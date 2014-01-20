@@ -1,0 +1,35 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  verkaufte Artikel mit Mengen-Angabe "MENGE_GELIEFERT"
+--
+--  (c)'05 Andreas Filsinger
+--
+--die Artikel.Numero
+--Artikel.Titel
+--Artikel.Verlagno
+--
+--
+$Start='01.10.2004'
+$Ende='20.05.2005'
+
+select
+ artikel_r,
+ sum(MENGE_GELIEFERT) MENGE_GELIEFERT,
+ artikel.verlagno,
+ artikel.numero,
+ artikel.titel
+from
+ posten
+join
+ artikel
+on
+ artikel.rid=posten.artikel_r
+where
+ (MENGE_GELIEFERT>0) AND
+ (AUSGABEART_R IS NULL) AND
+ BELEG_R IN (select RID from Beleg where RECHNUNG between $Start AND $Ende)
+group by
+ artikel_r,numero,titel,verlagno
+
+

@@ -1,0 +1,1 @@
+Hier können Sie Einstellungen vornehmen, die das Verhalten des Shops bestimmen.

@@ -1,0 +1,24 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  aktive Lieferanten
+//
+//  (c)'04 Andreas Filsinger
+//
+$AbZeitraum='01.01.2003'
+
+select 
+ PERSON_R,
+ SUM(MENGE_GELIEFERT) MENGE_GELIEFERT
+from
+ BBELEG
+where
+ (ANLAGE>=$AbZeitraum)
+group by
+ PERSON_R
+
+complete
+
+Anschrift(PERSON_R) ADRESSAT1;ADRESSAT2;ADRESSAT3;ADRESSAT4;STRASSE;ORT
+Fax(PERSON_R) FAX
+-

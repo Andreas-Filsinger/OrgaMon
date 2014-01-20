@@ -1,0 +1,151 @@
+﻿~OBJ_MESSAGELIST~~OBJ_ERRORLIST~
+<p class="title">~CONST_SENTENCE_PLACE_ORDER~</p>
+<p class="steptitle">~CONST_WORD_STEP~ ~VAR_STEP~: ~VAR_SITE_STEP_TITLE~ - ~VAR_SITE_STEP_DESCRIPTION~</p>
+<br />
+~TEMPLATE_STEP~
+<!-- BEGIN STEP
+NAME=tob
+TITLE=~CONST_SENTENCE_TERMS_OF_BUSINESS~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_READ_OUR_TOB~
+-->
+<textarea style="height:400px;">
+<!-- BEGIN RAW_TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/terms-of-business.txt
+-->RAW_TEXT: terms-of-business.txt<!-- END RAW_TEXT -->
+</textarea>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_accept_tob">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_LAST_SITE~';" style="">
+<input type="submit" class="buttonaslink" value="~CONST_WORD_ACCEPT~&nbsp;&gt;&gt;&gt;" style="">
+</form>
+<!-- END STEP -->
+<!-- BEGIN STEP
+NAME=addresses
+TITLE=~CONST_SENTENCE_BILL_AND_DELIVERY_ADDRESS~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_SELECT_YOUR_PREFERRED_BILL_AND_DELIVERY_ADDRESSES~
+-->
+<script type="text/javascript" src="./js/functions.js"></script>
+<form name="form_adresses" action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<p class="subtitle">~CONST_WORD_BILL_ADDRESS~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_CONTACTS_BILL~
+</div>
+<p class="subtitle">~CONST_WORD_DELIVERY_ADDRESS~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_CONTACTS_DELIVERY~
+</div>
+
+<div id="div_option_bill_delivery" style="display:none;">
+<p class="subtitle">~CONST_WORD_BILL_DELIVERY~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+<input type="checkbox" class="check" id="check_bill_delivery" name="f_choice" value="true" ~VAR_BILL_DELIVERY~/>&nbsp;<label for="check_bill_delivery">~CONST_SENTENCE_PLEASE_SEND_BILL_SEPARATELY_TO_BILL_ADDRESS~</label></p>
+</div>
+</div>
+
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_select_addresses">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';" />
+<input type="submit" class="buttonaslink" value="~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;" />
+</form>
+
+<script type="text/javascript">
+function checkIfBillAndDeliveryAddressEqual()
+{ if (getValueOfChecked('form_adresses', 'f_bcontact_r') != getValueOfChecked('form_adresses', 'f_dcontact_r'))
+  { document.getElementById('div_option_bill_delivery').style.display = 'block';
+  }
+  else 
+  { document.getElementById('div_option_bill_delivery').style.display = 'none';
+  }
+}
+checkIfBillAndDeliveryAddressEqual();
+</script>
+<!-- END STEP -->
+<!-- BEGIN STEP
+ACTIVE=Y
+NAME=date
+TITLE=~CONST_WORD_DATE_OF_DELIVERY~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_CHOOSE_A_DATE_OF_DELIVERY~
+-->
+<script type="text/javascript" src="./js/calendar.js"></script>
+<script type="text/javascript" src="./js/functions.js"></script>
+<div id="div_calendar" style="position:absolute; visibility:hidden; background-color:white; layer-background-color:white;"></div>
+<p class="text">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/order-date-of-delivery.txt
+!NL2BR=true
+-->TEXT: order-date-of-delivery.txt<!-- END TEXT -->
+</p>
+<form id="form_delivery_date" action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<input type="radio" class="radio" id="dradio_soonest" name="f_choice" value="soonest">&nbsp;<label for="dradio_soonest">~CONST_SENTENCE_SOONEST_PART_DELIVERY~&nbsp;<b>~VAR_DATE_SOONEST~</b></label><br />
+<input type="radio" class="radio" id="dradio_date" name="f_choice" value="complete">&nbsp;<label for="dradio_date">~CONST_SENTENCE_COMPLETE_DELIVERY_ON~</label>&nbsp;
+<input type="text" class="minimal" style="font-weight:bold;" id="f_date" name="f_date" value="~VAR_F_DATE~" size="10" maxlength="10" onfocus="checkRadioButtonById('dradio_date')" />
+<a href="#" onClick="calendar.select(document.getElementById('f_date'),'anchor_date','dd.MM.yyyy'); checkRadioButtonById('dradio_date'); return false;" name="anchor_date" id="anchor_date"><img src="~CONST___TEMPLATE_IMAGES_PATH~option_calendar.png" style="vertical-align:bottom; margin-right:5px;"/>~CONST_WORD_CHOOSE~</a>&nbsp;(~CONST_FORMATSTRING_DATE_224~)
+<hr>
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_set_date">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';" />
+<input type="submit" class="buttonaslink" value="~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;" />
+</form>
+<script type="text/javascript">
+var calendar = new CalendarPopup("div_calendar");
+calendar.setCssPrefix('hebucal_');
+calendar.setLanguage('~CONST___LANGUAGE~');
+calendar.addDisabledDates(null,'~VAR_DATE_LATEST~');
+calendar.addEnabledDates('~VAR_DATE_LATEST~');
+
+setCheckedRadioButtonByValue('form_delivery_date', 'f_choice', '~VAR_F_CHOICE~');
+</script>
+<!-- END STEP -->
+<!-- BEGIN STEP
+ACTIVE=N
+NAME=payment
+TITLE=~CONST_WORD_MODE_OF_PAYMENT~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_SELECT_YOUR_PREFERRED_MODE_OF_PAYMENT~
+-->
+<script type="text/javascript" src="./js/functions.js"></script>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<!-- <p class="subtitle"></p> -->
+<p class="subtitle">~CONST_WORD_DIRECT_DEBITING_SYSTEM~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_PAYMENT_INFOS~
+</div>
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_payment">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';" />
+<input type="submit" class="buttonaslink" value="~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;" />
+</form>
+<!-- END STEP -->
+<!-- BEGIN STEP
+NAME=overview
+TITLE=~CONST_SENTENCE_ORDER_OVERVIEW~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_VALIDATE_YOUR_ORDER~
+-->
+<p>~OBJ_CART~</p><hr>
+~OBJ_PAYMENT_INFO~
+<p class="subtitle">~CONST_WORD_BILL_ADDRESS~</p>
+<p>~OBJ_CONTACT_BILL~</p>
+<hr />
+<p class="subtitle">~CONST_WORD_DELIVERY_ADDRESS~</p>
+<p>~OBJ_CONTACT_DELIVERY~</p>
+<hr />
+~OBJ_BILL_DELIVERY_TYPE~
+~OBJ_DATE~
+<p class="text" id="justify"><b>
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/order-important-hint.txt
+!NL2BR=true
+-->TEXT: order-important-hint.txt<!-- END TEXT -->
+</b></p>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';">
+<p class="text" id="right"><input type="submit" class="buttonaslink" value="&gt;&gt;&gt;&nbsp;~CONST_SENTENCE_PLACE_ORDER~"></p>
+<!-- END STEP -->
+

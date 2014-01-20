@@ -1,0 +1,8 @@
+select 
+ TITEL
+from 
+ ARTIKEL_MITGLIED
+where
+ (ARTIKEL_R=$RID) and
+ (MASTER_R=$MASTER_R) and
+ (CONTEXT_R=$Context)

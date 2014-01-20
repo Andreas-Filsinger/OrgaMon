@@ -1,0 +1,1 @@
+select distinct RECHNUNGSANSCHRIFT_R from Beleg

@@ -1,0 +1,6 @@
+select verlag_R, (select count(rid) from artikel where Lager_r=L.RID) Belegung,
+diversitaet,
+sortiment_r
+from
+lager  L
+where verlag_r=147

@@ -1,0 +1,95 @@
+{
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2011  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+}
+unit ArtikelPOS;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, CPort, CPortCtl, Vcl.Buttons;
+
+type
+  TFormArtikelPOS = class(TForm)
+    ComPort1: TComPort;
+    ComComboBox1: TComComboBox;
+    Label1: TLabel;
+    SpeedButton1: TSpeedButton;
+    procedure FormActivate(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+  private
+    { Private-Deklarationen }
+  public
+    { Public-Deklarationen }
+    procedure Schublade_Auf(sComPort: string);
+  end;
+
+var
+  FormArtikelPOS: TFormArtikelPOS;
+
+implementation
+
+uses
+  globals;
+
+{$R *.dfm}
+
+procedure TFormArtikelPOS.FormActivate(Sender: TObject);
+begin
+  Label1.caption := 'SchubladePort=' + iSchubladePort;
+  ComComboBox1.text := iSchubladePort;
+end;
+
+procedure TFormArtikelPOS.Schublade_Auf(sComPort: string);
+const
+  Sequence_RelaisKarteHi: array [0 .. 2] of byte = ($FF, $01, $01);
+  Sequence_RelaisKarteLo: array [0 .. 2] of byte = ($FF, $01, $00);
+begin
+  try
+    if (sComPort <> '') then
+    begin
+      with ComPort1 do
+      begin
+        Port := sComPort;
+        Connected := true;
+        write(Sequence_RelaisKarteHi, sizeof(Sequence_RelaisKarteHi));
+        sleep(35); // ms
+        write(Sequence_RelaisKarteLo, sizeof(Sequence_RelaisKarteLo));
+        Connected := false;
+      end;
+    end;
+  except
+    beep;
+  end;
+end;
+
+procedure TFormArtikelPOS.SpeedButton1Click(Sender: TObject);
+begin
+  Schublade_Auf(ComComboBox1.text);
+
+end;
+
+end.

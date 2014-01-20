@@ -1,0 +1,27 @@
+unit Aufkleber;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids;
+
+type
+  TFormAufkleber = class(TForm)
+    DrawGrid1: TDrawGrid;
+    Button1: TButton;
+    Button2: TButton;
+  private
+    { Private-Deklarationen }
+  public
+    { Public-Deklarationen }
+  end;
+
+var
+  FormAufkleber: TFormAufkleber;
+
+implementation
+
+{$R *.DFM}
+
+end.

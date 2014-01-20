@@ -1,0 +1,15 @@
+program FirebirdRestore;
+
+uses
+  Forms,
+  UnitFirebirdRestore in 'UnitFirebirdRestore.pas' {FormFirebirdRestore},
+  anfix32 in '..\..\anfix32\anfix32.pas',
+  ShFolders in '..\..\Anfix32\shfolders.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TFormFirebirdRestore, FormFirebirdRestore);
+  Application.Run;
+end.

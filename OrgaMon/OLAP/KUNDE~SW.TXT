@@ -1,0 +1,14 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Anzahl der Kunden
+--
+--  (c)'05 Andreas Filsinger
+--
+--  Kunden, sind solche, die in den letzten 18 Monaten was gekauft haben
+--
+
+select count(RID) from PERSON where RID in (
+select PERSON_R from BELEG where (MENGE_GELIEFERT>0) and (DAVON_BEZAHLT>0) and (ANLAGE>'now'-548)
+)
+

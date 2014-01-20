@@ -1,0 +1,7 @@
+select * from Ausgangsrechnung where kunde_r=445305
+order by datum
+
+excel
+
+open
+-

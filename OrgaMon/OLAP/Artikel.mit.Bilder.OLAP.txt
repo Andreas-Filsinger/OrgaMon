@@ -1,0 +1,25 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Alle Artikel mit Bildern
+--
+
+select distinct 
+ ARTIKEL_R 
+from 
+ DOKUMENT
+where
+ MEDIUM_R=2
+ 
+complete
+
+Bild(ARTIKEL_R) BILD
+Vorschau(ARTIKEL_R) VORSCHAU
+Musik(ARTIKEL_R) MUSIK
+Kontext(ARTIKEL_R) KONTEXT
+-
+
+excel
+
+open
+-  

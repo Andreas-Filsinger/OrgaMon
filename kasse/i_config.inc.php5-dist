@@ -1,0 +1,7 @@
+<?php
+
+define("XMLRPCPath","");
+define("XMLRPCHost","localhost");
+define("XMLRPCPort",3040);
+
+?>

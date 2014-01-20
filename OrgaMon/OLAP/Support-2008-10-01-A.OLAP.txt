@@ -1,0 +1,106 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Kunden, die in einem gewissen Zeitraum von einem Verlag
+--  etwas geliefert bekamen. In Relation zu einem Katalog-Vertrag.
+--
+--  (c)'08 Andreas Filsinger
+--  Beispiel: Halter-Musikverlag
+--
+
+$Verlage=67
+$Beleg=82569
+$Start='01.01.2006'
+
+-- Zunächst mal die zu untersuchenden Belege
+
+select
+ RID
+from
+ BELEG
+where
+ (RECHNUNG>$Start)
+
+save
+
+numeric RID
+
+-- Nun die betroffenen Artikel
+
+select
+ RID
+from
+ ARTIKEL
+where
+ (VERLAG_R in ($Verlage))
+
+save
+
+numeric RID
+
+-- Nun die betroffenen Posten
+
+select distinct
+ BELEG_R
+from
+ POSTEN
+where
+ (MENGE_GELIEFERT>0) AND
+ (BELEG_R IN (select RID from olap$$tmp0)) AND
+ (ARTIKEL_R IN (select RID from olap$$tmp1))
+
+save
+
+numeric BELEG_R
+
+-- Nun die kauffreudigen Personen
+
+select distinct
+ PERSON_R
+from
+ BELEG
+where
+ (RID in (select RID from olap$$tmp2))
+
+save
+
+numeric PERSON_R
+
+-- Nun die Katalog-Verträge 
+
+select distinct
+ PERSON_R
+from 
+ VERTRAG
+where
+ BELEG_R in ($Beleg)
+ 
+save
+
+numeric PERSON_R
+
+-- Nun das Ergebnis
+
+select
+ RID as PERSON_R,
+ (select COUNT(RID) from olap$$tmp3 where PERSON.RID=RID) as VERLAG,
+ (select COUNT(RID) from olap$$tmp4 where PERSON.RID=RID) as KATALOG
+from
+ PERSON
+where
+ (RID in (select RID from olap$$tmp3)) or
+ (RID in (select RID from olap$$tmp4))
+
+complete
+
+Anschrift(PERSON_R) Adressat1;Adressat2;Adressat3;Adressat4;Strasse;Ort
+Ansprache ANSPRACHE
+Anrede ANREDE
+Land LAND_R
+-
+
+excel
+
+open
+-
+ 

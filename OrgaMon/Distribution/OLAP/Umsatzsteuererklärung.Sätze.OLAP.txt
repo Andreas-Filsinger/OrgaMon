@@ -1,0 +1,24 @@
+--
+--  O L A P  -  Definitions Datei
+--
+--  neues Buchungsjournal SATZ* bezogen!
+--
+--
+
+$StartDatum='01.01.2008' -- erster Tag der Zeitspanne
+$EndeDatum='01.02.2008' -- erster Tag NACH der Zeitspanne
+
+select 
+ NAME, 
+ SATZ
+from 
+ MWST
+where
+ $StartDatum between VON_DATUM and BIS_DATUM
+ 
+excel
+
+SATZ=DOUBLE
+
+open
+- 

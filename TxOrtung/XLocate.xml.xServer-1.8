@@ -1,0 +1,2012 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xlocate.xserver.ptvag.com" xmlns:ns1="http://common.xserver.ptvag.com" xmlns:ns0="http://types.xlocate.xserver.ptvag.com" xmlns:tns="http://jwsdp.xlocate.xserver.ptvag.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns3="http://exception.core.jabba.ptvag.com" name="XLocateWSService" targetNamespace="http://jwsdp.xlocate.xserver.ptvag.com">
+<types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://value.core.jabba.ptvag.com" xmlns:ns0="http://exception.core.jabba.ptvag.com" xmlns:tns="http://xlocate.xserver.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://xlocate.xserver.ptvag.com" elementFormDefault="qualified">
+        <import namespace="http://common.xserver.ptvag.com"/>
+                    <import namespace="http://value.core.jabba.ptvag.com"/>
+            <import namespace="http://exception.core.jabba.ptvag.com"/>
+                                                                                                                    <simpleType name="SortOrder">
+        <restriction base="xsd:string">
+                            <enumeration value="ASCENDING"/>
+                            <enumeration value="DESCENDING"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfSortOrder">
+        <sequence>
+            <element name="SortOrder" type="tns:SortOrder" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSortOrder">
+        <sequence>
+            <element name="ArrayOfSortOrder" type="tns:ArrayOfSortOrder" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="SortOption">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="field" type="tns:ResultField" use="required"/> 
+                                        <attribute name="order" type="tns:SortOrder" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfSortOption">
+        <sequence>
+            <element name="SortOption" type="tns:SortOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSortOption">
+        <sequence>
+            <element name="ArrayOfSortOption" type="tns:ArrayOfSortOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="SearchOptionBase">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                        				</sequence>     
+                                                            <attribute name="value" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfSearchOptionBase">
+        <sequence>
+            <element name="SearchOptionBase" type="tns:SearchOptionBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSearchOptionBase">
+        <sequence>
+            <element name="ArrayOfSearchOptionBase" type="tns:ArrayOfSearchOptionBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ClassificationDescription">
+        <restriction base="xsd:string">
+                            <enumeration value="NOT_CLASSIFIED"/>
+                            <enumeration value="LOW"/>
+                            <enumeration value="MEDIUM"/>
+                            <enumeration value="HIGH"/>
+                            <enumeration value="EXACT"/>
+                            <enumeration value="UNIQUE"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfClassificationDescription">
+        <sequence>
+            <element name="ClassificationDescription" type="tns:ClassificationDescription" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfClassificationDescription">
+        <sequence>
+            <element name="ArrayOfClassificationDescription" type="tns:ArrayOfClassificationDescription" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="AdditionalField">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="field" type="tns:ResultField" use="required"/> 
+                                                    <attribute name="value" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfAdditionalField">
+        <sequence>
+            <element name="AdditionalField" type="tns:AdditionalField" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfAdditionalField">
+        <sequence>
+            <element name="ArrayOfAdditionalField" type="tns:ArrayOfAdditionalField" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ResultField">
+        <restriction base="xsd:string">
+                            <enumeration value="COUNTRY"/>
+                            <enumeration value="STATE"/>
+                            <enumeration value="ADMINREGION"/>
+                            <enumeration value="CITY"/>
+                            <enumeration value="CITY2"/>
+                            <enumeration value="POSTCODE"/>
+                            <enumeration value="STREET"/>
+                            <enumeration value="HOUSENR"/>
+                            <enumeration value="COORDX"/>
+                            <enumeration value="COORDY"/>
+                            <enumeration value="DETAILLEVEL"/>
+                            <enumeration value="DETAILLEVEL_DESCRIPTION"/>
+                            <enumeration value="POPULATION"/>
+                            <enumeration value="EXTENSIONCLASS"/>
+                            <enumeration value="LEVEL"/>
+                            <enumeration value="ISCITYDISTRICT"/>
+                            <enumeration value="COUNTRY_ISO2"/>
+                            <enumeration value="COUNTRY_ISO3"/>
+                            <enumeration value="COUNTRY_COUNTRYCODEPLATE"/>
+                            <enumeration value="COUNTRY_DIALINGCODE"/>
+                            <enumeration value="COUNTRY_CAPITAL"/>
+                            <enumeration value="COUNTRY_NAME"/>
+                            <enumeration value="HOUSENR_SIDE"/>
+                            <enumeration value="HOUSENR_STRUCTURE"/>
+                            <enumeration value="HOUSENR_STARTFORMAT"/>
+                            <enumeration value="HOUSENR_ENDFORMAT"/>
+                            <enumeration value="APPENDIX"/>
+                            <enumeration value="SCORE_TOTALSCORE"/>
+                            <enumeration value="SCORE_FINALPENALTY"/>
+                            <enumeration value="FOUNDBY_CITY"/>
+                            <enumeration value="FOUNDBY_CITY2"/>
+                            <enumeration value="FOUNDBY_POSTCODE"/>
+                            <enumeration value="FOUNDBY_STREET"/>
+                            <enumeration value="CLASSIFICATION"/>
+                            <enumeration value="CLASSIFICATION_DESCRIPTION"/>
+                            <enumeration value="SWAPANDSPLITMODE"/>
+                            <enumeration value="POPUPINFO"/>
+                            <enumeration value="PHONENUMBER"/>
+                            <enumeration value="GENERIC_1"/>
+                            <enumeration value="GENERIC_2"/>
+                            <enumeration value="GENERIC_3"/>
+                            <enumeration value="GENERIC_4"/>
+                            <enumeration value="GENERIC_5"/>
+                            <enumeration value="SEGMENT_ID"/>
+                            <enumeration value="SEGMENT_COUNTRY"/>
+                            <enumeration value="SEGMENT_DIRECTION"/>
+                            <enumeration value="XYN"/>
+                            <enumeration value="POINAME"/>
+                            <enumeration value="POITYPE"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfResultField">
+        <sequence>
+            <element name="ResultField" type="tns:ResultField" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfResultField">
+        <sequence>
+            <element name="ArrayOfResultField" type="tns:ArrayOfResultField" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="SearchParameter">
+        <restriction base="xsd:string">
+                            <enumeration value="COUNTRY_CODETYPE"/>
+                            <enumeration value="SEARCH_BINARY"/>
+                            <enumeration value="SEARCH_PHONETIC"/>
+                            <enumeration value="SEARCH_FUZZY"/>
+                            <enumeration value="SWAPANDSPLITMODE"/>
+                            <enumeration value="STREET_HNRPOSITION"/>
+                            <enumeration value="STREET_RETURNALLHNR"/>
+                            <enumeration value="RESULT_LANGUAGE"/>
+                            <enumeration value="CITY_RETURNALLCITY2"/>
+                            <enumeration value="MULTIWORDINDEX_ENABLE"/>
+                            <enumeration value="POSTCODE_AGGREGATE"/>
+                            <enumeration value="ASTERISKMODE"/>
+                            <enumeration value="INTERSECTIONS_ENABLE"/>
+                            <enumeration value="HNR_OFFSET"/>
+                            <enumeration value="MAX_RESULT"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfSearchParameter">
+        <sequence>
+            <element name="SearchParameter" type="tns:SearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSearchParameter">
+        <sequence>
+            <element name="ArrayOfSearchParameter" type="tns:ArrayOfSearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                    <complexType name="XLocateException">
+        <complexContent>
+                            <extension base="ns0:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <element name="XLocateException" type="tns:XLocateException"/>
+                                                    <simpleType name="DetailLevelDescription">
+        <restriction base="xsd:string">
+                            <enumeration value="COUNTRY"/>
+                            <enumeration value="STATE"/>
+                            <enumeration value="EXTPOSTCODE"/>
+                            <enumeration value="CITY"/>
+                            <enumeration value="CITY2"/>
+                            <enumeration value="POSTCODE"/>
+                            <enumeration value="STREET"/>
+                            <enumeration value="HNRSECTION"/>
+                            <enumeration value="HNRLINK"/>
+                            <enumeration value="HNRINTERPOLATED"/>
+                            <enumeration value="HNREXACT"/>
+                            <enumeration value="INTERSECTION"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfDetailLevelDescription">
+        <sequence>
+            <element name="DetailLevelDescription" type="tns:DetailLevelDescription" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfDetailLevelDescription">
+        <sequence>
+            <element name="ArrayOfDetailLevelDescription" type="tns:ArrayOfDetailLevelDescription" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="SearchOption">
+        <complexContent>
+                            <extension base="tns:SearchOptionBase">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="param" type="tns:SearchParameter" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfSearchOption">
+        <sequence>
+            <element name="SearchOption" type="tns:SearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSearchOption">
+        <sequence>
+            <element name="ArrayOfSearchOption" type="tns:ArrayOfSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="NamedSearchOption">
+        <complexContent>
+                            <extension base="tns:SearchOptionBase">
+								<sequence>      
+                    		                        				</sequence>     
+                                                            <attribute name="param" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfNamedSearchOption">
+        <sequence>
+            <element name="NamedSearchOption" type="tns:NamedSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfNamedSearchOption">
+        <sequence>
+            <element name="ArrayOfNamedSearchOption" type="tns:ArrayOfNamedSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Address">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                    		                    		                    		                    		                    		                        				</sequence>     
+                                                            <attribute name="city" type="xsd:string" use="optional"/> 
+                                                    <attribute name="city2" type="xsd:string" use="optional"/> 
+                                                    <attribute name="country" type="xsd:string" use="optional"/> 
+                                                    <attribute name="houseNumber" type="xsd:string" use="optional"/> 
+                                                    <attribute name="postCode" type="xsd:string" use="optional"/> 
+                                                    <attribute name="state" type="xsd:string" use="optional"/> 
+                                                    <attribute name="street" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfAddress">
+        <sequence>
+            <element name="Address" type="tns:Address" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfAddress">
+        <sequence>
+            <element name="ArrayOfAddress" type="tns:ArrayOfAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                        <complexType name="ResultAddress">
+        <complexContent>
+                            <extension base="tns:Address">
+								<sequence>      
+                    		                <element name="wrappedAdditionalFields" type="tns:ArrayOfAdditionalField" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                    		        						        <element name="coordinates" type="ns1:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                        				</sequence>     
+                                                                        <attribute name="adminRegion" type="xsd:string" use="optional"/> 
+                                                    <attribute name="appendix" type="xsd:string" use="optional"/> 
+                                        <attribute name="classificationDescription" type="tns:ClassificationDescription" use="required"/> 
+                                                                <attribute name="countryCapital" type="xsd:string" use="optional"/> 
+                                        <attribute name="detailLevelDescription" type="tns:DetailLevelDescription" use="required"/> 
+                                        <attribute name="totalScore" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfResultAddress">
+        <sequence>
+            <element name="ResultAddress" type="tns:ResultAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfResultAddress">
+        <sequence>
+            <element name="ArrayOfResultAddress" type="tns:ArrayOfResultAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ErrorCode">
+        <restriction base="xsd:string">
+                            <enumeration value="ENGINE_ERROR"/>
+                            <enumeration value="UNSPECIFIED_DATA_PATH"/>
+                            <enumeration value="INITIALIZATION_ERROR"/>
+                            <enumeration value="ENUMERATION_ERROR"/>
+                            <enumeration value="INVALID_SEARCH_OPTION"/>
+                            <enumeration value="INVALID_ADDITIONAL_FIELD"/>
+                            <enumeration value="PATH_PROBLEM"/>
+                            <enumeration value="INVALID_MAP_LICENSE"/>
+                            <enumeration value="INVALID_PARAMETERS"/>
+                            <enumeration value="LIST_EXCEEDED_MAXLENGTH"/>
+                            <enumeration value="EMPTY_INPUT_ADDRESS"/>
+                            <enumeration value="EMPTY_INPUT_LOCATION"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfErrorCode">
+        <sequence>
+            <element name="ErrorCode" type="tns:ErrorCode" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfErrorCode">
+        <sequence>
+            <element name="ArrayOfErrorCode" type="tns:ArrayOfErrorCode" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ReverseSearchParameter">
+        <restriction base="xsd:string">
+                            <enumeration value="COUNTRY_CODETYPE"/>
+                            <enumeration value="RESULT_LANGUAGE"/>
+                            <enumeration value="ENGINE_TOLERANCE"/>
+                            <enumeration value="ENGINE_TARGETSIZE"/>
+                            <enumeration value="ENGINE_FILTERMODE"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfReverseSearchParameter">
+        <sequence>
+            <element name="ReverseSearchParameter" type="tns:ReverseSearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfReverseSearchParameter">
+        <sequence>
+            <element name="ArrayOfReverseSearchParameter" type="tns:ArrayOfReverseSearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="ReverseSearchOption">
+        <complexContent>
+                            <extension base="tns:SearchOptionBase">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="param" type="tns:ReverseSearchParameter" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfReverseSearchOption">
+        <sequence>
+            <element name="ReverseSearchOption" type="tns:ReverseSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfReverseSearchOption">
+        <sequence>
+            <element name="ArrayOfReverseSearchOption" type="tns:ArrayOfReverseSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PoiAddress">
+        <complexContent>
+                            <extension base="tns:Address">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="poiName" type="xsd:string" use="optional"/> 
+                                                    <attribute name="poiType" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoiAddress">
+        <sequence>
+            <element name="PoiAddress" type="tns:PoiAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiAddress">
+        <sequence>
+            <element name="ArrayOfPoiAddress" type="tns:ArrayOfPoiAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Location">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		        						        <element name="coordinate" type="ns1:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLocation">
+        <sequence>
+            <element name="Location" type="tns:Location" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLocation">
+        <sequence>
+            <element name="ArrayOfLocation" type="tns:ArrayOfLocation" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PoiLocation">
+        <complexContent>
+                            <extension base="tns:Location">
+								<sequence>      
+                    		        						        <element name="poiArea" type="ns1:Polygon" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                        				</sequence>     
+                                                                        <attribute name="poiName" type="xsd:string" use="optional"/> 
+                                        <attribute name="poiSearchRange" type="xsd:int" use="required"/> 
+                                                    <attribute name="poiType" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoiLocation">
+        <sequence>
+            <element name="PoiLocation" type="tns:PoiLocation" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiLocation">
+        <sequence>
+            <element name="ArrayOfPoiLocation" type="tns:ArrayOfPoiLocation" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PoiResultAddress">
+        <complexContent>
+                            <extension base="tns:ResultAddress">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="poiName" type="xsd:string" use="optional"/> 
+                                                    <attribute name="poiType" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoiResultAddress">
+        <sequence>
+            <element name="PoiResultAddress" type="tns:PoiResultAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiResultAddress">
+        <sequence>
+            <element name="ArrayOfPoiResultAddress" type="tns:ArrayOfPoiResultAddress" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PoiSearchOption">
+        <complexContent>
+                            <extension base="tns:SearchOptionBase">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="param" type="tns:PoiSearchParameter" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoiSearchOption">
+        <sequence>
+            <element name="PoiSearchOption" type="tns:PoiSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiSearchOption">
+        <sequence>
+            <element name="ArrayOfPoiSearchOption" type="tns:ArrayOfPoiSearchOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                    <simpleType name="PoiSearchParameter">
+        <restriction base="xsd:string">
+                            <enumeration value="LANGUAGE"/>
+                            <enumeration value="MAX_RESULT"/>
+                            <enumeration value="COUNTRYCODE_TYPE"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfPoiSearchParameter">
+        <sequence>
+            <element name="PoiSearchParameter" type="tns:PoiSearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiSearchParameter">
+        <sequence>
+            <element name="ArrayOfPoiSearchParameter" type="tns:ArrayOfPoiSearchParameter" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="AddressResponse">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                    		                <element name="wrappedResultList" type="tns:ArrayOfResultAddress" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="errorCode" type="xsd:int" use="required"/> 
+                                                    <attribute name="errorDescription" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfAddressResponse">
+        <sequence>
+            <element name="AddressResponse" type="tns:AddressResponse" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfAddressResponse">
+        <sequence>
+            <element name="ArrayOfAddressResponse" type="tns:ArrayOfAddressResponse" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PoiAddressResponse">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                    		                <element name="wrappedResultList" type="tns:ArrayOfPoiResultAddress" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="errorCode" type="xsd:int" use="required"/> 
+                                                    <attribute name="errorDescription" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoiAddressResponse">
+        <sequence>
+            <element name="PoiAddressResponse" type="tns:PoiAddressResponse" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoiAddressResponse">
+        <sequence>
+            <element name="ArrayOfPoiAddressResponse" type="tns:ArrayOfPoiAddressResponse" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://value.core.jabba.ptvag.com" xmlns:ns1="http://exception.core.jabba.ptvag.com" xmlns:ns0="http://wrappertypes.service.jabba.ptvag.com" xmlns:tns="http://common.xserver.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://common.xserver.ptvag.com" elementFormDefault="qualified">
+            <import namespace="http://wrappertypes.service.jabba.ptvag.com"/>
+                <import namespace="http://value.core.jabba.ptvag.com"/>
+            <import namespace="http://exception.core.jabba.ptvag.com"/>
+                                                                                                <complexType name="RequestOptions">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                    		                <element name="wrappedResponseGeometry" type="tns:ArrayOfGeometryEncoding" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="coordFormat" type="tns:CoordFormat" use="required"/> 
+                                                    <attribute name="profile" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfRequestOptions">
+        <sequence>
+            <element name="RequestOptions" type="tns:RequestOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfRequestOptions">
+        <sequence>
+            <element name="ArrayOfRequestOptions" type="tns:ArrayOfRequestOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="GeometryEncoding">
+        <restriction base="xsd:string">
+                            <enumeration value="PLAIN"/>
+                            <enumeration value="WKB"/>
+                            <enumeration value="WKT"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfGeometryEncoding">
+        <sequence>
+            <element name="GeometryEncoding" type="tns:GeometryEncoding" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryEncoding">
+        <sequence>
+            <element name="ArrayOfGeometryEncoding" type="tns:ArrayOfGeometryEncoding" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="CoordFormat">
+        <restriction base="xsd:string">
+                            <enumeration value="OG_GEODECIMAL"/>
+                            <enumeration value="PTV_MERCATOR"/>
+                            <enumeration value="PTV_GEOMINSEC"/>
+                            <enumeration value="PTV_GEODECIMAL"/>
+                            <enumeration value="PTV_CONFORM"/>
+                            <enumeration value="PTV_SUPERCONFORM"/>
+                            <enumeration value="PTV_SMARTUNITS"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfCoordFormat">
+        <sequence>
+            <element name="CoordFormat" type="tns:CoordFormat" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfCoordFormat">
+        <sequence>
+            <element name="ArrayOfCoordFormat" type="tns:ArrayOfCoordFormat" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="BoundingBox">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		        						        <element name="leftTop" type="tns:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="rightBottom" type="tns:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBoundingBox">
+        <sequence>
+            <element name="BoundingBox" type="tns:BoundingBox" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBoundingBox">
+        <sequence>
+            <element name="ArrayOfBoundingBox" type="tns:ArrayOfBoundingBox" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="EncodedGeometry">
+        <complexContent>
+                            <extension base="tns:EncodedGeometryBase">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="wkb" type="xsd:base64Binary" use="optional"/> 
+                                                    <attribute name="wkt" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfEncodedGeometry">
+        <sequence>
+            <element name="EncodedGeometry" type="tns:EncodedGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfEncodedGeometry">
+        <sequence>
+            <element name="ArrayOfEncodedGeometry" type="tns:ArrayOfEncodedGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LinearRing">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="linearRing" type="tns:PlainLinearRing" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLinearRing">
+        <sequence>
+            <element name="LinearRing" type="tns:LinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLinearRing">
+        <sequence>
+            <element name="ArrayOfLinearRing" type="tns:ArrayOfLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainLinearRing">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainLinearRing">
+        <sequence>
+            <element name="PlainLinearRing" type="tns:PlainLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainLinearRing">
+        <sequence>
+            <element name="ArrayOfPlainLinearRing" type="tns:ArrayOfPlainLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Polygon">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="polygon" type="tns:PlainPolygon" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPolygon">
+        <sequence>
+            <element name="Polygon" type="tns:Polygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPolygon">
+        <sequence>
+            <element name="ArrayOfPolygon" type="tns:ArrayOfPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainPolygon">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedLinearRings" type="tns:ArrayOfPlainLinearRing" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainPolygon">
+        <sequence>
+            <element name="PlainPolygon" type="tns:PlainPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainPolygon">
+        <sequence>
+            <element name="ArrayOfPlainPolygon" type="tns:ArrayOfPlainPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LineString">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="lineString" type="tns:PlainLineString" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLineString">
+        <sequence>
+            <element name="LineString" type="tns:LineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLineString">
+        <sequence>
+            <element name="ArrayOfLineString" type="tns:ArrayOfLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainLineString">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainLineString">
+        <sequence>
+            <element name="PlainLineString" type="tns:PlainLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainLineString">
+        <sequence>
+            <element name="ArrayOfPlainLineString" type="tns:ArrayOfPlainLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Point">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="point" type="tns:PlainPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoint">
+        <sequence>
+            <element name="Point" type="tns:Point" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoint">
+        <sequence>
+            <element name="ArrayOfPoint" type="tns:ArrayOfPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="XServiceException">
+        <complexContent>
+                            <extension base="ns1:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <element name="XServiceException" type="tns:XServiceException"/>
+                                                    <complexType name="PlainMultiPoint">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiPoint">
+        <sequence>
+            <element name="PlainMultiPoint" type="tns:PlainMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiPoint">
+        <sequence>
+            <element name="ArrayOfPlainMultiPoint" type="tns:ArrayOfPlainMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainMultiLineString">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedLineStrings" type="tns:ArrayOfPlainLineString" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiLineString">
+        <sequence>
+            <element name="PlainMultiLineString" type="tns:PlainMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiLineString">
+        <sequence>
+            <element name="ArrayOfPlainMultiLineString" type="tns:ArrayOfPlainMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainMultiPolygon">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPolygons" type="tns:ArrayOfPlainPolygon" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiPolygon">
+        <sequence>
+            <element name="PlainMultiPolygon" type="tns:PlainMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiPolygon">
+        <sequence>
+            <element name="ArrayOfPlainMultiPolygon" type="tns:ArrayOfPlainMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainGeometryCollection">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedGeometries" type="tns:ArrayOfPlainGeometryBase" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainGeometryCollection">
+        <sequence>
+            <element name="PlainGeometryCollection" type="tns:PlainGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainGeometryCollection">
+        <sequence>
+            <element name="ArrayOfPlainGeometryCollection" type="tns:ArrayOfPlainGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiPoint">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiPoint" type="tns:PlainMultiPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiPoint">
+        <sequence>
+            <element name="MultiPoint" type="tns:MultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiPoint">
+        <sequence>
+            <element name="ArrayOfMultiPoint" type="tns:ArrayOfMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiLineString">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiLineString" type="tns:PlainMultiLineString" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiLineString">
+        <sequence>
+            <element name="MultiLineString" type="tns:MultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiLineString">
+        <sequence>
+            <element name="ArrayOfMultiLineString" type="tns:ArrayOfMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiPolygon">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiPolygon" type="tns:PlainMultiPolygon" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiPolygon">
+        <sequence>
+            <element name="MultiPolygon" type="tns:MultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiPolygon">
+        <sequence>
+            <element name="ArrayOfMultiPolygon" type="tns:ArrayOfMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="GeometryCollection">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="geometryCollection" type="tns:PlainGeometryCollection" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometryCollection">
+        <sequence>
+            <element name="GeometryCollection" type="tns:GeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryCollection">
+        <sequence>
+            <element name="ArrayOfGeometryCollection" type="tns:ArrayOfGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                    <complexType name="PlainGeometryBase">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                        				</sequence>     
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainGeometryBase">
+        <sequence>
+            <element name="PlainGeometryBase" type="tns:PlainGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainGeometryBase">
+        <sequence>
+            <element name="ArrayOfPlainGeometryBase" type="tns:ArrayOfPlainGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainPoint">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="x" type="xsd:double" use="required"/> 
+                                        <attribute name="y" type="xsd:double" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainPoint">
+        <sequence>
+            <element name="PlainPoint" type="tns:PlainPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainPoint">
+        <sequence>
+            <element name="ArrayOfPlainPoint" type="tns:ArrayOfPlainPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="EncodedGeometryBase">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                        				</sequence>     
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfEncodedGeometryBase">
+        <sequence>
+            <element name="EncodedGeometryBase" type="tns:EncodedGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfEncodedGeometryBase">
+        <sequence>
+            <element name="ArrayOfEncodedGeometryBase" type="tns:ArrayOfEncodedGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://wrappertypes.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://wrappertypes.service.jabba.ptvag.com" elementFormDefault="qualified">
+  <!-- Calendar -->
+  <complexType name="ArrayOfCalendar">
+    <sequence>
+      <element name="Calendar" type="xsd:dateTime" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfCalendar">
+    <sequence>
+      <element name="ArrayOfCalendar" type="tns:ArrayOfCalendar" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- String -->
+  <complexType name="ArrayOfString">
+    <sequence>
+      <element name="String" type="xsd:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfString">
+    <sequence>
+      <element name="ArrayOfString" type="tns:ArrayOfString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- byte -->
+  <complexType name="ArrayOfArrayOfByte">
+    <sequence>
+      <element name="ArrayOfByte" type="xsd:base64Binary" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- short -->
+  <complexType name="ArrayOfShort">
+    <sequence>
+      <element name="Short" type="xsd:short" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfShort">
+    <sequence>
+      <element name="ArrayOfShort" type="tns:ArrayOfShort" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- int -->
+  <complexType name="ArrayOfInt">
+    <sequence>
+      <element name="Int" type="xsd:int" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfInt">
+    <sequence>
+      <element name="ArrayOfInt" type="tns:ArrayOfInt" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- long -->
+  <complexType name="ArrayOfLong">
+    <sequence>
+      <element name="Long" type="xsd:long" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfLong">
+    <sequence>
+      <element name="ArrayOfLong" type="tns:ArrayOfLong" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- float -->
+  <complexType name="ArrayOfFloat">
+    <sequence>
+      <element name="Float" type="xsd:float" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfFloat">
+    <sequence>
+      <element name="ArrayOfFloat" type="tns:ArrayOfFloat" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- double -->
+  <complexType name="ArrayOfDouble">
+    <sequence>
+      <element name="Double" type="xsd:double" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfDouble">
+    <sequence>
+      <element name="ArrayOfDouble" type="tns:ArrayOfDouble" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- boolean -->
+  <complexType name="ArrayOfBoolean">
+    <sequence>
+      <element name="Boolean" type="xsd:boolean" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfBoolean">
+    <sequence>
+      <element name="ArrayOfBoolean" type="tns:ArrayOfBoolean" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+</schema>   
+
+
+
+   
+
+   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://exception.core.jabba.ptvag.com" xmlns:tns="http://exception.messaging.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://exception.messaging.service.jabba.ptvag.com" elementFormDefault="qualified">
+				<import namespace="http://exception.core.jabba.ptvag.com"/>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         		 			 	<complexType name="MessagingServiceException">
+        <complexContent>
+        		            <extension base="ns0:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+ 	</complexType>		
+ 	<element name="MessagingServiceException" type="tns:MessagingServiceException"/>
+    		 			                                                                                                                                                  	
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://value.core.jabba.ptvag.com" xmlns:tns="http://baseservices.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://baseservices.service.jabba.ptvag.com" elementFormDefault="qualified">
+  <import namespace="http://value.core.jabba.ptvag.com"/>
+  <complexType name="CallerContext">
+    <complexContent>
+      <extension base="ns0:TransientVO">
+        <sequence>
+          <element name="wrappedProperties" type="tns:ArrayOfCallerContextProperty" minOccurs="1" maxOccurs="1" nillable="true"/>
+        </sequence>
+        <attribute name="log1" type="xsd:string" use="optional"/>
+        <attribute name="log2" type="xsd:string" use="optional"/>
+        <attribute name="log3" type="xsd:string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CallerContextProperty">
+    <complexContent>
+      <extension base="ns0:TransientVO">
+        <sequence/>
+        <attribute name="key" type="xsd:string" use="optional"/>
+        <attribute name="value" type="xsd:string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOfCallerContextProperty">
+    <sequence>
+      <element name="CallerContextProperty" type="tns:CallerContextProperty" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://value.core.jabba.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://value.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="TransientVO">
+    <sequence>
+    </sequence>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://persistent.core.jabba.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://persistent.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="OID">
+    <sequence>
+    </sequence>
+    <attribute name="id" type="string" use="optional"/>
+  </complexType>
+  <complexType name="AuditedVO" abstract="true">
+    <complexContent>
+      <extension base="tns:VO">
+        <sequence>
+        </sequence>
+        <attribute name="createTime" type="dateTime" use="optional"/>
+        <attribute name="createUser" type="string" use="optional"/>
+        <attribute name="updateTime" type="dateTime" use="optional"/>
+        <attribute name="updateUser" type="string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="VO" abstract="true">
+    <sequence>
+    </sequence>
+    <attribute name="id" type="string" use="optional"/>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://wrappertypes.service.jabba.ptvag.com" xmlns:tns="http://exception.core.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://exception.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="StackElement">
+        <sequence>
+            <element name="cause" type="tns:StackElement" minOccurs="0" maxOccurs="1" nillable="true"/>  
+			<element name="wrappedContext" type="ns0:ArrayOfString" minOccurs="1" maxOccurs="1" nillable="true"/>      
+        </sequence>                
+        <attribute name="className" type="string" use="optional"/>
+        <attribute name="errorKey" type="string" use="optional"/>
+        <attribute name="message" type="string" use="optional"/>
+  </complexType>
+  
+  
+  <complexType name="ParameterNotSetException">
+    <complexContent>
+      <extension base="tns:IllegalParameterException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="ParameterNotSetException" type="tns:ParameterNotSetException"/>
+  <complexType name="IllegalParameterException">
+    <complexContent>
+      <extension base="tns:BusinessException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="IllegalParameterException" type="tns:IllegalParameterException"/>
+  <complexType name="UnexpectedException">
+    <complexContent>
+      <extension base="tns:SystemException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="UnexpectedException" type="tns:UnexpectedException"/>
+  
+  
+  
+  
+  
+  
+  <complexType name="RemoteAccessException">
+    <complexContent>
+      <extension base="tns:SystemException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="RemoteAccessException" type="tns:RemoteAccessException"/>
+  <complexType name="BaseException">
+    <sequence>
+        <element name="stackElement" type="tns:StackElement" minOccurs="0" maxOccurs="1" nillable="true"/>
+    </sequence>
+    <attribute name="transactionId" type="string" use="optional"/>               
+  </complexType>
+  <element name="BaseException" type="tns:BaseException"/>
+  <complexType name="SystemException">
+    <complexContent>
+      <extension base="tns:BaseException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="SystemException" type="tns:SystemException"/>
+  <complexType name="BusinessException">
+    <complexContent>
+      <extension base="tns:BaseException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="BusinessException" type="tns:BusinessException"/>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://types.xlocate.xserver.ptvag.com" xmlns:ns3="http://baseservices.service.jabba.ptvag.com" xmlns:ns4="http://common.xserver.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" targetNamespace="http://types.xlocate.xserver.ptvag.com">
+		<import namespace="http://common.xserver.ptvag.com"/>
+<import namespace="http://xlocate.xserver.ptvag.com"/>
+<import namespace="http://baseservices.service.jabba.ptvag.com"/>
+<import namespace="http://exception.core.jabba.ptvag.com"/>
+
+		<complexType name="findAddress">
+<sequence>
+<element name="Address_1" type="ns2:Address" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findAddressResponse">
+<sequence>
+<element name="result" type="ns2:AddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findAddresses">
+<sequence>
+<element name="ArrayOfAddress_1" type="ns2:ArrayOfAddress" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findAddressesResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findLocation">
+<sequence>
+<element name="Location_1" type="ns2:Location" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findLocationResponse">
+<sequence>
+<element name="result" type="ns2:AddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findLocations">
+<sequence>
+<element name="ArrayOfLocation_1" type="ns2:ArrayOfLocation" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findLocationsResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByAddress">
+<sequence>
+<element name="PoiAddress_1" type="ns2:PoiAddress" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByAddressResponse">
+<sequence>
+<element name="result" type="ns2:PoiAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByAddresses">
+<sequence>
+<element name="ArrayOfPoiAddress_1" type="ns2:ArrayOfPoiAddress" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByAddressesResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfPoiAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByLocation">
+<sequence>
+<element name="PoiLocation_1" type="ns2:PoiLocation" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByLocationResponse">
+<sequence>
+<element name="result" type="ns2:PoiAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByLocations">
+<sequence>
+<element name="ArrayOfPoiLocation_1" type="ns2:ArrayOfPoiLocation" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="findPoiByLocationsResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfPoiAddressResponse" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchAddress">
+<sequence>
+<element name="Address_1" type="ns2:Address" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchAddressResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfResultAddress" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchAddresses">
+<sequence>
+<element name="ArrayOfAddress_1" type="ns2:ArrayOfAddress" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchAddressesResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfArrayOfResultAddress" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchLocation">
+<sequence>
+<element name="Point_1" type="ns4:Point" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchLocationResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfResultAddress" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchLocations">
+<sequence>
+<element name="ArrayOfPoint_1" type="ns4:ArrayOfPoint" nillable="true"/>
+<element name="ArrayOfSearchOptionBase_2" type="ns2:ArrayOfSearchOptionBase" nillable="true"/>
+<element name="ArrayOfSortOption_3" type="ns2:ArrayOfSortOption" nillable="true"/>
+<element name="ArrayOfResultField_4" type="ns2:ArrayOfResultField" nillable="true"/>
+<element name="CallerContext_5" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="matchLocationsResponse">
+<sequence>
+<element name="result" type="ns2:ArrayOfArrayOfResultAddress" nillable="true"/>
+</sequence>
+</complexType>
+
+		<element name="findAddress" type="tns:findAddress"/>
+<element name="findAddressResponse" type="tns:findAddressResponse"/>
+<element name="findAddresses" type="tns:findAddresses"/>
+<element name="findAddressesResponse" type="tns:findAddressesResponse"/>
+<element name="findLocation" type="tns:findLocation"/>
+<element name="findLocationResponse" type="tns:findLocationResponse"/>
+<element name="findLocations" type="tns:findLocations"/>
+<element name="findLocationsResponse" type="tns:findLocationsResponse"/>
+<element name="findPoiByAddress" type="tns:findPoiByAddress"/>
+<element name="findPoiByAddressResponse" type="tns:findPoiByAddressResponse"/>
+<element name="findPoiByAddresses" type="tns:findPoiByAddresses"/>
+<element name="findPoiByAddressesResponse" type="tns:findPoiByAddressesResponse"/>
+<element name="findPoiByLocation" type="tns:findPoiByLocation"/>
+<element name="findPoiByLocationResponse" type="tns:findPoiByLocationResponse"/>
+<element name="findPoiByLocations" type="tns:findPoiByLocations"/>
+<element name="findPoiByLocationsResponse" type="tns:findPoiByLocationsResponse"/>
+<element name="matchAddress" type="tns:matchAddress"/>
+<element name="matchAddressResponse" type="tns:matchAddressResponse"/>
+<element name="matchAddresses" type="tns:matchAddresses"/>
+<element name="matchAddressesResponse" type="tns:matchAddressesResponse"/>
+<element name="matchLocation" type="tns:matchLocation"/>
+<element name="matchLocationResponse" type="tns:matchLocationResponse"/>
+<element name="matchLocations" type="tns:matchLocations"/>
+<element name="matchLocationsResponse" type="tns:matchLocationsResponse"/>
+
+</schema>		
+</types>
+<message name="XLocateWS_findAddress">
+<part name="parameters" element="ns0:findAddress"/>
+</message>
+<message name="XLocateWS_findAddressResponse">
+<part name="parameters" element="ns0:findAddressResponse"/>
+</message>
+<message name="XServiceException">
+<part name="XServiceException" element="ns1:XServiceException"/>
+</message>
+<message name="XLocateException">
+<part name="XLocateException" element="ns2:XLocateException"/>
+</message>
+<message name="SystemException">
+<part name="SystemException" element="ns3:SystemException"/>
+</message>
+<message name="UnexpectedException">
+<part name="UnexpectedException" element="ns3:UnexpectedException"/>
+</message>
+
+
+
+
+<message name="XLocateWS_findAddresses">
+<part name="parameters" element="ns0:findAddresses"/>
+</message>
+<message name="XLocateWS_findAddressesResponse">
+<part name="parameters" element="ns0:findAddressesResponse"/>
+</message>
+<message name="XLocateWS_findLocation">
+<part name="parameters" element="ns0:findLocation"/>
+</message>
+<message name="XLocateWS_findLocationResponse">
+<part name="parameters" element="ns0:findLocationResponse"/>
+</message>
+<message name="XLocateWS_findLocations">
+<part name="parameters" element="ns0:findLocations"/>
+</message>
+<message name="XLocateWS_findLocationsResponse">
+<part name="parameters" element="ns0:findLocationsResponse"/>
+</message>
+<message name="XLocateWS_findPoiByAddress">
+<part name="parameters" element="ns0:findPoiByAddress"/>
+</message>
+<message name="XLocateWS_findPoiByAddressResponse">
+<part name="parameters" element="ns0:findPoiByAddressResponse"/>
+</message>
+<message name="XLocateWS_findPoiByAddresses">
+<part name="parameters" element="ns0:findPoiByAddresses"/>
+</message>
+<message name="XLocateWS_findPoiByAddressesResponse">
+<part name="parameters" element="ns0:findPoiByAddressesResponse"/>
+</message>
+<message name="XLocateWS_findPoiByLocation">
+<part name="parameters" element="ns0:findPoiByLocation"/>
+</message>
+<message name="XLocateWS_findPoiByLocationResponse">
+<part name="parameters" element="ns0:findPoiByLocationResponse"/>
+</message>
+<message name="XLocateWS_findPoiByLocations">
+<part name="parameters" element="ns0:findPoiByLocations"/>
+</message>
+<message name="XLocateWS_findPoiByLocationsResponse">
+<part name="parameters" element="ns0:findPoiByLocationsResponse"/>
+</message>
+<message name="XLocateWS_matchAddress">
+<part name="parameters" element="ns0:matchAddress"/>
+</message>
+<message name="XLocateWS_matchAddressResponse">
+<part name="parameters" element="ns0:matchAddressResponse"/>
+</message>
+<message name="XLocateWS_matchAddresses">
+<part name="parameters" element="ns0:matchAddresses"/>
+</message>
+<message name="XLocateWS_matchAddressesResponse">
+<part name="parameters" element="ns0:matchAddressesResponse"/>
+</message>
+<message name="XLocateWS_matchLocation">
+<part name="parameters" element="ns0:matchLocation"/>
+</message>
+<message name="XLocateWS_matchLocationResponse">
+<part name="parameters" element="ns0:matchLocationResponse"/>
+</message>
+<message name="XLocateWS_matchLocations">
+<part name="parameters" element="ns0:matchLocations"/>
+</message>
+<message name="XLocateWS_matchLocationsResponse">
+<part name="parameters" element="ns0:matchLocationsResponse"/>
+</message>
+
+<portType name="XLocateWS">
+<operation name="findAddress">
+<input message="tns:XLocateWS_findAddress"/>
+<output message="tns:XLocateWS_findAddressResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findAddresses">
+<input message="tns:XLocateWS_findAddresses"/>
+<output message="tns:XLocateWS_findAddressesResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findLocation">
+<input message="tns:XLocateWS_findLocation"/>
+<output message="tns:XLocateWS_findLocationResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findLocations">
+<input message="tns:XLocateWS_findLocations"/>
+<output message="tns:XLocateWS_findLocationsResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findPoiByAddress">
+<input message="tns:XLocateWS_findPoiByAddress"/>
+<output message="tns:XLocateWS_findPoiByAddressResponse"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findPoiByAddresses">
+<input message="tns:XLocateWS_findPoiByAddresses"/>
+<output message="tns:XLocateWS_findPoiByAddressesResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findPoiByLocation">
+<input message="tns:XLocateWS_findPoiByLocation"/>
+<output message="tns:XLocateWS_findPoiByLocationResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="findPoiByLocations">
+<input message="tns:XLocateWS_findPoiByLocations"/>
+<output message="tns:XLocateWS_findPoiByLocationsResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="matchAddress">
+<input message="tns:XLocateWS_matchAddress"/>
+<output message="tns:XLocateWS_matchAddressResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="matchAddresses">
+<input message="tns:XLocateWS_matchAddresses"/>
+<output message="tns:XLocateWS_matchAddressesResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="matchLocation">
+<input message="tns:XLocateWS_matchLocation"/>
+<output message="tns:XLocateWS_matchLocationResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="matchLocations">
+<input message="tns:XLocateWS_matchLocations"/>
+<output message="tns:XLocateWS_matchLocationsResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XLocateException" message="tns:XLocateException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+
+</portType>
+<binding name="XLocateWSBinding" type="tns:XLocateWS">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="findAddress">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findAddresses">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findLocation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findLocations">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findPoiByAddress">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findPoiByAddresses">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findPoiByLocation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="findPoiByLocations">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="matchAddress">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="matchAddresses">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="matchLocation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="matchLocations">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XLocateException">
+<soap:fault name="XLocateException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+
+</binding>
+<service name="XLocateWSService">
+	<port name="XLocateWSPort" binding="tns:XLocateWSBinding">
+		<soap:address location="http://80.146.239.243:12001/xlocate/ws/XLocate" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"/>
+	</port>
+</service>
+</definitions>

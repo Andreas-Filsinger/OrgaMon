@@ -1,0 +1,279 @@
+object FormBackUp: TFormBackUp
+  Left = 8
+  Top = 156
+  Width = 930
+  Height = 577
+  Caption = 'Datensicherung'
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Verdana'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object GroupBox1: TGroupBox
+    Left = 1
+    Top = 0
+    Width = 919
+    Height = 417
+    Caption = 'Datenbank Sicherung'
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 141
+      Top = 365
+      Width = 37
+      Height = 13
+      Caption = 'Label1'
+    end
+    object Label2: TLabel
+      Left = 84
+      Top = 23
+      Width = 37
+      Height = 13
+      Caption = 'Label2'
+    end
+    object Label3: TLabel
+      Left = 35
+      Top = 23
+      Width = 44
+      Height = 13
+      Caption = 'Server:'
+    end
+    object Label4: TLabel
+      Left = 19
+      Top = 364
+      Width = 119
+      Height = 13
+      Caption = 'Ziel aus Serversicht:'
+    end
+    object Label5: TLabel
+      Left = 12
+      Top = 54
+      Width = 67
+      Height = 13
+      Caption = 'Datenbank:'
+    end
+    object Label6: TLabel
+      Left = 84
+      Top = 54
+      Width = 37
+      Height = 13
+      Caption = 'Label6'
+    end
+    object Label11: TLabel
+      Left = 41
+      Top = 71
+      Width = 38
+      Height = 13
+      Caption = 'Client:'
+    end
+    object Label12: TLabel
+      Left = 84
+      Top = 71
+      Width = 44
+      Height = 13
+      Caption = 'Label12'
+    end
+    object Label13: TLabel
+      Left = 84
+      Top = 39
+      Width = 44
+      Height = 13
+      Caption = 'Label13'
+    end
+    object Label14: TLabel
+      Left = 84
+      Top = 88
+      Width = 44
+      Height = 13
+      Caption = 'Label14'
+    end
+    object Label15: TLabel
+      Left = 53
+      Top = 88
+      Width = 26
+      Height = 13
+      Caption = 'IBX:'
+    end
+    object Label16: TLabel
+      Left = 8
+      Top = 379
+      Width = 130
+      Height = 13
+      Caption = 'Ziel aus unserer Sicht:'
+    end
+    object Label17: TLabel
+      Left = 141
+      Top = 380
+      Width = 44
+      Height = 13
+      Caption = 'Label17'
+    end
+    object Label18: TLabel
+      Left = 4
+      Top = 104
+      Width = 75
+      Height = 13
+      Caption = 'Indy Project:'
+    end
+    object Label19: TLabel
+      Left = 14
+      Top = 120
+      Width = 65
+      Height = 13
+      Caption = 'IB Objects:'
+    end
+    object Label20: TLabel
+      Left = 84
+      Top = 104
+      Width = 44
+      Height = 13
+      Caption = 'Label20'
+    end
+    object Label21: TLabel
+      Left = 84
+      Top = 120
+      Width = 44
+      Height = 13
+      Caption = 'Label21'
+    end
+    object Button1: TButton
+      Left = 676
+      Top = 367
+      Width = 227
+      Height = 42
+      Caption = 'Datenbank Backup starten'
+      TabOrder = 0
+      OnClick = Button1Click
+    end
+    object Memo1: TMemo
+      Left = 3
+      Top = 144
+      Width = 914
+      Height = 217
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Fixedsys'
+      Font.Style = []
+      ParentFont = False
+      ScrollBars = ssVertical
+      TabOrder = 1
+    end
+    object CheckBox1: TCheckBox
+      Left = 140
+      Top = 396
+      Width = 306
+      Height = 17
+      Caption = 'Datenbanksicherung zur Fehlerdiagnose uploaden'
+      TabOrder = 2
+    end
+  end
+  object GroupBox2: TGroupBox
+    Left = 1
+    Top = 422
+    Width = 919
+    Height = 108
+    Caption = 'Archivierung des Pfades mit Anwendungsdaten'
+    TabOrder = 1
+    object Label7: TLabel
+      Left = 24
+      Top = 39
+      Width = 41
+      Height = 13
+      Caption = 'Quelle:'
+    end
+    object Label8: TLabel
+      Left = 80
+      Top = 39
+      Width = 37
+      Height = 13
+      Caption = 'Label8'
+    end
+    object Label9: TLabel
+      Left = 24
+      Top = 55
+      Width = 26
+      Height = 13
+      Caption = 'Ziel:'
+    end
+    object Label10: TLabel
+      Left = 80
+      Top = 55
+      Width = 44
+      Height = 13
+      Caption = 'Label10'
+    end
+    object Button2: TButton
+      Left = 680
+      Top = 72
+      Width = 225
+      Height = 26
+      Caption = 'Anwendungsverzeichnis archivieren'
+      TabOrder = 0
+      OnClick = Button2Click
+    end
+    object ProgressBar1: TProgressBar
+      Left = 20
+      Top = 77
+      Width = 653
+      Height = 17
+      Min = 0
+      Max = 100
+      TabOrder = 1
+    end
+  end
+  object IBBackupService1: TIBBackupService
+    Protocol = TCP
+    TraceFlags = []
+    BlockingFactor = 0
+    Options = []
+    Left = 392
+    Top = 16
+  end
+  object DCP_des1: TDCP_des
+    Id = 23
+    Algorithm = 'DES'
+    MaxKeySize = 64
+    BlockSize = 64
+    Left = 456
+    Top = 16
+  end
+  object VCLZip1: TVCLZip
+    OnTotalPercentDone = VCLZip1TotalPercentDone
+    MultiZipInfo.BlockSize = 1457600
+    Left = 360
+    Top = 16
+  end
+  object IBServerProperties1: TIBServerProperties
+    LoginPrompt = False
+    TraceFlags = []
+    Options = [Version]
+    Left = 488
+    Top = 16
+  end
+  object IBRestoreService1: TIBRestoreService
+    TraceFlags = []
+    PageBuffers = 0
+    Left = 424
+    Top = 16
+  end
+  object IdFTP1: TIdFTP
+    MaxLineAction = maException
+    OnWork = IdFTP1Work
+    OnWorkBegin = IdFTP1WorkBegin
+    OnWorkEnd = IdFTP1WorkEnd
+    Host = 'www.orgamon.de'
+    Passive = True
+    Password = 'YG14q0sU'
+    ProxySettings.ProxyType = fpcmNone
+    ProxySettings.Port = 0
+    Username = 'web5f1'
+    Left = 518
+    Top = 16
+  end
+end

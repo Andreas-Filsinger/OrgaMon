@@ -1,0 +1,22 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Umsetzen in eine Liste
+--
+
+list
+
+distinct USER_ID
+
+data
+
+nop
+nop
+
+select
+ RID, USER_ID
+from
+ PERSON
+where
+ USER_ID in $0
+ 

@@ -1,0 +1,22 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Fehlerhaft gebuchte Belege nach Systemfehler in der Rev. 6.049
+--
+--  (c)'04 Andreas Filsinger
+--
+
+select
+  VERSAND.BELEG_R,
+  VERSAND.TEILLIEFERUNG,
+  VERSAND.LIEFERBETRAG,
+  BELEG.rechnungs_betrag,
+  BELEG.TEILLIEFERUNG
+from
+ BELEG
+left join VERSAND on
+ (BELEG.RID=VERSAND.BELEG_R)
+where
+ ((VERSAND.TEILLIEFERUNG<>BELEG.TEILLIEFERUNG) OR
+  (BELEG.TEILLIEFERUNG IS NULL)) AND
+ (VERSAND.AUSGANG between '10.11.2004' and '12.11.2004')

@@ -1,0 +1,23 @@
+--
+--  O L A P  - Definitions Datei
+--
+-- Alle Belege die eine kostenpflichtige Auslieferung hatten
+-- in der SUMME aber nichts drin stehen haben!
+--
+
+select distinct
+ BELEG.RID
+from
+ versand
+left join
+ beleg
+on
+(BELEG.RID=VERSAND.beleg_r)
+where
+ (BELEG.rid IS NOT NULL) AND
+ (VERSAND.LIEFERBETRAG>0) AND
+ (BELEG.RECHNUNGS_BETRAG =0) AND
+ (BELEG.ANLAGE>'31.12.2003')
+order by
+ BELEG.rid desc
+

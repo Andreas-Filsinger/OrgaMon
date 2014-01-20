@@ -1,0 +1,7 @@
+select RID,ISO_KURZZEICHEN from LAND   order by ISO_KURZZEICHEN
+
+
+excel
+
+open
+- 

@@ -1,0 +1,12 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Baustellen für externe Routen
+--
+
+select
+ nummern_praefix,name
+from
+ baustelle
+where
+ export_extern = 'Y'

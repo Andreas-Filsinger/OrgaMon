@@ -1,0 +1,27 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Artikel Details
+--
+
+select 
+ * 
+from 
+ ARTIKEL 
+where 
+ RID=$RID
+
+complete
+
+Preis(RID)
+Verlag(VERLAG_R)
+Komponist(KOMPONIST_R)
+Arrangeur(ARRANGEUR_R)
+Kategorie(RID)
+Bemerkung(RID)
+-
+
+excel
+
+open
+-

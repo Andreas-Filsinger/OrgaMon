@@ -1,0 +1,6 @@
+select vorname,nachname from person where
+ (rid in (select PERSON_R from beleg where mahnbescheid is not null))
+
+-- and
+-- (rid in (select PERSON_R from Mahnlauf))
+

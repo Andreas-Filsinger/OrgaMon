@@ -1,0 +1,142 @@
+﻿ <!-- BEGIN PARAMS
+title=Die Blasmusik
+--><!-- END PARAMS -->
+~TEMPLATE_STEP~
+<!-- BEGIN STEP
+NAME=info
+TITLE=Die Blasmusik
+DESCRIPTION=
+-->
+<p>Seit Januar 1996 sind wir der Herausgeber der Fachzeitschrift</p>
+<p class="title">"Die Blasmusik" (offizielles Organ des Bundes Deutscher Blasmusikverbände e.V.).</p>
+<img src="http://www.hebu-music.de/pics/fachzeitschrift/Zeitung.jpg" alt="Die Blasmusik" style="float:right; margin-left:30px;">
+<p class="text" id="justify">
+Die Leser dieser Fachzeitschrift wissen die monatlichen Informationen und Nachrichten zu 
+schätzen. Neben den Regionalnachrichten aus den Mitgliedsverbänden enthält "Die Blasmusik" auch einiges an überregional 
+interessanten Nachrichten und Informationen:
+</p>
+<ul>
+<li>CD- und Notenvorstellungen</li>
+<li>Buchbesprechungen</li>
+<li>Neues vom Instrumentenmarkt</li> 
+<li>Veranstaltungshinweise</li> 
+<li>Berichte über herausragende Ereignisse</li> 
+<li>Serien über Komponisten und Werkanalysen</li> 
+<li>Kritische Kommentare zu aktuellen Themen</li>
+</ul>
+<div class="clear"></div>
+<hr />
+<p class="text" id="justify">
+Auf Anfrage senden wir Ihnen gerne ein 
+<a href="mailto:dieblasmusik@hebu-music.de?subject=Leseprobe 'Die Blasmusik'&body=Bitte senden Sie mir eine kostenlose Ausgabe der Zeitschrift 'Die Blasmusik' an die folgende Adresse:">Probeexemplar</a> 
+zu.
+</p>
+<p class="text" id="justify">
+Anzeigenkunden erhalten 
+<a href="http://www.hebu-music.de/pics/fachzeitschrift/blasmusik_mediadaten_01-2009.pdf">hier</a> 
+die aktuelle Anzeigenpreisliste.
+</p>
+<p class="line" id="justify">
+Wenn wir Ihr Interesse geweckt haben, würden wir uns freuen, Sie als Abonnementen begrüßen zu dürfen.
+</p>
+<a href="~CONST___INDEX~?site=die_blasmusik&subsite=abo">&gt;&gt;&gt; Für nur 19,90 € im Jahr sind Sie dabei.</a>
+<!-- END STEP -->
+<!-- BEGIN STEP
+NAME=abo
+TITLE=Abonnement-Bestellung "Die Blasmusik"
+DESCRIPTION=
+-->
+<script type="text/javascript">
+var recipient = "a.knam@hebu-music.de";
+var crlf = "\r\n";
+var template_order_subject = "Abo-Bestellung Die Blasmusik [~NAME~]";
+var template_order_body = 
+"Hiermit bestelle ich -bis auf Widerruf- " + crlf + 
+"das Jahresabonnement der Zeitschrift " + crlf + 
+"'Die Blasmusik' " + crlf + 
+"zum Preis von 19,90 EUR/Jahr." + crlf + 
+crlf + 
+"~DATA~";
+
+function prepareOrderMail()
+{ var order_form = document.forms["abo_order_form"];
+  var data = "";
+  for(var i = 0; i < order_form.elements.length; i++)
+  { if (order_form.elements[i].type == "text")
+    { data += order_form.elements[i].name + " ................. " + order_form.elements[i].value + crlf;
+	}
+  }
+  var subject = template_order_subject.replace(/~NAME~/,order_form.elements["Name"].value);
+  var body = template_order_body.replace(/~DATA~/,data);
+  var href = encodeURI("mailto:" + recipient + "?subject=" + subject + "&body=" + body);
+  //alert(href);
+  location.href = href; 
+}
+</script>
+<p class="title">Abonnement - Bestellung für die Zeitschrift<br> "Die Blasmusik"<br></p>
+<p class="text">
+<table style="font-size:8pt;">
+  <tr>
+    <td width="40%">Herausgeber:</td>
+    <td width="60%">Bund Deutscher Blasmusikverbände e.V.</td>
+  </tr>
+  <tr>
+    <td width="40%">Verlag und Redaktion:</td>
+    <td width="60%">HeBu Musikverlag GmbH, Postfach 11 66, 76699 Kraichtal<br>Telefon: 0 72 50/92 28-0  Telefax: 0 72 50/92 12 31</td>
+  <tr>
+  <tr>
+    <td width="40%">Redaktionsleitung:</td>
+    <td width="60%">Georg Bruder (V.i.S.d.P.)</td>
+  <tr>
+  <tr>
+    <td width="40%">Erscheinungsweise:</td>
+    <td width="60%">12 Ausgaben jährlich, jeweils am Anfang des Monats</td>
+  <tr>
+    <tr>
+    <td width="40%">Redaktionsschluss:</td>
+    <td width="60%">Am 18. des Vormonats</td>
+  <tr>
+    <tr>
+    <td width="40%">Anzeigenschluss:</td>
+    <td width="60%">Am 22. des Vormonats</td>
+  <tr>
+</table>
+</p>
+<form name="abo_order_form" action="javascript:prepareOrderMail()" enctype="text/plain" method="post">
+
+<p class="subtitle">Hiermit bestelle ich -bis auf Widerruf- das Jahresabonnement der Zeitschrift<br />"Die Blasmusik" zum Preis von 19,90 EUR/Jahr.</p>
+<table class="form" cellspacing="0">
+  <tr>
+    <td id="first_col"><p class="fieldtitle">Name</p><input type="text" name="Name" value="" /></td>
+    <td><p class="fieldtitle">Vereinsname</p><input type="text" name="Vereinsname" value="" /></td>
+  </tr>
+  <tr>
+    <td id="first_col"><p class="fieldtitle">Telefon</p><input type="text" name="Telefon" maxlength="25" size="5" value="" /></td>
+    <td><p class="fieldtitle">E-Mail</p><input type="text" name="EMail" size="5" value="" /></td>
+  </tr>
+  <tr>
+    <td id="first_col"><p class="fieldtitle">Adresse</p><input type="text" name="Adresse" value="" /></td>
+    <td><p class="fieldtitle">PLZ</p><input type="text" name="PLZ" maxlength="10" size="5" value="" /></td>
+  </tr>
+  <tr>
+    <td id="first_col"><p class="fieldtitle">Ort</p><input type="text" name="Ort" size="5" value="" /></td>
+    <td><p class="fieldtitle">Land</p><input type="text" name="Land" size="5" value="Deutschland" /></td>
+  </tr>
+</table>
+
+<p class="subtitle" id="inline">Die im vorraus fällige Jahresgebühr kann meinem Konto belastet werden:</p>
+<table class="form" cellspacing="0">
+  <tr>
+    <td id="first_col"><p class="fieldtitle">Kontonummer</p><input type="text" name="Kontonummer" value="" /></td>
+    <td><p class="fieldtitle">Bankleitzahl</p><input type="text" name="BLZ" value="" /></td>
+  </tr>
+  <tr>
+    <td id="first_col"></td>
+    <td><p class="fieldtitle">Name der Bank</p><input type="text" name="Bankname" value="" /></td>
+  </tr>
+</table>
+<input type="submit" class="buttonaslink" value=">>> Formular als E-Mail senden" />
+</form>
+<!-- END STEP -->
+
+

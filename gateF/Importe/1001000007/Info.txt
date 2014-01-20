@@ -1,0 +1,5 @@
+Datum 10.08.11
+Uhr 11 Uhr 15
+Anz -1
+Abgelehnte -1
+Importierte -1

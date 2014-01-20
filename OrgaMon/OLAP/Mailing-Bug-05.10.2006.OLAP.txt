@@ -1,0 +1,28 @@
+-- Mailing
+
+select
+ RID from
+ person
+ where
+(Mailing='Y') and 
+ (RID not in (
+select distinct
+ PE.RID
+from
+ posten PO
+left join
+ beleg BE ON BE.RID=PO.BELEG_R
+left join
+ artikel AR ON AR.RID=PO.ARTIKEL_R
+left join
+ PERSON PE ON BE.PERSON_R=PE.RID
+where
+(BE.ANLAGE>='01.08.2002') AND
+(AR.sortiment_r IN (65577, 65578, 75912, 75913, 67540))
+))
+
+excel
+
+open
+-
+

@@ -1,0 +1,32 @@
+--
+-- O L A P  - Definitions Datei
+--
+-- Context Artikel (c) 2005 Andreas Filsinger
+--
+-- $Context ist ein einzelner Artikel RID
+--
+$Context=190208
+
+select 
+ ARTIKEL_MITGLIED.POSNO,
+ ARTIKEL.NUMERO,
+ ARTIKEL.TITEL,
+ ARTIKEL.RID,
+ ARTIKEL.VERLAG_R
+from
+ ARTIKEL
+left join
+ ARTIKEL_MITGLIED
+on
+ (ARTIKEL_MITGLIED.ARTIKEL_R=ARTIKEL.RID)
+where
+ (ARTIKEL_MITGLIED.MASTER_R=$Context)
+order by
+ ARTIKEL_MITGLIED.POSNO
+
+complete
+
+Verlag(VERLAG_R) VERLAG
+Preis(RID) PREIS
+-
+

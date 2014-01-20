@@ -1,0 +1,352 @@
+====================================
+* PROJEKT: TPicUpload
+* SOURCE DIR: D:\Delphi\TPicUpload
+* INNO SETUP SCRIPT: TPicUpload.iss
+* HELP COPY: YES
+* PUBLIC: YES
+* INFO: Tool zum Upload von Photos ins WWW (delphi,php)
+====================================
+
+// INFO BEGIN
+Motivation:
+  Vereinfachung von Photouploads auf www.mvecho.de<br />
+<br />
+Features:
+  Auswählen, Ordnen und Beschriften der Photos.
+  Verkleinern der Photos auf die korrekten Größen (Index und 100%), die die Website vorgibt.
+  Upload der Photos mit den bekannten Benutzerdaten in einen bestehenden oder neuen Ordner.
+
+// INFO END
+
+1) Kurzanleitung
+   * TPicUpload starten
+   * Photo-Ordner auswählen
+   * Bilder auswählen, sortieren, kommentieren
+     Bemerkung: Start muss nicht angeklickt werden (siehe Kapitel 3 und Kapitel 4)
+   * Internetseite auswählen, "Verbinden" klicken
+   * Ordner auswählen
+   * eventuell neuen Unterordnernamen und Beschreibung eingeben
+   * Benutzerkennung und Passwort eingeben
+   * Upload klicken
+
+2) Internetseiten hinzufügen
+   * Auf Setup klicken
+   * Unterhalb von [Sites] und vor der nächsten eckigen Klammer "[" eine neue Zeile beginnen mit "SiteX=", wobei
+     das X für die nächste noch nicht verwendete Zahl steht.
+   * Nach dem Gleichheitszeichen wird dann die Adresse der Internetseite notiert, z.B. "http://www.mvecho.de"
+   * Eine komplette Zeile sieht dann beispielsweise so aus: "Site1=http://www.mvecho.de"
+
+3) Mit TPicUpload Bilder verkleinern (ohne Upload)
+   * Unter Zweitens die gewünschten Bilder auswählen
+   * Ohne Upload: Das neue Format eingeben und Start klicken
+   * Die verkleinerten Bilder befinden sich in einem Unterordner des in Erstens gewählten Ordners.
+     Er trägt als Namen die Anzahl der eingestellten Pixel.
+
+4) Für Benutzer mit Internet-Zeittarif: Onlinezeit sparen beim Upload
+   * Unter Zweitens die gewünschten Bilder auswählen
+   * Ins Internet einwählen
+   * Unter Drittens die Internetseite auswählen und "Verbinden" klicken
+   * Die beiden Zahlen hinter "index-image-size" und "original-image-size" in der StatusBox notieren
+   * Internetverbindung trennen
+   * Unter Zweitens nacheinander die beiden notierten Zahlen eingeben und jeweils Start klicken
+   * Wieder ins Internet einwählen
+   * Unter Drittens nochmals "Verbinden" und fortfahren wie in Kapitel 1 beschrieben
+
+5) Referenz der "Setup"-Möglichkeiten
+
+   #
+   # [Sites]
+   #
+   # Site1=http://foddooos.de
+   #   hier gibst Du die Internetseiten an, auf die Du Bilder
+   #   hochladen willst.
+   # Site2=
+   #   Hier gibst Du eine alternative Website an
+   # Site3=
+   #   usw.
+
+   [Sites]
+   Site1=http://www.mvecho.de
+
+   #
+   # [Format]
+   #
+   # MaxWidthHeight=640
+   #   hier gibst Du an auf welches Format angepasst wird.
+   #   Dieser Wert wird aber in der Regel selbst Durch TPicUpload
+   #   ermittelt
+
+   [Format]
+   MaxWidthHeight=1024
+
+   #
+   # [Allgemein]
+   #
+   # DeleteAfterUpload=1
+   #   Die verkleinerten Bilder werden nach dem Hochalden gelöscht
+   #   Diese Einstellung sieht man auch als Haken bei "drittens"
+   # DeleteAfterUpload=0
+   #   Es bleiben Verzeichnisse und verkleinerte Bilder zurück
+   #
+   # DeleteOriginalsAfterUpload=1
+   #   Die Original-Bilder werden nach dem erfolgreichen Hochladen
+   #   gelöscht. Vorsicht, dies ist nur anzuraten wenn man nicht
+   #   seine Original-Bildquelle angibt sondern ein verzeichnis,
+   #   in das die Bilder kopiert wurden.
+   # DeleteOriginalsAfterUpload=0
+   #   Das in "erstens" angegebene VErzeichnis bleibt immer
+   #   unberührt bestehen
+
+   [Allgemein]
+   DeleteAfterUpload=0
+   DeleteOriginalsAfterUpload=0
+
+
+Rev 1.042 (30.03.11) Thorsten Schroff
+ 
+ Neu: Schritt 3: Upload-Fortschrittsanzeige mit Abbruch-Button in kleinem Pop-Up-Fenster
+ Neu: neue Variablen CountSelected und CancelUpload (public) eingeführt
+
+Rev 1.041 (23.03.11) Andreas Filsinger
+
+ Bug: Dokumentation: nicht "false" und "true" sondern "0" und "1" muss
+      verwendet werden.
+
+Rev 1.040 (22.03.11) Thorsten Schroff
+
+ Neu: Ordner-Parameter wird auch nach automatischem Update berücksichtigt
+
+Rev 1.039 (22.03.11) Thorsten Schroff
+
+ Bug: Setup: Fehlende Scroll-Leiste des Memo-Felds
+ Bug: Status: Leerzeile zuviel zwischen Upload-Meldungen
+
+Rev 1.038 (22.03.11) Thorsten Schroff & Andreas Filsinger
+
+ Neu: (Nur OrgaMon-Version) Verschieben/Kopieren von Korrupten Bildern
+      nach .\corrupt-jpgs\
+ Neu: Neue Einstellung: [Allgemein].DeleteOriginalsAfterUpload für
+      das löschen der Original-Bilder nach dem Upload
+
+Rev 1.037 (20.03.11) Andreas Filsinger
+
+ Neu: Meldung über korrupte Dateien erst am Ende der Umkonvertierung.
+
+Rev 1.036 (20.03.11) Andreas Filsinger
+
+ - keine Änderung -
+
+Rev 1.035 (19.03.11) Andreas Filsinger & Thorsten Schroff
+
+ Neu: Änderungen Andreas
+ Neu: Neue Dateien in SVN aufgenommen
+ Neu: Handling korrupter JPG-Dateien (Methode MarkAsBadFile)
+ Bug: Lesefehler beim Klicken durch die Checklistbox, wenn Vorschau gerade lädt (vor allem bei größeren Dateien)
+ 
+Rev 1.034 (16.03.11) Thorsten Schroff
+
+ Neu: Neue Dateien in SVN aufgenommen
+ Neu: Revision veröffentlicht
+
+Rev 1.033 (15.03.11) Andreas Filsinger
+
+ Neu: Problem mit quadratischen Bildern
+
+Rev 1.032 (14.03.11) Andreas Filsinger
+
+ Neu: Intern: Anpassungen an OrgaMon
+ Neu: OrgaMon-Modus: TPicUpload.ini wird aus dem Anwenderverzeichnis geladen! Die
+      Speicherung im Applikationsverzeichnis widerspricht den Win 7 Richtlinien.
+
+Rev 1.031 (01.03.11) Andreas Filsinger
+
+ Neu: Intern: Anpassungen an OrgaMon
+
+Rev 1.030 (28.02.11) Andreas Filsinger & Thorsten Schroff
+
+ Neu: Umstellung auf Delphi XE
+ Neu: neue Komponente für Ordner-Auswahl
+ Neu: 3D-Optik
+ Neu: Schritt 1: neues Layout des Komponenten
+ Neu: MsMultiPartFormData.pas: Anpassungen an Delphi XE
+
+Rev 1.029 (21.03.10) Thorsten Schroff
+ 
+ Neu: Es kann auf das Maß der kurzen Seite des Photos resampled werden
+ Neu: Zweitens: Neues Format: Checkbox "kurze Seite"
+ Neu: Zweitens: Neues Format: Wert wird in der INI-Datei gespeichert
+ Neu: Drittens: neue Parameter ThumbResizeShortEdge und OriginalResizeShortEdge
+ Neu: Drittens: Checkbox "lokale Hilfsordner nach Upload löschen", Status wird in der INI-Datei gespeichert
+
+Rev 1.028 (18.08.08) Thorsten Schroff
+
+ Neu: Photo-Verzeichnis kann beim Start als Kommandozeilen-Parameter übergeben werden
+ Neu: Eintrag "Mit TPicUpload hochladen" im Windows-Kontext-Menü für Verzeichnisse
+ Neu: Standardmäßig sind die Photos unter Zweitens nicht mehr ausgewählt
+
+Rev 1.027 (18.04.08) Andreas Filsinger
+
+ Neu: Photos werden erneut verkleinert, falls die Originaldateien jünger als 
+      schon vorhandene Kopien sind.
+
+Rev 1.026 (28.11.07) Andreas Filsinger & Thorsten Schroff
+
+ Neu: Anpassungen zur Integration der aktuellen Version in den OrgaMon
+
+Rev 1.025 (11.08.07) Thorsten Schroff
+
+  Neu: Zweitens: Flat Buttons.
+  Bug: "finished" Parameter wurde nicht an Server gesendet.
+
+Rev 1.024 (05.03.07) Thorsten Schroff
+
+  Neu: Zweitens: Icons der Buttons "Auswahl umkehren", "Alles auswählen" und "Auswahl entfernen" ersetzt.
+
+Rev 1.023 (05.03.07) Thorsten Schroff
+
+  Neu: Andere Farbe des Status-Textes im Splashscreen beim Download einer neuen Revision aus dem Internet.
+  Bug: Zweitens: Icons für Vollansicht müssen mit dem korrekten Arbeitspfad geladen werden.
+
+Rev 1.022 (05.03.07) Thorsten Schroff
+  
+  Neu: Zweitens: Pfeil-Buttons in der Vollansicht zentriert.
+  Neu: Zweitens: Anzahl der ausgewählten Photos wird angezeigt.
+  Bug: Zweitens: Bei Label für Dateinamen muss ShowAccelChar false sein.
+  Bug: Zweitens: In der Vollansicht werden nur zu große Photos auf Bildschirmgröße verkleinert, 
+       kleinere Photos werden in ihrer tatsächlichen Größe angezeigt.
+
+Rev 1.021 (11.12.06-05.03.07) Thorsten Schroff, Andreas Filsinger
+  
+  Neu: Zweitens: Layout geändert und Symbole ersetzt.
+  Neu: Zweitens: Vollbild-Modus zum Auswählen und Kommentieren der Photos. 
+  Neu: Drittens: Anzeige der Anzahl der Ordner.
+  Neu: Änderungen für die Orgamon-Integration.
+  Bug: Hilfe-Button wurde nicht angezeigt.
+
+Rev 1.020 (10.01.06-03.12.06) Thorsten Schroff
+  
+  Neu: Falls beim Upload ein Fehler auftritt und der Upload dadurch abgebricht, werden beim nächsten 
+       Start von TPicUpload die fehlenden Photos für den Upload markiert und die Kommentare wiederhergestellt.
+  Neu: Dem Server wird mitgeteilt, wenn der Upload abgeschlossen wurde.
+  Neu: Orgamon: Für Orgamon-Integration müsste {$DEFINE STANDALONE} im Hauptformular entfernt werden.  
+  Neu: Ini-Datei: Enthält kurzes HowTo wie neue Internetseiten hinzugefügt werden.
+  Neu: Startfenster: Fehlertext erscheint in blauer Farbe.
+  Neu: Update-Schaltfläche für Benutzer mit Internet-Zeittarifen, falls die Updateinformationen bei Programmstart nicht
+       abgerufen werden können, weil keine permanente Internetverbindung besteht. Schaltfläche existiert nur, wenn 
+       mit {$DEFINE STANDALONE} kompiliert wird.
+  Neu: Setupfenster umbenannt.
+  Neu: Hilfe-Schaltfläche: zeigt TPicUpload_Info.html an. Schaltfläche Wird nur angezeigt, falls die Datei existiert.
+  Neu: Rev-Datei: Kleines HowTo.
+  Neu: Methode zum Überprüfen, ob eine Internetverbindung besteht (wird momentan noch nicht angewandt).
+  Bug: Falls nach dem Verbinden die Seitenwahl geändert wurde, wurde ohne erneutes Verbinden auf 
+       diese Seite hochgeladen.
+
+Rev 1.019 (02.01.06) Thorsten Schroff
+
+  Neu: Startfenster: Grafik verbessert. Layout geändert.
+
+Rev 1.018 (02.01.06) Thorsten Schroff
+
+  Neu: Inno-Setup: Neue Delphi-Sourcen aufgenommen.
+
+Rev 1.017 (02.01.06) Thorsten Schroff
+
+  Neu: Startfenster: Zuerst Update-Check, dann TimeOut.
+  Neu: Startfenster: Neue Grafik.
+
+Rev 1.016 (02.01.06) Thorsten Schroff
+
+  Neu: Startfenster: Die Revision wird angezeigt.
+  Neu: Startfenster: Prüft beim Start auf neue Revision im Internet und führt gegebenenfalls ein Update durch.
+  Bug: Drittens: Nach einem Redirect konnte man auf keine andere Seite mehr verbinden.
+  Neu: Drittens: Die verbleibenden Zeichen für den neuen Ordnernamen werden angezeigt, wenn der Server 
+       einen entsprechenden Wert bereitstellt.
+  Neu: Inno-Setup: Nach der Installation kann sich der Benutzer die TPicUpload_Info.html anzeigen lassen.
+  Neu: Inno-Setup: Im Silent-Mode wird TPicUpload gestartet.
+
+Rev 1.015 (02.10.05) Thorsten Schroff
+
+  Neu: Erste Veröffentlichung von TPicUpload unter der GNU General Public License.
+  Neu: Drittens: StatusBox kleiner, Eingabefelder breiter.
+  Neu: Drittens: Die Ordner-Drop-Down-Liste wird nicht mehr alphabetisch geordnet. 
+       Die gewünschte Reihenfolge muss vom Server geliefert werden.
+  Neu: Drittens: Der Name des gewählten Ordners wird als Hinweis angezeigt, wenn man mit der Maus über 
+       die Drop-Down-Liste fährt. Somit werden auch lange Ordnernamen völlig sichtbar.
+
+Rev 1.014 (06.09.05) Thorsten Schroff
+
+  Neu: TPicUpload kann jetzt von tpicupload.php an ein anderes Skript 
+       (z.B. tpicupload.php5 damit der Server mit PHP5 parst) redirected werden.
+
+Rev 1.013 (06.09.05) Thorsten Schroff
+
+  Bug: Objekte der Ordnerauswahl-Liste wurden freigegeben.
+
+Rev 1.012 (05.09.05) Thorsten Schroff
+
+  Neu: Drittens: Der erste Ordner in der Dropdown-Auswahl wird nach dem "Verbinden" als Upload-Zielordner vorgewählt.
+  Neu: Der TPicUpload-Server liefert die maximale Länge der Ordnernamen. Daran wird das Eingabefeld angepasst.
+  Neu: Für Andreas wurde Source-Code in die Distribution aufgenommen.
+   
+Rev 1.011 (31.08.05) Andreas Filsinger
+
+  Neu: TPicUpload ist jetzt in den Orgamon integriert.
+       Zwei neue "public" Funktionen und der "unattended"-Mode machen dies möglich.
+  Bug: Der Speicher der FileCheckList wird wieder freigegeben.
+
+Rev 1.010 (17.08.05) Thorsten Schroff
+  
+  Neu: Hauptfenster öffnet in der Bildschirmmitte und nicht in der Desktopmitte (bei Multi-Monitor-Systemen).
+
+Rev 1.009 (05.08.05) Thorsten Schroff
+
+  Neu: Mehr Programmrückmeldungen beim Resampling in Schritt 2.
+
+Rev 1.008 (04.08.05) Thorsten Schroff
+
+  Bug: Inno-Setup-Skript: Zielname auf falsch angegeben.
+
+Rev 1.007 (04.08.05) Thorsten Schroff
+  
+  Neu: Revision Info wird angezeigt.
+  Neu: Ini-Datei kann jetzt über Setup bearbeitet werden.
+  Neu: Die 3 Schritte sind jetzt als Registerkarten angelegt.
+  Neu: StatusBox kann gelöscht werden.
+  Bug: Bilder in der Zielgrösse wurden nicht bearbeitet und in den Zielpfad gespeichert.
+  Neu: Schon verkleinerte Bilder werden beim Upload nicht erneut formatiert.
+  Neu: Anzeige der vom Server geforderten Bildgrössen in der Statusbox.
+  Neu: Icons verbessert.
+  Neu: "aktualisieren" (Upload) heisst jetzt "Verbinden".
+  Neu: Automatische Vorschau auch beim Wechsel zu Schritt 2.
+  Bug: Erfassen der Bildbeschreibung beim Wechsel zu Schritt 3. 
+
+Rev 1.006 (29.07.05) Thorsten Schroff
+
+  Neu: Ausblenden der Ordnereingabemöglichkeiten.
+  Neu: Neue Optik der DropDown-Auswahllisten.
+
+Rev 1.005 (23.07.05) Thorsten Schroff
+
+  Neu: Programmverfügbarkeit während Resampling und Upload verbessert.
+
+Rev 1.004 (21.06.05) Thorsten Schroff
+
+  Neu: TPicUpload_Info.html nun Teil der Release.
+
+Rev 1.003 (21.06.05) Thorsten Schroff
+
+  Neu: auf AutoUp umgestellt.
+
+Rev 1.002 (20.06.05) Thorsten Schroff
+
+  Neu: Optische Änderungen an den Eingabeobjekten.
+  Neu: vorläufiges Einblenden von Buttons für den Fehlerfall.
+
+Rev 1.001 (20.06.05) Thorsten Schroff
+
+  Bug: Arbeitsverzeichnis wurde nicht korrekt ermittelt und somit TPicUload.ini nicht gefunden.
+
+Rev 1.000 (20.06.05) Thorsten Schroff
+
+ * erste funktionstüchtige Release, aber noch voller bekannter und natürlich unbekannter Bugs.
+

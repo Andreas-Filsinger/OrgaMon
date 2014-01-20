@@ -1,0 +1,249 @@
+====================================
+* PROJEKT: keepcon
+* SOURCE DIR: ..\keepcon
+* HELP COPY: YES
+* PUBLIC: YES
+* UPDATE: keepcon.pas
+* UPDATE: init.d.keepcon
+* UPDATE: and-firewall
+* UPDATE: etc.keepcon.conf
+* UPDATE: vigor.sh
+* UPDATE: ..\rev\keepcon.rev
+* INFO: DSL-,ISDN-,Kabel- Verbindungen zuverlässig aufrecht erhalten
+====================================
+
+// INFO BEGIN
+<br>
+<b>Linux-Dämon für Suse 11.x Freeware mit Quelltexten in Freepascal</b><br>
+<br>
+* Automatisches Prüfen und Aufrechterhalten von Internet-Verbindungen<br>
+* Publizieren der eigenen IP ins InterNet via FTP und DynDNS<br>
+* Ermitteln der IPs anderer Maschinen, und Eintragung in /etc/hosts<br>
+* Patch und Upload von html-Templates um die eigene IP zu publizieren<br>
+<br>
+// INFO END
+
+Dokumentation
+
+@<a href="http://orgamon.org/mediawiki/index.php5/Keepcon"><font color="blue">Benutzerhandbuch im OrgaMon-Wiki "keepcon"</font></a href>
+
+Rev 1.035 (14.10.11-03.11.11) Andreas Filsinger
+
+ Neu: externer Router überwachbar
+ Neu: erste Implementierung: DrayTek Vigor 2920, wegen DynDNS Bug
+ 
+Rev 1.034 (08.12.10) Andreas Filsinger
+
+ Neu: Ping setzt "Round-Robin" ein
+ Neu: Ping prüft auch ob das Standard-Gateway gesetzt ist
+ Neu: Gateway wird in der Übersicht mit angezeigt
+ Neu: Standard-Route (default) kann mit "k" gelöscht werden
+
+Rev 1.033 (20.09.10) Andreas Filsinger
+
+ Neu: "orgamon.org" anstelle des "cargobay.de"
+
+Rev 1.032 (20.09.10) Andreas Filsinger
+
+ Neu: Remote Hostnames können nun lokal einen Alias Namen annehmen
+
+Rev 1.031 (16.09.10) Andreas Filsinger
+
+ Neu: auch lauffähig z.B. mit "eth1" (am Kabel-Modem)
+ Neu: DynDNS fähig
+
+Rev 1.030 (11.04.08) Andreas Filsinger
+
+ Bug: Memoryleak in Exec
+
+Rev 1.029 (10.04.08) Andreas Filsinger
+
+ Neu: Umgestellt von "cinternet" auf "ifup,ifdown,ifstatus"
+ Neu: Es muss nun provider@interface angegeben werden, also tonline-buisness-dsl@dsl0
+ Neu: Muss auf dem Zielsystem selbst mit freepascal compiliert werden (Details siehe Doku)!
+
+Rev 1.028 (05.10.07) Andreas Filsinger
+
+ Neu: Compiliert mit freepascal
+
+Rev 1.027 (28.09.05) Andreas Filsinger
+
+ Neu: Alle 3 Minuten Ping & Update der befreundeten Hostnamen. 
+
+Rev 1.026 (14.09.05) Andreas Filsinger
+
+ Neu: ftp - Befehl nur noch mit kleinem -V.
+
+Rev 1.025 (14.09.05) Andreas Filsinger
+
+ Neu: "-x" xinetd mode, nur Lauschen auf geänderte remote-Hosts.
+
+Rev 1.024 (05.09.05-08.09.05) Andreas Filsinger
+
+ Bug: früher Start von keepcon: es ging gar nix, da die Interfaces erst später
+      hinzukommen können!
+
+ Neu: Konfigurationsdatei nun /etc/keepcon.conf
+
+Rev 1.023 (05.09.05) Andreas Filsinger
+
+ Neu: Benutzung des "anderen" Interfaces möglich!
+ Neu: Im Debug-Modus gehen alle externen Calls in den Log!
+
+Rev 1.022 (11.05.05) Andreas Filsinger
+
+ Bug: Bei Schwierigkeiten erstmals zu verbinden, muss das Netzwerk Interface
+      neu abgefragt werden, da hier Zugänge / Abgänge zu erwarten sind.
+
+Rev 1.021 (26.04.05) Andreas Filsinger
+
+ Bug: Bei inaktivem Interface muss man den "aktiven" Provider wählen,
+      und danach das Interface hochfahren!
+
+ Neu: Nachdem die Verbindung steht, wird gleich ein Ping probiert, ob
+      es sich auch wirklich um eine "nutzbare" Verbindung handelt.
+ Neu: and-firewall gibt das benutzte Externe Interface aus!      
+
+Rev 1.020 (22.04.05) Andreas Filsinger
+
+ Neu: Beim wählen (-A) wird kein Provider-Name mehr angegeben, dies
+      führte bei cinternet 1.5 zu einem Fehler!
+ Neu: use_interface=yes ist notwendig bei Suse 9.2, damit nach
+      ifconfig mit dem Interface-Name gegangen wird, anstelle
+      dem "True Adapter". (Also dsl<n> anstelle von eth<n>).
+ Neu: Bei der ISDN Anwahl kann sein, dass die Internet Adresse
+      zunächst als 127.0.0.1 ermittelt wird. Diese wurde in den
+      Pool der unmöglichen IP-Adressen aufgenommen.       
+
+Rev 1.019 (18.04.05) Andreas Filsinger
+
+ Bug: "Round of silence" unter Umständen zu oft ermittelt.
+ Bug: keepconD hatte ev. falsche Rechte und falsche Kommentare. Jetzt
+      morderniesiert mit checkproc, killproc und startproc. Doku verbessert.
+ Bug: "keepcon.log" wurde u.U. in ein falsches Verzeichnis geschrieben.
+
+ Neu: Kontrolle über rckeepconD nun möglich.
+
+Rev 1.018 (28.02.05) Andreas Filsinger
+
+ Neu: Die eigene aktuelle IP kann auch auf alternative Sites publiziert werden.
+      Dazu kann der Quell-Dateiname leergelassen werden. Dann wird die bekannte
+      "<HostName>.html" aus eigener Kraft erzeugt, und hochgeladen.
+
+Rev 1.017 (28.02.05) Andreas Filsinger
+
+ Neu: Automatic Mode: Neues Modell:
+
+      Statusprüfung: alle 60 Sekunden
+      Ping: alle 5 Minuten
+      Freunde: alle 3 Minuten
+
+Rev 1.016 (17.02.05-23.02.05) Andreas Filsinger
+
+ Neu: Im OK-Fall 6 Minuten schlafen, im Fehler-Fall nur 1 Minute
+ Neu: mehr Info über IP Wechsel im Log
+ Neu: Verbesserungen im automatic Mode
+ Neu: Refactoring der "Dial" - Routinen
+ Neu: im Status disconnected nicht noch "ping" versuchen,
+      da es hier keine IP gibt, gleich den reconnect machen
+
+Rev 1.015 (16.02.05) Andreas Filsinger
+
+ Neu: mehr Info im Log bei Fehlern
+ Neu: automatischer Modus: Lebenszeichen nach 3 Durchläufen ohne Änderung
+ Neu: ping= man hat die möglichkeit alternative Ping Ziele anzugeben
+      (Ein Erfolg ist ausreichend!).
+
+Rev 1.014 (14.02.05) Andreas Filsinger
+
+ Bug: SecurityFix: Buffer Overflow bei 'exec'
+ Bug: SecurityFix: Buffer Overflow bei 'SysLog'
+
+ Neu: R macht einen Schnellstart mit allen Teilaufgaben
+
+Rev 1.013 (30.08.04) Andreas Filsinger
+
+ Bug: INI Datei wurde bei Änderungen nicht neu gelesen. (Nach den 6
+      Minuten).
+
+Rev 1.012 (30.08.04) Andreas Filsinger
+
+ Bug: FTPup hatte den Pfadnamen der Datei mitübermittelt, obwohl der
+      Zielpfad durch einen eigenen Parameter bestimmt wird.
+
+Rev 1.011 (30.08.04) Andreas Filsinger
+
+ Neu: Der Erfolg von PatchHTML wird überwacht.
+ Neu: fehlende Templates von PatchHTML werden an SysLog gemeldet.
+
+Rev 1.010 (12.05.04) Andreas Filsinger
+
+ Neu: Mehr Dokumentation in keepcon.ini
+
+Rev 1.009 (05.05.04-06.05.04) Andreas Filsinger
+
+ Neu: html-Templates mit "~IP~" können verwendet werden. Dazu gibt es in
+      der keepcon.ini eine neue Rubrik:
+
+      [Templates]
+      1=fname,host,user,pwd,path
+      2=...
+
+Rev 1.008 (11.07.03) Andreas Filsinger
+
+ Neu: Beim Startup sofortige Anwahl im Falle "disconnected".
+ Neu: HangUp wartet auf des Status "disconnected". Somit enfallen
+      weitere Sleeps in der Folge von HangUp.
+
+Rev 1.007 (09.07.03) Andreas Filsinger
+
+ Neu: "rcnmb restart" wird gerufen, nachdem /etc/hosts modifiziert werden musste.
+ Neu: Bei DSL ist mir aufgefallen, dass wenn es nicht geht, es im Status
+      "connecting" verhart. Nach einem einstellbaren Time-Out (~10s) sollte
+      keepcon wieder "H" = HangUp machen! Zumindest den Erfolg melden ...
+
+Rev 1.006 (01.07.03) Andreas Filsinger
+
+ Neu: kleine Änderungen in der Doku (WINS)
+
+Rev 1.005 (18.06.03) Andreas Filsinger
+
+ Bug: Bildschirmausgabe bei ping überflüssig
+
+Rev 1.004 (13.06.03) Andreas Filsinger
+
+ Bug: Im boot-Benutzer-Kontext ging der komplette "ftp" nicht. Ich musste
+      explizit mit 'su root -c "ftp ..."' den Benutzer-Kontext klar definieren
+      damit .netrc berücksichtigt wird.
+
+ Neu: Unerreichbare/Unbekannte Hosts werden aus der /etc/hosts wiederum
+      ausgetragen. Ein "OFFLINE" Status kann man durch die IP Adresse
+      0.0.0.0 signalisieren.
+ Neu: downgeloadete .html Dateien werden nach Ermittlung der IP gelöscht
+ Neu: völlig unbekannte host-namen landen im System Log
+
+Rev 1.003 (13.06.03) Andreas Filsinger
+
+ Neu: Doku verbessert.
+
+Rev 1.002 (11.06.03) Andreas Filsinger
+
+ Neu: and-firewall (auch notwendig zum Ablauf) nun auch Teil der Distribution.
+
+      ACHTUNG:
+      ========
+
+      Die Einstellungen in dieser Firewall sind nur beispielhaft zu sehen, da
+      sie offen wie ein Scheunentor ist!
+
+Rev 1.001 (08.06.03-11.06.03) Andreas Filsinger
+
+ Neu: offizieller Start über /etc/init.d Run-Level Editor möglich
+ Neu: "-a" Automatic Mode (keine Interaktion nötig)
+ Neu: Download von Remote Hostnamen UND modifizieren der /etc/hosts
+ Neu: Ermittlung und Upload der eigenen IP
+ Neu: Die "Hauptverbindung" kann angegeben werden.
+
+Rev 1.000 (07.06.03) Andreas Filsinger
+
+ Neu: Eigenes Projekt, Ausgelöst aus HOWTO

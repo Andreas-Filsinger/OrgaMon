@@ -1,0 +1,25 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+//
+//  (c)'03 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select
+ PRORATA_PERSON_R PERSON_R,
+ COUNT(RID) ANZAHL
+from 
+ ARTIKEL 
+where 
+ PRORATA_PERSON_R IS not NULL
+group by
+ PRORATA_PERSON_R 
+
+complete
+
+Anschrift(PERSON_R) ADRESSAT1;ADRESSAT2;ADRESSAT3;ADRESSAT4;STRASSE;ORT
+Fax(PERSON_R) FAX
+-

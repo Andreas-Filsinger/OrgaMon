@@ -1,0 +1,60 @@
+﻿<!-- <script type="text/javascript">
+document.cookie = 'TWEBSHOP_COOKIE_TEST=true;';
+if (!document.cookie)
+{ document.write('<table style="width:780px; background-color:#FFCCCC; border-color:#CC0000; border-style:solid; border-width:2px; padding:5px; color:#CC0000; font-weight:bold;"><tr><td>~CONST_ERROR_COOKIES_NOT_ACTIVATED~</td></tr></table><br />');
+}
+</script>
+-->
+<!-- BEGIN PARAMS
+title=~CONST_SENTENCE_CUSTOMER_LOGIN~
+--><!-- END PARAMS -->
+~OBJ_ERRORLIST~ ~OBJ_MESSAGELIST~
+<p class="title">~CONST_SENTENCE_CUSTOMER_LOGIN~</p>
+<p class="text" id="justify">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/login-introduction.txt
+!HTML2TXT=1
+!NL2BR=1
+-->TEXT: login-introduction.txt<!-- END TEXT -->
+</p>
+<div class="content_half_left">
+<p class="steptitle">Zugang mit E-Mail/Passwort</p>
+<p class="boxtext" id="justify">
+  Hier können Sie sich mit Ihren Zugangsdaten einloggen. Bitte beide Felder ausfüllen.
+</p>
+<form name="form_login" id="login" action="~CONST___INDEX~" method="post">
+  <input type="hidden" name="site" value="login">
+  <input type="hidden" name="action" value="login">
+  <input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+  <table class="form" cellspacing="0">
+    <tr>
+      <td id="first_col"><p class="fieldtitle">~CONST_WORD_EMAIL~</p>
+        <input type="text" id="f_user" name="f_user" maxlength="50" value="~VAR_C_USER~" />
+      </td>
+    </tr>
+    <tr>
+      <td id="first_col"><p class="fieldtitle">~CONST_WORD_PASSWORD~</p>
+        <input type="password" name="f_pass" maxlength="25" />
+        <input type="submit" class="buttonaslink" value=">>>" />
+      </td>
+    </tr>
+  </table>
+</form>
+<p class="fieldtitle">~CONST_SENTENCE_FORGOTTEN_PASSWORD~</p>
+<p class="boxtext" id="justify">
+  Haben Sie ihr Passwort vergessen, dann geben
+  Sie einfach in folgendem Fenster einfach Ihre
+  E-Mail ein. <a href="~CONST___INDEX~?site=send_password">&nbsp;&gt;&gt;&gt;</a>
+</p>
+</div>
+<div class="content_half_right">
+  <p class="steptitle">~CONST_SENTENCE_ACCESS_VIA_CUSTOMER_NO~</p>
+  <p class="boxtext" id="justify">
+    Wenn Sie bereits über einen anderen Weg bei
+    Hebu Musikverlag Produkte bestellt haben,
+    können Sie sich über die Eingabe Ihrer bereits
+    vorhandenen Kundennummer hier registrieren.
+    erhalten von uns in Kürze per Mail Ihre
+    persönlichen Zugangsdaten. <a href="~CONST___INDEX~?site=register">&nbsp;&gt;&gt;&gt;</a>
+  </p>
+</div>

@@ -1,0 +1,22 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Zahlungsdauer SEWA Rechnungen
+//
+//  (c)'04 Andreas Filsinger
+//
+//
+
+select 
+ A.RECHNUNG,
+ A.DATUM,
+ B.VALUTA,
+ A.BETRAG
+from
+ AUSGANGSRECHNUNG A
+join 
+ AUSGANGSRECHNUNG B
+on
+ (A.BELEG_R = B.BELEG_R) AND (B.BETRAG<0)
+where 
+ (A.BETRAG>0)

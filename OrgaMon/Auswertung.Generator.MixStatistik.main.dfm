@@ -1,0 +1,150 @@
+object FormAGM_Main: TFormAGM_Main
+  Left = 0
+  Top = 0
+  Caption = 'LN-MITS bearbeiten'
+  ClientHeight = 380
+  ClientWidth = 528
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  Menu = MainMenu
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnActivate = FormActivate
+  OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object ListViewCities: TListView
+    Left = 0
+    Top = 0
+    Width = 528
+    Height = 352
+    Align = alClient
+    Columns = <
+      item
+        Caption = 'St'#228'dte'
+        Width = 480
+      end>
+    GridLines = True
+    MultiSelect = True
+    RowSelect = True
+    PopupMenu = PopupMenuListView
+    TabOrder = 0
+    ViewStyle = vsReport
+    OnDblClick = ButtonEditClick
+    OnEditing = ListViewCitiesEditing
+    OnSelectItem = ListViewCitiesSelectItem
+  end
+  object PanelControl: TPanel
+    Left = 0
+    Top = 352
+    Width = 528
+    Height = 28
+    Align = alBottom
+    TabOrder = 1
+    object ButtonAdd: TButton
+      Left = 8
+      Top = 2
+      Width = 105
+      Height = 23
+      Caption = 'Hinzuf'#252'gen...'
+      TabOrder = 0
+      OnClick = ButtonAddClick
+    end
+    object ButtonEdit: TButton
+      Left = 119
+      Top = 2
+      Width = 105
+      Height = 23
+      Caption = 'Bearbeiten...'
+      TabOrder = 1
+      OnClick = ButtonEditClick
+    end
+    object ButtonDelete: TButton
+      Left = 230
+      Top = 2
+      Width = 105
+      Height = 23
+      Caption = 'L'#246'schen'
+      TabOrder = 2
+      OnClick = ButtonDeleteClick
+    end
+  end
+  object MainMenu: TMainMenu
+    Left = 8
+    Top = 32
+    object Menu_File: TMenuItem
+      Caption = '&Datei'
+      object Menu_Open: TMenuItem
+        Caption = #214'ffnen...'
+        ShortCut = 16463
+        OnClick = Menu_OpenClick
+      end
+      object Menu_SaveAs: TMenuItem
+        Caption = 'Speichern unter...'
+        ShortCut = 16467
+        OnClick = Menu_SaveAsClick
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object Menu_GenerateOLAPFiles: TMenuItem
+        Caption = 'OLAP Dateien erzeugen...'
+        OnClick = Menu_GenerateOLAPFilesClick
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object Menu_Config: TMenuItem
+        Caption = 'Konfiguration...'
+        OnClick = Menu_ConfigClick
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object Menu_Exit: TMenuItem
+        Caption = 'Beenden'
+        OnClick = Menu_ExitClick
+      end
+    end
+  end
+  object PopupMenuListView: TPopupMenu
+    Left = 40
+    Top = 32
+    object PopupMenu_Add: TMenuItem
+      Caption = 'Hinzuf'#252'gen...'
+      OnClick = ButtonAddClick
+    end
+    object PopupMenu_Edit: TMenuItem
+      Caption = 'Bearbeiten...'
+      OnClick = ButtonEditClick
+    end
+    object PopupMenu_Delete: TMenuItem
+      Caption = 'L'#246'schen'
+      OnClick = ButtonDeleteClick
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object PopupMenu_SelectAll: TMenuItem
+      Caption = 'Alles ausw'#228'hlen'
+      ShortCut = 16449
+      OnClick = PopupMenu_SelectAllClick
+    end
+  end
+  object OpenDialogXLS: TOpenDialog
+    Filter = '*.xls (MS Excel Dateien)|*.xls|*.* (Alle Dateien)|*.*'
+    Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
+    Left = 72
+    Top = 32
+  end
+  object SaveDialogXLS: TSaveDialog
+    Filter = '*.xls (MS Excel Dateien)|*.xls|*.* (Alle Dateien)|*.*'
+    Left = 104
+    Top = 32
+  end
+end

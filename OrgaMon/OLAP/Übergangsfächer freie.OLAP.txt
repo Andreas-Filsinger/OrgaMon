@@ -1,0 +1,26 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  freie Übergangfächern
+--
+--  (c)'05 Andreas Filsinger
+--
+--
+
+$VERLAG_R=181
+
+select
+ Lager.name
+from
+ lager
+where 
+ (rid not in (select distinct Lager_r from beleg where lager_r is not null)) and
+ (verlag_r=$VERLAG_R)
+order by
+ lager.name 
+
+excel
+
+open
+-
+ 

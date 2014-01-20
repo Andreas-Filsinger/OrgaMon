@@ -1,0 +1,1940 @@
+====================================
+* PROJEKT: gateF
+* SOURCE DIR: G:\delphi\gateF
+* PUBLIC: YES
+* INNO SETUP SCRIPT: gateF.iss
+* INNO SETUP WITHOUT POINT: YES
+* HELP COPY: YES
+* INFO: Besuchersystem für den Werkschutz der SIEMENS AG, Werk Bruchsal
+* KUNDE: 4298
+====================================
+
+// INFO BEGIN
+<b>Besuchersystem für den Werkschutz SIEMENS Bruchsal</b><br>
+Besuchersystem, Empfangs-System, Win32, Open Source<br>
+<br>
+Komplette Besucherverwaltung für SIEMENS AG, Werk Bruchsal<br>
+Besuchsplanung, Emfangszeiten, Besuchsende-Zeiten, Besuchsdauer<br>
+umfassende Recherche möglich. 5 Sprachvarianten.<br>
+Diese Anwendung befindet sich unter Entwicklung.<br>
+Wesentliche Highlights sind die aufwendige Listen-Ansicht,<br>
+und der durchdachte Eingabedialog. Eine incrementelle Suchmaschine<br>
+wird mehrfach inerhalb des Projektes verwendet.<br>
+Bei SIEMENS wird an der Hauptpforte zusätzlich ein<br>
+Infoterminal verwendet, mit dem man auf dem Touch-Display<br>
+unterschreiben kann. Archivierung einer Unterschrift.<br>
+Über weiteres Interesse würde ich mich freuen.<br>
+// INFO END
+
+Einführung
+
+ Besuchersystem für den Werkschutz SIEMENS Bruchsal
+ Besuchersystem, Empfangs-System, Win32, Open Source auf Nachfrage.
+
+ Komplette Besucherverwaltung für SIEMENS AG, Werk Bruchsal
+ Besuchsplanung, Emfangszeiten, Besuchsende-Zeiten, Besuchsdauer
+ umfassende Recherche möglich. 5 Sprachvarianten.
+ Diese Anwendung befindet sich unter Entwicklung.
+ Wesentliche Highlights sind die aufwendige Listen-Ansicht,
+ und der durchdachte Eingabedialog. Eine incrementelle Suchmaschine
+ wird mehrfach inerhalb des Projektes verwendet.
+ Bei SIEMENS wird an der Hauptpforte zusätzlich ein
+ Infoterminal verwendet, mit dem man auf dem Touch-Display
+ unterschreiben kann. Archivierung einer Unterschrift.
+ Über weiteres Interesse würde ich mich freuen.
+
+ ACHTUNG: Änderungen dieses Dokumentes faxen an 07251/966101 oder an andreas@filsinger.de mailen. Sonst gehen Ihre Änderungen durch die nächste Dokument-Revision verloren. Jeder Hinweis ist Gold wert - bitte nicht für sich behalten. Danke.
+ Schulungsgrundlage für Pforten-System SIEMENS Werk in Bruchsal
+
+1) Sinn und Zweck des Systems:
+
+ * EDV gestütze Speicherung von Besuchsvorgängen
+ * verbesserte Transparenz der Besuchsvorgänge
+ * mehr Daten sammeln pro Besuch als bisher
+ * Überwachungsnetz "Besucher" enger knüpfen
+ * Proffesionalität dem Besucher gegenüber erhöhen
+ * Abschreckung & Autorität einem Besucher gegenüber erhöhen, der böse Absichten hat
+
+2) was das System nicht kann, falsche Erwartungshaltungen entkräften
+
+ es geht alles schneller ?!
+  (NEIN: da, viel mehr Information erfasst werden als bisher)
+ es geht alles einfacher ?!
+  (NEIN: da man sehr konzentriert die Daten kontrollieren muss)
+ es geht jetzt alles von selbst ?!
+  (NEIN: das System denkt nicht selbst)
+ es geht jetzt alles ohne Personal ?!
+  (NEIN: das System ermöglicht sogar mehr Handlungsmöglichkeiten)
+
+3) Schulungsziele, Grundbegriffe der Anwendung
+
+ Symbolfarben, die Sie immer wieder in der Anwendung finden werden:
+
+ grau
+ "graue Vorzeit", vergangenheit, abgeschlossene Besuche. Personen, die schon aus dem Haus sind. Personen, die nicht mehr im Haus sind.
+
+ grün / rot
+ Personen / KFZ sind im Haus. Rot bedeutet: Die angegebene Besuchszeit ist abgelaufen. Die Zeit läuft mit wie lange sie schon überfällig sind.
+
+ orange
+ zukünftige Besuche. Besuche, die geplant sind. Diese Besucher sind noch nicht im Haus.
+
+ die Tabelle ist in (unsichtbare) Spalten aufgeteilt. Diese Spalten haben folgende Bedeutung:
+
+ >>, "Cursor"
+ drücken Sie <Pfeil hoch>, <Pfeil runter>, <Bild Hoch>, <Bild runter>, <Pos 1>, <Ende> um in der Liste zu blättern, bzw. den Cursor zu bewegen. Mit Hilfe des Cursor sagen Sie dem Programm mit wechler Zeile der Liste sie gleich weitere Aktionen machen wollen (drucken, löschen, ansehen)
+
+ Symbol-Figuren
+ männliches Symbol, weibliches Symbol, Motorrad (für Kfz,PkW,LKW,Kombi), Gruppe.
+
+ Zeitangaben
+ für graue oder orangene symbole: Besuchsdatum und Besuchsdauer
+ für grüne oder rote Symbole: verbleibende Zeit, oder bisher überzogene Zeit
+
+ Besucherangabe
+ Name (Fett) und Firma (kleiner)
+
+ Zeitangaben
+ Besuchsbeginn und Besuchsende
+
+
+4) Einloggen in das System
+
+ Bevor Sie mit dem System arbeiten sollten sie sich vergewissern, daß im oberen Bereich des Bildschirms, gleich neben der Angabe T1 / T2 / T3 / T4 Ihr Personal-Kürzel angegeben ist.
+ Klicken Sie mit dem Mauszeiger auf das grüne Namensfeld mit dem Werkschutzmitarbeiterkürzel (linke Maustaste). Sie können das Programm komplett ohne Maus bedienen. Alternativ drücken Sie einfach die Tastenkombination <ALT> (gedrückt halten) und dann <L> dazudrücken.
+ Drücken Sie solange <Pfeil unten>, <Pfeil oben> bis Ihr Kürzel auftaucht - danach die Taste <ENTER> auch <RETURN> genannt. ggf. müssen Sie noch ein Passwort eingeben. Gibt es dabei schwierigkeiten wenden Sie sich an den Support.
+
+ -> Q:Passwort vergessen?
+     A:Frau Liebgott fragen
+ -> Q:Mein Sicherheitskürzel ist nicht in der Liste?
+     A:Frau Liebgott soll es einpflegen!
+
+5a) Guten Tag - ein neuer Besucher
+
+ Aufruf des Eingabe-Bildschirm
+
+ Vergewissern Sie sich, dass der Listen-Cursor (nicht Mauszeiger!) auf einem der roten oder grünen Symbole zeigt. Oder auf die Zeile "Besucher, aktuell im Werk".
+ Drücken Sie die Taste <Einfg>. uups - die Liste verschwindet und wird von einer ganz neuen Eingabe-Maske verdeckt. Deuten Sie dies als gutes Zeichen.
+
+ Sorgfalt bei der Eingabe
+
+ Geben Sie jetzt den Namen, die Firma, das KFZ-Kennzeichen in das Eingabe-Feld "Besucher" ein. Geben Sie zu diesen Zeitpunkt kein Komma (Nachname, Vorname) oder Bindestriche (KA-TA-89) ein. Das verwirrt das System und es findet nicht den richtigen Datensatz - denn: Wir spekulieren, der Besucher war schon mal im Werk - seine Daten sind in diesem Fall gespeichert.
+ Ist der Besucher das erste Mal (mit dem neuen System) im Werk nehmen Sie sich bitte etwas mehr Zeit die Felder Besucher, Firma, Handy, KFZ, mitgebrachte Gegenstände und Besuchsgrund sorgfältig auszufüllen.
+ Es dauert ggf. etwas mehr Zeit - ABER einmal korrekt erfasst ist ein weiterer Besuch ein Kinderspiel - also wie der Amerikaner sagen würde "take your time" - oder auf italienisch "mache solange du brauche, nix snell snell".
+ Nochmal zur Info: - so gut (oder auch so schlecht) Sie diesen ersten Besuch dokumentieren - so gut sind diese Daten im System drin. Spätere Korrekturen sind zwar jederzeit möglich - bekannt ist jedoch dass dies oft unterbleibt.
+
+ <ALT> & Buchstabe, schneller zum Ziel
+
+ Zum schnellen Anspringen der Eingabe-Positionen sehen Sie teilweise einzele Buchstaben unterstrichen - die Buchstaben verwenden Sie im Zusammenhang mit <ALT>.
+ Wenn alles soweit OK ist, drücken Sie <ALT> & <O> oder mit der Maus die Taste "OK". Es ist ein neues grünes Symbol entstanden.
+
+ Verwendung der Suchmaschinen
+
+ filsinger.de verwendet eine patentierte Suchmethotik, die z.B. auch von Suchmaschinen im Internet verwendet wird. Die Zeilen "Besucher" und "Mitarbeiter" sind  Ihre Startfelder für die Suchmaschine. Groß- und Kleinschreibung ist unerheblich - üblicherweise schreibt man hier alles klein - um Zeit zu sparen.
+ Suchen Sie nach "Schumacher, Michael" geben Sie z.B. ein "schu mi", das reicht in der Regel den richtigen zu finden. Im Gegensatz zu vielen anderen (altmodischen) Suchmaschienen müssen Sie den Suchvorgang nicht extra durch einen Suchen-Knopf starten. Wenn Sie den 2. Buchstaben eingeben gehts automatisch los mit der Suche (worauf soll der Computer denn auch warten?!).
+ Komma, Bindestriche und sonstigen Buchstabensalat ist für die Suchmaschine unverdaulich.
+
+ Besuchsdauer oder wie lange dauert der Besuch
+
+ geben Sie hier die gesamt-dauer des Besuches an. folgende Eingabe sind möglich:
+
+ 1	= eine Stunde
+ 20	= 20 minuten
+ 45 	= 3/4 Stunde
+ 12h	= 12 Stunden
+ 12m	= 12 Minuten
+
+ endlich drucken
+
+ Die Taste "OK" beendet den Eingabe-Dialog "Willkommen, ...". Danach wird mit <F3> die aktuelle Zeile (Zeile, auf die der Cursor zeigt) ausgedruckt.
+
+5b) Guten Tag - ein Mitarbeiter (braucht einen Tagesausweis)
+
+  * Drücken Sie F4 (für Mitarbeiter-Info)
+  * Geben Sie Suchbegriffe ein - der Mitarbeiter wird (hoffentlich) gefunden. Handelt
+    es sich um eine Neueinstellung so wählen Sie einen Ansprechpartner der gleichen
+    Abteilung.
+  * Drücken Sie F3 - der Mitarbeiter wird in die Besucherliste übernommen. Sie können
+    jetzt wie gewohnt sofort ausdrucken (wieder mit F3). Oder Sie ändern ggf. nun den
+    Namen ab, wenn der Mitarbeiter direkt nicht gefunden wurde.
+  * Tip: Der Mitarbeiter erscheint in der Liste als "Gruppe", das liegt daran, dass
+    keine Herr/Frau Info bei den Mitarbeitern zur verfügung steht. Diese können Sie
+    aber leicht (vor dem Ausdrucken) abändern.
+    (Doppelklick (oder ENTER drücken, wenn markiert) auf die Zeile, die es betrifft,
+     dann Drop-Downfeld Anrede abändern).
+  * In der Liste erscheinen Mitarbeiter "grün" hinterlegt.
+  * Ein Ausbuchen ist notwendig.
+
+6) Auf Wiedersehen - Besucher verlässt das Werk
+   (gilt auch für Mitarbeiter)
+
+ Bewegen Sie den Listen-Cursor auf den jeweilige Besucher.
+ Sehen Sie diesen nicht auf Anhieb in der Liste, so verwenden Sie die Suchfunktion F2.
+ Drücken Sie die Taste <Entf> und setzen schon mal einen Sonnenbrille auf, da jetzt einiges gelb aufleuchtet. Korrigieren Sie ggf. noch einige Zeitangaben und dürcken <ALT> & <O> oder abbrechen oder <ESC>.
+ Oder ziehen Sie den Lesestift über den Barcode.
+
+7) Zusammenarbeit mit dem Infoterminal (nur Tor 3)
+
+ der Besucher kann Ihnen die Einagbe von "Name", "Firma", "Handy", abnehmen . zudem unterschreibt er elektronisch. Die Unterschrift wird automatisch in eine Neuanlage übernommen. Damit Ihnen der Besucher nicht immer die eigenen Eingaben überschreibt übertragen Sie dessen Daten auf Wunsch mit <ALT> & <L> in die aktuellen Eingabe-Feldern. Auch der Besucher muss nicht mehr alles Eingeben, wenn dieser schon mal da war.
+
+8) Planung eines Besuchsvorganges
+
+ vergewissern Sie sich, dass der Listen-Cursor auf ein orangenes Symbol zeigt (drücken Sie z.B. einfach die Taste <Ende>) oder auf die Zeile "Besuchsplanung". Danach <Einfg>. uuups - dieser Bildschirm kommt Ihnen bekannt vor - aber mit der Farbe stimmt was nicht - genau Sie geben den Besuchsvorgang (soweit Sie die Daten kennen) ein - genau wie wenn es ein aktueller Besuch währe. Alle Besuchdaten (auch Datum, Besuchdauer usw.) wird natürlich erst entgültig angegeben, wenn der Besucher dann wirklich eintrifft.
+
+9) Besuchszeit verlängern
+
+ Der Besucher ist schon überfällig (=rotes Symbol). Um ihm (oder ihr) noch weitere 10 Minuten Zeit zu geben bewegen Sie den Cursor auf diese Person. <Eigenschafts Menü> Taste drücken. "noch 10 Minuten" anwählen. Fertig.
+
+ oder
+
+ rechte Maustate auf die Zeile. Menüpunkt "noch 10 Minuten" klicken. Fertig.
+
+ oder
+
+ Cursor auf die Zeile. <ENTER>. Im Feld "Besuchdauer" ( <ALT> & <D>) eine neue (längere) Besuchsdauer eingeben. <ALT> & <O> (=OK). Fertig.
+
+10) Ich war gestern schon mal da:
+
+ in der Historie (grau) die Person suchen. Eingenschaftsmenü aufrufen. "Besuch wiederholen" aufrufen. Er ist plötzlich in der Besuchsplanung. WIeder Eingenschaftsmenü aufrufen. "Besuch ist eingetroffen" wählen. Danach nur noch die neue Besuchzeit wählen.
+ Auf alle Fälle den besuchten Mitarbeiter anwählen.
+
+
+11) Umgang mit dem Laserdrucker
+
+ -> Behebung von Papierstau
+     "119" rufen
+ -> Nachfüllen von Formularpapier,
+     a) (Face down) Gesicht nach unten = SIEMENS Logo
+        muss auf den Boden schauen!
+     b) kleine Ausweiskarte muss links oben sein!!
+ -> Toner austauschen
+     Toner Lämpchen beobachten
+     Mindestbestand des Toners überprüfen
+     "119" rufen
+
+12) Zusätzliche Möglichkeiten
+
+  -> "Ich komme morgen wieder!"
+ (in der Planung)
+  -> "Ich wollte eigentlich erst morgen kommen!"
+ ()
+ -> "ich muss nur was im Auto holen"
+ auf alle Fälle ausbuchen!!! Dies ist dann ein neuer Besuch ohne Ausdruck.
+  -> "Können Sie das nochmal drucken!"
+ jederzeit mit <ALT> & <D> möglich oder <F3>
+ -> "Können Sie mir einen "Beleg" mitgeben?"
+ jederzeit mit <ALT> & <D> möglich oder <F3>
+  -> ich komme die ganze Woche, jeden Tag
+ (genauer Ablauf noch in Planung)
+
+13) Tasten-Funktion, wenn die Liste sichtbar ist
+
+ <ENTER>
+   in der Historie -> alle Daten anzeigen
+   bei den Besuchern -> Daten anzeigen / ändern
+   in der Planung -> Daten anzeigen / ändern
+
+ <ENTF>
+  bei den Besuchern -> Besuch ist beendet
+
+ <EINFG>
+  bei den Besuchern -> neuen Besucher eintragen!
+  in der Planung -> neuen Besuch planen!
+  es ist abhängig wo der Cursor steht was das Programm anlegt:
+  Steht man in der Historie oder auf dem Listentitel
+  "Besucher, aktuell im Werk:" -> Besuch (dialog ist grün!)
+  'Besuchsplanung:' -> Besuchsplanung (dialog ist orange!)
+
+ <ALT> & "K" -> KFZ Kennzeichen eingeben (ein Fahrzeug kommt!)
+ <ALT> & "D" -> aktuell markierten Besucher drucken
+ <ALT> & "L" -> Anmeldeschirm (Login) für Benutzerwechsel
+
+ ODER:  auf den Datensatz mit der Maus zielen -> rechte Maustaste drücken
+
+ Sonderfunktionen (nur interne Bedeutung)
+
+ <ALT> & "S" -> Systemeinstellungen
+ <ALT> & "I" -> Besucherterminal Information abrufen
+ <ALT> & "P" -> Preview, Druckervorschau
+ <ALT> & "B" -> Besucherdaten pflegen
+ <Strg> & <ENTF> dauerhafte Löschung eines Datensatzes!
+
+
+14) Installation / Update von "Pforteassist"
+
+ wichtige Dokumentation für das Theken-Auflage Infoterminal
+ der Firma filsinger.de GmbH & co.KG. install-Verzeichnisse sind
+ ggf. unter folgender Kennung zu finden:
+
+ > Userkennung für die H:\install !Freigabe!
+ > Userkennung : FAX03971
+ > PW          : filsinger
+ > aktuelle IP des Terminals : 180.20.116.17
+   bei Änderung dieser IP ist an Pforte "3" diese IP neu
+   einzutragen in die Datei "H:\gateF\gateF.ini"
+
+ Voraussetzung:
+
+ - icn-WinNT Installation, min. Service Pack 3
+ - am Netzwerk angeschlossen
+ - Installations-CD "2" von filsinger.de zur Hand
+
+ zur Installation:
+
+ * Bildschirm-Modus 1024x768, HighColor, 70Hz einstellen
+ * AutoLogon-Funktion
+
+   mit Start->Ausführen->regedit folgende Einträge anwählen
+
+  "HKEY_LOCAL_MACHINE" -> "SOFTWARE" -> "Microsoft" ->
+  "Windows NT" -> "CurrentVersion" -> "Winlogon"
+
+  AutoAdminLogon:REG_SZ:1
+  DefaultPassword:REG_SZ:<das PWD>
+  DefaultUserName:REG_SZ:<der Benutzername>
+
+ * Programmverzeichnis der Installations-CD
+   "\source\itsiemens3" nach "C:\programme\itsiemens3"
+   Anwendung "PforteAssist.exe" in den Autostart-Ordner kopieren
+ * Pivot-Software
+   \install\pivot\pdi.exe
+ * MicroTouch Rev. 5.4
+   Kalibrierug durchführen, achtung: Angezeigte Kalibrierungspunkte
+   schön lange gedrückt halten!!!
+ * Schriftart "Verdana" hinzufügen
+ * Schriftart "Arial Black" hinzufügen
+ * Ip-Adresse des Terminals bestimmen:
+   DOS-Eingabeaufforderung starten
+   ipconfig /all <ENTER>
+   Eintrag "IP-Adresse  :" in die INI
+
+   H:\gateF\gateF.ini
+
+   unter der Rubrik des Rechner-Names der Pforte 3 als
+   BesucherTer
+
+   BesucherTerminal=180.20.101.99
+
+   eintragen
+ * Installation REMCON V4.15
+ * Installation SP4
+
+ Einspielen von Updates
+
+ neue Rev. PforteAssist.exe (Besucherterminal)
+
+ * Sicherstellen, daß FilsingerPforte Tor 3
+   nicht läuft - alle anderen dürfen laufen!
+ * mit REMCON, mti <ESC> Anwendung stoppen
+ * C:\programme\itsiemens3\PforteAssist.exe nun
+   überschreiben, Anwendung neu starten!
+
+15) Installation / Update von "gateF"
+
+ Voraussetzung "ICN-Client Standard Installation" (bei Neuinstallation)
+
+   * Screen Modus 1024x768
+   * Antialiasing bei der Textausgabe aktivieren: Start->Einstellungen->
+     Systemsteuerung->Anzeige->Plus!->Bildschirmschriften glätten ankreuzen!
+   * mit entsprechendem User einloggen, auf dem K:\ Verzeichnis?!
+     befindet sich die Anwendung "gateF.exe" - zu dieser
+     Datei eine Verknüpfung auf dem Desktop erstellen.
+   * Den Rechner-Namen ermitteln: Eingabe in der Eingabe-Aufforderung:
+     ipconfig /all Eintrag "Host-Name" ist Rechner-Name, diesen Wert in
+     eckigen Klammern in die gateF.ini übernehmen
+     -> ev. ist dieser Wert schon vorhanden. Gesamte Einträge unter
+     einem vorhandenen Rechner-Namen kopieren und neu einfügen.
+   * Einstellungen wie gewünscht machen!
+
+ Update installieren, neue Rev. gateF.exe (Werkschutzanwendung)
+
+   * Neue Rev von www.cargobay.de downloaden!
+   * Sicherstellen, dass keine der gateF.exe läuft
+     (remote logout der Pforten?!),
+     ev. mit notepad stop.txt erzeugen, dadurch wird gateF an
+     "Verlassenen" Pforten gestoppt.
+   * gateF.exe überschreiben, Alle dürfen wieder in beliebiger
+     Reihenfolge starten
+
+16) Aufbau der Mitarbeiter.txt
+
+    CSV, Windows-ANSI Zeichensatz, Feldtrenner ist Semikolon (;)
+    Folgende Spalten werden ausgegeben:
+
+    Name (im Format  "Nachname, Vorname")
+    Gebäude
+    Telefon (im Format "Fest (Mobil)")
+    eMail
+
+17) Import Schemata
+
+ Einleitung
+ ==========
+
+  Um gateF beim Import von Mitarbeiterdaten flexibler zu machen, wurde neben
+  den 3 fest programmierten Import-Varianten (SiPort,CSV,ADCM) eine frei
+  konfigurierbare Variante hinzugefügt. Grundlage für diese neue Version sind
+  ASCII Dateien im Windowszeichensatz mit einem Semikolon als Trennzeichen (;).
+  Anführungszeichen und Schlusszeichen können nicht verarbeitet werden. Diese
+  Anforderungen werden durch *.csv-Dateien erfüllt, wie sie z.B. von Excel oder
+  beliebigen Datenbank Programmen erzeugt werden können.
+  Zur Konfiguration gelangen Sie mit <ALT>&<S>, Passwort eingeben, Reiter
+  "Mitarbeiter", taste "Schema bearbeiten".
+  Inerhalb der Schema Definition können Sie den Import testen, die tatsächlichen
+  gateF Mitarbeiterdaten bleiben dadurch jedoch unberührt.
+  Selbst wenn Sie einen "echten" Import durchführen (taste "Schema gateF" im
+  Systembereich->Reiter Mitarbeiter) wird die bisherige mitarbeiter.txt in
+  ".\Import\<große Nummer>\bisherige Mitarbeiter.txt" gespeichert. In Notfällen
+  kann diese Version auf die echte .\Mitarbeiter.txt umkopiert werden.
+
+ Überblick
+ =========
+
+  Laden Sie ihre Datengrundlage (*.csv-Datei) in die Zeile "Quelle". Ist
+  die Dateiendung nicht csv geben Sie, nachdem sie "->" (zum Browsen im
+  Verzeichnisbaum) gedrückt haben, einen "*" ein. Es werden nun alle denkbaren
+  Dateien angezeigt. Die Grundlage gehört mit zum Schema, gateF wird immer wieder
+  auf diese Quell-Datei beim Import zurückgreifen (im Rahmen des Tagesabschlusses).
+
+  Reiter "definieren"
+
+   ganz links stehen gateF Datenfelder, die es zu füllen gilt. Ein Doppelklick auf
+   ein Feld stellt es in die Mitte. Klicken Sie es nun auch in der Mitte an. Suchen
+   Sie ganz rechts das passende Feld aus Ihrer Quell-Datei aus und markieren es
+   ebenfalls. klicken Sie dann unterhalb der mittleren Tabelle den Pfeil "<-" dadurch
+   wird Ziel mit Quelle verbunden. Führen Sie diese Aktion mit allen Feldern durch.
+   Die Filter müssen nicht verbunden werden. Wenn Sie aber Datensätze weglassen wollen
+   verbinden Sie die Filter mit Feldern die Kriterien enthalten die zu weglassen
+   führen können.
+
+  Reiter "filtern"
+
+   tragen Sie hier KO-Kriterien für die Inhalte der Filter Felder ein. Tragen Sie
+   z.B. PIO ein werden alle Datensätze herausgefiltert, die diesen Wert an irgendeiner
+   Stelle der Filter A..C enthalten haben. Also den Wert "LSLKSLPIOSSJS" auch.
+
+  Reiter "umsetzen"
+
+   hier werden nur die Werte der bewährten Umsetzer aus gateF.ini angegeben.
+   Infos aus der damaligen Rev-Datei:
+   automatischer Wortumsetzer für das Feld "ort" in der Tabelle
+   Mitarbeiter.txt. Diese Funktion wird automatisch in der Prozedur
+   "zusätzliche Mitarbeiter hinzufügen" ausgeführt also bei jedem
+   Mitarbeiterimport sowie beim Tagesabschluss (falls incl. Import)
+   durchgeführt. Es werden Wortteile durch Ersatzworte ausgetauscht.
+   Dabei kann man Informationen für den Besucher verständlicher
+   gestalten oder Abteilungsnamen in Gebäudenamen umsetzten. Oder Teilworte
+   ganz weglassen (Anregung von Herrn Diefenbacher). Das Format dabei ist:
+   <Bisheriges Wort> [ "," <Neues Wort> ] ";" <Bisheriges Wort> [ "," <Neues Wort> ]
+
+   [SYSTEM]
+   MitarbeiterOrtUmsetzer=ICN CM W Bsl;COMT,3045;PL EA,plea
+
+   in diesem Beispiel:
+    "ICN CM W Bsl" wird künftig gelöscht (kein neues Wort angegeben!)
+    "COMT" wird durch Gebäudenummer "3045" ersetzt
+    "PL EA" wird durch "plea" ersetzt
+
+   * Groß und Kleinschreibung wird unterschieden
+   * Führende Blanks, sowie die am Ende werden abgeschnitten
+
+  Beispielhafter Ablauf für eine Import-Schema-Definition:
+
+   1) ev. ein Schema das ähnlich ist laden, oder ganz neu beginnen.
+   2) rechts neben "Quelle (csv-Datei)" die Taste "->" drücken. Die neue
+      csv-Datei anwählen.
+   3) in der ganz rechten Tabelle müssen nun alle Feld-Namen erscheine.
+   4) wenn Sie auf einzelne Feld-Namen klicken, sollte in der tabelle darunter
+      Beispiel-Daten für das jeweilige Feld erscheinen.
+   5) Nun beginnen sie mit der Feldzuordnung. Dazu ein Daten-Feld aus der Tabelle
+      ganz links auswählen, und Taste "->" drücken. Das Feld erschein nun in der
+      Mittleren Tabelle. Diese Feld nun anklicken. Es erscheint unter der Mittleren
+      Tabelle die "Parameter-Zuordnung". Wählen Sie von der Quelle ein Datenfeld aus
+      das passt. nun die taste "<-" rechts neben den jeweiligen Parameter (#1,#2,#3)
+      Der parameter wurd in die mittlere Tabelle übernommen (als Zahl, die echten Feld
+      namen spielen keine rolle).
+   6) Das Schema sollte man von Zeit zu Zeit speichern.
+   7) Die Felder mit "_Info_#" (nicht in jedem Projekt) können Sie mehrfach verwenden. Schauen
+      Sie sich das Beispiel "KA01.gzs" an.
+      Im ersten Parameter können Sie einen Text eingeben, z.B. "Standort", der 2. Parameter
+      ist eine ganz normale Angabe für eine Quell-Spalte. Wird der Import durchgeführt, so
+      werden die Daten in ein Textfeld mit dem Vorsatz "Standort_" importiert. Beispiel:
+
+      Monteur_Info_#_#(Standort,30)
+
+      #1 Standort
+      #2 30
+
+      Feld 30 wird als Text "Standort_Hier der Text" in das Memofeld Monteur-Info
+      importiert. Steht hier z.B. "Keller", wird es als Standort_Keller importiert.
+      Beim Import kann man auch mal einen Parameter frei lassen, es wird
+      dann einfach "nix" importiert!
+   8) Infos über den jeweiligen Import werden im Verzeichnis .\Importe abgelegt, hier
+      werden daten, das schema und zusätzliche Infos zu jedem einzelnen Import ab-
+      gelegt.
+
+ Automatisieren
+ ==============
+
+  Zum automatisieren ändern sie die gateF.ini:
+
+  [SYSTEM]
+  MitarbeiterAnhandSchema=NEIN
+
+  Beim Importlauf wir immer das Schema "gateF.ImportSchema" verwendet. Legen Sie
+  experimentelle Schemen unter anderen Dateinamen ab!
+
+ Logging-Mechanismen
+ ===================
+
+  Der Import ist komplex und will gut überwacht sein. Deshalb werden bei jedem
+  Importlauf (Taste System.Mitarbeiter."Schema gateF") oder Importtestlauf
+  (Taste System.Mitarbeiter.Schema bearbeiten.definieren."Start") im Verzeihnis
+  .\Importe ein neues Unterverzeichnis mit einer fortlaufenden Nummer angelegt.
+  Eine Löschung erfolgt automatisch nach 5 Tagen. Hier die Bedeutung der Dateien:
+
+  Abgelehnte.csv  // wegen des Filters ausgesonderte Datensätze im Original-Format
+  Importiere.csv  // Filter erfolgreich passierte Datensätze im Original-Format
+  Info.txt // Logging Infos über den Importlauf
+  Daten.csv // die Kopie der Quell-Daten
+  Resultat.csv // das Ergebnis des Imports an sich
+  Schema.ImportSchema // das verwendete Importschema
+
+  geht was nicht, so ist zur Diagnose der Inhalt dieses Verzeichnisses rundum
+  aussagekräftig und kann an den Support zur weiteren Diagnose gesendet werden.
+
+ Benutzerdefinierte Funktion
+ ===========================
+
+ Benutzerdefiniert A_#_#. (Regel laut Anforderung vom 11.07.02)
+
+  Ist <Inhalt von feld #1>=<#2> wird Gebäude durch Firma überschrieben. In unserem
+  Beispiel:
+  #1  14
+  #2  EXE
+
+18) Erweiterungsvorschläge im Rahmen der Rev 3.000 Planung
+
+ 3,x66,0:Bei Anlieferungen per Fahrzeug (Fahrzeugbegleitschein) soll unter Verwendung der Rückseite,
+         eines 2. Druckers, eines neuen Formulares usw. der FAHRZEUGBEGLEITSCHEIN gedruckt werden.
+         Veränderliche Daten werden manuell eingegeben. Das Ziel muss über ein Dialogfeld auswählbar
+         sein. Der Inhalt der Maske muss durch den Anwender frei definierbar sein.
+ 3,x02,3:Druck des Fahrzeugbegleitscheins
+ ----
+ 4,x65,0:Neue "Single-Keystroke" Abfragefunktionen: (Statistik auch ausdruckbar)
+         Aktueller Stand (wer ist im Haus)
+         Abfage definierte Personen + Fahrzeuge je Zeiteinheit.
+         Anzahl der Besucher je Zeiteinheit.
+ 4,x01,2:Ausdruck / Auswertung Besucher-Anzahl
+         von / bis Monat Anklickbar, Tor 1 .. 4 gesamt Summen
+         bilden wie in Grafik ausgearbeitet.
+ 4,x30,2:Statistik Tabelle : Tages - Abschluss, -> Bild "Erweiterung Tabelle.bmp"
+ 4,x13,2:Tagebuch drucken von Tag bis Tag
+ 4,x04,3:Ausdruck aktueller Stand (wer ist im Haus) soll möglich sein!
+ ----
+ 5,x72,0:Historie.ini auf SQL-Server
+         SQL-Scripts erzeugen beim Tagesabschluss, neuer Menüpunkt
+         für die Erzeugung dieser Scripts.
+         noch besser, da unabhängig vom SQL-Server!
+ 5,x73,0:Liste.ini (nicht Echtzeit) auf SQL-Server. So aktuell wie möglich!
+         SQL-Scripts erzeugen, noch besser, da unabhängig vom SQL-Server!
+ 5,x74,0:Grundmaske zur Abfrage der Historie basierend auf SQL-Datenhaltung.
+         Möglichkeiten aufzeigen und dokumentieren, wie Administratoren eigene
+         SQL Abfrage Scripts integrieren und ausführen können.
+ 7,x58,3:ganze Planungsblocks vergeben können. Firma Böhm markieren -> alle in die Planung!
+ 4,x54,3:Abfragemaske für Besucher Selektion "Firma" "Besuchsziel" (halt alle Felder)
+         für Historien-Abfragen, analog zum Punkt 5,x74,0
+ ----
+ 11,x75,0:kleiner WebServer für das IntraNet. Kontaktpunkt: das Besucher-System
+ 11,x76,0:Versenden von eMails "Besuch ist nun eingetroffen" zur reinen Nachricht-
+          Ablage bei Projekt-Dokumentierungen. Weiterhin tel. Benachrichtigung
+          durch den Werkschutz.
+ 11,x79,0:eMail an alle Besuchten, wenn Besuch Status "rot" erhält
+          Idee: eMail "Flag" für alle Events!
+ 11,x77,0:Vorschläge und Konzept zur losen Kopplung an das InterNet.
+ 8,x37,1:Besuchsdauer bei der Planung aus der alten Besuchsdauer übernehmen (wow!!)
+ x0: besucher und Mitarbeiter reload nach einem Tages-Abschluss: d.h. ewiger Ablauf des
+     Programmes muss möglich sein.
+ ----
+ ---- Info : Wie funktioniert der ADCM Import
+
+ mit Herrn Walz hatte ich ein ASCII-Dateiformat vereinbart (in der Anlage). Es wurde mir eine Test-Datei
+ zur Verfügung gestellt. Es wurde vereinbart, dass diese Datei automatisiert
+ in einem für gateF sichtbaren Verzeichnis erzeugt wird. Die Programmierung
+ wurde in Rev. 1.051 beschrieben.
+
+ Zur Praxis:
+ 1) ev. Mitarbeiter.txt wegsichern
+ 2) gateF.ini wie in Rev. 1.051 angegeben erweitern. So etwa:
+
+ [ADCM]
+ ImportQuelle=G:\delphi\gateF\ADCMPerson.txt
+
+ die Existenz dieser datei sicherstellen.
+
+ 3) Im Systemschirm (alt&S, pwd gateF) Mitarbeiter-Reiter wählen
+ 4) "Mitarbeiter aus ADCM" drücken, es entsteht die Datei
+    "Mitarbeiter aus ADCM.txt", wenn diese soweit OK ist nach
+   "Mitarbeiter aus Import.txt" manuell kopieren!
+
+ 5) Taste "zusätzliche Mitarbeiter hinzufügen" ("Mitarbeiter aus Import.txt"
+ wird mit "Mitarbeiter zusätzlich.txt" addiert und nach "Mitarbeiter.txt"
+ gespeichert)
+ 6) gateF neu starten und die Mitarbeiter mal ansehen.
+
+ * Ein automatischer Import der ADCM-Daten im Tagesabschluss wie schon bei
+ PLEA sollte nach dem erfolgreichen Test in AUftrag gegeben werden (im
+ Leistungsumfang 2.0 enthalten!)
+ ---- Info: Wie ist mitarbeiter.txt aufgebaut
+ Text-Datei, Windows-Zeichensatz, Feldtrenner ";"
+
+ name;ort;tel;email
+
+ Bemerkungen:  ort: Gebäude+Zimmernummer+Tischnummer, solange wie dies nicht
+                    möglich ist: Abteilungsname
+               tel: durchwahl in Klammer, die mobile Nummer
+ ----
+
+!!! Verbesserungsvorschläge und Korrekturen bitte an andreas@filsinger.de !!!
+
+Ablage-Datei
+
+  Die historie.ini (=Dateiname des default-Wertes) ist eine Ablage-Datei von gateF.
+  Sie wird ausschlieslich im Moment des Tagesabschlusses angetastet. Dabei wird nur
+  folgende Aktionen auf dieser Datei ausgeführt:
+
+  * anhängen der "grauen" die älter sind als <<[system].BelasseStatusGrau>> Tage
+
+  die Ablage-Datei ist somit nur für Nachforschungen oder Statistik wichtig,
+  es klang an, man könne nicht ermitteln, welche Datensätze LKW sind, das geht
+  jedoch, hier der Satzaufbau:
+
+     {01} Symbol 0=Mann, 1=Frau, 2=PKW, 3=Group, 4=Marker, 5=PKW-Kombi, 6=Bus, 7=Pritsche, 8=LKW
+     {02} sDatum
+     {03} eDatum
+     {04} sZeit
+     {05} eZeit
+     {06} BesucherName
+     {07} Firma
+     {08} Mitarbeiter
+     {09} PforteEin
+     {10} PforteAus
+     {11} PfoertnerEin
+     {12} PfoertnerAus
+     {13} Anzahl
+     {14} Kennzeichen
+     {15} Land
+     {16} TrnID
+     {17} Grund
+     {18} Mitgebracht
+     {19} Handy
+     {20} Anrede
+     {21} Parken 0=keine erlaubnis, 1=erlaubt
+     {22} Alarm 0=keiner, 1=Info, 2=Achtung, 3=Gefahr
+     {23} GeaendertDurch
+     {24} BesucherID
+     {25} Nachricht
+     {26} RepetierendBis
+
+Rev 2.027 (10.08.11) Andreas Filsinger
+
+ Bug: Einfügen eines Datensatzes
+
+Rev 2.026 (10.08.11) Andreas Filsinger
+
+ Bug: Splash - Screen wurde nicht angezeigt
+ Bug: Tagesabschluss: Import lief ohne Import-Datei schief
+ Bug: Tagesabschluss: Datensicherung nach zip geht wieder
+
+ Wegfall: der Name der Pforte an die man zurücklaufen muss
+
+Rev 2.025 (08.08.11) Andreas Filsinger
+
+ Neu: "Mitarbeiter" -> "Laufkarte"
+ Neu: Text links oben auf der Laufkarte
+ Neu:
+
+Rev 2.024 (02.08.11-08.08.11) Andreas Filsinger
+
+ Neu: Compiliert mit Delphi XE
+ Neu: Kommunikation mit PforteAssist nun über "TIdTCPClient".
+ Wegfall: VCL-Zip
+ Wegfall: Barcode
+
+Rev 2.023 (26.02.03) Andreas Filsinger
+
+ Neu: neuer Systemparameter:
+
+      [System]
+      Ablage=historie.csv
+
+      (default ist historie.ini)
+
+ Info: Neues Kapitel Ablage-Datei
+
+Rev 2.022 (17.07.02) Andreas Filsinger
+
+ Neu: Import: man kann ein neues Feld importieren "Firma" für Namen von
+      externen Firmen, die sich im Haus befinden.
+ Neu: Import: man kann benutzerdefinierte Regeln starten.
+ Info: Änderungen/Erweiterungen im Kapitel "17) Import Schemata"
+
+ Zur Installation:
+ =================
+
+ a) Die Distribution erfolgt jetzt als "setup". Einfach lokal installieren,
+    danach exe rauskopieren, und wie gewohnt einspielen.
+ b) Damit die neue Logik greift, muss das Importschema "gateF"
+    um 2 Felder erweitert werden:
+    <Alt><S> <pwd> "schema bearbeiten" ganz oben "->" Doppelklick auf
+    gateF.ImportSchema. Doppelklick auf "Firma" bei #1 mit 17 füllen.
+    Doppelklick auf "Benutzerdefiniert A_#_#" bei #1 mit 14 füllen,
+    #2 mit EXE füllen. "speichern" wieder als gateF.ImportSchema.
+
+Rev 2.021 (31.05.02) Andreas Filsinger
+
+ Neu: Erstmals ein Setup verfügbar
+ Neu: Hilfe, wenn man auf das gateF Symbol clickt
+
+Rev 2.020 (04.12.01) Andreas Filsinger
+
+ Bug: Import: "Vorname", "Nachname" war vertauscht - jetzt OK.
+              ACHTUNG: Import-Schema "gateF" wieder anpassen!
+ Bug: Import: Es wurden sogar die ersten 2 Zeilen weggelassen!
+              Jetzt werden alle Zeilen importiert.
+
+ Neu: Import: Es wird auch die erste Zeile der Import-Datei gelesen.
+
+ Info: "SLC fail" bedeutet: Set List Cursor fail, das ist genau das
+       Problem, dass der Listencursor nach dem Einfügen eines neuen
+       Besuchers nicht auf diesem neuen Datensatz steht nachdem man OK
+       gedrückt hat. Ich habe jetzt eine Vermutung waren das liegt.
+       Die Behebung dieses Fehlers dauert aber noch (siehe offene Bugs)
+       ...
+
+Rev 2.019 (27.11.01-02.12.01) Andreas Filsinger
+
+ Bug: Absturz in diversen Situationen aufgrund problematischer Verschlüssellung
+      der Unterschrift. Diese Schwäche kommt nur in Verbindung mit dem Unter-
+      schreibterminal zu Tage. Durch den strengeren Delphi 6.01-Compiler aufgetreten.
+      !!!! War ab Rev. 2.015 zu beobachten. !!! Da in der Eisenbahnstrasse gateF
+      immer stabil lief (kein Unterschrift Modul), kann ich schliessen, dass die
+      Rev 2.019 durch diesen Fix wieder die Stabilität der Rev 2.014 hat.
+
+ Bug: Wenn keine Namenseingaben am Unterschreib-Terminal panel gemacht wurden,
+      (weil der Besucher schon das 1000. Mal da ist) sondern nur noch
+      unterschriebt werden jetzt nicht mehr alle Eingaben des Werkschutzes auf
+      dem Formular "Willkommen" gelöscht, nachdem diese die Taste "Laden" drücken.
+
+Rev 2.018 (27.11.01) Andreas Filsinger
+
+ Bug: Tagesausweis: nur das erste Wort der Abteilung wurde ausgegeben.
+ Bug: Die Cursor-Position "Planungstitel" konnte nicht gespeichert werden.
+
+ Neu: "MA-Tagesausweis" anstelle von "Tagesausweis"
+ Neu: <ALT>&<H> kann nun für die Taste "heute" gedrückt werden
+
+Rev 2.017 (22.11.01-26.11.01) Andreas Filsinger
+
+ Neu: Mitarbeiterausweis (Tagesausweis) Kurzanleitung:
+
+      * "F4-Mitarbeiter" drücken
+      * einen Auswählen durch Eingabe eines Suchbegriffes
+      * "F3-Tagesausweis" drücken
+      * ggf. Änderungen vornehmen
+      * "F3-Drucken" (ein Mitarbeiterausweis wird gedruckt, ohne weitere
+        Tabellen)
+
+      Ausführlichere Doku: neues Kapitel 5b)
+
+Rev 2.016 (07.11.01) Andreas Filsinger
+
+ Bug: Die Besuchersuche hatte KFZ-Nummern mit nur einem Buchstaben
+      nicht mehr gefunden.
+
+Rev 2.015 (28.09.01-15.10.01) Andreas Filsinger
+
+ Neu: frei konfigurierbarer Import mit Hilfe von Importschemen
+ Neu: automatisieren des neuen Import Typs "Schema gateF" durch
+      folgende Angabe in der gateF.ini:
+
+      [SYSTEM]
+      MitarbeiterAnhandSchema=JA
+ Neu: Kapitel 17 der Dokumentation (Import-Schemata)
+ Neu: Kapitel 16 der Dokumentation (Mitarbeiter.txt)
+ Neu: (intern) compiliert mit Delphi 6.01
+
+ Zur Installation
+ ================
+
+ nach dem ersten Start ist das Verzeichnis .\ImportSchema entstanden.
+ Bei Bedarf dort die vorbereitete Datei "gateF.ImportSchema" verschieben.
+ gateF.ini wie oben beschrieben abändern.
+ Ev. an "Pforte 5" (also an einer unbenutzen, Administrations-Pforte) das
+ Schema entwickeln und in Betrieb nehmen.
+
+Rev 2.014 (16.07.01-06.09.01) Andreas Filsinger
+
+ INFO: Freier Datenbank-Import leider erst in der nächsten Release, da wir
+       immer noch liste.ini mit Dateigröße "0" haben. Ich habe mir alle
+       Stellen, die problematisch sein können angesehen, und dabei 6 Detail-
+       Änderungen vorgenommen.
+
+ * Neu: Besucherhinweise über gateF und Pforteassist in "gateF Info.html"
+        integriert.
+ * Neu: Neuer Transaktions-Server Rev. 1.003 integriert (Projekt->Transaction)
+ * Neu: exakte Wortsuchen jetzt möglich. Mit einem abschließenden Punkt am
+        Wortende kann man unterdrücken, dass noch weitere unerwünschte Resultate
+        ausgegeben werden. Beispiel:
+        Suchbegriff 100. findet die Zahl 100, jedoch nicht 1001, 1002, 100999
+        usw.
+ * Neu: Fehlt die liste.ini so wird diese nicht mehr ohne Rückfrage an den
+        Benutzer neu angelegt!
+
+Rev 2.013 (20.04.01) Andreas Filsinger
+
+ * Bug: offensichtlich mit "Bereichsprüfung AN kompiliert", jetzt neues Build
+        erzeugt.
+ * Bug: - Funktion Laden an Tor 3 nicht möglich, Dialogbox "Laden" ist ausgeblendet
+        ev. Folgefehler, war nicht nachvollziehbar!
+ * Bug: - beim Start der Applikation erscheint die Fehlermeldung "Fehler bei Bereichsprüfung"
+        ev. Folgefehler, war nicht nachvollziehbar!
+ * Bug: "0" Element wurde nicht gefunden, siehe auch Projekt "WordIndex".
+
+ * Info: Ort-Umsetzer: Entfernung des Strings wie in gateF.ini definiert bei
+         Mitarbeiter- Import wird nicht durchgeführt
+         Info ging raus: Groß- und Kleinschreibung beachten!
+
+Rev 2.012 (19.04.01) Andreas Filsinger
+
+ * Neu: automatischer Wortumsetzer für das Feld "ort" in der Tabelle
+        Mitarbeiter.txt. Diese Funktion wird automatisch in der Prozedur
+        "zusätzliche Mitarbeiter hinzufügen" ausgeführt also bei jedem
+        Mitarbeiterimport sowie beim Tagesabschluss (falls incl. Import)
+        durchgeführt. Es werden Wortteile durch Ersatzworte ausgetauscht.
+        Dabei kann man Informationen für den Besucher verständlicher
+        gestalten oder Abteilungsnamen in Gebäudenamen umsetzten. Oder Teilworte
+        ganz weglassen (Anregung von Herrn Diefenbacher). Das Format dabei ist:
+        <Bisheriges Wort> [ "," <Neues Wort> ] ";" <Bisheriges Wort> [ "," <Neues Wort> ]
+
+        [SYSTEM]
+        MitarbeiterOrtUmsetzer=ICN CM W Bsl;COMT,3045;PL EA,plea
+
+        in diesem Beispiel:
+         "ICN CM W Bsl" wird künftig gelöscht (kein neues Wort angegeben!)
+         "COMT" wird durch Gebäudenummer "3045" ersetzt
+         "PL EA" wird durch "plea" ersetzt
+
+        * Groß und Kleinschreibung wird unterschieden
+        * Führende Blanks, sowie die am Ende werden abgeschnitten
+ * Neu: (für ICN) Parameter für den automatisierten Mitarbeiter-ADCM-Import
+        im Tagesabschluss.
+
+        [SYSTEM]
+        MitarbeiterAusADCM=JA
+
+        // ACHTUNG: im SYSTEM-Bereich nicht im ADCM-Bereich!
+ * Bug: Fehlermeldung, wenn "Mitarbeiter aus Import.txt" nicht vohanden war,
+        und die Taste "zusätzliche Mitarbeiter hinzufügen" gedrückt wurde.
+        (wurde ggf. auch durch das system selbst gedrückt).
+ * Bug: Ausgabe-Dateiname der Taste "Mitarbeiter aus ADCM" muss
+        "Mitarbeiter aus Import.txt" lauten.
+
+Rev 2.011 (10.04.01) Andreas Filsinger
+
+ * Neu: Taste "AUS", damit man die "gelben" komfortabel aus der täglichen
+        Planung entfernen kann. Siehe dazu auch die Informationen in der
+        Rev. 2.003.
+         * Es reicht nicht das angegebene Datum zu löschen!.
+         * Die gelben verschwinden erst am nächsten Tag!
+         * Wenn man die gelben aus der Planung löscht (ohne oder mit AUS)
+           kann der Tagesabschluss die Information nicht verarbeiten, sie
+           werden wieder auf den nächten Tag geplant.
+         * Wenn man also will, daß sie nicht mehr geplant werden: Gelben
+           aufrufen, AUS drücken und bis morgen warten.
+ * Neu: Fehler-Dialog, sobald die vom Barcodeleser ausgegebene Nummer über-
+        haupt nicht gefunden wurde: Info an Frau Liebgott: Dies kann eigentlich
+        gar nicht sein, da ALLE Nummern dem System bekannt sein müssen. Es sei
+        denn es gab mal eine Löschung der Besucher.txt. Bitte um kurze Info,
+        bei welchen Nummern die Person unbekannt ist!
+ * Neu: "<F5> BarCode-Auto", wenn grün dann wird der Besucher vollautomatisch
+        rausgebucht!
+
+Rev 2.010 (14.03.01) Andreas Filsinger
+
+ * Bug: keine Sanduhr beim Tagesabschluss.
+ * Bug: automatisches Schließen des Start-Up (Hochfahren) Splash-Screens
+        war nicht immer gewährleistet. Im Besonderen: Wenn der Tages-Abschluss
+        nicht gemacht war!
+
+Rev 2.009 (05.03.01-06.03.01) Andreas Filsinger
+
+ * Info: Die "PL EA"-Installation ist nun erfolgt - Es wird keine Auftrennung der
+         Entwicklungslinien geben. Beide Standorte sollten uneingeschränkt die
+         jeweils gleiche (aktuelle) Revision einsetzen. System-Unterschiede werden
+         über die gateF.ini Datei gesteuert.
+
+ * Bug: Programm-Absturz, wenn Datei "Besucher.txt" (noch) nicht vorhanden ist.
+ * Bug: Transaktions-Server fährt nicht hoch, wenn Datei "Liste.ini" komplett
+        fehlt!
+ * Neu: Beim Programmstart wird auf dem Server-Arbeitsplatz geprüft, ob heute
+        schon ein Tagesabschluss durchgeführt wurde. Wenn nicht, kann dieser
+        sofort ausgeführt werden.
+ * Neu: für "PL EA": Neuer Parameter und neue Importschnittstelle. In der
+        gateF.ini bitte unten angegebene Zeile im System-Bereich ergänzen.
+        Dadurch wird die Datei-Übernahme im Tagesabschluss aktiviert.
+
+        [System]
+        MitarbeiterAusCSV=JA
+
+        dadurch wird das mit PLEA vereinbarte Datenformat für den
+        Mitarbeiter-Import ins gateF bei jedem Tagesabschluss verwendet.
+        Die Datei liegt im selben Ordner wie der gateF.exe: Der Dateiname ist
+        "Mitarbeiter.csv", der Satzaufbau folgendermaßen (die Datei kann
+        anhand einer EXCEL-Tabelle mit "speichern unter", "Text mit
+        Trennzeichen" erstellt werden.
+
+        <BSL, immer fester Text> (wird ignoriert) ";"
+        Abteilung ";"
+        Nachnahme ";"
+        Vorname ";"
+        Tel ";"
+        Fax ";"
+        Handy ";"
+
+Rev 2.008 (26.02.01) Andreas Filsinger
+
+ * Bug: (22.02.01) Diefenbacher, Krämer: bei dem Ausdruck eines Besuchsscheines
+        die x- fachen Exemplare ausgedruckt werden. Dies passiert sporadisch,
+        aktuell trat dieses Problem heute morgen bei Fr. Krämer
+        (Tor 4, Tel- Nr. 2204) auf.
+        Neu: ungewollt doppelter Ausdruck wird nun verhindert durch einen
+        Rückfrage-Dialog wenn die selbe TRN-ID 2x (oder mehr) hintereinander
+        ausgedruckt werden soll. Ich denke die eigentliche Ursache ist, daß
+        keinerlei Bestätigung erfolgt, wenn <F3> gedrückt wurde. Oder durch langes
+        Drücken der <F3> schon die Tastenwiederholfunktion losgeht. Oder die Taste <F3>
+        prellt. Alles natürlich im Zusammenhang mit der sehr langen Wartezeit,
+        bis der Ausdruck erfolgt.
+
+Rev 2.007 (09.02.01) Andreas Filsinger
+
+ * Neu: Nach 20 Tagen wird davon ausgegangen, daß alle Daten
+        in einer globalen Datensicherung enthalten sind, und
+        ggf. zurückgeholt werden können. Folgende Dateien
+        werden im Tagesabschluss gelöscht (nur, wenn älter als
+        20 Tage!):
+
+        .\Diagnose\*.*            // Transaktionsdiagnosen
+        .\Datensicherung\*.*      // ZIPs der Tagesabschlüsse
+        .\Ablage\*.*              // Unterschriften
+ * Info: Herr Diefenbacher: das angesprochene Verfahren das Sortieren
+         der Besucherliste (liste.ini) auf den Transaktions-Server zu
+         verlagern ist aus folgendem Grund technisch (im Moment) nicht
+         möglich: Der Transaktions-Server hat keine Ahnung über den Inhalt
+         der Daten. Zur Sortierung müsste er die Bedeutung der einzelnen
+         Felder kenn. Des weiteren basiert die Sortierung seit Rev.
+         2.000 auf einem CALCULATED FIELD, das "ohne Intelligenz" nicht
+         zur Verfügung steht ...
+         Das Konzept ist eigentlich: dem Server die Datensicherheit zu
+         überlassen. Jegliche Mutmaßung über Inhalt und Bedeutung von Daten
+         vermindert die Stabilität des Servers (so die Idee).
+         Zusammen mit meinen amerikanischen Freunden arbeite ich jedoch
+         an einer Server-Erweiterung, die dennoch Aufgaben wie sortieren
+         erfüllen kann ...
+         
+Rev 2.006 (02.02.01) Andreas Filsinger
+
+ * Neu: Barcodeverarbeitung des Modells "Master BB D 72-00"
+        der Barcode wird als Tastatureingabe plus abschließendem
+        CR (#13) geliefert. Hier in der Anwendung also z.B.
+        "1" "0" "0" "4" "0" "0" "4" "2" "8" "1" "<CR>"
+        Man muß in der Hauptlistenansicht stehen, um den Barcodeleser
+        verwenden zu können. Besucher können Ihr altes Kärtchen
+        aus dem letzten Besuch vorlegen! Funktionen:
+
+        * Rausbuchen eines aktuellen Besuches
+        * Finden eines Besuches in der Planung
+        * Finden eines Besucher in der Besucher-Datenbank
+
+Rev 2.005 (09.12.00) Andreas Filsinger
+
+ * Neu: Die Besucher.txt wird jetzt vor dem Speichern wieder
+        sortiert. Dadurch kann man sich bei manuellen Öffnen
+        einen besseren Überblick verschaffen.
+ * Neu: Beim Systemsicherungsbildschirm war noch der Standard-Titel
+        aus Programmierung.
+ * Neu: Der Systemsicherungsbildschirm kann mit <ESC> beendet werden.
+
+Rev 2.004 (08.12.00) Andreas Filsinger
+
+ * Bug: Im grünen Willkommendialog war das Eingangs-Datum nicht mehr änderbar
+ * Bug: Diverse Probleme bei der Suche nach KFZ-"Nummer". Nutzung nach dem nächsten
+        Tageabschluß möglich.
+ * Bug: Unter Windows 2000 Schwierigkeiten mit den TrueColor-Programm-Icon.
+ * Neu: Einblenden des Kalenders, wenn man in das Besuchsdatumsfeld springt
+        <ALT>&<A>
+ * Neu: Die Datei "Letzter Benutzer xx.ini" hat jetzt eine 2. Zeile:
+        <UserName> "auf" <ComputerName> " mit gateF Rev." <Versionsnummer gateF>
+        Dadurch ist Diagnose in der Datensicherung besser, welche Version
+        zu diesem Zeitpunkt lief!
+ * Neu: <ALT>&<K> (für Kennzeichen) ersetzt <EINFG> im Haupt-Listen-Bildschirm,
+        wenn man ein Fahrzeugkennzeichen eingeben will - bei Namenseingaben wie
+        bisher bitte <Einfg>. Bei <ALT>&<K> steht der Cursor dann sofort im Feld
+        Kennzeichen. Dies lößt das Problem von Tor 4.
+
+Rev 2.003 (03.11.00-06.11.00) Andreas Filsinger
+
+ * Neu: Einige "inzwischen unnötige" Dateien werden gelöscht.
+ * Neu: Feld "Gültigkeitsdatum" neben Profil war teils mit BLANKS gefüllt
+ * Neu: "Replay" Taste im Transaktions-Dialog besser geschützt.
+ * Neu: Status "gelb" sieht man jetzt auch in der Besucher-Suche <F1> / <F2>
+
+ Diverse Richtigstellungen beim Status "gelb" (Planungs-Roboter)
+ (oder: keine Angst vor der gelben Invarsion!)
+ ===============================================================
+
+ Seit der Rev. 2.000, können "Dauerbesucher" automatisch werktäglich
+ in die Besuchsplanung übernommen werden: Hier die wichtigsten Regeln
+ für die automatische Besuchsplanung:
+
+ * den Status "gelb" vergibt man, indem man ein "Gültigkeitsdatum"
+   (neben dem Profil "001") einträgt. Bis zu dem angegebenen Datum
+   wird der Besucher nun jeden Tag automatisch in die Besuchsplanung
+   übernommen! (Das passiert nachts beim Tagesabschluss).
+ * man unterbindet den Status "gelb" indem man das Gültigkeits-Datum
+   auf den heutigen Tag setzt. Dadurch wird er in Zukunft nicht mehr
+   geplant. Es reicht nicht das Datum zu löschen, es kann dann sein
+   (wenn er zuvor länger geplant war), das er am nächsten Tag wieder
+   als "gelber" Eintrag erscheint!
+ * die "gelben" Palnungseinträge brauchen nicht gelöscht werden, das
+   erfolgt automatisch im Rahmen des Tagesabschluss.
+ * jederzeit kann das "Gültigkeitsdatum" verlängert oder verkürzt werden.
+ * für "SA" und "SO" werden im Moment keine gelben erzeugt, ev. hier
+   Anregungen des Werkschutzes durchgeben.
+ * Sind auch andere Planungsprofile denkbar?
+ * Lassen sich "Dauerbesucher" automatisch erkennen? Hierzu sind Ideen
+   willkommen!
+
+Rev 2.002 (02.11.00) Andreas Filsinger
+
+ * Bug: Indexfehler nach Durchlauf des Tagesabschluss. Jetzt OK.
+ * Neu: Wegen der teilweisen schwachen Rechner: Die Anzeige der Haupt-liste
+        läuft nicht mehr weiter, wenn die Anzeige nicht den Eingabe-Focus hat!
+        Dadurch wird das Eingabeverhalten der Eingabe-Dialoge beschleunigt!
+
+Rev 2.001 (01.11.00) Andreas Filsinger
+
+ * Bug: Suchmaschine hatte "Böhm (Reinigungspersonal)" nicht gefunden, obwohl jedes
+        Wort ok war!.
+ * Neu: Besucher:Ladenzeiten des Programmes wesentlich verkürzt.
+ * Neu: Besucher:Von der Besucher-Datenbank wird ein vorberechneter Index im Rahmen des
+        Tagesabschluss erzeugt!
+ * Neu: Willkommendialog:Besucher-Anzahl ist jetzt editierbar.
+ * Neu: Besucher:Nation wird jetzt abgespeichert ()!
+ * Neu: Besucher:Symbol wird jetzt abgespeichert ()!
+ * Neu: Besondere Bedeutung bei dem Wort "Anlieferung".
+ * Neu: Tagesabschluss: Besucher-Änderungen via TAN vornehmen!
+ * Neu: Löschung von doppelten in der Besucher-Suche ermöglichen!
+        Taste <ENTF> in der Liste
+        Taste <ALT> & <L> egal wo man steht!
+        Beispiel: imig schmi !!!
+ * Bug: Besucher wurden erst eingetragen, sobald sie aus der Historie rausgetragen
+        worden sind. Jetzt werden beim Tagesabschluss !alle! Besucher übernommen!
+        Egal wie der Parameter "BelasseStatusGrau" gesetzt ist, Besucher-INfos
+        stehen also am nächsten Tag zur Verfügung.
+ * Bug: Abstürze beim Programmende, Ursache jetzt gefunden und beseitigt.
+ * Bug: Mit "memproof" diverse Speicher-Lecks gefunden (Memory- / Resource- Leaks).
+ * Neu: Bei Anlage einer Besuchsplanung ist Zeit 9:00 bis Std-Ende
+        Datum ist morgen!
+ * Neu: Es wurde immer der Status "grün" beim Listenzeichnen neu berechnet, das ist
+        nicht mehr notwendig! -> schnellerer Aufbau der Liste!
+ * Neu: Korrektur des Referenzdatensatz erklären!
+        Den besucher auswählen, der OK ist, danach "unten" die Eingaben tätigen,
+        nun oben die "unnötigen" mit dem Mülleimer löschen! Der Besucher wird
+        ab dann mit den richtigen Daten geführt. Die doppleten werden gelöscht!
+        "imig schm"
+
+ THEMENKREIS MELDUNGEN AN DEN BESUCHER
+ =====================================
+
+ * Neu: "Meldungen" (Infos) können eingegeben werden. Ausrufezeichen steuern
+        dabei die Wichtigkeit:
+
+        kein Ausrufezeichen = normale Info (Info-Symbol)
+        ein Ausrufezeichen = zur Beachtung (Achtung Symbol)
+        zwei+ Ausrufezeichen = Alarmstatus (STOP-Schild)
+
+ * Neu: Jetzt auch FR,ES und PO Texte in den System-Parameter abänderbar.
+ * Neu: System-Bildschirm jetzt überarbeitet.
+ * Neu: EMail Adressen werden beim Import berechnet.
+ * Neu: eMail-Taste in der Mitarbeiter Info.
+ * Neu: eMail-Adresse nun in der Mitarbeiter.txt.
+ * Bug: Datum des Besuchsende wurde beim ersten Aufruf des Anzeigeformulares
+        falsch angezeigt.
+ * Neu: Besuchsdauer aus der Historie wird jetzt als neue Besuchsdauer übernommen.
+
+ TRANSAKTIONS-SERVER, Anzeige mit <ALT> & <T>
+ ============================================
+
+ * Neu: Bei Exceptions im Transaktions-Server wird ein ReStart des Timers
+        versucht!
+ * Neu: Solange der Server läuft, blinkt die Anzeige der Anzahl der Transaktionen
+        grün.
+ * Neu: Die Anzahl der Server Exceptions (Anzeige="Verarbeitungsserver") wird nun
+        angezeigt. (Zur Diagnose ob ein Fehler aufgetreten ist).
+ * Neu: Die Anzeige wird nur upgedatet, wenn das Tranaktions-Formular auch das aktive
+        ist.
+ * Neu: Ablauf des Server Diensten jetzt alle 1.333 Sekunden.
+
+
+Rev 2.000 (16.10.00) Andreas Filsinger
+
+THEMENGRUPPE NEUBEHANDLUNG VON WOCHENBESUCHERN
+==============================================
+
+6,x06,1:"ganze Woche" -> Sonderstatus im Besucher-System. automatischer Planungsvorlauf 5/6 Tage
+        ->dies würde die Liste.ini sprengen, und unnötige Rechenzeit verbrauchen,
+          ein besseres Konzept erhielt den Zuschlag: Repetierende Besuche bis zu einem
+          gewissen Datum erzeugt durch ein Profil System!
+1,x53,1:Beschleunigtes Rein / Rausbuchen der wöchentlichen Besucher. Ev. Flag "Wochenbesucher" für
+        den Planungsroboter!
+        ->wird über das Datum gesteuert
+6,x07,1:erneut ganze Woche ermöglichen, Vorausstetzung ist jedoch eine Unterschrift auf
+        dem Original Beleg.
+        ->Wochenende dadurch immer noch ein Problem
+        ->klar ist "Taste ganze Woche!"
+6,x25,4:Tool-Buttons (kleine grafische Symbole) im Kopf des Anwendungsbildschirms
+        (wie bei Office Anwendungen).
+        ->passt nicht so ganz in das Konzept, vielmehr wurde die Bedienbarkeit
+          per Tastatur perfektioniert!
+6,x59,4:Einsatz von Planungs-Robotern! Die täglich nach ihren Planungsvorgaben Planungen erzeugen.
+        -> eigentlich durch repetierendes Konzept nicht mehr notwendig!
+        -> ev. Pool aus repetierenden Besuchern
+        Repetierungs-verbot für die Tage?
+
+ implemetiertes Konzept:
+ =======================
+
+ Neben den Felder Besuchbeginn (Datum+Uhrzeit) und Besuchende (Datum+Uhrzeit) gibt es
+ jetzt eine längerfristige Gültigkeit (Datum) solange, wie diese Gültigkeit nicht abge-
+ laufen ist, wird folgende Sonderbehandlung durchgeführt:
+
+ a) Der Datensatz steht in der "Dauerbesucher.ini"
+ b) Bei Ausdruck eines Ausweißes gilt dieser immer bis zum folgenden Freitag
+ c) Dieser Besucher wird IMMER für jeden Tag geplant, dabei wird die Besuchszeit
+    des letzten Besuches übernommen
+ d) nicht eingetroffene Besuche brauchen nicht geplant     
+
+also was ist zu tun: sobald repetierendes-Datum auf Kärtchen gesetzt ist, wird
+                     berechbar aus Profil! angebbar (das sollte gehalten werden!)
+                     Gültig bis !Freitag!
+
+                     Kärtchen entsprechend drucken!
+                     ->jede Woche neu?!<-
+                     ->bis nächsten Montag, so daßß er Montag wieder drin ist, und
+                       dann wieder gedruckt werden kann!
+                     Taste "ganze Woche" berechnet den Freitag
+-> im Tagesabschluss: a) normaler Tagesabschluss:
+                      b) nicht eingetroffene Besucher rausschmeisen
+                         Wochenbesucher finden (das sind die ZULETZT in der Historie sind),
+                         Datum ansehen, ev. für das heutige Datum dann planen insofern dieser
+                         Wochentag nicht verboten ist!
+                         alle weitere Planungen für diesen natürlich Löschen
+                         in den heutigen Tag aufnehmen
+-----
+
+6,x12,3: Mitgebrachte Gegenstände kann addierende Schreibhilfe sein:
+         "Notebook" + "Werkzeugkasten" + ...
+6,x68,0: aus Planung OK, abbrechen -> noch in der aktuellen Liste
+         Jetzt OK, Buchung hier umgestellt - bitte gut überwachen!
+
+THEMENGRUPPE UNTERSCHREIBEN
+===========================
+
+* Neu: Grundsätzlich, die Unterschrift ist jetzt unter dem Besucher-ID gespeichert!
+       Dadurch ist eine "Unterschrift"-Referenz möglich!
+8,x70,0:Unterschrift im nachhinein nicht mehr änderbar.
+        Jetzt OK.
+6,x69,0:erst Planung -> dann besuch -> der unterschreibt -> diese Unterschrift ist nicht ladbar.
+        Jetzt OK.
+6,x52,4:nachträgliches Unterschreiben ermöglichen
+        Jetzt OK.
+4,x08,2:Informations-Feld "aktuellste hinterlegte" Unterschrift
+        abrufen. Ansicht der Unterschrift / Ausdruck / übernahme der
+        Unterschrift ermöglichen.
+        -> Unterschrift ev. anhand der User-ID?!
+        Jetzt möglich, rechte obere Ecke!
+8,x18,3:Verschiedene Unterschriften zum Abruf anbieten?!
+        Es zählt jetzt die Referenz-Unterschrift des Besuchers! Siehe x08
+2,x78,0:Unterschriften löschen im Tagesabschluss
+        nicht möglich, da es Referenz-Unterschriften sind. Widerspricht x08,x18,x70
+2,x19,3:Die Unterschriften BMP werden verschlüsselt gespeichert, (im Explorer sind
+        diese völlig frei zugänglich!)
+        Jetzt OK. Sogar noch sicherer: Die Entschlüsselung ist abhängig vom
+        Besucher-ID, so kann man keine Referenz-Unterschrift eines anderen auf
+        die Datei eines weiteren Besuchers kopieren. Das Entschlüsseln misslingt dann.
+        Eine Verwertung der Unterschrift ist dann nicht mehr möglich.
+2,x03,4:Selbstvergabe von Passwörtern für den Werkschutz ermöglichen.
+        Besonderheit: soll KEIN pwd mehr verwendet werden muss ein Leerschritt
+        (BLANK) als Passwort verwendet werden! Die Passwort Datei wird offen
+        als pwds.ini abgelegt, ein Erkennen der Passwörter (oder umkopieren) ist
+        nicht möglich. Jede Manipulation führt zu nicht nachvollziehbaren Änderungen
+        des Passworts. Auch ein Erraten er pwd-Länge ist nicht möglich!
+--------
+
+6,x56,3:Unterscheidung bei der Suche "Eingang" / "Ausgang" d.h. man sucht einen Besucher
+        weil er "kommt" oder weil er "geht". Dementsprechend werden unsinnige Suchtreffer
+        gleich unterbunden.
+
+        Lösung:
+        =======
+
+        "kommen" immer mit Taste "Einfg" (man muss NICHT mit F1/F2 suchen, da "orange" Treffer
+                                          laut x36 angezeigt werden!)
+        "gehen" immer mit Taste "f2" oder Barcode
+
+6,x57,2:Bei <F1> und <F2> sollen in der Liste auch die Farben grau/grün/rot/Orange verwendet
+        werden, bisher müssen die WSM immer anhand der TAN nachsehen, welcher Datensatz verwendet
+        werden muss.
+9,x15,4:Barcodes: leichtes Ausbuchen des Besuchers aufgrund des Barcodes
+9,x16,4:Barcodes: ev. schnelleres Wiedererkennen eines Besuchers anhand seines
+                  Barcodes auf einem "alten" Ausweiss. Thema Bar-codes <-> Wiedererkennen
+                  von Wochenbesuchern
+        INFO
+        ====
+
+        Reihenfolge bei der Erkennung eines Barcodes:
+
+        1. Prüfung, ob Person im Haus ist! wenn JA -> Ausgang
+        2. Prüfung, ob Person in der Planung ist! wenn JA -> Jetzt eingetroffen
+                    (für heute?!)
+        3. Prüfung, ob Person als Besucher existiert! wenn JA -> Ungeplant eingetroffen
+
+1,x36,1:oranger Treffer, wenn Besuch schon erwartet wird! Eingabe des Namens -> er schaut, ob in
+        der Besuchsplanung was bekannt ist. Hinweis: Der Besuch könnte geplant sein, ev. werden
+        Sie erwartet. Datum=Datum, Name=+-=Name) Doppelete Suche wird dadurch vermieden.
+        heute, morgen, gestern wird angezeigt! (oder das Datum, wenn es noch weit dahin ist!)
+9,x14,4:Barcodes: Druck auf Besucherschein und Ausweiss
+6,x09,1:Taste "ganzer Tag" (Taste von morgens bis abends)
+6,x11,1:Taste "+30min" "+40min" usf. Also die Möglichkeit die Besuchzeit auf Einfache weise zu verlängern.
+8,x61,0: Die Besucher müssen 5 Tage anstatt wie heute nur 2 Tage im System verbleiben, damit
+         montags die Liste vom Mittwoch noch aufrufbar ist (langes Wochenende mit Brückentag).
+         Die Speicherung der Historie soll dabei nicht mehr in der Liste.ini erfolgen (Entlastung
+         der Ladezeiten/Speicherzeiten der Liste.ini). Da die Historie -1 Tag ja eh. statisch
+         ist soll diese in einer Ablage.ini gespeichert werden - die nur wiederum vom Tagesabschluss
+         gepfelgt werden soll. Für den Anwender soll sich nichts ändern - das System soll nur schneller
+         und sicherer werden. Alternativ-Vorschlag, erkennen der Wochenend-Situation:
+         Lösung: (Parameter in der gateF.ini)
+
+         [SYSTEM]
+         BelasseStatusGrau=1
+
+8,x47,1: die grauen sollten noch einen Tach länger drinbleiben, damit am Montag auf die grauen
+         zugegriffen werden kann (vom Freitag!) Tagesabschluss ev. die Anzahl der Werktage
+         berücksichtigen?! 3 Tage / Feiertage / usw. ev. Feiertag über eine editor für das ganze
+         Jahr festlegen!
+
+         Lösung: (Parameter in der gateF.ini)
+
+         [SYSTEM]
+         BelasseStatusGrau=1
+7,x41,1:neue Logik bei den KFZ-Kennzeichen: Fehleingaben KAS2736-> 2736 wird nicht gefunden->
+        hier umstellen auf den reinen vergleich der Nummern. bzw. ev. Volltext suche machen.
+        KFZ-Nummern sollen gespeichert werden wie eingegeben, aber im Suchindex als ganzes Wort
+        eingetragen werden!
+7,x51,0:Abgleich der Besucher-Liste mit Hilfe von KFZ-Kenn-Zeichen und anderer Maßnahmen: auf die
+        besprochenen Art und Weise: Doppeleinträge dadurch um 70% vermindern: -> entfernen
+        der "-" "<BLANK>" "/" usw. Alles grosse buchstaben -> dann nur noch identität auf diese
+        Art und Weise buchen. Für das Entfernen von doppelt geführten Personen muss eine Hilfefunktion
+        (interaktiv) implementiert werden. Da die Einträge von gleichen Personen sich oftmals minimal
+        unterscheiden, muss das System in der Lage sein auch ähnliche Einträge zu erkennen. Kennzeichen
+        erkennung soll besser möglich sein. Groß + Klein Schreibung. Ein Hinzunehmen eines Feldeintrages
+        und sonstiger Identität ist KEIN Unterscheidungskriterium sonder, der mit mehr Daten soll verwendet
+        werden.
+2,x50,2: Feste Besucher-IDs übernehemen. Eine Besucher ID ist die TAN des ersten Besuches. Für
+         die Barcode-Geschichte kann dann zum Wiedererkennen des Besuchers diese TAN verwednet
+         werden. Auch sind dann Identifizeirungen bei der Besucher-Liste (Problematik der doppelten
+         / Mehrfachen) dann einfacher. Idee eines Hauptdatensatzes bei Firmen mit verschiedenen
+         zugehörigen mal überlegen.
+
+Rev 1.995 (12.10.00-16.10.00) Andreas Filsinger
+
+2,x64,0:Die Abfrage der Systemparameter muss über ein Passwort geschützt sein.
+2,x40,3:pwd-Schutz für System Schirm <ALT> & <S>
+3,x45,0:Bei Fahrzeug: Kennzeichen anzeigen - anstelle von Namen
+10,x17,3:Tagesabschluss: -> Mitarbeiter-Tabelle neu aufbauen!
+1,x05,0:Besucherplanung: Taste "OK, aber auch morgen" - bei Entlassen eines Besuchers - soll verwirklicht werden. Besuchdaten : identisch zum heutigen Besuch, auch wieder gleiche Besuchszeiten. Der Cursor steht dann gleich auf dem geplanten Datensatz. Es können (nach ENTER) Modifikationen vorgenommen werden.
+6,x39,3:Besuchsdatum soll im grünen Willkommen Dialog nicht änderbar sein!
+3,x33,0:Besuche ohne menschlichen Ansprechpartner, Besuchsziele können auch Gebäude sein oder einpflegbare Anlieferungspunkte.
+3,x34,0:Sonderstatus Besucher ist ein Fahrzeug - Ein Anlieferungsprozess! Diverse Diaologe anpassen.
+3,x44,0:Fahrzeuge sollen ein eigenes Symbol in der Liste (Lieferant Symbol) erhalten. LKW Symbol,
+        bzw. Anlieferungs-Symbol. Alle Personen mit Parkerlaubnis sollen ein blaues "P" Schild im
+        Hintergrund haben.
+3,x60,0:Besucher mit KFZ:neues Symbol in der Liste (echtes Auto) (klar ist die Erweiterung zwischen
+        2 Dingen zu unterscheiden:
+        1) menschliche Besucher, die mit dem KFZ auf das Gelände fahren
+           (Parkschein, wenn ein Kfz.Kennzeichen eingegeben wird, dann wird
+           automatisch ein Parkschein ausgegeben. Wird die Ausgabe eines
+           Parkscheines vorgegebenm so wird das Daenfeld kfz-Kennzeichen ein
+           mussfeld.
+        2) Anlieferungen via KFZ, die Anlieferungsziele ansteuern)
+
+ Themenschwerpunkt "Besucher-Datenbank"
+ ======================================
+
+ 8,x49,2:Besuchsziele: Bestimmte Fahrzeuge / Reinigungspersonal hat eigentlich immer ein
+         !!!bevorzugtes!!!! Besuchsziel dies könnte man in die Besucher Datenbank übernehemn -
+         oder ein Quickindex auf die letzten paar besuche dieser Person.
+ 8,x22,2:Besucher DB: "bevorzugtes Ziel" als eigenes Feld mit abspeichern
+ 8,x21,2:Besucher DB: "LastChange" als eigenes Feld
+ 7,x55,1:Master-Datensatz Methodik bei Besucher: d.h. schon im Vorfeld fragen, ob die eben GEÄNDERTE
+        Datensatz-Version durch die neue Version überschrieben werden soll.
+ 8,x32,2:ordentliche Trennungen Firmen->Personen Reiter [A][B][C]
+ 8,x20,2:Besucher DB: "Ort" als eigenes Feld
+                      ->Im Rahmen der Implementierung als nicht zweckmäßig erkannt.
+ 8,x23,2:Besucher DB: Firmen/Personen/Reiter [A][B][C] usw. angebbar! Herr x, von der Firma y
+                      -> unnötig durch die eindeutige ID, die Eingabefehler erkennen läßt
+ 8,x24,2:Besucher DB: Trennung von Personen und Firmen / einzelne Transaktions-Nummern zufügen!
+                      ->Im Rahmen der Implementierung als nicht zweckmäßig erkannt.
+
+Rev 1.052 (10.10.00-12.10.00) Andreas Filsinger
+
+6,x35,2:<F1>, <F2> besser farblich markieren (was ist alles enthalten?!), Farben in den Besuchsdialogen
+6,x29,1:rote Linie, als Markierung, wo der Listen-Cursor steht. (Hintergrund:
+        Der Cursor ist schlecht sichtbar!) Verwirklicht als Markierung in
+        SIEMENS Farben, um keinen Platz für Linien zu verschwenden!
+        -> ganz neuer Leuchtbalken
+8,x48,4:neues Feld: "letzte Änderung durch" Kürzel des WS wird übernommen.
+6,x38,1:grauer Status: Sortieren nach Ausgangsuhrzeit und Ausgangsdatum
+1,x43,3:graue Liste (=abgeschlossene Besuche=Historie): Taste <Einfg> -> Der aktuell markierte
+        Datensatz ist jetzt ein grüner, einfach hier alle Änderungen übernehmen. Einfache NEUANLAGE
+        eines Datensatzes aus der Historie heraus - Vorbelegung aller wichtigen Datenfelder.
+
+Rev 1.051 (30.09.00-09.10.00) Andreas Filsinger
+
+10,x67,3:neuerliche (4.) Programmierung einer Importschnittstelle aus ACM-System.
+         neuer Systemparameter gateF.ini :
+
+         [ADCM]
+         ImportQuelle=G:\delphi\gateF\ADCMPerson.txt
+5,x71,0:SIEMENS Karlsruhe, Abklärung SiPort
+        -> Bericht liegt Herrn Gesper vor, Ausgeklammerte Rechnungsstellung
+1,x81,0:Der "Cursor" in der Besucherliste darf nicht durch Aktionen anderer Arbeitsstationen
+        verschoben werden.
+        -> Fehler am Tor Süd entdeckt und behoben Rev. 1.048
+1,x80,0:In der Anwendung der Grundfunktionen (z.B. Eingabe eines Besuchsvorganges, Aktivierung
+        eines Besuches anhand der Besuchsplanung, Suchen & Finden eines laufenden Besuches und
+        Auslaß / Austragen des Besuchers) dürfen Wartezeiten von max. 3 Sekunden enstehen. Ev.
+        müssen anstehende Netzwerk-Synchronisationen (der Liste.ini) zu einem späteren Zeitpunkt
+        in einer Anwendungspause (vom Programm automatisch) nachgeholt werden können, so daß in
+        einer Last-Situation nicht alle Stationen blockiert sind.
+        -> Transaktionskonzept
+2,x42,1:echte Transaktionen machen, wo man genau die aktionen: Neu, löschen, ändern sehen kann.
+        Ausgabe in eine gemeinsame / und in eine individuelle Datei! Aufsetzen der Gesamt-Information
+        (lese-zeiger) auf einem gewissen Status somit möglich.
+        -> Transaktionskonzept
+
+Rev 1.050 (29.09.00) Andreas Filsinger
+
+ * Neu: Datei "Transaktions Probleme" jetzt integriert in die normale
+        Transaktions-Diagnose.
+ * Neu: Wenn eigene Transaktionsausgabe gesperrt ist (Lock), wird er
+        jetzt nach 1000 ms vom Client gelöst.
+ * Bug: Splash-Screen wird jetzt angezeigt bis Ladevorgang abgeschlossen
+        ist.
+
+Rev 1.049 (22.09.00-25.09.00) Andreas Filsinger
+
+ * Bug: rechte Maustaste auf die Liste hat den Cursor
+        nicht positioniert!
+ * Neu: Spalte "Besuchte Mitarbeiter" nun breiter, letzte Spalte
+        war unnötig breit, jetzt besser!
+ * Neu: Tagesabschluss : "historie.ini" wird nicht mehr geladen,
+        nur noch hinzugefügt! (Funktion gleich, aber schneller)
+
+Rev 1.048 (22.09.00) Andreas Filsinger
+
+ * Bug: Transaktionen waren destrukiv für "liste.ini"
+ * Bug: Zeitbalken sind nicht mehr gelaufen
+ * Bug: Scroll-Balken rief den Zorn der Götter (=WSMs) hervor,
+        Jetzt KEIN Rollbalken mehr, bis Lösung erarbeitet.
+        Info an Bediener: mit den Tasten scrollen!
+ * Bug: bei Migration von einer alter Version: Automatisch wird
+        jetzt das Datei-Attribut auf "Read Only" gesetzt.
+        (Nur bei der Arbeitsstation, die Server ist!)
+ * Bug: Bei sehr vielen Transaktionen wird verhindert, daß
+        der Server mehrfach Arbeitsprozesse startet.
+
+Rev 1.047 (21.09.00-22.09.00) Andreas Filsinger
+
+ * Neu: Transaktions-Server nun down in der kritischen
+        Zeit des Tagesabschluss!
+ * Neu: neue Erkenntnis aus ZIP Modul Rev 2.21 eingebaut
+        (BufferedStreamSize=8k) (-> .\Datensicherung)
+ * Neu: "InsideSave" nicht mehr notwendig! (interne
+        Sicherung aus der Zeit vor der Transaktion)
+ * Neu: BMPs (da diese sich nicht ändern) sind raus aus
+        der ZIP-Sicherung. Hier kann das normale Sicherungs-
+        Konzept greifen!
+
+Rev 1.046 (20.09.00) Andreas Filsinger
+
+ * Neu: <ALT> & <T> für die Transaktionsdiagnose, interessant für
+        Server-Arbeitsplatz.
+ * Neu: Client wartet jetzt auf Freigabe der Transaktions-
+        Ausgabe-Datei (sicherer)!
+ * Neu: Bei der Datensatz-Änderung wird aus der lokalen Ansicht
+        heraus eine Feld-Änderung betrachtet. Dadurch ist jetzt
+        das folgende Szenario möglich.
+        Tor 1 ändert einen Datensatz bezüglich der Besuchszeit
+        Tor 2 ändert denselben Datensatz bezüglich eines Schreibfehlers
+         im Feld Namen
+        beide speichern jetzt ab - egal wer hier zuerst oder zuletzt
+        speichert - beide bekommen ihre Änderungen durch, da sie
+        unterschiedliche Felder betreffen. (COLUMN-UPDATE)
+ * Neu: "System" Verzeichnis speichert Programm-Resourcen
+        im Rahmen des .\Pforte Clean-Ups
+ * Neu: neues Symbol für TOR 5 (38.bmp)
+ * Neu: nun 5 Pforten-fähig!
+ * Neu: Im Rahmen des Verzeichnis-Clean-Ups werden automatisiert
+        alle BMP-Dateien auf andere Verzeichnisse verschoben!
+
+        .\System (für das Programm intern notwendige BMPs)
+        .\Ablage (Die Unterschriften!)
+
+        der erste Start kann somit ziemlich lange dauern!
+
+Rev 1.045 (13.08.00-19.09.00) Andreas Filsinger
+
+  ---> Bitte unbedingt ein Test-Pfad verwenden <---
+
+   (Auf einem Test-System dazu den aktuellen Pforten-Pfad .\Pforte
+    auf ein anderes beliebiges Verzeichnis kopieren, dort den
+    gateF.exe überspielen und starten!)
+
+  Transaktions-Modus
+  ==================
+
+  * Spezielle Zwischen-Release für die Transaktions-gesicherte
+    Verbuchung der gemachten Änderungen an der Liste.ini!
+
+  Das bisherige User-Interface wurde reaktiviert! EINER der
+  Arbeitsplatze muss zum Transaktions-Server bestimmt werden
+  (Pforte 3 (empfohlen)) Bitte in der gateF.ini den neue Wert
+  "Server" auf JA setzen!
+
+  [<RechnerName>]
+  ...
+  ...
+  Server=JA
+
+ * Neu: Systemseite: <ALT> & <S>
+        + Arbeitsverzeichnis
+        + CPU Mhz
+
+Rev 1.044 (13.07.00) Andreas Filsinger
+
+ * Neu: "Aufwärm"-Befehl wird per default unterdrückt
+        in der Rechner-Configuration kann diese Funktion
+        jedoch reaktiviert werden: Eintrag in gateF.ini:
+
+        [<RechnerName>]
+        DruckerWarmUp=JA
+
+        Die Taste <Einfg> müsste dadurch eine sofortige
+        Reaktions-Zeit erlangen. 
+
+Rev 1.043 (17.05.00) Andreas Filsinger
+
+ * Bug: E/A Fehler 59 bedeutet: Fehlernummer von Windows-Betriebs-System:
+        "Unerwarteter Netzwerkfehler", naja wenig aufschlussreich - aber:
+        Die 2. Meldung war sehr aufschlussreich (dank an Herrn Manjet).
+        Es war folgende Situation: Bei Daten-Änderungen wird im Netzwerk ein
+        Lock gesetzt. Ist die Änderung durch, wird dieser Lock erst
+        gelöst, dann gelöscht - dazwischen entsteht eine Zeitverzögerung.
+        Wenn andere Tore schon auf die Befreiung lauern und diese haben
+        eine bessere Netzwerkanbindung gelingt dem langsamen Client zwar
+        das lösen des Locks aber nicht mehr das Löschen (der Lock ist ja
+        schon wieder gesetzt). OK, dies wird jetzt berücksichtigt.
+  * Neu: Damit das Verzeichnis "Liste Sicherungen" nicht überläuft, wird
+         jetzt im Tages-Abschluss alle Dateien gelöscht, die alter als 1
+         Tag sind. (es bleibt erhalten: heute + gestern, damit müsste ein
+         Recover immer möglich sein).
+
+Rev 1.042 (11.05.00) Andreas Filsinger
+
+ * Bug: <Alt>&<S> dann "Systemeinstellungen" öffnete noch
+        "FilsingerPforte.ini" anstelle von "gateF.ini".
+ * Neu: nur Vermutung: gleichzeitiges Laden/Speichern des selben Clients
+        könnte in einem gerouteten Netz ein Problem sein. Jetzt verhindert -
+        ABER: konkrete Ursache noch nicht gefunden.
+ * Neu: Wegen wiederholtem Datenverlust werden jetzt Sicherungen der Liste.ini
+        im Verzeichnis .\Liste Sicherungen angelegt. Die aktuelle TRN wird
+        als Dateinamen-Fragment verwendet.
+
+        INFO
+        ====
+
+        Die Erweiterung wurde zur Fehlerdiagnose programmiert. Aber jetzt
+        kann auch IMMER die Liste.ini wiederhergestellt werden: Vorgehens-
+        weise: In K:\Pforte\Liste Sicherungen enstehen die Abbilder der
+        einzelnen Liste.ini während gewisser Besuchs Transaktionen. Sortiert
+        nach Datum/Uhrzeit kann solange zurückgegangen werden bis eine Liste.ini
+        gefunden wird, die noch Daten enthält.
+        Die Namen vergabe erfolgt folgendermaßen:
+        Liste <Letzte Besuchs TRN>-<Subtransaktion>.ini
+
+        * Dies dient auch für mich zur Diagnose: Ich kann (hoffentlich) auch sehen
+          welche Pforte den Fehler verursacht und warum!
+        * In der Rev. 2.000 werden ich ein echtes Transaktions-System verwenden,
+          das Schritt für Schritt wieder auf STABILEN Daten zurückgreifen kann
+          sollte ein Problem auftreten.
+        * Die Diagnose der "Org Liste.ini" von Herrn Diefenbacher ergab eine Datei
+          - doppelt so gross wie eine normale Liste.ini ?! - gefüllt mit lauter
+          "Nullen" - mir völlig unbekannte Fehlervariante geschrotteter Dateien!
+          Frage an ev. Freak aus Netzwerk-Team: Sind "genullte" Dateien typisch
+          für Netzwerk-Probleme?!
+
+Rev 1.041 (04.05.00-10.05.00) Andreas Filsinger
+
+ * Bug: gelber "Auf Wiedersehen" - Dialog: Bei Zwischen-
+        zeitlicher Änderung des Listenaufbaues wurde
+        unter Umständen der falsche ausgebucht. Jetzt
+        wird sicher über die "Besuchs TAN" gebucht.
+ * Bug: Änderung der Besuchsdauer OHNE <Enter> zu drücken
+        wurden ignoriert.
+
+Rev 1.040 (25.04.00) Andreas Filsinger
+
+ * Bug: Tagesabschluss wurde mehrfach gestartet, nur
+        im Automatik-Modus! Dadurch Fehlermeldung
+        "historie.ini" kann nicht erstellt werden!
+ * Bug: Beenden durch <ESC> jetzt sicherer!
+
+ * Neu: Doppeltes Starten der Applikation verhindert!
+
+Rev 1.039 (24.03.00) Andreas Filsinger
+
+ * Neu: 2 Import-Tasten gesperrt
+ * Neu: Text auf den Mitarbeiter-Tasten verbessert
+
+Rev 1.038 (23.03.00) Andreas Filsinger
+
+ * Neu: Anwendung hat jetzt den Namen "gate F"
+
+Rev 1.037 (09.03.00-13.03.00) Andreas Filsinger
+
+ * Bug: T5,6,... war nicht mehr möglich
+ * Bug: kein Drucker -> Programm-Start war nicht möglich!
+
+ * Neu: 5 Sprachvarianten laut Abnahme-Protokoll
+        -> 3) 5 Sprachvarianten
+
+       Nach Verfügbarkeit der 5 Sprachdateien wird
+       eine entsprechende Revision für das Besucherterminal
+       sowie der Werkschutzanwendung ausgeliefert.
+
+  - (beim drucken) Sprachanpassung von Text außerhalb des
+    Hinweistextes in der gewählten Landessprache.
+    Im Rahmen der Sprachanpassungen 5 Sprachen de,us,es,po,fr
+    englisch / deutsch Sprachvarianten auf alle Texte des Ausdruckes
+    erweitern.
+
+Rev 1.036 (02.03.00) Andreas Filsinger
+
+ * Bug: langer "Name" auf Ausdruck, ggf. zu groß
+        jetzt automatische Verkleinerung, bis er passt.
+        nur auf Kärtchen und Besucher-Schein.
+
+Rev 1.035 (01.03.00) Andreas Filsinger
+
+ * Bug: "§" Paragraf ist als Zeichen OK
+ * Bug: Fehlermeldung "illegal Char "?""! jetzt komplett weg, Zeichen
+        werden durch die Suchmaschine nun ignoriert.
+ * Bug: "Tor 5" hatte "wer ist aktiv-Info" verhindert, jetzt auch "T5"
+        wieder ohne Probleme möglich!
+        Angezeigt wird jedoch nur Tor 1..4!
+ * Bug: "-5:-2" oder so war in der Besuchdauer-Anzeige!
+ * Bug: "negative" Besuchsdauer war möglich
+ * Bug: bei der Besuchsplanung, danach "jetzt eingetroffen" war die Besuchs-
+        dauer nicht auf die obligatorischen 10 min eingestellt.
+ ---
+ * Neu: Es ist jetzt leichter einen Besuch zu wiederholen: Dazu kann im
+        Historie-Bereich "Besuch ->aktuell" oder "Besuch ->Planung" ange-
+        wählt werden!
+ * Neu: Ausdruck der Handy-Nummer rechtsbündig (falls vorhanden!)
+ * Neu: Ausdruck der "Mitgebrachten Gegenstände : " (falls vorhanden!)
+ * Neu: <ENTER> im Feld "parkschein" geht auf das Feld "Besuchername"
+        bisher: ohne Funktion.
+ * Neu: "KFZ" <ALT> & <K> springt in das richtige Eingabefeld
+
+Rev 1.034 (24.02.00) Andreas Filsinger
+
+ * Bug: Eingabe von ";" im Willkommen Dialog unterdrückt,
+        das mag das System gar nicht!
+ * Info: KFZ-Kennzeichen sind laut STVZO in der Gesamtbuchstabenanzahl
+         minimal 2 stellig, maximal 5 stellig und in den Ziffern maximal
+         4 stellig. also
+         x-x-x .. xxx-xx-xxxx (und alles dazwischen!)
+         Ausnahme: Behörden-KFZ
+         ausländische Kennzeichen sind nicht in eine Form pressbar.
+         Ich empfehle die Eingabe von Leerschritten.
+         KA TA 2873
+         Eine Maske könnte schwierig werden, gibts da noch konkretere
+         Vorschläge?!
+ * Bug: "*", "_" jetzt bei der Eingabe erlaubt!
+ * Bug: "US" / "DE" wurd nicht vom Infoterminal "Besucher" übernommen.
+ * Neu: Doppelpfeile (>>) im Ausdruck sind nun weg!
+ * Neu: Text nun "Rückgabe bei Besuchsende an der"
+
+Rev 1.033 (18.02.00) Andreas Filsinger
+
+ Bug: Fehlermeldung beim Check, welche Pforten
+      aktiv sind!
+
+Rev 1.032 (16.02.00) Andreas Filsinger
+
+ Bug: (intern) im Tagesabschluss.
+ Bug: (intern) in der Besucherpflege <ALT> & <B>.
+
+Rev 1.031 (16.02.00) Andreas Filsinger
+
+ * Neu: F4, Mitarbeiter jetzt auch zum nachschlagen mit der
+        bekannten Suchmaschine. Das ist eine
+        Telefon-Buch Anwendung für jede Pforte!!
+ * Neu: Import aus "mitarbeiter.csv" jetzt möglich
+        Bitte diese Datei im excel mit "speichern unter" ->
+        "csv mit Trennzeichen" in das Verzeichnis K:\pforte\
+        ablegen. <ALT> & <S> in der Anwendung, nach "Mitarbeiter
+        CSV" danach Anwendung neu starten.
+
+Rev 1.030 (11.02.00-14.02.00) Andreas Filsinger
+
+ * Bug: "Neu (Planung)" im PopUp-Menü hatte nicht
+        so funktioniert wie erwartet.
+ * Bug: Eingabe "90min", "20h", "120min" hatte nicht
+        funktioniert.
+
+ * Neu: [Diefenbacher] Anzeige im oberen Bereich des
+        Bildschirmes, welche Pforten im Moment "laufen".
+        Aktualisierung nur alle 20 sec. da Laufzeit-
+        kritisch.
+ * Neu: [Diefenbacher] "stop.txt" wird jetzt von der
+        Applikation selbst beim ersten Start gelöscht.
+        Das bedeutet eine Vereinfachung bei der
+        Update-Installation: Stop.txt braucht nur
+        angelegt werden. Nicht mehr gelöscht.
+ * Neu: [Liebgott] Herr/Frau kommt jetzt auch aus der
+        Besucher-Datenbank. Bei Neuanlagen landet man
+        jetzt direkt im Feld "Besucher" suchen. Anrede
+        kann offen bleiben (=Herr). Mit <ALT> & <R> direkt
+        anspringbar, wenn man den Datensatz aus der Datenbank
+        geholt hat - und Herr oder Frau noch fehlt.
+ * Neu: <ALT> & <B> "Besucher-Daten ändern" jetzt aktiviert.
+        Buchungsaktionen werden durchgeführt. Es können nun
+        Löschungen / Änderungen am Besucher-Stamm vorgenommen
+        werden!
+ * Neu: Nach <Entf> wird der Listencursor nicht mehr auf den
+        ersten Besucher des Tages gesetzt. Er bleibt einfach
+        da stehen, wo er war.
+
+Rev 1.029 (11.02.00) Andreas Filsinger
+
+ * Bug: der Text "<nicht gefunden>" bei Besuchern hatte
+        in der letzten Spalte noch das Tor angezeigt.
+
+ * Neu: Tagesabschluss
+   ===================
+   * erstellt Sicherung "Sicherung 100*.zip"
+   * bucht "alte" Historie-Einträge aus
+   * bucht Besucher in die Suchmaschine
+   * Historie enthält dann nur noch den aktuellen Tag plus
+     gestrigen Tag - alle anderen Tage müssen über die
+     Recherche-Funktion ermittelt werden.
+   * Besuchsdaten werden mit der Besucher-DB abgeglichen!
+   * automatische Ausführung über Parameter
+     TagesAbschluss=02:00
+     in den SystemParameter in der Rubrik [<RechnerName>].
+
+   Q:keine Durchführung ist: kein Problem, kann nachgeholt werden
+   Q:mehrfache Durchführung ist: kein Problem, es passiert beim 2. Mal nix
+   Q:Durchführung während andere Pforten arbeiten: kein Problem
+   Q:Durchführung an Pforten<>T3: kein Problem
+
+Rev 1.028 (10.02.00) Andreas Filsinger
+
+ Bug: (nur intern) memory-leak bei jeder Neuanlage.
+ Bug: Vor Neuaufruf F1 / F2, muss Eingabefeld ge-
+      löscht werden.
+
+ Neu: Bei "F2 Suchen" kann jetzt einfach durch Eingabe von
+      t3, t1, t2, oder t4 die suche auf das jeweilige Tor
+      beschränkt werden. Auch kombinationen sind möglich!
+ Neu: Bei "F2 Suchen" kann jetzt auch nach den Werkschutz-
+      mitarbeiterkürzlen suchen! Eingabe z.B.
+      T3 lieb
+ Neu: "F1 Auskunft" ist wie "F2" jedoch ist auch die
+      Historie mit drin!
+ Neu: Die Datei "stop.txt" (Inhalt gleichgültig, einfach
+      nur da sein muss sie) stoppt die Anwendung.
+      Funktion wichtig für Admin, aber nicht vergessen
+      diese nach getaner Arbeiter wieder zu löschen!
+
+ --- im Zusammenhang mit den Unterschriften am T4:
+
+ Neu: Ganz bewustes Zurücksetzten der Unterschrift
+      auf "leer". Bei einer Neuanlage. Reine Vorsichtsmassnahme
+      keinen bekannten Einfluss auf Funktion.
+ Neu: Speicherung einer Unterschrift durch andere Tore
+      ausser T3 wird verhindert! Reine Vorsichtsmassnahme
+      keinen bekannten Einfluss auf Funktion.
+
+Rev 1.027 (08.02.00) Andreas Filsinger
+
+ Bug: Wenn der Listencursor ganz unten steht, dann
+      ist der "Auf-Wiedersehen" Dialog nicht sichtbar!
+      Dialog jetzt oben oder unten, dabei wird die Zeile,
+      die bearbeitet wird durch gelbe Farbe markiert, damit
+      man weiss, wenn man entlässt.
+ Bug: Bei Eingabe durch ein anderes Tor wurde einfach
+      der Listencursor ganz an den Anfang des Tages
+      hingesetzt!
+ Bug: Bei nachträglichem Drucken wird die aktuelle
+      Unterschrift gedruckt. (bisher Vermischung von
+      anderen Daten mit aktueller Unterschrift).
+ Bug: Wenn man in der Besuchsplanung nur den Besuchstag
+      im Kalender angeklickt hat, ohne eine Besuchsdauer
+      einzugeben, so wurde das Besuchsende-Datum nicht
+      gesetzt.
+
+ Neu: Unterschrift jetzt auch auf dem Willkommen-
+      Dialog sichtbar!
+ Neu: elektronische Unterschrift kann jetzt auch
+      nachträglich gedruckt werden.
+ Neu: elektronische Unterschrift kann von jedem
+      beliebigen Tor gedruckt werden.
+ Neu: auf dem System-Fenster ist jetzt der
+      Programm-Revision-Stand sichtbar.
+ Neu: Speicherinfo auf der <F2> Suche jetzt weg.
+
+Rev 1.026 (07.02.00) Andreas Filsinger
+
+ Bug: "Besuch wiederholen": es wurde keine NEUE TAN
+      vergeben. Es wurde nicht gespeichert.
+ Bug: In den Besucher-Listen war Multi-Row Select möglich.
+ Bug: TAB Reihenfolge "Willkommen", diverse holperer
+ Bug: Historie-PopUp "ändern" beachtete Position nicht
+
+ Neu: wegen unzuverlässigen "Mitarbeiter"-Datenbank, kann jetzt für
+      "nicht vorhandene" Mitarbeiter die Datei
+      "Mitarbeiter zusätzlich.txt" gepfelgt werden, diese wird zum
+      importierten Bestand hinzuaddiert.
+      Im Rahmen des Import-Laufes.
+ Neu: 8 neue <ALT> Keys im "Willkommen" Dialog
+ Neu    : diverse Detail-Änderungen im "Willkommen-Dialog"
+          - Auswahl von besuchter Mitarbeiter funktioniert nicht ordnungsgemäß
+          einfaches Anklicken hat keine Funktion,
+          Doppeltes Anklicken -> Eintragung erfolgt
+          <ENTER> -> Eintragung erfolgt
+ Neu 12 : Click, ENTER und Doppelklick inerhalb der Suchtabellen wird
+          berücksichtigt (bisher gar nicht!)
+ Neu 08 : Wenn Eingabe-Focus auf der (den) Liste(n) ist, soll <ENTER> auch
+          nach unten blättern.
+ Neu (intern): Speichernutzung der Anwendung steht auf der System-Parameter
+               Seite. (<ALT> <S>).
+ Neu (intern): debug Info "edit.txt" jetzt nicht mehr notwendig               
+ Neu: entsprechende Erweiterungen auf dem System-Parameter-Anwendungsschirm.
+ Neu: "Löschen" im PopUp von "normaler" Benutzer entfernt
+
+Rev 1.025 (05.02.00-06.02.00) Andreas Filsinger
+
+ Bug: Meldung "Datensatz wurde nicht geändert" fliegt raus!!!
+ Bug: Besuch über 0 Uhr nachts hinweg!! Mal komplett durchspielen ...
+      Entlass um z.B. 1:20 Uhr, in dem Zusammenhang gemachte Verbesserungen:
+      * Entlasstag war nicht nächster Tag
+      * Besuchsdauer war falsch berechnet
+      * Männchen war rot
+      * Wenn mehr als 1 Tag überfällig
+      * Restzeit, wenn Besuch über Tages-Grenze hinweg
+
+ Neu 05: Suchfunktion in der "Besuchs-Liste", Wenn es mal sehr - sehr
+         viele Besucher gibt!! -> <ALT> - W / <F2> und man muss jemand
+         ausbuchen - findet ihn aber so auf anhieb in der Liste nicht.
+ Neu: Neues Outfit von Besuch am, um , ende, und Besuchvorgangs-Nummer!
+      Anregung Frau Liebgott.
+ Neu: Bei "Auf Wiedersehen" läuft jetzt die Uhr mit!
+ Neu: Ausgangs-Datum ist jetzt auch abänderbar (wenn jemand 23:59) das
+      Haus wirklich verlassen hat es ist aber schon 1:20.
+ Neu 02: "Grund des Besuches" in den Besucher-Datensatz
+         mit abspeichern, bei der Übernahme als ersten Eintrag
+         in die Combo-Box "Grund des Besuches" eintragen.
+ Neu 10: Besucher-Datenbank soll pflegbar sein
+ Neu 09: Feld "Bemerkung" ist pflegbar bei Besucher wird aber weiterhin nicht
+         in den Besuchsvorgang übernommen.
+         Also es muss möglich sein:
+
+         Änderung
+         Neuanlage (auch Serien Neuanlage!),
+         Löschung
+
+         ";" ist nicht erlaubt als Eingabe. Verbuchung ist imens
+         kompliziert, da Daten aus 3 Quellen stammen! *
+         'Änderungen immer und immer wieder durchführen?!' *
+         Buchung erst im Tages-Abschluss möglich.
+
+Rev 1.024 (01.02.00-04.02.00) Andreas Filsinger
+
+ Neu 03: Noch einen Moment suchen, wo Unterschrift gelöscht werden kann
+         Überlegen was passiert wenn keine Unterschrift da ist!
+ Neu 04:  Verschiedene Unterschriften zum Abruf anbieten
+         -> bzw. Idee: das eigentliche Problem ist: Wird beim
+            Besucherterminal mit den Namens-Eingabe NEU begonnen,
+            so können die Felder "FIRMA", "HANDY", "UNTESCHR" auf
+            der Werkschutzseite gelöscht, bzw. in die "Vorgänger"-
+            Seite übertragen werden. -> auch neue Besucherterminal
+            Revision!
+   - beim Anlegen eines neuen Besuchers wird die Handynummer von dem
+     vorhergehenden Besucher nicht gelöscht
+ Neu 07: automatische Wandlung in Großbuchstaben, wenn
+         Werkschutzmitarbeiter-Kürzel eingegeben wird.
+         lieb <ENTER> -> LIEB
+ Neu 01: Text "Besucher" auf dem Ausweiss mit ausdrucken
+         etwas kleiner wie "Parkschein"
+ Bug 11: "DE" - Vorgabe auch bei der Eingabe von aktuellen Besuchern
+           dieser Fehler ist nur bei der "Besuchsplanung"
+           siehe auch Info13!
+         - beim Anlegen eines neuen Besuchers sollte die Option Nation mit dem Wert
+           DE vorbelegt sein (in der Besuchsanlage ist es jetzt schon so, ev. wurden
+           nur geplante Besuche angelegt.
+ Neu 18: Text nun "gültig bis 03.02.2000 14:00", Text:
+         "gültig bis 03.02.2000 um 14:00 h" ändern in
+         "gültig bis 03.02.2000 14:00"
+         (2 blanks zwischen Datum und Uhrzeit!)
+ Neu 14: Warmup-Funktion bei Taste "Einfg"
+         - Drucker geht beim Anlegen eines neuen Besuchers nicht in den Onlinemodus,
+           erst beim Anstoß eines Druckes
+         [Warm-Up-Funktion des Drucker benutzen (geschickt z.B. im Moment des
+          Unterschreibens)]
+ Neu: Drucken: Text "Pforte Ausgang" jetzt entfernt
+ Bug: unnötiger Warnton, wenn das Besucherterminal-Info Fenster verlassen wurde.
+ Bug: Socket-Pakete mit "0" Daten (Command only) wurden
+      nicht richtig verarbeitet.
+ Bug: "leere" Unterschriften wurden nicht richtig verarbeitet
+
+Rev 1.023 (31.01.00-01.02.00) Andreas Filsinger
+
+ * Bug: geänderte Entlasszeit wurde NICHT berücksichtigt!
+ * Bug: "noch 10 min" -> "Speichern" & "Anzahl" neu setzen!!!
+ * Bug: "Ändern" ohne Funktion in der Besuchsplanung!
+ * Bug: "Löschen" ohne Funktion in der Besuchsplanung!
+ * Bug: "Neu" ohne Funktion in der Besuchsplanung!
+ * Bug: auf dem Kalender ist immer der 12.01.00 angezeigt,
+        vor dem öffnen des Dialoges sollte das der Tag des
+        Besuchbeginnes sein.
+ * Neu: Standard des Eingabe-Bildschirm soll "OK" sein!
+ * Neu: Doppel-Klick auf Listeneintrag wirkt wie <ENTER>
+ * Neu: Besuchsende 2 Schriftgrade größer
+
+Rev 1.022 (27.01.00) Andreas Filsinger
+
+ * Neu: F3-drucken, in der Liste wird der markierte Datensatz
+ * Neu: Parkschein wird nicht gedruckt, wenn "Parkschein" nicht angekreuzt.
+ * Neu: Anrede, echtes neues Feld (wird abgespeichert)
+ * Neu: nur noch Anrede "Herr", "Frau", "Gruppe".
+ * Neu: "KFZ" in der Anrede raus -> Steuerung des "Personen-Symbols" jetzt
+        über "Anrede" und "Parkschein".
+ * Neu: der zuletzt eingeloggte Werkschutzmitarbeiter wird wieder beim nächsten
+        Applikations-Start geladen.
+ * Bug: Nach einer Neuanlage war der Cursor auf einem anderen Datensatz (nicht
+        auf dem neu angelegten)
+
+Rev 1.021 (26.01.00-27.01.00) Andreas Filsinger
+
+ * Neu: Schreibhilfe aus Combo-Box bei Feld "Mitgebrachte Gegenstände"
+ * Neu: Unterschrift BMP wird gespeichert
+ * Neu: Mitarbeiter-Import aus SiPort jetzt mit Abteilung + Telefon
+ * Neu: diverse System-Parameter sind jetzt änderbar
+ * Bug: TAB-Reihenfolge im Willkommen verändert
+ * Bug: ENTER-Reihenfolge im Willkommen verändert
+
+Rev 1.020 (24.01.00-25.01.00) Andreas Filsinger
+
+ * Neu: "Diefenbacher" - Import von "Böhm.csv" und "Fahrzg.csv"
+ * Neu: Mitarbeiter "DB" - suche via "Name"
+ * Neu: Besucher "DB" - suche via "FirmenName", "Name", "KFZ"
+
+Rev 1.019 (17.01.00) Andreas Filsinger
+
+ Neu: Übernahme der Infoterminal-Daten in eine Neuanlage
+ Neu: Ankreuzmöglichkeit "automatische Übernahme aus Infoterminal"
+ Neu: Eingabedialog: 3 Titel, je nach Kontext
+ Neu: auf der Bildschirmliste jetzt die Besuchsdauer
+
+ Thema Drucken
+ =============
+
+ * Bug: Druckdaten auch auf dem KFZ-Schein ausdrucken.
+ * Neu: Besuchs-Vorgangs-ID mit ausdrucken.
+        "ID-"+nummer+"-"+Werkschutzmitarbeiterkürzel
+ * Neu: US und DE Texte der "Besucher Hinweise".
+ * Neu: Inhaltliche Überschriften mitdrucken.
+ * Neu: Auf Wunsch keine Rahmen mehr drucken.
+ * Neu: Auf Wunsch keine Logo-Positionen mehr.
+ * Neu: Zur Orientierung des Besuchers: Angabe der Eingangspforte
+
+Rev 1.018 (13.01.00-16.01.00) Andreas Filsinger
+
+ * Funktion "Besuch eingetroffen" aktiviert, Änderungsfunktion des Datensatzes
+   auf Eingangs-Pforte und Ausgangs-Pforte.
+ * Bug: neues Feld "Handy" wurde nicht abgespeichert
+ * Bug: wenn nur Historie -> alle Besucher im Haus!!!
+ * Neu: 3 Anwendungsfarben des Eingabe-Dialogs - je nach Pforten-Status
+ * Neu: "Überschriften" in den Listen besser sichtbar!
+
+Rev 1.017 (10.01.00-12.01.00) Andreas Filsinger
+
+ * Neu: Straffung des Infoterminal-Dialoges (noch mehr machbar!!!)
+ * Neu: Willkommenform mit "nur" Anzeige Funktion "OK" ist dabei
+        disabled.
+ * Neu: Besuch wiederholen
+ * Neu: unterschiedliche Kontextmenüs für
+
+        Vergangenheit:
+        ==============
+
+        Neu: Besuch wiederholen -> Alle Besuchsdaten werden aus dem
+                                   alten Besuch übernommen.
+        Neu: Anzeigen -> Alle Besuchsdaten werden angezeigt.
+        Neu: drucken -> Ausgabe der Besuchsdaten auf das Formular.
+
+        Gegenwart:
+        ==========
+
+        Zukunft:
+        ========
+
+        Neu: drucken -> Ausgabe der Besuchsdaten auf das Formular.
+ * Bug: wenn Liste leer
+ * Bug: wenn Liste leer, Taste einfügen:
+        wenn der Cursor auf der Besuchsplanung steht -> Planung
+        wenn der Cursor auf "im Haus"  steht -> Planung
+ * Bug: Nach Einfügen wurde nicht abgespeichert
+ * Bug: 12h hatte nicht funktioniert
+ * Besuchsdauer: Eingabe von "12 h" soll möglich sein
+ * Neu: Besucher über "00:00" Uhr hinweg
+ * Bug: keine Daten -> Liste unterschreitet das Minimum
+
+Rev 1.016 (22.12.99) Andreas Filsinger
+
+ * Neu: WS aus gemeinsamen Pool
+        Gemeinsamer POOL für alle WS - Kurzbezeichnungen
+ * Neu: Titel in der Listenanzeige "Besucher aktuell im Werk"
+ * Neu: Titel in der Listenanzeige "Besuchs Planung"
+ * Neu: Casino-Flag demarkiert
+ * Neu: Im Feld Besuchsgrund wird eine Schreibhilfe eingefügt,
+        ("Besprechung", "Anlieferung", "Installation", "Montage" ...)
+        aus Datei "Besuchsgründe.ini"
+ * Bug: Absturz, wenn Listen-Index = 0
+ * Bug: Wenn Historie leer ist
+ * Bug: Wenn "Im Haus" leer ist
+

@@ -1,0 +1,29 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Rabatt Info Blatt
+//
+//  (c)'03 Andreas Filsinger
+//
+//
+
+select
+ A.NAME1,
+ P.VORNAME,
+ P.NACHNAME,
+ R.CODE,
+ R.RABATT
+from
+ rabatt R
+join
+ person P
+on
+ R.person_r=P.RID
+join
+ anschrift A
+on
+ P.PRIV_ANSCHRIFT_R=A.RID
+where
+ R.CODE is not NULL
+ORDER by
+ A.NAME1, R.CODE

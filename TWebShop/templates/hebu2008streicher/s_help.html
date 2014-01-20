@@ -1,0 +1,20 @@
+﻿~OBJ_MESSAGELIST~~OBJ_ERRORLIST~
+<p class="title">
+<!-- BEGIN IMAGE
+SRC=~CONST___TEMPLATE_IMAGES_PATH~icon_help.png
+ALT=~CONST_WORD_SETTINGS~
+STYLE=vertical-align:middle; margin-right:15px;
+-->IMAGE: icon_help.png<!-- END IMAGE -->
+~CONST_WORD_HELP~
+</p>
+<p class="text" id="justify">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/help-instructions.txt
+-->TEXT: help-instructions.txt<!-- END TEXT -->
+</p>
+<form action="~CONST___INDEX~" method="post">
+ <textarea style="height:300px;" name="f_help_request">~VAR_F_HELP_REQUEST~</textarea>
+ <input type="hidden" name="action" value="send_help_request"><br /><br />
+ <input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+ <input type="submit" class="button" value="~CONST_WORD_SEND~">
+</form>

@@ -1,0 +1,28 @@
+--
+--  O L A P  - Definitions Datei
+--
+-- Stempel Auswahl über die Person
+-- das Statement sollte 1,2,3,4 liefern, also den RID des zu
+-- verwendeten Stemples.
+-- "0" dient als Default und verwendet dann GEN_RECHNUNG!
+--  
+
+$BELEG_R=19473
+
+select
+(
+--- Bedingung
+coalesce( (select 1 from BELEG where 
+    (RID=$BELEG_R) and
+    (VORLAGE_PREFIX='Apo-') 
+    ),0)  
+---
+)
+as STEMPEL_R
+from
+rdb$$database
+
+excel
+
+open
+- 

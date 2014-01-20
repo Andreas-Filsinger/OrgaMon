@@ -1,0 +1,25 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Lagerbelegung eines gewissen Verlages
+//
+//  (c)'04 Andreas Filsinger
+//
+
+select A.RID,
+       A.NUMERO,
+       A.TITEL,
+       L.NAME,
+       L.FREIGABE,
+       max(W.AUFTRITT)
+from artikel A
+left join lager L on
+ A.LAGER_R=L.RID
+left join warenbewegung W on
+ A.RID=W.ARTIKEL_R
+where
+ ((A.mindestbestand is null) or (A.mindestbestand=0)) AND
+ ((A.menge is null) or (A.menge=0)) AND
+ (A.LAGER_R IS NOT NULL)
+group by
+ A.RID,A.NUMERO,A.TITEL,L.NAME,L.FREIGABE

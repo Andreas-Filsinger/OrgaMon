@@ -1,0 +1,53 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Artikel - Infos - Kategorisiert
+//
+//  (c)'05 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select
+ 'K' || GATTUNG.CODE,
+ GATTUNG.BEZEICHNUNG,
+ ARTIKEL.RID ARTIKEL_R,
+ ARTIKEL.KOMPONIST_R,
+ ARTIKEL.ARRANGEUR_R,
+ Artikel.Titel,
+ Land.Iso_Kurzzeichen, -- bezogen auf Artikel.Land_R
+ Artikel.Schwer_Gruppe,
+ Sortiment.Bezeichnung,  -- bezogen auf Artikel.Sortiment_R
+ Artikel.Numero,
+ Person.Suchbegriff, -- bezogen auf Artikel.Verlag_R
+ Artikel.Dauer,
+ (select TITEL from ARTIKEL where RID=ARTIKEL_MITGLIED.MASTER_R) as CD
+from
+ ARTIKEL_GATTUNG
+join GATTUNG on
+ ARTIKEL_GATTUNG.GATTUNG_R=GATTUNG.RID
+join ARTIKEL on
+ ARTIKEL_GATTUNG.ARTIKEL_R=ARTIKEL.RID
+join SORTIMENT on
+ ARTIKEL.SORTIMENT_R=SORTIMENT.RID
+join LAND on
+ ARTIKEL.LAND_R=LAND.RID
+join PERSON on
+ ARTIKEL.VERLAG_R=PERSON.RID
+left join ARTIKEL_MITGLIED on
+ (ARTIKEL.RID=ARTIKEL_MITGLIED.ARTIKEL_R) and
+ (ARTIKEL_MITGLIED.CONTEXT_R=2) 
+where 
+ ((Artikel.komponist_r=30) or (Artikel.Arrangeur_R=30))
+order by
+ GATTUNG.CODE,Artikel.Titel       
+
+complete
+
+Preis(ARTIKEL_R) PREIS
+Lieferzeit(ARTIKEL_R) LIEFERZEIT
+Komponist(KOMPONIST_R) KOMPONIST
+Arrangeur(ARRANGEUR_R) ARRANGEUR
+Bemerkung(ARTIKEL_R) BEMERKUNG
+Kategorie(BEZEICHNUNG) UEBERSCHRIFT
+-

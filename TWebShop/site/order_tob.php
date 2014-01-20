@@ -1,0 +1,8 @@
+﻿<?php
+
+if ($site->isActive()) 
+{   
+  
+}
+
+?>

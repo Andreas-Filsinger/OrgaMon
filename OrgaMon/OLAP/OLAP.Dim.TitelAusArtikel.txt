@@ -1,0 +1,6 @@
+select 
+ TITEL
+from 
+ ARTIKEL
+where
+ (RID=$RID)

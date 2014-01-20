@@ -1,0 +1,13 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Geo Lokalisierte Baustellen
+--
+--  (c)'05 Andreas Filsinger
+--
+
+select
+ kuerzel from baustelle
+where
+ RID in (select BAUSTELLE_R from AUFTRAG where POSTLEITZAHL_R IS NOT NULL)
+

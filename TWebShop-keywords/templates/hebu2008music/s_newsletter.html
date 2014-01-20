@@ -1,0 +1,69 @@
+<p class="title">~CONST_SENTENCE_ORDER_OUR_NEWSLETTER~</p>
+<!-- BEGIN PARAMS
+title=~CONST_WORD_NEWSLETTER~
+--><!-- END PARAMS -->
+~OBJ_MESSAGELIST~~OBJ_ERRORLIST~
+<p class="text" id="justify">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/newsletter-info.txt
+-->TEXT: newsletter-info.txt<!-- END TEXT -->
+</p>
+<div class="content_half_left">
+<form action="~CONST___INDEX~" method="post">
+<input type="hidden" name="action" value="newsletter_signon" />
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~" />
+<p class="subtitle">~CONST_WORD_SIGNON~</p>
+<p>
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/newsletter-signon-instruction.txt
+-->TEXT: newsletter-signon-instruction.txt<!-- END TEXT -->
+</p>
+<table class="form" cellspacing="0">
+  <tr>
+    <td id="first_col"><p class="fieldtitle">~CONST_WORD_EMAIL~&nbsp;<strong>*</strong></p>
+      <input type="text" name="f_user" size="15" value="~VAR_F_USER~" />
+	</td>
+  </tr>
+  <tr>
+    <td id="first_col"><p class="fieldtitle">~CONST_WORD_FIRSTNAME~</p>
+      <input type="text" name="f_firstname" size="15" value="~VAR_F_FIRSTNAME~" />
+	</td>
+  </tr>
+  <tr>
+    <td id="first_col"><p class="fieldtitle">~CONST_WORD_SURNAME~</p>
+	  <input type="text" name="f_surname" size="15" value="~VAR_F_SURNAME~" />
+	</td>
+  </tr>
+  <tr>
+    <td id="first_col">
+	  <input type="submit" class="buttonaslink" style="float:right" value="~CONST_WORD_SIGNON~" />
+	</td>
+  </tr>
+</table>
+</form>
+</div>
+<div class="content_half_right">
+<form action="~CONST___INDEX~" method="post">
+<input type="hidden" name="action" value="newsletter_signout" />
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~" />
+<p class="subtitle">~CONST_WORD_SIGNOUT~</p>
+<p>
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/newsletter-signout-instruction.txt
+-->TEXT: newsletter-signout-instruction.txt<!-- END TEXT -->
+</p>
+  <table class="form" cellspacing="0">
+  <tr>
+    <td id="first_col"><p class="fieldtitle">~CONST_WORD_EMAIL~&nbsp;<strong>*</strong></p>
+      <input type="text" name="f_user" size="15" value="~VAR_F_USER~" />
+	</td>
+  </tr>
+  <tr>
+    <td id="first_col">
+	  <input type="submit" class="buttonaslink" style="float:right" value="~CONST_WORD_SIGNOUT~" />
+	</td>
+  </tr>
+</table>
+</form>
+</div>
+<div class="clear"></div>

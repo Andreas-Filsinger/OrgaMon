@@ -1,0 +1,35 @@
+POSTSCRIPT WIN32
+LPT1:
+
+
+
+
+
+
+
+
+
+60:LQ 10 CPI
+60:LQ 10 CPI fett
+85:Mini Mini
+60:LQ 12 CPI fett
+60:Proportional
+60:Proportional fett
+60:LQ breit
+110:LQ Mini
+60:Schnell Schrift
+60:LQ gro·
+'0':Linker Rand 0,0 cm
+'59':Linker Rand 0,5 cm
+'118':linker Rand 1,0 cm
+'177':Linker Rand 1,5 cm
+'236':Linker Rand 2,0 cm
+'295':Linker Rand 2,5 cm
+'472':Linker Rand 4,0 cm
+'100':1mm vor
+'400':5mm vor
+'100':1mm zurÅck
+'400':5mm zurÅck
+'240'
+'75'
+'75'

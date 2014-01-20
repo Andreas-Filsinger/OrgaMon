@@ -1,0 +1,17 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Unplausible Mahnstufe, Mahndaten
+//
+//  (c)'04 Andreas Filsinger
+//
+//
+
+select rid,mahnstufe,mahnung1,mahnung2,mahnung3 from beleg where
+ ( (mahnung3 is not null) and ( (mahnung2 is null) or (mahnung1 is null) )) or
+ ( (mahnung2 is not null) and (mahnung1 is null) ) or
+ ( (mahnstufe is null) and ( (mahnung1 is not null) or (mahnung2 is not null) or (mahnung3 is not null) ) ) OR
+ ( (mahnstufe is not null) and (mahnung1 is null) and (mahnung2 is null) and (mahnung3 is null) ) or
+ ( (mahnstufe<>1) and (mahnung1 is not null) and (mahnung2 is null) and (mahnung3 is null) ) or
+ ( (mahnstufe<>2) and (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is null) ) or
+ ( (mahnstufe<3) and (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is not null) )

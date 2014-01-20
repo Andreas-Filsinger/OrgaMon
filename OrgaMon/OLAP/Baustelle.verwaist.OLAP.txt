@@ -1,0 +1,10 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Baustellen, die keine Termine mehr haben!
+--
+
+select
+ Nummern_prefix,name from baustelle where
+ rid not in (select baustelle_r from auftrag)
+

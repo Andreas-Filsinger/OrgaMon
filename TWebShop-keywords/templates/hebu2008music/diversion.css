@@ -1,0 +1,81 @@
+body
+{ background:#FFF url('./images/back_header.png') no-repeat 0px 10px;
+}
+
+a, input.buttonaslink, p.title, p.subtitle, p.righttitle, p.steptitle, p.fieldtitle
+{ color:#005E8E;
+}
+
+input:focus, textarea:focus, select:focus
+{ border-color:#005E8E;
+}
+
+
+/* 2.1.1 Links */
+a#header1
+{ background:#004469;
+}
+
+a#header1:hover
+{ background:#006489;
+}
+
+a#header2
+{ background:#AE794A;
+}
+
+a#header2:hover
+{ background:#CE996A;
+}
+
+a#header3
+{ background:#A1A730;
+}
+
+a#header3:hover
+{ background:#C1C750;
+}
+
+
+/* 4.2 HAUPTMENÜ-TITEL */
+div.mainmenuitem#mainmenutitle
+{ background:#FFF url('./images/back_mainmenu_title.png') right repeat-y;
+}
+
+
+/* 4.2 HAUPTMENÜ-EINTRÄGE */
+a#mainmenuitem:hover, a#mainmenuitem:active
+{ background:#3784AB;
+}
+
+
+/* ARTIKEL */
+div.article_header
+{ background:#619DBC; 
+}
+
+div.article_main_container
+{ background:right repeat-y url('./images/back_article.png');
+}
+
+
+/************/
+/* KALENDER */
+/************/
+.hebucal_cpYearNavigation,
+.hebucal_cpMonthNavigation,
+TD.hebucal_cpCurrentDate
+{ background-color:#004469;
+}
+  
+TD.hebucal_cpDayColumnHeader,
+TD.hebucal_cpTodayText,
+TD.hebucal_cpTodayTextDisabled,
+.hebucal_cpBorder
+{ border:#006489;
+}
+
+A.hebucal_cpTodayText,
+.hebucal_cpCurrentMonthDate
+{ color:#006489;
+}

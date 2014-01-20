@@ -1,0 +1,10 @@
+--
+
+
+
+select rid,user_id,vorname,nachname from person p where
+(user_id is not null) AND
+(user_id <> '') AND
+(user_id in (select USER_ID from person where
+ user_id=p.user_id and rid<>p.rid))
+

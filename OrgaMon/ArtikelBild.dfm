@@ -1,0 +1,108 @@
+object FormArtikelBild: TFormArtikelBild
+  Left = 0
+  Top = 0
+  Caption = 'Artikel - Medien'
+  ClientHeight = 371
+  ClientWidth = 550
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  DesignSize = (
+    550
+    371)
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 11
+    Width = 135
+    Height = 13
+    Caption = 'Download - Quelle (Sync.ini)'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 38
+    Width = 178
+    Height = 13
+    Caption = 'Bild Zielverzeichnis (Eingabe optional)'
+  end
+  object Edit1: TEdit
+    Left = 200
+    Top = 8
+    Width = 265
+    Height = 21
+    TabOrder = 0
+  end
+  object Memo1: TMemo
+    Left = 5
+    Top = 96
+    Width = 540
+    Height = 242
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Lines.Strings = (
+      '')
+    ScrollBars = ssVertical
+    TabOrder = 1
+  end
+  object Button1: TButton
+    Left = 472
+    Top = 344
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Abgleich'
+    TabOrder = 2
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 472
+    Top = 6
+    Width = 75
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Browse'
+    TabOrder = 3
+    OnClick = Button2Click
+  end
+  object Edit2: TEdit
+    Left = 200
+    Top = 35
+    Width = 265
+    Height = 21
+    TabOrder = 4
+  end
+  object CheckBox1: TCheckBox
+    Left = 8
+    Top = 62
+    Width = 233
+    Height = 17
+    Caption = 'Bilder mit anderer Dateigr'#246'sse ersetzen'
+    TabOrder = 5
+  end
+  object CheckBox2: TCheckBox
+    Left = 8
+    Top = 346
+    Width = 97
+    Height = 17
+    Caption = 'Abbruch'
+    TabOrder = 6
+  end
+  object ProgressBar1: TProgressBar
+    Left = 111
+    Top = 346
+    Width = 355
+    Height = 17
+    TabOrder = 7
+  end
+  object OpenTextFileDialog1: TOpenTextFileDialog
+    DefaultExt = 'ini'
+    Filter = 'Quelleinstellungen|*.ini'
+    Left = 61
+    Top = 96
+  end
+end

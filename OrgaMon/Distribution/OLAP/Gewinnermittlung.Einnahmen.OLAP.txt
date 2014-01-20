@@ -1,0 +1,40 @@
+--
+--  O L A P  -  Definitions Datei
+--
+--  Konto Saldo
+--
+
+$StartDatum='01.01.2006' -- erster Tag der Zeitspanne
+$EndeDatum='01.01.2007' -- erster Tag NACH der Zeitspanne
+
+select 
+ ' ' || B.NAME KONTO, 
+ I.KONTO BEZEICHNUNG,
+ sum(B.BETRAG) SALDO
+from
+ BUCH B
+left join
+ BUCH I
+on
+ (B.NAME=I.NAME) and
+ (I.BETRAG is null)  
+where
+ (B.DATUM>=$StartDatum) and 
+ (B.DATUM<$EndeDatum) and
+ (B.BETRAG>0)
+group by
+ B.NAME, I.KONTO 
+order by
+ B.NAME
+ 
+add
+
+Summe;;=SUMME
+-  
+ 
+excel
+
+SALDO=MONEY
+
+open
+- 

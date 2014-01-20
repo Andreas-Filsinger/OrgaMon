@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.867,C:\Users\Andreas\Documents\RAD Studio\Projekte\XE2\OrgaMon\Synedit-2.0.7\Packages\Synedit-XE2.groupproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\ProjectGroup1.groupproj</Transaction>
+  </Transactions>
+	<Default.Personality>
+		<Projects ActiveProject="C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\Synedit-2.0.7\Packages\SynEdit_D2009.dproj"/>
+	</Default.Personality>
+</BorlandProject>

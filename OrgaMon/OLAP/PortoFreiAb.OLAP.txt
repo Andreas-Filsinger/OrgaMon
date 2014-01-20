@@ -1,0 +1,45 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Portofrei ab x,xx € als SQL Statement formuliert
+--
+
+$PERSON_R=1224
+
+select
+--- Bedingung für 0,00 EURO
+ (
+  (CAST (0.0 as DOUBLE PRECISION)) * 
+  (coalesce( (select 1 from PERSON where A16='Y' and RID=$PERSON_R),0)) 
+ )
+  +
+--- Bedingung für 50,00 EURO
+ (
+  (CAST (50.0 as DOUBLE PRECISION)) * 
+  (coalesce( (select 1 from PERSON where A17='Y' and RID=$PERSON_R),0)) 
+ )
+  +
+--- Bedingung für 100,00 EURO (existente RIDs)
+ (
+  (CAST (100.0 as DOUBLE PRECISION)) * 
+  (coalesce( (select 1 from PERSON where 
+               (A16='N' or A16 is null) and 
+               (A17='N' or A17 is null) and
+               (RID=$PERSON_R)
+             ),0)) 
+ ) +
+--- Bedingung für 100,00 EURO (nicht existente RIDs)
+ (
+  (CAST (100.0 as DOUBLE PRECISION)) * 
+  (coalesce( (select 0 from PERSON where RID=$PERSON_R),1)) 
+ )
+---
+ as PORTOFREIAB
+from
+ rdb$$database
+ 
+excel
+
+open
+- 
+ 

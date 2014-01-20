@@ -1,0 +1,53 @@
+--
+--  O L A P  -  Definitions Datei
+--
+--  Konto Auszug
+--
+
+$Konto='8400' -- das Konto, das uns interessiert
+$StartDatum='01.01.2007' -- erster Tag der Zeitspanne
+$EndeDatum='01.02.2007' -- erster Tag NACH der Zeitspanne
+
+select 
+ B.NAME KONTO, 
+ cast(B.DATUM as date) DATUM,
+ B.BETRAG,
+ COALESCE(S1.BETRAG,0.0) SATZ1,
+ COALESCE(S2.BETRAG,0.0) SATZ2,
+ COALESCE(S3.BETRAG,0.0) SATZ3,
+ (B.BETRAG - COALESCE(S1.BETRAG,0.0) - COALESCE(S2.BETRAG,0.0) - COALESCE(S3.BETRAG,0.0)) NETTO
+from
+ BUCH B
+left join
+ BUCH S1
+on
+ (B.MASTER_R=S1.MASTER_R) and
+ (S1.NAME='SATZ1')
+left join
+ BUCH S2
+on
+ (B.MASTER_R=S2.MASTER_R) and
+ (S2.NAME='SATZ2')
+left join
+ BUCH S3
+on
+ (B.MASTER_R=S3.MASTER_R) and
+ (S3.NAME='SATZ3')
+where
+ (B.MASTER_R<>B.RID) and
+ (B.GEGENKONTO is null) and
+ (B.NAME=$Konto) and
+ (B.DATUM>=$StartDatum) and
+ (B.DATUM<$EndeDatum)
+order by
+ B.DATUM, B.POSNO 
+ 
+excel
+
+BETRAG=MONEY
+SATZ1=MONEY
+SATZ2=MONEY
+SATZ3=MONEY
+
+open
+- 

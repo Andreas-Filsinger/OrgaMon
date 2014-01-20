@@ -1,0 +1,56 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Personen die Artikel gewisser Kategorien in einem gewissen Zeitraum gekauft haben. Mit den
+//  Einschränkungen: 
+//
+//    * MAILING darf nicht deaktiviert sein
+//    * Der Kunde darf nicht gewisse Artikel schon gekauft haben (ArtikelAusschluss)
+//
+//  (c)'04 Andreas Filsinger
+//
+//  Bitte beachten:
+//
+//  * das Statement hat Laufzeiten bis zu 10 Minuten. Also bitte Gelduld.
+//  * Kategorien ist die Liste (oder nur einer) der RIDs in denen der Kunde gekauft hat
+//  * Artikelausschluss ist die Liste (oder nur einer) der Artikel, die, sobald der
+//    Kunden einen davon gekauft hat, er nicht mehr auf der Liste steht. Es kann 
+//    der Artikel selbst sein, der beworben wird, oder der RID des Werbematerials
+//    das verschickt werden soll.
+//
+$Kategorien=21,22
+$Verlage=102612,2293
+$Start='31.12.2002'
+$Ende='01.01.2004'
+$ArtikelAusschluss=141986
+
+select RID,
+         NUMMER,
+         VORNAME,
+         NACHNAME,
+        SUCHBEGRIFF
+from
+ PERSON
+where 
+ ( (MAILING IS NULL) or (MAILING = 'Y') ) AND
+ RID in (
+select distinct PERSON_R from beleg where 
+RID in 
+ (
+ select distinct
+  BELEG_R
+ from
+  POSTEN 
+ where
+  ( 
+    (ARTIKEL_R IN (select ARTIKEL_R from artikel_gattung where GATTUNG_R IN ($Kategorien))) OR
+    (ARTIKEL_R IN (select RID from ARTIKEL where VERLAG_R IN ($Verlage)))
+  ) 
+  and
+  (BELEG_R IN (select RID from Beleg where RECHNUNG between $Start AND $Ende))
+ )
+) AND
+ (0=
+ (select count(MENGE_GELIEFERT) from posten where artikel_r in ($ArtikelAusschluss) and beleg_r in 
+  (select RID from Beleg where PERSON_R=PERSON.RID)
+ ))

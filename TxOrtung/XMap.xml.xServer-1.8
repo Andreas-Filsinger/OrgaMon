@@ -1,0 +1,1981 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://common.xserver.ptvag.com" xmlns:ns2="http://xmap.xserver.ptvag.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://types.xmap.xserver.ptvag.com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns3="http://exception.core.jabba.ptvag.com" xmlns:tns="http://jwsdp.xmap.xserver.ptvag.com" name="XMapWSService" targetNamespace="http://jwsdp.xmap.xserver.ptvag.com">
+<types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://exception.core.jabba.ptvag.com" xmlns:ns2="http://common.xserver.ptvag.com" xmlns:ns0="http://wrappertypes.service.jabba.ptvag.com" xmlns:ns3="http://value.core.jabba.ptvag.com" xmlns:tns="http://xmap.xserver.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://xmap.xserver.ptvag.com" elementFormDefault="qualified">
+        <import namespace="http://common.xserver.ptvag.com"/>
+            <import namespace="http://wrappertypes.service.jabba.ptvag.com"/>
+                    <import namespace="http://value.core.jabba.ptvag.com"/>
+            <import namespace="http://exception.core.jabba.ptvag.com"/>
+                                                                                                                                                                                        <simpleType name="ImageFileFormat">
+        <restriction base="xsd:string">
+                            <enumeration value="GIF"/>
+                            <enumeration value="JPG"/>
+                            <enumeration value="BMP"/>
+                            <enumeration value="WBMP"/>
+                            <enumeration value="PNG"/>
+                            <enumeration value="SMO"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfImageFileFormat">
+        <sequence>
+            <element name="ImageFileFormat" type="tns:ImageFileFormat" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfImageFileFormat">
+        <sequence>
+            <element name="ArrayOfImageFileFormat" type="tns:ArrayOfImageFileFormat" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                        <complexType name="Map">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="image" type="tns:Image" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                <element name="wrappedObjects" type="tns:ArrayOfObjectInfos" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="visibleSection" type="tns:VisibleSection" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMap">
+        <sequence>
+            <element name="Map" type="tns:Map" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMap">
+        <sequence>
+            <element name="ArrayOfMap" type="tns:ArrayOfMap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MapSection">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="center" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                    		                        				</sequence>     
+                                                            <attribute name="scale" type="xsd:int" use="required"/> 
+                                        <attribute name="scrollHorizontal" type="xsd:int" use="required"/> 
+                                        <attribute name="scrollVertical" type="xsd:int" use="required"/> 
+                                        <attribute name="zoom" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMapSection">
+        <sequence>
+            <element name="MapSection" type="tns:MapSection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMapSection">
+        <sequence>
+            <element name="ArrayOfMapSection" type="tns:ArrayOfMapSection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="ImageInfo">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                    		                    		                        				</sequence>     
+                                                <attribute name="format" type="tns:ImageFileFormat" use="required"/> 
+                                        <attribute name="height" type="xsd:int" use="required"/> 
+                                                    <attribute name="imageParameter" type="xsd:string" use="optional"/> 
+                                        <attribute name="width" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfImageInfo">
+        <sequence>
+            <element name="ImageInfo" type="tns:ImageInfo" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfImageInfo">
+        <sequence>
+            <element name="ArrayOfImageInfo" type="tns:ArrayOfImageInfo" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Layer">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="name" type="xsd:string" use="optional"/> 
+                                        <attribute name="visible" type="xsd:boolean" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLayer">
+        <sequence>
+            <element name="Layer" type="tns:Layer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLayer">
+        <sequence>
+            <element name="ArrayOfLayer" type="tns:ArrayOfLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="StaticLayer">
+        <complexContent>
+                            <extension base="tns:Layer">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="category" type="xsd:int" use="required"/> 
+                                        <attribute name="detailLevel" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfStaticLayer">
+        <sequence>
+            <element name="StaticLayer" type="tns:StaticLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfStaticLayer">
+        <sequence>
+            <element name="ArrayOfStaticLayer" type="tns:ArrayOfStaticLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="CustomLayer">
+        <complexContent>
+                            <extension base="tns:Layer">
+								<sequence>      
+                    		                <element name="wrappedBitmaps" type="tns:ArrayOfBitmaps" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                <element name="wrappedLines" type="tns:ArrayOfLines" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		                    		                <element name="wrappedTexts" type="tns:ArrayOfTexts" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                            <attribute name="centerObjects" type="xsd:boolean" use="required"/> 
+                                        <attribute name="drawPriority" type="xsd:int" use="required"/> 
+                                                    <attribute name="objectInfos" type="tns:ObjectInfoType" use="required"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfCustomLayer">
+        <sequence>
+            <element name="CustomLayer" type="tns:CustomLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfCustomLayer">
+        <sequence>
+            <element name="ArrayOfCustomLayer" type="tns:ArrayOfCustomLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="BasicBitmap">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		        						        <element name="position" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                            <attribute name="descr" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBasicBitmap">
+        <sequence>
+            <element name="BasicBitmap" type="tns:BasicBitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBasicBitmap">
+        <sequence>
+            <element name="ArrayOfBasicBitmap" type="tns:ArrayOfBasicBitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Texts">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="options" type="tns:TextOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                <element name="wrappedTexts" type="tns:ArrayOfText" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfTexts">
+        <sequence>
+            <element name="Texts" type="tns:Texts" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfTexts">
+        <sequence>
+            <element name="ArrayOfTexts" type="tns:ArrayOfTexts" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="BitmapOptions">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="referencePoint" type="ns2:PlainPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="transparencyColor" type="tns:Color" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBitmapOptions">
+        <sequence>
+            <element name="BitmapOptions" type="tns:BitmapOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBitmapOptions">
+        <sequence>
+            <element name="ArrayOfBitmapOptions" type="tns:ArrayOfBitmapOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LinePartOptions">
+        <complexContent>
+                            <extension base="tns:BasicDrawingOptions">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="width" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLinePartOptions">
+        <sequence>
+            <element name="LinePartOptions" type="tns:LinePartOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLinePartOptions">
+        <sequence>
+            <element name="ArrayOfLinePartOptions" type="tns:ArrayOfLinePartOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Color">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                    		                        				</sequence>     
+                                                <attribute name="blue" type="xsd:int" use="required"/> 
+                                        <attribute name="green" type="xsd:int" use="required"/> 
+                                        <attribute name="red" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfColor">
+        <sequence>
+            <element name="Color" type="tns:Color" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfColor">
+        <sequence>
+            <element name="ArrayOfColor" type="tns:ArrayOfColor" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="BasicDrawingOptions">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="color" type="tns:Color" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                        				</sequence>     
+                                                            <attribute name="visible" type="xsd:boolean" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBasicDrawingOptions">
+        <sequence>
+            <element name="BasicDrawingOptions" type="tns:BasicDrawingOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBasicDrawingOptions">
+        <sequence>
+            <element name="ArrayOfBasicDrawingOptions" type="tns:ArrayOfBasicDrawingOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Text">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="position" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                        				</sequence>     
+                                                                        <attribute name="text" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfText">
+        <sequence>
+            <element name="Text" type="tns:Text" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfText">
+        <sequence>
+            <element name="ArrayOfText" type="tns:ArrayOfText" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="TextOptions">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		        						        <element name="bgColor" type="tns:Color" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		        						        <element name="font" type="tns:Font" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="frameColor" type="tns:Color" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		                    		                    		                    		                    		        						        <element name="textColor" type="tns:Color" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="alignment" type="tns:TextAlignment" use="required"/> 
+                                                    <attribute name="fillBg" type="xsd:boolean" use="required"/> 
+                                                                <attribute name="pixelX" type="xsd:int" use="required"/> 
+                                        <attribute name="pixelY" type="xsd:int" use="required"/> 
+                                        <attribute name="relX" type="xsd:int" use="required"/> 
+                                        <attribute name="relY" type="xsd:int" use="required"/> 
+                                        <attribute name="showFrame" type="xsd:boolean" use="required"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfTextOptions">
+        <sequence>
+            <element name="TextOptions" type="tns:TextOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfTextOptions">
+        <sequence>
+            <element name="ArrayOfTextOptions" type="tns:ArrayOfTextOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Bitmaps">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                <element name="wrappedBitmaps" type="tns:ArrayOfBasicBitmap" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="options" type="tns:BitmapOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBitmaps">
+        <sequence>
+            <element name="Bitmaps" type="tns:Bitmaps" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBitmaps">
+        <sequence>
+            <element name="ArrayOfBitmaps" type="tns:ArrayOfBitmaps" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="TextAlignment">
+        <restriction base="xsd:string">
+                            <enumeration value="TOP_LEFT"/>
+                            <enumeration value="TOP_MID"/>
+                            <enumeration value="TOP_RIGHT"/>
+                            <enumeration value="MID_LEFT"/>
+                            <enumeration value="CENTER"/>
+                            <enumeration value="MID_RIGHT"/>
+                            <enumeration value="BOTTOM_LEFT"/>
+                            <enumeration value="BOTTOM_MID"/>
+                            <enumeration value="BOTTOM_RIGHT"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfTextAlignment">
+        <sequence>
+            <element name="TextAlignment" type="tns:TextAlignment" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfTextAlignment">
+        <sequence>
+            <element name="ArrayOfTextAlignment" type="tns:ArrayOfTextAlignment" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Font">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                    		                    		                    		                    		                        				</sequence>     
+                                                <attribute name="bold" type="xsd:boolean" use="required"/> 
+                                        <attribute name="frame" type="xsd:boolean" use="required"/> 
+                                        <attribute name="italic" type="xsd:boolean" use="required"/> 
+                                                    <attribute name="name" type="xsd:string" use="optional"/> 
+                                        <attribute name="size" type="xsd:int" use="required"/> 
+                                        <attribute name="underline" type="xsd:boolean" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfFont">
+        <sequence>
+            <element name="Font" type="tns:Font" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfFont">
+        <sequence>
+            <element name="ArrayOfFont" type="tns:ArrayOfFont" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Lines">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                <element name="wrappedLines" type="ns2:ArrayOfLineString" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="options" type="tns:LineOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLines">
+        <sequence>
+            <element name="Lines" type="tns:Lines" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLines">
+        <sequence>
+            <element name="ArrayOfLines" type="tns:ArrayOfLines" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="ObjectInfos">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                <element name="wrappedObjects" type="tns:ArrayOfLayerObject" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                            <attribute name="name" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfObjectInfos">
+        <sequence>
+            <element name="ObjectInfos" type="tns:ObjectInfos" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfObjectInfos">
+        <sequence>
+            <element name="ArrayOfObjectInfos" type="tns:ArrayOfObjectInfos" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LayerObject">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		        						        <element name="geometry" type="tns:ObjectGeometry" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		                    		        						        <element name="pixel" type="ns2:PlainPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="ref" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                            <attribute name="descr" type="xsd:string" use="optional"/> 
+                                                    <attribute name="hiId" type="xsd:int" use="required"/> 
+                                        <attribute name="loId" type="xsd:int" use="required"/> 
+                                                </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLayerObject">
+        <sequence>
+            <element name="LayerObject" type="tns:LayerObject" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLayerObject">
+        <sequence>
+            <element name="ArrayOfLayerObject" type="tns:ArrayOfLayerObject" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Bitmap">
+        <complexContent>
+                            <extension base="tns:BasicBitmap">
+								<sequence>      
+                    		                        				</sequence>     
+                                                            <attribute name="name" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBitmap">
+        <sequence>
+            <element name="Bitmap" type="tns:Bitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBitmap">
+        <sequence>
+            <element name="ArrayOfBitmap" type="tns:ArrayOfBitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="RawBitmap">
+        <complexContent>
+                            <extension base="tns:BasicBitmap">
+								<sequence>      
+                    		                        				</sequence>     
+                                                            <attribute name="rawBitmap" type="xsd:base64Binary" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfRawBitmap">
+        <sequence>
+            <element name="RawBitmap" type="tns:RawBitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfRawBitmap">
+        <sequence>
+            <element name="ArrayOfRawBitmap" type="tns:ArrayOfRawBitmap" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MapParams">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="showScale" type="xsd:boolean" use="required"/> 
+                                        <attribute name="useMiles" type="xsd:boolean" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMapParams">
+        <sequence>
+            <element name="MapParams" type="tns:MapParams" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMapParams">
+        <sequence>
+            <element name="ArrayOfMapParams" type="tns:ArrayOfMapParams" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="SMOLayer">
+        <complexContent>
+                            <extension base="tns:Layer">
+								<sequence>      
+                    		                    		                    		                        				</sequence>     
+                                                            <attribute name="configuration" type="xsd:string" use="optional"/> 
+                                        <attribute name="objectInfos" type="tns:ObjectInfoType" use="required"/> 
+                                                    <attribute name="smoData" type="xsd:base64Binary" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfSMOLayer">
+        <sequence>
+            <element name="SMOLayer" type="tns:SMOLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfSMOLayer">
+        <sequence>
+            <element name="ArrayOfSMOLayer" type="tns:ArrayOfSMOLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="VisibleSection">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="boundingBox" type="ns2:BoundingBox" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="center" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                        				</sequence>     
+                                                                        <attribute name="scale" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfVisibleSection">
+        <sequence>
+            <element name="VisibleSection" type="tns:VisibleSection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfVisibleSection">
+        <sequence>
+            <element name="ArrayOfVisibleSection" type="tns:ArrayOfVisibleSection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Image">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="rawImage" type="xsd:base64Binary" use="optional"/> 
+                                                    <attribute name="url" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfImage">
+        <sequence>
+            <element name="Image" type="tns:Image" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfImage">
+        <sequence>
+            <element name="ArrayOfImage" type="tns:ArrayOfImage" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ErrorCodes">
+        <restriction base="xsd:string">
+                            <enumeration value="NOERR"/>
+                            <enumeration value="INITINVALIDMAPPATH"/>
+                            <enumeration value="INITCONFIGERROR"/>
+                            <enumeration value="INITRENDERER"/>
+                            <enumeration value="INITREPATH"/>
+                            <enumeration value="INITIMAGEINSTANCE"/>
+                            <enumeration value="INIIMAGEMAPSERVER"/>
+                            <enumeration value="INITINVALIDBITMAPPATH"/>
+                            <enumeration value="INITINVALIDIMSPATH"/>
+                            <enumeration value="INITCREATEIMSPATH"/>
+                            <enumeration value="MODULEENV"/>
+                            <enumeration value="EMPTYPROFILE"/>
+                            <enumeration value="LICENSEACCESS"/>
+                            <enumeration value="INITINVALIDRLPATH"/>
+                            <enumeration value="INITINVALIDPOIPATH"/>
+                            <enumeration value="INITRLERROR"/>
+                            <enumeration value="INITPOIERROR"/>
+                            <enumeration value="INITINVALIDLINEPATH"/>
+                            <enumeration value="INITLABELER"/>
+                            <enumeration value="INITINVALIDTERRAINPATH"/>
+                            <enumeration value="NOTLICENSED"/>
+                            <enumeration value="NOTLICENSEDPOI"/>
+                            <enumeration value="NOTLICENSEDTRAFFICINFO"/>
+                            <enumeration value="NOTLICENSEDRASTER"/>
+                            <enumeration value="NOTLICENSEDTERRAIN"/>
+                            <enumeration value="PRINTNORENDERCONFIG"/>
+                            <enumeration value="PRINTSIZE"/>
+                            <enumeration value="MAPSECTIONNULL"/>
+                            <enumeration value="MAPSECTIONCENTER"/>
+                            <enumeration value="IMAGEINFO"/>
+                            <enumeration value="LAYERUNKNOWNTYPE"/>
+                            <enumeration value="BITMAPNOLOAD"/>
+                            <enumeration value="BITMAPDECODE"/>
+                            <enumeration value="BITMAPDECREASE"/>
+                            <enumeration value="BITMAPINCREASE"/>
+                            <enumeration value="BITMAPENCODE"/>
+                            <enumeration value="BITMAPDRAW"/>
+                            <enumeration value="CUSTOMLAYERNAME"/>
+                            <enumeration value="BITMAPPOSITION"/>
+                            <enumeration value="BITMAPNODATA"/>
+                            <enumeration value="BITMAPRAWDATA"/>
+                            <enumeration value="BITMAPUNKNOWNTYPE"/>
+                            <enumeration value="INSERTPOI"/>
+                            <enumeration value="IMSNOTCONFIGURED"/>
+                            <enumeration value="SMOERROR"/>
+                            <enumeration value="INVALIDSMOLAYER"/>
+                            <enumeration value="SMOLAYERNAME"/>
+                            <enumeration value="LAYERNAMEDUPLICATE"/>
+                            <enumeration value="ENCODEBITMAP"/>
+                            <enumeration value="SMODATAEMPTY"/>
+                            <enumeration value="SMOWRITEIMS"/>
+                            <enumeration value="INVALIDSTATICLAYER"/>
+                            <enumeration value="INVALIDCATEGORY"/>
+                            <enumeration value="INVALIDSMOCONFIGURATION"/>
+                            <enumeration value="STATICLAYERERROR"/>
+                            <enumeration value="INVALIDIMAGEINFO"/>
+                            <enumeration value="FONTCREATEERROR"/>
+                            <enumeration value="INVALIDSMO"/>
+                            <enumeration value="LAYERDOESNOTSUPPORTOBJECTINFOS"/>
+                            <enumeration value="BITMAPURLNOLOAD"/>
+                            <enumeration value="INVALIDDRAWPRIORITY"/>
+                            <enumeration value="INVALIDOBJECTINFOS"/>
+                            <enumeration value="GEOMETRYLAYERNAME"/>
+                            <enumeration value="ERRORINLAYERGEOMETRY"/>
+                            <enumeration value="LAYERINSERT"/>
+                            <enumeration value="SMOBITMAP"/>
+                            <enumeration value="INVALIDRASTERLAYEROPERATION"/>
+                            <enumeration value="NOTLICENSEDROADEDITOR"/>
+                            <enumeration value="ROADEDITORLAYERELEMENT"/>
+                            <enumeration value="PROFILEDOESNOTEXIST"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfErrorCodes">
+        <sequence>
+            <element name="ErrorCodes" type="tns:ErrorCodes" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfErrorCodes">
+        <sequence>
+            <element name="ArrayOfErrorCodes" type="tns:ArrayOfErrorCodes" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LineOptions">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="arrows" type="tns:BasicDrawingOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="mainLine" type="tns:LinePartOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		        						        <element name="sideLine" type="tns:LinePartOptions" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                        				</sequence>     
+                                                                        <attribute name="showFlags" type="xsd:boolean" use="required"/> 
+                                                    <attribute name="transparent" type="xsd:boolean" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLineOptions">
+        <sequence>
+            <element name="LineOptions" type="tns:LineOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLineOptions">
+        <sequence>
+            <element name="ArrayOfLineOptions" type="tns:ArrayOfLineOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="XMapException">
+        <complexContent>
+                            <extension base="ns1:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <element name="XMapException" type="tns:XMapException"/>
+                                                    <simpleType name="DrawPriorities">
+        <restriction base="xsd:string">
+                            <enumeration value="PRIORMIN"/>
+                            <enumeration value="PRIORBRIDGE"/>
+                            <enumeration value="PRIORHEIGHT"/>
+                            <enumeration value="PRIOROTHER"/>
+                            <enumeration value="PRIORRAIL"/>
+                            <enumeration value="PRIORTUNNEL"/>
+                            <enumeration value="PRIORWATER"/>
+                            <enumeration value="PRIORBACKGROUND"/>
+                            <enumeration value="PRIORROUTE"/>
+                            <enumeration value="PRIORTOLL"/>
+                            <enumeration value="PRIORSCENICROUTE"/>
+                            <enumeration value="PRIORSTREET"/>
+                            <enumeration value="PRIORTOWNPOINTBASE"/>
+                            <enumeration value="PRIORONEWAYSIGN"/>
+                            <enumeration value="PRIORTOWNNAMEBASE"/>
+                            <enumeration value="PRIORTOWNNAME1"/>
+                            <enumeration value="PRIORTOWNNAME2"/>
+                            <enumeration value="PRIORTOWNNAME3"/>
+                            <enumeration value="PRIORTOWNNAME4"/>
+                            <enumeration value="PRIORTOWNNAME5"/>
+                            <enumeration value="PRIORTOWNNAME6"/>
+                            <enumeration value="PRIORTOWNNAME7"/>
+                            <enumeration value="PRIORTOWNNAME8"/>
+                            <enumeration value="PRIORTOWNNAME9"/>
+                            <enumeration value="PRIORTOWNNAME10"/>
+                            <enumeration value="PRIORTOWNNAME11"/>
+                            <enumeration value="PRIORTOWNNAME12"/>
+                            <enumeration value="PRIORTOWNNAME13"/>
+                            <enumeration value="PRIORTOWNNAME14"/>
+                            <enumeration value="PRIORSTREETSIGNSBASE"/>
+                            <enumeration value="PRIORSTREETSIGNSMOTORWAY"/>
+                            <enumeration value="PRIORSTREETSIGNSCOUNTRY"/>
+                            <enumeration value="PRIORSTREETNAMEBASE"/>
+                            <enumeration value="PRIORSTREETNAMEMOTORWAY"/>
+                            <enumeration value="PRIORSTREETNAMEEUROPE"/>
+                            <enumeration value="PRIORSTREETNAMENATIONAL"/>
+                            <enumeration value="PRIORSTREETNAMECOUNTRY"/>
+                            <enumeration value="PRIORSTREETNAMEREGION"/>
+                            <enumeration value="PRIORSTREETNAMETOWN"/>
+                            <enumeration value="PRIORSTREETNAMEZONE30"/>
+                            <enumeration value="PRIORSTREETNAMEPLAY"/>
+                            <enumeration value="PRIORADAKSIGN"/>
+                            <enumeration value="PRIORHOUSENUMBER"/>
+                            <enumeration value="PRIORTEXT"/>
+                            <enumeration value="PRIORPOIDEFAULT"/>
+                            <enumeration value="PRIORMAX"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfDrawPriorities">
+        <sequence>
+            <element name="DrawPriorities" type="tns:DrawPriorities" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfDrawPriorities">
+        <sequence>
+            <element name="ArrayOfDrawPriorities" type="tns:ArrayOfDrawPriorities" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="ObjectInfoType">
+        <restriction base="xsd:string">
+                            <enumeration value="NONE"/>
+                            <enumeration value="REFERENCEPOINT"/>
+                            <enumeration value="GEOMETRY"/>
+                            <enumeration value="GEOMETRYCLIPPED"/>
+                            <enumeration value="FULLGEOMETRY"/>
+                            <enumeration value="FULLGEOMETRYCLIPPED"/>
+                            <enumeration value="TILEGEOMETRY"/>
+                            <enumeration value="TILEGEOMETRYCLIPPED"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfObjectInfoType">
+        <sequence>
+            <element name="ObjectInfoType" type="tns:ObjectInfoType" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfObjectInfoType">
+        <sequence>
+            <element name="ArrayOfObjectInfoType" type="tns:ArrayOfObjectInfoType" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="StaticPoiLayer">
+        <complexContent>
+                            <extension base="tns:StaticLayer">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="objectInfos" type="tns:ObjectInfoType" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfStaticPoiLayer">
+        <sequence>
+            <element name="StaticPoiLayer" type="tns:StaticPoiLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfStaticPoiLayer">
+        <sequence>
+            <element name="ArrayOfStaticPoiLayer" type="tns:ArrayOfStaticPoiLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="StaticRasterLayer">
+        <complexContent>
+                            <extension base="tns:StaticLayer">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="drawPosition" type="tns:DrawPositions" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfStaticRasterLayer">
+        <sequence>
+            <element name="StaticRasterLayer" type="tns:StaticRasterLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfStaticRasterLayer">
+        <sequence>
+            <element name="ArrayOfStaticRasterLayer" type="tns:ArrayOfStaticRasterLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="DrawPositions">
+        <restriction base="xsd:string">
+                            <enumeration value="BELOWROUTE"/>
+                            <enumeration value="BELOWSTREET"/>
+                            <enumeration value="BELOWNAMES"/>
+                            <enumeration value="ONTOP"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfDrawPositions">
+        <sequence>
+            <element name="DrawPositions" type="tns:DrawPositions" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfDrawPositions">
+        <sequence>
+            <element name="ArrayOfDrawPositions" type="tns:ArrayOfDrawPositions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="ObjectGeometry">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		        						        <element name="pixelGeometry" type="ns2:PlainGeometryBase" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="refGeometry" type="ns2:EncodedGeometry" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfObjectGeometry">
+        <sequence>
+            <element name="ObjectGeometry" type="tns:ObjectGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfObjectGeometry">
+        <sequence>
+            <element name="ArrayOfObjectGeometry" type="tns:ArrayOfObjectGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="GeometryLayer">
+        <complexContent>
+                            <extension base="tns:Layer">
+								<sequence>      
+                    		                    		                <element name="wrappedGeometries" type="tns:ArrayOfGeometries" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		                        				</sequence>     
+                                                <attribute name="drawPriority" type="xsd:int" use="required"/> 
+                                                    <attribute name="objectInfos" type="tns:ObjectInfoType" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometryLayer">
+        <sequence>
+            <element name="GeometryLayer" type="tns:GeometryLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryLayer">
+        <sequence>
+            <element name="ArrayOfGeometryLayer" type="tns:ArrayOfGeometryLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Geometries">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                <element name="wrappedGeometries" type="tns:ArrayOfGeometry" minOccurs="1" maxOccurs="1" nillable="true"/> 
+            		                <element name="wrappedOptions" type="tns:ArrayOfGeometryOption" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometries">
+        <sequence>
+            <element name="Geometries" type="tns:Geometries" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometries">
+        <sequence>
+            <element name="ArrayOfGeometries" type="tns:ArrayOfGeometries" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="GeometryOption">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="option" type="tns:GeometryOptions" use="required"/> 
+                                                    <attribute name="value" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometryOption">
+        <sequence>
+            <element name="GeometryOption" type="tns:GeometryOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryOption">
+        <sequence>
+            <element name="ArrayOfGeometryOption" type="tns:ArrayOfGeometryOption" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="GeometryOptions">
+        <restriction base="xsd:string">
+                            <enumeration value="BORDERCOLOR"/>
+                            <enumeration value="BORDERWIDTH"/>
+                            <enumeration value="BORDERALPHA"/>
+                            <enumeration value="FILLCOLOR"/>
+                            <enumeration value="FILLALPHA"/>
+                            <enumeration value="DRAWARROWS"/>
+                            <enumeration value="LINESCALEFACTOR"/>
+                            <enumeration value="AUTOCENTEROBJECTS"/>
+                            <enumeration value="ARROWCOLOR"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfGeometryOptions">
+        <sequence>
+            <element name="GeometryOptions" type="tns:GeometryOptions" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryOptions">
+        <sequence>
+            <element name="ArrayOfGeometryOptions" type="tns:ArrayOfGeometryOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                    <complexType name="Geometry">
+        <complexContent>
+                            <extension base="ns3:TransientVO">
+                				<sequence>      
+                    		                    		        						        <element name="geometry" type="ns2:EncodedGeometry" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		                    		        						        <element name="referencePoint" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                            <attribute name="description" type="xsd:string" use="optional"/> 
+                                                    <attribute name="id" type="xsd:int" use="required"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometry">
+        <sequence>
+            <element name="Geometry" type="tns:Geometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometry">
+        <sequence>
+            <element name="ArrayOfGeometry" type="tns:ArrayOfGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                    <complexType name="GeometryExt">
+        <complexContent>
+                            <extension base="tns:Geometry">
+								<sequence>      
+                    		                        				</sequence>     
+                                                            <attribute name="geometryString" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometryExt">
+        <sequence>
+            <element name="GeometryExt" type="tns:GeometryExt" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryExt">
+        <sequence>
+            <element name="ArrayOfGeometryExt" type="tns:ArrayOfGeometryExt" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="RoadEditorLayer">
+        <complexContent>
+                            <extension base="tns:Layer">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="objectInfos" type="tns:ObjectInfoType" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfRoadEditorLayer">
+        <sequence>
+            <element name="RoadEditorLayer" type="tns:RoadEditorLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfRoadEditorLayer">
+        <sequence>
+            <element name="ArrayOfRoadEditorLayer" type="tns:ArrayOfRoadEditorLayer" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MapSectionRot">
+        <complexContent>
+                            <extension base="tns:MapSection">
+								<sequence>      
+                    		                        				</sequence>     
+                                                <attribute name="angle" type="xsd:int" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMapSectionRot">
+        <sequence>
+            <element name="MapSectionRot" type="tns:MapSectionRot" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMapSectionRot">
+        <sequence>
+            <element name="ArrayOfMapSectionRot" type="tns:ArrayOfMapSectionRot" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="VisibleSectionRot">
+        <complexContent>
+                            <extension base="tns:VisibleSection">
+								<sequence>      
+                    		                    		        						        <element name="leftBottom" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="leftTop" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="rightBottom" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="rightTop" type="ns2:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="angle" type="xsd:int" use="required"/> 
+                                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfVisibleSectionRot">
+        <sequence>
+            <element name="VisibleSectionRot" type="tns:VisibleSectionRot" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfVisibleSectionRot">
+        <sequence>
+            <element name="ArrayOfVisibleSectionRot" type="tns:ArrayOfVisibleSectionRot" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://exception.core.jabba.ptvag.com" xmlns:ns2="http://value.core.jabba.ptvag.com" xmlns:ns0="http://wrappertypes.service.jabba.ptvag.com" xmlns:tns="http://common.xserver.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://common.xserver.ptvag.com" elementFormDefault="qualified">
+            <import namespace="http://wrappertypes.service.jabba.ptvag.com"/>
+                <import namespace="http://value.core.jabba.ptvag.com"/>
+            <import namespace="http://exception.core.jabba.ptvag.com"/>
+                                                                                                <complexType name="RequestOptions">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		                    		                    		                <element name="wrappedResponseGeometry" type="tns:ArrayOfGeometryEncoding" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                <attribute name="coordFormat" type="tns:CoordFormat" use="required"/> 
+                                                    <attribute name="profile" type="xsd:string" use="optional"/> 
+                                    </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfRequestOptions">
+        <sequence>
+            <element name="RequestOptions" type="tns:RequestOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfRequestOptions">
+        <sequence>
+            <element name="ArrayOfRequestOptions" type="tns:ArrayOfRequestOptions" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="GeometryEncoding">
+        <restriction base="xsd:string">
+                            <enumeration value="PLAIN"/>
+                            <enumeration value="WKB"/>
+                            <enumeration value="WKT"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfGeometryEncoding">
+        <sequence>
+            <element name="GeometryEncoding" type="tns:GeometryEncoding" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryEncoding">
+        <sequence>
+            <element name="ArrayOfGeometryEncoding" type="tns:ArrayOfGeometryEncoding" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <simpleType name="CoordFormat">
+        <restriction base="xsd:string">
+                            <enumeration value="OG_GEODECIMAL"/>
+                            <enumeration value="PTV_MERCATOR"/>
+                            <enumeration value="PTV_GEOMINSEC"/>
+                            <enumeration value="PTV_GEODECIMAL"/>
+                            <enumeration value="PTV_CONFORM"/>
+                            <enumeration value="PTV_SUPERCONFORM"/>
+                            <enumeration value="PTV_SMARTUNITS"/>
+                        </restriction>
+    </simpleType>       
+    <complexType name="ArrayOfCoordFormat">
+        <sequence>
+            <element name="CoordFormat" type="tns:CoordFormat" minOccurs="0" maxOccurs="unbounded" nillable="false"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfCoordFormat">
+        <sequence>
+            <element name="ArrayOfCoordFormat" type="tns:ArrayOfCoordFormat" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="BoundingBox">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                    		        						        <element name="leftTop" type="tns:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+            		        						        <element name="rightBottom" type="tns:Point" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfBoundingBox">
+        <sequence>
+            <element name="BoundingBox" type="tns:BoundingBox" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfBoundingBox">
+        <sequence>
+            <element name="ArrayOfBoundingBox" type="tns:ArrayOfBoundingBox" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="EncodedGeometry">
+        <complexContent>
+                            <extension base="tns:EncodedGeometryBase">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                            <attribute name="wkb" type="xsd:base64Binary" use="optional"/> 
+                                                    <attribute name="wkt" type="xsd:string" use="optional"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfEncodedGeometry">
+        <sequence>
+            <element name="EncodedGeometry" type="tns:EncodedGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfEncodedGeometry">
+        <sequence>
+            <element name="ArrayOfEncodedGeometry" type="tns:ArrayOfEncodedGeometry" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LinearRing">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="linearRing" type="tns:PlainLinearRing" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLinearRing">
+        <sequence>
+            <element name="LinearRing" type="tns:LinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLinearRing">
+        <sequence>
+            <element name="ArrayOfLinearRing" type="tns:ArrayOfLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainLinearRing">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainLinearRing">
+        <sequence>
+            <element name="PlainLinearRing" type="tns:PlainLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainLinearRing">
+        <sequence>
+            <element name="ArrayOfPlainLinearRing" type="tns:ArrayOfPlainLinearRing" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Polygon">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="polygon" type="tns:PlainPolygon" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPolygon">
+        <sequence>
+            <element name="Polygon" type="tns:Polygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPolygon">
+        <sequence>
+            <element name="ArrayOfPolygon" type="tns:ArrayOfPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainPolygon">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedLinearRings" type="tns:ArrayOfPlainLinearRing" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainPolygon">
+        <sequence>
+            <element name="PlainPolygon" type="tns:PlainPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainPolygon">
+        <sequence>
+            <element name="ArrayOfPlainPolygon" type="tns:ArrayOfPlainPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="LineString">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="lineString" type="tns:PlainLineString" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfLineString">
+        <sequence>
+            <element name="LineString" type="tns:LineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfLineString">
+        <sequence>
+            <element name="ArrayOfLineString" type="tns:ArrayOfLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainLineString">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainLineString">
+        <sequence>
+            <element name="PlainLineString" type="tns:PlainLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainLineString">
+        <sequence>
+            <element name="ArrayOfPlainLineString" type="tns:ArrayOfPlainLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="Point">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="point" type="tns:PlainPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPoint">
+        <sequence>
+            <element name="Point" type="tns:Point" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPoint">
+        <sequence>
+            <element name="ArrayOfPoint" type="tns:ArrayOfPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="XServiceException">
+        <complexContent>
+                            <extension base="ns1:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <element name="XServiceException" type="tns:XServiceException"/>
+                                                    <complexType name="PlainMultiPoint">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPoints" type="tns:ArrayOfPlainPoint" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiPoint">
+        <sequence>
+            <element name="PlainMultiPoint" type="tns:PlainMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiPoint">
+        <sequence>
+            <element name="ArrayOfPlainMultiPoint" type="tns:ArrayOfPlainMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainMultiLineString">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedLineStrings" type="tns:ArrayOfPlainLineString" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiLineString">
+        <sequence>
+            <element name="PlainMultiLineString" type="tns:PlainMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiLineString">
+        <sequence>
+            <element name="ArrayOfPlainMultiLineString" type="tns:ArrayOfPlainMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainMultiPolygon">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedPolygons" type="tns:ArrayOfPlainPolygon" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainMultiPolygon">
+        <sequence>
+            <element name="PlainMultiPolygon" type="tns:PlainMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainMultiPolygon">
+        <sequence>
+            <element name="ArrayOfPlainMultiPolygon" type="tns:ArrayOfPlainMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainGeometryCollection">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                <element name="wrappedGeometries" type="tns:ArrayOfPlainGeometryBase" minOccurs="1" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainGeometryCollection">
+        <sequence>
+            <element name="PlainGeometryCollection" type="tns:PlainGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainGeometryCollection">
+        <sequence>
+            <element name="ArrayOfPlainGeometryCollection" type="tns:ArrayOfPlainGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiPoint">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiPoint" type="tns:PlainMultiPoint" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiPoint">
+        <sequence>
+            <element name="MultiPoint" type="tns:MultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiPoint">
+        <sequence>
+            <element name="ArrayOfMultiPoint" type="tns:ArrayOfMultiPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiLineString">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiLineString" type="tns:PlainMultiLineString" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiLineString">
+        <sequence>
+            <element name="MultiLineString" type="tns:MultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiLineString">
+        <sequence>
+            <element name="ArrayOfMultiLineString" type="tns:ArrayOfMultiLineString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="MultiPolygon">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="multiPolygon" type="tns:PlainMultiPolygon" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfMultiPolygon">
+        <sequence>
+            <element name="MultiPolygon" type="tns:MultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfMultiPolygon">
+        <sequence>
+            <element name="ArrayOfMultiPolygon" type="tns:ArrayOfMultiPolygon" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="GeometryCollection">
+        <complexContent>
+                            <extension base="tns:EncodedGeometry">
+								<sequence>      
+                    		        						        <element name="geometryCollection" type="tns:PlainGeometryCollection" minOccurs="0" maxOccurs="1" nillable="true"/> 
+                				</sequence>     
+                                            </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfGeometryCollection">
+        <sequence>
+            <element name="GeometryCollection" type="tns:GeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfGeometryCollection">
+        <sequence>
+            <element name="ArrayOfGeometryCollection" type="tns:ArrayOfGeometryCollection" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                    <complexType name="PlainGeometryBase">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                        				</sequence>     
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainGeometryBase">
+        <sequence>
+            <element name="PlainGeometryBase" type="tns:PlainGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainGeometryBase">
+        <sequence>
+            <element name="ArrayOfPlainGeometryBase" type="tns:ArrayOfPlainGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="PlainPoint">
+        <complexContent>
+                            <extension base="tns:PlainGeometryBase">
+								<sequence>      
+                    		                    		                        				</sequence>     
+                                                <attribute name="x" type="xsd:double" use="required"/> 
+                                        <attribute name="y" type="xsd:double" use="required"/> 
+                        </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfPlainPoint">
+        <sequence>
+            <element name="PlainPoint" type="tns:PlainPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfPlainPoint">
+        <sequence>
+            <element name="ArrayOfPlainPoint" type="tns:ArrayOfPlainPoint" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                    <complexType name="EncodedGeometryBase">
+        <complexContent>
+                            <extension base="ns2:TransientVO">
+                				<sequence>      
+                        				</sequence>     
+                                </extension>
+        </complexContent>
+    </complexType>      
+    <complexType name="ArrayOfEncodedGeometryBase">
+        <sequence>
+            <element name="EncodedGeometryBase" type="tns:EncodedGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+    <complexType name="ArrayOfArrayOfEncodedGeometryBase">
+        <sequence>
+            <element name="ArrayOfEncodedGeometryBase" type="tns:ArrayOfEncodedGeometryBase" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        </sequence>
+    </complexType>      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://wrappertypes.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://wrappertypes.service.jabba.ptvag.com" elementFormDefault="qualified">
+  <!-- Calendar -->
+  <complexType name="ArrayOfCalendar">
+    <sequence>
+      <element name="Calendar" type="xsd:dateTime" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfCalendar">
+    <sequence>
+      <element name="ArrayOfCalendar" type="tns:ArrayOfCalendar" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- String -->
+  <complexType name="ArrayOfString">
+    <sequence>
+      <element name="String" type="xsd:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfString">
+    <sequence>
+      <element name="ArrayOfString" type="tns:ArrayOfString" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- byte -->
+  <complexType name="ArrayOfArrayOfByte">
+    <sequence>
+      <element name="ArrayOfByte" type="xsd:base64Binary" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- short -->
+  <complexType name="ArrayOfShort">
+    <sequence>
+      <element name="Short" type="xsd:short" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfShort">
+    <sequence>
+      <element name="ArrayOfShort" type="tns:ArrayOfShort" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- int -->
+  <complexType name="ArrayOfInt">
+    <sequence>
+      <element name="Int" type="xsd:int" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfInt">
+    <sequence>
+      <element name="ArrayOfInt" type="tns:ArrayOfInt" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- long -->
+  <complexType name="ArrayOfLong">
+    <sequence>
+      <element name="Long" type="xsd:long" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfLong">
+    <sequence>
+      <element name="ArrayOfLong" type="tns:ArrayOfLong" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- float -->
+  <complexType name="ArrayOfFloat">
+    <sequence>
+      <element name="Float" type="xsd:float" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfFloat">
+    <sequence>
+      <element name="ArrayOfFloat" type="tns:ArrayOfFloat" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- double -->
+  <complexType name="ArrayOfDouble">
+    <sequence>
+      <element name="Double" type="xsd:double" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfDouble">
+    <sequence>
+      <element name="ArrayOfDouble" type="tns:ArrayOfDouble" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+  <!-- boolean -->
+  <complexType name="ArrayOfBoolean">
+    <sequence>
+      <element name="Boolean" type="xsd:boolean" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfArrayOfBoolean">
+    <sequence>
+      <element name="ArrayOfBoolean" type="tns:ArrayOfBoolean" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+</schema>   
+
+
+
+   
+
+   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://exception.core.jabba.ptvag.com" xmlns:tns="http://exception.messaging.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://exception.messaging.service.jabba.ptvag.com" elementFormDefault="qualified">
+				<import namespace="http://exception.core.jabba.ptvag.com"/>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         		 			 	<complexType name="MessagingServiceException">
+        <complexContent>
+        		            <extension base="ns0:BusinessException">
+                                <sequence>
+					        				</sequence>
+                                </extension>
+        </complexContent>
+ 	</complexType>		
+ 	<element name="MessagingServiceException" type="tns:MessagingServiceException"/>
+    		 			                                                                                                                                                  	
+</schema>   
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://value.core.jabba.ptvag.com" xmlns:tns="http://baseservices.service.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://baseservices.service.jabba.ptvag.com" elementFormDefault="qualified">
+  <import namespace="http://value.core.jabba.ptvag.com"/>
+  <complexType name="CallerContext">
+    <complexContent>
+      <extension base="ns0:TransientVO">
+        <sequence>
+          <element name="wrappedProperties" type="tns:ArrayOfCallerContextProperty" minOccurs="1" maxOccurs="1" nillable="true"/>
+        </sequence>
+        <attribute name="log1" type="xsd:string" use="optional"/>
+        <attribute name="log2" type="xsd:string" use="optional"/>
+        <attribute name="log3" type="xsd:string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CallerContextProperty">
+    <complexContent>
+      <extension base="ns0:TransientVO">
+        <sequence/>
+        <attribute name="key" type="xsd:string" use="optional"/>
+        <attribute name="value" type="xsd:string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOfCallerContextProperty">
+    <sequence>
+      <element name="CallerContextProperty" type="tns:CallerContextProperty" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    </sequence>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://value.core.jabba.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://value.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="TransientVO">
+    <sequence>
+    </sequence>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://persistent.core.jabba.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://persistent.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="OID">
+    <sequence>
+    </sequence>
+    <attribute name="id" type="string" use="optional"/>
+  </complexType>
+  <complexType name="AuditedVO" abstract="true">
+    <complexContent>
+      <extension base="tns:VO">
+        <sequence>
+        </sequence>
+        <attribute name="createTime" type="dateTime" use="optional"/>
+        <attribute name="createUser" type="string" use="optional"/>
+        <attribute name="updateTime" type="dateTime" use="optional"/>
+        <attribute name="updateUser" type="string" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="VO" abstract="true">
+    <sequence>
+    </sequence>
+    <attribute name="id" type="string" use="optional"/>
+  </complexType>
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://wrappertypes.service.jabba.ptvag.com" xmlns:tns="http://exception.core.jabba.ptvag.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://exception.core.jabba.ptvag.com" elementFormDefault="qualified">
+  <complexType name="StackElement">
+        <sequence>
+            <element name="cause" type="tns:StackElement" minOccurs="0" maxOccurs="1" nillable="true"/>  
+			<element name="wrappedContext" type="ns0:ArrayOfString" minOccurs="1" maxOccurs="1" nillable="true"/>      
+        </sequence>                
+        <attribute name="className" type="string" use="optional"/>
+        <attribute name="errorKey" type="string" use="optional"/>
+        <attribute name="message" type="string" use="optional"/>
+  </complexType>
+  
+  
+  <complexType name="ParameterNotSetException">
+    <complexContent>
+      <extension base="tns:IllegalParameterException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="ParameterNotSetException" type="tns:ParameterNotSetException"/>
+  <complexType name="IllegalParameterException">
+    <complexContent>
+      <extension base="tns:BusinessException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="IllegalParameterException" type="tns:IllegalParameterException"/>
+  <complexType name="UnexpectedException">
+    <complexContent>
+      <extension base="tns:SystemException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="UnexpectedException" type="tns:UnexpectedException"/>
+  
+  
+  
+  
+  
+  
+  <complexType name="RemoteAccessException">
+    <complexContent>
+      <extension base="tns:SystemException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="RemoteAccessException" type="tns:RemoteAccessException"/>
+  <complexType name="BaseException">
+    <sequence>
+        <element name="stackElement" type="tns:StackElement" minOccurs="0" maxOccurs="1" nillable="true"/>
+    </sequence>
+    <attribute name="transactionId" type="string" use="optional"/>               
+  </complexType>
+  <element name="BaseException" type="tns:BaseException"/>
+  <complexType name="SystemException">
+    <complexContent>
+      <extension base="tns:BaseException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="SystemException" type="tns:SystemException"/>
+  <complexType name="BusinessException">
+    <complexContent>
+      <extension base="tns:BaseException">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="BusinessException" type="tns:BusinessException"/>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</schema>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns3="http://baseservices.service.jabba.ptvag.com" xmlns:tns="http://types.xmap.xserver.ptvag.com" xmlns:ns4="http://common.xserver.ptvag.com" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" targetNamespace="http://types.xmap.xserver.ptvag.com">
+		<import namespace="http://common.xserver.ptvag.com"/>
+<import namespace="http://baseservices.service.jabba.ptvag.com"/>
+<import namespace="http://xmap.xserver.ptvag.com"/>
+<import namespace="http://exception.core.jabba.ptvag.com"/>
+
+		<complexType name="renderMap">
+<sequence>
+<element name="MapSection_1" type="ns2:MapSection" nillable="true"/>
+<element name="MapParams_2" type="ns2:MapParams" nillable="true"/>
+<element name="ImageInfo_3" type="ns2:ImageInfo" nillable="true"/>
+<element name="ArrayOfLayer_4" type="ns2:ArrayOfLayer" nillable="true"/>
+<element name="boolean_5" type="boolean"/>
+<element name="CallerContext_6" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="renderMapResponse">
+<sequence>
+<element name="result" type="ns2:Map" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="renderMapBoundingBox">
+<sequence>
+<element name="BoundingBox_1" type="ns4:BoundingBox" nillable="true"/>
+<element name="MapParams_2" type="ns2:MapParams" nillable="true"/>
+<element name="ImageInfo_3" type="ns2:ImageInfo" nillable="true"/>
+<element name="ArrayOfLayer_4" type="ns2:ArrayOfLayer" nillable="true"/>
+<element name="boolean_5" type="boolean"/>
+<element name="CallerContext_6" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="renderMapBoundingBoxResponse">
+<sequence>
+<element name="result" type="ns2:Map" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="renderMapRot">
+<sequence>
+<element name="MapSectionRot_1" type="ns2:MapSectionRot" nillable="true"/>
+<element name="MapParams_2" type="ns2:MapParams" nillable="true"/>
+<element name="ImageInfo_3" type="ns2:ImageInfo" nillable="true"/>
+<element name="ArrayOfLayer_4" type="ns2:ArrayOfLayer" nillable="true"/>
+<element name="boolean_5" type="boolean"/>
+<element name="CallerContext_6" type="ns3:CallerContext" nillable="true"/>
+</sequence>
+</complexType>
+<complexType name="renderMapRotResponse">
+<sequence>
+<element name="result" type="ns2:Map" nillable="true"/>
+</sequence>
+</complexType>
+
+		<element name="renderMap" type="tns:renderMap"/>
+<element name="renderMapResponse" type="tns:renderMapResponse"/>
+<element name="renderMapBoundingBox" type="tns:renderMapBoundingBox"/>
+<element name="renderMapBoundingBoxResponse" type="tns:renderMapBoundingBoxResponse"/>
+<element name="renderMapRot" type="tns:renderMapRot"/>
+<element name="renderMapRotResponse" type="tns:renderMapRotResponse"/>
+
+</schema>		
+</types>
+<message name="XMapWS_renderMap">
+<part name="parameters" element="ns0:renderMap"/>
+</message>
+<message name="XMapWS_renderMapResponse">
+<part name="parameters" element="ns0:renderMapResponse"/>
+</message>
+<message name="XServiceException">
+<part name="XServiceException" element="ns1:XServiceException"/>
+</message>
+<message name="XMapException">
+<part name="XMapException" element="ns2:XMapException"/>
+</message>
+<message name="SystemException">
+<part name="SystemException" element="ns3:SystemException"/>
+</message>
+<message name="UnexpectedException">
+<part name="UnexpectedException" element="ns3:UnexpectedException"/>
+</message>
+
+
+
+
+<message name="XMapWS_renderMapBoundingBox">
+<part name="parameters" element="ns0:renderMapBoundingBox"/>
+</message>
+<message name="XMapWS_renderMapBoundingBoxResponse">
+<part name="parameters" element="ns0:renderMapBoundingBoxResponse"/>
+</message>
+<message name="XMapWS_renderMapRot">
+<part name="parameters" element="ns0:renderMapRot"/>
+</message>
+<message name="XMapWS_renderMapRotResponse">
+<part name="parameters" element="ns0:renderMapRotResponse"/>
+</message>
+
+<portType name="XMapWS">
+<operation name="renderMap">
+<input message="tns:XMapWS_renderMap"/>
+<output message="tns:XMapWS_renderMapResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XMapException" message="tns:XMapException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="renderMapBoundingBox">
+<input message="tns:XMapWS_renderMapBoundingBox"/>
+<output message="tns:XMapWS_renderMapBoundingBoxResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XMapException" message="tns:XMapException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+<operation name="renderMapRot">
+<input message="tns:XMapWS_renderMapRot"/>
+<output message="tns:XMapWS_renderMapRotResponse"/>
+<fault name="XServiceException" message="tns:XServiceException"/>
+<fault name="XMapException" message="tns:XMapException"/>
+<fault name="SystemException" message="tns:SystemException"/>
+<fault name="UnexpectedException" message="tns:UnexpectedException"/>
+
+
+
+
+</operation>
+
+</portType>
+<binding name="XMapWSBinding" type="tns:XMapWS">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="renderMap">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XMapException">
+<soap:fault name="XMapException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="renderMapBoundingBox">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XMapException">
+<soap:fault name="XMapException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+<operation name="renderMapRot">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="XServiceException">
+<soap:fault name="XServiceException" use="literal"/>
+</fault>
+<fault name="XMapException">
+<soap:fault name="XMapException" use="literal"/>
+</fault>
+<fault name="SystemException">
+<soap:fault name="SystemException" use="literal"/>
+</fault>
+<fault name="UnexpectedException">
+<soap:fault name="UnexpectedException" use="literal"/>
+</fault>
+
+
+
+
+</operation>
+
+</binding>
+<service name="XMapWSService">
+	<port name="XMapWSPort" binding="tns:XMapWSBinding">
+		<soap:address location="http://80.146.239.243:12101/xmap/ws/XMap" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"/>
+	</port>
+</service>
+</definitions>

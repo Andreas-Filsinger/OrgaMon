@@ -1,0 +1,10 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Order, alle Löschbaren
+--
+
+select
+ RID
+from
+ BBELEG 

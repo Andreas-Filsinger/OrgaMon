@@ -1,0 +1,137 @@
+object FormInternationaleTexte: TFormInternationaleTexte
+  Left = 70
+  Top = 199
+  Caption = 'Texte (incl. Sprachvarianten)'
+  ClientHeight = 466
+  ClientWidth = 730
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Verdana'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object IB_Grid1: TIB_Grid
+    Left = 0
+    Top = 41
+    Width = 736
+    Height = 286
+    CustomGlyphsSupplied = []
+    DataSource = IB_DataSource1
+    TabOrder = 0
+    EditLinksAuto = True
+    IndicateLongTitle = True
+    IndicateLongCellText = True
+    DrawCellTextOptions = [gdtEllipsis, gdtShowTextBlob]
+    DrawTitleTextOptions = [gdtEllipsis]
+    CurrentRowColor = clInfoBk
+    TabStopLinks.Strings = (
+      'RID'
+      'LANDISO_KURZZEICHEN'
+      'INT_TEXT')
+  end
+  object IB_Memo1: TIB_Memo
+    Left = 0
+    Top = 328
+    Width = 735
+    Height = 125
+    DataField = 'INT_TEXT'
+    DataSource = IB_DataSource1
+    TabOrder = 1
+    AutoSize = False
+  end
+  object IB_SearchBar1: TIB_SearchBar
+    Left = 8
+    Top = 8
+    Width = 120
+    Height = 25
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 2
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+  end
+  object IB_NavigationBar1: TIB_NavigationBar
+    Left = 136
+    Top = 8
+    Width = 116
+    Height = 25
+    Flat = False
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 3
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+  end
+  object IB_UpdateBar1: TIB_UpdateBar
+    Left = 264
+    Top = 8
+    Width = 138
+    Height = 25
+    Flat = False
+    Ctl3D = False
+    ParentCtl3D = False
+    TabOrder = 4
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+    VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+  end
+  object Button1: TButton
+    Left = 520
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'l'#246'schen'
+    TabOrder = 5
+    OnClick = Button1Click
+  end
+  object IB_Query1: TIB_Query
+    ColumnAttributes.Strings = (
+      'RID=NOTREQUIRED'
+      'LAND_R=NOTREQUIRED')
+    DatabaseName = '192.168.115.91:test.fdb'
+    FieldsDisplayWidth.Strings = (
+      'INT_TEXT=400')
+    FieldsReadOnly.Strings = (
+      'LAND_TEXT=TRUE;NOEDIT;NOINSERT;NOSEARCH')
+    FieldsVisible.Strings = (
+      'DB_KEY=FALSE')
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'SELECT RID'
+      '     , LAND_R'
+      '     , (SELECT ISO_KURZZEICHEN FROM'
+      '        LAND T WHERE T.RID=P.LAND_R) AS'
+      '       LAND_TEXT'
+      '     , INT_TEXT'
+      'FROM INTERNATIONALTEXT P'
+      'ORDER BY RID,LAND_R'
+      'FOR UPDATE')
+    ColorScheme = True
+    RequestLive = True
+    Left = 672
+    Top = 8
+  end
+  object IB_DataSource1: TIB_DataSource
+    Dataset = IB_Query1
+    Left = 704
+    Top = 8
+  end
+  object IB_Query2: TIB_Query
+    DatabaseName = '192.168.115.91:test.fdb'
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'SELECT INT_TEXT'
+      'FROM INTERNATIONALTEXT'
+      'WHERE RID=:CR1 AND'
+      'LAND_R=:CR2')
+    Left = 640
+    Top = 8
+  end
+end

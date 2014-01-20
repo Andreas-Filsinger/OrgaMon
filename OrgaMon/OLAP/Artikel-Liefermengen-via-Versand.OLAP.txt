@@ -1,0 +1,41 @@
+//
+//  O L A P  - Definitions Datei
+//  
+//  Gelieferte Mengen von Context Mitgliedern in einem Zeitraum
+//  addiert zu Monaten
+//
+// $Context kann eine Kommaseparierte Liste sein
+//
+// $ArtikelAusschluss kann eine kommaseparierte Liste sein
+//
+$Context=197842
+$Start='31.12.2001'
+$Ende='01.01.2008'
+$ArtikelAusschluss=0
+
+select 
+  VERSAND.AUSGANG DATUM,
+  POSTEN.MENGE_GELIEFERT MENGE
+from
+  POSTEN 
+join VERSAND on
+ (POSTEN.BELEG_R=VERSAND.BELEG_R) and
+ (VERSAND.RECHNUNG is not null) and
+ (AUSGANG between $Start AND $Ende)
+join ARTIKEL on
+ (POSTEN.ARTIKEL_R=ARTIKEL.RID) and
+ (ARTIKEL.RID not in ($ArtikelAusschluss))  
+where
+ (POSTEN.MENGE_GELIEFERT>0)
+
+integrate
+
+DATUM=month(DATUM)
+
+sort
+
+DATUM
+
+excel
+open
+-

@@ -1,0 +1,22 @@
+--
+-- O L A P  
+--
+-- Gibt einen "*" aus, wenn die Probemenge<20 oder NULL
+-- anstonsten einen Leerschritt.
+--
+
+--$RID=192355
+--$RID=195586
+$RID=196482
+
+select COALESCE(
+ (select '*' from ARTIKEL where 
+ (RID=$RID) and
+ ((MENGE_PROBE<20) or (MENGE_PROBE is null)))
+ ,' '
+ ) from RDB$$DATABASE
+ 
+excel
+open
+-
+ 

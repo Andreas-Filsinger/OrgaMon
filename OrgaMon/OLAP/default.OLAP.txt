@@ -1,0 +1,22 @@
+load C:\mappe1.csv
+
+RID INTEGER RID
+-
+ 
+select distinct
+Person.RID
+from posten
+join Beleg on
+Posten.Beleg_R=Beleg.RID
+join Person on
+Beleg.Person_R=Person.RID
+join OLAP$$TMP0 on
+Person.RID= OLAP$$TMP0.RID
+where artikel_R=214223 and 
+Posten.Ausgabeart_R is NULL
+
+
+excel
+
+open
+- 

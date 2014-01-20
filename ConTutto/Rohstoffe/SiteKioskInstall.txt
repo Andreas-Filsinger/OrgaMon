@@ -1,0 +1,110 @@
+================ Grundsätzliches zu Win 2000 installation
+Server: Dauerhaft auf eine Freigabe auf einem COntutto-Verzeichnis des Servers erstellen
+Client: Diese Freigabe verbinden mit einem Laufwerksbuchstaben (auch beim nächsten Start!)
+Alle: Bilschirmschoner jeder art deaktivieren.
+================ WinAmp_278 / 5.02
+Installieren, irgendwann "no connection to internet" (oder so) sagen!!!
+Winamp muss in den Autostart-Ordner (sonst ist der Eingabe-Focus beim Start von Contutto weg!):
+Auf Winamp-Verknüpfung auf dem Desktop ein rechter Mausklick -> kopieren
+Rechts Mausklick auf Start->Öffen->PRogramme->Autostart->rechter Mausklick (Einfügen!)
+Immer Disable WinAmp Agent (kleines Symbol neben der Uhr!) sonst kommt der Winamp nicht hoch!
+Option _> Stay on Top aktivieren
+Preferences -> Agent : Alle 3 deaktivieren!
+---------------
+Winamp mal starten und Fenster schön oben rechts positionieren.
+(später ist der nicht mehr positionierbar.)
+Play-List Fenster unter dem Winamp-Fenster positionieren.
+alle anderen Winamp-Fenster schliesen.
+Ev. Repeat (endlosschleife) einstellen.
+================ Contutto
+* Für Contutto eine Verknüpfung auf dem Desktop anlegen
+ Befehlszeile <ServerFreigabe...\Contutto.exe messe          (mit Parameter Messe)
+ Tastenkombination <Strg> und <Alt> und <H> zuordnen
+* Contutto beenden
+ ände als suchbegriff eingeben
+* Contutto auf allen Stationen beenden
+ daun als suchbegriff eingeben  
+* SiteKisok beenden
+ <ESC> dann das pwd (1328A67E)
+================ Sitekiosk Installation
+
+(bei mir auf NT 4 installiert!)
+sitekioskde.exe starten
+<weiter>
+SiteKiosk 4.9 Rev 14
+<weiter>
+<weiter>
+<JA>
+<weiter<
+minimal-Symbol
+<weiter>
+<weiter>
+[x] Neu starten
+<Fertigstellen>
+--------------------------- (erstes mal konfigurieren)
+start->Programm->SiteKisok->SiteKisok konfigurieren
+(x) neu erstellen 
+<weiter>
+nun auswählen mit gelebn Ordner Symbol
+//:File C:\Programme\SiteKiosk\Html\programs\tools.htm 
+<weiter>
+---------------- (einrichtung)
+//:File  C:\programme\sitekiosk\html\programs\tools.htm
+<weiter>
+--------------------- Zugriffsoptionen
+(x) offline
+<weiter>
+---------------------- Surfgebiet
+<weiter>
+---------------- Programme
+[x] externe Programme verwenden
+[hinzufügen]
+G:\contutto\contutto.exe messe                    (bei Befehlszeile)
+Drücken Sie Strg und Alt und H um zu starten      (bei Bemerkung, KEINE Sonderzeichen verwenden!)
+-------------- Bildschirmschoner
+[ ] Bildschirmschoner      (wegmachen!)
+<weiter>
+
+-------------- Mails
+<weiter>
+--------------  drucken
+[ ] Druckerbutton   (wegmachen!)
+<weiter>
+--------------- smbol design
+[ ] logout (wegmachen)
+
+//:File ../html/programs/tools.htm
+<weiter>
+
+------------- ausblendenk
+[ ] fensterleiste anzeigen
+[ ] ADresseingabefeld
+(o) Browserleiste immer ausblenden
+<weiter>
+--------------  weitere einst
+[ ] SiteKisok Splash
+<weiter>
+--------------- Touch
+<weiter>
+---------- Fenster management
+ersten 5 Programme entfernen! (bis zum grünen Knödel)
+<weiter>
+------------- eSC Tasten pwd
+1328A67E
+1328A67E
+<fertigstellen>
+default <ENTER>
+beenden und starten
+----------------------- Starteinstellungen
+[x] automatisch beim jedem start
+[v] Tastatur Sperre während des windows start
+[v] Automatisches Windows Logon einschalten
+    (ACHTUNG es muss dem Benutzer ein pwd gegeben werden!!!
+     ohne pwd misslingt der auto-start!)
+    Ev. einen neuen Benutzer auf dem Computer angeben
+User: .... Pwd: ...
+------------ Registierung
+Andreas Filsinger - 1 Lizenz(en)
+8EAB192A-1328A67E-2E7633E2-2A
+------------------
+

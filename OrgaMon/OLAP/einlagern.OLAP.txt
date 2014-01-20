@@ -1,0 +1,13 @@
+select A.rid,
+L.NAME,
+L.FREIGABE,
+W.AUFTRITT
+from artikel A
+join lager L on
+  A.LAGER_R = L.RID
+  join warenbewegung W on
+  A.RID = W.ARTIKEL_R
+  where
+  ((A.mindestbestand is null) or (A.mindestbestand = 0)) and
+  ((A.menge is null) or (A.menge = 0)) and
+  (LAGER_R is not NULL)

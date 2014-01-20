@@ -1,0 +1,813 @@
+
+<HTML>
+<HEAD>
+<STYLE TYPE="text/css">
+<!--
+BODY {font-family:Courier New;font-size:10pt}
+A.red0 {color:CC0000;text-decoration:underline}
+A.blue0 {color:000099;text-decoration:none}
+-->
+</STYLE>
+<TITLE>Projekt Info</TITLE>
+</HEAD>
+<body bgcolor="#FFFFFF" leftmargin=10 topmargin=0 marginwidth=0 marginheight=0 vlink="#888888" alink="#AA3333" link="#336699">
+<!-- BEGIN Info -->
+<b>Info Dokument f&uuml;r JonDaServer Rev. 2.150</b><br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#0">Was ist neu</A><br>
+<br>
+Inhaltsverzeichnis<br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#1">Dokumentation</A><br>
+<br>
+<A class=blue0 name="1">Dokumentation</A><br>
+<br>
+<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href><br>
+<br>
+<A class=red0 name="0">Rev 2.150 (04.10.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: RWTR transportiert Optionen &uuml;ber den Bild-Prefix (MaxAnzahl=)<br>
+<br>
+<A class=red0>Rev 2.149 (02.08.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: cJonDaServer hat keine Abh&auml;ngigkeit mehr zu &quot;Dialogs&quot;<br>
+<br>
+<A class=red0>Rev 2.148 (10.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: GUI: Logik invertiert beim H&auml;kchen &quot;mit Ergebnis TAN upload&quot;<br>
+<br>
+<A class=red0>Rev 2.147 (04.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: OPTIONEN vom Server als Protokoll<br>
+&nbsp;Neu: .\Daten\~Ger&auml;t~.ini werden nun in .\Einstellungen\~Ger&auml;t~.ini gespeichert<br>
+&nbsp;Neu: .\Einstellungen\~Ger&auml;t~.ini: OPTIONEN= JonDa-Optionen f&uuml;r das jeweilige Ger&auml;t<br>
+<br>
+<A class=red0>Rev 2.146 (19.05.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Zentraler Bilder-Fokus-Zeitraum: 32 Tage<br>
+<br>
+<A class=red0>Rev 2.145 (17.05.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Pflege Massnahme f&uuml;r &quot;Foto&quot; und &quot;Auftrag&quot; - BLA<br>
+<br>
+<A class=red0>Rev 2.144 (17.05.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: TAN Flip Over bei &quot;99999&quot;<br>
+<br>
+<A class=red0>Rev 2.143 (11.05.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: BLA-Gr&ouml;sse auf 250000 erweitert.<br>
+<br>
+<A class=red0>Rev 2.142 (31.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .\Daten\~Ger&auml;t~.ini: ZEIT_PR&Uuml;FUNG=NEIN<br>
+<br>
+<A class=red0>Rev 2.141 (26.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: WebSite: Mehr Infos<br>
+<br>
+<A class=red0>Rev 2.140 (18.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: GpLists Sort-Bug<br>
+&nbsp;Neu: Foto+Auftrag (Bin&auml;res Lager) um &quot;TimeStamp&quot; erweitert<br>
+<br>
+<A class=red0>Rev 2.139 (17.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: GpLists SetCapacity-Bug<br>
+<br>
+<A class=red0>Rev 2.138 (17.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Bilderprefix: &quot;Schrott-&quot; im Falle von &quot;Schrott&quot;<br>
+<br>
+<A class=red0>Rev 2.137 (10.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Statistik: Anzahl der Fotomeldungen<br>
+&nbsp;Neu: Foto-Website: neue Farben<br>
+&nbsp;Neu: Foto-Website: neues Layout<br>
+&nbsp;Neu: Foto-Website: unn&ouml;tige werden ausgeblendet<br>
+<br>
+<A class=red0>Rev 2.136 (09.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Statistik im Log: Die Zahl der Datums-Korrekture wird ausgegeben<br>
+&nbsp;Neu: Statistik im Log: Nur Werte&lt;&gt;0 werden ausgegeben<br>
+<br>
+<A class=red0>Rev 2.135 (09.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Wiederholen der TAN war im &quot;Online&quot; Modus<br>
+<br>
+<A class=red0>Rev 2.134 (29.01.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Statistik: Ignorierte Meldungen, Es wird unterschieden zwischen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ignoriert wegen &quot;Test&quot; oder Ignoriert wegen &quot;OhneAuftrag&quot;<br>
+&nbsp;Neu: Globale Protokollierung der OrgaMon-Auftr&auml;ge<br>
+&nbsp;Neu: Globale Protokollierung der Foto-Protokoll-Infos<br>
+&nbsp;Neu: Web-Statistik, wo sind Fotos da, wo nicht!<br>
+<br>
+<A class=red0>Rev 2.133 (29.01.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Wegen umfassenden &Auml;nderungen im srvXMLRPC neu compiliert<br>
+<br>
+<A class=red0>Rev 2.132 (15.01.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Umgestellt auf neue ini-Parameter<br>
+&nbsp;Neu: normale &quot;disconnect&quot; Exception wird nicht mehr aufgezeichnet<br>
+<br>
+<A class=red0>Rev 2.131 (22.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: MVHA: Strassennamen wurden falsch eingetragen<br>
+<br>
+<A class=red0>Rev 2.130 (16.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Mehr Log-Ausgaben bei Exceptions<br>
+<br>
+<A class=red0>Rev 2.129 (16.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Versuch mit einer &quot;CriticalSection&quot; die Ausf&uuml;hrung immer nur einer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aufgabe sicherzustellen. Konkurrierende &quot;proceeds&quot; lassen mich mit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;einem unguten Gef&uuml;hl zur&uuml;ck.<br>
+<br>
+<A class=red0>Rev 2.128 (15.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Absturz bei &quot;proceed&quot;<br>
+<br>
+&nbsp;Neu: Mehr Infos beim manuellen Proceed<br>
+<br>
+<A class=red0>Rev 2.127 (15.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: R&uuml;ckbau &quot;JonDaConnector&quot;<br>
+&nbsp;Neu: ProceedTAN nun im XMLRPC-Log<br>
+&nbsp;Neu: Gebrauchte Zeit im XMLRPC-Log<br>
+<br>
+<A class=red0>Rev 2.126 (15.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Upload der Ergebnisdaten hatte nicht funktioniert<br>
+<br>
+<A class=red0>Rev 2.125 (15.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: cJonDaServer: Reine Win32 Konsolen-Anwendung<br>
+<br>
+<A class=red0>Rev 2.124 (10.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Migrationshilfen: &quot;MonDaServer&quot; -&gt; &quot;JonDaServer&quot;<br>
+<br>
+<A class=red0>Rev 2.123 (09.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Detailverbesserungen f&uuml;r den Programm-Startup<br>
+<br>
+<A class=red0>Rev 2.122 (09.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Baustelle &quot;MVHA&quot;: Neuer Prefix f&uuml;r Bildbenennung!<br>
+<br>
+<A class=red0>Rev 2.121 (11.09.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;SEWA Hoehner&quot; wurde nicht erkannt?!<br>
+<br>
+<A class=red0>Rev 2.120 (03.07.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;SEWA Heupel&quot; wurde nicht erkannt?!<br>
+<br>
+<A class=red0>Rev 2.119 (03.07.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Projektname nun &quot;JonDaServer&quot;<br>
+&nbsp;Neu: Lauff&auml;higkeit auf C:\Programme\JonDaServer<br>
+<br>
+<A class=red0>Rev 2.118 (06.06.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Schreibfehler bei Weskamp<br>
+&nbsp;<br>
+<A class=red0>Rev 2.117 (03.06.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Foto-Eingabe: &quot;Z#neu&quot; und &quot;Prefix&quot; ist jetzt in der Ergebnis-Datei<br>
+&nbsp;Neu: Foto-Eingabe: bessere Identifizierung und Ersetzung &quot;alter&quot; Eintr&auml;ge<br>
+<br>
+<A class=red0>Rev 2.116 (13.05.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Eingabe-Datums, &auml;lter als 4 Tage werden korriegiert auf heute 12:00 h.<br>
+<br>
+<A class=red0>Rev 2.115 (15.09.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Plausibilit&auml;tspr&uuml;fung und Datums-Korrektur auch bei der Meldung.<br>
+<br>
+<A class=red0>Rev 2.114 (11.09.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: bei &quot;Meldung&quot; wird beim Produktiv-Test auf das Meldungsdatum geschaut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht auf das Eingabe-Datum.<br>
+&nbsp;Neu: Eingabe-Datums, &auml;lter als 48 h werden korriegiert auf heute 12:00 h.<br>
+<br>
+<A class=red0>Rev 2.113 (22.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: weiterer Filter f&uuml;r THUA<br>
+<br>
+<A class=red0>Rev 2.112 (22.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Test/Prod - Switch wurde bei den Ger&auml;te - Meldungen nicht ber&uuml;cksichtigt<br>
+&nbsp;Bug: Test/Prod - Switch wurde bei der Gesamt - Meldung nicht ber&uuml;cksichtigt<br>
+<br>
+&nbsp;Neu: Zentrale Entry-Point Routine f&uuml;r Produktiv-/Test- Switch<br>
+<br>
+<A class=red0>Rev 2.111 (22.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ab '299': Eingaben werden erst ab dem 22.08.2008 ber&uuml;cksichtigt!<br>
+<br>
+<A class=red0>Rev 2.110 (18.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Proceed &quot;999&quot;: Statistik! + Meldungen! wird ausgel&ouml;st!<br>
+<br>
+<A class=red0>Rev 2.109 (18.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Alias-Ger&auml;tenummern sind jetzt deaktiviert, aber in eine eigene Funktion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verschoben!<br>
+&nbsp;Neu: Foto: &quot;Eingabe&quot; Datei hat eine Eintrag-Lebensdauer von nur noch 20 Tagen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(bisher unbeschr&auml;nkt!)<br>
+&nbsp;Neu: Integration von JonDa-Stat!<br>
+&nbsp;Neu: JonDa-Stat kann nun verschiedene Baustellen!<br>
+<br>
+<A class=red0>Rev 2.108 (05.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Alias-Ger&auml;tenummern sind jetzt m&ouml;glich!<br>
+<br>
+<A class=red0>Rev 2.107 (28.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Verarbeiten einer ganzen Kette von TANs<br>
+<br>
+<A class=red0>Rev 2.106 (22.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Eingabedateien nur wenn es ein Datum gibt<br>
+<br>
+<A class=red0>Rev 2.105 (22.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Eingabe.~GeraeteNo~.txt wird angelegt um den Wechselmoment festzustellen<br>
+<br>
+<A class=red0>Rev 2.104 (21.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: FTP-Zugangsdaten im Base-Plug<br>
+<br>
+<A class=red0>Rev 2.103 (14.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Ger&auml;t &quot;000&quot;: &quot;GGG.DAT&quot; bei den &quot;Abgezogenen&quot; gibt es nicht.<br>
+<br>
+&nbsp;Neu: FTP-Host kann nun auch &uuml;ber einen Parameter gesetzt werden.<br>
+<br>
+<A class=red0>Rev 2.102 (14.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Log der XML-RPC-Calls<br>
+<br>
+<A class=red0>Rev 2.101 (12.03.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Ber&uuml;cksichtigt erstmals die vom Ger&auml;t abgezogenen Auftr&auml;ge<br>
+<br>
+<A class=red0>Rev 2.100 (08.12.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Ber&uuml;cksichtigt erstmals das, was der OrgaMon selbst noch nicht runtergeladen hat.<br>
+<br>
+<A class=red0>Rev 2.099 (07.12.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: '.\0000' heisst jetzt &quot;.\Daten&quot;!<br>
+<br>
+<A class=red0>Rev 2.098 (02.12.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neues XMLRPC Namespace-Modell.<br>
+<br>
+<A class=red0>Rev 2.097 (29.10.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Zeit/Datum der Auftragsdatei wird aus dem FTP Server &uuml;bernommen!<br>
+&nbsp;Wegfall: Sonderl&ouml;sung &quot;Singen&quot; wegen Nichmeldung der Testdaten. <br>
+<br>
+<A class=red0>Rev 2.096 (02.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Singen: Testeingaben ausblenden!<br>
+<br>
+<A class=red0>Rev 2.095 (13.08.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ISDN-Support ausgebaut.<br>
+&nbsp;Neu: BasePlug: Zeitstempel und TAN-Stempel wird mit ausgegeben.<br>
+<br>
+<A class=red0>Rev 2.094 (14.03.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Rev Vergleich mislang!<br>
+<br>
+<A class=red0>Rev 2.093 (12.03.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: JonDa: Zwang zur Version 1.104.<br>
+<br>
+<A class=red0>Rev 2.092 (23.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Meldung! geht immer in den Upload<br>
+&nbsp;Neu: Anzahl der Meldungen werden ber&uuml;cksichtigt<br>
+<br>
+<A class=red0>Rev 2.091 (12.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &lt;TAB&gt; war in der auftrag.txt!<br>
+<br>
+<A class=red0>Rev 2.090 (10.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XMLRPC: In BasePlug wird der ComputerName (Host) ausgegeben!<br>
+<br>
+<A class=red0>Rev 2.089 (07.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Mindestprogrammversion kann nun eingestellt werden. Eine entsprechende<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Info wird ausgegeben.<br>
+<br>
+<A class=red0>Rev 2.088 (26.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;000&quot; hatte nicht mehr funktioniert!<br>
+<br>
+<A class=red0>Rev 2.087 (14.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Begriffsbildung: Abberufen! (FTW Auftr&auml;ge, die pl&ouml;tzlich vom OrgaMon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht mehr f&uuml;r dieses Ger&auml;t kommen!).<br>
+<br>
+<A class=red0>Rev 2.086 (12.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Log: Sollten beim Log Probleme auftauchen, so wird einfach sp&auml;ter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gelogged.<br>
+&nbsp;Neu: Alle Datei &quot;Open&quot; Aufrufe nun abgesichert.&nbsp;&nbsp;&nbsp;&nbsp; <br>
+<br>
+<A class=red0>Rev 2.085 (08.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Meldung (TAN 50000) wird im Memo angezeigt<br>
+<br>
+<A class=red0>Rev 2.084 (31.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;Fertige&quot; waren wieder als unber&uuml;hrte im Auftrag!<br>
+<br>
+<A class=red0>Rev 2.083 (30.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: FTW melden ist nun default.<br>
+<br>
+<A class=red0>Rev 2.082 (30.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: F&uuml;r Statistik: Info Ausgabe ins Statistik Verzeichnis!<br>
+<br>
+<A class=red0>Rev 2.081 (30.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: M&ouml;glichkeit, das Melden der &quot;FTW&quot; zu verhindern!<br>
+<br>
+<A class=red0>Rev 2.080 (30.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;FTW&quot; Termine wurden als &quot;Fall-Back&quot; gemeldet!<br>
+&nbsp;Neu: Ist eine Ger&auml;te-Datei vorhanden, do werden die Sendeergebnisse auch dort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eingetragen. Bei der Verarbeitung werden dann auch die Ergebnisse aus<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;den Ger&auml;te-Dateien mit ber&uuml;cksichtigt.<br>
+<br>
+<A class=red0>Rev 2.079 (29.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: bei den Protokoll-Dateinamen bitte nur Grossschreibung! <br>
+<br>
+<A class=red0>Rev 2.078 (27.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: kein Zwischenraum zwischen Name1 und Name2.<br>
+<br>
+<A class=red0>Rev 2.077 (25.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: K&uuml;rzel f&uuml;r &quot;freie Terminwahl&quot;: FTW<br>
+&nbsp;Neu: K&uuml;rzel f&uuml;r &quot;Kopie Vorlage Termin&quot;: KV<br>
+&nbsp;Neu: Umlaute werden wieder nach 2 Zeichen gewandelt.<br>
+<br>
+<A class=red0>Rev 2.076 (25.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: auftrag.txt wurde zu fr&uuml;h freigegeben.<br>
+<br>
+<A class=red0>Rev 2.075 (24.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;Freie Terminwahl&quot; ber&uuml;cksichtigt.<br>
+<br>
+<A class=red0>Rev 2.074 (11.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: SNTP ist ausschaltbar (sntp=NEIN)<br>
+<br>
+<A class=red0>Rev 2.073 (30.06.06-01.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: FTP: Host war nicht gesetzt, deshalb &quot;Connection closed gracefully&quot;.<br>
+&nbsp;Bug: FTP: War nicht (mehr) passiv, deshalb andere Systematik beim Datei-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transfer.<br>
+<br>
+<A class=red0>Rev 2.072 (29.06.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;000&quot; hatte nicht richtig funktioniert.<br>
+<br>
+<A class=red0>Rev 2.071 (31.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Wenn es eine Ger&auml;tenummer nicht auf dem FTP gibt wird besser reagiert!<br>
+<br>
+<A class=red0>Rev 2.070 (08.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Mobil: Abgearbeitete des OrgaMon werden jetzt ber&uuml;cksichtigt.<br>
+<br>
+<A class=red0>Rev 2.069 (02.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Dauerhafte wurden nicht immer als erste &Uuml;bertragen. <br>
+<br>
+<A class=red0>Rev 2.068 (20.04.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Ger&auml;tenummer mussten immer mit &quot;0&quot; beginnen. Nun sollten auch Ger&auml;tenummern<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;99 m&ouml;glich sein.<br>
+&nbsp;Neu: TAN Bericht als csv.<br>
+<br>
+<A class=red0>Rev 2.067 (13.04.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Umlaut in der Baustellenbezeichnung ging nicht!<br>
+<br>
+<A class=red0>Rev 2.066 (07.04.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: OrgaMon &quot;Fertige&quot; werden nicht mehr aufs Ger&auml;t &uuml;bertragen.<br>
+<br>
+<A class=red0>Rev 2.065 (28.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: MondaServer: Kontrolle der Handyzeit kann deaktiviert werden.<br>
+<br>
+<A class=red0>Rev 2.064 (09.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Backslash-Filter f&uuml;r die Z&auml;hlernummern &quot;neu&quot; - wegen des Barcodes.<br>
+<br>
+<A class=red0>Rev 2.063 (08.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Im JonDa - Modus wurden Protokolldaten nicht richtig &uuml;bernommen.<br>
+&nbsp;Bug: Umlautzeichen (&Auml;&Ouml;&Uuml;&auml;&ouml;&uuml;), die aus dem JonDa kommen wurden nicht richtig<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;umkonvertiert.<br>
+&nbsp;Bug: Umlautzeichen (&Auml;&Ouml;&Uuml;&auml;&ouml;&uuml;), im Log wurden nicht richtig &uuml;bernommen.<br>
+<br>
+<A class=red0>Rev 2.062 (04.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: kein Meldedatum in der Zukunft mehr.<br>
+<br>
+<A class=red0>Rev 2.061 (28.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Kein &quot;NEW.ZIP&quot; mehr im JonDa-Modus.<br>
+<br>
+<A class=red0>Rev 2.060 (26.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Zeitpr&uuml;fung erst ab Programmversion 1.075.<br>
+<br>
+<A class=red0>Rev 2.059 (26.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &Uuml;bertragungsverweigerung bei Zeitabweichung&gt;5 Minuten.<br>
+<br>
+<A class=red0>Rev 2.058 (26.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Fehlermeldungen gleich bei der TAN Vergabe!<br>
+<br>
+<A class=red0>Rev 2.057 (25.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Angleichungen an (mit OrgaMon) gemeinsame MDEREC.INC.<br>
+<br>
+<A class=red0>Rev 2.056 (23.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;-1&quot; Termin wurde auf &quot;Fallback&quot; gesetzt.<br>
+<br>
+<A class=red0>Rev 2.055 (23.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;-1&quot; Termin wurde auf &quot;Fallback&quot; gesetzt.<br>
+<br>
+<A class=red0>Rev 2.054 (23.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Bei &quot;-1 Auftr&auml;gen&quot; wurde alles falsch &uuml;bertragen.<br>
+<br>
+<A class=red0>Rev 2.053 (23.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Spezialdatum &quot;01.01.2000&quot; wurde nicht ber&uuml;cksichtigt. <br>
+<br>
+<A class=red0>Rev 2.052 (29.11.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neue Serveradresse eingetragen.<br>
+<br>
+<A class=red0>Rev 2.051 (25.11.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Compiliert mit neuem Cartaker.<br>
+<br>
+<A class=red0>Rev 2.050 (26.10.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: InformOrgamon erfolgte aufgrund der globalen Variable Stat_Meldungen, die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ggf. &uuml;berschrieben werden kann, insbesondere durch Zeitgleiche JonDa Anrufe.<br>
+<br>
+<A class=red0>Rev 2.049 (26.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Protokolle: Einzelne Protokolle wurden mehrfach auf das Ger&auml;t &uuml;bertragen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Beispiel: PLE 4x).<br>
+<br>
+<A class=red0>Rev 2.048 (26.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: JonDa: Versionnummer wurde nicht richtig protokolliert!<br>
+<br>
+&nbsp;Neu: Zeit&uuml;berwachungsbericht verbessert.<br>
+&nbsp;Neu: JonDa: Ablagemoment der TAN Verarbeitung wird jetzt protokolliert. Dadurch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kann eine Handy-Zeitabweichung ber&uuml;cksichtigt werden.<br>
+<br>
+<A class=red0>Rev 2.047 (12.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: verwendete Transaktionsnummer ist mit im Log.<br>
+<br>
+<A class=red0>Rev 2.046 (01.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;-1&quot; Datens&auml;tze aus JonDa werden &uuml;bernommen.<br>
+&nbsp;Neu: &quot;GaZMa&quot; heisst jetzt &quot;OrgaMon&quot;<br>
+<br>
+<A class=red0>Rev 2.045 (01.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Monteurk&uuml;rzel k&ouml;nnen auch Umlaute enthalten!<br>
+&nbsp;Neu: Ger&auml;teoptionen und die Uhrzeit wird aufgenommen!<br>
+<br>
+<A class=red0>Rev 2.044 (08.07.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &Uuml;berwachung der Uhrzeit des Dateisystems.<br>
+&nbsp;Neu: &Uuml;berwachung &uuml;bergrosser Uhrzeitkorrekturen.<br>
+<br>
+<A class=red0>Rev 2.043 (29.04.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neustart des OrgaMon Servers gehen in das CareTaker-Log.<br>
+&nbsp;Neu: Jeder erfolgreiche Anruf geht in das CareTaker-Log.<br>
+&nbsp;Neu: Nachmeldungen werden nach jedem &Uuml;bertragungsende versucht.<br>
+&nbsp;Neu: Blinkende LED zeigt einen &quot;Idle&quot; Server Modus an.<br>
+&nbsp;Neu: Gr&uuml;ne LED zeigt einen &quot;conntierten&quot; Server an.<br>
+<br>
+<A class=red0>Rev 2.042 (07.03.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Alle Protokoll-Feldnamen k&ouml;nnen f&uuml;r eine Baustelle ermittelt werden.<br>
+<br>
+<A class=red0>Rev 2.041 (26.01.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Status &quot;Vorgezogen&quot; wird ber&uuml;cksichtigt!<br>
+<br>
+<A class=red0>Rev 2.040 (08.11.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Name1 und Name2 wird an das Handy in der selben Zeile ausgegeben.<br>
+<br>
+<A class=red0>Rev 2.039 (04.11.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Anzeige: Es wurde nach einem Neustart nicht die zuletzt verarbeitete<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TAN Nummer angezeigt.<br>
+<br>
+&nbsp;Neu: JonDa: Die Neuigkeiten f&uuml;r das Handy werden nicht bei der ersten Anwahl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geladen, sondern erst beim &quot;Proceed&quot;. Dadurch sind die Daten so aktuell<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wie m&ouml;glich.<br>
+<br>
+<A class=red0>Rev 2.038 (29.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Jonda: Der Server vergibt bei Fehlversuchen immer dieselbe TAN als &quot;neue&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TAN, damit dem Handy die M&ouml;glichkeit gegeben wird mehrfach in dieselbe Datei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hochzuladen. Erst beim Verarbeiten (proceed) wird dieser MArker wieder zur&uuml;ck-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gesetzt. In .\0000\ wird die &quot;FolgeTAN&quot; in der Datei TAN.Ger&auml;t.txt gespeichert.<br>
+<br>
+<A class=red0>Rev 2.037 (26.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Verarbeitungsausfall bei JonDa-Betrieb.<br>
+<br>
+<A class=red0>Rev 2.036 (21.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Diagnose (Fall &quot;Kraatz&quot;) verbessert!<br>
+<br>
+<A class=red0>Rev 2.035 (20.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Uhrzeit wird jetzt alle 24 h neu gestellt.&nbsp;&nbsp;<br>
+<br>
+<A class=red0>Rev 2.034 (20.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: JonDa: Umzug auf Laufwerk &quot;W:&quot; (WebServer)<br>
+&nbsp;Neu: AUFTRAG.xxx.TAN landet im 0000 Verzeichnis!<br>
+&nbsp;Neu: JonDa: Bei fehlender TAN wird auf die &quot;alte&quot; AUFTRAG.xxx.DAT zur&uuml;ckgegriffen!<br>
+<br>
+<A class=red0>Rev 2.033 (17.10.04-19.10.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: JonDa: Nach dem Feld &quot;Ort&quot; wird der Protokollname angegeben.<br>
+&nbsp;Neu: JonDa: auftrag.txt: Fortlaufende Nummer wird nicht mehr erwartet.<br>
+&nbsp;Neu: JonDa: Zusammenstellung der Monteurdaten anhand der bisherigen TAN.<br>
+&nbsp;Neu: JonDa: Erstmalig klassische Verarbeitung.<br>
+&nbsp;Neu: JonDa: nur Protokolle werden &uuml;bertragen.<br>
+&nbsp;Neu: JonDa: Dokumentation.<br>
+<br>
+<A class=red0>Rev 2.032 (06.09.04-07.09.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML-RPC Zugang f&uuml;r Jonda.<br>
+<br>
+<A class=red0>Rev 1.032 (14.04.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: AutoFallBack: Nach 13 Tagen ohne Eingabe, f&auml;llt ein Termin an die SEWA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zur&uuml;ck. Es wird dort der Status &quot;FallBack&quot; eingetragen.<br>
+<br>
+<A class=red0>Rev 1.031 (13.04.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: AutoFallBack: Nach 13 Tagen ohne Eingabe, f&auml;llt ein Termin an die SEWA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zur&uuml;ck. Es wird der Status &quot;unm&ouml;glich&quot; eingetragen.<br>
+<br>
+&nbsp;Wegfall: ISDN: CAPI Monitor lief nicht als Teil der Anwendung. Ev. mal externes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tool installieren!&nbsp;&nbsp;&nbsp;&nbsp; <br>
+<br>
+<A class=red0>Rev 1.030 (30.03.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ISDN: CallerID wird mitprotokolliert!<br>
+<br>
+<A class=red0>Rev 1.029 (28.03.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Integration in CareTaker.<br>
+&nbsp;Neu: Moment des Auflegens ist nun auch mit im Log.<br>
+&nbsp;Neu: Wird eine Tel. Nummer beim &quot;RING&quot; &uuml;bertragen? Alles geht nun ins LOG.<br>
+<br>
+<A class=red0>Rev 1.028 (05.03.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Hinzugef&uuml;gte Termine aus der Vergangenheit konnten nicht auf das Ger&auml;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geladen werden. (Teil 2)<br>
+<br>
+<A class=red0>Rev 1.027 (05.03.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Hinzugef&uuml;gte Termine aus der Vergangenheit konnten nicht auf das Ger&auml;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geladen werden.<br>
+<br>
+<A class=red0>Rev 1.026 (17.02.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: langsameres Senden wegen Verbindungsst&ouml;rungen (um 30% vermindert)<br>
+&nbsp;Neu: kleinere Sende-Buffer-Gr&ouml;ssen f&uuml;r die Serial-Komponente. (32 anstelle von 1024)<br>
+<br>
+<A class=red0>Rev 1.025 (16.02.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Endlich liegt der Eingabefokus nach dem Start auf dem Formular. Nur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;show&quot; - Funktion brachte den Erfolg.<br>
+&nbsp;Neu: Es k&ouml;nnen RIDs aus alten Transaktionen nachgelesen werden.<br>
+<br>
+<A class=red0>Rev 1.024 (12.02.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Es k&ouml;nnen Termine anderer Monteure vom Ger&auml;t entfernt werden!<br>
+<br>
+<A class=red0>Rev 1.023 (25.11.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ftp &quot;www.orgamon.org&quot; wird kontaktiert<br>
+<br>
+<A class=red0>Rev 1.022 (29.10.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: ein frisch umterminierter Auftrag, der vom Monteur schon heute<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abgearbeitet wurde, wurde als &quot;unbearbeitet&quot; frisch auf das Ger&auml;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gespielt. (Entdeckt durch Monteur Herrn Wolf).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Neue Vorgehensweise. Die neuen Termininformationen vom GaZMa werden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mit den gemachten Eingaben des Monteurs vermischt.<br>
+<br>
+<A class=red0>Rev 1.021 (05.08.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: (Anfrage Schwoy) Nach Monteur ausw&auml;hlbar<br>
+&nbsp;Neu: (Anfrage Schwoy) Nach Eingabedatum ausw&auml;hlbar<br>
+<br>
+<A class=red0>Rev 1.020 (07.07.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Restaten aus einer anderen TAN &uuml;bernehmen. Angabe eines Monteures<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;erm&ouml;glichen!<br>
+<br>
+<A class=red0>Rev 1.019 (01.07.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;Erledigte&quot; erscheinen wieder als &quot;Restaten&quot;, sobald sich mehrere<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monteure ein Ger&auml;t teilen.<br>
+<br>
+<A class=red0>Rev 1.018 (13.06.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Upload der AUFTRAG.&lt;&lt;Ger&auml;tenummer&gt;&gt;.DAT. Es wird &quot;sput&quot; verwendet. Etwas<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sicherer als &quot;put&quot;.<br>
+<br>
+<A class=red0>Rev 1.017 (10.06.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Diagnose nach Z&auml;hlernummer Alt.<br>
+<br>
+<A class=red0>Rev 1.016 (21.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Diagnose nach Z&auml;hlernummer Neu.<br>
+&nbsp;Neu: Diagnose unabh&auml;ngig von der Ger&auml;tenummer.<br>
+&nbsp;Neu: doppelte AUFTRAG Dateien werden unterdr&uuml;ckt.<br>
+<br>
+<A class=red0>Rev 1.015 (31.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorausplanung von Restaten-L&ouml;schungen m&ouml;glich! Dadurch kann ich einzelne<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sonderfunktionen vorplanen (f&uuml;r einzelne Ger&auml;te). Wenn diese Ger&auml;te anrufen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wird die Sonderfunktion einmal ausgef&uuml;hrt und der MondaServer verf&auml;llt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wieder in den Normalzustand.<br>
+<br>
+<A class=red0>Rev 1.014 (26.03.03-28.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Umfassend erweiterte Diagnosem&ouml;glichkeiten.<br>
+<br>
+<A class=red0>Rev 1.013 (26.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: RID=0 wurde auch an GaZMa gemeldet!<br>
+<br>
+<A class=red0>Rev 1.012 (26.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: TRN-Dateien wurden mit !DAT benannt und waren damit f&uuml;r die Datei&uuml;bertragung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsichtbar!<br>
+<br>
+&nbsp;Neu: Es werden alle &uuml;bertragenen Baustellen-K&uuml;rzel gesammelt, es werden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;danach die entsprechenden Protokolle (&lt;BaustellenK&uuml;rzel&gt;*.txt) auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonDa &uuml;bertragen.<br>
+<br>
+<A class=red0>Rev 1.011 (25.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Man kann mit der Ger&auml;te-Nummer &quot;000&quot; anrufen lassen. Dabei wird der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aktuellen Bestand des Ger&auml;tes gel&ouml;scht. Es wird eine leere Auftragsdatei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uuml;bertragen. Die &quot;alten&quot; Daten, die sich auf dem Ger&auml;t befanden sind<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zwar auf dem MonDaServer gesichert, werden aber nicht an GaZMa &uuml;ber-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tragen.<br>
+<br>
+<A class=red0>Rev 1.010 (20.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;Erledigte&quot; kamen als Restat immer wieder zum Vorschein!<br>
+<br>
+&nbsp;Neu: Abgearbeitete Datens&auml;tze verbleiben am Eingabetag auf dem Ger&auml;t!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Die &Uuml;berschreibung durch den &quot;leeren&quot; Datensatz wird dabei unterdr&uuml;ckt)<br>
+&nbsp;Neu: Abgearbeitete Datens&auml;tze, die vom Monteur eigenm&auml;chtig vorgezogen wurden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verbleiben auf dem Ger&auml;t bis der urspr&uuml;nglich geplante Tag erreicht ist!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Die &Uuml;berschreibung durch den &quot;leeren&quot; Datensatz wird dabei unterdr&uuml;ckt)<br>
+&nbsp;Neu: Angepasste Protokolle werden nun mit&uuml;bertragen! Es gibt aber noch keinen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatischen Weg die Protokolle aus GaZMa (Pfad .\Protokolle) auf die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonDa Ger&auml;te zu verschieben. Jedoch sind zumindest die Dateinamen der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Protokolle auf dem MonDa-Ger&auml;t UND im GaZMa-Pfad gleich. Dokumentation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dazu im Kapitel &quot;Protokoll-Integration ins GaZMa&quot; des GaZMa_Info.html.<br>
+<br>
+&nbsp;Noch mehr Bemerkungen dazu ...<br>
+<br>
+&nbsp;&nbsp;// Stay-Liste<br>
+&nbsp;&nbsp;// ==========<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;// Liste aller erledigten! Alle werden nat&uuml;rlich an GaZMa gemeldet!<br>
+&nbsp;&nbsp;// Einige sollten jedoch auf dem MonDa-System bleiben: GaZMa weis<br>
+&nbsp;&nbsp;// ev. von diesen Meldungen noch nichts, und versucht die Datens&auml;tze<br>
+&nbsp;&nbsp;// durch &quot;unbearbeitete&quot; zu Ersetzen - ein &Auml;rgernis f&uuml;r den Monteur<br>
+&nbsp;&nbsp;// hat dieser doch die Auftr&auml;ge schon erledigt!<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;// Es wird ein Pool von heutigen und vorgezogenen Auftr&auml;gen gef&uuml;hrt.<br>
+&nbsp;&nbsp;// Kommen jedoch diese mit einem anderen _soll Datum oder Vormittag/Nachmittag<br>
+&nbsp;&nbsp;// wird der Datensatz von GazMa genommen, ansonsten der eigene behalten.<br>
+&nbsp;&nbsp;// Kommt dieser Datensatz gar nicht mehr von GaZMa, so kann auch die weitere<br>
+&nbsp;&nbsp;// Speicherung auf MonDa unterbleiben. GaZMa ist dann offensichtlich schon<br>
+&nbsp;&nbsp;// von der Erledigung informiert.<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;// Entweder steht der Datensatz an der Stelle wo er war, oder er ist weg.<br>
+&nbsp;&nbsp;// Oder gazma hat ihn durch einen neuen ersetzt.<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;// Vorgehensweise:<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;// ist der GazMa-Datensatz in der Stay Liste?<br>
+&nbsp;&nbsp;// ja -&gt; pr&uuml;fe, ob soll=soll ist<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ja-&gt;nehme den MonDa-Datensatz<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (man k&ouml;nnte jedoch die Gazma-Datenfelder updaten!!!)<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nein-&gt;nehme den GaZMa-Datensatz<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ev. wurde hier umterminiert!<br>
+&nbsp;&nbsp;// nein -&gt; einfach &uuml;bernehmen!<br>
+&nbsp;&nbsp;//<br>
+<br>
+<A class=red0>Rev 1.009 (10.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Die aktuelle Programm-Version von Monda kann in der Datei .\Update\MondaVersion.txt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gespeichert werden. Somit sind Updates dieses DOS-Programmes einfacher.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(* automatisches Auslesen was an Updates ansteht!)<br>
+<br>
+<A class=red0>Rev 1.008 (27.02.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &Uuml;bertragung ohne den Datenbestand zu Ver&auml;ndern (per Schalter m&ouml;glich!)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACHTUNG: der Schalter bleibt immer gesetzt<br>
+&nbsp;Neu: Es wird protokolliert, was an das Monda-Ger&auml;t ausgegeben wird.<br>
+&nbsp;Info: Neues Kapitel: &quot;wichtige Infos zur Installation unter Windows 2000&quot;.<br>
+<br>
+<A class=red0>Rev 1.007 (16.12.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: unbearbeitete Datens&auml;tze (keinerlei Eingabe des Monteurs) von vergangenen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tagen verfallen automatisch in den Status &quot;Restat&quot;.<br>
+<br>
+<A class=red0>Rev 1.006 (04.12.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Zeitsynchronisation via SNTP auf die Atomuhr der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Physikalisch- Technischen Bundesanstalt (ptbtime1.ptb.de,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptbtime2.ptb.de)<br>
+&nbsp;Neu: ini-Datei: Es k&ouml;nnen mehrere Zeitserver angegeben werden!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sntp=server1,server2,...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In dieser Reihenfolge werden die Server angefragt, der erste mit einer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Antwort wird genommen.&nbsp;&nbsp;&nbsp;&nbsp; <br>
+<br>
+<A class=red0>Rev 1.005 (03.12.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: neue Termine &uuml;berschreiben jetzt &quot;Restaten&quot;!<br>
+&nbsp;Neu: &quot;info&quot;/&quot;wegfall&quot; Status wird nicht nach GaZMa &uuml;bertragen!<br>
+&nbsp;Neu: MonDa Rev. &quot;1.011&quot; <br>
+<br>
+<A class=red0>Rev 1.004 (16.10.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Kann &quot;zus&auml;tzliche&quot; Tage verarbeiten, diese werden hinten angestellt.<br>
+<br>
+<A class=red0>Rev 1.003 (08.10.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: MonDa Rev. Update erstmals automatisch bei Bedarf auf Rev. 1.010<br>
+<br>
+<A class=red0>Rev 1.002 (19.09.02-20.09.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Kopie der neuen TRN-Daten nach &quot;.\GaZMa&quot;<br>
+<br>
+&nbsp;Neu: Automatischer Upload der Ergebnisdaten ins InterNet f&uuml;rs GaZMa<br>
+&nbsp;Neu: Automatischer Download der aktuellen Daten (von GaZMa aufbereitet)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aus dem InterNet<br>
+<br>
+<A class=red0>Rev 1.001 (05.09.02-15.09.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Brandbreitenbeschr&auml;nkung wegen fehlenden Hardware-Handshakes auf beiden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Seiten.<br>
+&nbsp;Neu: erstmals &quot;Restat,R&uuml;ckl&auml;ufer,normal&quot; Melde-Logik angewendet!<br>
+<br>
+<A class=red0>Rev 1.000 (31.05.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Erste Release<br>
+<br>
+<!-- END Info -->
+</BODY>
+</HTML>

@@ -1,0 +1,59 @@
+
+
+Rev 1.008 (20.07.08) Andreas Filsinger
+
+ Bug: Fehler bei der Erkennung, ob sich 2 Datumszeiträume überschneiden.
+
+ Neu: Salden: Vortragssaldo kann als "0" angenommen werden.
+
+Rev 1.007 (04.03.08) Andreas Filsinger
+
+ Bug: Schreibfehler
+ Neu: Kosten Typ "Reinigung"
+
+Rev 1.006 (05.01.05) Andreas Filsinger
+
+ Bug: Optik: einige Feldlängen stimmen bei der Ausgabe nicht
+
+ Neu: "J" für das ganze Jahr
+ Neu: "M" für den ganzen Monat
+ Neu: "R" für den Rest des Monats
+ Neu: "T" für den Buchungstag
+
+Rev 1.005 (04.07.03) Andreas Filsinger
+
+ Neu: Umstellung auf EURO
+
+Rev 1.004 (04.12.01) Andreas Filsinger
+
+ Neu: Objekt-Verzeichnisse sind jetzt möglich (einfaches Verwalten mehrerer
+      Objekte).
+
+Rev 1.003 (07.06.01) Andreas Filsinger
+
+ * Neu: Nebenkosten-Übersicht für den Eigentümer zur Vorlage beim Finanzamt.
+        Nebenkosten-Beleg.
+ * Neu: Nebenkosten-Übersicht für den Mieter. Zum Kurzüberblick auf einer Seite.
+        (Abrechnungsbeleg).
+
+Rev 1.002 (11.05.00) Andreas Filsinger
+
+ * Neu: Die Rücklage aus vergangenen Abrechnungen wird jetzt berücksichtigt.
+ * Neu: Rücklagen-Übersicht
+ * Neu: Berechung des Übertrages aus dem Vorjahr jetzt möglich!
+        -> einerseits den Betrag des Mieters, und auch des Eigentümers!
+
+Rev 1.001 (08.05.00-10.05.00) Andreas Filsinger
+
+ * Neu: Übersicht der Einzahlungen für den Eigentümer/Mieter
+ * Neu: Beteiligung an den Bank-Kosten lässt sich ausschalten
+        wichtig für Wohnung "4", -> wird nicht abgerechnet
+ * Neu: Beteiligung an den Strom-Kosten lässt sich ausschalten
+        wichtig für Wohnung "4", -> eigener Stromkreis
+ * Neu: %-Angabe der Kosten im Verhältnis zu den Gesamt-Kosten
+ * Neu: Kostenzusammen-Fassung wird jetzt sortiert.
+
+Rev 1.000 (14.04.00) Andreas Filsinger
+
+ * Neu: endlich ein offizielles Projekt
+

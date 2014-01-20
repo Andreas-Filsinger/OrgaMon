@@ -1,0 +1,31 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  verkaufte Artikel in einem gewissen Zeitraum, die nicht kategorisiert sind
+//
+//  (c)'04 Andreas Filsinger
+//
+//
+$Start='31.12.2002'
+$Ende='01.01.2004'
+
+select rid ARTIKEL_R from artikel where
+ (rid in (
+select distinct artikel_r from posten where
+ (MENGE_GELIEFERT>0) AND
+ BELEG_R IN (select RID from Beleg where RECHNUNG between $Start AND $Ende)
+ ) ) AND
+ rid not in (select artikel_r from artikel_gattung)
+
+select artikel_r,sum(MENGE_GELIEFERT) MENGE_GELIEFERT from posten where
+ (MENGE_GELIEFERT>0) AND
+ BELEG_R IN (select RID from Beleg where RECHNUNG between $Start AND $Ende)
+group by
+ artikel_r 
+
+join
+*
+*
+-
+
+sort

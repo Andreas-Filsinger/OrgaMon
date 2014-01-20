@@ -1,0 +1,84 @@
+[TIP]
+(dieser internen Hinweis dient Ihrer info,
+bitte nicht übersetzen):
+
+Liebe Übersetzerin,
+Lieber Übersetzer, 
+
+dieses Dokument wird direkt von der Pfortenanwendung
+verarbeitet, bitte ändern Sie NIEMALS die Texte
+in den eckigen Klammern. Nur die Sachen darunter.
+Ersetzen Sie dabei den deutschen Text durch die
+entsprechende Übersetzung.
+"\F" "\f" sind Steuerzeichen, die man auch in der 
+Übersetung belassen sollte. Besteht der Text aus 
+mehreren Zeilen bitte so ungefähr das Layout 
+beibehalten.
+
+Danke und Viel Spass.
+
+Andreas Filsinger, filsinger.de
+------------- Jetzt gehts los...
+
+
+[Name für die Sprache]
+english
+
+[Hinweise]
+\FAttention!\f
+The rules and regulations for general conduct and safety for 
+Siemens employees apply to all visitors as well.  Since the 
+possibility of an accident is always present, we ask you to
+be careful.  For the protection of Siemens rights, all samples
+and documents, as well as any information, used or provided 
+during your visit, other than already generally publicized information,
+are to be considered confidential. The reproduction and use of all 
+recordings or drawings including company-related publications 
+requires the prior written consent of Siemens. The use or carrying
+of reproduction equipment such as cameras, video recorders, 
+tape recorders, etc. is permitted only in exceptional cases.
+
+[Unterschrift]
+Signature
+
+[Rückgabe]
+Please return this form at the end of your visit to
+security
+
+[Herr]
+Mr.
+
+[Frau]
+Ms.
+
+[Gruppe]
+Group
+
+[gültig bis]
+Valid through
+
+[Pforte Empfang]
+Reception 
+
+[Parken]
+parking ticket
+Please display it visibly in your car window
+
+[Name]
+Name
+
+[Firma]
+Company
+
+[Mobilfunk-Telefon]
+Mobile Nr.
+
+[Bediener]
+\F\+\+\+\+Wellcome\f
+... at SIEMENS Bruchsal:
+
+* Please provide your name, company and 
+  mobile phone number if you are reachable 
+  under this number during your visit.
+
+* Please sign below

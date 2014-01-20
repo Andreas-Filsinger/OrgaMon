@@ -1,0 +1,63 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Kunden, die in einem gewissen Zeitraum NICHT in einem Sortiment
+--  etwas geliefert bekamen.
+--
+--  (c)'05 Andreas Filsinger
+--
+
+$Start='01.01.2005'
+
+-- Erst mal die Liste der zu untersuchenden Belege aufzeichnen
+
+select
+ RID
+from
+ BELEG
+where
+ (MENGE_GELIEFERT>0) and
+ (DAVON_BEZAHLT>0) and
+ (ANLAGE>$Start)
+
+save
+
+numeric RID
+
+-- jetzt die Kreuz Dimensionen bilden
+
+select
+ B.PERSON_R,
+ A.VERLAG_R,
+ count(P.MENGE_GELIEFERT)
+from
+ POSTEN P
+join
+ ARTIKEL A
+ON
+ P.ARTIKEL_R = A.RID
+join
+ BELEG B
+ON
+ P.BELEG_R = B.RID
+join
+ PERSON K
+ON
+ B.PERSON_R = K.RID
+where
+  (P.BELEG_R in (select RID from olap$$tmp0)) AND
+  (P.MENGE_GELIEFERT > 0) AND
+  (A.VERLAG_R IS NOT NULL) AND
+  ((K.MAILING='Y') OR (K.MAILING IS NULL))
+group by
+ B.PERSON_R,A.VERLAG_R
+ 
+spread
+
+VERLAG_R
+-
+
+complete
+
+Anschrift(PERSON_R) Adressat1;Adressat2;Adressat3;Adressat4;Strasse;Ort
+-

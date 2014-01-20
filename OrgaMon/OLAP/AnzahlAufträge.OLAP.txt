@@ -1,0 +1,22 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+--
+--  (c)'03 Andreas Filsinger
+--
+--  Ergebnis: OLAP.tmp2.csv
+--
+
+$StartDatum=18.04.2005
+$EndeDatum=23.04.2005
+
+select
+ count(RID)
+from
+ AUFTRAG
+where
+ (STATUS<>6) and
+ (AUSFUEHREN between '$StartDatum' and '$EndeDatum')
+ 
+ 

@@ -1,0 +1,36 @@
+
+$StartDatum='01.06.2011'
+$EndeDatum='01.07.2011'
+
+
+select 
+ MAX(ARTIKEL.TITEL) ARTIKEL,
+ MAX(ARTIKEL.EURO) PREIS,
+ SUM(GELIEFERT.MENGE_RECHNUNG) ANZAHL
+from
+ ARTIKEL 
+join
+ GELIEFERT
+on
+ (GELIEFERT.ARTIKEL_R=ARTIKEL.RID)
+join
+ BELEG
+on
+ (GELIEFERT.BELEG_R=BELEG.RID) and
+ (BELEG.RECHNUNG between $StartDatum and $EndeDatum)   
+group by
+ ARTIKEL.RID
+order by
+ SUM(GELIEFERT.MENGE_RECHNUNG) descending
+
+
+add
+
+Summe;;=SUMME
+-  
+ 
+excel
+PREIS=MONEY
+open
+-
+   

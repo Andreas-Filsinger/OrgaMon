@@ -1,0 +1,32 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+//
+//  (c)'03 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select DATUM,sum(CLICKS) CLICKS from WEBSHOPCLICKS group by DATUM
+
+select ANLAGE DATUM,rechnungs_betrag from beleg where ((medium='WebShop') or (medium='Webshop')) and (rechnungs_betrag>0)
+
+cast
+
+-
+DATUM=date(DATUM)
+
+join
+
+DATUM=DATUM
+DATUM=DATUM
+-
+
+integrate
+
+DATUM=month(DATUM)
+
+sort
+
+DATUM

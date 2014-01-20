@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2006.02.27 06:13:34.765.pas,C:\Dokumente und Einstellungen\delphi2006\Eigene Dateien\Borland Studio-Projekte\Unit1.pas=G:\delphi\sewa\Datensammler.pas</Transaction>
+    <Transaction>2006.02.27 06:13:34.765.dfm,C:\Dokumente und Einstellungen\delphi2006\Eigene Dateien\Borland Studio-Projekte\Unit1.dfm=G:\delphi\sewa\Datensammler.dfm</Transaction>
+    <Transaction>2006.02.27 06:13:58.281.bdsproj,C:\Dokumente und Einstellungen\delphi2006\Eigene Dateien\Borland Studio-Projekte\Project2.bdsproj=G:\delphi\sewa\NonDa.bdsproj</Transaction>
+    <Transaction>2007.02.27 10:36:06.484.pas,G:\delphi\sewa\Unit2.pas=G:\delphi\sewa\globals.pas</Transaction>
+  </Transactions>
+</BorlandProject>

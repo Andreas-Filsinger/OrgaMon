@@ -1,0 +1,34 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  VK-Auswertung über Sortimente
+//
+//  (c)'03 Andreas Filsinger
+//
+
+select
+ S.bezeichnung VK_SORTIMENT,
+ A.TITEL VK_TITEL,
+ P.MENGE_GELIEFERT VK_MENGE,
+ P.MENGE_GELIEFERT * P.PREIS VK_WERT
+ from
+  posten P
+ join
+  artikel A
+ on
+  P.ARTIKEL_R=A.RID
+ join
+  sortiment s
+ on
+  A.SORTIMENT_R=S.RID
+ where
+  (posten.beleg_r in (select RID
+                     from Beleg
+                     where
+                     (rechnung>'31.12.2002') and
+                     (rechnung<'01.01.2004')
+                    )) and
+  (posten.menge_geliefert>0) and
+  (posten.preis>0)
+order by
+ S.Bezeichnung, A.TITEL

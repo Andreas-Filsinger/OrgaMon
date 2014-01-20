@@ -1,0 +1,12 @@
+select 
+ ARTIKEL.RID,ARTIKEL.TITEL 
+from 
+ ARTIKEL 
+where 
+ (ARTIKEL.WEBSHOP='N') or 
+ (ARTIKEL.SORTIMENT_R in (select RID from SORTIMENT where WEBSHOP='N'))
+
+excel
+open
+-
+

@@ -1,0 +1,5 @@
+<?php
+  
+  $tree()->openNode($id);
+  
+?>

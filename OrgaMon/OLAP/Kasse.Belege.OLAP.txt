@@ -1,0 +1,30 @@
+
+$StartDatum='01.06.2011'
+$EndeDatum='01.07.2011'
+
+
+select 
+ RID as RECHNUNG,
+ RECHNUNG as DATUM,
+ RECHNUNGS_BETRAG,
+ MOTIVATION as GEGEBEN,
+ '1' ANZAHL
+from
+ BELEG
+where
+ (BELEG.RECHNUNG between $StartDatum and $EndeDatum)   
+order by
+ RECHNUNG
+
+
+add
+
+Summe;;=SUMME;;=SUMME
+-  
+ 
+excel
+RECHNUNGS_BETRAG=MONEY
+GEGEBEN=MONEY
+open
+-
+   

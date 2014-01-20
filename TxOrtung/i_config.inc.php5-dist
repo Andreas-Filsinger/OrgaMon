@@ -1,0 +1,25 @@
+<?php
+
+//XServer, generelle Verbindungsdaten
+define("SERVER","http://localhost");
+define("LOCATE_SERVICE_PORT","50020");
+define("GETMAP_SERVICE_PORT","50010");
+define("LOGIN","");
+define("PASS","");
+
+define("HTTP_PROXY_HOST",null);
+define("HTTP_PROXY_PORT",null);
+
+//Statisches oder dynamisches WSDL?
+define("USE_STATIC_WSDL",true);
+define("CACHED_WSDL_LOCATE","./XLocate.xml");
+define("CACHED_WSDL_GETMAP","./XMap.xml");
+
+//Karten
+define("SAVE_MAPS",true);
+define("PATH_MAPS","./Karten/");
+
+define("IMAGE_WIDTH",990);
+define("IMAGE_HEIGHT",700);
+
+?>

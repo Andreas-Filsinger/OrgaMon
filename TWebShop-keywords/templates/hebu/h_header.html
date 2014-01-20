@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!---  meta http-equiv="expires" content="0" //--->
+<meta name="keywords" content="~VAR_SITE_KEYWORDS~">
+<title>~CONST_TWEBSHOP_TITLE~ : ~VAR_SITE_TITLE~</title>
+<link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~style.css">
+<link rel="shortcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
+</head>
+
+<body>
+<table style="height:100%; width:100%; table-layout:fixed; border-width:0px; padding:0px;" cellspacing="0">
+<tr><td style="padding:0px; height:50px; border-width:0px;">
+
+  <table style="width:800px; height:50px; color:#FFFFFF; border-width:0px; padding:0px; table-layout:fixed;" cellspacing="0">
+  <tr>
+    <td style="height:50px; width:135px; background-color:#FFFFFF; padding:0px;">
+	<a href="~CONST___INDEX~?site=welcome">
+<!-- BEGIN IMAGE
+SRC=~CONST___TEMPLATE_IMAGES_PATH~logo_110x48.png
+ALT=Logo
+STYLE=margin:0px;
+-->IMAGE:logo_110x48.png<!-- END IMAGE --></a>
+	</td>
+    <td style="height:50px; vertical-align:middle; background-color:#ADCBE7; padding:0px; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_header_left.png'); background-repeat:repeat-y;">
+      <!-- | <a class="a01" href="~CONST___INDEX~?site=actions"><b>~CONST_WORD_ACTIONS~</b></a>-->
+      | <a class="a01" href="~CONST___INDEX~?site=myshop"><b>~CONST_SENTENCE_MY_SHOP~</b></a> 
+      | <a class="a01" href="~CONST___INDEX~?site=help"><b>~CONST_WORD_HELP~</b></a> 
+    </td>
+    <td style="width:50px; height:50px; vertical-align:middle; text-align:left; padding-left:0px; padding:0px; background-color:#ADCBE7;">
+      <form action="~CONST___INDEX~" method="get" style="margin:0px;">
+	  <input type="image" src="~CONST___TEMPLATE_IMAGES_PATH~icon_big_search_header.png" value="Ok" alt="~CONST_SENTENCE_START_SEARCH~">
+	</td>
+    <td style="width:150px; height:50px; vertical-align:middle; text-align:left; padding-left:0px; padding:0px; background-color:#ADCBE7;">
+	  <input type="text" class="char05" name="f_search_expression" value="~VAR_SEARCH_USER_EXPRESSION~" size="18"><br />
+	  &nbsp;&nbsp;<span style="color:#FFFFFF; font-size:11px;"><a class="a01s" href="~CONST___INDEX~?site=article_tree">~CONST_SENTENCE_EXTENDED_SEARCH~</a></span>
+	  <input type="hidden" name="action" value="search_user_expression">
+      <input type="hidden" name="site" value="search">
+	  <input type="hidden" name="sid" value="~VAR_NEXT_SEARCH_ID~">
+      <input type="hidden" name="page" value="1">
+      </form>
+	</td>
+    <td style="width:60px; height:50px; vertical-align:bottom; text-align:right; padding:0px; background-color:#ADCBE7;">
+      <a class="a01" href="~CONST___INDEX~?site=cart" style="margin:0px;">
+<!-- BEGIN IMAGE
+SRC=~CONST___TEMPLATE_IMAGES_PATH~icon_big_cart_header.png
+ALT=~CONST_SENTENCE_SHOW_CART~
+STYLE=margin:0px; 
+-->IMAGE:icon_big_cart_header.png<!-- END IMAGE --></a>
+	</td>
+	<td style="width:70px; height:50px; vertical-align:middle; text-align:left; padding:0px; background-color:#ADCBE7; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_header_cart.png'); background-repeat:repeat-y;">
+      <span class="smallblack">~VAR_CART_POSITIONS~&nbsp;~CONST_WORD_ARTICLES~</span><br>
+      <span class="smallblack">~VAR_CART_SUM~</span>
+    </td>
+    <td style="width:75px; height:50px; text-align:right; vertical-align:middle; background-color:#ADCBE7; padding:0px;">
+      ~OBJ_LOGIN~
+	</td>
+    <td style="width:27px; height:50px; padding:0px; border-width:0px; vertical-align:top;">
+<!-- BEGIN IMAGE
+SRC=~CONST___TEMPLATE_IMAGES_PATH~header_right.png
+ALT=
+STYLE=padding:0px; margin:0px; border:0px;
+-->IMAGE:header_right.png<!-- END IMAGE -->
+    </td>
+  </tr>
+  </table>
+  
+</td></tr>
+<tr><td style="height:20px; padding:0px;">
+
+  <table style="width:800px; table-layout:fixed;" cellspacing="0">
+  <tr>
+    <td style="width:600px; padding-left:10px; border-width:0px; border-color:#000000; border-style:solid; border-top-width:0px; border-bottom-width:0px; height:20px; text-align:left; vertical-align:middle; font-size:11px; background-color:#DDDDDD; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_info_bar.png'); background-repeat:repeat-x;">
+      ~OBJ_LOGIN_INFO~ 
+    </td>
+	<td style="padding-right:27px; border-width:0px; border-color:#000000; border-style:solid; border-top-width:0px; border-bottom-width:0px; height:20px; text-align:right; vertical-align:middle; font-size:11px; background-color:#DDDDDD; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_info_bar.png'); background-repeat:repeat-x;">
+      ~OBJ_DATE~
+	</td>
+  </tr>
+  </table>
+  
+</td></tr>
+<tr><td  style="vertical-align:top; padding:10px; padding-left:10px; border:0px #DDDDDD solid; ">

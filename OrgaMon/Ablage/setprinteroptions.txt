@@ -1,0 +1,110 @@
+procedure SetPrinterOptions;
+  procedure SetPrinterOptions2;
+    procedure TBasicPrintProcessor.SetPrinterOptions;
+    var
+      DeviceMode: THandle;
+      Device, Driver, Port: array[0..MAX_PATH] of Char;
+//  PaperSize: TPoint;
+      DriverInfo2: PDriverInfo2;
+      DriverInfo2Size: DWORD;
+      hPrinter: THandle;
+    begin
+      BasicErrors.add(printer.printers[Printer.PrinterIndex]);
+      Printer.PrinterIndex := Printer.PrinterIndex;
+      Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+      with PDevMode(GlobalLock(DeviceMode))^ do
+      try
+
+        StrLCopy(dmFormName, 'LABEL', CCHFORMNAME - 1);
+        dmFields := dmFields or DM_FORMNAME;
+
+
+        dmCopies := max(1, strtointdef(ReadVal('ANZAHL'), 0));
+        dmFields := dmFields or DM_COPIES;
+
+
+//    dmFields := dmFields or DM_PAPERSIZE;
+//    PaperSize := ConvertXY(FPageExt.X, FPageExt.Y, FUnits, mmLoMetric);
+//    if FOrientation = poLandscape then SwapValue(PaperSize.X, PaperSize.Y);
+//    dmPaperSize := DMPAPER_USER;
+//    dmFields := dmFields or DM_PAPERWIDTH;
+//    dmPaperWidth := 1440;
+//    dmFields := dmFields or DM_PAPERLENGTH;
+//    dmPaperLength := 233;
+//    dmFields := dmFields or DM_ORIENTATION;
+//    dmOrientation := DMORIENT_PORTRAIT;
+//    dmOrientation := DMORIENT_LANDSCAPE;
+      finally
+        GlobalUnlock(DeviceMode);
+      end;
+      OpenPrinter(Device, hPrinter, nil);
+      try
+        GetPrinterDriver(hPrinter, nil, 2, nil, 0, DriverInfo2Size);
+        GetMem(DriverInfo2, DriverInfo2Size);
+        try
+          GetPrinterDriver(hPrinter, nil, 2, DriverInfo2, DriverInfo2Size, DriverInfo2Size);
+          StrPCopy(Driver, ExtractFileName(StrPas(DriverInfo2^.PDriverPath)));
+        finally
+          FreeMem(DriverInfo2, DriverInfo2Size);
+        end;
+      finally
+        ClosePrinter(hPrinter);
+      end;
+      Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+      Printer.PrinterIndex := Printer.PrinterIndex;
+    end;
+  {$H+}
+
+    function GetDefaultPrinter(pszBuffer: PChar; var pcchBuffer: DWORD): BOOL; stdcall; external winspl name 'GetDefaultPrinterA';
+
+    procedure TBasicPrintProcessor.SetPrinterOptions2;
+    var
+      _PPrinterInfo2: PPrinterInfo2;
+      pPrinterName: PChar;
+      sPrinterName, sFormName: string;
+      hPrinter: THandle;
+      cbNeeded: DWORD;
+      dwBufferSize: DWORD;
+    begin
+      sFormName := 'LABEL';
+      if not GetDefaultPrinter(nil, dwBufferSize) then
+      begin
+        case GetLastError of
+          ERROR_INSUFFICIENT_BUFFER: ;
+          ERROR_FILE_NOT_FOUND: raise Exception.Create('');
+        else
+          raise Exception.Create('GetDefaultPrinter Error, Code : ' + IntToStr(GetLastError));
+        end;
+      end;
+      pPrinterName := nil;
+      try
+        GetMem(pPrinterName, dwBufferSize);
+        GetDefaultPrinter(pPrinterName, dwBufferSize);
+        sPrinterName := StrPas(pPrinterName);
+      finally
+        if pPrinterName <> nil then
+        begin
+          FreeMem(pPrinterName, dwBufferSize);
+          pPrinterName := nil;
+        end;
+      end;
+      if not WinSpool.OpenPrinter(PChar(sPrinterName), hPrinter, nil) then
+        raise Exception.Create('OpenPrinter Error, Code : ' + IntToStr(GetLastError));
+      WinSpool.GetPrinter(hPrinter, 2, nil, 0, @cbNeeded);
+      _PPrinterInfo2 := nil;
+      try
+        GetMem(_PPrinterInfo2, cbNeeded);
+        WinSpool.GetPrinter(hPrinter, 2, _PPrinterInfo2, cbNeeded, @cbNeeded);
+        with _PPrinterInfo2^.pDevMode^ do
+        begin
+          StrLCopy(dmFormName, PChar(sFormName), CCHFORMNAME - 1);
+          dmFields := DM_FORMNAME;
+        end;
+        if not WinSpool.SetPrinter(hPrinter, 2, _PPrinterInfo2, 0) then
+          ; //      raise Exception.Create('SetPrinter Error, Code : ' + IntToStr(GetLastError));
+      finally
+        if _PPrinterInfo2 <> nil then
+          FreeMem(_PPrinterInfo2);
+        _PPrinterInfo2 := nil;
+      end;
+    end;

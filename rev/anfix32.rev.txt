@@ -1,0 +1,352 @@
+====================================
+*       REVISIONS-INFORMATION      *
+====================================
+* PROJEKT: anfix32
+* SOURCE DIR: G:\anfix32
+* UPDATE: anfix32.pas
+* UPDATE: binlager32.pas
+* UPDATE: FastGEO.pas
+* UPDATE: GeoCache.pas
+* UPDATE: gplists.pas
+* UPDATE: html.pas
+* UPDATE: winamp.pas
+* UPDATE: wordindex.pas
+* UPDATE: Transaction.pas
+* UPDATE: Transaction.dfm
+* UPDATE: SymbolPool.pas
+* UPDATE: basic32.pas
+* UPDATE: SimplePassword.pas
+* UPDATE: ShFolders.pas
+* UPDATE: Jedi.inc
+* INFO: Tools-Grundlage aller Win32-Anwendungen
+====================================
+
+// INFO BEGIN
+<b>Tools</b>-Grundlage aller Win32-Anwendungen, Delphi-Source-Code<br>
+<br>
+ anfix32.pas     : tools, tools, tools<br>
+ FastGEO.pas     : Mathematik: 2D, 3D Berechnungen<br>
+ GeoCache.pas    : Verwaltung von Punkten auf einer 2D Karte<br>
+ gplists.pas     : Verschiede Listenverwaltungen.<br>
+ html.pas        : Füllt html-Templates mit Inhalten<br>
+ binlager32.pas  : blob speicher<br>
+ winamp.pas      : winamp-Interface<br>
+ wordindex.pas   : cooler Such-Index persistent!<br>
+ Transaction.pas<br>
+ .dfm            : cooler Server für Netzbetriebenes Buchen<br>
+ SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
+// INFO END
+
+Rev 1.061 (29.08.13) Andreas Filsinger
+
+ Neu: cIllegalSeconds
+
+Rev 1.060 (20.03.08) Andreas Filsinger
+
+ Neu: spilt
+
+Rev 1.059 (22.02.08) Andreas Filsinger
+
+ Wegfall: Referenz auf "Shfolder.dll"
+ Wegfall: Referenz auf "netapi32.dll"
+
+Rev 1.058 (05.02.08) Andreas Filsinger
+
+ Neu: RevPos beschleunigt.
+
+Rev 1.057 (06.01.07) Andreas Filsinger
+
+ Neu: i18n: Verbesserte Routinen (Datum,Geldwertdarstellung)
+
+Rev 1.056 (08.11.06) Andreas Filsinger
+
+ Neu: Caching des "ComputerName".
+ Neu: Caching des "Domain".
+
+Rev 1.055 (24.07.06) Andreas Filsinger
+
+ Neu: html: COMPUTE Befehl, zur vollen Context - Ausbelichtung eines Includes.
+            (Anwendung: alternative Datenausprägung: z.B. Lieferschein als
+             Beilage zu einer Rechnung, oder Rechnungsdublikat, oder doppelter
+             EC-Lastschrift Beleg!)
+ Neu: html: rawMode zur Unterdrückung des Rohdatenabschnittes.
+
+Rev 1.054 (03.07.06) Andreas Filsinger
+
+ Neu: FastGEO, GEOCache, gplists 
+
+Rev 1.053 (20.03.06) Andreas Filsinger
+
+ Bug: ValidatePathname hatte diverse Bugs.
+
+Rev 1.052 (16.12.05) Andreas Filsinger
+
+ Neu: Nicht mehr abhängig von mmsystem.pas (winmm.dll).
+
+Rev 1.051 (25.05.05) Andreas Filsinger
+
+ Neu: Diverse Änderungen beim Ansprechen der Windows API
+
+Rev 1.050 (30.03.05) Andreas Filsinger
+
+ Neu: IntToStrN ist jetzt grundsätzlich int64, da cast nach unten nicht schadet.
+
+Rev 1.049 (12.01.05) Andreas Filsinger
+
+ Bug: date2long konnte das Jahr "0" bis "99" nicht verarbeiten.
+ Bug: date2long konnte nicht das aktuelle Jahr einsetzen.
+
+Rev 1.048 (28.09.04) Andreas Filsinger
+
+ Neu: FileCompare
+
+Rev 1.047 (21.07.04) Andreas Filsinger
+
+ Neu: html.pas: Einführung eines Heaps, der immer aktuelle Werte von globalen
+      Variablen-Werten gespeichert hält.
+ Neu: html.pas: Idee der ON/OFF Blocks "O-BLOCK", das sind Streifen in einer A4
+                Definition, die für S F N L Pages an/ausschaltbar sind.
+ Neu: html.pas: Bei F N L Pages wird am Ende noch der Heap geschrieben.                     
+
+Rev 1.046 (28.06.04) Andreas Filsinger
+
+ Bug: strtodouble: deutsche Tausenderpunkte wurden nicht richtig berücksichtigt.
+
+Rev 1.045 (24.04.04) Andreas Filsinger
+
+ Neu: html: verschachtelte INCLUDEs nun möglich.
+ Neu: html: wird der "sub" INCLUDE nicht anhand des lokalen Dateinames der Mutter
+      gefunden wird der Prefix weggelassen. Beispiel:
+      Rechnung.html INCLUDEd Position.html, so wird zunächst nach
+      Rechnung.html.Position.html gesucht. Jetzt auch alternativ nach:
+      Position.html
+      So können verschiedene html-Vorlage globale Includes hinzufügen.
+
+Rev 1.044 (13.02.04) Andreas Filsinger
+
+ Neu: function ApplicationDataDir : string; // CSIDL_APPDATA
+ Neu: function PersonalDataDir : string; // CSIDL_PERSONAL
+ Neu: DirExists basiert ´jetzt auf FileGetAttr
+
+Rev 1.043 (08.01.04) Andreas Filsinger
+
+ Bug: BASIC: 'ANZAHL' hatte keine Auswirkung!
+ Bug: BASIC: 'DEVICE' Anweisung innerhalb des Druckens ergab keinen Fehler!
+
+ Neu: BASIC: Bei Font oder Druckerwechsel wird die Auflösung der Schrift neu gesetzt.
+ Neu: BASIC: Variable "FORMULAR"
+ Neu: BASIC: PRINT "<x>","<y>","<Dateiname-Bild>"
+             Befehl zur Ausgabe von Bildern
+ Neu: BASIC: SQL ( "<DeinSQLStatement" )
+
+Rev 1.042 (29.12.03) Andreas Filsinger
+
+ Bug: BASIC, diverse Bugfixes
+
+ Neu: BASIC, Formularauswahl im "DEVICE" Token
+
+Rev 1.041 (22.12.03) Andreas Filsinger
+
+ Bug: BASIC, diverse Bugfixes
+
+Rev 1.040 (17.12.03) Andreas Filsinger
+
+ Neu: BASIC Module (Druckprozessor mit BASIC - Programmiersprache)
+
+Rev 1.039 (03.11.03) Andreas Filsinger
+
+ Neu: strtodouble toleriert jetzt auch ein Währungssymbol
+
+Rev 1.038 (05.09.03) Andreas Filsinger
+
+ Neu: "Ersetze" kann jetzt mit TStrings
+ Neu: IsAdmin gibt Auskunft, ob eine Installation möglich ist
+
+Rev 1.037 (03.09.03) Andreas Filsinger
+
+ Neu: cRevNotAValidProject ist "public"
+
+Rev 1.036 (30.06.03) Andreas Filsinger
+
+ Bug: strtodouble, strtodoubledef internationalisiert.
+
+Rev 1.035 (18.06.03) Andreas Filsinger
+
+ Neu: html: "<-- INCLUDE <FName> -->" erweiterung
+
+Rev 1.034 (14.04.03) Andreas Filsinger
+
+ Bug: nextp nach dem letzten Delimiter!
+
+Rev 1.033 (11.03.03) Andreas Filsinger
+
+ Neu: function strtodoubledef(s:string;d:double):double;
+
+Rev 1.032 (22.07.02) Andreas Filsinger
+
+ Bug: html: Mehrseitige Dokumente: Endlosschleife, wenn eine Platzbedarf auf einer
+      "last" Seite sowieso nicht ausreichend ist. Er hat versucht durch endlos viele
+      next-Seiten die Situation zu verbessern -> Absturz.
+
+ Neu: FileVersion, ließt die Dateiversion aus der exe/dll-Datei aus.
+
+Rev 1.031 (02.07.02) Andreas Filsinger
+
+ Neu: dir,FileDelete,ExtractFilePath verarbeiten (einen) /*/ Eintrag in den
+      SuchMasken. Dabei können eine vielzahl von Unterverzeichnissen untersucht
+      werden. Maske z.B. G:\abhier\*\*.csv findet
+      SubDir1\test.csv
+      SubDir2\hallo.csv
+      usw.
+
+Rev 1.030 (26.06.02) Andreas Filsinger
+
+ Bug: html.pas: Wenn Zeilenanzahl nicht verfügbar ist -> Endlossschleife.
+ Neu: html.pas: DatenSammlerlokal und datensammlerGlobal jetzt integriert.
+
+Rev 1.029 (18.04.02) Andreas Filsinger
+
+ Neu: FileAlive, erzwingt die Erzeugung einer neuen Datei
+ Neu: "seconds" können auch negativ sein
+
+Rev 1.028 (03.04.02) Andreas Filsinger
+
+ Bug: html.pas: Mehrseitige Dokumente: Umfang der Seite "next" wurde nicht
+      berücksichtigt.
+
+Rev 1.027 (01.04.02) Andreas Filsinger
+
+ Bug: html.pas : Endlosschleife, wenn ein "unzertrennlicher" Block
+      größer ist als eine Seite.
+ Bug: mehrseitige Dokumente ohne "pagebreak" (also mit unzertrennlichen
+      Blöcken, die größer waren, als auf einer Seite Platz ist) brachten
+      den html-Belichter zum Absturz. Jetzt wird auf die erste Seite alles
+      rausbelichtet (sie ist übervoll). Auf der 2. Seite (=letzte Seite) ist
+      der Rest.
+
+Rev 1.026 (21.02.02) Andreas Filsinger
+
+ Neu: html.pas kann mehrseitige Dokumente belichten.
+
+Rev 1.025 (25.12.01) Andreas Filsinger
+
+ Neu: DateOK verarbeitet auch "2001" oder "12.2001"
+ Neu: date2long verarbeitet auch "2001"  oder andere ganze Jahre.
+ Neu: long2date verarbeitet auch "2001" oder andere ganze Jahre.
+
+Rev 1.024 (04.12.01) Andreas Filsinger
+
+ Neu: dir - ist das letzte Zeichen ein ".", wird nach Verzeichnissen gesucht.
+
+Rev 1.023 (02.12.01) Andreas Filsinger
+
+ Bug: BMPScramble erzeugte einen GPF unter Delphi 6.01
+ Neu: BMPScramble jetzt ohne "random"
+
+Rev 1.022 (08.11.01) Andreas Filsinger
+
+ Bug: DatePlusWorking (überspringen von Feitertagen)
+
+Rev 1.021 (05.11.01) Andreas Filsinger
+
+ Bug: "WindowsNeuStarten" ging nicht unter Windows 2000.
+
+Rev 1.020 (08.10.01) Andreas Filsinger
+
+ Neu: function VisibleContrast(BackGroundColor : TColor):TColor;
+      Errechnung der Vordergrundfarbe für Text anhand der Hintergrundfarbe.
+
+Rev 1.019 (02.10.01) Andreas Filsinger
+
+ Neu: procedure LoadFromFileHugeLines (clear : boolean; s : Tstrings; const FName : string);
+      neu geschrieben.
+
+Rev 1.018 (18.09.01) Andreas Filsinger
+
+ Neu: FileDelete, Days accepted as Parameters
+ Neu: FUNCTION LoadGraphicsFile(CONST Filename: STRING):  TBitmap;
+ Neu: PROCEDURE DisplayBitmap(CONST Bitmap:  TBitmap;CONST Image :  TImage; FillColor : TColor);
+
+Rev 1.017 (12.09.01) Andreas Filsinger
+
+ Neu: revcopy= revert copy = copy from back of string
+
+Rev 1.016 (01.09.01) Andreas Filsinger
+
+ Neu: verbessertes LoadFromHugeLines
+
+Rev 1.015 (25.08.01) Andreas Filsinger
+
+ Bug: function FileSeconds(FName : string) : TAnfixTime;
+      exception, wenn die Datei nicht existiert. Jetzt result=0!
+      Analog zu FileDate
+
+Rev 1.014 (20.08.01) Andreas Filsinger
+
+ Bug: SaveAsUnixFile: letztes <lf> bei Unix-Dateien
+      (scheinbar) nicht notwendig.
+
+Rev 1.013 (01.08.01) Andreas Filsinger
+
+ Bug: FileDelete in Novell Netzen
+
+Rev 1.012 (16.07.01) Andreas Filsinger
+
+ Bug: FileTouch mit Files, die das Read Only Attribut gesetzt haben!
+
+Rev 1.011 (06.06.01) Andreas Filsinger
+
+ * Neu: function ScreenColorRes : int64;
+        Ermittelt die Farbtiefe der aktuellen Anwendung
+
+Rev 1.010 (24.05.01) Andreas Filsinger
+
+ * Neu: ErsetzeUpper, wie ersetze, Klein und Grossschreibung spielt aber keine
+        Rolle.
+
+Rev 1.009 (02.05.01) Andreas Filsinger
+
+ * Neu: DateOK auch mit String
+ * Neu: WeekGet auch mit TDateTime
+ 
+Rev 1.008 (21.04.01) Andreas Filsinger
+
+ * Neu: procedure IpAdressList (s : TstringList); ermittelt alle lokalen IP Adressen
+
+Rev 1.007 (11.04.01) Andreas Filsinger
+
+ * Neu: function long2dateText (dlong : TAnfixDate) : string;
+ * Neu: procedure SaveToUnixFile(s : TStrings; const FName : string);
+
+Rev 1.006 (04.04.01) Andreas Filsinger
+
+ * Modifikation in frequnetly
+ * Neu: LoadFromCSV Ecxel speichert <CR> in Memofeldern ab!
+ * NEU: SaveToUnixFile speichet TStrings nur mir 0A anstelle von 0D 0A
+
+Rev 1.005 (28.03.01) Andreas Filsinger
+
+ * Neu: Paket neu geschnürt!
+
+Rev 1.004 (09.02.01) Andreas Filsinger
+
+ * Bug: interner Compilerfehler, wenn Optimierung an ist!
+
+Rev 1.003 (09.02.01) Andreas Filsinger
+
+ * Neu: Externe Unit "adCpuUsage" nicht mehr notwendig!
+        Source-Code wurde integriert da mit einer Weiter-
+        entwicklung durch Alexey A. Dynnikov nicht zu rechnen
+        ist.
+
+Rev 1.002 (09.02.01) Andreas Filsinger
+
+ * Neu: FileDelete mit Datums-Filter, es werden alle Dateien
+        gelöscht, die älter sind als ein angebbares Datum!
+
+Rev 1.001 (06.02.01) Andreas Filsinger
+
+ * Neu: diverse Änderungen und Verbesserungen
+
+Rev 1.000 (06.06.00) Andreas Filsinger
+
