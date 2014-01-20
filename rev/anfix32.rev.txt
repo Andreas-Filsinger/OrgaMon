@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.062 (17.01.14) Andreas Filsinger
+
+ Neu: erstmals unter Lazarus compiliert
+
 Rev 1.061 (29.08.13) Andreas Filsinger
 
  Neu: cIllegalSeconds
