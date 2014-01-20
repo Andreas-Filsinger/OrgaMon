@@ -8,11 +8,12 @@ object Form1: TForm1
   ClientWidth = 917
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   LCLVersion = '1.2.0.2'
   object DBGrid1: TDBGrid
-    Left = 32
+    Left = 24
     Height = 180
-    Top = 104
+    Top = 248
     Width = 647
     Color = clWindow
     Columns = <>
@@ -20,9 +21,9 @@ object Form1: TForm1
     TabOrder = 0
   end
   object DBMemo1: TDBMemo
-    Left = 32
+    Left = 24
     Height = 150
-    Top = 288
+    Top = 432
     Width = 654
     DataField = 'EXPORT_EINSTELLUNGEN'
     DataSource = Datasource1
@@ -30,9 +31,9 @@ object Form1: TForm1
     TabOrder = 1
   end
   object DBNavigator1: TDBNavigator
-    Left = 32
+    Left = 24
     Height = 25
-    Top = 72
+    Top = 216
     Width = 241
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -48,9 +49,9 @@ object Form1: TForm1
     TabOrder = 2
   end
   object Memo1: TMemo
-    Left = 290
+    Left = 688
     Height = 90
-    Top = 448
+    Top = 264
     Width = 150
     Lines.Strings = (
       'Memo1'
@@ -58,7 +59,7 @@ object Form1: TForm1
     TabOrder = 3
   end
   object IBConnection1: TIBConnection
-    Connected = True
+    Connected = False
     LoginPrompt = False
     DatabaseName = 'raib25:/srv/smb/ablage/fdb/sewa/sicherung_00002600.fdb'
     KeepConnection = False
@@ -73,7 +74,7 @@ object Form1: TForm1
     top = 16
   end
   object SQLTransaction1: TSQLTransaction
-    Active = True
+    Active = False
     Action = caNone
     Database = IBConnection1
     left = 136
@@ -81,7 +82,6 @@ object Form1: TForm1
   end
   object SQLQuery1: TSQLQuery
     PacketRecords = 1
-    IndexName = 'DEFAULT_ORDER'
     UniDirectional = True
     FieldDefs = <    
       item
@@ -96,7 +96,6 @@ object Form1: TForm1
         Precision = -1
         Size = 12
       end>
-    Active = True
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
@@ -108,8 +107,36 @@ object Form1: TForm1
     top = 16
   end
   object Datasource1: TDatasource
-    DataSet = SQLQuery1
-    left = 304
-    top = 16
+    DataSet = ZQuery1
+    left = 40
+    top = 136
+  end
+  object ZConnection1: TZConnection
+    ControlsCodePage = cCP_UTF8
+    ClientCodepage = 'ISO8859_1'
+    Properties.Strings = (
+      'codepage=ISO8859_1'
+    )
+    TransactIsolationLevel = tiReadCommitted
+    Connected = True
+    DesignConnection = True
+    HostName = 'raib25'
+    Port = 0
+    Database = '/srv/smb/ablage/fdb/sewa/sicherung_00002600.fdb'
+    User = 'SYSDBA'
+    Password = 'EdkMGOFT'
+    Protocol = 'firebird-2.5'
+    LibraryLocation = 'C:\Windows\System32\fbclient.dll'
+    left = 40
+    top = 72
+  end
+  object ZQuery1: TZQuery
+    Connection = ZConnection1
+    SQL.Strings = (
+      'select EXPORT_EINSTELLUNGEN,NUMMERN_PREFIX from BAUSTELLE'
+    )
+    Params = <>
+    left = 128
+    top = 72
   end
 end
