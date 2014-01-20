@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, IBConnection, sqldb, DB, FileUtil, Forms, Controls,
-  Graphics, Dialogs, DBGrids, StdCtrls, DBCtrls;
+  Graphics, Dialogs, DBGrids, StdCtrls, DBCtrls, ZConnection, ZDataset;
 
 type
 
@@ -21,9 +21,12 @@ type
     Memo1: TMemo;
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
+    ZConnection1: TZConnection;
+    ZQuery1: TZQuery;
     procedure DBMemo1Change(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
   public
@@ -47,6 +50,7 @@ procedure TForm1.FormActivate(Sender: TObject);
 var
    s: TSTringField;
 begin
+  {
   if not (SQLQuery1.active) then
   begin
     IBCOnnection1.Connected := True;
@@ -54,6 +58,11 @@ begin
     SQLQuery1.active := True;
     memo1.Lines.add(AnsiToUTF8(SQLQuery1.FieldByName('NUMMERN_PREFIX').AsString));
   end;
+  }
+  // with Zeos
+  if not(ZQuery1.Active) then
+   ZQuery1.Open;
+
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -61,6 +70,11 @@ begin
 //  SQLQuery1.Post;
   SQLTransaction1.Commit;
   DataSource1.Enabled:=false;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
 end;
 
 procedure TForm1.DBMemo1Change(Sender: TObject);
