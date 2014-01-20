@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2012  Andreas Filsinger
+  Copyright (C) 2007 - 2014  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   classes;
 
 const
-  VersionAnfix32: single = 1.061; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.062; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
