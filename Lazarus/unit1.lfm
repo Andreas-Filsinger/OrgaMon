@@ -6,174 +6,84 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 614
   ClientWidth = 917
+  OnActivate = FormActivate
+  OnClose = FormClose
   LCLVersion = '1.2.0.2'
   object DBGrid1: TDBGrid
-    Left = 65
+    Left = 32
     Height = 180
-    Top = 232
+    Top = 104
     Width = 647
     Color = clWindow
     Columns = <>
     DataSource = Datasource1
     TabOrder = 0
   end
-  object Button1: TButton
-    Left = 103
-    Height = 25
-    Top = 461
-    Width = 75
-    Caption = 'Button1'
-    OnClick = Button1Click
+  object DBMemo1: TDBMemo
+    Left = 32
+    Height = 150
+    Top = 288
+    Width = 654
+    DataField = 'EXPORT_EINSTELLUNGEN'
+    DataSource = Datasource1
+    OnChange = DBMemo1Change
     TabOrder = 1
+  end
+  object DBNavigator1: TDBNavigator
+    Left = 32
+    Height = 25
+    Top = 72
+    Width = 241
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.EnlargeVertical = crsScaleChilds
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 100
+    ClientHeight = 25
+    ClientWidth = 241
+    DataSource = Datasource1
+    Options = []
+    TabOrder = 2
+  end
+  object Memo1: TMemo
+    Left = 290
+    Height = 90
+    Top = 448
+    Width = 150
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 3
   end
   object IBConnection1: TIBConnection
     Connected = True
     LoginPrompt = False
     DatabaseName = 'raib25:/srv/smb/ablage/fdb/sewa/sicherung_00002600.fdb'
     KeepConnection = False
+    Params.Strings = (
+      'codepage=WIN1251'
+    )
     Password = 'EdkMGOFT'
     Transaction = SQLTransaction1
     UserName = 'SYSDBA'
-    CharSet = 'ANSI'
     LogEvents = []
-    left = 336
-    top = 48
+    left = 40
+    top = 16
   end
   object SQLTransaction1: TSQLTransaction
     Active = True
     Action = caNone
     Database = IBConnection1
-    left = 96
-    top = 63
+    left = 136
+    top = 16
   end
   object SQLQuery1: TSQLQuery
+    PacketRecords = 1
+    IndexName = 'DEFAULT_ORDER'
+    UniDirectional = True
     FieldDefs = <    
-      item
-        Name = 'RID'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'AUFTRAGGEBER_R'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'NUMMERN_PREFIX'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 12
-      end    
-      item
-        Name = 'INFO'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'NAME'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 35
-      end    
-      item
-        Name = 'VON'
-        DataType = ftDate
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'BIS'
-        DataType = ftDate
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'ORTE'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'ORTE_AKTIV'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'SCHLAGZEILE'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'LAST_V'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'LAST_N'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'ZAEHLER_NR_STELLEN'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'INTERNET'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'INET_ANONYM'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'CSV_QUELLE'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 64
-      end    
-      item
-        Name = 'PROTOKOLLFELDER'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'PROTOKOLLEXPORT'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'REGEL_ARBEITSZEIT_V'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'REGEL_ARBEITSZEIT_N'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'EXPORT_TAN'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
       item
         Name = 'EXPORT_EINSTELLUNGEN'
         DataType = ftMemo
@@ -181,95 +91,25 @@ object Form1: TForm1
         Size = 8
       end    
       item
-        Name = 'EXPORT_EXTERN'
+        Name = 'NUMMERN_PREFIX'
         DataType = ftFixedChar
         Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'EXPORT_MONDA'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'AUFWAND'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'GEO_AKTIV'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'GEO_ORTSTEIL'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'INTERNFELDER'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'SUCHINDEX_AUS'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'TERMINLISTE_AUS'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
-      end    
-      item
-        Name = 'KOSTENSTELLE'
-        DataType = ftString
-        Precision = -1
-        Size = 35
-      end    
-      item
-        Name = 'BEARBEITUNG_R'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'VERTRETUNG_R'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'BUNDESLAND_IDX'
-        DataType = ftInteger
-        Precision = -1
-        Size = 0
-      end    
-      item
-        Name = 'VORRANG'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 1
+        Size = 12
       end>
+    Active = True
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from BAUSTELLE'
+      'select EXPORT_EINSTELLUNGEN,NUMMERN_PREFIX from BAUSTELLE for update'
     )
     Params = <>
-    left = 248
-    top = 56
+    UpdateMode = upWhereAll
+    left = 224
+    top = 16
   end
   object Datasource1: TDatasource
     DataSet = SQLQuery1
-    left = 75
-    top = 179
+    left = 304
+    top = 16
   end
 end

@@ -24,6 +24,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5"/>
@@ -36,7 +37,6 @@
       <Unit2>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2124"/>
