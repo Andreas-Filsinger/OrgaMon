@@ -1,0 +1,1684 @@
+====================================
+* PROJEKT: TWebShop
+* INFO: WebShop für den OrgaMon (php5.3,xmlrpc,firebird)
+* SOURCE DIR: ..\TWebShop
+* TXT VERSIONING: YES
+* INNO SETUP SCRIPT: TWebShop.iss
+====================================
+
+// INFO BEGIN
+TWebShop (eCommerce-Frontend für den OrgaMon)
+2002 - 2012 by Thorsten Schroff 
+2012 - 2013 by Andreas Filsinger
+2013 by Alexander Knam
+// INFO END
+
+Rev 3.024 (15.01.14) Andreas Filsinger
+
+ Neu: Verlagslinks angepasst
+
+Rev 3.023 (19.07.13) Andreas Filsinger
+
+ Bug: "$this" Anpassung an PHP 5.4
+
+Rev 3.022 (02.04.13) Andreas Filsinger
+
+ Neu: Streicher: Kataloge
+
+Rev 3.021 (20.03.13) Alexander Knam
+
+ Neu: Menü-Titel "Streicher und Sinfonieorchester"
+
+Rev 3.020 (15.02.13) Andreas Filsinger
+
+ Bug: viewer.php: Schickte immer ein BOM voraus, so dass ANSI Dokumente falsch angezeigt wurden
+
+Rev 3.019 (15.02.13) Andreas Filsinger
+
+ Bug: myshop.account: Abfrage nach abgerechneten Belegen war fehlerhaft
+ Bug: myshop.account: Template "hebu2008music": Link auf Arbeitszeit macht keinen Sinn
+ Bug: myshop.account: Template "orgamon": </a> Tag hatte gefehlt
+ Bug: myshop.account: Template "streicher": WORD_MISION war ohne Wert
+
+ Neu: myshop.account: Abfrage nach abgerechneten Belegen nun über AUSGANGSRECHNUNG
+ Neu: myshop.account: 2x SQL-Angaben weniger pro Zeile
+
+Rev 3.018 (15.02.13) Andreas Filsinger
+
+ Bug: myshop.account: Belegnummer und Link war falsch
+
+ Neu: myshop.account: Rechnungsnummer ist sichtbar
+ Neu: myshop.account: Datum ist mit Punkten getrennt (Sollte aber lokalisiert werden)
+
+Rev 3.017 (02.10.12) Andreas Filsinger
+
+ Neu: Meldung eines nicht funktionierenden Links: Bots können ausgesperrt werden
+
+Rev 3.016 (01.10.12) Andreas Filsinger
+
+ Bug: Registrierung lief mit ungeprüfter Nummer ins SQL (Injection-Gefahr)
+
+ Neu: Registrierung verbesserte Logik
+ Neu: Meldung eines nicht funktionierenden Links: Ich will sehen WER das ist
+
+Rev 3.015 (28.09.12) Andreas Filsinger
+
+ Neu: Template "hebu2008streicher" nach utf-8 konvertiert
+
+Rev 3.014 (28.09.12) Andreas Filsinger
+
+ Neu: Sicherheit beim Passwort-System erhöht
+
+Rev 3.013 (26.09.12) Andreas Filsinger
+
+ Bug: Shop führt nur eine action aus, also nach "login" kein "miniscore"
+ 
+ Neu: Miniscore: Kommt man von Login ist man nun in der Artikel-Detail-Ansicht
+ Neu: Session: Log des "START"-Zustand und "ENDE"-Zustand
+ Neu: Action: Log durch Aktivieren von ACTION_LOG
+ Neu: Statefull: Log durch Aktivieren von STATEFULL_LOG
+
+Rev 3.012 (19.09.12) Andreas Filsinger
+
+ Bug: user->getService() verwendete u.U. einen BLOB-ID aus der Session.
+      Dieser Wert ist weder global und zeitlos unbegrenzt gültig, sondern
+	  dessen Verwendung funktioniert nur im Kontext der aktuellen Abfrage.
+	  Der entsprechende Wert "user_dienste" wird nun schon bei der Abfrage
+	  in die Datenbank gesetzt.
+ Bug: eregi_replace ist nun mb_eregi_replace
+ Bug: "Verfügbarkeit" war in der Sprachdatei als "Verf & u u m l gbarkeit" angegeben.
+      Dies ist nur im Webshop Kontext korrekt, Das Wort wird auch im Plain-Text der
+	  eMail Funktion verwendet. Daher sollte utf-8 die Kodierung der Wahl sein,
+	  nicht html ...
+ Bug: Newsletter: Das site Template "blank" kann nicht geladen werden - Ich hab eines 
+      erstellt. Bedeutung jedoch unklar.
+ Neu: MOD_NEWSLETTER_PATH anstelle von MOD_NEWSLETTER_LOG_PATH (ich habe kein Logging gefunden)
+
+Rev 3.011 (10.09.12) Andreas Filsinger
+
+ Bug: Newsletter lief nicht
+
+Rev 3.010 (29.08.12) Andreas Filsinger
+
+ Bug: TPicUpload lief nicht
+
+Rev 3.009 (29.08.12) Andreas Filsinger
+
+ Bug: FirePHPCore Verzeichnis hatte gefehlt
+
+Rev 3.008 (27.08.12) Andreas Filsinger
+
+ Bug: Template: hebu2008: CONST_ vergessen
+
+Rev 3.007 (27.08.12) Andreas Filsinger
+
+ Neu: Template: hebu2008: Link zu Streicher "streicher"
+ Neu: Template: hebu2008: Startseite nicht mehr hardcoded "welcome" 
+
+Rev 3.006 (24.07.12) Andreas Filsinger
+
+ Bug: ibase: 3x free_result Leaks
+
+ Neu: FirePHP Log-Möglichkeit, implementiert in ibase, xmlrpc, session
+
+Rev 3.005 (20.07.12) Andreas Filsinger
+
+ Neu: $tree nun auch in der Session
+ Neu: SESSION_LOG nun möglich
+
+Rev 3.004 (19.07.12) Andreas Filsinger
+
+ Bug: Umlaute in den Suchanfragen gingen nicht
+ Bug: Umlaute in den eMails gingen nicht
+
+Rev 3.003 (19.07.12) Andreas Filsinger
+
+ Bug: Anzeige von Rechnungs-Dokumenten hatte nicht funktioniert
+
+ Neu: Fehler, wenn kein MemCache-Server läuft
+
+Rev 3.002 (18.07.12) Andreas Filsinger
+
+ Bug: xmlrpc_client: Markieren von schlechten Hosts hatte nicht funktioniert
+
+Rev 3.001 (18.07.12) Andreas Filsinger
+
+ Bug: Vorhandensein der Extension "mbstring" wurde nicht geprüft
+
+Rev 3.000 (17.07.12-18.07.12) Andreas Filsinger
+
+ Merge: Revision-Infos der einzelnen Templates
+ Merge: TWebShop 1.000+ (TWebShop 1)
+ Merge: TWebShop_Dev 1.000+ (TWebShop 2)
+ Rename: TWebShop_Dev -> TWebShop 2
+ Neu: 1.098 -> 2.098 -> 3.000
+ Wegfall: PHP.INI muss nicht mehr geändert werden: Änderung für die Interbase / Firebird Settings
+          werden im Script gemacht.
+ Neu: ibase: Natives Datumformat ist nun tt.mm.jjjj (in "DATE"-Feldern + "TIMESTAMP"-Feldern)
+ Neu: Umbenennung in TWebShop
+ 
+Merge 1.008 (17.02.11) Andreas Filsinger & Thorsten Schroff
+
+ Template "orgamon" Neu: Anpassen an aktuelleste TWebShop_Dev Merge 1.084
+ Template "orgamon" Neu: Einpflegen neuer Sprachbausteine 
+ Template "orgamon" Neu: Einfügen fehlender Template-Konstanten
+ Template "orgamon" Neu: s_myshop.html: Änderungen
+
+Merge 1.007 (05.03.10) Thorsten Schroff
+
+ Template "orgamon" Neu: ISS überarbeitet und auf neusten technischen Stand gebracht
+ Template "orgamon" Neu: Sprachdateien nun Teil des Templates
+ Template "orgamon" Neu: revision.txt
+
+Merge 1.006 (13.10.08) Andreas Filsinger
+
+ Template "orgamon" Neu: OrgaTix Erweiterung TWebShop Rev. 1046
+
+Merge 1.005 (01.10.08) Thorsten Schroff
+
+ Template "orgamon" Neu: Preis-Templates für Versandkosten
+
+Merge 1.004 (27.09.08) Thorsten Schroff
+ 
+ Template "orgamon" Neu: Pfad für Uninstall-Dateien ist \templates\orgamon
+ Template "orgamon" Neu: OrgaTix: Eingabefeld für Ticket-Info größer
+
+Merge 1.003 (25.09.08) Thorsten Schroff
+
+ Template "orgamon" Neu: i_template.inc.php5: __TEMPLATE_PROJECTNAME
+ Template "orgamon" Neu: f_footer.html: Template Revision als HTML-Kommentar
+
+Merge 1.002 (25.09.08) Thorsten Schroff
+
+ Template "orgamon" Neu: Setup: Installationspfad nun Hauptverzeichnis des WebShops (TWebShop_Dev)
+
+Merge 1.001 (23.09.08) Thorsten Schroff
+ 
+ Template "orgamon" Neu: Mein Shop: Integration OrgaTix
+ Template "orgamon" Neu: i_template_orgatix.inc.php5
+ Template "orgamon" Neu: Icon OrgaTix
+ Template "orgamon" Neu: Images: Hintergründe und Icons
+
+Merge 1.000 (14.09.08) Thorsten Schroff
+
+ * erste Release
+
+Merge 1.023b
+
+ Template "hebu2008streicher" Neu: s_welcome.html: Blindtext entfernt
+
+Merge 1.022 (05.01.12) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Navigation: Hinweis in Sucheingabefeld per JavaScript
+ Template "hebu2008streicher" Neu: Ordner js für templatespezifisches JavaScript
+ Template "hebu2008streicher" Neu: Neue Templates: template_bill_delivery_type.inc.php5 und template_order.inc.php5
+ Template "hebu2008streicher" Neu: neue Sprachbausteine
+ Bug: style.css: @import(calender.css) war veraltet (Kalender-Styles sind mittlerweile in style.css enthalten)
+
+Merge 1.021 (07.12.11) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Änderung Sprachbausteine
+
+Merge 1.020 (07.12.11) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Zusätzlicher Bestellschritt: Wahl des Versendetermins
+ Template "hebu2008streicher" Neu: Style-Angaben für JavaScript-DatePicker
+ Template "hebu2008streicher" Neu: Grafik: Option Kalender
+ Template "hebu2008streicher" Neu: neue Sprachbausteine
+
+Merge 1.019 (03.02.11) Thorsten Schroff
+ 
+ Template "hebu2008streicher" Neu: Anpassen an neuste Shop-Version
+ Template "hebu2008streicher" Neu: Einpflegen neuer Sprachbausteine
+
+Merge 1.018 (01.02.11) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: s_myshop.html: Download-Übersicht: Anzeige der Dateigröße
+ Template "hebu2008streicher" Neu: Einpflegen neuer Sprachbausteine
+ Template "hebu2008streicher" Neu: eigenes Icon für Mp3-Download
+
+Merge 1.017 (31.01.11) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Update auf TWebShop_Dev Merge 1.079
+
+Merge 1.016 (08.11.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Suche: Auswahlliste Sortiermöglichkeit
+
+Merge 1.015 (05.09.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Einkaufswagen: Mengeneingabe wird automazisch aktualisiert.
+ Template "hebu2008streicher" Neu: Warnung bei deaktiviertem Javascript.
+
+Merge 1.014 (23.07.10) Thorsten Schroff
+ 
+ Template "hebu2008streicher" Neu: s_newsletter.html: Anpassungen an neues Newsletter-System
+ Template "hebu2008streicher" Neu: s_myshop.html: Newsletter schreiben: Anpassungen an neues Newsletter-System
+ Template "hebu2008streicher" Neu: Pflege der Sprachdateien
+
+Merge 1.013 (02.07.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: i_template_account: Template für die Anzeige des Kontostands
+ Template "hebu2008streicher" Neu: s_links.html: neue Links
+
+Merge 1.012 (28.05.10) Thorsten Schroff
+
+ Bug: Suchtrefferseiten-Anzeige: undefinierte Konstante _TEMPLATE_SEARCH_RESULT_PAGES_OPTION_ALPHABETICAL_INDEX
+ Bug: IE: Langer Suchbegriff verzerrt Layout
+
+Merge 1.011 (27.05.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Produktivschaltung Musik für Streicher, vorläufige Ausblendung von Menüpunkten
+ Bug: h_header.html: Tippfehler "shUrtcut icon"
+
+Merge 1.010 (12.03.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: CSS: Anpassungen für Microsoft Internet Explorer 8
+ Template "hebu2008streicher" Neu: s_cookies.html: Erklärt die Notwendigkeit von Cookies und bietet Lösungswege
+
+Merge 1.009 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Header-Links auf stagex.hebu-music.com
+
+Merge 1.008 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Systemsprache entfernt (nun Teil von TWebshop_Dev)
+ Template "hebu2008streicher" Neu: ISS angepasst
+
+Merge 1.007 (04.03.10) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Projektname nun TemplateHeBu2008Streicher
+
+Merge 1.006 (04.03.10) Thorsten Schroff
+ 
+ Template "hebu2008streicher" Neu: komplett umgesetztes Design "2008"
+
+Merge 1.005 (06.10.09) Andreas Filsinger
+
+ Template "hebu2008streicher" Neu: Design "2008"
+
+Merge 1.004 (01.10.08) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Preis-Templates für Versandkosten
+
+Merge 1.003 (27.09.08) Thorsten Schroff
+ 
+ Template "hebu2008streicher" Neu: Pfad für Uninstall-Dateien ist \templates\hebu
+
+Merge 1.002 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: i_template.inc.php5: __TEMPLATE_PROJECTNAME
+ Template "hebu2008streicher" Neu: f_footer.html: Template Revision als HTML-Kommentar
+
+Merge 1.001 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: Setup: Installationspfad nun Hauptverzeichnis des WebShops (TWebShop_Dev)
+
+Merge 1.000 (14.09.08) Thorsten Schroff
+
+ Template "hebu2008streicher" Neu: favicon.ico
+ * erste Release basierend auf dem Template auf www.hebu-music.com
+
+Merge 1.018 (07.12.11) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Änderung Sprachbausteine
+
+Merge 1.017 (07.12.11) Thorsten Schroff
+ 
+ Template "hebu2008musikverlag" Neu: Style-Angaben für JavaScript-DatePicker
+ Template "hebu2008musikverlag" Neu: Grafik: Option Kalender
+ Template "hebu2008musikverlag" Neu: neue Sprachbausteine
+
+Merge 1.016 (03.02.11) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Anpassen an neuste Shop-Version
+ Template "hebu2008musikverlag" Neu: Einpflegen neuer Sprachbausteine
+
+Merge 1.015 (01.02.11) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: s_myshop.html: Download-Übersicht: Anzeige der Dateigröße
+ Template "hebu2008musikverlag" Neu: Einpflegen neuer Sprachbausteine
+ Template "hebu2008musikverlag" Neu: eigenes Icon für Mp3-Download
+
+Merge 1.014 (31.01.11) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Update auf TWebShop_Dev Merge 1.079
+
+Merge 1.013 (05.09.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Einkaufswagen: Mengeneingabe wird automazisch aktualisiert.
+ Template "hebu2008musikverlag" Neu: Warnung bei deaktiviertem Javascript.
+
+Merge 1.012 (15.08.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: s_upload.html: Anzeige von maximalen Dateigrößen
+ Template "hebu2008musikverlag" Neu: s_upload.html: TinyMCE aktiviert
+
+Merge 1.011 (15.08.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: s_upload.html: Artikel-Upload-Formular für "Die Blasmusik"
+ Template "hebu2008musikverlag" Neu: h_header.html: Menüs minimalisiert
+ Bug: h_header.html: Tippfehler "shUrtcut icon"
+
+Merge 1.010 (12.03.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: CSS: Anpassungen für Microsoft Internet Explorer 8
+ Template "hebu2008musikverlag" Neu: s_cookies.html: Erklärt die Notwendigkeit von Cookies und bietet Lösungswege
+
+Merge 1.009 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Header-Links auf stagex.hebu-music.com
+
+Merge 1.008 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Systemsprache entfernt (nun Teil von TWebshop_Dev)
+ Template "hebu2008musikverlag" Neu: ISS angepasst
+
+Merge 1.007 (04.03.10) Thorsten Schroff
+ 
+ Template "hebu2008musikverlag" Neu: Projektname nun TemplateHeBu2008Musikverlag
+
+Merge 1.006 (04.03.10) Thorsten Schroff
+ 
+ Template "hebu2008musikverlag" Neu: komplett umgesetztes Design "2008"
+
+Merge 1.005 (06.10.09) Andreas Filsinger
+
+ Template "hebu2008musikverlag" Neu: Design "2008"
+
+Merge 1.004 (01.10.08) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Preis-Templates für Versandkosten
+
+Merge 1.003 (27.09.08) Thorsten Schroff
+ 
+ Template "hebu2008musikverlag" Neu: Pfad für Uninstall-Dateien ist \templates\hebu
+
+Merge 1.002 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: i_template.inc.php5: __TEMPLATE_PROJECTNAME
+ Template "hebu2008musikverlag" Neu: f_footer.html: Template Revision als HTML-Kommentar
+
+Merge 1.001 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: Setup: Installationspfad nun Hauptverzeichnis des WebShops (TWebShop_Dev)
+
+Merge 1.000 (14.09.08) Thorsten Schroff
+
+ Template "hebu2008musikverlag" Neu: favicon.ico
+ * erste Release basierend auf dem Template auf www.hebu-music.com
+ 
+Merge 1.032 (05.01.12) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Navigation: Menüpunkt "Die Blasmusik" dauerhaft entfernt
+ Template "hebu2008music" Neu: Navigation: Hinweis in Sucheingabefeld per JavaScript
+ Template "hebu2008music" Neu: Ordner js für templatespezifisches JavaScript
+ Template "hebu2008music" Neu: Neue Templates: template_bill_delivery_type.inc.php5 und template_order.inc.php5
+ Template "hebu2008music" Neu: neue Sprachbausteine
+ Template "hebu2008music" Bug: style.css: @import(calender.css) war veraltet (Kalender-Styles sind mittlerweile in style.css enthalten)
+
+Merge 1.031 (07.12.11) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Änderung Sprachbausteine
+
+Merge 1.030 (07.12.11) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: Zusätzlicher Bestellschritt: Wahl des Versendetermins
+ Template "hebu2008music" Neu: Style-Angaben für JavaScript-DatePicker
+ Template "hebu2008music" Neu: Grafik: Option Kalender
+ Template "hebu2008music" Neu: neue Sprachbausteine
+
+Merge 1.029 (04.02.11) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: Update auf Inno-Setup 5.4.0
+
+Merge 1.028 (03.02.11) Thorsten Schroff
+
+ Bug: Fehlender Sprachbaustein in den Sprachdateien
+
+Merge 1.027 (03.02.11) Thorsten Schroff
+
+ Template "hebu2008music" Neu: h_header.html: "Meine Einstellungen" heißt jetzt "Mein HeBu"
+ Template "hebu2008music" Neu: i_template_shop.inc.php5: "Kunden-Login" und "Kunde werden" in Reihenfolge getauscht
+ Template "hebu2008music" Neu: s_myshop.html: Umstellung auf "Mein HeBu", "Meine Musik" und "Bestellstatus" nach oben gesetzt
+
+Merge 1.026 (01.02.11) Thorsten Schroff
+
+ Template "hebu2008music" Neu: s_myshop.html: Download-Übersicht: Anzeige der Dateigröße
+ Template "hebu2008music" Neu: Einpflegen neuer Sprachbausteine
+ Template "hebu2008music" Neu: eigenes Icon für Mp3-Download
+
+Merge 1.025 (28.01.11) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: i_template_mymusic.inc.php5: Download-Übersicht: Beleg-Nummer entfernt
+
+Merge 1.024 (27.01.11) Thorsten Schroff
+
+ Template "hebu2008music" Neu: i_template_mymusic.inc.php5: Download-Übersicht: Layout verändert (Datum hinzu - Numero weg)
+ Template "hebu2008music" Neu: s_myshop.html: Refresh (zwecks Zähler) der Download-Übersicht per Javascript
+
+Merge 1.023 (27.01.11) Thorsten Schroff
+
+ Template "hebu2008music" Neu: i_template_payment_info.inc.php5: Template für Zahlungsinformationen
+ Template "hebu2008music" Neu: i_template_mymusic.inc.php5: Template für Musik-Downloads
+ Template "hebu2008music" Neu: Sprache: Textdatei myshop_mymusic.txt
+ Template "hebu2008music" Neu: Grafik: option_mp3.png, option_mp3_disabled.png
+
+Merge 1.022 (08.11.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Suche: Auswahlliste Sortiermöglichkeit
+
+Merge 1.021 (05.09.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Einkaufswagen: Mengeneingabe wird automazisch aktualisiert.
+ Template "hebu2008music" Neu: Warnung bei deaktiviertem Javascript.
+
+Merge 1.020 (23.07.10) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: s_newsletter.html: Anpassungen an neues Newsletter-System
+ Template "hebu2008music" Neu: s_myshop.html: Newsletter schreiben: Anpassungen an neues Newsletter-System
+ Template "hebu2008music" Neu: Pflege der Sprachdateien
+
+Merge 1.019 (02.07.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: i_template_account: Template für die Anzeige des Kontostands
+ Template "hebu2008music" Neu: s_links.html: neue Links
+ Template "hebu2008music" Neu: s_search.html: Link zu notendatenbank.net
+ Template "hebu2008music" Neu: Sprachen: search-not-found.txt
+
+Merge 1.018 (28.05.10) Thorsten Schroff
+
+ Template "hebu2008music" Bug: Suchtrefferseiten-Anzeige: undefinierte Konstante _TEMPLATE_SEARCH_RESULT_PAGES_OPTION_ALPHABETICAL_INDEX
+ Template "hebu2008music" Bug: IE: Langer Suchbegriff verzerrt Layout
+ Template "hebu2008music" Bug: Kataloge: IE: Anzeige der Kataloge verzerrt
+
+Merge 1.017 (27.05.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Header-Schaltfläche Musik für Streicher
+
+Merge 1.016 (21.05.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Newsletter-Templates hinzugefügt
+
+Merge 1.015 (03.05.10) Thorsten Schroff
+
+ Template "hebu2008music" Bug: h_header.html: Tippfehler "shUrtcut icon"
+
+Merge 1.014 (16.04.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Über uns: Textänderungen
+ Template "hebu2008music" Neu: In Memoriam Chtristian Buss: Seite von alter Präsenz übernommen (Anopassung ans Layout, Korrekturen in der HTML-Struktur)
+ Template "hebu2008music" Neu: Kataloge: Überschriften nun im Titel-Stil, tabellenmäßige Optik
+
+Merge 1.013 (09.04.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Style-Sheet: Inputs haben Rahmen, Abstand Menü zu Inhalt
+ Template "hebu2008music" Neu: Template Seite Kataloge
+ Bug: Artikel-Template war noch hardcoded Deutsch
+ Template "hebu2008music" Neu: Sprachdateien überarbeitet
+
+Merge 1.012 (07.04.10) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: Template nun mehrsprachig.
+ Template "hebu2008music" Neu: Englische Sprachdateien auf dem aktuellsten Stand.
+
+Merge 1.011 (02.04.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Template vervollständigt (beeinhaltet nun die komplette alte Homepage und den Webshop)
+ Template "hebu2008music" Neu: Nicht geklärte Menüpunkte/Inhalte ausgeblendet
+ Template "hebu2008music" Neu: Standalone: Nur hebu-music im Header 
+ Template "hebu2008music" Neu: Seite: Kataloge
+ Template "hebu2008music" Neu: Seite: Newsletter
+ Template "hebu2008music" Neu: Seite: Die Blasmusik
+ Template "hebu2008music" Neu: Seite welcome: HeBu Aktuell eingefügt
+
+Merge 1.010 (12.03.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: CSS: Anpassungen für Microsoft Internet Explorer 8
+ Template "hebu2008music" Neu: s_cookies.html: Erklärt die Notwendigkeit von Cookies und bietet Lösungswege
+
+Merge 1.009 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Header-Links auf stagex.hebu-music.com
+
+Merge 1.008 (05.03.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Systemsprache entfernt (nun Teil von TWebshop_Dev)
+ Template "hebu2008music" Neu: ISS angepasst
+
+Merge 1.007 (04.03.10) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Projektname nun TemplateHeBu2008Music
+
+Merge 1.006 (04.03.10) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: komplett umgesetztes Design "2008"
+
+Merge 1.005 (06.10.09) Andreas Filsinger
+
+ Template "hebu2008music" Neu: Design "2008"
+
+Merge 1.004 (01.10.08) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Preis-Templates für Versandkosten
+
+Merge 1.003 (27.09.08) Thorsten Schroff
+ 
+ Template "hebu2008music" Neu: Pfad für Uninstall-Dateien ist \templates\hebu
+
+Merge 1.002 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008music" Neu: i_template.inc.php5: __TEMPLATE_PROJECTNAME
+ Template "hebu2008music" Neu: f_footer.html: Template Revision als HTML-Kommentar
+
+Merge 1.001 (25.09.08) Thorsten Schroff
+
+ Template "hebu2008music" Neu: Setup: Installationspfad nun Hauptverzeichnis des WebShops (TWebShop_Dev)
+
+Merge 1.000 (14.09.08) Thorsten Schroff
+
+ Template "hebu2008music" Neu: favicon.ico
+ * erste Release basierend auf dem Template auf www.hebu-music.com
+
+Merge 1.006 (02.04.10) Thorsten Schroff
+ 
+ Bug: Tippfehler "shurtcut icon" in h_header.html korrigiert
+ Bug: Tippfehler in i_template_article.inc.php5 korrigiert
+ Template "hebu" Neu: _TEMPLATE_SEARCH_RESULT_PAGES_OPTION_ALPHABETICAL_INDEX hinzugefügt
+
+Merge 1.005 (05.03.10) Thorsten Schroff
+ 
+ Template "hebu" Neu: ISS überarbeitet und auf neusten technischen Stand gebracht
+ Template "hebu" Neu: Sprachdateien nun Teil des Templates
+ Template "hebu" Neu: revision.txt
+
+Merge 1.004 (01.10.08) Thorsten Schroff
+
+ Template "hebu" Neu: Preis-Templates für Versandkosten
+
+Merge 1.003 (27.09.08) Thorsten Schroff
+ 
+ Template "hebu" Neu: Pfad für Uninstall-Dateien ist \templates\hebu
+
+Merge 1.002 (25.09.08) Thorsten Schroff
+
+ Template "hebu" Neu: i_template.inc.php5: __TEMPLATE_PROJECTNAME
+ Template "hebu" Neu: f_footer.html: Template Revision als HTML-Kommentar
+
+Merge 1.001 (25.09.08) Thorsten Schroff
+
+ Template "hebu" Neu: Setup: Installationspfad nun Hauptverzeichnis des WebShops (TWebShop_Dev)
+
+Merge 1.000 (14.09.08) Thorsten Schroff
+
+ Template "hebu" Neu: favicon.ico
+ * erste Release basierend auf dem Template auf www.hebu-music.com
+
+Rev 2.097 (17.07.12) Andreas Filsinger
+
+ Reifegrad: Alfa
+ ===============
+
+ Bug: "Ü" im Suchindex wurde nicht angezeigt
+
+Rev 2.096 (16.07.12) Andreas Filsinger
+
+ Reifegrad: Alfa
+ ===============
+
+ Bug: "sitemap" lief seit Umstellung nicht mehr
+ Bug: "subsite" lief seit Umstellung nicht mehr
+
+Rev 2.095 (12.07.12-16.07.12) Andreas Filsinger
+
+ Reifegrad: Alfa
+ ===============
+
+ Neu: Zeichensatz der html-Ausgabe ist nun UTF8
+ Neu: UTF8 in Template Texten nun Pflicht
+ Neu: Strings aus der Datenbank werden in UTF8 gewandelt
+
+Rev 2.094 (10.07.12-12.07.12) Andreas Filsinger
+
+ Neu: ohne Schnickschnack: $orgamon und $ibase sind einfach globale Objekte
+ Neu: mehr utf8 Kodierungen in den templates
+
+Rev 2.093 (06.07.12-10.07.12) Andreas Filsinger
+
+ Reifegrad: Alfa
+ ===============
+
+ Neu: xmlrpc: error_chain kummuliert die Fehler-Kette bei xmlrpc Versagen
+ Neu: tapplication: "orgamon", "ibase", "errorlist" werden nicht in die session
+      abgespeichert (im Moment kann ich es nocht nicht verhindern!)
+ Neu: $ibase, $orgamon, $errorlist, $messagelist sind globale Objekte, das
+      sollte man auch so abbilden -> Beginne mit cart.php.
+      Ansonsten muss man bei der Objekt-Serialisierung und Speicherung in der
+      Session besonderen Aufwand treiben. Zudem ist es ehrlicher und schneller.
+
+Rev 2.092 (06.07.12) Andreas Filsinger
+
+ Bug: ./logic - Verzeichnis hatte im Setup gefehlt
+
+Rev 2.091 (06.07.12) Andreas Filsinger
+
+ Neu: alle php-Skripte sind nun in der UTF8 Kodierung (noch unvollständig)
+ Neu: xmlrpc, orgamon sind keine Single-Instance-Klassen mehr
+ Neu: Einige Klasse haben Abhängigkeiten zu $xmlrpc und $orgamon
+
+Rev 2.090 (27.06.12) Andreas Filsinger
+
+ Neu: Verzeichnis "action"
+ Neu: Verzeichnis "core"
+ Neu: Verzeichnis "site"
+ Neu: Setup: Es werden immer alle Templates mit ausgeliefert
+ Neu: xmlrpc: Round-Robin
+
+Rev 2.089 (15.05.12) Thorsten Schroff
+
+ Neu: Klasse thost: Objektstruktur für die Serverdaten (Name/URL/IP, Port, Timeout, Retries,...)
+ Neu: Klasse txmlrpc_client praktiziert jetzt Round-Robin und Failover
+ Neu: Konstruktor der Klasse txmlrpc_client verarbeitet Arrays of thost
+ Neu: Klasse txmlrpc_client merkt sich "schlechte" Hosts
+ Neu: i_config.inc.php5/i_default.inc.php5: XMLRPC_NAMESPACE wurde umbenannt in TWEBSHOP_NAMESPACE
+ Neu: i_config.inc.php5/si_default.inc.php5: Einführen der Konstanten XMLRPC_HOST_x, deren Wert eine kommagetrennte Name/Wert-Paar-Liste ist
+ Neu: p_init_orgamon.php5: Auswertung der XMLRPC_HOST_i-Konstanten, Erzeugen der entsprechenden THOST-Instanzen und Übergabe an die Instanz von TORGAMON
+
+Rev 2.088 (22.04.12) Thorsten Schroff
+
+ Neu: XMLRPC-Client: detailiertes Logging, XMLRPC-ID, Retries
+ Neu: Klasse twebshop_article: XMLRPC-Aufruf in Methode getPublisher() auskommentiert
+ Bug: Klasse torgamon: __wakeup() war noch nicht an neuste Version der XMLRPC-Client-Klasse angepasst
+
+Rev 2.087 (10.01.12) Thorsten Schroff
+
+ Bug: Bestellschritt Versendedatum: Beim Zurückblättern in den Bestellschritten wurde das schnellstmögliche 
+      Versendedatum (falls zuvor gewählt) im Eingabefeld der Option "Komplettversand" angezeigt
+ Bug: Kategoriebaum funktionierte nur noch in der ersten Ebene
+
+Rev 2.086 (05.01.12) Thorsten Schroff
+
+ Neu: Bestellschritt Adressen: Bei Wahl verschiedener Rechnungs- und Lieferanschriften, kann der Kunde
+      zwischen "Rechnung der Lieferung beilegen" und "Rechnung separat versenden" wählen. Angabe wird in "Infos unter dem
+      Posten-Block" (BELEG.KUNDEN_INFO) übernommen.
+ Neu: Neue Klasse: twebshop_bill_delivery_type
+ Neu: Bestellschritt Übersicht: Anzeige der Rechnungsversandart und des gewünschten Versendedatums.
+ Neu: JavaScript: Verbesserungen in functions.js
+ Bug: t_webshop_search.inc.php5: Abfangen des fatal errors, der in getSortOrderType (Ursache noch unklar) ausgelöst wurde
+ Bug: Bestellung: Verfügbarkeit des Einkaufswagens wurde bei neuer Bestellung nicht aktualisiert und der entsprechende Bestellschritt 
+      dann unter Umständen (nicht) aktiviert.
+
+Rev 2.085 (07.12.11) Thorsten Schroff
+ 
+ Neu: Erste Maßnahmen zur Abspeckung der Session
+ Neu: Bei verschiedenen Verfügbarkeiten der Artikel im Einkaufswagen wird dem Kunden während der Bestellvorgangs 
+      eine Termin-Wahl angeboten (der angebene Termin wird nach Ausführung der Bestellung in das Feld TERMIN 
+      im Beleg geschrieben)
+ Neu: Berücksichtigung neuer Verfügbarkeits-Stati
+ Neu: Integration eines JavaScript-DatePickers
+ Neu: Lauffähig mit PHP 5.3.8
+ Neu: Strict PHP valide
+ Bug: Aufruf einer als "private" deklarierten Funktion beim Löschen im Einkaufswagen
+
+Rev 2.084 (04.02.11) Thorsten Schroff
+
+ Neu: Update auf Inno-Setup 5.4.0
+
+Rev 2.083 (03.02.11) Thorsten Schroff
+
+ Neu: a_download_mymusic.inc.php5: Verbesserte Logik, korrigierter Ablauf für Fehlermeldung bei Abbruch
+ Neu: a_download_mymusic.inc.php5: Zeiterfassung des Downloads
+
+Rev 2.082 (03.02.11) Thorsten Schroff
+
+ Bug: a_order.inc.php5: my_music muss mymusic lauten
+ Neu: p_login.inc.php5: verbesserte Logik bei Überprüfung, ob Login erforderlich
+
+Rev 2.081 (03.02.11) Thorsten Schroff
+
+ Neu: s_myshop.inc.php5: subsite wird in Session mitgetragen
+ Neu: s_myshop.inc.php5: die Hauptseite muss mit &site=myshop&subsite=overview gerufen werden
+ Neu: a_download_mymusic.inc.php5: verbessertes Fehlerverhalten, Einführung diverser Fehlermeldungen
+ Neu: t_webshop_wishlist.inc.php5: neue Klasse twebshop_wishlist (für Merklisten-Funktionalität)
+
+Rev 2.080 (01.02.11) Thorsten Schroff
+ 
+ Neu: a_download.inc.php5: header sendet Download-Größe
+ Neu: twebshop_article.inc.php5: neue statische Eigenschaft twebshop_article::MP3_PATH speichert Pfad zu den MP3-Dateien
+ Neu: a_download_mymusic.inc.php5: Info wird in Session geschrieben
+ Neu: s_myshop_mymusic.inc.php5: Info wird als Meldung ausgegeben
+ Neu: t_session.inc.php5: neue Methode tsession::unregisterTmpVar()
+ Neu: p_newsletter_build_html.inc.php5: Option MP3-Download
+
+Rev 2.079 (31.01.11) Thorsten Schroff
+
+ Bug: heruntergeladene MP3-Dateien enthalten angehängten HTML-Code
+ Neu: t_site.inc.php5: Neue Eigenschaft tsite::content, beschreibt (analog zu den Eigenschaften ::header und ::footer), ob die Seite Inhalt ausgibt
+ Neu: t_site.inc.php5: Neue Methoden tsite::hasContent() und tsite::setContent(true/false)
+ Neu: a_download_mymusic.inc.php5: Aufruf von tsite::setContent(false)
+
+Rev 2.078 (31.01.11) Thorsten Schroff
+ 
+ Neu: i_global_const.inc.php5: Neue Konstante TABLE_EVENT für den Namen der Ereignis-Tabelle
+ Neu: t_orgamon.inc.php5: Neue Klasse torgamon_event zum Lesen und Erzeugen von Ereignissen
+ Neu: t_orgamon.inc.php5: Umstellen der Methode torgamon::createEvent() auf neue Klasse torgamon_event
+ Neu: t_ibase.inc.php5: Neue Methoden tibase::format_for_insert() und tibase::is_blob_resource()
+ Neu: t_webshop_bill.inc.php5: Neue Methode twebshop_bill::getEvent(type) liefert das torgamon_event-Objekt 
+      zu diesem Beleg mit der übergegeben Ereignis-Art
+ Neu: a_upload_data.inc.php5: auf neue Klasse torgamon_event umgestellt
+ Neu: a_newsletter_create.inc.php5: auf neue Klasse torgamon_event umgestellt
+ Neu: a_upload_confirmation.inc.php5: auf neue Klasse torgamon_event umgestellt
+ Neu: a_order.inc.php5: Auswerten des Rückgabe-Werts des XMLRPCs torgamon::execAccounting()
+
+Rev 2.077 (28.01.11) Thorsten Schroff
+
+ Bug: a_order.inc.php5: fehlende Fallunterscheidung zwischen Bestellungen mit/ohne Zahlungsinformation
+ Neu: twebshop_bill.inc.php5: ZAHLUNGTYP_R eingeführt
+ Neu: twebshop_mymusic.inc.php5: Beleg-Nummer kann nun formatiert ausgeben werden
+
+Rev 2.076 (27.01.11) Thorsten Schroff
+
+ Bug: i_global_funcs.inc.php5: Funktion path_format() liefert falsches Resultat bei Linux-Pfad
+ Neu: twebshop_mymusic.inc.php5: Kauf-Datum wird aus Tabelle Beleg (Feld ANLAGE) gezogen 
+ Neu: a_download_mymusic.inc.php5: Log-Datei wird geschrieben
+ Neu: i_default_config.inc.php5: Neue Konstanten MP3_DOWNLOAD_LOG_PATH und MP3_DOWNLOAD_LOG_NAME
+
+Rev 2.075 (27.01.11) Thorsten Schroff
+
+ Bug: a_order_payment.inc.php5 hat gefehlt in Rev 2.074
+
+Rev 2.074 (27.01.11) Thorsten Schroff
+
+ Bug: s_order_payment.inc.php5 hat gefehlt in Rev 2.073
+
+Rev 2.073 (27.01.11) Thorsten Schroff
+ 
+ Neu: t_webshop_article.inc.php5: neue Methode: twebshop_article->existsMP3Download()
+ Neu: i_default_config.inc.php5: neue Konstante TWEBSHOP_ARTICLE_VERSION_SHORT_MP3 enthält das Kürzel für 
+      die Ausgabeart "vollständige Aufnahme"
+ Neu: i_default_config.inc.php5: neue Konstante TWEBSHOP_MP3_DOWNLOAD_POSTFIX enthält das Mp3-Postfix
+ Neu: i_global_funcs.inc.php5: Funktion path_format verbessert: leading_dots werden unterdrückt, wenn 
+      übergebener Pfad ein Windows-Pfad ist (einen Doppelpunkt enthält)
+ Neu: t_site.inc.php5: Steps sind nun aktivier- und deaktivierbar
+ Neu: s_order_payment.inc.php5: Füllt das Formular mit zuvor eingegebenen Werten (beim Blättern durch die Bestellschritte)/Defaultwerten
+ Neu: a_order_payment.inc.php5: eingegebene Werte werden auf Gültigkeit geprüft und falls gültig in Session übernommen
+ Neu: neue Klasse twebshop_payment_info
+ Neu: Klasse twebshop_payment: Neue Methoden getMaskedBAN() und buildMaskedBAN() liefern die teilweise maskierte Kontonummer zurück
+ Neu: s_order_overview.inc.php5: Aufbereiten der Zahlungsinformationen für Anzeige
+ Neu: a_order.inc.php5: bei Bankverbindung neu: Anlegen einer neue Person, Befüllen dieses Datensatzes mit den Zahlungsinformationen
+ Neu: a_order.inc.php5: Befüllen des Belegs mit der Information ZAHLUNGSPFLICHTIGER_R
+ Neu: torgamon: neue XMLRPC-Methode Buchen: torgamon->execAccounting(beleg_r, person_r)
+ Neu: twebshop_cart: neue Methode containsVersion(version_r) prüft, ob Ausgabeart in Einkaufswagen vorhanden ist
+ Neu: t_webshop_user.inc.php5: neue Methode getMyMusic() liefert alle Downloads eines Kunden (abgelaufene und offene)
+ Neu: neue Klassen twebshop_mymusic und twebshop_mymusic_item
+ Neu: twebshop_mymusic.inc.php5: Änderung in Logik: MENGE_AGENT legt Anzahl der erlaubten Downloads fest, MENGE_GELIEFERT fungiert als Zähler (aufwärts bis Wert in MENGE_AGENT erreicht)
+ 
+Rev 2.072 (08.11.10) Thorsten Schroff
+
+ Neu: Suche: Sortiermöglichkeit
+ Bug: Suche: bei neuer Suche wurde der Parameter page nicht zurückgesetzt
+
+Rev 2.071 (16.08.10) Thorsten Schroff
+
+ Bug: s_upload.inc.php5: Tippfehler
+
+Rev 2.070 (15.08.10) Thorsten Schroff
+ 
+ Neu: TinyMCE nun Teil der Release
+
+Rev 2.069 (15.08.10) Thorsten Schroff
+
+ Neu: Upload-Modul: Artikel-Upload-Möglichkeit für "Die Blasmusik"
+ Neu: Javascript-Bibliothek für Blasmusikverbände und angeschlossene Vereine
+
+Rev 2.068 (23.07.10) Thorsten Schroff
+
+ Bug: Syntaxfehler in i_default_config.inc.php5
+ Bug: Klasse torgamon: Methode sendMail: noch nicht auf neues tibase-Verhalten umgestellt
+ Bug: a_signout_activate.inc.php5: Fehler in Konstantenname
+
+Rev 2.067 (23.07.10) Alexander Knam & Thorsten Schroff
+
+ Neu: t_webshop_user.inc.php5: Zeile (VERSAND.AUSGANG>CURRENT_DATE-1095): von 1 Jahr (365) auf 3 Jahre (1095) verändert
+ Neu: Newsletter: neue Funktionen (Aktionen) zur An- und Abmeldung am/vom Newsletter-System mit Fallunterscheidung (User, bekannter Kunde, unbekannt)
+ Neu: Newsletter: a_newsletter_create.inc.php5: erstellt eine EML-Datei.
+ Neu: i_default_config.inc.php5: neue Konstanten für das Newsletter-Modul
+ Neu: Klasse tibase: neue Methode ->gen_id() ermittelt nächsten RID eines Generators
+ Neu: Klasse torgamon: neue Methode ->createEvent()
+
+Rev 2.066 (02.07.10) Thorsten Schroff
+
+ Bug: myshop_account: Kontostandsanzeige zeigte nur überfällige Posten nicht den gesamten offenen Betrag
+ Neu: Klasse twebshop_account zur Abbildung des Kontostands
+
+Rev 2.065 (28.05.10) Thorsten Schroff
+
+ Neu: a_newsletter_send.inc.php5: Versand kann auf mehrere eMails verteilt werden. BBC-Header-Feld wird nicht angegeben.
+ Neu: i_config.inc.php5: Konfiguration des Newsletter-Moduls
+ Bug: p_footer.inc.php5: Ermittlung der Revision des Templates war noch nicht auf Textversioning umgestellt.
+
+Rev 2.064 (28.05.10) Thorsten Schroff
+
+ Neu: a_newsletter_send.inc.php5: kleine Verbesserungen an der Newsletterfunktion
+ Bug: Klasse tsmtp: Variable logfile wurde nicht an allen Stellen verwendet, sondern war teilweise noch hardcoded
+
+Rev 2.063 (21.05.10) Thorsten Schroff
+
+ Neu: erste Newsletterfunktionalität
+
+Rev 2.062 (03.05.10) Thorsten Schroff
+
+ Bug: Bestellvorgang: Adressen: Falsches Adressformat/Template bei Adressen in verschiedenen Ländern
+
+Rev 2.061 (16.04.10) Thorsten Schroff
+
+ Neu: t_site.inc.php5: PARAMS werden URL-dekodiert (ermöglicht Gleichheitszeichen in einem Parameter-String)
+
+Rev 2.060 (09.04.10) Thorsten Schroff
+
+ Bug: a_search_user_expression.inc.php5: f_user_expression wurde nicht gestetzt, falls nicht in Query
+ Bug: statische Mitglieder von Artikeln wurden nicht angezeigt
+ Neu: s_promo_pakets.inc.php5: Lädt alle Kataloge und zeigt sie inklusive Bild und Jahreszahl an
+
+Rev 2.059 (07.04.10) Thorsten Schroff
+
+ Neu: Klasse twebshop_article_context: SQL-Statement korrigiert (Haken Webshop wird nun berücksichtigt)
+
+Rev 2.058 (02.04.10) Thorsten Schroff
+ 
+ Neu: Klasse twebshop_article_context: zur Darstellung der Kataloge erstellt
+ Neu: Konstante TWEBSHOP_TITLE_SEPARATOR: definiert Zeichen, die als Trenner für den 
+      Seiten-Titel (Titel Browser-Fenster) verwendet werden
+ Neu: Klasse tsite verbessert: Eigenschaft step ist nun private, muss über ->getStep() abgefragt werden, 
+      an alle Stellen ersetzt; Titel wird auch bei Steps automatisch gesetzt
+ Neu: Klasse twebshop_search: neue Methode searchContext für Katalogsuche
+ Neu: p_search.inc.php5: Alphabetischer Index ist nun eine Option
+ Neu: ISS Update
+
+Rev 2.057 (12.03.10) Thorsten Schroff
+
+ Neu: Prüfung, ob Cookies akzeptiert werden, erneuert. Nun allgemein template-fähig.
+
+Rev 2.056 (05.03.10) Thorsten Schroff
+
+ Bug: Fehler beim Laden der default-Sprache, falls Template-Pfad nicht existent
+
+Rev 2.055 (05.03.10) Thorsten Schroff
+
+ Neu: Systemsprache Teil des Shops
+ Bug: test_xmlrpc.php5: txmlrpc::create() hat gefehlt.
+ Neu: ISS angepasst
+
+Rev 2.054 (04.03.10) Thorsten Schroff
+
+ Neu: Einkaufswagen: Automatische Übernahme des Details (bei Ausgabeart Einzelstimme) durch Javascript (onBlur)
+ Neu: Klasse txmlrpc: erweitert, nun booleanfähig
+ Neu: Klasse tcryptid: Patch für 64bit-Integer übernommen
+ Neu: statische Seiten eingeführt (benötigen keine s_xyz.inc.php5, sondern nur s_xyz.html-Template)
+ Neu: Klasse twebshopcart: getPositionByUID(), rebuildPositions()
+ Neu: Klasse twebshoparticle: position (Positionsnummer für Einkaufswagen)
+ Neu: Sprachdateien wurden in die Templates verschoben
+ Neu: ISS angepasst
+
+Rev 2.053 (24.11.09) Thorsten Schroff
+ 
+ Neu: Fehlermeldung und Abbruch falls Template-Pfad nicht existent.
+
+Rev 2.052 (06.10.09) Andreas Filsinger
+
+ Neu: Minimale Änderung in der "i_config.inc.php5"
+
+Rev 2.051 (14.05.09) Andreas Filsinger
+
+ Neu: Rechnungsnummer in der Beleg-Übersicht
+
+Rev 2.050 (08.04.09) Andreas Filsinger & Thorsten Schroff 
+ 
+ Neu: Methode twebshop_user::getMonitionDocument()
+ Neu: s_account.inc.php5: Aktueller Stundenstand wird angezeigt
+ Neu: l_german.inc.php5 aktualisiert
+ Neu: t_site.inc.php5: Blocks eingeführt, die deaktiviert (ausgeblendet) werden können
+ Neu: i_config.inc.php5, i_default_config.inc.php5: auszublendende Blocks definieren (per Konstante)
+ Neu: p_init.inc.php5: Blocks ausblenden
+
+Rev 2.049 (19.03.09) Thorsten Schroff
+
+ Neu: t_orgamon.inc.php5: neue statische Methode processText() bereitet Texte für die Ausgabe 
+      vor (Zeilen mit @ werden 1:1 auszugeben)
+ Neu: t_webshop_article.inc.php5: neue Methode getNotice() liefert den Inhalt des BEM-Feldes.
+      Der Text wird mit torgamon::processText() behandelt.
+ Neu: t_multistringlist.inc.php5: Behandlung von Blobs verbessert.
+
+Rev 2.048 (12.11.08) Thorsten Schroff
+
+ Bug: tpicupload.php5: Klasse TWEBSHOP_USER war nicht importiert (wurde jüngst aus 
+      t_webshop_person.inc.php5 extrahiert und in ein eigenes Skript gepackt). 
+
+Rev 2.047 (10.11.08) Thorsten Schroff
+
+ Bug: tpicupload.php5: Klasse TVISUAL war nicht importiert.
+
+Rev 2.046 (13.10.08) Andreas Filsinger
+
+ Neu: OrgaTix Erweiterung
+
+Rev 2.045 (06.10.08) Thorsten Schroff
+
+ Neu: Templates sind nun temporär (session-gebunden) umschaltbar
+ Neu: i_global_funcs.inc.php5: 2 neue Parameter (class und id) für Funktion image_tag()
+ Neu: Klasse TSITE um die neuen Image-Parameter erweitert
+ Neu: i_language.inc.php5: Variablen umbenannt
+
+Rev 2.044 (01.10.08) Thorsten Schroff
+
+ Neu: Versandkosten sind jetzt vom Typ twebshop_price
+ Neu: twebshop_price::setValues()
+ Bug: Bestellung: Adressen wählen: Nicht mehr alle Adressen wurden angezeigt
+
+Rev 2.043 (27.09.08) Thorsten Schroff
+ 
+ Neu: Alle mit Templates arbeitenden TWebShop-Klassen sind nun Kinder von tvisual (vererbt)
+
+Rev 2.042 (25.09.08) Thorsten Schroff
+
+ Neu: p_footer.inc.php5: Liest Revision des Templates aus
+
+Rev 2.041 (23.09.08) Thorsten Schroff
+
+ Neu: Integration OrgaTix
+ Neu: Klassen torgatix, torgatix_ticket, torgatix_processor
+ Neu: Seiten s_myshop_orgatix.inc.php5, s_myshop_orgatix_ticket.inc.php5
+ Neu: a_save_orgatix_ticket.inc.php5: speichert neue/ geänderte Tickets
+ Neu: Sprachbausteine für OrgaTix
+ Neu: i_config.inc.php5-dist als initiales Konfigurationsskript (nicht mehr 
+      das der Entwicklungsumgebung)
+ Bug: tibase::date() Monat und Tag im Datum vertauscht.
+ Neu: tibase::datetime()
+ Neu: experimentell: Caching von XMLRPC-Antworten
+
+Rev 2.040 (15.09.08) Thorsten Schroff
+ 
+ Bug: Suche wird scheinbar aus alten Lesezeichen heraus ohne Übergabe einer SID gestartet,
+      SID wird dann automatisch gesetzt.
+ Bug: torgamon->sendMail(): Message mit einfachen Anführungszeichen führt zum Fehlschlagen 
+      des Insert-Statements
+
+Rev 2.039 (14.09.08) Thorsten Schroff
+
+ Bug: Anmelden: bei Englischer Sprache wurden keine Länder zur Auswahl angezeigt
+ Neu: Anpassungen an die neuen Platzhalter im ORT_FORMAT-String
+ Neu: Suche wird nun gecached, Suchergebnisse werden in der Session mitgetragen, dies ermöglicht 
+      das Blättern mit den Browser-Schaltflächen über mehrere verschiedene Suchergebnisse hinweg
+ Neu: Klasse TWEBSHOP_SEARCH: neue Methode doSearch(...)
+ Neu: neue Klasse TWEBSHOP_SEARCH_RESULT
+ Neu: SID = SearchID
+ Neu: s_sitemap.inc.php5: alphabetischer Index
+ Neu: twebshop_person->clearHTMLTemplate() und twebshop_person->clearOptions(), um Session zu schrumpfen
+ Neu: Einkaufswagen/Suche/Artikelansicht: Anzeige von rabattierten Preisen
+ Neu: MyShop: Einstellungen: Rabatt anzeigen Ja/Nein
+ Neu: Klassen TWEBSHOP_PERSON & TWEBSHOP_USER : Bestimmte Methoden verschoben und umbenannt
+ Neu: twebshop_person->showDiscount()
+ Neu: Suche: Artikelanzeige erweitert (Bemerkung wird nun angezeigt), dazu Layout angepasst
+ Neu: Erweiterte Suche: kombinierte Suche (Kategorie & Text) ist nun möglich
+ Neu: p_output.inc.php5: o_site.inc.php5, o_footer.inc.php5 und o_header.inc.php5 fallen weg
+ Neu: neue Klasse TPERFORMANCE zum Erfassen von zeiten
+ Neu: Anpassungen in den Klassen TXMLRPC und TIBASE und den Dateien f_footer.html und p_footer.inc.php5 an TPERFORMANCE
+ Neu: TWebShop_Dev ist nun templatefähig
+ Neu: "In den Einkaufswagen" landet wieder auf der Ausgangsseite (nicht mehr im Einkaufswagen)
+ Bug: TWEBSHOP_PRICE: Bei Ausfall von XMLRPC wurde "kostenlos" angezeigt, nun "unbekannt"
+ Neu: In i_config.inc.php5 sind alle möglichen Konstanten schon auskommentiert eingetragen
+ Neu: Icon
+ Neu: Update .ISS
+
+Rev 2.038 (17.08.08) Thorsten Schroff
+
+ Neu: OrgaMon: INITIATOR_R beim Senden von eMails
+
+Rev 2.037 (06.08.08) Thorsten Schroff
+
+ Neu: Demo: Webshop-Administrator bekommt bei einer "broken link"-Meldung die Person_R 
+      und die eMailadresse des Meldenden (falls dieser eingeloggt ist)
+
+Rev 2.036 (24.07.08) Thorsten Schroff
+
+ Bug: Mein Shop: Kundendaten: ein vorher geladenes Adress-Template wurde nicht ersetzt
+ Neu: Anpassung an neue Ortsformat-String-Platzhalter
+
+Rev 2.035 (24.05.08) Andreas Filsinger
+
+ Neu: Beleg-Update: viewer.php5, t_webshop_person.inc.php5, t_webshop_bill.inc.php5
+ Neu: Setup (ISS): Layoutkritische Dateien werden nicht mehr überschrieben
+
+Rev 2.034 (15.05.08) Thorsten Schroff
+ 
+ Bug: HTML-Entities in eMails beseitigt
+
+Rev 2.033 (19.04.08) Andreas Filsinger, Thorsten Schroff
+
+ Neu: mehr Info in der Fehlermeldung "kann nicht auf Datenbank verbinden"
+ Neu: mehr Info in der Fehlermeldung "kann nicht mit XMLRPC-Server verbinden"
+ Neu: Konstante "CUSTOM_PNG" für den Pfad der kundenspeziefischen Bilder
+ Neu: Bild "gaaaanz links oben" in den CUSTOM_PNG verschoben, für Endkunde besser benannt, 
+      damit er ein entsprechendes Bild liefern kann (Dimensionen gleich im Dateinamen)
+ Neu: 2 neue Standard-Bilder für ./custom
+ Neu: Klasse t_picupload muss im normalen Shop-Betrieb nicht geladen werden
+ Neu: Klasse t_webshop_article frägt jetzt den OrgaMon dirket nach dem Bildpfad
+ Neu: Klasse t_orgamon liefert jetzt Routinen, die vollständige Bildnamen liefern
+ Neu: Klasse t_webshop_tpicupload entfällt
+ Bug: PHP-Notices bei nicht vorhandenem Artikelbaum (keine Datenbankeinträge)
+
+Rev 2.032 (09.04.08) Andreas Filsinger & Thorsten Schroff
+
+ Neu: t_xmlrpc.inc.php5 wird von t_orgamon.inc.php5 included
+ Neu: Die erste Instanzierung der XMLRPC-Singleton-Klasse erfolgt im Konstruktor der OrgaMon-Klasse
+ Neu: Im Konstruktor der OrgaMon-Klasse wird ein erster BasePlug-Request durchgeführt,
+      um die XMLRPC-Anbindung zu testen. 
+ Neu: t_orgamon.inc.php5: neue Eigenschaft torgamon::$connected, true wenn BasePlug im Konstruktor erfolgreich
+ Neu: p_init.inc.php5: Datenbank-Objekt wird nur instanziert, wenn torgamon::$connected
+ Neu: p_init.inc.php5: Umschalten auf Fehlerseite, wenn OrgaMon- oder Datenbankanbindung fehlgeschlagen
+ Neu: tpicupload.php5: Prüft das Gelingen des Kopiervorgangs und gibt gegebenenfalls eine Fehlermeldung aus
+ Neu: p_init.inc.php5: tpicupload::setPath umgestellt auf TWEBSHOP_IMAGE_URL
+
+Rev 2.031 (16.03.08) Thorsten Schroff
+
+ Bug: tpicupload.php5: Datenbankkonnektierung mit falschen Parametern.
+ Neu: Anzeige der Bestellnummer in der Artikel-Detailansicht.
+ Neu: Artikelbaum: neue Methode openAllNodes()
+ 
+Rev 2.030 (12.01.08) Thorsten Schroff
+
+ Neu: Einkaufswagen: Text "zur Kasse gehen"
+ Neu: i_config.inc.php5: Konstante TWEBSHOP_FIRST_SITE setzt die Startseite des Webshops
+ Neu: s_start.inc.php5 in s_welcome.inc.php5 umbenannt
+
+Rev 2.029 (10.12.07) Thorsten Schroff
+
+ Bug: Bestellung: Adressauswahl: Mehr als 3 Adressen wurden nur unvollständig angezeigt.
+ Neu: Seite "Passwort vergessen ?"
+
+Rev 2.028 (02.12.07) Thorsten Schroff
+
+ Neu: XMLRPC-Namespace
+
+Rev 2.027 (01.12.07) Thorsten Schroff
+
+ Neu: Einkaufswagen: Versandkosten werden nicht bei jeder Änderung des Einkaufswagens ermittelt.
+ Neu: Einkaufswagen: Option Versandkosten aktualisieren
+ Neu: Bestellung: Im letzten Bestellschritt werden immer die tatsächlichen Versandkosten angezeigt.
+ Neu: Bestellung: Nach Abschluss einer Bestellung wird der Bestellstatus angezeigt.
+ Neu: Mein Shop: Bestellstatus: Sortierung nach Datum absteigend.
+
+Rev 2.026 (12.11.07) Thorsten Schroff
+
+ Neu: Demos auch ohne Login zugänglich
+
+Rev 2.025 (05.09.07) Thorsten Schroff
+
+ Neu: Loginseite: Hinweis auf deaktivierte Cookies (funktioniert lokal leider nur noch im Firefox)
+ Neu: Verfügbarkeit: aus "auf Lager" wird "sofort"
+ Neu: Suchtrefferseite: Wort "Pfad" wurde entfernt
+ Bug: Startseite: Error- & Messagelist wurden nicht angezeigt (haben im Template gefehlt)
+ Neu: Startseite: Textbox nun auch im Firefox zentriert
+ 
+Rev 2.024 (03.09.07) Andreas Filsinger
+
+ Neu: Performance Angaben (Gesamt, XMLPRC & IBASE) in der Fusszeile
+ Neu: Methode torgamon::getHeartBeat() liefert mehr Details
+ Neu: Methode torgamon::decodePassword($pwd)
+ Neu: Variable $_INDEX aus allen Templates entfernt
+
+Rev 2.023 (30.08.07) Thorsten Schroff
+
+ Neu: Bei Login wird Passwort mit abgeglichen (WorkAround für Datensätze mit identischer UserID).
+
+Rev 2.022 (29.08.07) Thorsten Schroff
+
+ Bug: Neuanmeldung mit doppelter UserID nicht möglich.
+
+Rev 2.021 (29.08.07) Thorsten Schroff
+ 
+ Neu: Klasse TORGAMON: Methode ::getSystemString() checkt, ob das Array Elemente enthält. Falls nicht, wird BasePlug neu abgefragt.
+ Bug: Klasse TWEBSHOP_ADDRESS: In Methode ::convertCountryFormatToTemplate() war prefix nicht überall definiert.
+
+Rev 2.020 (24.08.07) Thorsten Schroff
+ 
+ Neu: Anzeige des Pfades in den Suchtreffern und in der Einzelansicht
+ Neu: Klasse TWEBSHOP_ARTICLE_TREE in eigene Datei (t_webshop_article_tree.inc.php5) ausgelagert
+ Bug: PHP Notice in TMULTISTRINGLIST::build(), falls erster String kein Name/Value Paar (ohne Gleichheitszeichen)
+ Bug: TXMLPRC: Selbst erzeugte Fehlermeldungen wurden nicht mehr ins ErrorLog ausgegeben, weil Methode zu früh beendet wurde
+
+Rev 2.019 (23.08.07) Thorsten Schroff
+
+ Bug: Fehler bei Suche nach vollständiger Aufnahme, wenn INTER_INFO-Blob = NULL
+ Neu: Bestellung: Neuer Schritt: Auswahl der Liefer- & Rechnungsanschrift
+ Neu: TXMLRPC: XMLRPC-Timeout geht ins Error-Log
+ Neu: TIBASE: Fehlermeldungen bei SELECT,INSERT,UPDATE & DELET gehen in die ErrorList
+
+Rev 2.018 (14.08.07) Thorsten Schroff
+
+ Bug: s_search.inc.php5: Falls Datenbankfeld PERSON.WEBSHOP_TREFFERPROSEITE = NULL war, wurden keine Suchtreffer ausgegeben.
+      Dies wird nun abgefangen und mit dem Standardwert belegt.
+
+Rev 2.017 (13.08.07) Thorsten Schroff
+ 
+ Neu: s_search.inc.php5: Loggen der Session, wenn die Variable search_result_pages kein Objekt mehr ist
+
+Rev 2.016 (13.08.07) Thorsten Schroff
+
+ Neu: Klasse XMLRPC: Detektion eines Timeouts und Ausgabe einer Fehlermeldung
+
+Rev 2.015 (13.08.07) Andreas Filsinger & Thorsten Schroff
+
+ Neu: site=test: zur automatisierbaren Funktionskontrolle des WebShops
+ Neu: torgamon::getHeartBeat()
+ Neu: Datenbank-User und Datenbank-Passwort (unverschlüsselt) nun aus BasePlug
+ Neu: Config-Konstanten IBASE_NAME, IBASE_USER & IBASE_PASSWORD abgeschafft
+
+Rev 2.014 (09.08.07) Thorsten Schroff
+
+ Neu: TPicUpload-Server (Klasse TPICUPLOAD & Klasse TWEBSHOP_TPICUPLOAD)
+ Bug: favicon.ico muss in html-Header angegeben werden
+ Bug: per Umbenennung im Style-Attribut ausgeblendetes Hintergrundbild erzeugt Fehler im Apache Error Log 
+ Neu: Neue Config-Konstante XMLRPC_TIMEOUT
+ Neu: Klasse TXMLRPC: Dem Konstruktor kann nun ein Timeout-Wert übergeben werden.
+ Neu: Neue Config-Konstanten TPICUPLOAD_THUMB_WIDTH, TPICUPLOAD_IMAGE_WIDTH
+ Neu: Klasse TWEBSHOP_USER: neue Methoden ::getServices() und ::isService(service)
+
+Rev 2.013 (01.08.07) Thorsten Schroff
+
+ Neu: Mein Shop: Bestellstatus
+
+Rev 2.012 (31.07.07) Thorsten Schroff
+
+ Neu: Demo: Veraltete Links können jetzt gemeldet werden (Funktion implementiert)
+ Neu: System-Sprache: neuer Ordner /language/system
+ Bug: s_order_overview.inc.php5: Detailangaben wurden bei den entsprechenden Ausgabearten nicht angezeigt
+
+Rev 2.011 (31.07.07) Thorsten Schroff
+
+ Neu: Mein Shop: Konto (Kontostand, Rechnungsübersicht)
+ Neu: viewer.php5 zum Anzeigen von html-Dateien
+
+Rev 2.010 (27.07.07) Thorsten Schroff
+ 
+ Neu: Pfad für Artikelabbildungen aus BasePlug (Parameter 12, ARTICLE_IMAGE_URL)
+ Neu: neues Icon für die Sprache Englisch
+ Neu: FavIcon
+ Bug: einige neue PNGs haben gefehlt
+
+Rev 2.009 (27.07.07) Thorsten Schroff
+ 
+ Neu: Anzeige der enthaltenen Titel in der Artikeldetailansicht (_TEMPLATE_ARTICLE_LINK_ARTICLE, anpassen _TEMPLATE_ARTICLE_ARTICLE, twebshop_article::getFromHTMLTemplate())
+ Neu: twebshop_article::getMembers(): Artikel-Mitglieder: neues, schnelleres SQL-Statement übernommen
+ Bug: Suche nach "Böhmen"
+ Bug: MiniScore/LoginInfo löst Orgamon-Exception aus
+ Neu: Adressänderung in MyShop möglich (a_set_user_address.inc.php5)
+ Neu: Änderung der eMailadresse in MyShop möglich (a_set_user_id.inc.php5)
+ Neu: .ISS und .REV ins Setup mit aufgenommen
+ Neu: Klasse tsite erweitert
+ Neu: s_myshop in Einzelseiten zerlegt, WORD_MAILINGS, search-hint.txt, twebshop_article::getMembers()
+ Neu: ISS-Skript angepasst
+ Bug: s_search.inc.php5: es war kein Standard-Wert für page gesetzt -> Klasse tpages::setPage() angepasst
+ Neu: BasePlug TimeOut auf 20 Sekunden 
+
+Rev 2.008 (23.07.07) Thorsten Schroff
+ 
+ Neu: Wahl der Sprache auf der Startseite
+
+Rev 2.007 (23.07.07) Thorsten Schroff
+
+ *** erste produktiv einsetzbare Release ***
+
+Rev 2.006 (20.04.07) Thorsten Schroff
+ 
+ * neuer Meilenstein
+
+Rev 2.005 (22.01.07) Thorsten Schroff
+  
+ * vierte Demo-Release
+
+Rev 2.004 (18.12.06) Thorsten Schroff
+
+ * dritte Demo-Release
+
+Rev 2.003 (11.07.06) Thorsten Schroff
+
+ * zweite Demo-Release, unendlich viele Neuerungen und Verbesserungen
+
+Rev 2.002 (01.11.05) Thorsten Schroff
+
+ Bug: t_mp3player.inc.php5 war nicht in der Release enthalten.
+
+Rev 2.001 (31.10.05) Thorsten Schroff
+ 
+ Neu: Klasse TMP3PLAYER zur Einbindung des FlashMp3Players und seiner Config-XML-Datei
+ Neu: TWEBSHOP_ARTICLE::getSounds() liefert alle Mp3-Dateien zu dem Titel
+ Neu: Skin für den Player
+ Neu: Änderungen an TERRORLIST und TMESSAGELIST  
+
+Rev 2.000 (25.10.05) Thorsten Schroff
+
+* erste Demo-Release für FlashMp3Player
+
+====================================
+* PROJEKT: TWebShop
+* SOURCE DIR: G:\php\TWebShop
+* DELETE: G:\php\TWebShop\Shop\admin\agb.txt
+* DELETE: G:\php\TWebShop\Shop\admin\connections.inc.php
+* DELETE: G:\php\TWebShop\Shop\admin\constants.inc.php
+* INNO SETUP SCRIPT: TWebShop.iss
+* HELP COPY: YES
+* PUBLIC: YES
+* INFO: Thorsten Schroffs WebShop (php,xml-rpc,delphi,firebird)
+====================================
+
+// INFO BEGIN
+// INFO END
+
+Rev 1.056 (05.04.05) Thorsten Schroff
+
+ Neu: Admin-Bereich: Firebird: Standard-Sql-Statement geändert.
+ Neu: BasePlug: "XMLRPC" in Datenbankadresse wird durch die XMLRPC-Host-Adresse ersetzt. 
+
+Rev 1.055 (07.03.05) Andreas Filsinger
+
+ Bug: Schwierigkeitsgrad war möglicherweise nicht initialisiert. 
+      Der Patch betrifft 2 Dateien
+      show_article.php
+      search.inc.php
+      und ist jeweils mit "// AF-1.054 //" markiert.
+
+Rev 1.054 (07.03.05) Andreas Filsinger
+
+ Bug: search_input.inc.php war nicht Teil des Setup
+
+Rev 1.053 (28.02.05) Thorsten Schroff
+
+ Neu: Die Suche wurde zentralisiert, damit "web_search.php", das ursprünglich als webshopunabhängiger 
+      Ersatz für die Such-DLL gedacht war, die selben Suchtreffer und Anzeigen liefert, wie die webshop-interne
+      Suche.
+ Neu: gleichzeitige Kompatibilität zu PHP4 und PHP5 verbessert.
+ Neu: Neue Felder in den Tabellen "AUSGABEART" und "SORTIMENT", die die WebShop-Relevanz angeben, werden berücksichtigt.
+      Ebenso das Feld "AUSGABEART.FREIERTEXT", das festlegt, ob eine Ausgabeart einen Zusatztext enthalten muss und das
+      Feld "SORTIMENT.AUSGABEARTEN", das festlegt ob ein Sortiment über verschiedene Ausgabearten verfügt.
+      Dadurch werden einige Konstanten hinfällig.
+ Neu: Aktionen mit Zeitbeschränkung.
+     
+Rev 1.052 (01.02.05) Thorsten Schroff
+
+ Mögliche Ursachen für doppelte eMailadressen überprüft, keine Fehler gefunden.
+ Bug: Syntaxfehler im letzten Bestellschritt korrigiert.
+
+Rev 1.051 (15.11.04) Thorsten Schroff
+ 
+ Neu: Revision Info wird in Login-Seite angezeigt.
+ Bug: Update-Datei war nicht tabulator-getrennt.
+
+Rev 1.050 (11.11.04) Thorsten Schroff
+
+ Neu: Firebird-Transaktions-Logbuch
+ Neu: ARTIKEL_MITGLIEDER teilweise schon umgesetzt, CDRID im Info-Blob hat noch Vorrang !
+ Bug: Nicht alle UPDATES auf die Tabelle PERSON wurden mit explizit gestarteten Transaktionen durchgeführt,
+      was zu einem Datenbank-Deadlock führte.
+
+Rev 1.049 (30.09.04) Thorsten Schroff
+
+ Neu: Einstellungen mit Labels versehen, so dass die Checkboxen und Radiobuttons auch durch Klicken 
+      auf den Text geändert werden können.
+ Bug: Neue Preisanzeige (Brutto/Netto) hat noch Fehlermeldungen erzeugt.
+
+Rev 1.048 (27.09.04) Thorsten Schroff
+
+ Neu: Rabattberechtigte Kunden können unter "Einstellungen" wählen, ob die Preise brutto oder netto angezeigt werden.
+      Für nicht rabattberechtigte Kunden existiert die Möglichkeit nicht.
+ Bug: falsche Preisberechnung, bei Artikeln mit Stati "auf Anfrage", "vergriffen"
+ 
+ Code-Refactoring an einigen Stellen
+
+
+Rev 1.047 (16.08.04) Thorsten Schroff
+ 
+ Bug: user_new.php hat ungültiges html erzeugt (tr-Tag zuviel).
+
+Rev 1.046 (26.07.04-11.08.04) Thorsten Schroff & Andreas Filsinger
+ 
+ Neu: Vergriffene Artikel können nicht in den Warenkorb gelegt werden.
+ Neu: Neue Maßnahmen zur Verhinderung von doppelten Neuanmeldungen.
+ Neu: Verbesserung des Admin-Bereichs.
+ Bug: Admin-Bereich: Suche nach nur Vorname oder nur Nachname hat nicht mehr funktioniert.
+
+Rev 1.045 (15.07.04) Thorsten Schroff
+ 
+ Bug: user_new.php: Die Angabe von Adressdaten, die einfache Anführungszeichen (z.B. französische Strassennamen)
+      enthielten, führte zum Scheitern des Datenbankneueintrags.
+ Bug: user_new.php: Bei Ländern, für die kein Adress-Format-String eingepflegt ist, wurde die Anzeige zur Bestätigung
+      falsch generiert.
+
+Rev 1.044 (07.07.04) Andreas Filsinger
+
+ Bug: Installation: Es bestand die Gefahr, dass vorhandene "connections.inc.php" "constants.inc.php" und
+      "agb.txt" durch die Installation überschrieben wurden. In der TWebShop.rev wurden jetzt entsprechende
+      "DELETE" Statements hinzugefügt.
+
+Rev 1.043 (01.07.04) Thorsten Schroff
+
+ Neu: Der WebShop greift jetzt auf die neuen Datenbankfelder für Dauer, Schwierigkeitsgrad, Komponist und Arrangeur zurück.
+ Bug: start.php hat Warnung angezeigt, weil/wenn start.txt leer ist (0 KB).
+
+Rev 1.042 (18.06.04) Thorsten Schroff
+
+ Bug: "Mahnung.html" mit großem "M", da der WebShop jetzt auf Linux läuft.
+
+Rev 1.041 (15.06.04-18.06.04) Thorsten Schroff
+
+ Neu: Unter "Mein Konto" werden die Beträge mit "Soll", "Haben" oder "Konto ausgeglichen" ausgewiesen. 
+ Neu: Impressum jetzt mit mehr Kontakt-Information.
+ Neu: Logbücher für einzelne Benutzer, Tage, Registrierungen im Monat, SMTP- & XMLRPC-Fehler.  
+ Neu: Logbücher im Adminbereich einsehbar.
+ Neu: Einkaufswagen-Pop-Up wird bei Logout geschlossen.
+ Neu: BasePlug wurde um das Mahnungsverzeichnis erweitert.
+ Neu: web_search.php verlinkt zum Webshop-Login.
+ Bug: user_register.php hat eMailadresse im falschen Format in die Datenbank eingetragen.
+ Bug: Belege & Mahnungen konnten nicht mehr angezeigt werden. Pfadangabe falsch.
+
+Rev 1.040 (13.06.04) Thorsten Schroff
+  
+ Neu: web_search.php überprüft die XMLRPC-Verfügbarkeit.
+
+Rev 1.039 (06.05.04) Thorsten Schroff
+
+ Neu: Anzahl der Suchtreffer wird angezeigt (web_search.php)
+
+Rev 1.038 (30.03.04-06.05.04) Thorsten Schroff
+ 
+ Neu: Die bisherige Such-DLL wird durch ein PHP-Skript ersetzt, das nun Teil des Projekts ist.
+ Neu: Verbesserte Debug-Möglichkeiten im Admin-Bereich.
+ Neu: Preisangabe korrigiert.
+ Bug: Im Login-Skript wurden zu wenige Parameter an get_cart_amount() übergeben.
+ Bug: Im Skript send_miniscore.php war ein Backslash zuviel.
+
+Rev 1.037 (29.03.04) Thorsten Schroff
+
+ Neu: Es werden nur noch die Aktionen angezeigt, die im Orgamon markiert wurden (endlich !)
+ Bug: Eingabefeld "Verein/Firma" bei Neukundenanmeldung war zu lang (zu viele Zeichen möglich)
+ Bug: Eingabefeld "PLZ" bei Neukundenanmeldung war zu lang (zu viele Zeichen möglich)
+
+Rev 1.036 (13.12.03-14.12.03) Thorsten Schroff
+  
+ Neu: Neue Debug-Funktionen.
+ Bug: Verzögerungen durch Datenbank-Lock im Einkaufswagen und im Info-Fenster behoben.
+ Bug: Falls auf der Login-Seite ein Fehler auftrat (kein XMLRPC-Server gefunden), existiert kein eMail-Textfeld,
+      das fokusiert werden kann -> dies erzeugte einen Javascript-Fehler.
+
+Rev 1.035 (07.12.03) Thorsten Schroff
+ 
+ Neu: "Passwort vergessen ?" Link auf der Login Seite.
+ Neu: Bei der Kundenneuanmeldung wird überprüft, ob die eMailadresse schon existiert und 
+      eine Neuanlage gegebenenfalls unterdrückt.
+ Neu: Login: Das eMail-Feld ist gleich fokusiert.
+ Bug: Passwort-Zuteilen hat nicht berücksichtigt, dass mittlerweile mehrere Kundendatensätze
+      mit gleichen Benutzernamen existieren können und dann einfach nix gemacht.
+ Bug: orderstep4.php: Anführungszeichen in Titeln müssen unterdrückt werden.
+ Bug: user_register_log.txt war mit in der letzten Release und wurde überschrieben. F?%* !
+
+Rev 1.034 (29.11.03) Thorsten Schroff
+
+ Neu: Die Kundennummer wird unter dem Namen in der Navigation angezeigt.
+ Neu: Refresh-Verhalten bei Neuanmeldung verbessert.
+ Bug: Einkaufswagen hat die Datenbank für Orgamon blockiert.
+ Bug: Leere eMail Adressen wurden zum Verschicken der Zugangsdaten benutzt.
+ Bug: Die Passwort-Zuteilen Funktion war weggefallen.
+ Bug: user_register.php Fehlerabfrage hatte einen Schönheitsfehler.
+
+
+Rev 1.033 (25.11.03-26.11.03) Andreas Filsinger & Thorsten Schroff
+
+ BugFix-Release
+
+ Bug: Im Skript "orderstep3.php" war ein Semikolon zuviel, was zu einem Abbruch führte.
+
+Rev 1.032 (03.09.03-23.11.03) Thorsten Schroff
+
+ Neu: Neue Anmeldemöglichkeiten für Nutzer zur Vermeidung von doppelten Datensätzen 
+      (Anmeldung als neuer HeBu-Kunde/ Anmeldung mit Kundennummer für bestehende HeBu-Kunden) 
+ Neu: Internationale Adressformate bei der Anmeldung (Formatstrings in der Datenbank müssen eingepflegt werden).
+ Neu: AGB können auf der Login-Seite gelesen werden (für Neuanmeldungen).
+ Neu: Fusszeile auf der Login-Seite geändert (eMailadressen).
+ Neu: Bilder können nach "draussen" ins Internet auf eine Domain gelegt werden (der Pfad ist ein Orgamon-Sytemparameter).
+ Bug: Regulärer Ausdruck für eMail-Adressenprüfung war fehlerhaft (xyz@-abc.de war möglich).
+
+Rev 1.031 (02.09.03) Thorsten Schroff
+
+ Neu: Die Bestellung wird in der Logdatei des Kunden festgehalten.
+ Bug: Bestellbestätigungen gingen nicht mehr an eMailWebmaster.
+ Bug: Die Hauptlogdatei "log.txt" wurde beim Installieren der neuen Revision überschrieben.
+ Bug: Die eMails betreffs Verdacht auf doppelte Registrierung wurde in jedem Fall verschickt, 
+      nicht nur bei echten Doppeleinträgen.
+
+Rev 1.030 (28.08.03-01.09.03) Thorsten Schroff
+
+ Neu: Beim Verdacht einer Doppelregistrierung erhält der WebShopmaster eine eMail.
+ Neu: Bei der Neuregistrierung wird jetzt ein Logbuch (user_register_log.txt) geführt,
+      in dem die Eingaben zur Person festgehalten werden.
+ Bug: Fehler beim Eintragen der Anschrift einer Neuregistrierung in die Datenbank.
+ Bug: fehlerhafte htpasswd.exe in der Release ersetzt
+
+Rev 1.029 (04.08.03) Thorsten Schroff
+
+ Neu: Einem Artikel können mehrere CDs zugeordnet werden (mit Semikolon trennen).
+ Neu: Datenbankseitige Probleme mit der Anlage von Neukunden (Anschrift fehlt) werden besser protokolliert.
+ Bug: Änderungen im Einkaufswagen waren nicht sofort ersichtlich.
+
+Rev 1.028 (16.07.03) Alexander Knam
+
+ Neu: diverse Lieferbarkeits - Symbole
+
+Rev 1.027 (16.07.03) Thorsten Schroff
+
+ Neu: Verbesserte Prüfung der XMLRPC - Verfügbarkeit.
+
+Rev 1.026 (16.07.03) Thorsten Schroff
+
+ Neu: Webshop prüft, ob Orgamon für XMLRPC Anfragen bereitsteht und verschickt eine eMail an den Webmaster, falls nicht.
+ Neu: Webshop prüft, ob Cookies im Browser des Kunden aktiviert sind.
+ Bug: Die 4 neuen Test-Skripte aus Rev 1.025 waren nicht in der Auslieferung.
+ Bug: add.inc.php: Semikolon vergessen.
+
+
+Rev 1.025 (14.07.03) Thorsten Schroff
+
+ Neu: Test-Funktionen für Keepcon (bei Erfolg wird "Ok" ausgegeben):
+      Apache   - test00.htm: Statische Datei die aufgerufen wird, um die Verfügbarkeit von Apache zu überprüfen.
+      Php      - test01.php: Prüft die Verfügbarkeit von Php. Falls erfolgreich wird die Php-Version angezeigt.
+      XMLRPC   - test02.php: Prüft die Verfügbarkeit von XMLRPC. Falls Fehlschlag, wird der Fehlercode und -text ausgegeben.
+      Firebird - test03.php: Prüft die Datenbankanbindung. Zählt die Anzahl der vorhandenen Tabellen. "Ok" bei mindestens einer Tabelle.
+
+
+Rev 1.024 (14.07.03) Thorsten Schroff
+
+ Neu: Schreibende Datenbankzugriffe sind jetzt grundsätzlich in Transaktionen eingebunden,
+      damit die Datenbank durch einen Apache-Absturz während der Ausführung eines Skripts 
+      für andere Datenbanknutzer (Orgamon) nicht gelockt bleibt.
+   
+
+Rev 1.023 (21.06.03) Thorsten Schroff
+
+ Neu: Das Datenbankfeld "LAND_R" wird jetzt wie vorgesehen benutzt und bei der Neu-Registrierung eingesetzt.
+      Dem Feld "STATE" kommt somit wieder die ursprünglich angedachte Aufgabe des Bezirks/Bundeslandes zu.
+
+ Bug: Dokumentation zu Rev. 1.022 (siehe unten) ergänzt.
+ 
+
+Rev 1.022 (12.06.03-14.06.03) Thorsten Schroff
+
+ Achtung ! 
+ Neu: Die Login-Seite heisst nicht mehr "user_login.htm", sondern "user_login.php".
+      Das RouteIP-Template muss dahingehend geändert werden.
+      Im selben Zuge musste die bisherige Datei "user_login.php" in "login.php" umbenannt werden.
+      Dies ist das Skript, das von nun an vom Orgamon aufgerufen werden muss, um sich als Kunde einzuloggen.
+      
+ 
+ Bug: Im Einkaufswagen konnte die Stückzahl (in Folge der Style-Sheet-Änderungen in Rev. 1.020) nicht mehr erhöht werden.
+ Bug: Bei der Neuregistrierung von Kunden wurde die Domainkennung des jeweiligen Landes anstatt des Postkürzels verwendet.
+ Bug: Log-Dateien konnten nicht umbenannt werden, wenn die Zieldatei schon existiert.
+ Neu: Neue Webshop-Konstanten (constants.inc.php) werden automatisch hinzugefügt und müssen nicht manuell ergänzt werden.
+
+Rev 1.021 (11.06.03) Andreas Filsinger
+
+ Bug: Session Variable &s_pdfdir war in functions.php.inc nicht gültig.
+      die function show_pdf war somit immer "0".
+      es wurde keine "PDF" Symbole mehr angezeigt.
+
+Rev 1.020 (09.05.03-11.06.03) Thorsten Schroff
+
+ Neu: Neue Benutzer können sich mit Ihrer Anschrift registrieren.
+ Neu: Treffer-Seitenwahl auch unten auf der Trefferseite.
+ Neu: Artikelrang wird in den Suchtreffern und auf der Infoseite angezeigt.
+ Neu: Log-Dateien werden mit achtstelligen RIDs im Dateinamen abgelegt.
+ Neu: Style-Sheet komplett überarbeitet und optimiert (neue, passendere Klassennamen vergeben und 
+      auf allen Seiten angepasst, überflüssige Einträge gesucht und entfernt).
+ Neu: Pfad zu den Miniscores wird von OrgaMon erfragt.
+
+Rev 1.019 (14.03.03) Thorsten Schroff
+
+ Neu: Erfolgreiche Logins werden auch im allgemeinen Logbuch festgehalten.
+ Neu: Misslungene Logins werden im allgemeinen Logbuch genauer protokolliert.
+ Neu: Bei leerem Einkaufswagen werden die Versandkosten vom WebShop unterdrückt.
+ Bug: Falsche Fehlermeldung bei der Benutzerregistrierung unterbunden.
+ Bug: ErrorLog-Funktion für eMailversand korrigiert.
+ Bug: Verzeichnisschutz für Administrations Bereich hat Probleme mit Leerzeichen im Pfad.
+
+Rev 1.018 (25.02.03) Andreas Filsinger
+
+ Neu: Adressangabe "NAME1" in der Session-Varibale
+ Neu: Adressangabe "NAME1" wird im Orderstep 3 angezeigt
+
+Rev 1.017 (19.02.03) Thorsten Schroff
+
+ Neu: als Bestellschritt 3 eingefügt: Lieferanschrift und Rechnungsanschrift wählen.
+ Neu: Verfügbarkeitsanzeige: Anzahl der Exemplare auf Lager.
+ Neu: PDF-Icon ersetzt.
+ Bug: Schreibzugriffe auf Datenbank hatten Abu und damit XML-RPC blockiert.
+ Neu: Logbuch-Verzeichnis wird von Installationsprogramm angelegt.
+ Bug: Admin: Passwortfunktion hatte Verzeichnisprobleme.
+ Bug: Admin: Fehler im Suchmaschine DLL-Test.
+ Neu: Kapitel 6) ergänzt.
+
+Rev 1.016 (15.02.03) Thorsten Schroff
+ 
+ Neu: Migration auf abu.
+ Neu: Rabattanzeige im Einkaufswagen optimiert.
+ Neu: Rabattanzeige im letzten Bestellschritt eingefügt.
+ Neu: Menü: "Startseite" in "Aktionen" umbenannt.
+ Bug: Fehlerhafter Aufruf der Logbuch-Funktion im Miniscores-Skript.
+ Neu: Logbuch für SMTP-eMailversand angelegt, um herauszufinden, warum zeitweise keine eMails versendet werden können.
+ Neu: Admin: Firebird-Abfrage verbessert.
+ Neu: Admin: Möglichkeit die Suchmaschine lokal zu testen.
+ Neu: Admin: Passwort kann geändert/aufgehoben werden.
+
+Rev 1.015 (05.02.03) Thorsten Schroff
+
+ Neu: Rabattsystem in die Einkaufswagenanzeige mit aufgenommen.
+ Bug: Bei der Installation wurde die Datei "firefunctions.inc.php" vergessen.
+
+Rev 1.014 (24.01.03) Thorsten Schroff
+ 
+ Neu: An die Suchtrefferanzeige "Treffer x bis y" wurde "von z" angehängt.
+ Neu: PHP-seitig erste Versuche mit dem Rabattsystem. 
+ Neu: Automatische Fehlermeldung verbessert.
+ Bug: Log-Datei wurde immer durch gleichzeitigen Zugriff überschrieben. Jetzt pro Benutzer eine Log-Datei.
+
+Rev 1.013 (03.12.02) Thorsten Schroff
+
+ Bug: Mein Shop: Änderungen der Einstellungen konnten nicht in die Datenbank übernommen werden.
+
+Rev 1.012 (28.11.02) Andreas Filsinger
+
+ Bug: agb.txt wurde von Setup überschrieben.
+
+Rev 1.011 (28.11.02) Thorsten Schroff
+
+ Neu: Bestellen: In Bestellschritt 3 wird nochmals eine komplette Einkaufswagen-Übersicht angezeigt.
+ Neu: Suchtreffer: Schwierigkeitsgrad und Dauer werden ausgeblendet, wenn dazu keine Angaben vorliegen.
+
+Rev 1.010 (27.11.02) Thorsten Schroff
+
+ Neu: Aktionsfläche in die Startseite übernommen und aus der Navigation entfernt.
+ Neu: Es wird die Anzahl der Posten und nicht mehr die Anzahl der Exemplare angezeigt.
+ Neu: Benutzer registrieren: Eingabe von Adresse, Land und evt. Verein ist jetzt möglich.
+ Neu: Einkaufswagen: Einzel- & Gesamtpreis werden gleichzeitig angezeigt (D_PreisAnzeige fällt aus "constants.php" raus).
+ Neu: Falls ein Titel auf CD verfügbar ist, erscheint ein CD-Icon. Durch Anklicken wird die Info zur CD angezeigt.
+ Neu: Die Anzeige von Dauer und Schwierigkeitsgrad kann in bestimmten Kategorien unterdrückt werden.
+ Neu: Bestellen: Erste Änderungen gegen versehentliches Bestellen vorgenommen. Mehr in Rev 1.011.
+ Neu: Bemerkungen zu Titeln werden wieder angezeigt.
+ Neu: Bestellstatus & Lieferstatus: Ausgabeart-Kürzel wird nicht mehr angezeigt.
+ Neu: Impressum: Neue Logos hinzugefügt.
+ Neu: Admin: XML-RPC BasePlug kann aufgerufen werden, um XML-RPC-Verbindung zu testen.
+ Neu: Admin: Firebird-Verbindungstest überarbeitet.
+ Neu: (intern) Der Datenbankname wird per XML-RPC vom HeBuAdmin ermittelt und in der Session mitgetragen
+ Neu: (intern) XML-RPC Funktionsnamen-Konstanten aus der "connections.inc.php" entfernt und in eine neue Datei namens "xfunctions.inc.php" verschoben.
+
+Rev 1.009 (07.11.02) Thorsten Schroff
+ 
+ Leere Release (keine Änderungen)
+
+Rev 1.008 (30.10.02) Thorsten Schroff
+
+ Bug: Artikel anzeigen hat nicht mehr funktioniert.
+ Bug: Setup: Logos des Impressums wurden nicht installiert.
+
+Rev 1.007 (28.10.02) Thorsten Schroff
+
+ Neu: Administration: Der Inhalt der Datei "connections.inc.php" kann angezeigt werden.
+ Bug: "Zugangsdaten verschicken"-Funktion benutzte falsches Datenbankfeld als Empfängeradresse.
+
+Rev 1.006 (27.10.02) Thorsten Schroff
+ 
+ Neu: Einstellungen: Kunden mit mehreren eMailadressen können eine als Login auswählen.
+ Neu: Einkaufswagen: Preisanzeige (Gesamt/Einzelpreis) wird in der Session gespeichert.
+ Neu: Impressum hinzugefügt.
+ Bug: Hilfe: Zurück-Link hatte nicht korrekt funktioniert.
+
+Rev 1.005 (21.10.02) Thorsten Schroff
+
+ Bug: Setup: neuer Dateiname: TWebShop_Info.html
+ Bug: Setup: Distribution von "constants.inc.php" zusammen mit "connections.inc.php" 
+      aus Sicherheitsgründen jetzt aus dem "ShopPublic" Verzeichnis.
+
+Rev 1.004 (19.10.02) Thorsten Schroff
+
+ Neu: Die Ausgabearten werden in der Session transportiert, um die Performance zu erhöhen.
+ Neu: Miniscores eines Artikels können während einer Session nur einmal verschickt werden, 
+      um den Upstream für den Shop freizuhalten.
+ Neu: In bestimmten Kategorien kann man sinnigerweise keine Ausgabeart mehr auswählen. Die 
+      RIDs dieser Kategorien werden in der Konstanten-Bibliothek eingetragen.
+ Neu: Die Dauer und der Schwierigkeitsgrad eines Titels wird in der Suchtrefferseite angezeigt.
+ Neu: Bestellstatus: Spaltenreihenfolge wurde geändert.
+ Neu: Im Einkaufswagen kann man zwischen Einzelpreis- und Gesamtpreisansicht (bei einer Menge > 1) eines 
+      Artikels umschalten.
+ Neu: Bei einer erfolgreichen Bestellung erhält der Kunde und der Verlag eine Bestellbestätigung per eMail.
+ Neu: Bestellfunktion "Zur Kasse" auch im PopUp-Fenster´
+ Neu: Bei mehr als 130 Suchtreffern kann der Benutzer nicht mehr alle auf einer Seite anzeigen lassen, 
+      da die Darstellung das momentane Zeitlimit von 30 Sekunden überschreiten würde.
+ Neu: Im Administrations-Bereich besteht die Möglichkeit die Konstanten-Bibliothek zu editieren.
+ Bug: Fehler in der Aktionen-Ansicht behoben (Letzter Artikel konnte nicht bestellt werden).
+ Bug: Fehler in der Logbuch-Funktion behoben (Logins wurden nicht festgehalten).
+
+Rev 1.003 (17.10.02) Andreas Filsinger
+
+ Neu: Funktionierende php.ini und http.conf nun Teil der Distribution.
+      Hilft bei Setup Problemen. Verzeichnis .\adimin\SetupHelp
+
+Rev 1.002 (13.10.02) Thorsten Schroff
+
+ Neu: Abschluss php Programmierung
+ Neu: erster vollständiger setup
+
+Rev 1.001 (11.10.02) Thorsten Schroff
+
+ Neu: verbessertes Session Management
+
+Rev 1.000 (16.09.02-10.10.02) Thorsten Schroff
+
+ * von Grund auf Neu programmiert
+

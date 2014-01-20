@@ -1,0 +1,33 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Anzahl der Kunden
+--
+--  (c)'05 Andreas Filsinger
+--
+--  Kunden, sind solche, die in den letzten 18 Monaten was erhalten haben
+--  das Geld gekostet hat, wobei gezahlt wurde
+--
+
+select
+ PERSON_R RID,
+ sum(menge_geliefert) MENGE_GELIEFERT,
+ sum(davon_bezahlt) DAVON_BEZAHLT
+from
+ BELEG
+where
+ (MENGE_GELIEFERT>0) and
+ (DAVON_BEZAHLT>0) and
+ (ANLAGE>cast('now' as Date) - 365)
+group by
+ PERSON_R
+
+sort
+
+numeric DAVON_BEZAHLT descending
+
+complete
+
+Person(RID)
+-
+

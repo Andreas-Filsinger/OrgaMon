@@ -1,0 +1,13 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Kostenlose Artikel
+//
+//  (c)'04 Andreas Filsinger
+//
+
+select distinct RID from ARTIKEL 
+where 
+ RID IN (select euro from artikel where euro<=0.01)
+or
+ RID IN (select rid from artikel where preis_r in (select rid from preis where EURO<0.01))

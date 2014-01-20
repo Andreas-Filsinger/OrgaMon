@@ -1,0 +1,2097 @@
+﻿{
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2007  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+}
+unit globals;
+
+interface
+
+uses
+  windows,
+  classes,
+{$IFNDEF CONSOLE}
+  graphics,
+  controls,
+{$ENDIF}
+  System.UITypes,
+  anfix32,
+  WordIndex;
+
+const
+  cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
+  Version: single = 7.942; // OrgaMon.rev.txt
+  cVersion_JonDa: single = 1.118;
+  cVersion_OrgaMonApp: single = 2.000;
+
+  // Mindest-Anforderungen
+  cMinVersion_OrgaMonApp: single = 2.016;
+
+  // INI Sachen
+  cIniFName = cApplicationName + '.ini';
+  cDataBaseName = 'DatabaseName';
+  cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
+  cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
+  cSettings_SysdbaPassword = 'SysdbaPasswort';
+
+  // Anwendungs Sachen
+  HourGlassLevel: integer = 0;
+  iForceAppDown: boolean = false; // Anwendung muss jetzt verlassen werden
+  nosplash: boolean = false; // wenn true, kein Splash Screen beim Programmstart
+
+  // wenn true, wird keinerlei Timer Routine mehr ausgeführt
+  notimer: boolean = false;
+
+  TimerLevel: integer = 0; // wir erhöht, wenn jemand in einem Timer steckt!
+
+  // wenn true, kein Update der DB-Meta-Daten, andere Update-Quelle
+  isBeta: boolean = true;
+
+  LanguageDriver: string = '';
+
+  // Contextsachen
+  cContextExtension = '.ctx';
+  cContextFirst = 0;
+  cContextCountMax = 29;
+  cContextCountFName = 'Head' + cContextExtension;
+
+  // Autoup Sachen
+  cRevExtension = '.rev.txt';
+
+  // Import - Schema
+  cSchemaExtension = '.gzs';
+  cExcelExtension = '.xls';
+  cImageExtension = '.jpg';
+  cPDFExtension = '.pdf';
+  cMP3Extension = '.mp3';
+  cZIPExtension = '.zip';
+  cDATExtension = '.DAT';
+  cUTF8DataExtension = '.utf-8.txt';
+  cVorlageExtension = '.Vorlage';
+
+  // OrgaMon Unterverzeichnisse für Dokumente ...
+  cHTMLTemplatesDir = 'HTML Vorlagen\';
+  cHTMLBlocksDir = cHTMLTemplatesDir + 'Blocks\';
+
+  cRechnungPath = 'Rechnungen\';
+  cMahnbescheidPath = 'Mahnbescheide\';
+  cTransitionPath = 'Transition\';
+  cDruckauftragPath = 'Druckauftrag\';
+  cRechnungsKopiePath = 'Rechnungskopie\';
+  cFotosPath = 'Fotos\';
+  cGeraeteKommandos = 'Kommandos\';
+  cHBCIPath = 'HBCI\';
+
+  cOffeneFensterFName = 'Offene Fenster.txt';
+  cBreitengrad_in_m = 111136; // [m]
+  cPLZlength_default = 5;
+
+  // Buch
+  cKontoStr = 'Konto:';
+  cBLZStr = 'BLZ:';
+  cRECHNUNGStr = 'RECHNUNG ';
+
+  // virtuelle Konten
+  cKonto_Deckblatt = 'Deckblatt';
+  cKonto_Ungebucht = 'Ungebucht';
+
+  // Masken für Teillieferungen
+  cTEILLIEFERUNG_FILTER_ALLE = -1;
+
+  cBuch_HeaderLineAusgleich =
+    'PERSON_R;BELEG_R;Betrag;Valuta;BUCH_R;Meldung;Konto;TEILLIEFERUNG;EREIGNIS';
+  cBuch_Ausgleich = '%d;%d;%m;%s;%d;%s;%s;%d;%d';
+
+  cBuch_HeaderLineForderungen =
+    'Überschrift;UrsprünglicheGesamtForderung;BELEG_R;TEILLIEFERUNG;Anzahlungen';
+  cBuch_Forderungen = '%s;%m;%d;%d;%m';
+
+  // Suchindizes
+  cAuftragsIndexFName = 'Auftrag' + c_wi_FileExtension;
+  cBaustelleIndexFName = 'Baustelle.%d' + c_wi_FileExtension;
+  cArtikelSuchindexFName = 'Artikel.%s' + c_wi_FileExtension;
+  cKontoSuchindexFName = 'Konto.%s' + c_wi_FileExtension;
+  cArtikelSuchindexIntern = 'intern';
+  cTierSuchindexFName = 'Tier' + c_wi_FileExtension;
+  cQAuftragsIndexFName = 'QAuftrag' + c_wi_FileExtension;
+  cMusikerSuchindexFName = 'Musiker' + c_wi_FileExtension;
+
+  // Caching
+  cSortimentCacheFName = 'Sortiment.Cache';
+  cLaenderCacheFName = 'Länder.Cache';
+  cKreativeCacheFName = 'Kreative.Cache';
+  cVertragsvariantenCacheFName = 'Vertragsvarianten.Cache';
+  cItemsCacheFExtension = '.Items';
+  cValueCacheFExtension = '.Values';
+
+  // HTML Ausgabebelege
+  cHTMLextension = '.html';
+  cDOCextension = '.doc';
+  cHTML_OrderFName = 'Bestellung' + cHTMLextension;
+  cHTML_ArbeitszeitFName = 'Arbeitszeit' + cHTMLextension;
+  cHTML_MahnungFName = 'Mahnung' + cHTMLextension;
+
+  cTradeMark = '™';
+  cImpossiblePLZ = '99999';
+  // eine im echten Leben nicht vorkommende (vergebene) PLZ
+
+  // Start-Datum, minimales Buchungs- / Transaktionsdatum
+  // im OrgaMon
+  cOrgaMonBirthDay = '17.07.2000';
+  cOrgaMonBirthDayAsLong = 20000717;
+
+  // wird benutzt, um Vorgänge auf
+  // den St. Nimmerleinstag zu schieben!
+  cOrgaMonDeathDay = '01.01.9999';
+  cOrgaMonDeathDayAsLong = 99990101;
+
+  cOrgaMonPrivat = '!! ohne Ausgleich-Buchungen !!';
+
+  // OLAP
+  cOLAPExtension = '.OLAP.txt';
+  cOLAPDimPrefix = 'OLAP.Dim.';
+  cOLAPnull = '<NULL>';
+  cOLAPcsvSeparator = ';';
+  cOLAPcsvQuote = '"';
+  cOLAPcsvLineBreak = '|';
+  cOLAP_Ergebnis = 'OLAP Ergebnis';
+
+  // Skripte
+  cSkriptExtension = '.Skript.txt';
+
+  cAuftragLupeFavoritenFName = 'Auftrag.Lupe.Favoriten.xml';
+  cFeiertageFName = 'Feiertage.xml';
+
+  // Fälligkeit von Fordeurngen
+  cStandard_ZahlungFrist = 10; { [Tage] }
+
+  // Versendetag
+  cVersendetag_ErstesDatum = 20070101;
+  cVersendetag_OffsetLagernd = 100;
+  cVersendetag_OffsetTage = 10;
+
+  // POS Kasse
+  cBON_gemerkt = 'Gemerkt-';
+  cBON_Bon = 'Bon-';
+
+  cBON_Beleg_Datum = 'DATUM';
+  cBON_Beleg_Uhr = 'UHR';
+  cBON_Beleg_Bearbeiter = 'BEARBEITER';
+  cBON_Beleg_Gegeben = 'GEGEBEN';
+
+type
+  TDOM_Reference = integer;
+
+const
+  // Mengen Konstanten
+  cMenge_max = MaxInt - cVersendetag_OffsetLagernd;
+
+  cMenge_unbegrenzt = -1;
+  // Typischer Eintrag für den "immer verfügbaren" Artikel
+
+  cMenge_unbestimmt = -2;
+  // Keine Aussage, da Artikel inzwischen gelöscht oder nicht auffindbar
+  // Eintrag erfolgt in "MINDESTBESTAND"
+
+  cMenge_downloadbar = -3;
+  // der Artikel ist unbegrenzt verfügbar, da es sich um einen
+  // Dateidownload handelt
+
+  // Ausgabearten
+  cAUSGABEART_NATIV = 0;
+  // in der DB-> !!!NULL!!! (nicht "0" - die sollte es nicht geben!)
+  cAusgabeArt_Probestimme_PDF: TDOM_Reference = 1;
+  cAusgabeArt_Demoaufnahme_MP3: TDOM_Reference = 2;
+  // function cAusgabeArt_Aufnahme_MP3: TDOM_Reference; in "Funktionen.Basis"
+
+  // Medium Typen
+  cMediumWeblink = 1;
+  cMediumBild = 2;
+
+  // Gewichte für Bubbles "Rechnungs-Belege"
+  cV_ZeroState = 100000;
+  cV_Fehler = 10000;
+  cV_Agent = 01000;
+  // cV_Bestellt = 100;
+  cV_Rechnung = 0010;
+  cV_Geliefert = 0001;
+
+  // Gewichte für Bubbles "Bestell-Belege"
+  cB_ZeroState = 100000;
+  cB_Fehler = 10000;
+  cB_unbestellt = 01000;
+  cB_zurueck = 00100;
+  cB_Erwartet = 00010;
+  cB_Geliefert = 00001;
+
+  // EREIGNIS-Typen für Geschäftsabläufe
+  // wird auch für Ticket-Arten verwendet
+  eT_BestellungNunVollstaendigLieferbar = 1;
+  eT_BestellungNunTeilweiseLieferbar = 2;
+  eT_BestellungMerkmalTeilweiseLieferbarVerloren = 3;
+  eT_WareEingetroffen = 4;
+  eT_LagerPlatzZugeteilt = 5;
+  eT_LagerPlatzFreigabe = 6;
+  eT_BelegScan = 7;
+  eT_Miniscore = 8; // wird vom WebShop erzeugt! Hat keine Info-Eintrag
+  eT_WareRausgegangen = 9;
+  eT_WareBestellt = 10;
+  eT_ZahlungPerLastschrift = 11; // ganze Zahlungsliste im Block
+  eT_ForderungsAusgleich = 12;
+  eT_KatalogVersendung = 13; // macht Alexander selbst
+  eT_PaketIDErhalten = 14; // Es war möglich eine Versand-ID zuzuteilen
+  eT_OrgaTix = 15; // Ticket im Support-System
+  eT_Umsatzabruf = 16; // Es wurde ein Umsatz abgerufen (Online-Banking)
+  eT_Kasse = 17; // Eine Kasse lieferte uns einen Kassenzettel
+  eT_Newsletter = 18; // Der Webshop hat einen Newsletter erzeugt
+  eT_SaldoAbruf = 19; // Es wurde ein Saldo abgerufen (Online-Banking)
+  eT_BenutzerTextUpload = 20; // Blasmusikartikel werden hochgeladen
+  eT_WebShopBestellung = 21;
+  // Es wurden Probleme bei der Webshopbestelltung bemerkt
+  eT_BelegStorno = 22;
+  eT_Vormerken = 23;
+  eT_FTP = 24; // Request für einen FTP Upload
+
+  // Bestellsystem Motivationsgrund
+  eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag
+  eT_MotivationManuell = 20; // manuelle Eingabe durch den Benutzer
+  eT_MotivationHaendlerAuftrag = 25; // durch Auftrag eines Händlers
+  eT_MotivationKundenAuftrag = 30; // durch Auftrag eines Kunden
+
+  cRefComboOhneEintrag = '- ohne Eintrag -';
+
+  // Ini Schalter
+  cIni_Activate = 'JA';
+  cIni_Deactivate = 'NEIN';
+
+  cAktiveBaustellenFName = 'AktiveBaustellen.txt';
+  cMDEFNameMde = 'AUFTRAG.DAT';
+  cMDEFNameNeu = 'NEUES.DAT';
+  cBlank = '                                         ';
+  cNoBearbeiter = -1;
+  cVormittagsChar = 'V';
+  cNachmittagsChar = 'N';
+  cHTMLBlockPath = 'Blocks\';
+  cGEO_PQ_Length = 5; // Bei der Routenplanung
+  cZaehlerNummerFieldLength = 40;
+
+  //
+  cAutoPlanquadratLength = 4;
+
+  // Indexfeld AUFTRAG.STRASSE
+  cSTRASSE_OrtsteilcodeLength = 2;
+  cSTRASSE_PLANQUADRAT_Length = 30; // 30 relevante Zeichen beim Planquadrat
+  cSTRASSE_HausNummern_Length = 6; // HHHHHH
+  cSTRASSE_HausnummerNumerischerZusatz_Length = 2; // EE
+  cSTRASSE_Wohneinheit_Length = 3;
+
+  // Für Excel Spalten
+  cCSV_Column_A = 0;
+  cCSV_Column_B = 1;
+  cCSV_Column_C = 2;
+  cCSV_Column_D = 3;
+  cCSV_Column_E = 4;
+  cCSV_Column_F = 5;
+  cCSV_Column_G = 6;
+  cCSV_Column_H = 7;
+  cCSV_Column_I = 8;
+  cCSV_Column_J = 9;
+  cCSV_Column_K = 10;
+
+  // Build In Diag FTP
+  cFTP_Host = 'orgamon.de';
+  cFTP_UserName = 'incoming';
+  cFTP_Password = '1kfan8wx5';
+
+  // erweiterte Baustellen Einstellungen
+  cE_ZIPPASSWORD = 'ZipPasswort';
+  cE_FTPPASSWORD = 'FTPPasswort';
+  cE_FTPUSER = 'FTPBenutzer';
+  cE_FTPHOST = 'FTPServer';
+  cE_FTPVerzeichnis = 'FTPVerzeichnis';
+  cE_VERZEICHNIS = 'Verzeichnis';
+  cE_ZusaetzlicheZips = 'ZusätzlicheZips';
+  cE_BAUSTELLE_R = 'BAUSTELLE_R';
+  cE_EXPORT_TAN = 'EXPORT_TAN';
+  cE_Praefix = 'ZipPräfix';
+  cE_Postfix = 'ZipPostfix'; // ".unmoeglich" oder ""
+  cE_SAPQUELLE = 'FreieZähler';
+  cE_SAPReihenfolge = 'SpaltenReihenfolge';
+  cE_SpaltenAlias = 'SpaltenAlias';
+  cE_SpaltenOhneInhalt = 'SpaltenOhneInhalt';
+  cE_XLSVorlage = 'XLSVorlage';
+  cE_MaxperLoad = 'MaxAnzahl';
+  cE_MaterialNummerAlt = 'MaterialNummerAlt';
+  cE_MaterialNummerNeu = 'MaterialNummerNeu';
+  cE_Zaehlwerk = 'Zählwerk';
+  cE_ZaehlwerkNeu = 'ZaehlwerksnummerNeu';
+  cE_AuchAlsCSV = 'AuchAlsCSV';
+  cE_AuchAlsXML = 'AuchAlsXML';
+  cE_AuchAlsXLS = 'AuchAlsXLS';
+  cE_AuchAlsXLSunmoeglich = 'AuchAlsXLS_Unmöglich';
+  cE_AuchAlsKK22 = 'AuchAlsKK22';
+  cE_AuchAlsARGOS = 'AuchAlsARGOS';
+  cE_OhneStandardXLS = 'OhneStandardXLS';
+  cE_EinsZuEins = 'EinsZuEins';
+  cE_EineDatei = 'EineDatei';
+  cE_Filter = 'Filter'; // für Zählernummer neu
+  cE_ZaehlerNummerNeuZeichen = 'ZählerNummerNeuZeichen';
+  cE_ZaehlerNummerNeuAusN1 = 'ZählerNummerNeuAusN1';
+  cE_ZaehlerNummerNeuMitA1 = 'ZählerNummerNeuMitA1';
+  cE_eMail = 'eMail';
+  cE_Wochentage = 'Wochentage';
+  cE_ZipAnlage = 'ZipAlsAnlage';
+  cE_AuchAlsIDOC = 'AuchAlsIDOC';
+  cE_QS_Mode = 'QS_Mode';
+  cE_SQL_Filter = 'SQL_Filter';
+  cE_Datenquelle = 'Datenquelle'; // BAUSTELLE_R
+  cE_KopieVon = 'Original'; // BAUSTELLE_R
+  cE_FotoQuelle = 'FotoQuelle'; // Quellverzeichnis für die Speicherkarte
+  cE_FotoZiel = 'FotoZiel'; // default ~BaustellenPfad~ Fotos
+  cE_FotoAblage = 'FotoAblage'; // default -ohne- Ablage
+  cE_FotosLaden = 'FotosLaden';
+  cE_FotosMaxAnzahl = 'FotosMaxAnzahl'; // Maximale Anzahl Bilder im ZIP
+  cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung
+  cE_CoreFTP = 'CoreFTP'; // Besonderer Upload über Core-FTP
+  cE_AuchMitFoto = 'AuchMitFoto'; // wenn Fotos mit in das Zip sollen
+  cE_SpalteAlsText = 'SpalteAlsText'; // bei der Ausgabe an Excel wichtig
+  cE_AbschlussTransaktion = 'AbschlussTransaktion';
+  // Nach dem 'commit' noch eine Nacharbeitung
+  cE_Postfix_Foto = '-Foto';
+
+  // Mail-Vorlagen
+  cMailvorlage_Login = 'LOGIN';
+  cMailvorlage_Ergebnis = 'ERGEBNIS';
+  cMailvorlage_Dokument = 'PDF';
+  cMailvorlage_Versand = 'Versand@';
+
+  // virtuelle Settings
+  cE_TAN = 'TAN';
+  cE_BAUSTELLE = 'BAUSTELLE';
+  cE_nichtEFRE = 'nichtEFRE';
+  cE_TANLENGTH = 4;
+
+  cQueryHint: array [0 .. 21] of string = ('EDIT=Datensatz ändern',
+    'POST=Abschicken', 'CANCEL=Abbruch', 'CANCELSEARCH=Suche abbrechen',
+    'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',
+    'FIRST=Erster Datensatz', 'PRIOR=vorheriger Datensatz',
+    'NEXT=nächster Datensatz', 'LAST=Letzter Datensatz', 'SEARCH=Suchen',
+    'COUNT=Anzahl der Datensätze', 'INSERT=Datensatz einfügen',
+    'DELETE=Datensatz löschen', 'REFRESH=Aktualisieren',
+    'REFRESHKEYS=Aktualisieren', 'REFRESHROWS=Aktualisieren',
+    'POSTSEARCH=Abschicken', 'CANCELEDIT=Änderung abbrechen',
+    'CANCELINSERT=Einfügen abbrechen', 'CANCELDELETE=Löschen abbrechen');
+
+type
+
+  TDoubleObject = class(TObject)
+    Wert: double;
+  end;
+
+const
+  cMonDa_Status_unbearbeitet = 0;
+  cMonDa_Status_Restant = -1;
+  cMonDa_Status_Unmoeglich = -2;
+  cMonDa_Status_Wegfall = -3;
+  cMonDa_Status_NeuAnschreiben = -4;
+  cMonDa_Status_Info = -5;
+  cMonDa_Status_Vorgezogen = -6;
+  cMonDa_Status_FallBack = -7;
+  cMonDa_Status_OhneInfo = -8;
+  cMonDa_ImmerAusfuehren = 20000101; // Sonder-Datum "Neu"-Vorlage
+  cMonDa_FreieTerminWahl = 20000102; // Sonder-Datum FTW
+  cMonDa_ErsterTermin = 20010101; // Ab hier beginnen die echten Termine
+  cMonDa_ErsteEingabe = 20020601; // Erster
+  cMonDa_FieldLength_ZaehlerNummer = 15;
+  cJonDa_ErgebnisMaske_deprecated = '?????' + cDATExtension;
+  cJonDa_ErgebnisMaske_utf8 = '?????' + cUTF8DataExtension;
+
+  // Aufbau der Rückmeldung
+  // RID;Z#A-Korrektur;Z#N;ZSN;ZSA;R#-Korrektur;R#-Neu;Protokoll;Datum-Ist;Uhr-Ist
+  cMobileMeldung_COLUMN_RID = 0;
+  cMobileMeldung_COLUMN_ZAEHLER_KORR = 1;
+  cMobileMeldung_COLUMN_ZAEHLER_NEU = 2;
+  cMobileMeldung_COLUMN_ZAEHLER_STAND_NEU = 3;
+  cMobileMeldung_COLUMN_ZAEHLER_STAND_ALT = 4;
+  cMobileMeldung_COLUMN_REGLER_KORR = 5;
+  cMobileMeldung_COLUMN_REGLER_NEU = 6;
+  cMobileMeldung_COLUMN_PROTOKOLL = 7;
+  cMobileMeldung_COLUMN_EINGABE_DATUM = 8;
+  cMobileMeldung_COLUMN_EINGABE_UHR = 9;
+  cMobileMeldung_COLUMN_MOMENT = 10;
+
+type
+  TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
+
+  TMDERec = packed record
+
+    { von GaZMa }
+    RID: longint;
+    Baustelle: string[6]; { wird auch für die Gerätenummer verwendet }
+    ABNummer: string[5];
+    Monteur: string[6];
+    Art: string[2];
+    zaehlernummer_alt: TZaehlerNummerType;
+    Reglernummer_alt: TZaehlerNummerType;
+    ausfuehren_soll: TAnfixDate;
+    vormittags: boolean;
+    Monteur_Info: string[255];
+    Zaehler_Info: string[255]; { auch Plausibilitätsfelder }
+    Zaehler_Name1: string[35];
+    Zaehler_Name2: string[35];
+    Zaehler_Strasse: string[35];
+    Zaehler_Ort: string[35];
+
+    { von Monda }
+    zaehlernummer_korr: TZaehlerNummerType;
+    zaehlernummer_neu: TZaehlerNummerType;
+    zaehlerstand_neu: string[8];
+    zaehlerstand_alt: string[8];
+    Reglernummer_korr: TZaehlerNummerType;
+    Reglernummer_neu: TZaehlerNummerType;
+    ProtokollInfo: string[255];
+
+    { von Monda intern }
+    { <0: Sonderstati, Bedeutung siehe obige Konstanten }
+    { 00: Unerledigt }
+    { >0: Erledigt }
+    ausfuehren_ist_datum: TAnfixDate; { Tr�ger von cMonDa_Status }
+    ausfuehren_ist_uhr: TAnfixTime;
+
+  end;
+
+const
+  // JonDa Sachen
+  cJonDaServer_LogFName = 'JonDaServer.log';
+  cGeraetSchema = '  ??.??.?? ??:??:?? ?????:???';
+  cServerDataPath = 'Daten\';
+  cOrgaMonDataPath = 'OrgaMon\';
+  cMeldungPath = 'Meldung\';
+  cStatistikPath = 'Statistik\';
+  cUpdatePath = 'Update\';
+  cProtokollPath = 'Protokolle\';
+  cGeraeteEinstellungen = 'Einstellungen\';
+  cDBPath = 'db\';
+  cTrnFName = 'Transaktionsnummer.ini';
+  cFirstTrn = '10000';
+  cERROR_TAN = '00000';
+  cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
+  cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
+  cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
+  cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
+  cJondaProtokollDelimiter = '~';
+  cProtPrefix = 'PROT';
+  cProtExtension = '.TXT';
+
+  // Creator Sachen!
+  cHistorieTextFName = 'Creator\historie.txt';
+  cPwdAllTextFName = 'Creator\HEntry.txt';
+  SerialText = 'Creator\Serie Nummer.txt';
+  CryptOriginal = 'Creator\Original von Crypt.txt';
+
+  // Dateinamen für CD-R
+  cNotenTableFName = 'noten.txt';
+  // noten und deren Beschreibung, die mitgeliefert werden
+  cHaendlerFName = 'Haendler.txt';
+  // cd-r pwd Datei "händler" für Einsicht in Händler Adressen
+  SerialFName = 'serial.txt'; // Serien-Nummer der CDR
+  CryptAusgabe = 'Crypt.txt'; // cd-r pwd Datei "normal" für noten
+  MUSExtension = 'MUS';
+  cHochKommaMac = '"';
+  PlaceForHugeText = 20 * 1024;
+  clListeGrau = $F0F0F0;
+  cWordHeaderFName = 'Word Kopfzeile.txt';
+
+  // Besondere Worte in der Datenbank
+  cVerlagUebergangsfach = 'Übergangsfach'; // im SUCHBEGRIFF der PERSON
+  cVerlagFreiesLager = 'Freies Lager'; // im SUCHBEGRIFF der PERSON
+
+  // eMail Makros
+  ceMail_Anlage = 'Anlage:';
+  ceMail_Baustein = 'Baustein:';
+  ceMail_eml = 'eml:';
+  ceMail_ResetPasswort = 'Aktion:PasswortNeu';
+  cMail_BlackListed = 'BLACKLISTED';
+
+  // für die Drucklabels
+  cZugangsVorgang = 'Warenzugang';
+  cLagerBegriff = 'Lager';
+  cInventurviaMenge = 'Menge>0';
+  cInventur = 'Inventur';
+  cBelegbuchung = 'Belegbuchung';
+
+  // Besondere Events der Datenbank
+  cEventsDisconnect = 'PLEASE_DISCONNECT';
+  cEventsDown = 'PLEASE_DOWN';
+
+  // Farben für Sperren
+  cSperreAusfuehren = TColors.red; // Baustelle ist von...bis
+  cSperreUrlaub: TColor = TColors.lime; // Monteur
+  cSperreWochentag: TColor = TColors.Yellow; // Wochentag
+  cSperreAuszeit: TColor = 0;
+  cSperreBaustelle = TColors.blue; // innerhalb der Baustelle
+  cSperreZaehler = TColors.Purple; // innerhalb des Zählers
+  cSperreArbeit = TColors.LtGray;
+  // eigentlich keine Sperre sondern umgekehrt -> Arbeit
+  cSperreMehrArbeit = TColors.DkGray;
+  // eigentlich keine Sperre sondern umgekehrt -> MehrArbeit
+  cSperreFeiertag: TColor = 0; // ein Feiertag
+
+  // Werte für Sperren
+  // Name;Bad;Color;Prio
+  sSperre_Wert_Baustelle: TStringList = nil;
+  sSperre_Wert_Person: TStringList = nil;
+  sSperre_Wert_Arbeit: TStringList = nil;
+  sSperre_Wert_Baustopp: TStringList = nil;
+  sSperre_Wert_Zuordnung: TStringList = nil;
+
+  // Sichtbarkeit-Prios für Sperren
+  cPrio_ZaehlerSperre = 0;
+  cPrio_BaustellenSperre = 1;
+  cPrio_MonteurSperre = 2;
+  cPrio_FeiertagSperre = 3;
+
+  // Arbeit an sich spielt eigentlich in einer anderen Liga
+  cPrio_ArbeitSperre = 0;
+
+  // H = Hausnummer
+  // E = Wohneinheit
+  // 44/1
+  // 44 WE 19
+  cAuftragsNummer_Length = 5;
+  cToleranzRahmenVolllast = 90;
+
+  cMonteurTrenner = '----';
+  c2Monteure = '&';
+  cProtokollTrenner = '|';
+
+  cMapping_EFRE_Sparten = 'EFRE-Sparten';
+
+  // Mitgabeparameter zum Zeichnen der Auslastungsanzeige
+  c_Auslastungsflag_Ueberlast = 1; // Belastung ist mehr als möglich
+  c_Auslastungsflag_Fremd = 2; // andere Baustelle wie aktuelle
+  c_Auslastungsflag_Mix = 4; // mehrere Baustellen
+
+  cImportFieldsAnz = 59;
+  cImportFields: array [0 .. pred(cImportFieldsAnz)] of string = (
+    { 00 } 'Art',
+    { 01 } 'Zähler_Nummer',
+    { 02 } 'Zähler_Ort_Name1',
+    { 03 } 'Zähler_Ort_Name2',
+    { 04 } 'Zähler_Ort_Strasse',
+    { 05 } 'Zähler_Ort_Strasse_#_#_#',
+    { 06 } 'Zähler_Ort_Ort',
+    { 07 } 'Zähler_Ort_Ort_#_#',
+    { 08 } 'Zähler_Info_#_#', // Konstante + Feld -> eine Zeile
+    { 09 } 'Zähler_Planquadrat',
+    { 10 } 'Kunde_Brief_Nummer',
+    { 11 } 'Kunde_Brief_Name1',
+    { 12 } 'Kunde_Brief_Name2',
+    { 13 } 'Kunde_Brief_Straße',
+    { 14 } 'Kunde_Brief_Ort',
+    { 15 } 'Kunde_Brief_Ort_#_#',
+    { 16 } 'Monteur_Info_#_#', // Konstante + Feld -> eine Zeile
+    { 17 } 'C_Art_Info', // Konstante -> Art
+    { 18 } 'C_Zähler_Ort_Info',
+    { 19 } 'Zähler_Sperre_von',
+    { 20 } 'Zähler_Sperre_bis',
+    { 21 } 'Kunde_Brief_Strasse_#_#_#',
+    { 22 } 'Kunde_Brief_Name1_#_#',
+    { 23 } 'Intern_Info_#_#',
+    { 24 } 'Zähler_Ort_Ortsteil',
+    { 25 } 'Kunde_Brief_Ort_#_#_#',
+    { 26 } 'Zähler_Planquadrat_#_#',
+    { 27 } 'Verbrauch_Datum',
+    { 28 } 'Verbrauch_Zähler_Stand',
+    { 29 } 'Verbrauch_Pro_Jahr',
+    { 30 } 'Regler_Nummer',
+    { 31 } 'C_Monteur1_Kürzel',
+    { 32 } 'C_Monteur2_Kürzel',
+    { 33 } 'Monteur1',
+    { 34 } 'Monteur2',
+    { 35 } 'WordEmpfänger',
+    { 36 } 'C_Zähler_Ort_Ortsteil',
+    { 37 } 'Verbrauch_0_Datum',
+    { 38 } 'Verbrauch_0_Zähler_Stand',
+    { 39 } 'SAP_Info_#_#',
+    { 40 } 'SAP_Art_#_#',
+    { 41 } 'Zählerstand_AlterZähler',
+    { 42 } 'Zählerstand_NeuerZähler',
+    { 43 } 'Zähler_Ort_Name1_#_#',
+    { 44 } 'Zähler_Ort_Name2_#_#',
+    { 45 } 'Wechselzeitraum_Von',
+    { 46 } 'Wechselzeitraum_Bis',
+    { 47 } 'Wechselzeitraum_Bereich_#_#_#',
+    { 48 } 'Zähler_Sperre_Bereich_#_#_#',
+    { 49 } 'SAP_Sperre_von',
+    { 50 } 'SAP_Sperre_bis',
+    { 51 } 'Plausibilität_Min_Max_#_#_#',
+    { 52 } 'Strassen_erst_ungerade',
+    { 53 } 'Nummer_Auto',
+    { 54 } 'Termin',
+    { 55 } 'Zusatzarbeiten',
+    { 56 } 'C_SAP_INFO_#_#',
+    { 57 } 'Transaktion',
+    { 58 } 'Material_Nummer');
+
+  cWordHeaderLine2 =
+
+  // Bereich I : Zählerdaten
+    'Art;' + 'Zaehler_Nummer;' + 'ReglerNummerAlt;' + 'Sperre;' + 'SperreKurz;'
+    + 'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
+    'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
+
+  // Bereich II : Liegenschaft
+    'Verbraucher_Name;' + 'Verbraucher_Name2;' + 'Verbraucher_Strasse;' +
+    'Verbaucher_Strasse_Teil1;' + 'Verbaucher_Strasse_Teil2;' +
+    'Verbaucher_Strasse_Teil3;' + 'Planquadrat;' + 'OrtsteilCode;' +
+    'Verbraucher_Ortsteil;' + 'Verbraucher_Ort;' +
+
+  // Bereich III: Anschreiben
+    'KundeNummer;' + 'Anschreiben_Name;' + 'Anschreiben_Name2' +
+    'Anschreiben_Strasse;' + 'Anschreiben_Ort;' + 'WordEmpfaenger;' +
+    'WordAnzahl;' +
+
+  // Bereich IV: Termin Info
+    'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' +
+    'WochentagKurz;' + 'Datum;' + 'DatumText;' + 'Zeit;' + 'ZeitText;' +
+    ';Monteur;' + 'MonteurHandy;' +
+    'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
+    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
+    'Bemerkung;' +
+
+  // Bereich V: OrgaMon Interna, ohne Bedeutung für den Auftraggeber
+    'ReferenzIdentitaet;' + 'Status1;' + 'Status2;' + 'Geaendert;' +
+    'Bearbeiter;' +
+
+  // Bereich VI: Ergebnisse für den Auftraggeber
+    'WechselDatum;' + 'WechselZeit;' + 'ZaehlerNummerKorrektur;' +
+    'ZaehlerStandAlt;' + 'ZaehlerNummerNeu;' + 'ZaehlerStandNeu;' +
+    'ReglerNummerKorrektur;' + 'ReglerNummerNeu;' + 'Protokoll;' + 'Leer';
+
+  // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
+
+  cWordHeaderLine = 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
+    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
+    'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
+    'Zeit;Geaendert;Auftrags_Nummer;Status1;Status2;WochentagKurz;' +
+    'Verbraucher_Name2;Anschreiben_Name2;WochentagLang;MonteurText;' +
+    'ZeitText;DatumText;Baustelle;Bearbeiter;Sperre;Planquadrat;' +
+    'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
+    'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
+    'Verbraucher_Ortsteil;ZaehlerNummerKorrektur;ZaehlerNummerNeu;' +
+    'ZaehlerStandAlt;ZaehlerStandNeu;Protokoll;WechselDatum;WechselZeit;' +
+    'ReglerNummerAlt;ReglerNummerKorrektur;ReglerNummerNeu;' +
+    'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;'
+    + 'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;'
+    + 'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
+    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
+    'Status3;ZeitraumKurz;' +
+
+  // immer notwendig
+    'Leer';
+
+  // Spalten, die nicht an den Auftraggeber übertragen werden!
+  cRedHeaderLine =
+    'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +
+    'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' +
+    'InternInfo10;Leer';
+
+const
+  twh_Datum: integer = 0;
+  twh_KundeNummer: integer = 1;
+  twh_Monteur: integer = 2;
+  twh_Bemerkung: integer = 3;
+  twh_Art: integer = 4;
+  twh_Zaehler_Nummer: integer = 5;
+  twh_Anschreiben_Name: integer = 6;
+  twh_Anschreiben_Strasse: integer = 7;
+  twh_Verbraucher_Ort: integer = 8;
+  twh_Verbraucher_Name: integer = 9;
+  twh_Verbraucher_Strasse: integer = 10;
+  twh_Anschreiben_Ort: integer = 11;
+  twh_Zeit: integer = 12;
+  twh_Geaendert: integer = 13;
+  twh_Auftrags_Nummer: integer = 14;
+  twh_Status1: integer = 15;
+  twh_Status2: integer = 16;
+  twh_WochentagKurz: integer = 17;
+  twh_Verbraucher_Name2: integer = 18;
+  twh_Anschreiben_Name2: integer = 19;
+  twh_WochentagLang: integer = 20;
+  twh_MonteurText: integer = 21;
+  twh_ZeitText: integer = 22;
+  twh_DatumText: integer = 23;
+  twh_Baustelle: integer = 24;
+  twh_Bearbeiter: integer = 25;
+  twh_Sperre: integer = 26;
+  twh_Planquadrat: integer = 27;
+  twh_ZaehlerInfo1: integer = 28;
+  twh_ZaehlerInfo2: integer = 29;
+  twh_ZaehlerInfo3: integer = 30;
+  twh_ZaehlerInfo4: integer = 31;
+  twh_ZaehlerInfo5: integer = 32;
+  twh_ZaehlerInfo6: integer = 33;
+  twh_ZaehlerInfo7: integer = 34;
+  twh_ZaehlerInfo8: integer = 35;
+  twh_ZaehlerInfo9: integer = 36;
+  twh_ZaehlerInfo10: integer = 37;
+  twh_Verbraucher_Ortsteil: integer = 38;
+  twh_ZaehlerNummerKorrektur: integer = 39;
+  twh_ZaehlerNummerNeu: integer = 40;
+  twh_ZaehlerStandAlt: integer = 41;
+  twh_ZaehlerStandNeu: integer = 42;
+  twh_Protokoll: integer = 43;
+  twh_WechselDatum: integer = 44;
+  twh_WechselZeit: integer = 45;
+  twh_ReglerNummerAlt: integer = 46;
+  twh_ReglerNummerKorrektur: integer = 47;
+  twh_ReglerNummerNeu: integer = 48;
+  twh_Verbaucher_Strasse_Teil1: integer = 49;
+  twh_Verbaucher_Strasse_Teil2: integer = 50;
+  twh_Verbaucher_Strasse_Teil3: integer = 51;
+  twh_WordEmpfaenger: integer = 52;
+  twh_ReferenzIdentitaet: integer = 53;
+  twh_WordAnzahl: integer = 54;
+  twh_OrtsteilCode: integer = 55;
+  twh_SperreKurz: integer = 56;
+  twh_MonteurHandy: integer = 57;
+  twh_InternInfo1: integer = 58;
+  twh_InternInfo2: integer = 59;
+  twh_InternInfo3: integer = 60;
+  twh_InternInfo4: integer = 61;
+  twh_InternInfo5: integer = 62;
+  twh_InternInfo6: integer = 63;
+  twh_InternInfo7: integer = 64;
+  twh_InternInfo8: integer = 65;
+  twh_InternInfo9: integer = 66;
+  twh_InternInfo10: integer = 67;
+  twh_Status3: integer = 68;
+  twh_ZeitraumKurz: integer = 69;
+  twh_Leer: integer = 70;
+
+  // Geschäftsvorgang
+  cGV_Forderung = 70;
+
+type
+  TeSymbolColor = (cscRed, cscGreen, cscGray, cscLogo);
+  TeSymbolBackground = (csbWhite, csbGray);
+
+  TePhaseStatus = ( { 00 } ctsDatenFehlen, //
+    { 01 } ctsTerminiert, //
+    { 02 } ctsAngeschrieben, //
+    { 03 } ctsMonteurinformiert, //
+    { 04 } ctsErfolg, //
+    { 05 } ctsNeuAnschreiben, //
+    { 06 } ctsHistorisch, //
+    { 07 } ctsVorgezogen, // durch einen anderen erledigt!
+    { 08 } ctsRestant, //
+    { 09 } ctsUnmoeglich, //
+    { 10 } ctsLast); // virtuell = ctsTerminiert, ctsAngeschrieben
+  // virtuell = ctsHistorisch, ctsMonteurinformiert
+
+  TeVirtualPhaseStatus = ( { 00 } ctvDatenFehlen, //
+    { 01 } ctvTerminiert, //
+    { 02 } ctvAngeschrieben, //
+    { 03 } ctvMonteurinformiert, //
+    { 04 } ctvErfolg, //
+    { 05 } ctvNeuAnschreiben, //
+    { 06 } ctvHistorisch, //
+    { 07 } ctvVorgezogen, // durch einen anderen erledigt!
+    { 08 } ctvRestant, //
+    { 09 } ctvUnmoeglich, //
+    // Ab jetzt kommen die virtuellen Stati
+    { 10+0 } ctvAngeschriebenInformiert,
+    { 10+1 } ctvHistorischInformiert,
+    { 10+2 } ctvErfolgGemeldet,
+    { 10+3 } ctvUnmoeglichGemeldet,
+    { 10+4 } ctvVorgezogenGemeldet,
+    { 10+5 } ctvUnterwegs,
+    { 10+6 } ctvPausiert);
+
+const
+  { 00 } cs_DatenFehlen = ord(ctsDatenFehlen);
+  { 01 } cs_Terminiert = ord(ctsTerminiert);
+  { 02 } cs_Angeschrieben = ord(ctsAngeschrieben);
+  { 03 } cs_Monteurinformiert = ord(ctsMonteurinformiert);
+  { 04 } cs_Erfolg = ord(ctsErfolg);
+  { 05 } cs_NeuAnschreiben = ord(ctsNeuAnschreiben);
+  { 06 } cs_Historisch = ord(ctsHistorisch);
+  { 07 } cs_Vorgezogen = ord(ctsVorgezogen);
+  { 08 } cs_Restant = ord(ctsRestant);
+  { 09 } cs_Unmoeglich = ord(ctsUnmoeglich);
+  { 10 } cs_AngeschriebenInformiert = ord(ctvAngeschriebenInformiert);
+  { 11 } cs_HistorischInformiert = ord(ctvHistorischInformiert);
+  { 12 } cs_ErfolgGemeldet = ord(ctvErfolgGemeldet);
+  { 13 } cs_UnmoeglichGemeldet = ord(ctvUnmoeglichGemeldet);
+  { 14 } cs_VorgezogenGemeldet = ord(ctvVorgezogenGemeldet);
+  { 15 } cs_Unterwegs = ord(ctvUnterwegs);
+  { 16 } cs_Pausiert = ord(ctvPausiert);
+
+type
+  TeInfoStatus = ( { 0 } cisOK, // 29
+    { 1 } cisWiedervorlage, // 15
+    { 2 } cisAlarm, // 17
+    { 3 } cisSperreVerletzt, // 33
+    { 4 } cisProbleme, // 8
+    { 5 } cisLast);
+
+  TeWertigkeitBaustellenzuordnung = (
+    { } cwb_Keine,
+    { } cwb_echteArbeit,
+    { } cwb_Zuordnung,
+    { } cwb_Vermutung);
+
+  TeTerminarbeitsplatzSortMode = (csm_normalSortierung, csm_PLZSortierung,
+    csm_PostSortierung, csm_ZeitSortierung, csm_ZaehlernummerSortierung,
+    csm_BriefadresseSortierung, csm_ABNummerSortierung, csm_StatusSortierung,
+    csm_WechselSortierung);
+
+  eRechnungsNummerVergabeMoment = (ernvm_Anlage, ernvm_Berechnen,
+    ernvm_Vorschau, ernvm_Verbuchen);
+
+const
+  cPhasenStatusText: array [0 .. ord(ctsLast) + 6] of string = (
+    { 00 } 'unvollständig',
+    { 01 } 'terminiert',
+    { 02 } 'angeschrieben',
+    { 03 } 'informiert',
+    { 04 } 'erfolgreich',
+    { 05 } 'Neu anschreiben',
+    { 06 } 'historisch',
+    { 07 } 'vorgezogen',
+    { 08 } 'Restant',
+    { 09 } 'unmöglich',
+    { 10+0 } 'offen', // ab "offen" sind es virtuelle Status ...
+    { 10+1 } 'anschreibbar',
+    { 10+2 } 'abgearbeitet',
+    { 10+3 } 'gemeldet',
+    { 10+4 } 'ungemeldet',
+    { 10+5 } 'unterwegs',
+    { 10+6 } 'pausiert');
+
+var
+  MyProgramPath: string;
+  MyApplicationPath: string;
+  WebDir: string;
+  AnwenderPath: string;
+  SearchDir: string;
+  SpoolDir: string;
+  DatensicherungPath: string;
+  SoundPath: string;
+  UpdatePath: string;
+  DiagnosePath: string;
+  ImportePath: string;
+  WordPath: string;
+  ProtokollePath: string;
+  WebPath: string;
+  SchemaPath: string;
+  RohstoffePath: string;
+  ContextPath: string;
+  EigeneOrgaMonDateienPfad: string; // .xls Ausgabe als Datenquelle
+  MDEPath: string;
+  HtmlVorlagenPath: string;
+  AuftragMobilServerPath: string;
+  FotoPath: string;
+  KassePath: string;
+
+  // aus der ini Datei
+  iDataBaseName: AnsiString; // alles
+  iDataBaseUser: AnsiString; //
+  iDataBasePassword: AnsiString; //
+
+  i_c_DataBaseFName: string; // (calculated) pfad/Dateiname der Datenbank
+  i_c_DataBasePath: string; // pfad der Datenbank
+
+  // aus System-Parameter Tabelle
+  iMwStSatzManuelleArtikel: double = 19.0;
+  iPortoFreiAbBrutto: string;
+  iPortoMwStLogik: boolean;
+  iSicherungsPfad: string;
+  iSicherungsPreFix: string;
+  iSicherungenAnzahl: integer;
+
+  // Belege / Rechnungen
+  iNachlieferungInfo: string;
+  iBereitsGeliefertInfo: string;
+  iNichtMehrLieferbar: string;
+  iStandardTextRechnung: string;
+  iUnterdrueckeGeliefertes: boolean;
+  iRechnungsNummerVergabeMoment: eRechnungsNummerVergabeMoment;
+
+  iTranslatePath: string;
+  iDataBaseBackUpDir: string;
+  iTagesAbschlussUm: TAnfixTime;
+  iTagesAbschlussAuf: string;
+  iNachTagesAbschlussAnwendungNeustart: boolean;
+  iNachTagesAbschlussRechnerNeustarten: boolean;
+  iNachTagwacheAnwendungNeustart: boolean;
+  iNachTagwacheRechnerNeustarten: boolean;
+  iCronAuf: string;
+
+  iKontoInhaber: string;
+  iKontoBankName: string;
+  iKontoNummer: string;
+  iKontoBLZ: string;
+  iKontoPIN: string;
+  iKontoVorlauf: integer = 5;
+  iKontenHBCI: string;
+  iHBCIRest: string;
+  iMusicPath: string;
+  iPDFPathApp: string;
+  iPDFVersender: string;
+  iPDFAdmin: string;
+  iPDFSend: string;
+  iJonDaAdmin: integer;
+  // imp pend: Noch einen Parameter draus machen, OHNE diesen Default!
+  iJonDaServer: string = 'http://217.91.31.84/';
+
+  // Shop Sachen
+  iShopDomain: string;
+  iShopArtikelBilderPath: string;
+  iPDFPathShop: string;
+  iXMLRPCHost: string;
+  iXMLRPCPort: string;
+  iXMLRPCGeroutet: boolean; // XMLRPCGeroutet
+  iHTMLPath: string;
+  iBildURL: string;
+  iTPicUpload: string;
+  iVerlagsdatenabgleich: string;
+  iShopArtikelBilderURL: string;
+  iMusicPathShop: string;
+  iMusikDownloadsProArtikel: integer;
+  iShopQRPath : string;
+
+  // remote Shop Sachen
+  iShopKey: string;
+  iShopKonto: string;
+  iShopLink: string;
+  iShopMP3: string;
+
+  iRESTHost: string;
+  iRESTPort: string;
+  iRESTGeroutet: boolean; // XMLRPCGeroutet
+
+  // POS Sachen
+  iScannerHost: string;
+  iMagnetoHost: string;
+  iSchubladePort: string;
+  iAuftragsMotivation: string;
+  iAuftragsGrundRueckfrage: boolean;
+  iSchnelleRechnung_PERSON_R: integer;
+  iRechnungGlattstellen: boolean;
+  iLabelHost: string;
+  iKasseHost: string;
+  iTagWacheAuf: string;
+  iTagWacheUm: TAnfixTime;
+  iNachTagwacheHerunterfahren: boolean;
+  iTextDocumentExtension: string;
+
+  iNachTagesAbschlussHerunterfahren: boolean;
+  iTagWacheWochentage: string;
+  iTagWacheBaustelle: integer;
+  iTagesabschlussWochentage: string;
+  iAuftragsMedium: string;
+  iDataBase_SYSDBA_pwd: string;
+  iRangZeitfenster: integer;
+  iLieferzeitZeitfenster: integer;
+  iStandardLieferZeit: integer;
+  iFormColor: TColor;
+  iReplikation: boolean;
+  iHeimatLand: integer;
+  iAnschriftNameOben: boolean;
+  iOrtFormat: string;
+  iEinzelpreisNetto: boolean;
+  iGOT: boolean; // Gebührenordnung für Tierärtze
+  iBruttoVersandGewicht: boolean;
+
+  iMahnSchwelle: double;
+  iMahnFaelligkeitstoleranz: integer;
+  iMahnungAusgelicheneDazwischenAnzeigen: boolean;
+  iMahnungErstAbUnausgeglichenheit: boolean;
+  iMahnungGebuehr1: double;
+  iMahnungGebuehr2: double;
+  iMahnungGebuehr3: double;
+  iMahnungZinsSatzPrivat: double;
+  iMahnungZinsSatzGewerblich: double;
+  iMahnstufeZinsEintritt: integer;
+  iMahnungMindestZins: double;
+  iMahnfreierZeitraum: integer;
+  iMahnungMahnBescheidLaufzeit: integer = 100;
+  iMahnlaufbeiTagesabschluss: boolean;
+
+  iProfilTexte: TStringList;
+  iSchalterTexte: TStringList;
+  iLagerHoheDiversitaet: boolean;
+  iEinzelPositionNetto: string;
+  iKommaFaktor: boolean;
+  iOLAPpublic: boolean;
+  iBelegAnzeigeNachBuchen: boolean;
+  iBelegAutoSetMengeNull: boolean;
+  iBelegMengenSortierung: boolean;
+  iBelegArtikelNeu: boolean;
+  iNeuanlageZeitraum: integer; // [Tage]
+  iOpenOfficePDF: boolean;
+  iAusgabeartLastschriftText: integer;
+  // [AUSGABEART_R] der HBCI Verwendungszweck
+  //
+  iBuchSonstigeErloese: string;
+  iBuchFokus: TAnfixDate;
+  iEinsUnterdrueckung: boolean;
+  iTestDrucker: string;
+  // Name des Druckers für Testausdrucke default = "FreePDF"
+
+  // aus relaxx
+  iAuftragsObjektPath: string;
+  iAuftragsAblagePath: string;
+  iWarnFarbe_L0: TColor;
+  iWarnFarbe_L1: TColor;
+  iWarnFarbe_L2: TColor;
+  iWarnFarbe_L3: TColor;
+  iWarnFarbe_L4: TColor;
+
+  // aus GaZMa
+  iCSVOpenPath: string;
+  iAblageZeitraum: integer; // in Tagen
+  iJonDaVorlauf: integer; // in Tagen
+  iTagesArbeitszeit: TAnfixTime; // in Sekunden
+  iTagesabschlussRang: boolean;
+  iFaktorGanzzahlig: boolean;
+  iMobilFTP: string;
+
+  // aus JonDaServer
+  iJonDa_FTPHost: string = '';
+  iJonDa_FTPUserName: string = '';
+  iJonDa_FTPPassword: string = '';
+
+  // aus AutoUp / Tests
+  iAutoUpRevDir: string;
+  iAutoUpFTP: string;
+  iFSPath: string;
+
+  // global FTP-Proxy
+  iFtpProxyHost: string = '';
+  iFtpProxyPort: integer = 0;
+
+  // für Kartensachen
+  iKartenPfad: string; // Ablage-Fläche für Karten-Bild-Dateien
+  iKartenHost: string; // Tile-Server, der Angesprochen wird
+  iKartenProfil: string; // Zusatz-Einstellungen für das Outfitt der Karten
+
+  // für Baustellensachen
+  iBaustellenPfad: string;
+
+  ActualPwdNoten: string; // pwd 1
+  ActualPwdHaendler: string; // pwd 2
+  ActualSerialNumber: string; // SerialNumber
+
+  // Persistent Registration Data
+  ActualSource: string;
+  ETFLager: string;
+  CDRAusgabe: string;
+  BLAOutFName: string;
+
+  ReallyBigString: array [0 .. pred(PlaceForHugeText)] of char;
+  sBearbeiter: integer = -1; // RID des aktuellen Benutzers (-1=keiner)
+
+  // True, wenn Datenbankverbindung steht, und alle Start-Ups beendet sind
+  //
+  AllSystemsRunning: boolean = false;
+
+  // Abschalten von Server-Diensten, über die Kommandozeile!
+  pDisableTagesabschluss: boolean = true;
+  pDisableTagwache: boolean = true;
+  pDisableeCommerceAPIs: boolean = true;
+  pDisableMailer: boolean = true;
+  pDisableHotkeys: boolean = true;
+  pDisableDrucker: boolean = true;
+
+const
+  // Für CDR Anwendung
+  ProjektID = 'anfisoft\hebu';
+
+  // Program-Limits
+  MaxDesktopSymbols = 100;
+  MaxSymbols = 100;
+  MaxFoundAnz = 15000; // Maximale Anzahl der gefundenen Datensätze
+  MaxMedien = 25; // Maximale Anzahl der Sound-Medien
+  MaxHugeText = 20 * 1024; // Maximale Größe der Info-Text
+
+  // Pixel-Konstanten
+  MaxFontSize = 18;
+  MaxInpPixelwidth = 390; // Pixel-Breite der Eingabe-Zeile
+  LEDPixelPosX = 431; // LED - Position X
+  LEDPixelPosY = 21; // LED - Position Y
+  WAITPixelPosX = 249;
+  WAITPixelPosY = 49;
+  INPUTPixelPosX = 27;
+  INPUTPixelPosY = 14;
+  FILTER_CHECKLISTBOX_ZERO_SIZE = 0;
+  FILTER_CHECKLISTBOX_ENTRY_SIZE = 13;
+  VolumeReglerPixelPosX = 50;
+  VolumeReglerPixelPosY = 78;
+  VolumeOFFSwitchArea: TRect = (left: 10; top: 10; right: 52; bottom: 77);
+  ListenAnsichtArea: TRect = (left: 6; top: 41; right: 25; bottom: 59);
+  ZoomSizeX = 90;
+  ZoomSizeY = 120;
+  LEDonTimer = 1;
+  LEDoffTimer = 3;
+  LegalStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  TranslatetStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ';
+  swmode: boolean = false;
+  MaxSubSearch = 20; // Max Anzahl der Suchworte
+
+  // FILTER-IDs
+  cFILTER_ANZ = 6;
+
+  FILTER_FELDER = 1;
+  FILTER_LAND = 2;
+  FILTER_SCHWER = 3;
+  FILTER_PREIS = 4;
+  FILTER_MUSIC = 5;
+  FILTER_NEU = 6;
+
+  // Offsets für verschiedene Farben
+  FilterOFF = 0;
+  FilterGREEN = cFILTER_ANZ;
+  FilterRED = cFILTER_ANZ * 2;
+
+  //
+  BUT_INFO = 0;
+  BUT_SEARCH = 1;
+  BUT_EXIT = 2;
+  BUT_DATABASE = 3;
+  BUT_NON = 3;
+
+  cSym_Notiz_leer: word = 0;
+  cSym_Notiz_belegt: word = 0;
+  cSym_Bestell_leer: word = 0;
+  cSym_Bestell_belegt: word = 0;
+  cSym_Eingabe: word = 0;
+  cSym_sound_disabled: word = 0;
+  cSym_Sound_play: word = 0;
+  cSym_Sound_volume: word = 0;
+  cSym_rSound_weel: word = 0;
+  cSym_hilfe: word = 0;
+  cSym_Mulleimer_leer: word = 0;
+  cSym_Mulleimer_belegt: word = 0;
+  cSym_neu: word = 0;
+  cSym_preis: word = 0;
+  cSym_schwer: word = 0;
+  cSym_land: word = 0;
+  cSym_musik: word = 0;
+  cSym_feld: word = 0;
+  cSym_Farben: word = 0;
+  cSym_HeBu: word = 0;
+  cSym_Amos: word = 0;
+  cSym_rdunkelrot: word = 0;
+  cSym_rrot: word = 0;
+  cSym_rgrun: word = 0;
+  cSym_rdunkelgrun: word = 0;
+  cSym_rLED_grun: word = 0;
+  cSym_rLED_gelb: word = 0;
+  cSym_rLED_blau: word = 0;
+  cSym_rLED_rot: word = 0;
+  cSym_rLED_grau: word = 0;
+  cSym_InterNet: word = 0;
+  cSym_Jubi: word = 0;
+
+const
+  Artikel0FName = 'artikel0.bin';
+  Artikel1FName = 'artikel1.bin';
+  Bestellung0FName = 'best0.rtf';
+  Bestellung1FName = 'best1.rtf';
+  CDHintergrundFName = 'cdback.bmp';
+  Desktop0x1024FName = 'd0x10.ini';
+  Desktop0x640FName = 'd0x6.ini';
+  Desktop0x800FName = 'd0x8.ini';
+  Desktop1x1024FName = 'd1x10.ini';
+  Desktop1x640FName = 'd1x6.ini';
+  Desktop1x800FName = 'd1x8.ini';
+  HilfeDemosFName = 'hdemos.txt';
+  HilfeLizenzFName = 'hlizenz.txt';
+  HilfeMetrixFName = 'hmetrix.txt';
+  HilfeNotenFName = 'hnoten.txt';
+  NotenHinterGrundFName = 'noback.bmp';
+  WordStartIndex0FName = 'wsi0.bin';
+  WordStartIndex1FName = 'wsi1.bin';
+  WordStartSorted0FName = 'wss0.bin';
+  WordStartSorted1FName = 'wss1.bin';
+
+type
+  tDataBaseRec = packed record
+    ArtikelNo: string[10];
+    Land: string[3];
+    Titel: string[80];
+    Komponist: string[35];
+    Arranger: string[35];
+    schwer: string[10];
+    preis: single;
+    verlag: string[35];
+    Serie: string[35];
+    Dauer: string[10];
+    ProbeStimme: string[10];
+    Aufnahme: string[35];
+    Sparte: string[35];
+    Bemerkung: integer;
+    Komposition: integer;
+    UeberKomponist: integer;
+    UeberArranger: integer;
+    PaperColor: TColor;
+    BestellNo: string[10];
+    OrgPreis: single;
+    OrgCurrency: string[3];
+    EntryDate: integer;
+    SoundSource: byte; // 0=nicht verfügbar, 1=HeBu CDR usw.
+    dealerID: string[6]; // xxxxxc, eigentlich integer
+    BildDokument: integer; // Nummer des Bildes falls vorhanden
+  end;
+
+  tCheckArray = array [1 .. 1023] of boolean;
+
+  tVerlag = packed record
+    nummer: string[10]; // eigentlich integer
+    name: string[40];
+    strasse: string[40];
+    Ort: string[40];
+    Ansprechpartner: string[40];
+    tel: string[40];
+    fax: string[40];
+    eMail: string[40];
+    website: string[40];
+  end;
+
+const
+  MaxDoubleWordCount = 30000;
+  MaxVerlage = 1000;
+
+type
+  eSymbolTypes = (SYM_UNKNOWN, // "0" may occur if not initialized
+    SYM_NOTENBLATT, // großes Notenblatt
+    SYM_FILTERBUTTON, // Filter
+    SYM_NOTIZ, // Ablage
+    SYM_KORB, // Bestellkorb
+    SYM_MININOTEN, // kleine Noten
+    SYM_LED, // kleine LED auf Input Symbol
+    SYM_INPUT, // Controll-Panel
+    SYM_HILFE, // Hilfe
+    SYM_AMOS, // Mode-Switch
+    SYM_HEBU, // Mode-Switch
+    SYM_SOUND, // Sound-Modul
+    SYM_TRASH, // Müll-Eimer
+    SYM_INTERNET, // InterNet
+    SYM_JUBI);
+
+  eLEDStatus = (LED_OFF, LED_GREEN, LED_RED, LED_ORANGE);
+
+  eInsideArea = (INSIDE_UNKNOWN, INSIDE_DRAG, INSIDE_OTHER);
+
+  eSoundState = (SS_DISABLED, SS_PLAY, SS_STOP);
+
+  tPaintProc = procedure(DesktopIndex: word);
+
+  tDesktopSymbol = record
+    Symbolrect: TRect;
+    SymbolType: eSymbolTypes; // Symbol-Typ
+    SymbolDATA: integer; // Symbol-ID
+    SymbolOffset: integer; // Symbol-ID-Offset
+    DragArea: TRect; // Bereich für Object-Move
+  end;
+
+  tDeskTopSymbols = array [1 .. MaxDesktopSymbols] of tDesktopSymbol;
+
+  tSymbolPosition = record
+    SymbolName: string[35];
+    Spos: TRect; // Source Pos
+    OwnSize: TRect; // "self-Rect"
+    BitMap: TBitMap;
+  end;
+
+  tLandRec = record
+    LandName: string[35];
+  end;
+
+  tKomponistRec = record
+    name: string[35];
+  end;
+
+  tArragerRec = record
+    name: string[35];
+  end;
+
+  tVerlagRec = record
+    name: string[35];
+  end;
+
+  tSerieRec = record
+    name: string[35];
+  end;
+
+  tFoundArray = array [1 .. MaxFoundAnz] of integer;
+  pFoundArray = ^tFoundArray;
+
+  tverlage = array [0 .. pred(MaxVerlage)] of tVerlag;
+  pverlage = ^tverlage;
+
+  // TMwstSatz = class(TObject)
+  // Wert: double;
+  // end;
+
+const
+  clpaper = $00808080;
+  clShadow = $00E0E0E0;
+  cNotenBlattXL: integer = 270;
+  cNotenBlattYL: integer = 405;
+
+  cNotenBlattSchadowOffsetX = 2;
+  cImpossibleRect: array [0 .. 3] of integer = (0, 0, -1, -1);
+  cUninstall: boolean = false;
+  cDeleteRegistry: boolean = false;
+
+  FeldNamenAnz = 8;
+  cFelderNamen: array [1 .. FeldNamenAnz] of word = (39, 40, 41, 42, 43,
+    44, 45, 99);
+
+var
+  noten: tDataBaseRec; // aktueller Datensatz "notenblatt"
+
+  // für die Händler-Version
+  verlag: tVerlag; // aktueller Datensatz "verlagsadresse"
+  VerlageArray: pverlage;
+  VerlageAnz: integer;
+
+  SystemPath: string; // CDROM:SYSTEM
+
+  SuggestedWindowPosition: TPoint;
+
+  // Persistent Registration Data
+  FurtherVersion: string;
+  SerialNumber: string;
+  Password: string;
+  Name1: string;
+  Name2: string;
+  strasse: string;
+  PLZOrt: string;
+  DesktopSetting: string;
+  LastResolution: integer;
+  MyResolutionStr: string;
+  DesktopMode: integer;
+  FirstInstallOfThisVersion: string;
+  PasswordHaendler: string;
+  BaseDate: string;
+  OwnMedias: string;
+  RegistrationKey: string;
+  LastInterNetConnection: string;
+  QuellPath: string;
+
+  // Sprach-Treiber
+  LanguageStr: TStringList;
+  LanguageModes: TStringList;
+  MusicMedias: TStringList;
+
+  // InterNet-Update Programm Version
+  Paramstr0: string;
+
+  // läuft von "C:\"
+  Crunner: boolean;
+
+  // Boot-Sequence
+  sBootSequence: TStringList;
+
+function cOrgaMonCopyright: string;
+function cAppName: string;
+function iDataBaseHost: string; // Host des firebird
+function iMandant: string; // Markante Bezeichnung des Mandanten
+function e_r_Kontext: string;
+
+function AddBackSlash(const s: string): string;
+function RemoveBackSlash(const s: string): string;
+procedure BeginHourGlass;
+procedure EnsureHourGlass;
+procedure EndHourGlass;
+procedure EnsureDefaultCursor;
+function bool2cO(b: boolean): string;
+function RIDasStr(PERSON_R: integer): string; overload;
+function RIDasStr(PERSON_R: TObject): string; overload;
+function MahnungFName(PERSON_R: integer): string;
+
+// dynamische Pfade
+function cAuftragErgebnisPath: string;
+function iOlapPath: string;
+function iSystemOLAPPath: string;
+function iPDFPathPublicShop: string;
+function iPDFPathPublicApp: string;
+function iLohnPath: string;
+function iBaustellenPath: string;
+function iSkriptePath: string;
+procedure evalPath(var iDataBaseName: string); overload;
+procedure evalPath(var iDataBaseName: AnsiString); overload;
+function lookLikePath(s: string): boolean;
+
+// dynamische Parameter
+function JonDaVorlauf: integer;
+
+implementation
+
+uses
+  CareTakerClient,
+  IniFiles, SysUtils,
+{$IFNDEF CONSOLE}
+  Dialogs,
+  forms,
+  MandantAuswahl,
+{$ENDIF}
+  math, Geld, IB_Session,
+  SolidFTP, Jvgnugettext, SimplePassword;
+
+const
+  RegistrySoftwareID = 'SOFTWARE';
+
+  // TOOLS
+
+function cOrgaMonCopyright: string;
+begin
+  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version)
+    + ' ©1987-' + JahresZahl + ' http://www.orgamon.org';
+end;
+
+function cAppName: string;
+begin
+  if isBeta then
+    result := cApplicationName + cTradeMark + '-RC Rev. ' +
+      RevToStr(globals.Version) + ' [' + iMandant + ']'
+  else
+    result := cApplicationName + cTradeMark + ' Rev. ' +
+      RevToStr(globals.Version) + ' [' + iMandant + ']';
+end;
+
+function iDataBaseHost: string;
+var
+  k: integer;
+begin
+  k := pred(pos(':', string(iDataBaseName)));
+  if (k > 2) then
+    // true server Name "aaron:..."
+    result := copy(string(iDataBaseName), 1, k)
+  else
+    // Drive Name like "C:\..."
+    result := '';
+end;
+
+// Im OrgaMon müssen alle Pfadangaben mit einem Slash am Ende angegeben werden
+// so wird die Unterscheidung zur Datei deutlich
+
+function lookLikePath(s: string): boolean;
+begin
+  result := false;
+  if length(s) > 1 then
+    result := CharInset(s[length(s)], ['\', '/']);
+end;
+
+function iMandant: string;
+var
+  k: integer;
+begin
+  result := ValidatePathName(MyProgramPath);
+  k := revpos('\', result);
+  result := copy(result, succ(k), MaxInt);
+end;
+
+procedure evalPath(var iDataBaseName: string); overload;
+begin
+  ersetze('{app}', ProgramFilesDir, iDataBaseName);
+  ersetze('{exe}', MyApplicationPath, iDataBaseName);
+  ersetze('{own}', EigeneOrgaMonDateienPfad, iDataBaseName);
+  ersetze('{doc}', PersonalDataDir, iDataBaseName);
+end;
+
+procedure evalPath(var iDataBaseName: AnsiString); overload;
+var
+  s: string;
+begin
+  s := iDataBaseName;
+  evalPath(s);
+  iDataBaseName := s;
+end;
+
+const
+  LoadIniFCalled: boolean = false;
+  MyIni: TIniFile = nil;
+  BootStage: integer = 0;
+
+procedure LoadIniF;
+const
+  cMaxMandanten = 20;
+var
+  n: integer;
+  AllTheMandanten: TStringList;
+  ParamWhatBase: string;
+  cUpperBaseSettingParam: string;
+  ChosenIndex: integer;
+  sGroup: string;
+  DataBaseName: string;
+
+  procedure LogBootStage(Mandant: string);
+  begin
+    sBootSequence.Add(inttostr(BootStage) + '=' + Mandant);
+    inc(BootStage);
+
+  end;
+
+begin
+
+  // Enable Spare
+  // in diesem Falle wird vorrangig Spare gefragt, wenn leer
+  // fällt Spare wieder auf das Original zurück
+  if isParam('-es') then
+    sGroup := 'Spare'
+  else
+    sGroup := 'System';
+
+  sBootSequence.Add('Namespace=' + sGroup);
+
+  //
+  AllTheMandanten := TStringList.create;
+  repeat
+
+    if not(LoadIniFCalled) then
+      if FileExists(EigeneOrgaMonDateienPfad + cIniFName) then
+      begin
+        if assigned(MyIni) then
+          FreeAndNil(MyIni);
+        sBootSequence.Add('load ' + EigeneOrgaMonDateienPfad + cIniFName);
+        MyIni := TIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
+        break;
+      end;
+
+    if assigned(MyIni) then
+      FreeAndNil(MyIni);
+    sBootSequence.Add('load ' + MyProgramPath + cIniFName);
+    MyIni := TIniFile.create(MyProgramPath + cIniFName);
+  until true;
+  LoadIniFCalled := true;
+
+  try
+    with MyIni do
+    begin
+      // Passwort
+      iDataBaseUser := AnsiString(ReadString(sGroup, cDataBaseUser, 'SYSDBA'));
+      iDataBasePassword := AnsiString(ReadString(sGroup, cDataBasePwd,
+        'masterkey'));
+
+      // erster Datenbankname ermitteln
+      repeat
+
+        iDataBaseName := AnsiString(ReadString(sGroup, cDataBaseName, ''));
+        if (iDataBaseName <> '') then
+          break;
+
+        iDataBaseName :=
+          AnsiString(ReadString(sGroup, cDataBaseName + '1', ''));
+        if (iDataBaseName <> '') then
+          break;
+
+        if (sGroup = 'Spare') then
+          sGroup := 'System'
+        else
+          break;
+
+      until false;
+
+      evalPath(iDataBaseName);
+
+      // weitere Datenbanknamen
+      AllTheMandanten.Add(iDataBaseName);
+      for n := 2 to cMaxMandanten do
+        AllTheMandanten.Add(ReadString(sGroup,
+          cDataBaseName + inttostr(n), ''));
+      for n := pred(AllTheMandanten.count) downto 1 do
+        if (AllTheMandanten[n] = '') then
+        begin
+          AllTheMandanten.delete(n)
+        end
+        else
+        begin
+          DataBaseName := AllTheMandanten[n];
+          evalPath(DataBaseName);
+          AllTheMandanten[n] := DataBaseName;
+        end;
+
+      // ist in der Kommandozeile etwas angegeben?
+      cUpperBaseSettingParam := AnsiUpperCase(cDataBaseName);
+      for n := 1 to ParamCount do
+      begin
+        ParamWhatBase := AnsiUpperCase(ParamStr(n));
+        if pos(cUpperBaseSettingParam, ParamWhatBase) = 1 then
+        begin
+          ChosenIndex :=
+            strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
+          if (ChosenIndex <= AllTheMandanten.count) then
+          begin
+            iDataBaseName := AllTheMandanten[pred(ChosenIndex)];
+            AllTheMandanten.clear;
+            break;
+          end;
+        end;
+      end;
+
+      // einen manuell Auswählen
+      if (AllTheMandanten.count > 1) then
+      begin
+        // FormMandantAuswahl := TFormMandantAuswahl.create(Application);
+        // Application.initialize;
+        StartDebug('MandantAuswahl');
+{$IFNDEF CONSOLE}
+        FormMandantAuswahl := TFormMandantAuswahl.create(nil);
+        with FormMandantAuswahl do
+        begin
+          listbox1.items.assign(AllTheMandanten);
+          listbox1.itemindex := 0;
+          ShowModal;
+          if (Mandant = '') then
+          begin
+            halt;
+          end
+          else
+          begin
+            LogBootStage(Mandant);
+            iDataBaseName := Mandant;
+            iDataBasePassword :=
+              ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)),
+              iDataBasePassword);
+          end;
+        end;
+        FreeAndNil(FormMandantAuswahl);
+{$ENDIF}
+      end;
+
+      // Datenbankname muss einen Wert haben!
+      if (iDataBaseName = '') then
+      begin
+{$IFNDEF CONSOLE}
+        ShowMessage(
+{$ELSE}
+        writeln(
+{$ENDIF}
+          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName +
+          #13#10 + #13#10 + '[' + sGroup + ']' + #13#10 + cDataBaseName + '=' +
+          #13#10 + #13#10 + ' notwendige Einstellung ist ohne Wert!');
+
+        halt;
+      end
+      else
+      begin
+        LogBootStage(iDataBaseName);
+      end;
+
+      // auf den nächsten verweisen, im Fall, dass kein Server angegeben ist.
+      if (iDataBaseHost = '') and lookLikePath(iDataBaseName) then
+      begin
+
+        if DirExists(iDataBaseName) then
+        begin
+
+          if FileExists(iDataBaseName + cIniFName) then
+          begin
+            MyProgramPath := iDataBaseName;
+            LoadIniF;
+          end
+          else
+          begin
+{$IFNDEF CONSOLE}
+            ShowMessage(
+{$ELSE}
+            writeln(
+{$ENDIF}
+              'ERROR: Die Datei' + #13#10 + #13#10 + iDataBaseName + cIniFName +
+              #13#10 + #13#10 + 'existiert nicht!');
+            halt;
+          end;
+
+        end
+        else
+        begin
+{$IFNDEF CONSOLE}
+          ShowMessage(
+{$ELSE}
+          writeln(
+{$ENDIF}
+            'ERROR: Das Verzeichnis' + #13#10 + #13#10 + iDataBaseName + #13#10
+            + #13#10 + 'existiert nicht oder ist zur Zeit nicht verfügbar!');
+          halt;
+
+        end;
+      end;
+
+      //
+
+    end;
+  except
+
+  end;
+  AllTheMandanten.free;
+  if assigned(MyIni) then
+    FreeAndNil(MyIni);
+end;
+
+function AddBackSlash(const s: string): string;
+begin
+  if (length(s) > 0) then
+  begin
+    if (s[length(s)] <> '\') then
+      result := s + '\'
+    else
+      result := s;
+  end
+  else
+  begin
+    result := s;
+  end;
+end;
+
+function RemoveBackSlash(const s: string): string;
+begin
+  if (length(s) > 0) then
+  begin
+    if (s[length(s)] = '\') or (s[length(s)] = '/') then
+      result := copy(s, 1, pred(length(s)))
+    else
+      result := s;
+  end
+  else
+  begin
+    result := s;
+  end;
+end;
+
+function iPDFPathPublicShop: string;
+var
+  k: integer;
+begin
+  result := RemoveBackSlash(iPDFPathShop);
+  k := max(revpos('\', result), revpos('/', result));
+  result := copy(result, 1, k);
+end;
+
+var
+  _iPDFPathPublicApp: string = '';
+
+function iPDFPathPublicApp: string;
+// das letzte Verzeichnis wird abgeschnitten
+var
+  k: integer;
+begin
+  if (_iPDFPathPublicApp = '') then
+  begin
+    _iPDFPathPublicApp := RemoveBackSlash(iPDFPathApp);
+    k := max(revpos('\', _iPDFPathPublicApp), revpos('/', _iPDFPathPublicApp));
+    _iPDFPathPublicApp := copy(_iPDFPathPublicApp, 1, k);
+  end;
+  result := _iPDFPathPublicApp;
+end;
+
+function iSystemOLAPPath: string;
+begin
+  result := MyProgramPath + 'OLAP\'
+end;
+
+function iOlapPath: string;
+begin
+  if iOLAPpublic then
+    result := iSystemOLAPPath
+  else
+    result := EigeneOrgaMonDateienPfad + 'OLAP\';
+end;
+
+procedure BeginHourGlass;
+begin
+  if (HourGlassLevel = 0) then
+  begin
+{$IFNDEF CONSOLE}
+    screen.cursor := crHourGlass;
+    Application.ProcessMessages;
+{$ENDIF}
+  end;
+  inc(HourGlassLevel);
+end;
+
+procedure EnsureHourGlass;
+begin
+{$IFNDEF CONSOLE}
+  if (HourGlassLevel > 0) then
+    screen.cursor := crHourGlass
+  else
+    screen.cursor := crdefault;
+{$ENDIF}
+end;
+
+procedure EndHourGlass;
+begin
+  dec(HourGlassLevel);
+{$IFNDEF CONSOLE}
+  if HourGlassLevel = 0 then
+    screen.cursor := crdefault;
+{$ENDIF}
+end;
+
+procedure EnsureDefaultCursor;
+begin
+  HourGlassLevel := 0;
+{$IFNDEF CONSOLE}
+  screen.cursor := crdefault;
+{$ENDIF}
+end;
+
+function bool2cO(b: boolean): string;
+begin
+  if b then
+    result := cIni_Activate
+  else
+    result := cIni_Deactivate;
+end;
+
+function RIDasStr(PERSON_R: integer): string;
+begin
+  result := inttostrN(PERSON_R, 10);
+end;
+
+function RIDasStr(PERSON_R: TObject): string;
+begin
+  result := RIDasStr(integer(PERSON_R));
+end;
+
+function MahnungFName(PERSON_R: integer): string;
+begin
+  result := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\' +
+    cHTML_MahnungFName;
+end;
+
+const
+  AuftragErgebnis_path_called_once: boolean = false;
+
+function cAuftragErgebnisPath: string;
+begin
+  result := MyProgramPath + 'SAP\';
+  if not(AuftragErgebnis_path_called_once) then
+  begin
+    AuftragErgebnis_path_called_once := true;
+    CheckCreateDir(result);
+  end;
+end;
+
+const
+  LohnPath_called_once: boolean = false;
+
+function iLohnPath: string;
+begin
+  result := MyProgramPath + 'Lohn\';
+  if not(LohnPath_called_once) then
+  begin
+    LohnPath_called_once := true;
+    CheckCreateDir(result);
+  end;
+end;
+
+const
+  BaustellenPath_called_once: boolean = false;
+  BaustellenPath_result: string = '';
+
+function iBaustellenPath: string;
+begin
+  if not(BaustellenPath_called_once) then
+  begin
+    if (iBaustellenPfad = '') then
+      BaustellenPath_result := MyProgramPath + 'Baustellen\'
+    else
+      BaustellenPath_result := iBaustellenPfad;
+    CheckCreateDir(BaustellenPath_result);
+    BaustellenPath_called_once := true;
+  end;
+  result := BaustellenPath_result;
+end;
+
+const
+  SkriptePath_called_once: boolean = false;
+  SkriptePath_result: string = '';
+
+function iSkriptePath: string;
+begin
+  if not(SkriptePath_called_once) then
+  begin
+    SkriptePath_result := MyProgramPath + 'Skripte\';
+    CheckCreateDir(SkriptePath_result);
+    SkriptePath_called_once := true;
+  end;
+  result := SkriptePath_result;
+end;
+
+const
+  JonDaVorlauf_Date: TAnfixDate = 0;
+  JonDaVorlauf_Result: integer = 0;
+
+function JonDaVorlauf: integer;
+var
+  NextDate: TAnfixDate;
+begin
+  if (DateGet <> JonDaVorlauf_Date) then
+  begin
+    JonDaVorlauf_Date := DateGet;
+    NextDate := WerktagDatePlus(JonDaVorlauf_Date, iJonDaVorlauf);
+    JonDaVorlauf_Result := DateDiff(JonDaVorlauf_Date, NextDate);
+  end;
+  result := JonDaVorlauf_Result;
+end;
+
+function GetFBClientLibName: string;
+begin
+  // kann erst wieder geändert werden, sobald
+  // wir von den "Interbase Admin" Komponenten
+  // wegkommen, die ja eh die gds32.dll laden.
+  // Die Situation will ich vermeiden, dass die
+  // fbclient.dll UND die gds32.dll vom OrgaMon
+  // geladen werden. Ev. mal auf die uib Komponenten
+  // umstellen!
+  result := 'gds32.dll';
+end;
+
+const
+  _Kontext: string = '';
+
+function e_r_Kontext: string;
+begin
+  if (_Kontext = '') then
+    _Kontext := FindANewPassword;
+  result := _Kontext;
+end;
+
+initialization
+
+// if IsParam('-mc') then
+// MemChk;
+{$IFNDEF CONSOLE}
+  Application.Title := cApplicationName;
+{$ENDIF}
+StartDebug('globals');
+IB_GetClientLibNameFunc := GetFBClientLibName;
+
+// i8n
+cNachFrage := _(cNachFrage);
+
+DebugMode := false;
+isBeta := isParam('-b') or (pos(inttostr(RevAsInteger(globals.Version)),
+  ParamStr(0)) > 0) or (pos('-RC.exe', ParamStr(0)) > 0);
+
+iProfilTexte := TStringList.create;
+iSchalterTexte := TStringList.create;
+LanguageStr := TStringList.create;
+LanguageModes := TStringList.create;
+MusicMedias := TStringList.create;
+sBootSequence := TStringList.create;
+
+// OrgaMon
+MyApplicationPath := ExtractFilePath(ParamStr(0));
+MyProgramPath := MyApplicationPath;
+EigeneOrgaMonDateienPfad := PersonalDataDir + cApplicationName + '\';
+
+
+// Namespace;Bad;Color;Priorität
+
+sSperre_Wert_Baustelle := TStringList.create;
+sSperre_Wert_Person := TStringList.create;
+sSperre_Wert_Arbeit := TStringList.create;
+sSperre_Wert_Baustopp := TStringList.create;
+sSperre_Wert_Zuordnung := TStringList.create;
+
+StartDebug(MyProgramPath);
+LoadIniF;
+
+StartDebug(iDataBaseName);
+StartDebug(MyProgramPath);
+
+DiagnosePath := MyProgramPath + 'Diagnose\';
+SolidFTP.SolidFTP_LogDir := DiagnosePath;
+
+WebDir := MyProgramPath + 'Web Veröffentlichung\';
+SearchDir := MyProgramPath + 'SuchIndex\';
+CDRAusgabe := MyProgramPath + 'CD-R\Noten\';
+AnwenderPath := MyProgramPath + 'Anwender\' + UserName + '\';
+ETFLager := MyProgramPath + 'Creator\Zwischenlager\';
+DatensicherungPath := MyProgramPath + 'Datensicherung\';
+SoundPath := MyProgramPath + 'Sounds\';
+SystemPath := MyProgramPath + 'System';
+Geld.iSystemPath := SystemPath;
+UpdatePath := MyProgramPath + 'Updates\';
+WordPath := MyProgramPath + 'Word\';
+ProtokollePath := MyProgramPath + 'Protokolle\';
+ContextPath := ApplicationDataDir + cApplicationName + '\Context\';
+MDEPath := MyProgramPath + 'MonDa\';
+HtmlVorlagenPath := MyProgramPath + cHTMLTemplatesDir;
+AuftragMobilServerPath := MyProgramPath + 'MonDaServer\';
+WebPath := MyProgramPath + 'Intranet\';
+SchemaPath := MyProgramPath + 'Schemen\';
+RohstoffePath := MyProgramPath + 'Rohstoffe\';
+ImportePath := MyProgramPath + 'Importe\';
+cCareTakerDiagnosePath := MyProgramPath + 'CareTaker\';
+KassePath := MyProgramPath + 'Kasse\';
+
+StartDebug('CheckCreate.begin');
+
+CheckCreateDir(WebPath);
+CheckCreateDir(ProtokollePath);
+CheckCreateDir(ContextPath);
+CheckCreateDir(MyProgramPath + 'Musik');
+CheckCreateDir(MyProgramPath + 'System');
+CheckCreateDir(MyProgramPath + 'Noten');
+CheckCreateDir(MyProgramPath + 'Creator');
+CheckCreateDir(UpdatePath);
+CheckCreateDir(ETFLager);
+CheckCreateDir(MyProgramPath + 'Mailing');
+CheckCreateDir(MyProgramPath + 'CD-R\Noten');
+CheckCreateDir(MyProgramPath + 'CD-R\System');
+CheckCreateDir(MyProgramPath + 'GermanParcel');
+CheckCreateDir(MyProgramPath + cRechnungsKopiePath);
+CheckCreateDir(MyProgramPath + 'Bestellungskopie');
+CheckCreateDir(MyProgramPath + cHTMLTemplatesDir);
+CheckCreateDir(MyProgramPath + cHTMLBlocksDir);
+
+CheckCreateDir(DiagnosePath);
+CheckCreateDir(WebDir);
+CheckCreateDir(SearchDir);
+CheckCreateDir(CDRAusgabe);
+CheckCreateDir(AnwenderPath);
+
+StartDebug('CheckCreate.end');
+
+finalization
+
+LanguageStr.free;
+LanguageModes.free;
+MusicMedias.free;
+iProfilTexte.free;
+iSchalterTexte.free;
+sBootSequence.free;
+if assigned(MyIni) then
+  FreeAndNil(MyIni);
+
+end.

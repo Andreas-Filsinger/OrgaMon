@@ -1,0 +1,53 @@
+//
+//  O L A P  - Definitions Datei
+//
+//
+//  Mailing, 
+//
+//  * kein MAILING Ausschluss
+//  * bereits ein Kauf aus $Sortimente im Zeitraum $Start bis $Ende-1
+//  * aber nicht einen Artikel aus $Ausschluss
+//
+//  (c)'04 Andreas Filsinger
+//
+//
+$Start='01.10.2004'
+$Ende='01.11.2004'
+$Sortimente=65577,65578,65580
+$Ausschluss=142607,157724
+
+select distinct
+ PE.RID
+from
+ PERSON PE
+left join 
+ BELEG BE on (BE.PERSON_R=PE.RID)
+left join 
+ POSTEN PO on (PO.BELEG_R=BE.RID)
+where 
+ (PO.ARTIKEL_R in ($Ausschluss)) 
+-- and 
+-- (BE.ANLAGE between $Start and $Ende)
+order by
+ PE.RID
+
+select distinct
+ PE.RID
+from
+ posten PO
+left join
+ beleg BE on (BE.RID=PO.BELEG_R)
+left join
+ artikel AR on (AR.RID=PO.ARTIKEL_R)
+left join
+ PERSON PE on (BE.PERSON_R=PE.RID)
+where
+ ((PE.Mailing is null) OR (PE.Mailing='Y')) 
+and
+ (BE.ANLAGE between $Start and $Ende) 
+and
+ (AR.SORTIMENT_R IN ($Sortimente))
+order by
+ PE.RID
+
+subtract

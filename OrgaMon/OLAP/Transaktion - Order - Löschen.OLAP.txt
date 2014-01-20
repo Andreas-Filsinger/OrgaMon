@@ -1,0 +1,5 @@
+--
+--  O L A P  - Definitions Datei
+--
+
+select rid from BBELEG

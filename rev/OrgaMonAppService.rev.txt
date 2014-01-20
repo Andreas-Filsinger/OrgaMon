@@ -1,0 +1,180 @@
+====================================
+*       REVISIONS-INFORMATION      *
+====================================
+* (c)'12 by Andreas Filsinger      *
+====================================
+* PROJEKT: OrgaMonAppService
+* PUBLIC: YES
+* SOURCE DIR: ..\JonDaServer
+* INNO SETUP SCRIPT: OrgaMonAppService.iss
+* INNO SETUP WITHOUT POINT: YES
+* INFO: Foto- und Zip- Service für Internet-Ablagen
+====================================
+
+// INFO BEGIN
+// INFO END
+
+Dokumentation
+
+@<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
+
+Rev 1.033 (10.12.13) Andreas Filsinger
+
+ Bug: Foto-Umbenennung via "Wartende": Hier hatte noch die Z# Neu Formatierung
+      gefehlt
+
+Rev 1.032 (06.11.13) Andreas Filsinger
+
+ Bug: Foto-Umbenennung via Callback: Hier hatte noch die Z# Neu Formatierung
+      gefehlt
+
+Rev 1.031 (30.10.13) Andreas Filsinger
+
+ Neu: Wegen geänderter Foto-Benennung neu compiliert
+
+Rev 1.030 (12.09.13) Andreas Filsinger
+
+ Bug: (infozip) Dateinamen mit "-" am Anfang
+ Bug: ZIP-Ablage: Nummer wurde hochgesetzt ohne dass ein Zip entstanden ist
+
+Rev 1.029 (11.09.13) Andreas Filsinger
+
+ Neu: Bei Bild Doppellieferungen wurden "wartende" (-Neu) als "nicht mehr gefunden"
+      bezeichnet. Eine irreführende Fehlermeldung. Vielmehr ist die Umbenennung bereits
+      erfolgt.
+
+Rev 1.028 (29.08.13) Andreas Filsinger
+
+ Neu: Bei Bild Doppellieferungen wird ein älteres Bild, das aber später übertragen
+      wurde nachrangig umbenannt.
+
+Rev 1.027 (29.08.13) Andreas Filsinger
+
+ Neu: Bei Bild Doppellieferungen wird das "alte" Bild mit "-n" umbenannt um
+      für das neue Bild Platz zuschaffen.
+
+Rev 1.026 (20.08.13) Andreas Filsinger
+
+ Neu: Fehlermeldungen informativer
+ Neu: Zip-Ablage, Ziel wird mit angegeben
+
+Rev 1.025 (10.07.13) Andreas Filsinger
+
+ Neu: Fehlermeldungen informativer
+
+Rev 1.024 (24.06.13) Andreas Filsinger
+
+ Bug: Absturz wenn Eingabe.nnn.txt fehlte
+
+Rev 1.023 (17.04.13) Andreas Filsinger
+
+ Neu: Bildbenennungsmodus "7"
+
+Rev 1.022 (06.02.13) Andreas Filsinger
+
+ Neu: html2pdf: Arbeitsverzeichnis angebbar
+
+Rev 1.021 (30.01.13) Andreas Filsinger
+
+ Bug: Fehler bei "0" Dateien
+ Neu: Abbruch möglich durch Haken
+
+Rev 1.020 (30.01.13) Andreas Filsinger
+
+ Neu: Umbenennung zu "OrgaMonAppService"
+
+Rev 1.019 (24.01.13) Andreas Filsinger
+
+ Neu: .zip Ablagemöglichkeit für eine einzelne Ablage
+ Neu: ".zip.html" nach ".zip.html.pdf" Konverter
+ Neu: ".zip.html" und ".zip.html.pdf" Archivierung "Wechselbelege-nnnn.zip"
+
+Rev 1.018 (07.12.12) Andreas Filsinger
+
+ Neu: 2. Datensicherung (in die Zip-Datei) wird nicht mehr gemacht.
+
+Rev 1.017 (03.12.12) Andreas Filsinger
+
+ Neu: _AUFTRAG+TS kann als alternative Quelle hinzugestellt werden. Das
+      kann hilfreich sein, wenn sehr "alte" Bilder geliefert werden. Dadurch
+      kann man aktuelle UND sehr alte Bilder zuordnen.
+
+Rev 1.016 (03.12.12) Andreas Filsinger
+
+ Bug: Ablage\Pfad in FTPBenutzer wird nun berücksichtigt
+
+ Neu: Unverarbeitete, Listenfocus bleibt erhalten
+ Neu: Wartende: Spalte, Baustelle und Moment
+ 
+Rev 1.015 (03.12.12) Andreas Filsinger
+
+ Neu: Bild Bennungsmodus "7": keine weitere "-Neu" Logik notwendig!
+
+Rev 1.014 (14.11.12) Andreas Filsinger
+
+ Neu: Wegen hohem Datenaufkommen reichen 10.000 Bilder / 60 Tage nicht mehr
+      Nun auf 100.000 / 60 Tage erhöht!
+ Neu: Unvollständige Uploads: Speicherung als CSV
+
+Rev 1.013 (21.09.12) Andreas Filsinger
+
+ Bug: Nach einem Umbenennungsfehler wurde die ganze Gruppe verworfen
+
+ Neu: Wartezeit am Anfang kann umgangen werden
+ Neu: Unverarbeitet: "Alle" können nochmal verarbeitet werden
+
+Rev 1.012 (12.09.12) Andreas Filsinger
+
+ Neu: Warte erst mal 10 Minuten bevor es los geht ...
+
+Rev 1.011 (10.09.12) Andreas Filsinger
+
+ Neu: Status des Bild-Uploads wird in index.html ausgegeben
+
+Rev 1.010 (23.08.12-24.08.12) Andreas Filsinger
+
+ Neu: Foto-Umbenennung: Übernahme des Status "Fehler beim Umbenennen" in die
+      Eingangskette.
+
+Rev 1.009 (07.08.12) Andreas Filsinger
+
+ Neu: Foto-Bennungsmodus "6": "Mandant-aknr-" aus csv-Datei
+
+Rev 1.008 (31.07.12) Andreas Filsinger
+
+ Neu: Sicherung geht jetzt nach I:\
+
+Rev 1.007 (06.07.12-25.07.2012) Andreas Filsinger
+
+ Bug: Memory Leak im Backup-Service, war extrem schwer zu finden
+      TsTable: TObjectList durch TList ersetzt!
+
+Rev 1.006 (06.07.12) Andreas Filsinger
+
+ Bug: letzer Monteur der Warteliste der offenen wurde niemals aktualisiert
+
+Rev 1.005 (05.07.12) Andreas Filsinger
+
+ Neu: Flip-Over von "9999" auf "0001"
+
+Rev 1.004 (03.07.12) Andreas Filsinger
+
+ Neu: Anzeige der bereits fertig hochgeladenen Dateien im "Upload"-Reiter
+
+Rev 1.003 (28.06.12) Andreas Filsinger
+
+ Neu: Sortierung, Ältestes Bild kommt zuerst dran
+
+Rev 1.002 (20.06.12) Andreas Filsinger
+
+ Regression: "foto" hatte im Modus "5" nicht mehr funktioniert
+
+Rev 1.001 (19.06.12) Andreas Filsinger
+
+ Neu: Wartende: einzelne Einträge können einfach gelöscht werden
+
+Rev 1.000 (18.06.12) Andreas Filsinger
+
+ Neu: erste Test- PostgresQL Integration
+ Neu: Erste Release
+

@@ -1,0 +1,6 @@
+select
+ ANSPRACHE
+from
+ PERSON
+where
+ RID=$PERSON_R

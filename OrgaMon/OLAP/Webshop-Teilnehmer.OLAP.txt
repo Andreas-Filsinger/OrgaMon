@@ -1,0 +1,11 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Webshop Teilnehmer
+//
+//  (c)'03 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp0.csv
+//
+
+select rid, nachname, anrede,  vorname, USER_ID from person where USER_ID IS NOT NULL and USER_ID<>''

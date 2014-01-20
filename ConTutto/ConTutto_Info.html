@@ -1,0 +1,1645 @@
+
+<HTML>
+<HEAD>
+<STYLE TYPE="text/css">
+<!--
+BODY {font-family:Courier New;font-size:10pt}
+A.red0 {color:CC0000;text-decoration:underline}
+A.blue0 {color:000099;text-decoration:none}
+-->
+</STYLE>
+<TITLE>Projekt Info</TITLE>
+</HEAD>
+<body bgcolor="#FFFFFF" leftmargin=10 topmargin=0 marginwidth=0 marginheight=0 vlink="#888888" alink="#AA3333" link="#336699">
+<!-- BEGIN Info -->
+<b>Info Dokument f&uuml;r ConTutto Rev. 2.031</b><br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#0">Was ist neu</A><br>
+<br>
+Inhaltsverzeichnis<br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#1">offene bekannte Bugs</A><br>
+&nbsp;&nbsp;<A class=red0 href="#2">erweiterte Anforderungen</A><br>
+&nbsp;&nbsp;<A class=red0 href="#3">offene Anforderungen f&uuml;r den Grafiker</A><br>
+&nbsp;&nbsp;<A class=red0 href="#4">Messe Modus</A><br>
+<br>
+&nbsp;--- ToDo-List f&uuml;r ConTutto Release =================================================<br>
+<br>
+<A class=blue0 name="1">offene bekannte Bugs</A><br>
+<br>
+&nbsp;b15: (06.03.01) Andreas Filsinger: Treffer und gefilterte (rot) werden angezeigt.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Man betrachtet den 7/172, nun Taste &quot;|&lt;&lt;&quot;, die Suche wird verlassen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Es wird wieder der allererste Datensatzangezeigt nicht der erste<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;der Trefferliste. Mal nachvollziehen!<br>
+&nbsp;b14: (05.03.01) M&auml;nnlein : Deinstallation ergibt immer noch Fehler 217<br>
+&nbsp;b13: (05.03.01) M&auml;nnlein : Habe versucht nach Mozart mir dem Filter &quot;Komponist&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zu suchen. Gab aber kein Ergebnis, obwohl einige kommen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&uuml;ssten?<br>
+&nbsp;b01: (21.02.01) Fraglich: Desktop-Lokale Filter Daten JA/NEIN? Bleiben die erhalten?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x23: FoundArray abspeichern und wieder laden! Trefferlisten abspeichern!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(07.03.01) Desktop-Switch: noch immens viele Sachen sichern/wiederladen, neu<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gestaltung der Desktop&lt;n&gt;.ini (hier muss alles drin sein, und zwar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Textm&auml;&szlig;ig, &uuml;ber die Versionen &uuml;bergreifend (soweit m&ouml;glich!)<br>
+&nbsp;b03: (23.02.01) Florian Heckl - Auf dvo-Seite: Reiter &quot;Notenbibliothek&quot; nach 2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&ouml;ffnen nicht mehr Transparent dargestellt.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(06.03.01) Andreas Filsinger: kann ich nicht nachvollziehen, gibts dazu noch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die passenden gifs?<br>
+&nbsp;b06: Jubil&auml;um mit Sound Lib drin<br>
+&nbsp;b07: Notiz mit Sound Lib drin<br>
+&nbsp;b08: Beenden des Programmes mit Sound Lib drin<br>
+&nbsp;b09: Schriftart &quot;Notiz&quot;-Bereich ist undefiniert! Bei 2x NACH Bearbeitung der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bestellungs-Datei ist die Schrift anders.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Weg zum Bug: Klick auf Bestellablage-&gt;Klick auf Notizablage-&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Schriftgr&ouml;&szlig;e hat sich ge&auml;ndert<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; hier alles komplet auf html - Umstellen entsprechend neue System<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Voraussetzungen! Win95 mit IE 5.0 200 Mhz, 32 MByte<br>
+&nbsp;b10: Hires-move, es sind immer noch artefakte zu beobachten bei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht viereckigen Objekten! Fernziel: png-Alpha-Blending-Move. D.H.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;online Antialiasing in den aktuellen Hintergrund!<br>
+&nbsp;b16: gr&uuml;ner Haken bleibt bei den Symbolen an (nach einem move). Nach einiger<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sollten diese aber wieder ausgehen! Ev. mal richtig mit event-Liste<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l&ouml;sen!<br>
+&nbsp;b17: winamp: -&gt;noch besser l&ouml;sen, ev. &quot;%PROGRAMPATH%&quot; ermitteln (&uuml;berf&auml;llig!)<br>
+<br>
+<A class=blue0 name="2">erweiterte Anforderungen</A><br>
+<br>
+&nbsp;x34: Alle Ausgaben sollen html Dokumente sein, mit (vom) Programm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vorbelegten Eingabefeldern! -&gt; siehe html Testseite in den<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;favoriten!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Listenansicht auch ausgebbar (ausdruckbar)!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x21a: Listenansicht sollte eine echte Tabellarische Ansicht sein. (belcihten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in einenn html-Context ist dann einfacher)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x20: Ausdruck-Funktion bei Info-Texten (belichten in einen HTML-Context?!)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x21: Ausdruckm&ouml;glichkeit der Listen-Ansicht (belichten in einen HTML-Context?!)<br>
+&nbsp;x36: Zusammenf&uuml;hren der static.txt und mp3cd.txt, hlizenz, hdemo, hnoten<br>
+&nbsp;x37: Wie im Internet : Alle Textpassagen, die &quot;anklickbar&quot; sind blau machen,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und unterstreichen!<br>
+&nbsp;x40: (31.01.01) links neben der Track-Anzeige steht ein Play Symbol, Das ist so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gedacht, da&szlig; es zu diesem Tracks h&ouml;rbeispiele geben soll.<br>
+<br>
+&nbsp;x02: Abpr&uuml;fen der letzten CD-Version (Aufforderung zum Einlegen). Per Zufall<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;durchschnittlich jedes 4. Mal.<br>
+&nbsp;x03: &quot;Hints&quot; f&uuml;r die Symbole, wenn auf ihnen zu stehen kommt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ev. l&ouml;sen wie im Hauptmen&uuml;, mit labels!<br>
+&nbsp;x06:&nbsp;&nbsp;aktive Bestellung, die selbst rechnet bei Ab&auml;nderung der Zahl (Report HeBu 5.))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Offical Statement&quot;: Will ein Benutzer 2 Noten bestellen, so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stellt er einfach das selbe Symbol 2x in den Bestellbereich.<br>
+&nbsp;x07: check for win32-messages &quot;resolution-change&quot; and ReInitialize application.<br>
+&nbsp;x10: check MP3 Support<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* MP3-Player via MS Technologie (Media Player 7?!)<br>
+&nbsp;x11: * check Win98, Win2000, &quot;MP3-Support&quot; (no winamp!)<br>
+&nbsp;x15: reiner CD-ROM Betrieb - v&ouml;llig ohne Installation<br>
+&nbsp;x18: Eingabe-Feld soll eine Standard-Win Eingabefeld geben, damit mit Hilfe des<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboards kopiert werden kann.<br>
+&nbsp;x19: keine L&auml;ngenbeschr&auml;nkung bei Info-texten, bzw. Setzen auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20k (das reicht dann im Moment f&uuml;r alle Texte).<br>
+&nbsp;x25: Angabe der W&auml;hrung auch in Euro, bzw. komplette Euro Version<br>
+&nbsp;x26: Mindestschriftgr&ouml;&szlig;e f&uuml;r Titel, mind. wie bei 130675,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;127784 ist zu klein<br>
+&nbsp;x27: Marker-Funktion &quot;nicht mehr anzeigen&quot;, diese Titel dann<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nach einer Suche nicht mehr anzeigen! niemals mehr!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Dead list machen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;treffer-Beschr&auml;nkung<br>
+&nbsp;x28: 3-fach Nummern aktzeptieren (Die Sache mit dem &quot;/&quot; im Titel, ev.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 Zeilig oder so!<br>
+&nbsp;x29: DVD-Rohlinge + Brenner mal abkl&auml;ren<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stand 2000: Brenner 9.000,- Rohling 65,- DM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stand Jan 2001: Brenner 9.000,- Rohling 58,- DM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stand Okt 2001: Brenner 1.499,- (4.7 GB) Rohling 89,- DM<br>
+&nbsp;x32: Konkurent &quot;Orakel von Delphi&quot;: Partituren, Notenbl&auml;tter ansehbar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Idee: Privates Notenarchiv, also alle Noten da rein, die man<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;schon hat,hey Super Idee jeder Verein will auch sein Repertoire<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verwalten. Notenschrank!!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Besseres Bestellsystem<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Uuml;bersichtlichere Datenabbildung (Komponisten, Arrangere...)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Listengenerator, d.h. bessere Ausgabem&ouml;glichlkeiten der Notiz,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bestellbereiche<br>
+&nbsp;* einfacher Listengenerator zur Ausgabe der Daten Titel/Felder/Fu&szlig;<br>
+&nbsp;* Autoren-Click -&gt; Liste deren St&uuml;cke<br>
+&nbsp;b* Sound-Bibliothek Holland ist komisch, mal pr&uuml;fen!<br>
+&nbsp;x12: Angabe der Datenversions-Nummer (mit Datum) auf der Info-Seite<br>
+&nbsp;x30: mal Technologiestudie, was mit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) CLX<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Windows 2000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in Sachen Oneline Weichzeichnen von Randbereichen, alpha Blending in beliebige<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hintergr&uuml;nde. PNG-Dateiformat?!<br>
+<br>
+<A class=blue0 name="3">offene Anforderungen f&uuml;r den Grafiker</A><br>
+<br>
+&nbsp;* w10xDG0.GIF: (22.02.01) Hebu: links oben weiss, sollte schwarz sein<br>
+&nbsp;* w10xDG1.GIF: (22.02.01) DVO: links oben weiss, sollte schwarz sein<br>
+&nbsp;* symd.bmp: Der Play-Button bitte auch in der Auspr&auml;gung disabled<br>
+&nbsp;&nbsp;&nbsp;(21.02.01) Ist im Moment der Lautsprecher, es sollte aber ein Symbol sein,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;da&szlig; &quot;PLAY&quot; hier nicht m&ouml;glich ist, weil kein Sound-Medium zur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verf&uuml;gung steht!<br>
+&nbsp;* (05.02.01) q1024d: grafisch verstehe ich die geschwungene<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linie, den &Uuml;bergang zwischen gelb und blau nicht. Die blaue Schrift<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;steht &uuml;ber dem gelb (ist also doppelt hoch?) Der Schrift&uuml;bergang sollte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eigentlich gar keinen Schatten haben!<br>
+&nbsp;&nbsp;&nbsp;(26.02.01) damit das deutlich wird habe ich das g050201.gif ins info-Verzeichnis<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gestellt.<br>
+&nbsp;* Die Sprachvariante &quot;e&quot; ber&uuml;cksichtigen und alles auch englisch be-<br>
+&nbsp;&nbsp;&nbsp;lichten! Alle Bild-Dateien mit dem Endbuchstaben &quot;d&quot; m&uuml;ssen auch als<br>
+&nbsp;&nbsp;&nbsp;&quot;e&quot; Version vorliegen! Bitte das Quellmaterial so speichern (+ Daten-<br>
+&nbsp;&nbsp;&nbsp;sicherung) da&szlig; ohne weiteres weitere Sprachversionen erzeugt werden<br>
+&nbsp;&nbsp;&nbsp;k&ouml;nnen!<br>
+&nbsp;&nbsp;&nbsp;(26.02.01)&nbsp;&nbsp;Es betrifft:<br>
+&nbsp;&nbsp;&nbsp;aboute<br>
+&nbsp;&nbsp;&nbsp;q800e<br>
+&nbsp;&nbsp;&nbsp;q1024e<br>
+&nbsp;&nbsp;&nbsp;StartUpe<br>
+&nbsp;* Die Hilfe muss neu gestaltet werden: Bisherige Hilfe findet man unter<br>
+&nbsp;&nbsp;&nbsp;.\Hilfe\Images\Hilfe*.gif<br>
+&nbsp;&nbsp;&nbsp;Dateiname neu: \Hilfe\index?.html alle Bilder und Sub-htmls<br>
+&nbsp;&nbsp;&nbsp;m&uuml;ssen im Untervereichnis Images sein! Im Hilfe Hauptverzeichnis nur<br>
+&nbsp;&nbsp;&nbsp;die Landes-speziefischen index-htmls.<br>
+&nbsp;* Die Anwendung wird in 800x600 und 1024x768 betrieben, daraus<br>
+&nbsp;&nbsp;&nbsp;ergeben sich die Aufl&ouml;sungen f&uuml;r einzelne Grafik-Hintergr&uuml;nde. (w)<br>
+&nbsp;&nbsp;&nbsp;8=800x600<br>
+&nbsp;&nbsp;&nbsp;10=1024x768<br>
+&nbsp;&nbsp;&nbsp;Grafiken ohne diese Nummern werden vom Programm selbst gezoomt.<br>
+<br>
+<A class=blue0 name="4">Messe Modus</A><br>
+<br>
+&nbsp;F&uuml;r die Pr&auml;sentation auf Messen wird ein besonderer Modus von Contutto<br>
+&nbsp;programmiert, nur 800x600 Modus. Im Messemodus startet die Anwendung<br>
+&nbsp;gleich in den (zuletzt ge-w&auml;hlten) Datenbank-Bereich durch. Alles ist<br>
+&nbsp;rein &uuml;ber die Tastatur bedienbar. Diverse Funktions-Tasten erm&ouml;glichen<br>
+&nbsp;die Bedienung rein mit der Tastatur! Start der Anwendung durch:<br>
+<br>
+&nbsp;ConTutto.exe messe<br>
+<br>
+&nbsp;Die Bedienung ist vollst&auml;ndig durch die Tastatur m&ouml;glich<br>
+<br>
+&nbsp;f5 - play next (spiele ersten/n&auml;chsten Sub-Titel zu diesem St&uuml;ck)<br>
+&nbsp;f6 - stop musik<br>
+&nbsp;f7 - leiser<br>
+&nbsp;f8 - lauter<br>
+&nbsp;f9 - vorhergehender gefundener<br>
+&nbsp;f10 - n&auml;chster gefundener<br>
+&nbsp;f11 - Info &uuml;ber den Titel<br>
+&nbsp;f12 - Trefferliste anzeigen<br>
+&nbsp;&lt;esc&gt; offene fenster schliessen<br>
+<br>
+<A class=red0 name="0">Rev 2.031 (28.03.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Im Modus &quot;messe&quot; werden einige weitere Umgebungs-Pr&uuml;fungen unterbunden.<br>
+<br>
+<A class=red0>Rev 2.030 (13.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: binlager32: Compiliert mit neuer Version. <br>
+<br>
+<A class=red0>Rev 2.029 (07.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Compiliert mit Delphi 2006.<br>
+<br>
+<A class=red0>Rev 2.028 (09.07.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: F4,Pfeil nach unten-&gt; Fehler &quot;Index unterschreitet ...&quot;<br>
+<br>
+<A class=red0>Rev 2.027 (09.07.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Bei verkleinertem Anzeigeumfang und gespeichertem Desktop-Element, kam es<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zur Anzeige eines schwarzen Notenblattes. Jetzt wird auf den ersten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Datensatz positioniert.<br>
+<br>
+<A class=red0>Rev 2.026 (08.07.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Suchbegriff &quot;Grease&quot; hatte nicht funktioniert -&gt; umgestellt auf TWordIndex<br>
+<br>
+<A class=red0>Rev 2.025 (20.02.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Compiliert mit neuestem Winamp Modul<br>
+<br>
+<A class=red0>Rev 2.024 (05.03.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Maus im Messemodus deaktiviert.<br>
+<br>
+<A class=red0>Rev 2.023 (24.06.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Nur neu compiliert, Auslieferungsart: nur die neueste EXE<br>
+<br>
+<A class=red0>Rev 2.022 (10.04.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: H&auml;ndleradressen wurden in der H&auml;ndler-Version nicht richtig angezeigt.<br>
+<br>
+<A class=red0>Rev 2.021 (19.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Datensatz-Export via &lt;Shift&gt; &lt;F4&gt; im jeweiligen Bereich,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Passwort folgt in getrennter Mail.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Es ensteht im .\system Verzeichnis die Datei WebExport.csv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(direkt mit excel &ouml;ffenbar).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Wegen der Zeilenumbr&uuml;che in den Infotexten ist die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Codierung gleich html.<br>
+<br>
+&nbsp;Info: Hebu: enth&auml;llt nur Spieldaten! Mit Hebu-Admin (ab Rev. 1.177)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;neueste Datenbasis erzeugen und die 4 Dateien via ftp Obermayer zu-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g&auml;nglich machen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obermayer: Import wie gehabt neu durchf&uuml;hren!<br>
+<br>
+<A class=red0>Rev 2.020 (14.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: wieder kompatibel zur (alten) 76!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Daten von Alexanders CD: .\CDR\system k&ouml;nnen genommen werden.<br>
+&nbsp;Neu: Musikliste (F4) (nur beim ersten Mal geht die Erzeugung sehr lange, dann auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allen Stationen (sehr?) schnell!)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Neu erzeugen erzwingen (z.B. nach manuellem reinkopieren von mehr Sounds:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Datei MitMusik.txt aus .\system l&ouml;schen!)<br>
+&nbsp;Neu: Liste(F4,F12): &lt;ENTER&gt; wechselt in die normale Anzeige und<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spielt das Teil gleich!<br>
+<br>
+<A class=red0>Rev 2.019 (12.03.02-13.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &lt;Alt&gt;&amp;&lt;F4&gt; im Messe Mode unterbunden.<br>
+&nbsp;Neu: unbenutzte Symbole werden ausgeblendet!<br>
+<br>
+<A class=red0>Rev 2.018 (11.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Es wird versucht was auf &quot;G:\&quot; zu speichern!<br>
+<br>
+<A class=red0>Rev 2.017 (11.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Beenden des Programmes war fehlerhaft.<br>
+&nbsp;Neu: F5 bis F12 wird angezeigt (noch ohne Funktion)<br>
+<br>
+<A class=red0>Rev 2.016 (06.03.02) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: EURO - Version<br>
+&nbsp;Neu: Neues Kapitel &quot;Messe Modus&quot;<br>
+<br>
+&nbsp;Info: n&auml;chste Revisions betreffen die Messe-Version<br>
+<br>
+<A class=red0>Rev 2.015 (09.10.01-10.10.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: symbol.itp wurde falsch eingelesen.<br>
+&nbsp;Bug: Pixelfehler im Rubrikfilter, sichtbar beim Move desselben<br>
+&nbsp;Bug: nun auch lauff&auml;hig, wenn Winamp nach D:\Programme\ installiert ist.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;noch besser l&ouml;sen, ev. &quot;%PROGRAMPATH%&quot; ermitteln (&uuml;berf&auml;llig!)<br>
+&nbsp;b12 : Filter &quot;Rubrik&quot; ohne Funktion!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bug: (05.03.01) M&auml;nnlein : Sind die Filter schon im Bereich &quot;Rubrik&quot; schon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;funktionsf&auml;hig?<br>
+<br>
+&nbsp;R&uuml;ckfrage: gibts noch Infos zu &quot;b03&quot;?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(auch via eMail)<br>
+&nbsp;R&uuml;ckfrage: Was macht die html Hilfe, wer belichtet die, dvo wollte hier helfen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(auch via eMail)<br>
+<br>
+&nbsp;Neu: (intern) auf anfix32 angepasst, doppelte &quot;tools&quot; entfernt<br>
+&nbsp;Neu: (intern) compiliert mit Delphi 6.01<br>
+<br>
+<A class=red0>Rev 2.014 (24.09.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;b11: wenn ein Filterfenster offen ist, und man bewegt den filter, wird<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;der Desktop mit diesem filter gezeichnet!<br>
+&nbsp;Bug: Einzeltitel lies sich nicht mit &lt;ESC&gt; schlie&szlig;en<br>
+&nbsp;Bug: Pieps, wenn man &quot;Jubil&auml;um&quot; mit &lt;ESC&gt; schloss.<br>
+<br>
+&nbsp;R&uuml;ckfrage: gibts noch Infos zu &quot;b03&quot;?<br>
+&nbsp;R&uuml;ckfrage: Was macht die html Hilfe, wer belichtet die, dvo wollte hier helfen<br>
+<br>
+&nbsp;* Neu: compiliert mit neuester Tool-Basis<br>
+<br>
+<A class=red0>Rev 2.013 (07.03.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: rechter Mausklick auf den Bereichswechselreiter oder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rechter Mausklick auf das gro&szlig;en Notenblatt/CD-Bild -&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Der &quot;titel&quot; wird im Suchbegriff des anderen Bereiches eingetragen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Die Suche wird gestartet.<br>
+<br>
+<A class=red0>Rev 2.012 (02.03.01-06.03.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: im Play-Knopf im Hebu-Bereich waren noch Funktions Fehler<br>
+&nbsp;* Bug: Trotz falscher Soundsourceeinstellung kann ein Sound (falls zuf&auml;llig in .\Musik<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vorhanden) abgespielt werden. Also: einfach Artikelnummer&lt;EinzeltitelNo&gt;.mp3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ins Musikverzeichnis kopieren!<br>
+&nbsp;x42: (23.02.01) Florian Heckl - Keine Anzeige des Preises (erst n&auml;chste Version??)<br>
+&nbsp;x31: Obermayer: Bemerkung noch anzeigen<br>
+&nbsp;x33: Obermayer: Neuerschein&uuml;bner Feld Erstellungsdatum<br>
+&nbsp;x38: (31.01.01) Bei Hebu muss &quot;CD-Track&quot; &quot;Serie&quot; lauten, hier werden alle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Titel aus dieser Serie angezeigt.<br>
+&nbsp;x39: (31.01.01) wenn man auf einen CD-Track clickt sollte dieser Titel angezeigt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;werden!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(26.02.01) es sollte die Track-Ansicht angezeigt werden!<br>
+&nbsp;b00 : defekte Volumeanzeige deaktivieren!<br>
+&nbsp;* b14: Es sind noch einige leere Datens&auml;tze in der Datenbank.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z.B. Datensatz 47, 55, 82, usw.<br>
+&nbsp;&nbsp;&nbsp;(01.03.01) es ist so, da&szlig; Tracks zu &quot;47&quot; in der TITEL.CSV vor-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;handen sind. Die CD selbst ist aber in der CD_DAT1.CSV<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NICHT vorhanden. Dies kann ich im Moment nicht aufl&ouml;sen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In der out.csv kann nach &quot;ERROR:&quot; gesucht werden, um<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solche CDs aufzufinden!<br>
+&nbsp;&nbsp;&nbsp;(06.03.01) Es wurden alle Leeren Datens&auml;tze durch Herrn M&auml;nnlein ersetzt.<br>
+&nbsp;b05: (23.02.01) Florian Heckl - auf dvo-Seite im Objekt das die CD anzeigt in den oberen Ecken keine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transparenz<br>
+&nbsp;x41: (22.02.01) Mini1.bmp wird nicht ber&uuml;cksichtigt.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(06.03.01) Andreas Filsinger, kein Handlungsbedarf, mini1.bmp nach .\Rohstoffe<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verschoben!<br>
+&nbsp;x15b: komplette Lauff&auml;higkeit OHNE CD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(06.03.01) Andreas Filsinger, seit l&auml;ngerem erf&uuml;llt<br>
+&nbsp;x12: Idee: Im Moment erfolgt die &quot;Farbe&quot; der Noten zufallsgesteuert, sollen wir Noten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aus dem gleichen Verlag immer die selbe Farbe geben (Wiedererkennungs-Effekt?).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(06.03.01) Andreas Filsinger, in ConTutto sind die Hintergrundfarben gestorben<br>
+<br>
+<A class=red0>Rev 2.011 (01.03.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Anzeige des Landes links oben.<br>
+&nbsp;* Neu: sind einzelne Titel zu lang wird &quot;...&quot; angezeigt! Einzeltitelanzeige jetzt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etwas kontrollierter.<br>
+&nbsp;* Neu: Click auf die Einzeltitel (kleine Schrift) &ouml;ffnet die gesamt-Ansicht der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tracks. Analog zur Funktion &quot;Einzeltitel&quot;.<br>
+&nbsp;* neu: Click auf den Titel-&gt;Anzeige der restlichen Felder!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bemerkung, ANzahl der cds (nochmal), Rubriken<br>
+&nbsp;* Neu: Anzeige der Rubrik(en).<br>
+&nbsp;* Neu: neben dem preis Anzahl der Cds.<br>
+&nbsp;* Neu: in der Einzeltitelansicht wird das &quot;Play&quot;-Symbol nicht mehr gezeigt.<br>
+&nbsp;* Neu: mit &lt;F3&gt; kann man eine Gesamtansicht aller Daten zu diesem Datensatz<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sichtbar machen. (nur f&uuml;r interne Zwecke)<br>
+&nbsp;* b13: (26.02.01) M&auml;nnlein : Bei der CD wir im rechten oberen Bereich die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bestellnummer eingedruckt. Sie verwenden hierf&uuml;r wahrscheinlich das Feld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;BestellNr.&quot;. Dieses Feld ist aber nur gef&uuml;llt, wenn die CD bei uns im<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shop erh&auml;ltlich ist. Es bleiben also ca. 1500 CDs ohne Bestellnummer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Im Feld &quot;Labelf&uuml;rInternet&quot; stehen mehr Informationen. N&auml;mlich Label +<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bestell-Nr. Wenn das Feld &quot;BestellNr.&quot; leer ist, dann zeige Feld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Label f&uuml;r Internet&quot; an? Damit h&auml;tten wir zumindest immer eine Info in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diesem Feld.<br>
+&nbsp;* Neu: Obermayer: Land-Filter jetzt in Funktion: Betrifft auch Import, d.h. ohne<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;neuerlichen Import keine Funktion!<br>
+&nbsp;* Info: Obermayer: L&auml;nder-Namen.englisch.[21]= in der static.txt noch &uuml;bersetzten!<br>
+&nbsp;* Neu: Obermayer: Artikelnummer wird jetzt richtig angezeigt<br>
+&nbsp;* Neu: Obermayer: Neue Logik beim Import, &Uuml;bernahme der Artikelnummer:<br>
+<br>
+&nbsp;x43: (23.02.01) M&auml;nnlein, Einzeltitelansichtfesnter sollte zoombar sein!<br>
+&nbsp;b02: (23.02.01) Florian Heckl - Mengenangabe beim Notitzblock und Einkaufskorb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noch nach Links unten setzen<br>
+&nbsp;b04: (23.02.01) Florian Heckl - Wei&szlig;er/schwarzer Rand um das Desktopobjekt bei Anzeige des CD-Covers<br>
+<br>
+<A class=red0>Rev 2.010 (26.02.01-27.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Einf&auml;rbung der Notenbl&auml;tter entf&auml;llt!<br>
+&nbsp;* Neu: gro&szlig;es Artikel-Blatt ist jetzt transparent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hat keinen Rahmen mehr.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hat keinen Schatten mehr.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hat eine festbleibende Gr&ouml;&szlig;e.<br>
+&nbsp;* Bug: Drag-Bereich der Mini-Noten war falsch!<br>
+&nbsp;* Bug: Lief nicht mehr bei Aufl&ouml;sungen &gt;1024x768<br>
+&nbsp;* Bug: Nummern im Notiz/Bestellbereich waren falsch positioniert!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b12: (26.02.01) Andreas Filsinger, Anzahl der Noten im Warenkorb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oder Notiz richtig positionieren<br>
+&nbsp;* Neu: BACK1-hebu.bmp als back0.bmp eingespielt, leider musste ich die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gr&ouml;&szlig;en BEIDER Dateien neu setzen: Ist jetzt 270x400 Pixel, Design<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bei beiden aufeinander angepasst.<br>
+<br>
+&nbsp;* Info: Der Modus 640x480 entf&auml;llt!<br>
+&nbsp;* symd.bmp: (21.02.01) Filter &quot;Rubrik&quot; bitte auf den Standard der anderen Filter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;berichtigen.<br>
+&nbsp;* symd.bmp: (22.02.01) Die farbigen Filter habe ich eingef&uuml;gt Bitte beachten, ev.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leicht andere Position.<br>
+&nbsp;* (05.02.01) q1024d: Bitte durchg&auml;ngig die Schatten setzten. Nicht einmal tiefliegend,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dann wieder hochliegend.<br>
+&nbsp;* (05.02.01) q1024d: Buttons sind niemals tiefliegend (option,Ende)<br>
+&nbsp;* Im Notiz und Bestellbereich einen Platz f&uuml;r die Anzahl der St&uuml;cke<br>
+&nbsp;&nbsp;&nbsp;vorsehen.<br>
+&nbsp;&nbsp;&nbsp;(05.02.01) ich bitte um Beachtung oder Erkl&auml;rung<br>
+&nbsp;* (05.02.01) q1024d: Wenn man konzequent ist m&uuml;sste man den ganzen Hebu-Bereich in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blau designen ... oder ? ...<br>
+<br>
+<A class=red0>Rev 2.009 (23.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: (23.02.01) M&auml;nnlein : Titel.csv wird vor dem Import sortiert, da vorkommt, da&szlig; Tracks zugeh&ouml;rig<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zu einer CD nicht unbedingt ohne &quot;L&uuml;cken&quot; (mit anderen CDs) ausgegeben werden.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Damit die sortierung nichts zusammenw&uuml;rfelt werden die Tracks noch mit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;einer Nummer versehen -&gt; out0.csv!<br>
+<br>
+&nbsp;b13: (23.02.01) Herr M&auml;nnlein - Desktop-symbol updaten, wenn exe anders lokalisiert ist!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eigentlich ist der Fehler, dass das Symbol nicht bei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;der deinstallation gel&ouml;scht wird.<br>
+&nbsp;b12: (23.02.01) Herr M&auml;nnlein - Wenn gar kein Bild angegeben, dann wird dennoch nach<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dem Bild gesucht.<br>
+<br>
+<A class=red0>Rev 2.008 (22.02.01-23.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Import-Lauf nun wesentlich &uuml;berarbeitet und beschleunigt.<br>
+&nbsp;* Info: Aufbau der out.csv (erzeugt durch den ersten DVO-Schritt):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) &quot;Cdnr&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Eindeutige Nummer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) &quot;CD Titel&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Name der CD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) &quot;Land&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Land<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) &quot;Internet&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: In diesem Feld stehen Labelname und Bestellnummer als Infofeld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) &quot;Kommentar&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Beschreibung zu einzelnen CDs durch die Redaktion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6) &quot;Cover1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Bildname des dazugeh&ouml;rigen CD-Covers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7) &quot;Inhaltskuerzel&quot;&nbsp;&nbsp;&nbsp;&nbsp;: Rubriken als K&uuml;rzel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8) &quot;Lieferant&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Hier steht unser Lieferant f&uuml;r den Shop. Bei alter CD-ROM war das so gel&ouml;st, wenn hier etwas drinsteht, dann konnte der Kunde die CD &uuml;ber uns bestellen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9) &quot;Einzelpreis&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Momentaner Preis der CD bei uns im Shop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10) &quot;BestellNr.&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Bestellnummer noch einmal separat zum Feld Labelf&uuml;rInternet. Ist nur gef&uuml;llt, wenn wir diese CD im Shop haben.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11) &quot;Anzahl&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Wenn es sich um eine Mehrfach-CD handelt, dann ist hier die Anzahl der CDs eingetragen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12) &quot;Neuheit&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Ist hier eine 1 eingetragen, dann handelt es sich um eine Neuheit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13) &quot;Erstellungsdatum&quot; : Erstellungsdatum des Datensatzes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14) &quot;Eins&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Verkn&uuml;pfung mit Labeldatenbank (K&uuml;rzel in Feld &quot;Eins&quot; ist die Verkn&uuml;pfung)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15) &quot;EURO&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Preis umgerechnet in Euro<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16) &quot;Summe_Laufzeit&quot;&nbsp;&nbsp; : Gesamtlaufzeit der CD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17) &quot;Einzeltitel 1|Komponist 1|Arrangeur 1|Dirigent 1|Orchester1 ¦Einzeltitel 2|...&quot; : Tracks-Info (suchbar!)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18) &quot;Laufzeit 1¦Laufzeit 2¦...&quot; : Tracks-Info (nicht suchbar!)<br>
+<br>
+&nbsp;* Neu: &quot;name.bmp&quot; jetzt eingebunden.<br>
+&nbsp;* Neu: Jede CD hat nur noch einen Datensatz! Die Tracks stehen jetzt in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&Uuml;ber die Komposition&quot; max 25k Platz! Import-Lauf entsprechend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modifiziert. Die Track-Einzeldauer steht in &quot;&Uuml;ber den Arrangeur&quot;.<br>
+&nbsp;* Neu: Alle Tracks werden jetzt auf der CD angezeigt! (Noch einige Anzeige-M&auml;ngel bei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Platzmangel m&ouml;glich)<br>
+&nbsp;* Neu: &quot;Einzeltitel&quot; enthalten jetzt alle verf&uuml;gbaren Daten.<br>
+&nbsp;* Neu: kein intro.mp3 mehr im Musik-Ordner.<br>
+<br>
+&nbsp;* Bug: Position f&uuml;r LED im Eingabebereich korrigiert.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ACHTUNG: &Auml;nderungen im symd.bmp waren notwendig, bitte r&uuml;ck&uuml;bertragen!<br>
+&nbsp;* Bug: Position des Wartebalkens bei der Volltextsuche jetzt korrigiert!<br>
+<br>
+&nbsp;x00: Neues ConTutto-Outfit (Design 2.0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mal alle WinAmp-Skins durchsehen!<br>
+&nbsp;x00: CD-Titel,Einzel-Titel, Komponist , Arranger, Dirigent,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kapelle/Orchester, Artikel-No, Label<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die Ansicht der Daten noch verbessern!<br>
+&nbsp;x00: Obermayer: Schwierigkeitsgrad weg,<br>
+&nbsp;x00: Obermayer: Anzeige der CD quadratisch<br>
+&nbsp;x00: Obermayer: dauerhaft angezeigte Treffer-Tabelle wobei<br>
+&nbsp;x00: Obermayer: zuviele identische Treffer, wenn nur nach der Titelsuche<br>
+&nbsp;x00 : (31.01.01) Artist fehlt bei Track-Info<br>
+&nbsp;x00 : (31.01.01) Einzel-Track &quot;Dauer&quot; fehlt im Datensatz oder ich<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;habes es nicht gefunden.<br>
+&nbsp;x00: (22.02.01) eine CD : ein Datensatz!<br>
+<br>
+<A class=red0>Rev 2.007 (21.02.01-22.02.01) Andreas Filsinger</A><br>
+<br>
+* (05.02.01) symd: Bitte kein Antialiasing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in diese Blue-Screen-Farbe. Sondern in die &Uuml;berwiegende Farbe = das gelb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vom Desktop!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!!Die Blue-screen Farbe selbst darf niemals verwendet werden.!!<br>
+&nbsp;&nbsp;(18.02.01) ups, Blue-screen Farbe massiv verwendet, man kann den Effekt durch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transparenz der Schriften sehen.<br>
+* Also die Philosophie des Desktops ist so: es gibt die (bisher blauen)<br>
+&nbsp;&nbsp;&quot;Sonderfunktionen&quot;: wenn man diese dr&uuml;ckt, &ouml;ffnet sich ein neues info-fenster<br>
+&nbsp;&nbsp;(-&gt; Hilfe sollte auch ein blaues Teil werden!)<br>
+&nbsp;&nbsp;dann gibt es die gelben<br>
+&nbsp;&nbsp;&quot;Filter&quot;: sie schr&auml;nken das Suchergebnis ein!<br>
+&nbsp;&nbsp;dann gibt es funktionelle symbole<br>
+&nbsp;&nbsp;gro&szlig;es symbol, papierkorb, notiz und bestellablage<br>
+&nbsp;&nbsp;(05.02.01) der funktionelle Unterschied sollte fablich ausgearbeitet werden,<br>
+&nbsp;&nbsp;ich kann hier keinen Unterschied erkennen. Jetzt ist alles gelb und die verwirrung<br>
+&nbsp;&nbsp;ist komplett. Bitte als Inspiration mal die Skins von winamp durchsehen!<br>
+<br>
+&nbsp;* Neu: Wieder unterschiedliche Hintergrundbilder f&uuml;r die unterschiedlichen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bereiche.<br>
+&nbsp;* Neu: Filter &quot;Rubrik&quot;, nur grafisch (noch) keine Funktion. Wird wie der Feld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter funktionieren, unterschiedliche Runriken in den beiden Bereichen<br>
+&nbsp;* Neu: Rubriken-Texte &quot;DVO&quot; eingepflegt (internationaler Text 143, ab hier wieder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uuml;bersetzen!).<br>
+&nbsp;* Neu: Covers werden jetzt angezeigt: Beispiel: Suchbegriff &quot;convergence&quot;<br>
+<br>
+&nbsp;* Bug: Click-Bereich der Umschaltkn&ouml;pfe war zu klein bemessen.<br>
+&nbsp;* Bug: (21.02.01) Florian Heckl : Ausserdem bitte ich zu beachten, dass die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Icons (Neuerscheinungen, Feld...) eine Kante besitzen, an der sie sich<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mit den Aktivierungssymbolen (H&auml;ckchen) zsammensetzen. Die Kante wird<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vom Programm nicht erfasst.<br>
+&nbsp;* Bug: Eingabebreite wurde nicht ber&uuml;cksichtigt.<br>
+&nbsp;* Bug: Treffer Hintergrundfarbe war &quot;grau&quot;.<br>
+&nbsp;* Bug: Treffer-Anzeigel&auml;nge wurde nicht ber&uuml;cksichtigt.<br>
+&nbsp;* Bug: Import: Bei der Fehlerausgabe wurde keine CD-Nummer mit angegeben<br>
+&nbsp;* Bug: Import: Die &quot;N&quot; Dateien werden jetzt selbstt&auml;tig umbenannt, und nach<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.\System verschoben. In der Regel reicht jetzt ein Neustart von<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contutto um mit den neuen Daten zu arbeiten.<br>
+&nbsp;* Bug: Beim Beenden der Anwendung gab es noch einen Warn-Ton.<br>
+<br>
+&nbsp;* Info: Jede CD nur ein Datensatz kommt erst in der n&auml;chsten Version!<br>
+<br>
+<A class=red0>Rev 2.006 (17.02.01-19.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* (05.02.01) symd: fehlt: Umschaltersymbol hebu/dvo<br>
+&nbsp;* Alle restlichen Symbole umstellen<br>
+&nbsp;&nbsp;&nbsp;(05.02.01) LEDs fehlen!<br>
+&nbsp;* (05.02.01) bitte die richtigen Dateinamen verwenden. Sonst ist alles ein<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ratespiel.<br>
+&nbsp;* (05.02.01) q1024d: Mir ist nicht klar, wie man in die bereich kommt. Hier deutlicher<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;machen wo die schaltfl&auml;chen sind.<br>
+&nbsp;* (05.02.01) q1024d: Die schrift &quot;eMail&quot; &quot;webSite&quot; &quot;info&quot; bitte unterstreichen, so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;da&szlig; den Benutzer klar wird, da&szlig; es sich um Links handelt.<br>
+&nbsp;* (05.02.01) q1024d: Farbe des Hebu-Bereiches (dunkles rot) ist irgendwie unpassend<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bitte mal heller oder dunkler machen.<br>
+&nbsp;* In den Minisymbolen ein &quot;Schlie&szlig;en&quot; Symbol vorsehen<br>
+&nbsp;* (05.02.01) Bitte nur Verlustfreie formate liefern. (gif oder bmp).<br>
+&nbsp;* (05.02.01) Gramatikfehler &quot;con tutti&quot; bitte korrigieren<br>
+&nbsp;* (05.02.01) symd: Bitte kein Symbol eines EDV-Magnet-Bandes verwenden (Datenspeicher),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sondern ein als solches erkennbares CD-Symbol.<br>
+&nbsp;* (05.02.01) symd: die &quot;eins vor&quot; &quot;eins zur&uuml;ck&quot; symbole sind doppelpfeile, dies<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;symbolisiert seitenweises Bl&auml;ttern was hier nicht m&ouml;glich ist. Bitte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;durch einfache Pfeile ersetzen. First/Last ist OK.<br>
+&nbsp;* (05.02.01) symd: Sucheingabe Symbol: Status-LED vergessen. Suchbegriff nicht gefunden,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ durch filter zur&uuml;ckgesetzt usw. M&ouml;gliche Farben siehe symd.bmp.<br>
+&nbsp;* (05.02.01) symd: Notiz und Bestellablage sind keine Buttons!<br>
+&nbsp;* (05.02.01) symd: fehlt: gef&uuml;llte Notizablage<br>
+&nbsp;* (05.02.01) symd: fehlt: gef&uuml;llte Warenablage<br>
+&nbsp;* (05.02.01) symd: Thema Filter:<br>
+&nbsp;&nbsp;&nbsp;diese m&uuml;ssen noch ein L&auml;mpchen haben das als Satusanzeige dient.<br>
+&nbsp;&nbsp;&nbsp;filter sind keine Buttons! eher Desktopobjekte oder Icons.<br>
+&nbsp;&nbsp;&nbsp;Wenn An/Aus ohne Aufruf des Filters selbst erfolgend soll, bitte Objekte<br>
+&nbsp;&nbsp;&nbsp;zeichnen, die auf sich selbst einen AN/AUS Knopf beinhalten.<br>
+&nbsp;* In Notiz/Bestell-Symbol grafisch ber&uuml;cksichtigen, da&szlig; es sich um<br>
+&nbsp;&nbsp;&nbsp;die Ecke des VErschiebbaren Fensterbereiches handelt.<br>
+&nbsp;&nbsp;&nbsp;(05.02.01) ich bitte um Beachtung oder Erkl&auml;rung<br>
+&nbsp;* Bei dem Lautst&auml;rkeregler einen &quot;Volume&quot; &quot;Track&quot; &quot;Volume&quot; &quot;Spur&quot;<br>
+&nbsp;&nbsp;&nbsp;vorsehen! Die entsprechenden Koordinaten k&ouml;nnen in VolWay.ini<br>
+&nbsp;&nbsp;&nbsp;editiert werden!<br>
+&nbsp;&nbsp;&nbsp;(05.02.01) ich bitte um Beachtung oder Erkl&auml;rung<br>
+&nbsp;* Der Play-Button hat keinen Lautst&auml;rke bereich<br>
+&nbsp;* Neu: Import aus FileMaker jetzt festgelegt:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITEL.CSV<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=========<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) &quot;Cdnr&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Eindeutige Nummer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) &quot;CD Titel&quot;&nbsp;&nbsp;&nbsp;&nbsp; : Name der CD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) &quot;Titel&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Einzeltitel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) &quot;Komponist&quot;&nbsp;&nbsp;&nbsp;&nbsp;: Eingabe = Nachname, Vorname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) &quot;Arrangeur&quot;&nbsp;&nbsp;&nbsp;&nbsp;: Eingabe = Nachname, Vorname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6) &quot;Dirigent&quot;&nbsp;&nbsp;&nbsp;&nbsp; : Eingabe = Nachname, Vorname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7) &quot;Orchester&quot;&nbsp;&nbsp;&nbsp;&nbsp;: Name Orchester<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8) &quot;Laufzeit&quot;&nbsp;&nbsp;&nbsp;&nbsp; : Uhrzeitfeld (Laufzeit Einzeltitel)<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CD_DAT1.CSV<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;===========<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) &quot;CD Titel&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Name der CD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) &quot;Cdnr&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Eindeutige Nummer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) &quot;Land&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Land<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) &quot;Internet&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: In diesem Feld stehen Labelname und Bestellnummer als Infofeld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) &quot;Kommentar&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Beschreibung zu einzelnen CDs durch die Redaktion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6) &quot;Cover1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Bildname des dazugeh&ouml;rigen CD-Covers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7) &quot;Inhaltskuerzel&quot;&nbsp;&nbsp;&nbsp;&nbsp;: Rubriken als K&uuml;rzel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8) &quot;Lieferant&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Hier steht unser Lieferant f&uuml;r den Shop. Bei alter CD-ROM war das so gel&ouml;st, wenn hier etwas drinsteht, dann konnte der Kunde die CD &uuml;ber uns bestellen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9) &quot;Einzelpreis&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Momentaner Preis der CD bei uns im Shop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10) &quot;BestellNr.&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Bestellnummer noch einmal separat zum Feld Labelf&uuml;rInternet. Ist nur gef&uuml;llt, wenn wir diese CD im Shop haben.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11) &quot;Anzahl&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Wenn es sich um eine Mehrfach-CD handelt, dann ist hier die Anzahl der CDs eingetragen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12) &quot;Neuheit&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Ist hier eine 1 eingetragen, dann handelt es sich um eine Neuheit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13) &quot;Erstellungsdatum&quot; : Erstellungsdatum des Datensatzes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14) &quot;Eins&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Verkn&uuml;pfung mit Labeldatenbank (K&uuml;rzel in Feld &quot;Eins&quot; ist die Verkn&uuml;pfung)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15) &quot;EURO&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Preis umgerechnet in Euro<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16) &quot;Summe_Laufzeit&quot;&nbsp;&nbsp; : Gesamtlaufzeit der CD<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUT.CSV<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=======<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) .. 8) aus TITEL.CSV<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) .. 16) aus CD_DAT1.CSV<br>
+<br>
+&nbsp;* Neu: &quot;[]&quot;&quot;&quot; sind g&uuml;ltige Eingabezeichen!<br>
+&nbsp;* Neu: Positions-Templates<br>
+&nbsp;* Fix: Memoryleak in &quot;HebuBase&quot;<br>
+&nbsp;* Fix: &quot;X&quot; im Hauptmen&uuml; ist nicht mehr m&ouml;glich!<br>
+&nbsp;* Fix: Sanduhr z.B. beim &quot;DVO 2&quot; Import<br>
+&nbsp;x00: Obermayer: Preise<br>
+<br>
+<A class=red0>Rev 2.005 (05.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: StartUpD.bmp so OK!<br>
+&nbsp;* ACHTUNG: umfassenden Kommentare (markiert durch &quot;(05.02.01)&quot;) in den Grafiker-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anforderungen.<br>
+<br>
+<A class=red0>Rev 2.004 (01.02.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Desktop-Positions-Vorgaben wurden nicht mitgeliefert!<br>
+&nbsp;* Bug: Den ersten &quot;DVO&quot;-Importschritt vergessen, siehe aktualisierte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hinweise zum Import der Obermayer-Daten! Jetzt die beiden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Schritte ansteuerbar gemacht.<br>
+&nbsp;* Bug: SoundKnopf war nur im Hebu-Bereich sichtbar.<br>
+&nbsp;* Neu: DVO Import-Schritt 1 nun auch ins Programm integriert.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entsprechende Taste &quot;DVO 1&quot; integriert.<br>
+&nbsp;* Neu: (Programmintern) Desktop-Positions-Vorgaben-Datei hat jetzt neue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Namen, dem allgemeinen Standard angepasst.<br>
+<br>
+&nbsp;Datenimport DVO (Beschreibung, aktualisierte Version)<br>
+&nbsp;=====================================================<br>
+<br>
+&nbsp;Die Erzeugung der Obermayer-Datenbank kann nun selbst erfolgen! Das Import<br>
+&nbsp;Modul ist in Contutto integriert. So kann immer mit den aktuellsten daten<br>
+&nbsp;gearbeitet werden.<br>
+<br>
+&nbsp;1) Im Filemaker alle Datenfelder exportieren in der reihenfolge, wie<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sie angeboten werden. Es muss nach C:\programme\contutto exportiert<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(bzw kopiert) werden. Es m&uuml;ssen 2 Datenbanken exportiert werden:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cd_dat1.csv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;titel.csv<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Datei-&gt;Import/Export-&gt;Daten exportieren-&gt;Dateityp (Text mit Komma)-&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Zu weiteren Einstellungen bitte cd_dat1.gif und titel.gif beachten (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Alle in .\infos Ordner!).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Vom Contutto-Import Modul werden diese beiden beiden Dateien zu einer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Zusammengef&uuml;hrt. cd_dat1.csv und titel.csv sind beispielhaft im<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.\infos Verzeichnis gespeichert!<br>
+&nbsp;2) Contutto starten, in den hebu-Bereich _&gt;internet-&gt;&quot;DVO 1&quot;-&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;die Datei out.csv wird neu erzeugt (Summe der cd_dat1.csv und titel.csv)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;das Fenster schlie&szlig;t sich selbstst&auml;tig. Nun &quot;DVO 2&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;der Import l&auml;uft nun, danach findet man in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:\programme\contutto 4 neue Datein, diese folgenderma&szlig;en kopieren<br>
+&nbsp;&nbsp;&nbsp;&nbsp;N artikel1.bin kopieren nach .\system\artikel1.bin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;N Texte1.BLA kopieren nach .\system\Texte1.BLA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;N WSI1.bin kopieren nach .\system\WSI1.bin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;N WSS1.bin kopieren nach .\system\WSS1.bin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(jeweils das N wegnehmen-&gt;alte daten &uuml;berschreiben)<br>
+&nbsp;3) die ber&uuml;hmenten 2 deinstallations-H&auml;kchen, danach neu starten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Ab sofort wird mit der neuen Datenbank gearbeitet.<br>
+<br>
+<A class=red0>Rev 2.003 (31.01.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;x00: Obermayer: neues Symbol -&gt; &quot;CD-Titel&quot; klick darauf enth&auml;lt die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Track-Ansicht (alle Tracks dieser CD), Info &uuml;ber die CD,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und alle Tracks<br>
+&nbsp;x00: Obermayer: Filter-reaktivieren!<br>
+<br>
+<br>
+<A class=red0>Rev 2.002 (29.01.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: &quot;Pieps&quot;, wenn man die Datenbank &ouml;ffnete<br>
+&nbsp;b05: Nach einem Drop sollte das Symbol ganz oben in der Z-List stehen so wird<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;das gerade bewegte Symbol ggf. von einem anderen &uuml;berdeckt! Das darf nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sein. Jetzt OK.<br>
+&nbsp;---- Nachtrag (schon erledigter)<br>
+&nbsp;x00: Obermayer: Sound-Button<br>
+&nbsp;x22: Mehr als 5000 Suchtreffer, mal sehen warum es limitiert ist:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jetzt auf 15.000 limitiert (schon seit 1.055)<br>
+<br>
+<A class=red0>Rev 2.001 (23.01.01-26.01.01) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Filter waren unter Umst&auml;nden nicht sichtbar!<br>
+&nbsp;* Bug: Bereichswechsel war nicht m&ouml;glich!<br>
+&nbsp;* Bug: Es fehlten im Partnerbereich &quot;Sound&quot;, &quot;Jubi&quot;, und &quot;InterNet&quot;<br>
+&nbsp;* Bug: Bei schlie&szlig;en des Filters &quot;Musik&quot; wurde der Desktop neu geladen!<br>
+&nbsp;-------------------------------------------------------------------------------<br>
+<br>
+&nbsp;* Neu: gleicher Hintergrund in beiden Bereichen (w10xDGx.gif)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Format jetzt gif, wegen Speicherknappheit! Bitte nur in der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quell-Datei (liegt als BMP vor) arbeiten, und jeweils<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die gif Datei neu bearbeiten.<br>
+&nbsp;* Neu: compiliert mit neuester winamp Ansteuersoftware!<br>
+&nbsp;* Alt: Desktop-Schemata fallen weg, Code entfernt!<br>
+&nbsp;* Alt: &quot;Schwarz-Wei&szlig;&quot; Modus entfernt!<br>
+&nbsp;* Neu: x00: Obermayer: das rosa kommt nicht so gut ...<br>
+<br>
+// x16: Abpr&uuml;fen der Festplatten-Gr&ouml;&szlig;e vor dem Kopieren!<br>
+<br>
+<A class=red0>Rev 2.000 (12.12.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Erste gemeinsame Programm - (&quot;0&quot;) - Version Obermayer / HeBu<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pr&uuml;fung auf theoretische Machbarkeit. Bilder, CD-Suche an sich,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Startschirm, Hauptmen&uuml;-Schirm, individueller Desktop.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Farb-Schemen deaktiviert. Noch keine Design-Umstellung auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Design 2.0 (seri&ouml;ser). Diverse BMPs wegen der Online-Version<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eingespart. (640x480 und 800x600 Modus deaktivert, bitte 1024x768<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oder gr&ouml;&szlig;er verwenden!)<br>
+<br>
+&nbsp;INSTALLATION<br>
+&nbsp;============<br>
+<br>
+&nbsp;* entpacken in ein frisches Verzeichnis. kompletten Inhalt dann auf eine<br>
+&nbsp;&nbsp;&nbsp;CDR-Brennen oder von diesem Verzeichnis heraus ConTutto.exe starten.<br>
+<br>
+<A class=red0>Rev 1.069 (07.10.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: kann jetzt auch mit dem neuesten WinAmp verwendet werden! Es war ab 2.20 nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mehr m&ouml;glich den WinAmp zuverl&auml;ssig zu verwenden. Ich habe halt immer nur die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.20er installiert gehabt - dies kann man den Kunden aber nicht aufzwingen. Bitte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;den neuesten winamp-Setup auf die CD-R raufkopieren!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Die Datei nach winamp.exe umkopieren! So k&ouml;nnen wir dort immer den neuesten Winamp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ausliefern!<br>
+<br>
+<A class=red0>Rev 1.068 (06.10.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Die Datenbank wird jetzt auch nach C:\ kopiert, wenn sie dort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&auml;lter ist als die eigene Version auf .\system.<br>
+<br>
+<A class=red0>Rev 1.067 (27.08.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Das Hilfe-Formular wurde bei &quot;Ende&quot; nicht mitgeschlossen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ev. weiterer Grund f&uuml;r das &quot;Einfrieren&quot;. Jedoch seit der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rev. 1.066 nicht mehr aufgetaucht.<br>
+<br>
+<A class=red0>Rev 1.066 (26.08.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Listen-Ansicht der Noten nach einer Suchabfrage<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;war zum Teil &quot;eingefrohren&quot;. Jetzt endlich im Rahmen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;der Integration in den HeBu-Admin gefunden.<br>
+&nbsp;&nbsp;&nbsp;b04: einfreiren des Programmes bei offener Listenansicht<br>
+<br>
+<A class=red0>Rev 1.065 (14.04.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Bisher MUSSTE f&uuml;r einen Sound die Datei &lt;ArtikelNo&gt;.mp3 existieren!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Im 2. Schritt wurden &lt;ArtikelNo&gt;*.mp3 der Play-List zugef&uuml;gt - Jetzt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ge&auml;ndert:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Es wird sofort nach &lt;ArtikelNo&gt;*.mp3 gesucht! Die Liste wird<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sortiert - dann die erste Datei abgespielt!<br>
+&nbsp;* Neu: aaargartr+ filter feld-komponist, Grund Durch den Bindestrich<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kommt nicht das ganze wort vor - deshalb hat es der Filter aus<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sortiert. Jetzt werden alle Wortanf&auml;nge gefunden. OK, kann<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leider neue Probleme mit sich bringen. Bitte pr&uuml;fen!<br>
+<br>
+<A class=red0>Rev 1.064 (10.04.00-12.04.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: auf manchen CDs war der A0000 gespeichert! Das muss aber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A0001 heissen. Jetzt umgangen!<br>
+&nbsp;* Bug: H&auml;ndler-Passwort wurde nicht in den Willkommen-Dialog<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&uuml;ckgespeichert!<br>
+&nbsp;* Bug: Nach InterNet Update war die Notenanzeige undefiniert!<br>
+&nbsp;* Bug: Auf die Verlage wurde u.U. schon vor dem ersten Erzeugen des<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formulars zugegriffen!<br>
+&nbsp;&nbsp;&nbsp;b04: Bei Beenden der Applikation von aussen wird das Programm nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;korrekt beendet. Genau wie auch beim Beenden des HauptMen&uuml;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fensters mit &quot;Alt+F4&quot;.<br>
+&nbsp;!!!!<br>
+&nbsp;* Bug: &quot;aargaard, mal suchen mit Filter&quot;: kein Fehler gefunden -&gt; bitte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R&uuml;cksprache<br>
+&nbsp;* Bug: &quot;grainger suchen...&quot;: kein Fehler gefunden -&gt; bitte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R&uuml;cksprache<br>
+&nbsp;* bug: &quot;00000.mp3, 00000a.mp3 usw. oder 00000a.mp3 00000b.mp3&quot;: kein Fehler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gefunden -&gt; bitte R&uuml;cksprache<br>
+&nbsp;----<br>
+&nbsp;* Neu: check von &quot;QuickTime&quot; / &quot;Immedia&quot; nur noch wenn wirklich notwendig!<br>
+&nbsp;* Neu: Verlage.bin kann jetzt von &quot;C:\Programme\..&quot; geladen werden<br>
+&nbsp;* Neu: Vor dem InterNet Abruf werden die Verlage freigegeben!<br>
+&nbsp;* Neu: die Verlage werden erst beim ersten Bedarf geladen!<br>
+<br>
+<A class=red0>Rev 1.063 (01.04.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Die Rev. 1.054 bis 1.061 machte Probleme, wenn auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\programme\hebu\ eine hebu.exe aus dem InterNet<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;liegt.<br>
+<br>
+<A class=red0>Rev 1.062 (31.03.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Die Applikation konnte sich nicht richtig beenden,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wenn Sie feststellten, dass es noch eine Version<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auf C:\ gab. Dieser Fehler wurde in der Rev.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.054 oder 1.055 eingeschleppt.<br>
+&nbsp;* Bug: Wenn die Applikation feststelle, dass sie schon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gestartet ist konnte sie sich nicht richtig beenden.<br>
+&nbsp;* Bug: lief nicht zusammen mit Versionen vor der Einf&uuml;hrung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;der Jubil&auml;en (z.B. CDR Rev. 1.044).<br>
+&nbsp;---<br>
+&nbsp;* Neu: Ist beim Start des Programmes die CD nicht drin,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;so wird eine entsprechende Aufforderung gegeben!<br>
+&nbsp;* Neu: L&auml;uft die Applikation von &quot;C&quot; wird eine Verkn&uuml;pfung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auf dem Desktop erstellt. Das HeBu-&Auml;ffchen hat den<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Untertitel &quot;HeBu CDR&quot;.<br>
+&nbsp;* Neu: Es wird auch eine Verkn&uuml;pfung f&uuml;r das Start-Men&uuml;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;erstellt. Auch im Start Men&uuml; den Namen &quot;HeBu CDR&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Die CD ist weiterhin f&uuml;r den Ablauf notwendig!<br>
+&nbsp;* Neu: Bei der Angabe der Revisions-Nummer (HeBu Logo Click)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wird auch angegeben, wo die Applikation l&auml;uft, und<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wo sich die Daten befinden. Ev. besser bei der<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnose von Fehlern.<br>
+<br>
+<A class=red0>Rev 1.061 (30.03.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: OK - Datei im InterNet anlegen war falsch programmiert.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;cwd&quot; jetzt hinzugef&uuml;gt.<br>
+&nbsp;* Neu: Mehrstufige Updates (z.B. von 1 auf 5) laufen jetzt in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;einem Durchlauf.<br>
+<br>
+<A class=red0>Rev 1.060 (29.03.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: TimeOut bei der &Uuml;bertragung jetzt erst nach 120 sec<br>
+&nbsp;* Neu: Fehlermeldungen werden nun auch auf &quot;Bericht.txt&quot; aus-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gegeben.<br>
+<br>
+<A class=red0>Rev 1.059 (10.03.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Anpassung der Zugangsdaten an den neuen Provider<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Nettropolis&quot;.<br>
+<br>
+<A class=red0>Rev 1.058 (02.02.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Neu: Sortieren f&uuml;r die Listenansicht jetzt schneller fertig<br>
+<br>
+<A class=red0>Rev 1.057 (05.01.00) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Absturz, wenn serial.txt nicht vorhanden!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Jetzt Serien-Nummer = 0000-0000)<br>
+<br>
+<A class=red0>Rev 1.056 (22.12.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* NEU: portiert auf Delphi 5 (nur als Zwischenrelease) keine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Auml;nderungen / Erweiterungen<br>
+<br>
+<A class=red0>Rev 1.055 (14.10.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Info: Volltextsuche auch ohne CDR im Laufwerk m&ouml;glich!!!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(geht doch - hatte ich vergessen)<br>
+&nbsp;* Bug: Volltextsuche in Verbindung mit Feld-Filter<br>
+&nbsp;* Feld-Filter: Anzeige-Logik negiert (dadurch demarkieren aller<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Felder nicht mehr m&ouml;glich)<br>
+&nbsp;* Suchbeschr&auml;nkung auf 15000 Treffer erweitert<br>
+&nbsp;* Bug: &quot;music.&quot; Suchbegriff war Folgefehler weil &quot;MUSIC&quot; &gt;7000 mal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vorkommt -&gt; gr&ouml;&szlig;er als 5000, laden somit nicht m&ouml;glich.<br>
+<br>
+<A class=red0>Rev 1.054 (12.10.99-13.10.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* wenn nichts gefunden wurde, erscheint eine Meldung!<br>
+&nbsp;* Volltextsuche und Filterlauf ist jetzt auch mit Tastatur abbrechbar!<br>
+&nbsp;* Bug: CD-Wechsel bei Sound-Bibliothek hatte nicht funktioniert!<br>
+&nbsp;* Volltextsuche in den Feldern<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Land<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Schwer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Titel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Komponist<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arranger<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serie<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ArtikelNo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verlag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_Bemerkung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProbeStimme<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aufnahme<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_Komposition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_UeberKomponist<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_UeberArranger<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sparte<br>
+<br>
+&nbsp;&nbsp;ZUR INSTALLATION<br>
+&nbsp;&nbsp;================<br>
+<br>
+&nbsp;&nbsp;neue Files (im he1054.zip) f&uuml;rs system<br>
+<br>
+&nbsp;&nbsp;symd.bmp<br>
+&nbsp;&nbsp;syme.bmp<br>
+&nbsp;&nbsp;static.txt<br>
+<br>
+<A class=red0>Rev 1.053 (10.07.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Meldung &quot;Habe nix finde k&ouml;nne &quot; weg<br>
+&nbsp;* Bug: in der Suchmaschine<br>
+&nbsp;* Bug: wenn &quot;-&quot; im Autor<br>
+&nbsp;* Bug: wenn Autor nicht gefunden wird der Filter ausgeschaltet<br>
+<br>
+<A class=red0>Rev 1.052 (09.07.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* H&auml;ndler-PWD-Einstellung auf name-Formular verschoben<br>
+&nbsp;* Suche in den Jubil&auml;en jetzt mit ENTER oder dem &quot;&gt;&quot;<br>
+&nbsp;&nbsp;&nbsp;Button, notwendig, da Datenbank jetzt zu gro&szlig; f&uuml;r<br>
+&nbsp;&nbsp;&nbsp;automatisierte Suche!<br>
+&nbsp;* neue &quot;autoren.txt&quot;!<br>
+<br>
+&nbsp;NACHTRAG zu 1.051: symd.bmp verbessert, einzelne Pixel Artefakte im<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TrueColor-Modus waren sichtbar. in he1051.zip ent-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;halten!<br>
+<br>
+<A class=red0>Rev 1.051 (06.07.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Intro-Sound f&uuml;r Applikation, .\Musik\intro.mp3<br>
+&nbsp;&nbsp;&nbsp;wird gespielt wenn der datenbank-Part gestartet wird!<br>
+<br>
+<A class=red0>Rev 1.050 (30.06.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Hilfe-Seite war zu klein<br>
+&nbsp;* englische Version f&uuml;r &quot;Jubil&auml;um&quot;<br>
+&nbsp;* gr&ouml;&szlig;ere Dialoge f&uuml;r Jubil&auml;um<br>
+&nbsp;* redesign der Funktions-Kn&ouml;pfe, damit sie nicht<br>
+&nbsp;&nbsp;&nbsp;mit Filtern verwechselt werden k&ouml;nnen (Funktionen jetzt blau!)<br>
+&nbsp;&nbsp;&nbsp;(Filter = gelb)!<br>
+&nbsp;* Exakte Wortsuche &uuml;ber &quot;.&quot; am Ende<br>
+&nbsp;&nbsp;&nbsp;Beispiel Eingabe &quot;LIEBE&quot; und &quot;LIEBE.&quot;<br>
+&nbsp;&nbsp;&nbsp;Beispiel Eingabe &quot;10&quot; und &quot;10.&quot; !!!!<br>
+<br>
+<A class=red0>Rev 1.049 (29.06.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Absturz bei Programm-Ende<br>
+&nbsp;* Bug: Im Jubil&auml;ums-Dialog wurde bei den Info Texten nicht auf die erste<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zeile gebl&auml;ttert.<br>
+<br>
+<A class=red0>Rev 1.048 (25.06.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Doppelklick auf den Autor -&gt; Suche nach Nachname, incl. setzen der<br>
+&nbsp;&nbsp;&nbsp;Filter &quot;Komponist&quot; &quot;Autor&quot; wird gestartet.<br>
+<br>
+<A class=red0>Rev 1.047 (25.06.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* autoren-Info: Name, geb.Datum, Sterbe.Datum<br>
+&nbsp;* Jubil&auml;en-Info: Eingabe Jahreszahl, -&gt; 25,50,75,100,125,150,175 Jahre<br>
+&nbsp;&nbsp;&nbsp;-&gt; Ausgabe 25. Todestag, 100. Geburtstag<br>
+<br>
+<A class=red0>Rev 1.046 (12.05.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* nochmalige Pr&uuml;fung: Programm kann jetzt nur noch einmal gestartet werden!<br>
+&nbsp;&nbsp;&nbsp;jedoch, gibt es ein Update auf C:\programme, so wird diese Programm-Version<br>
+&nbsp;&nbsp;&nbsp;gestartet.<br>
+<br>
+<A class=red0>Rev 1.045 (11.05.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* nochmalige Pr&uuml;fung: Programm kann jetzt nur noch einmal gestartet werden!<br>
+&nbsp;&nbsp;&nbsp;2. Mal starten piepst es nur noch!<br>
+&nbsp;* Bug: Zu gro&szlig;e Texte aus dem Text-Lager f&uuml;hrten zum Absturz, es wurde jetzt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eine &Uuml;berschreibgrenze eingef&uuml;hrt.<br>
+&nbsp;* Maximale Textl&auml;nge jetzt auf 20*1024 Zeichen vergr&ouml;&szlig;ert.<br>
+<br>
+<A class=red0>Rev 1.044 (16.03.99-24.03.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* x17: Touch-Screen weg<br>
+&nbsp;* x10: check AutoFree of &quot;MiniSymbols&quot; !!!<br>
+&nbsp;* b08: Zeichen '%' jetzt OK<br>
+&nbsp;* b07: Zeichen '$' jetzt OK<br>
+&nbsp;* b05: Zeichen '&copy;' jetzt OK<br>
+&nbsp;* b04: Taste 'V' &ouml;ffnete das Verlagsinfo Fenster<br>
+&nbsp;* nach Update &quot;a0001.bla&quot; und &quot;u0002.bla&quot; l&ouml;schen<br>
+&nbsp;* nach Update &quot;a0002.bla&quot; -&gt; artikel.zip<br>
+&nbsp;* nach Update &quot;a0002.bla&quot; weg<br>
+&nbsp;* gefundene Update Artikel werden ausgegeben<br>
+&nbsp;* Bug: Fehlermeldung Das Zeichen &quot;,&quot; ist im Arrangeur verboten! bezog sich auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Komponisten!<br>
+&nbsp;* weitere Optimierungen des Imports<br>
+<br>
+&nbsp;17.03.99<br>
+&nbsp;========<br>
+<br>
+&nbsp;* aufgetretenes Problem: Die MiniNoten des Desktops werden unter<br>
+&nbsp;&nbsp;&nbsp;ihrer physikalischen Datensatz-Nummer abgespeichert, anstelle von<br>
+&nbsp;&nbsp;&nbsp;z.B. &quot;Artikel-Nummer&quot; + &quot;Verlag&quot;. Nach einem InterNet Update gehen somit<br>
+&nbsp;&nbsp;&nbsp;alle Infos verloren: jetzt behoben!<br>
+&nbsp;* x13: Info Text-Ansicht scrollable<br>
+<br>
+&nbsp;23.03.99<br>
+&nbsp;========<br>
+<br>
+&nbsp;FTP - Komponente von Fran&ccedil;ois PIETTE eingesetzt.<br>
+&nbsp;Versuche Test auf FTP, immer noch Verbindungsprobleme -&gt; keine InterNet-Version<br>
+&nbsp;ohne Test.<br>
+<br>
+&nbsp;24.03.99<br>
+&nbsp;========<br>
+<br>
+&nbsp;FTP jetzt verf&uuml;gbar, letzter Test<br>
+&nbsp;Bitte durch Testkunden InterNet Update testen.<br>
+<br>
+<A class=red0>Rev 1.043 (10.03.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Stack &Uuml;berlauf Fehler entdeckt!<br>
+&nbsp;* Bug: nur vom aktiven WinAmp soll zum eigenen Fenster geschaltet werden!<br>
+&nbsp;* Bug: wenn gar keine Soundkarte installiert ist, braucht auch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht nach der Aktivit&auml;t von anderen Fenstern sehen!<br>
+&nbsp;* erkennt die Anwendung auf der CDR eine neuere Programm-Version von<br>
+&nbsp;&nbsp;&nbsp;hebu.exe auf C:\programme\hebu so startet sie sofort diese Anwendung<br>
+&nbsp;&nbsp;&nbsp;anstelle der Version auf der CDR (wichtig f&uuml;r Updates der HEBU.EXE via<br>
+&nbsp;&nbsp;&nbsp;InterNet).<br>
+&nbsp;* Wow: Bug bei InterNet-Update, wenn Preis-Eingabe &quot;.&quot;<br>
+&nbsp;* Wow: Bug bei InterNet-Update, wenn Preis-Eingabe = &quot;..&quot;<br>
+<br>
+<A class=red0>Rev 1.042 (10.03.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;b15: Farb-Men&uuml; ist nicht &uuml;bersetzt<br>
+&nbsp;b14: Nach Programm-Ende bleibt ein MSDOS-Symbol in der Programm-Leiste stehen:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ursache noch nicht bekannt.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Ursache jetzt bekannt!!!, das Formular &uuml;berlappt den Taskbar-Bereich!<br>
+&nbsp;* Scramble Delta ist jetzt auf neuen Wert angeglichen<br>
+&nbsp;* kann jetzt auch ohne susi Key von Festplatte gestartet werden!<br>
+<br>
+<A class=red0>Rev 1.041 (09.03.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Stack-Problem, nix gefunden bitte nochmals probieren!<br>
+&nbsp;* wesentliche &Auml;nderungen / Verbesserungen im Import-Modul<br>
+<br>
+<A class=red0>Rev 1.040 (09.03.99) Andreas Filsinger</A><br>
+<br>
+&nbsp;* keine Desktop-L&ouml;schung wenn 1.039 zuvor installiert war<br>
+&nbsp;* neues Symbol &quot;InterNet&quot;, f&uuml;r das Update via InterNet<br>
+&nbsp;* wesentliche &Auml;nderungen / Verbesserungen im Import-Modul<br>
+&nbsp;* InterNet Update F&auml;higkeit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Addierung von 2 Dateien zur Artikel.txt, danach Import!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Integration des Import-Laufes nach HeBu<br>
+<br>
+<A class=red0>Rev 1.039 (12.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* WinAmp wird nun immer der Eingabe-Fokus genommen, d.h. wenn<br>
+&nbsp;&nbsp;&nbsp;z.B. Stop gedr&uuml;ckt wird, wird die Kontrolle wieder an die<br>
+&nbsp;&nbsp;&nbsp;Hebu-Anwendung &uuml;bergeben.<br>
+&nbsp;* STOP-Feld des Sound-Buttons (im Moment der Wiedergabe) ist<br>
+&nbsp;&nbsp;&nbsp;neu vermessen worden.<br>
+&nbsp;* wenn mehrere Sounds vorhanden sind werden diese in die PLAY-List<br>
+&nbsp;&nbsp;&nbsp;von Winamp &uuml;bergeben, Auswahl mit [|&lt;] oder [&gt;|], oder Knopf<br>
+&nbsp;&nbsp;&nbsp;[PL-] = PlayList!<br>
+<br>
+<A class=red0>Rev 1.038 (11.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Eingabe/Anzeige H&auml;ndler-Version PWD verbessert!<br>
+&nbsp;* die Datenbank Dateien werden jetzt nach C:\programme\hebu kopiert.<br>
+&nbsp;* die L&ouml;schung der Dateien im C:\programme\hebu erfolgt jetzt<br>
+&nbsp;&nbsp;&nbsp;vollst&auml;ndig (&quot;*.*&quot;)<br>
+<br>
+&nbsp;ACHTUNG<br>
+&nbsp;=======<br>
+<br>
+&nbsp;&Auml;nderungen im static.txt beachten:<br>
+<br>
+&nbsp;&Auml;NDERUNG&nbsp;&nbsp;&nbsp;&nbsp;D: 27=H&auml;ndler-Version! Passwort OK!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E: 27=Professional Version! Password OK!<br>
+<br>
+&nbsp;NEU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D: 125=Bitte Passwort f&uuml;r H&auml;ndler-Version eingeben!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E: 125=enter profeesional password here!<br>
+<br>
+<A class=red0>Rev 1.037 (07.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Debug-Meldung jetzt wirklich ausgeschaltet, wenn immedia-viewer gestartet wird.<br>
+<br>
+<A class=red0>Rev 1.036 (02.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Debug-Meldung ausgeschaltet, wenn immedia-viewer gestartet wird<br>
+<br>
+<A class=red0>Rev 1.035 (02.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* fixed bug: Falscher Text f&uuml;r &quot;H&ouml;rprobe&quot;, wenn man auf Titel-Info klickt.<br>
+<br>
+<A class=red0>Rev 1.034 (02.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* fixed b15: &quot;Holland&quot; war als &quot;N-Holland&quot; eingtragen, in static.txt Zeile 21<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bitte NL draus machen, -&gt; auch im [E] Bereich!<br>
+&nbsp;* p02: jemand aktiviert folgende Filter: Musik + Neuerscheinungen (keine weitere<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suchbegriffeingabe)-&gt; Ziel: er will einfach sehen welche Titel als Neuerscheinung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mit Sounds vorliegen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; also eine Abfrage OHNE Eingabe eines Suchbegriffes. (Das geht im Moment noch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht) Hier soll nun eine Gesamtabfrage, Gesamt-Recherche gestartet werden.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hierzu stelle ich mir einen neuen &quot;suche Starten&quot; Knopf vor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;irgendwie sollte man klar machen, da&szlig; auch eine Recherche ohne Eingabe eines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suchbegriffes m&ouml;glich ist. Die Anzahl der Treffer freilich sollte beschr&auml;nkt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;werden, ich sehe mal nach was ich da f&uuml;r einen internen Wert habe.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tats&auml;chliche implementierung:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=============================<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;einfach nix eingeben, und enter dr&uuml;cken<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wenn filter aktiv -&gt; suche l&auml;uft!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wenn kein Filter aktiv -&gt; LED rot!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;irgendwo hinklicken wenn man die Suche abbrechen will! <br>
+<br>
+&nbsp;* fixed b16: &quot;Verzeichnis-Info&quot; f&uuml;r den Quark-Viewer war zu kurz, wenn das Programm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C:\programme\creator\infos\katalog.imd aufruft, dann gings schief.<br>
+&nbsp;* fixed bug: wenn man ein Mini-Noten Symbol anklickt wurde die rote Zahl nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wieder auf &quot;0&quot; gesetzt.<br>
+<br>
+<A class=red0>Rev 1.033 (02.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* fixed b04: falls kein Original-Preis vorhanden, wird auf dem Desktop der DM-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preis angezeigt.<br>
+&nbsp;* fixed b05: alle Texte im Namens-Dialog sind noch deutsch.<br>
+&nbsp;* fixed b06: hat man einmal seinen Namen eingegeben kann man ihn nicht mehr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verbessern. Jetzt gibt es nur noch einen SetUp Dialog.<br>
+&nbsp;* fixed b07: der Namens-Dialog am Anfang: keine Sprachauswahl m&ouml;glich<br>
+&nbsp;* fixed b08: der Namens-Dialog am Anfang: nach einmaliger Eingabe nicht mehr aufrufbar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jetzt neue Taste in den Systemstettings.<br>
+&nbsp;* fixed b09: der Namens-Dialog am Anfang: es werden keine Sprachvarianten angezeigt<br>
+&nbsp;* fixed b10: der Namens-Dialog am Anfang: wenn der Name leer war, wurden die Sprachvarianten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht aufgefrischt.<br>
+&nbsp;* fixed b11: 'V' l&auml;dt nicht mehr die Verlags-Adresse wenn keine H&auml;ndler-Version<br>
+&nbsp;* fixed b12: der Namens-Dialog am Anfang: stellt man die Sprache um, so wurde das<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Haupt-Men&uuml; dennoch als &quot;anderssprachige Version&quot; geladen.<br>
+&nbsp;* x13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Inerhalb der Notizablage gibt es jetzt (f&uuml;r den bisher &quot;rechten Mausklick&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ein kleines Listensymbol. (Plan von Kinnik das Symbol au&szlig;erhalb des Notiz_symbols<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zu integrieren ist leider nicht notwendig, hilfe02x.bmp(s) bei Gelegenheit anpassen.<br>
+&nbsp;* fixed b13: Die Meldung, zur Aufforderung zum Einlegen von Medien war unverst&auml;ndlich.<br>
+<br>
+<A class=red0>Rev 1.032 (01.12.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Name-Bildschirm war zum Teil immer sichtbar.<br>
+&nbsp;* Name-Bildschirm hat den Splash-Screen nicht ausgeschaltet.<br>
+&nbsp;* W&auml;hrungs-Anzeige &quot;D&quot; und &quot;E&quot; jetzt verbessert.<br>
+&nbsp;* H&auml;ndler-Version:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Verlage mit Adressen jetzt unterstrichen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Verlagsbereich jetzt anklickbar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Verlagsinfos aus der Titelinfo entfernt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Verlagsadressen werden vor Bestellung eingeblendet<br>
+&nbsp;* Im Bestell-Text &quot;H&auml;ndler-Version&quot; wird unter<br>
+&nbsp;&nbsp;&nbsp;Original-Preis und Original-Bestellnummer und<br>
+&nbsp;&nbsp;&nbsp;Original-W&auml;hrung bestellt.<br>
+&nbsp;* Ablauf von Festplatte m&ouml;glich, dadurch Software-Update via Internet<br>
+&nbsp;&nbsp;&nbsp;m&ouml;glich.<br>
+<br>
+<A class=red0>Rev 1.031 (10.11.98-24.11.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;NEUE FUNKTIONEN<br>
+&nbsp;===============<br>
+<br>
+&nbsp;* englische Version, Vorbereitung f&uuml;r weitere Sprachen, beim ersten Start<br>
+&nbsp;&nbsp;&nbsp;wird automatisch die entsprechende Sprache gew&auml;hlt. Je nach Windows-Landes-<br>
+&nbsp;&nbsp;&nbsp;Version.<br>
+&nbsp;* M&uuml;lleimer (geb&uuml;hrenfrei).<br>
+&nbsp;* gibt es mehr Infos &uuml;ber den Komponisten oder den Arranger, so ist der<br>
+&nbsp;&nbsp;&nbsp;Name unterstrichen dargestellt.<br>
+&nbsp;* Neuer Eingabesatz verf&uuml;gbare Medien, hier kann der Benutzer eintragen, welche<br>
+&nbsp;&nbsp;&nbsp;Medien Ihm zur Verf&uuml;gung stehen!!!!<br>
+&nbsp;&nbsp;&nbsp;-&gt;klick auf HeBu-Logo im Hauptbildschirm<br>
+&nbsp;* die Filter-Dialoge haben nun einen Knopf zum Beenden, sowie einen<br>
+&nbsp;&nbsp;&nbsp;Knopf um den Filter zu deaktivieren.<br>
+&nbsp;* Weitere Versions-Infos werden in der Registry gespeichert, Zum Thema<br>
+&nbsp;&nbsp;&nbsp;Update der HeBu-EXE via InterNet oder im Fehlerfall, falls der HeBu.exe<br>
+&nbsp;&nbsp;&nbsp;erneuert werden mu&szlig;! -&gt; neue Quelle-Variable, f&uuml;r HeBu.exe auf Festplatte,<br>
+&nbsp;&nbsp;&nbsp;und Medium auf CDR.<br>
+&nbsp;* Differenzierteres Uninstall aktiviert.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Auswahl, ob L&ouml;schung der Files auf Platte<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Auswahl, ob L&ouml;schung der Registry Eintr&auml;ge<br>
+&nbsp;* neuer Filter: Musik, -&gt;nur Anzeige wenn St&uuml;ck auf angekreuztem Medium da!<br>
+&nbsp;* neuer Filter: Neuerscheinung, -&gt;nur Anzeige wenn recht neuer Eintrag<br>
+&nbsp;* Integration des Feldes Gattung: a) in die Suchmaschine b) in den Feld-Filter<br>
+&nbsp;* check how to start a cpl-Window, in this case, the desk.cpl to make it easy<br>
+&nbsp;&nbsp;&nbsp;for users to set the Color-Depth of user-desktop. -&gt; jetzt automatisch<br>
+&nbsp;* suppress upcoming &quot;Name&quot;-form, even if it its the main-Window!<br>
+<br>
+&nbsp;BEHOBENE FEHLER<br>
+&nbsp;===============<br>
+<br>
+&nbsp;* Eingabe von &quot;V&quot; -&gt; kommt allzu h&auml;ufig vor -&gt; Absturz<br>
+<br>
+<A class=red0>Rev 1.030 (27.07.98-30.07.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;BASIS F&Uuml;R MAC VERSION!?<br>
+<br>
+&nbsp;* Bug: [Kunde] Unstimmigkeiten bei der CD-ROM Erkennung<br>
+&nbsp;* Bug: [Bu1] Kommt ein Suchbegriff ver&auml;ndert doppelt in einer Nummer vor, so wurde<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;er doppelt in die Liste der gefundenen aufgenommen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z.b. Suchbegriff: &quot;Klarinetten&quot; Ergebnis 1x &quot;Klarinetten&quot; 1x &quot;Klarinettenchor&quot;<br>
+&nbsp;* Bug: [bisher unentdeckt] &lt;ESC&gt; im Info-Ansichtsfenster z.B. &uuml;ber den Komponisten ging nicht!<br>
+&nbsp;* Bug: [Bu2] bei zu gro&szlig;en Texten f&uuml;r die Info Fenster -&gt; Absturz!<br>
+&nbsp;* Bug: [Bu4] Titel vom Bestell-Bereich wurden auch in der Liste der Notiz-Ablage angezeigt!<br>
+&nbsp;* Bug: [Bu5] Filter aktiv / inaktive hatte bei &quot;normalen&quot; Close nicht funktioniert.<br>
+<br>
+<A class=red0>Rev 1.029 (09.07.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: [Bu01, Bu02] Touch-Felder &quot;Komponist&quot; &quot;Titel&quot; &quot;Arrangeur&quot; waren auf &quot;0&quot; gesetzt<br>
+&nbsp;* Bug: [bisher unentdeckt] nach einem Verschieben des go&szlig;en Notenblattes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wurden die Touch-Bereiche nicht mit verschoben!<br>
+&nbsp;* Bug: [bisher unentdeckt]: es werden zum Anzeigen der Notensymbole verschiedene<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Schriftgr&ouml;&szlig;en verwendet! Einmal einzeilig dann wieder 2 zeilig!<br>
+&nbsp;* Bug: [Bu??] manche Titel sind zu klein. Beispiel gefunden:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Concertino in 3 S&auml;tzen f&uuml;r Tuba und Blasorchester&quot;. Problem war: Titel f&uuml;r<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eine Zeile zu lang (sogar in der kleinsten Schrift). Dann wurde aufgeteilt auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 Zeilen, aber im kleinsten Schriftgrad geblieben. Es wird jetzt zumindest um<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 Schriftgrade vergr&ouml;&szlig;ert!<br>
+&nbsp;* Bug: [BuWinAmp, diverse]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Anwendungs-Fokus ging verloren nach &quot;open+play&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Anwendungs-Fokus ging verloren nach &quot;close&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Click auf &quot;play&quot; sofort nach Start des Programm, ggf. ohne Reaktion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; AutoClose nach Ende des St&uuml;cks ging nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; &quot;Always On Top&quot; Integration fehlte ganz<br>
+&nbsp;* Anzahl der MiniNoten auf 30 erh&ouml;ht.<br>
+<br>
+<A class=red0>Rev 1.028 (08.07.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* In der Listenansicht nach einer Datenbank Suche: Es wird nun auch Komponist,<br>
+&nbsp;&nbsp;&nbsp;Arrangeur und Verlag ausgegeben.<br>
+<br>
+<A class=red0>Rev 1.027 (23.06.98-07.07.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* check for single instance of the programm (Report Kinnik 01):<br>
+&nbsp;&nbsp;&nbsp;-&gt; das Programm kann auf einem PC nur einfach gestartet werden!<br>
+&nbsp;* L&auml;uft nur noch von CD-ROM ab.<br>
+&nbsp;* L&auml;uft jetzt auch wieder auf einem Rechner ohne Sound-Karte (soll es ja<br>
+&nbsp;&nbsp;&nbsp;geben!). Es wird gepr&uuml;ft, ob im System eine Soundkarte verf&uuml;gbar ist<br>
+&nbsp;&nbsp;&nbsp;wenn ja wird die entsprechende WinAmp-Funktionalit&auml;t ausgef&uuml;hrt, ansonsten<br>
+&nbsp;&nbsp;&nbsp;wird beim Befehl &quot;play&quot; eine Fehlermeldung ausgegeben.<br>
+&nbsp;&nbsp;&nbsp;Die WinAmp Installation auf solchen systemen wird nicht mehr zwingend<br>
+&nbsp;&nbsp;&nbsp;vorgeschrieben!<br>
+&nbsp;* Erster Test mit Win98: l&auml;uft ohne &Auml;nderung!<br>
+&nbsp;&nbsp;&nbsp;Anmerkung: Mann sollte k&ouml;nnte mal pr&uuml;fen, ob die Apple-QuickTime-Installation<br>
+&nbsp;&nbsp;&nbsp;&uuml;berhaupt notwendig ist! Wenn nicht, k&ouml;nnte sie nur schaden!<br>
+&nbsp;* linker oder rechter Mausklick auf das &quot;STOP&quot;-Symbol w&auml;hrend der Musik-<br>
+&nbsp;&nbsp;&nbsp;Wiedergabe - jedoch nicht in den viereckigen STOP-Bereich, sondern sonst<br>
+&nbsp;&nbsp;&nbsp;wo auf den Symbolbereich bringt WinAmp wieder in den sichtbaren Bereich.<br>
+&nbsp;&nbsp;&nbsp;(klick &quot;neben&quot; den Stop-Knopf z.B. auf roten Regler-Knopf oder Lautsprecher<br>
+&nbsp;&nbsp;&nbsp;&nbsp;zeigt das WINAMP-Fenster an!)<br>
+&nbsp;* Flackern beim Aufbau des Notenblattes behoben!<br>
+&nbsp;* Listenansicht, wo man sehen kann welche Datens&auml;tze gefunden wurden!<br>
+&nbsp;* Bug: Preis Filter hat nicht richtig geblinkt!<br>
+&nbsp;* Sollte mal der Desktop neu gezeichnet werden: F2 dr&uuml;cken! z.B. wenn die<br>
+&nbsp;&nbsp;&nbsp;Start-Leiste das aktuelle Fenster &uuml;berblendet.<br>
+&nbsp;* Notiz-Feld: rechte und linke Maustaste nun vertauscht!<br>
+&nbsp;&nbsp;&nbsp;linke Taste:&nbsp;&nbsp;Bei Konzertvorbereitung kann man alle Infos &uuml;ber Titel/Arrangeur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;im Notiz-Editor ausdrucken!<br>
+&nbsp;&nbsp;&nbsp;rechte Taste: Einfache Listenansicht ausdruckbar als &quot;Faforiten&quot;-Liste zur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entscheidungsfindung.<br>
+&nbsp;* &quot;Feld&quot;-Filter, wo man angeben kann, in welchen Feldern &uuml;berhaupt gesucht<br>
+&nbsp;&nbsp;&nbsp;werden soll. Gesucht wird dann zun&auml;chst in allen Feldern (technisch nich anders<br>
+&nbsp;&nbsp;&nbsp;machbar, im 2.Schritt werden jedoch alle Datens&auml;tze weggelassen, die den Suchbegriff<br>
+&nbsp;&nbsp;&nbsp;in dem jeweiligen Feld haben.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Titel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Komponist<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Arrangeur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Serie<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] ArtikelNo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Verlag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ ] Bemerkung<br>
+<br>
+&nbsp;* roter Knopf, jetzt passive Lautst&auml;rke-Anzeige OK. kleiner roter Punkt ist nicht<br>
+&nbsp;&nbsp;&nbsp;regelbar, die Lautst&auml;rke - Regelung erfolgt &uuml;ber den Regler im WinAmp-Fenster oder<br>
+&nbsp;&nbsp;&nbsp;&uuml;ber den Mixer der Systemsteuerung.<br>
+&nbsp;* Bug: automatische Umschaltung von Stop/Play hatte nicht mehr funktioniert!<br>
+&nbsp;* nur noch der &quot;STOP&quot; Bereich beim Sound-Knopf ist aktiver Klick-Bereich!<br>
+&nbsp;* Bug (endlich gefunden, existiert schon seit der ersten Version).<br>
+&nbsp;&nbsp;&nbsp;Die Beschreibung des Bug selbst ist schon recht schwierig - entsprechend<br>
+&nbsp;&nbsp;&nbsp;war die Behebung ziemlich aufwendig: Beim Neustart des Noten(datenbank)bereiches<br>
+&nbsp;&nbsp;&nbsp;wird zwar immer das Notenblatt angezeigt, das beim letzten Programm Ende angezeigt<br>
+&nbsp;&nbsp;&nbsp;wurde, jedoch klickte man darauf erschien ein ganz anderes kleines Notensymbol!<br>
+&nbsp;&nbsp;&nbsp;Im Speicher war somit ein ganz anderes Symbol pr&auml;sent. -&gt; Redundanz-Problem<br>
+&nbsp;&nbsp;&nbsp;Speicher-Schicht &lt;-&gt; visuelle Schicht. JETZT OK.<br>
+&nbsp;* WinAmp Rev. 1.92 Integration.<br>
+<br>
+<A class=red0>Rev 1.026 (09.06.98-19.06.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* neuer Knopf &quot;Sound&quot;, spielt &lt;.\Musik\&lt;ArtikelNo&gt;.mp3&gt;<br>
+&nbsp;* neuer Datensatzaufbau, Texte werden in voller L&auml;nge ausgelagert<br>
+&nbsp;* Notiz &quot;linker Maus-Knopf&quot;&nbsp;&nbsp; : kurzer Text // 91000 Bei Tanze (Polka)&nbsp;&nbsp; Guido Henn&nbsp;&nbsp;2&nbsp;&nbsp;38,-<br>
+&nbsp;* Notiz &quot;rechter Maus-Knopf&quot;&nbsp;&nbsp;: langer Text // f&uuml;r Konzertvorbereitung<br>
+<br>
+<A class=red0>Rev 1.025 (21.04.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Notiz-Bereich / rechter Mausklick auf Notiz-Button: alle Notendaten<br>
+&nbsp;&nbsp;&nbsp;landen jetzt im Editor, somit ist ein Ausdruck, Kopie in Zwischenablage<br>
+&nbsp;&nbsp;&nbsp;usf. m&ouml;glich. Die Informationen k&ouml;nnen weiterverarbeitet werden.<br>
+<br>
+<A class=red0>Rev 1.025 (21.04.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Sounds in der Datenbank. Jeder Titel kann abgespielt werden! Es wird das<br>
+&nbsp;&nbsp;&nbsp;WinAmp Programm verwendet! Die Musik liegt als Mpeg Layer 3 (*.mp3) im<br>
+&nbsp;&nbsp;&nbsp;Musik Verzeichnis der CDR.<br>
+<br>
+&nbsp;INSTALLATIONS-HINWEISE DIESER REV<br>
+&nbsp;=================================<br>
+<br>
+&nbsp;* Nat&uuml;rlich m&uuml;ssen die vorherigen Revs richtig eingespielt werden!<br>
+&nbsp;* Im Verzeichnis \install mu&szlig; das neue Verzeichnis WinAmp angelegt<br>
+&nbsp;&nbsp;&nbsp;werden. Dort kommt der winamp19.exe hinein!<br>
+&nbsp;* WinAmp19.exe starten, jedoch ACHTUNG:<br>
+&nbsp;&nbsp;&nbsp;Installationspfad auf C:\programme\winamp verbessern!!!<br>
+&nbsp;* Ein neue Hauptverzeichnis anlegen:<br>
+&nbsp;&nbsp;&nbsp;\Musik, dorthinein die MP3 Dateien speichern. Dateiname=ArtikelNummer+'.mp3'<br>
+&nbsp;&nbsp;&nbsp;Also Henns bei Tanze = 91000.mp3<br>
+&nbsp;* In der Datenbank, einfach mit der rechten Maus-Taste auf Hilfe-Knopf<br>
+&nbsp;&nbsp;&nbsp;(nur vorl&auml;ufig zum Testen, sp&auml;ter eigenes Symbol!) der Titel wird gespielt!<br>
+<br>
+<A class=red0>Rev 1.024 (23.03.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Dateinamen im Ordner System auf DOS Format gek&uuml;rzt. Alte CD-ROM<br>
+&nbsp;&nbsp;&nbsp;Treiber k&ouml;nnen offenbar nur DOS-Dateinamen (8+3) verarbeiten.<br>
+&nbsp;* BUG: im Start-Bildschirm &quot;Namens-Eingabe&quot; wurde immer die<br>
+&nbsp;&nbsp;&nbsp;falsche Serien-Nummer angezeigt! Serien-Nummern Handling jetzt<br>
+&nbsp;&nbsp;&nbsp;verbessert!&nbsp;&nbsp;<br>
+<br>
+<A class=red0>Rev 1.023 (12.03.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* BUG: Tastatur war tod, nachdem man ENDE gedr&uuml;ckt hatte<br>
+&nbsp;* BUG: Komische Zeichen in der Eingabe nachdem man &lt;LEERTASTE&gt; und &lt;ENTER&gt; dr&uuml;ckte<br>
+&nbsp;* NEU: &quot;space&quot; wurde umgestellt auf &quot;Leertaste&quot;<br>
+&nbsp;* NEU: Bestell- und Notiz-Text Editor jetzt auch mit linker Maus-Taste<br>
+<br>
+<A class=red0>Rev 1.022 (10.03.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* NEU: Jetzt mit Desktop-Symbol, f&uuml;r Farb-Einstellungen!<br>
+&nbsp;* NEU: Suchbegriff &quot;&auml;nde&quot; beendet das Programm! <br>
+<br>
+<A class=red0>Rev 1.021 (10.03.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Absturz nach Drag des Notiz/Bestell Bereiches &uuml;ber Grenzen hinweg<br>
+&nbsp;* NEU: Inerhalb des Move von kleinen Noten am unteren Bildrand wird das Symbol<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gel&ouml;scht!<br>
+&nbsp;* NEU: Desktop-Farbschema nun auch mit linker Maustaste<br>
+&nbsp;* NEU: Tastatur- Hintergrund jetzt &quot;magenta&quot;, ich hoffe es lag an dem!<br>
+<br>
+<A class=red0>Rev 1.020 (07.03.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Spezial-Funktionen f&uuml;r die Touch-Bedienung:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;* eingeblendetes KeyBoard, sobald man auf das Eingabe-Feld touched!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;* die kleinen MiniNoten kann man ganz an den unteren Rand ziehen, um Sie<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zu l&ouml;schen (aus dem Desktop heraus ziehen!), das man per Touch ja die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rechte Maus-Taste nicht benutzten kann!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;* als Kommando-Zeilen-Parameter %1 kann &quot;demo&quot; eingegeben<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;werden, danach kann man das Programm nicht mehr beenden!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; nicht mehr Lizenz-vertrag drucken<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; nicht mehr Demo-Software installieren<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; nicht mehr Noten-kopieren<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; nicht mehr deinstallieren!<br>
+<br>
+&nbsp;* &quot;Sparte&quot; -&gt; &quot;Gattung&quot;<br>
+<br>
+<A class=red0>Rev 1.019 (22.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Standard-Passwort ist jetzt in der Datei<br>
+&nbsp;&nbsp;&nbsp;&nbsp;..\system\stdpwd.txt<br>
+&nbsp;&nbsp;&nbsp;gespeichert. Dieses Passwort wird in das Eingabe-Feld pwd gestellt,<br>
+&nbsp;&nbsp;&nbsp;sobald das Programm geladen wird!<br>
+&nbsp;* Serien-Nummer ist jetzt kein Eingabefeld mehr<br>
+&nbsp;* Bug: mehr &quot;Infos&quot;<br>
+&nbsp;* Bug: doppelte Meldung &quot;alte Programmversion&quot;<br>
+<br>
+<A class=red0>Rev 1.018 (19.02.98-22.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: auch Desktop.ini wird jetzt gel&ouml;scht!<br>
+&nbsp;* Ghost-Script Installation!<br>
+&nbsp;* Red-Mon Installation<br>
+&nbsp;* diverse Texte im Demo-Software-Install Bereich<br>
+&nbsp;* Bug: &quot;Bla&szlig;orchester&quot;<br>
+&nbsp;* Bug: Fehlende Hilfe-Kn&ouml;pfe im HILFE03.BMP von<br>
+&nbsp;&nbsp;&nbsp;Frau Kinnick<br>
+<br>
+<A class=red0>Rev 1.017 (16.02.98-17.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: Absturz bei alten Desktops und neuen Noten-Files<br>
+&nbsp;* Adress-Angabe als eigenst&auml;ndiges Dialog-Fenster (Report HeBu 19.01)<br>
+&nbsp;&nbsp;&nbsp;Extra Namens Eingabe Dialog f&uuml;r ersten Start<br>
+&nbsp;* Implementierung der Hilfe Tasten im Noten-Bereich<br>
+&nbsp;* Deinstallation der Software jetzt m&ouml;glich:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;im Hauptbildschirm auf &quot;HEBU&quot;-Symbol, danach das Feld<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Deinstallation antaggen. Programm beenden!<br>
+&nbsp;* Drag-Area (Teilbereich f&uuml;rs Ziehen der Elemente) eingef&uuml;hrt.<br>
+&nbsp;&nbsp;&nbsp;Die Drag-Areas sind jetzt individuell gro&szlig;!<br>
+&nbsp;* F1 &ouml;ffnet jetzt Hilfe im Datenbank Bereich<br>
+&nbsp;* Bug: Wir &uuml;ber uns ist jetzt CenterDLG und AutoSize, da die &quot;WirUeber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Uns&quot;-Screens unterschiedlich gro&szlig; sind!<br>
+&nbsp;* Hilfe im Notenbereich! Bitte die 3 Dateien<br>
+<br>
+&nbsp;&nbsp;&nbsp;HilfeDemos.txt<br>
+&nbsp;&nbsp;&nbsp;HilfeLizenz.txt<br>
+&nbsp;&nbsp;&nbsp;HilfeNoten.txt<br>
+<br>
+&nbsp;&nbsp;&nbsp;noch bearbeiten!<br>
+&nbsp;* Lizenz.txt richtig umgebrochen, dabei festgestellt, da&szlig; noch<br>
+&nbsp;&nbsp;&nbsp;einige &Auml;nderungen gemacht werden m&uuml;ssen:<br>
+&nbsp;&nbsp;&nbsp;-&gt; &quot;...&quot; noch mit Text f&uuml;llen<br>
+&nbsp;&nbsp;&nbsp;-&gt; Layout noch per Hand richtig umbrechen!<br>
+&nbsp;* das Wort (Doppelnummer) wird jetzt unten dran geschrieben!<br>
+&nbsp;* Analog zur Bestellung auch eine Notiz-Datei (Report HeBu 4.))<br>
+&nbsp;* Bug: Bei Load-Desktop und Save-Desktop war ein Speicher-Leck in den Mini-Noten<br>
+&nbsp;* Bug: Desktop-Symbole blinken im AMOS Modus<br>
+&nbsp;* Bug: Filter deaktivieren im AMOS-Bereich<br>
+&nbsp;* Bug: Der &quot;Notiz-Text&quot; wurde aus den Noten im Bestell-Bereich gebildet!<br>
+&nbsp;* Filter Schwierigkeitsgrad muss ein &quot;von&quot; &quot;bis&quot; Filter sein (Report HeBu 3.))<br>
+&nbsp;* Bug: Finale 97, Startet Windows nicht neu!, Entsprechende Meldung eingebaut!<br>
+&nbsp;* Bug: durch die gro&szlig;e Drag-Hand sieht man im 640x480 Modus die Artikel nummer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nicht mehr -&gt; entsprechend Artikel-Nummer an den rechten Rand gesetzt!<br>
+&nbsp;* Bug: &quot;Doppelnummer&quot; war nicht in der 2. zeile, bei rechtsb&uuml;ndig<br>
+&nbsp;* Bug: Schrift im Titel bei einigen Nummern tats&auml;chlich zu klein!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mindest-Schrift-gr&ouml;&szlig;e und eventuell Texte umbrechen!<br>
+&nbsp;* Bug: keine Sanduhr beim Suchen von Titeln!<br>
+&nbsp;* Bug: bei Verringerung der Desktop-Aufl&ouml;sung ging die L&ouml;schroutine nicht mehr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wegen der 2 Desktops.<br>
+&nbsp;* Bug: in der Registry Variable &quot;Screen-Setting&quot;<br>
+&nbsp;* kleine Texte bei &quot;Titel&quot;, &quot;Komponist&quot;, &quot;Arranger&quot;<br>
+<br>
+&nbsp;AMOS-Bereich<br>
+&nbsp;============<br>
+<br>
+&nbsp;&nbsp;* eigener Desktop-INI, OK<br>
+&nbsp;&nbsp;* eigene W&auml;hrung, OK<br>
+&nbsp;&nbsp;* eigene Bestellung-RTF, OK<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Hinweis:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Bestellung0.rtf, ist die HeBu-Vorlage -&gt; letzte Zeile wird &uuml;bernommen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Bestellung1.rtf, ist die AMOS-Vorlage -&gt; letzte Zeile wird &uuml;bernommen<br>
+<br>
+&nbsp;&nbsp;* eigene Hintergrund-Bilder,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;....0.bmp, HeBu-Bilder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;....1.bmp, AMOS-Bilder<br>
+<br>
+&nbsp;&nbsp;* eigene Datenbanken, OK<br>
+<br>
+<A class=red0>Rev 1.016 (11.02.98-13-02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: q640x8 - Datei wird gesucht!<br>
+&nbsp;* Bug: wei&szlig;er Schirm mit Absturz, sobald Vorg&auml;ngerversion installiert<br>
+&nbsp;* Bug: Farbschemen wurden immer nur aus &quot;800x600&quot; gezooomt.<br>
+&nbsp;* neu: auch Finale 97 Demo<br>
+&nbsp;* neu: Hilfe-Bildschirme, mit Verkn&uuml;pfung<br>
+&nbsp;* neu: Wir &uuml;ber uns<br>
+<br>
+<A class=red0>Rev 1.015 (07.02.98-09.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* &quot;Grab-Hand&quot; Symbole eingebaut<br>
+&nbsp;* &quot;LED&quot; auf Eingabe-Fl&auml;che neu positioniert<br>
+&nbsp;* &quot;Grap-Cursor&quot; neu entwickelt<br>
+&nbsp;* Bug: &quot;14%&quot; MwSt auf &quot;7%&quot; MwSt umgestellt<br>
+&nbsp;* Suche weiter verbessert<br>
+&nbsp;* Farbschemen integriert. (rechte Maustaste auf Desktop im Datenbank Bereich)<br>
+&nbsp;* Bug: Absturz beim ersten Laden!<br>
+&nbsp;* Neu: Hilfe-Symbol im Datenbank Bereich // alle Templates belichtet<br>
+&nbsp;* Neu: StartUp-Fenster geht weg, sobald Mouse bewegt wird<br>
+&nbsp;* Neu: bei Verringerung der Aufl&ouml;sung werden die Desktop-Settings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gel&ouml;scht, da ev. Symbole au&szlig;erhalb des Arbeitsbereiches liegen k&ouml;nnen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aus Wunschliste<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;===============<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(save &quot;last-resolution&quot; in the registry and check it on every start. If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changed -&gt; ReCopy the template, but Show a &quot;abort, &quot;-Message to show user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that settings on desktop are lost!)<br>
+&nbsp;* Bug: Name/Stra&szlig;e/Ort beim ersten Load-UP ging nicht mehr!<br>
+&nbsp;* Bug: &quot;TAB&quot; Rheihenfolge im Notenbereich war total falsch!<br>
+<br>
+Info an Christian:<br>
+==================<br>
+<br>
+&nbsp;&nbsp;&nbsp;Noch fehlende Dateien:<br>
+<br>
+&nbsp;&nbsp;&nbsp;q800x24.bmp&nbsp;&nbsp;// (mit &quot;wir &uuml;ber ...&quot; button) wie q1024x24.bmp<br>
+&nbsp;&nbsp;&nbsp;q640x24.bmp&nbsp;&nbsp;// (mit &quot;wir &uuml;ber ...&quot; button) wie q1024x24.bmp<br>
+&nbsp;&nbsp;&nbsp;WirUeber.bmp // hey, bitte max mit 640x480, &quot;Ende&quot; Knopf nicht vergessen! Das<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gelieferte 1024x768 ist zu gro&szlig;! Bitte ev. unter Windows arbeiten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mit einer kleinen Systemschrift!<br>
+<br>
+&nbsp;&nbsp;&nbsp;Tool f&uuml;r Hilfe-Design:<br>
+&nbsp;&nbsp;&nbsp;======================<br>
+<br>
+&nbsp;&nbsp;&nbsp;Bitte mit MapMetrix die Hilfe-Folien miteinander verkn&uuml;pfen. MapMetrix bietet<br>
+&nbsp;&nbsp;&nbsp;die M&ouml;glichkeit von einer Hilfe-Folie zu einer (oder vielen) anderen zu springen.<br>
+&nbsp;&nbsp;&nbsp;Die Folien (BMPs und HilfeFolien.txt) mir dann geben!<br>
+<br>
+Info an Graphikerin:<br>
+====================<br>
+<br>
+&nbsp;&nbsp;Bitte doch noch Modifikationen in s800x600x24.bmp machen. Sie k&ouml;nnen die<br>
+&nbsp;&nbsp;Resultate selbst testen:<br>
+<br>
+&nbsp;&nbsp;Kopieren Sie den Inhalt der gesamten CD-ROM in ein Verzeichnis auf Festplatte.<br>
+&nbsp;&nbsp;Im Explorer ...\system\s800x600x24.bmp mit rechter Maustaste anklicken, und<br>
+&nbsp;&nbsp;den Haken &quot;schreibgesch&uuml;tzt&quot; entfernen. Mit Paint-Brush oder jedem anderen<br>
+&nbsp;&nbsp;Zeichenprogramm die Fehler entfernen, bmp speichern. Das Programm hebu.exe<br>
+&nbsp;&nbsp;(von Platte, nicht von CD) neu starten und Resultat beurteilen.<br>
+&nbsp;&nbsp;Ich empfehle den Modus 640 x 480 x True Color, da sieht man jeden &quot;Fehler&quot;:<br>
+&nbsp;&nbsp;ev. Win95 Benutzer als Helfer hinzuziehen bei Win95 Bedienungsproblemen. Meine<br>
+&nbsp;&nbsp;Beobachtung:<br>
+<br>
+&nbsp;&nbsp;-&gt; alle Lichtkappen haben einen aliasing Pixel<br>
+&nbsp;&nbsp;-&gt; Land Korpus hat rechts nen Pixel<br>
+&nbsp;&nbsp;-&gt; Input-Feld diverse Pixel<br>
+&nbsp;&nbsp;-&gt; Notiz-Buttons, Bestell-Button im Anfassbereich einen Pixel.<br>
+<br>
+<A class=red0>Rev 1.014 (05.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Hinweis-Fenster macht jetzt einen Y-AutoSize.<br>
+&nbsp;* Preis &amp; Schwierigkeitsgrad als nur ein Kreuzchen m&ouml;glich, oder keines!<br>
+&nbsp;* Lizenzvertrag drucken jetzt OK.<br>
+<br>
+<A class=red0>Rev 1.013 (03.02.98-04.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Notenrecords verschl&uuml;sselt! artikel.bin nicht &quot;knackbar&quot;!<br>
+&nbsp;* Position des neuen &quot;INFO-FENSTER&quot; jetzt immer gleich zu Anfang richtig!<br>
+&nbsp;* Filter Fenster nicht modal (Report HeBu 1.))<br>
+&nbsp;* Noten-Bereich, Standard: alle m&uuml;ssen angew&auml;hlt sein!! (Report HeBu 2.2.))<br>
+&nbsp;* Noten-Bereich, im letzten Feld mit &lt;ENTER&gt; weitergehen auf n&auml;chste Seite!<br>
+&nbsp;&nbsp;&nbsp;(Report HeBu 2.1.))<br>
+&nbsp;* Start-Up Zeit weiter verk&uuml;rzt. Actionen von OnCreate jeweils nach<br>
+&nbsp;&nbsp;&nbsp;OnActivate verschoben, auch im Noten-Formular!<br>
+&nbsp;* Bestellung: neue Zeile im Betrag sind 7% MwST enthalten! (Report HeBu 2.))<br>
+&nbsp;* Filter Land, neben den Buchstaben die volle Landesbezeichnung (Report HeBu 2.)).<br>
+&nbsp;&nbsp;&nbsp;Die Software f&uuml;r so ge&auml;ndert, da&szlig; nur der Teil vor einem Bindestrich in die<br>
+&nbsp;&nbsp;&nbsp;Selektion mit aufgenommen wird! Die Datei Laender.txt wird vom Creator in Zukunft<br>
+&nbsp;&nbsp;&nbsp;nur noch im Bericht-Verzeichnis angelegt, da sie ja nur L&auml;nder-Kurz-Kenzzeichen<br>
+&nbsp;&nbsp;&nbsp;enth&auml;lt. Laender.txt in einem ..\system Auslieferungsverzeichnis muss also ab und<br>
+&nbsp;&nbsp;&nbsp;zu mit Laender.txt in einem Bericht-Verzeichnis manuell verglichen werden, insbes-<br>
+&nbsp;&nbsp;&nbsp;ondere wenn neue L&auml;nder ev. hinzugekommen sind.<br>
+&nbsp;&nbsp;&nbsp;Laender.txt im ..\system muss mit &quot;notepad&quot; oder einem anderen Editor um die<br>
+&nbsp;&nbsp;&nbsp;Volltexte Landesbezeichnung erweitert werden.<br>
+<br>
+&nbsp;&nbsp;&nbsp;D-Deutschland&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Land&gt;&lt;Bindestrich&gt;&lt;VolltextLand&gt;&nbsp;&nbsp;OHNE LEERSCHRITTE!!!!<br>
+&nbsp;&nbsp;&nbsp;USA-Amerika<br>
+&nbsp;&nbsp;&nbsp;H-Ungarn<br>
+<br>
+<A class=red0>Rev 1.012 (03.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Datenfeld &quot;Sparte&quot; eingef&uuml;gt!<br>
+&nbsp;* neues Info-Fenster, Fenster nun selbst erstellt und gezeichnet!<br>
+&nbsp;&nbsp;&nbsp;Bemerkung / Info als Pop-Up. wenn´man dort hinklickt &ouml;ffnet sich ein<br>
+&nbsp;&nbsp;&nbsp;nicht modales Info-Fenster ohne OK Taste. (Report HeBu 7.))<br>
+&nbsp;* Bug (not reported) Kleine Notensymbole nicht vom realen Notensymbol<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;erzeugen lassen, sondern vom virtuellen.<br>
+&nbsp;* Bug (not reported) Hintergrund-Bildschirm beim Wechsel auf Fenster<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Datenbank&quot;<br>
+<br>
+<A class=red0>Rev 1.011 (02.02.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Start-Up Zeit verk&uuml;rzt. Actionen von OnCreate jeweils nach<br>
+&nbsp;&nbsp;&nbsp;OnActivate verschoben!<br>
+&nbsp;* Meldung: Ihre Farbaufl&ouml;sung ist zu gering..., bei Aufl&ouml;sungen&lt;HighColor<br>
+&nbsp;&nbsp;&nbsp;(Report Kinnik 01)<br>
+<br>
+<A class=red0>Rev 1.010 (22.01.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Installation ComMusic / BDB / Vereinsverwaltung nun hinzugef&uuml;gt!<br>
+&nbsp;&nbsp;&nbsp;(Report HeBu 19.01)<br>
+&nbsp;* Bestellung-RTF angepasst! (Report HeBu 5.))<br>
+&nbsp;* Preis und Schwierigkeitsgrad sind h&ouml;her angeordnet. (Report HeBu 8.))<br>
+&nbsp;* Preis jetzt mit 'DM'. (Report HeBu 8.))<br>
+&nbsp;* Hilfe-Kn&ouml;pfe im Bereich Noten eingef&uuml;gt (Report HeBu 2.3.))<br>
+<br>
+<A class=red0>Rev 1.009 (04.01.98) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bug: L&ouml;schen von Desktop - Symbolen war m&ouml;glich<br>
+&nbsp;* Programmversion m&ouml;glich, die KEINE Datenbank hat! Bei der Version<br>
+&nbsp;&nbsp;&nbsp;ohne Datenbank ist die Datei &quot;artikel.bin&quot; im Systemverzeichnis<br>
+&nbsp;&nbsp;&nbsp;nicht vorhanden. -&gt; Meldung &quot;Sie haben diesen Bereich nicht bestellt,<br>
+&nbsp;&nbsp;&nbsp;deshalb ist dieser nicht vorhanden!&quot;<br>
+&nbsp;&nbsp;&nbsp;Das Programm merkt nun selbst, ob die Datenbank-Datei &quot;artikel.bin&quot;<br>
+&nbsp;&nbsp;&nbsp;mit ausgeliefert ist oder nicht. Es sollten nun 2 CDR-Ausgabeverzeichnisse<br>
+&nbsp;&nbsp;&nbsp;erstellt werden: Eines mit allen Datenbank-Dateien, und eines, auf dem<br>
+&nbsp;&nbsp;&nbsp;artikel.bin fehlt. Beim Brennen benutzt man je nach Wunsch das eine oder<br>
+&nbsp;&nbsp;&nbsp;das andere Verzeichnis.<br>
+<br>
+<A class=red0>Rev 1.008 (19.12.97) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Showbox f&uuml;r alle weiterer Datenfelder (was bisher fehlte:<br>
+&nbsp;&nbsp;&nbsp;Serie, Bemerkung, Dauer, ProbeStimme, Aufnahme<br>
+&nbsp;* Bug: Wurden die Filter deaktiviert, so wurde die &quot;rote Zahl&quot; nicht<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auf Null zur&uuml;ckgesetzt.<br>
+&nbsp;* Schwierigkeitsgrad als bis - L&ouml;sung!<br>
+&nbsp;* Der Namens-Eingabe Dialog wird automatisch ge&ouml;ffnet, sobald noch<br>
+&nbsp;&nbsp;&nbsp;kein Name eingetragen ist.<br>
+<br>
+<A class=red0>Rev 1.007 (16.12.97) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Die Kunden-Adresse kann nun eingegeben werden. Wichtig f&uuml;r die<br>
+&nbsp;&nbsp;&nbsp;weitere Verwendung im Part &quot;Bestellung&quot;.<br>
+&nbsp;&nbsp;&nbsp;-&gt; Name 1. Zeile<br>
+&nbsp;&nbsp;&nbsp;-&gt; Name 2. Zeile<br>
+&nbsp;&nbsp;&nbsp;-&gt; Stra&szlig;e<br>
+&nbsp;&nbsp;&nbsp;-&gt; Ort<br>
+&nbsp;&nbsp;&nbsp;Die Eingabe bleiben dauerhaft gespeichert!<br>
+<br>
+&nbsp;&Auml;nderungen im Bestell-System:<br>
+&nbsp;=============================<br>
+<br>
+&nbsp;* aktuelle Bestellwerte werden in den Texteditor<br>
+&nbsp;&nbsp;&nbsp;jetzt richtig &uuml;bernommen!<br>
+&nbsp;* Den RTF-Editor eingedeutscht!<br>
+&nbsp;* Das &quot;about&quot;-Fenster des Editors entfernt<br>
+&nbsp;* Editor kann mit ESC verlassen werden.<br>
+<br>
+<A class=red0>Rev 1.006 (15.12.97) Andreas Filsinger</A><br>
+<br>
+&nbsp;* Bestellung.rtf nach -&gt; C:\<br>
+&nbsp;* Bug: Die momentane Farben der Filterkn&ouml;pfe wurde unter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Umst&auml;nden abgespeichert!<br>
+&nbsp;* Filterfunktion wieder aktivierent Filter wirken<br>
+&nbsp;&nbsp;&nbsp;einschr&auml;nkend.<br>
+&nbsp;* Preis-Filter ist ein ..bis xx DM Filter!<br>
+&nbsp;* Schwierigkeitsgrad-Filter nur 1..6. Jeder Grad ist<br>
+&nbsp;&nbsp;&nbsp;einzeln ankreuzbar. Der Filter muss dann auch<br>
+&nbsp;&nbsp;&nbsp;Datenbankeintr&auml;ge wie 4..6 verstehen! F&uuml;r den Filter ist<br>
+&nbsp;&nbsp;&nbsp;die ERSTE Zahl im Feld Schwierigkeitsgrad ausschlaggebend.<br>
+<br>
+1.005 (05.12.97) Andreas Filsinger<br>
+<br>
+&nbsp;* Suchwortl&auml;nge jetzt von 10 auf 25 Zeichen verl&auml;ngert<br>
+&nbsp;&nbsp;&nbsp;-&gt; vor Start ist neuer Import mit creator Rev. 1.006 notwendig<br>
+<br>
+1.004 (02.12.97) Andreas Filsinger<br>
+<br>
+&nbsp;* Bug: rie&szlig;iger Fehler im Suchsystem: Suche jetzt vielfach schneller!<br>
+&nbsp;* erfordert neuen Import durch creator Rev 1.005<br>
+&nbsp;* richtige Filtertexte wieder eingesetzt -&gt; f&uuml;r Demo Zwecke,<br>
+&nbsp;* Schweirigkeitsgrad-Filter nur 1..6. Feld auf 10 Zeichen<br>
+&nbsp;&nbsp;&nbsp;erweitert.<br>
+&nbsp;* Neues Filter-Fenster (mit close Button)<br>
+<br>
+1.003 (26.11.97) Andreas Filsinger<br>
+<br>
+&nbsp;* Wert in Klammer bei Datenbanksuche wegmachen!<br>
+&nbsp;* doppelte Suchergebnisse l&ouml;schen!<br>
+&nbsp;* neuer Text: &quot;Arrangement:&quot;, Text wird nicht ausgegeben, wenn kein Eintrag<br>
+&nbsp;&nbsp;&nbsp;im Feld Arrangeur der Datenbank steht!<br>
+&nbsp;* weitere neue Sonderzeichen entschl&uuml;sselt!<br>
+&nbsp;* Komponisten und Verlage Filter weg!<br>
+&nbsp;* Suche nach &quot;tocc&quot; jetzt erfolgreich. Problem mit<br>
+&nbsp;&nbsp;&nbsp;Wortnachbarn / bin&auml;re Suche.<br>
+<br>
+1.002 (24.11.97) Andreas Filsinger<br>
+<br>
+&nbsp;* IndexDebug-Fehlermeldung ist weg<br>
+&nbsp;* Die Datenbank-Suche um &quot;Umlaute&quot; erweitert<br>
+&nbsp;* Die Umlaute der Datenbank erweitert<br>
+&nbsp;* Suche erweitert, so da&szlig; auch &quot;Wortanf&auml;nge&quot; gefunden werden<br>
+&nbsp;&nbsp;&nbsp;-&gt; der Wert in der Datenbanksuchanzeige in der Klammer gibt an, auf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wieviele Datens&auml;tze sich das gefundene verteilt!<br>
+&nbsp;* man kann nun nach Verlag und Bestellnummer suchen<br>
+&nbsp;* bei Titeln mit &quot;/&quot; wird das Wort &quot;(Doppelnummer)&quot; hinter Artikelnummer<br>
+&nbsp;&nbsp;&nbsp;mit ausgegeben.<br>
+&nbsp;* Doppelnummern haben jetzt gleich gro&szlig;e Schriftgr&ouml;&szlig;en<br>
+&nbsp;* Texte unter den Titeln, in Klammern sind nicht mehr gr&ouml;&szlig;er als der<br>
+&nbsp;&nbsp;&nbsp;Titel selbst!<br>
+&nbsp;* Helles Hintergrundbild<br>
+&nbsp;* Fehlerhafte Filterwerte<br>
+&nbsp;* Suche Mehrstufig<br>
+<br>
+1.001 (08.09.97) Andreas Filsinger<br>
+<br>
+&nbsp;* Umstellung auf die neuen Bilder Schaltfl&auml;chen neu vermessen<br>
+&nbsp;* neuer Schaltknopf &quot;BASE&quot; f&uuml;r Datenbank<br>
+<br>
+1.000 (27.05.97) Andreas Filsinger<br>
+<br>
+&nbsp;&nbsp;&nbsp;* erste Lauff&auml;hig Version<br>
+<!-- END Info -->
+</BODY>
+</HTML>

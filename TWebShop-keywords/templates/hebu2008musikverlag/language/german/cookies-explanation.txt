@@ -1,0 +1,3 @@
+Cookies sind kleine Dateien, die von verschiedenen Websites auf der Festplatte Ihres Computers abgelegt werden, wenn Sie diese Websites besuchen. 
+Nur wenn Ihr Browser Cookies akzeptiert, können Sie alle Optionen nutzen, die hier angeboten werden.
+Gehen Sie wie folgt vor, damit Ihr Browser Cookies akzeptiert:

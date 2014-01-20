@@ -1,0 +1,21 @@
+--
+--  O L A P  - Definitions Datei
+--
+
+$high=#BBFFCC
+
+-- erst mal alles auf Null setzen
+
+update PERSON set  
+ PAPERCOLOR = null
+where 
+ PAPERCOLOR is not null
+
+-- nun die einzelnen Kriterien zum Einfärben (vorrangige bitte unten)
+ 
+update PERSON set
+ PAPERCOLOR = $high
+where
+ RECHNUNGSEMPFAENGER = 'Y'
+  
+   

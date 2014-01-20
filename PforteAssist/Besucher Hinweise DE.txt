@@ -1,0 +1,82 @@
+[TIP]
+(dieser internen Hinweis dient Ihrer info,
+bitte nicht übersetzen):
+
+Liebe Übersetzerin,
+Lieber Übersetzer, 
+
+dieses Dokument wird direkt von der Pfortenanwendung
+verarbeitet, bitte ändern Sie NIEMALS die Texte
+in den eckigen Klammern. Nur die Sachen darunter.
+Ersetzen Sie dabei den deutschen Text durch die
+entsprechende Übersetzung.
+"\F" "\f" sind Steuerzeichen, die man auch in der 
+Übersetung belassen sollte. Besteht der Text aus 
+mehreren Zeilen bitte so ungefähr das Layout 
+beibehalten.
+
+Danke und Viel Spass.
+
+Andreas Filsinger, filsinger.de
+------------- Jetzt gehts los...
+
+
+[Name für die Sprache]
+deutsch
+
+[Hinweise]
+\FHinweise!\f
+Die Schutz- und Ordnungsmaßnahmen für unser Haus und seine 
+Mitarbeiter gelten auch für Besucher. Wegen möglicher 
+Unfallgefahren bitten wir um Vorsicht. Zur Wahrung unserer 
+Rechte sind von uns übergebene Muster und Unterlagen sowie 
+während des Besuches erlangte Informationen - soweit nicht 
+bereits allgemein oder dem Besucher bekannt - vertraulich 
+zu behandeln. Die Anfertigung von Aufzeichnungen sowie 
+firmenbezogene Veröffentlichungen bedürfen der vorherigen 
+Zustimmung. Bild- und Tonaufzeichnungsgeräte können nur 
+im begründeten Ausnahmefall mitgeführt werden.
+
+[Unterschrift]
+Unterschrift
+
+[Rückgabe]
+Bei Besuchsende bitte zurückgeben an der
+Pforte
+
+[Herr]
+Herr
+
+[Frau]
+Frau
+
+[Gruppe]
+Gruppe
+
+[gültig bis]
+gültig bis
+
+[Pforte Empfang]
+Pforte Empfang
+
+[Parken]
+Parkschein
+gut sichtbar im Fahrzeug belassen
+
+[Name]
+Name
+
+[Firma]
+Firma
+
+[Mobilfunk-Telefon]
+Handy
+
+[Bediener]
+\F\+\+\+\+Willkommen\f
+...bei Siemens in Bruchsal
+
+* bitte geben Sie Ihren Namen, Firma und
+  Handy-Nummer ein - sofern Sie unter dieser
+  Nummer während des Besuchs erreichbar sind
+* bitte unterschreiben Sie im unteren Bereich

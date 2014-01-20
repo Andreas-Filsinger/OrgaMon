@@ -1,0 +1,9 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  aktuelle Aussenstände
+//
+//  (c)'04 Andreas Filsinger
+//
+
+select RECHNUNGS_BETRAG, RECHNUNGS_BETRAG-DAVON_BEZAHLT OFFEN from BELEG

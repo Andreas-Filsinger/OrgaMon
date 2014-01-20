@@ -1,0 +1,828 @@
+
+<HTML>
+<HEAD>
+<STYLE TYPE="text/css">
+<!--
+BODY {font-family:Courier New;font-size:10pt}
+A.red0 {color:CC0000;text-decoration:underline}
+A.blue0 {color:000099;text-decoration:none}
+-->
+</STYLE>
+<TITLE>Projekt Info</TITLE>
+</HEAD>
+<body bgcolor="#FFFFFF" leftmargin=10 topmargin=0 marginwidth=0 marginheight=0 vlink="#888888" alink="#AA3333" link="#336699">
+<!-- BEGIN Info -->
+<b>Info Dokument f&uuml;r Oc Rev. 1.173</b><br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#0">Was ist neu</A><br>
+<br>
+Inhaltsverzeichnis<br>
+<br>
+<br>
+<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href><br>
+<br>
+<A class=red0 name="0">Rev 1.173 (05.08.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: RWE: Monteurname mit Handy-Nummer in der Meldung<br>
+<br>
+<A class=red0>Rev 1.172 (26.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: rwe: OBIS-Kennziffern '1-1:0.2.0', '1-1:0.2.1'<br>
+<br>
+<A class=red0>Rev 1.171 (22.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: rwe: OBIS-Kennziffern '1-0:*'<br>
+<br>
+<A class=red0>Rev 1.170 (22.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: rwe: OBIS-Kennziffern '1-0:*'<br>
+<br>
+<A class=red0>Rev 1.169 (13.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Fixed-Formats: Neu &quot;Alternative_&quot; f&uuml;r den Fall von leeren Zellen<br>
+<br>
+<A class=red0>Rev 1.168 (13.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Fixed-Formats: Neu &quot;TTMMJJ&quot;<br>
+<br>
+<A class=red0>Rev 1.167 (05.07.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls2csv: Zeilenumbruch in Textfeldern wurden nicht als &quot;|&quot; ausgegeben<br>
+<br>
+<A class=red0>Rev 1.166 (30.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: IDOC: '#160' kann nicht verarbeitet werden<br>
+<br>
+&nbsp;Neu: IDOC: neuer MEA Namensmodus (bei MEA=JA)<br>
+<br>
+<A class=red0>Rev 1.165 (28.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: rwe: Ermittlung der OBIS-Kennziffern aus dem Auftrag<br>
+<br>
+<A class=red0>Rev 1.164 (23.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xml2csv: auf die Namespaces wurde kein Dateifilter angewendet<br>
+<br>
+<A class=red0>Rev 1.163 (15.06.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: *: erstmals multible Ausf&uuml;hrung, im Moment nur bei xml2csv<br>
+<br>
+<A class=red0>Rev 1.162 (16.05.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: RWE: &quot;0&quot; (aus Excel) ist kein Dateiname. Nun wird &quot;.&quot; erwartet!<br>
+<br>
+<A class=red0>Rev 1.161 (29.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: &quot;TOUR.KUNDE.GERAETEPLATZ.ANZAHL_GERAETE&quot; wird ermittelt<br>
+<br>
+<A class=red0>Rev 1.160 (28.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xml-Parser: Werte &uuml;ber mehrere Zeilen ausgegeben<br>
+<br>
+<A class=red0>Rev 1.159 (23.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xml-Parser: Werte &uuml;ber mehrere Zeilen ausgegeben<br>
+<br>
+<A class=red0>Rev 1.158 (22.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2idoc: Parameter auch &quot;Art&quot; - Abh&auml;ngig aufl&ouml;sbar, z.B.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mandant=&quot;602&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G.Mandant=&quot;102&quot;<br>
+<br>
+<A class=red0>Rev 1.157 (20.04.10-22.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ml2csv: (Primary Key) PK-Wert wird eingef&uuml;hrt<br>
+&nbsp;Neu: xls2xml: rwe: ORDER.Position muss importiert werden<br>
+&nbsp;Neu: xls2xml: rwe: EXPORT- Identifikation mit &quot;ORDER.id&quot; UND &quot;ORDER.Position&quot;<br>
+<br>
+<A class=red0>Rev 1.156 (20.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xml Pr&uuml;fung gegen dtd nun m&ouml;glich, und bei xls2xml nun Standard.<br>
+&nbsp;Neu: xls2xml: Ausgabe der Bilder nun angepasst.<br>
+<br>
+<A class=red0>Rev 1.155 (19.04.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xml2csv: UTF8-Quelle kombiniert mit Umsetzer.ini und Umlauten -&gt; falsch kodierte Umlaute<br>
+<br>
+<A class=red0>Rev 1.154 (18.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;xls2xml.ini&quot;: erster Parameter Bilder=JA|NEIN*<br>
+<br>
+<A class=red0>Rev 1.153 (17.03.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml -&gt; Neue Elemente<br>
+<br>
+<A class=red0>Rev 1.152 (22.02.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Funktion &quot;!^Y&quot;: L&ouml;schung der Zeile wenn &quot;leer&quot;<br>
+<br>
+<A class=red0>Rev 1.151 (22.02.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Funktion &quot;!Zeit&quot;: Zeitangaben wie &quot;9,3&quot; k&ouml;nnen nun verarbeitet werden<br>
+<br>
+<A class=red0>Rev 1.150 (10.02.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: IDOC, neuer Format-Parameter &quot;N&quot;: Ganzzahl -&gt; keine Nachkommastelle<br>
+<br>
+<A class=red0>Rev 1.149 (21.01.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xml2csv: gewisse Z&auml;hlwerke k&ouml;nnen ignoriert werden (IGNORE=)<br>
+<br>
+<A class=red0>Rev 1.148 (21.01.10) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: EDIS-Key &quot;1.7.1&quot; wird bei der Ausgabe ignoriert<br>
+<br>
+<A class=red0>Rev 1.147 (01.12.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls2ml: Fehlermeldungen wurden 2x in die Diagnose.txt geschrieben!<br>
+<br>
+&nbsp;Neu: xls2ml: Wird beim Pr&uuml;fen gegen ein Schema ein Fehler festgestellt, so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wird die Datei &quot;Oc-ERROR-~RID~.xml&quot; erstellt, die das durchgefallene<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xml enth&auml;lt. Ganz ans Ende der Datei wird noch der Fehler an sich<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;geheftet.<br>
+<br>
+<A class=red0>Rev 1.146 (24.11.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2ml: neben &quot;load&quot; l&ouml;scht &quot;write&quot; nun die INSERT Marke, damit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kann eindeutig die Insertposition sichergestellt werden, ins-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;besondere zu empfehlen bei 1:1 Blockersetzungen!<br>
+<br>
+<A class=red0>Rev 1.145 (20.11.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.ml: Z&auml;hlwerks-Automatik<br>
+<br>
+<A class=red0>Rev 1.144 (06.11.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: &quot;Argos P&quot; sobald die Datei &quot;Argos-P.ini&quot; existiert.<br>
+<br>
+<A class=red0>Rev 1.143 (03.11.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Vorlage.ml: wegen Testregression &quot;vorlage-ml-0&quot;<br>
+<br>
+<A class=red0>Rev 1.142 (28.10.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.ml: automatische Erkennung welche Blocks es gibt<br>
+<br>
+<A class=red0>Rev 1.141 (28.10.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: fixed.ini: 0&lt;n&gt; Formatiert den String auf die L&auml;nge &lt;n&gt; mit f&uuml;hrenden Nullen<br>
+<br>
+<A class=red0>Rev 1.140 (08.10.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls2ml: Wenn die ml UTF8 kodiert ist, sollte es die Ausgabe auch sein!<br>
+<br>
+<A class=red0>Rev 1.139 (29.09.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: Anpassungen aufgrund &Auml;nderungen im &quot;EXPORT*&quot; Dateiformat<br>
+<br>
+<A class=red0>Rev 1.138 (09.09.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xml2csv: Umsetzer integriert<br>
+&nbsp;Neu: xml2csv: &quot;DEBUG=JA&quot; f&uuml;r die Inbetriebnahme-Phase<br>
+&nbsp;Neu: xml2csv: Parser kann nun auch mehrzeilige Texte lesen<br>
+<br>
+<A class=red0>Rev 1.137 (07.09.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: doConversion: sBericht k&ouml;nnte auch &quot;nil&quot; sein! <br>
+<br>
+<A class=red0>Rev 1.136 (07.09.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Vorlage.ml: Doppelte Ausgabe der Datens&auml;tze ?! <br>
+<br>
+<A class=red0>Rev 1.135 (04.09.09) Ronny Schupeta</A><br>
+<br>
+&nbsp;Neu: &quot;Bericht&quot; ist im Fehlerfall mit in der Diagnose.<br>
+&nbsp;Neu: Info-Zip DLLs im Setup (Diagnose.zip wird aber noch nicht erstellt!)<br>
+&nbsp;Neu: libxml2 DLL im Setup<br>
+&nbsp;Neu: --xml: Validierung gegen &quot;Schema.xsd&quot;<br>
+<br>
+<A class=red0>Rev 1.134 (23.07.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Zeit wird nun 6 stellig ausgegeben im Format HH:MM:SS, wobei SS immer Null ist!<br>
+<br>
+<A class=red0>Rev 1.133 (13.07.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.ml: Auch der Status &quot;Vorgezogen&quot; und &quot;Unmoeglich&quot; kann nun ausbelichtet werden. Es m&uuml;ssen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dazu die Blocks &quot;VORGEZOGEN&quot; und &quot;UNMOEGLICH&quot; definiert werden.<br>
+<br>
+<A class=red0>Rev 1.132 (07.07.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.ml: Funktionen: !Komma, !Null8, !Boolean, !Zeit <br>
+<br>
+<A class=red0>Rev 1.131 (08.06.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: IDOC: &Uuml;berbleibsel aus alten Datenlieferungen wurden nicht gel&ouml;scht<br>
+<br>
+<A class=red0>Rev 1.130 (06.04.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: Neue Mappings<br>
+<br>
+<A class=red0>Rev 1.129 (30.03.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: IDOC: Konvertierung eines leeren Dokumentes lieferte missverst&auml;ndliche Fehlermeldung<br>
+<br>
+<A class=red0>Rev 1.128 (26.03.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: XLS-&gt;CSV: Standard-Format &quot;65535&quot; konnte nicht verarbeitet werden<br>
+<br>
+&nbsp;Neu: XLS-&gt;CSV: Konvertierungsfehler nun mit mehr Ursachen-Info<br>
+&nbsp;Neu: XLS-&gt;CSV: Konvertierungsfehler sind nun &quot;fatal&quot;<br>
+<br>
+<A class=red0>Rev 1.127 (04.03.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: XML: Sonderzeichen konnten nicht mehr konvertiert werden<br>
+<br>
+<A class=red0>Rev 1.126 (03.02.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: IDOC: &quot;#&quot; wird grunds&auml;tzlich entfernt<br>
+<br>
+<A class=red0>Rev 1.125 (17.02.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: IDOC: &Auml;nderungen der SAP-Feldnamen von<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aeger_matnr -&gt; MaterialnummerZaehlerAlt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aegpl_devloc -&gt; GeraeteplatzAlt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aeastl_anlage -&gt; AnlageAlt<br>
+<br>
+<A class=red0>Rev 1.124 (27.01.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ge&auml;nderter Kontenrahmen 4xxx<br>
+<br>
+<A class=red0>Rev 1.123 (14.01.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: K22: kommt mit '#'-Z&auml;hlernummern klar<br>
+<br>
+<A class=red0>Rev 1.122 (09.01.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Funktion &quot;.zeit.&quot;<br>
+<br>
+&nbsp;Neu: Ber&uuml;cksichtigung der Excel-Limitierung &quot;256 Spalten&quot;<br>
+<br>
+<A class=red0>Rev 1.121 (09.01.09) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Funktion &quot;.komma.&quot;<br>
+&nbsp;Neu: Funktion &quot;.zeit.&quot;<br>
+<br>
+<A class=red0>Rev 1.120 (15.12.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: verbesserte Logik bei den MWST-EU Ausl&auml;ndern<br>
+<br>
+<A class=red0>Rev 1.119 (15.12.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: spezielle Datev-Export Funktion<br>
+<br>
+<A class=red0>Rev 1.118 (03.12.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.xls: Kann nun auch &quot;gedreht&quot; sein!<br>
+<br>
+<A class=red0>Rev 1.117 (30.11.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ytox: Autodetect anhand A1= &quot;SAP ID&quot; -&gt; Y2X -&gt; [1:1]='ID' <br>
+<br>
+<A class=red0>Rev 1.116 (01.10.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XLS-&gt;ML: WechselDatum_3=JJJJMMTT<br>
+<br>
+<A class=red0>Rev 1.115 (08.09.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML-&gt;CSV: Utf8-Zeichsatz m&ouml;glich<br>
+&nbsp;Neu: XML-&gt;CSV: write_at steuer den Ausgabemoment einer csv Zeile<br>
+&nbsp;Neu: XML-&gt;CSV: &Auml;nderungen f&uuml;r &quot;co.ment&quot; Schnittstelle<br>
+<br>
+<A class=red0>Rev 1.114 (14.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML: Anpassungen an das aktuelle Protokoll<br>
+<br>
+<A class=red0>Rev 1.113 (13.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Vorlage.xls: Absturz bei der Ermittlung der Dokumentl&auml;nge &quot;vorlage.xls&quot;<br>
+<br>
+<A class=red0>Rev 1.112 (05.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML: '&amp;#xA;' sollte nach '|' konvertiert werden!<br>
+<br>
+<A class=red0>Rev 1.111 (04.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: &quot;KURZBEZ&quot; und &quot;HOSTKEY&quot; ist scheinbar optional.<br>
+<br>
+<A class=red0>Rev 1.110 (04.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: Mehrtarif im Einbau und Ausbau<br>
+<br>
+<A class=red0>Rev 1.109 (01.08.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Spalten Addierung mit Konstanten<br>
+<br>
+<A class=red0>Rev 1.108 (31.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Max&quot;SpaltenName&quot;=~MaximaleL&auml;ngeDerSpalte~ bewirkt dass der Inhalt auf eine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maximale L&auml;nge gek&uuml;rzt wird.<br>
+<br>
+<A class=red0>Rev 1.107 (30.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Filter: SpaltenName=-~Erw&uuml;nschteZeichen~<br>
+&nbsp;Neu: Filter: SpaltenName=+~Unerw&uuml;nschteZeichen~<br>
+&nbsp;Neu: Join: Verbinden von benachbarten Spalten, JoinColumn=NNN,NNN,NNN ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die Angabe muss 3 stellig erfolgen, die erste Spalte hat Nummer 000<br>
+<br>
+<A class=red0>Rev 1.106 (21.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Block Identifikation war unvollst&auml;ndig <br>
+<br>
+<A class=red0>Rev 1.105 (10.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls-&gt;ml: E2<br>
+<br>
+<A class=red0>Rev 1.104 (10.07.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XLS-&gt;ML: Funktionalit&auml;t analog zu &quot;HTML Vorlagen&quot; (&quot;ht&quot;ml,&quot;x&quot;ml)<br>
+<br>
+<A class=red0>Rev 1.103 (20.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML-&gt;CSV: ARGOS Modus erweitert.<br>
+<br>
+<A class=red0>Rev 1.102 (10.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Vorlage.xls: &quot;(&quot; und &quot;)&quot; wurden nicht erkannt.<br>
+<br>
+<A class=red0>Rev 1.101 (10.06.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage.xls: Auswerte-Logik mit &quot;und&quot;, &quot;oder&quot;, &quot;nicht&quot;<br>
+<br>
+<A class=red0>Rev 1.100 (23.05.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls2csv: &quot;Leerfeld&quot; am Ende ohne Titel<br>
+<br>
+<A class=red0>Rev 1.099 (23.05.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Fixed-Formats.ini: MaxColumn=: Anzahl der Ausgabespalten<br>
+&nbsp;Neu: Fixed-Formats.ini: ~SpaltenName~='&lt;KontstanterWert&gt;: Konstante Ausgabe m&ouml;glich<br>
+<br>
+<A class=red0>Rev 1.098 (23.05.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: &quot;speichern als CSV&quot; ging nicht mehr<br>
+<br>
+&nbsp;Neu: &quot;Michelbach-Format&quot; muss &quot;Adressenliste Oc&quot; in der ersten Zeile haben<br>
+&nbsp;Neu: &quot;xls nach csv&quot; ist neuer default in der Formaterkennung<br>
+&nbsp;Neu: Fixed-Formats.ini: Separator=&lt;Zeichen&gt;: Das Trennzeichen ist frei w&auml;hlbar<br>
+&nbsp;Neu: Fixed-Formats.ini: NoHeader=[&quot;JA&quot;|&quot;NEIN&quot;]: Schreiben des Headers?<br>
+<br>
+<A class=red0>Rev 1.097 (09.04.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: ODIS Korrektur bei &quot;G&quot;as und &quot;WA&quot;sser<br>
+&nbsp;Neu: xls2xml: Pr&auml;fix aus &quot;alter&quot; Z&auml;hlernummer bei &quot;G&quot; / &quot;WA&quot;.<br>
+<br>
+<A class=red0>Rev 1.096 (29.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ARGOS - Standort erst mal ausgeblendet<br>
+<br>
+<A class=red0>Rev 1.095 (28.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ARGOS - &quot;J&quot;-&gt;&quot;ja&quot; / &quot;N&quot;-&gt;&quot;nein&quot;<br>
+<br>
+<A class=red0>Rev 1.094 (27.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ARGOS - kein Fehler mehr bei fehlenden H&uuml;lsen<br>
+<br>
+<A class=red0>Rev 1.093 (27.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: ARGOS - H&uuml;lsen sind optional<br>
+<br>
+<A class=red0>Rev 1.092 (27.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neues XML Mapping f&uuml;r ARGOS MAINOVA<br>
+<br>
+<A class=red0>Rev 1.091 (22.01.08) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos-XML -&gt; csv: '&quot;' wird nach '''' konvertiert.<br>
+&nbsp;Neu: Argos-XML -&gt; csv: | und &amp; und ; wird beachtet.<br>
+<br>
+<A class=red0>Rev 1.090 (18.12.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos: V1+V2+V3 in Spalte &quot;I&quot;<br>
+&nbsp;Neu: Argos: BemerkungBuero in Spalte &quot;J&quot;<br>
+<br>
+<A class=red0>Rev 1.089 (04.10.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: csv2xml: argos: &quot;iso&quot; anstelle von &quot;ISO&quot;<br>
+<br>
+<A class=red0>Rev 1.088 (25.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xml2csv: mehr Statistik im Argos Modus.<br>
+<br>
+<A class=red0>Rev 1.087 (21.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Verbesserungen am Setup, Ver&auml;nderte Kontextmen&uuml;-Eintr&auml;ge<br>
+<br>
+<A class=red0>Rev 1.086 (20.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2argos: Abwandlung der RWE XML Datenlieferung.<br>
+<br>
+<A class=red0>Rev 1.085 (19.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xml2csv: XML wird in einen bin&auml;ren Kontainer ausgegeben.<br>
+<br>
+<A class=red0>Rev 1.084 (13.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: IDOC: '$' bedeutete &quot;Leerer Feldinhalt&quot;, jetzt entfernt- es werden Blanks<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eingetragen!<br>
+<br>
+<A class=red0>Rev 1.083 (06.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xml2csv: Semikolon wurde nicht konvertiert!<br>
+<br>
+<A class=red0>Rev 1.082 (04.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: K22: Wandlung Z&auml;hlernummer -&gt; String misslang.<br>
+&nbsp;Bug: K22: Z&auml;hlernummer wurde mit &quot;-&quot; ausgegeben.<br>
+<br>
+<A class=red0>Rev 1.081 (04.09.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: K22: Suchmaske f&uuml;r Quelldateien ist jetzt &quot;*.txt&quot; anstelle von &quot;download*.txt&quot;<br>
+&nbsp;Neu: K22: Bei der Suche nach Z&auml;hlernummern wird die Sparte mit ber&uuml;cksichtigt.<br>
+<br>
+<A class=red0>Rev 1.080 (03.08.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: RWE: Z&auml;hlwerke-Einbau-Ausbau Soll-Ermittlung verbessert.<br>
+<br>
+<A class=red0>Rev 1.079 (02.08.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: IDOC: Das obere Datum sollte ein echtes Datum sein und kein TimeStamp mit Uhrzeit<br>
+&nbsp;Bug: IDOC: Z&auml;hler Ausbau / Z&auml;hler Einbau war vertauscht<br>
+<br>
+&nbsp;Neu: IDOC: F&uuml;r jeden Wechsel eine eigene IDOC-Datei<br>
+&nbsp;Neu: IDOC: Sender und Empf&auml;nger wieder so wie im Beispiel<br>
+&nbsp;Neu: IDOC: MOVE-Zeile soll nun &quot;U61U62~Werk~1000INETI003&quot; lauten<br>
+&nbsp;Neu: IDOC: &quot;WechselMoment&quot; und &quot;WechselDatum&quot;<br>
+&nbsp;Neu: IDOC: Die IDOC-Nummer enth&auml;lt jetzt die TAN und die laufende IDOC Nummer<br>
+<br>
+<A class=red0>Rev 1.078 (02.08.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: IDOC - Modus, falls &quot;IDOC.Mappings.ini&quot; vorhanden ist.<br>
+<br>
+<A class=red0>Rev 1.077 (03.07.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos XML -&gt; XLS. Tempo f&uuml;r grosse Dateien beschleunigt.<br>
+<br>
+<A class=red0>Rev 1.076 (26.04.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Argos XML -&gt; XLS.<br>
+<br>
+<A class=red0>Rev 1.075 (05.03.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Erzwungene &quot;Indication Id=001&quot; bei LZ.<br>
+<br>
+<A class=red0>Rev 1.074 (02.02.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Erzwungene Hinweise f&uuml;r LZ.<br>
+<br>
+<A class=red0>Rev 1.073 (30.01.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Das Rollenz&auml;hlwerk (Spalte NB) kann nun gemeldet werden!<br>
+<br>
+<A class=red0>Rev 1.072 (29.01.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Mehrtarifzaehler werden einfach nicht via xml gemeldet!<br>
+<br>
+<A class=red0>Rev 1.070 (08.01.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2csv: Prefix '#' wird nicht mehr entfernt.<br>
+<br>
+<A class=red0>Rev 1.069 (02.01.07) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: KK22: Datumslimitierung des Wechseldatums auf 30.12.2006.<br>
+<br>
+<A class=red0>Rev 1.068 (28.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: KK22: Laden aller Dateien mit der Dateimaske &quot;download*.txt&quot;.<br>
+<br>
+<A class=red0>Rev 1.067 (16.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: eigenm&auml;chtiger Einbau Neuer Z&auml;hler = &quot;Eingebaut wurde: &quot;.<br>
+&nbsp;Neu: xls2xml: Informelle Ablesung = &quot;Abgelesen wurde: &quot;.<br>
+&nbsp;Neu: xls2xml: Z&auml;hlernummer Alt Korrektur = &quot;Wirkliche Z&auml;hlernummer: &quot;<br>
+&nbsp;Neu: xls2xml: neue unm&ouml;glich-Schreibweise = &quot;Ausf&uuml;hrung unm&ouml;glich: &quot;<br>
+&nbsp;Neu: xls2xml: neue vorgezogen Schreibwise = &quot;Wurde bereits erledigt: &quot;<br>
+<br>
+<A class=red0>Rev 1.066 (12.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: mehr Diagnosem&ouml;glichkeit im Fall der Ablehung.<br>
+<br>
+<A class=red0>Rev 1.065 (01.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: Bermerkungen kommen VOR den wichtigen Hinweisen.<br>
+&nbsp;Neu: xls2xml: Auch &quot;unm&ouml;gliche&quot; k&ouml;nnen nun gesendet werden.<br>
+&nbsp;Neu: xls2xml: &quot; sollte nun zuverl&auml;ssiger verhindert werden.<br>
+&nbsp;Neu: xls2xml: Auch ohne &quot;Wechseldatum&quot; und &quot;WechselUhrzeit&quot; kann gemeldet werden.<br>
+<br>
+<A class=red0>Rev 1.064 (01.12.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: Es kann auch sein, dass weder ARTICLE_TYPE.type_id noch ARTICLE.type_id<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vorhanden sind, grunds&auml;tzlich sollten nicht gefundene Tags nicht mehr den<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ganzen Oc Prozess stoppen! <br>
+<br>
+<A class=red0>Rev 1.063 (21.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: ARTICLE_TYPE.type_id kann alternativ aus ARTICLE.type_id bei new_article=&quot;TRUE&quot;<br>
+&nbsp;Neu: xls2xml: q erzeugt klare Fehlermeldung mit &quot;ORDER.id&quot;. <br>
+<br>
+<A class=red0>Rev 1.062 (21.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Einbauten ohne Z&auml;hlwerke: Neuer Artikel wurde nicht angegeben.<br>
+<br>
+<A class=red0>Rev 1.061 (17.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls2xml: Erkennen der Aufgaben aus XML.<br>
+&nbsp;Neu: xls2xml: Pr&uuml;fung der Ergebnisse anhand der Aufgaben.<br>
+<br>
+<A class=red0>Rev 1.060 (16.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Sonderzeichen &amp;#xA; wurde falsch umgesetzt!<br>
+<br>
+<A class=red0>Rev 1.059 (15.11.06-16.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Diagnose.zip nur noch im Fehlerfall<br>
+&nbsp;Neu: Warnungen sind nun auch m&ouml;glich<br>
+&nbsp;Neu: xls2xls: .t. Modus (Transaktionen) mit 2 Funktionen ISL1 und ISL2.<br>
+&nbsp;Neu: xls2xls: Datums- und Zeitwerte k&ouml;nnen auch verarbeitet werden.<br>
+<br>
+<A class=red0>Rev 1.058 (09.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Zeilenumbruch heisst &quot;&amp;#xA;&quot; und nicht &quot;&amp;#xA&quot;<br>
+<br>
+<A class=red0>Rev 1.057 (08.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Ausgabedateiname kann von der rufenden Anwendung abgefragt werden.<br>
+<br>
+<A class=red0>Rev 1.056 (07.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: AuftragsQuelle &amp; Meldung wurden als Datum ausgegeben.<br>
+<br>
+<A class=red0>Rev 1.055 (07.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: bei automatischer Erkennung war der Arbeitspfad nicht gesetzt.<br>
+<br>
+&nbsp;Neu: DLA-Auftr&auml;ge k&ouml;nnen nun gemeldet werden! (Sparte ist erforderlich!)<br>
+&nbsp;Neu: 001=Bemerkung(I3,I4,I5) und 002=Wichtiger Hinweis (I6,I7,I8) werden unterschieden!<br>
+<br>
+<A class=red0>Rev 1.054 (02.11.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Auftr&auml;ge des Typs &quot;ohne Z&auml;hlwerk&quot; wurden nicht gefunden.<br>
+<br>
+<A class=red0>Rev 1.053 (27.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xml-&gt;.csv: &quot;defaults&quot; f&uuml;r Z&auml;hlernummer, im Moment noch hardcoded.<br>
+<br>
+<A class=red0>Rev 1.052 (27.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xml-&gt;.csv: Z&auml;hlwerke werden jetzt auch aus Einbauz&auml;hler ermittelt.<br>
+<br>
+<A class=red0>Rev 1.051 (27.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Oc gibt es nun als Unit UND als Kommandozeilen-Anwendung<br>
+<br>
+<A class=red0>Rev 1.050 (19.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: .xls-&gt;.xml: Zeitstempel k&ouml;nnen jetzt richtig verarbeitet werden.<br>
+<br>
+<A class=red0>Rev 1.049 (19.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xls-&gt;.xml: Bei Doppeltarifz&auml;hlern gilt:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HT = 1.8.2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NT = 1.8.1<br>
+<br>
+<A class=red0>Rev 1.048 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: RWE typisches &quot;-&quot; nach den ersten 6 Ziffern.<br>
+<br>
+<A class=red0>Rev 1.047 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Feste odis - Keys bei SAP &quot;Zw&quot; Dateien.<br>
+<br>
+<A class=red0>Rev 1.046 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xls-&gt;.xml: arbeitet jetzt alternativ auch mit &quot;Zw&quot; anstelle von<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COUNTER.edis_<br>
+<br>
+<A class=red0>Rev 1.045 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xml-&gt;.csv: doppelt vorkommende IDs werden nun abgelehnt.<br>
+&nbsp;Neu: Diagnose: Fortschreibendes Schreiben, sobald Diagnose.All.txt existiert.<br>
+<br>
+<A class=red0>Rev 1.044 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xml-&gt;.csv: Dateiname wird mit aufgenommen!<br>
+&nbsp;Neu: .xml-&gt;.csv: Nummer des Zaehlwerkes wird mit aufgenommen!<br>
+<br>
+<A class=red0>Rev 1.043 (18.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: .xml-&gt;.csv: Es wurde immer nur die erste ODIS-Kennziffer benutzt.<br>
+<br>
+<A class=red0>Rev 1.042 (17.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .xml + Mapping.txt -&gt; .csv<br>
+<br>
+<A class=red0>Rev 1.041 (04.10.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls mit Vorlage: anstelle von &quot; am Anfang kann auch \ verwendet werden. Die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eingabe des &quot; ist bei Open Office nicht m&ouml;glich.<br>
+<br>
+<A class=red0>Rev 1.040 (28.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: xls-&gt;csv: Jetzt auch Uhrzeit und Zeitstempel m&ouml;glich.<br>
+<br>
+<A class=red0>Rev 1.039 (20.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Plausibilit&auml;tslogik war negiert.<br>
+<br>
+<A class=red0>Rev 1.038 (12.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: KK22: geforderte Nachkommastellen werden jetzt ber&uuml;cksichtigt!<br>
+<br>
+<A class=red0>Rev 1.037 (11.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: KK22: Mindestdatum ist 01.09.2006.<br>
+<br>
+<A class=red0>Rev 1.036 (08.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls -&gt; csv: Datumsformat wurde nicht immer erkannt!<br>
+<br>
+<A class=red0>Rev 1.035 (31.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: KK22 Modus!<br>
+<br>
+<A class=red0>Rev 1.034 (27.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: .+.: &quot; hatte nicht funktioniert.<br>
+<br>
+<A class=red0>Rev 1.033 (27.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .+.: Auch Konstante Werte k&ouml;nnen verkettet werden!<br>
+&nbsp;Neu: .+.: !Feld-&gt;Es wurd kein Leerzeichen eingef&uuml;gt!<br>
+<br>
+<A class=red0>Rev 1.032 (22.08.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: XML: INDICATION.text kann nun gesetzt werden.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;001 aus &quot;I3+I4+I5&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;002 aus &quot;I6&quot;<br>
+<br>
+<A class=red0>Rev 1.031 (25.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: XML: Close-Tag war grunds&auml;tzlich falsch formuliert.<br>
+<br>
+<A class=red0>Rev 1.030 (18.07.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: XML: ARTICLE Tag war im falschen Level.<br>
+<br>
+&nbsp;Neu: XML: edis aus der XLS.<br>
+&nbsp;Neu: XML: Automatische erkennung ob Neuer Z&auml;hler / Alter Z&auml;hler notwendig.<br>
+<br>
+<A class=red0>Rev 1.029 (16.06.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Auswertung der EXPORT*.xml<br>
+<br>
+<A class=red0>Rev 1.028 (26.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: xls -&gt; csv: Es werden auch 2 stellige Datumsformate erkannt.<br>
+<br>
+<A class=red0>Rev 1.027 (12.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: .j automatische Ja/Nein Felder.<br>
+&nbsp;Neu: .J echte JA/NEIN Felder.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j = 5 Taste = 5jklJKL und &quot;1&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = 6 Taste = 6mnoMNO und &quot;0&quot;<br>
+<br>
+<A class=red0>Rev 1.026 (12.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neuer Eintrag ins Kontext-Men&uuml; &quot;Speichern als csv&quot;<br>
+&nbsp;Neu: Kommandozeilenparamter --xls erzwingt den XLS -&gt; CSV Modus!<br>
+&nbsp;Neu: xls2csv: Leerzeilen in der Ausgabe werden nun unterdr&uuml;ckt.<br>
+<br>
+<A class=red0>Rev 1.025 (09.05.06-11.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Vorlage: Nachladen von Spalten aus einer externen Datei.<br>
+<br>
+<A class=red0>Rev 1.024 (08.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Vorlagen k&ouml;nnen auch leere Titelzeilen haben?!<br>
+<br>
+<A class=red0>Rev 1.023 (04.05.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Konstante Werte beginnen einfach mit &quot; (aber kein &quot; am Ende!)<br>
+&nbsp;Neu: Automatische Erkennung, wann den eigentlich die Commando-Zeile beginnt!<br>
+&nbsp;Neu: Die Ausgabe heisst jetzt &quot;Konvertiert&quot;!<br>
+<br>
+<A class=red0>Rev 1.022 (26.04.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;.1&quot; und &quot;.2&quot; Befehl f&uuml;r das Herausschneiden von Teilen aus einem String.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hier benutzt f&uuml;r die Trennung von PLZ und ORT.<br>
+<br>
+<A class=red0>Rev 1.021 (21.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: kundenspezifische Settings f&uuml;r einzelne Spaltenformatierungen sind nun<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&ouml;glich. Mehr dazu in der Dokumentation.<br>
+<br>
+<A class=red0>Rev 1.020 (16.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Datumsausgabe war falsch (War Anzahl der Tage seit dem 01.01.1970).<br>
+<br>
+<A class=red0>Rev 1.019 (14.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Beim Setup ist das Installationsverzeichnis nun w&auml;hlbar.<br>
+<br>
+<A class=red0>Rev 1.018 (07.03.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Fehlerhafte Eingaben im argos - Modus brachte die Konvertierung aus dem<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tritt.<br>
+<br>
+<A class=red0>Rev 1.017 (23.02.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Neuer Modus: xls nach csv Konvertierung.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ausl&ouml;ser ist die Existenz Spalte &quot;Zw&quot; oder &quot;MobiBelegNr&quot;<br>
+&nbsp;Neu: Batchbetrieb: Fehlermeldungen kommen auch in der Kommandozeile.<br>
+&nbsp;Neu: Batchbetrien: ExitCode=1 im Fehlerfall.<br>
+<br>
+<A class=red0>Rev 1.016 (23.02.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Umlaut &quot;&Auml;&quot; wurde nicht richtig gewandelt<br>
+&nbsp;Neu: Warnung bei leseFehlern in der Quell-Datei.<br>
+&nbsp;Neu: Fehler, wenn Zieldatei noch ge&ouml;ffnet ist. <br>
+<br>
+<A class=red0>Rev 1.015 (21.02.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;BG&quot; - Modus f&uuml;r die Mainova.<br>
+<br>
+<A class=red0>Rev 1.014 (27.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;Bemerkung&quot; wird jetzt im Fall, sobald der Monteur keine Bemerkung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eingetragen hat &uuml;bernommen.<br>
+<br>
+<A class=red0>Rev 1.013 (16.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;KENNZIFFER&quot; anstelle der &quot;KE&quot;<br>
+<br>
+<A class=red0>Rev 1.012 (16.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Beim Fehlen der Felder &quot;I3,I4,I5&quot; erfolgte keine Fehlerausgabe.<br>
+<br>
+&nbsp;Neu: Position von &quot;ARGOS_ID&quot; im Ergebnis ist jetzt beliebig.<br>
+&nbsp;Neu: Konvertierm&ouml;glichkeit von Gas / Wasser.<br>
+&nbsp;Neu: Homogenisierung der Spalten bei unterschiedlichen Auftrag_*.csv.<br>
+<br>
+<A class=red0>Rev 1.011 (13.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: sewa.2 war entstanden. Jetzt wieder sewa.csv!<br>
+<br>
+<A class=red0>Rev 1.010 (13.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: STRASSE_GP := STRASSE_GP + HAUS_NR_GP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STRASSE := STRASSE + HAUS_NR<br>
+<br>
+<A class=red0>Rev 1.009 (12.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Es wird nun in mehreren Auftr&auml;gen gesucht.<br>
+&nbsp;Neu: Versionsnummerangabe im Kontextmen&uuml;.<br>
+<br>
+<A class=red0>Rev 1.008 (12.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Ergebnisdateien haben nun 12 Spalten.<br>
+<br>
+<A class=red0>Rev 1.007 (11.01.06-12.01.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: In der Datei Oc.Mappings.ini kann Ergebnis=Ergebnis_SEWA. angegeben werden.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;Ergebnis_SEWA.&quot; ist auch der default - Wert)<br>
+&nbsp;Neu: In der Datei Oc.Mappings.ini kann Auftrag=Auftrag_ angegeben werden.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;Auftrag_&quot; ist auch der default Wert!)<br>
+&nbsp;Neu: Startzeichen f&uuml;r Argos-Auftr&auml;ge ist nunmehr nur noch &quot;Z&auml;hlernummer alt&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dies funktioniert dann f&uuml;r &quot;Strom - &quot;, &quot;Wasser - &quot;, &quot;Gas - &quot; gleichermassen.<br>
+<br>
+<A class=red0>Rev 1.006 (16.12.05-18.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: weitere Spaltenanpassungen.<br>
+&nbsp;Neu: Diagnose.zip erleichtert den Support.<br>
+<br>
+<A class=red0>Rev 1.005 (12.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: B+K &quot;csv&quot; Auftr&auml;ge k&ouml;nnen verarbeitet werden. <br>
+<br>
+<A class=red0>Rev 1.004 (09.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: &quot;/&quot; Trennungen erzeugen weitere Spalten<br>
+<br>
+<A class=red0>Rev 1.003 (09.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Bei Fehlern &ouml;ffnet sich das Diagnose Verzeichnis.<br>
+<br>
+<A class=red0>Rev 1.002 (08.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Einzelne Datens&auml;tze untereinander! <br>
+<br>
+<A class=red0>Rev 1.001 (08.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: F&uuml;r einen Word-Text<br>
+<br>
+<A class=red0>Rev 1.000 (18.07.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: erste Version<br>
+<!-- END Info -->
+</BODY>
+</HTML>

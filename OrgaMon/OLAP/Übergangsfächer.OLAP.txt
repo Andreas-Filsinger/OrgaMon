@@ -1,0 +1,37 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Belege in den Übergangfächern
+--
+--  (c)'05 Andreas Filsinger
+--
+--
+
+$VERLAG_R=181
+
+select
+ Lager.name,
+ Beleg.RID,
+ Beleg.zusage,
+ beleg.termin,
+ beleg.person_r
+from
+ lager
+join
+ beleg
+on
+ beleg.lager_r=lager.rid
+where
+ lager.verlag_r=$VERLAG_R
+order by
+ lager.name 
+ 
+complete
+
+Anschrift(PERSON_R) Adressat1;Adressat2;Adressat3;Adressat4;Strasse;Ort
+-
+ 
+excel
+
+open
+-

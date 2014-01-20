@@ -1,0 +1,104 @@
+
+<HTML>
+<HEAD>
+<STYLE TYPE="text/css">
+<!--
+BODY {font-family:Courier New;font-size:10pt}
+A.red0 {color:CC0000;text-decoration:underline}
+A.blue0 {color:000099;text-decoration:none}
+-->
+</STYLE>
+<TITLE>Projekt Info</TITLE>
+</HEAD>
+<body bgcolor="#FFFFFF" leftmargin=10 topmargin=0 marginwidth=0 marginheight=0 vlink="#888888" alink="#AA3333" link="#336699">
+<!-- BEGIN Info -->
+<b>Info Dokument f&uuml;r FirebirdRestore Rev. 1.012</b><br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#0">Was ist neu</A><br>
+<br>
+Inhaltsverzeichnis<br>
+<br>
+&nbsp;&nbsp;<A class=red0 href="#1">Format der ini.Datei</A><br>
+<br>
+<A class=blue0 name="1">Format der ini.Datei</A><br>
+<br>
+&nbsp;[System]<br>
+&nbsp;&quot;Eintrag-Numero-beginnend-bei-1&quot; = Win32Mapping,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hostname des Servers,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SambaMapping,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SYSDBA Passwort] ,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[RestoreDest]<br>
+<br>
+&nbsp;Beispiel:<br>
+<br>
+&nbsp;[System]<br>
+&nbsp;1=I:\,192.168.115.92,/ablage/<br>
+&nbsp;2=C:\,127.000.000.001,C:\<br>
+<br>
+<A class=red0 name="0">Rev 1.012 (18.09.06) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Das Passwort kann nun auch in verschl&uuml;sselter Form angegeben werden!<br>
+<br>
+<A class=red0>Rev 1.011 (13.12.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Verwendung der embedded Serverversion nun m&ouml;glich. Dazu muss der &quot;Hostname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;des Servers&quot; einfach leergelassen werden.<br>
+<br>
+<A class=red0>Rev 1.010 (30.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Ziel und Quelle war verwechselt worden.<br>
+<br>
+<A class=red0>Rev 1.009 (30.09.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Ziel der restoreten Datenbank kann angegeben werden.<br>
+<br>
+<A class=red0>Rev 1.008 (07.07.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: Multibildschirmsysteme: Formularposition war falsch.<br>
+<br>
+<A class=red0>Rev 1.007 (16.05.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Fehlt ein Netzwerkmapping wird die INI geladen<br>
+<br>
+<A class=red0>Rev 1.006 (27.04.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Mehr Info, welche Dateinamen verwendet werden.<br>
+&nbsp;Neu: Mehr Info im Fehlerfall.<br>
+&nbsp;Neu: Bis zu 26 Laufwerksmappings.<br>
+&nbsp;Neu: Sonderzeichen '#10' wird aus den meldungen des firebird Service entfernt<br>
+<br>
+<A class=red0>Rev 1.005 (22.04.05) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: SYSDBA Passwort kann angegeben werden. (Default = masterkey).<br>
+<br>
+<A class=red0>Rev 1.004 (25.04.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: Lokale Drives brauchen nicht mehr angegeben zu werden, vielmehr werden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alle Drives, die in der Ini nicht gefunden werden als lokal betrachtet.<br>
+&nbsp;Neu: Neue ini. Erweiterungen darin dokumentiert.<br>
+<br>
+<A class=red0>Rev 1.003 (01.04.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Info: mehr Infos in der FirebirdRestore.ini.<br>
+<br>
+&nbsp;Neu: Wird FirebirdRestore ohne Parameter aufgerufen, so kann wird die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FirebirdRestore.ini in den Anzeigebreich editierbar geladen.<br>
+<br>
+<A class=red0>Rev 1.002 (10.03.04) Andreas Filsinger</A><br>
+<br>
+&nbsp;Info: Dokumentation f&uuml;r lokale Files erweitert.<br>
+<br>
+<A class=red0>Rev 1.001 (14.11.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Bug: firebird restore stellt die Bildschirmausgabe ein, sobald die<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Anwendung den Eingabefokus verloren hat.<br>
+<br>
+&nbsp;Neu: Schriftart jetzt FixedSys<br>
+<br>
+<A class=red0>Rev 1.000 (07.11.03) Andreas Filsinger</A><br>
+<br>
+&nbsp;Neu: erste Release<br>
+<br>
+<!-- END Info -->
+</BODY>
+</HTML>

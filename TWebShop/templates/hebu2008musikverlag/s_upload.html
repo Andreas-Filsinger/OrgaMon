@@ -1,0 +1,144 @@
+<p class="title">Artikel-Upload für die Veröffentlichung in "Die Blasmusik"</p>
+<!-- BEGIN PARAMS
+title=Artikel-Upload "Die Blasmusik"
+--><!-- END PARAMS -->
+<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">
+	tinyMCE.init({
+		mode : "textareas",
+		theme : "simple"
+	});
+</script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/associations.js"></script>
+<script type="text/javascript">
+  function initAssociation(value)
+  { setSelectedOptionByValue('upload','f_association',value);
+  }
+  
+  function initMember(value)
+  { setSelectedOptionByValue('upload','f_member',value);
+  }
+  
+  function initEdition(value)
+  { setSelectedOptionByValue('upload','f_edition',value);
+  }
+ 
+  function loadAssociation()
+  { var index = document.forms['upload'].elements['f_association'].options.selectedIndex;
+	
+	while(document.forms['upload'].elements['f_member'].length > 0)
+	{ document.forms['upload'].elements['f_member'].options[document.forms['upload'].elements['f_member'].length-1] = null;
+	}
+	  
+	for(var i = 0; i < _ASSOCIATION[index]['members'].length; i++)
+	{ var option = new Option(_ASSOCIATION[index]['members'][i]['name'], _ASSOCIATION[index]['members'][i]['number'],false,false); 
+	  document.forms['upload'].elements['f_member'].options[i] = option;
+	}
+  }
+  
+  function checkeMailAndSubmit()
+  { if (confirm("Bitte überprüfen Sie nochmals die angegebene E-Mailadresse auf Richtigkeit: " + document.forms['upload'].elements['f_user'].value))
+    { document.forms['upload'].submit(); 
+	}
+  }
+  
+</script>
+<!-- <p class="steptitle">~CONST_SENTENCE_~</p>
+<hr /> -->
+~OBJ_MESSAGELIST~
+~OBJ_ERRORLIST~
+<div>
+<form id="upload" action="~CONST___INDEX~" method="post" enctype="multipart/form-data">
+
+<div class="fieldname">Verband auswählen:</div>
+<div class="field">
+  <select name="f_association" onchange="loadAssociation()">
+  <script type="text/javascript">
+    for(var i = 0; i < _ASSOCIATION.length; i++)
+	{ document.write('<option value="' + _ASSOCIATION[i]['number']+'-'+_ASSOCIATION[i]['dir'] + '">' + _ASSOCIATION[i]['name'] + '</option>');
+	}
+  </script>
+  </select>
+</div>
+<div class="clear"></div>
+<hr />
+  
+<div class="fieldname">Verein auswählen:</div>
+<div class="field">
+  <select name="f_member"></select>
+  <script type="text/javascript">
+    initAssociation('~VAR_F_ASSOCIATION~');
+	loadAssociation();
+	initMember('~VAR_F_MEMBER~');
+  </script>
+</div>
+<div class="clear"></div>
+<hr />
+
+<div class="fieldname">Ausgabe:</div>
+<div class="field">
+  <select name="f_edition">
+  <script type="text/javascript">	
+	var quantity = 9;
+	var months = new Array('Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember');
+	var month = ~VAR_MONTH~;
+	var now = new Date();
+	var year = Number(now.getFullYear());
+	for(var i = 0; i < quantity; i++)
+	{ var m = (month+i) % 12;
+	  if (m == 0) m = 12;
+	  var y = String(year + ((month+i-m) / 12));
+	  document.write('<option value="' + y + '/' + leadingZero(String(m),2) + '">' + months[m-1] + ' ' + y + '</option>');
+	}
+	
+  initEdition('~VAR_F_EDITION~');
+  </script>
+  </select>
+</div>
+<div class="clear"></div>
+<hr />
+  
+<div class="fieldname">Name des Autors:</div>
+<div class="field"><input class="minimal" type="text" name="f_author" size="35" maxlength="100" value="~VAR_F_AUTHOR~"></div>
+<div class="clear"></div>
+<hr />
+  
+<div class="fieldname">E-Mail des Autors (für Bestätigung):</div>
+<div class="field"><input class="minimal" type="text" name="f_user" size="35" maxlength="100" value="~VAR_F_USER~"></div>
+<div class="clear"></div>
+<hr />
+  
+<div class="fieldname">Text:</div>
+<div class="clear"></div>
+<div class="field"><textarea name="f_text" style="width:10cm; height:200px;">~VAR_F_TEXT~</textarea></div>
+<div class="clear"></div>
+<hr />
+  
+<!--
+<div class="field"><input type="button" class="short" value="~CONST_WORD_PREVIEW~" onClick="openPreview()"></div>
+<div class="clear"></div>
+<hr />
+-->
+  
+<!--
+<div class="fieldname">Bilder:</div>
+<div class="field">~OBJ_IMAGES~</div>
+<div class="clear"></div>
+-->
+ 
+<div class="fieldname">Photos (maximal ~VAR_MAX_FILE_SIZE~ MB pro Datei, maximal ~VAR_MAX_POST_SIZE~ MB gesamt):</div>
+<div class="field"><input class="text" type="file" name="f_photo[]" size="35"></div>
+<div class="field"><input class="text" type="file" name="f_photo[]" size="35"></div>
+<div class="field"><input class="text" type="file" name="f_photo[]" size="35"></div>
+<div class="field"><input class="text" type="file" name="f_photo[]" size="35"></div>
+<div class="field"><input class="text" type="file" name="f_photo[]" size="35"></div>
+<div class="clear"></div>
+<hr />
+  
+<input type="button" class="short" name="send" value="Hochladen" onClick="checkeMailAndSubmit()">
+<input type="hidden" name="action" value="upload_data">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="hidden" name="site" value="upload">
+</form>
+</div>

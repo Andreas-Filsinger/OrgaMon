@@ -1,0 +1,40 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Artikel - Infos 
+//
+//  (c)'04 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select
+ ARTIKEL.RID ARTIKEL_R,
+ ARTIKEL.KOMPONIST_R,
+ ARTIKEL.ARRANGEUR_R,
+ Artikel.Titel,
+ Land.Iso_Kurzzeichen, -- bezogen auf Artikel.Land_R
+ Artikel.Schwer_Gruppe,
+ Sortiment.Bezeichnung,  -- bezogen auf Artikel.Sortiment_R
+ Artikel.Numero,
+ Person.Suchbegriff, -- bezogen auf Artikel.Verlag_R
+ Artikel.Dauer
+from
+ ARTIKEL
+join SORTIMENT on
+ ARTIKEL.SORTIMENT_R=SORTIMENT.RID
+join LAND on
+ ARTIKEL.LAND_R=LAND.RID
+join PERSON on
+ ARTIKEL.VERLAG_R=PERSON.RID
+where
+ Artikel.Sortiment_R=65579
+
+complete
+
+Preis(ARTIKEL_R) PREIS
+Lieferzeit(ARTIKEL_R) LIEFERZEIT
+Komponist(KOMPONIST_R) KOMPONIST
+Arrangeur(ARRANGEUR_R) ARRANGEUR
+Bemerkung(ARTIKEL_R) BEMERKUNG
+-

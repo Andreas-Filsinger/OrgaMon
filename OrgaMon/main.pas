@@ -1,0 +1,1192 @@
+{
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2007  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+}
+unit main;
+
+interface
+
+uses
+  Windows, Messages, SysUtils,
+  Classes, Graphics, Controls,
+  Forms, Dialogs, ExtCtrls,
+  StdCtrls, Buttons, Menus,
+
+  // OrgaMon Projekt
+  globals,
+
+  // Tools
+  anfix32, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
+  IdAntiFreeze;
+
+type
+  TFormMain = class(TForm)
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Button6: TButton;
+    Button7: TButton;
+    Button8: TButton;
+    Button10: TButton;
+    Button11: TButton;
+    Button12: TButton;
+    Button13: TButton;
+    Button15: TButton;
+    Button17: TButton;
+    Button18: TButton;
+    Button19: TButton;
+    Button20: TButton;
+    Button21: TButton;
+    Button25: TButton;
+    Button9: TButton;
+    Button27: TButton;
+    Button28: TButton;
+    Button29: TButton;
+    Button30: TButton;
+    Button31: TButton;
+    Label1: TLabel;
+    Button32: TButton;
+    Button33: TButton;
+    Button34: TButton;
+    Button36: TButton;
+    Button37: TButton;
+    Button38: TButton;
+    Button43: TButton;
+    Button44: TButton;
+    Button46: TButton;
+    Button35: TButton;
+    Button40: TButton;
+    Button47: TButton;
+    Button48: TButton;
+    Button49: TButton;
+    Button51: TButton;
+    Button53: TButton;
+    Button22: TButton;
+    Button56: TButton;
+    Button57: TButton;
+    Button58: TButton;
+    Image1: TImage;
+    Button39: TButton;
+    Button60: TButton;
+    Button61: TButton;
+    Button62: TButton;
+    Button63: TButton;
+    Button64: TButton;
+    Button65: TButton;
+    Button66: TButton;
+    Button67: TButton;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Button16: TButton;
+    Button68: TButton;
+    Button59: TButton;
+    Button69: TButton;
+    Button70: TButton;
+    Image2: TImage;
+    Button72: TButton;
+    Button73: TButton;
+    Button75: TButton;
+    SpeedButton1: TSpeedButton;
+    Button76: TButton;
+    Button77: TButton;
+    Button79: TButton;
+    Button80: TButton;
+    Button78: TButton;
+    Button26: TButton;
+    Button81: TButton;
+    Button82: TButton;
+    Button83: TButton;
+    Button50: TButton;
+    Timer1: TTimer;
+    Button86: TButton;
+    CheckBox1: TCheckBox;
+    SpeedButton2: TSpeedButton;
+    Button87: TButton;
+    CMS: TLabel;
+    Resource: TLabel;
+    Button1: TButton;
+    Button5: TButton;
+    Button23: TButton;
+    Image3: TImage;
+    Button45: TButton;
+    Button74: TButton;
+    Button84: TButton;
+    SpeedButton20: TSpeedButton;
+    Button14: TButton;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    Panel5: TPanel;
+    Button24: TButton;
+    Button42: TButton;
+    IdAntiFreeze1: TIdAntiFreeze;
+    Button41: TButton;
+    Button55: TButton;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    Button71: TButton;
+    Button85: TButton;
+    Button88: TButton;
+    Button52: TButton;
+    Button89: TButton;
+    Button90: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
+    procedure Button13Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
+    procedure Button20Click(Sender: TObject);
+    procedure Button21Click(Sender: TObject);
+    procedure Button25Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure Button27Click(Sender: TObject);
+    procedure Button28Click(Sender: TObject);
+    procedure Button29Click(Sender: TObject);
+    procedure Button30Click(Sender: TObject);
+    procedure Button31Click(Sender: TObject);
+    procedure Button32Click(Sender: TObject);
+    procedure Button33Click(Sender: TObject);
+    procedure Button34Click(Sender: TObject);
+    procedure Button36Click(Sender: TObject);
+    procedure Button37Click(Sender: TObject);
+    procedure Button38Click(Sender: TObject);
+    procedure Button44Click(Sender: TObject);
+    procedure Button43Click(Sender: TObject);
+    procedure Button46Click(Sender: TObject);
+    procedure Button35Click(Sender: TObject);
+    procedure Button40Click(Sender: TObject);
+    procedure Button47Click(Sender: TObject);
+    procedure Button48Click(Sender: TObject);
+    procedure Button49Click(Sender: TObject);
+    procedure Button51Click(Sender: TObject);
+    procedure Button53Click(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
+    procedure Button56Click(Sender: TObject);
+    procedure Button57Click(Sender: TObject);
+    procedure Button58Click(Sender: TObject);
+    procedure Image1DblClick(Sender: TObject);
+    procedure Button39Click(Sender: TObject);
+    procedure Button60Click(Sender: TObject);
+    procedure Button61Click(Sender: TObject);
+    procedure Button63Click(Sender: TObject);
+    procedure Button64Click(Sender: TObject);
+    procedure Button65Click(Sender: TObject);
+    procedure Button66Click(Sender: TObject);
+    procedure Button67Click(Sender: TObject);
+    procedure Button59Click(Sender: TObject);
+    procedure Button69Click(Sender: TObject);
+    procedure Button62Click(Sender: TObject);
+    procedure Button70Click(Sender: TObject);
+    procedure Image2Click(Sender: TObject);
+    procedure Label1Click(Sender: TObject);
+    procedure Button72Click(Sender: TObject);
+    procedure Button73Click(Sender: TObject);
+    procedure Button75Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure Button76Click(Sender: TObject);
+    procedure Button77Click(Sender: TObject);
+    procedure Button79Click(Sender: TObject);
+    procedure Button80Click(Sender: TObject);
+    procedure Button78Click(Sender: TObject);
+    procedure Button81Click(Sender: TObject);
+    procedure Button82Click(Sender: TObject);
+    procedure Button83Click(Sender: TObject);
+    procedure Button26Click(Sender: TObject);
+    procedure Button68Click(Sender: TObject);
+    procedure Button50Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Button86Click(Sender: TObject);
+    procedure CheckBox1Click(Sender: TObject);
+    procedure Button87Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
+    procedure Image3Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure Button45Click(Sender: TObject);
+    procedure Button74Click(Sender: TObject);
+    procedure Button84Click(Sender: TObject);
+    procedure SpeedButton20Click(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
+    procedure Button24Click(Sender: TObject);
+    procedure Button42Click(Sender: TObject);
+    procedure Button41Click(Sender: TObject);
+    procedure Button55Click(Sender: TObject);
+    procedure Button71Click(Sender: TObject);
+    procedure Button85Click(Sender: TObject);
+    procedure Button88Click(Sender: TObject);
+    procedure Button52Click(Sender: TObject);
+    procedure Button89Click(Sender: TObject);
+    procedure Button90Click(Sender: TObject);
+  private
+    { Private-Deklarationen }
+    FirstStarted: boolean;
+    sHotKeys: TStringList;
+    SysHotKey1: TSysHotKEy;
+    procedure HotKey(Sender: TObject; Index: integer);
+  public
+    { Public-Deklarationen }
+    procedure UpdateBenutzer(Sender: TObject);
+    procedure ReflectUpdateStatus;
+    procedure registerHot(EventName: string; ShiftState: THKModifiers;
+      Key: TVirtKey; Active: boolean = true);
+    procedure hotEvent;
+  end;
+
+var
+  FormMain: TFormMain;
+
+implementation
+
+uses
+  Funktionen.Basis,
+  Funktionen.Beleg,
+  html, Person, Serie,
+  Laender, InternationaleTexte, Datenbank,
+  Artikel, SystemPflege, Resource.SiteDownload,
+  PersonDoppelte, PersonExport, Belege,
+  Lager, ArtikelSortiment, splash, MwSt,
+  Einstellungen, ArtikelBild,
+  BelegSuche, Datensicherung, PersonSuche,
+  CreatorMain, wordindex, AusgangsRechnungen,
+  Inventur, Ereignis, Tagesabschluss,
+  Versender, VersenderPaketID, BelegRecherche,
+  BaseUpdate, ArtikelVerlag,
+  AusgabeArt, Prorata,
+  BestellArbeitsplatz, WebShopConnector,
+  Aktion, ArtikelSuchIndex,
+  NatuerlicheResourcen, Scanner, PlakatDruck,
+  ArtikelPakete, ArtikelRang,
+  ArtikelLeistung, Replikation,
+  ArtikelKategorie, Mahnung,
+  Bearbeiter, OLAP,
+  DruckLabel, DruckSpooler, Objektverwaltung,
+  KontoAuswertung, LohnTabelle, BudgetKalkulation,
+  CareTakerClient, CareServer, RechnungsUebersicht,
+  epIMPORT, Zahlungsart, Musiker,
+  Arbeitszeit, Budget, Baustelle,
+  ArtikelContext, QMain,
+  ArtikelEinheit, PersonMailer, AuftragImport,
+  AuftragArbeitsplatz, AuftragSuchindex, Tagwache,
+  AuftragMobil, AuftragExtern, AuftragErgebnis,
+  Buchhalter, JclMiscel,
+  AutoUp, GeoArbeitsplatz, GeoLokalisierung,
+  AuftragGeo, IniFiles, TPUmain,
+  GeoPostleitzahlen,
+  QTicketArbeitsplatz, OLAPArbeitsplatz,
+  ZahlungECconnect, Medium, Jvgnugettext,
+  IB_Controls, Vertrag, Kontext,
+  BuchBarKasse, IBExportTable, wanfix32,
+  Kalender, Auswertung, IB_StringList,
+  Audit, Sperre, SkriptEditor,
+  ArtikelKasse, Cron;
+{$R *.DFM}
+
+procedure TFormMain.FormCreate(Sender: TObject);
+begin
+  TP_GlobalIgnoreClass(TIB_StringList);
+  TP_GlobalIgnoreClass(TFont);
+  TP_GlobalIgnoreClass(TIB_Edit);
+  TP_GlobalIgnoreClass(TIB_Text);
+  TP_GlobalIgnoreClass(TIB_ComboBox);
+
+  TranslateComponent(self); // tapplication
+  caption := cAppName;
+
+  Label1.caption := MachineID;
+  top := 2;
+  left := 2;
+  Image5.left := Image4.left;
+  Image5.top := Image4.top;
+  Image6.left := Image4.left;
+  Image6.top := Image4.top;
+  Image7.left := Image4.left;
+  Image7.top := Image4.top;
+end;
+
+procedure TFormMain.hotEvent;
+begin
+  WindowState := wsNormal;
+  show;
+  setfocus;
+  SetForegroundWindow(handle);
+end;
+
+procedure TFormMain.Button2Click(Sender: TObject);
+begin
+  FormPerson.show;
+end;
+
+procedure TFormMain.Button6Click(Sender: TObject);
+begin
+  FormSerie.show;
+end;
+
+procedure TFormMain.Button7Click(Sender: TObject);
+begin
+  FormLaender.show;
+end;
+
+procedure TFormMain.Button8Click(Sender: TObject);
+begin
+  FormInternationaleTexte.show;
+end;
+
+procedure TFormMain.Button10Click(Sender: TObject);
+begin
+  FormReplikation.show;
+end;
+
+procedure TFormMain.Button3Click(Sender: TObject);
+begin
+  FormArtikel.show;
+end;
+
+procedure TFormMain.Button11Click(Sender: TObject);
+begin
+  FormSystemPflege.show;
+end;
+
+procedure TFormMain.Button12Click(Sender: TObject);
+begin
+  FormPersonDoppelte.show;
+end;
+
+procedure TFormMain.Button13Click(Sender: TObject);
+begin
+  FormPersonExport.show;
+end;
+
+procedure TFormMain.Button14Click(Sender: TObject);
+begin
+  FormBuchBarKasse.setContext;
+end;
+
+procedure TFormMain.Button15Click(Sender: TObject);
+begin
+  FormLager.show;
+end;
+
+procedure TFormMain.Button17Click(Sender: TObject);
+begin
+  FormArtikelSortiment.show;
+end;
+
+procedure TFormMain.Button4Click(Sender: TObject);
+begin
+  FormBelegSuche.show;
+end;
+
+procedure TFormMain.FormActivate(Sender: TObject);
+var
+  sSystemSettings: TStringList;
+  n, m: integer;
+  _name, _settings: string;
+
+  LastRev: integer;
+  ThisRev: integer;
+  r: integer;
+  LastRun: TIniFile;
+
+  procedure DisableServer(sParam: string; const Panel: TPanel;
+    var pDisabled: boolean);
+  begin
+    if IsParam(sParam) then
+    begin
+      if assigned(Panel) then
+        Panel.color := clred;
+      pDisabled := true;
+    end
+    else
+    begin
+      if assigned(Panel) then
+        Panel.color := clSilver;
+      pDisabled := false;
+    end;
+  end;
+
+begin
+  if not(FirstStarted) then
+  begin
+
+    // verhindern des mehrmaligen Starts
+    FirstStarted := true;
+
+    // Datenbank verbinden
+    try
+
+      with DataModuleDatenbank.IB_Connection1 do
+      begin
+        UserName := iDataBaseUser;
+        if (length(iDataBasePassword) > 25) then
+          Password := deCrypt_Hex(iDataBasePassword)
+        else
+          Password := iDataBasePassword;
+        // entschlüsseltes Passwort anzeigen
+        if IsParam('-sp') then
+          ShowMessage(Password);
+        if (iDataBaseName = '') then
+        begin
+          ShowMessage('Kein Datenbankname angegeben!');
+          halt;
+        end;
+        Connect;
+        MachineIDChanged;
+      end;
+
+    except
+      on E: Exception do
+      begin
+        SplashClose;
+        ShowMessage('Keine Verbindung möglich mit' + #13 +
+          DataModuleDatenbank.IB_Connection1.DataBaseName + #13 + E.Message);
+        application.terminate;
+        exit;
+      end;
+    end;
+    FormDatensicherung.IBC := DataModuleDatenbank.IB_Connection1;
+    IBExportTable.cConnection := DataModuleDatenbank.IB_Connection1;
+
+    //
+    SplashClose;
+
+    BeginHourglass;
+
+    application.processmessages;
+    SetForegroundWindow(handle);
+    Button37.setfocus;
+
+    //
+    ReflectUpdateStatus;
+
+    // Systemparameter ermitteln
+    sSystemSettings := e_r_LadeParameter;
+
+    if isBeta then
+      iFormColor := $A0A0CC;
+
+    // Lokale Release-Updates durchführen (jeder Client!)
+    ThisRev := RevAsInteger(globals.Version);
+
+    // zuletzt benutze Version ermitteln
+    try
+      CheckCreateDir(EigeneOrgaMonDateienPfad);
+      LastRun := TIniFile.Create(EigeneOrgaMonDateienPfad + 'LastRun.ini');
+      with LastRun do
+      begin
+        LastRev := StrToIntDef(ReadString('System', 'Version', ''), 7680);
+        if (LastRev <> ThisRev) then
+          WriteString('System', 'Version', Inttostr(ThisRev));
+      end;
+      LastRun.Free;
+    except
+      LastRev := 7680;
+    end;
+
+    //
+    AppendStringsTofile(sBootSequence,EigeneOrgaMonDateienPfad + iMandant+'-Boot.log');
+
+    // Arbeiten durchführen, die bei Releaseänderungen gemacht werden müssen
+    for r := succ(LastRev) to ThisRev do
+      MigrateFrom(r);
+
+    for n := 0 to pred(application.ComponentCount) do
+    begin
+      if application.Components[n] is TForm then
+        with application.Components[n] as TForm do
+        begin
+
+          // Farbe des Forms
+          if (iFormColor <> clBtnFace) then
+          begin
+            color := iFormColor;
+            for m := 0 to pred(ComponentCount) do
+              if Components[m] is TPanel then
+                with Components[m] as TPanel do
+                  color := iFormColor;
+          end;
+
+          // Einstellungen für Queries
+          _settings := sSystemSettings.Values[name];
+          if (_settings <> '') then
+          begin
+            _name := nextp(_settings, '=');
+            for m := 0 to pred(ComponentCount) do
+              if Components[m] is TIB_Query then
+                with Components[m] as TIB_Query do
+                begin
+                  if (name = _name) then
+                  begin
+                    while (_settings <> '') do
+                      Fieldsvisible.add(nextp(_settings, ',') + '=FALSE');
+                    break;
+                  end;
+                end;
+          end;
+        end;
+    end;
+
+    if IsParam('-ds') then
+    begin
+      Panel3.color := clred;
+      Panel2.color := clred;
+      Panel1.color := clred;
+      Panel4.color := clred;
+      Panel5.color := clred;
+    end
+    else
+    begin
+      DisableServer('-dt', Panel3, pDisableTagesabschluss);
+      DisableServer('-dx', Panel2, pDisableeCommerceAPIs);
+      DisableServer('-dm', Panel1, pDisableMailer);
+      DisableServer('-dw', Panel4, pDisableTagwache);
+      DisableServer('-dh', Panel5, pDisableHotkeys);
+      DisableServer('-dd', nil, pDisableDrucker);
+    end;
+
+    // Hot-Keys
+    if not(pDisableHotkeys) then
+    begin
+      if pos(AnsiUpperCase(noblank(Computername)) + ',',
+        AnsiUpperCase(noblank(iScannerHost) + ',')) > 0 then
+        FormScanner.doActivate(true);
+      if pos(AnsiUpperCase(noblank(Computername)) + ',',
+        AnsiUpperCase(noblank(iMagnetoHost) + ',')) > 0 then
+        FormZahlungECconnect.doActivate(true);
+      registerHot('Menü', [hkAlt], vkf10, true);
+    end;
+    sSystemSettings.Free;
+
+    // Benutzer-Sachen
+    FormBearbeiter.OnChange := UpdateBenutzer;
+    FormBearbeiter.Start;
+
+    // CareTaker Sachen
+    Nachmeldungen;
+
+    application.processmessages;
+
+    // if bErlaubnis('SQL Monitor') then
+    // DataModuleDatenbank.IB_Monitor1.enabled := true;
+
+    // Haupteinstiege, die gesperrt werden können
+    Button68.enabled := bBilligung('Zahlung');
+
+    AllSystemsRunning := true; { eigentlich erst nach dem Update! }
+    if IsParam('-lr') then // "log restart"
+      CareTakerLog('All Systems running after restart');
+
+    Button56.enabled := (iSchnelleRechnung_PERSON_R >= cRID_FirstValid);
+
+    EndHourGlass;
+
+    if bErlaubnis('OLAP Arbeitsplatz Autostart') then
+      FormOLAPArbeitsplatz.show;
+    if bErlaubnis('Kasse Autostart') then
+    begin
+      FormArtikelKasse.prepare;
+      FormArtikelKasse.show;
+    end;
+
+  end;
+
+end;
+
+procedure TFormMain.Button19Click(Sender: TObject);
+begin
+  FormMwSt.show;
+end;
+
+procedure TFormMain.Button20Click(Sender: TObject);
+begin
+  openShell(MyProgramPath + 'TerminPlaner.exe');
+end;
+
+procedure TFormMain.Button21Click(Sender: TObject);
+begin
+  FormEinstellungen.show;
+end;
+
+procedure TFormMain.Button25Click(Sender: TObject);
+begin
+  FormDatensicherung.show;
+end;
+
+procedure TFormMain.Button90Click(Sender: TObject);
+begin
+ FormCron.show;
+end;
+
+procedure TFormMain.Button9Click(Sender: TObject);
+begin
+  FormPersonSuche.show;
+end;
+
+procedure TFormMain.Button18Click(Sender: TObject);
+begin
+  FormCreatorMain.show;
+end;
+
+procedure TFormMain.Button27Click(Sender: TObject);
+begin
+  //
+  FormRechnungsUebersicht.show;
+end;
+
+procedure TFormMain.Button28Click(Sender: TObject);
+begin
+  FormAusgangsRechnungen.show;
+end;
+
+procedure TFormMain.Button29Click(Sender: TObject);
+begin
+  // Inventur
+  FormInventur.show;
+end;
+
+procedure TFormMain.Button30Click(Sender: TObject);
+begin
+  FormEreignis.show;
+end;
+
+procedure TFormMain.Button31Click(Sender: TObject);
+begin
+  FormTagesAbschluss.show;
+end;
+
+procedure TFormMain.Button32Click(Sender: TObject);
+begin
+  FormVersender.show;
+end;
+
+procedure TFormMain.Button33Click(Sender: TObject);
+begin
+  FormVersenderPaketID.show;
+end;
+
+procedure TFormMain.Button34Click(Sender: TObject);
+begin
+  FormBelegRecherche.show;
+end;
+
+procedure TFormMain.Button36Click(Sender: TObject);
+begin
+  FormBaseUpdate.show;
+end;
+
+procedure TFormMain.Button37Click(Sender: TObject);
+begin
+  openShell(myApplicationPath + cApplicationName + '_Info.html');
+end;
+
+procedure TFormMain.Button38Click(Sender: TObject);
+begin
+  FormArtikelVerlag.show;
+end;
+
+procedure TFormMain.Button44Click(Sender: TObject);
+begin
+  FormAusgabeArt.show;
+end;
+
+procedure TFormMain.Button45Click(Sender: TObject);
+begin
+  FormMedium.show;
+end;
+
+procedure TFormMain.Button43Click(Sender: TObject);
+begin
+  FormProrata.show;
+end;
+
+procedure TFormMain.Button46Click(Sender: TObject);
+begin
+  FormBestellArbeitsplatz.show;
+end;
+
+procedure TFormMain.Button35Click(Sender: TObject);
+begin
+  FormWebShopConnector.show;
+end;
+
+procedure TFormMain.Button40Click(Sender: TObject);
+begin
+  FormAktion.show;
+end;
+
+procedure TFormMain.Button41Click(Sender: TObject);
+begin
+  FormKalender.show;
+end;
+
+procedure TFormMain.Button47Click(Sender: TObject);
+begin
+  FormArtikelSuchIndex.show;
+end;
+
+procedure TFormMain.Button48Click(Sender: TObject);
+begin
+  FormNatuerlicheResourcen.show;
+end;
+
+procedure TFormMain.Button49Click(Sender: TObject);
+begin
+  FormScanner.show;
+end;
+
+procedure TFormMain.Button51Click(Sender: TObject);
+begin
+  FormArtikelPakete.show;
+end;
+
+procedure TFormMain.Button52Click(Sender: TObject);
+begin
+  FormSkriptEditor.show;
+end;
+
+procedure TFormMain.Button53Click(Sender: TObject);
+begin
+  FormArtikelRang.show;
+end;
+
+procedure TFormMain.Button55Click(Sender: TObject);
+begin
+  FormAuswertung.show;
+end;
+
+procedure TFormMain.Button22Click(Sender: TObject);
+begin
+  FormArtikelLeistung.show;
+end;
+
+procedure TFormMain.Button56Click(Sender: TObject);
+begin
+  FormBelege.setContext(iSchnelleRechnung_PERSON_R);
+  FormBelege.Neu;
+end;
+
+procedure TFormMain.Button57Click(Sender: TObject);
+begin
+  FormArtikelKategorie.show;
+end;
+
+procedure TFormMain.Button58Click(Sender: TObject);
+begin
+  FormMahnung.show;
+end;
+
+procedure TFormMain.Image1DblClick(Sender: TObject);
+begin
+  FormBearbeiter.ShowPrivatProperties(FormBearbeiter.sBEARBEITER);
+end;
+
+procedure TFormMain.UpdateBenutzer(Sender: TObject);
+begin
+  sBEARBEITER := FormBearbeiter.sBEARBEITER;
+  Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));
+  Label1.caption := MachineID;
+  FormQMain.UpdateBenutzer;
+  Timer1.enabled := FormBearbeiter.bErlaubnis('FehlerAbzeichnen');
+end;
+
+procedure TFormMain.Button39Click(Sender: TObject);
+begin
+  FormOLAP.show;
+end;
+
+procedure TFormMain.Button60Click(Sender: TObject);
+begin
+  FormDruckLabel.show;
+end;
+
+procedure TFormMain.Button61Click(Sender: TObject);
+begin
+  FormDruckSpooler.show;
+end;
+
+procedure TFormMain.Button63Click(Sender: TObject);
+begin
+  FormObjektverwaltung.show;
+end;
+
+procedure TFormMain.Button64Click(Sender: TObject);
+begin
+  FormKontoAuswertung.show;
+end;
+
+procedure TFormMain.Button65Click(Sender: TObject);
+begin
+  FormLohntabelle.show;
+end;
+
+procedure TFormMain.Button66Click(Sender: TObject);
+begin
+  FormBudget.show;
+end;
+
+procedure TFormMain.Button67Click(Sender: TObject);
+begin
+  FormCareServer.show;
+end;
+
+procedure TFormMain.Button59Click(Sender: TObject);
+begin
+  FormZahlungsart.show;
+end;
+
+procedure TFormMain.Button69Click(Sender: TObject);
+begin
+  FormMusiker.show;
+end;
+
+procedure TFormMain.Button62Click(Sender: TObject);
+begin
+  FormBaustelle.mShow;
+end;
+
+procedure TFormMain.Button70Click(Sender: TObject);
+begin
+  FormArbeitszeit.show;
+end;
+
+procedure TFormMain.Button71Click(Sender: TObject);
+begin
+  FormAudit.show;
+end;
+
+procedure TFormMain.Image2Click(Sender: TObject);
+begin
+  openShell(cHelpURL);
+end;
+
+procedure TFormMain.Image3Click(Sender: TObject);
+var
+  AnwendungFName: string;
+begin
+  AnwendungFName := myApplicationPath + 'OrgaMon-VNC.exe';
+  if FileExists(AnwendungFName) then
+    WinExec32(AnwendungFName, sw_showdefault)
+  else
+    ShowMessage('ERROR: Anwendung ' + AnwendungFName + ' nicht gefunden!');
+end;
+
+procedure TFormMain.Label1Click(Sender: TObject);
+var
+  CT_Ticket: TTroubleTicket;
+begin
+  BeginHourGlass;
+  CT_Ticket := CareTakerLog('INFO: Hallo');
+  if (CT_Ticket <> -1) then
+    Nachmeldungen;
+  EndHourGlass;
+  ShowMessageTimeOut('CareTaker-Ticket: ' + Inttostr(CT_Ticket));
+end;
+
+procedure TFormMain.Button72Click(Sender: TObject);
+begin
+  FormArtikelContext.show;
+end;
+
+procedure TFormMain.Button73Click(Sender: TObject);
+begin
+  FormQMain.show;
+end;
+
+procedure TFormMain.Button74Click(Sender: TObject);
+begin
+  FormPlakatDruck.show;
+end;
+
+procedure TFormMain.Button75Click(Sender: TObject);
+begin
+  FormBearbeiter.show;
+end;
+
+procedure TFormMain.SpeedButton1Click(Sender: TObject);
+begin
+  openShell(AnwenderPath);
+end;
+
+procedure TFormMain.SpeedButton20Click(Sender: TObject);
+begin
+  FormKontext.browse;
+end;
+
+procedure TFormMain.SpeedButton2Click(Sender: TObject);
+begin
+  openShell(DiagnosePath);
+end;
+
+procedure TFormMain.HotKey(Sender: TObject; Index: integer);
+begin
+  if assigned(sHotKeys) then
+  begin
+    repeat
+      if (sHotKeys[Index] = 'Scanner') then
+        FormScanner.hotEvent;
+      if (sHotKeys[Index] = 'EC-Karte') then
+        FormZahlungECconnect.hotEvent;
+      if (sHotKeys[Index] = 'Menü') then
+        FormMain.hotEvent;
+    until true;
+  end;
+end;
+
+procedure TFormMain.Button76Click(Sender: TObject);
+begin
+  FormArtikelEinheit.show;
+end;
+
+procedure TFormMain.Button77Click(Sender: TObject);
+begin
+  FormPersonMailer.show;
+end;
+
+procedure TFormMain.Button79Click(Sender: TObject);
+begin
+  FormAuftragImport.mShow;
+end;
+
+procedure TFormMain.Button80Click(Sender: TObject);
+begin
+  FormAuftragArbeitsplatz.mShow;
+end;
+
+procedure TFormMain.Button78Click(Sender: TObject);
+begin
+  if Doit('Den Suchindex neu erstellen') then
+    FormAuftragSuchindex.reCreateTheIndex;
+end;
+
+procedure TFormMain.Button81Click(Sender: TObject);
+begin
+  FormAuftragMobil.show;
+end;
+
+procedure TFormMain.Button82Click(Sender: TObject);
+begin
+  FormAuftragErgebnis.show;
+end;
+
+procedure TFormMain.Button83Click(Sender: TObject);
+begin
+  FormAuftragExtern.show;
+end;
+
+procedure TFormMain.Button84Click(Sender: TObject);
+begin
+  FormVertrag.setContext(cRID_NULL);
+end;
+
+procedure TFormMain.Button85Click(Sender: TObject);
+begin
+  FormArtikelBild.show;
+end;
+
+procedure TFormMain.Button26Click(Sender: TObject);
+begin
+  FormTagWache.show;
+end;
+
+procedure TFormMain.Button42Click(Sender: TObject);
+begin
+  FormGeoArbeitsplatz.mShow;
+end;
+
+procedure TFormMain.Button68Click(Sender: TObject);
+begin
+  FormBuchhalter.show;
+end;
+
+procedure TFormMain.Button50Click(Sender: TObject);
+begin
+  FormAutoUp.show;
+end;
+
+procedure TFormMain.Timer1Timer(Sender: TObject);
+begin
+  if not(NoTimer) then
+  begin
+
+    // Fehler aus dem eCommerce-Module ausgeben (an menschlichen Benutzer!)
+    if AllSystemsRunning then
+    begin
+
+      // Dummy Pakete rausschicken (Timeouts hier verhindern)
+      {
+        inc(DummyPaketIntervall);
+        if (DummyPaketIntervall mod 60 = 59) then
+        if DataModuleDatenbank.IB_Connection1.connected then
+        e_r_gen('GLOBAL_GID');
+      }
+
+      //
+      if visible then
+        if bErlaubnis('OLAP Arbeitsplatz Autostart') then
+          hide;
+
+    end;
+
+  end;
+end;
+
+procedure TFormMain.Button86Click(Sender: TObject);
+begin
+  FormAuftragGeo.mShow;
+end;
+
+procedure TFormMain.CheckBox1Click(Sender: TObject);
+begin
+  DebugMode := CheckBox1.checked;
+  if DebugMode then
+  begin
+    Sperre.TestMode := true;
+    anfix32.DebugLogPath := DiagnosePath;
+  end
+  else
+  begin
+    if assigned(Sperre.sDiagnose) then
+    begin
+      Sperre.sDiagnose.SaveToFile(DiagnosePath + 'Sperre.txt');
+      Sperre.sDiagnose.clear;
+    end;
+    Sperre.TestMode := false;
+    anfix32.DebugLogPath := '';
+  end;
+end;
+
+procedure TFormMain.Button87Click(Sender: TObject);
+begin
+  FormTPmain.show;
+end;
+
+procedure TFormMain.Button88Click(Sender: TObject);
+begin
+  FormSiteDownload.show;
+end;
+
+procedure TFormMain.Button89Click(Sender: TObject);
+begin
+  FormArtikelKasse.prepare;
+  FormArtikelKasse.show;
+end;
+
+procedure TFormMain.ReflectUpdateStatus;
+begin
+  // Alle Bilder aus!
+  Image4.visible := false;
+  Image5.visible := false;
+  Image6.visible := false;
+  Image7.visible := false;
+
+  case FormBaseUpdate.CheckIfUpdateNeeded(DataModuleDatenbank.IB_Connection1) of
+    cUpdate_Aktuell:
+      Image7.visible := true;
+    cUpdate_Laufend:
+      Image5.visible := true;
+    cUpdate_Verfuegbar:
+      Image6.visible := true;
+    cUpdate_Ungeprueft:
+      ;
+  else
+    Image4.visible := true;
+  end;
+end;
+
+procedure TFormMain.registerHot(EventName: string; ShiftState: THKModifiers;
+  Key: TVirtKey; Active: boolean);
+var
+  iHotIndex: integer;
+begin
+
+  if not(assigned(sHotKeys)) then
+  begin
+    SysHotKey1 := TSysHotKEy.Create(self);
+    SysHotKey1.OnHotKey := HotKey;
+    sHotKeys := TStringList.Create;
+  end;
+
+  iHotIndex := sHotKeys.IndexOf(EventName);
+  if (iHotIndex = -1) then
+  begin
+    if Active then
+    begin
+      sHotKeys.add(EventName);
+      SysHotKey1.AddHotKey(Key, ShiftState);
+    end;
+  end
+  else
+  begin
+    if not(Active) then
+    begin
+      sHotKeys.Delete(iHotIndex);
+      SysHotKey1.Delete(iHotIndex);
+    end;
+  end;
+
+  SysHotKey1.Active := (sHotKeys.Count > 0);
+end;
+
+procedure TFormMain.Button16Click(Sender: TObject);
+begin
+  FormEPimport.show;
+end;
+
+procedure TFormMain.Button1Click(Sender: TObject);
+begin
+  FormQTicketArbeitsplatz.show;
+end;
+
+procedure TFormMain.Button5Click(Sender: TObject);
+begin
+  openShell(MDEPath + 'Index.html');
+end;
+
+procedure TFormMain.Button23Click(Sender: TObject);
+begin
+  FormOLAPArbeitsplatz.show;
+end;
+
+procedure TFormMain.Button24Click(Sender: TObject);
+begin
+  FormBelege.mShow;
+end;
+
+end.

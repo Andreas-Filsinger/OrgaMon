@@ -1,0 +1,29 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+--
+--
+
+select
+ ARTIKEL.RID,
+ Artikel.Titel,
+ Artikel.Numero,
+ Artikel.Verlagno,
+
+
+ 
+alle Context - Teilnehmer die damit verknüpft sind (blauer Button im Artikel)
+am Bestem im Format: Artikel.Titel (Artikel.Komponist,Artikel.Arrangeur) / NächsterArtikel....
+ 
+where
+Artikel.Verlag_R= and
+Artikel.Sortiment_R=
+
+
+complete
+ Bild(RID) BILD
+ Vorschau(RID) VORSCHAU
+ Preis(RID) PREIS as Betrag
+
+-

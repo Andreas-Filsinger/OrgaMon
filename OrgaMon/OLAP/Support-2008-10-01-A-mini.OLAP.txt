@@ -1,0 +1,17 @@
+
+select
+ RID,
+ (select COUNT(RID) from olap$$tmp2 where PERSON.RID=RID) as VERLAG,
+ (select COUNT(RID) from olap$$tmp3 where PERSON.RID=RID) as KATALOG
+from
+ PERSON
+where
+ (RID in (select RID from olap$$tmp2)) or
+ (RID in (select RID from olap$$tmp3))
+
+
+excel
+
+open
+-
+ 

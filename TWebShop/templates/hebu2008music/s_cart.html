@@ -1,0 +1,30 @@
+﻿<script type="text/javascript">
+function checkDetail(id, submit) 
+{ var hasDetail = new Array();
+ 
+  ~JS_HAS_DETAIL~
+
+  var index = document.forms[id].elements['version'].options.selectedIndex;
+  var value = document.forms[id].elements['version'].options[index].value;
+  if(!hasDetail[value])
+  { //document.forms[id].elements['detail'].disabled = true;
+    document.forms[id].elements['detail'].className = 'hide';
+	document.forms[id].elements['detail'].value = '';
+  }
+  else
+  { //document.forms[id].elements['detail'].disabled = false;
+    document.forms[id].elements['detail'].className = '';
+  }
+  if (submit)// && !hasDetail[value]) 
+    document.forms[id].submit();
+}
+</script>
+~OBJ_ERRORLIST~
+~OBJ_CART~
+<p class="text" id="justify">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/cart-hint.txt
+!HTML2TXT=0
+!NL2BR=0
+-->TEXT: cart-hint.txt<!-- END TEXT -->
+</p><hr />

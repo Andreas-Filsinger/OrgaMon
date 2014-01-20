@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Pragma" content="no-cache">
+<META HTTP-EQUIV="Cache-Control" content="no-cache, must-revalidate">
+<META HTTP-EQUIV="Expires" content="0">
+<Title>OrgaMon Gerät ~GeraeteNo~</title>
+<STYLE TYPE="text/css">
+.breakhere {page-break-before: always}
+table.border {border-color:#000000; border-style:solid; border-width:0pt;}
+td { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:9pt; }
+td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:9pt; }
+td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:9pt; }
+td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:9pt; }
+</STYLE>
+
+<script type="text/javascript">
+ 
+// verstecke die Grünen
+function hide_green () {
+
+  var e = document.getElementsByTagName("tr");
+  for (var i=0; i < e.length; i++) {
+   if (e[i].id.indexOf("t0n")===0) {
+    e[i].style.visibility = "collapse"; 
+   }
+  }
+} 
+  
+// mache die Grünen sichtbar
+function show_green () {
+
+  var e = document.getElementsByTagName("tr");
+  for (var i=0; i < e.length; i++) {
+   if (e[i].id.indexOf("t0n")===0) {
+    e[i].style.visibility = "visible"; 
+   }
+  }
+} 
+</script>
+
+</HEAD>
+<body bgcolor="#ffffff" text="#000000" link="#cc0000" vlink="#999999" alink="#ffcc00">
+<!-- OHNE ROHDATEN -->
+<!-- BEGIN FORMFEED -->
+<div class="breakhere">&nbsp;</div>
+<!-- END FORMFEED -->
+
+<font face="Verdana" size=4>
+<b>~GeraeteNo~</b><br>
+</font>
+
+<font face="Verdana" size=-1>
+Verarbeitungs TAN: ~TAN~, verwendeter OrgaMon: Rev. ~Version~<br><br>
+</font>
+
+<font face="Verdana" size=3>
+Grüne <a href="javascript:hide_green()">AUSBLENDEN</a>&nbsp;<a href="javascript:show_green()">EINBLENDEN</a><br><br>
+</font>
+
+<font face="Verdana" size=2>
+<b>Auswertung vom ~AktuellesDatum~ um ~AktuelleUhrzeit~</b><BR>
+</font>
+
+<table class=border cellpadding=1 cellspacing=0 border=1>
+
+    <tr>
+     <td bgcolor="#C8D8E0"><font face="Verdana" size=-1>Termin</font></td>
+     <td bgcolor="#C8D8E0"><font face="Verdana" size=-1>Details</font></td>
+     <td class=gend bgcolor="#C8D8E0"><font face="Verdana" size=-1>Status</font></td>
+    </tr>
+    
+<!-- BEGIN TRENNER -->
+</table>
+<div class="breakhere">&nbsp;</div>
+<font face="Verdana" size=2><b>Auswertung vom ~AktuellesDatum~ um ~AktuelleUhrzeit~</b><BR>
+<table class=border cellpadding=2 cellspacing=0 border=1>
+    <tr>
+     <td bgcolor="#C8D8E0"><font face="Verdana" size=-1>Termin</font></td>
+     <td bgcolor="#C8D8E0"><font face="Verdana" size=-1>Details</font></td>
+     <td class=gend bgcolor="#C8D8E0"><font face="Verdana" size=-1>Status</font></td>
+    </tr>
+<!-- END TRENNER -->
+
+<!-- BEGIN AUFTRAG MID -->
+    <tr id="t~Typ~n~Zeile~">
+     <td valign=top nowrap align=right bgcolor="#FFFFFF"><font face="Verdana" size=-2>~Termin~&nbsp;</font></td>
+     <td bgcolor="#FFFFFF"><font face="Verdana" size=-3>~Details~</font></td>
+     <td class=gend valign=top nowrap bgcolor="#~Farbe~"><font face="Verdana" size=-2>~Status~&nbsp;</font></td>
+    </tr>
+<!-- END AUFTRAG MID -->
+<!-- BEGIN AUFTRAG LAST -->
+    <tr>
+     <td colspan=2 class=gfoot valign=top nowrap  align=right bgcolor="#FFFFFF"><font face="Verdana" size=-1><b>&nbsp;~SummeOffen~</b></font></td>
+     <td colspan=1 class=gright bgcolor="#FFFFFF"><font face="Verdana" size=-1>&nbsp;~SummeDetails~</font></td>
+    </tr>
+<!-- END AUFTRAG LAST -->
+<!-- INSERT AUFTRAG -->
+</table>
+
+<br>
+<font face="Verdana" size=-3>~MehrInfo~<br></font>
+<!-- INSERT FORMFEED -->
+</body>
+</html>

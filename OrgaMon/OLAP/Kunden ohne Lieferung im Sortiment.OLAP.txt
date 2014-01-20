@@ -1,0 +1,76 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Kunden, die in einem gewissen Zeitraum NICHT in einem Sortiment
+--  etwas geliefert bekamen.
+--
+--  (c)'05 Andreas Filsinger
+--
+
+$Sortimente=65577,65578
+$Start='01.01.2005'
+
+-- Zunächst mal die zu untersuchenden Belege
+
+select
+ RID
+from
+ BELEG
+where
+ (RECHNUNG>$Start)
+
+save
+
+numeric RID
+
+-- Nun die betroffenen Artikel
+
+select
+ RID
+from
+ ARTIKEL
+where
+ (SORTIMENT_R in ($Sortimente))
+ 
+save
+
+numeric RID
+
+-- Nun die betroffenen Posten
+
+select distinct
+ BELEG_R
+from
+ POSTEN
+where
+ (MENGE_GELIEFERT>0) AND
+ (BELEG_R IN (select RID from olap$$tmp0)) AND
+ (ARTIKEL_R IN (select RID from olap$$tmp1))
+
+save
+
+numeric BELEG_R
+
+-- Nun die kauffreudigen Personen
+
+select distinct
+ PERSON_R
+from
+ BELEG
+where
+ (RID in (select RID from olap$$tmp2))
+ 
+save
+
+numeric PERSON_R
+
+-- Nun das Ergebnis
+
+select
+ RID
+from
+ PERSON
+where
+ (LETZTEAENDERUNG>$Start) AND
+ (RID not in (select RID from olap$$tmp3))
+

@@ -1,0 +1,44 @@
+--
+--  O L A P  - Definitions Datei
+--
+--
+
+$BELEG_R=94949,84722,84750
+
+-- Erst mal die Liste der zu untersuchenden Belege aufzeichnen
+
+select
+ VERTRAG.PERSON_R,
+ BELEG.MOTIVATION,
+ 1 as ANZAHL
+from
+ VERTRAG
+left join 
+ BELEG
+on
+ (BELEG.RID=VERTRAG.BELEG_R)  
+where
+ BELEG_R in ($BELEG_R)
+ 
+spread2
+
+MOTIVATION
+-
+
+delete
+
+2
+2
+-
+
+complete
+
+Anschrift(PERSON_R) Adressat1;Adressat2;Adressat3;Adressat4;Strasse;Ort
+Ansprache ANSPRACHE
+Anrede ANREDE
+Land LAND_R
+-
+
+excel
+open
+-

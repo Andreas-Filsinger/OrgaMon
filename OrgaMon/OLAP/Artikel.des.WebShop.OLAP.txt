@@ -1,0 +1,22 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Artikel, die im WebShop erscheinen sollen
+--
+--
+
+select 
+ ARTIKEL.RID
+from  
+ ARTIKEL
+join
+ SORTIMENT
+on
+ (ARTIKEL.SORTIMENT_R=SORTIMENT.RID)
+where
+ (ARTIKEL.PAKET_R is null) and
+ (ARTIKEL.LAUFNUMMER is not null) and
+ (ARTIKEL.WEBSHOP is null or ARTIKEL.WEBSHOP ='Y' ) and
+ (SORTIMENT.WEBSHOP is null or SORTIMENT.WEBSHOP = 'Y')
+order by
+ ARTIKEL.RID 

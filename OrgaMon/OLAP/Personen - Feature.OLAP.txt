@@ -1,0 +1,36 @@
+--
+-- Personen und deren Vertäge als Feature-Sheet
+--
+-- ACHTUNG: durch das "DISTINCT" sind Mehrfachabschlüsse ausgeblendet
+--
+
+$Belege=82094,82570
+
+select distinct
+ PERSON_R,
+ BELEG_R,
+ '1' as ANZAHL
+from
+ VERTRAG
+where
+ BELEG_R in ($Belege)
+order by
+ BELEG_R 
+
+ 
+spread
+
+BELEG_R
+-
+
+delete
+
+2
+2
+-
+ 
+excel
+
+open
+-
+   

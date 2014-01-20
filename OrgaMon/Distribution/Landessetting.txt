@@ -1,0 +1,15 @@
+
+## Landesspezifische Einstellungen mit den entsprechenden Default-Werten
+## sobald kein Wert angegeben ist. Hier muss man also definitiv eine 
+## Angabe machen, um die deutschen Defaults zu umgehen.
+
+
+OrtFormat=%l-%p %o %s
+
+BearbeiterSprache=DE
+
+TimeServer=ptbtime1.ptb.de,ptbtime2.ptb.de
+
+Auftragsmedium=Telefon,Fax,Persönlich,Brief,Webshop
+
+Auftragsmotivation=Musikmesse 2003,Katalog A,Katalog B,ohne

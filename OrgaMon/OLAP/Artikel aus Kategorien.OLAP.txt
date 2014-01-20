@@ -1,0 +1,65 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Artikel einer gewissen Gattung selektieren und danach
+--  etwas an diesen Artikeln was ändern!
+--
+
+$KATEGORIE=('062','063')
+$LAGER_R=67370
+$SCHARF='Nein'  -- ='Ja' um zu aktivieren, ='Nein' -> es wird nichts verändert!
+
+select
+ ARTIKEL.RID 
+from 
+ ARTIKEL
+join
+ ARTIKEL_GATTUNG
+on
+ (ARTIKEL.RID=ARTIKEL_GATTUNG.ARTIKEL_R)
+join
+ GATTUNG
+on
+ (ARTIKEL_GATTUNG.GATTUNG_R=GATTUNG.RID) 
+where
+ (GATTUNG.CODE in $KATEGORIE)
+
+list 
+
+distinct numeric RID
+
+data
+
+update
+ ARTIKEL
+set
+ LAGER_R=$LAGER_R
+where
+ (RID in $0) and
+ ('Ja' = $SCHARF)
+
+select
+ ARTIKEL.RID, 
+ ARTIKEL.TITEL,
+ GATTUNG.CODE,
+ ARTIKEL.LAGER_R
+from 
+ ARTIKEL
+join
+ ARTIKEL_GATTUNG
+on
+ (ARTIKEL.RID=ARTIKEL_GATTUNG.ARTIKEL_R)
+join
+ GATTUNG
+on
+ (ARTIKEL_GATTUNG.GATTUNG_R=GATTUNG.RID) 
+where
+ (GATTUNG.CODE in $KATEGORIE)
+order by
+ ARTIKEL.TITEL
+
+excel
+
+open
+-
+   

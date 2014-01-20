@@ -1,0 +1,34 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+--
+--
+
+$Kollektion=213245
+
+select 
+ AM.RID, 
+ AM.POSNO, 
+ AM.ARTIKEL_R,
+ AM.MASTER_R,
+ AM.CONTEXT_R,
+ AM.TITEL,
+ A.RID ARTIKEL_R,
+ A.NUMERO,
+ COALESCE( A.TITEL, AM.TITEL ) TITEL
+from 
+ ARTIKEL_MITGLIED AM
+left join 
+ Artikel A 
+on
+ ARTIKEL_MITGLIED.ARTIKEL_R=A.RID
+where 
+ MASTER_R=$Kollektion
+order by 
+ POSNO
+ 
+excel
+
+open
+- 

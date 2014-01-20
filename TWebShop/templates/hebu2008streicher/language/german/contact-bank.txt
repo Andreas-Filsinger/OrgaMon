@@ -1,0 +1,8 @@
+﻿Deutschland:
+Sparkasse Kraichgau
+BLZ: 663 500 36
+Konto: 34 421
+
+IBAN:
+DE88 6635 0036 0000 0344 21
+SWIFT: BRUSDE66

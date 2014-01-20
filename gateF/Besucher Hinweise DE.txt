@@ -1,0 +1,96 @@
+[TIP]
+(dieser internen Hinweis dient Ihrer info,
+bitte nicht übersetzen):
+
+Liebe Übersetzerin,
+Lieber Übersetzer, 
+
+dieses Dokument wird direkt von der Pfortenanwendung
+verarbeitet, bitte ändern Sie NIEMALS die Texte
+in den eckigen Klammern. Nur die Sachen darunter.
+Ersetzen Sie dabei den deutschen Text durch die
+entsprechende Übersetzung.
+"\F" "\f" sind Steuerzeichen, die man auch in der 
+Übersetung belassen sollte. Besteht der Text aus 
+mehreren Zeilen bitte so ungefähr das Layout 
+beibehalten.
+
+Danke und Viel Spass.
+
+Andreas Filsinger, filsinger.de
+------------- Jetzt gehts los...
+
+
+[Name für die Sprache]
+deutsch
+
+[Hinweise]
+\-\-\-\FWir begrüßen Sie in unserem Standort und bitten Sie, die Besucheranmeldung von
+der besuchten Person gegenzeichnen zu lassen und sie am Ende des Besuches
+zusammen mit dem Besucherausweis wieder am Empfang abzugeben.
+\!
+Der Aufenthalt in unserem Betrieb ist mit gewissen Gefahren verbunden, wir bitten Sie
+daher um Vorsicht. Bitte beachten Sie die Sicherheitshinweise auf dem Flucht- und
+Rettungsplan. Dort finden Sie die Verhaltenshinweise für Notfälle und die gültige Not-
+rufnummer. Eine Sicherheitsunterweisung erfolgt ggf. durch die besuchte Person. Die
+Schutz- und Ordnungsmaßnahmen für unseren Betrieb und seine Mitarbeiter gelten
+auch für unsere Besucher. Den Anweisungen der verantwortlichen Personen
+an unserem Standort ist Folge zu leisten.
+\!
+Zur Wahrung unserer Rechte sind von uns übergebene Muster und Unterlagen sowie
+während des Besuches erlangte Informationen, vertraulich zu behandeln. Die
+Anfertigung von Aufzeichnungen z.B. Bild, Ton, Daten etc. sowie die elektronische
+Übermittlung von unseren firmeninternen Informationen ist nicht gestattet.
+\!
+Mit der Angabe Ihrer personenbezogenen Daten stimmen Sie der allgemeinen
+Verwendung zur Erhebung, Verarbeitung und Nutzung im Rahmen unserer web-
+basierten Besucherverwaltung zu. Alle Angaben werden vertraulich behandelt,
+die Weitergabe an Dritte ist ausgeschlossen, soweit es sich nicht um unsere
+Sicherheitsdienstleister zur Abwicklung der Besucherverwaltung handelt. Ihre
+personenbezogenen Daten werden nach 180 Tagen gelöscht.
+\!
+\!
+\+\+\+\FAnerkennung:
+[Unterschrift]
+Unterschrift Besucher
+
+[Rückgabe]
+Kontrollabschnitt verbleibt beim
+Empfang
+
+[Herr]
+Herr
+
+[Frau]
+Frau
+
+[Gruppe]
+Gruppe
+
+[gültig bis]
+gültig bis
+
+[Pforte Empfang]
+Pforte Empfang
+
+[Parken]
+Parkschein
+gut sichtbar im Fahrzeug belassen
+
+[Name]
+Name
+
+[Firma]
+Firma
+
+[Mobilfunk-Telefon]
+Handy
+
+[Bediener]
+\F\+\+\+\+Willkommen\f
+...bei Siemens in Bruchsal
+
+* bitte geben Sie Ihren Namen, Firma und
+  Handy-Nummer ein - sofern Sie unter dieser
+  Nummer während des Besuchs erreichbar sind
+* bitte unterschreiben Sie im unteren Bereich

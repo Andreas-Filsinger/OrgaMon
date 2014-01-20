@@ -1,0 +1,41 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  eine Kollektion definiert sich aus dem "Hauptartikel" dieser
+--  Kollektion.
+--
+
+$Kollektion=213245
+
+select 
+ ARTIKEL.RID,
+ ARTIKEL.TITEL
+from 
+ ARTIKEL
+where 
+ (ARTIKEL.RID=$Kollektion) OR
+ ARTIKEL.RID in (
+select
+ ARTIKEL_MITGLIED.ARTIKEL_R 
+from 
+ ARTIKEL_MITGLIED
+where
+ (ARTIKEL_MITGLIED.MASTER_R=$Kollektion)
+)   
+
+complete
+
+PosNo
+Bild(RID) BILD
+Vorschau(RID) VORSCHAU
+Preis(RID) PREIS as Betrag
+-
+
+sort 
+
+numeric PosNo
+ 
+excel
+
+open
+- 

@@ -1,0 +1,81 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Kunden, die in einem gewissen Zeitraum in einem Sortiment
+--  etwas geliefert bekamen.
+--
+--  (c)'05 Andreas Filsinger
+--
+
+$Sortimente=67978
+$Start='01.01.2006'
+
+-- Zunächst mal die zu untersuchenden Belege
+
+select
+ RID
+from
+ BELEG
+where
+ (RECHNUNG>$Start)
+
+save
+
+numeric RID
+
+-- Nun die betroffenen Artikel
+
+select
+ RID
+from
+ ARTIKEL
+where
+ (SORTIMENT_R in ($Sortimente))
+
+save
+
+numeric RID
+
+-- Nun die betroffenen Posten
+
+select distinct
+ BELEG_R
+from
+ POSTEN
+where
+ (MENGE_GELIEFERT>0) AND
+ (BELEG_R IN (select RID from olap$$tmp0)) AND
+ (ARTIKEL_R IN (select RID from olap$$tmp1))
+
+save
+
+numeric BELEG_R
+
+-- Nun die kauffreudigen Personen
+
+select distinct
+ PERSON_R
+from
+ BELEG
+where
+ (RID in (select RID from olap$$tmp2))
+
+save
+
+numeric PERSON_R
+
+-- Nun das Ergebnis
+
+select
+ RID
+from
+ PERSON
+where
+ ((MAILING is NULL) or (MAILING='Y')) and
+ (RID in (select RID from olap$$tmp3))
+
+
+ excel
+ open
+ -
+ 

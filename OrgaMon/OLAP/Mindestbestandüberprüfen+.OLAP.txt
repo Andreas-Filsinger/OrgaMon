@@ -1,0 +1,50 @@
+//
+//  O L A P  - Definitions Datei
+//  
+//  Gelieferte Mengen auf Wochensummen aufgeteilt
+//
+//
+// $ArtikelAusschluss kann eine kommaseparierte Liste sein
+//
+$Start=CURRENT_TIMESTAMP-180
+$Ende=CURRENT_TIMESTAMP
+$ArtikelAusschluss=218215,189010,143487,218216,230710,230709,189904,191091,231812,190059,212103,231164,230708,230725,143397,183015,231402,143566,194185,143604,195127,212003,231546,231530,231545,231532,231533,231540,231541,203475,231971
+
+$VerlagAusschluss=739
+
+select 
+  GELIEFERT.ARTIKEL_R,
+  SUM(GELIEFERT.MENGE_RECHNUNG) LIEFER_MENGE
+from
+  GELIEFERT 
+join VERSAND on
+ (GELIEFERT.BELEG_R=VERSAND.BELEG_R) and
+ (RECHNUNG is not null) and
+ (AUSGANG between $Start AND $Ende) and
+ (TEILLIEFERUNG=GELIEFERT.POSNO)
+join ARTIKEL on
+ (GELIEFERT.ARTIKEL_R=ARTIKEL.RID) and
+ (ARTIKEL.RID not in ($ArtikelAusschluss)) and
+ (ARTIKEL.VERLAG_R not in ($VerlagAusschluss)) and
+ ((MINDESTBESTAND is null) or (MINDESTBESTAND=0))
+where
+ (GELIEFERT.MENGE_RECHNUNG>0) and
+ (GELIEFERT.ARTIKEL_R is not null) and
+ (GELIEFERT.AUSGABEART_R is null)
+group by
+ GELIEFERT.ARTIKEL_R
+having
+ (SUM(GELIEFERT.MENGE_RECHNUNG)>1) 
+order by 
+ LIEFER_MENGE descending
+
+complete
+
+SQL("select MINDESTBESTAND from ARTIKEL where RID=$ARTIKEL_R") MINDESTBESTAND
+SQL("select TITEL from ARTIKEL where RID=$ARTIKEL_R") TITEL
+SQL("select VERLAG_R from ARTIKEL where RID=$ARTIKEL_R") VERLAG_R
+- 
+
+excel
+open
+-

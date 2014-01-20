@@ -1,0 +1,30 @@
+--
+-- Selektion der sichtbaren Artikel eines WebShops
+--
+-- Namespace "blasmusik"
+--
+
+
+select 
+ rid 
+from 
+ artikel 
+where 
+ sortiment_R in (
+65578,
+73516,
+74674,
+65577,
+67978,
+65579,
+67540,
+74641,
+67678,
+77872,
+77806,
+75913,
+75912,
+65580
+)
+
+

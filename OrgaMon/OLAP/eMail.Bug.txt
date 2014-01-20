@@ -1,0 +1,17 @@
+HeBu-WebShop
+Sehr geehrter Kunde,
+
+durch einen Fehler in unserer Benutzerverwaltung war Ihnen bisher der Login in unseren Webshop nicht möglich. Wir konnten den Fehler jetzt lokalisieren und beheben. Unsere Prüfung hat ergeben, dass auch Ihr Zugangskonto betroffen war.
+
+Benutzer: ~PERSON.USER_ID~
+Passwort: ~PERSON.USER_PWD~
+
+Wir bitten unseren Fehler zu entschuldigen, und hoffen Sie haben in Zukunft viel Spass mit unserem WebShop.
+
+Ihr HeBu Technik - Team
+
+i.A. Andreas Filsinger
+
+http://www.hebu-music.de/shop
+noten@hebu-music.de
+Thorsten.Schroff@cargobay.de

@@ -1,0 +1,49 @@
+object FormFirebirdRestore: TFormFirebirdRestore
+  Left = 54
+  Top = 126
+  Caption = 'FormFirebirdRestore'
+  ClientHeight = 394
+  ClientWidth = 962
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Verdana'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 962
+    Height = 394
+    Align = alClient
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Fixedsys'
+    Font.Style = []
+    ParentFont = False
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+  object DCP_blowfish1: TDCP_blowfish
+    Id = 5
+    Algorithm = 'Blowfish'
+    MaxKeySize = 448
+    BlockSize = 64
+    Left = 160
+    Top = 16
+  end
+  object IBORestoreService1: TIBORestoreService
+    TraceFlags = []
+    PageBuffers = 0
+    Left = 40
+    Top = 16
+  end
+end

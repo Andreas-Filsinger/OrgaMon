@@ -1,0 +1,32 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Verlagsprozente
+//
+//  (c)'03 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select distinct
+ A.NAME1,
+ P.VORNAME,
+ P.NACHNAME,
+ P.RABATT_CODE,
+ R.RABATT
+from
+ person P
+join
+ anschrift A
+on
+ A.RID=P.PRIV_ANSCHRIFT_R
+left join
+ rabatt R
+on
+ R.CODE=P.RABATT_CODE
+where
+ P.RABATT_CODE is not null
+order by
+ A.name1, P.RABATT_CODE
+
+

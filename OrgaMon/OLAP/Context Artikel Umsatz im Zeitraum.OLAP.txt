@@ -1,0 +1,58 @@
+//
+//  O L A P  - Definitions Datei
+//  
+//  Umsatz von Context Mitgliedern in einem Zeitraum
+//  addiert zu Monaten
+//
+// $Context kann eine Kommaseparierte Liste sein
+//
+// $ArtikelAusschluss kann eine Kommaseparierte Liste sein
+//
+$Context=197842
+$Start='01.01.2004'
+$Ende='01.01.2005'
+$ArtikelAusschluss=0
+
+select 
+ BELEG.RECHNUNG DATUM,
+ ARTIKEL_MITGLIED.POSNO,
+ POSTEN.ARTIKEL_R,
+ ARTIKEL.VERLAG_R,
+ ARTIKEL.NUMERO,
+ ARTIKEL.TITEL,
+ (POSTEN.PREIS*POSTEN.MENGE_GELIEFERT) PREIS,
+ POSTEN.RABATT
+from
+ POSTEN 
+left join BELEG on
+ POSTEN.BELEG_R=BELEG.RID
+left join ARTIKEL on
+ POSTEN.ARTIKEL_R=ARTIKEL.RID
+left join ARTIKEL_MITGLIED on
+ (POSTEN.ARTIKEL_R=ARTIKEL_MITGLIED.ARTIKEL_R) and
+ (ARTIKEL_MITGLIED.MASTER_R=$Context)
+where
+ (POSTEN.MENGE_GELIEFERT>0) and
+ (POSTEN.PREIS>0) and
+ (POSTEN.ARTIKEL_R not in ($ArtikelAusschluss)) and
+ (POSTEN.ARTIKEL_R IN (select ARTIKEL_R from artikel_mitglied where MASTER_R=$Context)) and
+ (POSTEN.BELEG_R IN (select RID from Beleg where RECHNUNG between $Start AND $Ende))
+
+complete
+
+Verlag(VERLAG_R) VERLAG
+Umsatz(PREIS) UMSATZ
+-
+
+assign
+
+DATUM UMSATZ
+-
+
+sort
+
+numeric POSNO
+
+integrate2
+
+POSNO

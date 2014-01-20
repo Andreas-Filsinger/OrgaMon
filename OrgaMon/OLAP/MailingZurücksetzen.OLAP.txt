@@ -1,0 +1,5 @@
+update PERSON set
+ MAILING = null
+where
+ (MAILING = 'Y') and
+ (LETZTEAENDERUNG between '05.02.2004 11:34:50' and '05.02.2004 11:34:57')

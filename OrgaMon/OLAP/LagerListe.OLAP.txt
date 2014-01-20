@@ -1,0 +1,24 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Lagerliste 
+//
+//  (c)'04 Andreas Filsinger
+//
+
+select 
+ L.NAME,
+ A.MENGE,
+ A.MINDESTBESTAND,
+ A.NUMERO,
+ A.TITEL,
+ P.SUCHBEGRIFF
+from artikel A
+left join lager L on
+ A.LAGER_R=L.RID
+left join person p on
+ A.VERLAG_R=P.RID
+where
+ (A.LAGER_R IS NOT NULL)
+order by
+ L.NAME

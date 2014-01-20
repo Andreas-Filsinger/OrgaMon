@@ -1,0 +1,44 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Mailing Kunden ohne Umsatz mit anderer Aktivität
+--
+--  (c)'05 Andreas Filsinger
+--
+
+select cast('now' as Date)-548 DATUM from RDB$$DATABASE;
+
+list
+
+DATUM
+
+nop
+
+data
+
+select
+ PERSON_R RID,
+ sum(menge_geliefert) MENGE_GELIEFERT,
+ sum(davon_bezahlt) DAVON_BEZAHLT
+from
+ BELEG
+where
+ (MENGE_GELIEFERT>0) and
+ (DAVON_BEZAHLT>0) and
+ (ANLAGE>$0)
+group by
+ PERSON_R
+
+list
+
+numeric distinct RID
+
+nop
+
+data
+
+select RID from PERSON where
+((Mailing is null) OR (Mailing='J')) AND
+(LETZTEAENDERUNG>$0) AND
+not(RID in $1)
+

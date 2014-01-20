@@ -1,0 +1,12 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Belege, alle Löschbaren
+--
+
+select
+ RID
+from
+ PERSON
+where
+ RID not in (390,438)  

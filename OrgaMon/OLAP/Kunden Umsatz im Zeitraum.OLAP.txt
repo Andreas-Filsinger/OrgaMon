@@ -1,0 +1,39 @@
+//
+//  O L A P  - Definitions Datei
+//  
+//  Kunden Umsatz in einem Zeitraum
+//  addiert zu Monaten
+//
+//
+$Start='01.06.2004'
+$Ende='01.01.2005'
+
+select 
+ AUSGANGSRECHNUNG.VALUTA DATUM,
+ PERSON.NUMMER,
+ BELEG.PERSON_R,
+ -AUSGANGSRECHNUNG.BETRAG UMSATZ
+from
+ AUSGANGSRECHNUNG 
+left join BELEG on
+ AUSGANGSRECHNUNG.BELEG_R=BELEG.RID
+left join PERSON on
+ BELEG.PERSON_R=PERSON.RID
+where
+ (AUSGANGSRECHNUNG.BETRAG<0) and
+ (AUSGANGSRECHNUNG.VALUTA between $Start AND $Ende)
+
+complete
+
+Person(PERSON_R) KUNDE
+-
+
+assign
+
+DATUM UMSATZ
+-
+
+integrate2
+
+PERSON_R
+-

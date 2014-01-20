@@ -1,0 +1,16 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Importläufe Artikel
+--
+--  (c)'05 Andreas Filsinger
+--
+
+select
+ count(RID),
+ min(ERSTEINTRAG),
+ IMPORT_RID
+from
+ ARTIKEL
+group by
+ IMPORT_RID

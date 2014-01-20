@@ -1,0 +1,20 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Verlagsprozente
+//
+//  (c)'03 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+// $VERLAG=147
+
+
+select
+ VERLAG_R,
+ sum(L.DIVERSITAET) ,
+ sum((select count(RID) from ARTIKEL where LAGER_R=L.RID)) BELEGUNG
+from
+ Lager L
+group by
+ verlag_R

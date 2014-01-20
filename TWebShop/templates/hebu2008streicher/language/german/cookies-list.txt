@@ -1,0 +1,5 @@
+﻿Ändern Sie die die Einstellungen Ihres Browsers so, dass er Cookies akzeptiert:<br />Im Internet Explorer unter Extras, Internetoptionen im Reiter "Datenschutz", im Mozilla Firefox unter Extras, Einstellungen im Reiter "Datenschutz"
+
+Überprüfen Sie, ob die Uhrzeit- und Kalendereinstellungen Ihres Computers auf dem aktuellen Stand sind.
+
+Versuchen Sie, Ihren Browser auf die neueste Version von <a href="http://www.microsoft.com/windows/ie/default.htm" target="_blank">Microsoft Internet Explorer</a> oder <a href="http://www.mozilla.com/en-US/firefox/all.html" target="_blank">Mozilla Firefox</a> zu aktualisieren.

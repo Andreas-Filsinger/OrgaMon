@@ -1,0 +1,17 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Beleg-Umsatz mit Medium Webshop in Relation zu den WebClicks
+--
+--  (c)'03 Andreas Filsinger
+--
+--  Ergebnis: OLAP.tmp2.csv
+--
+
+select RID from BELEG where 
+ (ANLAGE between '01.02.2005' and '01.03.2005') 
+ 
+excel 
+
+open
+-

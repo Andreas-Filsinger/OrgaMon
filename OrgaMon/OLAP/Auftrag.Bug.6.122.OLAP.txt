@@ -1,0 +1,11 @@
+--
+--  O L A P  - Definitions Datei
+--
+
+select
+ ZAEHLER_NUMMER ZAEHLER_NUMMER_ALT from AUFTRAG where BAUSTELLE_R=136
+
+complete
+
+limit32(ZAEHLER_NUMMER_ALT) ZAEHLER_NUMMER_NEU
+-

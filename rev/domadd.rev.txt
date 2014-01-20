@@ -1,0 +1,40 @@
+====================================
+* PROJEKT: domadd
+* SOURCE DIR: G:\freepascal\domadd
+* HELP COPY: YES
+* PUBLIC: YES
+* UPDATE: G:\freepascal\domadd\domadd.pas
+* UPDATE: G:\rev\domadd.rev
+* INFO: Neuen Passwort-geschützten Subdomain automatisiert anlegen
+====================================
+
+// INFO BEGIN
+<br>
+<b>Linux-Freepascal Programm, das diverse Schritte ausführt, um eine neue Internet-Ablage anzulegen</b><br>
+<br>
+* Anlegen des Users
+* Anlegen des .htapsswd
+* Anlegen der Subdomain.conf für apache2
+* Befüllen des Verzeichnisses aus einem Skelett
+<br>
+// INFO END
+
+Dokumentation
+
+@<a href="http://orgamon.org/mediawiki/index.php/Domadd"><font color="blue">Weblink: Onlinedokumentation "domadd"</font></a href>
+
+Rev 1.002 (11.02.12) Andreas Filsinger
+
+ Bug: Numerische Usernamen sind unter Linux nicht möglich, es wird nun immer 
+      ein "u" vorangestellt!
+
+ Neu: Kopieren von alten Daten aus einer Datensicherung, Korrektur der Rechte
+ Neu: kopieren der *.txt Daten aus einer Datensicherung, Korrektur der Rechte
+
+Rev 1.001 (29.04.10) Andreas Filsinger
+
+ Neu: Virtualhost "*:80" nicht "*"
+
+Rev 1.000 (18.05.08) Andreas Filsinger
+
+ Neu: Erstmals Opensource

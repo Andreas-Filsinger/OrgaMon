@@ -1,0 +1,166 @@
+object FormReplikation: TFormReplikation
+  Left = 25
+  Top = 82
+  Width = 652
+  Height = 627
+  Caption = 'Replikation'
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 216
+    Width = 81
+    Height = 13
+    Caption = 'Anweisungsblock'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 440
+    Width = 89
+    Height = 13
+    Caption = 'Ausf'#252'hrungsfehler'
+  end
+  object Label3: TLabel
+    Left = 8
+    Top = 200
+    Width = 131
+    Height = 13
+    Caption = 'Alternative Quelldatenbank'
+  end
+  object Button3: TButton
+    Left = 528
+    Top = 412
+    Width = 107
+    Height = 25
+    Caption = 'Alle ausf'#252'hren'
+    TabOrder = 0
+    OnClick = Button3Click
+  end
+  object Button1: TButton
+    Left = 416
+    Top = 412
+    Width = 105
+    Height = 25
+    Caption = 'Ausf'#252'hren'
+    TabOrder = 1
+    OnClick = Button1Click
+  end
+  object Panel1: TPanel
+    Left = 8
+    Top = 8
+    Width = 625
+    Height = 41
+    TabOrder = 2
+    object IB_NavigationBar1: TIB_NavigationBar
+      Left = 16
+      Top = 8
+      Width = 121
+      Height = 25
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 0
+      DataSource = IB_DataSource1
+      ReceiveFocus = False
+      CustomGlyphsSupplied = []
+    end
+    object IB_UpdateBar1: TIB_UpdateBar
+      Left = 152
+      Top = 8
+      Width = 151
+      Height = 25
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 1
+      DataSource = IB_DataSource1
+      ReceiveFocus = False
+      CustomGlyphsSupplied = []
+      VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+    end
+  end
+  object IB_Grid1: TIB_Grid
+    Left = 8
+    Top = 56
+    Width = 625
+    Height = 129
+    CustomGlyphsSupplied = []
+    DataSource = IB_DataSource1
+    TabOrder = 3
+  end
+  object IB_Memo1: TIB_Memo
+    Left = 8
+    Top = 232
+    Width = 625
+    Height = 169
+    DataField = 'SCRIPT'
+    DataSource = IB_DataSource1
+    TabOrder = 4
+    AutoSize = False
+    ScrollBars = ssBoth
+    WordWrap = False
+  end
+  object ProgressBar1: TProgressBar
+    Left = 8
+    Top = 416
+    Width = 393
+    Height = 17
+    Min = 0
+    Max = 100
+    TabOrder = 5
+  end
+  object Memo1: TMemo
+    Left = 8
+    Top = 456
+    Width = 625
+    Height = 129
+    TabOrder = 6
+  end
+  object Edit1: TEdit
+    Left = 152
+    Top = 200
+    Width = 481
+    Height = 21
+    TabOrder = 7
+  end
+  object IB_Query1: TIB_Query
+    ColumnAttributes.Strings = (
+      'RID=NOTREQUIRED'
+      'INAKTIV=BOOLEAN=Y,N')
+    DatabaseName = '192.168.115.92:/ablage/fdb/hebu/hebu.180.fdb'
+    FieldsVisible.Strings = (
+      'SCRIPT=FALSE'
+      'RID=FALSE')
+    IB_Connection = DataModuleHeBu.IB_Connection1
+    SQL.Strings = (
+      'SELECT'
+      '       POSNO'
+      '     , RID'
+      '     , NAME'
+      '     , SCRIPT'
+      '     , INAKTIV'
+      'FROM RPL$JOB'
+      'ORDER BY POSNO'
+      'FOR UPDATE')
+    ColorScheme = True
+    KeyLinks.Strings = (
+      'RPL$JOB.RID')
+    MasterSearchFlags = [msfOpenMasterOnOpen, msfSearchAppliesToMasterOnly]
+    RequestLive = True
+    BufferSynchroFlags = []
+    FetchWholeRows = True
+    Left = 416
+    Top = 16
+  end
+  object IB_DataSource1: TIB_DataSource
+    Dataset = IB_Query1
+    Left = 448
+    Top = 16
+  end
+end

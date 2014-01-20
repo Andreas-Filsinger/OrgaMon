@@ -1,0 +1,19 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Umsatz 
+//
+//  (c)'04 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select ANLAGE DATUM,rechnungs_betrag from beleg where (rechnungs_betrag>0)
+
+integrate
+
+DATUM=month(DATUM)
+
+sort
+
+DATUM

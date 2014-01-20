@@ -1,0 +1,182 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{f58f0de1-066d-4188-a0cf-b3368350f551}</ProjectGuid>
+			<MainSource>Oc.dpr</MainSource>
+			<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<DCC_DependencyCheckOutputName>Oc.exe</DCC_DependencyCheckOutputName>
+			<ProjectVersion>13.4</ProjectVersion>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Basis>True</Basis>
+			<AppType>Console</AppType>
+			<FrameworkType>None</FrameworkType>
+			<Base>True</Base>
+			<Platform Condition="'$(Platform)'==''">Win32</Platform>
+			<TargetedPlatforms>1</TargetedPlatforms>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+			<Base_Win32>true</Base_Win32>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+			<Cfg_1_Win32>true</Cfg_1_Win32>
+			<CfgParent>Cfg_1</CfgParent>
+			<Cfg_1>true</Cfg_1>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+			<Cfg_2_Win32>true</Cfg_2_Win32>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;System.Win;FMXTee;$(DCC_Namespace)</DCC_Namespace>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<VerInfo_Locale>1031</VerInfo_Locale>
+			<DCC_DependencyCheckOutputName>Oc.exe</DCC_DependencyCheckOutputName>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win32)'!=''">
+			<Manifest_File>None</Manifest_File>
+			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
+			<Debugger_RunParams>I:\KundenUmgebung\SEWA\Aufträge\enbw-xml\xsd-7\Daten\Eingabe-Test\Zaehlerdaten_1000.xls --xls</Debugger_RunParams>
+			<DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<Version>7.0</Version>
+			<DCC_WriteableConstants>True</DCC_WriteableConstants>
+			<DCC_Optimize>False</DCC_Optimize>
+			<DCC_SymbolReferenceInfo>2</DCC_SymbolReferenceInfo>
+			<DCC_UnitSearchPath>..\dcpcrypt;..\dcpcrypt\hashes;..\DCPcrypt\Ciphers;..\libxml2;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_ResourcePath>..\dcpcrypt;..\dcpcrypt\hashes;..\DCPcrypt\Ciphers;..\libxml2;$(DCC_ResourcePath)</DCC_ResourcePath>
+			<DCC_ObjPath>..\dcpcrypt;..\dcpcrypt\hashes;..\DCPcrypt\Ciphers;..\libxml2;$(DCC_ObjPath)</DCC_ObjPath>
+			<DCC_IncludePath>..\dcpcrypt;..\dcpcrypt\hashes;..\DCPcrypt\Ciphers;..\libxml2;$(DCC_IncludePath)</DCC_IncludePath>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_DcuOutput>..\..\dcu</DCC_DcuOutput>
+			<DCC_ObjOutput>..\..\dcu</DCC_ObjOutput>
+			<DCC_HppOutput>..\..\dcu</DCC_HppOutput>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
+			<DCC_UnitAlias>pngimage=vcl.graphics.pngimage;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<Manifest_File>None</Manifest_File>
+			<DCC_UnitAlias>pngimage=Vcl.Imaging.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<Version>7.0</Version>
+			<DCC_WriteableConstants>True</DCC_WriteableConstants>
+			<DCC_Optimize>False</DCC_Optimize>
+			<DCC_UnitSearchPath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_ResourcePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;$(DCC_ResourcePath)</DCC_ResourcePath>
+			<DCC_ObjPath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;$(DCC_ObjPath)</DCC_ObjPath>
+			<DCC_IncludePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;$(DCC_IncludePath)</DCC_IncludePath>
+			<DCC_DcuOutput>..\..\dcu</DCC_DcuOutput>
+			<DCC_ObjOutput>..\..\dcu</DCC_ObjOutput>
+			<DCC_HppOutput>..\..\dcu</DCC_HppOutput>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<DCC_ExeOutput>$(ProgramFiles)\Oc\</DCC_ExeOutput>
+			<Debugger_RunParams>&quot;I:\KundenDaten\SEWA\Oc\Anfrage-2013-10-22\keiber.xls&quot; --xls</Debugger_RunParams>
+			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+		</PropertyGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Parameters>
+						<Parameters Name="RunParams">&quot;C:\OrgaMon-FS\Oc\csv-Referenz\WUEL-2011Zaehlerdaten_0011.xls&quot; --xls</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1031</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+					<Source>
+						<Source Name="MainSource">Oc.dpr</Source>
+					</Source>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+					</Excluded_Packages>
+				</Delphi.Personality>
+				<Platforms>
+					<Platform value="Win64">False</Platform>
+					<Platform value="OSX32">False</Platform>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+		<ItemGroup>
+			<DelphiCompile Include="$(MainSource)">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="..\PASconTools\SimplePassword.pas"/>
+			<DCCReference Include="..\PASconTools\Geld.pas"/>
+			<DCCReference Include="..\PASconTools\gplists.pas"/>
+			<DCCReference Include="..\PASconTools\anfix32.pas"/>
+			<DCCReference Include="..\PASconTools\sperre.pas"/>
+			<DCCReference Include="..\PASconTools\WordIndex.pas"/>
+			<DCCReference Include="..\PASconTools\txlib.pas"/>
+			<DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
+			<DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
+			<DCCReference Include="..\PASconTools\binlager32.pas"/>
+			<DCCReference Include="..\PASconTools\Mapping.pas"/>
+			<DCCReference Include="..\libxml2\libxml2.pas"/>
+			<DCCReference Include="..\PASconTools\html.pas"/>
+			<None Include="..\rev\Oc.rev.txt"/>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+	</Project>

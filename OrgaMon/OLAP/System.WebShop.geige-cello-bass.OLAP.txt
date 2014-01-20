@@ -1,0 +1,17 @@
+--
+-- Selektion der sichtbaren Artikel eines WebShops
+--
+-- Namespace "geige-cello-bass"
+--
+
+select 
+ rid 
+from 
+ artikel 
+where 
+ sortiment_r in (
+ 89781,
+ 89779,
+ 82565
+)
+

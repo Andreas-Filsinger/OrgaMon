@@ -1,0 +1,40 @@
+====================================
+* PROJEKT: Kasse
+* INFO: OrgaMon Web-Erweiterung: Kasse
+* SOURCE DIR: ..\Kasse
+* INNO SETUP SCRIPT: Kasse.iss
+* TXT VERSIONING: YES
+====================================
+
+// INFO BEGIN
+Eine Web-Kassenanwendung mit JSON Anbindung an den OrgaMon
+// INFO END
+
+Rev 1.021 (28.09.10) Andreas Filsinger
+
+ Bug: <-: Berechnet zumindest bei einer Position das Minus
+
+ Neu: "C" mit leerem Beleg macht einen "refresh" des Dokumentes
+ Neu: Kasse startet mit leeren Feldern
+ Neu: Minus von Einzelbeträgen
+ Neu: Code Clean Up
+ Neu: Eingabe und Anzeige von Preisen nun rechtsbündig
+
+Rev 1.020 (25.08.10) Andreas Filsinger
+
+ Neu: OrgaMon kann nun Artikel, Codes, Preise ersetzen
+ Neu: kasse.html muss nach .\htmlvorlagen
+ Neu: Tagwache.Kasse-Javascript.OLAP.txt erzeugt die Konstanten
+
+Rev 1.002 (22.08.10) Andreas Filsinger
+
+ Neu: Lauffähigkeit auf: Wii, Nintendo DS, Firefox, IE, Crome
+
+Rev 1.001 (09.10.09) Andreas Filsinger
+
+ Neu: Layout nahezu fertig
+ Neu: erste JavaScript Tech-Demos
+
+Rev 1.000 (08.10.09) Andreas Filsinger
+
+ Neu: Projekt angestossen mit Standard-HTML und einem virtuellen Keyboard

@@ -1,0 +1,36 @@
+<p class="title">Suche</p>
+~OBJ_ERRORLIST~~OBJ_MESSAGELIST~~OBJ_SEARCH_RESULT_PAGES~
+<script type="text/javascript" src="js/functions.js"></script>
+<form id="sort" action="~CONST___INDEX~" method="get">
+<input type="hidden" name="site" value="search">
+<input type="hidden" name="sid" value="~VAR_SID~">
+<input type="hidden" name="action" value="sort">
+<p class="righttitle">
+  <b>~CONST_SENTENCE_ORDER_BY~:</b>&nbsp;
+  <select name="type" onchange="submit()">
+    <option value="-1">-</option>
+    <option value="0">~CONST_SENTENCE_ALPHABETICAL_ASCENDING~</option>
+    <option value="1">~CONST_SENTENCE_ALPHABETICAL_DESCENDING~</option>
+    <option value="2">~CONST_SENTENCE_PRICE_ASCENDING~</option>
+    <option value="3">~CONST_SENTENCE_PRICE_DESCENDING~</option> 
+	<!-- 
+	<option value="4">Schwierigkeitsgrad (aufsteigend)</option>
+    <option value="5">Schwierigkeitsgrad (absteigend)</option>
+	-->
+  </select>
+</p>
+<form>
+<hr />
+<script type="text/javascript">
+  setSelectedOptionByValue('sort','type',~VAR_SORT_ORDER_TYPE~); 
+</script>
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/search-hint.txt
+-->TEXT: search-hint.txt<!-- END TEXT -->
+<hr />
+~OBJ_ARTICLE~
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/search-hint.txt
+-->TEXT: search-hint.txt<!-- END TEXT -->
+<hr />
+~OBJ_SEARCH_RESULT_PAGES~

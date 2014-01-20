@@ -1,0 +1,55 @@
+====================================
+* PROJEKT: WinAmp
+* SOURCE DIR: G:\anfix32
+* UPDATE: winamp.pas
+* INFO: Delphi Open Source Winamp 2.x / 5.x API
+* KUNDE: 1829
+====================================
+
+// INFO BEGIN
+Win32, Open Source, Interface zum Ansteuern von Winamp<br>
+Delphi, Sourcecode, (Klar) Freeware (was sonst)<br>
+<br>
+Vielfach verwendete Interface-Unit in meinen Applikationen.<br>
+Geht durch seine Sichtbarkeitskontrollen weit über<br>
+das normale Maß hinaus. Macht entgültig Schluss mit dem<br>
+Playlist-Bug. Das beste aus 3 Quellen die im Netz herum-<br>
+schwirren<br>
+// INFO END
+
+Rev 1.007 (16.12.05) Andreas Filsinger
+
+ Neu: Nicht mehr abhängig von mmsystem.pas (winmm.dll).
+
+Rev 1.006 (23.02.05) Andreas Filsinger
+
+ Bug: Versionsnummer war falsch.
+
+ Neu: Laden der WinAmp GUI erst bei Bedarf, und nicht schon bei Programmstart.
+
+Rev 1.005 (19.02.04-20.02.04) Andreas Filsinger
+
+ Bug: Always On Top wurde nicht in den ursprünglichen wert zurückgesetzt.
+ Bug: Hide war ohne application.processmessages.
+
+Rev 1.004 (23.05.03) Andreas Filsinger
+
+ Bug: Unnötiger Zugriff auf Laufwerk "D:\"
+
+Rev 1.003 (12.03.02) Andreas Filsinger
+
+ Neu: Mehr Funktionen mehr Steuer-Codes mehr Spass
+
+Rev 1.002 (22.02.01) Andreas Filsinger
+
+ * Neu: Nur 3 Compilerwarnungen entfernt. Sonst NIX.
+
+Rev 1.001 (25.01.01) Andreas Filsinger
+
+ * Bug: bei ungerader Byte-Anzahl von FName benötigt
+        WinAmpPlayFile nun doch eine weitere Null hinter
+        dem Dateinamen!
+
+Rev 1.000 (07.10.00) Andreas Filsinger
+
+ * Neu: Erstmals als Open Source veröffentlicht

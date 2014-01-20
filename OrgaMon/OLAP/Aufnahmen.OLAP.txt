@@ -1,0 +1,15 @@
+select 
+ * 
+from 
+ GELIEFERT
+join BELEG on (BELEG.RID=GELIEFERT.BELEG_R) and (BELEG.PERSON_R=1108)
+where
+ (GELIEFERT.ARTIKEL_R is not null) and 
+ (GELIEFERT.AUSGABEART_R=7) 
+order by
+ GELIEFERT.RID
+ 
+excel
+open
+-
+   

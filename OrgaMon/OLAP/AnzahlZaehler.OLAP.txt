@@ -1,0 +1,13 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Anzahl der Wechselaufträge
+--
+--
+
+$StartDatum=18.04.2005
+$EndeDatum=
+
+select count(RID) from AUFTRAG where
+ AUSFUEHREN between '$StartDatum' and '$EndeDatum'
+

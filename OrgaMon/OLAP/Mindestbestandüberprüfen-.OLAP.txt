@@ -1,0 +1,50 @@
+//
+//  O L A P  - Definitions Datei
+//  
+//  Artikel mit "Gelieferte Menge"=0 im Zeitraum
+//
+//
+// $ArtikelAusschluss kann eine kommaseparierte Liste sein
+//
+$Start=CURRENT_TIMESTAMP-360
+$Ende=CURRENT_TIMESTAMP
+$ArtikelAusschluss=0
+
+select distinct
+  GELIEFERT.ARTIKEL_R 
+from
+  GELIEFERT 
+join 
+ VERSAND 
+on
+ (GELIEFERT.BELEG_R=VERSAND.BELEG_R) and
+ (RECHNUNG is not null) and
+ (AUSGANG between $Start and $Ende) and
+ (TEILLIEFERUNG=GELIEFERT.POSNO)
+where
+ (GELIEFERT.MENGE_RECHNUNG>0) and
+ (GELIEFERT.ARTIKEL_R is not null) and
+ (GELIEFERT.AUSGABEART_R is null)
+
+save 
+
+numeric ARTIKEL_R
+-
+
+select 
+ RID ARTIKEL_R,
+ '0' GELIEFERT,
+ MINDESTBESTAND,
+ TITEL,
+ Verlag_R
+from 
+ ARTIKEL
+where
+ (MINDESTBESTAND>0) and
+ (RID not in ($ArtikelAusschluss)) and
+ (RID not in (select RID from OLAP$$TMP0))  
+
+
+excel
+open
+-

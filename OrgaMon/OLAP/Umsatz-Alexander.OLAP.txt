@@ -1,0 +1,38 @@
+$Start='01.01.2007'
+$Ende='31.12.2007'
+ 
+select
+ artikel.RID,
+ sum(MENGE_GELIEFERT) MENGE_GELIEFERT,
+ sum(Preis) Preis,
+ artikel.verlagno,
+ artikel.numero,
+ artikel.mindestbestand,
+ artikel.titel,
+ artikel.verlag_r,
+ artikel_mitglied.master_R
+from
+ POSTEN
+join ARTIKEL on 
+ (posten.artikel_r=artikel.rid) and 
+ (artikel.verlag_R=47030)
+join artikel_mitglied on 
+ (artikel_mitglied.artikel_r=posten.artikel_R) and
+ (artikel_mitglied.master_r=213244)
+where
+ (POSTEN.MENGE_GELIEFERT>0) and
+ (POSTEN.AUSGABEART_R IS NULL) and
+ (POSTEN.BELEG_R IN (select BELEG.RID from Beleg where BELEG.RECHNUNG between $Start AND $Ende))
+group by
+ artikel.rid,
+ artikel.verlagno,
+ artikel.numero,
+ artikel.mindestbestand,
+ artikel.titel,
+ artikel.verlag_r,
+ artikel_mitglied.master_R
+ 
+excel
+ 
+open
+-

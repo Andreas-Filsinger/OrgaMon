@@ -1,0 +1,18 @@
+~OBJ_ERRORLIST~~OBJ_MESSAGELIST~
+<!-- BEGIN IMAGE
+SRC=~CONST___TEMPLATE_IMAGES_PATH~icon_search.png
+ALT=~CONST_SENTENCE_EXTENDED_SEARCH~
+STYLE=margin-bottom:10px; margin-right:20px; vertical-align:middle;
+-->IMAGE: icon_search.png<!-- END IMAGE -->
+<span style="font-size:22px; vertical-align:middle;"><b>~CONST_SENTENCE_EXTENDED_SEARCH~</b></span><br />
+<form action="~CONST___INDEX~" method="get" style="margin:0px; margin-left:70px; margin-bottom:10px;">
+  <input type="text" class="char05" name="f_search_expression" value="~VAR_SEARCH_USER_EXPRESSION~" size="18">
+  <input type="submit" value="~CONST_SENTENCE_START_SEARCH~" style="vertical-align:middle;">
+  <input type="hidden" name="action" value="search_user_expression_extended">
+  <input type="hidden" name="sid"  value="~VAR_NEXT_SEARCH_ID~">
+  <input type="hidden" name="site" value="search">
+  <input type="hidden" name="page" value="1">
+</form>
+<p style="margin:0px; margin-left:70px;">
+~OBJ_TREE~
+</p>

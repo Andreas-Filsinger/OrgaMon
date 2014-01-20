@@ -1,0 +1,85 @@
+[TIP]
+(dieser internen Hinweis dient Ihrer info,
+bitte nicht übersetzen):
+
+Liebe Übersetzerin,
+Lieber Übersetzer, 
+
+dieses Dokument wird direkt von der Pfortenanwendung
+verarbeitet, bitte ändern Sie NIEMALS die Texte
+in den eckigen Klammern. Nur die Sachen darunter.
+Ersetzen Sie dabei den deutschen Text durch die
+entsprechende Übersetzung.
+"\F" "\f" sind Steuerzeichen, die man auch in der 
+Übersetung belassen sollte. Besteht der Text aus 
+mehreren Zeilen bitte so ungefähr das Layout 
+beibehalten.
+
+Danke und Viel Spass.
+
+Andreas Filsinger, filsinger.de
+------------- Jetzt gehts los...
+
+
+[Name für die Sprache]
+português
+
+[Hinweise]
+\FInstruções!\f
+As medidas vigentes de proteção e ordem para nosso 
+estabelecimento e funcionários aplicam-se também aos visitantes. 
+Devido à possível perigo de acidentes pedimos sua atenção.
+Como manutenção de nossos direitos, os documentos e amostras 
+bem como informações obtidas durante a visita - excetuando-se 
+casos de conhecimento geral ou do visitante - devem ser tratados
+como confidenciais.
+A execução de gravações bem como publicações acerca da empresa
+necessitam autorização prévia. Aparelhos de gravação
+(imagem e/ou som) só poderão ser conduzidos em casos especiais.
+
+[Unterschrift]
+Assinatura
+
+[Rückgabe]
+Devolver ao término da visita à
+portaria
+
+[Herr]
+Sr.
+
+[Frau]
+Sra.
+
+[Gruppe]
+Grupo
+
+[gültig bis]
+válido até
+
+[Pforte Empfang]
+Data da Recepção
+
+[Parken]
+ticket
+Deixar de estacionamento no carro bem à vista
+
+[Name]
+Nome
+
+[Firma]
+Firma
+
+[Mobilfunk-Telefon]
+Telefone móvel
+
+[Bediener]
+\F\+\+\+\+Bem vindo\f
+...à Siemens em Bruchsal
+
+* por favor digite seu nome, firma e o
+  número de seu celular - para o caso de ser alcançado 
+  através deste número durante a visita.
+* por favor assine no espaço abaixo
+
+
+

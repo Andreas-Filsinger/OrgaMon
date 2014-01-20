@@ -1,0 +1,261 @@
+SQL-Knowledge-Base:
+===================
+
+----------
+new table 
+
+CREATE TABLE  Entit100
+( 
+     PK_Entit100 INTEGER NOT NULL,
+     Name VARCHAR(50),
+        CONSTRAINT PK_Entit100 PRIMARY KEY (PK_Entit100)
+)
+
+----------
+new record: insert into ENTIT100 (NAME) values ("bello");
+
+----------
+autoinc-field: 
+
+a) 
+CREATE GENERATOR NK_KUNDE;
+SET GENERATOR NK_KUNDE TO 8000;
+
+b)
+CREATE TRIGGER CREATE_ID FOR ENTIT100
+BEFORE INSERT
+POSITION 0
+AS BEGIN
+ NEW.PK_ENTIT100 = GEN_ID(GENID,1);
+END
+
+^
+
+Referenz-Spalten
+================
+
+,     (SELECT ISO_KURZZEICHEN FROM
+      LAND T WHERE T.RID=P.SPRACHE_R) AS
+      SPRACHE_TEXT
+select 
+·	  NAME,
+·	  (select DESCRIPTION from PRODUCETYPE T
+·	   where T.TYPE = P.TYPE) as TYPE_DESC,
+·	  DESCRIPTION,
+·	  PRICE,
+·	  QTY
+·	from PRODUCE P
+
+-----------
+
+Bei einer View mußt Du anders Vorgehen. Hier ein Beispiel einer meiner
+Views. In jeder Tabelle gibt es die Felder ID und Maskenkey und beide werden
+meist in einer View benötigt.
+
+CREATE VIEW V_BARTG2(ID, MASKENKEY, BEZ, BEKGR_ID_EINKGRPNR, BKST_ID_EKKOST,
+EKKTO,
+TOLERANZ, TOLKZ, BENUTZER, GESPEICHERT, BEKGR_MASKENKEY, BKST_MASKENKEY) AS
+SELECT A.ID,
+A.MASKENKEY,
+A.BEZ,
+A.BEKGR_ID_EINKGRPNR,
+A.BKST_ID_EKKOST,
+A.EKKTO,
+A.TOLERANZ,
+A.TOLKZ,
+A.BENUTZER,
+A.GESPEICHERT,
+B.MASKENKEY,
+C.MASKENKEY
+FROM BARTG2 A
+LEFT OUTER JOIN BEKGR B ON A.BEKGR_ID_EINKGRPNR = B.ID
+LEFT OUTER JOIN BKST C ON A.BKST_ID_EKKOST = C.ID;
+
+Im ersten Teil gibst Du Aliasnamen für die Felder an. Diese kannst Du
+benennen, wie Du Lustig bist.  Dann in der eigentlichen SELECT-Anweisung
+erst die Originalfelder ebenfalls mit Aliasnamen für die Tabelle.
+Zur besseren Lesbarkeit des Inhalts einer späteren VIEW-Abfrage setzte ich
+die Feldnamen in der View gewöhnlich zusammen, d.h.
+die Felder der Haupttabelle bleiben original und die Felder der verbundenen
+Tabellen bekommen zusätzlich den Tabellennamen mit einem Unterstrich
+vorangestellt ( im Beispiel oben BEKGR_MASKENKEY ), d. h. es wird das Feld
+MASKENKEY in der Tabelle BEKGR angezeigt.
+
+
+Frank Rabold <frank.rabold@t-online.de> schrieb in im Newsbeitrag:
+9VMv8S7CAHA.1904@VICTORY...
+> Leider ist das auch nicht die Lösung. Die Anführungszeichen habe ich hier
+> nur zur Verdeutlichung geschrieben. Der SQL-Befehl lautet:
+>
+> create view View_Sportwart as
+> select Sportwart.ID, Sportwart.Ort, Sportwart.Verein_ID, Sportwart.Name,
+>    Sportwart.Vorname, Sportwart.Telefon, Sportwart.Strasse, Sportwart.PLZ,
+>    Verein.Name as Verein_Name
+> from Sportwart left outer join Verein on Sportwart.Verein_ID = Verein.ID;
+>
+> Interbase quittiert dies mit folgendem Fehler:
+>
+> Dynamic SQL Error
+> -SQL error code = -607
+> -Invalid command
+> -must specify column name for view select expression
+>
+> Mit dieser Meldung kann ich nichts anfangen. Für einen Tip wäre ich
+dankbar!
+>
+> Frank
+>
+>
+> "Gerd Kroll" <Gerd.Kroll@SMB-STRAP.DE> schrieb im Newsbeitrag
+> news:4ZDnyxyCAHA.1184@VICTORY...
+> > Du warst schon auf dem richtigen Weg. Lass die Anführungszeichen weg.
+> >
+> > Gerd
+> >
+> > Frank Rabold <frank.rabold@t-online.de> schrieb in im Newsbeitrag:
+> > GADpvOrCAHA.1768@VICTORY...
+> > > Hallo,
+> > >
+> > > ich möchte eine Sicht über zwei Tabellen, die einen gleichen
+> Spaltennamen
+> > > enthalten, erstellen.
+> > >
+> > > create view View_Sportwart as
+> > > select Sportwart.ID, Sportwart.Ort, Sportwart.Verein_ID,
+Sportwart.Name,
+> > >    Sportwart.Vorname, Sportwart.Telefon, Sportwart.Strasse,
+> Sportwart.PLZ,
+> > >    Verein.Name
+> > > from Sportwart left outer join Verein on Sportwart.Verein_ID =
+> Verein.ID;
+> > >
+> > > Interbase quittiert diesen Versuch mit folgendem Fehler:
+> > >
+> > > unsuccessful metadata update
+> > > -STORE RDB$RELATION_FIELDS failed
+> > > -attempt to store duplicate value (visible to active transactions) in
+> > unique
+> > > index "RDB$INDEX_15"
+> > >
+> > > Wenn ich in der SELECT-Anweisung schreibe "Verein.Name as Verein_Name"
+> > > erhalte ich auch einen Fehler.
+> > > Kann mir jemand erklären, wie man so etwas in SQL formuliert.
+> > >
+> > > Danke
+> > > Frank Rabold
+> > >
+> > >
+> >
+> >
+>
+>
+
+With Query1 do
+begin
+      first;
+      while not eof do
+      begin
+     Query2.ParamByName('codigo').asstring:=fieldbyname
+('IE_produto').asstring;
+     Query2.prepare;
+                Query2.open;
+                Query2.edit;
+     Query2.fieldbyname('PR_customedio').asfloat:=
+               (Query2.fieldbyname('PR_saldo').asfloat*
+                        Query2.fieldbyname('PR_customedio').asfloat)+
+                        (fieldbyname('IE_qtdereal').asfloat*
+                        fieldbyname('IE_precocompra').asfloat)/
+                        (Query2.fieldbyname('PR_saldo').asfloat+
+                        fieldbyname('IE_qtdereal').asfloat);
+     Query2.post;
+     Query2.close;
+     next;
+        end;
+end;
+
+
+----------------
+
+select ig.rdb$field_name
+from rdb$index_segments ig join rdb$indices i
+on ig.rdb$index_name = i.rdb$index_name
+join rdb$relation_constraints rc
+on i.rdb$index_name = rc.rdb$index_name
+and rc.rdb$constraint_type = 'PRIMARY KEY'
+and rc.rdb$relation_name = :tbl
+order by ig.rdb$field_position
+
+C.
+--
+---------
+Claudio Valderrama C.
+IT Engineer - Independent consultant - CHILE
+Owner of the Interbase WebRing
+http://members.tripod.com/cvalde
+(No support questions by e-mail, please. Thank you.)
+
+J8 wrote in message <8kfbee$7un6@bornews.borland.com>...
+>I need to know which fields make up the primary key for a table.
+>
+>I think this might work, but I don't know if the rdb$index_id = 1 is enough
+>to
+>ensure I get the primary key fields.
+>
+>select rdb$field_name
+>from rdb$index_segments
+>where rdb$index_name = (select rdb$index_name
+>                                         from rdb$indices
+>                                         where rdb$relation_name =
+>:pTableName
+>                                         and rdb$index_id = 1)
+>
+>Any feedback will be much appreciated.
+>
+>Mvrgr,
+>  Peter
+>
+>
+
+
+---------
+
+in procedure:
+  declare variable key_id integer;
+  ...
+  key_id = GEN_ID(gen_table1, 1);
+  insert into table1 :key_id, field...
+  ...
+  update table2 set table_link=:key_id
+
+
+"DSA-JCR" <info@dsa.es> wrote in message
+news:8lubjm$n0b15@bornews.borland.com...
+> Hi all:
+>
+> Well, I mean
+>
+> I want to do a SP that
+> 1.- Insert data in a table. This table has a Unique CODE updated by a
+> Generator
+> 2.- After insert the data, I must put that CODE in another table in order
+to
+> link them.
+>
+> How can I acomplish this ?
+>
+> Example :
+>
+> insert into table1 CODE, field1, ....
+> update table2 set Table1Link=CODE
+>
+> thanks in advance
+>
+> --
+> Juan Coruña Rodriguez
+> Desarrollo de Software Atlantico SL
+> www.dsa.es
+>
+>
+
+
+-----

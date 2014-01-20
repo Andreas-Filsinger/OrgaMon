@@ -1,0 +1,6 @@
+select
+ ANREDE
+from
+ PERSON
+where
+ RID=$PERSON_R

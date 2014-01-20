@@ -1,0 +1,12 @@
+--
+--  O L A P  - Definitions Datei
+--
+--
+
+select
+ RID,
+ FARBE_VORDERGRUND,
+ FARBE_HINTERGRUND,
+ KUERZEL
+from
+ BEARBEITER

@@ -1,0 +1,27 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Stempel-Auswahl anhand einer person_R
+--
+
+$PERSON_R=1224
+
+select
+--- Bedingung für Stempel 1
+  coalesce( 
+  
+   (select 1 from PERSON where 
+      (RABATT_CODE<>'') and 
+      (RABATT_CODE is not null) and
+  
+  A16='Y' and RID=$PERSON_R),0)) 
+ 
+ as STEMPEL_R
+from
+ rdb$$database
+ 
+excel
+
+open
+- 
+ 

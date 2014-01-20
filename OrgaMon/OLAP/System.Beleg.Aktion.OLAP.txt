@@ -1,0 +1,40 @@
+--
+-- liefert die Anzahl der "portoerzeugenden" Artikel in einem Beleg
+--
+
+$NAME=Portofrei
+$BELEG_R=23928
+
+select
+-- Gesamt-Anzahl der Posten
+ (select count(POSTEN.ARTIKEL_R)
+  from
+   POSTEN
+  where
+   (BELEG_R=$BELEG_R) and
+   (ARTIKEL_R is not null) and
+   (MENGE>0) and
+   ((ZUTAT is null) or (ZUTAT='N'))
+ ) -
+-- Anzahl der portofreien Artikel
+ (select count(POSTEN.ARTIKEL_R)
+  from
+   POSTEN
+  JOIN
+   AKTION
+  on
+   (POSTEN.ARTIKEL_R=AKTION.ARTIKEL_R) and
+   (AKTION.NAME='$NAME')
+  where
+   (BELEG_R=$BELEG_R) and
+   (ARTIKEL_R is not null) and
+   (MENGE>0) and
+   ((ZUTAT is null) or (ZUTAT='N'))
+ ) as ANZAHL
+from
+ RDB$$DATABASE
+
+excel
+
+open
+-

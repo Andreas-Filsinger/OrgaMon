@@ -1,0 +1,49 @@
+--
+--  O L A P  - Definitions Datei
+--  
+
+$Verlage=470,47030   -- noname,Hebu
+$Laender=59,101,16   -- Czech, Ungarn, Österreich
+$Start='01.01.2005'
+$Ende='01.01.2006'
+
+select 
+ count(POSTEN.MENGE_GELIEFERT),
+ ARTIKEL.NUMERO,
+ ARTIKEL.TITEL,
+ LAND.ISO_KURZZEICHEN,
+ ARTIKEL.VERLAG_R
+from
+ POSTEN 
+left join BELEG on
+ POSTEN.BELEG_R=BELEG.RID
+left join ARTIKEL on
+ POSTEN.ARTIKEL_R=ARTIKEL.RID
+left join PERSON on
+ BELEG.PERSON_R=PERSON.RID
+left join ANSCHRIFT on
+ PERSON.PRIV_ANSCHRIFT_R=ANSCHRIFT.RID
+left join LAND on
+ ANSCHRIFT.LAND_R=LAND.RID   
+where
+ (POSTEN.MENGE_GELIEFERT>0) and
+ (POSTEN.PREIS>0) and
+ (BELEG.RECHNUNG between $Start and $Ende) and
+ (ARTIKEL.VERLAG_R in ($Verlage)) and
+ (ANSCHRIFT.LAND_R in ($Laender))
+group by
+ ARTIKEL.NUMERO,
+ ARTIKEL.TITEL,
+ LAND.ISO_KURZZEICHEN,
+ ARTIKEL.VERLAG_R
+  
+
+complete
+
+Verlag(VERLAG_R) VERLAG
+-
+
+excel
+
+open
+-

@@ -1,0 +1,28 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  aktive Händler
+//
+//  (c)'04 Andreas Filsinger
+//
+$AbZeitraum='01.01.2003'
+
+select 
+ sum(DAVON_BEZAHLT) DAVON_BEZAHLT,
+ PERSON_R 
+from 
+ BELEG 
+where 
+ (ANLAGE>$AbZeitraum) AND
+ (RID in (select distinct BELEG_R from POSTEN where RABATT>0))
+group by 
+ PERSON_R
+
+complete
+
+Anschrift(PERSON_R) ADRESSAT1;ADRESSAT2;ADRESSAT3;ADRESSAT4;STRASSE;ORT
+-
+
+sort
+
+numeric DAVON_BEZAHLT descending

@@ -1,0 +1,103 @@
+====================================
+* PROJEKT: FirebirdRestore
+* SOURCE DIR: ..\FirebirdRestore\
+* HELP COPY: YES
+* PUBLIC: YES
+* INNO SETUP SCRIPT: FirebirdRestore.iss
+* INNO SETUP WITHOUT POINT: YES
+* INFO: *.fbak Restorer für Firebird Datenbanken
+====================================
+
+// INFO BEGIN
+Durch Doppelklick auf eine *.fbak Datei kann diese restored werden. In meinem<br>
+Fall sind alle Datenbanken verwaltet durch einen Remote Linux Server, der<br>
+seine Datenbanken in einem Bereich hält, die durch einen (Samba-)Share sichtbar sind.<br>
+Wie Shares zu den Laufwerksbuchstaben korrespondieren steht in der Ini-Datei.
+// INFO END
+
+Format der ini.Datei
+
+ [System]
+ "Eintrag-Numero-beginnend-bei-1" = Win32Mapping,
+                                    Hostname des Servers,
+                                    SambaMapping,
+                                    [SYSDBA Passwort] ,
+                                    [RestoreDest]
+
+ Beispiel:
+
+ [System]
+ 1=I:\,192.168.115.92,/ablage/
+ 2=C:\,,C:\
+
+Rev 1.013 (04.03.13) Andreas Filsinger
+
+ Neu: Firebird-embed Bibliothek ist Teil der Distribution
+ Neu: FirebirdRestore.ini wird nun aus
+      ~EigeneDateien~\FirebirdRestore\FirebirdRestore.ini geladen
+ Neu: IBOService anstelle von IBService
+
+Rev 1.012 (18.09.06) Andreas Filsinger
+
+ Neu: Das Passwort kann nun auch in verschlüsselter Form angegeben werden!
+
+Rev 1.011 (13.12.05) Andreas Filsinger
+
+ Neu: Verwendung der embedded Serverversion nun möglich. Dazu muss der "Hostname
+      des Servers" einfach leergelassen werden.
+
+Rev 1.010 (30.09.05) Andreas Filsinger
+
+ Bug: Ziel und Quelle war verwechselt worden.
+
+Rev 1.009 (30.09.05) Andreas Filsinger
+
+ Neu: Ziel der restoreten Datenbank kann angegeben werden.
+
+Rev 1.008 (07.07.05) Andreas Filsinger
+
+ Bug: Multibildschirmsysteme: Formularposition war falsch.
+
+Rev 1.007 (16.05.05) Andreas Filsinger
+
+ Neu: Fehlt ein Netzwerkmapping wird die INI geladen
+
+Rev 1.006 (27.04.05) Andreas Filsinger
+
+ Neu: Mehr Info, welche Dateinamen verwendet werden.
+ Neu: Mehr Info im Fehlerfall.
+ Neu: Bis zu 26 Laufwerksmappings.
+ Neu: Sonderzeichen '#10' wird aus den meldungen des firebird Service entfernt
+
+Rev 1.005 (22.04.05) Andreas Filsinger
+
+ Neu: SYSDBA Passwort kann angegeben werden. (Default = masterkey).
+
+Rev 1.004 (25.04.04) Andreas Filsinger
+
+ Neu: Lokale Drives brauchen nicht mehr angegeben zu werden, vielmehr werden
+      alle Drives, die in der Ini nicht gefunden werden als lokal betrachtet.
+ Neu: Neue ini. Erweiterungen darin dokumentiert.
+
+Rev 1.003 (01.04.04) Andreas Filsinger
+
+ Info: mehr Infos in der FirebirdRestore.ini.
+
+ Neu: Wird FirebirdRestore ohne Parameter aufgerufen, so kann wird die
+      FirebirdRestore.ini in den Anzeigebreich editierbar geladen.
+
+Rev 1.002 (10.03.04) Andreas Filsinger
+
+ Info: Dokumentation für lokale Files erweitert.
+
+Rev 1.001 (14.11.03) Andreas Filsinger
+
+ Bug: firebird restore stellt die Bildschirmausgabe ein, sobald die
+      Anwendung den Eingabefokus verloren hat.
+
+ Neu: Schriftart jetzt FixedSys
+
+Rev 1.000 (07.11.03) Andreas Filsinger
+
+ Neu: erste Release
+

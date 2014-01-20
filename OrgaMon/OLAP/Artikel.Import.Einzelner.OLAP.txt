@@ -1,0 +1,17 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  Einzelner Importlauf Artikel
+--
+--  (c)'05 Andreas Filsinger
+--
+
+$IMPORT_RID=203647
+
+select
+ RID,
+ TITEL
+from
+ ARTIKEL
+where
+ IMPORT_RID=$IMPORT_RID

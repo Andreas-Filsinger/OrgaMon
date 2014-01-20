@@ -1,0 +1,31 @@
+--
+--
+
+$Belege=82094,82570
+
+select 
+ PERSON_R,
+ BELEG_R,
+ '1' as ANZAHL
+from
+ VERTRAG
+where
+ BELEG_R in ($Belege)
+
+ 
+spread
+
+BELEG_R
+-
+
+delete
+
+2
+2
+-
+ 
+excel
+
+open
+-
+   

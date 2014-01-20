@@ -1,0 +1,131 @@
+====================================
+* PROJEKT: TxOrtung
+* SOURCE DIR: ..\TxOrtung
+* UPDATE: getmap.php5
+* UPDATE: i_config.inc.php5-dist
+* UPDATE: i_coordinate_funcs.inc.php5
+* UPDATE: i_global_vars.inc.php5
+* UPDATE: i_templates.inc.php5
+* UPDATE: i_types.inc.php5
+* UPDATE: index.php5
+* UPDATE: locate.php5
+* UPDATE: pngTextEdit.php5
+* UPDATE: XLocate.xml
+* UPDATE: XMap.xml
+* UPDATE: XLocate.xml.xServer-1.8
+* UPDATE: XLocate.xml.xServer-1.12
+* UPDATE: XMap.xml.xServer-1.8
+* UPDATE: XMap.xml.xServer-1.12
+* INFO: Simple HTTP Interface for Map&Guide XServer SOAP API
+* PUBLIC: YES
+* ARCHIVE: YES
+====================================
+
+// INFO BEGIN
+A SOAP API PHP - Wrapper <br>
+These scripts are a Communication Proxies wich hide the Complexity of the Map&Guide
+ XServer SOAP API. Clients can use simple HTTP-Requests for the two function calls, "locate" and
+ "getmap". This Code is derived from the (c)M&G PHP Codesamples. 
+// INFO END
+
+Rev 4.011 (28.03.11) Andreas Filsinger
+
+ Neu: locate: Ergebniswert "AUSSAGEKRAFT"
+ Neu: locate: Ergebniswert "SCHAERFE"
+ Neu: locate: Ergebniswert "QUOTE"
+ Neu: locate: Paramater "profile", Übergabe des gewünschten Abfrageprofiles (z.B. "fuzzy")
+
+Rev 4.010 (25.03.11) Andreas Filsinger
+
+ Neu: locate gibt eine Adresstabelle zurück, und nicht nur eine einzelne Adresse
+ Neu: Je nach xServer Version sind verschiedene WSDL Cache Dateien mit im Paket
+
+Rev 4.009 (24.03.11) Andreas Filsinger
+
+ Bug: Tippfehler: "WDSL" ist falsch!
+
+Rev 4.008 (24.03.11) Andreas Filsinger
+
+  Neu: globale Service-Ports-Definition
+  Neu: Versionnummer in der Index.php5, leicht anderes Layout
+  Wegfall: i_default_config.inc.php5
+
+Rev 4.007 (17.08.09) Thorsten Schroff
+
+  Neu: Einstellungen für XLocate- und XMap-Server werden nun zentral in i_config.inc.php5 bzw. i_default_config.inc.php5 gesetzt.
+  Neu: i_config.inc.php5 durch i_config.inc.php5-dist in Release ersetzt, damit produktive Datei beim Entzippen nicht überschrieben wird.
+
+Rev 4.006 (12.06.09) Thorsten Schroff
+
+  Neu: index.php5: Der Ordner PATH_MAPS, der von getmap.php5 zum Ablegen der Karten benötigt wird, wird versucht zu erstellen, falls er noch nicht existiert. 
+       Sowohl im Fehler- wie auch im Erfolgsfall wird dabei eine Meldung ausgegeben.
+
+Rev 4.005 (12.06.09) Thorsten Schroff
+
+  Neu: Releases mit Auto-Up wieder möglich
+
+Rev 4.004 (22.04.09) Andreas Filsinger & Thorsten Schroff
+
+  Bug: locate.php5: Fehler bei Rückgabe mehrerer Suchtreffer (Ursache: verschiedene Typen für 
+       einen (Objekt) und mehrere (Array) Treffer)
+  Neu: Ordner Karten inklusive Markierungspunkten (PNGs) zum Projekt hinzugefügt.
+
+Rev 4.003 (16.04.09) Thorsten Schroff
+
+  Neu: Skalierung der Karten nun wie bisher
+  Neu: i_config.inc.php5: Kartenbreite und -höhe (in Pixeln) können mit den Konstanten IMAGE_HEIGHT und 
+       IMAGE_WIDTH definiert werden
+
+Rev 4.002 (16.04.09) Thorsten Schroff
+
+  Bug: locate.php5: i_global_vars.inc.php5 muss vor i_templates.inc.php5 eingebunden werden.
+  Bug: index.php5: Form-Action war noch tlocate4.php5
+  Bug: getmap.php5: Tippfehler bei Variablennamen
+  Neu: XMercator2Geodecimal() zur Umrechnung eine X-Koordinate
+  Neu: YMercator2Geodecimal() zur Umrechnung eine Y-Koordinate
+  Neu: Mercator2Geodecimal() kann per Parameter zur Rundung der Ergebnisse gezwungen werden
+  Neu: getmap.php5 liefert Koordinaten ohne Kommastellen (gerundet)
+  Neu: index.php5: Title-Tag hinzugefügt
+
+Rev 4.001 (16.04.09) Thorsten Schroff
+
+  Neu: Neuer Projektname: TxOrtung
+  Neu: Umbenennung von tlocate4.php5 und tgetmap4.php5 in locate.php5 und getmap.php5
+  Neu: i_config.inc.php5
+  Neu: i_default_config.inc.php5
+  Neu: per Konstante SAVE_MAPS kann gewählt werden, ob Karten geladen und gespeichert (im Pfad PATH_MAPS) werden
+  Neu: auf geodezimale Koordinaten umgestellt
+  Neu: altes Icon in Rohstoffe aufgenommen
+  Neu: umschaltbar zwischen statischem (lokale Datei) und dynamischem (Datei wird vom xServer abgerufen) WSDL
+
+Rev 4.000 (11.04.09) Thorsten Schroff
+
+ Neu: erstmals Kontakt zum xServer gelungen
+
+Rev 3.002 (21.04.08) Andreas Filsinger
+
+ Neu: addChunk optimiert, und noch mehr Infos in die Text-Chunks eingefügt. 
+
+Rev 3.001 (27.11.07-18.04.08) Martin Schmidt
+
+ Neu: tgetmap4, lädt das PNG selbst und ergänzt Text-Chunks
+
+Rev 3.000 (04.05.06) Thorsten Schroff
+
+ Neu: erstmals veröffentlicht
+ Neu: Projekt Umbenennung: tmap -> tgeo
+ 
+Rev 1.002 (19.04.05) Andreas Filsinger
+
+ Neu: PHP-Script locate für >= PHP 5.0.4 als Beispiel mit dabei.
+
+Rev 1.001 (18.04.2005) Thorsten Schroff
+
+ Neu: Parameter "&z=" gibt den Zoom Prozentwert an.
+ Neu: Fadenkreuz ist nun ausgeblendet.
+ Neu: Eckpunkte und Mittelpunkt wird ausgegeben.
+ Neu: Scriptnamen angepasst.
+
+Rev 1.000 (15.04.2005) Thorsten Schroff
+
+ Neu: Abruf erstmals technisch gelungen

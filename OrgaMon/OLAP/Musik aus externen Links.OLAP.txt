@@ -1,0 +1,38 @@
+--
+--  O L A P  - Definitions Datei
+--
+--
+-- Artikel, deren Musik via externer Link zur Verfügung gestellt wird
+--
+
+$ARTIKEL_SCHALTER=A01  -- Schalter02
+$VERLAG_SCHALTER=A15   -- Profil16
+
+select
+ ARTIKEL.RID
+from
+ ARTIKEL
+join
+ PERSON
+on
+ ARTIKEL.VERLAG_R=PERSON.RID  
+where
+ --
+ -- Freigabe über den Verlag
+ ( (PERSON.$VERLAG_SCHALTER='Y') and (
+    (ARTIKEL.$ARTIKEL_SCHALTER='Y') 
+    or
+    (ARTIKEL.$ARTIKEL_SCHALTER is null)
+   ))
+ or
+ --
+ -- Einzelfreigabe
+ ( (PERSON.$VERLAG_SCHALTER is null) and 
+   (ARTIKEL.$ARTIKEL_SCHALTER='Y') )
+      
+return
+
+excel
+
+open
+-

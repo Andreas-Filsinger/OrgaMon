@@ -1,0 +1,7 @@
+﻿Sehr geehrte(r) ~VORNAME~  ~NACHNAME~,
+
+wir haben Ihre WebShop-Bestellung soeben erhalten. 
+Die Nummer des Bestellbelegs lautet ~BELEG_NO~.
+ 
+Wir danken für Ihre Bestellung,
+mfG, Ihr HeBu-Team

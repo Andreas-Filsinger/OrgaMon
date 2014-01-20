@@ -1,0 +1,5870 @@
+(* anfix32 - low level Tools
+
+  Copyright (C) 2007 - 2012  Andreas Filsinger
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  http://orgamon.org/
+
+*)
+unit anfix32;
+
+////{$ifdef fpc}
+//{$I jclfpc.inc}
+//{$else}
+{$I jcl.inc}
+//{$endif}
+
+interface
+
+uses
+  windows,
+  classes;
+
+const
+  VersionAnfix32: single = 1.061; // ..\rev\anfix32.rev.txt
+  cRevNotAValidProject: single = 0.000;
+  NVAC = #255; // not valid char
+
+type
+  TDateTimeBorlandPascal = record
+    Year, Month, Day, Hour, Min, Sec: Word;
+  end;
+
+  // Zeit
+type
+  TAnfixTime = longint;
+
+const
+  cOneMinuteInSeconds = 60;
+  cOneHourInSeconds = 60 * cOneMinuteInSeconds;
+  cOneDayInSeconds = 24 * cOneHourInSeconds;
+  cNoon = cOneDayInSeconds div 2;
+  cUhr = ' Uhr ';
+  cIllegalSeconds = longint(Low(longint));
+
+  // Datum
+type
+  TDatum_Granularitaet = (TDG_Tag, TDG_Woche, TDG_Monat, TDG_Quartal, TDG_Jahr);
+  TAnfixDate = longint;
+
+const
+  cDATE_YEAR_FAKTOR = 10000;
+  cDATE_MONTH_FAKTOR = 100;
+  cDATE_DAY_FAKTOR = 1;
+
+  cIllegalDate = 0;
+  cMinDate: longint = 0 * cDATE_YEAR_FAKTOR + 1 * cDATE_MONTH_FAKTOR + 1;
+  // 01.01.0000
+  cMaxDate: longint = 9999 * cDATE_YEAR_FAKTOR + 12 * cDATE_MONTH_FAKTOR + 31;
+  ccMinDate = 19000101;
+  // Eigentlich  0=30.12.1899 erste "g¸ltige" Datum also der 31.12.1899
+  ccMaxDate = 99991231;
+  cMaxDateTime: double = 9999 * 365;
+  cTageNamenKurz: array [1 .. 7] of string = ('MON', 'DIE', 'MIT', 'DON', 'FRE',
+    'SAM', 'SON');
+  cTageNamenLang: array [1 .. 7] of string = ('Montag', 'Dienstag', 'Mittwoch',
+    'Donnerstag', 'Freitag', 'Samstag', 'Sonntag');
+  cMonatNamenLang: array [1 .. 12] of string = ('Januar', 'Februar', 'M‰rz',
+    'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober',
+    'November', 'Dezember');
+  cMonatWeb: array [1 .. 12] of string = ('Jan', 'Feb', 'M‰r', 'Apr', 'Mai',
+    'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez');
+
+const
+  // Win32
+  BELOW_NORMAL_PRIORITY_CLASS = $4000;
+  ABOVE_NORMAL_PRIORITY_CLASS = $8000;
+
+  // Dateien
+  cValidFNameChars =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
+  cInvalidFNameChars = ':/\?*"<>|';
+  cTmpFileExtension = '.$$$';
+  cFSize_NotExists = -1;
+  cFSize_Null = -2;
+
+  // Filter
+  cZiffern = '0123456789';
+
+  // Geld
+  cMonetarySymbol = 'Ä';
+
+var
+  MandantName: string = 'offline';
+  cNachfrage: string = 'Nachfrage';
+  StartDebugger: boolean = false;
+  TestMode: boolean = false;
+  DebugMode: boolean = false;
+  DebugLogPath: string = '';
+
+  // Debug-Sachen
+procedure StartDebug(s: string);
+
+// String - Utils: Manipulation
+{$IFDEF SUPPORTS_UNICODE}
+procedure ersetze(const find_str, ersetze_str: string; var d: String); overload;
+{$ENDIF}
+procedure ersetze(const find_str, ersetze_str: string;
+  var d: AnsiString); overload;
+procedure ersetze(const find_str, ersetze_str: string;
+  var d: Shortstring); overload;
+procedure ersetze(s: TStrings; var d: string); overload;
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings); overload;
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings;
+  Index: integer); overload;
+procedure ersetzeUpper(find_str, ersetze_str: string; var d: string);
+function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
+  Upper: boolean = false): string;
+function StrFilter(s, Filter: string; DeleteHits: boolean = false)
+  : string; overload;
+function StrFilter(s, Filter: string; Hit: char): string; overload;
+function noblank(const InpStr: string): string;
+function nosemi(const s: string): string;
+
+// Stringgewichtung rumdrehen
+function reverseSort(s: string): string;
+
+function cutblank(const InpStr: string): string; overload;
+function cutblank(s: TStrings): boolean; overload;
+function cutrblank(const InpStr: string): string;
+function cutlblank(const InpStr: string): string;
+function CharCount(c: char; const InpStr: string): integer;
+function fill(ch: string; i: integer): string;
+function killLeadingZero(s: string): string;
+procedure bfill(var x: string; Size: byte);
+
+function bstr(const x: string; Size: byte): string;
+function revPos(const substr: string; const s: string): integer;
+// Pos backwards
+function revCopy(const s: string; start, len: integer): string;
+// Copy backwards
+procedure SwapStr(var s: string; Start1, len, Start2: integer);
+
+// 1,2,5-10 wird umgesetzt in 1,2,5,6,7,8,9,10
+function StrRange(s: string): string;
+
+// Str - Utils : Datenkonvertierung
+function btostr(b: byte; st: byte): string;
+function ltostr(l: longint; st: byte): string;
+function rtostr(r: real; stv, stn: byte): string; { pretty-Format }
+function boolToStr(b: boolean; _true: string = 'Y';
+  _false: string = 'N'): string;
+function IntToStrN(const i: int64; n: byte): string; overload;
+function IntToStrN(const s: string; n: byte): string; overload;
+function int64tostr(i: int64): string; // nur wrapper f¸r inttostr
+function strtol(x: string): longint;
+function str2int(const s: string): integer;
+function str2int64(const s: string): integer;
+function strtodword(s: string): dword;
+
+// Revision-Sachen (Versions-Verwaltung)
+function RevToStr(r: single): string;
+function RevAsInteger(Rev: single): integer; overload;
+function RevAsInteger(Rev: double): integer; overload;
+function RevIsFrom(Rev, From: single): boolean; //
+function RevIsBefore(Rev, Before: single): boolean; //
+function GetRevision(const ProjectName: string): single;
+procedure SetRevision(const ProjectName: string; Rev: single);
+
+// Floating Point Sachen
+function IntToExtended(const i: integer): extended;
+function FloatToStrISO(Value: extended; Nachkommastellen: integer = 0): string;
+function StrToDouble(x: string): double;
+function StrToDoubleDef(x: string; d: double): double;
+
+// Str - Utils : Charsets
+function ANSI2OEM(x: AnsiString): AnsiString;
+function Ansi2Mac(const x: AnsiString): AnsiString;
+function Mac2Ansi(const x: AnsiString): AnsiString;
+function Oem2Ansi(const x: AnsiString): AnsiString;
+function Oem2asci(const x: AnsiString): AnsiString;
+function Oem2utf8(const x: AnsiString): string;
+function asci(const x: string): string;
+// function Oem2Ansi(const x: AnsiString): string;
+
+// Str - Utils : Delimter getrennte Daten
+function NextP(var s: string; Delimiter: string = ';'): string; overload;
+{$ifndef fpc}
+function NextP(var s: AnsiString; Delimiter: string = ';'): AnsiString; overload;
+{$endif}
+function NextP(var s: Shortstring; Delimiter: Shortstring = ';')
+  : Shortstring; overload;
+function NextP(s: string; Delimiter: string; SkipCount: integer)
+  : string; overload;
+function FromP(s: string; Delimiter: string; SkipCount: integer): string;
+function rNextP(var s: string; Delimiter: string): string;
+function ReplaceP(s: string; Delimiter: string; SkipCount: integer;
+  NewP: string): string;
+function FieldCount(const s: string; Delimiter: char): integer;
+function HugeSingleLine(s: TStrings; Delimiter: string = #13;
+  MaxLines: integer = MaxInt): string;
+function Split(s: string; Delimiter: string = ';'; Quote: string = '')
+  : TStringList;
+
+// String-List Utils
+procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
+  const FName: string);
+procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
+procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
+
+procedure SaveToUnixFile(s: TStrings; const FName: string);
+function RemoveDuplicates(s: TStrings): integer; overload;
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer); overload;
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer;
+  Dups: TStrings); overload;
+procedure AppendStringsToFile(s: TStrings; const FName: string;
+  Encapsulate: string = ''); overload;
+procedure AppendStringsToFile(s: string; const FName: string;
+  Encapsulate: string = ''); overload;
+
+// DOS Utils
+procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
+procedure PackTime(T: TDateTimeBorlandPascal; var P: longint);
+
+// Datums-Utils
+function JahresZahl: string;
+function sTimeStamp: string;
+procedure GetDate(var Year, Month, Day, dow: Word);
+function NOW: TDateTime; // analog "now" ber¸cksichtigt aber TestMode
+
+// deutsche Datumsangaben
+function Datum: string; // tt.mm.yy
+function Datum10: string; // tt.mm.yyyy
+function DatumLog: string; // yyyymmtt
+
+// Wandlung Datum -> String
+function long2date { 10 } (dlong: TAnfixDate): string; overload; // TT.MM.JJJJ
+function long2date { 10 } (dlong: TDateTime): string; overload; // TT.MM.JJJJ
+function long2date5(dlong: TAnfixDate): string; // TT.MM
+function long2date6(dlong: longint): string; // JJMMTT
+function long2date6r(dlong: longint): string; // TTMMJJ (r f¸r reverse!)
+function long2date7(dlong: TAnfixDate): string; // MM.JJJJ
+function long2date8(dlong: TAnfixDate): string; overload; // TT.MM.JJ
+function long2date8(dlong: TDateTime): string; overload; // TT.MM.JJ
+function long2dateLog(dlong: TAnfixDate): string; // JJJJMMJJ
+function long2dateText(dlong: TAnfixDate): string;
+
+// Lokalisierte Datumsangaben
+function long2dateLocalized(dlong: TAnfixDate): string; overload;
+function long2dateLocalized(dt: TDateTime): string; overload;
+function DatumLocalized: string;
+
+function long2datetime(dlong: TAnfixDate): TDateTime;
+procedure long2datetimeBorlandPascal(dlong: TAnfixDate;
+  var date: TDateTimeBorlandPascal);
+procedure long2details(dlong: TAnfixDate; var j, m, T: integer);
+function Details2Long(j, m, T: integer): TAnfixDate;
+function extractYear(dlong: TAnfixDate): integer;
+function extractMonth(dlong: TAnfixDate): integer;
+function extractDay(dlong: TAnfixDate): integer;
+function date2long(date: string): TAnfixDate;
+function DateGet: TAnfixDate; //
+function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer
+function WeekGet(ADate: TAnfixDate): integer; overload; // Wochen Nummer
+function WeekDay(ADate: TAnfixDate): byte; // 1= Montag .. 7 = Sonntag
+function WeekDayS(ADate: TAnfixDate): string;
+function WeekDayL(ADate: TAnfixDate): string;
+
+function Feiertag(ADate: TAnfixDate): boolean; // imp pend
+function Kalenderwoche(ADate: TAnfixDate): integer; //
+function Quartal(ADate: TAnfixDate): integer; //
+function Fdate(const FName: string): longint;
+function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
+function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate;
+  var ASeconds: TAnfixTime): TAnfixDate; overload;
+function LastDayOfMonth(dlong: TAnfixDate): integer;
+function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate;
+// Datum des letzten Tages dieses Monats
+function MonthPeriod(dlong: TAnfixDate): TAnfixDate;
+// Aktuelles Datum + 1 Monat - 1 Tag
+function DaysInYear(dlong: TAnfixDate): integer;
+function dateDiff(d1, d2: TAnfixDate): longint;
+{ d1<d2, computes the number of days between two dates }
+function datePlus(dlong: TAnfixDate; plus: integer): TAnfixDate;
+function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
+function WerktagDatePlus(StartD: TAnfixDate; plus: integer): TAnfixDate;
+function ThisMonth(dlong: TAnfixDate): TAnfixDate;
+function NextMonth(dlong: TAnfixDate): TAnfixDate;
+function PrevMonth(dlong: TAnfixDate): TAnfixDate;
+
+function NearestDate(dlong: TAnfixDate; WeekDay: integer): TAnfixDate;
+function DateInside(d, dStart, DEnd: TAnfixDate): boolean;
+function DateCollision(aStart, aEnd, bStart, bEnd: TAnfixDate): boolean;
+function dateOK(dlong: TAnfixDate): boolean; overload;
+function dateNotOK(dlong: TAnfixDate): boolean; overload;
+function dateOK(dlong: string): boolean; overload;
+function dateNotOK(dlong: string): boolean; overload;
+function DateExact(dlong: TAnfixDate): boolean;
+function leapyear(dlong: TAnfixDate): boolean; { Gerald Rohr }
+
+// Zeit-Routinen
+function uhr: string;
+function uhr8: string;
+procedure GetTime(var hr, Min, Sec, sec100: Word);
+
+{ Time-Funktionen }
+function TimeGet: longint;
+function Long2Time(x: longint): string;
+function UhrOK(secs: TAnfixTime): boolean;
+
+{ Second-Funktionen, komplette Zeitangaben in LongInts speichern }
+function SecondsGet: TAnfixTime;
+function UpTime: TAnfixTime;
+function RunTime: TAnfixTime;
+function FSeconds(const FName: string): TAnfixTime;
+function SecondsToStr(secs: longint): string; overload; // hh:mm:ss
+function SecondsToStr(secs: TDateTime): string; overload; // hh:mm:ss
+function SecondsToStr5(secs: TAnfixTime): string; // hh:mm
+function SecondsToStr6(secs: TAnfixTime): string; // hhmmss
+function SecondsToStr8(secs: TAnfixTime): string; // (h)hh:mm:ss
+function SecondsToStr9(secs: TAnfixTime): string; // hhh:mm:ss
+function StrToSeconds(Sstr: string): TAnfixTime;
+function StrToSecondsdef(Sstr: string; def: TAnfixTime): TAnfixTime;
+
+function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime; overload; // 1>2
+function SecondsDiff(s1, s2: TDateTime): TAnfixTime; overload; // 1>2
+function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload; //
+function SecondsDiff(d1, s1, d2, s2: TAnfixTime): TAnfixTime; overload; // 1>2
+function SecondsDiffABS(d1, s1, d2, s2: longint): TAnfixTime; overload; //
+
+function SecondsOK(secs: TAnfixTime): boolean;
+
+function SecondsAdd(s1, s2: longint): longint;
+function dateTime2Seconds(dt: TDateTimeBorlandPascal): longint; overload;
+function dateTime2Seconds(dt: TDateTime): TAnfixTime; overload;
+function SecondsInside(s, s1, s2: TAnfixTime): boolean;
+
+// kombinierte Datum+Uhr Routinen
+procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
+function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
+function mkDateTime(s: string): TDateTime; overload;
+function DatumUhr: string; // Zeitstempel Datum " " Uhr
+
+// File-Funktionen
+function FileDelete(const Mask: string): boolean; overload;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate)
+  : boolean; overload;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate;
+  RemainingFileCount: integer): boolean; overload;
+function FileDeleteUntil(const Mask: string;
+  RemainingFileCount: integer): boolean;
+function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
+function FileCopy(const Mask, Dest: string; Move: boolean = false;
+  Touch: boolean = false): boolean;
+function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
+function FileMove(const Mask, Dest: string): boolean;
+function FileOperationMove(Source, Destination: string): boolean;
+function FileConcat(const Source1, Source2, Dest: string): boolean;
+procedure FileLimitTo(const TextFName: string; TextFSize: dword);
+procedure FileEmpty(const FName: string);
+procedure FileAlive(const FName: string);
+function FileRename(const Source, Dest: string): boolean;
+function FileVersion(const FName: string): string;
+function FileCompare(const FName1, FName2: string): boolean;
+function FSize(FName: string): int64;
+function FileDate(FName: string): TAnfixDate;
+function FileSeconds(FName: string): TAnfixTime;
+function FileDateTime(FName: string): TDateTime;
+function ValidateFName(x: string): string;
+function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
+procedure FileTouch(FName: string); overload; // Datei-Zeitstempel auf "now"
+procedure FileTouch(FName: string; ToDate: TAnfixDate); overload;
+procedure FileTouch(FName: string; ToDate: TAnfixDate;
+  ToTime: TAnfixTime); overload;
+procedure FileTouch(FileName: string; date: TDateTime); overload;
+procedure FileRemoveBOM(FileName: string);
+procedure SystemLog(Event: string); // system sysutils
+
+// Directory Funktionen
+procedure dir(const Mask: string; FileNames: TStrings;
+  uppercase: boolean = true; ClearList: boolean = true); overload;
+function dir(const Mask: string): integer; overload;
+function dirs(const Path: string): TStringList;
+function DirExists(const dir: string): boolean;
+procedure CheckCreateDir(dir: string); // recourse create dir
+function DirDelete(const Mask: string): boolean; overload;
+function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
+  overload;
+
+// Drive-Function
+function FSerial(DriveName: string): string;
+function FVolume(DriveName: string): string;
+function FisCD(DriveName: string): boolean;
+function FisNetwork(DriveName: string): boolean;
+function ExtractFilePrefix(FileName: string): string;
+
+// Time & Performance
+function Frequently: dword; overload;
+function Frequently(var LastTime: dword; DelayCount: dword): boolean; overload;
+function RDTSC: int64; // ReaD Time Stamp Counter in [CPU-Clocks]
+function RDTSCms: int64; // ReaD Time Stamp Counter in [ms]
+procedure perfBegin(FName: string);
+procedure perfStep(JobDescription: string = '');
+procedure perfEnd;
+
+// Command Line Parameter
+function IsParam(x: string): boolean;
+function getParam(x: string): string;
+
+// Program Termination
+function AlreadyRunning(ApplicationName: string): boolean;
+procedure CloseAppSem;
+
+// Win32 Sachen
+function IsAdmin: boolean;
+function SetPrivilege(privilegeName: string; enable: boolean): boolean;
+procedure WindowsHerunterfahren;
+procedure WindowsNeuStarten;
+procedure WindowsAbmelden;
+Procedure PostKeyEx32(key: Word; Const shift: TShiftState; specialkey: boolean);
+
+// System Information
+function CPUMhz: integer; // Frequence of CPU-Clock [MHz]
+function CPUUsage: integer; // 0-100 [%] !pending integration!
+function UserName: string;
+function ComputerName: string;
+function Domain: string;
+function NetworkInstalled: boolean;
+function WinNT: boolean;
+function Betriebssystem: string;
+
+// spezielle Pfade, jetzt ¸ber JclSysInfo
+function ProgramFilesDir: string; // mit Slash am ENde!
+function PersonalDataDir: string; //
+function ApplicationDataDir: string;
+
+// CD-Player Utils
+function GetCDAutoRun: boolean;
+procedure SetCDAutoRun(vAutoRun: boolean);
+
+// Graphische Utils
+function rXL(r: TRect): integer;
+function rYL(r: TRect): integer;
+function SizeCorrect(r: TRect): TRect;
+function Sub2Rects(const r1, r2: TRect; var o1, o2: TRect): boolean;
+procedure rInc(var r: TRect; xl, yl: integer);
+function rValid(const r: TRect): boolean;
+procedure rMoveto(var r: TRect; x, y: integer);
+procedure rMove(var r: TRect; dx, dy: integer);
+procedure rSize(const s: TRect; var d: TRect);
+procedure rSetSize(xl, yl: integer; var d: TRect);
+procedure rPercent(P: byte; cent: extended; var r: TRect);
+procedure rZero(var r: TRect);
+
+function mkrect(x, y, xl, yl: integer): TRect;
+function InSide(const x, y: integer; const r: TRect): boolean; overload;
+function InSide(const x, y: integer; Polygon: array of TPoint)
+  : boolean; overload;
+
+function RectCollision(const a, b: TRect): boolean;
+function Str2Rect(ValueStr: string): TRect;
+function Str2Point(ValueStr: string): TPoint;
+function rNull(const r: TRect): boolean;
+
+// verschl¸sselung bin‰r
+procedure DataScramble(var data; datasize: integer); overload;
+procedure DataScramble(var data; datasize: integer; const key: string);
+  overload;
+
+// verschl¸sselung String
+function StrEncode(const s: string; key: string): string;
+function StrDecode(const s: string; key: string): string;
+procedure AddStringsCR(s: TStrings; lines: string);
+// Passwˆrter
+function GeneratePwd(FromSet: string; PwdLength: integer): string;
+
+// Datentypen-Konvertierung "bin‰re Strings"
+// function dwordToBStr ( d : dword ) : string;
+function IntToBStr(i: integer): string;
+function WordToBStr(w: Word): string;
+function BStrToInt(const s: string): integer;
+function BStrToWord(const s: string): Word;
+
+// function BStrTodword (const s : string ) : dword;
+function Bin2HexStr(s: AnsiString): string; overload;
+function Bin2HexStr(var d; DataLen: integer): string; overload;
+
+function HexStr2Bin(s: string): string; overload;
+procedure HexStr2Bin(s: string; var d); overload;
+
+implementation
+
+{$WARN SYMBOL_PLATFORM OFF}
+{$WARN UNIT_PLATFORM OFF}
+
+uses
+  math,
+  JclDateTime,
+  JclWin32,
+  JclSysInfo,
+  JclSecurity,
+  JclRegistry,
+  SysUtils,
+  registry,
+  shellapi,
+  ComObj;
+
+// Windows, Forms, DispMsg;
+type
+  montharray = array [1 .. 13] of integer;
+
+  juldate = record
+    yr: longint; { 0 .. 9999 }
+    Day: longint; { 1 .. 366 }
+  end;
+
+const
+  monthtotal: montharray = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304,
+    334, 365);
+
+var
+  DateSeparator: char = '.';
+  baseyear: Word = 1976;
+  CPUUsageInit: boolean = false;
+  AppSem: THandle;
+
+function ExtractFilePrefix(FileName: string): string;
+begin
+  result := copy(FileName, 1, pred(revPos('.', FileName)));
+end;
+
+function ExtractFilePath(const FileName: string): string;
+var
+  k: integer;
+begin
+  k := pos('\*\', FileName);
+  if k > 0 then
+    result := copy(FileName, 1, k)
+  else
+    result := SysUtils.ExtractFilePath(FileName);
+end;
+
+procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
+var
+  Wow: TDateTime;
+  MSec: Word;
+begin
+  Wow := FileDateToDateTime(P);
+  with T do
+  begin
+    decodedate(Wow, Year, Month, Day);
+    decodetime(Wow, Hour, Min, Sec, MSec);
+  end;
+end;
+
+function FileDate(FName: string): TAnfixDate;
+var
+  _FileDateTime: TDateTime;
+begin
+  if FileAge(FName, _FileDateTime) then
+    result := DateTime2long(_FileDateTime)
+  else
+    result := 0;
+end;
+
+function FileSeconds(FName: string): TAnfixTime;
+var
+  _FileDateTime: TDateTime;
+begin
+  if FileAge(FName, _FileDateTime) then
+    result := dateTime2Seconds(_FileDateTime)
+  else
+    result := 0;
+end;
+
+function FileDateTime(FName: string): TDateTime;
+begin
+  if not(FileAge(FName, result)) then
+    result := 0;
+end;
+
+function Fdate(const FName: string): longint;
+var
+  sr: Tsearchrec;
+  DosError: integer;
+begin
+  result := 0;
+  DosError := findfirst(FName, faAnyFile, sr);
+  if (DosError = 0) then
+  begin
+    {$ifdef fpc}    //
+result := DateTime2long(sr.Time);
+    {$else}
+result := DateTime2long(sr.TimeStamp);
+    {$endif}
+  end;
+  findclose(sr);
+end;
+
+function FSeconds(const FName: string): TAnfixTime;
+var
+  sr: Tsearchrec;
+  DosError: integer;
+begin
+  result := 0;
+  DosError := findfirst(FName, faAnyFile, sr);
+  if (DosError = 0) then
+  begin
+    {$ifdef fpc}    //
+    result := dateTime2Seconds(sr.Time);
+    {$else}
+    result := dateTime2Seconds(sr.TimeStamp);
+    {$endif}
+  end;
+  findclose(sr);
+end;
+
+function DateTime2long(const dt: TDateTime): TAnfixDate;
+var
+  y, m, d: Word;
+begin
+  decodedate(dt, y, m, d);
+  result := Details2Long(y, m, d);
+  if (result = 18991230) then
+    result := cIllegalDate;
+end;
+
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate;
+  var ASeconds: TAnfixTime): TAnfixDate;
+begin
+  result := DateTime2long(dt);
+  ADate := result;
+  ASeconds := dateTime2Seconds(dt);
+end;
+
+function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate;
+begin
+  with date do
+    result := Details2Long(Year, Month, Day);
+end;
+
+procedure PackTime(T: TDateTimeBorlandPascal; var P: longint);
+begin
+  // with t do
+  // wow := encodedate(year,month,day) + encodetime(Hour,Min,Sec,0);
+  // p := DateTimeToFileDate(now);
+end;
+
+function NOW: TDateTime;
+begin
+  if TestMode then
+    result := encodedate(9999, 12, 31) + 0.5
+  else
+    result := SysUtils.NOW;
+end;
+
+function Datum: string;
+var
+  Year, Month, Day: Word;
+begin
+  if TestMode then
+  begin
+    result := '31.12.99';
+  end
+  else
+  begin
+    // Date tdatetime
+    decodedate(SysUtils.NOW, Year, Month, Day);
+    result := format('%2d.%2d.%4d', [Day, Month, Year]);
+    ersetze(' ', '0', result);
+    delete(result, 7, 2);
+  end;
+end;
+
+function Datum10: string;
+var
+  Year, Month, Day: Word;
+begin
+  if TestMode then
+  begin
+    result := '31.12.9999';
+  end
+  else
+  begin
+    // Date tdatetime
+    decodedate(SysUtils.NOW, Year, Month, Day);
+    result := format('%2d.%2d.%4d', [Day, Month, Year]);
+    ersetze(' ', '0', result);
+  end;
+end;
+
+function DatumLog: string;
+var
+  Year, Month, Day: Word;
+begin
+  // Date tdatetime
+  decodedate(SysUtils.NOW, Year, Month, Day);
+  result := format('%4d%2d%2d', [Year, Month, Day]);
+  ersetze(' ', '0', result);
+end;
+
+function sTimeStamp: string;
+begin
+  result := DatumLog + ' ' + uhr8;
+end;
+
+function JahresZahl: string;
+var
+  Year, Month, Day: Word;
+begin
+  // Date tdatetime
+  if TestMode then
+  begin
+    result := '9999';
+  end
+  else
+  begin
+    decodedate(SysUtils.NOW, Year, Month, Day);
+    result := format('%4d', [Year]);
+    ersetze(' ', '0', result);
+  end;
+end;
+
+function uhr: string;
+var
+  zeit: string;
+begin
+  zeit := SecondsToStr5(SecondsGet);
+  uhr := copy(zeit, 1, 2) + cUhr + copy(zeit, 4, 2);
+end;
+
+function uhr8: string;
+begin
+  result := SecondsToStr(SecondsGet);
+end;
+
+function date2long(date: string): longint;
+var
+  Res: longint;
+  T, m, j: Word;
+  p1, p2: byte;
+  dummy: integer;
+  jStart, jEnde, jCheck: integer;
+  cStart, cEnde: integer;
+  _J: string;
+
+  function ActJahr: integer;
+  var
+    dummy: integer;
+  begin
+    long2details(DateGet, result, dummy, dummy);
+  end;
+
+begin
+  result := cIllegalDate;
+
+  { String aufbereiten und in Format t.m.j bringen }
+  date := cutblank(date);
+  if length(date) = 0 then
+    exit;
+
+  // JJJJ-MM-TT
+  if length(date) = 10 then
+    if pos('-', date) = 5 then
+      date := NextP(date, '-', 2) + DateSeparator + NextP(date, '-', 1) +
+        DateSeparator + NextP(date, '-', 0);
+
+  ersetze(',', DateSeparator, date);
+  ersetze('-', DateSeparator, date);
+  ersetze('/', DateSeparator, date);
+  ersetze(' ', DateSeparator, date);
+
+  p1 := pos(DateSeparator, date);
+  if p1 = 0 then
+  begin
+    case length(date) of
+      2:
+        begin
+          // interpretiert als "JJ"
+          date := '01' + DateSeparator + '01' + DateSeparator + date;
+        end;
+      4:
+        begin
+          // interpretiert als "MMJJ"
+          m := strtol(copy(date, 1, 2));
+          if m <= 12 then
+            date := '01' + DateSeparator + copy(date, 1, 2) + DateSeparator +
+              copy(date, 3, 2)
+          else
+          begin
+            result := strtol(date) * 10000;
+            exit;
+          end;
+        end;
+      5:
+        begin
+          // interpretiert als "TMMJJ"
+          date := '0' + copy(date, 1, 1) + DateSeparator + copy(date, 2, 2) +
+            DateSeparator + copy(date, 4, 2);
+        end;
+      6:
+        begin
+          // interpretiert als "TTMMJJ"
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) +
+            DateSeparator + copy(date, 5, 2);
+        end;
+      8:
+        begin
+          // interpretiert als "TTMMJJJJ"
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) +
+            DateSeparator + copy(date, 5, 4);
+        end;
+    end;
+    p1 := pos(DateSeparator, date);
+  end;
+
+  if p1 = 0 then
+    exit;
+
+  date[p1] := '#';
+  p2 := pos(DateSeparator, date);
+  if (p2 > 0) then
+  begin
+    val(copy(date, 1, p1 - 1), T, dummy);
+    if (T = 0) then
+      T := 1;
+    if (T < 1) or (T > 31) then
+      exit;
+  end
+  else
+  begin
+    // MM.JJJ Interpretation
+    T := 0;
+    p2 := p1;
+    p1 := 0;
+  end;
+
+  // Monat
+  val(copy(date, p1 + 1, (p2 - p1) - 1), m, dummy);
+  if (m = 0) then
+    m := 1;
+  if (m < 1) or (m > 12) then
+    exit;
+
+  // Jahr
+  _J := copy(date, p2 + 1, 4);
+  if (_J = '') then
+    j := ActJahr
+  else
+    val(_J, j, dummy);
+
+  if (dummy <> 0) then
+  begin
+    _J := copy(date, p2 + 1, 2);
+    val(_J, j, dummy);
+  end;
+
+  if (j < 100) and (length(_J) < 3) then
+  begin
+
+    // Lˆsung : Das gleitenden Zeitfensters, Dokumentation siehe
+    // http://orgamon.org/mediawiki/index.php5/Entwickler#Datum
+
+    // Zeitfenster berechnen
+    jStart := ActJahr - 75;
+    jEnde := ActJahr + 24;
+
+    // Start und Ende Jahrhundert berechnen
+    cStart := (jStart DIV 100) * 100;
+    cEnde := (jEnde DIV 100) * 100;
+
+    // Nachsehen, welches Jahrhundert angebracht ist
+    jCheck := cStart + j;
+    repeat
+      if (jStart <= jCheck) and (jCheck <= jEnde) then
+        break;
+      jCheck := cEnde + j;
+    until true;
+    j := jCheck;
+
+  end;
+
+  Res :=
+  { Jahr } longint(j) * cDATE_YEAR_FAKTOR +
+  { Monat } longint(m) * cDATE_MONTH_FAKTOR +
+  { Tag } longint(T);
+  if dateOK(Res) then
+    result := Res;
+end;
+
+function leapyear(dlong: longint): boolean; { Gerald Rohr }
+var
+  dat: TDateTimeBorlandPascal;
+  yr: Word;
+begin
+  if (dlong < 9999) then
+  begin
+    yr := dlong;
+  end
+  else
+  begin
+    long2datetimeBorlandPascal(dlong, dat);
+    yr := dat.Year;
+  end;
+  leapyear := ((yr mod 4 = 0) and (not(yr mod 100 = 0))) or (yr mod 400 = 0);
+end; { function leapyear }
+
+procedure long2datetimeBorlandPascal(dlong: longint;
+  var date: TDateTimeBorlandPascal);
+var
+  r: longint;
+begin
+  with date do
+  begin
+    Day := (dlong mod 100);
+    r := dlong div 100;
+    Month := (r mod 100);
+    Year := (r div 100);
+  end;
+end;
+
+function DaysInYear(dlong: longint): integer;
+var
+  bufdat: TDateTimeBorlandPascal;
+begin
+  long2datetimeBorlandPascal(dlong, bufdat);
+  if leapyear(bufdat.Year) then
+    result := 366
+  else
+    result := 365;
+end;
+
+function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate;
+var
+  j, m, T: integer;
+begin
+  long2details(dlong, j, m, T);
+  result := Details2Long(j, m, LastDayOfMonth(dlong));
+end;
+
+function MonthPeriod(dlong: TAnfixDate): TAnfixDate;
+var
+  j, m, T: integer;
+begin
+  long2details(dlong, j, m, T);
+  result := datePlus(LastDateOfMonth(dlong), pred(T));
+end;
+
+function LastDayOfMonth(dlong: TAnfixDate): integer;
+var
+  bufdat: TDateTimeBorlandPascal;
+begin
+  long2datetimeBorlandPascal(dlong, bufdat);
+  case bufdat.Month of
+    2:
+      if leapyear(bufdat.Year) then
+        result := 29
+      else
+        result := 28;
+    4, 6, 9, 11:
+      result := 30;
+  else
+    result := 31;
+  end;
+end;
+
+function dateOK(dlong: string): boolean;
+begin
+  result := dateOK(date2long(dlong));
+end;
+
+function dateNotOK(dlong: string): boolean;
+begin
+  result := not(dateOK(dlong));
+end;
+
+function dateOK(dlong: longint): boolean;
+{ tests a string-date }
+var
+  yr, mm, dd: integer;
+  ok: boolean;
+  bufdat: TDateTimeBorlandPascal;
+label raus;
+begin
+  ok := false;
+  if dlong = 0 then
+    goto raus;
+
+  long2datetimeBorlandPascal(dlong, bufdat);
+
+  yr := bufdat.Year;
+  if (yr < 0) or (yr > 9999) then
+    goto raus;
+
+  mm := bufdat.Month;
+  if (mm < 0) or (mm > 12) then
+    goto raus;
+
+  dd := bufdat.Day;
+  if (mm = 0) and (dd <> 0) then
+    goto raus;
+  if dd = 0 then
+    dd := 1;
+  if (dd < 1) or (dd > 31) then
+    goto raus;
+
+  case mm of
+    2:
+      if dd > 28 then
+      begin
+        if dd > 29 then
+        begin
+          goto raus;
+        end
+        else
+        begin
+          if not leapyear(yr) then
+            goto raus;
+        end;
+      end;
+    4, 6, 9, 11:
+      begin
+        if dd > 30 then
+          goto raus;
+      end;
+  end;
+  ok := true;
+raus:
+  dateOK := ok;
+end;
+
+function UhrOK(secs: TAnfixTime): boolean;
+begin
+  result := (secs >= 0) and (secs < cOneDayInSeconds);
+end;
+
+function dateNotOK(dlong: longint): boolean;
+begin
+  result := not(dateOK(dlong));
+end;
+
+function DateExact(dlong: TAnfixDate): boolean;
+var
+  m, T: integer;
+begin
+  dlong := dlong mod 10000;
+  m := dlong div 100;
+  dlong := dlong mod 100;
+  T := dlong;
+  result := dateOK(dlong) and (m > 0) and (T > 0);
+end;
+
+function long2dateLog(dlong: TAnfixDate): string; // JJJJMMJJ
+var
+  j, m, T: Word;
+  ZStr: string;
+begin
+  if (dlong < 0) or (dlong > cMaxDate) then
+    dlong := 0;
+  if (dlong = 0) then
+  begin
+    result := fill(' ', 10);
+    exit;
+  end;
+
+  j := dlong div 10000;
+  dlong := dlong mod 10000;
+  m := dlong div 100;
+  dlong := dlong mod 100;
+  T := dlong;
+
+  // Jahr
+  str(j: 4, ZStr);
+  ersetze(' ', '0', ZStr);
+  result := ZStr;
+
+  // Monat
+  str(m: 2, ZStr);
+  ersetze(' ', '0', ZStr);
+  result := result + ZStr;
+
+  // Tag
+  str(T: 2, ZStr);
+  ersetze(' ', '0', ZStr);
+  result := result + ZStr;
+
+end;
+
+function long2date { 10 } (dlong: longint): string; overload;
+var
+  j, m, T: Word;
+  ZStr: string;
+  Res: string[10];
+begin
+  if (dlong < 0) or (dlong > cMaxDate) then
+    dlong := 0;
+  if (dlong = 0) then
+  begin
+    long2date := fill(' ', 10);
+    exit;
+  end;
+  j := dlong div 10000;
+  dlong := dlong mod 10000;
+  m := dlong div 100;
+  dlong := dlong mod 100;
+  T := dlong;
+  // Tag
+  if T > 0 then
+  begin
+    str(T: 2, ZStr);
+    ersetze(' ', '0', ZStr);
+    Res := ZStr + DateSeparator;
+  end
+  else
+  begin
+    Res := '';
+  end;
+  // Monat
+  if (m > 0) then
+  begin
+    str(m: 2, ZStr);
+    ersetze(' ', '0', ZStr);
+    Res := Res + ZStr + DateSeparator;
+  end
+  else
+  begin
+    Res := '';
+  end;
+  // Jahr
+  str(j: 4, ZStr);
+  ersetze(' ', '0', ZStr);
+  Res := Res + ZStr;
+  long2date := Res;
+end;
+
+function long2date(dlong: TDateTime): string; overload;
+begin
+  result := long2date(DateTime2long(dlong));
+end;
+
+function long2dateLocalized(dlong: TAnfixDate): string; overload;
+begin
+  //
+  if (dlong <> cIllegalDate) then
+  begin
+    result := long2date(dlong);
+    // Nur internationalisieren wenn vollst‰ndiges Datum
+    if (length(result) = 10) then
+      result := long2dateLocalized(long2datetime(dlong));
+  end
+  else
+    result := '';
+end;
+
+function long2dateLocalized(dt: TDateTime): string; overload;
+begin
+  //
+  result := '';
+  try
+    if (dt > 0) and (dt < cMaxDateTime) then
+      result := DateToStr(dt);
+  except
+    ;
+  end;
+end;
+
+function long2date8(dlong: longint): string;
+begin
+  result := long2date(dlong);
+  delete(result, length(result) - 3, 2);
+end;
+
+function long2date8(dlong: TDateTime): string;
+begin
+  result := long2date(dlong);
+  delete(result, length(result) - 3, 2);
+end;
+
+function long2date7(dlong: longint): string;
+begin
+  result := long2date(dlong);
+  delete(result, 1, 3);
+end;
+
+function long2date5(dlong: longint): string;
+begin
+  result := copy(long2date(dlong), 1, 5);
+end;
+
+function long2date6(dlong: longint): string; // JJMMTT
+begin
+  result := long2date(dlong);
+  result := copy(result, 8, 2) + copy(result, 3, 2) + copy(result, 1, 2);
+end;
+
+function long2date6r(dlong: longint): string; // TTMMJJ
+begin
+  result := long2date(dlong);
+  result := copy(result, 1, 2) + copy(result, 4, 2) + copy(result, 9, 2);
+end;
+
+function long2dateText(dlong: TAnfixDate): string;
+var
+  j, m, T, d: Word;
+begin
+  if (dlong < 0) or (dlong > cMaxDate) then
+    dlong := 0;
+  if dlong = 0 then
+  begin
+    result := '';
+    exit;
+  end;
+  d := WeekDay(dlong);
+  j := dlong div 10000;
+  dlong := dlong mod 10000;
+  m := dlong div 100;
+  dlong := dlong mod 100;
+  T := dlong;
+  result := cTageNamenLang[d] + ', ' + inttostr(T) + '. ' + cMonatNamenLang[m] +
+    ' ' + inttostr(j);
+end;
+
+function long2datetime(dlong: TAnfixDate): TDateTime;
+var
+  Mydate: TDateTimeBorlandPascal;
+begin
+  // fillchar(MyDate,sizeof(MyDate),0);
+  long2datetimeBorlandPascal(dlong, Mydate);
+  with Mydate do
+    result := encodedate(Year, Month, Day);
+end;
+
+procedure GetDate(var Year, Month, Day, dow: Word);
+var
+  Mydate: TDateTime;
+begin
+  Mydate := SysUtils.NOW;
+  decodedate(Mydate, Year, Month, Day); // encodetime
+  dow := DayOfWeek(Mydate);
+end;
+
+function WeekDay(ADate: TAnfixDate): byte; // 1= Montag, 7=Sonntag
+begin
+  result := pred(DayOfWeek(long2datetime(ADate)));
+  if (result = 0) then
+    result := 7;
+end;
+
+function WeekDayS(ADate: TAnfixDate): string;
+var
+  d: integer;
+begin
+  d := WeekDay(ADate);
+  if (d > 0) then
+    result := cTageNamenKurz[d]
+  else
+    result := '???';
+end;
+
+function WeekDayL(ADate: TAnfixDate): string;
+var
+  d: integer;
+begin
+  d := WeekDay(ADate);
+  if (d > 0) then
+    result := cTageNamenLang[d]
+  else
+    result := '???';
+end;
+
+function Feiertag(ADate: TAnfixDate): boolean; // imp pend
+begin
+  result := (WeekDay(ADate) = 7);
+end;
+
+function Kalenderwoche(ADate: TAnfixDate): integer; //
+begin
+  if dateOK(ADate) then
+    result := JclDateTime.ISOWeekNumber(long2datetime(ADate))
+  else
+    result := 0;
+end;
+
+function Quartal(ADate: TAnfixDate): integer; //
+begin
+  if dateOK(ADate) then
+    result := succ(extractMonth(ADate) DIV 3)
+  else
+    result := 0;
+end;
+
+function WeekGet(ADate: TAnfixDate): integer;
+var
+  dt: TDateTime;
+begin
+  if dateOK(ADate) then
+  begin
+    dt := long2datetime(ADate);
+    result := WeekGet(dt);
+  end
+  else
+  begin
+    result := 0;
+  end;
+end;
+
+function WeekGet(ADate: TDateTime): integer;
+//
+// Calculates calendar week assuming:
+// - Monday is the 1st day of the week.
+// - The 1st calendar week is the 1st week
+// of the year that contains a Thursday.
+//
+// If result is 53, then previous year is assumed.
+//
+var
+  Day: Word;
+  dayOne: Word;
+  firstOfYear: TDateTime;
+  Month: Word;
+  monthOne: Word;
+  Year: Word;
+begin
+  decodedate(ADate, Year, Month, Day);
+
+  case DayOfWeek(encodedate(Year, 1, 1)) of
+    1:
+      dayOne := 2; // Sunday
+    2:
+      dayOne := 1; // Monday
+    3:
+      dayOne := 31; // Tuesday
+    4:
+      dayOne := 30; // Wednesday
+    5:
+      dayOne := 29; // Thursday
+    6:
+      dayOne := 4; // Friday
+  else
+    dayOne := 3; // Saturday
+  end;
+
+  if dayOne > 4 then
+  begin
+    Dec(Year);
+    monthOne := 12
+  end
+  else
+    monthOne := 1;
+
+  firstOfYear := encodedate(Year, monthOne, dayOne);
+
+  if ADate < firstOfYear then
+    result := 53
+  else
+    result := (trunc(ADate - firstOfYear) div 7) + 1;
+end;
+
+function DateGet: TAnfixDate;
+begin
+  result := DateTime2long(date);
+end;
+
+procedure GetTime(var hr, Min, Sec, sec100: Word);
+begin
+  decodetime(SysUtils.NOW, hr, Min, Sec, sec100);
+end;
+
+function SecondsGet: longint;
+var
+  h, m, s, ms: Word;
+begin
+  if TestMode then
+  begin
+    result := cNoon;
+  end
+  else
+  begin
+    GetTime(h, m, s, ms);
+    SecondsGet := longint(h) * 60 * 60 + longint(m) * 60 + longint(s);
+  end;
+end;
+
+function SecondsAdd(s1, s2: longint): longint;
+begin
+  SecondsAdd := (s1 + s2) mod (24 * 60 * 60);
+end;
+
+procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
+var
+  FullDays: integer;
+begin
+  FullDays := (s1 + plus) div (24 * 60 * 60);
+  s2 := SecondsAdd(s1, plus);
+  d2 := datePlus(d1, FullDays);
+end;
+
+function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime;
+begin
+  if (s1 < s2) then
+    inc(s1, 24 * 60 * 60);
+  SecondsDiff := s1 - s2;
+end;
+
+function SecondsOK(secs: TAnfixTime): boolean;
+begin
+  result := (secs >= 0) and (secs < 24 * 60 * 60);
+end;
+
+function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload;
+begin
+  SecondsDiffABS := abs(s1 - s2);
+end;
+
+function SecondsInside(s, s1, s2: TAnfixTime): boolean;
+begin
+  if s2 > s1 then
+  begin
+    result := (s >= s1) and (s <= s2);
+  end
+  else
+  begin
+    result := (s >= s1) or (s <= s2);
+  end;
+end;
+
+function SecondsDiff(d1, s1, d2, s2: longint): longint;
+var
+  FullDays: integer;
+begin
+  if (d1 = d2) then
+  begin
+    result := s1 - s2;
+  end
+  else
+  begin
+    FullDays := Min(pred(dateDiff(d2, d1)), 40); //
+    result := (24 * 60 * 60 - s2) + (FullDays * 24 * 60 * 60) + s1;
+  end;
+end;
+
+function SecondsDiff(s1, s2: TDateTime): TAnfixTime; overload; // 1>2
+begin
+  result := SecondsDiff(
+    { } DateTime2long(s1),
+    { } dateTime2Seconds(s1),
+    { } DateTime2long(s2),
+    { } dateTime2Seconds(s2));
+end;
+
+function SecondsDiffABS(d1, s1, d2, s2: longint): longint;
+var
+  FullDays: integer;
+begin
+  if (d1 = d2) then
+  begin
+    result := abs(s1 - s2);
+  end
+  else
+  begin
+    FullDays := Min(pred(dateDiff(d2, d1)), 40); //
+    result := abs((24 * 60 * 60 - s2) + (FullDays * 24 * 60 * 60) + s1);
+  end;
+end;
+
+function fill(ch: string; i: integer): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 1 to i do
+    result := result + ch;
+end;
+
+function killLeadingZero(s: string): string;
+begin
+  result := s;
+  repeat
+    if length(result) < 2 then
+      break;
+    if (result[1] = '0') then
+      system.delete(result, 1, 1)
+    else
+      break;
+  until false;
+end;
+
+procedure bfill(var x: string; Size: byte);
+begin
+  x := copy(x, 1, Size);
+  x := x + fill(' ', Size - length(x));
+end;
+
+function bstr(const x: string; Size: byte): string;
+begin
+  result := copy(x, 1, Size);
+  bfill(result, Size);
+end;
+
+procedure ersetze(s: TStrings; var d: string); overload;
+var
+  n: integer;
+begin
+  if (pos('~', d) > 0) then
+  begin
+    for n := 0 to pred(s.Count) do
+      if pos('=', s[n]) > 0 then
+        ersetze('~' + NextP(s[n], '=', 0) + '~', NextP(s[n], '=', 1), d);
+  end;
+end;
+{$IFDEF SUPPORTS_UNICODE}
+
+procedure ersetze(const find_str, ersetze_str: string; var d: String);
+var
+  i: integer;
+  l: integer;
+  WorkStr: String;
+begin
+  i := pos(find_str, d);
+  if (i = 0) then
+    exit;
+  if (find_str = ersetze_str) or (find_str = '') or (d = '') then
+    exit;
+  WorkStr := d;
+  d := '';
+  l := length(find_str);
+  while (i > 0) do
+  begin
+    d := d + copy(WorkStr, 1, pred(i)) + ersetze_str;
+    WorkStr := copy(WorkStr, i + l, MaxInt);
+    i := pos(find_str, WorkStr);
+  end;
+  d := d + WorkStr;
+end;
+{$ENDIF}
+
+procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString);
+var
+  i: integer;
+  l: integer;
+  WorkStr: AnsiString;
+begin
+  i := pos(find_str, d);
+  if (i = 0) then
+    exit;
+  if (find_str = ersetze_str) or (find_str = '') or (d = '') then
+    exit;
+  WorkStr := d;
+  d := '';
+  l := length(find_str);
+  while (i > 0) do
+  begin
+    d := d + copy(WorkStr, 1, pred(i)) + ersetze_str;
+    WorkStr := copy(WorkStr, i + l, MaxInt);
+    i := pos(find_str, WorkStr);
+  end;
+  d := d + WorkStr;
+end;
+
+procedure ersetze(const find_str, ersetze_str: string; var d: Shortstring);
+var
+  WorkStr: string;
+begin
+  WorkStr := d;
+  ersetze(find_str, ersetze_str, WorkStr);
+  d := WorkStr;
+end;
+
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings;
+  Index: integer); overload;
+var
+  _s: string;
+begin
+  _s := s[Index];
+  ersetze(find_str, ersetze_str, _s);
+  s[Index] := _s;
+end;
+
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings); overload;
+var
+  n: integer;
+begin
+  for n := 0 to pred(s.Count) do
+    ersetze(find_str, ersetze_str, s, n);
+end;
+
+procedure ersetzeUpper(find_str, ersetze_str: string; var d: string);
+var
+  Mystr: string;
+  OffsetByNow: integer;
+  PatchList: TList;
+  n, k: integer;
+  Fl, dl: integer; // findLength, DifferenceLength
+begin
+  //
+  Fl := length(find_str);
+  dl := length(find_str) - length(ersetze_str);
+  PatchList := TList.create;
+  OffsetByNow := 0;
+  Mystr := AnsiUpperCase(d);
+  find_str := AnsiUpperCase(find_str);
+
+  // erst mal alle Vorkommnisse abchecken
+  repeat
+    k := pos(find_str, Mystr);
+    if k = 0 then
+      break;
+    PatchList.add(pointer(OffsetByNow + k));
+    delete(Mystr, 1, pred(k + Fl));
+    inc(OffsetByNow, pred(k + Fl));
+  until false;
+
+  // jetzt das resultat patchen
+  OffsetByNow := 0;
+  for n := 0 to pred(PatchList.Count) do
+  begin
+    d := copy(d, 1, pred(integer(PatchList[n]) - OffsetByNow)) + ersetze_str +
+      copy(d, (integer(PatchList[n]) - OffsetByNow) + Fl, MaxInt);
+    inc(OffsetByNow, dl);
+  end;
+  PatchList.free;
+
+end;
+
+function reverseSort(s: string): string;
+const
+  sReverse = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var
+  i, n: integer;
+begin
+  result := AnsiUpperCase(s);
+  ersetze('ƒ', 'A', result);
+  ersetze('÷', 'O', result);
+  ersetze('‹', 'U', result);
+  ersetze('ﬂ', 'S', result);
+  for i := 1 to length(s) do
+  begin
+    n := pos(result[i], sReverse);
+    if (n > 0) then
+      result[i] := sReverse[length(sReverse) - pred(n)]
+    else
+      result[i] := '*'
+  end;
+end;
+
+function btostr(b: byte; st: byte): string;
+var
+  s: string;
+begin
+  str(b: st, s);
+  btostr := s;
+end;
+
+function TimeGet: longint;
+var
+  h, m, s, ms: Word;
+begin
+  GetTime(h, m, s, ms);
+  TimeGet := longint(h) * 1000000 + longint(m) * 10000 + longint(s) * 100 +
+    longint(ms);
+end;
+
+function Long2Time(x: longint): string;
+var
+  OutStr: string;
+  h, m, s: byte;
+begin
+  h := x div 1000000;
+  x := x mod 1000000;
+  m := x div 10000;
+  x := x mod 10000;
+  s := x div 100;
+  OutStr := btostr(h, 2) + ':' + btostr(m, 2) + ':' + btostr(s, 2);
+  ersetze(' ', '0', OutStr);
+  Long2Time := OutStr;
+end;
+
+function dateTime2Seconds(dt: TDateTimeBorlandPascal): TAnfixTime;
+begin
+  dateTime2Seconds := longint(dt.Hour) * 60 * 60 + longint(dt.Min) * 60 +
+    longint(dt.Sec);
+end;
+
+function dateTime2Seconds(dt: TDateTime): TAnfixTime;
+var
+  h, m, s, ms: Word;
+begin
+  decodetime(dt, h, m, s, ms);
+  result := longint(h) * 60 * 60 + longint(m) * 60 + longint(s);
+end;
+
+function SecondsToStr(secs: longint): string;
+var
+  h, m, s: integer;
+  OutStr: string;
+  Negative: boolean;
+begin
+  //
+  if (secs < 0) then
+  begin
+    Negative := true;
+    secs := abs(secs);
+  end
+  else
+    Negative := false;
+
+  h := secs div (60 * 60);
+  secs := secs - (h * 60 * 60);
+  m := secs div 60;
+  secs := secs - (m * 60);
+  s := secs;
+  OutStr := IntToStrN(h, 2) + ':' + IntToStrN(m, 2) + ':' + IntToStrN(s, 2);
+
+  if Negative then
+    SecondsToStr := '-' + OutStr
+  else
+    SecondsToStr := OutStr;
+
+end;
+
+function SecondsToStr(secs: TDateTime): string;
+begin
+  result := SecondsToStr(dateTime2Seconds(secs));
+end;
+
+function SecondsToStr9(secs: longint): string;
+var
+  h, m, s: integer;
+  OutStr: string;
+  Negative: boolean;
+begin
+  //
+  if (secs < 0) then
+  begin
+    Negative := true;
+    secs := abs(secs);
+  end
+  else
+    Negative := false;
+
+  h := secs div (60 * 60);
+  secs := secs - (h * 60 * 60);
+  m := secs div 60;
+  secs := secs - (m * 60);
+  s := secs;
+  OutStr := IntToStrN(h, 3) + ':' + IntToStrN(m, 2) + ':' + IntToStrN(s, 2);
+  ersetze(' ', '0', OutStr);
+
+  if Negative then
+    SecondsToStr9 := '-' + OutStr
+  else
+    SecondsToStr9 := OutStr;
+end;
+
+function SecondsToStr8(secs: longint): string;
+begin
+  SecondsToStr8 := copy(SecondsToStr9(secs), 2, 8);
+end;
+
+function SecondsToStr6(secs: longint): string;
+var
+  _OutStr: string;
+begin
+  _OutStr := SecondsToStr9(secs);
+  result := copy(_OutStr, 2, 2) + copy(_OutStr, 5, 2) + copy(_OutStr, 8, 2);
+end;
+
+function SecondsToStr5(secs: longint): string;
+begin
+  SecondsToStr5 := copy(SecondsToStr(secs), 1, 5)
+end;
+
+{ ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+  GÅltige Formate:
+  hh
+  hh:mm
+  hh:mm:ss
+  hh Uhr mm
+  ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ }
+
+function StrToSeconds(Sstr: string): longint;
+var
+  h, m, s: Word;
+  Faktor: integer;
+
+  procedure ReadNext(var w: Word);
+  var
+    dpos: byte;
+    NumStr: string[3];
+    dummy: integer;
+  begin
+    if Sstr = '' then
+    begin
+      w := 0;
+    end
+    else
+    begin
+      dpos := pos(':', Sstr);
+      if (dpos > 0) then
+      begin
+        NumStr := copy(Sstr, 1, pred(dpos));
+        Sstr := copy(Sstr, succ(dpos), 255);
+        val(NumStr, w, dummy);
+      end
+      else
+      begin
+        val(Sstr, w, dummy);
+        Sstr := '';
+      end;
+    end;
+  end;
+
+begin
+  ersetze(cUhr, ':', Sstr);
+  Sstr := noblank(Sstr);
+  if pos('-', Sstr) > 0 then
+  begin
+    Faktor := -1;
+    ersetze('-', '', Sstr);
+  end
+  else
+  begin
+    Faktor := 1;
+  end;
+
+  ReadNext(h);
+  ReadNext(m);
+  ReadNext(s);
+  StrToSeconds := (longint(h) * longint(3600) + longint(m) * longint(60) +
+    longint(s)) * Faktor;
+end;
+
+function StrToSecondsdef(Sstr: string; def: longint): longint;
+begin
+  result := StrToSeconds(Sstr);
+  if result = 0 then
+    result := def;
+end;
+
+function noblank(const InpStr: string): string;
+var
+  i: integer;
+begin
+  result := InpStr;
+  repeat
+    i := pos(' ', result);
+    if i = 0 then
+      i := pos(#9, result);
+    if i = 0 then
+      break;
+    delete(result, i, 1);
+  until false;
+end;
+
+function cutblank(const InpStr: string): string;
+var
+  OutStr: string;
+begin
+  OutStr := InpStr;
+  while (OutStr <> '') and ((OutStr[1] = ' ') or (OutStr[1] = #160)) do
+    delete(OutStr, 1, 1);
+  while (OutStr <> '') and ((OutStr[length(OutStr)] = ' ') or
+    (OutStr[length(OutStr)] = #160)) do
+    delete(OutStr, length(OutStr), 1);
+  cutblank := OutStr;
+end;
+
+function cutblank(s: TStrings): boolean;
+var
+  n, l: integer;
+  Aenderungen: integer;
+begin
+  Aenderungen := 0;
+  for n := 0 to pred(s.Count) do
+  begin
+    l := length(s[n]);
+    if (l > 0) then
+    begin
+      s[n] := cutblank(s[n]);
+      if (length(s[n]) <> l) then
+        inc(Aenderungen);
+    end;
+  end;
+  result := (Aenderungen > 0);
+end;
+
+function cutrblank(const InpStr: string): string;
+var
+  OutStr: string;
+begin
+  OutStr := InpStr;
+  while (OutStr <> '') and (OutStr[length(OutStr)] = ' ') do
+    delete(OutStr, length(OutStr), 1);
+  cutrblank := OutStr;
+end;
+
+function cutlblank(const InpStr: string): string;
+var
+  OutStr: string;
+begin
+  OutStr := InpStr;
+  while (OutStr <> '') and (OutStr[1] = ' ') do
+    delete(OutStr, 1, 1);
+  cutlblank := OutStr;
+end;
+
+function CharCount(c: char; const InpStr: string): integer;
+var
+  n: integer;
+begin
+  result := 0;
+  for n := 1 to length(InpStr) do
+    if InpStr[n] = c then
+      inc(result);
+end;
+
+function FileDelete(const Mask: string): boolean;
+var
+  SelektedFiles: TStringList;
+  PathName: string;
+  n: integer;
+  ErrorCount: integer;
+begin
+  ErrorCount := 0;
+  SelektedFiles := TStringList.create;
+  dir(Mask, SelektedFiles, false);
+  PathName := ExtractFilePath(Mask);
+  for n := 0 to pred(SelektedFiles.Count) do
+  begin
+    FileSetAttr(PathName + SelektedFiles[n], 0);
+    if not(DeleteFile(PathName + SelektedFiles[n])) then
+      inc(ErrorCount);
+  end;
+  SelektedFiles.free;
+  result := (ErrorCount = 0);
+end;
+
+function FileDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
+var
+  SelektedFiles: TStringList;
+  PathName: string;
+  n: integer;
+  ErrorCount: integer;
+begin
+  if OlderThan < 1000 then
+    OlderThan := datePlus(DateGet, -OlderThan);
+  ErrorCount := 0;
+  SelektedFiles := TStringList.create;
+  dir(Mask, SelektedFiles, false);
+  PathName := ExtractFilePath(Mask);
+  for n := 0 to pred(SelektedFiles.Count) do
+    if (FileDate(PathName + SelektedFiles[n]) < OlderThan) then
+    begin
+      if (FileSetAttr(PathName + SelektedFiles[n], 0) <> 0) then
+        inc(ErrorCount);
+      if not(DeleteFile(PathName + SelektedFiles[n])) then
+        inc(ErrorCount);
+    end;
+  SelektedFiles.free;
+  result := (ErrorCount = 0);
+end;
+
+function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
+begin
+  if (OlderThan < 1000) then
+    OlderThan := datePlus(DateGet, -OlderThan);
+  result := FileDate(FileName) < OlderThan;
+end;
+
+function FileDelete(const Mask: string; OlderThan: TAnfixDate;
+  RemainingFileCount: integer): boolean;
+{
+  Lˆsche eventuell nur solche Dateien die ‰lter sind als "OlderThan"
+  pr¸fe aber ob zumindest insgesamt "RemainingFileCount" Dateien dabei
+  ¸brigbleiben.
+
+  "OlderThan" kann als Datum ¸bergeben werden oder
+  als ganzzahlige positive Anzahl der Tage (=Alter aus heutiger Sicht)
+}
+var
+  SelektedFiles: TStringList;
+  PathName: string;
+  n: integer;
+  ErrorCount: integer;
+begin
+  ErrorCount := 0;
+  SelektedFiles := TStringList.create;
+  dir(Mask, SelektedFiles, false);
+  if (SelektedFiles.Count > RemainingFileCount) then
+  begin
+    SelektedFiles.sort;
+    PathName := ExtractFilePath(Mask);
+    for n := 0 to pred(SelektedFiles.Count - RemainingFileCount) do
+      if not(FileDelete(PathName + SelektedFiles[n], OlderThan)) then
+        inc(ErrorCount);
+  end;
+  SelektedFiles.free;
+  result := (ErrorCount = 0);
+end;
+
+function FileDeleteUntil(const Mask: string;
+  RemainingFileCount: integer): boolean;
+{
+  Lˆsche Dateianzahl runter bis auf "RemainingFileCount"
+}
+var
+  SelektedFiles: TStringList;
+  PathName: string;
+  n: integer;
+  ErrorCount: integer;
+begin
+  ErrorCount := 0;
+  SelektedFiles := TStringList.create;
+  dir(Mask, SelektedFiles, false);
+  if (SelektedFiles.Count > RemainingFileCount) then
+  begin
+    SelektedFiles.sort;
+    PathName := ExtractFilePath(Mask);
+    for n := 0 to pred(SelektedFiles.Count - RemainingFileCount) do
+      if not(FileDelete(PathName + SelektedFiles[n])) then
+        inc(ErrorCount);
+  end;
+  SelektedFiles.free;
+  result := (ErrorCount = 0);
+end;
+
+//
+// (C) 1998, by Markus Stephany. All rights reserved.
+//
+
+function DelTree(PathName: string): boolean;
+
+  function _DelTree(Path: TFileName): boolean;
+  var
+    SRec: Tsearchrec;
+    Res: integer;
+  begin
+    result := true;
+    Path := Path + '\';
+    Res := findfirst(Path + '*', faAnyFile, SRec);
+    while Res = 0 do
+    begin
+
+      with SRec do
+      begin
+
+        if (Attr and faDirectory) = faDirectory then
+        begin
+
+          if (Name <> '.') and (Name <> '..') then
+
+            result := _DelTree(Path + SRec.Name);
+
+        end
+        else
+        begin
+
+          FileSetAttr(Path + SRec.Name, 0);
+          result := DeleteFile(Path + SRec.Name);
+          if not result then
+          begin
+            findclose(SRec);
+            exit;
+          end;
+
+        end;
+      end;
+      Res := FindNext(SRec);
+    end;
+
+    findclose(SRec);
+
+    try
+      FileSetAttr(ValidatePathName(Path), 0);
+      RmDir(ValidatePathName(Path));
+    except
+      result := false;
+    end;
+
+  end;
+
+begin
+  PathName := ValidatePathName(PathName);
+  result := true;
+  if not SysUtils.DirectoryExists(PathName) then
+  begin
+    // result is true cause the directory doesn't exist, and that is what we want
+    exit;
+  end;
+  result := _DelTree(PathName);
+end;
+
+function DirDelete(const Mask: string): boolean; overload;
+var
+  AllTheDirs: TStringList;
+  n: integer;
+  sr: Tsearchrec;
+  DosError: integer;
+  PathName: string;
+begin
+  AllTheDirs := TStringList.create;
+  PathName := ExtractFilePath(Mask);
+  DosError := findfirst(Mask, faDirectory, sr);
+  while (DosError = 0) do
+  begin
+    if (sr.Name <> '.') and (sr.Name <> '..') then
+      AllTheDirs.add(sr.Name);
+    DosError := FindNext(sr);
+  end;
+  findclose(sr);
+  for n := 0 to pred(AllTheDirs.Count) do
+    DelTree(PathName + AllTheDirs[n]);
+  AllTheDirs.free;
+  result := true;
+end;
+
+function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
+  overload;
+var
+  AllTheDirs: TStringList;
+  n: integer;
+  sr: Tsearchrec;
+  DosError: integer;
+  PathName: string;
+begin
+  if (OlderThan < 1000) then
+    OlderThan := datePlus(DateGet, -OlderThan);
+  AllTheDirs := TStringList.create;
+  PathName := ExtractFilePath(Mask);
+  DosError := findfirst(Mask, faDirectory, sr);
+  while (DosError = 0) do
+  begin
+    {$ifdef fpc}
+    if (sr.Name <> '.') and (sr.Name <> '..') then
+      if DateTime2long(sr.Time) < OlderThan then
+        AllTheDirs.add(sr.Name);
+    {$else}
+    if (sr.Name <> '.') and (sr.Name <> '..') then
+      if DateTime2long(sr.TimeStamp) < OlderThan then
+        AllTheDirs.add(sr.Name);
+    {$endif}
+    DosError := FindNext(sr);
+  end;
+  findclose(sr);
+  for n := 0 to pred(AllTheDirs.Count) do
+    DelTree(PathName + AllTheDirs[n]);
+  AllTheDirs.free;
+  result := true;
+end;
+
+function Frequently: dword;
+begin
+  result := GetTickCount;
+end;
+
+function Frequently(var LastTime: dword; DelayCount: dword): boolean;
+var
+  MyTick: dword;
+begin
+  result := false;
+  MyTick := GetTickCount;
+  if (LastTime = 0) or (MyTick > LastTime + DelayCount) or (MyTick < LastTime)
+  then
+  begin
+    result := true;
+    LastTime := MyTick;
+  end;
+end;
+
+function FSize(FName: string): int64;
+var
+  F: Tsearchrec;
+begin
+  result := cFSize_NotExists;
+  if (SysUtils.findfirst(FName, faAnyFile, F) = 0) then
+  begin
+    try
+      result := F.FindData.nFileSizeLow or (F.FindData.nFileSizeHigh shl 32);
+    finally
+      SysUtils.findclose(F);
+    end;
+  end;
+end;
+
+function RevToStr(r: single): string;
+var
+  s: string;
+begin
+  if TestMode then
+  begin
+    result := '9.999';
+  end
+  else
+  begin
+    if r = cRevNotAValidProject then
+    begin
+      result := '?.???';
+    end
+    else
+    begin
+      str(r: 4: 3, s);
+      result := s;
+    end;
+  end;
+end;
+
+const
+  RevInfoFileNameExtension = '.REV';
+
+function GetRevision(const ProjectName: string): single;
+var
+  InpFile: text;
+  dummy: integer;
+  Rev: single;
+  InpStr: string[5];
+begin
+  assign(InpFile, ProjectName + RevInfoFileNameExtension);
+{$I-}
+  reset(InpFile);
+{$I+}
+  if (ioresult <> 0) then
+  begin
+    Rev := cRevNotAValidProject;
+  end
+  else
+  begin
+    readln(InpFile, InpStr);
+    val(noblank(InpStr), Rev, dummy);
+    close(InpFile);
+  end;
+  GetRevision := Rev;
+end;
+
+procedure SetRevision(const ProjectName: string; Rev: single);
+var
+  OutFile: text;
+begin
+  assign(OutFile, ProjectName + RevInfoFileNameExtension);
+  rewrite(OutFile);
+  writeln(OutFile, RevToStr(Rev));
+  close(OutFile);
+end;
+
+function RevAsInteger(Rev: single): integer; overload;
+begin
+  result := round(Rev * 1000);
+end;
+
+function RevIsFrom(Rev, From: single): boolean; //
+begin
+  result := (RevAsInteger(Rev) >= RevAsInteger(From));
+end;
+
+function RevIsBefore(Rev, Before: single): boolean; //
+begin
+  result := not(RevIsFrom(Rev, Before));
+end;
+
+function RevAsInteger(Rev: double): integer; overload;
+begin
+  result := round(Rev * 1000);
+end;
+
+function IsParam(x: string): boolean;
+var
+  n: byte;
+begin
+  result := false;
+  if (pos('*', x) > 0) then
+  begin
+    x := copy(x, 1, pred(pos('*', x)));
+    for n := 1 to ParamCount do
+      if (pos(AnsiUpperCase(x), AnsiUpperCase(Paramstr(n))) = 1) then
+      begin
+        result := true;
+        exit;
+      end;
+  end
+  else
+  begin
+    for n := 1 to ParamCount do
+      if (AnsiUpperCase(x) = AnsiUpperCase(Paramstr(n))) then
+      begin
+        result := true;
+        exit;
+      end;
+  end;
+end;
+
+function getParam(x: string): string;
+var
+  n: byte;
+begin
+  result := '';
+  x := '--' + AnsiUpperCase(x) + '=';
+  for n := 1 to ParamCount do
+    if (pos(x, AnsiUpperCase(Paramstr(n))) = 1) then
+    begin
+      result := NextP(Paramstr(n), '=', 1);
+      break;
+    end;
+end;
+
+function FisNetwork(DriveName: string): boolean;
+var
+  ClearedDriveName: array [0 .. 1023] of char;
+begin
+  StrPCopy(ClearedDriveName, DriveName[1] + ':\');
+  result := (GetDriveType(ClearedDriveName) = DRIVE_REMOTE);
+end;
+
+var
+  RemoteNameInfo: array [0 .. 1023] of char;
+
+function FSerial(DriveName: string): string;
+var
+  SerialNum: dword;
+  d1, d2: dword;
+
+  ClearedDriveName: array [0 .. 1023] of char;
+  Size: dword;
+  ErrCode: integer;
+begin
+  result := '????????';
+  if length(DriveName) > 0 then
+  begin
+    StrPCopy(ClearedDriveName, DriveName[1] + ':\');
+    if GetDriveType(ClearedDriveName) = DRIVE_REMOTE then
+    begin
+      Size := SizeOf(RemoteNameInfo);
+      ErrCode := WNetGetUniversalName(ClearedDriveName,
+        UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
+      if (ErrCode = NO_ERROR) then
+        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo)
+          .lpUniversalName + '\');
+    end;
+    if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0)
+    then
+      result := format('%.8x', [SerialNum]);
+  end;
+end;
+
+function FVolume(DriveName: string): string;
+var
+  SerialNum: pdword;
+  a, b, c: dword;
+  Buffer: array [0 .. 255] of char;
+  b2: array [0 .. 255] of char;
+begin
+  if (DriveName = '') then
+  begin
+    result := '';
+    exit;
+  end;
+  if DriveName[length(DriveName)] <> '\' then
+    DriveName := DriveName + '\';
+
+  StrPCopy(b2, DriveName);
+  SerialNum := @c;
+  GetVolumeInformation(b2, Buffer, SizeOf(Buffer), SerialNum, a, b, nil, 0);
+  result := Buffer;
+end;
+
+function InSide(const x, y: integer; const r: TRect): boolean;
+begin
+  // may use PtInRect
+  InSide := (x >= r.left) and (x <= r.right) and (y >= r.top) and
+    (y <= r.Bottom);
+end;
+
+function InSide(const x, y: integer; Polygon: array of TPoint): boolean;
+var
+  PolyHandle: HRGN;
+begin
+  PolyHandle := CreatePolygonRgn(Polygon[0], length(Polygon), Winding);
+  result := PtInRegion(PolyHandle, x, y);
+  DeleteObject(PolyHandle);
+end;
+
+function InSideRect(const a, b: TRect): boolean;
+begin
+  result := InSide(a.left, a.top, b) or InSide(a.left, a.Bottom, b) or
+    InSide(a.right, a.top, b) or InSide(a.right, a.Bottom, b);
+end;
+
+function RectCollision(const a, b: TRect): boolean;
+begin
+  result := InSideRect(a, b) or InSideRect(b, a);
+end;
+
+function rXL(r: TRect): integer;
+begin
+  with r do
+    result := succ(r.right - r.left);
+end;
+
+function rYL(r: TRect): integer;
+begin
+  with r do
+    result := succ(r.Bottom - r.top);
+end;
+
+// SizeCorrect, leider notwendig f¸r
+//
+// FrameRect
+// FillRect
+//
+
+function SizeCorrect(r: TRect): TRect;
+begin
+  result.left := r.left;
+  result.top := r.top;
+  result.right := succ(r.right);
+  result.Bottom := succ(r.Bottom);
+end;
+
+function Sub2Rects(const r1, r2: TRect; var o1, o2: TRect): boolean;
+begin
+
+  if InSide(r2.left, r2.top, r1) then
+  begin
+    o1.left := r1.left;
+    o1.top := r1.top;
+    o1.right := r1.right;
+    o1.Bottom := pred(r2.top);
+
+    o2.left := r1.left;
+    o2.top := r2.top;
+    o2.right := pred(r2.left);
+    o2.Bottom := r1.Bottom;
+
+    result := true;
+    exit;
+  end;
+
+  if InSide(r2.right, r2.Bottom, r1) then
+  begin
+
+    o1.left := succ(r2.right);
+    o1.top := r1.top;
+    o1.right := r1.right;
+    o1.Bottom := r2.Bottom;
+
+    o2.left := r1.left;
+    o2.top := succ(r2.Bottom);
+    o2.right := r1.right;
+    o2.Bottom := r1.Bottom;
+
+    result := true;
+    exit;
+  end;
+
+  if InSide(r2.left, r2.Bottom, r1) then
+  begin
+
+    o1.left := r1.left;
+    o1.top := r1.top;
+    o1.right := pred(r2.left);
+    o1.Bottom := r2.Bottom;
+
+    o2.left := r1.left;
+    o2.top := succ(r2.Bottom);
+    o2.right := r1.right;
+    o2.Bottom := r1.Bottom;
+
+    result := true;
+    exit;
+  end;
+
+  if InSide(r2.right, r2.top, r1) then
+  begin
+
+    o1.left := r1.left;
+    o1.top := r1.top;
+    o1.right := r1.right;
+    o1.Bottom := pred(r2.top);
+
+    o2.left := succ(r2.right);
+    o2.top := r2.top;
+    o2.right := r1.right;
+    o2.Bottom := r1.Bottom;
+
+    result := true;
+    exit;
+  end;
+  result := false;
+end;
+
+
+// Resize a TRect
+
+procedure rInc(var r: TRect; xl, yl: integer);
+begin
+  inc(r.right, xl);
+  inc(r.Bottom, yl);
+end;
+
+// Hat ein rect ¸berhaupt eine Grˆﬂe?
+
+function rValid(const r: TRect): boolean;
+begin
+  result := (r.top <= r.Bottom) and (r.left <= r.right);
+end;
+
+// Ist es ein Leeres Rect?
+
+function rNull(const r: TRect): boolean;
+begin
+  result := (r.top = 0) and (r.Bottom = 0) and (r.left = 0) and (r.right = 0);
+end;
+
+// Move a TRect to the fixed point, save its !Size!
+
+procedure rMoveto(var r: TRect; x, y: integer);
+var
+  a, b: integer;
+begin
+  a := r.right - r.left;
+  b := r.Bottom - r.top;
+  r.left := x;
+  r.top := y;
+  r.right := x + a;
+  r.Bottom := y + b;
+end;
+
+procedure rMove(var r: TRect; dx, dy: integer);
+begin
+  inc(r.left, dx);
+  inc(r.right, dx);
+  inc(r.top, dy);
+  inc(r.Bottom, dy);
+end;
+
+// Copy the Size of a Rect to another
+
+procedure rSize(const s: TRect; var d: TRect);
+begin
+  d.right := pred(d.left + rXL(s));
+  d.Bottom := pred(d.top + rYL(s));
+end;
+
+// Copy the Size of a Rect to another
+
+procedure rSetSize(xl, yl: integer; var d: TRect);
+begin
+  d.right := pred(d.left + xl);
+  d.Bottom := pred(d.top + yl);
+end;
+
+function Str2Rect(ValueStr: string): TRect;
+var
+  k: integer;
+begin
+  if ValueStr = '' then
+  begin
+    result := rect(0, 0, 0, 0);
+    exit;
+  end;
+
+  // left
+  k := pos(',', ValueStr);
+  result.left := strtoint(copy(ValueStr, 1, pred(k)));
+  delete(ValueStr, 1, k);
+
+  // top
+  k := pos(',', ValueStr);
+  result.top := strtoint(copy(ValueStr, 1, pred(k)));
+  delete(ValueStr, 1, k);
+
+  // FullXL
+  k := pos(',', ValueStr);
+  result.right := result.left + strtoint(copy(ValueStr, 1, pred(k)));
+  delete(ValueStr, 1, k);
+
+  // FullYL
+  result.Bottom := result.top + strtoint(copy(ValueStr, 1, MaxInt));
+end;
+
+function Str2Point(ValueStr: string): TPoint;
+var
+  k: integer;
+begin
+  k := pos(',', ValueStr);
+  result := point(strtoint(copy(ValueStr, 1, pred(k))),
+    strtoint(copy(ValueStr, succ(k), MaxInt)));
+end;
+
+function revCopy(const s: string; start, len: integer): string;
+var
+  _start: integer;
+  StrL: integer;
+begin
+  StrL := length(s);
+  _start := StrL - (pred(start) + pred(len));
+  if _start < 1 then
+  begin
+    inc(len, start);
+    _start := 1;
+  end;
+  len := max(0, len);
+  result := copy(s, _start, len);
+end;
+
+procedure SwapStr(var s: string; Start1, len, Start2: integer);
+begin
+  if (Start1 = Start2) or (len < 1) then
+    exit;
+end;
+
+function revPos(const substr: string; const s: string): integer;
+{
+  Identisch zu pos, jedoch wird nicht von links nach rechts,
+  sondern von rechts nach links gesucht.
+  Anwendung:
+
+  8 = revpos ('\','C:\XDOS\HELLO.TXT');
+  6 = revpos ('jo','jjolojodel');
+
+  usf.
+}
+var
+  ls, l, SearchPos: integer;
+  SubPos: integer;
+  SeemsToBeOk: boolean;
+begin
+  result := 0;
+  repeat
+    if (pos(substr, s) = 0) then
+      break;
+    ls := length(substr);
+    if (ls = 0) then
+      break;
+    l := length(s);
+    if (ls > l) then
+      break;
+    for SearchPos := l downto ls do
+    begin
+      if (substr[ls] = s[SearchPos]) then
+      begin
+        { Erstes Zeichen stimmt schon, stimmen auch die anderen? }
+        SeemsToBeOk := true;
+        for SubPos := ls - 1 downto 1 do
+          if (substr[SubPos] <> s[SearchPos - ls + SubPos]) then
+          begin
+            SeemsToBeOk := false;
+            break;
+          end;
+        if SeemsToBeOk then
+        begin
+          result := SearchPos + 1 - ls;
+          break;
+        end;
+      end;
+    end;
+  until true;
+end;
+
+function FileOperation(const Source, Dest: string; op, flags: integer): boolean;
+var
+  shf: TSHFileOpStruct;
+  s1, s2: string;
+begin
+  FillChar(shf, SizeOf(shf), #0);
+  s1 := Source + #0#0;
+  s2 := Dest + #0#0;
+  shf.Wnd := 0;
+  shf.wFunc := op;
+  shf.pFrom := PCHAR(s1);
+  shf.pTo := PCHAR(s2);
+  shf.fFlags := flags;
+  result := (SHFileOperation(shf) = 0);
+end (* FileOperation *);
+
+function FileOperationMove(Source, Destination: string): boolean;
+begin
+  result := FileOperation(Source, Destination, FO_MOVE,
+    FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR + FOF_NOERRORUI);
+end;
+
+//
+//
+// FileOperation (sourcefile,destination,,
+//
+//
+
+function FileCopy(const Mask, Dest: string; Move: boolean = false;
+  Touch: boolean = false): boolean;
+var
+  FileL: TStringList;
+  ErrorCount: integer;
+  n: integer;
+  _Source: string;
+  _Dest: string;
+begin
+  if (pos('*', Mask) = 0) and (pos('?', Mask) = 0) then
+  begin
+    result := CopyFile(PCHAR(Mask), PCHAR(Dest), false);
+    if result then
+      result := (FileSetAttr(Dest, 0) = 0);
+    if result and Move then
+      FileDelete(Mask);
+    if result and Touch then
+      FileTouch(Dest);
+  end
+  else
+  begin
+    ErrorCount := 0;
+    FileL := TStringList.create;
+    dir(Mask, FileL, false);
+    _Dest := ValidatePathName(Dest);
+    _Source := ExtractFilePath(Mask);
+    CheckCreateDir(Dest);
+    for n := 0 to pred(FileL.Count) do
+      if not(FileCopy(_Source + FileL[n], _Dest + '\' + FileL[n], Move, Touch))
+      then
+        inc(ErrorCount);
+    result := (ErrorCount = 0);
+    FileL.free;
+  end;
+end;
+
+function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
+
+const
+  cINI_Sequenz = 'DateiAblageSequenz';
+
+var
+  ZielPath: string;
+  ZielIdentifier: string;
+  ZielNamensraum: string;
+  ZielExtension: string;
+  ZielExtensionLength: integer;
+  ExtensionPos: integer;
+
+  // .ini Sachen
+  IniFName: string;
+  sIni: TStringList;
+
+  // Maximaler Durchnummerierungswert
+  n, j, MaxCount, _MaxCount: integer;
+  sRecordVersion: string;
+
+  // Sicherungswert
+  SicherungFName: string;
+
+begin
+
+  // Kopiert eine Datei, "sichert" aber die alte Version der Datei
+  // nach DateiName "-n" ".Extension". Dabei wird n zun‰chst aus
+  // des bisher bestehenden Sicherungen bestimmt, aber auch nach
+  // Datei.Versionen.ini gespeichert um sp‰tere Zugriffe zu beschleunigen
+  // Ist Datei.Versionen.ini vorhanden wird die Existenz der Versionen
+  // nicht mehr gepr¸ft.
+
+  // 1) Sicherung der alten Datei anlegen
+  if FileExists(DestFName) then
+  begin
+    ZielPath := ExtractFilePath(DestFName);
+    ZielIdentifier := ExtractFileName(DestFName);
+    ExtensionPos := revPos('.', ZielIdentifier);
+    if (ExtensionPos < 3) then
+      raise Exception.create
+        ('FileVersionedCopy: keine g¸ltige Dateinamen-Erweiterung der Zieldatei');
+    ZielExtension := copy(ZielIdentifier, ExtensionPos, MaxInt);
+    ZielNamensraum := copy(ZielIdentifier, 1, pred(ExtensionPos));
+    IniFName := ZielPath + ZielNamensraum + '.ini';
+
+    sIni := TStringList.create;
+    if FileExists(IniFName) then
+    begin
+      sIni.LoadFromFile(IniFName);
+      MaxCount := StrToIntDef(sIni.Values[cINI_Sequenz], 0);
+    end
+    else
+    begin
+      MaxCount := 0;
+      sIni.clear;
+      dir(ZielPath + ZielNamensraum + '-' + '*' + ZielExtension, sIni, false);
+      // die Maximale Zahl rausextrahieren!
+      MaxCount := 0;
+      ZielExtensionLength := length(ZielExtension);
+      for n := 0 to pred(sIni.Count) do
+      begin
+        sRecordVersion := copy(sIni[n], 1, length(sIni[n]) -
+          ZielExtensionLength);
+        j := revPos('-', sRecordVersion);
+        _MaxCount := StrToIntDef(copy(sRecordVersion, succ(j), MaxInt),
+          MaxCount);
+        MaxCount := max(_MaxCount, MaxCount);
+      end;
+
+    end;
+
+    inc(MaxCount);
+
+    // Die alte Datei entsprechend der Nummer umbenennen
+    SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) +
+      ZielExtension;
+    if FileExists(SicherungFName) then
+      raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName +
+        ' existiert bereits');
+    if not(FileRename(DestFName, SicherungFName)) then
+      raise Exception.create('FileVersionedCopy: konnte ' + DestFName +
+        ' nicht wegsichern');
+
+    // Zuletzt benutzer Wert abspeichern
+    sIni.clear;
+    sIni.Values[cINI_Sequenz] := inttostr(MaxCount);
+    sIni.SaveToFile(IniFName);
+    sIni.free;
+  end;
+
+  // 2) Umkopieren
+  if not(FileCopy(SourceFName, DestFName)) then
+    raise Exception.create('FileVersionedCopy: konnte ' + DestFName +
+      ' nicht erstellen');
+
+end;
+
+// FConcat
+// F¸gt 2 Dateien zu einer neuen zusammen.
+
+function FileConcat(const Source1, Source2, Dest: string): boolean;
+var
+  FromF, ToF: file;
+{$IFDEF win32}
+  NumRead, NumWritten: integer;
+{$ELSE}
+  NumRead, NumWritten: Word;
+{$ENDIF}
+  buf: array [1 .. 2048] of char;
+begin
+  if FileCopy(Source1, Dest) then
+  begin
+
+    { Open input file }
+    assign(FromF, Source2);
+
+    { Record size = 1 }
+{$I-}
+    reset(FromF, 1);
+{$I+}
+    if ioresult <> 0 then
+    begin
+      result := false;
+      exit;
+    end;
+
+    { Open output file }
+    assign(ToF, Dest);
+
+    { Record size = 1 }
+    reset(ToF, 1);
+    seek(ToF, filesize(ToF));
+
+    repeat
+      BlockRead(FromF, buf, SizeOf(buf), NumRead);
+      BlockWrite(ToF, buf, NumRead, NumWritten);
+    until (NumRead = 0) or (NumWritten <> NumRead);
+    close(FromF);
+    close(ToF);
+    result := (NumWritten = NumRead);
+
+  end
+  else
+  begin
+    result := false;
+  end;
+end;
+
+function FileMove(const Mask, Dest: string): boolean;
+begin
+  result := FileCopy(Mask, Dest, true);
+end;
+
+function FileRename(const Source, Dest: string): boolean;
+var
+  F: file;
+begin
+  FileSetAttr(Source, 0);
+  assignFile(F, Source);
+{$I-}
+  rename(F, Dest);
+{$I+}
+  result := (ioresult = 0);
+end;
+
+function AlreadyRunning(ApplicationName: string): boolean;
+begin
+  AppSem := CreateSemaphore(nil, 0, 1, PCHAR(ApplicationName));
+  result := (AppSem <> 0) and (GetLastError = ERROR_ALREADY_EXISTS);
+end;
+
+procedure CloseAppSem;
+begin
+  CloseHandle(AppSem);
+end;
+
+function FisCD(DriveName: string): boolean;
+var
+  _DriveName: array [0 .. 63] of char;
+begin
+  StrPCopy(_DriveName, AnsiUpperCase(DriveName[1]) + ':\');
+  result := GetDriveType(_DriveName) = DRIVE_CDROM;
+end;
+
+procedure SetCDAutoRun(vAutoRun: boolean);
+(* this code comes from Delphi Developer Support *)
+var
+  reg: TRegistry;
+  AutoRunSetting: integer;
+begin
+  reg := TRegistry.create;
+  with reg do
+  begin
+    RootKey := HKEY_CURRENT_USER;
+    LazyWrite := false;
+    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer',
+      false);
+    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
+      SizeOf(AutoRunSetting));
+    if vAutoRun then
+      AutoRunSetting := AutoRunSetting and not(1 shl 5)
+    else
+      AutoRunSetting := AutoRunSetting or (1 shl 5);
+    reg.WriteBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
+      SizeOf(AutoRunSetting));
+    CloseKey;
+    free;
+  end;
+end;
+
+function GetCDAutoRun: boolean;
+(* this code comes from Delphi Developer Support *)
+var
+  reg: TRegistry;
+  AutoRunSetting: integer;
+begin
+  reg := TRegistry.create;
+  with reg do
+  begin
+    RootKey := HKEY_CURRENT_USER;
+    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer',
+      false);
+    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
+      SizeOf(AutoRunSetting));
+    CloseKey;
+    free;
+  end;
+  result := not((AutoRunSetting and (1 shl 5)) <> 0);
+end;
+
+// Hier gehts los, alles f¸r das CPU-Usage Tool!
+
+{ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  CPU Usage Measurement routines for Delphi and C++ Builder
+
+  Author:       Alexey A. Dynnikov
+  EMail:        aldyn@chat.ru
+  WebSite:      http://www.aldyn.ru/
+  Support:      Use the e-mail aldyn@chat.ru
+  or support@aldyn.ru
+
+  Creation:     Jul 8, 2000
+  Version:      1.02
+
+  Legal issues: Copyright (C) 2000 by Alexey A. Dynnikov <aldyn@chat.ru>
+
+  This software is provided 'as-is', without any express or
+  implied warranty.  In no event will the author be held liable
+  for any  damages arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any
+  purpose, including commercial applications, and to alter it
+  and redistribute it freely, subject to the following
+  restrictions:
+
+  1. The origin of this software must not be misrepresented,
+  you must not claim that you wrote the original software.
+  If you use this software in a product, an acknowledgment
+  in the product documentation would be appreciated but is
+  not required.
+
+  2. Altered source versions must be plainly marked as such, and
+  must not be misrepresented as being the original software.
+
+  3. This notice may not be removed or altered from any source
+  distribution.
+
+  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  USAGE:
+
+  1. Include this unit into project.
+
+  2. Call GetCPUCount to obtain the numbr of processors in the system
+
+  3. Each time you need to know the value of CPU usage call the CollectCPUData
+  to refresh the CPU usage information. Then call the GetCPUUsage to obtain
+  the CPU usage for given processor. Note that succesive calls of GetCPUUsage
+  without calling CollectCPUData will return the same CPU usage value.
+
+  Example:
+
+  procedure TTestForm.TimerTimer(Sender: TObject);
+  var i: Integer;
+  begin
+  CollectCPUData; // Get the data for all processors
+
+  for i:=0 to GetCPUCount-1 do // Show data for each processor
+  MInfo.Lines[i]:=Format('CPU #%d - %5.2f%%',[i,GetCPUUsage(i)*100]);
+  end;
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * }
+
+type
+  PInt64 = ^int64;
+
+  TPERF_DATA_BLOCK = record
+    Signature: array [0 .. 4 - 1] of WCHAR;
+    LittleEndian: dword;
+    Version: dword;
+    Revision: dword;
+    TotalByteLength: dword;
+    HeaderLength: dword;
+    NumObjectTypes: dword;
+    DefaultObject: longint;
+    SystemTime: TSystemTime;
+    Reserved: dword;
+    PerfTime: int64;
+    PerfFreq: int64;
+    PerfTime100nSec: int64;
+    SystemNameLength: dword;
+    SystemNameOffset: dword;
+  end;
+
+  PPERF_DATA_BLOCK = ^TPERF_DATA_BLOCK;
+
+  TPERF_OBJECT_TYPE = record
+    TotalByteLength: dword;
+    DefinitionLength: dword;
+    HeaderLength: dword;
+    ObjectNameTitleIndex: dword;
+    ObjectNameTitle: LPWSTR;
+    ObjectHelpTitleIndex: dword;
+    ObjectHelpTitle: LPWSTR;
+    DetailLevel: dword;
+    NumCounters: dword;
+    DefaultCounter: longint;
+    NumInstances: longint;
+    CodePage: dword;
+    PerfTime: int64;
+    PerfFreq: int64;
+  end;
+
+  PPERF_OBJECT_TYPE = ^TPERF_OBJECT_TYPE;
+
+  TPERF_COUNTER_DEFINITION = record
+    ByteLength: dword;
+    CounterNameTitleIndex: dword;
+    CounterNameTitle: LPWSTR;
+    CounterHelpTitleIndex: dword;
+    CounterHelpTitle: LPWSTR;
+    DefaultScale: longint;
+    DetailLevel: dword;
+    CounterType: dword;
+    CounterSize: dword;
+    CounterOffset: dword;
+  end;
+
+  PPERF_COUNTER_DEFINITION = ^TPERF_COUNTER_DEFINITION;
+
+  TPERF_COUNTER_BLOCK = record
+    ByteLength: dword;
+  end;
+
+  PPERF_COUNTER_BLOCK = ^TPERF_COUNTER_BLOCK;
+
+  TPERF_INSTANCE_DEFINITION = record
+    ByteLength: dword;
+    ParentObjectTitleIndex: dword;
+    ParentObjectInstance: dword;
+    UniqueID: longint;
+    NameOffset: dword;
+    NameLength: dword;
+  end;
+
+  PPERF_INSTANCE_DEFINITION = ^TPERF_INSTANCE_DEFINITION;
+
+  // ------------------------------------------------------------------------------
+
+const
+  Processor_IDX_Str = '238';
+  Processor_IDX = 238;
+  CPUUsageIDX = 6;
+
+type
+  AInt64F = array [0 .. $FFFF] of int64;
+  PAInt64F = ^AInt64F;
+
+var
+  _PerfData: PPERF_DATA_BLOCK;
+  _BufferSize: integer;
+  _POT: PPERF_OBJECT_TYPE;
+  _PCD: PPERF_COUNTER_DEFINITION;
+  _ProcessorsCount: integer;
+  _Counters: PAInt64F;
+  _PrevCounters: PAInt64F;
+  _SysTime: int64;
+  _PrevSysTime: int64;
+  _IsWinNT: boolean;
+  _IsWin2000: boolean;
+  _W9xCollecting: boolean;
+  _W9xCpuUsage: dword;
+  _W9xCpuKey: HKEY;
+  _CPUcount: integer;
+
+  // ------------------------------------------------------------------------------
+
+procedure ReleaseCPUData;
+var
+  h: HKEY;
+  r: dword;
+  dwDataSize, dwType: dword;
+begin
+  if _IsWinNT then
+    exit;
+  if not _W9xCollecting then
+    exit;
+  _W9xCollecting := false;
+
+  RegCloseKey(_W9xCpuKey);
+
+  r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StopStat', 0, KEY_ALL_ACCESS, h);
+
+  if r <> ERROR_SUCCESS then
+    exit;
+
+  dwDataSize := SizeOf(dword);
+
+  RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage),
+    @dwDataSize);
+
+  RegCloseKey(h);
+
+end;
+
+var
+  _UserName: string = '';
+
+function UserName: string;
+var
+  NameBuf: array [0 .. 1023] of char;
+  NameBufSize: dword;
+  fret: bool;
+  ErrorCode: dword;
+begin
+  if (_UserName = '') then
+  begin
+    if IsParam('--g') then
+    begin
+      _UserName := 'Gast';
+    end
+    else
+    begin
+      NameBufSize := SizeOf(NameBuf);
+      fret := GetUserName(NameBuf, NameBufSize);
+      if not(fret) then
+      begin
+        ErrorCode := GetLastError;
+        SysErrorMessage(ErrorCode);
+      end;
+      _UserName := NameBuf;
+    end;
+  end;
+  result := _UserName;
+end;
+
+var
+  _Domain: string = '';
+
+function Domain: string;
+type
+  // missing in windows.pas?!
+  PTOKEN_USER = ^TOKEN_USER;
+
+  TOKEN_USER = record
+    user: SID_AND_ATTRIBUTES;
+  end;
+var
+  reg: TRegistry;
+  hToken: THandle;
+  InfoBuffer: array [0 .. 511] of byte;
+  cbInfoBuffer: dword;
+  UserName: array [0 .. 1023] of char;
+  cchUserName: dword;
+  DomainName: array [0 .. 1023] of char;
+  cchDomainName: dword;
+  snu: SID_NAME_USE;
+begin
+  if (_Domain = '') then
+  begin
+    _Domain := '?';
+    if (Win32Platform = VER_PLATFORM_WIN32_NT) then
+    begin
+      // Lˆsung mit NT
+      repeat
+
+        // ObtainToken
+        if not(OpenThreadToken(GetCurrentThread, TOKEN_QUERY, true, hToken))
+        then
+        begin
+          if (GetLastError = ERROR_NO_TOKEN) then
+          begin
+            if not(OpenProcessToken(GetCurrentProcess, TOKEN_QUERY, hToken))
+            then
+              break;
+          end
+          else
+          begin
+            break;
+          end;
+        end;
+
+        // ObtainSID
+        cbInfoBuffer := SizeOf(InfoBuffer);
+        if not(GetTokenInformation(hToken, TokenUser, @InfoBuffer, cbInfoBuffer,
+          cbInfoBuffer)) then
+          break;
+        CloseHandle(hToken);
+
+        // ObtainDomain
+        cchUserName := SizeOf(UserName);
+        cchDomainName := SizeOf(DomainName);
+        if not(LookupAccountSid(nil, PTOKEN_USER(@InfoBuffer)^.user.sid,
+          UserName, cchUserName, DomainName, cchDomainName, snu)) then
+          break;
+        _Domain := DomainName;
+      until true;
+    end
+    else
+    begin
+      // win95, win98
+      reg := TRegistry.create;
+      with reg do
+      begin
+        RootKey := HKEY_LOCAL_MACHINE;
+        OpenKey('System\CurrentControlSet\Services\VxD\VNETSUP', false);
+        _Domain := ReadString('Workgroup');
+      end;
+      reg.free;
+    end;
+  end;
+  result := _Domain;
+end;
+
+var
+  _ComputerName: string = '';
+
+function ComputerName: string;
+var
+  NameBuf: array [0 .. 1023] of char;
+  NameBufSize: dword;
+  fret: bool;
+  ErrorCode: dword;
+begin
+  if (_ComputerName = '') then
+  begin
+    NameBufSize := SizeOf(NameBuf);
+    fret := GetComputerName(NameBuf, NameBufSize);
+    if not(fret) then
+    begin
+      ErrorCode := GetLastError;
+      StrPCopy(NameBuf, SysErrorMessage(ErrorCode));
+    end;
+    _ComputerName := NameBuf;
+  end;
+  result := _ComputerName;
+end;
+
+function NetworkInstalled: boolean;
+begin
+  result := (GetSystemMetrics(SM_NETWORK) and $01 = $01);
+end;
+
+function dir(const Mask: string): integer; overload;
+var
+  x: TStringList;
+begin
+  x := TStringList.create;
+  dir(Mask, x);
+  result := x.Count;
+  x.free;
+end;
+
+procedure dir(const Mask: string; FileNames: TStrings;
+  uppercase: boolean = true; ClearList: boolean = true); overload;
+var
+  sr: Tsearchrec;
+  fr: integer;
+  SubDirs: TStringList;
+  AllResults: TStringList;
+  NewMask: string;
+  n, k, m: integer;
+begin
+  if ClearList then
+    FileNames.clear;
+  k := pos('\*\', Mask);
+  if (k > 0) then
+  begin
+    // beliebige Unterverzeichnisse mit ausgeben!
+    SubDirs := TStringList.create;
+    AllResults := TStringList.create;
+    dir(copy(Mask, 1, k) + '*.', SubDirs, false);
+    for n := 0 to pred(SubDirs.Count) do
+    begin
+      if (pos('.', SubDirs[n]) = 1) then
+        continue;
+      NewMask := Mask;
+      ersetze('\*\', '\' + SubDirs[n] + '\', NewMask);
+      dir(NewMask, FileNames, uppercase);
+      for m := 0 to pred(FileNames.Count) do
+        AllResults.add(SubDirs[n] + '\' + FileNames[m]);
+    end;
+    FileNames.AddStrings(AllResults);
+    AllResults.free;
+    SubDirs.free;
+  end
+  else
+  begin
+
+    // suchen nach Verzeichnissen
+    if revPos('.', Mask) = length(Mask) then
+      fr := findfirst(Mask, faDirectory, sr)
+    else
+      fr := findfirst(Mask, faAnyFile - faDirectory, sr);
+    while (fr = 0) do
+    begin
+      if uppercase then
+        FileNames.add(AnsiUpperCase(sr.Name))
+      else
+        FileNames.add(sr.Name);
+
+      fr := FindNext(sr);
+    end;
+    findclose(sr);
+  end;
+end;
+
+function dirs(const Path: string): TStringList;
+
+  procedure add(const Path: string);
+  var
+    sPath: TStringList;
+    n: integer;
+  begin
+    sPath := TStringList.create;
+    dir(Path + '*.', sPath, false);
+    for n := 0 to pred(sPath.Count) do
+      if (sPath[n] <> '.') and (sPath[n] <> '..') then
+        result.add(sPath[n]);
+  end;
+
+var
+  n, m: integer;
+  s: TStringList;
+begin
+  result := TStringList.create;
+  add(Path);
+  for n := 0 to pred(result.Count) do
+  begin
+    s := dirs(Path + result[n] + '\');
+    for m := 0 to pred(s.Count) do
+      result.add(result[n] + '\' + s[m]);
+    s.free;
+  end;
+end;
+
+function boolToStr(b: boolean; _true: string = 'Y';
+  _false: string = 'N'): string;
+begin
+  if b then
+    result := _true
+  else
+    result := _false;
+end;
+
+procedure DataScramble(var data; datasize: integer; const key: string);
+const
+  CRYPT_1 = 2; { must be 0-5    divisor }
+  CRYPT_2 = 53; { must be 0-255  modifier }
+type
+  ScrambleCast = array [0 .. MaxInt div 2] of byte;
+var
+  n, l: integer;
+  c, T: byte;
+begin
+  l := length(key);
+  c := 0;
+  for n := 0 to pred(datasize) do
+  begin
+    if c = 255 then
+      c := 0
+    else
+      inc(c);
+    if (c mod 2) = 0 then
+      T := (c shr CRYPT_1) xor byte(key[(c mod l) + 1])
+    else
+      T := (abs(CRYPT_2 - c)) xor byte(key[((c mod l) + 1) shr 1]);
+    ScrambleCast(data)[n] := ScrambleCast(data)[n] xor T;
+  end;
+end;
+
+procedure DataScramble(var data; datasize: integer);
+begin
+  DataScramble(data, datasize, 'ANFiSOFT');
+end;
+
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer;
+  Dups: TStrings);
+var
+  n: integer;
+begin
+  DeleteCount := 0;
+  for n := pred(s.Count) downto 1 do
+    if s[pred(n)] = s[n] then
+    begin
+      Dups.addobject(s[n], s.objects[n]);
+      s.delete(n);
+      inc(DeleteCount);
+    end;
+end;
+
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer);
+// must be sorted
+var
+  n: integer;
+begin
+  DeleteCount := 0;
+  for n := pred(s.Count) downto 1 do
+    if (s[pred(n)] = s[n]) then
+    begin
+      s.delete(n);
+      inc(DeleteCount);
+    end;
+end;
+
+function RemoveDuplicates(s: TStrings): integer;
+begin
+  RemoveDuplicates(s, result);
+end;
+
+procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
+  const FName: string);
+var
+  InF: file;
+  _fsize: integer;
+  Buffer, P, i, Last: PAnsiChar;
+begin
+  if clear then
+    s.clear;
+
+  assignFile(InF, FName);
+{$I-}
+  FileMode := fmOpenRead; // read only, from CDR for example
+  reset(InF, 1);
+  FileMode := fmOpenReadWrite; // restore FileMode
+  if (ioresult <> 0) then
+    exit;
+{$I+}
+  _fsize := filesize(InF);
+
+  if (_fsize > 0) then
+  begin
+    GetMem(Buffer, _fsize + 3);
+    Buffer^ := #0;
+    P := Buffer + 1;
+    BlockRead(InF, P^, _fsize);
+    CloseFile(InF);
+
+    Last := P + _fsize;
+    Last^ := #$0A; // letzte Zeile wird sicher gefunden!
+    (Last + 1)^ := #$00; // letze NULL wird sicher gefunden!
+
+    // Null-Bytes in Blanks #32 verwandeln
+    repeat
+      i := StrScan(P, #$00);
+      if (i > Last) then
+        break;
+      i^ := #$20;
+      P := i + 1;
+    until false;
+
+    // In einzelne Zeilen auftrennen
+    P := Buffer + 1;
+    repeat
+      i := StrScan(P, #$0A);
+      if (i = nil) then
+      begin
+        i := Last;
+      end
+      else
+      begin
+        i^ := #0;
+        if (i - 1)^ = #$0D then
+          (i - 1)^ := #0;
+      end;
+      s.append(P);
+      P := i + 1;
+    until (P >= Last);
+    FreeMem(Buffer);
+  end
+  else
+  begin
+    CloseFile(InF);
+  end;
+
+  {
+    while OneLine<>'' do
+    begin
+    NewLine := nextp(OneLine,#$0A);
+    l := length(NewLine);
+    if l>0 then
+    if NewLine[l]=#$0D then
+    delete(NewLine,l,1);
+    s.add(NewLine);
+    end;
+
+
+    while not(eof(InF)) do
+    begin
+    readln(InF,OneLine);
+    while true do
+    begin
+    k := pos(#$0A,OneLine);
+    if (k=0) then
+    break;
+    s.add(copy(OneLine,1,pred(k)));
+    delete(OneLine,1,k);
+    end;
+    s.add(OneLine);
+    end;
+  }
+end;
+
+procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
+var
+  InF: TextFile;
+  OneLine: string;
+  k: integer;
+
+  (*
+
+    imp pend:  muss neu geschrieben werden!
+    -> mach lieber mal eine temp-table klasse!
+
+    procedure CheckSemi(k: integer);
+    var
+    l: integer;
+    NewColumn: string;
+    begin
+    l := pos('"', copy(OneLine, k + 1, MaxInt));
+    if (l = 0) then
+    exit;
+    NewColumn := copy(OneLine, k + 1, pred(l));
+    ersetze(';', ',', NewColumn);
+    OneLine := copy(Oneline, 1, pred(k)) + NewColumn + copy(OneLine, succ(k + l), MaxInt);
+    end;
+
+  *)
+
+begin
+  if clear then
+    s.clear;
+  assignFile(InF, FName);
+{$I-}
+  FileMode := fmOpenRead; // read only, from CDR for example
+  reset(InF);
+  FileMode := fmOpenReadWrite; // restore FileMode
+  if (ioresult <> 0) then
+    exit;
+{$I+}
+  while not(eof(InF)) do
+  begin
+    readln(InF, OneLine);
+
+    // mehrzeilige Textinhalte
+    while true do
+    begin
+      k := pos(#$0A, OneLine);
+      if (k = 0) then
+        break;
+      OneLine[k] := '|';
+    end;
+
+    // Semikolon innerhalb einer Spalte
+    (*
+
+      imp pend:  muss neu geschrieben werden!
+      -> mach lieber mal eine temp-table klasse!
+
+      if (length(OneLine) > 2) then
+      if (OneLine[1] = '"') then
+      CheckSemi(1);
+      repeat
+      k := pos(';"', OneLine);
+      if k = 0 then
+      break
+      else
+      CheckSemi(k + 1);
+      until false;
+
+    *)
+
+    s.add(OneLine);
+  end;
+  CloseFile(InF);
+end;
+
+procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
+var
+  InF: TextFile;
+  OneLine: string;
+  k: integer;
+begin
+  if clear then
+    s.clear;
+  assignFile(InF, FName);
+{$I-}
+  FileMode := fmOpenRead; // read only, from CDR for example
+  reset(InF);
+  FileMode := fmOpenReadWrite; // restore FileMode
+  if (ioresult <> 0) then
+    exit;
+{$I+}
+  while not(eof(InF)) do
+  begin
+    readln(InF, OneLine);
+
+    // mehrzeilige Textinhalte
+    while true do
+    begin
+      k := pos(#$0A, OneLine);
+      if (k = 0) then
+        break;
+      delete(OneLine, k, 1);
+    end;
+
+    while true do
+    begin
+      k := pos(#$0D, OneLine);
+      if (k = 0) then
+        break;
+      OneLine[k] := '|';
+    end;
+
+    if (OneLine <> '') then
+      s.add(OneLine);
+  end;
+  CloseFile(InF);
+end;
+
+function Betriebssystem: string;
+type
+  Twine_get_version = function: PAnsiChar; stdcall;
+var
+  HNtDll: HMODULE;
+  wine_get_version: Twine_get_version;
+begin
+  HNtDll := LoadLibrary('ntdll.dll');
+  if (HNtDll <> 0) then
+  begin
+    wine_get_version := GetProcAddress(HNtDll, 'wine_get_version');
+    if assigned(wine_get_version) then
+      result := 'wine-' + wine_get_version
+    else
+      result := GetOSVersionString;
+    FreeLibrary(HNtDll);
+  end;
+end;
+
+// WIN REBOOT
+
+function SetPrivilege(privilegeName: string; enable: boolean): boolean;
+var
+  tpPrev, tp: TTokenPrivileges;
+  token: THandle;
+  dwRetLen: dword;
+begin
+  result := false;
+  OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or
+    TOKEN_QUERY, token);
+  tp.PrivilegeCount := 1;
+  if LookupPrivilegeValue(nil, PCHAR(privilegeName), tp.Privileges[0].LUID) then
+  begin
+    if enable then
+      tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED
+    else
+      tp.Privileges[0].Attributes := 0;
+    dwRetLen := 0;
+    result := windows.AdjustTokenPrivileges(token, false, tp, SizeOf(tpPrev),
+      tpPrev, dwRetLen);
+  end;
+  CloseHandle(token);
+end;
+
+(*
+  WinReboot1.WinExit(EW_REBOOTSYSTEM); windows
+  WinReboot1.WinExit(EWX_SHUTDOWN or EWX_FORCE);
+
+  {$EXTERNALSYM EW_RESTARTWINDOWS}
+  EW_RESTARTWINDOWS        = $0042;
+  {$EXTERNALSYM EW_REBOOTSYSTEM}
+  EW_REBOOTSYSTEM          = $0043;
+  {$EXTERNALSYM EW_EXITANDEXECAPP}
+  EW_EXITANDEXECAPP        = $0044;
+
+  {$EXTERNALSYM ENDSESSION_LOGOFF}
+  ENDSESSION_LOGOFF        = DWORD($80000000);
+
+  {$EXTERNALSYM EWX_LOGOFF}
+  EWX_LOGOFF = 0;
+  {$EXTERNALSYM EWX_SHUTDOWN}
+  EWX_SHUTDOWN = 1;
+  {$EXTERNALSYM EWX_REBOOT}
+  EWX_REBOOT = 2;
+  {$EXTERNALSYM EWX_FORCE}
+  EWX_FORCE = 4;
+  {$EXTERNALSYM EWX_POWEROFF}
+  EWX_POWEROFF = 8;
+  {$EXTERNALSYM EWX_FORCEIFHUNG}
+  EWX_FORCEIFHUNG = $10;
+*)
+
+function WindowsClose(flags: integer): boolean;
+begin
+  if WinNT then
+    SetPrivilege('SeShutdownPrivilege', true);
+  result := ExitWindowsEx(flags, 0);
+  if WinNT then
+    SetPrivilege('SeShutdownPrivilege', false);
+end;
+
+procedure WindowsHerunterfahren;
+begin
+  WindowsClose(EWX_SHUTDOWN or EWX_FORCE);
+end;
+
+// procedure WindowsNeuStarten;
+// begin
+// WindowsClose(EW_REBOOTSYSTEM);
+// end;
+
+function NewAdjustTokenPrivileges(TokenHandle: THandle;
+  DisableAllPrivileges: bool; const NewState: TTokenPrivileges;
+  BufferLength: dword; PreviousState: PTokenPrivileges; ReturnLength: pdword)
+  : bool; stdcall; external advapi32 name 'AdjustTokenPrivileges';
+
+procedure WindowsNeuStarten;
+{ Restarts the computer. The function will NOT return if it is successful,
+  since Windows kills the process immediately after sending it a WM_ENDSESSION
+  message. }
+
+  procedure RestartErrorMessage;
+  begin
+    MessageBox(0, PCHAR('Neustart nicht mˆglich'), PCHAR('Fehler'),
+      MB_OK or MB_ICONEXCLAMATION);
+  end;
+
+var
+  token: THandle;
+  TokenPriv: TTokenPrivileges;
+const
+  SE_SHUTDOWN_NAME = 'SeShutdownPrivilege'; { don't localize }
+begin
+  if Win32Platform = VER_PLATFORM_WIN32_NT then
+  begin
+    if not OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or
+      TOKEN_QUERY, token) then
+    begin
+      RestartErrorMessage;
+      exit;
+    end;
+
+    LookupPrivilegeValue(nil, SE_SHUTDOWN_NAME, TokenPriv.Privileges[0].LUID);
+
+    TokenPriv.PrivilegeCount := 1;
+    TokenPriv.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED;
+
+    NewAdjustTokenPrivileges(token, false, TokenPriv, 0, nil, nil);
+
+    { Cannot test the return value of AdjustTokenPrivileges. }
+    if GetLastError <> ERROR_SUCCESS then
+    begin
+      RestartErrorMessage;
+      exit;
+    end;
+  end;
+  if not ExitWindowsEx(EWX_REBOOT or EWX_FORCE or EWX_FORCEIFHUNG, 0) then
+    RestartErrorMessage;
+
+  { If ExitWindows/ExitWindowsEx were successful, program execution halts here
+    (at least on Win95) }
+end;
+
+procedure WindowsAbmelden;
+begin
+  // %windir%\system32\rundll32.exe user32.dll,LockWorkStation
+end;
+
+const
+  MacCodeTable: array [0 .. 255] of AnsiChar =
+
+    ( { 000 }{ } NVAC, { , } #044, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 008 }{ } NVAC, { } NVAC, { } NVAC, { c } #013, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 016 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 024 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 032 }{ } #032, { ! } #033, { " } #034, { # } #035, { d } #036,
+    { % } #037, { & } #038, { ' } #039,
+    { 040 }{ ( } #040, { ) } #041, { * } #042, { + } #043, { , } #044,
+    { - } #045, { . } #046, { / } #047,
+    { 048 }{ 0 } #048, { 1 } #049, { 2 } #050, { 3 } #051, { 4 } #052,
+    { 5 } #053, { 6 } #054, { 7 } #055,
+    { 056 }{ 8 } #056, { 9 } #057, { : } #058, { ; } #059, { < } #060,
+    { = } #061, { > } #062, { ? } #063,
+    { 064 }{ @ } #064, { A } #065, { B } #066, { C } #067, { D } #068,
+    { E } #069, { F } #070, { G } #071,
+    { 072 }{ H } #072, { I } #073, { J } #074, { K } #075, { L } #076,
+    { M } #077, { N } #078, { O } #079,
+    { 080 }{ P } #080, { Q } #081, { R } #082, { S } #083, { T } #084,
+    { U } #085, { V } #086, { W } #087,
+    { 088 }{ X } #088, { Y } #089, { Z } #090, { [ } #091, { \ } #092,
+    { ] } #093, { ^ } #094, { _ } #095,
+    { 096 }{ ` } #096, { a } #097, { b } #098, { c } #099, { d } #100,
+    { e } #101, { f } #102, { g } #103,
+    { 104 }{ h } #104, { i } #105, { j } #106, { k } #107, { l } #108,
+    { m } #109, { n } #110, { o } #111,
+    { 112 }{ p } #112, { q } #113, { r } #114, { s } #115, { t } #116,
+    { u } #117, { v } #118, { w } #119,
+    { 120 }{ x } #120, { y } #121, { z } #122, { ( } #123, { } NVAC,
+    { ) } #125, { } NVAC, { } NVAC,
+    { 128 }{ ƒ } #196, { } '≈', { } NVAC, { … } #201, { } NVAC, { ÷ } #214,
+    { ‹ } #220, { · } #225,
+    { 136 }{ ‡ } #224, { ‚ } #226, { ‰ } #228, { } NVAC, { } 'Â', { Á } #231,
+    { È } #233, { Ë } #232,
+    { 144 }{ Í } #234, { Î } #235, { Ì } #237, { } NVAC, { } 'Ó', { } 'Ô',
+    { } NVAC, { Û } #243,
+    { 152 }{ Ú } #242, { } 'Ù', { ˆ } #246, { } NVAC, { ˙ } #250, { } '˘',
+    { ˚ } #251, { ¸ } #252,
+    { 160 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { ﬂ } #223,
+    { 168 }{ } NVAC, { } '©', { } NVAC, { ' } #039, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 176 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 184 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } '¯',
+    { 192 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 200 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 208 }{ } NVAC, { } NVAC, { " } #034, { " } #034, { ' } #039, { ' } #039,
+    { } NVAC, { } NVAC,
+    { 216 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 224 }{ } NVAC, { } NVAC, { } NVAC, { " } #034, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 232 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 240 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC,
+    { 248 }{ } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC, { } NVAC,
+    { } NVAC, { } NVAC);
+
+function Ansi2Mac(const x: AnsiString): AnsiString;
+const
+  MacStr: AnsiString = 'âûÉíóòçëêúèÄéÜáàÖüößä„“”‘´’'#$0B#$01;
+  WinStr: AnsiString = '‚˚…ÌÛÚÁÎÍ˙ËƒÈ‹·‡÷¸ˆﬂ‰"""'''''''#$0D',';
+var
+  n, k: integer;
+begin
+  result := x;
+  for n := 1 to length(result) do
+  begin
+    k := pos(result[n], WinStr);
+    if k > 0 then
+      result[n] := MacStr[k];
+  end;
+end;
+
+function Mac2Ansi(const x: AnsiString): AnsiString;
+
+(*
+  MacCodeTable : array[0..255] of char =
+  const
+  MacStr     : string[35] = 'âûÉíóòçëêúèÄéÜáàÖüößä„“”‘´’'#$0B#$01;
+  WinStr     : string[35] = '‚˚…ÌÛÚÁÎÍ˙ËƒÈ‹·‡÷¸ˆﬂ‰"""'''''''#$0D',';
+
+  ( { }#000,{ }#001,{ }#002,{ }#003,{ }#004,{ }#005,{ }#006,{ }#007,
+  { }#008,{ }#009,{ }#010,{ }#011,{ }#012,{ }#013,{ }#014,{ }#015,
+  { }#016,{ }#017,{ }#018,{ }#019,{ }#020,{ }#021,{ }#022,{ }#023,
+  { }#024,{ }#025,{ }#026,{ }#027,{ }#028,{ }#029,{ }#030,{ }#031,
+  { }#032,{!}#033,{"}#034,{#}#035,{$}#036,{%}#037,{&}#038,{'}#039,
+  {(}#040,{)}#041,{*}#042,{+}#043,{,}#044,{-}#045,{.}#046,{/}#047,
+  {0}#048,{1}#049,{2}#050,{3}#051,{4}#052,{5}#053,{6}#054,{7}#055,
+  {8}#056,{9}#057,{:}#058,{;}#059,{<}#060,{=}#061,{>}#062,{?}#063,
+  {@}#064,{A}#065,{B}#066,{C}#067,{D}#068,{E}#069,{F}#070,{G}#071,
+  {H}#072,{I}#073,{J}#074,{K}#075,{L}#076,{M}#077,{N}#078,{O}#079,
+  {P}#080,{Q}#081,{R}#082,{S}#083,{T}#084,{U}#085,{V}#086,{W}#087,
+  {X}#088,{Y}#089,{Z}#090,{[}#091,{\}#092,{]}#093,{^}#094,{_}#095,
+  {`}#096,{a}#097,{ }#098,{ }#099,{ }#100,{ }#101,{ }#102,{ }#103,
+  {h}#104,{ }#105,{ }#106,{ }#107,{ }#108,{ }#109,{ }#110,{ }#111,
+  {p}#112,{ }#113,{ }#114,{ }#115,{ }#116,{ }#117,{ }#118,{ }#119,
+  {x}#120,{y}#121,{z}#122,{ }#123,{ }#124,{ }#125,{ }#126,{ }#127,
+  {«}#128,{ }#129,{ }#130,{ }#131,{ }#132,{ }#133,{ }#134,{ }#135,
+  { }#136,{ }#137,{ }#138,{ }#139,{ }#140,{ }#141,{ }#142,{ }#143,
+  { }#144,{ }#145,{ }#146,{ }#147,{ }#148,{ }#149,{ }#150,{ }#151,
+  { }#152,{ }#153,{ }#154,{ }#155,{ }#156,{ }#157,{ }#158,{ }#159,
+  { }#160,{ }#161,{ }#162,{ }#163,{ }#164,{ }#165,{ }#166,{ }#167,
+  { }#168,{ }#169,{ }#170,{ }#171,{ }#172,{ }#173,{ }#174,{ }#175,
+  { }#176,{ }#177,{ }#178,{ }#179,{ }#180,{ }#181,{ }#182,{ }#183,
+  { }#184,{ }#185,{ }#186,{ }#187,{ }#188,{ }#189,{ }#190,{ }#191,
+  { }#192,{ }#193,{ }#194,{ }#195,{ }#196,{ }#197,{ }#198,{ }#199,
+  { }#200,{ }#201,{ }#202,{ }#203,{ }#204,{ }#205,{ }#206,{ }#207,
+  { }#208,{ }#209,{ }#210,{ }#211,{ }#212,{ }#213,{ }#214,{ }#215,
+  { }#216,{ }#217,{ }#218,{ }#219,{ }#220,{ }#221,{ }#222,{ }#223,
+  { }#224,{ }#225,{ }#226,{ }#227,{ }#228,{ }#229,{ }#230,{ }#231,
+  { }#232,{ }#233,{ }#234,{ }#235,{ }#236,{ }#237,{ }#238,{ }#239,
+  { }#240,{ }#241,{ }#242,{ }#243,{ }#244,{ }#245,{ }#246,{ }#247,
+  { }#248,{ }#249,{ }#250,{ }#251,{ }#252,{ }#253,{ }#254,{ }#255);
+
+*)
+
+var
+  n: integer;
+begin
+  SetLength(result, length(x));
+  for n := 1 to length(x) do
+    result[n] := MacCodeTable[ord(x[n])];
+end;
+
+var
+  CPUMhzCalculated: boolean = false;
+  ClockStart: int64;
+  _CPUkhz: int64;
+  TickStart: dword;
+
+function UpTime: TAnfixTime;
+begin
+  result := GetTickCount div 1000;
+end;
+
+function RunTime: TAnfixTime;
+begin
+  result := (GetTickCount - TickStart) div 1000;
+end;
+
+function RDTSC: int64;
+asm
+  // DB 0FH
+  // DB 31H
+  rdtsc
+end;
+
+function CPUMhz: integer; // Frequence of CPU-Clock [MHz]
+begin
+  if not(CPUMhzCalculated) then
+  begin
+    _CPUkhz := (RDTSC - ClockStart) div (GetTickCount - TickStart);
+    CPUMhzCalculated := true;
+  end;
+  result := _CPUkhz div 1000;
+end;
+
+function RDTSCms: int64; // ReaD Time Stamp Counter in [ms] since system-StartUp
+begin
+  if not(CPUMhzCalculated) then
+    CPUMhz;
+  result := (RDTSC - ClockStart) div _CPUkhz;
+end;
+
+/// ///////////////
+
+function fmMonetary(x: string): string;
+begin
+  x := StrFilter(x, '0123456789.,-+E');
+
+  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos('.', x) < pos(',', x))
+  then
+  begin
+    // DE-Tausender-Punkte lˆschen!
+    ersetze('.', '', x);
+  end;
+
+  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos(',', x) < pos('.', x))
+  then
+  begin
+    // US-Tausender-Kommas lˆschen!
+    ersetze(',', '', x);
+  end;
+
+  ersetze(',', '.', x);
+  result := x;
+end;
+
+function StrToDouble(x: string): double; // strto
+var
+  dummy: integer;
+begin
+  x := fmMonetary(x);
+  val(x, result, dummy);
+end;
+
+function StrToDoubleDef(x: string; d: double): double;
+var
+  dummy: integer;
+begin
+  x := fmMonetary(x);
+  if (x = '') then
+  begin
+    result := d
+  end
+  else
+  begin
+    val(x, result, dummy);
+    if dummy <> 0 then
+      result := d;
+  end;
+end;
+
+procedure greg_to_jul(dt: TDateTimeBorlandPascal; var jdt: juldate);
+{ Gerald Rohr }
+{ converts a tested gregorian date to a julian date }
+begin
+  with dt do
+  begin
+    jdt.yr := Year;
+    if (Year = 0) and (Month = 0) and (Day = 0) then
+      jdt.Day := 0
+    else
+    begin
+      if (leapyear(Year)) and (Month > 2) then
+        jdt.Day := 1
+      else
+        jdt.Day := 0;
+      jdt.Day := jdt.Day + monthtotal[Month] + Day;
+    end;
+  end;
+end; { --- procedure greg_to_jul --- }
+
+procedure jul_to_greg(jdt: juldate; var dt: TDateTimeBorlandPascal);
+{ Gerald Rohr }
+{ converts a tested julian date to a gregorian date }
+var
+  i, workday: integer;
+begin
+  with dt do
+  begin
+    Year := jdt.yr;
+    if (jdt.yr = 0) and (jdt.Day = 0) then
+    begin
+      Month := 0;
+      Day := 0;
+    end
+    else
+    begin
+      workday := jdt.Day;
+      if (leapyear(jdt.yr)) and (workday > 59) then
+        workday := workday - 1; { make it look like a non-leap year }
+      i := 1;
+      repeat
+        i := i + 1
+      until not(workday > monthtotal[i]);
+      i := i - 1;
+      Month := i;
+      Day := workday - monthtotal[i];
+      if leapyear(jdt.yr) and (jdt.Day = 60) then
+        Day := Day + 1
+    end;
+  end;
+end; { --- procedure jul_to_greg --- }
+
+function dateDiff(d1, d2: longint): longint; { d1<d2 }
+{ (c) Gerald Rohr }
+{ computes the number of days between two dates }
+var
+  dt1, dt2: TDateTimeBorlandPascal;
+  jdt1, jdt2: juldate;
+  i, num_leap_yrs: longint;
+begin
+
+  if dateOK(d1) and dateOK(d2) then
+  begin
+    long2datetimeBorlandPascal(d1, dt1);
+    long2datetimeBorlandPascal(d2, dt2);
+    greg_to_jul(dt1, jdt1);
+    greg_to_jul(dt2, jdt2);
+    num_leap_yrs := 0; { adjust for leap years }
+    if dt2.Year > dt1.Year then
+    begin
+      for i := dt1.Year to dt2.Year - 1 do
+        if leapyear(i) then
+          num_leap_yrs := num_leap_yrs + 1
+    end;
+
+    if dt1.Year > dt2.Year then
+    begin
+      for i := dt2.Year to dt1.Year - 1 do
+        if leapyear(i) then
+          num_leap_yrs := num_leap_yrs - 1;
+    end;
+
+    dateDiff := jdt2.Day - jdt1.Day + ((jdt2.yr - jdt1.yr) * 365) +
+      num_leap_yrs;
+  end
+  else
+    dateDiff := maxlongint; { something's wrong }
+end;
+
+function countdays2long(d: longint): longint; { Rudolf Regez }
+
+{ converts d days from BASEYEAR, where: 1901<=BASEYEAR<=2100, in a
+  DATE10_STR; valid date range: 1.1.0004<=DATE<=???? (at least 5101!)
+  When DATE_DIFF is used to compute the days, add 1 day to include the starting
+  point: d:=DATE_DIFF(baseyear_date,DATE)+1 in order to get the same date
+  DATE back from DAYS_SINCE(d); BASEYEAR must be: 1.1.BASEYEAR,
+  where: 1901<=BASEYEAR<=2100; example in FAR_DATE below }
+
+var
+  buf_baseyear, buf_d, x, y, z, i, jahr: longint;
+  julia: juldate;
+  dt: TDateTimeBorlandPascal;
+begin
+  if (baseyear < 1901) or (baseyear > 2100) then
+    baseyear := 1901;
+  { chose between:  1901<=baseyear<=2100! }
+  buf_baseyear := baseyear;
+  buf_d := d;
+
+  if d <= 0 then
+  begin
+    if d mod 1461 = 0 then
+      buf_baseyear := buf_baseyear - (abs(d) div 1461) * 4
+    else
+      buf_baseyear := buf_baseyear - (abs(d) div 1461 + 1) * 4;
+    { move baseyear by whole leap-periods }
+    if d mod 1461 = 0 then
+      d := 0
+    else
+      d := d + (abs(d) div 1461 + 1) * 1461;
+    buf_d := d;
+  end;
+  if buf_baseyear >= 0 then
+  begin
+    z := buf_baseyear mod 4;
+    if z = 0 then
+      z := 4; { leapyear }
+    d := d + (z - 1) * 365; { standardize to year following a leapyear }
+    x := d div 1461; { past whole leap-periods }
+    jahr := buf_baseyear + (buf_d - x) div 365; { ca year }
+    d := d - (x * 1461); { days in last (broken) period }
+    if ((buf_d - x) mod 365 = 0) then
+    begin
+      Dec(jahr);
+      if d = 0 then
+      begin
+        if (jahr >= 2100) then
+        begin
+          inc(jahr);
+        end
+        else if leapyear(jahr) then
+          d := 366
+        else
+          d := 365;
+      end
+      else
+        d := 365; { 31.12.xxxx }
+    end
+    else
+      d := buf_d - (jahr - buf_baseyear) * 365 - x; { days }
+
+    y := (1900 div 100) - ((buf_baseyear - 1) div 100);
+    { correct dates before
+      1900 for non-leapyears 1900,1800,1700... }
+    i := (buf_baseyear + 4) - 100 * (buf_baseyear div 100);
+    if z <> 4 then
+      i := i - 100;
+    if z = i then
+    begin
+      if z = 2 then
+        if (buf_d > 1095) then
+          Dec(y);
+      if z = 3 then
+        if (buf_d > 730) then
+          Dec(y);
+      if (z = 4) then
+        if (buf_d > 365) then
+          Dec(y);
+    end;
+
+    y := y - (y div 4);
+    if y < 0 then
+      y := 0;
+    for i := 1 to y do
+    begin
+      Dec(d);
+      if d = 0 then
+      begin
+        Dec(jahr);
+        if leapyear(jahr) then
+          d := 366
+        else
+          d := 365;
+      end;
+    end;
+
+    y := ((jahr - 1) div 100) - (1900 div 100) - 1; { correct dates beyond
+      2100 for non-leapyears 2200,2300,2500... }
+    y := y - (y div 4);
+    if y < 0 then
+      y := 0;
+    for i := 1 to y do
+    begin
+      if (d < 365) then
+        inc(d)
+      else if leapyear(jahr) then
+      begin
+        if d = 366 then
+        begin
+          inc(jahr);
+          d := 1;
+        end
+        else
+          inc(d);
+      end
+      else if d = 365 then
+      begin
+        inc(jahr);
+        d := 1;
+      end;
+    end;
+
+    with julia do
+    begin
+      yr := jahr;
+      Day := d;
+    end;
+    FillChar(dt, SizeOf(dt), 0);
+    jul_to_greg(julia, dt); { build datetime-date }
+    countdays2long := DateTime2long(dt);
+    { build DD.MM.YYYY-string }
+  end
+  else
+    countdays2long := maxlongint;
+end; { function days_since }
+(* ***************************** *)
+
+function long2countdays(dlong: longint): longint; { Rudolf Regez }
+{ calculate number of days from 1.1.BASEYEAR; the result fed as "d" into
+  COUNTDAYS_INTO_DT should return same dt }
+var
+  base_dt: TDateTimeBorlandPascal;
+  blong: longint;
+begin
+  if dateOK(dlong) then
+  begin
+    with base_dt do
+    begin
+      Year := baseyear;
+      Month := 1;
+      Day := 1;
+    end;
+    blong := DateTime2long(base_dt);
+    long2countdays := dateDiff(blong, dlong) + 1;
+    { add 1 day, it's number of the }
+  end
+  { days not the difference! } else
+    long2countdays := maxlongint;
+end;
+
+function datePlus(dlong: TAnfixDate; plus: longint): TAnfixDate;
+begin
+  result := dlong;
+  repeat
+
+    // Sofort raus bei keiner Arbeit
+    if (plus = 0) then
+      break;
+
+    // Wenn Datum an sich OK, das Ergebnis
+    if dateOK(dlong) then
+    begin
+      result := countdays2long(long2countdays(dlong) + plus);
+      break;
+    end;
+
+    //
+    result := maxlongint;
+  until true;
+end;
+
+function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
+begin
+  result := dlong;
+  repeat
+    result := datePlus(result, 1);
+    if (WeekDay(result) <= 5) then
+      if not(Feiertag(result)) then
+        Dec(plus);
+  until (plus = 0);
+end;
+
+function NextMonth(dlong: TAnfixDate): TAnfixDate;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  d := 1;
+  inc(m);
+  if (m = 13) then
+  begin
+    m := 1;
+    inc(y);
+  end;
+  result := Details2Long(y, m, d);
+end;
+
+function PrevMonth(dlong: TAnfixDate): TAnfixDate;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  d := 1;
+  Dec(m);
+  if (m = 0) then
+  begin
+    m := 12;
+    Dec(y);
+  end;
+  result := Details2Long(y, m, d);
+end;
+
+function Details2Long(j, m, T: integer): TAnfixDate;
+begin
+  result := (j * cDATE_YEAR_FAKTOR) + (m * cDATE_MONTH_FAKTOR) +
+    (T * cDATE_DAY_FAKTOR);
+end;
+
+function ThisMonth(dlong: TAnfixDate): TAnfixDate;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  d := 1;
+  result := Details2Long(y, m, d);
+end;
+
+function extractDay(dlong: TAnfixDate): integer;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  result := d;
+end;
+
+function extractMonth(dlong: TAnfixDate): integer;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  result := m;
+end;
+
+function extractYear(dlong: TAnfixDate): integer;
+var
+  m, d, y: integer;
+begin
+  long2details(dlong, y, m, d);
+  result := y;
+end;
+
+procedure long2details(dlong: TAnfixDate; var j, m, T: integer);
+begin
+  j := dlong div cDATE_YEAR_FAKTOR;
+  dlong := dlong mod cDATE_YEAR_FAKTOR;
+  m := dlong div cDATE_MONTH_FAKTOR;
+  dlong := dlong mod cDATE_MONTH_FAKTOR;
+  T := dlong;
+end;
+
+function WerktagDatePlus(StartD: TAnfixDate; plus: integer): TAnfixDate;
+var
+  Werktage: integer;
+begin
+  Werktage := 0;
+  while (Werktage < plus) do
+  begin
+    StartD := datePlus(StartD, 1);
+    if WeekDay(StartD) < 6 then
+      inc(Werktage);
+  end;
+  result := StartD;
+end;
+
+function NearestDate(dlong: TAnfixDate; WeekDay: integer): TAnfixDate;
+begin
+  result := 0;
+end;
+
+function DateInside(d, dStart, DEnd: longint): boolean;
+begin
+  { no date, not inside at all }
+  if d = 0 then
+  begin
+    DateInside := false;
+    exit;
+  end;
+
+  DateInside := true;
+
+  { Fact: d<>0 }
+  if (dStart = 0) and (DEnd = 0) then
+    exit;
+
+  { Fact: d<>0, one of (dStart,dEnd)<>0 }
+  if (dStart = 0) and (d <= DEnd) then
+    exit;
+
+  { Fact: d<>0, one of (dStart,dEnd)<>0 }
+  if (DEnd = 0) and (d >= dStart) then
+    exit;
+
+  if (dStart <> 0) and (DEnd <> 0) and (d >= dStart) and (d <= DEnd) then
+    exit;
+
+  DateInside := false;
+end;
+
+function DateCollision(aStart, aEnd, bStart, bEnd: TAnfixDate): boolean;
+begin
+  result := (aStart <= bEnd) and (aEnd >= bStart);
+end;
+
+function IntToStrN(const i: int64; n: byte): string;
+begin
+  result := inttostr(i);
+  result := fill('0', n - length(result)) + result;
+end;
+
+function IntToStrN(const s: string; n: byte): string;
+begin
+  result := IntToStrN(StrToIntDef(s, 0), n);
+end;
+
+function int64tostr(i: int64): string;
+begin
+  result := inttostr(i);
+end;
+
+function IntToBStr(i: integer): string;
+begin
+  SetLength(result, SizeOf(integer));
+  Move(i, result[1], SizeOf(integer));
+end;
+
+function WordToBStr(w: Word): string;
+begin
+  SetLength(result, SizeOf(Word));
+  Move(w, result[1], SizeOf(Word));
+end;
+
+function BStrToInt(const s: string): integer;
+begin
+  if length(s) >= SizeOf(integer) then
+    Move(s[1], result, SizeOf(integer))
+  else
+    result := MaxInt;
+end;
+
+function BStrToWord(const s: string): Word;
+begin
+  if length(s) >= SizeOf(Word) then
+    Move(s[1], result, SizeOf(Word))
+  else
+    result := MaxWord;
+end;
+
+function NextP(var s: string; Delimiter: string): string;
+var
+  k: integer;
+begin
+  k := pos(Delimiter, s);
+  if k > 0 then
+  begin
+    result := copy(s, 1, pred(k));
+    delete(s, 1, pred(k + length(Delimiter)));
+  end
+  else
+  begin
+    result := s;
+    s := '';
+  end;
+end;
+
+{$ifndef fpc}
+function NextP(var s: AnsiString; Delimiter: string): AnsiString;
+var
+  k: integer;
+begin
+  k := pos(Delimiter, s);
+  if k > 0 then
+  begin
+    result := copy(s, 1, pred(k));
+    delete(s, 1, pred(k + length(Delimiter)));
+  end
+  else
+  begin
+    result := s;
+    s := '';
+  end;
+end;
+{$endif}
+
+function rNextP(var s: string; Delimiter: string): string;
+var
+  k: integer;
+begin
+  k := revPos(Delimiter, s);
+  result := copy(s, succ(k), MaxInt);
+  s := copy(s, 1, pred(k));
+end;
+
+function NextP(var s: Shortstring; Delimiter: Shortstring): Shortstring;
+var
+  k: integer;
+begin
+  k := pos(Delimiter, s);
+  if (k > 0) then
+  begin
+    result := copy(s, 1, pred(k));
+    delete(s, 1, pred(k + length(Delimiter)));
+  end
+  else
+  begin
+    result := s;
+    s := '';
+  end;
+end;
+
+function NextP(s: string; Delimiter: string; SkipCount: integer): string;
+var
+  n, k: integer;
+begin
+
+  // Felder am Anfang lˆschen
+  for n := 1 to SkipCount do
+  begin
+    k := pos(Delimiter, s);
+    if (k > 0) then
+    begin
+      delete(s, 1, pred(k + length(Delimiter)))
+    end
+    else
+    begin
+      result := '';
+      exit;
+    end;
+  end;
+
+  // Rest bis Delimiter rausschneiden!
+  k := pos(Delimiter, s);
+  if k > 0 then
+  begin
+    result := copy(s, 1, pred(k));
+  end
+  else
+  begin
+    result := s;
+  end;
+end;
+
+function FromP(s: string; Delimiter: string; SkipCount: integer): string;
+var
+  n, k: integer;
+begin
+
+  // Felder am Anfang lˆschen
+  for n := 1 to SkipCount do
+  begin
+    k := pos(Delimiter, s);
+    if (k > 0) then
+    begin
+      delete(s, 1, pred(k + length(Delimiter)))
+    end
+    else
+    begin
+      result := '';
+      exit;
+    end;
+  end;
+  result := s;
+
+end;
+
+function ReplaceP(s: string; Delimiter: string; SkipCount: integer;
+  NewP: string): string;
+var
+  Pre: string;
+begin
+  Pre := '';
+  while (SkipCount > 0) do
+  begin
+    Pre := Pre + NextP(s, Delimiter) + Delimiter;
+    Dec(SkipCount);
+  end;
+  NextP(s, Delimiter);
+  result := Pre + NewP + Delimiter + s;
+end;
+
+function FieldCount(const s: string; Delimiter: char): integer;
+var
+  n: integer;
+begin
+  result := 0;
+  for n := 1 to length(s) do
+    if Delimiter = s[n] then
+      inc(result);
+end;
+
+function Split(s: string; Delimiter: string = ';'; Quote: string = '')
+  : TStringList;
+var
+  QuoteLength: integer;
+  QuoteEnd: integer;
+begin
+  QuoteLength := length(Quote);
+  result := TStringList.create;
+  if (QuoteLength = 0) then
+  begin
+    while (s <> '') do
+      result.add(NextP(s, Delimiter));
+  end
+  else
+  begin
+    while (s <> '') do
+    begin
+      if (pos(Quote, s) = 1) then
+      begin
+        system.delete(s, 1, QuoteLength);
+        QuoteEnd := pos(Quote, s);
+        if QuoteEnd = 0 then
+        begin
+          // ERROR: closing Quote expected
+          result.add(s);
+          s := '';
+        end
+        else
+        begin
+          result.add(copy(s, 1, pred(QuoteEnd)));
+          system.delete(s, 1, pred(QuoteEnd + QuoteLength));
+          NextP(s, Delimiter);
+        end;
+      end
+      else
+      begin
+        result.add(NextP(s, Delimiter));
+      end;
+    end;
+  end;
+end;
+
+function HugeSingleLine(s: TStrings; Delimiter: string = #13;
+  MaxLines: integer = MaxInt): string;
+var
+  n: integer;
+
+  function freeDelimiter(s: string): string;
+  begin
+    result := s;
+    if (Delimiter <> ' ') then
+      ersetze(Delimiter, '*', result);
+  end;
+
+begin
+  if (s.Count > 0) then
+  begin
+    result := freeDelimiter(s[0]);
+    for n := 1 to Min(pred(s.Count), pred(MaxLines)) do
+      result := result + Delimiter + freeDelimiter(s[n]);
+  end
+  else
+  begin
+    result := '';
+  end;
+end;
+
+var
+  _ProgramFilesDir: string = '';
+
+function ProgramFilesDir: string;
+begin
+  if (_ProgramFilesDir = '') then
+  begin
+    _ProgramFilesDir := GetProgramFilesFolder;
+    if (_ProgramFilesDir = '') then
+      _ProgramFilesDir := 'C:\Program Files';
+    _ProgramFilesDir := _ProgramFilesDir + '\';
+  end;
+  result := _ProgramFilesDir;
+end;
+
+function ApplicationDataDir: string;
+begin
+  result := ValidatePathName(GetAppdataFolder) + '\';
+end;
+
+function PersonalDataDir: string;
+begin
+  result := ValidatePathName(GetPersonalFolder) + '\';
+end;
+
+function DirExists(const dir: string): boolean;
+var
+  _FileGetAttr: integer;
+begin
+  _FileGetAttr := FileGetAttr(ValidatePathName(dir));
+  result := (_FileGetAttr <> -1) and
+    (_FileGetAttr and faDirectory = faDirectory);
+end;
+
+procedure CheckCreateDir(dir: string);
+var
+  l: integer;
+begin
+  l := length(dir);
+  if (l = 0) then
+    exit;
+  if (dir[l] = '\') then
+    SetLength(dir, pred(l));
+  if DirExists(dir) or (length(dir) < 3) then
+    exit;
+  CheckCreateDir(ExtractFilePath(dir));
+{$I-}
+  MkDir(dir);
+{$I+}
+  if ioresult <> 0 then;
+end;
+
+function strtol(x: string): longint;
+var
+  l: longint;
+  dummy: integer;
+begin
+  ersetze('.', ' ', x);
+  x := noblank(x);
+  val(x, l, dummy);
+  if (x = '') or (dummy <> 0) then
+    l := 0;
+  strtol := l;
+end;
+
+function strtodword(s: string): dword;
+var
+  dummy: integer;
+begin
+  ersetze('.', ' ', s);
+  s := noblank(s);
+  val(s, result, dummy);
+  if (s = '') or (dummy <> 0) then
+    result := 0;
+end;
+
+function Oem2Ansi(const x: AnsiString): AnsiString;
+var
+  Dest: PAnsiChar;
+begin
+  GetMem(Dest, succ(length(x)));
+  OemToCharA(PAnsiChar(x), Dest);
+  result := Dest;
+  FreeMem(Dest, succ(length(x)));
+end;
+
+function Oem2asci(const x: AnsiString): AnsiString;
+begin
+  result := x;
+  ersetze('Å', 'ue', result);
+  ersetze('î', 'oe', result);
+  ersetze('Ñ', 'ae', result);
+  ersetze('ö', 'Ue', result);
+  ersetze('ô', 'Oe', result);
+  ersetze('é', 'Ae', result);
+  ersetze('·', 'sz', result);
+end;
+
+function Oem2utf8(const x: AnsiString): string;
+begin
+  result := x;
+  ersetze('Å', '¸', result);
+  ersetze('î', 'ˆ', result);
+  ersetze('Ñ', '‰', result);
+  ersetze('ö', '‹', result);
+  ersetze('ô', '÷', result);
+  ersetze('é', 'ƒ', result);
+  ersetze('·', 'ﬂ', result);
+end;
+
+function asci(const x: string): string;
+begin
+  result := x;
+  if length(result) > 0 then
+  begin
+    ersetze('¸', 'ue', result);
+    ersetze('ˆ', 'oe', result);
+    ersetze('‰', 'ae', result);
+    ersetze('‹', 'Ue', result);
+    ersetze('÷', 'Oe', result);
+    ersetze('ƒ', 'Ae', result);
+    ersetze('ﬂ', 'sz', result);
+  end;
+end;
+
+function WinNT: boolean;
+begin
+  result := (Win32Platform = VER_PLATFORM_WIN32_NT);
+end;
+
+function ANSI2OEM(x: AnsiString): AnsiString;
+var
+  Dest: PAnsiChar;
+begin
+  GetMem(Dest, succ(length(x)));
+  CharToOemA(PAnsiChar(x), Dest);
+  result := Dest;
+  FreeMem(Dest, succ(length(x)));
+end;
+
+{
+  const
+  _ansi =             '¸ˆ‰‹÷ƒﬂ';
+  _oem  : string[7] = 'ÅîÑöôé·';
+  var
+  n,p : integer;
+  begin
+  for n := 1 to length(x) do
+  begin
+  p := pos(x[n],_ansi);
+  if p>0 then
+  x[n] := _oem[p];
+  end;
+  ANSI2OEM := x;
+  end;
+}
+
+function ltostr(l: longint; st: byte): string;
+var
+  s: string;
+begin
+  str(l: st, s);
+  if (l >= 1000) then
+  begin
+    insert('.', s, length(s) - 2);
+    if s[1] = ' ' then
+      delete(s, 1, 1);
+  end;
+  if l >= 1000000 then
+  begin
+    insert('.', s, length(s) - 6);
+    if s[1] = ' ' then
+      delete(s, 1, 1);
+  end;
+  ltostr := s;
+end;
+
+function StreamsEqual(s1, s2: TStream): boolean;
+const
+  BLOCK_SIZE = 4096;
+type
+  TBlockBuffer = array [0 .. BLOCK_SIZE - 1] of char;
+var
+  Buff1: TBlockBuffer;
+  Buff2: TBlockBuffer;
+  Size, left: integer;
+begin
+  result := true;
+  while true do
+  begin
+    left := s1.Size - s1.Position;
+    if (left = 0) then
+      exit;
+    if (left > SizeOf(Buff1)) then
+      Size := SizeOf(Buff1)
+    else
+      Size := left;
+    s1.Read(Buff1, Size);
+    s2.Read(Buff2, Size);
+    if not CompareMem(@Buff1, @Buff2, Size) then
+    begin
+      result := false;
+      exit;
+    end;
+  end;
+end;
+
+function FileCompare(const FName1, FName2: string): boolean;
+var
+  a, b: TFileStream;
+begin
+  result := false;
+  if (FSize(FName1) = FSize(FName2)) then
+  begin
+    try
+      a := TFileStream.create(FName1, fmOpenRead + fmShareDenyNone);
+      b := TFileStream.create(FName2, fmOpenRead + fmShareDenyNone);
+      result := StreamsEqual(a, b);
+      a.free;
+      b.free;
+    except
+    end;
+  end;
+end;
+
+procedure FileRemoveBOM(FileName: string);
+const
+  Buffer: array [1 .. 3] of byte = (32, 32, 32);
+var
+  a: TFileStream;
+begin
+  a := TFileStream.create(FileName, fmOpenReadWrite + fmShareExclusive);
+  a.Write(Buffer, 3);
+  a.free;
+end;
+
+procedure FileEmpty(const FName: string);
+var
+  OutF: file;
+begin
+  assignFile(OutF, FName);
+  rewrite(OutF);
+  CloseFile(OutF);
+end;
+
+procedure FileAlive(const FName: string);
+begin
+  if not(FileExists(FName)) then
+    FileEmpty(FName);
+end;
+
+procedure FileLimitTo(const TextFName: string; TextFSize: dword);
+var
+  MyStrings: TStringList;
+  StartFrom: integer;
+  SizeByNow: dword;
+  n: integer;
+  OutF: TextFile;
+  SetSizeTo: dword;
+begin
+  if (FSize(TextFName) > integer(TextFSize)) then
+  begin
+    MyStrings := TStringList.create;
+    SetSizeTo := max((TextFSize div 4) * 3, TextFSize - (8 * 1024));
+    StartFrom := 0;
+    SizeByNow := 0;
+    MyStrings.LoadFromFile(TextFName);
+    for n := pred(MyStrings.Count) downto 0 do
+    begin
+      inc(SizeByNow, length(MyStrings[n]) + 2);
+      if SizeByNow >= SetSizeTo then
+      begin
+        StartFrom := n;
+        break;
+      end;
+    end;
+    assignFile(OutF, TextFName);
+    rewrite(OutF);
+    for n := StartFrom to pred(MyStrings.Count) do
+      writeln(OutF, MyStrings[n]);
+    CloseFile(OutF);
+    MyStrings.free;
+  end;
+end;
+
+function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
+  Upper: boolean = false): string;
+var
+  PrefixIndex, PostfixIndex: integer;
+  InpStr2: string;
+begin
+  result := '';
+  if Upper then
+  begin
+    InpStr2 := AnsiUpperCase(InpStr);
+    PrefixIndex := pos(AnsiUpperCase(prefix), InpStr2);
+    if (PrefixIndex = 0) then
+      exit;
+    inc(PrefixIndex, length(prefix));
+    PostfixIndex := pos(AnsiUpperCase(postfix), InpStr2);
+  end
+  else
+  begin
+    PrefixIndex := pos(prefix, InpStr);
+    if (PrefixIndex = 0) then
+      exit;
+    inc(PrefixIndex, length(prefix));
+    PostfixIndex := pred(PrefixIndex + pos(postfix, copy(InpStr, PrefixIndex,
+      MaxInt)));
+  end;
+  if (PostfixIndex = 0) then
+    exit;
+  if (PostfixIndex < PrefixIndex) then
+    exit;
+  result := copy(InpStr, PrefixIndex, PostfixIndex - PrefixIndex);
+end;
+
+function ValidateFName(x: string): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 1 to length(x) do
+    if pos(x[n], cValidFNameChars) > 0 then
+      result := result + x[n];
+end;
+
+function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
+begin
+  result := x;
+  if length(result) > 0 then
+    if (pos(result[length(result)], '/\') > 0) then
+      delete(result, length(result), 1);
+end;
+
+procedure AppendStringsToFile(s: TStrings; const FName: string;
+  Encapsulate: string = '');
+var
+  OutF: TextFile;
+  n: integer;
+begin
+  assignFile(OutF, FName);
+  ioresult;
+{$I-}
+  append(OutF);
+{$I+}
+  if ioresult <> 0 then
+    rewrite(OutF);
+  if (Encapsulate <> '') then
+    writeln(OutF, Encapsulate + ' : {');
+  for n := 0 to pred(s.Count) do
+    writeln(OutF, s[n]);
+  if (Encapsulate <> '') then
+    writeln(OutF, '}');
+  CloseFile(OutF);
+end;
+
+procedure AppendStringsToFile(s: string; const FName: string;
+  Encapsulate: string = '');
+var
+  OutF: TextFile;
+begin
+  assignFile(OutF, FName);
+  ioresult;
+{$I-}
+  append(OutF);
+{$I+}
+  if (ioresult <> 0) then
+    rewrite(OutF);
+  if (Encapsulate <> '') then
+    writeln(OutF, Encapsulate + ' : {');
+  writeln(OutF, s);
+  if (Encapsulate <> '') then
+    writeln(OutF, '}');
+  CloseFile(OutF);
+end;
+
+function IntToExtended(const i: integer): extended;
+begin
+  result := i;
+end;
+
+function mkrect(x, y, xl, yl: integer): TRect;
+begin
+  result := rect(x, y, x + xl, y + yl);
+end;
+
+procedure rZero(var r: TRect);
+begin
+  r := rect(0, 0, 0, 0);
+end;
+
+procedure rPercent(P: byte; cent: extended; var r: TRect);
+var
+  FullX: extended;
+  Percent: extended;
+  NewXL: integer;
+begin
+  FullX := rXL(r);
+  Percent := P / cent;
+  FullX := FullX * Percent;
+  NewXL := round(FullX);
+  rSetSize(NewXL, rYL(r), r);
+end;
+
+function Bin2HexStr(s: AnsiString): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 1 to length(s) do
+    result := result + inttohex(ord(s[n]), 2);
+end;
+
+function Bin2HexStr(var d; DataLen: integer): string; overload;
+var
+  s: string;
+begin
+  SetLength(s, DataLen);
+  Move(d, s[1], DataLen);
+  result := Bin2HexStr(s);
+end;
+
+function HexStr2Bin(s: string): string;
+begin
+  result := '';
+  s := cutblank(s);
+  while (s <> '') do
+  begin
+    result := result + Chr(strtoint('$' + copy(s, 1, 2)));
+    delete(s, 1, 2);
+  end;
+end;
+
+procedure HexStr2Bin(s: string; var d); overload;
+var
+  ds: string;
+begin
+  ds := HexStr2Bin(s);
+  Move(ds[1], d, length(ds));
+end;
+
+function GeneratePwd(FromSet: string; PwdLength: integer): string;
+var
+  n: integer;
+begin
+  randomize;
+  result := '';
+  for n := 1 to PwdLength do
+    result := result + FromSet[succ(random(length(FromSet)))];
+end;
+
+//
+// removes chars the filter contain (DeleteHits=true)
+// removes all chars except the well known in the filter (DeleteHits=false);
+//
+// vorhandene Filter:
+//
+// cZiffern wird gerne als Filter verwendet
+
+function StrFilter(s, Filter: string; DeleteHits: boolean = false): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 1 to length(s) do
+    if ((pos(s[n], Filter) = 0) = DeleteHits) then
+      result := result + s[n];
+end;
+
+function StrFilter(s, Filter: string; Hit: char): string;
+var
+  n: integer;
+begin
+  result := s;
+  for n := 1 to length(s) do
+    if (pos(s[n], Filter) > 0) then
+      result[n] := Hit;
+end;
+
+function StrEncode(const s: string; key: string): string;
+var
+  DataBuffer: string;
+begin
+  DataBuffer := s;
+  DataScramble(DataBuffer[1], length(s), key);
+  result := Bin2HexStr(DataBuffer);
+end;
+
+function StrDecode(const s: string; key: string): string;
+var
+  DataBuffer: string;
+begin
+  DataBuffer := HexStr2Bin(s);
+  DataScramble(DataBuffer[1], length(s) div 2, key);
+  result := DataBuffer;
+end;
+
+function str2int(const s: string): integer;
+begin
+  if (s = '') then
+    result := 0
+  else
+    result := strtoint(cutblank(s));
+end;
+
+function str2int64(const s: string): integer;
+begin
+  if (s = '') then
+    result := 0
+  else
+    result := strtoint64(cutblank(s));
+end;
+
+procedure AddStringsCR(s: TStrings; lines: string);
+begin
+  while (lines <> '') do
+    s.add(NextP(lines, #13));
+end;
+
+procedure FileTouch(FileName: string; date: TDateTime);
+var
+  TheFile: file;
+  TheAttr: integer;
+begin
+  TheAttr := FileGetAttr(FileName);
+  if (TheAttr <> -1) then
+  begin
+    if TheAttr and faReadOnly <> 0 then
+      FileSetAttr(FileName, 0);
+    assignFile(TheFile, FileName);
+    reset(TheFile);
+    FileSetDate(TFileRec(TheFile).Handle, DateTimeToFileDate(date));
+    close(TheFile);
+  end;
+end;
+
+procedure FileTouch(FName: string); // now
+begin
+  FileTouch(FName, SysUtils.NOW);
+end;
+
+procedure FileTouch(FName: string; ToDate: TAnfixDate);
+begin
+  FileTouch(FName, ToDate, 0);
+end;
+
+procedure FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime);
+var
+  date: TDateTime;
+begin
+  date := mkDateTime(ToDate, ToTime);
+  FileTouch(FName, date);
+end;
+
+function DatumUhr: string;
+begin
+  result := Datum10 + ' ' + uhr8;
+end;
+
+function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
+var
+  ye, mo, da, ho, mi, se, ms: Word;
+begin
+  //
+  if SecondsOK(Time) then
+  begin
+
+    ho := Time div 3600;
+    Time := Time mod 3600;
+    mi := Time div 60;
+    Time := Time mod 60;
+    se := Time;
+  end
+  else
+  begin
+    ho := 0;
+    mi := 0;
+    se := 0;
+  end;
+  ms := 0;
+  if dateOK(date) then
+  begin
+    ye := date div 10000;
+    date := date mod 10000;
+    mo := date div 100;
+    date := date mod 100;
+    da := date;
+    result := encodedate(ye, mo, da) + EncodeTime(ho, mi, se, ms);
+  end
+  else
+  begin
+    result := EncodeTime(ho, mi, se, ms);
+  end;
+end;
+
+function mkDateTime(s: string): TDateTime; overload;
+var
+  pDatum: TAnfixDate;
+  pUhr: TAnfixTime;
+begin
+  pDatum := date2long(NextP(s, ' ', 0));
+  pUhr := StrToSeconds(NextP(s, ' ', 1));
+  if dateOK(pDatum) and UhrOK(pUhr) then
+    result := mkDateTime(pDatum, pUhr)
+  else
+    result := SysUtils.NOW;
+end;
+
+procedure SaveToUnixFile(s: TStrings; const FName: string);
+var
+  F: file;
+  OneLine: string;
+  n, PredLineCount: integer;
+begin
+  PredLineCount := pred(s.Count);
+  assignFile(F, FName);
+  rewrite(F, 1);
+  for n := 0 to PredLineCount do
+  begin
+    if (n = PredLineCount) then
+      OneLine := s[n]
+    else
+      OneLine := s[n] + #$0A;
+    BlockWrite(F, OneLine[1], length(OneLine));
+  end;
+  CloseFile(F);
+end;
+
+procedure CollectCPUData;
+var
+  BS: integer;
+  i: integer;
+  _PCB_Instance: PPERF_COUNTER_BLOCK;
+  _PID_Instance: PPERF_INSTANCE_DEFINITION;
+  st: TFileTime;
+
+var
+  h: HKEY;
+  r: dword;
+  dwDataSize, dwType: dword;
+begin
+  if _IsWinNT then
+  begin
+    BS := _BufferSize;
+    while (RegQueryValueEx(HKEY_PERFORMANCE_DATA, Processor_IDX_Str, nil, nil,
+      PBYTE(_PerfData), @BS) = ERROR_MORE_DATA) do
+    begin
+      // Get a buffer that is big enough.
+      inc(_BufferSize, $1000);
+      BS := _BufferSize;
+      ReallocMem(_PerfData, _BufferSize);
+    end;
+
+    // Locate the performance object
+    _POT := PPERF_OBJECT_TYPE(dword(_PerfData) + _PerfData.HeaderLength);
+    for i := 1 to _PerfData.NumObjectTypes do
+    begin
+      if _POT.ObjectNameTitleIndex = Processor_IDX then
+        break;
+      _POT := PPERF_OBJECT_TYPE(dword(_POT) + _POT.TotalByteLength);
+    end;
+
+    // Check for success
+    if _POT.ObjectNameTitleIndex <> Processor_IDX then
+      raise Exception.create
+        ('Unable to locate the "Processor" performance object');
+
+    if _ProcessorsCount < 0 then
+    begin
+      _ProcessorsCount := _POT.NumInstances;
+      if _IsWin2000 then
+        Dec(_ProcessorsCount);
+      GetMem(_Counters, _ProcessorsCount * SizeOf(int64));
+      GetMem(_PrevCounters, _ProcessorsCount * SizeOf(int64));
+    end;
+
+    // Locate the "% CPU usage" counter definition
+    _PCD := PPERF_COUNTER_DEFINITION(dword(_POT) + _POT.HeaderLength);
+    for i := 1 to _POT.NumCounters do
+    begin
+      if _PCD.CounterNameTitleIndex = CPUUsageIDX then
+        break;
+      _PCD := PPERF_COUNTER_DEFINITION(dword(_PCD) + _PCD.ByteLength);
+    end;
+
+    // Check for success
+    if _PCD.CounterNameTitleIndex <> CPUUsageIDX then
+      raise Exception.create
+        ('Unable to locate the "% of CPU usage" performance counter');
+
+    // Collecting coutners
+    _PID_Instance := PPERF_INSTANCE_DEFINITION
+      (dword(_POT) + _POT.DefinitionLength);
+    for i := 0 to _ProcessorsCount - 1 do
+    begin
+      _PCB_Instance := PPERF_COUNTER_BLOCK(dword(_PID_Instance) +
+        _PID_Instance.ByteLength);
+
+      _PrevCounters[i] := _Counters[i];
+      _Counters[i] := int64(PInt64(dword(_PCB_Instance) + _PCD.CounterOffset)^);
+
+      _PID_Instance := PPERF_INSTANCE_DEFINITION(dword(_PCB_Instance) +
+        _PCB_Instance.ByteLength);
+    end;
+
+    _PrevSysTime := _SysTime;
+    SystemTimeToFileTime(_PerfData.SystemTime, st);
+    _SysTime := int64(int64(st));
+  end
+  else
+  begin
+    if not _W9xCollecting then
+    begin
+      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StartStat', 0,
+        KEY_ALL_ACCESS, h);
+      if (r <> ERROR_SUCCESS) then
+        raise Exception.create('Unable to start performance monitoring');
+
+      dwDataSize := SizeOf(dword);
+
+      RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage),
+        @dwDataSize);
+
+      RegCloseKey(h);
+
+      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StatData', 0, KEY_READ,
+        _W9xCpuKey);
+
+      if (r <> ERROR_SUCCESS) then
+        raise Exception.create('Unable to read performance data');
+
+      _W9xCollecting := true;
+    end;
+
+    dwDataSize := SizeOf(dword);
+    RegQueryValueEx(_W9xCpuKey, 'KERNEL\CPUUsage', nil, @dwType,
+      PBYTE(@_W9xCpuUsage), @dwDataSize);
+  end;
+end;
+{$O+}
+
+function GetCPUCount: integer;
+begin
+  if _IsWinNT then
+  begin
+    if _ProcessorsCount < 0 then
+      CollectCPUData;
+    result := _ProcessorsCount;
+  end
+  else
+  begin
+    result := 1;
+  end;
+end;
+
+function GetCPUUsage(Index: integer): double;
+begin
+  if _IsWinNT then
+  begin
+    if _ProcessorsCount < 0 then
+      CollectCPUData;
+    if (Index >= _ProcessorsCount) or (Index < 0) then
+      raise Exception.create('CPU index out of bounds');
+    if _PrevSysTime = _SysTime then
+      result := 0
+    else
+      result := 1 - (_Counters[index] - _PrevCounters[index]) /
+        (_SysTime - _PrevSysTime);
+  end
+  else
+  begin
+    if Index <> 0 then
+      raise Exception.create('CPU index out of bounds');
+    if not _W9xCollecting then
+      CollectCPUData;
+    result := _W9xCpuUsage / 100;
+  end;
+end;
+
+function CPUUsage: integer;
+var
+  n: integer;
+  VI: TOSVERSIONINFO;
+begin
+  if not(CPUUsageInit) then
+  begin
+    CPUUsageInit := true;
+    _ProcessorsCount := -1;
+    _BufferSize := $2000;
+    _PerfData := AllocMem(_BufferSize);
+    VI.dwOSVersionInfoSize := SizeOf(VI);
+    if not GetVersionEx(VI) then
+      raise Exception.create('Can''t get the Windows version');
+    _IsWinNT := VI.dwPlatformId = VER_PLATFORM_WIN32_NT;
+    _IsWin2000 := _IsWinNT and (VI.dwMajorVersion >= 5);
+    _CPUcount := GetCPUCount;
+  end;
+  CollectCPUData; // Get the data for all processors
+
+  result := 0;
+  for n := 0 to pred(_CPUcount) do
+    inc(result, round(GetCPUUsage(n) * 100));
+
+  result := result div _CPUcount;
+
+end;
+
+function FileVersion(const FName: string): string;
+var
+  aFileName: array [0 .. MAX_PATH] of char;
+  pdwHandle: dword;
+  nInfoSize: dword;
+  pFileInfo: pointer;
+  pFixFInfo: PVSFixedFileInfo;
+  nFixFInfo: dword;
+  // pVarFInfo: PChar;
+  // nVarFInfo: DWORD;
+  // nVarTrans: DWORD;
+  // aVarFPath: array[0..MAX_PATH] of Char;
+begin
+
+  // Gibt Versionsnummer zur¸ck
+  StrPCopy(aFileName, FName);
+  pdwHandle := 0;
+  nInfoSize := GetFileVersionInfoSize(aFileName, pdwHandle);
+  result := '0';
+  if nInfoSize <> 0 then
+    pFileInfo := GetMemory(nInfoSize)
+  else
+    pFileInfo := nil;
+  if assigned(pFileInfo) then
+    try
+      if GetFileVersionInfo(aFileName, pdwHandle, nInfoSize, pFileInfo) then
+      begin
+        pFixFInfo := nil;
+        nFixFInfo := 0;
+        if VerQueryValue(pFileInfo, '\', pointer(pFixFInfo), nFixFInfo) then
+        begin
+          result := format('%d.%d.%d.%d', [HiWord(pFixFInfo^.dwFileVersionMS),
+            LoWord(pFixFInfo^.dwFileVersionMS),
+            HiWord(pFixFInfo^.dwFileVersionLS),
+            LoWord(pFixFInfo^.dwFileVersionLS)]);
+        end;
+      end;
+    finally
+      FreeMemory(pFileInfo);
+    end;
+end;
+
+procedure SystemLog(Event: string);
+var
+  OutF: TextFile;
+begin
+  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix
+    (ExtractFileName(Paramstr(0))) + '.log');
+{$I-}
+  append(OutF);
+{$I+}
+  if (ioresult <> 0) then
+    rewrite(OutF);
+  writeln(OutF, Event);
+  CloseFile(OutF);
+end;
+
+function IsAdmin: boolean;
+const
+  SECURITY_NT_AUTHORITY: TSIDIdentifierAuthority = (Value: (0, 0, 0, 0, 0, 5));
+  SECURITY_BUILTIN_DOMAIN_RID = $00000020;
+  DOMAIN_ALIAS_RID_ADMINS = $00000220;
+var
+  hAccessToken: THandle;
+  ptgGroups: PTokenGroups;
+  dwInfoBufferSize: Cardinal;
+  psidAdministrators: PSID;
+  x: integer;
+begin
+  result := false;
+  if Win32Platform <> VER_PLATFORM_WIN32_NT then
+  begin
+    result := true;
+    exit;
+  end;
+  if not OpenThreadToken(GetCurrentThread, TOKEN_QUERY, true, hAccessToken) then
+  begin
+    if GetLastError <> ERROR_NO_TOKEN then
+      exit;
+    if not OpenProcessToken(GetCurrentProcess, TOKEN_QUERY, hAccessToken) then
+      exit;
+  end;
+  try
+    GetTokenInformation(hAccessToken, TokenGroups, nil, 0, dwInfoBufferSize);
+    if GetLastError <> ERROR_INSUFFICIENT_BUFFER then
+      exit;
+    GetMem(ptgGroups, dwInfoBufferSize);
+    try
+      if not GetTokenInformation(hAccessToken, TokenGroups, ptgGroups,
+        dwInfoBufferSize, dwInfoBufferSize) then
+        exit;
+      if not AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2,
+        SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
+        psidAdministrators) then
+        exit;
+      try
+        for x := 0 to ptgGroups^.GroupCount - 1 do
+        begin
+          if EqualSid(psidAdministrators, ptgGroups^.Groups[x].sid) then
+          begin
+            result := true;
+            break;
+          end;
+        end;
+      finally
+        FreeSid(psidAdministrators);
+      end;
+    finally
+      FreeMem(ptgGroups);
+    end;
+  finally
+    CloseHandle(hAccessToken);
+  end;
+end; { Michael Winter }
+
+function FloatToStrISO(Value: extended; Nachkommastellen: integer = 0): string;
+var
+  _DecimalSeparator: char;
+  _ThousandSeparator: char;
+begin
+  _DecimalSeparator := FormatSettings.DecimalSeparator;
+  _ThousandSeparator := FormatSettings.ThousandSeparator;
+
+  // xml-usa
+  FormatSettings.DecimalSeparator := '.';
+  FormatSettings.ThousandSeparator := #0; // NO seperator!
+
+  result := FloatToStr(Value);
+  if (pos(FormatSettings.DecimalSeparator, result) = 0) then
+    result := result + FormatSettings.DecimalSeparator + '0';
+
+  if (Nachkommastellen > 0) then
+  begin
+    result := result + fill('0', Nachkommastellen -
+      (length(result) - pos(FormatSettings.DecimalSeparator, result)));
+  end;
+
+  //
+  FormatSettings.DecimalSeparator := _DecimalSeparator;
+  FormatSettings.ThousandSeparator := _ThousandSeparator;
+end;
+
+function rtostr(r: real; stv, stn: byte): string;
+var
+  nstr, hstr: string;
+  kpos: byte;
+begin
+  { Umwandlung in normalen String }
+  if stn > 0 then
+    str(r: (stv + stn + 1): stn, nstr)
+  else
+    str(r: stv: 0, nstr);
+  nstr := noblank(nstr);
+  kpos := pos('.', nstr);
+  if (kpos <> 0) then
+  begin
+    nstr[kpos] := ',';
+    hstr := copy(nstr, 1, kpos - 1);
+  end
+  else
+    hstr := nstr;
+  { Setzen der "Tausender" Punkte, Mio-Punkte }
+
+  if (r >= 1000.0) or (r <= -1000.0) then
+  begin
+    if (r >= 0.0) then
+    begin
+      { r positiv }
+      if (length(hstr) > 3) then
+        insert('.', hstr, length(hstr) - 2);
+      if (length(hstr) > 7) then
+        insert('.', hstr, length(hstr) - 6);
+    end
+    else
+    begin
+      if (length(hstr) > 4) then
+        insert('.', hstr, length(hstr) - 2);
+      if (length(hstr) > 8) then
+        insert('.', hstr, length(hstr) - 6);
+    end;
+  end;
+
+  if length(hstr) > stv then
+    hstr := 'ÒE';
+  { Montieren des Endanfistr }
+  if kpos = 0 then
+    rtostr := fill(' ', stv - length(hstr)) + hstr
+  else
+    rtostr := fill(' ', stv - length(hstr)) + hstr + copy(nstr, kpos, 255);
+end;
+
+function DatumLocalized: string;
+begin
+  result := DateToStr(SysUtils.NOW);
+end;
+
+// Performance-Utils
+
+var
+  _perfFName: string = '';
+  _perfms: int64 = 0;
+  _Step: string = '';
+
+procedure perfBegin(FName: string);
+begin
+  _perfFName := FName;
+  _perfms := RDTSCms;
+end;
+
+procedure perfStep(JobDescription: string = '');
+var
+  Needed: integer;
+begin
+  Needed := RDTSCms - _perfms;
+  if (_Step <> '') and (_perfFName <> '') then
+    AppendStringsToFile(format('%s: %d ms', [_Step, Needed]), _perfFName);
+  _Step := JobDescription;
+  _perfms := RDTSCms;
+end;
+
+procedure perfEnd;
+begin
+  perfStep;
+  _perfFName := '';
+end;
+
+Procedure PostKeyEx32(key: Word; Const shift: TShiftState; specialkey: boolean);
+{ ************************************************************
+  * Procedure PostKeyEx32
+  *
+  * Parameters:
+  *  key    : virtual keycode of the key to send. For printable
+  *           keys this is simply the ANSI code (Ord(character)).
+  *  shift  : state of the modifier keys. This is a set, so you
+  *           can set several of these keys (shift, control, alt,
+  *           mouse buttons) in tandem. The TShiftState type is
+  *           declared in the Classes Unit.
+  *  specialkey: normally this should be False. Set it to True to
+  *           specify a key on the numeric keypad, for example.
+  * Description:
+  *  Uses keybd_event to manufacture a series of key events matching
+  *  the passed parameters. The events go to the control with focus.
+  *  Note that for characters key is always the upper-case version of
+  *  the character. Sending without any modifier keys will result in
+  *  a lower-case character, sending it with [ssShift] will result
+  *  in an upper-case character!
+  ************************************************************ }
+
+// JvKeyBoardStates
+// JvgUtils
+
+Type
+  TShiftKeyInfo = Record
+    shift: byte;
+    vkey: byte;
+  End;
+
+  byteset = Set of 0 .. 7;
+Const
+  shiftkeys: Array [1 .. 3] of TShiftKeyInfo = ((shift: ord(ssCtrl);
+    vkey: VK_CONTROL), (shift: ord(ssShift); vkey: VK_SHIFT),
+    (shift: ord(ssAlt); vkey: VK_MENU));
+Var
+  flag: dword;
+  bShift: byteset absolute shift;
+  i: integer;
+Begin
+  For i := 1 To 3 Do
+  Begin
+    If shiftkeys[i].shift In bShift Then
+      keybd_event(shiftkeys[i].vkey, MapVirtualKey(shiftkeys[i].vkey, 0), 0, 0);
+  End; { For }
+  if specialkey Then
+    flag := KEYEVENTF_EXTENDEDKEY
+  Else
+    flag := 0;
+
+  keybd_event(key, MapVirtualKey(key, 0), flag, 0);
+  flag := flag or KEYEVENTF_KEYUP;
+  keybd_event(key, MapVirtualKey(key, 0), flag, 0);
+
+  For i := 3 DownTo 1 Do
+  Begin
+    If shiftkeys[i].shift In bShift Then
+      keybd_event(shiftkeys[i].vkey, MapVirtualKey(shiftkeys[i].vkey, 0),
+        KEYEVENTF_KEYUP, 0);
+  End; { For }
+End; { PostKeyEx32 }
+
+procedure StartDebug(s: string);
+begin
+  if StartDebugger then
+    AppendStringsToFile(s, ExtractFilePath(Paramstr(0)) + 'StartDebug.log');
+end;
+
+function nosemi(const s: string): string;
+begin
+  result := s;
+  ersetze(';', ',', result);
+  ersetze('"', '''', result);
+end;
+
+function StrRange(s: string): string;
+var
+  Sub: string;
+  n, r1, r2: integer;
+
+  procedure push(s: string);
+  begin
+    if (result = '') then
+      result := cutblank(s)
+    else
+      result := result + ',' + cutblank(s);
+  end;
+
+begin
+  result := '';
+  while s <> '' do
+  begin
+    Sub := NextP(s, ',');
+    if pos('-', Sub) > 0 then
+    begin
+      r1 := StrToIntDef(noblank(NextP(Sub, '-', 0)), 0);
+      r2 := StrToIntDef(noblank(NextP(Sub, '-', 1)), 0);
+      for n := r1 to r2 do
+        push(inttostr(n));
+    end
+    else
+    begin
+      push(Sub);
+    end;
+  end;
+end;
+
+initialization
+
+ClockStart := RDTSC;
+TickStart := GetTickCount;
+StartDebugger := IsParam('--d');
+if StartDebugger then
+  FileEmpty(ExtractFilePath(Paramstr(0)) + 'StartDebug.log');
+StartDebug('anfix32');
+
+finalization
+
+if CPUUsageInit then
+begin
+  ReleaseCPUData;
+  FreeMem(_PerfData);
+end;
+
+end.

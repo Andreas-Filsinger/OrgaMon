@@ -1,0 +1,103 @@
+--
+--  O L A P  -  Definitions Datei
+--
+--  neues Buchungsjournal SATZ* bezogen!
+--
+--  IBS = initialier Buchungssatz
+--
+
+$StartDatum='01.01.2008' -- erster Tag der Zeitspanne
+$EndeDatum='01.02.2008' -- erster Tag NACH der Zeitspanne
+$DurchlaufendePosten=('1590','1200')
+
+select 
+ DATUM,
+ NAME,
+ GEGENKONTO, 
+ ((select PREFIX from STEMPEL where IBS.STEMPEL_R=RID) || '-' || STEMPEL_DOKUMENT) as BUCHUNGSSTEMPEL,
+ BETRAG,
+ TEXT,
+ BEMERKUNG,
+-- E I N N A H M E N
+ COALESCE(
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   not(NAME starts with 'SATZ') and
+   (BETRAG>0))
+  ,(select BETRAG from BUCH where RID=IBS.RID and BETRAG>0)) as NETTO_AR,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ1') and
+   (BETRAG>0))
+  as SATZ1_AR,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ2') and
+   (BETRAG>0))
+  as SATZ2_AR,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ3') and
+   (BETRAG>0))
+  as SATZ3_AR,
+-- A U S G A B E N
+ COALESCE(
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   not(NAME starts with 'SATZ') and
+   (BETRAG<0))
+  ,(select BETRAG from BUCH where RID=IBS.RID and BETRAG<0)) as NETTO_ER,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ1') and
+   (BETRAG<0))
+  as SATZ1_ER,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ2') and
+   (BETRAG<0))
+  as SATZ2_ER,
+  (select SUM(BETRAG) from BUCH where 
+   (MASTER_R=IBS.RID) and 
+   (RID<>IBS.RID) and 
+   (NAME='SATZ3') and
+   (BETRAG<0))
+  as SATZ3_ER
+from
+ BUCH IBS 
+where
+ (DATUM>=$StartDatum) and
+ (DATUM<$EndeDatum) and
+ (MASTER_R=RID) and
+ (GEGENKONTO is not null) and
+ (GEGENKONTO not in $DurchlaufendePosten)
+order by
+ DATUM, MASTER_R, RID
+ 
+--add
+--
+--Summe;;;;=SUMME;;;=SUMME;=SUMME;=SUMME;=SUMME;=SUMME;=SUMME;=SUMME;=SUMME
+---  
+ 
+excel
+
+Farbspalte=MASTER_R
+BETRAG=MONEY
+SATZ1_AR=MONEY
+SATZ1_ER=MONEY
+SATZ2_AR=MONEY
+SATZ2_ER=MONEY
+SATZ3_AR=MONEY
+SATZ3_ER=MONEY
+NETTO_ER=MONEY
+NETTO_AR=MONEY
+
+open
+- 

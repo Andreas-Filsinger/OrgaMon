@@ -1,0 +1,42 @@
+//
+//  O L A P  - Definitions Datei
+//
+//  Artikel - Infos - Kategorisiert
+//
+//  (c)'05 Andreas Filsinger
+//
+//  Ergebnis: OLAP.tmp2.csv
+//
+
+select
+ 'K' || GATTUNG.CODE,
+ GATTUNG.BEZEICHNUNG,
+ ARTIKEL.RID ARTIKEL_R,
+ ARTIKEL.KOMPONIST_R,
+ ARTIKEL.ARRANGEUR_R,
+ Artikel.Titel,
+ Land.Iso_Kurzzeichen, -- bezogen auf Artikel.Land_R
+ Artikel.Schwer_Gruppe,
+ Sortiment.Bezeichnung,  -- bezogen auf Artikel.Sortiment_R
+ Artikel.Numero,
+ Person.Suchbegriff, -- bezogen auf Artikel.Verlag_R
+ Artikel.Dauer
+from
+ ARTIKEL_GATTUNG
+join GATTUNG on
+ ARTIKEL_GATTUNG.GATTUNG_R=GATTUNG.RID
+join ARTIKEL on
+ ARTIKEL_GATTUNG.ARTIKEL_R=ARTIKEL.RID
+join SORTIMENT on
+ ARTIKEL.SORTIMENT_R=SORTIMENT.RID
+join LAND on
+ ARTIKEL.LAND_R=LAND.RID
+join PERSON on
+ ARTIKEL.VERLAG_R=PERSON.RID
+order by
+ GATTUNG.CODE
+
+complete
+
+Kategorie(BEZEICHNUNG) UEBERSCHRIFT
+-

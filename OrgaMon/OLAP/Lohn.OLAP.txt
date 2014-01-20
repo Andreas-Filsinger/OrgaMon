@@ -1,0 +1,41 @@
+--
+--  O L A P  - Definitions Datei
+--
+--  (c)'05 Andreas Filsinger
+--
+
+$Jahr=2004
+
+select
+ RID
+from
+ PERSON
+where
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM between '01.01.$Jahr' and '31.12.$Jahr') > 0;
+
+list
+
+RID
+
+data
+
+select
+ NACHNAME,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.01.$Jahr') JAN,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.02.$Jahr') FEB,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.03.$Jahr') MAR,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.04.$Jahr') APR,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.05.$Jahr') MAI,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.06.$Jahr') JUN,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.07.$Jahr') JUL,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.08.$Jahr') AUG,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.09.$Jahr') SEP,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.10.$Jahr') OKT,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.11.$Jahr') NOV,
+ (select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=PERSON.RID and DATUM = '01.12.$Jahr') DEZ
+from
+ PERSON
+where
+ RID in $0
+order by
+ NACHNAME
