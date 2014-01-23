@@ -46,7 +46,7 @@ var
 implementation
 
 uses
-  anfix32;
+  anfix32, globals;
 
 {$R *.lfm}
 
@@ -69,7 +69,7 @@ begin
   // with Zeos
   if not(ZQuery1.Active) then
    ZQuery1.Open;
-
+ Memo1.Lines.add(cApplicationName+RevToStr(globals.version);
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);

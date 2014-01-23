@@ -84,8 +84,16 @@ interface
 uses
   classes,
   anfix32,
-  gplists,
-  System.UITypes;
+  gplists
+
+  {$IFNDEF FPC}
+  ,
+  System.UITypes
+  {$else}
+  ,Graphics
+  ,fpchelper
+  {$ENDIF}
+  ;
 
 const
   cVarDelimiter = '~';
@@ -284,8 +292,7 @@ function UnbreakAble(s: string): string;
 
 }
 
-function Ansi2html(x: AnsiString): string; overload;
-function Ansi2html(x: String): string; overload;
+function Ansi2html(x: string): string;
 function html2Ansi(x: string): string;
 function AnsiToRFC1738(s: string): string;
 function RFC1738ToAnsi(s: string): string;
@@ -297,8 +304,12 @@ implementation
 
 uses
   windows, SysUtils, math,
-  IniFiles, Soap.EncdDecd,
-  JclSimpleXML, JclStreams;
+  IniFiles,
+  {$ifndef fpc}
+  Soap.EncdDecd,
+  {$endif}
+  JclSimpleXML,
+   JclStreams;
 
 const
   cERRORText = 'ERROR:';
@@ -473,12 +484,14 @@ function THTMLTemplate.CheckReplaceOne(n: integer;
       FName := AnlagenPath + 'ERROR.jpg';
 
     // codieren
+    {$IFNDEF FPC}
     Inf := TFileStream.create(FName, fmOpenRead);
     OutF := TStringStream.create;
     EncodeStream(Inf, OutF);
     result := OutF.DataString;
     Inf.Free;
     OutF.Free;
+    {$ENDIF}
 
   end;
 
@@ -1766,7 +1779,7 @@ const
     (* û *) , '&uuml;' (* ü *) , '&yacute;' (* ý *) , '&thorn;'
     (* þ *) , '&yuml;' (* ÿ *) , '');
 
-function Ansi2html(x: AnsiString): string; overload;
+function Ansi2html(x: String): string;
 var
   n: integer;
 begin
@@ -1776,7 +1789,7 @@ begin
     if (length(x) > 0) then
       if (x[1] = cRawHTMLPrefix) then
       begin
-        result := string(copy(x, 2, MaxInt));
+        result := copy(x, 2, MaxInt);
         break;
       end;
 
@@ -1787,7 +1800,7 @@ begin
       else
         break;
 
-    // erstezte zwischenräume
+    // ersetze Zwischenräume
     ersetze('  ', cNonBreakableSpace + cNonBreakableSpace, x);
 
     // jetzt umsetzen!
@@ -1799,10 +1812,6 @@ begin
 
 end;
 
-function Ansi2html(x: String): string; overload;
-begin
-  result := Ansi2html(AnsiString(x));
-end;
 
 function AnsiToRFC1738(s: string): string;
 var

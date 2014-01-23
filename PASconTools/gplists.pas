@@ -852,6 +852,7 @@ type
   {:Fixed-size ring buffer of TObject references. Optionally thread-safe.
     @since   2003-07-25
   }
+  {$IFDEF GpLists_SpinLock}
   TGpObjectRingBuffer = class
   private
     orbBuffer                    : array of TObject;
@@ -898,6 +899,7 @@ type
     property Items[iObject: integer]: TObject read GetItem write SetItem; default;
     property OwnsObjects: boolean read orbOwnsObjects;
   end; { TGpObjectRingBuffer }
+  {$ENDIF}
 
   {:Object map comparision function.
     @since   2003-08-02
@@ -952,8 +954,8 @@ type
     property Values[item1, item2: TObject]: TObject read GetItems write SetItems; default;
   end; { TGpObjectObjectMap }
 
+  {$IFDEF GpLists_SpinLock}
   TGpDoublyLinkedList = class;
-
   {:Ancestor for objects that can be insterted in a doubly-linked list.
     @since   2003-10-27
   }
@@ -987,11 +989,13 @@ type
     property Current: TGpDoublyLinkedListObject read GetCurrent;
   end; { TGpDoublyLinkedListEnumerator }
   {$ENDIF GpLists_Enumerators}
+  {$ENDIF}
 
   {:A list of doubly-linked TGpDoublyLinkedListObject objects. NOT an owner of linked
     objects. Optionally thread-safe.
     @since   2003-10-27
   }
+  {$IFDEF GpLists_SpinLock}
   TGpDoublyLinkedList = class
   private
     dllCount: integer;
@@ -1029,6 +1033,7 @@ type
     procedure UnlinkAll;
     procedure Unlock;                                       {$IFDEF GpLists_Inline}inline;{$ENDIF}
   end; { TGpDoublyLinkedList }
+  {$ENDIF}
 
   {:Compares two TGpInt64objects for equality. Ready for use in
     TGpObject(Object)Map.
@@ -1051,7 +1056,9 @@ implementation
 
 uses
 {$IFNDEF CONSOLE}
-  Consts,
+{$IFNDEF FPC}
+Consts,
+{$ENDIF}
 {$ENDIF}
   Math;
 
@@ -3470,6 +3477,7 @@ end; { TGpObjectRingBufferEnumerator.MoveNext }
 {$ENDIF GpLists_Enumerators}
 
 { TGpObjectRingBuffer }
+{$IFDEF GpLists_SpinLock}
 
 constructor TGpObjectRingBuffer.Create(bufferSize: integer; ownsObjects,
   multithreaded: boolean);
@@ -3658,7 +3666,7 @@ procedure TGpObjectRingBuffer.Unlock;
 begin
     orbLock.Exit;
 end; { TGpObjectRingBuffer.Unlock }
-
+{$ENDIF}
 { TGpObjectMap }
 
 constructor TGpObjectMap.Create(ownsObjects: boolean);
@@ -3806,6 +3814,8 @@ procedure TGpObjectObjectMap.SetItems(item1, item2: TObject;
 begin
   Map(item1)[item2] := Value;
 end; { TGpObjectObjectMap.SetItems }
+
+{$IFDEF GpLists_SpinLock}
 
 { TGpDoublyLinkedListObject }
 
@@ -4130,6 +4140,7 @@ procedure TGpDoublyLinkedList.Unlock;
 begin
     dllLock.exit;
 end; { TGpDoublyLinkedList.Unlock }
+{$ENDIF}
 
 end.
 

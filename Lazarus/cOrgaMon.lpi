@@ -66,7 +66,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\jcl-2.5.0\source\include"/>
-      <OtherUnitFiles Value="..\PasConTools;..\..\jcl-2.5.0\source\common;..\..\jcl-2.5.0\source\windows"/>
+      <OtherUnitFiles Value="..\PasConTools;..\..\jcl-2.5.0\source\common;..\..\jcl-2.5.0\source\windows;..\OrgaMon"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
