@@ -35,7 +35,9 @@ uses
   graphics,
   controls,
 {$ENDIF}
+{$ifndef fpc}
   System.UITypes,
+{$endif}
   anfix32,
   WordIndex;
 
