@@ -23,19 +23,19 @@ define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_PREVIOUS",
 );
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_DEPOSITOR",
-"<p class=\"fieldtitle\">" . WORD_DEPOSITOR . "</p><input type=\"text\" class=\"short\" name=\"f_depositor\" value=\"~DEPOSITOR~\" size=\"50\" maxlength=\"50\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
+"<p class=\"fieldtitle\">" . WORD_DEPOSITOR . "</p><input type=\"text\" class=\"short\" name=\"f_depositor\" value=\"~DEPOSITOR~\" size=\"50\" maxlength=\"45\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
 );
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BAN",
-"<p class=\"fieldtitle\">" . WORD_BANK_ACCOUNT_NUMBER . "</p><input type=\"text\" class=\"short\" name=\"f_ban\" value=\"~BAN~\" size=\"10\" maxlength=\"10\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
+"<p class=\"fieldtitle\">" . WORD_BANK_ACCOUNT_NUMBER . "</p><input type=\"text\" class=\"short\" name=\"f_ban\" value=\"~BAN~\" size=\"45\" maxlength=\"45\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
 );
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BANK",
-"<p class=\"fieldtitle\">" . WORD_BANK . "</p><input type=\"text\" class=\"short\" name=\"f_bank\" value=\"~BANK~\" size=\"50\" maxlength=\"100\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
+"<p class=\"fieldtitle\">" . WORD_BANK . "</p><input type=\"text\" class=\"short\" name=\"f_bank\" value=\"~BANK~\" size=\"45\" maxlength=\"45\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
 );
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BIC",
-"<p class=\"fieldtitle\">" . WORD_BANK_IDENTIFICATION_CODE . "</p><input type=\"text\" class=\"short\" name=\"f_bic\" value=\"~BIC~\" size=\"10\" maxlength=\"10\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
+"<p class=\"fieldtitle\">" . WORD_BANK_IDENTIFICATION_CODE . "</p><input type=\"text\" class=\"short\" name=\"f_bic\" value=\"~BIC~\" size=\"35\" maxlength=\"35\" onfocus=\"checkRadioButtonById('pradio_~TYPE~_~RID~')\" />"
 );
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_OVERVIEW",
