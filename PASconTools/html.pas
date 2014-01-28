@@ -25,7 +25,9 @@
   |
 }
 unit html;
+
 {$I jcl.inc}
+
 // ------------------------------------------------------------------
 //
 // (c)'18.04.00 by Andreas Filsinger, http://OrgaMon.org
@@ -292,7 +294,7 @@ function UnbreakAble(s: string): string;
 
 }
 
-function Ansi2html(x: string): string;
+function Ansi2html(s: AnsiString): string;
 function html2Ansi(x: string): string;
 function AnsiToRFC1738(s: string): string;
 function RFC1738ToAnsi(s: string): string;
@@ -1779,34 +1781,35 @@ const
     (* û *) , '&uuml;' (* ü *) , '&yacute;' (* ý *) , '&thorn;'
     (* þ *) , '&yuml;' (* ÿ *) , '');
 
-function Ansi2html(x: String): string;
+function Ansi2html(s: AnsiString): string;
 var
   n: integer;
 begin
 
   repeat
 
-    if (length(x) > 0) then
-      if (x[1] = cRawHTMLPrefix) then
+    // Unverändert lassen?
+    if (length(s) > 0) then
+      if (s[1] = cRawHTMLPrefix) then
       begin
-        result := copy(x, 2, MaxInt);
+        result := copy(s, 2, MaxInt);
         break;
       end;
 
     // führende (=zwingende) Blanks!
-    for n := 1 to length(x) do
-      if x[n] = ' ' then
-        x[n] := cNonBreakableSpace
+    for n := 1 to length(s) do
+      if (s[n] = ' ') then
+        s[n] := cNonBreakableSpace
       else
         break;
 
-    // ersetze Zwischenräume
-    ersetze('  ', cNonBreakableSpace + cNonBreakableSpace, x);
+    // ersetze Zwischenräume, bei Doppelblanks zu vermuten
+    ersetze('  ', cNonBreakableSpace + cNonBreakableSpace, s);
 
-    // jetzt umsetzen!
+    // jetzt umsetzen!, Wegen dieser Umsetzung muss S ein AnsiString sein!
     result := '';
-    for n := 1 to length(x) do
-      result := result + cHTMLCodes[ord(x[n])];
+    for n := 1 to length(s) do
+      result := result + cHTMLCodes[ord(s[n])];
 
   until true;
 
