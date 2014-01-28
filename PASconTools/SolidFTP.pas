@@ -29,6 +29,9 @@ unit SolidFTP;
 interface
 
 uses
+{$ifdef FPC}
+ fpchelper,
+ {$endif}
   Classes, IdFTP, anfix32;
 
 type
@@ -1116,7 +1119,11 @@ begin
 
   // broadcast magic Paket
   BroadCaster := TIdUDPClient.Create(nil);
+  {$ifdef FPC}
+  BroadCaster.broadcast(OutStr, 9, '');
+  {$else}
   BroadCaster.broadcast(OutStr, 9, '', TEncoding.ANSI);
+  {$endif}
   BroadCaster.free;
 end;
 

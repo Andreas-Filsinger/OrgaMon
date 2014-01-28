@@ -18,10 +18,7 @@ type
     DBGrid1: TDBGrid;
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
-    IBConnection1: TIBConnection;
     Memo1: TMemo;
-    SQLQuery1: TSQLQuery;
-    SQLTransaction1: TSQLTransaction;
     ZConnection1: TZConnection;
     ZQuery1: TZQuery;
     procedure Datasource1StateChange(Sender: TObject);
@@ -55,7 +52,7 @@ uses
 
 procedure TForm1.FormActivate(Sender: TObject);
 var
-   s: TSTringField;
+  s: TSTringField;
 begin
   {
   if not (SQLQuery1.active) then
@@ -67,16 +64,15 @@ begin
   end;
   }
   // with Zeos
-  if not(ZQuery1.Active) then
-   ZQuery1.Open;
- Memo1.Lines.add(cApplicationName+RevToStr(globals.version);
+  if not (ZQuery1.Active) then
+    ZQuery1.Open;
+  caption := cApplicationName + ' ' + RevToStr(globals.version);
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-//  SQLQuery1.Post;
-  SQLTransaction1.Commit;
-  DataSource1.Enabled:=false;
+  //  SQLQuery1.Post;
+  DataSource1.Enabled := False;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -112,16 +108,16 @@ end;
 
 procedure TForm1.Datasource1StateChange(Sender: TObject);
 var
-    s: Tdatasetstate;
+  s: Tdatasetstate;
 begin
   {   dsInactive, dsBrowse, , dsInsert, dsSetKey,
       dsCalcFields, dsFilter, dsNewValue, dsOldValue, dsCurValue, dsBlockRead,
       dsInternalCalc, dsOpening
 }
   case (Sender as TDatasource).State of
-   dsInsert: Memo1.Color:=cllime;
-   dsEdit: Memo1.Color:=clyellow;
-   dsBrowse:Memo1.Color:=clwindow;
+    dsInsert: Memo1.Color := cllime;
+    dsEdit: Memo1.Color := clyellow;
+    dsBrowse: Memo1.Color := clwindow;
   end;
 end;
 

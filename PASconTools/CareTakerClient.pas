@@ -77,7 +77,11 @@ uses
   math, sysutils,
 
 {$IFNDEF CONSOLE}
+  {$ifdef fpc}
+  gettext,
+  {$else}
   Jvgnugettext,
+  {$endif}
 {$ENDIF}
   // anfix
   gplists, anfix32, html,
@@ -101,7 +105,12 @@ begin
 {$IFDEF CONSOLE}
       'de_DE' + '.' +
 {$ELSE}
-      GetCurrentLanguage + '.' +
+{$ifdef FPC}
+'de_DE' + '.' +
+
+{$else}
+GetCurrentLanguage  + '.' +
+{$endif}
 {$ENDIF}
       ComputerName + '.' + MandantName;
   result := _MachineID;

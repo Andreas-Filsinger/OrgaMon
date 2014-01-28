@@ -69,54 +69,6 @@ object Form1: TForm1
     )
     TabOrder = 3
   end
-  object IBConnection1: TIBConnection
-    Connected = False
-    LoginPrompt = False
-    DatabaseName = 'raib25:/srv/smb/ablage/fdb/sewa/sicherung_00002600.fdb'
-    KeepConnection = False
-    Params.Strings = (
-      'codepage=WIN1251'
-    )
-    Password = 'EdkMGOFT'
-    Transaction = SQLTransaction1
-    UserName = 'SYSDBA'
-    LogEvents = []
-    left = 40
-    top = 16
-  end
-  object SQLTransaction1: TSQLTransaction
-    Active = False
-    Action = caNone
-    Database = IBConnection1
-    left = 136
-    top = 16
-  end
-  object SQLQuery1: TSQLQuery
-    PacketRecords = 1
-    UniDirectional = True
-    FieldDefs = <    
-      item
-        Name = 'EXPORT_EINSTELLUNGEN'
-        DataType = ftMemo
-        Precision = -1
-        Size = 8
-      end    
-      item
-        Name = 'NUMMERN_PREFIX'
-        DataType = ftFixedChar
-        Precision = -1
-        Size = 12
-      end>
-    Database = IBConnection1
-    Transaction = SQLTransaction1
-    SQL.Strings = (
-      'select EXPORT_EINSTELLUNGEN,NUMMERN_PREFIX from BAUSTELLE for update'
-    )
-    Params = <>
-    UpdateMode = upWhereAll
-    left = 224
-    top = 16
-  end
   object Datasource1: TDatasource
     DataSet = ZQuery1
     OnStateChange = Datasource1StateChange

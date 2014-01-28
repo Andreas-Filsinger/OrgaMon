@@ -4,17 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="25">
+    <Units Count="36">
       <Unit0>
         <Filename Value="cOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="cOrgaMon"/>
-        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="26"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="32"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -24,11 +22,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="42"/>
-        <CursorPos X="35" Y="72"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="53"/>
+        <CursorPos X="15" Y="67"/>
+        <UsageCount Value="32"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -36,12 +35,10 @@
       <Unit2>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2124"/>
         <CursorPos X="31" Y="2147"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -64,139 +61,113 @@
       <Unit5>
         <Filename Value="..\..\jcl-2.4.1\source\common\JclSynch.pas"/>
         <UnitName Value="JclSynch"/>
-        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="40"/>
         <CursorPos X="12" Y="56"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclStrings.pas"/>
         <UnitName Value="JclStrings"/>
-        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="585"/>
         <CursorPos X="70" Y="608"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\inc\systemh.inc"/>
-        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="229"/>
         <CursorPos X="3" Y="251"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\jcl-2.5.0\source\include\jcl.inc"/>
-        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="241"/>
         <CursorPos X="1" Y="271"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\jcl-2.5.0\source\include\jclfpc.inc"/>
-        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="97"/>
         <CursorPos X="1" Y="129"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclAnsiStrings.pas"/>
         <UnitName Value="JclAnsiStrings"/>
-        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="499"/>
         <CursorPos X="78" Y="522"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclDateTime.pas"/>
         <UnitName Value="JclDateTime"/>
-        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="264"/>
         <CursorPos X="72" Y="266"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\objpas\sysutils\filutilh.inc"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="10" Y="99"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\win\sysutils.pp"/>
         <UnitName Value="sysutils"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="768"/>
         <CursorPos X="1" Y="812"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\packages\fcl-db\src\base\db.pas"/>
         <UnitName Value="db"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="30" Y="51"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="16"/>
-        <CursorPos X="9" Y="38"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <TopLine Value="1623"/>
+        <CursorPos X="1" Y="1645"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\PASconTools\gplists.pas"/>
         <UnitName Value="GpLists"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4101"/>
         <CursorPos X="1" Y="4144"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="3818" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\packages\fcl-base\src\syncobjs.pp"/>
         <UnitName Value="syncobjs"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclSynch.pas"/>
@@ -210,193 +181,153 @@
       <Unit19>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\objpas\math.pp"/>
         <UnitName Value="math"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="13"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\PASconTools\html.pas"/>
         <UnitName Value="html"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="280"/>
-        <CursorPos X="1" Y="311"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <TopLine Value="2010"/>
+        <CursorPos X="14" Y="2042"/>
+        <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
         <UnitName Value="JclSimpleXml"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="155"/>
-        <CursorPos X="1" Y="184"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <TopLine Value="4513"/>
+        <CursorPos X="1" Y="4557"/>
+        <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclStreams.pas"/>
         <UnitName Value="JclStreams"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="448"/>
         <CursorPos X="19" Y="492"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\inc\strings.pp"/>
         <UnitName Value="strings"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="13"/>
       </Unit23>
       <Unit24>
         <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\packages\fcl-base\src\inifiles.pp"/>
         <UnitName Value="IniFiles"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="1" Y="25"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="13"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <UnitName Value="fpchelper"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="814"/>
+        <CursorPos X="15" Y="857"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\PASconTools\CareTakerClient.pas"/>
+        <UnitName Value="CareTakerClient"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="45"/>
+        <CursorPos X="10" Y="84"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\..\indy\Lib\indylaz.pas"/>
+        <UnitName Value="indylaz"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="3" Y="10"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\..\indy\Lib\Protocols\IdHTTP.pas"/>
+        <UnitName Value="IdHTTP"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="319"/>
+        <CursorPos X="16" Y="341"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\PASconTools\SolidFTP.pas"/>
+        <UnitName Value="SolidFTP"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1100"/>
+        <CursorPos X="38" Y="1123"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\..\indy\Lib\Core\IdUDPClient.pas"/>
+        <UnitName Value="IdUDPClient"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="129"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\packages\fcl-base\src\gettext.pp"/>
+        <UnitName Value="gettext"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="25"/>
+        <UsageCount Value="11"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="C:\lazarus-1.2-RC2\lcl\interfaces\win32\win32wscontrols.pp"/>
+        <UnitName Value="Win32WSControls"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="161"/>
+        <CursorPos X="1" Y="184"/>
+        <UsageCount Value="11"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="C:\lazarus-1.2-RC2\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1851"/>
+        <CursorPos X="3" Y="1855"/>
+        <UsageCount Value="11"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="C:\lazarus-1.2-RC2\lcl\include\wincontrol.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="3466"/>
+        <CursorPos X="1" Y="3487"/>
+        <UsageCount Value="10"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\OrgaMon\MandantAuswahl.pas"/>
+        <UnitName Value="MandantAuswahl"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="37"/>
+        <CursorPos X="1" Y="50"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit35>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="312" Column="1" TopLine="304"/>
-      </Position1>
-      <Position2>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclStreams.pas"/>
-        <Caret Line="69" Column="1" TopLine="67"/>
-      </Position2>
-      <Position3>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclStreams.pas"/>
-        <Caret Line="113" Column="19" TopLine="76"/>
-      </Position3>
-      <Position4>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="312" Column="1" TopLine="304"/>
-      </Position4>
-      <Position5>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="493" Column="12" TopLine="465"/>
-      </Position5>
-      <Position6>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1821" Column="17" TopLine="1800"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="2882" Column="1" TopLine="2838"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1831" Column="34" TopLine="1799"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1821" Column="17" TopLine="1799"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1864" Column="21" TopLine="1842"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="94" Column="11" TopLine="72"/>
-      </Position11>
-      <Position12>
-        <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\inc\strings.pp"/>
-        <Caret Line="110" Column="1" TopLine="66"/>
-      </Position12>
-      <Position13>
-        <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\inc\strings.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position13>
-      <Position14>
-        <Filename Value="C:\lazarus-1.2-RC2\fpc\2.6.2\source\rtl\inc\strings.pp"/>
-        <Caret Line="66" Column="5" TopLine="22"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="94" Column="12" TopLine="72"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="93" Column="1" TopLine="72"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1821" Column="1" TopLine="1799"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="94" Column="1" TopLine="72"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1865" Column="21" TopLine="1843"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1875" Column="1" TopLine="1853"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="157" Column="1" TopLine="133"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <Caret Line="105" Column="5" TopLine="61"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="102" Column="27" TopLine="1"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="86" Column="1" TopLine="64"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="86" Column="27" TopLine="49"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1087" Column="31" TopLine="1050"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1097" Column="1" TopLine="1060"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="86" Column="1" TopLine="64"/>
-      </Position30>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectSession>
   <EditorMacros Count="0"/>
 </CONFIG>
