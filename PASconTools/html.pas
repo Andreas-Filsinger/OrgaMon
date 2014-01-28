@@ -2017,6 +2017,7 @@ begin
     if (iStart < iEnd) then
     begin
 
+      {$ifndef FPC}
       sXML := TStringStream.create;
       XML := TJclSimpleXML.create;
       try
@@ -2038,6 +2039,7 @@ begin
         end;
       end;
       sXML.Free;
+      {$endif}
 
       // Erfolg! nun ist klar, in welchem Block gesucht werden muss
       n := 0;

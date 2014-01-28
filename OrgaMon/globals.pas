@@ -37,6 +37,8 @@ uses
 {$ENDIF}
 {$ifndef fpc}
   System.UITypes,
+{$else}
+  fpchelper,
 {$endif}
   anfix32,
   WordIndex;
@@ -394,7 +396,7 @@ const
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
 
-  cQueryHint: array [0 .. 21] of string = ('EDIT=Datensatz ändern',
+  cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern',
     'POST=Abschicken', 'CANCEL=Abbruch', 'CANCELSEARCH=Suche abbrechen',
     'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',
     'FIRST=Erster Datensatz', 'PRIOR=vorheriger Datensatz',
@@ -596,7 +598,7 @@ const
   c_Auslastungsflag_Mix = 4; // mehrere Baustellen
 
   cImportFieldsAnz = 59;
-  cImportFields: array [0 .. pred(cImportFieldsAnz)] of string = (
+  cImportFields: array [0 .. pred(cImportFieldsAnz)] of UnicodeString = (
     { 00 } 'Art',
     { 01 } 'Zähler_Nummer',
     { 02 } 'Zähler_Ort_Name1',
@@ -874,7 +876,7 @@ type
     ernvm_Vorschau, ernvm_Verbuchen);
 
 const
-  cPhasenStatusText: array [0 .. ord(ctsLast) + 6] of string = (
+  cPhasenStatusText: array [0 .. ord(ctsLast) + 6] of UnicodeString = (
     { 00 } 'unvollständig',
     { 01 } 'terminiert',
     { 02 } 'angeschrieben',
@@ -1447,8 +1449,7 @@ function iPDFPathPublicApp: string;
 function iLohnPath: string;
 function iBaustellenPath: string;
 function iSkriptePath: string;
-procedure evalPath(var iDataBaseName: string); overload;
-procedure evalPath(var iDataBaseName: AnsiString); overload;
+function evalPath(iDataBaseName: string):string;
 function lookLikePath(s: string): boolean;
 
 // dynamische Parameter
@@ -1464,8 +1465,15 @@ uses
   forms,
   MandantAuswahl,
 {$ENDIF}
-  math, Geld, IB_Session,
-  SolidFTP, Jvgnugettext, SimplePassword;
+  math, Geld,
+  {$ifdef FPC}
+  gettext,
+  {$else}
+  Jvgnugettext,
+  IB_Session,
+  {$endif}
+  SolidFTP,
+  SimplePassword;
 
 const
   RegistrySoftwareID = 'SOFTWARE';
@@ -1520,22 +1528,15 @@ begin
   result := copy(result, succ(k), MaxInt);
 end;
 
-procedure evalPath(var iDataBaseName: string); overload;
+function evalPath(iDataBaseName: string):string;
 begin
-  ersetze('{app}', ProgramFilesDir, iDataBaseName);
-  ersetze('{exe}', MyApplicationPath, iDataBaseName);
-  ersetze('{own}', EigeneOrgaMonDateienPfad, iDataBaseName);
-  ersetze('{doc}', PersonalDataDir, iDataBaseName);
+  result := iDataBaseName;
+  ersetze('{app}', ProgramFilesDir, result);
+  ersetze('{exe}', MyApplicationPath, result);
+  ersetze('{own}', EigeneOrgaMonDateienPfad, result);
+  ersetze('{doc}', PersonalDataDir, result);
 end;
 
-procedure evalPath(var iDataBaseName: AnsiString); overload;
-var
-  s: string;
-begin
-  s := iDataBaseName;
-  evalPath(s);
-  iDataBaseName := s;
-end;
 
 const
   LoadIniFCalled: boolean = false;
@@ -1665,6 +1666,14 @@ begin
         // Application.initialize;
         StartDebug('MandantAuswahl');
 {$IFNDEF CONSOLE}
+{$ifdef fpc}
+LogBootStage(AllTheMandanten[0]);
+iDataBaseName := AllTheMandanten[0];
+iDataBasePassword :=
+  ReadString(sGroup, cDataBasePwd + inttostr(1),
+  iDataBasePassword);
+
+{$else}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
         with FormMandantAuswahl do
         begin
@@ -1685,6 +1694,7 @@ begin
           end;
         end;
         FreeAndNil(FormMandantAuswahl);
+        {$endif}
 {$ENDIF}
       end;
 
@@ -1995,7 +2005,9 @@ initialization
   Application.Title := cApplicationName;
 {$ENDIF}
 StartDebug('globals');
+{$ifndef FPC}
 IB_GetClientLibNameFunc := GetFBClientLibName;
+{$endif}
 
 // i8n
 cNachFrage := _(cNachFrage);

@@ -2036,10 +2036,6 @@ begin
   result := (ErrorCount = 0);
 end;
 
-//
-// (C) 1998, by Markus Stephany. All rights reserved.
-//
-
 function DelTree(PathName: string): boolean;
 
   function _DelTree(Path: TFileName): boolean;
@@ -2055,18 +2051,13 @@ function DelTree(PathName: string): boolean;
 
       with SRec do
       begin
-
         if (Attr and faDirectory) = faDirectory then
         begin
-
           if (Name <> '.') and (Name <> '..') then
-
             result := _DelTree(Path + SRec.Name);
-
         end
         else
         begin
-
           FileSetAttr(Path + SRec.Name, 0);
           result := DeleteFile(Path + SRec.Name);
           if not result then
@@ -2074,31 +2065,24 @@ function DelTree(PathName: string): boolean;
             findclose(SRec);
             exit;
           end;
-
         end;
       end;
       Res := FindNext(SRec);
     end;
-
     findclose(SRec);
-
     try
       FileSetAttr(ValidatePathName(Path), 0);
       RmDir(ValidatePathName(Path));
     except
       result := false;
     end;
-
   end;
 
 begin
   PathName := ValidatePathName(PathName);
   result := true;
   if not SysUtils.DirectoryExists(PathName) then
-  begin
-    // result is true cause the directory doesn't exist, and that is what we want
     exit;
-  end;
   result := _DelTree(PathName);
 end;
 
