@@ -1390,7 +1390,7 @@ var
 begin
   MENGE_BISHER := cMenge_unbestimmt;
   MENGE_NEU := cMenge_unbestimmt;
-  LAGER_R := cRID_Unset;
+  LAGER_R := cRID_unset;
   result := 0;
   try
     if (AUSGABEART_R > cAusgabeArt_Demoaufnahme_MP3) and
@@ -2900,6 +2900,7 @@ begin
 
         NoBELEG_R := FieldByName('BELEG_R').IsNull;
         BELEG_R := FieldByName('BELEG_R').AsInteger;
+        VORGANG := FieldByName('VORGANG').AsString;
 
         if not(NoBELEG_R) then
         begin
@@ -2945,10 +2946,12 @@ begin
               SkipIt := true;
           end;
 
-          // Belege, die heute abgerechnet wurden ignorieren!
-          if not(pHeutigeBelege) then
-            if not(SkipIt) and (FieldByName('DATUM').AsDate >= now - 2) then
-              SkipIt := true;
+          // Belege, die erst heute abgerechnet wurden auf der Mahnung ignorieren!
+          if not(SkipIt) then
+            if not(pHeutigeBelege) then
+              if (VORGANG = cVorgang_Rechnung) then
+                if (FieldByName('DATUM').AsDate >= now - 2) then
+                  SkipIt := true;
 
         end
         else
@@ -2962,7 +2965,6 @@ begin
 
           LoadArtikelBlock;
           BuchungsBetrag := FieldByName('BETRAG').AsDouble;
-          VORGANG := FieldByName('VORGANG').AsString;
           KontoTexte.clear;
           MoreText := '';
           BetragVerzug := 0.0;
@@ -8340,7 +8342,7 @@ begin
     iFormColor := TColors.SysBtnFace;
 
   // AutoUp und FS
-  evalPath(iAutoUpRevDir);
+  iAutoUpRevDir := evalPath(iAutoUpRevDir);
   if (iAutoUpRevDir = '') then
     iAutoUpRevDir := '..\rev\';
   if (pos(':', iAutoUpRevDir) = 0) then

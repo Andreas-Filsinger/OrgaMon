@@ -163,7 +163,7 @@ var
   HeaderDefault: TStringList; // vordefiniert
   HeaderSuppress: TStringList; // nicht erwünschte Daten
   HeaderFromIntern: TStringList; // Spalten aus dem INTERN Feld
-  HeaderTextFormat: TStringList;
+  HeaderTextFormat: TStringList; // xls Ausgabe Zellformats soll Text sein
 
   LinesL: TList;
   ErrorCount: integer;
