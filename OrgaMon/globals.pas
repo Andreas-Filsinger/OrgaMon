@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 7.942; // OrgaMon.rev.txt
+  Version: single = 7.944; // OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1622,7 +1622,7 @@ begin
 
       until false;
 
-      evalPath(iDataBaseName);
+      iDataBaseName := evalPath(iDataBaseName);
 
       // weitere Datenbanknamen
       AllTheMandanten.Add(iDataBaseName);
@@ -1636,8 +1636,7 @@ begin
         end
         else
         begin
-          DataBaseName := AllTheMandanten[n];
-          evalPath(DataBaseName);
+          DataBaseName := evalPath(AllTheMandanten[n]);
           AllTheMandanten[n] := DataBaseName;
         end;
 

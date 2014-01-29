@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.230; // ../rev/Oc.rev.txt
+  Version: single = 1.231; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -194,7 +194,7 @@ begin
     end;
 
     // Sind Buchstaben enthalten?
-    if length(StrFilter(ZaehlerNummerNeu, cZiffern+'-', true)) > 0 then
+    if length(StrFilter(ZaehlerNummerNeu, cZiffern + '-', true)) > 0 then
     begin
       result := ZaehlerNummerNeu;
       break;
@@ -205,7 +205,8 @@ begin
     begin
       if (ART = 'WA') or (ART = 'G') then
       begin
-        result := nextp(ZaehlerNummerAlt, '-', 0) + '-' + ZaehlerNummerNeu;
+        // result := nextp(ZaehlerNummerAlt, '-', 0) + '-' + ZaehlerNummerNeu;
+        result := ZaehlerNummerNeu;
       end
       else
       begin
@@ -2122,10 +2123,10 @@ var
       begin
 
         // melde EINBAU
-        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' +
-          rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) + '" ' +
-          'type_id=' + type_id + ' ' + 'defect="FALSE" ' +
-          'no_further_use="FALSE" ' + 'multiplication_constant="1"');
+        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART,
+          ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) + '" ' + 'type_id=' +
+          type_id + ' ' + 'defect="FALSE" ' + 'no_further_use="FALSE" ' +
+          'multiplication_constant="1"');
 
         if (ZaehlwerkeEinbauSoll.count > 0) then
         begin
@@ -2243,7 +2244,7 @@ var
     speak;
     speak('<!-- ### our unmapped tags: please include them in next dtd ### -->');
     speak('<!-- operator_order_id="' + RID + '" -->');
-    speak('<!-- article_real_id="' + rweformat(ART,ZAEHLER_NUMMER,
+    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER,
       x(r, 'ZaehlerNummerKorrektur')) + '" -->');
     speak('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
     speak('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
@@ -2517,10 +2518,10 @@ var
       begin
 
         // melde EINBAU
-        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' +
-          rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) + '" ' +
-          'type_id=' + type_id + ' ' + 'defect="FALSE" ' +
-          'no_further_use="FALSE" ' + 'multiplication_constant="1"');
+        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART,
+          ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) + '" ' + 'type_id=' +
+          type_id + ' ' + 'defect="FALSE" ' + 'no_further_use="FALSE" ' +
+          'multiplication_constant="1"');
 
         for n := 6 to 11 do
           MeldeZaehlwerk(r, n);
@@ -3778,9 +3779,16 @@ var
       if (ZaehlwerkeGemeldet = 0) then
       begin
         if MeldeZaehlwerk(r, 'NA', '1-1:1.8.1') then
+        begin
           MeldeZaehlwerk(r, 'ZaehlerStandAlt', '1-1:1.8.2')
+        end
         else
-          MeldeZaehlwerk(r, 'ZaehlerStandAlt', '1-1:1.8.1');
+        begin
+          if (ART = 'G') then
+            MeldeZaehlwerk(r, 'ZaehlerStandAlt', '7-1:11.8.1')
+          else
+            MeldeZaehlwerk(r, 'ZaehlerStandAlt', '1-1:1.8.1');
+        end;
       end;
 
       pop;
@@ -3834,9 +3842,16 @@ var
         if (ZaehlwerkeGemeldet = 0) then
         begin
           if MeldeZaehlwerk(r, 'NN', '1-1:1.8.1') then
+          begin
             MeldeZaehlwerk(r, 'ZaehlerStandNeu', '1-1:1.8.2')
+          end
           else
-            MeldeZaehlwerk(r, 'ZaehlerStandNeu', '1-1:1.8.1');
+          begin
+            if (ART = 'G') then
+              MeldeZaehlwerk(r, 'ZaehlerStandNeu', '7-1:11.8.1')
+            else
+              MeldeZaehlwerk(r, 'ZaehlerStandNeu', '1-1:1.8.1');
+          end;
         end;
 
         pop; // ARTICLE NEW
@@ -3940,7 +3955,7 @@ var
     Bild := cutblank(nextp(x(r, 'FN'), ',', 0));
     if (pos('.', Bild) > 0) then
     begin
-      if false and pBilder then
+      if pBilder then
       begin
         push('INITIATION_PROTOCOL');
         single('DATA_FILE ' + 'file_name="' + StrFilter(Bild, 'öäüÖÄÜß',

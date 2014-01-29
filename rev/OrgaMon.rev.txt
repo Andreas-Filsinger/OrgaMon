@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.944 (29.01.14) Andreas Filsinger
+
+ Bug: Mahnung: Anzahlungen der letzten 2 Tage wurden ignoriert
+
+Rev 7.943 (29.01.14) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.231" neu compiliert!
+
 Rev 7.942 (14.01.14) Andreas Filsinger
 
  Neu: Auftrag: Materialnummer
