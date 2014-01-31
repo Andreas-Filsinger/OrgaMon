@@ -292,7 +292,7 @@ function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 // MwSt: liefert die MwSt wie in diesem Sortiment üblich
 
-function e_r_Prozent(nSteuer: integer;
+function e_r_Prozent(SATZ: integer;
   mDatum: TAnfixDate = cIllegalDate): double;
 // MwSt: liefert den Prozentwert eines Steuersatzes
 
@@ -2062,6 +2062,7 @@ begin
     result := 0;
   end;
 end;
+
 
 // Preis-Tabelle-Caching
 // dieser Code sollte Autogeneriert sein, is aber nicht!
@@ -12106,10 +12107,10 @@ begin
 
 end;
 
-function e_r_Prozent(nSteuer: integer;
+function e_r_Prozent(SATZ: integer;
   mDatum: TAnfixDate = cIllegalDate): double;
 begin
-  if (nSteuer = 0) then
+  if (SATZ = 0) then
     result := 0
   else
   begin
@@ -12117,7 +12118,7 @@ begin
       mDatum := DateGet;
 
     result := e_r_sqld('select SATZ from MWST where ' + ' (NAME=''SATZ' +
-      inttostr(nSteuer) + ''') and ' + ' (''' + long2date(mDatum) +
+      inttostr(SATZ) + ''') and ' + ' (''' + long2date(mDatum) +
       ''' between VON_DATUM and BIS_DATUM)');
   end;
 end;

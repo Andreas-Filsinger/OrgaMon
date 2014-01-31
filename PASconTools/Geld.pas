@@ -81,6 +81,7 @@ const
 
   // Konto für Umsatz- Vor- Mehrwert- Steuer
   cKonto_SatzPrefix = 'SATZ';
+  cSatz_keinElement = -1.0; // da es keine negativen Prozentsätze gibt
 
   // vom OrgaMon benutzte Vorgangscodes für die Buchhaltung
   cVorgang_Rechnung = 'RECHNUNG (73)';

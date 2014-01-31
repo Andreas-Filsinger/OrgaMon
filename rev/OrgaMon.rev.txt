@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.946 (31.01.14) Andreas Filsinger
+
+ Neu: Personen-Suche: 2 neue Gruppen (Notfall+Telefon)
+ Neu: Personen-Suche: INFO - Feld
+ Neu: Personen-Suche: "B-1" bis "B-5" für Behandlungs oder Budget Zuteilung
+
+Rev 7.945 (30.01.14) Andreas Filsinger
+
+ Neu: Beleg: Übertrag in die Kasse möglich
+
 Rev 7.944 (29.01.14) Andreas Filsinger
 
  Bug: Mahnung: Anzahlungen der letzten 2 Tage wurden ignoriert

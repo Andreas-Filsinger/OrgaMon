@@ -82,6 +82,9 @@ procedure b_w_Rechnungsdatum(BELEG_R: integer; RechnungsDatum: TAnfixDate);
 // Nachträgliches Verändern des Rechnungsdatums sowie der
 // Fälligkeit
 
+function b_r_MwSt(KONTO: string): double; overload;
+// liefert den "üblichen" / "vorbelegten" MwSt Satz aus dem Konto-Deckblatt
+
 function b_r_AusgleichKonten: TStringList;
 // Liste der AR ausgleichenden Konten
 //
@@ -94,14 +97,14 @@ function b_r_Konto(SORTIMENT_R: integer): string;
 // Liefert die Konto-Nummer zu einem Artikel
 //
 
-function b_r_KontoSuchindexFName(Konto: string): string;
+function b_r_KontoSuchindexFName(KONTO: string): string;
 // Liefert den Dateinamen des TWordIndex Suchindex
 
 function b_r_PersonSaldo(PERSON_R: integer): double;
 // aktueller Saldo des "Kunden" Kontos
 //
 
-function b_r_KontoSaldo(Konto: string; Datum: TAnfixDate = ccMaxDate): double;
+function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
 // Saldo des Kontos "Konto" am "Datum"
 //
 
@@ -593,7 +596,7 @@ var
             insert;
             FieldByName('RID').AsInteger := NETTO_R;
             FieldByName('MASTER_R').AsInteger := BUCH_R;
-            FieldByName('NAME').AsString := Konto;
+            FieldByName('NAME').AsString := KONTO;
             FieldByName('BETRAG').AsDouble := NettoSumme;
             FieldByName('BELEG_R').AsInteger := BELEG_R;
             FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
@@ -696,17 +699,17 @@ var
       result := BruttoBetrag;
     end;
 
-    function bucheRest(Betrag: double; Konto: string = ''): double;
+    function bucheRest(Betrag: double; KONTO: string = ''): double;
     begin
-      if (Konto = '') then
-        Konto := cKonto_DurchlaufenderPosten;
+      if (KONTO = '') then
+        KONTO := cKonto_DurchlaufenderPosten;
 
       with qFOLGE do
       begin
         insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('MASTER_R').AsInteger := BUCH_R;
-        FieldByName('NAME').AsString := Konto;
+        FieldByName('NAME').AsString := KONTO;
         FieldByName('BETRAG').AsDouble := Betrag;
 
         // copy fields
@@ -808,7 +811,7 @@ var
     // direkt angegebene Satz-Buchung!
     SATZfound := false;
     for n := 0 to pred(Skript.count) do
-      if (pos('SATZ=', Skript[n]) = 1) then
+      if (pos(cKonto_SatzPrefix + '=', Skript[n]) = 1) then
       begin
         SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1),
           BruttoBetrag, bDatum, NETTO_R);
@@ -819,7 +822,7 @@ var
     if not(SATZfound) then
     begin
       for n := 0 to pred(Regel.count) do
-        if (pos('SATZ=', Regel[n]) = 1) then
+        if (pos(cKonto_SatzPrefix + '=', Regel[n]) = 1) then
           SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1),
             BruttoBetrag, bDatum, NETTO_R);
     end;
@@ -887,7 +890,7 @@ var
         SATZfound := false;
         TeilSteuerAnteil := 0;
         for m := 0 to pred(RegelOverwrite.count) do
-          if (pos('SATZ=', RegelOverwrite[m]) = 1) then
+          if (pos(cKonto_SatzPrefix + '=', RegelOverwrite[m]) = 1) then
           begin
             TeilSteuerAnteil :=
             { } SteuerBuchung(
@@ -903,7 +906,8 @@ var
 
         if not(SATZfound) then
           raise Exception.create
-            (format('SATZ= im Deckblatt "%s" nicht gefunden', [ZielKonto]));
+            (format(cKonto_SatzPrefix + '= im Deckblatt "%s" nicht gefunden',
+            [ZielKonto]));
 
         setBetrag(NETTO_R, TeilBetragBrutto - TeilSteuerAnteil);
 
@@ -1099,7 +1103,7 @@ var
   Betrag: double;
   BUCH_R: integer;
   EREIGNIS_R: integer;
-  Konto: string;
+  KONTO: string;
   TEILLIEFERUNG: integer;
   ScriptText: TStringList;
   InfoText: TStringList;
@@ -1160,7 +1164,7 @@ begin
       VALUTA := date2long(nextp(s, cOLAPcsvSeparator));
       BUCH_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
       Meldung := nextp(s, cOLAPcsvSeparator);
-      Konto := nextp(s, cOLAPcsvSeparator);
+      KONTO := nextp(s, cOLAPcsvSeparator);
       TEILLIEFERUNG := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
       EREIGNIS_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
 
@@ -1197,7 +1201,7 @@ begin
         end;
 
         // ggf. noch Konto-Datensatz buchen!
-        if (Konto <> '') then
+        if (KONTO <> '') then
         begin
 
           if (BUCH_R >= cRID_FirstValid) then
@@ -1256,7 +1260,7 @@ begin
               if not(eof) then
               begin
                 edit;
-                FieldByName('NAME').AsString := Konto;
+                FieldByName('NAME').AsString := KONTO;
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
                 FieldByName('BELEG_R').AsInteger := BELEG_R;
                 FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
@@ -1632,7 +1636,7 @@ begin
       inttostr(SORTIMENT_R));
 end;
 
-function b_r_KontoSaldo(Konto: string; Datum: TAnfixDate): double;
+function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate): double;
 var
   cBUCH: TIB_Cursor;
   Abschluss: double;
@@ -1657,7 +1661,7 @@ begin
     sql.add('where');
     if DateOK(iBuchFokus) then
       sql.add(' (DATUM >= ''' + long2date(iBuchFokus) + ''') and');
-    sql.add(' (NAME=''' + Konto + ''') and');
+    sql.add(' (NAME=''' + KONTO + ''') and');
     sql.add(' (BETRAG is not null)');
     sql.add('order by');
     sql.add(' DATUM, POSNO');
@@ -1707,13 +1711,13 @@ begin
   saldo.Free;
 end;
 
-function b_r_KontoSuchindexFName(Konto: string): string;
+function b_r_KontoSuchindexFName(KONTO: string): string;
 begin
   result :=
   { } SearchDir +
   { } format(
     { } cKontoSuchindexFName,
-    { } [ValidateFName(Konto)]);
+    { } [ValidateFName(KONTO)]);
 end;
 
 const
@@ -1908,6 +1912,23 @@ begin
     // Den eigentlichen Buchungssatz löschen
     e_x_sql('delete from BUCH where RID=' + inttostr(BUCH_R));
   end;
+end;
+
+function b_r_MwSt(KONTO: string): double; overload;
+var
+  Skript: TStringList;
+  Satz: string;
+begin
+  Skript := e_r_sqlt(
+    { } 'select SKRIPT from BUCH where ' +
+    { } '(BETRAG is null) and ' +
+    { } '(NAME = ''' + KONTO + ''')');
+  Satz := Skript.Values[cKonto_SatzPrefix];
+  Skript.Free;
+  if (Satz = '') then
+    result := cSatz_keinElement
+  else
+    result := e_r_Prozent(strtointdef(Satz,0));
 end;
 
 end.
