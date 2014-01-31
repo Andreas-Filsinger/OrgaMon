@@ -441,9 +441,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 33
+          Top = 34
           Width = 923
-          Height = 186
+          Height = 185
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -1241,7 +1241,7 @@ object FormBelege: TFormBelege
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 109
+      Left = 104
       Top = 33
       Width = 559
       Height = 17
@@ -1293,7 +1293,7 @@ object FormBelege: TFormBelege
       Caption = 'Rechnung:'
     end
     object Label10: TLabel
-      Left = 7
+      Left = 6
       Top = 34
       Width = 58
       Height = 13
@@ -1344,9 +1344,9 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton6Click
     end
     object SpeedButton7: TSpeedButton
-      Left = 124
+      Left = 131
       Top = 56
-      Width = 21
+      Width = 23
       Height = 22
       Hint = 'anderen Beleg schlucken'
       Glyph.Data = {
@@ -1383,7 +1383,7 @@ object FormBelege: TFormBelege
     object SpeedButton8: TSpeedButton
       Left = 540
       Top = 56
-      Width = 22
+      Width = 23
       Height = 22
       Hint = 'Dokumentverzeichnis "Rechnungen" '#246'ffnen'
       Anchors = [akTop, akRight]
@@ -1419,9 +1419,9 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton8Click
     end
     object SpeedButton10: TSpeedButton
-      Left = 95
+      Left = 101
       Top = 56
-      Width = 22
+      Width = 23
       Height = 22
       Hint = 'Diesen Beleg vervielf'#228'ltigen an einen OLAP Kundenkreis '
       Glyph.Data = {
@@ -1456,7 +1456,7 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton10Click
     end
     object SpeedButton11: TSpeedButton
-      Left = 72
+      Left = 76
       Top = 56
       Width = 23
       Height = 22
@@ -1493,9 +1493,9 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton11Click
     end
     object SpeedButton17: TSpeedButton
-      Left = 263
+      Left = 326
       Top = 56
-      Width = 21
+      Width = 23
       Height = 22
       Hint = 'Spaltenbreiten und Reihenfolge als lokaler Standard  speichern'
       Glyph.Data = {
@@ -1531,9 +1531,9 @@ object FormBelege: TFormBelege
       OnMouseDown = SpeedButton17MouseDown
     end
     object SpeedButton19: TSpeedButton
-      Left = 284
+      Left = 351
       Top = 56
-      Width = 21
+      Width = 23
       Height = 22
       Hint = 'Webshop Funktion "Bestellen" ausf'#252'hren'
       Glyph.Data = {
@@ -1570,7 +1570,7 @@ object FormBelege: TFormBelege
     object SpeedButton5: TSpeedButton
       Left = 564
       Top = 56
-      Width = 22
+      Width = 23
       Height = 22
       Hint = 'externes eMail Program mit dieser Zieladresse starten'
       Anchors = [akTop, akRight]
@@ -1606,9 +1606,9 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton5Click
     end
     object SpeedButton20: TSpeedButton
-      Left = 305
+      Left = 376
       Top = 56
-      Width = 22
+      Width = 23
       Height = 22
       Hint = 'Im Kontextverzeichnis merken'
       Glyph.Data = {
@@ -1643,7 +1643,7 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton20Click
     end
     object SpeedButton21: TSpeedButton
-      Left = 48
+      Left = 50
       Top = 56
       Width = 24
       Height = 22
@@ -1680,9 +1680,9 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton21Click
     end
     object SpeedButton22: TSpeedButton
-      Left = 327
+      Left = 401
       Top = 56
-      Width = 21
+      Width = 23
       Height = 22
       Hint = 'Ausfuhr in Drittland: kein MwSt Ausweis'
       Glyph.Data = {
@@ -1717,10 +1717,10 @@ object FormBelege: TFormBelege
       OnClick = SpeedButton22Click
     end
     object SpeedButton41: TSpeedButton
-      Left = 146
-      Top = 55
+      Left = 155
+      Top = 56
       Width = 23
-      Height = 23
+      Height = 22
       Hint = 'Beleg stornieren'
       Margins.Left = 4
       Margins.Top = 4
@@ -1757,6 +1757,59 @@ object FormBelege: TFormBelege
       ShowHint = True
       OnClick = SpeedButton41Click
     end
+    object SpeedButton23: TSpeedButton
+      Left = 180
+      Top = 56
+      Width = 23
+      Height = 22
+      Hint = 'Beleg in die "Bar Kasse" '#252'berf'#252'hren'
+      Glyph.Data = {
+        36050000424D3605000000000000360400002800000010000000100000000100
+        08000000000000010000F00A0000F00A000000010000000100003B3B3B006E45
+        330049494900535353005A5A5B005F5F5F00605D5E007C615C00636363006862
+        6200686969006B6B6B006A6C6E006B6C6C006C6C6C006D6D6D006E6E6E006F6F
+        6F00756B66006F717200727272007273740075757500777777007F7773007979
+        79007A7A7A00842D0D00982E000099390000BA52000094512C00CA6F1200C26C
+        1F00D4771900D97E1E00CB742600D07C2300905B4200846F660088746300967E
+        6A008C7B70008F7D7000827B7800C47C4000CA823E00A2877700D78F4500CD8F
+        5000CC965B00D1945600D1925B00D2975E00D19F5B00EEA04C00EBAA5500F2B0
+        5E00D59C6600C8A07800E9AD6600E7AC6900E6B06F00EDB26A00F4BA6F00EFBC
+        7800EDB97C00F5BC7600FFC27E00808081008282820083838300848484008686
+        86008A8A8A008B8B8B00888B8C008C8C8C0091868200928A84008B9197009090
+        90009797970095999A00989898009A9A9A009C9C9C009F9F9F009CA1A400A1A1
+        A100A2A2A200A4A4A400A5A5A600A5A6A700A8A8A800A9A9A900ABABAB00ADAD
+        AD00AEAEAE00A7ABB000AFB0B200B1B1B100B2B2B200B3B3B300B4B4B400B5B5
+        B500B6B6B600B8B9B900B9B9B900B9BABB00BBBBBB00B9BABD00B9BCBE00BDBD
+        BD00BEBEBE00DFB58900D4B79400E6B98900C3B8B000C9BFB300C4BDB900FFCB
+        8C00CFC0BB00F8D5AF00C2C2C200C3C3C300C2C3C500C5C5C500C5C6C700CACA
+        CA00CCCCCC00C7CDD200CDD6DE00D0D0D000D1D1D100D9D5D700D8D8D800D9D9
+        D900DBDDDE00DCDEDF00DEDEDE00DFDFDF00E8DCCF00F0DDC500F1DCC900F2E2
+        CF00FEEEDD00FFF0DD00DFE6EC00E0E0E000E1E1E100E2E2E200E4E4E400E5E5
+        E500E7E7E700E5E7E900E8E8E800E9E9E900EBEBEB00EDECED00EEEEEE00E8EC
+        F100ECF5FB00F2F2F200F3F3F300F1F3F500F2F4F600F5F5F500F6F6F600F5F6
+        FB00F8F8F800F9F9F900FBFBFB00FCFCFC00FDFDFD00FDFFFF00FEFEFE00FFFF
+        FF00000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000B1B1B1B0AA9D
+        958C9CAAB1B1B1B1B1B1B1B0A899815748455686A4B0B1B1B1B1AA987F521812
+        131405497D9FADB1B1B19A592C283624786F1608176A9FB0B1B14E293E393830
+        76706E1A0F1982AAB1B12A44434041327764666C450B619EAFB12B79341F0127
+        8B5C0E0D4D104B7C98AB4F3B2F84A287A5555415450A09145A9C6DA17A733520
+        A65A5306071B1D264A97728F233F757BB180561C1E22372D69A0859B93AF9091
+        33A958212E313D749FACB16D92253C3A429F8A4C500C4A96B0B1B1AB6F8E9483
+        63456D514A0F4A97B1B1B1B1A05D04030200117E47175499B1B1B1B1A3714651
+        6272898D674A81A4B1B1B1B1AA8865605F5E5B666885A7AEB1B1}
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = SpeedButton23Click
+    end
     object IB_Grid1: TIB_Grid
       Left = 1
       Top = 80
@@ -1786,7 +1839,7 @@ object FormBelege: TFormBelege
       VisibleButtons = [nbFirst, nbLast]
     end
     object IB_UpdateBar1: TIB_UpdateBar
-      Left = 170
+      Left = 205
       Top = 56
       Width = 92
       Height = 22
@@ -1998,7 +2051,7 @@ object FormBelege: TFormBelege
     object Button4: TButton
       Left = 732
       Top = 56
-      Width = 21
+      Width = 23
       Height = 22
       Hint = 'abgeschlossenen Rechnungsbeleg '#246'ffnen'
       Anchors = [akTop, akRight]
@@ -2160,7 +2213,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100D80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100DC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

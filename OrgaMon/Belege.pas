@@ -168,6 +168,7 @@ type
     TabSheet3: TTabSheet;
     IB_Memo3: TIB_Memo;
     IB_UpdateBar3: TIB_UpdateBar;
+    SpeedButton23: TSpeedButton;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
       var AString: string);
     procedure Button1Click(Sender: TObject);
@@ -272,6 +273,7 @@ type
     procedure SpeedButton41Click(Sender: TObject);
     procedure IB_DataSource2StateChanged(Sender: TIB_DataSource;
       ADataset: TIB_Dataset);
+    procedure SpeedButton23Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -357,7 +359,7 @@ uses
   Vertrag, Kontext,
   ArtikelAAA, BelegSuche, Geld,
   Datenbank, wanfix32,
-  DruckSpooler;
+  DruckSpooler, BuchBarKasse;
 
 {$R *.DFM}
 //
@@ -1855,6 +1857,12 @@ begin
       e_w_BelegDrittlandAusfuhr(BELEG_R);
       Button5Click(Sender);
     end;
+end;
+
+procedure TFormBelege.SpeedButton23Click(Sender: TObject);
+begin
+  // aktuellen Beleg (muss offen sein) in die Bar-Kasse übernehmen
+  FormBuchBarKasse.SetContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormBelege.SpeedButton2Click(Sender: TObject);

@@ -42,7 +42,7 @@ uses
 
   // Hebu-Projekt
   wordindex, Buttons, ExtCtrls,
-  IB_CursorGrid, IB_Grid, IB_Access;
+  IB_CursorGrid, IB_Grid, IB_Access, IB_Controls, IB_UpdateBar;
 
 type
   TFormPersonSuche = class(TForm)
@@ -69,8 +69,6 @@ type
     Button8: TButton;
     Button10: TButton;
     SpeedButton4: TSpeedButton;
-    Label4: TLabel;
-    Edit2: TEdit;
     IB_DataSource1: TIB_DataSource;
     IB_Query1: TIB_Query;
     IB_Grid1: TIB_Grid;
@@ -79,6 +77,18 @@ type
     Button13: TButton;
     Image1: TImage;
     Timer1: TTimer;
+    Button14: TButton;
+    Button15: TButton;
+    Button16: TButton;
+    Button17: TButton;
+    Edit2: TEdit;
+    Label4: TLabel;
+    Button19: TButton;
+    Button18: TButton;
+    Button20: TButton;
+    Button21: TButton;
+    Button22: TButton;
+    Button24: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -114,6 +124,14 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
+    procedure Edit2KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit2DblClick(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
   private
     { Private-Deklarationen }
     SearchIndex: TWordIndex;
@@ -123,6 +141,7 @@ type
     sMitglieder: TgpIntegerList;
     GEN_MITGLIEDERLISTE: Integer;
     _TimeRefreshed: dword;
+    LastValueByScroll: string;
 
     function Suche_PERSON_R: Integer;
 
@@ -285,6 +304,7 @@ procedure TFormPersonSuche.AufgabeAdd(Gruppe: string; PERSON_R: Integer);
 var
   MITGLIEDERLISTE_R: Integer;
   GRUPPE_R: Integer;
+  INFO: string;
 begin
   if (PERSON_R >= cRID_FirstValid) then
   begin
@@ -294,9 +314,17 @@ begin
     if (GRUPPE_R < cRID_FirstValid) then
       raise Exception.create('Gruppe nicht angelegt');
 
+    // Setzen des INFO Strings
+    if (Edit2.Text = LastValueByScroll) then
+      INFO := ''
+    else
+      INFO := Edit2.Text;
+
     MITGLIEDERLISTE_R := e_w_gen('GEN_MITGLIEDERLISTE');
-    e_x_sql('insert into MITGLIEDERLISTE (RID,GRUPPE_R,PERSON_R) values (' +
+    e_x_sql('insert into MITGLIEDERLISTE (RID,INFO,GRUPPE_R,PERSON_R) values ('
+      +
       { } inttostr(MITGLIEDERLISTE_R) + ',' +
+      { } '''' + INFO + ''',' +
       { } inttostr(GRUPPE_R) + ',' +
       { } inttostr(PERSON_R) + ')');
 
@@ -319,7 +347,6 @@ end;
 procedure TFormPersonSuche.AufgabeRefresh;
 begin
   LastRow := -1;
-
   GEN_MITGLIEDERLISTE := e_r_gen('GEN_MITGLIEDERLISTE');
   if IB_Query1.Active then
     IB_Query1.Refresh
@@ -483,6 +510,66 @@ begin
   NehmeBelege;
 end;
 
+procedure TFormPersonSuche.Button14Click(Sender: TObject);
+begin
+  AufgabeStatus('T');
+end;
+
+procedure TFormPersonSuche.Button15Click(Sender: TObject);
+begin
+  AufgabeAdd('T', Suche_PERSON_R);
+end;
+
+procedure TFormPersonSuche.Button16Click(Sender: TObject);
+begin
+  AufgabeStatus('E');
+end;
+
+procedure TFormPersonSuche.Button17Click(Sender: TObject);
+begin
+  AufgabeAdd('E', Suche_PERSON_R);
+end;
+
+procedure TFormPersonSuche.Button18Click(Sender: TObject);
+var
+  MITGLIEDERLISTE_R: Integer;
+  _INFO, INFO: string;
+  ROOM: string;
+begin
+  // Set new prefix
+  MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
+  if (MITGLIEDERLISTE_R >= cRID_FirstValid) then
+  begin
+    ROOM := (Sender as TButton).caption;
+
+    _INFO := IB_Query1.FieldByName('INFO').AsString;
+
+    if pos(':', _INFO) > 0 then
+      INFO := nextp(_INFO, ':', 1)
+    else
+      INFO := _INFO;
+
+    INFO := cutblank(INFO);
+
+    if (ROOM <> '') then
+      INFO := ROOM + ' : ' + INFO;
+
+    if (INFO <> _INFO) then
+    begin
+      e_x_sql(
+        { } 'update MITGLIEDERLISTE set INFO=' +
+        { } '''' + INFO + '''' +
+        { } 'where RID=' +
+        { } inttostr(MITGLIEDERLISTE_R));
+      AufgabeAenderungAnzeigen;
+      AufgabeRefresh;
+
+    end;
+
+  end;
+
+end;
+
 procedure TFormPersonSuche.Button1Click(Sender: TObject);
 begin
   AufgabeAdd('W', Suche_PERSON_R);
@@ -496,7 +583,6 @@ end;
 procedure TFormPersonSuche.Button4Click(Sender: TObject);
 begin
   AufgabeStatus('W');
-
 end;
 
 procedure TFormPersonSuche.Button5Click(Sender: TObject);
@@ -522,6 +608,31 @@ begin
         Key := #0;
         Close;
       end;
+  end;
+end;
+
+procedure TFormPersonSuche.Edit2DblClick(Sender: TObject);
+begin
+  Edit2.Text := '';
+end;
+
+procedure TFormPersonSuche.Edit2KeyPress(Sender: TObject; var Key: Char);
+var
+  MITGLIEDER_R: Integer;
+begin
+  if (Key = #13) then
+  begin
+    MITGLIEDER_R := IB_Query1.FieldByName('RID').AsInteger;
+    if (MITGLIEDER_R >= cRID_FirstValid) then
+    begin
+      e_x_sql('update MITGLIEDERLISTE set INFO=''' + Edit2.Text +
+        ''' where RID=' + inttostr(MITGLIEDER_R));
+      Key := #0;
+      AufgabeAenderungAnzeigen;
+      IB_Query1.Refresh;
+      IB_Grid1.SetFocus;
+    end;
+
   end;
 end;
 
@@ -736,7 +847,7 @@ begin
         // 2, 3: AString := format('%m', [strtodoubledef(AString, 0.0)]);
         1:
           AString := e_r_Person(strtointdef(AString, cRID_NULL));
-        2:
+        3:
           begin
             DateA := date2long(nextp(AString, ' ', 0));
             SecondsA := StrToSeconds(nextp(AString, ' ', 1));
@@ -746,6 +857,12 @@ begin
               AString := secondsToStr5(Wartezeit);
           end;
       end;
+end;
+
+procedure TFormPersonSuche.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
+begin
+  LastValueByScroll := IB_Dataset.FieldByName('INFO').AsString;
+  Edit2.Text := LastValueByScroll;
 end;
 
 procedure TFormPersonSuche.Image1Click(Sender: TObject);

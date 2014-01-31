@@ -100,18 +100,20 @@ type
   private
     { Private-Deklarationen }
     Konten: TStringList;
+    KontoNummern: TStringList;
     BetragN: array [1 .. cBarKasse_AnzahlKonten] of double;
+    MwStN: array [1 .. cBarKasse_AnzahlKonten] of double;
     Bar: double;
     Summe: double;
     RueckGeld: double;
 
     procedure ReflectData;
-    procedure ReflectKonten;
+    procedure EnsureKonten;
     procedure BetragInp(const editBetrag, editNext: TEdit;
       BetragIndex: integer);
   public
     { Public-Deklarationen }
-    procedure setContext;
+    procedure setContext(BELEG_R: integer = 0);
     procedure Clear;
   end;
 
@@ -191,7 +193,7 @@ begin
     // technische Buchungsinfos
     ScriptText.add('Schema=Folge');
     for n := 1 to cBarKasse_AnzahlKonten do
-      if (BetragN[n] <> 0) then
+      if isSomeMoney(BetragN[n]) then
         ScriptText.add(format('BETRAG=%.2f;%s',
           [BetragN[n], nextp(Konten[pred(n)], ' ', 0)]));
 
@@ -255,6 +257,8 @@ begin
     BetragN[n] := 0;
 
   Bar := 0;
+  RueckGeld := 0;
+  Summe := 0;
   Edit1.Text := '';
   Edit2.Text := '';
   Edit3.Text := '';
@@ -345,8 +349,7 @@ end;
 
 procedure TFormBuchBarKasse.FormActivate(Sender: TObject);
 begin
-  if not(assigned(Konten)) then
-    ReflectKonten;
+  EnsureKonten;
 end;
 
 procedure TFormBuchBarKasse.FormKeyPress(Sender: TObject; var Key: Char);
@@ -379,50 +382,195 @@ begin
     StaticText2.Caption := '+++';
 end;
 
-procedure TFormBuchBarKasse.ReflectKonten;
+procedure TFormBuchBarKasse.EnsureKonten;
 var
   n: integer;
+  Konto: string;
 begin
-  BeginHourGlass;
-  if assigned(Konten) then
-    FreeAndNil(Konten);
+  if not(assigned(Konten)) then
+  begin
+    BeginHourGlass;
 
-  Konten := e_r_sqlsl
-    ('select distinct SORTIMENT.KONTO||'' - ''||BUCH.KONTO as KONTO ' +
-    'from SORTIMENT ' + 'join BUCH on' + ' (BUCH.NAME=SORTIMENT.KONTO) and' +
-    ' (BUCH.BETRAG is null) and' + ' (BUCH.SKRIPT not like ''%BAR=NEIN%'')' +
-    'where ' + ' (SORTIMENT.KONTO is not null) ' + 'order by' +
-    ' SORTIMENT.KONTO');
+    for n := 1 to cBarKasse_AnzahlKonten do
+      MwStN[n] := 0;
 
-  for n := Konten.count to cBarKasse_AnzahlKonten do
-    Konten.add(cKonto_Erloese + ' - Erlöse');
+    KontoNummern := TStringList.create;
+    Konten := e_r_sqlsl(
+      { } 'select distinct SORTIMENT.KONTO||'' - ''||BUCH.KONTO as KONTO ' +
+      { } 'from SORTIMENT ' +
+      { } 'join BUCH on' +
+      { } ' (BUCH.NAME=SORTIMENT.KONTO) and' +
+      { } ' (BUCH.BETRAG is null) and' +
+      { } ' (BUCH.SKRIPT not like ''%BAR=NEIN%'')' +
+      { } 'where ' +
+      { } ' (SORTIMENT.KONTO is not null) ' +
+      { } 'order by' +
+      { } ' SORTIMENT.KONTO');
 
-  Label6.Caption := Konten[0];
-  Label7.Caption := Konten[1];
-  Label8.Caption := Konten[2];
-  Label9.Caption := Konten[3];
-  Label14.Caption := Konten[4];
-  Label16.Caption := Konten[5];
-  EndHourGlass;
+    for n := Konten.Count to cBarKasse_AnzahlKonten do
+      Konten.add(cKonto_Erloese + ' - Erlöse');
+
+    for n := 0 to pred(Konten.Count) do
+    begin
+      Konto := nextp(Konten[n], ' ', 0);
+      KontoNummern.add(Konto);
+      MwStN[n + 1] := b_r_MwST(Konto);
+    end;
+
+    Label6.Caption := Konten[0];
+    Label7.Caption := Konten[1];
+    Label8.Caption := Konten[2];
+    Label9.Caption := Konten[3];
+    Label14.Caption := Konten[4];
+    Label16.Caption := Konten[5];
+
+    EndHourGlass;
+  end;
 end;
 
-procedure TFormBuchBarKasse.setContext;
+procedure TFormBuchBarKasse.setContext(BELEG_R: integer = 0);
+var
+  cPosten: TIB_Cursor;
+  SORTIMENT_R: integer;
+  ARTIKEL: string;
+  Konto: string;
+  Konto_Index: integer;
+  EinzelpreisNetto: boolean;
+  _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
+  _Rabatt, _EinzelPreis, _MwStSatz: double;
+  _PreisProPosition: double;
+  NameSet, KontoSet: boolean;
+  n: integer;
 begin
+  // Werte zurücksetzen
+  BeginHourGlass;
   Clear;
-  show;
-  Edit1.SetFocus;
+  NameSet := false;
+
+  if (BELEG_R >= cRID_FirstValid) then
+  begin
+    EnsureKonten;
+    EinzelpreisNetto :=
+      (e_r_sqls('select EINZELPREIS_NETTO from BELEG where RID=' +
+      inttostr(BELEG_R)) = cC_True);
+    cPosten := nCursor;
+    with cPosten do
+    begin
+      sql.add('select');
+      sql.add(' POSTEN.ARTIKEL,');
+      sql.add(' POSTEN.ARTIKEL_R,');
+      sql.add(' POSTEN.AUSGABEART_R,');
+      sql.add(' POSTEN.EINHEIT_R,');
+      sql.add(' POSTEN.MENGE,');
+      sql.add(' POSTEN.MENGE_RECHNUNG,');
+      sql.add(' POSTEN.MENGE_AUSFALL,');
+      sql.add(' POSTEN.MENGE_GELIEFERT,');
+      sql.add(' POSTEN.MENGE_AGENT,');
+      sql.add(' POSTEN.MWST,');
+      sql.add(' POSTEN.NETTO,');
+      sql.add(' POSTEN.RABATT,');
+      sql.add(' POSTEN.PREIS,');
+      sql.add(' SORTIMENT.KONTO');
+      sql.add('from POSTEN');
+      sql.add('left join ARTIKEL on');
+      sql.add(' (POSTEN.ARTIKEL_R=ARTIKEL.RID)');
+      sql.add('left join SORTIMENT on');
+      sql.add(' (ARTIKEL.SORTIMENT_R=SORTIMENT.RID)');
+      sql.add('where');
+      sql.add(' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ')');
+      sql.add('order by');
+      sql.add(' POSTEN.POSNO,POSTEN.RID');
+      ApiFirst;
+      while not(eof) do
+      begin
+        // um welche Zeile gehts?
+        ARTIKEL := FieldByName('ARTIKEL').AsString;
+
+        // den Brutto Preis und die zugehörige Kontonummer berechnen
+
+        e_r_PostenInfo(cPosten, false, EinzelpreisNetto, _Anz, _AnzAuftrag,
+          _AnzGeliefert, _AnzStorniert, _AnzAgent, _Rabatt, _EinzelPreis,
+          _MwStSatz);
+        _PreisProPosition := e_c_Rabatt(e_r_PostenPreis(_EinzelPreis, _Anz,
+          FieldByName('EINHEIT_R').AsInteger), _Rabatt);
+
+        if isSomeMoney(_PreisProPosition) then
+        begin
+
+          repeat
+
+            // Über Konto und passender MwST-Satz suchen
+            Konto := FieldByName('KONTO').AsString;
+            Konto_Index := KontoNummern.IndexOf(Konto);
+            if (Konto_Index <> -1) then
+            begin
+              if (MwStN[Konto_Index + 1] = _MwStSatz) then
+              begin
+                BetragN[Konto_Index + 1] := BetragN[Konto_Index + 1] +
+                  _PreisProPosition;
+                break;
+              end;
+            end;
+
+            // über den MWST Satz suchen
+            KontoSet := false;
+            for n := cBarKasse_AnzahlKonten downto 1 do
+              if (MwStN[n] = _MwStSatz) then
+              begin
+                BetragN[n] := BetragN[n] + _PreisProPosition;
+                KontoSet := true;
+                break;
+              end;
+            if KontoSet then
+              break;
+
+            ShowMessage('Fehler: "' + ARTIKEL +
+              '" konnte nicht zugeordnet werden!');
+
+          until true;
+        end
+        else
+        begin
+          if not(NameSet) then
+            if (ARTIKEL <> '') then
+            begin
+              Edit1.Text := ARTIKEL;
+              NameSet := true;
+            end;
+
+        end;
+        ApiNext;
+      end;
+      close;
+    end;
+    cPosten.free;
+
+  end;
+
+  // Anzeigen
   ReflectData;
+  Show;
+  if NameSet then
+    Edit2.SetFocus
+  else
+    Edit1.SetFocus;
+  EndHourGlass;
+
 end;
 
 procedure TFormBuchBarKasse.SpeedButton12Click(Sender: TObject);
 begin
-  ReflectKonten;
-  Showmessage(HugeSingleLine(Konten));
+  // refresh Kontoinfo
+  FreeAndNil(Konten);
+  FreeAndNil(KontoNummern);
+  EnsureKonten;
+
+  ShowMessage(HugeSingleLine(Konten));
 end;
 
 procedure TFormBuchBarKasse.SpeedButton1Click(Sender: TObject);
 begin
- FormArtikelPOS.Schublade_Auf(iSchubladePort);
+  FormArtikelPOS.Schublade_Auf(iSchubladePort);
 end;
 
 end.

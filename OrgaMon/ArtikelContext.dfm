@@ -761,7 +761,7 @@ object FormArtikelContext: TFormArtikelContext
       'MULTIBEL=BOOLEAN=Y,N'
       'HAUPTARTIKEL=BOOLEAN=Y,N'
       'ZWINGEND=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -790,7 +790,7 @@ object FormArtikelContext: TFormArtikelContext
   object IB_Query2: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayWidth.Strings = (
       'NUMERO=51'
       'TITEL=217')
@@ -829,7 +829,7 @@ object FormArtikelContext: TFormArtikelContext
     Top = 184
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayWidth.Strings = (
       'TITEL=471'
       'POSNO=65')
@@ -871,7 +871,7 @@ object FormArtikelContext: TFormArtikelContext
     Top = 444
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '

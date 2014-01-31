@@ -393,15 +393,6 @@ object FormPersonSuche: TFormPersonSuche
     ShowHint = True
     OnClick = SpeedButton4Click
   end
-  object Label4: TLabel
-    Left = 327
-    Top = 512
-    Width = 135
-    Height = 13
-    Anchors = [akLeft, akBottom]
-    Caption = 'Aufgaben Beschreibung'
-    ExplicitTop = 515
-  end
   object Image1: TImage
     Left = 883
     Top = 229
@@ -527,6 +518,14 @@ object FormPersonSuche: TFormPersonSuche
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image1Click
   end
+  object Label4: TLabel
+    Left = 342
+    Top = 234
+    Width = 23
+    Height = 13
+    Caption = '&Info'
+    FocusControl = Edit2
+  end
   object Edit1: TEdit
     Left = 109
     Top = 507
@@ -558,7 +557,7 @@ object FormPersonSuche: TFormPersonSuche
     Font.Style = []
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect]
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 27
     OnDblClick = StringGrid1DblClick
     OnDrawCell = StringGrid1DrawCell
     OnKeyPress = StringGrid1KeyPress
@@ -569,14 +568,14 @@ object FormPersonSuche: TFormPersonSuche
     Width = 22
     Height = 22
     Caption = '&P'
-    TabOrder = 2
+    TabOrder = 26
     OnClick = Button2Click
   end
   object Button6: TButton
     Left = 251
     Top = 12
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Nach oben schieben'
     Caption = #241
     Font.Charset = SYMBOL_CHARSET
@@ -587,14 +586,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 3
+    TabOrder = 2
     OnClick = Button6Click
   end
   object Button9: TButton
     Left = 275
     Top = 12
-    Width = 21
-    Height = 22
+    Width = 23
+    Height = 23
     Hint = 'Nach unten schieben'
     Caption = #242
     Font.Charset = SYMBOL_CHARSET
@@ -605,14 +604,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 4
+    TabOrder = 3
     OnClick = Button9Click
   end
   object Button23: TButton
     Left = 228
     Top = 12
-    Width = 22
-    Height = 22
+    Width = 23
+    Height = 23
     Hint = 'Original-Reihenfolge wiederherstellen'
     Caption = #244
     Font.Charset = SYMBOL_CHARSET
@@ -623,7 +622,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 5
+    TabOrder = 1
     OnClick = Button23Click
   end
   object Button1: TButton
@@ -631,7 +630,7 @@ object FormPersonSuche: TFormPersonSuche
     Top = 229
     Width = 23
     Height = 22
-    Hint = 'Aufgabe muss warten'
+    Hint = 'als "muss warten" aufnehmen'
     Caption = 'K'
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
@@ -641,7 +640,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 6
+    TabOrder = 21
     OnClick = Button1Click
   end
   object Button3: TButton
@@ -649,7 +648,7 @@ object FormPersonSuche: TFormPersonSuche
     Top = 229
     Width = 23
     Height = 22
-    Hint = 'Aufgabe kommt jetzt dran'
+    Hint = 'als "in Behandlung" aufnehmen'
     Caption = 'J'
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
@@ -659,14 +658,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 7
+    TabOrder = 22
     OnClick = Button3Click
   end
   object Button4: TButton
     Left = 635
     Top = 12
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Aufgabe muss warten'
     Caption = 'K'
     Font.Charset = SYMBOL_CHARSET
@@ -677,14 +676,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 8
+    TabOrder = 11
     OnClick = Button4Click
   end
   object Button5: TButton
     Left = 664
     Top = 12
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Aufgabe kommt jetzt dran'
     Caption = 'J'
     Font.Charset = SYMBOL_CHARSET
@@ -695,14 +694,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 9
+    TabOrder = 12
     OnClick = Button5Click
   end
   object Button7: TButton
-    Left = 693
+    Left = 757
     Top = 12
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Aufgabe erledigt!'
     Caption = #252
     Font.Charset = SYMBOL_CHARSET
@@ -713,7 +712,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 10
+    TabOrder = 15
     OnClick = Button7Click
   end
   object Button8: TButton
@@ -721,7 +720,7 @@ object FormPersonSuche: TFormPersonSuche
     Top = 229
     Width = 23
     Height = 22
-    Hint = 'Etwas merken'
+    Hint = 'Als "Notiz" aufnehmen'
     Caption = #39
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
@@ -731,14 +730,14 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 11
+    TabOrder = 20
     OnClick = Button8Click
   end
   object Button10: TButton
     Left = 606
     Top = 12
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Aufgabe beschreiben'
     Caption = #39
     Font.Charset = SYMBOL_CHARSET
@@ -749,51 +748,37 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 12
+    TabOrder = 10
     OnClick = Button10Click
   end
-  object Edit2: TEdit
-    Left = 469
-    Top = 507
-    Width = 263
-    Height = 24
-    Anchors = [akLeft, akBottom]
-    Enabled = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Verdana'
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 13
-  end
   object IB_Grid1: TIB_Grid
-    Left = 8
-    Top = 38
+    Left = 7
+    Top = 39
     Width = 929
     Height = 189
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     ReadOnly = True
-    TabOrder = 14
+    TabOrder = 18
     DrawFocusSelected = True
+    DrawCellTextOptions = [gdtShowTextBlob]
     OnGetCellProps = IB_Grid1GetCellProps
     OnGetDisplayText = IB_Grid1GetDisplayText
   end
   object Button11: TButton
     Left = 854
     Top = 12
-    Width = 22
-    Height = 22
+    Width = 23
+    Height = 23
     Caption = 'P'
-    TabOrder = 15
+    TabOrder = 17
     OnClick = Button11Click
   end
   object Button12: TButton
     Left = 826
     Top = 12
-    Width = 22
-    Height = 22
+    Width = 23
+    Height = 23
     Caption = 'B'
     TabOrder = 16
     OnClick = Button12Click
@@ -804,8 +789,145 @@ object FormPersonSuche: TFormPersonSuche
     Width = 22
     Height = 22
     Caption = '&B'
-    TabOrder = 17
+    TabOrder = 25
     OnClick = Button13Click
+  end
+  object Button14: TButton
+    Left = 693
+    Top = 12
+    Width = 23
+    Height = 23
+    Hint = 'in den Status "Telefon"'
+    Caption = ')'
+    Font.Charset = SYMBOL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Wingdings'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 13
+    OnClick = Button14Click
+  end
+  object Button15: TButton
+    Left = 693
+    Top = 229
+    Width = 23
+    Height = 22
+    Hint = 'als "R'#252'ckruf" aufnehmen'
+    Caption = ')'
+    Font.Charset = SYMBOL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Wingdings'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 23
+    OnClick = Button15Click
+  end
+  object Button16: TButton
+    Left = 722
+    Top = 12
+    Width = 23
+    Height = 23
+    Hint = 'in den Status "Notfall"'
+    Caption = 'M'
+    Font.Charset = SYMBOL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Wingdings'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 14
+    OnClick = Button16Click
+  end
+  object Button17: TButton
+    Left = 721
+    Top = 229
+    Width = 23
+    Height = 22
+    Hint = 'als "Notfall" aufnehmen'
+    Caption = 'M'
+    Font.Charset = SYMBOL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Wingdings'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 24
+    OnClick = Button17Click
+  end
+  object Edit2: TEdit
+    Left = 371
+    Top = 230
+    Width = 215
+    Height = 21
+    Hint = '<ENTER> zum Abschluss. <Doppelklick> um zu leeren.'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 19
+    OnDblClick = Edit2DblClick
+    OnKeyPress = Edit2KeyPress
+  end
+  object Button19: TButton
+    Left = 408
+    Top = 12
+    Width = 33
+    Height = 23
+    Caption = 'B-2'
+    TabOrder = 5
+    OnClick = Button18Click
+  end
+  object Button18: TButton
+    Left = 371
+    Top = 12
+    Width = 33
+    Height = 23
+    Caption = 'B-1'
+    TabOrder = 4
+    OnClick = Button18Click
+  end
+  object Button20: TButton
+    Left = 444
+    Top = 12
+    Width = 33
+    Height = 23
+    Caption = 'B-3'
+    TabOrder = 6
+    OnClick = Button18Click
+  end
+  object Button21: TButton
+    Left = 480
+    Top = 12
+    Width = 33
+    Height = 23
+    Caption = 'B-4'
+    TabOrder = 7
+    OnClick = Button18Click
+  end
+  object Button22: TButton
+    Left = 516
+    Top = 12
+    Width = 33
+    Height = 23
+    Caption = 'B-5'
+    TabOrder = 8
+    OnClick = Button18Click
+  end
+  object Button24: TButton
+    Left = 553
+    Top = 12
+    Width = 33
+    Height = 23
+    TabOrder = 9
+    OnClick = Button18Click
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'CSV'
@@ -829,13 +951,15 @@ object FormPersonSuche: TFormPersonSuche
     FieldsDisplayLabel.Strings = (
       'PERSON_R=Person')
     FieldsDisplayWidth.Strings = (
-      'MITGLIEDERLISTE.PERSON_R=784')
+      'MITGLIEDERLISTE.PERSON_R=450'
+      'INFO=322')
     FieldsVisible.Strings = (
       'GRUPPE.NAME=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select'
       ' MITGLIEDERLISTE.PERSON_R,'
+      ' MITGLIEDERLISTE.INFO,'
       ' MITGLIEDERLISTE.SEIT,'
       
         ' COALESCE(MITGLIEDERLISTE.PAPERCOLOR, GRUPPE.PAPERCOLOR) as PAPE' +
@@ -850,15 +974,20 @@ object FormPersonSuche: TFormPersonSuche
       'order by'
       ' COALESCE(GRUPPE.POSNO,GRUPPE.RID), '
       ' COALESCE(MITGLIEDERLISTE.POSNO,MITGLIEDERLISTE.RID)'
+      'for update'
       ''
       '-- MITGLIEDERLISTE.ZUSAGE,'
       '-- MITGLIEDERLISTE.ABLAUF,')
+    ColorScheme = True
+    RefreshAction = raKeepDataPosOrRowNum
+    RequestLive = True
+    AfterScroll = IB_Query1AfterScroll
     Left = 136
     Top = 72
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 368
-    Top = 16
+    Left = 256
+    Top = 80
   end
 end
