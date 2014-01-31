@@ -199,6 +199,10 @@ object FormBelege: TFormBelege
       object TabSheet1: TTabSheet
         Caption = 'Posten'
         ImageIndex = 13
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           923
           219)
@@ -441,9 +445,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 34
+          Top = 35
           Width = 923
-          Height = 185
+          Height = 184
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -453,6 +457,8 @@ object FormBelege: TFormBelege
           TabOrder = 0
           OnCellGainFocus = IB_Grid2CellGainFocus
           OnGetDisplayText = IB_Grid2GetDisplayText
+          ExplicitTop = 34
+          ExplicitHeight = 185
         end
         object IB_NavigationBar2: TIB_NavigationBar
           Left = 71
@@ -811,6 +817,8 @@ object FormBelege: TFormBelege
         Caption = 'Texte'
         Highlighted = True
         ImageIndex = 3
+        ExplicitTop = 24
+        ExplicitHeight = 220
         object Label13: TLabel
           Left = 0
           Top = 120
@@ -877,6 +885,8 @@ object FormBelege: TFormBelege
       object TabSheet3: TTabSheet
         Caption = 'Interninfo'
         ImageIndex = 8
+        ExplicitTop = 24
+        ExplicitHeight = 220
         object IB_Memo3: TIB_Memo
           Left = 0
           Top = 0
@@ -887,6 +897,7 @@ object FormBelege: TFormBelege
           Align = alClient
           TabOrder = 0
           AutoSize = False
+          ExplicitHeight = 220
         end
       end
     end
@@ -2213,7 +2224,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100DC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100E00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

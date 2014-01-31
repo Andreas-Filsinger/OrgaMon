@@ -97,6 +97,7 @@ type
     procedure Edit8KeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton1Click(Sender: TObject);
+    procedure Button1KeyPress(Sender: TObject; var Key: Char);
   private
     { Private-Deklarationen }
     Konten: TStringList;
@@ -106,6 +107,7 @@ type
     Bar: double;
     Summe: double;
     RueckGeld: double;
+    KassenStation: boolean;
 
     procedure ReflectData;
     procedure EnsureKonten;
@@ -115,6 +117,7 @@ type
     { Public-Deklarationen }
     procedure setContext(BELEG_R: integer = 0);
     procedure Clear;
+    procedure Swap;
   end;
 
 var
@@ -233,6 +236,15 @@ begin
   end;
 end;
 
+procedure TFormBuchBarKasse.Button1KeyPress(Sender: TObject; var Key: Char);
+begin
+  if (Key = 'X') or (Key = 'x') then
+  begin
+    Swap;
+    Key := #0;
+  end;
+end;
+
 procedure TFormBuchBarKasse.Button2Click(Sender: TObject);
 begin
   if (Edit1.Text <> '') or (Edit2.Text <> '') or (Edit3.Text <> '') or
@@ -255,7 +267,6 @@ var
 begin
   for n := 1 to cBarKasse_AnzahlKonten do
     BetragN[n] := 0;
-
   Bar := 0;
   RueckGeld := 0;
   Summe := 0;
@@ -571,6 +582,22 @@ end;
 procedure TFormBuchBarKasse.SpeedButton1Click(Sender: TObject);
 begin
   FormArtikelPOS.Schublade_Auf(iSchubladePort);
+end;
+
+procedure TFormBuchBarKasse.Swap;
+begin
+  KassenStation := not(KassenStation);
+  case KassenStation of
+    true:
+      begin
+        Button1.Caption := '*';
+      end;
+    false:
+      begin
+        Button1.Caption := 'C';
+      end;
+  end;
+
 end;
 
 end.

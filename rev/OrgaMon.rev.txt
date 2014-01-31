@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.947 (31.01.14) Andreas Filsinger
+
+ Neu: Personen-Suche: anonyme Aufgabe
+ Neu: Personen-Suche: Bei "anonymen Aufgaben": Zuordnung einer "persönlichen"
+      schnellen Rechnung mit Taste "B"eleg
+
 Rev 7.946 (31.01.14) Andreas Filsinger
 
  Neu: Personen-Suche: 2 neue Gruppen (Notfall+Telefon)
