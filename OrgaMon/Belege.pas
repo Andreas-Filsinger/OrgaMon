@@ -324,7 +324,7 @@ type
       Posten_Rid: Integer = 0); overload;
     procedure DoTheArtikelSearch;
     function getContext_PERSON_R: Integer;
-    procedure Neu;
+    function Neu : integer;
 
     // Zuweisung der HotKeys
     procedure setShortCut(pDataSource: TIB_DataSource);
@@ -673,7 +673,7 @@ begin
   AusSucheUebernehmen;
 end;
 
-procedure TFormBelege.Neu;
+function TFormBelege.Neu : integer;
 
   procedure SetMM(Medium, Motivation: string);
   var
@@ -739,6 +739,7 @@ begin
     EndHourGlass;
   end;
   Edit1.SetFocus;
+  result := BelegRID;
 end;
 
 procedure TFormBelege.Button7Click(Sender: TObject);

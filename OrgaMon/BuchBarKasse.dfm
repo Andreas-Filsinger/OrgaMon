@@ -424,6 +424,7 @@ object FormBuchBarKasse: TFormBuchBarKasse
     ParentFont = False
     TabOrder = 8
     OnClick = Button1Click
+    OnKeyPress = Button1KeyPress
   end
   object Button2: TButton
     Left = 228

@@ -89,6 +89,7 @@ type
     Button21: TButton;
     Button22: TButton;
     Button24: TButton;
+    SpeedButton5: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -132,6 +133,7 @@ type
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Edit2DblClick(Sender: TObject);
     procedure Button18Click(Sender: TObject);
+    procedure SpeedButton5Click(Sender: TObject);
   private
     { Private-Deklarationen }
     SearchIndex: TWordIndex;
@@ -500,9 +502,50 @@ begin
 end;
 
 procedure TFormPersonSuche.Button12Click(Sender: TObject);
+var
+  PERSON_R: Integer;
+  BELEG_R: Integer;
+  MITGLIEDERLISTE_R: Integer;
+  INFO: string;
 begin
+
+  //
   if not(DontSetContext) then
-    FormBelege.setContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
+  begin
+    PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
+    MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
+
+    if (PERSON_R = iSchnelleRechnung_PERSON_R) then
+    begin
+      BELEG_R := strtointdef(nextp(IB_Query1.FieldByName('INFO').AsString,
+        '#', 1), 0);
+      if (BELEG_R < cRID_FirstValid) then
+      begin
+        FormBelege.setContext(iSchnelleRechnung_PERSON_R);
+        BELEG_R := FormBelege.Neu;
+
+        // Neue Beleg Nummer in den Auftrag eintragen
+        INFO := IB_Query1.FieldByName('INFO').AsString + ' #' +
+          inttostr(BELEG_R);
+
+        e_x_sql(
+          { } 'update MITGLIEDERLISTE set INFO=' +
+          { } '''' + INFO + '''' +
+          { } 'where RID=' +
+          { } inttostr(MITGLIEDERLISTE_R));
+        AufgabeAenderungAnzeigen;
+      end
+      else
+      begin
+        FormBelege.setContext(iSchnelleRechnung_PERSON_R, BELEG_R);
+      end;
+
+    end
+    else
+    begin
+      FormBelege.setContext(PERSON_R);
+    end;
+  end;
 end;
 
 procedure TFormPersonSuche.Button13Click(Sender: TObject);
@@ -980,6 +1023,16 @@ begin
     else
       open;
   end;
+end;
+
+procedure TFormPersonSuche.SpeedButton5Click(Sender: TObject);
+begin
+  BeginHourGlass;
+  SearchIndex.FoundList.clear;
+  SearchIndex.FoundList.add(pointer(iSchnelleRechnung_PERSON_R));
+  Zeige;
+  StringGrid1.SetFocus;
+  EndHourGlass;
 end;
 
 end.
