@@ -221,8 +221,8 @@ object FormPersonSuche: TFormPersonSuche
     OnClick = SpeedButton27Click
   end
   object Label3: TLabel
-    Left = 36
-    Top = 21
+    Left = 33
+    Top = 17
     Width = 166
     Height = 13
     Caption = 'personenbezogene Aufgaben'
@@ -353,10 +353,10 @@ object FormPersonSuche: TFormPersonSuche
     OnClick = Image2Click
   end
   object SpeedButton4: TSpeedButton
-    Left = 8
+    Left = 7
     Top = 12
-    Width = 22
-    Height = 22
+    Width = 23
+    Height = 23
     Hint = 'Suchindex neu erstellen'
     Margins.Left = 4
     Margins.Top = 4
@@ -564,6 +564,43 @@ object FormPersonSuche: TFormPersonSuche
     ShowHint = True
     OnClick = SpeedButton5Click
   end
+  object SpeedButton7: TSpeedButton
+    Left = 218
+    Top = 12
+    Width = 23
+    Height = 23
+    Hint = 'andere Identit'#228't annehmen'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
+      000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000
+      0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFF000000
+      FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000FFFFFFFFFFFFFFFFFFFFFF
+      FF000000FFFFFF000000000000FFFFFFFFFFFFFFFFFF00000000000000000000
+      0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFF
+      FFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFF000000FFFFFF000000FFFFFFFFFFFF000000000000000000000000FF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF000000
+      FFFFFFFFFFFF000000FFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000
+      0000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF000000000000FFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00
+      0000000000FFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000
+      000000FFFFFF000000000000FFFFFFFFFFFF000000000000000000FFFFFF0000
+      00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000FF
+      FFFFFFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFF0000000000
+      00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000
+      0000000000000000FFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000FFFF
+      FFFFFFFF000000000000FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF000000FF
+      FFFFFFFFFFFFFFFFFFFFFF000000000000000000000000FFFFFF}
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton7Click
+  end
   object Edit1: TEdit
     Left = 109
     Top = 507
@@ -595,7 +632,7 @@ object FormPersonSuche: TFormPersonSuche
     Font.Style = []
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect]
     ParentFont = False
-    TabOrder = 27
+    TabOrder = 24
     OnDblClick = StringGrid1DblClick
     OnDrawCell = StringGrid1DrawCell
     OnKeyPress = StringGrid1KeyPress
@@ -606,62 +643,8 @@ object FormPersonSuche: TFormPersonSuche
     Width = 22
     Height = 22
     Caption = '&P'
-    TabOrder = 26
+    TabOrder = 23
     OnClick = Button2Click
-  end
-  object Button6: TButton
-    Left = 251
-    Top = 12
-    Width = 23
-    Height = 23
-    Hint = 'Nach oben schieben'
-    Caption = #241
-    Font.Charset = SYMBOL_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -17
-    Font.Name = 'Wingdings'
-    Font.Style = []
-    ParentFont = False
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 2
-    OnClick = Button6Click
-  end
-  object Button9: TButton
-    Left = 275
-    Top = 12
-    Width = 23
-    Height = 23
-    Hint = 'Nach unten schieben'
-    Caption = #242
-    Font.Charset = SYMBOL_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -17
-    Font.Name = 'Wingdings'
-    Font.Style = []
-    ParentFont = False
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 3
-    OnClick = Button9Click
-  end
-  object Button23: TButton
-    Left = 228
-    Top = 12
-    Width = 23
-    Height = 23
-    Hint = 'Original-Reihenfolge wiederherstellen'
-    Caption = #244
-    Font.Charset = SYMBOL_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -17
-    Font.Name = 'Wingdings'
-    Font.Style = []
-    ParentFont = False
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 1
-    OnClick = Button23Click
   end
   object Button1: TButton
     Left = 635
@@ -678,7 +661,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 21
+    TabOrder = 18
     OnClick = Button1Click
   end
   object Button3: TButton
@@ -696,7 +679,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 22
+    TabOrder = 19
     OnClick = Button3Click
   end
   object Button4: TButton
@@ -714,7 +697,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 11
+    TabOrder = 8
     OnClick = Button4Click
   end
   object Button5: TButton
@@ -732,7 +715,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 12
+    TabOrder = 9
     OnClick = Button5Click
   end
   object Button7: TButton
@@ -750,7 +733,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 15
+    TabOrder = 12
     OnClick = Button7Click
   end
   object Button8: TButton
@@ -768,7 +751,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 20
+    TabOrder = 17
     OnClick = Button8Click
   end
   object Button10: TButton
@@ -786,7 +769,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 10
+    TabOrder = 7
     OnClick = Button10Click
   end
   object IB_Grid1: TIB_Grid
@@ -797,7 +780,7 @@ object FormPersonSuche: TFormPersonSuche
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     ReadOnly = True
-    TabOrder = 18
+    TabOrder = 15
     DrawFocusSelected = True
     DrawCellTextOptions = [gdtShowTextBlob]
     OnGetCellProps = IB_Grid1GetCellProps
@@ -809,7 +792,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 23
     Height = 23
     Caption = 'P'
-    TabOrder = 17
+    TabOrder = 14
     OnClick = Button11Click
   end
   object Button12: TButton
@@ -818,7 +801,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 23
     Height = 23
     Caption = 'B'
-    TabOrder = 16
+    TabOrder = 13
     OnClick = Button12Click
   end
   object Button13: TButton
@@ -827,7 +810,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 22
     Height = 22
     Caption = '&B'
-    TabOrder = 25
+    TabOrder = 22
     OnClick = Button13Click
   end
   object Button14: TButton
@@ -845,7 +828,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 13
+    TabOrder = 10
     OnClick = Button14Click
   end
   object Button15: TButton
@@ -863,7 +846,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 23
+    TabOrder = 20
     OnClick = Button15Click
   end
   object Button16: TButton
@@ -881,7 +864,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 14
+    TabOrder = 11
     OnClick = Button16Click
   end
   object Button17: TButton
@@ -899,7 +882,7 @@ object FormPersonSuche: TFormPersonSuche
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 24
+    TabOrder = 21
     OnClick = Button17Click
   end
   object Edit2: TEdit
@@ -910,7 +893,7 @@ object FormPersonSuche: TFormPersonSuche
     Hint = '<ENTER> zum Abschluss. <Doppelklick> um zu leeren.'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 19
+    TabOrder = 16
     OnDblClick = Edit2DblClick
     OnKeyPress = Edit2KeyPress
   end
@@ -920,7 +903,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 33
     Height = 23
     Caption = 'B-2'
-    TabOrder = 5
+    TabOrder = 2
     OnClick = Button18Click
   end
   object Button18: TButton
@@ -929,7 +912,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 33
     Height = 23
     Caption = 'B-1'
-    TabOrder = 4
+    TabOrder = 1
     OnClick = Button18Click
   end
   object Button20: TButton
@@ -938,7 +921,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 33
     Height = 23
     Caption = 'B-3'
-    TabOrder = 6
+    TabOrder = 3
     OnClick = Button18Click
   end
   object Button21: TButton
@@ -947,7 +930,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 33
     Height = 23
     Caption = 'B-4'
-    TabOrder = 7
+    TabOrder = 4
     OnClick = Button18Click
   end
   object Button22: TButton
@@ -956,7 +939,7 @@ object FormPersonSuche: TFormPersonSuche
     Width = 33
     Height = 23
     Caption = 'B-5'
-    TabOrder = 8
+    TabOrder = 5
     OnClick = Button18Click
   end
   object Button24: TButton
@@ -964,7 +947,7 @@ object FormPersonSuche: TFormPersonSuche
     Top = 12
     Width = 33
     Height = 23
-    TabOrder = 9
+    TabOrder = 6
     OnClick = Button18Click
   end
   object OpenDialog1: TOpenDialog

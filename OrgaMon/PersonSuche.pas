@@ -57,9 +57,6 @@ type
     SpeedButton3: TSpeedButton;
     SpeedButton27: TSpeedButton;
     Label3: TLabel;
-    Button6: TButton;
-    Button9: TButton;
-    Button23: TButton;
     Image2: TImage;
     Button1: TButton;
     Button3: TButton;
@@ -90,6 +87,7 @@ type
     Button22: TButton;
     Button24: TButton;
     SpeedButton5: TSpeedButton;
+    SpeedButton7: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -134,6 +132,7 @@ type
     procedure Edit2DblClick(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
+    procedure SpeedButton7Click(Sender: TObject);
   private
     { Private-Deklarationen }
     SearchIndex: TWordIndex;
@@ -1033,6 +1032,47 @@ begin
   Zeige;
   StringGrid1.SetFocus;
   EndHourGlass;
+end;
+
+procedure TFormPersonSuche.SpeedButton7Click(Sender: TObject);
+var
+  PERSON_R, PERSON_R_NEU: Integer;
+  MITGLIEDERLISTE_R: Integer;
+begin
+  // Person OBEN
+  MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
+  PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
+
+  // Person in der Suchtreffer Liste
+  if (StringGrid1.Row >= 1) and (StringGrid1.Row <= SearchIndex.FoundList.Count)
+  then
+    PERSON_R_NEU := Integer(SearchIndex.FoundList[pred(StringGrid1.Row)])
+    else
+     PERSON_R_NEU := cRID_Unset;
+
+  // Aktion an sich
+  if (MITGLIEDERLISTE_R >= cRID_FirstValid) and (PERSON_R >= cRID_FirstValid)
+    and (PERSON_R_NEU >= cRID_FirstValid) and (PERSON_R <> PERSON_R_NEU) then
+  begin
+    // Identität soll geändert werden
+    if doit(
+      { } 'Soll der Eintrag' + #13#10 +
+      { } e_r_Person(PERSON_R) + #13#10 +
+      { } 'wegfallen? Und ab jetzt' + #13#10 +
+      { } e_r_Person(PERSON_R_NEU) + #13#10 + 'eingetragen werden') then
+    begin
+        // Identität abändern
+        e_x_sql(
+          { } 'update MITGLIEDERLISTE set PERSON_R=' +
+          { } inttostr(PERSON_R_NEU) + ' ' +
+          { } 'where RID=' +
+          { } inttostr(MITGLIEDERLISTE_R));
+        AufgabeAenderungAnzeigen;
+        AufgabeRefresh;
+
+        // imp pend: Beleg/Kasse umkopieren
+    end;
+  end;
 end;
 
 end.
