@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.948 (03.02.14) Andreas Filsinger
+
+ Neu: Person-Suche: Aufgabe: Haifisch zur Änderung des Personenbezuges
+
 Rev 7.947 (31.01.14) Andreas Filsinger
 
  Neu: Personen-Suche: anonyme Aufgabe
