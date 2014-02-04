@@ -268,8 +268,8 @@ begin
   for n := 1 to cBarKasse_AnzahlKonten do
     BetragN[n] := 0;
   Bar := 0;
-  RueckGeld := 0;
   Summe := 0;
+  RueckGeld := 0;
   Edit1.Text := '';
   Edit2.Text := '';
   Edit3.Text := '';
@@ -402,9 +402,6 @@ begin
   begin
     BeginHourGlass;
 
-    for n := 1 to cBarKasse_AnzahlKonten do
-      MwStN[n] := 0;
-
     KontoNummern := TStringList.create;
     Konten := e_r_sqlsl(
       { } 'select distinct SORTIMENT.KONTO||'' - ''||BUCH.KONTO as KONTO ' +
@@ -418,16 +415,20 @@ begin
       { } 'order by' +
       { } ' SORTIMENT.KONTO');
 
+    // Auffüllen auf zumindest "cBarKasse_AnzahlKonten" Konten
     for n := Konten.Count to cBarKasse_AnzahlKonten do
       Konten.add(cKonto_Erloese + ' - Erlöse');
 
+    // "KontoNummern" den "Konten" zur Seite stellen
     for n := 0 to pred(Konten.Count) do
     begin
       Konto := nextp(Konten[n], ' ', 0);
       KontoNummern.add(Konto);
-      MwStN[n + 1] := b_r_MwST(Konto);
+      if (n < cBarKasse_AnzahlKonten) then
+        MwStN[succ(n)] := b_r_MwST(Konto);
     end;
 
+    // die ersten "cBarKasse_AnzahlKonten"
     Label6.Caption := Konten[0];
     Label7.Caption := Konten[1];
     Label8.Caption := Konten[2];
