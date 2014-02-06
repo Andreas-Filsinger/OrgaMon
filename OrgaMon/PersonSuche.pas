@@ -88,6 +88,7 @@ type
     Button24: TButton;
     SpeedButton5: TSpeedButton;
     SpeedButton7: TSpeedButton;
+    SpeedButton23: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -133,6 +134,7 @@ type
     procedure Button18Click(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton7Click(Sender: TObject);
+    procedure SpeedButton23Click(Sender: TObject);
   private
     { Private-Deklarationen }
     SearchIndex: TWordIndex;
@@ -174,7 +176,7 @@ uses
   Funktionen.Basis,
   Funktionen.Beleg,
   Funktionen.LokaleDaten,
-  IBExportTable, Belege;
+  IBExportTable, Belege, BuchBarKasse;
 
 {$R *.DFM}
 
@@ -404,10 +406,30 @@ end;
 procedure TFormPersonSuche.Button7Click(Sender: TObject);
 var
   MITGLIEDERLISTE_R: Integer;
+  qEREIGNIS: TIB_Query;
 begin
   MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
   if (MITGLIEDERLISTE_R >= cRID_FirstValid) then
   begin
+
+    // Aufgabe als erledigt in das Ereignis sichern!
+    qEREIGNIS := nQuery;
+    with qEREIGNIS do
+    begin
+      sql.Add('select RID,ART,INFO,PERSON_R,TICKET_R from EREIGNIS for update');
+      insert;
+      FieldByName('RID').AsInteger := cRID_AutoInc;
+      FieldByName('ART').AsInteger := eT_AufgabeErledigt;
+
+      // copy Fields
+      FieldByName('INFO').assign(IB_Query1.FieldByName('INFO'));
+      FieldByName('PERSON_R').assign(IB_Query1.FieldByName('PERSON_R'));
+      FieldByName('TICKET_R').assign(IB_Query1.FieldByName('TICKET_R'));
+      post;
+    end;
+    qEREIGNIS.Free;
+
+    // Aufgabe raus
     e_x_sql('delete from MITGLIEDERLISTE where RID=' +
       inttostr(MITGLIEDERLISTE_R));
     AufgabeAenderungAnzeigen;
@@ -779,18 +801,18 @@ begin
       end
       else
       begin
-        sql.add('SELECT PRIV_ANSCHRIFT_R, NUMMER, VORNAME, NACHNAME, PAPERCOLOR');
-        sql.add('FROM PERSON');
-        sql.add('WHERE RID=:CROSSREF');
+        sql.Add('SELECT PRIV_ANSCHRIFT_R, NUMMER, VORNAME, NACHNAME, PAPERCOLOR');
+        sql.Add('FROM PERSON');
+        sql.Add('WHERE RID=:CROSSREF');
       end;
     end;
 
     cANSCHRIFT := DataModuleDatenbank.nCursor;
     with cANSCHRIFT do
     begin
-      sql.add('SELECT NAME1, STRASSE, LAND_R, STATE, ORT, PLZ');
-      sql.add('FROM ANSCHRIFT');
-      sql.add('WHERE RID=:CROSSREF');
+      sql.Add('SELECT NAME1, STRASSE, LAND_R, STATE, ORT, PLZ');
+      sql.Add('FROM ANSCHRIFT');
+      sql.Add('WHERE RID=:CROSSREF');
       open;
     end;
 
@@ -846,8 +868,8 @@ begin
         end;
       end;
 
-    cPERSON.free;
-    cANSCHRIFT.free;
+    cPERSON.Free;
+    cANSCHRIFT.Free;
   end
   else
   begin
@@ -932,9 +954,9 @@ begin
     SearchIndex.FoundList.clear;
     SearchIndex.FoundList.capacity := pred(ImportL.Count);
     for n := 1 to pred(ImportL.Count) do
-      SearchIndex.FoundList.add
+      SearchIndex.FoundList.Add
         (pointer(strtointdef(nextp(ImportL[n], ';', 0), -1)));
-    ImportL.free;
+    ImportL.Free;
     NoLimit := true;
     Zeige;
     if (SearchIndex.FoundList.Count > 0) then
@@ -942,6 +964,33 @@ begin
     else
       Edit1.SetFocus;
     EndHourGlass;
+  end;
+end;
+
+procedure TFormPersonSuche.SpeedButton23Click(Sender: TObject);
+var
+  MITGLIEDERLISTE_R: Integer;
+  TICKET_R: Integer;
+  KassenBeleg: TSTringList;
+begin
+  // gespeicherten Vorgang wiederherstellen!
+  // oder einen neuen beginnen!
+  MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
+  if (MITGLIEDERLISTE_R >= cRID_FirstValid) then
+  begin
+    TICKET_R := IB_Query1.FieldByName('TICKET_R').AsInteger;
+    if (TICKET_R < cRID_FirstValid) then
+    begin
+      TICKET_R := e_w_gen('GEN_TICKET');
+      KassenBeleg := TSTringList.create;
+      KassenBeleg.Values['TICKET_R'];
+    end
+    else
+    begin
+      KassenBeleg := e_r_sqlt('select INFO from TICKET where RID=' +
+        inttostr(TICKET_R));
+    end;
+    FormBuchBarKasse.setContext(KassenBeleg);
   end;
 end;
 
@@ -962,18 +1011,18 @@ begin
   Person := DataModuleDatenbank.nCursor;
   with Person do
   begin
-    sql.add('select rid from person where eintrag>=''' +
+    sql.Add('select rid from person where eintrag>=''' +
       long2date(DatePlus(DateGet, -iNeuanlageZeitraum)) + '''');
-    sql.add('order by eintrag descending');
+    sql.Add('order by eintrag descending');
     ApiFirst;
     while not(Eof) do
     begin
-      SearchIndex.FoundList.add(TObject(FieldByName('RID').AsInteger));
+      SearchIndex.FoundList.Add(TObject(FieldByName('RID').AsInteger));
       APInext;
     end;
     Close;
   end;
-  Person.free;
+  Person.Free;
   Zeige;
   if (SearchIndex.FoundList.Count > 0) then
     StringGrid1.SetFocus
@@ -991,18 +1040,18 @@ begin
   Person := DataModuleDatenbank.nCursor;
   with Person do
   begin
-    sql.add('select rid from person where kontaktam>=''' +
+    sql.Add('select rid from person where kontaktam>=''' +
       long2date(DatePlus(DateGet, -5)) + '''');
-    sql.add('order by kontaktam descending');
+    sql.Add('order by kontaktam descending');
     ApiFirst;
     while not(Eof) do
     begin
-      SearchIndex.FoundList.add(TObject(FieldByName('RID').AsInteger));
+      SearchIndex.FoundList.Add(TObject(FieldByName('RID').AsInteger));
       APInext;
     end;
     Close;
   end;
-  Person.free;
+  Person.Free;
   Zeige;
   if (SearchIndex.FoundList.Count > 0) then
     StringGrid1.SetFocus
@@ -1028,7 +1077,7 @@ procedure TFormPersonSuche.SpeedButton5Click(Sender: TObject);
 begin
   BeginHourGlass;
   SearchIndex.FoundList.clear;
-  SearchIndex.FoundList.add(pointer(iSchnelleRechnung_PERSON_R));
+  SearchIndex.FoundList.Add(pointer(iSchnelleRechnung_PERSON_R));
   Zeige;
   StringGrid1.SetFocus;
   EndHourGlass;
@@ -1047,8 +1096,8 @@ begin
   if (StringGrid1.Row >= 1) and (StringGrid1.Row <= SearchIndex.FoundList.Count)
   then
     PERSON_R_NEU := Integer(SearchIndex.FoundList[pred(StringGrid1.Row)])
-    else
-     PERSON_R_NEU := cRID_Unset;
+  else
+    PERSON_R_NEU := cRID_unset;
 
   // Aktion an sich
   if (MITGLIEDERLISTE_R >= cRID_FirstValid) and (PERSON_R >= cRID_FirstValid)
@@ -1061,16 +1110,16 @@ begin
       { } 'wegfallen? Und ab jetzt' + #13#10 +
       { } e_r_Person(PERSON_R_NEU) + #13#10 + 'eingetragen werden') then
     begin
-        // Identität abändern
-        e_x_sql(
-          { } 'update MITGLIEDERLISTE set PERSON_R=' +
-          { } inttostr(PERSON_R_NEU) + ' ' +
-          { } 'where RID=' +
-          { } inttostr(MITGLIEDERLISTE_R));
-        AufgabeAenderungAnzeigen;
-        AufgabeRefresh;
+      // Identität abändern
+      e_x_sql(
+        { } 'update MITGLIEDERLISTE set PERSON_R=' +
+        { } inttostr(PERSON_R_NEU) + ' ' +
+        { } 'where RID=' +
+        { } inttostr(MITGLIEDERLISTE_R));
+      AufgabeAenderungAnzeigen;
+      AufgabeRefresh;
 
-        // imp pend: Beleg/Kasse umkopieren
+      // imp pend: Beleg/Kasse umkopieren
     end;
   end;
 end;

@@ -411,9 +411,9 @@ object FormBuchBarKasse: TFormBuchBarKasse
     TabOrder = 19
   end
   object Button1: TButton
-    Left = 228
+    Left = 210
     Top = 437
-    Width = 121
+    Width = 139
     Height = 56
     Caption = '*'
     Font.Charset = SYMBOL_CHARSET
@@ -424,13 +424,13 @@ object FormBuchBarKasse: TFormBuchBarKasse
     ParentFont = False
     TabOrder = 8
     OnClick = Button1Click
-    OnKeyPress = Button1KeyPress
+    OnMouseDown = Button1MouseDown
   end
   object Button2: TButton
-    Left = 228
+    Left = 210
     Top = 410
-    Width = 121
-    Height = 25
+    Width = 114
+    Height = 26
     Cancel = True
     Caption = 'abbrechen'
     TabOrder = 9
@@ -502,5 +502,20 @@ object FormBuchBarKasse: TFormBuchBarKasse
     Color = clBtnText
     ParentBackground = False
     TabOrder = 24
+  end
+  object Button3: TButton
+    Left = 324
+    Top = 411
+    Width = 25
+    Height = 25
+    Caption = 'C'
+    Font.Charset = SYMBOL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -21
+    Font.Name = 'Wingdings'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 25
+    OnClick = Button3Click
   end
 end

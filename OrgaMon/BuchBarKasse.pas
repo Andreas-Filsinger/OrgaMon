@@ -83,6 +83,7 @@ type
     StaticText8: TStaticText;
     Panel7: TPanel;
     SpeedButton1: TSpeedButton;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Edit3KeyPress(Sender: TObject; var Key: Char);
     procedure Edit4KeyPress(Sender: TObject; var Key: Char);
@@ -97,25 +98,44 @@ type
     procedure Edit8KeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton1Click(Sender: TObject);
-    procedure Button1KeyPress(Sender: TObject; var Key: Char);
+    procedure Button1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Button3Click(Sender: TObject);
   private
-    { Private-Deklarationen }
+
+    // Caching Elemente
     Konten: TStringList;
     KontoNummern: TStringList;
-    BetragN: array [1 .. cBarKasse_AnzahlKonten] of double;
     MwStN: array [1 .. cBarKasse_AnzahlKonten] of double;
+
+    // GUI Elemente
+    Titel: string;
+    BetragN: array [1 .. cBarKasse_AnzahlKonten] of double;
     Bar: double;
+
+    // Berechnete Elemente
     Summe: double;
     RueckGeld: double;
+
+    // Context Elements
+    TICKET_R: Integer;
+
+    // Einstellungen
     KassenStation: boolean;
 
+    procedure ReflectBuchungsTaste;
     procedure ReflectData;
     procedure EnsureKonten;
     procedure BetragInp(const editBetrag, editNext: TEdit;
-      BetragIndex: integer);
+      BetragIndex: Integer);
+    procedure Buche;
+    procedure Speichere;
   public
     { Public-Deklarationen }
-    procedure setContext(BELEG_R: integer = 0);
+    function toStringList: TStringList;
+
+    procedure setContext(BELEG_R: Integer = 0); overload;
+    procedure setContext(fromString: TStringList); overload;
     procedure Clear;
     procedure Swap;
   end;
@@ -140,7 +160,7 @@ const
   cMoneyFormat = '%m ';
 
 procedure TFormBuchBarKasse.BetragInp(const editBetrag, editNext: TEdit;
-  BetragIndex: integer);
+  BetragIndex: Integer);
 var
   Betrag: double;
 begin
@@ -164,85 +184,128 @@ begin
 
 end;
 
-procedure TFormBuchBarKasse.Button1Click(Sender: TObject);
+procedure TFormBuchBarKasse.Buche;
 var
   qBUCH: TIB_Query;
-  BUCH_R: integer;
+  BUCH_R: Integer;
   sDiagnose: TStringList;
   InfoText: TStringList;
   ScriptText: TStringList;
-  n: integer;
+  n: Integer;
   WasError: boolean;
   WasSumme: double;
 begin
-  if isSomeMoney(Summe) then
+  WasSumme := Summe;
+  Summe := 0;
+
+  Button1.Enabled := false;
+  BeginHourGlass;
+
+  WasError := true;
+  sDiagnose := TStringList.create;
+  ScriptText := TStringList.create;
+  InfoText := TStringList.create;
+  qBUCH := DataModuleDatenbank.nQuery;
+
+  // Name und Info in dieser Buchung
+  InfoText.add(Edit1.Text);
+  InfoText.add(format('%m gegeben (%m zurück)', [Bar, RueckGeld]));
+
+  // technische Buchungsinfos
+  ScriptText.add('Schema=Folge');
+  for n := 1 to cBarKasse_AnzahlKonten do
+    if isSomeMoney(BetragN[n]) then
+      ScriptText.add(format('BETRAG=%.2f;%s',
+        [BetragN[n], nextp(Konten[pred(n)], ' ', 0)]));
+
+  with qBUCH do
   begin
-    WasSumme := Summe;
-    Summe := 0;
+    BUCH_R := e_w_gen('GEN_BUCH');
+    sql.add('select * from BUCH for update');
 
-    Button1.Enabled := false;
-    BeginHourGlass;
+    //
+    insert;
+    FieldByName('RID').AsInteger := BUCH_R;
+    FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+    FieldByName('DATUM').AsDateTime := now;
+    FieldByName('NAME').AsString := cKonto_Kasse;
+    FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
+    FieldByName('ERTRAG').AsString := cC_True;
+    FieldByName('BETRAG').AsDouble := cPreisRundung(WasSumme);
+    FieldByName('TEXT').Assign(InfoText);
+    FieldByName('SKRIPT').Assign(ScriptText);
+    post;
 
-    WasError := true;
-    sDiagnose := TStringList.create;
-    ScriptText := TStringList.create;
-    InfoText := TStringList.create;
-    qBUCH := DataModuleDatenbank.nQuery;
-
-    // Name und Info in dieser Buchung
-    InfoText.add(Edit1.Text);
-    InfoText.add(format('%m gegeben (%m zurück)', [Bar, RueckGeld]));
-
-    // technische Buchungsinfos
-    ScriptText.add('Schema=Folge');
-    for n := 1 to cBarKasse_AnzahlKonten do
-      if isSomeMoney(BetragN[n]) then
-        ScriptText.add(format('BETRAG=%.2f;%s',
-          [BetragN[n], nextp(Konten[pred(n)], ' ', 0)]));
-
-    with qBUCH do
-    begin
-      BUCH_R := e_w_gen('GEN_BUCH');
-      sql.add('select * from BUCH for update');
-
-      //
-      insert;
-      FieldByName('RID').AsInteger := BUCH_R;
-      FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-      FieldByName('DATUM').AsDateTime := now;
-      FieldByName('NAME').AsString := cKonto_Kasse;
-      FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
-      FieldByName('ERTRAG').AsString := cC_True;
-      FieldByName('BETRAG').AsDouble := cPreisRundung(WasSumme);
-      FieldByName('TEXT').Assign(InfoText);
-      FieldByName('SKRIPT').Assign(ScriptText);
-      post;
-
-      b_w_buche(BUCH_R, sDiagnose);
-      EndHourGlass;
-      WasError := FormCareServer.ShowIfError(sDiagnose);
-      BeginHourGlass;
-    end;
-    qBUCH.free;
-    InfoText.free;
-    sDiagnose.free;
-    ScriptText.free;
-    if not(WasError) then
-    begin
-      close;
-    end;
-    Button1.Enabled := true;
+    b_w_buche(BUCH_R, sDiagnose);
     EndHourGlass;
+    WasError := FormCareServer.ShowIfError(sDiagnose);
+    BeginHourGlass;
+  end;
+  qBUCH.free;
+  InfoText.free;
+  sDiagnose.free;
+  ScriptText.free;
+  if not(WasError) then
+    close;
+  Button1.Enabled := true;
+  EndHourGlass;
+
+end;
+
+procedure TFormBuchBarKasse.Speichere;
+var
+  KasseBeleg: TStringList;
+  qTICKET: TIB_Query;
+begin
+  if (TICKET_R < cRID_FirstValid) then
+  begin
+    // Neuanlage
+    TICKET_R := e_w_gen('GEN_TICKET');
+    KasseBeleg := toStringList;
+    qTICKET := nQuery;
+    with qTICKET do
+    begin
+      sql.add('select RID,ART,INFO from TICKET for update');
+      insert;
+      FieldByName('RID').AsInteger := TICKET_R;
+      FieldByName('ART').AsInteger := eT_KassenBeleg;
+      FieldByName('INFO').Assign(KasseBeleg);
+      post;
+    end;
+    qTICKET.free;
+  end
+  else
+  begin
+    // Update
+    qTICKET := nQuery;
+    with qTICKET do
+    begin
+      sql.add('select INFO from TICKET where RID=' + inttostr(TICKET_R) +
+        ' for update');
+      edit;
+      FieldByName('INFO').Assign(KasseBeleg);
+      post;
+    end;
+    qTICKET.free;
   end;
 end;
 
-procedure TFormBuchBarKasse.Button1KeyPress(Sender: TObject; var Key: Char);
+procedure TFormBuchBarKasse.Button1Click(Sender: TObject);
 begin
-  if (Key = 'X') or (Key = 'x') then
+  if isSomeMoney(Summe) then
   begin
-    Swap;
-    Key := #0;
+    if KassenStation then
+      Buche
+    else
+      Speichere;
   end;
+end;
+
+procedure TFormBuchBarKasse.Button1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if (Button = mbRight) then
+    Swap;
 end;
 
 procedure TFormBuchBarKasse.Button2Click(Sender: TObject);
@@ -261,9 +324,20 @@ begin
   end;
 end;
 
+procedure TFormBuchBarKasse.Button3Click(Sender: TObject);
+begin
+  if isSomeMoney(Summe) then
+  begin
+    if KassenStation then
+      Speichere
+    else
+      Buche
+  end;
+end;
+
 procedure TFormBuchBarKasse.Clear;
 var
-  n: integer;
+  n: Integer;
 begin
   for n := 1 to cBarKasse_AnzahlKonten do
     BetragN[n] := 0;
@@ -361,14 +435,31 @@ end;
 procedure TFormBuchBarKasse.FormActivate(Sender: TObject);
 begin
   EnsureKonten;
+  ReflectBuchungsTaste;
 end;
 
 procedure TFormBuchBarKasse.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #27 then
+  if (Key = #27) then
   begin
     Key := #0;
     Button2Click(Sender);
+  end;
+end;
+
+procedure TFormBuchBarKasse.ReflectBuchungsTaste;
+begin
+  case KassenStation of
+    true:
+      begin
+        Button1.Caption := '*';
+        Button3.Caption := 'C';
+      end;
+    false:
+      begin
+        Button1.Caption := 'C';
+        Button3.Caption := '*';
+      end;
   end;
 end;
 
@@ -378,6 +469,7 @@ begin
   Summe := BetragN[1] + BetragN[2] + BetragN[3] + BetragN[4] + BetragN[5] +
     BetragN[6];
   RueckGeld := Bar - Summe;
+  Titel := Edit1.Text;
 
   // Anzeigen
   StaticText3.Caption := format(cMoneyFormat, [BetragN[1]]);
@@ -395,7 +487,7 @@ end;
 
 procedure TFormBuchBarKasse.EnsureKonten;
 var
-  n: integer;
+  n: Integer;
   Konto: string;
 begin
   if not(assigned(Konten)) then
@@ -440,19 +532,18 @@ begin
   end;
 end;
 
-procedure TFormBuchBarKasse.setContext(BELEG_R: integer = 0);
+procedure TFormBuchBarKasse.setContext(BELEG_R: Integer = 0);
 var
   cPosten: TIB_Cursor;
-  SORTIMENT_R: integer;
   ARTIKEL: string;
   Konto: string;
-  Konto_Index: integer;
+  Konto_Index: Integer;
   EinzelpreisNetto: boolean;
-  _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
+  _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: Integer;
   _Rabatt, _EinzelPreis, _MwStSatz: double;
   _PreisProPosition: double;
   NameSet, KontoSet: boolean;
-  n: integer;
+  n: Integer;
 begin
   // Werte zurücksetzen
   BeginHourGlass;
@@ -570,13 +661,35 @@ begin
 
 end;
 
+procedure TFormBuchBarKasse.setContext(fromString: TStringList);
+var
+  n: Integer;
+begin
+  BeginHourGlass;
+  Clear;
+  with fromString do
+  begin
+    Titel := Values['Titel'];
+    for n := 1 to cBarKasse_AnzahlKonten do
+      BetragN[n] := StrToMoneyDef(Values['Betrag' + inttostr(n)]);
+    Bar := StrToMoneyDef(Values['Bar']);
+    TICKET_R := StrToIntDef(Values['TICKET_R'], cRID_Unset);
+  end;
+  ReflectData;
+  Show;
+  Edit2.SetFocus;
+  EndHourGlass;
+end;
+
 procedure TFormBuchBarKasse.SpeedButton12Click(Sender: TObject);
 begin
+
   // refresh Kontoinfo
   FreeAndNil(Konten);
   FreeAndNil(KontoNummern);
   EnsureKonten;
 
+  // Infos über alle Konten
   ShowMessage(HugeSingleLine(Konten));
 end;
 
@@ -588,17 +701,22 @@ end;
 procedure TFormBuchBarKasse.Swap;
 begin
   KassenStation := not(KassenStation);
-  case KassenStation of
-    true:
-      begin
-        Button1.Caption := '*';
-      end;
-    false:
-      begin
-        Button1.Caption := 'C';
-      end;
-  end;
+  ReflectBuchungsTaste;
+end;
 
+function TFormBuchBarKasse.toStringList: TStringList;
+var
+  n: Integer;
+begin
+  result := TStringList.create;
+  with result do
+  begin
+    Values['Titel'] := Titel;
+    for n := 1 to cBarKasse_AnzahlKonten do
+      Values['Betrag' + inttostr(n)] := MoneyToStr(BetragN[n]);
+    Values['Bar'] := MoneyToStr(Bar);
+    Values['TICKET_R'] := inttostr(TICKET_R);
+  end;
 end;
 
 end.
