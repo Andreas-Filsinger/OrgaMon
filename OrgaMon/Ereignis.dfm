@@ -172,6 +172,7 @@ object FormEreignis: TFormEreignis
       '     , VERSAND_R'
       '     , RID'
       '     , BEARBEITER_R'
+      '     , TICKET_R'
       'FROM '
       ' EREIGNIS'
       'ORDER '

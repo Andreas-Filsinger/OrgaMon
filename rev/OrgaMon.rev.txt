@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.950 (06.02.14) Andreas Filsinger
+
+ Neu: Person-Suche: Aufgabe: Zuordnung eines Bar-Beleges (als Ereignis!)
+ Neu: Person-Suche: Aufgabe: "Erledigt" wird als Ereignis gespeichert
+
 Rev 7.949 (04.02.14) Andreas Filsinger
 
  Bug: Beleg: Übernahme in die Kasse: In Rückgeld stand ein Wert>0 Euro
@@ -10427,6 +10432,24 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:7.950
+
+alter table MITGLIEDERLISTE
+ add EREIGNIS_R DOM_REFERENCE;
+
+alter table MITGLIEDERLISTE
+add constraint FK_ML_EREIGNIS
+foreign key (EREIGNIS_R)
+references EREIGNIS(RID);
+
+alter table EREIGNIS
+add TICKET_R DOM_REFERENCE;
+
+alter table EREIGNIS
+add constraint FK_EREIGNIS_TICKET
+foreign key (TICKET_R)
+references TICKET(RID);
 
 :7.941
 

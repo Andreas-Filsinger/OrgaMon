@@ -87,8 +87,7 @@ const
   cVorgang_Rechnung = 'RECHNUNG (73)';
   cVorgang_Abschluss = 'ABSCHLUSS (805)';
 
-
-  //
+  // Pfad für BLZ Dateien
   iSystemPath: string = '';
 
 function cPreisRundung(d: double): double; overload;
@@ -108,6 +107,12 @@ function isOther(Betrag1, Betrag2: double): boolean;
 function isNoMoney(Betrag:double): boolean; // = cGeld_KeinElement
 
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
+
+// String-Routinen
+
+function StrToMoney(x: string): double; // strto
+function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
+function MoneyToStr(d : double):string;
 
 type
   // Salden-Objekt, zur Bestimmung des Endsaldo eines Kontos
@@ -628,6 +633,21 @@ begin
     result := true;
   until true;
 
+end;
+
+function StrToMoney(x: string): double; // strto
+begin
+  result := StrToDouble(x);
+end;
+
+function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
+begin
+  result := StrToDoubleDef(x,d);
+end;
+
+function MoneyToStr(d : double):string;
+begin
+  result := format('%m',[d]);
 end;
 
 end.

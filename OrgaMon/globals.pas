@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 7.949; // OrgaMon.rev.txt
+  Version: single = 7.950; // OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -276,6 +276,8 @@ const
   eT_BelegStorno = 22;
   eT_Vormerken = 23;
   eT_FTP = 24; // Request für einen FTP Upload
+  eT_KassenBeleg = 25; // Speicherung eines Kassenbeleges
+  eT_AufgabeErledigt = 26; // Personenbezogene Aufgaben sind "erledigt"
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag
