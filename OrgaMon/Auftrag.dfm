@@ -365,7 +365,7 @@ object FormAuftrag: TFormAuftrag
       Top = 27
       Width = 674
       Height = 135
-      ActivePage = TabSheet1
+      ActivePage = TabSheet6
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'
@@ -673,7 +673,6 @@ object FormAuftrag: TFormAuftrag
           AutoSize = False
           OnChange = IB_Memo1Change
           ScrollBars = ssVertical
-          ExplicitLeft = 262
         end
         object IB_Edit12: TIB_Edit
           Left = 25
@@ -1254,6 +1253,7 @@ object FormAuftrag: TFormAuftrag
       object TabSheet6: TTabSheet
         Caption = '&Protokoll && Status'
         ImageIndex = 5
+        ExplicitLeft = 0
         object Label35: TLabel
           Left = 272
           Top = 3
@@ -1262,8 +1262,8 @@ object FormAuftrag: TFormAuftrag
           Caption = 'Abruf'
         end
         object SpeedButton10: TSpeedButton
-          Left = 150
-          Top = 2
+          Left = 327
+          Top = 49
           Width = 22
           Height = 22
           Hint = 'Protokoll mit den Eingaben anzeigen'
@@ -1299,8 +1299,8 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton10Click
         end
         object SpeedButton11: TSpeedButton
-          Left = 123
-          Top = 2
+          Left = 300
+          Top = 49
           Width = 22
           Height = 22
           Hint = 'Leere Protokoll-Definition anzeigen'
@@ -1336,8 +1336,8 @@ object FormAuftrag: TFormAuftrag
           OnClick = SpeedButton11Click
         end
         object SpeedButton12: TSpeedButton
-          Left = 95
-          Top = 2
+          Left = 272
+          Top = 49
           Width = 22
           Height = 22
           Hint = 'Protokollverzeichnis '#246'ffnen'
@@ -1385,21 +1385,6 @@ object FormAuftrag: TFormAuftrag
           Font.Style = [fsUnderline]
           ParentFont = False
         end
-        object IB_Memo4: TIB_Memo
-          Left = 0
-          Top = 0
-          Width = 266
-          Height = 107
-          DataField = 'PROTOKOLL'
-          DataSource = IB_DataSource1
-          Align = alLeft
-          OnDblClick = IB_Memo4DblClick
-          TabOrder = 0
-          AutoSize = False
-          OnChange = IB_Memo4Change
-          ScrollBars = ssVertical
-          WordWrap = False
-        end
         object IB_Date8: TIB_Date
           Left = 272
           Top = 22
@@ -1407,7 +1392,7 @@ object FormAuftrag: TFormAuftrag
           Height = 21
           DataField = 'MONDA_ABRUF'
           DataSource = IB_DataSource1
-          TabOrder = 1
+          TabOrder = 0
           IncCellHeight = 1
           IncCellWidth = 2
           DrawYearArrow = False
@@ -1420,7 +1405,7 @@ object FormAuftrag: TFormAuftrag
           Caption = 'normal'
           ImageIndex = 31
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 2
+          TabOrder = 1
           OnClick = JvImgBtn1Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
@@ -1436,7 +1421,7 @@ object FormAuftrag: TFormAuftrag
           Caption = 'Neu anschreiben'
           ImageIndex = 80
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 3
+          TabOrder = 2
           OnClick = JvImgBtn2Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
@@ -1452,7 +1437,7 @@ object FormAuftrag: TFormAuftrag
           Caption = 'Restant'
           ImageIndex = 11
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 4
+          TabOrder = 3
           OnClick = JvImgBtn3Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
@@ -1468,7 +1453,7 @@ object FormAuftrag: TFormAuftrag
           Caption = 'erledigt'
           ImageIndex = 87
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 5
+          TabOrder = 4
           OnClick = JvImgBtn4Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
@@ -1484,7 +1469,7 @@ object FormAuftrag: TFormAuftrag
           Caption = 'vorgezogen'
           ImageIndex = 83
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 6
+          TabOrder = 5
           OnClick = JvImgBtn5Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
@@ -1500,13 +1485,28 @@ object FormAuftrag: TFormAuftrag
           Caption = 'unm'#246'glich'
           ImageIndex = 77
           Images = FormAuftragArbeitsplatz.ImageList1
-          TabOrder = 7
+          TabOrder = 6
           OnClick = JvImgBtn6Click
           HotTrackFont.Charset = ANSI_CHARSET
           HotTrackFont.Color = clWindowText
           HotTrackFont.Height = -11
           HotTrackFont.Name = 'Verdana'
           HotTrackFont.Style = []
+        end
+        object IB_Memo4: TIB_Memo
+          Left = 0
+          Top = 0
+          Width = 266
+          Height = 107
+          DataField = 'PROTOKOLL'
+          DataSource = IB_DataSource1
+          Align = alLeft
+          OnDblClick = IB_Memo4DblClick
+          TabOrder = 7
+          AutoSize = False
+          OnChange = IB_Memo4Change
+          ScrollBars = ssVertical
+          WordWrap = False
         end
       end
       object TabSheet7: TTabSheet

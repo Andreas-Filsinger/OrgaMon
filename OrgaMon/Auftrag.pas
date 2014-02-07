@@ -107,7 +107,6 @@ type
     Label36: TLabel;
     IB_Edit18: TIB_Edit;
     TabSheet6: TTabSheet;
-    IB_Memo4: TIB_Memo;
     Button8: TButton;
     Label41: TLabel;
     IB_Edit27: TIB_Edit;
@@ -237,6 +236,7 @@ type
     IB_Edit39: TIB_Edit;
     Label61: TLabel;
     Label62: TLabel;
+    IB_Memo4: TIB_Memo;
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox1DropDown(Sender: TObject);
