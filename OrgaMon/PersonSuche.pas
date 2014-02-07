@@ -324,9 +324,10 @@ begin
       INFO := Edit2.Text;
 
     MITGLIEDERLISTE_R := e_w_gen('GEN_MITGLIEDERLISTE');
-    e_x_sql('insert into MITGLIEDERLISTE (RID,INFO,GRUPPE_R,PERSON_R) values ('
+    e_x_sql('insert into MITGLIEDERLISTE (RID,BEARBEITER_R,INFO,GRUPPE_R,PERSON_R) values ('
       +
       { } inttostr(MITGLIEDERLISTE_R) + ',' +
+      { } inttostr(e_r_Bearbeiter) + ',' +
       { } '''' + INFO + ''',' +
       { } inttostr(GRUPPE_R) + ',' +
       { } inttostr(PERSON_R) + ')');
@@ -416,7 +417,11 @@ begin
     qEREIGNIS := nQuery;
     with qEREIGNIS do
     begin
-      sql.Add('select RID,ART,INFO,PERSON_R,TICKET_R from EREIGNIS for update');
+      sql.Add('select');
+      sql.Add('RID,ART,INFO,');
+      sql.Add('PERSON_R,TICKET_R,BEARBEITER_R,');
+      sql.Add('PAPERCOLOR,POSNO,GRUPPE_R,');
+      sql.Add('BEENDET from EREIGNIS for update');
       insert;
       FieldByName('RID').AsInteger := cRID_AutoInc;
       FieldByName('ART').AsInteger := eT_AufgabeErledigt;
@@ -425,6 +430,11 @@ begin
       FieldByName('INFO').assign(IB_Query1.FieldByName('INFO'));
       FieldByName('PERSON_R').assign(IB_Query1.FieldByName('PERSON_R'));
       FieldByName('TICKET_R').assign(IB_Query1.FieldByName('TICKET_R'));
+      FieldByName('BEENDET').assign(IB_Query1.FieldByName('SEIT'));
+      FieldByName('BEARBEITER_R').assign(IB_Query1.FieldByName('BEARBEITER_R'));
+      FieldByName('PAPERCOLOR').assign(IB_Query1.FieldByName('PAPERCOLOR'));
+      FieldByName('POSNO').assign(IB_Query1.FieldByName('POSNO'));
+      FieldByName('GRUPPE_R').assign(IB_Query1.FieldByName('GRUPPE_R'));
       post;
     end;
     qEREIGNIS.Free;
@@ -911,7 +921,10 @@ begin
         // 2, 3: AString := format('%m', [strtodoubledef(AString, 0.0)]);
         1:
           AString := e_r_Person(strtointdef(AString, cRID_NULL));
-        3:
+        2:
+          if (AString <>'') then
+           AString := '€';
+        4:
           begin
             DateA := date2long(nextp(AString, ' ', 0));
             SecondsA := StrToSeconds(nextp(AString, ' ', 1));
@@ -970,7 +983,7 @@ end;
 procedure TFormPersonSuche.SpeedButton23Click(Sender: TObject);
 var
   MITGLIEDERLISTE_R: Integer;
-  TICKET_R: Integer;
+  TICKET_R, PERSON_R: Integer;
   KassenBeleg: TSTringList;
 begin
   // gespeicherten Vorgang wiederherstellen!
@@ -981,15 +994,37 @@ begin
     TICKET_R := IB_Query1.FieldByName('TICKET_R').AsInteger;
     if (TICKET_R < cRID_FirstValid) then
     begin
+      PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
+
+      // new Ticket
       TICKET_R := e_w_gen('GEN_TICKET');
-      KassenBeleg := TSTringList.create;
-      KassenBeleg.Values['TICKET_R'];
+      e_x_sql('insert into TICKET (RID,ART,PERSON_R) values (' +
+        { } inttostr(TICKET_R) + ',' +
+        { } inttostr(eT_KassenBeleg) + ',' +
+        { } inttostr(PERSON_R) + ')');
+      e_x_sql(
+        { } 'update MITGLIEDERLISTE set TICKET_R=' + inttostr(TICKET_R) +
+        { } ' where RID=' +
+        { } inttostr(MITGLIEDERLISTE_R));
+      AufgabeAenderungAnzeigen;
+
+      // Kassenbeleg aufbereiten
+      KassenBeleg := TStringList.create;
+      KassenBeleg.Values['TICKET_R'] := inttostr(TICKET_R);
+      KassenBeleg.Values['Titel'] :=
+      { } e_r_Person(PERSON_R) + ' ' +
+      { } IB_Query1.FieldByName('INFO').AsString;
+
     end
     else
     begin
       KassenBeleg := e_r_sqlt('select INFO from TICKET where RID=' +
         inttostr(TICKET_R));
+      // unterschieben eines neuen TICKET_R verhindern!
+      KassenBeleg.Values['TICKET_R'] := inttostr(TICKET_R);
     end;
+
+    // Kasse anwerfen!
     FormBuchBarKasse.setContext(KassenBeleg);
   end;
 end;

@@ -1019,27 +1019,43 @@ object FormPersonSuche: TFormPersonSuche
       'WARTEZEIT=NODATE')
     DatabaseName = '192.168.115.25:test.fdb'
     FieldsAlignment.Strings = (
-      'PERSON_R=LEFT')
+      'PERSON_R=LEFT'
+      'TICKET_R=CENTER')
     FieldsDisplayFormat.Strings = (
       'WARTEZEIT=HH:MM')
     FieldsDisplayLabel.Strings = (
-      'PERSON_R=Person')
+      'PERSON_R=Person'
+      'TICKET_R='#8364)
     FieldsDisplayWidth.Strings = (
-      'MITGLIEDERLISTE.PERSON_R=450'
-      'INFO=322')
+      'MITGLIEDERLISTE.PERSON_R=437'
+      'INFO=322'
+      'TICKET_R=12')
+    FieldsIndex.Strings = (
+      'PERSON_R'
+      'TICKET_R'
+      'INFO'
+      'SEIT'
+      'PAPERCOLOR'
+      'RID'
+      'BEARBEITER_R'
+      'GRUPPE_R'
+      'POSNO')
     FieldsVisible.Strings = (
       'GRUPPE.NAME=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select'
       ' MITGLIEDERLISTE.PERSON_R,'
+      ' MITGLIEDERLISTE.TICKET_R,'
       ' MITGLIEDERLISTE.INFO,'
       ' MITGLIEDERLISTE.SEIT,'
       
         ' COALESCE(MITGLIEDERLISTE.PAPERCOLOR, GRUPPE.PAPERCOLOR) as PAPE' +
         'RCOLOR,'
       ' MITGLIEDERLISTE.RID,'
-      ' MITGLIEDERLISTE.TICKET_R'
+      ' MITGLIEDERLISTE.BEARBEITER_R,'
+      ' MITGLIEDERLISTE.GRUPPE_R,'
+      ' MITGLIEDERLISTE.POSNO'
       'from'
       ' MITGLIEDERLISTE'
       'join'

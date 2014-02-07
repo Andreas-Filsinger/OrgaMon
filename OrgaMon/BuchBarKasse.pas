@@ -257,11 +257,15 @@ var
   KasseBeleg: TStringList;
   qTICKET: TIB_Query;
 begin
+  KasseBeleg := toStringList;
   if (TICKET_R < cRID_FirstValid) then
   begin
+
     // Neuanlage
     TICKET_R := e_w_gen('GEN_TICKET');
-    KasseBeleg := toStringList;
+    KasseBeleg.Values['TICKET_R'] := inttostr(TICKET_R);
+
+    // Save
     qTICKET := nQuery;
     with qTICKET do
     begin
@@ -273,31 +277,52 @@ begin
       post;
     end;
     qTICKET.free;
+
   end
   else
   begin
+
     // Update
     qTICKET := nQuery;
     with qTICKET do
     begin
-      sql.add('select INFO from TICKET where RID=' + inttostr(TICKET_R) +
+      sql.add('select RID,INFO from TICKET where RID=' + inttostr(TICKET_R) +
         ' for update');
+        open;
+        if eof then
+         raise Exception.Create('Datensatz zum Update nicht mehr gefunden!');
       edit;
+      KasseBeleg.Values['TICKET_R'] := inttostr(TICKET_R);
       FieldByName('INFO').Assign(KasseBeleg);
       post;
     end;
     qTICKET.free;
+
   end;
+  KasseBeleg.free;
+  Clear;
+  close;
 end;
 
 procedure TFormBuchBarKasse.Button1Click(Sender: TObject);
 begin
-  if isSomeMoney(Summe) then
+  if KassenStation then
   begin
-    if KassenStation then
+    if isSomeMoney(Summe) then
       Buche
-    else
-      Speichere;
+  end
+  else
+    Speichere;
+end;
+
+procedure TFormBuchBarKasse.Button3Click(Sender: TObject);
+begin
+  if KassenStation then
+    Speichere
+  else
+  begin
+    if isSomeMoney(Summe) then
+      Buche;
   end;
 end;
 
@@ -324,17 +349,6 @@ begin
   end;
 end;
 
-procedure TFormBuchBarKasse.Button3Click(Sender: TObject);
-begin
-  if isSomeMoney(Summe) then
-  begin
-    if KassenStation then
-      Speichere
-    else
-      Buche
-  end;
-end;
-
 procedure TFormBuchBarKasse.Clear;
 var
   n: Integer;
@@ -344,6 +358,7 @@ begin
   Bar := 0;
   Summe := 0;
   RueckGeld := 0;
+  Titel := '';
   Edit1.Text := '';
   Edit2.Text := '';
   Edit3.Text := '';
@@ -469,7 +484,6 @@ begin
   Summe := BetragN[1] + BetragN[2] + BetragN[3] + BetragN[4] + BetragN[5] +
     BetragN[6];
   RueckGeld := Bar - Summe;
-  Titel := Edit1.Text;
 
   // Anzeigen
   StaticText3.Caption := format(cMoneyFormat, [BetragN[1]]);
@@ -545,6 +559,7 @@ var
   NameSet, KontoSet: boolean;
   n: Integer;
 begin
+
   // Werte zurücksetzen
   BeginHourGlass;
   Clear;
@@ -670,6 +685,7 @@ begin
   with fromString do
   begin
     Titel := Values['Titel'];
+    Edit1.Text := Titel;
     for n := 1 to cBarKasse_AnzahlKonten do
       BetragN[n] := StrToMoneyDef(Values['Betrag' + inttostr(n)]);
     Bar := StrToMoneyDef(Values['Bar']);
@@ -711,7 +727,7 @@ begin
   result := TStringList.create;
   with result do
   begin
-    Values['Titel'] := Titel;
+    Values['Titel'] := Edit1.Text;
     for n := 1 to cBarKasse_AnzahlKonten do
       Values['Betrag' + inttostr(n)] := MoneyToStr(BetragN[n]);
     Values['Bar'] := MoneyToStr(Bar);

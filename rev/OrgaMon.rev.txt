@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.952 (07.02.14) Andreas Filsinger
+
+ Neu: Personen suche: Speicherung von Kassenbelegen und späteres Verbuchen
+ Neu: Artikel: Felder: MENGE_ALTERNATIV_LAGER, LAGER_ALTERNATIV_R
+
+Rev 7.951 (07.02.14) Andreas Filsinger
+
+ Bug: Auftrag: Reiter Protokoll: 3 Funktionsknöpfe waren verdeckt
+
 Rev 7.950 (06.02.14) Andreas Filsinger
 
  Neu: Person-Suche: Aufgabe: Zuordnung eines Bar-Beleges (als Ereignis!)
@@ -10432,6 +10441,36 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:7.951
+
+alter table EREIGNIS
+ add PAPERCOLOR integer,
+ add POSNO integer,
+ add GRUPPE_R DOM_REFERENCE;
+
+alter table EREIGNIS
+ add constraint FK_EREIGNIS_GRUPPE
+ foreign key (GRUPPE_R)
+ references GRUPPE(RID);
+
+alter table ARTIKEL
+add MENGE_ALTERNATIV_LAGER integer,
+add LAGER_ALTERNATIV_R DOM_REFERENCE;
+
+alter table ARTIKEL
+ add constraint FK_A_A_LAGER
+ foreign key (LAGER_ALTERNATIV_R)
+ references LAGER(RID);
+
+alter table ARTIKEL_AA
+add MENGE_ALTERNATIV_LAGER integer,
+add LAGER_ALTERNATIV_R DOM_REFERENCE;
+
+alter table ARTIKEL
+ add constraint FK_AAA_A_LAGER
+ foreign key (LAGER_ALTERNATIV_R)
+ references LAGER(RID);
 
 :7.950
 

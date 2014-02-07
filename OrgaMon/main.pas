@@ -521,7 +521,8 @@ begin
     end;
 
     //
-    AppendStringsTofile(sBootSequence,EigeneOrgaMonDateienPfad + iMandant+'-Boot.log');
+    AppendStringsTofile(sBootSequence, EigeneOrgaMonDateienPfad + iMandant +
+      '-Boot.log');
 
     // Arbeiten durchführen, die bei Releaseänderungen gemacht werden müssen
     for r := succ(LastRev) to ThisRev do
@@ -589,7 +590,10 @@ begin
         FormScanner.doActivate(true);
       if pos(AnsiUpperCase(noblank(Computername)) + ',',
         AnsiUpperCase(noblank(iMagnetoHost) + ',')) > 0 then
+      begin
         FormZahlungECconnect.doActivate(true);
+        FormBuchBarKasse.Swap;
+      end;
       registerHot('Menü', [hkAlt], vkf10, true);
     end;
     sSystemSettings.Free;
@@ -651,7 +655,7 @@ end;
 
 procedure TFormMain.Button90Click(Sender: TObject);
 begin
- FormCron.show;
+  FormCron.show;
 end;
 
 procedure TFormMain.Button9Click(Sender: TObject);
@@ -911,7 +915,7 @@ procedure TFormMain.Label1Click(Sender: TObject);
 var
   CT_Ticket: TTroubleTicket;
 begin
-  BeginHourGlass;
+  BeginHourglass;
   CT_Ticket := CareTakerLog('INFO: Hallo');
   if (CT_Ticket <> -1) then
     Nachmeldungen;
