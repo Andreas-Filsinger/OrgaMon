@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.033; // ..\rev\OrgaMonAppService.rev
+  Version: single = 1.034; // ..\rev\OrgaMonAppService.rev
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1886,6 +1886,9 @@ var
   bOrgaMon: TBLager;
   mderecOrgaMon: TMDERec;
   FotoBenennungsModus: integer;
+
+  // Foto Benennungs Funktion
+  sFotoCall, rFoto: TStringList;
 begin
 
   // Init
@@ -1989,14 +1992,39 @@ begin
       continue;
     end;
 
-    // imp pend: Auch hier sollte die Dateinamensfindung
+    // imp pend: Immer (nicht nur bei Modus=6) sollte die Dateinamensfindung
     // über die Standard-Umbenennungs-Funktion "foto" erfolgen
     // ev. mit einem "nil" Callback für die Z# Neu, oder einem
     // der die Monteurseingaben berücksichtigen kann.
-    FNameNeu :=
-    { } copy(FNameNeu, 1, k) +
-    { } TJonDaExec.FormatZaehlerNummerNeu(ZAEHLER_NUMMER_NEU) +
-    { } '.jpg';
+
+    if (FotoBenennungsModus = 6) then
+    begin
+
+      // prepare
+      sFotoCall := TStringList.Create;
+      with sFotoCall do
+      begin
+        Values[cParameter_foto_Modus] := inttostr(FotoBenennungsModus);
+        Values[cParameter_foto_baustelle] := sBaustelle;
+        Values[cParameter_foto_parameter] := 'FN';
+        Values[cParameter_foto_zaehlernummer_alt] := copy(FNameNeu, 1, pred(k));
+        Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
+      end;
+
+      // execute
+      rFoto := JonDaExec.foto(sFotoCall);
+      sFotoCall.Free;
+      FNameNeu := rFoto.Values[cParameter_foto_neu];
+      rFoto.Free;
+
+    end
+    else
+    begin
+      FNameNeu :=
+      { } copy(FNameNeu, 1, k) +
+      { } TJonDaExec.FormatZaehlerNummerNeu(ZAEHLER_NUMMER_NEU) +
+      { } '.jpg';
+    end;
 
     if (FNameNeu = FNameAlt) then
     begin

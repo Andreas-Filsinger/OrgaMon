@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.034 (11.02.14) Andreas Filsinger
+
+ Neu: Foto-Umbenennung via "Wartende": Teilweise über den Call-Back
+ Neu: Foto-Umbenennung: Modus "6": Werte Mandant, aknr können leer sein
+
 Rev 1.033 (10.12.13) Andreas Filsinger
 
  Bug: Foto-Umbenennung via "Wartende": Hier hatte noch die Z# Neu Formatierung
