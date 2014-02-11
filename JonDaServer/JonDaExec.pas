@@ -2568,6 +2568,7 @@ var
   r: integer;
   Fname: string;
   ZielBaustelle: string;
+  Mandant, aknr: string;
 begin
   // mderecOrgaMon.Baustelle / cParameter_foto_baustelle
   // mderecOrgaMon.Zaehler_Strasse / cParameter_foto_strasse
@@ -2670,11 +2671,17 @@ begin
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
             begin
-              FotoPrefix :=
-              { } tNAMES.readCell(r, 'Mandant') +
-              { } '-' +
-              { } tNAMES.readCell(r, 'aknr') +
-              { } '-'
+              //
+              Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
+              aknr := cutblank(tNAMES.readCell(r, 'aknr'));
+
+              if (Mandant <> '') then
+                FotoPrefix := Mandant + '-'
+              else
+                FotoPrefix := '';
+
+              if (aknr <> '') then
+                FotoPrefix := FotoPrefix + aknr + '-';
             end
             else
             begin
