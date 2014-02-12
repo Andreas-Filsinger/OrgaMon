@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.034; // ..\rev\OrgaMonAppService.rev
+  Version: single = 1.035; // ..\rev\OrgaMonAppService.rev
 
   // root Locations
   cWorkPath = 'W:\';
@@ -598,6 +598,11 @@ begin
 
     JonDaExec := TJonDaExec.Create;
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
+
+    // TimeStamp in die Logdatei legen
+    AppendStringsToFile(
+      { } 'timestamp ' + sTimeStamp,
+      { } MyWorkingPath + cFotoTransaktionenFName);
 
   end;
 

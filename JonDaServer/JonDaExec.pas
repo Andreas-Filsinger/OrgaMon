@@ -2565,10 +2565,12 @@ var
   FotoGeraeteNo: string;
   Path: string;
   tNAMES: TsTable;
+  sNAMES: TStringList;
   r: integer;
   Fname: string;
   ZielBaustelle: string;
   Mandant, aknr: string;
+  ReferenzDiagnose: TStringList;
 begin
   // mderecOrgaMon.Baustelle / cParameter_foto_baustelle
   // mderecOrgaMon.Zaehler_Strasse / cParameter_foto_strasse
@@ -2648,6 +2650,7 @@ begin
         begin
           // ~Mandant~ "-" ~aknr~ "-" ~~
           tNAMES := TsTable.Create;
+          tNAMES.oTextHasLF := true;
           FotoPrefix := '';
           Fname := Path + Baustelle + '.xls.csv';
           repeat
@@ -2666,6 +2669,7 @@ begin
               { } ' nicht gefunden';
               break;
             end;
+
 
             tNAMES.InsertFromFile(Fname);
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
@@ -2691,6 +2695,18 @@ begin
               { } ' in Spalte "' + cRID_Suchspalte + '" ' +
               { } ' nicht gefunden!';
               FotoPrefix := 'ERROR' + '-';
+
+              // Diagnose
+              if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv')<
+                 FileAge(Fname)
+               then
+               begin
+
+  ReferenzDiagnose:= tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
+  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
+                   ReferenzDiagnose.free;
+                    end;
+
             end;
           until true;
           UmbenennungAbgeschlossen := true;

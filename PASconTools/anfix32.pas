@@ -20,11 +20,11 @@
 *)
 unit anfix32;
 
-////{$ifdef fpc}
-//{$I jclfpc.inc}
-//{$else}
+/// /{$ifdef fpc}
+// {$I jclfpc.inc}
+// {$else}
 {$I jcl.inc}
-//{$endif}
+// {$endif}
 
 interface
 
@@ -196,9 +196,10 @@ function asci(const x: string): string;
 
 // Str - Utils : Delimter getrennte Daten
 function NextP(var s: string; Delimiter: string = ';'): string; overload;
-{$ifndef fpc}
-function NextP(var s: AnsiString; Delimiter: string = ';'): AnsiString; overload;
-{$endif}
+{$IFNDEF fpc}
+function NextP(var s: AnsiString; Delimiter: string = ';'): AnsiString;
+  overload;
+{$ENDIF}
 function NextP(var s: Shortstring; Delimiter: Shortstring = ';')
   : Shortstring; overload;
 function NextP(s: string; Delimiter: string; SkipCount: integer)
@@ -218,6 +219,7 @@ procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
   const FName: string);
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
+procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
 
 procedure SaveToUnixFile(s: TStrings; const FName: string);
 function RemoveDuplicates(s: TStrings): integer; overload;
@@ -600,11 +602,11 @@ begin
   DosError := findfirst(FName, faAnyFile, sr);
   if (DosError = 0) then
   begin
-    {$ifdef fpc}    //
-result := DateTime2long(sr.Time);
-    {$else}
-result := DateTime2long(sr.TimeStamp);
-    {$endif}
+{$IFDEF fpc}    //
+    result := DateTime2long(sr.Time);
+{$ELSE}
+    result := DateTime2long(sr.TimeStamp);
+{$ENDIF}
   end;
   findclose(sr);
 end;
@@ -618,11 +620,11 @@ begin
   DosError := findfirst(FName, faAnyFile, sr);
   if (DosError = 0) then
   begin
-    {$ifdef fpc}    //
+{$IFDEF fpc}    //
     result := dateTime2Seconds(sr.Time);
-    {$else}
+{$ELSE}
     result := dateTime2Seconds(sr.TimeStamp);
-    {$endif}
+{$ENDIF}
   end;
   findclose(sr);
 end;
@@ -2126,15 +2128,15 @@ begin
   DosError := findfirst(Mask, faDirectory, sr);
   while (DosError = 0) do
   begin
-    {$ifdef fpc}
+{$IFDEF fpc}
     if (sr.Name <> '.') and (sr.Name <> '..') then
       if DateTime2long(sr.Time) < OlderThan then
         AllTheDirs.add(sr.Name);
-    {$else}
+{$ELSE}
     if (sr.Name <> '.') and (sr.Name <> '..') then
       if DateTime2long(sr.TimeStamp) < OlderThan then
         AllTheDirs.add(sr.Name);
-    {$endif}
+{$ENDIF}
     DosError := FindNext(sr);
   end;
   findclose(sr);
@@ -3536,7 +3538,6 @@ begin
     end;
   }
 end;
-
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 var
   InF: TextFile;
@@ -3609,6 +3610,52 @@ begin
     s.add(OneLine);
   end;
   CloseFile(InF);
+end;
+
+procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
+var
+  Stream: TFileStream;
+  Buffer: array [0 .. 32767] of AnsiChar; // 32k Buffer
+  TempStr: string;
+  i: integer;
+  BufferUse: integer;
+  LastWasCR: boolean;
+begin
+  if clear then
+    s.clear;
+  LastWasCR := false;
+  TempStr := '';
+  Stream := TFileStream.create(FName, fmOpenRead);
+  repeat
+    BufferUse := Stream.Read(Buffer, SizeOf(Buffer));
+    for i := 0 to BufferUse do
+    begin
+      if (Buffer[i] = #$0D) then
+      begin
+        LastWasCR := true;
+        s.add(TempStr);
+        TempStr := '';
+      end
+      else
+      begin
+        if (Buffer[i] = #$0A) then
+        begin
+          if not(LastWasCR) then
+            TempStr := TempStr + '|';
+        end
+        else
+        begin
+          TempStr := TempStr + Buffer[i];
+        end;
+        LastWasCR := false;
+      end;
+    end;
+    if (BufferUse < SizeOf(Buffer)) then
+      break;
+  until false;
+  if (TempStr<>'') then
+   s.add(TempStr);
+  Stream.free;
 end;
 
 procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
@@ -4500,7 +4547,8 @@ begin
   end;
 end;
 
-{$ifndef fpc}
+{$IFNDEF fpc}
+
 function NextP(var s: AnsiString; Delimiter: string): AnsiString;
 var
   k: integer;
@@ -4517,7 +4565,7 @@ begin
     s := '';
   end;
 end;
-{$endif}
+{$ENDIF}
 
 function rNextP(var s: string; Delimiter: string): string;
 var
