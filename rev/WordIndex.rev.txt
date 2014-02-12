@@ -1,0 +1,168 @@
+====================================
+* PROJEKT: WordIndex
+* SOURCE DIR: G:\anfix32
+* UPDATE: WordIndex.pas
+* UPDATE: G:\anfix32\anfix32.pas
+* INFO: schneller Suchindex bei "Wort für Wort" indizierter Suche
+====================================
+
+// INFO BEGIN
+Win32, Delphi Open Source, zentraler Mechanismus der "Speedsuche" bei vielen Projekten<br>
+<br>
+WortIndex<br>
+=========<br>
+<br>
+Volltextsuche bei z.B. 45.000 Datensätzen mit 300.000 Worten,<br>
+die auch massiv doppelt vorkommen können<br>
+die Suche erfolgt immer als "UND" Suche<br>
+Oft sollen Datensätze durch die Eingabe einiger Worte<br>
+durch den Benutzer lokalisiert werden können<br>
+Dazu ist die Erstellung einer Wort-Index-Tabelle notwendig<br>
+durch die Eingabe von einzelnen Worten (durch "Blank" getrennt)<br>
+lassen die entsprechenden Datensätze genau lokalisieren<br>
+die Treffer-Listen für die einzelnen Worte werden verodert,<br>
+so daß doppelte Treffer ausgeschlossen werden.<br>
+<br>
+SearchStr<br>
+=========<br>
+<br>
+TStringList.Indexof funktioniert nur bei Identität,<br>
+diese abgeleitete Klasse findet auch Wortanfänge.<br>
+<br>
+universell verwendbar!.<br>
+<br>
+TsTable<br>
+=======<br>
+ - String Table (CSV-Objekt)<br>
+<br>
+TSearchStringList<br>
+=================<br>
+  - Binäre Suche & Incrementelle & "Pos=1" Suche<br>
+<br>
+TExtendedList<br>
+=============<br>
+   - "AND" "OR" fähige Liste<br>
+<br>
+// INFO END
+
+Rev 1.024 (12.02.14) Andreas Filsinger
+
+ Neu: TsTable: oTextHasLF, muss gesetzt werden wenn die CSV chr(LF) in
+      Textfeldern hat.
+
+Rev 1.020 (05.07.03) Andreas Filsinger
+
+ Neu: Ist der Suchtrenner (Searchdelimiter) nicht vorhanden wird der ganze String
+      als Suchstring genommen.
+
+Rev 1.019 (17.06.03) Andreas Filsinger
+
+ Bug: Absturz, wenn die WordIndexdatei nicht vorhanden war.
+
+Rev 1.018 (10.10.02) Andreas Filsinger
+
+ Bug: Special Char "~" wurde nicht mehr gefunden. Sortieren UND das Suchen läuft
+      jetzt richtigerweise über die gleiche Funktion.
+
+Rev 1.017 (28.09.02) Andreas Filsinger
+
+ Neu: AddOne, JoinDuplicates jetzt ist "public". Damit lässt sich die Mother-
+      list einsparen.
+ Neu: "lokale Duplikate" (=clones) werden erst gar nicht hinzugefügt. Dies
+      entlastet "sort" und RemoveDuplicates. Candidates erzeugen sort und dann
+      remove-Duplicates machen! Weis man genau, das die Referenz nur einmal
+      zusammen mit einem grossen String übergeben wird, kann mal das globale
+      Suchen nach Clones unterbinden "LookForClones:=false". Das bringt einen
+      Geschwindigkeitszuwachs.
+
+Rev 1.016 (15.09.02) Andreas Filsinger
+
+ Neu: Bei der Übergabe der Suchstrings lässt sich der zum Suchen
+      relevante Teil von dem Datenteil durch einen Seperator (String
+      oder ein Trennzeichen) abtrennen. Somit kann z.B. nur im vorderen
+      Teil eines Strings gesucht werden.
+
+Rev 1.015 (17.10.01) Andreas Filsinger
+
+ Neu: Detailiertere Diagnose-Ausgabe in SaveToDiag beim Speichern in Strings
+
+Rev 1.014 (09.10.01) Andreas Filsinger
+
+ Neu: BeginUpdate und EndUpdate bei langwierigen Operationen, ich hoffe es
+      bringt was.
+
+Rev 1.013 (25.09.01) Andreas Filsinger
+
+ * Neu: T(Extended)List.SaveToFile();
+ * Neu: T(Extended)List.LoadFromFile();
+
+Rev 1.012 (01.08.01) Andreas Filsinger
+
+ * Neu: Verbessertes Speichern im Netzwerk
+ * Neu: Verbessertes Laden im Netzwerk
+
+Rev 1.011 (15.07.01) Andreas Filsinger
+
+ * Bug: Die exacte Suche (mit Punkt am Wort-Ende!) hatte nicht funktioniert!
+        z.B. Suchbegriff "weber."
+
+Rev 1.010 (12.07.01) Andreas Filsinger
+
+ * Neu: Filter veröffentlicht
+
+Rev 1.009 (03.05.01) Andreas Filsinger
+
+ * Neu: TWordIndex.LoadFromFile weiter verbessert durch
+        setzen der vor dem laden bekannten "capacity".
+
+Rev 1.008 (26.04.01) Andreas Filsinger
+
+ * Neu: Bei der Diagnosen Ausgabe kann ma die Ausgabe
+        Listenlänge auf n Elemente begrenzen.
+ * Neu: Im Konstruktor kann man die Mindestlänge der
+        Worte angeben. (In der Regel machen Wörter mit
+        einem Buchstaben keinen Sinn). Der Defaultwert
+        ist somit 2.       
+
+Rev 1.007 (20.04.01) Andreas Filsinger
+
+ * Bug: Fehler, wenn das in der Sortierung erste Element
+        mehrfach vorkam.
+
+Rev 1.006 (17.04.01) Andreas Filsinger
+
+ * Bug: Nach schweren Turbulenzen nun endlich eine neue
+        Version von JoinDuplicates, die funktionieren
+        müsste.
+
+Rev 1.005 (17.04.01) Andreas Filsinger
+
+ * Neu: "DontFreeObjects" auf true setzen, um zu Verhindern, dass ein
+        TWordIndex.free die gespeicherten Objecte auch noch frei gibt.
+        Dies ist sinnvoll, wenn es sich nicht um Objecte, sondern um
+        Nutzdaten handelt, die keine Object-Pointer darstellen.
+
+Rev 1.004 (06.03.01) Andreas Filsinger
+
+ * Bug: TWordIndex mit leerer Liste gab GPE
+
+Rev 1.003 (01.12.00) Andreas Filsinger
+
+ * Neu: bei "TStringList.sort" ist "d" = "D", da
+        "AnsiCompareText" verwendet wird. Später beim
+        "AnsiCompareStr" ist es joch wieder unterschiedlich
+        wobei nun Dinge nicht mehr gefunden werden! Hier sollte
+        man einen CaseSensitive-sort einführen. Als Workaround
+        nun einen "FindInc"(rementell) eingeführt.
+
+Rev 1.002 (20.10.00) Andreas Filsinger
+
+ * Bug: Suche mit "White-Chars" (Klammer usw.) war unmöglich
+
+Rev 1.001 (16.10.00) Andreas Filsinger
+
+ * Neu: Ladenzeiten 167 mal schneller!
+
+Rev 1.000 (16.10.00) Andreas Filsinger
+
+ * Neu: Erstmals als Open Source veröffentlicht

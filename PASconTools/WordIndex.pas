@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2010  Andreas Filsinger
+  Copyright (C) 2007 - 2014  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.023; // ..\rev\WordIndex.rev
+  WordIndexVersion: single = 1.024; // ..\rev\WordIndex.rev.txt
   c_wi_TranslateFrom = 'ßÄËÖÜÁÀÉÈÚÙÓÍÊÇÅ';
   c_wi_TranslateTo = 'SAEOUAAEEUUOIECA';
   c_wi_ValidChars = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' +
@@ -97,7 +97,7 @@ type
     procedure Search(s: string);
     procedure SaveToFile(const FName: string); override;
     procedure LoadFromFile(const FName: string); override;
-    function ReloadIfNew : boolean;
+    function ReloadIfNew: boolean;
     procedure SaveToDiagFile(FName: string); overload;
     procedure SaveToDiagFile(FName: string;
       MinSubElementCount, MaxSubElementCount: integer); overload;
@@ -145,6 +145,7 @@ type
     oNoblank: boolean; // noblank to all the cells on "load"
     oDistinct: boolean; // sort and remove duplicates on "load"
     oNoAutoQuote: boolean; // do NOT remove all the Quotes  ;"aaa"; -> ;aaa;
+    oTextHasLF: boolean; // Text Cells can have internal Line Breaks (LF)
     oSeparator: string; // Trenner zwischen den Spalten
 
     function getSeparator: string;
@@ -607,7 +608,7 @@ begin
   end;
 end;
 
-function TWordIndex.ReloadIfNew : boolean;
+function TWordIndex.ReloadIfNew: boolean;
 begin
   result := false;
   if (LastFileName <> '') then
@@ -1546,11 +1547,16 @@ var
 
 begin
 
-  // csv laden
+  // Header vorbereiten
   JoinL := TStringList.Create;
   if (StaticHeader <> '') then
     JoinL.add(StaticHeader);
-  LoadFromFileCSV(false, JoinL, FName);
+
+  // csv laden
+  if oTextHasLF then
+    LoadFromFileCSV_LF(false, JoinL, FName)
+  else
+    LoadFromFileCSV(false, JoinL, FName);
 
   // clean Quoting entfernen
   if not(oNoAutoQuote) then
@@ -1744,8 +1750,8 @@ begin
         SortStr := readCell(m, k);
         if FormatNumeric then
           SortStr := inttostrN(round(StrToDoubleDef(SortStr, 0) * 100.0), 15);
-        if DoReverse  then
-         SortStr := reverseSort(SortStr);
+        if DoReverse then
+          SortStr := reverseSort(SortStr);
         if (n = 0) then
           ClientSorter.AddObject(SortStr, TObject(m))
         else
