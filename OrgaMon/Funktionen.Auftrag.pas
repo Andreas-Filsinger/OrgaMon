@@ -1951,6 +1951,7 @@ begin
   cAUFTRAG := nCursor;
   sParameter.values[cParameter_foto_parameter] := MeldungsName;
   sParameter.values[cParameter_foto_RID] := inttostr(AUFTRAG_R);
+  sParameter.values[cParameter_foto_Pfad] := AuftragMobilServerPath;
 
   with cAUFTRAG do
   begin
@@ -1994,9 +1995,11 @@ begin
   // Funktion ausführen
   sResult := FotoName_JonDaX.foto(sParameter);
 
-  result :=
-  { } sResult.values[cParameter_foto_neu] + ',' +
-  { } sResult.values[cParameter_foto_fertig];
+  result := sResult.values[cParameter_foto_Fehler];
+  if (result = '') then
+    result :=
+    { } sResult.values[cParameter_foto_neu] + ',' +
+    { } sResult.values[cParameter_foto_fertig];
 
   sParameter.free;
   sZaehlerInfo.free;
@@ -5662,7 +5665,6 @@ begin
     end;
 
 end;
-
 
 function csvCheck(const s: string): string;
 begin

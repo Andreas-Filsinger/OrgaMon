@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.035; // ..\rev\OrgaMonAppService.rev
+  Version: single = 1.036; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -170,6 +170,7 @@ type
     tBAUSTELLE: tsTable;
     JonDaExec: TJonDaExec;
     MemCache: TMemCache;
+    LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
 
     procedure Log(s: string);
     function GEN_ID: integer;
@@ -600,10 +601,13 @@ begin
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
 
     // TimeStamp in die Logdatei legen
-    AppendStringsToFile(
-      { } 'timestamp ' + sTimeStamp,
-      { } MyWorkingPath + cFotoTransaktionenFName);
-
+    if not(LastLogWasTimeStamp) then
+    begin
+      AppendStringsToFile(
+        { } 'timestamp ' + sTimeStamp,
+        { } MyWorkingPath + cFotoTransaktionenFName);
+      LastLogWasTimeStamp := true;
+    end;
   end;
 
 end;
@@ -1794,6 +1798,8 @@ begin
               { } 'cp ' + sFiles[m] +
               { } ' ' + FotoZiel + '\' +
               { } FotoDateiName, MyWorkingPath + cFotoTransaktionenFName);
+                  LastLogWasTimeStamp := false;
+
 
             // Auszeichnen, wenn die Umbenennung vorläufig ist
             if not(UmbenennungAbgeschlossen) then
@@ -2059,6 +2065,7 @@ begin
           { } 'mv ' + FNameAlt +
           { } ' ' + FNameNeu,
           { } MyWorkingPath + cFotoTransaktionenFName);
+                  LastLogWasTimeStamp := false;
 
         WARTEND.del(r);
       end;

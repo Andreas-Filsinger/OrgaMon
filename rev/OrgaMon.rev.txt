@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.954 (12.02.14) Andreas Filsinger
+
+ Neu: Foto: Pfad für Nachschlagedateien der Fotoumbenennung ist ".\MonDaServer"
+ Neu: Foto: Bei Fehlern liefert e_r_Foto nicht den Bildnamen sondern die
+      Fehlermeldung
+
 Rev 7.953 (12.02.14) Andreas Filsinger
 
  Neu: wegen WordIndex Rev. 1.024 neu compiliert
