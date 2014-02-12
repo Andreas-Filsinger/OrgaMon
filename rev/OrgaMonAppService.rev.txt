@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.036 (12.02.14) Andreas Filsinger
+
+ Bug: timestamp Flood
+
 Rev 1.035 (12.02.14) Andreas Filsinger
 
  Bug: CSV konnte nicht korrekt gelesen werden

@@ -2670,7 +2670,6 @@ begin
               break;
             end;
 
-
             tNAMES.InsertFromFile(Fname);
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
@@ -2697,15 +2696,15 @@ begin
               FotoPrefix := 'ERROR' + '-';
 
               // Diagnose
-              if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv')<
-                 FileAge(Fname)
-               then
-               begin
+              if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') <
+                FileAge(Fname) then
+              begin
 
-  ReferenzDiagnose:= tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
-  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
-                   ReferenzDiagnose.free;
-                    end;
+                ReferenzDiagnose := tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
+                ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' +
+                  cRID_Suchspalte + '.csv');
+                ReferenzDiagnose.free;
+              end;
 
             end;
           until true;
@@ -4249,7 +4248,7 @@ begin
   with sBAUSTELLE do
   begin
     InsertFromFile(Fname);
-    cColumnIndex_NUMMERN_PREFIX := colof('NUMMERN_PREFIX', true);
+    cColumnIndex_NUMMERN_PREFIX := colOf('NUMMERN_PREFIX', true);
     for r := 1 to RowCount do
     begin
       _NUMMERN_PREFIX := readCell(r, cColumnIndex_NUMMERN_PREFIX);
