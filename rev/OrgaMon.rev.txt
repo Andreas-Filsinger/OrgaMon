@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 7.955 (17.02.14) Andreas Filsinger
+
+ Bug: Personen Suche: Info+<ENTER>, danach Neuanlage: Info würde übernommen
+
 Rev 7.954 (12.02.14) Andreas Filsinger
 
  Neu: Foto: Pfad für Nachschlagedateien der Fotoumbenennung ist ".\MonDaServer"
