@@ -145,6 +145,7 @@ type
     GEN_MITGLIEDERLISTE: Integer;
     _TimeRefreshed: dword;
     LastValueByScroll: string;
+    // Speichert den Inhalt des aktuell angezeigten Datensatzes
 
     function Suche_PERSON_R: Integer;
 
@@ -333,6 +334,7 @@ begin
       { } inttostr(PERSON_R) + ')');
 
     AufgabeRefresh;
+    IB_Query1.Locate('RID', MITGLIEDERLISTE_R, []);
   end;
 end;
 
@@ -704,9 +706,9 @@ begin
       Key := #0;
       AufgabeAenderungAnzeigen;
       IB_Query1.Refresh;
+      LastValueByScroll := Edit2.Text;
       IB_Grid1.SetFocus;
     end;
-
   end;
 end;
 
@@ -745,7 +747,6 @@ begin
       AufgabeRefresh
     else if frequently(_TimeRefreshed, 15000) then
       AufgabeRefresh;
-
   end;
 
 end;
@@ -922,8 +923,8 @@ begin
         1:
           AString := e_r_Person(strtointdef(AString, cRID_NULL));
         2:
-          if (AString <>'') then
-           AString := '€';
+          if (AString <> '') then
+            AString := '€';
         4:
           begin
             DateA := date2long(nextp(AString, ' ', 0));
@@ -1009,7 +1010,7 @@ begin
       AufgabeAenderungAnzeigen;
 
       // Kassenbeleg aufbereiten
-      KassenBeleg := TStringList.create;
+      KassenBeleg := TSTringList.create;
       KassenBeleg.Values['TICKET_R'] := inttostr(TICKET_R);
       KassenBeleg.Values['Titel'] :=
       { } e_r_Person(PERSON_R) + ' ' +
