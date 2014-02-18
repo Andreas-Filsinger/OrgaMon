@@ -45,17 +45,12 @@ implementation
 uses
   anfix32, globals,
   JonDaExec in '../JonDaServer/JonDaExec.pas',
-  Funktionen.Auftrag
-  {
-  in '../OrgaMon/Funktionen.Auftrag',
-  Funktionen.Basis in '../OrgaMon/Funktionen.Basis',
-  Funktionen.Beleg in '../OrgaMon/Funktionen.Beleg',
-  Funktionen.Buch in '../OrgaMon/Funktionen.Buch',
-  Funktionen.LokaleDaten in '../OrgaMon/Funktionen.LokaleDaten',
-  Funktionen.Transaktionen in '../OrgaMon/Funktionen.Transaktionen'
-   }
-
-  ;
+  Sperre,
+  Funktionen_Auftrag,
+  Funktionen.Basis,
+  Funktionen.Beleg,
+  Funktionen.Buch,
+  Funktionen.LokaleDaten;
 
 {$R *.lfm}
 

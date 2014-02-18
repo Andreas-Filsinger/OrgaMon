@@ -10,6 +10,9 @@ unit txlib;
 interface
 
 uses
+ {$ifdef fpc}
+ fpchelper,
+ {$endif}
  Windows, SysUtils, StrUtils,
  Classes, WinSock, DateUtils;
 
