@@ -29,7 +29,11 @@ unit Sperre;
 interface
 
 uses
- System.UITypes,
+  {$ifndef fpc}
+  System.UITypes,
+  {$else}
+  fpchelper, graphics,
+  {$endif}
   classes,
   anfix32,
   dateutils,

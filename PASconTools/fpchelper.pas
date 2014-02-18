@@ -35,6 +35,10 @@ interface
 
 uses
   SysUtils, Classes, graphics, gettext;
+
+const
+     PIPE_UNLIMITED_INSTANCES = 255;
+
 type
 PColorRec = ^TColorRec;
 TColorRec = record
