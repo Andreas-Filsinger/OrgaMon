@@ -57,8 +57,8 @@ implementation
 uses
   anfix32, WordIndex,
   gplists,
-  Funktionen.Basis,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Auftrag,
   CareTakerClient, Datenbank;
 {$R *.DFM}
 

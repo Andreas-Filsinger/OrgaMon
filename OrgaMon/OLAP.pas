@@ -134,10 +134,10 @@ uses
 
   // OrgaMon-Core
   globals, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Auftrag,
-  Funktionen.Beleg,
-  Funktionen.Buch,
+  Funktionen_Basis,
+  Funktionen_Auftrag,
+  Funktionen_Beleg,
+  Funktionen_Buch,
 
   // OrgaMon-VCL
   ArtikelVerlag, Einstellungen, AuftragArbeitsplatz,

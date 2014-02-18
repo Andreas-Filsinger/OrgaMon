@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.Buch;
+unit Funktionen_Buch;
 
 //
 // b_r_* lesende Buchungsregeln

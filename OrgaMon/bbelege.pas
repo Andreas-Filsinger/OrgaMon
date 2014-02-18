@@ -263,9 +263,9 @@ implementation
 uses
   globals, anfix32, html,
   Person, main, mwst, GUIHelp,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  funktionen_Auftrag,
   Artikel, ArtikelSuchIndex,
   ArtikelVerlag, Lager,
   AusgabeArt,

@@ -674,8 +674,11 @@ var
   begin
     CloseFile(MonDaAasTxt);
     Auftrag.SaveToFile(
-      { } MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension,
-      TEncoding.UTF8);
+      { } MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension
+      {$ifndef fpc}
+      ,TEncoding.UTF8
+{$endif}
+      );
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1321,7 +1324,11 @@ begin
       begin
 
         // Settings auswerten!
-        JondaAll.LoadFromFile(UpFName(AktTrn), TEncoding.UTF8);
+        JondaAll.LoadFromFile(UpFName(AktTrn)
+{$ifndef fpc}
+        , TEncoding.UTF8
+{$endif}
+        );
         if (JondaAll.count = 0) then
         begin
           log(cWARNINGText + ' 1211:' +
@@ -1330,11 +1337,19 @@ begin
 
           // danger: Modify original User Data
           FileRemoveBOM(UpFName(AktTrn));
-          JondaAll.LoadFromFile(UpFName(AktTrn), TEncoding.ANSI);
+          JondaAll.LoadFromFile(UpFName(AktTrn)
+          {$ifndef fpc}
+          , TEncoding.ANSI
+          {$endif}
+          );
           JondaAll[0] := cutblank(JondaAll[0]);
 
           // danger: Overwrite original User Data
-          JondaAll.SaveToFile(UpFName(AktTrn), TEncoding.UTF8);
+          JondaAll.SaveToFile(UpFName(AktTrn)
+          {$ifndef fpc}
+          , TEncoding.UTF8
+          {$endif}
+          );
 
         end;
 
@@ -1965,7 +1980,11 @@ begin
       CloseFile(f_OrgaMon_Auftrag);
       CloseFile(fOrgaMonErgebnis);
       sOrgaMonErgebnis.SaveToFile(MyProgramPath + AktTrn + '\' + AktTrn +
-        cUTF8DataExtension, TEncoding.UTF8);
+        cUTF8DataExtension
+        {$ifndef fpc}
+        , TEncoding.UTF8
+        {$endif}
+        );
       CloseFile(f_OrgaMonApp_Ergebnis);
       CloseFile(f_OrgaMonApp_NeuerAuftrag);
       CloseFile(MonDaA_StayF);
@@ -2492,8 +2511,12 @@ begin
             AddStrings(Einstellungen);
           end;
           if RevIsFrom(strtodoubledef(VERSION, 0), cVersion_OrgaMonApp) then
-            OptionStrings.SaveToFile(MyProgramPath + TAN + '\' + TAN + '.txt',
-              TEncoding.UTF8)
+            OptionStrings.SaveToFile(MyProgramPath + TAN + '\' + TAN + '.txt'
+            {$ifndef fpc}
+            ,TEncoding.UTF8
+{$endif}
+
+            )
           else
             AppendStringsToFile(OptionStrings, MyProgramPath + TAN + '\' + TAN
               + '.txt');
@@ -4165,7 +4188,11 @@ begin
     for n := 0 to pred(sOutput.count) do
       sMigrationsVorlage.insert(InsertPoint + n, sOutput[n]);
 
-    sMigrationsVorlage.SaveToFile(NewFName, TEncoding.UTF8);
+    sMigrationsVorlage.SaveToFile(NewFName
+    {$ifndef fpc}
+    , TEncoding.UTF8
+    {$endif}
+    );
 
     result := true;
 

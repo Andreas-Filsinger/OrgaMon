@@ -44,6 +44,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'WebShop - XML RPC'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 439
         Top = 123
@@ -176,6 +180,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - Medien'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 8
         Top = 69
@@ -489,6 +497,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - MySQL'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button6: TButton
         Left = 498
         Top = 192
@@ -642,6 +654,10 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'REST'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button11: TButton
         Left = 17
         Top = 39

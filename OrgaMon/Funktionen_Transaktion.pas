@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.Transaktion;
+unit Funktionen_Transaktion;
 
 interface
 

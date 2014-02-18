@@ -9,7 +9,7 @@ uses
   IB_UpdateBar, IB_NavigationBar,
   Grids, IB_Grid, IB_Components, IB_Access,
   ExtCtrls, StdCtrls, Mask,
-  IB_Controls, Buttons, ComCtrls;
+  IB_Controls, Buttons, ComCtrls, IB_EditButton;
 
 type
   TFormQAuftrag = class(TForm)
@@ -172,7 +172,7 @@ uses
   anfix32, Math, QGruppe,
   main, DateUtils, globals,
   Bearbeiter, Qmain, Datenbank,
-  wanfix32, Funktionen.Auftrag;
+  wanfix32, Funktionen_Auftrag;
 
 {$R *.dfm}
 

@@ -112,9 +112,9 @@ var
 implementation
 
 uses
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   BudgetKalkulation,
   anfix32, globals, Person, Artikel,
   Geld, IBExportTable, wanfix32;

@@ -175,7 +175,7 @@ implementation
 
 uses
   globals, anfix32,
-  Funktionen.Auftrag,
+  Funktionen_Auftrag,
   Einstellungen,
   Bearbeiter, Datenbank, splash,
   BaseUpdate, Datensicherung, Tagesabschluss,

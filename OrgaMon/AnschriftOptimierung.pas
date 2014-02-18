@@ -95,7 +95,7 @@ implementation
 
 uses
   anfix32, globals, Baustelle,
-  Datenbank, Funktionen.Auftrag, wanfix32;
+  Datenbank, Funktionen_Auftrag, wanfix32;
 
 {$R *.dfm}
 

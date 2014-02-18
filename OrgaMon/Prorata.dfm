@@ -462,7 +462,7 @@ object FormProrata: TFormProrata
     OnChange = ComboBox1Change
   end
   object IB_QueryPERSON: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsAlignment.Strings = (
       'PRORATA_PERSON_R=LEFT'
       'PERSON_R=LEFT')
@@ -485,7 +485,7 @@ object FormProrata: TFormProrata
     Top = 88
   end
   object IB_QueryARTIKEL: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -525,7 +525,7 @@ object FormProrata: TFormProrata
     Top = 333
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -535,7 +535,7 @@ object FormProrata: TFormProrata
     Top = 104
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -545,7 +545,7 @@ object FormProrata: TFormProrata
     Top = 104
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '

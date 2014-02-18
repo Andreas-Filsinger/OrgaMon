@@ -76,9 +76,9 @@ implementation
 
 uses
   globals, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   CareTakerClient,
   AuftragMobil, AuftragErgebnis, OLAPArbeitsplatz,
   BaseUpdate, Datensicherung, IBEXportTable,

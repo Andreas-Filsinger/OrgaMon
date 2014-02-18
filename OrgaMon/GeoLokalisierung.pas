@@ -132,9 +132,9 @@ uses
 
   // OrgaMon
   Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag;
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag;
 
 {$R *.dfm}
 

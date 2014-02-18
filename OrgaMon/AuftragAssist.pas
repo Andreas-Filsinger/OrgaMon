@@ -81,7 +81,7 @@ uses
   globals, anfix32, html,
   CareTakerClient, FastGEO, GEOCache,
   Datenbank,
-  Funktionen.Auftrag,
+  Funktionen_Auftrag,
    wanfix32;
 
 {$R *.dfm}

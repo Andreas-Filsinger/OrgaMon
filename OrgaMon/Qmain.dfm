@@ -44,6 +44,10 @@ object FormQMain: TFormQMain
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = '&'#220'berblick'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         784
         516)
@@ -278,6 +282,10 @@ object FormQMain: TFormQMain
     object TabSheet2: TTabSheet
       Caption = 'Basis&daten'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image1: TImage
         Left = 10
         Top = 56
@@ -308,6 +316,10 @@ object FormQMain: TFormQMain
     object TabSheet4: TTabSheet
       Caption = '&Admin'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 504
         Top = 24

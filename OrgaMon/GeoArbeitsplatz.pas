@@ -134,9 +134,9 @@ uses
   Anfix32, globals, CareTakerClient,
   AuftragArbeitsplatz, gplists, WordIndex,
   IB_Components, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   IBExportTable, IB_Schema, IB_Access,
   wanfix32;
 

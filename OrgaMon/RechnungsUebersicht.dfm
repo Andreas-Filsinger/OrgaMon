@@ -14,6 +14,8 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   DesignSize = (
     931
     623)
@@ -227,7 +229,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     OnClick = CheckBox1Click
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT'
       'DAVON_BEZAHLT=RIGHT'

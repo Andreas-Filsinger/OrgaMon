@@ -134,10 +134,10 @@ implementation
 
 uses
   anfix32, globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Buch,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Buch,
+  Funktionen_Auftrag,
   Bearbeiter,
   html, Person,
   Belege, Datenbank, Main,

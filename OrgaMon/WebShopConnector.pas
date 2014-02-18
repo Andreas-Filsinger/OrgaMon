@@ -191,9 +191,9 @@ implementation
 uses
   math, geld, anfix32,
   globals, Datenbank, Person,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   SimplePassword, html,
   DateUtils, CareTakerClient,
   gplists, OLAP, SolidFTP,

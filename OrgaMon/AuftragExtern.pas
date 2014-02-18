@@ -72,7 +72,7 @@ implementation
 
 uses
   anfix32, IB_Components, CareTakerClient,
-  Funktionen.Auftrag, WordIndex,
+  Funktionen_Auftrag, WordIndex,
   html, SolidFTP, InfoZIP, Datenbank, Baustelle;
 
 {$R *.dfm}

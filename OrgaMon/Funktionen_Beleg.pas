@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.Beleg;
+unit Funktionen_Beleg;
 
 //
 // e,

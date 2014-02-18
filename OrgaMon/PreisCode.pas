@@ -70,8 +70,8 @@ implementation
 
 uses
   ArtikelVerlag,
-  Funktionen.Basis,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Auftrag,
   Datenbank;
 
 {$R *.dfm}
