@@ -277,7 +277,7 @@ implementation
 
 uses
   Funktionen_Basis,
-  Funktionen.Beleg,
+  Funktionen_Beleg,
   html, Person, Serie,
   Laender, InternationaleTexte, Datenbank,
   Artikel, SystemPflege, Resource.SiteDownload,

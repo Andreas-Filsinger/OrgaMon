@@ -285,7 +285,7 @@ object FormZahlungsart: TFormZahlungsart
       'STANDARD=BOOLEAN=Y,N'
       'AUTOZAHLUNG=BOOLEAN=Y,N'
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'BELEG_INFO=FALSE'

@@ -111,8 +111,8 @@ implementation
 
 uses
   globals, anfix32, math,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   Person, CareTakerClient, Datenbank,
   IBExportTable, Jvgnugettext,
   wanfix32;

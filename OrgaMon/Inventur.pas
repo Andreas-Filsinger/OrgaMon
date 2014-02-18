@@ -160,9 +160,9 @@ var
 implementation
 
 uses
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   ArtikelSortiment, anfix32, globals,
   QueryEdit,  Artikel,
   html, ArtikelVerlag,

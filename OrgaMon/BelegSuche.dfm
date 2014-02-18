@@ -497,7 +497,7 @@ object FormBelegSuche: TFormBelegSuche
       'MAHNUNG_AUSGESETZT=BOOLEAN=Y,N'
       'TERMIN=NOTIME'
       'ZUSAGE=NOTIME')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayFormat.Strings = (
       'ZUSAGE=dd.mm.yy'
       'DRUCK=dd.mm.yy'
@@ -701,7 +701,7 @@ object FormBelegSuche: TFormBelegSuche
     Top = 72
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -725,7 +725,7 @@ object FormBelegSuche: TFormBelegSuche
   object IB_Query3: TIB_Query
     ColumnAttributes.Strings = (
       'NETTO=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_RECHNUNG=REC'
       'MENGE_BESTELLT=BES'
@@ -791,7 +791,7 @@ object FormBelegSuche: TFormBelegSuche
     Top = 527
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -801,7 +801,7 @@ object FormBelegSuche: TFormBelegSuche
     Top = 390
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM '

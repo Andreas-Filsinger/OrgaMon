@@ -92,7 +92,7 @@ var
 implementation
 
 uses
-  anfix32, globals, Funktionen.Beleg,
+  anfix32, globals, Funktionen_Beleg,
   IBExportTable, Datenbank, wanfix32;
 
 {$R *.DFM}

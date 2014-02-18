@@ -39,7 +39,7 @@ uses
 
 
   Mask, IB_Controls, IB_NavigationBar,
-  ExtCtrls, IB_SearchBar, IB_UpdateBar;
+  ExtCtrls, IB_SearchBar, IB_UpdateBar, IB_EditButton;
 
 type
   TFormPersonDoppelte = class(TForm)
@@ -84,7 +84,7 @@ implementation
 
 uses
   globals, anfix32,
-  Funktionen.Beleg,
+  Funktionen_Beleg,
   Datenbank;
 
 {$R *.DFM}

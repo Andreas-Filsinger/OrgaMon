@@ -118,8 +118,8 @@ var
 implementation
 
 uses
-  globals, anfix32, Funktionen.Basis,
-  Funktionen.Beleg,
+  globals, anfix32, Funktionen_Basis,
+  Funktionen_Beleg,
   basic32, CareTakerClient, Artikel,
   WarenBewegung, IBExportTable,
   wanfix32, Datenbank;

@@ -121,8 +121,8 @@ implementation
 
 uses
   globals, anfix32,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   CareTakerClient, IBExportTable, wanfix32;
 
 {$R *.DFM}

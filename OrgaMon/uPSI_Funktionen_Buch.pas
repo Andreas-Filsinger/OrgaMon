@@ -42,7 +42,7 @@ implementation
 uses
    gplists
   ,anfix32
-  ,Funktionen.Buch
+  ,Funktionen_Buch
   ;
  
  

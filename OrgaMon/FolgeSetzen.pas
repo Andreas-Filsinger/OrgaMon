@@ -79,7 +79,7 @@ implementation
 
 uses
   globals, anfix32, CareTakerClient,
-  wanfix32, Funktionen.Beleg;
+  wanfix32, Funktionen_Beleg;
 
 procedure TFormFolgeSetzen.FormActivate(Sender: TObject);
 begin

@@ -123,9 +123,9 @@ implementation
 
 uses
   Math, SysUtils,
-  Funktionen.Basis,
-  Funktionen.Auftrag,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Auftrag,
+  Funktionen_Beleg,
   IB_Access, IB_Components,
 
 {$IFNDEF CONSOLE}

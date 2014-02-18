@@ -689,10 +689,10 @@ uses
 {$ENDIF}
   // OrgaMon
   CareTakerClient,
-  Funktionen.LokaleDaten,
-  Funktionen.Basis,
-  Funktionen.Buch,
-  Funktionen.Auftrag;
+  Funktionen_LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Buch,
+  Funktionen_Auftrag;
 
 const
   cAllSettingsAnz = 178;

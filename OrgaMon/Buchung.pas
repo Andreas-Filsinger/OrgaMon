@@ -156,9 +156,9 @@ implementation
 
 uses
   globals, anfix32,
-  Funktionen.Basis,
-  Funktionen.Buch,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Buch,
+  Funktionen_Beleg,
   Person, Belege, Ereignis,
  CaretakerClient, CareServer,
   Jvgnugettext, IBExportTable,

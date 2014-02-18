@@ -77,7 +77,7 @@ implementation
 
 uses
   Datenbank, globals, anfix32,
-  Funktionen.Basis, CareTakerClient, IBExportTable,
+  Funktionen_Basis, CareTakerClient, IBExportTable,
   wanfix32;
 
 {$R *.DFM}

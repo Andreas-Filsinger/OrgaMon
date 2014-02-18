@@ -268,7 +268,7 @@ object FormPersonExport: TFormPersonExport
     end
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -282,7 +282,7 @@ object FormPersonExport: TFormPersonExport
     Top = 104
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -297,7 +297,7 @@ object FormPersonExport: TFormPersonExport
     Top = 104
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT ANLAGE'

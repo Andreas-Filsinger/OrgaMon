@@ -197,8 +197,6 @@ uses
   math,
   anfix32, IBExportTable, SimplePassword,
 
-  // Funktionen.Beleg,
-
   // wegen der Versionsnummern
   GHD_pngimage,
   UFlxMessages,

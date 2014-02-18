@@ -123,7 +123,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  Funktionen.LokaleDaten,
+  Funktionen_LokaleDaten,
   Person, anfix32, globals,
   Artikel, WordIndex, html,
   CareTakerClient, Geld, Datenbank,

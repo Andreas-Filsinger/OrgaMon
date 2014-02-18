@@ -227,7 +227,7 @@ const
   // in der DB-> !!!NULL!!! (nicht "0" - die sollte es nicht geben!)
   cAusgabeArt_Probestimme_PDF: TDOM_Reference = 1;
   cAusgabeArt_Demoaufnahme_MP3: TDOM_Reference = 2;
-  // function cAusgabeArt_Aufnahme_MP3: TDOM_Reference; in "Funktionen.Basis"
+  // function cAusgabeArt_Aufnahme_MP3: TDOM_Reference; in "Funktionen_Basis"
 
   // Medium Typen
   cMediumWeblink = 1;

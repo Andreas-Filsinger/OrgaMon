@@ -161,10 +161,10 @@ implementation
 
 uses
   globals, math,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.Buch,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_Buch,
   Einstellungen, IB_Process, Geld,
   IB_DataScan, IB_Session, IB_Export,
   IB_Import, GeoPostleitzahlen, GeoLokalisierung,

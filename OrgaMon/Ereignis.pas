@@ -79,8 +79,8 @@ implementation
 uses
   Belege, Artikel, Person,
   BBelege, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   DruckSpooler, globals,
   anfix32, CareTakerClient, CareServer,
   IBExportTable, wanfix32;

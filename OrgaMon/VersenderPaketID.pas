@@ -87,9 +87,9 @@ implementation
 uses
   globals, Versender, anfix32,
   WordIndex, Belege,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_LokaleDaten,
   IBEXportTable, Datenbank,
   CareTakerClient, OLAP, wanfix32;
 

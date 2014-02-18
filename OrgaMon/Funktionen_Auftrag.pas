@@ -238,8 +238,8 @@ uses
 
   // OrgaMon
   JonDaExec,
-  Funktionen.Beleg,
-  Funktionen.Basis,
+  Funktionen_Beleg,
+  Funktionen_Basis,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}

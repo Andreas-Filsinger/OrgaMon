@@ -130,9 +130,9 @@ implementation
 uses
   Belege, anfix32, html,
   globals, Person, AusgangsRechnungen,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   ArtikelVerlag, Lager, WarenBewegung,
   IBExportTable, Jvgnugettext,
   Kontext, Datenbank, wanfix32,

@@ -26,6 +26,10 @@ object FormInventur: TFormInventur
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Durchf'#252'hrung'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 12
         Top = 3
@@ -204,6 +208,10 @@ object FormInventur: TFormInventur
     object TabSheet3: TTabSheet
       Caption = 'Auswertungen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 16

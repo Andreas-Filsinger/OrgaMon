@@ -67,7 +67,7 @@ var
 implementation
 
 uses
-  Funktionen.Beleg, anfix32, CareTakerClient,
+  Funktionen_Beleg, anfix32, CareTakerClient,
   ZahlungECconnect, Jvgnugettext, wanfix32;
 
 {$R *.dfm}

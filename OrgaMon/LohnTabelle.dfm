@@ -549,7 +549,7 @@ object FormLohntabelle: TFormLohntabelle
     end
   end
   object IB_QueryPERSON: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from person '
@@ -560,7 +560,7 @@ object FormLohntabelle: TFormLohntabelle
     Top = 144
   end
   object IB_QueryANSCHRIFT: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from '
@@ -576,7 +576,7 @@ object FormLohntabelle: TFormLohntabelle
       'RID=NOTREQUIRED'
       'AKTIV=BOOLEAN=Y,N'
       'ABWESENHEIT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayWidth.Strings = (
       'VON=120'
       'BIS=120')

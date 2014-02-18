@@ -133,9 +133,9 @@ uses
 
   IB_Components, IB_Access,
   math, html, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   graphics, CareTakerClient,
   IBExportTable, WordIndex,
   Sperre, Bearbeiter, GeoLokalisierung,

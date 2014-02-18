@@ -100,7 +100,7 @@ implementation
 uses
   ExcelHelper, UExcelAdapter, XLSAdapter,
   UFlexCelImport, UFlxFormats, UFlxNumberFormat,
-  globals, OLAP, Funktionen.Auftrag,
+  globals, OLAP, Funktionen_Auftrag,
   CaretakerClient, wanfix32, Auswertung.Generator.MixStatistik.main;
 
 {$R *.dfm}

@@ -132,9 +132,9 @@ implementation
 uses
   SimplePassword, Splash, wanfix32,
   Creatorok, Creatorwait,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   anfix32, binlager32,
   ArtikelVerlag, WordIndex,
   IBExportTable;

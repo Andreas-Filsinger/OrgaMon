@@ -65,7 +65,7 @@ implementation
 uses
   anfix32, globals, Artikel,
   ArtikelKategorie, Datenbank, gplists,
-  Funktionen.Beleg, Math;
+  Funktionen_Beleg, Math;
 
 {$R *.dfm}
 

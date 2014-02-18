@@ -67,7 +67,7 @@ implementation
 uses
   SimplePassword, globals, CreatorMain,
   splash, Person,
-  Funktionen.Beleg;
+  Funktionen_Beleg;
 
 {$R *.DFM}
 

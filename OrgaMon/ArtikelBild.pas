@@ -64,8 +64,8 @@ implementation
 uses
   anfix32, IniFiles, IBExportTable,
    globals,
-   Funktionen.Basis,
-   Funktionen.Beleg;
+   Funktionen_Basis,
+   Funktionen_Beleg;
 
 {$R *.dfm}
 

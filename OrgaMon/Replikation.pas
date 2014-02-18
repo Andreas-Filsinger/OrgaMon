@@ -89,7 +89,7 @@ uses
   anfix32, globals, IniFiles,
   BaseUpdate, Einstellungen, CareTakerClient,
   WordIndex, IBExportTable, Datenbank,
-  Funktionen.Basis, wanfix32;
+  Funktionen_Basis, wanfix32;
 
 {$R *.dfm}
 

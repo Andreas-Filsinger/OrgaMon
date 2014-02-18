@@ -226,8 +226,8 @@ uses
   infozip,
 
   // OrgaMon-Core
-  Funktionen.Basis,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_LokaleDaten,
 
   // OrgaMon - UI
   BaseUpdate;

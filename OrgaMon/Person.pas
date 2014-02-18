@@ -426,11 +426,11 @@ implementation
 
 uses
   main, anfix32, globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.Buch,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_Buch,
+  Funktionen_LokaleDaten,
   WordIndex, Belege, AusgangsRechnungen,
   BBelege, Geld,
   Tier, TierAuswahl, PersonSuche, QAbzeichnen,

@@ -148,9 +148,9 @@ implementation
 uses
   anfix32, globals,
   IBExportTable,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Buch,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Buch,
   IB_Components, IB_Access,
   CareServer, Geld, Datenbank, ArtikelPOS;
 

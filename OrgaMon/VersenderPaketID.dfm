@@ -288,7 +288,7 @@ object FormVersenderPaketID: TFormVersenderPaketID
     TabOrder = 8
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANG=Labeldruck'
       'BELEG_R=BELEG'
