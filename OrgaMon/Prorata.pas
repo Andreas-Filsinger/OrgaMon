@@ -120,9 +120,9 @@ var
 implementation
 
 uses
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Funktionen.LokaleDaten,
   Person, anfix32, globals,
   Artikel, WordIndex, html,

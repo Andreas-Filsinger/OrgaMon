@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.Basis;
+unit Funktionen_Basis;
 
 interface
 

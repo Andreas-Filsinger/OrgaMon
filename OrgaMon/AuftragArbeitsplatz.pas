@@ -498,11 +498,11 @@ uses
   AuftragSuchindex, PlanquadratNachfrage,
   AuftragMobil, MonteurUmfang, AuftragSuche,
   AuftragErgebnis, CareTakerClient, AnschriftOptimierung,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.Transaktion,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_Transaktion,
+  Funktionen_LokaleDaten,
   FastGeo, GeoArbeitsplatz, GeoLokalisierung,
 
   Datenbank, FrageLoeschenMonteurInfo;

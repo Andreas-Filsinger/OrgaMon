@@ -123,9 +123,9 @@ uses
   GeoArbeitsplatz,
   CareTakerClient, AuftragArbeitsplatz, gplists,
   WordIndex, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   wanfix32, IBExcel;
 
 {$R *.dfm}

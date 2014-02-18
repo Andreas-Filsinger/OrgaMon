@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.LokaleDaten;
+unit Funktionen_LokaleDaten;
 
 interface
 
@@ -57,11 +57,11 @@ implementation
 
 uses
   Globals, Anfix32, IB_Components,
-  Funktionen.Basis, gplists,
+  Funktionen_Basis, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
-  Funktionen.Auftrag, wordindex;
+  Funktionen_Auftrag, wordindex;
 
 const
   AlreadyCheckedPath: TStringList = nil;

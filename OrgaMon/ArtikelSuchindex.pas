@@ -55,9 +55,9 @@ uses
   globals, WordIndex, anfix32,
   gplists,  Datenbank,
   IB_Access,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
 
   { imp pend : Routinen verschieben e_?_Verlag }
   { imp pend : OLAP ohne GUI }

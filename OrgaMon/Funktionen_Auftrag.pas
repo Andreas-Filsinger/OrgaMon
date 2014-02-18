@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit Funktionen.Auftrag;
+unit Funktionen_Auftrag;
 
 interface
 

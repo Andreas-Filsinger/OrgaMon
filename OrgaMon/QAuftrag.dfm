@@ -848,7 +848,7 @@ object FormQAuftrag: TFormQAuftrag
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -873,7 +873,7 @@ object FormQAuftrag: TFormQAuftrag
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'VERFALL=NOTIME')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayFormat.Strings = (
       'VERFALL=dd.mm.yy')
     FieldsDisplayLabel.Strings = (
@@ -937,7 +937,7 @@ object FormQAuftrag: TFormQAuftrag
   object IB_Query3: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsAlignment.Strings = (
       'GRUPPE_R=LEFT')
     FieldsDisplayFormat.Strings = (
@@ -1002,7 +1002,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 296
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -1011,7 +1011,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 272
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * '
@@ -1022,7 +1022,7 @@ object FormQAuftrag: TFormQAuftrag
     Top = 272
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT SUM(DAUER) D_SUMME'

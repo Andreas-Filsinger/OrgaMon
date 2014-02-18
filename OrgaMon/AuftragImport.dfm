@@ -165,6 +165,10 @@ object FormAuftragImport: TFormAuftragImport
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 1
         Top = -1
@@ -389,6 +393,10 @@ object FormAuftragImport: TFormAuftragImport
     object TabSheet2: TTabSheet
       Caption = 'Verarbeitung und Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 552
         Top = 16

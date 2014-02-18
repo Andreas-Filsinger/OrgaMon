@@ -119,7 +119,7 @@ implementation
 uses
   CaretakerClient, Baustelle,
   globals, math, wanfix32,
-  IBExportTable, Funktionen.Auftrag, CCR.Exif;
+  IBExportTable, Funktionen_Auftrag, CCR.Exif;
 
 {$R *.dfm}
 

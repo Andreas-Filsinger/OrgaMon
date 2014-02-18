@@ -152,10 +152,10 @@ uses
   CaretakerClient, anfix32, Person,
   Belege, Kontext, OLAP,
   IBExportTable,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_LokaleDaten,
   wanfix32, gplists;
 
 {$R *.dfm}

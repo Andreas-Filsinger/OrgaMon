@@ -120,9 +120,10 @@ uses
 
   // OrgaMon tools
   Datenbank, AuftragArbeitsplatz, JonDaExec,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag;
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag;
+
 {$R *.dfm}
 
 function TFormAuftragMobil.WriteMobil: boolean;

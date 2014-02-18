@@ -161,9 +161,9 @@ implementation
 uses
   globals, anfix32, html,
   IBExportTable, JclMiscel,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   ArtikelVerlag, Bearbeiter,
   Artikel, ArtikelKategorie,
   GUIHelp, gpLists, CareTakerClient,

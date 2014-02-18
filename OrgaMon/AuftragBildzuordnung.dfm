@@ -479,7 +479,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     TabOrder = 17
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayWidth.Strings = (
       'ZAEHLER_NUMMER=107'
       'ZAEHLER_WECHSEL=230')

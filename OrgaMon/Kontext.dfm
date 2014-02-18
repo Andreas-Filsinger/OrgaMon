@@ -25,6 +25,10 @@ object FormKontext: TFormKontext
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Person'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 16
         Top = 32

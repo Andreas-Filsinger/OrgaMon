@@ -276,7 +276,7 @@ var
 implementation
 
 uses
-  Funktionen.Basis,
+  Funktionen_Basis,
   Funktionen.Beleg,
   html, Person, Serie,
   Laender, InternationaleTexte, Datenbank,

@@ -94,7 +94,7 @@ implementation
 
 uses
   anfix32, QGruppe, Datensicherung,
-  Datenbank, Funktionen.Auftrag, wanfix32;
+  Datenbank, Funktionen_Auftrag, wanfix32;
 
 {$R *.dfm}
 

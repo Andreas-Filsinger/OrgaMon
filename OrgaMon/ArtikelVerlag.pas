@@ -130,9 +130,9 @@ implementation
 
 uses
   anfix32, globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Person,
   Lager, ArtikelSortiment, PreisCode,
   gplists, Datenbank,

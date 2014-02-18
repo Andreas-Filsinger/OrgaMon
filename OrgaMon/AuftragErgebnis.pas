@@ -139,10 +139,10 @@ uses
   IB_Components, IB_Access,
 
   // OrgaMon-Core
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.Transaktion,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_Transaktion,
 
   //
   Bearbeiter, AuftragArbeitsplatz, Datenbank,

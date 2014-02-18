@@ -65,6 +65,10 @@ object FormBudget: TFormBudget
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Belege'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 16
         Top = 7
@@ -286,6 +290,10 @@ object FormBudget: TFormBudget
     object TabSheet2: TTabSheet
       Caption = 'Berechnung'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 24
         Top = 27
@@ -371,6 +379,10 @@ object FormBudget: TFormBudget
     object TabSheet3: TTabSheet
       Caption = 'Verbuchen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 16
         Top = 16
@@ -446,7 +458,7 @@ object FormBudget: TFormBudget
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '

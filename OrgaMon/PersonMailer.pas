@@ -157,9 +157,9 @@ implementation
 uses
   anfix32, globals, html,
   WordIndex,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Person, Belege,
   CareTakerClient, IdAttachmentFile,
   IBExportTable, IdAssignedNumbers, wanfix32,

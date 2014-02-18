@@ -81,9 +81,9 @@ implementation
 
 uses
   globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Person, Belege,
   AusgangsRechnungen, anfix32,
   geld, IBExportTable, Rechnungen,

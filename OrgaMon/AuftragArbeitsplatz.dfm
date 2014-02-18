@@ -829,7 +829,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
         Left = 702
         Top = 0
         Width = 10
-        Height = 22
+        Height = 13
         Caption = '[]'
         OnClick = LabelRefreshDiagClick
       end
@@ -1287,7 +1287,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
         Left = 162
         Top = 0
         Width = 37
-        Height = 22
+        Height = 13
         Cursor = crHandPoint
         Caption = 'KW 02'
         Font.Charset = ANSI_CHARSET
@@ -1421,7 +1421,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010164006800B00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010164006800B40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0010000010020000000000000A0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

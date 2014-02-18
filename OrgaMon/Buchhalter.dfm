@@ -35,6 +35,10 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -346,6 +350,10 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Sammellastschrift'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1082,6 +1090,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1384,6 +1396,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -2056,6 +2072,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3384,6 +3404,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Lastschriften'
       ImageIndex = 6
       OnShow = TabSheet7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3608,6 +3632,10 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 24
         Top = 40
@@ -3922,7 +3950,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 368
     Top = 104
     Bitmap = {
-      494C0101040009001C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900200110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

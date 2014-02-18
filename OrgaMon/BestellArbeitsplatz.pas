@@ -231,9 +231,9 @@ implementation
 
 uses
   anfix32, ArtikelVerlag, globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Lager, Artikel,
   Belege, BBelege, Person,
   WarenBewegung, html, FolgeSetzen,

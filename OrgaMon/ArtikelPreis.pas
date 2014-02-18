@@ -78,9 +78,9 @@ implementation
 uses
   globals, anfix32, Belege,
   Artikel, Datenbank, IBExportTable,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag;
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag;
 
 {$R *.dfm}
 
