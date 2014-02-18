@@ -65,7 +65,7 @@ implementation
 uses
   globals, anfix32, WordIndex,
   IB_Access, IB_Components, Datenbank,
-  Funktionen.Auftrag, CareTakerClient, IBExportTable,
+  Funktionen_Auftrag, CareTakerClient, IBExportTable,
   wanfix32, AuftragArbeitsplatz;
 {$R *.dfm}
 

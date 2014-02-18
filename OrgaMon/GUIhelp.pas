@@ -89,8 +89,8 @@ uses
   dialogs, forms, windows,
   anfix32, winamp, WordIndex,
   globals, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   wanfix32;
 
 {$R *.dfm}

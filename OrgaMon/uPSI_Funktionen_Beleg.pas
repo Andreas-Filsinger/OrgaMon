@@ -48,7 +48,7 @@ uses
   ,anfix32
   ,globals
   ,gplists
-  ,Funktionen.Beleg
+  ,Funktionen_Beleg
   ;
  
  

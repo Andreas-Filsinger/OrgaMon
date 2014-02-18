@@ -184,11 +184,11 @@ implementation
 uses
   globals, anfix32, IBExportTable,
   math, IB_Session, jclcounter,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Buch,
-  Funktionen.LokaleDaten,
-  Funktionen.Transaktion,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Buch,
+  Funktionen_LokaleDaten,
+  Funktionen_Transaktion,
   Belege, SolidFTP,
   BaseUpdate, Datenbank,
   CareServer, html,
@@ -507,7 +507,7 @@ begin
     BeginHourGlass;
     if (xMode = xMode_Free) then
     begin
-      Funktionen.Transaktion.Dispatch(Edit12.text, lTRN);
+      Funktionen_Transaktion.Dispatch(Edit12.text, lTRN);
     end
     else
     begin

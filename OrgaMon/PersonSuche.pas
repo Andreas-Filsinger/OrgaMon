@@ -173,10 +173,10 @@ implementation
 uses
   math, globals, anfix32, Person,
   Jvgnugettext, wanfix32, GUIhelp,
-  Funktionen.Auftrag, CareTakerClient,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.LokaleDaten,
+  Funktionen_Auftrag, CareTakerClient,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_LokaleDaten,
   IBExportTable, Belege, BuchBarKasse;
 
 {$R *.DFM}

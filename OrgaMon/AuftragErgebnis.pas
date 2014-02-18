@@ -2015,7 +2015,7 @@ var
     begin
       TransaktionsName := Settings.values[cE_AbschlussTransaktion];
       while (TransaktionsName <> '') do
-        Funktionen.Transaktion.Dispatch(nextp(TransaktionsName), CommitL);
+        Funktionen_Transaktion.Dispatch(nextp(TransaktionsName), CommitL);
     end;
 
   end;

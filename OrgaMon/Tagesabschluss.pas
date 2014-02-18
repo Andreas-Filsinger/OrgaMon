@@ -77,9 +77,9 @@ implementation
 uses
   globals, wanfix32,
 
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_LokaleDaten,
 
   Datensicherung, Datenbank,
   Person, CreatorMain, VersenderPaketID,

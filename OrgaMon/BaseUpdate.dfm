@@ -38,6 +38,10 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Bottom = 4
       Caption = 'Anwendungs Update'
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 243
         Top = 150

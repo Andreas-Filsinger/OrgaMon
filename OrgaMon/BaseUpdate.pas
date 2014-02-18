@@ -191,7 +191,7 @@ uses
   WordIndex, anfix32, globals,
   Einstellungen, CareTakerClient, splash,
   SimplePassword, wanfix32, Datenbank,
-  Funktionen.Basis, JclMiscel, math;
+  Funktionen_Basis, JclMiscel, math;
 
 {$R *.DFM}
 

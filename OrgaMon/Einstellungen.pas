@@ -80,7 +80,7 @@ implementation
 
 uses
   anfix32, globals, CareTakerClient,
-  Funktionen.Basis, wanfix32;
+  Funktionen_Basis, wanfix32;
 
 {$R *.DFM}
 

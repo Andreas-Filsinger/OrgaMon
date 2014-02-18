@@ -238,7 +238,7 @@ uses
   IBOServices, IB_Session,
 
   // OrgaMon
-  Funktionen.Basis,
+  Funktionen_Basis,
 
   // Tests
   InfoZip, DCPmd5, txlib, Datenbank;

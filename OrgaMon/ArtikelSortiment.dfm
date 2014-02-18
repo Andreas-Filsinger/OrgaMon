@@ -276,6 +276,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Beleg Infos'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 22
@@ -312,6 +316,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet2: TTabSheet
       Caption = 'Artikel Export'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ProgressBar2: TProgressBar
         Left = 7
         Top = 33
@@ -332,6 +340,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet3: TTabSheet
       Caption = 'Verk'#228'ufe'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 12
         Top = 11
@@ -434,6 +446,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet4: TTabSheet
       Caption = 'Verkaufsstatistik'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 7
         Top = 33
@@ -641,6 +657,10 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet5: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 264
         Top = 0
@@ -667,10 +687,18 @@ object FormArtikelSortiment: TFormArtikelSortiment
     object TabSheet6: TTabSheet
       Caption = 'Netto/Brutto Konvertierung'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet7: TTabSheet
       Caption = 'Preise'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 351
         Top = 27

@@ -98,8 +98,8 @@ implementation
 
 uses
   Artikel, globals, anfix32,
-  Funktionen.Basis, IBExportTable,
-  Funktionen.Beleg, math, Datenbank,
+  Funktionen_Basis, IBExportTable,
+  Funktionen_Beleg, math, Datenbank,
   wanfix32;
 
 {$R *.dfm}

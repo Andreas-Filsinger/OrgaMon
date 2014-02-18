@@ -128,9 +128,9 @@ implementation
 uses
   globals, Person, Belege,
   IBExportTable, BelegSuche, ArtikelPOS,
-  Funktionen.Basis,
-  Funktionen.Buch,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Buch,
+  Funktionen_Beleg,
   Mahnung, gplists,
   CareServer, Geld, Datenbank,
   Buchhalter, wanfix32;

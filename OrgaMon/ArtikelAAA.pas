@@ -70,8 +70,8 @@ implementation
 
 uses
   GUIHelp, globals,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   wanfix32, Artikel;
 
 {$R *.dfm}

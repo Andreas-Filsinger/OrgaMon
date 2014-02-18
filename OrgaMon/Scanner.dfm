@@ -211,7 +211,7 @@ object FormScanner: TFormScanner
     ShowMode = scAnalog
   end
   object IB_Cursor1: TIB_Cursor
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -228,7 +228,7 @@ object FormScanner: TFormScanner
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM PAKET')

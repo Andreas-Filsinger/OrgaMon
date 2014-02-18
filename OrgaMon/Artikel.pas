@@ -321,11 +321,11 @@ implementation
 uses
   globals, anfix32, html,
   gplists, math, wanfix32,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
-  Funktionen.Transaktion,
-  Funktionen.LokaleDaten,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
+  Funktionen_Transaktion,
+  Funktionen_LokaleDaten,
   ArtikelNeu, Musiker, Person,
   ArtikelEingabe, ArtikelVerlag, Lager,
   ArtikelBackorder, BestellArbeitsplatz, ArtikelKategorie,
@@ -1009,7 +1009,7 @@ begin
     end;
 
     //
-    Funktionen.Transaktion.Dispatch(Edit4.text, lRID);
+    Funktionen_Transaktion.Dispatch(Edit4.text, lRID);
     lRID.free;
 
     EndHourGlass;

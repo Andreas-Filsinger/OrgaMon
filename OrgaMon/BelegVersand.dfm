@@ -253,7 +253,7 @@ object FormBelegVersand: TFormBelegVersand
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'BELEG_R=B#'
       'TEILLIEFERUNG=TL'

@@ -92,7 +92,7 @@ implementation
 uses
   anfix32, Bearbeiter, CareTakerClient,
   globals, Datenbank, wanfix32,
-  Funktionen.Basis, IBExportTable;
+  Funktionen_Basis, IBExportTable;
 
 {$R *.dfm}
 

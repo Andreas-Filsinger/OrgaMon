@@ -102,7 +102,7 @@ implementation
 
 uses
   globals, ArtikelNeu,
-  Funktionen.Beleg,
+  Funktionen_Beleg,
   Artikel, anfix32, IBEXportTable,
   CareTakerClient, Datenbank,
   wanfix32;

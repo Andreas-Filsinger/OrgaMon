@@ -93,10 +93,10 @@ uses
   Datenbank,
 {$ENDIF}
   CareTakerClient,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Buch,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Buch,
+  Funktionen_Auftrag,
 
   // Pascal Skript
   uPSRuntime,

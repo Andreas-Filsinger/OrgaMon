@@ -89,8 +89,8 @@ implementation
 
 uses
   globals, winamp,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   CareTakerClient, Belege, Person,
   Main, IBExportTable, VersenderPaketID,
   SysHot, wanfix32;

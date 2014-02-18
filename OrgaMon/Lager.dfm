@@ -402,7 +402,7 @@ object FormLager: TFormLager
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'FREIGABE=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsVisible.Strings = (
       'STANDORT=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -451,7 +451,7 @@ object FormLager: TFormLager
     Top = 88
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM LAGER '
@@ -465,7 +465,7 @@ object FormLager: TFormLager
     Top = 8
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID'
@@ -476,7 +476,7 @@ object FormLager: TFormLager
     Top = 426
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT NAME FROM '
@@ -485,7 +485,7 @@ object FormLager: TFormLager
     Top = 426
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM ARTIKEL'
@@ -494,7 +494,7 @@ object FormLager: TFormLager
     Top = 418
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -508,7 +508,7 @@ object FormLager: TFormLager
     Top = 416
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID '
@@ -518,7 +518,7 @@ object FormLager: TFormLager
     Top = 416
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID '

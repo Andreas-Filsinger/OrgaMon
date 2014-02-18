@@ -47,7 +47,7 @@ uses
   ,anfix32
   ,globals
   ,txHoliday
-  ,Funktionen.Auftrag
+  ,Funktionen_Auftrag
   ;
  
  

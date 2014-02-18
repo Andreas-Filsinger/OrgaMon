@@ -2006,7 +2006,7 @@ begin
         for n := 0 to pred(Transaktionen.count) do
         begin
           InfoFile.add('Transaktion "' + Transaktionen[n] + '"');
-          Funktionen.Transaktion.Dispatch(Transaktionen[n], lImportierte);
+          Funktionen_Transaktion.Dispatch(Transaktionen[n], lImportierte);
         end;
         lImportierte.free;
       end;

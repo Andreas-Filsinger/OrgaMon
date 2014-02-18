@@ -147,8 +147,8 @@ uses
   IBEXportTable, math, html,
   GUIHelp, wanfix32, Geld,
   Datenbank, IB_Components,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   BaseUpdate, Tagesabschluss,
   Bearbeiter, Auswertung;
 

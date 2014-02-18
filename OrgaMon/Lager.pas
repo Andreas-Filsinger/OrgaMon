@@ -142,8 +142,8 @@ implementation
 
 uses
   globals, anfix32, math,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   ArtikelVerlag,  Datenbank,
   IBExportTable, wanfix32;
 

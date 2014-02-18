@@ -81,8 +81,8 @@ uses
   globals, Versender,
   Datenbank,
   GUIHelp,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   IBExportTable, anfix32,
   Jvgnugettext, CaretakerClient, wanfix32;
 

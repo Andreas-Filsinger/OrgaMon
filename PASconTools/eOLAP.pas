@@ -56,9 +56,9 @@ implementation
 uses
   InvokeRegistry, globals, IBEXportTable,
   Geld, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   SysUtils, anfix32,
   math, windows, IB_Components,
   WordIndex, gpLists, html,

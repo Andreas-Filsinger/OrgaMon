@@ -83,8 +83,8 @@ implementation
 
 uses
   globals, anfix32, WordIndex,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   IB_Components, IB_Access,
   gplists, IBExportTable, Datenbank;
 

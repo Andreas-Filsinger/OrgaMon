@@ -64,8 +64,8 @@ implementation
 uses
   IBExportTable, Belege, anfix32,
   BBelege, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   wanfix32;
 {$R *.DFM}
 

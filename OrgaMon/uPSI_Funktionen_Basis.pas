@@ -42,7 +42,7 @@ implementation
 uses
    gplists
   ,globals
-  ,Funktionen.Basis
+  ,Funktionen_Basis
   ;
  
  

@@ -196,9 +196,9 @@ implementation
 
 uses
   html, anfix32, math,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   Person, Belege, AusgangsRechnungen,
   InternationaleTexte,
   CareTakerClient, Einstellungen,

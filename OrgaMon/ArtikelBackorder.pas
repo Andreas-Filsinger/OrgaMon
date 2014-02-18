@@ -78,7 +78,7 @@ implementation
 
 uses
   Artikel, anfix32, Belege,
-  Funktionen.Beleg,
+  Funktionen_Beleg,
   BBelege, CareTakerClient,
   globals, IBExportTable, wanfix32;
 

@@ -340,10 +340,10 @@ implementation
 
 uses
   math, globals, anfix32,
-  Funktionen.Basis,
-  Funktionen.Buch,
-  Funktionen.Beleg,
-  Funktionen.Auftrag,
+  Funktionen_Basis,
+  Funktionen_Buch,
+  Funktionen_Beleg,
+  Funktionen_Auftrag,
   html, Person, main,
   mwst, Artikel, AusgangsRechnungen,
   BelegVersand, Versender, ArtikelSuchIndex,

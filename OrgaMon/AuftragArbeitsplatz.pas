@@ -2035,7 +2035,7 @@ begin
       doAynaci2;
 
     lRID := TgpIntegerList.CreateFrom(ItemsGRID);
-    Funktionen.Transaktion.Dispatch(Edit3.Text, lRID);
+    Funktionen_Transaktion.Dispatch(Edit3.Text, lRID);
     lRID.free;
 
     Edit3.Text := '';

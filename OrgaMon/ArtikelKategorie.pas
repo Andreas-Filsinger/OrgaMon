@@ -91,8 +91,8 @@ implementation
 uses
   globals, anfix32,
   IBExcel, Datenbank,
-  Funktionen.Basis,
-  Funktionen.Beleg,
+  Funktionen_Basis,
+  Funktionen_Beleg,
   wanfix32;
 
 {$R *.dfm}
