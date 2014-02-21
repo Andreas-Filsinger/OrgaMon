@@ -50,7 +50,7 @@ uses
   JonDaExec in '..\JonDaServer\JonDaExec.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
-  IBExportTable in '..\PASconTools\IBExportTable.pas',
+  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
   txHoliday in '..\PASconTools\txHoliday.pas',
   infozip in '..\infozip\infozip.pas',
   Mapping in '..\PASconTools\Mapping.pas',
