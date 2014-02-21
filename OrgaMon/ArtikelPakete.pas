@@ -103,7 +103,7 @@ implementation
 uses
   globals, ArtikelNeu,
   Funktionen_Beleg,
-  Artikel, anfix32, IBEXportTable,
+  Artikel, anfix32, dbOrgaMon,
   CareTakerClient, Datenbank,
   wanfix32;
 {$R *.dfm}

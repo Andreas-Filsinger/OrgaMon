@@ -48,7 +48,7 @@ implementation
 
 uses
   Belege, Globals, anfix32,
-  CareTakerClient, Artikel, IBExportTable,
+  CareTakerClient, Artikel, dbOrgaMon,
   wanfix32;
 
 {$R *.dfm}

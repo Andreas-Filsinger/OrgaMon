@@ -263,7 +263,7 @@ object FormQTicketArbeitsplatz: TFormQTicketArbeitsplatz
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'AUSGANG=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANG=OK'
       'ART=Art'

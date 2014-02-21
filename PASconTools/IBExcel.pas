@@ -46,7 +46,7 @@ uses
    IB_Header,
   IB_Session,
   anfix32,
-  IBExportTable;
+  dbOrgaMon;
 
 procedure ExportTableAsXLS(TSql: string; FName: string; Seperator: char = ';');
   overload;

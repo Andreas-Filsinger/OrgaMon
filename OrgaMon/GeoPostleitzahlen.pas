@@ -86,7 +86,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   IB_Components, IB_Access,
-  gplists, IBExportTable, Datenbank;
+  gplists, dbOrgaMon, Datenbank;
 
 {$R *.DFM}
 

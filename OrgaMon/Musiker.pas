@@ -98,7 +98,7 @@ implementation
 
 uses
   Artikel, globals, anfix32,
-  Funktionen_Basis, IBExportTable,
+  Funktionen_Basis, dbOrgaMon,
   Funktionen_Beleg, math, Datenbank,
   wanfix32;
 

@@ -168,7 +168,7 @@ uses
   ArtikelVerlag,
   Lager,  CareTakerClient,
   Artikel, Geld, Datenbank,
-  IBExportTable, wanfix32;
+  dbOrgaMon, wanfix32;
 
 {$R *.DFM}
 

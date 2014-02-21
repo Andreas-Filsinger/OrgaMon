@@ -270,7 +270,7 @@ uses
   ArtikelVerlag, Lager,
   AusgabeArt,
   FolgeSetzen, ArtikelBackorder,
-  ArtikelPreis, IBExportTable, CareTakerClient,
+  ArtikelPreis, dbOrgaMon, CareTakerClient,
   gplists, OLAP, Jvgnugettext,
   Geld, Datenbank, wanfix32;
 

@@ -80,7 +80,7 @@ uses
   Artikel, anfix32, Belege,
   Funktionen_Beleg,
   BBelege, CareTakerClient,
-  globals, IBExportTable, wanfix32;
+  globals, dbOrgaMon, wanfix32;
 
 {$R *.dfm}
 

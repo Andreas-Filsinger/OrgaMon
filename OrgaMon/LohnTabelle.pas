@@ -123,7 +123,7 @@ uses
   globals, anfix32,
   Funktionen_Basis,
   Funktionen_Beleg,
-  CareTakerClient, IBExportTable, wanfix32;
+  CareTakerClient, dbOrgaMon, wanfix32;
 
 {$R *.DFM}
 

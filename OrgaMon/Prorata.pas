@@ -127,7 +127,7 @@ uses
   Person, anfix32, globals,
   Artikel, WordIndex, html,
   CareTakerClient, Geld, Datenbank,
-  IBExportTable, wanfix32;
+  dbOrgaMon, wanfix32;
 
 {$R *.dfm}
 

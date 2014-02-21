@@ -453,7 +453,7 @@ implementation
 uses
   Jvgnugettext, wanfix32,
   globals, math, clipbrd,
-  SimplePassword, IBExportTable,
+  SimplePassword, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,

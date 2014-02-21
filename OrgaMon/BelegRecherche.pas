@@ -62,7 +62,7 @@ var
 implementation
 
 uses
-  IBExportTable, Belege, anfix32,
+  dbOrgaMon, Belege, anfix32,
   BBelege, Datenbank,
   Funktionen_Basis,
   Funktionen_Beleg,

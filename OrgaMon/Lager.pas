@@ -145,7 +145,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   ArtikelVerlag,  Datenbank,
-  IBExportTable, wanfix32;
+  dbOrgaMon, wanfix32;
 
 {$R *.DFM}
 

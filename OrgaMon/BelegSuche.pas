@@ -134,7 +134,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   ArtikelVerlag, Lager, WarenBewegung,
-  IBExportTable, Jvgnugettext,
+  dbOrgaMon, Jvgnugettext,
   Kontext, Datenbank, wanfix32,
   GUIHelp;
 

@@ -114,7 +114,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Person, CareTakerClient, Datenbank,
-  IBExportTable, Jvgnugettext,
+  dbOrgaMon, Jvgnugettext,
   wanfix32;
 
 {$R *.dfm}

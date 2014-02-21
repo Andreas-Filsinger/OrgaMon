@@ -77,7 +77,7 @@ implementation
 
 uses
   globals, anfix32, Belege,
-  Artikel, Datenbank, IBExportTable,
+  Artikel, Datenbank, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag;

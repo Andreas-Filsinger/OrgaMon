@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-  Tier, globals, IBExportTable;
+  Tier, globals, dbOrgaMon;
 
 {$R *.dfm}
 

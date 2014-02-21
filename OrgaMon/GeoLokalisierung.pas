@@ -127,7 +127,7 @@ uses
   IdBaseComponent, IdComponent, IdTCPConnection,
   IdTCPClient, IdHTTP,
 
-  gplists, CareTakerClient, IBExportTable,
+  gplists, CareTakerClient, dbOrgaMon,
   geoCache, html, SimplePassword,
 
   // OrgaMon

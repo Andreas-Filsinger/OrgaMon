@@ -353,7 +353,7 @@ uses
   ArtikelKategorie, GUIhelp, BelegRecherche,
   BBelege, ArtikelBackorder,
   CareTakerClient, QAbzeichnen, ArtikelContext,
-  ArtikelPreis, IBExportTable, gplists,
+  ArtikelPreis, dbOrgaMon, gplists,
   Ereignis, Bearbeiter, OpenOfficePDF,
   Jvgnugettext, JvDBSpinedit,
   Vertrag, Kontext,

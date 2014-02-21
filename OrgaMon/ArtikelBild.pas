@@ -62,7 +62,7 @@ var
 implementation
 
 uses
-  anfix32, IniFiles, IBExportTable,
+  anfix32, IniFiles, dbOrgaMon,
    globals,
    Funktionen_Basis,
    Funktionen_Beleg;

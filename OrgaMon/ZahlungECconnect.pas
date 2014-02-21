@@ -141,7 +141,7 @@ uses
   Bearbeiter,
   html, Person,
   Belege, Datenbank, Main,
-  ibexporttable, SysHot,
+  dbOrgaMon, SysHot,
   wanfix32, gplists, geld,
   Kontext;
 {$R *.dfm}

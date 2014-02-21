@@ -160,7 +160,7 @@ implementation
 
 uses
   globals, anfix32, html,
-  IBExportTable, JclMiscel,
+  dbOrgaMon, JclMiscel,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,

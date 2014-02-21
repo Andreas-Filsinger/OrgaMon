@@ -313,7 +313,7 @@ uses
   QTicketArbeitsplatz, OLAPArbeitsplatz,
   ZahlungECconnect, Medium, Jvgnugettext,
   IB_Controls, Vertrag, Kontext,
-  BuchBarKasse, IBExportTable, wanfix32,
+  BuchBarKasse, dbOrgaMon, wanfix32,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
   ArtikelKasse, Cron;
@@ -482,7 +482,7 @@ begin
       end;
     end;
     FormDatensicherung.IBC := DataModuleDatenbank.IB_Connection1;
-    IBExportTable.cConnection := DataModuleDatenbank.IB_Connection1;
+    dbOrgaMon.cConnection := DataModuleDatenbank.IB_Connection1;
 
     //
     SplashClose;

@@ -127,7 +127,7 @@ implementation
 
 uses
   globals, Person, Belege,
-  IBExportTable, BelegSuche, ArtikelPOS,
+  dbOrgaMon, BelegSuche, ArtikelPOS,
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,

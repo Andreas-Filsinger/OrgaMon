@@ -238,7 +238,7 @@ uses
   Belege, BBelege, Person,
   WarenBewegung, html, FolgeSetzen,
   CareTakerClient, ArtikelBackOrder, OLAP,
-  Datenbank, wanfix32, IBExportTable;
+  Datenbank, wanfix32, dbOrgaMon;
 
 {$R *.dfm}
 // Fest programmierte Spalten

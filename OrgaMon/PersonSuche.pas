@@ -177,7 +177,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-  IBExportTable, Belege, BuchBarKasse;
+  dbOrgaMon, Belege, BuchBarKasse;
 
 {$R *.DFM}
 

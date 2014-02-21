@@ -93,7 +93,7 @@ implementation
 
 uses
   anfix32, globals, Funktionen_Beleg,
-  IBExportTable, Datenbank, wanfix32;
+  dbOrgaMon, Datenbank, wanfix32;
 
 {$R *.DFM}
 

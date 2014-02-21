@@ -161,7 +161,7 @@ uses
   Funktionen_Beleg,
   Person, Belege, Ereignis,
  CaretakerClient, CareServer,
-  Jvgnugettext, IBExportTable,
+  Jvgnugettext, dbOrgaMon,
   wanfix32, Buchhalter;
 
 procedure TFormBuchung.addHistorie(BUCH_R: integer);

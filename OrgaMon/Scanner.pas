@@ -92,7 +92,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   CareTakerClient, Belege, Person,
-  Main, IBExportTable, VersenderPaketID,
+  Main, dbOrgaMon, VersenderPaketID,
   SysHot, wanfix32;
 {$R *.dfm}
 
