@@ -20,11 +20,7 @@
 *)
 unit anfix32;
 
-/// /{$ifdef fpc}
-// {$I jclfpc.inc}
-// {$else}
 {$I jcl.inc}
-// {$endif}
 
 interface
 
@@ -220,6 +216,9 @@ procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
+
+procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
+procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
 
 procedure SaveToUnixFile(s: TStrings; const FName: string);
 function RemoveDuplicates(s: TStrings): integer; overload;
@@ -508,6 +507,9 @@ implementation
 {$WARN UNIT_PLATFORM OFF}
 
 uses
+{$IFDEF fpc}
+  lazUTF8Classes,
+{$ENDIF}
   math,
   JclDateTime,
   JclWin32,
@@ -3538,6 +3540,7 @@ begin
     end;
   }
 end;
+
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 var
   InF: TextFile;
@@ -3653,8 +3656,8 @@ begin
     if (BufferUse < SizeOf(Buffer)) then
       break;
   until false;
-  if (TempStr<>'') then
-   s.add(TempStr);
+  if (TempStr <> '') then
+    s.add(TempStr);
   Stream.free;
 end;
 
@@ -5880,6 +5883,24 @@ begin
       push(Sub);
     end;
   end;
+end;
+
+procedure LoadStringsFromFileUTF8(List: TStrings; const FileName: string);
+begin
+{$IFDEF fpc}
+  lazUTF8Classes.LoadStringsFromFileUTF8(List, FileName);
+{$ELSE}
+  List.LoadFromFile(FileName, TEncoding.UTF8);
+{$ENDIF}
+end;
+
+procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
+begin
+{$IFDEF fpc}
+  lazUTF8Classes.SaveStringsToFileUTF8(List, FileName);
+{$ELSE}
+  List.SaveToFile(FileName, TEncoding.UTF8);
+{$ENDIF}
 end;
 
 initialization

@@ -42,7 +42,7 @@ implementation
 uses
    IB_Components
   ,Sperre
-  ,IBExportTable
+  ,dbOrgaMon
   ,gplists
   ,anfix32
   ,globals

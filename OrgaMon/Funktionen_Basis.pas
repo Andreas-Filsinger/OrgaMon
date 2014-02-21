@@ -195,7 +195,7 @@ uses
   DCPcrypt2, DCPblockciphers, DCPblowfish,
 
   math,
-  anfix32, IBExportTable, SimplePassword,
+  anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
   GHD_pngimage,

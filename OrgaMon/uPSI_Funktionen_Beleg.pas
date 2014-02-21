@@ -44,7 +44,7 @@ implementation
 uses
    IB_Components
   ,IB_Access
-  ,IBExportTable
+  ,dbOrgaMon
   ,anfix32
   ,globals
   ,gplists

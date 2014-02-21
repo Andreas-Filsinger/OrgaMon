@@ -30,7 +30,7 @@ interface
 
 uses
   Classes, IB_Components, Sperre,
-  IBExportTable, gplists, anfix32,
+  dbOrgaMon, gplists, anfix32,
   globals, txHoliday;
 
 {
