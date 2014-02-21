@@ -182,7 +182,7 @@ var
 implementation
 
 uses
-  globals, anfix32, IBExportTable,
+  globals, anfix32, dbOrgaMon,
   math, IB_Session, jclcounter,
   Funktionen_Basis,
   Funktionen_Beleg,

@@ -83,7 +83,7 @@ uses
   GUIHelp,
   Funktionen_Basis,
   Funktionen_Beleg,
-  IBExportTable, anfix32,
+  dbOrgaMon, anfix32,
   Jvgnugettext, CaretakerClient, wanfix32;
 
 {$R *.DFM}

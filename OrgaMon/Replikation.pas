@@ -88,7 +88,7 @@ implementation
 uses
   anfix32, globals, IniFiles,
   BaseUpdate, Einstellungen, CareTakerClient,
-  WordIndex, IBExportTable, Datenbank,
+  WordIndex, dbOrgaMon, Datenbank,
   Funktionen_Basis, wanfix32;
 
 {$R *.dfm}

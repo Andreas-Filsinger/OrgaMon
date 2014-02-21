@@ -137,7 +137,7 @@ uses
   Funktionen_Auftrag,
   anfix32, binlager32,
   ArtikelVerlag, WordIndex,
-  IBExportTable;
+  dbOrgaMon;
 
 {$R *.DFM}
 

@@ -127,7 +127,7 @@ uses
   IB_Session,
 
   // Tools
-  anfix32, IBExportTable, WordIndex,
+  anfix32, dbOrgaMon, WordIndex,
   CareTakerClient, ExcelHelper, html,
   Geld, OpenOfficePDF, JclMiscel,
   wanfix32,

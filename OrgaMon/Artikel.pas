@@ -56,7 +56,7 @@ uses
   UFlexCelImport,
   UExcelAdapter,
   XLSAdapter,
-  IBExportTable,
+  dbOrgaMon,
 
   // Hebu-Project
   Datenbank, IB_EditButton;

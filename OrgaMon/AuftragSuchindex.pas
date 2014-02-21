@@ -33,7 +33,7 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
   ComCtrls, IB_Components, globals,
-  IBExportTable;
+  dbOrgaMon;
 
 type
   TFormAuftragSuchindex = class(TForm)

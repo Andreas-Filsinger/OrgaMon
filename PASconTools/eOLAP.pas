@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  InvokeRegistry, globals, IBEXportTable,
+  InvokeRegistry, globals, dbOrgaMon,
   Geld, Datenbank,
   Funktionen_Basis,
   Funktionen_Beleg,

@@ -164,7 +164,7 @@ object FormKalender: TFormKalender
     ColumnAttributes.Strings = (
       'WERKTAG=BOOLEAN=Y,N'
       'FEIERTAG=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsVisible.Strings = (
       'BEARBEITER_R=FALSE'
       'ANLEGER_R=FALSE')

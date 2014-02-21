@@ -117,7 +117,7 @@ uses
   Funktionen_Auftrag,
   BudgetKalkulation,
   anfix32, globals, Person, Artikel,
-  Geld, IBExportTable, wanfix32;
+  Geld, dbOrgaMon, wanfix32;
 
 {$R *.dfm}
 

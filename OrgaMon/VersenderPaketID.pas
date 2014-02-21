@@ -90,7 +90,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-  IBEXportTable, Datenbank,
+  dbOrgaMon, Datenbank,
   CareTakerClient, OLAP, wanfix32;
 
 {$R *.DFM}

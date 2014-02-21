@@ -97,7 +97,7 @@ implementation
 uses
   globals, IB_Components, Datenbank,
   anfix32, Person, Baustelle,
-  Belege, Vertrag, IBExportTable,
+  Belege, Vertrag, dbOrgaMon,
   Funktionen_Auftrag;
 
 {$R *.dfm}

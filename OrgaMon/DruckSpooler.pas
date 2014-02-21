@@ -121,7 +121,7 @@ uses
   globals, anfix32, Funktionen_Basis,
   Funktionen_Beleg,
   basic32, CareTakerClient, Artikel,
-  WarenBewegung, IBExportTable,
+  WarenBewegung, dbOrgaMon,
   wanfix32, Datenbank;
 {$R *.dfm}
 function Resolve(const VarName: ShortString): ShortString;

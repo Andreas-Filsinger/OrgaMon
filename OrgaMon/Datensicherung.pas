@@ -220,7 +220,7 @@ uses
   IdStack,
 
   // ANFiX
-  IBExportTable,
+  dbOrgaMon,
 
   // Infozip
   infozip,

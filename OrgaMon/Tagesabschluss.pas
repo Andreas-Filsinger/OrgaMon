@@ -90,7 +90,7 @@ uses
   Mahnung, AuftragMobil,
   AuftragExtern, AuftragSuchindex,
   WebShopConnector, Buchhalter, OLAP,
-  IBExportTable;
+  dbOrgaMon;
 
 {$R *.DFM}
 

@@ -83,7 +83,7 @@ uses
   Funktionen_Beleg,
   DruckSpooler, globals,
   anfix32, CareTakerClient, CareServer,
-  IBExportTable, wanfix32;
+  dbOrgaMon, wanfix32;
 {$R *.DFM}
 
 procedure TFormEreignis.FormActivate(Sender: TObject);

@@ -67,7 +67,7 @@ var
 implementation
 
 uses
-  IBExportTable, globals, Datenbank;
+  dbOrgaMon, globals, Datenbank;
 
 {$R *.dfm}
 

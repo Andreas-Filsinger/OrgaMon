@@ -144,7 +144,7 @@ implementation
 
 uses
   anfix32, globals, ArtikelPOS,
-  IBEXportTable, math, html,
+  dbOrgaMon, math, html,
   GUIHelp, wanfix32, Geld,
   Datenbank, IB_Components,
   Funktionen_Basis,

@@ -147,7 +147,7 @@ implementation
 
 uses
   anfix32, globals,
-  IBExportTable,
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Buch,

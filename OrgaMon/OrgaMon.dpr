@@ -161,7 +161,6 @@ uses
   binlager32 in '..\PASconTools\binlager32.pas',
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   GeoCache in '..\PASconTools\GeoCache.pas',
-  IBExportTable in '..\PASconTools\IBExportTable.pas',
   basic32 in '..\PASconTools\basic32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   ContextBase in '..\PASconTools\ContextBase.pas',
@@ -203,7 +202,8 @@ uses
   Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
   IB_Components in '..\..\IBO5\source\core\IB_Components.pas',
   IB_Access in '..\..\IBO5\source\access\IB_Access.pas',
-  Cron in 'Cron.pas' {FormCron};
+  Cron in 'Cron.pas' {FormCron},
+  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas';
 
 {$R *.RES}
 

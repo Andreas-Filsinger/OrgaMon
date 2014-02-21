@@ -119,7 +119,7 @@ implementation
 
 uses
   GeoLokalisierung, anfix32, IB_Components,
-  IB_Access, globals, IBEXportTable,
+  IB_Access, globals, dbOrgaMon,
   GeoArbeitsplatz,
   CareTakerClient, AuftragArbeitsplatz, gplists,
   WordIndex, Datenbank,

@@ -583,7 +583,6 @@
 			<DCCReference Include="..\PASconTools\binlager32.pas"/>
 			<DCCReference Include="..\PASconTools\SolidFTP.pas"/>
 			<DCCReference Include="..\PASconTools\GeoCache.pas"/>
-			<DCCReference Include="..\PASconTools\IBExportTable.pas"/>
 			<DCCReference Include="..\PASconTools\basic32.pas"/>
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
 			<DCCReference Include="..\PASconTools\ContextBase.pas"/>
@@ -651,6 +650,7 @@
 				<Form>FormCron</Form>
 				<FormType>dfm</FormType>
 			</DCCReference>
+			<DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
 			<None Include="..\rev\Oc.rev.txt"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<None Include="..\rev\TPicUpload.rev.txt"/>

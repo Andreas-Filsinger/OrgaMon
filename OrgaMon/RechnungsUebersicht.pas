@@ -86,7 +86,7 @@ uses
   Funktionen_Auftrag,
   Person, Belege,
   AusgangsRechnungen, anfix32,
-  geld, IBExportTable, Rechnungen,
+  geld, dbOrgaMon, Rechnungen,
    ZahlungECconnect, wanfix32;
 
 {$R *.dfm}

@@ -136,7 +136,7 @@ uses
   Person,
   Lager, ArtikelSortiment, PreisCode,
   gplists, Datenbank,
-  IBExportTable, wanfix32;
+  dbOrgaMon, wanfix32;
 
 {$R *.DFM}
 
