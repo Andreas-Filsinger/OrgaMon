@@ -28,10 +28,24 @@ unit dbOrgaMon;
 
 interface
 
+{
+
+dbOrgaMon: Abstrahiert die Datenbankschicht, stellt dazu einige
+
+dbo* ("dbo" für DatenBank OrgaMon) Klassen zur Verfügung
+
+}
+
+
+
 uses
   Classes,
 {$ifdef fpc}
-  ZConnection, ZDataset,
+  db,
+  ZConnection,
+  ZDataset,
+  ZAbstractDataset,
+  ZDbcResultSetMetadata,
 {$else}
   IB_Components,
   IB_Access,
@@ -43,10 +57,16 @@ uses
 type
 {$ifdef fpc}
 TdboQuery = TZQuery;
-TdboColumn = TZColumn;
+TdboColumn = TZColumnInfo;
+TdboDataset = TZAbstractDataset;
+TdboDatasource = TDatasource;
+TdboCursor = TZReadOnlyQuery;
 {$else}
 TdboQuery = TIB_Query;
 TdboColumn = TIB_Column;
+TdboDataset = TIB_Dataset;
+TdboDatasource = TIB_Datasource;
+TdboCursor = TIB_Cursor;
 {$endif}
 
 
@@ -146,17 +166,17 @@ procedure qSelectOne(q: TdboQuery);
 procedure qSelectAll(q: TdboQuery);
 procedure qSelectList(q: TdboQuery; FName: string); overload;
 procedure qSelectList(q: TdboQuery; l: TList); overload;
-procedure qStringsAdd(f: TIB_Column; s: string);
+procedure qStringsAdd(f: TdboColumn; s: string);
 function HeaderNames(q: TdboQuery): TStringList; overload;
-function HeaderNames(q: TIB_Dataset): TStringList; overload;
+function HeaderNames(q: TdboDataset): TStringList; overload;
 function ColOf(q: TdboQuery; FieldName: string): integer; overload;
-function ColOf(q: TIB_Datasource; FieldName: string): integer; overload;
+function ColOf(q: TdboDataSource; FieldName: string): integer; overload;
 
 function ListasSQL(i: TgpIntegerList): string; overload;
 function ListasSQL(i: TList): string; overload;
 
 // Datum Tools
-function Datum_coalesce(f: TIB_Column; d: TANFiXDate): TANFiXDate;
+function Datum_coalesce(f: TdboColumn; d: TANFiXDate): TANFiXDate;
 
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
@@ -176,8 +196,11 @@ implementation
 uses
   Windows,
   SysUtils,
+{$ifdef fpc}
+{$else}
   IB_Header,
   IB_Session,
+{$endif}
   Math,
   CareTakerClient;
 
@@ -279,7 +302,7 @@ end;
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
   AppendMode: boolean = false);
 var
-  cABLAGE: TIB_Cursor;
+  cABLAGE: TdboCursor;
   Ablage: TStringList;
   StartTime: dword;
   n, m: integer;
@@ -309,13 +332,17 @@ begin
   end;
   DB_memo := TStringList.create;
   Ablage := TStringList.create;
-  cABLAGE := TIB_Cursor.create(nil);
+  cABLAGE := TdboCursor.create(nil);
   StartTime := 0;
   with cABLAGE do
   begin
 
     if assigned(cConnection) then
+{$ifdef fpc}
+     connection := cConnection;
+{$else}
       ib_connection := cConnection;
+{$endif}
 
     sql.add(TSql);
 
