@@ -110,8 +110,7 @@
 			<DCCReference Include="..\JonDaServer\JonDaExec.pas"/>
 			<DCCReference Include="..\PASconTools\binlager32.pas"/>
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
-			<DCCReference Include="Funktionen.Basis.pas"/>
-			<DCCReference Include="..\PASconTools\IBExportTable.pas"/>
+			<DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
 			<DCCReference Include="..\PASconTools\txHoliday.pas"/>
 			<DCCReference Include="..\infozip\infozip.pas"/>
 			<DCCReference Include="..\PASconTools\Mapping.pas"/>
@@ -123,12 +122,12 @@
 			<DCCReference Include="..\CCR Exif\CCR.Exif.StreamHelper.pas"/>
 			<DCCReference Include="..\CCR Exif\CCR.Exif.TagIDs.pas"/>
 			<DCCReference Include="..\CCR Exif\CCR.Exif.XMPUtils.pas"/>
-			<DCCReference Include="Funktionen.Beleg.pas"/>
-			<DCCReference Include="Funktionen.Buch.pas"/>
 			<DCCReference Include="eConnect.pas"/>
-			<DCCReference Include="Funktionen.Auftrag.pas"/>
-			<DCCReference Include="Funktionen.LokaleDaten.pas"/>
 			<DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
+			<DCCReference Include="Funktionen_Auftrag.pas"/>
+			<DCCReference Include="Funktionen_Basis.pas"/>
+			<DCCReference Include="Funktionen_Beleg.pas"/>
+			<DCCReference Include="Funktionen_LokaleDaten.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>

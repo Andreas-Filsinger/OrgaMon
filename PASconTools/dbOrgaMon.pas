@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit IBExportTable;
+unit dbOrgaMon;
 
 interface
 

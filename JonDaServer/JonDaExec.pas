@@ -29,6 +29,9 @@ unit JonDaExec;
 interface
 
 uses
+{$IFDEF fpc}
+  lazUTF8Classes,
+{$ENDIF}
   globals, classes, Sysutils,
   anfix32, wordindex, IdFTP;
 
@@ -673,12 +676,8 @@ var
   procedure CloseJonDa;
   begin
     CloseFile(MonDaAasTxt);
-    Auftrag.SaveToFile(
-      { } MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension
-      {$ifndef fpc}
-      ,TEncoding.UTF8
-{$endif}
-      );
+    SaveStringsToFileUTF8(Auftrag, MyProgramPath + AktTrn + '\auftrag' +
+      cUTF8DataExtension);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1324,11 +1323,7 @@ begin
       begin
 
         // Settings auswerten!
-        JondaAll.LoadFromFile(UpFName(AktTrn)
-{$ifndef fpc}
-        , TEncoding.UTF8
-{$endif}
-        );
+        LoadStringsFromFileUTF8(JondaAll, UpFName(AktTrn));
         if (JondaAll.count = 0) then
         begin
           log(cWARNINGText + ' 1211:' +
@@ -1338,18 +1333,14 @@ begin
           // danger: Modify original User Data
           FileRemoveBOM(UpFName(AktTrn));
           JondaAll.LoadFromFile(UpFName(AktTrn)
-          {$ifndef fpc}
-          , TEncoding.ANSI
-          {$endif}
-          );
+{$IFNDEF fpc}
+            , TEncoding.ANSI
+{$ENDIF}
+            );
           JondaAll[0] := cutblank(JondaAll[0]);
 
           // danger: Overwrite original User Data
-          JondaAll.SaveToFile(UpFName(AktTrn)
-          {$ifndef fpc}
-          , TEncoding.UTF8
-          {$endif}
-          );
+          SaveStringsToFileUTF8(JondaAll, UpFName(AktTrn));
 
         end;
 
@@ -1979,12 +1970,9 @@ begin
       // Dateien schliessen
       CloseFile(f_OrgaMon_Auftrag);
       CloseFile(fOrgaMonErgebnis);
-      sOrgaMonErgebnis.SaveToFile(MyProgramPath + AktTrn + '\' + AktTrn +
-        cUTF8DataExtension
-        {$ifndef fpc}
-        , TEncoding.UTF8
-        {$endif}
-        );
+
+      SaveStringsToFileUTF8(sOrgaMonErgebnis, MyProgramPath + AktTrn + '\' +
+        AktTrn + cUTF8DataExtension);
       CloseFile(f_OrgaMonApp_Ergebnis);
       CloseFile(f_OrgaMonApp_NeuerAuftrag);
       CloseFile(MonDaA_StayF);
@@ -2511,12 +2499,8 @@ begin
             AddStrings(Einstellungen);
           end;
           if RevIsFrom(strtodoubledef(VERSION, 0), cVersion_OrgaMonApp) then
-            OptionStrings.SaveToFile(MyProgramPath + TAN + '\' + TAN + '.txt'
-            {$ifndef fpc}
-            ,TEncoding.UTF8
-{$endif}
-
-            )
+            SaveStringsToFileUTF8(OptionStrings, MyProgramPath + TAN + '\' +
+              TAN + '.txt')
           else
             AppendStringsToFile(OptionStrings, MyProgramPath + TAN + '\' + TAN
               + '.txt');
@@ -4188,12 +4172,7 @@ begin
     for n := 0 to pred(sOutput.count) do
       sMigrationsVorlage.insert(InsertPoint + n, sOutput[n]);
 
-    sMigrationsVorlage.SaveToFile(NewFName
-    {$ifndef fpc}
-    , TEncoding.UTF8
-    {$endif}
-    );
-
+    SaveStringsToFileUTF8(sMigrationsVorlage,NewFName);
     result := true;
 
   except

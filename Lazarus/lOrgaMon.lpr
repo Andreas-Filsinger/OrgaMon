@@ -1,12 +1,12 @@
 {
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2014  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -24,17 +24,18 @@
   |    http://orgamon.org/
   |
 }
-program cOrgaMon;
+program lOrgaMon;
 
-{$APPTYPE CONSOLE}
-{$R *.res}
+{$mode objfpc}{$H+}
 
 uses
-  System.SysUtils,
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Interfaces,
   Classes,
   math,
   inifiles,
-  IB_Session,
   anfix32 in '..\PASconTools\anfix32.pas',
   globals in 'globals.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
@@ -49,7 +50,7 @@ uses
   JonDaExec in '..\JonDaServer\JonDaExec.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
-  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
+  IBExportTable in '..\PASconTools\IBExportTable.pas',
   txHoliday in '..\PASconTools\txHoliday.pas',
   infozip in '..\infozip\infozip.pas',
   Mapping in '..\PASconTools\Mapping.pas',
@@ -87,11 +88,11 @@ var
 begin
   JonDa := TJonDaExec.Create;
 
-  // Ini-Datei öffnen
+  // Ini-Datei Ã¶ffnen
   MyIni := TIniFile.Create(MyProgramPath + cIniFName);
   with MyIni do
   begin
-    // Ftp-Bereich für diesen Server
+    // Ftp-Bereich fÃ¼r diesen Server
     iJonDa_FTPHost := ReadString(UserName, 'ftphost', 'gateway');
     iJonDa_FTPUserName := ReadString(UserName, 'ftpuser', '');
     iJonDa_FTPPassword := ReadString(UserName, 'ftppwd', '');
@@ -111,7 +112,7 @@ begin
   e_r_PreisNativ_ensureCache;
   writeln(' OK');
 
-  // Vorrangig über den "--Port=nnnnn" Parameter
+  // Vorrangig Ã¼ber den "--Port=nnnnn" Parameter
   UsedPort := StrToIntDef(getParam('port'), -1);
   if (UsedPort < 0) or (UsedPort > 65536) then
     UsedPort := StrToIntDef(iXMLRPCPort, 3040);
@@ -187,9 +188,9 @@ var
  EREIGNIS_R, BELEG_R, PERSON_R : integer;
 begin
   repeat
-   // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
+   // Step 1 : ErlÃ¶se die Timeout Jobs (aber nur alle 5 Min)
 
-   // Step 2 : Markiere offene Jobs für mich
+   // Step 2 : Markiere offene Jobs fÃ¼r mich
 
    // Step 3 : Verarbeite offene Jobs
 
@@ -306,7 +307,7 @@ begin
       MachineIDChanged;
     end;
 
-    dbOrgaMon.cConnection := fbConnection;
+    IBExportTable.cConnection := fbConnection;
 
     sBearbeiter := e_r_Bearbeiter;
     if (sBearbeiter < cRID_FirstValid) then
@@ -346,3 +347,4 @@ begin
   end;
 
 end.
+
