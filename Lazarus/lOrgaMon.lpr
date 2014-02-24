@@ -3,7 +3,7 @@
   |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
   |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
   |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
   |    Copyright (C) 2014  Andreas Filsinger
@@ -25,6 +25,23 @@
   |
 }
 program lOrgaMon;
+
+{
+
+ l("l" für Lazarus / Linux)OrgaMon
+
+ cOrgaMon ist der Embarcadero/Delphi XMLRPC Server für Win32
+ dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für Win32 und Linux (Yeah!)
+
+ Vergleiche
+
+ cOrgaMon | lOrgaMon
+ =========+=========
+ IBO      | Zeos
+ infozip  | 7zip
+ ccr-exif |
+
+}
 
 {$mode objfpc}{$H+}
 
