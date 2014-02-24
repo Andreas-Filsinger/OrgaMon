@@ -38,8 +38,9 @@ program lOrgaMon;
  cOrgaMon | lOrgaMon
  =========+=========
  IBO      | Zeos
- infozip  | 7zip
- ccr-exif |
+ infozip  | 7zip?
+ ccr-exif | commandline "exiftool", oder ccr-exif-port
+ flexcel  | fpspreadsheet
 
 }
 
