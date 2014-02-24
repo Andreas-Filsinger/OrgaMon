@@ -60,7 +60,14 @@ TdboQuery = TZQuery;
 TdboColumn = TZColumnInfo;
 TdboDataset = TZAbstractDataset;
 TdboDatasource = TDatasource;
-TdboCursor = TZReadOnlyQuery;
+
+{ TdboCursor }
+
+TdboCursor = class(TZReadOnlyQuery)
+   public
+     procedure ApiFirst;
+     procedure ApiNext;
+  end;
 {$else}
 TdboQuery = TIB_Query;
 TdboColumn = TIB_Column;
@@ -901,6 +908,18 @@ begin
   begin
     result := ListasSQL(TgpIntegerList(nil));
   end;
+end;
+
+{ TdboCursor }
+
+procedure TdboCursor.ApiFirst;
+begin
+  First;
+end;
+
+procedure TdboCursor.ApiNext;
+begin
+  Next;
 end;
 
 procedure TSQLStringList.ReplaceBlock(BlockName: string; NewLines: string);
