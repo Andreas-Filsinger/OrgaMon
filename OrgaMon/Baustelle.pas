@@ -2675,8 +2675,8 @@ var
   BAUSTELLE_R: Integer;
   ZIEL_R: Integer;
 
-  cHauptDatensaetze: TIB_Club;
-  cHistorischeDatensaetze: TIB_Club;
+  cHauptDatensaetze: TdboClub;
+  cHistorischeDatensaetze: TdboClub;
 
   procedure CopyAll;
   var
@@ -2775,13 +2775,13 @@ begin
       sql.Add('select count(RID) ANZAHL from AUFTRAG where RID=:CROSSREF');
     end;
 
-    cHauptDatensaetze := TIB_Club.create(cConnection, 'ABLAGE');
+    cHauptDatensaetze := TdboClub.create(cConnection, 'ABLAGE');
     cHauptDatensaetze.sql(
       { } 'select RID from ABLAGE where ' +
       { } SQL_where + 'and ' +
       { } ' (RID=MASTER_R)');
 
-    cHistorischeDatensaetze := TIB_Club.create(cConnection, 'ABLAGE');
+    cHistorischeDatensaetze := TdboClub.create(cConnection, 'ABLAGE');
     cHistorischeDatensaetze.sql(
       { } 'select ABLAGE.RID from ABLAGE ' +
       { } cHauptDatensaetze.join('MASTER_R') +

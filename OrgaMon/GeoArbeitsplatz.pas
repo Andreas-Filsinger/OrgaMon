@@ -1061,7 +1061,7 @@ var
   DebugS: TStringList;
   EmptyRIDs: TgpIntegerList;
   BAUSTELLE_R: Integer;
-  numberCLUB: TIB_Club;
+  numberCLUB: TdboClub;
   updateList: TgpIntegerList;
   Baustellen: TgpIntegerList;
   BaustellenABNUMMER: TgpIntegerList;
@@ -1133,7 +1133,7 @@ begin
       BaustellenABNUMMER.add(e_r_AuftragNummer(BAUSTELLE_R));
 
     // Über einen "CLUB" arbeiten
-    numberCLUB := TIB_Club.create(DataModuleDatenbank.IB_Connection1,
+    numberCLUB := TdboClub.create(DataModuleDatenbank.IB_Connection1,
       'AUFTRAG');
     updateList := e_r_sqlm(
       { } 'select AUFTRAG.RID from AUFTRAG ' +

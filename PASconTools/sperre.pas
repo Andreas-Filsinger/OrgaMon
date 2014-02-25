@@ -74,6 +74,14 @@ const
   { } cSperre_ZeitAngabe_Vormittag,
   { } cSperre_ZeitAngabe_Nachmittag,
   { } cSperre_ZeitAngabe_Mittag];
+{$ifdef fpc}
+cSperre_ColourDefault = $20000000;
+cSperre_ColourRed = $FF000;
+{$else}
+cSperre_ColourDefault =     TColors.SysDefault;
+cSperre_ColourRed =     TColors.Red;
+{$endif}
+
 
 var
   sDiagnose: TStringList;
@@ -374,7 +382,7 @@ var
   n: Integer;
   HigestPrio: Integer;
 begin
-  Result := TColors.SysDefault;
+  Result := cSperre_ColourDefault;
   FGrund := '';
   HigestPrio := -1;
   for n := 0 to high(TheData) do
@@ -395,7 +403,7 @@ var
   n: Integer;
   d, NearestDistance: Integer;
 begin
-  Result := TColors.SysDefault;
+  Result := cSperre_ColourDefault;
   FGrund := '';
   NearestDistance := MaxInt;
   for n := 0 to high(TheData) do

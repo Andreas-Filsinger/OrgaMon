@@ -56,11 +56,17 @@ uses
 
 type
 {$IFDEF fpc}
+TdboDatasource = TDatasource;
+TdboDataset = TDataset;
+
+{ TdboScript }
+
+TdboScript = class(TZSQLProcessor)
+  public function sql : TStrings;
+end;
+
   TdboQuery = TZQuery;
-  TdboColumn = TZColumnInfo;
-  TdboDataset = TZAbstractDataset;
-  TdboDatasource = TDatasource;
-  TdboScript = TZSQLProcessor;
+  TdboField = TField;
 
   { TdboCursor }
 
@@ -72,7 +78,7 @@ type
 {$ELSE}
 
   TdboQuery = TIB_Query;
-  TdboColumn = TIB_Column;
+  TdboField = TIB_Column;
   TdboDataset = TIB_Dataset;
   TdboDatasource = TIB_Datasource;
   TdboCursor = TIB_Cursor;
@@ -104,7 +110,7 @@ type
   end;
 
   // Tools für ELEMENT
-  TIB_Club = class(TObject)
+  TdboClub = class(TObject)
     ID: integer;
     RefTable: string;
 {$IFDEF fpc}
@@ -174,9 +180,9 @@ procedure qSelectOne(q: TdboQuery);
 procedure qSelectAll(q: TdboQuery);
 procedure qSelectList(q: TdboQuery; FName: string); overload;
 procedure qSelectList(q: TdboQuery; l: TList); overload;
-procedure qStringsAdd(f: TdboColumn; s: string);
-function HeaderNames(q: TdboQuery): TStringList; overload;
+procedure qStringsAdd(f: TdboField; s: string);
 function HeaderNames(q: TdboDataset): TStringList; overload;
+function HeaderNames(q: TdboQuery): TStringList; overload;
 function ColOf(q: TdboQuery; FieldName: string): integer; overload;
 function ColOf(q: TdboDatasource; FieldName: string): integer; overload;
 
@@ -184,7 +190,7 @@ function ListasSQL(i: TgpIntegerList): string; overload;
 function ListasSQL(i: TList): string; overload;
 
 // Datum Tools
-function Datum_coalesce(f: TdboColumn; d: TANFiXDate): TANFiXDate;
+function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
@@ -273,6 +279,7 @@ uses
   Windows,
   SysUtils,
 {$IFDEF fpc}
+  fpchelper,
 {$ELSE}
   {$IFNDEF CONSOLE}
    Datenbank,
@@ -1016,7 +1023,15 @@ begin
   end;
 end;
 
+
 {$IFDEF fpc}
+{ TdboScript }
+
+function TdboScript.sql: TStrings;
+begin
+  result := Script;
+end;
+
 { TdboCursor }
 
 procedure TdboCursor.ApiFirst;
@@ -1105,36 +1120,38 @@ begin
     e_x_sql('drop table ' + TableName);
 end;
 
-procedure qStringsAdd(f: TIB_Column; s: string);
+procedure qStringsAdd(f: TdboField; s: string);
 var
   sl: TStringList;
 begin
   sl := TStringList.create;
+{$ifdef fpc}
+ Raise Exception.Create('imp pend: db: Add a Line to TStringList-Field');
+{$else}
   f.AssignTo(sl);
   sl.add(s);
   f.assign(sl);
+{$endif}
   sl.free;
 end;
 
 function RecordCopy(TableName, GeneratorName: string; RID: integer): integer;
 var
-  cSOURCE: TIB_Cursor;
+  cSOURCE: TdboCursor;
   qDEST: TdboQuery;
   NewRID: integer;
   _FieldName: string;
   n: integer;
 begin
   result := -1;
-  cSOURCE := TIB_Cursor.create(nil);
-  qDEST := TdboQuery.create(nil);
+  cSOURCE := nCursor;
+  qDEST := nQuery;
   try
     repeat
 
       //
       with cSOURCE do
       begin
-        if assigned(cConnection) then
-          ib_connection := cConnection;
 
         sql.add('select * from ' + TableName + ' where RID=' + inttostr(RID));
 
@@ -1145,14 +1162,12 @@ begin
         ApiFirst;
         if eof then
           break;
-        NewRID := gen_id(GeneratorName, 1);
+        NewRID := e_w_gen(GeneratorName);
       end;
 
       //
       with qDEST do
       begin
-        if assigned(cConnection) then
-          ib_connection := cConnection;
         sql.add('select * from ' + TableName + ' for update');
         insert;
         FieldByName('RID').AsInteger := NewRID;
@@ -1191,49 +1206,30 @@ begin
   qDEST.free;
 end;
 
-function gen_id(GenName: string; Step: integer = 0): integer;
-var
-  x: TIB_DSQL;
-begin
-  if assigned(cConnection) then
-  begin
-    result := cConnection.gen_id(GenName, Step);
-  end
-  else
-  begin
-    x := TIB_DSQL.create(nil);
-    with x do
-    begin
-      result := gen_id(GenName, Step);
-    end;
-    x.free;
-  end;
-end;
-
 { TSQLMENGE }
 
-procedure TIB_Club.add(i: integer);
+procedure TdboClub.add(i: integer);
 begin
   if not(assigned(items)) then
     items := TgpIntegerList.create;
   items.add(i);
 end;
 
-procedure TIB_Club.add(i: TgpIntegerList);
+procedure TdboClub.add(i: TgpIntegerList);
 begin
   if not(assigned(items)) then
     items := TgpIntegerList.create;
   items.append(i);
 end;
 
-constructor TIB_Club.create;
+constructor TdboClub.create;
 begin
   //
   RefTable := pRefTable;
   ibc := pibc;
 end;
 
-destructor TIB_Club.Destroy;
+destructor TdboClub.Destroy;
 begin
   if assigned(items) then
     FreeAndNil(items);
@@ -1241,7 +1237,7 @@ begin
   inherited;
 end;
 
-function TIB_Club.join(FieldName: string = ''): string;
+function TdboClub.join(FieldName: string = ''): string;
 begin
 
   if (FieldName = '') then
@@ -1253,18 +1249,18 @@ begin
   { } ' (' + TableName + '.RID=' + RefTable + '.' + FieldName + ') ';
 end;
 
-function TIB_Club.sql(s: string): string;
+function TdboClub.sql(s: string): string;
 begin
   // den Club mit Hife des SQL füllen!
   result := TableName;
   xsql('insert into ' + result + ' (RID) ' + s);
 end;
 
-function TIB_Club.sql(fromList: TgpIntegerList = nil): string;
+function TdboClub.sql(fromList: TgpIntegerList = nil): string;
 var
   workL: TgpIntegerList;
   n: integer;
-  dCLUB: TIB_DSQL;
+  dCLUB: TdboScript;
 begin
   result := '';
 
@@ -1282,11 +1278,9 @@ begin
   if not(assigned(workL)) then
     exit;
 
-  dCLUB := TIB_DSQL.create(nil);
+  dCLUB := nDSQL;
   with dCLUB do
   begin
-    if assigned(cConnection) then
-      ib_connection := cConnection;
 
     sql.add('insert into ' + TableName + ' (RID) values (:RID)');
     for n := 0 to pred(workL.count) do
@@ -1300,11 +1294,11 @@ begin
   result := join;
 end;
 
-function TIB_Club.TableName: string;
+function TdboClub.TableName: string;
 begin
   if (ID = 0) then
   begin
-    ID := gen_id('GEN_CLUB', 1);
+    ID := e_w_gen('GEN_CLUB');
     result := 'CLUB$' + inttostr(ID);
 
     // CLUB Tabelle neu anlegen
@@ -1322,9 +1316,10 @@ begin
   end;
 end;
 
-procedure TIB_Club.xsql(s: String);
+procedure TdboClub.xsql(s: String);
 begin
-  ibc.DefaultTransaction.ExecuteImmediate(s);
+   e_x_sql(s);
+//  ibc.DefaultTransaction.ExecuteImmediate(s);
 end;
 
 function e_r_fbClientVersion: string;
@@ -1332,10 +1327,14 @@ var
   TheModuleName: array [0 .. 1023] of char;
   s: string;
 begin
+{$ifdef fpc}
+ result := 'imp pend: obtain DLL-Handle';
+{$else}
   // welcher Client wird verwendet
   GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
+{$endif}
 end;
 
 function isRID(RID: integer): string;
@@ -1355,11 +1354,31 @@ begin
   sHeaderNames.free;
 end;
 
-function ColOf(q: TIB_Datasource; FieldName: string): integer; overload;
+function HeaderNames(q: TdboDataset): TStringList;
+var
+  n: integer;
+begin
+  result := TStringList.create;
+  with q do
+    for n := 0 to pred(FieldCount) do
+      result.add(Fields[n].FieldName);
+end;
+
+function HeaderNames(q: TdboQuery): TStringList;
+var
+  n: integer;
+begin
+  result := TStringList.create;
+  with q do
+    for n := 0 to pred(FieldCount) do
+      result.add(Fields[n].FieldName);
+end;
+
+function ColOf(q: TdboDatasource; FieldName: string): integer; overload;
 var
   sHeaderNames: TStringList;
 begin
-  sHeaderNames := HeaderNames(q.Dataset);
+  sHeaderNames := HeaderNames(q.DataSet);
   result := sHeaderNames.indexof(FieldName);
   sHeaderNames.free;
 end;
@@ -1380,32 +1399,14 @@ begin
     result := 'null';
 end;
 
-function HeaderNames(q: TdboQuery): TStringList; overload;
-var
-  n: integer;
-begin
-  result := TStringList.create;
-  with q do
-    for n := 0 to pred(FieldCount) do
-      result.add(Fields[n].FieldName);
-end;
 
-function HeaderNames(q: TIB_Dataset): TStringList; overload;
-var
-  n: integer;
-begin
-  result := TStringList.create;
-  with q do
-    for n := 0 to pred(FieldCount) do
-      result.add(Fields[n].FieldName);
-end;
 
-function Datum_coalesce(f: TIB_Column; d: TANFiXDate): TANFiXDate;
+function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 begin
   if f.IsNull then
     result := d
   else
-    result := DateTime2Long(f.AsDate);
+    result := DateTime2Long(f.AsDateTime);
   if not(DateOK(result)) then
     result := d;
 end;
@@ -1481,7 +1482,7 @@ var
   end;
 
 var
-  cTABLE: TIB_Cursor;
+  cTABLE: TdboCursor;
   cFIELDCOUNT: integer;
   InsertPreFix: string;
   n, m: integer;
@@ -1492,15 +1493,13 @@ var
 
 begin
   DB_memo := TStringList.create;
-  cTABLE := TIB_Cursor.create(nil);
+  cTABLE := nCursor;
   _TableName := cTableNameUnset;
 
   InsertPreFix := 'insert into ' + cTableName;
   with cTABLE do
   begin
 
-    if assigned(cConnection) then
-      ib_connection := cConnection;
 
     sql.add(TSql);
     if DebugMode then
@@ -1527,7 +1526,10 @@ begin
         begin
           if not(IsNull) then
           begin
+{$ifdef fpc}
+Content := AsString;
 
+{$else}
             case SQLType of
               SQL_DOUBLE, SQL_DOUBLE_:
                 Content := FloatToStrISO(AsDouble, 2);
@@ -1578,6 +1580,8 @@ begin
             else
               Content := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
+{$endif}
+
           end
           else
           begin
@@ -1618,7 +1622,7 @@ end;
 procedure fbDump(_R: integer; References: TStringList;
   Dump: TStringList); overload;
 var
-  cDATA: TIB_Cursor;
+  cDATA: TdboCursor;
   Dependency: string;
   Condition: string;
   AddFields: string;
@@ -1628,11 +1632,9 @@ var
   n, m: integer;
 
 begin
-  cDATA := TIB_Cursor.create(nil);
+  cDATA := nCursor;
   with cDATA do
   begin
-    if assigned(cConnection) then
-      ib_connection := cConnection;
     for n := 0 to pred(References.count) do
     begin
       Condition := cutblank(nextp(References[n], ' where ', 1));
@@ -1708,26 +1710,60 @@ begin
   if DebugMode then
     AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt',
       DatumUhr);
+{$ifdef fpc}
+ raise Exception.create('imp pend: e_x_sql');
+{$else}
 {$IFDEF CONSOLE}
   fbTransaction.ExecuteImmediate(s);
 {$ELSE}
   Datamoduledatenbank.IB_Transaction_W.ExecuteImmediate(s);
 {$ENDIF}
+{$endif}
 end;
 
 procedure e_x_commit;
 begin
+  {$ifdef fpc}
+   raise Exception.create('imp pend: e_x_commit');
+  {$else}
 {$IFDEF CONSOLE}
   // In der Konsolenanwendung haben wir nur *eine* Transaktion, ein commit war bisher
   // nicht notwendig
 {$ELSE}
   Datamoduledatenbank.IB_Transaction_R.Commit;
+  {$ENDIF}
+  {$ENDIF}
+end;
+
+function e_r_GEN(GenName: string): integer;
+begin
+  {$ifdef fpc}
+   raise Exception.create('imp pend: e_r_gen');
+  {$else}
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, 0);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
+{$ENDIF}
+{$ENDIF}
+end;
+
+function e_w_GEN(GenName: string): integer;
+begin
+  {$ifdef fpc}
+   raise Exception.create('imp pend: e_w_gen');
+  {$else}
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, 1);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
+{$ENDIF}
 {$ENDIF}
 end;
 
 procedure e_x_update(s: string; sl: TStringList);
 var
-  qUPDATE: TIB_Query;
+  qUPDATE: TdboQuery;
 begin
   qUPDATE := nQuery;
   with qUPDATE do
@@ -1746,27 +1782,9 @@ begin
   e_x_sql(HugeSingleLine(s, #13#10));
 end;
 
-function e_r_GEN(GenName: string): integer;
-begin
-{$IFDEF CONSOLE}
-  result := fbConnection.gen_id(GenName, 0);
-{$ELSE}
-  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
-{$ENDIF}
-end;
-
-function e_w_GEN(GenName: string): integer;
-begin
-{$IFDEF CONSOLE}
-  result := fbConnection.gen_id(GenName, 1);
-{$ELSE}
-  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
-{$ENDIF}
-end;
-
 function e_r_sql(s: string): integer;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   cSQL := nCursor;
   with cSQL do
@@ -1780,7 +1798,7 @@ end;
 
 function e_r_sql(s: string; sl: TStringList): integer;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   result := 1;
   cSQL := nCursor;
@@ -1788,11 +1806,15 @@ begin
   begin
     sql.add(s);
     ApiFirst;
+{$ifdef fpc}
+ Raise Exception.create('imp pend: Assign StringList to Blob');
+{$else}
     Fields[0].AssignTo(sl);
+{$endif}
   end;
   cSQL.free;
 end;
-function HasFieldName(IBQ: TIB_Dataset; FieldName: string): boolean;
+function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
 var
   n: integer;
 begin
@@ -1814,8 +1836,13 @@ begin
   ersetze('''', '''''', result);
 end;
 
-function nQuery: TIB_Query;
+function nQuery: TdboQuery;
 begin
+
+{$ifdef fpc}
+result := TZQuery.create(nil);
+
+{$else}
 {$IFDEF CONSOLE}
   result := TIB_Query.create(nil);
   with result do
@@ -1826,11 +1853,15 @@ begin
 {$ELSE}
   result := Datamoduledatenbank.nQuery;
 {$ENDIF}
+{$ENDIF}
 end;
 
-function nCursor: TIB_Cursor;
+function nCursor: TdboCursor;
 begin
-{$IFDEF CONSOLE}
+  {$ifdef fpc}
+  result := TdboCursor.create(niL);
+  {$else}
+  {$IFDEF CONSOLE}
   result := TIB_Cursor.create(nil);
   with result do
   begin
@@ -1840,11 +1871,15 @@ begin
 {$ELSE}
   result := Datamoduledatenbank.nCursor;
   result.IB_Transaction := Datamoduledatenbank.IB_Transaction_R;
-{$ENDIF}
+  {$ENDIF}
+  {$ENDIF}
 end;
 
-function nDSQL: TIB_DSQL;
+function nDSQL: TdboScript;
 begin
+{$ifdef fpc}
+ result := TdboScript.create(nil);
+{$else}
 {$IFDEF CONSOLE}
   result := TIB_DSQL.create(nil);
   with result do
@@ -1854,6 +1889,7 @@ begin
   end;
 {$ELSE}
   result := Datamoduledatenbank.nDSQL;
+{$ENDIF}
 {$ENDIF}
 end;
 
@@ -1896,7 +1932,7 @@ end;
 
 function e_r_sqlt(s: string): TStringList;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   result := TStringList.create;
   cSQL := nCursor;
@@ -1904,14 +1940,18 @@ begin
   begin
     sql.add(s);
     ApiFirst;
+    {$ifdef fpc}
+     Raise Exception.Create('imp pend: dbOrgaMon:e_r_sqlt Add a Line to TStringList-Field');
+    {$else}
     Fields[0].AssignTo(result);
+{$endif}
   end;
   cSQL.free;
 end;
 
 function e_r_sqlsl(s: string): TStringList;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   result := TStringList.create;
   cSQL := nCursor;
@@ -1930,7 +1970,7 @@ end;
 
 function e_r_sqlslo(s: string): TStringList;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   result := TStringList.create;
   cSQL := nCursor;
@@ -1949,7 +1989,7 @@ end;
 
 function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   if assigned(m) then
     result := m
@@ -1971,7 +2011,7 @@ end;
 
 function e_r_sqls(s: string): string;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   cSQL := nCursor;
   with cSQL do
@@ -1990,7 +2030,7 @@ end;
 
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
 var
-  cSQL: TIB_Cursor;
+  cSQL: TdboCursor;
 begin
   cSQL := nCursor;
   with cSQL do
@@ -2000,7 +2040,11 @@ begin
     if eof then
       result := ifnull
     else
-      result := Fields[0].AsDouble;
+      {$ifdef fpc}
+      result := Fields[0].AsFloat;
+    {$else}
+    result := Fields[0].AsDouble;
+    {$endif}
   end;
   cSQL.free;
 end;
@@ -2067,7 +2111,7 @@ var
   end;
 
 var
-  cOLAP: TIB_Cursor;
+  cOLAP: TdboCursor;
   OneLine: string;
   sSQL: string;
   n, k: integer;

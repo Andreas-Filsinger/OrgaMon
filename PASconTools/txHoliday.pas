@@ -10,7 +10,11 @@ unit txHoliday;
 interface
 
 uses
+{$ifdef fpc}
+ graphics,
+{$else}
   System.UITypes,
+{$endif}
   classes,
   anfix32,
   dateutils,
@@ -272,7 +276,7 @@ begin
   FAfternoon := false;
   FFromDateTime := 0.0;
   FToDateTime := 0.0;
-  FColor := TColors.SysDefault;
+  FColor := cSperre_ColourDefault;
 end;
 
 function TSperreWeekDaySpecifics.CheckIt(DateTime: TDateTime): boolean;
@@ -349,7 +353,7 @@ begin
   FSpecifics.Clear;
 
   FEnabled := false;
-  FColor := TColors.SysDefault;
+  FColor := cSperre_ColourDefault;
 end;
 
 function TSperreWeekDayItem.Add: TSperreWeekDaySpecifics;
@@ -374,7 +378,7 @@ var
 begin
   Result := false;
 
-  AColor := TColors.SysDefault;
+  AColor := cSperre_ColourDefault;
 
   if FEnabled then
     if Count > 0 then
@@ -420,7 +424,7 @@ begin
     FDays[I].FIndex := I;
   end;
 
-  FColor := TColors.Red;
+  FColor := cSperre_ColourRed;
 end;
 
 procedure TSperreWeekDays.Reset;
@@ -445,7 +449,7 @@ var
 begin
   Result := false;
 
-  AColor := TColors.SysDefault;
+  AColor := cSperre_ColourDefault;
   for I := 1 to 7 do
     if FDays[I].CheckIt(DateTime, AColor) then
     begin
@@ -821,7 +825,7 @@ end;
 constructor TSperreOfficalHolidays.Create;
 begin
   FStates := TList.Create;
-  FColor := TColors.Red;
+  FColor := cSperre_ColourRed;
 
   AddStateOfGermany;
 end;
