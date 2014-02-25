@@ -64,7 +64,7 @@
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-			<Debugger_RunParams>-da -al -at</Debugger_RunParams>
+			<Debugger_RunParams>-al -at</Debugger_RunParams>
 			<DCC_ExeOutput>$(ProgramFiles)\JonDaServer\</DCC_ExeOutput>
 			<DCC_ConsoleTarget>true</DCC_ConsoleTarget>
 			<Manifest_File>None</Manifest_File>

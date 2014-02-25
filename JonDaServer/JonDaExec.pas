@@ -3045,10 +3045,49 @@ var
         Fname + cBL_FileExtension);
   end;
 
+  procedure ClearSENDEN;
+  const
+    cOlderThan = 10;
+  var
+    tSENDEN: TsTable;
+    r, c, n: integer;
+    CellDate, d: TANFiXDate;
+  begin
+    // Nach "SENDEN" Tabelle protokollieren
+    // IMEI;NAME;ID;MOMENT;TAN;REV
+    tSENDEN := TsTable.Create;
+    with tSENDEN do
+    begin
+      InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      c := colOf('MOMENT', true);
+      d := DatePlus(DateGet, -cOlderThan);
+      // zu alte Zeile löschen
+      for r := 1 to RowCount do
+      begin
+        CellDate := strtointdef(nextp(readCell(r, c),' ',0), cIllegalDate);
+        if (CellDate > cIllegalDate) and (CellDate < d) then
+        begin
+          // Löschposition gefunden -> alles ab da löschen!
+          for n := RowCount downto r do
+            Del(n);
+          break;
+        end;
+      end;
+
+      if changed then
+      begin
+        SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
+        SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      end;
+    end;
+    tSENDEN.free;
+  end;
+
 begin
 
   // Datensicherungsverzeichnis!
   LastTrn := inttostr(pred(strtoint(ActTRN)));
+
 
   // erst mal 'ne Datensicherung machen
   FileCopy(MyProgramPath + cServerDataPath + 'FOTO+TS' + cBL_FileExtension,
@@ -3062,6 +3101,9 @@ begin
   // neu aufbauen + alte raus!
   Freshen(MyProgramPath + cServerDataPath + 'FOTO+TS');
   Freshen(MyProgramPath + cServerDataPath + 'AUFTRAG+TS');
+
+  // SENDEN.CSV neu aufbereiten
+  ClearSENDEN;
 
   // imp pend:
   //
@@ -4172,7 +4214,7 @@ begin
     for n := 0 to pred(sOutput.count) do
       sMigrationsVorlage.insert(InsertPoint + n, sOutput[n]);
 
-    SaveStringsToFileUTF8(sMigrationsVorlage,NewFName);
+    SaveStringsToFileUTF8(sMigrationsVorlage, NewFName);
     result := true;
 
   except

@@ -910,6 +910,8 @@ begin
   end;
 end;
 
+{$ifdef fpc}
+
 { TdboCursor }
 
 procedure TdboCursor.ApiFirst;
@@ -921,6 +923,8 @@ procedure TdboCursor.ApiNext;
 begin
   Next;
 end;
+
+{$endif}
 
 procedure TSQLStringList.ReplaceBlock(BlockName: string; NewLines: string);
 var
