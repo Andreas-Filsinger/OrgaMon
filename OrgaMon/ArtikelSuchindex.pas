@@ -54,6 +54,7 @@ implementation
 uses
   globals, WordIndex, anfix32,
   gplists,  Datenbank,
+  dbOrgaMon,
   IB_Access,
   Funktionen_Basis,
   Funktionen_Beleg,
