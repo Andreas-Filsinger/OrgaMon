@@ -325,7 +325,7 @@ var
   MoreText: string;
 begin
   //
-  DateTime2long(e_r_ServerTime, ServerDate, ServerTime);
+  DateTime2long(e_r_Now, ServerDate, ServerTime);
 
   //
   ServerDiff := Local_vs_Server_TimeDifference;
@@ -351,7 +351,7 @@ begin
   //
   LocalDate := DateGet;
   LocalTime := SecondsGet;
-  DateTime2long(e_r_ServerTime, ServerDate, ServerTime);
+  DateTime2long(e_r_Now, ServerDate, ServerTime);
   //
   result := SecondsDiff(LocalDate, LocalTime, ServerDate, ServerTime);
   if (abs(result) <= cWahrnehmungsSchwelle) then

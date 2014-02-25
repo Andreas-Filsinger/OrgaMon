@@ -42,6 +42,7 @@ implementation
 uses
    gplists
   ,globals
+  ,dbOrgaMon
   ,Funktionen_Basis
   ;
  
@@ -164,7 +165,6 @@ begin
  S.RegisterDelphiFunction(@enCrypt_Hex, 'enCrypt_Hex', cdRegister);
  S.RegisterDelphiFunction(@deCrypt_Hex, 'deCrypt_Hex', cdRegister);
  S.RegisterDelphiFunction(@SysDBApassword, 'SysDBApassword', cdRegister);
- S.RegisterDelphiFunction(@e_r_ServerTime, 'e_r_ServerTime', cdRegister);
 end;
 
  

@@ -30,53 +30,54 @@ interface
 
 {
 
-dbOrgaMon: Abstrahiert die Datenbankschicht, stellt dazu einige
+  dbOrgaMon: Abstrahiert die Datenbankschicht, stellt dazu einige
 
-dbo* ("dbo" für DatenBank OrgaMon) Klassen zur Verfügung
+  dbo* ("dbo" für DatenBank OrgaMon) Klassen zur Verfügung
 
 }
 
-
-
 uses
   Classes,
-{$ifdef fpc}
+{$IFDEF fpc}
   db,
   ZConnection,
   ZDataset,
   ZAbstractDataset,
   ZDbcResultSetMetadata,
-{$else}
+  ZSQLProcessor,
+{$ELSE}
   IB_Components,
   IB_Access,
-{$endif}
+{$ENDIF}
   gplists,
   WordIndex,
-  anfix32;
+  anfix32,
+  globals;
 
 type
-{$ifdef fpc}
-TdboQuery = TZQuery;
-TdboColumn = TZColumnInfo;
-TdboDataset = TZAbstractDataset;
-TdboDatasource = TDatasource;
+{$IFDEF fpc}
+  TdboQuery = TZQuery;
+  TdboColumn = TZColumnInfo;
+  TdboDataset = TZAbstractDataset;
+  TdboDatasource = TDatasource;
+  TdboScript = TZSQLProcessor;
 
-{ TdboCursor }
+  { TdboCursor }
 
-TdboCursor = class(TZReadOnlyQuery)
-   public
-     procedure ApiFirst;
-     procedure ApiNext;
+  TdboCursor = class(TZReadOnlyQuery)
+  public
+    procedure ApiFirst;
+    procedure ApiNext;
   end;
-{$else}
-TdboQuery = TIB_Query;
-TdboColumn = TIB_Column;
-TdboDataset = TIB_Dataset;
-TdboDatasource = TIB_Datasource;
-TdboCursor = TIB_Cursor;
-{$endif}
+{$ELSE}
 
-
+  TdboQuery = TIB_Query;
+  TdboColumn = TIB_Column;
+  TdboDataset = TIB_Dataset;
+  TdboDatasource = TIB_Datasource;
+  TdboCursor = TIB_Cursor;
+  TdboScript = TIB_DSQL;
+{$ENDIF}
 
 const
   cSQLwhereMarker = '-- BEGIN';
@@ -106,11 +107,11 @@ type
   TIB_Club = class(TObject)
     ID: integer;
     RefTable: string;
-{$ifdef fpc}
+{$IFDEF fpc}
     ibc: TZConnection;
-{$else}
+{$ELSE}
     ibc: TIB_Connection;
-{$endif}
+{$ENDIF}
     items: TgpIntegerList;
     itemsByReference: TgpIntegerList;
 
@@ -119,11 +120,11 @@ type
     procedure xsql(s: String);
 
   public
-{$ifdef fpc}
+{$IFDEF fpc}
     constructor create(pibc: TZConnection; pRefTable: string); virtual;
-{$else}
+{$ELSE}
     constructor create(pibc: TIB_Connection; pRefTable: string); virtual;
-{$endif}
+{$ENDIF}
     destructor Destroy; override;
 
     procedure add(i: integer); overload;
@@ -134,11 +135,11 @@ type
   end;
 
 const
-  {$ifdef fpc}
+{$IFDEF fpc}
   cConnection: TZConnection = nil;
-  {$else}
+{$ELSE}
   cConnection: TIB_Connection = nil;
-{$endif}
+{$ENDIF}
   // Datenbank Tabelle exportieren
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
   AppendMode: boolean = false); overload;
@@ -177,7 +178,7 @@ procedure qStringsAdd(f: TdboColumn; s: string);
 function HeaderNames(q: TdboQuery): TStringList; overload;
 function HeaderNames(q: TdboDataset): TStringList; overload;
 function ColOf(q: TdboQuery; FieldName: string): integer; overload;
-function ColOf(q: TdboDataSource; FieldName: string): integer; overload;
+function ColOf(q: TdboDatasource; FieldName: string): integer; overload;
 
 function ListasSQL(i: TgpIntegerList): string; overload;
 function ListasSQL(i: TList): string; overload;
@@ -189,6 +190,8 @@ function Datum_coalesce(f: TdboColumn; d: TANFiXDate): TANFiXDate;
 function isRID(RID: integer): string;
 function bool2cC(b: boolean): string;
 function RIDtostr(RID: integer): string;
+function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
+function EnsureSQL(s: string): string;
 
 // Tools für das Tabellen Handling
 function useTable(TableName: string): string;
@@ -196,18 +199,87 @@ function AllTables: TStringList;
 function TableExists(TableName: string): boolean;
 procedure DropTable(TableName: string);
 function RecordCopy(TableName, GeneratorName: string; RID: integer): integer;
+
+// Grundsätzliche Datenbank-Objekte
+function nQuery: TdboQuery;
+function nCursor: TdboCursor;
+function nDSQL: TdboScript;
+
+{ Datenbank Abfragen allgemein }
+function e_r_IsRID(FieldName: string; RID: integer): boolean;
+// SQL selects, die einen Einzelnen Wert zurückgeben
+
+function e_r_sql(s: string): integer; overload;
+// Nur das erste Feld aus der ersten Zeile als Integer
+
+function e_r_sql(s: string; sl: TStringList): integer; overload;
+// Nur das erste Feld aus der Element als Text-Blob, result=1
+
+function e_r_sqlt(s: string): TStringList;
+// Nur das erste Feld des ersten Records als Text-Blob
+
+function e_r_GEN(GenName: string): integer;
+
+function e_w_GEN(GenName: string): integer;
+// erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
+
+// Zeit aus dem Datenbankserver lesen
+function e_r_now: TdateTime;
+
+//
+function e_r_sqls(s: string): string;
+function e_r_sqlb(s: string): boolean;
+function e_r_sqld(s: string; ifnull: double = 0.0): double;
+
+// Erste Ergebnis-Spalte als TStringList
+function e_r_sqlsl(s: string): TStringList;
+
+// wie sqlsl, jedoch noch den "RID" in der 2. Spalte
+function e_r_sqlslo(s: string): TStringList;
+
+// Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
+function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
+
+function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
+
+// SQL Update, Execute Statements
+procedure e_x_sql(s: string); overload;
+procedure e_x_sql(s: TStrings); overload;
+procedure e_x_update(s: string; sl: TStringList);
+procedure e_w_dereference(RID: integer; TableN, FieldN: string;
+  DeleteIt: boolean = false);
+
+// Datenbank-Server Commit
+procedure e_x_commit;
+
+// Server Infos
 function e_r_fbClientVersion: string;
+function e_r_ConnectionCount: integer;
+
+
+{$IFDEF CONSOLE}
+
+const
+  // Globale Datenbank-Elemente
+  fbConnection: TIB_Connection = nil;
+  fbTransaction: TIB_Transaction = nil;
+  fbSession: TIB_Session = nil;
+
+{$ENDIF}
 
 implementation
 
 uses
   Windows,
   SysUtils,
-{$ifdef fpc}
-{$else}
+{$IFDEF fpc}
+{$ELSE}
+  {$IFNDEF CONSOLE}
+   Datenbank,
+  {$ENDIF}
   IB_Header,
   IB_Session,
-{$endif}
+{$ENDIF}
   Math,
   CareTakerClient;
 
@@ -345,12 +417,11 @@ begin
   begin
 
     if assigned(cConnection) then
-{$ifdef fpc}
-     connection := cConnection;
-{$else}
+{$IFDEF fpc}
+      connection := cConnection;
+{$ELSE}
       ib_connection := cConnection;
-{$endif}
-
+{$ENDIF}
     sql.add(TSql);
 
     if DebugMode then
@@ -380,7 +451,9 @@ begin
         begin
           if not(IsNull) then
           begin
-
+{$IFDEF fpc}
+            Infostr := Infostr + AsString;
+{$ELSE}
             case SQLType of
               SQL_DOUBLE, SQL_DOUBLE_:
                 Infostr := Infostr + format('%.2f', [AsDouble]);
@@ -434,35 +507,36 @@ begin
               Infostr := Infostr + 'SQLType ' + inttostr(SQLType) +
                 ' unbekannt!';
             end;
-          end
-          else
-          begin
-            Infostr := Infostr + sRID_NULL;
-          end;
-
-          if (n <> pred(FieldCount)) then
-            Infostr := Infostr + Seperator;
-
-        end;
-
-      Ablage.add(Infostr);
-
-      ApiNext;
-      if frequently(StartTime, 1000) or eof then
-        SaveResults;
+{$ENDIF}
+        end
+    else
+    begin
+      Infostr := Infostr + sRID_NULL;
     end;
-    SaveResults;
+
+    if (n <> pred(FieldCount)) then
+      Infostr := Infostr + Seperator;
+
   end;
-  cABLAGE.free;
-  Ablage.free;
-  DB_memo.free;
+
+  Ablage.add(Infostr);
+
+  ApiNext;
+  if frequently(StartTime, 1000) or eof then
+    SaveResults;
+end;
+SaveResults;
+end;
+cABLAGE.free;
+Ablage.free;
+DB_memo.free;
 end;
 
 function slTable(TSql: string): TStringList;
 const
   Seperator = ';';
 var
-  cABLAGE: TIB_Cursor;
+  cABLAGE: TdboCursor;
   n, m: integer;
   Infostr: string;
   DB_text: string;
@@ -471,14 +545,17 @@ var
 begin
   result := TStringList.create;
   DB_memo := TStringList.create;
-  cABLAGE := TIB_Cursor.create(nil);
+  cABLAGE := TdboCursor.create(nil);
   try
     with cABLAGE do
     begin
 
       if assigned(cConnection) then
+{$IFDEF fpc}
+        connection := cConnection;
+{$ELSE}
         ib_connection := cConnection;
-
+{$ENDIF}
       sql.add(TSql);
       if DebugMode then
         AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
@@ -506,7 +583,9 @@ begin
           begin
             if not(IsNull) then
             begin
-
+{$IFDEF fpc}
+              Infostr := Infostr + AsString;
+{$ELSE}
               case SQLType of
                 SQL_DOUBLE, SQL_DOUBLE_:
                   Infostr := Infostr + format('%.2f', [AsDouble]);
@@ -559,31 +638,32 @@ begin
                 Infostr := Infostr + 'SQLType ' + inttostr(SQLType) +
                   ' unbekannt!';
               end;
-            end
-            else
-            begin
-              Infostr := Infostr + '<NULL>';
-            end;
-
-            if (n <> pred(FieldCount)) then
-              Infostr := Infostr + Seperator;
-
-          end;
-
-        result.add(Infostr);
-
-        ApiNext;
+{$ENDIF}
+          end
+      else
+      begin
+        Infostr := Infostr + '<NULL>';
       end;
-    end;
-  except
-    on E: Exception do
-    begin
-      result.add(cERRORText + ' slTable: ' + E.Message);
+
+      if (n <> pred(FieldCount)) then
+        Infostr := Infostr + Seperator;
+
     end;
 
+    result.add(Infostr);
+
+    ApiNext;
   end;
-  cABLAGE.free;
-  DB_memo.free;
+end;
+except
+  on E: Exception do
+  begin
+    result.add(cERRORText + ' slTable: ' + E.Message);
+  end;
+
+end;
+cABLAGE.free;
+DB_memo.free;
 end;
 
 function AsKeyValue(q: TdboQuery): TStringList;
@@ -608,7 +688,9 @@ begin
 
           if not(IsNull) then
           begin
-
+{$IFDEF fpc}
+            Infostr := AsString;
+{$ELSE}
             case SQLType of
               SQL_DOUBLE, SQL_DOUBLE_:
                 Infostr := format('%.2f', [AsDouble]);
@@ -659,24 +741,25 @@ begin
             else
               Infostr := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
-          end
-          else
-          begin
-            Infostr := '';
-          end;
-
-          result.add(Fields[n].FieldName + '=' + Infostr);
-
-        end;
-
-    end;
-  except
-    on E: Exception do
+{$ENDIF}
+        end
+    else
     begin
-      result.add(cERRORText + ' : ' + E.Message);
+      Infostr := '';
     end;
+
+    result.add(Fields[n].FieldName + '=' + Infostr);
+
   end;
-  DB_memo.free;
+
+end;
+except
+  on E: Exception do
+  begin
+    result.add(cERRORText + ' : ' + E.Message);
+  end;
+end;
+DB_memo.free;
 
 end;
 
@@ -687,7 +770,7 @@ end;
 
 function csTable(TSql: string): TsTable; overload;
 var
-  cABLAGE: TIB_Cursor;
+  cABLAGE: TdboCursor;
   n, m: integer;
   Content: string;
   sRow: TStringList;
@@ -698,13 +781,16 @@ var
 begin
   result := TsTable.create;
   DB_memo := TStringList.create;
-  cABLAGE := TIB_Cursor.create(nil);
+  cABLAGE := TdboCursor.create(nil);
   with cABLAGE do
   begin
 
     if assigned(cConnection) then
+{$IFDEF fpc}
+      connection := cConnection;
+{$ELSE}
       ib_connection := cConnection;
-
+{$ENDIF}
     sql.add(TSql);
     if DebugMode then
       AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
@@ -726,7 +812,9 @@ begin
         begin
           if not(IsNull) then
           begin
-
+{$IFDEF fpc}
+            Content := AsString;
+{$ELSE}
             case SQLType of
               SQL_DOUBLE, SQL_DOUBLE_:
                 Content := format('%.2f', [AsDouble]);
@@ -775,20 +863,22 @@ begin
             else
               Content := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
-          end
-          else
-          begin
-            Content := '<NULL>';
-          end;
-          sRow.add(Content);
-        end;
+
+{$ENDIF}
+        end
+      else
+      begin
+        Content := '<NULL>';
       end;
-      result.add(sRow);
-      ApiNext;
+      sRow.add(Content);
     end;
   end;
-  cABLAGE.free;
-  DB_memo.free;
+  result.add(sRow);
+  ApiNext;
+end;
+end;
+cABLAGE.free;
+DB_memo.free;
 end;
 
 function csTable(TSql: TStrings): TsTable; overload;
@@ -850,6 +940,21 @@ end;
 
 procedure ExportScript(TSql: string; FName: string;
   Seperator: char = ';'); overload;
+{$IFDEF fpc}
+var
+  Ablage: TStringList;
+begin
+  FileDelete(FName);
+  Ablage := TStringList.create;
+  e_x_sql(TSql);
+  Ablage.add('ANZAHL;');
+  Ablage.add('<NULL>;');
+  AppendStringsToFile(Ablage, FName);
+  Ablage.free;
+end;
+
+{$ELSE}
+
 var
   cABLAGE: TIB_DSQL;
   Ablage: TStringList;
@@ -875,6 +980,7 @@ begin
   cABLAGE.free;
   Ablage.free;
 end;
+{$ENDIF}
 
 function ListasSQL(i: TgpIntegerList): string; overload;
 var
@@ -910,8 +1016,7 @@ begin
   end;
 end;
 
-{$ifdef fpc}
-
+{$IFDEF fpc}
 { TdboCursor }
 
 procedure TdboCursor.ApiFirst;
@@ -924,7 +1029,7 @@ begin
   Next;
 end;
 
-{$endif}
+{$ENDIF}
 
 procedure TSQLStringList.ReplaceBlock(BlockName: string; NewLines: string);
 var
@@ -960,14 +1065,12 @@ end;
 
 function AllTables: TStringList;
 var
-  cSYSTEM: TIB_Cursor;
+  cSYSTEM: TdboCursor;
 begin
   result := TStringList.create;
-  cSYSTEM := TIB_Cursor.create(nil);
+  cSYSTEM := nCursor;
   with cSYSTEM do
   begin
-    if assigned(cConnection) then
-      ib_connection := cConnection;
     sql.add('SELECT');
     sql.add(' RDB$RELATION_NAME');
     sql.add('FROM');
@@ -995,22 +1098,11 @@ begin
   TableList.free;
 end;
 
+// imp pend: This is really "DropTableIfExists()"
 procedure DropTable(TableName: string);
-var
-  x: TIB_DSQL;
 begin
   if TableExists(TableName) then
-  begin
-    x := TIB_DSQL.create(nil);
-    with x do
-    begin
-      if assigned(cConnection) then
-        ib_connection := cConnection;
-      sql.add('drop table ' + TableName);
-      execute;
-    end;
-    x.free;
-  end;
+    e_x_sql('drop table ' + TableName);
 end;
 
 procedure qStringsAdd(f: TIB_Column; s: string);
@@ -1099,20 +1191,20 @@ begin
   qDEST.free;
 end;
 
-function gen_id(genName: string; Step: integer = 0): integer;
+function gen_id(GenName: string; Step: integer = 0): integer;
 var
   x: TIB_DSQL;
 begin
   if assigned(cConnection) then
   begin
-    result := cConnection.gen_id(genName, Step);
+    result := cConnection.gen_id(GenName, Step);
   end
   else
   begin
     x := TIB_DSQL.create(nil);
     with x do
     begin
-      result := gen_id(genName, Step);
+      result := gen_id(GenName, Step);
     end;
     x.free;
   end;
@@ -1609,6 +1701,453 @@ begin
     end;
   end;
   cDATA.free;
+end;
+
+procedure e_x_sql(s: string);
+begin
+  if DebugMode then
+    AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt',
+      DatumUhr);
+{$IFDEF CONSOLE}
+  fbTransaction.ExecuteImmediate(s);
+{$ELSE}
+  Datamoduledatenbank.IB_Transaction_W.ExecuteImmediate(s);
+{$ENDIF}
+end;
+
+procedure e_x_commit;
+begin
+{$IFDEF CONSOLE}
+  // In der Konsolenanwendung haben wir nur *eine* Transaktion, ein commit war bisher
+  // nicht notwendig
+{$ELSE}
+  Datamoduledatenbank.IB_Transaction_R.Commit;
+{$ENDIF}
+end;
+
+procedure e_x_update(s: string; sl: TStringList);
+var
+  qUPDATE: TIB_Query;
+begin
+  qUPDATE := nQuery;
+  with qUPDATE do
+  begin
+    sql.add(s);
+    First;
+    edit;
+    Fields[0].assign(sl);
+    post;
+  end;
+  qUPDATE.free;
+end;
+
+procedure e_x_sql(s: TStrings);
+begin
+  e_x_sql(HugeSingleLine(s, #13#10));
+end;
+
+function e_r_GEN(GenName: string): integer;
+begin
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, 0);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
+{$ENDIF}
+end;
+
+function e_w_GEN(GenName: string): integer;
+begin
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, 1);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
+{$ENDIF}
+end;
+
+function e_r_sql(s: string): integer;
+var
+  cSQL: TIB_Cursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    result := Fields[0].AsInteger;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sql(s: string; sl: TStringList): integer;
+var
+  cSQL: TIB_Cursor;
+begin
+  result := 1;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    Fields[0].AssignTo(sl);
+  end;
+  cSQL.free;
+end;
+function HasFieldName(IBQ: TIB_Dataset; FieldName: string): boolean;
+var
+  n: integer;
+begin
+  result := false;
+  with IBQ do
+  begin
+    for n := 0 to pred(FieldCount) do
+      if (Fields[n].FieldName = FieldName) then
+      begin
+        result := true;
+        break;
+      end;
+  end;
+end;
+
+function EnsureSQL(s: string): string;
+begin
+  result := s;
+  ersetze('''', '''''', result);
+end;
+
+function nQuery: TIB_Query;
+begin
+{$IFDEF CONSOLE}
+  result := TIB_Query.create(nil);
+  with result do
+  begin
+    IB_Connection := fbConnection;
+    IB_Session := fbSession;
+  end;
+{$ELSE}
+  result := Datamoduledatenbank.nQuery;
+{$ENDIF}
+end;
+
+function nCursor: TIB_Cursor;
+begin
+{$IFDEF CONSOLE}
+  result := TIB_Cursor.create(nil);
+  with result do
+  begin
+    IB_Connection := fbConnection;
+    IB_Session := fbSession;
+  end;
+{$ELSE}
+  result := Datamoduledatenbank.nCursor;
+  result.IB_Transaction := Datamoduledatenbank.IB_Transaction_R;
+{$ENDIF}
+end;
+
+function nDSQL: TIB_DSQL;
+begin
+{$IFDEF CONSOLE}
+  result := TIB_DSQL.create(nil);
+  with result do
+  begin
+    IB_Connection := fbConnection;
+    IB_Session := fbSession;
+  end;
+{$ELSE}
+  result := Datamoduledatenbank.nDSQL;
+{$ENDIF}
+end;
+
+type
+  eConnectionCountMethod = (eCCM_unchecked, eCCM_impossible,
+    eCCM_MonitorTables);
+
+const
+  CCM: eConnectionCountMethod = eCCM_unchecked;
+
+function e_r_ConnectionCount: integer;
+begin
+  if (CCM = eCCM_unchecked) then
+  begin
+    if (e_r_sql('SELECT' + ' count(RDB$RELATION_NAME) ' + 'FROM' +
+      ' RDB$RELATIONS ' + 'WHERE' +
+      ' (RDB$RELATION_NAME=''MON$ATTACHMENTS'')') = 1) then
+      CCM := eCCM_MonitorTables
+    else
+      CCM := eCCM_impossible;
+  end;
+
+  if (CCM = eCCM_MonitorTables) then
+    result := e_r_sql('select sum(MON$STATE) from MON$ATTACHMENTS')
+  else
+    result := 1;
+
+end;
+function e_r_IsRID(FieldName: string; RID: integer): boolean;
+begin
+  result := false;
+  repeat
+    if (RID < cRID_FirstValid) then
+      break;
+
+    result := (e_r_sql('select count(RID) from ' + nextp(FieldName, '_',
+      0) + ' where RID=' + inttostr(RID)) = 1);
+  until true;
+end;
+
+function e_r_sqlt(s: string): TStringList;
+var
+  cSQL: TIB_Cursor;
+begin
+  result := TStringList.create;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    Fields[0].AssignTo(result);
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqlsl(s: string): TStringList;
+var
+  cSQL: TIB_Cursor;
+begin
+  result := TStringList.create;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.add(Fields[0].AsString);
+      ApiNext;
+    end;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqlslo(s: string): TStringList;
+var
+  cSQL: TIB_Cursor;
+begin
+  result := TStringList.create;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.AddObject(Fields[0].AsString, Pointer(Fields[1].AsInteger));
+      ApiNext;
+    end;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
+var
+  cSQL: TIB_Cursor;
+begin
+  if assigned(m) then
+    result := m
+  else
+    result := TgpIntegerList.create;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.add(Fields[0].AsInteger);
+      ApiNext;
+    end;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqls(s: string): string;
+var
+  cSQL: TIB_Cursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    result := Fields[0].AsString;
+  end;
+  cSQL.free;
+end;
+
+function e_r_sqlb(s: string): boolean;
+begin
+  result := e_r_sqls(s) = cC_True;
+end;
+
+function e_r_sqld(s: string; ifnull: double = 0.0): double;
+var
+  cSQL: TIB_Cursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+    if eof then
+      result := ifnull
+    else
+      result := Fields[0].AsDouble;
+  end;
+  cSQL.free;
+end;
+
+procedure e_w_dereference(RID: integer; TableN, FieldN: string;
+  DeleteIt: boolean = false);
+var
+  sql: TStringList;
+begin
+  sql := TStringList.create;
+  if DeleteIt then
+  begin
+    sql.add('delete from ' + TableN);
+    sql.add('WHERE');
+    sql.add(FieldN + '=' + inttostr(RID));
+  end
+  else
+  begin
+    sql.add('update');
+    sql.add(TableN + ' set');
+    sql.add(FieldN + ' = NULL');
+    sql.add('WHERE');
+    sql.add(FieldN + '=' + inttostr(RID));
+  end;
+  e_x_sql(sql);
+  sql.free;
+end;
+
+
+function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
+var
+  ParameterL: TStringList;
+
+  function ResolveParameter(s: string): string;
+  var
+    k, l: integer;
+  begin
+    //
+    result := s;
+    ersetze('$$', '€€', result);
+    repeat
+
+      // Anfangsposition bestimmen
+      k := pos('$', result);
+      if k = 0 then
+        break;
+
+      // Länge bestimmen
+      l := min(k + 1, length(result));
+      repeat
+        if (l > length(result)) then
+          break;
+        if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
+          break;
+        inc(l);
+      until false;
+
+      // Nun austauschen
+      ersetze(copy(result, k, l - k), ParameterL.Values[copy(result, k, l - k)
+        ], result);
+
+    until false;
+    ersetze('€€', '$', result);
+  end;
+
+var
+  cOLAP: TIB_Cursor;
+  OneLine: string;
+  sSQL: string;
+  n, k: integer;
+  AutoMataState: integer;
+  EmptyLine: boolean;
+begin
+
+  //
+  // 12.12.2005
+  // erste Anfänge, den Kernel via OLAP Statements
+  // variable zu halten. Die OLAP Ausführungs-Funktion sollte
+  // noch vollständig in das eCommerce Modul verschoben werden.
+  //
+  result := TStringList.create;
+  ParameterL := TStringList.create;
+  ParameterL.addstrings(Params);
+  AutoMataState := 0;
+  for n := 0 to pred(OLAP.count) do
+  begin
+
+    OneLine := cutblank(OLAP[n]);
+    EmptyLine := (OneLine = '');
+
+    // remove comment
+    k := pos('//', OneLine);
+    if (k > 0) then
+      OneLine := copy(OneLine, 1, pred(k));
+    k := pos('--', OneLine);
+    if (k > 0) then
+      OneLine := copy(OneLine, 1, pred(k));
+
+    case AutoMataState of
+      0:
+        begin
+          if pos('select', OneLine) = 1 then
+          begin
+            sSQL := OneLine;
+            AutoMataState := 1;
+          end
+          else
+          begin
+            if (OneLine <> '') then
+              ParameterL.add(OneLine);
+          end;
+        end;
+      1:
+        begin
+          if EmptyLine then
+            break
+          else
+            sSQL := sSQL + ' ' + OneLine;
+        end;
+    end;
+  end;
+
+  cOLAP := nCursor;
+  with cOLAP do
+  begin
+    sql.add(ResolveParameter(sSQL));
+    ApiFirst;
+    for n := 0 to pred(FieldCount) do
+      result.add(Fields[n].FieldName + '=' + Fields[n].AsString);
+  end;
+
+  cOLAP.free;
+  ParameterL.free;
+end;
+
+function e_r_now: TdateTime;
+var
+  cNOW: TdboCursor;
+begin
+  cNOW := nCursor;
+  with cNOW do
+  begin
+    sql.add('select CURRENT_TIMESTAMP from RDB$DATABASE');
+    ApiFirst;
+    result := Fields[0].AsDateTime;
+  end;
+  cNOW.free;
 end;
 
 end.

@@ -70,6 +70,7 @@ implementation
 
 uses
   GUIHelp, globals,
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   wanfix32, Artikel;
