@@ -35,7 +35,7 @@ uses
   ComCtrls, IB_Components, IB_Access,
   CheckLst, globals, ExtCtrls,
   IB_UpdateBar, Grids, IB_Grid,
-  JvGIF, GHD_pngimage, gplists;
+  gplists;
 
 type
   TFormMahnung = class(TForm)

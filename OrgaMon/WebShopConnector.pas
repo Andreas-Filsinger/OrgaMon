@@ -199,8 +199,7 @@ uses
   gplists, OLAP, SolidFTP,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
   DCPbase64, ArtikelVerlag,
-  IdHttp, GHD_pngimage, UFlxMessages,
-  JclBase, JvclVer, dbOrgaMon,
+  IdHttp, UFlxMessages, JclBase, JvclVer, dbOrgaMon,
   SystemPflege, REST;
 
 const

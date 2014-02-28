@@ -76,7 +76,7 @@ const
   { } cSperre_ZeitAngabe_Mittag];
 {$ifdef fpc}
 cSperre_ColourDefault = $20000000;
-cSperre_ColourRed = $FF000;
+cSperre_ColourRed = $0000FF;
 {$else}
 cSperre_ColourDefault =     TColors.SysDefault;
 cSperre_ColourRed =     TColors.Red;

@@ -56,7 +56,10 @@ procedure PersonSuchindex;
 implementation
 
 uses
-  Globals, Anfix32, IB_Components,
+  Globals, Anfix32,
+{$ifndef fpc}
+  IB_Components,
+{$endif}
   dbOrgaMon,Funktionen_Basis, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,
@@ -157,8 +160,8 @@ end;
 procedure PersonSuchindex;
 var
   SpeedIndex: TWordIndex;
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
 begin
 
   SpeedIndex := TWordIndex.create(nil);
@@ -263,7 +266,7 @@ end;
 
 function Sortiment(Purge: boolean): string;
 var
-  cSORTIMENT: TIB_Cursor;
+  cSORTIMENT: TdboCursor;
   AusgabeItems: TStringList;
   AusgabeValues: TStringList;
 begin
@@ -292,7 +295,7 @@ begin
         begin
           AusgabeItems.add(format('%s (%.2f%% MwSt)',
             [FieldByName('BEZEICHNUNG').AsString,
-            FieldByName('SATZ').AsDouble]));
+            FieldByName('SATZ').AsFloat]));
           AusgabeValues.add(FieldByName('RID').AsString);
           Apinext;
         end;
@@ -311,7 +314,7 @@ end;
 
 function VertragsVarianten(Purge: boolean): string;
 var
-  cVertragsVarianten: TIB_Cursor;
+  cVertragsVarianten: TdboCursor;
   AusgabeItems: TStringList;
   AusgabeValues: TgpIntegerList;
 begin

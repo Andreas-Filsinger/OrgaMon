@@ -29,7 +29,11 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes, IB_Components, Sperre,
+  Classes,
+  {$ifndef fpc}
+  IB_Components,
+  {$endif}
+  Sperre,
   dbOrgaMon, gplists, anfix32,
   globals, txHoliday;
 
@@ -53,7 +57,7 @@ procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer); overload;
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: TList); overload;
 
 // Auftrag - Sachen
-procedure AuftragBeforePost(Auftrag: TIB_Dataset; ReOrgMode: boolean = false);
+procedure AuftragBeforePost(Auftrag: TdboDataset; ReOrgMode: boolean = false);
 function e_w_AuftragDelete(Master_R: Integer): Integer;
 procedure e_w_AuftragAblage(Master_R: Integer);
 procedure RecourseDeleteAUFTRAG(RIDList: TList; var DeleteCount: Integer);
@@ -225,16 +229,22 @@ implementation
 
 uses
   // Delphi
+{$ifdef fpc}
+ fpchelper,
+{$else}
   System.UITypes,
+Jvgnugettext,
+IB_Access,
+{$endif}
   math,
 
   // types,
   SysUtils,
 
   // Tools
-  Jvgnugettext, html, infozip,
+  html, infozip,
   CareTakerClient, Mapping, Geld,
-  WordIndex, IB_Access,
+  WordIndex,
 
   // OrgaMon
   JonDaExec,

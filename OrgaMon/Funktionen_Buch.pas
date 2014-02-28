@@ -126,7 +126,12 @@ uses
   Funktionen_Basis,
   Funktionen_Auftrag,
   Funktionen_Beleg,
-  IB_Access, IB_Components,
+{$ifdef fpc}
+  fpchelper,
+{$else}
+  IB_Access,
+  IB_Components,
+{$endif}
 
 {$IFNDEF CONSOLE}
   Datenbank,
@@ -153,10 +158,10 @@ var
   end;
 
 var
-  qFOLGE: TIB_Query;
-  cINITIAL: TIB_Cursor;
-  cPOSTEN: TIB_Cursor;
-  cDECKBLATT: TIB_Cursor;
+  qFOLGE: TdboQuery;
+  cINITIAL: TdboCursor;
+  cPOSTEN: TdboCursor;
+  cDECKBLATT: TdboCursor;
 
   function setBetrag(BUCH_R: integer; Betrag: double): double;
   begin
@@ -247,7 +252,7 @@ var
       FieldByName('MASTER_R').AsInteger := BUCH_R;
       FieldByName('ZUSAMMENHANG_R').AsInteger := NETTO_R;
       FieldByName('NAME').AsString := cKonto_SatzPrefix + inttostr(pSatz);
-      FieldByName('BETRAG').AsDouble := result;
+      FieldByName('BETRAG').AsFloat := result;
       FieldByName('VORGANG').AsString := Vorgang;
 
       // copy fields
@@ -343,7 +348,7 @@ var
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('MASTER_R').AsInteger := BUCH_R;
         FieldByName('NAME').AsString := cKonto_Anzahlungen;
-        FieldByName('BETRAG').AsDouble := BruttoBetrag;
+        FieldByName('BETRAG').AsFloat := BruttoBetrag;
         FieldByName('BELEG_R').AsInteger := BELEG_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
 
@@ -385,7 +390,7 @@ var
           FieldByName('ERTRAG').AsString := cC_True;
 
           FieldByName('SKRIPT').Assign(ScriptText);
-          FieldByName('BETRAG').AsDouble := -Forderung;
+          FieldByName('BETRAG').AsFloat := -Forderung;
           FieldByName('BELEG_R').AsInteger := BELEG_R;
           FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
 
@@ -486,7 +491,7 @@ var
           begin
 
             // Zwang zur Konto-Zuordnung
-            if FieldByName('ARTIKEL_R').IsNotNull then
+            if not(FieldByName('ARTIKEL_R').IsNull) then
               if FieldByName('KONTO').AsString = '' then
                 raise Exception.create('Beim Sortiment "' +
                   FieldByName('BEZEICHNUNG').AsString +
@@ -597,7 +602,7 @@ var
             FieldByName('RID').AsInteger := NETTO_R;
             FieldByName('MASTER_R').AsInteger := BUCH_R;
             FieldByName('NAME').AsString := KONTO;
-            FieldByName('BETRAG').AsDouble := NettoSumme;
+            FieldByName('BETRAG').AsFloat := NettoSumme;
             FieldByName('BELEG_R').AsInteger := BELEG_R;
             FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
 
@@ -621,7 +626,7 @@ var
               FieldByName('ZUSAMMENHANG_R').AsInteger := NETTO_R;
               FieldByName('NAME').AsString := cKonto_SatzPrefix +
                 inttostr(SatzN);
-              FieldByName('BETRAG').AsDouble := MwStSumme;
+              FieldByName('BETRAG').AsFloat := MwStSumme;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
               FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
 
@@ -641,7 +646,7 @@ var
       BruttoBetrag: double): double;
     var
       Forderung: double;
-      cVERSAND: TIB_Cursor;
+      cVERSAND: TdboCursor;
     begin
       result := 0;
       repeat
@@ -676,7 +681,7 @@ var
               bucheVollausgleich(
                 { } BELEG_R,
                 { } FieldByName('TEILLIEFERUNG').AsInteger,
-                { } FieldByName('LIEFERBETRAG').AsDouble);
+                { } FieldByName('LIEFERBETRAG').AsFloat);
               ApiNext;
             end;
 
@@ -710,7 +715,7 @@ var
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('MASTER_R').AsInteger := BUCH_R;
         FieldByName('NAME').AsString := KONTO;
-        FieldByName('BETRAG').AsDouble := Betrag;
+        FieldByName('BETRAG').AsFloat := Betrag;
 
         // copy fields
         FolgeFelderErben;
@@ -948,7 +953,7 @@ begin
           raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) +
             ') existiert nicht');
 
-        FieldByName('SKRIPT').AssignTo(Skript);
+        e_r_sqlt(FieldByName('SKRIPT'),Skript);
         if (Skript.Values['ZWISCHENSATZ'] = cIni_Activate) then
         begin
 
@@ -991,11 +996,11 @@ begin
         end
         else
         begin
-          bDatum := datetime2long(FieldByName('DATUM').AsDate);
+          bDatum := datetime2long(FieldByName('DATUM').AsDateTime);
         end;
 
         // Parameter füllen!
-        BruttoBetrag := FieldByName('BETRAG').AsDouble;
+        BruttoBetrag := FieldByName('BETRAG').AsFloat;
         Quelle := FieldByName('NAME').AsString;
         Ziel := FieldByName('GEGENKONTO').AsString;
 
@@ -1013,7 +1018,7 @@ begin
         if eof then
           raise Exception.create('Deckblatt "''' + Ziel +
             '''" existiert nicht!');
-        FieldByName('SKRIPT').AssignTo(Regel);
+        e_r_sqlt(FieldByName('SKRIPT'),Regel);
       end;
 
       // auf der anderen Seite Buchen?
@@ -1094,9 +1099,9 @@ procedure b_w_ForderungAusgleich(sList: TStrings; Diagnose: TStrings);
 var
   n: integer;
   s: string;
-  qBELEG: TIB_Query;
-  qAUSGANGSRECHNUNG: TIB_Query;
-  qBUCH: TIB_Query;
+  qBELEG: TdboQuery;
+  qAUSGANGSRECHNUNG: TdboQuery;
+  qBUCH: TdboQuery;
   PERSON_R: integer;
   BELEG_R: integer;
   VALUTA: TANFiXTime;
@@ -1182,11 +1187,11 @@ begin
           open;
           first;
           edit;
-          FieldByName('DAVON_BEZAHLT').AsDouble :=
-            cPreisRundung(FieldByName('DAVON_BEZAHLT').AsDouble + Betrag);
+          FieldByName('DAVON_BEZAHLT').AsFloat :=
+            cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
 
-          if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsDouble -
-            FieldByName('DAVON_BEZAHLT').AsDouble) then
+          if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat -
+            FieldByName('DAVON_BEZAHLT').AsFloat) then
           begin
             // jetzt als vollständig bezahlt markieren.
             FieldByName('MAHNUNG1').clear;
@@ -1215,7 +1220,7 @@ begin
               first;
               if not(eof) then
               begin
-                FieldByName('SKRIPT').AssignTo(ScriptText);
+                e_r_sqlt(FieldByName('SKRIPT'),ScriptText);
                 ScriptText.Values['COLOR'] := '#00FF66'; // grün
                 edit;
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
@@ -1274,9 +1279,9 @@ begin
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
                 FieldByName('ERTRAG').AsString := cC_True;
 
-                FieldByName('BETRAG').AsDouble := Betrag;
+                FieldByName('BETRAG').AsFloat := Betrag;
                 if DateOK(VALUTA) then
-                  FieldByName('WERTSTELLUNG').AsDate := long2datetime(VALUTA);
+                  FieldByName('WERTSTELLUNG').AsDateTime := long2datetime(VALUTA);
                 FieldByName('TEXT').Assign(InfoText);
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
@@ -1300,11 +1305,11 @@ begin
         // Muss Felder
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('KUNDE_R').AsInteger := PERSON_R;
-        FieldByName('BETRAG').AsDouble := -Betrag;
+        FieldByName('BETRAG').AsFloat := -Betrag;
         if DateOK(VALUTA) then
         begin
-          FieldByName('DATUM').AsDate := long2datetime(VALUTA);
-          FieldByName('VALUTA').AsDate := long2datetime(VALUTA);
+          FieldByName('DATUM').AsDateTime := long2datetime(VALUTA);
+          FieldByName('VALUTA').AsDateTime := long2datetime(VALUTA);
         end;
 
         // Optionale Felder
@@ -1347,7 +1352,7 @@ end;
 
 procedure b_w_ForderungAusgleichStorno(EREIGNIS_R: integer);
 var
-  cBUCH: TIB_Cursor;
+  cBUCH: TdboCursor;
   BELEG_R, TEILLIEFERUNG: integer;
   n: integer;
   Betrag: double;
@@ -1374,7 +1379,7 @@ begin
       lBUCH.add(FieldByName('RID').AsInteger);
       BELEG_R := FieldByName('BELEG_R').AsInteger;
       TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
-      Betrag := FieldByName('BETRAG').AsDouble;
+      Betrag := FieldByName('BETRAG').AsFloat;
 
       // Betrag in dem Beleg vermindern
       e_x_sql(
@@ -1417,9 +1422,9 @@ end;
 function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double)
   : TStringList;
 var
-  cBELEG: TIB_Cursor;
-  qBELEG: TIB_Query;
-  qAUSGANGSRECHNUNG: TIB_Query;
+  cBELEG: TdboCursor;
+  qBELEG: TdboQuery;
+  qAUSGANGSRECHNUNG: TdboQuery;
   sPARAMETER: TStringList;
   ForderungsFrist: integer;
 
@@ -1451,10 +1456,10 @@ begin
       RECHNUNGSANSCHRIFT_R := FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger;
       ZAHLUNGSPFLICHTIGER_R := FieldByName('ZAHLUNGSPFLICHTIGER_R').AsInteger;
       ZAHLUNGTYP_R := FieldByName('ZAHLUNGTYP_R').AsInteger;
-      FieldByName('INTERN_INFO').AssignTo(sPARAMETER);
+      e_r_sqlt(FieldByName('INTERN_INFO'),sPARAMETER);
       // Rechnungsdatum bestimmen
       repeat
-        if (TEILLIEFERUNG = 0) and FieldByName('RECHNUNG').IsNotNull then
+        if (TEILLIEFERUNG = 0) and not(FieldByName('RECHNUNG').IsNull) then
         begin
           RECHNUNG := FieldByName('RECHNUNG').AsDateTime;
           break;
@@ -1492,7 +1497,7 @@ begin
         if (ZAHLUNGTYP_R >= cRID_FirstValid) then
           FieldByName('ZAHLUNGTYP_R').AsInteger := ZAHLUNGTYP_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
-        FieldByName('BETRAG').AsDouble := RechnungsBetrag;
+        FieldByName('BETRAG').AsFloat := RechnungsBetrag;
         FieldByName('RECHNUNG').AsInteger :=
           e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
           inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
@@ -1512,8 +1517,8 @@ begin
         sql.add('from BELEG where RID=' + inttostr(BELEG_R) + ' for update');
         open;
         edit;
-        FieldByName('RECHNUNGS_BETRAG').AsDouble :=
-          FieldByName('RECHNUNGS_BETRAG').AsDouble + RechnungsBetrag;
+        FieldByName('RECHNUNGS_BETRAG').AsFloat :=
+          FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
         FieldByName('TEILLIEFERUNG').AsInteger := succ(TEILLIEFERUNG);
         FieldByName('RECHNUNG').AsDateTime := RECHNUNG;
         FieldByName('FAELLIG').AsDateTime := FAELLIG;
@@ -1552,8 +1557,8 @@ end;
 
 function b_w_copy(BUCH_R: integer): integer;
 var
-  cBUCH: TIB_Cursor;
-  qBUCH: TIB_Query;
+  cBUCH: TdboCursor;
+  qBUCH: TdboQuery;
   BlackList: TStringList;
   n: integer;
 begin
@@ -1638,7 +1643,7 @@ end;
 
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate): double;
 var
-  cBUCH: TIB_Cursor;
+  cBUCH: TdboCursor;
   Abschluss: double;
   ABSCHLUSSper: TAnfixDate;
   saldo: TSaldo;
@@ -1670,8 +1675,8 @@ begin
     while not(eof) do
     begin
       // ...
-      FieldByName('TEXT').AssignTo(UeberweisungsText);
-      _DATUM := datetime2long(FieldByName('DATUM').AsDate);
+      e_r_sqlt(FieldByName('TEXT'),UeberweisungsText);
+      _DATUM := datetime2long(FieldByName('DATUM').AsDateTime);
 
       // Saldo fortführen ...
       repeat
@@ -1699,7 +1704,7 @@ begin
 
           end;
 
-        saldo.addUmsatz(_DATUM, FieldByName('BETRAG').AsDouble);
+        saldo.addUmsatz(_DATUM, FieldByName('BETRAG').AsFloat);
       until true;
       ApiNext;
     end;
@@ -1732,7 +1737,7 @@ var
   BUCH_R: integer;
   Datum: TAnfixDate;
   Betrag: double;
-  cBUCH: TIB_Cursor;
+  cBUCH: TdboCursor;
 
   // gebildete Werte
   ErstesDatum: TAnfixDate;
@@ -1761,8 +1766,8 @@ begin
     begin
       ParamByName('CROSSREF').AsInteger := integer(FoundElements[i]);
       ApiFirst;
-      Datum := datetime2long(FieldByName('DATUM').AsDate);
-      Betrag := FieldByName('BETRAG').AsDouble;
+      Datum := datetime2long(FieldByName('DATUM').AsDateTime);
+      Betrag := FieldByName('BETRAG').AsFloat;
 
       if (Datum >= Von) and (Datum <= Bis) then
       begin
@@ -1812,7 +1817,7 @@ end;
 
 function b_r_MD5(BUCH_R: integer): string;
 var
-  cBUCH: TIB_Cursor;
+  cBUCH: TdboCursor;
   MD5s: TStringList;
   hMD5: TDCP_md5;
   Script: TStringList;
@@ -1829,15 +1834,15 @@ begin
     begin
       MD5s.add(FieldByName('POSNO').AsString);
 
-      MD5s.add(long2date(datetime2long(FieldByName('DATUM').AsDate)) +
+      MD5s.add(long2date(datetime2long(FieldByName('DATUM').AsDateTime)) +
         ' 00:00:00');;
-      MD5s.add(long2date(datetime2long(FieldByName('WERTSTELLUNG').AsDate)) +
+      MD5s.add(long2date(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime)) +
         ' 00:00:00');
 
-      MD5s.add(long2date6(datetime2long(FieldByName('WERTSTELLUNG').AsDate)));
-      MD5s.add(FloatToStrISO(FieldByName('BETRAG').AsDouble));
+      MD5s.add(long2date6(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime)));
+      MD5s.add(FloatToStrISO(FieldByName('BETRAG').AsFloat));
       MD5s.add('EUR');
-      FieldByName('SKRIPT').AssignTo(Script);
+      e_r_sqlt(FieldByName('SKRIPT'),Script);
       MD5s.add(Script.Values['TRANSAKTIONSTYP']);
 
       // BusinessTransactionText
