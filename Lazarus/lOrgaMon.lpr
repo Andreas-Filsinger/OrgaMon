@@ -38,10 +38,10 @@ program lOrgaMon;
 
  cOrgaMon | lOrgaMon
  =========+=========
- IBO      | Zeos!
- infozip  | ?: fpc-paszlib, fpc-unzip, fpc-zlib, JclCompression, ev. externes Tool?!
+ IBO      | Zeos! (Umlaut OK!)
+ infozip  | zipper! (ab 1.3: UTF8, 64 Bit Support)
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
- flexcel  | fpspreadsheet!
+ flexcel  | fpspreadsheet! (LAck of Revision Number)
 
 }
 

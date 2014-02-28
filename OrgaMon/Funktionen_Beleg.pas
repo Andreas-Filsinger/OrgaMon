@@ -684,6 +684,8 @@ uses
   // Tools
   {$ifndef fpc}
   Jvgnugettext,
+  {$else}
+  fpchelper,
   {$endif}
 
   html, Geld,
@@ -1352,8 +1354,12 @@ begin
     EREIGNIS := nQuery;
     with EREIGNIS do
     begin
-      ColumnAttributes.add('RID=NOTREQUIRED');
-      ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ifdef fpc}
+ Raise Exception.Create('Columnattributes');
+{$else}
+ColumnAttributes.add('RID=NOTREQUIRED');
+ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$endif}
       sql.add('select * from EREIGNIS for update');
       Insert;
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -1557,8 +1563,12 @@ begin
       WARENBEWEGUNG := nQuery;
       with WARENBEWEGUNG do
       begin
+        {$ifdef fpc}
+         Raise Exception.Create('Columnattributes');
+        {$else}
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+        {$endif}
         sql.add('select * from WARENBEWEGUNG for update');
         Insert;
         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
@@ -1838,8 +1848,12 @@ begin
         EREIGNIS := nQuery;
         with EREIGNIS do
         begin
+          {$ifdef fpc}
+           Raise Exception.Create('Columnattributes');
+          {$else}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+          {$endif}
           sql.add('select * from EREIGNIS for update');
           Insert;
           FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -1917,8 +1931,12 @@ begin
         WARENBEWEGUNG := nQuery;
         with WARENBEWEGUNG do
         begin
+          {$ifdef fpc}
+           Raise Exception.Create('Columnattributes');
+          {$else}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+          {$endif}
           sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
           Insert;
           if (AUSGABEART_R > 0) then
@@ -1998,8 +2016,12 @@ begin
           WARENBEWEGUNG := nQuery;
           with WARENBEWEGUNG do
           begin
+            {$ifdef fpc}
+             Raise Exception.Create('Columnattributes');
+            {$else}
             ColumnAttributes.add('RID=NOTREQUIRED');
             ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+            {$endif}
             sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
             Insert;
             if (AUSGABEART_R > 0) then
@@ -2117,8 +2139,8 @@ begin
 
         p := cPreis_aufAnfrage;
 
-        if FieldByName('EURO').IsNull and FieldByName('PREIS').IsNotNull and
-          FieldByName('WAEHRUNG_R').IsNotNull then
+        if FieldByName('EURO').IsNull and not(FieldByName('PREIS').IsNull) and
+          not(FieldByName('WAEHRUNG_R').IsNull) then
         begin
           // Umrechnen der Auslandswährung auf €
           cLAND.ParamByName('CROSSREF').AsInteger := FieldByName('WAEHRUNG_R')
@@ -2130,7 +2152,7 @@ begin
         else
         begin
           //
-          if FieldByName('EURO').IsNotNull then
+          if not(FieldByName('EURO').IsNull) then
             p := FieldByName('EURO').AsFloat
         end;
 
@@ -2218,7 +2240,11 @@ begin
         Params.BeginUpdate;
         ParamByName('CR_AR').AsInteger := ARTIKEL_R;
         ParamByName('CR_AA').AsInteger := AUSGABEART_R;
+        {$ifdef fpc}
+        Params.EndUpdate;
+        {$else}
         Params.EndUpdate(true);
+        {$endif}
       end;
     end;
 
@@ -2229,13 +2255,13 @@ begin
       if not(eof) then
       begin
         //
-        if FieldByName('PREIS_R').IsNotNull then
+        if not(FieldByName('PREIS_R').IsNull) then
         begin
           result := e_r_PreisTabelle(FieldByName('PREIS_R').AsInteger);
         end
         else
         begin
-          if FieldByName('EURO').IsNotNull then
+          if not(FieldByName('EURO').IsNull) then
             result := FieldByName('EURO').AsFloat
           else
             result := cPreis_aufAnfrage;
@@ -2452,7 +2478,11 @@ begin
           Params.BeginUpdate;
           ParamByName('CR_AR').AsInteger := ARTIKEL_R;
           ParamByName('CR_AA').AsInteger := AUSGABEART_R;
+          {$ifdef fpc}
+          Params.EndUpdate;
+{$else}
           Params.EndUpdate(true);
+{$endif}
           ApiFirst;
         end;
       end
@@ -2465,7 +2495,11 @@ begin
           ParamByName('CR_ER').AsInteger := EINHEIT_R;
           ParamByName('CR_AR').AsInteger := ARTIKEL_R;
           ParamByName('CR_AA').AsInteger := AUSGABEART_R;
-          Params.EndUpdate(true);
+          {$ifdef fpc}
+          Params.EndUpdate;
+          {$else}
+                    Params.EndUpdate(true);
+          {$endif}
           ApiFirst;
         end;
       end;
@@ -2478,13 +2512,13 @@ begin
       begin
 
         // info ok
-        if FieldByName('PREIS_R').IsNotNull then
+        if not(FieldByName('PREIS_R').IsNull) then
         begin
           result := e_r_PreisTabelle(FieldByName('PREIS_R').AsInteger);
         end
         else
         begin
-          if FieldByName('EURO').IsNotNull then
+          if not(FieldByName('EURO').IsNull) then
           begin
             result := FieldByName('EURO').AsFloat
           end
@@ -2945,7 +2979,7 @@ begin
           //
           SkipIt := (Ausgeglichen_BELEG_R.IndexOf(BELEG_R) <> -1);
 
-          if not(SkipIt) and FieldByName('TEILLIEFERUNG').IsNotNull then
+          if not(SkipIt) and not(FieldByName('TEILLIEFERUNG').IsNull) then
           begin
 
             // Micro - Ausgeglichenheit in dieser Teillieferung prüfen!
@@ -2961,7 +2995,7 @@ begin
           if not(SkipIt) then
             if not(pHeutigeBelege) then
               if (VORGANG = cVorgang_Rechnung) then
-                if (FieldByName('DATUM').AsDate >= now - 2) then
+                if (FieldByName('DATUM').AsDateTime >= now - 2) then
                   SkipIt := true;
 
         end
@@ -2981,11 +3015,11 @@ begin
           BetragVerzug := 0.0;
 
           // maunellen Text laden
-          if FieldByName('TEXT').IsNotNull then
+          if not(FieldByName('TEXT').IsNull) then
           begin
 
             //
-            FieldByName('TEXT').AssignTo(KontoTexte);
+            e_r_sqlt(FieldByName('TEXT'),KontoTexte);
 
             // Nur bis zur Geheim-Symbol
             if (KontoTexte.count > 0) then
@@ -3004,7 +3038,7 @@ begin
               DateDiff(DateTime2Long(FieldByName('VALUTA').AsDateTime),
               DateGet);
             BelegNo := FieldByName('BELEG_R').AsString;
-            if FieldByName('TEILLIEFERUNG').IsNotNull then
+            if not(FieldByName('TEILLIEFERUNG').IsNull) then
               BelegNo := BelegNo + '-' +
                 inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2);
 
@@ -3051,11 +3085,11 @@ begin
             if FieldByName('DATUM').IsNull then
               DatensammlerLokal.add
                 ('BelegDat=' + long2dateLocalized
-                (DateTime2Long(qBELEG.FieldByName('RECHNUNG').AsDate)))
+                (DateTime2Long(qBELEG.FieldByName('RECHNUNG').AsDateTime)))
             else
               DatensammlerLokal.add
                 ('BelegDat=' + long2dateLocalized
-                (DateTime2Long(FieldByName('DATUM').AsDate)));
+                (DateTime2Long(FieldByName('DATUM').AsDateTime)));
 
             //
             if (isSomeMoney(BuchungsBetrag)) then
@@ -3192,25 +3226,25 @@ begin
               with qBELEG do
               begin
 
-                if FieldByName('MAHNUNG1').IsNotNull then
+                if not(FieldByName('MAHNUNG1').IsNull) then
                   MoreText := MoreText + #13 + _('Mahnung 1 erhielten Sie am') +
                     ' ' + long2dateLocalized
-                    (DateTime2Long(FieldByName('MAHNUNG1').AsDate));
+                    (DateTime2Long(FieldByName('MAHNUNG1').AsDateTime));
 
-                if FieldByName('MAHNUNG2').IsNotNull then
+                if not(FieldByName('MAHNUNG2').IsNull) then
                   MoreText := MoreText + #13 + _('Mahnung 2 erhielten Sie am') +
                     ' ' + long2dateLocalized
-                    (DateTime2Long(FieldByName('MAHNUNG2').AsDate));
+                    (DateTime2Long(FieldByName('MAHNUNG2').AsDateTime));
 
-                if FieldByName('MAHNUNG3').IsNotNull then
+                if not(FieldByName('MAHNUNG3').IsNull) then
                   MoreText := MoreText + #13 + _('Mahnung 3 erhielten Sie am') +
                     ' ' + long2dateLocalized
-                    (DateTime2Long(FieldByName('MAHNUNG3').AsDate));
+                    (DateTime2Long(FieldByName('MAHNUNG3').AsDateTime));
 
-                if FieldByName('MAHNBESCHEID').IsNotNull then
+                if not(FieldByName('MAHNBESCHEID').IsNull) then
                   MoreText := MoreText + #13 + _('Mahnbescheid beantragt am') +
                     ' ' + long2dateLocalized
-                    (DateTime2Long(FieldByName('MAHNBESCHEID').AsDate));
+                    (DateTime2Long(FieldByName('MAHNBESCHEID').AsDateTime));
 
                 SaldoLautBeleg := FieldByName('RECHNUNGS_BETRAG').AsFloat -
                   FieldByName('DAVON_BEZAHLT').AsFloat;
@@ -3691,7 +3725,11 @@ begin
       with qPosten do
       begin
         sql.add('select * from POSTEN for update');
+{$ifdef fpc}
+raise exception.create('ColumnAttributes');
+{$else}
         ColumnAttributes.add('RID=NOTREQUIRED');
+      {$endif}
         prepare;
       end;
 
@@ -4144,7 +4182,6 @@ begin
       qRABATT_CODE := nCursor;
       with qRABATT_CODE do
       begin
-        readonly := true;
         sql.add('SELECT RABATT_CODE,NETTO,NETTO_WIE_BRUTTO FROM PERSON WHERE RID='
           + inttostr(PERSON_R));
         ApiFirst;
@@ -4162,7 +4199,6 @@ begin
       begin
         sql.add('SELECT VERLAG_R,SORTIMENT_R FROM ARTIKEL WHERE RID=' +
           inttostr(ARTIKEL_R));
-        readonly := true;
         Open;
         First;
         VERLAG_R := FieldByName('VERLAG_R').AsInteger;
@@ -4254,7 +4290,7 @@ begin
         inttostr(ARTIKEL_R));
       Open;
       VERLAG_R := FieldByName('VERLAG_R').AsInteger;
-      if FieldByName('RABATT').IsNotNull then
+      if not(FieldByName('RABATT').IsNull) then
       begin
         Rabatt := FieldByName('RABATT').AsFloat;
         ResultResolved := true;
@@ -4272,7 +4308,7 @@ begin
     begin
       sql.add('SELECT RABATT FROM PERSON WHERE RID=' + inttostr(VERLAG_R));
       Open;
-      if FieldByName('RABATT').IsNotNull then
+      if not(FieldByName('RABATT').IsNull) then
       begin
         Rabatt := FieldByName('RABATT').AsFloat;
         ResultResolved := true;
@@ -4346,7 +4382,7 @@ begin
         raise exception.create('SORTIMENT_R nicht gefunden');
 
       // neuer ARTIKEL_R
-      result := GEN_ID('ARTIKEL_GID', 1);
+      result := e_w_GEN('ARTIKEL_GID');
       NUMERO := FieldByName('NAECHSTE_NUMMER').AsInteger;
       if (NUMERO = -1) then
         NUMERO := result;
@@ -4423,7 +4459,7 @@ begin
     ANSCHRIFT := nQuery;
     with ANSCHRIFT do
     begin
-      ANSCHRIFT_R := GEN_ID('GLOBAL_GID', 1);
+      ANSCHRIFT_R := e_w_GEN('GLOBAL_GID');
       sql.add('select * from anschrift for update');
       Insert;
       FieldByName('RID').AsInteger := ANSCHRIFT_R;
@@ -4436,11 +4472,11 @@ begin
     PERSON := nQuery;
     with PERSON do
     begin
-      PERSON_R := GEN_ID('POSTEN_GID', 1);
+      PERSON_R := e_w_GEN('POSTEN_GID');
 
       // versuchen eine neue Kundennummer zu erhalten
       repeat
-        NUMMER := GEN_ID('NK_KUNDE', 1);
+        NUMMER := e_w_GEN('NK_KUNDE');
       until (e_r_sql('select count(RID) from PERSON where NUMMER=' +
         inttostr(NUMMER)) = 0);
 
@@ -4899,11 +4935,11 @@ begin
         TL := FieldByName('TEILLIEFERUNG').AsInteger;
         GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
           .AsInteger, 2);
-        FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
         if (BTYP = '') then
           BTYP := INTERN_INFO.values['BTYP' + GENERATION_POSTFIX];
 
-        if FieldByName('LIEFERANSCHRIFT_R').IsNotNull then
+        if not(FieldByName('LIEFERANSCHRIFT_R').IsNull) then
           PERSON_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger
         else
           PERSON_R := FieldByName('PERSON_R').AsInteger;
@@ -5177,7 +5213,7 @@ var
 begin
   with ib_q do
   begin
-    if FieldByName('PLZ').IsNotNull then
+    if not(FieldByName('PLZ').IsNull) then
     begin
       _land_sub := e_r_land(ib_q);
       _plz_sub := inttostr(FieldByName('PLZ').AsInteger);
@@ -5886,14 +5922,14 @@ begin
             break;
           end;
           VertragsTexte.add('VertragsReferenz=' + inttostr(VERTRAG_R));
-          FieldByName('EINSTELLUNGEN').AssignTo(EINSTELLUNGEN);
+          e_r_sqlt(FieldByName('EINSTELLUNGEN'),EINSTELLUNGEN);
 
           if FieldByName('VON').IsNull then
           begin
             result.add('WARNING: Vertrag VON ist null!');
             break;
           end;
-          VON := DateTime2Long(FieldByName('VON').AsDate);
+          VON := DateTime2Long(FieldByName('VON').AsDateTime);
 
           if FieldByName('BELEG_R').IsNull then
           begin
@@ -5927,17 +5963,17 @@ begin
           if FieldByName('BIS').IsNull then
             BIS := cMaxDate
           else
-            BIS := DateTime2Long(FieldByName('BIS').AsDate);
+            BIS := DateTime2Long(FieldByName('BIS').AsDateTime);
 
           if FieldByName('STICHTAG').IsNull then
             STICHTAG := VON
           else
-            STICHTAG := DateTime2Long(FieldByName('STICHTAG').AsDate);
+            STICHTAG := DateTime2Long(FieldByName('STICHTAG').AsDateTime);
 
           if FieldByName('GEBUCHT_BIS').IsNull then
             GEBUCHT_BIS := DatePlus(STICHTAG, -1)
           else
-            GEBUCHT_BIS := DateTime2Long(FieldByName('GEBUCHT_BIS').AsDate);
+            GEBUCHT_BIS := DateTime2Long(FieldByName('GEBUCHT_BIS').AsDateTime);
 
           // Stichtage, die vor einer erfolgten Buchung liegen
           // werden storniert
@@ -6121,7 +6157,7 @@ begin
   sSettings.free;
 end;
 
-function e_r_VertragBuchen(VERTRAG_R: integer): boolean; overload;
+function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
 var
   cVERTRAG: TdboCursor;
   GEBUCHT_BIS: TAnfixDate;
@@ -6174,22 +6210,22 @@ begin
         // result.add('WARNING: Vertrag VON ist null!');
         break;
       end;
-      VON := DateTime2Long(FieldByName('VON').AsDate);
+      VON := DateTime2Long(FieldByName('VON').AsDateTime);
 
       if FieldByName('BIS').IsNull then
         BIS := cMaxDate
       else
-        BIS := DateTime2Long(FieldByName('BIS').AsDate);
+        BIS := DateTime2Long(FieldByName('BIS').AsDateTime);
 
       if FieldByName('STICHTAG').IsNull then
         STICHTAG := VON
       else
-        STICHTAG := DateTime2Long(FieldByName('STICHTAG').AsDate);
+        STICHTAG := DateTime2Long(FieldByName('STICHTAG').AsDateTime);
 
       if FieldByName('GEBUCHT_BIS').IsNull then
         GEBUCHT_BIS := DatePlus(STICHTAG, -1)
       else
-        GEBUCHT_BIS := DateTime2Long(FieldByName('GEBUCHT_BIS').AsDate);
+        GEBUCHT_BIS := DateTime2Long(FieldByName('GEBUCHT_BIS').AsDateTime);
 
       // Stichtage, die vor einer erfolgten Buchung liegen
       // werden storniert
@@ -6452,7 +6488,7 @@ begin
         PERSON_R := FieldByName('PERSON_R').AsInteger;
         GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
           .AsInteger, 2);
-        FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
         isHaendler := e_r_RabattFaehig(PERSON_R);
       end;
 
@@ -6462,7 +6498,11 @@ begin
         sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
         sql.add('for update');
+{$ifdef fpc}
+raise exception.create('ColumnAttributes');
+{$else}
         ColumnAttributes.add('RID=NOTREQUIRED');
+{$endif}
         Open;
         First;
       end;
@@ -6505,7 +6545,7 @@ begin
               FieldByName('MENGE_AGENT').AsInteger +
               FieldByName('MENGE_AUSFALL').AsInteger);
 
-            if FieldByName('ARTIKEL_R').IsNotNull then
+            if not(FieldByName('ARTIKEL_R').IsNull) then
             begin
 
               // ist überhaupt was zu verbuchen
@@ -6588,7 +6628,7 @@ begin
                     e_r_Lieferzeit(FieldByName('AUSGABEART_R').AsInteger,
                     FieldByName('ARTIKEL_R').AsInteger)));
 
-                  FieldByName('ZUSAGE').AsDate := long2datetime(ZUSAGE);
+                  FieldByName('ZUSAGE').AsDateTime := long2datetime(ZUSAGE);
 
                 end
                 else
@@ -6597,7 +6637,7 @@ begin
                   // Heute lieferbar!
                   if (_RechnungImPostenNeu > _RechnungImPosten) then
                   begin
-                    FieldByName('ZUSAGE').AsDate :=
+                    FieldByName('ZUSAGE').AsDateTime :=
                       long2datetime(Liefertag(DateGet));
                   end;
                 end;
@@ -6642,7 +6682,7 @@ begin
                         qPosten.FieldByName('ARTIKEL_R').AsInteger;
 
                       //
-                      if (qPosten.FieldByName('AUSGABEART_R').IsNotNull) then
+                      if not(qPosten.FieldByName('AUSGABEART_R').IsNull) then
                         FieldByName('AUSGABEART_R').AsInteger :=
                           qPosten.FieldByName('AUSGABEART_R').AsInteger;
                       FieldByName('ART').AsInteger := eT_WareBestellt;
@@ -6650,9 +6690,9 @@ begin
                       qStringsAdd(FieldByName('INFO'),
                         format('Order für %dx Artikel %s', [_AgentImPostenNeu,
                         qPosten.FieldByName('ARTIKEL').AsString]));
-                      FieldByName('VORLAGE').AsDate := now + 3;
-                      FieldByName('ABLAUF').AsDate := FieldByName('VORLAGE')
-                        .AsDate + 5;
+                      FieldByName('VORLAGE').AsDateTime := now + 3;
+                      FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE')
+                        .AsDateTime + 5;
 
                       Post;
 
@@ -6676,9 +6716,9 @@ begin
                         format('Order für %dx Artikel %s erwartet',
                         [_AgentImPostenNeu, qPosten.FieldByName('ARTIKEL')
                         .AsString]));
-                      FieldByName('VORLAGE').AsDate := now + 3;
-                      FieldByName('ABLAUF').AsDate := FieldByName('VORLAGE')
-                        .AsDate + 5;
+                      FieldByName('VORLAGE').AsDateTime := now + 3;
+                      FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE')
+                        .AsDateTime + 5;
                       Post;
 
                     end;
@@ -6692,7 +6732,7 @@ begin
                 begin
                   if not(ZUSAMMENHANG) then
                   begin
-                    GEN_ID('GEN_ZUSAMMENHANG', 1);
+                    e_w_GEN('GEN_ZUSAMMENHANG');
                     ZUSAMMENHANG := true;
                   end;
 
@@ -6922,11 +6962,11 @@ begin
       while not(eof) do
       begin
 
-        if FieldByName('ZUSAGE').IsNotNull then
+        if not(FieldByName('ZUSAGE').IsNull) then
         begin
-          ZUSAGE := max(ZUSAGE, DateTime2Long(FieldByName('ZUSAGE').AsDate));
+          ZUSAGE := max(ZUSAGE, DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
           ERSTERLIEFERTAG := min(ERSTERLIEFERTAG,
-            DateTime2Long(FieldByName('ZUSAGE').AsDate));
+            DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
         end;
 
         // Problematisch: Eigentlich sollte das "if" über das Flag "ZUTAT"
@@ -6934,7 +6974,7 @@ begin
         if not(e_r_IsVersandKosten(FieldByName('ARTIKEL_R').AsInteger)) then
         begin
 
-          if FieldByName('TERMIN').IsNotNull then
+          if not(FieldByName('TERMIN').IsNull) then
           begin
             if (FieldByName('MENGE_RECHNUNG').AsInteger > 0) or
               (FieldByName('MENGE_AGENT').AsInteger > 0) then
@@ -7011,7 +7051,7 @@ begin
       // Bedingungen für einen "edit" -> somit auch Generations Wechsel
       if (VERSAND_STATUS <> FieldByName('VERSAND_STATUS').AsInteger) or
         (FieldByName('VERSAND_STATUS').IsNull) or
-        (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDate)) or
+        (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDateTime)) or
         (FieldByName('MENGE_AUFTRAG').AsInteger <> MENGE_AUFTRAG) or
         (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) or
         (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) or
@@ -7019,7 +7059,7 @@ begin
         (FieldByName('VOLUMEN').AsFloat <> VOLUMEN) or
         (FieldByName('ZUTATEN').AsFloat <> Zutaten) or
         ((FieldByName('TERMIN').AsDateTime <> TERMIN) and
-        (TERMIN <> cTerminUnset)) or ((FieldByName('TERMIN').IsNotNull) and
+        (TERMIN <> cTerminUnset)) or (not(FieldByName('TERMIN').IsNull) and
         (TERMIN = cTerminUnset)) then
       begin
 
@@ -7039,7 +7079,7 @@ begin
         if (ZUSAGE = 0) then
           FieldByName('ZUSAGE').clear
         else
-          FieldByName('ZUSAGE').AsDate := long2datetime(ZUSAGE);
+          FieldByName('ZUSAGE').AsDateTime := long2datetime(ZUSAGE);
         if (TERMIN = cTerminUnset) then
           FieldByName('TERMIN').clear
         else
@@ -7085,8 +7125,8 @@ begin
                 format('Warenausgang für Beleg %d erwartet', [BELEG_R]));
               FieldByName('ART').AsInteger := eT_WareRausgegangen;
               if (ERSTERLIEFERTAG < MaxInt) then
-                FieldByName('VORLAGE').AsDate := long2datetime(ERSTERLIEFERTAG);
-              FieldByName('ABLAUF').AsDate := FieldByName('VORLAGE').AsDate + 3;
+                FieldByName('VORLAGE').AsDateTime := long2datetime(ERSTERLIEFERTAG);
+              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 3;
               Post;
 
             end
@@ -7107,7 +7147,7 @@ begin
               if (ERSTERLIEFERTAG < MaxInt) then
                 FieldByName('VORLAGE').AsDateTime :=
                   long2datetime(ERSTERLIEFERTAG);
-              FieldByName('ABLAUF').AsDate := FieldByName('VORLAGE').AsDate + 3;
+              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 3;
               qStringsAdd(FieldByName('INFO'), FieldByName('MOMENT').AsString);
               // Einfach weiteren Moment hinzu!
               Post;
@@ -7170,8 +7210,12 @@ begin
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-              ColumnAttributes.add('RID=NOTREQUIRED');
+{$ifdef fpc}
+ raise Exception.create('7214:ColumnAttributes');
+{$else}
+ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+      {$endif}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('ART').AsInteger :=
@@ -7202,8 +7246,13 @@ begin
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
+{$ifdef fpc}
+// {$I %FILE%} {$I %LINE%}
+raise exception.create('7251:ColumnAttributes');
+{$else}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+              {$endif}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -9424,7 +9473,7 @@ begin
           end;
         end;
         if FieldByName('PREIS').IsNotNull then
-          FieldByName('AUSFUEHRUNG').AsDate :=
+          FieldByName('AUSFUEHRUNG').AsDateTime :=
             long2datetime(date2Long(InternInfosQuelle.values['von']));
 
         repeat
@@ -9604,7 +9653,7 @@ begin
           end;
           if assigned(sTexte) then
             if FieldByName('PREIS').IsNotNull then
-              FieldByName('AUSFUEHRUNG').AsDate :=
+              FieldByName('AUSFUEHRUNG').AsDateTime :=
                 long2datetime(date2Long(sTexte.values['von']));
           Post;
         end;
@@ -9846,7 +9895,7 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      if (DateTime2Long(FieldByName('AUFTRITT').AsDate) < DateTimeOut) then
+      if (DateTime2Long(FieldByName('AUFTRITT').AsDateTime) < DateTimeOut) then
         FreeList.add(FieldByName('RID').AsInteger);
       ApiNext;
     end;
@@ -10799,7 +10848,7 @@ begin
       DatensammlerGlobal.add('AktuellesDatum=' + DatumLocalized);
       DatensammlerGlobal.add('AktuelleUhrzeit=' + Uhr);
       DatensammlerGlobal.add('Rechnungsdatum=' +
-        long2dateLocalized(FieldByName('RECHNUNG').AsDate));
+        long2dateLocalized(FieldByName('RECHNUNG').AsDateTime));
       DatensammlerGlobal.add('Zahldatum=' + long2dateLocalized(DatePlus(DateGet,
         e_r_ZahlungFrist(PERSON_R))));
       DatensammlerGlobal.add('Hauptnummer=' + cPERSON.FieldByName
@@ -10991,7 +11040,7 @@ begin
           DatensammlerLokal.add('Ausfuehrung=')
         else
           DatensammlerLokal.add('Ausfuehrung=' +
-            long2date8(DateTime2Long(FieldByName('AUSFUEHRUNG').AsDate)));
+            long2date8(DateTime2Long(FieldByName('AUSFUEHRUNG').AsDateTime)));
 
         if (_Anz <> _AnzAuftrag) then
         begin
@@ -11801,7 +11850,7 @@ begin
 
         // AF-Patch eCommerce.pas 10678 +
         // ZAEHLER_WECHSEL : TANFiXDate;
-        ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDate);
+        ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
         if (ZAEHLER_WECHSEL > DateGet) then
           Log('[Q14] Ablesedatum liegt in der Zukunft');
         if (ZAEHLER_WECHSEL < 20080822) then
