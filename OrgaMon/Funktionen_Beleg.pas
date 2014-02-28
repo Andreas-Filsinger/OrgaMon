@@ -26,10 +26,6 @@
 }
 unit Funktionen_Beleg;
 
-{$ifdef fpc}
-{$define CONSOLE}
-{$endif}
-
 //
 // e,
 // e_ eCommerce
@@ -683,8 +679,10 @@ uses
 
   // Tools
   {$ifndef fpc}
+  System.UITypes,
   Jvgnugettext,
   {$else}
+  graphics,
   fpchelper,
   {$endif}
 
@@ -696,7 +694,6 @@ uses
 
   // DataBase
 {$IFNDEF CONSOLE}
-  System.UITypes,
   Datenbank,
 {$ENDIF}
   // OrgaMon
@@ -7278,8 +7275,10 @@ raise exception.create('7251:ColumnAttributes');
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
+              {$ifndef fpc}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+              {$endif}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -7500,7 +7499,7 @@ begin
       UebergangsfaecherAnz := RecordCount;
       if (UebergangsfaecherAnz > 0) then
       begin
-        UebergangsfachSelected := GEN_ID('UEBERGANGSFACH_GID', 1)
+        UebergangsfachSelected := e_w_gen('UEBERGANGSFACH_GID')
           mod UebergangsfaecherAnz;
         ApiFirst;
         // Nun den Einstiegspunkt anfahren!
@@ -7957,7 +7956,9 @@ begin
       with qPosten do
       begin
         sql.add('select * from POSTEN for update');
+{$ifndef fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
+{$endif}
         prepare;
       end;
 
@@ -7981,7 +7982,7 @@ begin
             FieldByName('MENGE').assign(cWARENKORB.FieldByName('MENGE'));
             e_w_SetPostenData(FieldByName('ARTIKEL_R').AsInteger,
               PERSON_R, qPosten);
-            if cWARENKORB.FieldByName('AUSGABEART_R').IsNotNull then
+            if not(cWARENKORB.FieldByName('AUSGABEART_R').IsNull) then
               FieldByName('ARTIKEL').AsString := FieldByName('ARTIKEL').AsString
                 + ' ' + cWARENKORB.FieldByName('BEMERKUNG').AsString;
             Post;
@@ -8031,12 +8032,14 @@ begin
     try
       with qBELEG do
       begin
-        BELEG_R := GEN_ID('BELEG_GID', 1);
+        BELEG_R := e_w_GEN('BELEG_GID');
         //
         sql.add('select * from BELEG for update');
+{$ifndef fpc}
         ColumnAttributes.add('ANLAGE=NOTREQUIRED');
         ColumnAttributes.add('BTYP=NOTREQUIRED');
         ColumnAttributes.add('BSTATUS=NOTREQUIRED');
+{$endif}
         Insert;
         FieldByName('RID').AsInteger := BELEG_R;
         FieldByName('PERSON_R').AsInteger := PERSON_R;
@@ -8486,7 +8489,7 @@ begin
     else
     begin
       InfoText := TStringList.create;
-      FieldByName('INT_TEXT').AssignTo(InfoText);
+      e_r_sqlt(FieldByName('INT_TEXT'),InfoText);
       if InfoText.count > 0 then
         result := InfoText[0]
       else
@@ -8535,7 +8538,7 @@ begin
     end
     else
     begin
-      FieldByName('INT_TEXT').AssignTo(result);
+      e_r_sqlt(FieldByName('INT_TEXT'),result);
     end;
   end;
   cINTERNATIONALTEXT.free;
@@ -8563,7 +8566,7 @@ begin
     Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' +
     inttostr(LANGUAGE) + ')');
   IntTxt.First;
-  IntTxt.FieldByName('INT_TEXT').AssignTo(Bigmemo);
+  e_r_sqlt(IntTxt.FieldByName('INT_TEXT'),Bigmemo);
   Bigmemo.add('');
   result := cutblank(Bigmemo[0]);
   //
@@ -8631,7 +8634,7 @@ begin
           ApiFirst;
           if not(eof) then
           begin
-            if FieldByName('GEWICHT').IsNotNull then
+            if not(FieldByName('GEWICHT').IsNull) then
             begin
               result := FieldByName('GEWICHT').AsInteger;
               cGEWICHT.free;
@@ -9201,8 +9204,10 @@ begin
       qEREIGNIS := nQuery;
       with qEREIGNIS do
       begin
+{$ifndef fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$endif}
         sql.add('select * from EREIGNIS for update');
         Insert;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -9354,7 +9359,7 @@ begin
     sql.add('from BELEG');
     sql.add(' where RID=' + inttostr(BELEG_R_FROM));
     ApiFirst;
-    FieldByName('INTERN_INFO').AssignTo(InternInfosQuelle);
+    e_r_sqlt(FieldByName('INTERN_INFO'),InternInfosQuelle);
     RECHNUNGSANSCHRIFT_R := FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger;
     LIEFERANSCHRIFT_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
   end;
@@ -9459,7 +9464,7 @@ begin
           DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
           if (RoteListe.IndexOf(DBFieldName) = -1) then
           begin
-            if (DBFieldName = 'ARTIKEL') and cQUELL_POSTEN.Fields[n].IsNotNull
+            if (DBFieldName = 'ARTIKEL') and not(cQUELL_POSTEN.Fields[n].IsNull)
             then
             begin
               ARTIKEL := cQUELL_POSTEN.Fields[n].AsString;
@@ -9472,7 +9477,7 @@ begin
             end;
           end;
         end;
-        if FieldByName('PREIS').IsNotNull then
+        if not(FieldByName('PREIS').IsNull) then
           FieldByName('AUSFUEHRUNG').AsDateTime :=
             long2datetime(date2Long(InternInfosQuelle.values['von']));
 
@@ -9514,7 +9519,7 @@ var
   qZIEL_BELEG: TdboQuery;
   qZIEL_POSTEN: TdboQuery;
   BlackList: TStringList;
-  Options: TStringList;
+  BelegOptions: TStringList;
   n: integer;
   BELEG_R: integer;
   DBFieldName: string;
@@ -9530,7 +9535,7 @@ begin
   qZIEL_BELEG := nQuery;
   qZIEL_POSTEN := nQuery;
   BlackList := TStringList.create;
-  Options := TStringList.create;
+  BelegOptions := TStringList.create;
 
   repeat
 
@@ -9542,7 +9547,7 @@ begin
       if eof then
         raise exception.create('Quell-Beleg ' + inttostr(BELEG_R_FROM) +
           ' nicht gefunden');
-      FieldByName('INTERN_INFO').AssignTo(Options);
+      e_r_sqlt(FieldByName('INTERN_INFO'),BelegOptions);
       BTYP := strtointdef(FieldByName('BTYP').AsString, 0);
     end;
 
@@ -9550,7 +9555,7 @@ begin
     if assigned(sTexte) then
       for n := 0 to pred(sTexte.count) do
         if (pos('=', sTexte[n]) > 0) then
-          Options.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
+          BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
 
     // prüfe exitenz der Ziel - Person
     if e_r_sql('select count(rid) from person where RID=' +
@@ -9598,7 +9603,7 @@ begin
       for n := 0 to pred(FieldCount) do
         if (BlackList.IndexOf(Fields[n].FieldName) = -1) then
           Fields[n].assign(cQUELL_BELEG.FieldByName(Fields[n].FieldName));
-      FieldByName('INTERN_INFO').assign(Options);
+      e_r_sqlt(FieldByName('INTERN_INFO'),BelegOptions);
       if (BTYP > 0) then
         FieldByName('BTYP').AsString := inttostr(BTYP - 1);
       Post;
@@ -9639,7 +9644,7 @@ begin
             if (BlackList.IndexOf(DBFieldName) = -1) then
             begin
               if assigned(sTexte) and (DBFieldName = 'ARTIKEL') and
-                cQUELL_POSTEN.Fields[n].IsNotNull then
+                not(cQUELL_POSTEN.Fields[n].IsNull) then
               begin
                 CellStr := cQUELL_POSTEN.Fields[n].AsString;
                 ersetze(sTexte, CellStr);
@@ -9652,7 +9657,7 @@ begin
             end;
           end;
           if assigned(sTexte) then
-            if FieldByName('PREIS').IsNotNull then
+            if not(FieldByName('PREIS').IsNull) then
               FieldByName('AUSFUEHRUNG').AsDateTime :=
                 long2datetime(date2Long(sTexte.values['von']));
           Post;
@@ -9672,10 +9677,10 @@ begin
   qZIEL_POSTEN.free;
   BlackList.free;
 
-  if (Options.values['verbuchen'] = cIni_Activate) then
-    e_w_BelegBuchen(BELEG_R, Options.values['label'] = cIni_Activate);
+  if (BelegOptions.values['verbuchen'] = cIni_Activate) then
+    e_w_BelegBuchen(BELEG_R, BelegOptions.values['label'] = cIni_Activate);
 
-  Options.free;
+  BelegOptions.free;
 
 end;
 
@@ -9806,7 +9811,7 @@ begin
       inttostr(ZAHLUNGTYP_R));
     ApiFirst;
 
-    FieldByName('BELEG_INFO').AssignTo(TheText);
+    e_r_sqlt(FieldByName('BELEG_INFO'),TheText);
 
     // Fälligkeit aus der Zahlungsart
     if FieldByName('FAELLIG').IsNull then
@@ -9839,7 +9844,7 @@ begin
     pStrReplace('ZahlungKonto', _MoreInfo.values['ZahlungKonto']);
     pStrReplace('ZahlungBank', _MoreInfo.values['ZahlungBank']);
 
-    if FieldByName('SKONTO_FAELLIG').IsNotNull then
+    if not(FieldByName('SKONTO_FAELLIG').IsNull) then
     begin
       SKONTOTAGE := FieldByName('SKONTO_FAELLIG').AsInteger;
       _MoreInfo.add('SKONTOTAGE=' + inttostr(SKONTOTAGE));
@@ -10067,7 +10072,7 @@ begin
       TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
       GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
         .AsInteger, 2);
-      FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+      e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
     end;
 
     // Ausgabebeleg dauerhaft kopieren
@@ -10189,8 +10194,10 @@ begin
     qWARENBEWEGUNG := nQuery;
     with qWARENBEWEGUNG do
     begin
+{$ifndef fpc}
       ColumnAttributes.add('RID=NOTREQUIRED');
       ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$endif}
       sql.add('select * from WARENBEWEGUNG for update');
       Insert;
       FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
@@ -10230,7 +10237,7 @@ begin
           ApiFirst;
         end;
 
-        if (cVERSAND.FieldByName('VERSENDER_R').IsNotNull) then
+        if not(cVERSAND.FieldByName('VERSENDER_R').IsNull) then
         begin
 
           // a) Versender Infos bereitstellen
@@ -10278,7 +10285,7 @@ begin
           PaketS := TStringList.create;
           ParameterS := TStringList.create;
           WerteS := TStringList.create;
-          cVERSENDER.FieldByName('INTERNINFO').AssignTo(ParameterS);
+          e_r_sqlt(cVERSENDER.FieldByName('INTERNINFO'),ParameterS);
 
           case cVERSENDER.FieldByName('EXPORTTYP').AsInteger of
             1:
@@ -10859,7 +10866,7 @@ begin
         .AsString);
 
       // Freie Felddefinitionen noch machen ...
-      FieldByName('INTERN_INFO').AssignTo(InternInfo);
+      e_r_sqlt(FieldByName('INTERN_INFO'),InternInfo);
       for n := 0 to pred(InternInfo.count) do
         if pos('=', InternInfo[n]) > 1 then
           DatensammlerGlobal.add(InternInfo[n]);
@@ -11094,7 +11101,7 @@ begin
             ApiFirst;
 
             // Artikel-Daten holen!
-            FieldByName('INTERN_INFO').AssignTo(ArtikelInfo);
+            e_r_sqlt(FieldByName('INTERN_INFO'),ArtikelInfo);
 
             // aus dem Artikelstamm übernommene Felder
             DatensammlerLokal.add('No=' + FieldByName('NUMERO').AsString);
@@ -11350,7 +11357,7 @@ begin
     // weitere Bemerkungen hinzufügen!
     if not(cBELEG.FieldByName('KUNDEN_INFO').IsNull) then
     begin
-      cBELEG.FieldByName('KUNDEN_INFO').AssignTo(KundenInfo);
+      e_r_sqlt(cBELEG.FieldByName('KUNDEN_INFO'),KundenInfo);
       if (KundenInfo.count > 0) then
       begin
         _AddText := KundenInfo[0];
@@ -11367,7 +11374,7 @@ begin
 
     if not(cBELEG.FieldByName('VORAB_INFO').IsNull) then
     begin
-      cBELEG.FieldByName('VORAB_INFO').AssignTo(KundenInfo);
+      e_r_sqlt(cBELEG.FieldByName('VORAB_INFO'),KundenInfo);
       if (KundenInfo.count > 0) then
       begin
         _AddText := KundenInfo[0];
@@ -11844,9 +11851,9 @@ begin
       ApiFirst;
       if (FieldByName('STATUS').AsInteger = cs_Erfolg) then
       begin
-        FieldByName('PROTOKOLL').AssignTo(sProtokoll);
-        FieldByName('ZAEHLER_INFO').AssignTo(sZaehlerInfo);
-        FieldByName('INTERN_INFO').AssignTo(sIntern);
+        e_r_sqlt(FieldByName('PROTOKOLL'),sProtokoll);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'),sZaehlerInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),sIntern);
 
         // AF-Patch eCommerce.pas 10678 +
         // ZAEHLER_WECHSEL : TANFiXDate;
@@ -12267,8 +12274,10 @@ begin
         // Beleg anlegen
         with qBELEG do
         begin
+          {$ifndef fpc}
           ColumnAttributes.add('BTYP=NOTREQUIRED');
           ColumnAttributes.add('BSTATUS=NOTREQUIRED');
+          {$endif}
           Insert;
           FieldByName('PERSON_R').AsInteger := iSchnelleRechnung_PERSON_R;
           FieldByName('RID').AsInteger := BELEG_R;
@@ -12342,7 +12351,7 @@ procedure e_d_Rang;
 
 var
   IB_RANG: TdboCursor;
-  IB_SET_ARTIKEL, IB_SET_ARTIKEL_AA: TIB_DSQL;
+  IB_SET_ARTIKEL, IB_SET_ARTIKEL_AA: TdboScript;
   IB_ARTIKEL, IB_ARTIKEL_AA: TdboQuery;
   IB_SET_RANG: TdboQuery;
   RANG: double;
@@ -12358,23 +12367,23 @@ begin
   e_x_sql('update ARTIKEL_AA set RANG=null');
 
   // update mechanismus vorbereiten
-  IB_SET_ARTIKEL := nDSQL;
+  IB_SET_ARTIKEL := nScript;
   with IB_SET_ARTIKEL do
   begin
     sql.add('UPDATE ARTIKEL');
     sql.add('SET RANG=:RANG');
     sql.add('WHERE RID=:CR');
-    prepare;
+    //prepare;
   end;
 
-  IB_SET_ARTIKEL_AA := nDSQL;
+  IB_SET_ARTIKEL_AA := nScript;
   with IB_SET_ARTIKEL_AA do
   begin
     sql.add('UPDATE ARTIKEL_AA');
     sql.add('SET RANG=:RANG');
     sql.add('WHERE (ARTIKEL_R=:CR_A)');
     sql.add('AND (AUSGABEART_R=:CR_B)');
-    prepare;
+    //prepare;
   end;
 
   IB_RANG := nCursor;
@@ -12430,7 +12439,11 @@ begin
           Params.BeginUpdate;
           ParamByName('CR').AsInteger := ARTIKEL_R;
           ParamByName('RANG').AsFloat := RANG;
-          Params.EndUpdate(true);
+{$ifdef fpc}
+Params.EndUpdate;
+{$else}
+Params.EndUpdate(true);
+{$endif}
           execute;
         end;
 
@@ -12445,7 +12458,11 @@ begin
           ParamByName('CR_A').AsInteger := ARTIKEL_R;
           ParamByName('CR_B').AsInteger := AUSGABEART_R;
           ParamByName('RANG').AsFloat := RANG;
-          Params.EndUpdate(true);
+{$ifdef fpc}
+Params.EndUpdate;
+{$else}
+Params.EndUpdate(true);
+{$endif}
           execute;
         end;
 
@@ -12513,8 +12530,8 @@ begin
       end;
 
       // Wer hat das aktuellere Datum?
-      if (IB_ARTIKEL_AA.FieldByName('AKTION').IsNotNull) and
-        (IB_ARTIKEL.FieldByName('AKTION').IsNotNull) then
+      if not(IB_ARTIKEL_AA.FieldByName('AKTION').IsNull) and
+        not(IB_ARTIKEL.FieldByName('AKTION').IsNull) then
       begin
         if (IB_ARTIKEL_AA.FieldByName('AKTION').AsDateTime >
           IB_ARTIKEL.FieldByName('AKTION').AsDateTime) then
@@ -12525,14 +12542,14 @@ begin
       end;
 
       // Hat ARTIKEL.AKTION ein Datum?
-      if (IB_ARTIKEL.FieldByName('AKTION').IsNotNull) then
+      if not(IB_ARTIKEL.FieldByName('AKTION').IsNull) then
       begin
         IB_SET_RANG := IB_ARTIKEL;
         break;
       end;
 
       // Hat ARTIKEL_AA.AKTION ein Datum?
-      if (IB_ARTIKEL_AA.FieldByName('AKTION').IsNotNull) then
+      if not(IB_ARTIKEL_AA.FieldByName('AKTION').IsNull) then
       begin
         IB_SET_RANG := IB_ARTIKEL_AA;
         break;

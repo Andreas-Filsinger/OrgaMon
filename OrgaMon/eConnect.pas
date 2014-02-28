@@ -29,10 +29,13 @@ unit eConnect;
 interface
 
 uses
-  classes, WordIndex,
 
+  classes,
+{$ifndef fpc}
   // Pascal Skript
-  uPSUtils, uPSCompiler;
+  uPSUtils, uPSCompiler,
+{$endif}
+  WordIndex;
 
 type
   TeConnect = class(TObject)
@@ -72,7 +75,9 @@ type
     function rpc_e_w_Skript(sParameter: TStringList): TStringList;
   end;
 
+{$ifndef fpc}
 function _Uses(Sender: TPSPascalCompiler; const Name: tbtString): Boolean;
+{$endif}
 
 implementation
 
@@ -81,10 +86,11 @@ uses
   SysUtils,
 
   // IBO
+{$ifndef fpc}
   IB_Components, IB_Access,
-
+{$endif}
   // Tools
-  anfix32, srvXMLRPC, Geld,
+  anfix32, srvXMLRPC,
   html, dbOrgaMon,
 
   // OrgaMon
@@ -98,6 +104,7 @@ uses
   Funktionen_Buch,
   Funktionen_Auftrag,
 
+{$ifndef fpc}
   // Pascal Skript
   uPSRuntime,
   // PS "System"
@@ -114,8 +121,12 @@ uses
   uPSI_Funktionen_Beleg,
   uPSI_Funktionen_Buch,
   uPSI_Funktionen_Auftrag,
-  uPSI_eConnect;
+  uPSI_eConnect,
+{$endif}
+  Geld
+  ;
 
+{$ifndef fpc}
 const
   oCompiler: TPSPascalCompiler = nil;
   oExecute: TPSExec = nil;
@@ -179,6 +190,7 @@ begin
 
   until true;
 end;
+{$endif}
 
 function TeConnect.CheckLoadSuchIndex(NameSpace: string): TWordIndex;
 var
@@ -322,7 +334,7 @@ var
   szSent: string;
   SORTIMENT_R: integer;
   n: integer;
-  cAKTION: TIB_Cursor;
+  cAKTION: TdboCursor;
   MASTER_R: integer;
   ArtikelSuche: TWordIndex;
   _RDTSCmc: int64;
@@ -774,6 +786,7 @@ var
   Data: AnsiString;
   n: integer;
 begin
+{$ifndef fpc}
   result := TStringList.create;
   result.AddObject('', TXMLRPC_Server.oBeginArray);
   if not(assigned(oCompiler)) then
@@ -832,7 +845,7 @@ begin
   end;
   //
   result.AddObject('', TXMLRPC_Server.oEndArray);
-
+{$endif}
 end;
 
 end.

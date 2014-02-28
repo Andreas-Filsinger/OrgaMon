@@ -140,6 +140,7 @@ uses
   {$else}
   UFlxMessages,
   CCR.Exif.Consts,
+  GHD_pngimage,
 {$endif}
   JclBase,
 {$IFNDEF CONSOLE}

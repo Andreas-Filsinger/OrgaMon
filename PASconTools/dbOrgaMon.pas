@@ -209,7 +209,7 @@ function RecordCopy(TableName, GeneratorName: string; RID: integer): integer;
 // Grundsätzliche Datenbank-Objekte
 function nQuery: TdboQuery;
 function nCursor: TdboCursor;
-function nDSQL: TdboScript;
+function nScript: TdboScript;
 
 { Datenbank Abfragen allgemein }
 function e_r_IsRID(FieldName: string; RID: integer): boolean;
@@ -266,11 +266,15 @@ function e_r_ConnectionCount: integer;
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
+const
+
+fbConnection: TZConnection = nil;
+
 
 {$ELSE}
 
-const
   // Globale Datenbank-Elemente
+const
   fbConnection: TIB_Connection = nil;
   fbTransaction: TIB_Transaction = nil;
   fbSession: TIB_Session = nil;
@@ -1283,7 +1287,7 @@ begin
   if not(assigned(workL)) then
     exit;
 
-  dCLUB := nDSQL;
+  dCLUB := nScript;
   with dCLUB do
   begin
 
@@ -1880,7 +1884,7 @@ begin
   {$ENDIF}
 end;
 
-function nDSQL: TdboScript;
+function nScript: TdboScript;
 begin
 {$ifdef fpc}
  result := TdboScript.create(nil);

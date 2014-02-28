@@ -230,7 +230,8 @@ implementation
 uses
   // Delphi
 {$ifdef fpc}
- fpchelper,
+graphics,
+fpchelper,
 {$else}
   System.UITypes,
 Jvgnugettext,
@@ -286,9 +287,9 @@ var
   cFeiertage: TSperreOfficalHolidays = nil;
 
 var
-  _AuftragAblage_Copy: TIB_DSQL = nil;
-  _AuftragAblage_Del: TIB_DSQL = nil;
-  _AuftragAblage_Quelle: TIB_Cursor = nil;
+  _AuftragAblage_Copy: TdboScript = nil;
+  _AuftragAblage_Del: TdboScript = nil;
+  _AuftragAblage_Quelle: TdboCursor = nil;
   _AuftragAblage_FieldNames: TStringList = nil;
 
 procedure EnsureCache_Monteur; forward;
@@ -324,7 +325,7 @@ begin
       _AuftragAblage_FieldNames.Add(Fields[n].FieldName);
   end;
 
-  _AuftragAblage_Copy := nDSQL;
+  _AuftragAblage_Copy := nScript;
   with _AuftragAblage_Copy do
   begin
     sql.Add('insert into ABLAGE');
@@ -335,17 +336,21 @@ begin
     sql.Add(' AUFTRAG');
     sql.Add('WHERE');
     sql.Add(' RID=:CROSSREF');
+    {$ifndef fpc}
     prepare;
+    {$endif}
   end;
 
-  _AuftragAblage_Del := nDSQL;
+  _AuftragAblage_Del := nScript;
   with _AuftragAblage_Del do
   begin
     sql.Add('DELETE FROM');
     sql.Add(' ABLAGE');
     sql.Add('WHERE');
     sql.Add(' RID=:CROSSREF');
+    {$ifndef fpc}
     prepare;
+    {$endif}
   end;
 
 end;
@@ -401,18 +406,18 @@ begin
 end;
 
 var
-  IB_DSQL5: TIB_DSQL = nil;
+  IB_DSQL5: TdboScript = nil;
 
 procedure RecourseDeleteAUFTRAG(RIDList: TList; var DeleteCount: Integer);
 var
   n: Integer;
   RIDs: TList;
-  Auftrag: TIB_Query;
+  Auftrag: TdboQuery;
 begin
   //
   if not(assigned(IB_DSQL5)) then
   begin
-    IB_DSQL5 := nDSQL;
+    IB_DSQL5 := nScript;
     with IB_DSQL5 do
     begin
       sql.Add('DELETE FROM');
@@ -739,8 +744,8 @@ end;
 
 function e_r_Kunde(PERSON_R: Integer): string;
 var
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
   Name: string;
 begin
   cPERSON := nCursor;
@@ -788,8 +793,8 @@ end;
 
 function e_r_Person(PERSON_R: Integer): string;
 var
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
   Name: string;
 begin
   cPERSON := nCursor;
@@ -802,7 +807,7 @@ begin
   if not(cPERSON.eof) then
   begin
 
-    if cPERSON.FieldByName('PRIV_ANSCHRIFT_R').IsNotNull then
+    if not(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').IsNull) then
     begin
 
       cANSCHRIFT := nCursor;
@@ -856,8 +861,8 @@ end;
 
 function e_r_Person2Zeiler(PERSON_R: Integer): TStringList;
 var
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
   n: Integer;
 begin
 
@@ -914,7 +919,7 @@ begin
   end;
 end;
 
-procedure AuftragBeforePost(Auftrag: TIB_Dataset; ReOrgMode: boolean);
+procedure AuftragBeforePost(Auftrag: TdboDataset; ReOrgMode: boolean);
 var
   // PQ
   _Koordinaten: string;
@@ -956,8 +961,8 @@ var
   _sBearbeiter: Integer; // Barbeiter bisher
 
   // DebugInfo: string;
-  cOldVersion: TIB_Cursor;
-  cAnzHistorische: TIB_Cursor;
+  cOldVersion: TdboCursor;
+  cAnzHistorische: TdboCursor;
   InitialChange: boolean;
   AnzHistorische: Integer;
 
@@ -971,6 +976,7 @@ var
   Toleranzband: double;
 
 begin
+{$ifndef fpc}
   HistorischerErzeugt := false;
   _STATUS := ctsLast;
   if not(IgnoreAuftragPost) then
@@ -1502,17 +1508,19 @@ begin
     end;
   ForceHistorischer := false;
   IgnoreAuftragPost := false;
+{$endif}
+
 end;
 
 const
-  IB_DSQL1: TIB_DSQL = nil;
-  IB_DSQL2: TIB_DSQL = nil;
+  IB_DSQL1: TdboScript = nil;
+  IB_DSQL2: TdboScript = nil;
 
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer);
 begin
   if not(assigned(IB_DSQL1)) then
   begin
-    IB_DSQL1 := nDSQL;
+    IB_DSQL1 := nScript;
     with IB_DSQL1 do
     begin
       sql.Add('INSERT INTO');
@@ -1523,9 +1531,11 @@ begin
       sql.Add(' AUFTRAG');
       sql.Add('WHERE ');
       sql.Add(' RID=:CROSSREF');
+{$ifndef fpc}
       prepare;
+{$endif}
     end;
-    IB_DSQL2 := nDSQL;
+    IB_DSQL2 := nScript;
     with IB_DSQL2 do
     begin
       sql.Add('UPDATE');
@@ -1733,8 +1743,8 @@ end;
 
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
 var
-  cBAUSTELLE: TIB_Cursor;
-  cAUFTRAG: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
+  cAUFTRAG: TdboCursor;
 begin
   // Baustellen-Vorlage laden
   cBAUSTELLE := nCursor;
@@ -1940,7 +1950,7 @@ const
 
 function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string): string;
 var
-  cAUFTRAG: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
   sResult: TStringList;
   sParameter: TStringList;
   sZaehlerInfo: TStringList;
@@ -1985,7 +1995,7 @@ begin
     sParameter.values[cParameter_foto_strasse] :=
       FieldByName('KUNDE_STRASSE').AsString;
     sParameter.values[cParameter_foto_ort] := FieldByName('KUNDE_ORT').AsString;
-    FieldByName('ZAEHLER_INFO').assignto(sZaehlerInfo);
+    e_r_sqlt(FieldByName('ZAEHLER_INFO'),sZaehlerInfo);
     sParameter.values[cParameter_foto_zaehler_info] :=
       HugeSingleLine(sZaehlerInfo, '|');
     sParameter.values[cParameter_foto_zaehlernummer_alt] :=
@@ -2021,9 +2031,9 @@ procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
 var
 
   // SQL-Querys
-  Auftrag: TIB_Query;
-  POSTEN: TIB_Query;
-  MEILENSTEIN: TIB_Query;
+  Auftrag: TdboQuery;
+  POSTEN: TdboQuery;
+  MEILENSTEIN: TdboQuery;
 
   //
   MeilenSteinDauer: Integer;
@@ -2066,15 +2076,15 @@ begin
       Exception.create('AUFTRAG nicht gefunden!');
     repeat
 
-      if FieldByName('BEGINN').IsNotNull then
+      if not(FieldByName('BEGINN').IsNull) then
       begin
-        StartDatum := DateTime2Long(FieldByName('EINGANG').AsDate);
+        StartDatum := DateTime2Long(FieldByName('EINGANG').AsDateTime);
         break;
       end;
 
-      if FieldByName('EINGANG').IsNotNull then
+      if not(FieldByName('EINGANG').IsNull) then
       begin
-        StartDatum := DateTime2Long(FieldByName('EINGANG').AsDate);
+        StartDatum := DateTime2Long(FieldByName('EINGANG').AsDateTime);
         break;
       end;
 
@@ -2115,7 +2125,7 @@ begin
     begin
 
       // Dauer erhöhen
-      if MEILENSTEIN.FieldByName('DAUER').IsNotNull then
+      if not(MEILENSTEIN.FieldByName('DAUER').IsNull) then
       begin
         _DAUER := MEILENSTEIN.FieldByName('DAUER').AsInteger;
         MeilenSteinHatDauerInfo := true;
@@ -2133,10 +2143,10 @@ begin
 
         // neuen Begin buchen
         if (_StartDatum <> DateTime2Long(MEILENSTEIN.FieldByName('BEGINN')
-          .AsDate)) then
+          .AsDateTime)) then
         begin
           MEILENSTEIN.edit;
-          MEILENSTEIN.FieldByName('BEGINN').AsDate :=
+          MEILENSTEIN.FieldByName('BEGINN').AsDateTime :=
             long2datetime(_StartDatum);
           MEILENSTEIN.post;
         end;
@@ -2162,7 +2172,7 @@ begin
         else
         begin
           MaxAbschluss := max(MaxAbschluss,
-            DateTime2Long(MEILENSTEIN.FieldByName('ABSCHLUSS').AsDate));
+            DateTime2Long(MEILENSTEIN.FieldByName('ABSCHLUSS').AsDateTime));
         end;
       end;
 
@@ -2184,7 +2194,7 @@ begin
       // VERFALL
       if not(ErsterVerfall) then
       begin
-        FieldByName('VERFALL').AsDate := long2datetime(ErsterVerfallAm);
+        FieldByName('VERFALL').AsDateTime := long2datetime(ErsterVerfallAm);
         if (VerfallGruppe_R >= cRID_FirstValid) then
           FieldByName('GRUPPE_R').AsInteger := VerfallGruppe_R
         else
@@ -2198,7 +2208,7 @@ begin
 
       // BESITZ-ÜBERNAHME
       if FieldByName('OWNER_R').IsNull then
-        if Auftrag.FieldByName('OWNER_R').IsNotNull then
+        if not(Auftrag.FieldByName('OWNER_R').IsNull) then
           FieldByName('OWNER_R').AsInteger := Auftrag.FieldByName('OWNER_R')
             .AsInteger;
 
@@ -2218,7 +2228,7 @@ begin
 
     if not(OneHasNoAbschluss) and DateOK(MaxAbschluss) then
     begin
-      FieldByName('ABSCHLUSS').AsDate := long2datetime(MaxAbschluss);
+      FieldByName('ABSCHLUSS').AsDateTime := long2datetime(MaxAbschluss);
     end
     else
     begin
@@ -2226,15 +2236,15 @@ begin
     end;
 
     // Autoset Begin
-    if FieldByName('EINGANG').IsNotNull then
+    if not(FieldByName('EINGANG').IsNull) then
       FieldByName('BEGINN').assign(FieldByName('EINGANG'));
 
     //
     FieldByName('DAUER').AsInteger := MaxPostenDauer;
-    if FieldByName('EINGANG').IsNotNull and OneHasDauer then
-      FieldByName('ABSCHLUSS_C').AsDate :=
+    if not(FieldByName('EINGANG').IsNull) and OneHasDauer then
+      FieldByName('ABSCHLUSS_C').AsDateTime :=
         long2datetime(WerktagDatePlus(DateTime2Long(FieldByName('EINGANG')
-        .AsDate), MaxPostenDauer))
+        .AsDateTime), MaxPostenDauer))
     else
       FieldByName('ABSCHLUSS_C').clear;
 
@@ -2243,7 +2253,7 @@ begin
     begin
       Verfall.sort;
       OneLine := Verfall[0];
-      FieldByName('VERFALL').AsDate :=
+      FieldByName('VERFALL').AsDateTime :=
         long2datetime(strtoint(nextp(OneLine, ';')));
 
       HANDLUNGSBEDARF_POSTEN_RID := strtoint(nextp(OneLine, ';'));
@@ -2316,7 +2326,7 @@ function e_r_MonteurRIDFromKuerzel(str: string): Integer;
 var
   SubItem: TStringList;
   IsFrei: boolean;
-  cMonteur: TIB_Cursor;
+  cMonteur: TdboCursor;
 begin
   if not(assigned(CacheMonteur)) then
   begin
@@ -2715,7 +2725,7 @@ procedure EnsureCache_Baustelle;
 var
   _SubItem: TStringList;
   _Ortsteile: TStringList;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 begin
   //
   // Idee, Haltbarkeitsdatum des Cache einführen, danach
@@ -2743,7 +2753,7 @@ begin
         { [4] } _SubItem.Add(FieldByName('CSV_QUELLE').AsString);
         if (FieldByName('ORTE_AKTIV').AsString = 'Y') then
         begin
-          FieldByName('ORTE').assignto(_Ortsteile);
+          e_r_sqlt(FieldByName('ORTE'),_Ortsteile);
           { [5] } _SubItem.Add(';' + HugeSingleLine(_Ortsteile, ';'));
         end
         else
@@ -2808,7 +2818,7 @@ var
   MONTEUR_RID: Integer;
   MonteurPositive: TStringList;
   AlleMonteure: TStringList;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 begin
   if (rid <> CacheBaustelleMonteureLastRequestedRID) then
   begin
@@ -2821,7 +2831,7 @@ begin
 
       // Monteure holen (RID)
       MemoField := TStringList.create;
-      FieldByName('INFO').assignto(MemoField);
+      e_r_sqlt(FieldByName('INFO'),MemoField);
       MonteurSubs := MemoField.values['MONTEURE'];
       // Text hinter den Zahlen wegschneiden
       n := pos('[', MonteurSubs);
@@ -2929,7 +2939,7 @@ function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings;
   Sperre: TSperre): Integer;
 var
   MemoInfo: TStringList;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 begin
   result := cRID_Null;
   cBAUSTELLE := nCursor;
@@ -2945,12 +2955,12 @@ begin
 
       // ganz normale Ausführung laden
       if not(FieldByName('VON').IsNull) and not(FieldByName('BIS').IsNull) then
-        Sperre.Add(FieldByName('VON').AsDate, FieldByName('BIS').AsDate, false,
+        Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime, false,
           cSperreAusfuehren, cPrio_BaustellenSperre);
 
       // einzelne Sperren dazwischen
       MemoInfo := TStringList.create;
-      FieldByName('INFO').assignto(MemoInfo);
+      e_r_sqlt(FieldByName('INFO'),MemoInfo);
       Sperre.ReadFromMemo(MemoInfo, sSperre_Wert_Baustelle, Umstand);
 
       // Feiertage
@@ -3067,7 +3077,7 @@ end;
 procedure e_r_ProtokollExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
 var
   n, FoundIndex: Integer;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 begin
   //
   EnsureCache_Baustelle;
@@ -3084,7 +3094,7 @@ begin
         sql.Add('select PROTOKOLLFELDER from BAUSTELLE where RID=' +
           inttostr(BAUSTELLE_R));
         ApiFirst;
-        FieldByName('PROTOKOLLFELDER').assignto(FelderListe);
+        e_r_sqlt(FieldByName('PROTOKOLLFELDER'),FelderListe);
       end;
       cBAUSTELLE.free;
 
@@ -3100,7 +3110,7 @@ end;
 
 function e_r_PhasenStatus(AUFTRAG_R: Integer): string;
 var
-  cAUFTRAG: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
   STATUS: Integer;
 begin
   cAUFTRAG := nCursor;
@@ -3132,7 +3142,7 @@ begin
 
       // "gemeldet"
       if (STATUS <> ord(ctsHistorisch)) then
-        if FieldByName('EXPORT_TAN').IsNotNull then
+        if not(FieldByName('EXPORT_TAN').IsNull) then
         begin
           STATUS := ord(ctsLast) + 3;
           break;
@@ -3147,7 +3157,7 @@ end;
 procedure e_r_InternExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
 var
   n, FoundIndex: Integer;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 begin
   //
   EnsureCache_Baustelle;
@@ -3164,7 +3174,7 @@ begin
         sql.Add('select INTERNFELDER from BAUSTELLE where RID=' +
           inttostr(BAUSTELLE_R));
         ApiFirst;
-        FieldByName('INTERNFELDER').assignto(FelderListe);
+        e_r_sqlt(FieldByName('INTERNFELDER'),FelderListe);
       end;
       cBAUSTELLE.free;
       for n := pred(FelderListe.count) downto 0 do
@@ -3219,7 +3229,7 @@ begin
 end;
 
 var
-  e_r_AuftragItems_cAUFTRAG: TIB_Cursor = nil;
+  e_r_AuftragItems_cAUFTRAG: TdboCursor = nil;
   e_r_AuftragItems_LastRequestedRID: Integer = cRID_Unset;
   e_r_AuftragItems_LastRequestedSub: TStringList = nil;
 
@@ -3240,14 +3250,14 @@ var
       repeat
 
         if (_STATUS <> ord(ctsHistorisch)) then
-          if FieldByName('MONDA_ABRUF').IsNotNull then
+          if not(FieldByName('MONDA_ABRUF').IsNull) then
           begin
             _STATUS := ord(ctsLast) + 8;
             break;
           end;
 
         if (_STATUS <> ord(ctsHistorisch)) then
-          if FieldByName('WIEDERVORLAGE').IsNotNull then
+          if not(FieldByName('WIEDERVORLAGE').IsNull) then
           begin
             _STATUS := ord(ctsLast) + 9;
             break;
@@ -3255,31 +3265,31 @@ var
 
         if (_STATUS = ord(ctsAngeschrieben)) or
           (_STATUS = ord(ctsMonteurInformiert)) then
-          if FieldByName('WORDEXPORT').IsNotNull then
-            if FieldByName('MONTEUREXPORT').IsNotNull then
+          if not(FieldByName('WORDEXPORT').IsNull) then
+            if not(FieldByName('MONTEUREXPORT').IsNull) then
               _STATUS := ord(ctsLast);
 
         if (_STATUS = ord(ctsHistorisch)) then
-          if FieldByName('MONTEUREXPORT').IsNotNull then
+          if not(FieldByName('MONTEUREXPORT').IsNull) then
             _STATUS := ord(ctsLast) + 1;
 
         // schon gemeldet:
         if (_STATUS = ord(ctsErfolg)) then
-          if FieldByName('EXPORT_TAN').IsNotNull then
+          if not(FieldByName('EXPORT_TAN').IsNull) then
             if FieldByName('EXPORT_TAN').AsInteger > 0 then
               _STATUS := ord(ctsLast) + 2
             else
               _STATUS := ord(ctsLast) + 5;
 
         if (_STATUS = ord(ctsUnmoeglich)) then
-          if FieldByName('EXPORT_TAN').IsNotNull then
+          if not(FieldByName('EXPORT_TAN').IsNull) then
             if FieldByName('EXPORT_TAN').AsInteger > 0 then
               _STATUS := ord(ctsLast) + 3
             else
               _STATUS := ord(ctsLast) + 6;
 
         if (_STATUS = ord(ctsVorgezogen)) then
-          if FieldByName('EXPORT_TAN').IsNotNull then
+          if not(FieldByName('EXPORT_TAN').IsNull) then
             if FieldByName('EXPORT_TAN').AsInteger > 0 then
               _STATUS := ord(ctsLast) + 4
             else
@@ -3358,7 +3368,7 @@ begin
         end;
 
         { [3] }
-        FieldByName('MONTEUR_INFO').assignto(MoreInfo);
+        e_r_sqlt(FieldByName('MONTEUR_INFO'),MoreInfo);
         if (MoreInfo.count > 0) then
           result.Add(HugeSingleLine(MoreInfo, cOLAPcsvLineBreak))
         else
@@ -3457,13 +3467,13 @@ begin
         result.Add(inttostr(FieldByName('BEARBEITER_R').AsInteger) + '/' +
           inttostr(FieldByName('TERMINIERT_R').AsInteger));
         { [26] }
-        result.Add(long2date8(DateTime2Long(FieldByName('SPERRE_VON').AsDate)) +
-          '-' + long2date8(DateTime2Long(FieldByName('SPERRE_BIS').AsDate)));
+        result.Add(long2date8(DateTime2Long(FieldByName('SPERRE_VON').AsDateTime)) +
+          '-' + long2date8(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
         { [27] }
         result.Add(FieldByName('PLANQUADRAT').AsString);
 
         { [28]..[37] }
-        FieldByName('ZAEHLER_INFO').assignto(MoreInfo);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'),MoreInfo);
         for n := 0 to pred(MoreInfo.count) do
           if pos('v1=', MoreInfo[n]) > 0 then
           begin
@@ -3490,7 +3500,7 @@ begin
         TmpStr := FieldByName('ZAEHLER_STAND_NEU').AsString;
         result.Add(KommaCheck(TmpStr));
         { [43] }
-        FieldByName('PROTOKOLL').assignto(MoreInfo);
+        e_r_sqlt(FieldByName('PROTOKOLL'),MoreInfo);
         result.Add(HugeSingleLine(MoreInfo, cProtokollTrenner));
         { [44] }// Datum Zählerwechsel
         result.Add(Long2date(DateTime2Long(FieldByName('ZAEHLER_WECHSEL')
@@ -3519,8 +3529,8 @@ begin
         { [55] }
         result.Add(FieldByName('KUNDE_ORTSTEIL_CODE').AsString);
         { [56] }
-        result.Add(long2date5(DateTime2Long(FieldByName('SPERRE_VON').AsDate)) +
-          '-' + long2date5(DateTime2Long(FieldByName('SPERRE_BIS').AsDate)));
+        result.Add(long2date5(DateTime2Long(FieldByName('SPERRE_VON').AsDateTime)) +
+          '-' + long2date5(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
         { [57] }
         if not(FieldByName('MONTEUR1_R').IsNull) then
         begin
@@ -3535,7 +3545,7 @@ begin
           result.Add('');
         end;
         { [58..67] }
-        FieldByName('INTERN_INFO').assignto(MoreInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),MoreInfo);
         for n := 0 to 9 do
           if (MoreInfo.count > n) then
             result.Add(MoreInfo[n])
@@ -3544,9 +3554,9 @@ begin
         { [68] Status3 }
         result.Add(vStatus(FieldByName('STATUS_BISHER').AsInteger));
         { [69] }
-        result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON').AsDate))
+        result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON').AsDateTime))
           + '..' + long2date5(DateTime2Long(FieldByName('ZEITRAUM_BIS')
-          .AsDate)));
+          .AsDateTime)));
       end;
     end;
     MoreInfo.free;
@@ -4302,8 +4312,8 @@ end;
 
 procedure EnsureCache_ArbeitBaustelle;
 var
-  cBAUSTELLE: TIB_Cursor;
-  cAUFTRAG: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
+  cAUFTRAG: TdboCursor;
   D: TDateTime;
   VON, BIS: TANFiXDate;
   vormittags: string;
@@ -4370,9 +4380,9 @@ begin
       while not(eof) do
       begin
         BAUSTELLE_R := FieldByName('RID').AsInteger;
-        VON := DateTime2Long(FieldByName('VON').AsDate);
-        BIS := DateTime2Long(FieldByName('BIS').AsDate);
-        FieldByName('INFO').assignto(INFO);
+        VON := DateTime2Long(FieldByName('VON').AsDateTime);
+        BIS := DateTime2Long(FieldByName('BIS').AsDateTime);
+        e_r_sqlt(FieldByName('INFO'),INFO);
 
         // Baustopp=
         e_r_Baustelle_Stopp.ReadFromMemo(
@@ -4447,7 +4457,7 @@ begin
         with Sperre do
         begin
           vormittags := FieldByName('VORMITTAGS').AsString;
-          D := FieldByName('AUSFUEHREN').AsDate;
+          D := FieldByName('AUSFUEHREN').AsDateTime;
           repeat
 
             //
@@ -4479,7 +4489,7 @@ begin
         end;
         e_r_Baustelle_Einsatz.Add(Sperre);
 
-        if FieldByName('MONTEUR2_R').IsNotNull then
+        if not(FieldByName('MONTEUR2_R').IsNull) then
         begin
           Sperre.Kontext := FieldByName('MONTEUR2_R').AsInteger;
           e_r_Baustelle_Einsatz.Add(Sperre);
@@ -4571,8 +4581,8 @@ end;
 
 procedure ReCreateAktiveBaustellen;
 var
-  cAUFTRAG: TIB_Cursor;
-  cBAUSTELLE: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
+  cBAUSTELLE: TdboCursor;
   RIDs: string;
   AktiveBaustellen: TStringList;
 begin
@@ -4754,7 +4764,7 @@ const
   chtml_MIDAUFTRAG = 'load AUFTRAG MID,AUFTRAG';
   chtml_HEADER = 'load HEADER,HEADER';
 var
-  cARBEIT, cPERSON, cANSCHRIFT: TIB_Cursor;
+  cARBEIT, cPERSON, cANSCHRIFT: TdboCursor;
 
   pDateFrom: TANFiXDate;
   pDateTo: TANFiXDate;
@@ -4803,7 +4813,7 @@ var
     with cARBEIT do
     begin
       // erst mal über den Abrechnungsbeleg versuchen!
-      if FieldByName('BELEG_R').IsNotNull then
+      if not(FieldByName('BELEG_R').IsNull) then
         result := e_r_sqld('select PREIS from POSTEN where ' + ' (BELEG_R=' +
           FieldByName('BELEG_R').AsString + ') and ' + ' (ARTIKEL_R=' +
           FieldByName('ARTIKEL_R').AsString + ')')
@@ -4826,7 +4836,7 @@ var
     begin
 
       // Zwischenwerte berechnen
-      DATUM := DateTime2Long(FieldByName('DATUM').AsDate);
+      DATUM := DateTime2Long(FieldByName('DATUM').AsDateTime);
       if (DATUM <> _Datum) then
         DatensammlerLokal.Add('DATUM=' + long2datetext(DATUM))
       else
@@ -4853,7 +4863,7 @@ var
         DatensammlerLokal.Add('STUNDENSATZ=');
       DatensammlerLokal.Add('BELEG_R=' + FieldByName('BELEG_R').AsString);
       InfoS := TStringList.create;
-      FieldByName('INFO').assignto(InfoS);
+      e_r_sqlt(FieldByName('INFO'),InfoS);
       if (InfoS.count > 0) then
         if (pos('[', InfoS[0]) >= 1) and (pos(']', InfoS[0]) > 0) then
         begin
@@ -5017,7 +5027,7 @@ var
 
   procedure CloseBudget;
   var
-    qPosten: TIB_Query;
+    qPosten: TdboQuery;
     wasRabatt: double;
   begin
 
@@ -5044,7 +5054,7 @@ var
         end
         else
         begin
-          wasRabatt := FieldByName('RABATT').AsDouble;
+          wasRabatt := FieldByName('RABATT').AsFloat;
           edit;
         end;
         e_w_SetPostenData(ARTIKEL_R, PERSON_R, qPosten);
@@ -5053,7 +5063,7 @@ var
         FieldByName('MENGE').AsInteger := ZEIT;
         FieldByName('ARTIKEL').AsString := TITEL;
         if (wasRabatt <> 0) then
-          FieldByName('RABATT').AsDouble := wasRabatt;
+          FieldByName('RABATT').AsFloat := wasRabatt;
         post;
         close;
       end;
@@ -5164,7 +5174,7 @@ begin
 
     // weitere Globale Felder:
     DatensammlerGlobal.Add('Geburtstag=' + long2dateLocalized
-      (cPERSON.FieldByName('GEBURTSTAG').AsDate));
+      (cPERSON.FieldByName('GEBURTSTAG').AsDateTime));
     DatensammlerGlobal.Add('Versicherungsnummer=' +
       cPERSON.FieldByName('VERSICHERUNGSNUMMER').AsString);
 
@@ -5251,7 +5261,7 @@ begin
 
           if (SubBudget <> '*') then
           begin
-            FieldByName('INFO').assignto(ArbeitsDetails);
+            e_r_sqlt(FieldByName('INFO'),ArbeitsDetails);
             for n := 0 to pred(ArbeitsDetails.count) do
               if (pos(SubBudget, ArbeitsDetails[n]) > 0) then
               begin
@@ -5262,7 +5272,7 @@ begin
 
           if (pFromDatum <> cIllegalDate) and ZeitAbschnittVerwenden then
           begin
-            ZeitAbschnittVerwenden := DateTime2Long(FieldByName('DATUM').AsDate)
+            ZeitAbschnittVerwenden := DateTime2Long(FieldByName('DATUM').AsDateTime)
               >= pFromDatum;
           end;
 
@@ -5326,7 +5336,7 @@ var
   PERSON_R: Integer;
   VERLAG_R: Integer;
   SUCHBEGRIFF: string;
-  cVERLAG: TIB_Cursor;
+  cVERLAG: TdboCursor;
 begin
   if not(assigned(_AllVerlage2)) then
   begin
@@ -5435,7 +5445,7 @@ end;
 
 function e_r_Verlag_R(rid: Integer): Integer;
 var
-  Verlag: TIB_Cursor;
+  Verlag: TdboCursor;
 begin
   Verlag := nCursor;
   with Verlag do
@@ -5452,7 +5462,7 @@ end;
 
 function e_r_VerlagAlias(VERLAG_R: Integer): Integer;
 var
-  ALIAS: TIB_Cursor;
+  ALIAS: TdboCursor;
   Visited_Verlag_R: TStringList;
 begin
   ALIAS := nCursor;
@@ -5525,9 +5535,9 @@ var
   lKOPIE_IMPORTs: TgpIntegerList;
   lKOPIE_EXPORT_TANs: TgpIntegerList;
 
-  cZIEL: TIB_Cursor;
-  qZIEL: TIB_Query;
-  cQUELLE: TIB_Cursor;
+  cZIEL: TdboCursor;
+  qZIEL: TdboQuery;
+  cQUELLE: TdboCursor;
 
   settings: TStringList;
   rid, EXPORT_TAN: Integer;
@@ -5596,7 +5606,7 @@ begin
 
             qZIEL.insert;
             for n := 0 to pred(FieldCount) do
-              if Fields[n].IsNotNull then
+              if not(Fields[n].IsNull) then
                 qZIEL.FieldByName(Fields[n].FieldName).assign(Fields[n])
               else
                 qZIEL.FieldByName(Fields[n].FieldName).clear;
