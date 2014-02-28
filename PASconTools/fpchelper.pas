@@ -404,6 +404,7 @@ function PathExtractFileNameNoExt(const Path: string): string;
 
 function PadNumber(const pi: integer): string;
 function StrHasAlpha(const str: String): boolean;
+procedure RegisterExpectedMemoryLeak(var a);
 
 type
   EJcfConversionError = class(Exception)
@@ -860,5 +861,9 @@ function _(s:string):string;
 begin
   result := s;
 end;
+
+procedure RegisterExpectedMemoryLeak(var a);
+begin
+                              end;
 
 end.

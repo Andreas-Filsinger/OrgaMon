@@ -108,6 +108,9 @@ function unzip(FName: string; Destination: string; Options: TStringList = nil)
 implementation
 
 uses
+  {$ifdef fpc}
+  fpchelper,
+  {$endif}
   windows, registry, SysUtils,
   JclMiscel, JclSysInfo;
 

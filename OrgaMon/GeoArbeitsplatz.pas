@@ -37,7 +37,10 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  GHD_PngImage, StdCtrls, ExtCtrls, Buttons,
+
+  // Wegen Subinfos im PNG
+  GHD_PngImage,
+  StdCtrls, ExtCtrls, Buttons,
   GeoCache, FastGeo, OpenStreetMap, JvGIF,
   // Indy
   IdBaseComponent, IdHTTPHeaderInfo, IdComponent,
@@ -402,7 +405,7 @@ begin
       // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
       // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
       Request.Referer := cOpenStreetMap_TileURL;
-      // Die Client Erkennung, um sich zu tarnen benutze ich gerne den Opera User-Agent
+      // Die Clientkennung
       Request.UserAgent :=
         'Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0 FirePHP/0.7.1';
     end;

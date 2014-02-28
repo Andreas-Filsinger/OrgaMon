@@ -29,8 +29,11 @@ unit Funktionen_Basis;
 interface
 
 uses
-  Classes, gplists, globals,
-  IB_Access, IB_Components;
+{$ifndef fpc}
+IB_Access,
+IB_Components,
+{$endif}
+  Classes, gplists, globals  ;
 
 {
   eBasis: Grundlegende Funktionen des OrgaMon ohne besondere Zuordnung zu
@@ -131,17 +134,22 @@ uses
   anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
-  GHD_pngimage,
+{$ifdef fpc}
+  ZClasses,
+//  fpspreadsheet,
+  {$else}
   UFlxMessages,
+  CCR.Exif.Consts,
+{$endif}
   JclBase,
 {$IFNDEF CONSOLE}
+  GHD_pngimage,
   Datenbank,
   TPUMain,
   JvclVer,
 {$ENDIF}
   idglobal,
   infozip,
-  CCR.Exif.Consts,
   srvXMLRPC;
 
 const
@@ -233,7 +241,7 @@ end;
 
 procedure EnsureCache_Musiker;
 var
-  cMUSIKER: TIB_Cursor;
+  cMUSIKER: TdboCursor;
   RID: integer;
   Kette: string;
   KetteNachname: string;
@@ -362,7 +370,7 @@ var
 
   procedure AddOne(RID: integer);
   var
-    cMUSIKER: TIB_Cursor;
+    cMUSIKER: TdboCursor;
     OneTxt: TStringList;
   begin
     if (txt.count > 0) then
@@ -375,7 +383,7 @@ var
     begin
       sql.add('select UEBER_INFO from MUSIKER where RID=' + inttostr(RID));
       ApiFirst;
-      FieldByName('UEBER_INFO').AssignTo(OneTxt);
+      e_r_sqlt(FieldByName('UEBER_INFO'),OneTxt);
     end;
     cMUSIKER.free;
     txt.addstrings(OneTxt);
@@ -383,7 +391,7 @@ var
   end;
 
 var
-  cREF: TIB_Cursor;
+  cREF: TdboCursor;
 begin
   txt := TStringList.create;
   cREF := nCursor;
@@ -417,7 +425,7 @@ end;
 
 function e_r_MusikerGroup(MUSIKER_R: integer): TList;
 var
-  cREF: TIB_Cursor;
+  cREF: TdboCursor;
 begin
   result := TList.create;
   cREF := nCursor;
@@ -443,8 +451,8 @@ end;
 
 function e_r_MusikerWerke(MUSIKER_R: integer): TList;
 var
-  cARTIKEL: TIB_Cursor;
-  cREF: TIB_Cursor;
+  cARTIKEL: TdboCursor;
+  cREF: TdboCursor;
   lRID: string;
 begin
   result := TList.create;
@@ -487,7 +495,7 @@ end;
 
 function e_r_MusikerGroupRID(RID: integer): integer;
 var
-  cREF: TIB_Cursor;
+  cREF: TdboCursor;
 begin
   // der ersten Datensatz einer Liste ermitteln (sich zurückarteien)
   cREF := nCursor;
@@ -566,7 +574,7 @@ end;
 
 procedure EnsureCache_Laender;
 var
-  cLAND: TIB_Cursor;
+  cLAND: TdboCursor;
 
   function AddOne: TStringList;
   begin
@@ -780,7 +788,11 @@ begin
       // ==========================================================
       { 01 } add(cAppName);
 {$IFDEF CONSOLE}
-      { 02 } add('IBO Rev. ' + fbConnection.Version);
+{$ifdef fpc}
+{ 02 } add('Zeos Rev. ' + ZEOS_VERSION);
+{$else}
+{ 02 } add('IBO Rev. ' + fbConnection.Version);
+{$endif}
 {$ELSE}
       { 02 } add('IBO Rev. ' + Datamoduledatenbank.IB_connection1.Version);
 {$ENDIF}
@@ -796,7 +808,11 @@ begin
 {$ELSE}
       { 08 } add('TPicUpload Rev. ' + TPUMain.REV);
 {$ENDIF}
-      { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
+{$ifdef fpc}
+{ 09 } add('fpspreadsheet Rev. ' + 'N/A');
+{$else}
+{ 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
+{$endif}
       { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +
         inttostr(JclVersionMinor));
 {$IFDEF CONSOLE}
@@ -819,8 +835,13 @@ begin
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
       { 20 } add(e_r_fbClientVersion); //
+{$ifdef fpc}
+      { 21 } add('Portable Network Graphics Delphi ' +'N/A'
+        );
+{$else}
       { 21 } add('Portable Network Graphics Delphi ' +
         GHD_pngimage.LibraryVersion);
+{$endif}
       { 22 } add(iDataBaseHost);
       { 23 } add(i_c_DataBaseFName);
 {$IFDEF CONSOLE}
@@ -830,7 +851,11 @@ begin
 {$ELSE}
       { 24 } add('N/A');
 {$ENDIF}
-      { 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.Version);
+{$ifdef fpc}
+{ 25 } add('exiftool Rev. ' + 'N/A');
+{$else}
+{ 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.Version);
+{$endif}
       { 26 } add(e_r_Kontext);
       { 27 } add(Betriebssystem);
     end;
@@ -877,7 +902,7 @@ end;
 
 function SysDBApassword: string;
 var
-  cEINSTELLUNGEN: TIB_Cursor;
+  cEINSTELLUNGEN: TdboCursor;
   Settings: TStringList;
 begin
   cEINSTELLUNGEN := nCursor;
@@ -886,7 +911,7 @@ begin
     sql.add('select * from EINSTELLUNG');
     ApiFirst;
     Settings := TStringList.create;
-    FieldByName('SETTINGS').AssignTo(Settings);
+    e_r_sqlt(FieldByName('SETTINGS'),Settings);
     result := Settings.Values[cSettings_SysdbaPAssword];
     if (result = '') then
       result := 'masterkey'
@@ -1039,6 +1064,8 @@ begin
   CryptKeyLength := length(cKey) * 8;
 
 {$IFDEF CONSOLE}
+{$ifdef fpc}
+{$else}
   // Datenbank - Zugriffselemente erzeugen!
   fbSession := TIB_Session.create(nil);
   fbTransaction := TIB_Transaction.create(nil);
@@ -1072,7 +1099,7 @@ begin
     RecVersion := true;
     LockWait := true;
   end;
-
+{$endif}
 {$ENDIF}
 
 end.

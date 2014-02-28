@@ -32,10 +32,10 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
-  ExtCtrls, GHD_pngimage, ComCtrls,
+  ExtCtrls, ComCtrls,
   Datenbank,
   IB_Access, IB_Components, IB_UpdateBar,
-  Grids, IB_Grid, JvGIF;
+  Grids, IB_Grid;
 
 type
   TFormLohntabelle = class(TForm)

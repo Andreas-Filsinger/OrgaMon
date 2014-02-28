@@ -24,6 +24,7 @@
   |    http://orgamon.org/
   |
 }
+{$define CONSOLE}
 program lOrgaMon;
 
 {
@@ -37,14 +38,15 @@ program lOrgaMon;
 
  cOrgaMon | lOrgaMon
  =========+=========
- IBO      | Zeos
- infozip  | 7zip?
- ccr-exif | commandline "exiftool", oder ccr-exif-port
- flexcel  | fpspreadsheet
+ IBO      | Zeos!
+ infozip  | ?: fpc-paszlib, fpc-unzip, fpc-zlib, JclCompression, ev. externes Tool?!
+ ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
+ flexcel  | fpspreadsheet!
 
 }
 
 {$mode objfpc}{$H+}
+{$APPTYPE CONSOLE}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -58,6 +60,8 @@ uses
   globals in 'globals.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
   gplists in '..\PASconTools\gplists.pas',
+  DCPcrypt2 in '..\DCPcrypt\DCPcrypt2.pas',
+  DCPmd5 in '..\DCPcrypt\Hashes\DCPmd5.pas',
   html in '..\PASconTools\html.pas',
   CareTakerClient in '..\PASconTools\CareTakerClient.pas',
   SimplePassword in '..\PASconTools\SimplePassword.pas',
@@ -72,20 +76,12 @@ uses
   txHoliday in '..\PASconTools\txHoliday.pas',
   infozip in '..\infozip\infozip.pas',
   Mapping in '..\PASconTools\Mapping.pas',
-  GHD_pngimage in '..\PASconTools\GHD_pngimage.pas',
-  GHD_pnglang in '..\PASconTools\GHD_pnglang.pas',
-  CCR.Exif.Consts in '..\CCR Exif\CCR.Exif.Consts.pas',
-  CCR.Exif.JpegUtils in '..\CCR Exif\CCR.Exif.JpegUtils.pas',
-  CCR.Exif in '..\CCR Exif\CCR.Exif.pas',
-  CCR.Exif.StreamHelper in '..\CCR Exif\CCR.Exif.StreamHelper.pas',
-  CCR.Exif.TagIDs in '..\CCR Exif\CCR.Exif.TagIDs.pas',
-  CCR.Exif.XMPUtils in '..\CCR Exif\CCR.Exif.XMPUtils.pas',
-  eConnect in 'eConnect.pas',
   OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
   Funktionen_Basis in 'Funktionen_Basis.pas',
   Funktionen_Beleg in 'Funktionen_Beleg.pas',
-  Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas';
+  Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
+  eConnect in 'eConnect.pas';
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);
@@ -225,6 +221,8 @@ end;
 var
   k, l: integer;
 
+
+{$R *.res}
 
 begin
   repeat

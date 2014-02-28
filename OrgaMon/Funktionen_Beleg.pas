@@ -26,6 +26,10 @@
 }
 unit Funktionen_Beleg;
 
+{$ifdef fpc}
+{$define CONSOLE}
+{$endif}
+
 //
 // e,
 // e_ eCommerce
@@ -40,8 +44,10 @@ interface
 
 uses
   Classes,
+{$ifndef fpc}
   IB_Components,
   IB_Access,
+{$endif}
   dbOrgaMon,
   anfix32,
   globals,
@@ -198,7 +204,7 @@ function e_r_PostenPreis(EinzelPreis: double; Anz, EINHEIT_R: integer): double;
 function e_c_Rabatt(PREIS, Rabatt: double): double;
 // einen Preis um einen Rabatt vermindern
 
-procedure e_r_PostenInfo(IBQ: TIB_DataSet; NurGeliefertes: boolean;
+procedure e_r_PostenInfo(IBQ: TdboDataSet; NurGeliefertes: boolean;
   EinzelpreisNetto: boolean; var _Anz, _AnzAuftrag, _AnzGeliefert,
   _AnzStorniert, _AnzAgent: integer; var _Rabatt, _EinzelPreis,
   _MwStSatz: double);
@@ -394,10 +400,10 @@ function e_r_Rechnung(BELEG_R, TEILLIEFERUNG: integer): string;
 function e_w_Rechnung(BELEG_R: integer): integer;
 // setzt die Rechnungsnummer im Beleg falls noch leer
 
-function e_r_Versandfertig(ib_q: TIB_DataSet): boolean;
+function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 // Ist bei dieser Beleg komplett versandfertig (alles da!)?
 
-function e_r_Versandfaehig(ib_q: TIB_DataSet): boolean;
+function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 // Ist bei diesem Beleg etwas versendbar?
 
 function e_w_BelegVersand(BELEG_R: integer; Summe: double;
@@ -444,7 +450,7 @@ function e_w_PersonNeu: integer; { : RID }
 // legt eine neue Person (vorläufig) an. Über sie kann der Kunde
 // vorbestellungen / vormerkungen anlegen.
 
-function e_w_SetStandardVersandData(qVERSAND: TIB_Query): integer;
+function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 { : VERSENDER_R }
 // Versanddatensatz vorbelegen
 
@@ -587,17 +593,17 @@ procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
 
 function e_r_Adressat(PERSON_R: integer): TStringList;
 function e_r_Ort(PERSON_R: integer): string; overload;
-function e_r_Ort(ib_q: TIB_DataSet): string; overload;
-function e_r_Name(ib_q: TIB_DataSet): string; overload;
+function e_r_Ort(ib_q: TdboDataset): string; overload;
+function e_r_Name(ib_q: TdboDataset): string; overload;
 function e_r_Name(PERSON_R: integer): string; overload;
-function e_r_NameVorname(ib_q: TIB_DataSet): string; overload;
+function e_r_NameVorname(ib_q: TdboDataset): string; overload;
 function e_r_NameVorname(PERSON_R: integer): string; overload;
-function e_r_land(ib_q: TIB_DataSet): string;
-function e_r_PLZlength(ib_q: TIB_DataSet): integer;
-function e_r_plz(ib_q: TIB_DataSet; PLZlength: integer = -1): string;
-function e_r_fax(ib_q: TIB_DataSet): string; overload;
+function e_r_land(ib_q: TdboDataset): string;
+function e_r_PLZlength(ib_q: TdboDataset): integer;
+function e_r_plz(ib_q: TdboDataset; PLZlength: integer = -1): string;
+function e_r_fax(ib_q: TdboDataset): string; overload;
 function e_r_fax(PERSON_R: integer): string; overload;
-function e_r_telefon(ib_q: TIB_DataSet): string; overload;
+function e_r_telefon(ib_q: TdboDataset): string; overload;
 
 // preDelete* sind Funktionen die die Löschung einer Entität vorbereiten
 // und somit erst ermöglichen
@@ -613,9 +619,9 @@ procedure e_w_preDeleteTier(TIER_R: integer);
 function e_w_BelegStatusBuchen(BELEG_R: integer): boolean;
 function e_w_BBelegStatusBuchen(BBELEG_R: integer): boolean;
 
-procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TIB_Query);
+procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
 procedure e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R,
-  PERSON_R: integer; qPosten: TIB_Query);
+  PERSON_R: integer; qPosten: TdboQuery);
 // vor dem setzen weiterer Felder kann hier Standardasiert ein Artikel in
 // den aktuellen Posten kopiert werden. Zentrale Funktion zum Füllen einer
 // Posten zeile
@@ -672,12 +678,15 @@ implementation
 
 uses
   // Delphi
-  System.UITypes,
   math,
   SysUtils,
 
   // Tools
-  Jvgnugettext, html, Geld,
+  {$ifndef fpc}
+  Jvgnugettext,
+  {$endif}
+
+  html, Geld,
   SimplePassword, WordIndex, OpenStreetMap,
 
   // DC-Crypt
@@ -685,6 +694,7 @@ uses
 
   // DataBase
 {$IFNDEF CONSOLE}
+  System.UITypes,
   Datenbank,
 {$ENDIF}
   // OrgaMon
@@ -767,7 +777,7 @@ var
 
   function BCheck(Condition: string): integer;
   var
-    BREGEL: TIB_Cursor;
+    BREGEL: TdboCursor;
   begin
     result := -1;
     BREGEL := nCursor;
@@ -789,7 +799,7 @@ var
 
   procedure LoadMoreARTIKELData;
   var
-    ARTIKEL: TIB_Cursor;
+    ARTIKEL: TdboCursor;
   begin
     ARTIKEL := nCursor;
     with ARTIKEL do
@@ -873,10 +883,10 @@ procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R,
   MENGE: integer; Motivation: integer);
 
 var
-  cPOSTEN: TIB_Cursor;
+  cPOSTEN: TdboCursor;
   _titel: string;
-  BPosten: TIB_Query;
-  ARTIKEL: TIB_Query;
+  BPosten: TdboQuery;
+  ARTIKEL: TdboQuery;
   ZUSAGE: TDateTime;
   ArtikelTextFromArtikel: boolean;
 begin
@@ -912,8 +922,8 @@ begin
             _titel := FieldByName('ARTIKEL').AsString;
 
             // ev. Zusage aus dem Posten übernehmen
-            if FieldByName('ZUSAGE').IsNotNull then
-              ZUSAGE := FieldByName('ZUSAGE').AsDate;
+            if not(FieldByName('ZUSAGE').IsNull) then
+              ZUSAGE := FieldByName('ZUSAGE').AsDateTime;
 
           end;
         end;
@@ -973,11 +983,11 @@ begin
               BPosten.FieldByName('NUMERO').assign(FieldByName('NUMERO'));
               BPosten.FieldByName('VERLAG_R').assign(FieldByName('VERLAG_R'));
               BPosten.FieldByName('VERLAGNO').assign(FieldByName('VERLAGNO'));
-              BPosten.FieldByName('PREIS').AsDouble :=
+              BPosten.FieldByName('PREIS').AsFloat :=
                 e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R);
-              BPosten.FieldByName('MWST').AsDouble :=
+              BPosten.FieldByName('MWST').AsFloat :=
                 e_r_MwSt(AUSGABEART_R, ARTIKEL_R);
-              BPosten.FieldByName('RABATT').AsDouble := e_r_ekRabatt(ARTIKEL_R);
+              BPosten.FieldByName('RABATT').AsFloat := e_r_ekRabatt(ARTIKEL_R);
               Close;
             end;
             ARTIKEL.free;
@@ -988,7 +998,7 @@ begin
 
             FieldByName('RID').AsInteger := 0;
             FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
-            FieldByName('ZUSAGE').AsDate := ZUSAGE;
+            FieldByName('ZUSAGE').AsDateTime := ZUSAGE;
             if (AUSGABEART_R > 0) then
               FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
             if (POSTEN_R > 0) then
@@ -1018,7 +1028,7 @@ begin
                 FieldByName('MENGE_UNBESTELLT').AsInteger + MENGE;
 
               // Zusage ev. vorstellen! Es wird etwas dringlicher
-              if (FieldByName('ZUSAGE').AsDate > ZUSAGE) then
+              if (FieldByName('ZUSAGE').AsDateTime > ZUSAGE) then
                 FieldByName('ZUSAGE').AsDateTime := ZUSAGE;
 
               Post;
@@ -1034,8 +1044,8 @@ end;
 
 function e_w_BestellBeleg(PERSON_R: integer): integer;
 var
-  IB_r_OldOne: TIB_Query;
-  IB_w_NewOne: TIB_Query;
+  IB_r_OldOne: TdboQuery;
+  IB_w_NewOne: TdboQuery;
 begin
 
   // Einen Bestellbeleg liefern, der noch nicht abgeschickt ist!
@@ -1073,7 +1083,7 @@ begin
       FieldByName('BSTATUS').AsString := '*';
       Post;
       // imp pend: NOT MULTIUSER VALIDATED
-      result := GEN_ID('GEN_BBELEG', 0);
+      result := e_r_gen('GEN_BBELEG');
       Close;
     end;
     IB_w_NewOne.free;
@@ -1088,18 +1098,18 @@ function e_w_buchen(BELEG_R, PERSON_R: TDOM_Reference): integer;
 var
   sDiagnose: TStringList;
   MENGE_AUFNAHME: integer;
-  qBELEG: TIB_Query;
+  qBELEG: TdboQuery;
   INTERN_INFO: TStringList;
   GENERATION_POSTFIX: string;
   n, m: integer;
   BuchungsIndex: TWordIndex;
   SuchFName: string;
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
   ZAHLUNGSPFLICHTIGER_R: integer;
   ZAHLUNGTYP_R: integer;
   Suchbegriff: string;
   Treffer: integer;
-  EREIGNIS: TIB_Query;
+  EREIGNIS: TdboQuery;
   ErrorStr: string;
   BankverbindungOK: boolean;
   KontoNummer, BLZ, BankName: string;
@@ -1214,7 +1224,7 @@ begin
         sql.add('from PERSON where RID=' + inttostr(ZAHLUNGSPFLICHTIGER_R));
         ApiFirst;
 
-        if IsHaben(FieldByName('Z_ELV_FREIGABE').AsDouble) then
+        if IsHaben(FieldByName('Z_ELV_FREIGABE').AsFloat) then
         begin
           sDiagnose.add(cINFOText +
             ' Der Zahlungspflichtige wurde durch eine ELV Freigabe bestätigt!');
@@ -1305,7 +1315,7 @@ begin
           .AsInteger, 2);
 
         INTERN_INFO := TStringList.create;
-        FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
 
         INTERN_INFO.values['BTYP' + GENERATION_POSTFIX] := 'p'; // Portofrei
         INTERN_INFO.values['FILTER' + GENERATION_POSTFIX] :=
@@ -1380,9 +1390,9 @@ end;
 function e_w_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE: integer;
   BELEG_R: integer = 0; POSTEN_R: integer = 0): integer;
 var
-  ARTIKEL: TIB_Query;
-  AA: TIB_Query;
-  WARENBEWEGUNG: TIB_Query;
+  ARTIKEL: TdboQuery;
+  AA: TdboQuery;
+  WARENBEWEGUNG: TdboQuery;
   MENGE_FieldName: string;
   MENGE_BISHER: integer;
   MENGE_NEU: integer;
@@ -1597,7 +1607,7 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
   procedure GetFromArtikelField(FieldN: string);
   var
-    cARTIKEL: TIB_Cursor;
+    cARTIKEL: TdboCursor;
   begin
     cARTIKEL := nCursor;
     with cARTIKEL do
@@ -1625,7 +1635,7 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
   procedure GetFromAA;
   var
-    cAA: TIB_Cursor;
+    cAA: TdboCursor;
   begin
     cAA := nCursor;
     with cAA do
@@ -1697,7 +1707,7 @@ function e_w_SetFolge(AUSGABEART_R, ARTIKEL_R: integer): integer; // Beleg-Anz
 var
   RIDS: TgpIntegerList;
   RecN: integer;
-  cFOLGE: TIB_Query;
+  cFOLGE: TdboQuery;
 begin
   // Ermitteln der "ursprünglichen Reihenfolge"
   RIDS := TgpIntegerList.create;
@@ -1754,15 +1764,15 @@ function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
   end;
 
 var
-  QueryPOSTEN: TIB_Query;
-  QueryBPOSTEN: TIB_Query;
-  ARTIKEL: TIB_Query;
+  QueryPOSTEN: TdboQuery;
+  QueryBPOSTEN: TdboQuery;
+  ARTIKEL: TdboQuery;
   DontBook: boolean;
   _Menge: integer;
   MENGE_BISHER, MENGE_NEU: integer;
   AtomMenge: integer;
-  WARENBEWEGUNG: TIB_Query;
-  EREIGNIS: TIB_Query;
+  WARENBEWEGUNG: TdboQuery;
+  EREIGNIS: TdboQuery;
   EventText: TStringList;
   LAGER_R: integer;
   BBELEG_R: integer;
@@ -2078,8 +2088,8 @@ end;
 
 procedure e_r_PreisTabelle_ensureCache;
 var
-  cPREIS: TIB_Cursor;
-  cLAND: TIB_Cursor;
+  cPREIS: TdboCursor;
+  cLAND: TdboCursor;
   p: double;
   g: TGeldBetrag;
 begin
@@ -2113,15 +2123,15 @@ begin
           // Umrechnen der Auslandswährung auf €
           cLAND.ParamByName('CROSSREF').AsInteger := FieldByName('WAEHRUNG_R')
             .AsInteger;
-          p := cPreisRundung(FieldByName('PREIS').AsDouble *
-            cLAND.FieldByName('KURS').AsDouble);
+          p := cPreisRundung(FieldByName('PREIS').AsFloat *
+            cLAND.FieldByName('KURS').AsFloat);
 
         end
         else
         begin
           //
           if FieldByName('EURO').IsNotNull then
-            p := FieldByName('EURO').AsDouble
+            p := FieldByName('EURO').AsFloat
         end;
 
         g := TGeldBetrag.create;
@@ -2150,8 +2160,8 @@ begin
 end;
 
 const
-  e_r_PreisNativ_cARTIKEL: TIB_Cursor = nil;
-  e_r_PreisNativ_cAA: TIB_Cursor = nil;
+  e_r_PreisNativ_cARTIKEL: TdboCursor = nil;
+  e_r_PreisNativ_cAA: TdboCursor = nil;
 
 procedure e_r_PreisNativ_ensureCache;
 begin
@@ -2188,7 +2198,7 @@ end;
 
 function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
 var
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
 begin
   result := cPreis_aufAnfrage;
   try
@@ -2226,7 +2236,7 @@ begin
         else
         begin
           if FieldByName('EURO').IsNotNull then
-            result := FieldByName('EURO').AsDouble
+            result := FieldByName('EURO').AsFloat
           else
             result := cPreis_aufAnfrage;
         end;
@@ -2282,7 +2292,7 @@ const
 
 procedure e_r_SortimentSatz_EnsureCache;
 var
-  cSORTIMENT: TIB_Cursor;
+  cSORTIMENT: TdboCursor;
   s: TSteuerSatz;
 begin
   if not(assigned(e_r_SortimentSatz_Steuer)) then
@@ -2316,7 +2326,7 @@ begin
         s := TSteuerSatz.create;
         with s do
         begin
-          Satz := FieldByName('SATZ').AsDouble;
+          Satz := FieldByName('SATZ').AsFloat;
           Netto := (FieldByName('NETTO').AsString = cC_True);
           NettoWieBrutto :=
             (FieldByName('NETTO_WIE_BRUTTO').AsString = cC_True);
@@ -2346,9 +2356,9 @@ begin
 end;
 
 const
-  e_r_Preis_ARTIKEL: TIB_Cursor = nil;
-  e_r_Preis_AA: TIB_Cursor = nil;
-  e_r_Preis_AA_EINHEIT: TIB_Cursor = nil;
+  e_r_Preis_ARTIKEL: TdboCursor = nil;
+  e_r_Preis_AA: TdboCursor = nil;
+  e_r_Preis_AA_EINHEIT: TdboCursor = nil;
 
 procedure e_r_Preis_ensureCache;
 begin
@@ -2407,7 +2417,7 @@ function e_r_Preis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer;
   var Satz: double; var Netto: boolean; var NettoWieBrutto: boolean): double;
 var
   s: TSteuerSatz;
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
 begin
 
   //
@@ -2476,7 +2486,7 @@ begin
         begin
           if FieldByName('EURO').IsNotNull then
           begin
-            result := FieldByName('EURO').AsDouble
+            result := FieldByName('EURO').AsFloat
           end
           else
             result := e_r_Preis(
@@ -2552,7 +2562,7 @@ var
   Satz: double;
   Netto: boolean;
   NettoWieBrutto: boolean;
-  cPREIS: TIB_Cursor;
+  cPREIS: TdboCursor;
 begin
   result := cPreis_unbekannt;
   try
@@ -2569,7 +2579,7 @@ begin
           ' (PREIS.USD is not null)');
         ApiFirst;
         if not(eof) then
-          result := FieldByName('USD').AsDouble;
+          result := FieldByName('USD').AsFloat;
       end;
       cPREIS.free;
     end;
@@ -2636,12 +2646,12 @@ var
   VerzugszinsSatz: double;
   BerechneterZins: double;
 
-  cAUSGANGSRECHNUNG: TIB_Cursor;
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
-  cBELEGSALDO: TIB_Cursor;
-  qBELEG: TIB_Query;
-  cBELEG: TIB_Cursor;
+  cAUSGANGSRECHNUNG: TdboCursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
+  cBELEGSALDO: TdboCursor;
+  qBELEG: TdboQuery;
+  cBELEG: TdboCursor;
   MaxMahnstufe: integer;
   MaxTageVerzug: integer;
 
@@ -2799,7 +2809,7 @@ begin
       sql.add(' (KUNDE_R=' + inttostr(PERSON_R) + ')');
       sql.add('group by KUNDE_R');
       ApiFirst;
-      SkipManuelleZahlungen := isZeroMoney(FieldByName('SUM').AsDouble);
+      SkipManuelleZahlungen := isZeroMoney(FieldByName('SUM').AsFloat);
     end;
     cAUSGANGSRECHNUNG.free;
 
@@ -2919,7 +2929,7 @@ begin
               begin
 
                 // ermittelten Wert speichern
-                SumValue := cBELEGSALDO.FieldByName('B_SUM').AsDouble;
+                SumValue := cBELEGSALDO.FieldByName('B_SUM').AsFloat;
                 Unausgeglichen := TDoubleObject.create;
                 Unausgeglichen.Wert := SumValue;
                 Checked_BELEG_R.AddObject(FieldByName('BELEG_R').AsString,
@@ -2965,7 +2975,7 @@ begin
         begin
 
           LoadArtikelBlock;
-          BuchungsBetrag := FieldByName('BETRAG').AsDouble;
+          BuchungsBetrag := FieldByName('BETRAG').AsFloat;
           KontoTexte.clear;
           MoreText := '';
           BetragVerzug := 0.0;
@@ -3052,7 +3062,7 @@ begin
             begin
 
               if not(qBELEG.FieldByName('RECHNUNGS_BETRAG')
-                .AsDouble = qBELEG.FieldByName('DAVON_BEZAHLT').AsDouble) then
+                .AsFloat = qBELEG.FieldByName('DAVON_BEZAHLT').AsFloat) then
               begin
 
                 if (FaelligSeit > 0) then
@@ -3202,8 +3212,8 @@ begin
                     ' ' + long2dateLocalized
                     (DateTime2Long(FieldByName('MAHNBESCHEID').AsDate));
 
-                SaldoLautBeleg := FieldByName('RECHNUNGS_BETRAG').AsDouble -
-                  FieldByName('DAVON_BEZAHLT').AsDouble;
+                SaldoLautBeleg := FieldByName('RECHNUNGS_BETRAG').AsFloat -
+                  FieldByName('DAVON_BEZAHLT').AsFloat;
                 if (SaldoLautBeleg > 0) then
                   MaxMahnstufe := max(MaxMahnstufe, FieldByName('MAHNSTUFE')
                     .AsInteger);
@@ -3661,7 +3671,7 @@ var
   DoppelPunktPos: integer;
   n, m: integer;
   nCode: integer;
-  qPosten: TIB_Query;
+  qPosten: TdboQuery;
   sCode: String;
   sSortiment: string;
   iSortiment: integer;
@@ -3805,8 +3815,8 @@ begin
             begin
               Insert;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
-              FieldByName('PREIS').AsDouble := StrtoDouble(sCode);
-              FieldByName('MWST').AsDouble := MWST;
+              FieldByName('PREIS').AsFloat := StrtoDouble(sCode);
+              FieldByName('MWST').AsFloat := MWST;
               FieldByName('MENGE').AsInteger := MENGE;
               sSortiment := nextp(lKasse[n], ':', 1);
               sSortiment := cutblank(nextp(sSortiment, '(', 0));
@@ -3894,7 +3904,7 @@ end;
 function e_r_ArtikelVersendetag(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
   m: integer;
-  LIEFERZEIT: TIB_Cursor;
+  LIEFERZEIT: TdboCursor;
 begin
 
   if (AUSGABEART_R = cAusgabeArt_Aufnahme_MP3) then
@@ -3932,7 +3942,7 @@ begin
       repeat
         if eof then
           break;
-        if (FieldByName('ARTIKEL.EURO').AsDouble = cPreis_vergriffen) then
+        if (FieldByName('ARTIKEL.EURO').AsFloat = cPreis_vergriffen) then
         begin
           result := 1;
           break;
@@ -3968,7 +3978,7 @@ end;
 function e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R: integer): integer; // [Tage]
 var
   m: integer;
-  LIEFERZEIT: TIB_Cursor;
+  LIEFERZEIT: TdboCursor;
 begin
   result := 0; // sofort
   try
@@ -4016,7 +4026,7 @@ end;
 function e_r_VerlagsRabatt(VERLAG_R, PERSON_R: integer): double;
 var
   //
-  qARTIKEL: TIB_Cursor;
+  qARTIKEL: TdboCursor;
 
   // Cache
   RABATT_CODE: string;
@@ -4024,7 +4034,7 @@ var
 
   function matchRule(pSQL: string; var Rabatt: double): boolean;
   var
-    qRABATT: TIB_Cursor;
+    qRABATT: TdboCursor;
   begin
     result := false;
     qRABATT := nCursor;
@@ -4034,7 +4044,7 @@ var
       ApiFirst;
       if not(eof) then
       begin
-        Rabatt := FieldByName('RABATT').AsDouble;
+        Rabatt := FieldByName('RABATT').AsFloat;
         result := true;
       end;
     end;
@@ -4093,8 +4103,8 @@ function e_r_Rabatt(ARTIKEL_R, PERSON_R: integer; var Netto: boolean;
   var NettoWieBrutto: boolean): double;
 var
   //
-  qARTIKEL: TIB_Cursor;
-  qRABATT_CODE: TIB_Cursor;
+  qARTIKEL: TdboCursor;
+  qRABATT_CODE: TdboCursor;
 
   // Cache
   RABATT_CODE: string;
@@ -4105,7 +4115,7 @@ var
 
   function matchRule(pSQL: string; var Rabatt: double): boolean;
   var
-    qRABATT: TIB_Cursor;
+    qRABATT: TdboCursor;
   begin
     result := false;
     qRABATT := nCursor;
@@ -4115,7 +4125,7 @@ var
       ApiFirst;
       if not(eof) then
       begin
-        Rabatt := FieldByName('RABATT').AsDouble;
+        Rabatt := FieldByName('RABATT').AsFloat;
         result := true;
       end;
     end;
@@ -4225,8 +4235,8 @@ end;
 
 function e_r_ekRabatt(ARTIKEL_R: integer): double;
 var
-  qARTIKEL: TIB_Cursor;
-  qPERSON: TIB_Cursor;
+  qARTIKEL: TdboCursor;
+  qPERSON: TdboCursor;
   VERLAG_R: integer;
   Rabatt: double;
   ResultResolved: boolean;
@@ -4246,7 +4256,7 @@ begin
       VERLAG_R := FieldByName('VERLAG_R').AsInteger;
       if FieldByName('RABATT').IsNotNull then
       begin
-        Rabatt := FieldByName('RABATT').AsDouble;
+        Rabatt := FieldByName('RABATT').AsFloat;
         ResultResolved := true;
       end;
       Close;
@@ -4264,7 +4274,7 @@ begin
       Open;
       if FieldByName('RABATT').IsNotNull then
       begin
-        Rabatt := FieldByName('RABATT').AsDouble;
+        Rabatt := FieldByName('RABATT').AsFloat;
         ResultResolved := true;
       end;
       Close;
@@ -4309,9 +4319,9 @@ end;
 
 function e_w_ArtikelNeu(SORTIMENT_R: integer): integer;
 var
-  ARTIKEL: TIB_Query;
-  Sortiment: TIB_Query;
-  ArtikelNo: TIB_Cursor;
+  ARTIKEL: TdboQuery;
+  Sortiment: TdboQuery;
+  ArtikelNo: TdboCursor;
   NUMERO: integer;
 begin
 
@@ -4401,9 +4411,9 @@ end;
 
 function e_w_PersonNeu: integer;
 var
-  ANSCHRIFT: TIB_Query;
+  ANSCHRIFT: TdboQuery;
   ANSCHRIFT_R: integer;
-  PERSON: TIB_Query;
+  PERSON: TdboQuery;
   PERSON_R: integer;
   NUMMER: integer;
 begin
@@ -4459,7 +4469,7 @@ end;
 
 function e_r_AgentMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
-  POSTEN: TIB_Cursor;
+  POSTEN: TdboCursor;
 begin
   POSTEN := nCursor;
   with POSTEN do
@@ -4504,8 +4514,8 @@ end;
 
 function e_r_Adressat(PERSON_R: integer): TStringList;
 var
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
   n: integer;
 begin
 
@@ -4554,7 +4564,7 @@ end;
 
 procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
 var
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
 begin
   sl.add(Prefix + 'ZahlungInhaber=' + e_r_KontoInhaber(PERSON_R));
   cPERSON := nCursor;
@@ -4575,7 +4585,7 @@ end;
 procedure e_r_Anschrift(PERSON_R: integer; sl: TStringList;
   Prefix: string = '');
 var
-  PERSON, ANSCHRIFT: TIB_Cursor;
+  PERSON, ANSCHRIFT: TdboCursor;
   Adressat: TStringList;
 begin
   PERSON := nCursor;
@@ -4630,7 +4640,7 @@ end;
 
 function e_r_UnbestellteMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
-  BPosten: TIB_Cursor;
+  BPosten: TdboCursor;
 begin
   BPosten := nCursor;
   with BPosten do
@@ -4652,7 +4662,7 @@ end;
 
 function e_r_OffeneMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
-  BPosten: TIB_Cursor;
+  BPosten: TdboCursor;
 begin
   // ungeliefert = "unbestelltes" + "erwartetes"
   BPosten := nCursor;
@@ -4680,7 +4690,7 @@ end;
 function e_r_ErwarteteMenge(AUSGABEART_R, ARTIKEL_R: integer;
   sDetails: TStringList = nil): integer;
 var
-  BPosten: TIB_Cursor;
+  BPosten: TdboCursor;
 begin
   result := 0;
   if (ARTIKEL_R > 0) then
@@ -4792,9 +4802,9 @@ type
   TePortoModus = (ePortoUngesetzt, ePortoZwang, ePortoFrei, ePortoAuto);
 var
   ARTIKEL_R: integer;
-  Beleg: TIB_Cursor;
+  Beleg: TdboCursor;
   eResult: TStringList;
-  VREGEL: TIB_Cursor;
+  VREGEL: TdboCursor;
   DebugS: TStringList;
   EndlessRecurseDetection: TStringList;
   PERSON_R: integer;
@@ -4827,7 +4837,7 @@ var
 
   function VCheck(Condition: string): integer;
   var
-    VREGEL: TIB_Cursor;
+    VREGEL: TdboCursor;
   begin
     result := -1;
     VREGEL := nCursor;
@@ -5085,7 +5095,7 @@ begin
     inttostr(VERSENDER_R));
 end;
 
-function e_r_PLZlength(ib_q: TIB_DataSet): integer;
+function e_r_PLZlength(ib_q: TdboDataset): integer;
 var
   _LandFormatStr: string;
   k: integer;
@@ -5098,7 +5108,7 @@ begin
       result := strtointdef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
-function e_r_Ort(ib_q: TIB_DataSet): string; overload;
+function e_r_Ort(ib_q: TdboDataset): string; overload;
 // benötigt
 //
 // (LAND_R, STATE, ORT, PLZ)
@@ -5138,7 +5148,7 @@ end;
 
 function e_r_Ort(PERSON_R: integer): string; overload;
 var
-  ANSCHRIFT: TIB_Cursor;
+  ANSCHRIFT: TdboCursor;
 begin
   ANSCHRIFT := nCursor;
   with ANSCHRIFT do
@@ -5155,12 +5165,12 @@ begin
   ANSCHRIFT.free;
 end;
 
-function e_r_land(ib_q: TIB_DataSet): string;
+function e_r_land(ib_q: TdboDataset): string;
 begin
   result := e_r_LaenderPost(ib_q.FieldByName('LAND_R').AsInteger);
 end;
 
-function e_r_plz(ib_q: TIB_DataSet; PLZlength: integer = -1): string;
+function e_r_plz(ib_q: TdboDataset; PLZlength: integer = -1): string;
 var
   _land_sub: string;
   _plz_sub: string;
@@ -5182,7 +5192,7 @@ begin
   end;
 end;
 
-procedure e_r_PostenInfo(IBQ: TIB_DataSet; NurGeliefertes: boolean;
+procedure e_r_PostenInfo(IBQ: TdboDataset; NurGeliefertes: boolean;
   EinzelpreisNetto: boolean; var _Anz, _AnzAuftrag, _AnzGeliefert,
   _AnzStorniert, _AnzAgent: integer; var _Rabatt, _EinzelPreis,
   _MwStSatz: double
@@ -5226,8 +5236,8 @@ begin
     end;
 
     // Preis
-    _MwStSatz := FieldByName('MWST').AsDouble;
-    _EinzelPreis := FieldByName('PREIS').AsDouble;
+    _MwStSatz := FieldByName('MWST').AsFloat;
+    _EinzelPreis := FieldByName('PREIS').AsFloat;
 
     // MwSt raus oder dazu
     if (_MwStSatz <> 0.0) then
@@ -5247,7 +5257,7 @@ begin
     end;
 
     // Rabatt
-    _Rabatt := FieldByName('RABATT').AsDouble;
+    _Rabatt := FieldByName('RABATT').AsFloat;
 
   end;
 end;
@@ -5311,9 +5321,9 @@ end;
 function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1)
   : TStringList;
 var
-  POSTEN: TIB_Cursor;
-  Beleg: TIB_Cursor;
-  WARE: TIB_Cursor;
+  POSTEN: TdboCursor;
+  Beleg: TdboCursor;
+  WARE: TdboCursor;
 
   // Beleg-Optionen von denen die Berechnung abhängt
   NurGeliefertes: boolean;
@@ -5374,10 +5384,10 @@ begin
       EinzelpreisNetto := FieldByName('EINZELPREIS_NETTO').AsString = cC_True;
 
       if NurGeliefertes then
-        Anzahlung := FieldByName('DAVON_BEZAHLT').AsDouble
+        Anzahlung := FieldByName('DAVON_BEZAHLT').AsFloat
       else
-        Anzahlung := FieldByName('DAVON_BEZAHLT').AsDouble -
-          FieldByName('RECHNUNGS_BETRAG').AsDouble;
+        Anzahlung := FieldByName('DAVON_BEZAHLT').AsFloat -
+          FieldByName('RECHNUNGS_BETRAG').AsFloat;
 
       if (Anzahlung < cGeld_KleinsterBetrag) then
         Anzahlung := 0;
@@ -5535,7 +5545,7 @@ end;
 
 function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
 var
-  PAKET: TIB_Cursor;
+  PAKET: TdboCursor;
   MENGE: integer;
   EinzelPreis, GesamtPreis: double;
 begin
@@ -5640,7 +5650,7 @@ end;
 procedure e_w_preDeleteBeleg(BELEG_R: integer);
 var
   PDeleteList: TStringList;
-  POSTEN: TIB_Cursor;
+  POSTEN: TdboCursor;
   n: integer;
   POSTEN_R: integer;
 begin
@@ -5693,7 +5703,7 @@ end;
 procedure e_w_preDeleteBBeleg(BBELEG_R: integer);
 var
   PDeleteList: TStringList;
-  POSTEN: TIB_Cursor;
+  POSTEN: TdboCursor;
   n: integer;
   POSTEN_R: integer;
 begin
@@ -5760,8 +5770,8 @@ end;
 
 function e_w_VersandKostenClear(BELEG_R: integer): integer;
 var
-  cBELEG: TIB_Cursor;
-  cPOSTEN: TIB_Cursor;
+  cBELEG: TdboCursor;
+  cPOSTEN: TdboCursor;
   lPOSTEN: TList;
   n: integer;
   StopIt: boolean;
@@ -5819,7 +5829,7 @@ end;
 function e_w_VertragBuchen(VERTRAG_R: integer; sSettings: TStringList)
   : TStringList; overload;
 var
-  cVERTRAG: TIB_Cursor;
+  cVERTRAG: TdboCursor;
   GEBUCHT_BIS: TAnfixDate;
   ERSTER_ABRECHNUNGSTAG: TAnfixDate;
   LETZTER_ABRECHNUNGSTAG: TAnfixDate;
@@ -6113,7 +6123,7 @@ end;
 
 function e_r_VertragBuchen(VERTRAG_R: integer): boolean; overload;
 var
-  cVERTRAG: TIB_Cursor;
+  cVERTRAG: TdboCursor;
   GEBUCHT_BIS: TAnfixDate;
   ERSTER_ABRECHNUNGSTAG: TAnfixDate;
   STICHTAG: TAnfixDate;
@@ -6250,7 +6260,7 @@ end;
 
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 var
-  cVREGEL: TIB_Cursor;
+  cVREGEL: TdboCursor;
 begin
   cVREGEL := nCursor;
   with cVREGEL do
@@ -6282,7 +6292,7 @@ end;
 
 function e_r_KontoInhaber(PERSON_R: integer): string;
 var
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
 begin
   result := '';
   cPERSON := nCursor;
@@ -6309,8 +6319,8 @@ end;
 
 function e_r_VornameNachname(PERSON_R: integer): string;
 var
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
 begin
   result := '';
   cPERSON := nCursor;
@@ -6400,11 +6410,11 @@ var
   BUDGET_R: integer;
 
   // Die eigentlichen Queries, die geändert werden
-  qBELEG: TIB_Query;
-  qPosten: TIB_Query;
+  qBELEG: TdboQuery;
+  qPosten: TdboQuery;
 
   // Ticket Erstellung zur Qualtitäts-Sicherung
-  qTICKET: TIB_Query;
+  qTICKET: TdboQuery;
   TICKET_R: TDOM_Reference;
 
   _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzNachlieferung: integer;
@@ -6725,8 +6735,8 @@ begin
                           then
                           begin
                             edit;
-                            FieldByName('PREIS').AsDouble :=
-                              FieldByName('PREIS').AsDouble + Glattstellung;
+                            FieldByName('PREIS').AsFloat :=
+                              FieldByName('PREIS').AsFloat + Glattstellung;
                             Post;
                             Glattstellung := 0.0;
                           end;
@@ -6774,7 +6784,7 @@ begin
                   ' ARTIKEL ' + 'join' + ' SORTIMENT ' + 'on' +
                   ' (SORTIMENT.RID=ARTIKEL.SORTIMENT_R) ' + 'where' +
                   ' (ARTIKEL.RID=' + inttostr(ARTIKEL_R) + ')') <> cC_True) then
-                  FieldByName('MWST').AsDouble :=
+                  FieldByName('MWST').AsFloat :=
                     MwStSaver.MWST[_groesstesMwStElementIndex].Satz;
               end;
             FieldByName('ARTIKEL').AsString := FieldByName('ARTIKEL').AsString +
@@ -6833,7 +6843,7 @@ begin
   end;
 end;
 
-function e_r_Versandfertig(ib_q: TIB_DataSet): boolean;
+function e_r_Versandfertig(ib_q: TdboDataset): boolean;
 begin
   with ib_q do
     result := (FieldByName('MENGE_RECHNUNG').AsInteger > 0) and
@@ -6841,7 +6851,7 @@ begin
       (FieldByName('MENGE_AGENT').AsInteger = 0); // nix mehr zu ordern
 end;
 
-function e_r_Versandfaehig(ib_q: TIB_DataSet): boolean;
+function e_r_Versandfaehig(ib_q: TdboDataset): boolean;
 begin
   with ib_q do
     result := (FieldByName('MENGE_RECHNUNG').AsInteger > 0);
@@ -6865,13 +6875,13 @@ var
   LAGER_R: integer;
   EMPFAENGER_R: integer;
   PERSON_R: integer;
-  qEREIGNIS: TIB_Query;
+  qEREIGNIS: TdboQuery;
   VOLUMEN: double;
   Zutaten: double;
-  cPOSTEN: TIB_Cursor;
-  qBELEG: TIB_Query;
+  cPOSTEN: TdboCursor;
+  qBELEG: TdboQuery;
 
-  qTICKET: TIB_Query;
+  qTICKET: TdboQuery;
   TICKET_R: integer;
 
   ZUSAGE: TAnfixDate;
@@ -6941,7 +6951,7 @@ begin
           inc(MENGE_AGENT, FieldByName('MENGE_AGENT').AsInteger);
 
           // Regel auswerten!
-          VOLUMEN := VOLUMEN + e_r_PostenPreis(FieldByName('PREIS').AsDouble,
+          VOLUMEN := VOLUMEN + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
             FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL')
             .AsInteger, FieldByName('EINHEIT_R').AsInteger);
 
@@ -6952,7 +6962,7 @@ begin
         end
         else
         begin
-          Zutaten := Zutaten + e_r_PostenPreis(FieldByName('PREIS').AsDouble,
+          Zutaten := Zutaten + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
             FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL')
             .AsInteger, FieldByName('EINHEIT_R').AsInteger);
         end;
@@ -7006,8 +7016,8 @@ begin
         (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) or
         (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) or
         (FieldByName('MENGE_GELIEFERT').AsInteger <> MENGE_GELIEFERT) or
-        (FieldByName('VOLUMEN').AsDouble <> VOLUMEN) or
-        (FieldByName('ZUTATEN').AsDouble <> Zutaten) or
+        (FieldByName('VOLUMEN').AsFloat <> VOLUMEN) or
+        (FieldByName('ZUTATEN').AsFloat <> Zutaten) or
         ((FieldByName('TERMIN').AsDateTime <> TERMIN) and
         (TERMIN <> cTerminUnset)) or ((FieldByName('TERMIN').IsNotNull) and
         (TERMIN = cTerminUnset)) then
@@ -7024,8 +7034,8 @@ begin
         FieldByName('MENGE_RECHNUNG').AsInteger := Menge_Rechnung;
         FieldByName('MENGE_AGENT').AsInteger := MENGE_AGENT;
         FieldByName('MENGE_GELIEFERT').AsInteger := MENGE_GELIEFERT;
-        FieldByName('VOLUMEN').AsDouble := VOLUMEN;
-        FieldByName('ZUTATEN').AsDouble := Zutaten;
+        FieldByName('VOLUMEN').AsFloat := VOLUMEN;
+        FieldByName('ZUTATEN').AsFloat := Zutaten;
         if (ZUSAGE = 0) then
           FieldByName('ZUSAGE').clear
         else
@@ -7272,8 +7282,8 @@ var
   Menge_Erwartet: integer;
   MENGE_GELIEFERT: integer;
   Menge_Zurueck: integer;
-  cBPOSTEN: TIB_Cursor;
-  qBBELEG: TIB_Query;
+  cBPOSTEN: TdboCursor;
+  qBBELEG: TdboQuery;
 begin
   result := false;
   if (BBELEG_R > 0) then
@@ -7396,8 +7406,8 @@ var
   UebergangsfachSelected: integer;
   TriedCount: integer;
   n: integer;
-  cBELEG: TIB_Cursor;
-  cLAGER: TIB_Cursor;
+  cBELEG: TdboCursor;
+  cLAGER: TdboCursor;
 begin
   UEBERGANGSFACH_VERLAG_R := e_r_Uebergangsfach_VERLAG_R;
 
@@ -7488,7 +7498,7 @@ end;
 
 function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 var
-  cPACKFORM: TIB_Cursor;
+  cPACKFORM: TdboCursor;
 begin
   cPACKFORM := nCursor;
   with cPACKFORM do
@@ -7500,11 +7510,11 @@ begin
   cPACKFORM.free;
 end;
 
-function e_w_SetStandardVersandData(qVERSAND: TIB_Query): integer;
+function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 // [VERSENDER_R]
 var
   PACKFORM_R: integer;
-  cVERSENDER: TIB_Cursor;
+  cVERSENDER: TdboCursor;
 begin
 
   // Standard-Versender ermitteln
@@ -7655,8 +7665,8 @@ end;
 function e_w_BelegVersand(BELEG_R: integer; Summe: double;
   gewicht: integer): integer;
 var
-  cBELEG: TIB_Cursor;
-  qVERSAND: TIB_Query;
+  cBELEG: TdboCursor;
+  qVERSAND: TdboQuery;
   RECHNUNGSNUMMER: integer;
 begin
   result := 0;
@@ -7735,7 +7745,7 @@ begin
           FieldByName('RECHNUNGSANSCHRIFT_R')
             .assign(cBELEG.FieldByName('RECHNUNGSANSCHRIFT_R'));
 
-        FieldByName('LIEFERBETRAG').AsDouble := Summe;
+        FieldByName('LIEFERBETRAG').AsFloat := Summe;
         FieldByName('GEWICHT').AsInteger := gewicht;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
         if RECHNUNGSNUMMER >= cRID_FirstValid then
@@ -7765,7 +7775,7 @@ begin
 end;
 
 procedure e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R,
-  PERSON_R: integer; qPosten: TIB_Query);
+  PERSON_R: integer; qPosten: TdboQuery);
 var
   Satz: double;
   artikelNetto: boolean;
@@ -7783,7 +7793,7 @@ begin
     Rabatt := e_r_Rabatt(ARTIKEL_R, PERSON_R, personNetto,
       personNettoWieBrutto);
     if (Rabatt > 0.0) then
-      FieldByName('RABATT').AsDouble := Rabatt
+      FieldByName('RABATT').AsFloat := Rabatt
     else
       FieldByName('RABATT').clear;
 
@@ -7792,17 +7802,17 @@ begin
       artikelNettoWieBrutto);
     FieldByName('NETTO').AsString := bool2cC(artikelNetto);
     if personNetto then
-      FieldByName('MWST').AsDouble := 0
+      FieldByName('MWST').AsFloat := 0
     else
-      FieldByName('MWST').AsDouble := Satz;
+      FieldByName('MWST').AsFloat := Satz;
     if (PREIS <> cPreis_vergriffen) and (PREIS <> cPreis_aufAnfrage) then
     begin
       if personNetto and not(personNettoWieBrutto) and
         not(artikelNettoWieBrutto) and not(artikelNetto) then
-        FieldByName('PREIS').AsDouble :=
+        FieldByName('PREIS').AsFloat :=
           cPreisRundung(PREIS / (1.0 + Satz / 100.0))
       else
-        FieldByName('PREIS').AsDouble := PREIS;
+        FieldByName('PREIS').AsFloat := PREIS;
     end
     else
     begin
@@ -7811,9 +7821,9 @@ begin
   end;
 end;
 
-procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TIB_Query);
+procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
 var
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
   AUSGABEART_R: integer;
   EINHEIT_R: integer;
 begin
@@ -7869,9 +7879,9 @@ end;
 function e_w_WarenkorbEinfuegen(BELEG_R: integer): integer;
 var
   PERSON_R: integer;
-  cWARENKORB: TIB_Cursor;
-  cBELEG: TIB_Cursor;
-  qPosten: TIB_Query;
+  cWARENKORB: TdboCursor;
+  cBELEG: TdboCursor;
+  qPosten: TdboQuery;
 begin
   result := 0;
   cBELEG := nCursor;
@@ -7961,7 +7971,7 @@ end;
 
 function e_w_BelegNeu(PERSON_R: integer): integer;
 var
-  qBELEG: TIB_Query;
+  qBELEG: TdboQuery;
   BELEG_R: integer;
 begin
   result := cRID_Null;
@@ -8038,9 +8048,9 @@ function e_r_LadeParameter: TStringList;
 var
   sSystemSettings: TStringList;
 {$IFDEF CONSOLE}
-  cSETTINGS: TIB_Cursor;
+  cSETTINGS: TdboCursor;
 {$ELSE}
-  qSETTINGS: TIB_Query;
+  qSETTINGS: TdboQuery;
 {$ENDIF}
   n: integer;
   SettingsChanged: boolean;
@@ -8410,7 +8420,7 @@ end;
 function e_r_Localize(RID, LAND_R: integer): string;
 var
   InfoText: TStringList;
-  cINTERNATIONALTEXT: TIB_Cursor;
+  cINTERNATIONALTEXT: TdboCursor;
 begin
   cINTERNATIONALTEXT := nCursor;
   with cINTERNATIONALTEXT do
@@ -8438,7 +8448,7 @@ begin
   cINTERNATIONALTEXT.free;
 end;
 
-function e_r_telefon(ib_q: TIB_DataSet): string;
+function e_r_telefon(ib_q: TdboDataset): string;
 begin
   with ib_q do
   begin
@@ -8458,7 +8468,7 @@ end;
 
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
 var
-  cINTERNATIONALTEXT: TIB_Cursor;
+  cINTERNATIONALTEXT: TdboCursor;
 begin
   result := TStringList.create;
   cINTERNATIONALTEXT := nCursor;
@@ -8484,8 +8494,8 @@ end;
 
 function e_r_Localize2(RID, LANGUAGE: integer): string;
 var
-  Land: TIB_Cursor;
-  IntTxt: TIB_Cursor;
+  Land: TdboCursor;
+  IntTxt: TdboCursor;
   Bigmemo: TStringList;
 begin
   if (RID <= 0) then
@@ -8552,7 +8562,7 @@ end;
 
 function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 var
-  cGEWICHT: TIB_Cursor;
+  cGEWICHT: TdboCursor;
 begin
   result := 0;
   try
@@ -8607,7 +8617,7 @@ var
   _BELEG_R_FROM: string;
   _BELEG_R_TO: string;
   References: TStringList;
-  qBELEG: TIB_Query;
+  qBELEG: TdboQuery;
 begin
   result := 0;
   if (BELEG_R_FROM <> BELEG_R_TO) then
@@ -8644,12 +8654,12 @@ begin
         _BELEG_R_TO + ' for update');
 
       edit;
-      FieldByName('RECHNUNGS_BETRAG').AsDouble :=
-        FieldByName('RECHNUNGS_BETRAG').AsDouble +
+      FieldByName('RECHNUNGS_BETRAG').AsFloat :=
+        FieldByName('RECHNUNGS_BETRAG').AsFloat +
         e_r_sqld('select RECHNUNGS_BETRAG from BELEG where RID=' +
         _BELEG_R_FROM);
-      FieldByName('DAVON_BEZAHLT').AsDouble := FieldByName('DAVON_BEZAHLT')
-        .AsDouble + e_r_sqld('select DAVON_BEZAHLT from BELEG where RID=' +
+      FieldByName('DAVON_BEZAHLT').AsFloat := FieldByName('DAVON_BEZAHLT')
+        .AsFloat + e_r_sqld('select DAVON_BEZAHLT from BELEG where RID=' +
         _BELEG_R_FROM);
       Post;
 
@@ -8908,7 +8918,7 @@ end;
 
 function e_r_Umsatz(POSTEN_R: integer): double;
 var
-  cPOSTEN: TIB_Cursor;
+  cPOSTEN: TdboCursor;
 var
   _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
 var
@@ -9008,7 +9018,7 @@ var
   //
   procedure PruefeVerlag(VERLAG_R: integer);
   var
-    cLAGER: TIB_Cursor;
+    cLAGER: TdboCursor;
     FREI: integer;
   begin
     //
@@ -9108,8 +9118,8 @@ function e_w_EinLagern(ARTIKEL_R: integer): integer;
 var
   PERSON_R: integer;
   SORTIMENT_R: integer;
-  cARTIKEL: TIB_Cursor;
-  qEREIGNIS: TIB_Query;
+  cARTIKEL: TdboCursor;
+  qEREIGNIS: TdboQuery;
   EventText: TStringList;
 begin
   // noch mehr Infos nachladen
@@ -9175,7 +9185,7 @@ end;
 
 function e_r_Schritte(AUFTRAG_R: integer): TStringList;
 var
-  cSCHRITTE: TIB_Cursor;
+  cSCHRITTE: TdboCursor;
   BELEG_R: integer;
   BAUSTELLE_R: integer;
 begin
@@ -9250,12 +9260,12 @@ procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer;
 
 // kopiere alle Posten des Quell-Beleges in den bestehenden Beleg hinzu
 var
-  cQUELL_BELEG: TIB_Cursor;
-  cQUELL_POSTEN: TIB_Cursor;
-  cZIEL_POSTEN: TIB_Cursor;
+  cQUELL_BELEG: TdboCursor;
+  cQUELL_POSTEN: TdboCursor;
+  cZIEL_POSTEN: TdboCursor;
 
-  qZIEL_POSTEN: TIB_Query;
-  qZIEL_BELEG: TIB_Query;
+  qZIEL_POSTEN: TdboQuery;
+  qZIEL_BELEG: TdboQuery;
   RoteListe: TStringList;
   InternInfosQuelle: TStringList;
   InternInfosZiel: TStringList;
@@ -9419,7 +9429,7 @@ begin
 
         repeat
           if (ARTIKEL <> '') then
-            if isZeroMoney(FieldByName('PREIS').AsDouble) then
+            if isZeroMoney(FieldByName('PREIS').AsFloat) then
               if PostenTextZiel.IndexOf(ARTIKEL) <> -1 then
               begin
                 // Text-Dublette erkannt -> cancel
@@ -9450,10 +9460,10 @@ end;
 function e_w_CopyBeleg(BELEG_R_FROM, PERSON_R_TO: integer;
   sTexte: TStringList = nil): integer;
 var
-  cQUELL_BELEG: TIB_Cursor;
-  cQUELL_POSTEN: TIB_Cursor;
-  qZIEL_BELEG: TIB_Query;
-  qZIEL_POSTEN: TIB_Query;
+  cQUELL_BELEG: TdboCursor;
+  cQUELL_POSTEN: TdboCursor;
+  qZIEL_BELEG: TdboQuery;
+  qZIEL_POSTEN: TdboQuery;
   BlackList: TStringList;
   Options: TStringList;
   n: integer;
@@ -9675,8 +9685,8 @@ var
   end;
 
 var
-  cZAHLUNG: TIB_Cursor;
-  cPERSON: TIB_Cursor;
+  cZAHLUNG: TdboCursor;
+  cPERSON: TdboCursor;
   FAELLIGTAGE: integer;
   FAELLIGDATUM: TAnfixDate;
   FOLGEMONAT: integer;
@@ -9786,7 +9796,7 @@ begin
       _MoreInfo.add('SKONTOTAGE=' + inttostr(SKONTOTAGE));
       _MoreInfo.add('SKONTODATUM=' + long2dateLocalized(DatePlus(DateGet,
         SKONTOTAGE)));
-      _MoreInfo.add(format('SKONTO=%.1f', [FieldByName('SKONTO').AsDouble]));
+      _MoreInfo.add(format('SKONTO=%.1f', [FieldByName('SKONTO').AsFloat]));
 
       pStrReplace('SkontoTage', _MoreInfo.values['SKONTOTAGE']);
       pStrReplace('SkontoDatum', _MoreInfo.values['SKONTODATUM']);
@@ -9809,7 +9819,7 @@ end;
 
 procedure e_w_LagerFreigeben;
 var
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
   FreeList: TgpIntegerList;
   DateTimeOut: TAnfixDate;
   n: integer;
@@ -9865,7 +9875,7 @@ var
   ClientSorter: TStringList;
   n: integer;
   s, a: string;
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
 begin
   if (RIDS.count > 1) then
   begin
@@ -9939,13 +9949,13 @@ var
   RechnungsBudgetVolumen: integer;
   TITEL, _titel: string;
 
-  qBELEG: TIB_Query;
-  qPosten: TIB_Query;
-  qWARENBEWEGUNG: TIB_Query;
-  cVERSAND: TIB_Cursor;
-  cVERSENDER: TIB_Cursor;
-  cPERSON: TIB_Cursor;
-  cANSCHRIFT: TIB_Cursor;
+  qBELEG: TdboQuery;
+  qPosten: TdboQuery;
+  qWARENBEWEGUNG: TdboQuery;
+  cVERSAND: TdboCursor;
+  cVERSENDER: TdboCursor;
+  cPERSON: TdboCursor;
+  cANSCHRIFT: TdboCursor;
   BerechneteInfos: TStringList;
   AusgabeBelege: TStringList;
 
@@ -10439,9 +10449,9 @@ end;
 
 function e_w_BelegStorno(BELEG_R: integer): boolean;
 var
-  cGELIEFERT: TIB_Cursor;
-  cVERSAND: TIB_Cursor;
-  qTICKET: TIB_Query;
+  cGELIEFERT: TdboCursor;
+  cVERSAND: TdboCursor;
+  qTICKET: TdboQuery;
   PERSON_R: integer;
 begin
   result := false;
@@ -10533,7 +10543,7 @@ function e_r_MengenAusgabe(MENGE, EINHEIT_R: integer;
   FormatStr: string = '%d'): string;
 var
   KommaZahl: double;
-  cEINHEIT: TIB_Cursor;
+  cEINHEIT: TdboCursor;
   AusgabeS: string;
 begin
   AusgabeS := inttostr(MENGE);
@@ -10556,7 +10566,7 @@ begin
           else
           begin
             KommaZahl := MENGE;
-            KommaZahl := KommaZahl / FieldByName('EINHEIT').AsDouble;
+            KommaZahl := KommaZahl / FieldByName('EINHEIT').AsFloat;
             AusgabeS :=
               format('%.' + inttostr(pred(length(FieldByName('EINHEIT')
               .AsString))) + 'f', [KommaZahl]);
@@ -10660,7 +10670,7 @@ var
   RECHNUNGSNUMMER: integer;
   GENERATION: integer;
 
-  cPERSON, cANSCHRIFT, cBELEG, cPOSTEN, cARTIKEL: TIB_Cursor;
+  cPERSON, cANSCHRIFT, cBELEG, cPOSTEN, cARTIKEL: TdboCursor;
 
   //
   _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzNachlieferung: integer;
@@ -10806,10 +10816,10 @@ begin
           DatensammlerGlobal.add(InternInfo[n]);
 
       if NurGeliefertes then
-        _Anzahlung := FieldByName('DAVON_BEZAHLT').AsDouble
+        _Anzahlung := FieldByName('DAVON_BEZAHLT').AsFloat
       else
-        _Anzahlung := (FieldByName('DAVON_BEZAHLT').AsDouble -
-          FieldByName('RECHNUNGS_BETRAG').AsDouble);
+        _Anzahlung := (FieldByName('DAVON_BEZAHLT').AsFloat -
+          FieldByName('RECHNUNGS_BETRAG').AsFloat);
 
       if (_Anzahlung < cGeld_KleinsterBetrag) then
         _Anzahlung := 0;
@@ -10961,10 +10971,10 @@ begin
         begin
           if iFaktorGanzzahlig then
             DatensammlerLokal.add('Faktor=' + format('%1.fx',
-              [FieldByName('FAKTOR').AsDouble]))
+              [FieldByName('FAKTOR').AsFloat]))
           else
             DatensammlerLokal.add('Faktor=' + format('%gx',
-              [FieldByName('FAKTOR').AsDouble]));
+              [FieldByName('FAKTOR').AsFloat]));
         end;
 
         if FieldByName('GEWICHT').IsNull then
@@ -11466,7 +11476,7 @@ var
   OutHeaderL: TStringList;
   OutDataL: TStringList;
   P4: TStringList;
-  cPERSON, cANSCHRIFT: TIB_Cursor;
+  cPERSON, cANSCHRIFT: TdboCursor;
   AllParts: TStringList;
   n: integer;
 begin
@@ -11530,7 +11540,7 @@ function e_w_NeuerMahnlauf(ForceNew: boolean = false): boolean;
 var
   AnzahlBuchen: integer;
   AnzahlOhneMahnung: integer;
-  cMahnLauf: TIB_Cursor;
+  cMahnLauf: TdboCursor;
 
   function AnzahlGesamt: integer;
   begin
@@ -11590,7 +11600,7 @@ const
 var
   FName: string;
   Satz1, Satz2: string;
-  cBUCHUNG_KALKULATION: TIB_Cursor;
+  cBUCHUNG_KALKULATION: TdboCursor;
 
   function Verteile2(r: double): string;
   type
@@ -11647,8 +11657,8 @@ begin
     if not(eof) then
     begin
       FName := e_r_LohnFName(FieldByName('RID').AsInteger);
-      Satz1 := format('%m', [FieldByName('SATZ1').AsDouble]);
-      Satz2 := format('%m', [FieldByName('SATZ2').AsDouble]);
+      Satz1 := format('%m', [FieldByName('SATZ1').AsFloat]);
+      Satz2 := format('%m', [FieldByName('SATZ2').AsFloat]);
       if FileExists(FName) then
         result := Verteile2(Betrag);
     end;
@@ -11669,7 +11679,7 @@ end;
 
 function e_r_AuftragPlausi(AUFTRAG_R: integer): string;
 var
-  cAUFTRAG: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
   sProtokoll: TStringList;
   sZaehlerInfo: TStringList;
   sIntern: TStringList;
@@ -11924,7 +11934,7 @@ begin
   until true;
 end;
 
-function e_r_Name(ib_q: TIB_DataSet): string; overload;
+function e_r_Name(ib_q: TdboDataset): string; overload;
 begin
   result := cutblank(ib_q.FieldByName('VORNAME').AsString + ' ' +
     ib_q.FieldByName('NACHNAME').AsString);
@@ -11932,7 +11942,7 @@ end;
 
 function e_r_Name(PERSON_R: integer): string; overload;
 var
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
 begin
   cPERSON := nCursor;
   with cPERSON do
@@ -11944,7 +11954,7 @@ begin
   cPERSON.free;
 end;
 
-function e_r_NameVorname(ib_q: TIB_DataSet): string; overload;
+function e_r_NameVorname(ib_q: TdboDataset): string; overload;
 var
   n, V: string;
 begin
@@ -11968,7 +11978,7 @@ end;
 
 function e_r_NameVorname(PERSON_R: integer): string; overload;
 var
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
 begin
   cPERSON := nCursor;
   with cPERSON do
@@ -11980,7 +11990,7 @@ begin
   cPERSON.free;
 end;
 
-function e_r_fax(ib_q: TIB_DataSet): string; overload;
+function e_r_fax(ib_q: TdboDataset): string; overload;
 begin
   result := '';
   try
@@ -11999,7 +12009,7 @@ end;
 
 function e_r_fax(PERSON_R: integer): string; overload;
 var
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
 begin
   cPERSON := nCursor;
   with cPERSON do
@@ -12136,8 +12146,8 @@ end;
 
 procedure e_x_BelegAusPOS;
 var
-  qBELEG: TIB_Query;
-  qPosten: TIB_Query;
+  qBELEG: TdboQuery;
+  qPosten: TdboQuery;
   sBELEGE: TStringList;
   n, r: integer;
   sBON: TsTable;
@@ -12241,10 +12251,10 @@ begin
             FieldByName('MENGE').AsInteger :=
               strtointdef(sBON.readCell(r, 'ANZAHL'), 0);
             FieldByName('ARTIKEL').AsString := sBON.readCell(r, 'TITEL');
-            FieldByName('PREIS').AsDouble :=
+            FieldByName('PREIS').AsFloat :=
               strtodoubledef(sBON.readCell(r, 'EURO'), 0.0);
             FieldByName('NETTO').AsString := cC_False;
-            FieldByName('MWST').AsDouble :=
+            FieldByName('MWST').AsFloat :=
               strtodoubledef(sBON.readCell(r, 'SATZ'), 0);
 
             //
@@ -12282,10 +12292,10 @@ end;
 procedure e_d_Rang;
 
 var
-  IB_RANG: TIB_Cursor;
+  IB_RANG: TdboCursor;
   IB_SET_ARTIKEL, IB_SET_ARTIKEL_AA: TIB_DSQL;
-  IB_ARTIKEL, IB_ARTIKEL_AA: TIB_Query;
-  IB_SET_RANG: TIB_Query;
+  IB_ARTIKEL, IB_ARTIKEL_AA: TdboQuery;
+  IB_SET_RANG: TdboQuery;
   RANG: double;
   MENGE: integer;
   ARTIKEL_R, AUSGABEART_R: integer;
@@ -12370,7 +12380,7 @@ begin
         begin
           Params.BeginUpdate;
           ParamByName('CR').AsInteger := ARTIKEL_R;
-          ParamByName('RANG').AsDouble := RANG;
+          ParamByName('RANG').AsFloat := RANG;
           Params.EndUpdate(true);
           execute;
         end;
@@ -12385,7 +12395,7 @@ begin
           Params.BeginUpdate;
           ParamByName('CR_A').AsInteger := ARTIKEL_R;
           ParamByName('CR_B').AsInteger := AUSGABEART_R;
-          ParamByName('RANG').AsDouble := RANG;
+          ParamByName('RANG').AsFloat := RANG;
           Params.EndUpdate(true);
           execute;
         end;
@@ -12493,7 +12503,7 @@ begin
     with IB_SET_RANG do
     begin
       edit;
-      FieldByName('RANG').AsDouble := n;
+      FieldByName('RANG').AsFloat := n;
       Post;
       Next;
     end;
@@ -12520,14 +12530,14 @@ type
   end;
 
 var
-  EREIGNIS: TIB_Cursor;
-  ARTIKEL: TIB_Query;
+  EREIGNIS: TdboCursor;
+  ARTIKEL: TdboQuery;
   LieferzeitDurchschnitt: TLieferzeitDurchschnitt;
   DebugStr: TStringList;
   StartD, EndeD: TAnfixDate;
   n: integer;
-  LIEFERZEIT: TIB_Cursor;
-  PERSON: TIB_Query;
+  LIEFERZEIT: TdboCursor;
+  PERSON: TdboQuery;
 
   procedure MakeEntry;
   begin

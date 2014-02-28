@@ -42,9 +42,9 @@ uses
   ComCtrls, ToolWin, IB_Components,
   Menus, WordIndex, anfix32,
   DatePick,
-
   Sperre, Buttons, globals,
-  gplists, GHD_pngimage, txlib, IB_Access, dbOrgaMon;
+  gplists, txlib, IB_Access,
+  dbOrgaMon;
 
 type
   TFormAuftragArbeitsplatz = class(TForm)

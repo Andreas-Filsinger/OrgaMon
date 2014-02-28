@@ -221,7 +221,8 @@ function e_r_sql(s: string): integer; overload;
 function e_r_sql(s: string; sl: TStringList): integer; overload;
 // Nur das erste Feld aus der Element als Text-Blob, result=1
 
-function e_r_sqlt(s: string): TStringList;
+function e_r_sqlt(s: string): TStringList; overload;
+procedure e_r_sqlt(Field: TdboField;s: TStrings); overload;
 // Nur das erste Feld des ersten Records als Text-Blob
 
 function e_r_GEN(GenName: string): integer;
@@ -264,6 +265,9 @@ function e_r_ConnectionCount: integer;
 
 
 {$IFDEF CONSOLE}
+{$IFDEF fpc}
+
+{$ELSE}
 
 const
   // Globale Datenbank-Elemente
@@ -271,6 +275,7 @@ const
   fbTransaction: TIB_Transaction = nil;
   fbSession: TIB_Session = nil;
 
+{$ENDIF}
 {$ENDIF}
 
 implementation
@@ -1948,6 +1953,16 @@ begin
   end;
   cSQL.free;
 end;
+
+procedure e_r_sqlt(Field: TdboField;s: TStrings); overload;
+begin
+{$ifdef fpc}
+     Raise Exception.Create('imp pend: dbOrgaMon:e_r_sqlt Add a Line to TStringList-Field');
+{$else}
+ Field.AssignTo(s);
+{$endif}
+end;
+
 
 function e_r_sqlsl(s: string): TStringList;
 var
