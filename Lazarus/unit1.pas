@@ -45,12 +45,7 @@ implementation
 uses
   anfix32, globals,
   JonDaExec in '../JonDaServer/JonDaExec.pas',
-  Sperre,
-  Funktionen_Auftrag,
-  Funktionen.Basis,
-  Funktionen.Beleg,
-  Funktionen.Buch,
-  Funktionen.LokaleDaten;
+  Sperre;
 
 {$R *.lfm}
 

@@ -24,7 +24,6 @@
   |    http://orgamon.org/
   |
 }
-{$define CONSOLE}
 program lOrgaMon;
 
 {
@@ -39,9 +38,9 @@ program lOrgaMon;
  cOrgaMon | lOrgaMon
  =========+=========
  IBO      | Zeos! (Umlaut OK!)
- infozip  | zipper! (ab 1.3: UTF8, 64 Bit Support)
+ infozip  | zipper! (ab Rev 1.3: UTF8, 64 Bit Support)
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
- flexcel  | fpspreadsheet! (LAck of Revision Number)
+ flexcel  | fpspreadsheet! (Lack of Revision Number)
 
 }
 
@@ -56,6 +55,9 @@ uses
   Classes,
   math,
   inifiles,
+  sysutils,
+  ZCompatibility,
+  fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   globals in 'globals.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
@@ -151,32 +153,32 @@ begin
       writeln('Performance-Log aktiv: ' + LogContext);
 
     // TWebShop
-    AddMethod('ArtikelSuche', XMethods.rpc_e_r_ArtikelSuche);
-    AddMethod('ArtikelPreis', XMethods.rpc_e_r_ArtikelPreis);
-    AddMethod('KontoInfo', XMethods.rpc_e_r_KontoInfo);
-    AddMethod('BestellInfo', XMethods.rpc_e_r_BestellInfo);
-    AddMethod('Land', XMethods.rpc_e_r_Land);
-    AddMethod('Bestellen', XMethods.rpc_e_w_Bestellen);
-    AddMethod('Vormerken', XMethods.rpc_e_w_Vormerken);
-    AddMethod('Buchen', XMethods.rpc_e_w_Buchen);
-    AddMethod('ArtikelVersendetag', XMethods.rpc_e_r_ArtikelVersendetag);
-    AddMethod('Verlag', XMethods.rpc_e_r_Verlag);
-    AddMethod('Versandkosten', XMethods.rpc_e_r_Versandkosten);
-    AddMethod('ArtikelInfo', XMethods.rpc_e_r_ArtikelInfo);
-    AddMethod('BasePlug', XMethods.rpc_e_r_BasePlug);
-    AddMethod('ArtikelRabattPreis', XMethods.rpc_e_r_ArtikelRabattPreis);
-    AddMethod('PersonNeu', XMethods.rpc_e_w_PersonNeu);
-    AddMethod('Ort', XMethods.rpc_e_r_Ort);
-    AddMethod('Rabatt', XMethods.rpc_e_r_Rabatt);
-    AddMethod('Preis', XMethods.rpc_e_r_Preis);
-    AddMethod('Miniscore', XMethods.rpc_e_w_Miniscore);
-    AddMethod('LoginInfo', XMethods.rpc_e_w_LoginInfo);
-    AddMethod('Skript', XMethods.rpc_e_w_Skript);
+    AddMethod('ArtikelSuche', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelSuche);
+    AddMethod('ArtikelPreis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelPreis);
+    AddMethod('KontoInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_KontoInfo);
+    AddMethod('BestellInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_BestellInfo);
+    AddMethod('Land', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Land);
+    AddMethod('Bestellen', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Bestellen);
+    AddMethod('Vormerken', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Vormerken);
+    AddMethod('Buchen', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Buchen);
+    AddMethod('ArtikelVersendetag', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelVersendetag);
+    AddMethod('Verlag', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Verlag);
+    AddMethod('Versandkosten', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Versandkosten);
+    AddMethod('ArtikelInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelInfo);
+    AddMethod('BasePlug', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_BasePlug);
+    AddMethod('ArtikelRabattPreis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelRabattPreis);
+    AddMethod('PersonNeu', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_PersonNeu);
+    AddMethod('Ort', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Ort);
+    AddMethod('Rabatt', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Rabatt);
+    AddMethod('Preis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Preis);
+    AddMethod('Miniscore', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Miniscore);
+    AddMethod('LoginInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_LoginInfo);
+    AddMethod('Skript', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Skript);
 
     // JonDa
-    AddMethod('JonDaPlug', JonDa.info);
-    AddMethod('StartTAN', JonDa.start);
-    AddMethod('ProceedTAN', JonDa.proceed);
+    AddMethod('JonDaPlug', {$ifdef fpc}@{$endif}JonDa.info);
+    AddMethod('StartTAN', {$ifdef fpc}@{$endif}JonDa.start);
+    AddMethod('ProceedTAN', {$ifdef fpc}@{$endif}JonDa.proceed);
 
     // Starten
     BasePlug := e_r_BasePlug;
@@ -291,6 +293,11 @@ begin
         MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
       end;
 
+      {$ifdef fpc}
+      ClientCodePage := 'ISO8859_1';
+      ControlsCodePage := cCP_UTF8 ;
+      Protocol := 'firebird-2.5';
+      {$else}
       DataBaseName := _iDataBaseName;
       if (iDataBaseHost = '') then
       begin
@@ -301,8 +308,13 @@ begin
       begin
         protocol := cpTCP_IP;
       end;
+      {$endif}
 
-      UserName := iDataBaseUser;
+{$ifdef fpc}
+User := iDataBaseUser;
+{$else}
+UserName := iDataBaseUser;
+{$endif}
       if (length(iDataBasePassword) > 25) then
         Password := deCrypt_Hex(iDataBasePassword)
       else
@@ -323,7 +335,7 @@ begin
       MachineIDChanged;
     end;
 
-    IBExportTable.cConnection := fbConnection;
+    dbOrgaMon.cConnection := fbConnection;
 
     sBearbeiter := e_r_Bearbeiter;
     if (sBearbeiter < cRID_FirstValid) then
