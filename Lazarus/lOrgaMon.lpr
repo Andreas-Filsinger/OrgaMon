@@ -33,7 +33,16 @@ program lOrgaMon;
  cOrgaMon ist der Embarcadero/Delphi XMLRPC Server für Win32
  dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für Win32 und Linux (Yeah!)
 
+
+ Voraussetzungen
+ ===============
+
+ zeos
+ jcl
+ Indy
+
  Vergleiche
+ ==========
 
  cOrgaMon | lOrgaMon
  =========+=========

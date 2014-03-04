@@ -26,13 +26,15 @@
 }
 unit globals;
 
+{$i jcl.inc}
+
 interface
 
 uses
   windows,
   classes,
-{$IFNDEF CONSOLE}
   graphics,
+{$IFNDEF CONSOLE}
   controls,
 {$ENDIF}
 {$ifndef fpc}
