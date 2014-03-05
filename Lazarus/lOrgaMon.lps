@@ -4,24 +4,23 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="38">
+    <Units Count="39">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
         <CursorPos X="1" Y="30"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="2" Y="23"/>
@@ -68,7 +67,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="249"/>
         <CursorPos X="1" Y="271"/>
@@ -171,7 +170,7 @@
       <Unit17>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <UnitName Value="fpchelper"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="844"/>
         <CursorPos X="17" Y="869"/>
@@ -191,7 +190,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5587"/>
         <CursorPos X="39" Y="5609"/>
@@ -229,10 +228,11 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="32"/>
-        <CursorPos X="1" Y="38"/>
+        <TopLine Value="1553"/>
+        <CursorPos X="16" Y="1556"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -256,7 +256,7 @@
       <Unit26>
         <Filename Value="..\OrgaMon\eConnect.pas"/>
         <UnitName Value="eConnect"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="1" Y="38"/>
@@ -312,7 +312,7 @@
       <Unit32>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclStrings.pas"/>
         <UnitName Value="JclStrings"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5388"/>
         <CursorPos X="61" Y="5398"/>
@@ -323,7 +323,7 @@
       <Unit33>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclDateTime.pas"/>
         <UnitName Value="JclDateTime"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="256"/>
         <CursorPos X="72" Y="266"/>
@@ -334,7 +334,7 @@
       <Unit34>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclAnsiStrings.pas"/>
         <UnitName Value="JclAnsiStrings"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4086"/>
         <CursorPos X="68" Y="4096"/>
@@ -345,7 +345,7 @@
       <Unit35>
         <Filename Value="..\..\jcl-2.6.0\source\common\zlibh.pas"/>
         <UnitName Value="zlibh"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2368"/>
         <CursorPos X="1" Y="2378"/>
@@ -356,7 +356,7 @@
       <Unit36>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
         <UnitName Value="JclSimpleXml"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1080"/>
         <CursorPos X="42" Y="1087"/>
@@ -370,135 +370,146 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="78"/>
-        <CursorPos X="31" Y="89"/>
+        <CursorPos X="3" Y="91"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
+      <Unit38>
+        <Filename Value="..\..\indy\Lib\indylaz.pas"/>
+        <UnitName Value="indylaz"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="3" Y="10"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit38>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\..\jcl-2.6.0\source\common\JclAnsiStrings.pas"/>
-        <Caret Line="4091" Column="68" TopLine="4081"/>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="23" Column="2" TopLine="13"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\jcl-2.6.0\source\common\zlibh.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
+        <Caret Line="86" Column="14" TopLine="80"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1036" Column="23" TopLine="1020"/>
       </Position3>
       <Position4>
-        <Filename Value="..\PASconTools\anfix32.pas"/>
-        <Caret Line="23" Column="2" TopLine="13"/>
+        <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1046" Column="15" TopLine="1030"/>
       </Position4>
       <Position5>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="86" Column="14" TopLine="80"/>
+        <Caret Line="1048" Column="16" TopLine="1032"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1036" Column="23" TopLine="1020"/>
+        <Caret Line="1086" Column="17" TopLine="1075"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1046" Column="15" TopLine="1030"/>
+        <Caret Line="1087" Column="16" TopLine="1075"/>
       </Position7>
       <Position8>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1048" Column="16" TopLine="1032"/>
+        <Caret Line="1089" Column="18" TopLine="1075"/>
       </Position8>
       <Position9>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1086" Column="17" TopLine="1075"/>
+        <Caret Line="1091" Column="24" TopLine="1075"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1087" Column="16" TopLine="1075"/>
+        <Caret Line="1095" Column="17" TopLine="1079"/>
       </Position10>
       <Position11>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1089" Column="18" TopLine="1075"/>
+        <Caret Line="1097" Column="16" TopLine="1082"/>
       </Position11>
       <Position12>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1091" Column="24" TopLine="1075"/>
+        <Caret Line="1099" Column="18" TopLine="1083"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1095" Column="17" TopLine="1079"/>
+        <Caret Line="1101" Column="24" TopLine="1085"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1097" Column="16" TopLine="1082"/>
+        <Caret Line="1113" Column="23" TopLine="1097"/>
       </Position14>
       <Position15>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1099" Column="18" TopLine="1083"/>
+        <Caret Line="1124" Column="41" TopLine="1114"/>
       </Position15>
       <Position16>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1101" Column="24" TopLine="1085"/>
+        <Caret Line="1128" Column="18" TopLine="1114"/>
       </Position16>
       <Position17>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1113" Column="23" TopLine="1097"/>
+        <Caret Line="1130" Column="18" TopLine="1114"/>
       </Position17>
       <Position18>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1124" Column="41" TopLine="1114"/>
+        <Caret Line="86" Column="27" TopLine="76"/>
       </Position18>
       <Position19>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1128" Column="18" TopLine="1114"/>
+        <Caret Line="1045" Column="1" TopLine="1037"/>
       </Position19>
       <Position20>
         <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1130" Column="18" TopLine="1114"/>
+        <Caret Line="1083" Column="1" TopLine="1074"/>
       </Position20>
       <Position21>
-        <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="86" Column="27" TopLine="76"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="35" Column="1" TopLine="1"/>
       </Position21>
       <Position22>
-        <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1045" Column="1" TopLine="1037"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="556" Column="25" TopLine="543"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\jcl-2.6.0\source\common\JclSimpleXml.pas"/>
-        <Caret Line="1083" Column="1" TopLine="1074"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position23>
       <Position24>
         <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="35" Column="1" TopLine="1"/>
+        <Caret Line="556" Column="25" TopLine="543"/>
       </Position24>
       <Position25>
         <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="556" Column="25" TopLine="543"/>
+        <Caret Line="29" Column="12" TopLine="21"/>
       </Position25>
       <Position26>
         <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="558" Column="25" TopLine="545"/>
       </Position26>
       <Position27>
-        <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="556" Column="25" TopLine="543"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="29" Column="12" TopLine="21"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="558" Column="25" TopLine="545"/>
-      </Position29>
-      <Position30>
         <Filename Value="..\PASconTools\CareTakerClient.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\PASconTools\CareTakerClient.pas"/>
+        <Caret Line="89" Column="31" TopLine="78"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\..\indy\Lib\indylaz.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="38" Column="1" TopLine="32"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
