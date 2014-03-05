@@ -1045,6 +1045,8 @@ end;
 
 procedure TdboCursor.ApiFirst;
 begin
+ if not(active) then
+  Open;
   First;
 end;
 
@@ -1869,6 +1871,7 @@ function nCursor: TdboCursor;
 begin
   {$ifdef fpc}
   result := TdboCursor.create(niL);
+  result.connection := fbconnection;
   {$else}
   {$IFDEF CONSOLE}
   result := TIB_Cursor.create(nil);

@@ -26,8 +26,6 @@
 }
 unit globals;
 
-{$i jcl.inc}
-
 interface
 
 uses

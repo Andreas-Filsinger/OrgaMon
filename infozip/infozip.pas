@@ -69,8 +69,10 @@ const
    Rev. 1.002 | R1114 | 16.05.2012 | Options-Delimiter dokumentiert
    Rev. 1.003 | R1308 | 04.03.2013 | 7z Support
    Rev. 1.004 |       | 12.09.2013 | Fix: zip Filesnames starting with "-" (Minus)
+   Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port ...
   }
-  infozip_Version: single = 1.004;
+
+  infozip_Version: single = 1.005;
 
 var
   zMessages: TStringList;
@@ -95,7 +97,7 @@ function zip(sFile: String; FName: string; Options: string = ''): integer
 // aufgenommen. Auf RootPath selbst finden sich keine Hinweise im enstehenden
 // Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
 //
-// Password   = das globale Passwort, mit dem Alle Dateien verschlüsselt werden sollen
+// Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
 // Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
 // eingesetzt werden soll. 0 = keine Komprimierung (Store) ... 9 = höchste Komprimierung
 // ExtraInfos = genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht deterministischen
@@ -110,10 +112,14 @@ implementation
 uses
   {$ifdef fpc}
   fpchelper,
+  Abzipper in '..\..\Abbrevia\Source\Abzipper.pas',
   {$endif}
   windows, registry, SysUtils,
   JclMiscel, JclSysInfo;
 
+{$ifdef fpc}
+
+{$else}
 // globals
 type
   z_uint8 = int64;
@@ -440,6 +446,7 @@ function ZpVersion(ver: LPZpVer): integer; stdcall;
 function Wiz_SingleEntryUnzip(ifnc: integer; ifnv: pointer; xfnc: integer;
   xfnv: pointer; DCL: LPDCL; UserFunc: LPUSERFUNCTIONS): integer; stdcall;
   external 'unzip32.dll' name 'Wiz_SingleEntryUnzip';
+
 (*
   where the arguments are:
 
@@ -467,6 +474,8 @@ function ZpInit(lpZipUserFunc: LPZIPUSERFUNCTIONS): integer; stdcall;
   external 'zip32z64.dll' name 'ZpInit';
 function ZpArchive(c: ZCL; Opts: LPZPOPT): integer; stdcall;
   external 'zip32z64.dll' name 'ZpArchive';
+
+{$endif}
 
 // #### tools ####
 
@@ -552,10 +561,95 @@ begin
   d := d + WorkStr;
 end;
 
+var
+  _ProgramFilesDir: string = '';
+
+function ProgramFilesDir: AnsiString;
+begin
+  if (_ProgramFilesDir = '') then
+    _ProgramFilesDir := GetProgramFilesFolder + '\';
+  result := _ProgramFilesDir;
+end;
+
 // End - User - API
 
 function zip(sFiles: TStringList; FName: string;
   Options: TStringList = nil): integer;
+{$ifdef fpc}
+var
+  zipArchive : TABZipper;
+begin
+ zipArchive := TABZipper.Create;
+ with zipArchive do
+ begin
+   // Archiv-Name
+   FileName := FName;
+
+   // Dateien
+   repeat
+
+     if not(assigned(sFiles)) then
+     begin
+       AddFiles('*');
+       break;
+     end;
+
+     if (sFiles.Count = 0) then
+     begin
+       AddFiles('*');
+       break;
+     end;
+
+     AddFiles(sFiles);
+
+   until true;
+
+   if assigned(Options) then
+   begin
+
+     // Recurse SubDirs
+     if (Options.Values[infozip_RootPath] <> '') then
+     begin
+       szRootDir := oRootDir;
+       fRecurse := 1;
+     end
+     else
+     begin
+       fNoDirEntries := true;
+       fJunkDir := true;
+     end;
+
+     // Password
+     if (Options.Values[infozip_Password] <> '') then
+     begin
+       FilePassword := Options.Values[infozip_Password];
+       fEncrypt := 1;
+     end;
+
+     // Compression Level
+     if (Options.Values[infozip_Level] <> '') then
+       fLevel := ord(Options.Values[infozip_Level][1])
+     else
+       fLevel := ord('9');
+
+     // Extra Infos
+     if (Options.Values[infozip_ExtraInfo] = '0') then
+       fExtra := true;
+
+   end
+   else
+   begin
+
+     // Defaults!
+     fNoDirEntries := true;
+     fJunkDir := true;
+     fLevel := ord('9');
+   end;
+
+   ZipAllFiles;
+ end;
+
+{$else}
 var
   FilesStore: pointer;
   FilesStoreCount: integer;
@@ -701,6 +795,7 @@ begin
   dispose(ZipOptions);
   sFilesInternal.free;
   FS_free;
+{$endif}
 end;
 
 function zip(sFiles: TStringList; FName: string; Options: string): integer
@@ -765,15 +860,6 @@ end;
   dispose(Parameter);
   end;
 *)
-var
-  _ProgramFilesDir: string = '';
-
-function ProgramFilesDir: AnsiString;
-begin
-  if (_ProgramFilesDir = '') then
-    _ProgramFilesDir := GetProgramFilesFolder + '\';
-  result := _ProgramFilesDir;
-end;
 
 //
 const
@@ -785,8 +871,12 @@ const
   cUnzipMethod_Unzip_exe = 1;
   cUnzipMethod_7z_exe = 2;
 
+
 function unzip(FName: string; Destination: string;
   Options: TStringList = nil): integer;
+{$ifdef fpc}
+begin
+{$else}
 var
   CommandLine: string;
 begin
@@ -859,12 +949,17 @@ begin
     result := 1;
 
   end;
-
+{$endif}
 end;
 
 begin
-  zMessages := TStringList.Create;
-  RegisterExpectedMemoryLeak(zMessages);
+ zMessages := TStringList.Create;
+ RegisterExpectedMemoryLeak(zMessages);
+ unzip_Version:= 'unzip ' + zbase.zlibVersion;
+ zip_Version:= 'zip ' +  zbase.zlibVersion;
+
+  {$ifdef fpc}
+  {$else}
 
   // ZIP Versions-Nummer
   new(ZipVersionInfo);
@@ -913,5 +1008,5 @@ begin
     SendApplicationMessage := _DLLMESSAGE;
     ServCallBk := _DLLSERVICE;
   end;
-
+ {$endif}
 end.
