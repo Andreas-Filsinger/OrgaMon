@@ -136,6 +136,9 @@ uses
   // wegen der Versionsnummern
 {$ifdef fpc}
   ZClasses,
+  ZConnection,
+  ZCompatibility,
+
 //  fpspreadsheet,
   {$else}
   UFlxMessages,
@@ -790,7 +793,7 @@ begin
       { 01 } add(cAppName);
 {$IFDEF CONSOLE}
 {$ifdef fpc}
-{ 02 } add('Zeos Rev. ' + ZEOS_VERSION);
+{ 02 } add('Zeos Rev. ' + fbConnection.Version);
 {$else}
 { 02 } add('IBO Rev. ' + fbConnection.Version);
 {$endif}
@@ -1066,6 +1069,15 @@ begin
 
 {$IFDEF CONSOLE}
 {$ifdef fpc}
+//fbTransaction := TZTransaction.create;
+ fbConnection := TZConnection.create(nil);
+with fbconnection do
+begin
+      ClientCodePage := 'ISO8859_1';
+      ControlsCodePage := cCP_UTF8;
+      Protocol := 'firebird-2.5';
+// Transaction := fbTransaction;
+end;
 {$else}
   // Datenbank - Zugriffselemente erzeugen!
   fbSession := TIB_Session.create(nil);

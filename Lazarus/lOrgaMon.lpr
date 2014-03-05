@@ -46,10 +46,10 @@ program lOrgaMon;
 
  cOrgaMon | lOrgaMon
  =========+=========
- IBO      | Zeos! (Umlaut OK!)
- infozip  | zipper! (ab Rev 1.3: UTF8, 64 Bit Support)
- ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
  flexcel  | fpspreadsheet! (Lack of Revision Number)
+ IBO      | Zeos! (Umlaut OK!)
+ infozip  | Abbrevia 5.1
+ ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
 
 }
 
@@ -65,7 +65,6 @@ uses
   math,
   inifiles,
   sysutils,
-  ZCompatibility,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   globals in 'globals.pas',
@@ -85,7 +84,7 @@ uses
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
   txHoliday in '..\PASconTools\txHoliday.pas',
-  infozip in '..\infozip\infozip.pas',
+  InfoZIP in '..\infozip\InfoZIP.pas',
   Mapping in '..\PASconTools\Mapping.pas',
   OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
@@ -136,6 +135,7 @@ begin
   write('.');
   e_r_PreisNativ_ensureCache;
   writeln(' OK');
+
 
   // Vorrangig über den "--Port=nnnnn" Parameter
   UsedPort := StrToIntDef(getParam('port'), -1);
@@ -283,6 +283,10 @@ begin
 
     writeln(cOKText);
 
+
+    // zip(nil,MyProgramPath+'*.ini',MyProgramPath+'z.zip');
+
+
     with fbConnection do
     begin
 
@@ -302,11 +306,7 @@ begin
         MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
       end;
 
-      {$ifdef fpc}
-      ClientCodePage := 'ISO8859_1';
-      ControlsCodePage := cCP_UTF8 ;
-      Protocol := 'firebird-2.5';
-      {$else}
+      {$ifndef fpc}
       DataBaseName := _iDataBaseName;
       if (iDataBaseHost = '') then
       begin
@@ -321,6 +321,8 @@ begin
 
 {$ifdef fpc}
 User := iDataBaseUser;
+ HostName := iDataBaseHost;
+ Database := i_c_DataBaseFName;
 {$else}
 UserName := iDataBaseUser;
 {$endif}

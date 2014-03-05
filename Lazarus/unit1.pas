@@ -54,7 +54,7 @@ uses
 
 procedure TForm1.FormActivate(Sender: TObject);
 var
-  s: TSTringField;
+  s: TStringField;
 begin
   {
   if not (SQLQuery1.active) then
