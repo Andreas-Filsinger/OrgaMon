@@ -1133,7 +1133,7 @@ begin
 
     // Die benötigten AB-Start-Nummern ermitteln
     for n := 0 to pred(Baustellen.count) do
-      BaustellenABNUMMER.add(e_r_AuftragNummer(BAUSTELLE_R));
+      BaustellenABNUMMER.add(e_r_AuftragNummer(Baustellen[n]));
 
     // Über einen "CLUB" arbeiten
     numberCLUB := TdboClub.create(DataModuleDatenbank.IB_Connection1,
@@ -1146,7 +1146,6 @@ begin
       { } 'order by' +
       { } ' STRASSE, ZAEHLER_NUMMER, ART');
 
-    e_x_commit;
     numberCLUB.free;
 
     // Updateliste abarbeiten
@@ -1166,7 +1165,6 @@ begin
         inttostr(updateList[n]));
     end;
 
-     e_x_commit;
     updateList.free;
   end;
   EmptyRIDs.free;

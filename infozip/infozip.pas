@@ -955,10 +955,10 @@ end;
 begin
  zMessages := TStringList.Create;
  RegisterExpectedMemoryLeak(zMessages);
- unzip_Version:= 'unzip ' + zbase.zlibVersion;
- zip_Version:= 'zip ' +  zbase.zlibVersion;
 
   {$ifdef fpc}
+ unzip_Version:= 'unzip ' + zbase.zlibVersion;
+ zip_Version:= 'zip ' +  zbase.zlibVersion;
   {$else}
 
   // ZIP Versions-Nummer

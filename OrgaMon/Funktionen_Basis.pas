@@ -147,7 +147,6 @@ uses
 {$endif}
   JclBase,
 {$IFNDEF CONSOLE}
-  GHD_pngimage,
   Datenbank,
   TPUMain,
   JvclVer,
