@@ -43,8 +43,11 @@ uses
   ZConnection,
   ZDataset,
   ZAbstractDataset,
+  ZAbstractConnection,
   ZDbcResultSetMetadata,
   ZSQLProcessor,
+  ZStreamBlob,
+  ZDbcInterbase6,
 {$ELSE}
   IB_Components,
   IB_Access,
@@ -1137,7 +1140,9 @@ var
 begin
   sl := TStringList.create;
 {$ifdef fpc}
- Raise Exception.Create('imp pend: db: Add a Line to TStringList-Field');
+ sl.text := f.AsString;
+ sl.add(s);
+ f.AsString := sl.text;
 {$else}
   f.AssignTo(sl);
   sl.add(s);
@@ -1722,7 +1727,7 @@ begin
     AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt',
       DatumUhr);
 {$ifdef fpc}
- raise Exception.create('imp pend: e_x_sql');
+ fbconnection.ExecuteDirect(s);
 {$else}
 {$IFDEF CONSOLE}
   fbTransaction.ExecuteImmediate(s);
@@ -1735,7 +1740,7 @@ end;
 procedure e_x_commit;
 begin
   {$ifdef fpc}
-   raise Exception.create('imp pend: e_x_commit');
+   fbconnection.commit;
   {$else}
 {$IFDEF CONSOLE}
   // In der Konsolenanwendung haben wir nur *eine* Transaktion, ein commit war bisher
@@ -1807,24 +1812,6 @@ begin
   cSQL.free;
 end;
 
-function e_r_sql(s: string; sl: TStringList): integer;
-var
-  cSQL: TdboCursor;
-begin
-  result := 1;
-  cSQL := nCursor;
-  with cSQL do
-  begin
-    sql.add(s);
-    ApiFirst;
-{$ifdef fpc}
- Raise Exception.create('imp pend: Assign StringList to Blob');
-{$else}
-    Fields[0].AssignTo(sl);
-{$endif}
-  end;
-  cSQL.free;
-end;
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
 var
   n: integer;
@@ -1942,6 +1929,25 @@ begin
   until true;
 end;
 
+function e_r_sql(s: string; sl: TStringList): integer;
+var
+  cSQL: TdboCursor;
+begin
+  result := 1;
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    ApiFirst;
+{$ifdef fpc}
+ Raise Exception.create('imp pend: Assign StringList to Blob');
+{$else}
+    Fields[0].AssignTo(sl);
+{$endif}
+  end;
+  cSQL.free;
+end;
+
 function e_r_sqlt(s: string): TStringList;
 var
   cSQL: TdboCursor;
@@ -1952,24 +1958,26 @@ begin
   begin
     sql.add(s);
     ApiFirst;
-    {$ifdef fpc}
-     Raise Exception.Create('imp pend: dbOrgaMon:e_r_sqlt Add a Line to TStringList-Field');
-    {$else}
-    Fields[0].AssignTo(result);
-{$endif}
+    e_r_sqlt(Fields[0],result);
   end;
   cSQL.free;
 end;
 
 procedure e_r_sqlt(Field: TdboField;s: TStrings); overload;
+{$ifdef fpc}
+var
+ t : TStringStream;
+{$endif}
 begin
 {$ifdef fpc}
-     Raise Exception.Create('imp pend: dbOrgaMon:e_r_sqlt Add a Line to TStringList-Field');
+// t := TStringStream.Create(Field.AsBlob);
+//s.loadFromStream(t);
+//t.free;
+ s.text := Field.AsString;
 {$else}
  Field.AssignTo(s);
 {$endif}
 end;
-
 
 function e_r_sqlsl(s: string): TStringList;
 var
