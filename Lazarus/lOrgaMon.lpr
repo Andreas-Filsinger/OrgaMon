@@ -125,6 +125,7 @@ begin
     JonDa.Option_Console := true;
   end;
   MyIni.free;
+
   // Caching Objekte voraktivieren
   write('Cache ');
   e_r_Preis_ensureCache;

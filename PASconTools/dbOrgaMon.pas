@@ -32,7 +32,7 @@ interface
 
   dbOrgaMon: Abstrahiert die Datenbankschicht, stellt dazu einige
 
-  dbo* ("dbo" für DatenBank OrgaMon) Klassen zur Verfügung
+  dbo* ("dbo" für DatenBank OrgaMon) -Klassen zur Verfügung
 
 }
 
@@ -48,6 +48,7 @@ uses
   ZSQLProcessor,
   ZStreamBlob,
   ZDbcInterbase6,
+  ZSequence,
 {$ELSE}
   IB_Components,
   IB_Access,
@@ -59,14 +60,15 @@ uses
 
 type
 {$IFDEF fpc}
-TdboDatasource = TDatasource;
-TdboDataset = TDataset;
+  TdboDatasource = TDatasource;
+  TdboDataset = TDataset;
 
-{ TdboScript }
+  { TdboScript }
 
-TdboScript = class(TZSQLProcessor)
-  public function sql : TStrings;
-end;
+  TdboScript = class(TZSQLProcessor)
+  public
+    function sql: TStrings;
+  end;
 
   TdboQuery = TZQuery;
   TdboField = TField;
@@ -225,13 +227,14 @@ function e_r_sql(s: string; sl: TStringList): integer; overload;
 // Nur das erste Feld aus der Element als Text-Blob, result=1
 
 function e_r_sqlt(s: string): TStringList; overload;
-procedure e_r_sqlt(Field: TdboField;s: TStrings); overload;
+procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 // Nur das erste Feld des ersten Records als Text-Blob
 
-function e_r_GEN(GenName: string): integer;
-
-function e_w_GEN(GenName: string): integer;
+function e_w_GEN(GenName: string; Increment: integer = 1): integer;
 // erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
+
+function e_r_GEN(GenName: string): integer;
+// liefert den aktuellen Wert des Generators
 
 // Zeit aus dem Datenbankserver lesen
 function e_r_now: TdateTime;
@@ -266,17 +269,16 @@ procedure e_x_commit;
 function e_r_fbClientVersion: string;
 function e_r_ConnectionCount: integer;
 
-
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
+
 const
 
-fbConnection: TZConnection = nil;
-
+  fbConnection: TZConnection = nil;
 
 {$ELSE}
 
-  // Globale Datenbank-Elemente
+// Globale Datenbank-Elemente
 const
   fbConnection: TIB_Connection = nil;
   fbTransaction: TIB_Transaction = nil;
@@ -293,9 +295,9 @@ uses
 {$IFDEF fpc}
   fpchelper,
 {$ELSE}
-  {$IFNDEF CONSOLE}
-   Datenbank,
-  {$ENDIF}
+{$IFNDEF CONSOLE}
+  Datenbank,
+{$ENDIF}
   IB_Header,
   IB_Session,
 {$ENDIF}
@@ -527,28 +529,28 @@ begin
                 ' unbekannt!';
             end;
 {$ENDIF}
-        end
-    else
-    begin
-      Infostr := Infostr + sRID_NULL;
+          end
+          else
+          begin
+            Infostr := Infostr + sRID_NULL;
+          end;
+
+          if (n <> pred(FieldCount)) then
+            Infostr := Infostr + Seperator;
+
+        end;
+
+      Ablage.add(Infostr);
+
+      ApiNext;
+      if frequently(StartTime, 1000) or eof then
+        SaveResults;
     end;
-
-    if (n <> pred(FieldCount)) then
-      Infostr := Infostr + Seperator;
-
-  end;
-
-  Ablage.add(Infostr);
-
-  ApiNext;
-  if frequently(StartTime, 1000) or eof then
     SaveResults;
-end;
-SaveResults;
-end;
-cABLAGE.free;
-Ablage.free;
-DB_memo.free;
+  end;
+  cABLAGE.free;
+  Ablage.free;
+  DB_memo.free;
 end;
 
 function slTable(TSql: string): TStringList;
@@ -658,31 +660,31 @@ begin
                   ' unbekannt!';
               end;
 {$ENDIF}
-          end
-      else
-      begin
-        Infostr := Infostr + '<NULL>';
+            end
+            else
+            begin
+              Infostr := Infostr + '<NULL>';
+            end;
+
+            if (n <> pred(FieldCount)) then
+              Infostr := Infostr + Seperator;
+
+          end;
+
+        result.add(Infostr);
+
+        ApiNext;
       end;
-
-      if (n <> pred(FieldCount)) then
-        Infostr := Infostr + Seperator;
-
+    end;
+  except
+    on E: Exception do
+    begin
+      result.add(cERRORText + ' slTable: ' + E.Message);
     end;
 
-    result.add(Infostr);
-
-    ApiNext;
   end;
-end;
-except
-  on E: Exception do
-  begin
-    result.add(cERRORText + ' slTable: ' + E.Message);
-  end;
-
-end;
-cABLAGE.free;
-DB_memo.free;
+  cABLAGE.free;
+  DB_memo.free;
 end;
 
 function AsKeyValue(q: TdboQuery): TStringList;
@@ -761,24 +763,24 @@ begin
               Infostr := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
 {$ENDIF}
-        end
-    else
-    begin
-      Infostr := '';
+          end
+          else
+          begin
+            Infostr := '';
+          end;
+
+          result.add(Fields[n].FieldName + '=' + Infostr);
+
+        end;
+
     end;
-
-    result.add(Fields[n].FieldName + '=' + Infostr);
-
+  except
+    on E: Exception do
+    begin
+      result.add(cERRORText + ' : ' + E.Message);
+    end;
   end;
-
-end;
-except
-  on E: Exception do
-  begin
-    result.add(cERRORText + ' : ' + E.Message);
-  end;
-end;
-DB_memo.free;
+  DB_memo.free;
 
 end;
 
@@ -884,20 +886,20 @@ begin
             end;
 
 {$ENDIF}
-        end
-      else
-      begin
-        Content := '<NULL>';
+          end
+          else
+          begin
+            Content := '<NULL>';
+          end;
+          sRow.add(Content);
+        end;
       end;
-      sRow.add(Content);
+      result.add(sRow);
+      ApiNext;
     end;
   end;
-  result.add(sRow);
-  ApiNext;
-end;
-end;
-cABLAGE.free;
-DB_memo.free;
+  cABLAGE.free;
+  DB_memo.free;
 end;
 
 function csTable(TSql: TStrings): TsTable; overload;
@@ -1035,7 +1037,6 @@ begin
   end;
 end;
 
-
 {$IFDEF fpc}
 { TdboScript }
 
@@ -1048,8 +1049,8 @@ end;
 
 procedure TdboCursor.ApiFirst;
 begin
- if not(active) then
-  Open;
+  if not(active) then
+    Open;
   First;
 end;
 
@@ -1134,20 +1135,31 @@ begin
     e_x_sql('drop table ' + TableName);
 end;
 
+procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
+begin
+{$IFDEF fpc}
+  s.text := Field.AsString;
+{$ELSE}
+  Field.AssignTo(s);
+{$ENDIF}
+  if DebugMode then
+    AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt',
+      DatumUhr);
+end;
+
 procedure qStringsAdd(f: TdboField; s: string);
 var
   sl: TStringList;
 begin
   sl := TStringList.create;
-{$ifdef fpc}
- sl.text := f.AsString;
- sl.add(s);
- f.AsString := sl.text;
-{$else}
-  f.AssignTo(sl);
+  e_r_sqlt(f, sl);
   sl.add(s);
+
+{$IFDEF fpc}
+  f.AsString := sl.text;
+{$ELSE}
   f.assign(sl);
-{$endif}
+{$ENDIF}
   sl.free;
 end;
 
@@ -1178,7 +1190,7 @@ begin
         ApiFirst;
         if eof then
           break;
-        NewRID := e_w_gen(GeneratorName);
+        NewRID := e_w_GEN(GeneratorName);
       end;
 
       //
@@ -1314,7 +1326,7 @@ function TdboClub.TableName: string;
 begin
   if (ID = 0) then
   begin
-    ID := e_w_gen('GEN_CLUB');
+    ID := e_w_GEN('GEN_CLUB');
     result := 'CLUB$' + inttostr(ID);
 
     // CLUB Tabelle neu anlegen
@@ -1334,8 +1346,7 @@ end;
 
 procedure TdboClub.xsql(s: String);
 begin
-   e_x_sql(s);
-//  ibc.DefaultTransaction.ExecuteImmediate(s);
+  e_x_sql(s);
 end;
 
 function e_r_fbClientVersion: string;
@@ -1343,14 +1354,14 @@ var
   TheModuleName: array [0 .. 1023] of char;
   s: string;
 begin
-{$ifdef fpc}
- result := 'imp pend: obtain DLL-Handle';
-{$else}
+{$IFDEF fpc}
+  result := 'imp pend: obtain DLL-Handle';
+{$ELSE}
   // welcher Client wird verwendet
   GetModuleFileName(FGDS_Handle, TheModuleName, sizeof(TheModuleName));
   s := TheModuleName;
   result := s + ' ' + FileVersion(TheModuleName);
-{$endif}
+{$ENDIF}
 end;
 
 function isRID(RID: integer): string;
@@ -1414,8 +1425,6 @@ begin
   else
     result := 'null';
 end;
-
-
 
 function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 begin
@@ -1516,7 +1525,6 @@ begin
   with cTABLE do
   begin
 
-
     sql.add(TSql);
     if DebugMode then
       AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
@@ -1542,10 +1550,10 @@ begin
         begin
           if not(IsNull) then
           begin
-{$ifdef fpc}
-Content := AsString;
+{$IFDEF fpc}
+            Content := AsString;
 
-{$else}
+{$ELSE}
             case SQLType of
               SQL_DOUBLE, SQL_DOUBLE_:
                 Content := FloatToStrISO(AsDouble, 2);
@@ -1596,8 +1604,7 @@ Content := AsString;
             else
               Content := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
-{$endif}
-
+{$ENDIF}
           end
           else
           begin
@@ -1726,55 +1733,66 @@ begin
   if DebugMode then
     AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt',
       DatumUhr);
-{$ifdef fpc}
- fbconnection.ExecuteDirect(s);
-{$else}
+{$IFDEF fpc}
+  fbConnection.ExecuteDirect(s);
+{$ELSE}
 {$IFDEF CONSOLE}
   fbTransaction.ExecuteImmediate(s);
 {$ELSE}
   Datamoduledatenbank.IB_Transaction_W.ExecuteImmediate(s);
 {$ENDIF}
-{$endif}
+{$ENDIF}
 end;
 
 procedure e_x_commit;
 begin
-  {$ifdef fpc}
-   fbconnection.commit;
-  {$else}
+{$IFDEF fpc}
+  fbConnection.commit;
+{$ELSE}
 {$IFDEF CONSOLE}
   // In der Konsolenanwendung haben wir nur *eine* Transaktion, ein commit war bisher
   // nicht notwendig
 {$ELSE}
-  Datamoduledatenbank.IB_Transaction_R.Commit;
-  {$ENDIF}
-  {$ENDIF}
+  Datamoduledatenbank.IB_Transaction_R.commit;
+{$ENDIF}
+{$ENDIF}
+end;
+
+function e_w_GEN(GenName: string; Increment: integer = 1): integer;
+{$IFDEF fpc}
+var
+  s: TZSequence;
+{$ENDIF}
+begin
+{$IFDEF fpc}
+  s := TZSequence.create(nil);
+  with s do
+  begin
+    SequenceName := GenName;
+    if (Increment = 0) then
+    begin
+      // This is now "read-only": "Change Context to read"
+      result := GetCurrentValue;
+    end
+    else
+    begin
+      BlockSize := Increment;
+      result := GetNextValue;
+    end;
+  end;
+  s.free;
+{$ELSE}
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, Increment);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, Increment);
+{$ENDIF}
+{$ENDIF}
 end;
 
 function e_r_GEN(GenName: string): integer;
 begin
-  {$ifdef fpc}
-   raise Exception.create('imp pend: e_r_gen');
-  {$else}
-{$IFDEF CONSOLE}
-  result := fbConnection.gen_id(GenName, 0);
-{$ELSE}
-  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
-{$ENDIF}
-{$ENDIF}
-end;
-
-function e_w_GEN(GenName: string): integer;
-begin
-  {$ifdef fpc}
-   raise Exception.create('imp pend: e_w_gen');
-  {$else}
-{$IFDEF CONSOLE}
-  result := fbConnection.gen_id(GenName, 1);
-{$ELSE}
-  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
-{$ENDIF}
-{$ENDIF}
+  result := e_w_GEN(GenName, 0);
 end;
 
 procedure e_x_update(s: string; sl: TStringList);
@@ -1837,15 +1855,15 @@ end;
 function nQuery: TdboQuery;
 begin
 
-{$ifdef fpc}
-result := TZQuery.create(nil);
+{$IFDEF fpc}
+  result := TZQuery.create(nil);
 
-{$else}
+{$ELSE}
 {$IFDEF CONSOLE}
   result := TIB_Query.create(nil);
   with result do
   begin
-    IB_Connection := fbConnection;
+    ib_connection := fbConnection;
     IB_Session := fbSession;
   end;
 {$ELSE}
@@ -1856,34 +1874,34 @@ end;
 
 function nCursor: TdboCursor;
 begin
-  {$ifdef fpc}
+{$IFDEF fpc}
   result := TdboCursor.create(niL);
-  result.connection := fbconnection;
-  {$else}
-  {$IFDEF CONSOLE}
+  result.connection := fbConnection;
+{$ELSE}
+{$IFDEF CONSOLE}
   result := TIB_Cursor.create(nil);
   with result do
   begin
-    IB_Connection := fbConnection;
+    ib_connection := fbConnection;
     IB_Session := fbSession;
   end;
 {$ELSE}
   result := Datamoduledatenbank.nCursor;
   result.IB_Transaction := Datamoduledatenbank.IB_Transaction_R;
-  {$ENDIF}
-  {$ENDIF}
+{$ENDIF}
+{$ENDIF}
 end;
 
 function nScript: TdboScript;
 begin
-{$ifdef fpc}
- result := TdboScript.create(nil);
-{$else}
+{$IFDEF fpc}
+  result := TdboScript.create(nil);
+{$ELSE}
 {$IFDEF CONSOLE}
   result := TIB_DSQL.create(nil);
   with result do
   begin
-    IB_Connection := fbConnection;
+    ib_connection := fbConnection;
     IB_Session := fbSession;
   end;
 {$ELSE}
@@ -1917,6 +1935,7 @@ begin
     result := 1;
 
 end;
+
 function e_r_IsRID(FieldName: string; RID: integer): boolean;
 begin
   result := false;
@@ -1939,11 +1958,7 @@ begin
   begin
     sql.add(s);
     ApiFirst;
-{$ifdef fpc}
- Raise Exception.create('imp pend: Assign StringList to Blob');
-{$else}
-    Fields[0].AssignTo(sl);
-{$endif}
+    e_r_sqlt(Fields[0], sl);
   end;
   cSQL.free;
 end;
@@ -1958,25 +1973,9 @@ begin
   begin
     sql.add(s);
     ApiFirst;
-    e_r_sqlt(Fields[0],result);
+    e_r_sqlt(Fields[0], result);
   end;
   cSQL.free;
-end;
-
-procedure e_r_sqlt(Field: TdboField;s: TStrings); overload;
-{$ifdef fpc}
-var
- t : TStringStream;
-{$endif}
-begin
-{$ifdef fpc}
-// t := TStringStream.Create(Field.AsBlob);
-//s.loadFromStream(t);
-//t.free;
- s.text := Field.AsString;
-{$else}
- Field.AssignTo(s);
-{$endif}
 end;
 
 function e_r_sqlsl(s: string): TStringList;
@@ -2070,11 +2069,11 @@ begin
     if eof then
       result := ifnull
     else
-      {$ifdef fpc}
+{$IFDEF fpc}
       result := Fields[0].AsFloat;
-    {$else}
-    result := Fields[0].AsDouble;
-    {$endif}
+{$ELSE}
+      result := Fields[0].AsDouble;
+{$ENDIF}
   end;
   cSQL.free;
 end;
@@ -2102,7 +2101,6 @@ begin
   e_x_sql(sql);
   sql.free;
 end;
-
 
 function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
 var
@@ -2157,7 +2155,7 @@ begin
   //
   result := TStringList.create;
   ParameterL := TStringList.create;
-  ParameterL.addstrings(Params);
+  ParameterL.AddStrings(Params);
   AutoMataState := 0;
   for n := 0 to pred(OLAP.count) do
   begin
