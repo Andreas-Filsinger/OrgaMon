@@ -1145,7 +1145,7 @@ begin
       { } ' (NUMMER is null) ' +
       { } 'order by' +
       { } ' STRASSE, ZAEHLER_NUMMER, ART');
-
+    e_x_commit;
     numberCLUB.free;
 
     // Updateliste abarbeiten
@@ -1164,7 +1164,7 @@ begin
         inttostr(BaustellenABNUMMER[IncIndex]) + ' where ' + ' RID=' +
         inttostr(updateList[n]));
     end;
-
+    e_x_commit;
     updateList.free;
   end;
   EmptyRIDs.free;
