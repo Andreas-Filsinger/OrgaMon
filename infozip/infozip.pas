@@ -113,6 +113,7 @@ uses
   {$ifdef fpc}
   fpchelper,
   Abzipper in '..\..\Abbrevia\Source\Abzipper.pas',
+  AbUnzper in '..\..\Abbrevia\Source\Abunzper.pas',
   {$endif}
   windows, registry, SysUtils,
   JclMiscel, JclSysInfo;
@@ -875,6 +876,8 @@ const
 function unzip(FName: string; Destination: string;
   Options: TStringList = nil): integer;
 {$ifdef fpc}
+var
+ zipArchive : TAbUnzip;
 begin
 {$else}
 var
