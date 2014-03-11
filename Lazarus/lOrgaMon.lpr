@@ -86,7 +86,7 @@ uses
   txHoliday in '..\PASconTools\txHoliday.pas',
   InfoZIP in '..\infozip\InfoZIP.pas',
   Mapping in '..\PASconTools\Mapping.pas',
-  OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
+  OpenStreetMap in '..\PASconTools\OpenStreetMap.pas', laz_fpspreadsheet,
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
   Funktionen_Basis in 'Funktionen_Basis.pas',
   Funktionen_Beleg in 'Funktionen_Beleg.pas',
@@ -307,24 +307,21 @@ begin
         MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
       end;
 
-      {$ifndef fpc}
-      DataBaseName := _iDataBaseName;
-      if (iDataBaseHost = '') then
-      begin
-        Server := '';
-        protocol := cplocal;
-      end
-      else
-      begin
-        protocol := cpTCP_IP;
-      end;
-      {$endif}
-
 {$ifdef fpc}
 User := iDataBaseUser;
  HostName := iDataBaseHost;
  Database := i_c_DataBaseFName;
 {$else}
+DataBaseName := _iDataBaseName;
+if (iDataBaseHost = '') then
+begin
+  Server := '';
+  protocol := cplocal;
+end
+else
+begin
+  protocol := cpTCP_IP;
+end;
 UserName := iDataBaseUser;
 {$endif}
       if (length(iDataBasePassword) > 25) then

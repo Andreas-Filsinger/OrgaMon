@@ -27,11 +27,13 @@
 unit Funktionen_Beleg;
 
 //
-// e,
-// e_ eCommerce
-// w,r
-// w_ possible write
-// r_ read only access
+// e
+// e_ (=eCommerce)
+//
+// w,r,x
+// w_ (=write) possible write (maybe deteced as "without effect" in a later state)
+// r_ (=read) granted read only access (guaranteed no "w")
+// x_ (=execute) SQL Satement
 //
 // SQL-Aktions-Logging in ein SQL-Log
 //
@@ -69,19 +71,10 @@ function e_r_Artikel(AUSGABEART_R, ARTIKEL_R: integer): string;
 procedure e_r_ArtikelSortieren(const RIDS: TList);
 //
 
-{ Artikel }
 function e_r_ArtikelLink(ARTIKEL_R: integer): string;
+//
 
 function ResolveSQL(const VarName: ShortString): ShortString;
-//
-
-procedure e_x_dereference(dependencies: TStringList; fromref: string;
-  toref: string = 'NULL'); overload;
-procedure e_x_dereference(dependencies: string; fromref: string;
-  toref: string = 'NULL'); overload;
-// alle Referenzen von einem Wert auf einen RID
-//
-// TABELLE "." FELD [","] [" where " CONDITION]
 //
 
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -1352,7 +1345,7 @@ begin
     with EREIGNIS do
     begin
 {$ifdef fpc}
- Raise Exception.Create('Columnattributes');
+ // Raise Exception.Create('Columnattributes');
 {$else}
 ColumnAttributes.add('RID=NOTREQUIRED');
 ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
@@ -3964,10 +3957,10 @@ begin
     with LIEFERZEIT do
     begin
       sql.add('SELECT');
-      sql.add(' ARTIKEL.LIEFERZEIT,');
+      sql.add(' ARTIKEL.LIEFERZEIT as ARTIKEL_LIEFERZEIT,');
       sql.add(' ARTIKEL.EURO,');
       sql.add(' ARTIKEL.MINDESTBESTAND,');
-      sql.add(' PERSON.LIEFERZEIT');
+      sql.add(' PERSON.LIEFERZEIT as PERSON_LIEFERZEIT');
       sql.add('FROM ARTIKEL');
       sql.add('left JOIN PERSON ON');
       sql.add(' (ARTIKEL.VERLAG_R=PERSON.RID)');
@@ -3977,18 +3970,18 @@ begin
       repeat
         if eof then
           break;
-        if (FieldByName('ARTIKEL.EURO').AsFloat = cPreis_vergriffen) then
+        if (FieldByName('EURO').AsFloat = cPreis_vergriffen) then
         begin
           result := 1;
           break;
         end;
-        if (FieldByName('ARTIKEL.MINDESTBESTAND').AsInteger = cMenge_unbegrenzt)
+        if (FieldByName('MINDESTBESTAND').AsInteger = cMenge_unbegrenzt)
         then
         begin
           result := cVersendetag_OffsetTage;
           break;
         end;
-        result := FieldByName('ARTIKEL.LIEFERZEIT').AsInteger;
+        result := FieldByName('ARTIKEL_LIEFERZEIT').AsInteger;
         if (result > 0) then
         begin
           result := min(
@@ -3996,7 +3989,7 @@ begin
             { } cVersendetag_OffsetTage + LieferzeitInTagen(result));
           break;
         end;
-        result := FieldByName('PERSON.LIEFERZEIT').AsInteger;
+        result := FieldByName('PERSON_LIEFERZEIT').AsInteger;
         if (result > 0) then
         begin
           result := min(
@@ -6041,7 +6034,7 @@ begin
           KONTEXT := EINSTELLUNGEN.values['Kontext'];
           if (KONTEXT = '') then
           begin
-            KONTEXT_SQL := 'INTERN_INFO not containing ''Kontext=''';
+            KONTEXT_SQL := '(INTERN_INFO is NULL) or (INTERN_INFO not containing ''Kontext='')';
           end
           else
           begin
@@ -8761,65 +8754,6 @@ begin
 
 end;
 
-procedure e_x_dereference(dependencies: TStringList;
-  fromref, toref: string); overload;
-var
-  Dependency: string;
-  Condition: string;
-  AddFields: string;
-  TableName: string;
-  FieldName: string;
-  CalculatedSQL: string;
-  n: integer;
-begin
-  try
-    for n := 0 to pred(dependencies.count) do
-    begin
-      Condition := cutblank(nextp(dependencies[n], ' where ', 1));
-      Dependency := cutblank(nextp(dependencies[n], ' where ', 0));
-
-      AddFields := cutblank(nextp(Dependency, ',', 1));
-      Dependency := cutblank(nextp(Dependency, ',', 0));
-
-      TableName := nextp(Dependency, '.', 0);
-      FieldName := nextp(Dependency, '.', 1);
-
-      if (Condition <> '') then
-        Condition := ' and (' + Condition + ')';
-
-      CalculatedSQL := 'update ' + TableName + ' set ' + FieldName + ' = ' +
-        toref + AddFields + ' where (' + FieldName + ' = ' + fromref + ')' +
-        Condition;
-
-      try
-        e_x_sql(CalculatedSQL);
-      except
-        on E: exception do
-        begin
-          CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL +
-            '"): ' + E.Message);
-        end;
-      end;
-
-    end;
-  except
-    on E: exception do
-    begin
-      CareTakerLog(cERRORText + ' e_x_dereference(): ' + E.Message);
-    end;
-  end;
-end;
-
-procedure e_x_dereference(dependencies, fromref, toref: string); overload;
-var
-  sl: TStringList;
-begin
-  sl := TStringList.create;
-  sl.add(dependencies);
-  e_x_dereference(sl, fromref, toref);
-  sl.free;
-end;
-
 function e_w_JoinPerson(PERSON_R_FROM, PERSON_R_TO: integer): integer;
 var
   References: TStringList;
@@ -9557,7 +9491,7 @@ begin
         if (pos('=', sTexte[n]) > 0) then
           BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
 
-    // prüfe exitenz der Ziel - Person
+    // prüfe Existenz der Ziel-Person
     if e_r_sql('select count(rid) from person where RID=' +
       inttostr(PERSON_R_TO)) <> 1 then
       break;
@@ -9603,7 +9537,7 @@ begin
       for n := 0 to pred(FieldCount) do
         if (BlackList.IndexOf(Fields[n].FieldName) = -1) then
           Fields[n].assign(cQUELL_BELEG.FieldByName(Fields[n].FieldName));
-      e_r_sqlt(FieldByName('INTERN_INFO'),BelegOptions);
+      FieldByName('INTERN_INFO').Assign(BelegOptions);
       if (BTYP > 0) then
         FieldByName('BTYP').AsString := inttostr(BTYP - 1);
       Post;

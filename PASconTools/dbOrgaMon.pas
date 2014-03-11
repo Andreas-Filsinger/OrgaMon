@@ -41,6 +41,7 @@ uses
 {$IFDEF fpc}
   db,
   ZConnection,
+  ZClasses,
   ZDataset,
   ZAbstractDataset,
   ZAbstractConnection,
@@ -70,7 +71,7 @@ type
     function sql: TStrings;
   end;
 
-  TdboQuery = TZQuery;
+
   TdboField = TField;
 
   { TdboCursor }
@@ -80,6 +81,14 @@ type
     procedure ApiFirst;
     procedure ApiNext;
   end;
+
+  { TdboQuery }
+
+  TdboQuery = class(TZQuery)
+  public
+   procedure Insert;
+  end;
+
 {$ELSE}
 
   TdboQuery = TIB_Query;
@@ -264,6 +273,15 @@ procedure e_w_dereference(RID: integer; TableN, FieldN: string;
 
 // Datenbank-Server Commit
 procedure e_x_commit;
+
+// alle Referenzen von einem Wert auf einen RID
+//
+// TABELLE "." FELD [","] [" where " CONDITION]
+//
+procedure e_x_dereference(dependencies: TStringList; fromref: string;
+  toref: string = 'NULL'); overload;
+procedure e_x_dereference(dependencies: string; fromref: string;
+  toref: string = 'NULL'); overload;
 
 // Server Infos
 function e_r_fbClientVersion: string;
@@ -1037,6 +1055,7 @@ begin
   end;
 end;
 
+
 {$IFDEF fpc}
 { TdboScript }
 
@@ -1057,6 +1076,15 @@ end;
 procedure TdboCursor.ApiNext;
 begin
   Next;
+end;
+
+{ TdboQuery }
+
+procedure TdboQuery.Insert;
+begin
+  if not(active) then
+    Open;
+ inherited Insert;
 end;
 
 {$ENDIF}
@@ -1856,8 +1884,8 @@ function nQuery: TdboQuery;
 begin
 
 {$IFDEF fpc}
-  result := TZQuery.create(nil);
-
+  result := TdboQuery.create(nil);
+  result.connection := fbConnection;
 {$ELSE}
 {$IFDEF CONSOLE}
   result := TIB_Query.create(nil);
@@ -1896,6 +1924,7 @@ function nScript: TdboScript;
 begin
 {$IFDEF fpc}
   result := TdboScript.create(nil);
+  result.connection := fbConnection;
 {$ELSE}
 {$IFDEF CONSOLE}
   result := TIB_DSQL.create(nil);
@@ -2221,5 +2250,65 @@ begin
   end;
   cNOW.free;
 end;
+
+procedure e_x_dereference(dependencies: TStringList;
+  fromref, toref: string); overload;
+var
+  Dependency: string;
+  Condition: string;
+  AddFields: string;
+  TableName: string;
+  FieldName: string;
+  CalculatedSQL: string;
+  n: integer;
+begin
+  try
+    for n := 0 to pred(dependencies.count) do
+    begin
+      Condition := cutblank(nextp(dependencies[n], ' where ', 1));
+      Dependency := cutblank(nextp(dependencies[n], ' where ', 0));
+
+      AddFields := cutblank(nextp(Dependency, ',', 1));
+      Dependency := cutblank(nextp(Dependency, ',', 0));
+
+      TableName := nextp(Dependency, '.', 0);
+      FieldName := nextp(Dependency, '.', 1);
+
+      if (Condition <> '') then
+        Condition := ' and (' + Condition + ')';
+
+      CalculatedSQL := 'update ' + TableName + ' set ' + FieldName + ' = ' +
+        toref + AddFields + ' where (' + FieldName + ' = ' + fromref + ')' +
+        Condition;
+
+      try
+        e_x_sql(CalculatedSQL);
+      except
+        on E: exception do
+        begin
+          CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL +
+            '"): ' + E.Message);
+        end;
+      end;
+
+    end;
+  except
+    on E: exception do
+    begin
+      CareTakerLog(cERRORText + ' e_x_dereference(): ' + E.Message);
+    end;
+  end;
+end;
+
+procedure e_x_dereference(dependencies, fromref, toref: string); overload;
+var
+  sl: TStringList;
+begin
+  sl := TStringList.create;
+  sl.add(dependencies);
+  e_x_dereference(sl, fromref, toref);
+  sl.free;
+end;
+
 
 end.
