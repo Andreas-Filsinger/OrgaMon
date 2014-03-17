@@ -48,7 +48,7 @@ program lOrgaMon;
  =========+=========
  flexcel  | fpspreadsheet! (Lack of Revision Number)
  IBO      | Zeos! (Umlaut OK!)
- infozip  | Abbrevia 5.1
+ infozip  | Abbrevia 5.1!
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
 
 }
@@ -65,9 +65,9 @@ uses
   math,
   inifiles,
   sysutils,
+  globals,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
-  globals in 'globals.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
   gplists in '..\PASconTools\gplists.pas',
   DCPcrypt2 in '..\DCPcrypt\DCPcrypt2.pas',
@@ -86,12 +86,13 @@ uses
   txHoliday in '..\PASconTools\txHoliday.pas',
   InfoZIP in '..\infozip\InfoZIP.pas',
   Mapping in '..\PASconTools\Mapping.pas',
-  OpenStreetMap in '..\PASconTools\OpenStreetMap.pas', laz_fpspreadsheet,
-  Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
-  Funktionen_Basis in 'Funktionen_Basis.pas',
-  Funktionen_Beleg in 'Funktionen_Beleg.pas',
-  Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
-  eConnect in 'eConnect.pas';
+  OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
+  laz_fpspreadsheet,
+  Funktionen_Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_LokaleDaten,
+  eConnect;
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);

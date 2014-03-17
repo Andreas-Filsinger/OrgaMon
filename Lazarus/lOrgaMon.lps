@@ -9,12 +9,11 @@
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="67"/>
-        <CursorPos X="7" Y="92"/>
-        <UsageCount Value="56"/>
+        <TopLine Value="55"/>
+        <CursorPos X="3" Y="93"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -194,10 +193,13 @@
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
         <UnitName Value="Funktionen_Beleg"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6160"/>
         <CursorPos X="5" Y="32"/>
         <UsageCount Value="15"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
