@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.038 (18.03.14) Andreas Filsinger
+
+ Neu: Fotos-nnnn.zip: Limitierung auf ca. 100 MByte
+
+Rev 1.037 (18.03.14) Andreas Filsinger
+
+ Neu: Fotos mit leerer Zählernummer
+
 Rev 1.036 (12.02.14) Andreas Filsinger
 
  Bug: timestamp Flood

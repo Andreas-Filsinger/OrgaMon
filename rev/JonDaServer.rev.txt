@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 2.205 (18.03.14) Andreas Filsinger
+
+ Neu: Fotos mit leerer Zählernummer
+
 Rev 2.204 (24.02.14) Andreas Filsinger
 
  Neu: SENDEN.CSV Abschluss
