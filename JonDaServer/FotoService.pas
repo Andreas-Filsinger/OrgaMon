@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.036; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.038; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1069,9 +1069,14 @@ var
   BasisDatum: TANFiXDate;
 
   procedure serviceJPG;
+  const
+    cMaxZIP_Size = 100 * 1024 * 1024;
   var
     m: integer;
+    Pending: boolean;
+    FotoFSize: int64;
   begin
+    Pending := false;
     sPics.Clear;
     repeat
       // Jpegs
@@ -1093,6 +1098,21 @@ var
           sPics.delete(m);
       if (sPics.count = 0) then
         break;
+
+      // reduziere auf < 100 MByte
+      FotoFSize := 0;
+      for m := pred(sPics.count) downto 0 do
+      begin
+        if (FotoFSize >= cMaxZIP_Size) then
+        begin
+          sPics.delete(m);
+          Pending := true;
+        end
+        else
+        begin
+          inc(FotoFSize, FSize(sPath + sPics[m]));
+        end;
+      end;
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
       FTP_Benutzer := nextp(sPath, '\', 1);
@@ -1142,6 +1162,7 @@ var
       begin
         // Problem anzeigen
         FormFotoService.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
+        Pending := false;
         break;
       end;
 
@@ -1155,6 +1176,10 @@ var
         FileDelete(sPath + sPics[m]);
 
     until true;
+
+    if Pending then
+      serviceJPG;
+
   end;
 
   procedure serviceHTML;
@@ -1319,7 +1344,7 @@ begin
 
       repeat
 
-        // Zips
+        // Zips ablegen
         dir(sPath + '*.zip', sZips, false);
         for m := 0 to pred(sZips.count) do
         begin
@@ -1335,8 +1360,10 @@ begin
         if (sDirs[n] = 'orgamon-mob') then
           break;
 
+        // jpgs zippen
         serviceJPG;
 
+        // htmls zippen
         serviceHTML;
 
       until true;
@@ -1798,8 +1825,7 @@ begin
               { } 'cp ' + sFiles[m] +
               { } ' ' + FotoZiel + '\' +
               { } FotoDateiName, MyWorkingPath + cFotoTransaktionenFName);
-                  LastLogWasTimeStamp := false;
-
+            LastLogWasTimeStamp := false;
 
             // Auszeichnen, wenn die Umbenennung vorläufig ist
             if not(UmbenennungAbgeschlossen) then
@@ -2065,7 +2091,7 @@ begin
           { } 'mv ' + FNameAlt +
           { } ' ' + FNameNeu,
           { } MyWorkingPath + cFotoTransaktionenFName);
-                  LastLogWasTimeStamp := false;
+        LastLogWasTimeStamp := false;
 
         WARTEND.del(r);
       end;

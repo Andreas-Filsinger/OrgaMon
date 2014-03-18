@@ -2579,13 +2579,14 @@ var
   Mandant, aknr: string;
   ReferenzDiagnose: TStringList;
 begin
+  result := TStringList.Create;
+  FotoDateiName := '';
   // mderecOrgaMon.Baustelle / cParameter_foto_baustelle
   // mderecOrgaMon.Zaehler_Strasse / cParameter_foto_strasse
   // mderecOrgaMon.Zaehler_Ort / cParameter_foto_ort
   // mderecOrgaMon.zaehlernummer_alt / cParameter_foto_zaehlernummer_alt
   // mderecOrgaMon.zaehlernummer_neu / cParameter_foto_zaehlernummer_neu
   // cE_FotoBenennung
-  result := TStringList.Create;
   FotoBenennung := strtointdef(sParameter.values[cParameter_foto_Modus], 0);
   Baustelle := sParameter.values[cParameter_foto_baustelle];
   ZielBaustelle := Baustelle;
@@ -2839,11 +2840,19 @@ begin
     break;
   end;
 
-  // Ergebnis
-  result.values[cParameter_foto_fertig] := activ(UmbenennungAbgeschlossen);
-  result.values[cParameter_foto_neu] := FotoDateiName + '.jpg';
-  result.values[cParameter_foto_ziel] := ZielBaustelle;
-
+  if (FotoDateiName = '') then
+  begin
+    // leeres Ergebnis
+    result.values[cParameter_foto_Fehler] :=
+    { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind';
+  end
+  else
+  begin
+    // Ergebnis
+    result.values[cParameter_foto_fertig] := activ(UmbenennungAbgeschlossen);
+    result.values[cParameter_foto_neu] := FotoDateiName + '.jpg';
+    result.values[cParameter_foto_ziel] := ZielBaustelle;
+  end;
 end;
 
 function TJonDaExec.ftpDown(GeraeteNo, AktTrn: string; iFTP: TIdFTP): boolean;
@@ -2853,7 +2862,6 @@ var
   GeraeteNoSrc: string;
   FName_Abgezogen: string;
   FName_AbgezogenSrc: string;
-
 begin
   result := true;
   sErgebnisTANs := TStringList.Create;
@@ -3064,7 +3072,7 @@ var
       // zu alte Zeile löschen
       for r := 1 to RowCount do
       begin
-        CellDate := strtointdef(nextp(readCell(r, c),' ',0), cIllegalDate);
+        CellDate := strtointdef(nextp(readCell(r, c), ' ', 0), cIllegalDate);
         if (CellDate > cIllegalDate) and (CellDate < d) then
         begin
           // Löschposition gefunden -> alles ab da löschen!
@@ -3087,7 +3095,6 @@ begin
 
   // Datensicherungsverzeichnis!
   LastTrn := inttostr(pred(strtoint(ActTRN)));
-
 
   // erst mal 'ne Datensicherung machen
   FileCopy(MyProgramPath + cServerDataPath + 'FOTO+TS' + cBL_FileExtension,
