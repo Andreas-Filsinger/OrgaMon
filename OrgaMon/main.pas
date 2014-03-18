@@ -521,8 +521,9 @@ begin
     end;
 
     //
-    AppendStringsTofile(sBootSequence, EigeneOrgaMonDateienPfad + iMandant +
-      '-Boot.log');
+    if DebugMode then
+      AppendStringsTofile(sBootSequence, EigeneOrgaMonDateienPfad + iMandant +
+        '-Boot.log');
 
     // Arbeiten durchführen, die bei Releaseänderungen gemacht werden müssen
     for r := succ(LastRev) to ThisRev do
