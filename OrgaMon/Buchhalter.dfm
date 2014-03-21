@@ -35,10 +35,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -350,10 +346,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Sammellastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1090,10 +1082,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1396,10 +1384,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -2072,15 +2056,11 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
       object Label16: TLabel
-        Left = 35
+        Left = 37
         Top = 41
         Width = 38
         Height = 13
@@ -2091,7 +2071,7 @@ object FormBuchhalter: TFormBuchhalter
         Caption = 'Datum'
       end
       object Label17: TLabel
-        Left = 113
+        Left = 123
         Top = 41
         Width = 36
         Height = 13
@@ -2102,7 +2082,7 @@ object FormBuchhalter: TFormBuchhalter
         Caption = 'Valuta'
       end
       object Label18: TLabel
-        Left = 209
+        Left = 212
         Top = 41
         Width = 48
         Height = 13
@@ -2113,7 +2093,7 @@ object FormBuchhalter: TFormBuchhalter
         Caption = 'Vorgang'
       end
       object Label19: TLabel
-        Left = 376
+        Left = 356
         Top = 41
         Width = 25
         Height = 13
@@ -2124,7 +2104,7 @@ object FormBuchhalter: TFormBuchhalter
         Caption = 'Text'
       end
       object Label20: TLabel
-        Left = 654
+        Left = 620
         Top = 39
         Width = 21
         Height = 13
@@ -2176,7 +2156,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton12Click
       end
       object Label21: TLabel
-        Left = 776
+        Left = 753
         Top = 39
         Width = 36
         Height = 13
@@ -2687,7 +2667,7 @@ object FormBuchhalter: TFormBuchhalter
         ExplicitTop = 330
       end
       object SpeedButton26: TSpeedButton
-        Left = 859
+        Left = 833
         Top = 32
         Width = 22
         Height = 22
@@ -2728,7 +2708,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton26Click
       end
       object SpeedButton32: TSpeedButton
-        Left = 783
+        Left = 758
         Top = 383
         Width = 22
         Height = 22
@@ -2786,7 +2766,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton32Click
       end
       object SpeedButton33: TSpeedButton
-        Left = 823
+        Left = 799
         Top = 32
         Width = 32
         Height = 22
@@ -3027,7 +3007,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton46Click
       end
       object SpeedButton47: TSpeedButton
-        Left = 833
+        Left = 809
         Top = 383
         Width = 23
         Height = 22
@@ -3141,9 +3121,9 @@ object FormBuchhalter: TFormBuchhalter
         OnDrawCell = DrawGrid3DrawCell
       end
       object Button14: TButton
-        Left = 859
+        Left = 835
         Top = 383
-        Width = 22
+        Width = 28
         Height = 22
         Hint = 'Ausgleich buchen'
         Margins.Left = 4
@@ -3381,7 +3361,7 @@ object FormBuchhalter: TFormBuchhalter
         TabOrder = 17
       end
       object Button22: TButton
-        Left = 808
+        Left = 784
         Top = 383
         Width = 22
         Height = 22
@@ -3404,10 +3384,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Lastschriften'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3632,10 +3608,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 24
         Top = 40
@@ -3950,7 +3922,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 368
     Top = 104
     Bitmap = {
-      494C010104000900200110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900280110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

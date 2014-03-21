@@ -18,7 +18,7 @@ object FormCron: TFormCron
     Top = 0
     Width = 809
     Height = 710
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
