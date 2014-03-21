@@ -150,7 +150,7 @@ object FormCareServer: TFormCareServer
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alBottom
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
@@ -160,10 +160,6 @@ object FormCareServer: TFormCareServer
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'W'#228'chter Log'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 179
         Top = 5
@@ -836,10 +832,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 86
         Top = 47
@@ -1097,10 +1089,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Funktions Sicherstellung'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label16: TLabel
         Left = 8
         Top = 8

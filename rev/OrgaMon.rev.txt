@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.005 (20.03.14) Andreas Filsinger
+
+ Neu: Diagnose-Möglichkeit für "openShell" in Pflege -> Serversteuerung
+
 Rev 8.004 (18.03.14) Andreas Filsinger
 
  Neu: Fotos mit leerer Zählernummer

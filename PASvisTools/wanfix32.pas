@@ -46,6 +46,9 @@ const
   // die Umrechnung geschieht zur Laufzeit mit der Funktion DPIx()
   cAppDesigner_PixelsPerInch: double = 96.0;
 
+  // Das zuletzt übergebene Dokument (print,open,exec,...)
+  _Document: string = '';
+
   // Grafische Sachen
 function LoadGraphicsFile(const Filename: string): TBitmap;
 procedure DrawImage(Canvas: TCanvas; DestRect: TRect; ABitmap: TBitmap);
@@ -472,19 +475,27 @@ end;
 
 function printhtml(dokument: string): boolean;
 begin
+ _Document := dokument;
   result := WinExec32('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"',
     sw_showdefault);
 end;
 
 function printpdf(dokument: string): boolean;
 const
+  cAdobe10 = 'Adobe\Reader 10.0\Reader\AcroRd32.exe';
   cAdobe9 = 'Adobe\Reader 9.0\Reader\AcroRd32.exe';
   cAdobe7 = 'adobe\acrobat 7.0\reader\acrord32.exe';
 var
   InstalledReader: string;
 begin
+ _Document := dokument;
   repeat
     // detect newest reader
+    if FileExists(ProgramFilesDir + cAdobe10) then
+    begin
+      InstalledReader := ProgramFilesDir + cAdobe10;
+      break;
+    end;
     if FileExists(ProgramFilesDir + cAdobe9) then
     begin
       InstalledReader := ProgramFilesDir + cAdobe9;
@@ -549,6 +560,7 @@ var
   end;
 
 begin
+ _Document := FName;
   result := false;
   d(FName);
   if FileExists(FName) then
@@ -574,7 +586,7 @@ begin
 
       if (WindowList.indexof('Drucken') <> -1) then
       begin
-        delay(cDelayGranularity*2);
+        delay(cDelayGranularity * 2);
         d('PRE-VK_RETURN');
         PostKeyEx32(VK_RETURN, [], false);
         d('POST-VK_RETURN');
@@ -964,10 +976,10 @@ begin
         MB_SYSTEMMODAL or MB_ICONQUESTION;
 
     MBresult := MessageBoxTimeOut(application.Handle, PChar(Frage),
-      PChar(Format('OK nach %d Sekunden', [TimeOut DIV 1000])), iFlags, 0,
-      TimeOut);
+      PChar(Format('OK nach %d Sekunden', [TimeOut DIV 1000])), iFlags,
+      0, TimeOut);
 
-    result := (MBresult=MB_TIMEDOUT) or (MBresult=IDOK);
+    result := (MBresult = MB_TIMEDOUT) or (MBresult = IDOK);
   end
   else
   begin
@@ -1025,14 +1037,18 @@ begin
   end;
 end;
 
+//  file:///
+
 function openShell(dokument: string;
   Visibility: Word = SW_SHOWMAXIMIZED): boolean;
 begin
+  _Document := dokument;
   result := ShellExecute(0, 'open', PChar(dokument), nil, nil, Visibility) > 32;
 end;
 
 function printShell(dokument: string): boolean;
 begin
+  _Document := dokument;
   result := ShellExecute(0, 'print', PChar(dokument), nil, nil,
     SW_SHOWMAXIMIZED) > 32;
 end;

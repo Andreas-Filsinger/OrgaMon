@@ -143,6 +143,10 @@ type
     Button15: TButton;
     RadioButton6: TRadioButton;
     Edit12: TEdit;
+    GroupBox1: TGroupBox;
+    SpeedButton4: TSpeedButton;
+    Edit13: TEdit;
+    Button16: TButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -163,6 +167,8 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -752,6 +758,11 @@ begin
   openShell(EigeneOrgaMonDateienPfad);
 end;
 
+procedure TFormSystemPflege.SpeedButton4Click(Sender: TObject);
+begin
+ edit13.Text := wanfix32._document;
+end;
+
 procedure TFormSystemPflege.Button13Click(Sender: TObject);
 var
   TheL: TStringList;
@@ -793,6 +804,11 @@ end;
 procedure TFormSystemPflege.Button15Click(Sender: TObject);
 begin
   FormArtikelPOS.show;
+end;
+
+procedure TFormSystemPflege.Button16Click(Sender: TObject);
+begin
+ openShell(Edit13.Text);
 end;
 
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
