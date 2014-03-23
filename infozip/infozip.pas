@@ -112,8 +112,9 @@ implementation
 uses
   {$ifdef fpc}
   fpchelper,
-  Abzipper in '..\..\Abbrevia\Source\Abzipper.pas',
-  AbUnzper in '..\..\Abbrevia\Source\Abunzper.pas',
+  AbConst,
+  Abzipper,
+  AbUnzper,
   {$endif}
   windows, registry, SysUtils,
   JclMiscel, JclSysInfo;
@@ -580,7 +581,7 @@ function zip(sFiles: TStringList; FName: string;
 var
   zipArchive : TABZipper;
 begin
- zipArchive := TABZipper.Create;
+ zipArchive := TABZipper.Create(nil);
  with zipArchive do
  begin
    // Archiv-Name
@@ -591,17 +592,17 @@ begin
 
      if not(assigned(sFiles)) then
      begin
-       AddFiles('*');
+   //    AddFiles('*');
        break;
      end;
 
      if (sFiles.Count = 0) then
      begin
-       AddFiles('*');
+   //    AddFiles('*');
        break;
      end;
 
-     AddFiles(sFiles);
+  //   AddFiles(sFiles);
 
    until true;
 
@@ -611,22 +612,22 @@ begin
      // Recurse SubDirs
      if (Options.Values[infozip_RootPath] <> '') then
      begin
-       szRootDir := oRootDir;
-       fRecurse := 1;
+     //  szRootDir := oRootDir;
+    //   fRecurse := 1;
      end
      else
      begin
-       fNoDirEntries := true;
-       fJunkDir := true;
+    //   fNoDirEntries := true;
+      // fJunkDir := true;
      end;
 
      // Password
      if (Options.Values[infozip_Password] <> '') then
      begin
-       FilePassword := Options.Values[infozip_Password];
-       fEncrypt := 1;
+    //   FilePassword := Options.Values[infozip_Password];
+   //    fEncrypt := 1;
      end;
-
+   {
      // Compression Level
      if (Options.Values[infozip_Level] <> '') then
        fLevel := ord(Options.Values[infozip_Level][1])
@@ -636,18 +637,19 @@ begin
      // Extra Infos
      if (Options.Values[infozip_ExtraInfo] = '0') then
        fExtra := true;
-
+  }
    end
    else
    begin
-
+   {
      // Defaults!
      fNoDirEntries := true;
      fJunkDir := true;
      fLevel := ord('9');
+   }
    end;
 
-   ZipAllFiles;
+   //ZipAllFiles;
  end;
 
 {$else}
@@ -877,7 +879,7 @@ function unzip(FName: string; Destination: string;
   Options: TStringList = nil): integer;
 {$ifdef fpc}
 var
- zipArchive : TAbUnzip;
+ zipArchive : TAbUnZipper;
 begin
 {$else}
 var
@@ -960,8 +962,8 @@ begin
  RegisterExpectedMemoryLeak(zMessages);
 
   {$ifdef fpc}
- unzip_Version:= 'unzip ' + zbase.zlibVersion;
- zip_Version:= 'zip ' +  zbase.zlibVersion;
+ unzip_Version:= 'unzip ' + AbConst.AbVersionS;
+ zip_Version:= 'zip ' +  AbConst.AbVersionS;
   {$else}
 
   // ZIP Versions-Nummer
