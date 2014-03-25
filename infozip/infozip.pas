@@ -881,7 +881,26 @@ function unzip(FName: string; Destination: string;
 var
  zipArchive : TAbUnZipper;
 begin
-{$else}
+ result := 0;
+
+ if not(FileExists(FName)) then
+   raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
+
+ zipArchive := TAbUnzipper.create;
+ with zipArchive do
+ begin
+   FileName := FName;
+   BaseDirectory := Destination;
+    // ExtractOptions := [];
+
+       if assigned(Options) then
+      if (Options.Values[infozip_Password] <> '') then
+        Password := Options.Values[infozip_Password];
+
+ end;
+
+
+ {$else}
 var
   CommandLine: string;
 begin
