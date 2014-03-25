@@ -4,17 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="68">
+    <Units Count="76">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
-        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="69"/>
-        <CursorPos X="5" Y="87"/>
+        <CursorPos X="30" Y="89"/>
         <UsageCount Value="58"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -157,12 +155,10 @@
       <Unit16>
         <Filename Value="..\infozip\infozip.pas"/>
         <UnitName Value="InfoZIP"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="955"/>
         <CursorPos X="44" Y="966"/>
         <UsageCount Value="19"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -195,12 +191,10 @@
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
         <UnitName Value="Funktionen_Beleg"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="5" Y="1"/>
         <UsageCount Value="15"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -363,12 +357,10 @@
       </Unit38>
       <Unit39>
         <Filename Value="..\..\jcl-2.5.0\source\include\jcl.inc"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="34"/>
         <CursorPos X="2" Y="44"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -528,238 +520,257 @@
       <Unit58>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclStrings.pas"/>
         <UnitName Value="JclStrings"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5388"/>
         <CursorPos X="60" Y="5398"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclAnsiStrings.pas"/>
         <UnitName Value="JclAnsiStrings"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4086"/>
         <CursorPos X="69" Y="4096"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclDateTime.pas"/>
         <UnitName Value="JclDateTime"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="256"/>
         <CursorPos X="72" Y="266"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
         <UnitName Value="JclSimpleXml"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1124"/>
         <CursorPos X="4" Y="1130"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
         <Filename Value="..\..\Abbrevia\source\AbUnzper.pas"/>
         <UnitName Value="AbUnzper"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="121"/>
         <CursorPos X="4" Y="129"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
         <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
         <UnitName Value="AbZipTyp"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="21"/>
         <CursorPos X="8" Y="37"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
         <Filename Value="..\..\Abbrevia\source\AbDefine.inc"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
         <Filename Value="..\..\Abbrevia\source\AbUtils.pas"/>
         <UnitName Value="AbUtils"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
         <CursorPos X="1" Y="72"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
         <Filename Value="..\..\Abbrevia\source\AbConst.pas"/>
         <UnitName Value="AbConst"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="26"/>
         <CursorPos X="1" Y="45"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
         <Filename Value="..\..\zeos\src\plain\ZPlainLoader.pas"/>
         <UnitName Value="ZPlainLoader"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="231"/>
         <CursorPos X="1" Y="240"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
+      <Unit68>
+        <Filename Value="..\..\jcl-2.5.0\source\common\zlibh.pas"/>
+        <UnitName Value="zlibh"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="923"/>
+        <CursorPos X="7" Y="2378"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="..\..\jcl\source\windows\JclWin32.pas"/>
+        <UnitName Value="JclWin32"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="7223"/>
+        <CursorPos X="49" Y="7245"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit69>
+      <Unit70>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="2" Y="41"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclStrings.pas"/>
+        <UnitName Value="JclStrings"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="5374"/>
+        <CursorPos X="60" Y="5398"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit71>
+      <Unit72>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclDateTime.pas"/>
+        <UnitName Value="JclDateTime"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="244"/>
+        <CursorPos X="71" Y="266"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit72>
+      <Unit73>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclAnsiStrings.pas"/>
+        <UnitName Value="JclAnsiStrings"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="4074"/>
+        <CursorPos X="69" Y="4096"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit73>
+      <Unit74>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\zlibh.pas"/>
+        <UnitName Value="zlibh"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2356"/>
+        <CursorPos X="4" Y="2378"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <UnitName Value="JclSimpleXml"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1071"/>
+        <CursorPos X="38" Y="1093"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit75>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="19" HistoryIndex="18">
       <Position1>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="318" Column="41" TopLine="302"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="385" Column="24" TopLine="370"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="44" Column="2" TopLine="22"/>
       </Position2>
       <Position3>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="386" Column="24" TopLine="370"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclStrings.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position3>
       <Position4>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="397" Column="25" TopLine="382"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclStrings.pas"/>
+        <Caret Line="5393" Column="59" TopLine="5371"/>
       </Position4>
       <Position5>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="398" Column="25" TopLine="383"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclDateTime.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="399" Column="28" TopLine="384"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclAnsiStrings.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position6>
       <Position7>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="459" Column="21" TopLine="444"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclAnsiStrings.pas"/>
+        <Caret Line="4091" Column="68" TopLine="4069"/>
       </Position7>
       <Position8>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="460" Column="22" TopLine="445"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\zlibh.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="461" Column="23" TopLine="446"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position9>
       <Position10>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="462" Column="21" TopLine="447"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="86" Column="27" TopLine="64"/>
       </Position10>
       <Position11>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="463" Column="22" TopLine="448"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1045" Column="1" TopLine="1025"/>
       </Position11>
       <Position12>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="464" Column="23" TopLine="449"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1083" Column="38" TopLine="1061"/>
       </Position12>
       <Position13>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1062" Column="52" TopLine="1046"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1085" Column="52" TopLine="1063"/>
       </Position13>
       <Position14>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1090" Column="53" TopLine="1074"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\common\JclSimpleXml.pas"/>
+        <Caret Line="1097" Column="16" TopLine="1065"/>
       </Position14>
       <Position15>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1128" Column="43" TopLine="1112"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="270" Column="8" TopLine="248"/>
       </Position15>
       <Position16>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1129" Column="52" TopLine="1113"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="40" Column="2" TopLine="18"/>
       </Position16>
       <Position17>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1166" Column="44" TopLine="1150"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="64" Column="59" TopLine="20"/>
       </Position17>
       <Position18>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1167" Column="53" TopLine="1151"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="42" Column="2" TopLine="20"/>
       </Position18>
       <Position19>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1245" Column="42" TopLine="1229"/>
+        <Filename Value="..\..\jcl-git\jcl\jcl\source\include\jcl.inc"/>
+        <Caret Line="63" Column="66" TopLine="19"/>
       </Position19>
-      <Position20>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1263" Column="24" TopLine="1247"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1264" Column="24" TopLine="1248"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="1345" Column="36" TopLine="1329"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
-        <Caret Line="37" Column="8" TopLine="21"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\Abbrevia\source\AbUnzper.pas"/>
-        <Caret Line="129" Column="4" TopLine="121"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="964" Column="29" TopLine="954"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="965" Column="34" TopLine="955"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="115" Column="11" TopLine="98"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="965" Column="27" TopLine="955"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="115" Column="3" TopLine="105"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\infozip\infozip.pas"/>
-        <Caret Line="966" Column="44" TopLine="955"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
