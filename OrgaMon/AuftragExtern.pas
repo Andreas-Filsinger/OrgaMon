@@ -427,7 +427,7 @@ begin
 
               end;
 
-              Quit;
+              Disconnect;
 
             end;
           except

@@ -2446,7 +2446,7 @@ begin
           if connected then
           begin
             try
-              Quit;
+              Disconnect;
             Except
               // don't handle this!
             end;
@@ -2642,7 +2642,7 @@ begin
           if connected then
           begin
             try
-              Quit;
+              Disconnect;
             Except
               // do not handle this
             end;

@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.006 (25.03.14) Andreas Filsinger
+
+ Neu: FTP: mehr Diagnose Info
+ Neu: FTP: Abort+Disconnect nach einem Fehler
+
 Rev 8.005 (20.03.14) Andreas Filsinger
 
  Neu: Diagnose-Möglichkeit für "openShell" in Pflege -> Serversteuerung
