@@ -29,9 +29,9 @@ unit SolidFTP;
 interface
 
 uses
-{$ifdef FPC}
- fpchelper,
- {$endif}
+{$IFDEF FPC}
+  fpchelper,
+{$ENDIF}
   Classes, IdFTP, anfix32;
 
 type
@@ -47,6 +47,8 @@ const
   SolidFTP_sLog: TStringList = nil;
   SolidFTP_Retries: integer = 3; // 030 ~ 1 Stunde pro Transaktion
   SolidFTP_NonLinuxParser: boolean = false;
+  SolidFTP_SingleStepLog: boolean = true;
+
   // 120 ~ 4 Stunden pro Transaktion
   SolidFTP_LogDir: string = '';
 
@@ -109,7 +111,7 @@ uses
   SysUtils,
 
   // anfix
-  CareTakerClient, Simplepassword,
+  CareTakerClient, SimplePassword,
 
   // Indy FTP
   IdFTPCommon, IDFtpList, IdGlobal, IdResourceStringsProtocols,
@@ -148,6 +150,58 @@ begin
   end;
 end;
 
+//
+// Fail-Over-Ketten:
+//
+// orgamon.de->orgamon.net->orgamon.dyndns.org
+// orgamon.net->orgamon.de->orgamon.dyndns.org
+//
+// Rang: Hier wird angegeben wieviele Alternativen man bisher erhalten hat
+//
+//
+
+const
+  FailOvers: TStringList = nil;
+  _FailOvers: TStringList = nil; // interne Repräsentation der FailObers
+
+function FailOverOf(host: string; Rang: integer = 0): string;
+var
+  n, m: integer;
+  s: string;
+begin
+
+  if (FailOvers = nil) then
+  begin
+
+    // hier als Konstante, sollte langfristig aus ini oder DB geladen
+    // werden können
+    FailOvers := TStringList.Create;
+    with FailOvers do
+    begin
+      add('orgamon.de>orgamon.net>orgamon.dyndns.org');
+      add('orgamon.net>orgamon.de>orgamon.dyndns.org');
+      add('hebu-music.com>orgamon.dyndns.org>orgamon.net>orgamon.de');
+    end;
+
+    // die Angaben werden in ein effizienteres Format konvertiert
+    _FailOvers := TStringList.Create;
+    for n := 0 to pred(FailOvers.Count) do
+    begin
+      s := FailOvers[n];
+      m := 0;
+      while (s <> '') do
+      begin
+        _FailOvers.values[nextp(s, '>') + ':' + IntToStr(m)] :=
+          nextp(s, '>', 1);
+        inc(m);
+      end;
+    end;
+
+  end;
+
+  result := _FailOvers.values[host + ':' + IntToStr(Rang)];
+end;
+
 const
   sErrorMsg: TStringList = nil;
   sErrorCount: integer = 0;
@@ -162,18 +216,19 @@ begin
   begin
     Passive := true; // wichtig wegen NAT und Sicherheit
     TransferType := ftBinary; // wichtig wegen SIZE
+    TransferTimeout := 30000; // 30 sec ohne Daten -> TimeOut
   end;
   with ftp.ProxySettings do
   begin
     if (iFTPProxyHost <> '') then
     begin
-      Host := iFTPProxyHost;
+      host := iFTPProxyHost;
       Port := iFTPProxyPort;
       ProxyType := fpcmHttpProxyWithFtp;
     end
     else
     begin
-      Host := '';
+      host := '';
       Port := 0;
       ProxyType := fpcmNone;
     end;
@@ -210,7 +265,13 @@ begin
           IntToStr(DateGet) + '.log.txt');
     SolidFTP_sLog.clear;
   end;
+end;
 
+procedure SolidSingleStepLog(s: string);
+begin
+  if SolidFTP_SingleStepLog then
+    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' +
+      IntToStr(DateGet) + '.log.txt');
 end;
 
 procedure SolidEndTransaction;
@@ -232,7 +293,7 @@ var
 begin
 
   // Um einen Zeitstempel erweitern
-  TimeStampS := datum + ';' + Uhr8 + ';' + s;
+  TimeStampS := datum + ';' + uhr8 + ';' + s;
 
   // ins Log kommt alles
   SolidFTP_sLog.add(TimeStampS);
@@ -264,9 +325,18 @@ function solidHandleException(ftp: TIdFTP; ActRetry: integer;
 begin
   if (ActRetry >= SolidFTP_Retries) then
   begin
+
     solidLog(cERRORText + ' ' + sMsg);
     try
+      SolidSingleStepLog('abort');
       ftp.Abort;
+    except
+      ;
+    end;
+
+    try
+      SolidSingleStepLog('disconnect');
+      ftp.Disconnect;
     except
 
       on E: EIdSocketError do
@@ -277,7 +347,7 @@ begin
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [250] ' + E.Message);
+        solidLog(cEXCEPTIONText + ' [279] ' + E.ClassName + ':' + E.Message);
       end;
 
     end;
@@ -285,20 +355,29 @@ begin
   end
   else
   begin
-    solidLog(cWARNINGText + ' ' + sMsg);
+    solidLog(cWARNINGText + ' (n=' + IntToStr(ActRetry) + ') ' + sMsg);
+
     try
+      SolidSingleStepLog('abort');
       ftp.Abort;
+    except
+      ;
+    end;
+
+    try
+      SolidSingleStepLog('disconnect');
+      ftp.Disconnect;
     except
 
       on E: EIdSocketError do
       begin
-        solidLog(cEXCEPTIONText + ' [271] Socket Error: ' +
+        solidLog(cEXCEPTIONText + ' [295] Socket Error: ' +
           IntToStr(E.LastError));
       end;
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [289] ' + E.Message);
+        solidLog(cEXCEPTIONText + ' [301] ' + E.ClassName + ':' + E.Message);
       end;
 
     end;
@@ -323,9 +402,25 @@ begin
 end;
 
 procedure SolidLogin(ftp: TIdFTP);
+var
+  HostAlternatives: TStringList;
+  s: string;
+  n: integer;
 begin
+  HostAlternatives := TStringList.Create;
   with ftp do
   begin
+
+    HostAlternatives.add(host);
+
+    // Calculate the Fail Overs
+    s := host;
+    repeat
+      s := FailOverOf(s,pred(HostAlternatives.count));
+      if (s = '') then
+        break;
+      HostAlternatives.add(s);
+    until false;
 
     if (length(UserName) = 0) then
     begin
@@ -333,16 +428,52 @@ begin
       raise Exception.Create('Empty UserName, can not log in');
     end;
 
+    // Usernames with a numeric First Character are in Linux not valid
+    // OrgaMon-Rules: Enforce the Prefix "u" (for "U"ser)
     if CharInSet(UserName[1], ['0' .. '9']) then
     begin
-      // Numeric Usernames in Linux not valid
-      // OrgaMon-Rules: Enforce Prefix "u" (for "U"ser)
       UserName := 'u' + UserName;
-      solidLog(cWARNINGText + ' Prefixed Login-Name with "u", now "' +
+      solidLog(cINFOText + ' Prefixed Login-Name with "u", now "' +
         UserName + '"');
     end;
 
-    connect;
+    n := 0;
+    repeat
+
+      try
+        host := HostAlternatives[n];
+        SolidSingleStepLog('connect ' + UserName + '@' + host);
+        connect;
+      except
+
+        // imp pend: Die "nicht erreichbaren Hosts" könnten
+        // für 10 Minuten in einer "Bad-Host-Liste" landen.
+        // Für den Fall dass es Alternativen gibt könnte
+        // in dieser Zeit immer zuerst auf die Alternative
+        // konnectiert werden
+        { <code> }
+
+        // imp pend: Bei "Passwort/User falsch" ist ein
+        // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
+        // Aufgabe der Aktion ist nötig!
+        { <code> }
+
+        // ensure original "Host"
+        if (n > 0) then
+          host := HostAlternatives[0];
+
+        // raise if no alternatives are left
+        if (n = pred(HostAlternatives.Count)) then
+          raise;
+
+        inc(n);
+
+      end;
+
+    until (connected);
+
+    // restore Original Host
+    host := HostAlternatives[0];
     sActualServerWorkingDirectory := cSolidFTP_DirCurrent;
 
   end;
@@ -354,7 +485,7 @@ var
 
   function _logID: string;
   begin
-    result := 'cd(' + ftp.Host + ',' + ftp.UserName + ',' + DestPath + ')';
+    result := 'cd(' + ftp.host + ',' + ftp.UserName + ',' + DestPath + ')';
   end;
 
 begin
@@ -375,9 +506,15 @@ begin
 
           //
           if (DestPath = '/') or (DestPath = '\') then
+          begin
+            SolidSingleStepLog('changedir /');
             ChangeDir('/')
+          end
           else
+          begin
+            SolidSingleStepLog('changedir ' + ValidatePathName(DestPath));
             ChangeDir(ValidatePathName(DestPath));
+          end;
 
           // Erfolg verbuchen!
           sActualServerWorkingDirectory := DestPath;
@@ -413,7 +550,7 @@ var
 
   function _logID: string;
   begin
-    result := 'dir(' + ftp.Host + ',' + ftp.UserName + ',' + SourcePath + ',' +
+    result := 'dir(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
       SourceMask + ')';
   end;
 
@@ -437,6 +574,7 @@ begin
         UseMLIS := not(SolidFTP_NonLinuxParser);
 
         // Verzeichnis liste abrufen!
+        SolidSingleStepLog('list ' + SourceMask);
         List(SourceMask, true);
 
         // Dateien zur List hinzunehmen
@@ -480,7 +618,7 @@ var
 
   function _logID: string;
   begin
-    result := 'commit(' + ftp.Host + ',' + ftp.UserName + ',' + DestPath + ',' +
+    result := 'commit(' + ftp.host + ',' + ftp.UserName + ',' + DestPath + ',' +
       DestFName + ')';
   end;
 
@@ -498,14 +636,18 @@ begin
         // Pfad sicherstellen!
         solidcdOne(ftp, DestPath);
 
+        SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
         if (Size(DestFName + cTmpFileExtension) >= 0) then
         begin
           if (Size(DestFName) >= 0) then
           begin
             solidLog(cWARNINGText + 'solidCommit: ' + DestFName +
               ' gab es bereits');
+            SolidSingleStepLog('delete ' + DestFName);
             Delete(DestFName);
           end;
+          SolidSingleStepLog('rename ' + DestFName + cTmpFileExtension + ' ' +
+            DestFName);
           Rename(DestFName + cTmpFileExtension, DestFName);
           result := true;
         end
@@ -548,7 +690,7 @@ var
 
   function _logID: string;
   begin
-    result := 'up(' + ftp.Host + ',' + ftp.UserName + ',' + SourceFName + ',' +
+    result := 'up(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ',' +
       DestPath + ',' + DestFName + ')';
   end;
 
@@ -569,14 +711,17 @@ begin
         solidcdOne(ftp, DestPath);
 
         // Ziel ev. schon vorhanden? -> Löschen
+        SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
         if Size(DestFName + cTmpFileExtension) >= 0 then
         begin
           solidLog(cWARNINGText + 'solidUp: ' + DestFName + cTmpFileExtension +
             ' gab es schon');
+          SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
           Delete(DestFName + cTmpFileExtension);
         end;
 
         // Ziel hochladen!
+        SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
         Put(SourceFName, DestFName + cTmpFileExtension);
 
         // Erfolg!
@@ -615,7 +760,7 @@ var
 
   function _logID: string;
   begin
-    result := 'store(' + ftp.Host + ',' + ftp.UserName + ',' + SourceFName + ','
+    result := 'store(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ','
       + DestPath + ',' + DestFName + ')';
   end;
 
@@ -637,6 +782,7 @@ begin
         solidcdOne(ftp, DestPath);
 
         // Zwischenspeicher ev. vorhanden?
+        SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
         rSize := Size(DestFName + cTmpFileExtension);
         if (rSize <> lSize) then
         begin
@@ -645,6 +791,7 @@ begin
             if (rSize = -1) then
             begin
               // Datei bisher unbekannt!
+              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
               Put(SourceFName, DestFName + cTmpFileExtension);
               break;
             end;
@@ -652,6 +799,8 @@ begin
             if (rSize < lSize) then
             begin
               // Datei da, aber unvollständig
+              SolidSingleStepLog('putrestart@' + IntToStr(rSize) + ' ' +
+                DestFName + cTmpFileExtension);
               PutRestart(SourceFName, DestFName + cTmpFileExtension, rSize);
               break;
             end;
@@ -659,7 +808,9 @@ begin
             if (rSize = 0) then
             begin
               // Datei da, aber leer
+              SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
               Delete(DestFName + cTmpFileExtension);
+              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
               Put(SourceFName, DestFName + cTmpFileExtension);
               break;
             end;
@@ -705,7 +856,7 @@ var
 
   function _logID: string;
   begin
-    result := 'size(' + ftp.Host + ',' + ftp.UserName + ',' + SourceFName + ','
+    result := 'size(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ','
       + SourcePath + ',' + SourceFName + ')';
   end;
 
@@ -726,6 +877,7 @@ begin
         solidcdOne(ftp, SourcePath);
 
         // Grösse der Datei bestimmen
+        SolidSingleStepLog('size ' + SourceFName);
         result := Size(SourceFName);
         break;
 
@@ -759,7 +911,7 @@ var
 
   function _logID: string;
   begin
-    result := 'del(' + ftp.Host + ',' + ftp.UserName + ',' + SourcePath + ',' +
+    result := 'del(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
       SourceFName + ')';
   end;
 
@@ -778,6 +930,7 @@ begin
         // Pfad sicherstellen!
         solidcdOne(ftp, SourcePath);
 
+        SolidSingleStepLog('delete ' + SourceFName);
         Delete(SourceFName);
 
         // Erfolg!
@@ -835,7 +988,7 @@ var
 
   function _logID: string;
   begin
-    result := 'down(' + ftp.Host + ',' + ftp.UserName + ',' + SourcePath + ',' +
+    result := 'down(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
       SourceFName + ',' + DestPath + ')';
   end;
 
@@ -861,6 +1014,7 @@ begin
             FileDelete(DestPath + SourceFName + cTmpFileExtension);
 
           // Datei runterladen
+          SolidSingleStepLog('get ' + SourceFName);
           Get(SourceFName, DestPath + SourceFName + cTmpFileExtension, true);
 
           // Jetzt umbenenen
@@ -870,7 +1024,10 @@ begin
         end;
 
         if RemoteDelete then
+        begin
+          SolidSingleStepLog('delete ' + SourceFName);
           Delete(SourceFName);
+        end;
 
         // Erfolg!
         result := true;
@@ -880,7 +1037,7 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [738] Socket Error: ' +
+          solidLog(cEXCEPTIONText + ' [929] Socket Error: ' +
             IntToStr(E.LastError));
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
           then
@@ -889,7 +1046,7 @@ begin
 
         on E: Exception do
         begin
-          solidLog(cEXCEPTIONText + ' [738] ' + E.Message);
+          solidLog(cEXCEPTIONText + ' [938] ' + E.Message);
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
           then
             result := false;
@@ -1006,6 +1163,7 @@ begin
           DestFName := DestFName + '-' + FindANewPassword;
 
         // Rename it to keep the "old" Version
+        SolidSingleStepLog('rename ' + DestFName);
         ftp.Rename(
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName),
           { } DestFName);
@@ -1119,11 +1277,11 @@ begin
 
   // broadcast magic Paket
   BroadCaster := TIdUDPClient.Create(nil);
-  {$ifdef FPC}
+{$IFDEF FPC}
   BroadCaster.broadcast(OutStr, 9, '');
-  {$else}
+{$ELSE}
   BroadCaster.broadcast(OutStr, 9, '', TEncoding.ANSI);
-  {$endif}
+{$ENDIF}
   BroadCaster.free;
 end;
 
@@ -1162,7 +1320,7 @@ begin
       '.log.txt';
 
     CommandL := CommandL + ' -log ' + CoreFTPLogFName;
-    AppendStringsToFile(Uhr8 + ': { ' + CommandL, CoreFTPLogFName);
+    AppendStringsToFile(uhr8 + ': { ' + CommandL, CoreFTPLogFName);
   end;
 
   if (sUpFiles.Count > 0) then
@@ -1197,7 +1355,7 @@ begin
         [AnzahlErfolgreicherUploads, sUpFiles.Count]), CoreFTPLogFName);
 
     AppendStringsToFile(format('%s: CoreFTPExitCode:%d }',
-      [Uhr8, CoreFTPExitCode]), CoreFTPLogFName);
+      [uhr8, CoreFTPExitCode]), CoreFTPLogFName);
   end;
 
   result := (CoreFTPExitCode <> Cardinal($FFFFFFFF)) and

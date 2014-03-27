@@ -1820,7 +1820,7 @@ begin
       end;
       // atomic.end
       try
-        Quit;
+        Disconnect;
       except
         on E: EIdSocketError do
         begin

@@ -237,7 +237,7 @@ var
           break;
         end;
       try
-        IdFTP1.Quit;
+        IdFTP1.Disconnect;
       except
       end;
     until true;
@@ -1249,7 +1249,7 @@ begin
       solidGet(IdFTP1, '', cJonDa_ErgebnisMaske_utf8, AuftragMobilServerPath,
         not(CheckBox6.Checked));
       try
-        IdFTP1.Quit;
+        IdFTP1.Disconnect;
       except
       end;
     end;

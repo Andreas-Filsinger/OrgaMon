@@ -399,7 +399,7 @@ begin
           delete(LocalFName);
       end;
 
-      quit;
+      Disconnect;
     end;
   end;
 
@@ -2050,7 +2050,7 @@ begin
             Put(Uploads[n], DestPath + ExtractFileName(Uploads[n]));
             inc(rFTPTotal, FSize(Uploads[n]));
           end;
-          quit;
+          Disconnect;
         end;
     Uploads.free;
   end;
@@ -2165,7 +2165,7 @@ begin
       rFTPTotal := 0;
       Log('FTP: get ' + cTemplatesArchiveFName + ' ...');
       Get(cTemplatesArchiveFName, cAutoUpPath + cTemplatesArchiveFName, true);
-      quit;
+      Disconnect;
     end;
 
     // entpacken nach .
