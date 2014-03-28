@@ -570,10 +570,6 @@ object FormPersonMailer: TFormPersonMailer
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Log'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -610,16 +606,12 @@ object FormPersonMailer: TFormPersonMailer
       Margins.Bottom = 2
       Caption = 'Test'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 35
         Top = 17
-        Width = 62
+        Width = 80
         Height = 13
-        Caption = 'Empf'#228'nger'
+        Caption = 'Empf'#228'nger ->'
       end
       object Button1: TButton
         Left = 637
@@ -631,27 +623,27 @@ object FormPersonMailer: TFormPersonMailer
         OnClick = Button1Click
       end
       object Edit1: TEdit
-        Left = 116
-        Top = 12
+        Left = 119
+        Top = 14
         Width = 294
         Height = 21
         TabOrder = 1
         Text = 'Testmail.Empfaenger@domain.tld'
       end
       object CheckBox2: TCheckBox
-        Left = 53
-        Top = 61
-        Width = 113
+        Left = 52
+        Top = 59
+        Width = 392
         Height = 17
-        Caption = 'Alle Mails an ->'
+        Caption = 'Mail an ->... anstelle der eingetragenen Person(en)'
         TabOrder = 2
       end
       object CheckBox4: TCheckBox
-        Left = 53
+        Left = 52
         Top = 39
         Width = 316
         Height = 16
-        Caption = 'Alle aktuellen Mails zus'#228'tzlich bcc an ->'
+        Caption = 'Mail zus'#228'tzlich "bcc" an ->...'
         TabOrder = 3
       end
       object CheckBox3: TCheckBox
@@ -682,10 +674,6 @@ object FormPersonMailer: TFormPersonMailer
     object TabSheet4: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 39
         Top = 43
