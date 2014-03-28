@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.038; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.039; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1116,11 +1116,25 @@ var
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
       FTP_Benutzer := nextp(sPath, '\', 1);
-      if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
-        FTP_Benutzer := 'u' + FTP_Benutzer;
       r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
       if (r = -1) then
+      begin
+        // 2. Suchversuch mit prefixed "u"
+        if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
+        begin
+          FTP_Benutzer := 'u' + FTP_Benutzer;
+          r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
+        end;
+      end;
+
+      // (immer noch) nicht gefunden?
+      if (r = -1) then
+      begin
+        FormFotoService.Log('ERROR: FTP-Benutzer "' + FTP_Benutzer +
+          '" unbekannt');
+        Pending := false;
         break;
+      end;
 
       // Die Nummer des zu erzeugenden ZIP suchen
       mIni := TiniFile.Create(sPath + 'Fotos-nnnn.ini');
