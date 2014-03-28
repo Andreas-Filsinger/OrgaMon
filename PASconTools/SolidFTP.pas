@@ -60,7 +60,7 @@ const
   // FTP - Initialisierung
 procedure SolidInit(ftp: TIdFTP);
 procedure SolidBeginTransaction;
-procedure solidLog(s: string);
+procedure solidLog(s: string; DoStatistics: boolean = true);
 procedure SolidEndTransaction;
 
 // FTP - Login
@@ -114,9 +114,9 @@ uses
   CareTakerClient, SimplePassword,
 
   // Indy FTP
-  IdFTPCommon, IDFtpList, IdGlobal, IdResourceStringsProtocols,
-  IdFTPListParseBase, IdStack,
-  IdFTPListParseUnix, IdFTPListParseWindowsNT,
+  IdFTPCommon, IDFtpList, IdGlobal,
+  IdResourceStringsProtocols, IdFTPListParseBase, IdStack,
+  IdFTPListParseUnix, IdFTPListParseWindowsNT, IdReplyRFC,
 
   // Indy UDP
   IdUDPClient,
@@ -153,6 +153,10 @@ end;
 //
 // Fail-Over-Ketten:
 //
+// Syntax:
+// ~PrimaryHostName~ { ">"  ~AlternativeHostName~ }
+//
+// Beispiel:
 // orgamon.de->orgamon.net->orgamon.dyndns.org
 // orgamon.net->orgamon.de->orgamon.dyndns.org
 //
@@ -173,14 +177,13 @@ begin
   if (FailOvers = nil) then
   begin
 
-    // hier als Konstante, sollte langfristig aus ini oder DB geladen
+    // hier noch als Konstante, sollte langfristig aus ini oder DB geladen
     // werden können
     FailOvers := TStringList.Create;
     with FailOvers do
     begin
       add('orgamon.de>orgamon.net>orgamon.dyndns.org');
       add('orgamon.net>orgamon.de>orgamon.dyndns.org');
-      add('hebu-music.com>orgamon.dyndns.org>orgamon.net>orgamon.de');
     end;
 
     // die Angaben werden in ein effizienteres Format konvertiert
@@ -287,10 +290,11 @@ begin
   end;
 end;
 
-procedure solidLog(s: string);
+procedure solidLog(s: string; DoStatistics: boolean = true);
 var
   TimeStampS: string;
 begin
+  ersetze(#$0D#$0A, '|', s);
 
   // Um einen Zeitstempel erweitern
   TimeStampS := datum + ';' + uhr8 + ';' + s;
@@ -300,23 +304,30 @@ begin
 
   if (pos(cWARNINGText, s) = 1) then
   begin
-    inc(sWarningCount);
+    if DoStatistics then
+      inc(sWarningCount);
     sErrorMsg.add(TimeStampS);
   end;
 
   if (pos(cERRORText, s) = 1) then
   begin
-    inc(sErrorCount);
+    if DoStatistics then
+      inc(sErrorCount);
     sErrorMsg.add(TimeStampS);
     CareTakerLog(s);
   end;
 
   if (pos(cEXCEPTIONText, s) = 1) then
   begin
-    inc(sErrorCount);
+    if DoStatistics then
+      inc(sErrorCount);
     sErrorMsg.add(TimeStampS);
   end;
+
   //
+  if SolidFTP_SingleStepLog then
+    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' +
+      IntToStr(DateGet) + '.log.txt');
 
 end;
 
@@ -342,12 +353,13 @@ begin
       on E: EIdSocketError do
       begin
         solidLog(cEXCEPTIONText + ' [250] Socket Error: ' +
-          IntToStr(E.LastError));
+          IntToStr(E.LastError), false);
       end;
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [279] ' + E.ClassName + ':' + E.Message);
+        solidLog(cEXCEPTIONText + ' [279] ' + E.ClassName + ':' +
+          E.Message, false);
       end;
 
     end;
@@ -372,12 +384,13 @@ begin
       on E: EIdSocketError do
       begin
         solidLog(cEXCEPTIONText + ' [295] Socket Error: ' +
-          IntToStr(E.LastError));
+          IntToStr(E.LastError), false);
       end;
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [301] ' + E.ClassName + ':' + E.Message);
+        solidLog(cEXCEPTIONText + ' [301] ' + E.ClassName + ':' +
+          E.Message, false);
       end;
 
     end;
@@ -406,6 +419,8 @@ var
   HostAlternatives: TStringList;
   s: string;
   n: integer;
+  RemoteSystemErrorCode: integer;
+
 begin
   HostAlternatives := TStringList.Create;
   with ftp do
@@ -416,7 +431,7 @@ begin
     // Calculate the Fail Overs
     s := host;
     repeat
-      s := FailOverOf(s,pred(HostAlternatives.count));
+      s := FailOverOf(s, pred(HostAlternatives.Count));
       if (s = '') then
         break;
       HostAlternatives.add(s);
@@ -446,28 +461,50 @@ begin
         connect;
       except
 
-        // imp pend: Die "nicht erreichbaren Hosts" könnten
-        // für 10 Minuten in einer "Bad-Host-Liste" landen.
-        // Für den Fall dass es Alternativen gibt könnte
-        // in dieser Zeit immer zuerst auf die Alternative
-        // konnectiert werden
-        { <code> }
+        on E: Exception do
+        begin
 
-        // imp pend: Bei "Passwort/User falsch" ist ein
-        // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
-        // Aufgabe der Aktion ist nötig!
-        { <code> }
+          // Fehlerprotokollierung
+          solidLog(cEXCEPTIONText + ' ' + E.ClassName + ': ' +
+            E.Message, false);
 
-        // ensure original "Host"
-        if (n > 0) then
-          host := HostAlternatives[0];
+          // zusätzliche Fehlerprotokollierung
+          if E is EIdReplyRFCError then
+          begin
+            RemoteSystemErrorCode := EIdReplyRFCError(E).ErrorCode;
+            solidLog(cINFOText + ' zusätzlicher Fehlercode: ' +
+              IntToStr(RemoteSystemErrorCode), false);
 
-        // raise if no alternatives are left
-        if (n = pred(HostAlternatives.Count)) then
-          raise;
+            if (RemoteSystemErrorCode = 530) then
+            begin
+              // Bei "Passwort/User falsch" ist ein
+              // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
+              // Aufgabe der Aktion ist nötig!
+              solidLog(cERRORText +
+                ' Benutzername/Passwort wurde nicht akzeptiert.');
+              sTransactionFatalError := true;
+            end;
 
-        inc(n);
+          end;
 
+          // imp pend: Die "nicht erreichbaren Hosts" könnten
+          // für 10 Minuten in einer "Bad-Host-Liste" landen.
+          // Für den Fall dass es Alternativen gibt könnte
+          // in dieser Zeit immer zuerst auf die Alternative
+          // konnectiert werden
+          { <code> }
+
+          // ensure original "Host"
+          if (n > 0) then
+            host := HostAlternatives[0];
+
+          // raise if no alternatives are left
+          if (n = pred(HostAlternatives.Count)) or sTransactionFatalError then
+            raise;
+
+          inc(n);
+
+        end;
       end;
 
     until (connected);
