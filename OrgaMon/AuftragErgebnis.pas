@@ -97,6 +97,8 @@ type
     Stat_meldungen: integer;
     Stat_nichtEFRE: integer;
     Stat_Attachments: TStringList;
+    Stat_FehlendeResourcen: TStringList;
+
     MaxAnzahl: integer;
 
     procedure ClearStat;
@@ -110,6 +112,7 @@ type
     //
     function CreateFiles(Settings: TStringList; RIDs: TgpIntegerList;
       FailL: TgpIntegerList; Files: TStringList): boolean;
+    function nichtEFREFName(Settings: TStringList): string;
     procedure Log(s: string; BAUSTELLE_R: integer = 0;
       TAN: string = ''); overload;
     procedure Log(s: TStrings; BAUSTELLE_R: integer = 0;
@@ -230,7 +233,6 @@ var
   // Dinge für die freien Zähler "EFRE"
   FreieResourcen: TsTable;
   Sparten: TFieldMapping;
-  FehlendeResourcen: TStringList;
   EFRE_ZAEHLER_NR_NEU: string;
   EFRE: TgpIntegerList;
 
@@ -305,15 +307,6 @@ var
     cAUFTRAG.free;
     PROTOKOLL.free;
     ZaehlerNummernNeu.sort;
-  end;
-
-// Datei mit der Liste der nicht einbaufähigen Neugeräte
-  function nichtEFREFName: string;
-  begin
-    result :=
-    { } cAuftragErgebnisPath +
-    { } e_r_BaustellenPfad(Settings) + '\' +
-    { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE] + '.csv';
   end;
 
 // EFRE- Filter für "Zählernummer Neu"
@@ -837,7 +830,6 @@ begin
   ProtokollWerte := TStringList.create;
   FreieResourcen := TsTable.create;
   Sparten := TFieldMapping.create;
-  FehlendeResourcen := TStringList.create;
 
   ActColumn := TStringList.create;
   MussFelder := TStringList.create;
@@ -864,9 +856,7 @@ begin
           Sparten.Path := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings);
 
           // FehlendeResourcen
-          FileDelete(nichtEFREFName);
-          FehlendeResourcen.add
-            ('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID');
+          FileDelete(nichtEFREFName(Settings));
 
           // Laden der EFRE - Datei
           with FreieResourcen do
@@ -1161,7 +1151,7 @@ begin
               inc(Stat_nichtEFRE);
 
               // Fehler Berichten
-              FehlendeResourcen.add(
+              Stat_FehlendeResourcen.add(
                 { } EFRE_ZAEHLER_NR_NEU + ';' +
                 { } material_nummer_alt + ';' +
                 { } Settings.values[cE_TAN] + ';' +
@@ -1719,13 +1709,6 @@ begin
         if (Settings.values[cE_OhneStandardXLS] <> cIni_Activate) then
           Files.add(OutFName);
 
-      Settings.values[cE_nichtEFRE] := '';
-      if (Settings.values[cE_Postfix] = '') and (Stat_nichtEFRE > 0) then
-      begin
-        FehlendeResourcen.SaveToFile(nichtEFREFName);
-        Settings.values[cE_nichtEFRE] := nichtEFREFName;
-      end;
-
       repeat
 
         // Oc noch rufen, um wieder eine csv draus zu machen?
@@ -1953,7 +1936,6 @@ begin
   ProtokollWerte.free;
   FreieResourcen.free;
   Sparten.free;
-  FehlendeResourcen.free;
   ActColumn.free;
   MussFelder.free;
   RauteFelder.free;
@@ -2540,6 +2522,12 @@ begin
 
         end;
 
+        if (Stat_nichtEFRE > 0) then
+        begin
+          Stat_FehlendeResourcen.SaveToFile(nichtEFREFName(Settings));
+          Settings.values[cE_nichtEFRE] := nichtEFREFName(Settings);
+        end;
+
         if (ErrorCount = 0) then
           doFTP;
 
@@ -2717,6 +2705,15 @@ begin
   end;
 end;
 
+function TFormAuftragErgebnis.nichtEFREFName(Settings: TStringList): string;
+begin
+  // Datei mit der Liste der nicht einbaufähigen Neugeräte
+  result :=
+  { } cAuftragErgebnisPath +
+  { } e_r_BaustellenPfad(Settings) + '\' +
+  { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE] + '.csv';
+end;
+
 procedure TFormAuftragErgebnis.SetDefaults(ResetRadioButton: boolean);
 begin
   if ResetRadioButton then
@@ -2758,6 +2755,7 @@ begin
     Stat_Vorgezogen := TgpIntegerList.create;
     Stat_Unmoeglich := TgpIntegerList.create;
     Stat_Fail := TgpIntegerList.create;
+    Stat_FehlendeResourcen := TStringList.create;
   end
   else
   begin
@@ -2765,10 +2763,13 @@ begin
     Stat_Vorgezogen.clear;
     Stat_Unmoeglich.clear;
     Stat_Fail.clear;
+    Stat_FehlendeResourcen.clear;
   end;
   Stat_meldungen := 0;
   Stat_nichtEFRE := 0;
   Stat_Attachments.clear;
+  Stat_FehlendeResourcen.add
+    ('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID');
 end;
 
 procedure TFormAuftragErgebnis.ComboBox1DropDown(Sender: TObject);
