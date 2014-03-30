@@ -896,7 +896,7 @@ begin
        if assigned(Options) then
       if (Options.Values[infozip_Password] <> '') then
         Password := Options.Values[infozip_Password];
-
+   Extract;
  end;
 
 
