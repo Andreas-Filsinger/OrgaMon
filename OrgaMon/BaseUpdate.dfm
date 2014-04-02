@@ -38,13 +38,9 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Bottom = 4
       Caption = 'Anwendungs Update'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 243
-        Top = 150
+        Top = 152
         Width = 90
         Height = 13
         Margins.Left = 4
@@ -55,7 +51,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Label6: TLabel
         Left = 139
-        Top = 196
+        Top = 199
         Width = 194
         Height = 13
         Margins.Left = 4
@@ -66,7 +62,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Label4: TLabel
         Left = 102
-        Top = 173
+        Top = 175
         Width = 231
         Height = 13
         Margins.Left = 4
@@ -94,7 +90,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object SpeedButton4: TSpeedButton
         Left = 335
-        Top = 147
+        Top = 148
         Width = 20
         Height = 20
         Margins.Left = 4
@@ -132,7 +128,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object SpeedButton1: TSpeedButton
         Left = 335
-        Top = 169
+        Top = 171
         Width = 20
         Height = 20
         Margins.Left = 4
@@ -170,7 +166,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object SpeedButton2: TSpeedButton
         Left = 335
-        Top = 192
+        Top = 195
         Width = 20
         Height = 20
         Margins.Left = 4
@@ -222,7 +218,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object StaticText3: TStaticText
         Left = 357
-        Top = 194
+        Top = 196
         Width = 47
         Height = 17
         Margins.Left = 4
@@ -236,14 +232,15 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Button8: TButton
         Left = 406
-        Top = 193
+        Top = 196
         Width = 69
-        Height = 17
+        Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'ausf'#252'hren'
+        Caption = 'A&usf'#252'hren'
+        Default = True
         TabOrder = 2
         OnClick = Button8Click
       end
@@ -262,31 +259,31 @@ object FormBaseUpdate: TFormBaseUpdate
         Left = 406
         Top = 149
         Width = 69
-        Height = 16
+        Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'ausf'#252'hren'
+        Caption = 'Ausf'#252'hren'
         TabOrder = 4
         OnClick = Button4Click
       end
       object Button9: TButton
         Left = 406
-        Top = 171
+        Top = 172
         Width = 69
-        Height = 18
+        Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'ausf'#252'hren'
+        Caption = 'Ausf'#252'hren'
         TabOrder = 5
         OnClick = Button9Click
       end
       object StaticText6: TStaticText
         Left = 357
-        Top = 171
+        Top = 172
         Width = 48
         Height = 18
         Margins.Left = 4
@@ -345,10 +342,6 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Bottom = 4
       Caption = 'Datenbank Update'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 153
         Top = 45
