@@ -126,13 +126,12 @@ uses
   Funktionen_Basis,
   Funktionen_Auftrag,
   Funktionen_Beleg,
-{$ifdef fpc}
+{$IFDEF fpc}
   fpchelper,
-{$else}
+{$ELSE}
   IB_Access,
   IB_Components,
-{$endif}
-
+{$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
@@ -953,7 +952,7 @@ begin
           raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) +
             ') existiert nicht');
 
-        e_r_sqlt(FieldByName('SKRIPT'),Skript);
+        e_r_sqlt(FieldByName('SKRIPT'), Skript);
         if (Skript.Values['ZWISCHENSATZ'] = cIni_Activate) then
         begin
 
@@ -1018,7 +1017,7 @@ begin
         if eof then
           raise Exception.create('Deckblatt "''' + Ziel +
             '''" existiert nicht!');
-        e_r_sqlt(FieldByName('SKRIPT'),Regel);
+        e_r_sqlt(FieldByName('SKRIPT'), Regel);
       end;
 
       // auf der anderen Seite Buchen?
@@ -1220,7 +1219,7 @@ begin
               first;
               if not(eof) then
               begin
-                e_r_sqlt(FieldByName('SKRIPT'),ScriptText);
+                e_r_sqlt(FieldByName('SKRIPT'), ScriptText);
                 ScriptText.Values['COLOR'] := '#00FF66'; // grün
                 edit;
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
@@ -1281,7 +1280,8 @@ begin
 
                 FieldByName('BETRAG').AsFloat := Betrag;
                 if DateOK(VALUTA) then
-                  FieldByName('WERTSTELLUNG').AsDateTime := long2datetime(VALUTA);
+                  FieldByName('WERTSTELLUNG').AsDateTime :=
+                    long2datetime(VALUTA);
                 FieldByName('TEXT').Assign(InfoText);
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
@@ -1429,7 +1429,7 @@ var
   ForderungsFrist: integer;
 
   // cache
-  RECHNUNG: TDateTime;
+  RECHNUNGSDATUM: TDateTime;
   TEILLIEFERUNG: integer;
   PERSON_R: integer;
   RECHNUNGSANSCHRIFT_R: TDOM_Reference;
@@ -1442,7 +1442,7 @@ begin
   qAUSGANGSRECHNUNG := nQuery;
   qBELEG := nQuery;
   cBELEG := nCursor;
-  RECHNUNG := cIllegalDate;
+  RECHNUNGSDATUM := cIllegalDate;
   try
 
     with cBELEG do
@@ -1456,16 +1456,13 @@ begin
       RECHNUNGSANSCHRIFT_R := FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger;
       ZAHLUNGSPFLICHTIGER_R := FieldByName('ZAHLUNGSPFLICHTIGER_R').AsInteger;
       ZAHLUNGTYP_R := FieldByName('ZAHLUNGTYP_R').AsInteger;
-      e_r_sqlt(FieldByName('INTERN_INFO'),sPARAMETER);
-      // Rechnungsdatum bestimmen
-      repeat
-        if (TEILLIEFERUNG = 0) and not(FieldByName('RECHNUNG').IsNull) then
-        begin
-          RECHNUNG := FieldByName('RECHNUNG').AsDateTime;
-          break;
-        end;
-        RECHNUNG := now;
-      until true;
+      e_r_sqlt(FieldByName('INTERN_INFO'), sPARAMETER);
+
+      // Rechnungsdatum bestimmen, Vorbelegung bei TL=0 möglich!
+      if (TEILLIEFERUNG = 0) and not(FieldByName('RECHNUNG').IsNull) then
+        RECHNUNGSDATUM := FieldByName('RECHNUNG').AsDateTime
+      else
+        RECHNUNGSDATUM := now;
     end;
 
     if (PERSON_R >= cRID_FirstValid) then
@@ -1475,7 +1472,7 @@ begin
       ForderungsFrist := e_r_ZahlungFrist(PERSON_R);
 
       // hier noch erweiterte Fälligkeitslogik einfügen
-      FAELLIG := long2datetime(DatePlus(datetime2long(RECHNUNG),
+      FAELLIG := long2datetime(DatePlus(datetime2long(RECHNUNGSDATUM),
         ForderungsFrist));
 
       // (muss noch in das normale Kontenschema verschoben werden!)
@@ -1484,7 +1481,7 @@ begin
         sql.add('select * from AUSGANGSRECHNUNG for update');
         insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
-        FieldByName('DATUM').AsDateTime := RECHNUNG;
+        FieldByName('DATUM').AsDateTime := RECHNUNGSDATUM;
         FieldByName('VORGANG').AsString := cVorgang_Rechnung;
         FieldByName('VALUTA').AsDateTime := FAELLIG;
         FieldByName('BELEG_R').AsInteger := BELEG_R;
@@ -1520,7 +1517,7 @@ begin
         FieldByName('RECHNUNGS_BETRAG').AsFloat :=
           FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
         FieldByName('TEILLIEFERUNG').AsInteger := succ(TEILLIEFERUNG);
-        FieldByName('RECHNUNG').AsDateTime := RECHNUNG;
+        FieldByName('RECHNUNG').AsDateTime := RECHNUNGSDATUM;
         FieldByName('FAELLIG').AsDateTime := FAELLIG;
         if (RechnungsBetrag > 0) then
         begin
@@ -1675,7 +1672,7 @@ begin
     while not(eof) do
     begin
       // ...
-      e_r_sqlt(FieldByName('TEXT'),UeberweisungsText);
+      e_r_sqlt(FieldByName('TEXT'), UeberweisungsText);
       _DATUM := datetime2long(FieldByName('DATUM').AsDateTime);
 
       // Saldo fortführen ...
@@ -1836,13 +1833,14 @@ begin
 
       MD5s.add(long2date(datetime2long(FieldByName('DATUM').AsDateTime)) +
         ' 00:00:00');;
-      MD5s.add(long2date(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime)) +
-        ' 00:00:00');
+      MD5s.add(long2date(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime))
+        + ' 00:00:00');
 
-      MD5s.add(long2date6(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime)));
+      MD5s.add(long2date6(datetime2long(FieldByName('WERTSTELLUNG')
+        .AsDateTime)));
       MD5s.add(FloatToStrISO(FieldByName('BETRAG').AsFloat));
       MD5s.add('EUR');
-      e_r_sqlt(FieldByName('SKRIPT'),Script);
+      e_r_sqlt(FieldByName('SKRIPT'), Script);
       MD5s.add(Script.Values['TRANSAKTIONSTYP']);
 
       // BusinessTransactionText
@@ -1933,7 +1931,7 @@ begin
   if (Satz = '') then
     result := cSatz_keinElement
   else
-    result := e_r_Prozent(strtointdef(Satz,0));
+    result := e_r_Prozent(strtointdef(Satz, 0));
 end;
 
 end.

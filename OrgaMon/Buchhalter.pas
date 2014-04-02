@@ -2010,7 +2010,7 @@ begin
             sFolgeBuchungssatz[8] := KontoAsAlias(Konto);
             if WarEbenErloesKonto then
               sFolgeBuchungssatz[10] :=
-                e_r_Rechnung(FieldByName('BELEG_R').AsInteger,
+                e_r_RechnungsNummer(FieldByName('BELEG_R').AsInteger,
                 FieldByName('TEILLIEFERUNG').AsInteger);
 
             if (pos('S', Konto) = 1) then

@@ -399,9 +399,9 @@ begin
  S.RegisterDelphiFunction(@e_w_buchen, 'e_w_buchen', cdRegister);
  S.RegisterDelphiFunction(@e_r_Stempel, 'e_r_Stempel', cdRegister);
  S.RegisterDelphiFunction(@e_r_RechnungsNummerAnzahlDerStellen, 'e_r_RechnungsNummerAnzahlDerStellen', cdRegister);
- S.RegisterDelphiFunction(@e_r_Rechnungen, 'e_r_Rechnungen', cdRegister);
- S.RegisterDelphiFunction(@e_r_Rechnung, 'e_r_Rechnung', cdRegister);
- S.RegisterDelphiFunction(@e_w_Rechnung, 'e_w_Rechnung', cdRegister);
+ S.RegisterDelphiFunction(@e_r_RechnungsNummern, 'e_r_Rechnungen', cdRegister);
+ S.RegisterDelphiFunction(@e_r_RechnungsNummer, 'e_r_Rechnung', cdRegister);
+ S.RegisterDelphiFunction(@e_w_RechnungsNummer, 'e_w_Rechnung', cdRegister);
  S.RegisterDelphiFunction(@e_r_Versandfertig, 'e_r_Versandfertig', cdRegister);
  S.RegisterDelphiFunction(@e_r_Versandfaehig, 'e_r_Versandfaehig', cdRegister);
  S.RegisterDelphiFunction(@e_w_BelegVersand, 'e_w_BelegVersand', cdRegister);

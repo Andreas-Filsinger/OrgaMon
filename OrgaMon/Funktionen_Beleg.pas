@@ -42,10 +42,10 @@ interface
 
 uses
   Classes,
-{$ifndef fpc}
+{$IFNDEF fpc}
   IB_Components,
   IB_Access,
-{$endif}
+{$ENDIF}
   dbOrgaMon,
   anfix32,
   globals,
@@ -287,8 +287,7 @@ function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 // MwSt: liefert die MwSt wie in diesem Sortiment üblich
 
-function e_r_Prozent(SATZ: integer;
-  mDatum: TAnfixDate = cIllegalDate): double;
+function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 // MwSt: liefert den Prozentwert eines Steuersatzes
 
 function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
@@ -380,13 +379,13 @@ function e_r_Stempel(PERSON_R, BELEG_R: integer): integer; // [STEMPEL_R]
 function e_r_RechnungsNummerAnzahlDerStellen: integer;
 // Anzahl der Stellen der Rechnungsnummer bestimmen
 
-function e_r_Rechnungen(BELEG_R: integer): TStringList;
+function e_r_RechnungsNummern(BELEG_R: integer): TStringList;
 // liefert alle bisherigen Rechnungen zu diesem Beleg
 
-function e_r_Rechnung(BELEG_R, TEILLIEFERUNG: integer): string;
+function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 // liefert die verwendete Rechnungsnummer zu diesem Beleg
 
-function e_w_Rechnung(BELEG_R: integer): integer;
+function e_w_RechnungsNummer(BELEG_R: integer): integer;
 // setzt die Rechnungsnummer im Beleg falls noch leer
 
 function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
@@ -582,17 +581,17 @@ procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
 
 function e_r_Adressat(PERSON_R: integer): TStringList;
 function e_r_Ort(PERSON_R: integer): string; overload;
-function e_r_Ort(ib_q: TdboDataset): string; overload;
-function e_r_Name(ib_q: TdboDataset): string; overload;
+function e_r_Ort(ib_q: TdboDataSet): string; overload;
+function e_r_Name(ib_q: TdboDataSet): string; overload;
 function e_r_Name(PERSON_R: integer): string; overload;
-function e_r_NameVorname(ib_q: TdboDataset): string; overload;
+function e_r_NameVorname(ib_q: TdboDataSet): string; overload;
 function e_r_NameVorname(PERSON_R: integer): string; overload;
-function e_r_land(ib_q: TdboDataset): string;
-function e_r_PLZlength(ib_q: TdboDataset): integer;
-function e_r_plz(ib_q: TdboDataset; PLZlength: integer = -1): string;
-function e_r_fax(ib_q: TdboDataset): string; overload;
+function e_r_land(ib_q: TdboDataSet): string;
+function e_r_PLZlength(ib_q: TdboDataSet): integer;
+function e_r_plz(ib_q: TdboDataSet; PLZlength: integer = -1): string;
+function e_r_fax(ib_q: TdboDataSet): string; overload;
 function e_r_fax(PERSON_R: integer): string; overload;
-function e_r_telefon(ib_q: TdboDataset): string; overload;
+function e_r_telefon(ib_q: TdboDataSet): string; overload;
 
 // preDelete* sind Funktionen die die Löschung einer Entität vorbereiten
 // und somit erst ermöglichen
@@ -671,14 +670,13 @@ uses
   SysUtils,
 
   // Tools
-  {$ifndef fpc}
+{$IFNDEF fpc}
   System.UITypes,
   Jvgnugettext,
-  {$else}
+{$ELSE}
   graphics,
   fpchelper,
-  {$endif}
-
+{$ENDIF}
   html, Geld,
   SimplePassword, WordIndex, OpenStreetMap,
 
@@ -1307,7 +1305,7 @@ begin
           .AsInteger, 2);
 
         INTERN_INFO := TStringList.create;
-        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'), INTERN_INFO);
 
         INTERN_INFO.values['BTYP' + GENERATION_POSTFIX] := 'p'; // Portofrei
         INTERN_INFO.values['FILTER' + GENERATION_POSTFIX] :=
@@ -1344,12 +1342,12 @@ begin
     EREIGNIS := nQuery;
     with EREIGNIS do
     begin
-{$ifdef fpc}
- // Raise Exception.Create('Columnattributes');
-{$else}
-ColumnAttributes.add('RID=NOTREQUIRED');
-ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$endif}
+{$IFDEF fpc}
+      // Raise Exception.Create('Columnattributes');
+{$ELSE}
+      ColumnAttributes.add('RID=NOTREQUIRED');
+      ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
       sql.add('select * from EREIGNIS for update');
       Insert;
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -1553,12 +1551,12 @@ begin
       WARENBEWEGUNG := nQuery;
       with WARENBEWEGUNG do
       begin
-        {$ifdef fpc}
-         Raise Exception.Create('Columnattributes');
-        {$else}
+{$IFDEF fpc}
+        Raise exception.create('Columnattributes');
+{$ELSE}
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-        {$endif}
+{$ENDIF}
         sql.add('select * from WARENBEWEGUNG for update');
         Insert;
         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
@@ -1838,12 +1836,12 @@ begin
         EREIGNIS := nQuery;
         with EREIGNIS do
         begin
-          {$ifdef fpc}
-           Raise Exception.Create('Columnattributes');
-          {$else}
+{$IFDEF fpc}
+          Raise exception.create('Columnattributes');
+{$ELSE}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-          {$endif}
+{$ENDIF}
           sql.add('select * from EREIGNIS for update');
           Insert;
           FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -1921,12 +1919,12 @@ begin
         WARENBEWEGUNG := nQuery;
         with WARENBEWEGUNG do
         begin
-          {$ifdef fpc}
-           Raise Exception.Create('Columnattributes');
-          {$else}
+{$IFDEF fpc}
+          Raise exception.create('Columnattributes');
+{$ELSE}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-          {$endif}
+{$ENDIF}
           sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
           Insert;
           if (AUSGABEART_R > 0) then
@@ -2006,12 +2004,12 @@ begin
           WARENBEWEGUNG := nQuery;
           with WARENBEWEGUNG do
           begin
-            {$ifdef fpc}
-             Raise Exception.Create('Columnattributes');
-            {$else}
+{$IFDEF fpc}
+            Raise exception.create('Columnattributes');
+{$ELSE}
             ColumnAttributes.add('RID=NOTREQUIRED');
             ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-            {$endif}
+{$ENDIF}
             sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
             Insert;
             if (AUSGABEART_R > 0) then
@@ -2230,11 +2228,11 @@ begin
         Params.BeginUpdate;
         ParamByName('CR_AR').AsInteger := ARTIKEL_R;
         ParamByName('CR_AA').AsInteger := AUSGABEART_R;
-        {$ifdef fpc}
+{$IFDEF fpc}
         Params.EndUpdate;
-        {$else}
+{$ELSE}
         Params.EndUpdate(true);
-        {$endif}
+{$ENDIF}
       end;
     end;
 
@@ -2468,11 +2466,11 @@ begin
           Params.BeginUpdate;
           ParamByName('CR_AR').AsInteger := ARTIKEL_R;
           ParamByName('CR_AA').AsInteger := AUSGABEART_R;
-          {$ifdef fpc}
+{$IFDEF fpc}
           Params.EndUpdate;
-{$else}
+{$ELSE}
           Params.EndUpdate(true);
-{$endif}
+{$ENDIF}
           ApiFirst;
         end;
       end
@@ -2485,11 +2483,11 @@ begin
           ParamByName('CR_ER').AsInteger := EINHEIT_R;
           ParamByName('CR_AR').AsInteger := ARTIKEL_R;
           ParamByName('CR_AA').AsInteger := AUSGABEART_R;
-          {$ifdef fpc}
+{$IFDEF fpc}
           Params.EndUpdate;
-          {$else}
-                    Params.EndUpdate(true);
-          {$endif}
+{$ELSE}
+          Params.EndUpdate(true);
+{$ENDIF}
           ApiFirst;
         end;
       end;
@@ -2812,7 +2810,7 @@ begin
     // TAN für Mahnbescheid auslesen!
     if pAuchMahnbescheid then
     begin
-      MahnbescheidTAN := e_r_GEN('GEN_MAHNBESCHEID');
+      MahnbescheidTAN := e_r_gen('GEN_MAHNBESCHEID');
       FileCopy(MahnungFName(PERSON_R), MahnbescheidPath + 'Mahnbescheid.html');
     end;
     // ausgesetzte Belege ermitteln
@@ -3009,7 +3007,7 @@ begin
           begin
 
             //
-            e_r_sqlt(FieldByName('TEXT'),KontoTexte);
+            e_r_sqlt(FieldByName('TEXT'), KontoTexte);
 
             // Nur bis zur Geheim-Symbol
             if (KontoTexte.count > 0) then
@@ -3368,14 +3366,14 @@ begin
               begin
                 DatensammlerLokal.add('BelegFaellig=' +
                   _('Ihre Zahlung zu den Rechnungen') + ' ' +
-                  HugeSingleLine(e_r_Rechnungen(FieldByName('BELEG_R')
+                  HugeSingleLine(e_r_RechnungsNummern(FieldByName('BELEG_R')
                   .AsInteger), ', '));
               end
               else
               begin
                 DatensammlerLokal.add('BelegFaellig=' +
                   _('Ihre Zahlung zur Rechnung') + ' ' +
-                  e_r_Rechnung(FieldByName('BELEG_R').AsInteger,
+                  e_r_RechnungsNummer(FieldByName('BELEG_R').AsInteger,
                   FieldByName('TEILLIEFERUNG').AsInteger));
               end;
             end;
@@ -3715,11 +3713,11 @@ begin
       with qPosten do
       begin
         sql.add('select * from POSTEN for update');
-{$ifdef fpc}
-raise exception.create('ColumnAttributes');
-{$else}
+{$IFDEF fpc}
+        raise exception.create('ColumnAttributes');
+{$ELSE}
         ColumnAttributes.add('RID=NOTREQUIRED');
-      {$endif}
+{$ENDIF}
         prepare;
       end;
 
@@ -3975,8 +3973,7 @@ begin
           result := 1;
           break;
         end;
-        if (FieldByName('MINDESTBESTAND').AsInteger = cMenge_unbegrenzt)
-        then
+        if (FieldByName('MINDESTBESTAND').AsInteger = cMenge_unbegrenzt) then
         begin
           result := cVersendetag_OffsetTage;
           break;
@@ -4925,7 +4922,7 @@ begin
         TL := FieldByName('TEILLIEFERUNG').AsInteger;
         GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
           .AsInteger, 2);
-        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'), INTERN_INFO);
         if (BTYP = '') then
           BTYP := INTERN_INFO.values['BTYP' + GENERATION_POSTFIX];
 
@@ -5121,7 +5118,7 @@ begin
     inttostr(VERSENDER_R));
 end;
 
-function e_r_PLZlength(ib_q: TdboDataset): integer;
+function e_r_PLZlength(ib_q: TdboDataSet): integer;
 var
   _LandFormatStr: string;
   k: integer;
@@ -5134,7 +5131,7 @@ begin
       result := strtointdef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
-function e_r_Ort(ib_q: TdboDataset): string; overload;
+function e_r_Ort(ib_q: TdboDataSet): string; overload;
 // benötigt
 //
 // (LAND_R, STATE, ORT, PLZ)
@@ -5191,12 +5188,12 @@ begin
   ANSCHRIFT.free;
 end;
 
-function e_r_land(ib_q: TdboDataset): string;
+function e_r_land(ib_q: TdboDataSet): string;
 begin
   result := e_r_LaenderPost(ib_q.FieldByName('LAND_R').AsInteger);
 end;
 
-function e_r_plz(ib_q: TdboDataset; PLZlength: integer = -1): string;
+function e_r_plz(ib_q: TdboDataSet; PLZlength: integer = -1): string;
 var
   _land_sub: string;
   _plz_sub: string;
@@ -5218,7 +5215,7 @@ begin
   end;
 end;
 
-procedure e_r_PostenInfo(IBQ: TdboDataset; NurGeliefertes: boolean;
+procedure e_r_PostenInfo(IBQ: TdboDataSet; NurGeliefertes: boolean;
   EinzelpreisNetto: boolean; var _Anz, _AnzAuftrag, _AnzGeliefert,
   _AnzStorniert, _AnzAgent: integer; var _Rabatt, _EinzelPreis,
   _MwStSatz: double
@@ -5912,7 +5909,7 @@ begin
             break;
           end;
           VertragsTexte.add('VertragsReferenz=' + inttostr(VERTRAG_R));
-          e_r_sqlt(FieldByName('EINSTELLUNGEN'),EINSTELLUNGEN);
+          e_r_sqlt(FieldByName('EINSTELLUNGEN'), EINSTELLUNGEN);
 
           if FieldByName('VON').IsNull then
           begin
@@ -6034,7 +6031,8 @@ begin
           KONTEXT := EINSTELLUNGEN.values['Kontext'];
           if (KONTEXT = '') then
           begin
-            KONTEXT_SQL := '(INTERN_INFO is NULL) or (INTERN_INFO not containing ''Kontext='')';
+            KONTEXT_SQL :=
+              '(INTERN_INFO is NULL) or (INTERN_INFO not containing ''Kontext='')';
           end
           else
           begin
@@ -6478,7 +6476,7 @@ begin
         PERSON_R := FieldByName('PERSON_R').AsInteger;
         GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
           .AsInteger, 2);
-        e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+        e_r_sqlt(FieldByName('INTERN_INFO'), INTERN_INFO);
         isHaendler := e_r_RabattFaehig(PERSON_R);
       end;
 
@@ -6488,11 +6486,11 @@ begin
         sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
         sql.add('for update');
-{$ifdef fpc}
-raise exception.create('ColumnAttributes');
-{$else}
+{$IFDEF fpc}
+        raise exception.create('ColumnAttributes');
+{$ELSE}
         ColumnAttributes.add('RID=NOTREQUIRED');
-{$endif}
+{$ENDIF}
         Open;
         First;
       end;
@@ -6765,8 +6763,8 @@ raise exception.create('ColumnAttributes');
                           then
                           begin
                             edit;
-                            FieldByName('PREIS').AsFloat :=
-                              FieldByName('PREIS').AsFloat + Glattstellung;
+                            FieldByName('PREIS').AsFloat := FieldByName('PREIS')
+                              .AsFloat + Glattstellung;
                             Post;
                             Glattstellung := 0.0;
                           end;
@@ -6873,7 +6871,7 @@ raise exception.create('ColumnAttributes');
   end;
 end;
 
-function e_r_Versandfertig(ib_q: TdboDataset): boolean;
+function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 begin
   with ib_q do
     result := (FieldByName('MENGE_RECHNUNG').AsInteger > 0) and
@@ -6881,7 +6879,7 @@ begin
       (FieldByName('MENGE_AGENT').AsInteger = 0); // nix mehr zu ordern
 end;
 
-function e_r_Versandfaehig(ib_q: TdboDataset): boolean;
+function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 begin
   with ib_q do
     result := (FieldByName('MENGE_RECHNUNG').AsInteger > 0);
@@ -6954,7 +6952,8 @@ begin
 
         if not(FieldByName('ZUSAGE').IsNull) then
         begin
-          ZUSAGE := max(ZUSAGE, DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
+          ZUSAGE := max(ZUSAGE,
+            DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
           ERSTERLIEFERTAG := min(ERSTERLIEFERTAG,
             DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
         end;
@@ -7115,8 +7114,10 @@ begin
                 format('Warenausgang für Beleg %d erwartet', [BELEG_R]));
               FieldByName('ART').AsInteger := eT_WareRausgegangen;
               if (ERSTERLIEFERTAG < MaxInt) then
-                FieldByName('VORLAGE').AsDateTime := long2datetime(ERSTERLIEFERTAG);
-              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 3;
+                FieldByName('VORLAGE').AsDateTime :=
+                  long2datetime(ERSTERLIEFERTAG);
+              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE')
+                .AsDateTime + 3;
               Post;
 
             end
@@ -7137,7 +7138,8 @@ begin
               if (ERSTERLIEFERTAG < MaxInt) then
                 FieldByName('VORLAGE').AsDateTime :=
                   long2datetime(ERSTERLIEFERTAG);
-              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 3;
+              FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE')
+                .AsDateTime + 3;
               qStringsAdd(FieldByName('INFO'), FieldByName('MOMENT').AsString);
               // Einfach weiteren Moment hinzu!
               Post;
@@ -7200,12 +7202,12 @@ begin
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-{$ifdef fpc}
- raise Exception.create('7214:ColumnAttributes');
-{$else}
-ColumnAttributes.add('RID=NOTREQUIRED');
+{$IFDEF fpc}
+              raise exception.create('7214:ColumnAttributes');
+{$ELSE}
+              ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-      {$endif}
+{$ENDIF}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('ART').AsInteger :=
@@ -7236,13 +7238,13 @@ ColumnAttributes.add('RID=NOTREQUIRED');
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-{$ifdef fpc}
-// {$I %FILE%} {$I %LINE%}
-raise exception.create('7251:ColumnAttributes');
-{$else}
+{$IFDEF fpc}
+              // {$I %FILE%} {$I %LINE%}
+              raise exception.create('7251:ColumnAttributes');
+{$ELSE}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-              {$endif}
+{$ENDIF}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -7268,10 +7270,10 @@ raise exception.create('7251:ColumnAttributes');
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-              {$ifndef fpc}
+{$IFNDEF fpc}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-              {$endif}
+{$ENDIF}
               sql.add('select * from EREIGNIS for update');
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -7492,7 +7494,7 @@ begin
       UebergangsfaecherAnz := RecordCount;
       if (UebergangsfaecherAnz > 0) then
       begin
-        UebergangsfachSelected := e_w_gen('UEBERGANGSFACH_GID')
+        UebergangsfachSelected := e_w_GEN('UEBERGANGSFACH_GID')
           mod UebergangsfaecherAnz;
         ApiFirst;
         // Nun den Einstiegspunkt anfahren!
@@ -7635,24 +7637,24 @@ function e_r_RechnungsNummerAnzahlDerStellen: integer;
 begin
   if (_Cache_RechnungsNummerAnzahlDerStellen = 0) then
     _Cache_RechnungsNummerAnzahlDerStellen :=
-      length(inttostr(e_r_GEN('GEN_RECHNUNG')));
+      length(inttostr(e_r_gen('GEN_RECHNUNG')));
   result := _Cache_RechnungsNummerAnzahlDerStellen;
 end;
 
-function e_r_Rechnung(BELEG_R, TEILLIEFERUNG: integer): string;
+function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 var
-  RECHNUNG: integer;
+  RECHNUNGSNUMMER: integer;
 begin
-  RECHNUNG := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
+  RECHNUNGSNUMMER := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
     inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
     inttostr(TEILLIEFERUNG) + ')');
-  if (RECHNUNG = 0) then
+  if (RECHNUNGSNUMMER = 0) then
     result := ''
   else
-    result := inttostrN(RECHNUNG, e_r_RechnungsNummerAnzahlDerStellen);
+    result := inttostrN(RECHNUNGSNUMMER, e_r_RechnungsNummerAnzahlDerStellen);
 end;
 
-function e_r_Rechnungen(BELEG_R: integer): TStringList;
+function e_r_RechnungsNummern(BELEG_R: integer): TStringList;
 var
   n: integer;
   RECHNUNGEN: TgpIntegerList;
@@ -7666,7 +7668,7 @@ begin
   RECHNUNGEN.free;
 end;
 
-function e_w_Rechnung(BELEG_R: integer): integer;
+function e_w_RechnungsNummer(BELEG_R: integer): integer;
 // [RechnungsNummer]
 var
   PERSON_R: integer;
@@ -7789,7 +7791,7 @@ begin
         FieldByName('LIEFERBETRAG').AsFloat := Summe;
         FieldByName('GEWICHT').AsInteger := gewicht;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        if RECHNUNGSNUMMER >= cRID_FirstValid then
+        if (RECHNUNGSNUMMER > 0) then
           FieldByName('RECHNUNG').AsInteger := RECHNUNGSNUMMER;
         Post;
 
@@ -7949,9 +7951,9 @@ begin
       with qPosten do
       begin
         sql.add('select * from POSTEN for update');
-{$ifndef fpc}
+{$IFNDEF fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
-{$endif}
+{$ENDIF}
         prepare;
       end;
 
@@ -8028,11 +8030,11 @@ begin
         BELEG_R := e_w_GEN('BELEG_GID');
         //
         sql.add('select * from BELEG for update');
-{$ifndef fpc}
+{$IFNDEF fpc}
         ColumnAttributes.add('ANLAGE=NOTREQUIRED');
         ColumnAttributes.add('BTYP=NOTREQUIRED');
         ColumnAttributes.add('BSTATUS=NOTREQUIRED');
-{$endif}
+{$ENDIF}
         Insert;
         FieldByName('RID').AsInteger := BELEG_R;
         FieldByName('PERSON_R').AsInteger := PERSON_R;
@@ -8482,7 +8484,7 @@ begin
     else
     begin
       InfoText := TStringList.create;
-      e_r_sqlt(FieldByName('INT_TEXT'),InfoText);
+      e_r_sqlt(FieldByName('INT_TEXT'), InfoText);
       if InfoText.count > 0 then
         result := InfoText[0]
       else
@@ -8493,7 +8495,7 @@ begin
   cINTERNATIONALTEXT.free;
 end;
 
-function e_r_telefon(ib_q: TdboDataset): string;
+function e_r_telefon(ib_q: TdboDataSet): string;
 begin
   with ib_q do
   begin
@@ -8531,7 +8533,7 @@ begin
     end
     else
     begin
-      e_r_sqlt(FieldByName('INT_TEXT'),result);
+      e_r_sqlt(FieldByName('INT_TEXT'), result);
     end;
   end;
   cINTERNATIONALTEXT.free;
@@ -8559,7 +8561,7 @@ begin
     Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' +
     inttostr(LANGUAGE) + ')');
   IntTxt.First;
-  e_r_sqlt(IntTxt.FieldByName('INT_TEXT'),Bigmemo);
+  e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
   Bigmemo.add('');
   result := cutblank(Bigmemo[0]);
   //
@@ -8699,9 +8701,8 @@ begin
         _BELEG_R_TO + ' for update');
 
       edit;
-      FieldByName('RECHNUNGS_BETRAG').AsFloat :=
-        FieldByName('RECHNUNGS_BETRAG').AsFloat +
-        e_r_sqld('select RECHNUNGS_BETRAG from BELEG where RID=' +
+      FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG')
+        .AsFloat + e_r_sqld('select RECHNUNGS_BETRAG from BELEG where RID=' +
         _BELEG_R_FROM);
       FieldByName('DAVON_BEZAHLT').AsFloat := FieldByName('DAVON_BEZAHLT')
         .AsFloat + e_r_sqld('select DAVON_BEZAHLT from BELEG where RID=' +
@@ -9138,10 +9139,10 @@ begin
       qEREIGNIS := nQuery;
       with qEREIGNIS do
       begin
-{$ifndef fpc}
+{$IFNDEF fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$endif}
+{$ENDIF}
         sql.add('select * from EREIGNIS for update');
         Insert;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -9293,7 +9294,7 @@ begin
     sql.add('from BELEG');
     sql.add(' where RID=' + inttostr(BELEG_R_FROM));
     ApiFirst;
-    e_r_sqlt(FieldByName('INTERN_INFO'),InternInfosQuelle);
+    e_r_sqlt(FieldByName('INTERN_INFO'), InternInfosQuelle);
     RECHNUNGSANSCHRIFT_R := FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger;
     LIEFERANSCHRIFT_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
   end;
@@ -9481,7 +9482,7 @@ begin
       if eof then
         raise exception.create('Quell-Beleg ' + inttostr(BELEG_R_FROM) +
           ' nicht gefunden');
-      e_r_sqlt(FieldByName('INTERN_INFO'),BelegOptions);
+      e_r_sqlt(FieldByName('INTERN_INFO'), BelegOptions);
       BTYP := strtointdef(FieldByName('BTYP').AsString, 0);
     end;
 
@@ -9489,7 +9490,8 @@ begin
     if assigned(sTexte) then
       for n := 0 to pred(sTexte.count) do
         if (pos('=', sTexte[n]) > 0) then
-          BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
+          BelegOptions.values[nextp(sTexte[n], '=', 0)] :=
+            nextp(sTexte[n], '=', 1);
 
     // prüfe Existenz der Ziel-Person
     if e_r_sql('select count(rid) from person where RID=' +
@@ -9537,7 +9539,7 @@ begin
       for n := 0 to pred(FieldCount) do
         if (BlackList.IndexOf(Fields[n].FieldName) = -1) then
           Fields[n].assign(cQUELL_BELEG.FieldByName(Fields[n].FieldName));
-      FieldByName('INTERN_INFO').Assign(BelegOptions);
+      FieldByName('INTERN_INFO').assign(BelegOptions);
       if (BTYP > 0) then
         FieldByName('BTYP').AsString := inttostr(BTYP - 1);
       Post;
@@ -9745,7 +9747,7 @@ begin
       inttostr(ZAHLUNGTYP_R));
     ApiFirst;
 
-    e_r_sqlt(FieldByName('BELEG_INFO'),TheText);
+    e_r_sqlt(FieldByName('BELEG_INFO'), TheText);
 
     // Fälligkeit aus der Zahlungsart
     if FieldByName('FAELLIG').IsNull then
@@ -9984,7 +9986,7 @@ begin
     // Rechnungsnummer setzen
     if (iRechnungsNummerVergabeMoment = ernvm_Verbuchen) then
       if isSomeMoney(RechnungsBetrag) then
-        e_w_Rechnung(BELEG_R);
+        e_w_RechnungsNummer(BELEG_R);
 
     // aktuellen Beleg ausgeben
     AusgabeBelege := e_w_AusgabeBeleg(BELEG_R, false, false);
@@ -10006,7 +10008,7 @@ begin
       TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
       GENERATION_POSTFIX := '-' + inttostrN(FieldByName('GENERATION')
         .AsInteger, 2);
-      e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+      e_r_sqlt(FieldByName('INTERN_INFO'), INTERN_INFO);
     end;
 
     // Ausgabebeleg dauerhaft kopieren
@@ -10128,10 +10130,10 @@ begin
     qWARENBEWEGUNG := nQuery;
     with qWARENBEWEGUNG do
     begin
-{$ifndef fpc}
+{$IFNDEF fpc}
       ColumnAttributes.add('RID=NOTREQUIRED');
       ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$endif}
+{$ENDIF}
       sql.add('select * from WARENBEWEGUNG for update');
       Insert;
       FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
@@ -10219,7 +10221,7 @@ begin
           PaketS := TStringList.create;
           ParameterS := TStringList.create;
           WerteS := TStringList.create;
-          e_r_sqlt(cVERSENDER.FieldByName('INTERNINFO'),ParameterS);
+          e_r_sqlt(cVERSENDER.FieldByName('INTERNINFO'), ParameterS);
 
           case cVERSENDER.FieldByName('EXPORTTYP').AsInteger of
             1:
@@ -10788,8 +10790,11 @@ begin
       DatensammlerGlobal.add('Datum=' + long2dateLocalized(DateGet));
       DatensammlerGlobal.add('AktuellesDatum=' + DatumLocalized);
       DatensammlerGlobal.add('AktuelleUhrzeit=' + Uhr);
-      DatensammlerGlobal.add('Rechnungsdatum=' +
-        long2dateLocalized(FieldByName('RECHNUNG').AsDateTime));
+      if FieldByName('RECHNUNG').IsNull then
+        DatensammlerGlobal.add('Rechnungsdatum=' + DatumLocalized)
+      else
+        DatensammlerGlobal.add('Rechnungsdatum=' +
+          long2dateLocalized(FieldByName('RECHNUNG').AsDateTime));
       DatensammlerGlobal.add('Zahldatum=' + long2dateLocalized(DatePlus(DateGet,
         e_r_ZahlungFrist(PERSON_R))));
       DatensammlerGlobal.add('Hauptnummer=' + cPERSON.FieldByName
@@ -10800,7 +10805,7 @@ begin
         .AsString);
 
       // Freie Felddefinitionen noch machen ...
-      e_r_sqlt(FieldByName('INTERN_INFO'),InternInfo);
+      e_r_sqlt(FieldByName('INTERN_INFO'), InternInfo);
       for n := 0 to pred(InternInfo.count) do
         if pos('=', InternInfo[n]) > 1 then
           DatensammlerGlobal.add(InternInfo[n]);
@@ -11035,7 +11040,7 @@ begin
             ApiFirst;
 
             // Artikel-Daten holen!
-            e_r_sqlt(FieldByName('INTERN_INFO'),ArtikelInfo);
+            e_r_sqlt(FieldByName('INTERN_INFO'), ArtikelInfo);
 
             // aus dem Artikelstamm übernommene Felder
             DatensammlerLokal.add('No=' + FieldByName('NUMERO').AsString);
@@ -11167,12 +11172,12 @@ begin
       if not(NurGeliefertes) and not(AlsLieferschein) then
         if isSomeMoney(MwStSaver.brutto) then
           if RECHNUNGSNUMMER = 0 then
-            RECHNUNGSNUMMER := e_w_Rechnung(BELEG_R);
+            RECHNUNGSNUMMER := e_w_RechnungsNummer(BELEG_R);
 
     if NurGeliefertes then
     begin
       DatensammlerGlobal.add('Rechnung=' +
-        HugeSingleLine(e_r_Rechnungen(BELEG_R), ', '));
+        HugeSingleLine(e_r_RechnungsNummern(BELEG_R), ', '));
     end
     else
     begin
@@ -11291,7 +11296,7 @@ begin
     // weitere Bemerkungen hinzufügen!
     if not(cBELEG.FieldByName('KUNDEN_INFO').IsNull) then
     begin
-      e_r_sqlt(cBELEG.FieldByName('KUNDEN_INFO'),KundenInfo);
+      e_r_sqlt(cBELEG.FieldByName('KUNDEN_INFO'), KundenInfo);
       if (KundenInfo.count > 0) then
       begin
         _AddText := KundenInfo[0];
@@ -11308,7 +11313,7 @@ begin
 
     if not(cBELEG.FieldByName('VORAB_INFO').IsNull) then
     begin
-      e_r_sqlt(cBELEG.FieldByName('VORAB_INFO'),KundenInfo);
+      e_r_sqlt(cBELEG.FieldByName('VORAB_INFO'), KundenInfo);
       if (KundenInfo.count > 0) then
       begin
         _AddText := KundenInfo[0];
@@ -11785,13 +11790,14 @@ begin
       ApiFirst;
       if (FieldByName('STATUS').AsInteger = cs_Erfolg) then
       begin
-        e_r_sqlt(FieldByName('PROTOKOLL'),sProtokoll);
-        e_r_sqlt(FieldByName('ZAEHLER_INFO'),sZaehlerInfo);
-        e_r_sqlt(FieldByName('INTERN_INFO'),sIntern);
+        e_r_sqlt(FieldByName('PROTOKOLL'), sProtokoll);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'), sZaehlerInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'), sIntern);
 
         // AF-Patch eCommerce.pas 10678 +
         // ZAEHLER_WECHSEL : TANFiXDate;
-        ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
+        ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL')
+          .AsDateTime);
         if (ZAEHLER_WECHSEL > DateGet) then
           Log('[Q14] Ablesedatum liegt in der Zukunft');
         if (ZAEHLER_WECHSEL < 20080822) then
@@ -11924,7 +11930,7 @@ begin
   until true;
 end;
 
-function e_r_Name(ib_q: TdboDataset): string; overload;
+function e_r_Name(ib_q: TdboDataSet): string; overload;
 begin
   result := cutblank(ib_q.FieldByName('VORNAME').AsString + ' ' +
     ib_q.FieldByName('NACHNAME').AsString);
@@ -11944,7 +11950,7 @@ begin
   cPERSON.free;
 end;
 
-function e_r_NameVorname(ib_q: TdboDataset): string; overload;
+function e_r_NameVorname(ib_q: TdboDataSet): string; overload;
 var
   n, V: string;
 begin
@@ -11980,7 +11986,7 @@ begin
   cPERSON.free;
 end;
 
-function e_r_fax(ib_q: TdboDataset): string; overload;
+function e_r_fax(ib_q: TdboDataSet): string; overload;
 begin
   result := '';
   try
@@ -12107,10 +12113,9 @@ begin
 
 end;
 
-function e_r_Prozent(SATZ: integer;
-  mDatum: TAnfixDate = cIllegalDate): double;
+function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 begin
-  if (SATZ = 0) then
+  if (Satz = 0) then
     result := 0
   else
   begin
@@ -12118,7 +12123,7 @@ begin
       mDatum := DateGet;
 
     result := e_r_sqld('select SATZ from MWST where ' + ' (NAME=''SATZ' +
-      inttostr(SATZ) + ''') and ' + ' (''' + long2date(mDatum) +
+      inttostr(Satz) + ''') and ' + ' (''' + long2date(mDatum) +
       ''' between VON_DATUM and BIS_DATUM)');
   end;
 end;
@@ -12208,10 +12213,10 @@ begin
         // Beleg anlegen
         with qBELEG do
         begin
-          {$ifndef fpc}
+{$IFNDEF fpc}
           ColumnAttributes.add('BTYP=NOTREQUIRED');
           ColumnAttributes.add('BSTATUS=NOTREQUIRED');
-          {$endif}
+{$ENDIF}
           Insert;
           FieldByName('PERSON_R').AsInteger := iSchnelleRechnung_PERSON_R;
           FieldByName('RID').AsInteger := BELEG_R;
@@ -12307,7 +12312,7 @@ begin
     sql.add('UPDATE ARTIKEL');
     sql.add('SET RANG=:RANG');
     sql.add('WHERE RID=:CR');
-    //prepare;
+    // prepare;
   end;
 
   IB_SET_ARTIKEL_AA := nScript;
@@ -12317,7 +12322,7 @@ begin
     sql.add('SET RANG=:RANG');
     sql.add('WHERE (ARTIKEL_R=:CR_A)');
     sql.add('AND (AUSGABEART_R=:CR_B)');
-    //prepare;
+    // prepare;
   end;
 
   IB_RANG := nCursor;
@@ -12373,11 +12378,11 @@ begin
           Params.BeginUpdate;
           ParamByName('CR').AsInteger := ARTIKEL_R;
           ParamByName('RANG').AsFloat := RANG;
-{$ifdef fpc}
-Params.EndUpdate;
-{$else}
-Params.EndUpdate(true);
-{$endif}
+{$IFDEF fpc}
+          Params.EndUpdate;
+{$ELSE}
+          Params.EndUpdate(true);
+{$ENDIF}
           execute;
         end;
 
@@ -12392,11 +12397,11 @@ Params.EndUpdate(true);
           ParamByName('CR_A').AsInteger := ARTIKEL_R;
           ParamByName('CR_B').AsInteger := AUSGABEART_R;
           ParamByName('RANG').AsFloat := RANG;
-{$ifdef fpc}
-Params.EndUpdate;
-{$else}
-Params.EndUpdate(true);
-{$endif}
+{$IFDEF fpc}
+          Params.EndUpdate;
+{$ELSE}
+          Params.EndUpdate(true);
+{$ENDIF}
           execute;
         end;
 

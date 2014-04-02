@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.010 (02.04.14) Andreas Filsinger
+
+ Neu: Beleg: Ausgabe in HTML: "Rechnungsdatum" ist nun immer belegt
+
 Rev 8.009 (31.03.14) Andreas Filsinger
 
  Neu: FTP: Unsicherheit über TFTP.TransferTimeout, wieder zurück von 30000 auf 0

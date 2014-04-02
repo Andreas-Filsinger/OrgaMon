@@ -1718,7 +1718,7 @@ begin
   Label7.caption := NewStr;
 
   // Rechnungen teilweise schon ausgegeben?
-  AusgangsRechnungen := e_r_Rechnungen(BelegRID);
+  AusgangsRechnungen := e_r_RechnungsNummern(BelegRID);
   case AusgangsRechnungen.count of
     0:
       NewStr := '(bisher keine Rechnungen)';
