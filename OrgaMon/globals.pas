@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.010; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.011; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -599,7 +599,7 @@ const
   c_Auslastungsflag_Fremd = 2; // andere Baustelle wie aktuelle
   c_Auslastungsflag_Mix = 4; // mehrere Baustellen
 
-  cImportFieldsAnz = 59;
+  cImportFieldsAnz = 62;
   cImportFields: array [0 .. pred(cImportFieldsAnz)] of UnicodeString = (
     { 00 } 'Art',
     { 01 } 'Zähler_Nummer',
@@ -659,7 +659,10 @@ const
     { 55 } 'Zusatzarbeiten',
     { 56 } 'C_SAP_INFO_#_#',
     { 57 } 'Transaktion',
-    { 58 } 'Material_Nummer');
+    { 58 } 'Material_Nummer',
+    { 59 } 'Protokoll_#',
+    { 60 } 'Protokoll_C_#',
+    { 61 } 'Protokoll_C_C');
 
   cWordHeaderLine2 =
 

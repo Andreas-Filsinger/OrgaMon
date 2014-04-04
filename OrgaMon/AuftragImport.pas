@@ -701,6 +701,7 @@ var
   _ZaehlerMehrInfo: TStringList;
   _MonteurMehrInfo: TStringList;
   _InternMehrInfo: TStringList;
+  _ProtokollMehrInfo: TStringList;
 
   _ZaehlerTyp: string;
   MoreTextInfo: TStringList;
@@ -1334,6 +1335,7 @@ begin
     _ZaehlerMehrInfo := TStringList.create;
     _MonteurMehrInfo := TStringList.create;
     _InternMehrInfo := TStringList.create;
+    _ProtokollMehrInfo := TSTringList.Create;
 
     Abgelehnte := TStringList.create;
     Importierte := TStringList.create;
@@ -1412,6 +1414,7 @@ begin
         _ZaehlerMehrInfo.clear;
         _MonteurMehrInfo.clear;
         _InternMehrInfo.clear;
+        _ProtokollMehrInfo.Clear;
 
         Insert; // neue Auftragszeile!
 
@@ -1922,7 +1925,21 @@ begin
                   // 'Material_Nummer',
                   FieldByName('MATERIAL_NUMMER').AsString := rSpaltenWert(1);
                 end;
-
+               59:
+               begin
+                // Protokoll_#
+                 _ProtokollMehrInfo.Add(rSpaltenWert(1));
+               end;
+               60:
+               begin
+                 // Protokoll_C_#
+                 _ProtokollMehrInfo.Add(ParameterItems[0] + '=' + rSpaltenWert(2));
+               end;
+               61:
+               begin
+                 // Protokoll_C_C
+                 _ProtokollMehrInfo.Add(ParameterItems[0] + '=' + ParameterItems[1]);
+               end;
             else
               // Fehler!
             end;
@@ -1936,6 +1953,7 @@ begin
         FieldByName('ZAEHLER_INFO').assign(_ZaehlerMehrInfo);
         FieldByName('MONTEUR_INFO').assign(_MonteurMehrInfo);
         FieldByName('INTERN_INFO').assign(_InternMehrInfo);
+        FieldByName('PROTOKOLL').Assign(_ProtokollMehrInfo);
 
         //
         if (FieldByName('BRIEF_NAME1').AsString = '') and
@@ -2017,6 +2035,7 @@ begin
     _ZaehlerMehrInfo.free;
     _MonteurMehrInfo.free;
     _InternMehrInfo.free;
+    _ProtokollMehrInfo.free;
 
     InfoFile.add(cINFOText + 'Abgelehnte ' + inttostr(Abgelehnte.count -
       QuellHeaderLines));
