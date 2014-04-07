@@ -106,6 +106,7 @@ const
   cC_True = 'Y';
   cC_True_AsString = '''Y''';
   cC_False = 'N';
+  cC_False_AsString = '''N''';
   cC_concant = '||';
 
   // Datenbank Referenz Identitäten
@@ -211,7 +212,8 @@ function isRID(RID: integer): string;
 function bool2cC(b: boolean): string;
 function RIDtostr(RID: integer): string;
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
-function EnsureSQL(s: string): string;
+function EnsureSQL(const s: string): string;
+function SQLstring(const s: string): string;
 
 // Tools für das Tabellen Handling
 function useTable(TableName: string): string;
@@ -1874,10 +1876,15 @@ begin
   end;
 end;
 
-function EnsureSQL(s: string): string;
+function EnsureSQL(const s: string): string;
 begin
   result := s;
   ersetze('''', '''''', result);
+end;
+
+function SQLstring(const s: string): string;
+begin
+  result := '''' + EnsureSQL(s) + '''';
 end;
 
 function nQuery: TdboQuery;

@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.012 (07.04.14) Andreas Filsinger
+
+ Neu: Artikel: Barsoi: Import von "'"
+
 Rev 8.011 (04.04.14) Andreas Filsinger
 
  Neu: Auftrag: Import: Protokoll_#, Protokoll_C_#, Protokoll_C_C

@@ -85,7 +85,6 @@ type
     TabSheet5: TTabSheet;
     Edit7: TEdit;
     Button9: TButton;
-    ProgressBar2: TProgressBar;
     CheckBox7: TCheckBox;
     TabSheet6: TTabSheet;
     Button12: TButton;
@@ -109,6 +108,7 @@ type
     Memo1: TMemo;
     TabSheet10: TTabSheet;
     Button19: TButton;
+    StaticText1: TStaticText;
     procedure Button6Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -633,10 +633,10 @@ begin
 
   (*
 
-  // Aktionen
-  // a) AUSGANGSRECHNUNGEN -> BUCH, Wegfall "AUSGANGSRECHNUNGEN"
+    // Aktionen
+    // a) AUSGANGSRECHNUNGEN -> BUCH, Wegfall "AUSGANGSRECHNUNGEN"
 
-     AUSGANGSRECHNUNG.KUNDE_R -> PERSON_R
+    AUSGANGSRECHNUNG.KUNDE_R -> PERSON_R
     AUSGANGSRECHNUNG.RID      -> BUCH.GEN_ID(new)
     AUSGANGSRECHNUNG. BELEG_R
     AUSGANGSRECHNUNG. TEILLIEFERUNG
@@ -651,7 +651,7 @@ begin
     AUSGANGSRECHNUNG. ZAHLUNGSPFLICHTIGER_R
 
 
-  // b) BELEG-Wegfall:
+    // b) BELEG-Wegfall:
     BELEG.RECHNUNGS_BETRAG       DOUBLE PRECISION -> Redundant kein Übergang, Wegfall
     BELEG.DAVON_BEZAHLT          DOUBLE PRECISION -> Redundant kein Übergang, Wegfall
     BELEG.ABSCHLUSS              TIMESTAMP        -> Wegfall, keine Bedeutung
@@ -2474,48 +2474,60 @@ const
 
   function CheckCreateAusgabeart: integer; // [AUSGABEART_R]
   begin
-    result := e_r_sql('select RID from AUSGABEART where (NAME=''' +
-      aaAusgabeart + ''')');
+    result := e_r_sql('select RID from AUSGABEART where (NAME=' +
+      SQLstring(aaAusgabeart) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GEN_AUSGABEART');
       e_x_sql('insert into AUSGABEART (RID,NAME) values (' + inttostr(result) +
-        ',' + '''' + aaAusgabeart + '''' + ')');
+        ',' + SQLstring(aaAusgabeart) + ')');
     end;
   end;
 
   function CheckCreateSortiment: integer; // [SORTIMENT_R]
   begin
-    result := e_r_sql('select RID from sortiment where ' + ' (BEZEICHNUNG=''' +
-      aaSortiment + ''') and ' + ' (MWST_R=' + inttostr(_MWST_R) + ')');
+    result := e_r_sql('select RID from sortiment where ' + ' (BEZEICHNUNG=' +
+      SQLstring(aaSortiment) + ') and ' + ' (MWST_R=' +
+      inttostr(_MWST_R) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GLOBAL_GID');
       e_x_sql('insert into SORTIMENT (RID,NAECHSTE_NUMMER,NETTO,MWST_R,BEZEICHNUNG) values ('
-        + inttostr(result) + ',' + '-1,' + '''' + cC_True + ''',' +
-        inttostr(_MWST_R) + ',' + '''' + aaSortiment + '''' + ')');
+        +
+        { } inttostr(result) + ',' +
+        { } '-1,' +
+        { } cC_True_AsString + ',' +
+        { } inttostr(_MWST_R) + ',' +
+        { } SQLstring(aaSortiment) + ')');
     end;
   end;
 
   function CheckCreateArtikel: integer; // [ARTIKEL_R]
   begin
-    result := e_r_sql('select RID from ARTIKEL where ' + ' (DAUER=''' +
-      INDEX + ''')');
+    result := e_r_sql('select RID from ARTIKEL where ' + ' (DAUER=' +
+      SQLstring(INDEX) + ')');
     if (result < cRID_FirstValid) then
     begin
       // erste Anlage!!
       result := e_w_ArtikelNeu(SORTIMENT_R);
-      e_x_sql('update ARTIKEL set ' + ' DAUER=''' + INDEX + ''',' +
-        ' SCHWER_GRUPPE=''' + VART + ''',' + ' TITEL=''' + MEDI + ''',' +
-        ' GEWICHT=-1, ' + ' LETZTEAENDERUNG=CURRENT_TIMESTAMP, ' + ' VERLAG_R='
-        + inttostr(PERSON_R) + ' ' + 'where RID=' + inttostr(result));
+      e_x_sql('update ARTIKEL set ' +
+        { } ' DAUER=' + SQLstring(INDEX) + ',' +
+        { } ' SCHWER_GRUPPE=' + SQLstring(VART) + ',' +
+        { } ' TITEL=' + SQLstring(MEDI) + ',' +
+        { } ' GEWICHT=-1, ' +
+        { } ' LETZTEAENDERUNG=CURRENT_TIMESTAMP, ' +
+        { } ' VERLAG_R=' + inttostr(PERSON_R) + ' ' +
+        { } 'where RID=' + inttostr(result));
     end
     else
     begin
-      e_x_sql('update ARTIKEL set ' + ' SCHWER_GRUPPE=''' + VART + ''',' +
-        ' TITEL=''' + MEDI + ''',' + ' GEWICHT=-1, ' +
-        ' LETZTEAENDERUNG=CURRENT_TIMESTAMP, ' + ' VERLAG_R=' +
-        inttostr(PERSON_R) + ' ' + 'where RID=' + inttostr(result));
+      e_x_sql('update ARTIKEL set ' +
+        { } ' SCHWER_GRUPPE=' + SQLstring(VART) + ',' +
+        { } ' TITEL=' + SQLstring(MEDI) + ',' +
+        { } ' GEWICHT=-1, ' +
+        { } ' LETZTEAENDERUNG=CURRENT_TIMESTAMP, ' +
+        { } ' VERLAG_R=' + inttostr(PERSON_R) + ' ' +
+        { } 'where RID=' + inttostr(result));
     end;
   end;
 
@@ -2581,12 +2593,12 @@ const
   begin
     //
     result := e_r_sql('select RID from EINHEIT ' +
-      'where (EINHEIT=1) and (BASIS=''' + ABG + ''')');
+      'where (EINHEIT=1) and (BASIS=' + SQLstring(ABG) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GEN_EINHEIT');
       e_x_sql('insert into EINHEIT (RID,EINHEIT,BASIS) values ' + '(' +
-        inttostr(result) + ',' + '1,' + '''' + ABG + ''')');
+        inttostr(result) + ',' + '1,' + SQLstring(ABG) + ')');
     end;
   end;
 
@@ -2597,8 +2609,8 @@ const
     if (VKURZ = '') then
       VKURZ := VERNR;
 
-    result := e_r_sql('select RID from PERSON where ' + ' (SUCHBEGRIFF=''' +
-      VKURZ + ' Barsoi'')');
+    result := e_r_sql('select RID from PERSON where ' +
+      { } ' (SUCHBEGRIFF=''' + EnsureSQL(VKURZ) + ' Barsoi'')');
     if (result < cRID_FirstValid) then
       result := e_w_PersonNeu;
 
@@ -2606,21 +2618,21 @@ const
       inttostr(result));
 
     e_x_sql('update PERSON set ' +
-      { } ' SUCHBEGRIFF=''' + copy(VKURZ, 1, 45) + ' Barsoi'', ' +
+      { } ' SUCHBEGRIFF=''' + EnsureSQL(copy(VKURZ, 1, 45)) + ' Barsoi'', ' +
       { } ' NACHNAME=null, ' +
-      { } ' GESCH_TEL=''' + copy(TEL1, 1, 25) + ''',' +
-      { } ' EMAIL=''' + copy(TEL2, 1, 120) + ''',' +
-      { } ' WEBSITE=''' + copy(TELEX, 1, 120) + ''',' +
-      { } ' GESCH_FAX=''' + copy(FAX, 1, 25) + ''',' +
-      { } ' HAUPT_NUMMER=''' + VERNR + '''' +
+      { } ' GESCH_TEL=' + SQLstring(copy(TEL1, 1, 25)) + ',' +
+      { } ' EMAIL=' + SQLstring(copy(TEL2, 1, 120)) + ',' +
+      { } ' WEBSITE=' + SQLstring(copy(TELEX, 1, 120)) + ',' +
+      { } ' GESCH_FAX=' + SQLstring(copy(FAX, 1, 25)) + ',' +
+      { } ' HAUPT_NUMMER=' + SQLstring(VERNR) + '' +
       { } ' where RID=' + inttostr(result));
 
     e_x_sql('update ANSCHRIFT set ' +
-      { } ' NAME1=''' + copy(NAM1, 1, 45) + ''',' +
-      { } ' NAME2=''' + copy(NAM2, 1, 45) + ''',' +
-      { } ' STRASSE=''' + copy(str, 1, 45) + ''',' +
+      { } ' NAME1=' + SQLstring(copy(NAM1, 1, 45)) + ',' +
+      { } ' NAME2=' + SQLstring(copy(NAM2, 1, 45)) + ',' +
+      { } ' STRASSE=' + SQLstring(copy(str, 1, 45)) + ',' +
       { } ' PLZ=' + inttostr(strtointdef(nextp(PORT, ' ', 0), 0)) + ',' +
-      { } ' ORT=''' + copy(nextp(PORT, ' ', 1), 1, 45) + ''' ' +
+      { } ' ORT=' + SQLstring(copy(nextp(PORT, ' ', 1), 1, 45)) + ' ' +
       { } ' where RID=' + inttostr(ANSCHRIFT_R));
   end;
 
@@ -2777,7 +2789,7 @@ begin
   sSortiment := TStringList.create;
   sMEDI.loadfromfile(MyProgramPath + Edit7.text);
   AutoMataState := 0;
-  ProgressBar2.max := sMEDI.count;
+  ProgressBar1.max := sMEDI.count;
   for n := 0 to pred(sMEDI.count) do
   begin
     parse(sMEDI[n]);
@@ -2786,7 +2798,8 @@ begin
       application.processmessages;
       if CheckBox7.checked then
         break;
-      ProgressBar2.position := n;
+      ProgressBar1.position := n;
+      StaticText1.caption := inttostr(n);
     end;
   end;
 
@@ -2805,7 +2818,8 @@ begin
   sEinheit.free;
   sSortiment.free;
 
-  ProgressBar2.position := 0;
+  ProgressBar1.position := 0;
+  StaticText1.caption := inttostr(0);
   EndHourGlass;
 end;
 

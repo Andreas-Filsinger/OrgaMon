@@ -49,7 +49,8 @@ uses
   ComCtrls, ExtCtrls,
 
   // ANFiX
-  gplists, Buttons, IdBaseComponent, IdComponent, IB_UtilityBar;
+  gplists, Buttons, IdBaseComponent, IdComponent, IB_UtilityBar, IdUDPBase,
+  IdUDPClient, IdSysLog;
 
 type
   TFormSystemPflege = class(TForm)
@@ -147,6 +148,16 @@ type
     SpeedButton4: TSpeedButton;
     Edit13: TEdit;
     Button16: TButton;
+    TabSheet10: TTabSheet;
+    Edit14: TEdit;
+    Button17: TButton;
+    Edit15: TEdit;
+    Label23: TLabel;
+    Label24: TLabel;
+    Memo3: TMemo;
+    IdSysLog1: TIdSysLog;
+    CheckBox6: TCheckBox;
+    Button18: TButton;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -169,6 +180,11 @@ type
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure IdSysLog1Status(ASender: TObject; const AStatus: TIdStatus;
+      const AStatusText: string);
+    procedure CheckBox6Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -211,6 +227,14 @@ begin
   PageControl1.ActivePage := TabSheet1;
 end;
 
+procedure TFormSystemPflege.IdSysLog1Status(ASender: TObject;
+  const AStatus: TIdStatus; const AStatusText: string);
+begin
+  if AStatus = hsStatusText then
+    Memo3.Lines.Add(AStatusText);
+
+end;
+
 procedure TFormSystemPflege.Button3Click(Sender: TObject);
 var
   AllTheRIDs: TStringList;
@@ -223,14 +247,14 @@ begin
   with IB_Query1 do
   begin
     sql.Clear;
-    sql.add('SELECT ' + Edit4.Text);
-    sql.add('FROM ' + Edit3.Text);
+    sql.Add('SELECT ' + Edit4.Text);
+    sql.Add('FROM ' + Edit3.Text);
     ListBox1.Items.addstrings(sql);
     Open;
     first;
     while not(eof) do
     begin
-      AllTheRIDs.add(FieldByName(Edit4.Text).AsString);
+      AllTheRIDs.Add(FieldByName(Edit4.Text).AsString);
       next;
     end;
     Close;
@@ -243,10 +267,10 @@ begin
       exit;
     end;
     sql.Clear;
-    sql.add('SELECT ' + Edit2.Text);
-    sql.add('FROM ' + Edit1.Text);
-    sql.add('WHERE ' + Edit2.Text + ' IS NOT NULL');
-    sql.add('FOR UPDATE');
+    sql.Add('SELECT ' + Edit2.Text);
+    sql.Add('FROM ' + Edit1.Text);
+    sql.Add('WHERE ' + Edit2.Text + ' IS NOT NULL');
+    sql.Add('FOR UPDATE');
     ListBox1.Items.addstrings(sql);
     Open;
     ErrorCount := 0;
@@ -257,7 +281,7 @@ begin
       begin
         if (ErrorCount = 0) then
           ListBox1.Items.Clear;
-        ListBox1.Items.add(FieldByName(Edit2.Text).AsString + '? ');
+        ListBox1.Items.Add(FieldByName(Edit2.Text).AsString + '? ');
         inc(ErrorCount);
         if CheckBox1.Checked then
         begin
@@ -315,7 +339,7 @@ begin
     refresh;
     while not(eof) do
     begin
-      ListBox1.Items.add(FieldByName('RDB$RELATION_NAME').AsString + '.' +
+      ListBox1.Items.Add(FieldByName('RDB$RELATION_NAME').AsString + '.' +
         FieldByName('RDB$INDEX_NAME').AsString
         {
           + ' ' +
@@ -336,7 +360,7 @@ begin
     if pos('RDB$PRIMARY', ListBox1.Items[n]) > 0 then
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
         ' active;');
       try
         if CheckBox2.Checked then
@@ -347,7 +371,7 @@ begin
         end;
       except
         beep;
-        ListBox2.Items.add(ListBox1.Items[n]);
+        ListBox2.Items.Add(ListBox1.Items[n]);
       end;
       continue;
     end;
@@ -355,7 +379,7 @@ begin
     if pos('RDB$FOREIGN', ListBox1.Items[n]) > 0 then
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
         ' active;');
       try
         if CheckBox3.Checked then
@@ -366,14 +390,14 @@ begin
         end;
       except
         beep;
-        ListBox2.Items.add(ListBox1.Items[n]);
+        ListBox2.Items.Add(ListBox1.Items[n]);
       end;
       continue;
     end
     else
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
         ' active;');
       try
         if CheckBox4.Checked then
@@ -384,7 +408,7 @@ begin
         end;
       except
         beep;
-        ListBox2.Items.add(ListBox1.Items[n]);
+        ListBox2.Items.Add(ListBox1.Items[n]);
       end;
       continue;
     end;
@@ -404,13 +428,13 @@ begin
   if ListBox1.ItemIndex <> -1 then
   begin
     IB_Script1.sql.Clear;
-    IB_Script1.sql.add('alter index ' + ClearIndexName(ListBox1.Items
+    IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items
       [ListBox1.ItemIndex]) + ' active;');
     try
       IB_Script1.Execute;
     except
       beep;
-      ListBox2.Items.add(ListBox1.Items[ListBox1.ItemIndex]);
+      ListBox2.Items.Add(ListBox1.Items[ListBox1.ItemIndex]);
     end;
   end;
   EndHourGlass;
@@ -453,7 +477,7 @@ begin
       begin
         RID := strtointdef(_RID, -1);
         if (RID > 0) and (lTRN.indexof(RID) = -1) then
-          lTRN.add(RID);
+          lTRN.Add(RID);
       end;
     end;
     ImportL.free;
@@ -513,7 +537,7 @@ begin
     BeginHourGlass;
     if (xMode = xMode_Free) then
     begin
-      Funktionen_Transaktion.Dispatch(Edit12.text, lTRN);
+      Funktionen_Transaktion.Dispatch(Edit12.Text, lTRN);
     end
     else
     begin
@@ -570,7 +594,7 @@ begin
           inc(SuccessN);
         except
           on E: Exception do
-            ListBox3.Items.add(E.Message);
+            ListBox3.Items.Add(E.Message);
         end;
 
         if frequently(StartTime, 555) or (n = pred(lTRN.count)) then
@@ -587,7 +611,7 @@ begin
       FormCareServer.ShowIfError(sLog);
       sLog.free;
     end;
-    ListBox3.Items.add('Beendet!');
+    ListBox3.Items.Add('Beendet!');
     EndHourGlass;
   end
   else
@@ -623,7 +647,7 @@ begin
   begin
     with qDOKUMENT do
     begin
-      sql.add('select RID,DATEN from DOKUMENT for update');
+      sql.Add('select RID,DATEN from DOKUMENT for update');
       for n := 0 to pred(sList.count) do
       begin
 
@@ -671,7 +695,7 @@ begin
   ResultStrL.insert(0, '// ' + iDataBaseName);
   ResultStrL.insert(0, '/*');
 
-  SynMemo1.lines.assign(ResultStrL);
+  SynMemo1.Lines.assign(ResultStrL);
   ResultStrL.SaveToFile(MetaDataFName);
   SynExporterHTML1.ExportAll(ResultStrL);
   SynExporterHTML1.SaveToFile(MetaDataFName + '.html');
@@ -702,7 +726,7 @@ begin
   cDOKUMENT := DataModuleDatenbank.nCursor;
   with cDOKUMENT do
   begin
-    sql.add('select RID,DATEN from DOKUMENT where DATEN is not null');
+    sql.Add('select RID,DATEN from DOKUMENT where DATEN is not null');
     ApiFirst;
     while not(eof) do
     begin
@@ -712,7 +736,7 @@ begin
       m := TMemoryStream.create;
       m.CopyFrom(s, s.Size);
       inc(SizeOverAll, m.Size);
-      Memo2.lines.add(inttostr(m.Size) + ' Bytes');
+      Memo2.Lines.Add(inttostr(m.Size) + ' Bytes');
       m.free;
       s.free;
 
@@ -721,14 +745,14 @@ begin
   end;
   cDOKUMENT.free;
   a := Speed.Stop;
-  Memo2.lines.add('Summe ist ' + inttostr(SizeOverAll DIV (1024 * 1024)) +
+  Memo2.Lines.Add('Summe ist ' + inttostr(SizeOverAll DIV (1024 * 1024)) +
     ' MiByte');
-  Memo2.lines.add(format('Benötigte Zeit %.3f s', [a]));
+  Memo2.Lines.Add(format('Benötigte Zeit %.3f s', [a]));
 
   b := SizeOverAll;
   b := b / 1024.0 / 1024.0;
   c := b / a;
-  Memo2.lines.add(format('Transfer-Rate ist somit %.1f MiByte/s', [c]));
+  Memo2.Lines.Add(format('Transfer-Rate ist somit %.1f MiByte/s', [c]));
   Speed.free;
 
 end;
@@ -746,7 +770,7 @@ begin
     ResetAll;
     ExtractToStrings(ResultStrL);
   end;
-  Memo2.lines.add(format('SQL-Metadaten Analyse dauerte  %.3f s',
+  Memo2.Lines.Add(format('SQL-Metadaten Analyse dauerte  %.3f s',
     [Speed.Stop]));
   ResultStrL.free;
   Speed.free;
@@ -760,7 +784,7 @@ end;
 
 procedure TFormSystemPflege.SpeedButton4Click(Sender: TObject);
 begin
- edit13.Text := wanfix32._document;
+  Edit13.Text := wanfix32._document;
 end;
 
 procedure TFormSystemPflege.Button13Click(Sender: TObject);
@@ -775,11 +799,11 @@ begin
   TheC := DataModuleDatenbank.nCursor;
   with TheC do
   begin
-    sql.add('select ' + Edit6.Text + ' from ' + Edit5.Text);
+    sql.Add('select ' + Edit6.Text + ' from ' + Edit5.Text);
     ApiFirst;
     while not(eof) do
     begin
-      TheL.add(Fields[0].AsString);
+      TheL.Add(Fields[0].AsString);
       ApiNext;
     end;
   end;
@@ -795,7 +819,7 @@ procedure TFormSystemPflege.Button14Click(Sender: TObject);
 begin
   BeginHourGlass;
   Label22.caption := iDataBaseHost;
-  Memo2.lines.Clear;
+  Memo2.Lines.Clear;
   PerfSQL;
   PerfDataTransport;
   EndHourGlass;
@@ -808,7 +832,105 @@ end;
 
 procedure TFormSystemPflege.Button16Click(Sender: TObject);
 begin
- openShell(Edit13.Text);
+  openShell(Edit13.Text);
+end;
+
+procedure TFormSystemPflege.Button17Click(Sender: TObject);
+
+  function FilterMatch(const s: string): boolean;
+  begin
+    result := (pos(Edit15.Text, s) > 0);
+  end;
+
+  procedure Log(s: string);
+  begin
+    Memo3.Lines.Add(s);
+  end;
+
+var
+  BlackList: TStringList;
+  Apache2Log: TStringList;
+  n, i, Matches, MAxMAtches: integer;
+  IP: string;
+  FirewallScript: TStringList;
+begin
+  Apache2Log := TStringList.create;
+  BlackList := TStringList.create;
+
+  Apache2Log.LoadFromFile(Edit14.Text);
+
+  Log('Log-Size [Lines] : ' + inttostr(Apache2Log.count));
+  Matches := 0;
+  for n := 0 to pred(Apache2Log.count) do
+    if FilterMatch(Apache2Log[n]) then
+    begin
+      inc(Matches);
+      IP := nextp(Apache2Log[n], ' ', 0);
+      i := BlackList.indexof(IP);
+      if (i = -1) then
+        BlackList.AddObject(IP, pointer(integer(1)))
+      else
+        BlackList.Objects[i] := pointer(integer(BlackList.Objects[i]) + 1);
+    end;
+  Log('Filter-Hits [Lines] : ' + inttostr(Matches));
+  Log('Bad IPs [Count] : ' + inttostr(BlackList.count));
+  Apache2Log.free;
+  if (BlackList.count > 0) then
+  begin
+    FirewallScript := TStringList.create;
+    Matches := 0;
+    MAxMAtches := 0;
+    for n := 0 to pred(BlackList.count) do
+    begin
+      i := integer(BlackList.Objects[n]);
+      MAxMAtches := max(MAxMAtches, i);
+      inc(Matches, i);
+      FirewallScript.Add(inttostrN(i, 5) + ';' + BlackList[n]);
+    end;
+    Log('Average Attacks per IP [Attacks] : ' +
+      inttostr(round(Matches / BlackList.count)));
+    Log('Top Count Attacks per most active IP [Attacks] : ' +
+      inttostr(MAxMAtches));
+    FirewallScript.Sort;
+    FirewallScript.SaveToFile('I:\Blacklist.txt');
+    FirewallScript.free;
+  end;
+  BlackList.free;
+
+end;
+
+procedure TFormSystemPflege.Button18Click(Sender: TObject);
+var
+  BlackList: TStringList;
+  FirewallScript: TStringList;
+  n: integer;
+  IP: string;
+begin
+  BlackList := TStringList.create;
+  FirewallScript := TStringList.create;
+  with FirewallScript do
+  begin
+    Add('#!/bin/bash');
+    Add('#');
+    Add('# autogenerated by OrgaMon');
+    Add('#');
+    Add('');
+    Add('iptables -F');
+    Add('iptables -t nat -F');
+    Add('iptables -t mangle -F');
+    Add('iptables -X');
+  end;
+  BlackList.LoadFromFile('I:\' + 'Blacklist.txt');
+  for n := 0 to pred(BlackList.count) do
+  begin
+    IP := nextp(BlackList[n], ';', 1);
+    FirewallScript.Add('iptables -I INPUT -s ' + IP + ' -j DROP');
+  end;
+  BlackList.free;
+  FirewallScript.LineBreak := #$0A;
+  FirewallScript.SaveToFile('I:\' + 'block.sh');
+  FirewallScript.free;
+
 end;
 
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
@@ -819,6 +941,11 @@ end;
 procedure TFormSystemPflege.Button2Click(Sender: TObject);
 begin
   DataModuleDatenbank.IB_Transaction_R.Commit;
+end;
+
+procedure TFormSystemPflege.CheckBox6Click(Sender: TObject);
+begin
+  IdSysLog1.Active := CheckBox6.Checked;
 end;
 
 procedure TFormSystemPflege.CheckBox8Click(Sender: TObject);
@@ -840,10 +967,10 @@ procedure TFormSystemPflege.TabSheet7Show(Sender: TObject);
 var
   e_r_BasePlug_Strings: TStringList;
 begin
-  if (Memo1.lines.count = 0) then
+  if (Memo1.Lines.count = 0) then
   begin
     e_r_BasePlug_Strings := e_r_BasePlug;
-    Memo1.lines.addstrings(e_r_BasePlug_Strings);
+    Memo1.Lines.addstrings(e_r_BasePlug_Strings);
     e_r_BasePlug_Strings.free;
   end;
 end;

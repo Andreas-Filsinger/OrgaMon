@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet5
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -768,6 +768,78 @@ object FormSystemPflege: TFormSystemPflege
         OnClick = Button15Click
       end
     end
+    object TabSheet10: TTabSheet
+      Caption = 'Sicherheit'
+      ImageIndex = 9
+      object Label23: TLabel
+        Left = 32
+        Top = 16
+        Width = 107
+        Height = 13
+        Caption = 'Apache2 Log Datei'
+      end
+      object Label24: TLabel
+        Left = 32
+        Top = 72
+        Width = 68
+        Height = 13
+        Caption = 'Angriffstags'
+      end
+      object Edit14: TEdit
+        Left = 32
+        Top = 40
+        Width = 578
+        Height = 21
+        TabOrder = 0
+        Text = 'I:\Apache2.log'
+      end
+      object Button17: TButton
+        Left = 472
+        Top = 142
+        Width = 138
+        Height = 25
+        Caption = 'Create Firewall'
+        TabOrder = 1
+        OnClick = Button17Click
+      end
+      object Edit15: TEdit
+        Left = 32
+        Top = 91
+        Width = 578
+        Height = 21
+        TabOrder = 2
+        Text = 
+          '"POST / HTTP/1.1" 200 272 "-" "Mozilla/4.0 (compatible; MSIE 6.0' +
+          '; Windows NT 5.1; SV1)"'
+      end
+      object Memo3: TMemo
+        Left = 32
+        Top = 200
+        Width = 569
+        Height = 97
+        Lines.Strings = (
+          'Memo3')
+        TabOrder = 3
+      end
+      object CheckBox6: TCheckBox
+        Left = 104
+        Top = 146
+        Width = 97
+        Height = 17
+        Caption = 'Aktiv'
+        TabOrder = 4
+        OnClick = CheckBox6Click
+      end
+      object Button18: TButton
+        Left = 526
+        Top = 303
+        Width = 75
+        Height = 25
+        Caption = 'Button18'
+        TabOrder = 5
+        OnClick = Button18Click
+      end
+    end
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -837,5 +909,10 @@ object FormSystemPflege: TFormSystemPflege
     IB_Connection = DataModuleDatenbank.IB_Connection1
     Left = 128
     Top = 456
+  end
+  object IdSysLog1: TIdSysLog
+    OnStatus = IdSysLog1Status
+    Left = 40
+    Top = 160
   end
 end
