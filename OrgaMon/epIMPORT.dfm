@@ -32,14 +32,10 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet6
+    ActivePage = TabSheet5
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 17
@@ -175,10 +171,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet2: TTabSheet
       Caption = 'GaZMa'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 7
         Top = 97
@@ -222,10 +214,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet3: TTabSheet
       Caption = 'Datafactory Postalcode'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button6: TButton
         Left = 48
         Top = 33
@@ -257,10 +245,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet4: TTabSheet
       Caption = 'Cunz'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 16
         Top = 24
@@ -327,10 +311,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet5: TTabSheet
       Caption = 'Medi-Liste'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit7: TEdit
         Left = 33
         Top = 24
@@ -340,37 +320,34 @@ object FormepIMPORT: TFormepIMPORT
         Text = 'Rohstoffe\BLMEDI1.TXT'
       end
       object Button9: TButton
-        Left = 300
-        Top = 45
-        Width = 75
-        Height = 24
+        Left = 295
+        Top = 24
+        Width = 98
+        Height = 72
         Caption = 'Import'
         TabOrder = 1
         OnClick = Button9Click
       end
-      object ProgressBar2: TProgressBar
-        Left = 33
-        Top = 51
-        Width = 256
-        Height = 17
-        TabOrder = 2
-      end
       object CheckBox7: TCheckBox
         Left = 33
-        Top = 72
+        Top = 79
         Width = 96
         Height = 17
         Caption = 'abbrechen'
+        TabOrder = 2
+      end
+      object StaticText1: TStaticText
+        Left = 32
+        Top = 56
+        Width = 11
+        Height = 17
+        Caption = '0'
         TabOrder = 3
       end
     end
     object TabSheet6: TTabSheet
       Caption = 'Buch'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button12: TButton
         Left = 33
         Top = 33
@@ -393,10 +370,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet7: TTabSheet
       Caption = '1400'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 16
         Top = 16
@@ -425,10 +398,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet8: TTabSheet
       Caption = 'eMail'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 3
         Top = 48
@@ -480,10 +449,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet9: TTabSheet
       Caption = 'UIB'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button18: TButton
         Left = 446
         Top = 247
@@ -506,10 +471,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet10: TTabSheet
       Caption = 'FPSpreadSheet'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 32
         Top = 32
