@@ -375,7 +375,7 @@ begin
     Open;
     while not(eof) do
     begin
-      BA := BA_locate(cAUSGABEART_NATIV, FieldByName('RID').AsInteger);
+      BA := BA_locate(cAUSGABEART_OHNE, FieldByName('RID').AsInteger);
       next;
     end;
     Close;

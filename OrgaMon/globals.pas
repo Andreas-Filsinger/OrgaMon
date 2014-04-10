@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.012; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.014; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -223,10 +223,13 @@ const
   // Dateidownload handelt
 
   // Ausgabearten
-  cAUSGABEART_NATIV = 0;
+  cAUSGABEART_OHNE = 0;
   // in der DB-> !!!NULL!!! (nicht "0" - die sollte es nicht geben!)
   cAusgabeArt_Probestimme_PDF: TDOM_Reference = 1;
   cAusgabeArt_Demoaufnahme_MP3: TDOM_Reference = 2;
+
+  // Ausgabearten, die in der Ausgabeart Tabelle gehalten werden
+  cAusgabeArt_FirstRID:TDOM_Reference = 3;
   // function cAusgabeArt_Aufnahme_MP3: TDOM_Reference; in "Funktionen_Basis"
 
   // Medium Typen

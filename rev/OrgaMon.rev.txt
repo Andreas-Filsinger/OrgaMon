@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.014 (10.04.14) Andreas Filsinger
+
+ Neu: Warenbewegung "ALTERNATIV" Markierung bei Bewegungen im Alternativ-Lager
+ Neu: Artikel: Lagerbuchungen berücksichtigen das Alternativ-Lager
+
+Rev 8.013 (10.04.14) Andreas Filsinger
+
+ Bug: Datenbank: Tabelle ARTIKEL_AA, kein Constraint auf Alternativ Lager
+ Bug: Lager: Bei freien Resource-Artikeln unterblieb die "letzter Verkauf" Buchung
+
 Rev 8.012 (07.04.14) Andreas Filsinger
 
  Neu: Artikel: Barsoi: Import von "'"
@@ -10509,6 +10519,21 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.014
+
+alter table WARENBEWEGUNG
+ add ALTERNATIV CHAR(1);
+
+:8.013
+
+alter table ARTIKEL
+ drop constraint FK_AAA_A_LAGER;
+
+alter table ARTIKEL_AA
+ add constraint FK_AAA_A_LAGER
+ foreign key (LAGER_ALTERNATIV_R)
+ references LAGER(RID);
 
 :7.951
 

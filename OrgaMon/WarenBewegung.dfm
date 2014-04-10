@@ -201,13 +201,17 @@ object FormWarenBewegung: TFormWarenBewegung
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
-      'BEWEGT=BOOLEAN=Y,N')
+      'BEWEGT=BOOLEAN=Y,N'
+      'ALTERNATIV=BOOLEAN='#39'Y,N'#39)
     DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGABEART_R=AA'
       'ARTIKEL=Titel'
       'BEWEGT=OK'
-      'MENGE=ANZ')
+      'MENGE=ANZ'
+      'ALTERNATIV=A')
+    FieldsGridTitleHint.Strings = (
+      'ALTERNATIV=Alternativ Lager')
     FieldsDisplayWidth.Strings = (
       'AUSGABEART_R=25'
       'ARTIKEL=120'
@@ -217,7 +221,8 @@ object FormWarenBewegung: TFormWarenBewegung
       'ZIEL=60'
       'BRISANZ=30'
       'MENGE_BISHER=30'
-      'MENGE_NEU=30')
+      'MENGE_NEU=30'
+      'ALTERNATIV=14')
     FieldsVisible.Strings = (
       'POSTEN_R=FALSE'
       'BPOSTEN_R=FALSE'
@@ -240,6 +245,7 @@ object FormWarenBewegung: TFormWarenBewegung
         'ROM BELEG WHERE RID=WARENBEWEGUNG.BELEG_R)) ZIEL '
       '     , MENGE_BISHER'
       '     , MENGE_NEU'
+      '     , ALTERNATIV'
       '     , ZUSAMMENHANG'
       '     , AUFTRITT'
       '     , RID'

@@ -122,6 +122,7 @@ begin
   sql.add('     , (SELECT LAGER.NAME FROM LAGER WHERE RID=(SELECT LAGER_R FROM BELEG WHERE RID=WARENBEWEGUNG.BELEG_R)) ZIEL');
   sql.add('     , MENGE_BISHER');
   sql.add('     , MENGE_NEU');
+  sql.Add('     , ALTERNATIV');
   sql.add('     , ZUSAMMENHANG');
   sql.add('     , AUFTRITT');
   sql.add('     , RID');
@@ -159,6 +160,7 @@ begin
   sql.add('     , (SELECT LAGER.NAME FROM LAGER WHERE RID=(SELECT LAGER_R FROM BELEG WHERE RID=WARENBEWEGUNG.BELEG_R)) ZIEL');
   sql.add('     , MENGE_BISHER');
   sql.add('     , MENGE_NEU');
+  sql.Add('     , ALTERNATIV');
   sql.add('     , ZUSAMMENHANG');
   sql.add('     , AUFTRITT');
   sql.add('     , RID');
