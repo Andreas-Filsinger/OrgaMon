@@ -1388,17 +1388,19 @@ var
   AA: TdboQuery;
   WARENBEWEGUNG: TdboQuery;
   MENGE_FieldName: string;
-  MENGE_BISHER: integer;
+  MENGE_BISHER_0, MENGE_BISHER_1: integer;
   MENGE_NEU: integer;
   LAGER_R: integer;
+  AlternativLagerEntnahme: boolean;
 begin
-  MENGE_BISHER := cMenge_unbestimmt;
+  MENGE_BISHER_0 := cMenge_unbestimmt;
+  MENGE_BISHER_1 := cMenge_unbestimmt;
   MENGE_NEU := cMenge_unbestimmt;
   LAGER_R := cRID_unset;
   result := 0;
+  AlternativLagerEntnahme := false;
   try
-    if (AUSGABEART_R > cAusgabeArt_Demoaufnahme_MP3) and
-      (AUSGABEART_R > cAusgabeArt_Probestimme_PDF) then
+    if (AUSGABEART_R >= cAusgabeArt_FirstRID) then
     begin
 
       // Menge in der Ausgabeart buchen
@@ -1406,9 +1408,11 @@ begin
       with AA do
       begin
         sql.add('SELECT');
+        sql.add(' MENGE_ALTERNATIV_LAGER,');
         sql.add(' LETZTERVERKAUF,');
         sql.add(' MINDESTBESTAND,');
         sql.add(' LAGER_R,');
+        sql.add(' LAGER_ALTERNATIV_R,');
         sql.add(' MENGE');
         sql.add('FROM');
         sql.add(' ARTIKEL_AA');
@@ -1420,28 +1424,57 @@ begin
         Open;
         if not(eof) then
         begin
-          LAGER_R := FieldByName('LAGER_R').AsInteger;
-          MENGE_BISHER := FieldByName('MENGE').AsInteger;
+
+          MENGE_BISHER_0 := FieldByName('MENGE').AsInteger;
+          MENGE_BISHER_1 := FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger;
+
+          if (MENGE_BISHER_0 = 0) and (MENGE < 0) and (MENGE_BISHER_1 > 0) then
+          begin
+
+            // Nur Einzelverkäufe möglich
+            if (MENGE <> -1) then
+              raise exception.create
+                ('Entnahme aus Alternativ-Lager kann nur 1 sein!');
+
+            // Lager muss bekannt sein, damit die Markierung gelingt
+            LAGER_R := FieldByName('LAGER_ALTERNATIV_R').AsInteger;
+            if (LAGER_R < cRID_FirstValid) then
+              raise exception.create
+                ('Bei Entnahme aus Alternativ-Lager muss der Lagerplatz definiert sein!');
+
+            AlternativLagerEntnahme := true;
+          end
+          else
+          begin
+            LAGER_R := FieldByName('LAGER_R').AsInteger;
+          end;
+
           if (FieldByName('MINDESTBESTAND').AsInteger = cMenge_unbegrenzt) then
           begin
-            // keine Mengenbuchung, nur "letzer Verkauf"
-            // es findet keine Mengenbuchung statt
-            if (MENGE_NEU < MENGE_BISHER) then
+            // keine Mengenbuchung, nur "letzer Verkauf" - Buchung
+            if (MENGE < 0) then
             begin
               edit;
               FieldByName('LETZTERVERKAUF').AsDateTime := now;
               Post;
             end;
-            result := MENGE_BISHER;
+            result := MENGE_BISHER_0 + MENGE_BISHER_1;
           end
           else
           begin
-            MENGE_NEU := MENGE_BISHER + MENGE;
-            if (MENGE <> 0) and (MENGE_NEU <> MENGE_BISHER) then
+            if AlternativLagerEntnahme then
+              MENGE_NEU := MENGE_BISHER_1 + MENGE
+            else
+              MENGE_NEU := MENGE_BISHER_0 + MENGE;
+
+            if (MENGE <> 0) then
             begin
               edit;
-              FieldByName('MENGE').AsInteger := MENGE_NEU;
-              if (MENGE_NEU < MENGE_BISHER) then
+              if AlternativLagerEntnahme then
+                FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger := MENGE_NEU
+              else
+                FieldByName('MENGE').AsInteger := MENGE_NEU;
+              if (MENGE < 0) then
                 FieldByName('LETZTERVERKAUF').AsDateTime := now;
               Post;
             end;
@@ -1459,7 +1492,8 @@ begin
       ARTIKEL := nQuery;
       with ARTIKEL do
       begin
-        //
+
+        // MENGEN-Feld bestimmen
         repeat
 
           if (AUSGABEART_R = cAusgabeArt_Probestimme_PDF) then
@@ -1477,12 +1511,15 @@ begin
           end;
 
           MENGE_FieldName := 'MENGE';
+          AlternativLagerEntnahme := true;
         until true;
 
         sql.add('SELECT');
+        sql.add(' MENGE_ALTERNATIV_LAGER,');
         sql.add(' LETZTERVERKAUF,');
         sql.add(' MINDESTBESTAND,');
         sql.add(' LAGER_R,');
+        sql.add(' LAGER_ALTERNATIV_R,');
         sql.add(' ' + MENGE_FieldName);
         sql.add('FROM');
         sql.add(' ARTIKEL');
@@ -1497,42 +1534,79 @@ begin
             LAGER_R := FieldByName('LAGER_R').AsInteger;
 
           //
-          MENGE_BISHER := FieldByName(MENGE_FieldName).AsInteger;
+          MENGE_BISHER_0 := FieldByName(MENGE_FieldName).AsInteger;
+          MENGE_BISHER_1 := FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger;
+
           if (FieldByName('MINDESTBESTAND').AsInteger = cMenge_unbegrenzt) then
           begin
-            // keine Mengenbuchung, nur "letzer Verkauf"
-            if (MENGE_NEU < MENGE_BISHER) then
+            // keine Mengenbuchung, nur "letzer Verkauf" - Buchung
+            if (MENGE < 0) then
             begin
               edit;
               FieldByName('LETZTERVERKAUF').AsDateTime := now;
               Post;
             end;
-            result := MENGE_BISHER;
+            result := MENGE_BISHER_0 + MENGE_BISHER_1;
           end
           else
           begin
-            MENGE_NEU := MENGE_BISHER + MENGE;
-            if (MENGE <> 0) and (MENGE_NEU <> MENGE_BISHER) then
-            begin
-              edit;
 
-              // LAGER zuordnen, wenn benötigt!
-              if (LAGER_R < cRID_FirstValid) and (MENGE_BISHER <= 0) and
-                (MENGE > 0) then
+              if AlternativLagerEntnahme and (MENGE_BISHER_0 = 0) and (MENGE_BISHER_1 > 0) and (MENGE < 0)
+              then
               begin
-                LAGER_R := e_w_EinLagern(ARTIKEL_R);
-                if (LAGER_R >= cRID_FirstValid) then
-                  FieldByName('LAGER_R').AsInteger := LAGER_R;
+
+                MENGE_NEU := MENGE_BISHER_1 + MENGE;
+
+                // Aus dem Alternativ-Lager entnehmen!
+                // Nur Einzelverkäufe möglich
+                if (MENGE <> -1) then
+                  raise exception.create
+                    ('Entnahmemenge aus Alternativ-Lager kann nur 1 sein!');
+
+                // Lager muss bekannt sein, damit die Markierung gelingt
+                LAGER_R := FieldByName('LAGER_ALTERNATIV_R').AsInteger;
+                if (LAGER_R < cRID_FirstValid) then
+                  raise exception.create
+                    ('Bei Entnahme aus Alternativ-Lager muss der Lagerplatz definiert sein!');
+
+                edit;
+
+                // MENGE_NEU
+                FieldByName(MENGE_FieldName).AsInteger := MENGE_NEU;
+                if (MENGE < 0) then
+                  FieldByName('LETZTERVERKAUF').AsDateTime := now;
+
+                Post;
+
+                result := MENGE_BISHER_0 + MENGE_NEU;
+              end
+              else
+              begin
+                AlternativLagerEntnahme := false;
+                MENGE_NEU := MENGE_BISHER_0 + MENGE;
+                if (MENGE <> 0) and (MENGE_NEU <> MENGE_BISHER_0) then
+                begin
+                  edit;
+
+                  // nur eim Einlagern
+                  // LAGER zuteilen, wenn benötigt!
+                  if (MENGE > 0) and (LAGER_R < cRID_FirstValid) and
+                    (MENGE_BISHER_0 <= 0) then
+                  begin
+                    LAGER_R := e_w_EinLagern(ARTIKEL_R);
+                    if (LAGER_R >= cRID_FirstValid) then
+                      FieldByName('LAGER_R').AsInteger := LAGER_R;
+                  end;
+
+                  // MENGE_NEU
+                  FieldByName(MENGE_FieldName).AsInteger := MENGE_NEU;
+                  if (MENGE < 0) then
+                    FieldByName('LETZTERVERKAUF').AsDateTime := now;
+
+                  Post;
+                  result := MENGE_BISHER_1 + MENGE_NEU;
+                end;
               end;
-
-              // MENGE_NEU
-              FieldByName(MENGE_FieldName).AsInteger := MENGE_NEU;
-              if (MENGE_NEU < MENGE_BISHER) then
-                FieldByName('LETZTERVERKAUF').AsDateTime := now;
-
-              Post;
-            end;
-            result := MENGE_NEU;
           end;
         end;
       end;
@@ -1561,8 +1635,9 @@ begin
         Insert;
         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
         FieldByName('MENGE').AsInteger := MENGE;
-        FieldByName('MENGE_BISHER').AsInteger := MENGE_BISHER;
-        FieldByName('MENGE_NEU').AsInteger := MENGE_NEU;
+        FieldByName('MENGE_BISHER').AsInteger := MENGE_BISHER_0 +
+          MENGE_BISHER_1;
+        FieldByName('MENGE_NEU').AsInteger := result;
 
         FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
         if (AUSGABEART_R >= cRID_FirstValid) then
@@ -1578,6 +1653,7 @@ begin
           FieldByName('BELEG_R').AsInteger := BELEG_R;
         if (LAGER_R >= cRID_FirstValid) then
           FieldByName('LAGER_R').AsInteger := LAGER_R;
+        FieldByName('ALTERNATIV').AsString := bool2cC(AlternativLagerEntnahme);
 
         Post;
         Close;
@@ -1603,7 +1679,8 @@ end;
 
 function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-  procedure GetFromArtikelField(FieldN: string);
+  procedure GetFromArtikelField(FieldN: string;
+    AuchAlternativLager: boolean = true);
   var
     cARTIKEL: TdboCursor;
   begin
@@ -1611,6 +1688,8 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
     with cARTIKEL do
     begin
       sql.add('SELECT');
+      if AuchAlternativLager then
+        sql.add(' MENGE_ALTERNATIV_LAGER,');
       sql.add(' MINDESTBESTAND,');
       sql.add(' ' + FieldN);
       sql.add('FROM');
@@ -1625,7 +1704,11 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
       else
       begin
         if (FieldByName('MINDESTBESTAND').AsInteger <> cMenge_unbegrenzt) then
+        begin
           result := FieldByName(FieldN).AsInteger;
+          if AuchAlternativLager then
+            inc(result, FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger);
+        end;
       end;
     end;
     cARTIKEL.free;
@@ -1639,6 +1722,7 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
     with cAA do
     begin
       sql.add('SELECT');
+      sql.add(' MENGE_ALTERNATIV_LAGER,');
       sql.add(' MINDESTBESTAND,');
       sql.add(' MENGE');
       sql.add('FROM');
@@ -1651,7 +1735,9 @@ function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
       if not(eof) then
       begin
         if (FieldByName('MINDESTBESTAND').AsInteger <> cMenge_unbegrenzt) then
-          result := FieldByName('MENGE').AsInteger;
+          result :=
+          { } FieldByName('MENGE').AsInteger +
+          { } FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger;
       end;
     end;
     cAA.free;
@@ -1679,14 +1765,14 @@ begin
     // Ausgabeart "1"
     if (AUSGABEART_R = cAusgabeArt_Probestimme_PDF) then
     begin
-      GetFromArtikelField('MENGE_PROBE');
+      GetFromArtikelField('MENGE_PROBE', false);
       break;
     end;
 
     // Ausgabeart "2"
     if (AUSGABEART_R = cAusgabeArt_Demoaufnahme_MP3) then
     begin
-      GetFromArtikelField('MENGE_DEMO');
+      GetFromArtikelField('MENGE_DEMO', false);
       break;
     end;
 
@@ -1755,7 +1841,7 @@ function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
 
   function AusgabeArtCompare: string;
   begin
-    if (AUSGABEART_R <= cAUSGABEART_NATIV) then
+    if (AUSGABEART_R <= cAUSGABEART_OHNE) then
       result := ' IS NULL'
     else
       result := ' = ' + inttostr(AUSGABEART_R);
@@ -1967,7 +2053,7 @@ begin
         DontBook := false;
         repeat
 
-          if (AUSGABEART_R = cAUSGABEART_NATIV) then
+          if (AUSGABEART_R = cAUSGABEART_OHNE) then
           begin
             sql.add('MENGE M');
             break;
@@ -7645,8 +7731,8 @@ function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 var
   RECHNUNGSNUMMER: integer;
 begin
-  RECHNUNGSNUMMER := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
-    inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
+  RECHNUNGSNUMMER := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R='
+    + inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
     inttostr(TEILLIEFERUNG) + ')');
   if (RECHNUNGSNUMMER = 0) then
     result := ''

@@ -207,9 +207,11 @@ function ListasSQL(i: TList): string; overload;
 // Datum Tools
 function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 
+// Boolean Types
+function bool2cC(b: boolean): string;
+
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
-function bool2cC(b: boolean): string;
 function RIDtostr(RID: integer): string;
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
 function EnsureSQL(const s: string): string;

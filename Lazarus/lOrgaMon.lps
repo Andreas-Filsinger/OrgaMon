@@ -157,7 +157,7 @@
       <Unit16>
         <Filename Value="..\infozip\infozip.pas"/>
         <UnitName Value="InfoZIP"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="867"/>
         <CursorPos X="21" Y="882"/>
@@ -249,10 +249,13 @@
       <Unit26>
         <Filename Value="..\OrgaMon\eConnect.pas"/>
         <UnitName Value="eConnect"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="38"/>
-        <CursorPos X="1" Y="38"/>
+        <TopLine Value="388"/>
+        <CursorPos X="80" Y="417"/>
         <UsageCount Value="14"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
@@ -626,13 +629,10 @@
       <Unit67>
         <Filename Value="..\..\zeos\src\plain\ZPlainLoader.pas"/>
         <UnitName Value="ZPlainLoader"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="153"/>
         <CursorPos X="21" Y="183"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -790,8 +790,8 @@
         <Caret Line="1890" Column="12" TopLine="1860"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\zeos\src\plain\ZPlainLoader.pas"/>
-        <Caret Line="183" Column="21" TopLine="153"/>
+        <Filename Value="..\OrgaMon\eConnect.pas"/>
+        <Caret Line="38" Column="1" TopLine="38"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

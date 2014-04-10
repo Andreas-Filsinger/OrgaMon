@@ -241,20 +241,20 @@ begin
             end;
 
             BILD_R := e_r_ArtikelDokument(
-              { } cAUSGABEART_NATIV,
+              { } cAUSGABEART_OHNE,
               { } ARTIKEL_R, cMediumBild);
             if (BILD_R >= cRID_FirstValid) then
             begin
               // breits ein Bilder-RID eingetragen
 
               FNameDest := e_r_ArtikelBild
-                (cAUSGABEART_NATIV, ARTIKEL_R);
+                (cAUSGABEART_OHNE, ARTIKEL_R);
               if (FNameDest = '') then
               begin
                 // Problem: Das Bild ist nicht da!
                 Log(
                   { } 'WARNUNG: Bild-Datei "' +
-                  { } e_r_ArtikelBild(cAUSGABEART_NATIV,
+                  { } e_r_ArtikelBild(cAUSGABEART_OHNE,
                   ARTIKEL_R, false) +
                   { } '" vermisst!');
                 DoCopy;
