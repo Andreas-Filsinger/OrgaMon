@@ -89,6 +89,7 @@ type
     SpeedButton5: TSpeedButton;
     SpeedButton7: TSpeedButton;
     SpeedButton23: TSpeedButton;
+    SpeedButton6: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -135,6 +136,7 @@ type
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton7Click(Sender: TObject);
     procedure SpeedButton23Click(Sender: TObject);
+    procedure SpeedButton6Click(Sender: TObject);
   private
     { Private-Deklarationen }
     SearchIndex: TWordIndex;
@@ -1117,6 +1119,22 @@ begin
   Zeige;
   StringGrid1.SetFocus;
   EndHourGlass;
+end;
+
+procedure TFormPersonSuche.SpeedButton6Click(Sender: TObject);
+var
+  MITGLIEDERLISTE_R: Integer;
+  qEREIGNIS: TIB_Query;
+begin
+  MITGLIEDERLISTE_R := IB_Query1.FieldByName('RID').AsInteger;
+  if (MITGLIEDERLISTE_R >= cRID_FirstValid) and doit('Wirklich löschen') then
+  begin
+    // Aufgabe löschen (Ohne Entlassung)
+    e_x_sql('delete from MITGLIEDERLISTE where RID=' +
+      inttostr(MITGLIEDERLISTE_R));
+    AufgabeAenderungAnzeigen;
+    AufgabeRefresh;
+  end;
 end;
 
 procedure TFormPersonSuche.SpeedButton7Click(Sender: TObject);
