@@ -1551,25 +1551,48 @@ begin
           else
           begin
 
-              if AlternativLagerEntnahme and (MENGE_BISHER_0 = 0) and (MENGE_BISHER_1 > 0) and (MENGE < 0)
-              then
+            if AlternativLagerEntnahme and (MENGE_BISHER_0 = 0) and
+              (MENGE_BISHER_1 > 0) and (MENGE < 0) then
+            begin
+
+              MENGE_NEU := MENGE_BISHER_1 + MENGE;
+
+              // Aus dem Alternativ-Lager entnehmen!
+              // Nur Einzelverkäufe möglich
+              if (MENGE <> -1) then
+                raise exception.create
+                  ('Entnahmemenge aus Alternativ-Lager kann nur 1 sein!');
+
+              // Lager muss bekannt sein, damit die Markierung gelingt
+              LAGER_R := FieldByName('LAGER_ALTERNATIV_R').AsInteger;
+              if (LAGER_R < cRID_FirstValid) then
+                raise exception.create
+                  ('Bei Entnahme aus Alternativ-Lager muss der Lagerplatz definiert sein!');
+
+              edit;
+              FieldByName('MENGE_ALTERNATIV_LAGER').AsInteger := MENGE_NEU;
+              FieldByName('LETZTERVERKAUF').AsDateTime := now;
+              Post;
+
+              result := MENGE_BISHER_0 + MENGE_NEU;
+            end
+            else
+            begin
+              AlternativLagerEntnahme := false;
+              MENGE_NEU := MENGE_BISHER_0 + MENGE;
+              if (MENGE <> 0) and (MENGE_NEU <> MENGE_BISHER_0) then
               begin
-
-                MENGE_NEU := MENGE_BISHER_1 + MENGE;
-
-                // Aus dem Alternativ-Lager entnehmen!
-                // Nur Einzelverkäufe möglich
-                if (MENGE <> -1) then
-                  raise exception.create
-                    ('Entnahmemenge aus Alternativ-Lager kann nur 1 sein!');
-
-                // Lager muss bekannt sein, damit die Markierung gelingt
-                LAGER_R := FieldByName('LAGER_ALTERNATIV_R').AsInteger;
-                if (LAGER_R < cRID_FirstValid) then
-                  raise exception.create
-                    ('Bei Entnahme aus Alternativ-Lager muss der Lagerplatz definiert sein!');
-
                 edit;
+
+                // nur eim Einlagern
+                // LAGER zuteilen, wenn benötigt!
+                if (MENGE > 0) and (LAGER_R < cRID_FirstValid) and
+                  (MENGE_BISHER_0 <= 0) then
+                begin
+                  LAGER_R := e_w_EinLagern(ARTIKEL_R);
+                  if (LAGER_R >= cRID_FirstValid) then
+                    FieldByName('LAGER_R').AsInteger := LAGER_R;
+                end;
 
                 // MENGE_NEU
                 FieldByName(MENGE_FieldName).AsInteger := MENGE_NEU;
@@ -1577,36 +1600,9 @@ begin
                   FieldByName('LETZTERVERKAUF').AsDateTime := now;
 
                 Post;
-
-                result := MENGE_BISHER_0 + MENGE_NEU;
-              end
-              else
-              begin
-                AlternativLagerEntnahme := false;
-                MENGE_NEU := MENGE_BISHER_0 + MENGE;
-                if (MENGE <> 0) and (MENGE_NEU <> MENGE_BISHER_0) then
-                begin
-                  edit;
-
-                  // nur eim Einlagern
-                  // LAGER zuteilen, wenn benötigt!
-                  if (MENGE > 0) and (LAGER_R < cRID_FirstValid) and
-                    (MENGE_BISHER_0 <= 0) then
-                  begin
-                    LAGER_R := e_w_EinLagern(ARTIKEL_R);
-                    if (LAGER_R >= cRID_FirstValid) then
-                      FieldByName('LAGER_R').AsInteger := LAGER_R;
-                  end;
-
-                  // MENGE_NEU
-                  FieldByName(MENGE_FieldName).AsInteger := MENGE_NEU;
-                  if (MENGE < 0) then
-                    FieldByName('LETZTERVERKAUF').AsDateTime := now;
-
-                  Post;
-                  result := MENGE_BISHER_1 + MENGE_NEU;
-                end;
+                result := MENGE_BISHER_1 + MENGE_NEU;
               end;
+            end;
           end;
         end;
       end;
