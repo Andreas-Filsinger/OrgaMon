@@ -445,9 +445,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 39
+          Top = 40
           Width = 923
-          Height = 180
+          Height = 179
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -885,8 +885,6 @@ object FormBelege: TFormBelege
       object TabSheet3: TTabSheet
         Caption = 'Interninfo'
         ImageIndex = 8
-        ExplicitTop = 24
-        ExplicitHeight = 220
         object IB_Memo3: TIB_Memo
           Left = 0
           Top = 0
@@ -897,7 +895,6 @@ object FormBelege: TFormBelege
           Align = alClient
           TabOrder = 0
           AutoSize = False
-          ExplicitHeight = 220
         end
       end
     end
@@ -2224,7 +2221,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100F00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100F40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

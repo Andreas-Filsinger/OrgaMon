@@ -1522,7 +1522,7 @@ begin
 
     sql.add('select TITEL,NUMERO,VERLAG_R,');
     sql.add('VERLAGNO, KOMPONIST_R,CODE,ARRANGEUR_R,RID,');
-    sql.add('SCHWER_GRUPPE, SCHWER_DETAILS, LAND_R, MENGE, ');
+    sql.add('SCHWER_GRUPPE, SCHWER_DETAILS, LAND_R, ');
     sql.add('MINDESTBESTAND,LAGER_R,RANG, MENGE_PROBE, ');
     sql.add('MENGE_DEMO,PAPERCOLOR from ARTIKEL where RID=' + inttostr(RID));
     APiFirst;
@@ -1566,7 +1566,7 @@ begin
       { [9] }
       SubItem.add(e_r_LaenderISO(FieldByName('LAND_R').AsInteger));
       { [10] }
-      SubItem.add(FieldByName('MENGE').AsString + '/' +
+      SubItem.add(IntToStr(e_r_Menge(cRID_Unset,cRID_UnSet,RID)) + '/' +
         FieldByName('MINDESTBESTAND').AsString);
       { [11] }
       SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
