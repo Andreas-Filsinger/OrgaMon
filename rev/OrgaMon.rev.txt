@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.018 (23.04.14) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.232" neu compiliert!
+
 Rev 8.017 (15.04.14) Andreas Filsinger
 
  Bug: Beleg: Artikelsuche: Bei der Mengenanzeige wurde das Alternativlager

@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.231; // ../rev/Oc.rev.txt
+  Version: single = 1.232; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -2864,8 +2864,11 @@ begin
 
       r := 2;
       repeat
+
         // den Key zusammenbauen
         OrderId := cutblank(CellValue[r, succ(cORDER_id)]);
+        OrderId := fill('0', 9 - length(OrderId)) + OrderId;
+
         OrderPosition := cutblank(CellValue[r, succ(cORDER_Position)]);
         if OrderPosition = '' then
           OrderPosition := '1';
@@ -4200,6 +4203,8 @@ begin
       repeat
         // den Key zusammenbauen
         OrderId := cutblank(CellValue[r, succ(cORDER_id)]);
+                OrderId := fill('0',9-length(OrderId)) + OrderId;
+
         OrderPosition := cutblank(CellValue[r, succ(cORDER_Position)]);
         if OrderPosition = '' then
           OrderPosition := '1';
