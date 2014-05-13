@@ -30,9 +30,9 @@ interface
 
 uses
   Classes,
-  {$ifndef fpc}
+{$IFNDEF fpc}
   IB_Components,
-  {$endif}
+{$ENDIF}
   Sperre,
   dbOrgaMon, gplists, anfix32,
   globals, txHoliday;
@@ -64,7 +64,9 @@ procedure RecourseDeleteAUFTRAG(RIDList: TList; var DeleteCount: Integer);
 function e_r_PhasenStatus(AUFTRAG_R: Integer): string;
 function e_c_AuftragHeader: TStringList;
 function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
+function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
+procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
@@ -123,6 +125,7 @@ function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
 function e_r_BaustellenLang: TStringList;
 function e_r_BaustellenAktive: TStringList;
+procedure e_r_Sync_Baustelle;
 
 function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
@@ -229,23 +232,23 @@ implementation
 
 uses
   // Delphi
-{$ifdef fpc}
-graphics,
-fpchelper,
-{$else}
+{$IFDEF fpc}
+  graphics,
+  fpchelper,
+{$ELSE}
   System.UITypes,
-Jvgnugettext,
-IB_Access,
-{$endif}
+  Jvgnugettext,
+  IB_Access,
+{$ENDIF}
   math,
 
   // types,
   SysUtils,
 
   // Tools
-  html, infozip,
+  html, infozip, OrientationConvert,
   CareTakerClient, Mapping, Geld,
-  WordIndex,
+  WordIndex, ExcelHelper,
 
   // OrgaMon
   JonDaExec,
@@ -336,9 +339,9 @@ begin
     sql.Add(' AUFTRAG');
     sql.Add('WHERE');
     sql.Add(' RID=:CROSSREF');
-    {$ifndef fpc}
+{$IFNDEF fpc}
     prepare;
-    {$endif}
+{$ENDIF}
   end;
 
   _AuftragAblage_Del := nScript;
@@ -348,9 +351,9 @@ begin
     sql.Add(' ABLAGE');
     sql.Add('WHERE');
     sql.Add(' RID=:CROSSREF');
-    {$ifndef fpc}
+{$IFNDEF fpc}
     prepare;
-    {$endif}
+{$ENDIF}
   end;
 
 end;
@@ -976,7 +979,7 @@ var
   Toleranzband: double;
 
 begin
-{$ifndef fpc}
+{$IFNDEF fpc}
   HistorischerErzeugt := false;
   _STATUS := ctsLast;
   if not(IgnoreAuftragPost) then
@@ -1508,8 +1511,7 @@ begin
     end;
   ForceHistorischer := false;
   IgnoreAuftragPost := false;
-{$endif}
-
+{$ENDIF}
 end;
 
 const
@@ -1531,9 +1533,9 @@ begin
       sql.Add(' AUFTRAG');
       sql.Add('WHERE ');
       sql.Add(' RID=:CROSSREF');
-{$ifndef fpc}
+{$IFNDEF fpc}
       prepare;
-{$endif}
+{$ENDIF}
     end;
     IB_DSQL2 := nScript;
     with IB_DSQL2 do
@@ -1995,7 +1997,7 @@ begin
     sParameter.values[cParameter_foto_strasse] :=
       FieldByName('KUNDE_STRASSE').AsString;
     sParameter.values[cParameter_foto_ort] := FieldByName('KUNDE_ORT').AsString;
-    e_r_sqlt(FieldByName('ZAEHLER_INFO'),sZaehlerInfo);
+    e_r_sqlt(FieldByName('ZAEHLER_INFO'), sZaehlerInfo);
     sParameter.values[cParameter_foto_zaehler_info] :=
       HugeSingleLine(sZaehlerInfo, '|');
     sParameter.values[cParameter_foto_zaehlernummer_alt] :=
@@ -2753,7 +2755,7 @@ begin
         { [4] } _SubItem.Add(FieldByName('CSV_QUELLE').AsString);
         if (FieldByName('ORTE_AKTIV').AsString = 'Y') then
         begin
-          e_r_sqlt(FieldByName('ORTE'),_Ortsteile);
+          e_r_sqlt(FieldByName('ORTE'), _Ortsteile);
           { [5] } _SubItem.Add(';' + HugeSingleLine(_Ortsteile, ';'));
         end
         else
@@ -2831,7 +2833,7 @@ begin
 
       // Monteure holen (RID)
       MemoField := TStringList.create;
-      e_r_sqlt(FieldByName('INFO'),MemoField);
+      e_r_sqlt(FieldByName('INFO'), MemoField);
       MonteurSubs := MemoField.values['MONTEURE'];
       // Text hinter den Zahlen wegschneiden
       n := pos('[', MonteurSubs);
@@ -2955,12 +2957,12 @@ begin
 
       // ganz normale Ausführung laden
       if not(FieldByName('VON').IsNull) and not(FieldByName('BIS').IsNull) then
-        Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime, false,
-          cSperreAusfuehren, cPrio_BaustellenSperre);
+        Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime,
+          false, cSperreAusfuehren, cPrio_BaustellenSperre);
 
       // einzelne Sperren dazwischen
       MemoInfo := TStringList.create;
-      e_r_sqlt(FieldByName('INFO'),MemoInfo);
+      e_r_sqlt(FieldByName('INFO'), MemoInfo);
       Sperre.ReadFromMemo(MemoInfo, sSperre_Wert_Baustelle, Umstand);
 
       // Feiertage
@@ -3094,7 +3096,7 @@ begin
         sql.Add('select PROTOKOLLFELDER from BAUSTELLE where RID=' +
           inttostr(BAUSTELLE_R));
         ApiFirst;
-        e_r_sqlt(FieldByName('PROTOKOLLFELDER'),FelderListe);
+        e_r_sqlt(FieldByName('PROTOKOLLFELDER'), FelderListe);
       end;
       cBAUSTELLE.free;
 
@@ -3174,7 +3176,7 @@ begin
         sql.Add('select INTERNFELDER from BAUSTELLE where RID=' +
           inttostr(BAUSTELLE_R));
         ApiFirst;
-        e_r_sqlt(FieldByName('INTERNFELDER'),FelderListe);
+        e_r_sqlt(FieldByName('INTERNFELDER'), FelderListe);
       end;
       cBAUSTELLE.free;
       for n := pred(FelderListe.count) downto 0 do
@@ -3368,7 +3370,7 @@ begin
         end;
 
         { [3] }
-        e_r_sqlt(FieldByName('MONTEUR_INFO'),MoreInfo);
+        e_r_sqlt(FieldByName('MONTEUR_INFO'), MoreInfo);
         if (MoreInfo.count > 0) then
           result.Add(HugeSingleLine(MoreInfo, cOLAPcsvLineBreak))
         else
@@ -3467,13 +3469,14 @@ begin
         result.Add(inttostr(FieldByName('BEARBEITER_R').AsInteger) + '/' +
           inttostr(FieldByName('TERMINIERT_R').AsInteger));
         { [26] }
-        result.Add(long2date8(DateTime2Long(FieldByName('SPERRE_VON').AsDateTime)) +
-          '-' + long2date8(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
+        result.Add(long2date8(DateTime2Long(FieldByName('SPERRE_VON')
+          .AsDateTime)) + '-' +
+          long2date8(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
         { [27] }
         result.Add(FieldByName('PLANQUADRAT').AsString);
 
         { [28]..[37] }
-        e_r_sqlt(FieldByName('ZAEHLER_INFO'),MoreInfo);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'), MoreInfo);
         for n := 0 to pred(MoreInfo.count) do
           if pos('v1=', MoreInfo[n]) > 0 then
           begin
@@ -3500,7 +3503,7 @@ begin
         TmpStr := FieldByName('ZAEHLER_STAND_NEU').AsString;
         result.Add(KommaCheck(TmpStr));
         { [43] }
-        e_r_sqlt(FieldByName('PROTOKOLL'),MoreInfo);
+        e_r_sqlt(FieldByName('PROTOKOLL'), MoreInfo);
         result.Add(HugeSingleLine(MoreInfo, cProtokollTrenner));
         { [44] }// Datum Zählerwechsel
         result.Add(Long2date(DateTime2Long(FieldByName('ZAEHLER_WECHSEL')
@@ -3529,8 +3532,9 @@ begin
         { [55] }
         result.Add(FieldByName('KUNDE_ORTSTEIL_CODE').AsString);
         { [56] }
-        result.Add(long2date5(DateTime2Long(FieldByName('SPERRE_VON').AsDateTime)) +
-          '-' + long2date5(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
+        result.Add(long2date5(DateTime2Long(FieldByName('SPERRE_VON')
+          .AsDateTime)) + '-' +
+          long2date5(DateTime2Long(FieldByName('SPERRE_BIS').AsDateTime)));
         { [57] }
         if not(FieldByName('MONTEUR1_R').IsNull) then
         begin
@@ -3545,7 +3549,7 @@ begin
           result.Add('');
         end;
         { [58..67] }
-        e_r_sqlt(FieldByName('INTERN_INFO'),MoreInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'), MoreInfo);
         for n := 0 to 9 do
           if (MoreInfo.count > n) then
             result.Add(MoreInfo[n])
@@ -3554,14 +3558,41 @@ begin
         { [68] Status3 }
         result.Add(vStatus(FieldByName('STATUS_BISHER').AsInteger));
         { [69] }
-        result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON').AsDateTime))
-          + '..' + long2date5(DateTime2Long(FieldByName('ZEITRAUM_BIS')
-          .AsDateTime)));
+        result.Add(long2date5(DateTime2Long(FieldByName('ZEITRAUM_VON')
+          .AsDateTime)) + '..' +
+          long2date5(DateTime2Long(FieldByName('ZEITRAUM_BIS').AsDateTime)));
       end;
     end;
     MoreInfo.free;
   end;
 
+end;
+
+function e_r_AuftragLine(AUFTRAG_R: Integer): string;
+
+  function NoSemi(n: Integer; const s: string): string;
+  var
+    k: Integer;
+  begin
+    result := s;
+    if (n >= 28) and (n <= 36) then
+    begin
+      k := pos('_', result);
+      if (k > 0) then
+        result := copy(result, succ(k), MaxInt);
+    end;
+    ersetze(';', '*', result);
+    ersetze('"', '''''', result);
+  end;
+
+var
+  SubItems: TStringList;
+  n: Integer;
+begin
+  SubItems := e_r_AuftragItems(AUFTRAG_R);
+  result := '';
+  for n := 0 to pred(SubItems.count) do
+    result := result + NoSemi(n, SubItems[n]) + ';';
 end;
 
 function e_c_AuftragHeader: TStringList;
@@ -4382,7 +4413,7 @@ begin
         BAUSTELLE_R := FieldByName('RID').AsInteger;
         VON := DateTime2Long(FieldByName('VON').AsDateTime);
         BIS := DateTime2Long(FieldByName('BIS').AsDateTime);
-        e_r_sqlt(FieldByName('INFO'),INFO);
+        e_r_sqlt(FieldByName('INFO'), INFO);
 
         // Baustopp=
         e_r_Baustelle_Stopp.ReadFromMemo(
@@ -4577,6 +4608,305 @@ begin
   if not(FileExists(AktiveBaustellenFName)) then
     ReCreateAktiveBaustellen;
   result.LoadFromFile(AktiveBaustellenFName);
+end;
+
+procedure e_r_Sync_Baustelle;
+var
+  // Baustellen Infos
+  cBAUSTELLE: TIB_Cursor;
+  EXPORT_EINSTELLUNGEN: TStringList;
+  tBAUSTELLE: TsTable;
+  Row: TStringList;
+
+begin
+  cBAUSTELLE := nCursor;
+  EXPORT_EINSTELLUNGEN := TStringList.create;
+  tBAUSTELLE := TsTable.create;
+  with tBAUSTELLE do
+  begin
+    addCol('NUMMERN_PREFIX');
+    addCol(cE_FTPHOST);
+    addCol(cE_FTPUSER);
+    addCol(cE_FTPPASSWORD);
+    addCol(cE_FTPVerzeichnis);
+    addCol(cE_ZIPPASSWORD);
+    addCol(cE_FotoBenennung);
+  end;
+
+  with cBAUSTELLE do
+  begin
+    sql.Add('select NUMMERN_PREFIX,EXPORT_EINSTELLUNGEN from BAUSTELLE');
+    sql.Add('where EXPORT_MONDA=' + cC_True_AsString);
+    ApiFirst;
+    while not(eof) do
+    begin
+      Row := TStringList.create;
+      FieldByName('EXPORT_EINSTELLUNGEN').assignto(EXPORT_EINSTELLUNGEN);
+      with Row do
+      begin
+        Add(FieldByName('NUMMERN_PREFIX').AsString);
+        Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPHOST));
+        Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPUSER));
+        Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN,
+          cE_FTPPASSWORD)));
+        Add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPVerzeichnis));
+        Add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN,
+          cE_ZIPPASSWORD)));
+        Add(EXPORT_EINSTELLUNGEN.values[cE_FotoBenennung]);
+      end;
+      tBAUSTELLE.addRow(Row);
+      Apinext;
+    end;
+    tBAUSTELLE.SaveToFile(MdePath + 'baustelle.csv');
+  end;
+
+  tBAUSTELLE.free;
+  cBAUSTELLE.free;
+  EXPORT_EINSTELLUNGEN.free;
+end;
+
+procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
+var
+  RIDs: TgpIntegerList;
+  AllOutData: TStringList;
+  OneLine: string;
+  n, k: Integer;
+  AUFTRAG_R: Integer;
+  SubItems: TStringList;
+  Protokoll: TStringList;
+  INTERN_INFO: TStringList;
+  ProtokollStr: string;
+
+  ProtokollFelder: TStringList;
+  ProtokollOut: TStringList;
+  InternFelder: TStringList;
+  InternOut: TStringList;
+
+  Baustelle: string;
+
+  // Für Excel
+  xTable: TList;
+  xSubs: TStringList;
+  xOneLine: string;
+  xOptions: TStringList;
+  xFName, xPath: string;
+
+  ErrorOnGenerate: boolean;
+
+  procedure xNewLine;
+  begin
+    xSubs := TStringList.create;
+    xTable.Add(xSubs);
+  end;
+
+begin
+
+  //
+  RIDs := e_r_sqlm(
+    { } 'select RID from AUFTRAG where' +
+    { } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and' +
+    { } ' (STATUS<>6) ' +
+    { } 'order by ' +
+    { } ' STRASSE,NUMMER');
+
+  xTable := TList.create;
+  xOptions := TStringList.create;
+  Protokoll := TStringList.create;
+  ProtokollFelder := TStringList.create;
+  InternFelder := TStringList.create;
+  ProtokollOut := TStringList.create;
+  AllOutData := TStringList.create;
+
+  Baustelle := e_r_BaustelleKuerzel(BAUSTELLE_R);
+  e_r_ProtokollExport(BAUSTELLE_R, ProtokollFelder);
+  e_r_InternExport(BAUSTELLE_R, InternFelder);
+
+  // Kopf Zeile für Excel
+  xNewLine;
+  xOneLine := cWordHeaderLine;
+  while xOneLine <> '' do
+    xSubs.Add(nextp(xOneLine, ';'));
+
+  // Spalten Optionen für Excel
+  with xOptions do
+  begin
+    Add('Datum=DATE');
+    Add('KundeNummer=');
+    Add('Monteur=');
+    Add('Bemerkung=');
+    Add('Art=');
+    Add('Zaehler_Nummer=STRING');
+    Add('Anschreiben_Name=');
+    Add('Anschreiben_Strasse=');
+    Add('Verbraucher_Ort=');
+    Add('Verbraucher_Name=');
+    Add('Verbraucher_Strasse=');
+    Add('Anschreiben_Ort=');
+    Add('Zeit=STRING');
+    Add('Geaendert=DATETIME');
+    Add('Auftrags_Nummer=');
+    Add('Status1=');
+    Add('Status2=');
+    Add('WochentagKurz=');
+    Add('Verbraucher_Name2=');
+    Add('Anschreiben_Name2=');
+    Add('WochentagLang=');
+    Add('MonteurText=');
+    Add('ZeitText=');
+    Add('DatumText=');
+    Add('Baustelle=');
+    Add('Bearbeiter=');
+    Add('Sperre=');
+    Add('Planquadrat=');
+    Add('ZaehlerInfo1=');
+    Add('ZaehlerInfo2=');
+    Add('ZaehlerInfo3=');
+    Add('ZaehlerInfo4=');
+    Add('ZaehlerInfo5=');
+    Add('ZaehlerInfo6=');
+    Add('ZaehlerInfo7=');
+    Add('ZaehlerInfo8=');
+    Add('ZaehlerInfo9=');
+    Add('ZaehlerInfo10=');
+    Add('Verbraucher_Ortsteil=');
+    Add('ZaehlerNummerKorrektur=');
+    Add('ZaehlerNummerNeu=');
+    Add('ZaehlerStandAlt=');
+    Add('ZaehlerStandNeu=');
+    Add('Protokoll=');
+    Add('WechselDatum=DATE');
+    Add('WechselZeit=TIME');
+    Add('ReglerNummerAlt=');
+    Add('ReglerNummerKorrektur=');
+    Add('ReglerNummerNeu=');
+    Add('Verbaucher_Strasse_Teil1=');
+    Add('Verbaucher_Strasse_Teil2=');
+    Add('Verbaucher_Strasse_Teil3=');
+    Add('WordEmpfaenger=');
+    Add('ReferenzIdentitaet=ORDINAL');
+    Add('WordAnzahl=');
+    Add('OrtsteilCode=');
+    Add('SperreKurz=');
+    Add('MonteurHandy=');
+    Add('InternInfo1=');
+    Add('InternInfo2=');
+    Add('InternInfo3=');
+    Add('InternInfo4=');
+    Add('InternInfo5=');
+    Add('InternInfo6=');
+    Add('InternInfo7=');
+    Add('InternInfo8=');
+    Add('InternInfo9=');
+    Add('InternInfo10=');
+    Add('V1=DATETIME');
+    Add('V2=DATETIME');
+    Add('V3=DATETIME');
+  end;
+
+  xSubs.AddStrings(ProtokollFelder);
+  xSubs.AddStrings(InternFelder);
+  OneLine := cWordHeaderLine + ';' + HugeSingleLine(ProtokollFelder, ';');
+  if (InternFelder.count > 0) then
+    OneLine := OneLine + ';' + HugeSingleLine(InternFelder, ';');
+
+  AllOutData.Add(OneLine);
+
+  for n := 0 to pred(RIDs.count) do
+  begin
+    AUFTRAG_R := RIDs[n];
+
+    // die "default" Spalten
+    SubItems := e_r_AuftragItems(AUFTRAG_R);
+
+    // gleich nach Excel ausgeben
+    xSubs := TStringList.create;
+    xTable.Add(xSubs);
+    xSubs.AddStrings(SubItems);
+    xSubs.Add(''); // grrrr!
+
+    // Protokoll laden
+    ProtokollStr := SubItems[twh_Protokoll];
+    Protokoll.clear;
+    while (ProtokollStr <> '') do
+      Protokoll.Add(nextp(ProtokollStr, cProtokollTrenner));
+    SubItems[twh_Protokoll] := '';
+
+    ProtokollOut.clear;
+    for k := 0 to pred(ProtokollFelder.count) do
+    begin
+      ProtokollOut.Add
+        (csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[k]])));
+    end;
+
+    if (InternFelder.count > 0) then
+    begin
+      INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' +
+        inttostr(AUFTRAG_R));
+      for k := 0 to pred(InternFelder.count) do
+        ProtokollOut.Add
+          (csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[k]])));
+      INTERN_INFO.free;
+    end;
+
+    xSubs.AddStrings(ProtokollOut);
+
+    AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' +
+      HugeSingleLine(ProtokollOut, ';'));
+
+  end;
+
+  xPath := AuftragMobilServerPath + Baustelle + '\';
+  CheckCreateDir(xPath);
+
+  // Speichern als XLS
+  xFName := xPath + Baustelle + '.xls';
+  ExcelExport(xFName, xTable, nil, xOptions);
+
+  if FileExists(xPath + 'Vorlage.xls') then
+  begin
+    repeat
+      ErrorOnGenerate := true;
+
+      // Konvertieren mit einer Vorlage.xls
+      if not(doConversion(Content_Mode_xls2xls, xFName)) then
+        break;
+
+      // Wir brauchen eine csv
+      if not(doConversion(Content_Mode_xls2csv, conversionOutFName)) then
+        break;
+
+      // Wir brauchen den richtigen Dateinamen
+      if not(FileCopy(conversionOutFName, xPath + cE_FotoBenennung + '-' +
+        Baustelle + '.csv')) then
+        break;
+
+      // Löschen der "doppelten" Datei
+      if not(FileDelete(conversionOutFName)) then
+        break;
+
+      ErrorOnGenerate := false;
+    until true;
+  end
+  else
+  begin
+
+    // Speichern direkt als .csv
+    AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
+  end;
+
+  freeandnil(AllOutData);
+  freeandnil(ProtokollFelder);
+  freeandnil(ProtokollOut);
+  freeandnil(Protokoll);
+  freeandnil(xTable);
+  freeandnil(xOptions);
+  freeandnil(InternFelder);
+  freeandnil(InternOut);
+  freeandnil(RIDs);
+
+
+  // Hochladen!
+
 end;
 
 procedure ReCreateAktiveBaustellen;
@@ -4863,7 +5193,7 @@ var
         DatensammlerLokal.Add('STUNDENSATZ=');
       DatensammlerLokal.Add('BELEG_R=' + FieldByName('BELEG_R').AsString);
       InfoS := TStringList.create;
-      e_r_sqlt(FieldByName('INFO'),InfoS);
+      e_r_sqlt(FieldByName('INFO'), InfoS);
       if (InfoS.count > 0) then
         if (pos('[', InfoS[0]) >= 1) and (pos(']', InfoS[0]) > 0) then
         begin
@@ -5261,7 +5591,7 @@ begin
 
           if (SubBudget <> '*') then
           begin
-            e_r_sqlt(FieldByName('INFO'),ArbeitsDetails);
+            e_r_sqlt(FieldByName('INFO'), ArbeitsDetails);
             for n := 0 to pred(ArbeitsDetails.count) do
               if (pos(SubBudget, ArbeitsDetails[n]) > 0) then
               begin
@@ -5272,8 +5602,8 @@ begin
 
           if (pFromDatum <> cIllegalDate) and ZeitAbschnittVerwenden then
           begin
-            ZeitAbschnittVerwenden := DateTime2Long(FieldByName('DATUM').AsDateTime)
-              >= pFromDatum;
+            ZeitAbschnittVerwenden :=
+              DateTime2Long(FieldByName('DATUM').AsDateTime) >= pFromDatum;
           end;
 
         end;
@@ -5711,4 +6041,3 @@ begin
   CacheBaustelleMonteureLastRequestedRID := -1;
 
 end.
-

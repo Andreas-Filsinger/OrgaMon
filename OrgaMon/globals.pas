@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.018; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.021; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -328,7 +328,7 @@ const
   cCSV_Column_J = 9;
   cCSV_Column_K = 10;
 
-  // Build In Diag FTP
+  // Build In Diagnostic FTP
   cFTP_Host = 'orgamon.de';
   cFTP_UserName = 'incoming';
   cFTP_Password = '1kfan8wx5';

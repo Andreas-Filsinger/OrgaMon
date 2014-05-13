@@ -312,6 +312,13 @@ type
     Edit14: TEdit;
     CheckBox40: TCheckBox;
     CheckBox41: TCheckBox;
+    Label60: TLabel;
+    Label61: TLabel;
+    Label62: TLabel;
+    Label63: TLabel;
+    SpeedButton17: TSpeedButton;
+    SpeedButton18: TSpeedButton;
+    Label64: TLabel;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -403,6 +410,9 @@ type
     procedure FormResize(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure SpeedButton16Click(Sender: TObject);
+    procedure TabSheet9Show(Sender: TObject);
+    procedure SpeedButton17Click(Sender: TObject);
+    procedure SpeedButton18Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -434,6 +444,7 @@ type
 
     procedure ReflectMonteurInfo;
     procedure ReflectArbeitszeitInfo;
+    procedure ReflectFotoPath;
     procedure ExecuteLoeschen(Nachfragen: Boolean);
     procedure VerwaisteHistorischeDatensaetzeLoeschen;
     procedure AblageLoeschen;
@@ -909,6 +920,7 @@ begin
 
   // Bundesland auslesen
   ReadState;
+  ReflectFotoPath;
 end;
 
 procedure TFormBaustelle.Button1Click(Sender: TObject);
@@ -3348,6 +3360,12 @@ begin
   sMonteure.free;
 end;
 
+procedure TFormBaustelle.ReflectFotoPath;
+begin
+  Label62.caption := FotoPath + e_r_BaustellenPfadFoto(IB_Memo5.Lines) + '\';
+  Label63.caption := FotoPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\';
+end;
+
 procedure TFormBaustelle.IB_Edit3Change(Sender: TObject);
 begin
   ReflectArbeitszeitInfo;
@@ -3764,6 +3782,47 @@ begin
     ShowMessage(FName + ' nicht gefunden!');
   end;
   s.free;
+end;
+
+procedure TFormBaustelle.SpeedButton17Click(Sender: TObject);
+var
+  IdFTP1: TIdFTP;
+begin
+
+  // Baustelle.csv erstellen
+  e_r_Sync_Baustelle;
+
+  // Datei hochladen
+  IdFTP1 := TIdFTP.create(self);
+  SolidFTP_Retries := 5;
+  SolidInit(IdFTP1);
+  with IdFTP1 do
+  begin
+    Passive := true;
+    Host := nextp(iMobilFTP, ';', 0);
+    UserName := nextp(iMobilFTP, ';', 1);
+    password := nextp(iMobilFTP, ';', 2);
+  end;
+
+  SolidBeginTransaction;
+  SolidPut(IdFTP1, MdePath + 'baustelle.csv', '', 'baustelle.csv');
+  SolidEndTransaction;
+
+  try
+    IdFTP1.Disconnect;
+  except
+  end;
+
+  try
+    IdFTP1.free;
+  except
+  end;
+
+end;
+
+procedure TFormBaustelle.SpeedButton18Click(Sender: TObject);
+begin
+  e_r_Sync_Auftraege(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormBaustelle.SpeedButton1Click(Sender: TObject);
@@ -4712,6 +4771,11 @@ end;
 procedure TFormBaustelle.SpeedButton9Click(Sender: TObject);
 begin
   ShowMessage('noch nicht programmiert!');
+end;
+
+procedure TFormBaustelle.TabSheet9Show(Sender: TObject);
+begin
+  ReflectFotoPath;
 end;
 
 procedure TFormBaustelle.Button23Click(Sender: TObject);

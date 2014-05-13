@@ -19,6 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.021 (08.05.14) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Fehlt das letzte von mehreren Bildern so ist die
+      Datenmeldung verhindert, das erste Bild ist aber dennoch im ZIP.
+
+Rev 8.020 (07.05.14) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: FTP-Testablage hat gar kein "FTPVerzeichnis="
+
+ Neu: Baustelle: Foto: Angabe der Foto-Verzeichnisse
+
+Rev 8.019 (06.05.14) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Foto-Anlagen: Mehr als nur FA
+
 Rev 8.018 (23.04.14) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.232" neu compiliert!
