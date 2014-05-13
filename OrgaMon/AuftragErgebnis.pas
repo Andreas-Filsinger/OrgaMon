@@ -183,8 +183,10 @@ var
 
   // Foto mit im Zip?!
   AuchMitFoto: boolean;
-  AusbauFotoFName: string;
-  _AusbauFotoFName: string;
+  FotoSpalten, _FotoSpalten, FotoSpalte: string; // "FA;FN;FH"
+  FilesCandidates: TStringList;
+  FotoFName: string;
+  _FotoFName: string;
 
   // Zwischenspeicher
   ActColumn: TStringList;
@@ -937,8 +939,22 @@ begin
       Zaehler_nr_neu_filter := Settings.values[cE_Filter];
       Zaehler_nr_neu_zeichen := Settings.values[cE_ZaehlerNummerNeuZeichen];
       PlausiMode := StrToIntDef(Settings.values[cE_QS_Mode], 4);
-      AuchMitFoto := (Settings.values[cE_AuchMitFoto] = cIni_Activate) and
-        (FotoPath <> '');
+
+      // =JA oder =FA oder =FA;FN
+      AuchMitFoto :=
+      { } (Settings.values[cE_AuchMitFoto] <> cIni_DeActivate) and
+      { } (Settings.values[cE_AuchMitFoto] <> '') and
+      { } (FotoPath <> '');
+      if AuchMitFoto then
+      begin
+        if (Settings.values[cE_AuchMitFoto] = cIni_Activate) then
+          FotoSpalten := 'FA'
+        else
+          FotoSpalten := Settings.values[cE_AuchMitFoto];
+      end
+      else
+        FotoSpalten := '';
+
       ZaehlerNummernNeuAusN1 := (Settings.values[cE_ZaehlerNummerNeuAusN1] <>
         cIni_DeActivate);
       ZaehlerNummernNeuMitA1 :=
@@ -996,7 +1012,7 @@ begin
 
         // normale Daten - Spalten
         ProtokollWerte.clear;
-        DataLine := FormAuftragArbeitsplatz.WordDataFromRID(AUFTRAG_R);
+        DataLine := e_r_AuftragLine(AUFTRAG_R);
         k := 0;
         while (DataLine <> '') do
         begin
@@ -1572,53 +1588,65 @@ begin
         // Bild dazumachen!
         if writePermission and AuchMitFoto then
         begin
+          FilesCandidates := TStringList.create;
 
-          ActColIndex := Header.indexof('FA');
-          if (ActColIndex <> -1) then
+          _FotoSpalten := noblank(FotoSpalten);
+          while (_FotoSpalten <> '') do
           begin
+            FotoSpalte := nextp(_FotoSpalten);
 
-            AusbauFotoFName := nextp(ActColumn[ActColIndex], ',', 0);
-            if (AusbauFotoFName <> '') then
+            ActColIndex := Header.indexof(FotoSpalte);
+            if (ActColIndex <> -1) then
             begin
-              repeat
 
-                if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\'
-                  + AusbauFotoFName)) then
-                begin
-                  AusbauFotoFName := e_r_FotoName(AUFTRAG_R, 'FA');
+              FotoFName := nextp(ActColumn[ActColIndex], ',', 0);
+              if (FotoFName <> '') then
+              begin
+                repeat
 
-                  // Rückwärtiges Ändern
-                  ActColumn[ActColIndex] := AusbauFotoFName;
-                  AusbauFotoFName := nextp(AusbauFotoFName, ',', 0);
-                end;
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) +
+                    '\' + FotoFName)) then
+                  begin
+                    FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
 
-                if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\'
-                  + AusbauFotoFName)) then
-                begin
-                  writePermission := false;
-                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' +
-                    'Bild "' + AusbauFotoFName + '" fehlt!', BAUSTELLE_R,
-                    Settings.values[cE_TAN]);
-                  if (FailL.indexof(AUFTRAG_R) = -1) then
-                    FailL.add(AUFTRAG_R);
-                  break;
-                end;
+                    // Rückwärtiges Ändern
+                    ActColumn[ActColIndex] := FotoFName;
+                    FotoFName := nextp(FotoFName, ',', 0);
+                  end;
 
-                // Ev. Dublette anlegen (RWE-Problem!)
-                _AusbauFotoFName := StrFilter(AusbauFotoFName, 'öäüÖÄÜß', true);
-                if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\'
-                  + _AusbauFotoFName)) then
-                  FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' +
-                    AusbauFotoFName, FotoPath + e_r_BaustellenPfad(Settings) +
-                    '\' + _AusbauFotoFName);
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) +
+                    '\' + FotoFName)) then
+                  begin
+                    writePermission := false;
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' '
+                      + FotoSpalte + '-Bild "' + FotoFName + '" fehlt!',
+                      BAUSTELLE_R, Settings.values[cE_TAN]);
+                    if (FailL.indexof(AUFTRAG_R) = -1) then
+                      FailL.add(AUFTRAG_R);
+                    break;
+                  end;
 
-                // Erfolg!
-                Files.add(FotoPath + e_r_BaustellenPfad(Settings) + '\' +
-                  _AusbauFotoFName);
+                  // Ev. Dublette anlegen (RWE-Problem!)
+                  _FotoFName := StrFilter(FotoFName, 'öäüÖÄÜß', true);
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) +
+                    '\' + _FotoFName)) then
+                    FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' +
+                      FotoFName, FotoPath + e_r_BaustellenPfad(Settings) + '\' +
+                      _FotoFName);
 
-              until true;
+                  // Erfolg! Foto muss mit ins ZIP
+                  FilesCandidates.add(FotoPath + e_r_BaustellenPfad(Settings) +
+                    '\' + _FotoFName);
+
+                until true;
+              end;
             end;
           end;
+
+          // Nur bei Fehlerfreiheit alles dazu
+          if writePermission then
+            Files.AddStrings(FilesCandidates);
+          FilesCandidates.free;
 
         end;
 
@@ -2165,7 +2193,7 @@ var
       if (Settings.values[cE_SQL_Filter] <> '') then
         sql.add(Settings.values[cE_SQL_Filter]);
 
-      sql.addstrings(Memo1.lines);
+      sql.AddStrings(Memo1.lines);
       repeat
 
         if (AUFTRAG_R >= cRID_FirstValid) then
@@ -2438,6 +2466,7 @@ begin
             Host := cFTP_Host;
             Username := cFTP_UserName;
             Password := cFTP_Password;
+            Settings.values[cE_FTPVerzeichnis] := '';
           end
           else
           begin

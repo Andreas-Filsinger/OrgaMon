@@ -408,7 +408,6 @@ type
 
     function CreateSymbol(id: Integer): TBitMap;
     procedure ContextPopUp(X, Y: Integer);
-    function WordDataFromRID(RID: Integer): string;
     procedure RefreshCountAnzeige;
     procedure RefreshMonteurAuslastung(BAUSTELLE_R: Integer);
     procedure RefreshBaustellenAuslastung;
@@ -1766,33 +1765,6 @@ begin
   ToggleSortMode(csm_WechselSortierung);
   Suche;
 
-end;
-
-function TFormAuftragArbeitsplatz.WordDataFromRID(RID: Integer): string;
-
-  function NoSemi(n: Integer; const S: string): string;
-  var
-    k: Integer;
-  begin
-    result := S;
-    if (n >= 28) and (n <= 36) then
-    begin
-      k := pos('_', result);
-      if (k > 0) then
-        result := copy(result, succ(k), MaxInt);
-    end;
-    ersetze(';', '*', result);
-    ersetze('"', '''''', result);
-  end;
-
-var
-  SubItems: TStringlist;
-  n: Integer;
-begin
-  SubItems := e_r_AuftragItems(RID);
-  result := '';
-  for n := 0 to pred(SubItems.count) do
-    result := result + NoSemi(n, SubItems[n]) + ';';
 end;
 
 procedure TFormAuftragArbeitsplatz.ToolButton14Click(Sender: TObject);
@@ -6253,9 +6225,11 @@ var
 
 begin
   result := '';
+
   //
   if (s_Baustelle = -1) then
   begin
+
     //
     if not(doit
       ('Der csv ist keine Baustelle zugeordnet. Erweiterte Protokollspalten werden fehlen.'
@@ -6393,7 +6367,7 @@ begin
   begin
     AUFTRAG_R := RIDs[n];
 
-    //
+    // die "default" Spalten
     SubItems := e_r_AuftragItems(AUFTRAG_R);
 
     // gleich nach Excel ausgeben
@@ -6435,12 +6409,12 @@ begin
 
       xSubs.AddStrings(ProtokollOut);
 
-      AllOutData.Add(WordDataFromRID(AUFTRAG_R) + ';' +
+      AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' +
         HugeSingleLine(ProtokollOut, ';'));
     end
     else
     begin
-      AllOutData.Add(WordDataFromRID(AUFTRAG_R));
+      AllOutData.Add(e_r_AuftragLine(AUFTRAG_R));
     end;
 
     //
@@ -6452,21 +6426,21 @@ begin
 
   end;
 
-  //
+  // Speichern als CSV
   AllOutData.SaveToFile(MyProgramPath + FormBearbeiter.sBearbeiterKurz
     + '.csv');
 
+  // Speichern als XLS
   xFName := iBaustellenPath + Baustellen[0];
   CheckCreateDir(xFName);
   xFName := xFName + '\' + FormBearbeiter.sBearbeiterKurz + '.xls';
   ExcelExport(xFName, xTable, nil, xOptions);
 
-  //
+  // Konvertieren mit einer Vorlage.xls
   if FileExists(iBaustellenPath + Baustellen[0] + '\Vorlage.xls') then
-    doConversion(Content_Mode_xls2xls, iBaustellenPath + Baustellen[0] + '\' +
-      FormBearbeiter.sBearbeiterKurz + '.xls');
+    doConversion(Content_Mode_xls2xls, xFName);
 
-  //
+  // Kopieren der .csv nach .\Word
   CheckCreateOnce(WordPath);
   result := WordPath + inttostrN(e_w_gen('GEN_CSV'), 6) + '-' +
     FormBearbeiter.sBearbeiterKurz + '.csv';
@@ -6487,8 +6461,7 @@ begin
 
   if (Baustellen.count > 1) then
     ShowMessage('Warnung: Es ist ein Mix aus mehreren Baustellen in der csv:' +
-      #13 + HugeSingleLine(Baustellen) + #13 +
-      'Sollte das nicht richtig sein, versuchen Sie bitte den Fehler nachzuvollziehen, und melden es an Andreas Filsinger.');
+      #13 + HugeSingleLine(Baustellen));
   FreeAndNil(Baustellen);
 
   // gleich das Excel öffnen

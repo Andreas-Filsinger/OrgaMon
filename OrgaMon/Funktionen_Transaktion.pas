@@ -37,89 +37,130 @@ procedure doHA12(AuchZaehlerStaende: boolean);
 //
 // Transaktionen
 //
-// "*)"-Transaktionen sind keine reinen Instant-Anforderungen sondern
-// haben gute Chancen mehrfach Anwendung zu finden!
 
-// Corinna Haag
-procedure doHA1;
+// (c) Corinna Haag 2012
+
 // Ableseergebnisse aus .csv lesen und eintragen (mit Zählerstand)
-procedure doHA2;
+procedure doHA1;
+
 // Ableseergebnisse aus .csv lesen und eintragen (ohne Zählerstand)
-procedure doHA3(lRID: TgpIntegerList);
+procedure doHA2;
+
 // aus den Interninfos diverse felder rauslöschen!
-procedure doHA4(lRID: TgpIntegerList); // *) EXPORT_TAN löschen
+procedure doHA3(lRID: TgpIntegerList);
+
+// EXPORT_TAN löschen
+procedure doHA4(lRID: TgpIntegerList);
+
+// EXPORT_TAN setzen (auf manuelle Meldung)
 procedure doHA5(lRID: TgpIntegerList);
-// *) EXPORT_TAN setzen (auf manuelle Meldung)
-procedure doHA6(lRID: TgpIntegerList);
+
 // aus den Zaehler_infos Werte in Feld BRIEF_NAME2 übertragen
+procedure doHA6(lRID: TgpIntegerList);
+
+// Beurteilung via QS und Ergebnis in "Jahresverbrauch"
 procedure doHA7(lRID: TgpIntegerList);
-// *) Beurteilung via QS und Ergebnis in "Jahresverbrauch"
+
+// QS deaktivieren durch Eintrag von "QS_UMGANGEN"
 procedure doHA8(lRID: TgpIntegerList);
-// *) QS deaktivieren durch Eintrag von "QS_UMGANGEN"
+
+// Ablesehinweise und Vorgezogen aktualisieren
 procedure doHA9(lRID: TgpIntegerList);
-// *) Ablesehinweise und Vorgezogen aktualisieren
+
+// alle Markieren, die in externer XLS Liste vorhanden sind "Bericht.xls"
 procedure doHAA(lRID: TgpIntegerList);
-// *) alle Markieren, die in externer XLS Liste vorhanden sind "Bericht.xls"
+
+// IDOC Schreibweisen in den InternInfos anpassen
 procedure doHAB(lRID: TgpIntegerList);
-// *) IDOC Schreibweisen in den InternInfos anpassen
+
+// bei "Sparte=Einbau" wird FA=, gemacht
 procedure doHAC(lRID: TgpIntegerList);
-// *) bei "Sparte=Einbau" wird FA=, gemacht
 
 procedure doFI1(lRID: TgpIntegerList);
 
-// Sengül Aynaci
-procedure doAY3(lRID: TgpIntegerList); // Daten aus den Historischen rücksichern
+// (c) Sengül Aynaci 2012
+
+// Daten aus den Historischen rücksichern
+procedure doAY3(lRID: TgpIntegerList);
+
+// Daten aus den Historischen rücksichern
 procedure doAY4(lRID: TgpIntegerList);
-// In den Intern-Infos (SAP-Infos) was ersetzen
+
 procedure doAY5(lRID: TgpIntegerList);
 
-// Saskia Ahrens
-procedure doAH1(lRID: TgpIntegerList); // EXPORT*xml überprüfen
-procedure doAH2(lRID: TgpIntegerList);
+// (c) Saskia Ahrens 2012
+
+// EXPORT*xml überprüfen
+procedure doAH1(lRID: TgpIntegerList);
+
 // "Monteur informiert" in der Historie zurücksetzen
-procedure doAH3(lRID: TgpIntegerList);
+procedure doAH2(lRID: TgpIntegerList);
+
 // alle auflisten, die in einer externen XLS Liste vorhanden sind
 // auch die Ablage wird berücksichtigt "Bericht.xls"
+procedure doAH3(lRID: TgpIntegerList);
 
-// Nadine Keiber
-procedure doKE1(lRID: TgpIntegerList);
+// (c) Nadine Keiber 2014
+
 // "550G" zur Zählernummer wieder dazumachen
-procedure doKE2(lRID: TgpIntegerList);
-// Die Sperren aus einer Zusatz-Baustelle anhand der Ableseeinheit korriegieren
-procedure doKE3(lRID: TgpIntegerList);
-// BRIEF_STRASSE aus KUNDE_STRASSE übernehmen falls Hausnummer fehlt
-procedure doKE4(lRID: TgpIntegerList);
-// aus den Zaehler_infos Werte in das Feld ZAEHLER_NUMMER übertragen
-procedure doKE5(lRID: TgpIntegerList);
-// Zähler-Infos um Konstante "Quelle=xml" ergänzen!
-procedure doKE6(lRID: TgpIntegerList); // *) erneute Geolokalisierung erzwingen
-procedure doKE7(lRID: TgpIntegerList);
-// =Schreibweisen in den InternInfos anpassen
-procedure doKE8(lRID: TgpIntegerList); // "60" zur Zählernummer-neu dazumachen
-procedure doKE9(lRID: TgpIntegerList);
-// N1, N2, N3, N4 aus einer Excel-Datei korrigieren!
-procedure doKEA(lRID: TgpIntegerList);
-// N2, aus den Werten R#neu, R#Korrektur, R#alt füllen
-procedure doKEB(lRID: TgpIntegerList);
-// Objektschlüssel=nnnnnnXnn -> Objektschlüssel=nnnnnnn nn
-procedure doKEC(lRID: TgpIntegerList);
-// INTERN_INFOS.aknr -> REGLER_NR
+procedure doKE1(lRID: TgpIntegerList);
 
-// Biggi Hildebrand
+// Die Sperren aus einer Zusatz-Baustelle anhand der Ableseeinheit korriegieren
+procedure doKE2(lRID: TgpIntegerList);
+
+// BRIEF_STRASSE aus KUNDE_STRASSE übernehmen falls Hausnummer fehlt
+procedure doKE3(lRID: TgpIntegerList);
+
+// aus den Zaehler_infos Werte in das Feld ZAEHLER_NUMMER übertragen
+procedure doKE4(lRID: TgpIntegerList);
+
+// Zähler-Infos um Konstante "Quelle=xml" ergänzen!
+procedure doKE5(lRID: TgpIntegerList);
+
+// erneute Geolokalisierung erzwingen
+procedure doKE6(lRID: TgpIntegerList);
+
+// =Schreibweisen in den InternInfos anpassen
+procedure doKE7(lRID: TgpIntegerList);
+
+// "60" zur Zählernummer-neu dazumachen
+procedure doKE8(lRID: TgpIntegerList);
+
+// N1, N2, N3, N4 aus einer Excel-Datei korrigieren!
+procedure doKE9(lRID: TgpIntegerList);
+
+// N2, aus den Werten R#neu, R#Korrektur, R#alt füllen
+procedure doKEA(lRID: TgpIntegerList);
+
+// Objektschlüssel=nnnnnnXnn -> Objektschlüssel=nnnnnnn nn
+procedure doKEB(lRID: TgpIntegerList);
+
+// INTERN_INFOS.aknr -> REGLER_NR
+procedure doKEC(lRID: TgpIntegerList);
+
+// (c) Biggi Hildebrand 2013
+
 procedure doBI1(lRID: TgpIntegerList);
 
-// Nadine Heiter
-procedure doHE1(lRID: TgpIntegerList);
+// (c) Nadine Heiter 2012
+
 // PROTOKOLL - Schreibweisen Ersetzung aus "Protokoll-Ersetzungen.txt"
-procedure doHE2(lRID: TgpIntegerList);
+procedure doHE1(lRID: TgpIntegerList);
+
 // alle aus "Baustelle\Bericht.xls" Heraussuchen + Markieren
+procedure doHE2(lRID: TgpIntegerList);
 
-// Alexander Knam
-procedure doKN1(lRID: TgpIntegerList); // ersetze(',',':',Dauer);
-procedure doKN2(lRID: TgpIntegerList); // Buche Wareneingang "OK"
+// (c) Alexander Knam 2010
+// ersetze(',',':',Dauer);
+procedure doKN1(lRID: TgpIntegerList);
 
-// Dr. Mangler
-procedure doMA1(lRID: TgpIntegerList); // gehe eine Mahnstufe zurück
+// Buche Wareneingang "OK"
+procedure doKN2(lRID: TgpIntegerList);
+
+// (c) Dr. Mangler 2013
+
+// gehe eine Mahnstufe zurück
+procedure doMA1(lRID: TgpIntegerList);
 
 // Pascal Skript Transaktionen
 function doSkript(TransaktionsName: string; lRID: TgpIntegerList): boolean;

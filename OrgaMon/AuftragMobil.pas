@@ -151,11 +151,6 @@ var
   sMONTEUR_R: string;
   MONTEUR_R: integer;
 
-  // Baustellen Infos
-  cBAUSTELLE: TIB_Cursor;
-  EXPORT_EINSTELLUNGEN: TStringList;
-  tBAUSTELLE: TsTable;
-  Row: TStringList;
 
   procedure ShowStep;
   begin
@@ -303,51 +298,7 @@ begin
     // JonDa-Server über die Baustellen informieren
     Label3.caption := 'Baustellen-Infos ...';
     application.ProcessMessages;
-
-    cBAUSTELLE := nCursor;
-    EXPORT_EINSTELLUNGEN := TStringList.create;
-    tBAUSTELLE := TsTable.create;
-    with tBAUSTELLE do
-    begin
-      addCol('NUMMERN_PREFIX');
-      addCol(cE_FTPHOST);
-      addCol(cE_FTPUSER);
-      addCol(cE_FTPPASSWORD);
-      addCol(cE_FTPVerzeichnis);
-      addCol(cE_ZIPPASSWORD);
-      addCol(cE_FotoBenennung);
-    end;
-
-    with cBAUSTELLE do
-    begin
-      sql.add('select NUMMERN_PREFIX,EXPORT_EINSTELLUNGEN from BAUSTELLE');
-      sql.add('where EXPORT_MONDA=' + cC_True_AsString);
-      ApiFirst;
-      while not(eof) do
-      begin
-        Row := TStringList.create;
-        FieldByName('EXPORT_EINSTELLUNGEN').AssignTo(EXPORT_EINSTELLUNGEN);
-        with Row do
-        begin
-          add(FieldByName('NUMMERN_PREFIX').AsString);
-          add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPHOST));
-          add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPUSER));
-          add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN,
-            cE_FTPPASSWORD)));
-          add(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN, cE_FTPVerzeichnis));
-          add(enCrypt_Hex(e_r_ParameterFoto(EXPORT_EINSTELLUNGEN,
-            cE_ZIPPASSWORD)));
-          add(EXPORT_EINSTELLUNGEN.Values[cE_FotoBenennung]);
-        end;
-        tBAUSTELLE.addRow(Row);
-        ApiNext;
-      end;
-      tBAUSTELLE.SaveToFile(MdePath + 'baustelle.csv');
-    end;
-
-    tBAUSTELLE.free;
-    cBAUSTELLE.free;
-    EXPORT_EINSTELLUNGEN.free;
+    e_r_Sync_Baustelle;
     FTPup.add(MdePath + 'baustelle.csv' + ';' + ';' + 'baustelle.csv');
   end;
 
