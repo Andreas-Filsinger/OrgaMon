@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.022 (12.05.14-13.05.14) Andreas Filsinger
+
+ Neu: Baustelle: "Sync"-Taste für baustelle.csv an den App-Server
+ Neu: Baustelle: "Sync"-Taste für Auftrag.csv an den Foto-Server
+ Neu: Tagesabschluss: Foto-Server "Sync" im Rahmen von "Auftrag Extern aufbereiten"
+
 Rev 8.021 (08.05.14) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: Fehlt das letzte von mehreren Bildern so ist die

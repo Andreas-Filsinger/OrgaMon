@@ -491,7 +491,7 @@ begin
           // für 10 Minuten in einer "Bad-Host-Liste" landen.
           // Für den Fall dass es Alternativen gibt könnte
           // in dieser Zeit immer zuerst auf die Alternative
-          // konnectiert werden
+          // connectiert werden
           { <code> }
 
           // ensure original "Host"
