@@ -80,6 +80,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
+  Funktionen_Auftrag,
 
   Datensicherung, Datenbank,
   Person, CreatorMain, VersenderPaketID,
@@ -243,8 +244,14 @@ begin
                 FormAuftragMobil.WriteMobil;
               end;
             7:
-              if not(FormAuftragExtern.DoJob) then
-                Log(cERRORText + ' AuftragExtern fail');
+              begin
+                // Für den Foto Server
+                e_r_Sync_AuftraegeAlle;
+
+                // Für externe Auftrags-Routen
+                if not(FormAuftragExtern.DoJob) then
+                  Log(cERRORText + ' AuftragExtern fail');
+              end;
             8:
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doMediumBuilder) then

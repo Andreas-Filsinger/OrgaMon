@@ -319,6 +319,7 @@ type
     SpeedButton17: TSpeedButton;
     SpeedButton18: TSpeedButton;
     Label64: TLabel;
+    SpeedButton19: TSpeedButton;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -413,6 +414,7 @@ type
     procedure TabSheet9Show(Sender: TObject);
     procedure SpeedButton17Click(Sender: TObject);
     procedure SpeedButton18Click(Sender: TObject);
+    procedure SpeedButton19Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -3788,6 +3790,7 @@ procedure TFormBaustelle.SpeedButton17Click(Sender: TObject);
 var
   IdFTP1: TIdFTP;
 begin
+  BeginHourGlass;
 
   // Baustelle.csv erstellen
   e_r_Sync_Baustelle;
@@ -3798,7 +3801,6 @@ begin
   SolidInit(IdFTP1);
   with IdFTP1 do
   begin
-    Passive := true;
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
     password := nextp(iMobilFTP, ';', 2);
@@ -3818,11 +3820,24 @@ begin
   except
   end;
 
+  EndHourGlass;
 end;
 
 procedure TFormBaustelle.SpeedButton18Click(Sender: TObject);
 begin
+  BeginHourGlass;
   e_r_Sync_Auftraege(IB_Query1.FieldByName('RID').AsInteger);
+  EndHourGlass;
+end;
+
+procedure TFormBaustelle.SpeedButton19Click(Sender: TObject);
+var
+  sPath: string;
+begin
+  sPath := AuftragMobilServerPath + e_r_BaustelleKuerzel
+    (IB_Query1.FieldByName('RID').AsInteger) + '\';
+  CheckCreateDir(sPath);
+  openShell(sPath);
 end;
 
 procedure TFormBaustelle.SpeedButton1Click(Sender: TObject);
