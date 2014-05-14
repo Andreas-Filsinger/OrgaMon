@@ -33,7 +33,7 @@ uses
 
 const
   cApplicationName = 'JonDaServer';
-  version: single = 2.205; // ..\rev\JonDaServer.rev.txt
+  version: single = 2.206; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
   cVersion_JonDa : single = 1.118;
@@ -78,6 +78,7 @@ const
   cGeraeteKommandos = 'Kommandos\';
   cFotoPath = 'Fotos\';
   cDBPath = 'db\';
+  cSyncPath = 'sync\';
 
   cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';

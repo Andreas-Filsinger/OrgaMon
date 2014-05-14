@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.040 (14.05.14) Andreas Filsinger
+
+ Neu: Holt nun selbst "baustelle.csv", zu Beginn und alle 5 Min.
+ Neu: Holt nun "FotoBenennung-~Baustelle~.csv", zu Beginn und alle 5 Min. nach .\db
+
 Rev 1.039 (28.03.14) Andreas Filsinger
 
  Bug: numerische FTP-User müssen auch ohne Prefix "u" gefunden werden!

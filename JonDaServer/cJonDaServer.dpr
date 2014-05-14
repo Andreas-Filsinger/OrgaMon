@@ -48,7 +48,6 @@ var
   JonDa: TJonDaExec;
   MyIni: TIniFile;
   SectionName: string;
-  iFTP: TIdFTP;
 
 begin
   try
@@ -57,9 +56,17 @@ begin
       { } MyProgramPath);
     JonDa := TJonDaExec.Create;
 
-    // IMEI
+    // DebugMode?
+    if IsParam('-al') then
+    begin
+      writeln('DebugMode @' + MyProgramPath);
+      DebugMode := true;
+      DebugLogPath := globals.MyProgramPath;
+    end;
+
+    // lade IMEI
     write('Lade Tabelle IMEI ... ');
-    JonDa.tIMEI.insertfromFile(MyProgramPath+'db/IMEI.csv');
+    JonDa.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
     writeln(IntToStr(JonDa.tIMEI.Count));
 
     // Ini-Datei öffnen
@@ -82,14 +89,6 @@ begin
     writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost +
       ' für FTP');
 
-    // DebugMode?
-    if IsParam('-al') then
-    begin
-      writeln('DebugMode @' + MyProgramPath);
-      DebugMode := true;
-      DebugLogPath := globals.MyProgramPath;
-    end;
-
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' +
       RevToStr(globals.version) + ' [' + UserName + ']');
@@ -103,6 +102,7 @@ begin
       if not(IsParam('-da')) then
       begin
 
+        // Binäres Auftragslager
         JonDa.doAbschluss;
         writeln('OK');
 
@@ -112,27 +112,6 @@ begin
           cBL_FileExtension,
           { } MyProgramPath + cFotoPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
-
-        write('Baustellendaten ... ');
-        iFTP := TIdFTP.Create(nil);
-        SolidInit(iFTP);
-        with iFTP do
-        begin
-          Host := iJonDa_FTPHost;
-          UserName := iJonDa_FTPUserName;
-          Password := iJonDa_FTPPassword;
-        end;
-
-        try
-          SolidGet(iFTP, '', cMonDaServer_Baustelle, MyProgramPath + cFotoPath);
-          validateBaustelleCSV(MyProgramPath + cFotoPath +
-            cMonDaServer_Baustelle);
-          writeln('OK');
-          iFTP.Disconnect;
-        except
-
-        end;
-        iFTP.free;
 
       end
       else
@@ -145,7 +124,7 @@ begin
       with XMLRPC do
       begin
         DefaultPort := StrToIntDef(getParam('Port'), 3049);
-        write('Öffne ' + ComputerName + ':' + inttostr(DefaultPort) + '  ... ');
+        write('Öffne ' + ComputerName + ':' + IntToStr(DefaultPort) + '  ... ');
         DiagnosePath := MyProgramPath;
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');

@@ -85,7 +85,11 @@ function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string;
 function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string;
   FileList: TStringList): boolean;
 
+//
 // FTP - FileSize
+//
+// -1 wenn es die Datei gar nicht gibt
+//
 function SolidSize(ftp: TIdFTP; SourcePath, SourceFName: string): int64;
 
 // FTP - Delete

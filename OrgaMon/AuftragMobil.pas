@@ -299,7 +299,7 @@ begin
     Label3.caption := 'Baustellen-Infos ...';
     application.ProcessMessages;
     e_r_Sync_Baustelle;
-    FTPup.add(MdePath + 'baustelle.csv' + ';' + ';' + 'baustelle.csv');
+    FTPup.add(MdePath + cMonDaServer_Baustelle + ';' + ';' + cMonDaServer_Baustelle);
   end;
 
   // MonDa-Server über abgearbeitete informieren

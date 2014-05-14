@@ -4658,7 +4658,7 @@ begin
       tBAUSTELLE.addRow(Row);
       Apinext;
     end;
-    tBAUSTELLE.SaveToFile(MdePath + 'baustelle.csv');
+    tBAUSTELLE.SaveToFile(MdePath + cMonDaServer_Baustelle);
   end;
 
   tBAUSTELLE.free;
@@ -4913,6 +4913,16 @@ begin
     // Speichern direkt als .csv
     AllOutData.SaveToFile(xPath + cE_FotoBenennung + '-' + Baustelle + '.csv');
   end;
+
+  // Versioned Copy
+  if not(FileCompare(
+    { } xPath + cE_FotoBenennung + '-' + Baustelle + '.csv',
+    { } xPath + cE_FotoBenennung + '.csv'
+    )) then
+    FileVersionedCopy(
+      { } xPath + cE_FotoBenennung + '-' + Baustelle + '.csv',
+      { } xPath + cE_FotoBenennung + '.csv'
+      );
 
   freeandnil(AllOutData);
   freeandnil(ProtokollFelder);
