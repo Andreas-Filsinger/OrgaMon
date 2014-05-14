@@ -225,7 +225,14 @@ type
     procedure doStat(iFTP: TIdFTP);
 
     // ADMINISTRATION
+    //
+    // * Binäres Lager auffrischen
+    // * SENDEN.CSV von altem Müll befreien
     procedure doAbschluss;
+
+    // aus dem FTP-Bereich diverse
+    // Sync-Dateien holen
+    procedure doSync;
 
   end;
 
@@ -2660,7 +2667,7 @@ begin
           tNAMES := TsTable.Create;
           tNAMES.oTextHasLF := true;
           FotoPrefix := '';
-          Fname := Path + Baustelle + '.xls.csv';
+          Fname := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
           repeat
             if (Path = '') then
             begin
@@ -3449,6 +3456,83 @@ begin
   for n := 0 to pred(sDir.count) do
     StatSingle(sDir[n]);
   sDir.free;
+end;
+
+procedure TJonDaExec.doSync;
+var
+  iFTP: TIdFTP;
+  sDir: TStringList;
+  n: integer;
+  BaustellePath: string;
+begin
+
+  // Sync Down
+  iFTP := TIdFTP.Create(nil);
+  SolidInit(iFTP);
+  with iFTP do
+  begin
+    Host := iJonDa_FTPHost;
+    UserName := iJonDa_FTPUserName;
+    Password := iJonDa_FTPPassword;
+  end;
+
+  try
+    SolidGet(iFTP, '', cMonDaServer_Baustelle, MyProgramPath + cSyncPath, true);
+    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv',
+      MyProgramPath + cSyncPath, true);
+    iFTP.DisConnect;
+  except
+
+  end;
+  iFTP.free;
+
+  // baustelle.csv -> MyProgramPath + cFotoPath
+  if FileExists(MyProgramPath + cSyncPath + cMonDaServer_Baustelle) then
+  begin
+
+    // prepare
+    validateBaustelleCSV(MyProgramPath + cSyncPath + cMonDaServer_Baustelle);
+
+    // compare + copy
+    if not(FileCompare(
+      { } MyProgramPath + cSyncPath + cMonDaServer_Baustelle,
+      { } MyProgramPath + cFotoPath + cMonDaServer_Baustelle)) then
+      FileVersionedCopy(
+        { } MyProgramPath + cSyncPath + cMonDaServer_Baustelle,
+        { } MyProgramPath + cFotoPath + cMonDaServer_Baustelle);
+
+    // delete
+    FileDelete(MyProgramPath + cSyncPath + cMonDaServer_Baustelle);
+  end;
+
+  //
+  //
+  // FotoBenennung-*.csv -> MyProgramPath + cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
+
+  sDir := TStringList.Create;
+  dir(MyProgramPath + cSyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
+  for n := 0 to pred(sDir.count) do
+  begin
+
+    // Lese den Pfad aus dem Dateinamen
+    BaustellePath := ExtractSegmentBetween(sDir[n],cE_FotoBenennung + '-','.csv') + '\';
+
+    // JonDa - Limitation!
+    BaustellePath := copy(noblank(BaustellePath),1,6);
+
+    CheckCreateDir(MyProgramPath + cdbPath + BaustellePath);
+
+    if not(FileCompare(
+      { } MyProgramPath + cSyncPath + sDir[n],
+      { } MyProgramPath + cdbPath + BaustellePath + cE_FotoBenennung + '.csv')) then
+      FileVersionedCopy(
+        { } MyProgramPath + cSyncPath + sDir[n],
+        { } MyProgramPath + cdbPath + BaustellePath + cE_FotoBenennung + '.csv');
+
+    FileDelete(MyProgramPath + cSyncPath +sDir[n]);
+  end;
+  sDir.free;
+
 end;
 
 function TJonDaExec.upMeldungen(iFTP: TIdFTP): TStringList;

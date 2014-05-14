@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.039; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.040; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -127,6 +127,7 @@ type
     Button15: TButton;
     Edit7: TEdit;
     Label8: TLabel;
+    Button16: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -153,6 +154,7 @@ type
     procedure Button14Click(Sender: TObject);
     procedure TabSheet7Show(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -219,17 +221,8 @@ begin
 end;
 
 procedure TFormFotoService.Button10Click(Sender: TObject);
-var
-  iEXIF: TExifData;
-  Image: TJPEGImage;
-
 begin
   ensureGlobals;
-  iEXIF := TExifData.Create;
-  iEXIF.Free;
-  Image := TJPEGImage.Create;
-  Image.Free;
-
 end;
 
 procedure TFormFotoService.Button11Click(Sender: TObject);
@@ -421,6 +414,12 @@ begin
 
 end;
 
+procedure TFormFotoService.Button16Click(Sender: TObject);
+begin
+  ensureGlobals;
+  JonDaExec.doSync;
+end;
+
 procedure TFormFotoService.Button4Click(Sender: TObject);
 begin
   if CheckBox1.checked then
@@ -583,9 +582,34 @@ begin
 end;
 
 procedure TFormFotoService.ensureGlobals;
+var
+ MyIni: TIniFile;
+ SectionName : string;
 begin
   if not(assigned(tBAUSTELLE)) then
   begin
+
+    //
+    JonDaExec := TJonDaExec.Create;
+    JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
+
+    // Wir brauchen FTP-Zugangsdaten wegen des Sync
+    MyIni := TIniFile.Create(MyProgramPath + cIniFName);
+    with MyIni do
+    begin
+      SectionName := UserName;
+      if (ReadString(SectionName, 'ftpuser', '') = '') then
+        SectionName := 'System';
+
+      // Ftp-Bereich für diesen Server
+      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+    end;
+    MyIni.free;
+
+    // die aktuellen Daten aus dem FTP-Bereich abholen
+    JonDaExec.doSync;
 
     // Initialer Lauf
     tBAUSTELLE := tsTable.Create;
@@ -596,9 +620,6 @@ begin
       AppendStringsToFile(
         { } cHeader_UmbenennungUnvollstaendig,
         { } MyWorkingPath + cFotoUmbenennungAusstehend);
-
-    JonDaExec := TJonDaExec.Create;
-    JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
 
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
@@ -1721,7 +1742,7 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] :=
                 zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := MyWorkingPath;
+              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath + cdbPath;
             end;
             sFotoResult := JonDaExec.foto(sFotoCall);
             sFotoCall.Free;

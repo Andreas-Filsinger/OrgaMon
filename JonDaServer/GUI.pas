@@ -306,10 +306,12 @@ begin
     checkcreatedir(MyProgramPath + cOrgaMonDataPath);
     checkcreatedir(MyProgramPath + cMeldungPath);
     checkcreatedir(MyProgramPath + cStatistikPath);
-    checkcreatedir(MyProgramPath + cUpdatePath);
+//    checkcreatedir(MyProgramPath + cUpdatePath);
     checkcreatedir(MyProgramPath + cProtokollPath);
     checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
     checkcreatedir(MyProgramPath + cFotoPath);
+    checkcreatedir(MyProgramPath + cDBPath);
+    checkcreatedir(MyProgramPath + cSyncPath);
   end;
 
   PageControl1.ActivePage := TabSheet1;

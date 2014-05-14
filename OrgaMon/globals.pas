@@ -35,17 +35,17 @@ uses
 {$IFNDEF CONSOLE}
   controls,
 {$ENDIF}
-{$ifndef fpc}
+{$IFNDEF fpc}
   System.UITypes,
-{$else}
+{$ELSE}
   fpchelper,
-{$endif}
+{$ENDIF}
   anfix32,
   WordIndex;
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.023; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.024; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -229,7 +229,7 @@ const
   cAusgabeArt_Demoaufnahme_MP3: TDOM_Reference = 2;
 
   // Ausgabearten, die in der Ausgabeart Tabelle gehalten werden
-  cAusgabeArt_FirstRID:TDOM_Reference = 3;
+  cAusgabeArt_FirstRID: TDOM_Reference = 3;
   // function cAusgabeArt_Aufnahme_MP3: TDOM_Reference; in "Funktionen_Basis"
 
   // Medium Typen
@@ -502,12 +502,16 @@ const
   cProtokollPath = 'Protokolle\';
   cGeraeteEinstellungen = 'Einstellungen\';
   cDBPath = 'db\';
+  cSyncPath = 'sync\';
+  cFotoPath = 'Fotos\';
+
   cTrnFName = 'Transaktionsnummer.ini';
   cFirstTrn = '10000';
   cERROR_TAN = '00000';
   cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
+  cMonDaServer_Baustelle = 'baustelle.csv';
   cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';
@@ -993,7 +997,7 @@ var
   iShopArtikelBilderURL: string;
   iMusicPathShop: string;
   iMusikDownloadsProArtikel: integer;
-  iShopQRPath : string;
+  iShopQRPath: string;
 
   // remote Shop Sachen
   iShopKey: string;
@@ -1457,7 +1461,7 @@ function iPDFPathPublicApp: string;
 function iLohnPath: string;
 function iBaustellenPath: string;
 function iSkriptePath: string;
-function evalPath(iDataBaseName: string):string;
+function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
 
 // dynamische Parameter
@@ -1474,12 +1478,12 @@ uses
   MandantAuswahl,
 {$ENDIF}
   math, Geld,
-  {$ifdef FPC}
+{$IFDEF FPC}
   gettext,
-  {$else}
+{$ELSE}
   Jvgnugettext,
   IB_Session,
-  {$endif}
+{$ENDIF}
   SolidFTP,
   SimplePassword;
 
@@ -1536,7 +1540,7 @@ begin
   result := copy(result, succ(k), MaxInt);
 end;
 
-function evalPath(iDataBaseName: string):string;
+function evalPath(iDataBaseName: string): string;
 begin
   result := iDataBaseName;
   ersetze('{app}', ProgramFilesDir, result);
@@ -1544,7 +1548,6 @@ begin
   ersetze('{own}', EigeneOrgaMonDateienPfad, result);
   ersetze('{doc}', PersonalDataDir, result);
 end;
-
 
 const
   LoadIniFCalled: boolean = false;
@@ -1673,14 +1676,13 @@ begin
         // Application.initialize;
         StartDebug('MandantAuswahl');
 {$IFNDEF CONSOLE}
-{$ifdef fpc}
-LogBootStage(AllTheMandanten[0]);
-iDataBaseName := AllTheMandanten[0];
-iDataBasePassword :=
-  ReadString(sGroup, cDataBasePwd + inttostr(1),
-  iDataBasePassword);
+{$IFDEF fpc}
+        LogBootStage(AllTheMandanten[0]);
+        iDataBaseName := AllTheMandanten[0];
+        iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(1),
+          iDataBasePassword);
 
-{$else}
+{$ELSE}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
         with FormMandantAuswahl do
         begin
@@ -1701,7 +1703,7 @@ iDataBasePassword :=
           end;
         end;
         FreeAndNil(FormMandantAuswahl);
-        {$endif}
+{$ENDIF}
 {$ENDIF}
       end;
 
@@ -2012,10 +2014,9 @@ initialization
   Application.Title := cApplicationName;
 {$ENDIF}
 StartDebug('globals');
-{$ifndef FPC}
+{$IFNDEF FPC}
 IB_GetClientLibNameFunc := GetFBClientLibName;
-{$endif}
-
+{$ENDIF}
 // i8n
 cNachFrage := _(cNachFrage);
 
