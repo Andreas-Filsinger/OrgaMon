@@ -67,7 +67,7 @@ function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
 function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
-procedure e_r_Sync_AuftraegeAlle ;
+procedure e_r_Sync_AuftraegeAlle;
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
@@ -4669,16 +4669,16 @@ end;
 procedure e_r_Sync_AuftraegeAlle;
 var
   RIDs: TgpIntegerList;
-  n:integer;
+  n: Integer;
 begin
- RIDs := e_r_sqlm(
- {} 'select RID from BAUSTELLE where '+
- {} ' (EXPORT_EINSTELLUNGEN containing ''FotoBenennung=6'') or '+
- {} ' (EXPORT_EINSTELLUNGEN containing ''FotoBenennung=7'')');
-            for n := 0 to pred(RIDs.Count) do
-                            e_r_Sync_Auftraege(RIDs[n]);
-RIDS.Free;
-
+  RIDs := e_r_sqlm(
+    { } 'select RID from BAUSTELLE where ' +
+    { } ' (EXPORT_EINSTELLUNGEN containing ''FotoBenennung=6'') ' +
+    { } 'order by' +
+    { } ' NUMMERN_PREFIX');
+  for n := 0 to pred(RIDs.count) do
+    e_r_Sync_Auftraege(RIDs[n]);
+  RIDs.free;
 end;
 
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
@@ -4889,7 +4889,7 @@ begin
         break;
 
       // Diagnose wegsichern
-      FileCopy(xPath+'Diagnose.txt',xPath+'Diagnose-Vorlage.txt');
+      FileCopy(xPath + 'Diagnose.txt', xPath + 'Diagnose-Vorlage.txt');
 
       // Wir brauchen eine csv
       if not(doConversion(Content_Mode_xls2csv, conversionOutFName)) then
@@ -4924,9 +4924,7 @@ begin
   freeandnil(InternOut);
   freeandnil(RIDs);
 
-
-  xFname := cE_FotoBenennung + '-' + Baustelle + '.csv';
-
+  xFName := cE_FotoBenennung + '-' + Baustelle + '.csv';
 
   // Datei hochladen
   IdFTP1 := TIdFTP.create(nil);
@@ -4936,7 +4934,7 @@ begin
   begin
     Host := nextp(iMobilFTP, ';', 0);
     UserName := nextp(iMobilFTP, ';', 1);
-    password := nextp(iMobilFTP, ';', 2);
+    Password := nextp(iMobilFTP, ';', 2);
   end;
 
   SolidBeginTransaction;
@@ -4952,7 +4950,6 @@ begin
     IdFTP1.free;
   except
   end;
-
 
 end;
 

@@ -2704,15 +2704,16 @@ begin
               FotoPrefix := 'ERROR' + '-';
 
               // Diagnose
-              if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') <
-                FileAge(Fname) then
-              begin
+              if DebugMode then
+                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') <
+                  FileAge(Fname) then
+                begin
 
-                ReferenzDiagnose := tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
-                ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' +
-                  cRID_Suchspalte + '.csv');
-                ReferenzDiagnose.free;
-              end;
+                  ReferenzDiagnose := tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
+                  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' +
+                    cRID_Suchspalte + '.csv');
+                  ReferenzDiagnose.free;
+                end;
 
             end;
           until true;
