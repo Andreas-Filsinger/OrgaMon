@@ -118,8 +118,8 @@ object FormFotoService: TFormFotoService
         TabOrder = 9
       end
       object Button16: TButton
-        Left = 280
-        Top = 408
+        Left = 273
+        Top = 412
         Width = 75
         Height = 25
         Caption = 'Sync'
@@ -130,10 +130,6 @@ object FormFotoService: TFormFotoService
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -202,10 +198,6 @@ object FormFotoService: TFormFotoService
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         726
         481)
@@ -303,10 +295,6 @@ object FormFotoService: TFormFotoService
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -380,10 +368,6 @@ object FormFotoService: TFormFotoService
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         726
         481)
@@ -464,10 +448,6 @@ object FormFotoService: TFormFotoService
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -556,10 +536,6 @@ object FormFotoService: TFormFotoService
       Caption = 'PostgreSQL'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 32
         Top = 24
@@ -588,10 +564,6 @@ object FormFotoService: TFormFotoService
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ListBox9: TListBox
         Left = 32
         Top = 48

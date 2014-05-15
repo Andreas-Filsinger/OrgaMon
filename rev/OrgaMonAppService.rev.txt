@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.041 (15.05.14) Andreas Filsinger
+
+ Bug: Sync: "\" wurde beim Baustellenpfad abgeschnitten
+
 Rev 1.040 (14.05.14) Andreas Filsinger
 
  Neu: Holt nun selbst "baustelle.csv", zu Beginn und alle 5 Min.
