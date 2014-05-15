@@ -3515,10 +3515,10 @@ begin
   begin
 
     // Lese den Pfad aus dem Dateinamen
-    BaustellePath := ExtractSegmentBetween(sDir[n],cE_FotoBenennung + '-','.csv') + '\';
+    BaustellePath := ExtractSegmentBetween(sDir[n],cE_FotoBenennung + '-','.csv');
 
     // JonDa - Limitation!
-    BaustellePath := copy(noblank(BaustellePath),1,6);
+    BaustellePath := copy(noblank(BaustellePath),1,6) + '\';
 
     CheckCreateDir(MyProgramPath + cdbPath + BaustellePath);
 
