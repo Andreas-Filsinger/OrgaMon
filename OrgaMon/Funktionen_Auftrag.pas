@@ -4614,7 +4614,7 @@ end;
 procedure e_r_Sync_Baustelle;
 var
   // Baustellen Infos
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
   EXPORT_EINSTELLUNGEN: TStringList;
   tBAUSTELLE: TsTable;
   Row: TStringList;
@@ -4642,7 +4642,7 @@ begin
     while not(eof) do
     begin
       Row := TStringList.create;
-      FieldByName('EXPORT_EINSTELLUNGEN').assignto(EXPORT_EINSTELLUNGEN);
+     e_r_sqlt( FieldByName('EXPORT_EINSTELLUNGEN'),EXPORT_EINSTELLUNGEN);
       with Row do
       begin
         Add(FieldByName('NUMMERN_PREFIX').AsString);

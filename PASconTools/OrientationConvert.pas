@@ -79,19 +79,40 @@ function doConversion(Mode: integer; InFName: string;
 function CheckContent(InFName: string): integer;
 
 implementation
+{$ifdef fpc}
 
+function doConversion(Mode: integer; InFName: string;
+  sBericht: TStringList = nil): boolean;
+begin
+ result := false;
+end;
+
+function CheckContent(InFName: string): integer;
+begin
+  result := 0;
+end;
+
+end.
+{$else}
 uses
   Windows, SysUtils, IniFiles,
   math,
 
   // OrgaMon - Tools
-  geld, libxml2, Mapping,
+  geld, Mapping, anfix32,
+  html, WordIndex, gplists,
+  binlager32
+
+  ,
+
+  // libxml
+  libxml2,
 
   // FlexCel
   UFlexCelImport, UExcelAdapter, XLSAdapter,
-  UFlxFormats, UFlxNumberFormat,
-  anfix32, html, WordIndex,
-  gplists, binlager32;
+  UFlxFormats, UFlxNumberFormat
+  ;
+
 
 // Tmemorystream
 // TStringlist
@@ -1122,8 +1143,10 @@ begin
   while not(eof(fXML)) do
   begin
     readln(fXML, OneL);
+{$ifndef fpc}
     if pUTF8 then
       OneL := UTF8ToWideString(OneL);
+{$endif}
     inc(LineNo);
     parse(OneL);
     if (ErrorCount > 0) then
@@ -11423,3 +11446,5 @@ begin
 end;
 
 end.
+{$endif}
+

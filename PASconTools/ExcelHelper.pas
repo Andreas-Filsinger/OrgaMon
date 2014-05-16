@@ -29,7 +29,13 @@ unit ExcelHelper;
 interface
 
 uses
-  Classes, UFlexCelImport;
+  Classes
+{$ifdef fpc}
+  , fpspreadsheet
+{$else}
+  , UFlexCelImport
+{$endif}
+  ;
 
 const
   cExcel_HTML_Color_High = $99CCFF;
@@ -80,12 +86,40 @@ const
   // Farbspalte=<SPALTENÜBERSCHRIFT>
   // TabellenName=<SheetName>
 
+  {$ifdef fpc}
+
+procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
+  Options: TStringList = nil; pXLS: TsWorkbook = nil);
+    {$else}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TFlexCelImport = nil);
+    {$endif}
 procedure CSVExport(FName: string; Content: TList);
 procedure CSVImport(FName: string; Content: TList);
 
 implementation
+
+{$ifdef fpc}
+
+procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
+  Options: TStringList = nil; pXLS: TsWorkbook = nil);
+begin
+
+end;
+
+procedure CSVExport(FName: string; Content: TList);
+begin
+
+end;
+
+procedure CSVImport(FName: string; Content: TList);
+begin
+
+end;
+
+
+end.
+{$else}
 
 uses
   UExcelAdapter, XLSAdapter,
@@ -690,3 +724,5 @@ begin
 end;
 
 end.
+{$endif}
+
