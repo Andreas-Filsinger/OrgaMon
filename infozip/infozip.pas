@@ -886,7 +886,7 @@ begin
  if not(FileExists(FName)) then
    raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
 
- zipArchive := TAbUnzipper.create;
+ zipArchive := TAbUnzipper.create(nil);
  with zipArchive do
  begin
    FileName := FName;
@@ -896,7 +896,7 @@ begin
        if assigned(Options) then
       if (Options.Values[infozip_Password] <> '') then
         Password := Options.Values[infozip_Password];
-   Extract;
+   ExtractFiles('*');
  end;
 
 
