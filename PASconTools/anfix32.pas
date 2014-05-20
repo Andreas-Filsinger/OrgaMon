@@ -5089,6 +5089,7 @@ begin
 {$I-}
   append(OutF);
 {$I+}
+ try
   if ioresult <> 0 then
     rewrite(OutF);
   if (Encapsulate <> '') then
@@ -5098,6 +5099,9 @@ begin
   if (Encapsulate <> '') then
     writeln(OutF, '}');
   CloseFile(OutF);
+ except
+   // kann nicht (mehr) protokollieren
+ end;
 end;
 
 procedure AppendStringsToFile(s: string; const FName: string;
