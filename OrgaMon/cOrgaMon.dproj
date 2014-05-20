@@ -2,7 +2,7 @@
 		<PropertyGroup>
 			<ProjectGuid>{1E8C34D7-6E0A-4AA8-953A-C298E050851E}</ProjectGuid>
 			<ProjectVersion>13.4</ProjectVersion>
-			<FrameworkType>None</FrameworkType>
+			<FrameworkType>VCL</FrameworkType>
 			<MainSource>cOrgaMon.dpr</MainSource>
 			<Base>True</Base>
 			<Config Condition="'$(Config)'==''">Debug</Config>
@@ -39,10 +39,16 @@
 			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+			<Cfg_2_Win32>true</Cfg_2_Win32>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_UsePackage>fmx;IndySystem;DBXInterBaseDriver;DbxCommonDriver;dbxcds;dsnap;IndyCore;fmxase;CloudService;inetdbxpress;bindcompfmx;rtl;dbrtl;DbxClientDriver;bindcomp;inetdb;xmlrtl;ibxpress;IndyProtocols;DBXMySQLDriver;bindengine;soaprtl;inet;fmxobj;fmxdae;dbexpress;$(DCC_UsePackage)</DCC_UsePackage>
 			<DCC_UnitSearchPath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\Hashes;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
 			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
 			<DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
 			<DCC_E>false</DCC_E>
@@ -68,21 +74,11 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-			<DCC_UnitAlias>graphics=vcl.graphics;$(DCC_UnitAlias)</DCC_UnitAlias>
-			<Debugger_RunParams>-at</Debugger_RunParams>
-			<DCC_DebugInfoInExe>false</DCC_DebugInfoInExe>
-			<DCC_Description>OrgaMon XMLRPC Konsolen Server</DCC_Description>
-			<DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-			<VerInfo_MajorVer>7</VerInfo_MajorVer>
-			<VerInfo_Keys>CompanyName=OrgaMon;FileDescription=XMLRPC Server für OrgaMon Funktionen;FileVersion=7.0.0.0;InternalName=;LegalCopyright=OpenSource, www.orgamon.org;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
-			<DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
-			<DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
-			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
-			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
+			<DCC_Namespace>Vcl;$(DCC_Namespace)</DCC_Namespace>
 			<Manifest_File>None</Manifest_File>
+			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
+			<DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<DCC_RemoteDebug>false</DCC_RemoteDebug>
 		</PropertyGroup>
@@ -91,6 +87,12 @@
 			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
 			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
 			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<DCC_WriteableConstants>true</DCC_WriteableConstants>
+			<DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<Manifest_File>None</Manifest_File>
+			<VerInfo_Locale>1033</VerInfo_Locale>
 		</PropertyGroup>
 		<ItemGroup>
 			<DelphiCompile Include="$(MainSource)">
@@ -130,6 +132,7 @@
 			<DCCReference Include="Funktionen_LokaleDaten.pas"/>
 			<DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
 			<DCCReference Include="..\libxml2\libxml2.pas"/>
+			<DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
@@ -145,7 +148,7 @@
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
-			<Borland.ProjectType/>
+			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
 			<BorlandProject>
 				<Delphi.Personality>
 					<VersionInfo>
