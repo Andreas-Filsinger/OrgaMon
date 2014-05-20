@@ -110,8 +110,7 @@ uses
 
   // FlexCel
   UFlexCelImport, UExcelAdapter, XLSAdapter,
-  UFlxFormats, UFlxNumberFormat
-  ;
+  UFlxFormats, UFlxNumberFormat;
 
 
 // Tmemorystream
