@@ -928,7 +928,7 @@ begin
         sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND');
         sql.add(' (MENGE_UNBESTELLT>0) AND');
         sql.add(' (MOTIVATION=' + inttostr(ord(Motivation)) + ')');
-        sql.add('FOR UPDATE');
+        for_update(sql);
       end
       else
       begin
@@ -940,7 +940,7 @@ begin
         sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND');
         sql.add(' (MENGE_UNBESTELLT>0) AND');
         sql.add(' (MOTIVATION=' + inttostr(ord(Motivation)) + ')');
-        sql.add('FOR UPDATE');
+        for_update(sql);
       end;
 
       Open;
@@ -1063,7 +1063,7 @@ begin
     begin
       sql.add('SELECT *');
       sql.add('FROM BBELEG');
-      sql.add('FOR UPDATE');
+      for_update(sql);
       Open;
       Insert;
       FieldByName('PERSON_R').AsInteger := PERSON_R;
@@ -1166,7 +1166,7 @@ begin
       begin
         sql.add('select INTERN_INFO,GENERATION,ZAHLUNGSPFLICHTIGER_R,ZAHLUNGTYP_R,PERSON_R from BELEG');
         sql.add('where (RID=' + inttostr(BELEG_R) + ')');
-        sql.add('for update');
+        for_update(sql);
         Open;
         First;
         if eof then
@@ -1342,13 +1342,12 @@ begin
     EREIGNIS := nQuery;
     with EREIGNIS do
     begin
-{$IFDEF fpc}
-      // Raise Exception.Create('Columnattributes');
-{$ELSE}
+      sql.add('select * from EREIGNIS');
+{$IFNDEF fpc}
+      for_update(sql);
       ColumnAttributes.add('RID=NOTREQUIRED');
       ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-      sql.add('select * from EREIGNIS for update');
       Insert;
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
       FieldByName('ART').AsInteger := eT_WebShopBestellung;
@@ -1357,7 +1356,7 @@ begin
       if (BELEG_R >= cRID_FirstValid) then
         FieldByName('BELEG_R').AsInteger := BELEG_R;
       FieldByName('MENGE').AsInteger := MENGE_AUFNAHME;
-      FieldByName('INFO').assign(sDiagnose);
+      e_w_sqlt(FieldByName('INFO'), sDiagnose);
       Post;
     end;
     EREIGNIS.free;
@@ -1420,7 +1419,7 @@ begin
         sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and');
         sql.add(' (AUSGABEART_R' + isRID(AUSGABEART_R) + ') and');
         sql.add(' (EINHEIT_R' + isRID(EINHEIT_R) + ')');
-        sql.add('FOR UPDATE');
+        for_update(sql);
         Open;
         if not(eof) then
         begin
@@ -1525,7 +1524,7 @@ begin
         sql.add(' ARTIKEL');
         sql.add('WHERE');
         sql.add(' (RID=' + inttostr(ARTIKEL_R) + ')');
-        sql.add('FOR UPDATE');
+        for_update(sql);
         Open;
         if not(eof) then
         begin
@@ -1627,7 +1626,7 @@ begin
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-        sql.add('select * from WARENBEWEGUNG for update');
+        sql.add('select * from WARENBEWEGUNG ' + for_update);
         Insert;
         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
         FieldByName('MENGE').AsInteger := MENGE;
@@ -1800,7 +1799,7 @@ begin
     sql.add(' (MENGE_ERWARTET>0) AND');
     sql.add(e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R));
     sql.add('order by ZUSAGE,RID');
-    sql.add('for update');
+    for_update(sql);
     Open;
     First;
     while not(eof) do
@@ -1888,7 +1887,7 @@ begin
       sql.add(' (MOTIVATION>=10)');
       sql.add('ORDER BY');
       sql.add(' FOLGE,ZUSAGE,RID');
-      sql.add('FOR UPDATE');
+      for_update(sql);
 
       Open;
 
@@ -1924,7 +1923,7 @@ begin
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-          sql.add('select * from EREIGNIS for update');
+          sql.add('select * from EREIGNIS ' + for_update);
           Insert;
           FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
           FieldByName('ART').AsInteger := eT_WareEingetroffen;
@@ -1971,7 +1970,7 @@ begin
       sql.add(' (MENGE_AGENT>0)');
       sql.add('ORDER BY');
       sql.add(' ZUSAGE');
-      sql.add('FOR UPDATE');
+      for_update(sql);
 
       Open;
       while not(eof) do
@@ -2007,7 +2006,7 @@ begin
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-          sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
+          sql.add('SELECT * FROM WARENBEWEGUNG ' + for_update);
           Insert;
           if (AUSGABEART_R > 0) then
             FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
@@ -2074,7 +2073,7 @@ begin
         if not(DontBook) then
         begin
           sql.add('FROM ARTIKEL WHERE (RID=' + inttostr(ARTIKEL_R) + ')');
-          sql.add('FOR UPDATE');
+          for_update(sql);
           Open;
 
           MENGE_BISHER := FieldByName('M').AsInteger;
@@ -2092,7 +2091,7 @@ begin
             ColumnAttributes.add('RID=NOTREQUIRED');
             ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-            sql.add('SELECT * FROM WARENBEWEGUNG FOR update');
+            sql.add('SELECT * FROM WARENBEWEGUNG ' + for_update);
             Insert;
             if (AUSGABEART_R > 0) then
               FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
@@ -2948,7 +2947,7 @@ begin
     // Alle Belege des Kunden auflisten
     with qBELEG do
     begin
-      sql.add('SELECT * FROM BELEG WHERE RID=:CROSSREF FOR UPDATE');
+      sql.add('SELECT * FROM BELEG WHERE RID=:CROSSREF ' + for_update);
       prepare;
     end;
 
@@ -3794,7 +3793,7 @@ begin
 
       with qPosten do
       begin
-        sql.add('select * from POSTEN for update');
+        sql.add('select * from POSTEN ' + for_update);
 {$IFDEF fpc}
         raise exception.create('ColumnAttributes');
 {$ELSE}
@@ -4096,8 +4095,8 @@ begin
       with LIEFERZEIT do
       begin
         sql.add('SELECT');
-        sql.add(' ARTIKEL.LIEFERZEIT,');
-        sql.add(' PERSON.LIEFERZEIT');
+        sql.add(' ARTIKEL.LIEFERZEIT as ARTIKEL_LIEFERZEIT,');
+        sql.add(' PERSON.LIEFERZEIT as PERSON_LIEFERZEIT');
         sql.add('FROM ARTIKEL');
         sql.add('left JOIN PERSON ON');
         sql.add(' (ARTIKEL.VERLAG_R=PERSON.RID)');
@@ -4107,10 +4106,10 @@ begin
         repeat
           if eof then
             break;
-          result := FieldByName('ARTIKEL.LIEFERZEIT').AsInteger;
+          result := FieldByName('ARTIKEL_LIEFERZEIT').AsInteger;
           if (result > 0) then
             break;
-          result := FieldByName('PERSON.LIEFERZEIT').AsInteger;
+          result := FieldByName('PERSON_LIEFERZEIT').AsInteger;
           if (result > 0) then
             break;
         until true;
@@ -4444,7 +4443,7 @@ begin
 
       // "NÄCHSTE NUMMER"
       sql.add('SELECT NAECHSTE_NUMMER FROM SORTIMENT WHERE RID=' +
-        inttostr(SORTIMENT_R) + ' FOR UPDATE');
+        inttostr(SORTIMENT_R) + ' ' + for_update);
       Open;
       First;
       if eof then
@@ -4477,7 +4476,7 @@ begin
     //
     with ARTIKEL do
     begin
-      sql.add('select RID,SORTIMENT_R,NUMERO,ERSTEINTRAG,MINDESTBESTAND,GEWICHT from ARTIKEL for update');
+      sql.add('select RID,SORTIMENT_R,NUMERO,ERSTEINTRAG,MINDESTBESTAND,GEWICHT from ARTIKEL ' + for_update);
       Insert;
       if (SORTIMENT_R <> -1) then
         FieldByName('SORTIMENT_R').AsInteger := SORTIMENT_R;
@@ -4529,7 +4528,7 @@ begin
     with ANSCHRIFT do
     begin
       ANSCHRIFT_R := e_w_GEN('GLOBAL_GID');
-      sql.add('select * from anschrift for update');
+      sql.add('select * from anschrift ' + for_update);
       Insert;
       FieldByName('RID').AsInteger := ANSCHRIFT_R;
       FieldByName('LAND_R').AsInteger := iHeimatLand;
@@ -4550,7 +4549,7 @@ begin
         inttostr(NUMMER)) = 0);
 
       // Haupt-Datensatz anlegen
-      sql.add('select * from person for update');
+      sql.add('select * from person ' + for_update);
       Insert;
       FieldByName('RID').AsInteger := PERSON_R;
       FieldByName('NUMMER').AsInteger := NUMMER;
@@ -6545,7 +6544,9 @@ begin
       with qBELEG do
       begin
         sql.add('select * from BELEG where RID=' + inttostr(BELEG_R));
-        sql.add('for update');
+{$IFNDEF fpc}
+        for_update(sql);
+{$ENDIF}
         Open;
         First;
         if eof then
@@ -6567,10 +6568,8 @@ begin
         sql.add('select * from POSTEN where');
         sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
-        sql.add('for update');
-{$IFDEF fpc}
-        raise exception.create('ColumnAttributes');
-{$ELSE}
+{$IFNDEF fpc}
+        for_update(sql);
         ColumnAttributes.add('RID=NOTREQUIRED');
 {$ENDIF}
         Open;
@@ -6743,7 +6742,10 @@ begin
                       // TICKET neu anlegen
                       Close;
                       sql.clear;
-                      sql.add('select * from TICKET for update');
+                      sql.add('select * from TICKET');
+{$IFNDEF fpc}
+                      for_update(sql);
+{$ENDIF}
                       Insert;
                       FieldByName('RID').AsInteger := 0;
                       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -6774,7 +6776,10 @@ begin
                       Close;
                       sql.clear;
                       sql.add('select * from TICKET where RID=' +
-                        inttostr(TICKET_R) + ' for update');
+                        inttostr(TICKET_R));
+{$IFNDEF fpc}
+                      sql.add(' ' + for_update);
+{$ENDIF}
                       Open;
                       First;
 
@@ -7086,7 +7091,7 @@ begin
     begin
 
       sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) +
-        ' for update');
+        ' ' + for_update);
       Open;
       First;
       if eof then
@@ -7185,7 +7190,7 @@ begin
               // TICKET neu anlegen
               Close;
               sql.clear;
-              sql.add('select * from TICKET for update');
+              sql.add('select * from TICKET ' + for_update);
               Insert;
               FieldByName('RID').AsInteger := 0;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -7211,7 +7216,7 @@ begin
               Close;
               sql.clear;
               sql.add('select * from TICKET where RID=' + inttostr(TICKET_R) +
-                ' for update');
+                ' ' + for_update);
               Open;
               First;
               edit;
@@ -7290,7 +7295,7 @@ begin
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-              sql.add('select * from EREIGNIS for update');
+              sql.add('select * from EREIGNIS ' + for_update);
               Insert;
               FieldByName('ART').AsInteger :=
                 eT_BestellungNunVollstaendigLieferbar;
@@ -7327,7 +7332,7 @@ begin
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-              sql.add('select * from EREIGNIS for update');
+              sql.add('select * from EREIGNIS ' + for_update);
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
@@ -7356,7 +7361,7 @@ begin
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-              sql.add('select * from EREIGNIS for update');
+              sql.add('select * from EREIGNIS ' + for_update);
               Insert;
               FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
@@ -7468,7 +7473,7 @@ begin
       with qBBELEG do
       begin
         sql.add('select * from BBELEG where RID=' + inttostr(BBELEG_R) +
-          ' for update');
+          ' ' + for_update);
         Open;
         First;
         if eof then
@@ -7813,7 +7818,7 @@ begin
 
       //
       sql.add('select * from VERSAND where BELEG_R=' + inttostr(BELEG_R));
-      sql.add('for update');
+      for_update(sql);
       Open;
       First;
 
@@ -8032,7 +8037,7 @@ begin
       // Posten öffnen
       with qPosten do
       begin
-        sql.add('select * from POSTEN for update');
+        sql.add('select * from POSTEN ' + for_update);
 {$IFNDEF fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
 {$ENDIF}
@@ -8111,11 +8116,13 @@ begin
       begin
         BELEG_R := e_w_GEN('BELEG_GID');
         //
-        sql.add('select * from BELEG for update');
 {$IFNDEF fpc}
+        sql.add('select * from BELEG ' + for_update);
         ColumnAttributes.add('ANLAGE=NOTREQUIRED');
         ColumnAttributes.add('BTYP=NOTREQUIRED');
         ColumnAttributes.add('BSTATUS=NOTREQUIRED');
+{$ELSE}
+        sql.add('select * from BELEG');
 {$ENDIF}
         Insert;
         FieldByName('RID').AsInteger := BELEG_R;
@@ -8194,7 +8201,7 @@ begin
       qSETTINGS := nQuery;
       with qSETTINGS do
       begin
-        sql.add('select * from EINSTELLUNG for update');
+        sql.add('select * from EINSTELLUNG ' + for_update);
         Open;
         if not(HasFieldName(qSETTINGS, 'SETTINGS')) then
           break;
@@ -8780,7 +8787,7 @@ begin
     begin
 
       sql.add('select RECHNUNGS_BETRAG,DAVON_BEZAHLT from BELEG where RID=' +
-        _BELEG_R_TO + ' for update');
+        _BELEG_R_TO + ' ' + for_update);
 
       edit;
       FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG')
@@ -9225,7 +9232,7 @@ begin
         ColumnAttributes.add('RID=NOTREQUIRED');
         ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-        sql.add('select * from EREIGNIS for update');
+        sql.add('select * from EREIGNIS ' + for_update);
         Insert;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
         FieldByName('ART').AsInteger := eT_LagerPlatzZugeteilt;
@@ -9405,7 +9412,7 @@ begin
     sql.add(' BTYP');
     sql.add('from BELEG');
     sql.add('where (RID=' + inttostr(BELEG_R_TO) + ')');
-    sql.add('for update');
+    for_update(sql);
     Open;
     First;
     BTYP := strtointdef(FieldByName('BTYP').AsString, 0);
@@ -9453,7 +9460,7 @@ begin
 
   with qZIEL_POSTEN do
   begin
-    sql.add('select * from POSTEN for update');
+    sql.add('select * from POSTEN ' + for_update);
     Open;
   end;
 
@@ -9614,7 +9621,7 @@ begin
     with qZIEL_BELEG do
     begin
       sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) +
-        ' for update');
+        ' ' + for_update);
       Open;
       First;
       edit;
@@ -9641,7 +9648,7 @@ begin
 
     with qZIEL_POSTEN do
     begin
-      sql.add('select * from POSTEN for update');
+      sql.add('select * from POSTEN ' + for_update);
     end;
 
     with cQUELL_POSTEN do
@@ -10083,7 +10090,7 @@ begin
     with qBELEG do
     begin
       sql.add('select * from BELEG where RID=' + inttostr(BELEG_R));
-      sql.add('for update');
+      for_update(sql);
       Open;
       First;
       Menge_AuftragVorLieferung := FieldByName('MENGE_AUFTRAG').AsInteger;
@@ -10163,7 +10170,7 @@ begin
       sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
       sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
       sql.add('order by POSNO,RID');
-      sql.add('for update');
+      for_update(sql);
       Open;
       First;
       Menge_Lieferung := 0;
@@ -10216,7 +10223,7 @@ begin
       ColumnAttributes.add('RID=NOTREQUIRED');
       ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
-      sql.add('select * from WARENBEWEGUNG for update');
+      sql.add('select * from WARENBEWEGUNG ' + for_update);
       Insert;
       FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
       FieldByName('MENGE').AsInteger := Menge_Lieferung;
@@ -10535,7 +10542,7 @@ begin
     qTICKET := nQuery;
     with qTICKET do
     begin
-      sql.add('select * from TICKET for update');
+      sql.add('select * from TICKET ' + for_update);
       Insert;
       FieldByName('RID').AsInteger := 0;
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -12257,11 +12264,11 @@ begin
     R_ARTIKEL := e_r_sqlm('select RID from ARTIKEL');
 
     qBELEG := nQuery;
-    qBELEG.sql.add('select * from BELEG for update');
+    qBELEG.sql.add('select * from BELEG ' + for_update);
 
     //
     qPosten := nQuery;
-    qPosten.sql.add('select * from POSTEN for update');
+    qPosten.sql.add('select * from POSTEN ' + for_update);
 
     sBON := TsTable.create;
     sBELEG := TStringList.create;
@@ -12508,7 +12515,7 @@ begin
     sql.add(' RANG is null');
     sql.add('order by');
     sql.add(' AKTION desc, RID desc');
-    sql.add('for update');
+    for_update(sql);
     Open;
     First;
   end;
@@ -12525,7 +12532,7 @@ begin
     sql.add(' RANG is null');
     sql.add('order by');
     sql.add(' AKTION desc, RID desc');
-    sql.add('for update');
+    for_update(sql);
     Open;
     First;
   end;
@@ -12667,7 +12674,7 @@ begin
   e_x_sql('update ARTIKEL set LIEFERZEIT=null');
 
   with ARTIKEL do
-    sql.add('select LIEFERZEIT from ARTIKEL where RID=:CROSSREF for update');
+    sql.add('select LIEFERZEIT from ARTIKEL where RID=:CROSSREF ' + for_update);
 
   with EREIGNIS do
   begin
@@ -12729,7 +12736,7 @@ begin
 
   // Ergebnis bei den Verlagen Eintragen
   PERSON.sql.add
-    ('SELECT LIEFERZEIT FROM PERSON WHERE RID=:CROSSREF FOR UPDATE');
+    ('SELECT LIEFERZEIT FROM PERSON WHERE RID=:CROSSREF ' + for_update);
   with LIEFERZEIT do
   begin
     sql.add('select');

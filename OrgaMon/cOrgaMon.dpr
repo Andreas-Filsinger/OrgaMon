@@ -66,7 +66,9 @@ uses
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
   Funktionen_Basis in 'Funktionen_Basis.pas',
   Funktionen_Beleg in 'Funktionen_Beleg.pas',
-  Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas';
+  Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
+  OrientationConvert in '..\PASconTools\OrientationConvert.pas',
+  libxml2 in '..\libxml2\libxml2.pas';
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);

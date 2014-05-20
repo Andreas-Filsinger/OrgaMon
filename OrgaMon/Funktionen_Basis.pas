@@ -138,8 +138,7 @@ uses
   ZClasses,
   ZConnection,
   ZCompatibility,
-
-//  fpspreadsheet,
+  ZDbcIntfs,
   {$else}
   UFlxMessages,
   CCR.Exif.Consts,
@@ -1075,7 +1074,8 @@ begin
       ClientCodePage := 'ISO8859_1';
       ControlsCodePage := cCP_UTF8;
       Protocol := 'firebird-2.5';
-// Transaction := fbTransaction;
+      TransactIsolationLevel := tiReadCommitted;
+
 end;
 {$else}
   // Datenbank - Zugriffselemente erzeugen!

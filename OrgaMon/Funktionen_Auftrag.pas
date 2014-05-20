@@ -2072,8 +2072,8 @@ begin
 
   with Auftrag do
   begin
-    sql.Add('SELECT * FROM QAUFTRAG WHERE RID=' + inttostr(AUFTRAG_R) +
-      ' FOR UPDATE');
+    sql.Add('SELECT * FROM QAUFTRAG WHERE RID=' + inttostr(AUFTRAG_R));
+    for_update(sql);
     open;
     if eof then
       Exception.create('AUFTRAG nicht gefunden!');
@@ -2097,8 +2097,8 @@ begin
 
   with POSTEN do
   begin
-    sql.Add('SELECT * FROM QPOSTEN WHERE QAUFTRAG_R=' + inttostr(AUFTRAG_R) +
-      ' FOR UPDATE');
+    sql.Add('SELECT * FROM QPOSTEN WHERE QAUFTRAG_R=' + inttostr(AUFTRAG_R));
+    for_update(sql);
     open;
   end;
 
@@ -2106,7 +2106,7 @@ begin
   begin
     sql.Add('SELECT * FROM MEILENSTEIN WHERE QPOSTEN_R=:CROSSREF');
     sql.Add('ORDER BY POSNR,RID');
-    sql.Add('FOR UPDATE');
+    for_update(sql);
     open;
   end;
 
@@ -5427,7 +5427,7 @@ var
         sql.Add(' (BELEG_R=' + inttostr(BELEG_R) + ') and');
         sql.Add(' (BUGET_R=' + inttostr(_BUDGET_R) + ') and');
         sql.Add(' (MENGE_GELIEFERT is null)');
-        sql.Add('for update');
+        for_update(sql);
         open;
         First;
         if eof then
@@ -5972,7 +5972,8 @@ begin
         // ZIEL Baustelle anlegen
         with qZIEL do
         begin
-          sql.Add('select * from AUFTRAG for update');
+          sql.Add('select * from AUFTRAG');
+          for_update(sql);
           open;
         end;
         with cQUELLE do

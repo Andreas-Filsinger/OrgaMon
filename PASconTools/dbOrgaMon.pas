@@ -71,7 +71,6 @@ type
     function sql: TStrings;
   end;
 
-
   TdboField = TField;
 
   { TdboCursor }
@@ -86,7 +85,7 @@ type
 
   TdboQuery = class(TZQuery)
   public
-   procedure Insert;
+    procedure Insert;
   end;
 
 {$ELSE}
@@ -229,6 +228,9 @@ function nQuery: TdboQuery;
 function nCursor: TdboCursor;
 function nScript: TdboScript;
 
+// Migrations-Tools
+function for_update(s: TStrings = nil) : string;
+
 { Datenbank Abfragen allgemein }
 function e_r_IsRID(FieldName: string; RID: integer): boolean;
 // SQL selects, die einen Einzelnen Wert zurückgeben
@@ -239,9 +241,14 @@ function e_r_sql(s: string): integer; overload;
 function e_r_sql(s: string; sl: TStringList): integer; overload;
 // Nur das erste Feld aus der Element als Text-Blob, result=1
 
-function e_r_sqlt(s: string): TStringList; overload;
-procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 // Nur das erste Feld des ersten Records als Text-Blob
+function e_r_sqlt(s: string): TStringList; overload;
+
+// Ersatz für "assignto" bei IBObjects
+procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
+
+// Schreiben eines Datenbank Blob-Feldes
+procedure e_w_sqlt(Field: TdboField; s: TStrings);
 
 function e_w_GEN(GenName: string; Increment: integer = 1): integer;
 // erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
@@ -359,7 +366,8 @@ begin
       ResultSQL.add(inttostr(integer(l[n])))
     else
       ResultSQL.add(',' + inttostr(integer(l[n])));
-  ResultSQL.add(') for update');
+  ResultSQL.add(')');
+  for_update(ResultSQL);
   ChangeWhere(q, ResultSQL);
   ResultSQL.free;
 end;
@@ -1059,7 +1067,6 @@ begin
   end;
 end;
 
-
 {$IFDEF fpc}
 { TdboScript }
 
@@ -1088,7 +1095,7 @@ procedure TdboQuery.Insert;
 begin
   if not(active) then
     Open;
- inherited Insert;
+  inherited Insert;
 end;
 
 {$ENDIF}
@@ -1111,7 +1118,7 @@ begin
     while (NewLines <> '') do
     begin
       inc(BlockStart);
-      insert(BlockStart, nextp(NewLines, #13));
+      Insert(BlockStart, nextp(NewLines, #13));
     end;
     for n := BlockStart to pred(count) do
       if pos('~' + BlockName + ' end~', strings[n]) > 0 then
@@ -1179,6 +1186,15 @@ begin
       DatumUhr);
 end;
 
+procedure e_w_sqlt(Field: TdboField; s: TStrings);
+begin
+{$IFDEF fpc}
+  Field.AsString := s.text;
+{$ELSE}
+  Field.Assign(s);
+{$ENDIF}
+end;
+
 procedure qStringsAdd(f: TdboField; s: string);
 var
   sl: TStringList;
@@ -1190,7 +1206,7 @@ begin
 {$IFDEF fpc}
   f.AsString := sl.text;
 {$ELSE}
-  f.assign(sl);
+  f.Assign(sl);
 {$ENDIF}
   sl.free;
 end;
@@ -1229,7 +1245,7 @@ begin
       with qDEST do
       begin
         sql.add('select * from ' + TableName + ' for update');
-        insert;
+        Insert;
         FieldByName('RID').AsInteger := NewRID;
         for n := 0 to pred(FieldCount) do
         begin
@@ -1249,7 +1265,7 @@ begin
               break;
 
             qDEST.FieldByName(_FieldName)
-              .assign(cSOURCE.FieldByName(_FieldName));
+              .Assign(cSOURCE.FieldByName(_FieldName));
 
           until true;
         end;
@@ -1648,7 +1664,7 @@ begin
             sRow := sRow + Content + fbDumpKomma;
         end;
       end;
-      Dump.insert(0, InsertPreFix + sRow + ');');
+      Dump.Insert(0, InsertPreFix + sRow + ');');
       ApiNext;
     end;
   end;
@@ -1728,7 +1744,7 @@ begin
           // Script ab und zu auftrennen
           if (m > 500) then
           begin
-            Dump.insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
               inttostr(_R) + ' where RID in (' + CalculatedSQL + ');');
             m := 0;
           end;
@@ -1745,12 +1761,12 @@ begin
 
           if (m = 1) then
           begin
-            Dump.insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
               inttostr(_R) + ' where RID=' + CalculatedSQL + ';');
             break;
           end;
 
-          Dump.insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
+          Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
             inttostr(_R) + ' where RID in (' + CalculatedSQL + ');')
 
         until true;
@@ -1800,6 +1816,7 @@ begin
   s := TZSequence.create(nil);
   with s do
   begin
+    connection := fbConnection;
     SequenceName := GenName;
     if (Increment = 0) then
     begin
@@ -1837,7 +1854,7 @@ begin
     sql.add(s);
     First;
     edit;
-    Fields[0].assign(sl);
+    Fields[0].Assign(sl);
     post;
   end;
   qUPDATE.free;
@@ -1984,6 +2001,17 @@ begin
     result := (e_r_sql('select count(RID) from ' + nextp(FieldName, '_',
       0) + ' where RID=' + inttostr(RID)) = 1);
   until true;
+end;
+
+function for_update(s: TStrings = nil):string;
+begin
+{$IFNDEF fpc}
+ if assigned(s) then
+  s.add('for update');
+ result := 'for update';
+{$else}
+ result := '';
+{$ENDIF}
 end;
 
 function e_r_sql(s: string; sl: TStringList): integer;
@@ -2293,7 +2321,7 @@ begin
       try
         e_x_sql(CalculatedSQL);
       except
-        on E: exception do
+        on E: Exception do
         begin
           CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL +
             '"): ' + E.Message);
@@ -2302,7 +2330,7 @@ begin
 
     end;
   except
-    on E: exception do
+    on E: Exception do
     begin
       CareTakerLog(cERRORText + ' e_x_dereference(): ' + E.Message);
     end;
@@ -2318,6 +2346,5 @@ begin
   e_x_dereference(sl, fromref, toref);
   sl.free;
 end;
-
 
 end.

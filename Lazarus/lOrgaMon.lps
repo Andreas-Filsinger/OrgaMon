@@ -4,26 +4,28 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="74">
+    <Units Count="75">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
-        <EditorIndex Value="0"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="5" Y="85"/>
-        <UsageCount Value="60"/>
+        <TopLine Value="270"/>
+        <CursorPos X="1" Y="312"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="5071"/>
-        <CursorPos X="1" Y="5093"/>
-        <UsageCount Value="18"/>
+        <TopLine Value="5823"/>
+        <CursorPos X="1" Y="5851"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -65,11 +67,11 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="76"/>
-        <CursorPos X="1" Y="76"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="281"/>
+        <CursorPos X="3" Y="312"/>
+        <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -102,10 +104,13 @@
       <Unit10>
         <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
         <UnitName Value="Funktionen_Basis"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="880"/>
-        <CursorPos X="25" Y="917"/>
+        <TopLine Value="127"/>
+        <CursorPos X="1" Y="141"/>
         <UsageCount Value="20"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
@@ -120,10 +125,12 @@
       <Unit12>
         <Filename Value="..\..\zeos-7.1\src\dbc\ZDbcIntfs.pas"/>
         <UnitName Value="ZDbcIntfs"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="97"/>
-        <CursorPos X="3" Y="95"/>
+        <TopLine Value="26"/>
+        <CursorPos X="6" Y="52"/>
         <UsageCount Value="16"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -156,21 +163,21 @@
       <Unit16>
         <Filename Value="..\infozip\infozip.pas"/>
         <UnitName Value="InfoZIP"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="885"/>
-        <CursorPos X="21" Y="899"/>
+        <TopLine Value="90"/>
+        <CursorPos X="3" Y="115"/>
         <UsageCount Value="19"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <UnitName Value="fpchelper"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="844"/>
-        <CursorPos X="17" Y="869"/>
+        <TopLine Value="26"/>
+        <CursorPos X="1" Y="66"/>
         <UsageCount Value="14"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -185,26 +192,23 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4621"/>
-        <CursorPos X="52" Y="4645"/>
+        <CursorPos X="18" Y="4634"/>
         <UsageCount Value="16"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="4645" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
         <UnitName Value="Funktionen_Beleg"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="5" Y="1"/>
-        <UsageCount Value="15"/>
+        <TopLine Value="4084"/>
+        <CursorPos X="41" Y="4112"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
@@ -229,10 +233,12 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="2070"/>
+        <CursorPos X="1" Y="2106"/>
         <UsageCount Value="16"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -254,11 +260,11 @@
       <Unit26>
         <Filename Value="..\OrgaMon\eConnect.pas"/>
         <UnitName Value="eConnect"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="388"/>
-        <CursorPos X="80" Y="417"/>
-        <UsageCount Value="14"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="2"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
@@ -272,28 +278,34 @@
       <Unit28>
         <Filename Value="..\PASconTools\srvXMLRPC.pas"/>
         <UnitName Value="srvXMLRPC"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="116"/>
-        <CursorPos X="15" Y="137"/>
-        <UsageCount Value="14"/>
+        <TopLine Value="776"/>
+        <CursorPos X="1" Y="800"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\zeos-7.1\src\component\ZConnection.pas"/>
         <UnitName Value="ZConnection"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="41"/>
+        <TopLine Value="36"/>
         <CursorPos X="3" Y="71"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractConnection.pas"/>
         <UnitName Value="ZAbstractConnection"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1662"/>
-        <CursorPos X="44" Y="1682"/>
+        <TopLine Value="98"/>
+        <CursorPos X="35" Y="278"/>
         <UsageCount Value="12"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -353,10 +365,12 @@
       <Unit37>
         <Filename Value="..\PASconTools\CareTakerClient.pas"/>
         <UnitName Value="CareTakerClient"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="78"/>
-        <CursorPos X="3" Y="91"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="12"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
@@ -370,12 +384,10 @@
       </Unit38>
       <Unit39>
         <Filename Value="..\..\jcl-2.5.0\source\include\jcl.inc"/>
-        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="34"/>
         <CursorPos X="2" Y="44"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -444,10 +456,12 @@
       <Unit48>
         <Filename Value="..\..\zeos-7.1\src\dbc\ZDbcInterbase6Utils.pas"/>
         <UnitName Value="ZDbcInterbase6Utils"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="3" Y="66"/>
-        <UsageCount Value="14"/>
+        <TopLine Value="813"/>
+        <CursorPos X="1" Y="837"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
@@ -479,8 +493,8 @@
         <Filename Value="..\..\zeos-7.1\src\dbc\ZDbcInterbase6.pas"/>
         <UnitName Value="ZDbcInterbase6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="89"/>
-        <CursorPos X="1" Y="91"/>
+        <TopLine Value="391"/>
+        <CursorPos X="1" Y="433"/>
         <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit52>
@@ -488,8 +502,8 @@
         <Filename Value="..\..\zeos-7.1\src\dbc\ZDbcConnection.pas"/>
         <UnitName Value="ZDbcConnection"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="74"/>
-        <CursorPos X="1" Y="284"/>
+        <TopLine Value="744"/>
+        <CursorPos X="1" Y="782"/>
         <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
@@ -497,29 +511,31 @@
         <Filename Value="..\..\zeos-7.1\src\component\ZSequence.pas"/>
         <UnitName Value="ZSequence"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="58"/>
-        <CursorPos X="23" Y="89"/>
+        <TopLine Value="131"/>
+        <CursorPos X="1" Y="149"/>
         <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
         <Filename Value="..\..\zeos-7.1\src\dbc\ZDbcInterbase6Statement.pas"/>
         <UnitName Value="ZDbcInterbase6Statement"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="250"/>
-        <CursorPos X="21" Y="270"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="622"/>
+        <CursorPos X="1" Y="646"/>
+        <UsageCount Value="13"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="275" ID="2"/>
         </Bookmarks>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
         <Filename Value="..\..\zeos-7.1\src\plain\ZPlainFirebirdDriver.pas"/>
         <UnitName Value="ZPlainFirebirdDriver"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="90"/>
-        <CursorPos X="46" Y="99"/>
+        <TopLine Value="861"/>
+        <CursorPos X="1" Y="889"/>
         <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
@@ -535,99 +551,81 @@
       <Unit58>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclStrings.pas"/>
         <UnitName Value="JclStrings"/>
-        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5388"/>
         <CursorPos X="60" Y="5398"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclAnsiStrings.pas"/>
         <UnitName Value="JclAnsiStrings"/>
-        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4086"/>
         <CursorPos X="69" Y="4096"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclDateTime.pas"/>
         <UnitName Value="JclDateTime"/>
-        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="256"/>
         <CursorPos X="72" Y="266"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
         <Filename Value="..\..\jcl-2.5.0\source\common\JclSimpleXml.pas"/>
         <UnitName Value="JclSimpleXml"/>
-        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1124"/>
         <CursorPos X="4" Y="1130"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
         <Filename Value="..\..\Abbrevia\source\AbUnzper.pas"/>
         <UnitName Value="AbUnzper"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="73"/>
         <CursorPos X="3" Y="91"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
         <Filename Value="..\..\Abbrevia\source\AbZipTyp.pas"/>
         <UnitName Value="AbZipTyp"/>
-        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1869"/>
         <CursorPos X="22" Y="1869"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
         <Filename Value="..\..\Abbrevia\source\AbDefine.inc"/>
-        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
         <Filename Value="..\..\Abbrevia\source\AbUtils.pas"/>
         <UnitName Value="AbUtils"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
         <CursorPos X="1" Y="72"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
         <Filename Value="..\..\Abbrevia\source\AbConst.pas"/>
         <UnitName Value="AbConst"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="26"/>
-        <CursorPos X="1" Y="45"/>
+        <TopLine Value="28"/>
+        <CursorPos X="1" Y="77"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -642,212 +640,193 @@
       <Unit68>
         <Filename Value="..\..\Abbrevia\source\AbArcTyp.pas"/>
         <UnitName Value="AbArcTyp"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="670"/>
         <CursorPos X="3" Y="677"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
         <Filename Value="..\..\Abbrevia\source\AbZBrows.pas"/>
         <UnitName Value="AbZBrows"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="28"/>
         <CursorPos X="3" Y="28"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
         <Filename Value="..\..\Abbrevia\source\AbBrowse.pas"/>
         <UnitName Value="AbBrowse"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="505"/>
         <CursorPos X="29" Y="523"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit70>
       <Unit71>
         <Filename Value="..\PASconTools\OrientationConvert.pas"/>
         <UnitName Value="OrientationConvert"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="51"/>
         <CursorPos X="5" Y="95"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit71>
       <Unit72>
         <Filename Value="..\PASconTools\ExcelHelper.pas"/>
         <UnitName Value="ExcelHelper"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="76"/>
         <CursorPos X="3" Y="117"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit72>
       <Unit73>
         <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
         <UnitName Value="fpspreadsheet"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="424"/>
         <CursorPos X="13" Y="443"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit73>
+      <Unit74>
+        <Filename Value="..\..\indy\Lib\System\IdStack.pas"/>
+        <UnitName Value="IdStack"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="843"/>
+        <CursorPos X="29" Y="871"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit74>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
-        <Caret Line="32" Column="1" TopLine="26"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2087" Column="1" TopLine="2045"/>
       </Position1>
       <Position2>
-        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
-        <Caret Line="34" Column="16" TopLine="7"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2088" Column="1" TopLine="2046"/>
       </Position2>
       <Position3>
-        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
-        <Caret Line="92" Column="47" TopLine="65"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2089" Column="1" TopLine="2047"/>
       </Position3>
       <Position4>
-        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
-        <Caret Line="104" Column="1" TopLine="78"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2090" Column="1" TopLine="2048"/>
       </Position4>
       <Position5>
-        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
-        <Caret Line="513" Column="1" TopLine="466"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2091" Column="1" TopLine="2049"/>
       </Position5>
       <Position6>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="71" Column="1" TopLine="33"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2106" Column="1" TopLine="2070"/>
       </Position6>
       <Position7>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4347" Column="1" TopLine="4325"/>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="5848" Column="1" TopLine="5823"/>
       </Position7>
       <Position8>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4617" Column="25" TopLine="4592"/>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="5849" Column="1" TopLine="5823"/>
       </Position8>
       <Position9>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4645" Column="1" TopLine="4621"/>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="5851" Column="1" TopLine="5823"/>
       </Position9>
       <Position10>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="241" Column="1" TopLine="216"/>
       </Position10>
       <Position11>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="190" Column="37" TopLine="148"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="243" Column="1" TopLine="216"/>
       </Position11>
       <Position12>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="1836" Column="46" TopLine="1794"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2027" Column="1" TopLine="2002"/>
       </Position12>
       <Position13>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="2012" Column="53" TopLine="1971"/>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2106" Column="1" TopLine="2070"/>
       </Position13>
       <Position14>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="2692" Column="17" TopLine="2648"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="276" Column="1" TopLine="251"/>
       </Position14>
       <Position15>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4618" Column="23" TopLine="4576"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="42" Column="1" TopLine="86"/>
       </Position15>
       <Position16>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4624" Column="23" TopLine="4582"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position16>
       <Position17>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4639" Column="56" TopLine="4597"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="334" Column="5" TopLine="294"/>
       </Position17>
       <Position18>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4645" Column="72" TopLine="4603"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="115" Column="1" TopLine="90"/>
       </Position18>
       <Position19>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4649" Column="51" TopLine="4607"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="334" Column="5" TopLine="294"/>
       </Position19>
       <Position20>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4650" Column="51" TopLine="4608"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="1819" Column="19" TopLine="1794"/>
       </Position20>
       <Position21>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4651" Column="63" TopLine="4609"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="1959" Column="22" TopLine="1934"/>
       </Position21>
       <Position22>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4653" Column="51" TopLine="4611"/>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <Caret Line="306" Column="3" TopLine="281"/>
       </Position22>
       <Position23>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4654" Column="63" TopLine="4612"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="338" Column="1" TopLine="325"/>
       </Position23>
       <Position24>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4656" Column="33" TopLine="4614"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="72" Column="1" TopLine="51"/>
       </Position24>
       <Position25>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4666" Column="23" TopLine="4625"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position25>
       <Position26>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="4676" Column="32" TopLine="4634"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="795" Column="39" TopLine="753"/>
       </Position26>
       <Position27>
-        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
-        <Caret Line="242" Column="18" TopLine="227"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="797" Column="38" TopLine="755"/>
       </Position27>
       <Position28>
-        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
-        <Caret Line="243" Column="19" TopLine="227"/>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="95" Column="11" TopLine="51"/>
       </Position28>
       <Position29>
-        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
-        <Caret Line="1169" Column="1" TopLine="1161"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1079" Column="1" TopLine="1057"/>
       </Position29>
       <Position30>
-        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
-        <Caret Line="5933" Column="22" TopLine="5911"/>
+        <Filename Value="..\OrgaMon\Funktionen_Basis.pas"/>
+        <Caret Line="1078" Column="1" TopLine="1053"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
-  <Debugging>
-    <BreakPoints Count="2">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\PASconTools\dbOrgaMon.pas"/>
-        <Line Value="2017"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Line Value="8036"/>
-      </Item2>
-    </BreakPoints>
-  </Debugging>
   <EditorMacros Count="0"/>
 </CONFIG>
