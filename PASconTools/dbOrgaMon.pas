@@ -1080,7 +1080,9 @@ end;
 procedure TdboCursor.ApiFirst;
 begin
   if not(active) then
-    Open;
+    Open
+  else
+   Refresh;
   First;
 end;
 
