@@ -61,6 +61,8 @@
 			<DCC_UsePackage>ibo5art_d2012;TeeDB;FlexCelXE2;vclib;vclimg;ibo5vrt_d2012;vcldb;vcldsnap;ibo5trt_d2012;vcl;webdsnap;ibo5crt_d2012;adortl;ibo5xrt_d2012;ibo5frt_d2012;Tee;TeeUI;vclactnband;bindcompvcl;vclie;ibo5ftsrt_d2012;vcltouch;websnap;VclSmp;ibo5rplrt_d2012;dsnapcon;vclx;$(DCC_UsePackage)</DCC_UsePackage>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win32)'!=''">
+			<Manifest_File>None</Manifest_File>
+			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
 			<DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;ibo5art_d2012;ibo5wsrt_d2012;JvDlgs;TeeDB;FlexCelXE2;JvCrypt;Rave100VCL;vclib;inetdbbde;JvNet;JvDotNetCtrls;vclimg;fmi;ibo5vrt_d2012;JvXPCtrls;vcldb;vcldsnap;ibo5trt_d2012;Intraweb_120_160;ibo5wxrt_d2012;JvCore;vclribbon;frxe16;vcl;CodeSiteExpressPkg;FmxTeeUI;JvAppFrm;JvDB;JvRuntimeDesign;webdsnap;ibo5crt_d2012;JclDeveloperTools;JvDocking;adortl;JvWizards;SynEdit_R2009;JvHMI;ibo5xrt_d2012;vcldbx;JvBands;frx16;ibo5frt_d2012;JvPluginSystem;Tee;ibo5admrt_d2012;JclContainers;JvCmp;JvSystem;svnui;CPortLibD2010;JvControls;JvTimeFramework;frxDB16;intrawebdb_120_160;fs16;FMXTee;TeeUI;vclactnband;JvJans;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvPageComps;JvPrintPreview;ibo5ftsrt_d2012;vcltouch;websnap;VclSmp;fsDB16;ibo5rplrt_d2012;ibo5wrt_d2012;dsnapcon;JclVcl;JvPascalInterpreter;vclx;svn;bdertl;JvBDE;$(DCC_UsePackage)</DCC_UsePackage>
 			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
 			<VerInfo_Locale>1033</VerInfo_Locale>
@@ -74,9 +76,8 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
-			<DCC_Namespace>Vcl;$(DCC_Namespace)</DCC_Namespace>
-			<Manifest_File>None</Manifest_File>
 			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
 			<DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<VerInfo_Locale>1033</VerInfo_Locale>
@@ -89,6 +90,7 @@
 			<DCC_DebugInformation>false</DCC_DebugInformation>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
 			<DCC_UnitAlias>pngimage=vcl.graphics.pngimage;JPEG=Vcl.Imaging.JPEG;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<Manifest_File>None</Manifest_File>

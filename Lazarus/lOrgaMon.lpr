@@ -56,15 +56,13 @@ program lOrgaMon;
 {$mode objfpc}{$H+}
 {$APPTYPE CONSOLE}
 
-uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}{$ENDIF}
+uses {$IFDEF UNIX} {$IFDEF UseCThreads}
+  cthreads, {$ENDIF} {$ENDIF}
   Interfaces,
   Classes,
-  math,
+  Math,
   inifiles,
-  sysutils,
+  SysUtils,
   globals,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
@@ -102,134 +100,228 @@ var
   Modus: string;
   _iDataBaseName: string;
 
-procedure RunAsXMLRPC;
-var
-  JonDa: TJonDaExec;
-  MyIni: TIniFile;
-  UsedPort: integer;
-  XMethods: TeConnect;
-  XServer: TXMLRPC_Server;
-  BasePlug: TStringList;
-begin
-  JonDa := TJonDaExec.Create;
-
-  // Ini-Datei öffnen
-  MyIni := TIniFile.Create(MyProgramPath + cIniFName);
-  with MyIni do
+  procedure RunAsXMLRPC;
+  var
+    JonDa: TJonDaExec;
+    MyIni: TIniFile;
+    UsedPort: integer;
+    XMethods: TeConnect;
+    XServer: TXMLRPC_Server;
+    BasePlug: TStringList;
   begin
-    // Ftp-Bereich für diesen Server
-    iJonDa_FTPHost := ReadString(UserName, 'ftphost', 'gateway');
-    iJonDa_FTPUserName := ReadString(UserName, 'ftpuser', '');
-    iJonDa_FTPPassword := ReadString(UserName, 'ftppwd', '');
-    JonDa.start_NoTimeCheck := ReadString(UserName, 'NoTimeCheck', '')
-      = cIni_Activate;
-    JonDa.Option_Console := true;
+    JonDa := TJonDaExec.Create;
+
+    // Ini-Datei öffnen
+    MyIni := TIniFile.Create(MyProgramPath + cIniFName);
+    with MyIni do
+    begin
+      // Ftp-Bereich für diesen Server
+      iJonDa_FTPHost := ReadString(UserName, 'ftphost', 'gateway');
+      iJonDa_FTPUserName := ReadString(UserName, 'ftpuser', '');
+      iJonDa_FTPPassword := ReadString(UserName, 'ftppwd', '');
+      JonDa.start_NoTimeCheck :=
+        ReadString(UserName, 'NoTimeCheck', '') = cIni_Activate;
+      JonDa.Option_Console := True;
+    end;
+    MyIni.Free;
+
+    // Caching Objekte voraktivieren
+    Write('Cache ');
+    e_r_Preis_ensureCache;
+    Write('.');
+    e_r_PreisTabelle_ensureCache;
+    Write('.');
+    e_r_SortimentSatz_EnsureCache;
+    Write('.');
+    e_r_PreisNativ_ensureCache;
+    writeln(' OK');
+
+
+    // Vorrangig über den "--Port=nnnnn" Parameter
+    UsedPort := StrToIntDef(getParam('port'), -1);
+    if (UsedPort < 0) or (UsedPort > 65536) then
+      UsedPort := StrToIntDef(iXMLRPCPort, 3040);
+
+    XMethods := TeConnect.Create;
+    XMethods.Init;
+    XServer := TXMLRPC_Server.Create(nil);
+    with XServer do
+    begin
+      // Init
+
+      // Listen-Port des Servers setzen
+      DefaultPort := UsedPort;
+      // iXMLRPCPort muss aber auch entsprechende gesetzt sein!
+      iXMLRPCPort := IntToStr(UsedPort);
+
+      DebugMode := anfix32.DebugMode;
+      DiagnosePath := globals.DiagnosePath;
+      TimingStats := IsParam('-at');
+      LogContext := DatumLog + '-' + ComputerName + '-' + IntToStr(DefaultPort);
+      if TimingStats then
+        writeln('Performance-Log aktiv: ' + LogContext);
+
+      // TWebShop
+      AddMethod('ArtikelSuche',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_ArtikelSuche);
+      AddMethod('ArtikelPreis',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_ArtikelPreis);
+      AddMethod('KontoInfo',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_KontoInfo);
+      AddMethod('BestellInfo',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_BestellInfo);
+      AddMethod('Land',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Land);
+      AddMethod('Bestellen',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_Bestellen);
+      AddMethod('Vormerken',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_Vormerken);
+      AddMethod('Buchen',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_Buchen);
+      AddMethod('ArtikelVersendetag',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_ArtikelVersendetag);
+      AddMethod('Verlag',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Verlag);
+      AddMethod('Versandkosten',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Versandkosten);
+      AddMethod('ArtikelInfo',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_ArtikelInfo);
+      AddMethod('BasePlug',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_BasePlug);
+      AddMethod('ArtikelRabattPreis',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_ArtikelRabattPreis);
+      AddMethod('PersonNeu',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_PersonNeu);
+      AddMethod('Ort',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Ort);
+      AddMethod('Rabatt',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Rabatt);
+      AddMethod('Preis',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_r_Preis);
+      AddMethod('Miniscore',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_Miniscore);
+      AddMethod('LoginInfo',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_LoginInfo);
+      AddMethod('Skript',
+{$ifdef fpc}
+        @
+{$endif}
+        XMethods.rpc_e_w_Skript);
+
+      // JonDa
+      AddMethod('JonDaPlug',
+{$ifdef fpc}
+        @
+{$endif}
+        JonDa.info);
+      AddMethod('StartTAN',
+{$ifdef fpc}
+        @
+{$endif}
+        JonDa.start);
+      AddMethod('ProceedTAN',
+{$ifdef fpc}
+        @
+{$endif}
+        JonDa.proceed);
+
+      // Starten
+      BasePlug := e_r_BasePlug;
+      Write(
+        'Starte ' + ComputerName + ':' + iXMLRPCPort + ' im Kontext ' +
+        BasePlug[25] + ' ... ');
+      BasePlug.Free;
+      active := True;
+      writeln(cOKText);
+
+    end;
+
+    // if DebugHook = 0 then
+    while True do
+      sleep(1000);
+
   end;
-  MyIni.free;
 
-  // Caching Objekte voraktivieren
-  write('Cache ');
-  e_r_Preis_ensureCache;
-  write('.');
-  e_r_PreisTabelle_ensureCache;
-  write('.');
-  e_r_SortimentSatz_EnsureCache;
-  write('.');
-  e_r_PreisNativ_ensureCache;
-  writeln(' OK');
-
-
-  // Vorrangig über den "--Port=nnnnn" Parameter
-  UsedPort := StrToIntDef(getParam('port'), -1);
-  if (UsedPort < 0) or (UsedPort > 65536) then
-    UsedPort := StrToIntDef(iXMLRPCPort, 3040);
-
-  XMethods := TeConnect.Create;
-  XMethods.Init;
-  XServer := TXMLRPC_Server.Create(nil);
-  with XServer do
+  procedure RunAsOrder;
+  var
+    EREIGNIS_R, BELEG_R, PERSON_R: integer;
   begin
-    // Init
+    repeat
+      // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
 
-    // Listen-Port des Servers setzen
-    DefaultPort := UsedPort;
-    // iXMLRPCPort muss aber auch entsprechende gesetzt sein!
-    iXMLRPCPort := IntToStr(UsedPort);
+      // Step 2 : Markiere offene Jobs für mich
 
-    DebugMode := anfix32.DebugMode;
-    DiagnosePath := globals.DiagnosePath;
-    TimingStats := IsParam('-at');
-    LogContext := DatumLog + '-' + ComputerName + '-' + IntToStr(DefaultPort);
-    if TimingStats then
-      writeln('Performance-Log aktiv: ' + LogContext);
+      // Step 3 : Verarbeite offene Jobs
 
-    // TWebShop
-    AddMethod('ArtikelSuche', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelSuche);
-    AddMethod('ArtikelPreis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelPreis);
-    AddMethod('KontoInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_KontoInfo);
-    AddMethod('BestellInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_BestellInfo);
-    AddMethod('Land', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Land);
-    AddMethod('Bestellen', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Bestellen);
-    AddMethod('Vormerken', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Vormerken);
-    AddMethod('Buchen', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Buchen);
-    AddMethod('ArtikelVersendetag', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelVersendetag);
-    AddMethod('Verlag', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Verlag);
-    AddMethod('Versandkosten', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Versandkosten);
-    AddMethod('ArtikelInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelInfo);
-    AddMethod('BasePlug', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_BasePlug);
-    AddMethod('ArtikelRabattPreis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_ArtikelRabattPreis);
-    AddMethod('PersonNeu', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_PersonNeu);
-    AddMethod('Ort', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Ort);
-    AddMethod('Rabatt', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Rabatt);
-    AddMethod('Preis', {$ifdef fpc}@{$endif}XMethods.rpc_e_r_Preis);
-    AddMethod('Miniscore', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Miniscore);
-    AddMethod('LoginInfo', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_LoginInfo);
-    AddMethod('Skript', {$ifdef fpc}@{$endif}XMethods.rpc_e_w_Skript);
 
-    // JonDa
-    AddMethod('JonDaPlug', {$ifdef fpc}@{$endif}JonDa.info);
-    AddMethod('StartTAN', {$ifdef fpc}@{$endif}JonDa.start);
-    AddMethod('ProceedTAN', {$ifdef fpc}@{$endif}JonDa.proceed);
-
-    // Starten
-    BasePlug := e_r_BasePlug;
-    write(
-      { } 'Starte ' +
-      { } ComputerName + ':' + iXMLRPCPort +
-      { } ' im Kontext ' +
-      { } BasePlug[25] + ' ... ');
-    BasePlug.free;
-    active := true;
-    writeln(cOKText);
-
+      sleep(2000);
+    until False;
   end;
 
-  // if DebugHook = 0 then
-  while true do
-    sleep(1000);
+  procedure RunAsUnImplemented;
+  begin
 
-end;
-
-procedure RunAsOrder;
-var
- EREIGNIS_R, BELEG_R, PERSON_R : integer;
-begin
-  repeat
-   // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
-
-   // Step 2 : Markiere offene Jobs für mich
-
-   // Step 3 : Verarbeite offene Jobs
-
-
-   sleep(2000);
-  until false;
-end;
-
-procedure RunAsUnImplemented;
-begin
-
-end;
+  end;
 
 var
   k, l: integer;
@@ -256,7 +348,7 @@ begin
     end;
     // Default
     Ident := id_XMLRPC;
-  until true;
+  until True;
 
   // Ident- String
   case Ident of
@@ -271,23 +363,17 @@ begin
   end;
 
   try
-    //
-    writeln('       ___                  __  __');
-    writeln('  ___ / _ \ _ __ __ _  __ _|  \/  | ___  _ __');
-    writeln(' / __| | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \');
-    writeln('| (__| |_| | | | (_| | (_| | |  | | (_) | | | |');
-    writeln(' \___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_| ' + Modus +
-      '-Server@' + Betriebssystem);
-    writeln('                |___/');
+
+    writeln('  _  ___                  __  __');
+    writeln(' | |/ _ \ _ __ __ _  __ _|  \/  | ___  _ __');
+    writeln(' | | | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \');
+    writeln(' | | |_| | | | (_| | (_| | |  | | (_) | | | |');
+    writeln(' |_|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_| ' +
+      Modus + '-Server@' + Betriebssystem);
+    writeln('              |___/');
     writeln;
-    write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath
-      + ' ... ');
-
+    Write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath + ' ... ');
     writeln(cOKText);
-
-
-    // zip(nil,MyProgramPath+'*.ini',MyProgramPath+'z.zip');
-
 
     with fbConnection do
     begin
@@ -309,21 +395,21 @@ begin
       end;
 
 {$ifdef fpc}
-User := iDataBaseUser;
- HostName := iDataBaseHost;
- Database := i_c_DataBaseFName;
+      User := iDataBaseUser;
+      HostName := iDataBaseHost;
+      Database := i_c_DataBaseFName;
 {$else}
-DataBaseName := _iDataBaseName;
-if (iDataBaseHost = '') then
-begin
-  Server := '';
-  protocol := cplocal;
-end
-else
-begin
-  protocol := cpTCP_IP;
-end;
-UserName := iDataBaseUser;
+      DataBaseName := _iDataBaseName;
+      if (iDataBaseHost = '') then
+      begin
+        Server := '';
+        protocol := cplocal;
+      end
+      else
+      begin
+        protocol := cpTCP_IP;
+      end;
+      UserName := iDataBaseUser;
 {$endif}
       if (length(iDataBasePassword) > 25) then
         Password := deCrypt_Hex(iDataBasePassword)
@@ -334,10 +420,10 @@ UserName := iDataBaseUser;
         writeln('ERROR: DataBaseName= ist leer');
         halt;
       end;
-      write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' +
+      Write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' +
         string(iDataBaseName) + ' ... ');
       Connect;
-      if not(Connected) then
+      if not (Connected) then
       begin
         writeln('ERROR: DataBase.connect erfolglos');
         halt;
@@ -361,21 +447,21 @@ UserName := iDataBaseUser;
     if IsParam('-al') then
     begin
       writeln('DebugMode @' + DiagnosePath);
-      DebugMode := true;
+      DebugMode := True;
       DebugLogPath := globals.DiagnosePath;
     end;
 
     // Systemparameter ermitteln
     e_r_LadeParameter;
-    AllSystemsRunning := true;
+    AllSystemsRunning := True;
 
     case Ident of
       id_XMLRPC:
         RunAsXMLRPC;
       id_Bestellen:
         RunAsOrder;
-    else
-      RunAsUnImplemented;
+      else
+        RunAsUnImplemented;
 
     end;
 
@@ -385,4 +471,3 @@ UserName := iDataBaseUser;
   end;
 
 end.
-
