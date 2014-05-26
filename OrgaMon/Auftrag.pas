@@ -782,10 +782,26 @@ begin
 end;
 
 procedure TFormAuftrag.IB_Memo4DblClick(Sender: TObject);
+var
+  AUFTRAG_R: integer;
 begin
-  ShowMessage('FA=' + e_r_FotoName(IB_Query1.FieldByName('RID').AsInteger, 'FA')
-    + #13 + 'FN=' + e_r_FotoName(IB_Query1.FieldByName('RID').AsInteger, 'FN') +
-    #13 + 'FH=' + e_r_FotoName(IB_Query1.FieldByName('RID').AsInteger, 'FH'));
+  AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
+  ShowMessage(
+    { } 'FA=' +
+    { } e_r_FotoName(
+    { } AUFTRAG_R,
+    { } 'FA',
+    {} IB_MEMO4.Lines.Values['FA'])
+    { } + #13 + 'FN=' +
+    { } e_r_FotoName(
+    { } AUFTRAG_R,
+    { } 'FN',
+    {} IB_MEMO4.Lines.Values['FN']) +
+    { } #13 + 'FH=' +
+    { } e_r_FotoName(
+    { } AUFTRAG_R,
+    { } 'FH',
+    {} IB_MEMO4.Lines.Values['FH']));
 end;
 
 procedure TFormAuftrag.IB_Memo5Change(Sender: TObject);

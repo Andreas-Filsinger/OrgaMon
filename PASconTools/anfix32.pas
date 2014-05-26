@@ -576,7 +576,7 @@ begin
   if FileAge(FName, _FileDateTime) then
     result := DateTime2long(_FileDateTime)
   else
-    result := 0;
+    result := cIllegalDate;
 end;
 
 function FileSeconds(FName: string): TAnfixTime;

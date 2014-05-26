@@ -9,7 +9,6 @@
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="361"/>
@@ -70,6 +69,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1080"/>

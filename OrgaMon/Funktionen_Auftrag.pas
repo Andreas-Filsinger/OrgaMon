@@ -135,7 +135,7 @@ function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 procedure e_w_GrabFotos;
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string): string;
+function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert:string=''): string;
 
 function e_r_TerminAnzahl_V(rid: Integer): Integer;
 function e_r_TerminAnzahl_N(rid: Integer): Integer;
@@ -1951,7 +1951,7 @@ const
   FotoName_JonDaX: TJonDaExec = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string): string;
+function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert:string=''): string;
 var
   cAUFTRAG: TdboCursor;
   sResult: TStringList;
@@ -2013,6 +2013,8 @@ begin
     + inttostr(BAUSTELLE_R));
   sParameter.values[cParameter_foto_Modus] := sSettings.values
     [cE_FotoBenennung];
+  sParameter.values[cParameter_foto_Datei] :=     FotoPath + e_r_BaustellenPfad(sSettings) +
+                    '\' + nextp(AktuellerWert,',',0);
   sSettings.free;
 
   // Funktion ausführen
