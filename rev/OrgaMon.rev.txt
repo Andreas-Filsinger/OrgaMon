@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.026 (26.05.14) Andreas Filsinger
+
+ Neu: Foto-Umbenennung=6: Neue Möglichkeiten (JJJJMMTT)
+
+Rev 8.025 (26.05.14) Andreas Filsinger
+
+ Neu: Foto-Umbenennung=6: Neue Möglichkeiten (FA-Kurz,~Spalte~,~F?-*~)
+
 Rev 8.024 (14.05.14) Andreas Filsinger
 
  Neu: Foto: Benennung=6: Neue Pfad-Konvention: \~Baustelle~\FotoBenennung.csv

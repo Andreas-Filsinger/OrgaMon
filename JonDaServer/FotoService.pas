@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.041; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.042; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1743,6 +1743,7 @@ begin
                 zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
               sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath + cdbPath;
+              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
             end;
             sFotoResult := JonDaExec.foto(sFotoCall);
             sFotoCall.Free;
@@ -2081,6 +2082,7 @@ begin
         Values[cParameter_foto_parameter] := 'FN';
         Values[cParameter_foto_zaehlernummer_alt] := copy(FNameNeu, 1, pred(k));
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
+        Values[cParameter_foto_Datei] := cWorkPath + FNameAlt;
       end;
 
       // execute

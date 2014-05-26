@@ -66,9 +66,12 @@ const
   cParameter_foto_geraet = 'GERAET';
   cParameter_foto_Pfad = 'PFAD';
 
+  // INPUT OPTIONAL
+  cParameter_foto_Datei = 'DATEI'; // Dateiname des Fotos (incl. Pfad)
+
   // OUTPUT
   cParameter_foto_fertig = 'ENDGUELTIG'; //
-  cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname
+  cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname - ohne Pfad
   cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
 
@@ -2573,7 +2576,9 @@ var
   zaehlernummer_neu: string;
   zaehlernummer_alt: string;
   ZAEHLER_NUMMER_NEU: string;
-  FotoDateiName: string;
+  FotoDateiNameNeu: string;
+  FotoDateiNameBisher: string;
+  FN_Kurz: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   FotoGeraeteNo: string;
@@ -2582,12 +2587,27 @@ var
   sNAMES: TStringList;
   r: integer;
   Fname: string;
+  FreeFormat: string;
+  Token, Value: string;
+  WechselDatum: TANFiXDate;
   ZielBaustelle: string;
   Mandant, aknr: string;
   ReferenzDiagnose: TStringList;
+  ShouldAbort: boolean;
+
+  procedure FatalError(s: string);
+  begin
+    if (result.values[cParameter_foto_Fehler] = '') then
+      result.values[cParameter_foto_Fehler] := s
+    else
+      result.values[cParameter_foto_Fehler] :=
+        result.values[cParameter_foto_Fehler] + '|' + s;
+    ShouldAbort := true;
+  end;
+
 begin
   result := TStringList.Create;
-  FotoDateiName := '';
+  FotoDateiNameNeu := '';
   // mderecOrgaMon.Baustelle / cParameter_foto_baustelle
   // mderecOrgaMon.Zaehler_Strasse / cParameter_foto_strasse
   // mderecOrgaMon.Zaehler_Ort / cParameter_foto_ort
@@ -2616,7 +2636,10 @@ begin
     asci(sParameter.values[cParameter_foto_strasse]);
   sParameter.values[cParameter_foto_ort] :=
     asci(sParameter.values[cParameter_foto_ort]);
+  FotoDateiNameBisher := sParameter.values[cParameter_foto_Datei];
   UmbenennungAbgeschlossen := false;
+  FN_Kurz := false;
+  ShouldAbort := false;
 
   while true do
   begin
@@ -2663,12 +2686,22 @@ begin
         end;
       6:
         begin
-          // ~Mandant~ "-" ~aknr~ "-" ~~
+
+          // default Umbenennung:
+          // ====================
+          // [ ~Mandant~ "-" ] [ ~aknr~ "-" ] ~~
+
+          // völlig freie Umbennung:
+          // =======================
+          //
+          //
+
           tNAMES := TsTable.Create;
           tNAMES.oTextHasLF := true;
           FotoPrefix := '';
           Fname := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
           repeat
+
             if (Path = '') then
             begin
               result.values[cParameter_foto_Fehler] :=
@@ -2689,17 +2722,77 @@ begin
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
             begin
-              //
-              Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
-              aknr := cutblank(tNAMES.readCell(r, 'aknr'));
 
-              if (Mandant <> '') then
-                FotoPrefix := Mandant + '-'
+              FreeFormat := tNAMES.readCell(r, FotoParameter + '-Benennung');
+              if (FreeFormat <> '') then
+              begin
+                FotoPrefix := FreeFormat;
+                while (pos('~', FotoPrefix) > 0) do
+                begin
+                  Token := ExtractSegmentBetween(FotoPrefix, '~', '~');
+                  Value := '';
+                  repeat
+
+                    if (Token = 'JJJJMMTT') then
+                    begin
+
+                      WechselDatum :=
+                        Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := long2dateLog(WechselDatum);
+                        break;
+                      end;
+
+                      if (FotoDateiNameBisher = '') then
+                      begin
+                        FatalError('Wert "DATEI=" ist leer');
+                        break;
+                      end;
+                      if not(FileExists(FotoDateiNameBisher)) then
+                      begin
+                        FatalError('Datei "' + FotoDateiNameBisher +
+                          '" nicht gefunden');
+                        break;
+                      end;
+                      Value := long2dateLog(FileDate(FotoDateiNameBisher));
+                      break;
+                    end;
+
+                    if (Token = 'FN-Kurz') then
+                    begin
+                      FN_Kurz := true;
+                      break;
+                    end;
+
+                    // aus einer anderen Spalte
+                    if tNAMES.colof(Token) = -1 then
+                    begin
+                      FatalError('Spalte "' + Token + '" nicht gefunden');
+                      break;
+                    end;
+                    Value := tNAMES.readCell(r, Token);
+
+                  until true;
+                  ersetze('~' + Token + '~', Value, FotoPrefix);
+                end;
+
+              end
               else
-                FotoPrefix := '';
+              begin
 
-              if (aknr <> '') then
-                FotoPrefix := FotoPrefix + aknr + '-';
+                //
+                Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
+                aknr := cutblank(tNAMES.readCell(r, 'aknr'));
+
+                if (Mandant <> '') then
+                  FotoPrefix := Mandant + '-'
+                else
+                  FotoPrefix := '';
+
+                if (aknr <> '') then
+                  FotoPrefix := FotoPrefix + aknr + '-';
+              end;
             end
             else
             begin
@@ -2716,7 +2809,7 @@ begin
                   FileAge(Fname) then
                 begin
 
-                  ReferenzDiagnose := tNAMES.Col(tNAMES.colOf(cRID_Suchspalte));
+                  ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
                   ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' +
                     cRID_Suchspalte + '.csv');
                   ReferenzDiagnose.free;
@@ -2801,7 +2894,7 @@ begin
       if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1)
       then
       begin
-        FotoDateiName := FotoPrefix + zaehlernummer_alt;
+        FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
         UmbenennungAbgeschlossen := true;
         break;
       end;
@@ -2821,23 +2914,28 @@ begin
 
         if (ZAEHLER_NUMMER_NEU = '') then
         begin
-          FotoDateiName :=
+          FotoDateiNameNeu :=
           { } FotoPrefix +
           { } zaehlernummer_alt + '-Neu';
         end
         else
         begin
-          FotoDateiName :=
-          { } FotoPrefix +
-          { } zaehlernummer_alt + '-' +
-          { } ZAEHLER_NUMMER_NEU;
+          if FN_Kurz then
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } ZAEHLER_NUMMER_NEU
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt + '-' +
+            { } ZAEHLER_NUMMER_NEU;
           UmbenennungAbgeschlossen := true;
         end;
         break;
       end;
 
       // Sonstige
-      FotoDateiName :=
+      FotoDateiNameNeu :=
       { } FotoPrefix +
       { } zaehlernummer_alt +
       { } '-' + FotoParameter;
@@ -2848,7 +2946,7 @@ begin
     break;
   end;
 
-  if (FotoDateiName = '') then
+  if (FotoDateiNameNeu = '') then
   begin
     // leeres Ergebnis
     result.values[cParameter_foto_Fehler] :=
@@ -2857,9 +2955,12 @@ begin
   else
   begin
     // Ergebnis
-    result.values[cParameter_foto_fertig] := activ(UmbenennungAbgeschlossen);
-    result.values[cParameter_foto_neu] := FotoDateiName + '.jpg';
-    result.values[cParameter_foto_ziel] := ZielBaustelle;
+    if not(ShouldAbort) then
+    begin
+      result.values[cParameter_foto_fertig] := activ(UmbenennungAbgeschlossen);
+      result.values[cParameter_foto_neu] := FotoDateiNameNeu + '.jpg';
+      result.values[cParameter_foto_ziel] := ZielBaustelle;
+    end;
   end;
 end;
 
@@ -3075,7 +3176,7 @@ var
     with tSENDEN do
     begin
       InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
-      c := colOf('MOMENT', true);
+      c := colof('MOMENT', true);
       d := DatePlus(DateGet, -cOlderThan);
       // zu alte Zeile löschen
       for r := 1 to RowCount do
@@ -3515,21 +3616,24 @@ begin
   begin
 
     // Lese den Pfad aus dem Dateinamen
-    BaustellePath := ExtractSegmentBetween(sDir[n],cE_FotoBenennung + '-','.csv');
+    BaustellePath := ExtractSegmentBetween(sDir[n],
+      cE_FotoBenennung + '-', '.csv');
 
     // JonDa - Limitation!
-    BaustellePath := copy(noblank(BaustellePath),1,6) + '\';
+    BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
 
-    CheckCreateDir(MyProgramPath + cdbPath + BaustellePath);
+    checkcreatedir(MyProgramPath + cDBPath + BaustellePath);
 
     if not(FileCompare(
       { } MyProgramPath + cSyncPath + sDir[n],
-      { } MyProgramPath + cdbPath + BaustellePath + cE_FotoBenennung + '.csv')) then
+      { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv'))
+    then
       FileVersionedCopy(
         { } MyProgramPath + cSyncPath + sDir[n],
-        { } MyProgramPath + cdbPath + BaustellePath + cE_FotoBenennung + '.csv');
+        { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung
+        + '.csv');
 
-    FileDelete(MyProgramPath + cSyncPath +sDir[n]);
+    FileDelete(MyProgramPath + cSyncPath + sDir[n]);
   end;
   sDir.free;
 
@@ -3546,7 +3650,8 @@ var
   mderec: TMdeRec;
   OneJLine: string;
   JProtokoll: string;
-  OrgaMonErgebnis: file of TMdeRec; // Das sind Ergebnisse von MonDa
+  OrgaMonErgebnis: file of TMdeRec;
+  // Das sind Ergebnisse von MonDa
   MyProgramPath: string;
   sOrgaMonFName: string;
   dTimeOut: TANFiXDate;
@@ -4152,7 +4257,8 @@ begin
       cMonDa_ImmerAusfuehren:
         sTerminInfo := 'KV'; // Kopier-Vorlage
       cMonDa_FreieTerminWahl:
-        sTerminInfo := 'FTW'; // Freie Termin Wahl
+        sTerminInfo := 'FTW';
+      // Freie Termin Wahl
     else
       sTerminInfo := WeekDayS(ausfuehren_soll) + ' ' +
         copy(long2date(ausfuehren_soll), 1, 5) + VormittagsStr(vormittags);
@@ -4388,7 +4494,7 @@ begin
   with sBAUSTELLE do
   begin
     InsertFromFile(Fname);
-    cColumnIndex_NUMMERN_PREFIX := colOf('NUMMERN_PREFIX', true);
+    cColumnIndex_NUMMERN_PREFIX := colof('NUMMERN_PREFIX', true);
     for r := 1 to RowCount do
     begin
       _NUMMERN_PREFIX := readCell(r, cColumnIndex_NUMMERN_PREFIX);
