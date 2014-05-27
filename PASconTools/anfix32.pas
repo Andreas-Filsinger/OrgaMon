@@ -29,7 +29,7 @@ uses
   classes;
 
 const
-  VersionAnfix32: single = 1.062; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.063; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -3631,7 +3631,7 @@ begin
   Stream := TFileStream.create(FName, fmOpenRead);
   repeat
     BufferUse := Stream.Read(Buffer, SizeOf(Buffer));
-    for i := 0 to BufferUse do
+    for i := 0 to pred(BufferUse) do
     begin
       if (Buffer[i] = #$0D) then
       begin

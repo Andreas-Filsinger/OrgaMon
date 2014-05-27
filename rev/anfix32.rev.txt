@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.063 (27.05.14) Andreas Filsinger
+
+ Bug: LoadFromFileCSV_LF insert random character every 32 k
+
 Rev 1.062 (17.01.14) Andreas Filsinger
 
  Neu: erstmals unter Lazarus compiliert
