@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.027 (27.05.14) Andreas Filsinger
+
+ Neu: Compiliert wegen anfix32 Rev. 1.063
+
 Rev 8.026 (26.05.14) Andreas Filsinger
 
  Neu: Foto-Umbenennung=6: Neue Möglichkeiten (JJJJMMTT)
