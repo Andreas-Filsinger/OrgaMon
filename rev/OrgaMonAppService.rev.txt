@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.043 (27.05.14) Andreas Filsinger
+
+ Neu: Amnestie nach 10 Tagen für "-Neu" Wartende
+ Neu: FotoBenennung=6, nicht abgeschlossen wenn "-Neu"
+ Neu: F2: findet nun auch bereits umbenannte Dateien (mv ...)
+
 Rev 1.042 (26.05.14) Andreas Filsinger
 
  Neu: Foto-Umbenennung: Im Modus "6" neue Möglichkeiten

@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.042; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.043; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -128,6 +128,7 @@ type
     Edit7: TEdit;
     Label8: TLabel;
     Button16: TButton;
+    Label9: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -583,8 +584,8 @@ end;
 
 procedure TFormFotoService.ensureGlobals;
 var
- MyIni: TIniFile;
- SectionName : string;
+  MyIni: TIniFile;
+  SectionName: string;
 begin
   if not(assigned(tBAUSTELLE)) then
   begin
@@ -606,7 +607,7 @@ begin
       iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
       iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
     end;
-    MyIni.free;
+    MyIni.Free;
 
     // die aktuellen Daten aus dem FTP-Bereich abholen
     JonDaExec.doSync;
@@ -615,7 +616,7 @@ begin
     tBAUSTELLE := tsTable.Create;
     tBAUSTELLE.insertFromFile(MyWorkingPath + cMonDaServer_Baustelle);
 
-    // Header anlegen
+    // Datei der Wartenden sicherstellen, Header anlegen
     if not(FileExists(MyWorkingPath + cFotoUmbenennungAusstehend)) then
       AppendStringsToFile(
         { } cHeader_UmbenennungUnvollstaendig,
@@ -641,10 +642,10 @@ end;
 
 function TFormFotoService.GEN_ID: integer;
 var
-  mIni: TiniFile;
+  mIni: TIniFile;
   i: int64;
 begin
-  mIni := TiniFile.Create(MobUploadPath + 'Backup-Service.ini');
+  mIni := TIniFile.Create(MobUploadPath + 'Backup-Service.ini');
   with mIni do
   begin
     result := StrToInt(ReadString('System', 'Sequence', '0'));
@@ -706,20 +707,28 @@ begin
   if (Key = VK_F2) then
   begin
     FindStr :=
-    { } ' ' +
-    { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
-    { } ListBox3.Items[i];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    { Blank } ' ' +
+    { Verzeichnis } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
+    { Dateiname } ListBox3.Items[i];
+
+    for n := pred(sMoveTransaktionen.count) downto 0 do
     begin
-      if pos('cp', sMoveTransaktionen[n]) = 1 then
-        if pos(FindStr, sMoveTransaktionen[n]) > 0 then
+
+      // wurde die Datei ev. Umbenannt?
+      if (pos('mv', sMoveTransaktionen[n]) = 1) then
+        if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
+        begin
+          FindStr := nextp(sMoveTransaktionen[n], ' ', 1);
+          continue;
+        end;
+
+      // wurde die Datei kopiert?
+      if (pos('cp', sMoveTransaktionen[n]) = 1) then
+        if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
         begin
           FoundStr := nextp(sMoveTransaktionen[n], ' ', 1);
-
           FileMove(Edit4.Text + ListBox3.Items[i], MobUploadPath + FoundStr);
-
           ListBox3.DeleteSelected;
-
           break;
         end;
     end;
@@ -786,12 +795,13 @@ begin
 
             // Datei in die Tabelle der wartenden einfügen.
             AppendStringsToFile(
-              { } FoundStr + ';' +
-              { } Ablage + '\' + ListBox3.Items[i] + ';' +
-              { } RID + ';' +
-              { } GeraeteNo + ';' +
-              { } ';' +
-              { } DatumLog, MyWorkingPath + cFotoUmbenennungAusstehend);
+              { DATEINAME_ORIGINAL } FoundStr + ';' +
+              { DATEINAME_AKTUELL } Ablage + '\' + ListBox3.Items[i] + ';' +
+              { RID } RID + ';' +
+              { GERAETENO } GeraeteNo + ';' +
+              { BAUSTELLE } ';' +
+              { MOMENT } DatumLog,
+              { Dateiname } MyWorkingPath + cFotoUmbenennungAusstehend);
 
             ListBox3.DeleteSelected;
           end;
@@ -1081,7 +1091,7 @@ var
   r: integer;
 
   FTP_Benutzer: string;
-  mIni: TiniFile;
+  mIni: TIniFile;
   FotosSequence: integer;
   Col_FTP_Benutzer: integer;
 
@@ -1158,7 +1168,7 @@ var
       end;
 
       // Die Nummer des zu erzeugenden ZIP suchen
-      mIni := TiniFile.Create(sPath + 'Fotos-nnnn.ini');
+      mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
@@ -1202,7 +1212,7 @@ var
       end;
 
       // Fotos-nnnn.ini erhöhen
-      mIni := TiniFile.Create(sPath + 'Fotos-nnnn.ini');
+      mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
       mIni.WriteString('System', 'Sequence', inttostr(FotosSequence));
       mIni.Free;
 
@@ -1257,7 +1267,7 @@ var
         break;
 
       // Die Nummer des zu erzeugenden ZIP suchen
-      mIni := TiniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
+      mIni := TIniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
@@ -1300,7 +1310,7 @@ var
       end;
 
       // Laufnummer erhöhen
-      mIni := TiniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
+      mIni := TIniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
       mIni.WriteString('System', 'Sequence', inttostr(FotosSequence));
       mIni.Free;
 
@@ -1742,8 +1752,10 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] :=
                 zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath + cdbPath;
-              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
+              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath
+                + cdbPath;
+              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath +
+                sFiles[m];
             end;
             sFotoResult := JonDaExec.foto(sFotoCall);
             sFotoCall.Free;
@@ -1866,13 +1878,13 @@ begin
             // Auszeichnen, wenn die Umbenennung vorläufig ist
             if not(UmbenennungAbgeschlossen) then
               AppendStringsToFile(
-                { } sFiles[m] + ';' +
-                { } FotoZiel + '\' + FotoDateiName + ';' +
-                { } inttostr(RID) + ';' +
-                { } FotoGeraeteNo + ';' +
-                { } ';' +
-                { } DatumLog,
-                { } MyWorkingPath + cFotoUmbenennungAusstehend);
+                { DATEINAME_ORIGINAL } sFiles[m] + ';' +
+                { DATEINAME_AKTUELL } FotoZiel + '\' + FotoDateiName + ';' +
+                { RID } inttostr(RID) + ';' +
+                { GERAETENO } FotoGeraeteNo + ';' +
+                { BAUSTELLE } ';' +
+                { MOMENT } DatumLog,
+                { Dateiname } MyWorkingPath + cFotoUmbenennungAusstehend);
 
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
@@ -1947,8 +1959,9 @@ end;
 procedure TFormFotoService.workWartend(All: boolean);
 var
   WARTEND: tsTable;
+  MomentTimeout: TANFiXDate;
   CSV: tsTable;
-  r, i, k, ro: integer;
+  r, i, k, ro, c: integer;
   ZAEHLER_NUMMER_NEU: string;
   FNameAlt, FNameNeu: string;
   RID: integer;
@@ -1972,13 +1985,28 @@ begin
   WARTEND := tsTable.Create;
   with WARTEND do
   begin
-    //
+
+    // load+sort
     insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
     SortBy('GERAETENO');
 
     // sicherstellen der Spalte
     addCol('BAUSTELLE');
     addCol('MOMENT');
+
+    // all zu alte Einträge löschen
+    MomentTimeout := DatePlus(DateGet, -10);
+    i := 0;
+    c := colOf('MOMENT');
+    for r := RowCount downto 1 do
+      if (StrToIntDef(readCell(r, c), 0) < MomentTimeout) then
+      begin
+        del(r);
+        inc(i);
+      end;
+    if (i > 0) then
+      Log('INFO: ' + 'gebe ' + inttostr(i) +
+        ' Dateieinträge frei, da sie älter als 10 Tage sind');
 
   end;
 
@@ -2050,8 +2078,8 @@ begin
 
     if not(FileExists(cWorkPath + FNameAlt)) then
     begin
-      Log('INFO: ' + 'überspringe Datei "' + FNameAlt +
-        '" da verschwunden, oder bereits umbenannt');
+      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt +
+        '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
