@@ -2792,6 +2792,11 @@ begin
 
                 if (aknr <> '') then
                   FotoPrefix := FotoPrefix + aknr + '-';
+
+                // Bei dieser Art der Umbenennung ist
+                // das Thema scheinbar direkt abgeschlossen
+                // unabhängig von der Z# Neu
+                UmbenennungAbgeschlossen := true;
               end;
             end
             else
@@ -2817,7 +2822,6 @@ begin
 
             end;
           until true;
-          UmbenennungAbgeschlossen := true;
           tNAMES.free;
 
         end;

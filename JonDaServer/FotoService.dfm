@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -130,10 +130,6 @@ object FormFotoService: TFormFotoService
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -202,16 +198,12 @@ object FormFotoService: TFormFotoService
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         726
         481)
       object SpeedButton1: TSpeedButton
-        Left = 1
-        Top = 3
+        Left = 3
+        Top = 52
         Width = 21
         Height = 22
         Glyph.Data = {
@@ -244,13 +236,12 @@ object FormFotoService: TFormFotoService
         OnClick = SpeedButton1Click
       end
       object Image1: TImage
-        Left = 196
+        Left = 312
         Top = 80
-        Width = 527
+        Width = 411
         Height = 384
         Anchors = [akLeft, akTop, akRight, akBottom]
         Stretch = True
-        ExplicitHeight = 385
       end
       object Label1: TLabel
         Left = 4
@@ -259,8 +250,15 @@ object FormFotoService: TFormFotoService
         Height = 13
         Caption = 'Maske'
       end
+      object Label9: TLabel
+        Left = 8
+        Top = 8
+        Width = 22
+        Height = 13
+        Caption = 'Pfad'
+      end
       object Edit4: TEdit
-        Left = 28
+        Left = 68
         Top = 3
         Width = 162
         Height = 21
@@ -270,7 +268,7 @@ object FormFotoService: TFormFotoService
       object ListBox3: TListBox
         Left = 3
         Top = 80
-        Width = 186
+        Width = 303
         Height = 384
         Anchors = [akLeft, akTop, akBottom]
         ItemHeight = 13
@@ -279,17 +277,17 @@ object FormFotoService: TFormFotoService
         OnKeyDown = ListBox3KeyDown
       end
       object Edit5: TEdit
-        Left = 44
-        Top = 27
+        Left = 68
+        Top = 30
         Width = 146
         Height = 21
         TabOrder = 2
         Text = '*'
       end
       object ListBox4: TListBox
-        Left = 196
+        Left = 312
         Top = 3
-        Width = 527
+        Width = 411
         Height = 71
         ItemHeight = 13
         Items.Strings = (
@@ -303,10 +301,6 @@ object FormFotoService: TFormFotoService
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -380,10 +374,6 @@ object FormFotoService: TFormFotoService
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         726
         481)
@@ -464,10 +454,6 @@ object FormFotoService: TFormFotoService
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -556,10 +542,6 @@ object FormFotoService: TFormFotoService
       Caption = 'PostgreSQL'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 32
         Top = 24
@@ -588,10 +570,6 @@ object FormFotoService: TFormFotoService
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ListBox9: TListBox
         Left = 32
         Top = 48
