@@ -969,6 +969,7 @@ procedure TFormCareServer.SpeedButton4Click(Sender: TObject);
 var
   sSettings: TStringList;
   sHost: string;
+  sApp : string;
 begin
   sSettings := TStringList.create;
   IB_Query4.FieldByName('INFO').AssignTo(sSettings);
@@ -976,7 +977,20 @@ begin
   if (sHost = '') or (pos(':', sHost) = 1) then
     sHost := IB_Query4.FieldByName('HOST').AsString + sHost;
 
-  WinExec32(ProgramFilesDir + 'UltraVNC/vncviewer.exe ' + sHost + ' /password '
+  repeat
+
+   sApp := ProgramFilesDir + 'UltraVNC\vncviewer.exe';
+   if FileExists(sApp) then
+    break;
+   sApp := ProgramFilesDir + 'uvnc bvba\UltraVNC\vncviewer.exe';
+   if FileExists(sApp) then
+    break;
+
+   sApp := '';
+   ShowMessage('Keine Ultra-VNC Installation gefunden');
+  until true;
+  if (sApp<>'') then
+  WinExec32(sApp + ' ' + sHost + ' /password '
     + sSettings.values['vnc'], sw_showdefault);
   sSettings.Free;
 end;
