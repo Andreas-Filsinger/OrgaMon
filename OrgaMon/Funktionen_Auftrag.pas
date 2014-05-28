@@ -2013,7 +2013,7 @@ begin
     + inttostr(BAUSTELLE_R));
   sParameter.values[cParameter_foto_Modus] := sSettings.values
     [cE_FotoBenennung];
-  sParameter.values[cParameter_foto_Datei] :=     FotoPath + e_r_BaustellenPfad(sSettings) +
+  sParameter.values[JonDaExec.cParameter_foto_Datei] :=     FotoPath + e_r_BaustellenPfad(sSettings) +
                     '\' + nextp(AktuellerWert,',',0);
   sSettings.free;
 

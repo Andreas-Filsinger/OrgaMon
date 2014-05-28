@@ -4,15 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="77">
+    <Units Count="78">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="361"/>
-        <CursorPos X="1" Y="376"/>
+        <TopLine Value="51"/>
+        <CursorPos X="36" Y="80"/>
         <UsageCount Value="67"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -20,7 +20,7 @@
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5069"/>
         <CursorPos X="1" Y="5094"/>
@@ -40,7 +40,7 @@
       <Unit3>
         <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
         <UnitName Value="ZDataset"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="3" Y="63"/>
@@ -69,8 +69,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1080"/>
         <CursorPos X="9" Y="1085"/>
@@ -90,7 +89,7 @@
       <Unit8>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
         <UnitName Value="ZAbstractRODataset"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2178"/>
         <CursorPos X="3" Y="2186"/>
@@ -190,19 +189,21 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4621"/>
-        <CursorPos X="18" Y="4634"/>
+        <TopLine Value="1992"/>
+        <CursorPos X="52" Y="2016"/>
         <UsageCount Value="16"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="4645" ID="1"/>
         </Bookmarks>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
         <UnitName Value="Funktionen_Beleg"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2612"/>
         <CursorPos X="32" Y="2545"/>
@@ -231,10 +232,12 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2070"/>
-        <CursorPos X="1" Y="2106"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="16"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -692,13 +695,25 @@
       <Unit76>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-db\src\base\db.pas"/>
         <UnitName Value="db"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1204"/>
         <CursorPos X="18" Y="1234"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit76>
+      <Unit77>
+        <Filename Value="..\JonDaServer\JonDaExec.pas"/>
+        <UnitName Value="JonDaExec"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="39"/>
+        <CursorPos X="21" Y="59"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit77>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
@@ -706,123 +721,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="430" Column="25" TopLine="389"/>
+        <Caret Line="924" Column="13" TopLine="899"/>
       </Position1>
       <Position2>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="752" Column="41" TopLine="711"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="754" Column="32" TopLine="713"/>
+        <Caret Line="181" Column="24" TopLine="140"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="142" Column="5" TopLine="117"/>
+        <Caret Line="265" Column="58" TopLine="224"/>
       </Position4>
       <Position5>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2529" Column="1" TopLine="2495"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="419" Column="26" TopLine="378"/>
       </Position5>
       <Position6>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2530" Column="1" TopLine="2495"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="704" Column="40" TopLine="663"/>
       </Position6>
       <Position7>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2445" Column="1" TopLine="2420"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="3590" Column="1" TopLine="3568"/>
       </Position7>
       <Position8>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2446" Column="1" TopLine="2420"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2447" Column="1" TopLine="2420"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="80" Column="16" TopLine="38"/>
       </Position9>
       <Position10>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2448" Column="1" TopLine="2420"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="1711" Column="19" TopLine="1670"/>
       </Position10>
       <Position11>
-        <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
-        <Caret Line="2451" Column="1" TopLine="2420"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="1960" Column="1" TopLine="1941"/>
       </Position11>
       <Position12>
-        <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
-        <Caret Line="63" Column="3" TopLine="38"/>
+        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="277" Column="14" TopLine="254"/>
+        <Caret Line="151" Column="13" TopLine="109"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="83" Column="3" TopLine="57"/>
+        <Caret Line="343" Column="30" TopLine="303"/>
       </Position14>
       <Position15>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="924" Column="13" TopLine="899"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="181" Column="24" TopLine="140"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="265" Column="58" TopLine="224"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="419" Column="26" TopLine="378"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="704" Column="40" TopLine="663"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="3590" Column="1" TopLine="3568"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="80" Column="16" TopLine="38"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="1711" Column="19" TopLine="1670"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="1960" Column="1" TopLine="1941"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="151" Column="13" TopLine="109"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
-        <Caret Line="343" Column="30" TopLine="303"/>
-      </Position28>
-      <Position29>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <Caret Line="1085" Column="9" TopLine="1080"/>
-      </Position29>
-      <Position30>
+      </Position15>
+      <Position16>
         <Filename Value="lOrgaMon.lpr"/>
         <Caret Line="376" Column="1" TopLine="349"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="4634" Column="18" TopLine="4621"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="2014" Column="32" TopLine="1993"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="2056" Column="1" TopLine="2020"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="255" Column="10" TopLine="225"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="2014" Column="1" TopLine="1991"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lOrgaMon.lpr"/>
+        <Caret Line="229" Column="1" TopLine="215"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="255" Column="6" TopLine="219"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="2016" Column="1" TopLine="1991"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="255" Column="12" TopLine="213"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="1951" Column="30" TopLine="1909"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="1537" Column="1" TopLine="1508"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="1538" Column="1" TopLine="1512"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
+        <Caret Line="2016" Column="31" TopLine="1991"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

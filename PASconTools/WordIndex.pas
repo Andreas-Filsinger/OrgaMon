@@ -1218,9 +1218,16 @@ var
 begin
   // auto generate a empty header line
   if (Count = 0) then
+  begin
     add(TStringList.Create);
+    result := -1;
+  end else
+  begin
+   // check if already exists
+   result := colOf(HeaderName);
+  end;
 
-  result := colOf(HeaderName);
+  // add Column
   if (result = -1) then
   begin
     result := header.Count;
@@ -1233,7 +1240,6 @@ begin
     end;
     Changed := true;
   end;
-
 end;
 
 function TsTable.sumCol(HeaderName: string): double;
