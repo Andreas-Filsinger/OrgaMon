@@ -16,70 +16,70 @@ object FormTier: TFormTier
   TextHeight = 13
   object Label1: TLabel
     Left = 91
-    Top = 189
+    Top = 207
     Width = 17
     Height = 13
     Caption = 'Art'
   end
   object Label2: TLabel
     Left = 74
-    Top = 212
+    Top = 230
     Width = 34
     Height = 13
     Caption = 'Rasse'
   end
   object Label3: TLabel
     Left = 75
-    Top = 236
+    Top = 254
     Width = 33
     Height = 13
     Caption = 'Name'
   end
   object Label4: TLabel
     Left = 46
-    Top = 260
+    Top = 278
     Width = 62
     Height = 13
     Caption = 'Geschlecht'
   end
   object Label5: TLabel
     Left = 11
-    Top = 316
+    Top = 334
     Width = 97
     Height = 13
     Caption = 'T'#228'towiernummer'
   end
   object Label6: TLabel
     Left = 33
-    Top = 340
+    Top = 358
     Width = 74
     Height = 13
     Caption = 'Chipnummer'
   end
   object Label7: TLabel
     Left = 241
-    Top = 185
+    Top = 203
     Width = 62
     Height = 13
     Caption = 'Impfungen'
   end
   object Label8: TLabel
     Left = 27
-    Top = 363
+    Top = 381
     Width = 81
     Height = 13
     Caption = 'Krankheitsbild'
   end
   object Label9: TLabel
     Left = 28
-    Top = 283
+    Top = 301
     Width = 81
     Height = 13
     Caption = 'Geburtsdatum'
   end
   object Label10: TLabel
     Left = 63
-    Top = 475
+    Top = 493
     Width = 38
     Height = 14
     Caption = '&suche'
@@ -92,8 +92,8 @@ object FormTier: TFormTier
     ParentFont = False
   end
   object SpeedButton2: TSpeedButton
-    Left = 16
-    Top = 472
+    Left = 7
+    Top = 490
     Width = 23
     Height = 22
     Hint = 'Suchindex aktualisieren'
@@ -130,7 +130,7 @@ object FormTier: TFormTier
   end
   object SpeedButton1: TSpeedButton
     Left = 171
-    Top = 16
+    Top = 36
     Width = 22
     Height = 22
     Glyph.Data = {
@@ -164,7 +164,7 @@ object FormTier: TFormTier
   end
   object Image2: TImage
     Left = 618
-    Top = 16
+    Top = 8
     Width = 54
     Height = 22
     Cursor = crHandPoint
@@ -289,7 +289,7 @@ object FormTier: TFormTier
   end
   object SpeedButton16: TSpeedButton
     Left = 7
-    Top = 16
+    Top = 36
     Width = 23
     Height = 22
     Hint = 'Neuanlage'
@@ -324,9 +324,51 @@ object FormTier: TFormTier
     ShowHint = True
     OnClick = SpeedButton16Click
   end
+  object Label11: TLabel
+    Left = 36
+    Top = 12
+    Width = 57
+    Height = 13
+    Caption = '<Person>'
+  end
+  object SpeedButton3: TSpeedButton
+    Left = 632
+    Top = 36
+    Width = 22
+    Height = 22
+    Hint = 'Person (mit dem Tier) in die Suche '#252'bernehmen'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000FFFFFFD2D3D5
+      F2F2F2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFBBC0C5376B9B415A70E8E8E8FFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB3BABFB3F0FF
+      75A5CE3F5B74E2E2E2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFF98ADBBD7FFFF92B7D8415D77EBEBEBFFFFFFFF
+      FFFFFDFDFDFCFCFCFCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      7893A6DCFFFF8EB6D94F6378FCFCFCFCFCFCF0F0F0EEEEEEEAE9E9DFDCDCEFEE
+      EEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8F8F86788A2D8FFFF76A8CD77777FDB
+      D8D8AAA2A2A39E9CB7B3B2E7E7E7EDEDEDE5E3E3FFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFF0F0F0618BA5B3F1FF7794A7E7DFD3FCFBF2FCFBF2E3C6B0B0A596AFAD
+      ABEBEBEBEAE8E8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8F8F888909AFFFFF4BC
+      836FC48C78DAAFA0DFB4A7E5B3A3C9C3AD928E8DEDEDEDF9F8F8FFFFFFFFFFFF
+      FFFFFFFFFFFFF2F0F0CEBDAEC79B80CB9B7CE0B69CD5A990E2BCADE8C7BBECC2
+      B2A6A28EBEB7B7FCFCFCFFFFFFFFFFFFFFFFFFFFFFFFCDC1BCCABDACCFA177E3
+      C59DE0C097DDBA94D1A281DAAE9CDFB2A6D8CCB791796EFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFCBC0B9BEA891E4C08EEBD6A4E9D49EE8CFA0E1C19AD5A989D8A7
+      97CAB8A6876E5CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD3C8C4A59684ECD395F4
+      E6BAF9F0C9F0DFAEE7CCA0DDB894D6A58FB1A3958C7365FFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFF5F2F1806D5ED2BF89FFFFDEFFFFFFF4EAC0E9D2A1E8C09CC39A
+      82877C65B5A198FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7BAB4685946C2
+      B085FCEDC0F6E0A9E9CC97B28E698B8173978169F8F6F6FFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFBCB0A95F4D3C6653378A7452806C517C7365AB9B
+      89EBE5E0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1
+      EEEBC1B4AAA5968BBBADA2D4C9BFF7F5F3FFFFFFFFFFFFFFFFFF}
+    OnClick = SpeedButton3Click
+  end
   object IB_Grid1: TIB_Grid
     Left = 7
-    Top = 45
+    Top = 63
     Width = 666
     Height = 131
     CustomGlyphsSupplied = []
@@ -335,7 +377,7 @@ object FormTier: TFormTier
   end
   object IB_Memo1: TIB_Memo
     Left = 241
-    Top = 202
+    Top = 220
     Width = 432
     Height = 151
     DataField = 'IMPFUNG'
@@ -345,7 +387,7 @@ object FormTier: TFormTier
   end
   object IB_Memo2: TIB_Memo
     Left = 111
-    Top = 360
+    Top = 378
     Width = 562
     Height = 105
     DataField = 'KRANKHEIT'
@@ -355,7 +397,7 @@ object FormTier: TFormTier
   end
   object IB_Edit1: TIB_Edit
     Left = 111
-    Top = 184
+    Top = 202
     Width = 121
     Height = 21
     DataField = 'ART'
@@ -364,7 +406,7 @@ object FormTier: TFormTier
   end
   object IB_Edit2: TIB_Edit
     Left = 111
-    Top = 208
+    Top = 226
     Width = 121
     Height = 21
     DataField = 'RASSE'
@@ -372,8 +414,8 @@ object FormTier: TFormTier
     TabOrder = 2
   end
   object IB_Edit3: TIB_Edit
-    Left = 111
-    Top = 232
+    Left = 114
+    Top = 251
     Width = 121
     Height = 21
     DataField = 'NAME'
@@ -382,7 +424,7 @@ object FormTier: TFormTier
   end
   object IB_Edit4: TIB_Edit
     Left = 111
-    Top = 256
+    Top = 274
     Width = 121
     Height = 21
     DataField = 'GESCHLECHT'
@@ -391,7 +433,7 @@ object FormTier: TFormTier
   end
   object IB_Edit5: TIB_Edit
     Left = 111
-    Top = 312
+    Top = 330
     Width = 121
     Height = 21
     DataField = 'TAETOWIERNUMMER'
@@ -400,7 +442,7 @@ object FormTier: TFormTier
   end
   object IB_Edit6: TIB_Edit
     Left = 111
-    Top = 336
+    Top = 354
     Width = 121
     Height = 21
     DataField = 'CHIPNUMMER'
@@ -409,7 +451,7 @@ object FormTier: TFormTier
   end
   object Button1: TButton
     Left = 598
-    Top = 472
+    Top = 490
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -418,7 +460,7 @@ object FormTier: TFormTier
   end
   object Edit1: TEdit
     Left = 111
-    Top = 280
+    Top = 298
     Width = 122
     Height = 21
     TabOrder = 5
@@ -427,7 +469,7 @@ object FormTier: TFormTier
   end
   object Edit2: TEdit
     Left = 111
-    Top = 472
+    Top = 490
     Width = 481
     Height = 22
     Font.Charset = ANSI_CHARSET
@@ -440,15 +482,15 @@ object FormTier: TFormTier
     OnKeyPress = Edit2KeyPress
   end
   object ProgressBar1: TProgressBar
-    Left = 16
-    Top = 449
+    Left = 7
+    Top = 467
     Width = 89
     Height = 16
     TabOrder = 12
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 33
-    Top = 16
+    Top = 36
     Width = 128
     Height = 22
     Ctl3D = False
@@ -460,8 +502,8 @@ object FormTier: TFormTier
     VisibleButtons = [ubDelete, ubPost, ubCancel, ubRefreshAll]
   end
   object Button2: TButton
-    Left = 427
-    Top = 16
+    Left = 199
+    Top = 35
     Width = 105
     Height = 22
     Caption = 'alle anzeigen'
@@ -469,21 +511,13 @@ object FormTier: TFormTier
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 535
-    Top = 16
+    Left = 7
+    Top = 8
     Width = 22
     Height = 22
     Caption = '&P'
     TabOrder = 15
     OnClick = Button3Click
-  end
-  object Button4: TButton
-    Left = 559
-    Top = 16
-    Width = 22
-    Height = 22
-    Caption = '&K'
-    TabOrder = 16
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
@@ -522,7 +556,7 @@ object FormTier: TFormTier
     AfterScroll = IB_Query1AfterScroll
     OnConfirmDelete = IB_Query1ConfirmDelete
     Left = 24
-    Top = 64
+    Top = 82
     ParamValues = (
       'CROSSREF=')
   end
@@ -530,6 +564,6 @@ object FormTier: TFormTier
     AutoInsert = False
     Dataset = IB_Query1
     Left = 56
-    Top = 64
+    Top = 82
   end
 end

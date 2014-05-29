@@ -159,7 +159,8 @@ type
     { Public-Deklarationen }
     DontSetContext: boolean;
     PERSON_R: Integer;
-    procedure setContext(s: string);
+    procedure setContext(s: string); overload;
+    procedure setContext(PERSON_R: Integer; Thema: string); overload;
     procedure AufgabeAdd(Gruppe: string; PERSON_R: Integer);
     procedure AufgabeStatus(Gruppe: string);
     function AuftragGruppe(Gruppe: string): Integer;
@@ -785,6 +786,18 @@ begin
   begin
     Edit1.SetFocus;
   end;
+end;
+
+procedure TFormPersonSuche.setContext(PERSON_R: Integer; Thema: string);
+begin
+  BeginHourGlass;
+  show;
+  Edit1.Text := 'RID' + inttostr(PERSON_R);
+  Suche;
+  Edit2.Text := Thema;
+  EndHourGlass;
+
+  Edit2.SetFocus;
 end;
 
 procedure TFormPersonSuche.setContext(s: string);

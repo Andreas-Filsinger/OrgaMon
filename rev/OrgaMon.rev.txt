@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.029 (28.05.14) Andreas Filsinger
+
+ Neu: Übernahme von der Tiersuche in die Personensuche möglich
+
+Rev 8.028 (28.05.14) Andreas Filsinger
+
+ Bug: Start von UltraVNC funktioniert u.U. nicht
+
 Rev 8.027 (27.05.14) Andreas Filsinger
 
  Neu: Compiliert wegen anfix32 Rev. 1.063

@@ -18,6 +18,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.046 (28.05.14) Andreas Filsinger
+
+ Bug: Umbenennung der wartenden war im Modus 6 falsch
+
+Rev 1.045 (28.05.14) Andreas Filsinger
+
+ Neu: Info-Dokumente "-neu.html", "senden.html"
+
 Rev 1.044 (27.05.14) Andreas Filsinger
 
  Neu: Compiliert wegen anfix32 Rev. 1.063

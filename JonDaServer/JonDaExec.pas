@@ -196,7 +196,7 @@ type
     class function AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
     class function FormatZaehlerNummerNeu(const s: string): string;
 
-    class function activ(a: boolean): string;
+    class function active(a: boolean): string;
     class function ProtokollPath(Rev: single): string;
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
@@ -425,7 +425,7 @@ begin
   checkcreatedir(MyProgramPath + result);
 end;
 
-class function TJonDaExec.activ(a: boolean): string;
+class function TJonDaExec.active(a: boolean): string;
 begin
   if a then
     result := cIni_Activate
@@ -2961,7 +2961,7 @@ begin
     // Ergebnis
     if not(ShouldAbort) then
     begin
-      result.values[cParameter_foto_fertig] := activ(UmbenennungAbgeschlossen);
+      result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
       result.values[cParameter_foto_neu] := FotoDateiNameNeu + '.jpg';
       result.values[cParameter_foto_ziel] := ZielBaustelle;
     end;

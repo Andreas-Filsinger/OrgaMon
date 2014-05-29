@@ -72,9 +72,10 @@ type
     IB_UpdateBar1: TIB_UpdateBar;
     Button2: TButton;
     Button3: TButton;
-    Button4: TButton;
     Image2: TImage;
     SpeedButton16: TSpeedButton;
+    Label11: TLabel;
+    SpeedButton3: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
@@ -88,9 +89,10 @@ type
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;
       var Confirmed: Boolean);
+    procedure SpeedButton3Click(Sender: TObject);
   private
     { Private-Deklarationen }
-    Edit1Showing: boolean;
+    Edit1Showing: Boolean;
     MainQuerySql: TStringList;
     TierSucheWI: TWordIndex;
     PERSON_R: integer;
@@ -113,17 +115,17 @@ uses
   globals, anfix32, math,
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Auftrag,
   Person, CareTakerClient, Datenbank,
   dbOrgaMon, Jvgnugettext,
-  wanfix32;
+  wanfix32, PersonSuche;
 
 {$R *.dfm}
-
 { TFormTier }
 
 procedure TFormTier.SetContext;
 begin
-  if (pPERSON_R>=cRID_FirstValid) then
+  if (pPERSON_R >= cRID_FirstValid) then
   begin
     PERSON_R := pPERSON_R;
     with IB_Query1 do
@@ -132,7 +134,7 @@ begin
       sql.clear;
       AddStringsCR(sql, cSelectAll);
       ParamByName('CROSSREF').AsInteger := PERSON_R;
-      if not (active) then
+      if not(active) then
         Open;
     end;
     show;
@@ -148,16 +150,17 @@ end;
 
 procedure TFormTier.Edit1Change(Sender: TObject);
 begin
-  if not (Edit1Showing) then
+  if not(Edit1Showing) then
   begin
-    IB_Query1.FieldByName('GEBURT').AsInteger := date2long(edit1.text);
+    IB_Query1.FieldByName('GEBURT').AsInteger := date2long(Edit1.text);
   end;
 end;
 
 procedure TFormTier.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
   Edit1Showing := true;
-  edit1.text := noblank(long2date(IB_Query1.FieldByName('GEBURT').AsInteger));
+  Edit1.text := noblank(long2date(IB_Query1.FieldByName('GEBURT').AsInteger));
+  Label11.Caption := e_r_Person(IB_Query1.FieldByName('PERSON_R').AsInteger);
   Edit1Showing := false;
 end;
 
@@ -166,11 +169,10 @@ procedure TFormTier.IB_Query1ConfirmDelete(Sender: TComponent;
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Tier') + #13 +
-      FieldByName('NAME').AsString + #13 +
+    if doit(_('Tier') + #13 + FieldByName('NAME').AsString + #13 +
       _('wirklich löschen'), true) then
     begin
-//       e_w_preDeleteTier
+      // e_w_preDeleteTier
       Confirmed := true;
     end;
 end;
@@ -182,10 +184,10 @@ end;
 
 procedure TFormTier.SpeedButton16Click(Sender: TObject);
 var
- TIER_R : integer;
+  TIER_R: integer;
 begin
   // neues Tier
-  with IB_query1 do
+  with IB_Query1 do
   begin
     if state in [dssinsert, dssedit] then
       Post;
@@ -194,9 +196,9 @@ begin
     insert;
     FieldByName('RID').AsInteger := TIER_R;
     FieldByName('PERSON_R').AsInteger := PERSON_R;
-    post;
+    Post;
     refresh;
-    locate('RID',TIER_R,[]);
+    locate('RID', TIER_R, []);
   end;
   IB_Query1.Edit;
   IB_Edit1.SetFocus;
@@ -207,7 +209,7 @@ var
   PathName: string;
 begin
   PathName := MyProgramPath + 'Tiere\' +
-    inttostrN(ib_query1.FieldByName('RID').AsInteger, 8);
+    inttostrN(IB_Query1.FieldByName('RID').AsInteger, 8);
   CheckCreateDir(PathName);
   openShell(PathName);
 end;
@@ -272,16 +274,16 @@ procedure TFormTier.Button2Click(Sender: TObject);
 var
   ToRID: integer;
 begin
-  with ib_query1 do
+  with IB_Query1 do
   begin
     screen.cursor := crHourGlass;
     ToRID := FieldByName('RID').AsInteger;
     close;
     sql.clear;
     AddStringsCR(sql, cSelectAll);
-    open;
+    Open;
     locate('RID', ToRID, []);
-    button2.Enabled := false;
+    Button2.Enabled := false;
     screen.cursor := crDefault;
   end;
 end;
@@ -295,8 +297,8 @@ end;
 procedure TFormTier.CreateIndex;
 var
   cTIER: TIB_Cursor;
-  IMPFUNGsl: TSTringList;
-  KRANKHEITsl: TSTringList;
+  IMPFUNGsl: TStringList;
+  KRANKHEITsl: TStringList;
   StartT: dword;
   RecN: integer;
 begin
@@ -305,34 +307,32 @@ begin
     FreeAndNil(TierSucheWI);
   TierSucheWI := TWordIndex.create(nil);
   cTIER := DataModuleDatenbank.nCursor;
-  IMPFUNGsl := TSTringList.create;
-  KRANKHEITsl := TSTringList.create;
+  IMPFUNGsl := TStringList.create;
+  KRANKHEITsl := TStringList.create;
   RecN := 0;
   StartT := 0;
   with cTIER do
   begin
     sql.add('select * from TIER');
     ApiFirst;
-    progressbar1.max := RecordCount;
-    while not (eof) do
+    ProgressBar1.max := RecordCount;
+    while not(eof) do
     begin
       FieldByName('IMPFUNG').AssignTo(IMPFUNGsl);
       FieldByName('KRANKHEIT').AssignTo(KRANKHEITsl);
-      TierSucheWI.AddWords(FieldByNAme('ART').AsString + ' ' +
-        FieldByNAme('RASSE').AsString + ' ' +
-        FieldByNAme('NAME').AsString + ' ' +
-        'g' + FieldByNAme('GESCHLECHT').AsString + ' ' +
-        FieldByNAme('TAETOWIERNUMMER').AsString + ' ' +
-        FieldByNAme('CHIPNUMMER').AsString + ' ' +
-        HugeSingleLine(IMPFungsl, ' ') + ' ' +
-        HugeSingleLine(KRANKHEITsl, ' ')
+      TierSucheWI.AddWords(FieldByName('ART').AsString + ' ' +
+        FieldByName('RASSE').AsString + ' ' + FieldByName('NAME').AsString + ' '
+        + 'g' + FieldByName('GESCHLECHT').AsString + ' ' +
+        FieldByName('TAETOWIERNUMMER').AsString + ' ' +
+        FieldByName('CHIPNUMMER').AsString + ' ' + HugeSingleLine(IMPFUNGsl,
+        ' ') + ' ' + HugeSingleLine(KRANKHEITsl, ' ')
 
         , TObject(FieldByName('RID').AsInteger));
       ApiNext;
       inc(RecN);
       if frequently(StartT, 444) or eof then
       begin
-        progressbar1.position := RecN;
+        ProgressBar1.position := RecN;
         application.processmessages;
       end;
     end;
@@ -342,46 +342,48 @@ begin
   KRANKHEITsl.free;
   TierSucheWI.JoinDuplicates(false);
   TierSucheWI.SaveToFile(SearchDir + cTierSuchindexFName);
-  progressbar1.position := 0;
+  ProgressBar1.position := 0;
   EndHourGlass;
 end;
 
 procedure TFormTier.DoTheTierSearch;
 begin
   BeginHourGlass;
-  if not (FileExists(SearchDir + cTierSuchindexFName)) then
+  if not(FileExists(SearchDir + cTierSuchindexFName)) then
     CreateIndex;
-  if not (assigned(TierSucheWI)) then
+  if not(assigned(TierSucheWI)) then
   begin
     TierSucheWI := TWordIndex.create(nil);
     TierSucheWI.LoadFromFile(SearchDir + cTierSuchindexFName);
-  end else
+  end
+  else
   begin
     TierSucheWI.ReloadIfNew;
   end;
 
-  TierSucheWI.Search(edit2.Text);
+  TierSucheWI.Search(Edit2.text);
   if TierSucheWI.FoundList.count > 0 then
   begin
-    with ib_query1 do
+    with IB_Query1 do
     begin
       close;
       sql.clear;
       AddStringsCR(sql, cSelectList(TierSucheWI.FoundList));
-      open;
-      button2.Enabled := true;
+      Open;
+      Button2.Enabled := true;
     end;
-  end else
+  end
+  else
   begin
     ShowMessage('Nichts gefunden!');
-    edit2.SetFocus;
+    Edit2.SetFocus;
   end;
   EndHourGlass;
 end;
 
 procedure TFormTier.Edit2KeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then
+  if (Key = #13) then
   begin
     Key := #0;
     DoTheTierSearch;
@@ -393,10 +395,18 @@ begin
   CreateIndex;
 end;
 
+procedure TFormTier.SpeedButton3Click(Sender: TObject);
+begin
+  with IB_Query1 do
+    FormPersonSuche.SetContext(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('ART').AsString + ' ' +
+      { } FieldByName('NAME').AsString);
+end;
+
 procedure TFormTier.Button3Click(Sender: TObject);
 begin
   FormPerson.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
 end;
 
 end.
-

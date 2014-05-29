@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.044; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.046; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -665,7 +665,7 @@ end;
 procedure TFormFotoService.ListBox3KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
-  FindStr, Ablage: string;
+  FindStr, Ablage, Path: string;
   FoundStr: string;
   n, i: integer;
   GeraeteNo, RID: string;
@@ -706,9 +706,13 @@ begin
   // F2: Die Umbenennung muss nochmals durchgeführt werden
   if (Key = VK_F2) then
   begin
+    Path := ExtractSegmentBetween(Edit4.Text, '\', '\');
+    if Path <> '' then
+      Path := Path + '\';
+
     FindStr :=
     { Blank } ' ' +
-    { Verzeichnis } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
+    { Verzeichnis } Path +
     { Dateiname } ListBox3.Items[i];
 
     for n := pred(sMoveTransaktionen.count) downto 0 do
@@ -727,10 +731,14 @@ begin
         if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
         begin
           FoundStr := nextp(sMoveTransaktionen[n], ' ', 1);
-          FileMove(Edit4.Text + ListBox3.Items[i], MobUploadPath + FoundStr);
-          ListBox3.DeleteSelected;
+          if not(FileExists(MobUploadPath + FoundStr)) then
+          begin
+            FileMove(Edit4.Text + ListBox3.Items[i], MobUploadPath + FoundStr);
+            ListBox3.DeleteSelected;
+          end;
           break;
         end;
+
     end;
     Key := 0;
   end;
@@ -1764,7 +1772,7 @@ begin
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
             UmbenennungAbgeschlossen :=
               (sFotoResult.Values[cParameter_foto_fertig]
-              = JonDaExec.activ(true));
+              = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -1963,7 +1971,7 @@ var
   CSV: tsTable;
   r, i, k, ro, c: integer;
   ZAEHLER_NUMMER_NEU: string;
-  FNameAlt, FNameNeu: string;
+  FNameAlt, FNameNeu, FPath: string;
   RID: integer;
   sBaustelle: string;
   BAUSTELLE_Index: integer;
@@ -1975,6 +1983,10 @@ var
 
   // Foto Benennungs Funktion
   sFotoCall, rFoto: TStringList;
+
+  // senden einfärben
+  tSENDEN: tsTable;
+
 begin
 
   // Init
@@ -2075,6 +2087,7 @@ begin
 
     // Umbenennung starten
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+    FPath := nextp(FNameAlt, '\', 0) + '\';
 
     if not(FileExists(cWorkPath + FNameAlt)) then
     begin
@@ -2105,6 +2118,7 @@ begin
       sFotoCall := TStringList.Create;
       with sFotoCall do
       begin
+        Values[cParameter_foto_RID] := inttostr(RID);
         Values[cParameter_foto_Modus] := inttostr(FotoBenennungsModus);
         Values[cParameter_foto_baustelle] := sBaustelle;
         Values[cParameter_foto_parameter] := 'FN';
@@ -2116,7 +2130,27 @@ begin
       // execute
       rFoto := JonDaExec.foto(sFotoCall);
       sFotoCall.Free;
-      FNameNeu := rFoto.Values[cParameter_foto_neu];
+      with rFoto do
+      begin
+        repeat
+
+          if (Values[cParameter_foto_Fehler] <> '') then
+          begin
+            Log(Values[cParameter_foto_Fehler]);
+            break;
+          end;
+
+          if (Values[cParameter_foto_fertig] = cIni_Activate) then
+          begin
+            FNameNeu := rFoto.Values[cParameter_foto_neu];
+            if (pos('\', FNameNeu) = 0) then
+              FNameNeu := FPath + FNameNeu;
+
+          end;
+
+        until true;
+      end;
+
       rFoto.Free;
 
     end
@@ -2126,6 +2160,16 @@ begin
       { } copy(FNameNeu, 1, k) +
       { } TJonDaExec.FormatZaehlerNummerNeu(ZAEHLER_NUMMER_NEU) +
       { } '.jpg';
+    end;
+
+    if (FNameNeu = '') then
+      continue;
+
+    if (CharCount('\', FNameNeu) <> 1) then
+    begin
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig bei Pfad "' +
+        FPath + '"');
+      continue;
     end;
 
     if (FNameNeu = FNameAlt) then
@@ -2168,7 +2212,30 @@ begin
   bOrgaMon.Free;
 
   if WARTEND.Changed then
+  begin
+
+    // recreate senden.html
+    tSENDEN := tsTable.Create;
+    with tSENDEN do
+    begin
+      insertFromFile(MyProgramPath + cdbPath + 'SENDEN.csv');
+      i := addCol('PAPERCOLOR');
+      k := WARTEND.colOf('GERAETENO');
+      c := colOf('ID');
+      for r := 1 to RowCount do
+        if (WARTEND.locate(k, readCell(r, c)) <> -1) then
+          writeCell(r, i, '#FF9900');
+      SaveToHTML(MyProgramPath + cStatistikPath + 'senden.html');
+    end;
+    tSENDEN.Free;
+
+    // save WARTEND / save as html
+    WARTEND.SaveToHTML(MyProgramPath + cStatistikPath + '-neu.html');
     WARTEND.SaveToFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+
+    // LOG
+    Log('INFO: "-Neu" Umbenennung wurde durchgeführt');
+  end;
 
   WARTEND.Free;
 
