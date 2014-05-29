@@ -504,6 +504,7 @@ end;
 procedure TFormFotoService.Button8Click(Sender: TObject);
 begin
   workAblage;
+  Edit2.Text := '';
 end;
 
 procedure TFormFotoService.Button9Click(Sender: TObject);
@@ -2223,7 +2224,7 @@ begin
   bOrgaMon.EndTransaction;
   bOrgaMon.Free;
 
-  if WARTEND.Changed then
+  if WARTEND.Changed or CheckBox2.Checked then
   begin
 
     // recreate senden.html
