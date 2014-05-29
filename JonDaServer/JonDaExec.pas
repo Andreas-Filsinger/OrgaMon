@@ -2602,6 +2602,7 @@ var
     else
       result.values[cParameter_foto_Fehler] :=
         result.values[cParameter_foto_Fehler] + '|' + s;
+    result.values[cParameter_foto_fertig] := cIni_Deactivate;
     ShouldAbort := true;
   end;
 
@@ -2699,22 +2700,22 @@ begin
           tNAMES := TsTable.Create;
           tNAMES.oTextHasLF := true;
           FotoPrefix := '';
-          Fname := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
           repeat
 
             if (Path = '') then
             begin
-              result.values[cParameter_foto_Fehler] :=
-              { } 'In diesem Modus muss ' + cParameter_foto_Pfad + '=' +
-              { } ' gesetzt sein';
+              FatalError(
+                { } 'In diesem Modus muss ' + cParameter_foto_Pfad + '=' +
+                { } ' gesetzt sein');
               break;
             end;
 
+            Fname := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
             if not(FileExists(Fname)) then
             begin
-              result.values[cParameter_foto_Fehler] :=
-              { } 'Datei "' + Fname + '"' +
-              { } ' nicht gefunden';
+              FatalError(
+                { } 'Datei "' + Fname + '"' +
+                { } ' nicht gefunden');
               break;
             end;
 
@@ -2953,8 +2954,8 @@ begin
   if (FotoDateiNameNeu = '') then
   begin
     // leeres Ergebnis
-    result.values[cParameter_foto_Fehler] :=
-    { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind';
+    FatalError(
+    { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
   end
   else
   begin

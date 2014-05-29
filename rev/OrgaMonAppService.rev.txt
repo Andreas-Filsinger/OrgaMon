@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.047 (29.05.14) Andreas Filsinger
+
+ Bug: Umbennenung nach News: Pfad war nicht gesetzt
+ Bug: Umbenennung nach News: "FnameNeu" war <> leer nach Fehler
+
 Rev 1.046 (28.05.14) Andreas Filsinger
 
  Bug: Umbenennung der wartenden war im Modus 6 falsch

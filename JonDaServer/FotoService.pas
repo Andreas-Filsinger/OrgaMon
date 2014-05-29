@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.046; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.047; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1967,6 +1967,7 @@ end;
 procedure TFormFotoService.workWartend(All: boolean);
 var
   WARTEND: tsTable;
+  Anfangsbestand: integer;
   MomentTimeout: TANFiXDate;
   CSV: tsTable;
   r, i, k, ro, c: integer;
@@ -2000,6 +2001,7 @@ begin
 
     // load+sort
     insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+    Anfangsbestand := RowCount;
     SortBy('GERAETENO');
 
     // sicherstellen der Spalte
@@ -2122,10 +2124,20 @@ begin
         Values[cParameter_foto_Modus] := inttostr(FotoBenennungsModus);
         Values[cParameter_foto_baustelle] := sBaustelle;
         Values[cParameter_foto_parameter] := 'FN';
+
+        // D A N G E R   imp pend
+        // was soll der Scheiß, hier wird schlimm rumkopiert
+        // Zielführender wär eine verarbeitung aus "cParameter_foto_Datei"
+        // also wenn es einfach nur darum geht aus "-Neu" "-~Z#Neu~" zu machen!
         Values[cParameter_foto_zaehlernummer_alt] := copy(FNameNeu, 1, pred(k));
+
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
         Values[cParameter_foto_Datei] := cWorkPath + FNameAlt;
+        Values[cParameter_foto_Pfad] := JonDaServerPath + cdbPath;
       end;
+
+      // set default result (ERROR RESULT)
+      FNameNeu := '';
 
       // execute
       rFoto := JonDaExec.foto(sFotoCall);
@@ -2145,7 +2157,6 @@ begin
             FNameNeu := rFoto.Values[cParameter_foto_neu];
             if (pos('\', FNameNeu) = 0) then
               FNameNeu := FPath + FNameNeu;
-
           end;
 
         until true;
@@ -2162,19 +2173,21 @@ begin
       { } '.jpg';
     end;
 
+    // nichts machen in diesem Fall
     if (FNameNeu = '') then
       continue;
 
+    // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig bei Pfad "' +
-        FPath + '"');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' +
+        FPath + '" fehlt');
       continue;
     end;
 
     if (FNameNeu = FNameAlt) then
     begin
-      // ohne Umbenennung einfach nur den Eintrag löschen!
+      // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
       WARTEND.del(r);
     end
     else
@@ -2205,7 +2218,6 @@ begin
         WARTEND.del(r);
       end;
     end;
-
   end;
 
   bOrgaMon.EndTransaction;
@@ -2234,14 +2246,17 @@ begin
     WARTEND.SaveToFile(MyWorkingPath + cFotoUmbenennungAusstehend);
 
     // LOG
-    Log('INFO: "-Neu" Umbenennung wurde durchgeführt');
+    Log('INFO: ' +
+      { } inttostr(Anfangsbestand - WARTEND.RowCount) +
+      { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
+      { } inttostr(WARTEND.RowCount) +
+      { } ' verbleiben');
+
   end;
 
   WARTEND.Free;
-
   if assigned(CSV) then
     CSV.Free;
-
 end;
 
 const
