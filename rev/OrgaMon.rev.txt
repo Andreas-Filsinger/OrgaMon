@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.030 (29.05.14) Andreas Filsinger
+
+ Neu: Tagwache: Erzeugung der Baustellen-Info-Dateien nun vor der
+      Ergebnismeldung. Manche Baustellen benötigen ganz aktuelle
+      Grundlagen zur Foto-Umbenennung.
+
 Rev 8.029 (28.05.14) Andreas Filsinger
 
  Neu: Übernahme von der Tiersuche in die Personensuche möglich

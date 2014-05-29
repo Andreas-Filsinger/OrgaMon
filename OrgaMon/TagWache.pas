@@ -130,7 +130,13 @@ begin
             0:
               FormAuftragMobil.ReadMobil;
             1:
-              e_w_GrabFotos;
+              begin
+                // Die neuesten Fotos laden
+                e_w_GrabFotos;
+                // Für den Foto Server, aber auch lokal damit die
+                // Bildumbenennung mit aktuellem Wechseldatum klappt
+                e_r_Sync_AuftraegeAlle;
+              end;
             2:
               FormAuftragErgebnis.UploadNewTANS;
             3:
@@ -141,7 +147,7 @@ begin
                 with FormBaustelle do
                 begin
                   Show;
-                  if IB_Query1.Locate('RID',iTagwacheBaustelle , []) then
+                  if IB_Query1.Locate('RID', iTagwacheBaustelle, []) then
                   begin
                     AutoYES := true;
                     Button7Click(self);
