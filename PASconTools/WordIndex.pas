@@ -183,6 +183,7 @@ type
     function Row(r: integer): TStringList;
     procedure addRow(r: TStringList = nil);
     function RowCount: integer;
+    function ColCount: integer;
     constructor Create; virtual;
     destructor Destroy; override;
   end;
@@ -1221,10 +1222,11 @@ begin
   begin
     add(TStringList.Create);
     result := -1;
-  end else
+  end
+  else
   begin
-   // check if already exists
-   result := colOf(HeaderName);
+    // check if already exists
+    result := colOf(HeaderName);
   end;
 
   // add Column
@@ -1278,6 +1280,11 @@ begin
     result.AddObject(TStringList(Items[r])[c], pointer(r));
 end;
 
+function TsTable.ColCount: integer;
+begin
+ result := header.Count;
+end;
+
 function TsTable.colOf(HeaderName: string;
   RaiseIfNotExists: boolean = false): integer;
 begin
@@ -1303,13 +1310,20 @@ procedure TsTable.SaveToHTML(FName: string; sFormats: TStringList = nil);
 const
   cPagebreak = '<div class="breakhere">&nbsp;</div>';
 var
-  lastRow, r, c: integer;
+   r, c, cPAPERCOLOR: integer;
+  lastRow, lastCol: integer;
   OutS: TStringList;
   sRow: TStringList;
   tdExtras: string;
   tdData: string;
+  tdPaperColor: string;
 begin
   lastRow := pred(Count);
+  cPAPERCOLOR := colOf('PAPERCOLOR');
+  lastCol := pred(ColCount);
+  if cPAPERCOLOR=lastCol then
+   lastCol := pred(lastCol);
+
   OutS := TStringList.Create;
   with OutS do
   begin
@@ -1339,12 +1353,26 @@ begin
     add('<font face="Verdana" size=2>');
     add('<table class=border cellpadding=1 cellspacing=0 border=1>');
 
+    tdPaperColor := '';
     for r := 0 to lastRow do
     begin
       add(' <tr>');
       sRow := TStringList(Items[r]);
+
+      if (r > 0) then
+        if (cPAPERCOLOR <> -1) then
+        begin
+          tdPaperColor := sRow[cPAPERCOLOR];
+          if (pos('#', tdPaperColor) = 1) then
+            tdPaperColor := ' bgcolor="' + tdPaperColor + '"'
+          else
+            tdPaperColor := '';
+        end;
+
       for c := 0 to pred(sRow.Count) do
       begin
+        if (c = cPAPERCOLOR) then
+          continue;
 
         repeat
           if (r = lastRow) and (c = pred(sRow.Count)) then
@@ -1353,7 +1381,7 @@ begin
             break;
           end;
 
-          if (c = pred(sRow.Count)) then
+          if (c = lastCol) then
           begin
             tdExtras := 'class=gend';
             break;
@@ -1370,7 +1398,9 @@ begin
         until true;
 
         if (r = 0) then
-          tdExtras := tdExtras + ' bgcolor="#C8D8E0"';
+          tdExtras := tdExtras + ' bgcolor="#C8D8E0"'
+        else
+          tdExtras := tdExtras + tdPaperColor;
 
         tdData := sRow[c];
 
