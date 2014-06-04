@@ -395,6 +395,7 @@ procedure dir(const Mask: string; FileNames: TStrings;
 function dir(const Mask: string): integer; overload;
 function dirs(const Path: string): TStringList;
 function DirExists(const dir: string): boolean;
+function DirSize(dir: string): int64; // WARNING: Time consuming
 procedure CheckCreateDir(dir: string); // recourse create dir
 function DirDelete(const Mask: string): boolean; overload;
 function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
@@ -4777,6 +4778,37 @@ begin
     (_FileGetAttr and faDirectory = faDirectory);
 end;
 
+function DirSize(dir: string): int64; // WARNING: Time consuming
+var
+  sr: Tsearchrec;
+  DosError: integer;
+  l: integer;
+begin
+  result := 0;
+  l := length(dir);
+  if (l > 0) then
+  begin
+    if (dir[l] <> PathDelim) then
+      dir := dir + PathDelim;
+    DosError := findfirst(dir + '*', faAnyFile, sr);
+    while (DosError = 0) do
+    begin
+      repeat
+        if (sr.Name = '.') then
+          break;
+        if (sr.Name = '..') then
+          break;
+        if (sr.Attr and faDirectory = faDirectory) then
+          inc(result, DirSize(dir + sr.Name))
+        else
+          inc(result, sr.Size);
+      until true;
+      DosError := FindNext(sr);
+    end;
+    findclose(sr);
+  end;
+end;
+
 procedure CheckCreateDir(dir: string);
 var
   l: integer;
@@ -4784,7 +4816,7 @@ begin
   l := length(dir);
   if (l = 0) then
     exit;
-  if (dir[l] = '\') then
+  if (dir[l] = PathDelim) then
     SetLength(dir, pred(l));
   if DirExists(dir) or (length(dir) < 3) then
     exit;

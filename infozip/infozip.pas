@@ -55,6 +55,7 @@ const
   unzip_Version: string = 'N/A';
   zip_Version: string = 'N/A';
   cZIPExtension = '.zip';
+  cZIPTempFileMask = 'zia*';
   infozip_RootPath = 'RootPath';
   infozip_Password = 'Password';
   infozip_Level = 'Level';

@@ -2,7 +2,7 @@ object FormProrata: TFormProrata
   Left = 65
   Top = 4
   Caption = 'Prorata'
-  ClientHeight = 726
+  ClientHeight = 742
   ClientWidth = 743
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -14,12 +14,12 @@ object FormProrata: TFormProrata
   OnActivate = FormActivate
   DesignSize = (
     743
-    726)
+    742)
   PixelsPerInch = 96
   TextHeight = 13
   object Label5: TLabel
     Left = 7
-    Top = 679
+    Top = 695
     Width = 8
     Height = 18
     Anchors = [akLeft, akBottom]
@@ -30,62 +30,25 @@ object FormProrata: TFormProrata
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
+    ExplicitTop = 679
   end
   object Label1: TLabel
     Left = 7
-    Top = 44
+    Top = 14
     Width = 99
     Height = 13
     Caption = 'Prorata Personen'
   end
   object Label2: TLabel
     Left = 7
-    Top = 289
+    Top = 259
     Width = 83
     Height = 13
     Caption = 'Prorata Artikel'
   end
-  object SpeedButton1: TSpeedButton
-    Left = 710
-    Top = 625
-    Width = 25
-    Height = 26
-    Hint = 'Verzeichnis des aktuellen Benutzers '#246'ffnen'
-    Anchors = [akLeft, akBottom]
-    Glyph.Data = {
-      36030000424D3603000000000000360000002800000010000000100000000100
-      1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
-      0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
-      009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
-      9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
-      FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
-      FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
-      CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-      FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
-      9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
-      0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-      FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
-      009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
-      CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-      FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
-      FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-      FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
-      009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
-      9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-    ParentShowHint = False
-    ShowHint = True
-    OnClick = SpeedButton1Click
-  end
   object Image2: TImage
     Left = 681
-    Top = 8
+    Top = 4
     Width = 54
     Height = 22
     Cursor = crHandPoint
@@ -209,48 +172,32 @@ object FormProrata: TFormProrata
     OnClick = Image2Click
   end
   object Label8: TLabel
-    Left = 8
-    Top = 16
+    Left = 148
+    Top = 13
     Width = 36
     Height = 13
     Caption = 'Modus'
   end
-  object Button1: TButton
-    Left = 615
-    Top = 626
-    Width = 89
-    Height = 25
-    Anchors = [akLeft, akBottom]
-    Caption = 'a) Auswerten'
-    TabOrder = 0
-    OnClick = Button1Click
-  end
   object ProgressBar1: TProgressBar
     Left = 7
-    Top = 699
+    Top = 715
     Width = 730
     Height = 17
     Anchors = [akLeft, akBottom]
-    TabOrder = 1
-  end
-  object Button4: TButton
-    Left = 615
-    Top = 657
-    Width = 120
-    Height = 25
-    Anchors = [akLeft, akBottom]
-    Caption = 'b) Briefe erzeugen'
-    TabOrder = 2
-    OnClick = Button4Click
+    TabOrder = 0
+    ExplicitTop = 699
   end
   object GroupBox1: TGroupBox
     Left = 7
-    Top = 517
-    Width = 594
-    Height = 161
+    Top = 484
+    Width = 728
+    Height = 205
     Anchors = [akLeft, akBottom]
     Caption = 'Optionen'
-    TabOrder = 3
+    TabOrder = 1
+    DesignSize = (
+      728
+      205)
     object Label7: TLabel
       Left = 141
       Top = 97
@@ -316,6 +263,59 @@ object FormProrata: TFormProrata
       ShowHint = True
       OnClick = SpeedButton2Click
     end
+    object SpeedButton1: TSpeedButton
+      Left = 688
+      Top = 32
+      Width = 25
+      Height = 26
+      Hint = 'Verzeichnis des aktuellen Benutzers '#246'ffnen'
+      Anchors = [akLeft, akBottom]
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
+        0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
+        009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
+        9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
+        FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
+        FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
+        CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+        FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
+        9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
+        0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+        FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
+        009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
+        CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+        FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
+        FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+        FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
+        009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
+        9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = SpeedButton1Click
+      ExplicitTop = 15
+    end
+    object Label9: TLabel
+      Left = 320
+      Top = 16
+      Width = 138
+      Height = 13
+      Caption = 'a) Auswertungsoptionen'
+    end
+    object Label10: TLabel
+      Left = 320
+      Top = 136
+      Width = 92
+      Height = 13
+      Caption = 'b) Briefoptionen'
+    end
     object Edit2: TEdit
       Left = 198
       Top = 93
@@ -325,24 +325,24 @@ object FormProrata: TFormProrata
       Text = '0%'
     end
     object CheckBox2: TCheckBox
-      Left = 319
-      Top = 49
+      Left = 338
+      Top = 65
       Width = 145
       Height = 18
       Caption = 'Beleg-Sortierung'
       TabOrder = 1
     end
     object CheckBoxAusgabearten: TCheckBox
-      Left = 319
-      Top = 82
+      Left = 338
+      Top = 80
       Width = 225
       Height = 17
       Caption = 'Ausgabearten zulassen'
       TabOrder = 2
     end
     object CheckBox4: TCheckBox
-      Left = 319
-      Top = 99
+      Left = 338
+      Top = 96
       Width = 129
       Height = 17
       Caption = 'Mengensortierung'
@@ -351,8 +351,8 @@ object FormProrata: TFormProrata
       TabOrder = 3
     end
     object CheckBox5: TCheckBox
-      Left = 319
-      Top = 66
+      Left = 338
+      Top = 156
       Width = 225
       Height = 16
       Caption = 'Details (jeden Verkauf ausweisen)'
@@ -385,8 +385,8 @@ object FormProrata: TFormProrata
       Text = '0'
     end
     object CheckBox6: TCheckBox
-      Left = 319
-      Top = 116
+      Left = 338
+      Top = 113
       Width = 186
       Height = 18
       Caption = 'Artikelbezeichnung aus Beleg'
@@ -395,70 +395,98 @@ object FormProrata: TFormProrata
       TabOrder = 8
     end
     object CheckBoxSinglePerson: TCheckBox
-      Left = 319
-      Top = 12
+      Left = 338
+      Top = 33
       Width = 186
       Height = 17
       Caption = 'nur f'#252'r die markierte Person'
       TabOrder = 9
     end
     object CheckBoxSingleArtikel: TCheckBox
-      Left = 319
-      Top = 28
+      Left = 338
+      Top = 49
       Width = 225
       Height = 17
       Caption = 'nur f'#252'r den markierten Artikel'
       TabOrder = 10
       OnClick = CheckBoxSingleArtikelClick
     end
+    object CheckBox1: TCheckBox
+      Left = 338
+      Top = 170
+      Width = 225
+      Height = 17
+      Caption = 'Verkausfsmenge=0 weglassen'
+      TabOrder = 11
+    end
+    object Button1: TButton
+      Left = 624
+      Top = 106
+      Width = 89
+      Height = 25
+      Anchors = [akLeft, akBottom]
+      Caption = 'a) Auswerten'
+      TabOrder = 12
+      OnClick = Button1Click
+    end
+    object Button4: TButton
+      Left = 593
+      Top = 162
+      Width = 120
+      Height = 25
+      Anchors = [akLeft, akBottom]
+      Caption = 'b) Briefe erzeugen'
+      TabOrder = 13
+      OnClick = Button4Click
+    end
   end
   object IB_Grid1: TIB_Grid
     Left = 7
-    Top = 62
+    Top = 32
     Width = 730
     Height = 216
     CustomGlyphsSupplied = []
     DefDrawBefore = False
     DataSource = IB_DataSource2
     Anchors = [akLeft, akTop, akRight]
-    TabOrder = 4
+    TabOrder = 2
     OnDrawCell = IB_Grid1DrawCell
     OnDrawFocusedCell = IB_Grid1DrawFocusedCell
   end
   object IB_Grid2: TIB_Grid
     Left = 7
-    Top = 309
+    Top = 279
     Width = 730
-    Height = 204
+    Height = 202
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource3
     Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 5
+    TabOrder = 3
   end
   object Button2: TButton
     Left = 715
-    Top = 283
+    Top = 253
     Width = 22
     Height = 23
     Caption = 'A'
-    TabOrder = 6
+    TabOrder = 4
     OnClick = Button2Click
   end
   object Button3: TButton
     Left = 560
-    Top = 36
+    Top = 6
     Width = 22
     Height = 21
     Caption = 'P'
-    TabOrder = 7
+    TabOrder = 5
     OnClick = Button3Click
   end
   object ComboBox1: TComboBox
-    Left = 56
-    Top = 13
+    Left = 205
+    Top = 6
     Width = 145
     Height = 21
-    TabOrder = 8
+    TabOrder = 6
     OnChange = ComboBox1Change
   end
   object IB_QueryPERSON: TIB_Query
@@ -482,7 +510,7 @@ object FormProrata: TFormProrata
       ' PRORATA')
     AfterScroll = IB_QueryPERSONAfterScroll
     Left = 32
-    Top = 88
+    Top = 58
   end
   object IB_QueryARTIKEL: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -510,19 +538,19 @@ object FormProrata: TFormProrata
     ColorScheme = True
     RequestLive = True
     Left = 32
-    Top = 333
+    Top = 303
     ParamValues = (
       'CROSSREF=')
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_QueryPERSON
     Left = 64
-    Top = 88
+    Top = 58
   end
   object IB_DataSource3: TIB_DataSource
     Dataset = IB_QueryARTIKEL
-    Left = 64
-    Top = 333
+    Left = 80
+    Top = 303
   end
   object IB_Query6: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -532,7 +560,7 @@ object FormProrata: TFormProrata
       'FROM PERSON'
       'WHERE RID=:CROSSREF')
     Left = 488
-    Top = 104
+    Top = 74
   end
   object IB_Query7: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -542,7 +570,7 @@ object FormProrata: TFormProrata
       'FROM ANSCHRIFT'
       'WHERE RID=:CROSSREF')
     Left = 520
-    Top = 104
+    Top = 74
   end
   object IB_Query8: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -555,10 +583,10 @@ object FormProrata: TFormProrata
       'WHERE'
       ' RID=:CROSSREF')
     Left = 552
-    Top = 104
+    Top = 74
   end
   object IB_DataSource4: TIB_DataSource
     Left = 616
-    Top = 104
+    Top = 74
   end
 end

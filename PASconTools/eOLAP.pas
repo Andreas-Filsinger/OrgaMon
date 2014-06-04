@@ -64,10 +64,7 @@ uses
   WordIndex, gpLists, html,
   ExcelHelper, OpenOfficePDF,
   BASIC32, IB_Session, IB_Header,
-  CareTakerClient,
-
-  // GUI - muss noch weg!
-  wanfix32;
+  CareTakerClient;
 
 { TOLAP }
 
@@ -1529,10 +1526,12 @@ begin
               if xlsAutoOpen then
                 if (getValueofParameter('$ExcelOpen') <> cINI_deactivate) then
                 begin
+                 (*
                   if xlsAutoHTML then
                     openShell(RohdatenHTMLFName(RohdatenCount))
                   else
                     openShell(RohdatenxlsFName(RohdatenCount));
+                  *)
                 end;
 
               if xlsAutoPrint then
@@ -1543,11 +1542,11 @@ begin
                   {} 'OpenOffice.org 3\program\soffice.exe" '+
                   {} '-headless -p "' +RohdatenxlsFName(RohdatenCount) +'"',
                   SW_HIDE);
-                *)
                 if xlsAutoHTML then
                   printhtmlok(RohdatenHTMLFName(RohdatenCount))
                 else
                   printShell(RohdatenxlsFName(RohdatenCount));
+                *)
 
               end;
             end;

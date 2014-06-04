@@ -977,7 +977,9 @@ begin
     ProgressBar1.Position := 50;
 
     // alte Fragmente entfernen
+    FileDelete(EigeneOrgaMonDateienPfad + cZIPTempFileMask);
     FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
+
     // ZIP
     ArchiveFiles := infozip.zip(nil, TmpFName + cTmpFileExtension, zipOptions);
     zipOptions.free;

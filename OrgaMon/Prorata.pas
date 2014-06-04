@@ -37,10 +37,8 @@ uses
 
 type
   TFormProrata = class(TForm)
-    Button1: TButton;
     ProgressBar1: TProgressBar;
     Label5: TLabel;
-    Button4: TButton;
     IB_QueryPERSON: TIB_Query;
     IB_QueryARTIKEL: TIB_Query;
     IB_DataSource2: TIB_DataSource;
@@ -61,7 +59,6 @@ type
     IB_Grid2: TIB_Grid;
     Button2: TButton;
     Button3: TButton;
-    SpeedButton1: TSpeedButton;
     Image2: TImage;
     CheckBox5: TCheckBox;
     Label3: TLabel;
@@ -76,6 +73,12 @@ type
     SpeedButton2: TSpeedButton;
     CheckBoxSinglePerson: TCheckBox;
     CheckBoxSingleArtikel: TCheckBox;
+    CheckBox1: TCheckBox;
+    SpeedButton1: TSpeedButton;
+    Button1: TButton;
+    Button4: TButton;
+    Label9: TLabel;
+    Label10: TLabel;
     procedure IB_QueryPERSONAfterScroll(IB_Dataset: TIB_Dataset);
     procedure FormActivate(Sender: TObject);
     procedure IB_Grid1DrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -552,7 +555,7 @@ var
   StartTime: dword;
   ThisRecN: Integer;
   pTextLength: Integer;
-  FName: string;
+  FName, FNamePerson: string;
   ArtikelListe: TSearchStringList;
   n, m: Integer;
 
@@ -596,6 +599,12 @@ begin
 
   ArtikelListe := TSearchStringList.Create;
   ArtikelListe.LoadFromFile(FName);
+
+  if CheckBox1.Checked then
+    for n := pred(ArtikelListe.Count) downto 0 do
+      if (StrToIntdef(nextp(ArtikelListe[n], ';', cFID_MENGE), 0) = 0) then
+        ArtikelListe.Delete(n);
+
   pTextLength := strtol(Edit1.Text);
 
   IB_Query6.Open;
@@ -731,7 +740,7 @@ begin
         FPDataLocal.add('Von=' + nextp(ArtikelListe[n], ';', cFID_VON));
         FPDataLocal.add('Bis=' + nextp(ArtikelListe[n], ';', cFID_BIS));
 
-        AUSGABEART_R := strtointdef(nextp(ArtikelListe[n], ';',
+        AUSGABEART_R := StrToIntdef(nextp(ArtikelListe[n], ';',
           cFID_AUSGABEART_R), 0);
         if (AUSGABEART_R > cRID_FirstValid) then
           FPDataLocal.add('AusgabeArt=' +
@@ -766,11 +775,22 @@ begin
 
     GesamtAuszahlungsSumme := GesamtAuszahlungsSumme + EinzelAuszahlungsSumme;
 
+    FNamePerson := ValidateFName(IB_Query6.FieldByName('NACHNAME')
+      .AsString) + '_' +
+    { } IB_Query6.FieldByName('NUMMER').AsString;
+
+    // Debug-Dateien
+    FPDataLocal.SaveToFile(cProrataAuswertungPath + FNamePerson +
+      '.DataLocal.txt');
+    FPDataGlobal.SaveToFile(cProrataAuswertungPath + FNamePerson +
+      '.DataGlobal.txt');
+
+    // WriteValue
     AbrechnungsBeleg.WriteValue(FPDataLocal, FPDataGlobal);
     AbrechnungsBeleg.SaveToFile(
       { } cProrataAuswertungPath +
-      { } ValidateFName(IB_Query6.FieldByName('NACHNAME').AsString) + '_' +
-      { } IB_Query6.FieldByName('NUMMER').AsString + '.html');
+      { } FNamePerson
+      { } + '.html');
 
     AbrechnungsBeleg.Free;
     FPDataGlobal.Free;

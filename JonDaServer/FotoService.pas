@@ -129,6 +129,8 @@ type
     Label8: TLabel;
     Button16: TButton;
     Label9: TLabel;
+    Button17: TButton;
+    ListBox10: TListBox;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -156,6 +158,7 @@ type
     procedure TabSheet7Show(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -419,6 +422,11 @@ procedure TFormFotoService.Button16Click(Sender: TObject);
 begin
   ensureGlobals;
   JonDaExec.doSync;
+end;
+
+procedure TFormFotoService.Button17Click(Sender: TObject);
+begin
+ Listbox10.Items.Add(IntToStr(DirSize('X:\JonDaServer\#61') DIV (1024*1024)));
 end;
 
 procedure TFormFotoService.Button4Click(Sender: TObject);

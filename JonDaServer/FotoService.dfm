@@ -537,6 +537,23 @@ object FormFotoService: TFormFotoService
         TabOrder = 7
         Text = 'W:\mitgas\'
       end
+      object Button17: TButton
+        Left = 128
+        Top = 144
+        Width = 243
+        Height = 25
+        Caption = 'JonDaServer Ablage'
+        TabOrder = 8
+        OnClick = Button17Click
+      end
+      object ListBox10: TListBox
+        Left = 128
+        Top = 8
+        Width = 259
+        Height = 97
+        ItemHeight = 13
+        TabOrder = 9
+      end
     end
     object TabSheet7: TTabSheet
       Caption = 'PostgreSQL'

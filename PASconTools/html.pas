@@ -79,6 +79,18 @@ unit html;
 // formuluiert werden können. Es werden dann nicht mehr 2 alternative Blöcke zur
 // verfügung gestellt, sondern nur noch einer, aber mit allen möglichen Varianten
 // schon per Logikausdrücken in sich drin.
+// ----------------------------------------------------------------------------------------
+// Optimierung des Writevalue, besonders bei grossen Ausbelichtungen:
+//
+// Bei CheckreplaceOne könnte man einen SuchCache Namens "~" benutzen. Es müssen nicht
+// immer alle Zeilen durchsucht werden, sondern die, die ein "~" enthalten. "Stufe 1"
+// [Lines]
+// Man könnte auch die Stellen (Zeilennummern) verzeichnen wo bestimmte werte noch stehen
+// ~XX~ in 0,2,3,4 kommen Zeilen hinzu muss der Cache erweitert werden, finden Ersetzungen statt
+// so muss der Cache gekürzt werden. Also eine SearchString@[Lines] Datenstruktur "Stufe 2"
+// Immer bei einem Zugang (insert, load, add) könnte man den Cache erweitern
+// ----------------------------------------------------------------------------------------
+
 //
 // ..\..\rev\anfix32.rev
 interface
@@ -850,7 +862,7 @@ var
 
             repeat
 
-              // nicht kombinierbare KOmmandos werden mit break beendet
+              // nicht kombinierbare Kommandos werden mit break beendet
               if (pos(cPageBreakHerePossible, Command) > 0) then
               begin
                 if DebugMode then
