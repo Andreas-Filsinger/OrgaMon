@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.032 (04.06.14) Andreas Filsinger
+
+ Neu: Datensicherung: ZIP Fragmente von Info-Zip werden nun zuvor gelöscht
+
+Rev 8.031 (02.06.14) Andreas Filsinger
+
+ Neu: Prorata: Weglassen von Nullverkäufen nun möglich
+
 Rev 8.030 (29.05.14) Andreas Filsinger
 
  Neu: Tagwache: Erzeugung der Baustellen-Info-Dateien nun vor der

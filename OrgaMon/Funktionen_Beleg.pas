@@ -4476,7 +4476,8 @@ begin
     //
     with ARTIKEL do
     begin
-      sql.add('select RID,SORTIMENT_R,NUMERO,ERSTEINTRAG,MINDESTBESTAND,GEWICHT from ARTIKEL ' + for_update);
+      sql.add('select RID,SORTIMENT_R,NUMERO,ERSTEINTRAG,MINDESTBESTAND,GEWICHT from ARTIKEL '
+        + for_update);
       Insert;
       if (SORTIMENT_R <> -1) then
         FieldByName('SORTIMENT_R').AsInteger := SORTIMENT_R;
@@ -7090,8 +7091,8 @@ begin
     with qBELEG do
     begin
 
-      sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) +
-        ' ' + for_update);
+      sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) + ' ' +
+        for_update);
       Open;
       First;
       if eof then
@@ -7472,8 +7473,8 @@ begin
 
       with qBBELEG do
       begin
-        sql.add('select * from BBELEG where RID=' + inttostr(BBELEG_R) +
-          ' ' + for_update);
+        sql.add('select * from BBELEG where RID=' + inttostr(BBELEG_R) + ' ' +
+          for_update);
         Open;
         First;
         if eof then
@@ -8110,19 +8111,18 @@ begin
 
   if (PERSON_R >= cRID_FirstValid) then
   begin
-    qBELEG := nQuery;
     try
+
+      // Beleg anlegen
+      qBELEG := nQuery;
+      BELEG_R := e_w_GEN('BELEG_GID');
       with qBELEG do
       begin
-        BELEG_R := e_w_GEN('BELEG_GID');
-        //
-{$IFNDEF fpc}
         sql.add('select * from BELEG ' + for_update);
+{$IFNDEF fpc}
         ColumnAttributes.add('ANLAGE=NOTREQUIRED');
         ColumnAttributes.add('BTYP=NOTREQUIRED');
         ColumnAttributes.add('BSTATUS=NOTREQUIRED');
-{$ELSE}
-        sql.add('select * from BELEG');
 {$ENDIF}
         Insert;
         FieldByName('RID').AsInteger := BELEG_R;
@@ -8132,6 +8132,18 @@ begin
         Post;
         result := BELEG_R;
       end;
+      qBELEG.free;
+
+      ///////////////////////////////////////////////////////////////////
+      // e_w_BelegNeu.OLAP.txt
+      // imp pend
+      // ev. direkt aus der Datenbank lesen
+      // ev. in einem Cache-Element halten
+      // ev. einfach eine Mehrstufige Skript-Kette vorhalten
+      // ev. "exitif, breakif, retiv"
+      // ansonsten "select, "=r , insert, update =w Statements
+      ///////////////////////////////////////////////////////////////////
+
     except
       on E: exception do
       begin
@@ -8139,7 +8151,6 @@ begin
           + E.Message);
       end;
     end;
-    qBELEG.free;
   end;
 end;
 
@@ -9620,8 +9631,8 @@ begin
     BlackList.add('BSTATUS');
     with qZIEL_BELEG do
     begin
-      sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) +
-        ' ' + for_update);
+      sql.add('select * from BELEG where RID=' + inttostr(BELEG_R) + ' ' +
+        for_update);
       Open;
       First;
       edit;
@@ -12735,8 +12746,8 @@ begin
   ARTIKEL.Close;
 
   // Ergebnis bei den Verlagen Eintragen
-  PERSON.sql.add
-    ('SELECT LIEFERZEIT FROM PERSON WHERE RID=:CROSSREF ' + for_update);
+  PERSON.sql.add('SELECT LIEFERZEIT FROM PERSON WHERE RID=:CROSSREF ' +
+    for_update);
   with LIEFERZEIT do
   begin
     sql.add('select');
