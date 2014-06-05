@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="78">
+    <Units Count="79">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -20,7 +20,7 @@
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5069"/>
         <CursorPos X="1" Y="5094"/>
@@ -40,7 +40,7 @@
       <Unit3>
         <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
         <UnitName Value="ZDataset"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="3" Y="63"/>
@@ -69,7 +69,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1080"/>
         <CursorPos X="9" Y="1085"/>
@@ -89,7 +89,7 @@
       <Unit8>
         <Filename Value="..\..\zeos-7.1\src\component\ZAbstractRODataset.pas"/>
         <UnitName Value="ZAbstractRODataset"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2178"/>
         <CursorPos X="3" Y="2186"/>
@@ -189,7 +189,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1992"/>
         <CursorPos X="52" Y="2016"/>
@@ -203,7 +203,7 @@
       <Unit20>
         <Filename Value="..\OrgaMon\Funktionen_Beleg.pas"/>
         <UnitName Value="Funktionen_Beleg"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2612"/>
         <CursorPos X="32" Y="2545"/>
@@ -232,7 +232,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -695,7 +695,7 @@
       <Unit76>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-db\src\base\db.pas"/>
         <UnitName Value="db"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1204"/>
         <CursorPos X="18" Y="1234"/>
@@ -705,7 +705,6 @@
       <Unit77>
         <Filename Value="..\JonDaServer\JonDaExec.pas"/>
         <UnitName Value="JonDaExec"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="39"/>
@@ -714,6 +713,18 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
+      <Unit78>
+        <Filename Value="..\..\lazarus\ide\exttools.pas"/>
+        <UnitName Value="ExtTools"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1438"/>
+        <CursorPos X="22" Y="1475"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit78>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
