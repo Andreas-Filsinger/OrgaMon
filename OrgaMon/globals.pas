@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.032; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.033; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1447,10 +1447,14 @@ procedure BeginHourGlass;
 procedure EnsureHourGlass;
 procedure EndHourGlass;
 procedure EnsureDefaultCursor;
+function MahnungFName(PERSON_R: integer): string;
+
+// Allgemeine String Utils
 function bool2cO(b: boolean): string;
 function RIDasStr(PERSON_R: integer): string; overload;
 function RIDasStr(PERSON_R: TObject): string; overload;
-function MahnungFName(PERSON_R: integer): string;
+function StrassePostalisch(s: string): string;
+function OrtPostalisch(s: string): string;
 
 // dynamische Pfade
 function cAuftragErgebnisPath: string;
@@ -1994,6 +1998,25 @@ begin
   // geladen werden. Ev. mal auf die uib Komponenten
   // umstellen!
   result := 'gds32.dll';
+end;
+
+function StrassePostalisch(s: string): string;
+begin
+  result :=
+  { } noDoubleBlank(
+    { } nextp(
+    { } nextp(
+    { } StrFilter(
+    { } s, '!?', true),
+    { } '@', 0), '#', 0));
+end;
+
+function OrtPostalisch(s: string): string;
+begin
+  result := nextp(
+    { } StrFilter(
+    { } s, '!?', true),
+    { } '@', 0)
 end;
 
 const

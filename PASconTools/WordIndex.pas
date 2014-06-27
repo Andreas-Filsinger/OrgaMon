@@ -166,6 +166,8 @@ type
 
     procedure writeCell(Row, Col: integer; s: string); overload;
     procedure writeCell(Row: integer; Col: string; s: string); overload;
+    procedure incCell(Row, Col: integer); overload;
+    procedure incCell(Row: integer; Col: string); overload;
     procedure SortBy(sFields: TStrings); overload;
     procedure SortBy(sFields: String); overload;
 
@@ -181,7 +183,7 @@ type
     function sumCol(HeaderName: string): double;
 
     function Row(r: integer): TStringList;
-    procedure addRow(r: TStringList = nil);
+    function addRow(r: TStringList = nil) : integer;
     function RowCount: integer;
     function ColCount: integer;
     constructor Create; virtual;
@@ -1254,13 +1256,19 @@ begin
     result := result + StrToDoubleDef(TStringList(Items[r])[c], 0.0);
 end;
 
-procedure TsTable.addRow(r: TStringList);
+function TsTable.addRow(r: TStringList) : integer;
 var
   NewRow: TStringList;
   n: integer;
 begin
   if assigned(r) then
-    add(r)
+  begin
+    // Sicherstellen dass genug Spalten vorhanden sind
+    for n := r.count to pred(header.Count) do
+      r.add('');
+
+    add(r);
+  end
   else
   begin
     NewRow := TStringList.Create;
@@ -1269,6 +1277,7 @@ begin
     add(NewRow);
   end;
   Changed := true;
+  result := pred(count);
 end;
 
 function TsTable.Col(c: integer): TStringList;
@@ -1431,15 +1440,6 @@ begin
   OutS.free;
 end;
 
-procedure TsTable.SortBy(sFields: String);
-var
-  slFields: TStringList;
-begin
-  slFields := split(sFields);
-  SortBy(slFields);
-  slFields.free;
-end;
-
 procedure TsTable.insertFromStrings(sl: TStrings);
 var
   n, m: integer;
@@ -1564,6 +1564,20 @@ begin
     end;
   end;
   Changed := false;
+end;
+
+procedure TsTable.incCell(Row, Col: integer);
+begin
+  if (Col >= 0) then
+  begin
+    TStringList(Items[Row])[Col] := IntToStr(succ(StrToIntDef(TStringList(Items[Row])[Col],0)));
+    Changed := true;
+  end;
+end;
+
+procedure TsTable.incCell(Row: integer; Col: string);
+begin
+ incCell(Row,colof(Col));
 end;
 
 procedure TsTable.insertFromFile(FName: string; StaticHeader: string = '');
@@ -1752,6 +1766,7 @@ begin
   result := locate(colOf(Col), sValue);
 end;
 
+
 procedure TsTable.SortBy(sFields: TStrings);
 var
   ClientSorter: TStringList;
@@ -1823,6 +1838,15 @@ begin
     eSave.free;
     ClientSorter.free;
   end;
+end;
+
+procedure TsTable.SortBy(sFields: String);
+var
+  slFields: TStringList;
+begin
+  slFields := split(sFields);
+  SortBy(slFields);
+  slFields.free;
 end;
 
 function TsTable.locateDuplicates(Col: integer; sValue: string;

@@ -220,7 +220,6 @@ function ObtainStrassenWohnungseinheit(const _strasseFull: string): string;
 
 function StrasseUnify(a: string): string;
 function StrassenNameIdentisch(a, b: string): boolean;
-function StrassePostalisch(s: string): string;
 
 function OrtIdentisch(a, b: string): boolean;
 function SAP2Art(Material: string): string;
@@ -480,19 +479,6 @@ begin
   result := DeleteCount;
 end;
 
-function RemoveDoubleBlank(s: string): string;
-var
-  k: Integer;
-begin
-  repeat
-    k := pos('  ', s);
-    if k = 0 then
-      break;
-    System.Delete(s, k, 1);
-  until false;
-  result := s;
-end;
-
 procedure ObtainStrasseHausnummerPos(const _strasseFull: string;
   var _FirstNummernPos, _LastNummernPos: Integer);
 var
@@ -686,17 +672,6 @@ end;
 function StrassenNameIdentisch(a, b: string): boolean;
 begin
   result := (a = b) or (StrasseUnify(a) = StrasseUnify(b));
-end;
-
-function StrassePostalisch(s: string): string;
-begin
-  result :=
-  { } RemoveDoubleBlank(
-    { } nextp(
-    { } nextp(
-    { } StrFilter(
-    { } s, '!?', true),
-    { } '@', 0), '#', 0));
 end;
 
 function LieferzeitToStr(i: TAnfixTime): string;
@@ -3384,20 +3359,16 @@ begin
         { [5] }
         result.Add(FieldByName('ZAEHLER_NUMMER').AsString);
         { [6] }
-        result.Add(RemoveDoubleBlank(FieldByName('BRIEF_NAME1').AsString));
+        result.Add(noDoubleBlank(FieldByName('BRIEF_NAME1').AsString));
         { [7] }
         result.Add(StrassePostalisch(FieldByName('BRIEF_STRASSE').AsString));
         { [8] }
-        result.Add(
-          { } nextp(
-          { } StrFilter(
-          { } FieldByName('KUNDE_ORT').AsString, '!?', true),
-          { } '@', 0));
+        result.Add(OrtPostalisch(FieldByName('KUNDE_ORT').AsString));
         { [9] }
         if FieldByName('KUNDE_NAME1').IsNull then
           result.Add(result[6])
         else
-          result.Add(RemoveDoubleBlank(FieldByName('KUNDE_NAME1').AsString));
+          result.Add(noDoubleBlank(FieldByName('KUNDE_NAME1').AsString));
         { [10] }
         result.Add(StrassePostalisch(FieldByName('KUNDE_STRASSE').AsString));
         { [11] }
@@ -3420,13 +3391,13 @@ begin
         else
           result.Add('');
         { [18] }
-        TmpStr := RemoveDoubleBlank(FieldByName('KUNDE_NAME2').AsString);
+        TmpStr := noDoubleBlank(FieldByName('KUNDE_NAME2').AsString);
         if (TmpStr = result[9]) then
           result.Add('')
         else
           result.Add(TmpStr);
         { [19] }
-        TmpStr := RemoveDoubleBlank(FieldByName('BRIEF_NAME2').AsString);
+        TmpStr := noDoubleBlank(FieldByName('BRIEF_NAME2').AsString);
         if (TmpStr = result[6]) then
           result.Add('')
         else

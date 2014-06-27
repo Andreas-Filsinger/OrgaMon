@@ -1494,7 +1494,7 @@ end;
 
 procedure TFormAuftrag.Image3Click(Sender: TObject);
 begin
-  openShell(cHelpURL + 'Auftraege');
+  openShell(cHelpURL + 'Auftrag');
 end;
 
 procedure TFormAuftrag.Image4Click(Sender: TObject);

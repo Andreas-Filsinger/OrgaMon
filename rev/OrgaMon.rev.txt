@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.033 (27.06.14) Andreas Filsinger
+
+ Neu: Foto: Benennung: Strasse und Ort lag nicht in der postalischen Variante vor
+
 Rev 8.032 (04.06.14) Andreas Filsinger
 
  Neu: Datensicherung: ZIP Fragmente von Info-Zip werden nun zuvor gelöscht

@@ -33,15 +33,11 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet6
+    ActivePage = TabSheet3
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 40
@@ -233,10 +229,6 @@ object FormGUI: TFormGUI
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -366,10 +358,6 @@ object FormGUI: TFormGUI
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 16
         Top = 24
@@ -727,14 +715,19 @@ object FormGUI: TFormGUI
         State = cbChecked
         TabOrder = 29
       end
+      object Button23: TButton
+        Left = 257
+        Top = 423
+        Width = 120
+        Height = 25
+        Caption = 'freie Ger'#228'te-ID'
+        TabOrder = 30
+        OnClick = Button23Click
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -859,10 +852,6 @@ object FormGUI: TFormGUI
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48

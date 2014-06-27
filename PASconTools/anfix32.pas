@@ -127,6 +127,8 @@ function StrFilter(s, Filter: string; DeleteHits: boolean = false)
   : string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
 function noblank(const InpStr: string): string;
+function noDoubleBlank(s: string): string;
+
 function nosemi(const s: string): string;
 
 // Stringgewichtung rumdrehen
@@ -1867,6 +1869,19 @@ begin
       break;
     delete(result, i, 1);
   until false;
+end;
+
+function noDoubleBlank(s: string): string;
+var
+  k: Integer;
+begin
+  repeat
+    k := pos('  ', s);
+    if k = 0 then
+      break;
+    System.Delete(s, k, 1);
+  until false;
+  result := s;
 end;
 
 function cutblank(const InpStr: string): string;
