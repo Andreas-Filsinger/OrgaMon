@@ -2634,9 +2634,13 @@ begin
   Path := sParameter.values[cParameter_foto_Pfad];
   AUFTRAG_R := strtointdef(sParameter.values[cParameter_foto_RID], cRID_Null);
   sParameter.values[cParameter_foto_strasse] :=
-    asci(sParameter.values[cParameter_foto_strasse]);
+    {} asci(
+    {} StrassePostalisch(
+    {} sParameter.values[cParameter_foto_strasse]));
   sParameter.values[cParameter_foto_ort] :=
-    asci(sParameter.values[cParameter_foto_ort]);
+    {} asci(
+    {} OrtPostalisch(
+    {} sParameter.values[cParameter_foto_ort]));
   FotoDateiNameBisher := sParameter.values[cParameter_foto_Datei];
   UmbenennungAbgeschlossen := false;
   FN_Kurz := false;

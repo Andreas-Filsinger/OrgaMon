@@ -33,7 +33,7 @@ uses
 
 const
   cApplicationName = 'JonDaServer';
-  version: single = 2.206; // ..\rev\JonDaServer.rev.txt
+  version: single = 2.207; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
   cVersion_JonDa : single = 1.118;
@@ -229,6 +229,9 @@ type
 
   // RID;Z#A-Korrektur;Z#N;ZSN;ZSA;R#-Korrektur;R#-Neu;Protokoll;Datum-Ist;Uhr-Ist
 
+function StrassePostalisch(s: string): string;
+function OrtPostalisch(s: string): string;
+
 implementation
 
 uses
@@ -342,6 +345,24 @@ begin
   end;
   AllTheMandanten.free;
   MyIni.free;
+end;
+
+function StrassePostalisch(s: string): string;
+begin
+  result :=
+  { } noDoubleBlank(
+    { } nextp(
+    { } nextp(
+    { } StrFilter(
+    { } s, '!?', true),
+    { } '@', 0), '#', 0));
+end;
+function OrtPostalisch(s: string): string;
+begin
+  result := nextp(
+    { } StrFilter(
+    { } s, '!?', true),
+    { } '@', 0)
 end;
 
 begin
