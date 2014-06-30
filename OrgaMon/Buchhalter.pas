@@ -1836,10 +1836,25 @@ end;
 
 procedure TFormBuchhalter.Button22Click(Sender: TObject);
 begin
-  if sForderungen.count = 1 then
-    showBeleg(0)
-  else
-    BelegMode := true;
+
+  if BelegMode then
+  begin
+     Button22.caption := 'ù';
+     BelegMode := false;
+  end;
+
+  if (sForderungen.count > 0) then
+  begin
+    if (sForderungen.count = 1) then
+    begin
+      showBeleg(0)
+    end else
+    begin
+      BelegMode := true;
+      Button22.caption := 's';
+      ShowMessageTimeOut('Es gibt mehrere Belege, klicken Sie auf die Tabelle um einen auszuw‰hlen!');
+    end;
+  end;
 end;
 
 procedure TFormBuchhalter.Button23Click(Sender: TObject);
@@ -5844,18 +5859,17 @@ var
   FName: string;
 begin
   sLine := sForderungen[ForderungINdex];
-
   BELEG_R := StrToIntDef(nextp(sLine, ';', 2), cRID_Null);
   TEILLIEFERUNG := StrToIntDef(nextp(sLine, ';', 3), cRID_Null);
   PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' +
     inttostr(BELEG_R));
-  FName := MyProgramPath + 'Rechnungen\' + inttostrN(PERSON_R, 10) + '\' +
-    inttostrN(BELEG_R, 10) + '-' + inttostrN(TEILLIEFERUNG, 2) + '.html';
+  FName := RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG);
   if FileExists(FName) then
     openShell(FName)
   else
     ShowMessage(FName + #13 + 'nicht gefunden!');
   BelegMode := false;
+  Button22.caption := 'ù';
 end;
 
 procedure TFormBuchhalter.SpeedButton9Click(Sender: TObject);

@@ -71,7 +71,7 @@ type
     procedure setSQL;
   public
     { Public-Deklarationen }
-    procedure SetContext(PERSON_R: integer);
+    procedure SetContext(PERSON_R: Integer);
   end;
 
 var
@@ -87,111 +87,61 @@ uses
   Person, Belege,
   AusgangsRechnungen, anfix32,
   geld, dbOrgaMon, Rechnungen,
-   ZahlungECconnect, wanfix32;
+  ZahlungECconnect, wanfix32;
 
 {$R *.dfm}
 
 const
-  sSQL_NurUnbezahlte =
-' select'+
-'  VERSAND.RECHNUNG,'+
-'  VERSAND.LIEFERBETRAG,'+
-'  (select'+
-'    SUM(-B.BETRAG)'+
-'   from'+
-'    AUSGANGSRECHNUNG B'+
-'   where'+
-'    (VERSAND.BELEG_R=B.BELEG_R) and'+
-'    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and'+
-'    ((B.VORGANG<>'''+cVorgang_Rechnung+''') or (B.VORGANG is null))'+
-'   ) as DAVON_BEZAHLT,'+
-'  VERSAND.BELEG_R,'+
-'  VERSAND.TEILLIEFERUNG,'+
-'  VERSAND.AUSGANG,'+
-'  BELEG.MAHNSTUFE,'+
-'  PERSON.RID as PERSON_R,'+
-'  PERSON.SUCHBEGRIFF'+
-' from'+
-'  VERSAND'+
-' join'+
-'  BELEG'+
-' on'+
-'  (BELEG.RID=VERSAND.BELEG_R)'+
-' join'+
-'  PERSON'+
-' on'+
-'  (PERSON.RID=BELEG.PERSON_R)'+
-' where'+
-'  (VERSAND.RECHNUNG is not null) and'+
-'  (VERSAND.AUSGANG>CURRENT_DATE-365) and'+
-'  (VERSAND.LIEFERBETRAG > coalesce('+
-'   (select'+
-'      -SUM(B.BETRAG)'+
-'    from'+
-'     AUSGANGSRECHNUNG B'+
-'    where'+
-'     (VERSAND.BELEG_R=B.BELEG_R) and'+
-'     (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and'+
-'     ((B.VORGANG<>'''+cVorgang_Rechnung+''') or (B.VORGANG is null))'+
-'   ),0.0) + 0.01) and'+
+  sSQL_NurUnbezahlte = ' select' + '  VERSAND.RECHNUNG,' +
+    '  VERSAND.LIEFERBETRAG,' + '  (select' + '    SUM(-B.BETRAG)' + '   from' +
+    '    AUSGANGSRECHNUNG B' + '   where' +
+    '    (VERSAND.BELEG_R=B.BELEG_R) and' +
+    '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' + '    ((B.VORGANG<>''' +
+    cVorgang_Rechnung + ''') or (B.VORGANG is null))' + '   ) as DAVON_BEZAHLT,'
+    + '  VERSAND.BELEG_R,' + '  VERSAND.TEILLIEFERUNG,' + '  VERSAND.AUSGANG,' +
+    '  BELEG.MAHNSTUFE,' + '  PERSON.RID as PERSON_R,' + '  PERSON.SUCHBEGRIFF'
+    + ' from' + '  VERSAND' + ' join' + '  BELEG' + ' on' +
+    '  (BELEG.RID=VERSAND.BELEG_R)' + ' join' + '  PERSON' + ' on' +
+    '  (PERSON.RID=BELEG.PERSON_R)' + ' where' +
+    '  (VERSAND.RECHNUNG is not null) and' +
+    '  (VERSAND.AUSGANG>CURRENT_DATE-365) and' +
+    '  (VERSAND.LIEFERBETRAG > coalesce(' + '   (select' +
+    '      -SUM(B.BETRAG)' + '    from' + '     AUSGANGSRECHNUNG B' +
+    '    where' + '     (VERSAND.BELEG_R=B.BELEG_R) and' +
+    '     (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' + '     ((B.VORGANG<>'''
+    + cVorgang_Rechnung + ''') or (B.VORGANG is null))' +
+    '   ),0.0) + 0.01) and' +
 
-' ((select'+
-'    SUM(B.BETRAG)'+
-'  from'+
-'    AUSGANGSRECHNUNG B'+
-'  where'+
-'   (VERSAND.BELEG_R=B.BELEG_R))>0.01)'+
-' order by'+
-'  VERSAND.AUSGANG descending ';
+    ' ((select' + '    SUM(B.BETRAG)' + '  from' + '    AUSGANGSRECHNUNG B' +
+    '  where' + '   (VERSAND.BELEG_R=B.BELEG_R))>0.01)' + ' order by' +
+    '  VERSAND.AUSGANG descending ';
 
-
-  sSQL_Alle =
-' select'+
-'  VERSAND.RECHNUNG,'+
-'  VERSAND.LIEFERBETRAG,'+
-'  (select'+
-'    SUM(-B.BETRAG)'+
-'   from'+
-'    AUSGANGSRECHNUNG B'+
-'   where'+
-'    (VERSAND.BELEG_R=B.BELEG_R) and'+
-'    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and'+
-'    ((B.VORGANG<>'''+cVorgang_Rechnung+''') or (B.VORGANG is null))'+
-'   ) as DAVON_BEZAHLT,'+
-'  VERSAND.BELEG_R,'+
-'  VERSAND.TEILLIEFERUNG,'+
-'  VERSAND.AUSGANG,'+
-'  BELEG.MAHNSTUFE,'+
-'  PERSON.RID as PERSON_R,'+
-'  PERSON.SUCHBEGRIFF'+
-' from'+
-'  VERSAND'+
-' join'+
-'  BELEG'+
-' on'+
-'  (BELEG.RID=VERSAND.BELEG_R)'+
-' join'+
-'  PERSON'+
-' on'+
-'  (PERSON.RID=BELEG.PERSON_R)'+
-' where'+
-'  (VERSAND.RECHNUNG is not null) and'+
-'  (VERSAND.AUSGANG>CURRENT_DATE-365) '+
-' order by'+
-'  VERSAND.AUSGANG descending ';
-
+  sSQL_Alle = ' select' + '  VERSAND.RECHNUNG,' + '  VERSAND.LIEFERBETRAG,' +
+    '  (select' + '    SUM(-B.BETRAG)' + '   from' + '    AUSGANGSRECHNUNG B' +
+    '   where' + '    (VERSAND.BELEG_R=B.BELEG_R) and' +
+    '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' + '    ((B.VORGANG<>''' +
+    cVorgang_Rechnung + ''') or (B.VORGANG is null))' + '   ) as DAVON_BEZAHLT,'
+    + '  VERSAND.BELEG_R,' + '  VERSAND.TEILLIEFERUNG,' + '  VERSAND.AUSGANG,' +
+    '  BELEG.MAHNSTUFE,' + '  PERSON.RID as PERSON_R,' + '  PERSON.SUCHBEGRIFF'
+    + ' from' + '  VERSAND' + ' join' + '  BELEG' + ' on' +
+    '  (BELEG.RID=VERSAND.BELEG_R)' + ' join' + '  PERSON' + ' on' +
+    '  (PERSON.RID=BELEG.PERSON_R)' + ' where' +
+    '  (VERSAND.RECHNUNG is not null) and' +
+    '  (VERSAND.AUSGANG>CURRENT_DATE-365) ' + ' order by' +
+    '  VERSAND.AUSGANG descending ';
 
 procedure TFormRechnungsUebersicht.FormActivate(Sender: TObject);
 begin
   BeginHourGlass;
-  if not (IB_query1.active) then
+  if not(IB_Query1.active) then
   begin
-   with IB_Query1 do
-   begin
-    setSQL;
-    open;
-   end;
-  end else
+    with IB_Query1 do
+    begin
+      setSQL;
+      open;
+    end;
+  end
+  else
     IB_Query1.refresh;
   EndHourGlass;
 end;
@@ -208,63 +158,60 @@ end;
 
 procedure TFormRechnungsUebersicht.Button3Click(Sender: TObject);
 begin
-  FormAusgangsrechnungen.SetContext(
-    IB_Query1.FieldByName('PERSON_R').AsInteger,
+  FormAusgangsrechnungen.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger,
     IB_Query1.FieldByName('BELEG_R').AsInteger,
-    IB_Query1.FieldByName('LIEFERBETRAG').AsDouble+
-    IB_Query1.FieldByName('DAVON_BEZAHLT').AsDouble
-    );
+    IB_Query1.FieldByName('LIEFERBETRAG').AsDouble + IB_Query1.FieldByName
+    ('DAVON_BEZAHLT').AsDouble);
 end;
 
-procedure TFormRechnungsUebersicht.SetContext(PERSON_R: integer);
+procedure TFormRechnungsUebersicht.SetContext(PERSON_R: Integer);
 begin
 
 end;
 
 procedure TFormRechnungsUebersicht.setSQL;
 begin
- with IB_Query1 do
- begin
-   sql.clear;
-   if CheckBox1.Checked then
-    sql.add(sSQL_Alle)
-   else
-    sql.add(sSQL_NurUnbezahlte);
- end;
+  with IB_Query1 do
+  begin
+    sql.clear;
+    if CheckBox1.Checked then
+      sql.add(sSQL_Alle)
+    else
+      sql.add(sSQL_NurUnbezahlte);
+  end;
 end;
 
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);
 begin
-  openShell(MyProgramPath + 'Rechnungen\' + inttostrN(IB_Query1.FieldByName('PERSON_R').AsInteger, 10));
+  openShell(MyProgramPath + cRechnungPath + '\' +
+    RIDasStr(IB_Query1.FieldByName('PERSON_R').AsInteger));
 end;
 
 procedure TFormRechnungsUebersicht.Button4Click(Sender: TObject);
 begin
-  openShell(MyProgramPath +
-    'Rechnungen\' +
-    inttostrN(IB_Query1.FieldByName('PERSON_R').AsInteger, 10) + '\' +
-    inttostrN(IB_Query1.FieldByName('BELEG_R').AsInteger, 10) +
-    '-' +
-    inttostrN(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger, 2) +
-    '.html');
+  with IB_Query1 do
+    openShell(RechnungFName(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger));
 end;
 
 procedure TFormRechnungsUebersicht.Button5Click(Sender: TObject);
 begin
 end;
-//  FormRechnungen.show;
+// FormRechnungen.show;
 
 procedure TFormRechnungsUebersicht.CheckBox1Click(Sender: TObject);
 begin
- IB_Query1.close;
- setSQL;
- IB_Query1.Open;
+  IB_Query1.close;
+  setSQL;
+  IB_Query1.open;
 end;
 
 procedure TFormRechnungsUebersicht.Button18Click(Sender: TObject);
 var
   Bericht: TStringList;
-  PERSON_R: integer;
+  PERSON_R: Integer;
 begin
   PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
   if PERSON_R > 0 then
@@ -279,31 +226,33 @@ procedure TFormRechnungsUebersicht.IB_Grid1GetDisplayText(Sender: TObject;
   ACol, ARow: Integer; var AString: string);
 begin
   if (ARow > 0) then
-      if (AString <> '') then
-       case ACol of
-         2, 3: AString := format('%m', [strtodoubledef(AString, 0.0)]);
-         8: AString := e_r_Person(strtointdef(AString,cRID_NULL));
-       end;
+    if (AString <> '') then
+      case ACol of
+        2, 3:
+          AString := format('%m', [strtodoubledef(AString, 0.0)]);
+        8:
+          AString := e_r_Person(strtointdef(AString, cRID_NULL));
+      end;
 end;
 
 procedure TFormRechnungsUebersicht.Image4Click(Sender: TObject);
 begin
-  FormPerson.setContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
+  FormPerson.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
 
   // EC-Karten Event simulieren!
   with FormZahlungECconnect do
   begin
-   Edit1.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_BLZ').AsString;
-   Edit2.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_KONTO').AsString;
-   Edit3.Text := 'NOCARD';
-   FillContext;
-   if (PERSON_R<>FormPerson.IB_Query1.FieldByName('RID').AsInteger) then
-    ShowMEssage('RID='+inttostr(PERSON_R)+' hat dieselben Kontodaten (Dublette?)!')
-   else
-    show;
+    Edit1.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_BLZ').AsString;
+    Edit2.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_KONTO').AsString;
+    Edit3.Text := 'NOCARD';
+    FillContext;
+    if (PERSON_R <> FormPerson.IB_Query1.FieldByName('RID').AsInteger) then
+      ShowMEssage('RID=' + inttostr(PERSON_R) +
+        ' hat dieselben Kontodaten (Dublette?)!')
+    else
+      show;
   end;
 
 end;
 
 end.
-
