@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.034 (30.06.14) Andreas Filsinger
+
+ Neu: Automatischer Forderungsausgleich: Ansicht des Rechnungsbeleges nun auch
+      möglich, wenn es mehrere Belege gibt. Bedienung vereinfacht.
+
 Rev 8.033 (27.06.14) Andreas Filsinger
 
  Neu: Foto: Benennung: Strasse und Ort lag nicht in der postalischen Variante vor

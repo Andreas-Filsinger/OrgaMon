@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.033; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.034; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1448,6 +1448,7 @@ procedure EnsureHourGlass;
 procedure EndHourGlass;
 procedure EnsureDefaultCursor;
 function MahnungFName(PERSON_R: integer): string;
+function RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG: integer): string;
 
 // Allgemeine String Utils
 function bool2cO(b: boolean): string;
@@ -1910,6 +1911,16 @@ function MahnungFName(PERSON_R: integer): string;
 begin
   result := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\' +
     cHTML_MahnungFName;
+end;
+
+function RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG: integer): string;
+begin
+  result :=
+  { } MyProgramPath + cRechnungPath + '\' +
+  { } RIDasStr(PERSON_R) + '\' +
+  { } RIDasStr(BELEG_R) + '-' +
+  { } inttostrN(TEILLIEFERUNG, 2) +
+  { } '.html';
 end;
 
 const
