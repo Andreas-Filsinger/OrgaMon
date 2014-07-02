@@ -3,14 +3,14 @@
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.698,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\binlager32.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.716,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\gplists.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.517,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\CCR Exif\CCR.Exif.XMPUtils.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.721,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\anfix32.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.950,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\DCPcrypt\Ciphers\DCPblowfish.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.612,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASvisTools\wanfix32.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.857,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\html.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.714,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\DCPcrypt\DCPconst.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.924,C:\Users\Andreas\Documents\RAD Studio\Projekte\PicSave\BackupService.dproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\BackupService.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.482,C:\Users\Andreas\Documents\RAD Studio\Projekte\PicSave\BackupService.dproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\PicSave\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.721,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\anfix32.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.517,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\CCR Exif\CCR.Exif.XMPUtils.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.864,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\JonDaExec.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.537,C:\Users\Andreas\Documents\RAD Studio\Projekte\PicSave\FotoService.pas=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\FotoService.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.746,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\globals.pas</Transaction>
@@ -30,14 +30,51 @@
     <Transaction>1899.12.30 00:00:00.000.537,C:\Users\Andreas\Documents\RAD Studio\Projekte\PicSave\FotoService.dfm=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\FotoService.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.905,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\rev\JonDaServer.rev.txt</Transaction>
     <Transaction>1899.12.30 00:00:00.000.615,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\SolidFTP.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.957,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\SimplePassword.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.481,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\rev\BackupService.rev.txt</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.957,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\SimplePassword.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.410,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\CCR Exif\CCR.Exif.StreamHelper.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.495,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\CCR Exif\CCR.Exif.JpegUtils.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.850,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\infozip\infozip.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.904,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\PASconTools\srvXMLRPC.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.542,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\DCPcrypt\DCPcrypt2.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.850,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\infozip\infozip.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.973,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\DCPcrypt\DCPblockciphers.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.901,C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\BackupService.dproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\OrgaMonAppService.dproj</Transaction>
-  </Transactions>
+  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="..\..\OrgaMon"/>
+    <File Path="..\CCR Exif"/>
+    <File Path="..\CCR Exif\CCR.Exif.Consts.pas"/>
+    <File Path="..\CCR Exif\CCR.Exif.JpegUtils.pas"/>
+    <File Path="..\CCR Exif\CCR.Exif.pas"/>
+    <File Path="..\CCR Exif\CCR.Exif.StreamHelper.pas"/>
+    <File Path="..\CCR Exif\CCR.Exif.TagIDs.pas"/>
+    <File Path="..\CCR Exif\CCR.Exif.XMPUtils.pas"/>
+    <File Path="..\DCPcrypt"/>
+    <File Path="..\DCPcrypt\Ciphers"/>
+    <File Path="..\DCPcrypt\Ciphers\DCPblowfish.pas"/>
+    <File Path="..\DCPcrypt\DCPbase64.pas"/>
+    <File Path="..\DCPcrypt\DCPblockciphers.pas"/>
+    <File Path="..\DCPcrypt\DCPconst.pas"/>
+    <File Path="..\DCPcrypt\DCPcrypt2.pas"/>
+    <File Path="..\infozip"/>
+    <File Path="..\infozip\infozip.pas"/>
+    <File Path="..\PASconTools"/>
+    <File Path="..\PASconTools\anfix32.pas"/>
+    <File Path="..\PASconTools\binlager32.pas"/>
+    <File Path="..\PASconTools\CareTakerClient.pas"/>
+    <File Path="..\PASconTools\gplists.pas"/>
+    <File Path="..\PASconTools\html.pas"/>
+    <File Path="..\PASconTools\SimplePassword.pas"/>
+    <File Path="..\PASconTools\SolidFTP.pas"/>
+    <File Path="..\PASconTools\srvXMLRPC.pas"/>
+    <File Path="..\PASconTools\WordIndex.pas"/>
+    <File Path="..\PASvisTools"/>
+    <File Path="..\PASvisTools\wanfix32.pas"/>
+    <File Path="..\rev"/>
+    <File Path="..\rev\JonDaServer.rev.txt"/>
+    <File Path="..\rev\OrgaMonAppService.rev.txt"/>
+    <File Path="FotoService.pas"/>
+    <File Path="FotoService.dfm"/>
+    <File Path="globals.pas"/>
+    <File Path="JonDaExec.pas"/>
+  </ProjectSortOrder>
 </BorlandProject>

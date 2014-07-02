@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.048; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.049; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -426,7 +426,8 @@ end;
 
 procedure TFormFotoService.Button17Click(Sender: TObject);
 begin
- Listbox10.Items.Add(IntToStr(DirSize('X:\JonDaServer\#61') DIV (1024*1024)));
+  ListBox10.Items.Add(inttostr(DirSize('X:\JonDaServer\#61')
+    DIV (1024 * 1024)));
 end;
 
 procedure TFormFotoService.Button4Click(Sender: TObject);
@@ -1976,7 +1977,8 @@ end;
 procedure TFormFotoService.workWartend(All: boolean);
 var
   WARTEND: tsTable;
-  Anfangsbestand: integer;
+  Stat_Anfangsbestand: integer;
+  Stat_NachtragBaustelle: integer;
   MomentTimeout: TANFiXDate;
   CSV: tsTable;
   r, i, k, ro, c: integer;
@@ -2003,6 +2005,7 @@ begin
   ensureGlobals;
   invalidateZaehlerNummerNeuCache;
 
+  Stat_NachtragBaustelle := 0;
   CSV := nil;
   WARTEND := tsTable.Create;
   with WARTEND do
@@ -2010,8 +2013,10 @@ begin
 
     // load+sort
     insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
-    Anfangsbestand := RowCount;
-    SortBy('GERAETENO');
+    Stat_Anfangsbestand := RowCount;
+    SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
+    if Changed then
+      Log('INFO: Frisch sortiert');
 
     // sicherstellen der Spalte
     addCol('BAUSTELLE');
@@ -2043,7 +2048,7 @@ begin
     RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
     ZAEHLER_NUMMER_NEU := '';
 
-    // Hinzunehmen der Baustellen-Info
+    // Nachtrag der Baustellen-Info
     sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
     if (sBaustelle = '') then
       if bOrgaMon.exist(RID) then
@@ -2051,6 +2056,7 @@ begin
         bOrgaMon.get;
         sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
         WARTEND.writeCell(r, 'BAUSTELLE', sBaustelle);
+        inc(Stat_NachtragBaustelle);
       end;
 
     // Ist bei dieser Baustelle eine Umbenennung überhaupt erwünscht?
@@ -2170,7 +2176,6 @@ begin
 
         until true;
       end;
-
       rFoto.Free;
 
     end
@@ -2189,8 +2194,8 @@ begin
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' +
-        FPath + '" fehlt');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "'
+        + FPath + '" fehlt');
       continue;
     end;
 
@@ -2232,7 +2237,7 @@ begin
   bOrgaMon.EndTransaction;
   bOrgaMon.Free;
 
-  if WARTEND.Changed or CheckBox2.Checked then
+  if WARTEND.Changed or CheckBox2.checked then
   begin
 
     // recreate senden.html
@@ -2255,11 +2260,17 @@ begin
     WARTEND.SaveToFile(MyWorkingPath + cFotoUmbenennungAusstehend);
 
     // LOG
-    Log('INFO: ' +
-      { } inttostr(Anfangsbestand - WARTEND.RowCount) +
-      { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
-      { } inttostr(WARTEND.RowCount) +
-      { } ' verbleiben');
+    if (Stat_Anfangsbestand - WARTEND.RowCount > 0) then
+      Log('INFO: ' +
+        { } inttostr(Stat_Anfangsbestand - WARTEND.RowCount) +
+        { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
+        { } inttostr(WARTEND.RowCount) +
+        { } ' verbleiben');
+
+    if (Stat_NachtragBaustelle > 0) then
+      Log('INFO: ' +
+        { } inttostr(Stat_NachtragBaustelle) +
+        { } ' Baustelleninfo(s) wurde(n) nachgetragen');
 
   end;
 

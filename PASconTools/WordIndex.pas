@@ -1831,7 +1831,10 @@ begin
     begin
       n := integer(ClientSorter.Objects[pred(m)]);
       if (n <> m) then
+      begin
         Items[m] := eSave[n];
+        Changed := true;
+      end;
     end;
     OwnsObjects := true;
 

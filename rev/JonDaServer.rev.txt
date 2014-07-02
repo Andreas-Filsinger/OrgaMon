@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 2.208 (01.07.14) Andreas Filsinger
+
+ Neu: Erzeugung der geraete.html jetzt im Rahmen des Abschlusses
+
 Rev 2.207 (27.06.14) Andreas Filsinger
 
  Neu: Foto: Benennung: Strasse und Ort lag nicht in der postalischen Variante vor
