@@ -227,7 +227,11 @@ type
     // REPORT:
     procedure doStat(iFTP: TIdFTP);
 
-    // ADMINISTRATION
+    // MAINTANACE:
+    procedure maintainSENDEN;
+    procedure maintainGERAETE;
+
+    // MAINTANANCE:
     //
     // * Binäres Lager auffrischen
     // * SENDEN.CSV von altem Müll befreien
@@ -279,6 +283,131 @@ begin
       break;
     result := true;
   until true;
+end;
+
+procedure TJonDaExec.maintainGERAETE;
+var
+  sLog: TStringList;
+  n, r: integer;
+  CallDate, HasDate: TANFiXDate;
+  _HasDate: string;
+  GeraeteID: string;
+  sGeraete: TsTable;
+  SingleRow: TStringList;
+  cCol_GERAET, cCol_CALL, cCol_COUNT: integer;
+begin
+
+  // Ergebnistabelle anlegen
+  sGeraete := TsTable.Create;
+  with sGeraete do
+  begin
+    cCol_GERAET := addCol('GERAET');
+    cCol_CALL := addCol('CALL');
+    cCol_COUNT := addCol('COUNT', '0');
+
+    // Tabelle mit besonders interessanten Werte vorbefüllen
+    for n := 1 to 100 do
+    begin
+      SingleRow := TStringList.Create;
+      SingleRow.add(inttostrN(n, 3));
+      SingleRow.add('NAD');
+      SingleRow.add('0');
+      addRow(SingleRow);
+    end;
+
+  end;
+
+  // Log laden und auswerten
+  sLog := TStringList.Create;
+  sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
+  for n := pred(sLog.count) downto 0 do
+  begin
+    if LogMatch(sLog[n], cGeraetSchema) then
+    begin
+      GeraeteID := nextp(sLog[n], ':', 3);
+      if (GeraeteID <> '000') then
+      begin
+        CallDate := Date2Long(nextp(sLog[n], ' ', 2));
+
+        r := sGeraete.locate(cCol_GERAET, GeraeteID);
+        if (r = -1) then
+        begin
+          // Bisher unbekannt
+          SingleRow := TStringList.Create;
+          SingleRow.add(GeraeteID);
+          SingleRow.add(inttostr(CallDate));
+          r := sGeraete.addRow(SingleRow);
+        end
+        else
+        begin
+          repeat
+            _HasDate := sGeraete.readCell(r, cCol_CALL);
+
+            if (_HasDate = 'NAD') then
+            begin
+              sGeraete.writeCell(r, cCol_CALL, inttostr(CallDate));
+              break;
+            end;
+
+            HasDate := strtointdef(_HasDate, cIllegalDate);
+
+            if (HasDate < CallDate) then
+            begin
+              sGeraete.writeCell(r, cCol_CALL, inttostr(CallDate));
+              break;
+            end;
+
+          until true;
+        end;
+        sGeraete.incCell(r, cCol_COUNT);
+
+      end;
+    end;
+  end;
+  sLog.free;
+
+  sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
+  // Ergebnis speichern
+  sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html');
+  sGeraete.free;
+end;
+
+procedure TJonDaExec.maintainSENDEN;
+const
+  cOlderThan = 10;
+var
+  tSENDEN: TsTable;
+  r, c, n: integer;
+  CellDate, d: TANFiXDate;
+begin
+  // Nach "SENDEN" Tabelle protokollieren
+  // IMEI;NAME;ID;MOMENT;TAN;REV
+  tSENDEN := TsTable.Create;
+  with tSENDEN do
+  begin
+    InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+    c := colof('MOMENT', true);
+    d := DatePlus(DateGet, -cOlderThan);
+    // zu alte Zeile löschen
+    for r := 1 to RowCount do
+    begin
+      CellDate := strtointdef(nextp(readCell(r, c), ' ', 0), cIllegalDate);
+      if (CellDate > cIllegalDate) and (CellDate < d) then
+      begin
+        // Löschposition gefunden -> alles ab da löschen!
+        for n := RowCount downto r do
+          Del(n);
+        break;
+      end;
+    end;
+
+    if changed then
+    begin
+      SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
+      SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+    end;
+  end;
+  tSENDEN.free;
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum
@@ -2634,13 +2763,13 @@ begin
   Path := sParameter.values[cParameter_foto_Pfad];
   AUFTRAG_R := strtointdef(sParameter.values[cParameter_foto_RID], cRID_Null);
   sParameter.values[cParameter_foto_strasse] :=
-    {} asci(
-    {} StrassePostalisch(
-    {} sParameter.values[cParameter_foto_strasse]));
+  { } asci(
+    { } StrassePostalisch(
+    { } sParameter.values[cParameter_foto_strasse]));
   sParameter.values[cParameter_foto_ort] :=
-    {} asci(
-    {} OrtPostalisch(
-    {} sParameter.values[cParameter_foto_ort]));
+  { } asci(
+    { } OrtPostalisch(
+    { } sParameter.values[cParameter_foto_ort]));
   FotoDateiNameBisher := sParameter.values[cParameter_foto_Datei];
   UmbenennungAbgeschlossen := false;
   FN_Kurz := false;
@@ -2959,7 +3088,7 @@ begin
   begin
     // leeres Ergebnis
     FatalError(
-    { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
+      { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
   end
   else
   begin
@@ -3171,44 +3300,6 @@ var
         Fname + cBL_FileExtension);
   end;
 
-  procedure ClearSENDEN;
-  const
-    cOlderThan = 10;
-  var
-    tSENDEN: TsTable;
-    r, c, n: integer;
-    CellDate, d: TANFiXDate;
-  begin
-    // Nach "SENDEN" Tabelle protokollieren
-    // IMEI;NAME;ID;MOMENT;TAN;REV
-    tSENDEN := TsTable.Create;
-    with tSENDEN do
-    begin
-      InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
-      c := colof('MOMENT', true);
-      d := DatePlus(DateGet, -cOlderThan);
-      // zu alte Zeile löschen
-      for r := 1 to RowCount do
-      begin
-        CellDate := strtointdef(nextp(readCell(r, c), ' ', 0), cIllegalDate);
-        if (CellDate > cIllegalDate) and (CellDate < d) then
-        begin
-          // Löschposition gefunden -> alles ab da löschen!
-          for n := RowCount downto r do
-            Del(n);
-          break;
-        end;
-      end;
-
-      if changed then
-      begin
-        SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
-        SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
-      end;
-    end;
-    tSENDEN.free;
-  end;
-
 begin
 
   // Datensicherungsverzeichnis!
@@ -3228,7 +3319,10 @@ begin
   Freshen(MyProgramPath + cServerDataPath + 'AUFTRAG+TS');
 
   // SENDEN.CSV neu aufbereiten
-  ClearSENDEN;
+  maintainSENDEN;
+
+  // geraete.html
+  maintainGERAETE;
 
   // imp pend:
   //
@@ -4509,7 +4603,7 @@ begin
       _NUMMERN_PREFIX := readCell(r, cColumnIndex_NUMMERN_PREFIX);
       NUMMERN_PREFIX := copy(_NUMMERN_PREFIX, 1, 6);
       if (_NUMMERN_PREFIX <> NUMMERN_PREFIX) then
-        writecell(
+        writeCell(
           { } r, cColumnIndex_NUMMERN_PREFIX,
           { } NUMMERN_PREFIX);
     end;

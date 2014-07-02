@@ -1522,93 +1522,9 @@ begin
 end;
 
 procedure TFormGUI.Button23Click(Sender: TObject);
-var
-  sLog: TStringList;
-  n, r: integer;
-  CallDate, HasDate: TANFiXDate;
-  _HasDate: string;
-  GeraeteID: string;
-  sGeraete: TsTable;
-  SingleRow: TStringList;
-  cCol_GERAET, cCol_CALL, cCol_COUNT: integer;
-
 begin
   BeginHourGlass;
-
-  // Ergebnistabelle anlegen
-  sGeraete := TsTable.create;
-  with sGeraete do
-  begin
-    cCol_GERAET := addCol('GERAET');
-    cCol_CALL := addCol('CALL');
-    cCol_COUNT := addCol('COUNT', '0');
-
-    // Tabelle der interessanten Werte füllen
-    for n := 1 to 100 do
-    begin
-      SingleRow := TStringList.create;
-      SingleRow.add(inttostrN(n, 3));
-      SingleRow.add('NAD');
-      SingleRow.add('0');
-      addRow(SingleRow);
-    end;
-
-  end;
-
-  // Log laden und auswerten
-  sLog := TStringList.create;
-  sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
-  for n := pred(sLog.count) downto 0 do
-  begin
-    if JonDaX.LogMatch(sLog[n], cGeraetSchema) then
-    begin
-      GeraeteID := nextp(sLog[n], ':', 3);
-      if (GeraeteID <> '000') then
-      begin
-        CallDate := Date2Long(nextp(sLog[n], ' ', 2));
-
-        r := sGeraete.locate(cCol_GERAET, GeraeteID);
-        if (r = -1) then
-        begin
-          // Bisher unbekannt
-          SingleRow := TStringList.create;
-          SingleRow.add(GeraeteID);
-          SingleRow.add(inttostr(CallDate));
-          r := sGeraete.addRow(SingleRow);
-        end
-        else
-        begin
-          repeat
-            _HasDate := sGeraete.readCell(r, cCol_CALL);
-
-            if (_HasDate = 'NAD') then
-            begin
-              sGeraete.writeCell(r, cCol_CALL, inttostr(CallDate));
-              break;
-            end;
-
-            HasDate := strtointdef(_HasDate, cIllegalDate);
-
-            if (HasDate < CallDate) then
-            begin
-              sGeraete.writeCell(r, cCol_CALL, inttostr(CallDate));
-              break;
-            end;
-
-          until true;
-        end;
-        sGeraete.incCell(r, cCol_COUNT);
-
-      end;
-    end;
-  end;
-  sLog.free;
-
-  sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
-  // Ergebnis speichern
-  sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html');
-  sGeraete.free;
-
+  JonDaX.maintainGERAETE;
   EndHourGlass;
 end;
 
