@@ -69,7 +69,8 @@ uses
   Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
   OrientationConvert in '..\PASconTools\OrientationConvert.pas',
   libxml2 in '..\libxml2\libxml2.pas',
-  ExcelHelper in '..\PASconTools\ExcelHelper.pas';
+  ExcelHelper in '..\PASconTools\ExcelHelper.pas',
+  basic32 in '..\PASconTools\basic32.pas';
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);

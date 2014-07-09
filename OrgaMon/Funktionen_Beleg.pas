@@ -1343,8 +1343,8 @@ begin
     with EREIGNIS do
     begin
       sql.add('select * from EREIGNIS');
-{$IFNDEF fpc}
       for_update(sql);
+{$IFNDEF fpc}
       ColumnAttributes.add('RID=NOTREQUIRED');
       ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
@@ -1917,9 +1917,7 @@ begin
         EREIGNIS := nQuery;
         with EREIGNIS do
         begin
-{$IFDEF fpc}
-          Raise exception.create('Columnattributes');
-{$ELSE}
+{$IFNDEF fpc}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
@@ -2000,9 +1998,7 @@ begin
         WARENBEWEGUNG := nQuery;
         with WARENBEWEGUNG do
         begin
-{$IFDEF fpc}
-          Raise exception.create('Columnattributes');
-{$ELSE}
+{$IFNDEF fpc}
           ColumnAttributes.add('RID=NOTREQUIRED');
           ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
@@ -2085,9 +2081,7 @@ begin
           WARENBEWEGUNG := nQuery;
           with WARENBEWEGUNG do
           begin
-{$IFDEF fpc}
-            Raise exception.create('Columnattributes');
-{$ELSE}
+{$IFNDEF fpc}
             ColumnAttributes.add('RID=NOTREQUIRED');
             ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
@@ -3794,9 +3788,7 @@ begin
       with qPosten do
       begin
         sql.add('select * from POSTEN ' + for_update);
-{$IFDEF fpc}
-        raise exception.create('ColumnAttributes');
-{$ELSE}
+{$IFNDEF fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
 {$ENDIF}
         prepare;
@@ -6545,9 +6537,7 @@ begin
       with qBELEG do
       begin
         sql.add('select * from BELEG where RID=' + inttostr(BELEG_R));
-{$IFNDEF fpc}
         for_update(sql);
-{$ENDIF}
         Open;
         First;
         if eof then
@@ -6564,13 +6554,18 @@ begin
         isHaendler := e_r_RabattFaehig(PERSON_R);
       end;
 
+      // Basic-Programm ausführen
+                 e_x_basic(MyProgramPath+cDBASICPath+'BerechneBeleg-1.txt',
+                 {} 'PERSON_R='+IntToStr(PERSON_R)+';'+
+                 {} 'BELEG_R='+IntToStr(BELEG_R));
+
       with qPosten do
       begin
         sql.add('select * from POSTEN where');
         sql.add(INTERN_INFO.values['FILTER' + GENERATION_POSTFIX]);
         sql.add(' (BELEG_R=' + inttostr(BELEG_R) + ')');
-{$IFNDEF fpc}
         for_update(sql);
+{$IFNDEF fpc}
         ColumnAttributes.add('RID=NOTREQUIRED');
 {$ENDIF}
         Open;
@@ -6744,9 +6739,7 @@ begin
                       Close;
                       sql.clear;
                       sql.add('select * from TICKET');
-{$IFNDEF fpc}
                       for_update(sql);
-{$ENDIF}
                       Insert;
                       FieldByName('RID').AsInteger := 0;
                       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -6778,9 +6771,7 @@ begin
                       sql.clear;
                       sql.add('select * from TICKET where RID=' +
                         inttostr(TICKET_R));
-{$IFNDEF fpc}
-                      sql.add(' ' + for_update);
-{$ENDIF}
+                      for_update(sql);
                       Open;
                       First;
 
@@ -7290,9 +7281,7 @@ begin
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-{$IFDEF fpc}
-              raise exception.create('7214:ColumnAttributes');
-{$ELSE}
+{$IFNDEF fpc}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
@@ -7326,10 +7315,7 @@ begin
             qEREIGNIS := nQuery;
             with qEREIGNIS do
             begin
-{$IFDEF fpc}
-              // {$I %FILE%} {$I %LINE%}
-              raise exception.create('7251:ColumnAttributes');
-{$ELSE}
+{$IFNDEF fpc}
               ColumnAttributes.add('RID=NOTREQUIRED');
               ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
 {$ENDIF}
