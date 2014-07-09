@@ -48,7 +48,7 @@ program lOrgaMon;
  =========+=========
  flexcel  | fpspreadsheet! (Lack of Revision Number)
  IBO      | Zeos! (Umlaut OK!)
- infozip  | Abbrevia 5.1! (Reported as 5.0)
+ infozip  | Abbrevia 5.2! (Reported as 5.0)
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
 
 }

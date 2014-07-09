@@ -191,7 +191,7 @@ object FormBelege: TFormBelege
       Top = 24
       Width = 931
       Height = 248
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alBottom
       Anchors = [akLeft, akTop, akRight, akBottom]
       Images = ImageList1
@@ -199,10 +199,6 @@ object FormBelege: TFormBelege
       object TabSheet1: TTabSheet
         Caption = 'Posten'
         ImageIndex = 13
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         DesignSize = (
           923
           219)
@@ -445,9 +441,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 40
+          Top = 41
           Width = 923
-          Height = 179
+          Height = 178
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -457,8 +453,6 @@ object FormBelege: TFormBelege
           TabOrder = 0
           OnCellGainFocus = IB_Grid2CellGainFocus
           OnGetDisplayText = IB_Grid2GetDisplayText
-          ExplicitTop = 38
-          ExplicitHeight = 181
         end
         object IB_NavigationBar2: TIB_NavigationBar
           Left = 71
@@ -817,8 +811,6 @@ object FormBelege: TFormBelege
         Caption = 'Texte'
         Highlighted = True
         ImageIndex = 3
-        ExplicitTop = 24
-        ExplicitHeight = 220
         object Label13: TLabel
           Left = 0
           Top = 120
@@ -2221,7 +2213,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100F40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100F80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

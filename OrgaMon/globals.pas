@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.034; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.035; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -106,6 +106,7 @@ const
   cFotosPath = 'Fotos\';
   cGeraeteKommandos = 'Kommandos\';
   cHBCIPath = 'HBCI\';
+  cDBASICPath = 'D-BASIC\';
 
   cOffeneFensterFName = 'Offene Fenster.txt';
   cBreitengrad_in_m = 111136; // [m]

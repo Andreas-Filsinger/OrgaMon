@@ -135,6 +135,7 @@
 			<DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
 			<DCCReference Include="..\libxml2\libxml2.pas"/>
 			<DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
+			<DCCReference Include="..\PASconTools\basic32.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>

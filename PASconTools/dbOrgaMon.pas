@@ -57,6 +57,7 @@ uses
   gplists,
   WordIndex,
   anfix32,
+  basic32,
   globals;
 
 type
@@ -229,7 +230,7 @@ function nCursor: TdboCursor;
 function nScript: TdboScript;
 
 // Migrations-Tools
-function for_update(s: TStrings = nil) : string;
+function for_update(s: TStrings = nil): string;
 
 { Datenbank Abfragen allgemein }
 function e_r_IsRID(FieldName: string; RID: integer): boolean;
@@ -281,6 +282,10 @@ procedure e_x_sql(s: TStrings); overload;
 procedure e_x_update(s: string; sl: TStringList);
 procedure e_w_dereference(RID: integer; TableN, FieldN: string;
   DeleteIt: boolean = false);
+
+// BASIC Prozessor
+procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
+procedure e_x_basic(FName: string; ParameterS: String =''); overload;
 
 // Datenbank-Server Commit
 procedure e_x_commit;
@@ -1082,7 +1087,7 @@ begin
   if not(active) then
     Open
   else
-   Refresh;
+    Refresh;
   First;
 end;
 
@@ -2005,14 +2010,14 @@ begin
   until true;
 end;
 
-function for_update(s: TStrings = nil):string;
+function for_update(s: TStrings = nil): string;
 begin
 {$IFNDEF fpc}
- if assigned(s) then
-  s.add('for update');
- result := 'for update';
-{$else}
- result := '';
+  if assigned(s) then
+    s.add('for update');
+  result := 'for update';
+{$ELSE}
+  result := '';
 {$ENDIF}
 end;
 
@@ -2347,6 +2352,91 @@ begin
   sl.add(dependencies);
   e_x_dereference(sl, fromref, toref);
   sl.free;
+end;
+
+function ResolveSQL(const VarName: ShortString): ShortString;
+begin
+ if (pos('select',VarName)=1) then
+  result := e_r_sqls(VarName)
+ else
+  e_x_sql(VarName);
+end;
+
+const
+  dbBASIC: TBasicProcessor = nil;
+  dbBASIC_FName_Cache: TStringList = nil;
+
+procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
+var
+  n: integer;
+  sBASIC: TStringList;
+begin
+
+  // Init
+  if (dbBASIC = nil) then
+  begin
+    dbBASIC := TBasicProcessor.create;
+    dbBASIC.DeviceOverride := 'null';
+    dbBASIC.ResolveSQL := ResolveSQL;
+    dbBASIC_FName_Cache := TStringList.create;
+    n := -1;
+  end
+  else
+  begin
+    n := dbBASIC_FName_Cache.indexof(FName);
+  end;
+
+  // Get Script
+  // ACHTUNG: ein einziges Mal (das erste Mal) wird aus dem Dateisystem
+  // das Script geladen, bzw. dessen Existenz geprüft. Danach bleibt es
+  // gecached. Es wird auch nicht mehr auf das ev. spätere Erscheinen
+  // des Skriptes geachtet.
+  if (n = -1) then
+  begin
+    if FileExists(FName) then
+    begin
+      sBASIC := TStringList.create;
+      sBASIC.LoadFromFile(FName);
+    end
+    else
+    begin
+      sBASIC := nil;
+    end;
+    dbBASIC_FName_Cache.AddObject(FName, sBASIC);
+  end
+  else
+  begin
+    sBASIC := TStringList(dbBASIC_FName_Cache.Objects[n]);
+  end;
+
+  // Execute
+  if assigned(sBASIC) then
+  begin
+
+    with dbBASIC do
+    begin
+
+      // Übernahme der ParameterL
+      for n := 0 to pred(ParameterL.count) do
+        WriteVal(nextp(ParameterL[n], '=', 0), nextp(ParameterL[n], '=', 1));
+
+      // RUN
+      Assign(sBASIC);
+      RUN;
+    end;
+
+  end;
+end;
+
+procedure e_x_basic(FName: string; ParameterS: String =''); overload;
+var
+ ParameterL : TStringList;
+begin
+ ParameterL := TStringList.create;
+ while (ParameterS<>'') do
+  ParameterL.Add(nextp(ParameterS));
+ e_x_basic(FName,ParameterL);
+ ParameterL.Free;
 end;
 
 end.

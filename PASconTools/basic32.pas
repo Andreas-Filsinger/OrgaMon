@@ -306,11 +306,10 @@ implementation
 uses
   winspool, windows, math,
   graphics, Printers, SysUtils,
-  anfix32,
 {$IFNDEF CONSOLE}
   wanfix32,
 {$ENDIF}
-  jvimage;
+  anfix32;
 
 const
   OpenMakroId = 011;
@@ -2312,15 +2311,6 @@ begin
   until (eoe) or (BasicError > 0);
 end;
 
-{ 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-  Execute f갿rt eine Zeile aus.
-
-  3 Restm봥lichkeiten bleiben:
-
-  1. GOTO "LABEL"
-  3. GOTO LineNumber (durch "RETURN")
-  컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
-
 function TBasicProcessor.RUN(StartLineNumber: integer = 0): boolean;
 var
   x: string;
@@ -2565,6 +2555,7 @@ begin
         DruckStueckTitel := 'RUN#' + inttostr(DruckStueckZaehler);
       Title := DruckStueckTitel;
 
+      {$IFNDEF FPC}
       //
       GetPrinter(Device, Driver, Port, DevMode);
       // force reload of DEVMODE
@@ -2594,6 +2585,7 @@ begin
             GlobalUnlock(DevMode); // unlock devmode handle.
           end;
       end; { If }
+      {$ENDIF}
       BeginDoc;
       canvas.font.size := -8;
       canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
