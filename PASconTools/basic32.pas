@@ -75,15 +75,15 @@ const
   TOOMANYIDS = 1; { zuviele Objekte pro Zeile }
   NOMACROCLOSE = 2; { "Ø" nicht vorhanden }
   NOQUOTECLOSE = 3; { """ nicht vorhanden }
-  LABELTOOLONG = 4; { Label-Bezeichnung zu lang }
-  DUPLABEL = 5; { Label bereits vergeben }
-  TOOMANYLABELS = 6; { Zu viele Labels }
+  LABELTOOLONG = 4; { Sprungmarken-Bezeichnung zu lang }
+  DUPLABEL = 5; { Sprungmarke bereits vergeben }
+  TOOMANYLABELS = 6; { Zu viele Sprungmarken }
   GOSUBSTACKOVERFLOW = 7; { Zu tiefe Verschachtelung oder Rekursion }
   GOSUBSTACKUNDERFLOW = 8; { RETURN ohne vorherigen GOSUB-Aufruf }
   UNKOWNLABEL = 9; { Sprungmarke unbekannt }
   SYNTAXERROR = 10; { Anweisung unverstÑndlich }
   VAREXPECTED = 11; { Variabel erwartet }
-  ERRORINLABEL = 12; { Fehler im Label }
+  ERRORINLABEL = 12; { Fehler in Sprungmarke }
   USERBREAK = 13; { Abbruch durch ABORT }
   VARFORMERROR = 14; { kein gÅltiger Variablen-Eintrag }
   DIVISIONBYZERRO = 15; { Division durch "0" }
@@ -116,7 +116,7 @@ const
   BasicErrorStrings: array [0 .. BASICLASTERROR] of AnsiString = ('OK',
     'zuviele Objekte pro Zeile', OIdCloseMakro + ' erwartet',
     OIdQuote + ' erwartet', 'Sprungmarke zu lang',
-    'Sprungmarke bereits vergeben', 'Zu viele Labels',
+    'Sprungmarke bereits vergeben', 'Zu viele Sprungmarke',
     'Zu tiefe GOSUB-Verschachtelung oder Rekursion',
     'RETURN ohne vorherigen GOSUB-Aufruf', 'Sprungmarke unbekannt',
     'Anweisung unverst‰ndlich', 'Variable erwartet',
