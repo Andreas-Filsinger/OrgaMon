@@ -46,6 +46,7 @@ Source: "gnu-gpl-twebshop.txt"; DestDir: "{app}";
 Source: "config.php"; DestDir: "{app}"; DestName: "config-distribution.php";
 Source: "id.sig"; DestDir: "{app}";
 Source: "index.php"; DestDir: "{app}";
+Source: "shop.php"; DestDir: "{app}";
 Source: "tpicupload.php"; DestDir: "{app}";
 Source: "viewer.php"; DestDir: "{app}";
 Source: "favicon.ico"; DestDir: "{app}"; Flags:onlyifdoesntexist
