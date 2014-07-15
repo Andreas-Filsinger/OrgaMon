@@ -25,7 +25,8 @@ class twebshop_article extends tvisual {
     public $images = array();
     public $sounds = array();
     public $members = array();
-
+    private $autoplay = false;
+    
     const MEDIUM_R_SOUND = TWEBSHOP_ARTICLE_MEDIUM_R_SOUND;
     const MEDIUM_R_IMAGE = TWEBSHOP_ARTICLE_MEDIUM_R_IMAGE;
     const CONTEXT_R_RECORD = TWEBSHOP_ARTICLE_CONTEXT_R_RECORD;
@@ -133,21 +134,132 @@ class twebshop_article extends tvisual {
         return $this->NUMERO;
     }
 
-    public function getSounds() { //Hörproben (Demo) // $this->sounds = file_search($path,"^({$this->getMediaName()})[a-zA-Z]{0,1}\.[mM]{1}[pP]{1}(3)$");
+    /* --> 27.06.2014 michaelhacksoftware : Nur tatsächlich abspielbare Lieder und Links trennen */
+    public function getSounds($OnlyPlayable) {
+
         global $ibase;
 
-        $result = $ibase->query("SELECT BEMERKUNG FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_SOUND . " AND ARTIKEL_R={$this->rid})");
-        while ($data = $ibase->fetch_object($result)) {
-            $sounds = preg_split("/((\r)*(\n)+)+/", $ibase->get_blob($data->BEMERKUNG, 4096));
-            foreach ($sounds as $sound)
-                if ($sound != "")
-                    $this->sounds[] = new twebshop_article_link(self::encryptRID($this->rid), $this->TITEL, $sound);
+        /* === Lieder aus Datenbank laden === */
+        if (empty($this->sounds)) {
+        
+            $result = $ibase->query("SELECT BEMERKUNG FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_SOUND . " AND ARTIKEL_R={$this->rid})");
+            while ($data = $ibase->fetch_object($result)) {
+
+                $Items = preg_split("/((\r)*(\n)+)+/", $ibase->get_blob($data->BEMERKUNG, 4096));
+
+                foreach ($Items as $Item) {
+                
+                    if ($Item == "") continue;
+
+                    /* === Links auf Windbandmusic überprüfen ### Sonderlösung ### === */
+                    if (strtolower(substr($Item, 0, 28)) == "http://www.windbandmusic.com") {
+                        $Music = $this->getWindbandmusic($Item);
+                        $this->sounds = array_merge($this->sounds, $Music);
+                    } else {
+                        $this->sounds[] = $Item;
+                    }
+
+                }
+
+            }
+            $ibase->free_result($result);
+
         }
-        $ibase->free_result($result);
 
-        return $this->sounds;
+        $Sounds = array();
+
+        foreach ($this->sounds as $Sound) {
+
+            /* === Abspielbare Lieder anhand Endung ermitteln === */
+            if (strtolower(substr($Sound, -4)) == ".mp3") {
+                $Playable = true;
+            } else {
+                $Playable = false;
+            }
+
+            /* === Abspielbare Lieder und Links trennen === */
+            if ($OnlyPlayable) {
+                if ($Playable)  $Sounds[] = $Sound;
+            } else {
+                if (!$Playable) $Sounds[] = new twebshop_article_link(self::encryptRID($this->rid), $this->TITEL, $Sound);
+            }
+
+        }
+
+        return $Sounds;
+
     }
+    /* <-- */
 
+    /* --> 27.06.2014 michaelhacksoftware : JavaScript Code zum Abspielen der Titel generieren */
+    public function getPlayCode() {
+
+        /* === Alle abspielbaren Titel laden === */
+        $Sounds = $this->getSounds(true);
+        if (!count($Sounds)) return "";
+        
+        /* === JavaScript Code generieren === */
+        $Code = "<script type=\"text/javascript\">"
+              . "function PlayTitle_" . $this->NUMERO . "() {"
+              . "var play = !parent.isPlaying;";
+
+        // Alle Titel hinzufügen
+        for ($i = 0; $i < count($Sounds); $i++) {
+            $Code .= "parent.myPlaylist.add({"
+                  .  "title:\"" . $this->TITEL . ($i > 0 ? " (" . $i . ")" : "") . "\", artist:\"" . $this-> getComposer() . "\", mp3:\"" . $Sounds[$i] . "\""
+                  .  "}, " . (!$i ? "play" : "false") . ");";
+        }
+
+        $Code .= "}";
+
+        // Evtl. Autoplay einfügen
+        if ($this->autoplay) {
+            $Code .= "PlayTitle_" . $this->NUMERO . "();";
+        }
+        
+        $Code .= "</script>";
+
+        return $Code;
+
+    }
+    /* <-- */
+
+    /* --> 27.06.2014 michaelhacksoftware : MP3s von Windbandmusic ermitteln ### Sonderlösung ### */
+    private function getWindbandmusic($Url) {
+
+        $Result = array();
+
+        /* === URL und Query String parsen, um an die ID zu kommen === */
+        $QueryString = parse_url($Url, PHP_URL_QUERY);
+        parse_str($QueryString, $Query);
+
+        if (!isset($Query['id'])) return $Result;
+
+        /* === Mp3 Dateien von Windbandmusic auslesen === */
+        $Lines = file("http://www.windbandmusic.com/index.php5?action=get_media&id=" . urlencode($Query['id']), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        foreach ($Lines as $Line) {
+        
+            $Parts = explode('\n', $Line);
+
+            foreach ($Parts as $Part) {
+                if ($Part == "") continue;
+                $Result[] = "http://www.windbandmusic.com/music/" . $Part; // Link zur Datei zusammensetzen
+            }
+
+        }
+
+        return $Result;
+
+    }
+    /* <-- */
+
+    /* --> 07.07.2014 michaelhacksoftware : AutoPlay setzen */
+    public function setAutoPlay() {
+        $this->autoplay = true;
+    }
+    /* <-- */
+    
     public function existRecords() { //Tonträger (CD)
         global $ibase;
         $sql = "SELECT COUNT(*) FROM " . TABLE_ARTICLE_MEMBER . " WHERE (ARTIKEL_R={$this->rid}) AND (MASTER_R != {$this->rid}) AND (CONTEXT_R=" . self::CONTEXT_R_RECORD . ")";

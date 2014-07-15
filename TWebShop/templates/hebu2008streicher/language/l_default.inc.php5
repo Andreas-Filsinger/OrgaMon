@@ -88,7 +88,7 @@
 @define("WORD_DATE_OF_DELIVERY","Versendedatum");
 @define("WORD_DELIVERY_ADDRESS","Lieferanschrift");
 @define("WORD_DEMO","H&ouml;rprobe");
-@define("WORD_DEMOS","H&ouml;rproben");
+@define("WORD_DEMOS","Media");
 @define("WORD_DEPOSITOR","Kontoinhaber");
 @define("WORD_DESCRIPTION","Beschreibung");
 @define("WORD_DETAILS","Detailinformation");
@@ -142,6 +142,8 @@
 @define("WORD_PASSWORD","Passwort");
 @define("WORD_PATH","Pfad");
 @define("WORD_PHONE","Telefon");
+@define("WORD_PLAY","Demo");
+@define("WORD_PLAYER","Player");
 @define("WORD_PORTUGAL","Portugal");
 @define("WORD_PREVIEW","Vorschau");
 @define("WORD_PRICE","Preis");

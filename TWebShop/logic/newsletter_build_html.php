@@ -38,7 +38,8 @@ function get_articles($params) {
         $article->addOption("CART", _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_CART);
         if (defined("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DETAILS"))
             $article->addOption("DETAILS", _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DETAILS);
-        $article->addOption("DEMO", (count($article->getSounds()) > 0) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DEMO : "");
+        $article->addOption("PLAY", (count($article->getSounds(true))  > 0) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_PLAY : "");
+        $article->addOption("DEMO", (count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DEMO : "");
         $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_MINISCORE : ""));
         $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_RECORDS : ""));
         $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_THUMB : "");

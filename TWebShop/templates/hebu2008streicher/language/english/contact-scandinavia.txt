@@ -3,4 +3,4 @@ Postboks 5 Alnabru
 NO-614 Oslo
 Tel.: +47 2303 9555
 Fax: +47 2303 9559
-<a href="mailto:post@noteservice.no">email</a> / <a href="http://www.noteservice.no">homepage</a>
+<a href="mailto:post@noteservice.no">email</a> / <a href="http://www.noteservice.no" target="_top">homepage</a>

@@ -9,9 +9,9 @@ if ($site->isActive())
   $shop->saveVars("s_demo",array("id"));
 
   $article = new twebshop_article($id);
-  $article->getSounds();
+  $sounds  = $article->getSounds(false);
   
-  foreach($article->sounds as $link)
+  foreach($sounds as $link)
   { $link->addOption("BROKEN_LINK",_TEMPLATE_ARTICLE_LINK_DEMO_OPTION_BROKEN_LINK);
     $site->appendComponent("OBJ_LINK", $link->getFromHTMLTemplate(_TEMPLATE_ARTICLE_LINK_DEMO));
   }

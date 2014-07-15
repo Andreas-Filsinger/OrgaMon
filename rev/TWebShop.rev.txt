@@ -13,6 +13,15 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2013 by Alexander Knam
 // INFO END
 
+Rev 3.025 (14.07.14) Michael Hack
+
+ Neu: Integrierter Musikplayer auf Basis des 'jPlayers'
+      - Mit Playliste
+      - Persistente Wiedergabe durch Kapselung des Shops im iFrame
+      - Abfrage externer Musikdateien
+
+ Neu: Action 'AutoPlay' für die Wiedergabe im Newsletter
+
 Rev 3.024 (15.01.14) Andreas Filsinger
 
  Neu: Verlagslinks angepasst

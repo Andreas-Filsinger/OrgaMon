@@ -141,6 +141,8 @@ define("WORD_PAGE","page");
 define("WORD_PASSWORD","password");
 define("WORD_PATH","path");
 define("WORD_PHONE","phone");
+define("WORD_PLAY","play");
+define("WORD_PLAYER","player");
 define("WORD_PORTUGAL","Portugal");
 define("WORD_PREVIEW","preview");
 define("WORD_PRICE","price");

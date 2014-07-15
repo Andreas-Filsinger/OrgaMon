@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // dient der Identifizierung der Session, ist
 // die ID in der Session unterschiedlich zu der hier
