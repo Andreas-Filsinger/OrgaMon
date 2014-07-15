@@ -27,11 +27,15 @@ function get_revision($infohtml = "", $path = "") {
     return $rev;
 }
 
-function index($absolute = false) {
-    return (!$absolute) ? path_format(basename($_SERVER["PHP_SELF"]), true) : ("http://" . $_SERVER["HTTP_HOST"] . $_SERVER["PHP_SELF"]);
+/* --> 07.07.2014 michaelhacksoftware : Für externe Inhalte, wie Newsletter, den korrekten Pfad auf die Index bereitstellen */
+function geturl_shop() {
+    return path() . FILE_SHOP;
 }
 
-$_INDEX = index();
+function geturl_index() {
+    return path() . FILE_INDEX;
+}
+/* <-- */
 
 function path() {
     return "http://" . $_SERVER["HTTP_HOST"] . pathinfo($_SERVER["PHP_SELF"], PATHINFO_DIRNAME) . "/";

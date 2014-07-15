@@ -1,10 +1,34 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
 <!---  meta http-equiv="expires" content="0" //--->
 <title>~CONST_TWEBSHOP_TITLE~ : ~VAR_SITE_TITLE~</title>
+<script type="text/javascript" src="./js/jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~style.css">
 <link rel="shurtcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
+
+    <script type="text/javascript">
+
+        /* 09.07.2014 michaelhacksoftware : Wenn Seite nicht im iFrame geladen, dann neu laden */
+        if (top.location == self.location) {
+            window.location.href = "~CONST___INDEX_EXT~" + window.location.search;
+        }
+        /* --- */
+        
+        /* 27.06.2014 michaelhacksoftware : jPlayer an die richtige Position setzen */
+        $(document).ready(function() {
+
+            var position = $('.PlayerPosition').position();
+
+            parent.$('#jp_container_1').css('top',  position.top);
+            parent.$('#jp_container_1').css('left', position.left);
+
+        });
+        /* --- */
+
+    </script>
+
 </head>
 
 <body>

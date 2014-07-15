@@ -20,7 +20,8 @@ class tsite {
     private $_steps = array();
     static public $title_separator = " : ";
     static private $deactivated_blocks = array();
-
+    private $autoplay = false;
+    
     const CLASS_NAME = "PHP5CLASS T_SITE";
 
     public function __construct($name = "") {
@@ -78,6 +79,16 @@ class tsite {
     public function deactivateStepByName($name) {
         $this->setStepActiveByName($name, false);
     }
+
+    /* --> 07.07.2014 michaelhacksoftware : AutoPlay für Artikel vormerken */
+    public function getAutoPlay() {
+        return $this->autoplay;
+    }
+
+    public function setAutoPlay() {
+        $this->autoplay = true;
+    }
+    /* <-- */
 
     private function setStepActiveByName($name, $active) {
         foreach ($this->_steps as $index => $_step) {

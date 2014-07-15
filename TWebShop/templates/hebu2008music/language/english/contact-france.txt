@@ -3,11 +3,11 @@
 F-59510 Hem
 Tel.: +33 (0) 3 20 83 78 32
 Fax: +33 (0) 3 20 82 83 91
-<a href="mailto:hmmo@hmmo.com">email</a> / <a href="http://www.hmmo.com/">homepage</a>
+<a href="mailto:hmmo@hmmo.com">email</a> / <a href="http://www.hmmo.com/" target="_top">homepage</a>
 
 Editions Robert Martin
 106, Grand rue de la Coupée
 F-71850 Charnay-Lés-Macon
 Tel.: +33 (0) 3 85 34 46 81
 Fax: +33 (0) 3 85 29 96 16
-<a href="mailto:info@edrmartin.com">email</a> / <a href="http://www.edrmartin.com/">homepage</a>
+<a href="mailto:info@edrmartin.com">email</a> / <a href="http://www.edrmartin.com/" target="_top">homepage</a>

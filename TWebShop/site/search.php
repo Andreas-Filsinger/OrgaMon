@@ -51,6 +51,7 @@ if ($site->isActive()) {
     $site->addComponent("VAR_SORT_ORDER_TYPE", $search->getSortOrderType());
     $site->addComponent("OBJ_SEARCH_RESULT_PAGES", ($search->getHits() > $user->WEBSHOP_TREFFERPROSEITE) ? $search_result_pages->getFromHTMLTemplate() : "");
     $site->addComponent("OBJ_ARTICLE", "");  //wird unten erweitert
+    $site->addComponent("OBJ_PLAY", "");
 
     $performance->addToken("search_obj_articles");
     for ($i = $search_result_pages->getItemStartIndex(); $i <= $search_result_pages->getItemStopIndex(); $i++) {
@@ -59,12 +60,14 @@ if ($site->isActive()) {
         $article->addOption("CART", _TEMPLATE_ARTICLE_SEARCH_OPTION_CART);
         if (defined("_TEMPLATE_ARTICLE_SEARCH_OPTION_DETAILS"))
             $article->addOption("DETAILS", _TEMPLATE_ARTICLE_SEARCH_OPTION_DETAILS);
-        $article->addOption("DEMO", (count($article->getSounds()) > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_DEMO : "");
+        $article->addOption("PLAY", (count($article->getSounds(true))  > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_PLAY : "");
+        $article->addOption("DEMO", (count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_DEMO : "");
         $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_MINISCORE : ""));
         $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_SEARCH_OPTION_RECORDS : ""));
         $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_THUMB : "");
         $article->addOption("MP3", ($article->existsMP3Download()) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_MP3 : "" );
         $site->appendComponent("OBJ_ARTICLE", $article->getFromHTMLTemplate($template));
+        $site->appendComponent("OBJ_PLAY", $article->getPlayCode());
         unset($article);
     }
     $performance->getTimeNeededBy("search_obj_articles");

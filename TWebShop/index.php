@@ -1,478 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <?php
 
-//
-// pre init: Prüfen der notwendigen Module
-$i = 0;
-$_PHPEXTENSIONS = array("interbase", "session", "mcrypt", "memcache", "mbstring");
-foreach ($_PHPEXTENSIONS as $_EXTENSION)
-    if (!extension_loaded($_EXTENSION)) {
-        echo "FATAL ERROR: missing PHP-extension: $_EXTENSION<br />";   // => Low-Level-LOG
-        $i++;
+    /*******************************************************************
+     * Shop Index                                                      *
+     *-----------------------------------------------------------------*
+     *                                                                 *
+     * Indexdatei für tWebshop, welche den eigentlich Shop als iFrame  *
+     * einbindet, damit der jPlayer persistent spielen kann. Wenn      *
+     * diese Seite mit Argument aufgerufen wird, werden diese an den   *
+     * Shop weitergegeben.                                             *
+     *                                                                 *
+     * Das im Shop konfigurierte Template wird beachtet.               *
+     *                                                                 *
+     *-----------------------------------------------------------------*
+     * 27.06.2014 | Michael Hack Software | www.michaelhacksoftware.de *
+     *******************************************************************/
+
+    include_once("config.php");
+
+    /* === Parameter an Shop weiterleiten === */
+    $Site = "./shop.php";
+
+    if ($_SERVER['QUERY_STRING']) {
+        $Site .= "?" . $_SERVER['QUERY_STRING'];
     }
 
-// Prüfung der Verschlüsselungsmöglichkeiten    
-if (CRYPT_SHA256 != 1) {
-    echo "FATAL ERROR: CRYPT_SHA256 missing<br />";   // => Low-Level-LOG
-    $i++;
-}
-
-if ($i == 0) {
-
-// richtige PHP-Einstellungen sicherstellen
-    date_default_timezone_set('Europe/Berlin');
-    mb_internal_encoding("UTF-8");
-    ini_set('ibase.timestampformat', "%d.%m.%Y %H:%M:%S");
-    ini_set('ibase.dateformat', "%d.%m.%Y");
-    ini_set('ibase.timeformat', "%H:%M:%S");
-
-
-    // echo ini_get('memory_limit');
-// pre Ring 0, System-Konstanten und Performance-Infrastruktur
-//
-    include_once("./core/performance.php");     // Klasse zum Erfassen der Performance (benötigte Zeiten)
-    tperformance::setTimeStarted();
-    include_once("./FirePHPCore/fb.php");
-
-    // Log-Sample
-    /*
-      if (!fb("Welt","Hallo",FirePHP::INFO)) {
-      echo "fb() funktioniert nicht!";
-      }
-     */
-
-    include_once("./core/global_funcs.php"); // Globale Funktionensammlung
-    include_once("./logic/global_const.php"); // Globale System Konstanten 
-    include_once("./core/errorlist.php");       // Klasse zur Fehlerausgabe
-    //
-// Webshop - Kernel Ring 0 
-//
-
-    include_once("./core/cryption.php");  // Verschlüsselungs-Klasse 
-    include_once("./core/crypt_id.php");        // Klasse zur Verschlüsselung der Datenbank-IDs
-    include_once("./core/shopstate.php");     // Verwaltet den Status der Anwendung, sie wird dadurch StateFull
-    include_once("./core/visual.php");         // Standardklassen, die beerbt werden
-    include_once("./core/global.php");          // Klasse zur Deklaration & Registrierung von globalen Variablen
-    include_once("./core/messagelist.php");     // Klasse zur Meldungsausgabe
-    include_once("./core/stringlist.php");      // Klasse zur Verwaltung von Stringlisten
-    include_once("./core/multistringlist.php"); // Vererbte Klasse zur Verwaltung von Stringlisten von Werten mit mehreren Zeilen 
-    include_once("./core/xmlrpc_client.php");   // XMLRPC - Client 
-    include_once("./core/session.php");         // Klasse zur Erleichterung des Handlings der $_SESSION
-// Webshop - Konfiguration (Optionen hier möglich für die Core-Bibliotheken)
-//
-    include_once("config.php");             // Konfiguration
-// Webshop - Kernel Ring 1 (Abhängigkeiten zur aktuellen Konfiguration möglich)
-//
-    include_once("./core/ibase.php");           // Klasse zur Interbase-Anbindung
-    include_once("./core/site.php");            // Klasse zur Verwaltung von Webseiten
-    include_once("./core/pages.php");           // Klasse zur Verwaltung von Unterseiten (z.B. mehrseitige Suchtrefferanzeige) 
-    include_once("./core/steps.php");           // Klasse zur Abbildung von Einzelschritten als Unterseiten (z.B. Seite Anmelden hat mehrere Schritte)
-    include_once("./core/option.php");          // Klasse zur Abbildung von Benutzer-Optionen
-    include_once("./core/template.php");        // Klasse zur Übergabe von Templates
-    //
-// Webshop - Logik Ring 2 (Shop-Logik-Core)
-//
-    include_once("./logic/orgamon.php");         // OrgaMon-Client-Klasse (nutzt XMLRPC-Client) und OrgaMon-Ereignis-Klasse
-    include_once("./logic/orgatix.php");         // OrgaTix-Klasse 
-    //
-// Webshop - Logik Ring 3 (Shop-Logik für Site-Implementierungen)
-//
-    include_once("./logic/account.php");
-    include_once("./logic/address.php");
-    include_once("./logic/article.php");
-    include_once("./logic/article_context.php");
-    include_once("./logic/article_link.php");
-    include_once("./logic/article_tree.php");
-    include_once("./logic/availability.php");
-    include_once("./logic/bill.php");
-    include_once("./logic/cart.php");
-    include_once("./logic/country.php");
-    include_once("./logic/mailings.php");
-    include_once("./logic/musician.php");
-    include_once("./logic/musician_list.php");
-    include_once("./logic/mymusic.php");
-    include_once("./logic/order_state.php");
-    include_once("./logic/payment_info.php");
-    include_once("./logic/person.php");
-    include_once("./logic/price.php");
-    include_once("./logic/publisher.php");
-    include_once("./logic/twebshop_search.php");
-    include_once("./logic/search_result_pages.php");
-    include_once("./logic/user.php");
-    include_once("./logic/article_variants.php");
-    include_once("./logic/wishlist.php");
-
-// neuer Ring ?, die "_GLOBALS" sind da!
-// Webshop - Ring 4 - "Template, Language" - Phase
-// Webshop - Ring 5 - "Action" - Phase
-// Webshop - Ring 6 - "Site" - Phase
-######## TEMPLATES ##############
-// TEMPLATE AUS COOKIE ERMITTELN
-    if (isset($_COOKIE["c_template"])) {
-        $_TEMPLATE = $_COOKIE["c_template"];
-    }
-
-// TEMPLATE AUS REQUEST ERMITTELN
-    if (isset($_REQUEST["template"])) {
-        $_TEMPLATE = $_REQUEST["template"];
-    }
-
-// TEMPLATE SETZEN (ENTWEDER AUS COOKIE, AUS REQUEST ODER AUS CONFIG.PHP)
-    $_TEMPLATE = (isset($_TEMPLATE)) ? $_TEMPLATE : TWEBSHOP_TEMPLATE;
-
-    define("__TEMPLATE_PATH", __TEMPLATES_PATH . $_TEMPLATE . "/");
-    define("__TEMPLATE_IMAGES_PATH", __TEMPLATE_PATH . "images/");
-
-    if (!is_dir(__TEMPLATE_PATH))
-        die(sprintf(SYS_VARIABLE_SENTENCE_TEMPLATE_PATH_NOT_FOUND, __TEMPLATE_PATH));
-
-// SPRACHDATEIEN LADEN
-### LANGUAGE ###
-    define("__LANGUAGE_PATH", __TEMPLATE_PATH . "language/");
-
-// SPRACHE DES COOKIES ERMITTELN
-    if (isset($_COOKIE["c_language"])) {
-        $_LANGUAGE = $_COOKIE["c_language"];
-    }
-
-// SPRACHE AUS REQUEST ERMITTELN
-    if (isset($_REQUEST["language"])) {
-        $_LANGUAGE = $_REQUEST["language"];
-    }
-
-// SPRACHE AUS REQUEST ERMITTELN, ABWAERTSKOMPATIBILITAET MIT ALTEN TEMPLATE-VERSIONEN
-    if (isset($_REQUEST["lang"])) {
-        $_LANGUAGE = $_REQUEST["lang"];
-    }
-
-// BENUTZERSPRACHE SETZEN
-    $_LANGUAGE = (isset($_LANGUAGE)) ? $_LANGUAGE : DEFAULT_LANGUAGE;
-
-// BENUTZERSPRACHE LADEN
-    if (file_exists($includefile = __LANGUAGE_PATH . "l_" . $_LANGUAGE . ".inc.php5"))
-        include_once($includefile);
-
-// WAS NOCH NICHT DURCH DIE SPRACHDATEI GELADEN WURDE WIRD JETZT MIT DEM STANDARDWERT GELADEN
-    include_once(__LANGUAGE_PATH . "l_default.inc.php5");
-
-#####################
-// TEMPLATES LADEN
-    $templates = file_search(__TEMPLATE_PATH, "^i_template(_[a-z_]+){0,1}.inc.php5$");
-    foreach ($templates as $includefile)
-        include_once(__TEMPLATE_PATH . $includefile);
-    unset($templates);
-    unset($includefile);
-
-#################################
-
-    include_once("./logic/globals.php");            // Deklaration & Registrierung der globalen Variablen
-// WebShop - Ring 7 - "Session gestartet" Phase
-// INIT
-    $errorlist = terrorlist::create("", "#CC0000", __TEMPLATE_IMAGES_PATH . "icon_error.png", _TEMPLATE_ERRORLIST);
-    $errorlist->add($_REGISTRATION_ERRORS);
-    unset($_REGISTRATION_ERRORS);
-
-    $messagelist = tmessagelist::create("", "#00CC00", __TEMPLATE_IMAGES_PATH . "icon_message.png", _TEMPLATE_MESSAGELIST);
-    $performance = tperformance::create();
-    $cryption = tcryption::create();
-    $crypt_ID = tcryptID::create();
-
-    /* @var $ibase tibase */
-    $ibase = new tibase;
-    if (defined("IBASE_LOG"))
-        if (IBASE_LOG) {
-            $ibase->logSQL = true;
-        }
-
-    /* @var $xmlrpc txmlrpc_client */
-    $xmlrpc = new txmlrpc_client;
-    if (defined("XMLRPC_LOG"))
-        if (XMLRPC_LOG) {
-            $xmlrpc->logCALL = true;
-        }
-
-    $xmlrpchosts = array();
-    $i = 1;
-    while (defined("XMLRPC_$i")) {
-        $params = new tstringlist();
-        $params->assignString(constant("XMLRPC_$i"), ",");
-        $h = new thost(
-                        $params->getValueByName("name"),
-                        $params->getValueByName("port"),
-                        $params->getValueByName("path"),
-                        $params->getValueByName("user"),
-                        $params->getValueByName("password"),
-                        $params->getValueByName("timeout"),
-                        $params->getValueByName("retries")
-        );
-        $xmlrpc->addHost($h);
-        $i++;
-        unset($params);
-    }
-
-    if ($i < 2) {
-
-        $errorlist->add("need a XMLRPC Server");
-    }
-
-    unset($i);
-    unset($xmlrpchosts);
-
-    /* @var $orgamon torgamon */
-    $orgamon = new torgamon;
-    $ibase->requestImplementer = $orgamon;
-
-    twebshop_bill::setPath($orgamon->getSystemString(torgamon::BASEPLUG_BILL_PATH));
-    twebshop_article::setMP3Path($orgamon->getSystemString(torgamon::BASEPLUG_MP3_PATH));
-
-    $session = tsession::create();
-
-    if ($session->isRegistered("shop") AND $session->getVar("shop")->getID() != TWEBSHOP_ID) {
-        $session->destroy();
-        $session = tsession::create();
-    }
-
-    if (!$session->isRegistered("shop")) {
-        $shop = new tshopState(TWEBSHOP_ID);
-        $shop->setActionID();
-        $shop->setSite(TWEBSHOP_FIRST_SITE);
-        $session->registerVar("shop", $shop);
-    }
-
-    $shop = $session->getVar("shop");
-    $user = $session->getVar("user", twebshop_user::create());
-    $user->clearOptions();
-    $cart = $session->getVar("cart", twebshop_cart::create());
-    $search = $session->getVar("search", twebshop_search::create());
-    $search_result_pages = $session->getVar("search_result_pages", new twebshop_search_result_pages($search->getResult(), $search->getID(), $user->WEBSHOP_TREFFERPROSEITE));
-    $tree = $session->getVar("tree", new twebshop_article_tree());
-    $article_variants = $session->getVar("article_variants", twebshop_article_variants::create());
-
-    toption::$properties["VERSION_MP3"] = $article_variants->getVersionIDByShortName(TWEBSHOP_ARTICLE_VERSION_SHORT_MP3);
-
-
-// GLOBALE OBJEKTE
-    $site = new tsite(isset($site) ? $site : ""); // AUS STRING WIRD OBJEKT
-    tsite::$title_separator = TWEBSHOP_TITLE_SEPARATOR;
-    tsite::deactivateBlocks(TWEBSHOP_INACTIVE_BLOCKS);
-    $template = new ttemplate();
-
-
-// Prüft ob ein User-Login für die aufgerufene Seite/Aktion erforderlich ist
-// SEITEN, DIE EINEN LOGIN ERFORDERN (INDEX = SEITENNAME, WERT = HINWEISTEXT)
-    $login_requiring_sites = array(
-//"demo" => SENTENCE_PLEASE_LOGIN,
-        "myshop" => SENTENCE_PLEASE_LOGIN_TO_CHANGE_SETTINGS,
-        "order" => SENTENCE_PLEASE_LOGIN
-    );
-
-
-// AKTIONEN, DIE EINEN LOGIN ERFORDERN
-    $login_requiring_actions = array(
-        "change_password" => SENTENCE_PLEASE_LOGIN_TO_CHANGE_SETTINGS,
-        "miniscore" => SENTENCE_PLEASE_LOGIN_TO_GET_MINISCORE,
-        "load_cart" => SENTENCE_PLEASE_LOGIN_TO_LOAD_CART,
-        "order" => SENTENCE_PLEASE_LOGIN,
-        "order_accept_tob" => SENTENCE_PLEASE_LOGIN,
-        "send_help_request" => SENTENCE_PLEASE_LOGIN,
-        "set_hits_per_page" => SENTENCE_PLEASE_LOGIN_TO_CHANGE_SETTINGS,
-        "download_mymusic" => SENTENCE_PLEASE_LOGIN,
-        "update_wishlist" => SENTENCE_PLEASE_LOGIN,
-        "delete_from_wishlist" => SENTENCE_PLEASE_LOGIN,
-        "add_to_wishlist" => SENTENCE_PLEASE_LOGIN
-    );
-
-
-    // PRÜFEN OB EIN LOGIN ERFORDERLICH IST 
-    $login_required_by_site = ($site->set() AND array_key_exists($site->getName(), $login_requiring_sites)) OR (!$site->set() AND array_key_exists($shop->getCurrentSite(), $login_requiring_sites));
-
-    $login_required_by_action = (isset($action) AND array_key_exists($action, $login_requiring_actions));
-// USER EINGELOGGT ? UND (ERFORDERT DIE AUFGERUFENE SEITE EINEN LOGIN ? ODER ERFORDERT DIE AUSZUFÜHRENDE AKTION EINEN LOGIN ?)
-    if (!$user->loggedIn() AND ($login_required_by_site OR $login_required_by_action)) {
-
-        // VARIABLEN für später SPEICHERN, MIT DER DAS AKTUELLE SKRIPT GERUFEN WURDE
-        $shop->saveVars("login", tglobal::$_REGISTERED);
-
-        // HINWEIS AUSGEBEN
-        if ($login_required_by_site)
-            $messagelist->add($login_requiring_sites[$site->getName()]);
-        if ($login_required_by_action)
-            $messagelist->add($login_requiring_actions[$action]);
-
-        $site->setName("login");                   // VARIABLE ÜBERSCHREIBEN, ZUR LOGIN SEITE WECHSELN
-        // VARIABLE LÖSCHEN, ERSTMAL KEINE AKTION AUSFÜHREN, wurde ja gespeichert
-        if (isset($action))
-            unset($action);
-    }
-    unset($login_required_by_site);
-    unset($login_required_by_action);
-
-// AF: Die Verarbeitung einer action kann wiederum eine andere auslösen
-    // Aktion-Ketten, wobei es eine API gibt, an die man sich zufügen kann
-    // wären mir da lieber - aber ich löse das mit einer Logik die einfach nur
-    // verhindert, dass actions doppelt ausgeführt werden
-    $actionsAlreadySeen = array();
-    while (true) {
-
-        // gar nix zu tun
-        if (!isset($action))
-            break;
-
-        // heute bereits bearbeitet
-        if (in_array($action, $actionsAlreadySeen))
-            break;
-
-        if (!file_exists($includefile = "./action/" . $action . ".php"))
-            break;
-
-        // Unabhängig von ihrer tatsächlichen Ausführung gilt die action als 
-        // berücksichtigt
-        $actionsAlreadySeen[] = $action;
-        switch (true) {
-
-            case(isset($aid) AND $aid > $shop->getActionID()): {
-                    if (defined("ACTION_LOG"))
-                        if (ACTION_LOG)
-                            fb($action, "Action-" . $aid, FirePHP::INFO);
-                    $shop->setActionID($aid);
-                    unset($aid);
-                    include_once($includefile);
-                    break;
-                }
-
-            case(isset($aid) AND $aid <= $shop->getActionID()): {
-
-                    // Verhindern, dass die $action wiederholt ausgeführt wird
-                    unset($aid);
-                    break;
-                }
-
-            case(!isset($aid)): {
-                    if (defined("ACTION_LOG"))
-                        if (ACTION_LOG)
-                            fb($action, "Action", FirePHP::INFO);
-                    include_once($includefile);
-                    break;
-                }
-        }
-    }
-
-    toption::$properties["AID"] = $shop->getNextActionID();
-
-#####################
-// Suche?!
-
-    toption::$properties["SID"] = $search->getID();
-    toption::$properties["NEXT_SID"] = $search->getNextID();
-
-    if (isset($sid)) {
-        $search->checkID($sid);
-    }
-
-    if ($search->hasRun()) {
-        $page = 1;
-    }
-
-    if ($search->hasRun() OR $search->isCached() OR $search->hasBeenSorted()) {
-        $search_result_pages = new twebshop_search_result_pages($search->getResult(), $search->getID(), $user->WEBSHOP_TREFFERPROSEITE);
-        //TS 05.12.2011: Indizes nur bilden, wenn sie später auch angezeigt werden
-        if ($search->getHits() > $user->WEBSHOP_TREFFERPROSEITE) {
-            $performance->addToken("page_index");
-            $search_result_pages->buildPageIndex(10);
-            $search_result_pages->buildABCIndex();
-            $performance->getTimeNeededBy("page_index");
-        }
-    }
-
-
-####  SITE  #### 
-    $performance->addToken("p_site");
-
-//$site->set() liefert true, wenn $site->name != ""
-    $site->setName(($site->set()) ? $shop->setSite($site->getName()) : $shop->getCurrentSite());
-    toption::$properties["SITE"] = $site->getName();
-
-    if (file_exists($includefile = "./site/" . $site->getName() . ".php")) {
-        include_once($includefile);
-    } else {
-
-        if ($site->loadTemplate(__TEMPLATE_PATH)) {
-            if (isset($subsite))
-                $site->setStepByName($subsite);
-        }
-        else {
-            $site->setTemplate("~OBJ_ERRORLIST~");
-            $errorlist->add("Seite " . $site->getName() . " nicht gefunden!");
-        }
-    }
-
-#####################
-
-    $performance->getTimeNeededBy("p_site");
-
-
-    include_once("./logic/messages.php");           // Ausgabe Messagelist & Errorlist vorbereiten
-// WebShop - Ring 7 (alle infos sind nun gesammelt -> Belichtung der Ausgabe!!)
-//
-    include_once("./logic/header.php");             // Seitenkopf
-    include_once("./logic/footer.php");             // Seitenfuss
-    //
-// AF: ich glaube diese unset werden gemacht dass
-// Referenzen darauf, die sich in den persistenten Objekten
-// befinden NICHT gespeichert werden. Kommt mal auf einen Versuch an.
-// Man müsste mal genau schauen, WAS in die Session läuft
-// Ich denke es wäre eleganter alle von tsession_persistent abgeleitetes
-// Objekt in die Session zu tragen, also dass man genau steuern kann
-// und muss was man in der session haben will ...
-//
-
-    unset($errorlist);
-    unset($messagelist);
-    unset($ibase);
-    unset($performance);
-    unset($cryption);
-    unset($crypt_ID);
-    unset($template);
-    unset($xmlrpc);
-    unset($orgamon);
-
-
-    $cart->clearHTMLTemplate();
-//$cart->clearOptions();
-
-
-    $search_result_pages->clearHTMLTemplate();
-    $user->clearHTMLTemplate();
-    $user->clearOptions();
-
-
-//$versions->clearHTMLTemplate();
-
-
-    $session->registerVars(
-            array(
-                "_LANGUAGE",
-                "cart",
-                "search",
-                "search_result_pages",
-                "tree",
-                "user",
-                "article_variants"
-            )
-    );
-
-    include_once("./logic/output.php");             // reine Ausgabe, keine Fragen mehr!
-
-    $session->cleanupTmpVars($shop->getCurrentSite());
-
-    unset($cart);
-    unset($search);
-    unset($search_result_pages);
-    unset($tree);
-    unset($user);
-    unset($article_variants);
-
-    if (defined("SESSION_LOG"))
-        if (SESSION_LOG)
-            $session->doLog(FirePHP::WARN);
-}
 ?>
+<html>
+
+    <head>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=9">
+        
+        <script type="text/javascript" src="./js/jquery.js"></script>
+        <script type="text/javascript" src="./js/jplayer/jplayer.js"></script>
+        <script type="text/javascript" src="./js/jplayer/jplayer-playlist.js"></script>
+
+        <link href="./templates/<?php echo TWEBSHOP_TEMPLATE; ?>/jplayer.css" rel="stylesheet" type="text/css">
+
+        <script type="text/javascript">
+
+            var myPlaylist;
+            var isPlaying = false;
+
+            /* 27.06.2014 michaelhacksoftware : jPlayer vorbereiten */
+            $(document).ready(function(){
+
+                myPlaylist = new jPlayerPlaylist({
+                    jPlayer: "#jp_player_1",
+                    cssSelectorAncestor: "#jp_container_1"
+                }, [], {
+                    playlistOptions: {
+                        enableRemoveControls: true
+                    },
+                    swfPath: "js/jplayer",
+                    supplied: "mp3",
+                    smoothPlayBar: true
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.play, function(event) {
+                    isPlaying = true;
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.pause, function(event) {
+                    isPlaying = false;
+                });
+
+            });
+            /* --- */
+
+            /* 08.07.2014 michaelhacksoftware : ResizeFunction für den iFrame */
+            function ResizeFrame() {
+
+                var frame   = document.getElementById('frmShop');
+                var content = frmShop.document.getElementsByTagName('body')[0];
+
+                frame.scrolling        = 'no';
+                content.style.overflow = 'hidden';
+
+                var height = eval(content.offsetHeight + 20) + 'px';
+
+                if (document.all && !window.opera) {
+                    height = eval(content.scrollHeight + 20) + 'px';
+                }
+
+                if (frame.style.height != height) {
+                    frame.style.height = height;
+                }
+
+                scrollTo(0, 0);
+
+            }
+            /* --- */
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <div id="jp_container_1" class="jp-audio">
+
+            <div class="jp-type-playlist">
+
+                <div id="jp_player_1" class="jp-jplayer"></div>
+
+                <div class="jp-gui">
+
+                    <div class="jp-interface">
+
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+
+                        <div class="jp-current-time"></div>
+                        <div class="jp-duration"></div>
+
+                        <div class="jp-volume-holder">
+
+                            <div class="jp-volume-bar">
+                                <div class="jp-volume-bar-value"></div>
+                            </div>
+
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                            </ul>
+
+                        </div>
+
+                        <div class="jp-controls-holder">
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-previous" tabindex="1">previous</a></li>
+                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                                <li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
+                                <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="jp-playlist"><ul><li></li></ul></div>
+
+            </div>
+
+        </div>
+
+        <iframe id="frmShop" name="frmShop" src="<?php echo $Site; ?>" onload="ResizeFrame()" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
+
+    </body>
+
+</html>

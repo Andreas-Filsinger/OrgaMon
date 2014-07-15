@@ -25,7 +25,7 @@ if ($site->isActive())
     $cart->article[$index]->addOption("DELETE",_TEMPLATE_ARTICLE_CART_OPTION_DELETE);
     $cart->article[$index]->addOption("REFRESH",_TEMPLATE_ARTICLE_CART_OPTION_REFRESH);
     $cart->article[$index]->addOption("AID","~AID~");
-    $cart->article[$index]->addOption("DEMO",(count($article->getSounds()) > 0) ? _TEMPLATE_ARTICLE_CART_OPTION_DEMO : "");
+    $cart->article[$index]->addOption("DEMO",(count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_CART_OPTION_DEMO : "");
     $cart->article[$index]->addOption("MINISCORE",($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH))) ? _TEMPLATE_ARTICLE_CART_OPTION_MINISCORE : "");
     $cart->article[$index]->addOption("RECORDS",($article->existRecords() ? _TEMPLATE_ARTICLE_CART_OPTION_RECORDS : ""));
     $cart->article[$index]->addOption("COPY",($article_variants->hasDetail($article->version_r) AND $article->detail != "") ? _TEMPLATE_ARTICLE_CART_OPTION_COPY : "");
