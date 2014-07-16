@@ -13,6 +13,10 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2013 by Alexander Knam
 // INFO END
 
+Rev 3.026 (16.07.14) Michael Hack
+
+ Neu: Hebu Newsletter Template hinzugefügt
+
 Rev 3.025 (14.07.14) Michael Hack
 
  Neu: Integrierter Musikplayer auf Basis des 'jPlayers'
