@@ -27,7 +27,6 @@
 unit html;
 
 {$I jcl.inc}
-
 // ------------------------------------------------------------------
 //
 // (c)'18.04.00 by Andreas Filsinger, http://OrgaMon.org
@@ -100,14 +99,13 @@ uses
   anfix32,
   gplists
 
-  {$IFNDEF FPC}
-  ,
+{$IFNDEF FPC}
+    ,
   System.UITypes
-  {$else}
-  ,Graphics
-  ,fpchelper
-  {$ENDIF}
-  ;
+{$ELSE}
+    , Graphics, fpchelper
+{$ENDIF}
+    ;
 
 const
   cVarDelimiter = '~';
@@ -252,6 +250,7 @@ type
     procedure LoadFromFile(const FileName: string); override;
 
     procedure SaveToFileCompressed(FName: string);
+    procedure InsertDocument(FName: string);
 
     // Sorting
     procedure SortPages;
@@ -319,11 +318,11 @@ implementation
 uses
   windows, SysUtils, math,
   IniFiles,
-  {$ifndef fpc}
+{$IFNDEF fpc}
   Soap.EncdDecd,
-  {$endif}
+{$ENDIF}
   JclSimpleXML,
-   JclStreams;
+  JclStreams;
 
 const
   cERRORText = 'ERROR:';
@@ -498,15 +497,14 @@ function THTMLTemplate.CheckReplaceOne(n: integer;
       FName := AnlagenPath + 'ERROR.jpg';
 
     // codieren
-    {$IFNDEF FPC}
+{$IFNDEF FPC}
     Inf := TFileStream.create(FName, fmOpenRead);
     OutF := TStringStream.create;
     EncodeStream(Inf, OutF);
     result := OutF.DataString;
     Inf.Free;
     OutF.Free;
-    {$ENDIF}
-
+{$ENDIF}
   end;
 
 var
@@ -1827,7 +1825,6 @@ begin
 
 end;
 
-
 function AnsiToRFC1738(s: string): string;
 var
   n: integer;
@@ -2032,7 +2029,7 @@ begin
     if (iStart < iEnd) then
     begin
 
-      {$ifndef FPC}
+{$IFNDEF FPC}
       sXML := TStringStream.create;
       XML := TJclSimpleXML.create;
       try
@@ -2054,8 +2051,7 @@ begin
         end;
       end;
       sXML.Free;
-      {$endif}
-
+{$ENDIF}
       // Erfolg! nun ist klar, in welchem Block gesucht werden muss
       n := 0;
       repeat
@@ -2672,6 +2668,214 @@ begin
     result.add(param);
     inc(k);
   end;
+end;
+
+procedure THTMLTemplate.InsertDocument(FName: string);
+
+  function StartTokenIs(s: string; n: integer; const o: TStrings): boolean;
+  var
+    p, pp: integer;
+  begin
+
+    // das erste Zeichen muss passen
+    p := pos(s[1], o[n]);
+    if (p = 0) then
+    begin
+      result := false;
+      exit;
+    end;
+
+    // vor dem ersten Zeichen darf es nur Leerschritte geben
+    if (p > 1) then
+      if (noblank(copy(s[n], 1, pred(n))) <> '') then
+      begin
+        result := false;
+        exit;
+
+      end;
+
+    // Allen weiteren Zeichen müssen passen
+    pp := pos(s, o[n]);
+
+    // Im Notfall: uppercase
+    if (pp <> p) then
+      pp := pos(s, uppercase(o[n]));
+
+    // Immer noch nicht?
+    if (pp <> p) then
+    begin
+      result := false;
+      exit;
+    end;
+
+    // Ansonsten: Nichts zu beanstanden
+    result := true;
+
+  end;
+
+var
+  // Line-Numbers
+  HomeLine, NewLine, InsertPos: integer;
+  Body_Start, Body_end, HTML_end: integer;
+  n: integer;
+
+  nDocument: TStringList;
+  oStyle, nStyle: TStringList;
+
+  // Automata
+  Automatastate: integer;
+  Mission_complete: boolean;
+  GrowMode: boolean;
+
+begin
+
+  // Dokument-Fortsetzung laden
+  nDocument := TStringList.create;
+  nDocument.LoadFromFile(FName);
+
+  //
+  oStyle := nil;
+  Body_Start := -1;
+  Body_end := -1;
+  HTML_end := -1;
+
+  // die ganzen Tag-Lines den "neuen" Dokumentes bestimmen!
+  Automatastate := 0;
+  nStyle := nil;
+  Mission_complete := false;
+  HomeLine := 0;
+  while true do
+  begin
+
+    if (HomeLine = nDocument.count) then
+      break;
+
+    case Automatastate of
+      0:
+        if StartTokenIs('<STYLE', HomeLine, nDocument) then
+        begin
+          nStyle := TStringList.create;
+          inc(Automatastate);
+        end;
+      1:
+        if StartTokenIs('</STYLE', HomeLine, nDocument) then
+        begin
+          inc(Automatastate);
+        end
+        else
+        begin
+          if (nDocument[HomeLine] <> '<!--') then
+            if (nDocument[HomeLine] <> '-->') then
+              nStyle.add(nDocument[HomeLine]);
+        end;
+      2:
+        if StartTokenIs('<BODY', HomeLine, nDocument) then
+        begin
+          Body_Start := HomeLine;
+          inc(Automatastate);
+        end;
+      3:
+        if StartTokenIs('</BODY', HomeLine, nDocument) then
+        begin
+          Body_end := HomeLine;
+          inc(Automatastate);
+        end;
+      4:
+        if StartTokenIs('</HTML', HomeLine, nDocument) then
+        begin
+          HTML_end := HomeLine;
+          Mission_complete := true;
+        end;
+    end;
+    inc(HomeLine);
+  end;
+
+  if Mission_complete then
+  begin
+
+    //
+    // Header     1:1     delete
+    // Style      1:1     add if unkown
+    // Body       1:1     add
+    // Comment
+    HomeLine := 0;
+    Automatastate := 0;
+    GrowMode := false;
+    Mission_complete := false;
+    while true do
+    begin
+
+      if (HomeLine = count) then
+        break;
+
+      case Automatastate of
+        0:
+          if StartTokenIs('</STYLE', HomeLine, self) then
+          begin
+            for n := 0 to pred(nStyle.count) do
+            begin
+              insert(HomeLine, nStyle[n]);
+              inc(HomeLine);
+            end;
+            inc(Automatastate);
+          end;
+        1:
+          begin
+            if StartTokenIs('</BODY', HomeLine, self) then
+            begin
+              insert(HomeLine, '<P class=breakhere></P>');
+              inc(HomeLine);
+              for n := succ(Body_Start) to pred(Body_end) do
+              begin
+                insert(HomeLine, nDocument[n]);
+                inc(HomeLine);
+              end;
+              inc(Automatastate);
+            end;
+          end;
+        2:
+          begin
+            if StartTokenIs('</HTML', HomeLine, self) then
+            begin
+              inc(Automatastate);
+            end;
+
+          end;
+      end;
+
+      if GrowMode then
+      begin
+        insert(HomeLine, nDocument[NewLine]);
+        inc(NewLine);
+      end
+      else
+      begin
+        inc(HomeLine);
+      end;
+
+    end;
+  end
+  else
+  begin
+    // Fehler im B Dokument
+    addFatalError('Parser des hinzuzufügenden Dokumentes steckt im Status ' +
+      IntToStr(Automatastate) + ' fest');
+  end;
+  if assigned(nStyle) then
+    FreeAndNil(nStyle);
+  if assigned(oStyle) then
+    FreeAndNil(oStyle);
+
+  // Es gab Fehler?
+  if Messages.count > 0 then
+  begin
+    clear;
+    add('<html>');
+    add(HugeSingleLine(Messages, '<br>'));
+    add('</html>');
+    Messages.clear;
+  end;
+
 end;
 
 procedure THTMLTemplate.SortBlocks(Block: string);

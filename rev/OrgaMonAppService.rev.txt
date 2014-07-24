@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.050 (24.07.14) Andreas Filsinger
+
+ Bug: html: Ausgabe einer Tabelle sollte nicht eine globales css definieren
+
 Rev 1.049 (02.07.14) Andreas Filsinger
 
  Neu: Foto: Wartende: Bessere Log-Infos
