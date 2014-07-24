@@ -213,7 +213,7 @@ type
     procedure infozipTest(Path: string);
     procedure HashTest(Path: string);
     procedure htmlTest(Path: string);
-
+    procedure html_addTest(Path: string);
   end;
 
 var
@@ -371,6 +371,17 @@ begin
   html.SaveToFileCompressed(Path + 'Ergebnis.html');
   html.Free;
   Datensammler.Free;
+end;
+
+procedure TFormCareServer.html_addTest(Path: string);
+var
+  html: THTMLTemplate;
+begin
+  html := THTMLTemplate.create;
+  html.LoadFromFile(Path + 'A.html');
+  html.InsertDocument(Path + 'B.html');
+  html.SaveToFile(Path + 'Ergebnis.html');
+  html.Free;
 end;
 
 procedure TFormCareServer.txlibTest(Path: string);
@@ -1422,6 +1433,12 @@ begin
         if (sNameSpaces[n] = 'html') then
         begin
           nTest := htmlTest;
+          break;
+        end;
+
+        if (sNameSpaces[n] = 'html-add') then
+        begin
+          nTest := html_addTest;
           break;
         end;
 
