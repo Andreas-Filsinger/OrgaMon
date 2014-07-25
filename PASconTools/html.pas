@@ -2720,12 +2720,11 @@ var
   n: integer;
 
   nDocument: TStringList;
-  oStyle, nStyle: TStringList;
+  nStyle: TStringList;
 
   // Automata
   Automatastate: integer;
   Mission_complete: boolean;
-  GrowMode: boolean;
 
 begin
 
@@ -2734,7 +2733,6 @@ begin
   nDocument.LoadFromFile(FName);
 
   //
-  oStyle := nil;
   Body_Start := -1;
   Body_end := -1;
   HTML_end := -1;
@@ -2785,6 +2783,7 @@ begin
         begin
           HTML_end := HomeLine;
           Mission_complete := true;
+          break;
         end;
     end;
     inc(HomeLine);
@@ -2799,8 +2798,7 @@ begin
     // Body       1:1     add
     // Comment
     HomeLine := 0;
-    Automatastate := 0;
-    GrowMode := false;
+    Automatastate := 5;
     Mission_complete := false;
     while true do
     begin
@@ -2809,7 +2807,7 @@ begin
         break;
 
       case Automatastate of
-        0:
+        5:
           if StartTokenIs('</STYLE', HomeLine, self) then
           begin
             for n := 0 to pred(nStyle.count) do
@@ -2819,7 +2817,7 @@ begin
             end;
             inc(Automatastate);
           end;
-        1:
+        6:
           begin
             if StartTokenIs('</BODY', HomeLine, self) then
             begin
@@ -2833,38 +2831,36 @@ begin
               inc(Automatastate);
             end;
           end;
-        2:
+        7:
           begin
             if StartTokenIs('</HTML', HomeLine, self) then
             begin
-              inc(Automatastate);
+              for n := succ(Body_end) to pred(HTML_end) do
+              begin
+                insert(HomeLine, nDocument[n]);
+                inc(HomeLine);
+              end;
+              Mission_complete := true;
+              break;
             end;
-
           end;
       end;
 
-      if GrowMode then
-      begin
-        insert(HomeLine, nDocument[NewLine]);
-        inc(NewLine);
-      end
-      else
-      begin
-        inc(HomeLine);
-      end;
+      inc(HomeLine);
 
     end;
-  end
-  else
-  begin
-    // Fehler im B Dokument
-    addFatalError('Parser des hinzuzufügenden Dokumentes steckt im Status ' +
-      IntToStr(Automatastate) + ' fest');
   end;
+
+  // Clean Up
   if assigned(nStyle) then
     FreeAndNil(nStyle);
-  if assigned(oStyle) then
-    FreeAndNil(oStyle);
+
+  if not(Mission_complete) then
+  begin
+    // Fehler im B Dokument
+    addFatalError('Parser steckt im Status ' +
+      IntToStr(Automatastate) + ' fest');
+  end;
 
   // Es gab Fehler?
   if Messages.count > 0 then
