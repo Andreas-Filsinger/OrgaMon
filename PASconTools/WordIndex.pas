@@ -1351,6 +1351,25 @@ begin
     add('td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+
+(*
+
+    //
+    // Versuch, die gültigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
+    // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
+    //
+    // -> Funktion noch bisher nicht bewiesen
+    //
+
+    add('table.border {border-color:#000000; border-style:solid; border-width:0pt;');
+    add(' td { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+    add(' td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+    add(' td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+    add(' td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+    add('}');
+
+*)
+
     add('</style>');
     if assigned(sFormats) then
       add('<title>' + Ansi2HTML(sFormats.Values['TITEL']) + '</title>')
@@ -1402,6 +1421,8 @@ begin
             break;
           end;
 
+          // Im Falle des erfolgreichen Versuches könnte
+          // hier das setzen der Class unterbleiben
           tdExtras := 'class=gdef';
 
         until true;
@@ -1770,7 +1791,7 @@ end;
 procedure TsTable.SortBy(sFields: TStrings);
 var
   ClientSorter: TStringList;
-  k, l, m, n: integer;
+  k, m, n: integer;
   SortColumn, SortStr: string;
   FormatNumeric, DoReverse: boolean;
   eSave: TObjectList;

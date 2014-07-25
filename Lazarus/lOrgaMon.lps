@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="85">
+    <Units Count="86">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -40,7 +40,7 @@
       <Unit3>
         <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
         <UnitName Value="ZDataset"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="3" Y="63"/>
@@ -189,7 +189,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1992"/>
         <CursorPos X="52" Y="2016"/>
@@ -232,7 +232,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -762,7 +762,6 @@
       <Unit82>
         <Filename Value="..\PASconTools\basic32.pas"/>
         <UnitName Value="basic32"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2553"/>
@@ -774,7 +773,7 @@
       <Unit83>
         <Filename Value="C:\lazarus\lcl\printers.pas"/>
         <UnitName Value="Printers"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="238"/>
         <CursorPos X="16" Y="260"/>
@@ -784,13 +783,25 @@
       <Unit84>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\winunits-base\src\winspool.pp"/>
         <UnitName Value="winspool"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1280"/>
         <CursorPos X="12" Y="1289"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit84>
+      <Unit85>
+        <Filename Value="..\..\lazarus\components\lazthread\reglazthread.pas"/>
+        <UnitName Value="RegLazThread"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="13"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="26" Y="44"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit85>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
