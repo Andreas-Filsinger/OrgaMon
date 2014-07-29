@@ -26,7 +26,8 @@ interface
 
 uses
   windows,
-  classes;
+  classes,
+  SysUtils;
 
 const
   VersionAnfix32: single = 1.063; // ..\rev\anfix32.rev.txt
@@ -126,6 +127,7 @@ function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
 function StrFilter(s, Filter: string; DeleteHits: boolean = false)
   : string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
+function StrFilter(s:string ; Filter: TSysCharSet; DeleteHits: boolean = false): string; Overload;
 function noblank(const InpStr: string): string;
 function noDoubleBlank(s: string): string;
 
@@ -519,7 +521,6 @@ uses
   JclSysInfo,
   JclSecurity,
   JclRegistry,
-  SysUtils,
   registry,
   shellapi,
   ComObj;
@@ -5272,6 +5273,16 @@ begin
   for n := 1 to length(s) do
     if (pos(s[n], Filter) > 0) then
       result[n] := Hit;
+end;
+
+function StrFilter(s:string ; Filter: TSysCharSet; DeleteHits: boolean = false): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 1 to length(s) do
+    if (not(CharInSet(s[n],Filter)) = DeleteHits) then
+      result := result + s[n];
 end;
 
 function StrEncode(const s: string; key: string): string;

@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="86">
+    <Units Count="87">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -40,7 +40,7 @@
       <Unit3>
         <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
         <UnitName Value="ZDataset"/>
-        <EditorIndex Value="18"/>
+        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="3" Y="63"/>
@@ -189,7 +189,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1992"/>
         <CursorPos X="52" Y="2016"/>
@@ -232,7 +232,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -773,7 +773,7 @@
       <Unit83>
         <Filename Value="C:\lazarus\lcl\printers.pas"/>
         <UnitName Value="Printers"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="238"/>
         <CursorPos X="16" Y="260"/>
@@ -783,7 +783,7 @@
       <Unit84>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\winunits-base\src\winspool.pp"/>
         <UnitName Value="winspool"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1280"/>
         <CursorPos X="12" Y="1289"/>
@@ -793,7 +793,6 @@
       <Unit85>
         <Filename Value="..\..\lazarus\components\lazthread\reglazthread.pas"/>
         <UnitName Value="RegLazThread"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -802,6 +801,17 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
+      <Unit86>
+        <Filename Value="..\..\fpspreadsheet\fpsxmlcommon.pas"/>
+        <UnitName Value="fpsxmlcommon"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="14"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="44"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit86>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>

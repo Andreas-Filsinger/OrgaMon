@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.037 (25.07.14) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: EFRE Liste: neue informative Spalte "TextZaehlerNummerNeu"
+
+Rev 8.036 (25.07.14) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Herausgenommene TAN bei Datenquelle= Baustellen hatte nicht funktioniert
+
 Rev 8.035 (09.07.14) Andreas Filsinger
 
  Neu: D-BASIC Integration in die Beleg-Buchung. Dadurch können Marketing-Zugaben

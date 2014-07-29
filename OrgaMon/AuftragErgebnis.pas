@@ -1171,7 +1171,8 @@ begin
                 { } EFRE_ZAEHLER_NR_NEU + ';' +
                 { } material_nummer_alt + ';' +
                 { } Settings.values[cE_TAN] + ';' +
-                { } inttostr(AUFTRAG_R));
+                { } inttostr(AUFTRAG_R)+';'+
+                {} ZAEHLER_NR_NEU);
 
               //
               Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' +
@@ -2157,9 +2158,15 @@ var
       _Expected_TAN := StrToIntDef(Edit2.Text, -1)
     else
       _Expected_TAN := StrToIntDef(Settings.values[cE_EXPORT_TAN], -2) + 1;
+
+    // Es könnte sein, dass bei der Datenquelle= die TAN rasugenommen wurde
     if (_Expected_TAN = -1) then
-      raise exception.create
-        ('Die neue TAN konnte nicht ermittelt werden|Letzte TAN leer oder keine Zahl');
+    begin
+      inc(ErrorCount);
+      Log(cERRORText +
+        ' Die neue TAN konnte nicht ermittelt werden|Letzte TAN leer oder keine Zahl');
+      exit;
+    end;
 
     cAUFTRAG := DataModuleDatenbank.nCursor;
     with cAUFTRAG do
@@ -2798,7 +2805,7 @@ begin
   Stat_nichtEFRE := 0;
   Stat_Attachments.clear;
   Stat_FehlendeResourcen.add
-    ('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID');
+    ('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
 end;
 
 procedure TFormAuftragErgebnis.ComboBox1DropDown(Sender: TObject);

@@ -2145,7 +2145,7 @@ begin
   sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' +
     StrFilter(iKontoBLZ, cFilterPositiveGanzzahl) + '/' +
     StrFilter(iKontoNummer, cFilterPositiveGanzzahl), MyProgramPath + cHBCIPath
-    + 'DTAUS.DTA.UTF-8.csv');
+    + 'DTAUS.DTA.SEPA.csv');
   LastschriftJobID := DataModuleREST.TAN;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
