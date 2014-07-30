@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.038 (30.07.14) Andreas Filsinger
+
+ Neu: Beleg: Einzeldokumente zu einem Beleg können zu einem HTML verschmolzen/
+      zusammengefügt werden (Dieses Dokument ist dann mehrseitig). Neues Symbol
+      Grüner vereinigender Pfeil nach rechts.
+
 Rev 8.037 (25.07.14) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: EFRE Liste: neue informative Spalte "TextZaehlerNummerNeu"

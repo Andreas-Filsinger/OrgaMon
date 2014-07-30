@@ -169,6 +169,7 @@ type
     IB_Memo3: TIB_Memo;
     IB_UpdateBar3: TIB_UpdateBar;
     SpeedButton23: TSpeedButton;
+    SpeedButton24: TSpeedButton;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
       var AString: string);
     procedure Button1Click(Sender: TObject);
@@ -274,6 +275,7 @@ type
     procedure IB_DataSource2StateChanged(Sender: TIB_DataSource;
       ADataset: TIB_Dataset);
     procedure SpeedButton23Click(Sender: TObject);
+    procedure SpeedButton24Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -324,7 +326,7 @@ type
       Posten_Rid: Integer = 0); overload;
     procedure DoTheArtikelSearch;
     function getContext_PERSON_R: Integer;
-    function Neu : integer;
+    function Neu: Integer;
 
     // Zuweisung der HotKeys
     procedure setShortCut(pDataSource: TIB_DataSource);
@@ -673,7 +675,7 @@ begin
   AusSucheUebernehmen;
 end;
 
-function TFormBelege.Neu : integer;
+function TFormBelege.Neu: Integer;
 
   procedure SetMM(Medium, Motivation: string);
   var
@@ -1566,7 +1568,7 @@ begin
       { [9] }
       SubItem.add(e_r_LaenderISO(FieldByName('LAND_R').AsInteger));
       { [10] }
-      SubItem.add(IntToStr(e_r_Menge(cRID_Unset,cRID_UnSet,RID)) + '/' +
+      SubItem.add(inttostr(e_r_Menge(cRID_Unset, cRID_Unset, RID)) + '/' +
         FieldByName('MINDESTBESTAND').AsString);
       { [11] }
       SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
@@ -1864,6 +1866,41 @@ procedure TFormBelege.SpeedButton23Click(Sender: TObject);
 begin
   // aktuellen Beleg (muss offen sein) in die Bar-Kasse übernehmen
   FormBuchBarKasse.SetContext(IB_Query1.FieldByName('RID').AsInteger);
+end;
+
+procedure TFormBelege.SpeedButton24Click(Sender: TObject);
+var
+  sPath: string;
+  sMask: string;
+  sMainDoc, sMainDocFName: string;
+  sOtherDocs: TStringList;
+  bigDocument: THTMLTemplate;
+  n: Integer;
+begin
+  sOtherDocs := TStringList.create;
+
+  sMainDoc := e_r_BelegFName(
+    { } IB_Query1.FieldByName('PERSON_R').AsInteger,
+    { } IB_Query1.FieldByName('RID').AsInteger,
+    { } pred(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
+  sMask := sMainDoc;
+  ersetze('.html', '*.html', sMask);
+  sPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+
+  // Beleg HTMLS zusammenführen
+  bigDocument := THTMLTemplate.create;
+  bigDocument.LoadFromFile(sMainDoc);
+  dir(sMask, sOtherDocs, false);
+  sMainDocFName := ExtractFileName(sMainDoc);
+
+  sOtherDocs.delete(sOtherDocs.indexof(sMainDocFName));
+  for n := 0 to pred(sOtherDocs.count) do
+    bigDocument.InsertDocument(sPath + sOtherDocs[n]);
+
+  sOtherDocs.free;
+  ersetze('*.html', '.combined.html', sMask);
+  bigDocument.SaveToFile(sMask);
+  bigDocument.free;
 end;
 
 procedure TFormBelege.SpeedButton2Click(Sender: TObject);
