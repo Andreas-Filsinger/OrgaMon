@@ -22,7 +22,11 @@
 
 Dokumentation
 
-@<a href="http://orgamon.org/mediawiki/index.php5/AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+@<a href="http://wiki.orgamon.org/index.php5/AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+
+Rev 1.035 (04.08.14) Andreas Filsinger
+
+ Neu: SEPA - Lastschrift
 
 Rev 1.034 (04.10.10) Andreas Filsinger
 
