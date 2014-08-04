@@ -8,7 +8,7 @@
                                        
   Copyright (c) 2008 Christoph Thielecke
   Copyright (C) 2008 Martin Schmidt
-  Copyright (C) 2007-2010 Andreas Filsinger
+  Copyright (C) 2007-2014 Andreas Filsinger
                                            
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #include <aqbanking/banking.h>
 #include <aqbanking/jobgetbalance.h>
 #include <aqbanking/jobgettransactions.h>
-#include <aqbanking/jobsingledebitnote.h>
+#include <aqbanking/jobsepadebitnote.h> 
 
 // C
 #include <fcntl.h>
@@ -57,10 +57,14 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.034";
+const char *currentVersion = "1.035.12";
+
+// Zeiger auf die Kommandozeilenparameter
 const char *pin;
 const char *blz;
 const char *kto;
+
+// 
 char *fileAusgabeFName;
 char *csvName;	
 int lineend=0;
@@ -77,7 +81,7 @@ void getCorrectFileNum()
 	FILE * file;
 	int i=1;
 	
-	//�berpr�fen ob i.log.txt existiert, wenn nicht ist das das n�chste file (i++)
+	// Überprüfen ob i.log.txt existiert, wenn nicht ist das das nächste file (i++)
 	while(i)
 	{
 		sprintf(path, "logs/%i.log.txt", i);
@@ -301,7 +305,6 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 */
 	const char *hash;
 	const char *status;
-	const char *ipAddr;
 	
 	FILE *savCert;
 	char cert [5000]; // Abgelegtes Zertifikat
@@ -341,7 +344,6 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
          statusOK=1;	 
 	}
 	status=GWEN_SslCertDescr_GetStatusText(cd);
-	ipAddr=GWEN_SslCertDescr_GetIpAddress(cd);
 
 	ti=GWEN_SslCertDescr_GetNotBefore(cd);
 	if (ti) 
@@ -920,8 +922,65 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 	return 0;
 }
 
-int lastschrift( AB_BANKING *ab, const char *path )
-{
+
+void AB_Banking__fillTransactionRemoteSepaInfo(AB_BANKING *ab, AB_TRANSACTION *t) {
+  const char *sRemoteCountry;
+  
+  sRemoteCountry=AB_Transaction_GetRemoteCountry(t);
+  if (!(sRemoteCountry && *sRemoteCountry)) {
+       DBG_INFO(AQBANKING_LOGDOMAIN, "No remote country info, assuming \"de\"");
+       sRemoteCountry="de";
+  }
+
+  if (strcasecmp(sRemoteCountry, "de")==0) {
+    const char *sRemoteBankCode;
+    const char *sRemoteAccountNumber;
+    const char *sRemoteBic;
+    const char *sRemoteIban;
+
+    sRemoteBankCode=AB_Transaction_GetRemoteBankCode(t);
+    sRemoteAccountNumber=AB_Transaction_GetRemoteAccountNumber(t);
+    sRemoteBic=AB_Transaction_GetRemoteBic(t);
+    sRemoteIban=AB_Transaction_GetRemoteIban(t);
+
+    if (!(sRemoteBic && *sRemoteBic) && (sRemoteBankCode && *sRemoteBankCode)) {
+      AB_BANKINFO *bi;
+
+      bi=AB_Banking_GetBankInfo(ab, sRemoteCountry, "*", sRemoteBankCode);
+      if (bi) {
+         const char *s;
+
+         s=AB_BankInfo_GetBic(bi);
+         if (s && *s) {
+            DBG_INFO(AQBANKING_LOGDOMAIN, "Setting remote BIC for [%s] to [%s]", sRemoteBankCode, s);
+            AB_Transaction_SetRemoteBic(t, s);
+         }
+         AB_BankInfo_free(bi);
+      }
+    }
+                                                                                                                                              
+   if (!(sRemoteIban && *sRemoteIban) && (sRemoteBankCode && *sRemoteBankCode) && (sRemoteAccountNumber && *sRemoteAccountNumber)) {
+    GWEN_BUFFER *tbuf;
+    int rv;
+                                                                                                                                                              
+    tbuf=GWEN_Buffer_new(0, 32, 0, 1);
+    rv=AB_Banking_MakeGermanIban(sRemoteBankCode, sRemoteAccountNumber, tbuf);
+    if (rv<0) {
+      DBG_INFO(AQBANKING_LOGDOMAIN, "here (%d)", rv);
+    }
+    else {
+      DBG_INFO(AQBANKING_LOGDOMAIN, "Setting remote IBAN for [%s/%s] to [%s]",
+      sRemoteBankCode, sRemoteAccountNumber, GWEN_Buffer_GetStart(tbuf));
+     AB_Transaction_SetRemoteIban(t, GWEN_Buffer_GetStart(tbuf));
+    }
+    GWEN_Buffer_free(tbuf);
+  }
+ }
+}
+
+
+int lastschrift( AB_BANKING *ab, const char *path ) {
+
 	char buffer[5000];
 	AB_TRANSACTION *t=0;
 	AB_ACCOUNT *a;
@@ -929,14 +988,22 @@ int lastschrift( AB_BANKING *ab, const char *path )
 	AB_IMEXPORTER_CONTEXT *ctx=0;
 	AB_JOB *job=0;
         AB_USER *u=0;
-	GWEN_STRINGLIST *sl=0;
-	GWEN_STRINGLIST *sl2=0;
+        GWEN_DATE *dt;
+        GWEN_TIME *tm;
+
 	FILE *LASTCSV;
+	FILE *gidfile;
 	
 	long size =0; //Laenge der Datei
 	char c=0; //Zeichenpuffer
+	
+    // Datenhaltung für Zusatzinfos
+        char bic[100];
+        char iban[100];
+        char gid[100];
 
     // Spalten aus der CSV, ACHTUNG: unter Umstaenden Multibyte-Strings
+        char rid[100+1];
 	char name[100+1];
 	char fblz[100+1];
 	char fkto[100+1];
@@ -948,6 +1015,9 @@ int lastschrift( AB_BANKING *ab, const char *path )
 	char vz5[100+1];
 	char vz6[100+1];
 	char vz7[100+1];
+	char AusfuehrungsDatum[100+1];
+	char MandatsDatum[100+1];
+
 	char parameter[100+1];
 
 	int i=0;//Position im buffer
@@ -956,6 +1026,7 @@ int lastschrift( AB_BANKING *ab, const char *path )
 	int l=0;//position in der Datei
 	int spalte=0;
 	int iLineCount=0;
+        AB_BANKINFO *bi;
 	
 	//Konto suchen
 	a = AB_Banking_GetAccountByCodeAndNumber(ab, blz, kto);
@@ -965,10 +1036,60 @@ int lastschrift( AB_BANKING *ab, const char *path )
 	}
         u = AB_Account_GetFirstUser( a );					
 	
-        sprintf(buffer,"INFO: Konto Bezeichnung (userName) ist \"%s\"!\n",AB_User_GetUserName(u));
+        sprintf(buffer,"INFO: Konto-Bezeichnung (userName) ist \"%s\"!\n",AB_User_GetUserName(u));
         doc(buffer,0);
+        
+        // Init
+        bic[0]=0;
+        iban[0]=0;
+        gid[0]=0;
+        
+        // eigene BIC suchen
+        bi=AB_Banking_GetBankInfo(ab, "de", "*", blz);
+        if (bi) {
 
-	//Die csv-datei mit den Lastschriftdatens�tzen suchen und auslesen
+          sprintf(bic,"%s",AB_BankInfo_GetBic(bi));
+          AB_BankInfo_free(bi);
+        } else {
+		doc("ERROR: GetBankInfo für eigene BLZ ging schief!\n", 0);
+		return 2;
+        }
+        if ((strlen(bic)!=8) && (strlen(bic)!=11)) {
+          doc("ERROR: GetBic lieferte keine gültige BIC!\n", 0);
+	  return 2;
+        }
+        
+        // eigene IBAN suchen
+        strncpy(iban, AB_Account_GetIBAN(a), sizeof(iban)-1);
+        if (strlen(iban)!=22) {
+          doc("ERROR: GetIBAN ging schief!\n", 0);
+          return 2;
+        }
+        
+        // eigene Gläubiger-ID laden aus der Datei gid.~blz~.~kto~
+	sprintf(buffer, "gid.%s.%s.txt", blz, kto);
+	if((gidfile = fopen(buffer, "r"))){
+                i = 0;
+		do {
+		   gid[i++] = fgetc(gidfile);
+		} while(i<18);
+		gid[i] =0;
+		fclose(gidfile);
+	
+	} else {
+          doc("ERROR: Die Gläubiger ID ist nicht bekannt!\n", 0);
+          return 2;
+	}
+	if (strlen(gid)!=18) {
+          doc("ERROR: Gläubiger ID sollte 18 Zeichen haben!\n", 0);
+          return 2;
+	}
+	
+	// Info ausgeben
+	sprintf(buffer,"INFO: %s %s %s\n",  bic, iban, gid );
+	doc(buffer,0);
+
+	//Die csv-datei mit den Lastschriftdatensätzen suchen und auslesen
 	if((LASTCSV = fopen(path, "r")))
 	{
 		fseek(LASTCSV , 0 , SEEK_END);
@@ -985,6 +1106,7 @@ int lastschrift( AB_BANKING *ab, const char *path )
 
                         // lese eine Zeile!
 			spalte=0;
+         rid[0]=0;
 	 name[0]=0;
 	 fblz[0]=0;
 	 fkto[0]=0;
@@ -996,6 +1118,9 @@ int lastschrift( AB_BANKING *ab, const char *path )
 	 vz5[0]=0;
 	 vz6[0]=0;
 	 vz7[0]=0;
+         AusfuehrungsDatum[0]=0;
+	 MandatsDatum[0]=0;
+	 
 			while (l<size) {
 
                                 // eine Zelle aufbauen!
@@ -1018,19 +1143,22 @@ int lastschrift( AB_BANKING *ab, const char *path )
 				
 				switch(spalte)
 				{
-					case 0: /*RID*/	break;
+					case 0: /*RID*/	sprintf(rid, "RID%s", parameter); break;
 					case 1: /*Name*/  strcpy(name, parameter); break;
 					case 2: /*Ort*/	break;
 					case 3: /*BLZ*/   strcpy(fblz, parameter); break;
 					case 4: /*Konto*/  strcpy(fkto, parameter); break;
 					case 5: /*Betrag*/ strcpy(betrag, parameter); break;
-					case 6: /*VZ1*/   strcpy(vz1, parameter);	 break;
+					case 6: /*VZ1*/   strcpy(vz1, parameter); break;
 					case 7: /*VZ2*/   strcpy(vz2, parameter); break;
 					case 8: /*VZ3*/   strcpy(vz3, parameter); break;
 					case 9: /*VZ4*/   strcpy(vz4, parameter); break;
 					case 10: /*VZ5*/  strcpy(vz5, parameter); break; // optional
 					case 11: /*VZ6*/  strcpy(vz6, parameter); break; // optional
 					case 12: /*VZ7*/  strcpy(vz7, parameter); break; // optional
+					case 13: /**/ strcpy(AusfuehrungsDatum,parameter); break;
+                                        case 14: /**/ strcpy(MandatsDatum,parameter); break;
+
 				}
 				spalte++;
 				
@@ -1051,42 +1179,116 @@ int lastschrift( AB_BANKING *ab, const char *path )
  						betrag[i] = '.';//Dezimalpunkt!!
 					}
 					
-					// einen Job erstellen
-					job = AB_JobSingleDebitNote_new(a);
+					// Job erstellen
+					job = AB_JobSepaDebitNote_new(a);
 					rv = AB_Job_CheckAvailability(job);
 					if(rv) {
 					
-					        doc("ERROR: Job \"SingleDebiNote\" ist nicht erlaubt!\n",0);
+				        	doc("ERROR: Job \"SepaDebitNote\" ist nicht erlaubt!\n",0);
 						return 2;
 					}
 					
+					// Init
 					t = AB_Transaction_new();
+                                        
+                                        AB_Banking_FillGapsInTransaction(ab, a, t);
+					
+                                        // -----------------------------------------
+					// Transaktionsart:
+					//
 
-					// Local Settings
-					AB_Transaction_SetLocalBankCode(t, blz);
-					AB_Transaction_SetLocalAccountNumber(t, kto);
-					AB_Transaction_SetLocalName(t, AB_User_GetUserName(u));
+					// SEPA Basis Lastschrift einmalig
+				        AB_Transaction_SetType(t, AB_Transaction_TypeSepaDebitNote);
+                                        AB_Transaction_SetSequenceType(t, AB_Transaction_SequenceTypeOnce);
+                                        AB_Transaction_SetTextKey(t, 5);
+                                        
+                                        
+                                        // -----------------------------------------
+                                        // Transaktionsparameter:
+                                        //
 
-					// Remote Settings
-					AB_Transaction_SetRemoteBankCode(t, fblz);
-					AB_Transaction_SetRemoteAccountNumber(t, fkto);
+                                        // Datum der Mandatserteilung
+                                        dt=GWEN_Date_fromString(MandatsDatum);
+                                        if (dt==0) {
+                                         doc("ERROR: Datum der Mandatserteilung falsch!\n",0);
+                                         return 2;
+                                        }
+                                        AB_Transaction_SetMandateDate(t, dt);
+                                        
+					// Auf dem Mandat angegebene Nummer
+					//AB_Transaction_SetMandateReference(t, rid);
+					// Kunden Nummer
+					AB_Transaction_SetMandateId(t, rid);
+                                        
+                                        // Ausführungsdatum
+                                        sprintf(AusfuehrungsDatum,"%s-00:00",AusfuehrungsDatum);
+                                        tm=GWEN_Time_fromUtcString(AusfuehrungsDatum, "YYYYMMDD-hh:mm");
+				        if (tm==0) {
+                                            doc("ERROR: Ausführungsdatum-Datum falsch!\n",0);
+					    return 2;
+					}
+                                        AB_Transaction_SetDate(t, tm);
+
+					// Betrag
 					AB_Transaction_SetValue(t, AB_Value_fromString(betrag));
 
-					sl2 = GWEN_StringList_new();
-					GWEN_StringList_AppendString(sl2, name, 1, 0);
-					AB_Transaction_SetRemoteName(t, sl2);
+                                        // Verwendungszweck
+					if (strlen(vz1)>=1) {
+					 AB_Transaction_AddPurpose(t, vz1,0);
+					} 
+					if (strlen(vz2)>=1) {
+					 AB_Transaction_AddPurpose(t, vz2,0);
+					} 
+					if (strlen(vz3)>=1) {
+					 AB_Transaction_AddPurpose(t, vz3,0);
+					} 
+					if (strlen(vz4)>=1) {
+					 AB_Transaction_AddPurpose(t, vz4,0);
+					} 
+					if (strlen(vz5)>=1) {
+					 AB_Transaction_AddPurpose(t, vz5,0);
+					} 
+					if (strlen(vz6)>=1) {
+					 AB_Transaction_AddPurpose(t, vz6,0);
+					} 
+					if (strlen(vz7)>=1) {
+					 AB_Transaction_AddPurpose(t, vz7,0);
+					} 
+                                        
 
-					sl = GWEN_StringList_new();
-					GWEN_StringList_AppendString(sl, vz1, 1, 0);
-					GWEN_StringList_AppendString(sl, vz2, 1, 0);
-					GWEN_StringList_AppendString(sl, vz3, 1, 0);
-					GWEN_StringList_AppendString(sl, vz4, 1, 0);
-					GWEN_StringList_AppendString(sl, vz5, 1, 0);
-					GWEN_StringList_AppendString(sl, vz6, 1, 0);
-					GWEN_StringList_AppendString(sl, vz7, 1, 0);
-					AB_Transaction_SetPurpose(t, sl);
+                                        // -----------------------------------------
+                                        // Begünstigter:
+                                        //
+                                        
+                                        // Gläubiger Identifikationsnummer der Deutschen Bundesbank
+                                        AB_Transaction_SetCreditorSchemeId(t, gid);
+					AB_Transaction_SetLocalName(t, AB_User_GetUserName(u));
+					AB_Transaction_SetLocalIban(t, iban );
+                                        AB_Transaction_SetLocalBic(t, bic); 
+                                        
+                                        // Scheinbar kann/muss folgendes unterbleiben:
+					// AB_Transaction_SetLocalBankCode(t, blz);
+					// AB_Transaction_SetLocalAccountNumber(t, kto);
+					
+                                        // -----------------------------------------
+                                        // Schuldner:
+                                        //
 
-					AB_JobSingleDebitNote_SetTransaction(job, t);
+                                        // Name
+					AB_Transaction_AddRemoteName(t, name, 0);
+					
+					// Kontonummer+BLZ
+					AB_Transaction_SetRemoteBankCode(t, fblz);
+					AB_Transaction_SetRemoteAccountNumber(t, fkto);
+					// IBAN+BIC errechnen und eintragen
+					AB_Banking__fillTransactionRemoteSepaInfo(ab, t);
+
+
+                                        // ENDE befüllen der Transaktion   
+                                        // -----------------------------------------
+					
+					// save,add,free
+					AB_Job_SetTransaction(job, t);
 					AB_Job_List2_PushBack(jl, job);//Job zur liste hinzufgen
 					AB_Transaction_free(t);
 				
@@ -1102,7 +1304,7 @@ int lastschrift( AB_BANKING *ab, const char *path )
 		}
 		fclose(LASTCSV);
 		
-		sprintf(buffer,"%d Lastschriftauftraege\n",AB_Job_List2_GetSize(jl));
+		sprintf(buffer,"INFO: Anzahl Lastschriftauftraege ist %d.\n",AB_Job_List2_GetSize(jl));
 		doc(buffer,0 );
 		
 		//Alle Datens�tze gelesen und in jobs geparst
