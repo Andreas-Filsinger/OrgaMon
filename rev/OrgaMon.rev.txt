@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.039 (04.08.14) Andreas Filsinger
+
+ Neu: Buch: SEPA Basis Lastschriften
+
 Rev 8.038 (30.07.14) Andreas Filsinger
 
  Neu: Beleg: Einzeldokumente zu einem Beleg können zu einem HTML verschmolzen/
