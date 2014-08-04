@@ -1352,6 +1352,10 @@ begin
             VZweck[i] := '';
           Verwendungszweck.free;
 
+          // Datums bisher noch automatisch
+          MandatsDatum := cDTA_DatumAutomatisch;
+          AusfuehrungsDatum := cDTA_DatumAutomatisch;
+
         end;
 
         DtaPut(DTA_Posten);
@@ -1839,8 +1843,8 @@ begin
 
   if BelegMode then
   begin
-     Button22.caption := 'ù';
-     BelegMode := false;
+    Button22.Caption := 'ù';
+    BelegMode := false;
   end;
 
   if (sForderungen.count > 0) then
@@ -1848,11 +1852,13 @@ begin
     if (sForderungen.count = 1) then
     begin
       showBeleg(0)
-    end else
+    end
+    else
     begin
       BelegMode := true;
-      Button22.caption := 's';
-      ShowMessageTimeOut('Es gibt mehrere Belege, klicken Sie auf die Tabelle um einen auszuw‰hlen!');
+      Button22.Caption := 's';
+      ShowMessageTimeOut
+        ('Es gibt mehrere Belege, klicken Sie auf die Tabelle um einen auszuw‰hlen!');
     end;
   end;
 end;
@@ -5591,6 +5597,13 @@ begin
         VZweck[2] := Subs[7];
         VZweck[3] := Subs[8];
         VZweck[4] := Subs[9];
+        VZweck[5] := '';
+        VZweck[6] := '';
+        VZweck[7] := '';
+        // Datums bisher noch automatisch
+        MandatsDatum := cDTA_DatumAutomatisch;
+        AusfuehrungsDatum := cDTA_DatumAutomatisch;
+
       end;
       Subs.free;
 
@@ -5869,7 +5882,7 @@ begin
   else
     ShowMessage(FName + #13 + 'nicht gefunden!');
   BelegMode := false;
-  Button22.caption := 'ù';
+  Button22.Caption := 'ù';
 end;
 
 procedure TFormBuchhalter.SpeedButton9Click(Sender: TObject);
