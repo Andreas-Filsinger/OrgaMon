@@ -61,6 +61,14 @@ const
   cDATE_MONTH_FAKTOR = 100;
   cDATE_DAY_FAKTOR = 1;
 
+  cDATE_MONTAG = 1;
+  cDATE_DIENSTAG = 2;
+  cDATE_MITTWOCH = 3;
+  cDATE_DONNERSTAG = 4;
+  cDATE_FREITAG = 5;
+  cDATE_SAMSTAG = 6;
+  cDATE_SONNTAG = 7;
+
   cIllegalDate = 0;
   cMinDate: longint = 0 * cDATE_YEAR_FAKTOR + 1 * cDATE_MONTH_FAKTOR + 1;
   // 01.01.0000
@@ -127,7 +135,8 @@ function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
 function StrFilter(s, Filter: string; DeleteHits: boolean = false)
   : string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
-function StrFilter(s:string ; Filter: TSysCharSet; DeleteHits: boolean = false): string; Overload;
+function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false)
+  : string; Overload;
 function noblank(const InpStr: string): string;
 function noDoubleBlank(s: string): string;
 
@@ -1288,9 +1297,72 @@ begin
     result := '???';
 end;
 
-function Feiertag(ADate: TAnfixDate): boolean; // imp pend
+function Feiertag(ADate: TAnfixDate): boolean;
+var
+  m, d, y: integer;
+  KarFreitag, OsterSonntag, OsterMOntag: TAnfixDate;
+
+  (*
+    Feiertage nach Target2, z.B. 2014
+    =================================
+    1. Januar 2014 , Neujahr
+    18. April 2014 , Karfreitag
+    21. April 2014 , Ostermontag
+    1. Mai 2014, Tag der Arbeit
+    25. Dezember 2014, 1. Weichnachtsfeiterg
+    26. Dezember 2014, 2. Weihnachtsfeiertag
+
+    Optimierung
+    ===========
+    Ostersonntag kann nur zwischen 22. März und dem 25. April sein
+    Karfreitag wäre dann frühestens am 20. März
+    Ostermontag wäre dann spätestens am 26. April
+  *)
+
 begin
+
+  // Sonntag
   result := (WeekDay(ADate) = 7);
+  if result then
+    exit;
+
+  long2details(ADate, y, m, d);
+
+  // Neujahr
+  result := (m = 1) and (d = 1);
+  if result then
+    exit;
+
+  // 1. Mai
+  result := (m = 5) and (d = 1);
+  if result then
+    exit;
+
+  // Weihnacht
+  result := (m = 12) and ((d = 25) or (d = 26));
+  if result then
+    exit;
+
+  // im Osterzeitraum?
+  if
+  { } (m < 3) or
+  { } (m > 4) or
+  { } ((m = 3) and (d < 20)) or
+  { } ((m = 4) and (d > 26)) then
+    exit;
+
+  OsterSonntag := DateTime2long(JclDateTime.EasterSunday(y));
+
+  OsterMOntag := datePlus(OsterSonntag, 1);
+  result := (ADate = OsterMOntag);
+  if result then
+    exit;
+
+  KarFreitag := datePlus(OsterSonntag, -2);
+  result := (ADate = KarFreitag);
+  if result then
+    exit;
+
 end;
 
 function Kalenderwoche(ADate: TAnfixDate): integer; //
@@ -1874,13 +1946,13 @@ end;
 
 function noDoubleBlank(s: string): string;
 var
-  k: Integer;
+  k: integer;
 begin
   repeat
     k := pos('  ', s);
     if k = 0 then
       break;
-    System.Delete(s, k, 1);
+    system.delete(s, k, 1);
   until false;
   result := s;
 end;
@@ -4364,16 +4436,6 @@ begin
   until true;
 end;
 
-function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
-begin
-  result := dlong;
-  repeat
-    result := datePlus(result, 1);
-    if (WeekDay(result) <= 5) then
-      if not(Feiertag(result)) then
-        Dec(plus);
-  until (plus = 0);
-end;
 
 function NextMonth(dlong: TAnfixDate): TAnfixDate;
 var
@@ -4465,6 +4527,26 @@ begin
       inc(Werktage);
   end;
   result := StartD;
+end;
+
+function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
+var
+ Richtung : integer;
+begin
+  result := dlong;
+  if (Plus=0) then
+   exit;
+
+  if (Plus>0) then
+   Richtung := 1
+  else
+   Richtung := -1;
+
+  repeat
+    result := datePlus(result, Richtung);
+    if (WeekDay(result) < cDATE_SAMSTAG) and not(Feiertag(result)) then
+     Plus := Plus - Richtung;
+  until (plus = 0);
 end;
 
 function NearestDate(dlong: TAnfixDate; WeekDay: integer): TAnfixDate;
@@ -5275,13 +5357,14 @@ begin
       result[n] := Hit;
 end;
 
-function StrFilter(s:string ; Filter: TSysCharSet; DeleteHits: boolean = false): string;
+function StrFilter(s: string; Filter: TSysCharSet;
+  DeleteHits: boolean = false): string;
 var
   n: integer;
 begin
   result := '';
   for n := 1 to length(s) do
-    if (not(CharInSet(s[n],Filter)) = DeleteHits) then
+    if (not(CharInSet(s[n], Filter)) = DeleteHits) then
       result := result + s[n];
 end;
 

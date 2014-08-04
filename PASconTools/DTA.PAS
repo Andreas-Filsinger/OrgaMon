@@ -54,11 +54,23 @@ uses
 
 const
   cDTA_csvSeparator = ';';
-  cHeaderLine = 'RID' + cDTA_csvSeparator + 'Name' + cDTA_csvSeparator + 'Ort' +
-    cDTA_csvSeparator + 'BLZ' + cDTA_csvSeparator + 'Konto' + cDTA_csvSeparator
-    + 'Betrag' + cDTA_csvSeparator + 'VZ1' + cDTA_csvSeparator + 'VZ2' +
-    cDTA_csvSeparator + 'VZ3' + cDTA_csvSeparator + 'VZ4' + cDTA_csvSeparator +
-    'VZ5' + cDTA_csvSeparator + 'VZ6' + cDTA_csvSeparator + 'VZ7';
+  cDTA_DatumAutomatisch = 0;
+  cHeaderLine =
+  { } 'RID' + cDTA_csvSeparator +
+  { } 'Name' + cDTA_csvSeparator +
+  { } 'Ort' + cDTA_csvSeparator +
+  { } 'BLZ' + cDTA_csvSeparator +
+  { } 'Konto' + cDTA_csvSeparator +
+  { } 'Betrag' + cDTA_csvSeparator +
+  { } 'VZ1' + cDTA_csvSeparator +
+  { } 'VZ2' + cDTA_csvSeparator +
+  { } 'VZ3' + cDTA_csvSeparator +
+  { } 'VZ4' + cDTA_csvSeparator +
+  { } 'VZ5' + cDTA_csvSeparator +
+  { } 'VZ6' + cDTA_csvSeparator +
+  { } 'VZ7' + cDTA_csvSeparator +
+  { } 'AusfuehrungsDatum' + cDTA_csvSeparator +
+  { } 'MandatsDatum';
   cUmsatzHeader =
     'PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7';
   cSaldoHeader = 'Betrag;Waehrung';
@@ -73,6 +85,7 @@ type
     ktonr: string[10];
     KontoInhaberName: string[27];
     KontoInhaberOrt: string[27];
+    GlaeubigerID: string[18];
     Lastschrift: boolean;
   end;
 
@@ -85,6 +98,9 @@ type
     zahlerName: string[27];
     zahlerOrt: string[27];
     VZweck: array [1 .. 7] of string[27];
+    MandatsDatum: TANfixDate;
+    AusfuehrungsDatum: TANfixDate;
+    // +MandatID: string[27];
   end;
 
 procedure DtaOpen(header: DtaDataType);
@@ -286,6 +302,13 @@ begin
         ') kein Verwendungszweck angegeben bei ' + zahlerName);
     end;
 
+    { Datum }
+    if (MandatsDatum = cIllegalDate) then
+      MandatsDatum := DateGet;
+
+    if (AusfuehrungsDatum = cIllegalDate) then
+      AusfuehrungsDatum := datePlusWorking(DateGet, 5);
+
   end;
 end;
 
@@ -416,20 +439,26 @@ begin
   if ValidCSatz(CSatz) then
   begin
 
-    { Log - Ausgabe }
+    { Ausgabe }
     with CSatz do
     begin
 
       hstr := StrFilter(rtostr(betrag, 13, 2), '0123456789,');
-      sAusgabe := inttostr(RID) + cDTA_csvSeparator + '"' + cutblank(zahlerName)
-        + '"' + cDTA_csvSeparator + '"' + cutblank(zahlerOrt) + '"' +
-        cDTA_csvSeparator + blz + cDTA_csvSeparator + ktonr + cDTA_csvSeparator
-        + hstr + cDTA_csvSeparator + '"' + cutblank(VZweck[1]) + '"' +
-        cDTA_csvSeparator + '"' + cutblank(VZweck[2]) + '"' + cDTA_csvSeparator
-        + '"' + cutblank(VZweck[3]) + '"' + cDTA_csvSeparator + '"' +
-        cutblank(VZweck[4]) + '"' + cDTA_csvSeparator + '"' + cutblank(VZweck[5]
-        ) + '"' + cDTA_csvSeparator + '"' + cutblank(VZweck[6]) + '"' +
-        cDTA_csvSeparator + '"' + cutblank(VZweck[7]) + '"';
+      sAusgabe :=
+      { } inttostr(RID) + cDTA_csvSeparator + '"' +
+      { } cutblank(zahlerName) + '"' + cDTA_csvSeparator + '"' +
+      { } cutblank(zahlerOrt) + '"' + cDTA_csvSeparator +
+      { } blz + cDTA_csvSeparator +
+      { } ktonr + cDTA_csvSeparator + { } hstr + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[1]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[2]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[3]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[4]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[5]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[6]) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(VZweck[7]) + '"' + cDTA_csvSeparator +
+      { } long2dateLog(AusfuehrungsDatum) + cDTA_csvSeparator +
+      { } long2dateLog(MandatsDatum);
 
       writeln(DtaListeRAW, sAusgabe);
       writeln(DtaListeAnsi, DTA2Ansi(sAusgabe));
