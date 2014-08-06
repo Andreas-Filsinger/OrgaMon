@@ -85,19 +85,21 @@ type
     ktonr: string[10];
     KontoInhaberName: string[27];
     KontoInhaberOrt: string[27];
-    GlaeubigerID: string[18];
+    GlaeubigerID: string[18]; // CRED = Gläubiger-ID
     Lastschrift: boolean;
   end;
 
+  // EREF+ = Ende-zu-Ende-Referenz, xml: <EndToEndId>
+  //
   // Posten-Daten: Fremde Konten die belastet werden
   CSatzType = record
-    RID: integer;
+    RID: integer; // wird MREF (Mandatsreferenz) ist i.d.R. RID des BUCH oder AUSGANGSRECHNUNG
     blz: string[8];
     ktonr: string[10];
     betrag: real;
     zahlerName: string[27];
     zahlerOrt: string[27];
-    VZweck: array [1 .. 7] of string[27];
+    VZweck: array [1 .. 7] of string[27];     // SVWZ = Verwendungszweck
     MandatsDatum: TANfixDate;
     AusfuehrungsDatum: TANfixDate;
     // +MandatID: string[27];
