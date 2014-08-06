@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.040 (05.08.14) Andreas Filsinger
+
+ Neu: Buch: Reihenfolge der Lastschriften bei einer Sammellastschrift wird in
+      der Kontoführung protokolliert.
+
 Rev 8.039 (04.08.14) Andreas Filsinger
 
  Neu: Buch: SEPA Basis Lastschriften
@@ -10632,6 +10637,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.040
+
+ALTER TABLE AUSGANGSRECHNUNG
+ADD POSNO INTEGER;
 
 :8.014
 

@@ -425,7 +425,7 @@ type
     procedure setIdentitaetRosa(PERSON_R: Integer);
     procedure doSuche;
 
-    procedure e_w_HBCI_Group(TAN: string);
+    procedure e_w_HBCI_Group(TAN: string; JobID: string);
     procedure e_w_HBCI_EreignisDel(EREIGNIS_R: Integer; Grund: string);
 
     procedure setContext(Konto: string; BELEG_R: Integer = -1); overload;
@@ -2359,7 +2359,7 @@ begin
     end;
 
     // Volumen nun als Übertragen markieren
-    e_w_HBCI_Group(iTAN);
+    e_w_HBCI_Group(iTAN, LastschriftJobID);
 
     // Jetzt die ganzen Server-Infos ausgeben
     if (iTAN <> Fill('0', cTAN_AnzahlStellen)) then
@@ -2411,7 +2411,7 @@ begin
     { } 'where RID=' + inttostr(EREIGNIS_R));
 end;
 
-procedure TFormBuchhalter.e_w_HBCI_Group(TAN: string);
+procedure TFormBuchhalter.e_w_HBCI_Group(TAN: string; JobID: string);
 var
   sVOLUMEN: TsTable;
   sDTAUS: TsTable;
@@ -2431,7 +2431,6 @@ var
   end;
 
 begin
-
   sVOLUMEN := TsTable.Create;
   sDTAUS := TsTable.Create;
   qEREIGNIS := DataModuleDatenbank.nQuery;
@@ -2451,6 +2450,7 @@ begin
     FieldByName('MENGE').AsInteger := sDTAUS.RowCount;
     sINFO.values['BETRAG'] := format('%m', [sDTAUS.sumCol('Betrag')]);
     sINFO.values['TAN'] := TAN;
+    sINFO.values['JOB'] := JobID;
     FieldByName('INFO').Assign(sINFO);
     if (sBearbeiter > 0) then
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -2460,6 +2460,7 @@ begin
   FileSave('DTA.CSV');
   FileSave('DTA.raw.csv');
   FileSave('DTA.UTF-8.csv');
+  FileSave('DTA.SEPA.csv');
 
   // EREIGNIS_R in allen Forderungsdatensätzen buchen
   with sVOLUMEN do
@@ -2469,7 +2470,8 @@ begin
     for r := 1 to RowCount do
       e_x_sql(
         { } 'update AUSGANGSRECHNUNG set EREIGNIS_R=' +
-        { } inttostr(EREIGNIS_R) + ' ' +
+        { } inttostr(EREIGNIS_R) + ', ' +
+        { } 'POSNO=' + inttostr(r) + ' ' +
         { } 'where RID=' +
         { } readCell(r, c));
   end;
@@ -2479,7 +2481,6 @@ begin
   qEREIGNIS.free;
   sDTAUS.free;
   sVOLUMEN.free;
-
 end;
 
 function TFormBuchhalter.e_w_KontoSync(Konten: string;
