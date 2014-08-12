@@ -71,10 +71,15 @@ const
   { } 'VZ7' + cDTA_csvSeparator +
   { } 'AusfuehrungsDatum' + cDTA_csvSeparator +
   { } 'MandatsDatum';
+
   cUmsatzHeader =
-    'PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7';
+  { } 'PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;' +
+  { } 'VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;' +
+  { } 'Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7;'
+    +
+  { } 'MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz';
+
   cSaldoHeader = 'Betrag;Waehrung';
-  cFilterPositiveGanzzahl = '0123456789';
 
 type
   // Kopf-Daten: Eigenes Konto
@@ -93,13 +98,14 @@ type
   //
   // Posten-Daten: Fremde Konten die belastet werden
   CSatzType = record
-    RID: integer; // wird MREF (Mandatsreferenz) ist i.d.R. RID des BUCH oder AUSGANGSRECHNUNG
+    RID: integer;
+    // wird MREF (Mandatsreferenz) ist i.d.R. RID des BUCH oder AUSGANGSRECHNUNG
     blz: string[8];
     ktonr: string[10];
     betrag: real;
     zahlerName: string[27];
     zahlerOrt: string[27];
-    VZweck: array [1 .. 7] of string[27];     // SVWZ = Verwendungszweck
+    VZweck: array [1 .. 7] of string[27]; // SVWZ = Verwendungszweck
     MandatsDatum: TANfixDate;
     AusfuehrungsDatum: TANfixDate;
     // +MandatID: string[27];

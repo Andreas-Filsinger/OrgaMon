@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.041 (12.08.14) Andreas Filsinger
+
+ Neu: Buch: Umsatz: Anpassungen an aqbd Version 1.036
+
 Rev 8.040 (05.08.14) Andreas Filsinger
 
  Neu: Buch: Reihenfolge der Lastschriften bei einer Sammellastschrift wird in

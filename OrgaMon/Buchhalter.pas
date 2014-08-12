@@ -1265,10 +1265,8 @@ begin
       if isSoll(Forderung) then
       begin
         Verwendungszweck := e_r_Ueberweisungstext;
-        BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString,
-          cFilterPositiveGanzzahl);
-        ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString,
-          cFilterPositiveGanzzahl);
+        BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
+        ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
         Gutschriften.AddObject(BLZ + '-' + ktonr, Verwendungszweck);
         SetLength(dGutschriften, Gutschriften.count);
         dGutschriften[pred(Gutschriften.count)] := Forderung;
@@ -1282,8 +1280,8 @@ begin
   begin
     FName := DiagnosePath + 'DTAUS.DTA';
     BankName := iKontoBankName;
-    BLZ := StrFilter(iKontoBLZ, cFilterPositiveGanzzahl);
-    ktonr := StrFilter(iKontoNummer, cFilterPositiveGanzzahl);
+    BLZ := StrFilter(iKontoBLZ, cZiffern);
+    ktonr := StrFilter(iKontoNummer, cZiffern);
     KontoInhaberName := iKontoInhaber;
     KontoInhaberOrt := '';
     Lastschrift := true;
@@ -1307,10 +1305,8 @@ begin
         with DTA_Posten do
         begin
           RID := FieldByName('RID').AsInteger;
-          BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString,
-            cFilterPositiveGanzzahl);
-          ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString,
-            cFilterPositiveGanzzahl);
+          BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
+          ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
 
           zahlerName := cutblank(FieldByName('Z_ELV_KONTO_INHABER').AsString);
           if (zahlerName = '') then
@@ -2149,9 +2145,8 @@ begin
   KlassischeTAN := Edit10.Text;
   Memo1.lines.clear;
   sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' +
-    StrFilter(iKontoBLZ, cFilterPositiveGanzzahl) + '/' +
-    StrFilter(iKontoNummer, cFilterPositiveGanzzahl), MyProgramPath + cHBCIPath
-    + 'DTAUS.DTA.SEPA.csv');
+    StrFilter(iKontoBLZ, cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern),
+    MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv');
   LastschriftJobID := DataModuleREST.TAN;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
@@ -2579,7 +2574,7 @@ var
   begin
     i := Headers.IndexOf(FieldName);
     if (i = -1) then
-      result := '??'
+      result := ''
     else
       result := nextp(Line, ';', i);
   end;
@@ -2591,6 +2586,19 @@ var
     s := r(Line, FieldName);
     if (s <> '') then
       sl.add(s);
+  end;
+
+  procedure sadd(Kuerzel, Wert: string; sl: TStringList);
+  var
+    s: string;
+  begin
+    if Wert <> '' then
+    begin
+      s := noblank(sl.Text);
+      if (pos(Wert, s) = 0) then
+        if pos(Kuerzel + ':', s) = 0 then
+          sl.add(Kuerzel + ': ' + Wert);
+    end;
   end;
 
 var
@@ -2624,6 +2632,7 @@ var
   BankCode, AccountNumber: string;
   BusinessTransactionText: string;
   PrimaNoteNumber: string;
+  MandatsReferenz, GlaeubigerID, EndeZuEndeReferenz: string;
 
   // Ereignis eintragen
   EREIGNIS_R: Integer;
@@ -2695,9 +2704,10 @@ begin
     DiagnoseLog.addstrings(serverLog);
     serverLog.free;
 
-    //
+    // Überhaupt was da?
     if (sResult.count > 0) then
-      if pos(cUmsatzHeader, sResult[0]) = 1 then
+      // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
+      if (pos(cUmsatzHeader, sResult[0]) = 1) or (pos(sResult[0], cUmsatzHeader) = 1) then
       begin
 
         Headers := split(sResult[0]);
@@ -2732,6 +2742,12 @@ begin
           radd(ActLine, 'Buchungstext7', BuchungsText);
           radd(ActLine, 'VonName1', vonName);
           radd(ActLine, 'VonName2', vonName);
+          MandatsReferenz := r(ActLine, 'MandatsReferenz');
+          sadd('MREF', MandatsReferenz, BuchungsText);
+          GlaeubigerID := r(ActLine, 'GlaeubigerID');
+          sadd('CRED', GlaeubigerID, BuchungsText);
+          EndeZuEndeReferenz := r(ActLine, 'EndeZuEndeReferenz');
+          sadd('EREF', EndeZuEndeReferenz, BuchungsText);
 
           // Gesamtliste aller übertragener Posten
           if (EntryDate <> LastDate) then
@@ -5570,8 +5586,8 @@ begin
   begin
     FName := DiagnosePath + 'DTAUS-GK.DTA';
     BankName := iKontoBankName;
-    BLZ := StrFilter(iKontoBLZ, cFilterPositiveGanzzahl);
-    ktonr := StrFilter(iKontoNummer, cFilterPositiveGanzzahl);
+    BLZ := StrFilter(iKontoBLZ, cZiffern);
+    ktonr := StrFilter(iKontoNummer, cZiffern);
     KontoInhaberName := iKontoInhaber;
     KontoInhaberOrt := '';
     Lastschrift := false;
