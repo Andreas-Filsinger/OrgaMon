@@ -57,7 +57,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.035.12";
+const char *currentVersion = "1.036";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -117,7 +117,7 @@ void doc(const char *text, int x)
 		time ( &rawtime );
 		timeinfo = localtime ( &rawtime );
 		
-		if (lineend)//Ausgabeder Uhrzeit, wenn das Flag lineend true ist
+		if (lineend)//Ausgabe der Uhrzeit, wenn das Flag lineend true ist
 		{
 			fprintf(logfile, "%2i:%2i:%2i\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 			lineend =0;
@@ -131,7 +131,8 @@ void doc(const char *text, int x)
 		fprintf(logfile, text);
 		fclose(logfile);
 		
-		//Wenn das xFlag gesetzt ist, zus�tzlich in eine csv-Datei schreiben
+		// Wenn das xFlag gesetzt ist, zus�tzlich in eine csv-Datei schreiben
+		// (null) wird dabei unterdrückt
 		if (x) {
 			FILE *transactionfile;
 			sprintf(fileName, "results/%s.%s.csv", fileAusgabeFName, csvName);
@@ -217,6 +218,7 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 				FILE *tanreq;
 				char fileName[1050];
 				char path[1050];
+				char docbuf[3000];
 				
 				FILE *tanFile;
 				char c;
@@ -236,9 +238,7 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 				//Auf das TAN-File vom client warten
 				while (1) {
 
-				  doc("Waiting for TAN-file '", 0);
-				  doc(fileName, 0);
-				  doc("' ...\n", 0);
+
 				  
 				if((tanFile = fopen(fileName, "r"))) {
 
@@ -262,14 +262,16 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 						break;
 				}
 				else {
-					
-                                          sleep(1);//Eine Sekunde warten....
+                                  sleep(1);//Eine Sekunde warten....
+                                  sprintf(docbuf,"Warte seit %d Sekunden auf TAN-File '%s' ...\n",l,fileName);
+                                  doc(docbuf, 0);
 				}
-					l++;
-                                        if (l==240) {
-                                          doc("TAN-Zeitueberschreitung\n", 0);
-                                          return 2; 
-				        }
+				l++;
+                                if (l==240) {
+                                      
+                                      doc("TAN-Zeitueberschreitung\n", 0);
+                                      return 2; 
+           		        }
 					
 				}
 
@@ -436,7 +438,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
          }
 	
 	
-           doc("The Certificate is ignored and accepted!\n", 0);
+           doc("WARNING: Zertifikat wird ungeprueft akzeptiert!\n", 0);
            return 0;
 	}
 
@@ -470,7 +472,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 	
 		if(strcmp(buffer, cert)==0)
 		{
-			doc("The Certificate is identical and accepted!\n", 0);
+			doc("INFO: Das Zertifikat wurde erfolgreich geprueft!\n", 0);
 			return 0;
 		}
 		else
@@ -493,6 +495,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 		fprintf(savCert, buffer);
 		fclose(savCert);
 		doc("WARNING: Ein Vergleichs-Zertifikat lag bisher nicht vor!\n",0);
+			doc("INFO: Das Zertifikat wurde erfolgreich geprueft!\n", 0);
 		return 0;
 	}
 }
@@ -614,7 +617,7 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	//Erstellen der .csv-Datei
 	doc("\n<transactions>", 0);
 	//erste Zeile im CSV-File
-	doc("PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7\r\n", 1);
+	doc("PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7;MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz\r\n", 1);
 	
 	ai=AB_ImExporterContext_GetFirstAccountInfo(ctx); //AccountInfo herausziehen
         if (ai) {
@@ -633,6 +636,9 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		const char *vonREF;
 		const char *from1;
 		const char *from2;
+		const char *mref;
+		const char *cred;
+		const char *eref;
 		char betrag [21];
 		char date [32];
 		char valutaDate [32];
@@ -696,34 +702,41 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		from1 = GWEN_StringList_StringAt(sl,0);
 		from2 = GWEN_StringList_StringAt(sl,1);
 		vonREF = AB_Transaction_GetCustomerReference(t);
+		mref = AB_Transaction_GetMandateReference (t);
+		cred = AB_Transaction_GetCreditorIdentifier(t);
+		eref = AB_Transaction_GetEndToEndReference(t);
 		
 		if(vonREF==0)
 		{
 			vonREF="NONREF";
 		}
-		
+
 		//Ausgaben in die CSV-Datei
-		sprintf(buffer, "%i;", i);											doc(buffer,1);
-		sprintf(buffer, "%s;", date);										doc(buffer,1);
-		sprintf(buffer, "%s;", valutaDate);									doc(buffer,1);
-		sprintf(buffer, "%s;", betrag);										doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));					doc(buffer,1);
-		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
+		sprintf(buffer, "%i;", i);					doc(buffer,1);
+		sprintf(buffer, "%s;", date);					doc(buffer,1);
+		sprintf(buffer, "%s;", valutaDate);				doc(buffer,1);
+		sprintf(buffer, "%s;", betrag);					doc(buffer,1);
+		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));		doc(buffer,1);
+		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));	doc(buffer,1);
 		sprintf(buffer, "%i;", AB_Transaction_GetTransactionCode(t));	doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetTransactionText(t));	doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetPrimanota(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetRemoteBankCode(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetRemoteAccountNumber(t));	doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetCustomerReference(t));		doc(buffer,1);
-		sprintf(buffer, "%s;", from1);										doc(buffer,1);
-		sprintf(buffer, "%s;", from2);										doc(buffer,1);
-		sprintf(buffer, "%s;", purpose1);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose2);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose3);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose4);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose5);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose6);									doc(buffer,1);
-		sprintf(buffer, "%s;", purpose7);									doc(buffer,1);
+		sprintf(buffer, "%s;", from1);						doc(buffer,1);
+		sprintf(buffer, "%s;", from2);						doc(buffer,1);
+		sprintf(buffer, "%s;", purpose1);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose2);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose3);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose4);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose5);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose6);					doc(buffer,1);
+		sprintf(buffer, "%s;", purpose7);					doc(buffer,1);
+		sprintf(buffer, "%s;", mref ); doc(buffer,1);
+		sprintf(buffer, "%s;", cred ); doc(buffer,1);
+		sprintf(buffer, "%s;", eref ); doc(buffer,1);
+         
 		doc("\r\n", 1);
 		i++;
 
@@ -1001,6 +1014,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
         char bic[100];
         char iban[100];
         char gid[100];
+        char eref[100];
 
     // Spalten aus der CSV, ACHTUNG: unter Umstaenden Multibyte-Strings
         char rid[100+1];
@@ -1043,6 +1057,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
         bic[0]=0;
         iban[0]=0;
         gid[0]=0;
+        eref[0]=0;
         
         // eigene BIC suchen
         bi=AB_Banking_GetBankInfo(ab, "de", "*", blz);
@@ -1156,8 +1171,8 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					case 10: /*VZ5*/  strcpy(vz5, parameter); break; // optional
 					case 11: /*VZ6*/  strcpy(vz6, parameter); break; // optional
 					case 12: /*VZ7*/  strcpy(vz7, parameter); break; // optional
-					case 13: /**/ strcpy(AusfuehrungsDatum,parameter); break;
-                                        case 14: /**/ strcpy(MandatsDatum,parameter); break;
+					case 13: /*AusfuehrungsDatum*/ strcpy(AusfuehrungsDatum,parameter); break;
+                                        case 14: /*MandatsDatum*/ strcpy(MandatsDatum,parameter); break;
 
 				}
 				spalte++;
@@ -1216,9 +1231,21 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         AB_Transaction_SetMandateDate(t, dt);
                                         
 					// Auf dem Mandat angegebene Nummer
-					//AB_Transaction_SetMandateReference(t, rid);
-					// Kunden Nummer
+					// SEPA "MREF"
+					//
+					// "RID"~AUSGANGSRECHNUNG_R~
+					//
 					AB_Transaction_SetMandateId(t, rid);
+					
+					//
+					// Eindeutige Kennzeichnung der Zeile
+					// wichtig für die Kennzeichnung von Rücklastschriften
+					// SEPA "EREF"
+					//
+					// "J"~JobNummer~"Z"~DatenZeilenNummerDerCSV~
+					//
+ 					sprintf(eref,"J%sZ%d",fileAusgabeFName,iLineCount-1);
+					AB_Transaction_SetEndToEndReference(t, eref);
                                         
                                         // Ausführungsdatum
                                         sprintf(AusfuehrungsDatum,"%s-00:00",AusfuehrungsDatum);
@@ -1667,8 +1694,7 @@ int deamon()
 			
 			//nur den numerischen "JOB-ID" suchen...
 			i=0;
-			while((jobFileName[i]) && (jobFileName[i] != '.'))
-			{
+			while((jobFileName[i]) && (jobFileName[i] != '.')) {
 				fileNumBuffer[i] = jobFileName[i];
 				i++;
 			}

@@ -5,6 +5,7 @@
 * PUBLIC: YES
 * UPDATE: abtest.c
 * UPDATE: index.php
+* UPDATE: aqbd.sh
 * UPDATE: Rohstoffe\favicon.ico
 * INFO: Der AqBanking Dämon (in C) für den HBCI-Rest Server (in PHP)
 ====================================
@@ -23,6 +24,10 @@
 Dokumentation
 
 @<a href="http://wiki.orgamon.org/index.php5/AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+
+Rev 1.036 (12.08.14) Andreas Filsinger
+
+ Neu: Umsatz: Mandatsreferenz, Gläubiger-ID und Ende zu Ende Referenz
 
 Rev 1.035 (04.08.14) Andreas Filsinger
 
