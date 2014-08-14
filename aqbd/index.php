@@ -1,7 +1,7 @@
 <?php
 
 //
-$Version="1.036";
+$Version="1.037";
 
 // REST - Parameter
 $pBLZ="";

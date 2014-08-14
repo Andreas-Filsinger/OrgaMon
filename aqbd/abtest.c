@@ -57,7 +57,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.036";
+const char *currentVersion = "1.037";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -702,8 +702,10 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		from1 = GWEN_StringList_StringAt(sl,0);
 		from2 = GWEN_StringList_StringAt(sl,1);
 		vonREF = AB_Transaction_GetCustomerReference(t);
-		mref = AB_Transaction_GetMandateReference (t);
-		cred = AB_Transaction_GetCreditorIdentifier(t);
+//		mref = AB_Transaction_GetMandateReference (t);
+		mref = AB_Transaction_GetMandateId (t);
+//		cred = AB_Transaction_GetCreditorIdentifier(t);
+		cred = AB_Transaction_GetCreditorSchemeId(t);
 		eref = AB_Transaction_GetEndToEndReference(t);
 		
 		if(vonREF==0)
@@ -1272,6 +1274,9 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					if (strlen(vz4)>=1) {
 					 AB_Transaction_AddPurpose(t, vz4,0);
 					} 
+					
+					// Seems aqBanking can take only 4 
+					/*
 					if (strlen(vz5)>=1) {
 					 AB_Transaction_AddPurpose(t, vz5,0);
 					} 
@@ -1281,7 +1286,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					if (strlen(vz7)>=1) {
 					 AB_Transaction_AddPurpose(t, vz7,0);
 					} 
-                                        
+                                        */
 
                                         // -----------------------------------------
                                         // Begünstigter:
@@ -1307,9 +1312,16 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					// Kontonummer+BLZ
 					AB_Transaction_SetRemoteBankCode(t, fblz);
 					AB_Transaction_SetRemoteAccountNumber(t, fkto);
+					
 					// IBAN+BIC errechnen und eintragen
 					AB_Banking__fillTransactionRemoteSepaInfo(ab, t);
-
+					
+					sprintf(buffer,
+					 "%s;%s;%s\n", 
+					 rid,
+					 AB_Transaction_GetRemoteIban(t), 
+					 AB_Transaction_GetRemoteBic(t));
+                                        doc(buffer,0);
 
                                         // ENDE befüllen der Transaktion   
                                         // -----------------------------------------
