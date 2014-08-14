@@ -209,6 +209,8 @@ type
     SpeedButton45: TSpeedButton;
     SpeedButton46: TSpeedButton;
     SpeedButton47: TSpeedButton;
+    Edit15: TEdit;
+    Label1: TLabel;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -1232,6 +1234,7 @@ var
   Verwendungszweck: TStringList;
   VerwendungszweckGutschrift: TStringList;
   Gutschriften: TStringList;
+  Gutschriften_RID: TgpIntegerList;
   dGutschriften: array of double;
   GutschriftKey: string;
   i, n: Integer;
@@ -1241,10 +1244,29 @@ var
   BLZ: string[8];
   ktonr: string[10];
 
+  // Limitierung
+  Limit_Anzahl: Integer;
+  Limit_Wert: double;
+  Limit_Erreicht: boolean;
+
+  // Aufsummierung des Volumens
+  Summe_Anzahl: Integer;
+  Summe_Wert: double;
+
+  // Ausgabevolumen
+  tDTAUS : TsTable;
+  RIDs_Used:TgpIntegerList;
+
 begin
   BeginHourGlass;
 
   Gutschriften := TStringList.Create;
+  Gutschriften_RID:= TgpIntegerList.Create;
+  tDTAUS := TsTable.create;
+  tDTAUS.oNoAutoQuote := true;
+
+  RIDs_Used:=TgpIntegerList.Create;
+
   // defaults aus den Zahlungsarten
   _UeberweisungsSettings := e_r_sqlt('select EINSTELLUNGEN from ZAHLUNGTYP ' +
     'where' + ' (AUTOZAHLUNG=''' + cC_True + ''') ' + 'order by ' +
@@ -1252,6 +1274,28 @@ begin
 
   // Die aktuelle Abfrage ausgeben
   ExportTable(IB_Query1.sql, DiagnosePath + 'DTAUS.csv');
+  tDTAUS.insertFromFile(DiagnosePath + 'DTAUS.csv');
+
+  repeat
+
+    if (pos('€', Edit15.Text) > 0) then
+    begin
+      Limit_Wert := StrToDoubledef(Edit15.Text, cGeld_Max);
+      Limit_Anzahl := MaxInt;
+      break;
+    end;
+
+    if (Edit15.Text <> '') then
+    begin
+      Limit_Anzahl := StrToIntDef(Edit15.Text, MaxInt);
+      Limit_Wert := cGeld_Max;
+      break;
+    end;
+
+    Limit_Anzahl := MaxInt;
+    Limit_Wert := cGeld_Max;
+
+  until true;
 
   // Nachsehen, wo Gutschriften sind
   with IB_Query1 do
@@ -1264,6 +1308,7 @@ begin
         { } FieldByName('BETRAG').AsDouble);
       if isSoll(Forderung) then
       begin
+        Gutschriften_RID.Add(FieldByName('RID').AsInteger);
         Verwendungszweck := e_r_Ueberweisungstext;
         BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
         ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
@@ -1288,6 +1333,9 @@ begin
   end;
 
   SollCount := 0;
+  Summe_Anzahl := 0;
+  Summe_Wert := 0.0;
+  Limit_Erreicht := false;
 
   DtaOpen(DTA_Header);
   with IB_Query1 do
@@ -1300,7 +1348,6 @@ begin
 
       if isHaben(Forderung) then
       begin
-        inc(SollCount);
 
         with DTA_Posten do
         begin
@@ -1317,7 +1364,7 @@ begin
           zahlerOrt := '';
 
           // nun alle Verwendungszwecke eintragen
-          // tatsächliche Forderung berechnen
+          // tatsächliche Forderung berechnen, suche passende Gutschriften
           Verwendungszweck := e_r_Ueberweisungstext;
           GutschriftKey := BLZ + '-' + ktonr;
           for n := pred(Gutschriften.count) downto 0 do
@@ -1331,6 +1378,8 @@ begin
                   if (Verwendungszweck.IndexOf(VerwendungszweckGutschrift[i])
                     = -1) then
                     Verwendungszweck.add(VerwendungszweckGutschrift[i]);
+                RIDs_Used.Add(Gutschriften_RID[n]);
+                Gutschriften_RID.Delete(n);
                 // Imp pend: memory leak wegen TObject?!
                 Gutschriften.Delete(n);
               end;
@@ -1354,7 +1403,20 @@ begin
 
         end;
 
-        DtaPut(DTA_Posten);
+        inc(Summe_Anzahl);
+        Summe_Wert := Summe_Wert + DTA_Posten.Betrag;
+
+        if (Summe_Anzahl <= Limit_Anzahl) and (Summe_Wert <= Limit_Wert) then
+        begin
+          RIDs_Used.Add(FieldByName('RID').AsInteger);
+          DtaPut(DTA_Posten);
+          inc(SollCount);
+        end
+        else
+        begin
+          Limit_Erreicht := true;
+        end;
+
       end;
       next;
     end;
@@ -1362,8 +1424,18 @@ begin
 
   DTAlog := DtaClose;
 
-  Label35.Caption := DTAlog.values['ANZAHL'] + ' Buchungen';
+  Label35.Caption := DTAlog.values['ANZAHL'] + ' Buchung(en)';
   Label36.Caption := DTAlog.values['BETRAG'];
+
+  // Jetzt die unbenutzen RIDs alle raus aus der Gesamt-Tabelle
+  with tDTAUS do
+  begin
+    for n := RowCount downto 1 do
+     if RIDs_Used.indexof(StrtoIntDef(readCell(n,'RID'),0))=-1 then
+      tDTAUS.Del(n);
+    if Changed then
+     SaveToFile(DiagnosePath + 'DTAUS.csv');
+  end;
 
   EndHourGlass;
   repeat
@@ -1384,6 +1456,9 @@ begin
       break;
     end;
 
+    if Limit_Erreicht then
+      ShowMEssageTimeOut('Ihr Limit war wirksam!');
+
     // Erfolg
     CheckCreateOnce(MyProgramPath + cHBCIPath);
     FileCopy(DiagnosePath + 'DTAUS.*', MyProgramPath + cHBCIPath);
@@ -1391,8 +1466,13 @@ begin
 
   until true;
   _UeberweisungsSettings.free;
+
   // imp pend: memory leak wegen TObject?
   Gutschriften.free;
+  Gutschriften_RID.Free;
+  tDTAUS.Free;
+  RIDs_Used.Free;
+
 end;
 
 procedure TFormBuchhalter.TabSheet1Show(Sender: TObject);
@@ -1853,7 +1933,7 @@ begin
     begin
       BelegMode := true;
       Button22.Caption := 's';
-      ShowMessageTimeOut
+      ShowMEssageTimeOut
         ('Es gibt mehrere Belege, klicken Sie auf die Tabelle um einen auszuwählen!');
     end;
   end;
@@ -2369,6 +2449,8 @@ begin
 
   until true;
 
+  IB_query1.Refresh;
+
 end;
 
 procedure TFormBuchhalter.Button7Click(Sender: TObject);
@@ -2433,7 +2515,7 @@ begin
 
   EREIGNIS_R := e_w_gen('EREIGNIS_GID');
 
-  // Ereignis setzen
+  // Ereignis erzeugen
   sDTAUS.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS.DTA.csv');
   with qEREIGNIS do
   begin
@@ -2707,7 +2789,8 @@ begin
     // Überhaupt was da?
     if (sResult.count > 0) then
       // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
-      if (pos(cUmsatzHeader, sResult[0]) = 1) or (pos(sResult[0], cUmsatzHeader) = 1) then
+      if (pos(cUmsatzHeader, sResult[0]) = 1) or
+        (pos(sResult[0], cUmsatzHeader) = 1) then
       begin
 
         Headers := split(sResult[0]);
