@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -962,6 +962,13 @@ object FormBuchhalter: TFormBuchhalter
         ShowHint = True
         OnClick = SpeedButton41Click
       end
+      object Label1: TLabel
+        Left = 264
+        Top = 42
+        Width = 103
+        Height = 13
+        Caption = 'Anzahl-/ Wertlimit'
+      end
       object Button1: TButton
         Left = 34
         Top = 51
@@ -1072,6 +1079,13 @@ object FormBuchhalter: TFormBuchhalter
         Anchors = [akLeft, akTop, akBottom]
         ScrollBars = ssVertical
         TabOrder = 7
+      end
+      object Edit15: TEdit
+        Left = 263
+        Top = 57
+        Width = 106
+        Height = 21
+        TabOrder = 8
       end
     end
     object TabSheet3: TTabSheet
@@ -3922,7 +3936,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 368
     Top = 104
     Bitmap = {
-      494C0101040009004C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900580110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

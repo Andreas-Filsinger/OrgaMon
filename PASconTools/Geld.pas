@@ -48,6 +48,7 @@ const
 
   // M.MMggGGGG#
   cGeld_Bedeutungslos = 0.000000001;
+  cGeld_Max = 999000000000.00; // 999 Billiarden
 
   // Ein Zahlenwert, der kein Geldbetrag ist
   cGeld_Zero = 0.0;
