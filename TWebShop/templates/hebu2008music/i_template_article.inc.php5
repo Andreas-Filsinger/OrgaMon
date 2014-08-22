@@ -225,7 +225,7 @@ define("_TEMPLATE_ARTICLE_NEWSLETTER",
 "<!-- ~RID_INT~ //-->" . CRLF .
 "<div class=\"article_main_container\">" . CRLF .
 "<div class=\"article_header\">" . CRLF .
-"<div class=\"left\"><a name=\"~RID~\" href=\"" . __PATH . __INDEX_EXT . "?site=article&id=~RID~\">~TITEL~</a>&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
+"<div class=\"left\"><a name=\"~RID~\" href=\"" . __INDEX_EXT . "?site=article&id=~RID~\">~TITEL~</a>&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
 "<div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<div class=\"search_body_left\"><p><b>" .
@@ -245,32 +245,32 @@ WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p></div>" . CRLF .
 
 // TEMPLATE FÜR OPTION INFO IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DETAILS",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=article&id=~RID~\">" . WORD_DETAILS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_details.png\" alt=\"" . WORD_DETAILS . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=article&id=~RID~\">" . WORD_DETAILS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_details.png\" alt=\"" . WORD_DETAILS . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION EINKAUFSWAGEN IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_CART",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=cart&action=add_to_cart&id=~RID~\">" . nbsp(SENTENCE_INTO_CART) . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_add_to_cart.png\" alt=\"" . SENTENCE_ADD_TO_CART . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=cart&action=add_to_cart&id=~RID~\">" . nbsp(SENTENCE_INTO_CART) . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_add_to_cart.png\" alt=\"" . SENTENCE_ADD_TO_CART . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION PLAY IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_PLAY",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=article&action=play&id=~RID~\">" . WORD_PLAY . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_play.png\" alt=\"" . WORD_PLAY . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=article&action=play&id=~RID~\">" . WORD_PLAY . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_play.png\" alt=\"" . WORD_PLAY . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION DEMO IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DEMO",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=demo&id=~RID~\">" . WORD_DEMOS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_demo.png\" alt=\"" . WORD_DEMO . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=demo&id=~RID~\">" . WORD_DEMOS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_demo.png\" alt=\"" . WORD_DEMO . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION MINISCORE IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_MINISCORE",
-"<a href=\"" . __PATH . __INDEX_EXT . "?action=miniscore&id=~RID~\">" . WORD_MINISCORE . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_miniscore.png\" alt=\"" . SENTENCE_SEND_MINISCORE . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?action=miniscore&id=~RID~\">" . WORD_MINISCORE . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_miniscore.png\" alt=\"" . SENTENCE_SEND_MINISCORE . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION AUFNAHMEN IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_RECORDS",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=search&action=search_records&id=~RID~\">" . WORD_RECORDS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_record.png\" alt=\"" . SENTENCE_SEARCH_RECORDS . "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=search&action=search_records&id=~RID~\">" . WORD_RECORDS . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_record.png\" alt=\"" . SENTENCE_SEARCH_RECORDS . "\" /></a>"
 );
 
 // TEMPLATE FÜR OPTION ABBILDUNG IM NEWSLETTER
@@ -280,7 +280,7 @@ define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_THUMB",
 
 //TEMPLTATE FÜR OPTION MP3-DOWNLOAD IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_MP3",
-"<a href=\"" . __PATH . __INDEX_EXT . "?site=cart&action=add_to_cart&vid=~VERSION_MP3~&id=~RID~\">" . nbsp(SENTENCE_BUY_MP3_DOWNLOAD) . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_buy_mp3.png\" alt=\"" . SENTENCE_BUY_MP3_DOWNLOAD. "\" /></a>"
+"<a href=\"" . __INDEX_EXT . "?site=cart&action=add_to_cart&vid=~VERSION_MP3~&id=~RID~\">" . nbsp(SENTENCE_BUY_MP3_DOWNLOAD) . "<img src=\"" . __PATH . __TEMPLATE_IMAGES_PATH . "option_buy_mp3.png\" alt=\"" . SENTENCE_BUY_MP3_DOWNLOAD. "\" /></a>"
 );
 
 
