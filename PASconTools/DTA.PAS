@@ -50,12 +50,12 @@ unit DTA;
 interface
 
 uses
-  classes, Anfix32;
+  classes, Anfix32, DCPcrypt2, DCPmd5;
 
 const
   cDTA_csvSeparator = ';';
   cDTA_DatumAutomatisch = 0;
-  cHeaderLine =
+  cDTA_LastschriftHeader =
   { } 'RID' + cDTA_csvSeparator +
   { } 'Name' + cDTA_csvSeparator +
   { } 'Ort' + cDTA_csvSeparator +
@@ -72,14 +72,35 @@ const
   { } 'AusfuehrungsDatum' + cDTA_csvSeparator +
   { } 'MandatsDatum';
 
-  cUmsatzHeader =
-  { } 'PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;' +
-  { } 'VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;' +
-  { } 'Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7;'
-    +
-  { } 'MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz';
+  cDTA_UmsatzHeader =
+  { } 'PosNo' + cDTA_csvSeparator + // *** Veränderlich ***
+  { } 'Datum' + cDTA_csvSeparator +
+  { } 'Valuta' + cDTA_csvSeparator + // *** Veränderlich ***
+  { } 'Betrag' + cDTA_csvSeparator +
+  { } 'Waehrung' + cDTA_csvSeparator +
+  { } 'Typ' + cDTA_csvSeparator +
+  { } 'VorgangID' + cDTA_csvSeparator +
+  { } 'VorgangText' + cDTA_csvSeparator +
+  { } 'PrimaNota' + cDTA_csvSeparator +
+  { } 'VonBLZ' + cDTA_csvSeparator +
+  { } 'VonKonto' + cDTA_csvSeparator +
+  { } 'VonREF' + cDTA_csvSeparator +
+  { } 'VonName1' + cDTA_csvSeparator +
+  { } 'VonName2' + cDTA_csvSeparator +
+  { } 'Buchungstext1' + cDTA_csvSeparator +
+  { } 'Buchungstext2' + cDTA_csvSeparator +
+  { } 'Buchungstext3' + cDTA_csvSeparator +
+  { } 'Buchungstext4' + cDTA_csvSeparator +
+  { } 'Buchungstext5' + cDTA_csvSeparator +
+  { } 'Buchungstext6' + cDTA_csvSeparator +
+  { } 'Buchungstext7' + cDTA_csvSeparator +
+  { } 'MandatsReferenz' + cDTA_csvSeparator +
+  { } 'GlaeubigerID' + cDTA_csvSeparator +
+  { } 'EndeZuEndeReferenz';
 
-  cSaldoHeader = 'Betrag;Waehrung';
+  cDTA_SaldoHeader =
+  { } 'Betrag' + cDTA_csvSeparator +
+  { } 'Waehrung';
 
 type
   // Kopf-Daten: Eigenes Konto
@@ -111,9 +132,13 @@ type
     // +MandatID: string[27];
   end;
 
+// Lastschrift Funktionen
 procedure DtaOpen(header: DtaDataType);
 procedure DtaPut(CSatz: CSatzType);
 function DtaClose: TStringList;
+
+// Umsatz Funktionen
+function DtaUmsatzMD5(UmsatzLine: string): string;
 
 implementation
 
@@ -392,10 +417,10 @@ begin
     assignFile(DtaListeSEPA, FName + '.SEPA.csv');
     rewrite(DtaListeSEPA);
 
-    writeln(DtaListeAnsi, cHeaderLine);
-    writeln(DtaListeUTF8, cHeaderLine);
-    writeln(DtaListeRAW, cHeaderLine);
-    writeln(DtaListeSEPA, cHeaderLine);
+    writeln(DtaListeAnsi, cDTA_LastschriftHeader);
+    writeln(DtaListeUTF8, cDTA_LastschriftHeader);
+    writeln(DtaListeRAW, cDTA_LastschriftHeader);
+    writeln(DtaListeSEPA, cDTA_LastschriftHeader);
 
     { Schreibe Datensatz A }
     if Lastschrift then
@@ -633,6 +658,45 @@ begin
     writeln(BerichtF, '');
 
     closeFile(BerichtF);
+  end;
+end;
+
+const
+  DtaMD5_UmsatzHeader: TStringList = nil;
+  DtaMD5_BlackList: TStringList = nil;
+  DtaMD5_MD5: TDCP_md5 = nil;
+
+function DtaUmsatzMD5(UmsatzLine: string): string;
+var
+  HashSizeInBytes: integer;
+  Hash: array of byte;
+  HashS: array of Ansichar;
+  n: integer;
+begin
+
+  if (DtaMD5_UmsatzHeader = nil) then
+  begin
+    DtaMD5_UmsatzHeader := split(cDTA_UmsatzHeader);
+    DtaMD5_BlackList := split('PosNo;Valuta');
+    DtaMD5_MD5 := TDCP_md5.create(nil);
+  end;
+
+  with DtaMD5_MD5 do
+  begin
+    Init;
+    HashSizeInBytes := GetHashSize DIV 8;
+    SetLength(Hash, HashSizeInBytes);
+    SetLength(HashS, HashSizeInBytes * 2 + 1);
+
+    for n := 0 to pred(DtaMD5_UmsatzHeader.Count) do
+      if (DtaMD5_BlackList.indexof(DtaMD5_UmsatzHeader[n]) = -1) then
+        updateStr(nextp(UmsatzLine))
+      else
+        nextp(UmsatzLine);
+
+    Final(Hash[0]);
+    BinToHex(PAnsiChar(Hash), PAnsiChar(HashS), HashSizeInBytes);
+    result := AnsiLowerCase(PAnsiChar(HashS));
   end;
 end;
 

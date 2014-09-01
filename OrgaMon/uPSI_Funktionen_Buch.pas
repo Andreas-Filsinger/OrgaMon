@@ -112,7 +112,6 @@ begin
  S.RegisterDelphiFunction(@b_r_KontoSuchindexFName, 'b_r_KontoSuchindexFName', cdRegister);
  S.RegisterDelphiFunction(@b_r_PersonSaldo, 'b_r_PersonSaldo', cdRegister);
  S.RegisterDelphiFunction(@b_r_KontoSaldo, 'b_r_KontoSaldo', cdRegister);
- S.RegisterDelphiFunction(@b_r_MD5, 'b_r_MD5', cdRegister);
  S.RegisterDelphiFunction(@b_w_preDeleteBuch, 'b_w_preDeleteBuch', cdRegister);
  S.RegisterDelphiFunction(@b_w_DeleteBuch, 'b_w_DeleteBuch', cdRegister);
 end;
