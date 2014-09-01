@@ -51,7 +51,6 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     Button5: TButton;
-    DCP_md51: TDCP_md5;
     TabSheet4: TTabSheet;
     Edit1: TEdit;
     Label4: TLabel;
@@ -211,6 +210,7 @@ type
     SpeedButton47: TSpeedButton;
     Edit15: TEdit;
     Label1: TLabel;
+    CheckBox7: TCheckBox;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -1254,18 +1254,18 @@ var
   Summe_Wert: double;
 
   // Ausgabevolumen
-  tDTAUS : TsTable;
-  RIDs_Used:TgpIntegerList;
+  tDTAUS: TsTable;
+  RIDs_Used: TgpIntegerList;
 
 begin
   BeginHourGlass;
 
   Gutschriften := TStringList.Create;
-  Gutschriften_RID:= TgpIntegerList.Create;
-  tDTAUS := TsTable.create;
+  Gutschriften_RID := TgpIntegerList.Create;
+  tDTAUS := TsTable.Create;
   tDTAUS.oNoAutoQuote := true;
 
-  RIDs_Used:=TgpIntegerList.Create;
+  RIDs_Used := TgpIntegerList.Create;
 
   // defaults aus den Zahlungsarten
   _UeberweisungsSettings := e_r_sqlt('select EINSTELLUNGEN from ZAHLUNGTYP ' +
@@ -1308,7 +1308,7 @@ begin
         { } FieldByName('BETRAG').AsDouble);
       if isSoll(Forderung) then
       begin
-        Gutschriften_RID.Add(FieldByName('RID').AsInteger);
+        Gutschriften_RID.add(FieldByName('RID').AsInteger);
         Verwendungszweck := e_r_Ueberweisungstext;
         BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
         ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
@@ -1378,7 +1378,7 @@ begin
                   if (Verwendungszweck.IndexOf(VerwendungszweckGutschrift[i])
                     = -1) then
                     Verwendungszweck.add(VerwendungszweckGutschrift[i]);
-                RIDs_Used.Add(Gutschriften_RID[n]);
+                RIDs_Used.add(Gutschriften_RID[n]);
                 Gutschriften_RID.Delete(n);
                 // Imp pend: memory leak wegen TObject?!
                 Gutschriften.Delete(n);
@@ -1408,7 +1408,7 @@ begin
 
         if (Summe_Anzahl <= Limit_Anzahl) and (Summe_Wert <= Limit_Wert) then
         begin
-          RIDs_Used.Add(FieldByName('RID').AsInteger);
+          RIDs_Used.add(FieldByName('RID').AsInteger);
           DtaPut(DTA_Posten);
           inc(SollCount);
         end
@@ -1431,10 +1431,10 @@ begin
   with tDTAUS do
   begin
     for n := RowCount downto 1 do
-     if RIDs_Used.indexof(StrtoIntDef(readCell(n,'RID'),0))=-1 then
-      tDTAUS.Del(n);
+      if RIDs_Used.IndexOf(StrToIntDef(readCell(n, 'RID'), 0)) = -1 then
+        tDTAUS.Del(n);
     if Changed then
-     SaveToFile(DiagnosePath + 'DTAUS.csv');
+      savetofile(DiagnosePath + 'DTAUS.csv');
   end;
 
   EndHourGlass;
@@ -1469,9 +1469,9 @@ begin
 
   // imp pend: memory leak wegen TObject?
   Gutschriften.free;
-  Gutschriften_RID.Free;
-  tDTAUS.Free;
-  RIDs_Used.Free;
+  Gutschriften_RID.free;
+  tDTAUS.free;
+  RIDs_Used.free;
 
 end;
 
@@ -2449,7 +2449,7 @@ begin
 
   until true;
 
-  IB_query1.Refresh;
+  IB_Query1.Refresh;
 
 end;
 
@@ -2692,7 +2692,6 @@ var
   //
   LastDate: TAnfixDate;
   LfdNo: Integer;
-  MD5s: TStringList;
   MD5: string;
   Script: TStringList;
   uText: TStringList;
@@ -2716,6 +2715,9 @@ var
   PrimaNoteNumber: string;
   MandatsReferenz, GlaeubigerID, EndeZuEndeReferenz: string;
 
+  // Bereits im System
+  BereitsGespeichert: boolean;
+
   // Ereignis eintragen
   EREIGNIS_R: Integer;
   sEreignis: TStringList;
@@ -2725,7 +2727,6 @@ begin
   result := -1;
   ErrorCount := 0;
   EREIGNIS_R := cRID_Null;
-  MD5s := TStringList.Create;
   Script := TStringList.Create;
   uText := TStringList.Create;
   DiagnoseLog := TStringList.Create;
@@ -2789,105 +2790,96 @@ begin
     // Überhaupt was da?
     if (sResult.count > 0) then
       // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
-      if (pos(cUmsatzHeader, sResult[0]) = 1) or
-        (pos(sResult[0], cUmsatzHeader) = 1) then
+      if (pos(cDTA_UmsatzHeader, sResult[0]) = 1) or
+        (pos(sResult[0], cDTA_UmsatzHeader) = 1) then
       begin
 
         Headers := split(sResult[0]);
         result := 0;
         LastDate := cMinDate;
-        LfdNo := 0;
+        LfdNo := 0; // wird später durch "1" überschrieben
+
         for i := 1 to pred(sResult.count) do
         begin
 
-          vonName.clear;
-          BuchungsText.clear;
           ActLine := sResult[i];
+          DiagnoseLog.add(ActLine);
+
+          //
+          // Identifikationsfelder muss aufbereitet werden
+          // zur Dublettenerkennung
+          //
+          MD5 := DtaUmsatzMD5(ActLine);
 
           EntryDate := Date2Long(r(ActLine, 'Datum'));
-          ValutaDate := Date2Long(r(ActLine, 'Valuta'));
-          Amount := strtodouble(r(ActLine, 'Betrag'));
-          TransactionType := r(ActLine, 'Typ');
-          CustomerReference := r(ActLine, 'VonREF');
-          if (CustomerReference = '') then
-            CustomerReference := 'NONREF';
-          BusinessTransactionCode := r(ActLine, 'VorgangID');
-          BankCode := r(ActLine, 'VonBLZ');
-          AccountNumber := r(ActLine, 'VonKonto');
-          BusinessTransactionText := r(ActLine, 'VorgangText');
-          PrimaNoteNumber := r(ActLine, 'PrimaNota');
-          radd(ActLine, 'Buchungstext1', BuchungsText);
-          radd(ActLine, 'Buchungstext2', BuchungsText);
-          radd(ActLine, 'Buchungstext3', BuchungsText);
-          radd(ActLine, 'Buchungstext4', BuchungsText);
-          radd(ActLine, 'Buchungstext5', BuchungsText);
-          radd(ActLine, 'Buchungstext6', BuchungsText);
-          radd(ActLine, 'Buchungstext7', BuchungsText);
-          radd(ActLine, 'VonName1', vonName);
-          radd(ActLine, 'VonName2', vonName);
-          MandatsReferenz := r(ActLine, 'MandatsReferenz');
-          sadd('MREF', MandatsReferenz, BuchungsText);
-          GlaeubigerID := r(ActLine, 'GlaeubigerID');
-          sadd('CRED', GlaeubigerID, BuchungsText);
-          EndeZuEndeReferenz := r(ActLine, 'EndeZuEndeReferenz');
-          sadd('EREF', EndeZuEndeReferenz, BuchungsText);
-
-          // Gesamtliste aller übertragener Posten
           if (EntryDate <> LastDate) then
           begin
             LastDate := EntryDate;
             LfdNo := 1;
           end;
-          // 080319
-          RealValuta := long2date8(ValutaDate);
-          RealValuta := copy(RealValuta, 7, 2) + // JJ
-            copy(RealValuta, 4, 2) + // MM
-            copy(RealValuta, 1, 2); // TT
 
-          // den Signatur Datensatz aufbereiten
-          MD5s.clear;
-          MD5s.add(inttostr(LfdNo));
-          MD5s.add(long2date(EntryDate) + ' 00:00:00');
-          MD5s.add(long2date(ValutaDate) + ' 00:00:00');
-          MD5s.add(RealValuta);
-          MD5s.add(FloatToStrISO(Amount));
-          MD5s.add(r(ActLine, 'Waehrung'));
-          MD5s.add(TransactionType);
-          MD5s.add(BusinessTransactionText);
-          MD5s.add(BusinessTransactionCode);
-          MD5s.add(PrimaNoteNumber);
-          MD5s.add(BankCode);
-          MD5s.add(AccountNumber);
-          MD5s.add(CustomerReference);
-          MD5s.add('{');
-          MD5s.add(HugeSingleLine(vonName, #$0D#$0A));
-          MD5s.add('}');
-          MD5s.add('{');
-          MD5s.add(HugeSingleLine(BuchungsText, #$0D#$0A));
-          MD5s.add('}');
-
-          // MD5 Summe des Datensatzes berechnen
-          MD5 := DCP_md51.FromStrings(MD5s);
-
-          // unten dazu
-          MD5s.add(MD5);
-
-          DiagnoseLog.addstrings(MD5s);
+          if CheckBox7.Checked then
+            BereitsGespeichert :=
+              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
+              KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
+              ''') and ' + '(MD5=''' + MD5 + ''')') <> 0)
+          else
+            BereitsGespeichert :=
+              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
+              KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
+              ''') and ' + '(POSNO=' + inttostr(LfdNo) + ')') <> 0);
 
           // Fingerabdruck suchen
-          if e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
-            KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
-            ''') and ' + '(MD5=''' + MD5 + ''')') = 0 then
+          if not(BereitsGespeichert) then
           begin
 
             if Buchen then
             begin
 
+              // Aufbereiten
+              ValutaDate := Date2Long(r(ActLine, 'Valuta'));
+              Amount := strtodouble(r(ActLine, 'Betrag'));
+              TransactionType := r(ActLine, 'Typ');
+              CustomerReference := r(ActLine, 'VonREF');
+              if (CustomerReference = '') then
+                CustomerReference := 'NONREF';
+              BusinessTransactionCode := r(ActLine, 'VorgangID');
+              BankCode := r(ActLine, 'VonBLZ');
+              AccountNumber := r(ActLine, 'VonKonto');
+              BusinessTransactionText := r(ActLine, 'VorgangText');
+              PrimaNoteNumber := r(ActLine, 'PrimaNota');
+              BuchungsText.clear;
+              radd(ActLine, 'Buchungstext1', BuchungsText);
+              radd(ActLine, 'Buchungstext2', BuchungsText);
+              radd(ActLine, 'Buchungstext3', BuchungsText);
+              radd(ActLine, 'Buchungstext4', BuchungsText);
+              radd(ActLine, 'Buchungstext5', BuchungsText);
+              radd(ActLine, 'Buchungstext6', BuchungsText);
+              radd(ActLine, 'Buchungstext7', BuchungsText);
+              vonName.clear;
+              radd(ActLine, 'VonName1', vonName);
+              radd(ActLine, 'VonName2', vonName);
+              MandatsReferenz := r(ActLine, 'MandatsReferenz');
+              sadd('MREF', MandatsReferenz, BuchungsText);
+              GlaeubigerID := r(ActLine, 'GlaeubigerID');
+              sadd('CRED', GlaeubigerID, BuchungsText);
+              EndeZuEndeReferenz := r(ActLine, 'EndeZuEndeReferenz');
+              sadd('EREF', EndeZuEndeReferenz, BuchungsText);
+
+              // Gesamtliste aller übertragener Posten
+
+              // 080319
+              RealValuta := long2date8(ValutaDate);
+              RealValuta := copy(RealValuta, 7, 2) + // JJ
+                copy(RealValuta, 4, 2) + // MM
+                copy(RealValuta, 1, 2); // TT
+
               // Erst ein zentrales Ereignis schreiben
-              if EREIGNIS_R < cRID_FirstValid then
+              if (EREIGNIS_R < cRID_FirstValid) then
               begin
                 sEreignis := TStringList.Create;
                 sEreignis.add('Umsatzabruf ' + BLZ + '/' + KontoNummer);
+                sEreignis.AddStrings(sResult);
                 qEREIGNIS := DataModuleDatenbank.nQuery;
                 with qEREIGNIS do
                 begin
@@ -2905,6 +2897,8 @@ begin
                 qEREIGNIS.free;
                 sEreignis.free;
               end;
+
+              DiagnoseLog.add('+' + MD5);
 
               with qBUCH do
               begin
@@ -2952,7 +2946,15 @@ begin
 
                 inc(result);
               end;
+            end
+            else
+            begin
+              DiagnoseLog.add('#' + MD5);
             end;
+          end
+          else
+          begin
+            DiagnoseLog.add('-' + MD5);
           end;
 
           inc(LfdNo);
@@ -2976,7 +2978,6 @@ begin
 
   // Log speichern
   DiagnoseLog.savetofile(LogFName(KontoNummer));
-  MD5s.free;
   Script.free;
   uText.free;
   DiagnoseLog.free;
@@ -3432,7 +3433,7 @@ begin
 
     //
     if (sResult.count > 0) then
-      if pos(cSaldoHeader, sResult[0]) = 1 then
+      if pos(cDTA_SaldoHeader, sResult[0]) = 1 then
       begin
 
         Headers := split(sResult[0]);

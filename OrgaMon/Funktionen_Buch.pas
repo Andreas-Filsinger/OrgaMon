@@ -108,9 +108,6 @@ function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
 // Saldo des Kontos "Konto" am "Datum"
 //
 
-function b_r_MD5(BUCH_R: integer): string;
-// Berechnung eines Hash, der die Identität einer
-// Buchung in einem String zusammenfassen soll
 
 function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 // Berechnet hochgerechnete jährliche Kosten im Zeitraum
@@ -1810,66 +1807,6 @@ begin
       { } format('%s|%d', [long2date(ErstesDatum) + '-' + long2date(Bis),
       round(d1)]) + ';' +
       { } format('%m', [result]), DiagnosePath + b_r_Anno_LogFile);
-end;
-
-function b_r_MD5(BUCH_R: integer): string;
-var
-  cBUCH: TdboCursor;
-  MD5s: TStringList;
-  hMD5: TDCP_md5;
-  Script: TStringList;
-begin
-  MD5s := TStringList.create;
-  cBUCH := nCursor;
-  hMD5 := TDCP_md5.create(nil);
-  Script := TStringList.create;
-  with cBUCH do
-  begin
-    sql.add('select * from BUCH where RID=' + inttostr(BUCH_R));
-    ApiFirst;
-    if not(eof) then
-    begin
-      MD5s.add(FieldByName('POSNO').AsString);
-
-      MD5s.add(long2date(datetime2long(FieldByName('DATUM').AsDateTime)) +
-        ' 00:00:00');;
-      MD5s.add(long2date(datetime2long(FieldByName('WERTSTELLUNG').AsDateTime))
-        + ' 00:00:00');
-
-      MD5s.add(long2date6(datetime2long(FieldByName('WERTSTELLUNG')
-        .AsDateTime)));
-      MD5s.add(FloatToStrISO(FieldByName('BETRAG').AsFloat));
-      MD5s.add('EUR');
-      e_r_sqlt(FieldByName('SKRIPT'), Script);
-      MD5s.add(Script.Values['TRANSAKTIONSTYP']);
-
-      // BusinessTransactionText
-      MD5s.add(nextp(FieldByName('VORGANG').AsString, ' (', 0));
-
-      // BusinessTransactionCode
-      MD5s.add(ExtractSegmentBetween('(', ')', FieldByName('VORGANG')
-        .AsString));
-
-      MD5s.add(FieldByName('STEMPEL_NO').AsString);
-      (*
-        MD5s.add(BankCode);
-        MD5s.add(AccountNumber);
-        MD5s.add(CustomerReference);
-        MD5s.add('{');
-        MD5s.add(HugeSingleLine(vonName,#$0D#$0A));
-        MD5s.add('}');
-        MD5s.add('{');
-        FieldByName('TEXT').Assign(uText);
-
-        MD5s.add(HugeSingleLine(BuchungsText,#$0D#$0A));
-        MD5s.add('}');
-      *)
-    end;
-  end;
-  result := hMD5.FromStrings(MD5s);
-  cBUCH.Free;
-  MD5s.Free;
-
 end;
 
 function b_r_PersonSaldo(PERSON_R: integer): double;

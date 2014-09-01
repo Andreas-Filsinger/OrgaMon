@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.043 (01.09.14) Andreas Filsinger
+
+ Neu: Buch: Umsatzabfrage: neue Methode zur MD5-Abfrage (Achtung Dublettengefahr!)
+
 Rev 8.042 (14.08.14) Andreas Filsinger
 
  Neu: Buch: Lastschriften: Sammler-Limitierung über Anzahl/Wert möglich

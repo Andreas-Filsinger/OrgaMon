@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -1101,7 +1101,7 @@ object FormBuchhalter: TFormBuchhalter
         519)
       object Label40: TLabel
         Left = 358
-        Top = 30
+        Top = 8
         Width = 66
         Height = 16
         Margins.Left = 4
@@ -1388,6 +1388,16 @@ object FormBuchhalter: TFormBuchhalter
         Height = 17
         Caption = 'nur Saldenabruf'
         TabOrder = 12
+      end
+      object CheckBox7: TCheckBox
+        Left = 362
+        Top = 36
+        Width = 263
+        Height = 17
+        Caption = 'Dublettenerkennung mit MD5 Hash'
+        Checked = True
+        State = cbChecked
+        TabOrder = 13
       end
     end
     object TabSheet4: TTabSheet
@@ -3909,34 +3919,27 @@ object FormBuchhalter: TFormBuchhalter
       'PERSON.Z_ELV_BLZ=ITEM=9'
       'PERSON.Z_ELV_KONTO=ITEM=10'
       'PERSON.Z_ELV_KONTO_INHABER=ITEM=11')
-    Left = 96
-    Top = 120
+    Left = 40
+    Top = 344
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 176
-    Top = 120
-  end
-  object DCP_md51: TDCP_md5
-    Id = 16
-    Algorithm = 'MD5'
-    HashSize = 128
-    Left = 256
-    Top = 112
+    Left = 120
+    Top = 344
   end
   object IB_Cursor1: TIB_Cursor
     DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from BUCH where RID=:CROSSREF')
-    Left = 96
-    Top = 168
+    Left = 40
+    Top = 384
   end
   object ImageList1: TImageList
-    Left = 368
-    Top = 104
+    Left = 216
+    Top = 344
     Bitmap = {
-      494C010104000900580110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040009005C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4211,8 +4214,8 @@ object FormBuchhalter: TFormBuchhalter
     Enabled = False
     Interval = 1200
     OnTimer = Timer1Timer
-    Left = 312
-    Top = 112
+    Left = 288
+    Top = 344
   end
   object IB_Query2: TIB_Query
     CalculateAllFields = True
@@ -4241,12 +4244,12 @@ object FormBuchhalter: TFormBuchhalter
       ' RID desc')
     ColorScheme = True
     ReadOnly = True
-    Left = 96
-    Top = 216
+    Left = 40
+    Top = 432
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2
-    Left = 176
-    Top = 176
+    Left = 112
+    Top = 392
   end
 end
