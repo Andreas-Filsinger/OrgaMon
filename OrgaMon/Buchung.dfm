@@ -128,26 +128,13 @@ object FormBuchung: TFormBuchung
   object Label13: TLabel
     Left = 5
     Top = 533
-    Width = 55
+    Width = 93
     Height = 16
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    Caption = 'Signatur'
-  end
-  object IB_Text2: TIB_Text
-    Left = 121
-    Top = 529
-    Width = 670
-    Height = 25
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
-    DataField = 'MD5'
-    DataSource = IB_DataSource1
-    BevelInner = bvLowered
+    Caption = 'HBCI-Signatur'
   end
   object SpeedButton1: TSpeedButton
     Left = 95
@@ -727,46 +714,20 @@ object FormBuchung: TFormBuchung
     ShowHint = True
     OnClick = SpeedButton5Click
   end
-  object SpeedButton6: TSpeedButton
-    Left = 94
-    Top = 532
-    Width = 23
-    Height = 20
-    Hint = 'MD5 Hash bestimmen'
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
-    Glyph.Data = {
-      36030000424D3603000000000000360000002800000010000000100000000100
-      18000000000000030000610F0000610F00000000000000000000FFFFFFE2E2E2
-      CBCBCBC9C9C9C9C9C9C9C9C97AA9C850A2D44A94CA91A7BCC9C9C9C9C9C9C9C9
-      C9CCCCCCE2E2E2FFFFFFFFFFFFCBCBCBF9F9F9FCFCFCFCFCFCFCFCFC6EBFE886
-      E9F94DD9F54397CEADC3D9FCFCFCFCFCFCF9F9F9CCCCCCFFFFFFFEFEFEC9C9C9
-      FCFCFCFCFCFCFCFCFCFCFCFC6ABAE6A1E6F838D2F247D6F64398CFA9BED6F0F3
-      F9F1F4F9C9C9C9FFFFFFFEFEFEC9C9C9FCFCFCFCFCFCFCFCFCFCFCFCB2D8F05F
-      B0E399E2F653DCF546D9F63F95CE478ED3488FD692A6BEFEFEFEFEFEFEC9C9C9
-      FCFCFCFCFCFCFCFCFCFCFCFCFBFBFBD1E6F46BBBE666C1E85ED9F24EDBF65BDD
-      F755D8F53282CCB0C3DDFEFEFEC9C9C9FCFCFCFCFCFCFCFCFCFCFCFCFBFBFBFB
-      FBFBFBFBFB92C7E989DDF46AE0F673E2F75FDFF655DAF64185CFFEFEFEC9C9C9
-      FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC77BDE6A9EEF97EE6F89AE8
-      F87ED1F080E2F64A9EDBFEFEFEC9C9C9FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-      FCFCFCFCFCA8D2ED5EC1EAA3F0FB80D4F07EC7EC54A4DCB0CBE4FEFEFEC9C9C9
-      FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFBFBFBF8F8F89CCAE96FC9ECC9F3
-      FB63BFE89AB5C9FEFEFEFEFEFEC9C9C9FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFB
-      FBFBF8F8F8F5F5F5F0F1F289C1E468B8E3ABD4EFC9C9C9FEFEFEFEFEFEC9C9C9
-      FCFCFCFBFBFBFCFCFCFCFCFCFBFBFBF8F8F8F5F5F5F1F1F1ECECECEAEAEAE6E6
-      E6FCFCFCC9C9C9FEFEFEFEFEFEC9C9C9FCFCFCF9F9F9F9F9F9F9F9F9F7F7F7F6
-      F6F6F2F2F2EBEBEBFCFCFCFCFCFCFCFCFCFCFCFCC9C9C9FEFEFEFEFEFEC9C9C9
-      FCFCFCF7F7F7F9F9F9F7F7F7F7F7F7F3F3F3F0F0F0EAEAEAFCFCFCF6F6F6F4F4
-      F4C5C5C5DFDFDFFFFFFFFFFFFFC9C9C9FBFBFBF4F4F4F5F5F5F5F5F5F5F5F5F1
-      F1F1EFEFEFE9E9E9FCFCFCE7E7E7C2C2C2DFDFDFFDFDFDFFFFFFFFFFFFCCCCCC
-      F8F8F8FBFBFBFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8C2C2C2DFDF
-      DFFDFDFDFFFFFFFFFFFFFFFFFFE3E3E3CCCCCCC9C9C9C9C9C9C9C9C9C9C9C9C9
-      C9C9C9C9C9C9C9C9C9C9C9DFDFDFFDFDFDFFFFFFFFFFFFFFFFFF}
-    ParentShowHint = False
-    ShowHint = True
-    OnClick = SpeedButton6Click
+  object Label8: TLabel
+    Left = 483
+    Top = 66
+    Width = 40
+    Height = 16
+    Caption = 'PosNo'
+  end
+  object IB_Text3: TIB_Text
+    Left = 534
+    Top = 65
+    Width = 65
+    Height = 17
+    DataField = 'POSNO'
+    DataSource = IB_DataSource1
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 528
@@ -797,6 +758,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'KONTO'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 9
   end
   object IB_Edit2: TIB_Edit
@@ -810,6 +772,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'NAME'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 8
   end
   object IB_CheckBox1: TIB_CheckBox
@@ -823,6 +786,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'FIXIERT'
     DataSource = IB_DataSource1
+    Color = clGrayText
     ParentColor = False
     TabOrder = 4
     Caption = 'fixiert'
@@ -838,6 +802,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'SKRIPT'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 13
     AutoSize = False
     ScrollBars = ssVertical
@@ -853,6 +818,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'IBAN'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 11
   end
   object IB_Memo2: TIB_Memo
@@ -866,6 +832,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BEMERKUNG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 20
     AutoSize = False
     ScrollBars = ssVertical
@@ -881,6 +848,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'DATUM'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 5
     IncCellHeight = 1
     IncCellWidth = 2
@@ -897,6 +865,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'WERTSTELLUNG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 6
     IncCellHeight = 1
     IncCellWidth = 2
@@ -913,6 +882,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 22
   end
   object IB_Date3: TIB_Date
@@ -926,6 +896,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG_VON'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 23
     IncCellHeight = 1
     IncCellWidth = 2
@@ -942,6 +913,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GELTUNG_BIS'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 24
     IncCellHeight = 1
     IncCellWidth = 2
@@ -958,6 +930,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'VERFUEGBAR'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 25
     IncCellHeight = 1
     IncCellWidth = 2
@@ -1022,6 +995,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'TEXT'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 19
     AutoSize = False
     ScrollBars = ssVertical
@@ -1037,6 +1011,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'VORGANG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 26
   end
   object IB_Edit6: TIB_Edit
@@ -1050,6 +1025,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_NO'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 27
   end
   object IB_Edit7: TIB_Edit
@@ -1063,6 +1039,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'PERSON_R'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 14
   end
   object IB_Edit8: TIB_Edit
@@ -1076,6 +1053,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BELEG_R'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 15
   end
   object IB_Edit9: TIB_Edit
@@ -1089,6 +1067,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'EREIGNIS_R'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 18
   end
   object IB_Edit10: TIB_Edit
@@ -1102,6 +1081,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BBELEG_R'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 17
   end
   object IB_Edit11: TIB_Edit
@@ -1115,6 +1095,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'GEGENKONTO'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 12
   end
   object IB_Edit14: TIB_Edit
@@ -1128,6 +1109,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'BETRAG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -21
@@ -1155,7 +1137,7 @@ object FormBuchung: TFormBuchung
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 28
+    TabOrder = 29
     OnClick = Button5Click
   end
   object IB_Edit15: TIB_Edit
@@ -1169,6 +1151,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_DOKUMENT'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 10
   end
   object IB_Edit16: TIB_Edit
@@ -1182,13 +1165,14 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'STEMPEL_R'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 7
   end
   object IB_Grid1: TIB_Grid
     Left = 470
     Top = 405
     Width = 321
-    Height = 123
+    Height = 146
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -1196,7 +1180,7 @@ object FormBuchung: TFormBuchung
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
     OnDblClick = IB_Grid1DblClick
-    TabOrder = 29
+    TabOrder = 30
   end
   object Panel1: TPanel
     Left = 5
@@ -1211,7 +1195,7 @@ object FormBuchung: TFormBuchung
     Ctl3D = True
     ParentBackground = False
     ParentCtl3D = False
-    TabOrder = 30
+    TabOrder = 31
   end
   object IB_Edit12: TIB_Edit
     Left = 652
@@ -1224,6 +1208,7 @@ object FormBuchung: TFormBuchung
     Margins.Bottom = 4
     DataField = 'TEILLIEFERUNG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     TabOrder = 16
   end
   object Button11: TButton
@@ -1245,7 +1230,7 @@ object FormBuchung: TFormBuchung
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 31
+    TabOrder = 32
     OnClick = Button11Click
   end
   object IB_CheckBox2: TIB_CheckBox
@@ -1255,9 +1240,20 @@ object FormBuchung: TFormBuchung
     Height = 17
     DataField = 'ERTRAG'
     DataSource = IB_DataSource1
+    Color = clGrayText
     ParentColor = False
-    TabOrder = 32
+    TabOrder = 33
     Caption = 'Ertrag'
+  end
+  object IB_Edit13: TIB_Edit
+    Left = 121
+    Top = 529
+    Width = 348
+    Height = 24
+    DataField = 'MD5'
+    DataSource = IB_DataSource1
+    Color = clGrayText
+    TabOrder = 28
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
