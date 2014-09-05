@@ -70,7 +70,6 @@ type
     Button2: TButton;
     Button3: TButton;
     Label13: TLabel;
-    IB_Text2: TIB_Text;
     IB_Memo3: TIB_Memo;
     SpeedButton1: TSpeedButton;
     Label14: TLabel;
@@ -111,8 +110,10 @@ type
     IB_Edit12: TIB_Edit;
     SpeedButton5: TSpeedButton;
     Button11: TButton;
-    SpeedButton6: TSpeedButton;
     IB_CheckBox2: TIB_CheckBox;
+    Label8: TLabel;
+    IB_Text3: TIB_Text;
+    IB_Edit13: TIB_Edit;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;
@@ -130,7 +131,6 @@ type
     procedure IB_Grid1DblClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
-    procedure SpeedButton6Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Historie_Read: integer;
@@ -466,14 +466,6 @@ end;
 procedure TFormBuchung.SpeedButton5Click(Sender: TObject);
 begin
   locateTo(b_w_Copy(BUCH_R));
-end;
-
-procedure TFormBuchung.SpeedButton6Click(Sender: TObject);
-var
-  MD5: string;
-begin
-
-  ShowMessage(IB_Query1.FieldByName('MD5').AsString + #13 + MD5);
 end;
 
 end.

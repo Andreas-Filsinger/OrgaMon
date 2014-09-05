@@ -27,10 +27,6 @@ object FormArtikelVerlag: TFormArtikelVerlag
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = #220'bersicht'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 7
         Top = 43
@@ -281,10 +277,6 @@ object FormArtikelVerlag: TFormArtikelVerlag
     object TabSheet2: TTabSheet
       Caption = 'Definition'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label18: TLabel
         Left = 182
         Top = 85

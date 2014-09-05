@@ -211,6 +211,7 @@ type
     Edit15: TEdit;
     Label1: TLabel;
     CheckBox7: TCheckBox;
+    SpeedButton48: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -308,6 +309,7 @@ type
     procedure SpeedButton45Click(Sender: TObject);
     procedure SpeedButton46Click(Sender: TObject);
     procedure SpeedButton47Click(Sender: TObject);
+    procedure SpeedButton48Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -760,7 +762,6 @@ var
   TEILLIEFERUNG: Integer;
   Betrag: double;
   VALUTA: string;
-
   sVOLUMEN: TsTable;
   r: Integer;
 begin
@@ -773,17 +774,9 @@ begin
     exit;
   end;
 
-  // Plausibilitätsprüfung
-  if not(FileExists(DiagnosePath + 'DTAUS.DTA')) then
-    if not(doit('DTAUS.DTA ist nicht vorhanden!' + #13 +
-      'Scheinbar wurde keine Lastschrift durchgeführt!' + #13 +
-      'Dennoch Zahlungseingänge verbuchen')) then
-      exit;
-
-  if doit('Wurde die Sammellastschrift' + #13 +
-    'durch eine externe Anwendung erfolgreich' + #13 +
-    'durchgeführt? Darf der Zahlungseingang für' + #13 +
-    'alle DTA - Belege verbucht werden') then
+  if doit('Wurde die Sammellastschrift erfolgreich' + #13 +
+    'eingereicht? Darf nun der Zahlungseingang für' + #13 +
+    'alle Einzugsmandate verbucht werden') then
   begin
 
     BeginHourGlass;
@@ -796,7 +789,7 @@ begin
       for r := 1 to RowCount do
       begin
         // Nun die einzelnen Zahlungsereignisse
-        Betrag := StrToDoubledef(readCell(r, 'BETRAG'), 0.0);
+        Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
         BELEG_R := StrToIntDef(readCell(r, 'BELEG_R'), cRID_Null);
         PERSON_R := StrToIntDef(readCell(r, 'PERSON_R'), cRID_Null);
         TEILLIEFERUNG := StrToIntDef(readCell(r, 'TEILLIEFERUNG'), 0);
@@ -820,11 +813,9 @@ begin
     end;
     e_x_sql('update EREIGNIS set BEENDET=CURRENT_TIMESTAMP where RID=' +
       inttostr(EREIGNIS_R));
-
     sVOLUMEN.free;
     IB_Query2.Refresh;
     EndHourGlass;
-
   end;
 end;
 
@@ -2879,7 +2870,7 @@ begin
               begin
                 sEreignis := TStringList.Create;
                 sEreignis.add('Umsatzabruf ' + BLZ + '/' + KontoNummer);
-                sEreignis.AddStrings(sResult);
+                sEreignis.addstrings(sResult);
                 qEREIGNIS := DataModuleDatenbank.nQuery;
                 with qEREIGNIS do
                 begin
@@ -5809,6 +5800,20 @@ procedure TFormBuchhalter.SpeedButton47Click(Sender: TObject);
 begin
   // Zahlung als Anzahlung für Zukünftige Belege verbuchen
   ShowMessage('Noch nicht implementiert');
+end;
+
+procedure TFormBuchhalter.SpeedButton48Click(Sender: TObject);
+var
+  EREIGNIS_R: Integer;
+  FName: string;
+begin
+  EREIGNIS_R := IB_Query2.FieldByName('RID').AsInteger;
+  FName := MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R,
+    8) + '.csv';
+  if FileExists(FName) then
+    openShell(FName)
+  else
+    ShowMessage('Dazu gibt es keine Liste');
 end;
 
 procedure TFormBuchhalter.SpeedButton4Click(Sender: TObject);
