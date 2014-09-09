@@ -3094,6 +3094,8 @@ begin
           if (VORGANG = cVorgang_Rechnung) then
           begin
 
+            DatensammlerLokal.add('MREF=RID'+FieldByName('RID').AsString);
+
             // das ist ein Rechnungs-Beleg, also eine Forderung
             RECHNUNGSNUMMER := inttostrN(FieldByName('RECHNUNG').AsInteger,
               e_r_RechnungsNummerAnzahlDerStellen);
@@ -3425,6 +3427,7 @@ begin
             // Eine Zahlung des Kunden
             BelegNo := '---';
             RECHNUNGSNUMMER := '---';
+            DatensammlerLokal.add('MREF=');
             DatensammlerLokal.add('Medium=');
             DatensammlerLokal.add('Motivation=');
             DatensammlerLokal.add('LastschriftText=' + _('Ihre Zahlung'));
