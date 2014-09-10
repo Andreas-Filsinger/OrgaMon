@@ -50,7 +50,8 @@ uses
 
   // ANFiX
   gplists, Buttons, IdBaseComponent, IdComponent, IB_UtilityBar, IdUDPBase,
-  IdUDPClient, IdSysLog;
+  IdUDPClient, IdSysLog, IdContext, IdCustomTCPServer, IdTCPServer,
+  IdCmdTCPServer;
 
 type
   TFormSystemPflege = class(TForm)
@@ -158,6 +159,9 @@ type
     IdSysLog1: TIdSysLog;
     CheckBox6: TCheckBox;
     Button18: TButton;
+    IdCmdTCPServer1: TIdCmdTCPServer;
+    Button19: TButton;
+    ListBox4: TListBox;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -185,6 +189,9 @@ type
       const AStatusText: string);
     procedure CheckBox6Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
+    procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer;
+      var AData: string; AContext: TIdContext);
+    procedure Button19Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
@@ -225,6 +232,12 @@ end;
 procedure TFormSystemPflege.FormCreate(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheet1;
+end;
+
+procedure TFormSystemPflege.IdCmdTCPServer1BeforeCommandHandler(
+  ASender: TIdCmdTCPServer; var AData: string; AContext: TIdContext);
+begin
+ Listbox4.Items.Add(AData);
 end;
 
 procedure TFormSystemPflege.IdSysLog1Status(ASender: TObject;
@@ -931,6 +944,11 @@ begin
   FirewallScript.SaveToFile('I:\' + 'block.sh');
   FirewallScript.free;
 
+end;
+
+procedure TFormSystemPflege.Button19Click(Sender: TObject);
+begin
+ IdCmdTCPServer1.Active := true;
 end;
 
 procedure TFormSystemPflege.Button1Click(Sender: TObject);

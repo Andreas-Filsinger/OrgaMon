@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet10
+    ActivePage = TabSheet9
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -767,6 +767,23 @@ object FormSystemPflege: TFormSystemPflege
         TabOrder = 0
         OnClick = Button15Click
       end
+      object Button19: TButton
+        Left = 224
+        Top = 128
+        Width = 225
+        Height = 25
+        Caption = 'Start "scOrgaMon" Server'
+        TabOrder = 1
+        OnClick = Button19Click
+      end
+      object ListBox4: TListBox
+        Left = 288
+        Top = 176
+        Width = 121
+        Height = 97
+        ItemHeight = 13
+        TabOrder = 2
+      end
     end
     object TabSheet10: TTabSheet
       Caption = 'Sicherheit'
@@ -914,5 +931,36 @@ object FormSystemPflege: TFormSystemPflege
     OnStatus = IdSysLog1Status
     Left = 40
     Top = 160
+  end
+  object IdCmdTCPServer1: TIdCmdTCPServer
+    Bindings = <>
+    DefaultPort = 7094
+    CommandHandlers = <>
+    ExceptionReply.Code = '500'
+    ExceptionReply.Text.Strings = (
+      'Unknown Internal Error')
+    Greeting.Code = '200'
+    Greeting.Text.Strings = (
+      'Welcome')
+    HelpReply.Code = '100'
+    HelpReply.Text.Strings = (
+      'Help follows')
+    MaxConnectionReply.Code = '300'
+    MaxConnectionReply.Text.Strings = (
+      'Too many connections. Try again later.')
+    ReplyTexts = <
+      item
+        Code = '201'
+        Text.Strings = (
+          'A'
+          'B'
+          'C')
+      end>
+    ReplyUnknownCommand.Code = '400'
+    ReplyUnknownCommand.Text.Strings = (
+      'Unknown Command')
+    OnBeforeCommandHandler = IdCmdTCPServer1BeforeCommandHandler
+    Left = 224
+    Top = 208
   end
 end
