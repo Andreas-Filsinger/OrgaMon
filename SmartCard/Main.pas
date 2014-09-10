@@ -30,16 +30,24 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Controls, ComCtrls, StdCtrls,
   ExtCtrls, Graphics,
-  MD_PCSC, MD_PCSCDef, MD_Tools;
+  MD_PCSC, MD_PCSCDef, MD_Tools, Vcl.Menus, IdContext, IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdCmdTCPClient;
 
 type
   TMainForm = class(TForm)
     LogMemo: TMemo;
+    TrayIcon1: TTrayIcon;
+    PopupMenu1: TPopupMenu;
+    Beenden1: TMenuItem;
+    ber1: TMenuItem;
+    IdCmdTCPClient1: TIdCmdTCPClient;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ReaderListBoxDrawItem(Control: TWinControl; Index: Integer;
       RC: TRect; State: TOwnerDrawState);
     procedure FormActivate(Sender: TObject);
+    procedure Beenden1Click(Sender: TObject);
+    procedure ber1Click(Sender: TObject);
   private
     FPCSC: TPCSC;
     Initialized: boolean;
@@ -97,8 +105,6 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  Caption := 'PC/SC Sample Application V1.3';
-  Application.Title := Caption;
   Application.OnIdle := ProcessEvents;
   LogMemo.Clear;
   Initialized := false;
@@ -332,7 +338,6 @@ begin
     AddLogMemo('KarteNr: ' + KarteNr);
   end;
 
-
   // Abmelden
   PCSCResult := PCSCReader.Disconnect();
   if PCSCResult = SCARD_S_SUCCESS then
@@ -341,11 +346,23 @@ begin
     AddLogMemo(Format('SCardDisconnect failed with error code %s (%s)',
       [IntToHex(PCSCResult, 8), ErrorToString(PCSCResult)]));
 
-
   // Ergebnis melden
-
   AddLogMemo('BLZ;KontoNummer;KarteNr;GueltigBis');
   AddLogMemo(BLZ + ';' + KontoNummer + ';' + KarteNr + ';' + GueltigBis);
+
+  beep;
+
+  try
+    with IdCmdTCPClient1 do
+    begin
+      if not(Connected) then
+        Connect;
+      SendCmd(BLZ + ';' + KontoNummer + ';' + KarteNr + ';' + GueltigBis);
+      // Disconnect;
+    end;
+  except
+
+  end;
 
 end;
 
@@ -364,13 +381,14 @@ begin
   PCSCResult := PCSCReader.TransmitSW(DataIn, DataOut, SW12);
   if PCSCResult = SCARD_S_SUCCESS then
   begin
-    AddLogMemo('SCardTransmit succeeded.');
     AddLogMemo('Card response status word: ' + IntToHex(SW12, 4) + ' (' +
       CardErrorToString(SW12) + ')');
     if length(DataOut) > 0 then
     begin
+      AddLogMemo('Card response Bytes: ' + BufferToHexString(DataOut));
+
       CardResponse := BCDBufferToDecString(DataOut);
-      AddLogMemo('Card response data: ' + CardResponse);
+      AddLogMemo('Card response BCD  : ' + CardResponse);
       result := true;
     end;
   end
@@ -382,6 +400,16 @@ end;
 procedure TMainForm.CardRemoved(Sender: TObject; ReaderName: string);
 begin
   AddLogMemo('Card removed from ' + ReaderName);
+end;
+
+procedure TMainForm.Beenden1Click(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TMainForm.ber1Click(Sender: TObject);
+begin
+  // ShowMessage('OrgaMon');
 end;
 
 procedure TMainForm.CardError(Sender: TObject; ReaderName: string);
