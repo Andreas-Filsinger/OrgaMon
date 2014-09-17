@@ -343,21 +343,21 @@ object FormZahlungECconnect: TFormZahlungECconnect
         ShowHint = True
         OnClick = SpeedButton3Click
       end
-      object Edit1: TEdit
+      object Edit_BLZ: TEdit
         Left = 138
         Top = 30
         Width = 97
         Height = 24
         TabOrder = 0
       end
-      object Edit2: TEdit
+      object Edit_Konto: TEdit
         Left = 283
         Top = 29
         Width = 126
         Height = 24
         TabOrder = 1
       end
-      object Edit3: TEdit
+      object Edit_GueltigBis: TEdit
         Left = 519
         Top = 29
         Width = 89

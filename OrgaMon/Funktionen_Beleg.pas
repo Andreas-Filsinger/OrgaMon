@@ -3094,7 +3094,7 @@ begin
           if (VORGANG = cVorgang_Rechnung) then
           begin
 
-            DatensammlerLokal.add('MREF=RID'+FieldByName('RID').AsString);
+            DatensammlerLokal.add('MREF=RID' + FieldByName('RID').AsString);
 
             // das ist ein Rechnungs-Beleg, also eine Forderung
             RECHNUNGSNUMMER := inttostrN(FieldByName('RECHNUNG').AsInteger,
@@ -6558,9 +6558,9 @@ begin
       end;
 
       // Basic-Programm ausführen
-                 e_x_basic(MyProgramPath+cDBASICPath+'BerechneBeleg-1.txt',
-                 {} 'PERSON_R='+IntToStr(PERSON_R)+';'+
-                 {} 'BELEG_R='+IntToStr(BELEG_R));
+      e_x_basic(MyProgramPath + cDBASICPath + 'BerechneBeleg-1.txt',
+        { } 'PERSON_R=' + inttostr(PERSON_R) + ';' +
+        { } 'BELEG_R=' + inttostr(BELEG_R));
 
       with qPosten do
       begin
@@ -8123,7 +8123,7 @@ begin
       end;
       qBELEG.free;
 
-      ///////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////
       // e_w_BelegNeu.OLAP.txt
       // imp pend
       // ev. direkt aus der Datenbank lesen
@@ -8131,7 +8131,7 @@ begin
       // ev. einfach eine Mehrstufige Skript-Kette vorhalten
       // ev. "exitif, breakif, retiv"
       // ansonsten "select, "=r , insert, update =w Statements
-      ///////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////
 
     except
       on E: exception do
@@ -12777,6 +12777,7 @@ begin
     DebugStr.SaveToFile(DiagnosePath + 'Lieferzeit.txt');
   DebugStr.free;
 end;
+
 
 (*
   KNO := TStringList.create;

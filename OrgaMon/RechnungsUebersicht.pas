@@ -84,6 +84,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
+  Funktionen_Buch,
   Person, Belege,
   AusgangsRechnungen, anfix32,
   geld, dbOrgaMon, Rechnungen,
@@ -240,11 +241,15 @@ begin
   FormPerson.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
 
   // EC-Karten Event simulieren!
-  with FormZahlungECconnect do
+  with FormZahlungECconnect, FormPerson.IB_Query1 do
   begin
-    Edit1.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_BLZ').AsString;
-    Edit2.Text := FormPerson.IB_Query1.FieldByName('Z_ELV_KONTO').AsString;
-    Edit3.Text := 'NOCARD';
+    Edit_BLZ.Text := b_r_Person_ELV_BLZ(
+      { } FieldByName('Z_ELV_BLZ').AsString,
+      { } FieldByName('Z_ELV_KONTO').AsString);
+    Edit_Konto.Text := b_r_Person_ELV_Konto(
+      { } FieldByName('Z_ELV_BLZ').AsString,
+      { } FieldByName('Z_ELV_KONTO').AsString);
+    Edit_GueltigBis.Text := 'NOCARD';
     FillContext;
     if (PERSON_R <> FormPerson.IB_Query1.FieldByName('RID').AsInteger) then
       ShowMEssage('RID=' + inttostr(PERSON_R) +

@@ -29,11 +29,11 @@ unit Funktionen_Basis;
 interface
 
 uses
-{$ifndef fpc}
-IB_Access,
-IB_Components,
-{$endif}
-  Classes, gplists, globals  ;
+{$IFNDEF fpc}
+  IB_Access,
+  IB_Components,
+{$ENDIF}
+  Classes, gplists, globals;
 
 {
   eBasis: Grundlegende Funktionen des OrgaMon ohne besondere Zuordnung zu
@@ -41,7 +41,6 @@ IB_Components,
   eCommerce, eResource
 
 }
-
 
 { System }
 function e_r_BasePlug: TStringList;
@@ -56,6 +55,7 @@ procedure e_w_EreignisAbschluss(EREIGNIS_R: integer; INFO: string = '');
 { Person }
 procedure e_w_PersonSetPassword(PERSON_R: integer);
 procedure e_w_PersonEnsurePassword(PERSON_R: integer);
+function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 
 { Baustelle }
 function e_r_ParameterFoto(sl: TStringList; p: string): string;
@@ -94,11 +94,9 @@ function enCrypt_Hex(s: string): string;
 function deCrypt_Hex(s: string): string;
 procedure MigrateFrom(BringTo: integer);
 
-
 function SysDBApassword: string;
 //
 //
-
 
 function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
   delimiter: char = #13): string;
@@ -123,7 +121,6 @@ function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 // Es wird zurückgeliefert, was wirklich abgeschrieben werden konnte
 // --------------------------------------------------------------------------
 
-
 implementation
 
 uses
@@ -134,16 +131,16 @@ uses
   anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
-{$ifdef fpc}
+{$IFDEF fpc}
   ZClasses,
   ZConnection,
   ZCompatibility,
   ZDbcIntfs,
-  {$else}
+{$ELSE}
   UFlxMessages,
   CCR.Exif.Consts,
   GHD_pngimage,
-{$endif}
+{$ENDIF}
   JclBase,
 {$IFNDEF CONSOLE}
   Datenbank,
@@ -385,7 +382,7 @@ var
     begin
       sql.add('select UEBER_INFO from MUSIKER where RID=' + inttostr(RID));
       ApiFirst;
-      e_r_sqlt(FieldByName('UEBER_INFO'),OneTxt);
+      e_r_sqlt(FieldByName('UEBER_INFO'), OneTxt);
     end;
     cMUSIKER.free;
     txt.addstrings(OneTxt);
@@ -493,7 +490,6 @@ begin
   cARTIKEL.free;
 
 end;
-
 
 function e_r_MusikerGroupRID(RID: integer): integer;
 var
@@ -790,11 +786,11 @@ begin
       // ==========================================================
       { 01 } add(cAppName);
 {$IFDEF CONSOLE}
-{$ifdef fpc}
-{ 02 } add('Zeos Rev. ' + fbConnection.Version);
-{$else}
-{ 02 } add('IBO Rev. ' + fbConnection.Version);
-{$endif}
+{$IFDEF fpc}
+      { 02 } add('Zeos Rev. ' + fbConnection.Version);
+{$ELSE}
+      { 02 } add('IBO Rev. ' + fbConnection.Version);
+{$ENDIF}
 {$ELSE}
       { 02 } add('IBO Rev. ' + Datamoduledatenbank.IB_connection1.Version);
 {$ENDIF}
@@ -810,11 +806,11 @@ begin
 {$ELSE}
       { 08 } add('TPicUpload Rev. ' + TPUMain.REV);
 {$ENDIF}
-{$ifdef fpc}
-{ 09 } add('fpspreadsheet Rev. ' + 'N/A');
-{$else}
-{ 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
-{$endif}
+{$IFDEF fpc}
+      { 09 } add('fpspreadsheet Rev. ' + 'N/A');
+{$ELSE}
+      { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
+{$ENDIF}
       { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +
         inttostr(JclVersionMinor));
 {$IFDEF CONSOLE}
@@ -837,13 +833,12 @@ begin
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
       { 20 } add(e_r_fbClientVersion); //
-{$ifdef fpc}
-      { 21 } add('Portable Network Graphics Delphi ' +'N/A'
-        );
-{$else}
+{$IFDEF fpc}
+      { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
+{$ELSE}
       { 21 } add('Portable Network Graphics Delphi ' +
         GHD_pngimage.LibraryVersion);
-{$endif}
+{$ENDIF}
       { 22 } add(iDataBaseHost);
       { 23 } add(i_c_DataBaseFName);
 {$IFDEF CONSOLE}
@@ -853,11 +848,11 @@ begin
 {$ELSE}
       { 24 } add('N/A');
 {$ENDIF}
-{$ifdef fpc}
-{ 25 } add('exiftool Rev. ' + 'N/A');
-{$else}
-{ 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.Version);
-{$endif}
+{$IFDEF fpc}
+      { 25 } add('exiftool Rev. ' + 'N/A');
+{$ELSE}
+      { 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.Version);
+{$ENDIF}
       { 26 } add(e_r_Kontext);
       { 27 } add(Betriebssystem);
     end;
@@ -913,7 +908,7 @@ begin
     sql.add('select * from EINSTELLUNG');
     ApiFirst;
     Settings := TStringList.create;
-    e_r_sqlt(FieldByName('SETTINGS'),Settings);
+    e_r_sqlt(FieldByName('SETTINGS'), Settings);
     result := Settings.Values[cSettings_SysdbaPAssword];
     if (result = '') then
       result := 'masterkey'
@@ -923,7 +918,6 @@ begin
   end;
   cEINSTELLUNGEN.free;
 end;
-
 
 procedure MigrateFrom(BringTo: integer);
 begin
@@ -1056,6 +1050,16 @@ begin
       { } 'where RID=' + inttostr(EREIGNIS_R))
 end;
 
+function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
+begin
+  result := e_r_sqlm(
+    { } 'select RID from PERSON where ' +
+    { } '((Z_ELV_KONTO=''' + Konto + ''') and ' +
+    { } '(Z_ELV_BLZ=''' + BLZ + ''')) or ' +
+    { } '(Z_ELV_KONTO containing ''' + BLZ + inttostrN(Konto, 10) +
+    { } ''')');
+end;
+
 const
   cKey = 'anfisoft' + cApplicationName;
 
@@ -1066,18 +1070,18 @@ begin
   CryptKeyLength := length(cKey) * 8;
 
 {$IFDEF CONSOLE}
-{$ifdef fpc}
-//fbTransaction := TZTransaction.create;
- fbConnection := TZConnection.create(nil);
-with fbconnection do
-begin
-      ClientCodePage := 'ISO8859_1';
-      ControlsCodePage := cCP_UTF8;
-      Protocol := 'firebird-2.5';
-      TransactIsolationLevel := tiReadCommitted;
+{$IFDEF fpc}
+  // fbTransaction := TZTransaction.create;
+  fbConnection := TZConnection.create(nil);
+  with fbConnection do
+  begin
+    ClientCodePage := 'ISO8859_1';
+    ControlsCodePage := cCP_UTF8;
+    Protocol := 'firebird-2.5';
+    TransactIsolationLevel := tiReadCommitted;
 
-end;
-{$else}
+  end;
+{$ELSE}
   // Datenbank - Zugriffselemente erzeugen!
   fbSession := TIB_Session.create(nil);
   fbTransaction := TIB_Transaction.create(nil);
@@ -1111,7 +1115,7 @@ end;
     RecVersion := true;
     LockWait := true;
   end;
-{$endif}
+{$ENDIF}
 {$ENDIF}
 
 end.
