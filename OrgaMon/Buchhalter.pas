@@ -5102,8 +5102,10 @@ begin
             repeat
 
               // Volltreffer-Suche
-              search(KontoInhaber + ' ' + b_r_Auszug_BLZBIC(sBuchungsText) +
-                b_r_Auszug_KontoIBAN(sBuchungsText));
+              search(
+                { } KontoInhaber + ' ' +
+                { } b_r_Auszug_BLZBIC(sBuchungsText) + ' ' +
+                { } b_r_Auszug_KontoIBAN(sBuchungsText));
               addFoundListTo(ItemDebiRIDs);
 
               if (ItemDebiRIDs.count > 0) then

@@ -2049,20 +2049,31 @@ begin
   result := '';
   repeat
 
-   if length(Z_ELV_KONTO)<11 then
-   begin
-    result := Bank_Konto(Z_ELV_KONTO);
-    break;
-   end;
+    if length(Z_ELV_KONTO) < 11 then
+    begin
+      result := Bank_Konto(Z_ELV_KONTO);
+      break;
+    end;
 
-   // DEppBBBBBBBBKKKKKKKKKK
-   if (pos('DE',Z_ELV_KONTO)=1) then
-   begin
-     result := Bank_Konto(copy(Z_ELV_KONTO,13,10));
-     break;
-   end;
+    // DEppBBBBBBBBKKKKKKKKKK
+    if (pos('DE', Z_ELV_KONTO) = 1) then
+    begin
+      result := Bank_Konto(copy(Z_ELV_KONTO, 13, 10));
+      break;
+    end;
 
   until true;
+end;
+
+function IBAN_BLZ_Konto(IBAN: string): string;
+begin
+  result := '';
+  if (pos('DE', IBAN) = 1) then
+  begin
+    result :=
+    { } copy(IBAN, 5, 8) + ' ' +
+    { } Bank_Konto(copy(IBAN, 13, 10));
+  end;
 end;
 
 end.
