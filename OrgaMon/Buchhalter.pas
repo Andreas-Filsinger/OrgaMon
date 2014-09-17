@@ -468,134 +468,6 @@ uses
 const
   cButtonGridRows = 4;
 
-function numberFilter(s: string): string;
-begin
-  result := StrFilter(s, '0123456789');
-  while (pos('0', result) = 1) do
-    system.Delete(result, 1, 1);
-end;
-
-function getKonto(s: TStrings): string;
-var
-  n: Integer;
-begin
-  result := '';
-  for n := 0 to pred(s.count) do
-    if pos(cKontoStr, s[n]) > 0 then
-    begin
-      result := numberFilter(ExtractSegmentBetween(s[n], cKontoStr, cBLZStr));
-      break;
-    end;
-end;
-
-function getBLZ(s: TStrings): string;
-var
-  n, k: Integer;
-begin
-  result := '';
-  for n := 0 to pred(s.count) do
-  begin
-    k := pos(cBLZStr, s[n]);
-    if (k > 0) then
-    begin
-      result := numberFilter(copy(s[n], k, MaxInt));
-      break;
-    end;
-  end;
-end;
-
-function getInhaber(s: TStrings): string;
-var
-  n: Integer;
-  ganzesPaket: string;
-begin
-  result := '';
-  ganzesPaket := HugeSingleLine(s, ' ');
-  if (pos(cBLZStr, ganzesPaket) > 0) or (pos(cRECHNUNGStr, ganzesPaket) > 0)
-  then
-    for n := 0 to pred(s.count) do
-    begin
-      if (pos(cBLZStr, s[n]) = 0) and (pos(cRECHNUNGStr, s[n]) = 0) then
-        result := cutblank(result + ' ' + s[n])
-      else
-        break;
-    end;
-  ersetze('''', '', result);
-  ersetze('"', '', result);
-  result := copy(result, 1, 45);
-end;
-
-function getBelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
-var
-  n, k, l, m: Integer;
-  c: Char;
-begin
-
-  // k Position des '-'
-  // l Positions des String Anfangs
-  result := TStringList.Create;
-  for n := 0 to pred(s.count) do
-  begin
-    k := pos('-0', s[n]);
-    if (k > 0) then
-    begin
-
-      // Nun den Anfang suchen!
-      l := k;
-      while (l > 1) do
-      begin
-        c := s[n][l - 1]; // Look ahead!
-        if not(c in ['0' .. '9']) then
-          break;
-        dec(l);
-      end;
-
-      // Nun das Ende suchen
-      m := k + 1;
-      while (m < length(s[n])) do
-      begin
-        c := s[n][m + 1]; // Look ahead!
-        if not(c in ['0' .. '9']) then
-          break;
-        inc(m);
-      end;
-
-      result.add(copy(s[n], l, m - l + 1));
-    end;
-  end;
-end;
-
-function getRechnung(s: TStrings): TStringList; // Rechnungsnummer
-var
-  sWords: TWordIndex;
-  n: Integer;
-begin
-  result := TStringList.Create;
-  if (s.count > 0) then
-  begin
-    sWords := TWordIndex.Create(nil, e_r_RechnungsNummerAnzahlDerStellen);
-    with sWords do
-    begin
-      // Überweisungstexte hinzunehmen
-      for n := pred(s.count) downto 0 do
-        if (pos(cBLZStr, s[n]) = 0) then // bitte nicht die Kontonummern-Zeile!
-          addwords(s[n], nil);
-
-      // Führende Nullen löschen
-      for n := 0 to pred(count) do
-        while (pos('0', strings[n]) = 1) do
-          strings[n] := copy(strings[n], 2, MaxInt);
-
-      JoinDuplicates(false);
-
-      // nur zahlen der vereinbarten Länge benutzen
-      Filter('0123456789', e_r_RechnungsNummerAnzahlDerStellen + 1);
-    end;
-    result.addstrings(sWords);
-    sWords.free;
-  end;
-end;
-
 procedure TFormBuchhalter.ComboBox1KeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #13) then
@@ -1047,7 +919,7 @@ begin
       ' for update');
     open;
     edit;
-    KontoInhaber := getInhaber(sBuchungsText);
+    KontoInhaber := b_r_Auszug_Inhaber(sBuchungsText);
     if (pos(',', KontoInhaber) = 0) then
     begin
       FieldByName('VORNAME').AsString := nextp(KontoInhaber, ' ', 0);
@@ -1079,7 +951,7 @@ end;
 procedure TFormBuchhalter.Button19Click(Sender: TObject);
 begin
   // Person suchen!
-  FormPersonSuche.setContext(getInhaber(sBuchungsText));
+  FormPersonSuche.setContext(b_r_Auszug_Inhaber(sBuchungsText));
 end;
 
 procedure TFormBuchhalter.Button1Click(Sender: TObject);
@@ -1301,8 +1173,10 @@ begin
       begin
         Gutschriften_RID.add(FieldByName('RID').AsInteger);
         Verwendungszweck := e_r_Ueberweisungstext;
-        BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
-        ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
+        BLZ := b_r_Person_ELV_BLZ(FieldByName('Z_ELV_BLZ').AsString,
+          FieldByName('Z_ELV_KONTO').AsString);
+        ktonr := b_r_Person_ELV_Konto(FieldByName('Z_ELV_BLZ').AsString,
+          FieldByName('Z_ELV_KONTO').AsString);
         Gutschriften.AddObject(BLZ + '-' + ktonr, Verwendungszweck);
         SetLength(dGutschriften, Gutschriften.count);
         dGutschriften[pred(Gutschriften.count)] := Forderung;
@@ -1343,8 +1217,10 @@ begin
         with DTA_Posten do
         begin
           RID := FieldByName('RID').AsInteger;
-          BLZ := StrFilter(FieldByName('Z_ELV_BLZ').AsString, cZiffern);
-          ktonr := StrFilter(FieldByName('Z_ELV_KONTO').AsString, cZiffern);
+          BLZ := b_r_Person_ELV_BLZ(FieldByName('Z_ELV_BLZ').AsString,
+            FieldByName('Z_ELV_KONTO').AsString);
+          ktonr := b_r_Person_ELV_Konto(FieldByName('Z_ELV_BLZ').AsString,
+            FieldByName('Z_ELV_KONTO').AsString);
 
           zahlerName := cutblank(FieldByName('Z_ELV_KONTO_INHABER').AsString);
           if (zahlerName = '') then
@@ -4014,12 +3890,12 @@ begin
                 // Status Kalt oder Warm oder HOT-HOT-HOT
                 brush.color := HTMLColor2TColor(cBUCH_Farbe_Kalt); // kalt
                 repeat
-                  if (getKonto(sBuchungsText) <>
+                  if (b_r_Auszug_KontoIBAN(sBuchungsText) <>
                     e_r_sqls('select Z_ELV_KONTO from PERSON ' + 'where RID=' +
                     inttostr(PERSON_R))) then
                     break;
 
-                  if (getBLZ(sBuchungsText) <>
+                  if (b_r_Auszug_BLZBIC(sBuchungsText) <>
                     e_r_sqls('select Z_ELV_BLZ from PERSON ' + 'where RID=' +
                     inttostr(PERSON_R))) then
                     break;
@@ -5142,7 +5018,7 @@ begin
 
         // über ~RechnungsNummer~
         // -> es wird nur nach ~BelegNummer~ "-" ~Teillieferung~ umgesetzt
-        RechnungsNummern := getRechnung(sBuchungsText);
+        RechnungsNummern := b_r_Auszug_Rechnung(sBuchungsText);
         if (RechnungsNummern.count > 0) then
         begin
           cVERSAND := DataModuleDatenbank.nCursor;
@@ -5164,7 +5040,7 @@ begin
         RechnungsNummern.free;
 
         // über ~BelegNummer~ "-" ~Teillieferung~
-        BelegNummer := getBelegTeillieferung(sBuchungsText);
+        BelegNummer := b_r_Auszug_BelegTeillieferung(sBuchungsText);
         if (BelegNummer.count > 0) then
         begin
           for n := 0 to pred(BelegNummer.count) do
@@ -5212,7 +5088,7 @@ begin
         begin
 
           // direkt über die Namens-Zeile!
-          KontoInhaber := PrepareForSearch(getInhaber(sBuchungsText));
+          KontoInhaber := PrepareForSearch(b_r_Auszug_Inhaber(sBuchungsText));
 
           // Bank-Worte entfernen
           ersetze(' UND ', ' ', KontoInhaber);
@@ -5226,8 +5102,8 @@ begin
             repeat
 
               // Volltreffer-Suche
-              search(KontoInhaber + ' ' + getBLZ(sBuchungsText) +
-                getKonto(sBuchungsText));
+              search(KontoInhaber + ' ' + b_r_Auszug_BLZBIC(sBuchungsText) +
+                b_r_Auszug_KontoIBAN(sBuchungsText));
               addFoundListTo(ItemDebiRIDs);
 
               if (ItemDebiRIDs.count > 0) then
@@ -5248,7 +5124,7 @@ begin
               addFoundListTo(NamePassend);
 
               KontoInhaber := cutblank(KontoInhaber);
-              if (pos(',', getInhaber(sBuchungsText)) > 0) then
+              if (pos(',', b_r_Auszug_Inhaber(sBuchungsText)) > 0) then
               begin
                 search(nextp(KontoInhaber, ' ', 0));
                 addFoundListTo(NamePassend);
@@ -5336,11 +5212,12 @@ begin
       inttostr(BUCH_R));
 
     //
-    e_x_sql('update PERSON set ' + ' Z_ELV_KONTO_INHABER=''' +
-      getInhaber(sBUCHUNGSTEXTE) + ''', ' + ' Z_ELV_BLZ=''' +
-      getBLZ(sBUCHUNGSTEXTE) + ''', ' + ' Z_ELV_KONTO=''' +
-      getKonto(sBUCHUNGSTEXTE) + ''' ' + 'where' + ' RID=' +
-      inttostr(PERSON_R));
+    e_x_sql('update PERSON set ' +
+      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE)
+      + ''', ' +
+      { } ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
+      { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' +
+      'where' + ' RID=' + inttostr(PERSON_R));
 
     e_x_sql('update PERSON set ' + ' Z_ELV_BANK_NAME=null ' + 'where' + ' (RID='
       + inttostr(PERSON_R) + ') and' + ' (Z_ELV_BANK_NAME=''' +
@@ -5368,11 +5245,13 @@ begin
       inttostr(BUCH_R));
 
     //
-    e_x_sql('update PERSON set ' + ' Z_ELV_KONTO_INHABER=''' +
-      getInhaber(sBUCHUNGSTEXTE) + ''', ' + ' Z_ELV_BANK_NAME=''' +
-      cOrgaMonPrivat + ''', ' + ' Z_ELV_BLZ=''' + getBLZ(sBUCHUNGSTEXTE) +
-      ''', ' + ' Z_ELV_KONTO=''' + getKonto(sBUCHUNGSTEXTE) + ''' ' + 'where' +
-      ' RID=' + inttostr(PERSON_R));
+    e_x_sql('update PERSON set ' +
+      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE)
+      + ''', ' +
+      { } ' Z_ELV_BANK_NAME=''' + cOrgaMonPrivat + ''', ' +
+      { } ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
+      { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' +
+      { } 'where' + ' RID=' + inttostr(PERSON_R));
 
     sBUCHUNGSTEXTE.free;
     DrawGrid3.Refresh;

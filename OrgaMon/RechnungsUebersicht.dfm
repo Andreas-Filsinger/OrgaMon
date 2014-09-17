@@ -14,6 +14,8 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   DesignSize = (
     931
     623)

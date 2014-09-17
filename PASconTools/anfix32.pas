@@ -100,8 +100,9 @@ const
   cFSize_NotExists = -1;
   cFSize_Null = -2;
 
-  // Filter
+  // für Filter
   cZiffern = '0123456789';
+  cBuchstaben = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   // Geld
   cMonetarySymbol = '€';

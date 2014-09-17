@@ -43,9 +43,9 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    Edit3: TEdit;
+    Edit_BLZ: TEdit;
+    Edit_Konto: TEdit;
+    Edit_GueltigBis: TEdit;
     StaticText1: TStaticText;
     CheckBox1: TCheckBox;
     Button1: TButton;
@@ -119,7 +119,6 @@ type
     procedure fillContext;
 
     procedure setTestdata;
-    function ValidateKonto(s: string): string;
     procedure doActivate(active: boolean);
     procedure createDocument;
     procedure showDocument;
@@ -160,8 +159,8 @@ begin
     // SQL bilden
     sSQL := 'update PERSON set' +
     { } ' Z_ELV_KONTO_INHABER=''' + _name + ''', ' +
-    { } ' Z_ELV_BLZ=''' + Edit1.text + ''', ' +
-    { } ' Z_ELV_KONTO=''' + ValidateKonto(Edit2.text) + ''', ' +
+    { } ' Z_ELV_BLZ=''' + Edit_BLZ.text + ''', ' +
+    { } ' Z_ELV_KONTO=''' + Bank_Konto(Edit_Konto.text) + ''', ' +
     { } ' Z_ELV_FREIGABE=' + FloatToStrISO(Betrag, 2) + ' ' +
     { } 'where' +
     { } ' RID=' + inttostr(PERSON_R);
@@ -225,10 +224,10 @@ begin
   LastschriftFName := '';
 
   // Karten Daten
-  Edit1.text := '';
+  Edit_BLZ.text := '';
   StaticText1.caption := '';
-  Edit2.text := '';
-  Edit3.text := '';
+  Edit_Konto.text := '';
+  Edit_GueltigBis.text := '';
 
   // Personen und Zahlungsdaten
   Edit4.text := '';
@@ -255,8 +254,8 @@ begin
       add('template=Lastschrift.html');
       add('aktuell=' + cIni_Activate);
       add('mahngebühr=' + cIni_DeActivate);
-      add('ELV_KontoNummer=' + ValidateKonto(Edit2.text));
-      add('ELV_BLZ=' + Edit1.text);
+      add('ELV_KontoNummer=' + Bank_Konto(Edit_Konto.text));
+      add('ELV_BLZ=' + Edit_BLZ.text);
       add('ELV_Bank=' + StaticText1.caption);
       add('ELV_KontoInhaber=' + _name);
     end;
@@ -353,9 +352,9 @@ end;
 
 procedure TFormZahlungECconnect.loadFromCard;
 begin
-  Edit1.text := _blz;
-  Edit2.text := _konto;
-  Edit3.text := _gueltig;
+  Edit_BLZ.text := _blz;
+  Edit_Konto.text := _konto;
+  Edit_GueltigBis.text := _gueltig;
 end;
 
 procedure TFormZahlungECconnect.Log(s: string);
@@ -424,14 +423,13 @@ begin
   BeginHourGlass;
 
   // BLZ in Bankname umsetzen prüfen
-  StaticText1.caption := _bank(Edit1.text);
+  StaticText1.caption := _bank(Edit_BLZ.text);
   Edit8.text := '';
 
   // Person dazu ermitteln!
-  lPERSON := e_r_sqlm(
-    { } 'select RID from PERSON where ' +
-    { } '(Z_ELV_KONTO=''' + ValidateKonto(Edit2.text) + ''') and ' +
-    { } '(Z_ELV_BLZ=''' + Edit1.text + ''')');
+  lPERSON := e_r_Person_BLZ_Konto(
+    { } Edit_BLZ.text,
+    { } Bank_Konto(Edit_Konto.text));
 
   KONTO_PERSON_R := cRID_null;
   repeat
@@ -578,14 +576,6 @@ end;
 procedure TFormZahlungECconnect.SpeedButton5Click(Sender: TObject);
 begin
   fillContext;
-end;
-
-function TFormZahlungECconnect.ValidateKonto(s: string): string;
-begin
-  //
-  result := StrFilter(s, '0123456789');
-  while (pos('0', result) = 1) do
-    delete(result, 1, 1);
 end;
 
 function TFormZahlungECconnect._bank(BLZ: string): string;

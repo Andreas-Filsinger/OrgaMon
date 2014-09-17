@@ -104,10 +104,12 @@ function b_r_PersonSaldo(PERSON_R: integer): double;
 // aktueller Saldo des "Kunden" Kontos
 //
 
+function b_r_Person_ELV_BLZ(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
+function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
+
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
 // Saldo des Kontos "Konto" am "Datum"
 //
-
 
 function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 // Berechnet hochgerechnete jährliche Kosten im Zeitraum
@@ -115,6 +117,19 @@ function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 
 procedure b_w_preDeleteBuch(BUCH_R: integer);
 procedure b_w_DeleteBuch(BUCH_R: integer);
+
+// Funktionen für Zeichenraum Prüfung BIC & IBAN
+function Bank_IDs(s: string): string;
+
+// Funktionen für Zeichenraum Prüfung KontoNummer
+function Bank_Konto(s: string): string;
+
+// Funktionen zur Infosammlung aus dem Konto-Auszug-Inhalt
+function b_r_Auszug_KontoIBAN(s: TStrings): string;
+function b_r_Auszug_BLZBIC(s: TStrings): string;
+function b_r_Auszug_Inhaber(s: TStrings): string;
+function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
+function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
 
 implementation
 
@@ -1426,7 +1441,7 @@ var
   ForderungsFrist: integer;
 
   // cache
-  RECHNUNGSDATUM: TDateTime;
+  RechnungsDatum: TDateTime;
   TEILLIEFERUNG: integer;
   PERSON_R: integer;
   RECHNUNGSANSCHRIFT_R: TDOM_Reference;
@@ -1439,7 +1454,7 @@ begin
   qAUSGANGSRECHNUNG := nQuery;
   qBELEG := nQuery;
   cBELEG := nCursor;
-  RECHNUNGSDATUM := cIllegalDate;
+  RechnungsDatum := cIllegalDate;
   try
 
     with cBELEG do
@@ -1457,9 +1472,9 @@ begin
 
       // Rechnungsdatum bestimmen, Vorbelegung bei TL=0 möglich!
       if (TEILLIEFERUNG = 0) and not(FieldByName('RECHNUNG').IsNull) then
-        RECHNUNGSDATUM := FieldByName('RECHNUNG').AsDateTime
+        RechnungsDatum := FieldByName('RECHNUNG').AsDateTime
       else
-        RECHNUNGSDATUM := now;
+        RechnungsDatum := now;
     end;
 
     if (PERSON_R >= cRID_FirstValid) then
@@ -1469,7 +1484,7 @@ begin
       ForderungsFrist := e_r_ZahlungFrist(PERSON_R);
 
       // hier noch erweiterte Fälligkeitslogik einfügen
-      FAELLIG := long2datetime(DatePlus(datetime2long(RECHNUNGSDATUM),
+      FAELLIG := long2datetime(DatePlus(datetime2long(RechnungsDatum),
         ForderungsFrist));
 
       // (muss noch in das normale Kontenschema verschoben werden!)
@@ -1478,7 +1493,7 @@ begin
         sql.add('select * from AUSGANGSRECHNUNG for update');
         insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
-        FieldByName('DATUM').AsDateTime := RECHNUNGSDATUM;
+        FieldByName('DATUM').AsDateTime := RechnungsDatum;
         FieldByName('VORGANG').AsString := cVorgang_Rechnung;
         FieldByName('VALUTA').AsDateTime := FAELLIG;
         FieldByName('BELEG_R').AsInteger := BELEG_R;
@@ -1514,7 +1529,7 @@ begin
         FieldByName('RECHNUNGS_BETRAG').AsFloat :=
           FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
         FieldByName('TEILLIEFERUNG').AsInteger := succ(TEILLIEFERUNG);
-        FieldByName('RECHNUNG').AsDateTime := RECHNUNGSDATUM;
+        FieldByName('RECHNUNG').AsDateTime := RechnungsDatum;
         FieldByName('FAELLIG').AsDateTime := FAELLIG;
         if (RechnungsBetrag > 0) then
         begin
@@ -1869,6 +1884,185 @@ begin
     result := cSatz_keinElement
   else
     result := e_r_Prozent(strtointdef(Satz, 0));
+end;
+
+function Bank_IDs(s: string): string;
+begin
+  result := StrFilter(s, cZiffern + cBuchstaben);
+  while (pos('0', result) = 1) do
+    system.Delete(result, 1, 1);
+end;
+
+function Bank_Konto(s: string): string;
+begin
+  result := StrFilter(s, cZiffern);
+  while (pos('0', result) = 1) do
+    system.Delete(result, 1, 1);
+end;
+
+function b_r_Auszug_KontoIBAN(s: TStrings): string;
+var
+  n: integer;
+begin
+  result := '';
+  for n := 0 to pred(s.count) do
+    if pos(cKontoStr, s[n]) > 0 then
+    begin
+      result := Bank_IDs(ExtractSegmentBetween(s[n], cKontoStr, cBLZStr));
+      break;
+    end;
+end;
+
+function b_r_Auszug_BLZBIC(s: TStrings): string;
+var
+  n, k: integer;
+begin
+  result := '';
+  for n := 0 to pred(s.count) do
+  begin
+    k := pos(cBLZStr, s[n]);
+    if (k > 0) then
+    begin
+      result := Bank_IDs(copy(s[n], k + length(cBLZStr), MaxInt));
+      break;
+    end;
+  end;
+end;
+
+function b_r_Auszug_Inhaber(s: TStrings): string;
+var
+  n: integer;
+  ganzesPaket: string;
+begin
+  result := '';
+  ganzesPaket := HugeSingleLine(s, ' ');
+  if (pos(cBLZStr, ganzesPaket) > 0) or (pos(cRECHNUNGStr, ganzesPaket) > 0)
+  then
+    for n := 0 to pred(s.count) do
+    begin
+      if (pos(cBLZStr, s[n]) = 0) and (pos(cRECHNUNGStr, s[n]) = 0) then
+        result := cutblank(result + ' ' + s[n])
+      else
+        break;
+    end;
+  ersetze('''', '', result);
+  ersetze('"', '', result);
+  result := copy(result, 1, 45);
+end;
+
+function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
+var
+  n, k, l, m: integer;
+  c: Char;
+begin
+
+  // k Position des '-'
+  // l Positions des String Anfangs
+  result := TStringList.create;
+  for n := 0 to pred(s.count) do
+  begin
+    k := pos('-0', s[n]);
+    if (k > 0) then
+    begin
+
+      // Nun den Anfang suchen!
+      l := k;
+      while (l > 1) do
+      begin
+        c := s[n][l - 1]; // Look ahead!
+        if not(c in ['0' .. '9']) then
+          break;
+        dec(l);
+      end;
+
+      // Nun das Ende suchen
+      m := k + 1;
+      while (m < length(s[n])) do
+      begin
+        c := s[n][m + 1]; // Look ahead!
+        if not(c in ['0' .. '9']) then
+          break;
+        inc(m);
+      end;
+
+      result.add(copy(s[n], l, m - l + 1));
+    end;
+  end;
+end;
+
+function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
+var
+  sWords: TWordIndex;
+  n: integer;
+begin
+  result := TStringList.create;
+  if (s.count > 0) then
+  begin
+    sWords := TWordIndex.create(nil, e_r_RechnungsNummerAnzahlDerStellen);
+    with sWords do
+    begin
+      // Überweisungstexte hinzunehmen
+      for n := pred(s.count) downto 0 do
+        if (pos(cBLZStr, s[n]) = 0) then // bitte nicht die Kontonummern-Zeile!
+          addwords(s[n], nil);
+
+      // Führende Nullen löschen
+      for n := 0 to pred(count) do
+        while (pos('0', strings[n]) = 1) do
+          strings[n] := copy(strings[n], 2, MaxInt);
+
+      JoinDuplicates(false);
+
+      // nur zahlen der vereinbarten Länge benutzen
+      Filter(cZiffern, e_r_RechnungsNummerAnzahlDerStellen + 1);
+    end;
+    result.AddStrings(sWords);
+    sWords.Free;
+  end;
+end;
+
+function b_r_Person_ELV_BLZ(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
+begin
+
+  result := '';
+  repeat
+    // Alte BLZ?
+    result := StrFilter(Z_ELV_BLZ, cZiffern);
+    if (length(result) = 8) then
+      break;
+
+    // aus IBAN?
+    if length(Z_ELV_KONTO) > 0 then
+      if (pos(Z_ELV_KONTO[1], cBuchstaben) > 0) then
+        result := StrFilter(copy(Z_ELV_KONTO, 5, 8), cZiffern);
+
+    if (length(result) = 8) then
+      break;
+
+    result := '';
+
+  until true;
+end;
+
+function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
+begin
+  result := '';
+  repeat
+
+   if length(Z_ELV_KONTO)<11 then
+   begin
+    result := Bank_Konto(Z_ELV_KONTO);
+    break;
+   end;
+
+   // DEppBBBBBBBBKKKKKKKKKK
+   if (pos('DE',Z_ELV_KONTO)=1) then
+   begin
+     result := Bank_Konto(copy(Z_ELV_KONTO,13,10));
+     break;
+   end;
+
+  until true;
 end;
 
 end.
