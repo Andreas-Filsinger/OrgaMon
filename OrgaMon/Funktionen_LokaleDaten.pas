@@ -57,14 +57,16 @@ implementation
 
 uses
   Globals, Anfix32,
-{$ifndef fpc}
+{$IFNDEF fpc}
   IB_Components,
-{$endif}
-  dbOrgaMon,Funktionen_Basis, gplists,
+{$ENDIF}
+  dbOrgaMon, Funktionen_Basis, gplists,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
-  Funktionen_Auftrag, wordindex;
+  Funktionen_Auftrag,
+  Funktionen_Buch,
+  wordindex;
 
 const
   AlreadyCheckedPath: TStringList = nil;
@@ -202,7 +204,7 @@ begin
     sql.add(' Z_ELV_KONTO,');
     sql.add(' KONTO_ER,');
     sql.add(' KONTO_AR,');
-    sql.Add(' HANDY');
+    sql.add(' HANDY');
     sql.add('from');
     sql.add(' PERSON');
     APIFirst;
@@ -220,23 +222,29 @@ begin
 
           SpeedIndex.AddWords(
             // PERSON Felder
-            cPERSON.FieldByName('VORNAME').AsString + ' ' +
-            cPERSON.FieldByName('NACHNAME').AsString + ' ' +
-            cPERSON.FieldByName('SUCHBEGRIFF').AsString + ' ' +
-            cPERSON.FieldByName('KUERZEL').AsString + ' ' +
-            cPERSON.FieldByName('MONDA').AsString + ' ' +
-            cPERSON.FieldByName('NUMMER').AsString + ' ' +
-            cPERSON.FieldByName('Z_ELV_KONTO_INHABER').AsString + ' ' +
-            noblank(cPERSON.FieldByName('Z_ELV_BLZ').AsString +
-            cPERSON.FieldByName('Z_ELV_KONTO').AsString) + ' ' +
-            cPERSON.FieldByName('KONTO_ER').AsString + ' ' +
-            cPERSON.FieldByName('KONTO_AR').AsString + ' ' +
-            strFilter(cPERSON.FieldByName('HANDY').AsString,cZiffern) + ' ' +
+            { } cPERSON.FieldByName('VORNAME').AsString + ' ' +
+            { } cPERSON.FieldByName('NACHNAME').AsString + ' ' +
+            { } cPERSON.FieldByName('SUCHBEGRIFF').AsString + ' ' +
+            { } cPERSON.FieldByName('KUERZEL').AsString + ' ' +
+            { } cPERSON.FieldByName('MONDA').AsString + ' ' +
+            { } cPERSON.FieldByName('NUMMER').AsString + ' ' +
+            { } cPERSON.FieldByName('Z_ELV_KONTO_INHABER').AsString + ' ' +
+            { } Bank_IDs(cPERSON.FieldByName('Z_ELV_BLZ').AsString) + ' ' +
+            { } Bank_IDs(cPERSON.FieldByName('Z_ELV_KONTO').AsString) + ' ' +
+            { } IBAN_BLZ_Konto(
+            { } cPERSON.FieldByName('Z_ELV_KONTO').AsString) + ' ' +
+            { } cPERSON.FieldByName('KONTO_ER').AsString + ' ' +
+            { } cPERSON.FieldByName('KONTO_AR').AsString + ' ' +
+            { } strFilter(cPERSON.FieldByName('HANDY').AsString,
+            cZiffern) + ' ' +
+
             // ANSCHRIFT Felder
-            FieldByName('NAME1').AsString + ' ' + FieldByName('NAME2').AsString
-            + ' ' + FieldByName('STRASSE').AsString + ' ' + FieldByName('PLZ')
-            .AsString + ' ' + FieldByName('ORT').AsString + ' ' +
-            FieldByName('STATE').AsString,
+            { } FieldByName('NAME1').AsString + ' ' +
+            { } FieldByName('NAME2').AsString + ' ' +
+            { } FieldByName('STRASSE').AsString + ' ' +
+            { } FieldByName('PLZ').AsString + ' ' +
+            { } FieldByName('ORT').AsString + ' ' +
+            { } FieldByName('STATE').AsString,
 
             TObject(cPERSON.FieldByName('RID').AsInteger)
 
@@ -297,7 +305,7 @@ begin
             [FieldByName('BEZEICHNUNG').AsString,
             FieldByName('SATZ').AsFloat]));
           AusgabeValues.add(FieldByName('RID').AsString);
-          Apinext;
+          ApiNext;
         end;
       end;
       cSORTIMENT.free;
@@ -347,7 +355,7 @@ begin
         begin
           AusgabeItems.add(FieldByName('MOTIVATION').AsString);
           AusgabeValues.add(FieldByName('RID').AsInteger);
-          Apinext;
+          ApiNext;
         end;
       end;
       cVertragsVarianten.free;
