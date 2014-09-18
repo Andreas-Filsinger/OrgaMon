@@ -2718,10 +2718,15 @@ var
 
   // Beleg-Listen
   Checked_BELEG_R: TStringList; // Saldo aller bisher berührten Belege
-  Ausgeglichen_BELEG_R: TgpIntegerList; // Saldo~0 Belege, oder Ausgeblendete
-  Ausgesetzt_BELEG_R: TgpIntegerList; // Fälligkeit ausgesetzt
-  Verbucht_BELEG_R: TStringList;
+
+  // Saldo=0 Belege, oder "Ausgeblendete"
+  Ausgeglichen_BELEG_R: TgpIntegerList;
+
+  // Fälligkeit ausgesetzt
+  Ausgesetzt_BELEG_R: TgpIntegerList;
+
   // Lister der Belege, in die das Buchungsdatum schon eingetragen wurde
+  Verbucht_BELEG_R: TStringList;
 
   Unausgeglichen: TDoubleObject;
   SaldoLautBeleg: double;
@@ -2767,6 +2772,7 @@ var
   pHeutigeBelege: boolean;
   pMahnMoment: TDateTime;
   pMahnGebuehr: boolean;
+  pOhneAusstehende: boolean;
 
   // Ausgabeparameter
   RECHNUNGEN: string;
@@ -2852,13 +2858,16 @@ begin
     if assigned(sOptionen) then
     begin
 
-      // bisherige Werte
-      pVerbuchen := (sOptionen.values['verbuchen'] = cIni_Activate);
-      pAuchMahnbescheid := (sOptionen.values['mahnbescheid'] = cIni_Activate);
-      pTemplateFName := sOptionen.values['template'];
-      pHeutigeBelege := (sOptionen.values['aktuell'] = cIni_Activate);
-      pMahnMoment := mkDateTime(sOptionen.values['moment']);
-      pMahnGebuehr := (sOptionen.values['mahngebühr'] <> cIni_DeActivate);
+      with sOptionen do
+      begin
+        pVerbuchen := (values['verbuchen'] = cIni_Activate);
+        pAuchMahnbescheid := (values['mahnbescheid'] = cIni_Activate);
+        pTemplateFName := values['template'];
+        pHeutigeBelege := (values['aktuell'] = cIni_Activate);
+        pMahnMoment := mkDateTime(values['moment']);
+        pMahnGebuehr := (values['mahngebühr'] <> cIni_DeActivate);
+        pOhneAusstehende := (values['ohneAusstehende'] = cIni_Activate);
+      end;
 
       // ins Log
       DatensammlerGlobal.addstrings(sOptionen);
@@ -2873,6 +2882,7 @@ begin
       pHeutigeBelege := false;
       pMahnMoment := now;
       pMahnGebuehr := true;
+      pOhneAusstehende := false;
     end;
 
     // verbuchen -> aktuellen MahnbelBeleg wegkopieren!
@@ -2888,10 +2898,11 @@ begin
       MahnbescheidTAN := e_r_gen('GEN_MAHNBESCHEID');
       FileCopy(MahnungFName(PERSON_R), MahnbescheidPath + 'Mahnbescheid.html');
     end;
+
     // ausgesetzte Belege ermitteln
-    e_r_sqlm('select RID from BELEG where' + ' (PERSON_R=' + inttostr(PERSON_R)
-      + ') and ' + ' (MAHNUNG_AUSGESETZT=''' + cC_True + ''')',
-      Ausgesetzt_BELEG_R);
+    e_r_sqlm('select RID from BELEG where ' +
+      { } '(PERSON_R=' + inttostr(PERSON_R) + ') and ' +
+      { } '(MAHNUNG_AUSGESETZT=''' + cC_True + ''')', Ausgesetzt_BELEG_R);
 
     // ausgeklammerte Belege ermitteln
     if assigned(sAugesetzteBelege) then
@@ -3060,6 +3071,14 @@ begin
               if (VORGANG = cVorgang_Rechnung) then
                 if (FieldByName('DATUM').AsDateTime >= now - 2) then
                   SkipIt := true;
+
+          // Belege, die bereits in einem Lastschriftvolumen vorgemerkt sind!
+          if not(SkipIt) then
+            if (pOhneAusstehende) then
+              if (VORGANG = cVorgang_Rechnung) then
+               if FieldByName('EREIGNIS_R').IsNotNull then
+                  SkipIt := true;
+
 
         end
         else
@@ -6145,6 +6164,7 @@ begin
 
             if VertragAnwendbar(DIESER_ABRECHNUNGSTAG) then
             begin
+              result.add('PERSON_R=' + inttostr(PERSON_R));
 
               // ev. Vorspann noch kopieren
               if (ZIEL_BELEG_R < cRID_FirstValid) and
@@ -12450,6 +12470,7 @@ begin
       MaxMenge := FieldByName('VERKAUFS_MENGE').AsInteger;
       Divisor := StrtoDouble('1' + fill('0', length(inttostr(MaxMenge))));
     end;
+
     n := 0;
     while not(eof) do
     begin
@@ -12777,7 +12798,6 @@ begin
     DebugStr.SaveToFile(DiagnosePath + 'Lieferzeit.txt');
   DebugStr.free;
 end;
-
 
 (*
   KNO := TStringList.create;

@@ -35,10 +35,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -350,10 +346,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Sammellastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1104,10 +1096,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1420,10 +1408,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -2623,7 +2607,7 @@ object FormBuchhalter: TFormBuchhalter
         ExplicitTop = 330
       end
       object SpeedButton21: TSpeedButton
-        Left = 641
+        Left = 640
         Top = 280
         Width = 22
         Height = 22
@@ -2662,7 +2646,6 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton21Click
-        ExplicitTop = 330
       end
       object SpeedButton25: TSpeedButton
         Left = 665
@@ -3424,10 +3407,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Lastschriften'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3693,10 +3672,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 24
         Top = 40
@@ -4004,7 +3979,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C0101040009006C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900700110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

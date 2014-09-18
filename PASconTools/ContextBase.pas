@@ -52,14 +52,14 @@ type
 implementation
 
 uses
-  anfix32, SysUtils;
+  anfix32, SysUtils, dbOrgaMon;
 
 procedure TContext.addContext(RID: integer);
 var
   k: integer;
 begin
   repeat
-    if (RID <= 0) then
+    if (RID < cRID_FirstValid) then
       break;
     k := indexof(RID);
     if (k = 0) then

@@ -164,15 +164,25 @@ uses
 procedure TFormVertrag.AddKontext(LogFileDerVertragsAnwendung: TStringList);
 var
   n: integer;
-  BELEG_R: integer;
+  RID: integer;
 begin
   for n := 0 to pred(LogFileDerVertragsAnwendung.Count) do
+  begin
     if pos('BELEG_R=', LogFileDerVertragsAnwendung[n]) = 1 then
     begin
-      BELEG_R := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1),
+      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1),
         cRID_Null);
-      FormKontext.cnBELEG.addContext(BELEG_R);
+      FormKontext.cnBELEG.addContext(RID);
+      continue;
     end;
+    if pos('PERSON_R=', LogFileDerVertragsAnwendung[n]) = 1 then
+    begin
+      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1),
+        cRID_Null);
+      FormKontext.cnPERSON.addContext(RID);
+      continue;
+    end;
+  end;
 end;
 
 procedure TFormVertrag.Button11Click(Sender: TObject);

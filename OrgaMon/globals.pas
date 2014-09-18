@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.044; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.046; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -171,6 +171,8 @@ const
   cOrgaMonDeathDay = '01.01.9999';
   cOrgaMonDeathDayAsLong = 99990101;
 
+  // für die Markierung wiederkehrender Gutschriften
+  // die nicht über Einnahmenkonten gebucht werden sollen
   cOrgaMonPrivat = '!! ohne Ausgleich-Buchungen !!';
 
   // OLAP

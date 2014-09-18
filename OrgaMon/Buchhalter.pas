@@ -4982,6 +4982,7 @@ var
   TEILLIEFERUNG: Integer;
   PERSON_R: Integer;
   BelegSaldo: double;
+  KontoIBAN: string; // Kontonummer ODER IBAN
 
   // Treffer-Liste ...
   BetragPassend: TgpIntegerList;
@@ -5101,12 +5102,23 @@ begin
             BetragPassend := TgpIntegerList.Create;
             repeat
 
-              // Volltreffer-Suche
+              KontoIBAN := b_r_Auszug_KontoIBAN(sBuchungsText);
+
+              // Volltreffer-Suche "Name" + "BLZ" + "Konto"
               search(
                 { } KontoInhaber + ' ' +
                 { } b_r_Auszug_BLZBIC(sBuchungsText) + ' ' +
-                { } b_r_Auszug_KontoIBAN(sBuchungsText));
+                { } KontoIBAN);
               addFoundListTo(ItemDebiRIDs);
+
+              // rein über die "alte" Bankverbindung
+              if (pos('DE', KontoIBAN) = 1) then
+              begin
+                search(
+                  { } IBAN_BLZ_Konto(KontoIBAN)
+                  { } );
+                addFoundListTo(ItemDebiRIDs);
+              end;
 
               if (ItemDebiRIDs.count > 0) then
               begin
@@ -5122,8 +5134,11 @@ begin
                   break;
               end;
 
+
+              // rein über den Namen
               search(KontoInhaber);
               addFoundListTo(NamePassend);
+
 
               KontoInhaber := cutblank(KontoInhaber);
               if (pos(',', b_r_Auszug_Inhaber(sBuchungsText)) > 0) then
