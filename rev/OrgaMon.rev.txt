@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.046 (18.09.14) Andreas Filsinger
+
+ Bug: SEPA: Durch die langen Fristen standen auf neuen SEPA-Mandaten auch noch die
+      bei der Bank noch nicht durchgeführten "alten" Forderungen. Man musste für
+      den aktuellen UND den ausstehenden Betrag unterschreiben.
+
+Rev 8.045 (18.09.14) Andreas Filsinger
+
+ Neu: Buch: Ausgleich Forderungen: SEPA Umstellung
+ Neu: Vertrag: Bei Anwendung: Personen Kontext wird gefüllt
+
 Rev 8.044 (03.09.14) Andreas Filsinger
 
  Neu: Buch: Ausgleich Lastschriften: Mandats Einzelansicht

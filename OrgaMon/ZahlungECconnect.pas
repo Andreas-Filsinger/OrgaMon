@@ -254,6 +254,7 @@ begin
       add('template=Lastschrift.html');
       add('aktuell=' + cIni_Activate);
       add('mahngebühr=' + cIni_DeActivate);
+      add('ohneAusstehende=' + cIni_Activate);
       add('ELV_KontoNummer=' + Bank_Konto(Edit_Konto.text));
       add('ELV_BLZ=' + Edit_BLZ.text);
       add('ELV_Bank=' + StaticText1.caption);

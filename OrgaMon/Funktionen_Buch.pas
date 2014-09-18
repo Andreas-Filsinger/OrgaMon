@@ -131,6 +131,9 @@ function b_r_Auszug_Inhaber(s: TStrings): string;
 function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
 function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
 
+// deutsche IBAN zerlegen in BLZ und Kontonummer
+function IBAN_BLZ_Konto(IBAN: string): string;
+
 implementation
 
 uses
@@ -1743,7 +1746,6 @@ function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 var
   FoundElements: TExtendedList;
   i: integer;
-  BUCH_R: integer;
   Datum: TAnfixDate;
   Betrag: double;
   cBUCH: TdboCursor;
@@ -2055,7 +2057,7 @@ begin
       break;
     end;
 
-    // DEppBBBBBBBBKKKKKKKKKK
+    // DEppBBBBBBBBkkkkkkkkkK
     if (pos('DE', Z_ELV_KONTO) = 1) then
     begin
       result := Bank_Konto(copy(Z_ELV_KONTO, 13, 10));
@@ -2070,6 +2072,7 @@ begin
   result := '';
   if (pos('DE', IBAN) = 1) then
   begin
+    IBAN := Bank_IDs(IBAN);
     result :=
     { } copy(IBAN, 5, 8) + ' ' +
     { } Bank_Konto(copy(IBAN, 13, 10));
