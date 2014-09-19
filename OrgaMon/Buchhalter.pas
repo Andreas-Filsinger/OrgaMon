@@ -2551,7 +2551,7 @@ var
   end;
 
 var
-  i: Integer;
+  i,n: Integer;
   AbfrageStartDatum: TAnfixDate;
 
   sResult: TStringList;
@@ -2568,7 +2568,7 @@ var
 
   vonName: TStringList;
   BuchungsText: TStringList;
-  ActLine: string;
+  s,ActLine: string;
 
   // Umsatzdaten
   EntryDate, ValutaDate: TAnfixDate;
@@ -2795,6 +2795,16 @@ begin
 
                 if (BankCode <> '') or (AccountNumber <> '') then
                 begin
+
+                  // keine Kontonummer in der SEPA Welt leer?
+                  if (AccountNumber='') then
+                  begin
+                   s := StrFilter(Buchungstext.Text,cZiffern+cBuchstaben+':');
+                   n := pos('IBAN:DE',s);
+                   if (n>0) then
+                     AccountNumber := Bank_Konto(copy(s, n+4+13, 10));
+                  end;
+
                   // "Konto: %s BLZ: %s"
                   uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr +
                     ' ' + BankCode);
