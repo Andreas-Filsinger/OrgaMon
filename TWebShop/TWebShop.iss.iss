@@ -6,7 +6,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=TWebShop
-AppVerName=TWebShop 3.026
+AppVerName=TWebShop 3.027
 AppCopyright=Copyright (C) 2002-2012 Thorsten Schroff
 DefaultDirName={pf}\www\htdocs\TWebShop
 DefaultGroupName=TWebShop
@@ -14,8 +14,8 @@ LicenseFile=gnu-gpl-twebshop.txt
 DisableStartupPrompt=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-TWebShop-3.026
-AppVersion=3.026
+OutputBaseFilename=Setup-TWebShop-3.027
+AppVersion=3.027
 ChangesAssociations=no
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
