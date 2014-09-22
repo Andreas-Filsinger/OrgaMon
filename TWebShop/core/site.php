@@ -6,7 +6,7 @@ class tsite {
 
     private $name = "";
     private $title = "";
-    private $keywords = "";
+    private $keywords = array();
     private $template = "";
     private $active = true;
     private $sitemap = false;
@@ -211,7 +211,11 @@ class tsite {
     }
 
     public function getKeywords($as_array = false) {
-        return ($as_array) ? $this->keywords : implode(",", $this->keywords);
+        if ($as_array) {
+            return $this->keywords;
+        } else {
+            return ($this->keywords) ? implode(",", $this->keywords) : "";
+        }
     }
 
     public function addToSiteMap() {

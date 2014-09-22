@@ -12,14 +12,19 @@ class twebshop_musician_list
     $this->list = $this->makeList($this->root);
   }
   
-  static public function makeList($musician_r)
+  static public function makeList($musician_r, $link)
   { $list = "";
     $musician = new twebshop_musician($musician_r);
 		
-	if ($musician->MUSIKER_R != NULL) $list.= twebshop_musician_list::makeList($musician->MUSIKER_R) . " " . $musician->EVL_TRENNER;
-	else $list.= trim($musician->VORNAME." ".$musician->NACHNAME) . " " . $musician->EVL_TRENNER;
-	
-	if ($musician->EVL_R != NULL) $list.= twebshop_musician_list::makeList($musician->EVL_R);
+	if ($musician->MUSIKER_R != NULL) $list.= twebshop_musician_list::makeList($musician->MUSIKER_R, $link) . " " . $musician->EVL_TRENNER;
+	else {
+        if ($link) {
+            $list.= "<a href=\"" . __INDEX . "?site=search&action=search_musician&id=" . $musician_r . "\">" . trim($musician->VORNAME." ".$musician->NACHNAME) . "</a> " . $musician->EVL_TRENNER;
+        } else {
+            $list.= trim($musician->VORNAME." ".$musician->NACHNAME) . " " . $musician->EVL_TRENNER;
+        }
+	}
+	if ($musician->EVL_R != NULL) $list.= twebshop_musician_list::makeList($musician->EVL_R, $link);
 	unset($musician);
 	return $list;
   }

@@ -107,6 +107,27 @@ class twebshop_search {
         
     }
 
+    /* --> 25.08.2014 michaelhacksoftware : Nach mehreren Feldern (OR) im Artikel suchen */
+    public function searchArticleFields($params) {
+
+        global $ibase;
+
+        $Id     = $params['id'];
+        $Fields = $params['fields'];
+
+        $Where = "";
+        foreach ($Fields as $Field) {
+            $Where .= $Field . " = " . $Id . " OR ";
+        }
+        $Where = substr($Where, 0, -4);
+
+        $this->result->assignIDs($ibase->get_list_as_array("SELECT RID FROM " . twebshop_article::TABLE . " WHERE " . $Where . " ORDER BY TITEL"));
+
+        return $this->result->getIDs();
+
+    }
+    /* <-- */
+
     public function searchRecords($params) {
 
         global $ibase;

@@ -124,6 +124,26 @@ class twebshop_person extends tvisual {
         return $this->emails;
     }
 
+    /* --> 22.08.2014 michaelhacksoftware : Namen der Person für die URL aufbereiten */
+    public function UrlEncodeName($Name) {
+
+        $Name = strtolower(trim($Name));
+
+        $Name = str_replace(" ",  "_", $Name);
+        $Name = str_replace("\"",  "", $Name);
+        $Name = str_replace("'",   "", $Name);
+        $Name = str_replace("?",   "", $Name);
+        $Name = str_replace("&",  "+", $Name);
+        $Name = str_replace("/",  "_", $Name);
+        $Name = str_replace("\\", "_", $Name);
+
+        $Name = urlencode($Name);
+
+        return $Name;
+
+    }
+    /* <-- */
+
     public function getFromHTMLTemplate($template = NULL) {
         $template = parent::getFromHTMLTemplate($template);
 

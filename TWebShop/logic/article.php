@@ -3,7 +3,7 @@
 //**** KLASSE ZUR ABBILDUNG DER ARTIKEL **********************************************************************************************
 class twebshop_article extends tvisual {
 
-    static public $properties = array("TITEL", "KOMPONIST_R", "ARRANGEUR_R", "RID", "LAND_R", "SORTIMENT_R", "NUMERO", "VERLAG_R", "RANG", "DAUER", "SCHWER_GRUPPE", "SCHWER_DETAILS", "ERSTEINTRAG", "PROBESTIMME", "WEBSHOP", "INTERN_INFO");
+    static public $properties = array("TITEL", "KOMPONIST_R", "ARRANGEUR_R", "RID", "LAND_R", "SORTIMENT_R", "NUMERO", "VERLAG_R", "VERLAGNO", "RANG", "DAUER", "SCHWER_GRUPPE", "SCHWER_DETAILS", "ERSTEINTRAG", "PROBESTIMME", "WEBSHOP", "INTERN_INFO");
     protected $rid = 0;
     protected $uid = "";
     protected $wid = NULL;
@@ -16,8 +16,6 @@ class twebshop_article extends tvisual {
     public $detail = "";
     public $price = NULL;
     public $availability = NULL;
-    public $composer = "";
-    public $arranger = "";
     public $publisher = "";
     public $info = NULL;
     public $notice = "";
@@ -80,14 +78,12 @@ class twebshop_article extends tvisual {
         }
     }
 
-    public function getComposer() {
-        $this->composer = ($this->KOMPONIST_R != NULL) ? $this->composer = twebshop_musician_list::makeList($this->KOMPONIST_R) : "-";
-        return $this->composer;
+    public function getComposer($Link) {
+        return ($this->KOMPONIST_R != NULL) ? twebshop_musician_list::makeList($this->KOMPONIST_R, $Link) : "-";
     }
 
-    public function getArranger() {
-        $this->arranger = ($this->ARRANGEUR_R != NULL) ? $this->arranger = twebshop_musician_list::makeList($this->ARRANGEUR_R) : "-";
-        return $this->arranger;
+    public function getArranger($Link) {
+        return ($this->ARRANGEUR_R != NULL) ? twebshop_musician_list::makeList($this->ARRANGEUR_R, $Link) : "-";
     }
 
     public function getInfo() { //echo wrap($this->INTERN_INFO);
@@ -206,7 +202,7 @@ class twebshop_article extends tvisual {
         // Alle Titel hinzufügen
         for ($i = 0; $i < count($Sounds); $i++) {
             $Code .= "parent.myPlaylist.add({"
-                  .  "title:\"" . $this->TITEL . ($i > 0 ? " (" . $i . ")" : "") . "\", artist:\"" . $this-> getComposer() . "\", mp3:\"" . $Sounds[$i] . "\""
+                  .  "title:\"" . str_replace("\"", "\\\"", $this->TITEL) . ($i > 0 ? " (" . $i . ")" : "") . "\", artist:\"" . str_replace("\"", "\\\"", $this->getComposer()) . "\", mp3:\"" . $Sounds[$i] . "\""
                   .  "}, " . (!$i ? "play" : "false") . ");";
         }
 
@@ -314,14 +310,17 @@ class twebshop_article extends tvisual {
     }
 
     public function getPublisher() {
-        //global $orgamon;
-        //TS 22.04.2012: folgende Zeilen auskommentiert: Da der Verlag nicht im Shop angezeigt werden soll, kann man den XMLRPC-Aufruf sparen.
-        //
-        //if ($this->VERLAG_R == NULL) { $this->VERLAG_R = 0; }
-        //if ($this->LAND_R == NULL)   { $this->LAND_R   = 0; }
-        //$this->publisher = $orgamon->getPublisher($this->LAND_R,$this->VERLAG_R);
-        $this->publisher = "";
+
+        global $orgamon;
+        
+        if (!$this->publisher) {
+            if ($this->VERLAG_R == NULL) { $this->VERLAG_R = 0; }
+            if ($this->LAND_R == NULL)   { $this->LAND_R   = 0; }
+            $this->publisher = $orgamon->getPublisher($this->LAND_R,$this->VERLAG_R);
+        }
+
         return $this->publisher;
+
     }
 
     public function getDuration() {
@@ -373,8 +372,6 @@ class twebshop_article extends tvisual {
     }
 
     public function getAll() {
-        $this->getComposer();
-        $this->getArranger();
         $this->getThumbs();
         $this->getImages();
         $this->getPublisher();
@@ -462,11 +459,13 @@ class twebshop_article extends tvisual {
             unset($tmp_member);
         }
 
-        $template = str_replace("~ARRANGER~", ($this->arranger == "") ? $this->getArranger() : $this->arranger, $template);
+        $template = str_replace("~ARRANGER~", $this->getArranger(false), $template);
+        $template = str_replace("~ARRANGER_LINK~", $this->getArranger(true), $template);
         $template = str_replace("~AVAILABILITY~", ($this->availability != NULL) ? $this->availability->getFromHTMLTemplate($this->_ttemplate) : "", $template);
         $template = str_replace("~BEM~", ($this->info != NULL AND ($tmp = $this->getNotice()) != "") ? nl2br($tmp) : SENTENCE_NO_FURTHER_INFORMATION_AVAILABLE, $template);
         $template = str_replace("~CID~", $this->cart_r, $template);
-        $template = str_replace("~COMPOSER~", ($this->composer == "") ? $this->getComposer() : $this->composer, $template);
+        $template = str_replace("~COMPOSER~", $this->getComposer(false), $template);
+        $template = str_replace("~COMPOSER_LINK~", $this->getComposer(true), $template);
         $template = str_replace("~DAUER~", $this->getDuration(), $template);
         $template = str_replace("~DETAIL~", $this->detail, $template);
         $template = str_replace("~UID~", ($this->uid == "") ? $this->getUID() : $this->uid, $template);
@@ -477,7 +476,7 @@ class twebshop_article extends tvisual {
         $template = str_replace("~NUMERO~", $this->NUMERO, $template);
         $template = str_replace("~POSITION~", $this->position, $template);
         $template = str_replace("~PRICE~", ($this->price != NULL) ? $this->price->getFromHTMLTemplate($this->_ttemplate) : "", $template);
-        $template = (strpos($template, "~PUBLISHER~", 0) !== false) ? str_replace("~PUBLISHER~", ($this->publisher == "") ? $this->getPublisher() : $this->publisher, $template) : $template;
+        $template = str_replace("~PUBLISHER~", "", $template); /*$template = (strpos($template, "~PUBLISHER~", 0) !== false) ? str_replace("~PUBLISHER~", ($this->publisher == "") ? $this->getPublisher() : $this->publisher, $template) : $template; # 22.08.2014 michaelhacksoftware | getPublisher wieder aktiviert, deswegen auskommentiert */
         $template = str_replace("~QUANTITY~", $this->quantity, $template);
         $template = str_replace("~RID~", urlencode(twebshop_article::encryptRID($this->rid)), $template);
         $template = str_replace("~RID_INT~", $this->rid, $template);

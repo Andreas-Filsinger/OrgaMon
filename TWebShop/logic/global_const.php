@@ -15,6 +15,10 @@ define("BR","<br />");
 
 define("__TEMPLATES_PATH","./templates/");
 
+// Links für die Rewrite Rule
+define("LINK_MUSICIAN",  "musiker_");
+define("LINK_PUBLISHER", "verlag_");
+
 // TABELLENNAMEN
 define("TABLE_ADDRESS","ANSCHRIFT");
 define("TABLE_ARTICLE","ARTIKEL");
@@ -28,6 +32,7 @@ define("TABLE_DELIVERY","GELIEFERT");
 define("TABLE_DOCUMENT","DOKUMENT");
 define("TABLE_INTERNATIONAL_TEXT","INTERNATIONALTEXT");
 define("TABLE_ITEM","POSTEN");
+define("TABLE_MUSICIAN","MUSIKER");
 define("TABLE_PAYMENT_INFO","PERSON");
 define("TABLE_PERSON","PERSON");
 define("TABLE_PROCESSOR","BEARBEITER");

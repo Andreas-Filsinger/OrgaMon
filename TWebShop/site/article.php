@@ -34,9 +34,17 @@ if ($site->isActive()) {
     $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_THUMB : "");
     $article->addOption("MP3", ($article->existsMP3Download()) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MP3 : "" );
 
+    /* --> 22.08.2014 michaelhacksoftware : Keywords zur Seite hinzufügen. */
+    if ($article->KOMPONIST_R) $site->appendKeywords($article->getComposer());
+    if ($article->ARRANGEUR_R) $site->appendKeywords($article->getArranger());
+    if ($article->VERLAG_R)    $site->appendKeywords($article->getPublisher());
+    $site->appendKeywords($article->NUMERO);
+    $site->appendKeywords($article->VERLAGNO);
+    /* <-- */
+    
     $site->addComponent("OBJ_ARTICLE", $article->getFromHTMLTemplate($template));
     $site->addComponent("OBJ_PLAY",    $article->getPlayCode());
-	
+
     $site->appendTitle($article->TITEL);
 }
 ?>
