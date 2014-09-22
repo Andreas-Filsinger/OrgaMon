@@ -13,6 +13,12 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2013 by Alexander Knam
 // INFO END
 
+Rev 3.027 (22.09.14) Michael Hack
+
+ Neu: Meta Keywords für Komponist/Arrangeur
+ Neu: Anklickbare Komponisten/Arrangeure
+ Neu: Übersichtseite mit allen Komponisten/Arrangeuren
+
 Rev 3.026 (16.07.14) Michael Hack
 
  Neu: Hebu Newsletter Template hinzugefügt
