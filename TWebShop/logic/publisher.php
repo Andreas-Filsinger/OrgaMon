@@ -18,8 +18,11 @@ class twebshop_publisher {
     }
 
     public function getProperties() {
-        
+
         global $ibase;
+
+        if (!$this->rid) return;
+
         $sql = "SELECT " . implode(",", twebshop_publisher::$properties) . " FROM " . self::TABLE . " WHERE RID=" . $this->rid;
         $ibase->query($sql);
         $data = $ibase->fetch_object();
@@ -27,7 +30,43 @@ class twebshop_publisher {
         foreach (twebshop_publisher::$properties as $name) {
             $this->{$name} = $data->{$name};
         }
+
     }
+
+    /* --> 22.08.2014 michaelhacksoftware : Alle Publisher ausgeben */
+    public function getAllPublishers() {
+
+        global $ibase;
+
+        $Items = array();
+
+        // === Query "Alle Publisher" abfragen
+        $ibase->query(
+            "SELECT DISTINCT a.VERLAG_R, p.SUCHBEGRIFF FROM " . TABLE_ARTICLE . " AS a" .
+            " LEFT JOIN " . TABLE_PERSON . " AS p ON a.VERLAG_R = p.RID" .
+            " LEFT JOIN " . TABLE_CATEGORY . " AS c ON a.SORTIMENT_R = c.RID" .
+            " WHERE c.WEBSHOP = 'Y'" .
+            " ORDER BY p.SUCHBEGRIFF"
+        );
+
+        while ($result = $ibase->fetch_object()) {
+
+            if (!$result->SUCHBEGRIFF) continue;
+
+            $Items[] = array(
+                "Id"   => $result->VERLAG_R,
+                "Name" => $result->SUCHBEGRIFF,
+                "Url"  => twebshop_person::UrlEncodeName($result->SUCHBEGRIFF)
+            );
+
+        }
+
+        $ibase->free_result();
+
+        return $Items;
+
+    }
+    /* <-- */
 
     public function getPerson() {
         $this->person = new twebshop_person($this->PERSON_R);

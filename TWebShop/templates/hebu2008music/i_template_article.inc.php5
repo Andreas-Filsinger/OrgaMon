@@ -9,8 +9,8 @@ define("_TEMPLATE_ARTICLE_SEARCH",
 "<div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<div class=\"search_body_left\"><p><b>" .
-WORD_COMPOSER . ":</b>&nbsp;~COMPOSER~</p><p><b>" .
-WORD_ARRANGER . ":</b>&nbsp;~ARRANGER~</p><p><b>" .
+WORD_COMPOSER . ":</b>&nbsp;~COMPOSER_LINK~</p><p><b>" .
+WORD_ARRANGER . ":</b>&nbsp;~ARRANGER_LINK~</p><p><b>" .
 WORD_DURATION . ":</b>&nbsp;~DAUER~</p></div>" . CRLF .
 "<div class=\"search_body_middle\"><p><b>" .
 WORD_GENRE . ":</b>&nbsp;~TREE_PATH~</p><p><b>" .
@@ -73,8 +73,8 @@ define("_TEMPLATE_ARTICLE_ARTICLE",
 "  <div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<div class=\"article_body\">" . CRLF .
-"  <p><b>" . WORD_COMPOSER . ":</b>&nbsp;~COMPOSER~</p>" . CRLF .
-"  <p><b>" . WORD_ARRANGER . ":</b>&nbsp;~ARRANGER~</p>" . CRLF .
+"  <p><b>" . WORD_COMPOSER . ":</b>&nbsp;~COMPOSER_LINK~</p>" . CRLF .
+"  <p><b>" . WORD_ARRANGER . ":</b>&nbsp;~ARRANGER_LINK~</p>" . CRLF .
 "  <p><b>" . WORD_DURATION . ":</b>&nbsp;~DAUER~</p><hr>" . CRLF .
 "  <p><b>" . WORD_GENRE . ":</b>&nbsp;~TREE_PATH~</p>" . CRLF .
 "  <p><b>" . WORD_DIFFICULTY . ":</b>&nbsp;~SCHWER_GRUPPE~&nbsp;~SCHWER_DETAILS~</p>" . CRLF .

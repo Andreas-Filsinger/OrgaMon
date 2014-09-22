@@ -4,6 +4,7 @@ $header = new tsite("header");
 $header->loadTemplate(__TEMPLATE_PATH,".html","h_");
 
 $header->addComponent("VAR_SITE_TITLE",$site->getTitle());
+$header->addComponent("VAR_META_KEYWORDS", $site->getKeywords());
 $header->addComponent("VAR_NEXT_SEARCH_ID",$search->getNextID());
 $header->addComponent("VAR_SEARCH_USER_EXPRESSION",$search->getUserExpression());
 $header->addComponent("VAR_CART_POSITIONS",$cart->getPositions());

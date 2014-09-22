@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=9">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="keywords" content="~VAR_META_KEYWORDS~">
 <title>~CONST_TWEBSHOP_TITLE~~CONST_TWEBSHOP_TITLE_SEPARATOR~~VAR_SITE_TITLE~</title>
 <script type="text/javascript" src="./js/cookies.js"></script>
 <script type="text/javascript" src="./js/jquery.js"></script>
@@ -26,6 +27,8 @@
 
             parent.$('#jp_container_1').css('top',  position.top);
             parent.$('#jp_container_1').css('left', position.left);
+
+            parent.document.title = document.title;
 
         });
         /* --- */

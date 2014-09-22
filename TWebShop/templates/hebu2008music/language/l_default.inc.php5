@@ -129,6 +129,7 @@
 @define("WORD_MISTER","Herr");
 @define("WORD_MISSES","Frau");
 @define("WORD_MODE_OF_PAYMENT","Zahlungsweise");
+@define("WORD_MUSICIANOVERVIEW", "Musikerübersicht");
 @define("WORD_NAME","Name");
 @define("WORD_NETHERLANDS","Niederlande");
 @define("WORD_NEWSLETTER","Newsletter");
@@ -151,6 +152,7 @@
 @define("WORD_PROCESSOR","Bearbeiter");
 @define("WORD_PUBLISHED","Erschienen");
 @define("WORD_PUBLISHER","Verlag");
+@define("WORD_PUBLISHEROVERVIEW", "Verlagsübersicht");
 @define("WORD_QUANTITY","Menge");
 @define("WORD_RECORDS","Tontr&auml;ger");
 @define("WORD_REFRESH","aktualisieren");
