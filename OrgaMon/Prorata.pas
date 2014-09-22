@@ -299,6 +299,8 @@ var
   cBELEGE: TIB_Cursor;
   cPOSTEN: TIB_Cursor;
 
+  BELEG_R : Integer;
+
   RECHNUNG: TANFiXDate;
   START: TANFiXDate;
   VON: TANFiXDate;
@@ -411,15 +413,19 @@ begin
       ParamByName('DATE1').AsDateTime := DateTimePicker1.DateTime;
       ParamByName('DATE2').AsDateTime := DateTimePicker2.DateTime;
       Open;
+
+
+
       ProgressBar1.Max := RecordCount;
       while not(Eof) do
       begin
 
         //
-        // aufgrund von Verkaufs-Belegen in IBQ5
+        // aufgrund von Verkaufs-Belegen
         //
-        cPOSTEN.ParamByName('CROSSREF').AsInteger := FieldByName('RID')
-          .AsInteger;
+        BELEG_R := FieldByName('RID').AsInteger;
+
+        cPOSTEN.ParamByName('CROSSREF').AsInteger := BELEG_R;
         cPOSTEN.First;
         while not(cPOSTEN.Eof) do
         begin
@@ -484,7 +490,7 @@ begin
                 { 06 } inttostr(_DieseMenge) + ';' +
                 { 07 } inttostr(round(_PreisNetto * 100.0)) + ';' +
                 { 08* } Long2Date(RECHNUNG) + ';' +
-                { 09 } cPOSTEN.FieldByName('BELEG_R').AsString + ';' +
+                { 09 } IntToStr(BELEG_R) + ';' +
                 { 10 } nextp(ArtikelListe[k], ';', cFID_LAGER_MENGE) + ';' +
                 { 11 } nextp(ArtikelListe[k], ';', cFID_VERLAGNO) + ';' +
                 { 12 } Long2Date(VON) + ';' +

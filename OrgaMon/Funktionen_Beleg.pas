@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007-2014  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -2693,6 +2693,7 @@ function e_w_KontoInfo(PERSON_R: integer; sOptionen: TStringList = nil)
   : TStringList;
 var
   n: integer;
+
   // html - Sachen
   MahnungsBeleg: THTMLTemplate;
   DatensammlerGlobal: TStringList;
@@ -2701,6 +2702,7 @@ var
   // Einzelne Positionen Werte
   BuchungsBetrag: double;
   BetragVerzug: double;
+
   // Summen
   Summe_Offen: double; // gesamtsumme aller Offenen Beträge
   Summe_Verzug: double; // gesamtsumme der Beträge in Verzug (incl. der offenen)
@@ -3076,9 +3078,8 @@ begin
           if not(SkipIt) then
             if (pOhneAusstehende) then
               if (VORGANG = cVorgang_Rechnung) then
-               if FieldByName('EREIGNIS_R').IsNotNull then
+                if FieldByName('EREIGNIS_R').IsNotNull then
                   SkipIt := true;
-
 
         end
         else
@@ -3179,8 +3180,9 @@ begin
             if (isSomeMoney(BuchungsBetrag)) then
             begin
 
-              if not(qBELEG.FieldByName('RECHNUNGS_BETRAG')
-                .AsFloat = qBELEG.FieldByName('DAVON_BEZAHLT').AsFloat) then
+              if IsOther(
+                { } qBELEG.FieldByName('RECHNUNGS_BETRAG').AsFloat,
+                { } qBELEG.FieldByName('DAVON_BEZAHLT').AsFloat) then
               begin
 
                 if (FaelligSeit > 0) then
@@ -5410,10 +5412,10 @@ begin
       e_r_sqld('select sum(LIEFERBETRAG) from VERSAND where BELEG_R=' +
       inttostr(BELEG_R));
 
-    if isOther(FORDERUNG_VERSAND, FORDERUNG_BELEGE) then
+    if IsOther(FORDERUNG_VERSAND, FORDERUNG_BELEGE) then
       break;
 
-    if isOther(SALDO_AUSGANGSRECHNUNGEN, FORDERUNG_BELEGE - AUSGLEICH_BELEGE)
+    if IsOther(SALDO_AUSGANGSRECHNUNGEN, FORDERUNG_BELEGE - AUSGLEICH_BELEGE)
     then
       break;
 
