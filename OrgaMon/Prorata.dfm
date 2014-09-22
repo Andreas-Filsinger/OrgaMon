@@ -185,7 +185,6 @@ object FormProrata: TFormProrata
     Height = 17
     Anchors = [akLeft, akBottom]
     TabOrder = 0
-    ExplicitTop = 699
   end
   object GroupBox1: TGroupBox
     Left = 7
