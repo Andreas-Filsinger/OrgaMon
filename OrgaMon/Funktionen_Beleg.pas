@@ -2511,6 +2511,11 @@ begin
 
   //
   result := cPreis_aufAnfrage;
+
+  // Es kann sein, dass mit (ARTIKEL_R=cRID_Null) gerufen wird
+  if (ARTIKEL_R<cRID_FirstValid) then
+   exit;
+
   try
 
     e_r_Preis_ensureCache;
