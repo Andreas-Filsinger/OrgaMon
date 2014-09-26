@@ -2551,7 +2551,7 @@ var
   end;
 
 var
-  i,n: Integer;
+  i, n: Integer;
   AbfrageStartDatum: TAnfixDate;
 
   sResult: TStringList;
@@ -2568,7 +2568,7 @@ var
 
   vonName: TStringList;
   BuchungsText: TStringList;
-  s,ActLine: string;
+  s, ActLine: string;
 
   // Umsatzdaten
   EntryDate, ValutaDate: TAnfixDate;
@@ -2797,12 +2797,13 @@ begin
                 begin
 
                   // keine Kontonummer in der SEPA Welt leer?
-                  if (AccountNumber='') then
+                  if (AccountNumber = '') then
                   begin
-                   s := StrFilter(Buchungstext.Text,cZiffern+cBuchstaben+':');
-                   n := pos('IBAN:DE',s);
-                   if (n>0) then
-                     AccountNumber := Bank_Konto(copy(s, n+4+13, 10));
+                    s := StrFilter(BuchungsText.Text,
+                      cZiffern + cBuchstaben + ':');
+                    n := pos('IBAN:DE', s);
+                    if (n > 0) then
+                      AccountNumber := Bank_Konto(copy(s, n + 4 + 13, 10));
                   end;
 
                   // "Konto: %s BLZ: %s"
@@ -5144,11 +5145,9 @@ begin
                   break;
               end;
 
-
               // rein über den Namen
               search(KontoInhaber);
               addFoundListTo(NamePassend);
-
 
               KontoInhaber := cutblank(KontoInhaber);
               if (pos(',', b_r_Auszug_Inhaber(sBuchungsText)) > 0) then
@@ -5167,10 +5166,15 @@ begin
               end;
 
               // die hinzu, bei denen 100% der offene Betrag stimmt
-              e_r_sqlm('select KUNDE_R FROM' + ' AUSGANGSRECHNUNG ' + 'GROUP BY'
-                + ' KUNDE_R ' + 'HAVING' + ' SUM(BETRAG) between ' +
-                FloatToStrISO(sBetrag - cGeld_Schwellwert) + ' and ' +
-                FloatToStrISO(sBetrag + cGeld_Schwellwert), BetragPassend);
+              e_r_sqlm(
+                { } 'select KUNDE_R FROM' +
+                { } ' AUSGANGSRECHNUNG ' +
+                { } 'GROUP BY' +
+                { } ' KUNDE_R ' +
+                { } 'HAVING' +
+                { } ' SUM(BETRAG) between ' +
+                { } FloatToStrISO(sBetrag - cGeld_Schwellwert) + ' and ' +
+                { } FloatToStrISO(sBetrag + cGeld_Schwellwert), BetragPassend);
 
               // alle vom Namen her passenden MIT passender Forderung
               for n := 0 to pred(NamePassend.count) do
