@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.049 (26.09.14) Andreas Filsinger
+
+ Bug: Lastschriftenliste: Bereits ausgeglichene waren sichtbar.
+
 Rev 8.048 (23.09.14) Andreas Filsinger
 
  Bug: Preis: Ausgabearten<>MP3 ohne Preiseintrag waren "vergriffen" richtig: "auf Anfrage"
