@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 1995 - 2014  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -102,6 +102,8 @@ const
   { } 'Betrag' + cDTA_csvSeparator +
   { } 'Waehrung';
 
+  cDTA_LastschriftVerzoegerung : integer = 5;
+
 type
   // Kopf-Daten: Eigenes Konto
   DtaDataType = record
@@ -113,6 +115,7 @@ type
     KontoInhaberOrt: string[27];
     GlaeubigerID: string[18]; // CRED = Gläubiger-ID
     Lastschrift: boolean;
+    AusfuehrungsDatum : TANFixDate; //
   end;
 
   // EREF+ = Ende-zu-Ende-Referenz, xml: <EndToEndId>
@@ -128,7 +131,7 @@ type
     zahlerOrt: string[27];
     VZweck: array [1 .. 7] of string[27]; // SVWZ = Verwendungszweck
     MandatsDatum: TANfixDate;
-    AusfuehrungsDatum: TANfixDate;
+    AusfuehrungsDatum: TANfixDate; // Default aus dem Kopf
     // +MandatID: string[27];
   end;
 
@@ -340,7 +343,7 @@ begin
       MandatsDatum := DateGet;
 
     if (AusfuehrungsDatum = cIllegalDate) then
-      AusfuehrungsDatum := datePlusWorking(DateGet, 5);
+      AusfuehrungsDatum := DTAInhaber.AusfuehrungsDatum;
 
   end;
 end;

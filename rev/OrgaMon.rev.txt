@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.050 (29.09.14) Andreas Filsinger
+
+ Wegfall: KontoVorlauf: Wird langfristig durch Vorgemerkte ersetzt
+ Neu: System: neuer Parameter: KontoSEPAFrist: Anzahl der Arbeitstage
+      vor Ausführung wenn man heute einreicht. Normalerweise "5", manche
+      Banken machen aber auch "6". Nur im Fall von abweichenden Fristen
+      muss dieser Wert gesetzt werden.
+
 Rev 8.049 (26.09.14) Andreas Filsinger
 
  Bug: Lastschriftenliste: Bereits ausgeglichene waren sichtbar.

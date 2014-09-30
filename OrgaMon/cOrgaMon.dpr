@@ -70,7 +70,8 @@ uses
   OrientationConvert in '..\PASconTools\OrientationConvert.pas',
   libxml2 in '..\libxml2\libxml2.pas',
   ExcelHelper in '..\PASconTools\ExcelHelper.pas',
-  basic32 in '..\PASconTools\basic32.pas';
+  basic32 in '..\PASconTools\basic32.pas',
+  DTA in '..\PASconTools\DTA.PAS';
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);

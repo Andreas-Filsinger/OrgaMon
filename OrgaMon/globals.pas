@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.049; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.050; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -974,7 +974,7 @@ var
   iKontoNummer: string;
   iKontoBLZ: string;
   iKontoPIN: string;
-  iKontoVorlauf: integer = 5;
+  iKontoSEPAFrist: integer;
   iKontenHBCI: string;
   iHBCIRest: string;
   iMusicPath: string;
