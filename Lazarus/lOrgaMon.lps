@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="92">
+    <Units Count="93">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -40,7 +40,7 @@
       <Unit3>
         <Filename Value="..\..\zeos-7.1\src\component\ZDataset.pas"/>
         <UnitName Value="ZDataset"/>
-        <EditorIndex Value="20"/>
+        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
         <CursorPos X="3" Y="63"/>
@@ -69,7 +69,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="76" Y="12"/>
@@ -189,7 +189,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="18"/>
+        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1992"/>
         <CursorPos X="52" Y="2016"/>
@@ -232,7 +232,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="19"/>
+        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -670,7 +670,7 @@
       <Unit73>
         <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
         <UnitName Value="fpspreadsheet"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="424"/>
         <CursorPos X="13" Y="443"/>
@@ -738,7 +738,7 @@
       <Unit80>
         <Filename Value="..\..\fpc\compiler\systems\t_linux.pas"/>
         <UnitName Value="t_linux"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1509"/>
         <CursorPos X="1" Y="1"/>
@@ -749,7 +749,7 @@
       <Unit81>
         <Filename Value="..\..\lazarus\components\turbopower_ipro\iphtmlprop.pas"/>
         <UnitName Value="iphtmlprop"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -760,7 +760,7 @@
       <Unit82>
         <Filename Value="..\PASconTools\basic32.pas"/>
         <UnitName Value="basic32"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2553"/>
         <CursorPos X="14" Y="2588"/>
@@ -787,7 +787,7 @@
       <Unit85>
         <Filename Value="..\..\lazarus\components\lazthread\reglazthread.pas"/>
         <UnitName Value="RegLazThread"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="26" Y="44"/>
@@ -798,7 +798,7 @@
       <Unit86>
         <Filename Value="..\..\fpspreadsheet\fpsxmlcommon.pas"/>
         <UnitName Value="fpsxmlcommon"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="44"/>
         <CursorPos X="1" Y="1"/>
@@ -849,7 +849,6 @@
       <Unit91>
         <Filename Value="..\..\fpspreadsheet\fpsstrings.pas"/>
         <UnitName Value="fpsStrings"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -857,6 +856,18 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit91>
+      <Unit92>
+        <Filename Value="..\..\fpspreadsheet\examples\wikitablemaker\synhighlighterwikitable.pas"/>
+        <UnitName Value="SynHighlighterWikitable"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="11"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit92>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>

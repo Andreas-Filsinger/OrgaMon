@@ -677,7 +677,7 @@ uses
   graphics,
   fpchelper,
 {$ENDIF}
-  html, Geld,
+  html, Geld, DTA,
   SimplePassword, WordIndex, OpenStreetMap,
 
   // DC-Crypt
@@ -8323,8 +8323,8 @@ begin
   iKontoNummer := sSystemSettings.values['KontoNummer'];
   iKontoBLZ := sSystemSettings.values['KontoBLZ'];
   iKontoPIN := sSystemSettings.values['KontoPIN'];
-  iKontoVorlauf := strtointdef(sSystemSettings.values['KontoVorlauf'],
-    iKontoVorlauf);
+  iKontoSEPAFrist := strtointdef(sSystemSettings.values['KontoSEPAFrist'],
+    cDTA_LastschriftVerzoegerung);
   iKontenHBCI := sSystemSettings.values['KontenHBCI'];
   iHBCIRest := sSystemSettings.values['HBCIRest'];
   iBuchFokus := strtointdef(sSystemSettings.values['BuchFokus'], -1);
@@ -8332,7 +8332,6 @@ begin
     iBuchFokus := DatePlus(DateGet, -iBuchFokus)
   else
     iBuchFokus := date2Long(sSystemSettings.values['BuchFokus']);
-
   SpoolDir := sSystemSettings.values['SpoolPath'];
   iTestDrucker := sSystemSettings.values['TestDrucker'];
   iMusicPath := sSystemSettings.values['MusicPath'];
