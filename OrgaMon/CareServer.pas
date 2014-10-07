@@ -365,21 +365,22 @@ begin
   if FileExists(Path + 'WriteValue.txt') then
   begin
 
-  html := THTMLTemplate.create;
-  Datensammler := TStringList.create;
-  html.LoadFromFile(Path + 'Template.html');
-  Datensammler.LoadFromFile(Path + 'WriteValue.txt');
-  html.writeValue(Datensammler);
-  html.SaveToFileCompressed(Path + 'Ergebnis.html');
-  html.Free;
-  Datensammler.Free;
-  end else
+    html := THTMLTemplate.create;
+    Datensammler := TStringList.create;
+    html.LoadFromFile(Path + 'Template.html');
+    Datensammler.LoadFromFile(Path + 'WriteValue.txt');
+    html.writeValue(Datensammler);
+    html.SaveToFileCompressed(Path + 'Ergebnis.html');
+    html.Free;
+    Datensammler.Free;
+  end
+  else
   begin
-  html := THTMLTemplate.create;
-  html.LoadFromFile(Path + 'A.html');
-  html.InsertDocument(Path + 'B.html');
-  html.SaveToFile(Path + 'Ergebnis.html');
-  html.Free;
+    html := THTMLTemplate.create;
+    html.LoadFromFile(Path + 'A.html');
+    html.InsertDocument(Path + 'B.html');
+    html.SaveToFile(Path + 'Ergebnis.html');
+    html.Free;
 
   end;
 end;
@@ -917,6 +918,7 @@ var
   sSettings: TStringList;
   LogInName: string;
   LogInHost: string;
+  LogInPort: string;
 begin
   sSettings := TStringList.create;
   IB_Query4.FieldByName('INFO').AssignTo(sSettings);
@@ -927,11 +929,18 @@ begin
   if (LogInHost = '') or (pos(':', LogInHost) = 1) then
     LogInHost := IB_Query4.FieldByName('HOST').AsString + LogInHost;
 
+  LogInPort := nextp(LogInHost, ':', 1);
+  LogInHost := nextp(LogInHost, ':', 0);
+
+  if (LogInPort <> '') then
+    LogInPort := '-P ' + LogInPort + ' ';
+
   WinExec32(
     { } ProgramFilesDir +
-    { } 'puTTY\putty.exe -ssh ' +
-    { } '-pw ' + sSettings.values['password'] +
-    { } ' ' + LogInName + '@' + LogInHost, sw_showdefault);
+    { Cmd } 'puTTY\putty.exe -ssh ' +
+    { Port } LogInPort +
+    { Passwort } '-pw ' + sSettings.values['password'] +
+    { User@Host } ' ' + LogInName + '@' + LogInHost, sw_showdefault);
   sSettings.Free;
 end;
 
@@ -980,7 +989,7 @@ procedure TFormCareServer.SpeedButton4Click(Sender: TObject);
 var
   sSettings: TStringList;
   sHost: string;
-  sApp : string;
+  sApp: string;
 begin
   sSettings := TStringList.create;
   IB_Query4.FieldByName('INFO').AssignTo(sSettings);
@@ -990,19 +999,19 @@ begin
 
   repeat
 
-   sApp := ProgramFilesDir + 'UltraVNC\vncviewer.exe';
-   if FileExists(sApp) then
-    break;
-   sApp := ProgramFilesDir + 'uvnc bvba\UltraVNC\vncviewer.exe';
-   if FileExists(sApp) then
-    break;
+    sApp := ProgramFilesDir + 'UltraVNC\vncviewer.exe';
+    if FileExists(sApp) then
+      break;
+    sApp := ProgramFilesDir + 'uvnc bvba\UltraVNC\vncviewer.exe';
+    if FileExists(sApp) then
+      break;
 
-   sApp := '';
-   ShowMessage('Keine Ultra-VNC Installation gefunden');
+    sApp := '';
+    ShowMessage('Keine Ultra-VNC Installation gefunden');
   until true;
-  if (sApp<>'') then
-  WinExec32(sApp + ' ' + sHost + ' /password '
-    + sSettings.values['vnc'], sw_showdefault);
+  if (sApp <> '') then
+    WinExec32(sApp + ' ' + sHost + ' /password ' + sSettings.values['vnc'],
+      sw_showdefault);
   sSettings.Free;
 end;
 

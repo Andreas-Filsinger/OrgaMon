@@ -27,7 +27,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     TabOrder = 0
     object SpeedButton1: TSpeedButton
       Left = 576
-      Top = 13
+      Top = 19
       Width = 45
       Height = 22
       Hint = 'Kasse '#246'ffnen'
@@ -63,9 +63,50 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       ShowHint = True
       OnClick = SpeedButton1Click
     end
+    object Label38: TLabel
+      Left = 186
+      Top = 3
+      Width = 68
+      Height = 13
+      Caption = 'Zahlungsart'
+    end
+    object SpeedButton3: TSpeedButton
+      Left = 159
+      Top = 19
+      Width = 21
+      Height = 22
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+        7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+        FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+        99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+        8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+        FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+        98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+        DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+        FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+        A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+        E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+        FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+        B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+        E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+        FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+        A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+        F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+        4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+        FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+        FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+        A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+      OnClick = SpeedButton3Click
+    end
     object IB_UpdateBar1: TIB_UpdateBar
       Left = 7
-      Top = 13
+      Top = 19
       Width = 140
       Height = 22
       Flat = False
@@ -79,7 +120,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Button1: TButton
       Left = 696
-      Top = 13
+      Top = 19
       Width = 21
       Height = 22
       Hint = 'Person anzeigen'
@@ -91,7 +132,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Button2: TButton
       Left = 722
-      Top = 13
+      Top = 19
       Width = 23
       Height = 22
       Hint = 'Beleg anzeigen'
@@ -103,7 +144,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Button9: TButton
       Left = 750
-      Top = 13
+      Top = 19
       Width = 23
       Height = 22
       Hint = 'Kontoinformation / Mahnung einsehen'
@@ -115,7 +156,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Button3: TButton
       Left = 627
-      Top = 13
+      Top = 19
       Width = 22
       Height = 22
       Hint = 'Konto-Buchung anzeigen'
@@ -127,7 +168,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Button5: TButton
       Left = 653
-      Top = 13
+      Top = 19
       Width = 22
       Height = 22
       Hint = 'passende Teilzahlungen in 1710 anzeigen'
@@ -136,6 +177,20 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       ShowHint = True
       TabOrder = 5
       OnClick = Button5Click
+    end
+    object IB_ComboBox2: TIB_ComboBox
+      Left = 186
+      Top = 19
+      Width = 143
+      Height = 21
+      DataField = 'ZAHLUNGTYP_R'
+      DataSource = IB_DataSource1
+      TabOrder = 6
+      Style = csDropDownList
+      Items.Strings = (
+        '- Standard -')
+      ItemValues.Strings = (
+        '')
     end
   end
   object IB_Grid1: TIB_Grid
@@ -440,6 +495,8 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       '     , TEXT'
       '     , KUNDE_R'
       '     , VORGANG'
+      '     , ZAHLUNGTYP_R'
+      '     , EREIGNIS_R'
       'FROM AUSGANGSRECHNUNG'
       '/* ~where begin~ */'
       '/* ~where end~ */'

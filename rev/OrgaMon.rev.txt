@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.051 (07.10.14) Andreas Filsinger
+
+ Bug: Putty: ":Port" wurde nicht richtig verarbeitet
+ Bug: Mahnung: Autozahlung ist eigentlich ausserhalb der Fälligkeit
+
+ Neu: "Z": es kann auf "Überweisung" umgestellt werden (ZAHLUNGTYP_R) Dadurch kann
+      dauerhaft diese Forderung aus der Lastschriftliste entfernt werden
+ Neu: Lastschriften: Kann nur noch ausgeführt werden wenn ZAHLUNGTYP_R=null
+
 Rev 8.050 (29.09.14) Andreas Filsinger
 
  Wegfall: KontoVorlauf: Wird langfristig durch Vorgemerkte ersetzt
