@@ -2513,8 +2513,8 @@ begin
   result := cPreis_aufAnfrage;
 
   // Es kann sein, dass mit (ARTIKEL_R=cRID_Null) gerufen wird
-  if (ARTIKEL_R<cRID_FirstValid) then
-   exit;
+  if (ARTIKEL_R < cRID_FirstValid) then
+    exit;
 
   try
 
@@ -3190,121 +3190,141 @@ begin
                 { } qBELEG.FieldByName('DAVON_BEZAHLT').AsFloat) then
               begin
 
-                if (FaelligSeit > 0) then
+                if
+                { } FieldByName('EREIGNIS_R').IsNull or
+                { } (FaelligSeit > cDTA_LastschriftVerzoegerung +
+                  iMahnFaelligkeitstoleranz) then
                 begin
+                  if (FaelligSeit > 0) then
+                  begin
 
-                  // auch buchen?
-                  if pVerbuchen then
-                    if (Verbucht_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
-                      .AsString) = -1) and
-                      (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
+                    //
+                    if FieldByName('EREIGNIS_R').IsNotNull then
+                      MoreText := MoreText + ' ' + _('(wird abgebucht)');
+
+                    // auch buchen?
+                    if pVerbuchen then
+                      if (Verbucht_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
+                        .AsString) = -1) and
+                        (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
+                        .AsInteger) = -1) then
+                      begin
+
+                        with qBELEG do
+                        begin
+
+                          //
+                          edit;
+                          repeat
+
+                            // ev. Mahnbescheid Eintragen?
+                            if pAuchMahnbescheid then
+                            begin
+                              if (FieldByName('MAHNSTUFE').AsInteger >= 3) then
+                              begin
+
+                                // eintragen/verbuchen
+                                FieldByName('MAHNBESCHEID').AsDateTime :=
+                                  pMahnMoment;
+
+                                // alle infos rausgeben
+                                FileCopy(MyProgramPath + cRechnungPath +
+                                  RIDasStr(PERSON_R) + '\' +
+                                  inttostrN(FieldByName('RID').AsInteger, 10) +
+                                  '-*', MahnbescheidPath);
+
+                                // auch Adress-Infos ausgeben
+                                e_f_PersonInfo(PERSON_R, MahnbescheidPath);
+                                break;
+                              end;
+                            end;
+
+                            // hier normaler Mahnlauf
+                            FieldByName('MAHNUNG').AsDateTime := pMahnMoment;
+                            FieldByName('MAHNSTUFE').AsInteger :=
+                              FieldByName('MAHNSTUFE').AsInteger + 1;
+                            repeat
+
+                              if FieldByName('MAHNUNG1').IsNull then
+                              begin
+                                FieldByName('MAHNUNG1').AsDateTime :=
+                                  pMahnMoment;
+                                break;
+                              end;
+
+                              if FieldByName('MAHNUNG2').IsNull then
+                              begin
+                                FieldByName('MAHNUNG2').AsDateTime :=
+                                  pMahnMoment;
+                                break;
+                              end;
+
+                              if FieldByName('MAHNUNG3').IsNull then
+                              begin
+                                FieldByName('MAHNUNG3').AsDateTime :=
+                                  pMahnMoment;
+                                break;
+                              end;
+
+                            until true;
+                          until true;
+                          Post;
+
+                          Verbucht_BELEG_R.add(qBELEG.FieldByName('RID')
+                            .AsString);
+                        end;
+                      end;
+
+                    if (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
                       .AsInteger) = -1) then
                     begin
 
-                      with qBELEG do
-                      begin
+                      if (FaelligSeit = 1) then
+                        MoreText:= MoreText + ' ' +
+                          format(_('(seit einem Tag in Verzug)'), [FaelligSeit])
+                      else
+                        MoreText := MoreText + ' ' +
+                          format(_('(seit %d Tagen in Verzug)'), [FaelligSeit]);
+                      MaxTageVerzug := max(MaxTageVerzug, FaelligSeit);
+                      BetragVerzug := BuchungsBetrag;
+                      Summe_Verzug := Summe_Verzug + BuchungsBetrag;
 
-                        //
-                        edit;
-                        repeat
-
-                          // ev. Mahnbescheid Eintragen?
-                          if pAuchMahnbescheid then
-                          begin
-                            if (FieldByName('MAHNSTUFE').AsInteger >= 3) then
-                            begin
-
-                              // eintragen/verbuchen
-                              FieldByName('MAHNBESCHEID').AsDateTime :=
-                                pMahnMoment;
-
-                              // alle infos rausgeben
-                              FileCopy(MyProgramPath + cRechnungPath +
-                                RIDasStr(PERSON_R) + '\' +
-                                inttostrN(FieldByName('RID').AsInteger, 10) +
-                                '-*', MahnbescheidPath);
-
-                              // auch Adress-Infos ausgeben
-                              e_f_PersonInfo(PERSON_R, MahnbescheidPath);
-                              break;
-                            end;
-                          end;
-
-                          // hier normaler Mahnlauf
-                          FieldByName('MAHNUNG').AsDateTime := pMahnMoment;
-                          FieldByName('MAHNSTUFE').AsInteger :=
-                            FieldByName('MAHNSTUFE').AsInteger + 1;
-                          repeat
-
-                            if FieldByName('MAHNUNG1').IsNull then
-                            begin
-                              FieldByName('MAHNUNG1').AsDateTime := pMahnMoment;
-                              break;
-                            end;
-
-                            if FieldByName('MAHNUNG2').IsNull then
-                            begin
-                              FieldByName('MAHNUNG2').AsDateTime := pMahnMoment;
-                              break;
-                            end;
-
-                            if FieldByName('MAHNUNG3').IsNull then
-                            begin
-                              FieldByName('MAHNUNG3').AsDateTime := pMahnMoment;
-                              break;
-                            end;
-
-                          until true;
-                        until true;
-                        Post;
-
-                        Verbucht_BELEG_R.add(qBELEG.FieldByName('RID')
-                          .AsString);
-                      end;
+                    end
+                    else
+                    begin
+                      MoreText := MoreText + ' ' + _('(Mahnung ausgesetzt)');
                     end;
 
-                  if (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
-                    .AsInteger) = -1) then
-                  begin
-                    if FaelligSeit = 1 then
-                      MoreText := MoreText + ' ' +
-                        format(_('(seit einem Tag in Verzug)'), [FaelligSeit])
-                    else
-                      MoreText := MoreText + ' ' +
-                        format(_('(seit %d Tagen in Verzug)'), [FaelligSeit]);
-                    MaxTageVerzug := max(MaxTageVerzug, FaelligSeit);
-                    BetragVerzug := BuchungsBetrag;
-                    Summe_Verzug := Summe_Verzug + BuchungsBetrag;
+                    // externer Rechnungsempf‰nger?
+                    if not(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').IsNull)
+                      and (qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger
+                      <> qBELEG.FieldByName('PERSON_R').AsInteger) then
+                    begin
+                      MoreText := MoreText + #13 + #13 +
+                        format(_('Rechnungsempf‰nger war %s.' + #13 +
+                        'Bitte leiten Sie diese Information an den Rechnungsempf‰nger weiter. Wir weisen Sie '
+                        + 'darauf hin, daﬂ bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.'),
+                        [e_r_Person(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R')
+                        .AsInteger)]);
+                    end;
+
                   end
                   else
                   begin
-                    MoreText := MoreText + ' ' + _('(Mahnung ausgesetzt)');
-                  end;
-
-                  // externer Rechnungsempf‰nger?
-                  if not(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').IsNull) and
-                    (qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger <>
-                    qBELEG.FieldByName('PERSON_R').AsInteger) then
-                  begin
-                    MoreText := MoreText + #13 + #13 +
-                      format(_('Rechnungsempf‰nger war %s.' + #13 +
-                      'Bitte leiten Sie diese Information an den Rechnungsempf‰nger weiter. Wir weisen Sie '
-                      + 'darauf hin, daﬂ bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.'),
-                      [e_r_Person(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R')
-                      .AsInteger)]);
+                    case FaelligSeit of
+                      0:
+                        MoreText := MoreText + ' ' + _('(heute f‰llig)');
+                      1:
+                        MoreText := MoreText + ' ' + _('(morgen f‰llig)');
+                    else
+                      MoreText := MoreText + ' ' +
+                        format(_('(in %d Tagen f‰llig)'), [-FaelligSeit]);
+                    end;
                   end;
                 end
                 else
                 begin
-                  case FaelligSeit of
-                    0:
-                      MoreText := MoreText + ' ' + _('(heute f‰llig)');
-                    1:
-                      MoreText := MoreText + ' ' + _('(morgen f‰llig)');
-                  else
-                    MoreText := MoreText + ' ' +
-                      format(_('(in %d Tagen f‰llig)'), [-FaelligSeit]);
-                  end;
+                  MoreText := MoreText + ' ' + _('(wird abgebucht)');
                 end;
               end
               else

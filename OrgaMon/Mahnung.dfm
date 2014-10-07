@@ -160,14 +160,10 @@ object FormMahnung: TFormMahnung
     Top = 42
     Width = 941
     Height = 579
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mahnliste &erstellen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 25
@@ -470,10 +466,6 @@ object FormMahnung: TFormMahnung
       Caption = '&Mahnen'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 9
         Top = 12
@@ -623,10 +615,6 @@ object FormMahnung: TFormMahnung
       Caption = 'Ausgesetzte Belege'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 17
         Top = 12
@@ -696,10 +684,6 @@ object FormMahnung: TFormMahnung
     object TabSheet4: TTabSheet
       Caption = 'Offene Posten '#220'bersicht'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 29
         Top = 167
