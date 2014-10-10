@@ -109,6 +109,7 @@ type
     TabSheet10: TTabSheet;
     Button19: TButton;
     StaticText1: TStaticText;
+    Abbruch: TCheckBox;
     procedure Button6Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -629,26 +630,148 @@ begin
 end;
 
 procedure TFormepIMPORT.Button16Click(Sender: TObject);
+var
+  cAUSGANGSRECHNUNGEN: TdboCursor;
+  qBUCH: TdboQuery;
+  cBELEG: TdboCursor;
+  BUCH_R: integer;
+  n: integer;
 begin
+  BeginHourGlass;
+  cAUSGANGSRECHNUNGEN := nCursor;
+  qBUCH := nQuery;
+  cBELEG := nCursor;
 
+  with qBUCH do
+  begin
+    sql.add('select * from BUCH');
+  end;
+
+  with cBELEG do
+  begin
+    sql.add('select * from BELEG where RID=:CROSSREF');
+  end;
+
+  with cAUSGANGSRECHNUNGEN do
+  begin
+    sql.add('select * from AUSGANGSRECHNUNG');
+    APiFirst;
+    ProgressBar1.max := RecordCount;
+    n := 0;
+    while not(eof) do
+    begin
+      // in das BUCH kopieren
+      qBUCH.insert;
+
+      BUCH_R := e_w_GEN('GEN_BUCH');
+      ListBox2.items.add(inttostr(BUCH_R));
+
+      qBUCH.FieldByName('RID').AsInteger := BUCH_R;
+      qBUCH.FieldByName('MASTER_R').AsInteger := BUCH_R;
+      qBUCH.FieldByName('NAME').AsString := cKonto_Forderungen;
+      qBUCH.FieldByName('PERSON_R').Assign(FieldByName('KUNDE_R'));
+      qBUCH.FieldByName('WERTSTELLUNG').Assign(FieldByName('VALUTA'));
+      qBUCH.FieldByName('BELEG_R').Assign(FieldByName('BELEG_R'));
+      qBUCH.FieldByName('TEILLIEFERUNG').Assign(FieldByName('TEILLIEFERUNG'));
+      qBUCH.FieldByName('RECHNUNG').Assign(FieldByName('RECHNUNG'));
+      qBUCH.FieldByName('DATUM').Assign(FieldByName('DATUM'));
+      qBUCH.FieldByName('BETRAG').Assign(FieldByName('BETRAG'));
+      qBUCH.FieldByName('TEXT').Assign(FieldByName('TEXT'));
+      qBUCH.FieldByName('ZAHLUNGTYP_R').Assign(FieldByName('ZAHLUNGTYP_R'));
+      qBUCH.FieldByName('EREIGNIS_R').Assign(FieldByName('EREIGNIS_R'));
+      qBUCH.FieldByName('VORGANG').Assign(FieldByName('VORGANG'));
+      qBUCH.FieldByName('ZAHLUNGSPFLICHTIGER_R')
+        .Assign(FieldByName('ZAHLUNGSPFLICHTIGER_R'));
+      qBUCH.FieldByName('POSNO').Assign(FieldByName('POSNO'));
+      qBUCH.FieldByName('MANDANT_R').Assign(FieldByName('MANDANT_R'));
+
+      if (FieldByName('VORGANG').AsString = cVorgang_Rechnung) and
+        (FieldByName('BELEG_R').IsNotNull) then
+      begin
+        cBELEG.ParamByName('CROSSREF').AsInteger := FieldByName('BELEG_R')
+          .AsInteger;
+        cBELEG.open;
+        if cBELEG.eof then
+          raise Exception.create('Beleg nicht mehr gefunden');
+        // qBUCH.FieldByName('DATUM').Assign(cBELEG.FieldByName('RECHNUNG'));
+        // qBUCH.FieldByName('WERTSTELLUNG').Assign(cBELEG.FieldByName('FAELLIG'));
+
+        qBUCH.FieldByName('MAHNSTUFE').Assign(cBELEG.FieldByName('MAHNSTUFE'));
+        qBUCH.FieldByName('MAHNUNG').Assign(cBELEG.FieldByName('MAHNUNG'));
+        qBUCH.FieldByName('MAHNUNG1').Assign(cBELEG.FieldByName('MAHNUNG1'));
+        qBUCH.FieldByName('MAHNUNG2').Assign(cBELEG.FieldByName('MAHNUNG2'));
+        qBUCH.FieldByName('MAHNUNG3').Assign(cBELEG.FieldByName('MAHNUNG3'));
+        qBUCH.FieldByName('MAHNBESCHEID')
+          .Assign(cBELEG.FieldByName('MAHNBESCHEID'));
+        qBUCH.FieldByName('MAHNUNG_AUSGESETZT')
+          .Assign(cBELEG.FieldByName('MAHNUNG_AUSGESETZT'));
+        cBELEG.close;
+      end;
+
+      qBUCH.post;
+      inc(n);
+      ProgressBar1.position := n;
+      if (n MOD 10 = 0) then
+        application.processmessages;
+      if Abbruch.Checked then
+        break;
+
+      ApiNext;
+    end;
+    close;
+  end;
+  ProgressBar1.position := 0;
+
+  cAUSGANGSRECHNUNGEN.free;
+  qBUCH.close;
+  qBUCH.free;
+  cBELEG.free;
+
+  // c) Tabelle AUSGANGSRECHNUNG löschen!
+  e_x_commit;
+  e_x_sql('drop table AUSGANGSRECHNUNG');
+
+  // d) Indexe löschen
+  e_x_sql('drop index BELEG_RECHNUNG_A');
+
+  // d) Felder aus BELEG löschen!
+  e_x_sql('alter table BELEG drop RECHNUNGS_BETRAG');
+  e_x_sql('alter table BELEG drop DAVON_BEZAHLT');
+  e_x_sql('alter table BELEG drop RECHNUNG');
+  e_x_sql('alter table BELEG drop FAELLIG');
+  e_x_sql('alter table BELEG drop MAHNSTUFE');
+  e_x_sql('alter table BELEG drop MAHNUNG');
+  e_x_sql('alter table BELEG drop MAHNUNG1');
+  e_x_sql('alter table BELEG drop MAHNUNG2');
+  e_x_sql('alter table BELEG drop MAHNUNG3');
+  e_x_sql('alter table BELEG drop MAHNBESCHEID');
+  e_x_sql('alter table BELEG drop MAHNUNG_AUSGESETZT');
+  e_x_commit;
+
+  // e_x_sql('alter table BELEG drop ABSCHLUSS
+  EndHourGlass;
   (*
 
     // Aktionen
+
     // a) AUSGANGSRECHNUNGEN -> BUCH, Wegfall "AUSGANGSRECHNUNGEN"
 
+    "1400" -> NAME
     AUSGANGSRECHNUNG.KUNDE_R -> PERSON_R
     AUSGANGSRECHNUNG.RID      -> BUCH.GEN_ID(new)
+    AUSGANGSRECHNUNG. VALUTA       -> BUCH.WERTSTELLUNG
     AUSGANGSRECHNUNG. BELEG_R
     AUSGANGSRECHNUNG. TEILLIEFERUNG
-    AUSGANGSRECHNUNG. RECHNUNG     -> BUCH.RECHNUNG
+    AUSGANGSRECHNUNG. RECHNUNG
     AUSGANGSRECHNUNG. DATUM
-    AUSGANGSRECHNUNG. VALUTA       -> BUCH.WERTSTELLUNG
     AUSGANGSRECHNUNG. BETRAG
     AUSGANGSRECHNUNG. TEXT
     AUSGANGSRECHNUNG. ZAHLUNGTYP_R
     AUSGANGSRECHNUNG. EREIGNIS_R
     AUSGANGSRECHNUNG. VORGANG
     AUSGANGSRECHNUNG. ZAHLUNGSPFLICHTIGER_R
+    AUSGANGSRECHNUNG. POSNO
+    AUSGANGSRECHNUNG. MANDANT_R
 
 
     // b) BELEG-Wegfall:
@@ -672,7 +795,7 @@ begin
 
   // Refactoring
   // a) Abfragen nun alle auf "BUCH" konzentrieen
-  // b) "Z" in das normale Buchungsansicht migrieren (auf person und Konto fixieren!)
+  // b) "Z" in das normale Buchungsansicht migrieren (auf person und Konto "1400" fixieren!)
 end;
 
 procedure TFormepIMPORT.Button17Click(Sender: TObject);
@@ -896,7 +1019,7 @@ begin
       next;
     end;
     Memo1.Lines.add('ENDE');
-    Close;
+    close;
   end;
   Query.free;
   Transaction.free;
@@ -977,13 +1100,13 @@ procedure TFormepIMPORT.Button1Click(Sender: TObject);
 begin
   BeginHourGlass;
   BreakIt := false;
-  if CheckBox1.checked then
+  if CheckBox1.Checked then
     ImportPersonen;
-  if CheckBox2.checked then
+  if CheckBox2.Checked then
     ImportTiere;
-  if CheckBox3.checked then
+  if CheckBox3.Checked then
     ImportLeistungen;
-  if CheckBox4.checked then
+  if CheckBox4.Checked then
     ImportRechnungen;
   EndHourGlass;
 end;
@@ -1089,7 +1212,7 @@ begin
       end;
       MwSt_R[n] := FieldByName('RID').AsInteger;
     end;
-    Close;
+    close;
   end;
 
   //
@@ -1132,7 +1255,7 @@ begin
       end;
       Sortimente.objects[n] := TObject(FieldByName('RID').AsInteger);
     end;
-    Close;
+    close;
   end;
 
   //
@@ -1161,7 +1284,7 @@ begin
         end;
       end;
     end;
-    Close;
+    close;
   end;
   closeFile(leirecdatf);
   EndHourGlass;
@@ -1418,8 +1541,8 @@ begin
       break;
 
   end;
-  IB_QueryANSCHRIFT.Close;
-  IB_QueryPERSON.Close;
+  IB_QueryANSCHRIFT.close;
+  IB_QueryPERSON.close;
   ImpF.free;
   Bemerkungen.free;
   ProgressBar1.position := 0;
@@ -1559,11 +1682,11 @@ begin
       CursorPERSON.ParamByName('CROSSREF').AsInteger :=
         strtoint(nextp(AllTheRechnungen[n], '.', 0));
       open;
-      APIfirst;
+      APiFirst;
       if eof then
         continue;
       PERSON_R := FieldByName('RID').AsInteger;
-      Close;
+      close;
     end;
     ListBox1.items.add('RID:' + inttostr(PERSON_R));
 
@@ -1685,11 +1808,11 @@ begin
 
   end;
   sql('SET GENERATOR BELEG_GID TO ' + inttostr(inc_recnum));
-  CursorPERSON.Close;
+  CursorPERSON.close;
   CursorPERSON.free;
-  IB_QueryBELEG.Close;
-  IB_QueryPOSTEN.Close;
-  IB_QueryAUSGANGSRECHNUNG.Close;
+  IB_QueryBELEG.close;
+  IB_QueryPOSTEN.close;
+  IB_QueryAUSGANGSRECHNUNG.close;
   AllTheRechnungen.free;
   drv_txt.free;
   ProgressBar1.position := 0;
@@ -1799,11 +1922,11 @@ begin
   begin
     CursorPERSON.ParamByName('CROSSREF').AsInteger := NUMMER;
     open;
-    APIfirst;
+    APiFirst;
     if eof then
       raise Exception.create('PERSON ' + inttostr(NUMMER) + ' nicht gefunden!');
     PERSON_R := FieldByName('RID').AsInteger;
-    Close;
+    close;
   end;
 
   rbBetrag := 0.0;
@@ -1916,11 +2039,11 @@ begin
     end;
   end;
 
-  CursorPERSON.Close;
+  CursorPERSON.close;
   CursorPERSON.free;
-  IB_QueryBELEG.Close;
-  IB_QueryPOSTEN.Close;
-  IB_QueryAUSGANGSRECHNUNG.Close;
+  IB_QueryBELEG.close;
+  IB_QueryPOSTEN.close;
+  IB_QueryAUSGANGSRECHNUNG.close;
   drv_txt.free;
   EndHourGlass;
 end;
@@ -2010,7 +2133,7 @@ begin
     begin
       ListBox1.items.add(inttostr(tierec.ind));
     end;
-    NummerCursor.Close;
+    NummerCursor.close;
     if frequently(StartTime, 222) or (n = pred(ImpF.count)) then
     begin
       ProgressBar1.position := n;
@@ -2082,13 +2205,13 @@ var
     begin
       IB_connection := rCONNECTION;
       sql.add('select * from ' + TableName);
-      APIfirst;
+      APiFirst;
       while not(eof) do
       begin
 
         repeat
           if qBAUSTELLE.Active then
-            qBAUSTELLE.Close;
+            qBAUSTELLE.close;
           qBAUSTELLE.ParamByName('CROSSREF').AsInteger :=
             cBAUSTELLE.FieldByName('RID').AsInteger;
           qBAUSTELLE.open;
@@ -2110,7 +2233,7 @@ var
             qBAUSTELLE.FieldByName(Fields[n].FieldName).clear;
         qBAUSTELLE.post;
         Log(TableName + ' ' + FieldByName('RID').AsString);
-        apiNext;
+        ApiNext;
       end;
     end;
     cBAUSTELLE.free;
@@ -2138,7 +2261,7 @@ var
           sql.add('(MASTER_R=RID)')
         else
           sql.add('(MASTER_R<>RID)');
-        APIfirst;
+        APiFirst;
         while not(eof) do
         begin
 
@@ -2159,12 +2282,12 @@ var
           end;
 
           inc(RecN);
-          apiNext;
+          ApiNext;
           Log(FieldByName('RID').AsString);
           if BreakIt then
             break;
         end;
-        Close;
+        close;
       end;
       cAUFTRAG.free;
     end;
@@ -2221,13 +2344,13 @@ begin
     IB_connection := rCONNECTION;
     sql.add('select * from MONTEUR');
 
-    APIfirst;
+    APiFirst;
     while not(eof) do
     begin
 
       repeat
         if qPERSON.Active then
-          qPERSON.Close;
+          qPERSON.close;
         qPERSON.ParamByName('CROSSREF').AsInteger := cMONTEUR.FieldByName('RID')
           .AsInteger;
         qPERSON.open;
@@ -2238,7 +2361,7 @@ begin
       until false;
 
       if qANSCHRIFT.Active then
-        qANSCHRIFT.Close;
+        qANSCHRIFT.close;
       qANSCHRIFT.ParamByName('CROSSREF').AsInteger :=
         qPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
       qANSCHRIFT.open;
@@ -2281,7 +2404,7 @@ begin
       Log('Monteur ' + FieldByName('RID').AsString);
       if BreakIt then
         break;
-      apiNext;
+      ApiNext;
     end;
   end;
   cMONTEUR.free;
@@ -2294,13 +2417,13 @@ begin
     IB_connection := rCONNECTION;
     sql.add('select * from AUFTRAGGEBER');
 
-    APIfirst;
+    APiFirst;
     while not(eof) do
     begin
 
       repeat
         if qPERSON.Active then
-          qPERSON.Close;
+          qPERSON.close;
         qPERSON.ParamByName('CROSSREF').AsInteger :=
           cAUFTRAGGEBER.FieldByName('RID').AsInteger;
         qPERSON.open;
@@ -2311,7 +2434,7 @@ begin
       until false;
 
       if qANSCHRIFT.Active then
-        qANSCHRIFT.Close;
+        qANSCHRIFT.close;
       qANSCHRIFT.ParamByName('CROSSREF').AsInteger :=
         qPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
       qANSCHRIFT.open;
@@ -2354,7 +2477,7 @@ begin
       Log('Auftraggeber ' + FieldByName('RID').AsString);
       if BreakIt then
         break;
-      apiNext;
+      ApiNext;
     end;
   end;
   cAUFTRAGGEBER.free;
@@ -2390,7 +2513,7 @@ begin
     InsertData(false);
   *)
 
-  qAUFTRAG.Close;
+  qAUFTRAG.close;
   qAUFTRAG.free;
   Label3.caption := 'Fertig!';
   EndHourGlass;
@@ -2796,7 +2919,7 @@ begin
     if frequently(StartTime, 333) then
     begin
       application.processmessages;
-      if CheckBox7.checked then
+      if CheckBox7.Checked then
         break;
       ProgressBar1.position := n;
       StaticText1.caption := inttostr(n);
@@ -3069,8 +3192,8 @@ begin
       break;
 
   end;
-  IB_QueryANSCHRIFT.Close;
-  IB_QueryPERSON.Close;
+  IB_QueryANSCHRIFT.close;
+  IB_QueryPERSON.close;
   ImpF.free;
   Bemerkungen.free;
   ProgressBar1.position := 0;
@@ -3207,11 +3330,11 @@ begin
       CursorPERSON.ParamByName('CROSSREF').AsInteger :=
         strtoint(nextp(AllTheRechnungen[n], '.', 0));
       open;
-      APIfirst;
+      APiFirst;
       if eof then
         continue;
       PERSON_R := FieldByName('RID').AsInteger;
-      Close;
+      close;
     end;
     ListBox1.items.add('RID:' + inttostr(PERSON_R));
 
@@ -3311,7 +3434,7 @@ begin
 
     with IB_QueryPOSTEN do
     begin
-      Close;
+      close;
       ParamByName('CROSSREF').AsInteger := rbNummer;
       open;
     end;
@@ -3360,11 +3483,11 @@ begin
 
   end;
   // sql('SET GENERATOR BELEG_GID TO ' + inttostr(inc_recnum));
-  CursorPERSON.Close;
+  CursorPERSON.close;
   CursorPERSON.free;
-  IB_QueryBELEG.Close;
-  IB_QueryPOSTEN.Close;
-  IB_QueryAUSGANGSRECHNUNG.Close;
+  IB_QueryBELEG.close;
+  IB_QueryPOSTEN.close;
+  IB_QueryAUSGANGSRECHNUNG.close;
   AllTheRechnungen.free;
   Anzahlung.free;
   drv_txt.free;
