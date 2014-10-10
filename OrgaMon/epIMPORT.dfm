@@ -32,7 +32,7 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet5
+    ActivePage = TabSheet7
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
@@ -393,6 +393,14 @@ object FormepIMPORT: TFormepIMPORT
         Height = 217
         ItemHeight = 13
         TabOrder = 1
+      end
+      object Abbruch: TCheckBox
+        Left = 144
+        Top = 272
+        Width = 77
+        Height = 17
+        Caption = 'Abbruch'
+        TabOrder = 2
       end
     end
     object TabSheet8: TTabSheet
