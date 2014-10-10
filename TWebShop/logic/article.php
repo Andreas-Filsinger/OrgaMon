@@ -232,17 +232,27 @@ class twebshop_article extends tvisual {
         if (!isset($Query['id'])) return $Result;
 
         /* === Mp3 Dateien von Windbandmusic auslesen === */
-        $Lines = file("http://www.windbandmusic.com/index.php5?action=get_media&id=" . urlencode($Query['id']), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $Input  = "";
+        $Socket = fsockopen("www.windbandmusic.com", 80, $errno, $errstr, 5);
 
-        foreach ($Lines as $Line) {
-        
-            $Parts = explode('\n', $Line);
+        if ($Socket) {
 
-            foreach ($Parts as $Part) {
-                if ($Part == "") continue;
-                $Result[] = "http://www.windbandmusic.com/music/" . $Part; // Link zur Datei zusammensetzen
+            fputs($Socket, "GET /index.php5?action=get_media&id=" . urlencode($Query['id']) . " HTTP/1.0\r\nHost: www.windbandmusic.com\r\n\r\n");
+
+            while (!feof($Socket)) {
+                $Input .= fgets($Socket, 256);
             }
 
+            fclose($Socket);
+
+        }
+
+        $Input = substr($Input, strpos($Input, "\r\n\r\n") + 4);
+        $Lines = explode('\n', $Input);
+
+        foreach ($Lines as $Line) {
+            if ($Line == "") continue;
+            $Result[] = "http://www.windbandmusic.com/music/" . $Line; // Link zur Datei zusammensetzen
         }
 
         return $Result;
