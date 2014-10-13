@@ -746,56 +746,10 @@ begin
   e_x_sql('alter table BELEG drop MAHNUNG3');
   e_x_sql('alter table BELEG drop MAHNBESCHEID');
   e_x_sql('alter table BELEG drop MAHNUNG_AUSGESETZT');
+  // e_x_sql('alter table BELEG drop ABSCHLUSS
   e_x_commit;
 
-  // e_x_sql('alter table BELEG drop ABSCHLUSS
   EndHourGlass;
-  (*
-
-    // Aktionen
-
-    // a) AUSGANGSRECHNUNGEN -> BUCH, Wegfall "AUSGANGSRECHNUNGEN"
-
-    "1400" -> NAME
-    AUSGANGSRECHNUNG.KUNDE_R -> PERSON_R
-    AUSGANGSRECHNUNG.RID      -> BUCH.GEN_ID(new)
-    AUSGANGSRECHNUNG. VALUTA       -> BUCH.WERTSTELLUNG
-    AUSGANGSRECHNUNG. BELEG_R
-    AUSGANGSRECHNUNG. TEILLIEFERUNG
-    AUSGANGSRECHNUNG. RECHNUNG
-    AUSGANGSRECHNUNG. DATUM
-    AUSGANGSRECHNUNG. BETRAG
-    AUSGANGSRECHNUNG. TEXT
-    AUSGANGSRECHNUNG. ZAHLUNGTYP_R
-    AUSGANGSRECHNUNG. EREIGNIS_R
-    AUSGANGSRECHNUNG. VORGANG
-    AUSGANGSRECHNUNG. ZAHLUNGSPFLICHTIGER_R
-    AUSGANGSRECHNUNG. POSNO
-    AUSGANGSRECHNUNG. MANDANT_R
-
-
-    // b) BELEG-Wegfall:
-    BELEG.RECHNUNGS_BETRAG       DOUBLE PRECISION -> Redundant kein Übergang, Wegfall
-    BELEG.DAVON_BEZAHLT          DOUBLE PRECISION -> Redundant kein Übergang, Wegfall
-    BELEG.ABSCHLUSS              TIMESTAMP        -> Wegfall, keine Bedeutung
-
-    // BELEG, Update bei der passenden letzten Forderung!!!
-    BELEG.RECHNUNG               TIMESTAMP        -> BUCH.DATUM
-    BELEG.FAELLIG                TIMESTAMP        -> BUCH.WERTSTELLUNG
-    BELEG.MAHNSTUFE              INTEGER          -> BUCH.MAHNSTUFE
-    BELEG.MAHNUNG                TIMESTAMP        -> BUCH.MAHNUNG
-    BELEG.MAHNUNG1               TIMESTAMP        -> BUCH.MAHNUNG1
-    BELEG.MAHNUNG2               TIMESTAMP        -> BUCH.MAHNUNG2
-    BELEG.MAHNUNG3               TIMESTAMP        -> BUCH.MAHNUNG3
-    BELEG.MAHNBESCHEID           TIMESTAMP        -> BUCH.MAHNBESCHEID
-    BELEG.MAHNUNG_AUSGESETZT     CHAR( 1 )        -> BUCH.MAHNUNG_AUSGESETZT
-
-
-  *)
-
-  // Refactoring
-  // a) Abfragen nun alle auf "BUCH" konzentrieen
-  // b) "Z" in das normale Buchungsansicht migrieren (auf person und Konto "1400" fixieren!)
 end;
 
 procedure TFormepIMPORT.Button17Click(Sender: TObject);
