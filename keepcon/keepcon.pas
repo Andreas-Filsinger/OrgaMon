@@ -1,6 +1,11 @@
+
 {$mode Delphi}
+
 //
-// keepcon (c) 2003-2011 by Andreas Filsinger
+// keepcon (c) 2003 - 2014 by Andreas Filsinger
+//
+// 
+//
 // This is Open Source under GNU Licence.
 //
 // http://orgamon.org
@@ -12,7 +17,7 @@ uses
 
 const
   // Allgemeine Konstanten
-  cVersion = '1.035'; // G:\rev\keepcon.rev
+  cVersion = '1.036'; // G:\rev\keepcon.rev
   cWorkingPath = '/root/';
   cTmpOutFileName = 'keepcon.tmp';
   cTmpScriptFileName = 'keepcon.script';
@@ -21,13 +26,14 @@ const
   cLogFile = '/root/keepcon.log';
   cTmpFile = cWorkingPath + cTmpOutFileName;
   cTmpScriptFile = cWorkingPath + cTmpScriptFileName;
-  cConnectionDelimiter = '@'; // z.B. "tonline-dsl-business@dsl0"
+  cConnectionDelimiter = '@'; 
   cRegularExpressionDelimiter = '"';
   cTheUnknownIP = '0.0.0.0';
 
   // cinternet Option
-  cStatusInfo = 'status: ';
+  cStatusTag = 'status: ';
   cDownInfo = 'interface %s is down';
+  cUnavailableInfo = 'Interface %s is not available';
   cUpInfo = '%s is up';
 
   // cinternet Stati
@@ -70,7 +76,7 @@ var
   sConnections: TStringList;
   sCachedScripts : TStringList;
 
-  // keepcon.ini
+  // Parameter aus /etc/keepcon.conf
   iFtpServer: string;
   iFTpUser: string;
   iftpPassword: string;
@@ -83,7 +89,29 @@ var
   iRemoteIPs: TStringList; // 
   iFailOvers: TStringList;
   iTemplates: TStringList;
-  iNewRoute: boolean;
+
+  // Bei iRestartRoute pruefen wir auch die Existenz einer
+  // Default-Route im Unconnected Zustand. Gibt es
+  // eine, so wird diese geloescht. Ein anschliessender 
+  // Connect wird dann in der Regel die richtige Route
+  // wieder hochziehen.
+  //
+  // Grund:
+  // Es sein kann, dass auf "eth1" z.B. ein
+  // Modem haengt - auf eth0 ist ein DHCP-Client
+  // aktiv ist. 
+  // Beide Interfaces setzen eine Default Route und
+  // kommen sich ev. in die Quere.
+  // In so einer Situation kann es vorkommen, dass
+  // ein "ping" funktioniert obwohl das Modem offline
+  // ist. 
+  // 
+  iRestartRoute: boolean;
+
+  //
+  // Wird ein IP-Adress-Wechsel durch den Provider 
+  // erkannt oder beim Neustart von Keepcon wird 
+  // die IP-Adresse an einen DynDNS-Anbieter mitgeteilt
   iDynDNS: string;
   iDynDNS_User: string;
   iDynDNS_Password: string;
@@ -145,7 +173,9 @@ begin
       iFtpPassword := ReadString('System', 'ftp_password', '');
       iFtpPath := ReadString('System', 'ftp_path', '/');
       iPing := ReadString('System', 'ping', '');
-      iNewRoute := ReadString('Primary', 'NewRoute', '')='YES';
+      iRestartRoute := 
+       { } (ReadString('Primary', 'RestartRoute', '')='YES') or 
+       { } (ReadString('Primary', 'NewRoute', '')='YES');
       iPrimaryConnection := ReadString('Primary', 'provider', '');
       iDynDNS:= ReadString('System','DynDNS','');
       iDynDNS_User:= ReadString('System','DynDNS_user','');
@@ -199,7 +229,7 @@ begin
   try
 
     if not (DaemonMode) then
-      writeln('up: ' + iFTPUser + '@' + iFTPServer + iFTPPath + '/' + ExtractFileName(iFTPFName));
+      writeln('upload: ' + iFTPUser + '@' + iFTPServer + iFTPPath + '/' + ExtractFileName(iFTPFName)+' ...');
 
     // .netrc
     s.add('machine ' +
@@ -214,7 +244,7 @@ begin
 
     // keepcon.ftp
     s.clear;
-    if iFTPPath <> '' then
+    if (iFTPPath <> '') then
       s.add('cd ' + iftpPath);
     s.add('put ' + cTmpFile + ' ' + ExtractFileName(iFTPFName));
     s.add('quit');
@@ -486,12 +516,17 @@ begin
     s.loadfromfile(cTmpFile);
     for n := 0 to pred(s.count) do
     begin
-      if (pos(cStatusInfo,s[n])=1) then
+      if (pos(cStatusTag,s[n])=1) then
       begin
-        result := nextp(s[n], cStatusInfo, 1);
+        result := nextp(s[n], cStatusTag, 1);
         break; 
       end;
       if (s[n]=format(cDownInfo,[interf])) then
+      begin
+        result := cStatusDisconnected;
+        break;      
+      end;
+      if (s[n]=format(cUnavailableInfo,[interf])) then
       begin
         result := cStatusDisconnected;
         break;      
@@ -502,6 +537,7 @@ begin
         break;      
       end;
     end;
+    
     if (result=cStatusUnknown) then
      for n := 0 to pred(n) do
       if (s[n]=format(cUpInfo,[interf])) then
@@ -577,33 +613,47 @@ begin
   s := TStringList.create;
   try
     interf := TransportInterface(connection);
-    DeleteFile(cTmpFile);
-    Exec('route -n' +
+    if pos(cScriptIdentifier,interf)=0 then
+    begin
+     DeleteFile(cTmpFile);
+     Exec('route -n' +
       ' > ' +
       cTmpFile
       );
-    s.loadfromfile(cTmpFile);
-    for n := 0 to pred(s.count) do
-    begin
-      if pos(cScriptIdentifier,interf)=0 then
-       if (pos(interf,s[n])=0) then
+     s.loadfromfile(cTmpFile);
+     for n := 0 to pred(s.count) do
+     begin
+      // Wir brauchen unser Interface
+      if (pos(interf,s[n])=0) then
         continue; 
+        
+      // Die Route muss "U"p sein  
       if (pos(' U',s[n])<21) then
         continue;
       sRoute := s[n];
+      
+      // Die Route muss die "default" Route 
+      if (pos(cTheUnknownIP,sRoute)<>1) then
+       continue;
+ 
+      // Loesche Alle Spacer Blanks
       repeat
         k := pos('  ',sRoute);
-        if k=0 then
+        if (k=0) then
           break;
         delete(sRoute,k,1);
       until false;
-      // skip zero gateway
+
+      // 
       sRoute := nextp(sRoute,' ',1);
-      if (sRoute='0.0.0.0') then
-       continue;
-      // store, but take last active gateway 
-      result := sRoute;
-    end;
+      if (sRoute=cTheUnknownIP) then
+       result := interf
+      else
+       result := sRoute;
+      break;
+      
+     end;
+    end; 
   except
     on E: Exception do Log('Status.' + e.Message);
   end;
@@ -625,20 +675,24 @@ end;
 
 procedure StartConnection(connection: string);
 begin
-    if pos(cScriptIdentifier,connection)=0 then
-  if Status(connection) <> cStatusConnected then
-  begin
-    // Schritt 1 : Die aktuelle Route loeschen
-    // damit der Weg frei wird fuer die neue Route
-     if iNewRoute then
+  if (pos(cScriptIdentifier,connection)=0) then
+   if (Status(connection) <> cStatusConnected) then
+   begin
+
+     // Schritt 1 : Die aktuelle default Route loeschen
+     // damit der Weg frei wird fuer die neue Route
+     if iRestartRoute then
       DelRoute;
 
-    // Schritt 2 : Den richtigen Provider aktivieren
-    Exec('ifup ' +
-      TransportInterface(connection) 
-      );
-
-  end;
+     // Schritt 2 : Den richtigen Provider aktivieren
+     Exec('ifup ' +
+       TransportInterface(connection) 
+       );
+       
+     // Schritt 3 : Dem System Zeit geben alles einzurichten
+     sleep(2000); 
+     
+   end;
 end;
 
 procedure Firewall(connection: string);
@@ -677,7 +731,7 @@ begin
          begin
            OneUp := true;
            Exec('ifdown '+ TransportInterface(sConnections[n]) );
-           sleep(100);
+           sleep(500);
          end;
        end;
     until not (OneUp) or (Trys = 3);
@@ -705,17 +759,28 @@ begin
     
     if (iDynDNS<>'') then
     begin
-     Exec(
+    if not (DaemonMode) then
+      writeln('dyn: set '+iDynDNS+' to '+TheNewIP+' ...');
+    
+     if Exec(
       { command } 'wget '+
-      { no spam } '--quiet '+
-      { no file } '--output-document=- '+
+      { no spam } '--no-verbose '+
+      { 200?    } '--save-headers '+
+      { Result  } '--output-document=/root/keepcon.wget.result '+
+      { Log     } '--append-output=/root/keepcon.wget.log '+
       { user    } '--http-user='+iDynDNS_User+' '+
       { pwd     } '--http-password='+iDynDNS_Password+' '+
       { URL     } 'https://members.dyndns.org/nic/update?'+
       { hostnme } 'hostname='+iDynDNS+
       { ip      } '\&myip='+TheNewIP+' '+
-      { quiet   } '&> /dev/null');
-      Log('DynDNS '+iDynDNS+' set to '+ TheNewIP );
+      { quiet   } '&> /dev/null')=0 then
+      begin
+        Log('DynDNS '+iDynDNS+' set to '+ TheNewIP )
+      end else
+      begin
+        Log('ERROR: DynDNS failure!'  );
+      end;
+      
     end;
 
     for n := 0 to pred(iTemplates.count) do
@@ -776,16 +841,7 @@ begin
      writeln(_Ping_AnzahlHosts:2,' Ping-Hosts!');
   end;
   
-  // Bei iNewRoute pruefen wir auch die Route
-  // da es sein kann, dass auf "eth1" z.B. ein
-  // Modem haengt - aber auf eth0 ein DHCP-Client
-  // aktiv ist. Wir wollen die default Route auf
-  // eth1 aktiv haben! Jedoch, kann durch Neustart
-  // des eth0 ev. die Standard-Route auf das dort
-  // angebotene Gateway gesetzt werden. Ping wuerde
-  // das nicht auffallen, da das Internet via eth0
-  // ev. einwandfrei funktioniert. 
-  if iNewRoute then
+  if iRestartRoute then
    if (GateWay(iPrimaryConnection)=cStatusUnset) then
    begin
      Log('Route fail!'); 
@@ -825,13 +881,14 @@ begin
   end;
   inc(_Ping_Skip);
   
- end;
+end;
 
 function Dial(Connection: string): boolean;
 var
   n: integer;
   IsConnected: boolean;
   HasIP: boolean;
+  HasRoute: boolean;
   ErrorCount: integer;
 begin
   result := false;
@@ -840,7 +897,9 @@ begin
     StartConnection(Connection);
     repeat
 
-      // establish the connection, timeout=15s
+      // Warte auf die Verbindung, timeout=15s
+      // * Das Interface muss erscheinen, z.B. "dsl0"
+      // * Das Interface muss in den Status "connected" wechseln
       n := 0;
       repeat
         inc(n);
@@ -853,11 +912,13 @@ begin
       until false;
       if not (IsConnected) then
       begin
+        Log('ERROR: Dial: Connection do not comes available, timeout after 15s');
         inc(ErrorCount);
         break;
       end;
 
-      // wait for the given IP, timeout=5s
+      // Warte auf die zugeteilte IP-Adresse, timeout=5s
+      //
       n := 0;
       repeat
         inc(n);
@@ -870,12 +931,33 @@ begin
       until false;
       if not (HasIp) then
       begin
+        Log('ERROR: Dial: IP-Adress comes not up, timeout after 5s');       
         inc(ErrorCount);
         break;
       end else
       begin
        // wait for more details comming up
-        sleep(250);
+       sleep(250);
+      end;
+      
+      
+      // Warte auf die "default" Route in das Interface oder den Host, timeout=5s
+      n := 0;
+      repeat
+        inc(n);
+        HasRoute := (GateWay(Connection)<>cStatusUnset);
+        if HasRoute or (n >= 5) then
+          break;
+        Exec('route add default ' +  TransportInterface(Connection));
+        if not (DaemonMode) then
+          write('r');
+        sleep(1000);
+      until false;
+      if not (HasRoute) then
+      begin
+        Log('ERROR: Dial: default route comes not up, timeout after 5s');       
+        inc(ErrorCount);
+        break;
       end;
 
     until true;
@@ -1024,7 +1106,7 @@ begin
         Log('/etc/hosts modified');
 
         // restart samba name server
-        exec('rcnmb restart');
+        Exec('rcnmb restart');
       end;
     except
       on E: Exception do Log('DownLoad.' + e.Message);
@@ -1070,6 +1152,7 @@ begin
   RoundCount := 0;
   FirstLoop := true;
   MainConnection := iPrimaryConnection;
+  actIP := ObtainIP(MainConnection);
   try
 
   repeat
@@ -1094,11 +1177,13 @@ begin
             DebugWriteLn('!Ping');
             if Ping then
             begin
-              DebugWriteLn('!Upload');
-              Upload;
+            
               DebugWriteLn('!SaveIP');
               SaveIP;
-              Log('reuse IP [' + actIP + ']');
+              Log('has IP [' + actIP + '] after "connected"');
+              
+              DebugWriteLn('!Upload');
+              Upload;
             end else
             begin
               Log('panic, ping after fresh "connected" fails ...');
@@ -1113,13 +1198,20 @@ begin
             DebugWriteLn('!Dial');
             if Dial(MainConnection) then
             begin
-            DebugWriteLn('!Firewall');
+            
+              if ChangedIP then
+              begin
+               DebugWriteLn('!SaveIP');
+               SaveIP;
+               Log('new IP [' + actIP + '] after "initial dial"');
+              end;
+
+              DebugWriteLn('!Firewall');
               Firewall(MainConnection);
-            DebugWriteLn('!Upload');
+
+              DebugWriteLn('!Upload');
               Upload; // Publish own IPs
-            DebugWriteLn('!SaveIP');
-              SaveIP;
-              Log('new IP [' + actIP + '] after "initial dial"');
+
             end;
           end;
           FirstLoop := false;
@@ -1135,16 +1227,23 @@ begin
           HangUp(sConnections);
           if Dial(MainConnection) then
           begin
+          
+            if ChangedIP then
+            begin
+             DebugWriteLn('!SaveIP');
+             SaveIP;
+             Log('new IP [' + actIP + '] after "unconnected"');
+            end; 
 
-          DebugWriteLn('!Firewall');
+            DebugWriteLn('!Firewall');
             Firewall(MainConnection); // now start the firewall
-          DebugWriteLn('!Upload');
+
+            DebugWriteLn('!Upload');
             Upload; // Publish own IP to different hosts
-          DebugWriteLn('!Download');
+
+            DebugWriteLn('!Download');
             DownLoad; // Download remote IPs
-          DebugWriteLn('!SaveIP');
-            SaveIP;
-            Log('new IP [' + actIP + '] after unconnected');
+
 
           end else
           begin
@@ -1158,12 +1257,14 @@ begin
           // Connection OK, refresh the newest hostnamens from internet
           if ChangedIP then
           begin
-            RoundCount := 0;
-          DebugWriteLn('!UpLoad');
-            UpLoad;
-          DebugWriteLn('!SaveIP');
+            DebugWriteLn('!SaveIP');
             SaveIP;
-            Log('reuse IP [' + actIP + '] after "ghost redial"');
+            Log('new IP [' + actIP + '] after "ghost redial"');
+            
+            DebugWriteLn('!UpLoad');
+            UpLoad;
+            
+            RoundCount := 0;
           end;
 
 
@@ -1171,12 +1272,13 @@ begin
           begin
 
             // Ping die Verbindung prüfen
-          DebugWriteLn('!Ping');
+            DebugWriteLn('!Ping');
             if not (Ping) then
             begin
               RoundCount := 0;
               Log('panic, ping at status "connected" fails ...');
-          DebugWriteLn('!HangUp');
+
+              DebugWriteLn('!HangUp');
               HangUp(sConnections);
               continue;
             end;
@@ -1201,13 +1303,11 @@ begin
 
       // (neue?) Ini-Lesen
       sCachedScripts.clear;
-          DebugWriteLn('!ReadIni');
+
+      DebugWriteLn('!ReadIni');
       ReadIni;
 
       inc(RoundCount);
-      if (RoundCount mod 20 = 0) then
-        Log('Round ' + inttostr(RoundCount) + ' of silence!');
-
 
   until false;
     except
@@ -1221,7 +1321,6 @@ var
   inp: string;
   Number: integer;
   _Status: string;
-
 begin
   writeln;
   writeln('keepcon Rev. ' + cVersion + ' (c) Andreas Filsinger, orgamon.org');
@@ -1229,8 +1328,8 @@ begin
   writeln;
 
   repeat
-      sCachedScripts.clear;
-
+    
+    sCachedScripts.clear;
     writeln('ID = Provider@Interface | Gateway | Status | IP');
     writeln('---------------------------------------------------------------');
     for n := 1 to sConnections.count do
@@ -1356,7 +1455,7 @@ begin
   // Load Config
   ReadIni;
 
-  // little Test, if exec works - if not
+  // little Test, if Exec works - if not
   // you are inside the ide - disable online debugger
   DeleteFile(cWhoAmI);
   Exec('whoami > ' + cWhoAmI);
