@@ -27,6 +27,13 @@ Dokumentation
 
 @<a href="http://orgamon.org/mediawiki/index.php5/Keepcon"><font color="blue">Benutzerhandbuch im OrgaMon-Wiki "keepcon"</font></a href>
 
+Rev 1.036 (22.10.14) Andreas Filsinger
+
+ Neu: Anpassungen an openSuSE 13.1
+ Neu: Aktives Setzen einer Route wenn sie fehlt
+ 
+ Bug: Anzeigen veralteter IP Adressen
+
 Rev 1.035 (14.10.11-03.11.11) Andreas Filsinger
 
  Neu: externer Router überwachbar
