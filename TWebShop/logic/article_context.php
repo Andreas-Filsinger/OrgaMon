@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class twebshop_article_context extends tvisual {
 

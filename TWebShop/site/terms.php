@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("terms");
 $site->setTitle(SHORT_TERMS_OF_BUSINESS);

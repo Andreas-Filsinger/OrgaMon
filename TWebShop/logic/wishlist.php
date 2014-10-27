@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DES EINKAUFWAGENS ****************************************************************************************
 class twebshop_wishlist extends twebshop_cart {

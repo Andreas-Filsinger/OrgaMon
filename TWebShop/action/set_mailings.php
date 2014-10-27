@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //var_dump($f_mailings);
 

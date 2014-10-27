@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ($site->isActive()) { //$site->appendTitle($site->getCurrentStep()->getTitle()," : ");
     $template->setTemplates(array(twebshop_article::CLASS_NAME => _TEMPLATE_ARTICLE_MYSHOP_MYMUSIC,
         twebshop_mymusic::CLASS_NAME => _TEMPLATE_MYMUSIC_MYSHOP,

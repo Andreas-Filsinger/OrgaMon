@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $header = new tsite("header");
 $header->loadTemplate(__TEMPLATE_PATH,".html","h_");

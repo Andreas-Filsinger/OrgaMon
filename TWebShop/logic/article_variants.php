@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ZUSAMMENFASSUNG DER AUSGABEARTEN ***********************************************************************************
 class twebshop_article_variants extends tvisual {

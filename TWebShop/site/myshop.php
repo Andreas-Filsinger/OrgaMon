@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("myshop");
 $site->setTitle(SENTENCE_MY_SHOP);
 $site->addToSiteMap();

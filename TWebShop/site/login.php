@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("login");
 $site->setTitle(WORD_LOGIN);
 $site->addToSiteMap();

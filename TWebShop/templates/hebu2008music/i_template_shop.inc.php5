@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_OPTION_LOGIN",
 "<div class=\"mainmenuitem\" id=\"mainmenutitle\"><b>" . WORD_LOGIN . "</b></div>" . CRLF .

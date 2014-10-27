@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // In diesem Skript definierte Klassen:
 // * torgatix bildet das komplette System ab

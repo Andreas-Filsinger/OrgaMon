@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if (file_exists(MP3_DOWNLOAD_LOG_PATH)) 
 { $log = path_format(MP3_DOWNLOAD_LOG_PATH,true,true) . MP3_DOWNLOAD_LOG_NAME;

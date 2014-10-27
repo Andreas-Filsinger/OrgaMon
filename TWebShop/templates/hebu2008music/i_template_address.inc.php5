@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_ADDRESS_SIGNON",
 "<table class=\"form\" cellspacing=\"0\">

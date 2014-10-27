@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if (isset($f_user) AND isset($id) AND check_numeric($id))
 { //$id = intval($id);

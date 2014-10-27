@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("DEFAULT_ERRORTITLE", "<b>Es sind Fehler aufgetreten:</b>");
 
 class terrorlist {

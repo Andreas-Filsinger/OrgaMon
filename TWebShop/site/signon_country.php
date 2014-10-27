@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if ($site->isActive()) 
 { $countries = new twebshop_countries($country_r);

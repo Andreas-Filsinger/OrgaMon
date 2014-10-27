@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("demo");
 $site->setTitle(WORD_DEMO);

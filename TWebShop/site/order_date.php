@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ($site->isActive()) {
     $site->addComponent("VAR_DATE_SOONEST", date("d.m.Y", $cart->getAvailability()->getSoonest()));
     $site->addComponent("VAR_DATE_LATEST", date("d.m.Y", $cart->getAvailability()->getLatest()));

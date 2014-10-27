@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 
 // ARTIKEL-TEMPLATE FÜR DIE SUCHTREFFER
 define("_TEMPLATE_ARTICLE_SEARCH",
 "<!-- ~RID_INT~ //-->" . CRLF .
 "<div class=\"article_main_container\">" . CRLF .
 "<div class=\"article_header\">" . CRLF .
-"<div class=\"left\"><a name=\"~NUMERO~\" href=\"" . __INDEX . "?site=article&id=~RID~\">~TITEL~</a>&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
+"<div class=\"left\"><a name=\"~NUMERO~\" href=\"~LINK~\">~TITEL~</a>&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
 "<div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<div class=\"search_body_left\"><p><b>" .
@@ -24,7 +24,7 @@ WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p></div>" . CRLF .
 
 // TEMPLATE FÜR OPTION INFO IN DER SUCHTREFFERANSICHT
 define("_TEMPLATE_ARTICLE_SEARCH_OPTION_DETAILS",
-"<a href=\"" . __INDEX . "?site=article&id=~RID~\">" . WORD_DETAILS . image_tag(__TEMPLATE_IMAGES_PATH."option_details.png",WORD_DETAILS) . "</a>"
+"<a href=\"~LINK~\">" . WORD_DETAILS . image_tag(__TEMPLATE_IMAGES_PATH."option_details.png",WORD_DETAILS) . "</a>"
 );
 
 // TEMPLATE FÜR OPTION EINKAUFSWAGEN IN DER SUCHTREFFERANSICHT
@@ -154,7 +154,7 @@ define("_TEMPLATE_ARTICLE_CART",
 
 // TEMPLATE FÜR OPTION DETAILS ANZEIGEN IM EINKAUFSWAGEN
 define("_TEMPLATE_ARTICLE_CART_OPTION_DETAILS",
-"<a href=\"" . __INDEX . "?site=article&id=~RID~\">~TITEL~</a>"
+"<a href=\"~LINK~\">~TITEL~</a>"
 );
 
 // TEMPLATE FÜR OPTION AKTUALISIEREN IM EINKAUFSWAGEN

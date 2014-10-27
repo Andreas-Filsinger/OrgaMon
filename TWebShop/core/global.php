@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // sicherheitsklöasse zur KOntrolle der url Parameter
 

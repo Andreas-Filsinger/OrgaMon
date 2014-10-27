@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
  * 20.03.2011
  * NEU:  In den vererbten Klassen als "private" deklarierte Eigenschaften werden NICHT serialisiert 
@@ -13,7 +13,7 @@
  * 
  */
 
-abstract class tvisual {
+class tvisual {
 
     protected $_options = array();
     protected $_template = NULL;
@@ -41,19 +41,12 @@ abstract class tvisual {
     public function setHTMLTemplate($template) {
         if (is_object($template) AND is_a($template, "ttemplate")) {
             $this->_ttemplate = $template;
-            $this->_template = ($this->_ttemplate->getTemplate(static::CLASS_NAME) != NULL) ? $this->_ttemplate->getTemplate(static::CLASS_NAME) : $this->_template;
-            // Heilige Scheisse
-            // wichtiger Unterschied zwischen PHP 5.3 und 5.4:
-            // PHP 5.3: $this ist wie static::
-            // PHP 5.4: $this ist wie self::
-            // also muss man bei 5.4 oft $this-> durch static:: ersetzen
-            // echo "{$this->CLASS_NAME}->setHTMLTemplate()<br />";
-            // echo self::CLASS_NAME . "->setHTMLTemplate()<br />";
-            // echo static::CLASS_NAME . "->setHTMLTemplate()<br />";
+            $this->_template = ($this->_ttemplate->getTemplate($this->CLASS_NAME) != NULL) ? $this->_ttemplate->getTemplate($this->CLASS_NAME) : $this->_template;
+            //echo "{$this->CLASS_NAME}->setHTMLTemplate()<br />";
+            //echo self::CLASS_NAME . "->setHTMLTemplate()<br />";
         } else {
             $this->_template = $template;
         }
-           
         return $this->getHTMLTemplate();
     }
 

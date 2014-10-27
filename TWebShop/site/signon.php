@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("CAPTION_BACK_BUTTON", "«&nbsp;" . WORD_BACK);
 define("CAPTION_GOON_BUTTON", WORD_GOON . "&nbsp;»");
 

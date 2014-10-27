@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("upload");
 $site->setTitle("Artikel-Upload \"Die Blasmusik\"");
 $site->loadTemplate(__TEMPLATE_PATH);

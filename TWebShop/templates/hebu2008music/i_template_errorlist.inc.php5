@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_ERRORLIST",
 "<div class=\"errorlist\">

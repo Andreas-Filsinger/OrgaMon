@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("cart");
 $site->setTitle(WORD_CART);

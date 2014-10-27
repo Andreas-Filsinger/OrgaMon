@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $id = $tmp_person->getIDasHash();
 

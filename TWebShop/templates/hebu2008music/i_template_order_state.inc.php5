@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_ORDER_STATE_MYSHOP",
 "<table cellspacing=\"0\">" . CRLF . 

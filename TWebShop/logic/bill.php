@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class twebshop_bill extends tvisual {
 

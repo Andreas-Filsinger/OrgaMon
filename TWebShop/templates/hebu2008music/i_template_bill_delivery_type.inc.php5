@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_BILL_DELIVERY_TYPE_ORDER_OVERVIEW",
 "~OPTION_STRING~"

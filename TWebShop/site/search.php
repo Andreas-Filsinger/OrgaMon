@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // ehemals s_search, also eine "site"
 

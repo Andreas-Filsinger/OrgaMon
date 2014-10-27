@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //
 // Im Shopstate Objekt wird der Status der Anwendung durchgetragen

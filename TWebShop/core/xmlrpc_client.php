@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // TXMLRPC CLASS, PHP5
 // by Thorsten Schroff, 2011
 
@@ -199,10 +199,9 @@ class txmlrpc {
     }
 
     static public function encodeResponse($xml) {
-        $ddoc = new DOMDocument();
+        $xml = DOMDocument::loadXML(utf8_encode($xml));
         try {
-            $ddoc->loadXML(utf8_encode($xml));
-            $xp = new DOMXPath($ddoc);
+            $xp = new DOMXPath($xml);
             $xml_vars = $xp->query("//params/param/value/child::*");
             switch ($xml_vars->length) {
                 case(0): {
@@ -227,10 +226,9 @@ class txmlrpc {
     }
 
     static public function decodeResponse($xml) {
-        $ddoc = new DOMDocument();
+        $xml = DOMDocument::loadXML(utf8_encode($xml));
         try {
-            $ddoc->loadXML(utf8_encode($xml));
-            $xp = new DOMXPath($ddoc);
+            $xp = new DOMXPath($xml);
             $xml_vars = $xp->query("//params/param/value/child::*");
             switch ($xml_vars->length) {
                 case(0): {

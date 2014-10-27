@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $session->registerTmpVar("dcontact_r", $f_dcontact_r, $shop->getCurrentSite());
 $session->registerTmpVar("bcontact_r", $f_bcontact_r, $shop->getCurrentSite());
 

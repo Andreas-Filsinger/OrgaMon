@@ -31,7 +31,8 @@
     <head>
 
         <meta http-equiv="X-UA-Compatible" content="IE=9">
-        
+        <meta charset="utf-8">
+
         <script type="text/javascript" src="./js/jquery.js"></script>
         <script type="text/javascript" src="./js/jplayer/jplayer.js"></script>
         <script type="text/javascript" src="./js/jplayer/jplayer-playlist.js"></script>
@@ -73,7 +74,7 @@
             function ResizeFrame() {
 
                 var frame   = document.getElementById('frmShop');
-                var content = frmShop.document.getElementsByTagName('body')[0];
+                var content = frame.contentDocument.getElementsByTagName('body')[0];
 
                 frame.scrolling        = 'no';
                 content.style.overflow = 'hidden';
@@ -89,7 +90,7 @@
                 }
 
                 scrollTo(0, 0);
-
+                
             }
             /* --- */
 

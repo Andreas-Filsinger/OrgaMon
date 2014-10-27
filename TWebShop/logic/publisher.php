@@ -1,14 +1,13 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DES VERLAGS **********************************************************************************************
 class twebshop_publisher {
 
-    static public $properties = array("PERSON_R");
+    static public $properties = array("SUCHBEGRIFF");
     public $rid = 0;
-    public $person = NULL;
     public $text = "";
 
-    const TABLE = TABLE_PUBLISHER;
+    const TABLE = TABLE_PERSON;
     const CLASS_NAME = "PHP5CLASS T_WEBSHOP_PUBLISHER";
 
 
@@ -16,6 +15,16 @@ class twebshop_publisher {
         $this->rid = $rid;
         $this->getProperties();
     }
+
+    /* --> 10.10.2014 michaelhacksoftware : Sprechenden Link erstellen */
+    public function createLink() {
+
+        if (!$this->rid) return __INDEX;
+
+        return path() . LINK_PUBLISHER . "/" . str2url($this->SUCHBEGRIFF) . "." . $this->rid;
+
+    }
+    /* <-- */
 
     public function getProperties() {
 
@@ -31,45 +40,6 @@ class twebshop_publisher {
             $this->{$name} = $data->{$name};
         }
 
-    }
-
-    /* --> 22.08.2014 michaelhacksoftware : Alle Publisher ausgeben */
-    public function getAllPublishers() {
-
-        global $ibase;
-
-        $Items = array();
-
-        // === Query "Alle Publisher" abfragen
-        $ibase->query(
-            "SELECT DISTINCT a.VERLAG_R, p.SUCHBEGRIFF FROM " . TABLE_ARTICLE . " AS a" .
-            " LEFT JOIN " . TABLE_PERSON . " AS p ON a.VERLAG_R = p.RID" .
-            " LEFT JOIN " . TABLE_CATEGORY . " AS c ON a.SORTIMENT_R = c.RID" .
-            " WHERE c.WEBSHOP = 'Y'" .
-            " ORDER BY p.SUCHBEGRIFF"
-        );
-
-        while ($result = $ibase->fetch_object()) {
-
-            if (!$result->SUCHBEGRIFF) continue;
-
-            $Items[] = array(
-                "Id"   => $result->VERLAG_R,
-                "Name" => $result->SUCHBEGRIFF,
-                "Url"  => twebshop_person::UrlEncodeName($result->SUCHBEGRIFF)
-            );
-
-        }
-
-        $ibase->free_result();
-
-        return $Items;
-
-    }
-    /* <-- */
-
-    public function getPerson() {
-        $this->person = new twebshop_person($this->PERSON_R);
     }
 
     public function __toString() {

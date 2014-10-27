@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
     /*******************************************************************
      * Links                                                           *
@@ -18,26 +18,31 @@
     if ($site->isActive()) {
 
         /* === Verlage === */
-        $Publishers = "";
-        $Publisher  = new twebshop_publisher();
-        $Items      = $Publisher->getAllPublishers();
+        $PublisherList = "";
+        $Publishers = new twebshop_publishers();
+        $Ids        = $Publishers->getIds();
 
-        foreach ($Items as $Item) {
-            $Publishers .= "<a href=\"" . __INDEX . "?name=" . $Item['Url'] . "&site=search&action=search_publisher&id=" . $Item['Id'] . "\">" . $Item['Name'] . "</a><br>";
+        foreach ($Ids as $Id) {
+            $Publisher = new twebshop_publisher($Id);
+            $PublisherList .= "<a href=\"" . $Publisher->createLink() . "\">" . $Publisher->SUCHBEGRIFF . "</a><br>";
+            unset($Publisher);
         }
 
         /* === Musiker === */
-        $Musicians = "";
-        $Musician  = new twebshop_musician();
-        $Items     = $Musician->getAllMusicians();
+        $MusicianList = "";
 
-        foreach ($Items as $Item) {
-            $Musicians .= "<a href=\"" . __INDEX . "?name=" . $Item['Url'] . "&site=search&action=search_musician&id=" . $Item['Id'] . "\">" . $Item['Name'] . "</a><br>";
+        $Musicians = new twebshop_musicians();
+        $Ids       = $Musicians->getIds();
+
+        foreach ($Ids as $Id) {
+            $Musician = new twebshop_musician($Id);
+            $MusicianList .= "<a href=\"" . $Musician->createLink() . "\">" . $Musician->NACHNAME . " " . $Musician->VORNAME . "</a><br>";
+            unset($Musician);
         }
 
         /* === Eintragen === */
-        $site->addComponent("OBJ_PUBLISHER_LIST", $Publishers);
-        $site->addComponent("OBJ_MUSICIAN_LIST",  $Musicians);
+        $site->addComponent("OBJ_PUBLISHER_LIST", $PublisherList);
+        $site->addComponent("OBJ_MUSICIAN_LIST",  $MusicianList);
 
     }
 

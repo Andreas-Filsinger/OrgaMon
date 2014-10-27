@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DES EINKAUFWAGENS ****************************************************************************************
 class twebshop_cart extends tvisual {

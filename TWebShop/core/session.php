@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // AF: Zugriffs-Wrapper auf die superglobal $_SESSION
 // Bemerkung zu der serialisierung von Objekten

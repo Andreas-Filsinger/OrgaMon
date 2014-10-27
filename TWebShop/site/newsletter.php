@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("newsletter");
 $site->setTitle(WORD_NEWSLETTER);

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("send_password");
 $site->setTitle(SENTENCE_FORGOTTEN_PASSWORD);
 $site->addToSiteMap();

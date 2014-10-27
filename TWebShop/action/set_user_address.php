@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $tmp_address = $user->getAddress();
 

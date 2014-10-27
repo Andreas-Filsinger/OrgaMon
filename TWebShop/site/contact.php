@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("contact");
 $site->setTitle(SENTENCE_CONTACT_AND_IMPRINT);
