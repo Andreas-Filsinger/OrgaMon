@@ -82,12 +82,14 @@ if ($i == 0) {
     include_once("./logic/article_context.php");
     include_once("./logic/article_link.php");
     include_once("./logic/article_tree.php");
+    include_once("./logic/articles.php");
     include_once("./logic/availability.php");
     include_once("./logic/bill.php");
     include_once("./logic/cart.php");
     include_once("./logic/country.php");
     include_once("./logic/mailings.php");
     include_once("./logic/musician.php");
+    include_once("./logic/musicians.php");
     include_once("./logic/musician_list.php");
     include_once("./logic/mymusic.php");
     include_once("./logic/order_state.php");
@@ -95,6 +97,7 @@ if ($i == 0) {
     include_once("./logic/person.php");
     include_once("./logic/price.php");
     include_once("./logic/publisher.php");
+    include_once("./logic/publishers.php");
     include_once("./logic/twebshop_search.php");
     include_once("./logic/search_result_pages.php");
     include_once("./logic/user.php");
