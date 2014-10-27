@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!$errorlist->error) {
     $path = MOD_UPLOAD_SAVE_PATH . $f_edition . "/" . $f_association . "/";
     $info = "path=$path\r\nauthor=$f_author\r\nemail=$f_user";

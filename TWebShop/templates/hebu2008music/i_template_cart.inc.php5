@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_CART",
 "<p class=\"title\">" . SENTENCE_YOUR_CART . "</p>" . CRLF . 

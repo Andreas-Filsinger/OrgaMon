@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // GLOBAL Variable, die inerhalb der URL übertragen werden, z.B. "$site" kommt via index.php?site=test
 // diese (und nicht mehr!) sollten auch im gloablen Kontext sichtbar sein!
 // GLOBALE VARIABLEN, DIE REGISTRIERT WERDEN SOLLEN

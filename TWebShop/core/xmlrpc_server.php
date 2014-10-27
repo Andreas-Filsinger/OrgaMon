@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // TXMLRPC CLASS, PHP5
 // by Thorsten Schroff, 2011
 

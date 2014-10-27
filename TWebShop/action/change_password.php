@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if ($f_pass == $f_pass_confirm) 
 { if ($user->setPassword($f_pass) !== false)

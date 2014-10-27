@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 function replace_code($text, $tag, $template, $function) { //echo "*$tag*";
     $pattern = "/(\[$tag\]{1}[a-zA-Z0-9 -,;\/:~._=?äÄöÖüÜß@<>!|&\"]*\[\/$tag\]{1})/";

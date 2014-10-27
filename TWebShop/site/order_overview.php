@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ($site->isActive()) {
     $template->setTemplates(array(twebshop_article::CLASS_NAME => _TEMPLATE_ARTICLE_ORDER,
         twebshop_cart::CLASS_NAME => _TEMPLATE_CART_ORDER,

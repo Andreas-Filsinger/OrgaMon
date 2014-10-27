@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (isset($f_user))
     $errorlist->clear();
 

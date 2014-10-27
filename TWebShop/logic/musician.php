@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DES MUSIKERS **********************************************************************************************
 class twebshop_musician {
@@ -15,6 +15,16 @@ class twebshop_musician {
         $this->getProperties();
     }
 
+    /* --> 10.10.2014 michaelhacksoftware : Sprechenden Link erstellen */
+    public function createLink() {
+
+        if (!$this->rid) return __INDEX;
+
+        return path() . LINK_MUSICIAN . "/" . str2url($this->VORNAME . " " . $this->NACHNAME) . "." . $this->rid;
+
+    }
+    /* <-- */
+
     public function getProperties() {
 
         global $ibase;
@@ -30,35 +40,6 @@ class twebshop_musician {
         }
 
     }
-
-    /* --> 28.08.2014 michaelhacksoftware : Alle Musiker ausgeben */
-    public function getAllMusicians() {
-
-        global $ibase;
-
-        $Items = array();
-
-        // === Query "Alle Musiker" abfragen
-        $ibase->query("SELECT RID, VORNAME, NACHNAME FROM " . self::TABLE . " ORDER BY NACHNAME, VORNAME");
-
-        while ($result = $ibase->fetch_object()) {
-
-            if (!$result->VORNAME && !$result->NACHNAME) continue;
-
-            $Items[] = array(
-                "Id"   => $result->RID,
-                "Name" => $result->NACHNAME . " " . $result->VORNAME,
-                "Url"  => twebshop_person::UrlEncodeName($result->NACHNAME . " " . $result->VORNAME)
-            );
-
-        }
-
-        $ibase->free_result();
-
-        return $Items;
-
-    }
-    /* <-- */
 
     public function __toString() {
         return twebshop_musician::CLASS_NAME;

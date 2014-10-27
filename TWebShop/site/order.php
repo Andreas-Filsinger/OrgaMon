@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("order");
 $site->setTitle(SENTENCE_PLACE_ORDER);
 $site->addToSiteMap();

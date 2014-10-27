@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("article_tree");
 $site->setTitle(SENTENCE_EXTENDED_SEARCH);

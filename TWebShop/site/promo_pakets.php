@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("promo_pakets");
 $site->setTitle(WORD_CATALOGUES);
 $site->loadTemplate(__TEMPLATE_PATH);

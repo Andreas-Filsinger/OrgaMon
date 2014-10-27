@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // Feste Dateinamen
 define("FILE_INDEX", "index.php");
@@ -16,8 +16,9 @@ define("BR","<br />");
 define("__TEMPLATES_PATH","./templates/");
 
 // Links für die Rewrite Rule
-define("LINK_MUSICIAN",  "musiker_");
-define("LINK_PUBLISHER", "verlag_");
+define("LINK_ARTICLES",  "artikel");
+define("LINK_MUSICIAN",  "musiker");
+define("LINK_PUBLISHER", "verlage");
 
 // TABELLENNAMEN
 define("TABLE_ADDRESS","ANSCHRIFT");

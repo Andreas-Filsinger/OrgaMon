@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("fault");
 $site->setTitle(WORD_ERROR);

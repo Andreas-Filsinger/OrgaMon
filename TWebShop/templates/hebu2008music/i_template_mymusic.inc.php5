@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_MYMUSIC_MYSHOP",
 "<table cellspacing=\"0\">" . CRLF . 

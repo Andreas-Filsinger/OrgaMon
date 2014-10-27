@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // erste Änderungen 20.07. :  * twebshop_article_tree::create() liefert jetzt ein Objekt eingenen Typs
 //                            * __invoke gibt den tree zurück!

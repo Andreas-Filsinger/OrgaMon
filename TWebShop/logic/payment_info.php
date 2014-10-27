@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class twebshop_payment_info extends tvisual {
 

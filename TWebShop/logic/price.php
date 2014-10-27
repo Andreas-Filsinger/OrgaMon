@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DES PREISES **********************************************************************************************
 class twebshop_price extends tvisual {

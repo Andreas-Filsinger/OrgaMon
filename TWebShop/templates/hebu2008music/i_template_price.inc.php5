@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_PRICE_SEARCH",
 "<b>~STRING~~SUM_NETTO~</b>"

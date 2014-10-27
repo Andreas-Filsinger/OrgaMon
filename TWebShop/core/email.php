@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined("CRLF"))
     define("CRLF", "\r\n");
 if (!defined("LF"))

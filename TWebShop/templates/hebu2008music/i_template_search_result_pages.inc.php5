@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_SEARCH_RESULT_PAGES",
 "<p style=\"margin-bottom:5px;\"><b>" . VARIABLE_SENTENCE_SHOWING_ARTICLE_FROM_X_TILL_Y . "</b></p>" . CRLF .

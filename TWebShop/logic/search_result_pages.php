@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class twebshop_search_result_pages extends tpages {
 

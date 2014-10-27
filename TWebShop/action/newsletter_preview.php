@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ($user->isService(MOD_NEWSLETTER_USER_SERVICE_NAME)) {
     
     $site->setHeader(false);

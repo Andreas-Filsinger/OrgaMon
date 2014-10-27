@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $footer = new tsite("footer");
 $footer->loadTemplate(__TEMPLATE_PATH,".html","f_");

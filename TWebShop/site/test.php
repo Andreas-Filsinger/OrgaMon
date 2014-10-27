@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $site->setName("test");
 $site->setTitle(SYS_SENTENCE_AVAILABILITY_CHECK);

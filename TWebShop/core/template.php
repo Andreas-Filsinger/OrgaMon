@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class ttemplate {
 
@@ -20,7 +20,6 @@ class ttemplate {
     }
 
     public function getTemplate($class) {
-        
         return (isset($this->{$class})) ? $this->{$class} : NULL;
     }
 

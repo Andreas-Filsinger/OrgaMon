@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("help");
 $site->setTitle(WORD_HELP);
 $site->addToSiteMap();

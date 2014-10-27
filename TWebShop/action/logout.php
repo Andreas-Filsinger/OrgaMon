@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 twebshop_user::free();
 $user = twebshop_user::create();

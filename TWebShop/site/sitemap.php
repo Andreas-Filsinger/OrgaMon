@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site->setName("sitemap");
 $site->setTitle(WORD_SITEMAP);
 $site->loadTemplate(__TEMPLATE_PATH);

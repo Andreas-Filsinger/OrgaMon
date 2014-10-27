@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ($site->isActive()) {
     
     $ids = $ibase->get_list_as_array("SELECT DISTINCT ZAHLUNGSPFLICHTIGER_R FROM BELEG WHERE (PERSON_R={$user->getID()}) AND (ZAHLUNGSPFLICHTIGER_R IS NOT NULL)", "ZAHLUNGSPFLICHTIGER_R");

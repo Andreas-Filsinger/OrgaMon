@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if ($site->isActive()) 
 { //$site->appendTitle($site->getCurrentStep()->getTitle()," : ");

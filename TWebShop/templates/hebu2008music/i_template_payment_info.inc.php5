@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW",
 "<p>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DER ARTIKEL **********************************************************************************************
 class twebshop_article extends tvisual {
@@ -57,6 +57,30 @@ class twebshop_article extends tvisual {
         parent::__wakeup();
     }
 
+    /* --> 10.10.2014 michaelhacksoftware : Sprechenden Link erstellen */
+    public function createLink() {
+
+        if (!$this->rid) return __INDEX;
+
+        if ($this->KOMPONIST_R || $this->ARRANGEUR_R) {
+            $Musician = $this->KOMPONIST_R ? new twebshop_musician($this->KOMPONIST_R) : new twebshop_musician($this->ARRANGEUR_R);
+            $Part1    = "/" . str2url($Musician->VORNAME . " " . $Musician->NACHNAME);
+        } else {
+            $Part1 = "";
+        }
+
+        if ($this->VERLAG_R) {
+            $Publisher = new twebshop_publisher($this->VERLAG_R);
+            $Part2     = "/" . str2url($Publisher->SUCHBEGRIFF);
+        } else {
+            $Part2 = "";
+        }
+
+        return path() . LINK_ARTICLES . $Part1 . $Part2 . "/" . str2url($this->TITEL) . "." . urlencode(twebshop_article::encryptRID($this->rid));
+
+    }
+    /* <-- */
+
     private function getProperties() {
 
         global $ibase;
@@ -78,11 +102,11 @@ class twebshop_article extends tvisual {
         }
     }
 
-    public function getComposer($Link) {
+    public function getComposer($Link = false) {
         return ($this->KOMPONIST_R != NULL) ? twebshop_musician_list::makeList($this->KOMPONIST_R, $Link) : "-";
     }
 
-    public function getArranger($Link) {
+    public function getArranger($Link = false) {
         return ($this->ARRANGEUR_R != NULL) ? twebshop_musician_list::makeList($this->ARRANGEUR_R, $Link) : "-";
     }
 
@@ -481,6 +505,7 @@ class twebshop_article extends tvisual {
         $template = str_replace("~UID~", ($this->uid == "") ? $this->getUID() : $this->uid, $template);
         $template = str_replace("~IMAGE~", (count($this->images) > 0) ? $this->getImage(0) : "", $template);
         $template = str_replace("~IMAGES~", (count($this->images) > 0) ? implode(",", $this->images) : "", $template);
+        $template = str_replace("~LINK~", $this->createLink(), $template);
         $template = str_replace("~MEMBERS~", $members, $template);
         $template = (strpos($template, "~MP3_FILE_SIZE~", 0) !== false) ? str_replace("~MP3_FILE_SIZE~", ($this->existsMP3Download()) ? file_size_MB($this->getMP3DownloadFileName()) : "", $template) : $template;
         $template = str_replace("~NUMERO~", $this->NUMERO, $template);

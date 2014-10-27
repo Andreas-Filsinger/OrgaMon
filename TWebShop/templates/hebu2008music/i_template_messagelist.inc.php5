@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_MESSAGELIST",
 "<div class=\"messagelist\">

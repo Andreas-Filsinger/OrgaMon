@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $cart->buildSum(true);
 

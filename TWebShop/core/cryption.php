@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("T_CRYPTION_DEFAULT_KEY", "");
 define("T_CRYPTION_DEFAULT_FILE", "cryption.sig");
 

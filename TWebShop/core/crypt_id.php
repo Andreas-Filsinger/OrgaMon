@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("T_CRYPT_ID_DEFAULT_KEY", "");
 define("T_CRYPT_ID_DEFAULT_FILE", "id.sig");
 

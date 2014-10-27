@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DER VERKETTETEN MUSIKER ****************************************************************************************** 
 class twebshop_musician_list
@@ -19,7 +19,7 @@ class twebshop_musician_list
 	if ($musician->MUSIKER_R != NULL) $list.= twebshop_musician_list::makeList($musician->MUSIKER_R, $link) . " " . $musician->EVL_TRENNER;
 	else {
         if ($link) {
-            $list.= "<a href=\"" . __INDEX . "?site=search&action=search_musician&id=" . $musician_r . "\">" . trim($musician->VORNAME." ".$musician->NACHNAME) . "</a> " . $musician->EVL_TRENNER;
+            $list.= "<a href=\"" . $musician->createLink() . "\">" . trim($musician->VORNAME." ".$musician->NACHNAME) . "</a> " . $musician->EVL_TRENNER;
         } else {
             $list.= trim($musician->VORNAME." ".$musician->NACHNAME) . " " . $musician->EVL_TRENNER;
         }

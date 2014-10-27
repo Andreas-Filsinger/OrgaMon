@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $session->registerTmpVar("payment", $f_payment, $shop->getCurrentSite());
 $session->registerTmpVar("type", $type, $shop->getCurrentSite());

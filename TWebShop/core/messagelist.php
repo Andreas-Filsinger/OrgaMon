@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("MESSAGETITLE", "<b>Meldung:</b>");
 
 class tmessagelist {

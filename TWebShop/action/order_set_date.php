@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //Fehler: 
 //1) wenn !isset($f_choice)

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //Rev 1.006 (31.01.2011) Thorsten Schroff
 //PROJEKT-SPEZIFISCH
@@ -294,6 +294,33 @@ function str_replace_uml($string) {
     $result = str_replace("Ü", "Ue", $result);
     return $result;
 }
+
+/* --> 10.10.2014 michaelhacksoftware : String für URL aufbereiten */
+function str2url($Text) {
+
+    $Text = strtolower(trim($Text));
+
+    $Text = str_replace(" / ", "-", $Text);
+    $Text = str_replace(" & ", "+", $Text);
+    $Text = str_replace(" "  , "-", $Text);
+    $Text = str_replace("."  ,  "", $Text);
+    $Text = str_replace(","  ,  "", $Text);
+    $Text = str_replace("\"" ,  "", $Text);
+    $Text = str_replace("'"  ,  "", $Text);
+    $Text = str_replace("("  ,  "", $Text);
+    $Text = str_replace(")"  ,  "", $Text);
+    $Text = str_replace("!"  ,  "", $Text);
+    $Text = str_replace("?"  ,  "", $Text);
+    $Text = str_replace("&"  , "+", $Text);
+    $Text = str_replace("/"  , "_", $Text);
+    $Text = str_replace("\\" , "_", $Text);
+
+    $Text = urlencode($Text);
+
+    return $Text;
+
+}
+/* <-- */
 
 //ZEIT/DATUM
 function ISO2Unix($iso) {

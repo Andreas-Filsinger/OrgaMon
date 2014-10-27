@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 //**** KLASSE ZUR ABBILDUNG DER ARTIKEL **********************************************************************************************
 class twebshop_availability extends tvisual {

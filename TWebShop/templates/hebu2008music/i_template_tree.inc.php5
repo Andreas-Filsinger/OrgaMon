@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_TREE_NODE_INDENT",
 image_tag(__TEMPLATE_IMAGES_PATH."tree_space.png","","text-align:center; vertical-align:middle;") . "&nbsp;"

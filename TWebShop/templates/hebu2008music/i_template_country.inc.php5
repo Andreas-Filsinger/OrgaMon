@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_COUNTRIES_SIGNON",
 "<select id=\"country\" name=\"f_country_r\">" . CRLF .

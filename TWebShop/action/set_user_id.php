@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if (twebshop_user::existsUserID($f_user) !== false) 
 { $errorlist->add(ERROR_USERID_ALREADY_EXISTS);

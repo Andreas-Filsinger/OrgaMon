@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("_TEMPLATE_VERSIONS",
 "<select id=\"version\" name=\"f_version_r\" onchange=\"javascript:checkDetail('~ID~',true);\" />

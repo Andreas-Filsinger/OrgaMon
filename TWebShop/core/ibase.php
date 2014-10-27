@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("IBASE_DEFAULT_USER", "SYSDBA");
 define("IBASE_DEFAULT_PASSWORD", "masterkey");
 define("IBASE_CHARSET_DATABASE", "ISO-8859-1"); // eigentlich "Ansi" oder "Windows-1252"

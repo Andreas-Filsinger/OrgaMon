@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 define("DEFAULT_PAGE_SIZE", 10); // Wieviele Items auf einer Page angezeigt werden sollen
 define("DEFAULT_PAGE_INDEX_RANGE", 10); // Wieviele Pages in der Auswahlliste angezeigt werden sollen
 //***************

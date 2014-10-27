@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 define("__TEMPLATE_ARTICLE_LINK_DEMO",
 image_tag(__TEMPLATE_IMAGES_PATH."icon_internet_blue.png","","float:left; margin-right:10px; margin-bottom:10px;") . CRLF . 
