@@ -1,15 +1,15 @@
-====================================
-*       REVISIONS-INFORMATION      *
-====================================
-* (c)'12 by Andreas Filsinger      *
-====================================
+======================================
+*       REVISIONS-INFORMATION        *
+======================================
+* (c)'2012-2014 by Andreas Filsinger *
+======================================
 * PROJEKT: OrgaMonAppService
 * PUBLIC: YES
 * SOURCE DIR: ..\JonDaServer
 * INNO SETUP SCRIPT: OrgaMonAppService.iss
 * INNO SETUP WITHOUT POINT: YES
 * INFO: Foto- und Zip- Service für Internet-Ablagen
-====================================
+======================================
 
 // INFO BEGIN
 // INFO END
@@ -17,6 +17,12 @@
 Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
+
+Rev 1.051 (28.10.14) Andreas Filsinger
+
+ Neu: Anzahl der unverarbeiteten wird angezeigt
+ Neu: AUFTRAG_R kann in alten AUFTRAG+TS.BLA gesucht werden
+ Neu: Alte AUFTRAG+TS.BLA können neben dem aktiven BLA gestellt werden
 
 Rev 1.050 (24.07.14) Andreas Filsinger
 

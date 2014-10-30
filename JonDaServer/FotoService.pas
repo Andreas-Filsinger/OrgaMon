@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.050; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.051; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -54,6 +54,7 @@ const
   cLocation_MOB = 'orgamon-mob\';
   cLocation_JonDaServer = 'JonDaServer\';
   cLocation_Unverarbeitet = 'unverarbeitet\';
+  cLocation_Manuell = 'manuell\';
 
   // File Names
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
@@ -131,6 +132,16 @@ type
     Label9: TLabel;
     Button17: TButton;
     ListBox10: TListBox;
+    Label10: TLabel;
+    TabSheet9: TTabSheet;
+    ListBox11: TListBox;
+    Button18: TButton;
+    Edit8: TEdit;
+    Button19: TButton;
+    Button20: TButton;
+    Label11: TLabel;
+    Edit9: TEdit;
+    CheckBox5: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -159,6 +170,10 @@ type
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure Button20Click(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
+    procedure TabSheet9Show(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -224,6 +239,45 @@ begin
   iEXIF.Free;
 end;
 
+procedure BeginHourGlass;
+begin
+  if (HourGlassLevel = 0) then
+  begin
+{$IFNDEF CONSOLE}
+    screen.cursor := crHourGlass;
+    Application.ProcessMessages;
+{$ENDIF}
+  end;
+  inc(HourGlassLevel);
+end;
+
+procedure EnsureHourGlass;
+begin
+{$IFNDEF CONSOLE}
+  if (HourGlassLevel > 0) then
+    screen.cursor := crHourGlass
+  else
+    screen.cursor := crdefault;
+{$ENDIF}
+end;
+
+procedure EndHourGlass;
+begin
+  dec(HourGlassLevel);
+{$IFNDEF CONSOLE}
+  if HourGlassLevel = 0 then
+    screen.cursor := crdefault;
+{$ENDIF}
+end;
+
+procedure EnsureDefaultCursor;
+begin
+  HourGlassLevel := 0;
+{$IFNDEF CONSOLE}
+  screen.cursor := crdefault;
+{$ENDIF}
+end;
+
 procedure TFormFotoService.Button10Click(Sender: TObject);
 begin
   ensureGlobals;
@@ -247,6 +301,11 @@ begin
     Timer1.Enabled := true;
     Button1.Caption := 'Stop';
   end;
+end;
+
+procedure TFormFotoService.Button20Click(Sender: TObject);
+begin
+  FileDelete(MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
 procedure TFormFotoService.Button2Click(Sender: TObject);
@@ -430,6 +489,90 @@ begin
     DIV (1024 * 1024)));
 end;
 
+procedure TFormFotoService.Button18Click(Sender: TObject);
+var
+  AUFTRAG_R: integer;
+  mderecOrgaMon: TMDERec;
+  bOrgaMon: TBLager;
+  AllTRN: TStringList;
+  n: integer;
+  AuftragFound: boolean;
+begin
+  AUFTRAG_R := StrToIntDef(Edit8.Text, 0);
+  if (AUFTRAG_R < 1) then
+    exit;
+
+  Listbox11.Items.Clear;
+  AllTRN := TStringList.Create;
+
+  dir(edit9.Text + '?????.', AllTRN, false);
+  AllTRN.sort;
+  ListBox11.Items.Add('search in ' + IntToStr(AllTRN.count) + ' subdirs ...');
+  for n := pred(AllTRN.count) downto 0 do
+  begin
+    repeat
+      if FileExists(edit9.Text + AllTRN[n] + '\AUFTRAG+TS.BLA') then
+      begin
+        AuftragFound := false;
+        bOrgaMon := TBLager.Create;
+        with bOrgaMon do
+        begin
+          ListBox11.Items.Add('check ' + AllTRN[n] + ' ...');
+          Init(edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon,
+            sizeof(TMDERec));
+          BeginTransaction(now);
+          if exist(AUFTRAG_R) then
+          begin
+            get;
+            ListBox11.Items.Add(mderecOrgaMon.Baustelle + '-' +
+              mderecOrgaMon.ABNummer + ' ' +
+              Long2date(mderecOrgaMon.ausfuehren_soll));
+            AuftragFound := true;
+          end;
+        end;
+        bOrgaMon.EndTransaction;
+        bOrgaMon.Free;
+        if AuftragFound then
+          break;
+      end;
+      AllTRN.delete(n);
+      if (n mod 25=0) then
+      begin
+       application.processmessages;
+       if CheckBox5.checked then
+        break;
+      end;
+
+    until true;
+  end;
+  ListBox11.Items.Add('search done!');
+  AllTRN.Free;
+end;
+
+procedure TFormFotoService.Button19Click(Sender: TObject);
+var
+  TRN: string;
+begin
+  BeginHourGlass;
+  Label11.Caption := '';
+  if (ListBox11.ItemIndex = -1) then
+  begin
+    Label11.Caption := 'ERROR: Es ist nichts markiert';
+    exit;
+  end;
+  TRN := StrFilter(ListBox11.Items[ListBox11.ItemIndex], cZiffern);
+  if (length(TRN) <> 5) then
+  begin
+    Label11.Caption := 'ERROR: Markierte Zeile enthält keine TRN';
+    exit;
+  end;
+  if FileCopy(
+    { } edit9.Text + TRN + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
+    { } MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    Label11.Caption := 'OK';
+  EndHourGlass;
+end;
+
 procedure TFormFotoService.Button4Click(Sender: TObject);
 begin
   if CheckBox1.checked then
@@ -596,6 +739,7 @@ procedure TFormFotoService.ensureGlobals;
 var
   MyIni: TIniFile;
   SectionName: string;
+  r : integer;
 begin
   if not(assigned(tBAUSTELLE)) then
   begin
@@ -625,6 +769,17 @@ begin
     // Initialer Lauf
     tBAUSTELLE := tsTable.Create;
     tBAUSTELLE.insertFromFile(MyWorkingPath + cMonDaServer_Baustelle);
+    if FileExists(MyWorkingPath + cMonDaServer_Baustelle_manuell) then
+    begin
+      with tBAUSTELLE do
+      begin
+        insertFromFile(MyWorkingPath + cMonDaServer_Baustelle_manuell);
+        for r := RowCount downto 1 do
+         if (length(ReadCell(r,cE_FTPUSER))<3) then
+          Del(r);
+        SaveToFile(MyWorkingPath + 'baustelle-alle.csv');
+      end;
+    end;
 
     // Datei der Wartenden sicherstellen, Header anlegen
     if not(FileExists(MyWorkingPath + cFotoUmbenennungAusstehend)) then
@@ -899,7 +1054,7 @@ begin
       if pos(Edit5.Text, sDir[n]) = 0 then
         sDir.delete(n);
 
-  sDir.Sort;
+  sDir.sort;
   ListBox3.Items.Assign(sDir);
   sDir.Free;
   if not(assigned(sMoveTransaktionen)) then
@@ -913,6 +1068,7 @@ var
 begin
   sDir := TStringList.Create;
   dir(MobUploadPath + cLocation_Unverarbeitet + '*.jpg', sDir, false);
+  Label10.Caption := inttostr(sDir.count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
 end;
@@ -933,14 +1089,14 @@ var
 begin
   sDir := TStringList.Create;
   dir(MobUploadPath + '*.$$$', sDir, false);
-  sDir.Sort;
+  sDir.sort;
   ListBox2.Items.Assign(sDir);
   sDir.Free;
   workStatus;
 
   sDir := TStringList.Create;
   dir(MobUploadPath + '*.jpg', sDir, false);
-  sDir.Sort;
+  sDir.sort;
   ListBox7.Items.Assign(sDir);
   sDir.Free;
 end;
@@ -960,7 +1116,7 @@ begin
 
   try
     dir(MobUploadPath + '*.$$$', sDir, false);
-    sDir.Sort;
+    sDir.sort;
 
     // Aktuelle Uploads (=Dateien im aktuellem Zugriff) entfernen
     for n := pred(sDir.count) downto 0 do
@@ -1012,6 +1168,12 @@ end;
 procedure TFormFotoService.TabSheet7Show(Sender: TObject);
 begin
   Label7.Caption := 'ZEOS Rev. ' + ZEOS_VERSION;
+end;
+
+procedure TFormFotoService.TabSheet9Show(Sender: TObject);
+begin
+ if edit9.Text='' then
+  edit9.Text := JonDaServerPath;
 end;
 
 procedure TFormFotoService.Timer1Timer(Sender: TObject);
@@ -1195,7 +1357,7 @@ var
           dir(sPath + 'Fotos-????.zip', sFotos, false);
           if sFotos.count > 0 then
           begin
-            sFotos.Sort;
+            sFotos.sort;
             FotosSequence :=
               StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
               'Fotos-', '.zip'), -1);
@@ -1294,7 +1456,7 @@ var
           dir(sPath + 'Wechselbelege-????.zip', sFotos, false);
           if sFotos.count > 0 then
           begin
-            sFotos.Sort;
+            sFotos.sort;
             FotosSequence :=
               StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
               'Wechselbelege-', '.zip'), -1);
@@ -1377,7 +1539,7 @@ begin
   // Zielbestimmung Sicherungsunterverzeichnis
   sBackupRoot := cBackUpPath + cLocation_JonDaServer;
   dir(sBackupRoot + '*.', sDirs, false);
-  sDirs.Sort;
+  sDirs.sort;
   for n := pred(sDirs.count) downto 0 do
     if (pos('.', sDirs[n]) = 1) then
       sDirs.delete(n);
@@ -1546,7 +1708,7 @@ begin
   end;
 
   // Sort Files by "Date / Time", Oldest topmost
-  sFilesClientSorter.Sort;
+  sFilesClientSorter.sort;
   sTemp := TStringList.Create;
   for n := 0 to pred(sFilesClientSorter.count) do
     sTemp.Add(sFiles[integer(sFilesClientSorter.Objects[n])]);
@@ -1655,7 +1817,7 @@ begin
       bOrgaMonOld := nil;
     end;
 
-    sFiles.Sort;
+    sFiles.sort;
 
     // Umbenennen nach dem Standard der jeweiligen Baustelle
     for m := pred(sFiles.count) downto 0 do
@@ -1774,6 +1936,7 @@ begin
                 + cdbPath;
               sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath +
                 sFiles[m];
+              sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
             sFotoResult := JonDaExec.foto(sFotoCall);
             sFotoCall.Free;
