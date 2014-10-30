@@ -150,6 +150,7 @@ type
     CheckBox18: TCheckBox;
     Button22: TButton;
     Button23: TButton;
+    TabSheet7: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);

@@ -84,6 +84,7 @@ const
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
   cMonDaServer_Baustelle = 'baustelle.csv';
+  cMonDaServer_Baustelle_manuell = 'baustelle-manuell.csv';
   cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
 
   cJonDaServer_LogFName = cApplicationName + '.log';
@@ -357,6 +358,7 @@ begin
     { } s, '!?', true),
     { } '@', 0), '#', 0));
 end;
+
 function OrtPostalisch(s: string): string;
 begin
   result := nextp(

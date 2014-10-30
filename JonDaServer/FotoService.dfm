@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet1
+    ActivePage = TabSheet9
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -335,6 +335,13 @@ object FormFotoService: TFormFotoService
           A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
         OnClick = SpeedButton2Click
       end
+      object Label10: TLabel
+        Left = 56
+        Top = 8
+        Width = 6
+        Height = 13
+        Caption = '0'
+      end
       object ListBox5: TListBox
         Left = 24
         Top = 32
@@ -603,6 +610,76 @@ object FormFotoService: TFormFotoService
         Caption = 'Button15'
         TabOrder = 1
         OnClick = Button15Click
+      end
+    end
+    object TabSheet9: TTabSheet
+      Caption = 'AUFTRAG+TS'
+      ImageIndex = 8
+      OnShow = TabSheet9Show
+      object Label11: TLabel
+        Left = 536
+        Top = 384
+        Width = 37
+        Height = 13
+        Caption = 'Label11'
+      end
+      object ListBox11: TListBox
+        Left = 48
+        Top = 104
+        Width = 457
+        Height = 257
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object Button18: TButton
+        Left = 175
+        Top = 75
+        Width = 75
+        Height = 25
+        Caption = 'Suchen'
+        TabOrder = 1
+        OnClick = Button18Click
+      end
+      object Edit8: TEdit
+        Left = 48
+        Top = 77
+        Width = 121
+        Height = 21
+        TabOrder = 2
+        Text = 'AUFTRAG_R'
+      end
+      object Button19: TButton
+        Left = 48
+        Top = 377
+        Width = 457
+        Height = 25
+        Caption = 'Als Alternative bereitstellen'
+        TabOrder = 3
+        OnClick = Button19Click
+      end
+      object Button20: TButton
+        Left = 48
+        Top = 408
+        Width = 457
+        Height = 25
+        Caption = 'Alternative l'#246'schen!'
+        TabOrder = 4
+        OnClick = Button20Click
+      end
+      object Edit9: TEdit
+        Left = 48
+        Top = 48
+        Width = 313
+        Height = 21
+        TabOrder = 5
+      end
+      object CheckBox5: TCheckBox
+        Left = 56
+        Top = 448
+        Width = 97
+        Height = 17
+        Caption = 'Abbruch'
+        TabOrder = 6
       end
     end
   end

@@ -63,6 +63,7 @@ const
   cParameter_foto_RID = 'RID';
   cParameter_foto_zaehlernummer_alt = 'ZAEHLERNUMMER_ALT';
   cParameter_foto_zaehlernummer_neu = 'ZAEHLERNUMMER_NEU';
+  cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
   cParameter_foto_geraet = 'GERAET';
   cParameter_foto_Pfad = 'PFAD';
 
@@ -2991,7 +2992,15 @@ begin
 
           until true;
 
-        end
+        end;
+      8:
+        begin
+          // manuelle Weiterbearbeitung, z.B. Weiterleitung pre eMail
+          FotoPrefix :=
+          { } sParameter.values[cParameter_foto_baustelle] + '-' +
+          { } sParameter.values[cParameter_foto_ABNummer] + '-';
+          UmbenennungAbgeschlossen := true;
+        end;
     else
 
       // Standard, 0

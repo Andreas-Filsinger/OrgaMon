@@ -33,7 +33,7 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet3
+    ActivePage = TabSheet7
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -900,6 +900,10 @@ object FormGUI: TFormGUI
         TabOrder = 2
         OnClick = Button22Click
       end
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'AUFTRAG+TS'
+      ImageIndex = 6
     end
   end
   object ProgressBar1: TProgressBar
