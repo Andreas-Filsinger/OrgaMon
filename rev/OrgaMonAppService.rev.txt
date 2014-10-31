@@ -23,6 +23,7 @@ Rev 1.051 (28.10.14) Andreas Filsinger
  Neu: Anzahl der unverarbeiteten wird angezeigt
  Neu: AUFTRAG_R kann in alten AUFTRAG+TS.BLA gesucht werden
  Neu: Alte AUFTRAG+TS.BLA können neben dem aktiven BLA gestellt werden
+ Neu: Manuelle Baustellen können zugeordnet werden "baustelle-manuell.csv"
 
 Rev 1.050 (24.07.14) Andreas Filsinger
 
