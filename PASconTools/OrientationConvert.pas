@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.232; // ../rev/Oc.rev.txt
+  Version: single = 1.233; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -4647,13 +4647,13 @@ var
       //
       values['Zaehler_Nummer'] := x(r, 'Zaehler_Nummer');
       values['ZaehlerStandAlt'] := x(r, 'ZaehlerStandAlt');
-      // x(r + 1, 'ZaehlerStandAlt');
+      values['NA'] := x_optional(r, 'NA');
 
       values['ZaehlerNummerNeu'] := x(r, 'ZaehlerNummerNeu');
       values['ZaehlerStandNeu'] := x(r, 'ZaehlerStandNeu');
       values['MaterialNummerNeu'] := x(r, 'MaterialNummerNeu');
+      values['NN'] := x_optional(r, 'NN');
 
-      // x(r + 1, 'ZaehlerStandNeu');
       values['WechselMoment'] := xd(r);
       values['WechselDatum'] := copy(values['WechselMoment'], 1, 8);
 
