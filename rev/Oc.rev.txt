@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.233 (04.11.14) Andreas Filsinger
+
+ Neu: xls2IDOC: NA und NN sind verwertbar
+
 Rev 1.232 (23.04.14) Andreas Filsinger
 
  Neu: xls2rwe: OrderId immer 9-Stellig
