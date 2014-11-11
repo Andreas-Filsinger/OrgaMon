@@ -3,7 +3,7 @@
 //**** KLASSE ZUR ABBILDUNG DER ARTIKEL **********************************************************************************************
 class twebshop_article extends tvisual {
 
-    static public $properties = array("TITEL", "KOMPONIST_R", "ARRANGEUR_R", "RID", "LAND_R", "SORTIMENT_R", "NUMERO", "VERLAG_R", "VERLAGNO", "RANG", "DAUER", "SCHWER_GRUPPE", "SCHWER_DETAILS", "ERSTEINTRAG", "PROBESTIMME", "WEBSHOP", "INTERN_INFO");
+    static public $properties = array("TITEL", "KOMPONIST_R", "ARRANGEUR_R", "RID", "LAND_R", "SORTIMENT_R", "NUMERO", "VERLAG_R", "VERLAGNO", "RANG", "DAUER", "SCHWER_GRUPPE", "SCHWER_DETAILS", "ERSTEINTRAG", "PROBESTIMME", "WEBSHOP", "INTERN_INFO", "LAUFNUMMER");
     protected $rid = 0;
     protected $uid = "";
     protected $wid = NULL;
@@ -173,7 +173,7 @@ class twebshop_article extends tvisual {
 
                     /* === Links auf Windbandmusic überprüfen ### Sonderlösung ### === */
                     if (strtolower(substr($Item, 0, 28)) == "http://www.windbandmusic.com") {
-                        $Music = $this->getWindbandmusic($Item);
+                        $Music = $this->getWindbandmusic($this->LAUFNUMMER);
                         $this->sounds = array_merge($this->sounds, $Music);
                     } else {
                         $this->sounds[] = $Item;
@@ -245,15 +245,9 @@ class twebshop_article extends tvisual {
     /* <-- */
 
     /* --> 27.06.2014 michaelhacksoftware : MP3s von Windbandmusic ermitteln ### Sonderlösung ### */
-    private function getWindbandmusic($Url) {
+    private function getWindbandmusic($Laufnummer) {
 
         $Result = array();
-
-        /* === URL und Query String parsen, um an die ID zu kommen === */
-        $QueryString = parse_url($Url, PHP_URL_QUERY);
-        parse_str($QueryString, $Query);
-
-        if (!isset($Query['id'])) return $Result;
 
         /* === Mp3 Dateien von Windbandmusic auslesen === */
         $Input  = "";
@@ -261,7 +255,7 @@ class twebshop_article extends tvisual {
 
         if ($Socket) {
 
-            fputs($Socket, "GET /index.php5?action=get_media&id=" . urlencode($Query['id']) . " HTTP/1.0\r\nHost: www.windbandmusic.com\r\n\r\n");
+            fputs($Socket, "GET /index.php5?action=get_media&id=" . $Laufnummer . " HTTP/1.0\r\nHost: www.windbandmusic.com\r\n\r\n");
 
             while (!feof($Socket)) {
                 $Input .= fgets($Socket, 256);

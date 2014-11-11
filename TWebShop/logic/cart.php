@@ -35,12 +35,12 @@ class twebshop_cart extends tvisual {
 
     public function buildSum($refresh_delivery = true) {
         $this->sum = 0;
-        if ($this->person_r != 0) {
+        //if ($this->person_r != 0) {
 
             foreach ($this->article as $article)
                 $this->sum += $article->price->getSumBrutto();
             $this->sum += ($refresh_delivery) ? $this->getDeliveryPriceSumme() : $this->delivery->getSumBrutto();
-        }
+        //}
         return $this->sum;
     }
 

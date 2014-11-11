@@ -13,6 +13,17 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2013 by Alexander Knam
 // INFO END
 
+Rev 3.028 (11.11.14) Michael Hack
+
+ Neu: Sprechende Links für Artikel, Verlage und Musiker
+ Neu: Automatische Sitemapgenerierung
+ 
+ Geändert: Anzeige des Warenkorbpreises auch wenn kein Kunde angemeldet ist
+ Geändert: Sonderabfrage externer Musikdateien optimiert
+ 
+ Bug: BOMs entfernt
+ Bug: HTML Fehler korrigiert
+ 
 Rev 3.027 (22.09.14) Michael Hack
 
  Neu: Meta Keywords für Komponist/Arrangeur

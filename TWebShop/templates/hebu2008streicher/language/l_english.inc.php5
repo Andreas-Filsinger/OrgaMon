@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //LANGUAGE
 define("__LANGUAGE","english"); //entsprechend dem Dateinamen
 
