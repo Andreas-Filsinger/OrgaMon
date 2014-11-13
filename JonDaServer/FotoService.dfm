@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet9
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -680,6 +680,75 @@ object FormFotoService: TFormFotoService
         Height = 17
         Caption = 'Abbruch'
         TabOrder = 6
+      end
+    end
+    object TabSheet10: TTabSheet
+      Caption = 'Rollback'
+      ImageIndex = 9
+      object Label12: TLabel
+        Left = 3
+        Top = 16
+        Width = 30
+        Height = 13
+        Caption = 'Quelle'
+      end
+      object Label13: TLabel
+        Left = 3
+        Top = 35
+        Width = 95
+        Height = 13
+        Caption = 'Transaktionsauszug'
+      end
+      object Edit10: TEdit
+        Left = 139
+        Top = 13
+        Width = 198
+        Height = 21
+        TabOrder = 0
+        Text = 'X:\JonDaServer\#83\'
+      end
+      object Edit11: TEdit
+        Left = 139
+        Top = 32
+        Width = 249
+        Height = 21
+        TabOrder = 1
+        Text = 'W:\JonDaServer\St'#246'rung\Rollback.txt'
+      end
+      object Button21: TButton
+        Left = 575
+        Top = 453
+        Width = 148
+        Height = 25
+        Caption = 'Rollback'
+        TabOrder = 2
+        OnClick = Button21Click
+      end
+      object ListBox12: TListBox
+        Left = 3
+        Top = 54
+        Width = 720
+        Height = 393
+        ItemHeight = 13
+        TabOrder = 3
+      end
+      object Button22: TButton
+        Left = 360
+        Top = 3
+        Width = 115
+        Height = 25
+        Caption = '<- Produktiv-Ablage'
+        TabOrder = 4
+        OnClick = Button22Click
+      end
+      object Button23: TButton
+        Left = 512
+        Top = 3
+        Width = 137
+        Height = 25
+        Caption = '<- Laufende DaSi'
+        TabOrder = 5
+        OnClick = Button23Click
       end
     end
   end

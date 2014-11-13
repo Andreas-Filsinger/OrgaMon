@@ -116,6 +116,8 @@ type
 
   published
 
+    property Methods: TStringList read sMethodNames;
+
     // Type-Info for the TStringList.Objects
     class function oInteger: TObject;
     class function oDouble: TObject;
@@ -134,7 +136,6 @@ type
     class function fromDateTime(d: TDateTime): string;
     class function fromBoolean(b: boolean): string;
 
-    procedure addMethod(Name: string; Method: TXMLRPC_Method);
     // XMLRPC-Methoden anmelden
     //
     // Name: [<NameSpace> "."] <Methodenname>
@@ -149,6 +150,11 @@ type
     // sein. Die Anzahl der Server ist auf die freien Ports
     // beschränkt.
     // Method: Die implementierte Routine, die gerufen werden soll
+    procedure addMethod(Name: string; Method: TXMLRPC_Method);
+
+    // XMLRPC-Metoden local ausführen
+    //
+    function exec(Name: string; Parameter: TStringList): TStringList;
 
   end;
 
@@ -326,6 +332,17 @@ begin
   result := cXML_Error;
   ersetze(cXML_Tag_ErrorCode, IntToStr(ErrorCode), result);
   ersetze(cXML_Tag_ErrorText, ErrorMsg, result);
+end;
+
+function TXMLRPC_Server.exec(Name: string; Parameter: TStringList): TStringList;
+var
+  n: Integer;
+begin
+  n := sMethodNames.IndexOf(Name);
+  if (n <> -1) then
+    result := mMethodAddr[n](Parameter)
+  else
+    result := nil;
 end;
 
 function TXMLRPC_Server.LogFName: string;
@@ -713,7 +730,7 @@ var
     result := s;
     ersetze(cServerFunctions_Meta_CallCount, IntToStr(Stat_Calls), result);
     ersetze(cServerFunctions_Meta_Uptime, SecondsToStr9(RunTime) + '@' +
-      SecondsToStr9(UpTime),result);
+      SecondsToStr9(UpTime), result);
     result := QuoteString(result);
   end;
 

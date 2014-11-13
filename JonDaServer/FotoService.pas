@@ -38,7 +38,7 @@ uses
   JonDaExec, MemCache;
 
 const
-  Version: single = 1.051; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.052; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -142,6 +142,15 @@ type
     Label11: TLabel;
     Edit9: TEdit;
     CheckBox5: TCheckBox;
+    TabSheet10: TTabSheet;
+    Edit10: TEdit;
+    Label12: TLabel;
+    Edit11: TEdit;
+    Label13: TLabel;
+    Button21: TButton;
+    ListBox12: TListBox;
+    Button22: TButton;
+    Button23: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -174,6 +183,9 @@ type
     procedure Button20Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
     procedure TabSheet9Show(Sender: TObject);
+    procedure Button21Click(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -308,12 +320,99 @@ begin
   FileDelete(MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
+procedure TFormFotoService.Button21Click(Sender: TObject);
+const
+  // TransaktionsCountMaske = '??????-';
+  TransaktionsCountMaske = '*-';
+var
+  QuellPfad, TransaktionenFName: string;
+  TransaktionsCount: string;
+  TRNs: TStringList;
+  TRNs_Fail: TStringList;
+  n, m: integer;
+  SrcFName: string;
+  SrcKandidaten: TStringList;
+  FotoSize: int64;
+begin
+  TRNs := TStringList.Create;
+  SrcKandidaten := TStringList.Create;
+  TRNs_Fail := TStringList.Create;
+
+  QuellPfad := Edit10.Text;
+  TransaktionenFName := Edit11.Text;
+  ListBox12.clear;
+  TRNs.LoadFromFile(TransaktionenFName);
+  for n := 0 to pred(TRNs.Count) do
+    if pos('cp ', TRNs[n]) = 1 then
+    begin
+      SrcFName := nextp(TRNs[n], ' ', 1);
+      dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName,
+        SrcKandidaten, false, true);
+      if (SrcKandidaten.Count = 0) then
+      begin
+        ListBox12.Items.Add('ERROR: ' + SrcFName + ' nicht in dieser Quelle');
+        TRNs_Fail.Add(TRNs[n]);
+      end
+      else
+      begin
+
+        // Identische Rausreduzieren
+        for m := pred(SrcKandidaten.Count) downto 1 do
+        begin
+          FotoSize := FSize(QuellPfad + cLocation_MOB + SrcKandidaten[pred(m)]);
+          if
+          { } (FotoSize > 0) and
+          { } (FotoSize = FSize(QuellPfad + cLocation_MOB + SrcKandidaten[m]))
+          then
+            SrcKandidaten.Delete(m);
+        end;
+
+        // Mehrfache versionslieferungen eines Motives geht noch nicht!
+        // imp pend!
+        if (SrcKandidaten.Count > 1) then
+        begin
+          ListBox12.Items.Add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' +
+            IntToStr(SrcKandidaten.Count) + 'x');
+          TRNs_Fail.Add(TRNs[n]);
+        end
+        else
+        begin
+          TransaktionsCount := nextp(SrcKandidaten[0], '-', 0);
+          ListBox12.Items.Add(
+            { } 'cp ' + QuellPfad + cLocation_MOB + TransaktionsCount + '-' +
+            SrcFName + ' ' +
+            { } MobUploadPath + SrcFName);
+
+          FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' +
+            SrcFName,MobUploadPath + SrcFName);
+        end;
+      end;
+     Application.ProcessMessages;
+    end;
+  TRNs_Fail.SaveToFile(TransaktionenFName + '.fail.txt');
+
+  TRNs.Free;
+  SrcKandidaten.Free;
+  TRNs_Fail.Free;
+
+end;
+
+procedure TFormFotoService.Button22Click(Sender: TObject);
+begin
+  Edit10.Text := cBackUpPath;
+end;
+
+procedure TFormFotoService.Button23Click(Sender: TObject);
+begin
+  Edit10.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
+end;
+
 procedure TFormFotoService.Button2Click(Sender: TObject);
 var
   n: integer;
   FName, FNameRemote, GeraeteNo: string;
 begin
-  for n := 0 to pred(ListBox5.Items.count) do
+  for n := 0 to pred(ListBox5.Items.Count) do
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
@@ -343,13 +442,13 @@ begin
   if (ListBox5.ItemIndex <> -1) then
   begin
     doWork(ListBox5.ItemIndex);
-    ListBox5.Items.delete(ListBox5.ItemIndex);
+    ListBox5.Items.Delete(ListBox5.ItemIndex);
   end
   else
   begin
-    for n := 0 to pred(ListBox5.Items.count) do
+    for n := 0 to pred(ListBox5.Items.Count) do
       doWork(n);
-    ListBox5.Items.Clear;
+    ListBox5.Items.clear;
   end;
 end;
 
@@ -438,11 +537,11 @@ begin
     // Alle
     sDir := TStringList.Create;
     dir(pPath_html + '*.zip.html', sDir, false);
-    if (sDir.count > 0) then
+    if (sDir.Count > 0) then
     begin
-      ProgressBar1.Max := pred(sDir.count);
+      ProgressBar1.Max := pred(sDir.Count);
       ProgressBar1.Position := 0;
-      for n := 0 to pred(sDir.count) do
+      for n := 0 to pred(sDir.Count) do
       begin
         if CheckBox4.checked then
           break;
@@ -473,7 +572,7 @@ begin
   MemCache.CheckServers;
   ListBox9.Items.Add(
 
-    inttostr(MemCache.Increment('sequence.69VVTGKZ1')));
+    IntToStr(MemCache.Increment('sequence.69VVTGKZ1')));
 
 end;
 
@@ -485,7 +584,7 @@ end;
 
 procedure TFormFotoService.Button17Click(Sender: TObject);
 begin
-  ListBox10.Items.Add(inttostr(DirSize('X:\JonDaServer\#61')
+  ListBox10.Items.Add(IntToStr(DirSize('X:\JonDaServer\#61')
     DIV (1024 * 1024)));
 end;
 
@@ -502,23 +601,23 @@ begin
   if (AUFTRAG_R < 1) then
     exit;
 
-  Listbox11.Items.Clear;
+  ListBox11.Items.clear;
   AllTRN := TStringList.Create;
 
-  dir(edit9.Text + '?????.', AllTRN, false);
+  dir(Edit9.Text + '?????.', AllTRN, false);
   AllTRN.sort;
-  ListBox11.Items.Add('search in ' + IntToStr(AllTRN.count) + ' subdirs ...');
-  for n := pred(AllTRN.count) downto 0 do
+  ListBox11.Items.Add('search in ' + IntToStr(AllTRN.Count) + ' subdirs ...');
+  for n := pred(AllTRN.Count) downto 0 do
   begin
     repeat
-      if FileExists(edit9.Text + AllTRN[n] + '\AUFTRAG+TS.BLA') then
+      if FileExists(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS.BLA') then
       begin
         AuftragFound := false;
         bOrgaMon := TBLager.Create;
         with bOrgaMon do
         begin
           ListBox11.Items.Add('check ' + AllTRN[n] + ' ...');
-          Init(edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon,
+          Init(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon,
             sizeof(TMDERec));
           BeginTransaction(now);
           if exist(AUFTRAG_R) then
@@ -535,12 +634,12 @@ begin
         if AuftragFound then
           break;
       end;
-      AllTRN.delete(n);
-      if (n mod 25=0) then
+      AllTRN.Delete(n);
+      if (n mod 25 = 0) then
       begin
-       application.processmessages;
-       if CheckBox5.checked then
-        break;
+        Application.ProcessMessages;
+        if CheckBox5.checked then
+          break;
       end;
 
     until true;
@@ -567,7 +666,7 @@ begin
     exit;
   end;
   if FileCopy(
-    { } edit9.Text + TRN + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
+    { } Edit9.Text + TRN + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
     { } MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension) then
     Label11.Caption := 'OK';
   EndHourGlass;
@@ -630,7 +729,7 @@ begin
   with PostgreSQL_Query do
   begin
 
-    sql.Clear;
+    sql.clear;
     sql.Add('select * from auftrag for update');
     open;
     insert;
@@ -638,7 +737,7 @@ begin
     post;
     close;
 
-    sql.Clear;
+    sql.clear;
     sql.Add('select * from auftrag');
     open;
     for n := 0 to pred(FieldCount) do
@@ -683,7 +782,7 @@ begin
     with WARTEND do
     begin
       insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
-      r := locate('RID', inttostr(AUFTRAG_R));
+      r := locate('RID', IntToStr(AUFTRAG_R));
       if (r = -1) then
         break;
       del(r);
@@ -696,7 +795,7 @@ begin
   SpeedButton3Click(Sender);
 
   // set Focus
-  if i < ListBox6.Items.count then
+  if i < ListBox6.Items.Count then
     ListBox6.ItemIndex := i;
 
 end;
@@ -739,7 +838,7 @@ procedure TFormFotoService.ensureGlobals;
 var
   MyIni: TIniFile;
   SectionName: string;
-  r : integer;
+  r: integer;
 begin
   if not(assigned(tBAUSTELLE)) then
   begin
@@ -775,8 +874,8 @@ begin
       begin
         insertFromFile(MyWorkingPath + cMonDaServer_Baustelle_manuell);
         for r := RowCount downto 1 do
-         if (length(ReadCell(r,cE_FTPUSER))<3) then
-          Del(r);
+          if (length(ReadCell(r, cE_FTPUSER)) < 3) then
+            del(r);
         SaveToFile(MyWorkingPath + 'baustelle-alle.csv');
       end;
     end;
@@ -817,7 +916,7 @@ begin
     inc(result);
     if (result >= round(power(10, cAnzahlStellen_Transaktionszaehler))) then
       result := 1;
-    WriteString('System', 'Sequence', inttostr(result));
+    WriteString('System', 'Sequence', IntToStr(result));
   end;
   mIni.Free;
 end;
@@ -848,7 +947,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[i];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if pos('cp', sMoveTransaktionen[n]) = 1 then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -880,7 +979,7 @@ begin
     { Verzeichnis } Path +
     { Dateiname } ListBox3.Items[i];
 
-    for n := pred(sMoveTransaktionen.count) downto 0 do
+    for n := pred(sMoveTransaktionen.Count) downto 0 do
     begin
 
       // wurde die Datei ev. Umbenannt?
@@ -915,7 +1014,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[i];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if (pos('cp', sMoveTransaktionen[n]) = 1) then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -941,7 +1040,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[i];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if (pos('cp', sMoveTransaktionen[n]) = 1) then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -989,9 +1088,9 @@ begin
   //
   if (Key = 0) then
   begin
-    if (ListBox3.Items.count > 0) then
+    if (ListBox3.Items.Count > 0) then
     begin
-      ListBox3.ItemIndex := min(i, ListBox3.Items.count - 1);
+      ListBox3.ItemIndex := min(i, ListBox3.Items.Count - 1);
       LoadPic;
     end;
   end;
@@ -1050,9 +1149,9 @@ begin
 
   // Maske Reduce
   if Edit5.Text <> '*' then
-    for n := pred(sDir.count) downto 0 do
+    for n := pred(sDir.Count) downto 0 do
       if pos(Edit5.Text, sDir[n]) = 0 then
-        sDir.delete(n);
+        sDir.Delete(n);
 
   sDir.sort;
   ListBox3.Items.Assign(sDir);
@@ -1068,7 +1167,7 @@ var
 begin
   sDir := TStringList.Create;
   dir(MobUploadPath + cLocation_Unverarbeitet + '*.jpg', sDir, false);
-  Label10.Caption := inttostr(sDir.count);
+  Label10.Caption := IntToStr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
 end;
@@ -1119,23 +1218,23 @@ begin
     sDir.sort;
 
     // Aktuelle Uploads (=Dateien im aktuellem Zugriff) entfernen
-    for n := pred(sDir.count) downto 0 do
+    for n := pred(sDir.Count) downto 0 do
     begin
       if not(FileAge(MobUploadPath + sDir[n], FileDateTime)) then
       begin
         // Datei ist verschwunden!
-        sDir.delete(n);
+        sDir.Delete(n);
         continue;
       end;
       if (SecondsDiff(now, FileDateTime) < 120) then
       begin
         // Datei wird gerade hochgeladen, bzw. ist zu frisch
-        sDir.delete(n);
+        sDir.Delete(n);
         continue;
       end;
     end;
 
-    for n := 0 to pred(sDir.count) do
+    for n := 0 to pred(sDir.Count) do
     begin
       m := nextp(sDir[n], '-', 0);
       if (sMonteure.IndexOf(m) = -1) then
@@ -1172,8 +1271,8 @@ end;
 
 procedure TFormFotoService.TabSheet9Show(Sender: TObject);
 begin
- if edit9.Text='' then
-  edit9.Text := JonDaServerPath;
+  if Edit9.Text = '' then
+    Edit9.Text := JonDaServerPath;
 end;
 
 procedure TFormFotoService.Timer1Timer(Sender: TObject);
@@ -1189,7 +1288,7 @@ begin
   if (TimerInit < cKikstart_delay * 60 * 1000) then
   begin
     if (TimerInit = 0) then
-      Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
+      Log('Warte ' + IntToStr(cKikstart_delay) + ' Minuten ...');
     inc(TimerInit, Timer1.Interval);
     if (TimerInit >= cKikstart_delay * 60 * 1000) then
     begin
@@ -1254,7 +1353,8 @@ procedure TFormFotoService.workAblage;
 const
   cIsAblageMarkerFile = 'ampel-horizontal.gif';
   cFileTimeOutDays = 50 + 10;
-  cPicTimeOutDays = 0; // 0 = gestern ist schon zu alt
+  cPicTimeOutDays = 0;
+  // 0 = gestern ist schon zu alt
 var
   sDirs: TStringList;
   sZips: TStringList;
@@ -1288,35 +1388,35 @@ var
     FotoFSize: int64;
   begin
     Pending := false;
-    sPics.Clear;
+    sPics.clear;
     repeat
       // Jpegs
       dir(sPath + '*.jpg', sPics, false);
-      if (sPics.count = 0) then
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
         if (FileDate(sPath + sPics[m]) >= PIC_OlderThan) then
-          sPics.delete(m);
-      if (sPics.count = 0) then
+          sPics.Delete(m);
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "wartende" Bilder
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
         if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1)
         then
-          sPics.delete(m);
-      if (sPics.count = 0) then
+          sPics.Delete(m);
+      if (sPics.Count = 0) then
         break;
 
       // reduziere auf < 100 MByte
       FotoFSize := 0;
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
       begin
         if (FotoFSize >= cMaxZIP_Size) then
         begin
-          sPics.delete(m);
+          sPics.Delete(m);
           Pending := true;
         end
         else
@@ -1355,11 +1455,11 @@ var
         if FotosSequence < 0 then
         begin
           dir(sPath + 'Fotos-????.zip', sFotos, false);
-          if sFotos.count > 0 then
+          if sFotos.Count > 0 then
           begin
             sFotos.sort;
             FotosSequence :=
-              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
+              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)],
               'Fotos-', '.zip'), -1);
           end;
         end;
@@ -1382,8 +1482,8 @@ var
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.count) then
+        { } tabelleBAUSTELLE.ReadCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
         FormFotoService.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
@@ -1393,11 +1493,11 @@ var
 
       // Fotos-nnnn.ini erhöhen
       mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
-      mIni.WriteString('System', 'Sequence', inttostr(FotosSequence));
+      mIni.WriteString('System', 'Sequence', IntToStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten JPGS löschen!
-      for m := 0 to pred(sPics.count) do
+      for m := 0 to pred(sPics.Count) do
         FileDelete(sPath + sPics[m]);
 
     until true;
@@ -1411,31 +1511,31 @@ var
   var
     m: integer;
   begin
-    sPics.Clear;
+    sPics.clear;
     repeat
 
       // Jpegs
       dir(sPath + '*.zip.html', sPics, false);
-      if (sPics.count = 0) then
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
         if (FileDate(sPath + sPics[m]) >= PIC_OlderThan) then
-          sPics.delete(m);
-      if (sPics.count = 0) then
+          sPics.Delete(m);
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "wartende" Wechselbelege, bei denen das pdf fehlt!
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
         if not(FileExists(sPath + sPics[m] + '.pdf')) then
-          sPics.delete(m);
-      if (sPics.count = 0) then
+          sPics.Delete(m);
+      if (sPics.Count = 0) then
         break;
 
       // .pdf muss auch mit!
       // erweitere um die .pdf Dateien
-      for m := 0 to pred(sPics.count) do
+      for m := 0 to pred(sPics.Count) do
         sPics.Add(sPics[m] + '.pdf');
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
@@ -1454,11 +1554,11 @@ var
         if FotosSequence < 0 then
         begin
           dir(sPath + 'Wechselbelege-????.zip', sFotos, false);
-          if sFotos.count > 0 then
+          if sFotos.Count > 0 then
           begin
             sFotos.sort;
             FotosSequence :=
-              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
+              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)],
               'Wechselbelege-', '.zip'), -1);
           end;
         end;
@@ -1481,8 +1581,8 @@ var
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.count) then
+        { } tabelleBAUSTELLE.ReadCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
         FormFotoService.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
@@ -1491,11 +1591,11 @@ var
 
       // Laufnummer erhöhen
       mIni := TIniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
-      mIni.WriteString('System', 'Sequence', inttostr(FotosSequence));
+      mIni.WriteString('System', 'Sequence', IntToStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten löschen!
-      for m := 0 to pred(sPics.count) do
+      for m := 0 to pred(sPics.Count) do
         FileDelete(sPath + sPics[m]);
 
     until true;
@@ -1540,10 +1640,10 @@ begin
   sBackupRoot := cBackUpPath + cLocation_JonDaServer;
   dir(sBackupRoot + '*.', sDirs, false);
   sDirs.sort;
-  for n := pred(sDirs.count) downto 0 do
+  for n := pred(sDirs.Count) downto 0 do
     if (pos('.', sDirs[n]) = 1) then
-      sDirs.delete(n);
-  sDestShort := sDirs[pred(sDirs.count)];
+      sDirs.Delete(n);
+  sDestShort := sDirs[pred(sDirs.Count)];
   sDest := sBackupRoot + sDestShort + '\';
 
   // work what?
@@ -1551,13 +1651,13 @@ begin
     dir(cWorkPath + '*.', sDirs, false)
   else
   begin
-    sDirs.Clear;
+    sDirs.clear;
     sDirs.Add(Edit2.Text);
   end;
 
   // sDirs.Clear;
   // sDirs.Add('orgamon-mob');
-  for n := 0 to pred(sDirs.count) do
+  for n := 0 to pred(sDirs.Count) do
   begin
     if (pos('.', sDirs[n]) = 1) then
       continue;
@@ -1571,7 +1671,7 @@ begin
 
         // Zips ablegen
         dir(sPath + '*.zip', sZips, false);
-        for m := 0 to pred(sZips.count) do
+        for m := 0 to pred(sZips.Count) do
         begin
           if (FileDate(sPath + sZips[m]) < ZIP_OlderThan) then
           begin
@@ -1609,7 +1709,8 @@ end;
 procedure TFormFotoService.workEingang(All: boolean);
 var
   sFiles: TStringList;
-  IgnoreIt: boolean; // Überspringen weil zu neu?!
+  IgnoreIt: boolean;
+  // Überspringen weil zu neu?!
   sFilesClientSorter: TStringList;
   sTemp: TStringList;
   n, m, i, f: integer;
@@ -1624,8 +1725,10 @@ var
   FotoMussWarten: boolean;
   FotoPrefix: string;
   FotoGeraeteNo: string;
-  FotoParameter: string; // FA, Ausbau, FN, Anlage usw.
-  FotoDateiName, FotoDateiNameVerfuegbar: string; // Kompletter Dateiname
+  FotoParameter: string;
+  // FA, Ausbau, FN, Anlage usw.
+  FotoDateiName, FotoDateiNameVerfuegbar: string;
+  // Kompletter Dateiname
   FotoZiel: string;
   FotoHost: string;
 
@@ -1658,7 +1761,7 @@ var
       { } MobUploadPath + cLocation_Unverarbeitet + ID + '+' + sFiles[m]);
 
     // Datei aus der Verarbeitungskette entfernen
-    sFiles.delete(m);
+    sFiles.Delete(m);
   end;
 
 begin
@@ -1674,7 +1777,7 @@ begin
   // reduce to Files-Age > 5 Seconds
   d := DateGet;
   s := SecondsGet;
-  for n := pred(sFiles.count) downto 0 do
+  for n := pred(sFiles.Count) downto 0 do
   begin
     FName := MobUploadPath + sFiles[n];
     FileAge(FName, FileTimeStamp);
@@ -1710,22 +1813,22 @@ begin
   // Sort Files by "Date / Time", Oldest topmost
   sFilesClientSorter.sort;
   sTemp := TStringList.Create;
-  for n := 0 to pred(sFilesClientSorter.count) do
+  for n := 0 to pred(sFilesClientSorter.Count) do
     sTemp.Add(sFiles[integer(sFilesClientSorter.Objects[n])]);
   sFiles.Assign(sTemp);
   sTemp.Free;
 
   // Reduce Work to Only One!
   if not(All) then
-    for n := pred(sFiles.count) downto 1 do
-      sFiles.delete(n);
+    for n := pred(sFiles.Count) downto 1 do
+      sFiles.Delete(n);
 
   // Generate Work-TAN
-  if (sFiles.count > 0) then
+  if (sFiles.Count > 0) then
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
 
   // make backup of all new Files
-  for n := 0 to pred(sFiles.count) do
+  for n := 0 to pred(sFiles.Count) do
     if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID
       + '-' + sFiles[n])) then
     begin
@@ -1735,7 +1838,7 @@ begin
     end;
 
   // reduce to valid jpg's
-  for n := pred(sFiles.count) downto 0 do
+  for n := pred(sFiles.Count) downto 0 do
   begin
     FullSuccess := false;
     FName := MobUploadPath + sFiles[n];
@@ -1796,7 +1899,7 @@ begin
       unverarbeitet(n);
   end;
 
-  if (sFiles.count > 0) then
+  if (sFiles.Count > 0) then
   begin
 
     ensureGlobals;
@@ -1820,7 +1923,7 @@ begin
     sFiles.sort;
 
     // Umbenennen nach dem Standard der jeweiligen Baustelle
-    for m := pred(sFiles.count) downto 0 do
+    for m := pred(sFiles.Count) downto 0 do
     begin
       RenameError := false;
       FullSuccess := false;
@@ -1893,7 +1996,7 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log('ERROR: ' + sFiles[m] + ': RID ' + inttostr(RID) +
+        Log('ERROR: ' + sFiles[m] + ': RID ' + IntToStr(RID) +
           ' konnte nicht gefunden werden!');
         break;
       end;
@@ -1918,7 +2021,7 @@ begin
             begin
               // Belegung der Foto-Parameter
               sFotoCall.Values[cParameter_foto_Modus] :=
-                tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+                tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -1926,7 +2029,7 @@ begin
                 Oem2asci(Zaehler_Strasse);
               sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
               sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
-              sFotoCall.Values[cParameter_foto_RID] := inttostr(RID);
+              sFotoCall.Values[cParameter_foto_RID] := IntToStr(RID);
               sFotoCall.Values[cParameter_foto_zaehlernummer_alt] :=
                 zaehlernummer_alt;
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] :=
@@ -1974,8 +2077,8 @@ begin
         //
         if (BAUSTELLE_Index > -1) and not(RenameError) then
         begin
-          FotoZiel := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FTPUSER);
-          FotoHost := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FTPHOST);
+          FotoZiel := tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FTPUSER);
+          FotoHost := tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FTPHOST);
           repeat
 
             if (length(FotoZiel) < 3) then
@@ -2011,11 +2114,11 @@ begin
               if (i = 1) then
                 FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
                   revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' +
-                  inttostr(i) + '.jpg'
+                  IntToStr(i) + '.jpg'
               else
                 FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
                   revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' +
-                  inttostr(i) + '.jpg';
+                  IntToStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -2061,7 +2164,7 @@ begin
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
                 { DATEINAME_AKTUELL } FotoZiel + '\' + FotoDateiName + ';' +
-                { RID } inttostr(RID) + ';' +
+                { RID } IntToStr(RID) + ';' +
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } ';' +
                 { MOMENT } DatumLog,
@@ -2098,7 +2201,7 @@ begin
     end;
 
     // Bilder jetzt einfach sichern
-    if (sFiles.count > 0) then
+    if (sFiles.Count > 0) then
     begin
       (*
         if (zip(
@@ -2122,7 +2225,7 @@ begin
       *)
 
       Log(ID);
-      for n := 0 to pred(sFiles.count) do
+      for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(MobUploadPath + sFiles[n])) then
         begin
           Log('ERROR: ' + sFiles[n] + ': Nicht löschbar');
@@ -2190,13 +2293,13 @@ begin
     i := 0;
     c := colOf('MOMENT');
     for r := RowCount downto 1 do
-      if (StrToIntDef(readCell(r, c), 0) < MomentTimeout) then
+      if (StrToIntDef(ReadCell(r, c), 0) < MomentTimeout) then
       begin
         del(r);
         inc(i);
       end;
     if (i > 0) then
-      Log('INFO: ' + 'gebe ' + inttostr(i) +
+      Log('INFO: ' + 'gebe ' + IntToStr(i) +
         ' Dateieinträge frei, da sie älter als 10 Tage sind');
 
   end;
@@ -2208,11 +2311,11 @@ begin
   for r := WARTEND.RowCount downto 1 do
   begin
 
-    RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
+    RID := StrToIntDef(WARTEND.ReadCell(r, 'RID'), 0);
     ZAEHLER_NUMMER_NEU := '';
 
     // Nachtrag der Baustellen-Info
-    sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
+    sBaustelle := WARTEND.ReadCell(r, 'BAUSTELLE');
     if (sBaustelle = '') then
       if bOrgaMon.exist(RID) then
       begin
@@ -2229,7 +2332,7 @@ begin
       if (BAUSTELLE_Index > -1) then
       begin
         FotoBenennungsModus := StrToIntDef(
-          { } tBAUSTELLE.readCell(
+          { } tBAUSTELLE.ReadCell(
           { } BAUSTELLE_Index,
           { } cE_FotoBenennung), 0);
 
@@ -2245,7 +2348,7 @@ begin
       ZAEHLER_NUMMER_NEU :=
       { } ZaehlerNummerNeu(
         { } RID,
-        { } WARTEND.readCell(r, 'GERAETENO'));
+        { } WARTEND.ReadCell(r, 'GERAETENO'));
 
     // Zuschaltbare Alternative: den Inhalt einer CSV prüfen
     if (ZAEHLER_NUMMER_NEU = '') then
@@ -2256,9 +2359,9 @@ begin
           CSV := tsTable.Create;
           CSV.insertFromFile(MyWorkingPath + 'ZaehlerNummerNeu.xls.csv');
         end;
-        ro := CSV.locate('ReferenzIdentitaet', inttostr(RID));
+        ro := CSV.locate('ReferenzIdentitaet', IntToStr(RID));
         if (ro <> -1) then
-          ZAEHLER_NUMMER_NEU := CSV.readCell(ro, 'ZaehlerNummerNeu');
+          ZAEHLER_NUMMER_NEU := CSV.ReadCell(ro, 'ZaehlerNummerNeu');
       end;
 
     // kein Ergebnis -> keine Aktion
@@ -2266,7 +2369,7 @@ begin
       continue;
 
     // Umbenennung starten
-    FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+    FNameAlt := WARTEND.ReadCell(r, 'DATEINAME_AKTUELL');
     FPath := nextp(FNameAlt, '\', 0) + '\';
 
     if not(FileExists(cWorkPath + FNameAlt)) then
@@ -2298,8 +2401,8 @@ begin
       sFotoCall := TStringList.Create;
       with sFotoCall do
       begin
-        Values[cParameter_foto_RID] := inttostr(RID);
-        Values[cParameter_foto_Modus] := inttostr(FotoBenennungsModus);
+        Values[cParameter_foto_RID] := IntToStr(RID);
+        Values[cParameter_foto_Modus] := IntToStr(FotoBenennungsModus);
         Values[cParameter_foto_baustelle] := sBaustelle;
         Values[cParameter_foto_parameter] := 'FN';
 
@@ -2377,10 +2480,10 @@ begin
           break;
         if (i = 1) then
           FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' +
-            inttostr(i) + '.jpg'
+            IntToStr(i) + '.jpg'
         else
           FNameNeu := copy(FNameNeu, 1, revpos('-', FNameNeu) - 1) + '-' +
-            inttostr(i) + '.jpg';
+            IntToStr(i) + '.jpg';
         inc(i);
       until false;
 
@@ -2412,7 +2515,7 @@ begin
       k := WARTEND.colOf('GERAETENO');
       c := colOf('ID');
       for r := 1 to RowCount do
-        if (WARTEND.locate(k, readCell(r, c)) <> -1) then
+        if (WARTEND.locate(k, ReadCell(r, c)) <> -1) then
           writeCell(r, i, '#FF9900');
       SaveToHTML(MyProgramPath + cStatistikPath + 'senden.html');
     end;
@@ -2425,14 +2528,14 @@ begin
     // LOG
     if (Stat_Anfangsbestand - WARTEND.RowCount > 0) then
       Log('INFO: ' +
-        { } inttostr(Stat_Anfangsbestand - WARTEND.RowCount) +
+        { } IntToStr(Stat_Anfangsbestand - WARTEND.RowCount) +
         { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
-        { } inttostr(WARTEND.RowCount) +
+        { } IntToStr(WARTEND.RowCount) +
         { } ' verbleiben');
 
     if (Stat_NachtragBaustelle > 0) then
       Log('INFO: ' +
-        { } inttostr(Stat_NachtragBaustelle) +
+        { } IntToStr(Stat_NachtragBaustelle) +
         { } ' Baustelleninfo(s) wurde(n) nachgetragen');
 
   end;
@@ -2478,7 +2581,7 @@ begin
     if not(assigned(EINGABE)) then
       EINGABE := tsTable.Create
     else
-      EINGABE.Clear;
+      EINGABE.clear;
     FName := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
@@ -2487,9 +2590,9 @@ begin
   end;
 
   // RID suchen
-  r := EINGABE.locate('RID', inttostr(AUFTRAG_R));
+  r := EINGABE.locate('RID', IntToStr(AUFTRAG_R));
   if (r <> -1) then
-    result := EINGABE.readCell(r, 'ZAEHLER_NUMMER_NEU')
+    result := EINGABE.ReadCell(r, 'ZAEHLER_NUMMER_NEU')
   else
     result := '';
 
