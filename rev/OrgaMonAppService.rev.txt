@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.052 (06.11.14) Andreas Filsinger
+
+ Neu: .\Störung\Rollback.txt, Rückführen von Bildern aus DaSi und dadurch Zwang
+      der Neudruchführung der Transaktion.
+
 Rev 1.051 (28.10.14) Andreas Filsinger
 
  Neu: Anzahl der unverarbeiteten wird angezeigt

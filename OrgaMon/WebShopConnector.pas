@@ -111,6 +111,16 @@ type
     StaticText9: TStaticText;
     CheckBox1: TCheckBox;
     CheckBox5: TCheckBox;
+    TabSheet5: TTabSheet;
+    ComboBox1: TComboBox;
+    Edit4: TEdit;
+    Edit5: TEdit;
+    Edit6: TEdit;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Button3: TButton;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -129,6 +139,8 @@ type
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
+    procedure TabSheet5Show(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -175,6 +187,7 @@ type
 
     // XMLRPC-Server
     function XMLRPC_Running: boolean;
+    procedure XMLRPC_Assign;
     procedure XMLRPC_Start;
     procedure XMLRPC_Stop;
     function XMLRPC_Clicks(DecrementBy: integer = 0): integer;
@@ -205,6 +218,12 @@ uses
 const
   cMySQLdumpFName = 'mysql.dump-%s.txt';
   cMySQLclearFName = 'mysql.delete.txt';
+
+procedure TFormWebShopConnector.TabSheet5Show(Sender: TObject);
+begin
+  XMLRPC_Assign;
+  ComboBox1.Items.Assign(XServer.Methods);
+end;
 
 procedure TFormWebShopConnector.Timer1Timer(Sender: TObject);
 var
@@ -385,24 +404,7 @@ begin
   StaticText1.caption := datum + ' : ' + inttostr(Clicks);
 end;
 
-function TFormWebShopConnector.XMLRPC_Clicks(DecrementBy: integer = 0): integer;
-begin
-  Result := 0;
-  if assigned(XServer) then
-  begin
-    dec(XMethods.WebShopClicks, DecrementBy);
-    Result := XMethods.WebShopClicks;
-  end;
-end;
-
-function TFormWebShopConnector.XMLRPC_Running: boolean;
-begin
-  Result := false;
-  if assigned(XServer) then
-    Result := XServer.active;
-end;
-
-procedure TFormWebShopConnector.XMLRPC_Start;
+procedure TFormWebShopConnector.XMLRPC_Assign;
 begin
   if not(assigned(XServer)) then
   begin
@@ -438,6 +440,29 @@ begin
       AddMethod('Skript', XMethods.rpc_e_w_Skript);
     end;
   end;
+
+end;
+
+function TFormWebShopConnector.XMLRPC_Clicks(DecrementBy: integer = 0): integer;
+begin
+  Result := 0;
+  if assigned(XServer) then
+  begin
+    dec(XMethods.WebShopClicks, DecrementBy);
+    Result := XMethods.WebShopClicks;
+  end;
+end;
+
+function TFormWebShopConnector.XMLRPC_Running: boolean;
+begin
+  Result := false;
+  if assigned(XServer) then
+    Result := XServer.active;
+end;
+
+procedure TFormWebShopConnector.XMLRPC_Start;
+begin
+  XMLRPC_Assign;
 
   with XServer do
   begin
@@ -530,6 +555,23 @@ end;
 procedure TFormWebShopConnector.Button2Click(Sender: TObject);
 begin
   ListBoxLog.Items.clear;
+end;
+
+procedure TFormWebShopConnector.Button3Click(Sender: TObject);
+var
+  Parameter: TStringList;
+begin
+  Parameter := TStringList.Create;
+  with Edit4 do
+    if (Text <> '') then
+      Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+  with Edit5 do
+    if (Text <> '') then
+      Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+  with Edit6 do
+    if (Text <> '') then
+      Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+  ListBoxLog.Items.AddStrings(XServer.exec(ComboBox1.Text, Parameter));
 end;
 
 procedure TFormWebShopConnector.Button10Click(Sender: TObject);
