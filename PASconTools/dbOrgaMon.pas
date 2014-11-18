@@ -161,13 +161,17 @@ const
 {$ELSE}
   cConnection: TIB_Connection = nil;
 {$ENDIF}
-  // Datenbank Tabelle exportieren
+  // Datenbank-Inhalt als Tabelle exportieren
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
   AppendMode: boolean = false); overload;
 procedure ExportTable(TSql: TStrings; FName: string;
   Seperator: char = ';'); overload;
+
+// Stringlist Table
 function slTable(TSql: string): TStringList; overload;
 function slTable(TSql: TStrings): TStringList; overload;
+
+// TsTable
 function csTable(TSql: string): TsTable; overload;
 function csTable(TSql: TStrings): TsTable; overload;
 
@@ -209,6 +213,7 @@ function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 
 // Boolean Types
 function bool2cC(b: boolean): string;
+function bool2cC_AsString(b: boolean): string;
 
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
@@ -285,7 +290,7 @@ procedure e_w_dereference(RID: integer; TableN, FieldN: string;
 
 // BASIC Prozessor
 procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
-procedure e_x_basic(FName: string; ParameterS: String =''); overload;
+procedure e_x_basic(FName: string; ParameterS: String = ''); overload;
 
 // Datenbank-Server Commit
 procedure e_x_commit;
@@ -826,7 +831,7 @@ end;
 
 function csTable(TSql: string): TsTable; overload;
 var
-  cABLAGE: TdboCursor;
+  cTABLE: TdboCursor;
   n, m: integer;
   Content: string;
   sRow: TStringList;
@@ -837,16 +842,9 @@ var
 begin
   result := TsTable.create;
   DB_memo := TStringList.create;
-  cABLAGE := TdboCursor.create(nil);
-  with cABLAGE do
+  cTABLE := nCursor;
+  with cTABLE do
   begin
-
-    if assigned(cConnection) then
-{$IFDEF fpc}
-      connection := cConnection;
-{$ELSE}
-      ib_connection := cConnection;
-{$ENDIF}
     sql.add(TSql);
     if DebugMode then
       AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
@@ -933,7 +931,7 @@ begin
       ApiNext;
     end;
   end;
-  cABLAGE.free;
+  cTABLE.free;
   DB_memo.free;
 end;
 
@@ -1188,9 +1186,6 @@ begin
 {$ELSE}
   Field.AssignTo(s);
 {$ENDIF}
-  if DebugMode then
-    AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt',
-      DatumUhr);
 end;
 
 procedure e_w_sqlt(Field: TdboField; s: TStrings);
@@ -1471,6 +1466,14 @@ begin
     result := cC_True
   else
     result := cC_False;
+end;
+
+function bool2cC_AsString(b: boolean): string;
+begin
+  if b then
+    result := cC_True_AsString
+  else
+    result := cC_False_AsString;
 end;
 
 function RIDtostr(RID: integer): string;
@@ -1880,6 +1883,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsInteger;
   end;
@@ -2030,6 +2036,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], sl);
   end;
@@ -2045,6 +2054,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], result);
   end;
@@ -2060,6 +2072,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2079,6 +2094,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2101,6 +2119,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2119,6 +2140,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsString;
   end;
@@ -2138,6 +2162,9 @@ begin
   with cSQL do
   begin
     sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     if eof then
       result := ifnull
@@ -2272,6 +2299,9 @@ begin
   with cOLAP do
   begin
     sql.add(ResolveParameter(sSQL));
+    if DebugMode then
+      AppendStringsToFile(sql, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
+        '.txt', DatumUhr);
     ApiFirst;
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName + '=' + Fields[n].AsString);
@@ -2356,10 +2386,10 @@ end;
 
 function ResolveSQL(const VarName: ShortString): ShortString;
 begin
- if (pos('select',VarName)=1) then
-  result := e_r_sqls(VarName)
- else
-  e_x_sql(VarName);
+  if (pos('select', VarName) = 1) then
+    result := e_r_sqls(VarName)
+  else
+    e_x_sql(VarName);
 end;
 
 const
@@ -2428,15 +2458,15 @@ begin
   end;
 end;
 
-procedure e_x_basic(FName: string; ParameterS: String =''); overload;
+procedure e_x_basic(FName: string; ParameterS: String = ''); overload;
 var
- ParameterL : TStringList;
+  ParameterL: TStringList;
 begin
- ParameterL := TStringList.create;
- while (ParameterS<>'') do
-  ParameterL.Add(nextp(ParameterS));
- e_x_basic(FName,ParameterL);
- ParameterL.Free;
+  ParameterL := TStringList.create;
+  while (ParameterS <> '') do
+    ParameterL.add(nextp(ParameterS));
+  e_x_basic(FName, ParameterL);
+  ParameterL.free;
 end;
 
 end.

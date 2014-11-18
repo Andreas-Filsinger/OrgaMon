@@ -31,10 +31,10 @@ interface
 uses
 
   classes,
-{$ifndef fpc}
+{$IFNDEF fpc}
   // Pascal Skript
   uPSUtils, uPSCompiler,
-{$endif}
+{$ENDIF}
   WordIndex;
 
 type
@@ -75,9 +75,10 @@ type
     function rpc_e_w_Skript(sParameter: TStringList): TStringList;
   end;
 
-{$ifndef fpc}
+{$IFNDEF fpc}
+
 function _Uses(Sender: TPSPascalCompiler; const Name: tbtString): Boolean;
-{$endif}
+{$ENDIF}
 
 implementation
 
@@ -86,12 +87,12 @@ uses
   SysUtils,
 
   // IBO
-{$ifndef fpc}
+{$IFNDEF fpc}
   IB_Components, IB_Access,
-{$endif}
+{$ENDIF}
   // Tools
   anfix32, srvXMLRPC,
-  html, dbOrgaMon,
+  html, dbOrgaMon, memcache,
 
   // OrgaMon
   globals,
@@ -104,7 +105,7 @@ uses
   Funktionen_Buch,
   Funktionen_Auftrag,
 
-{$ifndef fpc}
+{$IFNDEF fpc}
   // Pascal Skript
   uPSRuntime,
   // PS "System"
@@ -122,11 +123,11 @@ uses
   uPSI_Funktionen_Buch,
   uPSI_Funktionen_Auftrag,
   uPSI_eConnect,
-{$endif}
-  Geld
-  ;
+{$ENDIF}
+  Geld;
 
-{$ifndef fpc}
+{$IFNDEF fpc}
+
 const
   oCompiler: TPSPascalCompiler = nil;
   oExecute: TPSExec = nil;
@@ -190,7 +191,7 @@ begin
 
   until true;
 end;
-{$endif}
+{$ENDIF}
 
 function TeConnect.CheckLoadSuchIndex(NameSpace: string): TWordIndex;
 var
@@ -198,7 +199,6 @@ var
   FName: string;
 begin
   //
-  result := nil;
   if not(assigned(sArtikelSuche)) then
     sArtikelSuche := TStringList.create;
   k := sArtikelSuche.IndexOf(NameSpace);
@@ -245,8 +245,8 @@ begin
   VERLAG_R := cRID_unset;
   AUSGABEART_R := cRID_unset;
   ARTIKEL_R := cRID_unset;
-  res_d := 9.9;
-  res_s := '99';
+  // res_d := 9.9;
+  // res_s := '99';
 
   Inc(WebShopClicks);
 
@@ -279,7 +279,6 @@ var
   DieserPreis: double;
 begin
   result := TStringList.create;
-  DieserPreis := cPreis_Unbekannt;
   ARTIKEL_R := cRID_unset;
   AUSGABEART_R := cRID_unset;
   Inc(WebShopClicks);
@@ -287,6 +286,7 @@ begin
     AUSGABEART_R := StrToIntDef(sParameter[1], cRID_Null);
   if (sParameter.count > 2) then
     ARTIKEL_R := StrToIntDef(sParameter[2], cRID_Null);
+
   DieserPreis := e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R);
 
   with TXMLRPC_Server do
@@ -308,7 +308,6 @@ begin
   AUSGABEART_R := cRID_unset;
   ARTIKEL_R := cRID_unset;
   PERSON_R := cRID_unset;
-  Preis := cPreis_ungesetzt;
   Rabatt := 0.0;
   if (sParameter.count > 1) then
     AUSGABEART_R := StrToIntDef(sParameter[1], cRID_Null);
@@ -337,9 +336,10 @@ var
   cAKTION: TdboCursor;
   MASTER_R: integer;
   ArtikelSuche: TWordIndex;
-  _RDTSCmc: int64;
+  _RDTSCms: int64;
   NameSpace: string;
 begin
+  _RDTSCms := RDTSCms;
   result := TStringList.create;
   Inc(WebShopClicks);
   SORTIMENT_R := cRID_unset;
@@ -402,7 +402,7 @@ begin
     Uhr8 + ';' + // 1
     szSent + ';' + // 2, Suchanfrage
     inttostr(result.count) + ';' + // Anzahl der Suchtreffer
-    inttostr(RDTSCms - _RDTSCmc) // Benötigte Zeit
+    inttostr(RDTSCms - _RDTSCms) // Benötigte Zeit
     , SearchDir + 'Webshop-Suche.' + pMonatlichesLog + '.' + NameSpace
     + '.csv');
 end;
@@ -442,7 +442,7 @@ begin
     if iXMLRPCGeroutet then
       CacheBasePlug.insert(0, 'XMLRPC:' + i_c_DataBaseFName)
     else
-      CacheBasePlug.insert(0, iDataBaseName);
+      CacheBasePlug.insert(0, String(iDataBaseName));
     with TXMLRPC_Server do
     begin
       CacheBasePlug.insertObject(0, '', oBeginArray);
@@ -564,7 +564,6 @@ var
   PERSON_R: integer;
 begin
   result := TStringList.create;
-  BetragOffen := cPreis_Unbekannt;
   PERSON_R := cRID_unset;
   Inc(WebShopClicks);
   if (sParameter.count > 1) then
@@ -621,8 +620,6 @@ begin
   Inc(WebShopClicks);
   Netto := False;
   NettoWieBrutto := False;
-  Preis := cPreis_Unbekannt;
-  Rabatt := 0.0;
   ARTIKEL_R := cRID_unset;
   AUSGABEART_R := cRID_unset;
   PERSON_R := cRID_unset;
@@ -687,12 +684,19 @@ begin
       e_r_Verlag(VERLAG_R), oString);
 end;
 
+const
+  _Versandkosten_Cache_Size = 1000;
+  _Versandkosten_Cache: TStringList = nil;
+
 function TeConnect.rpc_e_r_Versandkosten(sParameter: TStringList): TStringList;
 var
   versandkosten: double;
   PERSON_R: integer;
   ARTIKEL_R: integer;
   BELEG_R: integer;
+  WARENKORB: TsTable;
+  WARENKORB_md5: string;
+  CacheIndex: integer;
 begin
   result := TStringList.create;
   Inc(WebShopClicks);
@@ -700,25 +704,72 @@ begin
   PERSON_R := cRID_unset;
 
   repeat
+
     // Parameter "PERSON_R" lesen
     if (sParameter.count > 1) then
       PERSON_R := StrToIntDef(sParameter[1], cRID_Null);
 
-    // Zwischen-Beleg erstellen
-    BELEG_R := e_w_BelegNeuAusWarenkorb(PERSON_R);
-    if (BELEG_R < cRID_FirstValid) then
+    if (PERSON_R < cRID_FirstValid) then
       break;
 
-    // Versandartikel bestimmen
-    ARTIKEL_R := e_r_VersandKosten(BELEG_R);
+    WARENKORB := csTable('select * from WARENKORB where PERSON_R=' +
+      inttostr(PERSON_R));
 
-    // Zwischen-Beleg löschen
-    e_w_preDeleteBeleg(BELEG_R);
-    e_x_sql('delete from BELEG where RID=' + inttostr(BELEG_R));
+    // Der Warenkorb ist leer
+    if (WARENKORB.RowCount = 0) then
+    begin
+      WARENKORB.free;
+      break;
+    end;
 
-    // Preis berechnen
-    if (ARTIKEL_R >= cRID_FirstValid) then
-      versandkosten := e_r_PreisBrutto(0, ARTIKEL_R);
+    // Hash-Tag bestimmen
+    WARENKORB_md5 := WARENKORB.md5;
+    WARENKORB.free;
+
+    // Im Cache suchen nach -> CacheIndex
+    if (_Versandkosten_Cache = nil) then
+    begin
+      _Versandkosten_Cache := TStringList.create;
+      CacheIndex := -1;
+    end
+    else
+      CacheIndex := _Versandkosten_Cache.IndexOf(WARENKORB_md5);
+
+    //
+    if (CacheIndex = -1) then
+    begin
+
+      // Zwischen-Beleg erstellen
+      BELEG_R := e_w_BelegNeuAusWarenkorb(PERSON_R);
+      if (BELEG_R < cRID_FirstValid) then
+        break;
+
+      // Versandartikel bestimmen
+      ARTIKEL_R := e_r_VersandKosten(BELEG_R);
+
+      // Zwischen-Beleg löschen
+      e_w_preDeleteBeleg(BELEG_R);
+      e_x_sql('delete from BELEG where RID=' + inttostr(BELEG_R));
+
+      // Preis berechnen
+      if (ARTIKEL_R >= cRID_FirstValid) then
+        versandkosten := e_r_PreisBrutto(0, ARTIKEL_R);
+
+      _Versandkosten_Cache.insertObject(0,WARENKORB_md5,
+        MoneyAsObject(versandkosten));
+      if (_Versandkosten_Cache.Count>_Versandkosten_Cache_Size) then
+      _Versandkosten_Cache.Delete(pred(_Versandkosten_Cache.count));
+
+    end
+    else
+    begin
+      // Cache-Hit, Lege es an den Anfang
+      if (CacheIndex<>0) then
+        _Versandkosten_Cache.Exchange(0,CacheIndex);
+
+      // Hole das Ergebnis
+      versandkosten := ObjectAsMoney(_Versandkosten_Cache.Objects[0]);
+    end;
 
   until true;
 
@@ -786,7 +837,7 @@ var
   Data: AnsiString;
   n: integer;
 begin
-{$ifndef fpc}
+{$IFNDEF fpc}
   result := TStringList.create;
   result.AddObject('', TXMLRPC_Server.oBeginArray);
   if not(assigned(oCompiler)) then
@@ -845,7 +896,7 @@ begin
   end;
   //
   result.AddObject('', TXMLRPC_Server.oEndArray);
-{$endif}
+{$ENDIF}
 end;
 
 end.

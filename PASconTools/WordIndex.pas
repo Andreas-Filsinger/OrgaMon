@@ -155,6 +155,7 @@ type
     procedure SaveToHTML(FName: string; sFormats: TStringList = nil);
     procedure Del(Row: integer = -1);
     function header: TStringList;
+    function data: TStringList;
     function locate(Col: integer; sValue: string): integer; overload; // [row]
     function locate(Col: string; sValue: string): integer; overload; // [row]
     function locateDuplicates(Col: integer; sValue: string;
@@ -183,9 +184,11 @@ type
     function sumCol(HeaderName: string): double;
 
     function Row(r: integer): TStringList;
-    function addRow(r: TStringList = nil) : integer;
+    function addRow(r: TStringList = nil): integer;
     function RowCount: integer;
     function ColCount: integer;
+    function md5: string;
+
     constructor Create; virtual;
     destructor Destroy; override;
   end;
@@ -201,7 +204,9 @@ uses
 {$IFNDEF CONSOLE}
   Dialogs,
 {$ENDIF}
-  SysUtils, Anfix32, html;
+  SysUtils, Anfix32, html,
+
+  IdGlobal, IdHash, IdHashMessageDigest;
 
 const
   cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) +
@@ -1256,7 +1261,7 @@ begin
     result := result + StrToDoubleDef(TStringList(Items[r])[c], 0.0);
 end;
 
-function TsTable.addRow(r: TStringList) : integer;
+function TsTable.addRow(r: TStringList): integer;
 var
   NewRow: TStringList;
   n: integer;
@@ -1264,7 +1269,7 @@ begin
   if assigned(r) then
   begin
     // Sicherstellen dass genug Spalten vorhanden sind
-    for n := r.count to pred(header.Count) do
+    for n := r.Count to pred(header.Count) do
       r.add('');
 
     add(r);
@@ -1277,7 +1282,7 @@ begin
     add(NewRow);
   end;
   Changed := true;
-  result := pred(count);
+  result := pred(Count);
 end;
 
 function TsTable.Col(c: integer): TStringList;
@@ -1291,7 +1296,7 @@ end;
 
 function TsTable.ColCount: integer;
 begin
- result := header.Count;
+  result := header.Count;
 end;
 
 function TsTable.colOf(HeaderName: string;
@@ -1303,14 +1308,20 @@ begin
       raise Exception.Create('Spalte ' + HeaderName + ' nicht gefunden');
 end;
 
-procedure TsTable.SaveToFile(FName: string);
+function TsTable.data: TStringList;
 var
   r: integer;
+begin
+  result := TStringList.Create;
+  for r := 0 to pred(Count) do
+    result.add(HugeSingleLine(TStringList(Items[r]), getSeparator));
+end;
+
+procedure TsTable.SaveToFile(FName: string);
+var
   OutS: TStringList;
 begin
-  OutS := TStringList.Create;
-  for r := 0 to pred(Count) do
-    OutS.add(HugeSingleLine(TStringList(Items[r]), getSeparator));
+  OutS := data;
   OutS.SaveToFile(FName);
   OutS.free;
 end;
@@ -1319,7 +1330,7 @@ procedure TsTable.SaveToHTML(FName: string; sFormats: TStringList = nil);
 const
   cPagebreak = '<div class="breakhere">&nbsp;</div>';
 var
-   r, c, cPAPERCOLOR: integer;
+  r, c, cPAPERCOLOR: integer;
   lastRow, lastCol: integer;
   OutS: TStringList;
   sRow: TStringList;
@@ -1330,8 +1341,8 @@ begin
   lastRow := pred(Count);
   cPAPERCOLOR := colOf('PAPERCOLOR');
   lastCol := pred(ColCount);
-  if cPAPERCOLOR=lastCol then
-   lastCol := pred(lastCol);
+  if cPAPERCOLOR = lastCol then
+    lastCol := pred(lastCol);
 
   OutS := TStringList.Create;
   with OutS do
@@ -1352,23 +1363,23 @@ begin
     add('td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
     add('td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
 
-(*
+    (*
 
-    //
-    // Versuch, die gültigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
-    // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
-    //
-    // -> Funktion noch bisher nicht bewiesen
-    //
+      //
+      // Versuch, die gültigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
+      // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
+      //
+      // -> Funktion noch bisher nicht bewiesen
+      //
 
-    add('table.border {border-color:#000000; border-style:solid; border-width:0pt;');
-    add(' td { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-    add(' td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-    add(' td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-    add(' td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
-    add('}');
+      add('table.border {border-color:#000000; border-style:solid; border-width:0pt;');
+      add(' td { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+      add(' td.gend { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:0pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+      add(' td.gfoot { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:0pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+      add(' td.gright { border-color:#000000; border-style:solid; border-left-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-top-width:1pt; font-family:Verdana; font-size:-1; }');
+      add('}');
 
-*)
+    *)
 
     add('</style>');
     if assigned(sFormats) then
@@ -1591,14 +1602,15 @@ procedure TsTable.incCell(Row, Col: integer);
 begin
   if (Col >= 0) then
   begin
-    TStringList(Items[Row])[Col] := IntToStr(succ(StrToIntDef(TStringList(Items[Row])[Col],0)));
+    TStringList(Items[Row])[Col] :=
+      inttostr(succ(StrToIntDef(TStringList(Items[Row])[Col], 0)));
     Changed := true;
   end;
 end;
 
 procedure TsTable.incCell(Row: integer; Col: string);
 begin
- incCell(Row,colof(Col));
+  incCell(Row, colOf(Col));
 end;
 
 procedure TsTable.insertFromFile(FName: string; StaticHeader: string = '');
@@ -1787,7 +1799,6 @@ begin
   result := locate(colOf(Col), sValue);
 end;
 
-
 procedure TsTable.SortBy(sFields: TStrings);
 var
   ClientSorter: TStringList;
@@ -1898,6 +1909,19 @@ begin
 
       end;
   end;
+end;
+
+function TsTable.md5: string;
+var
+  hashMessageDigest5: TIdHashMessageDigest5;
+  TableDump: TStringList;
+begin
+  TableDump := data;
+  hashMessageDigest5 := TIdHashMessageDigest5.Create;
+  result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex
+    (TableDump.Text));
+  hashMessageDigest5.free;
+  TableDump.free;
 end;
 
 function PrepareForSearch(s: string): string;

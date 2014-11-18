@@ -137,6 +137,7 @@
 			<DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
 			<DCCReference Include="..\PASconTools\basic32.pas"/>
 			<DCCReference Include="..\PASconTools\DTA.PAS"/>
+			<DCCReference Include="..\PASconTools\memcache.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>

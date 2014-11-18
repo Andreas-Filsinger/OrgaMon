@@ -3280,7 +3280,7 @@ begin
                     begin
 
                       if (FaelligSeit = 1) then
-                        MoreText:= MoreText + ' ' +
+                        MoreText := MoreText + ' ' +
                           format(_('(seit einem Tag in Verzug)'), [FaelligSeit])
                       else
                         MoreText := MoreText + ' ' +
@@ -8140,46 +8140,20 @@ end;
 
 function e_w_BelegNeu(PERSON_R: integer): integer;
 var
-  qBELEG: TdboQuery;
   BELEG_R: integer;
 begin
   result := cRID_Null;
-
   if (PERSON_R >= cRID_FirstValid) then
   begin
     try
-
-      // Beleg anlegen
-      qBELEG := nQuery;
       BELEG_R := e_w_GEN('BELEG_GID');
-      with qBELEG do
-      begin
-        sql.add('select * from BELEG ' + for_update);
-{$IFNDEF fpc}
-        ColumnAttributes.add('ANLAGE=NOTREQUIRED');
-        ColumnAttributes.add('BTYP=NOTREQUIRED');
-        ColumnAttributes.add('BSTATUS=NOTREQUIRED');
-{$ENDIF}
-        Insert;
-        FieldByName('RID').AsInteger := BELEG_R;
-        FieldByName('PERSON_R').AsInteger := PERSON_R;
-        FieldByName('EINZELPREIS_NETTO').AsString := bool2cC(iEinzelpreisNetto);
-        FieldByName('ANLEGER_R').AsInteger := sBearbeiter;
-        Post;
-        result := BELEG_R;
-      end;
-      qBELEG.free;
-
-      /// ////////////////////////////////////////////////////////////////
-      // e_w_BelegNeu.OLAP.txt
-      // imp pend
-      // ev. direkt aus der Datenbank lesen
-      // ev. in einem Cache-Element halten
-      // ev. einfach eine Mehrstufige Skript-Kette vorhalten
-      // ev. "exitif, breakif, retiv"
-      // ansonsten "select, "=r , insert, update =w Statements
-      /// ////////////////////////////////////////////////////////////////
-
+      e_x_sql('insert into BELEG (RID, PERSON_R, EINZELPREIS_NETTO, ANLEGER_R) '
+        + ' values (' +
+        { } RIDtostr(BELEG_R) + ',' +
+        { } RIDtostr(PERSON_R) + ',' +
+        { } bool2cC_AsString(iEinzelpreisNetto) + ',' +
+        { } RIDtostr(sBearbeiter) + ')');
+      result := BELEG_R;
     except
       on E: exception do
       begin
@@ -12050,6 +12024,7 @@ begin
     end;
 
     // Ermittlung über ein OLAP Statement
+    // aus INTERNATIONALTEXT mit dem Id OLAP:~Id~
     if (pos('OLAP:', iPortoFreiAbBrutto) > 0) then
     begin
       pOLAP := TStringList.create;

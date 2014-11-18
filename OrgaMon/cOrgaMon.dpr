@@ -71,7 +71,8 @@ uses
   libxml2 in '..\libxml2\libxml2.pas',
   ExcelHelper in '..\PASconTools\ExcelHelper.pas',
   basic32 in '..\PASconTools\basic32.pas',
-  DTA in '..\PASconTools\DTA.PAS';
+  DTA in '..\PASconTools\DTA.PAS',
+  memcache in '..\PASconTools\memcache.pas';
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);
