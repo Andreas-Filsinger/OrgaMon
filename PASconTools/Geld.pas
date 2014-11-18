@@ -115,6 +115,11 @@ function StrToMoney(x: string): double; // strto
 function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
 function MoneyToStr(d : double):string;
 
+// Object Routinen
+
+function MoneyAsObject(Wert: double):TObject;
+function ObjectAsMoney(Wert: TObject):double;
+
 type
   // Salden-Objekt, zur Bestimmung des Endsaldo eines Kontos
   TUmsatz = record
@@ -650,5 +655,17 @@ function MoneyToStr(d : double):string;
 begin
   result := format('%m',[d]);
 end;
+
+function MoneyAsObject(Wert: double):TObject;
+begin
+  result := TObject(Integer(round(Wert*100.0)));
+end;
+
+function ObjectAsMoney(Wert: TObject):double;
+begin
+ result := Integer(Wert);
+ result := result / 100.0;
+end;
+
 
 end.

@@ -203,7 +203,8 @@ uses
   IB_Components in '..\..\IBO5\source\core\IB_Components.pas',
   IB_Access in '..\..\IBO5\source\access\IB_Access.pas',
   Cron in 'Cron.pas' {FormCron},
-  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas';
+  dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
+  memcache in '..\PASconTools\memcache.pas';
 
 {$R *.RES}
 

@@ -143,7 +143,7 @@ type
     // von RPC-Aufrufen nicht ausgewertet. Das bedeutet für eine
     // Routine, die als "JonDa.Info" angemeldet werden, dass ein
     // Aufruf von "Test.Info" dennoch die registrierte "Info"
-    // gerufen wird. Inherlab der "Info" Implementierung hat man
+    // gerufen wird. Inerhalb der "Info" Implementierung hat man
     // jedoch im "sParameter[0]" "Test.Info" stehen, man kann also
     // NameSpace abhängig Implementierungen verwirklichen (Mandanten).
     // <MethodName> : der Methodenname an sich, dieser muss pro Server eindeutig
@@ -337,8 +337,20 @@ end;
 function TXMLRPC_Server.exec(Name: string; Parameter: TStringList): TStringList;
 var
   n: Integer;
+  MethodName: string;
 begin
-  n := sMethodNames.IndexOf(Name);
+  // [0] ist immer [ Namespace "." ] MethodName
+  Parameter.InsertObject(0,Name,oMethodName);
+
+  // Prefix-Namespace abtrennen
+  n := revpos(cXML_NameSpaceDelimiter, Name);
+  if n > 0 then
+    MethodName := copy(Name, succ(n), MaxInt)
+  else
+    MethodName := Name;
+
+  // Funktionsaufruf
+  n := sMethodNames.IndexOf(MethodName);
   if (n <> -1) then
     result := mMethodAddr[n](Parameter)
   else

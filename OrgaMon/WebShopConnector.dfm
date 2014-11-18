@@ -35,7 +35,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet6
     Align = alTop
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -207,7 +207,7 @@ object FormWebShopConnector: TFormWebShopConnector
         Width = 182
         Height = 21
         TabOrder = 0
-        Text = 'BasePlug'
+        Text = 'Versandkosten'
       end
       object Edit4: TEdit
         Left = 191
@@ -215,6 +215,7 @@ object FormWebShopConnector: TFormWebShopConnector
         Width = 121
         Height = 21
         TabOrder = 1
+        Text = '1032'
       end
       object Edit5: TEdit
         Left = 318
@@ -737,6 +738,109 @@ object FormWebShopConnector: TFormWebShopConnector
         Margins.Bottom = 4
         Caption = 'in bin Server'
         TabOrder = 1
+      end
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'memcache'
+      ImageIndex = 5
+      object Label17: TLabel
+        Left = 40
+        Top = 24
+        Width = 53
+        Height = 13
+        Caption = 'Host:Port'
+      end
+      object Label18: TLabel
+        Left = 92
+        Top = 89
+        Width = 22
+        Height = 13
+        Caption = 'Key'
+      end
+      object Label19: TLabel
+        Left = 82
+        Top = 111
+        Width = 32
+        Height = 13
+        Caption = 'Value'
+      end
+      object Edit7: TEdit
+        Left = 120
+        Top = 21
+        Width = 297
+        Height = 21
+        TabOrder = 0
+        Text = 'raib23:11211'
+      end
+      object Button15: TButton
+        Left = 272
+        Top = 48
+        Width = 75
+        Height = 25
+        Caption = 'version'
+        TabOrder = 1
+        OnClick = Button15Click
+      end
+      object Edit8: TEdit
+        Left = 120
+        Top = 81
+        Width = 121
+        Height = 21
+        TabOrder = 2
+        Text = 'Edit8'
+      end
+      object Button16: TButton
+        Left = 272
+        Top = 79
+        Width = 75
+        Height = 25
+        Caption = 'read'
+        TabOrder = 3
+        OnClick = Button16Click
+      end
+      object Button17: TButton
+        Left = 272
+        Top = 110
+        Width = 75
+        Height = 25
+        Caption = 'write'
+        TabOrder = 4
+        OnClick = Button17Click
+      end
+      object Button18: TButton
+        Left = 272
+        Top = 141
+        Width = 75
+        Height = 25
+        Caption = 'inc'
+        TabOrder = 5
+        OnClick = Button18Click
+      end
+      object Edit9: TEdit
+        Left = 120
+        Top = 108
+        Width = 121
+        Height = 21
+        TabOrder = 6
+        Text = 'Edit9'
+      end
+      object Button19: TButton
+        Left = 272
+        Top = 176
+        Width = 75
+        Height = 25
+        Caption = 'delete'
+        TabOrder = 7
+        OnClick = Button19Click
+      end
+      object Button20: TButton
+        Left = 272
+        Top = 208
+        Width = 75
+        Height = 25
+        Caption = 'exists'
+        TabOrder = 8
+        OnClick = Button20Click
       end
     end
   end

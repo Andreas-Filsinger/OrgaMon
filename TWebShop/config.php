@@ -123,7 +123,7 @@ define("MP3_DOWNLOAD_LOG_PATH","");
 define("MP3_DOWNLOAD_LOG_NAME","download.log");
 
 // VERZEICHNISSE
-define("SHOP_WWW",         "www.hebu-music.com/hebu-music");
+define("SHOP_WWW",         "http://localhost/twebshop/");
 define("SHOP_ROOT",        "/srv/www/htdocs/hebu-music");
 define("SHOP_SITEMAP_DIR", "sitemap/");
 

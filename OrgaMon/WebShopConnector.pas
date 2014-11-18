@@ -42,6 +42,9 @@ uses
   wordindex,
   eConnect,
 
+  // memcache
+  memcache,
+
   // IBO
   IB_Components, IB_Access,
 
@@ -121,6 +124,19 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Button3: TButton;
+    TabSheet6: TTabSheet;
+    Label17: TLabel;
+    Edit7: TEdit;
+    Button15: TButton;
+    Edit8: TEdit;
+    Button16: TButton;
+    Button17: TButton;
+    Label18: TLabel;
+    Label19: TLabel;
+    Button18: TButton;
+    Edit9: TEdit;
+    Button19: TButton;
+    Button20: TButton;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -141,6 +157,12 @@ type
     procedure Button14Click(Sender: TObject);
     procedure TabSheet5Show(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
+    procedure Button20Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -152,9 +174,13 @@ type
     TimerState: integer;
     TimerTicks: longword;
 
+    // XMLRPC - Sachen
     XServer: TXMLRPC_Server;
     XMethods: TeConnect;
     ConnectorExceptions: integer;
+
+    // Memcache - Sachen
+    MClient: TmemcacheClient;
 
     // FTP
     IdFTP1: TIdFTP;
@@ -552,6 +578,12 @@ begin
   end;
 end;
 
+procedure TFormWebShopConnector.Button20Click(Sender: TObject);
+begin
+  MClient.exist(Edit8.text);
+  ListBoxLog.Items.Add(MClient.LastError);
+end;
+
 procedure TFormWebShopConnector.Button2Click(Sender: TObject);
 begin
   ListBoxLog.Items.clear;
@@ -618,6 +650,44 @@ begin
     Disconnect;
   end;
   SolidEndTransaction;
+end;
+
+procedure TFormWebShopConnector.Button15Click(Sender: TObject);
+begin
+  if not(assigned(MClient)) then
+  begin
+    MClient := TmemcacheClient.Create(self);
+    MClient.ConnectTimeout := 2000;
+    MClient.ReadTimeout := 500;
+    MClient.Host := nextp(Edit7.Text, ':', 0);
+    MClient.Port := StrToIntDef(nextp(Edit7.Text, ':', 1), 11211);
+    MClient.connect;
+  end;
+  ListBoxLog.Items.Add(MClient.Version);
+end;
+
+procedure TFormWebShopConnector.Button16Click(Sender: TObject);
+begin
+  Edit9.Text := MClient.read(Edit8.Text);
+  ListBoxLog.Items.Add(MClient.LastError);
+end;
+
+procedure TFormWebShopConnector.Button17Click(Sender: TObject);
+begin
+  MClient.write(Edit8.Text, Edit9.Text);
+  ListBoxLog.Items.Add(MClient.LastError);
+end;
+
+procedure TFormWebShopConnector.Button18Click(Sender: TObject);
+begin
+  Edit9.Text := inttostr(MClient.inc(Edit8.Text));
+  ListBoxLog.Items.Add(MClient.LastError);
+end;
+
+procedure TFormWebShopConnector.Button19Click(Sender: TObject);
+begin
+  MClient.delete(Edit8.text);
+  ListBoxLog.Items.Add(MClient.LastError);
 end;
 
 procedure TFormWebShopConnector.Button1Click(Sender: TObject);
