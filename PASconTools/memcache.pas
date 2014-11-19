@@ -29,9 +29,13 @@ unit memcache;
 (*
 
 *===============================*
-* memchached Client             *
+* memcached Delphi Client       *
 * www.memcache.org              *
 *===============================*
+
+Rev 1.001 (19.11.14) Andreas Filsinger
+
+ Neu: Funktion "open"
 
 Rev 1.000 (18.11.14) Andreas Filsinger
 
@@ -43,6 +47,9 @@ interface
 
 uses
   Classes, Sysutils,
+  // Tools
+  anfix32,
+  // Indy
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient;
 
 
@@ -62,6 +69,7 @@ type
 
     // Admin Functions
     function version: string;
+    procedure open(host:string); // Host [ ":" Port ]
 
     // Read Functions
     function read(Key: string): string;
@@ -95,7 +103,7 @@ end;
 function TmemcacheClient.exist(Key: string): boolean;
 begin
   read(Key);
-  result := (LastError <> 'NOT_FOUND');
+  result := (LastError <> MC_NOTFOUND);
   if result then
     LastError := 'FOUND';
 end;
@@ -108,7 +116,7 @@ begin
   result := StrToIntDef(s, -1);
   if (result = -1) then
   begin
-    if (s = 'NOT_FOUND') then
+    if (s = MC_NOTFOUND) then
     begin
       write(Key, '1');
       result := 1;
@@ -122,6 +130,15 @@ begin
   end;
 end;
 
+procedure TmemcacheClient.open(host: string);
+begin
+    ConnectTimeout := 2000;
+    ReadTimeout := 500;
+    self.Host := nextp(host, ':', 0);
+    Port := StrToIntDef(nextp(host, ':', 1), 11211);
+    connect;
+end;
+
 function TmemcacheClient.read(Key: string): string;
 begin
   result := cmd('get ' + Key);
@@ -129,10 +146,10 @@ begin
     if (result = 'END') then
     begin
       result := '';
-      LastError := 'NOT_FOUND';
+      LastError := MC_NOTFOUND;
       break;
     end;
-    if pos('VALUE ' + Key, result) = 1 then
+    if (pos('VALUE ' + Key, result) = 1) then
     begin
       result := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);
       LastError := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);
@@ -147,7 +164,7 @@ end;
 
 procedure TmemcacheClient.write(Key, Value: string);
 begin
-  IOHandler.writeln('set ' + Key + ' 0 0 ' + IntTOStr(length(Value)),
+  IOHandler.writeln('set ' + Key + ' 0 0 ' + IntToStr(length(Value)),
     TEnCoding.ASCII);
   LastError := cmd(Value);
 end;

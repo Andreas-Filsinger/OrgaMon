@@ -49,7 +49,7 @@ uses
   IB_Components, IB_Access,
 
   // Indy
-  IdFTP;
+  IdFTP, Vcl.Buttons;
 
 const
   // cXML_RPC_namespace = 'abu';
@@ -137,6 +137,7 @@ type
     Edit9: TEdit;
     Button19: TButton;
     Button20: TButton;
+    SpeedButton1: TSpeedButton;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -163,6 +164,7 @@ type
     procedure Button17Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -569,6 +571,11 @@ begin
   Log('OK: setLAUFNUMMER!')
 end;
 
+procedure TFormWebShopConnector.SpeedButton1Click(Sender: TObject);
+begin
+ edit7.Text := imemcacheHost;
+end;
+
 procedure TFormWebShopConnector.EnsureCache;
 begin
   if (pSiteHost = '') then
@@ -657,11 +664,12 @@ begin
   if not(assigned(MClient)) then
   begin
     MClient := TmemcacheClient.Create(self);
-    MClient.ConnectTimeout := 2000;
-    MClient.ReadTimeout := 500;
-    MClient.Host := nextp(Edit7.Text, ':', 0);
-    MClient.Port := StrToIntDef(nextp(Edit7.Text, ':', 1), 11211);
-    MClient.connect;
+    MClient.open(Edit7.Text);
+    Button16.Enabled := true;
+    Button17.Enabled := true;
+    Button18.Enabled := true;
+    Button19.Enabled := true;
+    Button20.Enabled := true;
   end;
   ListBoxLog.Items.Add(MClient.Version);
 end;

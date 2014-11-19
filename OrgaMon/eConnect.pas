@@ -684,9 +684,19 @@ begin
       e_r_Verlag(VERLAG_R), oString);
 end;
 
+type
+  _Versandkosten_CachingType = (_VK_uninitialized, _VK_StringList, _VK_memcache,
+    _VK_none);
+
 const
+  _Versandkosten_CacheMode: _Versandkosten_CachingType = _VK_uninitialized;
+
+  // für Mode _VK_StringList
   _Versandkosten_Cache_Size = 1000;
   _Versandkosten_Cache: TStringList = nil;
+
+  // für Mode _VK_memcache
+  _Versandkosten_memcache: TmemcacheClient = nil;
 
 function TeConnect.rpc_e_r_Versandkosten(sParameter: TStringList): TStringList;
 var
@@ -696,7 +706,11 @@ var
   BELEG_R: integer;
   WARENKORB: TsTable;
   WARENKORB_md5: string;
+
+  //
   CacheIndex: integer;
+  CacheHit: Boolean;
+  CacheValue: string;
 begin
   result := TStringList.create;
   Inc(WebShopClicks);
@@ -712,31 +726,94 @@ begin
     if (PERSON_R < cRID_FirstValid) then
       break;
 
+    // lese den WARENKORB in eine csv Tabelle ein
     WARENKORB := csTable('select * from WARENKORB where PERSON_R=' +
       inttostr(PERSON_R));
 
-    // Der Warenkorb ist leer
+    // Der Warenkorb ist leer -> unbekannte Versandkosten
     if (WARENKORB.RowCount = 0) then
     begin
       WARENKORB.free;
       break;
     end;
 
-    // Hash-Tag bestimmen
+    // Hash-Tag bestimmen für das Caching
     WARENKORB_md5 := WARENKORB.md5;
     WARENKORB.free;
 
-    // Im Cache suchen nach -> CacheIndex
-    if (_Versandkosten_Cache = nil) then
+    // Caching initialisieren bzw. Anfrage stellen
+    case _Versandkosten_CacheMode of
+      _VK_uninitialized:
+        begin
+
+          if (imemcacheHost <> '') then
+          begin
+            _Versandkosten_memcache := TmemcacheClient.create;
+            _Versandkosten_memcache.open(imemcacheHost);
+            _Versandkosten_CacheMode := _VK_memcache;
+
+            // Erste Suche: andere Instanzen haben da ja schon was drin
+            CacheValue := _Versandkosten_memcache.read(WARENKORB_md5);
+            CacheHit := (CacheValue <> '');
+
+          end
+          else
+          begin
+            _Versandkosten_Cache := TStringList.create;
+            _Versandkosten_CacheMode := _VK_StringList;
+
+            // Erste Suche: unnötig da in dem Moment der Cache immer leer ist
+            CacheHit := False;
+
+          end;
+
+        end;
+      _VK_StringList:
+        begin
+
+          // Im Cache suchen nach -> CacheIndex
+          CacheIndex := _Versandkosten_Cache.IndexOf(WARENKORB_md5);
+          CacheHit := (CacheIndex >= 0);
+
+        end;
+      _VK_memcache:
+        begin
+
+          CacheValue := _Versandkosten_memcache.read(WARENKORB_md5);
+          CacheHit := (CacheValue <> '');
+
+        end;
+      _VK_none:
+        begin
+          CacheHit := False;
+        end;
+    end;
+
+    if (CacheHit) then
     begin
-      _Versandkosten_Cache := TStringList.create;
-      CacheIndex := -1;
+
+      // Benutze den Wert aus dem Cache
+      case _Versandkosten_CacheMode of
+        _VK_StringList:
+          begin
+            // Cache-Hit, Lege es an den Anfang
+            if (CacheIndex <> 0) then
+              _Versandkosten_Cache.Exchange(0, CacheIndex);
+
+            // Hole das Ergebnis
+            versandkosten := ObjectAsMoney(_Versandkosten_Cache.Objects[0]);
+
+          end;
+        _VK_memcache:
+          begin
+            versandkosten := CentAsMoney(StrToInt(CacheValue));
+          end;
+      else
+        versandkosten := cPreis_ungesetzt;
+      end;
+
     end
     else
-      CacheIndex := _Versandkosten_Cache.IndexOf(WARENKORB_md5);
-
-    //
-    if (CacheIndex = -1) then
     begin
 
       // Zwischen-Beleg erstellen
@@ -755,20 +832,21 @@ begin
       if (ARTIKEL_R >= cRID_FirstValid) then
         versandkosten := e_r_PreisBrutto(0, ARTIKEL_R);
 
-      _Versandkosten_Cache.insertObject(0,WARENKORB_md5,
-        MoneyAsObject(versandkosten));
-      if (_Versandkosten_Cache.Count>_Versandkosten_Cache_Size) then
-      _Versandkosten_Cache.Delete(pred(_Versandkosten_Cache.count));
-
-    end
-    else
-    begin
-      // Cache-Hit, Lege es an den Anfang
-      if (CacheIndex<>0) then
-        _Versandkosten_Cache.Exchange(0,CacheIndex);
-
-      // Hole das Ergebnis
-      versandkosten := ObjectAsMoney(_Versandkosten_Cache.Objects[0]);
+      // In den Cache speichern
+      case _Versandkosten_CacheMode of
+        _VK_StringList:
+          begin
+            _Versandkosten_Cache.insertObject(0, WARENKORB_md5,
+              MoneyAsObject(versandkosten));
+            if (_Versandkosten_Cache.count > _Versandkosten_Cache_Size) then
+              _Versandkosten_Cache.Delete(pred(_Versandkosten_Cache.count));
+          end;
+        _VK_memcache:
+          begin
+            _Versandkosten_memcache.
+              write(WARENKORB_md5, inttostr(MoneyAsCent(versandkosten)));
+          end;
+      end;
     end;
 
   until true;

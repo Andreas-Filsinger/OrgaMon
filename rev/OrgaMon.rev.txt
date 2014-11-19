@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.056 (19.11.14) Andreas Filsinger
+
+ Neu: memcache: erste eigene Implementierung & Integration in den OrgaMon
+ Neu: Versandkosten: Nutzung des memcache als Caching Lösung bei mehreren XMLRPCs
+ Neu: System: Neuer Parameter memcacheHost=~Host~ [ ":" ~Port~ ]
+
 Rev 8.055 (17.11.14) Andreas Filsinger
 
  Neu: XMLRPC: Versandkosten verwendet nun einen Cache
