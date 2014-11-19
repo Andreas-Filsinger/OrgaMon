@@ -55,7 +55,7 @@ function semiEnsureOpen() {
     // Init?
     if ($m_spc == null) {
         $m_spc = new Memcache();
-        if ($m_spc->connect(SEQUENCE_HOST)) {
+        if ($m_spc->pconnect(SEQUENCE_HOST)) {
             $m_spc->add(SEQUENCE_NAME . SEQUENCE_NAMESPACE, 0);
         } else {
             $c_spc = -1;
