@@ -744,7 +744,7 @@ object FormWebShopConnector: TFormWebShopConnector
       Caption = 'memcache'
       ImageIndex = 5
       object Label17: TLabel
-        Left = 40
+        Left = 61
         Top = 24
         Width = 53
         Height = 13
@@ -752,7 +752,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label18: TLabel
         Left = 92
-        Top = 89
+        Top = 84
         Width = 22
         Height = 13
         Caption = 'Key'
@@ -764,6 +764,41 @@ object FormWebShopConnector: TFormWebShopConnector
         Height = 13
         Caption = 'Value'
       end
+      object SpeedButton1: TSpeedButton
+        Left = 422
+        Top = 20
+        Width = 23
+        Height = 22
+        Hint = 'Wert aus den Einstellungen '#252'bernehmen'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC4ADADD0
+          BEBE9691917A7A7A9959347A73709A9A9AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFDDCDCDD1BEBEFDFCFCA07E7EEFE1E1848383F1DCCFA84305C6723A7E7D
+          7DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE4D6D6A57B7B926060916767AE7A7AF4
+          E7E7928E8DB6652EA94403B24C01AF6D3AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          C0A1A1DCC2C2DBBDBDD2A7A7E7C2C2F2E5E5B0744AAB4600B96E3BBB6521C05C
+          04F1C8A7FFFFFFFFFFFFFFFFFFFFFFFFEEE7E7A97D7DE8D1D1E3C9C9E2C8C8F4
+          E8E8B56630B27238C6C4C4BE9674C3610ACA6601E3A04FFFFFFFFFFFFFCCB1B1
+          A87676A47474E9D1D1E4CCCCE7D0D0F1E5E5EBCBB9F4E8E5F3E8E8F2E4E4DB9A
+          65D16A01DC7903FFFFFFFFFFFFB28888EDD3D3E6D1D1E3CACAECD7D7C29D9DE5
+          CDCDF5E2E2E1B6B6DFC2C2E6CFCFF6EDEDE49649D97401FFFFFFFFFFFFAE8282
+          EDDEDEF0E2E2E5CCCCF1E0E0AC8181FFFFFFFFFFFFE4C3C3E1C4C4E1C7C7DABE
+          BEDFD2D2DC811FFFFFFFFFFFFFE8DBDBC2A0A0D2B4B4E6CDCDF3E5E5A37979B2
+          8E8EC8AAAAC59D9DE5CCCCE1C7C7CAA5A5C6B0B0E5DBDBFFFFFFFFFFFFFFFFFF
+          D4B3B3DCBFBFEAD6D6ECD9D9F1E2E2DABBBBE6C8C8EBD7D7E4CACAE2C6C6E7CA
+          CAC19797C8B3B3FFFFFFFFFFFFFFFFFFD1A8A8FDFBFBF7F1F1E9D3D3E6CECEEF
+          DEDEECD9D9E4CACAE3C6C6C19D9DBE9898A67A7AF1ECECFFFFFFFFFFFFFFFFFF
+          E5C7C7CEA8A8D2A9A9CFAAAAF2E6E6E8D0D0E6CECEE9D4D4DCC1C1C4A5A5EADE
+          DEE9DBDBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFCFCFFFFFFDAB2B2FBF6F6C9
+          A4A4C9A3A3CAA6A6E0C7C7CBAAAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFE6CBCBCAA2A2E4CCCCFFFFFFDBC1C1C7A7A7F5F1F1FFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        OnClick = SpeedButton1Click
+      end
       object Edit7: TEdit
         Left = 120
         Top = 21
@@ -773,72 +808,76 @@ object FormWebShopConnector: TFormWebShopConnector
         Text = 'raib23:11211'
       end
       object Button15: TButton
-        Left = 272
-        Top = 48
+        Left = 453
+        Top = 19
         Width = 75
         Height = 25
-        Caption = 'version'
+        Caption = 'open'
         TabOrder = 1
         OnClick = Button15Click
       end
       object Edit8: TEdit
         Left = 120
         Top = 81
-        Width = 121
+        Width = 297
         Height = 21
         TabOrder = 2
-        Text = 'Edit8'
+        Text = 'sequence.69VVTGKZ1'
       end
       object Button16: TButton
-        Left = 272
+        Left = 453
         Top = 79
         Width = 75
         Height = 25
         Caption = 'read'
+        Enabled = False
         TabOrder = 3
         OnClick = Button16Click
       end
       object Button17: TButton
-        Left = 272
+        Left = 453
         Top = 110
         Width = 75
         Height = 25
         Caption = 'write'
+        Enabled = False
         TabOrder = 4
         OnClick = Button17Click
       end
       object Button18: TButton
-        Left = 272
+        Left = 453
         Top = 141
         Width = 75
         Height = 25
         Caption = 'inc'
+        Enabled = False
         TabOrder = 5
         OnClick = Button18Click
       end
       object Edit9: TEdit
         Left = 120
         Top = 108
-        Width = 121
+        Width = 297
         Height = 21
         TabOrder = 6
-        Text = 'Edit9'
       end
       object Button19: TButton
-        Left = 272
-        Top = 176
+        Left = 453
+        Top = 172
         Width = 75
         Height = 25
         Caption = 'delete'
+        Enabled = False
         TabOrder = 7
         OnClick = Button19Click
       end
       object Button20: TButton
-        Left = 272
-        Top = 208
+        Left = 453
+        Top = 203
         Width = 75
         Height = 25
         Caption = 'exists'
+        Enabled = False
         TabOrder = 8
         OnClick = Button20Click
       end
@@ -869,9 +908,9 @@ object FormWebShopConnector: TFormWebShopConnector
     TabOrder = 2
   end
   object ListBoxLog: TListBox
-    Left = 8
+    Left = 0
     Top = 299
-    Width = 680
+    Width = 696
     Height = 182
     Margins.Left = 4
     Margins.Top = 4

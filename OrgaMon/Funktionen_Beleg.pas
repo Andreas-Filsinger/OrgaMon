@@ -442,12 +442,12 @@ function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 { : VERSENDER_R }
 // Versanddatensatz vorbelegen
 
+function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
+//
+
 function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
 // berechnet die VersandKosten anhand der Tabelle VREGEL
 // BELEG_R: um welchen Beleg geht es
-
-function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
-//
 
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 // ermittelt, ob es sich bei dem Angegebenen Artikel
@@ -695,7 +695,7 @@ uses
   Funktionen_Auftrag;
 
 const
-  cAllSettingsAnz = 178;
+  cAllSettingsAnz = 179;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)
     ] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
@@ -745,7 +745,7 @@ const
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel',
     'TPicUploadPfad', 'VerlagsdatenabgleichPfad', 'KartenProfil',
-    'SchubladePort', 'TagwacheBaustelle');
+    'SchubladePort', 'TagwacheBaustelle', 'memcacheHost');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8346,6 +8346,7 @@ begin
   iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];
   iXMLRPCPort := sSystemSettings.values['XMLRPCPort'];
   iXMLRPCGeroutet := sSystemSettings.values['XMLRPCGeroutet'] = cIni_Activate;
+  imemcacheHost := sSystemSettings.values['memcacheHost'];
   iRESTHost := sSystemSettings.values['RESTHost'];
   iRESTPort := sSystemSettings.values['RESTPort'];
   iRESTGeroutet := sSystemSettings.values['RESTGeroutet'] = cIni_Activate;

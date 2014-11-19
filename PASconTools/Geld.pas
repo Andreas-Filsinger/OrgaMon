@@ -110,15 +110,17 @@ function isNoMoney(Betrag:double): boolean; // = cGeld_KeinElement
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
 
 // String-Routinen
-
 function StrToMoney(x: string): double; // strto
 function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
 function MoneyToStr(d : double):string;
 
 // Object Routinen
-
 function MoneyAsObject(Wert: double):TObject;
 function ObjectAsMoney(Wert: TObject):double;
+
+// Integer Routinen
+function MoneyAsCent(Wert: double):integer;
+function CentAsMoney(Wert: integer):double;
 
 type
   // Salden-Objekt, zur Bestimmung des Endsaldo eines Kontos
@@ -664,6 +666,17 @@ end;
 function ObjectAsMoney(Wert: TObject):double;
 begin
  result := Integer(Wert);
+ result := result / 100.0;
+end;
+
+function MoneyAsCent(Wert: double):integer;
+begin
+  result := round(Wert*100.0);
+end;
+
+function CentAsMoney(Wert: integer):double;
+begin
+ result := Wert;
  result := result / 100.0;
 end;
 
