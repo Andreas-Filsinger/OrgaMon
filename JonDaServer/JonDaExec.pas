@@ -55,16 +55,19 @@ const
 
   // INPUT
   cParameter_foto_Modus = 'MODUS'; // Benennung=0..6
-  cParameter_foto_parameter = 'PARAMETER'; // bisheriger Bildparameter
-  cParameter_foto_baustelle = 'NUMMERN_PREFIX'; // Kurzform der Baustellen Bez
+  cParameter_foto_parameter = 'PARAMETER';
+  // bisheriger Bildparameter "FA", "FN"
+  cParameter_foto_baustelle = 'NUMMERN_PREFIX';
+  // Kurzform der Baustellen Bez "KARL"
   cParameter_foto_strasse = 'STRASSE'; //
   cParameter_foto_ort = 'ORT'; //
   cParameter_foto_zaehler_info = 'ZAEHLER_INFO';
   cParameter_foto_RID = 'RID';
+  cParameter_foto_ART = 'ART';
   cParameter_foto_zaehlernummer_alt = 'ZAEHLERNUMMER_ALT';
   cParameter_foto_zaehlernummer_neu = 'ZAEHLERNUMMER_NEU';
   cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
-  cParameter_foto_geraet = 'GERAET';
+  cParameter_foto_geraet = 'GERAET'; // 3stellige Gerätenummer
   cParameter_foto_Pfad = 'PFAD';
 
   // INPUT OPTIONAL
@@ -2782,7 +2785,6 @@ begin
     case FotoBenennung of
       1:
         begin
-          // MVHA*, OHG*, MVVW*  Modus
           FotoPrefix :=
           { } sParameter.values[cParameter_foto_strasse] + ' ' +
           { } sParameter.values[cParameter_foto_ort];
@@ -3000,6 +3002,18 @@ begin
           { } sParameter.values[cParameter_foto_baustelle] + '-' +
           { } sParameter.values[cParameter_foto_ABNummer] + '-';
           UmbenennungAbgeschlossen := true;
+        end;
+      9:
+        begin
+          FotoPrefix :=
+          { } sParameter.values[cParameter_foto_ART] + ' ' +
+          { } sParameter.values[cParameter_foto_strasse] + ' ' +
+          { } sParameter.values[cParameter_foto_ort];
+          ersetze(' ', '_', FotoPrefix);
+          FotoPrefix := StrFilter(
+            { } FotoPrefix,
+            { } cValidFNameChars + '_') + '-';
+
         end;
     else
 

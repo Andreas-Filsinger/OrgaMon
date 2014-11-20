@@ -35,10 +35,10 @@ uses
   Vcl.ExtCtrls, Vcl.StdCtrls, WordIndex,
   Vcl.Imaging.jpeg, Vcl.ComCtrls, Vcl.Buttons, Data.DB, ZAbstractRODataset,
   ZDataset, ZAbstractConnection, ZConnection,
-  JonDaExec, MemCache;
+  JonDaExec, memcache;
 
 const
-  Version: single = 1.052; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.053; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -202,7 +202,6 @@ type
     { Public-Deklarationen }
     tBAUSTELLE: tsTable;
     JonDaExec: TJonDaExec;
-    MemCache: TMemCache;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
 
     procedure Log(s: string);
@@ -566,6 +565,7 @@ end;
 procedure TFormFotoService.Button15Click(Sender: TObject);
 begin
   // Read MemCached
+(*
   if not(assigned(MemCache)) then
     MemCache := TMemCache.Create;
 
@@ -573,7 +573,7 @@ begin
   ListBox9.Items.Add(
 
     IntToStr(MemCache.Increment('sequence.69VVTGKZ1')));
-
+  *)
 end;
 
 procedure TFormFotoService.Button16Click(Sender: TObject);
@@ -2030,6 +2030,8 @@ begin
               sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
               sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
               sFotoCall.Values[cParameter_foto_RID] := IntToStr(RID);
+
+              sFotoCall.Values[cParameter_foto_ART] := art;
               sFotoCall.Values[cParameter_foto_zaehlernummer_alt] :=
                 zaehlernummer_alt;
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] :=
@@ -2556,9 +2558,6 @@ end;
 
 procedure TFormFotoService.FormDestroy(Sender: TObject);
 begin
-  if assigned(MemCache) then
-    MemCache.Free;
-
   if assigned(EINGABE) then
     EINGABE.Free;
   if assigned(tBAUSTELLE) then

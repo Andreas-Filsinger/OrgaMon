@@ -22,6 +22,7 @@ Dokumentation
 Rev 8.057 (19.11.14) Andreas Filsinger
 
  Neu: BasePlug: StringIndex[16] memcache Versionsnummer "@" Systemparameter memcacheHost
+ Neu: Foto: FotoBenennung=9 ~Art~_~Straﬂe~_~Ort~
 
 Rev 8.056 (19.11.14) Andreas Filsinger
 
