@@ -103,9 +103,6 @@ type
     Edit9: TEdit;
     Button17: TButton;
     ListBox3: TListBox;
-    TabSheet9: TTabSheet;
-    Button18: TButton;
-    Memo1: TMemo;
     TabSheet10: TTabSheet;
     Button19: TButton;
     StaticText1: TStaticText;
@@ -126,7 +123,6 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
-    procedure Button18Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
   private
@@ -172,9 +168,7 @@ uses
   GeoArbeitsplatz, gplists, dbOrgaMon,
   CareTakerClient,
   Datenbank, WordIndex, html,
-  wanfix32,
-  // UIB
-  uib
+  wanfix32
 
   // fpspreadsheet
 {$IFDEF FPSPREADSHEET}
@@ -938,46 +932,6 @@ begin
   ListBox3.items.SaveToFile(DiagnosePath + 'eMail-Migration.txt');
   EndHourGlass;
   openShell(DiagnosePath + 'eMail-Migration.txt');
-end;
-
-procedure TFormepIMPORT.Button18Click(Sender: TObject);
-var
-  DataBase: TUIBDataBase;
-  Transaction: TUIBTransaction;
-  Query: TUIBQuery;
-begin
-  DataBase := TUIBDataBase.create(self);
-  Transaction := TUIBTransaction.create(self);
-  Query := TUIBQuery.create(self);
-
-  with DataBase do
-  begin
-    DatabaseName := iDataBaseName;
-    UserName := iDataBaseUser;
-    if (length(iDataBasePassword) > 25) then
-      Password := deCrypt_Hex(iDataBasePassword)
-    else
-      Password := iDataBasePassword;
-  end;
-
-  Transaction.DataBase := DataBase;
-  Query.Transaction := Transaction;
-  with Query do
-  begin
-    sql.add('select * from SORTIMENT');
-    open;
-    First;
-    while not(eof) do
-    begin
-      Memo1.Lines.add(format('RID=%d', [Fields.ByNameAsInteger['RID']]));
-      next;
-    end;
-    Memo1.Lines.add('ENDE');
-    close;
-  end;
-  Query.free;
-  Transaction.free;
-  DataBase.free;
 end;
 
 procedure TFormepIMPORT.Button19Click(Sender: TObject);
