@@ -2010,7 +2010,7 @@ begin
   // wegkommen, die ja eh die gds32.dll laden.
   // Die Situation will ich vermeiden, dass die
   // fbclient.dll UND die gds32.dll vom OrgaMon
-  // geladen werden. Ev. mal auf die uib Komponenten
+  // geladen werden. Ev. mal auf die zeos Komponenten
   // umstellen!
   result := 'gds32.dll';
 end;

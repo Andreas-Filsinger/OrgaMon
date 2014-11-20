@@ -32,7 +32,7 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet7
+    ActivePage = TabSheet5
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
@@ -452,28 +452,6 @@ object FormepIMPORT: TFormepIMPORT
         Height = 176
         ItemHeight = 13
         TabOrder = 3
-      end
-    end
-    object TabSheet9: TTabSheet
-      Caption = 'UIB'
-      ImageIndex = 8
-      object Button18: TButton
-        Left = 446
-        Top = 247
-        Width = 75
-        Height = 25
-        Caption = 'Test'
-        TabOrder = 0
-        OnClick = Button18Click
-      end
-      object Memo1: TMemo
-        Left = 32
-        Top = 16
-        Width = 489
-        Height = 225
-        Lines.Strings = (
-          'Memo1')
-        TabOrder = 1
       end
     end
     object TabSheet10: TTabSheet
