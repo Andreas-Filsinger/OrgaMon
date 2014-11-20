@@ -1954,6 +1954,7 @@ begin
   with cAUFTRAG do
   begin
     sql.Add('select ');
+    sql.Add(' AUFTRAG.ART,');
     sql.Add(' AUFTRAG.KUNDE_STRASSE,');
     sql.Add(' AUFTRAG.KUNDE_ORT,');
     sql.Add(' AUFTRAG.ZAEHLER_INFO,');
@@ -1970,6 +1971,8 @@ begin
     BAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
     sParameter.values[cParameter_foto_baustelle] :=
       FieldByName('NUMMERN_PREFIX').AsString;
+    sParameter.values[cParameter_foto_ART] :=
+      copy(FieldByName('ART').AsString,1,2);
     sParameter.values[cParameter_foto_strasse] :=
       FieldByName('KUNDE_STRASSE').AsString;
     sParameter.values[cParameter_foto_ort] := FieldByName('KUNDE_ORT').AsString;

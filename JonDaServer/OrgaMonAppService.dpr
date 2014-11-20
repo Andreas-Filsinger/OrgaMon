@@ -26,7 +26,8 @@ uses
   DCPbase64 in '..\DCPcrypt\DCPbase64.pas',
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
-  wanfix32 in '..\PASvisTools\wanfix32.pas';
+  wanfix32 in '..\PASvisTools\wanfix32.pas',
+  memcache in '..\PASconTools\memcache.pas';
 
 {$R *.res}
 

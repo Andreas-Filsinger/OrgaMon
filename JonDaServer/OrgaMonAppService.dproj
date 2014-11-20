@@ -116,6 +116,7 @@
 			<DCCReference Include="..\PASconTools\SolidFTP.pas"/>
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
 			<DCCReference Include="..\PASvisTools\wanfix32.pas"/>
+			<DCCReference Include="..\PASconTools\memcache.pas"/>
 			<None Include="..\rev\JonDaServer.rev.txt"/>
 			<None Include="..\rev\OrgaMonAppService.rev.txt"/>
 			<BuildConfiguration Include="Release">
