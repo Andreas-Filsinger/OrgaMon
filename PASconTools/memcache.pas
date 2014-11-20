@@ -47,17 +47,20 @@ interface
 
 uses
   Classes, Sysutils,
+
   // Tools
   anfix32,
+
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient;
 
-
 const
+ Version: single = 1.001;
  MC_STORED = 'STORED';
  MC_NOTFOUND = 'NOT_FOUND';
  MC_FOUND = 'FOUND';
-
+ MC_END = 'END';
+ MC_VALUE = 'VALUE';
 
 type
   TmemcacheClient = class(TIdTCPClient)
@@ -105,7 +108,7 @@ begin
   read(Key);
   result := (LastError <> MC_NOTFOUND);
   if result then
-    LastError := 'FOUND';
+    LastError := MC_FOUND;
 end;
 
 function TmemcacheClient.inc(Key: string): int64;
@@ -143,13 +146,13 @@ function TmemcacheClient.read(Key: string): string;
 begin
   result := cmd('get ' + Key);
   repeat
-    if (result = 'END') then
+    if (result = MC_END) then
     begin
       result := '';
       LastError := MC_NOTFOUND;
       break;
     end;
-    if (pos('VALUE ' + Key, result) = 1) then
+    if (pos(MC_VALUE + ' ' + Key, result) = 1) then
     begin
       result := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);
       LastError := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);

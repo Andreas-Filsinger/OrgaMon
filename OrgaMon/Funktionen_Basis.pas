@@ -149,7 +149,8 @@ uses
 {$ENDIF}
   idglobal,
   infozip,
-  srvXMLRPC;
+  srvXMLRPC,
+  memcache;
 
 const
   CacheMusikerLiveTime = 2 * 60 * 60 * 1000; // 2 Stunden
@@ -828,7 +829,10 @@ begin
         { } RevToStr(srvXMLRPC.Version) + '@' +
         { } ComputerName + ':' +
         { } iXMLRPCPort);
-      { 16 } add('Synedit Rev. 2.0.7');
+      { 16 } add(
+        { } 'memcache Rev. ' +
+        { } RevToStr(memcache.Version) + '@' +
+        { } imemcacheHost);
       { 17 } add(iDataBaseUser);
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
