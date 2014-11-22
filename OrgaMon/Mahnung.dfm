@@ -160,7 +160,7 @@ object FormMahnung: TFormMahnung
     Top = 42
     Width = 941
     Height = 579
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mahnliste &erstellen'
@@ -1300,13 +1300,13 @@ object FormMahnung: TFormMahnung
       'BRIEF=ITEM=9'
       'MAHNBESCHEID=ITEM=10')
     RequestLive = True
-    Left = 616
-    Top = 24
+    Left = 536
+    Top = 16
   end
   object IB_DataSourceMahnlauf: TIB_DataSource
     Dataset = IB_QueryMahnlauf
     Left = 648
-    Top = 24
+    Top = 16
   end
   object IB_DataSourceAusgesetzteBelege: TIB_DataSource
     Dataset = IB_QueryAusgesetzteBelege
