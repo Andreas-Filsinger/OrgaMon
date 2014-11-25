@@ -1310,8 +1310,8 @@ object FormMahnung: TFormMahnung
   end
   object IB_DataSourceAusgesetzteBelege: TIB_DataSource
     Dataset = IB_QueryAusgesetzteBelege
-    Left = 744
-    Top = 24
+    Left = 800
+    Top = 16
   end
   object IB_QueryAusgesetzteBelege: TIB_Query
     ColumnAttributes.Strings = (
@@ -1333,21 +1333,21 @@ object FormMahnung: TFormMahnung
       'SALDO=TRUE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
-      'select '
+      'select'
       ' RID,'
       ' PERSON_R,'
       ' RID SALDO,'
       ' MAHNUNG_AUSGESETZT'
-      'from '
+      'from'
       ' BELEG'
-      'where '
-      ' (MAHNUNG_AUSGESETZT='#39'Y'#39') '
+      'where'
+      ' (MAHNUNG_AUSGESETZT='#39'Y'#39')'
       'order by'
       ' RID'
       'for update')
     ColorScheme = True
     RequestLive = True
-    Left = 712
-    Top = 24
+    Left = 736
+    Top = 16
   end
 end

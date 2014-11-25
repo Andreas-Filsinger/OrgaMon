@@ -743,6 +743,7 @@ end;
 
 procedure TFormMahnung.EnsureOnline;
 begin
+  BeginHourGlass;
   if not (IB_QueryMahnlauf.active) then
     IB_QueryMahnlauf.open
   else
@@ -751,13 +752,14 @@ begin
     IB_QueryAusgesetzteBelege.open
   else
     IB_QueryAusgesetzteBelege.refresh;
+  EndHourGlass;
 end;
 
 procedure TFormMahnung.EnsureMahnungUpdate;
 begin
   e_x_sql(
-    'update mahnlauf M set '+
-    'MAHNUNG = (select max(B.mahnung) from beleg B where B.person_r=M.PERSON_R)');
+    'update MAHNLAUF M set '+
+    'MAHNUNG = (select max(B.MAHNUNG) from BELEG B where B.PERSON_R=M.PERSON_R)');
 end;
 
 procedure TFormMahnung.Image2Click(Sender: TObject);
@@ -773,8 +775,9 @@ begin
   try
     SilentMode := true;
    repeat
+    pagecontrol1.ActivePage := TabSheet1;
     show;
-    if ErzeugeKundenListe<>0 then
+    if (ErzeugeKundenListe<>0) then
      break;
     ErzeugeMahnListe(false);
     result := true;
