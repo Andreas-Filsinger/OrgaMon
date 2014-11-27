@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.233; // ../rev/Oc.rev.txt
+  Version: single = 1.234; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -288,7 +288,7 @@ var
   // Parameter
   pArgosMode: boolean;
   pUTF8: boolean;
-  pWriteAt: string;
+  pWriteAt: TStringList;
   pDebug: boolean;
   pIgnoreZaehlwerke: TStringList;
   pSplitNameSpace: string;
@@ -482,7 +482,7 @@ var
       if pArgosMode then
       begin
 
-        if (pWriteAt <> '') then
+        if (pWriteAt.count > 0) then
         begin
 
           if (_FullName = 'dispo.auftrag.sperrzeit') then
@@ -503,27 +503,7 @@ var
 
           end;
 
-          (*
-            if (_FullName =
-            'Auftragsdaten.Auftrag.Prozess.Installation.ProzessMaterial.AusbauContainer.Material')
-            then
-            begin
-            //
-            TYP := sMESSAGE.values
-            ['Auftragsdaten.Auftrag.Prozess.Installation.ProzessMaterial.AusbauContainer.Material.Type'];
-            //
-            if (TYP <> 'CountingDevice') and (TYP <> 'MeasurementRecording') and
-            (TYP <> 'MountType') then
-            begin
-            sMESSAGE.values['Type'] := TYP;
-            sMESSAGE.values['Serialnummer'] := sMESSAGE.values
-            ['Auftragsdaten.Auftrag.Prozess.Installation.ProzessMaterial.AusbauContainer.Material.Serialnummer'];
-            end;
-            break;
-            end;
-          *)
-
-          if (_FullName = pWriteAt) then
+          if (pWriteAt.IndexOf(_FullName)<>-1) then
           begin
             outOne;
             clearOne;
@@ -609,15 +589,12 @@ var
         break;
       end;
 
-      if (pWriteAt <> '') then
-      begin
-        if (_FullName = pWriteAt) then
+        if (pWriteAt.IndexOf(_FullName)<>-1) then
         begin
           outOne;
           clearOne;
           break;
         end;
-      end;
 
     until true;
     // onClose(Tag) - EVENTS !!!!!
@@ -923,7 +900,7 @@ var
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
-    pWriteAt := sMapping.values['WRITE_AT'];
+    pWriteAt := Split(sMapping.values['WRITE_AT'],'|');
     pDebug := sMapping.values['DEBUG'] = 'JA';
     pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|');
     pSplitNameSpace := sMapping.values['NAMESPACE'];
@@ -1234,6 +1211,7 @@ begin
     sHeader.Free;
   Umsetzer.Free;
   pIgnoreZaehlwerke.Free;
+  pWriteAt.Free;
 end;
 
 procedure xml2csv_Multi(InFName: string; sBericht: TStringList = nil);
