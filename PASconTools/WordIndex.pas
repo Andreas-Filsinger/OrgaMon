@@ -153,7 +153,8 @@ type
     procedure insertFromStrings(sl: TStrings);
     procedure SaveToFile(FName: string);
     procedure SaveToHTML(FName: string; sFormats: TStringList = nil);
-    procedure Del(Row: integer = -1);
+    procedure Del(Row: integer = -1); // delete Row
+    procedure Rem(Col: integer = -1); // remove Col
     function header: TStringList;
     function data: TStringList;
     function locate(Col: integer; sValue: string): integer; overload; // [row]
@@ -182,6 +183,9 @@ type
 
     // Rechenfunktionen
     function sumCol(HeaderName: string): double;
+
+    // Höhere Funktionen
+    procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
     function Row(r: integer): TStringList;
     function addRow(r: TStringList = nil): integer;
@@ -1285,6 +1289,27 @@ begin
   result := pred(Count);
 end;
 
+procedure TsTable.BlowUp(SearchCol, FName, ExtCol: string);
+var
+  B: TsTable;
+  refCol, cB, rA, rB: integer;
+begin
+  B := TsTable.Create;
+  B.insertFromFile(FName);
+  for cB := 0 to pred(B.header.Count) do
+    if (colOf(SearchCol + '.' + B.header[cB]) = -1) then
+      addCol(SearchCol + '.' + B.header[cB]);
+  refCol := colOf(SearchCol, true);
+  for rA := 1 to RowCount do
+  begin
+    rB := B.locate(ExtCol, readCell(rA, refCol));
+    if (rB <> -1) then
+      for cB := 0 to pred(B.header.Count) do
+        writeCell(rA, SearchCol + '.' + B.header[cB], B.readCell(rB, cB));
+  end;
+  B.free;
+end;
+
 function TsTable.Col(c: integer): TStringList;
 var
   r: integer;
@@ -1768,6 +1793,14 @@ end;
 function TsTable.readCell(Row: integer; Col: string): string;
 begin
   result := readCell(Row, colOf(Col));
+end;
+
+procedure TsTable.Rem(Col: integer);
+var
+  r: integer;
+begin
+  for r := 0 to pred(Count) do
+    TStringList(Items[r]).delete(Col);
 end;
 
 function TsTable.Row(r: integer): TStringList;

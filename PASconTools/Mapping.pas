@@ -28,7 +28,7 @@ unit Mapping;
 
 {
 
-  Mapping bietet Wert Umsetzer an, dabei ist die linke Seite der alte Wert,
+  Mapping bietet Wert-Umsetzer an, dabei ist die linke Seite der alte Wert,
   die rechte Seite der Neue.
 
   Hallo Welt=Hello world
@@ -57,7 +57,7 @@ unit Mapping;
   v=x
   V=y
 
-  ist nicht möglich. Es kommt die Fehlermeldung dass "v" bereits definiert ist.
+  ist somit nicht möglich. Es kommt die Fehlermeldung dass "v" bereits definiert ist.
 
   Anwendung
   =========
