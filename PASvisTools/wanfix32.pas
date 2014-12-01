@@ -475,7 +475,7 @@ end;
 
 function printhtml(dokument: string): boolean;
 begin
- _Document := dokument;
+  _Document := dokument;
   result := WinExec32('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"',
     sw_showdefault);
 end;
@@ -488,7 +488,7 @@ const
 var
   InstalledReader: string;
 begin
- _Document := dokument;
+  _Document := dokument;
   repeat
     // detect newest reader
     if FileExists(ProgramFilesDir + cAdobe10) then
@@ -560,7 +560,7 @@ var
   end;
 
 begin
- _Document := FName;
+  _Document := FName;
   result := false;
   d(FName);
   if FileExists(FName) then
@@ -1037,7 +1037,7 @@ begin
   end;
 end;
 
-//  file:///
+// file:///
 
 function openShell(dokument: string;
   Visibility: Word = SW_SHOWMAXIMIZED): boolean;

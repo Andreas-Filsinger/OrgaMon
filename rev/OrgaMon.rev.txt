@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.059 (01.12.14) Andreas Filsinger
+
+ Bug: Kasse: Ereignis "17", "BEENDET" spielte frühere Uhrzeit vor
+
 Rev 8.058 (24.11.14) Andreas Filsinger
 
  Neu: Mahnung: Beschleunigung von "Alle Häkchen wegnehmen"

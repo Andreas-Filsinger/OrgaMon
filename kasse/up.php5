@@ -1,8 +1,14 @@
 <?php
 
-// Kasse Rev 1.020
+// Kasse Rev 1.021
 
-header("Content-type: application/jsonrequest"); 
+date_default_timezone_set('Europe/Berlin');
+mb_internal_encoding("UTF-8");
+ini_set('ibase.timestampformat', "%d.%m.%Y %H:%M:%S");
+ini_set('ibase.dateformat', "%d.%m.%Y");
+ini_set('ibase.timeformat', "%H:%M:%S");
+
+header("Content-type: application/jsonrequest");
 
 include("i_config.inc.php5");
 include("t_errorlist.inc.php5");
@@ -33,7 +39,7 @@ function base_plug()
 }
 
 function decodePassword($password) 
-  { if (strlen($password) == 48) // Password ist verschlüsselt
+  { if (strlen($password) == 48) // Password ist verschlï¿½sselt
     { $hex = $password;
       $str = "";
       while (strlen($hex) > 1) 
@@ -66,13 +72,14 @@ function logPOST(){
 
 }
   
+ logPOST();
+ 
  if (base_plug() == true) { 
  
-    logPOST();
  
     while (true) {
 	
-    // Datenbank öffnen
+    // Datenbank ï¿½ffnen
     $ibase = tibase::create($server_info[0],
                            $server_info[17],
 		                   decodePassword($server_info[19]) );
@@ -94,7 +101,7 @@ function logPOST(){
 	  " " . $rid . "," .
 	  " 17," .
 	  " '" . $HTTP_RAW_POST_DATA . "')")) {
-      echo ("{ ERROR: \"Einfügen in die Datenbank ohne Erfolg\" }");
+      echo ("{ ERROR: \"Einfï¿½gen in die Datenbank ohne Erfolg\" }");
 	  break;
 	} 
 	unset($ibase);
@@ -108,7 +115,9 @@ function logPOST(){
 	}
 
  } else { 
-  echo ("{ ERROR: \"XMLRPC läuft nicht\" }");
+  echo ("{ ERROR: \"XMLRPC lï¿½uft nicht\" }");
  }
+ 
+ 
 
 ?>
