@@ -122,12 +122,20 @@ var
   BELEG_R: integer;
   OutFName: string;
 begin
+  BeginHourglass;
   BELEG_R := e_w_BelegNeuAusKasse(EREIGNIS_R);
   OutFName := e_w_BelegBuchen(BELEG_R);
   // printto(Handle, OutFName);
   // Ev. durch Auto-Print ersetzen
   if CheckBox1.checked then
     printhtmlOK(OutFName);
+
+  // "BEENDET" Wert überschreiben, um "echten" Wert zu ermitteln
+  e_x_sql(
+    { } 'update EREIGNIS set' +
+    { } ' BEENDET=CURRENT_TIMESTAMP ' +
+    { } 'where RID=' + inttostr(EREIGNIS_R));
+  EndHourGlass;
 end;
 
 procedure TFormEreignis.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);

@@ -41,7 +41,7 @@ uses
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
-  IdUDPClient, IdSNTP, JvExtComponent;
+  IdUDPClient, IdSNTP, JvExtComponent, Vcl.Grids;
 
 type
   TFormScanner = class(TForm)
@@ -51,16 +51,17 @@ type
     CheckBox1: TCheckBox;
     IB_Cursor1: TIB_Cursor;
     IB_Query1: TIB_Query;
-    Button4: TButton;
-    IdSNTP1: TIdSNTP;
     Button5: TButton;
     Button6: TButton;
     Label2: TLabel;
     SpeedButton1: TSpeedButton;
     ComboBox1: TComboBox;
     Image2: TImage;
-    JvClock1: TJvClock;
     SpeedButton2: TSpeedButton;
+    Button11: TButton;
+    Button7: TButton;
+    Image1: TImage;
+    DrawGrid1: TDrawGrid;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -69,6 +70,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
   private
     { Private-Deklarationen }
 
@@ -138,6 +140,7 @@ begin
     try
 
       Scan := GanzerScan;
+
       // Erst mal alles bis zur ersten Ziffer filtern
       LOGO := '';
       for n := 1 to length(Scan) do
@@ -315,6 +318,12 @@ begin
   setfocus;
   Edit1.setfocus;
   SetForeGroundWindow(handle);
+end;
+
+procedure TFormScanner.Image1Click(Sender: TObject);
+begin
+  openShell(cHelpURL + 'Scanner');
+
 end;
 
 procedure TFormScanner.Button4Click(Sender: TObject);
