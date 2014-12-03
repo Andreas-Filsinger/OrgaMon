@@ -2892,7 +2892,7 @@ begin
       pOhneAusstehende := false;
     end;
 
-    // verbuchen -> aktuellen MahnbelBeleg wegkopieren!
+    // verbuchen -> aktuellen Mahnbeleg wegkopieren!
     if pVerbuchen then
     begin
       FileCopy(MahnungFName(PERSON_R), OutPath + 'Mahnung_' + inttostr(DateGet)
@@ -2931,7 +2931,7 @@ begin
     // Person Datenfelder
     with cPERSON do
     begin
-      sql.add('SELECT * FROM PERSON WHERE RID=' + inttostr(PERSON_R));
+      sql.add('select * from PERSON where RID=' + inttostr(PERSON_R));
       ApiFirst;
     end;
 
@@ -2952,14 +2952,14 @@ begin
     // Konto Summe "Beleg-Bezogen"
     with cBELEGSALDO do
     begin
-      sql.add('SELECT SUM(BETRAG) B_SUM FROM AUSGANGSRECHNUNG WHERE BELEG_R=:CROSSREF');
+      sql.add('select sum(BETRAG) B_SUM from AUSGANGSRECHNUNG where BELEG_R=:CROSSREF');
       prepare;
     end;
 
     // Alle Belege des Kunden auflisten
     with qBELEG do
     begin
-      sql.add('SELECT * FROM BELEG WHERE RID=:CROSSREF ' + for_update);
+      sql.add('select * from BELEG where RID=:CROSSREF ' + for_update);
       prepare;
     end;
 
@@ -11992,7 +11992,6 @@ begin
   begin
     StrPCopy(CryptKey, iShopKey);
     Init(CryptKey, length(iShopKey) * 8, nil);
-
     str := Int64asKeyStr(ARTIKEL_R);
     SetLength(s, 8);
     EncryptCFB8bit(str[1], s[1], 8);
@@ -12259,7 +12258,6 @@ var
   sBON: TsTable;
   sBELEG: TStringList;
   BELEG_R: integer;
-  ZUSAMMENHANG_R: integer;
   ARTIKEL_R: integer;
   BEARBEITER_R: integer;
   aUHR: TAnfixTime;
@@ -12279,8 +12277,9 @@ begin
   dir(KassePath + cBON_Bon + '*.ini', sBELEGE, false);
   if (sBELEGE.count > 0) then
   begin
+    e_w_GEN('GEN_ZUSAMMENHANG');
+
     sBELEGE.sort;
-    ZUSAMMENHANG_R := e_w_GEN('GEN_ZUSAMMENHANG');
 
     R_BEARBEITER := e_r_sqlm('select RID from BEARBEITER');
     R_ARTIKEL := e_r_sqlm('select RID from ARTIKEL');
@@ -12412,6 +12411,8 @@ var
   Divisor: double;
 
 begin
+  IB_SET_RANG := nil;
+  Divisor := 1.0;
 
   e_x_sql('update ARTIKEL set RANG=null');
   e_x_sql('update ARTIKEL_AA set RANG=null');
@@ -12627,7 +12628,6 @@ begin
 
   until false;
 
-  IB_SET_RANG := nil;
   IB_ARTIKEL_AA.Close;
   IB_ARTIKEL.Close;
 

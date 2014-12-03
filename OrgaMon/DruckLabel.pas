@@ -74,6 +74,7 @@ type
     Button4: TButton;
     Image2: TImage;
     CheckBox1: TCheckBox;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -82,6 +83,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -237,6 +239,16 @@ end;
 procedure TFormDruckLabel.Button2Click(Sender: TObject);
 begin
   FormDruckSpooler.show;
+end;
+
+procedure TFormDruckLabel.Button3Click(Sender: TObject);
+begin
+ with Printer do
+ begin
+   BeginDoc;
+   Title := 'Leeres Dokument ' + sTimeStamp;
+   EndDoc;
+ end;
 end;
 
 procedure TFormDruckLabel.Button4Click(Sender: TObject);

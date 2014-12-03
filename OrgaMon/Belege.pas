@@ -2790,9 +2790,9 @@ begin
 
       // das SQL
       sql.add('select POSNO,RID from POSTEN where');
-      sql.add(' (BELEG_R=' + IB_Query1.FieldByName('RID').AsString + ')');
+      sql.add(' (BELEG_R=' + IB_Query1.FieldByName('RID').AsString + ') ');
       sql.add('order by');
-      sql.add('POSNO,RID');
+      sql.add(' POSNO,RID');
 
       // die Runde
       StartFlag := false;

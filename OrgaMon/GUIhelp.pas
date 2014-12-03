@@ -428,6 +428,7 @@ begin
     application.processmessages;
   end;
 end;
+
 function FindRid(RID: integer; const s: TStringList): string;
 var
   n: integer;

@@ -480,7 +480,7 @@ object FormMahnung: TFormMahnung
         ParentFont = False
       end
       object Button8: TButton
-        Left = 761
+        Left = 762
         Top = 43
         Width = 23
         Height = 22
@@ -581,7 +581,7 @@ object FormMahnung: TFormMahnung
         VisibleButtons = [ubEdit, ubPost, ubCancel, ubRefreshAll]
       end
       object Button11: TButton
-        Left = 904
+        Left = 907
         Top = 43
         Width = 23
         Height = 22
@@ -599,7 +599,7 @@ object FormMahnung: TFormMahnung
         OnClick = Button11Click
       end
       object Button18: TButton
-        Left = 810
+        Left = 809
         Top = 43
         Width = 22
         Height = 22
