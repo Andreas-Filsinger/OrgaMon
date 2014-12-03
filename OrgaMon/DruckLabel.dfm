@@ -426,6 +426,15 @@ object FormDruckLabel: TFormDruckLabel
     State = cbChecked
     TabOrder = 14
   end
+  object Button3: TButton
+    Left = 416
+    Top = 340
+    Width = 145
+    Height = 25
+    Caption = 'Leerdokument drucken'
+    TabOrder = 15
+    OnClick = Button3Click
+  end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')

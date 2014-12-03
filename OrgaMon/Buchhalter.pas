@@ -1042,9 +1042,13 @@ var
       // Prio 9: sind Tiernamen gewünscht?
       if (UeberweisungsSettings.values['BehandelteTiere'] = cIni_Activate) then
       begin
-        TierTexte := e_r_sqlsl('select ARTIKEL from POSTEN ' + 'where' +
-          ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
-          ' (TIER_R is not null)' + 'order by' + ' POSNO,RID');
+        TierTexte := e_r_sqlsl(
+          { } 'select ARTIKEL from POSTEN ' +
+          { } 'where' +
+          { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+          { } ' (TIER_R is not null) ' +
+          { } 'order by' +
+          { } ' POSNO,RID');
 
         result.addstrings(TierTexte);
         TierTexte.free;
@@ -1053,10 +1057,13 @@ var
       // Prio 10: Postenzeilen mit der passenden Ausgabeart
       if (iAusgabeartLastschriftText >= cRID_FirstValid) then
       begin
-        LastschriftTexte := e_r_sqlsl('select ARTIKEL from POSTEN ' + 'where' +
-          ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
-          ' (AUSGABEART_R=' + inttostr(iAusgabeartLastschriftText) + ')' +
-          'order by' + ' POSNO,RID');
+        LastschriftTexte := e_r_sqlsl(
+          { } 'select ARTIKEL from POSTEN ' +
+          { } 'where' +
+          { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+          { } ' (AUSGABEART_R=' + inttostr(iAusgabeartLastschriftText) + ') ' +
+          { } 'order by' +
+          { } ' POSNO,RID');
 
         result.addstrings(LastschriftTexte);
         LastschriftTexte.free;

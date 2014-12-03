@@ -332,8 +332,8 @@ begin
         FieldByName('BRIEF').AsString := cC_False;
       end else
       begin
-        FieldByName('BRIEF').AsString := cC_True;
         Bericht := e_w_KontoInfo(PERSON_R);
+        FieldByName('BRIEF').AsString := cC_True;
       end;
 
       if assigned(Bericht) then
@@ -402,9 +402,11 @@ begin
     inttostr(e_r_sql('select count(rid) from MAHNLAUF where BRIEF=''' +
     cC_True + '''')) + #13 + ' Mahnungen abgeschlossen werden') then
   begin
+    BeginHourGlass;
     ErzeugeMahnliste(false, true);
     EnsureMahnungUpdate;
     EnsureOnline;
+    EndHourGlass;
   end;
 end;
 

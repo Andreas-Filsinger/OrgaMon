@@ -25,10 +25,6 @@ object FormDruckSpooler: TFormDruckSpooler
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Drucken'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton4: TSpeedButton
         Left = 647
         Top = 10
@@ -181,7 +177,7 @@ object FormDruckSpooler: TFormDruckSpooler
         Top = 10
         Width = 23
         Height = 23
-        Hint = 'Jetzt eine Testausdruck durchf'#252'hren'
+        Hint = 'Jetzt ein Testausdruck durchf'#252'hren'
         Caption = #202
         Font.Charset = SYMBOL_CHARSET
         Font.Color = clWindowText
@@ -222,10 +218,6 @@ object FormDruckSpooler: TFormDruckSpooler
     object TabSheet2: TTabSheet
       Caption = 'Verarbeiten'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 48
@@ -255,10 +247,6 @@ object FormDruckSpooler: TFormDruckSpooler
       Caption = 'Druckauftrag'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton12: TSpeedButton
         Left = 3
         Top = 4

@@ -32,8 +32,9 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
+  anfix32, wordindex,
   StdCtrls, IB_Components, IB_Access,
-  anfix32, ExtCtrls,
+  ExtCtrls,
   Buttons, jpeg, Datenbank,
 
   // Jedi
@@ -62,6 +63,11 @@ type
     Button7: TButton;
     Image1: TImage;
     DrawGrid1: TDrawGrid;
+    Edit2: TEdit;
+    StaticText1: TStaticText;
+    Button2: TButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -71,11 +77,30 @@ type
     procedure Button6Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
+    procedure DrawGrid1DblClick(Sender: TObject);
+    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure FormActivate(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
   private
-    { Private-Deklarationen }
+    initialized: boolean;
+    cPlanY: Integer;
+    ScrollBarWidth: Integer;
+    SCAN_LIST: TsTable;
+    SL_BELEG_R: Integer;
 
-    function Selected_BELEG_R: integer;
-    function Selected_PERSON_R: integer;
+    function Selected_BELEG_R: Integer;
+    function Selected_PERSON_R: Integer;
+    procedure SL_load(BELEG_R: Integer);
+    procedure SL_refresh;
+    procedure SL_show;
+    procedure SL_reflect;
+    procedure RefreshSumme;
 
   public
     { Public-Deklarationen }
@@ -90,28 +115,38 @@ var
 implementation
 
 uses
+  math,
   globals, winamp,
   Funktionen_Basis,
   Funktionen_Beleg,
   CareTakerClient, Belege, Person,
   Main, dbOrgaMon, VersenderPaketID,
-  SysHot, wanfix32;
+  SysHot, wanfix32, GUIhelp,
+  html,
+  Artikel;
+
 {$R *.dfm}
+
+procedure TFormScanner.Button11Click(Sender: TObject);
+begin
+  // Scan Mengen eintragen
+  // Verbuchen
+end;
 
 procedure TFormScanner.Button1Click(Sender: TObject);
 var
   GanzerScan, Scan: string;
   ErrorMsg: string;
   LOGO: string;
-  BELEG_R: integer;
-  GENERATION: integer;
-  MENGE_RECHNUNG: integer;
+  BELEG_R: Integer;
+  GENERATION: Integer;
+  MENGE_RECHNUNG: Integer;
   EventText: TStringList;
-  n: integer;
+  n: Integer;
   LabelDruck: boolean;
-  VERSENDER_R: integer;
-  VERSAND_R: integer;
-  TEILLIEFERUNG: integer;
+  VERSENDER_R: Integer;
+  VERSAND_R: Integer;
+  TEILLIEFERUNG: Integer;
   qEREIGNIS: TIB_Query;
 begin
   //
@@ -153,8 +188,8 @@ begin
 
       // Welcher Versender?!
       if (LOGO <> '') then
-        VERSENDER_R := e_r_sql
-          ('select RID from VERSENDER where LOGO=''' + LOGO + '''');
+        VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
+          LOGO + '''');
 
       // restliche Parameter!
       BELEG_R := strtointdef(nextp(Scan, '-', 0), cRID_Null);
@@ -236,8 +271,8 @@ begin
       e_w_BelegBuchen(BELEG_R, LabelDruck);
 
       // Den Versender noch einstellen
-      VERSAND_R := e_r_sql('select RID from VERSAND where' +
-        ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
+      VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
+        inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
         inttostr(TEILLIEFERUNG) + ')');
       if (VERSAND_R >= cRID_FirstValid) then
         if (VERSENDER_R >= cRID_FirstValid) then
@@ -312,6 +347,185 @@ begin
     CheckBox1.Checked := active;
 end;
 
+procedure TFormScanner.DrawGrid1DblClick(Sender: TObject);
+begin
+  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 3), 0));
+end;
+
+procedure TFormScanner.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
+  Rect: TRect; State: TGridDrawState);
+var
+  Fokusiert: boolean;
+  MENGE_RECHNUNG, MENGE_SCAN, MENGE_REST: Integer;
+  GTIN: string;
+begin
+  if (ARow >= 0) then
+    with DrawGrid1.canvas, IB_Cursor1 do
+    begin
+
+      Fokusiert := (ARow = DrawGrid1.Row);
+
+      if Fokusiert then
+      begin
+        brush.color := HTMLColor2TColor($99CCFF);
+      end
+      else
+      begin
+        if odd(ARow) then
+        begin
+          brush.color := clWhite;
+        end
+        else
+        begin
+          brush.color := clListeGrau;
+        end;
+      end;
+
+      if assigned(SCAN_LIST) then
+      begin
+
+        (* Im Falle von Status "Markiert"
+          if Fokusiert then
+          begin
+          brush.color := HTMLColor2TColor($CCFFFF); // $99FF00
+          end
+          else
+          begin
+          if odd(ARow) then
+          begin
+          brush.color := HTMLColor2TColor($00CCFF);
+          end
+          else
+          begin
+          brush.color := HTMLColor2TColor($0099CC);
+          end;
+          end;
+
+          // Bereichnung der Zeilen Höhe
+          RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count)
+          + dpiX(2);
+          if (RowHeight <> DrawGrid1.RowHeights[ARow]) then
+          begin
+          DrawGrid1.RowHeights[ARow] := RowHeight;
+          UeberweisungsText.free;
+          exit;
+          end;
+        *)
+        case ACol of
+          0:
+            begin
+
+              if (ARow > 0) then
+              begin
+                MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(ARow, 0), 0);
+                MENGE_SCAN := strtointdef(SCAN_LIST.readCell(ARow, 4), 0);
+                MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
+                if MENGE_RECHNUNG > MENGE_SCAN then
+                begin
+                  GTIN := SCAN_LIST.readCell(ARow, 2);
+                  if (GTIN <> '<NULL>') then
+                    brush.color := HTMLColor2TColor($FF9966)
+                  else
+                    brush.color := HTMLColor2TColor($9999FF);
+                end
+                else
+                begin
+                  brush.color := HTMLColor2TColor($99FF99);
+                end;
+
+                // MENGE
+
+                FillRect(Rect);
+                font.size := 11;
+                TextOut(Rect.left + 2, Rect.top,
+                  SCAN_LIST.readCell(ARow, ACol));
+                if (MENGE_REST > 0) then
+                  TextOut(
+                    { } Rect.left + 2,
+                    { } Rect.top + cPlanY,
+                    { } 'noch ' + inttostr(MENGE_REST));
+              end
+              else
+              begin
+                font.size := 10;
+                TextRect(Rect, Rect.left + 2, Rect.top, 'Anzahl');
+              end;
+
+              // draw(rect.left + 3, rect.top + 2, StatusBMPs[random(4)]); // Status
+            end;
+          1:
+            begin
+              // ARTIKEL
+              // brush.color := HTMLColor2TColor($FFCC99);
+
+              font.size := 10;
+              TextRect(Rect, Rect.left + 2, Rect.top,
+                SCAN_LIST.readCell(ARow, ACol));
+            end;
+          2:
+            begin
+              // MENGE
+              // brush.color := HTMLColor2TColor($FFCC99);
+
+              font.size := 10;
+              TextRect(Rect, Rect.left + 2, Rect.top,
+                SCAN_LIST.readCell(ARow, ACol));
+            end;
+        else
+          // dummy Rand Zellen
+          FillRect(Rect);
+        end;
+
+        // Grauer vertikaler Strich
+        if (ACol > 0) then
+        begin
+          pen.color := $A0A0A0;
+          MoveTo(Rect.left, Rect.top);
+          LineTo(Rect.left, Rect.bottom);
+        end;
+      end
+      else
+      begin
+        // total leer!
+        FillRect(Rect);
+      end;
+    end;
+end;
+
+procedure TFormScanner.FormActivate(Sender: TObject);
+begin
+  if not(initialized) then
+  begin
+    cPlanY := dpiX(16);
+    ScrollBarWidth := GetSystemMetrics(SM_CXVSCROLL);
+    with DrawGrid1, canvas do
+    begin
+      DefaultRowHeight := (cPlanY * 2) + dpiX(2);
+      font.NAME := 'Courier New';
+      font.color := clblack;
+      ColCount := 4;
+      ColWidths[0] := dpiX(60);
+      ColWidths[2] := dpiX(130);
+      ColWidths[3] := 1;
+      ColWidths[1] := clientwidth - ColWidths[0] - ColWidths[2] -
+        (3 * 2 + ScrollBarWidth);
+      RowCount := 0;
+    end;
+    dgAutoSize(DrawGrid1, true);
+    initialized := true;
+  end;
+end;
+
+procedure TFormScanner.FormResize(Sender: TObject);
+begin
+  if initialized then
+    with DrawGrid1 do
+    begin
+      ColWidths[1] := clientwidth - ColWidths[0] - ColWidths[2] -
+        (3 * 2 + ScrollBarWidth);
+    end;
+end;
+
 procedure TFormScanner.hotEvent;
 begin
   show;
@@ -323,7 +537,12 @@ end;
 procedure TFormScanner.Image1Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Scanner');
+end;
 
+procedure TFormScanner.Button2Click(Sender: TObject);
+begin
+  SL_load(strtointdef(Edit2.Text, 0));
+  SL_show;
 end;
 
 procedure TFormScanner.Button4Click(Sender: TObject);
@@ -368,6 +587,34 @@ begin
   EndHourGlass;
 end;
 
+procedure TFormScanner.RefreshSumme;
+var
+  MENGE_RECHNUNG, MENGE_SCAN: Integer;
+  SUMME: Integer;
+begin
+  if assigned(SCAN_LIST) then
+  begin
+    MENGE_RECHNUNG := round(SCAN_LIST.sumCol('MENGE_RECHNUNG'));
+    MENGE_SCAN := round(SCAN_LIST.sumCol('MENGE_SCAN'));
+    SUMME := MENGE_RECHNUNG - MENGE_SCAN;
+    if (SUMME = 0) then
+    begin
+      StaticText1.color := cllime;
+      StaticText1.Caption := '';
+    end
+    else
+    begin
+      StaticText1.color := clred;
+      StaticText1.Caption := inttostr(SUMME);
+    end;
+  end
+  else
+  begin
+    StaticText1.color := cllime;
+    StaticText1.Caption := '';
+  end;
+end;
+
 procedure TFormScanner.ComboBox1Change(Sender: TObject);
 begin
   case ComboBox1.ItemIndex of
@@ -410,7 +657,30 @@ begin
 
 end;
 
-function TFormScanner.Selected_BELEG_R: integer;
+procedure TFormScanner.SpeedButton3Click(Sender: TObject);
+begin
+  SL_refresh;
+end;
+
+procedure TFormScanner.SpeedButton4Click(Sender: TObject);
+var
+  MENGE_SCAN: Integer;
+  MENGE_RECHNUNG: Integer;
+  MENGE_REST: Integer;
+begin
+  MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 0), 0);
+  MENGE_SCAN := strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 4), 0);
+  MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
+  if (MENGE_REST > 0) then
+  begin
+    inc(MENGE_SCAN);
+    SCAN_LIST.writeCell(DrawGrid1.Row, 4, inttostr(MENGE_SCAN));
+    SL_reflect;
+  end;
+
+end;
+
+function TFormScanner.Selected_BELEG_R: Integer;
 var
   s: string;
 begin
@@ -426,10 +696,10 @@ begin
   end;
 end;
 
-function TFormScanner.Selected_PERSON_R: integer;
+function TFormScanner.Selected_PERSON_R: Integer;
 var
   s: string;
-  BELEG_R: integer;
+  BELEG_R: Integer;
 begin
   if (ListBox1.ItemIndex <> -1) then
   begin
@@ -445,6 +715,58 @@ begin
   end;
 end;
 
+procedure TFormScanner.SL_load(BELEG_R: Integer);
+begin
+  if assigned(SCAN_LIST) then
+    SCAN_LIST.free;
+
+  SCAN_LIST := csTable(
+    { } 'select ' +
+    { } ' POSTEN.MENGE_RECHNUNG,' +
+    { } ' POSTEN.ARTIKEL,' +
+    { } ' ARTIKEL.GTIN,' +
+    { } ' POSTEN.ARTIKEL_R,' +
+    { } ' 0 as MENGE_SCAN ' +
+    { } 'from POSTEN ' +
+    { } 'left join ARTIKEL on' +
+    { } ' (POSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
+    { } 'where' +
+    { } ' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ') and' +
+    { } ' (POSTEN.MENGE_RECHNUNG>0) and' +
+    { } ' (POSTEN.ZUTAT is null) ' +
+    { } 'order by' +
+    { } ' POSTEN.POSNO,POSTEN.RID');
+
+  SL_BELEG_R := BELEG_R;
+end;
+
+procedure TFormScanner.SL_reflect;
+begin
+  DrawGrid1.Refresh;
+  RefreshSumme;
+end;
+
+procedure TFormScanner.SL_refresh;
+begin
+  if assigned(SCAN_LIST) then
+    SCAN_LIST.free;
+  SL_load(SL_BELEG_R);
+  SL_show;
+end;
+
+procedure TFormScanner.SL_show;
+begin
+  with DrawGrid1 do
+  begin
+    RowCount := SCAN_LIST.RowCount + 1;
+    FixedRows := 1;
+    DrawGrid1.RowHeights[0] := cPlanY + dpiX(2);
+    Refresh;
+    // SecureSetRow(DrawGrid1, pred(RowCount));
+  end;
+  RefreshSumme;
+end;
+
 procedure TFormScanner.Button5Click(Sender: TObject);
 begin
   FormBelege.SetContext(0, Selected_BELEG_R);
@@ -453,6 +775,11 @@ end;
 procedure TFormScanner.Button6Click(Sender: TObject);
 begin
   FormPerson.SetContext(Selected_PERSON_R);
+end;
+
+procedure TFormScanner.Button7Click(Sender: TObject);
+begin
+  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 3), 0));
 end;
 
 end.

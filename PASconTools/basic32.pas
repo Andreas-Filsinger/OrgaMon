@@ -1158,8 +1158,10 @@ begin
     EnsurePrinting;
     with printer.canvas do
     begin
-      TextOut(strtointdef(ReadVal('X'), 0) + _pX, strtointdef(ReadVal('Y'), 0)
-        + _pY, x);
+      TextOut(
+        { } strtointdef(ReadVal('X'), 0) + _pX,
+        { } strtointdef(ReadVal('Y'), 0) + _pY,
+        { } x);
       inc(_pX, TextWidth(x));
     end;
   end;
@@ -1169,7 +1171,7 @@ procedure TBasicProcessor.PrintItln(x: string);
 begin
   PrintIt(x);
   BasicOutPut.add('');
-  if DeviceOverride <> 'null' then
+  if (DeviceOverride <> 'null') then
   begin
     _pX := 0;
     inc(_pY, abs(printer.canvas.font.height) + strtointdef(ReadVal('LY'), 0));
@@ -2555,7 +2557,7 @@ begin
         DruckStueckTitel := 'RUN#' + inttostr(DruckStueckZaehler);
       Title := DruckStueckTitel;
 
-      {$IFNDEF FPC}
+{$IFNDEF FPC}
       //
       GetPrinter(Device, Driver, Port, DevMode);
       // force reload of DEVMODE
@@ -2585,7 +2587,7 @@ begin
             GlobalUnlock(DevMode); // unlock devmode handle.
           end;
       end; { If }
-      {$ENDIF}
+{$ENDIF}
       BeginDoc;
       canvas.font.size := -8;
       canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
@@ -2625,7 +2627,7 @@ begin
     end
     else
     begin
-      if DeviceOverride = '' then
+      if (DeviceOverride = '') then
         k := printer.Printers.indexof(gets(No + 1))
       else
         k := printer.Printers.indexof(DeviceOverride);
