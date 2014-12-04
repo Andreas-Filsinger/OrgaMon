@@ -394,10 +394,10 @@ function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 // Ist bei diesem Beleg etwas versendbar?
 
-function e_w_BelegVersand(BELEG_R: integer; Summe: double;
-  gewicht: integer): integer;
 // Legt einen neuen Versand-Eintrag in der Versand-Tabelle an,
 // oder füllt den vorbereiteten!
+function e_w_BelegVersand(BELEG_R: integer; Summe: double;
+  gewicht: integer): integer;
 
 function e_w_BelegDrittlandAusfuhr(BELEG_R: integer): boolean;
 // setzt die MwSt auf "0"
@@ -10420,7 +10420,7 @@ begin
                 // TitelZeile
                 PaketS.add(OutLineS);
                 try
-                  if DirectoryExists(cVERSENDER.FieldByName('EXPORTPFAD')
+                  if DirExists(cVERSENDER.FieldByName('EXPORTPFAD')
                     .AsString) then
                     PaketS.SaveToFile(cVERSENDER.FieldByName('EXPORTPFAD')
                       .AsString + 'DPKopf_.txt');
@@ -10478,7 +10478,7 @@ begin
                 if LabelDatensatz then
                 begin
                   try
-                    if DirectoryExists(cVERSENDER.FieldByName('EXPORTPFAD')
+                    if DirExists(cVERSENDER.FieldByName('EXPORTPFAD')
                       .AsString) then
                     begin
                       PaketS.SaveToFile(cVERSENDER.FieldByName('EXPORTPFAD')

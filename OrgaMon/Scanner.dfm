@@ -462,15 +462,6 @@ object FormScanner: TFormScanner
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
   end
-  object Edit2: TEdit
-    Left = 421
-    Top = 258
-    Width = 65
-    Height = 21
-    Anchors = [akRight, akBottom]
-    TabOrder = 10
-    Text = '311691'
-  end
   object StaticText1: TStaticText
     Left = 464
     Top = 31
@@ -491,17 +482,16 @@ object FormScanner: TFormScanner
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 11
+    TabOrder = 10
     Transparent = False
   end
   object Button2: TButton
-    Left = 492
-    Top = 258
-    Width = 75
-    Height = 25
-    Anchors = [akRight, akBottom]
-    Caption = 'Test'
-    TabOrder = 12
+    Left = 349
+    Top = 31
+    Width = 43
+    Height = 22
+    Caption = 'GTIN'
+    TabOrder = 11
     OnClick = Button2Click
   end
   object IB_Cursor1: TIB_Cursor
@@ -516,7 +506,7 @@ object FormScanner: TFormScanner
       'WHERE '
       ' (RID=:CROSSREF1) AND'
       ' (GENERATION=:CROSSREF2)')
-    Left = 184
+    Left = 32
     Top = 70
   end
   object IB_Query1: TIB_Query
@@ -526,7 +516,7 @@ object FormScanner: TFormScanner
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM PAKET')
-    Left = 264
-    Top = 70
+    Left = 32
+    Top = 126
   end
 end

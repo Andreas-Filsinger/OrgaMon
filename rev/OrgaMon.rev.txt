@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.061 (04.12.14) Andreas Filsinger
+
+ Neu: Artikel: Scanner: Einzel-Bestätigungs-Scan von Auslieferungen
+
 Rev 8.060 (03.12.14) Andreas Filsinger
 
  Neu: Artikel: Scanner: Einzel-Bestätigungs-Scan von Auslieferungen
