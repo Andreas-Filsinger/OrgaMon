@@ -14,7 +14,8 @@ if ($site->isActive())
 								twebshop_delivery::CLASS_NAME => _TEMPLATE_PRICE_CART_DELIVERY,
 								twebshop_availability::CLASS_NAME => _TEMPLATE_AVAILABILITY
   ));
-			  
+
+  $cart->buildSum();
   $cart->addOption("LOAD","");
   $cart->addOption("ORDER",($cart->getPositions() > 0) ? _TEMPLATE_CART_OPTION_ORDER : "");
   $cart->addOption("REFRESH_DELIVERY",($cart->getPositions() > 0) ? _TEMPLATE_CART_OPTION_REFRESH_DELIVERY : "");

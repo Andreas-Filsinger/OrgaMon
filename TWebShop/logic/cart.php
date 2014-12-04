@@ -30,36 +30,36 @@ class twebshop_cart extends tvisual {
         $this->person_r = $person_r;
         foreach (array_keys($this->article) as $index)
             $this->article[$index]->setPerson($this->person_r);
-        $this->buildSum(true);
+        $this->buildSum();
     }
 
-    public function buildSum($refresh_delivery = true) {
+    public function buildSum() {
+    
         $this->sum = 0;
-        //if ($this->person_r != 0) {
 
-            foreach ($this->article as $article)
-                $this->sum += $article->price->getSumBrutto();
-            $this->sum += ($refresh_delivery) ? $this->getDeliveryPriceSumme() : $this->delivery->getSumBrutto();
-        //}
+        foreach ($this->article as $article)
+            $this->sum += $article->price->getSumBrutto();
+
+        $this->sum += $this->getDeliveryPriceSumme();
+
         return $this->sum;
+
     }
 
     public function getSum() {
         return $this->sum;
     }
 
-    protected function getDeliveryPriceSumme() { //if ($this->person_r != 0) { 
+    protected function getDeliveryPriceSumme() {
         
         global $orgamon;
+        
         $delivery = $orgamon->getDeliveryPrice($this->person_r);
-
-        //}
-        //else 
-        //{ $delivery = twebshop_price::TYPE_UNKNOWN; 
-        //}
         $this->delivery->setValues($delivery);
         unset($delivery);
+        
         return $this->delivery->getSumBrutto();
+        
     }
 
     public function getPositions() {
@@ -137,7 +137,7 @@ class twebshop_cart extends tvisual {
         $this->article = array_diff_key($this->article, array($index => ""));
         $this->positions = count($this->article);
         $this->rebuildPositions();
-        $this->buildSum(($this->positions == 0) ? true : false);
+        $this->buildSum();
     }
 
     public function inCart($uid) {
