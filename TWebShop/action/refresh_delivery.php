@@ -1,5 +1,5 @@
 <?php
 
-$cart->buildSum(true);
+$cart->buildSum();
 
 ?>

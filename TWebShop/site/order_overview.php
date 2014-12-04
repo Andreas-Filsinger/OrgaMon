@@ -11,7 +11,7 @@ if ($site->isActive()) {
         twebshop_payment_info::CLASS_NAME => _TEMPLATE_PAYMENT_INFO_ORDER_OVERVIEW,
         twebshop_bill_delivery_type::CLASS_NAME => _TEMPLATE_BILL_DELIVERY_TYPE_ORDER_OVERVIEW));
 
-    $cart->buildSum(true);
+    $cart->buildSum();
 
     $site->getCurrentStep()->addComponent("OBJ_CART", $cart->getFromHTMLTemplate($template));
 

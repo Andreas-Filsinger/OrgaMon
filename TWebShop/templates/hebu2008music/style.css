@@ -254,6 +254,12 @@ a#mainmenuitem
   background:#939393;
 }
 
+a.PlayerPosition {
+
+    height: 80px;
+    
+}
+
 /* INHALT */
 div#content
 { width:100%;
