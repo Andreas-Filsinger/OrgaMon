@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2014 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -75,21 +75,19 @@ var
 implementation
 
 uses
-  globals, wanfix32,
+  globals, wanfix32, InfoZip,
+  Datenbank,
 
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
   Funktionen_Auftrag,
 
-  Datensicherung, Datenbank,
-  Person, CreatorMain, VersenderPaketID,
-  ArtikelSuchindex, NatuerlicheResourcen,
-  Replikation,
-  CareTakerClient, Scanner, Musiker,
-  BaseUpdate, Tier, InfoZip,
-  Mahnung, AuftragMobil,
-  AuftragExtern, AuftragSuchindex,
+  Datensicherung, Person, CreatorMain,
+  VersenderPaketID, ArtikelSuchindex, NatuerlicheResourcen,
+  Replikation, CareTakerClient, Musiker,
+  BaseUpdate, Tier, Mahnung,
+  AuftragMobil, AuftragExtern, AuftragSuchindex,
   WebShopConnector, Buchhalter, OLAP,
   dbOrgaMon;
 
@@ -313,7 +311,7 @@ begin
               e_w_VertragBuchen;
             25:
               begin
-                TimeDiff := FormScanner.Local_vs_Server_TimeDifference;
+                TimeDiff := r_Local_vs_Server_TimeDifference;
                 if (TimeDiff <> 0) then
                   Log(cERRORText +
                     format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',

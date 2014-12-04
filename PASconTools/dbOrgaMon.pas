@@ -265,6 +265,9 @@ function e_r_GEN(GenName: string): integer;
 // Zeit aus dem Datenbankserver lesen
 function e_r_now: TdateTime;
 
+// Zeitdifferenz zwischen Datenbank-Server und lokalem Server
+function r_Local_vs_Server_TimeDifference: TANFiXTime;
+
 //
 function e_r_sqls(s: string): string;
 function e_r_sqlb(s: string): boolean;
@@ -2467,6 +2470,23 @@ begin
     ParameterL.add(nextp(ParameterS));
   e_x_basic(FName, ParameterL);
   ParameterL.free;
+end;
+
+function r_Local_vs_Server_TimeDifference: TANFiXTime;
+const
+  cWahrnehmungsSchwelle = 1;
+var
+  LocalTime, ServerTime: TANFiXTime;
+  LocalDate, ServerDate: TANFiXDate;
+begin
+  BeginHourGlass;
+  LocalDate := DateGet;
+  LocalTime := SecondsGet;
+  DateTime2long(e_r_Now, ServerDate, ServerTime);
+  result := SecondsDiff(LocalDate, LocalTime, ServerDate, ServerTime);
+  if (abs(result) <= cWahrnehmungsSchwelle) then
+    result := 0;
+  EndHourGlass;
 end;
 
 end.

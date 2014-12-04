@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2014 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -63,11 +63,10 @@ type
     Button7: TButton;
     Image1: TImage;
     DrawGrid1: TDrawGrid;
-    Edit2: TEdit;
     StaticText1: TStaticText;
-    Button2: TButton;
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
+    Button2: TButton;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -81,32 +80,45 @@ type
     procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
     procedure FormActivate(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     initialized: boolean;
     cPlanY: Integer;
     ScrollBarWidth: Integer;
     SCAN_LIST: TsTable;
+
+    // Parameter der aktuellen Beleg-Ansicht
     SL_BELEG_R: Integer;
+    SL_GENERATION: Integer;
+    SL_LabelDruck: boolean;
+    SL_Teillieferung: Integer;
+    SL_ScanPrefix: string;
 
     function Selected_BELEG_R: Integer;
     function Selected_PERSON_R: Integer;
     procedure SL_load(BELEG_R: Integer);
-    procedure SL_refresh;
+    procedure SL_refresh; // Full Rebuild
     procedure SL_show;
-    procedure SL_reflect;
+    procedure SL_reflect; // Data Change
+    procedure SL_free; // empty and free list
     procedure RefreshSumme;
+    procedure doBuchen;
 
   public
     { Public-Deklarationen }
     procedure doActivate(active: boolean);
-    function Local_vs_Server_TimeDifference: TANFiXTime;
     procedure hotEvent;
+
+    // verschieden Scan Events
+    procedure doBelegScan(ganzerScan: string);
+    procedure doArtikelScan(ganzerScan: string);
+    function bucheArtikelScan(row: Integer): boolean;
+
   end;
 
 var
@@ -116,220 +128,65 @@ implementation
 
 uses
   math,
-  globals, winamp,
+
+  globals,
+
+  winamp, SysHot, wanfix32,
+  html, dbOrgaMon,
+
   Funktionen_Basis,
   Funktionen_Beleg,
-  CareTakerClient, Belege, Person,
-  Main, dbOrgaMon, VersenderPaketID,
-  SysHot, wanfix32, GUIhelp,
-  html,
+
+  GUIhelp, CareTakerClient, Belege,
+  Person, main, VersenderPaketID,
+
   Artikel;
 
 {$R *.dfm}
 
 procedure TFormScanner.Button11Click(Sender: TObject);
 begin
-  // Scan Mengen eintragen
-  // Verbuchen
+  doBuchen;
 end;
 
 procedure TFormScanner.Button1Click(Sender: TObject);
 var
-  GanzerScan, Scan: string;
-  ErrorMsg: string;
-  LOGO: string;
-  BELEG_R: Integer;
-  GENERATION: Integer;
-  MENGE_RECHNUNG: Integer;
-  EventText: TStringList;
-  n: Integer;
-  LabelDruck: boolean;
-  VERSENDER_R: Integer;
-  VERSAND_R: Integer;
-  TEILLIEFERUNG: Integer;
-  qEREIGNIS: TIB_Query;
+  ganzerScan: string;
 begin
-  //
-  LabelDruck := false;
-  MENGE_RECHNUNG := 0;
-  GENERATION := 0;
-  TEILLIEFERUNG := 0;
-  BELEG_R := cRID_Null;
-  ErrorMsg := '';
-  GanzerScan := Edit1.Text;
-  VERSENDER_R := cRID_Null;
-  qEREIGNIS := DataModuleDatenbank.nQuery;
-  EventText := TStringList.create;
-  with qEREIGNIS do
+  ganzerScan := Edit1.Text;
+
+  if (ganzerScan <> '') then
   begin
-    ColumnAttributes.add('RID=NOTREQUIRED');
-    ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-    sql.add('select * from EREIGNIS for update');
+
+    ListBox1.items.add(ganzerScan);
+    ListBox1.ItemIndex := pred(ListBox1.items.count);
+
+    if (pos('-', ganzerScan) = 0) then
+      doArtikelScan(ganzerScan)
+    else
+      doBelegScan(ganzerScan);
+
+    // Focus
+    SetForeGroundWindow(handle);
+
   end;
+end;
 
-  //
-  ListBox1.items.add(GanzerScan);
-  ListBox1.ItemIndex := pred(ListBox1.items.count);
-  repeat
-
-    try
-
-      Scan := GanzerScan;
-
-      // Erst mal alles bis zur ersten Ziffer filtern
-      LOGO := '';
-      for n := 1 to length(Scan) do
-        if (Pos(Scan[n], '0123456789') > 0) then
-        begin
-          LOGO := copy(Scan, 1, pred(n));
-          delete(Scan, 1, 1);
-          break;
-        end;
-
-      // Welcher Versender?!
-      if (LOGO <> '') then
-        VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
-          LOGO + '''');
-
-      // restliche Parameter!
-      BELEG_R := strtointdef(nextp(Scan, '-', 0), cRID_Null);
-      GENERATION := strtointdef(nextp(Scan, '-', 1), 0);
-
-      // Plausibilisierung "BELEG_R"
-      if (BELEG_R >= cRID_FirstValid) then
-        if not(e_r_IsRID('BELEG_R', BELEG_R)) then
-          BELEG_R := cRID_Null;
-
-      // Ganzen Scan loggen
-      with qEREIGNIS do
-      begin
-        insert;
-        FieldByName('ART').AsInteger := eT_BelegScan;
-        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        EventText.add('Scan ' + GanzerScan);
-        if (BELEG_R >= cRID_FirstValid) then
-          FieldByName('BELEG_R').AsInteger := BELEG_R;
-        FieldByName('INFO').assign(EventText);
-        post;
-      end;
-
-      // Sonder-Scan "Paket IDs verarbeiten"
-      if (GanzerScan = '+00000-') then
-      begin
-        FormVersenderPaketID.Execute;
-        WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
-        break;
-      end;
-
-      // Prüfung, ob BELEG_R ok ist
-      if (BELEG_R = cRID_Null) then
-      begin
-        ErrorMsg := 'Beleg ' + inttostr(BELEG_R) + ' wurde nicht gefunden!';
-        break;
-      end;
-
-      // Beleg-Daten nachladen
-      with IB_Cursor1 do
-      begin
-        ParamByName('CROSSREF1').AsInteger := BELEG_R;
-        ParamByName('CROSSREF2').AsInteger := GENERATION;
-        open;
-        if eof then
-        begin
-          ErrorMsg := '* Dieser Beleg wurde zwischenzeitlich geändert.' + #13 +
-            '* Oder es wurde noch kein Ausdruck gemacht.' + #13 +
-            'Er muss neu/erstmals ausgedruckt werden!'
-        end
-        else
-        begin
-          MENGE_RECHNUNG := FieldByName('MENGE_RECHNUNG').AsInteger;
-          TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
-        end;
-        close;
-      end;
-      if (ErrorMsg <> '') then
-        break;
-
-      if (MENGE_RECHNUNG = 0) then
-      begin
-        ErrorMsg := 'Die Rechnungsmenge des Beleges ist 0!';
-        break;
-      end;
-
-      // Ist es ein Plus-Scan?
-      if Pos('+', LOGO) > 0 then
-      begin
-        LabelDruck := true;
-        WinAmpPlayFile(SoundPath + 'plus.wav')
-      end
-      else
-      begin
-        WinAmpPlayFile(SoundPath + 'minus.wav');
-      end;
-
-      // Beleg buchen / Ausgabe / Versand vorbereiten
-      e_w_BelegBuchen(BELEG_R, LabelDruck);
-
-      // Den Versender noch einstellen
-      VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
-        inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-        inttostr(TEILLIEFERUNG) + ')');
-      if (VERSAND_R >= cRID_FirstValid) then
-        if (VERSENDER_R >= cRID_FirstValid) then
-          e_x_sql(
-            { } 'update VERSAND set ' +
-            { } ' VERSENDER_R=' + inttostr(VERSENDER_R) + ' ' +
-            { } 'where' +
-            { } ' (RID=' + inttostr(VERSAND_R) + ')');
-
-      if not(LabelDruck) then
-      begin
-        EventText.clear;
-        with qEREIGNIS do
-        begin
-          insert;
-          FieldByName('ART').AsInteger := eT_PaketIDErhalten;
-          FieldByName('BELEG_R').AsInteger := BELEG_R;
-          FieldByName('VERSAND_R').AsInteger := VERSAND_R;
-          EventText.add('Versand ohne Paket-ID!');
-          FieldByName('INFO').assign(EventText);
-          post;
-        end;
-      end;
-
-    except
-      on E: Exception do
-      begin
-        ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
-        WinAmpPlayFile(SoundPath + 'ERROR.WAV');
-        break;
-      end;
-    end;
-
-    with IB_Query1 do
+procedure TFormScanner.Button2Click(Sender: TObject);
+var
+  row: Integer;
+begin
+  if assigned(SCAN_LIST) then
+    if (Edit1.Text <> '') then
     begin
-      insert;
-      FieldByName('BELEG_R').AsInteger := BELEG_R;
-      FieldByName('GENERATION').AsInteger := GENERATION;
-      FieldByName('ART').AsString := LOGO;
-      FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-      post;
+      row := DrawGrid1.row;
+      e_x_sql(
+        { } 'update ARTIKEL set ' +
+        { } 'GTIN=' + Edit1.Text +
+        { } ' where RID=' + SCAN_LIST.readCell(row, 3));
+      SL_refresh;
+      SecureSetRow(DrawGrid1, row);
     end;
-
-    WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
-
-  until true;
-
-  Edit1.Text := '';
-  if (ErrorMsg <> '') then
-  begin
-    WinAmpPlayFile(SoundPath + 'ERROR.WAV');
-    ShowMessage(ErrorMsg);
-  end;
-  SetForeGroundWindow(handle);
-  qEREIGNIS.free;
-  EventText.free;
-
 end;
 
 procedure TFormScanner.CheckBox1Click(Sender: TObject);
@@ -347,9 +204,295 @@ begin
     CheckBox1.Checked := active;
 end;
 
+procedure TFormScanner.doArtikelScan(ganzerScan: string);
+var
+  ErrorMsg: string;
+  row: Integer;
+begin
+  ErrorMsg := '';
+  repeat
+    if not(assigned(SCAN_LIST)) then
+    begin
+      ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
+        'Oder in der Form' + #13 + '"+" | "-" ~Belegnummer~ "-" ~Generation~' +
+        #13 + 'eingeben und mit <ENTER> abschliessen';
+      break;
+    end;
+
+    row := SCAN_LIST.locate('GTIN', ganzerScan);
+    if (row = -1) then
+    begin
+      ErrorMsg := 'Diese GTIN ist im Moment unbekannt' + #13 +
+        'Entweder der Eintrag fehlt noch beim Artikel oder ist falsch' + #13 +
+        'Oder der Artikel gehört nicht zu dieser Lieferung' + #13 +
+        'Tragen Sie die GTIN nach, indem Sie manuell auf die richtige Zeile positionieren, drücken Sie dann [GTIN]';
+      break;
+    end;
+
+    // Änderung um "1" durchführen
+    bucheArtikelScan(row);
+    SecureSetRow(DrawGrid1, pred(row));
+    SL_reflect;
+
+  until true;
+
+  if (ErrorMsg <> '') then
+  begin
+    WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+    ShowMessage(ErrorMsg);
+  end
+  else
+  begin
+    Edit1.Text := '';
+    Edit1.SetFocus;
+  end;
+
+end;
+
+procedure TFormScanner.doBelegScan(ganzerScan: string);
+var
+  Scan: string;
+  ErrorMsg: string;
+  MENGE_RECHNUNG: Integer;
+  n: Integer;
+  EventText: TStringList;
+  qEREIGNIS: TIB_Query;
+begin
+
+  // Scan-Ereignis!
+  MENGE_RECHNUNG := 0;
+  ErrorMsg := '';
+  SL_LabelDruck := false;
+
+  EventText := TStringList.create;
+  qEREIGNIS := DataModuleDatenbank.nQuery;
+  with qEREIGNIS do
+  begin
+    ColumnAttributes.add('RID=NOTREQUIRED');
+    ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+    sql.add('select * from EREIGNIS for update');
+  end;
+
+  //
+  repeat
+
+    try
+
+      Scan := ganzerScan;
+
+      // Erst mal alles bis zur ersten Ziffer filtern
+      SL_ScanPrefix := '';
+      for n := 1 to length(Scan) do
+        if (pos(Scan[n], '0123456789') > 0) then
+        begin
+          SL_ScanPrefix := copy(Scan, 1, pred(n));
+          delete(Scan, 1, 1);
+          break;
+        end;
+
+      // restliche Parameter!
+      SL_BELEG_R := strtointdef(nextp(Scan, '-', 0), cRID_Null);
+      SL_GENERATION := strtointdef(nextp(Scan, '-', 1), 0);
+
+      // Plausibilisierung "BELEG_R"
+      if (SL_BELEG_R >= cRID_FirstValid) then
+        if not(e_r_IsRID('BELEG_R', SL_BELEG_R)) then
+          SL_BELEG_R := cRID_Null;
+
+      // Ganzen Scan loggen
+      with qEREIGNIS do
+      begin
+        insert;
+        FieldByName('ART').AsInteger := eT_BelegScan;
+        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+        EventText.add('Scan ' + ganzerScan);
+        if (SL_BELEG_R >= cRID_FirstValid) then
+          FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
+        FieldByName('INFO').assign(EventText);
+        post;
+      end;
+
+      // Sonder-Scan "Paket IDs verarbeiten"
+      if (ganzerScan = '+00000-') then
+      begin
+        FormVersenderPaketID.Execute;
+        WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
+        break;
+      end;
+
+      // Prüfung, ob BELEG_R ok ist
+      if (SL_BELEG_R = cRID_Null) then
+      begin
+        ErrorMsg := 'Beleg ' + scan + ' wurde nicht gefunden!';
+        break;
+      end;
+
+      // Beleg-Daten nachladen
+      with IB_Cursor1 do
+      begin
+        ParamByName('CROSSREF1').AsInteger := SL_BELEG_R;
+        ParamByName('CROSSREF2').AsInteger := SL_GENERATION;
+        open;
+        if eof then
+        begin
+          ErrorMsg :=
+          { } '* Dieser Beleg wurde zwischenzeitlich geändert.' + #13 +
+          { } '* Oder es wurde noch kein Ausdruck gemacht.' + #13 +
+          { } 'Er muss neu/erstmals ausgedruckt werden!'
+        end
+        else
+        begin
+          MENGE_RECHNUNG := FieldByName('MENGE_RECHNUNG').AsInteger;
+          SL_Teillieferung := FieldByName('TEILLIEFERUNG').AsInteger;
+        end;
+        close;
+      end;
+      if (ErrorMsg <> '') then
+        break;
+
+      if (MENGE_RECHNUNG = 0) then
+      begin
+        ErrorMsg := 'Die Rechnungsmenge des Beleges ist 0!';
+        break;
+      end;
+
+      // Ist es ein Plus-Scan?
+      if pos('+', SL_ScanPrefix) > 0 then
+      begin
+        SL_LabelDruck := true;
+        WinAmpPlayFile(SoundPath + 'plus.wav')
+      end
+      else
+      begin
+        WinAmpPlayFile(SoundPath + 'minus.wav');
+      end;
+
+      // Liste füllen
+      SL_load(SL_BELEG_R);
+      SL_show;
+
+    except
+      on E: Exception do
+      begin
+        ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
+        WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+        break;
+      end;
+    end;
+
+  until true;
+
+  if (ErrorMsg <> '') then
+  begin
+    WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+    ShowMessage(ErrorMsg);
+  end
+  else
+  begin
+    Edit1.Text := '';
+  end;
+
+  SetForeGroundWindow(handle);
+  qEREIGNIS.free;
+  EventText.free;
+
+end;
+
+procedure TFormScanner.doBuchen;
+var
+  ErrorMsg: string;
+  VERSENDER_R: Integer;
+  VERSAND_R: Integer;
+  EventText: TStringList;
+  qEREIGNIS: TIB_Query;
+begin
+  BeginHourGlass;
+
+  // Scan "Beleg verbuchen"
+  VERSENDER_R := cRID_Null;
+  EventText := TStringList.create;
+  qEREIGNIS := DataModuleDatenbank.nQuery;
+  with qEREIGNIS do
+  begin
+    ColumnAttributes.add('RID=NOTREQUIRED');
+    ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+    sql.add('select * from EREIGNIS for update');
+  end;
+
+  // Verbuchen
+  try
+
+    // Beleg buchen / Ausgabe / Versand vorbereiten
+    e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck);
+
+    // Den Versender noch einstellen
+    // Welcher Versender?!
+    if (SL_ScanPrefix <> '') then
+      VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
+        SL_ScanPrefix + '''');
+    VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
+      inttostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
+      inttostr(SL_Teillieferung) + ')');
+    if (VERSAND_R >= cRID_FirstValid) then
+      if (VERSENDER_R >= cRID_FirstValid) then
+        e_x_sql(
+          { } 'update VERSAND set ' +
+          { } ' VERSENDER_R=' + inttostr(VERSENDER_R) + ' ' +
+          { } 'where' +
+          { } ' (RID=' + inttostr(VERSAND_R) + ')');
+
+    if not(SL_LabelDruck) then
+    begin
+      EventText.clear;
+      with qEREIGNIS do
+      begin
+        insert;
+        FieldByName('ART').AsInteger := eT_PaketIDErhalten;
+        FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
+        FieldByName('VERSAND_R').AsInteger := VERSAND_R;
+        EventText.add('Versand ohne Paket-ID!');
+        FieldByName('INFO').assign(EventText);
+        post;
+      end;
+    end;
+    with IB_Query1 do
+    begin
+      insert;
+      FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
+      FieldByName('GENERATION').AsInteger := SL_GENERATION;
+      FieldByName('ART').AsString := SL_ScanPrefix;
+      FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+      post;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
+      WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+    end;
+  end;
+  //
+  qEREIGNIS.free;
+  EventText.free;
+
+  EndHourGlass;
+
+  if (ErrorMsg <> '') then
+  begin
+    WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+    ShowMessage(ErrorMsg);
+  end
+  else
+  begin
+    WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
+  end;
+
+end;
+
 procedure TFormScanner.DrawGrid1DblClick(Sender: TObject);
 begin
-  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 3), 0));
+  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.row, 3), 0));
 end;
 
 procedure TFormScanner.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -363,7 +506,7 @@ begin
     with DrawGrid1.canvas, IB_Cursor1 do
     begin
 
-      Fokusiert := (ARow = DrawGrid1.Row);
+      Fokusiert := (ARow = DrawGrid1.row);
 
       if Fokusiert then
       begin
@@ -529,20 +672,14 @@ end;
 procedure TFormScanner.hotEvent;
 begin
   show;
-  setfocus;
-  Edit1.setfocus;
+  SetFocus;
+  Edit1.SetFocus;
   SetForeGroundWindow(handle);
 end;
 
 procedure TFormScanner.Image1Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Scanner');
-end;
-
-procedure TFormScanner.Button2Click(Sender: TObject);
-begin
-  SL_load(strtointdef(Edit2.Text, 0));
-  SL_show;
 end;
 
 procedure TFormScanner.Button4Click(Sender: TObject);
@@ -556,7 +693,7 @@ begin
   DateTime2long(e_r_Now, ServerDate, ServerTime);
 
   //
-  ServerDiff := Local_vs_Server_TimeDifference;
+  ServerDiff := r_Local_vs_Server_TimeDifference;
 
   MoreText :=
     'Die lokale Zeitsynchronisation mit einem Zeit-Server muss extern aktiviert werden';
@@ -565,26 +702,6 @@ begin
     ' ' + secondstostr(SecondsGet) + #13 + 'Zeit des Datenbankservers ' +
     long2date(ServerDate) + ' ' + secondstostr(ServerTime) + #13 + #13 +
     'bereinigte Differenz ' + secondstostr9(ServerDiff));
-end;
-
-function TFormScanner.Local_vs_Server_TimeDifference: TANFiXTime;
-const
-  cWahrnehmungsSchwelle = 1;
-var
-  LocalTime, ServerTime: TANFiXTime;
-  LocalDate, ServerDate: TANFiXDate;
-begin
-  BeginHourGlass;
-  result := 0;
-  //
-  LocalDate := DateGet;
-  LocalTime := SecondsGet;
-  DateTime2long(e_r_Now, ServerDate, ServerTime);
-  //
-  result := SecondsDiff(LocalDate, LocalTime, ServerDate, ServerTime);
-  if (abs(result) <= cWahrnehmungsSchwelle) then
-    result := 0;
-  EndHourGlass;
 end;
 
 procedure TFormScanner.RefreshSumme;
@@ -599,6 +716,13 @@ begin
     SUMME := MENGE_RECHNUNG - MENGE_SCAN;
     if (SUMME = 0) then
     begin
+      StaticText1.color := clAqua;
+      StaticText1.Caption := '0';
+      Application.ProcessMessages;
+
+      doBuchen;
+      SL_free;
+
       StaticText1.color := cllime;
       StaticText1.Caption := '';
     end
@@ -610,7 +734,7 @@ begin
   end
   else
   begin
-    StaticText1.color := cllime;
+    StaticText1.color := clBtnFace;
     StaticText1.Caption := '';
   end;
 end;
@@ -662,22 +786,30 @@ begin
   SL_refresh;
 end;
 
-procedure TFormScanner.SpeedButton4Click(Sender: TObject);
+function TFormScanner.bucheArtikelScan(row: Integer): boolean;
 var
   MENGE_SCAN: Integer;
   MENGE_RECHNUNG: Integer;
   MENGE_REST: Integer;
 begin
-  MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 0), 0);
-  MENGE_SCAN := strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 4), 0);
+  MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(row, 0), 0);
+  MENGE_SCAN := strtointdef(SCAN_LIST.readCell(row, 4), 0);
   MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
   if (MENGE_REST > 0) then
   begin
     inc(MENGE_SCAN);
-    SCAN_LIST.writeCell(DrawGrid1.Row, 4, inttostr(MENGE_SCAN));
-    SL_reflect;
+    SCAN_LIST.writeCell(row, 4, inttostr(MENGE_SCAN));
   end;
+end;
 
+procedure TFormScanner.SpeedButton4Click(Sender: TObject);
+begin
+  if assigned(SCAN_LIST) then
+  begin
+    bucheArtikelScan(DrawGrid1.row);
+    SL_reflect;
+    SecureSetRow(DrawGrid1,min(DrawGrid1.row+1,pred(DrawGrid1.RowCount)));
+  end;
 end;
 
 function TFormScanner.Selected_BELEG_R: Integer;
@@ -715,6 +847,12 @@ begin
   end;
 end;
 
+procedure TFormScanner.SL_free;
+begin
+  DrawGrid1.RowCount := 0;
+  FreeAndNil(SCAN_LIST);
+end;
+
 procedure TFormScanner.SL_load(BELEG_R: Integer);
 begin
   if assigned(SCAN_LIST) then
@@ -722,11 +860,11 @@ begin
 
   SCAN_LIST := csTable(
     { } 'select ' +
-    { } ' POSTEN.MENGE_RECHNUNG,' +
-    { } ' POSTEN.ARTIKEL,' +
-    { } ' ARTIKEL.GTIN,' +
-    { } ' POSTEN.ARTIKEL_R,' +
-    { } ' 0 as MENGE_SCAN ' +
+    { 0 } ' POSTEN.MENGE_RECHNUNG,' +
+    { 1 } ' POSTEN.ARTIKEL,' +
+    { 2 } ' ARTIKEL.GTIN,' +
+    { 3 } ' POSTEN.ARTIKEL_R,' +
+    { 4 } ' 0 as MENGE_SCAN ' +
     { } 'from POSTEN ' +
     { } 'left join ARTIKEL on' +
     { } ' (POSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
@@ -749,7 +887,7 @@ end;
 procedure TFormScanner.SL_refresh;
 begin
   if assigned(SCAN_LIST) then
-    SCAN_LIST.free;
+    FreeAndNil(SCAN_LIST);
   SL_load(SL_BELEG_R);
   SL_show;
 end;
@@ -779,7 +917,9 @@ end;
 
 procedure TFormScanner.Button7Click(Sender: TObject);
 begin
-  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.Row, 3), 0));
+  if assigned(SCAN_LIST) then
+    FormArtikel.SetContext
+      (strtointdef(SCAN_LIST.readCell(DrawGrid1.row, 3), 0));
 end;
 
 end.
