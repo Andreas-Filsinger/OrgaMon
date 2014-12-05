@@ -161,7 +161,7 @@ begin
     { } ' Z_ELV_KONTO_INHABER=''' + _name + ''', ' +
     { } ' Z_ELV_BLZ=''' + Edit_BLZ.text + ''', ' +
     { } ' Z_ELV_KONTO=''' + Bank_Konto(Edit_Konto.text) + ''', ' +
-    { } ' Z_ELV_FREIGABE=' + FloatToStrISO(Betrag, 2) + ' ' +
+    { } ' Z_ELV_FREIGABE=coalesce(Z_ELV_FREIGABE,0.0) + ' + FloatToStrISO(Betrag, 2) + ' ' +
     { } 'where' +
     { } ' RID=' + inttostr(PERSON_R);
 

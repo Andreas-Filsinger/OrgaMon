@@ -3061,6 +3061,8 @@ object FormPerson: TFormPerson
       'NETTO_WIE_BRUTTO=BOOLEAN=Y,N'
       'WEBSHOP_RABATT=BOOLEAN=Y,N')
     DatabaseName = '192.168.115.25:test.fdb'
+    FieldsDisplayFormat.Strings = (
+      'Z_ELV_FREIGABE=0.00')
     FieldsVisible.Strings = (
       'SESSION_ID=FALSE'
       'USER_ID=FALSE'

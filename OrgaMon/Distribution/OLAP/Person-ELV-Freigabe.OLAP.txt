@@ -1,0 +1,12 @@
+select 
+ RID 
+from
+ PERSON
+where
+ (Z_ELV_FREIGABE>=0.01) or 
+ (Z_ELV_FREIGABE<=-0.01) 
+
+ 
+excel
+open
+- 

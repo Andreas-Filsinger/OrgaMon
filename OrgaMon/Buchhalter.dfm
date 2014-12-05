@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet4
+    ActivePage = TabSheet7
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -35,10 +35,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -350,10 +346,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Sammellastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -1104,10 +1096,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -2092,10 +2080,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3423,10 +3407,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Lastschriften'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         892
         519)
@@ -3692,10 +3672,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 24
         Top = 40
@@ -3950,9 +3926,7 @@ object FormBuchhalter: TFormBuchhalter
       
         ' (AR.DATUM between (CURRENT_TIMESTAMP-365) and CURRENT_TIMESTAMP' +
         ') and'
-      
-        ' ((ZAHLUNGTYP.AUTOZAHLUNG='#39'Y'#39') or (PERSON.Z_ELV_FREIGABE is not ' +
-        'null))'
+      ' ((ZAHLUNGTYP.AUTOZAHLUNG='#39'Y'#39') or (PERSON.Z_ELV_FREIGABE>=0.01))'
       'order by'
       ' AR.RECHNUNG')
     ColorScheme = True
@@ -4004,7 +3978,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C0101040009008C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900900110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4314,7 +4288,7 @@ object FormBuchhalter: TFormBuchhalter
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2
-    Left = 112
-    Top = 392
+    Left = 120
+    Top = 432
   end
 end
