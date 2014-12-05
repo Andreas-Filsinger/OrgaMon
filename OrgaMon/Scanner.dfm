@@ -128,7 +128,7 @@ object FormScanner: TFormScanner
     OnClick = SpeedButton2Click
   end
   object Image1: TImage
-    Left = 513
+    Left = 512
     Top = 2
     Width = 54
     Height = 22
@@ -252,7 +252,6 @@ object FormScanner: TFormScanner
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image1Click
-    ExplicitLeft = 535
   end
   object SpeedButton3: TSpeedButton
     Left = 152
@@ -408,7 +407,7 @@ object FormScanner: TFormScanner
       'Fehler')
   end
   object Button11: TButton
-    Left = 544
+    Left = 543
     Top = 31
     Width = 23
     Height = 22

@@ -1,4 +1,0 @@
-select distinct 
- PERSON_R
-from 
- PRORATA

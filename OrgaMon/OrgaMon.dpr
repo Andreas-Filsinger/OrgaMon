@@ -67,7 +67,6 @@ uses
   TierAuswahl in 'TierAuswahl.pas' {FormTierAuswahl},
   ArtikelKategorie in 'ArtikelKategorie.pas' {FormArtikelKategorie},
   OLAP in 'OLAP.pas' {FormOLAP},
-  GUIhelp in 'GUIhelp.pas' {DataModuleGUIhelp: TDataModule},
   DruckLabel in 'DruckLabel.pas' {FormDruckLabel},
   DruckSpooler in 'DruckSpooler.pas' {FormDruckSpooler},
   Objektverwaltung in 'Objektverwaltung.pas' {FormObjektverwaltung},
@@ -204,7 +203,8 @@ uses
   IB_Access in '..\..\IBO5\source\access\IB_Access.pas',
   Cron in 'Cron.pas' {FormCron},
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
-  memcache in '..\PASconTools\memcache.pas';
+  memcache in '..\PASconTools\memcache.pas',
+  GUIhelp in '..\PASvisTools\GUIhelp.pas' {DataModuleGUIhelp: TDataModule};
 
 {$R *.RES}
 
@@ -275,7 +275,6 @@ begin
   Application.CreateForm(TFormTierAuswahl, FormTierAuswahl);
   Application.CreateForm(TFormArtikelKategorie, FormArtikelKategorie);
   Application.CreateForm(TFormOLAP, FormOLAP);
-  Application.CreateForm(TDataModuleGUIhelp, DataModuleGUIhelp);
   Application.CreateForm(TFormDruckLabel, FormDruckLabel);
   Application.CreateForm(TFormDruckSpooler, FormDruckSpooler);
   Application.CreateForm(TFormObjektverwaltung, FormObjektverwaltung);
@@ -352,6 +351,7 @@ begin
   Application.CreateForm(TFormArtikelKasse, FormArtikelKasse);
   Application.CreateForm(TFormArtikelPOS, FormArtikelPOS);
   Application.CreateForm(TFormCron, FormCron);
+  Application.CreateForm(TDataModuleGUIhelp, DataModuleGUIhelp);
   Application.Run;
 end.
 

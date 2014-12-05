@@ -679,8 +679,15 @@ begin
           { } EREIGNIS_R]));
 
         // Nun bei der Person die Freigabe wieder zurücksetzen
-        e_x_sql('update PERSON set ' + ' Z_ELV_FREIGABE = null ' + 'where' +
-          ' RID=' + inttostr(PERSON_R));
+        e_x_sql(
+          { } 'update PERSON set ' +
+          { } ' Z_ELV_FREIGABE=' +
+          { } 'coalesce(Z_ELV_FREIGABE,' +
+          { } FloatToStrISO(Betrag, 2) + ') - ' +
+          { } FloatToStrISO(Betrag, 2) + ' ' +
+          { } 'where' +
+          { } ' RID=' + inttostr(PERSON_R));
+
       end;
     end;
     e_x_sql('update EREIGNIS set BEENDET=CURRENT_TIMESTAMP where RID=' +
