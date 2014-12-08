@@ -524,6 +524,7 @@ implementation
 uses
 {$IFDEF fpc}
   lazUTF8Classes,
+  fpchelper,
 {$ENDIF}
   math,
   JclDateTime,

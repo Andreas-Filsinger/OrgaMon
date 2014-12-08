@@ -3083,7 +3083,7 @@ begin
           if not(SkipIt) then
             if (pOhneAusstehende) then
               if (VORGANG = cVorgang_Rechnung) then
-                if FieldByName('EREIGNIS_R').IsNotNull then
+                if not(FieldByName('EREIGNIS_R').IsNull) then
                   SkipIt := true;
 
         end
@@ -3199,7 +3199,7 @@ begin
                   begin
 
                     //
-                    if FieldByName('EREIGNIS_R').IsNotNull then
+                    if not(FieldByName('EREIGNIS_R').IsNull) then
                       MoreText := MoreText + ' ' + _('(wird abgebucht)');
 
                     // auch buchen?

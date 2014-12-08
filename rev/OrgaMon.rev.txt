@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.063 (08.12.14) Andreas Filsinger
+
+ Bug: Lazarus Build war nicht mehr möglich
+
+ Neu: Buch: MANDAT, Datum des Mandates
+ Neu: jcl Rev. 2.6
+ Neu: jvcl Rev. 3.48
+
 Rev 8.062 (05.12.14) Andreas Filsinger
 
  Bug: Lastschriften: Versäumte Abbuchung bei sich überschneidenden Lastschriften

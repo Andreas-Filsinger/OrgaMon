@@ -93,8 +93,13 @@ begin
   with IOHandler do
   begin
     InputBuffer.Clear;
+    {$ifdef fpc}
+    writeln(command);
+    result := ReadLn(#13#10);
+    {$else}
     writeln(command, TEnCoding.ASCII);
     result := ReadLn(#13#10, TEnCoding.ASCII);
+    {$endif}
   end;
 end;
 
@@ -154,8 +159,13 @@ begin
     end;
     if (pos(MC_VALUE + ' ' + Key, result) = 1) then
     begin
+      {$ifdef fpc}
+      result := IOHandler.ReadLn(#13#10);
+      LastError := IOHandler.ReadLn(#13#10);
+      {$else}
       result := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);
       LastError := IOHandler.ReadLn(#13#10, TEnCoding.ASCII);
+      {$endif}
     end;
   until true;
 end;
@@ -167,8 +177,12 @@ end;
 
 procedure TmemcacheClient.write(Key, Value: string);
 begin
+  {$ifdef fpc}
+  IOHandler.writeln('set ' + Key + ' 0 0 ' + IntToStr(length(Value)));
+  {$else}
   IOHandler.writeln('set ' + Key + ' 0 0 ' + IntToStr(length(Value)),
     TEnCoding.ASCII);
+  {$endif}
   LastError := cmd(Value);
 end;
 
