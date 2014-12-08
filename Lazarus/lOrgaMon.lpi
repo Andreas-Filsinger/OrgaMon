@@ -73,7 +73,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\jcl-2.5.0\source\include"/>
-      <OtherUnitFiles Value="..\PasConTools;..\..\jcl-2.5.0\source\common;..\..\jcl-2.5.0\source\windows;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\Abbrevia\source"/>
+      <OtherUnitFiles Value="..\PasConTools;..\..\jcl\source\common;..\..\jcl\source\windows;..\OrgaMon;E:\Indy\lib\Protocols\;E:\Indy\lib\System\;E:\Indy\lib\Core\;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\Abbrevia 5.2\source"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
