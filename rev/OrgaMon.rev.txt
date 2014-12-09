@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.064 (09.12.14) Andreas Filsinger
+
+ Neu: Scanner: Position und Grösse des Formulars werden abgespeichert
+ Neu: Scanner: Artikel-Suche: Führende "0" werden unterdrückt.
+ Neu: Scanner: Artikel-Suche: Scan "+00001-" ist immer OK auf aktuellem Artikel
+ Neu: Scanner: Zutaten kommen nicht in die Liste, es sei denn sie haben eine GTIN
+
 Rev 8.063 (08.12.14) Andreas Filsinger
 
  Bug: Lazarus Build war nicht mehr möglich

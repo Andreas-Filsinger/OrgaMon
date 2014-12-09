@@ -42,7 +42,8 @@ uses
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
-  IdUDPClient, IdSNTP, JvExtComponent, Vcl.Grids;
+  IdUDPClient, IdSNTP, JvExtComponent, Vcl.Grids, JvComponentBase,
+  JvFormPlacement, JvAppStorage;
 
 type
   TFormScanner = class(TForm)
@@ -67,6 +68,7 @@ type
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
     Button2: TButton;
+    JvFormStorage1: TJvFormStorage;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -108,6 +110,7 @@ type
     procedure SL_free; // empty and free list
     procedure RefreshSumme;
     procedure doBuchen;
+    procedure doCheck;
 
   public
     { Public-Deklarationen }
@@ -160,14 +163,37 @@ begin
 
     ListBox1.items.add(ganzerScan);
     ListBox1.ItemIndex := pred(ListBox1.items.count);
+    repeat
 
-    if (pos('-', ganzerScan) = 0) then
-      doArtikelScan(ganzerScan)
-    else
-      doBelegScan(ganzerScan);
+      // Sonder-Scan "Paket IDs verarbeiten"
+      if (ganzerScan = '+00000-') then
+      begin
+        FormVersenderPaketID.Execute;
+        WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
+    edit1.Text := '';
 
-    // Focus
+        break;
+      end;
+
+      // Aktueller Artikel ist so OK
+      if (ganzerScan = '+00001-') then
+      begin
+        doCheck;
+    edit1.Text := '';
+
+        break;
+      end;
+
+      if (pos('-', ganzerScan) = 0) then
+        doArtikelScan(ganzerScan)
+      else
+        doBelegScan(ganzerScan);
+
+    until true;
+
+    // Focus back!
     SetForeGroundWindow(handle);
+    edit1.SetFocus;
 
   end;
 end;
@@ -211,6 +237,7 @@ var
 begin
   ErrorMsg := '';
   repeat
+
     if not(assigned(SCAN_LIST)) then
     begin
       ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
@@ -218,6 +245,10 @@ begin
         #13 + 'eingeben und mit <ENTER> abschliessen';
       break;
     end;
+
+    // führende Nullen weg!
+    while (pos('0', ganzerScan) = 1) do
+      delete(ganzerScan, 1, 1);
 
     row := SCAN_LIST.locate('GTIN', ganzerScan);
     if (row = -1) then
@@ -244,7 +275,6 @@ begin
   else
   begin
     Edit1.Text := '';
-    Edit1.SetFocus;
   end;
 
 end;
@@ -312,18 +342,10 @@ begin
         post;
       end;
 
-      // Sonder-Scan "Paket IDs verarbeiten"
-      if (ganzerScan = '+00000-') then
-      begin
-        FormVersenderPaketID.Execute;
-        WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
-        break;
-      end;
-
       // Prüfung, ob BELEG_R ok ist
       if (SL_BELEG_R = cRID_Null) then
       begin
-        ErrorMsg := 'Beleg ' + scan + ' wurde nicht gefunden!';
+        ErrorMsg := 'Beleg ' + Scan + ' wurde nicht gefunden!';
         break;
       end;
 
@@ -392,7 +414,6 @@ begin
     Edit1.Text := '';
   end;
 
-  SetForeGroundWindow(handle);
   qEREIGNIS.free;
   EventText.free;
 
@@ -488,6 +509,16 @@ begin
     WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
   end;
 
+end;
+
+procedure TFormScanner.doCheck;
+begin
+  if assigned(SCAN_LIST) then
+  begin
+    bucheArtikelScan(DrawGrid1.row);
+    SL_reflect;
+    SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1, pred(DrawGrid1.RowCount)));
+  end;
 end;
 
 procedure TFormScanner.DrawGrid1DblClick(Sender: TObject);
@@ -804,12 +835,7 @@ end;
 
 procedure TFormScanner.SpeedButton4Click(Sender: TObject);
 begin
-  if assigned(SCAN_LIST) then
-  begin
-    bucheArtikelScan(DrawGrid1.row);
-    SL_reflect;
-    SecureSetRow(DrawGrid1,min(DrawGrid1.row+1,pred(DrawGrid1.RowCount)));
-  end;
+  doCheck;
 end;
 
 function TFormScanner.Selected_BELEG_R: Integer;
@@ -871,7 +897,10 @@ begin
     { } 'where' +
     { } ' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ') and' +
     { } ' (POSTEN.MENGE_RECHNUNG>0) and' +
-    { } ' (POSTEN.ZUTAT is null) ' +
+    { } ' ((POSTEN.ZUTAT is null) or' +
+    { } '  ((POSTEN.ZUTAT is not null) and' +
+    { } '   (ARTIKEL.GTIN is not null))' +
+    { } ' ) ' +
     { } 'order by' +
     { } ' POSTEN.POSNO,POSTEN.RID');
 
