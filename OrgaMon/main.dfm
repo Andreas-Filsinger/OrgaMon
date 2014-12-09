@@ -976,6 +976,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Scanner'
+    Enabled = False
     TabOrder = 36
     OnClick = Button49Click
   end
@@ -1618,6 +1619,16 @@ object FormMain: TFormMain
   object IdAntiFreeze1: TIdAntiFreeze
     OnlyWhenIdle = False
     Left = 32
+    Top = 264
+  end
+  object JvAppIniFileStorage1: TJvAppIniFileStorage
+    StorageOptions.BooleanStringTrueValues = 'TRUE, YES, Y'
+    StorageOptions.BooleanStringFalseValues = 'FALSE, NO, N'
+    AutoFlush = True
+    AutoReload = True
+    Location = flCustom
+    SubStorages = <>
+    Left = 104
     Top = 264
   end
 end

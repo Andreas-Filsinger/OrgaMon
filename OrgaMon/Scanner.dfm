@@ -518,4 +518,12 @@ object FormScanner: TFormScanner
     Left = 32
     Top = 126
   end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    Options = [fpSize, fpLocation]
+    StoredValues = <>
+    Left = 336
+    Top = 232
+  end
 end

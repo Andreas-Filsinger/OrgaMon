@@ -39,7 +39,7 @@ uses
 
   // Tools
   anfix32, IB_Components, IB_Access, SysHot, IdBaseComponent, IdAntiFreezeBase,
-  IdAntiFreeze;
+  IdAntiFreeze, JvComponentBase, JvAppStorage, JvAppIniStorage;
 
 type
   TFormMain = class(TForm)
@@ -155,6 +155,7 @@ type
     Button52: TButton;
     Button89: TButton;
     Button90: TButton;
+    JvAppIniFileStorage1: TJvAppIniFileStorage;
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -619,6 +620,10 @@ begin
       CareTakerLog('All Systems running after restart');
 
     Button56.enabled := (iSchnelleRechnung_PERSON_R >= cRID_FirstValid);
+
+    // Scanner
+    JvAppIniFileStorage1.FileName := AnwenderPath+'Formularpositionen.ini';
+    Button49.Enabled := true;
 
     EndHourGlass;
 
