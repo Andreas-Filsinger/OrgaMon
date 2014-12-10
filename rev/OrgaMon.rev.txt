@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.066 (10.12.14) Andreas Filsinger
+
+ Bug: XMLRPC: Versandkosten, ergab "-3.0" (unbekannt) anstelle von "0.0" (frei)
+ Bug: XMLRPC: OLAP-Skript: "" Test auf eine Aktion bei einem ungebuchten Beleg misslang
+
+ Neu: Webshop-Connector: memcached: "delete all" -> "flush_all"
+
+Rev 8.065 (10.12.14) Andreas Filsinger
+
+ Neu: XMLRPC: Versandkosten, 2. Parameter -1001 = Cache ausschalten
+
 Rev 8.064 (09.12.14) Andreas Filsinger
 
  Neu: Scanner: Position und Grösse des Formulars werden abgespeichert

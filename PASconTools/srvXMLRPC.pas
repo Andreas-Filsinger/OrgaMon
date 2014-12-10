@@ -63,6 +63,10 @@ const
   cServerFunctions_Meta_CallCount = '_CALLS';
   cServerFunctions_Meta_Uptime = '_UPTIME';
 
+  cParameter_Unset = 0;
+  cParameter_Control = -1000;
+  cParameter_DisableCache = cParameter_Control - 1;
+
 type
   TFeedbackHelper = class
     class function Progress(Position: Integer; Name: string = '';

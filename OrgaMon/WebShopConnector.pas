@@ -138,6 +138,7 @@ type
     Button19: TButton;
     Button20: TButton;
     SpeedButton1: TSpeedButton;
+    Button21: TButton;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -162,9 +163,10 @@ type
     procedure Button18Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
-    procedure Button19Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
+    procedure Button21Click(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -591,6 +593,12 @@ begin
   ListBoxLog.Items.Add(MClient.LastError);
 end;
 
+procedure TFormWebShopConnector.Button21Click(Sender: TObject);
+begin
+  MClient.purge;
+  ListBoxLog.Items.Add(MClient.LastError);
+end;
+
 procedure TFormWebShopConnector.Button2Click(Sender: TObject);
 begin
   ListBoxLog.Items.clear;
@@ -670,6 +678,7 @@ begin
     Button18.Enabled := true;
     Button19.Enabled := true;
     Button20.Enabled := true;
+    Button21.Enabled := true;
   end;
   ListBoxLog.Items.Add(MClient.Version);
 end;
@@ -694,7 +703,7 @@ end;
 
 procedure TFormWebShopConnector.Button19Click(Sender: TObject);
 begin
-  MClient.delete(Edit8.text);
+ MClient.delete(Edit8.text);
   ListBoxLog.Items.Add(MClient.LastError);
 end;
 

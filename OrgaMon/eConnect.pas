@@ -706,11 +706,13 @@ var
   BELEG_R: integer;
   WARENKORB: TsTable;
   WARENKORB_md5: string;
+  ControlParameter: integer;
 
   //
   CacheIndex: integer;
   CacheHit: Boolean;
   CacheValue: string;
+
 begin
   result := TStringList.create;
   Inc(WebShopClicks);
@@ -723,8 +725,16 @@ begin
     if (sParameter.count > 1) then
       PERSON_R := StrToIntDef(sParameter[1], cRID_Null);
 
+    if (sParameter.count > 2) then
+      ControlParameter := StrToIntDef(sParameter[2], cParameter_Unset)
+    else
+      ControlParameter := cParameter_Unset;
+
     if (PERSON_R < cRID_FirstValid) then
       break;
+
+    if (ControlParameter = cParameter_DisableCache) then
+      _Versandkosten_CacheMode := _VK_none;
 
     // lese den WARENKORB in eine csv Tabelle ein
     WARENKORB := csTable('select * from WARENKORB where PERSON_R=' +
@@ -824,13 +834,15 @@ begin
       // Versandartikel bestimmen
       ARTIKEL_R := e_r_VersandKosten(BELEG_R);
 
+      // Versand-Preis berechnen
+      if (ARTIKEL_R = 0) then
+        versandkosten := cGeld_Zero;
+      if (ARTIKEL_R >= cRID_FirstValid) then
+        versandkosten := e_r_PreisBrutto(0, ARTIKEL_R);
+
       // Zwischen-Beleg löschen
       e_w_preDeleteBeleg(BELEG_R);
       e_x_sql('delete from BELEG where RID=' + inttostr(BELEG_R));
-
-      // Preis berechnen
-      if (ARTIKEL_R >= cRID_FirstValid) then
-        versandkosten := e_r_PreisBrutto(0, ARTIKEL_R);
 
       // In den Cache speichern
       case _Versandkosten_CacheMode of
