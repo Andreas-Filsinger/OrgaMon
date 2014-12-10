@@ -445,9 +445,15 @@ function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
 //
 
-function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
+
+//
 // berechnet die VersandKosten anhand der Tabelle VREGEL
 // BELEG_R: um welchen Beleg geht es
+// Ergebnis ARTIKEL_R = 0, keine Versandkosten
+//          ARTIKEL_R = -1, Berechnung nicht möglich, Problem
+//          ARTIKEL_R >0 , der passende Versandkostenartikel
+//
+function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
 
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 // ermittelt, ob es sich bei dem Angegebenen Artikel
@@ -475,12 +481,13 @@ function e_r_ArtikelMusik(AUSGABEART_R, ARTIKEL_R: integer): string;
 function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
 
 // B E L E G E
-function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
-// Prüfung, ob ein Beleg einer Aktion entspricht!
 
+// Prüfung, ob ein Beleg einer Aktion entspricht!
+function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
+
+// Dateiname des Belegs
 function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer;
   TEILLIEFERUNG: integer = 0; AsMask: boolean = false): string;
-// Dateiname des Belegs
 
 function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1)
   : TStringList;
@@ -5206,6 +5213,7 @@ begin
       end
       else
       begin
+        // Markierung für Portofrei!
         ARTIKEL_R := 0;
       end;
 

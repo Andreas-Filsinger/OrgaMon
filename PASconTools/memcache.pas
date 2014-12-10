@@ -80,8 +80,11 @@ type
 
     // Write Functions
     procedure write(Key, Value: string);
-    procedure delete(Key: string);
     function inc(Key: string): int64;
+
+    // Delete Funktions
+    procedure delete(Key: string);
+    procedure purge;
 
   end;
 
@@ -145,6 +148,11 @@ begin
     self.Host := nextp(host, ':', 0);
     Port := StrToIntDef(nextp(host, ':', 1), 11211);
     connect;
+end;
+
+procedure TmemcacheClient.purge;
+begin
+ cmd('flush_all');
 end;
 
 function TmemcacheClient.read(Key: string): string;

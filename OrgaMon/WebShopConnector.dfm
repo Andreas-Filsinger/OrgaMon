@@ -881,6 +881,16 @@ object FormWebShopConnector: TFormWebShopConnector
         TabOrder = 8
         OnClick = Button20Click
       end
+      object Button21: TButton
+        Left = 534
+        Top = 172
+        Width = 75
+        Height = 25
+        Caption = 'delete all'
+        Enabled = False
+        TabOrder = 9
+        OnClick = Button21Click
+      end
     end
   end
   object ProgressBar2: TProgressBar

@@ -26,10 +26,10 @@ select
    (POSTEN.ARTIKEL_R=AKTION.ARTIKEL_R) and
    (AKTION.NAME='$NAME')
   where
-   (BELEG_R=$BELEG_R) and
-   (ARTIKEL_R is not null) and
-   (MENGE>0) and
-   ((ZUTAT is null) or (ZUTAT='N'))
+   (POSTEN.BELEG_R=$BELEG_R) and
+   (POSTEN.ARTIKEL_R is not null) and
+   (POSTEN.MENGE>0) and
+   ((POSTEN.ZUTAT is null) or (POSTEN.ZUTAT='N'))
  ) as ANZAHL
 from
  RDB$$DATABASE
