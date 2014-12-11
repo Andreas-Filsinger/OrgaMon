@@ -445,13 +445,12 @@ function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
 //
 
-
 //
 // berechnet die VersandKosten anhand der Tabelle VREGEL
 // BELEG_R: um welchen Beleg geht es
 // Ergebnis ARTIKEL_R = 0, keine Versandkosten
-//          ARTIKEL_R = -1, Berechnung nicht möglich, Problem
-//          ARTIKEL_R >0 , der passende Versandkostenartikel
+// ARTIKEL_R = -1, Berechnung nicht möglich, Problem
+// ARTIKEL_R >0 , der passende Versandkostenartikel
 //
 function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
 
@@ -10428,8 +10427,8 @@ begin
                 // TitelZeile
                 PaketS.add(OutLineS);
                 try
-                  if DirExists(cVERSENDER.FieldByName('EXPORTPFAD')
-                    .AsString) then
+                  if DirExists(cVERSENDER.FieldByName('EXPORTPFAD').AsString)
+                  then
                     PaketS.SaveToFile(cVERSENDER.FieldByName('EXPORTPFAD')
                       .AsString + 'DPKopf_.txt');
                 except
@@ -10486,8 +10485,8 @@ begin
                 if LabelDatensatz then
                 begin
                   try
-                    if DirExists(cVERSENDER.FieldByName('EXPORTPFAD')
-                      .AsString) then
+                    if DirExists(cVERSENDER.FieldByName('EXPORTPFAD').AsString)
+                    then
                     begin
                       PaketS.SaveToFile(cVERSENDER.FieldByName('EXPORTPFAD')
                         .AsString + 'DP_' + _id + '.txt');
@@ -11694,12 +11693,31 @@ begin
 
 end;
 
+const
+  _e_r_Ausgabeart_Cache: TsTable = nil;
+  // imp pend: registrieren des Cache in einer globalen "flush" Routine
+
 function e_r_Ausgabeart(AUSGABEART_R: integer): string;
+var
+  row: integer;
 begin
-  result := e_r_sqls('select NAME from AUSGABEART where RID=' +
+  (* // no cache
+    result := e_r_sqls('select NAME from AUSGABEART where RID=' +
     inttostr(AUSGABEART_R));
-  if (result <> '') then
-    result := result + ' ';
+  *)
+  if not(assigned(_e_r_Ausgabeart_Cache)) then
+    _e_r_Ausgabeart_Cache := csTable(
+      { } 'select ' +
+      { 0 } ' RID,' +
+      { 1 } ' NAME ' +
+      { } 'from AUSGABEART');
+
+  row := _e_r_Ausgabeart_Cache.locate(0, inttostr(AUSGABEART_R));
+  if (row = -1) then
+    result := ''
+  else
+    result := _e_r_Ausgabeart_Cache.readCell(row, 1) + ' ';
+
 end;
 
 function e_r_PreisValid(p: double): boolean;
