@@ -111,6 +111,7 @@ type
     procedure RefreshSumme;
     procedure doBuchen;
     procedure doCheck;
+    procedure doArtikelJump;
 
   public
     { Public-Deklarationen }
@@ -170,7 +171,7 @@ begin
       begin
         FormVersenderPaketID.Execute;
         WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
-    edit1.Text := '';
+        Edit1.Text := '';
 
         break;
       end;
@@ -179,7 +180,7 @@ begin
       if (ganzerScan = '+00001-') then
       begin
         doCheck;
-    edit1.Text := '';
+        Edit1.Text := '';
 
         break;
       end;
@@ -193,7 +194,7 @@ begin
 
     // Focus back!
     SetForeGroundWindow(handle);
-    edit1.SetFocus;
+    Edit1.SetFocus;
 
   end;
 end;
@@ -201,15 +202,43 @@ end;
 procedure TFormScanner.Button2Click(Sender: TObject);
 var
   row: Integer;
+  AUSGABEART_R: Integer;
 begin
   if assigned(SCAN_LIST) then
     if (Edit1.Text <> '') then
     begin
       row := DrawGrid1.row;
-      e_x_sql(
-        { } 'update ARTIKEL set ' +
-        { } 'GTIN=' + Edit1.Text +
-        { } ' where RID=' + SCAN_LIST.readCell(row, 3));
+      AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(row, 5), cRID_Null);
+      if AUSGABEART_R >= cRID_FirstValid then
+      begin
+        // Setze Hauptartikel wenn <leer>
+        e_x_sql(
+          { } 'update ARTIKEL set' +
+          { } ' GTIN=' + Edit1.Text +
+          { } 'where ' +
+          { } ' (GTIN is null) and ' +
+          { } ' (RID=' + SCAN_LIST.readCell(row, 3) + ')');
+
+        // setze GTIN in der Ausgabeart
+        e_x_sql(
+          { } 'update ARTIKEL_AA set' +
+          { } ' GTIN=' + Edit1.Text +
+          { } 'where ' +
+          { } ' (AUSGABEART_R='+IntTostr(AUSGABEART_R)+') and ' +
+          { } ' (ARTIKEL_R=' + SCAN_LIST.readCell(row, 3) + ')');
+
+      end
+      else
+      begin
+
+        // Setze Hauptartikel
+        e_x_sql(
+          { } 'update ARTIKEL set ' +
+          { } 'GTIN=' + Edit1.Text +
+          { } ' where RID=' + SCAN_LIST.readCell(row, 3));
+
+      end;
+
       SL_refresh;
       SecureSetRow(DrawGrid1, row);
     end;
@@ -228,6 +257,14 @@ begin
   // set
   if (active <> CheckBox1.Checked) then
     CheckBox1.Checked := active;
+end;
+
+procedure TFormScanner.doArtikelJump;
+begin
+  if assigned(SCAN_LIST) then
+    FormArtikel.SetContext(
+      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, 3), cRID_Null),
+      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, 5), cRID_Null));
 end;
 
 procedure TFormScanner.doArtikelScan(ganzerScan: string);
@@ -321,8 +358,8 @@ begin
         end;
 
       // restliche Parameter!
-      SL_BELEG_R := strtointdef(nextp(Scan, '-', 0), cRID_Null);
-      SL_GENERATION := strtointdef(nextp(Scan, '-', 1), 0);
+      SL_BELEG_R := StrToIntDef(nextp(Scan, '-', 0), cRID_Null);
+      SL_GENERATION := StrToIntDef(nextp(Scan, '-', 1), 0);
 
       // Plausibilisierung "BELEG_R"
       if (SL_BELEG_R >= cRID_FirstValid) then
@@ -523,7 +560,7 @@ end;
 
 procedure TFormScanner.DrawGrid1DblClick(Sender: TObject);
 begin
-  FormArtikel.SetContext(strtointdef(SCAN_LIST.readCell(DrawGrid1.row, 3), 0));
+  doArtikelJump;
 end;
 
 procedure TFormScanner.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -531,6 +568,8 @@ procedure TFormScanner.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
 var
   Fokusiert: boolean;
   MENGE_RECHNUNG, MENGE_SCAN, MENGE_REST: Integer;
+  AUSGABEART_R: Integer;
+  AUSGABEART_NAME, Artikel: string;
   GTIN: string;
 begin
   if (ARow >= 0) then
@@ -551,7 +590,7 @@ begin
         end
         else
         begin
-          brush.color := clListeGrau;
+          brush.color := clListeGrauer;
         end;
       end;
 
@@ -591,8 +630,8 @@ begin
 
               if (ARow > 0) then
               begin
-                MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(ARow, 0), 0);
-                MENGE_SCAN := strtointdef(SCAN_LIST.readCell(ARow, 4), 0);
+                MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(ARow, 0), 0);
+                MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(ARow, 4), 0);
                 MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
                 if MENGE_RECHNUNG > MENGE_SCAN then
                 begin
@@ -632,9 +671,42 @@ begin
               // ARTIKEL
               // brush.color := HTMLColor2TColor($FFCC99);
 
-              font.size := 10;
-              TextRect(Rect, Rect.left + 2, Rect.top,
-                SCAN_LIST.readCell(ARow, ACol));
+              if (ARow > 0) then
+              begin
+                font.size := 10;
+
+                AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(ARow, 5),
+                  cRID_Null);
+
+                if (AUSGABEART_R >= cRID_FirstValid) then
+                begin
+                  AUSGABEART_NAME := e_r_Ausgabeart(AUSGABEART_R);
+                  Artikel := SCAN_LIST.readCell(ARow, ACol);
+                  ersetze(AUSGABEART_NAME, '', Artikel);
+                  TextRect(Rect, Rect.left + 2, Rect.top, AUSGABEART_NAME);
+                  font.Style := [fsbold];
+                  TextOut(
+                    { } Rect.left + 2,
+                    { } Rect.top + cPlanY,
+                    { } cutblank(Artikel));
+                  font.Style := [];
+                end
+                else
+                begin
+                  font.size := 11;
+                  font.Style := [fsbold];
+                  TextRect(Rect, Rect.left + 2, Rect.top + (cPlanY div 2),
+                    SCAN_LIST.readCell(ARow, ACol));
+                  font.Style := [];
+                end;
+              end
+              else
+              begin
+                font.size := 10;
+                TextRect(Rect, Rect.left + 2, Rect.top,
+                  SCAN_LIST.readCell(ARow, ACol));
+
+              end;
             end;
           2:
             begin
@@ -815,6 +887,7 @@ end;
 procedure TFormScanner.SpeedButton3Click(Sender: TObject);
 begin
   SL_refresh;
+  edit1.SetFocus;
 end;
 
 function TFormScanner.bucheArtikelScan(row: Integer): boolean;
@@ -823,8 +896,8 @@ var
   MENGE_RECHNUNG: Integer;
   MENGE_REST: Integer;
 begin
-  MENGE_RECHNUNG := strtointdef(SCAN_LIST.readCell(row, 0), 0);
-  MENGE_SCAN := strtointdef(SCAN_LIST.readCell(row, 4), 0);
+  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row, 0), 0);
+  MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, 4), 0);
   MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
   if (MENGE_REST > 0) then
   begin
@@ -836,6 +909,7 @@ end;
 procedure TFormScanner.SpeedButton4Click(Sender: TObject);
 begin
   doCheck;
+  edit1.SetFocus;
 end;
 
 function TFormScanner.Selected_BELEG_R: Integer;
@@ -846,7 +920,7 @@ begin
   begin
     // ##
     s := ListBox1.items[ListBox1.ItemIndex];
-    result := strtointdef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
+    result := StrToIntDef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
   end
   else
   begin
@@ -863,7 +937,7 @@ begin
   begin
     // ##
     s := ListBox1.items[ListBox1.ItemIndex];
-    BELEG_R := strtointdef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
+    BELEG_R := StrToIntDef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
     result := e_r_sql('select PERSON_R from BELEG where RID=' +
       inttostr(BELEG_R));
   end
@@ -888,12 +962,16 @@ begin
     { } 'select ' +
     { 0 } ' POSTEN.MENGE_RECHNUNG,' +
     { 1 } ' POSTEN.ARTIKEL,' +
-    { 2 } ' ARTIKEL.GTIN,' +
+    { 2 } ' coalesce(ARTIKEL_AA.GTIN, ARTIKEL.GTIN) as GTIN,' +
     { 3 } ' POSTEN.ARTIKEL_R,' +
-    { 4 } ' 0 as MENGE_SCAN ' +
+    { 4 } ' 0 as MENGE_SCAN, ' +
+    { 5 } ' POSTEN.AUSGABEART_R ' +
     { } 'from POSTEN ' +
     { } 'left join ARTIKEL on' +
     { } ' (POSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
+    { } 'left join ARTIKEL_AA on' +
+    { } ' (POSTEN.ARTIKEL_R=ARTIKEL_AA.ARTIKEL_R) and ' +
+    { } ' (POSTEN.AUSGABEART_R=ARTIKEL_AA.AUSGABEART_R) ' +
     { } 'where' +
     { } ' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ') and' +
     { } ' (POSTEN.MENGE_RECHNUNG>0) and' +
@@ -905,6 +983,9 @@ begin
     { } ' POSTEN.POSNO,POSTEN.RID');
 
   SL_BELEG_R := BELEG_R;
+  if DebugMode then
+    SCAN_LIST.SaveToFile(DiagnosePath + 'SCAN_LIST.csv');
+
 end;
 
 procedure TFormScanner.SL_reflect;
@@ -927,9 +1008,9 @@ begin
   begin
     RowCount := SCAN_LIST.RowCount + 1;
     FixedRows := 1;
-    DrawGrid1.RowHeights[0] := cPlanY + dpiX(2);
+    RowHeights[0] := cPlanY + dpiX(2);
+    Row := 1;
     Refresh;
-    // SecureSetRow(DrawGrid1, pred(RowCount));
   end;
   RefreshSumme;
 end;
@@ -946,9 +1027,7 @@ end;
 
 procedure TFormScanner.Button7Click(Sender: TObject);
 begin
-  if assigned(SCAN_LIST) then
-    FormArtikel.SetContext
-      (strtointdef(SCAN_LIST.readCell(DrawGrid1.row, 3), 0));
+  doArtikelJump;
 end;
 
 end.

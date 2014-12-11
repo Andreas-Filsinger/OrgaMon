@@ -45,7 +45,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.066; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.067; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -537,6 +537,7 @@ const
   cHochKommaMac = '"';
   PlaceForHugeText = 20 * 1024;
   clListeGrau = $F0F0F0;
+  clListeGrauer = $E0E0E0;
   cWordHeaderFName = 'Word Kopfzeile.txt';
 
   // Besondere Worte in der Datenbank

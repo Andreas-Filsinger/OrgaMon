@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.067 (11.12.14) Andreas Filsinger
+
+ Neu: Scanner: Lesbarkeit der Warentabelle verbessert
+ Neu: Scanner: verbesserte Fokus-Kontrolle
+ Neu: Scanner: Ausgabeart wird berücksichtigt
+
+ Neu: Ausgabeart-Caching
+
 Rev 8.066 (10.12.14) Andreas Filsinger
 
  Bug: XMLRPC: Versandkosten, ergab "-3.0" (unbekannt) anstelle von "0.0" (frei)
