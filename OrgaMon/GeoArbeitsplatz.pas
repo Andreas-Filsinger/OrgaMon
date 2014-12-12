@@ -42,10 +42,16 @@ uses
   GHD_PngImage,
   StdCtrls, ExtCtrls, Buttons,
   GeoCache, FastGeo, OpenStreetMap, JvGIF,
+
   // Indy
   IdBaseComponent, IdHTTPHeaderInfo, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP,
-  IdCookieManager, IdCookie;
+  IdCookieManager, IdCookie, JvComponentBase,
+  JvFormPlacement,
+
+  // Andere Formulare
+  main
+  ;
 
 type
   TFormGeoArbeitsplatz = class(TForm)
@@ -68,6 +74,7 @@ type
     IdCookieManager1: TIdCookieManager;
     PaintBox1: TPaintBox;
     SpeedButton6: TSpeedButton;
+    JvFormStorage1: TJvFormStorage;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton4Click(Sender: TObject);

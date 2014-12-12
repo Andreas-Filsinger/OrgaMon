@@ -243,7 +243,7 @@ uses
   DCPcrypt2, DCPblockciphers, DCPblowfish,
   DCPbase64, ArtikelVerlag,
   IdHttp, UFlxMessages, JclBase, JvclVer, dbOrgaMon,
-  SystemPflege, REST;
+  SystemPflege, REST, main;
 
 const
   cMySQLdumpFName = 'mysql.dump-%s.txt';
@@ -276,7 +276,7 @@ begin
   if not(FirstTimerEventChecked) then
   begin
     FirstTimerEventChecked := true;
-    if pDisableeCommerceAPIs then
+    if pDisableXMLRPC then
     begin
       TimerState := 3;
       Log('eAPIs wurden deaktiviert!');
@@ -293,6 +293,7 @@ begin
         begin
           TimerState := 1;
           XMLRPC_Start;
+          FormMain.panel2.color := cllime;
         end
         else
         begin
@@ -305,6 +306,7 @@ begin
         begin
           DataModuleREST.start;
           CheckBox4.Checked := true;
+          FormMain.panel2.color := cllime;
         end
         else
         begin
@@ -575,7 +577,7 @@ end;
 
 procedure TFormWebShopConnector.SpeedButton1Click(Sender: TObject);
 begin
- edit7.Text := imemcacheHost;
+  Edit7.Text := imemcacheHost;
 end;
 
 procedure TFormWebShopConnector.EnsureCache;
@@ -589,7 +591,7 @@ end;
 
 procedure TFormWebShopConnector.Button20Click(Sender: TObject);
 begin
-  MClient.exist(Edit8.text);
+  MClient.exist(Edit8.Text);
   ListBoxLog.Items.Add(MClient.LastError);
 end;
 
@@ -673,12 +675,12 @@ begin
   begin
     MClient := TmemcacheClient.Create(self);
     MClient.open(Edit7.Text);
-    Button16.Enabled := true;
-    Button17.Enabled := true;
-    Button18.Enabled := true;
-    Button19.Enabled := true;
-    Button20.Enabled := true;
-    Button21.Enabled := true;
+    Button16.enabled := true;
+    Button17.enabled := true;
+    Button18.enabled := true;
+    Button19.enabled := true;
+    Button20.enabled := true;
+    Button21.enabled := true;
   end;
   ListBoxLog.Items.Add(MClient.Version);
 end;
@@ -703,7 +705,7 @@ end;
 
 procedure TFormWebShopConnector.Button19Click(Sender: TObject);
 begin
- MClient.delete(Edit8.text);
+  MClient.Delete(Edit8.Text);
   ListBoxLog.Items.Add(MClient.LastError);
 end;
 
@@ -1205,7 +1207,7 @@ begin
                 Log(inttostr(ARTIKEL_R) + ' update Links!');
                 sql.Add('select BEMERKUNG from DOKUMENT where ' + ' (RID=' +
                   inttostr(DOKUMENT_R) + ') ' + ' for update');
-                Open;
+                open;
                 first;
                 if not(eof) then
                 begin
@@ -1482,7 +1484,7 @@ begin
         ' SCHWER_GRUPPE, SCHWER_DETAILS, DAUER, ' +
         ' VERLAG_R, KOMPONIST_R, ARRANGEUR_R ' +
         ' from ARTIKEL where RID=:CROSSREF');
-      Open;
+      open;
     end;
 
     // nun die mySQL Ausgabe

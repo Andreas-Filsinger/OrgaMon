@@ -52,6 +52,7 @@ type
   private
     { Private-Deklarationen }
     FirstTimerEventChecked: boolean;
+    MainFormInformed: boolean;
     Tagwache_TAN: integer;
 
     procedure Log(s: string);
@@ -83,7 +84,7 @@ uses
   AuftragMobil, AuftragErgebnis, OLAPArbeitsplatz,
   BaseUpdate, Datensicherung, dbOrgaMon,
   wanfix32,
-  OLAP, Baustelle, BestellArbeitsplatz, AuftragImport;
+  OLAP, Baustelle, BestellArbeitsplatz, AuftragImport, main;
 
 {$R *.DFM}
 
@@ -328,7 +329,14 @@ begin
       begin
         Label2.caption := 'nicht hier';
         cPanelActive := clred; // nicht vorgesehen
+        Timer1.enabled := false;
         break;
+      end;
+
+      if not(MainFormInformed) then
+      begin
+        FormMain.Panel4.color := cllime;
+        MainFormInformed := true;
       end;
 
       if (iTagWacheWochentage <> '') then

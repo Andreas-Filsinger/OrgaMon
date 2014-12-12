@@ -568,20 +568,23 @@ begin
 
     if IsParam('-ds') then
     begin
-      Panel3.color := clred;
-      Panel2.color := clred;
       Panel1.color := clred;
+      Panel2.color := clred;
+      Panel3.color := clred;
       Panel4.color := clred;
       Panel5.color := clred;
+      Panel6.color := clred;
+      Panel7.color := clred;
     end
     else
     begin
-      DisableServer('-dt', Panel3, pDisableTagesabschluss);
-      DisableServer('-dx', Panel2, pDisableeCommerceAPIs);
       DisableServer('-dm', Panel1, pDisableMailer);
+      DisableServer('-dx', Panel2, pDisableXMLRPC);
+      DisableServer('-dt', Panel3, pDisableTagesabschluss);
       DisableServer('-dw', Panel4, pDisableTagwache);
       DisableServer('-dh', Panel5, pDisableHotkeys);
-      DisableServer('-dd', nil, pDisableDrucker);
+      DisableServer('-dd', Panel6, pDisableDrucker);
+      DisableServer('-dk', Panel7, pDisableKasse);
     end;
 
     // Hot-Keys

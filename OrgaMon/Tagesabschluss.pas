@@ -53,6 +53,7 @@ type
   private
     { Private-Deklarationen }
     FirstTimerEventChecked: boolean;
+    MainFormInformed: boolean;
     TagesAbschluss_TAN: integer;
 
     procedure Log(s: string);
@@ -89,7 +90,7 @@ uses
   BaseUpdate, Tier, Mahnung,
   AuftragMobil, AuftragExtern, AuftragSuchindex,
   WebShopConnector, Buchhalter, OLAP,
-  dbOrgaMon;
+  dbOrgaMon, main;
 
 {$R *.DFM}
 
@@ -441,7 +442,14 @@ begin
       begin
         Label2.caption := 'nicht hier';
         cPanelActive := clred; // nicht vorgesehen
+        Timer1.enabled := false;
         break;
+      end;
+
+      if not(MainFormInformed) then
+      begin
+        FormMain.Panel3.color := cllime;
+        MainFormInformed := true;
       end;
 
       if (iTagesabschlussWochentage <> '') then
@@ -462,6 +470,7 @@ begin
         cPanelActive := cllime;
         break;
       end;
+
     end;
 
     Tagesabschluss;

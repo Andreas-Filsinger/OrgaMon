@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.068 (12.12.14) Andreas Filsinger
+
+ Neu: Fenster: Positionsspeicherung: Auftrag, Geo
+ Neu: Scanner: "Info unter den Posten" ist mit dabei
+ Neu: Hauptschirm: Angemeldete, laufende Dienste sind "grün" markiert
+
 Rev 8.067 (11.12.14) Andreas Filsinger
 
  Neu: Scanner: Lesbarkeit der Warentabelle verbessert

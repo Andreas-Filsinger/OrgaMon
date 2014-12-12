@@ -41,10 +41,10 @@ uses
   ExtCtrls, Grids, ImgList,
   ComCtrls, ToolWin, IB_Components,
   Menus, WordIndex, anfix32,
-  DatePick,
+  DatePick, main,
   Sperre, Buttons, globals,
   gplists, txlib, IB_Access,
-  dbOrgaMon;
+  dbOrgaMon, JvComponentBase, JvFormPlacement;
 
 type
   TFormAuftragArbeitsplatz = class(TForm)
@@ -184,6 +184,7 @@ type
     ToolButton6: TToolButton;
     IB_Query_MonteurInfoEinzeln: TIB_Query;
     MenuItem_WechselDatumSortierung: TMenuItem;
+    JvFormStorage1: TJvFormStorage;
     procedure ToolButton37Click(Sender: TObject);
     procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);

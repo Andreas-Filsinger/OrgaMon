@@ -103,6 +103,7 @@ const
   // für Filter
   cZiffern = '0123456789';
   cBuchstaben = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  cLineSeparator = '|';
 
   // Geld
   cMonetarySymbol = '€';
@@ -3679,7 +3680,7 @@ begin
       k := pos(#$0A, OneLine);
       if (k = 0) then
         break;
-      OneLine[k] := '|';
+      OneLine[k] := cLineSeparator;
     end;
 
     // Semikolon innerhalb einer Spalte
@@ -3735,7 +3736,7 @@ begin
         if (Buffer[i] = #$0A) then
         begin
           if not(LastWasCR) then
-            TempStr := TempStr + '|';
+            TempStr := TempStr + cLineSeparator;
         end
         else
         begin
@@ -3786,7 +3787,7 @@ begin
       k := pos(#$0D, OneLine);
       if (k = 0) then
         break;
-      OneLine[k] := '|';
+      OneLine[k] := cLineSeparator;
     end;
 
     if (OneLine <> '') then

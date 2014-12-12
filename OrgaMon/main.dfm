@@ -1142,7 +1142,7 @@ object FormMain: TFormMain
     Height = 11
     BevelOuter = bvNone
     BorderStyle = bsSingle
-    Caption = 'eAPI'
+    Caption = 'XMLRPC'
     Color = clRed
     Ctl3D = False
     Font.Charset = ANSI_CHARSET
@@ -1524,7 +1524,7 @@ object FormMain: TFormMain
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Spooler'
-    Color = clSilver
+    Color = clRed
     Ctl3D = False
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -1544,7 +1544,7 @@ object FormMain: TFormMain
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Caption = 'Kasse'
-    Color = clSilver
+    Color = clRed
     Ctl3D = False
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText

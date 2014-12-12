@@ -1542,7 +1542,7 @@ begin
                   begin
                     _Zeile := cutblank(rSpaltenWert(2));
                     while (_Zeile <> '') do
-                      _MonteurMehrInfo.add(cutblank(nextp(_Zeile, '|')));
+                      _MonteurMehrInfo.add(cutblank(nextp(_Zeile, cLineSeparator)));
                   end
                   else
                   begin

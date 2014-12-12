@@ -968,7 +968,7 @@ var
         result := result + '#$' + inttohex(ord(s[n]), 2)
       else
         result := result + s[n];
-    ersetze(#13, '|', result);
+    ersetze(#13, cLineSeparator, result);
     ersetze('-->', '--&gt;', result);
   end;
 

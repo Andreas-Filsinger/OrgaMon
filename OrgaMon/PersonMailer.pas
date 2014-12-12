@@ -163,7 +163,7 @@ uses
   Person, Belege,
   CareTakerClient, IdAttachmentFile,
   dbOrgaMon, IdAssignedNumbers, wanfix32,
-  AuftragArbeitsplatz;
+  AuftragArbeitsplatz, main;
 
 {$R *.dfm}
 
@@ -348,6 +348,7 @@ begin
     until true;
     CheckBox1.checked := true;
     CheckBox1.caption := 'Ich bin Server';
+    FormMain.Panel1.Color := cllime;
 
   end;
 

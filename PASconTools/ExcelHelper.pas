@@ -366,7 +366,7 @@ var
           if (k > 0) then
           begin
             CellContentString := copy(FullCell, 1, pred(k));
-            result := split(copy(FullCell, succ(k), pred(l - k)), '|');
+            result := split(copy(FullCell, succ(k), pred(l - k)), cLineSeparator);
             CellCommentString := result.Values[cCellFormat_Comment];
             break;
           end;
