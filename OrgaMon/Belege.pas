@@ -54,7 +54,7 @@ uses
 
   // HeBu Projekt
   Buttons, ComCtrls,
-  JvGIF;
+  JvGIF, JvComponentBase, JvFormPlacement;
 
 type
   TFormBelege = class(TForm)
@@ -170,6 +170,7 @@ type
     IB_UpdateBar3: TIB_UpdateBar;
     SpeedButton23: TSpeedButton;
     SpeedButton24: TSpeedButton;
+    JvFormStorage1: TJvFormStorage;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
       var AString: string);
     procedure Button1Click(Sender: TObject);

@@ -616,6 +616,10 @@ object FormVertrag: TFormVertrag
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35
@@ -1078,5 +1082,13 @@ object FormVertrag: TFormVertrag
     Dataset = IB_Query3
     Left = 112
     Top = 240
+  end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    Options = [fpSize, fpLocation]
+    StoredValues = <>
+    Left = 488
+    Top = 352
   end
 end
