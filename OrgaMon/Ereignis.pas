@@ -83,7 +83,7 @@ uses
   Funktionen_Beleg,
   DruckSpooler, globals,
   anfix32, CareTakerClient, CareServer,
-  dbOrgaMon, wanfix32;
+  dbOrgaMon, wanfix32, main;
 {$R *.DFM}
 
 procedure TFormEreignis.FormActivate(Sender: TObject);
@@ -229,12 +229,14 @@ begin
       begin
 
         // Check if service is wanted
-        Timer1.Enabled := not(pDisableDrucker) and
+        Timer1.Enabled := not(pDisableKasse) and
           (AnsiUpperCase(ComputerName) = AnsiUpperCase(iKasseHost));
 
         if Timer1.Enabled then
-          Label1.Caption := 'ich bin Server'
-        else
+        begin
+          Label1.Caption := 'ich bin Server';
+          FormMain.Panel7.color := cllime;
+        end else
           Label1.Caption := iKasseHost + ' ist Server';
 
         //

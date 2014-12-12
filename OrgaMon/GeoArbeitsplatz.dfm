@@ -562,4 +562,11 @@ object FormGeoArbeitsplatz: TFormGeoArbeitsplatz
     Left = 40
     Top = 96
   end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    StoredValues = <>
+    Left = 40
+    Top = 152
+  end
 end

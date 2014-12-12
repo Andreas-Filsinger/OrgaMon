@@ -188,6 +188,8 @@ type
     procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
     function Row(r: integer): TStringList;
+
+    // ACHTUNG: r darf nach addRow nicht freigegeben werden
     function addRow(r: TStringList = nil): integer;
     function RowCount: integer;
     function ColCount: integer;

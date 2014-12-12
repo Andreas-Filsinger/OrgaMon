@@ -122,7 +122,7 @@ uses
   Funktionen_Beleg,
   basic32, CareTakerClient, Artikel,
   WarenBewegung, dbOrgaMon,
-  wanfix32, Datenbank;
+  wanfix32, Datenbank, main;
 {$R *.dfm}
 function Resolve(const VarName: ShortString): ShortString;
 var
@@ -513,6 +513,8 @@ begin
             (AnsiUpperCase(ComputerName) = AnsiUpperCase(iLabelHost)
             );
           CheckBox1.Checked := Timer1.Enabled;
+          if Timer1.enabled then
+           FormMain.panel6.color := cllime;
 
           //
           inc(TimerState);

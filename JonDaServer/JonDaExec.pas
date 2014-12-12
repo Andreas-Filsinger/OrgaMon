@@ -1070,7 +1070,7 @@ var
       with mderecOrgaMon do
       begin
 
-        iDetails := Oem2asci(Zaehler_Strasse) + '|' + Oem2asci(Zaehler_Ort);
+        iDetails := Oem2asci(Zaehler_Strasse) + cLineSeparator + Oem2asci(Zaehler_Ort);
 
         // Text beim Termin (Spalte 1)
         iTermin :=
@@ -2734,7 +2734,7 @@ var
       result.values[cParameter_foto_Fehler] := s
     else
       result.values[cParameter_foto_Fehler] :=
-        result.values[cParameter_foto_Fehler] + '|' + s;
+        result.values[cParameter_foto_Fehler] + cLineSeparator + s;
     result.values[cParameter_foto_fertig] := cIni_Deactivate;
     ShouldAbort := true;
   end;

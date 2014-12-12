@@ -224,7 +224,7 @@ begin
           { } 'update ARTIKEL_AA set' +
           { } ' GTIN=' + Edit1.Text +
           { } 'where ' +
-          { } ' (AUSGABEART_R='+IntTostr(AUSGABEART_R)+') and ' +
+          { } ' (AUSGABEART_R=' + IntTostr(AUSGABEART_R) + ') and ' +
           { } ' (ARTIKEL_R=' + SCAN_LIST.readCell(row, 3) + ')');
 
       end
@@ -257,6 +257,9 @@ begin
   // set
   if (active <> CheckBox1.Checked) then
     CheckBox1.Checked := active;
+
+  if active then
+   FormMain.Panel5.Color := cllime;
 end;
 
 procedure TFormScanner.doArtikelJump;
@@ -489,15 +492,15 @@ begin
       VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
         SL_ScanPrefix + '''');
     VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
-      inttostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-      inttostr(SL_Teillieferung) + ')');
+      IntTostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
+      IntTostr(SL_Teillieferung) + ')');
     if (VERSAND_R >= cRID_FirstValid) then
       if (VERSENDER_R >= cRID_FirstValid) then
         e_x_sql(
           { } 'update VERSAND set ' +
-          { } ' VERSENDER_R=' + inttostr(VERSENDER_R) + ' ' +
+          { } ' VERSENDER_R=' + IntTostr(VERSENDER_R) + ' ' +
           { } 'where' +
-          { } ' (RID=' + inttostr(VERSAND_R) + ')');
+          { } ' (RID=' + IntTostr(VERSAND_R) + ')');
 
     if not(SL_LabelDruck) then
     begin
@@ -571,6 +574,7 @@ var
   AUSGABEART_R: Integer;
   AUSGABEART_NAME, Artikel: string;
   GTIN: string;
+  TXT: string;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -656,7 +660,7 @@ begin
                   TextOut(
                     { } Rect.left + 2,
                     { } Rect.top + cPlanY,
-                    { } 'noch ' + inttostr(MENGE_REST));
+                    { } 'noch ' + IntTostr(MENGE_REST));
               end
               else
               begin
@@ -671,40 +675,54 @@ begin
               // ARTIKEL
               // brush.color := HTMLColor2TColor($FFCC99);
 
+              TXT := SCAN_LIST.readCell(ARow, ACol);
               if (ARow > 0) then
               begin
-                font.size := 10;
-
-                AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(ARow, 5),
-                  cRID_Null);
-
-                if (AUSGABEART_R >= cRID_FirstValid) then
+                if (pos(cLineSeparator, TXT) > 0) then
                 begin
-                  AUSGABEART_NAME := e_r_Ausgabeart(AUSGABEART_R);
-                  Artikel := SCAN_LIST.readCell(ARow, ACol);
-                  ersetze(AUSGABEART_NAME, '', Artikel);
-                  TextRect(Rect, Rect.left + 2, Rect.top, AUSGABEART_NAME);
-                  font.Style := [fsbold];
+                  // Info Text unter dem Posten
+                  font.size := 10;
+                  TextRect(Rect, Rect.left + 2, Rect.top,
+                    nextp(TXT, cLineSeparator, 0));
                   TextOut(
                     { } Rect.left + 2,
                     { } Rect.top + cPlanY,
-                    { } cutblank(Artikel));
-                  font.Style := [];
+                    { } nextp(TXT, cLineSeparator, 1));
                 end
                 else
                 begin
-                  font.size := 11;
-                  font.Style := [fsbold];
-                  TextRect(Rect, Rect.left + 2, Rect.top + (cPlanY div 2),
-                    SCAN_LIST.readCell(ARow, ACol));
-                  font.Style := [];
+                  AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(ARow, 5),
+                    cRID_Null);
+
+                  if (AUSGABEART_R >= cRID_FirstValid) then
+                  begin
+                    AUSGABEART_NAME := e_r_Ausgabeart(AUSGABEART_R);
+                    Artikel := TXT;
+                    ersetze(AUSGABEART_NAME, '', Artikel);
+                    font.size := 10;
+                    TextRect(Rect, Rect.left + 2, Rect.top, AUSGABEART_NAME);
+                    font.size := 11;
+                    font.Style := [fsbold];
+                    TextOut(
+                      { } Rect.left + 2,
+                      { } Rect.top + cPlanY,
+                      { } cutblank(Artikel));
+                    font.Style := [];
+                  end
+                  else
+                  begin
+                    font.size := 11;
+                    font.Style := [fsbold];
+                    TextRect(Rect, Rect.left + 2,
+                      Rect.top + (cPlanY div 2), TXT);
+                    font.Style := [];
+                  end;
                 end;
               end
               else
               begin
                 font.size := 10;
-                TextRect(Rect, Rect.left + 2, Rect.top,
-                  SCAN_LIST.readCell(ARow, ACol));
+                TextRect(Rect, Rect.left + 2, Rect.top, TXT);
 
               end;
             end;
@@ -832,7 +850,7 @@ begin
     else
     begin
       StaticText1.color := clred;
-      StaticText1.Caption := inttostr(SUMME);
+      StaticText1.Caption := IntTostr(SUMME);
     end;
   end
   else
@@ -887,7 +905,7 @@ end;
 procedure TFormScanner.SpeedButton3Click(Sender: TObject);
 begin
   SL_refresh;
-  edit1.SetFocus;
+  Edit1.SetFocus;
 end;
 
 function TFormScanner.bucheArtikelScan(row: Integer): boolean;
@@ -902,14 +920,19 @@ begin
   if (MENGE_REST > 0) then
   begin
     inc(MENGE_SCAN);
-    SCAN_LIST.writeCell(row, 4, inttostr(MENGE_SCAN));
+    SCAN_LIST.writeCell(row, 4, IntTostr(MENGE_SCAN));
+    result := true;
+  end
+  else
+  begin
+    result := false;
   end;
 end;
 
 procedure TFormScanner.SpeedButton4Click(Sender: TObject);
 begin
   doCheck;
-  edit1.SetFocus;
+  Edit1.SetFocus;
 end;
 
 function TFormScanner.Selected_BELEG_R: Integer;
@@ -939,7 +962,7 @@ begin
     s := ListBox1.items[ListBox1.ItemIndex];
     BELEG_R := StrToIntDef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
     result := e_r_sql('select PERSON_R from BELEG where RID=' +
-      inttostr(BELEG_R));
+      IntTostr(BELEG_R));
   end
   else
   begin
@@ -954,10 +977,14 @@ begin
 end;
 
 procedure TFormScanner.SL_load(BELEG_R: Integer);
+var
+  PostenInfos: TStringList;
+  LineA, LineB: string;
 begin
   if assigned(SCAN_LIST) then
     SCAN_LIST.free;
 
+  // Beleg Positionen
   SCAN_LIST := csTable(
     { } 'select ' +
     { 0 } ' POSTEN.MENGE_RECHNUNG,' +
@@ -973,7 +1000,7 @@ begin
     { } ' (POSTEN.ARTIKEL_R=ARTIKEL_AA.ARTIKEL_R) and ' +
     { } ' (POSTEN.AUSGABEART_R=ARTIKEL_AA.AUSGABEART_R) ' +
     { } 'where' +
-    { } ' (POSTEN.BELEG_R=' + inttostr(BELEG_R) + ') and' +
+    { } ' (POSTEN.BELEG_R=' + IntTostr(BELEG_R) + ') and' +
     { } ' (POSTEN.MENGE_RECHNUNG>0) and' +
     { } ' ((POSTEN.ZUTAT is null) or' +
     { } '  ((POSTEN.ZUTAT is not null) and' +
@@ -981,6 +1008,63 @@ begin
     { } ' ) ' +
     { } 'order by' +
     { } ' POSTEN.POSNO,POSTEN.RID');
+
+  // Info Positionen
+  PostenInfos := e_r_sqlsl(
+    { } 'select' +
+    { } ' KUNDEN_INFO ' +
+    { } 'from' +
+    { } ' BELEG ' +
+    { } 'where' +
+    { } ' RID=' + IntTostr(BELEG_R));
+
+  // delete leading empty lines
+  repeat
+    if (PostenInfos.count > 0) then
+    begin
+      if (noblank(PostenInfos[0]) = '') then
+        PostenInfos.delete(0)
+      else
+        break;
+    end
+    else
+    begin
+      break;
+    end;
+  until false;
+
+  // Fülle Doppel-Zeilen
+  repeat
+
+    // 1. Zeile
+    if (PostenInfos.count = 0) then
+      break;
+    LineA := PostenInfos[0];
+    PostenInfos.delete(0);
+
+    // 2. Zeile
+    if (PostenInfos.count > 0) then
+    begin
+      LineB := PostenInfos[0];
+      PostenInfos.delete(0);
+    end
+    else
+    begin
+      LineB := '';
+    end;
+
+    SCAN_LIST.addRow(split(
+      { 0 } '1;' +
+      { 1 } nosemi(LineA) + cLineSeparator + nosemi(LineB) + ';' +
+      { 2 } 'INFO;' +
+      { 3 } ';' +
+      { 4 } '0;' +
+      { 5 } ''));
+
+  until false;
+
+  //
+  PostenInfos.free;
 
   SL_BELEG_R := BELEG_R;
   if DebugMode then
@@ -1009,7 +1093,7 @@ begin
     RowCount := SCAN_LIST.RowCount + 1;
     FixedRows := 1;
     RowHeights[0] := cPlanY + dpiX(2);
-    Row := 1;
+    row := 1;
     Refresh;
   end;
   RefreshSumme;

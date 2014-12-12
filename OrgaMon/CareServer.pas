@@ -1080,7 +1080,7 @@ begin
     begin
       OneLine := InF[n];
       OrgMsg := deCrypt(nextp(OneLine, ';', 2));
-      ersetze(#13, '|', OrgMsg);
+      ersetze(#13, cLineSeparator, OrgMsg);
       ersetze(#10, '', OrgMsg);
 
       result.add(nextp(OneLine, ';', 0) + ';' + // Moment

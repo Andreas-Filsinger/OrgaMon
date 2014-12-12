@@ -1958,10 +1958,10 @@ begin
             else
               add('');
           { 18 } add('');
-          { 19 } add(HugeSingleLine(sText, '|'));
+          { 19 } add(HugeSingleLine(sText, cLineSeparator));
           if (sText.count > 1) then
             sText.Delete(0);
-          strings[18] := HugeSingleLine(sText, '|');
+          strings[18] := HugeSingleLine(sText, cLineSeparator);
 
         end;
         sCSV.add(HugeSingleLine(sInitialerBuchungssatz, ';'));
