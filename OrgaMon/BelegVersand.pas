@@ -33,7 +33,8 @@ uses
   Classes, Graphics, Controls,
   Forms, Dialogs, IB_UpdateBar,
   ExtCtrls, Grids, IB_Grid,
-  IB_Components, IB_Access, StdCtrls, IB_Controls;
+  IB_Components, IB_Access, StdCtrls, IB_Controls, JvComponentBase,
+  JvFormPlacement;
 
 type
   TFormBelegVersand = class(TForm)
@@ -50,6 +51,7 @@ type
     Image2: TImage;
     Button20: TButton;
     Button2: TButton;
+    JvFormStorage1: TJvFormStorage;
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
     procedure ComboBox1Change(Sender: TObject);
@@ -60,8 +62,13 @@ type
     procedure Image2Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
+    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
+      var AString: string);
   private
     { Private-Deklarationen }
+    Grid1_Col_Bearbeiter: Integer;
+
     procedure EnsureOpen;
     procedure SetStandardVersandData;
     procedure ReflectData;
@@ -78,13 +85,13 @@ var
 implementation
 
 uses
-  globals, Versender,
+  globals, Versender, Main,
   Datenbank,
   GUIHelp,
   Funktionen_Basis,
   Funktionen_Beleg,
   dbOrgaMon, anfix32,
-  Jvgnugettext, CaretakerClient, wanfix32;
+  Jvgnugettext, CaretakerClient, wanfix32, Bearbeiter;
 
 {$R *.DFM}
 
@@ -148,9 +155,30 @@ begin
   end;
 end;
 
+procedure TFormBelegVersand.IB_Grid1GetDisplayText(Sender: TObject; ACol,
+  ARow: Integer; var AString: string);
+begin
+  if (Grid1_Col_Bearbeiter = -2) then
+  begin
+    Grid1_Col_Bearbeiter := HeaderACol(IB_Grid1, 'BEARBEITER_R');
+  end;
+  if (ARow > 0) then
+  begin
+    if (AString <> '') then
+      if (ACol = Grid1_Col_Bearbeiter) then
+        AString := FormBearbeiter.FetchKURZFromRID(strtointdef(AString, 0));
+  end;
+
+end;
+
 procedure TFormBelegVersand.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
   ReflectData;
+end;
+
+procedure TFormBelegVersand.IB_Query1BeforePrepare(Sender: TIB_Statement);
+begin
+Grid1_Col_Bearbeiter := -2;
 end;
 
 procedure TFormBelegVersand.IB_Query1ConfirmDelete(Sender: TComponent;

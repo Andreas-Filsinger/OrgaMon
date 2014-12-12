@@ -2625,4 +2625,12 @@ object FormArtikel: TFormArtikel
     Left = 184
     Top = 128
   end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    Options = [fpSize, fpLocation]
+    StoredValues = <>
+    Left = 768
+    Top = 184
+  end
 end

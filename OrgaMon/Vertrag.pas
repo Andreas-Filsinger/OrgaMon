@@ -35,7 +35,7 @@ uses
   ExtCtrls, IB_UpdateBar, IB_Components,
   Grids, IB_Grid, StdCtrls, IB_Access,
   IB_Controls, Mask, ComCtrls,
-  Buttons, Datenbank, IB_EditButton;
+  Buttons, Datenbank, IB_EditButton, JvComponentBase, JvFormPlacement;
 
 type
   TFormVertrag = class(TForm)
@@ -102,6 +102,7 @@ type
     SpeedButton8: TSpeedButton;
     Button4: TButton;
     Button5: TButton;
+    JvFormStorage1: TJvFormStorage;
     procedure Image2Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure IB_Query1BeforeInsert(IB_Dataset: TIB_Dataset);
@@ -151,7 +152,7 @@ uses
   globals, Baustelle,
   CaretakerClient, anfix32, Person,
   Belege, Kontext, OLAP,
-  dbOrgaMon,
+  dbOrgaMon, Main,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,

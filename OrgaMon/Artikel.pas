@@ -59,7 +59,7 @@ uses
   dbOrgaMon,
 
   // Hebu-Project
-  Datenbank, IB_EditButton;
+  Datenbank, IB_EditButton, JvComponentBase, JvFormPlacement;
 
 type
   TFormArtikel = class(TForm)
@@ -212,6 +212,7 @@ type
     TabSheet8: TTabSheet;
     Edit4: TEdit;
     SpeedButton21: TSpeedButton;
+    JvFormStorage1: TJvFormStorage;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
@@ -331,7 +332,7 @@ uses
   ArtikelBackorder, BestellArbeitsplatz, ArtikelKategorie,
   GUIhelp, WarenBewegung, CareTakerClient, ArtikelContext,
   ArtikelPreis, ArtikelPakete, OLAP,
-  Jvgnugettext, ArtikelSortiment;
+  Jvgnugettext, ArtikelSortiment, Main;
 
 {$R *.DFM}
 

@@ -3,7 +3,7 @@ object FormBelegVersand: TFormBelegVersand
   Top = 133
   Caption = 'Versandinfo zum Beleg'
   ClientHeight = 300
-  ClientWidth = 531
+  ClientWidth = 580
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -12,6 +12,9 @@ object FormBelegVersand: TFormBelegVersand
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
+  DesignSize = (
+    580
+    300)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -19,6 +22,7 @@ object FormBelegVersand: TFormBelegVersand
     Top = 243
     Width = 59
     Height = 13
+    Anchors = [akLeft, akBottom]
     Caption = 'Versender'
   end
   object Label2: TLabel
@@ -26,6 +30,7 @@ object FormBelegVersand: TFormBelegVersand
     Top = 267
     Width = 54
     Height = 13
+    Anchors = [akLeft, akBottom]
     Caption = 'Packform'
   end
   object Label3: TLabel
@@ -33,6 +38,7 @@ object FormBelegVersand: TFormBelegVersand
     Top = 262
     Width = 56
     Height = 20
+    Anchors = [akLeft, akBottom]
     Caption = 'Label3'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -42,11 +48,12 @@ object FormBelegVersand: TFormBelegVersand
     ParentFont = False
   end
   object Image2: TImage
-    Left = 475
+    Left = 524
     Top = 14
     Width = 54
     Height = 22
     Cursor = crHandPoint
+    Anchors = [akTop, akRight]
     AutoSize = True
     Picture.Data = {
       07544269746D61704E0E0000424D4E0E00000000000036000000280000003600
@@ -165,21 +172,26 @@ object FormBelegVersand: TFormBelegVersand
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image2Click
+    ExplicitLeft = 475
   end
   object IB_Grid1: TIB_Grid
     Left = 1
     Top = 40
-    Width = 528
+    Width = 577
     Height = 185
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
+    OnGetDisplayText = IB_Grid1GetDisplayText
+    ExplicitWidth = 528
   end
   object ComboBox1: TComboBox
     Left = 97
     Top = 241
     Width = 192
     Height = 21
+    Anchors = [akLeft, akBottom]
     TabOrder = 1
     Text = 'ComboBox1'
     OnChange = ComboBox1Change
@@ -189,18 +201,21 @@ object FormBelegVersand: TFormBelegVersand
     Top = 264
     Width = 192
     Height = 21
+    Anchors = [akLeft, akBottom]
     TabOrder = 2
     Text = 'ComboBox2'
     OnChange = ComboBox2Change
   end
   object Button1: TButton
-    Left = 441
+    Left = 490
     Top = 241
     Width = 88
     Height = 44
+    Anchors = [akRight, akBottom]
     Caption = 'OK'
     TabOrder = 3
     OnClick = Button1Click
+    ExplicitLeft = 441
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 7
@@ -217,11 +232,12 @@ object FormBelegVersand: TFormBelegVersand
     VisibleButtons = [ubEdit, ubDelete, ubPost, ubCancel, ubRefreshAll]
   end
   object Button20: TButton
-    Left = 449
+    Left = 498
     Top = 14
     Width = 21
     Height = 22
     Hint = 'Beleg drucken'
+    Anchors = [akTop, akRight]
     Caption = #202
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
@@ -231,13 +247,15 @@ object FormBelegVersand: TFormBelegVersand
     ParentFont = False
     TabOrder = 5
     OnClick = Button20Click
+    ExplicitLeft = 449
   end
   object Button2: TButton
-    Left = 423
+    Left = 472
     Top = 14
     Width = 23
     Height = 22
     Hint = 'Beleg anzeigen'
+    Anchors = [akTop, akRight]
     Caption = #157
     Font.Charset = SYMBOL_CHARSET
     Font.Color = clWindowText
@@ -249,6 +267,7 @@ object FormBelegVersand: TFormBelegVersand
     ShowHint = True
     TabOrder = 6
     OnClick = Button2Click
+    ExplicitLeft = 423
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
@@ -291,6 +310,7 @@ object FormBelegVersand: TFormBelegVersand
       '     , PACKFORM_R'
       '     , LIEFERANSCHRIFT_R'
       '     , RECHNUNGSANSCHRIFT_R'
+      '     , BEARBEITER_R'
       '     , INTERNINFO'
       '     , PACKFORM'
       '     , RID'
@@ -301,6 +321,7 @@ object FormBelegVersand: TFormBelegVersand
     ColorScheme = True
     RequestLive = True
     AfterScroll = IB_Query1AfterScroll
+    BeforePrepare = IB_Query1BeforePrepare
     OnConfirmDelete = IB_Query1ConfirmDelete
     Left = 24
     Top = 72
@@ -309,7 +330,15 @@ object FormBelegVersand: TFormBelegVersand
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 56
+    Left = 88
     Top = 72
+  end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    Options = [fpSize, fpLocation]
+    StoredValues = <>
+    Left = 392
+    Top = 240
   end
 end

@@ -441,9 +441,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 42
+          Top = 44
           Width = 923
-          Height = 177
+          Height = 175
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -2250,7 +2250,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100FC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100040110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4025,6 +4025,14 @@ object FormBelege: TFormBelege
     AutoInsert = False
     Dataset = IB_Query1
     Left = 72
+    Top = 96
+  end
+  object JvFormStorage1: TJvFormStorage
+    AppStorage = FormMain.JvAppIniFileStorage1
+    AppStoragePath = '%FORM_NAME%'
+    Options = [fpSize, fpLocation]
+    StoredValues = <>
+    Left = 496
     Top = 96
   end
 end
