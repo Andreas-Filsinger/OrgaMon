@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon
-AppVerName=OrgaMon 8.069
+AppVerName=OrgaMon 8.070
 AppCopyright=Copyright (C) 1988-2011 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -19,8 +19,8 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8069-Update
-AppVersion=8.069
+OutputBaseFilename=Setup-OrgaMon-8070-Update
+AppVersion=8.070
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -28,8 +28,8 @@ PrivilegesRequired=none
 
 [Files]
 ; Anwendung
-Source: "C:\Program Files\\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "C:\Program Files\\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+Source: "C:\Program Files (x86)\\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "C:\Program Files (x86)\\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 Source: "Distribution\Hilfe\OrgaMon-VNC.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 ; Lizenz-Infos
