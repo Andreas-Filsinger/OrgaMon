@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.070 (15.12.14) Andreas Filsinger
+
+ Bug: Scanner: Listenmarkierung geht nach unten, obwohl Restmenge>0
+
 Rev 8.069 (12.12.14) Andreas Filsinger
 
  Neu: Beleg: Versandlaster: Anzeige des Bearbeiters

@@ -121,6 +121,8 @@ type
     // verschieden Scan Events
     procedure doBelegScan(ganzerScan: string);
     procedure doArtikelScan(ganzerScan: string);
+
+    // =true wenn SCAN_MENGE nunmehr "0"
     function bucheArtikelScan(row: Integer): boolean;
 
   end;
@@ -259,7 +261,7 @@ begin
     CheckBox1.Checked := active;
 
   if active then
-   FormMain.Panel5.Color := cllime;
+    FormMain.Panel5.Color := cllime;
 end;
 
 procedure TFormScanner.doArtikelJump;
@@ -552,12 +554,15 @@ begin
 end;
 
 procedure TFormScanner.doCheck;
+var
+  ScanFertig: boolean;
 begin
   if assigned(SCAN_LIST) then
   begin
-    bucheArtikelScan(DrawGrid1.row);
+    ScanFertig := bucheArtikelScan(DrawGrid1.row);
     SL_reflect;
-    SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1, pred(DrawGrid1.RowCount)));
+    if ScanFertig then
+      SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1, pred(DrawGrid1.RowCount)));
   end;
 end;
 
@@ -584,17 +589,17 @@ begin
 
       if Fokusiert then
       begin
-        brush.color := HTMLColor2TColor($99CCFF);
+        brush.Color := HTMLColor2TColor($99CCFF);
       end
       else
       begin
         if odd(ARow) then
         begin
-          brush.color := clWhite;
+          brush.Color := clWhite;
         end
         else
         begin
-          brush.color := clListeGrauer;
+          brush.Color := clListeGrauer;
         end;
       end;
 
@@ -641,13 +646,13 @@ begin
                 begin
                   GTIN := SCAN_LIST.readCell(ARow, 2);
                   if (GTIN <> '<NULL>') then
-                    brush.color := HTMLColor2TColor($FF9966)
+                    brush.Color := HTMLColor2TColor($FF9966)
                   else
-                    brush.color := HTMLColor2TColor($9999FF);
+                    brush.Color := HTMLColor2TColor($9999FF);
                 end
                 else
                 begin
-                  brush.color := HTMLColor2TColor($99FF99);
+                  brush.Color := HTMLColor2TColor($99FF99);
                 end;
 
                 // MENGE
@@ -743,7 +748,7 @@ begin
         // Grauer vertikaler Strich
         if (ACol > 0) then
         begin
-          pen.color := $A0A0A0;
+          pen.Color := $A0A0A0;
           MoveTo(Rect.left, Rect.top);
           LineTo(Rect.left, Rect.bottom);
         end;
@@ -766,7 +771,7 @@ begin
     begin
       DefaultRowHeight := (cPlanY * 2) + dpiX(2);
       font.NAME := 'Courier New';
-      font.color := clblack;
+      font.Color := clblack;
       ColCount := 4;
       ColWidths[0] := dpiX(60);
       ColWidths[2] := dpiX(130);
@@ -837,25 +842,25 @@ begin
     SUMME := MENGE_RECHNUNG - MENGE_SCAN;
     if (SUMME = 0) then
     begin
-      StaticText1.color := clAqua;
+      StaticText1.Color := clAqua;
       StaticText1.Caption := '0';
       Application.ProcessMessages;
 
       doBuchen;
       SL_free;
 
-      StaticText1.color := cllime;
+      StaticText1.Color := cllime;
       StaticText1.Caption := '';
     end
     else
     begin
-      StaticText1.color := clred;
+      StaticText1.Color := clred;
       StaticText1.Caption := IntTostr(SUMME);
     end;
   end
   else
   begin
-    StaticText1.color := clBtnFace;
+    StaticText1.Color := clBtnFace;
     StaticText1.Caption := '';
   end;
 end;
@@ -921,7 +926,7 @@ begin
   begin
     inc(MENGE_SCAN);
     SCAN_LIST.writeCell(row, 4, IntTostr(MENGE_SCAN));
-    result := true;
+    result := (MENGE_REST = 1);
   end
   else
   begin
