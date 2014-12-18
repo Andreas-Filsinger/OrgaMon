@@ -3347,14 +3347,13 @@ begin
   // geraete.html
   maintainGERAETE;
 
-  // imp pend:
   //
-  // # Transaktions-Datenverzeichnisse wegsichern danach löschen
-  // # doAbschluss Automatisieren (per XMLRPC, per CRON, per Neustart?)
+  // imp pend: Transaktions-Datenverzeichnisse wegsichern danach löschen
+  // imp pend: doAbschluss Automatisieren (per XMLRPC, per CRON, per Neustart?)
   //
-  // # ev. Transaktionsverzeichnis erstellen, das führt aber auch
-  // zur Veränderung des Clients. Ev. kann man da was machen
-  // mit rewrite ...
+  // imp pend: ev. Transaktionsverzeichnis erstellen, das führt aber auch
+  //           zur Veränderung des Clients. Ev. kann man da was machen
+  //           mit rewrite ...
 
 end;
 

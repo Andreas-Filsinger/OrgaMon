@@ -242,7 +242,10 @@ uses
   gplists, OLAP, SolidFTP,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
   DCPbase64, ArtikelVerlag,
-  IdHttp, UFlxMessages, JclBase, JvclVer, dbOrgaMon,
+  IdHttp,
+
+  JclBase, JvclVer,
+  dbOrgaMon,
   SystemPflege, REST, main;
 
 const

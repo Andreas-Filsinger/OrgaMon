@@ -5840,8 +5840,7 @@ begin
       VERLAG_R := FieldByName('ALIAS_R').AsInteger;
       if (Visited_Verlag_R.indexof(inttostr(VERLAG_R)) <> -1) then
       begin
-        // imp pend
-        // alias loop detected
+        // imp pend: alias loop detected
         break;
       end;
     until false;

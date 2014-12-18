@@ -419,10 +419,9 @@ begin
       end;
     end;
   end;
-  // Imp pend:
-  // nachdem die beste (=kleinste) Differenz bestimmt ist
-  // muss bei mehreren Kandidaten identischer Differnez
-  // der mit der grössenten Priorität gewählt werden
+  // Imp pend: nachdem die beste (=kleinste) Differenz bestimmt ist
+  //           muss bei mehreren Kandidaten identischer Differnez
+  //           der mit der grössenten Priorität gewählt werden
 end;
 
 function TSperre.CheckEm(pDatum: TDateTime; pKontext: Integer): TgpIntegerList;

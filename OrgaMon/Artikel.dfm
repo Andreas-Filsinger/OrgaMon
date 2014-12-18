@@ -2615,19 +2615,9 @@ object FormArtikel: TFormArtikel
     Left = 64
     Top = 176
   end
-  object XLSAdapter1: TXLSAdapter
-    AllowOverwritingFiles = False
-    Left = 184
-    Top = 72
-  end
-  object FlexCelImport1: TFlexCelImport
-    Adapter = XLSAdapter1
-    Left = 184
-    Top = 128
-  end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1
-    AppStoragePath = '%FORM_NAME%'
+    AppStoragePath = '%FORM_NAME%\'
     Options = [fpSize, fpLocation]
     StoredValues = <>
     Left = 768

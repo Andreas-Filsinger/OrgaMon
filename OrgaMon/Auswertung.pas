@@ -98,10 +98,12 @@ var
 implementation
 
 uses
-  ExcelHelper, UExcelAdapter, XLSAdapter,
-  UFlexCelImport, UFlxFormats, UFlxNumberFormat,
-  globals, OLAP, Funktionen_Auftrag,
-  CaretakerClient, wanfix32, Auswertung.Generator.MixStatistik.main;
+  globals, CaretakerClient, wanfix32,
+  ExcelHelper,
+
+  FlexCel.Core, FlexCel.xlsAdapter,
+  OLAP, Funktionen_Auftrag,
+   Auswertung.Generator.MixStatistik.main;
 
 {$R *.dfm}
 
@@ -257,8 +259,7 @@ procedure TFormAuswertung.vorlageOLAP(sBegriff: string;
 var
   GlobalVars: TStringList;
   DestFName: string;
-  xlsAUSGABE: TFlexCelImport;
-  xlsMACHINE: TXLSAdapter;
+  xlsAUSGABE: TXLSFIle;
   Content: TList;
   Headers: TStringList;
   sSub: TStringList;
@@ -271,8 +272,7 @@ begin
   GlobalVars := TStringList.Create;
   Content := TList.Create;
   Headers := TStringList.Create;
-  xlsMACHINE := TXLSAdapter.Create(self);
-  xlsAUSGABE := TFlexCelImport.Create(self);
+  xlsAUSGABE := TXLSFile.create(true);
   DestFName := AnwenderPath + sBegriff + cExcelExtension;
   FileDelete(DestFName);
   GlobalVars.add('$StartDatum=''' + long2date(getStart) + '''');
@@ -298,8 +298,7 @@ begin
   begin
 
     //
-    adapter := xlsMACHINE;
-    OpenFile(iOlapPath + sBegriff + cVorlageExtension + cExcelExtension);
+    Open(iOlapPath + sBegriff + cVorlageExtension + cExcelExtension);
 
     // erste Seite -> Globale Parameter
     Headers.add('Parameter');
@@ -319,7 +318,7 @@ begin
     for n := SheetCount downto 1 do
     begin
       ActiveSheet := n;
-      if (ActiveSheetName = 'Parameter') then
+      if (SheetName = 'Parameter') then
       begin
         SheetParameter := n;
         break;
@@ -338,19 +337,17 @@ begin
       ClearSheet;
 
       // Sicherstellen, dass es die Datei gibt!
-      FileAlive(iOlapPath + sBegriff + '.' + ActiveSheetName + cOLAPExtension);
+      FileAlive(iOlapPath + sBegriff + '.' + SheetName + cOLAPExtension);
 
       // Nun das OLAP ausführen!
-      FormOLAP.DoContextOLAP(iOlapPath + sBegriff + '.' + ActiveSheetName +
+      FormOLAP.DoContextOLAP(iOlapPath + sBegriff + '.' + SheetName +
         cOLAPExtension, GlobalVars, xlsAUSGABE);
     end;
 
     ActiveSheet := 1;
     Save(DestFName);
-    adapter := nil;
   end;
   xlsAUSGABE.free;
-  xlsMACHINE.free;
   for n := 0 to pred(Content.Count) do
     TStringList(Content[n]).free;
   Content.free;

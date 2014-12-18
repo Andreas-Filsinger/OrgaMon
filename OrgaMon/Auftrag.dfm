@@ -1406,11 +1406,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 1
           OnClick = JvImgBtn1Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object JvImgBtn2: TJvImgBtn
           Left = 477
@@ -1422,11 +1417,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 2
           OnClick = JvImgBtn2Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object JvImgBtn3: TJvImgBtn
           Left = 566
@@ -1438,11 +1428,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 3
           OnClick = JvImgBtn3Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object JvImgBtn4: TJvImgBtn
           Left = 477
@@ -1454,11 +1439,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 4
           OnClick = JvImgBtn4Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object JvImgBtn5: TJvImgBtn
           Left = 477
@@ -1470,11 +1450,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 5
           OnClick = JvImgBtn5Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object JvImgBtn6: TJvImgBtn
           Left = 566
@@ -1486,11 +1461,6 @@ object FormAuftrag: TFormAuftrag
           Images = FormAuftragArbeitsplatz.ImageList1
           TabOrder = 6
           OnClick = JvImgBtn6Click
-          HotTrackFont.Charset = ANSI_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'Verdana'
-          HotTrackFont.Style = []
         end
         object IB_Memo4: TIB_Memo
           Left = 0

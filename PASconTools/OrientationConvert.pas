@@ -79,12 +79,13 @@ function doConversion(Mode: integer; InFName: string;
 function CheckContent(InFName: string): integer;
 
 implementation
-{$ifdef fpc}
+
+{$IFDEF fpc}
 
 function doConversion(Mode: integer; InFName: string;
   sBericht: TStringList = nil): boolean;
 begin
- result := false;
+  result := false;
 end;
 
 function CheckContent(InFName: string): integer;
@@ -93,24 +94,20 @@ begin
 end;
 
 end.
-{$else}
-uses
-  Windows, SysUtils, IniFiles,
-  math,
 
-  // OrgaMon - Tools
-  geld, Mapping, anfix32,
-  html, WordIndex, gplists,
-  binlager32
+{$ELSE}
+  uses Windows, SysUtils, IniFiles, math,
+
+// OrgaMon - Tools
+geld, Mapping, anfix32, html, WordIndex, gplists, binlager32
 
   ,
 
-  // libxml
-  libxml2,
+// libxml
+libxml2,
 
-  // FlexCel
-  UFlexCelImport, UExcelAdapter, XLSAdapter,
-  UFlxFormats, UFlxNumberFormat;
+// FlexCel
+FlexCel.Core, FlexCel.xlsAdapter;
 
 
 // Tmemorystream
@@ -503,7 +500,7 @@ var
 
           end;
 
-          if (pWriteAt.IndexOf(_FullName)<>-1) then
+          if (pWriteAt.indexof(_FullName) <> -1) then
           begin
             outOne;
             clearOne;
@@ -589,12 +586,12 @@ var
         break;
       end;
 
-        if (pWriteAt.IndexOf(_FullName)<>-1) then
-        begin
-          outOne;
-          clearOne;
-          break;
-        end;
+      if (pWriteAt.indexof(_FullName) <> -1) then
+      begin
+        outOne;
+        clearOne;
+        break;
+      end;
 
     until true;
     // onClose(Tag) - EVENTS !!!!!
@@ -900,7 +897,7 @@ var
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
-    pWriteAt := Split(sMapping.values['WRITE_AT'],'|');
+    pWriteAt := Split(sMapping.values['WRITE_AT'], '|');
     pDebug := sMapping.values['DEBUG'] = 'JA';
     pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|');
     pSplitNameSpace := sMapping.values['NAMESPACE'];
@@ -1119,10 +1116,10 @@ begin
   while not(eof(fXML)) do
   begin
     readln(fXML, OneL);
-{$ifndef fpc}
+{$IFNDEF fpc}
     if pUTF8 then
       OneL := UTF8ToWideString(OneL);
-{$endif}
+{$ENDIF}
     inc(LineNo);
     parse(OneL);
     if (ErrorCount > 0) then
@@ -1276,8 +1273,7 @@ var
   xml_EndIndex: integer;
 
   // XLS-Sachen
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c: integer;
 
   // Spalten Konstante
@@ -1598,7 +1594,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.CellValue[r, succ(c)];
+    result := xImport.GetStringFromCell(r, succ(c));
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -1644,7 +1640,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -1657,7 +1653,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -1704,7 +1700,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.CellValue[r, succ(_cdt)];
+        v := xImport.GetCellValue(r, succ(_cdt));
 
         if (TVarData(v).VType = varDouble) then
         begin
@@ -2724,9 +2720,7 @@ begin
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
   sZaehlwerke := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
   ZaehlwerkeAusbauSoll := TStringList.create;
   ZaehlwerkeEinbauSoll := TStringList.create;
@@ -2776,7 +2770,7 @@ begin
     begin
 
       try
-        OpenFile(InFName);
+        Open(InFName);
       except
         on e: exception do
         begin
@@ -2790,8 +2784,8 @@ begin
       sDiagFiles.add(InFName);
       sDiagFiles.add(conversionOutFName);
 
-      for c := 1 to MaxCol do
-        xlsHeaders.add(CellValue[1, c]);
+      for c := 1 to ColCountInRow(1) do
+        xlsHeaders.add(GetCellValue(1, c));
 
       cORDER_id := xlsHeaders.indexof('ORDER.id');
       if cORDER_id = -1 then
@@ -2866,22 +2860,22 @@ begin
       repeat
 
         // den Key zusammenbauen
-        OrderId := cutblank(CellValue[r, succ(cORDER_id)]);
+        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)));
         OrderId := fill('0', 9 - length(OrderId)) + OrderId;
 
-        OrderPosition := cutblank(CellValue[r, succ(cORDER_Position)]);
+        OrderPosition := cutblank(GetCellValue(r, succ(cORDER_Position)));
         if OrderPosition = '' then
           OrderPosition := '1';
 
-        ART := cutblank(CellValue[r, succ(cART)]);
+        ART := cutblank(GetCellValue(r, succ(cART)));
         ART_Zaehlwerke := strtointdef(StrFilter(ART, '0123456789'), 1);
-        Sparte := cutblank(CellValue[r, succ(cSPARTE)]);
-        RID := cutblank(CellValue[r, succ(cRID)]);
-        STATUS := strtointdef(CellValue[r, succ(cStatus)], -1);
-        ZAEHLER_NUMMER := cutblank(CellValue[r, succ(cZaehlerNummer)]);
+        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)));
+        RID := cutblank(GetCellValue(r, succ(cRID)));
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
+        ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
         ZAEHLWERKE_AUS_PROTOKOLL := false;
         for c := 0 to pred(cZaehlwerk.count) do
-          if (cutblank(CellValue[r, succ(cZaehlwerk[c])]) <> '') then
+          if (cutblank(GetCellValue(r, succ(cZaehlwerk[c]))) <> '') then
           begin
             ZAEHLWERKE_AUS_PROTOKOLL := true;
             break;
@@ -2964,7 +2958,7 @@ begin
             sBericht.add('(RID=' + RID + ') ORDER.id ist leer!');
         end;
         inc(r);
-      until (r > MaxRow);
+      until (r > RowCount);
     end;
     pop; // FILE
     if (sStack.count <> 0) then
@@ -2993,7 +2987,6 @@ begin
   sSource.Free;
   sStack.Free;
   xImport.Free;
-  xAdapter.Free;
   xlsHeaders.Free;
   ZaehlwerkeAusbauSoll.Free;
   ZaehlwerkeEinbauSoll.Free;
@@ -3051,8 +3044,7 @@ var
   xml_EndIndex: integer;
 
   // XLS-Sachen
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c: integer;
 
   // Spalten Konstante
@@ -3387,7 +3379,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.CellValue[r, succ(c)];
+    result := xImport.GetCellValue(r, succ(c));
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -3433,7 +3425,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -3446,7 +3438,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -3493,7 +3485,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.CellValue[r, succ(_cdt)];
+        v := xImport.GetCellValue(r, succ(_cdt));
 
         if (TVarData(v).VType = varDouble) then
         begin
@@ -4061,9 +4053,7 @@ begin
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
   sZaehlwerke := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
   ZaehlwerkeAusbauSoll := TStringList.create;
   ZaehlwerkeEinbauSoll := TStringList.create;
@@ -4113,7 +4103,7 @@ begin
     begin
 
       try
-        OpenFile(InFName);
+        Open(InFName);
       except
         on e: exception do
         begin
@@ -4127,8 +4117,8 @@ begin
       sDiagFiles.add(InFName);
       sDiagFiles.add(conversionOutFName);
 
-      for c := 1 to MaxCol do
-        xlsHeaders.add(CellValue[1, c]);
+      for c := 1 to ColCountInRow(1) do
+        xlsHeaders.add(GetCellValue(1, c));
 
       cORDER_id := xlsHeaders.indexof('ORDER.id');
       if cORDER_id = -1 then
@@ -4202,19 +4192,19 @@ begin
       r := 2;
       repeat
         // den Key zusammenbauen
-        OrderId := cutblank(CellValue[r, succ(cORDER_id)]);
-                OrderId := fill('0',9-length(OrderId)) + OrderId;
+        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)));
+        OrderId := fill('0', 9 - length(OrderId)) + OrderId;
 
-        OrderPosition := cutblank(CellValue[r, succ(cORDER_Position)]);
+        OrderPosition := cutblank(GetCellValue(r, succ(cORDER_Position)));
         if OrderPosition = '' then
           OrderPosition := '1';
 
-        ART := cutblank(CellValue[r, succ(cART)]);
+        ART := cutblank(GetCellValue(r, succ(cART)));
         ART_Zaehlwerke := strtointdef(StrFilter(ART, '0123456789'), 1);
-        Sparte := cutblank(CellValue[r, succ(cSPARTE)]);
-        RID := cutblank(CellValue[r, succ(cRID)]);
-        STATUS := strtointdef(CellValue[r, succ(cStatus)], -1);
-        ZAEHLER_NUMMER := cutblank(CellValue[r, succ(cZaehlerNummer)]);
+        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)));
+        RID := cutblank(GetCellValue(r, succ(cRID)));
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
+        ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -4257,7 +4247,7 @@ begin
             sBericht.add('(RID=' + RID + ') ORDER.id ist leer!');
         end;
         inc(r);
-      until (r > MaxRow);
+      until (r > RowCount);
     end;
     pop; // FILE
     if (sStack.count <> 0) then
@@ -4286,7 +4276,6 @@ begin
   sSource.Free;
   sStack.Free;
   xImport.Free;
-  xAdapter.Free;
   xlsHeaders.Free;
   ZaehlwerkeAusbauSoll.Free;
   ZaehlwerkeEinbauSoll.Free;
@@ -4316,8 +4305,7 @@ var
   pMEA_Naming: boolean;
 
   // XLS-Sachen
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c: integer;
 
   // Spalten Konstante
@@ -4384,7 +4372,7 @@ var
     end
     else
     begin
-      result := cutblank(xImport.CellValue[r, succ(_c)]);
+      result := cutblank(xImport.GetCellValue(r, succ(_c)));
       ersetze(#160, ' ', result);
       ersetze('#', '', result);
       ersetze('"', '''', result);
@@ -4416,7 +4404,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -4429,7 +4417,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -4476,7 +4464,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.CellValue[r, succ(_cdt)];
+        v := xImport.GetCellValue(r, succ(_cdt));
 
         if (TVarData(v).VType = varDouble) then
         begin
@@ -4688,9 +4676,7 @@ begin
   sResult := TStringList.create;
   sMapping := TStringList.create;
   sZaehlwerke := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
   SequenceNo := 1;
   IDOCNo := 1;
@@ -4736,7 +4722,7 @@ begin
   begin
 
     try
-      OpenFile(InFName);
+      Open(InFName);
     except
       on e: exception do
       begin
@@ -4750,8 +4736,8 @@ begin
     sDiagFiles.add(InFName);
     sDiagFiles.add(conversionOutFName);
 
-    for c := 1 to MaxCol do
-      xlsHeaders.add(CellValue[1, c]);
+    for c := 1 to ColCountInRow(1) do
+      xlsHeaders.add(GetCellValue(1, c));
 
     cART := xlsHeaders.indexof('Art');
     if (cART = -1) then
@@ -4780,12 +4766,12 @@ begin
 
     r := 2;
     repeat
-      RID := cutblank(CellValue[r, succ(cRID)]);
+      RID := cutblank(GetCellValue(r, succ(cRID)));
       if (strtointdef(RID, cRID_Null) >= cRID_FirstValid) then
       begin
-        ART := cutblank(CellValue[r, succ(cART)]);
+        ART := cutblank(GetCellValue(r, succ(cART)));
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
-        STATUS := strtointdef(CellValue[r, succ(cStatus)], -1);
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -4817,7 +4803,7 @@ begin
       end;
 
       inc(r);
-    until (r > MaxRow);
+    until (r > RowCount);
   end;
 
   if assigned(sBericht) then
@@ -4826,13 +4812,12 @@ begin
   sResult.Free;
   sMapping.Free;
   xImport.Free;
-  xAdapter.Free;
   xlsHeaders.Free;
 end;
 
 procedure xls2csv(InFName: string);
 var
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   Auftrag: TsTable;
   Separator: string;
   header, AllHeader: TStringList;
@@ -4855,7 +4840,7 @@ var
     begin
       try
 
-        v := CellValue[r, c];
+        v := GetCellValue(r, c);
         IsConverted := false;
         repeat
 
@@ -4864,10 +4849,10 @@ var
             break;
 
           // 2. Es muss ein Format haben
-          if (CellFormat[r, c] < 0) or (CellFormat[r, c] >= FormatListCount)
+          if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount)
           then
             break;
-          GetFormatList(CellFormat[r, c], xFmt);
+          xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
 
           // 3. Es muss ein Datumsformat haben
@@ -5014,7 +4999,6 @@ var
   Content: TStringList;
   OneCell: string;
   Content_S: string;
-  xAdapter: TXLSAdapter;
   r, c, z: integer;
 
   FixedFormats: TStringList;
@@ -5045,7 +5029,7 @@ var
   col_gtw_lagerort_alt: integer;
   col_tgws_ablesedatum: integer;
 
-  n: TFlexCelImport;
+  n: TXLSFile;
   Content_Wilken: TStringList;
 
   // Formatierungen
@@ -5059,9 +5043,7 @@ begin
   FixedFormats := TStringList.create;
   Content := TStringList.create;
   ExcelFormats := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   ZaehlerStandAlt := '';
   NA := '';
   ZaehlerStandNeu := '';
@@ -5072,7 +5054,7 @@ begin
   begin
 
     try
-      OpenFile(InFName);
+      Open(InFName);
     except
       on e: exception do
       begin
@@ -5109,7 +5091,7 @@ begin
     NoHeader := FixedFormats.values['NoHeader'] = 'JA';
     JoinColumn := FixedFormats.values['JoinColumn'];
     MaxSpalte := strtointdef(FixedFormats.values['MaxColumn'], MaxInt);
-    MaxSpalte := min(MaxSpalte, MaxCol);
+    MaxSpalte := min(MaxSpalte, ColCountInRow(1));
     pWilken := FixedFormats.values['Wilken'] = 'JA';
     pAuftrag := FixedFormats.values['Auftrag'];
     if (pAuftrag <> '') then
@@ -5125,18 +5107,18 @@ begin
     sDiagFiles.add(conversionOutFName);
     EmptyLine := fill(Separator, pred(MaxSpalte));
 
-    if (MaxRow >= 1) then
-      for c := 1 to MaxCol do
+    if (RowCount >= 1) then
+      for c := 1 to ColCountInRow(1) do
         AllHeader.add(getCell(1, c));
 
-    for r := 1 to MaxRow do
+    for r := 1 to RowCount do
     begin
 
       Content_S := '';
       ZaehlwerkeAusbau := 0;
       ZaehlwerkeEinbau := 0;
 
-      for c := 1 to MaxCol do
+      for c := 1 to ColCountInRow(1) do
       begin
 
         OneCell := getCell(r, c);
@@ -5369,7 +5351,6 @@ begin
     end;
   end;
   xImport.Free;
-  xAdapter.Free;
   try
     Content.SaveToFile(conversionOutFName);
   except
@@ -5433,7 +5414,7 @@ end;
 
 procedure xls2Flood(InFName: string);
 var
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   Auftrag: TsTable;
   pSeparator: string;
   header, AllHeader: TStringList;
@@ -5455,7 +5436,7 @@ var
     begin
       try
 
-        v := CellValue[r, c];
+        v := GetCellValue(r, c);
         IsConverted := false;
         repeat
 
@@ -5464,10 +5445,10 @@ var
             break;
 
           // 2. Es muss ein Format haben
-          if (CellFormat[r, c] < 0) or (CellFormat[r, c] >= FormatListCount)
+          if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount)
           then
             break;
-          GetFormatList(CellFormat[r, c], xFmt);
+          xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
 
           // 3. Es muss ein Datumsformat haben
@@ -5676,7 +5657,6 @@ var
   Content: TStringList;
   OneCell: string;
   Content_S: string;
-  xAdapter: TXLSAdapter;
   i, r, c, z: integer;
 
   FixedFloods: TStringList;
@@ -5692,7 +5672,7 @@ var
   ZaehlwerkeEinbau: integer;
   ZaehlwerkeAusbau: integer;
 
-  n: TFlexCelImport;
+  n: TXLSFile;
   Content_Wilken: TStringList;
 
   // Formatierungen
@@ -5707,9 +5687,7 @@ begin
   Content := TStringList.create;
   ExcelFormats := TStringList.create;
   pAuftrag := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   ZaehlerStandAlt := '';
   NA := '';
   ZaehlerStandNeu := '';
@@ -5720,7 +5698,7 @@ begin
   begin
 
     try
-      OpenFile(InFName);
+      Open(InFName);
     except
       on e: exception do
       begin
@@ -5770,18 +5748,18 @@ begin
     pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten']);
     pAuftragFlood := Split(FixedFloods.values['AuftragFlood']);
 
-    if (MaxRow >= 1) then
-      for c := 1 to MaxCol do
+    if (RowCount >= 1) then
+      for c := 1 to ColCountInRow(1) do
         AllHeader.add(getCell(1, c));
 
-    for r := 1 to MaxRow do
+    for r := 1 to RowCount do
     begin
 
       Content_S := '';
       ZaehlwerkeAusbau := 0;
       ZaehlwerkeEinbau := 0;
 
-      for c := 1 to MaxCol do
+      for c := 1 to ColCountInRow(1) do
       begin
 
         OneCell := getCell(r, c);
@@ -5939,7 +5917,6 @@ begin
     end;
   end;
   xImport.Free;
-  xAdapter.Free;
   try
     Content.SaveToFile(conversionOutFName);
     SaveAuftrag;
@@ -5991,8 +5968,7 @@ var
   Content: TStringList;
   sZaehler: TStringList;
   sZaehlerIndex: integer;
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c: integer;
   header: TStringList;
   FixedFormats: TStringList;
@@ -6210,16 +6186,17 @@ var
         begin
 
           // Referenzidentität
-          AUFTRAG_R := strtointdef(xImport.CellValue[xls_Row, xls_col_RID], -1);
-          ZZ := (xImport.CellValue[xls_Row, xls_col_ZZ] = 'X');
+          AUFTRAG_R := strtointdef(xImport.GetCellValue(xls_Row,
+            xls_col_RID), -1);
+          ZZ := (xImport.GetCellValue(xls_Row, xls_col_ZZ) = 'X');
 
           // Ablesedatum!
-          xDateTime := xImport.CellValue[xls_Row, xls_col_AbleseDatum];
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseDatum);
           EingabeDatum := long2date(xDateTime);
           EingabeDatumAsAnfix := date2long(EingabeDatum);
 
           // Ableseuhrzeit!
-          xDateTime := xImport.CellValue[xls_Row, xls_col_AbleseUhr];
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseUhr);
           EingabeUhr := SecondsToStr(xDateTime);
 
           if (EingabeDatumAsAnfix < 20060831) or not(DateOK(EingabeDatumAsAnfix))
@@ -6268,11 +6245,12 @@ var
           // zunächst aus MDE Erfassung versuchen
           case K21_count of
             1:
-              Zaehler_Stand := xImport.CellValue[xls_Row, xls_col_AbleseWertHT];
+              Zaehler_Stand := xImport.GetCellValue(xls_Row,
+                xls_col_AbleseWertHT);
             2:
               begin
-                Zaehler_Stand := xImport.CellValue
-                  [xls_Row, xls_col_AbleseWertNT];
+                Zaehler_Stand := xImport.GetCellValue(xls_Row,
+                  xls_col_AbleseWertNT);
                 if not(K21_HT_ok) and (Zaehler_Stand <> '') then
                 begin
                   Zaehler_Stand := '';
@@ -6419,14 +6397,12 @@ begin
   sZaehler := TStringList.create;
   FixedFormats := TStringList.create;
   Content := TStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   with xImport do
   begin
 
     try
-      OpenFile(InFName);
+      Open(InFName);
     except
       on e: exception do
       begin
@@ -6441,8 +6417,8 @@ begin
     sDiagFiles.add(InFName + '.txt');
 
     header.add('<NULL>');
-    for c := 1 to MaxCol do
-      header.add(CellValue[1, c]);
+    for c := 1 to ColCountInRow(1) do
+      header.add(GetCellValue(1, c));
 
     // Muss Spalten abfragen!
     SetColInfo(xls_col_ZaehlerNummer, 'Zaehler_Nummer');
@@ -6459,10 +6435,10 @@ begin
       exit;
 
     // Jetzt alle Zählernummern in sZaehler sammeln
-    for r := 2 to MaxRow do
+    for r := 2 to RowCount do
     begin
-      xls_Sparte := CellValue[r, xls_col_Art];
-      xls_ZNummer := CellValue[r, xls_col_ZaehlerNummer];
+      xls_Sparte := GetCellValue(r, xls_col_Art);
+      xls_ZNummer := GetCellValue(r, xls_col_ZaehlerNummer);
       ersetze('#', '', xls_ZNummer);
       sZaehler.addobject(StrFilter(xls_Sparte, '0123456789', true) + '-' +
         xls_ZNummer, pointer(r));
@@ -6474,14 +6450,13 @@ begin
     for r := 0 to pred(sZaehler.count) do
     begin
       xls_Row := integer(sZaehler.Objects[r]);
-      AUFTRAG_R := strtointdef(CellValue[xls_Row, xls_col_RID], -1);
+      AUFTRAG_R := strtointdef(GetCellValue(xls_Row, xls_col_RID), -1);
       sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' +
         sZaehler[r] + '"in EXPORT* nicht gefunden');
     end;
 
   end;
   xImport.Free;
-  xAdapter.Free;
   try
     Content.SaveToFile(InFName + '.txt');
   except
@@ -6502,9 +6477,9 @@ end;
 procedure xls_2_xls(InFName: string; sBericht: TStringList = nil);
 
 var
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   xFmt: TFlxFormat;
-  xExport: TFlexCelImport;
+  xExport: TXLSFile;
   inHeaders: TStringList;
   Command: string;
   TargetRow: integer;
@@ -6570,7 +6545,7 @@ var
       raise exception.create('gewünschte Spalte ' + ColumnNameAtReference +
         ' ist im Nachschlagewerk nicht vorhanden!');
 
-    Key := xImport.CellValue[Row, sREFERENCECol_Source];
+    Key := xImport.GetCellValue(Row, sREFERENCECol_Source);
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -6632,7 +6607,7 @@ var
       with xImport do
       begin
 
-        v := CellValue[r, c];
+        v := GetCellValue(r, c);
         IsConverted := false;
         repeat
 
@@ -6641,11 +6616,11 @@ var
             break;
 
           // 2. Es muss ein Format haben
-          if CellFormat[r, c] < 0 then
+          if getCellFormat(r, c) < 0 then
             break;
-          GetFormatList(CellFormat[r, c], xFmt);
+          xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
-          // FormatStr := AnsiUpperCase(FormatList[CellFormat[r, c]].format);
+          // FormatStr := AnsiUpperCase(FormatList[getCellFormat(r, c]].format);
 
           // 3. Es muss ein Datumsformat haben
           if (pos('YY', FormatStr) > 0) and (pos('HH', FormatStr) > 0) then
@@ -7085,18 +7060,17 @@ var
           if (ErrorCount = 0) then
           begin
             if AusgabeRotiert then
-              xExport.SetCellString(c, TargetRow,
-                MonDaCode(ContentAsWideString))
+              xExport.SetCellValue(c, TargetRow, MonDaCode(ContentAsWideString))
             else
-              xExport.SetCellString(TargetRow, c,
+              xExport.SetCellValue(TargetRow, c,
                 MonDaCode(ContentAsWideString));
           end
           else
           begin
             if AusgabeRotiert then
-              xExport.SetCellString(c, TargetRow, 'ERROR')
+              xExport.SetCellValue(c, TargetRow, 'ERROR')
             else
-              xExport.SetCellString(TargetRow, c, 'ERROR');
+              xExport.SetCellValue(TargetRow, c, 'ERROR');
           end;
 
         end;
@@ -7104,14 +7078,14 @@ var
         begin
           if AusgabeRotiert then
           begin
-            xExport.CellFormat[c, TargetRow] := xExport.CellFormat
-              [c, TargetStartRow];
-            xExport.ColumnWidth[TargetRow] := xExport.ColumnWidth
-              [TargetStartRow];
+            xExport.setCellFormat(c, TargetRow, xExport.getCellFormat(c,
+              TargetStartRow));
+
+            xExport.setColWidth(TargetRow, xExport.getColWidth(TargetStartRow));
           end
           else
-            xExport.CellFormat[TargetRow, c] := xExport.CellFormat
-              [TargetStartRow, c]
+            xExport.setCellFormat(TargetRow, c,
+              xExport.getCellFormat(TargetStartRow, c));
         end;
 
       except
@@ -7136,8 +7110,7 @@ var
   OutCommandsRegler: TStringList;
 
   // xls Quelle
-  xAdapter: TXLSAdapter;
-  xExportRegler: TFlexCelImport;
+  xExportRegler: TXLSFile;
   TemplateFname: string;
   r, c, k: integer;
   TargetMaxCol: integer;
@@ -7163,11 +7136,8 @@ begin
 
     sDiagFiles.add(InFName);
 
-    xAdapter := TXLSAdapter.create(nil);
-    xImport := TFlexCelImport.create(nil);
-    xImport.Adapter := xAdapter;
-    xExport := TFlexCelImport.create(nil);
-    xExport.Adapter := xAdapter;
+    xImport := TXLSFile.create(true);
+    xExport := TXLSFile.create(true);
 
     repeat
 
@@ -7196,9 +7166,8 @@ begin
 
       if FileExists(WorkPath + 'Vorlage-Regler.xls') then
       begin
-        xExportRegler := TFlexCelImport.create(nil);
-        xExportRegler.Adapter := xAdapter;
-        xExportRegler.OpenFile(WorkPath + 'Vorlage-Regler.xls');
+        xExportRegler := TXLSFile.create(true);
+        xExportRegler.Open(WorkPath + 'Vorlage-Regler.xls');
         mitRegler := true;
       end;
 
@@ -7206,8 +7175,8 @@ begin
 
       //
       try
-        xImport.OpenFile(InFName);
-        xExport.OpenFile(TemplateFname);
+        xImport.Open(InFName);
+        xExport.Open(TemplateFname);
       except
         on e: exception do
         begin
@@ -7224,9 +7193,9 @@ begin
       begin
 
         // zunächst ermitteln, ab welcher Zeile es los geht!
-        for r := MaxRow downto 1 do
+        for r := RowCount downto 1 do
         begin
-          v := CellValue[r, 1];
+          v := GetCellValue(r, 1);
           if (TVarData(v).VType = varDouble) then
           begin
             if (v <> 0) then
@@ -7249,9 +7218,9 @@ begin
         if TargetStartRow > 10 then
         begin
           AusgabeRotiert := true;
-          for c := MaxCol downto 1 do
+          for c := ColCountInRow(1) downto 1 do
           begin
-            v := CellValue[1, c];
+            v := GetCellValue(1, c);
             if (TVarData(v).VType = varDouble) then
             begin
               if (v <> 0) then
@@ -7274,27 +7243,27 @@ begin
         // die Befehlszeile aufsammeln
         if AusgabeRotiert then
         begin
-          for r := 1 to MaxRow do
+          for r := 1 to RowCount do
           begin
-            OutCommands.add(CellValue[r, TargetStartRow + 1]);
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1));
             if mitRegler then
-              OutCommandsRegler.add(xExportRegler.CellValue[r,
-                TargetStartRow + 1]);
+              OutCommandsRegler.add(xExportRegler.GetCellValue(r,
+                TargetStartRow + 1));
 
-            CellValue[r, TargetStartRow] := '';
-            CellValue[r, TargetStartRow + 1] := '';
+            SetCellValue(r, TargetStartRow, '');
+            SetCellValue(r, TargetStartRow + 1, '');
           end;
         end
         else
         begin
-          for c := 1 to MaxCol do
+          for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(CellValue[TargetStartRow + 1, c]);
+            OutCommands.add(GetCellValue(TargetStartRow + 1, c));
             if mitRegler then
-              OutCommandsRegler.add(xExportRegler.CellValue
-                [TargetStartRow + 1, c]);
-            CellValue[TargetStartRow, c] := '';
-            CellValue[TargetStartRow + 1, c] := '';
+              OutCommandsRegler.add
+                (xExportRegler.GetCellValue(TargetStartRow + 1, c));
+            SetCellValue(TargetStartRow, c, '');
+            SetCellValue(TargetStartRow + 1, c, '');
           end;
         end;
       end;
@@ -7304,10 +7273,10 @@ begin
       begin
 
         // die Datenfeld-Namen alle lesen!
-        for c := 1 to MaxCol do
-          inHeaders.add(CellValue[1, c]);
+        for c := 1 to ColCountInRow(1) do
+          inHeaders.add(GetCellValue(1, c));
 
-        for r := 2 to MaxRow do
+        for r := 2 to RowCount do
         begin
 
           writeLine(r, OutCommands);
@@ -7374,7 +7343,6 @@ begin
     if assigned(sBericht) then
       sDiagnose.addStrings(sBericht);
 
-    xAdapter.Free;
     xImport.Free;
     xExport.Free;
     if mitRegler then
@@ -7395,7 +7363,7 @@ end;
 procedure xls_Datev_xls(InFName: string);
 
 var
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   xFmt: TFlxFormat;
   inHeaders: TStringList;
   Command: string;
@@ -7451,7 +7419,7 @@ var
     if (TakeTodayCol = -1) then
       raise exception.create('gewünschte Spalte ' + s +
         ' ist im Nachschlagewerk nicht vorhanden!');
-    Key := xImport.CellValue[Row, sREFERENCECol_Source];
+    Key := xImport.GetCellValue(Row, sREFERENCECol_Source);
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -7500,7 +7468,7 @@ var
       with xImport do
       begin
 
-        v := CellValue[r, c];
+        v := GetCellValue(r, c);
         IsConverted := false;
         repeat
 
@@ -7509,11 +7477,11 @@ var
             break;
 
           // 2. Es muss ein Format haben
-          if CellFormat[r, c] < 0 then
+          if getCellFormat(r, c) < 0 then
             break;
-          GetFormatList(CellFormat[r, c], xFmt);
+          xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
-          // FormatStr := AnsiUpperCase(FormatList[CellFormat[r, c]].format);
+          // FormatStr := AnsiUpperCase(FormatList[getCellFormat(r, c]].format);
 
           // 3. Es muss ein Datumsformat haben
           if (pos('YY', FormatStr) > 0) and (pos('HH', FormatStr) > 0) then
@@ -7698,8 +7666,7 @@ var
   OutCommands: TStringList;
 
   // xls Quelle
-  xAdapter: TXLSAdapter;
-  xExport: TFlexCelImport;
+  xExport: TXLSFile;
   TemplateFname: string;
   r, s, c: integer;
   TargetRow: integer;
@@ -7732,12 +7699,8 @@ begin
 
     sDiagFiles.add(InFName);
 
-    xAdapter := TXLSAdapter.create(nil);
-    xImport := TFlexCelImport.create(nil);
-    xImport.Adapter := xAdapter;
-    xExport := TFlexCelImport.create(nil);
-    xExport.Adapter := xAdapter;
-
+    xImport := TXLSFile.create(true);
+    xExport := TXLSFile.create(true);
     repeat
       TemplateFname := WorkPath + 'Datev.xls';
 
@@ -7751,8 +7714,8 @@ begin
 
       //
       try
-        xImport.OpenFile(InFName);
-        xExport.OpenFile(TemplateFname);
+        xImport.Open(InFName);
+        xExport.Open(TemplateFname);
       except
         on e: exception do
         begin
@@ -7769,9 +7732,9 @@ begin
       begin
 
         // zunächst ermitteln, ab welcher Zeile es los geht!
-        for r := MaxRow downto 1 do
+        for r := RowCount downto 1 do
         begin
-          v := CellValue[r, 1];
+          v := GetCellValue(r, 1);
           if (TVarData(v).VType = varDouble) then
           begin
             if (v <> 0) then
@@ -7794,9 +7757,9 @@ begin
         if TargetStartRow > 10 then
         begin
           AusgabeRotiert := true;
-          for c := MaxCol downto 1 do
+          for c := ColCountInRow(1) downto 1 do
           begin
-            v := CellValue[1, c];
+            v := GetCellValue(1, c);
             if (TVarData(v).VType = varDouble) then
             begin
               if (v <> 0) then
@@ -7819,20 +7782,20 @@ begin
         // die Befehlszeile aufsammeln
         if AusgabeRotiert then
         begin
-          for r := 1 to MaxRow do
+          for r := 1 to RowCount do
           begin
-            OutCommands.add(CellValue[r, TargetStartRow + 1]);
-            CellValue[r, TargetStartRow] := '';
-            CellValue[r, TargetStartRow + 1] := '';
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1));
+            SetCellValue(r, TargetStartRow, '');
+            SetCellValue(r, TargetStartRow + 1, '');
           end;
         end
         else
         begin
-          for c := 1 to MaxCol do
+          for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(CellValue[TargetStartRow + 1, c]);
-            CellValue[TargetStartRow, c] := '';
-            CellValue[TargetStartRow + 1, c] := '';
+            OutCommands.add(GetCellValue(TargetStartRow + 1, c));
+            SetCellValue(TargetStartRow, c, '');
+            SetCellValue(TargetStartRow + 1, c, '');
           end;
         end;
       end;
@@ -7842,10 +7805,10 @@ begin
       begin
 
         // die Datenfeld-Namen alle lesen!
-        for c := 1 to MaxCol do
-          inHeaders.add(CellValue[1, c]);
+        for c := 1 to ColCountInRow(1) do
+          inHeaders.add(GetCellValue(1, c));
 
-        for r := 2 to MaxRow do
+        for r := 2 to RowCount do
           for s := 0 to 3 do
           begin
 
@@ -8119,18 +8082,18 @@ begin
                 if (ErrorCount = 0) then
                 begin
                   if AusgabeRotiert then
-                    xExport.SetCellString(c, TargetRow,
+                    xExport.SetCellValue(c, TargetRow,
                       MonDaCode(ContentAsWideString))
                   else
-                    xExport.SetCellString(TargetRow, c,
+                    xExport.SetCellValue(TargetRow, c,
                       MonDaCode(ContentAsWideString));
                 end
                 else
                 begin
                   if AusgabeRotiert then
-                    xExport.SetCellString(c, TargetRow, 'ERROR')
+                    xExport.SetCellValue(c, TargetRow, 'ERROR')
                   else
-                    xExport.SetCellString(TargetRow, c, 'ERROR');
+                    xExport.SetCellValue(TargetRow, c, 'ERROR');
                 end;
 
               end;
@@ -8138,14 +8101,14 @@ begin
               begin
                 if AusgabeRotiert then
                 begin
-                  xExport.CellFormat[c, TargetRow] := xExport.CellFormat
-                    [c, TargetStartRow];
-                  xExport.ColumnWidth[TargetRow] := xExport.ColumnWidth
-                    [TargetStartRow];
+                  xExport.setCellFormat(c, TargetRow,
+                    xExport.getCellFormat(c, TargetStartRow));
+                  xExport.setColWidth(TargetRow,
+                    xExport.getColWidth(TargetStartRow));
                 end
                 else
-                  xExport.CellFormat[TargetRow, c] := xExport.CellFormat
-                    [TargetStartRow, c]
+                  xExport.setCellFormat(TargetRow, c,
+                    xExport.getCellFormat(TargetStartRow, c));
               end;
               if (ErrorCount > 0) then
                 break;
@@ -8181,7 +8144,6 @@ begin
       end;
 
     until true;
-    xAdapter.Free;
     xImport.Free;
     xExport.Free;
   end;
@@ -8199,8 +8161,7 @@ var
   rMapping: integer;
 
   // xls Quelle
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
 
   //
   Auftrag: TsTable;
@@ -8287,7 +8248,7 @@ var
       // aus der Tabelle
       c := AuftragHeader.indexof(xlsSpalte);
       if (c <> -1) then
-        Wert := xImport.CellValue[r, c]
+        Wert := xImport.GetCellValue(r, c)
       else
         Wert := '';
 
@@ -8326,7 +8287,7 @@ var
   begin
     result := '';
     try
-      result := xImport.CellValue[r, c];
+      result := xImport.GetCellValue(r, c);
     except
       on e: exception do
       begin
@@ -8348,8 +8309,7 @@ begin
 
     Ergebnis := TStringList.create;
     sMappings := TSearchStringList.create;
-    xAdapter := TXLSAdapter.create(nil);
-    xImport := TFlexCelImport.create(nil);
+    xImport := TXLSFile.create(true);
 
     MappingDefaults := TStringList.create;
     with MappingDefaults do
@@ -8430,13 +8390,12 @@ begin
       if (ErrorCount > 0) then
         break;
 
-      xImport.Adapter := xAdapter;
       with xImport do
       begin
-        OpenFile(InFName);
+        Open(InFName);
         AuftragHeader.add('#');
-        for c := 1 to MaxCol do
-          AuftragHeader.add(CellValue[1, c]);
+        for c := 1 to ColCountInRow(1) do
+          AuftragHeader.add(GetCellValue(1, c));
 
         // Zwangsfelder abprüfen!
         col_Ergebnis_SERIAL_NR := col_Ergebnis('Zaehler_Nummer');
@@ -8456,16 +8415,16 @@ begin
 
         Stat_Verarbeitet := 0;
 
-        for r := 2 to MaxRow do
+        for r := 2 to RowCount do
         begin
 
           // ein Datum ermitteln
           try
-            sDatum := CellValue[r, col_Ergebnis_WechselDatum];
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum);
             if (noblank(sDatum) <> '') then
-              WechselDatum := CellValue[r, col_Ergebnis_WechselDatum]
+              WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
             else
-              WechselDatum := CellValue[r, col_Ergebnis_Datum];
+              WechselDatum := GetCellValue(r, col_Ergebnis_Datum);
           except
             on e: exception do
             begin
@@ -8522,7 +8481,7 @@ begin
 
         end;
         sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' +
-          inttostr(MaxRow - 1) + ' verarbeitet!');
+          inttostr(RowCount - 1) + ' verarbeitet!');
 
         if (ErrorCount > 0) then
           break;
@@ -8539,7 +8498,6 @@ begin
 
     //
     sMappings.Free;
-    xAdapter.Free;
     xImport.Free;
     Auftrag.Free;
     AuftragsListe.Free;
@@ -8561,8 +8519,7 @@ var
   rMapping: integer;
 
   // xls Quelle
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
 
   //
   Auftrag: TsTable;
@@ -8644,7 +8601,7 @@ var
       // aus der Tabelle
       c := ErgebnisHeader.indexof(xlsSpalte);
       if (c <> -1) then
-        Wert := xImport.CellValue[r, c]
+        Wert := xImport.GetCellValue(r, c)
       else
         Wert := '';
 
@@ -8681,7 +8638,7 @@ var
   begin
     result := '';
     try
-      result := xImport.CellValue[r, c];
+      result := xImport.GetCellValue(r, c);
     except
       on e: exception do
       begin
@@ -8707,8 +8664,7 @@ begin
 
     Ergebnis := TStringList.create;
     sMappings := TSearchStringList.create;
-    xAdapter := TXLSAdapter.create(nil);
-    xImport := TFlexCelImport.create(nil);
+    xImport := TXLSFile.create(true);
 
     MappingDefaults := TStringList.create;
     with MappingDefaults do
@@ -8784,13 +8740,12 @@ begin
       if (ErrorCount > 0) then
         break;
 
-      xImport.Adapter := xAdapter;
       with xImport do
       begin
-        OpenFile(InFName);
+        Open(InFName);
         ErgebnisHeader.add('#');
-        for c := 1 to MaxCol do
-          ErgebnisHeader.add(CellValue[1, c]);
+        for c := 1 to ColCountInRow(1) do
+          ErgebnisHeader.add(GetCellValue(1, c));
 
         // Zwangsfelder prüfen!
         col_Ergebnis_ARGOS_ID := col_Ergebnis('ARGOS_ID');
@@ -8809,16 +8764,16 @@ begin
 
         Stat_Verarbeitet := 0;
 
-        for r := 2 to MaxRow do
+        for r := 2 to RowCount do
         begin
 
           // ein Datum ermitteln
           try
-            sDatum := CellValue[r, col_Ergebnis_WechselDatum];
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum);
             if (noblank(sDatum) <> '') then
-              WechselDatum := CellValue[r, col_Ergebnis_WechselDatum]
+              WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
             else
-              WechselDatum := CellValue[r, col_Ergebnis_Datum];
+              WechselDatum := GetCellValue(r, col_Ergebnis_Datum);
           except
             on e: exception do
             begin
@@ -8875,7 +8830,7 @@ begin
 
         end;
         sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' +
-          inttostr(MaxRow - 1) + ' verarbeitet!');
+          inttostr(RowCount - 1) + ' verarbeitet!');
 
         if (ErrorCount > 0) then
           break;
@@ -8892,7 +8847,6 @@ begin
 
     //
     sMappings.Free;
-    xAdapter.Free;
     xImport.Free;
     Auftrag.Free;
     AuftragsListe.Free;
@@ -8905,9 +8859,8 @@ end;
 procedure yTOx(InFName: string);
 var
   //
-  oXLSAdapter: TXLSAdapter;
-  oImport: TFlexCelImport;
-  oExport: TFlexCelImport;
+  oImport: TXLSFile;
+  oExport: TXLSFile;
 
   rInput, rOutput: integer;
   c, LastC: integer;
@@ -8927,14 +8880,11 @@ begin
     //
     conversionOutFName := InFName + '.Oc.xls';
     //
-    oXLSAdapter := TXLSAdapter.create(nil);
-    oImport := TFlexCelImport.create(nil);
-    oImport.Adapter := oXLSAdapter;
+    oImport := TXLSFile.create(true);
     //
-    oExport := TFlexCelImport.create(nil);
-    oExport.Adapter := oXLSAdapter;
+    oExport := TXLSFile.create(true);
     FileDelete(conversionOutFName);
-    oExport.NewFile(1);
+    oExport.NewFile(1, TExcelFileFormat.v2003);
 
     //
     HeaderNames := TStringList.create;
@@ -8943,11 +8893,11 @@ begin
     LastC := MaxInt;
     with oImport do
     begin
-      OpenFile(InFName);
-      for rInput := 1 to MaxRow do
+      Open(InFName);
+      for rInput := 1 to RowCount do
       begin
-        FieldName := cutblank(CellValue[rInput, 1]);
-        FieldValue := cutblank(CellValue[rInput, 2]);
+        FieldName := cutblank(GetCellValue(rInput, 1));
+        FieldValue := cutblank(GetCellValue(rInput, 2));
         if (FieldName <> '') and (FieldValue <> '') then
         begin
           c := HeaderNames.indexof(FieldName);
@@ -8956,7 +8906,7 @@ begin
             if HeaderCollectState then
             begin
               HeaderNames.add(FieldName);
-              oExport.CellValue[rOutput, HeaderNames.count] := FieldValue;
+              oExport.SetCellValue(rOutput, HeaderNames.count, FieldValue);
             end;
           end
           else
@@ -8964,14 +8914,13 @@ begin
             HeaderCollectState := false;
             if (c < LastC) then
               inc(rOutput);
-            oExport.CellValue[rOutput, c + 1] := FieldValue;
+            oExport.SetCellValue(rOutput, c + 1, FieldValue);
             LastC := c;
           end;
         end;
       end;
       oExport.Save(conversionOutFName);
     end;
-    oXLSAdapter.Free;
     oImport.Free;
     oExport.Free;
     HeaderNames.Free;
@@ -8981,9 +8930,8 @@ end;
 procedure yTOx2(InFName: string);
 var
   //
-  oXLSAdapter: TXLSAdapter;
-  oImport: TFlexCelImport;
-  oExport: TFlexCelImport;
+  oImport: TXLSFile;
+  oExport: TXLSFile;
 
   rInput, cInput, rOutput: integer;
   c, LastC: integer;
@@ -8997,15 +8945,12 @@ begin
   conversionOutFName := InFName + '.Oc.xls';
 
   //
-  oXLSAdapter := TXLSAdapter.create(nil);
-  oImport := TFlexCelImport.create(nil);
-  oImport.Adapter := oXLSAdapter;
+  oImport := TXLSFile.create(true);
 
   //
-  oExport := TFlexCelImport.create(nil);
-  oExport.Adapter := oXLSAdapter;
+  oExport := TXLSFile.create(true);
   FileDelete(conversionOutFName);
-  oExport.NewFile(1);
+  oExport.NewFile(1, TExcelFileFormat.v2003);
 
   //
   HeaderNames := TStringList.create;
@@ -9013,18 +8958,17 @@ begin
   LastC := MaxInt;
   with oImport do
   begin
-    OpenFile(InFName);
-    for cInput := 1 to MaxCol do
+    Open(InFName);
+    for cInput := 1 to ColCountInRow(1) do
     begin
-      if CellValue[1, cInput] = '' then
+      if GetCellValue(1, cInput) = '' then
         break;
-      for rInput := 1 to MaxRow do
-        oExport.CellValue[cInput, rInput] := CellValue[rInput, cInput];
+      for rInput := 1 to RowCount do
+        oExport.SetCellValue(cInput, rInput, GetCellValue(rInput, cInput));
     end;
-    oExport.CellValue[1, 1] := 'ID';
+    oExport.SetCellValue(1, 1, 'ID');
     oExport.Save(conversionOutFName);
   end;
-  oXLSAdapter.Free;
   oImport.Free;
   oExport.Free;
   HeaderNames.Free;
@@ -9138,8 +9082,7 @@ var
   FirstLine: boolean;
 
   // Export Sachen
-  oXLSAdapter: TXLSAdapter;
-  oExport: TFlexCelImport;
+  oExport: TXLSFile;
 
   // Export Datenfelder
   aBestNo: string;
@@ -9155,14 +9098,14 @@ var
     nCol: integer;
   begin
     inc(nRow);
-    oExport.CellValue[nRow, 1] := aBestNo;
-    oExport.CellValue[nRow, 2] := aTitel;
-    oExport.CellValue[nRow, 3] := aOrchester;
-    oExport.CellValue[nRow, 4] := aWerk;
+    oExport.SetCellValue(nRow, 1, aBestNo);
+    oExport.SetCellValue(nRow, 2, aTitel);
+    oExport.SetCellValue(nRow, 3, aOrchester);
+    oExport.SetCellValue(nRow, 4, aWerk);
     nCol := 5;
     while (aKomponist <> '') do
     begin
-      oExport.CellValue[nRow, nCol] := cutblank(nextp(aKomponist, '/'));
+      oExport.SetCellValue(nRow, nCol, cutblank(nextp(aKomponist, '/')));
       inc(nCol);
     end;
   end;
@@ -9232,14 +9175,11 @@ var
 begin
 
   conversionOutFName := InFName + '.Oc.xls';
-  //
-  oXLSAdapter := TXLSAdapter.create(nil);
 
   //
-  oExport := TFlexCelImport.create(nil);
-  oExport.Adapter := oXLSAdapter;
+  oExport := TXLSFile.create(true);
   FileDelete(conversionOutFName);
-  oExport.NewFile(1);
+  oExport.NewFile(1, TExcelFileFormat.v2003);
 
   TheLines := TStringList.create;
   TheLines.loadFromFile(InFName);
@@ -9257,7 +9197,6 @@ begin
   end;
 
   oExport.Save(conversionOutFName);
-  oXLSAdapter.Free;
   oExport.Free;
   // open(conversionOutFName);
   TheLines.Free;
@@ -9266,8 +9205,7 @@ end;
 function CheckContent(InFName: string): integer;
 // Export Sachen
 var
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   c: integer;
   xmlFiles: TStringList;
 begin
@@ -9327,41 +9265,39 @@ begin
     end;
 
     // In der XLS Datei nach Merkmalen schauen!
-    xAdapter := TXLSAdapter.create(nil);
-    xImport := TFlexCelImport.create(nil);
-    xImport.Adapter := xAdapter;
+    xImport := TXLSFile.create(true);
     try
       with xImport do
       begin
 
-        OpenFile(InFName);
+        Open(InFName);
         result := Content_Mode_xls2csv;
-        for c := 1 to MaxCol do
+        for c := 1 to ColCountInRow(1) do
         begin
 
           //
-          if (CellValue[1, c] = 'KK22') then
+          if (GetCellValue(1, c) = 'KK22') then
           begin
             result := Content_Mode_KK22;
             break;
           end;
 
           //
-          if (CellValue[1, c] = 'ARGOS_ID') then
+          if (GetCellValue(1, c) = 'ARGOS_ID') then
           begin
             result := Content_Mode_Argos;
             break;
           end;
 
           //
-          if (CellValue[1, c] = 'SAP ID') then
+          if (GetCellValue(1, c) = 'SAP ID') then
           begin
             result := Content_Mode_enBW;
             break;
           end;
 
           //
-          if (CellValue[1, c] = 'KONTO_AR') then
+          if (GetCellValue(1, c) = 'KONTO_AR') then
           begin
             result := Content_Mode_Datev;
             break;
@@ -9377,7 +9313,6 @@ begin
           ' ist durch andere Anwendung geöffnet?');
       end;
     end;
-    xAdapter.Free;
     xImport.Free;
   end;
 end;
@@ -9401,8 +9336,7 @@ var
   xmlCursor: integer;
 
   // XLS-Sachen
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c, n: integer;
 
   // Spalten-Index Konstante
@@ -9499,7 +9433,7 @@ var
     end
     else
     begin
-      result := xImport.CellValue[r, succ(_c)];
+      result := xImport.GetCellValue(r, succ(_c));
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
       if isUTF8 then
@@ -9531,7 +9465,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -9544,7 +9478,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -9597,7 +9531,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -9610,7 +9544,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -9658,7 +9592,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -9671,7 +9605,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -9713,7 +9647,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.CellValue[r, succ(_cdt)];
+        v := xImport.GetCellValue(r, succ(_cdt));
 
         if (TVarData(v).VType = varDouble) then
         begin
@@ -9777,9 +9711,7 @@ begin
   DatenSammlerGlobal := TStringList.create;
   DatenSammlerInit := TStringList.create;
 
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
 
   xmlToday := Datum10;
@@ -9844,7 +9776,7 @@ begin
   begin
 
     try
-      OpenFile(InFName);
+      Open(InFName);
     except
       on e: exception do
       begin
@@ -9858,8 +9790,8 @@ begin
     sDiagFiles.add(InFName);
     sDiagFiles.add(conversionOutFName);
 
-    for c := 1 to MaxCol do
-      xlsHeaders.add(CellValue[1, c]);
+    for c := 1 to ColCountInRow(1) do
+      xlsHeaders.add(GetCellValue(1, c));
 
     cART := xlsHeaders.indexof('Art');
     if (cART = -1) then
@@ -9901,10 +9833,10 @@ begin
 
     r := 2;
     repeat
-      ART := cutblank(CellValue[r, succ(cART)]);
+      ART := cutblank(GetCellValue(r, succ(cART)));
       ZaehlwerkeLautArt := strtointdef(StrFilter(ART, '0123456789'), 1);
-      RID := cutblank(CellValue[r, succ(cRID)]);
-      STATUS := strtointdef(CellValue[r, succ(cStatus)], -1);
+      RID := cutblank(GetCellValue(r, succ(cRID)));
+      STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
 
       // Status bei bereits gemeldeten umsetzen!
       if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -9914,9 +9846,9 @@ begin
       if (STATUS = cSTATUS_VorgezogenGemeldet) then
         STATUS := cSTATUS_Vorgezogen;
 
-      ZAEHLER_NUMMER := cutblank(CellValue[r, succ(cZaehlerNummer)]);
+      ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
       if (cZaehlerNummerNeu <> -1) then
-        ZAEHLER_NUMMER_NEU := cutblank(CellValue[r, succ(cZaehlerNummerNeu)])
+        ZAEHLER_NUMMER_NEU := cutblank(GetCellValue(r, succ(cZaehlerNummerNeu)))
       else
         ZAEHLER_NUMMER_NEU := '';
 
@@ -9933,7 +9865,7 @@ begin
         // Referenzquelle
         if (cQuelle <> -1) then
         begin
-          Quelle := cutblank(CellValue[r, succ(cQuelle)]);
+          Quelle := cutblank(GetCellValue(r, succ(cQuelle)));
           if (Quelle <> '') then
             DatenSammlerEinzel.add(
               { } 'set ' + cSet_Quelle + ' ' +
@@ -9952,7 +9884,7 @@ begin
         else
         begin
           if (cAnlagen <> -1) then
-            ANLAGENVERZEICHNIS := cutblank(CellValue[r, succ(cAnlagen)])
+            ANLAGENVERZEICHNIS := cutblank(GetCellValue(r, succ(cAnlagen)))
           else
             ANLAGENVERZEICHNIS := '';
 
@@ -10123,7 +10055,7 @@ begin
       end;
 
       inc(r);
-    until (r > MaxRow);
+    until (r > RowCount);
   end;
 
   // Belichtung des Resultates
@@ -10156,7 +10088,6 @@ begin
   DatenSammlerInit.Free;
   sResult.Free;
   xImport.Free;
-  xAdapter.Free;
   xlsHeaders.Free;
 end;
 
@@ -10363,8 +10294,7 @@ var
   xmlCursor: integer;
 
   // XLS-Sachen
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   r, c: integer;
 
   // Spalten Konstante
@@ -10667,7 +10597,7 @@ var
     end
     else
     begin
-      result := xImport.CellValue[r, succ(_c)];
+      result := xImport.GetCellValue(r, succ(_c));
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
     end;
@@ -10697,7 +10627,7 @@ var
       t := 0;
 
       // Datum auslesen
-      v := xImport.CellValue[r, succ(_cd)];
+      v := xImport.GetCellValue(r, succ(_cd));
       if (TVarData(v).VType = varDouble) then
       begin
         d := v;
@@ -10710,7 +10640,7 @@ var
       end;
 
       // Uhr auslesen
-      v := xImport.CellValue[r, succ(_ct)];
+      v := xImport.GetCellValue(r, succ(_ct));
       if (TVarData(v).VType = varDouble) then
       begin
         t := v;
@@ -10766,7 +10696,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.CellValue[r, succ(_cdt)];
+        v := xImport.GetCellValue(r, succ(_cdt));
 
         if (TVarData(v).VType = varDouble) then
         begin
@@ -11064,9 +10994,7 @@ begin
   sResult := TStringList.create;
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
   bXML := TBLager.create;
   GetMem(pXML, 1024 * 1024);
@@ -11114,7 +11042,7 @@ begin
     begin
 
       try
-        OpenFile(InFName);
+        Open(InFName);
       except
         on e: exception do
         begin
@@ -11128,8 +11056,8 @@ begin
       sDiagFiles.add(InFName);
       sDiagFiles.add(conversionOutFName);
 
-      for c := 1 to MaxCol do
-        xlsHeaders.add(CellValue[1, c]);
+      for c := 1 to ColCountInRow(1) do
+        xlsHeaders.add(GetCellValue(1, c));
 
       cARGOS := xlsHeaders.indexof('ARGOS');
       if cARGOS = -1 then
@@ -11166,11 +11094,11 @@ begin
 
       r := 2;
       repeat
-        Argos := strtoint(cutblank(CellValue[r, succ(cARGOS)]));
-        ART := cutblank(CellValue[r, succ(cART)]);
+        Argos := strtoint(cutblank(GetCellValue(r, succ(cARGOS))));
+        ART := cutblank(GetCellValue(r, succ(cART)));
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
-        RID := cutblank(CellValue[r, succ(cRID)]);
-        STATUS := strtointdef(CellValue[r, succ(cStatus)], -1);
+        RID := cutblank(GetCellValue(r, succ(cRID)));
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -11212,7 +11140,7 @@ begin
             sBericht.add('(RID=' + RID + ') ARGOS ist leer!');
         end;
         inc(r);
-      until (r > MaxRow);
+      until (r > RowCount);
     end;
     pop;
     pop;
@@ -11243,7 +11171,6 @@ begin
   sSource.Free;
   sStack.Free;
   xImport.Free;
-  xAdapter.Free;
   xlsHeaders.Free;
 end;
 
@@ -11423,5 +11350,4 @@ begin
 end;
 
 end.
-{$endif}
-
+{$ENDIF}

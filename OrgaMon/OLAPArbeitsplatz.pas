@@ -290,9 +290,11 @@ type
 
     { Private-Deklarationen }
     ContentHeaders: TStringList;
-    ConnectionItems: TStringList; // Connection-Strings, also Name der Datenbank. Objects: IB_connections
+    ConnectionItems: TStringList;
+    // Connection-Strings, also Name der Datenbank. Objects: IB_connections
 
-    ContentItems: TList; // ConnectionIndex;CalibrationID;EquipmentID;SerialNumber - Objects: <nil>
+    ContentItems: TList;
+    // ConnectionIndex;CalibrationID;EquipmentID;SerialNumber - Objects: <nil>
     ItemMarked: TgpIntegerList;
     UserBreak: boolean;
 
@@ -396,13 +398,17 @@ var
 implementation
 
 uses
-  anfix32, globals, CareTakerClient,
-  html, OLAP, dbOrgaMon,
-  math, UExcelAdapter, XLSAdapter,
-  UFlexCelImport, UFlxFormats, UFlxNumberFormat,
-  IB_Header, OLAPedit, main,
-  Bearbeiter, OpenOfficePDF, Datenbank,
-  wanfix32;
+  math, wanfix32,
+  anfix32, html,
+
+  // FlexCell
+  FlexCel.Core, FlexCel.xlsAdapter,
+
+  globals, CareTakerClient, OLAP,
+  dbOrgaMon, IB_Header, OLAPedit,
+  main, Bearbeiter, OpenOfficePDF,
+  Datenbank;
+
 {$R *.dfm}
 
 const
@@ -438,14 +444,14 @@ const
   col_FirstFrei = col_FirstCalculated + 13;
 
   col_CountCalculated = 23;
-  col_names: array [0 .. pred(col_CountCalculated)] of string =
-    ('Prüfmoment', 'Fehler-Qmin', 'Fehler-Q02max', 'Fehler-Qmax', 'Radpaar',
-    'RP%', 'Druckverluste-Qmin-max', 'Druckverluste-Qmin',
-    'Druckverluste-Q02max', 'Druckverluste-Qmax', 'Auftragsnummer',
-    'Anzahl-Tests', 'Typ', 'Dimension.Frei.1', 'Dimension.Frei.2',
-    'Dimension.Frei.3', 'Dimension.Frei.4', 'Dimension.Frei.5',
-    'Dimension.Frei.6', 'Dimension.Frei.7', 'Dimension.Frei.8',
-    'Dimension.Frei.9', 'Dimension.Frei.0');
+  col_names: array [0 .. pred(col_CountCalculated)] of string = ('Prüfmoment',
+    'Fehler-Qmin', 'Fehler-Q02max', 'Fehler-Qmax', 'Radpaar', 'RP%',
+    'Druckverluste-Qmin-max', 'Druckverluste-Qmin', 'Druckverluste-Q02max',
+    'Druckverluste-Qmax', 'Auftragsnummer', 'Anzahl-Tests', 'Typ',
+    'Dimension.Frei.1', 'Dimension.Frei.2', 'Dimension.Frei.3',
+    'Dimension.Frei.4', 'Dimension.Frei.5', 'Dimension.Frei.6',
+    'Dimension.Frei.7', 'Dimension.Frei.8', 'Dimension.Frei.9',
+    'Dimension.Frei.0');
 
   col_last = col_FirstCalculated + pred(col_CountCalculated);
 
@@ -541,8 +547,8 @@ begin
     JoinFields.add('EQUIPMENTID');
     JoinFields.add('SERIALNUMBER');
 
-    QuestionaireFields.LoadFromFile(iOlapPath +
-        'External.Questionaire.Fields.txt');
+    QuestionaireFields.LoadFromFile
+      (iOlapPath + 'External.Questionaire.Fields.txt');
     LastTag := 0;
     for n := 0 to pred(QuestionaireFields.count) do
     begin
@@ -569,7 +575,7 @@ begin
       ActSettings := TStringList.create;
       if FileExists(iOlapPath + cOLAPDimPrefix + inttostr(n) + '.txt') then
         ActSettings.LoadFromFile(iOlapPath + cOLAPDimPrefix + inttostr(n)
-            + '.txt');
+          + '.txt');
       ColSettings.add(ActSettings);
     end;
 
@@ -580,8 +586,8 @@ begin
       ActSettings := TStringList.create;
       if FileExists(iOlapPath + cOLAPDimPrefix + col_names[n] + '.txt') then
       begin
-        SQLquery.LoadFromFile
-          (iOlapPath + cOLAPDimPrefix + col_names[n] + '.txt');
+        SQLquery.LoadFromFile(iOlapPath + cOLAPDimPrefix + col_names[n]
+          + '.txt');
         for m := pred(SQLquery.count) downto 0 do
         begin
           k := pos('--', SQLquery[m]);
@@ -653,8 +659,8 @@ begin
           ColWidths[n] := k;
       end;
 
-      ClientHeight := succ(pred(ClientHeight) div DefaultRowHeight)
-        * DefaultRowHeight;
+      ClientHeight := succ(pred(ClientHeight) div DefaultRowHeight) *
+        DefaultRowHeight;
       rowCount := 0;
     end;
 
@@ -699,7 +705,7 @@ begin
 
     if (ColparamAsString(10, 'TITLE') = '') then
       SetGridHeader(StaticText9, 'Druck' + #13 +
-          'Qmin(max)  Qmin  0,2Qmax  Qmax', 4)
+        'Qmin(max)  Qmin  0,2Qmax  Qmax', 4)
     else
       SetGridHeader(StaticText9, ColparamAsString(10, 'TITLE'), 4);
 
@@ -740,8 +746,8 @@ begin
   ImageList1.GetBitmap(id, result);
 end;
 
-procedure TFormOLAPArbeitsplatz.DrawGrid1DrawCell
-  (Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormOLAPArbeitsplatz.DrawGrid1DrawCell(Sender: TObject;
+  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var
   FocusColor: TColor;
   Fokusiert: boolean;
@@ -837,8 +843,8 @@ begin
                   DataCol := ACol - 1;
                   if (Subs[DataCol] = cOLAPNull) then
                     Subs[DataCol] := Content_CellText(ARow, DataCol);
-                  TextRect(Rect, Rect.left + 2, Rect.top, fmDisplay
-                      (Subs[DataCol]));
+                  TextRect(Rect, Rect.left + 2, Rect.top,
+                    fmDisplay(Subs[DataCol]));
                 end;
             else
               // Dummy Rand Zellen
@@ -1074,16 +1080,16 @@ begin
             if (ColparamAsString(col + 1, 'ROUND') = '') then
               roundDouble := 100.0
             else
-              roundDouble := strtodoubledef
-                (ColparamAsString(col + 1, 'ROUND'), 100);
+              roundDouble := strtodoubledef(ColparamAsString(col + 1,
+                'ROUND'), 100);
 
             // "+" oder "-" sicherstellen!
             if (AsDouble < 0) then
-              result := format(fmtDouble, [round(AsDouble * roundDouble)
-                  / roundDouble])
+              result := format(fmtDouble,
+                [round(AsDouble * roundDouble) / roundDouble])
             else
-              result := '+' + format
-                (fmtDouble, [round(AsDouble * roundDouble) / roundDouble]);
+              result := '+' + format(fmtDouble,
+                [round(AsDouble * roundDouble) / roundDouble]);
 
             // mit schönen Nullen auffüllen!
             charsDouble := ColparamAsInteger(pred(col), 'LENGTH');
@@ -1208,11 +1214,11 @@ begin
             sql.add('on');
             SQLconditions := 0;
             for m := 0 to pred(JoinFields.count) do
-              if quTableHas(qTABLE_Name, JoinFields[m]) and quTableHas
-                (JoinTables[n], JoinFields[m]) then
-                sql.add(' ' + SQL_and(SQLconditions)
-                    + '(' + qTABLE_Name + '.' + JoinFields[m] + '=' + JoinTables
-                    [n] + '.' + JoinFields[m] + ')');
+              if quTableHas(qTABLE_Name, JoinFields[m]) and
+                quTableHas(JoinTables[n], JoinFields[m]) then
+                sql.add(' ' + SQL_and(SQLconditions) + '(' + qTABLE_Name + '.' +
+                  JoinFields[m] + '=' + JoinTables[n] + '.' + JoinFields
+                  [m] + ')');
           end;
 
         end;
@@ -1242,14 +1248,13 @@ begin
       cABRUF.free;
     except
     end;
-    ResultStrings.SaveToFile
-      (AnwenderPath + 'OLAP-Arbeitsplatz.Feldauswahl.Tag.' + inttostrN
-        (ActInputFieldTag, 3) + '.txt');
+    ResultStrings.SaveToFile(AnwenderPath + 'OLAP-Arbeitsplatz.Feldauswahl.Tag.'
+      + inttostrN(ActInputFieldTag, 3) + '.txt');
     ResultStrings.free;
     JoinTables.free;
     EndHourGlass;
-    openShell(AnwenderPath + 'OLAP-Arbeitsplatz.Feldauswahl.Tag.' + inttostrN
-        (ActInputFieldTag, 3) + '.txt');
+    openShell(AnwenderPath + 'OLAP-Arbeitsplatz.Feldauswahl.Tag.' +
+      inttostrN(ActInputFieldTag, 3) + '.txt');
   end;
 end;
 
@@ -1380,8 +1385,8 @@ const
   cQuestOrSeperator = ',';
 
 const
-  cOperator: array [0 .. 7] of string =
-    ('=', '>=', '<=', '>', '<', '<>', 'like', 'starts with');
+  cOperator: array [0 .. 7] of string = ('=', '>=', '<=', '>', '<', '<>',
+    'like', 'starts with');
 
   cOperator2: array [0 .. 7] of string = ('=', '>=', '<=', '>', '<', '<>',
     ' like ', ' starts with ');
@@ -1429,9 +1434,9 @@ begin
         if (k > 0) then
         begin
           // between
-          result := ' and (' + quFieldName(eTag) + ' between ' + Operant
-            (copy(UserQuery, 1, pred(k)), IsNumeric) + ' and ' + Operant
-            (copy(UserQuery, k + 2, MaxInt), IsNumeric) + ')';
+          result := ' and (' + quFieldName(eTag) + ' between ' +
+            Operant(copy(UserQuery, 1, pred(k)), IsNumeric) + ' and ' +
+            Operant(copy(UserQuery, k + 2, MaxInt), IsNumeric) + ')';
         end
         else
         begin
@@ -1465,14 +1470,15 @@ begin
               if pos(cOperator[n], UserQuery) = 1 then
               begin
                 OperatorINdex := n;
-                UserQuery := copy
-                  (UserQuery, succ(length(cOperator[OperatorINdex])), MaxInt);
+                UserQuery :=
+                  copy(UserQuery, succ(length(cOperator[OperatorINdex])
+                  ), MaxInt);
                 break;
               end;
 
             //
-            result := ' and (' + quFieldName(eTag) + cOperator2[OperatorINdex]
-              + Operant(UserQuery, IsNumeric) + ')';
+            result := ' and (' + quFieldName(eTag) + cOperator2[OperatorINdex] +
+              Operant(UserQuery, IsNumeric) + ')';
 
           end;
         end;
@@ -1622,8 +1628,8 @@ begin
   EndHourGlass;
 end;
 
-function TFormOLAPArbeitsplatz.ColparamAsString(c: Integer; const s: string)
-  : string;
+function TFormOLAPArbeitsplatz.ColparamAsString(c: Integer;
+  const s: string): string;
 var
   sSettings: TStringList;
 begin
@@ -1633,14 +1639,13 @@ end;
 
 function TFormOLAPArbeitsplatz.ColparamAsString(const s: string): string;
 begin
-  result := ColparamAsString(StrToIntDef(nextp(s, '.', 0), 0), nextp(s, '.', 1)
-    );
+  result := ColparamAsString(StrToIntDef(nextp(s, '.', 0), 0),
+    nextp(s, '.', 1));
 end;
 
 procedure TFormOLAPArbeitsplatz.bericht;
 var
-  xlsAUSGABE: TFlexCelImport;
-  xlsMACHINE: TXLSAdapter;
+  xlsAUSGABE: TXLSFIle;
   fmHeader: Integer;
   fmHigh, fmHigh_Date: Integer;
   fmLow, fmLow_Date: Integer;
@@ -1652,15 +1657,15 @@ var
 
   procedure WriteCell(r, c: Integer; s: string; DoFormat: boolean = false);
 
-    procedure setFormat(fLow, fHigh: Integer);
+    procedure setRowFormat(fLow, fHigh: Integer);
     begin
       if DoFormat and (r > 1) then
         with xlsAUSGABE do
         begin
           if (r mod 2 = 0) then
-            CellFormat[r, c] := fHigh
+            setCellFormat(r, c, fHigh)
           else
-            CellFormat[r, c] := fLow;
+            setCellFormat(r, c, fLow);
         end;
     end;
 
@@ -1671,17 +1676,17 @@ var
         // Float oder Ganzzahl
         if (pos('-', s) = 1) or (pos('+', s) = 1) then
         begin
-          CellValue[r, c] := strtodoubledef(s, 0);
-          setFormat(fmLow, fmHigh);
+          setCellValue(r, c, strtodoubledef(s, 0));
+          setRowFormat(fmLow, fmHigh);
           break;
         end;
 
         // Datumsformat
         if (pos('.', s) = 3) and (pos(' ', s) = 11) and (pos(':', s) = 14) then
         begin
-          CellValue[r, c] := double(mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1))));
-          setFormat(fmLow_Date, fmHigh_Date);
+          setCellValue(r, c, double(mkDateTime(date2long(nextp(s, ' ', 0)),
+            strtoseconds(nextp(s, ' ', 1)))));
+          setRowFormat(fmLow_Date, fmHigh_Date);
           break;
         end;
 
@@ -1690,1748 +1695,1737 @@ var
           if (s[1] >= '0') and (s[1] <= '9') then
             if s = StrFilter(s, '0123456789') then
             begin
-              SetCellString(r, c, s);
-              setFormat(fmLow, fmHigh);
+              setCellValue(r, c, s);
+              setRowFormat(fmLow, fmHigh);
               break;
             end;
 
         // als String!
-        CellValue[r, c] := s;
-        setFormat(fmLow, fmHigh);
+        setCellValue(r, c, s);
+        setRowFormat(fmLow, fmHigh);
 
       until true;
 
+  end;
+
+  procedure WriteContent(ContentItems: TList; HeaderS: TStringList = nil);
+  var
+    slRow: TStringList;
+    sCell: string;
+    c, r: Integer;
+    xlsColumnWidth: array of Integer;
+
+    function getCount: Integer;
+    begin
+      result := ContentItems.count;
+      if assigned(HeaderS) then
+        inc(result);
     end;
 
-    procedure WriteContent(ContentItems: TList; HeaderS: TStringList = nil);
-    var
-      slRow: TStringList;
-      sCell: string;
-      c, r: Integer;
-      xlsColumnWidth: array of Integer;
-
-      function getCount: Integer;
-      begin
-        result := ContentItems.count;
-        if assigned(HeaderS) then
-          inc(result);
-      end;
-
-      function getLine(Index: Integer): TStringList;
-      begin
-        if assigned(HeaderS) then
-        begin
-          if (Index = 0) then
-            result := HeaderS
-          else
-            result := ContentItems[pred(Index)];
-        end
-        else
-        begin
-          result := ContentItems[Index];
-        end;
-      end;
-
+    function getLine(Index: Integer): TStringList;
     begin
-      if (getCount > 0) then
-        with xlsAUSGABE do
+      if assigned(HeaderS) then
+      begin
+        if (Index = 0) then
+          result := HeaderS
+        else
+          result := ContentItems[pred(Index)];
+      end
+      else
+      begin
+        result := ContentItems[Index];
+      end;
+    end;
+
+  begin
+    if (getCount > 0) then
+      with xlsAUSGABE do
+      begin
+        if assigned(HeaderS) then
+          SetLength(xlsColumnWidth, HeaderS.count)
+        else
+          SetLength(xlsColumnWidth, TStringList(ContentItems[0]).count);
+
+        for c := 0 to high(xlsColumnWidth) do
+          xlsColumnWidth[c] := DefaultColWidth;
+        for r := 0 to pred(getCount) do
         begin
-          if assigned(HeaderS) then
-            SetLength(xlsColumnWidth, HeaderS.count)
-          else
-            SetLength(xlsColumnWidth, TStringList(ContentItems[0]).count);
-
-          for c := 0 to high(xlsColumnWidth) do
-            xlsColumnWidth[c] := DefaultColWidth;
-          for r := 0 to pred(getCount) do
+          slRow := getLine(r);
+          for c := 0 to pred(slRow.count) do
           begin
-            slRow := getLine(r);
-            for c := 0 to pred(slRow.count) do
-            begin
-              sCell := fmDisplay(slRow[c]);
-              WriteCell(succ(r), succ(c), sCell, true);
-              xlsColumnWidth[c] := max(xlsColumnWidth[c], length(sCell) * 320);
-            end;
-
-            // Einfärbung der ganzen Titel-Zeile
-            if r = 0 then
-            begin
-              RowFormat[succ(r)] := fmHeader;
-            end;
-
+            sCell := fmDisplay(slRow[c]);
+            WriteCell(succ(r), succ(c), sCell, true);
+            xlsColumnWidth[c] := max(xlsColumnWidth[c], length(sCell) * 320);
           end;
 
-          // Spaltenbreite anpassen!
-          for c := 0 to high(xlsColumnWidth) do
-            ColumnWidth[succ(c)] := xlsColumnWidth[c];
+          // Einfärbung der ganzen Titel-Zeile
+          if r = 0 then
+          begin
+            // imp pend FlexCel: RowFormat
+            // RowFormat[succ(r)] := fmHeader;
+          end;
+
         end;
 
-    end;
+        // Spaltenbreite anpassen!
+        for c := 0 to high(xlsColumnWidth) do
+          setColWidth(succ(c), xlsColumnWidth[c]);
+      end;
+
+  end;
 
 
-    //
-    // Reines wertmäsiges befüllen
-    //
+//
+// Reines wertmäsiges befüllen
+//
 
-    procedure CloneContent(CopyColumn: TStringList);
-    var
-      n: Integer;
-      CommandLine: string;
-      SheetNumber: string;
-      TableName: string;
-      ColName: string;
-      r, c: Integer;
-      mapTable: TList;
-      SourceCol, SourceRow, SourceStart: Integer;
-      StartTime: dword;
+  procedure CloneContent(CopyColumn: TStringList);
+  var
+    n: Integer;
+    CommandLine: string;
+    SheetNumber: string;
+    TableName: string;
+    ColName: string;
+    r, c: Integer;
+    mapTable: TList;
+    SourceCol, SourceRow, SourceStart: Integer;
+    StartTime: dword;
+  begin
+    StartTime := 0;
+    ProgressBar1.max := CopyColumn.count;
+    for n := 0 to pred(CopyColumn.count) do
     begin
-      StartTime := 0;
-      ProgressBar1.max := CopyColumn.count;
-      for n := 0 to pred(CopyColumn.count) do
+
+      //
+      CommandLine := CopyColumn[n];
+
+      // Parsen
+      SheetNumber := nextp(CommandLine, ',');
+      TableName := nextp(CommandLine, '#');
+      ColName := nextp(CommandLine, ',');
+      r := StrToIntDef(nextp(CommandLine, ','), 0);
+      c := StrToIntDef(nextp(CommandLine, ','), 0);
+      if (r = 0) then
+        break;
+      if (c = 0) then
+        break;
+
+      mapTable := nil;
+      SourceStart := 1;
+      SourceCol := -1;
+      repeat
+
+        // Mappe raussuchen!
+        if (TableName = 'PE') then
+        begin
+          mapTable := ContentItems;
+          SourceStart := 0;
+          SourceCol := ContentHeaders.indexof(ColName);
+          break;
+        end;
+
+        if (TableName = 'MF') then
+        begin
+          mapTable := MF;
+          SourceCol := TStringList(mapTable[0]).indexof(ColName);
+          break;
+        end;
+
+        if (TableName = 'RP') then
+        begin
+          mapTable := RP;
+          SourceCol := TStringList(mapTable[0]).indexof(ColName);
+          break;
+        end;
+
+      until true;
+
+      repeat
+
+        // keine Tabelle?
+        if (mapTable = nil) then
+        begin
+          WriteCell(r + 1, c, 'Mappe ' + TableName + ' nicht gefunden!');
+          break;
+        end;
+
+        // keine Spalte?
+        if (SourceCol = -1) then
+        begin
+          WriteCell(r + 1, c, 'Spaltenüberschrift ' + ColName +
+            ' nicht gefunden!');
+          break;
+        end;
+
+        // Jetzt die ganze Tabelle kopieren - ohne Formate!
+        with xlsAUSGABE do
+        begin
+          ActiveSheet := StrToIntDef(SheetNumber, 1);
+          for SourceRow := SourceStart to pred(mapTable.count) do
+          begin
+            WriteCell(r + (SourceRow - SourceStart), c,
+              fmDisplay(TStringList(mapTable[SourceRow])[SourceCol]));
+            setCellFormat(r + (SourceRow - SourceStart), c,
+              getCellFormat(r + 1, c));
+          end;
+        end;
+
+      until true;
+
+      if frequently(StartTime, 333) then
       begin
+        ProgressBar1.position := n;
+        application.processmessages;
+      end;
 
-        //
-        CommandLine := CopyColumn[n];
+    end;
+    ProgressBar1.position := 0;
+  end;
 
-        // Parsen
-        SheetNumber := nextp(CommandLine, ',');
-        TableName := nextp(CommandLine, '#');
-        ColName := nextp(CommandLine, ',');
-        r := StrToIntDef(nextp(CommandLine, ','), 0);
-        c := StrToIntDef(nextp(CommandLine, ','), 0);
+var
+  s: Integer; // Mappen-Zähler
+  c, c2, r: Integer; // Spalten, Zeilen Zähler
+  countMAIN: Integer; // Anzahl der Hauptmappen (links)
+  ContentSubs: TStringList; //
+  MFSubs: TStringList;
+  SearchD: double;
+  SearchStr: string;
+
+  DynamicFirstRow: Integer;
+  GlobalSubs: TStringList;
+  AusfallSubs: TStringList;
+  Ausfall: Integer;
+
+  // ganze Spalten kopieren
+  CopyColumn: TStringList;
+  xlsFormat: WideString;
+  n: Integer;
+  FormatLists: TStringList;
+
+begin
+
+  if FileDelete(AnwenderPath + 'out.xls') then
+  begin
+
+    BeginHourGlass;
+    Content_complete;
+
+    //
+    Content_plausibel;
+
+    xlsAUSGABE := TXLSFIle.create(true);
+    CopyColumn := TStringList.create;
+    with xlsAUSGABE do
+    begin
+
+      //
+      if FileExists(AnwenderPath + ComboBox2.text) then
+      begin
+        Open(AnwenderPath + ComboBox2.text);
+
+        FormatLists := TStringList.create;
+        ActiveSheet := 1;
+        for n := 0 to pred(FormatCount) do
+        begin
+          fmfm := GetFormat(n);
+          FormatLists.add(format('%d=%s;%d', [
+            { } n,
+            { } fmfm.format,
+            { } fmfm.FillPattern.FgColor.Index]));
+        end;
+        FormatLists.add(inttostr(getCellFormat(4, 2)));
+        FormatLists.SaveToFile(AnwenderPath + 'Excel.Formats.txt');
+        FormatLists.free;
+        // open(UserDir + 'Excel.Formats.txt');
+
+        countMAIN := SheetCount - 4;
+      end
+      else
+      begin
+        NewFile(5);
+        countMAIN := 1;
+        ActiveSheet := 1;
+        SheetName := 'MAIN';
+      end;
+
+      // procedure ClearSheet;virtual;abstract;
+
+      //
+      ActiveSheet := countMAIN + 1;
+      SheetName := 'IN';
+      ClearSheet;
+
+      ActiveSheet := countMAIN + 2;
+      SheetName := 'PE';
+      ClearSheet;
+
+      ActiveSheet := countMAIN + 3;
+      SheetName := 'MF';
+      ClearSheet;
+
+      ActiveSheet := countMAIN + 4;
+      SheetName := 'RP';
+      ClearSheet;
+
+      // Die 2 Formate machen
+      fmfm := GetDefaultFormat;
+
+      // fmfm.format := 'Standard';
+      // fmfm.HAlignment := fha_right;
+      fmfm.borders.left.style := TFlxBorderStyle.Thin;
+      fmfm.borders.left.Color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+
+      fmfm.FillPattern.Pattern := TFlxPatternStyle.Solid; // solid fill
+      fmfm.FillPattern.BgColor := 0; // hm
+
+      // Header Format (hellgelb)
+      fmfm.FillPattern.FgColor := NearestColorIndex(HTMLColor2TColor($FFFF99));
+      fmHeader := addFormat(fmfm);
+
+      // Highlighted Row Format (hellblau)
+      fmfm.FillPattern.FgColor := NearestColorIndex(HTMLColor2TColor($88EEFF));
+      fmHigh := addFormat(fmfm);
+
+      // Spezialfall für Datum
+      xlsFormat := fmfm.format;
+      fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
+      fmHigh_Date := addFormat(fmfm);
+      fmfm.format := xlsFormat;
+
+      fmfm.FillPattern.FgColor := clWhite;
+      fmLow := addFormat(fmfm);
+
+      //
+      xlsFormat := fmfm.format;
+      fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
+      fmLow_Date := addFormat(fmfm);
+
+      // Messergebnisse
+      ActiveSheet := countMAIN + 2; // PE!
+      WriteContent(ContentItems, ContentHeaders);
+
+      // Ausfälle
+      REJECT := TList.create;
+      Tmp_load(REJECT, AnwenderPath + cQuestionaireRejectFName);
+
+      GLOBAL := TList.create;
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('PARAMETER'); // [0]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 1-4'); // [1]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 5'); // [2]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 6'); // [3]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 7'); // [4]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 8'); // [5]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 9'); // [6]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 10'); // [7]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 11'); // [8]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall 12'); // [9]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall sonstige'); // [10]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Ausfall Summe'); // [11]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('MF Summe'); // [12]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('MF+'); // [13]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('MF-'); // [14]
+      GLOBAL.add(GlobalSubs);
+
+      GlobalSubs := TStringList.create;
+      GlobalSubs.add('Questionaire'); // [15]
+      GLOBAL.add(GlobalSubs);
+
+      // Jetzt kommt der Variable teil!
+      DynamicFirstRow := GLOBAL.count;
+      for c := 0 to pred(ContentHeaders.count) do
+      begin
+        GlobalSubs := TStringList.create;
+        GlobalSubs.add(ContentHeaders[c]);
+        GLOBAL.add(GlobalSubs);
+      end;
+
+      // Jetzt die 2. Spalte befüllen (mit leeren werten!)
+      for r := 0 to pred(GLOBAL.count) do
+      begin
+        GlobalSubs := TStringList(GLOBAL[r]);
         if (r = 0) then
-          break;
-        if (c = 0) then
-          break;
-
-        mapTable := nil;
-        SourceStart := 1;
-        SourceCol := -1;
-        repeat
-
-          // Mappe raussuchen!
-          if (TableName = 'PE') then
-          begin
-            mapTable := ContentItems;
-            SourceStart := 0;
-            SourceCol := ContentHeaders.indexof(ColName);
-            break;
-          end;
-
-          if (TableName = 'MF') then
-          begin
-            mapTable := MF;
-            SourceCol := TStringList(mapTable[0]).indexof(ColName);
-            break;
-          end;
-
-          if (TableName = 'RP') then
-          begin
-            mapTable := RP;
-            SourceCol := TStringList(mapTable[0]).indexof(ColName);
-            break;
-          end;
-
-        until true;
-
-        repeat
-
-          // keine Tabelle?
-          if (mapTable = nil) then
-          begin
-            WriteCell(r + 1, c, 'Mappe ' + TableName + ' nicht gefunden!');
-            break;
-          end;
-
-          // keine Spalte?
-          if (SourceCol = -1) then
-          begin
-            WriteCell(r + 1, c,
-              'Spaltenüberschrift ' + ColName + ' nicht gefunden!');
-            break;
-          end;
-
-          // Jetzt die ganze Tabelle kopieren - ohne Formate!
-          with xlsAUSGABE do
-          begin
-            ActiveSheet := StrToIntDef(SheetNumber, 1);
-            for SourceRow := SourceStart to pred(mapTable.count) do
-            begin
-              WriteCell(r + (SourceRow - SourceStart), c, fmDisplay
-                  (TStringList(mapTable[SourceRow])[SourceCol]));
-              CellFormat[r + (SourceRow - SourceStart), c] := CellFormat
-                [r + 1, c];
-            end;
-          end;
-
-        until true;
-
-        if frequently(StartTime, 333) then
-        begin
-          ProgressBar1.position := n;
-          application.processmessages;
-        end;
-
+          GlobalSubs.add('WERT')
+        else
+          GlobalSubs.add('');
       end;
-      ProgressBar1.position := 0;
-    end;
 
-    var
-      s: Integer; // Mappen-Zähler
-      c, c2, r: Integer; // Spalten, Zeilen Zähler
-      countMAIN: Integer; // Anzahl der Hauptmappen (links)
-      ContentSubs: TStringList; //
-      MFSubs: TStringList;
-      SearchD: double;
-      SearchStr: string;
-
-      DynamicFirstRow: Integer;
-      GlobalSubs: TStringList;
-      AusfallSubs: TStringList;
-      Ausfall: Integer;
-
-      // ganze Spalten kopieren
-      CopyColumn: TStringList;
-      xlsFormat: WideString;
-      n: Integer;
-      FormatLists: TStringList;
-
-    begin
-
-      if FileDelete(AnwenderPath + 'out.xls') then
+      for r := 1 to pred(REJECT.count) do
       begin
+        GlobalSubs := TStringList(REJECT[r]);
+        Ausfall := StrToIntDef(GlobalSubs[1], 0); // Ausfallgrund!
+        case Ausfall of
+          1 .. 4:
+            AusfallSubs := TStringList(GLOBAL[1]);
+          5 .. 12:
+            AusfallSubs := TStringList(GLOBAL[Ausfall - 3]);
+        else
+          // alle Sonstigen!
+          AusfallSubs := TStringList(GLOBAL[10]);
+        end;
+        AusfallSubs[1] := '+' + inttostr(StrToIntDef(AusfallSubs[1], 0) + 1);
+      end;
 
-        BeginHourGlass;
-        Content_complete;
+      // Summe der Ausfälle
+      AusfallSubs := TStringList(GLOBAL[11]);
+      AusfallSubs[1] := '+' + inttostr(pred(REJECT.count));
+
+      // Summe der MF
+      AusfallSubs := TStringList(GLOBAL[12]);
+      AusfallSubs[1] := '+' + inttostr(ContentItems.count);
+
+      Tmp_delete(REJECT);
+      REJECT.free;
+
+      // Messfehler
+      MF := TList.create;
+      Tmp_load(MF, iOlapPath + 'External.MF.txt');
+
+      // Fehlende Spalte erweitern
+      for c := 0 to pred(MF.count) do
+      begin
+        ContentSubs := TStringList(MF[c]);
+        if (c = 0) then
+          ContentSubs.add('GUT')
+        else
+          ContentSubs.add('+0');
+      end;
+
+      // Werte hinzuaddieren
+      for c := 0 to pred(ContentItems.count) do
+      begin
+        ContentSubs := TStringList(ContentItems[c]);
+        SearchD := round(
+
+          (strtodoubledef(ContentSubs[col_Q02max], 0) -
+          strtodoubledef(ContentSubs[col_Qmax], 0))
+
+          * 10) / 10;
+        if (SearchD < 0) then
+          TStringList(GLOBAL[14])[1] := '+' +
+            inttostr(StrToIntDef(TStringList(GLOBAL[14])[1], 0) + 1)
+        else
+          TStringList(GLOBAL[13])[1] := '+' +
+            inttostr(StrToIntDef(TStringList(GLOBAL[13])[1], 0) + 1);
+        for c2 := 1 to pred(MF.count) do
+        begin
+          MFSubs := TStringList(MF[c2]);
+          if (strtodoubledef(MFSubs[0], 0) = SearchD) then
+            MFSubs[1] := '+' + inttostr(StrToIntDef(MFSubs[1], 0) + 1);
+        end;
+      end;
+
+      // Aufzählungsliste dazu
+      for r := 0 to pred(ContentHeaders.count) do
+      begin
+        GlobalSubs := TStringList(GLOBAL[r + DynamicFirstRow]);
+        GlobalSubs[1] := ' ' + Tmp_Aufzaehlung(ContentItems, r, false);
+      end;
+
+      // Selektions-String dazu
+      RefreshQuestionaireInfo;
+      GlobalSubs := TStringList(GLOBAL[15]);
+      GlobalSubs[1] := Memo1.lines[0];
+
+      ActiveSheet := countMAIN + 3;
+      WriteContent(MF);
+
+      // imp pend: rausschreiben ganzer Datenreihen.
+
+      // Radpaar
+      RP := TList.create;
+      Tmp_load(RP, iOlapPath + 'External.Gears.txt');
+
+      // Fehlende Spalte erweitern
+      for c := 0 to pred(RP.count) do
+      begin
+        ContentSubs := TStringList(RP[c]);
+        if (c = 0) then
+          ContentSubs.add('ANZ')
+        else
+          ContentSubs.add('+0');
+      end;
+
+      for c := 0 to pred(ContentItems.count) do
+      begin
+        ContentSubs := TStringList(ContentItems[c]);
+        SearchStr := ContentSubs[col_Radpaar];
+        for c2 := 1 to pred(RP.count) do
+        begin
+          MFSubs := TStringList(RP[c2]);
+          if (MFSubs[0] = SearchStr) then
+            MFSubs[2] := '+' + inttostr(StrToIntDef(MFSubs[2], 0) + 1);
+        end;
+      end;
+
+      ActiveSheet := countMAIN + 4; // RP!
+      WriteContent(RP);
+
+      ActiveSheet := countMAIN + 1; // IN!
+      WriteContent(GLOBAL);
+
+      // eventuell noch Spalten vorkopieren
+      // Hier nur die Aufgaben sammeln
+      for s := 1 to countMAIN do
+      begin
 
         //
-        Content_plausibel;
+        ActiveSheet := s;
 
-        xlsMACHINE := TXLSAdapter.create(self);
-        xlsAUSGABE := TFlexCelImport.create(self);
-        CopyColumn := TStringList.create;
-        with xlsAUSGABE do
+        //
+        for r := 1 to 80 do
+          for c := 1 to 30 do
+          begin
+            if (pos('#', getCellValue(r, c)) = 3) then
+              CopyColumn.add(inttostr(s) + ',' + getCellValue(r, c) + ',' +
+                inttostr(r) + ',' + inttostr(c));
+          end;
+
+      end;
+
+      // Jetzt die Arbeit machen (lassen)
+      CloneContent(CopyColumn);
+
+      // Objekte freigeben
+      Tmp_delete(MF);
+      MF.free;
+      Tmp_delete(RP);
+      RP.free;
+      Tmp_delete(GLOBAL);
+      GLOBAL.free;
+      if not(UserBreak) then
+      begin
+        Save(AnwenderPath + 'out.xls');
+        MakePDF(AnwenderPath + 'out.xls', AnwenderPath + 'out.pdf');
+      end;
+    end;
+    xlsAUSGABE.free;
+    CopyColumn.free;
+    EndHourGlass;
+    if not(UserBreak) then
+      if AllowOpen then
+        openShell(AnwenderPath + 'out.xls');
+  end
+  else
+  begin
+    ShowMessage('Ausgabe XLS ist noch offen!');
+  end;
+  UserBreak := false;
+end;
+
+function TFormOLAPArbeitsplatz.ColparamAsInteger(c: Integer;
+  const s: string): Integer;
+var
+  sSettings: TStringList;
+begin
+  sSettings := TStringList(ColSettings[c]);
+  result := StrToIntDef(sSettings.values[s], -1);
+end;
+
+function TFormOLAPArbeitsplatz.ColparamAsInteger(const s: string): Integer;
+begin
+  result := ColparamAsInteger(StrToIntDef(nextp(s, '.', 0), 0),
+    nextp(s, '.', 1));
+end;
+
+procedure TFormOLAPArbeitsplatz.ComboBox1Select(Sender: TObject);
+begin
+  // load
+  quLoad(ComboBox1.text);
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton19Click(Sender: TObject);
+var
+  n: Integer;
+  SettingsS: TStringList;
+begin
+  SettingsS := TStringList.create;
+  for n := 1 to MaxTag do
+    SettingsS.add(inttostr(n) + '=*');
+  ComboBox1.text := 'Neu_' + Datum + cOLAPAbfrageExtension;
+  quLoad(SettingsS);
+  SettingsS.free;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton20Click(Sender: TObject);
+var
+  LastParameterFName: string;
+begin
+  if doit(ComboBox1.text + ' wirklich löschen?') then
+  begin
+    FileDelete(AnwenderPath + ComboBox1.text);
+    RefreshLoadCombo;
+    ComboBox1.text := '';
+    LastParameterFName := quLastFName('*' + cOLAPAbfrageExtension);
+    if (LastParameterFName <> '') then
+      quLoad(LastParameterFName);
+  end;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton21Click(Sender: TObject);
+begin
+  readHelium;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton22Click(Sender: TObject);
+var
+  LastParameterFName: string;
+begin
+  if FileExists(AnwenderPath + ComboBox1.text) then
+  begin
+    FileCopy(AnwenderPath + ComboBox1.text, AnwenderPath + 'Kopie_' + Datum +
+      cOLAPAbfrageExtension);
+    FileTouch(AnwenderPath + 'Kopie_' + Datum + cOLAPAbfrageExtension);
+    RefreshLoadCombo;
+    LastParameterFName := quLastFName('*' + cOLAPAbfrageExtension);
+    if (LastParameterFName <> '') then
+      quLoad(LastParameterFName);
+  end
+  else
+  begin
+    ShowMessage('Fehler' + #13 + 'Datei ' + AnwenderPath + ComboBox1.text + #13
+      + 'nicht gefunden!');
+  end;
+end;
+
+procedure TFormOLAPArbeitsplatz.SpeedButton3Click(Sender: TObject);
+begin
+  RefreshLoadCombo;
+end;
+
+function TFormOLAPArbeitsplatz.fullQuest(fromTable: string): TStringList;
+var
+  SelfJoinIndex: Integer;
+  n, m: Integer;
+  ExtraWhere: TStringList;
+  JoinTables: TStringList;
+  SQLconditions: Integer;
+begin
+
+  //
+  JoinTables := TStringList.create;
+  result := TStringList.create;
+
+  result.add('select distinct');
+  result.add('  ' + fromTable + '.EQUIPMENTID');
+  result.add(' ,' + fromTable + '.CALIBRATIONID');
+  result.add(' ,METERS.SERIALNUMBER');
+  result.add('from');
+  result.add(' ' + fromTable);
+
+  ExtraWhere := fullWhere(JoinTables);
+  if (ExtraWhere.count > 0) then
+    ersetze(' and (', '     (', ExtraWhere, 0);
+
+  //
+  // J O I N
+  //
+
+  // join auf eigene "from" Tabelle verhindern
+  SelfJoinIndex := JoinTables.indexof(fromTable);
+  if (SelfJoinIndex <> -1) then
+    JoinTables.delete(SelfJoinIndex);
+
+  // Meters jedoch immer sicherstellen!
+  if (fromTable <> 'METERS') then
+    if (JoinTables.indexof('METERS') = -1) then
+      JoinTables.add('METERS');
+
+  // join auf die restlichen, verbleibenden Tabellen verbinden
+  if (JoinTables.count > 0) then
+  begin
+    for n := 0 to pred(JoinTables.count) do
+    begin
+      result.add('inner join');
+      result.add(' ' + JoinTables[n]);
+      result.add('on');
+      SQLconditions := 0;
+      for m := 0 to pred(JoinFields.count) do
+        if quTableHas(fromTable, JoinFields[m]) and
+          quTableHas(JoinTables[n], JoinFields[m]) then
+          result.add(' ' + SQL_and(SQLconditions) + '(' + fromTable + '.' +
+            JoinFields[m] + '=' + JoinTables[n] + '.' + JoinFields[m] + ')');
+    end;
+
+  end;
+
+  // W H E R E
+  result.add('where');
+
+  // Hier die Wheres
+  result.addstrings(ExtraWhere);
+
+  // S O R T
+  result.add('order by');
+  result.add(' METERS.SERIALNUMBER');
+
+  ExtraWhere.free;
+  JoinTables.free;
+end;
+
+function TFormOLAPArbeitsplatz.fullReject(fromTable: string): TStringList;
+var
+  SelfJoinIndex: Integer;
+  n, m: Integer;
+  ExtraWhere: TStringList;
+  JoinTables: TStringList;
+  SQLconditions: Integer;
+begin
+
+  //
+  JoinTables := TStringList.create;
+  result := TStringList.create;
+
+  result.add('select distinct');
+  result.add(' rejections.equipmentid,');
+  result.add(' rejections.rejectionid,');
+  result.add(' rejections.calibrationid,');
+  result.add(' rejections.PositionNumber');
+  result.add('from');
+  result.add(' ' + fromTable);
+
+  ExtraWhere := fullWhere(JoinTables);
+  if (ExtraWhere.count > 0) then
+    ersetze(' and (', '     (', ExtraWhere, 0);
+
+  //
+  // J O I N
+  //
+  SelfJoinIndex := JoinTables.indexof(fromTable);
+  if (SelfJoinIndex <> -1) then
+    JoinTables.delete(SelfJoinIndex);
+
+  // Rejections muss aber dabei sein!
+  if (JoinTables.indexof('REJECTIONS') = -1) then
+    JoinTables.add('REJECTIONS');
+
+  if (JoinTables.count > 0) then
+  begin
+    for n := 0 to pred(JoinTables.count) do
+    begin
+      result.add('inner join');
+      result.add(' ' + JoinTables[n]);
+      result.add('on');
+      SQLconditions := 0;
+      for m := 0 to pred(JoinFields.count) do
+        if quTableHas(fromTable, JoinFields[m]) and
+          quTableHas(JoinTables[n], JoinFields[m]) then
+          result.add(' ' + SQL_and(SQLconditions) + '(' + fromTable + '.' +
+            JoinFields[m] + '=' + JoinTables[n] + '.' + JoinFields[m] + ')');
+    end;
+
+  end;
+
+  // W H E R E
+  result.add('where');
+
+  // Hier die Wheres
+  result.addstrings(ExtraWhere);
+
+  ExtraWhere.free;
+  JoinTables.free;
+end;
+
+procedure TFormOLAPArbeitsplatz.quFillGrid;
+begin
+  //
+  StaticText4.Caption := 'Serial #' + #13 + 'Anz: ' +
+    inttostr(pred(ContentItems.count));
+
+  // application.processmessage
+  if assigned(ContentHeaders) then
+    FreeAndNil(ContentHeaders);
+  ContentHeaders := TStringList(ContentItems[0]);
+  ContentItems.delete(0);
+
+  with DrawGrid1 do
+  begin
+    inc(SupressGridPaint);
+    rowCount := ContentItems.count;
+    row := pred(rowCount);
+    dec(SupressGridPaint);
+    refresh;
+  end;
+
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton27Click(Sender: TObject);
+begin
+  openShell(AnwenderPath + cQuestionaireVolumeFName);
+end;
+
+procedure TFormOLAPArbeitsplatz.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    ord('m'), ord('M'), ord(' '):
+      if DrawGrid1.focused then
+      begin
+        if ssCtrl in Shift then
         begin
-
-          //
-          adapter := xlsMACHINE;
-          if FileExists(AnwenderPath + ComboBox2.text) then
-          begin
-            OpenFile(AnwenderPath + ComboBox2.text);
-
-            FormatLists := TStringList.create;
-            ActiveSheet := 1;
-            for n := 0 to pred(FormatListCount) do
-            begin
-              GetFormatList(n, fmfm);
-              FormatLists.add
-                (format('%d=%s;%d', [n, fmfm.format,
-                  fmfm.FillPattern.FgColorIndex]));
-            end;
-            FormatLists.add(inttostr(CellFormat[4, 2]));
-            FormatLists.SaveToFile(AnwenderPath + 'Excel.Formats.txt');
-            FormatLists.free;
-            // open(UserDir + 'Excel.Formats.txt');
-
-            countMAIN := SheetCount - 4;
-          end
-          else
-          begin
-            NewFile(5);
-            countMAIN := 1;
-            ActiveSheet := 1;
-            ActiveSheetName := 'MAIN';
-          end;
-
-          // procedure ClearSheet;virtual;abstract;
-
-          //
-          ActiveSheet := countMAIN + 1;
-          ActiveSheetName := 'IN';
-          ClearSheet;
-
-          ActiveSheet := countMAIN + 2;
-          ActiveSheetName := 'PE';
-          ClearSheet;
-
-          ActiveSheet := countMAIN + 3;
-          ActiveSheetName := 'MF';
-          ClearSheet;
-
-          ActiveSheet := countMAIN + 4;
-          ActiveSheetName := 'RP';
-          ClearSheet;
-
-          // Die 2 Formate machen
-          GetDefaultFormat(fmfm);
-
-          // fmfm.format := 'Standard';
-          // fmfm.HAlignment := fha_right;
-          fmfm.borders.left.style := fbs_Thin;
-          fmfm.borders.left.colorIndex := NearestColorIndex(clblack);
-
-          fmfm.FillPattern.Pattern := 2; // solid fill
-          fmfm.FillPattern.BgColorIndex := 0; // hm
-
-          // Header Format (hellgelb)
-          fmfm.FillPattern.FgColorIndex := NearestColorIndex
-            (HTMLColor2TColor($FFFF99));
-          fmHeader := addFormat(fmfm);
-
-          // Highlighted Row Format (hellblau)
-          fmfm.FillPattern.FgColorIndex := NearestColorIndex
-            (HTMLColor2TColor($88EEFF));
-          fmHigh := addFormat(fmfm);
-
-          // Spezialfall für Datum
-          xlsFormat := fmfm.format;
-          fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
-          fmHigh_Date := addFormat(fmfm);
-          fmfm.format := xlsFormat;
-
-          fmfm.FillPattern.FgColorIndex := NearestColorIndex(clWhite);
-          fmLow := addFormat(fmfm);
-
-          //
-          xlsFormat := fmfm.format;
-          fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
-          fmLow_Date := addFormat(fmfm);
-
-          // Messergebnisse
-          ActiveSheet := countMAIN + 2; // PE!
-          WriteContent(ContentItems, ContentHeaders);
-
-          // Ausfälle
-          REJECT := TList.create;
-          Tmp_load(REJECT, AnwenderPath + cQuestionaireRejectFName);
-
-          GLOBAL := TList.create;
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('PARAMETER'); // [0]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 1-4'); // [1]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 5'); // [2]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 6'); // [3]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 7'); // [4]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 8'); // [5]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 9'); // [6]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 10'); // [7]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 11'); // [8]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall 12'); // [9]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall sonstige'); // [10]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Ausfall Summe'); // [11]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('MF Summe'); // [12]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('MF+'); // [13]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('MF-'); // [14]
-          GLOBAL.add(GlobalSubs);
-
-          GlobalSubs := TStringList.create;
-          GlobalSubs.add('Questionaire'); // [15]
-          GLOBAL.add(GlobalSubs);
-
-          // Jetzt kommt der Variable teil!
-          DynamicFirstRow := GLOBAL.count;
-          for c := 0 to pred(ContentHeaders.count) do
-          begin
-            GlobalSubs := TStringList.create;
-            GlobalSubs.add(ContentHeaders[c]);
-            GLOBAL.add(GlobalSubs);
-          end;
-
-          // Jetzt die 2. Spalte befüllen (mit leeren werten!)
-          for r := 0 to pred(GLOBAL.count) do
-          begin
-            GlobalSubs := TStringList(GLOBAL[r]);
-            if (r = 0) then
-              GlobalSubs.add('WERT')
-            else
-              GlobalSubs.add('');
-          end;
-
-          for r := 1 to pred(REJECT.count) do
-          begin
-            GlobalSubs := TStringList(REJECT[r]);
-            Ausfall := StrToIntDef(GlobalSubs[1], 0); // Ausfallgrund!
-            case Ausfall of
-              1 .. 4:
-                AusfallSubs := TStringList(GLOBAL[1]);
-              5 .. 12:
-                AusfallSubs := TStringList(GLOBAL[Ausfall - 3]);
-            else
-              // alle Sonstigen!
-              AusfallSubs := TStringList(GLOBAL[10]);
-            end;
-            AusfallSubs[1] := '+' + inttostr
-              (StrToIntDef(AusfallSubs[1], 0) + 1);
-          end;
-
-          // Summe der Ausfälle
-          AusfallSubs := TStringList(GLOBAL[11]);
-          AusfallSubs[1] := '+' + inttostr(pred(REJECT.count));
-
-          // Summe der MF
-          AusfallSubs := TStringList(GLOBAL[12]);
-          AusfallSubs[1] := '+' + inttostr(ContentItems.count);
-
-          Tmp_delete(REJECT);
-          REJECT.free;
-
-          // Messfehler
-          MF := TList.create;
-          Tmp_load(MF, iOlapPath + 'External.MF.txt');
-
-          // Fehlende Spalte erweitern
-          for c := 0 to pred(MF.count) do
-          begin
-            ContentSubs := TStringList(MF[c]);
-            if (c = 0) then
-              ContentSubs.add('GUT')
-            else
-              ContentSubs.add('+0');
-          end;
-
-          // Werte hinzuaddieren
-          for c := 0 to pred(ContentItems.count) do
-          begin
-            ContentSubs := TStringList(ContentItems[c]);
-            SearchD := round(
-
-              (strtodoubledef(ContentSubs[col_Q02max], 0) - strtodoubledef
-                  (ContentSubs[col_Qmax], 0))
-
-                * 10) / 10;
-            if (SearchD < 0) then
-              TStringList(GLOBAL[14])[1] := '+' + inttostr
-                (StrToIntDef(TStringList(GLOBAL[14])[1], 0) + 1)
-            else
-              TStringList(GLOBAL[13])[1] := '+' + inttostr
-                (StrToIntDef(TStringList(GLOBAL[13])[1], 0) + 1);
-            for c2 := 1 to pred(MF.count) do
-            begin
-              MFSubs := TStringList(MF[c2]);
-              if (strtodoubledef(MFSubs[0], 0) = SearchD) then
-                MFSubs[1] := '+' + inttostr(StrToIntDef(MFSubs[1], 0) + 1);
-            end;
-          end;
-
-          // Aufzählungsliste dazu
-          for r := 0 to pred(ContentHeaders.count) do
-          begin
-            GlobalSubs := TStringList(GLOBAL[r + DynamicFirstRow]);
-            GlobalSubs[1] := ' ' + Tmp_Aufzaehlung(ContentItems, r, false);
-          end;
-
-          // Selektions-String dazu
-          RefreshQuestionaireInfo;
-          GlobalSubs := TStringList(GLOBAL[15]);
-          GlobalSubs[1] := Memo1.lines[0];
-
-          ActiveSheet := countMAIN + 3;
-          WriteContent(MF);
-
-          // imp pend: rausschreiben ganzer Datenreihen.
-
-          // Radpaar
-          RP := TList.create;
-          Tmp_load(RP, iOlapPath + 'External.Gears.txt');
-
-          // Fehlende Spalte erweitern
-          for c := 0 to pred(RP.count) do
-          begin
-            ContentSubs := TStringList(RP[c]);
-            if (c = 0) then
-              ContentSubs.add('ANZ')
-            else
-              ContentSubs.add('+0');
-          end;
-
-          for c := 0 to pred(ContentItems.count) do
-          begin
-            ContentSubs := TStringList(ContentItems[c]);
-            SearchStr := ContentSubs[col_Radpaar];
-            for c2 := 1 to pred(RP.count) do
-            begin
-              MFSubs := TStringList(RP[c2]);
-              if (MFSubs[0] = SearchStr) then
-                MFSubs[2] := '+' + inttostr(StrToIntDef(MFSubs[2], 0) + 1);
-            end;
-          end;
-
-          ActiveSheet := countMAIN + 4; // RP!
-          WriteContent(RP);
-
-          ActiveSheet := countMAIN + 1; // IN!
-          WriteContent(GLOBAL);
-
-          // eventuell noch Spalten vorkopieren
-          // Hier nur die Aufgaben sammeln
-          for s := 1 to countMAIN do
-          begin
-
-            //
-            ActiveSheet := s;
-
-            //
-            for r := 1 to 80 do
-              for c := 1 to 30 do
-              begin
-                if (pos('#', CellValue[r, c]) = 3) then
-                  CopyColumn.add
-                    (inttostr(s) + ',' + CellValue[r, c] + ',' + inttostr(r)
-                      + ',' + inttostr(c));
-              end;
-
-          end;
-
-          // Jetzt die Arbeit machen (lassen)
-          CloneContent(CopyColumn);
-
-          // Objekte freigeben
-          Tmp_delete(MF);
-          MF.free;
-          Tmp_delete(RP);
-          RP.free;
-          Tmp_delete(GLOBAL);
-          GLOBAL.free;
-          if not(UserBreak) then
-          begin
-            Save(AnwenderPath + 'out.xls');
-            MakePDF(AnwenderPath + 'out.xls', AnwenderPath + 'out.pdf');
-          end;
-          adapter := nil;
-        end;
-        xlsMACHINE.free;
-        xlsAUSGABE.free;
-        CopyColumn.free;
-        EndHourGlass;
-        if not(UserBreak) then
-          if AllowOpen then
-            openShell(AnwenderPath + 'out.xls');
-      end
-      else
-      begin
-        ShowMessage('Ausgabe XLS ist noch offen!');
-      end;
-      UserBreak := false;
-    end;
-
-    function TFormOLAPArbeitsplatz.ColparamAsInteger
-      (c: Integer; const s: string): Integer;
-    var
-      sSettings: TStringList;
-    begin
-      sSettings := TStringList(ColSettings[c]);
-      result := StrToIntDef(sSettings.values[s], -1);
-    end;
-
-    function TFormOLAPArbeitsplatz.ColparamAsInteger(const s: string): Integer;
-    begin
-      result := ColparamAsInteger(StrToIntDef(nextp(s, '.', 0), 0), nextp
-          (s, '.', 1));
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ComboBox1Select(Sender: TObject);
-    begin
-      // load
-      quLoad(ComboBox1.text);
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton19Click(Sender: TObject);
-    var
-      n: Integer;
-      SettingsS: TStringList;
-    begin
-      SettingsS := TStringList.create;
-      for n := 1 to MaxTag do
-        SettingsS.add(inttostr(n) + '=*');
-      ComboBox1.text := 'Neu_' + Datum + cOLAPAbfrageExtension;
-      quLoad(SettingsS);
-      SettingsS.free;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton20Click(Sender: TObject);
-    var
-      LastParameterFName: string;
-    begin
-      if doit(ComboBox1.text + ' wirklich löschen?') then
-      begin
-        FileDelete(AnwenderPath + ComboBox1.text);
-        RefreshLoadCombo;
-        ComboBox1.text := '';
-        LastParameterFName := quLastFName('*' + cOLAPAbfrageExtension);
-        if (LastParameterFName <> '') then
-          quLoad(LastParameterFName);
-      end;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton21Click(Sender: TObject);
-    begin
-      readHelium;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton22Click(Sender: TObject);
-    var
-      LastParameterFName: string;
-    begin
-      if FileExists(AnwenderPath + ComboBox1.text) then
-      begin
-        FileCopy(AnwenderPath + ComboBox1.text,
-          AnwenderPath + 'Kopie_' + Datum + cOLAPAbfrageExtension);
-        FileTouch(AnwenderPath + 'Kopie_' + Datum + cOLAPAbfrageExtension);
-        RefreshLoadCombo;
-        LastParameterFName := quLastFName('*' + cOLAPAbfrageExtension);
-        if (LastParameterFName <> '') then
-          quLoad(LastParameterFName);
-      end
-      else
-      begin
-        ShowMessage('Fehler' + #13 + 'Datei ' + AnwenderPath + ComboBox1.text +
-            #13 + 'nicht gefunden!');
-      end;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.SpeedButton3Click(Sender: TObject);
-    begin
-      RefreshLoadCombo;
-    end;
-
-    function TFormOLAPArbeitsplatz.fullQuest(fromTable: string): TStringList;
-    var
-      SelfJoinIndex: Integer;
-      n, m: Integer;
-      ExtraWhere: TStringList;
-      JoinTables: TStringList;
-      SQLconditions: Integer;
-    begin
-
-      //
-      JoinTables := TStringList.create;
-      result := TStringList.create;
-
-      result.add('select distinct');
-      result.add('  ' + fromTable + '.EQUIPMENTID');
-      result.add(' ,' + fromTable + '.CALIBRATIONID');
-      result.add(' ,METERS.SERIALNUMBER');
-      result.add('from');
-      result.add(' ' + fromTable);
-
-      ExtraWhere := fullWhere(JoinTables);
-      if (ExtraWhere.count > 0) then
-        ersetze(' and (', '     (', ExtraWhere, 0);
-
-      //
-      // J O I N
-      //
-
-      // join auf eigene "from" Tabelle verhindern
-      SelfJoinIndex := JoinTables.indexof(fromTable);
-      if (SelfJoinIndex <> -1) then
-        JoinTables.delete(SelfJoinIndex);
-
-      // Meters jedoch immer sicherstellen!
-      if (fromTable <> 'METERS') then
-        if (JoinTables.indexof('METERS') = -1) then
-          JoinTables.add('METERS');
-
-      // join auf die restlichen, verbleibenden Tabellen verbinden
-      if (JoinTables.count > 0) then
-      begin
-        for n := 0 to pred(JoinTables.count) do
-        begin
-          result.add('inner join');
-          result.add(' ' + JoinTables[n]);
-          result.add('on');
-          SQLconditions := 0;
-          for m := 0 to pred(JoinFields.count) do
-            if quTableHas(fromTable, JoinFields[m]) and quTableHas
-              (JoinTables[n], JoinFields[m]) then
-              result.add(' ' + SQL_and(SQLconditions)
-                  + '(' + fromTable + '.' + JoinFields[m] + '=' + JoinTables[n]
-                  + '.' + JoinFields[m] + ')');
-        end;
-
-      end;
-
-      // W H E R E
-      result.add('where');
-
-      // Hier die Wheres
-      result.addstrings(ExtraWhere);
-
-      // S O R T
-      result.add('order by');
-      result.add(' METERS.SERIALNUMBER');
-
-      ExtraWhere.free;
-      JoinTables.free;
-    end;
-
-    function TFormOLAPArbeitsplatz.fullReject(fromTable: string): TStringList;
-    var
-      SelfJoinIndex: Integer;
-      n, m: Integer;
-      ExtraWhere: TStringList;
-      JoinTables: TStringList;
-      SQLconditions: Integer;
-    begin
-
-      //
-      JoinTables := TStringList.create;
-      result := TStringList.create;
-
-      result.add('select distinct');
-      result.add(' rejections.equipmentid,');
-      result.add(' rejections.rejectionid,');
-      result.add(' rejections.calibrationid,');
-      result.add(' rejections.PositionNumber');
-      result.add('from');
-      result.add(' ' + fromTable);
-
-      ExtraWhere := fullWhere(JoinTables);
-      if (ExtraWhere.count > 0) then
-        ersetze(' and (', '     (', ExtraWhere, 0);
-
-      //
-      // J O I N
-      //
-      SelfJoinIndex := JoinTables.indexof(fromTable);
-      if (SelfJoinIndex <> -1) then
-        JoinTables.delete(SelfJoinIndex);
-
-      // Rejections muss aber dabei sein!
-      if (JoinTables.indexof('REJECTIONS') = -1) then
-        JoinTables.add('REJECTIONS');
-
-      if (JoinTables.count > 0) then
-      begin
-        for n := 0 to pred(JoinTables.count) do
-        begin
-          result.add('inner join');
-          result.add(' ' + JoinTables[n]);
-          result.add('on');
-          SQLconditions := 0;
-          for m := 0 to pred(JoinFields.count) do
-            if quTableHas(fromTable, JoinFields[m]) and quTableHas
-              (JoinTables[n], JoinFields[m]) then
-              result.add(' ' + SQL_and(SQLconditions)
-                  + '(' + fromTable + '.' + JoinFields[m] + '=' + JoinTables[n]
-                  + '.' + JoinFields[m] + ')');
-        end;
-
-      end;
-
-      // W H E R E
-      result.add('where');
-
-      // Hier die Wheres
-      result.addstrings(ExtraWhere);
-
-      ExtraWhere.free;
-      JoinTables.free;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.quFillGrid;
-    begin
-      //
-      StaticText4.Caption := 'Serial #' + #13 + 'Anz: ' + inttostr
-        (pred(ContentItems.count));
-
-      // application.processmessage
-      if assigned(ContentHeaders) then
-        FreeAndNil(ContentHeaders);
-      ContentHeaders := TStringList(ContentItems[0]);
-      ContentItems.delete(0);
-
-      with DrawGrid1 do
-      begin
-        inc(SupressGridPaint);
-        rowCount := ContentItems.count;
-        row := pred(rowCount);
-        dec(SupressGridPaint);
-        refresh;
-      end;
-
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton27Click(Sender: TObject);
-    begin
-      openShell(AnwenderPath + cQuestionaireVolumeFName);
-    end;
-
-    procedure TFormOLAPArbeitsplatz.FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    begin
-      case Key of
-        ord('m'), ord('M'), ord(' '):
-          if DrawGrid1.focused then
-          begin
-            if ssCtrl in Shift then
-            begin
-              // suche nächsten Markierten
-              // FindNextMarked;
-            end
-            else
-            begin
-              Key := 0;
-              Mark;
-            end;
-          end;
-      end;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.Mark;
-    var
-      FoundIndex: Integer;
-    begin
-      if (ContentItems.count > 0) then
-      begin
-        FoundIndex := ItemMarked.indexof(DrawGrid1.row);
-        if (FoundIndex = -1) then
-        begin
-          ItemMarked.add(DrawGrid1.row);
+          // suche nächsten Markierten
+          // FindNextMarked;
         end
         else
-          ItemMarked.delete(FoundIndex);
-        // RefreshCountAnzeige;
-
-        // redraw one line;
-        if (DrawGrid1.row < pred(DrawGrid1.rowCount)) then
-          DrawGrid1.row := DrawGrid1.row + 1
-        else
-          DrawGrid1.refresh;
-      end;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton7Click(Sender: TObject);
-    var
-      n: Integer;
-    begin
-      BeginHourGlass;
-      if (ItemMarked.count = 0) then
-      begin
-        for n := 0 to pred(ContentItems.count) do
-          ItemMarked.add(n);
-      end
-      else
-      begin
-        ItemMarked.clear;
-      end;
-      DrawGrid1.refresh;
-      EndHourGlass;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton9Click(Sender: TObject);
-    var
-      _ItemMarked: TgpIntegerList;
-      n: Integer;
-    begin
-      // invert marked list
-      BeginHourGlass;
-      _ItemMarked := TgpIntegerList.create;
-      for n := 0 to pred(ContentItems.count) do
-        if (ItemMarked.indexof(n) = -1) then
-          _ItemMarked.add(n);
-      FreeAndNil(ItemMarked);
-      ItemMarked := _ItemMarked;
-      DrawGrid1.refresh;
-      EndHourGlass;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.writeGestern;
-    var
-      sGestern: string;
-    begin
-      try
-        BeginHourGlass;
-
-        // Auswahl "gestern" laden
-        quLoad('gestern.OLAP-Parameter.txt');
-
-        // richtige XLS Vorlage anwählen
-        ComboBox2.text := 'Tagesbericht.xls';
-
-        // Starten
-        run;
-
-        FileDelete(AnwenderPath + 'out.pdf');
-
-        // XLS Funktion auslösen
-        bericht(false);
-
-        // XLS-Ergebnis in die Ablage verschieben
-        if FileExists(AnwenderPath + 'out.pdf') then
         begin
-          sGestern := long2date(DatePlus(DateGet, -1));
-          CheckCreateDir(iAuftragsAblagePath + 'Tagesberichte\');
-          FileCopy(AnwenderPath + 'out.pdf',
-            iAuftragsAblagePath + 'Tagesberichte\' + copy(sGestern, 8, 4)
-              + '-' + copy(sGestern, 4, 2) + '-' + copy(sGestern, 1, 2)
-              + '.pdf');
-        end;
-
-        EndHourGlass;
-
-      except
-
-      end;
-
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton10Click(Sender: TObject);
-    begin
-      ShowMessage('Dies vermindert das Ergebnisvolumen.' + #13 +
-          'Diese Funktion ist für Auswertungen sehr kritisch und wurde deaktiviert!');
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton5Click(Sender: TObject);
-    begin
-      ItemMarked.clear;
-      DrawGrid1.refresh;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton6Click(Sender: TObject);
-    begin
-      bericht;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.Content_complete;
-    var
-      r, c: Integer;
-      Subs: TStringList;
-      StartTime: dword;
-    begin
-      //
-      // sicherstellen, dass alle Spalten nun gefüllt sind!
-      //
-      BeginHourGlass;
-      try
-        ProgressBar1.max := ContentItems.count;
-        for r := 0 to pred(ContentItems.count) do
-        begin
-          Subs := TStringList(ContentItems[r]);
-          Content_prepare(Subs);
-          if not(UserBreak) then
-            for c := col_FirstCalculated to col_last do
-              if (Subs[c] = cOLAPNull) then
-                Subs[c] := Content_CellText(r, c);
-          if frequently(StartTime, 666) then
-          begin
-            application.processmessages;
-            ProgressBar1.position := r;
-          end;
-        end;
-      except
-      end;
-      ProgressBar1.position := 0;
-      EndHourGlass;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton29Click(Sender: TObject);
-
-    const
-      cWienGasSeperator = ',';
-
-    var
-      wiengas: TStringList;
-      Subs: TStringList;
-      r: Integer;
-
-      function WienGasSerial(s: string): string;
-      begin
-        result := fill('0', 8 - length(s)) + s;
-      end;
-
-      function WienGasNumeric(s: string): string;
-      begin
-        result := s;
-        ersetze(',', '.', result);
-      end;
-
-      function WienGasDatum(s: string): string;
-      begin
-        result := nextp(s, ' ', 0);
-      end;
-
-    begin
-      // Speichere im wiengas Format
-      BeginHourGlass;
-      Content_complete;
-      wiengas := TStringList.create;
-      for r := 0 to pred(ContentItems.count) do
-      begin
-        Subs := TStringList(ContentItems[r]);
-        wiengas.add(WienGasSerial(Subs[col_FirstFrei + 1])
-            + cWienGasSeperator + 'B' + cWienGasSeperator + WienGasDatum
-            (Subs[col_Moment]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_Qmin]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_Q02max]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_Qmax]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_Dmin]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_D02max]) + cWienGasSeperator + WienGasNumeric
-            (Subs[col_Dmax]));
-      end;
-      wiengas.SaveToFile(AnwenderPath + 'wiengas.txt');
-      wiengas.free;
-      EndHourGlass;
-      openShell(AnwenderPath + 'wiengas.txt');
-    end;
-
-    procedure TFormOLAPArbeitsplatz.Content_prepare(Subs: TStringList);
-    var
-      n: Integer;
-    begin
-      if (Subs.count <= col_last) then
-        for n := Subs.count to col_last do
-          Subs.add(cOLAPNull);
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton16Click(Sender: TObject);
-    var
-      Subs: TStringList;
-    begin
-      ShowMessage('Im Moment gesperrt!');
-      exit;
-      if (ContentItems.count > 0) then
-      begin
-        Subs := TStringList(ContentItems[DrawGrid1.row]);
-        FormOLAPedit.SetContext(Subs[col_Equipment], Subs[col_Calibration],
-          Subs[col_Serial]);
-      end;
-    end;
-
-    function TFormOLAPArbeitsplatz.Tmp_Aufzaehlung(tTable: TList; col: Integer;
-      HasHeader: boolean = true): string;
-    var
-      Subs: TStringList;
-      DistinctItems: TStringList;
-      r: Integer;
-      StartR: Integer;
-
-      // für numerische Werte
-      NumericMode: boolean;
-      maxEl_s, minEl_s: string;
-      maxEl, minEl: double;
-      AsNum: double;
-    begin
-      DistinctItems := TStringList.create;
-
-      if HasHeader then
-        StartR := 1
-      else
-        StartR := 0;
-
-      maxEl_s := cOLAPNull;
-      minEl_s := cOLAPNull;
-      maxEl := MinDouble;
-      minEl := MAxDouble;
-
-      if tTable.count > StartR then
-        NumericMode := (pos('+', TStringList(tTable[StartR])[col]) = 1) or
-          (pos('-', TStringList(tTable[StartR])[col]) = 1)
-      else
-        NumericMode := false;
-
-      for r := StartR to pred(tTable.count) do
-      begin
-        Subs := TStringList(tTable[r]);
-        if (Subs[col] <> cOLAPNull) then
-        begin
-          if NumericMode then
-          begin
-
-            AsNum := strtodoubledef(Subs[col], 0);
-            if (AsNum > maxEl) then
-            begin
-              maxEl_s := Subs[col];
-              maxEl := AsNum;
-            end;
-
-            if (AsNum < minEl) then
-            begin
-              minEl_s := Subs[col];
-              minEl := AsNum;
-            end;
-
-          end
-          else
-          begin
-            DistinctItems.add(fmDisplay(Subs[col]));
-          end;
+          Key := 0;
+          Mark;
         end;
       end;
+  end;
+end;
+
+procedure TFormOLAPArbeitsplatz.Mark;
+var
+  FoundIndex: Integer;
+begin
+  if (ContentItems.count > 0) then
+  begin
+    FoundIndex := ItemMarked.indexof(DrawGrid1.row);
+    if (FoundIndex = -1) then
+    begin
+      ItemMarked.add(DrawGrid1.row);
+    end
+    else
+      ItemMarked.delete(FoundIndex);
+    // RefreshCountAnzeige;
+
+    // redraw one line;
+    if (DrawGrid1.row < pred(DrawGrid1.rowCount)) then
+      DrawGrid1.row := DrawGrid1.row + 1
+    else
+      DrawGrid1.refresh;
+  end;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton7Click(Sender: TObject);
+var
+  n: Integer;
+begin
+  BeginHourGlass;
+  if (ItemMarked.count = 0) then
+  begin
+    for n := 0 to pred(ContentItems.count) do
+      ItemMarked.add(n);
+  end
+  else
+  begin
+    ItemMarked.clear;
+  end;
+  DrawGrid1.refresh;
+  EndHourGlass;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton9Click(Sender: TObject);
+var
+  _ItemMarked: TgpIntegerList;
+  n: Integer;
+begin
+  // invert marked list
+  BeginHourGlass;
+  _ItemMarked := TgpIntegerList.create;
+  for n := 0 to pred(ContentItems.count) do
+    if (ItemMarked.indexof(n) = -1) then
+      _ItemMarked.add(n);
+  FreeAndNil(ItemMarked);
+  ItemMarked := _ItemMarked;
+  DrawGrid1.refresh;
+  EndHourGlass;
+end;
+
+procedure TFormOLAPArbeitsplatz.writeGestern;
+var
+  sGestern: string;
+begin
+  try
+    BeginHourGlass;
+
+    // Auswahl "gestern" laden
+    quLoad('gestern.OLAP-Parameter.txt');
+
+    // richtige XLS Vorlage anwählen
+    ComboBox2.text := 'Tagesbericht.xls';
+
+    // Starten
+    run;
+
+    FileDelete(AnwenderPath + 'out.pdf');
+
+    // XLS Funktion auslösen
+    bericht(false);
+
+    // XLS-Ergebnis in die Ablage verschieben
+    if FileExists(AnwenderPath + 'out.pdf') then
+    begin
+      sGestern := long2date(DatePlus(DateGet, -1));
+      CheckCreateDir(iAuftragsAblagePath + 'Tagesberichte\');
+      FileCopy(AnwenderPath + 'out.pdf', iAuftragsAblagePath + 'Tagesberichte\'
+        + copy(sGestern, 8, 4) + '-' + copy(sGestern, 4, 2) + '-' +
+        copy(sGestern, 1, 2) + '.pdf');
+    end;
+
+    EndHourGlass;
+
+  except
+
+  end;
+
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton10Click(Sender: TObject);
+begin
+  ShowMessage('Dies vermindert das Ergebnisvolumen.' + #13 +
+    'Diese Funktion ist für Auswertungen sehr kritisch und wurde deaktiviert!');
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton5Click(Sender: TObject);
+begin
+  ItemMarked.clear;
+  DrawGrid1.refresh;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton6Click(Sender: TObject);
+begin
+  bericht;
+end;
+
+procedure TFormOLAPArbeitsplatz.Content_complete;
+var
+  r, c: Integer;
+  Subs: TStringList;
+  StartTime: dword;
+begin
+  //
+  // sicherstellen, dass alle Spalten nun gefüllt sind!
+  //
+  BeginHourGlass;
+  try
+    ProgressBar1.max := ContentItems.count;
+    for r := 0 to pred(ContentItems.count) do
+    begin
+      Subs := TStringList(ContentItems[r]);
+      Content_prepare(Subs);
+      if not(UserBreak) then
+        for c := col_FirstCalculated to col_last do
+          if (Subs[c] = cOLAPNull) then
+            Subs[c] := Content_CellText(r, c);
+      if frequently(StartTime, 666) then
+      begin
+        application.processmessages;
+        ProgressBar1.position := r;
+      end;
+    end;
+  except
+  end;
+  ProgressBar1.position := 0;
+  EndHourGlass;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton29Click(Sender: TObject);
+
+const
+  cWienGasSeperator = ',';
+
+var
+  wiengas: TStringList;
+  Subs: TStringList;
+  r: Integer;
+
+  function WienGasSerial(s: string): string;
+  begin
+    result := fill('0', 8 - length(s)) + s;
+  end;
+
+  function WienGasNumeric(s: string): string;
+  begin
+    result := s;
+    ersetze(',', '.', result);
+  end;
+
+  function WienGasDatum(s: string): string;
+  begin
+    result := nextp(s, ' ', 0);
+  end;
+
+begin
+  // Speichere im wiengas Format
+  BeginHourGlass;
+  Content_complete;
+  wiengas := TStringList.create;
+  for r := 0 to pred(ContentItems.count) do
+  begin
+    Subs := TStringList(ContentItems[r]);
+    wiengas.add(WienGasSerial(Subs[col_FirstFrei + 1]) + cWienGasSeperator + 'B'
+      + cWienGasSeperator + WienGasDatum(Subs[col_Moment]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_Qmin]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_Q02max]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_Qmax]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_Dmin]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_D02max]) + cWienGasSeperator +
+      WienGasNumeric(Subs[col_Dmax]));
+  end;
+  wiengas.SaveToFile(AnwenderPath + 'wiengas.txt');
+  wiengas.free;
+  EndHourGlass;
+  openShell(AnwenderPath + 'wiengas.txt');
+end;
+
+procedure TFormOLAPArbeitsplatz.Content_prepare(Subs: TStringList);
+var
+  n: Integer;
+begin
+  if (Subs.count <= col_last) then
+    for n := Subs.count to col_last do
+      Subs.add(cOLAPNull);
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton16Click(Sender: TObject);
+var
+  Subs: TStringList;
+begin
+  ShowMessage('Im Moment gesperrt!');
+  exit;
+  if (ContentItems.count > 0) then
+  begin
+    Subs := TStringList(ContentItems[DrawGrid1.row]);
+    FormOLAPedit.SetContext(Subs[col_Equipment], Subs[col_Calibration],
+      Subs[col_Serial]);
+  end;
+end;
+
+function TFormOLAPArbeitsplatz.Tmp_Aufzaehlung(tTable: TList; col: Integer;
+  HasHeader: boolean = true): string;
+var
+  Subs: TStringList;
+  DistinctItems: TStringList;
+  r: Integer;
+  StartR: Integer;
+
+  // für numerische Werte
+  NumericMode: boolean;
+  maxEl_s, minEl_s: string;
+  maxEl, minEl: double;
+  AsNum: double;
+begin
+  DistinctItems := TStringList.create;
+
+  if HasHeader then
+    StartR := 1
+  else
+    StartR := 0;
+
+  maxEl_s := cOLAPNull;
+  minEl_s := cOLAPNull;
+  maxEl := MinDouble;
+  minEl := MAxDouble;
+
+  if tTable.count > StartR then
+    NumericMode := (pos('+', TStringList(tTable[StartR])[col]) = 1) or
+      (pos('-', TStringList(tTable[StartR])[col]) = 1)
+  else
+    NumericMode := false;
+
+  for r := StartR to pred(tTable.count) do
+  begin
+    Subs := TStringList(tTable[r]);
+    if (Subs[col] <> cOLAPNull) then
+    begin
       if NumericMode then
       begin
-        result := minEl_s + ' .. ' + maxEl_s;
+
+        AsNum := strtodoubledef(Subs[col], 0);
+        if (AsNum > maxEl) then
+        begin
+          maxEl_s := Subs[col];
+          maxEl := AsNum;
+        end;
+
+        if (AsNum < minEl) then
+        begin
+          minEl_s := Subs[col];
+          minEl := AsNum;
+        end;
+
       end
       else
       begin
-        DistinctItems.sort;
-        RemoveDuplicates(DistinctItems);
-        case DistinctItems.count of
-          0:
-            result := '(0)';
-          1:
-            result := DistinctItems[0];
-          2:
-            result := DistinctItems[0] + ', ' + DistinctItems[1] + ' (2)';
-          3:
-            result := DistinctItems[0] + ', ' + DistinctItems[1]
-              + ', ' + DistinctItems[2] + ', ' + ' (3)';
+        DistinctItems.add(fmDisplay(Subs[col]));
+      end;
+    end;
+  end;
+  if NumericMode then
+  begin
+    result := minEl_s + ' .. ' + maxEl_s;
+  end
+  else
+  begin
+    DistinctItems.sort;
+    RemoveDuplicates(DistinctItems);
+    case DistinctItems.count of
+      0:
+        result := '(0)';
+      1:
+        result := DistinctItems[0];
+      2:
+        result := DistinctItems[0] + ', ' + DistinctItems[1] + ' (2)';
+      3:
+        result := DistinctItems[0] + ', ' + DistinctItems[1] + ', ' +
+          DistinctItems[2] + ', ' + ' (3)';
+    else
+      result := DistinctItems[0] + ' .. ' + DistinctItems
+        [pred(DistinctItems.count)] + ' (' +
+        inttostr(DistinctItems.count) + ')';
+    end;
+  end;
+  DistinctItems.free;
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton26Click(Sender: TObject);
+var
+  r: Integer;
+  SerialNo: TgpIntegerList;
+  LastSerial: Integer;
+  ReportFehlende: TStringList;
+  ReportDoppelte: TStringList;
+  Report: TStringList;
+  NextToCome: Integer;
+begin
+
+  // Erstellen der Liste mit fehlenden Serial-Nummern!
+  if (ContentItems.count > 2) then
+  begin
+
+    //
+    Report := TStringList.create;
+    ReportFehlende := TStringList.create;
+    ReportDoppelte := TStringList.create;
+    SerialNo := TgpIntegerList.create;
+    for r := 0 to pred(ContentItems.count) do
+      SerialNo.add(StrToIntDef(TStringList(ContentItems[r])[col_Serial], 0));
+    SerialNo.sort;
+
+    // erst mal Doppelte
+    LastSerial := MaxInt;
+    for r := 0 to pred(SerialNo.count) do
+    begin
+      if (SerialNo[r] = LastSerial) then
+        ReportDoppelte.add(inttostr(SerialNo[r]));
+      LastSerial := SerialNo[r];
+    end;
+
+    // nun die Folge sicherstellen!
+    NextToCome := SerialNo[0] + 1;
+    for r := 1 to pred(SerialNo.count) do
+    begin
+      if (NextToCome <> SerialNo[r]) then
+      begin
+        ReportFehlende.add(inttostr(NextToCome));
+        NextToCome := SerialNo[r] + 1;
+      end
+      else
+      begin
+        inc(NextToCome);
+      end;
+    end;
+
+    //
+  end;
+
+  Report.add('-- Doppelte: ' + inttostr(ReportDoppelte.count));
+  Report.add('');
+  Report.addstrings(ReportDoppelte);
+
+  Report.add('-- Fehlende: ' + inttostr(ReportFehlende.count));
+  Report.add('');
+  Report.addstrings(ReportFehlende);
+
+  Report.SaveToFile(AnwenderPath + 'Report.Doppelte.Fehlende.txt');
+
+  ReportFehlende.free;
+  ReportDoppelte.free;
+  Report.free;
+  EndHourGlass;
+
+  openShell(AnwenderPath + 'Report.Doppelte.Fehlende.txt');
+
+end;
+
+procedure TFormOLAPArbeitsplatz.ToolButton35Click(Sender: TObject);
+begin
+  Content_plausibel;
+end;
+
+procedure TFormOLAPArbeitsplatz.Content_plausibel;
+var
+  n: Integer;
+  Subs: TStringList;
+begin
+  BeginHourGlass;
+  Content_complete;
+  ItemMarked.clear;
+  for n := 0 to pred(ContentItems.count) do
+  begin
+    Subs := TStringList(ContentItems[n]);
+    if (Subs[col_AnzahlMesspunkte] <> '3') then
+      if (Subs[col_AnzahlMesspunkte] <> '4') then
+        ItemMarked.add(n);
+  end;
+  DrawGrid1.refresh;
+  EndHourGlass;
+  if not(UserBreak) then
+    if (ItemMarked.count > 0) then
+      ShowMessage('Es gibt unplausible!');
+end;
+
+procedure TFormOLAPArbeitsplatz.TabSheet5Show(Sender: TObject);
+begin
+  RefreshQuestionaireInfo;
+end;
+
+procedure TFormOLAPArbeitsplatz.RefreshQuestionaireInfo;
+var
+  n: Integer;
+  MyText: string;
+  s: string;
+  OneHit: boolean;
+  FieldName, FieldRealName: string;
+begin
+  BeginHourGlass;
+
+  Memo1.lines.clear;
+  if (ComboBox3.text <> '') then
+  begin
+    s := 'DB=' + ComboBox3.text;
+    OneHit := true;
+  end
+  else
+  begin
+    s := '';
+    OneHit := false;
+  end;
+
+  for n := 1 to MaxTag do
+  begin
+    MyText := TagEdit(n).text;
+    if (MyText <> '*') then
+    begin
+      if OneHit then
+        s := s + ' & ';
+
+      FieldName := TagLabel(n).Caption;
+      FieldRealName := nextp(QuestionaireFields.values[inttostr(n)], '.', 1);
+      if (FieldName <> FieldRealName) then
+        FieldName := FieldName + '(' + FieldRealName + ')';
+      ersetze('&', '', FieldName);
+
+      s := s + FieldName + '=' + MyText;
+      OneHit := true;
+    end;
+  end;
+  Memo1.lines.add(s);
+  EndHourGlass;
+end;
+
+procedure TFormOLAPArbeitsplatz.SpeedButton1Click(Sender: TObject);
+begin
+  RefreshQuestionaireInfo;
+end;
+
+procedure TFormOLAPArbeitsplatz.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if bErlaubnis('OLAP Arbeitsplatz Autostart') then
+    FormMain.close;
+end;
+
+procedure TFormOLAPArbeitsplatz.FormCreate(Sender: TObject);
+begin
+  with ToolBar1 do
+  begin
+    ButtonHeight := height - 2;
+    ButtonWidth := dpiX(23);
+  end;
+end;
+
+function TFormOLAPArbeitsplatz.quFieldTypeDateTime(eTag: Integer): boolean;
+begin
+  // Noch keine Anwendung, da kodierung als String OK ist
+end;
+
+procedure TFormOLAPArbeitsplatz.RefreshXLSCombo;
+var
+  FilesL: TStringList;
+begin
+  //
+  FilesL := TStringList.create;
+  dir(AnwenderPath + '*.xls', FilesL, false);
+  FilesL.sort;
+  FilesL.insert(0, '- ohne -');
+  ComboBox2.items.assign(FilesL);
+  FilesL.free;
+end;
+
+procedure TFormOLAPArbeitsplatz.run;
+var
+  ActInputFieldTag: Integer;
+  sql: TStringList;
+  fromTable: string;
+begin
+  BeginHourGlass;
+  UserBreak := false;
+  try
+    //
+    ActInputFieldTag := FocusTag;
+    if (ActInputFieldTag > 0) then
+      fromTable := nextp(quFieldName(ActInputFieldTag), '.', 0)
+    else
+      fromTable := 'METERS';
+
+    //
+    sql := fullQuest(fromTable);
+    ExportTable(sql, AnwenderPath + cQuestionaireVolumeFName);
+    sql.free;
+
+    //
+    sql := fullReject(fromTable);
+    ExportTable(sql, AnwenderPath + cQuestionaireRejectFName);
+    sql.free;
+
+    // Ergebnis anzeigen!
+    Content_load(AnwenderPath + cQuestionaireVolumeFName);
+
+    quFillGrid;
+
+  except
+  end;
+  EndHourGlass;
+end;
+
+procedure TFormOLAPArbeitsplatz.dir(const Mask: string; FileNames: TStrings;
+  uppercase: boolean);
+var
+  n, j: Integer;
+begin
+  anfix32.dir(Mask, FileNames, uppercase);
+  for n := 0 to pred(BlackList.count) do
+  begin
+    j := FileNames.indexof(BlackList[n]);
+    if (j <> -1) then
+      FileNames.delete(j);
+  end;
+end;
+
+procedure TFormOLAPArbeitsplatz.readHelium;
+const
+  s_csv_FormatRevision = 0;
+  s_csv_Datum = 1;
+  s_csv_Uhrzeit = 2;
+  s_csv_Zaehlertyp = 3;
+  s_csv_Pruefwerkzeug = 4;
+  s_csv_Membranhersteller = 5;
+  s_csv_Chargennummer = 6;
+  s_csv_fortlNummer = 7;
+  s_csv_Station_Pruefkammer = 8;
+  s_csv_Kammer_Glocke = 9;
+  s_csv_Messwert = 10;
+  s_csv_Grenzwert = 11;
+  s_csv_Pruefergebnis = 12;
+  s_csv_Separator = ';';
+  s_csv_IllegalChar_1 = #0;
+var
+  EQUIPMENTID: string;
+  CALIBRATIONID: Integer;
+  SERIALNUMBER: string;
+  PRUEFMOMENT: TDateTime;
+  FIELD_DATE: TANfixDate;
+
+  cINSERT: TIB_Cursor;
+  qCALIBRATIONS: TIB_Query;
+  qMETERS: TIB_Query;
+  qTESTS: TIB_Query;
+
+  // CSV
+  sCSV: TStringList;
+  sData: TStringList;
+  rData: string;
+  n, l, t: Integer;
+  StartTime: dword;
+  OneProcessed: boolean;
+  DestPath: string;
+  rCnt: Integer;
+
+  procedure SwapTo(FName: string; sl: TStrings);
+  var
+    BinFile: file;
+    a: array [0 .. 4095] of byte;
+    n, i: Integer;
+    s: string;
+  begin
+    sl.clear;
+    try
+      AssignFile(BinFile, FName);
+      reset(BinFile, 1);
+      BlockRead(BinFile, a, sizeof(a), i);
+      s := '';
+      for n := 0 to pred(i) do
+      begin
+        case a[n] of
+          13, 0:
+            ;
+          10:
+            begin
+              sl.add(s);
+              s := '';
+            end;
         else
-          result := DistinctItems[0] + ' .. ' + DistinctItems
-            [pred(DistinctItems.count)] + ' (' + inttostr(DistinctItems.count)
-            + ')';
+          s := s + chr(a[n]);
         end;
       end;
-      DistinctItems.free;
+      if (s <> '') then
+        sl.add(s);
+      CloseFile(BinFile);
+    except
+    end;
+  end;
+
+begin
+  if (iAuftragsObjektPath = '') then
+    exit;
+
+  BeginHourGlass;
+
+  sCSV := TStringList.create;
+  dir(iAuftragsObjektPath + '*.CSV', sCSV, false);
+  sCSV.sort;
+
+  if (sCSV.count > 0) then
+  begin
+
+    ProgressBar1.position := 0;
+    ProgressBar1.max := sCSV.count;
+    StartTime := 0;
+    qCALIBRATIONS := DataModuleDatenbank.nQuery;
+    qMETERS := DataModuleDatenbank.nQuery;
+    qTESTS := DataModuleDatenbank.nQuery;
+    cINSERT := DataModuleDatenbank.nCursor;
+    sData := TStringList.create;
+
+    // prepare calibs
+    with qCALIBRATIONS do
+    begin
+      if assigned(cConnection) then
+        ib_connection := cConnection;
+      sql.add('select * from CALIBRATIONS for update');
     end;
 
-    procedure TFormOLAPArbeitsplatz.ToolButton26Click(Sender: TObject);
-    var
-      r: Integer;
-      SerialNo: TgpIntegerList;
-      LastSerial: Integer;
-      ReportFehlende: TStringList;
-      ReportDoppelte: TStringList;
-      Report: TStringList;
-      NextToCome: Integer;
+    // prepare meters
+    with qMETERS do
     begin
-
-      // Erstellen der Liste mit fehlenden Serial-Nummern!
-      if (ContentItems.count > 2) then
-      begin
-
-        //
-        Report := TStringList.create;
-        ReportFehlende := TStringList.create;
-        ReportDoppelte := TStringList.create;
-        SerialNo := TgpIntegerList.create;
-        for r := 0 to pred(ContentItems.count) do
-          SerialNo.add(StrToIntDef(TStringList(ContentItems[r])[col_Serial], 0)
-            );
-        SerialNo.sort;
-
-        // erst mal Doppelte
-        LastSerial := MaxInt;
-        for r := 0 to pred(SerialNo.count) do
-        begin
-          if (SerialNo[r] = LastSerial) then
-            ReportDoppelte.add(inttostr(SerialNo[r]));
-          LastSerial := SerialNo[r];
-        end;
-
-        // nun die Folge sicherstellen!
-        NextToCome := SerialNo[0] + 1;
-        for r := 1 to pred(SerialNo.count) do
-        begin
-          if (NextToCome <> SerialNo[r]) then
-          begin
-            ReportFehlende.add(inttostr(NextToCome));
-            NextToCome := SerialNo[r] + 1;
-          end
-          else
-          begin
-            inc(NextToCome);
-          end;
-        end;
-
-        //
-      end;
-
-      Report.add('-- Doppelte: ' + inttostr(ReportDoppelte.count));
-      Report.add('');
-      Report.addstrings(ReportDoppelte);
-
-      Report.add('-- Fehlende: ' + inttostr(ReportFehlende.count));
-      Report.add('');
-      Report.addstrings(ReportFehlende);
-
-      Report.SaveToFile(AnwenderPath + 'Report.Doppelte.Fehlende.txt');
-
-      ReportFehlende.free;
-      ReportDoppelte.free;
-      Report.free;
-      EndHourGlass;
-
-      openShell(AnwenderPath + 'Report.Doppelte.Fehlende.txt');
-
+      if assigned(cConnection) then
+        ib_connection := cConnection;
+      sql.add('select * from METERS for update');
     end;
 
-    procedure TFormOLAPArbeitsplatz.ToolButton35Click(Sender: TObject);
+    with qTESTS do
     begin
-      Content_plausibel;
+      if assigned(cConnection) then
+        ib_connection := cConnection;
+      sql.add('select * from TESTS for update');
     end;
 
-    procedure TFormOLAPArbeitsplatz.Content_plausibel;
-    var
-      n: Integer;
-      Subs: TStringList;
+    with cINSERT do
     begin
-      BeginHourGlass;
-      Content_complete;
-      ItemMarked.clear;
-      for n := 0 to pred(ContentItems.count) do
-      begin
-        Subs := TStringList(ContentItems[n]);
-        if (Subs[col_AnzahlMesspunkte] <> '3') then
-          if (Subs[col_AnzahlMesspunkte] <> '4') then
-            ItemMarked.add(n);
-      end;
-      DrawGrid1.refresh;
-      EndHourGlass;
-      if not(UserBreak) then
-        if (ItemMarked.count > 0) then
-          ShowMessage('Es gibt unplausible!');
+      if assigned(cConnection) then
+        ib_connection := cConnection;
+
+      sql.add('select');
+      sql.add(' count(CALIBRATIONS.CALIBRATIONID)');
+      sql.add('from');
+      sql.add(' CALIBRATIONS');
+      sql.add('join');
+      sql.add(' METERS');
+      sql.add('on');
+      sql.add(' (CALIBRATIONS.CALIBRATIONID=METERS.CALIBRATIONID) and');
+      sql.add(' (CALIBRATIONS.EQUIPMENTID=METERS.EQUIPMENTID)');
+      sql.add('where');
+      sql.add(' (CALIBRATIONS.EQUIPMENTID=:EQUIPMENTID) and');
+      sql.add(' (CALIBRATIONS.FIELD_DATE=:FIELD_DATE) and');
+      sql.add(' (METERS.SERIALNUMBER=:SERIALNUMBER)');
+      prepare;
     end;
 
-    procedure TFormOLAPArbeitsplatz.TabSheet5Show(Sender: TObject);
+    for n := 0 to pred(sCSV.count) do
     begin
-      RefreshQuestionaireInfo;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.RefreshQuestionaireInfo;
-    var
-      n: Integer;
-      MyText: string;
-      s: string;
-      OneHit: boolean;
-      FieldName, FieldRealName: string;
-    begin
-      BeginHourGlass;
-
-      Memo1.lines.clear;
-      if (ComboBox3.text <> '') then
-      begin
-        s := 'DB=' + ComboBox3.text;
-        OneHit := true;
-      end
-      else
-      begin
-        s := '';
-        OneHit := false;
-      end;
-
-      for n := 1 to MaxTag do
-      begin
-        MyText := TagEdit(n).text;
-        if (MyText <> '*') then
-        begin
-          if OneHit then
-            s := s + ' & ';
-
-          FieldName := TagLabel(n).Caption;
-          FieldRealName := nextp(QuestionaireFields.values[inttostr(n)], '.',
-            1);
-          if (FieldName <> FieldRealName) then
-            FieldName := FieldName + '(' + FieldRealName + ')';
-          ersetze('&', '', FieldName);
-
-          s := s + FieldName + '=' + MyText;
-          OneHit := true;
-        end;
-      end;
-      Memo1.lines.add(s);
-      EndHourGlass;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.SpeedButton1Click(Sender: TObject);
-    begin
-      RefreshQuestionaireInfo;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.FormClose
-      (Sender: TObject; var Action: TCloseAction);
-    begin
-      if bErlaubnis('OLAP Arbeitsplatz Autostart') then
-        FormMain.close;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.FormCreate(Sender: TObject);
-    begin
-      with ToolBar1 do
-      begin
-        ButtonHeight := height - 2;
-        ButtonWidth := dpiX(23);
-      end;
-    end;
-
-    function TFormOLAPArbeitsplatz.quFieldTypeDateTime(eTag: Integer): boolean;
-    begin
-      // Noch keine Anwendung, da kodierung als String OK ist
-    end;
-
-    procedure TFormOLAPArbeitsplatz.RefreshXLSCombo;
-    var
-      FilesL: TStringList;
-    begin
-      //
-      FilesL := TStringList.create;
-      dir(AnwenderPath + '*.xls', FilesL, false);
-      FilesL.sort;
-      FilesL.insert(0, '- ohne -');
-      ComboBox2.items.assign(FilesL);
-      FilesL.free;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.run;
-    var
-      ActInputFieldTag: Integer;
-      sql: TStringList;
-      fromTable: string;
-    begin
-      BeginHourGlass;
-      UserBreak := false;
       try
-        //
-        ActInputFieldTag := FocusTag;
-        if (ActInputFieldTag > 0) then
-          fromTable := nextp(quFieldName(ActInputFieldTag), '.', 0)
+
+        // Datei laden!
+        SwapTo(iAuftragsObjektPath + sCSV[n], sData);
+        OneProcessed := false;
+
+        for l := 0 to pred(sData.count) do
+        begin
+
+          // Vorbereitung
+          rData := sData[l];
+
+          // Grundvoraussetzung für einen Import
+          if (nextp(rData, s_csv_Separator, s_csv_FormatRevision) <> 'R1.000')
+          then
+            continue;
+
+          EQUIPMENTID := cutblank(nextp(rData, s_csv_Separator,
+            s_csv_Pruefwerkzeug));
+          SERIALNUMBER := cutblank(nextp(rData, s_csv_Separator,
+            s_csv_fortlNummer));
+          FIELD_DATE := date2long(nextp(rData, s_csv_Separator, s_csv_Datum));
+          PRUEFMOMENT := mkDateTime(FIELD_DATE,
+            strtoseconds(nextp(rData, s_csv_Separator, s_csv_Uhrzeit)));
+
+          if (EQUIPMENTID = '') or (SERIALNUMBER = '') then
+            continue;
+
+          // erst mal prüfen, ob schon dieser Messwert drin ist
+          with cINSERT do
+          begin
+            ParamByName('EQUIPMENTID').AsString := EQUIPMENTID;
+            ParamByName('SERIALNUMBER').AsString := SERIALNUMBER;
+            ParamByName('FIELD_DATE').AsDateTime := PRUEFMOMENT;
+            Open;
+            ApiFirst;
+            rCnt := Fields[0].AsInteger;
+            close;
+            if (rCnt > 0) then
+              continue;
+          end;
+
+          // neue Helium-Messwerte eintragen
+          with qCALIBRATIONS do
+          begin
+            CALIBRATIONID := GEN_ID('GEN_CALIBRATIONID', 1);
+
+            insert;
+            // Index
+            FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
+            FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
+            FieldByName('FIELD_DATE').AsDateTime := PRUEFMOMENT;
+            post;
+          end;
+
+          with qMETERS do
+          begin
+            insert;
+
+            // Index
+            FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
+            FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
+            FieldByName('SERIALNUMBER').AsString := SERIALNUMBER;
+
+            // Data
+            FieldByName('METERDATA2').AsString := nextp(rData, s_csv_Separator,
+              s_csv_Zaehlertyp);
+            FieldByName('METERDATA4').AsString := nextp(rData, s_csv_Separator,
+              s_csv_Membranhersteller);
+            FieldByName('METERDATA5').AsString := nextp(rData, s_csv_Separator,
+              s_csv_Chargennummer);
+            FieldByName('POSITIONNUMBER').AsInteger :=
+              StrToIntDef(nextp(rData, s_csv_Separator,
+              s_csv_Station_Pruefkammer), -1);
+            FieldByName('METERDATA6').AsString := nextp(rData, s_csv_Separator,
+              s_csv_Kammer_Glocke);
+            FieldByName('METERDATA9').AsString := nextp(rData, s_csv_Separator,
+              s_csv_Pruefergebnis);
+            post;
+          end;
+
+          for t := 1 to 3 do
+          begin
+            with qTESTS do
+            begin
+              insert;
+              // Index
+              FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
+              FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
+              FieldByName('SERIALNUMBER').AsString := SERIALNUMBER;
+              // Data
+              FieldByName('POINTNUM').AsInteger := t;
+              FieldByName('METERPLOSS').AsDouble :=
+                strtodoubledef(nextp(rData, s_csv_Separator,
+                s_csv_Messwert), -1);
+              FieldByName('METERMAXPLOSS').AsDouble :=
+                strtodoubledef(nextp(rData, s_csv_Separator,
+                s_csv_Grenzwert), -1);
+              FieldByName('DONE').AsInteger := 1;
+              post;
+            end;
+          end;
+
+          OneProcessed := true;
+        end;
+
+        if OneProcessed then
+        begin
+          DestPath := 'Ablage\' + copy(long2date(FIELD_DATE), 7, 4) + '-KW' +
+            inttostrN(WeekGet(FIELD_DATE), 2) + '\';
+        end
         else
-          fromTable := 'METERS';
+        begin
+          DestPath := 'Unlesbar\';
+        end;
 
-        //
-        sql := fullQuest(fromTable);
-        ExportTable(sql, AnwenderPath + cQuestionaireVolumeFName);
-        sql.free;
-
-        //
-        sql := fullReject(fromTable);
-        ExportTable(sql, AnwenderPath + cQuestionaireRejectFName);
-        sql.free;
-
-        // Ergebnis anzeigen!
-        Content_load(AnwenderPath + cQuestionaireVolumeFName);
-
-        quFillGrid;
+        CheckCreateDir(iAuftragsAblagePath + DestPath);
+        FileMove(iAuftragsObjektPath + sCSV[n], iAuftragsAblagePath + DestPath
+          + sCSV[n]);
 
       except
-      end;
-      EndHourGlass;
-    end;
 
-    procedure TFormOLAPArbeitsplatz.dir(const Mask: string;
-      FileNames: TStrings; uppercase: boolean);
-    var
-      n, j: Integer;
-    begin
-      anfix32.dir(Mask, FileNames, uppercase);
-      for n := 0 to pred(BlackList.count) do
+      end;
+
+      if frequently(StartTime, 444) then
       begin
-        j := FileNames.indexof(BlackList[n]);
-        if (j <> -1) then
-          FileNames.delete(j);
+        ProgressBar1.position := n;
+        application.processmessages;
       end;
+
     end;
+    qCALIBRATIONS.free;
+    qMETERS.free;
+    qTESTS.free;
+    sData.free;
+  end;
+  sCSV.free;
+  ProgressBar1.position := 0;
+  EndHourGlass;
+end;
 
-    procedure TFormOLAPArbeitsplatz.readHelium;
-    const
-      s_csv_FormatRevision = 0;
-      s_csv_Datum = 1;
-      s_csv_Uhrzeit = 2;
-      s_csv_Zaehlertyp = 3;
-      s_csv_Pruefwerkzeug = 4;
-      s_csv_Membranhersteller = 5;
-      s_csv_Chargennummer = 6;
-      s_csv_fortlNummer = 7;
-      s_csv_Station_Pruefkammer = 8;
-      s_csv_Kammer_Glocke = 9;
-      s_csv_Messwert = 10;
-      s_csv_Grenzwert = 11;
-      s_csv_Pruefergebnis = 12;
-      s_csv_Separator = ';';
-      s_csv_IllegalChar_1 = #0;
-    var
-      EQUIPMENTID: string;
-      CALIBRATIONID: Integer;
-      SERIALNUMBER: string;
-      PRUEFMOMENT: TDateTime;
-      FIELD_DATE: TANfixDate;
+procedure TFormOLAPArbeitsplatz.Content_close;
+begin
+  FreeAndNil(ConnectionItems);
+  // open(OLAPpath + 'Datenbanken.OLAP.txt');
+end;
 
-      cINSERT: TIB_Cursor;
-      qCALIBRATIONS: TIB_Query;
-      qMETERS: TIB_Query;
-      qTESTS: TIB_Query;
+procedure TFormOLAPArbeitsplatz.RefreshDBCombo;
+var
+  OLAPscript: TStringList;
+  n: Integer;
+  Connections: TStringList;
+  AutoMataState: Integer;
+  OneLine: string;
+  OldIndex: Integer;
+begin
 
-      // CSV
-      sCSV: TStringList;
-      sData: TStringList;
-      rData: string;
-      n, l, t: Integer;
-      StartTime: dword;
-      OneProcessed: boolean;
-      DestPath: string;
-      rCnt: Integer;
+  //
+  OLAPscript := TStringList.create;
+  Connections := TStringList.create;
+  OLAPscript.LoadFromFile(iOlapPath + 'Datenbanken.OLAP.txt');
+  AutoMataState := 0;
+  for n := 0 to pred(OLAPscript.count) do
+  begin
+    OneLine := cutblank(OLAPscript[n]);
+    if (OneLine = '') then
+      continue;
+    case AutoMataState of
+      0:
+        if (OneLine = 'connect') then
+          inc(AutoMataState);
+      1:
+        if (OneLine = '-') then
+          inc(AutoMataState)
+        else
+        begin
+          nextp(OneLine, ' ');
+          Connections.add(OneLine);
+        end;
+      2:
+        break;
+    end;
+  end;
 
-      procedure SwapTo(FName: string; sl: TStrings);
-      var
-        BinFile: file;
-        a: array [0 .. 4095] of byte;
-        n, i: Integer;
-        s: string;
+  //
+  OldIndex := ComboBox3.itemIndex;
+  ComboBox3.items.assign(Connections);
+  if (OldIndex < ComboBox3.items.count) then
+    ComboBox3.itemIndex := OldIndex;
+
+  Connections.free;
+  OLAPscript.free;
+end;
+
+procedure TFormOLAPArbeitsplatz.ComboBox3Select(Sender: TObject);
+begin
+  if (ComboBox3.itemIndex <> -1) then
+    if assigned(ConnectionItems) then
+    begin
+      if (ComboBox3.itemIndex <> FormOLAP.DataBaseChosen) then
       begin
-        sl.clear;
-        try
-          AssignFile(BinFile, FName);
-          reset(BinFile, 1);
-          BlockRead(BinFile, a, sizeof(a), i);
-          s := '';
-          for n := 0 to pred(i) do
-          begin
-            case a[n] of
-              13, 0:
-                ;
-              10:
-                begin
-                  sl.add(s);
-                  s := '';
-                end;
-            else
-              s := s + chr(a[n]);
-            end;
-          end;
-          if (s <> '') then
-            sl.add(s);
-          CloseFile(BinFile);
-        except
-        end;
+        BeginHourGlass;
+        FormOLAP.DataBaseChosen := ComboBox3.itemIndex;
+        Content_close;
+        FormActivate(self);
+        EndHourGlass;
       end;
-
-    begin
-      if (iAuftragsObjektPath = '') then
-        exit;
-
-      BeginHourGlass;
-
-      sCSV := TStringList.create;
-      dir(iAuftragsObjektPath + '*.CSV', sCSV, false);
-      sCSV.sort;
-
-      if (sCSV.count > 0) then
-      begin
-
-        ProgressBar1.position := 0;
-        ProgressBar1.max := sCSV.count;
-        StartTime := 0;
-        qCALIBRATIONS := DataModuleDatenbank.nQuery;
-        qMETERS := DataModuleDatenbank.nQuery;
-        qTESTS := DataModuleDatenbank.nQuery;
-        cINSERT := DataModuleDatenbank.nCursor;
-        sData := TStringList.create;
-
-        // prepare calibs
-        with qCALIBRATIONS do
-        begin
-          if assigned(cConnection) then
-            ib_connection := cConnection;
-          sql.add('select * from CALIBRATIONS for update');
-        end;
-
-        // prepare meters
-        with qMETERS do
-        begin
-          if assigned(cConnection) then
-            ib_connection := cConnection;
-          sql.add('select * from METERS for update');
-        end;
-
-        with qTESTS do
-        begin
-          if assigned(cConnection) then
-            ib_connection := cConnection;
-          sql.add('select * from TESTS for update');
-        end;
-
-        with cINSERT do
-        begin
-          if assigned(cConnection) then
-            ib_connection := cConnection;
-
-          sql.add('select');
-          sql.add(' count(CALIBRATIONS.CALIBRATIONID)');
-          sql.add('from');
-          sql.add(' CALIBRATIONS');
-          sql.add('join');
-          sql.add(' METERS');
-          sql.add('on');
-          sql.add(' (CALIBRATIONS.CALIBRATIONID=METERS.CALIBRATIONID) and');
-          sql.add(' (CALIBRATIONS.EQUIPMENTID=METERS.EQUIPMENTID)');
-          sql.add('where');
-          sql.add(' (CALIBRATIONS.EQUIPMENTID=:EQUIPMENTID) and');
-          sql.add(' (CALIBRATIONS.FIELD_DATE=:FIELD_DATE) and');
-          sql.add(' (METERS.SERIALNUMBER=:SERIALNUMBER)');
-          prepare;
-        end;
-
-        for n := 0 to pred(sCSV.count) do
-        begin
-          try
-
-            // Datei laden!
-            SwapTo(iAuftragsObjektPath + sCSV[n], sData);
-            OneProcessed := false;
-
-            for l := 0 to pred(sData.count) do
-            begin
-
-              // Vorbereitung
-              rData := sData[l];
-
-              // Grundvoraussetzung für einen Import
-              if (nextp(rData, s_csv_Separator, s_csv_FormatRevision)
-                  <> 'R1.000') then
-                continue;
-
-              EQUIPMENTID := cutblank(nextp(rData, s_csv_Separator,
-                  s_csv_Pruefwerkzeug));
-              SERIALNUMBER := cutblank(nextp(rData, s_csv_Separator,
-                  s_csv_fortlNummer));
-              FIELD_DATE := date2long(nextp(rData, s_csv_Separator, s_csv_Datum)
-                );
-              PRUEFMOMENT := mkDateTime(FIELD_DATE, strtoseconds
-                  (nextp(rData, s_csv_Separator, s_csv_Uhrzeit)));
-
-              if (EQUIPMENTID = '') or (SERIALNUMBER = '') then
-                continue;
-
-              // erst mal prüfen, ob schon dieser Messwert drin ist
-              with cINSERT do
-              begin
-                ParamByName('EQUIPMENTID').AsString := EQUIPMENTID;
-                ParamByName('SERIALNUMBER').AsString := SERIALNUMBER;
-                ParamByName('FIELD_DATE').AsDateTime := PRUEFMOMENT;
-                open;
-                ApiFirst;
-                rCnt := Fields[0].AsInteger;
-                close;
-                if (rCnt > 0) then
-                  continue;
-              end;
-
-              // neue Helium-Messwerte eintragen
-              with qCALIBRATIONS do
-              begin
-                CALIBRATIONID := GEN_ID('GEN_CALIBRATIONID', 1);
-
-                insert;
-                // Index
-                FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
-                FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
-                FieldByName('FIELD_DATE').AsDateTime := PRUEFMOMENT;
-                post;
-              end;
-
-              with qMETERS do
-              begin
-                insert;
-
-                // Index
-                FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
-                FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
-                FieldByName('SERIALNUMBER').AsString := SERIALNUMBER;
-
-                // Data
-                FieldByName('METERDATA2').AsString := nextp
-                  (rData, s_csv_Separator, s_csv_Zaehlertyp);
-                FieldByName('METERDATA4').AsString := nextp
-                  (rData, s_csv_Separator, s_csv_Membranhersteller);
-                FieldByName('METERDATA5').AsString := nextp
-                  (rData, s_csv_Separator, s_csv_Chargennummer);
-                FieldByName('POSITIONNUMBER').AsInteger := StrToIntDef
-                  (nextp(rData, s_csv_Separator, s_csv_Station_Pruefkammer),
-                  -1);
-                FieldByName('METERDATA6').AsString := nextp
-                  (rData, s_csv_Separator, s_csv_Kammer_Glocke);
-                FieldByName('METERDATA9').AsString := nextp
-                  (rData, s_csv_Separator, s_csv_Pruefergebnis);
-                post;
-              end;
-
-              for t := 1 to 3 do
-              begin
-                with qTESTS do
-                begin
-                  insert;
-                  // Index
-                  FieldByName('CALIBRATIONID').AsInteger := CALIBRATIONID;
-                  FieldByName('EQUIPMENTID').AsString := EQUIPMENTID;
-                  FieldByName('SERIALNUMBER').AsString := SERIALNUMBER;
-                  // Data
-                  FieldByName('POINTNUM').AsInteger := t;
-                  FieldByName('METERPLOSS').AsDouble := strtodoubledef
-                    (nextp(rData, s_csv_Separator, s_csv_Messwert), -1);
-                  FieldByName('METERMAXPLOSS').AsDouble := strtodoubledef
-                    (nextp(rData, s_csv_Separator, s_csv_Grenzwert), -1);
-                  FieldByName('DONE').AsInteger := 1;
-                  post;
-                end;
-              end;
-
-              OneProcessed := true;
-            end;
-
-            if OneProcessed then
-            begin
-              DestPath := 'Ablage\' + copy(long2date(FIELD_DATE), 7, 4)
-                + '-KW' + inttostrN(WeekGet(FIELD_DATE), 2) + '\';
-            end
-            else
-            begin
-              DestPath := 'Unlesbar\';
-            end;
-
-            CheckCreateDir(iAuftragsAblagePath + DestPath);
-            FileMove(iAuftragsObjektPath + sCSV[n],
-              iAuftragsAblagePath + DestPath + sCSV[n]);
-
-          except
-
-          end;
-
-          if frequently(StartTime, 444) then
-          begin
-            ProgressBar1.position := n;
-            application.processmessages;
-          end;
-
-        end;
-        qCALIBRATIONS.free;
-        qMETERS.free;
-        qTESTS.free;
-        sData.free;
-      end;
-      sCSV.free;
-      ProgressBar1.position := 0;
-      EndHourGlass;
     end;
+end;
 
-    procedure TFormOLAPArbeitsplatz.Content_close;
-    begin
-      FreeAndNil(ConnectionItems);
-      // open(OLAPpath + 'Datenbanken.OLAP.txt');
-    end;
+procedure TFormOLAPArbeitsplatz.SpeedButton2Click(Sender: TObject);
+begin
+  RefreshXLSCombo;
+end;
 
-    procedure TFormOLAPArbeitsplatz.RefreshDBCombo;
-    var
-      OLAPscript: TStringList;
-      n: Integer;
-      Connections: TStringList;
-      AutoMataState: Integer;
-      OneLine: string;
-      OldIndex: Integer;
-    begin
+procedure TFormOLAPArbeitsplatz.ToolButton4Click(Sender: TObject);
+begin
+  UserBreak := true;
+end;
 
-      //
-      OLAPscript := TStringList.create;
-      Connections := TStringList.create;
-      OLAPscript.LoadFromFile(iOlapPath + 'Datenbanken.OLAP.txt');
-      AutoMataState := 0;
-      for n := 0 to pred(OLAPscript.count) do
-      begin
-        OneLine := cutblank(OLAPscript[n]);
-        if (OneLine = '') then
-          continue;
-        case AutoMataState of
-          0:
-            if (OneLine = 'connect') then
-              inc(AutoMataState);
-          1:
-            if (OneLine = '-') then
-              inc(AutoMataState)
-            else
-            begin
-              nextp(OneLine, ' ');
-              Connections.add(OneLine);
-            end;
-          2:
-            break;
-        end;
-      end;
-
-      //
-      OldIndex := ComboBox3.itemIndex;
-      ComboBox3.items.assign(Connections);
-      if (OldIndex < ComboBox3.items.count) then
-        ComboBox3.itemIndex := OldIndex;
-
-      Connections.free;
-      OLAPscript.free;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ComboBox3Select(Sender: TObject);
-    begin
-      if (ComboBox3.itemIndex <> -1) then
-        if assigned(ConnectionItems) then
-        begin
-          if (ComboBox3.itemIndex <> FormOLAP.DataBaseChosen) then
-          begin
-            BeginHourGlass;
-            FormOLAP.DataBaseChosen := ComboBox3.itemIndex;
-            Content_close;
-            FormActivate(self);
-            EndHourGlass;
-          end;
-        end;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.SpeedButton2Click(Sender: TObject);
-    begin
-      RefreshXLSCombo;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton4Click(Sender: TObject);
-    begin
-      UserBreak := true;
-    end;
-
-    procedure TFormOLAPArbeitsplatz.ToolButton33Click(Sender: TObject);
-    begin
-      ShowMessage('*ShortDateFormat:' + ShortDateFormat + #13 +
-          'LongDateFormat:' + LongDateFormat + #13 + 'TimeSeparator:' +
-          TimeSeparator + #13 + 'TimeAMString:' + TimeAMString + #13 +
-          'TimePMString:' + TimePMString + #13 + 'ShortTimeFormat:' +
-          ShortTimeFormat + #13 + '*LongTimeFormat:' + LongTimeFormat + #13);
-    end;
+procedure TFormOLAPArbeitsplatz.ToolButton33Click(Sender: TObject);
+begin
+  ShowMessage('*ShortDateFormat:' + ShortDateFormat + #13 + 'LongDateFormat:' +
+    LongDateFormat + #13 + 'TimeSeparator:' + TimeSeparator + #13 +
+    'TimeAMString:' + TimeAMString + #13 + 'TimePMString:' + TimePMString + #13
+    + 'ShortTimeFormat:' + ShortTimeFormat + #13 + '*LongTimeFormat:' +
+    LongTimeFormat + #13);
+end;
 
 end.

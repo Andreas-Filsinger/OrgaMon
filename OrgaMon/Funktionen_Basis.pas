@@ -137,7 +137,7 @@ uses
   ZCompatibility,
   ZDbcIntfs,
 {$ELSE}
-  UFlxMessages,
+  FlexCel.Core,
   CCR.Exif.Consts,
   GHD_pngimage,
 {$ENDIF}

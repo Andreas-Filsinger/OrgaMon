@@ -381,8 +381,7 @@ begin
     Close;
   end;
 
-  // Jetzt noch weitere Ausgabearten hinzufügen
-  // imp pend!
+  // imp pend: Jetzt noch weitere Ausgabearten hinzufügen
 
   // Nun alle "offenen" Order aufzeigen
   with IB_QueryBV3 do

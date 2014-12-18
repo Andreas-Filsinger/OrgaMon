@@ -32,9 +32,8 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, UExcelAdapter,
-  XLSAdapter, globals, IdFTP,
-  UFlexCelImport;
+  StdCtrls, ComCtrls,
+   globals, IdFTP;
 
 const
   cTageVorlauf = 11;
@@ -47,8 +46,6 @@ type
     ProgressBar1: TProgressBar;
     Button1: TButton;
     Label1: TLabel;
-    XLSAdapter1: TXLSAdapter;
-    FlexCelImport1: TFlexCelImport;
     Edit1: TEdit;
     Label2: TLabel;
     Label3: TLabel;
@@ -71,7 +68,11 @@ var
 implementation
 
 uses
-  anfix32, IB_Components, CareTakerClient,
+  anfix32,
+
+  FlexCel.Core, FlexCel.xlsAdapter,
+
+  IB_Components, CareTakerClient,
   Funktionen_Auftrag, WordIndex,
   html, SolidFTP, InfoZIP, Datenbank, Baustelle;
 
@@ -86,7 +87,7 @@ var
   BAUSTELLE: string;
   cAUFTRAEGE: TIB_Cursor;
   FirstData: boolean;
-  xAUSGABE: TFlexCelImport;
+  xAUSGABE: TXLSFile;
   xRow: integer;
   MONTEUR_R: integer;
   _MONTEUR_R: integer;
@@ -205,20 +206,20 @@ var
       begin
         NewFile(1);
         FirstData := false;
-        CellValue[xRow, 1] := 'Art';
-        ColumnWidth[1] := 4000;
-        CellValue[xRow, 2] := 'Zählernummer (M)';
-        ColumnWidth[2] := 7000;
-        CellValue[xRow, 3] := 'Termin';
-        ColumnWidth[3] := 6000;
-        CellValue[xRow, 4] := 'vor-/nachmittags';
-        ColumnWidth[4] := 6000;
+        setCellValue(xRow, 1,  'Art');
+        setColWidth(1, 4000);
+        setCellValue(xRow, 2, 'Zählernummer (M)');
+        setColWidth(2, 7000);
+        setCellValue(xRow, 3, 'Termin');
+        setColWidth(3, 6000);
+        setCellValue(xRow, 4,  'vor-/nachmittags');
+        setColWidth(4, 6000);
         inc(xRow);
       end;
-      CellValue[xRow, 1] := FullZaehlerArt;
-      CellValue[xRow, 2] := FieldByName('ZAEHLER_NUMMER').AsString;
-      CellValue[xRow, 3] := FieldByName('AUSFUEHREN').AsDate;
-      CellValue[xRow, 4] := FieldByName('VORMITTAGS').AsString;
+      setCellValue(xRow, 1,  FullZaehlerArt);
+      setCellValue(xRow, 2,  FieldByName('ZAEHLER_NUMMER').AsString);
+      setCellValue(xRow, 3,  FieldByName('AUSFUEHREN').AsDate);
+      setCellValue(xRow, 4,  FieldByName('VORMITTAGS').AsString);
       inc(xRow);
     end;
   end;
@@ -232,7 +233,7 @@ begin
   InfoFile := TStringList.create;
   MonteurL := TStringList.create;
   DirL := TStringList.create;
-  xAUSGABE := FlexCelImport1;
+  xAUSGABE := TXLSFIle.create(true);
   ErrorCount := 0;
   FirstUpload := true;
   cBAUSTELLE := DataModuleDatenbank.nCursor;
@@ -461,6 +462,7 @@ begin
   InfoFile.free;
   MonteurL.free;
   DirL.Free;
+  xAusgabe.Free;
   EndHourGlass;
   if (ErrorCount = 0) then
     close

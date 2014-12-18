@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.071 (17.12.14) Andreas Filsinger
+
+ Neu: Auftrag: Doppelklick auf Auftrag: Der Foto-Pfad wird mit ausgegeben
+ Neu: Auftrag: Doppelklick auf Auftrag: Die Existenz der Bild-Dateien wird geprüft
+ Neu: Auftrag: Doppelklick auf Auftrag: Die Info wird auch in eine Diagnosedatei
+      "Foto-" geschrieben
+
 Rev 8.070 (15.12.14) Andreas Filsinger
 
  Bug: Scanner: Listenmarkierung geht nach unten, obwohl Restmenge>0
