@@ -45,9 +45,13 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, JvGIF,
   ExtCtrls, SynEditHighlighter, SynHighlighterSQL,
-  SynEdit, SynMemo, IB_Components,
+  SynEdit, SynMemo,
+
+  // FlexCell
+  VCL.FlexCel.Core, FlexCel.xlsAdapter,
+  IB_Components,
   IB_Header, IB_Grid, gplists,
-  Buttons, UFlexCelImport, basic32;
+  Buttons, basic32;
 
 type
   TFormOLAP = class(TForm)
@@ -85,7 +89,7 @@ type
     SilentMode: boolean;
     RohdatenCount: integer;
     ListCount: integer;
-    pXLS: TFlexCelImport;
+    pXLS: TXLSFile;
 
     procedure ReFreshFileList;
     procedure Log(s: string);
@@ -100,7 +104,7 @@ type
     procedure DoContextOLAP(GlobalVars, OLAPScript: TStringList;
       Connection: TIB_Connection); overload;
     procedure DoContextOLAP(FName: string; GlobalVar: TStringList = nil;
-      XLS: TFlexCelImport = nil); overload;
+      XLS: TXLSFile = nil); overload;
     function OLAP(FName: string): TgpIntegerList;
 
     // Tool Funktionen
@@ -3468,7 +3472,7 @@ begin
 end;
 
 procedure TFormOLAP.DoContextOLAP(FName: string; GlobalVar: TStringList = nil;
-  XLS: TFlexCelImport = nil);
+  XLS: TXLSFile = nil);
 var
   sOLAPs: TStringList;
   n: integer;

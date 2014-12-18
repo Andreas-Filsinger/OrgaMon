@@ -47,16 +47,15 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  UXlsEncodeFormula,
-  UExcelAdapter, XLSAdapter, UFlexCelImport, txlib;
+  VCL.FlexCel.Core, FlexCel.xlsAdapter,
+  txlib;
 
 type
   TLNMITSCities = class;
 
   TLNMITS = class
   private
-    FXLSAdapter:        TXLSAdapter;
-    FFlexCelImport:     TFlexCelImport;
+    FFlexCelImport:     TXLSFile;
     FCities:            TLNMITSCities;
 
     FCityOverviewStart: Integer;
@@ -153,7 +152,6 @@ const
 
 constructor TLNMITS.Create;
 begin
-  FXLSAdapter := nil;
   FFlexCelImport := nil;
 
   RecreateFlexCel;
@@ -166,7 +164,6 @@ end;
 
 destructor TLNMITS.Destroy;
 begin
-  FXLSAdapter.Free;
   FFlexCelImport.Free;
 
   FCities.Free;
@@ -186,15 +183,15 @@ var
 begin
   Clear;
 
-  FFlexCelImport.OpenFile(Filename);
+  FFlexCelImport.Open(Filename);
 
   C := FFlexCelImport.SheetCount;
   for I := FCitySheetStart to C do
   begin
     FFlexCelImport.ActiveSheet := I;
 
-    if TXLowerCase(Trim(FFlexCelImport.ActiveSheetName)) <> 'alle' then
-      FCities.InternalAdd(FFlexCelImport.ActiveSheetName, False)
+    if TXLowerCase(Trim(FFlexCelImport.SheetName)) <> 'alle' then
+      FCities.InternalAdd(FFlexCelImport.SheetName, False)
     else
       Break;
   end;
@@ -219,7 +216,7 @@ begin
 
   C := NextCityLineToInsert - 1;
   for I := FCityOverviewStart to C do
-    if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.CellValue[I, 1]) = S then
+    if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.getCellValue(I, 1)) = S then
     begin
       Result := I;
       Break;
@@ -241,7 +238,7 @@ begin
     begin
       FFlexCelImport.ActiveSheet := I;
 
-      if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.ActiveSheetName) = S then
+      if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.SheetName) = S then
       begin
         Result := I;
         Break;
@@ -273,7 +270,7 @@ begin
   I := 1;
   while I < Max do
   begin
-    S := TXLowerCase(Trim(FFlexCelImport.CellValue[I, 1]));
+    S := TXLowerCase(Trim(FFlexCelImport.getCellValue(I, 1)));
     if S = 'summe' then
     begin
       Result := I;
@@ -291,14 +288,10 @@ end;
 
 procedure TLNMITS.RecreateFlexCel;
 begin
-  if Assigned(FXLSAdapter) then
-    FXLSAdapter.Free;
   if Assigned(FFlexCelImport) then
     FFlexCelImport.Free;
 
-  FXLSAdapter := TXLSAdapter.Create(nil);
-  FFlexCelImport := TFlexCelImport.Create(nil);
-  FFlexCelImport.Adapter := FXLSAdapter;
+  FFlexCelImport := TXLSFIle.Create(true);
 end;
 
 constructor TLNMITSCities.Create(AOwner: TLNMITS);
@@ -387,7 +380,9 @@ begin
   if Sheet < 0 then
     raise Exception.CreateFmt('Interner Fehler (Stadt "%s" konnte in den Sheets nicht gefunden werden)', [ City ]);
 
-  FOwner.FFlexCelImport.DeleteRows(Overview, 1);
+  // Imp pend FlexCel: DeleteRows
+  //FOwner.FFlexCelImport.DeleteRows(Overview, 1);
+
 
   FOwner.FFlexCelImport.ActiveSheet := Sheet;
   try
@@ -425,10 +420,10 @@ var
     C := Length(CellLetters);
     for I := 1 to C do
     begin
-      FOwner.FFlexCelImport.CellFormula[SumLine, 2 + I] := StringReplace(FOwner.FFlexCelImport.CellFormula[SumLine, 2 + I],
+      FOwner.FFlexCelImport.setCellValue(SumLine, 2 + I,  StringReplace(FOwner.FFlexCelImport.getCellValue(SumLine, 2 + I),
                                                                          IntToStr(NewLine - 1) + ')',
                                                                          IntToStr(SumLine - 1) + ')',
-                                                                         [ rfReplaceAll ]);
+                                                                         [ rfReplaceAll ]));
     end;
   end;
 begin
@@ -439,10 +434,13 @@ begin
     if CanModifyExcel then
     begin
       NewLine := FOwner.NextCityLineToInsert;
-      FOwner.FFlexCelImport.InsertAndCopyRows(FOwner.FCityOverviewStart, FOwner.FCityOverviewStart, NewLine, 1);
+
+      // Imp pend FlexCel: Row to Range
+      // FOwner.FFlexCelImport.InsertAndCopyRange(FOwner.FCityOverviewStart, FOwner.FCityOverviewStart, NewLine, 1);
+
       FOwner.FFlexCelImport.InsertAndCopySheets(FOwner.FCitySheetStart, FOwner.FFlexCelImport.SheetCount, 1);
       FOwner.FFlexCelImport.ActiveSheet := FOwner.FFlexCelImport.SheetCount - 1;
-      FOwner.FFlexCelImport.ActiveSheetName := PrepareCityNameForSheet(City, True);
+      FOwner.FFlexCelImport.SheetName := PrepareCityNameForSheet(City, True);
       FOwner.FFlexCelImport.ActiveSheet := 1;
 
       ModifyOverviewLine(City, NewLine);
@@ -463,13 +461,13 @@ var
   Col:  AnsiChar;
   I, C: Integer;
 begin
-  FOwner.FFlexCelImport.CellValue[Line, 1] := City;
+  FOwner.FFlexCelImport.setCellValue(Line, 1, City);
 
   C := Length(CellLetters);
   for I := 1 to C do
   begin
     Col := CellLetters[I];
-    FOwner.FFlexCelImport.CellFormula[Line, 2 + I] := Format('=SUM(%s!$%s2:$%s$65536)', [ PrepareCityNameForSheet(City, True), Col, Col ]);
+    FOwner.FFlexCelImport.SetCellValue(Line, 2 + I, Format('=SUM(%s!$%s2:$%s$65536)', [ PrepareCityNameForSheet(City, True), Col, Col ]));
   end;
 end;
 
@@ -553,7 +551,7 @@ var
     begin
       try
         FOwner.FOwner.FFlexCelImport.ActiveSheet := I;
-        FOwner.FOwner.FFlexCelImport.ActiveSheetName := TLNMITSCities.PrepareCityNameForSheet(City, True);
+        FOwner.FOwner.FFlexCelImport.SheetName := TLNMITSCities.PrepareCityNameForSheet(City, True);
       finally
         FOwner.FOwner.FFlexCelImport.ActiveSheet := 1;
       end;

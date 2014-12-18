@@ -468,14 +468,4 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
       OnClick = CheckBox5Click
     end
   end
-  object XLSAdapter1: TXLSAdapter
-    AllowOverwritingFiles = False
-    Left = 136
-    Top = 232
-  end
-  object FlexCelImport1: TFlexCelImport
-    Adapter = XLSAdapter1
-    Left = 48
-    Top = 232
-  end
 end

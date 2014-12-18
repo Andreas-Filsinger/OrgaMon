@@ -1144,9 +1144,8 @@ begin
     if CheckAndPos(cKundeID, ThisLine, InfoTextPos, n) then
     begin
       KundeID := copy(ThisLine, InfoTextPos, MaxInt);
-      // Kunden-Daten laden!
-      // imp pend!
-      continue;
+      // imp pend: Kunden-Daten laden!
+          continue;
     end;
 
     if AddRevLines then

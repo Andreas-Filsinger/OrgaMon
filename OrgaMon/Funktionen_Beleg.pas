@@ -9358,10 +9358,9 @@ end;
 procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer;
   sTexte: TStringList = nil);
 //
-// imp pend:
-// KUNDEN_INFO := VORLAGE.KUNDEN_INFO + VORSPANN.KUNDEN_INFO
-// Bsp: Wir beachten Ihre besonderen Anforderungen laut ROS (aus Vorlage! -> an 1. Position)
-// Frohe Weihnacht und ein gutes neue Jahr (aus Vorspann! -> an 2. Position)
+// Imp pend: KUNDEN_INFO := VORLAGE.KUNDEN_INFO + VORSPANN.KUNDEN_INFO
+//           Bsp: Wir beachten Ihre besonderen Anforderungen laut ROS (aus Vorlage! -> an 1. Position)
+//           Frohe Weihnacht und ein gutes neue Jahr (aus Vorspann! -> an 2. Position)
 //
 
 // kopiere alle Posten des Quell-Beleges in den bestehenden Beleg hinzu

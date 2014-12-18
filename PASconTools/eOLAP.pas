@@ -29,13 +29,17 @@ unit eOLAP;
 interface
 
 uses
-  classes, UFlexCelImport, srvXMLRPC;
+  classes,
+
+  FlexCel.Core, FLexCel.XLSAdapter,
+
+  srvXMLRPC;
 
 type
   IOLAP = Interface(IInvokable)
 
     procedure e_x_OLAP(FName: string; GlobalVars: TStringList = nil;
-      XLS: TFlexCelImport = nil; FeedBack: TXMLRPC_Method = nil); stdcall;
+      XLS: TXLSFIle = nil; FeedBack: TXMLRPC_Method = nil); stdcall;
 
   End;
 
@@ -47,7 +51,7 @@ type
     procedure StandardParameter(s: TStrings);
 
     procedure e_x_OLAP(FName: string; GlobalVars: TStringList = nil;
-      XLS: TFlexCelImport = nil; FeedBack: TXMLRPC_Method = nil); stdcall;
+      XLS: TXLSFile = nil; FeedBack: TXMLRPC_Method = nil); stdcall;
 
   end;
 
@@ -71,7 +75,7 @@ uses
 procedure TOLAP.e_x_OLAP(
   { } FName: string;
   { } GlobalVars: TStringList;
-  { } XLS: TFlexCelImport;
+  { } XLS: TXLSFIle;
   { } FeedBack: TXMLRPC_Method);
 
   function ErgebnisTableName(n: integer): string;

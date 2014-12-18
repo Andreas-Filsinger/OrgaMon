@@ -1006,8 +1006,7 @@ var
               for m := 0 to pred(V_Neu.count) do
                 V_add(nextp(V_Neu[m], '=', 1));
 
-              // Alle Vs, nun in Hinsicht auf den Zeitstempel-Wert sortieren!
-              // imp pend
+              // imp pend: Alle Vs, nun in Hinsicht auf den Zeitstempel-Wert sortieren!
 
               // Alle Vs nun dauerhaft Speichern
               for m := 0 to 9 do

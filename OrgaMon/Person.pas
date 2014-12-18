@@ -47,8 +47,7 @@ uses
 
   // HeBuAdmin-Projekt
   Buttons,
-  JvGIF, UFlexCelImport, UExcelAdapter,
-  XLSAdapter, JvExExtCtrls, JvRadioGroup,
+  JvGIF,  JvExExtCtrls, JvRadioGroup,
   CheckLst, IB_NavigationBar, IB_SearchBar, IB_Controls, ComCtrls, ExtCtrls,
   IB_UpdateBar, ToolWin, IB_EditButton;
 
@@ -257,8 +256,6 @@ type
     Button5: TButton;
     Edit1: TEdit;
     SpeedButton6: TSpeedButton;
-    FlexCelImport1: TFlexCelImport;
-    XLSAdapter1: TXLSAdapter;
     Label57: TLabel;
     IB_Edit44: TIB_Edit;
     Image4: TImage;
@@ -425,7 +422,10 @@ var
 implementation
 
 uses
-  main, anfix32, globals,
+  anfix32, globals,
+
+  FlexCel.Core, FlexCel.XLSAdapter,
+
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -437,7 +437,7 @@ uses
   GeoLokalisierung, dbOrgaMon,
   CareTakerClient, FastGeo, GeoArbeitsplatz,
   OLAP, Jvgnugettext,
-  Vertrag, ExcelHelper,
+  Vertrag, ExcelHelper, main,
   OrientationConvert, Kontext, Datenbank,
   DruckSpooler, html, clipbrd,
   wanfix32, GUIHelp,
@@ -2176,6 +2176,7 @@ var
   IgnoreField: Boolean;
   Bemerkung: TStringList;
   FieldNames: TStringList;
+  XLS: TXLSFIle;
 
   procedure TagDBField(FieldName: string; BoolValue: Boolean);
   begin
@@ -2195,14 +2196,15 @@ begin
     HeaderNames := TStringList.create;
     qPERSON := DataModuleDatenbank.nQuery;
     qANSCHRIFT := DataModuleDatenbank.nQuery;
+    XLS := TXLSFile.create(true);
 
     Aenderungen := 0;
 
     UserBreak := false;
     Button15.Caption := 'Abbruch';
-    with FlexCelImport1 do
+    with XLS do
     begin
-      OpenFile(Edit5.Text);
+      Open(Edit5.Text);
 
       with qPERSON do
       begin
@@ -2222,9 +2224,9 @@ begin
       FieldNames.add('ANSCHRIFT.PLZORT');
 
       // Spalten-Überschriften speichern
-      for n := 1 to MaxCol do
+      for n := 1 to ColCountInRow(1) do
       begin
-        Spalte := StrFilter(CellValue[1, n],
+        Spalte := StrFilter(getCellValue(1, n),
           '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_.');
         repeat
           k := pos('_', Spalte);
@@ -2235,19 +2237,19 @@ begin
       end;
 
       // Nun der Import
-      for n := 2 to MaxRow do // Zeilen
+      for n := 2 to RowCount do // Zeilen
       begin
         DoPost := false;
         Bemerkung.clear;
         try
-          for m := 1 to MaxCol do // Spalten
+          for m := 1 to ColCountInRow(1) do // Spalten
           begin
             IgnoreField := false;
             Tabelle := nextp(HeaderNames[pred(m)], '.', 0);
             Spalte := nextp(HeaderNames[pred(m)], '.', 1);
             if (Spalte <> '') then
             begin
-              CellStr := cutblank(CellValue[n, m]);
+              CellStr := cutblank(getCellValue(n, m));
               if (CellStr <> '') then
                 repeat
 
@@ -2394,7 +2396,7 @@ begin
           qANSCHRIFT.close;
           qPERSON.post;
           qPERSON.close;
-          Label56.Caption := 'Zeile ' + inttostr(n) + '/' + inttostr(MaxRow) +
+          Label56.Caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) +
             '(' + inttostr(Aenderungen) + ' Änderungen)';
           application.processmessages;
         end;
@@ -2410,6 +2412,7 @@ begin
     Bemerkung.Free;
     FieldNames.Free;
     HeaderNames.Free;
+    XLS.free;
     EndHourGlass;
   end
   else

@@ -458,8 +458,6 @@ uses
   Person, Belege, Ausgangsrechnungen,
   PersonSuche,
   ExcelHelper, CareServer, OLAP,
-  UExcelAdapter, XLSAdapter,
-  UFlexCelImport, UFlxFormats, UFlxNumberFormat,
 
   REST, dbOrgaMon, wanfix32,
   GUIhelp;

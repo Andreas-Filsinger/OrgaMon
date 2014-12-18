@@ -36,8 +36,7 @@ uses
   StdCtrls,
 
   // FlexCell
-  UFlexCelImport,
-  UExcelAdapter, XLSAdapter,
+  FlexCel.Core, FlexCel.xlsAdapter,
 
   // Indy
   IdComponent, IdFTP,
@@ -48,8 +47,6 @@ type
   TFormAuftragErgebnis = class(TForm)
     Button1: TButton;
     ProgressBar1: TProgressBar;
-    XLSAdapter1: TXLSAdapter;
-    FlexCelImport1: TFlexCelImport;
     ListBox1: TListBox;
     Label2: TLabel;
     Label3: TLabel;
@@ -88,6 +85,7 @@ type
     HugeTransactionN: integer;
     ManuellInitiiert: boolean;
     IdFTP1: TIdFTP;
+    FlexCelXLS : TXLSFile;
 
     // Statistik
     Stat_Erfolg: TgpIntegerList;
@@ -132,7 +130,6 @@ var
 implementation
 
 uses
-
   // lib
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
@@ -142,14 +139,15 @@ uses
   IB_Components, IB_Access,
 
   // OrgaMon-Core
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
 
-  //
+
+  // Forms
   Bearbeiter, AuftragArbeitsplatz, Datenbank,
-  UFlxFormats, dbOrgaMon,
   Mapping, InfoZIP, WordIndex;
 {$R *.dfm}
 
@@ -366,30 +364,31 @@ var
   var
     fmfm: TFlxFormat;
   begin
-    with FlexCelImport1 do
+    with FlexCelXLS do
     begin
 
-      GetDefaultFormat(fmfm);
+      fmfm := GetDefaultFormat;
       with fmfm do
       begin
         Font.name := 'Courier New';
         Font.Size20 := round(8.0 * 20);
-        borders.Left.style := fbs_Thin;
-        borders.Left.colorIndex := NearestColorIndex(clblack);
-        FillPattern.Pattern := 2;
-        FillPattern.BgColorIndex := 0;
-        VAlignment := fva_top;
-        FillPattern.FgColorIndex := NearestColorIndex($99CCFF);
+        borders.Left.style :=     TFlxBorderStyle.Thin;
+        borders.Left.color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+        FillPattern.Pattern := TFlxPatternStyle.Solid;
+        FillPattern.BgColor := 0;
+        VAlignment := TVFlxAlignment.top;
+        FillPattern.FgColor := NearestColorIndex(TUIColor.BgrToRgb($99CCFF));
         WrapText := true;
       end;
       fmProtokollText := addformat(fmfm);
 
-      GetDefaultFormat(fmfm);
+      fmfm := GetDefaultFormat;
       with fmfm do
       begin
         format := '@';
       end;
       fmInternText := addformat(fmfm);
+
     end;
   end;
 
@@ -398,7 +397,8 @@ var
     n: integer;
     fmReady: boolean;
   begin
-    FlexCelImport1.RowHeight[ExcelWriteRow] := 277;
+   // imp pend FlexCel: RowHeight
+ //   FlexCelXLS.RowHeight[ExcelWriteRow] := 277;
 
     for n := 0 to pred(ActColumn.count) do
     begin
@@ -412,9 +412,8 @@ var
           // ganzes Protokoll
           if (Header[n] = 'ProtokollText') then
           begin
-            FlexCelImport1.CellFormat[ExcelWriteRow, succ(n)] :=
-              fmProtokollText;
-            FlexCelImport1.columnwidth[succ(n)] := 340 * 18;
+            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n),     fmProtokollText);
+            FlexCelXLS.setcolwidth(succ(n), 340 * 18);
             fmReady := true;
             break;
           end;
@@ -422,7 +421,7 @@ var
           // q* Felder im Textformat, damit sie keine schadhafte Formatierung erhalten
           if (pos('q', Header[n]) = 1) then
           begin
-            FlexCelImport1.CellFormat[ExcelWriteRow, succ(n)] := fmInternText;
+            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n), fmInternText);
             fmReady := true;
             break;
           end;
@@ -430,7 +429,7 @@ var
           // Ausdrückliche Textfelder
           if (HeaderTextFormat.indexof(Header[n]) <> -1) then
           begin
-            FlexCelImport1.CellFormat[ExcelWriteRow, succ(n)] := fmInternText;
+            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n), fmInternText);
             fmReady := true;
             break;
           end;
@@ -442,11 +441,11 @@ var
       // AppendStringsToFile(ActColumn[n],DiagnosePath+'SetCell.log.txt');
       try
         if fmReady then
-          FlexCelImport1.CellValue[ExcelWriteRow, succ(n)] := ActColumn[n]
+          FlexCelXLS.setCellValue(ExcelWriteRow, succ(n), ActColumn[n])
         else
-          FlexCelImport1.SetCellString(ExcelWriteRow, succ(n), ActColumn[n]);
+          FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
       except
-        FlexCelImport1.SetCellString(ExcelWriteRow, succ(n), 'ERROR');
+        FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), 'ERROR');
       end;
 
     end;
@@ -675,13 +674,13 @@ var
     AliasNames := Settings.values[cE_SpaltenAlias];
     while (AliasNames <> '') do
       HeaderAliasNames.add(nextp(AliasNames, ';'));
-    with FlexCelImport1 do
+    with FlexCelXLS do
       for n := 0 to pred(Header.count) do
       begin
         NewHeaderName := HeaderAliasNames.values[Header[n]];
         if (NewHeaderName = '') then
           NewHeaderName := Header[n];
-        SetCellString(1, succ(n), NewHeaderName);
+        SetCellValue(1, succ(n), NewHeaderName);
       end;
     HeaderAliasNames.free;
 
@@ -844,7 +843,7 @@ begin
     ProgressBar1.max := RIDs.count;
     ProgressBar1.position := 0;
 
-    with FlexCelImport1 do
+    with FlexCelXLS do
     begin
 
       if (Settings.values[cE_SAPQUELLE] <> '') then
@@ -2861,6 +2860,7 @@ begin
     OnBannerAfterLogin := IdFTP1BannerAfterLogin;
     OnBannerBeforeLogin := IdFTP1BannerBeforeLogin;
   end;
+  FlexCelXLS := TXLSFile.create(true);
 end;
 
 procedure TFormAuftragErgebnis.IdFTP1BannerAfterLogin(ASender: TObject;

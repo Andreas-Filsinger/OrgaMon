@@ -53,9 +53,7 @@ uses
   // Tools
   WordIndex,
   JvGIF,
-  UFlexCelImport,
-  UExcelAdapter,
-  XLSAdapter,
+  FlexCel.Core, FlexCel.xlsadapter,
   dbOrgaMon,
 
   // Hebu-Project
@@ -206,8 +204,6 @@ type
     Button20: TButton;
     Label24: TLabel;
     IB_Edit3: TIB_Edit;
-    XLSAdapter1: TXLSAdapter;
-    FlexCelImport1: TFlexCelImport;
     SpeedButton19: TSpeedButton;
     TabSheet8: TTabSheet;
     Edit4: TEdit;
@@ -1553,18 +1549,20 @@ var
   IMPORT_R: Integer;
   MyStrL: TStringList;
   VerlagNo: string;
+  XLS : TXLSFIle;
 begin
   //
   if Button1.caption = 'Import' then
   begin
     BeginHourGlass;
+  XLS := TXLSFIle.create(true);
     Aenderungen := 0;
 
     UserBreak := false;
     Button1.caption := 'Abbruch';
-    with FlexCelImport1 do
+    with XLS do
     begin
-      OpenFile(Edit3.text);
+      Open(Edit3.text);
 
       qARTIKEL := DataModuleDatenbank.nQuery;
       with qARTIKEL do
@@ -1576,9 +1574,9 @@ begin
 
       // Spalten-Überschriften speichern
       HeaderNames := TStringList.create;
-      for n := 1 to MaxCol do
+      for n := 1 to ColCountInRow(1) do
       begin
-        Spalte := StrFilter(CellValue[1, n], 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
+        Spalte := StrFilter(getCellValue(1, n), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
         repeat
           k := pos('_', Spalte);
           if k = 1 then
@@ -1588,18 +1586,18 @@ begin
       end;
 
       // Nun der Import
-      for n := 2 to MaxRow do // Zeilen
+      for n := 2 to RowCount do // Zeilen
       begin
         SaveChanges := false;
         try
-          for m := 1 to MaxCol do // Spalten
+          for m := 1 to ColCountInRow(1) do // Spalten
           begin
 
             Spalte := HeaderNames[pred(m)];
             if (Spalte <> '') then
             begin
 
-              CellStr := cutblank(CellValue[n, m]);
+              CellStr := cutblank(getCellValue(n, m));
               if (CellStr <> '') then
               begin
                 repeat
@@ -1702,7 +1700,7 @@ begin
                   end;
 
                   // Wert speichern
-                  if (strtointdef(CellValue[n, m], 0) > 0) then
+                  if (strtointdef(getCellValue(n, m), 0) > 0) then
                     qARTIKEL.FieldByName(Spalte).AsInteger :=
                       strtointdef(CellStr, 0)
                   else
@@ -1730,7 +1728,7 @@ begin
         begin
           qARTIKEL.post;
           SaveChanges := false;
-          Label23.caption := 'Zeile ' + inttostr(n) + '/' + inttostr(MaxRow) +
+          Label23.caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) +
             '(' + inttostr(Aenderungen) + ' Änderungen)';
           application.processmessages;
         end;
@@ -1742,6 +1740,7 @@ begin
     SpeedButton2Click(Sender);
     Button1.caption := 'Import';
     Label23.caption := '-';
+    XLS.free;
     EndHourGlass;
   end
   else

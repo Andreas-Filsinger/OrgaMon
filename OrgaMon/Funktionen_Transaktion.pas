@@ -184,8 +184,7 @@ uses
   InfoZip,
 
   // XLS Sachen
-  UFlexCelImport, UExcelAdapter, XLSAdapter,
-  UFlxFormats, UFlxNumberFormat,
+  FlexCel.Core, FlexCel.xlsAdapter,
 
   // Pascal Skript
   uPSUtils, uPSCompiler, uPSRuntime,
@@ -1600,8 +1599,7 @@ end;
 procedure doHA9(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   qAUFTRAG: TIB_Query;
   sDiagnose: TStringList;
 
@@ -1689,7 +1687,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.CellValue[r, c]);
+    result := cutblank(xImport.getCellValue(r, c));
   end;
 
 var
@@ -1715,26 +1713,21 @@ begin
     OPen;
   end;
 
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFIle.create(true);
   sDiagnose := TStringList.create;
 
   with xImport do
   begin
-    OpenFile(MyProgramPath + 'NonDa/Nachtrag.xls');
+    Open(MyProgramPath + 'NonDa/Nachtrag.xls');
     ActiveSheet := 1;
-    for r := 2 to MaxRow do
+    for r := 2 to RowCount do
       setHinweise(rC(r, 5), rC(r, 6));
     ActiveSheet := 2;
-    for r := 2 to MaxRow do
+    for r := 2 to RowCount do
       setVorgezogen(rC(r, 5));
-    CloseFile;
   end;
 
-  xImport.Adapter := nil;
   xImport.free;
-  xAdapter.free;
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
   if (sDiagnose.count > 0) then
@@ -1745,8 +1738,7 @@ end;
 procedure doHAA(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFile;
   cAUFTRAG: TIB_Cursor;
   cAUFTRAG2: TIB_Cursor;
   sDiagnose: TStringList;
@@ -1800,7 +1792,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.CellValue[r, c]);
+    result := cutblank(xImport.getCellValue(r, c));
   end;
 
 var
@@ -1837,23 +1829,18 @@ begin
     OPen;
   end;
 
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
   with xImport do
   begin
-    OpenFile(MyProgramPath + 'NonDa/Bericht.xls');
+    Open(MyProgramPath + 'NonDa/Bericht.xls');
     ActiveSheet := 1;
-    for r := 2 to MaxRow do
+    for r := 2 to RowCount do
       setMarkiert(rC(r, 4)); // Excel Spalte D
-    CloseFile;
   end;
 
-  xImport.Adapter := nil;
   xImport.free;
-  xAdapter.free;
   cAUFTRAG.free;
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
@@ -1865,8 +1852,7 @@ end;
 
 procedure doAH3(lRID: TgpIntegerList);
 var
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFIle;
   cAUFTRAG: TIB_Cursor;
   cABLAGE: TIB_Cursor;
 
@@ -1879,7 +1865,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.CellValue[r, c]);
+    result := cutblank(xImport.getCellValue(r, c));
   end;
 
 var
@@ -1915,9 +1901,7 @@ begin
   end;
 
   // Excel-Dokument öffnen
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFIle.create(true);
 
   sRIDs := TStringList.create;
   sRIDs.add('RID');
@@ -1926,9 +1910,9 @@ begin
 
   with xImport do
   begin
-    OpenFile(MyProgramPath + 'NonDa/Bericht.xls');
+    Open(MyProgramPath + 'NonDa/Bericht.xls');
     ActiveSheet := 1;
-    for r := 2 to MaxRow do
+    for r := 2 to RowCount do
     begin
       AUFTRAG_R := -1;
 
@@ -1976,12 +1960,9 @@ begin
       end;
 
     end;
-    CloseFile;
   end;
 
-  xImport.Adapter := nil;
   xImport.free;
-  xAdapter.free;
   cAUFTRAG.free;
   cABLAGE.free;
   sRIDs.SaveToFile(DiagnosePath + 'AH3-AUFTRAG.csv');
@@ -2134,15 +2115,14 @@ end;
 procedure doKE9(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
-  xAdapter: TXLSAdapter;
-  xImport: TFlexCelImport;
+  xImport: TXLSFIle;
   qAUFTRAG: TIB_Query;
   sDiagnose: TStringList;
   sProtokoll: TStringList;
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.CellValue[r, c]);
+    result := cutblank(xImport.getCellValue(r, c));
   end;
 
 var
@@ -2176,18 +2156,16 @@ begin
     OPen;
   end;
 
-  xAdapter := TXLSAdapter.create(nil);
-  xImport := TFlexCelImport.create(nil);
-  xImport.Adapter := xAdapter;
+  xImport := TXLSFIle.create(true);
   sDiagnose := TStringList.create;
 
   with xImport do
   begin
-    OpenFile(MyProgramPath + 'NonDa/Nachtrag.xls');
+    Open(MyProgramPath + 'NonDa/Nachtrag.xls');
     ActiveSheet := 1;
 
     Col_ZaehlerNummer := -1;
-    for c := 1 to MaxCol do
+    for c := 1 to ColCountInRow(1) do
     begin
       HeaderFieldName := rC(1, c);
       if (HeaderFieldName = 'Zaehler_Nummer') then
@@ -2197,7 +2175,7 @@ begin
     end;
 
     with qAUFTRAG do
-      for r := 2 to MaxRow do
+      for r := 2 to RowCount do
       begin
         repeat
 
@@ -2230,12 +2208,9 @@ begin
 
       end;
 
-    CloseFile;
   end;
 
-  xImport.Adapter := nil;
   xImport.free;
-  xAdapter.free;
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
   if (sDiagnose.count > 0) then

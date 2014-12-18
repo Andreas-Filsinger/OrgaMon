@@ -223,7 +223,7 @@ begin
   begin
     Passive := true; // wichtig wegen NAT und Sicherheit
     TransferType := ftBinary; // wichtig wegen SIZE
-//    TransferTimeout := 30000; // 30 sec ohne Daten -> TimeOut
+    // TransferTimeout := 30000; // 30 sec ohne Daten -> TimeOut
   end;
   with ftp.ProxySettings do
   begin

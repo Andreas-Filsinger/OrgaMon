@@ -30,12 +30,12 @@ interface
 
 uses
   Classes
-{$ifdef fpc}
-  , fpspreadsheet
-{$else}
-  , UFlexCelImport
-{$endif}
-  ;
+{$IFDEF fpc}
+    , fpspreadsheet
+{$ELSE}
+    , VCL.FlexCel.Core, FlexCel.XlsAdapter
+{$ENDIF}
+    ;
 
 const
   cExcel_HTML_Color_High = $99CCFF;
@@ -86,20 +86,19 @@ const
   // Farbspalte=<SPALTENÜBERSCHRIFT>
   // TabellenName=<SheetName>
 
-  {$ifdef fpc}
-
+{$IFDEF fpc}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TsWorkbook = nil);
-    {$else}
+{$ELSE}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TFlexCelImport = nil);
-    {$endif}
+  Options: TStringList = nil; pXLS: TXLSFile = nil);
+{$ENDIF}
 procedure CSVExport(FName: string; Content: TList);
 procedure CSVImport(FName: string; Content: TList);
 
 implementation
 
-{$ifdef fpc}
+{$IFDEF fpc}
 
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TsWorkbook = nil);
@@ -117,21 +116,14 @@ begin
 
 end;
 
-
 end.
-{$else}
-
-uses
-  UExcelAdapter, XLSAdapter,
-  html, UFlxFormats, anfix32,
-  math, globals, SysUtils,
-  graphics;
+{$ELSE}
+  uses html, anfix32, math, globals, SysUtils, graphics;
 
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
-  Options: TStringList = nil; pXLS: TFlexCelImport = nil);
+  Options: TStringList = nil; pXLS: TXLSFile = nil);
 var
-  xlsAUSGABE: TFlexCelImport;
-  xlsMACHINE: TXLSAdapter;
+  xlsAUSGABE: TXLSFile;
   xlsFormatDefault: string;
   ColCount: integer;
   AllTypes: TStringList;
@@ -185,7 +177,7 @@ var
     with fmfm do
     begin
       format := FormatString;
-      fmfm.FillPattern.FgColorIndex := xlsAUSGABE.NearestColorIndex(CellColor);
+      fmfm.FillPattern.FgColor := xlsAUSGABE.NearestColorIndex(CellColor);
       fmfm.WrapText := MultiLine;
     end;
     result := xlsAUSGABE.addformat(fmfm);
@@ -193,23 +185,23 @@ var
 
   function fmSetColor(fmIndex: integer; CellColor: TColor): integer;
   begin
-    xlsAUSGABE.GetFormatList(fmIndex, fmfm);
-    fmfm.FillPattern.FgColorIndex := xlsAUSGABE.NearestColorIndex(CellColor);
+    fmfm := xlsAUSGABE.getformat(fmIndex);
+    fmfm.FillPattern.FgColor := xlsAUSGABE.NearestColorIndex(CellColor);
     result := xlsAUSGABE.addformat(fmfm);
   end;
 
   function fmSetOrientationVertikal(fmIndex: integer): integer;
   begin
-    xlsAUSGABE.GetFormatList(fmIndex, fmfm);
+    fmfm := xlsAUSGABE.getformat(fmIndex);
     fmfm.Rotation := 90;
     result := xlsAUSGABE.addformat(fmfm);
   end;
 
   function fmSetAlignment(fmIndex: integer): integer;
   begin
-    xlsAUSGABE.GetFormatList(fmIndex, fmfm);
-    fmfm.HAlignment := fha_center;
-    fmfm.VAlignment := fva_center;
+    fmfm := xlsAUSGABE.getformat(fmIndex);
+    fmfm.HAlignment := THFlxAlignment.center;
+    fmfm.VAlignment := TVFlxAlignment.center;
     result := xlsAUSGABE.addformat(fmfm);
   end;
 
@@ -280,8 +272,8 @@ var
 
         // Datum
         if (length(s) = 10) then
-          if (s[3] = '.') and (s[6] = '.') and
-            (s = StrFilter(s, '0123456789.')) then
+          if (s[3] = '.') and (s[6] = '.') and (s = StrFilter(s, '0123456789.'))
+          then
           begin
             result := xls_CellType_Date;
             break;
@@ -366,7 +358,8 @@ var
           if (k > 0) then
           begin
             CellContentString := copy(FullCell, 1, pred(k));
-            result := split(copy(FullCell, succ(k), pred(l - k)), cLineSeparator);
+            result := split(copy(FullCell, succ(k), pred(l - k)),
+              cLineSeparator);
             CellCommentString := result.Values[cCellFormat_Comment];
             break;
           end;
@@ -387,12 +380,10 @@ begin
   begin
     // Datei neu erstellen
     FileDelete(FName);
-    xlsMACHINE := TXLSAdapter.create(nil);
-    xlsAUSGABE := TFlexCelImport.create(nil);
+    xlsAUSGABE := TXLSFile.Create(true);
     with xlsAUSGABE do
     begin
-      adapter := xlsMACHINE;
-      NewFile(1);
+      NewFile(1, TExcelFileFormat.v2003);
     end;
   end
   else
@@ -400,7 +391,7 @@ begin
     xlsAUSGABE := pXLS;
   end;
 
-  AllTypes := TStringList.create;
+  AllTypes := TStringList.Create;
   for r := 0 to pred(xls_CellType_Count) do
     AllTypes.add(xls_CellTypes[r]);
 
@@ -408,17 +399,17 @@ begin
   begin
 
     // Alle Formate erzeugen, ableiten aus dem Standard-Format
-    GetDefaultFormat(fmfm);
+    fmfm := GetDefaultFormat;
     xlsFormatDefault := fmfm.format;
     with fmfm do
     begin
       Font.name := 'Verdana';
       Font.Size20 := round(10.0 * 20);
-      borders.Left.style := fbs_Thin;
-      borders.Left.colorIndex := NearestColorIndex(clblack);
-      FillPattern.Pattern := 2;
-      FillPattern.BgColorIndex := 0;
-      VAlignment := fva_top;
+      borders.Left.style := TFlxBorderStyle.Thin;
+      borders.Left.color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+      FillPattern.Pattern := TFlxPatternStyle.Solid;
+      FillPattern.BgColor := 0;
+      VAlignment := TVFlxAlignment.top;
     end;
 
     // Header Formate erzeugen
@@ -444,7 +435,7 @@ begin
     fmLow_Text := EnsureFormat('@', cExcel_HTML_Color_Low);
 
     //
-    ColCount := getLine(0).count;
+    // ColCount := getLine(0).count;
 
     SetLength(xlsColumnWidth, ColCount);
     SetLength(xlsFormatsLow, ColCount);
@@ -467,11 +458,11 @@ begin
       else
         fmCharsWidth := 0;
 
-      CellValue[1, succ(c)] := CellContent;
-      CellFormat[1, succ(c)] := f;
+      setCellValue(1, succ(c), CellContent);
+      setCellFormat(1, succ(c), f);
 
       if (CellComment <> '') then
-        SetCellComment(1, succ(c), CellComment);
+        SetComment(1, succ(c), CellComment);
 
       if (fmCharsWidth = 0) then
         xlsColumnWidth[c] := max(DefaultColWidth, length(CellContent) *
@@ -528,7 +519,7 @@ begin
 
       // Den Name des Sheets bestimmen
       if (Options.Values[cExcel_TabellenName] <> '') then
-        ActiveSheetName := Options.Values[cExcel_TabellenName];
+        SheetName := Options.Values[cExcel_TabellenName];
 
     end;
 
@@ -548,21 +539,21 @@ begin
             case xlsFormats[c] of
               xls_CellType_ordinal:
                 begin
-                  SetCellString(succ(r), succ(c), CellContent);
+                  setCellValue(succ(r), succ(c), CellContent);
                   CellCharCount := length(CellContent);
                 end;
               xls_CellType_Date:
                 begin
                   if (CellContent <> '') then
                   begin
-                    CellValue[succ(r), succ(c)] :=
-                      double(mkDateTime(date2long(nextp(CellContent,
-                      ' ', 0)), 0));
+                    setCellValue(succ(r), succ(c),
+                      double(mkDateTime(date2long(nextp(CellContent, ' ',
+                      0)), 0)));
                     CellCharCount := 10;
                   end
                   else
                   begin
-                    CellValue[succ(r), succ(c)] := '';
+                    setCellValue(succ(r), succ(c), '');
                     CellCharCount := 0;
                   end;
                 end;
@@ -574,14 +565,16 @@ begin
                     ersetze('-', ' ', myCellValue);
                     while (pos('  ', myCellValue) > 0) do
                       ersetze('  ', ' ', myCellValue);
-                    CellValue[succ(r), succ(c)] :=
-                      double(mkDateTime(date2long(nextp(myCellValue, ' ', 0)),
-                      strtoseconds(nextp(myCellValue, ' ', 1))));
+                    setCellValue(succ(r), succ(c),
+                      { } double(
+                      { } mkDateTime(
+                      { } date2long(nextp(myCellValue, ' ', 0)),
+                      { } strtoseconds(nextp(myCellValue, ' ', 1)))));
                     CellCharCount := 19;
                   end
                   else
                   begin
-                    CellValue[succ(r), succ(c)] := '';
+                    SetCellValue(succ(r), succ(c), '');
                     CellCharCount := 0;
                   end;
                 end;
@@ -589,25 +582,25 @@ begin
                 begin
                   if (CellContent <> '') then
                   begin
-                    CellValue[succ(r), succ(c)] :=
-                      double(mkDateTime(0, strtoseconds(CellContent)));
+                    setCellValue(succ(r), succ(c),
+                      double(mkDateTime(0, strtoseconds(CellContent))));
                     CellCharCount := 8;
                   end
                   else
                   begin
-                    CellValue[succ(r), succ(c)] := '';
+                    SetCellValue(succ(r), succ(c), '');
                     CellCharCount := 0;
                   end;
                 end;
               xls_CellType_Money:
                 begin
                   MoneyDouble := strtodoubledef(CellContent, 0);
-                  CellValue[succ(r), succ(c)] := MoneyDouble;
+                  SetCellValue(succ(r), succ(c),  MoneyDouble);
                   CellCharCount := length(format('%m', [MoneyDouble]));
                 end;
               xls_CellType_double:
                 begin
-                  CellValue[succ(r), succ(c)] := strtodoubledef(CellContent, 0);
+                  SetCellValue(succ(r), succ(c), strtodoubledef(CellContent, 0));
                   CellCharCount := length(CellContent);
                 end;
             else
@@ -619,11 +612,11 @@ begin
               // maximale Länge der einzelnen Strings berechnen
               CellCharCount := _length(myCellValue);
               ersetze(cOLAPcsvLineBreak, #10, myCellValue);
-              CellValue[succ(r), succ(c)] := myCellValue;
+              SetCellValue(succ(r), succ(c),  myCellValue);
 
             end;
           except
-            CellValue[succ(r), succ(c)] := CellContent;
+            SetCellValue(succ(r), succ(c), CellContent);
             CellCharCount := length(CellContent);
           end;
         end
@@ -645,10 +638,10 @@ begin
           CellFormats.Free;
         end;
 
-        CellFormat[succ(r), succ(c)] := f;
+        SetCellFormat(succ(r), succ(c), f);
 
         if (CellComment <> '') then
-          SetCellComment(succ(r), succ(c), CellComment);
+          SetComment(succ(r), succ(c), CellComment);
 
         // Breite schreiben
         xlsColumnWidth[c] := max(xlsColumnWidth[c],
@@ -657,16 +650,14 @@ begin
       end;
     end;
     for c := 0 to high(xlsColumnWidth) do
-      ColumnWidth[succ(c)] := min(65534, xlsColumnWidth[c]);
+      SetColWidth(succ(c), min(65534, xlsColumnWidth[c]));
     if not(assigned(pXLS)) then
     begin
       Save(FName);
-      adapter := nil;
     end;
   end;
   if not(assigned(pXLS)) then
   begin
-    xlsMACHINE.Free;
     xlsAUSGABE.Free;
   end;
   AllTypes.Free;
@@ -678,7 +669,7 @@ var
   JoinL: TStringList;
 begin
   // fertig -> rausspeichern
-  JoinL := TStringList.create;
+  JoinL := TStringList.Create;
   for m := 0 to pred(Content.count) do
     JoinL.add(HugeSingleLine(TStringList(Content[m]), cOLAPcsvSeparator));
   JoinL.SaveToFile(FName);
@@ -694,8 +685,8 @@ var
   JoinL: TStringList;
 begin
   Content.clear;
-  Content.add(TStringList.create);
-  JoinL := TStringList.create;
+  Content.add(TStringList.Create);
+  JoinL := TStringList.Create;
   LoadFromFileCSV(true, JoinL, FName);
   ThisHeader := JoinL[0];
   while (ThisHeader <> '') do
@@ -704,7 +695,7 @@ begin
   for n := 1 to pred(JoinL.count) do
   begin
     ThisLine := JoinL[n];
-    Cols := TStringList.create;
+    Cols := TStringList.Create;
     for m := 0 to pred(ColCount) do
     begin
       if (pos(cOLAPcsvQuote, ThisLine) = 1) then
@@ -724,5 +715,4 @@ begin
 end;
 
 end.
-{$endif}
-
+{$ENDIF}

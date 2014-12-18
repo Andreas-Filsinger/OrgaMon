@@ -74,14 +74,4 @@ object FormAuftragExtern: TFormAuftragExtern
     TabOrder = 3
     Text = '9'
   end
-  object XLSAdapter1: TXLSAdapter
-    AllowOverwritingFiles = False
-    Left = 56
-    Top = 72
-  end
-  object FlexCelImport1: TFlexCelImport
-    Adapter = XLSAdapter1
-    Left = 176
-    Top = 72
-  end
 end

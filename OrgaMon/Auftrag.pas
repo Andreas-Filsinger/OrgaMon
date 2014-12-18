@@ -783,25 +783,50 @@ end;
 
 procedure TFormAuftrag.IB_Memo4DblClick(Sender: TObject);
 var
+  BAUSTELLE_R: integer;
   AUFTRAG_R: integer;
+  FotoDir: string;
+  Settings: TStringList;
+
+  function InfoStr(FotoParameter: string): string;
+  var
+    FotoFname: string;
+    FotoPath: string;
+  begin
+    FotoFname :=
+    { } e_r_FotoName(
+      { } AUFTRAG_R,
+      { } FotoParameter,
+      { } IB_Memo4.lines.Values[FotoParameter]);
+    if FileExists(FotoDir + nextp(FotoFname, ',', 0)) then
+      FotoFname := FotoFname + ' OK!'
+    else
+      FotoFname := FotoFname + ' ERROR: In "' + FotoDir + '" fehlt die Datei!';
+
+    result :=
+    { } FotoParameter + '=' +
+    { } FotoFname;
+
+    AppendStringsToFile(result, DiagnosePath + 'Fotos-' + DatumLog +
+      '.log.txt');
+  end;
+
 begin
+
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
-  ShowMessage(
-    { } 'FA=' +
-    { } e_r_FotoName(
-    { } AUFTRAG_R,
-    { } 'FA',
-    {} IB_MEMO4.Lines.Values['FA'])
-    { } + #13 + 'FN=' +
-    { } e_r_FotoName(
-    { } AUFTRAG_R,
-    { } 'FN',
-    {} IB_MEMO4.Lines.Values['FN']) +
-    { } #13 + 'FH=' +
-    { } e_r_FotoName(
-    { } AUFTRAG_R,
-    { } 'FH',
-    {} IB_MEMO4.Lines.Values['FH']));
+  BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
+
+  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
+    inttostr(BAUSTELLE_R));
+
+  FotoDir := FotoPath + e_r_BaustellenPfad(Settings) + '\';
+
+  ShowMessage(FotoDir + #13 +
+    { } InfoStr('FA') + #13 +
+    { } InfoStr('FN') + #13 +
+    { } InfoStr('FH'));
+
+  Settings.Free;
 end;
 
 procedure TFormAuftrag.IB_Memo5Change(Sender: TObject);
@@ -971,8 +996,8 @@ begin
     InternalP := TStringList.create;
     FieldByName('ZAEHLER_INFO').AssignTo(InternalP);
     FieldByName('ZAEHLER_STAND_ALT').AsString :=
-      inttostr(max((strtoint64def(InternalP.values['P0'],
-      0) + strtoint64def(InternalP.values['P1'], 0)) div 2,
+      inttostr(max((strtoint64def(InternalP.Values['P0'],
+      0) + strtoint64def(InternalP.Values['P1'], 0)) div 2,
       strtointdef(FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString, 0)));
     InternalP.Free;
     // Ausführungsdatum

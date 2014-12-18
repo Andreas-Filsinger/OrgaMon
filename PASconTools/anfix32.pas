@@ -293,7 +293,7 @@ function WeekDay(ADate: TAnfixDate): byte; // 1= Montag .. 7 = Sonntag
 function WeekDayS(ADate: TAnfixDate): string;
 function WeekDayL(ADate: TAnfixDate): string;
 
-function Feiertag(ADate: TAnfixDate): boolean; // imp pend
+function Feiertag(ADate: TAnfixDate): boolean; // imp pend: Feiertage
 function Kalenderwoche(ADate: TAnfixDate): integer; //
 function Quartal(ADate: TAnfixDate): integer; //
 function Fdate(const FName: string): longint;

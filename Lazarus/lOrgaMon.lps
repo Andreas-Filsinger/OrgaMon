@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="101">
+    <Units Count="102">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -20,7 +20,7 @@
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="506"/>
         <CursorPos X="12" Y="527"/>
@@ -67,7 +67,7 @@
       <Unit6>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <UnitName Value="dbOrgaMon"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="76" Y="12"/>
@@ -185,7 +185,7 @@
       <Unit19>
         <Filename Value="..\OrgaMon\Funktionen_Auftrag.pas"/>
         <UnitName Value="Funktionen_Auftrag"/>
-        <EditorIndex Value="20"/>
+        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1992"/>
         <CursorPos X="52" Y="2016"/>
@@ -228,7 +228,7 @@
       <Unit23>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <UnitName Value="globals"/>
-        <EditorIndex Value="21"/>
+        <EditorIndex Value="22"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -666,7 +666,7 @@
       <Unit73>
         <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
         <UnitName Value="fpspreadsheet"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="424"/>
         <CursorPos X="13" Y="443"/>
@@ -748,7 +748,7 @@
       <Unit82>
         <Filename Value="..\PASconTools\basic32.pas"/>
         <UnitName Value="basic32"/>
-        <EditorIndex Value="18"/>
+        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2553"/>
         <CursorPos X="14" Y="2588"/>
@@ -784,7 +784,7 @@
       <Unit86>
         <Filename Value="..\..\fpspreadsheet\fpsxmlcommon.pas"/>
         <UnitName Value="fpsxmlcommon"/>
-        <EditorIndex Value="19"/>
+        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="44"/>
         <CursorPos X="1" Y="1"/>
@@ -804,7 +804,7 @@
       <Unit88>
         <Filename Value="..\..\fpspreadsheet\xlsbiff8.pas"/>
         <UnitName Value="xlsbiff8"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -823,7 +823,7 @@
       <Unit90>
         <Filename Value="..\..\fpspreadsheet\fpsrpn.pas"/>
         <UnitName Value="fpsRPN"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="73"/>
         <CursorPos X="1" Y="1"/>
@@ -833,7 +833,7 @@
       <Unit91>
         <Filename Value="..\..\fpspreadsheet\fpsstrings.pas"/>
         <UnitName Value="fpsStrings"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -843,7 +843,7 @@
       <Unit92>
         <Filename Value="..\..\fpspreadsheet\examples\wikitablemaker\synhighlighterwikitable.pas"/>
         <UnitName Value="SynHighlighterWikitable"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -854,7 +854,7 @@
       <Unit93>
         <Filename Value="..\..\fpspreadsheet\fpscsv.pas"/>
         <UnitName Value="fpscsv"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="299"/>
         <CursorPos X="13" Y="346"/>
@@ -919,7 +919,7 @@
       <Unit99>
         <Filename Value="..\PASconTools\memcache.pas"/>
         <UnitName Value="memcache"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="145"/>
         <CursorPos X="69" Y="181"/>
@@ -930,7 +930,6 @@
       <Unit100>
         <Filename Value="E:\lazarus\components\lazutils\lazutilities.pas"/>
         <UnitName Value="LazUtilities"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -939,6 +938,18 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit100>
+      <Unit101>
+        <Filename Value="E:\fpc\compiler\version.pas"/>
+        <UnitName Value="version"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="9"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="48" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit101>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
