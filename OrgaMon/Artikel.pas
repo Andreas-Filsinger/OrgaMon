@@ -1576,7 +1576,9 @@ begin
       HeaderNames := TStringList.create;
       for n := 1 to ColCountInRow(1) do
       begin
-        Spalte := StrFilter(getCellValue(1, n), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
+        Spalte := StrFilter(
+         {} getCellValue(1, n).ToStringInvariant,
+         {} 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
         repeat
           k := pos('_', Spalte);
           if k = 1 then
@@ -1597,7 +1599,7 @@ begin
             if (Spalte <> '') then
             begin
 
-              CellStr := cutblank(getCellValue(n, m));
+              CellStr := cutblank(getCellValue(n, m).ToStringInvariant);
               if (CellStr <> '') then
               begin
                 repeat
@@ -1700,7 +1702,7 @@ begin
                   end;
 
                   // Wert speichern
-                  if (strtointdef(getCellValue(n, m), 0) > 0) then
+                  if (strtointdef(getCellValue(n, m).ToStringInvariant, 0) > 0) then
                     qARTIKEL.FieldByName(Spalte).AsInteger :=
                       strtointdef(CellStr, 0)
                   else

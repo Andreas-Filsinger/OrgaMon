@@ -1023,18 +1023,26 @@ begin
   BeginHourGlass;
   sExcelOptions := TStringList.create;
   sExcelOptions.add('Datum=DATE');
+
   try
     CheckCreateOnce(EigeneOrgaMonDateienPfad);
     ExcelExport(EigeneOrgaMonDateienPfad + 'Personen.xls', PersonList, nil,
       xlsOptions);
-    CSVExport(EigeneOrgaMonDateienPfad + 'Personen.csv', PersonList);
-    if (iTextDocumentExtension = cDOCextension) then
-      CSVExport('C:\OrgaMon.csv', PersonList);
   except
     ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei'
       + #13 + EigeneOrgaMonDateienPfad + 'Personen.xls' + #13 +
       'im Moment geöffnet?');
   end;
+
+  try
+    CSVExport(EigeneOrgaMonDateienPfad + 'Personen.csv', PersonList);
+  except
+    ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei'
+      + #13 + EigeneOrgaMonDateienPfad + 'Personen.csv' + #13 +
+      'im Moment geöffnet?');
+  end;
+
+  sExcelOptions.Free;
   EndHourGlass;
 end;
 
@@ -2226,7 +2234,7 @@ begin
       // Spalten-Überschriften speichern
       for n := 1 to ColCountInRow(1) do
       begin
-        Spalte := StrFilter(getCellValue(1, n),
+        Spalte := StrFilter(getCellValue(1, n).ToStringInvariant,
           '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_.');
         repeat
           k := pos('_', Spalte);
@@ -2249,7 +2257,7 @@ begin
             Spalte := nextp(HeaderNames[pred(m)], '.', 1);
             if (Spalte <> '') then
             begin
-              CellStr := cutblank(getCellValue(n, m));
+              CellStr := cutblank(getCellValue(n, m).ToStringInvariant);
               if (CellStr <> '') then
                 repeat
 

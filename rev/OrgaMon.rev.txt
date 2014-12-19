@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.072 (18.12.14) Andreas Filsinger
+
+ Neu: Intern: Migration FlexCel 3.5 auf 6.6.11
+ Wegfall: Erstellen der Datei: C:\OrgaMon.csv
+
 Rev 8.071 (17.12.14) Andreas Filsinger
 
  Neu: Auftrag: Doppelklick auf Auftrag: Der Foto-Pfad wird mit ausgegeben

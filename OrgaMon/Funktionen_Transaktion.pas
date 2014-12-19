@@ -1687,7 +1687,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.getCellValue(r, c));
+    result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
   end;
 
 var
@@ -1792,7 +1792,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.getCellValue(r, c));
+    result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
   end;
 
 var
@@ -1865,7 +1865,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.getCellValue(r, c));
+    result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
   end;
 
 var
@@ -2122,7 +2122,7 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
-    result := cutblank(xImport.getCellValue(r, c));
+    result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
   end;
 
 var
