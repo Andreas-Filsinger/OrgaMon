@@ -730,8 +730,10 @@ begin
   result := 0;
   with pXLS do
     if GetCellValue(r, c).HasValue then
-      result := mkDateTime(0, strtoseconds(GetCellValue(r,
-        c).ToStringInvariant));
+    begin
+      result := GetCellValue(r, c).ToDateTime(false);
+      ReplaceDate(result, 0);
+    end;
 end;
 
 function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
