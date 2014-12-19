@@ -1315,7 +1315,7 @@ var
 
       // Es muss Vorgaben geben,
       if (sErgebnisseSoll.count = 0) then
-        raise Exception.create('Keine Ergebnisse in ' + cPath_ErgebnisSoll);
+        raise Exception.create('Keine Soll-Ergebnisse in ' + cPath_ErgebnisSoll);
 
       for n := 0 to pred(sErgebnisseSoll.count) do
       begin

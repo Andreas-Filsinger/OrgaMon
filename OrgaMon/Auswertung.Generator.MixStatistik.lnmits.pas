@@ -31,17 +31,16 @@ unit Auswertung.Generator.MixStatistik.lnmits;
 // Umlaute werden in Formeln normalerweise nicht akzeptiert.
 //
 // Umgehung des Problems:
-//   In der Datei UXlsEncodeFormula die Methode
-//          TParseString.IsAlpha(const c: UTF16Char): boolean;
-//   suchen und mit folgenden Code ersetzen:
+// In der Datei UXlsEncodeFormula die Methode
+// TParseString.IsAlpha(const c: UTF16Char): boolean;
+// suchen und mit folgenden Code ersetzen:
 //
 // function TParseString.IsAlpha(const c: UTF16Char): boolean;
 // begin
-//  Result:=(ord(c)<255) and (AnsiChar(c) in ['A'..'Z', 'Ä', 'Ü', 'Ö', '_', '\', 'a'..'z', 'ä', 'ü', 'ö', 'ß'])
+// Result:=(ord(c)<255) and (AnsiChar(c) in ['A'..'Z', 'Ä', 'Ü', 'Ö', '_', '\', 'a'..'z', 'ä', 'ü', 'ö', 'ß'])
 // end;
 //
 // Jetzt werden die Zeichen ÄÖÜäöüß zusätzlich akzeptiert.
-
 
 interface
 
@@ -55,11 +54,11 @@ type
 
   TLNMITS = class
   private
-    FFlexCelImport:     TXLSFile;
-    FCities:            TLNMITSCities;
+    FFlexCelImport: TXLSFile;
+    FCities: TLNMITSCities;
 
     FCityOverviewStart: Integer;
-    FCitySheetStart:    Integer;
+    FCitySheetStart: Integer;
 
     function NextCityLineToInsert: Integer;
     procedure RecreateFlexCel;
@@ -78,7 +77,8 @@ type
     property Cities: TLNMITSCities read FCities;
 
     // Zeile auf dem Deckblatt, ab der die Städte aufgelistet sind (fängt ab 1 an)
-    property CityOverviewStart: Integer read FCityOverviewStart write FCityOverviewStart;
+    property CityOverviewStart: Integer read FCityOverviewStart
+      write FCityOverviewStart;
     // Index des Sheets, ab der die Städte aufgelistet sind  (fängt ab 1 an)
     property CitySheetStart: Integer read FCitySheetStart write FCitySheetStart;
   end;
@@ -87,11 +87,12 @@ type
 
   TLNMITSCities = class
   private
-    FOwner:   TLNMITS;
-    FCities:  TTXStringList;
+    FOwner: TLNMITS;
+    FCities: TTXStringList;
 
     procedure InternalClear;
-    function InternalAdd(const City: AnsiString; CanModifyExcel: Boolean): TLNMITSCity;
+    function InternalAdd(const City: AnsiString; CanModifyExcel: Boolean)
+      : TLNMITSCity;
 
     procedure ModifyOverviewLine(const City: AnsiString; Line: Integer);
 
@@ -103,7 +104,8 @@ type
     constructor Create(AOwner: TLNMITS);
     destructor Destroy; override;
 
-    class function PrepareCityNameForSheet(const City: AnsiString; RemoveSpaces: Boolean): AnsiString;
+    class function PrepareCityNameForSheet(const City: AnsiString;
+      RemoveSpaces: Boolean): AnsiString;
     class function PrepareCityNameForSearch(const City: AnsiString): AnsiString;
     class procedure ValidateCityName(const City: AnsiString);
 
@@ -124,9 +126,9 @@ type
 
   TLNMITSCity = class
   private
-    FOwner:                   TLNMITSCities;
-    FCity:                    AnsiString;
-    FHaveToGenerateOlapFile:  Boolean;
+    FOwner: TLNMITSCities;
+    FCity: AnsiString;
+    FHaveToGenerateOlapFile: Boolean;
 
     procedure SetCity(const City: AnsiString);
     function GetIndex: Integer;
@@ -139,7 +141,8 @@ type
 
     property City: AnsiString read FCity write SetCity;
 
-    property HaveToGenerateOlapFile: Boolean read FHaveToGenerateOlapFile write FHaveToGenerateOlapFile;
+    property HaveToGenerateOlapFile: Boolean read FHaveToGenerateOlapFile
+      write FHaveToGenerateOlapFile;
 
     property Index: Integer read GetIndex;
     property Owner: TLNMITSCities read FOwner;
@@ -148,7 +151,7 @@ type
 implementation
 
 const
-  CellLetters : AnsiString = 'UJKLMOPQRSTWXYNVI';
+  CellLetters: AnsiString = 'UJKLMOPQRSTWXYNVI';
 
 constructor TLNMITS.Create;
 begin
@@ -207,7 +210,7 @@ end;
 
 function TLNMITS.OverviewIndexOf(const City: AnsiString): Integer;
 var
-  S:    AnsiString;
+  S: AnsiString;
   I, C: Integer;
 begin
   Result := -1;
@@ -216,7 +219,8 @@ begin
 
   C := NextCityLineToInsert - 1;
   for I := FCityOverviewStart to C do
-    if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.getCellValue(I, 1)) = S then
+    if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.getCellValue(I, 1)
+      .ToStringInvariant) = S then
     begin
       Result := I;
       Break;
@@ -225,7 +229,7 @@ end;
 
 function TLNMITS.SheetIndexOf(const City: AnsiString): Integer;
 var
-  S:    AnsiString;
+  S: AnsiString;
   I, C: Integer;
 begin
   Result := -1;
@@ -238,7 +242,8 @@ begin
     begin
       FFlexCelImport.ActiveSheet := I;
 
-      if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.SheetName) = S then
+      if TLNMITSCities.PrepareCityNameForSearch(FFlexCelImport.SheetName) = S
+      then
       begin
         Result := I;
         Break;
@@ -255,7 +260,7 @@ end;
 
 function TLNMITS.NextCityLineToInsert: Integer;
 var
-  S:      AnsiString;
+  S: AnsiString;
   I, Max: Integer;
 begin
   Result := -1;
@@ -270,7 +275,7 @@ begin
   I := 1;
   while I < Max do
   begin
-    S := TXLowerCase(Trim(FFlexCelImport.getCellValue(I, 1)));
+    S := TXLowerCase(Trim(FFlexCelImport.getCellValue(I, 1).ToStringInvariant));
     if S = 'summe' then
     begin
       Result := I;
@@ -283,7 +288,8 @@ begin
   end;
 
   if Result = -1 then
-    raise Exception.Create('Konnte auf dem Deckblatt die Zeile mit dem Inhalt "Summe" nicht finden.');
+    raise Exception.Create
+      ('Konnte auf dem Deckblatt die Zeile mit dem Inhalt "Summe" nicht finden.');
 end;
 
 procedure TLNMITS.RecreateFlexCel;
@@ -291,7 +297,7 @@ begin
   if Assigned(FFlexCelImport) then
     FFlexCelImport.Free;
 
-  FFlexCelImport := TXLSFIle.Create(true);
+  FFlexCelImport := TXLSFile.Create(true);
 end;
 
 constructor TLNMITSCities.Create(AOwner: TLNMITS);
@@ -303,8 +309,8 @@ begin
   begin
     SearchMethod := smHash;
     HashSize := 1024;
-    Duplicates := True;
-    CaseSensitive := True;
+    Duplicates := true;
+    CaseSensitive := true;
     Trimmed := False;
     Umlaut := False;
   end;
@@ -319,11 +325,12 @@ begin
   inherited;
 end;
 
-class function TLNMITSCities.PrepareCityNameForSheet(const City: AnsiString; RemoveSpaces: Boolean): AnsiString;
+class function TLNMITSCities.PrepareCityNameForSheet(const City: AnsiString;
+  RemoveSpaces: Boolean): AnsiString;
 var
-  S:  AnsiString;
+  S: AnsiString;
 begin
-  //S := 'abcdefghijklmnopqrstuvwxyzäüöéúíóáýèùìòàêûîôâABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖÉÚÍÓÁÝÈÙÌÒÀÊÛÎÔÂß0123456789';
+  // S := 'abcdefghijklmnopqrstuvwxyzäüöéúíóáýèùìòàêûîôâABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖÉÚÍÓÁÝÈÙÌÒÀÊÛÎÔÂß0123456789';
   S := 'abcdefghijklmnopqrstuvwxyzäüöABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖß0123456789';
   if not RemoveSpaces then
     S := S + ' ';
@@ -331,15 +338,16 @@ begin
   Result := LimitSpaces(LimitString(City, S));
 end;
 
-class function TLNMITSCities.PrepareCityNameForSearch(const City: AnsiString): AnsiString;
+class function TLNMITSCities.PrepareCityNameForSearch(const City: AnsiString)
+  : AnsiString;
 begin
-  Result := TXLowerCase(PrepareCityNameForSheet(City, True));
+  Result := TXLowerCase(PrepareCityNameForSheet(City, true));
 end;
 
 class procedure TLNMITSCities.ValidateCityName(const City: AnsiString);
 begin
-  if PrepareCityNameForSheet(City, True) = '' then
-    raise Exception.CreateFmt('Der Name der Stadt "%s" ist ungültig.', [ City ]);
+  if PrepareCityNameForSheet(City, true) = '' then
+    raise Exception.CreateFmt('Der Name der Stadt "%s" ist ungültig.', [City]);
 end;
 
 procedure TLNMITSCities.Clear;
@@ -358,15 +366,15 @@ end;
 
 function TLNMITSCities.Add(const City: AnsiString): TLNMITSCity;
 begin
-  Result := InternalAdd(City, True);
-  Result.FHaveToGenerateOlapFile := True;
+  Result := InternalAdd(City, true);
+  Result.FHaveToGenerateOlapFile := true;
 end;
 
 procedure TLNMITSCities.Delete(Index: Integer);
 var
   Overview: Integer;
-  Sheet:    Integer;
-  City:     AnsiString;
+  Sheet: Integer;
+  City: AnsiString;
 begin
   CheckIndex(Index, Count);
 
@@ -376,13 +384,16 @@ begin
   Sheet := FOwner.SheetIndexOf(City);
 
   if Overview < 0 then
-    raise Exception.CreateFmt('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)', [ City ]);
+    raise Exception.CreateFmt
+      ('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)',
+      [City]);
   if Sheet < 0 then
-    raise Exception.CreateFmt('Interner Fehler (Stadt "%s" konnte in den Sheets nicht gefunden werden)', [ City ]);
+    raise Exception.CreateFmt
+      ('Interner Fehler (Stadt "%s" konnte in den Sheets nicht gefunden werden)',
+      [City]);
 
   // Imp pend FlexCel: DeleteRows
-  //FOwner.FFlexCelImport.DeleteRows(Overview, 1);
-
+  // FOwner.FFlexCelImport.DeleteRows(Overview, 1);
 
   FOwner.FFlexCelImport.ActiveSheet := Sheet;
   try
@@ -406,26 +417,33 @@ begin
   FCities.Clear;
 end;
 
-function TLNMITSCities.InternalAdd(const City: AnsiString; CanModifyExcel: Boolean): TLNMITSCity;
+function TLNMITSCities.InternalAdd(const City: AnsiString;
+  CanModifyExcel: Boolean): TLNMITSCity;
 var
-  NewLine:  Integer;
+  NewLine: Integer;
 
   procedure ModifySumLine;
   var
-    SumLine:  Integer;
-    I, C:     Integer;
+    SumLine: Integer;
+    I, C: Integer;
   begin
     SumLine := NewLine + 1;
 
     C := Length(CellLetters);
     for I := 1 to C do
     begin
-      FOwner.FFlexCelImport.setCellValue(SumLine, 2 + I,  StringReplace(FOwner.FFlexCelImport.getCellValue(SumLine, 2 + I),
-                                                                         IntToStr(NewLine - 1) + ')',
-                                                                         IntToStr(SumLine - 1) + ')',
-                                                                         [ rfReplaceAll ]));
+      FOwner.FFlexCelImport.setCellValue(
+        { } SumLine,
+        { } 2 + I,
+        { } StringReplace(
+        { } FOwner.FFlexCelImport.getCellValue(SumLine, 2 + I)
+        .ToStringInvariant,
+        { } IntToStr(NewLine - 1) + ')',
+        { } IntToStr(SumLine - 1) + ')',
+        { } [rfReplaceAll]));
     end;
   end;
+
 begin
   ValidateCityName(City);
 
@@ -438,9 +456,10 @@ begin
       // Imp pend FlexCel: Row to Range
       // FOwner.FFlexCelImport.InsertAndCopyRange(FOwner.FCityOverviewStart, FOwner.FCityOverviewStart, NewLine, 1);
 
-      FOwner.FFlexCelImport.InsertAndCopySheets(FOwner.FCitySheetStart, FOwner.FFlexCelImport.SheetCount, 1);
+      FOwner.FFlexCelImport.InsertAndCopySheets(FOwner.FCitySheetStart,
+        FOwner.FFlexCelImport.SheetCount, 1);
       FOwner.FFlexCelImport.ActiveSheet := FOwner.FFlexCelImport.SheetCount - 1;
-      FOwner.FFlexCelImport.SheetName := PrepareCityNameForSheet(City, True);
+      FOwner.FFlexCelImport.SheetName := PrepareCityNameForSheet(City, true);
       FOwner.FFlexCelImport.ActiveSheet := 1;
 
       ModifyOverviewLine(City, NewLine);
@@ -453,12 +472,13 @@ begin
     FCities.AddObject(PrepareCityNameForSearch(City), Result);
   end
   else
-    raise Exception.CreateFmt('Die Stadt "%s" ist bereits vorhanden.', [ City ]);
+    raise Exception.CreateFmt('Die Stadt "%s" ist bereits vorhanden.', [City]);
 end;
 
-procedure TLNMITSCities.ModifyOverviewLine(const City: AnsiString; Line: Integer);
+procedure TLNMITSCities.ModifyOverviewLine(const City: AnsiString;
+  Line: Integer);
 var
-  Col:  AnsiChar;
+  Col: AnsiChar;
   I, C: Integer;
 begin
   FOwner.FFlexCelImport.setCellValue(Line, 1, City);
@@ -467,7 +487,9 @@ begin
   for I := 1 to C do
   begin
     Col := CellLetters[I];
-    FOwner.FFlexCelImport.SetCellValue(Line, 2 + I, Format('=SUM(%s!$%s2:$%s$65536)', [ PrepareCityNameForSheet(City, True), Col, Col ]));
+    FOwner.FFlexCelImport.setCellValue(Line, 2 + I,
+      Format('=SUM(%s!$%s2:$%s$65536)', [PrepareCityNameForSheet(City, true),
+      Col, Col]));
   end;
 end;
 
@@ -504,9 +526,10 @@ end;
 procedure TLNMITSCity.GenerateOlapFile(const Path: AnsiString);
 var
   Filename: AnsiString;
-  StrList:  TStringList;
+  StrList: TStringList;
 begin
-  Filename := WellFilename(Path + '\LN-MITS.' + TLNMITSCities.PrepareCityNameForSheet(City, True) + '.OLAP.txt');
+  Filename := WellFilename(Path + '\LN-MITS.' +
+    TLNMITSCities.PrepareCityNameForSheet(City, true) + '.OLAP.txt');
 
   StrList := TStringList.Create;
   try
@@ -529,43 +552,50 @@ end;
 
 procedure TLNMITSCity.SetCity(const City: AnsiString);
 var
-  I:  Integer;
+  I: Integer;
 
   procedure ModifyOverview;
   var
-    I:  Integer;
+    I: Integer;
   begin
     I := FOwner.FOwner.OverviewIndexOf(FCity);
     if I >= 0 then
       FOwner.ModifyOverviewLine(City, I)
     else
-      raise Exception.CreateFmt('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)', [ City ]);
+      raise Exception.CreateFmt
+        ('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)',
+        [City]);
   end;
 
   procedure ModifySheet;
   var
-    I:  Integer;
+    I: Integer;
   begin
     I := FOwner.FOwner.SheetIndexOf(FCity);
     if I >= 0 then
     begin
       try
         FOwner.FOwner.FFlexCelImport.ActiveSheet := I;
-        FOwner.FOwner.FFlexCelImport.SheetName := TLNMITSCities.PrepareCityNameForSheet(City, True);
+        FOwner.FOwner.FFlexCelImport.SheetName :=
+          TLNMITSCities.PrepareCityNameForSheet(City, true);
       finally
         FOwner.FOwner.FFlexCelImport.ActiveSheet := 1;
       end;
     end
     else
-      raise Exception.CreateFmt('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)', [ City ]);
+      raise Exception.CreateFmt
+        ('Interner Fehler (Stadt "%s" konnte auf dem Deckblatt nicht gefunden werden)',
+        [City]);
   end;
+
 begin
   TLNMITSCities.ValidateCityName(City);
 
   I := FOwner.IndexOf(City);
   if I >= 0 then
     if I <> Index then
-      raise Exception.CreateFmt('Die Stadt "%s" ist bereits vorhanden.', [ City ]);
+      raise Exception.CreateFmt
+        ('Die Stadt "%s" ist bereits vorhanden.', [City]);
 
   ModifySheet;
   ModifyOverview;
@@ -573,7 +603,7 @@ begin
   FOwner.FCities.Strings[Index] := TLNMITSCities.PrepareCityNameForSearch(City);
   FCity := TLNMITSCities.PrepareCityNameForSheet(City, False);
 
-  FHaveToGenerateOlapFile := True;
+  FHaveToGenerateOlapFile := true;
 end;
 
 function TLNMITSCity.GetIndex: Integer;

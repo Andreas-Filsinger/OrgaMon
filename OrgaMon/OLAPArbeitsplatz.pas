@@ -1973,17 +1973,17 @@ begin
       // fmfm.format := 'Standard';
       // fmfm.HAlignment := fha_right;
       fmfm.borders.left.style := TFlxBorderStyle.Thin;
-      fmfm.borders.left.Color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+      fmfm.borders.left.Color := clblack;
 
       fmfm.FillPattern.Pattern := TFlxPatternStyle.Solid; // solid fill
       fmfm.FillPattern.BgColor := 0; // hm
 
       // Header Format (hellgelb)
-      fmfm.FillPattern.FgColor := NearestColorIndex(HTMLColor2TColor($FFFF99));
+      fmfm.FillPattern.FgColor := HTMLColor2TColor($FFFF99);
       fmHeader := addFormat(fmfm);
 
       // Highlighted Row Format (hellblau)
-      fmfm.FillPattern.FgColor := NearestColorIndex(HTMLColor2TColor($88EEFF));
+      fmfm.FillPattern.FgColor := HTMLColor2TColor($88EEFF);
       fmHigh := addFormat(fmfm);
 
       // Spezialfall für Datum
@@ -2219,9 +2219,12 @@ begin
         for r := 1 to 80 do
           for c := 1 to 30 do
           begin
-            if (pos('#', getCellValue(r, c)) = 3) then
-              CopyColumn.add(inttostr(s) + ',' + getCellValue(r, c) + ',' +
-                inttostr(r) + ',' + inttostr(c));
+            if (pos('#', getCellValue(r, c).ToStringInvariant) = 3) then
+              CopyColumn.add(
+              {} inttostr(s) + ',' +
+              {} getCellValue(r, c).ToStringInvariant + ',' +
+               {} inttostr(r) + ',' +
+               {} inttostr(c));
           end;
 
       end;

@@ -96,6 +96,10 @@ procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
 procedure CSVExport(FName: string; Content: TList);
 procedure CSVImport(FName: string; Content: TList);
 
+function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+
 implementation
 
 {$IFDEF fpc}
@@ -125,7 +129,7 @@ procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
 var
   xlsAUSGABE: TXLSFile;
   xlsFormatDefault: string;
-  ColCount: integer;
+  Columns: integer;
   AllTypes: TStringList;
   CellCharCount: integer;
   MoneyDouble: double;
@@ -133,7 +137,7 @@ var
   xlsColumnWidth: array of integer;
   xlsFormatsLow: array of integer;
   xlsFormatsHigh: array of integer;
-  xlsFormats: array of integer;
+  xlsFormatsAll: array of integer;
 
   fmfm: TFlxFormat;
   Subs: TStringList;
@@ -177,7 +181,7 @@ var
     with fmfm do
     begin
       format := FormatString;
-      fmfm.FillPattern.FgColor := xlsAUSGABE.NearestColorIndex(CellColor);
+      fmfm.FillPattern.FgColor := CellColor;
       fmfm.WrapText := MultiLine;
     end;
     result := xlsAUSGABE.addformat(fmfm);
@@ -186,7 +190,7 @@ var
   function fmSetColor(fmIndex: integer; CellColor: TColor): integer;
   begin
     fmfm := xlsAUSGABE.getformat(fmIndex);
-    fmfm.FillPattern.FgColor := xlsAUSGABE.NearestColorIndex(CellColor);
+    fmfm.FillPattern.FgColor := CellColor;
     result := xlsAUSGABE.addformat(fmfm);
   end;
 
@@ -406,7 +410,7 @@ begin
       Font.name := 'Verdana';
       Font.Size20 := round(10.0 * 20);
       borders.Left.style := TFlxBorderStyle.Thin;
-      borders.Left.color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+      borders.Left.color := clblack;
       FillPattern.Pattern := TFlxPatternStyle.Solid;
       FillPattern.BgColor := 0;
       VAlignment := TVFlxAlignment.top;
@@ -434,17 +438,15 @@ begin
     fmHigh_Text := EnsureFormat('@', HTMLColor2TColor(cExcel_HTML_Color_High));
     fmLow_Text := EnsureFormat('@', cExcel_HTML_Color_Low);
 
-    //
-    // ColCount := getLine(0).count;
-
-    SetLength(xlsColumnWidth, ColCount);
-    SetLength(xlsFormatsLow, ColCount);
-    SetLength(xlsFormatsHigh, ColCount);
-    SetLength(xlsFormats, ColCount);
+    Columns := getLine(0).count;
+    SetLength(xlsColumnWidth, Columns);
+    SetLength(xlsFormatsLow, Columns);
+    SetLength(xlsFormatsHigh, Columns);
+    SetLength(xlsFormatsAll, Columns);
 
     // Header schreiben und Typen berechnen
     Subs := getLine(0);
-    for c := 0 to pred(ColCount) do
+    for c := 0 to pred(Columns) do
     begin
 
       CellFormats := cellsplit(Subs[c], CellContent, CellComment);
@@ -470,10 +472,10 @@ begin
       else
         xlsColumnWidth[c] := fmCharsWidth * cExcel_Pixel_Per_Char;
 
-      xlsFormats[c] := hasType(c);
+      xlsFormatsAll[c] := hasType(c);
 
       //
-      case xlsFormats[c] of
+      case xlsFormatsAll[c] of
         xls_CellType_Date:
           begin
             xlsFormatsLow[c] := fmLow_Date;
@@ -536,7 +538,7 @@ begin
         if (CellContent <> cOLAPnull) then
         begin
           try
-            case xlsFormats[c] of
+            case xlsFormatsAll[c] of
               xls_CellType_ordinal:
                 begin
                   setCellValue(succ(r), succ(c), CellContent);
@@ -574,7 +576,7 @@ begin
                   end
                   else
                   begin
-                    SetCellValue(succ(r), succ(c), '');
+                    setCellValue(succ(r), succ(c), '');
                     CellCharCount := 0;
                   end;
                 end;
@@ -588,19 +590,20 @@ begin
                   end
                   else
                   begin
-                    SetCellValue(succ(r), succ(c), '');
+                    setCellValue(succ(r), succ(c), '');
                     CellCharCount := 0;
                   end;
                 end;
               xls_CellType_Money:
                 begin
                   MoneyDouble := strtodoubledef(CellContent, 0);
-                  SetCellValue(succ(r), succ(c),  MoneyDouble);
+                  setCellValue(succ(r), succ(c), MoneyDouble);
                   CellCharCount := length(format('%m', [MoneyDouble]));
                 end;
               xls_CellType_double:
                 begin
-                  SetCellValue(succ(r), succ(c), strtodoubledef(CellContent, 0));
+                  setCellValue(succ(r), succ(c),
+                    strtodoubledef(CellContent, 0));
                   CellCharCount := length(CellContent);
                 end;
             else
@@ -612,11 +615,11 @@ begin
               // maximale Länge der einzelnen Strings berechnen
               CellCharCount := _length(myCellValue);
               ersetze(cOLAPcsvLineBreak, #10, myCellValue);
-              SetCellValue(succ(r), succ(c),  myCellValue);
+              setCellValue(succ(r), succ(c), myCellValue);
 
             end;
           except
-            SetCellValue(succ(r), succ(c), CellContent);
+            setCellValue(succ(r), succ(c), CellContent);
             CellCharCount := length(CellContent);
           end;
         end
@@ -638,7 +641,7 @@ begin
           CellFormats.Free;
         end;
 
-        SetCellFormat(succ(r), succ(c), f);
+        setCellFormat(succ(r), succ(c), f);
 
         if (CellComment <> '') then
           SetComment(succ(r), succ(c), CellComment);
@@ -712,6 +715,32 @@ begin
     end;
     Content.add(Cols);
   end;
+end;
+
+function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+begin
+  result := 0;
+  with pXLS do
+    if GetCellValue(r, c).HasValue then
+      result := GetCellValue(r, c).ToDateTime(false);
+end;
+
+function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+begin
+  result := 0;
+  with pXLS do
+    if GetCellValue(r, c).HasValue then
+      result := mkDateTime(0, strtoseconds(GetCellValue(r,
+        c).ToStringInvariant));
+end;
+
+function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+begin
+  with pXLS do
+    if GetCellValue(r, c).HasValue then
+      result := GetCellValue(r, c).ToDateTime(false)
+    else
+      result := 0;
 end;
 
 end.

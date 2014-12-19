@@ -99,9 +99,7 @@ end.
   uses Windows, SysUtils, IniFiles, math,
 
 // OrgaMon - Tools
-geld, Mapping, anfix32, html, WordIndex, gplists, binlager32
-
-  ,
+geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
 
 // libxml
 libxml2,
@@ -1636,34 +1634,12 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
 
       // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
+      d := getDateValue(xImport, r, succ(_cd));
 
       // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := anfix32.now;
@@ -1700,24 +1676,29 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.GetCellValue(r, succ(_cdt));
+        d := getDateTimeValue(xImport, r, succ(_cdt));
 
-        if (TVarData(v).VType = varDouble) then
-        begin
+        (*
+          ev. könnte auch ein String vorliegen, dann müsste man diesen alten
+          Code reaktivieren ...
+
+          if (TVarData(v).VType = varDouble) then
+          begin
           d := v;
-        end
-        else
-        begin
+          end
+          else
+          begin
           s := v;
           if (s <> '') then
           begin
-            ersetze('-', ' ', s);
-            while (pos('  ', s) > 0) do
-              ersetze('  ', ' ', s);
-            d := mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1)));
+          ersetze('-', ' ', s);
+          while (pos('  ', s) > 0) do
+          ersetze('  ', ' ', s);
+          d := mkDateTime(date2long(nextp(s, ' ', 0)),
+          strtoseconds(nextp(s, ' ', 1)));
           end;
-        end;
+          end;
+        *)
 
         if (d > 0) then
         begin
@@ -2785,7 +2766,7 @@ begin
       sDiagFiles.add(conversionOutFName);
 
       for c := 1 to ColCountInRow(1) do
-        xlsHeaders.add(GetCellValue(1, c));
+        xlsHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
       cORDER_id := xlsHeaders.indexof('ORDER.id');
       if cORDER_id = -1 then
@@ -2860,22 +2841,26 @@ begin
       repeat
 
         // den Key zusammenbauen
-        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)));
+        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)).ToStringInvariant);
         OrderId := fill('0', 9 - length(OrderId)) + OrderId;
 
-        OrderPosition := cutblank(GetCellValue(r, succ(cORDER_Position)));
+        OrderPosition := cutblank(GetCellValue(r, succ(cORDER_Position))
+          .ToStringInvariant);
         if OrderPosition = '' then
           OrderPosition := '1';
 
-        ART := cutblank(GetCellValue(r, succ(cART)));
+        ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
         ART_Zaehlwerke := strtointdef(StrFilter(ART, '0123456789'), 1);
-        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)));
-        RID := cutblank(GetCellValue(r, succ(cRID)));
-        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
-        ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
+        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)).ToStringInvariant);
+        RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus))
+          .ToStringInvariant, -1);
+        ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer))
+          .ToStringInvariant);
         ZAEHLWERKE_AUS_PROTOKOLL := false;
         for c := 0 to pred(cZaehlwerk.count) do
-          if (cutblank(GetCellValue(r, succ(cZaehlwerk[c]))) <> '') then
+          if (cutblank(GetCellValue(r, succ(cZaehlwerk[c])).ToStringInvariant)
+            <> '') then
           begin
             ZAEHLWERKE_AUS_PROTOKOLL := true;
             break;
@@ -3379,7 +3364,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.GetCellValue(r, succ(c));
+    result := xImport.GetCellValue(r, succ(c)).ToStringInvariant;
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -3421,34 +3406,12 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
 
       // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
+      d := getDateValue(xImport, r, succ(_cd));
 
       // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := anfix32.now;
@@ -3483,26 +3446,8 @@ var
     begin
 
       result := '';
-      d := 0;
       try
-        v := xImport.GetCellValue(r, succ(_cdt));
-
-        if (TVarData(v).VType = varDouble) then
-        begin
-          d := v;
-        end
-        else
-        begin
-          s := v;
-          if (s <> '') then
-          begin
-            ersetze('-', ' ', s);
-            while (pos('  ', s) > 0) do
-              ersetze('  ', ' ', s);
-            d := mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1)));
-          end;
-        end;
+        d := getDateTimeValue(xImport, r, succ(_cdt));
 
         if (d > 0) then
         begin
@@ -4118,7 +4063,7 @@ begin
       sDiagFiles.add(conversionOutFName);
 
       for c := 1 to ColCountInRow(1) do
-        xlsHeaders.add(GetCellValue(1, c));
+        xlsHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
       cORDER_id := xlsHeaders.indexof('ORDER.id');
       if cORDER_id = -1 then
@@ -4192,19 +4137,22 @@ begin
       r := 2;
       repeat
         // den Key zusammenbauen
-        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)));
+        OrderId := cutblank(GetCellValue(r, succ(cORDER_id)).ToStringInvariant);
         OrderId := fill('0', 9 - length(OrderId)) + OrderId;
 
-        OrderPosition := cutblank(GetCellValue(r, succ(cORDER_Position)));
+        OrderPosition := cutblank(
+          { } GetCellValue(r, succ(cORDER_Position)).ToStringInvariant);
         if OrderPosition = '' then
           OrderPosition := '1';
 
-        ART := cutblank(GetCellValue(r, succ(cART)));
+        ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
         ART_Zaehlwerke := strtointdef(StrFilter(ART, '0123456789'), 1);
-        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)));
-        RID := cutblank(GetCellValue(r, succ(cRID)));
-        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
-        ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
+        Sparte := cutblank(GetCellValue(r, succ(cSPARTE)).ToStringInvariant);
+        RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
+        STATUS := strtointdef(
+          { } GetCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+        ZAEHLER_NUMMER := cutblank(
+          { } GetCellValue(r, succ(cZaehlerNummer)).ToStringInvariant);
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -4372,7 +4320,7 @@ var
     end
     else
     begin
-      result := cutblank(xImport.GetCellValue(r, succ(_c)));
+      result := cutblank(xImport.GetCellValue(r, succ(_c)).ToStringInvariant);
       ersetze(#160, ' ', result);
       ersetze('#', '', result);
       ersetze('"', '''', result);
@@ -4400,34 +4348,8 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
-
-      // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
-
-      // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -4464,24 +4386,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.GetCellValue(r, succ(_cdt));
-
-        if (TVarData(v).VType = varDouble) then
-        begin
-          d := v;
-        end
-        else
-        begin
-          s := v;
-          if (s <> '') then
-          begin
-            ersetze('-', ' ', s);
-            while (pos('  ', s) > 0) do
-              ersetze('  ', ' ', s);
-            d := mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1)));
-          end;
-        end;
+        d := getDateTimeValue(xImport, r, succ(_cdt));
 
         if (d > 0) then
         begin
@@ -4737,7 +4642,7 @@ begin
     sDiagFiles.add(conversionOutFName);
 
     for c := 1 to ColCountInRow(1) do
-      xlsHeaders.add(GetCellValue(1, c));
+      xlsHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
     cART := xlsHeaders.indexof('Art');
     if (cART = -1) then
@@ -4766,12 +4671,13 @@ begin
 
     r := 2;
     repeat
-      RID := cutblank(GetCellValue(r, succ(cRID)));
+      RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
       if (strtointdef(RID, cRID_Null) >= cRID_FirstValid) then
       begin
-        ART := cutblank(GetCellValue(r, succ(cART)));
+        ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
-        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus))
+          .ToStringInvariant, -1);
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -6186,17 +6092,18 @@ var
         begin
 
           // Referenzidentität
-          AUFTRAG_R := strtointdef(xImport.GetCellValue(xls_Row,
-            xls_col_RID), -1);
-          ZZ := (xImport.GetCellValue(xls_Row, xls_col_ZZ) = 'X');
+          AUFTRAG_R := strtointdef(
+            { } xImport.GetCellValue(xls_Row, xls_col_RID)
+            .ToStringInvariant, -1);
+          ZZ := (xImport.GetCellValue(xls_Row, xls_col_ZZ).ToStringInvariant = 'X');
 
           // Ablesedatum!
-          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseDatum);
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseDatum).ToDateTime(false);
           EingabeDatum := long2date(xDateTime);
           EingabeDatumAsAnfix := date2long(EingabeDatum);
 
           // Ableseuhrzeit!
-          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseUhr);
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseUhr).ToDateTime(false);
           EingabeUhr := SecondsToStr(xDateTime);
 
           if (EingabeDatumAsAnfix < 20060831) or not(DateOK(EingabeDatumAsAnfix))
@@ -6246,11 +6153,11 @@ var
           case K21_count of
             1:
               Zaehler_Stand := xImport.GetCellValue(xls_Row,
-                xls_col_AbleseWertHT);
+                xls_col_AbleseWertHT).ToStringInvariant;
             2:
               begin
                 Zaehler_Stand := xImport.GetCellValue(xls_Row,
-                  xls_col_AbleseWertNT);
+                  xls_col_AbleseWertNT).ToStringInvariant;
                 if not(K21_HT_ok) and (Zaehler_Stand <> '') then
                 begin
                   Zaehler_Stand := '';
@@ -6418,7 +6325,7 @@ begin
 
     header.add('<NULL>');
     for c := 1 to ColCountInRow(1) do
-      header.add(GetCellValue(1, c));
+      header.add(GetCellValue(1, c).ToStringInvariant);
 
     // Muss Spalten abfragen!
     SetColInfo(xls_col_ZaehlerNummer, 'Zaehler_Nummer');
@@ -6437,8 +6344,8 @@ begin
     // Jetzt alle Zählernummern in sZaehler sammeln
     for r := 2 to RowCount do
     begin
-      xls_Sparte := GetCellValue(r, xls_col_Art);
-      xls_ZNummer := GetCellValue(r, xls_col_ZaehlerNummer);
+      xls_Sparte := GetCellValue(r, xls_col_Art).ToStringInvariant;
+      xls_ZNummer := GetCellValue(r, xls_col_ZaehlerNummer).ToStringInvariant;
       ersetze('#', '', xls_ZNummer);
       sZaehler.addobject(StrFilter(xls_Sparte, '0123456789', true) + '-' +
         xls_ZNummer, pointer(r));
@@ -6450,7 +6357,7 @@ begin
     for r := 0 to pred(sZaehler.count) do
     begin
       xls_Row := integer(sZaehler.Objects[r]);
-      AUFTRAG_R := strtointdef(GetCellValue(xls_Row, xls_col_RID), -1);
+      AUFTRAG_R := strtointdef(GetCellValue(xls_Row, xls_col_RID).ToStringInvariant, -1);
       sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' +
         sZaehler[r] + '"in EXPORT* nicht gefunden');
     end;
@@ -6545,7 +6452,7 @@ var
       raise exception.create('gewünschte Spalte ' + ColumnNameAtReference +
         ' ist im Nachschlagewerk nicht vorhanden!');
 
-    Key := xImport.GetCellValue(Row, sREFERENCECol_Source);
+    Key := xImport.GetCellValue(Row, sREFERENCECol_Source).ToStringInvariant;
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -7245,10 +7152,10 @@ begin
         begin
           for r := 1 to RowCount do
           begin
-            OutCommands.add(GetCellValue(r, TargetStartRow + 1));
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1).ToStringInvariant);
             if mitRegler then
               OutCommandsRegler.add(xExportRegler.GetCellValue(r,
-                TargetStartRow + 1));
+                TargetStartRow + 1).ToStringInvariant);
 
             SetCellValue(r, TargetStartRow, '');
             SetCellValue(r, TargetStartRow + 1, '');
@@ -7258,10 +7165,11 @@ begin
         begin
           for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(GetCellValue(TargetStartRow + 1, c));
+            OutCommands.add(GetCellValue(TargetStartRow + 1, c)
+              .ToStringInvariant);
             if mitRegler then
-              OutCommandsRegler.add
-                (xExportRegler.GetCellValue(TargetStartRow + 1, c));
+              OutCommandsRegler.add(xExportRegler.GetCellValue(TargetStartRow +
+                1, c).ToStringInvariant);
             SetCellValue(TargetStartRow, c, '');
             SetCellValue(TargetStartRow + 1, c, '');
           end;
@@ -7274,7 +7182,7 @@ begin
 
         // die Datenfeld-Namen alle lesen!
         for c := 1 to ColCountInRow(1) do
-          inHeaders.add(GetCellValue(1, c));
+          inHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
         for r := 2 to RowCount do
         begin
@@ -7419,7 +7327,7 @@ var
     if (TakeTodayCol = -1) then
       raise exception.create('gewünschte Spalte ' + s +
         ' ist im Nachschlagewerk nicht vorhanden!');
-    Key := xImport.GetCellValue(Row, sREFERENCECol_Source);
+    Key := xImport.GetCellValue(Row, sREFERENCECol_Source).ToStringInvariant;
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
@@ -7784,7 +7692,7 @@ begin
         begin
           for r := 1 to RowCount do
           begin
-            OutCommands.add(GetCellValue(r, TargetStartRow + 1));
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1).ToStringInvariant);
             SetCellValue(r, TargetStartRow, '');
             SetCellValue(r, TargetStartRow + 1, '');
           end;
@@ -7793,7 +7701,7 @@ begin
         begin
           for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(GetCellValue(TargetStartRow + 1, c));
+            OutCommands.add(GetCellValue(TargetStartRow + 1, c).ToStringInvariant);
             SetCellValue(TargetStartRow, c, '');
             SetCellValue(TargetStartRow + 1, c, '');
           end;
@@ -7806,7 +7714,7 @@ begin
 
         // die Datenfeld-Namen alle lesen!
         for c := 1 to ColCountInRow(1) do
-          inHeaders.add(GetCellValue(1, c));
+          inHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
         for r := 2 to RowCount do
           for s := 0 to 3 do
@@ -8248,7 +8156,7 @@ var
       // aus der Tabelle
       c := AuftragHeader.indexof(xlsSpalte);
       if (c <> -1) then
-        Wert := xImport.GetCellValue(r, c)
+        Wert := xImport.GetCellValue(r, c).ToStringInvariant
       else
         Wert := '';
 
@@ -8287,7 +8195,7 @@ var
   begin
     result := '';
     try
-      result := xImport.GetCellValue(r, c);
+      result := xImport.GetCellValue(r, c).ToStringInvariant;
     except
       on e: exception do
       begin
@@ -8395,7 +8303,7 @@ begin
         Open(InFName);
         AuftragHeader.add('#');
         for c := 1 to ColCountInRow(1) do
-          AuftragHeader.add(GetCellValue(1, c));
+          AuftragHeader.add(GetCellValue(1, c).ToStringInvariant);
 
         // Zwangsfelder abprüfen!
         col_Ergebnis_SERIAL_NR := col_Ergebnis('Zaehler_Nummer');
@@ -8420,11 +8328,13 @@ begin
 
           // ein Datum ermitteln
           try
-            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum);
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
             if (noblank(sDatum) <> '') then
               WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
+                .ToDateTime(false)
             else
-              WechselDatum := GetCellValue(r, col_Ergebnis_Datum);
+              WechselDatum := GetCellValue(r, col_Ergebnis_Datum)
+                .ToDateTime(false);
           except
             on e: exception do
             begin
@@ -8601,7 +8511,7 @@ var
       // aus der Tabelle
       c := ErgebnisHeader.indexof(xlsSpalte);
       if (c <> -1) then
-        Wert := xImport.GetCellValue(r, c)
+        Wert := xImport.GetCellValue(r, c).ToStringInvariant
       else
         Wert := '';
 
@@ -8638,7 +8548,7 @@ var
   begin
     result := '';
     try
-      result := xImport.GetCellValue(r, c);
+      result := xImport.GetCellValue(r, c).ToStringInvariant;
     except
       on e: exception do
       begin
@@ -8745,7 +8655,7 @@ begin
         Open(InFName);
         ErgebnisHeader.add('#');
         for c := 1 to ColCountInRow(1) do
-          ErgebnisHeader.add(GetCellValue(1, c));
+          ErgebnisHeader.add(GetCellValue(1, c).ToStringInvariant);
 
         // Zwangsfelder prüfen!
         col_Ergebnis_ARGOS_ID := col_Ergebnis('ARGOS_ID');
@@ -8769,7 +8679,7 @@ begin
 
           // ein Datum ermitteln
           try
-            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum);
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
             if (noblank(sDatum) <> '') then
               WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
             else
@@ -8896,8 +8806,8 @@ begin
       Open(InFName);
       for rInput := 1 to RowCount do
       begin
-        FieldName := cutblank(GetCellValue(rInput, 1));
-        FieldValue := cutblank(GetCellValue(rInput, 2));
+        FieldName := cutblank(GetCellValue(rInput, 1).ToStringInvariant);
+        FieldValue := cutblank(GetCellValue(rInput, 2).ToStringInvariant);
         if (FieldName <> '') and (FieldValue <> '') then
         begin
           c := HeaderNames.indexof(FieldName);
@@ -8961,7 +8871,7 @@ begin
     Open(InFName);
     for cInput := 1 to ColCountInRow(1) do
     begin
-      if GetCellValue(1, cInput) = '' then
+      if GetCellValue(1, cInput).IsEmpty then
         break;
       for rInput := 1 to RowCount do
         oExport.SetCellValue(cInput, rInput, GetCellValue(rInput, cInput));
@@ -9276,28 +9186,28 @@ begin
         begin
 
           //
-          if (GetCellValue(1, c) = 'KK22') then
+          if (GetCellValue(1, c).ToStringInvariant = 'KK22') then
           begin
             result := Content_Mode_KK22;
             break;
           end;
 
           //
-          if (GetCellValue(1, c) = 'ARGOS_ID') then
+          if (GetCellValue(1, c).ToStringInvariant = 'ARGOS_ID') then
           begin
             result := Content_Mode_Argos;
             break;
           end;
 
           //
-          if (GetCellValue(1, c) = 'SAP ID') then
+          if (GetCellValue(1, c).ToStringInvariant = 'SAP ID') then
           begin
             result := Content_Mode_enBW;
             break;
           end;
 
           //
-          if (GetCellValue(1, c) = 'KONTO_AR') then
+          if (GetCellValue(1, c).ToStringInvariant = 'KONTO_AR') then
           begin
             result := Content_Mode_Datev;
             break;
@@ -9433,7 +9343,7 @@ var
     end
     else
     begin
-      result := xImport.GetCellValue(r, succ(_c));
+      result := xImport.GetCellValue(r, succ(_c)).ToStringInvariant;
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
       if isUTF8 then
@@ -9461,34 +9371,8 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
-
-      // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
-
-      // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      d := getDateValue(xImport,r, succ(_cd));
+      t := getTimeValue(xImport,r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9527,34 +9411,8 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
-
-      // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
-
-      // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      d := getDateValue(xImport,r, succ(_cd));
+      t := getTimeValue(xImport,r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9588,34 +9446,8 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
-
-      // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
-
-      // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      d := getDateValue(xImport,r, succ(_cd));
+      t := getTimeValue(xImport,r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9647,24 +9479,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.GetCellValue(r, succ(_cdt));
-
-        if (TVarData(v).VType = varDouble) then
-        begin
-          d := v;
-        end
-        else
-        begin
-          s := v;
-          if (s <> '') then
-          begin
-            ersetze('-', ' ', s);
-            while (pos('  ', s) > 0) do
-              ersetze('  ', ' ', s);
-            d := mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1)));
-          end;
-        end;
+        d := getDateTimeValue(xImport,r, succ(_cdt));
 
         if (d > 0) then
         begin
@@ -9791,7 +9606,7 @@ begin
     sDiagFiles.add(conversionOutFName);
 
     for c := 1 to ColCountInRow(1) do
-      xlsHeaders.add(GetCellValue(1, c));
+      xlsHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
     cART := xlsHeaders.indexof('Art');
     if (cART = -1) then
@@ -9833,10 +9648,10 @@ begin
 
     r := 2;
     repeat
-      ART := cutblank(GetCellValue(r, succ(cART)));
+      ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
       ZaehlwerkeLautArt := strtointdef(StrFilter(ART, '0123456789'), 1);
-      RID := cutblank(GetCellValue(r, succ(cRID)));
-      STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
+      RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
+      STATUS := strtointdef(GetCellValue(r, succ(cStatus)).ToStringInvariant, -1);
 
       // Status bei bereits gemeldeten umsetzen!
       if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -9846,9 +9661,9 @@ begin
       if (STATUS = cSTATUS_VorgezogenGemeldet) then
         STATUS := cSTATUS_Vorgezogen;
 
-      ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)));
+      ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)).ToStringInvariant);
       if (cZaehlerNummerNeu <> -1) then
-        ZAEHLER_NUMMER_NEU := cutblank(GetCellValue(r, succ(cZaehlerNummerNeu)))
+        ZAEHLER_NUMMER_NEU := cutblank(GetCellValue(r, succ(cZaehlerNummerNeu)).ToStringInvariant)
       else
         ZAEHLER_NUMMER_NEU := '';
 
@@ -9865,7 +9680,7 @@ begin
         // Referenzquelle
         if (cQuelle <> -1) then
         begin
-          Quelle := cutblank(GetCellValue(r, succ(cQuelle)));
+          Quelle := cutblank(GetCellValue(r, succ(cQuelle)).ToStringInvariant);
           if (Quelle <> '') then
             DatenSammlerEinzel.add(
               { } 'set ' + cSet_Quelle + ' ' +
@@ -9884,7 +9699,7 @@ begin
         else
         begin
           if (cAnlagen <> -1) then
-            ANLAGENVERZEICHNIS := cutblank(GetCellValue(r, succ(cAnlagen)))
+            ANLAGENVERZEICHNIS := cutblank(GetCellValue(r, succ(cAnlagen)).ToStringInvariant)
           else
             ANLAGENVERZEICHNIS := '';
 
@@ -10597,7 +10412,7 @@ var
     end
     else
     begin
-      result := xImport.GetCellValue(r, succ(_c));
+      result := xImport.GetCellValue(r, succ(_c)).ToStringInvariant;
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
     end;
@@ -10623,34 +10438,8 @@ var
     end
     else
     begin
-      d := 0;
-      t := 0;
-
-      // Datum auslesen
-      v := xImport.GetCellValue(r, succ(_cd));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        d := v;
-      end
-      else
-      begin
-        s := noblank(v);
-        if (s <> '') then
-          d := long2DateTime(date2long(s));
-      end;
-
-      // Uhr auslesen
-      v := xImport.GetCellValue(r, succ(_ct));
-      if (TVarData(v).VType = varDouble) then
-      begin
-        t := v;
-      end
-      else
-      begin
-        s := v;
-        if (s <> '') then
-          t := mkDateTime(0, strtoseconds(s));
-      end;
+      d := getDateValue(xImport,r, succ(_cd));
+      t := getTimeValue(xImport,r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -10696,24 +10485,7 @@ var
       result := '';
       d := 0;
       try
-        v := xImport.GetCellValue(r, succ(_cdt));
-
-        if (TVarData(v).VType = varDouble) then
-        begin
-          d := v;
-        end
-        else
-        begin
-          s := v;
-          if (s <> '') then
-          begin
-            ersetze('-', ' ', s);
-            while (pos('  ', s) > 0) do
-              ersetze('  ', ' ', s);
-            d := mkDateTime(date2long(nextp(s, ' ', 0)),
-              strtoseconds(nextp(s, ' ', 1)));
-          end;
-        end;
+        d := getDateTimeValue(xImport,r, succ(_cdt));
 
         if (d > 0) then
         begin
@@ -11057,7 +10829,7 @@ begin
       sDiagFiles.add(conversionOutFName);
 
       for c := 1 to ColCountInRow(1) do
-        xlsHeaders.add(GetCellValue(1, c));
+        xlsHeaders.add(GetCellValue(1, c).ToStringInvariant);
 
       cARGOS := xlsHeaders.indexof('ARGOS');
       if cARGOS = -1 then
@@ -11094,11 +10866,13 @@ begin
 
       r := 2;
       repeat
-        Argos := strtoint(cutblank(GetCellValue(r, succ(cARGOS))));
-        ART := cutblank(GetCellValue(r, succ(cART)));
+        Argos := strtoint(cutblank(GetCellValue(r, succ(cARGOS))
+          .ToStringInvariant));
+        ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
-        RID := cutblank(GetCellValue(r, succ(cRID)));
-        STATUS := strtointdef(GetCellValue(r, succ(cStatus)), -1);
+        RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
+        STATUS := strtointdef(GetCellValue(r, succ(cStatus))
+          .ToStringInvariant, -1);
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then

@@ -133,7 +133,7 @@ uses
   // lib
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
-  wanfix32, SolidFTP,
+  wanfix32, SolidFTP, html,
 
   // IBO
   IB_Components, IB_Access,
@@ -373,11 +373,11 @@ var
         Font.name := 'Courier New';
         Font.Size20 := round(8.0 * 20);
         borders.Left.style :=     TFlxBorderStyle.Thin;
-        borders.Left.color := NearestColorIndex(TUICOlor.BgrToRgb(clblack));
+        borders.Left.color := clblack;
         FillPattern.Pattern := TFlxPatternStyle.Solid;
         FillPattern.BgColor := 0;
         VAlignment := TVFlxAlignment.top;
-        FillPattern.FgColor := NearestColorIndex(TUIColor.BgrToRgb($99CCFF));
+        FillPattern.FgColor := HTMLColor2TColor($99CCFF);
         WrapText := true;
       end;
       fmProtokollText := addformat(fmfm);
