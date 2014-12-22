@@ -1335,7 +1335,7 @@ var
 
           // Ist die Datei überhaupt entstanden?
           if not(FileExists(FullPath + TestSourceFName)) then
-            raise Exception.create('Datei "' + sErgebnisseSoll[n] +
+            raise Exception.create('Ergebnisdatei "' + sErgebnisseSoll[n] +
               '" wurde nicht erzeugt');
 
           // Datei-Inhalte vergleichen
