@@ -1592,7 +1592,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.GetStringFromCell(r, succ(c));
+    result := xImport.getCellValue(r, succ(c)).ToStringInvariant;
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -6095,15 +6095,18 @@ var
           AUFTRAG_R := strtointdef(
             { } xImport.GetCellValue(xls_Row, xls_col_RID)
             .ToStringInvariant, -1);
-          ZZ := (xImport.GetCellValue(xls_Row, xls_col_ZZ).ToStringInvariant = 'X');
+          ZZ := (xImport.GetCellValue(xls_Row, xls_col_ZZ)
+            .ToStringInvariant = 'X');
 
           // Ablesedatum!
-          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseDatum).ToDateTime(false);
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseDatum)
+            .ToDateTime(false);
           EingabeDatum := long2date(xDateTime);
           EingabeDatumAsAnfix := date2long(EingabeDatum);
 
           // Ableseuhrzeit!
-          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseUhr).ToDateTime(false);
+          xDateTime := xImport.GetCellValue(xls_Row, xls_col_AbleseUhr)
+            .ToDateTime(false);
           EingabeUhr := SecondsToStr(xDateTime);
 
           if (EingabeDatumAsAnfix < 20060831) or not(DateOK(EingabeDatumAsAnfix))
@@ -6357,7 +6360,8 @@ begin
     for r := 0 to pred(sZaehler.count) do
     begin
       xls_Row := integer(sZaehler.Objects[r]);
-      AUFTRAG_R := strtointdef(GetCellValue(xls_Row, xls_col_RID).ToStringInvariant, -1);
+      AUFTRAG_R := strtointdef(GetCellValue(xls_Row, xls_col_RID)
+        .ToStringInvariant, -1);
       sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' +
         sZaehler[r] + '"in EXPORT* nicht gefunden');
     end;
@@ -6386,7 +6390,7 @@ procedure xls_2_xls(InFName: string; sBericht: TStringList = nil);
 var
   xImport: TXLSFile;
   xFmt: TFlxFormat;
-  xExport: TXLSFile;
+  xVorlage: TXLSFile;
   inHeaders: TStringList;
   Command: string;
   TargetRow: integer;
@@ -6746,11 +6750,13 @@ var
     k: integer;
     NextSubFieldName: string;
     kk: integer;
+    FormatIndex: integer;
   begin
     for c := 1 to OutCommands.count do
     begin
       try
         Command := OutCommands[pred(c)];
+        FormatIndex := Integer(OutCommands.objects[pred(c)]);
 
         if (Command <> '') then
         begin
@@ -6967,32 +6973,24 @@ var
           if (ErrorCount = 0) then
           begin
             if AusgabeRotiert then
-              xExport.SetCellValue(c, TargetRow, MonDaCode(ContentAsWideString))
-            else
-              xExport.SetCellValue(TargetRow, c,
-                MonDaCode(ContentAsWideString));
+            begin
+            xVorlage.setColWidth(TargetRow,
+              xVorlage.getColWidth(TargetStartRow));
+              xVorlage.SetCellFromString(c, TargetRow,
+                MonDaCode(ContentAsWideString), FormatIndex);
+            end else
+            begin
+              xVorlage.SetCellFromString(TargetRow, c,
+                MonDaCode(ContentAsWideString), FormatIndex);
+            end;
           end
           else
           begin
             if AusgabeRotiert then
-              xExport.SetCellValue(c, TargetRow, 'ERROR')
+              xVorlage.SetCellValue(c, TargetRow, 'ERROR', -1)
             else
-              xExport.SetCellValue(TargetRow, c, 'ERROR');
+              xVorlage.SetCellValue(TargetRow, c, 'ERROR', -1);
           end;
-
-        end;
-        if (TargetStartRow <> TargetRow) then
-        begin
-          if AusgabeRotiert then
-          begin
-            xExport.setCellFormat(c, TargetRow, xExport.getCellFormat(c,
-              TargetStartRow));
-
-            xExport.setColWidth(TargetRow, xExport.getColWidth(TargetStartRow));
-          end
-          else
-            xExport.setCellFormat(TargetRow, c,
-              xExport.getCellFormat(TargetStartRow, c));
         end;
 
       except
@@ -7002,7 +7000,6 @@ var
           sDiagnose.add(format(cERRORText + ' %s(%d,%d): %s',
             [Command, r, c, e.message]));
         end;
-
       end;
 
       if (ErrorCount > 0) then
@@ -7024,6 +7021,7 @@ var
 
   // Erkennung, ob ein Wert drin ist
   v: Variant;
+  FormatIndex: integer;
 
 begin
 
@@ -7044,7 +7042,7 @@ begin
     sDiagFiles.add(InFName);
 
     xImport := TXLSFile.create(true);
-    xExport := TXLSFile.create(true);
+    xVorlage := TXLSFile.create(true);
 
     repeat
 
@@ -7083,7 +7081,7 @@ begin
       //
       try
         xImport.Open(InFName);
-        xExport.Open(TemplateFname);
+        xVorlage.Open(TemplateFname);
       except
         on e: exception do
         begin
@@ -7096,55 +7094,27 @@ begin
       if (ErrorCount > 0) then
         break;
 
-      with xExport do
+      with xVorlage do
       begin
 
         // zunächst ermitteln, ab welcher Zeile es los geht!
         for r := RowCount downto 1 do
-        begin
-          v := GetCellValue(r, 1);
-          if (TVarData(v).VType = varDouble) then
+          if GetCellValue(r, 1).HasValue then
           begin
-            if (v <> 0) then
-            begin
-              TargetStartRow := r - 1;
-              break;
-            end;
-          end
-          else
-          begin
-            if (v <> '') then
-            begin
-              TargetStartRow := r - 1;
-              break;
-            end;
+            TargetStartRow := r - 1;
+            break;
           end;
-        end;
 
         // Könnte die Ausgabe rotiert sein?
-        if TargetStartRow > 10 then
+        if (TargetStartRow > 10) then
         begin
           AusgabeRotiert := true;
           for c := ColCountInRow(1) downto 1 do
-          begin
-            v := GetCellValue(1, c);
-            if (TVarData(v).VType = varDouble) then
+            if GetCellValue(1, c).HasValue then
             begin
-              if (v <> 0) then
-              begin
-                TargetStartRow := c - 1;
-                break;
-              end;
-            end
-            else
-            begin
-              if (v <> '') then
-              begin
-                TargetStartRow := c - 1;
-                break;
-              end;
+              TargetStartRow := c - 1;
+              break;
             end;
-          end;
         end;
 
         // die Befehlszeile aufsammeln
@@ -7152,7 +7122,8 @@ begin
         begin
           for r := 1 to RowCount do
           begin
-            OutCommands.add(GetCellValue(r, TargetStartRow + 1).ToStringInvariant);
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1)
+              .ToStringInvariant);
             if mitRegler then
               OutCommandsRegler.add(xExportRegler.GetCellValue(r,
                 TargetStartRow + 1).ToStringInvariant);
@@ -7165,13 +7136,16 @@ begin
         begin
           for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(GetCellValue(TargetStartRow + 1, c)
-              .ToStringInvariant);
+            FormatIndex := getCellFormat(TargetStartRow, c);
+            OutCommands.addobject(GetCellValue(TargetStartRow + 1, c)
+              .ToStringInvariant,TObject(FormatIndex));
             if mitRegler then
-              OutCommandsRegler.add(xExportRegler.GetCellValue(TargetStartRow +
-                1, c).ToStringInvariant);
-            SetCellValue(TargetStartRow, c, '');
-            SetCellValue(TargetStartRow + 1, c, '');
+              OutCommandsRegler.addobject(xExportRegler.GetCellValue(TargetStartRow +
+                1, c).ToStringInvariant,TObject(FormatIndex) );
+
+            // imp pend: Just claer?
+            SetCellFromString(TargetStartRow, c, '',FormatIndex);
+            SetCellFromString(TargetStartRow + 1, c, '', FormatIndex);
           end;
         end;
       end;
@@ -7235,7 +7209,7 @@ begin
 
       FileDelete(conversionOutFName);
       try
-        xExport.Save(conversionOutFName);
+        xVorlage.Save(conversionOutFName);
       except
         on e: exception do
         begin
@@ -7252,7 +7226,7 @@ begin
       sDiagnose.addStrings(sBericht);
 
     xImport.Free;
-    xExport.Free;
+    xVorlage.Free;
     if mitRegler then
       xExportRegler.Free;
 
@@ -7692,7 +7666,8 @@ begin
         begin
           for r := 1 to RowCount do
           begin
-            OutCommands.add(GetCellValue(r, TargetStartRow + 1).ToStringInvariant);
+            OutCommands.add(GetCellValue(r, TargetStartRow + 1)
+              .ToStringInvariant);
             SetCellValue(r, TargetStartRow, '');
             SetCellValue(r, TargetStartRow + 1, '');
           end;
@@ -7701,7 +7676,8 @@ begin
         begin
           for c := 1 to ColCountInRow(1) do
           begin
-            OutCommands.add(GetCellValue(TargetStartRow + 1, c).ToStringInvariant);
+            OutCommands.add(GetCellValue(TargetStartRow + 1, c)
+              .ToStringInvariant);
             SetCellValue(TargetStartRow, c, '');
             SetCellValue(TargetStartRow + 1, c, '');
           end;
@@ -8328,7 +8304,8 @@ begin
 
           // ein Datum ermitteln
           try
-            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
+              .ToStringInvariant;
             if (noblank(sDatum) <> '') then
               WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
                 .ToDateTime(false)
@@ -8679,7 +8656,8 @@ begin
 
           // ein Datum ermitteln
           try
-            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
+            sDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
+              .ToStringInvariant;
             if (noblank(sDatum) <> '') then
               WechselDatum := GetCellValue(r, col_Ergebnis_WechselDatum)
             else
@@ -9371,8 +9349,8 @@ var
     end
     else
     begin
-      d := getDateValue(xImport,r, succ(_cd));
-      t := getTimeValue(xImport,r, succ(_ct));
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9411,8 +9389,8 @@ var
     end
     else
     begin
-      d := getDateValue(xImport,r, succ(_cd));
-      t := getTimeValue(xImport,r, succ(_ct));
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9446,8 +9424,8 @@ var
     end
     else
     begin
-      d := getDateValue(xImport,r, succ(_cd));
-      t := getTimeValue(xImport,r, succ(_ct));
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -9479,7 +9457,7 @@ var
       result := '';
       d := 0;
       try
-        d := getDateTimeValue(xImport,r, succ(_cdt));
+        d := getDateTimeValue(xImport, r, succ(_cdt));
 
         if (d > 0) then
         begin
@@ -9651,7 +9629,8 @@ begin
       ART := cutblank(GetCellValue(r, succ(cART)).ToStringInvariant);
       ZaehlwerkeLautArt := strtointdef(StrFilter(ART, '0123456789'), 1);
       RID := cutblank(GetCellValue(r, succ(cRID)).ToStringInvariant);
-      STATUS := strtointdef(GetCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+      STATUS := strtointdef(GetCellValue(r, succ(cStatus))
+        .ToStringInvariant, -1);
 
       // Status bei bereits gemeldeten umsetzen!
       if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -9661,9 +9640,11 @@ begin
       if (STATUS = cSTATUS_VorgezogenGemeldet) then
         STATUS := cSTATUS_Vorgezogen;
 
-      ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer)).ToStringInvariant);
+      ZAEHLER_NUMMER := cutblank(GetCellValue(r, succ(cZaehlerNummer))
+        .ToStringInvariant);
       if (cZaehlerNummerNeu <> -1) then
-        ZAEHLER_NUMMER_NEU := cutblank(GetCellValue(r, succ(cZaehlerNummerNeu)).ToStringInvariant)
+        ZAEHLER_NUMMER_NEU := cutblank(GetCellValue(r, succ(cZaehlerNummerNeu))
+          .ToStringInvariant)
       else
         ZAEHLER_NUMMER_NEU := '';
 
@@ -9699,7 +9680,8 @@ begin
         else
         begin
           if (cAnlagen <> -1) then
-            ANLAGENVERZEICHNIS := cutblank(GetCellValue(r, succ(cAnlagen)).ToStringInvariant)
+            ANLAGENVERZEICHNIS :=
+              cutblank(GetCellValue(r, succ(cAnlagen)).ToStringInvariant)
           else
             ANLAGENVERZEICHNIS := '';
 
@@ -10438,8 +10420,8 @@ var
     end
     else
     begin
-      d := getDateValue(xImport,r, succ(_cd));
-      t := getTimeValue(xImport,r, succ(_ct));
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
 
       if (d = 0) then
         d := now;
@@ -10485,7 +10467,7 @@ var
       result := '';
       d := 0;
       try
-        d := getDateTimeValue(xImport,r, succ(_cdt));
+        d := getDateTimeValue(xImport, r, succ(_cdt));
 
         if (d > 0) then
         begin
