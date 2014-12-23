@@ -1592,7 +1592,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.getCellValue(r, succ(c)).ToStringInvariant;
+    result := xImport.getCellValue(r, succ(c)).ToString;
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -3364,7 +3364,7 @@ var
 
   function x { celValue } (r, c: integer): string; overload;
   begin
-    result := xImport.GetCellValue(r, succ(c)).ToStringInvariant;
+    result := xImport.GetCellValue(r, succ(c)).ToString;
     ersetze('"', '''', result);
     ersetze('&', c_xml_ampersand, result);
   end;
@@ -4320,7 +4320,7 @@ var
     end
     else
     begin
-      result := cutblank(xImport.GetCellValue(r, succ(_c)).ToStringInvariant);
+      result := cutblank(xImport.GetCellValue(r, succ(_c)).ToString);
       ersetze(#160, ' ', result);
       ersetze('#', '', result);
       ersetze('"', '''', result);
@@ -9328,7 +9328,7 @@ var
     end
     else
     begin
-      result := xImport.GetCellValue(r, succ(_c)).ToStringInvariant;
+      result := xImport.GetCellValue(r, succ(_c)).ToString;
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
       if isUTF8 then
@@ -10401,7 +10401,7 @@ var
     end
     else
     begin
-      result := xImport.GetCellValue(r, succ(_c)).ToStringInvariant;
+      result := xImport.GetCellValue(r, succ(_c)).ToString;
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
     end;
@@ -10412,8 +10412,6 @@ var
     _cd: integer;
     _ct: integer;
     d, t: TDateTime;
-    v: Variant;
-    s: string;
   begin
     _cd := xlsHeaders.indexof('WechselDatum');
     _ct := xlsHeaders.indexof('WechselZeit');
@@ -10458,8 +10456,6 @@ var
   var
     _cdt: integer;
     d: TDateTime;
-    s: string;
-    v: Variant;
   begin
     _cdt := xlsHeaders.indexof(c);
     if (_cdt = -1) then
