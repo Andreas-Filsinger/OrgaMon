@@ -9,7 +9,7 @@
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<Basis>True</Basis>
 			<AppType>Console</AppType>
-			<FrameworkType>None</FrameworkType>
+			<FrameworkType>VCL</FrameworkType>
 			<Base>True</Base>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
 			<TargetedPlatforms>1</TargetedPlatforms>
@@ -45,7 +45,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;System.Win;FMXTee;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;System.Win;FMXTee;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
 			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
 			<VerInfo_Locale>1031</VerInfo_Locale>
 			<DCC_DependencyCheckOutputName>Oc.exe</DCC_DependencyCheckOutputName>
@@ -164,6 +164,7 @@
 			<DCCReference Include="..\PASconTools\Mapping.pas"/>
 			<DCCReference Include="..\libxml2\libxml2.pas"/>
 			<DCCReference Include="..\PASconTools\html.pas"/>
+			<DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
 			<None Include="..\rev\Oc.rev.txt"/>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
