@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007-2014  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ type
     HugeTransactionN: integer;
     ManuellInitiiert: boolean;
     IdFTP1: TIdFTP;
-    FlexCelXLS : TXLSFile;
+    FlexCelXLS: TXLSFile;
 
     // Statistik
     Stat_Erfolg: TgpIntegerList;
@@ -144,7 +144,6 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
-
 
   // Forms
   Bearbeiter, AuftragArbeitsplatz, Datenbank,
@@ -372,7 +371,7 @@ var
       begin
         Font.name := 'Courier New';
         Font.Size20 := round(8.0 * 20);
-        borders.Left.style :=     TFlxBorderStyle.Thin;
+        borders.Left.style := TFlxBorderStyle.Thin;
         borders.Left.color := clblack;
         FillPattern.Pattern := TFlxPatternStyle.Solid;
         FillPattern.BgColor := 0;
@@ -396,15 +395,15 @@ var
   var
     n: integer;
     fmReady: boolean;
+    fm: integer;
   begin
-   // imp pend FlexCel: RowHeight
- //   FlexCelXLS.RowHeight[ExcelWriteRow] := 277;
 
     for n := 0 to pred(ActColumn.count) do
     begin
 
       // Zell-Formatierung
       fmReady := false;
+      fm := -1;
       if (n < Header.count) then
       begin
         repeat
@@ -412,7 +411,7 @@ var
           // ganzes Protokoll
           if (Header[n] = 'ProtokollText') then
           begin
-            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n),     fmProtokollText);
+            fm := fmProtokollText;
             FlexCelXLS.setcolwidth(succ(n), 340 * 18);
             fmReady := true;
             break;
@@ -421,7 +420,7 @@ var
           // q* Felder im Textformat, damit sie keine schadhafte Formatierung erhalten
           if (pos('q', Header[n]) = 1) then
           begin
-            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n), fmInternText);
+            fm := fmInternText;
             fmReady := true;
             break;
           end;
@@ -429,7 +428,7 @@ var
           // Ausdrückliche Textfelder
           if (HeaderTextFormat.indexof(Header[n]) <> -1) then
           begin
-            FlexCelXLS.setCellFormat(ExcelWriteRow, succ(n), fmInternText);
+            fm := fmInternText;
             fmReady := true;
             break;
           end;
@@ -441,7 +440,7 @@ var
       // AppendStringsToFile(ActColumn[n],DiagnosePath+'SetCell.log.txt');
       try
         if fmReady then
-          FlexCelXLS.setCellValue(ExcelWriteRow, succ(n), ActColumn[n])
+          FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm)
         else
           FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
       except
@@ -1170,8 +1169,8 @@ begin
                 { } EFRE_ZAEHLER_NR_NEU + ';' +
                 { } material_nummer_alt + ';' +
                 { } Settings.values[cE_TAN] + ';' +
-                { } inttostr(AUFTRAG_R)+';'+
-                {} ZAEHLER_NR_NEU);
+                { } inttostr(AUFTRAG_R) + ';' +
+                { } ZAEHLER_NR_NEU);
 
               //
               Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' +

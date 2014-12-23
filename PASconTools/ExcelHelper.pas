@@ -86,6 +86,7 @@ const
   // Farbspalte=<SPALTENÜBERSCHRIFT>
   // TabellenName=<SheetName>
 
+
 {$IFDEF fpc}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TsWorkbook = nil);
@@ -101,6 +102,9 @@ function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 
 implementation
+
+
+
 
 {$IFDEF fpc}
 
@@ -122,7 +126,18 @@ end;
 
 end.
 {$ELSE}
-  uses html, anfix32, math, globals, SysUtils, graphics;
+  uses
+
+  // globals,
+  html, anfix32, math,  SysUtils, graphics;
+
+
+const
+  cOLAPcsvLineBreak = '|';
+    cOLAPnull = '<NULL>';
+  cOLAPcsvSeparator = ';';
+  cOLAPcsvQuote = '"';
+
 
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TXLSFile = nil);
@@ -307,11 +322,17 @@ var
     end;
   end;
 
-  function _length(MultiLine: string): integer;
+var
+  MultiLineCount: integer;
+
+  function lengthMultiLine(MultiLine: string): integer;
   begin
     result := 0;
     while (MultiLine <> '') do
+    begin
       result := max(result, length(nextp(MultiLine, cOLAPcsvLineBreak)));
+      inc(MultiLineCount);
+    end;
   end;
 
 type
@@ -460,9 +481,8 @@ begin
       else
         fmCharsWidth := 0;
 
-      setCellValue(1, succ(c), CellContent);
-      setCellFormat(1, succ(c), f);
-
+      // Set Format, Value, Comment
+      SetCellFromString(1, succ(c), CellContent, f);
       if (CellComment <> '') then
         SetComment(1, succ(c), CellComment);
 
@@ -532,7 +552,21 @@ begin
       for c := 0 to pred(Subs.count) do
       begin
 
+        // Wert,Kommentar,Formatierung bestimmen
         CellFormats := cellsplit(Subs[c], CellContent, CellComment);
+
+        // Format ermitteln
+        if isHigh(r, c) then
+          f := xlsFormatsHigh[c]
+        else
+          f := xlsFormatsLow[c];
+
+        // Format ggf. modifizieren
+        if assigned(CellFormats) then
+        begin
+          f := fmModifier(f, CellFormats);
+          CellFormats.Free;
+        end;
 
         // Wert schreiben
         if (CellContent <> cOLAPnull) then
@@ -541,7 +575,7 @@ begin
             case xlsFormatsAll[c] of
               xls_CellType_ordinal:
                 begin
-                  setCellValue(succ(r), succ(c), CellContent);
+                  SetCellFromString(succ(r), succ(c), CellContent, f);
                   CellCharCount := length(CellContent);
                 end;
               xls_CellType_Date:
@@ -549,13 +583,13 @@ begin
                   if (CellContent <> '') then
                   begin
                     setCellValue(succ(r), succ(c),
-                      double(mkDateTime(date2long(nextp(CellContent, ' ',
-                      0)), 0)));
+                      double(mkDateTime(date2long(nextp(CellContent, ' ', 0)
+                      ), 0)), f);
                     CellCharCount := 10;
                   end
                   else
                   begin
-                    setCellValue(succ(r), succ(c), '');
+                    setCellFormat(succ(r), succ(c), f);
                     CellCharCount := 0;
                   end;
                 end;
@@ -571,12 +605,12 @@ begin
                       { } double(
                       { } mkDateTime(
                       { } date2long(nextp(myCellValue, ' ', 0)),
-                      { } strtoseconds(nextp(myCellValue, ' ', 1)))));
+                      { } strtoseconds(nextp(myCellValue, ' ', 1)))), f);
                     CellCharCount := 19;
                   end
                   else
                   begin
-                    setCellValue(succ(r), succ(c), '');
+                    setCellFormat(succ(r), succ(c), f);
                     CellCharCount := 0;
                   end;
                 end;
@@ -585,84 +619,90 @@ begin
                   if (CellContent <> '') then
                   begin
                     setCellValue(succ(r), succ(c),
-                      double(mkDateTime(0, strtoseconds(CellContent))));
+                      double(mkDateTime(0, strtoseconds(CellContent))), f);
                     CellCharCount := 8;
                   end
                   else
                   begin
-                    setCellValue(succ(r), succ(c), '');
+                    setCellFormat(succ(r), succ(c), f);
                     CellCharCount := 0;
                   end;
                 end;
               xls_CellType_Money:
                 begin
                   MoneyDouble := strtodoubledef(CellContent, 0);
-                  setCellValue(succ(r), succ(c), MoneyDouble);
+                  setCellValue(succ(r), succ(c), MoneyDouble, f);
                   CellCharCount := length(format('%m', [MoneyDouble]));
                 end;
               xls_CellType_double:
                 begin
                   setCellValue(succ(r), succ(c),
-                    strtodoubledef(CellContent, 0));
+                    strtodoubledef(CellContent, 0), f);
                   CellCharCount := length(CellContent);
                 end;
             else
-              // String Typen!
+
+              // Alle String Typen!
               myCellValue := CellContent;
               if (pos('"', myCellValue) = 1) then
                 myCellValue := copy(myCellValue, 2, length(myCellValue) - 2);
 
               // maximale Länge der einzelnen Strings berechnen
-              CellCharCount := _length(myCellValue);
-              ersetze(cOLAPcsvLineBreak, #10, myCellValue);
-              setCellValue(succ(r), succ(c), myCellValue);
+              if (pos(cOLAPcsvLineBreak, myCellValue) > 0) then
+              begin
+                MultiLineCount := 0;
+                CellCharCount := lengthMultiLine(myCellValue);
+                ersetze(cOLAPcsvLineBreak, #10, myCellValue);
+                setCellValue(succ(r), succ(c), myCellValue, f);
+                if (MultiLineCount > 1) then
+                  setRowHeight(
+                    { } succ(r),
+                    { } max(
+                    { } GetRowHeight(succ(r)),
+                    { } DefaultRowHeight * MultiLineCount));
+                // SetAutoRowHeight(succ(r), true);
+              end
+              else
+              begin
+                setCellValue(succ(r), succ(c), myCellValue, f);
+                CellCharCount := length(myCellValue);
+              end;
 
             end;
           except
-            setCellValue(succ(r), succ(c), CellContent);
+            setCellValue(succ(r), succ(c), CellContent, f);
             CellCharCount := length(CellContent);
           end;
         end
         else
         begin
+          // nur das Format setzen, aber kein Wert
+          setCellFormat(succ(r), succ(c), f);
           CellCharCount := 0;
         end;
 
-        // Format schreiben
-        if isHigh(r, c) then
-          f := xlsFormatsHigh[c]
-        else
-          f := xlsFormatsLow[c];
-
-        // Format ggf. modifizieren
-        if assigned(CellFormats) then
-        begin
-          f := fmModifier(f, CellFormats);
-          CellFormats.Free;
-        end;
-
-        setCellFormat(succ(r), succ(c), f);
-
+        // Kommentar noch schreiben
         if (CellComment <> '') then
           SetComment(succ(r), succ(c), CellComment);
 
-        // Breite schreiben
+        // Breite ermitteln, ggf. merken
         xlsColumnWidth[c] := max(xlsColumnWidth[c],
           CellCharCount * cExcel_Pixel_Per_Char);
 
       end;
     end;
+
+    // Breite schreiben
     for c := 0 to high(xlsColumnWidth) do
       SetColWidth(succ(c), min(65534, xlsColumnWidth[c]));
+
     if not(assigned(pXLS)) then
     begin
       Save(FName);
     end;
   end;
   if not(assigned(pXLS)) then
-  begin
     xlsAUSGABE.Free;
-  end;
   AllTypes.Free;
 end;
 

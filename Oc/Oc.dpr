@@ -17,7 +17,8 @@ uses
   binlager32 in '..\PASconTools\binlager32.pas',
   Mapping in '..\PASconTools\Mapping.pas',
   libxml2 in '..\libxml2\libxml2.pas',
-  html in '..\PASconTools\html.pas';
+  html in '..\PASconTools\html.pas',
+  ExcelHelper in '..\PASconTools\ExcelHelper.pas';
 
 var
   InFName: string;
