@@ -4761,8 +4761,12 @@ var
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
 
+          // 2b. Es muss ein Format haben
+          if (FormatStr='') then
+           break;
+
           // 3. Es muss ein Datumsformat haben
-          if (pos('YY', FormatStr) > 0) and (pos('HH', FormatStr) > 0) then
+          if (pos('YY', FormatStr) > 0) and (pos('H', FormatStr) > 0) then
           begin
             // ganzer Timestamp
             d := v;
@@ -4780,14 +4784,13 @@ var
             break;
           end;
 
-          if (pos('HH', FormatStr) > 0) then
+          if (pos('H', FormatStr) > 0) then
           begin
             // Uhrzeit
             d := v;
             result := SecondsToStr(d);
             IsConverted := true;
             break;
-
           end;
 
         until true;
@@ -5350,15 +5353,19 @@ var
           if (TVarData(v).VType <> varDouble) then
             break;
 
-          // 2. Es muss ein Format haben
+          // 2a. Es muss ein Format haben
           if (getCellFormat(r, c) < 0) or (getCellFormat(r, c) >= FormatCount)
           then
             break;
           xFmt := GetFormat(getCellFormat(r, c));
           FormatStr := AnsiupperCase(xFmt.format);
 
+          // 2b. Es muss ein Format haben
+          if (FormatStr='') then
+           break;
+
           // 3. Es muss ein Datumsformat haben
-          if (pos('YY', FormatStr) > 0) and (pos('HH', FormatStr) > 0) then
+          if (pos('YY', FormatStr) > 0) and (pos('H', FormatStr) > 0) then
           begin
             // ganzer Timestamp
             d := v;
@@ -5376,7 +5383,7 @@ var
             break;
           end;
 
-          if (pos('HH', FormatStr) > 0) then
+          if (pos('H', FormatStr) > 0) then
           begin
             // Uhrzeit
             d := v;
