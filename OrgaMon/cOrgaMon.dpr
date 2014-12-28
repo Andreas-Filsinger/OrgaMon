@@ -190,17 +190,16 @@ end;
 
 procedure RunAsOrder;
 var
- EREIGNIS_R, BELEG_R, PERSON_R : integer;
+  EREIGNIS_R, BELEG_R, PERSON_R: integer;
 begin
   repeat
-   // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
+    // Step 1 : Erlöse die Timeout Jobs (aber nur alle 5 Min)
 
-   // Step 2 : Markiere offene Jobs für mich
+    // Step 2 : Markiere offene Jobs für mich
 
-   // Step 3 : Verarbeite offene Jobs
+    // Step 3 : Verarbeite offene Jobs
 
-
-   sleep(2000);
+    sleep(2000);
   until false;
 end;
 
@@ -211,7 +210,6 @@ end;
 
 var
   k, l: integer;
-
 
 begin
   repeat
@@ -317,10 +315,13 @@ begin
     sBearbeiter := e_r_Bearbeiter;
     if (sBearbeiter < cRID_FirstValid) then
     begin
-      writeln(cERRORText + ' Bearbeiter ' + anfix32.UserName +
-        ' ist noch nicht angelegt!');
+      writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName +
+        '" ist noch nicht angelegt!');
       halt(1);
     end;
+    sBearbeiterKurz :=
+    { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
+    { } e_r_Kontext;
 
     writeln(cOKText);
 

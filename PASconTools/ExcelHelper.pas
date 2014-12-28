@@ -70,8 +70,16 @@ const
   xls_CellType_Auto = 7;
   xls_CellType_Text = 8;
 
-  xls_CellTypes: array [0 .. pred(xls_CellType_Count)] of string = ('STRING',
-    'DATE', 'DATETIME', 'TIME', 'ORDINAL', 'DOUBLE', 'MONEY', 'AUTO', 'TEXT');
+  xls_CellTypes: array [0 .. pred(xls_CellType_Count)] of string = (
+    { } 'STRING',
+    { } 'DATE',
+    { } 'DATETIME',
+    { } 'TIME',
+    { } 'ORDINAL',
+    { } 'DOUBLE',
+    { } 'MONEY',
+    { } 'AUTO',
+    { } 'TEXT');
 
   cExcel_TabellenName = 'TabellenName';
   cExcel_FarbSpalte = 'FarbSpalte';
@@ -85,7 +93,6 @@ const
   // Options:  SPALTENÜBERSCHRIFT=FELDTYP
   // Farbspalte=<SPALTENÜBERSCHRIFT>
   // TabellenName=<SheetName>
-
 
 {$IFDEF fpc}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
@@ -102,9 +109,6 @@ function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 
 implementation
-
-
-
 
 {$IFDEF fpc}
 
@@ -128,16 +132,14 @@ end.
 {$ELSE}
   uses
 
-  // globals,
-  html, anfix32, math,  SysUtils, graphics;
-
+// globals,
+  html, anfix32, math, SysUtils, graphics;
 
 const
   cOLAPcsvLineBreak = '|';
-    cOLAPnull = '<NULL>';
+  cOLAPnull = '<NULL>';
   cOLAPcsvSeparator = ';';
   cOLAPcsvQuote = '"';
-
 
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TXLSFile = nil);
