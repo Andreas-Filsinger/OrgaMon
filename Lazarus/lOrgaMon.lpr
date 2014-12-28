@@ -436,10 +436,13 @@ begin
     sBearbeiter := e_r_Bearbeiter;
     if (sBearbeiter < cRID_FirstValid) then
     begin
-      writeln(cERRORText + ' Bearbeiter ' + anfix32.UserName +
-        ' ist noch nicht angelegt!');
+      writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName +
+        '" ist noch nicht angelegt!');
       halt(1);
     end;
+    sBearbeiterKurz :=
+    { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
+    { } e_r_Kontext;
 
     writeln(cOKText);
 
