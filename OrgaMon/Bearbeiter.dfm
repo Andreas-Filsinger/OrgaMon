@@ -429,7 +429,7 @@ object FormBearbeiter: TFormBearbeiter
     OnClick = Button2Click
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsDisplayLabel.Strings = (
       'NAME=voller Name'
       'USERNAME=NT Anmeldename'
@@ -479,7 +479,7 @@ object FormBearbeiter: TFormBearbeiter
     Top = 72
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'FARBE_HINTERGRUND=FALSE'

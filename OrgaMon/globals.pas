@@ -1083,7 +1083,6 @@ var
   iTestDrucker: string;
   // Name des Druckers für Testausdrucke default = "FreePDF"
 
-  // aus relaxx
   iAuftragsObjektPath: string;
   iAuftragsAblagePath: string;
   iWarnFarbe_L0: TColor;
@@ -1135,6 +1134,7 @@ var
 
   ReallyBigString: array [0 .. pred(PlaceForHugeText)] of char;
   sBearbeiter: integer = -1; // RID des aktuellen Benutzers (-1=keiner)
+  sBearbeiterKurz: string = '';
 
   // True, wenn Datenbankverbindung steht, und alle Start-Ups beendet sind
   //

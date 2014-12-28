@@ -7024,7 +7024,9 @@ end;
 
 function e_w_BelegStatusBuchen(BELEG_R: TDOM_Reference): boolean;
 var
+  GENERATION: integer;
   VERSAND_STATUS: integer;
+
   Pre_versandfertig: boolean;
   Pre_versandfaehig: boolean;
   Post_versandfertig: boolean;
@@ -7052,6 +7054,18 @@ var
   ERSTERLIEFERTAG: TAnfixDate;
   TERMIN: double;
   cTerminUnset: double;
+  IncGeneration: boolean;
+
+  procedure IncGenLog(s: string);
+  begin
+    AppendStringsToFile(
+      { } Uhr8 + ';' +
+      { } inttostr(BELEG_R) + '-' +
+      { } inttostr(GENERATION) + ';' +
+      { } sBearbeiterKurz + ';' +
+      { } s,
+      { } DiagnosePath + 'GENERATION-' + DatumLog + '.log');
+  end;
 
 begin
   result := false;
@@ -7146,6 +7160,8 @@ begin
       if eof then
         raise exception.create('Beleg nicht gefunden');
 
+      GENERATION := FieldByName('GENERATION').AsInteger;
+
       // Status der versendbarkeit bestimmen.
       Pre_versandfertig := e_r_Versandfertig(qBELEG);
       Pre_versandfaehig := e_r_Versandfaehig(qBELEG);
@@ -7174,25 +7190,95 @@ begin
         inc(VERSAND_STATUS, cV_Geliefert);
 
       // Bedingungen für einen "edit" -> somit auch Generations Wechsel
-      if (VERSAND_STATUS <> FieldByName('VERSAND_STATUS').AsInteger) or
-        (FieldByName('VERSAND_STATUS').IsNull) or
-        (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDateTime)) or
-        (FieldByName('MENGE_AUFTRAG').AsInteger <> MENGE_AUFTRAG) or
-        (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) or
-        (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) or
-        (FieldByName('MENGE_GELIEFERT').AsInteger <> MENGE_GELIEFERT) or
-        (FieldByName('VOLUMEN').AsFloat <> VOLUMEN) or
-        (FieldByName('ZUTATEN').AsFloat <> Zutaten) or
-        ((FieldByName('TERMIN').AsDateTime <> TERMIN) and
-        (TERMIN <> cTerminUnset)) or (not(FieldByName('TERMIN').IsNull) and
-        (TERMIN = cTerminUnset)) then
+
+      IncGeneration := true;
+      repeat
+
+        // Status des Beleges
+        if (FieldByName('VERSAND_STATUS').IsNull) then
+        begin
+          IncGenLog(format('Erstmaliges setzen des VERSAND_STATUS auf %d',
+            [VERSAND_STATUS]));
+          break;
+        end;
+        if (VERSAND_STATUS <> FieldByName('VERSAND_STATUS').AsInteger) then
+        begin
+          IncGenLog(format('VERSAND_STATUS von %d auf %d',
+            [FieldByName('VERSAND_STATUS').AsInteger, VERSAND_STATUS]));
+          break;
+        end;
+
+        // Geld
+        if (FieldByName('VOLUMEN').AsFloat <> VOLUMEN) then
+        begin
+          IncGenLog(format('Volumen von %m nach %m',
+            [FieldByName('VOLUMEN').AsFloat, VOLUMEN]));
+          break;
+        end;
+        if (FieldByName('ZUTATEN').AsFloat <> Zutaten) then
+        begin
+          IncGenLog(format('Zutaten von %m nach %m',
+            [FieldByName('ZUTATEN').AsFloat, Zutaten]));
+          break;
+        end;
+
+        // Mengen
+        if (FieldByName('MENGE_AUFTRAG').AsInteger <> MENGE_AUFTRAG) then
+        begin
+          IncGenLog(format('MENGE_AUFTRAG von %d nach %d',
+            [FieldByName('MENGE_AUFTRAG').AsInteger, MENGE_AUFTRAG]));
+          break;
+        end;
+        if (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) then
+        begin
+          IncGenLog(format('MENGE_RECHNUNG von %d nach %d',
+            [FieldByName('MENGE_RECHNUNG').AsInteger, Menge_Rechnung]));
+          break;
+        end;
+        if (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) then
+        begin
+          IncGenLog(format('MENGE_AGENT von %d nach %d',
+            [FieldByName('MENGE_AGENT').AsInteger, MENGE_AGENT]));
+          break;
+        end;
+        if (FieldByName('MENGE_GELIEFERT').AsInteger <> MENGE_GELIEFERT) then
+        begin
+          IncGenLog(format('MENGE_GELIEFERT von %d nach %d',
+            [FieldByName('MENGE_GELIEFERT').AsInteger, MENGE_GELIEFERT]));
+          break;
+        end;
+
+        // Datums
+        if ((FieldByName('TERMIN').AsDateTime <> TERMIN) and
+          (TERMIN <> cTerminUnset)) then
+        begin
+          IncGenLog(format('TERMIN von %s to %s',
+            [dTimeStamp(FieldByName('TERMIN').AsDateTime),
+            dTimeStamp(TERMIN)]));
+          break;
+        end;
+        if (not(FieldByName('TERMIN').IsNull) and (TERMIN = cTerminUnset)) then
+        begin
+          IncGenLog(format('TERMIN auf %s', [dTimeStamp(TERMIN)]));
+          break;
+        end;
+        if (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDateTime)) then
+        begin
+          IncGenLog(format('ZUSAGE von %s auf %s',
+            [long2date(FieldByName('ZUSAGE').AsDateTime), long2date(ZUSAGE)]));
+          break;
+        end;
+
+        IncGeneration := false;
+      until true;
+
+      if IncGeneration then
       begin
 
         // STATUS - Wechsel des Beleges!
         edit;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        FieldByName('GENERATION').AsInteger := FieldByName('GENERATION')
-          .AsInteger + 1;
+        FieldByName('GENERATION').AsInteger := succ(GENERATION);
         FieldByName('DRUCK').clear;
         FieldByName('VERSAND_STATUS').AsInteger := VERSAND_STATUS;
         FieldByName('MENGE_AUFTRAG').AsInteger := MENGE_AUFTRAG;
@@ -9359,8 +9445,8 @@ procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer;
   sTexte: TStringList = nil);
 //
 // Imp pend: KUNDEN_INFO := VORLAGE.KUNDEN_INFO + VORSPANN.KUNDEN_INFO
-//           Bsp: Wir beachten Ihre besonderen Anforderungen laut ROS (aus Vorlage! -> an 1. Position)
-//           Frohe Weihnacht und ein gutes neue Jahr (aus Vorspann! -> an 2. Position)
+// Bsp: Wir beachten Ihre besonderen Anforderungen laut ROS (aus Vorlage! -> an 1. Position)
+// Frohe Weihnacht und ein gutes neue Jahr (aus Vorspann! -> an 2. Position)
 //
 
 // kopiere alle Posten des Quell-Beleges in den bestehenden Beleg hinzu

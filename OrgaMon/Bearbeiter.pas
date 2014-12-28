@@ -727,7 +727,7 @@ begin
   if (BEARBEITER_R_INIT = cNoBearbeiter) then
   begin
 (*
-    if DoIt('Der Anmeldename "' + UserName + '" ist relaxx nicht bekannt!' + #13 +
+    if DoIt('Der Anmeldename "' + UserName + '" ist OrgaMon nicht bekannt!' + #13 +
       'wollen Sie jetzt einen Benutzer anlegen') then
 *)
     CreateNewUserSilent;

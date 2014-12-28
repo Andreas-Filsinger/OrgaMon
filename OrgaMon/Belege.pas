@@ -2085,9 +2085,14 @@ begin
       if ArbeitszeitOK then
       begin
         e_w_BudgetAbschreiben(BELEG_R, OutPath + cHTML_ArbeitszeitFName);
-        FileMove(OutPath + cHTML_ArbeitszeitFName, OutPath + inttostrN(BELEG_R,
-          10) + '-' + BSTATUS + inttostr(GENERATION) + '.' +
-          cHTML_ArbeitszeitFName);
+        FileMove(OutPath + cHTML_ArbeitszeitFName,
+          { } OutPath +
+          { } inttostrN(BELEG_R, 10) +
+          { } '-' +
+          { } BSTATUS +
+          { } inttostr(GENERATION) +
+          { } '.' +
+          { } cHTML_ArbeitszeitFName);
       end;
 
       AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked,

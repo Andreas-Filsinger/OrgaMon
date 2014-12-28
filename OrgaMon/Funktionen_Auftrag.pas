@@ -73,7 +73,6 @@ procedure e_r_Sync_AuftraegeAlle;
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
 function e_r_VorlageMail(VorlageName: string): Integer; // [EMAIL_R]
 
-// aus dem relaxx Projekt
 procedure EnsureHints(hints: TStrings);
 procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
 

@@ -269,7 +269,8 @@ function long2date6r(dlong: longint): string; // TTMMJJ (r für reverse!)
 function long2date7(dlong: TAnfixDate): string; // MM.JJJJ
 function long2date8(dlong: TAnfixDate): string; overload; // TT.MM.JJ
 function long2date8(dlong: TDateTime): string; overload; // TT.MM.JJ
-function long2dateLog(dlong: TAnfixDate): string; // JJJJMMJJ
+function long2dateLog(dlong: TAnfixDate): string; overload; // JJJJMMJJ
+function long2dateLog(dlong: TDateTime): string; overload; // JJJJMMJJ
 function long2dateText(dlong: TAnfixDate): string;
 
 // Lokalisierte Datumsangaben
@@ -368,6 +369,7 @@ procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
 function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
 function mkDateTime(s: string): TDateTime; overload;
 function DatumUhr: string; // Zeitstempel Datum " " Uhr
+function dTimeStamp(d:TDateTime): string;
 
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;
@@ -734,6 +736,11 @@ end;
 function sTimeStamp: string;
 begin
   result := DatumLog + ' ' + uhr8;
+end;
+
+function dTimeStamp(d:TDateTime): string;
+begin
+ result := long2dateLog(d) + ' ' + SecondsToStr(d);
 end;
 
 function JahresZahl: string;
@@ -1118,6 +1125,7 @@ begin
 
 end;
 
+
 function long2date { 10 } (dlong: longint): string; overload;
 var
   j, m, T: Word;
@@ -1163,6 +1171,11 @@ begin
   ersetze(' ', '0', ZStr);
   Res := Res + ZStr;
   long2date := Res;
+end;
+
+function long2dateLog(dlong: TDateTime): string; // JJJJMMJJ
+begin
+ result := long2dateLog(DateTime2Long(dlong));
 end;
 
 function long2date(dlong: TDateTime): string; overload;
