@@ -91,10 +91,8 @@ type
     Label2: TLabel;
     Image2: TImage;
     Button1: TButton;
-    Button5: TButton;
     Label8: TLabel;
     CheckListBox2: TCheckListBox;
-    Button2: TButton;
     Button3: TButton;
     StaticText1: TStaticText;
     StaticText2: TStaticText;
@@ -110,7 +108,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
     procedure EinstellungenClick(Sender: TObject);
     procedure BackupClick(Sender: TObject);
     procedure TagesabschlussClick(Sender: TObject);
@@ -135,7 +132,6 @@ type
     procedure Button17Click(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure Image2DblClick(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure ComboBox3Change(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
@@ -234,7 +230,7 @@ begin
     EnsureHints(IB_Query2.hints);
     EnsureHints(IB_Query3.hints);
 
-    caption := ExtractFileName(iDataBaseName) + ' - relaxx Rev ' + RevToStr(Version);
+    caption := ExtractFileName(iDataBaseName) + ' - OrgaMon Rev ' + RevToStr(Version);
 
     // Systemparameter ermitteln
 
@@ -317,11 +313,6 @@ begin
     if GruppeOnceUpdated then
       if UpdateGruppenSelektionNow then
         UpdateGruppenSelektion;
-end;
-
-procedure TFormQMain.Button5Click(Sender: TObject);
-begin
-  openShell(MyProgramPath + 'relaxx_Info.html');
 end;
 
 procedure TFormQMain.EinstellungenClick(Sender: TObject);
@@ -720,11 +711,6 @@ end;
 procedure TFormQMain.Image2DblClick(Sender: TObject);
 begin
   FormBearbeiter.ShowPrivatProperties(formbearbeiter.sBEARBEITER);
-end;
-
-procedure TFormQMain.Button2Click(Sender: TObject);
-begin
-  openShell(MyProgramPath + 'relaxx.ini');
 end;
 
 procedure TFormQMain.ComboBox3Change(Sender: TObject);

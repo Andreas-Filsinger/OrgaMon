@@ -833,6 +833,7 @@ end;
 procedure TFormMain.UpdateBenutzer(Sender: TObject);
 begin
   sBEARBEITER := FormBearbeiter.sBEARBEITER;
+  sBearbeiterKurz := FormBearbeiter.sBEARBEITERKurz;
   Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));
   Label1.caption := MachineID;
   FormQMain.UpdateBenutzer;

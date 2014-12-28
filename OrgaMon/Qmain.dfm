@@ -39,15 +39,11 @@ object FormQMain: TFormQMain
     Top = 0
     Width = 792
     Height = 544
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = '&'#220'berblick'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         784
         516)
@@ -245,29 +241,13 @@ object FormQMain: TFormQMain
         TabOrder = 8
         OnClick = Button1Click
       end
-      object Button5: TButton
-        Left = 720
-        Top = 17
-        Width = 48
-        Height = 21
-        Anchors = [akTop, akRight]
-        Caption = '&Hilfe'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 9
-        OnClick = Button5Click
-      end
       object CheckListBox2: TCheckListBox
         Left = 512
         Top = 40
         Width = 256
         Height = 65
         ItemHeight = 13
-        TabOrder = 10
+        TabOrder = 9
       end
       object ComboBox3: TComboBox
         Left = 644
@@ -275,17 +255,13 @@ object FormQMain: TFormQMain
         Width = 73
         Height = 21
         Style = csDropDownList
-        TabOrder = 11
+        TabOrder = 10
         OnChange = ComboBox3Change
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Basis&daten'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Image1: TImage
         Left = 10
         Top = 56
@@ -316,10 +292,6 @@ object FormQMain: TFormQMain
     object TabSheet4: TTabSheet
       Caption = '&Admin'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 504
         Top = 24
@@ -478,22 +450,13 @@ object FormQMain: TFormQMain
         Caption = 'SQL Diagnose'
         TabOrder = 11
       end
-      object Button2: TButton
-        Left = 152
-        Top = 360
-        Width = 141
-        Height = 25
-        Caption = 'relaxx.ini'
-        TabOrder = 12
-        OnClick = Button2Click
-      end
       object Button3: TButton
         Left = 320
         Top = 32
         Width = 75
         Height = 25
         Caption = 'Client Ping'
-        TabOrder = 13
+        TabOrder = 12
         OnClick = Button3Click
       end
       object StaticText1: TStaticText
@@ -504,7 +467,7 @@ object FormQMain: TFormQMain
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = 'morgen'
-        TabOrder = 14
+        TabOrder = 13
       end
       object StaticText2: TStaticText
         Left = 300
@@ -514,7 +477,7 @@ object FormQMain: TFormQMain
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = 'heute'
-        TabOrder = 15
+        TabOrder = 14
       end
       object StaticText3: TStaticText
         Left = 300
@@ -524,7 +487,7 @@ object FormQMain: TFormQMain
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = 'gestern'
-        TabOrder = 16
+        TabOrder = 15
       end
       object StaticText4: TStaticText
         Left = 300
@@ -534,7 +497,7 @@ object FormQMain: TFormQMain
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = 'vorgestern'
-        TabOrder = 17
+        TabOrder = 16
       end
       object StaticText5: TStaticText
         Left = 300
@@ -544,7 +507,7 @@ object FormQMain: TFormQMain
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = 'vor mehr als 2 Tagen'
-        TabOrder = 18
+        TabOrder = 17
       end
       object StaticText6: TStaticText
         Left = 300
@@ -556,7 +519,7 @@ object FormQMain: TFormQMain
         Caption = 'in mehr als 2 Tagen'
         Color = clWhite
         ParentColor = False
-        TabOrder = 19
+        TabOrder = 18
       end
       object Button4: TButton
         Left = 8
@@ -564,7 +527,7 @@ object FormQMain: TFormQMain
         Width = 285
         Height = 25
         Caption = 'Auftragslogik neu anwenden'
-        TabOrder = 20
+        TabOrder = 19
         OnClick = Button4Click
       end
       object ProgressBar1: TProgressBar
@@ -572,7 +535,7 @@ object FormQMain: TFormQMain
         Top = 432
         Width = 289
         Height = 16
-        TabOrder = 21
+        TabOrder = 20
       end
     end
   end
