@@ -7043,7 +7043,7 @@ var
   PERSON_R: integer;
   qEREIGNIS: TdboQuery;
   VOLUMEN: double;
-  Zutaten: double;
+  ZUTATEN: double;
   cPOSTEN: TdboCursor;
   qBELEG: TdboQuery;
 
@@ -7079,7 +7079,7 @@ begin
     MENGE_AGENT := 0;
     MENGE_GELIEFERT := 0;
     VOLUMEN := 0.0;
-    Zutaten := 0.0;
+    ZUTATEN := 0.0;
     ErrorFlag := false;
 
     ZUSAGE := 0;
@@ -7141,7 +7141,7 @@ begin
         end
         else
         begin
-          Zutaten := Zutaten + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
+          ZUTATEN := ZUTATEN + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
             FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL')
             .AsInteger, FieldByName('EINHEIT_R').AsInteger);
         end;
@@ -7209,16 +7209,16 @@ begin
         end;
 
         // Geld
-        if (FieldByName('VOLUMEN').AsFloat <> VOLUMEN) then
+        if IsOther(FieldByName('VOLUMEN').AsFloat, VOLUMEN) then
         begin
           IncGenLog(format('Volumen von %m nach %m',
             [FieldByName('VOLUMEN').AsFloat, VOLUMEN]));
           break;
         end;
-        if (FieldByName('ZUTATEN').AsFloat <> Zutaten) then
+        if IsOther(FieldByName('ZUTATEN').AsFloat, ZUTATEN) then
         begin
-          IncGenLog(format('Zutaten von %m nach %m',
-            [FieldByName('ZUTATEN').AsFloat, Zutaten]));
+          IncGenLog(format('ZUTATEN von %m nach %m',
+            [FieldByName('ZUTATEN').AsFloat, ZUTATEN]));
           break;
         end;
 
@@ -7286,7 +7286,7 @@ begin
         FieldByName('MENGE_AGENT').AsInteger := MENGE_AGENT;
         FieldByName('MENGE_GELIEFERT').AsInteger := MENGE_GELIEFERT;
         FieldByName('VOLUMEN').AsFloat := VOLUMEN;
-        FieldByName('ZUTATEN').AsFloat := Zutaten;
+        FieldByName('ZUTATEN').AsFloat := ZUTATEN;
         if (ZUSAGE = 0) then
           FieldByName('ZUSAGE').clear
         else
