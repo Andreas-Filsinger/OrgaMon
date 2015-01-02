@@ -7252,16 +7252,22 @@ begin
         if ((FieldByName('TERMIN').AsDateTime <> TERMIN) and
           (TERMIN <> cTerminUnset)) then
         begin
-          IncGenLog(format('TERMIN von %s to %s',
+          if FieldByName('TERMIN').IsNull then
+          IncGenLog(format('TERMIN von '+cOLAPNull+' auf %s',
+            [dTimeStamp(TERMIN)]))
+           else
+          IncGenLog(format('TERMIN von %s auf %s',
             [dTimeStamp(FieldByName('TERMIN').AsDateTime),
             dTimeStamp(TERMIN)]));
           break;
         end;
+
         if (not(FieldByName('TERMIN').IsNull) and (TERMIN = cTerminUnset)) then
         begin
-          IncGenLog(format('TERMIN auf %s', [dTimeStamp(TERMIN)]));
+          IncGenLog(format('TERMIN von %s auf '+cOLAPNull,[FieldByName('TERMIN').AsDateTime]));
           break;
         end;
+
         if (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDateTime)) then
         begin
           IncGenLog(format('ZUSAGE von %s auf %s',
