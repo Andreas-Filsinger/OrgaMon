@@ -29,7 +29,9 @@ unit globals;
 interface
 
 uses
-  windows,
+  {$IFDEF MSWINDOWS}
+windows,
+  {$ENDIF}
   classes,
   graphics,
 {$IFNDEF CONSOLE}
@@ -2156,4 +2158,4 @@ sBootSequence.free;
 if assigned(MyIni) then
   FreeAndNil(MyIni);
 
-end.
+end.

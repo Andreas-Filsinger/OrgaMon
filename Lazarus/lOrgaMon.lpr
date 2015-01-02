@@ -31,7 +31,7 @@ program lOrgaMon;
  l("l" für Lazarus / Linux)OrgaMon
 
  cOrgaMon ist der Embarcadero/Delphi XMLRPC Server für Win32
- dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für Win32 und Linux (Yeah!)
+ dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für die Plattform Win32 und Linux (Yeah!)
 
 
  Voraussetzungen
@@ -40,13 +40,14 @@ program lOrgaMon;
  zeos
  jcl
  Indy
+ fpspreadsheet
 
  Vergleiche
  ==========
 
  cOrgaMon | lOrgaMon
  =========+=========
- flexcel  | fpspreadsheet! (Lack of Revision Number)
+ flexcel  | fpspreadsheet! (Lack of Revision Number, 1.5 im Package)
  IBO      | Zeos! (Umlaut OK!)
  infozip  | Abbrevia 5.2! (Reported as 5.0)
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
@@ -54,6 +55,7 @@ program lOrgaMon;
 }
 
 {$mode objfpc}{$H+}
+//{ $ mode delphi}{ $ H+}
 {$APPTYPE CONSOLE}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
@@ -63,7 +65,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Math,
   inifiles,
   SysUtils,
-  globals,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
@@ -85,6 +86,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   InfoZIP in '..\infozip\InfoZIP.pas',
   Mapping in '..\PASconTools\Mapping.pas',
   OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
+  globals,
   laz_fpspreadsheet,
   Funktionen_Auftrag,
   Funktionen_Basis,
@@ -473,4 +475,4 @@ begin
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
 
-end.
+end.

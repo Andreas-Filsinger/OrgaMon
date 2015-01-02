@@ -25,7 +25,9 @@ unit anfix32;
 interface
 
 uses
+{$ifndef linux}
   windows,
+{$endif}
   classes,
   SysUtils;
 
@@ -6081,4 +6083,4 @@ begin
   FreeMem(_PerfData);
 end;
 
-end.
+end.
