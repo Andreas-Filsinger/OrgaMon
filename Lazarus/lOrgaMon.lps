@@ -9,18 +9,23 @@
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lOrgaMon"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="1" Y="42"/>
         <UsageCount Value="69"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <UnitName Value="anfix32"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="6"/>
+        <TopLine Value="1"/>
         <CursorPos X="2" Y="23"/>
         <UsageCount Value="21"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -644,10 +649,13 @@
       <Unit72>
         <Filename Value="..\PASconTools\ExcelHelper.pas"/>
         <UnitName Value="ExcelHelper"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="76"/>
-        <CursorPos X="3" Y="117"/>
+        <TopLine Value="84"/>
+        <CursorPos X="43" Y="102"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit72>
       <Unit73>
@@ -950,31 +958,34 @@
         <Filename Value="..\..\..\Downloads\source(1)\raycast\mainunit.pas"/>
         <HasResources Value="True"/>
         <UnitName Value="mainunit"/>
-        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit107>
       <Unit108>
         <Filename Value="..\..\..\Downloads\source(1)\raycast\gzio2.pas"/>
         <UnitName Value="gzio2"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="112"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit108>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="23" Column="2" TopLine="6"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\PASconTools\ExcelHelper.pas"/>
+        <Caret Line="117" Column="3" TopLine="76"/>
+      </Position2>
+    </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>
 </CONFIG>

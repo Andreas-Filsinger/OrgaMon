@@ -1923,8 +1923,12 @@ begin
       begin
         Open(AnwenderPath + ComboBox2.text);
 
-        FormatLists := TStringList.create;
         ActiveSheet := 1;
+
+(*
+        Format Diagnostik
+
+        FormatLists := TStringList.create;
         for n := 0 to pred(FormatCount) do
         begin
           fmfm := GetFormat(n);
@@ -1936,7 +1940,8 @@ begin
         FormatLists.add(inttostr(getCellFormat(4, 2)));
         FormatLists.SaveToFile(AnwenderPath + 'Excel.Formats.txt');
         FormatLists.free;
-        // open(UserDir + 'Excel.Formats.txt');
+        open(UserDir + 'Excel.Formats.txt');
+*)
 
         countMAIN := SheetCount - 4;
       end
