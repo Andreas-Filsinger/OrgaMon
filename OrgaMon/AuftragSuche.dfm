@@ -275,10 +275,6 @@ object FormAuftragSuche: TFormAuftragSuche
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'erweiterte Selektion'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 393
       object Label2: TLabel
         Left = 17
         Top = 19
@@ -461,10 +457,6 @@ object FormAuftragSuche: TFormAuftragSuche
     object TabSheet2: TTabSheet
       Caption = 'Sonderfunktionen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 325
       object Label1: TLabel
         Left = 48
         Top = 32

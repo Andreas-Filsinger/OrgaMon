@@ -463,7 +463,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet10
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -4306,12 +4306,12 @@ object FormBaustelle: TFormBaustelle
     BeforePost = IB_Query1BeforePost
     OnConfirmDelete = IB_Query1ConfirmDelete
     Left = 24
-    Top = 40
+    Top = 32
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
     Left = 56
-    Top = 40
+    Top = 32
   end
   object IB_Query3: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -4402,13 +4402,13 @@ object FormBaustelle: TFormBaustelle
       'GROUP BY'
       ' RID_AT_IMPORT')
     ReadOnly = True
-    Left = 440
-    Top = 40
+    Left = 464
+    Top = 32
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query12
-    Left = 480
-    Top = 40
+    Left = 464
+    Top = 72
   end
   object IB_QueryOrte: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -4424,7 +4424,7 @@ object FormBaustelle: TFormBaustelle
       'GROUP BY'
       ' KUNDE_ORTSTEIL')
     Left = 232
-    Top = 40
+    Top = 32
   end
   object IB_DSQL4: TIB_DSQL
     DatabaseName = '192.168.115.25:test.fdb'
@@ -4436,8 +4436,8 @@ object FormBaustelle: TFormBaustelle
       ' BAUSTELLE_R = :DESTINATION'
       'WHERE'
       ' (BAUSTELLE_R=:SOURCE)')
-    Left = 440
-    Top = 80
+    Left = 408
+    Top = 72
   end
   object IB_Query6: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -4450,13 +4450,13 @@ object FormBaustelle: TFormBaustelle
       'WHERE '
       ' (BAUSTELLE_R=:CROSSREF)')
     Left = 192
-    Top = 40
+    Top = 32
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'CSV'
     Filter = 'Semikolon seperierte Textdatei (*.csv)|*.csv'
-    Left = 547
-    Top = 43
+    Left = 739
+    Top = 51
   end
   object IB_DataSource3: TIB_DataSource
     Dataset = IB_Query7
@@ -4487,7 +4487,7 @@ object FormBaustelle: TFormBaustelle
       'TAN=ITEM=1'
       'ANZAHL=ITEM=2')
     Left = 24
-    Top = 72
+    Top = 80
   end
   object IB_Query8: TIB_Query
     ColumnAttributes.Strings = (
@@ -4512,12 +4512,12 @@ object FormBaustelle: TFormBaustelle
     ColorScheme = True
     AfterScroll = IB_Query8AfterScroll
     Left = 104
-    Top = 40
+    Top = 32
   end
   object IB_DataSource4: TIB_DataSource
     Dataset = IB_Query8
-    Left = 144
-    Top = 40
+    Left = 152
+    Top = 32
   end
   object IB_Query13: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -4568,8 +4568,8 @@ object FormBaustelle: TFormBaustelle
       ' (RID=MASTER_R)'
       'GROUP BY'
       ' ABLAGE_R')
-    Left = 480
-    Top = 80
+    Left = 544
+    Top = 32
     ParamValues = (
       'CROSSREF=')
   end

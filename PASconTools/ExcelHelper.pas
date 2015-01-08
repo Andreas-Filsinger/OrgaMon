@@ -97,16 +97,19 @@ const
 {$IFDEF fpc}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TsWorkbook = nil);
+function getDateValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+function getTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+function getDateTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
 {$ELSE}
 procedure ExcelExport(FName: string; Content: TList; Headers: TStringList = nil;
   Options: TStringList = nil; pXLS: TXLSFile = nil);
+function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
+function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 {$ENDIF}
 procedure CSVExport(FName: string; Content: TList);
 procedure CSVImport(FName: string; Content: TList);
 
-function getDateValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-function getTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
-function getDateTimeValue(pXLS: TXLSFile; r, c: integer): TDateTime;
 
 implementation
 
@@ -127,6 +130,22 @@ procedure CSVImport(FName: string; Content: TList);
 begin
 
 end;
+
+function getDateValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+begin
+  result := 0;
+end;
+
+function getTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+begin
+  result := 0;
+end;
+function getDateTimeValue(pXLS: TsWorkbook; r, c: integer): TDateTime;
+begin
+  result := 0;
+end;
+
+
 
 end.
 {$ELSE}

@@ -37,22 +37,25 @@
         <CommandLineParams Value="-al"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="5">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="laz_fpspreadsheet"/>
+        <PackageName Value="Jcl"/>
       </Item1>
       <Item2>
-        <PackageName Value="zcomponent"/>
+        <PackageName Value="laz_fpspreadsheet"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="zcomponent"/>
       </Item3>
       <Item4>
-        <PackageName Value="SQLDBLaz"/>
+        <PackageName Value="FCL"/>
       </Item4>
       <Item5>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item5>
+      <Item6>
+        <PackageName Value="LCL"/>
+      </Item6>
     </RequiredPackages>
     <Units Count="1">
       <Unit0>
@@ -70,7 +73,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\..\jcl-2.5.0\source\include"/>
-      <OtherUnitFiles Value="..\PASconTools;..\..\jcl\source\common;..\..\jcl\source\windows;..\OrgaMon;E:\Indy\lib\Protocols;E:\Indy\lib\System;E:\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\Abbrevia 5.2\source"/>
+      <OtherUnitFiles Value="..\PASconTools;..\..\jcl\source\common;..\..\jcl\source\windows;..\OrgaMon;E:\Indy\lib\Protocols\;E:\Indy\lib\System\;E:\Indy\lib\Core\;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\Abbrevia 5.2\source"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -99,4 +102,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

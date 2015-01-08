@@ -35,7 +35,7 @@ uses
   StdCtrls, ComCtrls, JvGIF, ExtCtrls,
   // 22.04.09: Ronny Schupeta
   // Unit globals und FavoritenSQL hinzugefügt
-  globals, FavoritenSQL, Mask, IB_Controls;
+  globals, FavoritenSQL, Mask, IB_Controls, IB_EditButton;
 
 type
   TFormAuftragSuche = class(TForm)

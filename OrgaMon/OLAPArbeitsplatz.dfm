@@ -130,7 +130,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     Flat = False
     Images = ImageList1
     TabOrder = 1
-    ExplicitWidth = 1198
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -143,7 +142,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
       Left = 6
       Top = 0
       Width = 81
-      Height = 25
+      Height = 22
       Style = csDropDownList
       TabOrder = 1
       OnSelect = ComboBox3Select
@@ -595,10 +594,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Messwerte (TESTS)'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1180,10 +1175,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet2: TTabSheet
       Caption = 'Messl'#228'ufe (CALIBRATIONS)'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1331,10 +1322,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet3: TTabSheet
       Caption = 'Ausf'#228'lle (REJECTIONS)'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1422,10 +1409,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = 'Z'#228'hler (METERS)'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1628,7 +1611,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 7
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 0
         Text = '*'
         OnChange = Edit95Change
@@ -1638,7 +1621,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 56
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 1
         Text = '*'
         OnChange = Edit95Change
@@ -1648,7 +1631,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 32
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 2
         Text = '*'
         OnChange = Edit95Change
@@ -1658,7 +1641,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 80
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 3
         Text = '*'
         OnChange = Edit95Change
@@ -1668,7 +1651,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 105
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 4
         Text = '*'
         OnChange = Edit95Change
@@ -1678,7 +1661,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 128
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 5
         Text = '*'
         OnChange = Edit95Change
@@ -1688,7 +1671,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 152
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 6
         Text = '*'
         OnChange = Edit95Change
@@ -1698,7 +1681,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 107
         Top = 175
         Width = 222
-        Height = 25
+        Height = 22
         TabOrder = 7
         Text = '*'
         OnChange = Edit95Change
@@ -1708,7 +1691,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 226
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 8
         Text = '*'
         OnChange = Edit95Change
@@ -1718,7 +1701,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 10
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 9
         Text = '*'
         OnChange = Edit95Change
@@ -1728,7 +1711,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 35
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 10
         Text = '*'
         OnChange = Edit95Change
@@ -1738,7 +1721,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 58
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 11
         Text = '*'
         OnChange = Edit95Change
@@ -1748,7 +1731,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 82
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 12
         Text = '*'
         OnChange = Edit95Change
@@ -1758,7 +1741,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 105
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 13
         Text = '*'
         OnChange = Edit95Change
@@ -1768,7 +1751,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 130
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 14
         Text = '*'
         OnChange = Edit95Change
@@ -1778,7 +1761,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 154
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 15
         Text = '*'
         OnChange = Edit95Change
@@ -1788,7 +1771,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 178
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 16
         Text = '*'
         OnChange = Edit95Change
@@ -1798,7 +1781,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
         Left = 437
         Top = 203
         Width = 220
-        Height = 25
+        Height = 22
         TabOrder = 17
         Text = '*'
         OnChange = Edit95Change
@@ -1808,10 +1791,6 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
       Caption = 'Selektions Zusammenfassung'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 19
         Top = 13
@@ -1871,7 +1850,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     Left = 95
     Top = 329
     Width = 339
-    Height = 25
+    Height = 22
     TabOrder = 3
     OnSelect = ComboBox1Select
   end
@@ -2134,14 +2113,14 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     Left = 707
     Top = 329
     Width = 249
-    Height = 25
+    Height = 22
     TabOrder = 16
   end
   object ImageList1: TImageList
     Left = 368
     Top = 249
     Bitmap = {
-      494C010162006300240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010162006300340010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000009001000001002000000000000090
       0100000000000000000000000000000000000000000000000000000000000000
       000000000000000000009999990D959595319191912F8C8C8C07000000000000
