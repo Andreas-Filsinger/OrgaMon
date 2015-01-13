@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.054 (13.01.15) Andreas Filsinger
+
+ Neu: Foto: Fotobenennung=6: "FN-Kurz" funktioniert nun auch bei FA
+
 Rev 1.053 (20.11.14) Andreas Filsinger
 
  Wegfall: Abhängigkeiten zu Memcache

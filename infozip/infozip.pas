@@ -117,8 +117,11 @@ uses
   Abzipper,
   AbUnzper,
   {$endif}
-  windows, registry, SysUtils,
-  JclMiscel, JclSysInfo;
+  windows,
+  registry,
+  SysUtils,
+  JclMiscel,
+  JclSysInfo;
 
 {$ifdef fpc}
 

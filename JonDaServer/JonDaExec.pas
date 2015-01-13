@@ -1070,7 +1070,8 @@ var
       with mderecOrgaMon do
       begin
 
-        iDetails := Oem2asci(Zaehler_Strasse) + cLineSeparator + Oem2asci(Zaehler_Ort);
+        iDetails := Oem2asci(Zaehler_Strasse) + cLineSeparator +
+          Oem2asci(Zaehler_Ort);
 
         // Text beim Termin (Spalte 1)
         iTermin :=
@@ -2711,7 +2712,7 @@ var
   ZAEHLER_NUMMER_NEU: string;
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
-  FN_Kurz: boolean;
+  NameOhneZaehlerNummerAlt: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   FotoGeraeteNo: string;
@@ -2776,7 +2777,7 @@ begin
     { } sParameter.values[cParameter_foto_ort]));
   FotoDateiNameBisher := sParameter.values[cParameter_foto_Datei];
   UmbenennungAbgeschlossen := false;
-  FN_Kurz := false;
+  NameOhneZaehlerNummerAlt := false;
   ShouldAbort := false;
 
   while true do
@@ -2823,6 +2824,7 @@ begin
         end;
       6:
         begin
+          // mit Hilfe von Foto-Benennung.csv
 
           // default Umbenennung:
           // ====================
@@ -2898,7 +2900,7 @@ begin
 
                     if (Token = 'FN-Kurz') then
                     begin
-                      FN_Kurz := true;
+                      NameOhneZaehlerNummerAlt := true;
                       break;
                     end;
 
@@ -3055,7 +3057,10 @@ begin
       if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1)
       then
       begin
-        FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
+        if NameOhneZaehlerNummerAlt then
+          FotoDateiNameNeu := FotoPrefix
+        else
+          FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
         UmbenennungAbgeschlossen := true;
         break;
       end;
@@ -3081,7 +3086,7 @@ begin
         end
         else
         begin
-          if FN_Kurz then
+          if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } ZAEHLER_NUMMER_NEU
@@ -3352,8 +3357,8 @@ begin
   // imp pend: doAbschluss Automatisieren (per XMLRPC, per CRON, per Neustart?)
   //
   // imp pend: ev. Transaktionsverzeichnis erstellen, das führt aber auch
-  //           zur Veränderung des Clients. Ev. kann man da was machen
-  //           mit rewrite ...
+  // zur Veränderung des Clients. Ev. kann man da was machen
+  // mit rewrite ...
 
 end;
 

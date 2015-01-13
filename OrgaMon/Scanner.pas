@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2014 Andreas Filsinger
+  |    Copyright (C) 2007 - 2015 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -150,6 +150,14 @@ uses
 
 {$R *.dfm}
 
+const
+  SCAN_LIST_MENGE_RECHNUNG = 0;
+  SCAN_LIST_ARTIKEL = 1;
+  SCAN_LIST_GTIN = 2;
+  SCAN_LIST_ARTIKEL_R = 3;
+  SCAN_LIST_MENGE_SCAN = 4;
+  SCAN_LIST_AUSGABEART_R = 5;
+
 procedure TFormScanner.Button11Click(Sender: TObject);
 begin
   doBuchen;
@@ -178,10 +186,19 @@ begin
         break;
       end;
 
-      // Aktueller Artikel ist so OK
+      // Sonder Scan "Artikel so OK"
       if (ganzerScan = '+00001-') then
       begin
         doCheck;
+        Edit1.Text := '';
+
+        break;
+      end;
+
+      // Sonder Scan "Verbuchen"
+      if (ganzerScan = '+00002-') then
+      begin
+        doBuchen;
         Edit1.Text := '';
 
         break;
@@ -276,6 +293,7 @@ procedure TFormScanner.doArtikelScan(ganzerScan: string);
 var
   ErrorMsg: string;
   row: Integer;
+  ScanFertig: boolean;
 begin
   ErrorMsg := '';
   repeat
@@ -292,7 +310,7 @@ begin
     while (pos('0', ganzerScan) = 1) do
       delete(ganzerScan, 1, 1);
 
-    row := SCAN_LIST.locate('GTIN', ganzerScan);
+    row := SCAN_LIST.next(DrawGrid1.row, SCAN_LIST_GTIN, ganzerScan);
     if (row = -1) then
     begin
       ErrorMsg := 'Diese GTIN ist im Moment unbekannt' + #13 +
@@ -303,9 +321,12 @@ begin
     end;
 
     // Änderung um "1" durchführen
-    bucheArtikelScan(row);
-    SecureSetRow(DrawGrid1, pred(row));
+    ScanFertig := bucheArtikelScan(row);
     SL_reflect;
+    if ScanFertig then
+      SecureSetRow(DrawGrid1, min(row + 1, pred(DrawGrid1.RowCount)))
+    else
+      SecureSetRow(DrawGrid1, row);
 
   until true;
 
@@ -349,6 +370,8 @@ begin
   repeat
 
     try
+
+      // "+" | "-" ~BelegNummer~ "-" ~Generation~
 
       Scan := ganzerScan;
 
@@ -453,6 +476,8 @@ begin
   end
   else
   begin
+    if iScannerAutoBuchen then
+      doBuchen;
     Edit1.Text := '';
   end;
 
@@ -471,84 +496,101 @@ var
 begin
   BeginHourGlass;
 
-  // Scan "Beleg verbuchen"
   VERSENDER_R := cRID_Null;
   EventText := TStringList.create;
   qEREIGNIS := DataModuleDatenbank.nQuery;
-  with qEREIGNIS do
-  begin
-    ColumnAttributes.add('RID=NOTREQUIRED');
-    ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-    sql.add('select * from EREIGNIS for update');
-  end;
+  ErrorMsg := '';
 
-  // Verbuchen
-  try
+  repeat
 
-    // Beleg buchen / Ausgabe / Versand vorbereiten
-    e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck);
-
-    // Den Versender noch einstellen
-    // Welcher Versender?!
-    if (SL_ScanPrefix <> '') then
-      VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
-        SL_ScanPrefix + '''');
-    VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
-      IntTostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-      IntTostr(SL_Teillieferung) + ')');
-    if (VERSAND_R >= cRID_FirstValid) then
-      if (VERSENDER_R >= cRID_FirstValid) then
-        e_x_sql(
-          { } 'update VERSAND set ' +
-          { } ' VERSENDER_R=' + IntTostr(VERSENDER_R) + ' ' +
-          { } 'where' +
-          { } ' (RID=' + IntTostr(VERSAND_R) + ')');
-
-    if not(SL_LabelDruck) then
+    if not(assigned(SCAN_LIST)) then
     begin
-      EventText.clear;
-      with qEREIGNIS do
+      ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
+        'Oder in der Form' + #13 + '"+" | "-" ~Belegnummer~ "-" ~Generation~' +
+        #13 + 'eingeben und mit <ENTER> abschliessen';
+      break;
+    end;
+
+    // Scan "Beleg verbuchen"
+    with qEREIGNIS do
+    begin
+      ColumnAttributes.add('RID=NOTREQUIRED');
+      ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+      sql.add('select * from EREIGNIS for update');
+    end;
+
+    // Verbuchen
+    try
+
+      // Beleg buchen / Ausgabe / Versand vorbereiten
+      e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck);
+
+      // Den Versender noch einstellen
+      // Welcher Versender?!
+      if (SL_ScanPrefix <> '') then
+        VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
+          SL_ScanPrefix + '''');
+      VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
+        IntTostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
+        IntTostr(SL_Teillieferung) + ')');
+      if (VERSAND_R >= cRID_FirstValid) then
+        if (VERSENDER_R >= cRID_FirstValid) then
+          e_x_sql(
+            { } 'update VERSAND set ' +
+            { } ' VERSENDER_R=' + IntTostr(VERSENDER_R) + ' ' +
+            { } 'where' +
+            { } ' (RID=' + IntTostr(VERSAND_R) + ')');
+
+      if not(SL_LabelDruck) then
+      begin
+        EventText.clear;
+        with qEREIGNIS do
+        begin
+          insert;
+          FieldByName('ART').AsInteger := eT_PaketIDErhalten;
+          FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
+          FieldByName('VERSAND_R').AsInteger := VERSAND_R;
+          EventText.add('Versand ohne Paket-ID!');
+          FieldByName('INFO').assign(EventText);
+          post;
+        end;
+      end;
+      with IB_Query1 do
       begin
         insert;
-        FieldByName('ART').AsInteger := eT_PaketIDErhalten;
         FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
-        FieldByName('VERSAND_R').AsInteger := VERSAND_R;
-        EventText.add('Versand ohne Paket-ID!');
-        FieldByName('INFO').assign(EventText);
+        FieldByName('GENERATION').AsInteger := SL_GENERATION;
+        FieldByName('ART').AsString := SL_ScanPrefix;
+        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
         post;
       end;
-    end;
-    with IB_Query1 do
-    begin
-      insert;
-      FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
-      FieldByName('GENERATION').AsInteger := SL_GENERATION;
-      FieldByName('ART').AsString := SL_ScanPrefix;
-      FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-      post;
+
+    except
+      on E: Exception do
+      begin
+        ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
+      end;
     end;
 
-  except
-    on E: Exception do
-    begin
-      ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
-      WinAmpPlayFile(SoundPath + 'ERROR.WAV');
-    end;
-  end;
+  until true;
+
   //
   qEREIGNIS.free;
   EventText.free;
 
-  EndHourGlass;
-
   if (ErrorMsg <> '') then
   begin
     WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+    EndHourGlass;
     ShowMessage(ErrorMsg);
   end
   else
   begin
     WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
+    SL_free;
+    StaticText1.Color := cllime;
+    StaticText1.Caption := '';
+    EndHourGlass;
   end;
 
 end;
@@ -646,7 +688,12 @@ begin
                 begin
                   GTIN := SCAN_LIST.readCell(ARow, 2);
                   if (GTIN <> '<NULL>') then
-                    brush.Color := HTMLColor2TColor($FF9966)
+                  begin
+                    if (MENGE_SCAN > 0) then
+                      brush.Color := HTMLColor2TColor($FF66FF)
+                    else
+                      brush.Color := HTMLColor2TColor($FF9966)
+                  end
                   else
                     brush.Color := HTMLColor2TColor($9999FF);
                 end
@@ -847,10 +894,7 @@ begin
       Application.ProcessMessages;
 
       doBuchen;
-      SL_free;
 
-      StaticText1.Color := cllime;
-      StaticText1.Caption := '';
     end
     else
     begin
@@ -919,13 +963,14 @@ var
   MENGE_RECHNUNG: Integer;
   MENGE_REST: Integer;
 begin
-  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row, 0), 0);
-  MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, 4), 0);
+  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row,
+    SCAN_LIST_MENGE_RECHNUNG), 0);
+  MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_MENGE_SCAN), 0);
   MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
   if (MENGE_REST > 0) then
   begin
     inc(MENGE_SCAN);
-    SCAN_LIST.writeCell(row, 4, IntTostr(MENGE_SCAN));
+    SCAN_LIST.writeCell(row, SCAN_LIST_MENGE_SCAN, IntTostr(MENGE_SCAN));
     result := (MENGE_REST = 1);
   end
   else
