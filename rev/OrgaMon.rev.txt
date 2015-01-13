@@ -19,6 +19,24 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.075 (13.01.15) Andreas Filsinger
+
+ Bug: Versand: Scan: Bei Artikeldubletten versagte die Suche nach dem 2. Auftreten
+      des selben Artikels
+ Bug: Versand: Scan: Nach einem erfolgreichen Scan wurde der Listecursor nicht
+      weiterbewegt
+ Bug: Beleg: Storno: Löschung der html-Belege war unsicher
+
+ Neu: Versand: Scan: "+00002-" für Verbuchen
+ Neu: Versand: Scan: Systemparameter "ScannerAutoBuchen", default "JA"
+ Neu: Versand: Scan: neue Farbe für: Es gibt noch weitere
+ Neu: Foto: Fotobenennung=6: "FN-Kurz" funktioniert nun auch bei FA und lässt die
+      Zähler#-Alt aus dem Dateinamen weg.
+
+Rev 8.074 (09.01.15) Andreas Filsinger
+
+ Bug: Beleg: eine "ZUSAGE"-Änderung sollte nicht die Beleg-GENERATION erhöhen
+
 Rev 8.073 (29.12.14) Andreas Filsinger
 
  Bug: Beleg: Zu häufiger Wechsel der GENERATION

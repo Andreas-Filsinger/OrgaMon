@@ -701,7 +701,7 @@ uses
   Funktionen_Auftrag;
 
 const
-  cAllSettingsAnz = 179;
+  cAllSettingsAnz = 180;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)
     ] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
@@ -712,11 +712,11 @@ const
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath',
     'MusicPath', 'PDFPathShop', 'PDFPathApp', 'PDFVersender', 'PDFAdmin',
     'PDFSend', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet',
-    'ScannerHost', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto',
-    'PortoMwStLogik', 'Auftragsmedium', 'Auftragsmotivation',
-    'AuftragsGrundRückfrage', 'SysdbaPasswort', 'RangZeitfenster',
-    'LieferzeitZeitfenster', 'StandardLieferzeit', 'PersonSchnelleRechnung',
-    'Farbe', 'Replikation', 'OrtFormat', 'GOT',
+    'ScannerHost', 'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost',
+    'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
+    'Auftragsmotivation', 'AuftragsGrundRückfrage', 'SysdbaPasswort',
+    'RangZeitfenster', 'LieferzeitZeitfenster', 'StandardLieferzeit',
+    'PersonSchnelleRechnung', 'Farbe', 'Replikation', 'OrtFormat', 'GOT',
     'BelegSetzeMengeNullBeiPreisNull', 'BelegRechnungGlattstellen',
     'BelegUnterdrückeGeliefertes', 'BelegMengenSortierung', 'BelegArtikelNeu',
     'BearbeiterSprache', 'EinzelpreisNetto', 'Mahnschwelle',
@@ -1097,7 +1097,7 @@ var
   qBELEG: TdboQuery;
   INTERN_INFO: TStringList;
   GENERATION_POSTFIX: string;
-  n, m: integer;
+  n: integer;
   BuchungsIndex: TWordIndex;
   SuchFName: string;
   cPERSON: TdboCursor;
@@ -1122,6 +1122,7 @@ begin
   // b) Erzeugen der aktuellen Zeitabrechnung (wenn BELEG_R ungesetzt)
   //
   result := cRID_unset;
+  ZAHLUNGSPFLICHTIGER_R := cRID_Null;
   MENGE_AUFNAHME := cMenge_unbestimmt;
   sDiagnose := TStringList.create;
   try
@@ -2345,7 +2346,6 @@ begin
           result := cPreis_aufAnfrage;
       end;
     end;
-    cARTIKEL := nil;
   except
     on E: exception do
     begin
@@ -2359,8 +2359,6 @@ const
   e_r_PreisAusgabeart_MUSTER_R: TDOM_Reference = cRID_unset;
 
 function e_r_PreisAusgabeart(AUSGABEART_R: TDOM_Reference): TDOM_Reference;
-var
-  MUSTER_R: TDOM_Reference;
 begin
   result := cRID_Null;
   repeat
@@ -2629,7 +2627,6 @@ begin
         until true;
       end;
     end;
-    cARTIKEL := nil;
   except
     on E: exception do
     begin
@@ -4178,9 +4175,6 @@ end;
 
 function e_r_VerlagsRabatt(VERLAG_R, PERSON_R: integer): double;
 var
-  //
-  qARTIKEL: TdboCursor;
-
   // Cache
   RABATT_CODE: string;
   _RABATT_CODE: string;
@@ -5348,11 +5342,7 @@ end;
 procedure e_r_PostenInfo(IBQ: TdboDataSet; NurGeliefertes: boolean;
   EinzelpreisNetto: boolean; var _Anz, _AnzAuftrag, _AnzGeliefert,
   _AnzStorniert, _AnzAgent: integer; var _Rabatt, _EinzelPreis,
-  _MwStSatz: double
-
-  );
-var
-  AnzUngebucht: integer;
+  _MwStSatz: double);
 begin
   with IBQ do
   begin
@@ -7043,7 +7033,7 @@ var
   PERSON_R: integer;
   qEREIGNIS: TdboQuery;
   VOLUMEN: double;
-  ZUTATEN: double;
+  Zutaten: double;
   cPOSTEN: TdboCursor;
   qBELEG: TdboQuery;
 
@@ -7054,17 +7044,23 @@ var
   ERSTERLIEFERTAG: TAnfixDate;
   TERMIN: double;
   cTerminUnset: double;
-  IncGeneration: boolean;
 
-  procedure IncGenLog(s: string);
+  IncGeneration: boolean;
+  DoPost: boolean;
+
+  procedure GENERATION_Log(IncGen: boolean; s: string);
   begin
-    AppendStringsToFile(
-      { } Uhr8 + ';' +
-      { } inttostr(BELEG_R) + '-' +
-      { } inttostr(GENERATION) + ';' +
-      { } sBearbeiterKurz + ';' +
-      { } s,
-      { } DiagnosePath + 'GENERATION-' + DatumLog + '.log');
+    if IncGen then
+    begin
+      AppendStringsToFile(
+        { } Uhr8 + ';' +
+        { } inttostr(BELEG_R) + '-' +
+        { } inttostr(GENERATION) + ';' +
+        { } sBearbeiterKurz + ';' +
+        { } s,
+        { } DiagnosePath + 'GENERATION-' + DatumLog + '.log');
+      IncGeneration := true;
+    end;
   end;
 
 begin
@@ -7079,7 +7075,7 @@ begin
     MENGE_AGENT := 0;
     MENGE_GELIEFERT := 0;
     VOLUMEN := 0.0;
-    ZUTATEN := 0.0;
+    Zutaten := 0.0;
     ErrorFlag := false;
 
     ZUSAGE := 0;
@@ -7141,7 +7137,7 @@ begin
         end
         else
         begin
-          ZUTATEN := ZUTATEN + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
+          Zutaten := Zutaten + e_r_PostenPreis(FieldByName('PREIS').AsFloat,
             FieldByName('MENGE').AsInteger - FieldByName('MENGE_AUSFALL')
             .AsInteger, FieldByName('EINHEIT_R').AsInteger);
         end;
@@ -7191,19 +7187,21 @@ begin
 
       // Bedingungen für einen "edit" -> somit auch Generations Wechsel
 
-      IncGeneration := true;
+      IncGeneration := false;
+      DoPost := true;
       repeat
 
         // Status des Beleges
         if (FieldByName('VERSAND_STATUS').IsNull) then
         begin
-          IncGenLog(format('Erstmaliges setzen des VERSAND_STATUS auf %d',
+          GENERATION_Log(true,
+            format('Erstmaliges setzen des VERSAND_STATUS auf %d',
             [VERSAND_STATUS]));
           break;
         end;
         if (VERSAND_STATUS <> FieldByName('VERSAND_STATUS').AsInteger) then
         begin
-          IncGenLog(format('VERSAND_STATUS von %d auf %d',
+          GENERATION_Log(true, format('VERSAND_STATUS von %d auf %d',
             [FieldByName('VERSAND_STATUS').AsInteger, VERSAND_STATUS]));
           break;
         end;
@@ -7211,39 +7209,39 @@ begin
         // Geld
         if IsOther(FieldByName('VOLUMEN').AsFloat, VOLUMEN) then
         begin
-          IncGenLog(format('Volumen von %m nach %m',
+          GENERATION_Log(true, format('Volumen von %m nach %m',
             [FieldByName('VOLUMEN').AsFloat, VOLUMEN]));
           break;
         end;
-        if IsOther(FieldByName('ZUTATEN').AsFloat, ZUTATEN) then
+        if IsOther(FieldByName('ZUTATEN').AsFloat, Zutaten) then
         begin
-          IncGenLog(format('ZUTATEN von %m nach %m',
-            [FieldByName('ZUTATEN').AsFloat, ZUTATEN]));
+          GENERATION_Log(true, format('ZUTATEN von %m nach %m',
+            [FieldByName('ZUTATEN').AsFloat, Zutaten]));
           break;
         end;
 
         // Mengen
         if (FieldByName('MENGE_AUFTRAG').AsInteger <> MENGE_AUFTRAG) then
         begin
-          IncGenLog(format('MENGE_AUFTRAG von %d nach %d',
+          GENERATION_Log(true, format('MENGE_AUFTRAG von %d nach %d',
             [FieldByName('MENGE_AUFTRAG').AsInteger, MENGE_AUFTRAG]));
           break;
         end;
         if (FieldByName('MENGE_RECHNUNG').AsInteger <> Menge_Rechnung) then
         begin
-          IncGenLog(format('MENGE_RECHNUNG von %d nach %d',
+          GENERATION_Log(true, format('MENGE_RECHNUNG von %d nach %d',
             [FieldByName('MENGE_RECHNUNG').AsInteger, Menge_Rechnung]));
           break;
         end;
         if (FieldByName('MENGE_AGENT').AsInteger <> MENGE_AGENT) then
         begin
-          IncGenLog(format('MENGE_AGENT von %d nach %d',
+          GENERATION_Log(true, format('MENGE_AGENT von %d nach %d',
             [FieldByName('MENGE_AGENT').AsInteger, MENGE_AGENT]));
           break;
         end;
         if (FieldByName('MENGE_GELIEFERT').AsInteger <> MENGE_GELIEFERT) then
         begin
-          IncGenLog(format('MENGE_GELIEFERT von %d nach %d',
+          GENERATION_Log(true, format('MENGE_GELIEFERT von %d nach %d',
             [FieldByName('MENGE_GELIEFERT').AsInteger, MENGE_GELIEFERT]));
           break;
         end;
@@ -7253,38 +7251,40 @@ begin
           (TERMIN <> cTerminUnset)) then
         begin
           if FieldByName('TERMIN').IsNull then
-          IncGenLog(format('TERMIN von '+cOLAPNull+' auf %s',
-            [dTimeStamp(TERMIN)]))
-           else
-          IncGenLog(format('TERMIN von %s auf %s',
-            [dTimeStamp(FieldByName('TERMIN').AsDateTime),
-            dTimeStamp(TERMIN)]));
+            GENERATION_Log(true, format('TERMIN von ' + cOLAPNull + ' auf %s',
+              [dTimeStamp(TERMIN)]))
+          else
+            GENERATION_Log(true, format('TERMIN von %s auf %s',
+              [dTimeStamp(FieldByName('TERMIN').AsDateTime),
+              dTimeStamp(TERMIN)]));
           break;
         end;
 
         if (not(FieldByName('TERMIN').IsNull) and (TERMIN = cTerminUnset)) then
         begin
-          IncGenLog(format('TERMIN von %s auf '+cOLAPNull,[FieldByName('TERMIN').AsDateTime]));
+          GENERATION_Log(true, format('TERMIN von %s auf ' + cOLAPNull,
+            [FieldByName('TERMIN').AsDateTime]));
           break;
         end;
 
         if (ZUSAGE <> DateTime2Long(FieldByName('ZUSAGE').AsDateTime)) then
         begin
-          IncGenLog(format('ZUSAGE von %s auf %s',
+          GENERATION_Log(false, format('ZUSAGE von %s auf %s',
             [long2date(FieldByName('ZUSAGE').AsDateTime), long2date(ZUSAGE)]));
           break;
         end;
 
-        IncGeneration := false;
+        DoPost := false;
       until true;
 
-      if IncGeneration then
+      if DoPost then
       begin
 
         // STATUS - Wechsel des Beleges!
         edit;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        FieldByName('GENERATION').AsInteger := succ(GENERATION);
+        if IncGeneration then
+          FieldByName('GENERATION').AsInteger := succ(GENERATION);
         FieldByName('DRUCK').clear;
         FieldByName('VERSAND_STATUS').AsInteger := VERSAND_STATUS;
         FieldByName('MENGE_AUFTRAG').AsInteger := MENGE_AUFTRAG;
@@ -7292,7 +7292,7 @@ begin
         FieldByName('MENGE_AGENT').AsInteger := MENGE_AGENT;
         FieldByName('MENGE_GELIEFERT').AsInteger := MENGE_GELIEFERT;
         FieldByName('VOLUMEN').AsFloat := VOLUMEN;
-        FieldByName('ZUTATEN').AsFloat := ZUTATEN;
+        FieldByName('ZUTATEN').AsFloat := Zutaten;
         if (ZUSAGE = 0) then
           FieldByName('ZUSAGE').clear
         else
@@ -8454,6 +8454,8 @@ begin
   iShopLink := sSystemSettings.values['ShopLink'];
   iShopMP3 := sSystemSettings.values['ShopMP3'];
   iScannerHost := sSystemSettings.values['ScannerHost'];
+  iScannerAutoBuchen := sSystemSettings.values['ScannerAutoBuchen'] <>
+    cIni_DeActivate;
   iLabelHost := sSystemSettings.values['LabelHost'];
   iKasseHost := sSystemSettings.values['KassenHost'];
   iMagnetoHost := sSystemSettings.values['MagnetoHost'];
@@ -10656,6 +10658,7 @@ var
 begin
   result := false;
   try
+    PERSON_R := e_r_sql('select PERSON_R from BELEG where RID='+inttostr(BELEG_R));
 
     // Ticket für den Beleg-Storno erstellen
     qTICKET := nQuery;
@@ -11909,7 +11912,7 @@ var
 
   procedure Log(s: string);
   begin
-    if (sResult = cOLAPnull) then
+    if (sResult = cOLAPNull) then
       sResult := s
     else
       sResult := sResult + cOLAPcsvLineBreak + s;
@@ -11999,7 +12002,7 @@ var
 begin
   try
     // Singen!
-    sResult := cOLAPnull;
+    sResult := cOLAPNull;
     cAUFTRAG := nCursor;
     sProtokoll := TStringList.create;
     sZaehlerInfo := TStringList.create;
@@ -12066,7 +12069,7 @@ begin
       end;
 
     end;
-    if (sResult = cOLAPnull) then
+    if (sResult = cOLAPNull) then
       result := ''
     else
       result := sResult;

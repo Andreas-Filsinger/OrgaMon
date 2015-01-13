@@ -113,10 +113,16 @@ implementation
 {$WARN UNIT_PLATFORM OFF}
 
 uses
-  SysUtils, forms, dialogs,
-  registry, Messages, printers,
-  shellapi, math, FileCtrl,
-  JclSysUtils, JclDateTime, JclMiscel, ComObj,
+  SysUtils,
+  forms,
+  dialogs,
+  Messages,
+  printers,
+  shellapi,
+  math,
+  JclSysUtils,
+  JclMiscel,
+  ComObj,
   anfix32;
 
 function ScreenColorRes: int64;

@@ -594,6 +594,10 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Messwerte (TESTS)'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1175,6 +1179,10 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet2: TTabSheet
       Caption = 'Messl'#228'ufe (CALIBRATIONS)'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1322,6 +1330,10 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet3: TTabSheet
       Caption = 'Ausf'#228'lle (REJECTIONS)'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -1791,6 +1803,10 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
       Caption = 'Selektions Zusammenfassung'
       ImageIndex = 4
       OnShow = TabSheet5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label22: TLabel
         Left = 19
         Top = 13
@@ -2120,7 +2136,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010162006300340010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010162006300380010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000009001000001002000000000000090
       0100000000000000000000000000000000000000000000000000000000000000
       000000000000000000009999990D959595319191912F8C8C8C07000000000000

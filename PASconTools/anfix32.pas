@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2014  Andreas Filsinger
+  Copyright (C) 2007 - 2015  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -533,13 +533,9 @@ uses
 {$ENDIF}
   math,
   JclDateTime,
-  JclWin32,
   JclSysInfo,
-  JclSecurity,
-  JclRegistry,
   registry,
-  shellapi,
-  ComObj;
+  shellapi;
 
 // Windows, Forms, DispMsg;
 type

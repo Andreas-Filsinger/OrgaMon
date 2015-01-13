@@ -56,7 +56,8 @@ uses
   Controls, Forms, Dialogs,
   ImgList, ComCtrls, JvGIF,
   ExtCtrls, StdCtrls, ToolWin,
-  Grids, IB_Components, IB_Access, gplists, Buttons;
+  Grids, IB_Components, IB_Access,
+  gplists, Buttons;
 
 type
   TFormOLAPArbeitsplatz = class(TForm)

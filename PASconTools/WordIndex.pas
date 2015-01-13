@@ -162,12 +162,16 @@ type
     function locateDuplicates(Col: integer; sValue: string;
       CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
     // [array of row]
+    function next(Row,Col: integer; sValue: string): integer; overload; // [row]
+    function next(Row: integer; Col, sValue: string): integer; overload; // [row]
 
     function readCell(Row, Col: integer): string; overload;
     function readCell(Row: integer; Col: string): string; overload;
 
     procedure writeCell(Row, Col: integer; s: string); overload;
     procedure writeCell(Row: integer; Col: string; s: string); overload;
+    procedure concatCell(Row, Col: integer; s: string); overload;
+    procedure concatCell(Row: integer; Col: string; s: string); overload;
     procedure incCell(Row, Col: integer); overload;
     procedure incCell(Row: integer; Col: string); overload;
     procedure SortBy(sFields: TStrings); overload;
@@ -1183,6 +1187,20 @@ begin
   writeCell(Row, colOf(Col), s);
 end;
 
+procedure TsTable.concatCell(Row, Col: integer; s: string);
+begin
+  if (Col >= 0) then
+  begin
+    TStringList(Items[Row])[Col] := TStringList(Items[Row])[Col] + s;
+    Changed := true;
+  end;
+end;
+
+procedure TsTable.concatCell(Row: integer; Col: string; s: string);
+begin
+  concatCell(Row, colOf(Col), s);
+end;
+
 procedure TsTable.Del(Row: integer);
 var
   n: integer;
@@ -1833,6 +1851,31 @@ function TsTable.locate(Col: string; sValue: string): integer;
 begin
   result := locate(colOf(Col), sValue);
 end;
+
+function TsTable.next(Row, Col: integer; sValue: string): integer;
+var
+  r: integer;
+begin
+  result := -1;
+  for r := row to pred(Count) do
+    if (TStringList(Items[r])[Col] = sValue) then
+    begin
+      result := r;
+      exit;
+    end;
+  for r := 1 to pred(Row) do
+    if (TStringList(Items[r])[Col] = sValue) then
+    begin
+      result := r;
+      exit;
+    end;
+end;
+
+function TsTable.next(Row: integer; Col, sValue: string): integer;
+begin
+ result := next(Row,colOf(Col), sValue);
+end;
+
 
 procedure TsTable.SortBy(sFields: TStrings);
 var
