@@ -1658,15 +1658,16 @@ var
 
   procedure WriteCell(r, c: Integer; s: string; DoFormat: boolean = false);
 
-    procedure setRowFormat(fLow, fHigh: Integer);
+    function _fm(fLow, fHigh: Int32):Int32;
     begin
+      result := -1;
       if DoFormat and (r > 1) then
         with xlsAUSGABE do
         begin
           if (r mod 2 = 0) then
-            setCellFormat(r, c, fHigh)
+            result :=  fHigh
           else
-            setCellFormat(r, c, fLow);
+            result := fLow;
         end;
     end;
 
@@ -1677,8 +1678,7 @@ var
         // Float oder Ganzzahl
         if (pos('-', s) = 1) or (pos('+', s) = 1) then
         begin
-          setCellValue(r, c, strtodoubledef(s, 0));
-          setRowFormat(fmLow, fmHigh);
+          setCellValue(r, c, strtodoubledef(s, 0), _fm(fmLow, fmHigh));
           break;
         end;
 
@@ -1686,8 +1686,7 @@ var
         if (pos('.', s) = 3) and (pos(' ', s) = 11) and (pos(':', s) = 14) then
         begin
           setCellValue(r, c, double(mkDateTime(date2long(nextp(s, ' ', 0)),
-            strtoseconds(nextp(s, ' ', 1)))));
-          setRowFormat(fmLow_Date, fmHigh_Date);
+            strtoseconds(nextp(s, ' ', 1)))), _fm(fmLow_Date, fmHigh_Date));
           break;
         end;
 
@@ -1696,14 +1695,12 @@ var
           if (s[1] >= '0') and (s[1] <= '9') then
             if s = StrFilter(s, '0123456789') then
             begin
-              setCellValue(r, c, s);
-              setRowFormat(fmLow, fmHigh);
+              setCellValue(r, c, s, _fm(fmLow, fmHigh));
               break;
             end;
 
         // als String!
-        setCellValue(r, c, s);
-        setRowFormat(fmLow, fmHigh);
+        setCellValue(r, c, s, _fm(fmLow, fmHigh));
 
       until true;
 
@@ -1899,7 +1896,6 @@ var
 
   // ganze Spalten kopieren
   CopyColumn: TStringList;
-  xlsFormat: WideString;
   n: Integer;
   FormatLists: TStringList;
 
@@ -1980,30 +1976,24 @@ begin
       // fmfm.HAlignment := fha_right;
       fmfm.borders.left.style := TFlxBorderStyle.Thin;
       fmfm.borders.left.Color := clblack;
-
       fmfm.FillPattern.Pattern := TFlxPatternStyle.Solid; // solid fill
-      fmfm.FillPattern.BgColor := 0; // hm
+      fmfm.FillPattern.BgColor := clblack;
 
       // Header Format (hellgelb)
       fmfm.FillPattern.FgColor := HTMLColor2TColor($FFFF99);
       fmHeader := addFormat(fmfm);
 
-      // Highlighted Row Format (hellblau)
+      // Normale Zellen (hellblau,weiss)
       fmfm.FillPattern.FgColor := HTMLColor2TColor($88EEFF);
       fmHigh := addFormat(fmfm);
-
-      // Spezialfall für Datum
-      xlsFormat := fmfm.format;
-      fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
-      fmHigh_Date := addFormat(fmfm);
-      fmfm.format := xlsFormat;
-
       fmfm.FillPattern.FgColor := clWhite;
       fmLow := addFormat(fmfm);
 
-      //
-      xlsFormat := fmfm.format;
+      // Datums Zelle (hellblau,weiss)
+      fmfm.FillPattern.FgColor := HTMLColor2TColor($88EEFF);
       fmfm.format := 'dd/mm/yyyy\ hh:mm:ss';
+      fmHigh_Date := addFormat(fmfm);
+      fmfm.FillPattern.FgColor := clWhite;
       fmLow_Date := addFormat(fmfm);
 
       // Messergebnisse
