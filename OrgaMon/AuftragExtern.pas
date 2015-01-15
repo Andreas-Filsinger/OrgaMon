@@ -206,20 +206,20 @@ var
       begin
         NewFile(1);
         FirstData := false;
-        setCellValue(xRow, 1,  'Art');
+        setCellFromString(xRow, 1,  'Art');
         setColWidth(1, 4000);
-        setCellValue(xRow, 2, 'Zählernummer (M)');
+        setCellFromString(xRow, 2, 'Zählernummer (M)');
         setColWidth(2, 7000);
-        setCellValue(xRow, 3, 'Termin');
+        setCellFromString(xRow, 3, 'Termin');
         setColWidth(3, 6000);
-        setCellValue(xRow, 4,  'vor-/nachmittags');
+        setCellFromString(xRow, 4,  'vor-/nachmittags');
         setColWidth(4, 6000);
         inc(xRow);
       end;
-      setCellValue(xRow, 1,  FullZaehlerArt);
-      setCellValue(xRow, 2,  FieldByName('ZAEHLER_NUMMER').AsString);
+      setCellFromString(xRow, 1,  FullZaehlerArt);
+      setCellFromString(xRow, 2,  FieldByName('ZAEHLER_NUMMER').AsString);
       setCellValue(xRow, 3,  FieldByName('AUSFUEHREN').AsDate);
-      setCellValue(xRow, 4,  FieldByName('VORMITTAGS').AsString);
+      setCellFromString(xRow, 4,  FieldByName('VORMITTAGS').AsString);
       inc(xRow);
     end;
   end;

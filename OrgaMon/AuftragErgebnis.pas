@@ -394,7 +394,6 @@ var
   procedure WriteLine;
   var
     n: integer;
-    fmReady: boolean;
     fm: integer;
   begin
 
@@ -402,7 +401,6 @@ var
     begin
 
       // Zell-Formatierung
-      fmReady := false;
       fm := -1;
       if (n < Header.count) then
       begin
@@ -413,7 +411,6 @@ var
           begin
             fm := fmProtokollText;
             FlexCelXLS.setcolwidth(succ(n), 340 * 18);
-            fmReady := true;
             break;
           end;
 
@@ -421,7 +418,6 @@ var
           if (pos('q', Header[n]) = 1) then
           begin
             fm := fmInternText;
-            fmReady := true;
             break;
           end;
 
@@ -429,7 +425,6 @@ var
           if (HeaderTextFormat.indexof(Header[n]) <> -1) then
           begin
             fm := fmInternText;
-            fmReady := true;
             break;
           end;
 
@@ -437,12 +432,8 @@ var
 
       end;
 
-      // AppendStringsToFile(ActColumn[n],DiagnosePath+'SetCell.log.txt');
       try
-        if fmReady then
-          FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm)
-        else
-          FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
+        FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm)
       except
         FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), 'ERROR');
       end;

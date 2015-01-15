@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.076 (15.01.15) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Excel: Alle Werte waren vom Typ "Text"
+
 Rev 8.075 (13.01.15) Andreas Filsinger
 
  Bug: Versand: Scan: Bei Artikeldubletten versagte die Suche nach dem 2. Auftreten
