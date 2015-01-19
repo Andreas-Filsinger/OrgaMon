@@ -25,6 +25,8 @@
         
         readfile($Filename);
 
+        exit();
+
     }
 
 ?>
