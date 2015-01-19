@@ -218,6 +218,7 @@ define("SENTENCE_ARTICLE_HAS_BEEN_REMOVED_FROM_CART","The article has been remov
 define("SENTENCE_ARTICLE_HAS_BEEN_ADDED_TO_CART","The article has been added to cart.");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_BY_EMAIL","at call, by email");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_VIA_DOWNLOAD","at call, download");
+define("SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD", "Available single parts to download:");
 define("SENTENCE_AVAILABLE_TODAY","available immediately");
 define("SENTENCE_AVAILABLE_TOMORROW","available tomorrow");
 define("SENTENCE_BECOME_CUSTOMER","become a customer");

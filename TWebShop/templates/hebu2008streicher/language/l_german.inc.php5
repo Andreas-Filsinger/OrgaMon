@@ -218,6 +218,7 @@ define("SENTENCE_AVAILABLE_IMMEDIATELY_BY_EMAIL","sofort via eMail");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_VIA_DOWNLOAD","sofort per Download");
 define("SENTENCE_AVAILABLE_TODAY","heute lieferbar");
 define("SENTENCE_AVAILABLE_TOMORROW","morgen lieferbar");
+define("SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD", "Verfügbare Einzelstimmen zum Download:");
 define("SENTENCE_BECOME_CUSTOMER","Kunde werden");
 define("SENTENCE_BILL_AND_DELIVERY_ADDRESS","Rechnungs- &amp; Lieferanschrift");
 define("SENTENCE_BILL_WILL_BE_DELIVERED_WITH_SHIPPING","Die Rechnung wird der Lieferung beigelegt.");
