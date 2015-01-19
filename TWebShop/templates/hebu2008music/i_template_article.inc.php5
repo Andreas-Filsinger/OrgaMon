@@ -82,6 +82,7 @@ define("_TEMPLATE_ARTICLE_ARTICLE",
 "  <p>~BEM~</p><!--~PUBLISHER~--><hr>" . CRLF .
 "  <p>~MEMBERS~</p><hr>" . CRLF .
 "  <p id=\"article_options\">~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~</p>" . CRLF .
+"  ~OPTION_PARTS_LIST~" . CRLF .
 "</div>" . CRLF .
 "<div class=\"article_side\">~OPTION_THUMB~</div>" . CRLF .
 "<div class=\"clear\"></div>" . CRLF .
@@ -123,6 +124,10 @@ define("_TEMPLATE_ARTICLE_ARTICLE_OPTION_MP3",
 _TEMPLATE_ARTICLE_SEARCH_OPTION_MP3
 );
 
+//TEMPLTATE FÜR OPTION DOWNLOADBARE STIMMEN
+define("_TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM",
+"<a href=\"" . __INDEX . "?site=~SITE~&action=download_part&part=~PART_KIND~&nr=~NUMERO~&id=~RID~\">~PART_NAME~</a>"
+);
 
 // ARTIKEL-TEMPLATE FÜR DEN EINKAUFSWAGEN
 define("_TEMPLATE_ARTICLE_CART",

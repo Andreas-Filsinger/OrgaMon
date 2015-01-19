@@ -218,6 +218,7 @@ define("SENTENCE_ARTICLE_HAS_BEEN_REMOVED_FROM_CART","Der Artikel wurde aus dem 
 define("SENTENCE_ARTICLE_HAS_BEEN_ADDED_TO_CART","Der Artikel wurde dem Warenkorb hinzugef&uuml;gt.");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_BY_EMAIL","sofort via eMail");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_VIA_DOWNLOAD","sofort per Download");
+define("SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD", "Verfügbare Einzelstimmen zum Download:");
 define("SENTENCE_AVAILABLE_TODAY","heute lieferbar");
 define("SENTENCE_AVAILABLE_TOMORROW","morgen lieferbar");
 define("SENTENCE_BECOME_CUSTOMER","Kunde werden");

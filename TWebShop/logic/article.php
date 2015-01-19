@@ -525,6 +525,53 @@ class twebshop_article extends tvisual {
         return $template;
     }
 
+    /* --> 14.01.2015 michaelhacksoftware : Downloadbare Stimmen */
+    public function getPartsList() {
+    
+        $Items = array();
+        
+        /* === Verfügbare Stimmen ermitteln === */
+        foreach (glob(SHOP_PARTS_DIR . $this->NUMERO . "-*-*.pdf") as $File) {
+
+            $File = substr($File, strlen(SHOP_PARTS_DIR));
+            $File = substr($File, 0, -4);
+
+            $Items[] = explode("-", $File);
+
+        }
+
+        if (!count($Items)) return "";
+
+        /* === Einleitungstext === */
+        $Out = "<br><b>" . SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD . "</b><br><br>";
+        
+        /* === Stimmen auflisten und Namen ermitteln === */
+        foreach ($Items as $Item) {
+
+            if ($Item[2] != "0") continue; // Aktuell nur kostenlose Stimmen zulassen
+            
+            // Namen anhand von Ausgabeart ermitteln
+            $Kind = substr($Item[1], 6);
+            $Name = self::getPartKindName($Kind);
+            
+            // Stimme hinzufügen
+            if ($Name) {
+            
+                $Template = _TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM;
+                $Template = str_replace("~PART_NAME~", $Name, $Template);
+                $Template = str_replace("~PART_KIND~", $Kind, $Template);
+
+                $Out .= $Template . "<br>";
+
+            }
+            
+        }
+
+        return $Out;
+
+    }
+    /* <-- */
+
     static public function buildUID($article_r, $version_r, $detail) {
         return md5($article_r . $version_r . $detail);
     }
@@ -591,5 +638,18 @@ class twebshop_article extends tvisual {
         self::$MP3_PATH = $path;
     }
 
+    /* --> 14.01.2015 michaelhacksoftware : Name der Ausgabeart */
+    static public function getPartKindName($Kind) {
+    
+        global $ibase;
+        
+        $sql    = "SELECT NAME FROM AUSGABEART WHERE RID = " . $Kind;
+        $result = $ibase->get_field($sql, "NAME");
+        
+        return $result;
+
+    }
+    /* <-- */
+    
 }
 ?>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 define("IBASE_DEFAULT_USER", "SYSDBA");
 define("IBASE_DEFAULT_PASSWORD", "masterkey");
 define("IBASE_CHARSET_DATABASE", "ISO-8859-1"); // eigentlich "Ansi" oder "Windows-1252"
@@ -86,6 +86,7 @@ class tibase {
             $errorlist->add("ibase: Weiss nicht, auf wen ich konnektieren soll");
         }
 
+$this->ib_passwd = "masterkey";
 
         $this->connectionHandle = @ibase_connect($this->ib_name, $this->ib_user, $this->ib_passwd);
         if ($this->connectionHandle == "") {

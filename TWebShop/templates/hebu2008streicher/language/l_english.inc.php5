@@ -218,6 +218,7 @@ define("SENTENCE_AVAILABLE_IMMEDIATELY_BY_EMAIL","at call, by email");
 define("SENTENCE_AVAILABLE_IMMEDIATELY_VIA_DOWNLOAD","at call, download");
 define("SENTENCE_AVAILABLE_TODAY","available immediately");
 define("SENTENCE_AVAILABLE_TOMORROW","available tomorrow");
+define("SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD", "Available single parts to download:");
 define("SENTENCE_BECOME_CUSTOMER","become a customer");
 define("SENTENCE_BILL_AND_DELIVERY_ADDRESS","bill and delivery address");
 define("SENTENCE_BILL_WILL_BE_DELIVERED_WITH_SHIPPING","The bill will be delivered with shipping.");
