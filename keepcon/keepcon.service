@@ -1,0 +1,21 @@
+#
+# (c) OrgaMon.org, Andreas Filsinger
+#
+# keepcon checks and restart you internet connection
+#
+[Unit]
+Description=Permanent Internet Connection
+After=multi-user.target
+
+[Service]
+ExecStart=/root/keepcon -a
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
+
+#
+
+
+
