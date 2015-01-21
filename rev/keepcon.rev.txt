@@ -5,6 +5,7 @@
 * PUBLIC: YES
 * UPDATE: keepcon.pas
 * UPDATE: init.d.keepcon
+* UPDATE: keepcon.service
 * UPDATE: and-firewall
 * UPDATE: etc.keepcon.conf
 * UPDATE: vigor.sh
@@ -14,7 +15,7 @@
 
 // INFO BEGIN
 <br>
-<b>Linux-Dämon für Suse 11.x Freeware mit Quelltexten in Freepascal</b><br>
+<b>Linux-Dämon für OpenSuse 13.x Freeware mit Quelltexten in Freepascal</b><br>
 <br>
 * Automatisches Prüfen und Aufrechterhalten von Internet-Verbindungen<br>
 * Publizieren der eigenen IP ins InterNet via FTP und DynDNS<br>
@@ -23,14 +24,17 @@
 <br>
 // INFO END
 
-Dokumentation
+@<a href="http://wiki.orgamon.org/index.php5/Keepcon"><font color="blue">Keepcon Dokumentation</font></a href>
 
-@<a href="http://orgamon.org/mediawiki/index.php5/Keepcon"><font color="blue">Benutzerhandbuch im OrgaMon-Wiki "keepcon"</font></a href>
+Rev 1.037 (21.01.15) Andreas Filsinger
 
-Rev 1.037 (19.01.15) Andreas Filsinger
-
- Neu: Prüfen und Warten auf das Modem-Interface
+ Bug: Status "connected" wurde bei Netzwerkkarten nicht korrekt erkannt
+ 
+ Neu: Vor dem "Dial": Prüfen und Warten auf das Modem-Interface
+ Neu: Vor der "Firewall": Prüfen und Warten auf das User-Interface
  Neu: Logs: Postfix "[" uptime "s" "]"
+ Neu: systemd .service Datei
+ Neu: Start-Logo
 
 Rev 1.036 (22.10.14) Andreas Filsinger
 
