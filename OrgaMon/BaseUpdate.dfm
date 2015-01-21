@@ -584,7 +584,7 @@ object FormBaseUpdate: TFormBaseUpdate
       'ORDER BY RID'
       'FOR UPDATE')
     RequestLive = True
-    Left = 328
+    Left = 296
     Top = 5
   end
   object IB_Script1: TIB_Script
@@ -607,7 +607,7 @@ object FormBaseUpdate: TFormBaseUpdate
       'PLEASE_DISCONNECT'
       'PLEASE_DOWN')
     Passive = False
-    Left = 289
+    Left = 241
     Top = 5
   end
   object IdHTTP1: TIdHTTP

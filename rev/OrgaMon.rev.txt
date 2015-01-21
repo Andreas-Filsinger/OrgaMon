@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.078 (20.01.15) Andreas Filsinger
+
+ Bug: Belege: Unnötige Übergangsfach-Buchungen bei Konfigurationen ohne Übergangsfach
+
+ Neu: Datensicherung: Datenbank: "zip"-Fragmente werden entfernt
+
+Rev 8.077 (16.01.15) Andreas Filsinger
+
+ Bug: Beleg: Entnahme eines Eintrages in TERMIN wurden nicht akzeptiert
+
 Rev 8.076 (15.01.15) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: Excel: Alle Werte waren vom Typ "Text"

@@ -512,6 +512,7 @@ var
       ZipFileList := TStringList.create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
       FileDelete(ResultFName);
+      FileDelete(DatensicherungPath + cZIPTempFileMask);
       if (infozip.zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
@@ -1822,7 +1823,7 @@ begin
       end;
       // atomic.end
       try
-        Disconnect;
+        disconnect;
       except
         on E: EIdSocketError do
         begin
