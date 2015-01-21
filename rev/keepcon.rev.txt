@@ -27,6 +27,11 @@ Dokumentation
 
 @<a href="http://orgamon.org/mediawiki/index.php5/Keepcon"><font color="blue">Benutzerhandbuch im OrgaMon-Wiki "keepcon"</font></a href>
 
+Rev 1.037 (19.01.15) Andreas Filsinger
+
+ Neu: Prüfen und Warten auf das Modem-Interface
+ Neu: Logs: Postfix "[" uptime "s" "]"
+
 Rev 1.036 (22.10.14) Andreas Filsinger
 
  Neu: Anpassungen an openSuSE 13.1

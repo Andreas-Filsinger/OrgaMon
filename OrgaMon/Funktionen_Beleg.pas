@@ -7263,7 +7263,7 @@ begin
         if (not(FieldByName('TERMIN').IsNull) and (TERMIN = cTerminUnset)) then
         begin
           GENERATION_Log(true, format('TERMIN von %s auf ' + cOLAPNull,
-            [FieldByName('TERMIN').AsDateTime]));
+            [dTimeStamp(FieldByName('TERMIN').AsDateTime)]));
           break;
         end;
 
@@ -7412,117 +7412,118 @@ begin
             end;
           end;
 
+          //
+          // L A G E R        austragen
+          //
+          // E R E I G N I S  erzeugen
+          //
+          repeat
+
+            if not(Pre_versandfertig) and Post_versandfertig then
+            begin
+
+              // bisher nicht versandfertig - nun aber versandfertig
+
+              // Ereignis "versand-fertig" entsteht?!
+              qEREIGNIS := nQuery;
+              with qEREIGNIS do
+              begin
+{$IFNDEF fpc}
+                ColumnAttributes.add('RID=NOTREQUIRED');
+                ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+                sql.add('select * from EREIGNIS ' + for_update);
+                Insert;
+                FieldByName('ART').AsInteger :=
+                  eT_BestellungNunVollstaendigLieferbar;
+                FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+                FieldByName('BELEG_R').AsInteger := BELEG_R;
+                if (LAGER_R >= cRID_FirstValid) then
+                  FieldByName('LAGER_R').AsInteger := LAGER_R;
+                FieldByName('PERSON_R').AsInteger := PERSON_R;
+                EventText := TStringList.create;
+                EventText.add(format('Versandfertig: im Übergangsfach %s!',
+                  [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
+                FieldByName('INFO').assign(EventText);
+                EventText.free;
+                Post;
+              end;
+              qEREIGNIS.free;
+
+              // Ticket "Auslieferung an die Post" ensteht
+              break;
+            end;
+
+            if not(Pre_versandfaehig) and Post_versandfaehig then
+            begin
+
+              // bisher nicht versandfertig - nun aber versandfertig
+
+              qEREIGNIS := nQuery;
+              with qEREIGNIS do
+              begin
+{$IFNDEF fpc}
+                ColumnAttributes.add('RID=NOTREQUIRED');
+                ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+                sql.add('select * from EREIGNIS ' + for_update);
+                Insert;
+                FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+                FieldByName('BELEG_R').AsInteger := BELEG_R;
+                if LAGER_R >= cRID_FirstValid then
+                  FieldByName('LAGER_R').AsInteger := LAGER_R;
+                FieldByName('PERSON_R').AsInteger := PERSON_R;
+                FieldByName('ART').AsInteger :=
+                  eT_BestellungNunTeilweiseLieferbar;
+                EventText := TStringList.create;
+                EventText.add
+                  (format('Versandfähig: Übergangsfach %s zugeteilt!',
+                  [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
+                FieldByName('INFO').assign(EventText);
+                EventText.free;
+                Post;
+              end;
+              qEREIGNIS.free;
+              break;
+            end;
+
+            if Pre_versandfaehig and not(Post_versandfaehig) then
+            begin
+              qEREIGNIS := nQuery;
+              with qEREIGNIS do
+              begin
+{$IFNDEF fpc}
+                ColumnAttributes.add('RID=NOTREQUIRED');
+                ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+                sql.add('select * from EREIGNIS ' + for_update);
+                Insert;
+                FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+                FieldByName('BELEG_R').AsInteger := BELEG_R;
+                if (LAGER_R >= cRID_FirstValid) then
+                  FieldByName('LAGER_R').AsInteger := LAGER_R;
+                FieldByName('PERSON_R').AsInteger := PERSON_R;
+                FieldByName('ART').AsInteger :=
+                  eT_BestellungMerkmalTeilweiseLieferbarVerloren;
+                EventText := TStringList.create;
+                EventText.add
+                  (format('Versandfähigkeit verloren: Übergangsfach %s freigegeben!',
+                  [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
+                FieldByName('INFO').assign(EventText);
+                EventText.free;
+                Post;
+              end;
+              qEREIGNIS.free;
+
+              // Lager austragen
+              e_w_Zwischenlagern(BELEG_R, cRID_Null);
+
+              break;
+            end;
+
+          until true;
+
         end;
-
-        //
-        // L A G E R        austragen
-        //
-        // E R E I G N I S  erzeugen
-        //
-        repeat
-
-          if not(Pre_versandfertig) and Post_versandfertig then
-          begin
-
-            // bisher nicht versandfertig - nun aber versandfertig
-
-            // Ereignis "versand-fertig" entsteht?!
-            qEREIGNIS := nQuery;
-            with qEREIGNIS do
-            begin
-{$IFNDEF fpc}
-              ColumnAttributes.add('RID=NOTREQUIRED');
-              ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$ENDIF}
-              sql.add('select * from EREIGNIS ' + for_update);
-              Insert;
-              FieldByName('ART').AsInteger :=
-                eT_BestellungNunVollstaendigLieferbar;
-              FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-              FieldByName('BELEG_R').AsInteger := BELEG_R;
-              if (LAGER_R >= cRID_FirstValid) then
-                FieldByName('LAGER_R').AsInteger := LAGER_R;
-              FieldByName('PERSON_R').AsInteger := PERSON_R;
-              EventText := TStringList.create;
-              EventText.add(format('Versandfertig: im Übergangsfach %s!',
-                [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
-              FieldByName('INFO').assign(EventText);
-              EventText.free;
-              Post;
-            end;
-            qEREIGNIS.free;
-
-            // Ticket "Auslieferung an die Post" ensteht
-            break;
-          end;
-
-          if not(Pre_versandfaehig) and Post_versandfaehig then
-          begin
-
-            // bisher nicht versandfertig - nun aber versandfertig
-
-            qEREIGNIS := nQuery;
-            with qEREIGNIS do
-            begin
-{$IFNDEF fpc}
-              ColumnAttributes.add('RID=NOTREQUIRED');
-              ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$ENDIF}
-              sql.add('select * from EREIGNIS ' + for_update);
-              Insert;
-              FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-              FieldByName('BELEG_R').AsInteger := BELEG_R;
-              if LAGER_R >= cRID_FirstValid then
-                FieldByName('LAGER_R').AsInteger := LAGER_R;
-              FieldByName('PERSON_R').AsInteger := PERSON_R;
-              FieldByName('ART').AsInteger :=
-                eT_BestellungNunTeilweiseLieferbar;
-              EventText := TStringList.create;
-              EventText.add(format('Versandfähig: Übergangsfach %s zugeteilt!',
-                [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
-              FieldByName('INFO').assign(EventText);
-              EventText.free;
-              Post;
-            end;
-            qEREIGNIS.free;
-            break;
-          end;
-
-          if Pre_versandfaehig and not(Post_versandfaehig) then
-          begin
-            qEREIGNIS := nQuery;
-            with qEREIGNIS do
-            begin
-{$IFNDEF fpc}
-              ColumnAttributes.add('RID=NOTREQUIRED');
-              ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$ENDIF}
-              sql.add('select * from EREIGNIS ' + for_update);
-              Insert;
-              FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-              FieldByName('BELEG_R').AsInteger := BELEG_R;
-              if (LAGER_R >= cRID_FirstValid) then
-                FieldByName('LAGER_R').AsInteger := LAGER_R;
-              FieldByName('PERSON_R').AsInteger := PERSON_R;
-              FieldByName('ART').AsInteger :=
-                eT_BestellungMerkmalTeilweiseLieferbarVerloren;
-              EventText := TStringList.create;
-              EventText.add
-                (format('Versandfähigkeit verloren: Übergangsfach %s freigegeben!',
-                [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
-              FieldByName('INFO').assign(EventText);
-              EventText.free;
-              Post;
-            end;
-            qEREIGNIS.free;
-
-            // Lager austragen
-            e_w_Zwischenlagern(BELEG_R, cRID_Null);
-
-            break;
-          end;
-
-        until true;
 
       end;
 
@@ -10658,7 +10659,8 @@ var
 begin
   result := false;
   try
-    PERSON_R := e_r_sql('select PERSON_R from BELEG where RID='+inttostr(BELEG_R));
+    PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' +
+      inttostr(BELEG_R));
 
     // Ticket für den Beleg-Storno erstellen
     qTICKET := nQuery;
