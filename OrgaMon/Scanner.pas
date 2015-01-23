@@ -69,6 +69,7 @@ type
     SpeedButton4: TSpeedButton;
     Button2: TButton;
     JvFormStorage1: TJvFormStorage;
+    SpeedButton5: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -88,6 +89,8 @@ type
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
+    procedure SpeedButton5Click(Sender: TObject);
   private
     initialized: boolean;
     cPlanY: Integer;
@@ -111,9 +114,12 @@ type
     procedure RefreshSumme;
     procedure doBuchen;
     procedure doCheck;
+    procedure doCheckLess;
     procedure doArtikelJump;
 
   public
+    _rowBuchbar: boolean;
+
     { Public-Deklarationen }
     procedure doActivate(active: boolean);
     procedure hotEvent;
@@ -124,6 +130,12 @@ type
 
     // =true wenn SCAN_MENGE nunmehr "0"
     function bucheArtikelScan(row: Integer): boolean;
+
+    // hat die Row noch einen Rest
+    function rowRest(row: Integer): boolean;
+
+    // finde die nächste buchbare Zeile
+    function rowBuchbar(row: Integer): Integer;
 
   end;
 
@@ -204,6 +216,15 @@ begin
         break;
       end;
 
+      // Sonder Scan "Artikel so OK"
+      if (ganzerScan = '+00003-') then
+      begin
+        doCheckLess;
+        Edit1.Text := '';
+
+        break;
+      end;
+
       if (pos('-', ganzerScan) = 0) then
         doArtikelScan(ganzerScan)
       else
@@ -227,16 +248,18 @@ begin
     if (Edit1.Text <> '') then
     begin
       row := DrawGrid1.row;
-      AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(row, 5), cRID_Null);
-      if AUSGABEART_R >= cRID_FirstValid then
+      AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(row,
+        SCAN_LIST_AUSGABEART_R), cRID_Null);
+      if (AUSGABEART_R >= cRID_FirstValid) then
       begin
+
         // Setze Hauptartikel wenn <leer>
         e_x_sql(
           { } 'update ARTIKEL set' +
           { } ' GTIN=' + Edit1.Text +
           { } 'where ' +
           { } ' (GTIN is null) and ' +
-          { } ' (RID=' + SCAN_LIST.readCell(row, 3) + ')');
+          { } ' (RID=' + SCAN_LIST.readCell(row, SCAN_LIST_ARTIKEL_R) + ')');
 
         // setze GTIN in der Ausgabeart
         e_x_sql(
@@ -244,7 +267,8 @@ begin
           { } ' GTIN=' + Edit1.Text +
           { } 'where ' +
           { } ' (AUSGABEART_R=' + IntTostr(AUSGABEART_R) + ') and ' +
-          { } ' (ARTIKEL_R=' + SCAN_LIST.readCell(row, 3) + ')');
+          { } ' (ARTIKEL_R=' + SCAN_LIST.readCell(row,
+          SCAN_LIST_ARTIKEL_R) + ')');
 
       end
       else
@@ -254,7 +278,7 @@ begin
         e_x_sql(
           { } 'update ARTIKEL set ' +
           { } 'GTIN=' + Edit1.Text +
-          { } ' where RID=' + SCAN_LIST.readCell(row, 3));
+          { } ' where RID=' + SCAN_LIST.readCell(row, SCAN_LIST_ARTIKEL_R));
 
       end;
 
@@ -285,8 +309,10 @@ procedure TFormScanner.doArtikelJump;
 begin
   if assigned(SCAN_LIST) then
     FormArtikel.SetContext(
-      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, 3), cRID_Null),
-      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, 5), cRID_Null));
+      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, SCAN_LIST_ARTIKEL_R),
+      cRID_Null),
+      { } StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, SCAN_LIST_AUSGABEART_R),
+      cRID_Null));
 end;
 
 procedure TFormScanner.doArtikelScan(ganzerScan: string);
@@ -320,6 +346,13 @@ begin
       break;
     end;
 
+    // prüfen, ob überhaupt noch was offen ist
+    if not(rowRest(row)) then
+    begin
+      ErrorMsg := 'Dieser Artikel wurde zu oft gescannt';
+      break;
+    end;
+
     // Änderung um "1" durchführen
     ScanFertig := bucheArtikelScan(row);
     SL_reflect;
@@ -333,7 +366,7 @@ begin
   if (ErrorMsg <> '') then
   begin
     WinAmpPlayFile(SoundPath + 'ERROR.WAV');
-    ShowMessage(ErrorMsg);
+    ShowMessageTimeOut(ErrorMsg, 8000);
   end
   else
   begin
@@ -462,7 +495,6 @@ begin
       on E: Exception do
       begin
         ErrorMsg := 'Systemfehler beim Buchen' + E.Message;
-        WinAmpPlayFile(SoundPath + 'ERROR.WAV');
         break;
       end;
     end;
@@ -472,7 +504,7 @@ begin
   if (ErrorMsg <> '') then
   begin
     WinAmpPlayFile(SoundPath + 'ERROR.WAV');
-    ShowMessage(ErrorMsg);
+    ShowMessageTimeOut(ErrorMsg, 10000);
   end
   else
   begin
@@ -503,7 +535,7 @@ begin
 
   repeat
 
-    if not(assigned(SCAN_LIST)) then
+    if not(assigned(SCAN_LIST)) or (SL_BELEG_R < cRID_FirstValid) then
     begin
       ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
         'Oder in der Form' + #13 + '"+" | "-" ~Belegnummer~ "-" ~Generation~' +
@@ -601,6 +633,36 @@ var
 begin
   if assigned(SCAN_LIST) then
   begin
+
+    // prüfen ob überhaupt die richtige Position
+    DrawGrid1.row := rowBuchbar(DrawGrid1.row);
+
+    if _rowBuchbar then
+    begin
+
+      // Position buchen
+      ScanFertig := bucheArtikelScan(DrawGrid1.row);
+      SL_reflect;
+      if ScanFertig then
+        SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1,
+          pred(DrawGrid1.RowCount)));
+    end
+    else
+    begin
+      WinAmpPlayFile(SoundPath + 'ERROR.WAV');
+      ShowMessageTimeOut
+        ('Sie versuchen zu viele Artikel barcodelos zu scannen', 8000);
+    end;
+  end;
+end;
+
+procedure TFormScanner.doCheckLess;
+var
+  ScanFertig: boolean;
+begin
+  if assigned(SCAN_LIST) then
+  begin
+    // Position buchen
     ScanFertig := bucheArtikelScan(DrawGrid1.row);
     SL_reflect;
     if ScanFertig then
@@ -686,8 +748,8 @@ begin
                 MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
                 if MENGE_RECHNUNG > MENGE_SCAN then
                 begin
-                  GTIN := SCAN_LIST.readCell(ARow, 2);
-                  if (GTIN <> '<NULL>') then
+                  GTIN := SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN);
+                  if (GTIN <> sRID_NULL) then
                   begin
                     if (MENGE_SCAN > 0) then
                       brush.Color := HTMLColor2TColor($FF66FF)
@@ -808,6 +870,18 @@ begin
     end;
 end;
 
+procedure TFormScanner.Edit1KeyPress(Sender: TObject; var Key: Char);
+begin
+  case Key of
+    'ß':
+      Key := '-';
+    '`':
+      Key := '+';
+    '´':
+      Key := '+';
+  end;
+end;
+
 procedure TFormScanner.FormActivate(Sender: TObject);
 begin
   if not(initialized) then
@@ -844,9 +918,13 @@ end;
 
 procedure TFormScanner.hotEvent;
 begin
-  show;
-  SetFocus;
+  if not(active) then
+  begin
+    show;
+    SetFocus;
+  end;
   Edit1.SetFocus;
+  Edit1.SelectAll;
   SetForeGroundWindow(handle);
 end;
 
@@ -979,9 +1057,50 @@ begin
   end;
 end;
 
+function TFormScanner.rowRest(row: Integer): boolean;
+var
+  MENGE_SCAN: Integer;
+  MENGE_RECHNUNG: Integer;
+begin
+  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row,
+    SCAN_LIST_MENGE_RECHNUNG), 0);
+  MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_MENGE_SCAN), 0);
+  result := (MENGE_SCAN < MENGE_RECHNUNG);
+end;
+
+function TFormScanner.rowBuchbar(row: Integer): Integer;
+
+  function good(row: Integer): boolean;
+  begin
+    result := rowRest(row);
+    if result then
+      result := (SCAN_LIST.readCell(row, SCAN_LIST_GTIN) = sRID_NULL)
+  end;
+
+var
+  n: Integer;
+
+begin
+  _rowBuchbar := true;
+  result := row;
+  for n := row to pred(SCAN_LIST.count) do
+    if good(n) then
+      exit(n);
+  for n := 1 to pred(row) do
+    if good(n) then
+      exit(n);
+  _rowBuchbar := false;
+end;
+
 procedure TFormScanner.SpeedButton4Click(Sender: TObject);
 begin
   doCheck;
+  Edit1.SetFocus;
+end;
+
+procedure TFormScanner.SpeedButton5Click(Sender: TObject);
+begin
+  doCheckLess;
   Edit1.SetFocus;
 end;
 
