@@ -1,14 +1,36 @@
-
-{$mode Delphi}
-
-//
-// This is Open Source under GNU Licence.
+{
+  |
+  |     http://wiki.orgamon.org/index.php5/Keepcon
+  |      _  __                ____
+  |     | |/ /___  ___ _ __  / ___|___  _ __
+  |     | ' // _ \/ _ \ '_ \| |   / _ \| '_ \
+  |     | . \  __/  __/ |_) | |__| (_) | | | |
+  |     |_|\_\___|\___| .__/ \____\___/|_| |_|
+  |                   |_|
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    keepcon (c) 2003 - 2015 by Andreas Filsinger,
+}
+{$MODE Delphi}
 //
 // This is FreePascal Source Code for Linux-Targets
 //
-// keepcon (c) 2003 - 2015 by Andreas Filsinger
+
 //
-// http://orgamon.org
+//
+//
 //
 program keepcon;
 
@@ -16,8 +38,7 @@ uses
   IniFiles, Classes, Unix, SysUtils, SystemLog;
 
 const
-
-  cVersion = '1.037'; 
+  cVersion = '1.037';
 
   //
   // Changelog unter
@@ -34,7 +55,7 @@ const
   cLogFile = '/root/keepcon.log';
   cTmpFile = cWorkingPath + cTmpOutFileName;
   cTmpScriptFile = cWorkingPath + cTmpScriptFileName;
-  cConnectionDelimiter = '@'; 
+  cConnectionDelimiter = '@';
   cRegularExpressionDelimiter = '"';
   cTheUnknownIP = '0.0.0.0';
 
@@ -70,10 +91,9 @@ const
   cTemplateParam_FTPUser = 2;
   cTemplateParam_FTPpwd = 3;
   cTemplateParam_FTPpath = 4;
-  
+
   // externe Scripte, Beispiel vigor.sh
   cScriptIdentifier = '.sh';
-
 
 var
   // Commandozeile
@@ -82,7 +102,7 @@ var
   XinetdMode: boolean = false;
 
   sConnections: TStringList;
-  sCachedScripts : TStringList;
+  sCachedScripts: TStringList;
 
   // Parameter aus /etc/keepcon.conf
   iFtpServer: string;
@@ -92,61 +112,60 @@ var
   iPublishName: string;
   iPrimaryConnection: string;
   iPing: string;
-  iRemotes: TStringList;   // PUBLICNAME 
+  iRemotes: TStringList; // PUBLICNAME
   iHostNames: TStringList; // lokaler Name, default ist der PUBLICNAME
-  iRemoteIPs: TStringList; // 
+  iRemoteIPs: TStringList; //
   iFailOvers: TStringList;
   iTemplates: TStringList;
 
   // Bei iRestartRoute pruefen wir auch die Existenz einer
   // Default-Route im Unconnected Zustand. Gibt es
-  // eine, so wird diese geloescht. Ein anschliessender 
+  // eine, so wird diese geloescht. Ein anschliessender
   // Connect wird dann in der Regel die richtige Route
   // wieder hochziehen.
   //
   // Grund:
   // Es sein kann, dass auf "eth1" z.B. ein
   // Modem haengt - auf eth0 ist ein DHCP-Client
-  // aktiv ist. 
+  // aktiv ist.
   // Beide Interfaces setzen eine Default Route und
   // kommen sich ev. in die Quere.
   // In so einer Situation kann es vorkommen, dass
   // ein "ping" funktioniert obwohl das Modem offline
-  // ist. 
-  // 
+  // ist.
+  //
   iRestartRoute: boolean;
 
   //
-  // Wird ein IP-Adress-Wechsel durch den Provider 
-  // erkannt oder beim Neustart von Keepcon wird 
+  // Wird ein IP-Adress-Wechsel durch den Provider
+  // erkannt oder beim Neustart von Keepcon wird
   // die IP-Adresse an einen DynDNS-Anbieter mitgeteilt
   iDynDNS: string;
   iDynDNS_User: string;
   iDynDNS_Password: string;
-  
-  
+
   // iNetwork
   // ========
   //
-  // Name des Netzwerk-Interfaces an dem die Internet-Nutzer 
-  // hÃ¤ngen. Auf dieses Netzwerk muss gewartet werden bevor 
+  // Name des Netzwerk-Interfaces an dem die Internet-Nutzer
+  // hÃ¤ngen. Auf dieses Netzwerk muss gewartet werden bevor
   // das Masquerading gestartet wird.
   //
   // Beispiel: eth0
-  // 
-  iNetwork : string;
-  
+  //
+  iNetwork: string;
+
   // iModem
   // ======
   //
   // Name des Netzwerk-Interfaces, an dem das Modem hÃ¤ngt.
   // Auf dieses Netzwerk muss gewartet werden bevor eine
   // Internet-Verbindung aufgebaut werden kann.
-  // 
+  //
   // Beispiel: eth1
   //
-  iModem : string;
-  
+  iModem: string;
+
   // iConnection
   // ===========
   //
@@ -155,112 +174,112 @@ var
   //
   // Beispiel: dsl0
   //
-  iConnection : string;
+  iConnection: string;
 
-function uptime : string;
+function uptime: string;
 var
- f : TextFile;
- u : string;
+  f: TextFile;
+  u: string;
 begin
- AssignFile(f, '/proc/uptime');
- reset(f);
- readln(f,u);
- CloseFile(f);
- result := copy(u,1,pred(pos('.',u)));
+  AssignFile(f, '/proc/uptime');
+  reset(f);
+  readln(f, u);
+  CloseFile(f);
+  result := copy(u, 1, pred(pos('.', u)));
 end;
 
 procedure Log(s: string);
-const  
- MaxMsgLength = 1024;
-var  
- LogMsg: array[0..MaxMsgLength] of char;
+const
+  MaxMsgLength = 1024;
+var
+  LogMsg: array [0 .. MaxMsgLength] of char;
 begin
   if DebugMode then
-   writeln(s);
-  StrPCopy(LogMsg, copy(s,1,pred(MaxMsgLength)) + ' ['+uptime+'s]' ); 
-  SysLog(LOG_INFO, '%d: %s',[GetProcessID, LogMsg]);
+    writeln(s);
+  StrPCopy(LogMsg, copy(s, 1, pred(MaxMsgLength)) + ' [' + uptime + 's]');
+  SysLog(LOG_INFO, '%d: %s', [GetProcessID, LogMsg]);
 end;
 
 // Execute a Command
 
-function Exec(s: string) : cint;
+function Exec(s: string): cint;
 begin
   try
     if DebugMode then
-      Log('EXEC: '+s);
+      Log('EXEC: ' + s);
     result := fpsystem(s);
   except
-    on E: Exception do Log('ERROR: Exec('+s+'):' + e.Message);
+    on E: Exception do
+      Log('ERROR: Exec(' + s + '):' + E.Message);
   end;
 end;
 
-procedure CachedExec(script:string);
+procedure CachedExec(script: string);
 begin
- if (sCachedScripts.indexof(script)=-1) then
- begin     
-  Deletefile(cTmpScriptFile);
-  Exec('/root/'+script+' > ' + cTmpScriptFile);
-  sCachedScripts.add(script);
-  sleep(300);
- end;
+  if (sCachedScripts.indexof(script) = -1) then
+  begin
+    Deletefile(cTmpScriptFile);
+    Exec('/root/' + script + ' > ' + cTmpScriptFile);
+    sCachedScripts.add(script);
+    sleep(300);
+  end;
 end;
 
 
 // upload the TMP File via File Transfer Protokoll
 
-procedure FTPup(iFTPServer, iFTPUser, iFTPPassword, iFTPPath, iFTPFName: string);
+procedure FTPup(iFtpServer, iFTpUser, iftpPassword, iftpPath,
+  iFTPFName: string);
 var
   s: TStringList;
 begin
-  s := TstringList.create;
+  s := TStringList.create;
   try
 
-    if not (DaemonMode) then
-      writeln('upload: ' + iFTPUser + '@' + iFTPServer + iFTPPath + '/' + ExtractFileName(iFTPFName)+' ...');
+    if not(DaemonMode) then
+      writeln('upload: ' + iFTpUser + '@' + iFtpServer + iftpPath + '/' +
+        ExtractFileName(iFTPFName) + ' ...');
 
     // .netrc
-    s.add('machine ' +
-      iFtpServer +
-      ' login ' +
-      iFTpUser +
-      ' password ' +
-      iftpPassword
-      );
+    s.add('machine ' + iFtpServer + ' login ' + iFTpUser + ' password ' +
+      iftpPassword);
     s.SaveToFile(cNetRC);
     Exec('chmod 600 ' + cNetRC);
 
     // keepcon.ftp
     s.clear;
-    if (iFTPPath <> '') then
+    if (iftpPath <> '') then
       s.add('cd ' + iftpPath);
     s.add('put ' + cTmpFile + ' ' + ExtractFileName(iFTPFName));
     s.add('quit');
-    s.savetofile(ckeepconFtp);
+    s.SaveToFile(ckeepconFtp);
 
     // call ftp with the prepared script
-    Exec('su root -c "' + cFTPcall + iFtpServer + ' < ' + ckeepconFtp + '" >>' + cLogFile);
+    Exec('su root -c "' + cFTPcall + iFtpServer + ' < ' + ckeepconFtp + '" >>' +
+      cLogFile);
 
   except
-    on E: Exception do Log('ERROR: FTPUp:' + e.Message);
+    on E: Exception do
+      Log('ERROR: FTPUp:' + E.Message);
   end;
   s.free;
 end;
 
-// string utils 
+// string utils
 
-function noblank(s:string):string;
-var 
- n : integer;
+function noblank(s: string): string;
+var
+  n: integer;
 begin
- repeat
-  n := pos(' ',s);
-  if n=0 then
-   break;
-  delete(s,n,1); 
+  repeat
+    n := pos(' ', s);
+    if n = 0 then
+      break;
+    delete(s, n, 1);
 
- until false;
- result := s;
-end; 
+  until false;
+  result := s;
+end;
 
 
 // parse a parameter
@@ -273,56 +292,62 @@ begin
   if k > 0 then
   begin
     result := copy(s, 1, pred(k));
-    delete(s, 1, pred(k + length(delimiter)));
-  end else
+    delete(s, 1, pred(k + length(Delimiter)));
+  end
+  else
   begin
     result := s;
     s := '';
   end;
 end;
 
-function nextp(s: string; delimiter: string; SkipCount: integer; WithRest: boolean = false): string; overload;
+function NextP(s: string; Delimiter: string; SkipCount: integer;
+  WithRest: boolean = false): string; overload;
 var
   n, k: integer;
 begin
   for n := 1 to SkipCount do
   begin
-    k := pos(delimiter, s);
+    k := pos(Delimiter, s);
     if (k > 0) then
     begin
-      delete(s, 1, pred(k+length(delimiter)));
-    end else
+      delete(s, 1, pred(k + length(Delimiter)));
+    end
+    else
     begin
       result := '';
       exit;
-    end;  
+    end;
   end;
 
   // cut the unneeded rest
-  if not (WithRest) then
+  if not(WithRest) then
   begin
-    k := pos(delimiter, s);
+    k := pos(Delimiter, s);
     if k > 0 then
       result := copy(s, 1, pred(k))
     else
-      result := s;  
-  end else
+      result := s;
+  end
+  else
   begin
-   result := s;  
+    result := s;
   end;
 end;
 
-function TransportInterface(connection: string): string; // Beispiel "dsl0", bei "tonline-dsl-business@dsl0"
+function TransportInterface(connection: string): string;
+// Beispiel "dsl0", bei "tonline-dsl-business@dsl0"
 begin
- if (pos(cConnectionDelimiter,connection) > 0) then
-   result := nextp(connection, cConnectionDelimiter, 1)
- else
-   result := connection; 
+  if (pos(cConnectionDelimiter, connection) > 0) then
+    result := NextP(connection, cConnectionDelimiter, 1)
+  else
+    result := connection;
 end;
 
 function ProviderSpecifier(connection: string): string;
 begin
-  result := nextp(connection, cConnectionDelimiter, 0); // Beispiel "tonline-dsl-business", bei "tonline-dsl-business@dsl0"
+  result := NextP(connection, cConnectionDelimiter, 0);
+  // Beispiel "tonline-dsl-business", bei "tonline-dsl-business@dsl0"
 end;
 
 procedure ReadIni;
@@ -335,29 +360,30 @@ var
 begin
   MyIni := TiniFile.create(cIniFile);
   try
-    iRemotes.Clear;
-    iHostNames.Clear;
-    iRemoteIps.Clear;
-    iTemplates.Clear;
-    iFailOvers.Clear;
+    iRemotes.clear;
+    iHostNames.clear;
+    iRemoteIPs.clear;
+    iTemplates.clear;
+    iFailOvers.clear;
     with MyIni do
     begin
       iPublishName := ReadString('System', 'publish', '');
       iFtpServer := ReadString('System', 'ftp_server', '');
       iFTpUser := ReadString('System', 'ftp_user', '');
-      iFtpPassword := ReadString('System', 'ftp_password', '');
-      iFtpPath := ReadString('System', 'ftp_path', '/');
+      iftpPassword := ReadString('System', 'ftp_password', '');
+      iftpPath := ReadString('System', 'ftp_path', '/');
       iPing := ReadString('System', 'ping', '');
-      iRestartRoute := 
-       { } (ReadString('Primary', 'RestartRoute', '')='YES') or 
-       { } (ReadString('Primary', 'NewRoute', '')='YES');
+      iRestartRoute :=
+      { } (ReadString('Primary', 'RestartRoute', '') = 'YES') or
+      { } (ReadString('Primary', 'NewRoute', '') = 'YES');
       iPrimaryConnection := ReadString('Primary', 'provider', '');
       iNetwork := ReadString('Interface', 'network', '');
       iModem := ReadString('Interface', 'modem', '');
-      iConnection := ReadString('Interface', 'connection', TransportInterface(iPrimaryConnection));
-      iDynDNS := ReadString('System','DynDNS','');
-      iDynDNS_User := ReadString('System','DynDNS_user','');
-      iDynDNS_Password := ReadString('System','DynDNS_password','');
+      iConnection := ReadString('Interface', 'connection',
+        TransportInterface(iPrimaryConnection));
+      iDynDNS := ReadString('System', 'DynDNS', '');
+      iDynDNS_User := ReadString('System', 'DynDNS_user', '');
+      iDynDNS_Password := ReadString('System', 'DynDNS_password', '');
       for n := 1 to 10 do
       begin
 
@@ -365,17 +391,18 @@ begin
         _host := ReadString('Remote', 'host' + inttostr(n), '');
         if (_host <> '') then
         begin
-          k := pos(' ',_host);
-          if k=0 then
-          begin       
-           iRemotes.Add(_host);
-           iHostNames.Add(_host);
-          end else
+          k := pos(' ', _host);
+          if k = 0 then
           begin
-           iRemotes.Add(copy(_host,1,pred(k)));
-           iHostNames.Add(copy(_host,succ(k),MaxInt));          
-          end; 
-          iRemoteIPs.Add(cTheUnknownIP);
+            iRemotes.add(_host);
+            iHostNames.add(_host);
+          end
+          else
+          begin
+            iRemotes.add(copy(_host, 1, pred(k)));
+            iHostNames.add(copy(_host, succ(k), MaxInt));
+          end;
+          iRemoteIPs.add(cTheUnknownIP);
         end;
 
         // .html / .php / .inc Dateien, die gepached werden müssen
@@ -389,19 +416,20 @@ begin
         if (_failOver <> '') then
           iFailOvers.add(_failOver);
       end;
-    
+
     end;
   except
-    on E: Exception do Log('ERROR: ReadIni:' + e.Message);
+    on E: Exception do
+      Log('ERROR: ReadIni:' + E.Message);
   end;
-  MyIni.Free;
+  MyIni.free;
 end;
 
 // Make a list of all Connections / Providers
 
 procedure BuildConnectionList(sConnections: TStrings);
 var
- n : integer;
+  n: integer;
 begin
   sConnections.clear;
   sConnections.add(iPrimaryConnection);
@@ -414,99 +442,104 @@ begin
 end;
 
 function ObtainIP(connection: string): string;
-  
+
   procedure via_ifconfig;
   var
-   s: TStringList;
-   AutoMataState: integer;
-   IP: string;
-   n, k: integer;
+    s: TStringList;
+    AutoMataState: integer;
+    IP: string;
+    n, k: integer;
   begin
-   s := TStringList.create;
-   try
-     Deletefile(cTmpFile);
-     Exec('ifconfig > ' + cTmpFile);
-     s.loadfromfile(cTmpFile);
-     AutoMataState := 0;
-     for n := 0 to pred(s.Count) do
-     begin
-       case AutoMataState of
-         0: begin // search for eth1, ippp0 ....
-             if pos(TransportInterface(connection), s[n]) = 1 then
-               AutoMataState := 1;
-           end;
-         1: begin // search now for "inet addr:"
-             k := pos(cIPhit, s[n]);
-             if (k > 0) then
-             begin
-               IP := copy(s[n], k + length(cIPHit), MaxInt);
-               k := pos(' ', IP);
-               if (k > 0) then
-                 IP := copy(IP, 1, pred(k));
-               if (IP <> '127.0.0.1') then
-                 result := IP;
-               break;
-             end;
-           end;
-       end;
-     end;
-   except
-     on E: Exception do Log('ERROR: ObtainIP-ifconfig:' + e.Message);
-   end;
-   s.free;
+    s := TStringList.create;
+    try
+      Deletefile(cTmpFile);
+      Exec('ifconfig > ' + cTmpFile);
+      s.loadfromfile(cTmpFile);
+      AutoMataState := 0;
+      for n := 0 to pred(s.count) do
+      begin
+        case AutoMataState of
+          0:
+            begin // search for eth1, ippp0 ....
+              if pos(TransportInterface(connection), s[n]) = 1 then
+                AutoMataState := 1;
+            end;
+          1:
+            begin // search now for "inet addr:"
+              k := pos(cIPHit, s[n]);
+              if (k > 0) then
+              begin
+                IP := copy(s[n], k + length(cIPHit), MaxInt);
+                k := pos(' ', IP);
+                if (k > 0) then
+                  IP := copy(IP, 1, pred(k));
+                if (IP <> '127.0.0.1') then
+                  result := IP;
+                break;
+              end;
+            end;
+        end;
+      end;
+    except
+      on E: Exception do
+        Log('ERROR: ObtainIP-ifconfig:' + E.Message);
+    end;
+    s.free;
   end;
 
   procedure via_script;
   const
-   cIPHit = 'IP:';
+    cIPHit = 'IP:';
   var
-   s: TStringList;
-   AutoMataState: integer;
-   IP: string;
-   n, k: integer;
+    s: TStringList;
+    AutoMataState: integer;
+    IP: string;
+    n, k: integer;
   begin
-   s := TStringList.create;
-   try
-     CachedExec(TransportInterface(connection));
-     s.loadfromfile(cTmpScriptFile);
-     AutoMataState := 0;
-     for n := 0 to pred(s.Count) do
-     begin
-       case AutoMataState of
-         0: begin // search for eth1, ippp0 ....
-             if pos(ProviderSpecifier(connection), trim(s[n])) = 1 then
-               AutoMataState := 1;
-           end;
-         1: begin // search now for "inet addr:"
-             k := pos(cIPHit, s[n]);
-             if (k > 0) then
-             begin
-               IP := copy(s[n], k + length(cIPHit), MaxInt);
-               k := pos('GW', IP);
-               if (k > 0) then
-                 IP := trim(copy(IP, 1, pred(k)));
-               if (IP <> '127.0.0.1') then
-                 result := IP;
-               break;
-             end;
-           end;
-       end;
-     end;
-   except
-     on E: Exception do Log('ERROR: ObtainIP-script:' + e.Message);
-   end;
-   s.free;
+    s := TStringList.create;
+    try
+      CachedExec(TransportInterface(connection));
+      s.loadfromfile(cTmpScriptFile);
+      AutoMataState := 0;
+      for n := 0 to pred(s.count) do
+      begin
+        case AutoMataState of
+          0:
+            begin // search for eth1, ippp0 ....
+              if pos(ProviderSpecifier(connection), trim(s[n])) = 1 then
+                AutoMataState := 1;
+            end;
+          1:
+            begin // search now for "inet addr:"
+              k := pos(cIPHit, s[n]);
+              if (k > 0) then
+              begin
+                IP := copy(s[n], k + length(cIPHit), MaxInt);
+                k := pos('GW', IP);
+                if (k > 0) then
+                  IP := trim(copy(IP, 1, pred(k)));
+                if (IP <> '127.0.0.1') then
+                  result := IP;
+                break;
+              end;
+            end;
+        end;
+      end;
+    except
+      on E: Exception do
+        Log('ERROR: ObtainIP-script:' + E.Message);
+    end;
+    s.free;
   end;
- 
-  
+
 begin
   result := cTheUnknownIP;
 
-  if (pos('.sh',TransportInterface(connection))>0) then
-   via_script
+  if (pos('.sh', TransportInterface(connection)) > 0) then
+    via_script
   else
-   via_ifconfig;
-    
+    via_ifconfig;
+
 end;
 
 function Patch(FName, TheNewIP: string): boolean;
@@ -526,10 +559,10 @@ begin
     repeat
 
       // load the template
-      if (Fname <> '') then
+      if (FName <> '') then
         if FileExists(FName) then
         begin
-          sl.LoadFromFile(FName);
+          sl.loadfromfile(FName);
           break;
         end;
 
@@ -545,15 +578,14 @@ begin
 
     until true;
 
-      // patch the IP
-    for n := 0 to pred(sl.Count) do
+    // patch the IP
+    for n := 0 to pred(sl.count) do
     begin
       SetK;
       if (k > 0) then
       begin
         repeat
-          sl[n] := copy(sl[n], 1, pred(k)) +
-            TheNewIP +
+          sl[n] := copy(sl[n], 1, pred(k)) + TheNewIP +
             copy(sl[n], k + length(cIPplaceholder), MaxInt);
           SetK;
         until (k = 0);
@@ -565,9 +597,10 @@ begin
     result := true;
 
   except
-    on E: Exception do Log('ERROR: Patch:' + e.Message);
+    on E: Exception do
+      Log('ERROR: Patch:' + E.Message);
   end;
-  sl.Free;
+  sl.free;
 end;
 
 procedure DelRoute;
@@ -577,120 +610,119 @@ end;
 
 function Status(connection: string): string;
 
-procedure via_ifstatus;
-var
-  s: TStringList;
-  n: integer;
-  interf: string;
-  hit: string;
-begin
-  s := TStringList.create;
-  try
-    interf := TransportInterface(connection);
-    DeleteFile(cTmpFile);
-    Exec('ifstatus ' +
-      interf +
-      ' > ' +
-      cTmpFile
-      );
-    s.loadfromfile(cTmpFile);
-    for n := 0 to pred(s.count) do
-    begin
-      if (pos(cStatusTag,s[n])=1) then
+  procedure via_ifstatus;
+  var
+    s: TStringList;
+    n: integer;
+    interf: string;
+    hit: string;
+  begin
+    s := TStringList.create;
+    try
+      interf := TransportInterface(connection);
+      Deletefile(cTmpFile);
+      Exec('ifstatus ' + interf + ' > ' + cTmpFile);
+      s.loadfromfile(cTmpFile);
+      for n := 0 to pred(s.count) do
       begin
-        result := nextp(s[n], cStatusTag, 1);
-        break; 
-      end;
-      if (s[n]=format(cDownInfo,[interf])) then
-      begin
-        result := cStatusDisconnected;
-        break;      
-      end;
-      if (s[n]=format(cUnavailableInfo,[interf])) then
-      begin
-        result := cStatusDisconnected;
-        break;      
-      end;
-      if (pos(interf,s[n])>0) and (pos('is down',s[n])>pos(interf,s[n])) then
-      begin
-        result := cStatusDisconnected;
-        break;      
-      end;
-    end;
-    
-    hit := noblank(format(cUpInfo,[interf]));
-    if (result=cStatusUnknown) then
-     for n := 0 to pred(s.count) do
-     begin
-      if debugmode then
-       writeln('"'+noblank(s[n])+'"');
-      if (pos(hit, noblank(s[n])) > 0) then
-      begin
-       result := cStatusConnected;
-       break;
-      end;   
-    end;  
-  except
-    on E: Exception do Log('ERROR: Status:' + e.Message);
-  end;
-  s.Free;
-end;  
-
-procedure via_script;
-var
-  s: TStringList;
-  n: integer;
-  wan: string;
-begin
-  s := TStringList.create;
-  try
-    CachedExec(TransportInterface(connection));
-    wan := ProviderSpecifier(connection);
-    s.loadfromfile(cTmpScriptFile);
-    for n := 0 to pred(s.count) do
-    begin
-      if (pos(wan,s[n])=1) then
-      begin
-        result := nextp(s[n], ':', 1);
-        repeat
-
-         if result='Connected' then
-         begin
-          result := cStatusConnected;
+        if (pos(cStatusTag, s[n]) = 1) then
+        begin
+          result := NextP(s[n], cStatusTag, 1);
           break;
-         end;
-         
-         if result='Disconnected' then
-         begin
+        end;
+        if (s[n] = format(cDownInfo, [interf])) then
+        begin
           result := cStatusDisconnected;
-          break;         
-         end;
-         
-         Log('ERROR: Status.Unknown Status "'+result+'"');
-         result := cStatusUnset;
-
-        until true;
-        break; 
+          break;
+        end;
+        if (s[n] = format(cUnavailableInfo, [interf])) then
+        begin
+          result := cStatusDisconnected;
+          break;
+        end;
+        if (pos(interf, s[n]) > 0) and (pos('is down', s[n]) > pos(interf, s[n]))
+        then
+        begin
+          result := cStatusDisconnected;
+          break;
+        end;
       end;
+
+      hit := noblank(format(cUpInfo, [interf]));
+      if (result = cStatusUnknown) then
+        for n := 0 to pred(s.count) do
+        begin
+          if DebugMode then
+            writeln('"' + noblank(s[n]) + '"');
+          if (pos(hit, noblank(s[n])) > 0) then
+          begin
+            result := cStatusConnected;
+            break;
+          end;
+        end;
+    except
+      on E: Exception do
+        Log('ERROR: Status:' + E.Message);
     end;
-  except
-    on E: Exception do Log('ERROR: Status.' + e.Message);
+    s.free;
   end;
-  s.Free;
-end; 
+
+  procedure via_script;
+  var
+    s: TStringList;
+    n: integer;
+    wan: string;
+  begin
+    s := TStringList.create;
+    try
+      CachedExec(TransportInterface(connection));
+      wan := ProviderSpecifier(connection);
+      s.loadfromfile(cTmpScriptFile);
+      for n := 0 to pred(s.count) do
+      begin
+        if (pos(wan, s[n]) = 1) then
+        begin
+          result := NextP(s[n], ':', 1);
+          repeat
+
+            if result = 'Connected' then
+            begin
+              result := cStatusConnected;
+              break;
+            end;
+
+            if result = 'Disconnected' then
+            begin
+              result := cStatusDisconnected;
+              break;
+            end;
+
+            Log('ERROR: Status.Unknown Status "' + result + '"');
+            result := cStatusUnset;
+
+          until true;
+          break;
+        end;
+      end;
+    except
+      on E: Exception do
+        Log('ERROR: Status.' + E.Message);
+    end;
+    s.free;
+  end;
 
 begin
   result := cStatusUnknown;
-  if pos('.sh',TransportInterface(connection))>0 then
-   via_script
+  if pos('.sh', TransportInterface(connection)) > 0 then
+    via_script
   else
-   via_ifstatus; 
+    via_ifstatus;
 end;
 
 function Gateway(connection: string): string;
 var
   s: TStringList;
-  n,k: integer;
+  n, k: integer;
   interf: string;
   sRoute: string;
 begin
@@ -698,51 +730,49 @@ begin
   s := TStringList.create;
   try
     interf := TransportInterface(connection);
-    if pos(cScriptIdentifier,interf)=0 then
+    if pos(cScriptIdentifier, interf) = 0 then
     begin
-     DeleteFile(cTmpFile);
-     Exec('route -n' +
-      ' > ' +
-      cTmpFile
-      );
-     s.loadfromfile(cTmpFile);
-     for n := 0 to pred(s.count) do
-     begin
-      // Wir brauchen unser Interface
-      if (pos(interf,s[n])=0) then
-        continue; 
-        
-      // Die Route muss "U"p sein  
-      if (pos(' U',s[n])<21) then
-        continue;
-      sRoute := s[n];
-      
-      // Die Route muss die "default" Route 
-      if (pos(cTheUnknownIP,sRoute)<>1) then
-       continue;
- 
-      // Loesche Alle Spacer Blanks
-      repeat
-        k := pos('  ',sRoute);
-        if (k=0) then
-          break;
-        delete(sRoute,k,1);
-      until false;
+      Deletefile(cTmpFile);
+      Exec('route -n' + ' > ' + cTmpFile);
+      s.loadfromfile(cTmpFile);
+      for n := 0 to pred(s.count) do
+      begin
+        // Wir brauchen unser Interface
+        if (pos(interf, s[n]) = 0) then
+          continue;
 
-      // 
-      sRoute := nextp(sRoute,' ',1);
-      if (sRoute=cTheUnknownIP) then
-       result := interf
-      else
-       result := sRoute;
-      break;
-      
-     end;
-    end; 
+        // Die Route muss "U"p sein
+        if (pos(' U', s[n]) < 21) then
+          continue;
+        sRoute := s[n];
+
+        // Die Route muss die "default" Route
+        if (pos(cTheUnknownIP, sRoute) <> 1) then
+          continue;
+
+        // Loesche Alle Spacer Blanks
+        repeat
+          k := pos('  ', sRoute);
+          if (k = 0) then
+            break;
+          delete(sRoute, k, 1);
+        until false;
+
+        //
+        sRoute := NextP(sRoute, ' ', 1);
+        if (sRoute = cTheUnknownIP) then
+          result := interf
+        else
+          result := sRoute;
+        break;
+
+      end;
+    end;
   except
-    on E: Exception do Log('ERROR: Status.' + e.Message);
+    on E: Exception do
+      Log('ERROR: Status.' + E.Message);
   end;
-  s.Free;
+  s.free;
 end;
 
 function ActiveConnection: string;
@@ -760,69 +790,71 @@ end;
 
 procedure StartConnection(connection: string);
 begin
-  if (pos(cScriptIdentifier,connection)=0) then
-   if (Status(connection) <> cStatusConnected) then
-   begin
+  if (pos(cScriptIdentifier, connection) = 0) then
+    if (Status(connection) <> cStatusConnected) then
+    begin
 
-     // Schritt 1 : Die aktuelle default Route loeschen
-     // damit der Weg frei wird fuer die neue Route
-     if iRestartRoute then
-      DelRoute;
+      // Schritt 1 : Die aktuelle default Route loeschen
+      // damit der Weg frei wird fuer die neue Route
+      if iRestartRoute then
+        DelRoute;
 
-     // Schritt 2 : Den richtigen Provider aktivieren
-     Exec('ifup ' +
-       TransportInterface(connection) 
-       );
-       
-     // Schritt 3 : Dem System Zeit geben alles einzurichten
-     sleep(2000); 
-     
-   end;
+      // Schritt 2 : Den richtigen Provider aktivieren
+      Exec('ifup ' + TransportInterface(connection));
+
+      // Schritt 3 : Dem System Zeit geben alles einzurichten
+      sleep(2000);
+
+    end;
 end;
 
 procedure Firewall(connection: string);
 var
- n : integer;
- IsConnected: boolean;
+  n: integer;
+  IsConnected: boolean;
 begin
- try
- 
-  if (pos(cScriptIdentifier,connection)=0) then
-  begin
+  try
 
-    // Warten auf das Network-Interface
-    if (iNetwork <> '') then
+    if (pos(cScriptIdentifier, connection) = 0) then
     begin
-      n := 0;
-      repeat
-        inc(n);
-        IsConnected := (Status(iNetwork) = cStatusConnected);
-        if IsConnected or (n >= 15) then
-          break;
-        if not (DaemonMode) then
-          write('n');
-        sleep(1000);
-      until false;
-      if not (IsConnected) then
-      begin
-        Log('WARNING: Firewall: Users-Interface "' + iNetwork + '" do not comes available, timeout after 15s');
-      end else
-      begin
-       if (n > 1) then
-        Log('INFO: Firewall: Users-Interface "' + iNetwork + '" came up after '+IntToStr(n)+'s');
-      end;  
-    end; 
 
-   // Starten der Firewall
-   if (iNetWork <> '') then
-     Exec(
-      {} cFirewallApp + ' ' + 
-      {} iNetWork + ' ' +
-      {} TransportInterface(connection));
-    
-  end;  
+      // Warten auf das Network-Interface
+      if (iNetwork <> '') then
+      begin
+        n := 0;
+        repeat
+          inc(n);
+          IsConnected := (Status(iNetwork) = cStatusConnected);
+          if IsConnected or (n >= 15) then
+            break;
+          if not(DaemonMode) then
+            write('n');
+          sleep(1000);
+        until false;
+        if not(IsConnected) then
+        begin
+          Log('WARNING: Firewall: Users-Interface "' + iNetwork +
+            '" do not comes available, timeout after 15s');
+        end
+        else
+        begin
+          if (n > 1) then
+            Log('INFO: Firewall: Users-Interface "' + iNetwork +
+              '" came up after ' + inttostr(n) + 's');
+        end;
+      end;
+
+      // Starten der Firewall
+      if (iNetwork <> '') then
+        Exec(
+          { } cFirewallApp + ' ' +
+          { } iNetwork + ' ' +
+          { } TransportInterface(connection));
+
+    end;
   except
-    on E: Exception do Log('ERROR: Firewall.' + e.Message);
+    on E: Exception do
+      Log('ERROR: Firewall.' + E.Message);
   end;
 end;
 
@@ -836,107 +868,109 @@ begin
   try
     Trys := 0;
     repeat
-      if not (DaemonMode) then
+      if not(DaemonMode) then
         if (Trys > 0) then
           write('H');
       inc(Trys);
       OneUp := false;
       for n := 0 to pred(sConnections.count) do
-       if pos(cScriptIdentifier,sConnections[n])=0 then
-       begin
-         _status := Status(sConnections[n]);
-         if (_status = cStatusConnected) or (_status = cStatusConnecting) then
-         begin
-           OneUp := true;
-           Exec('ifdown '+ TransportInterface(sConnections[n]) );
-           sleep(500);
-         end;
-       end;
-    until not (OneUp) or (Trys = 3);
+        if pos(cScriptIdentifier, sConnections[n]) = 0 then
+        begin
+          _status := Status(sConnections[n]);
+          if (_status = cStatusConnected) or (_status = cStatusConnecting) then
+          begin
+            OneUp := true;
+            Exec('ifdown ' + TransportInterface(sConnections[n]));
+            sleep(500);
+          end;
+        end;
+    until not(OneUp) or (Trys = 3);
   except
-    on E: Exception do Log('ERROR: HangUp.' + e.Message);
+    on E: Exception do
+      Log('ERROR: HangUp.' + E.Message);
   end;
 end;
 
-procedure Upload(Connection: string = '');
+procedure Upload(connection: string = '');
 var
   n: integer;
   TheNewIP: string;
   FName: string;
 begin
   try
-    if (Connection = '') then
-      Connection := ActiveConnection;
-    TheNewIP := ObtainIP(Connection);
+    if (connection = '') then
+      connection := ActiveConnection;
+    TheNewIP := ObtainIP(connection);
 
-    if (iFTPServer <> '') then
+    if (iFtpServer <> '') then
     begin
       Patch('', TheNewIP);
-      FTPup(iFTPServer, iFTPUser, iFTPPassword, iFTPPath, iPublishName + '.html');
+      FTPup(iFtpServer, iFTpUser, iftpPassword, iftpPath,
+        iPublishName + '.html');
     end;
-    
-    if (iDynDNS<>'') then
+
+    if (iDynDNS <> '') then
     begin
-    if not (DaemonMode) then
-      writeln('dyn: set '+iDynDNS+' to '+TheNewIP+' ...');
-    
-     if Exec(
-      { command } 'wget '+
-      { no spam } '--no-verbose '+
-      { 200?    } '--save-headers '+
-      { Result  } '--output-document=/root/keepcon.wget.result '+
-      { Log     } '--append-output=/root/keepcon.wget.log '+
-      { user    } '--http-user='+iDynDNS_User+' '+
-      { pwd     } '--http-password='+iDynDNS_Password+' '+
-      { URL     } 'https://members.dyndns.org/nic/update?'+
-      { hostnme } 'hostname='+iDynDNS+
-      { ip      } '\&myip='+TheNewIP+' '+
-      { quiet   } '&> /dev/null')=0 then
+      if not(DaemonMode) then
+        writeln('dyn: set ' + iDynDNS + ' to ' + TheNewIP + ' ...');
+
+      if Exec(
+        { command } 'wget ' +
+        { no spam } '--no-verbose ' +
+        { 200? } '--save-headers ' +
+        { Result } '--output-document=/root/keepcon.wget.result ' +
+        { Log } '--append-output=/root/keepcon.wget.log ' +
+        { user } '--http-user=' + iDynDNS_User + ' ' +
+        { pwd } '--http-password=' + iDynDNS_Password + ' ' +
+        { URL } 'https://members.dyndns.org/nic/update?' +
+        { hostnme } 'hostname=' + iDynDNS +
+        { ip } '\&myip=' + TheNewIP + ' ' +
+        { quiet } '&> /dev/null') = 0 then
       begin
-        Log('INFO: DynDNS '+iDynDNS+' set to '+ TheNewIP )
-      end else
+        Log('INFO: DynDNS ' + iDynDNS + ' set to ' + TheNewIP)
+      end
+      else
       begin
-        Log('ERROR: DynDNS failure!'  );
+        Log('ERROR: DynDNS failure!');
       end;
-      
+
     end;
 
     for n := 0 to pred(iTemplates.count) do
     begin
-      FName := nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FName);
+      FName := NextP(iTemplates[n], cTemplateDelimiter, cTemplateParam_FName);
       if Patch(FName, TheNewIP) then
       begin
         if (FName <> '') then
-          FTPup(
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPHost),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPUser),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPpwd),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPpath),
-            FName)
+          FTPup(NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPHost), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPUser), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPpwd), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPpath), FName)
         else
-          FTPup(
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPHost),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPUser),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPpwd),
-            nextp(iTemplates[n], cTemplateDelimiter, cTemplateParam_FTPpath),
-            iPublishName + '.html');
+          FTPup(NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPHost), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPUser), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPpwd), NextP(iTemplates[n], cTemplateDelimiter,
+            cTemplateParam_FTPpath), iPublishName + '.html');
       end;
     end;
   except
-    on E: Exception do Log('ERROR: Upload.' + e.Message);
+    on E: Exception do
+      Log('ERROR: Upload.' + E.Message);
   end;
 end;
 
 var
- _Ping_AnzahlHosts : integer = -1;
- _Ping_Skip   : integer = 0;
+  _Ping_AnzahlHosts: integer = -1;
+  _Ping_Skip: integer = 0;
 
 function Ping: boolean;
 var
   Target, tmpTarget: string;
-  Host : string;
-  SysResultCode: cInt;
-  iHost : integer;
+  Host: string;
+  SysResultCode: cint;
+  iHost: integer;
 begin
   result := false;
   if (iPing = '') then
@@ -946,48 +980,48 @@ begin
 
   // Sollte Ping noch nie verwendet worden sein
   // muss zunaechst die Anzahl der Hosts bestimmt werden
-  if (_Ping_AnzahlHosts<1) then
+  if (_Ping_AnzahlHosts < 1) then
   begin
-   tmpTarget := Target;
-   _Ping_AnzahlHosts := 0;
-   while (tmpTarget <> '') do
-   begin
-     inc(_Ping_AnzahlHosts);
-     nextp(tmpTarget,cTemplateDelimiter);
-   end;
-   if DebugMode then
-     writeln(_Ping_AnzahlHosts:2,' Ping-Hosts!');
+    tmpTarget := Target;
+    _Ping_AnzahlHosts := 0;
+    while (tmpTarget <> '') do
+    begin
+      inc(_Ping_AnzahlHosts);
+      NextP(tmpTarget, cTemplateDelimiter);
+    end;
+    if DebugMode then
+      writeln(_Ping_AnzahlHosts:2, ' Ping-Hosts!');
   end;
-  
+
   if iRestartRoute then
-   if (GateWay(iPrimaryConnection)=cStatusUnset) then
-   begin
-     Log('ERROR: Route fail!'); 
-     exit;  
-   end;
+    if (Gateway(iPrimaryConnection) = cStatusUnset) then
+    begin
+      Log('ERROR: Route fail!');
+      exit;
+    end;
 
   // Sollte der Skip-Count die Verwendung des
   // letzten Hosts verhindern, so wird wieder der
   // erste Host verwendet.
-  if (_Ping_Skip>=_Ping_AnzahlHosts) then
-   _Ping_Skip := 0;
+  if (_Ping_Skip >= _Ping_AnzahlHosts) then
+    _Ping_Skip := 0;
 
   iHost := 0;
   while (Target <> '') do
   begin
     // Skip?
     inc(iHost);
-    Host := nextp(Target, cTemplateDelimiter);
-    if (iHost<=_Ping_Skip) then
-     continue;
-    if DebugMode then 
-      writeln(_Ping_Skip, ' skipped!'); 
+    Host := NextP(Target, cTemplateDelimiter);
+    if (iHost <= _Ping_Skip) then
+      continue;
+    if DebugMode then
+      writeln(_Ping_Skip, ' skipped!');
 
     // Ping!
     try
-      SysResultCode := Exec('ping -c 1 -w 2 '+Host+' &> /dev/null');
- 
-      if (SysResultCode=0) then
+      SysResultCode := Exec('ping -c 1 -w 2 ' + Host + ' &> /dev/null');
+
+      if (SysResultCode = 0) then
       begin
         result := true;
         break;
@@ -998,10 +1032,10 @@ begin
     end;
   end;
   inc(_Ping_Skip);
-  
+
 end;
 
-function Dial(Connection: string): boolean;
+function Dial(connection: string): boolean;
 var
   n: integer;
   IsConnected: boolean;
@@ -1022,22 +1056,25 @@ begin
         IsConnected := (Status(iModem) = cStatusConnected);
         if IsConnected or (n >= 15) then
           break;
-        if not (DaemonMode) then
+        if not(DaemonMode) then
           write('m');
         sleep(1000);
       until false;
-      if not (IsConnected) then
+      if not(IsConnected) then
       begin
-        Log('WARNING: Dial: Modem-Interface "' + iModem + '" do not comes available, timeout after 15s');
-      end else
+        Log('WARNING: Dial: Modem-Interface "' + iModem +
+          '" do not comes available, timeout after 15s');
+      end
+      else
       begin
-       if (n > 1) then
-        Log('INFO: Dial: Modem-Interface "' + iModem + '" came up after '+IntToStr(n)+'s');
-      end;  
-    end; 
+        if (n > 1) then
+          Log('INFO: Dial: Modem-Interface "' + iModem + '" came up after ' +
+            inttostr(n) + 's');
+      end;
+    end;
 
     // Internet Einwahl
-    StartConnection(Connection);
+    StartConnection(connection);
     repeat
 
       // Warte auf die Verbindung, timeout=15s
@@ -1046,22 +1083,25 @@ begin
       n := 0;
       repeat
         inc(n);
-        IsConnected := (Status(Connection) = cStatusConnected);
+        IsConnected := (Status(connection) = cStatusConnected);
         if IsConnected or (n >= 15) then
           break;
-        if not (DaemonMode) then
+        if not(DaemonMode) then
           write('c');
         sleep(1000);
       until false;
-      if not (IsConnected) then
+      if not(IsConnected) then
       begin
-        Log('ERROR: Dial: Connection "'+ Connection +'" do not comes available, timeout after 15s');
+        Log('ERROR: Dial: Connection "' + connection +
+          '" do not comes available, timeout after 15s');
         inc(ErrorCount);
         break;
-      end else
+      end
+      else
       begin
-       if (n > 1) then
-        Log('INFO: Dial: Connection "' + Connection + '" came up after '+IntToStr(n)+'s');
+        if (n > 1) then
+          Log('INFO: Dial: Connection "' + connection + '" came up after ' +
+            inttostr(n) + 's');
       end;
 
       // Warte auf die zugeteilte IP-Adresse, timeout=5s
@@ -1069,40 +1109,40 @@ begin
       n := 0;
       repeat
         inc(n);
-        HasIP := (ObtainIP(Connection) <> cTheUnknownIP);
+        HasIP := (ObtainIP(connection) <> cTheUnknownIP);
         if HasIP or (n >= 5) then
           break;
-        if not (DaemonMode) then
+        if not(DaemonMode) then
           write('i');
         sleep(1000);
       until false;
-      if not (HasIp) then
+      if not(HasIP) then
       begin
-        Log('ERROR: Dial: IP-Adress comes not up, timeout after 5s');       
+        Log('ERROR: Dial: IP-Adress comes not up, timeout after 5s');
         inc(ErrorCount);
         break;
-      end else
+      end
+      else
       begin
-       // wait for more details comming up
-       sleep(250);
+        // wait for more details comming up
+        sleep(250);
       end;
-      
-      
+
       // Warte auf die "default" Route in das Interface oder den Host, timeout=5s
       n := 0;
       repeat
         inc(n);
-        HasRoute := (GateWay(Connection)<>cStatusUnset);
+        HasRoute := (Gateway(connection) <> cStatusUnset);
         if HasRoute or (n >= 5) then
           break;
-        Exec('route add default ' +  TransportInterface(Connection));
-        if not (DaemonMode) then
+        Exec('route add default ' + TransportInterface(connection));
+        if not(DaemonMode) then
           write('r');
         sleep(1000);
       until false;
-      if not (HasRoute) then
+      if not(HasRoute) then
       begin
-        Log('ERROR: Dial: default route comes not up, timeout after 5s');       
+        Log('ERROR: Dial: default route comes not up, timeout after 5s');
         inc(ErrorCount);
         break;
       end;
@@ -1110,7 +1150,8 @@ begin
     until true;
     result := (ErrorCount = 0)
   except
-    on E: Exception do Log('ERROR: Dial.' + e.Message);
+    on E: Exception do
+      Log('ERROR: Dial.' + E.Message);
   end;
 end;
 
@@ -1128,16 +1169,11 @@ begin
   result := false;
   if (iRemotes.count > 0) then
   begin
-    s := TstringList.create;
+    s := TStringList.create;
     try
       // .netrc
-      s.add('machine ' +
-        iFtpServer +
-        ' login ' +
-        iFTpUser +
-        ' password ' +
-        iftpPassword
-        );
+      s.add('machine ' + iFtpServer + ' login ' + iFTpUser + ' password ' +
+        iftpPassword);
       s.SaveToFile(cNetRC);
       Exec('chmod 600 ' + cNetRC);
 
@@ -1146,35 +1182,38 @@ begin
       s.add('cd ' + iftpPath);
       for n := 0 to pred(iRemotes.count) do
       begin
-        DeleteFile(cWorkingPath + iRemotes[n] + '.html');
-        s.add('get ' + iRemotes[n] + '.html ' + cWorkingPath + iRemotes[n] + '.html');
+        Deletefile(cWorkingPath + iRemotes[n] + '.html');
+        s.add('get ' + iRemotes[n] + '.html ' + cWorkingPath + iRemotes[n]
+          + '.html');
       end;
       s.add('quit');
-      s.savetofile(ckeepconFtp);
+      s.SaveToFile(ckeepconFtp);
 
       // call ftp
-      Exec('su root -c "' + cFTPcall + iFtpServer + ' < ' + ckeepconFtp + '" >>' + cLogFile);
+      Exec('su root -c "' + cFTPcall + iFtpServer + ' < ' + ckeepconFtp + '" >>'
+        + cLogFile);
 
       // process the files
       for n := 0 to pred(iRemotes.count) do
       begin
-        iRemoteIPS[n] := cTheUnknownIP;
+        iRemoteIPs[n] := cTheUnknownIP;
         if FileExists(cWorkingPath + iRemotes[n] + '.html') then
         begin
-          s.LoadFromFile(cWorkingPath + iRemotes[n] + '.html');
-          DeleteFile(cWorkingPath + iRemotes[n] + '.html');
-          for m := 0 to pred(s.Count) do
+          s.loadfromfile(cWorkingPath + iRemotes[n] + '.html');
+          Deletefile(cWorkingPath + iRemotes[n] + '.html');
+          for m := 0 to pred(s.count) do
           begin
             if length(s[m]) > 0 then
             begin
-              if (pos('.', s[m]) > 0) and (s[m][1] in ['0'..'9']) then
+              if (pos('.', s[m]) > 0) and (s[m][1] in ['0' .. '9']) then
               begin
-                iRemoteIPS[n] := s[m];
+                iRemoteIPs[n] := s[m];
                 break;
               end;
             end;
           end;
-        end else
+        end
+        else
         begin
           Log('ERROR: unknown host "' + iRemotes[n] + '"');
         end;
@@ -1183,12 +1222,12 @@ begin
       // modify /etc/hosts (if nessesary)
       HostChangeCount := 0;
 
-      s.LoadFromFile('/etc/hosts');
+      s.loadfromfile('/etc/hosts');
 
       for m := 0 to pred(iRemotes.count) do
       begin
         IPAlreadyResolved := false;
-        for n := 0 to pred(s.Count) do
+        for n := 0 to pred(s.count) do
         begin
           OneLine := s[n];
           CommentPos := pos('#', OneLine);
@@ -1203,25 +1242,26 @@ begin
               OneLine := copy(OneLine, 1, pred(CommentPos));
             if pos(iHostNames[m], OneLine) > 0 then
             begin
-              if (pos(iRemoteIPs[m], OneLine) > 0) and (iRemoteIPs[m] <> cTheUnknownIP) then
+              if (pos(iRemoteIPs[m], OneLine) > 0) and
+                (iRemoteIPs[m] <> cTheUnknownIP) then
               begin
                 // old IP OK!
                 IPAlreadyResolved := true;
                 break;
-              end else
+              end
+              else
               begin
                 // IP changed
                 if (iRemoteIPs[m] <> cTheUnknownIP) then
                 begin
                   // IP changed
-                  s[n] := iRemoteIPs[m] +
-                    '     ' +
-                    iHostNames[m] +
+                  s[n] := iRemoteIPs[m] + '     ' + iHostNames[m] +
                     '     # updated by keepcon';
-                end else
+                end
+                else
                 begin
                   // IP could not be resolved, remove line!
-                  if DebugMode then 
+                  if DebugMode then
                     writeln('remove!');
                   s.delete(n);
                 end;
@@ -1233,15 +1273,11 @@ begin
             end;
           end;
         end;
-        if not (IPAlreadyResolved) and (iRemoteIPs[m] <> cTheUnknownIP) then
+        if not(IPAlreadyResolved) and (iRemoteIPs[m] <> cTheUnknownIP) then
         begin
           // insert this new line
-          s.Add(
-            iRemoteIPs[m] +
-            '     ' +
-            iHostNames[m] +
-            '     # inserted by keepcon'
-            );
+          s.add(iRemoteIPs[m] + '     ' + iHostNames[m] +
+            '     # inserted by keepcon');
           inc(HostChangeCount);
         end;
       end;
@@ -1256,7 +1292,8 @@ begin
         Exec('rcnmb restart');
       end;
     except
-      on E: Exception do Log('DownLoad.' + e.Message);
+      on E: Exception do
+        Log('DownLoad.' + E.Message);
     end;
     s.free;
   end;
@@ -1282,17 +1319,17 @@ var
     actIP := ObtainIP(MainConnection);
     RoundCount := 0;
   end;
-  
-  procedure DebugWrite(s:string);
+
+  procedure DebugWrite(s: string);
   begin
-   if DebugMode then
-    write(s);  
+    if DebugMode then
+      write(s);
   end;
-  
-  procedure DebugWriteLn(s:string);
+
+  procedure DebugWriteLn(s: string);
   begin
-   if DebugMode then
-    writeln(s);  
+    if DebugMode then
+      writeln(s);
   end;
 
 begin
@@ -1302,7 +1339,7 @@ begin
   actIP := ObtainIP(MainConnection);
   try
 
-  repeat
+    repeat
 
       if (MainConnection <> '') then
       begin
@@ -1320,24 +1357,26 @@ begin
             // Verbindung schon OK - mache jedoch dennoch
             // deine IP publik
             DebugWriteLn('!Firewall');
-            FireWall(MainConnection);
+            Firewall(MainConnection);
             DebugWriteLn('!Ping');
             if Ping then
             begin
-            
+
               DebugWriteLn('!SaveIP');
               SaveIP;
               Log('INFO: has IP [' + actIP + '] after "connected"');
-              
+
               DebugWriteLn('!Upload');
               Upload;
-            end else
+            end
+            else
             begin
               Log('ERROR: ping after fresh "connected" fails');
               DebugWriteLn('!HangUp');
               HangUp(sConnections);
             end;
-          end else
+          end
+          else
           begin
             // Unverbunden!
             DebugWriteLn('!HangUp');
@@ -1345,12 +1384,12 @@ begin
             DebugWriteLn('!Dial');
             if Dial(MainConnection) then
             begin
-            
+
               if ChangedIP then
               begin
-               DebugWriteLn('!SaveIP');
-               SaveIP;
-               Log('INFO: new IP [' + actIP + '] after "initial dial"');
+                DebugWriteLn('!SaveIP');
+                SaveIP;
+                Log('INFO: new IP [' + actIP + '] after "initial dial"');
               end;
 
               DebugWriteLn('!Firewall');
@@ -1374,13 +1413,13 @@ begin
           HangUp(sConnections);
           if Dial(MainConnection) then
           begin
-          
+
             if ChangedIP then
             begin
-             DebugWriteLn('!SaveIP');
-             SaveIP;
-             Log('INFO: new IP [' + actIP + '] after "unconnected"');
-            end; 
+              DebugWriteLn('!SaveIP');
+              SaveIP;
+              Log('INFO: new IP [' + actIP + '] after "unconnected"');
+            end;
 
             DebugWriteLn('!Firewall');
             Firewall(MainConnection); // now start the firewall
@@ -1391,13 +1430,14 @@ begin
             DebugWriteLn('!Download');
             DownLoad; // Download remote IPs
 
-
-          end else
+          end
+          else
           begin
             BuildConnectionList(sConnections);
           end;
           RoundCount := 0;
-        end else
+        end
+        else
         begin
 
           // Connection OK, refresh the newest hostnamens from internet
@@ -1406,20 +1446,19 @@ begin
             DebugWriteLn('!SaveIP');
             SaveIP;
             Log('INFO: new IP [' + actIP + '] after "ghost redial"');
-            
+
             DebugWriteLn('!UpLoad');
-            UpLoad;
-            
+            Upload;
+
             RoundCount := 0;
           end;
-
 
           if (RoundCount mod 3 = 0) then
           begin
 
             // Ping die Verbindung prüfen
             DebugWriteLn('!Ping');
-            if not (Ping) then
+            if not(Ping) then
             begin
               RoundCount := 0;
               Log('ERROR: Ping at status "connected" fails');
@@ -1435,7 +1474,8 @@ begin
           end;
 
         end;
-      end else
+      end
+      else
       begin
         // mach erst mal Pause
         sleep(1000 * 10);
@@ -1455,10 +1495,11 @@ begin
 
       inc(RoundCount);
 
-  until false;
-    except
-      on E: Exception do Log('ERROR: Auto.' + e.Message);
-    end;
+    until false;
+  except
+    on E: Exception do
+      Log('ERROR: Auto.' + E.Message);
+  end;
 end;
 
 procedure ManualMode;
@@ -1466,18 +1507,18 @@ var
   n: integer;
   inp: string;
   Number: integer;
-  _Status: string;
+  _status: string;
 begin
   writeln;
-  writeln('  _  __                ____              keepcon' );
+  writeln('  _  __                ____              keepcon');
   writeln(' | |/ /___  ___ _ __  / ___|___  _ __    (c) 2003-2015 by Andreas Filsinger');
   writeln(' | '' // _ \/ _ \ ''_ \| |   / _ \| ''_ \');
   writeln(' | . \  __/  __/ |_) | |__| (_) | | | |');
   writeln(' |_|\_\___|\___| .__/ \____\___/|_| |_|  Rev. ' + cVersion);
   writeln('               |_|');
-               
+
   repeat
-    
+
     sCachedScripts.clear;
     writeln('----------------------------------------------------------------------');
     writeln('ID = Provider@Interface | Modem-   | Users-    | Gateway | Status | IP');
@@ -1485,71 +1526,68 @@ begin
     writeln('----------------------------------------------------------------------');
     for n := 1 to sConnections.count do
     begin
-      _Status := Status(sConnections[pred(n)]);
-      if _Status = cStatusConnected then
-        _Status := _Status + ' | ' + ObtainIP(sConnections[pred(n)])
+      _status := Status(sConnections[pred(n)]);
+      if _status = cStatusConnected then
+        _status := _status + ' | ' + ObtainIP(sConnections[pred(n)])
       else
-       _Status := _Status + ' | ' + cStatusUnset;  
-      writeln(n:2,
-        ' = ',
-        sConnections[pred(n)],
-        ' | ',
-        iModem,
-        ' | ',
-        iNetwork,
-        ' | ',
-        Gateway(sConnections[pred(n)]),
-        ' | ',
-        _Status);
+        _status := _status + ' | ' + cStatusUnset;
+      writeln(n:2, ' = ', sConnections[pred(n)], ' | ', iModem, ' | ', iNetwork,
+        ' | ', Gateway(sConnections[pred(n)]), ' | ', _status);
     end;
     writeln('---------------------------------------------------------------');
     writeln;
     writeln('ID = Published Hostname | provided IP | local Alias(es) ');
     for n := 1 to iRemotes.count do
     begin
-      writeln(n:2,
-        ' = ',
-        iRemotes[pred(n)],
-        ' ',
-        iRemoteIPs[pred(n)],
-        ' '+iHostNames[pred(n)]);
+      writeln(n:2, ' = ', iRemotes[pred(n)], ' ', iRemoteIPs[pred(n)],
+        ' ' + iHostNames[pred(n)]);
     end;
     writeln;
-    write('keepcon@' + iPublishName + ' ['+uptime+'s] # ');
-    readln(Inp);
-    if (Inp = 'exit') then
+    write('keepcon@' + iPublishName + ' [' + uptime + 's] # ');
+    readln(inp);
+    if (inp = 'exit') then
       break;
-    Inp := Inp + '  ';
-    Number := pred(strtointdef(Inp[2], 0));
+    inp := inp + '  ';
+    Number := pred(strtointdef(inp[2], 0));
     if (Number >= sConnections.count) then
       Number := -1;
-    case Inp[1] of
-      'r', 'R': begin
+    case inp[1] of
+      'r', 'R':
+        begin
           HangUp(sConnections);
           if Dial(iPrimaryConnection) then
           begin
-                      // now start the firewall
+            // now start the firewall
             Firewall(iPrimaryConnection);
             Upload; // Publish own IPs
             DownLoad; // Download remote IPs
           end;
         end;
-      'h', 'H': HangUp(sConnections);
-      'd', 'D': if (number <> -1) then
+      'h', 'H':
+        HangUp(sConnections);
+      'd', 'D':
+        if (Number <> -1) then
           StartConnection(sConnections[Number]);
-      'f', 'F': if (number <> -1) then
+      'f', 'F':
+        if (Number <> -1) then
           Firewall(sConnections[Number]);
-      's', 'S': if number <> -1 then
+      's', 'S':
+        if Number <> -1 then
           Status(sConnections[Number]);
-      'u', 'U': Upload;
-      'g', 'G': DownLoad;
-      't', 'T': if ping then
-                  writeln('## PING OK ##')
-                else
-                  writeln('## PING FAIL ##');  
-      'k', 'K': DelRoute;
-      'a', 'A': begin
-          AutoMaticMode;
+      'u', 'U':
+        Upload;
+      'g', 'G':
+        DownLoad;
+      't', 'T':
+        if Ping then
+          writeln('## PING OK ##')
+        else
+          writeln('## PING FAIL ##');
+      'k', 'K':
+        DelRoute;
+      'a', 'A':
+        begin
+          AutomaticMode;
           break;
         end;
     else
@@ -1588,7 +1626,6 @@ end;
 
 begin
 
-
   // Init
   sConnections := TStringList.create;
   sCachedScripts := TStringList.create;
@@ -1606,20 +1643,19 @@ begin
 
   repeat
 
-  if XinetdMode then
-  begin
-    Log('INFO: Rev. ' + cVersion + ' enters xinet.d mode');
-    break;
-  end;
-    
-  if DaemonMode then
-  begin
-    Log('INFO: Rev. ' + cVersion + ' enters automatic mode');
-    break;
-  end;
-  
-  Log('INFO: Rev. ' + cVersion + ' enters manual mode');
-  
+    if XinetdMode then
+    begin
+      Log('INFO: Rev. ' + cVersion + ' enters xinet.d mode');
+      break;
+    end;
+
+    if DaemonMode then
+    begin
+      Log('INFO: Rev. ' + cVersion + ' enters automatic mode');
+      break;
+    end;
+
+    Log('INFO: Rev. ' + cVersion + ' enters manual mode');
 
   until true;
 
@@ -1628,9 +1664,9 @@ begin
 
   // little Test, if Exec works - if not
   // you are inside the ide - disable online debugger
-  DeleteFile(cWhoAmI);
+  Deletefile(cWhoAmI);
   Exec('whoami > ' + cWhoAmI);
-  if not (FileExists(cWhoAmI)) then
+  if not(FileExists(cWhoAmI)) then
   begin
     Log('FATAL ERROR: can not write to ' + cWhoAmI);
     halt;
@@ -1649,7 +1685,8 @@ begin
 
     until false;
 
-  end else
+  end
+  else
   begin
 
     BuildConnectionList(sConnections);
@@ -1657,7 +1694,8 @@ begin
     if DaemonMode then
     begin
       AutomaticMode;
-    end else
+    end
+    else
     begin
       ManualMode;
     end;
@@ -1665,5 +1703,3 @@ begin
   end;
 
 end.
-
-

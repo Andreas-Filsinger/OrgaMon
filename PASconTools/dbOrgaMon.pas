@@ -706,7 +706,7 @@ begin
             end
             else
             begin
-              Infostr := Infostr + '<NULL>';
+              Infostr := Infostr + sRID_NULL;
             end;
 
             if (n <> pred(FieldCount)) then
@@ -925,7 +925,7 @@ begin
           end
           else
           begin
-            Content := '<NULL>';
+            Content := sRID_NULL;
           end;
           sRow.add(Content);
         end;

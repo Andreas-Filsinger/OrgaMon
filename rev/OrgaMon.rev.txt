@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.080 (23.01.15) Andreas Filsinger
+
+ Bug: Scanner: Taste <F2> markierte NICHT den alten Inhalt des Eingabefeldes
+
+ Neu: Scanner: Artikel ohne Barcode: "+00001-" sucht intelligent
+ Neu: Scanner: "+00003-" bucht aktuelle Zeile
+ Neu: Scanner: Symbol "grüner Haken" : bucht aktuelle Zeile
+
+Rev 8.079 (22.01.15) Andreas Filsinger
+
+ Neu: Scanner: Bluetooth Scanner HID amerikanisch
+
 Rev 8.078 (20.01.15) Andreas Filsinger
 
  Bug: Belege: Unnötige Übergangsfach-Buchungen bei Konfigurationen ohne Übergangsfach
