@@ -151,6 +151,9 @@ type
     ListBox12: TListBox;
     Button22: TButton;
     Button23: TButton;
+    TabSheet11: TTabSheet;
+    Button24: TButton;
+    Button25: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -186,6 +189,8 @@ type
     procedure Button21Click(Sender: TObject);
     procedure Button22Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
+    procedure Button24Click(Sender: TObject);
+    procedure Button25Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -404,6 +409,16 @@ end;
 procedure TFormFotoService.Button23Click(Sender: TObject);
 begin
   Edit10.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
+end;
+
+procedure TFormFotoService.Button24Click(Sender: TObject);
+begin
+ openShell(MyWorkingPath + cMonDaServer_Baustelle);
+end;
+
+procedure TFormFotoService.Button25Click(Sender: TObject);
+begin
+ openShell(MyWorkingPath + cFotoTransaktionenFName);
 end;
 
 procedure TFormFotoService.Button2Click(Sender: TObject);
