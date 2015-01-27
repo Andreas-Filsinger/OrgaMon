@@ -448,11 +448,21 @@ procedure TFormFotoService.Button26Click(Sender: TObject);
 var
   tREFERENZ: tsTable;
   Column_RID: integer;
-  r, c, m: integer;
+  r, c, m, n: integer;
   sRID: string;
   QuellPfad: string;
   SrcKandidaten: TStringList;
   FotoSize: int64;
+
+  procedure xmove(FName: string);
+  var
+    DestFName: string;
+  begin
+    DestFName := FName;
+    nextp(DestFName, '-');
+    FileCopy(QuellPfad + FName, 'G:\' + DestFName);
+  end;
+
 begin
   //
   // Rollback anhand der Baustellenzugehörigkeit
@@ -480,39 +490,44 @@ begin
       sRID := readCell(r, Column_RID);
       dir(QuellPfad + '*-' + sRID + '*.jpg', SrcKandidaten, false, true);
 
-      if SrcKandidaten.Count > 0 then
+      if (SrcKandidaten.Count > 0) then
       begin
-        // Identische Rausreduzieren
-        for m := pred(SrcKandidaten.Count) downto 1 do
-        begin
-          FotoSize := FSize(QuellPfad + SrcKandidaten[pred(m)]);
-          if
-          { } (FotoSize > 0) and
-          { } (FotoSize = FSize(QuellPfad + SrcKandidaten[m]))
-          then
-            SrcKandidaten.Delete(m);
-        end;
+
+        // Identische rausreduzieren
+        n := 0;
+        repeat
+          FotoSize := FSize(QuellPfad + SrcKandidaten[n]);
+          if (FotoSize > 0) then
+            for m := pred(SrcKandidaten.Count) downto n + 1 do
+            begin
+              if (FotoSize = FSize(QuellPfad + SrcKandidaten[m])) then
+                SrcKandidaten.Delete(m);
+            end;
+          inc(n);
+        until (n >= pred(SrcKandidaten.Count));
 
         if (SrcKandidaten.Count > 1) then
         begin
-          // Mehrfache versionslieferungen eines Motives geht noch nicht!
-          // imp pend!
+          ListBox12.Items.Add('---------------------------');
           ListBox12.Items.Add('ERROR: ' + sRID + ' kommt mehrfach vor: ' +
             IntToStr(SrcKandidaten.Count) + 'x');
+          for c := 0 to pred(SrcKandidaten.Count) do
+          begin
+            ListBox12.Items.Add(SrcKandidaten[c]);
+            xmove(SrcKandidaten[c]);
+          end;
+          ListBox12.Items.Add('---------------------------');
         end
         else
         begin
-          for c := 0 to pred(SrcKandidaten.Count) do
-            ListBox12.Items.Add(SrcKandidaten[c]);
-          if (SrcKandidaten.Count = 0) then
-            ListBox12.Items.Add('ERROR: ' + sRID + ' nichts gefunden!');
-        end;
-
+          ListBox12.Items.Add(SrcKandidaten[0]);
+          xmove(SrcKandidaten[0]);
+        end
+      end
+      else
+      begin
+        // ListBox12.Items.Add('ERROR: ' + sRID + ' nichts gefunden!');
       end;
-
-      if (r=30) then
-       break;
-
     end;
   end;
   tREFERENZ.Free;

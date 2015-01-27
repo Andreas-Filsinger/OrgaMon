@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="104">
+    <Units Count="105">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -13,7 +13,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="345"/>
         <CursorPos X="104" Y="52"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="68"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -672,6 +672,7 @@
         <CursorPos X="13" Y="443"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
       <Unit74>
         <Filename Value="..\..\indy\Lib\System\IdStack.pas"/>
@@ -790,6 +791,7 @@
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
         <Filename Value="..\OrgaMon\Buchhalter.pas"/>
@@ -810,6 +812,7 @@
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit88>
       <Unit89>
         <Filename Value="..\..\lazarus\lcl\interfaces\qt\qtsystemtrayicon.pas"/>
@@ -829,6 +832,7 @@
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit90>
       <Unit91>
         <Filename Value="..\..\fpspreadsheet\fpsstrings.pas"/>
@@ -839,6 +843,7 @@
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit91>
       <Unit92>
         <Filename Value="..\..\fpspreadsheet\examples\wikitablemaker\synhighlighterwikitable.pas"/>
@@ -860,6 +865,7 @@
         <CursorPos X="13" Y="346"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
       <Unit94>
         <Filename Value="..\..\jcl\source\common\JclStrings.pas"/>
@@ -955,16 +961,28 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit102>
       <Unit103>
-        <Filename Value="..\..\fpspreadsheet\fpscell.pas"/>
-        <UnitName Value="fpsCell"/>
-        <IsVisibleTab Value="True"/>
+        <Filename Value="..\..\fpspreadsheet\fpspatches.pas"/>
+        <UnitName Value="fpspatches"/>
         <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="19" Y="1"/>
+        <TopLine Value="1702"/>
+        <CursorPos X="1" Y="1738"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit103>
+      <Unit104>
+        <Filename Value="..\..\fpc\compiler\blockutl.pas"/>
+        <UnitName Value="blockutl"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="22"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="349"/>
+        <CursorPos X="36" Y="385"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit104>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
