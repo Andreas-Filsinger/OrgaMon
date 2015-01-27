@@ -455,6 +455,10 @@ const
   cMobileMeldung_COLUMN_EINGABE_UHR = 9;
   cMobileMeldung_COLUMN_MOMENT = 10;
 
+  // Spaltenüberschrift des "RID"
+  cRID_Suchspalte = 'ReferenzIdentitaet';
+
+
 type
   TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
 
