@@ -2699,8 +2699,6 @@ begin
 end;
 
 function TJonDaExec.foto(sParameter: TStringList): TStringList;
-const
-  cRID_Suchspalte = 'ReferenzIdentitaet';
 var
   Baustelle: string;
   FotoBenennung: integer;

@@ -143,9 +143,9 @@ type
     Edit9: TEdit;
     CheckBox5: TCheckBox;
     TabSheet10: TTabSheet;
-    Edit10: TEdit;
+    Edit_Rollback_Quelle: TEdit;
     Label12: TLabel;
-    Edit11: TEdit;
+    Edit_RollBack_Transaktionen: TEdit;
     Label13: TLabel;
     Button21: TButton;
     ListBox12: TListBox;
@@ -154,6 +154,9 @@ type
     TabSheet11: TTabSheet;
     Button24: TButton;
     Button25: TButton;
+    Label14: TLabel;
+    Edit_Rollback_Baustelle: TEdit;
+    Button26: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -191,6 +194,7 @@ type
     procedure Button23Click(Sender: TObject);
     procedure Button24Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
+    procedure Button26Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -324,6 +328,27 @@ begin
   FileDelete(MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
+procedure TFormFotoService.Button22Click(Sender: TObject);
+begin
+  Edit_Rollback_Quelle.Text := cBackUpPath;
+end;
+
+procedure TFormFotoService.Button23Click(Sender: TObject);
+begin
+  Edit_Rollback_Quelle.Text := cBackUpPath + cLocation_JonDaServer +
+    '#~AktuelleNummer~\';
+end;
+
+procedure TFormFotoService.Button24Click(Sender: TObject);
+begin
+  openShell(MyWorkingPath + cMonDaServer_Baustelle);
+end;
+
+procedure TFormFotoService.Button25Click(Sender: TObject);
+begin
+  openShell(MyWorkingPath + cFotoTransaktionenFName);
+end;
+
 procedure TFormFotoService.Button21Click(Sender: TObject);
 const
   // TransaktionsCountMaske = '??????-';
@@ -338,12 +363,30 @@ var
   SrcKandidaten: TStringList;
   FotoSize: int64;
 begin
+  //
+  // Rollback
+  // ========
+  //
+  // Ausgangssituation: Neuzuordnung von Bildern nötig.
+  //
+  // manuell erstellt man einen Auszug aus
+  // "FotoService-Transaktionen.log.txt" den man in das
+  // JonDaServer/Störungs verzeichnis kopiert
+  //
+  // Als Bildquelle kann dann ein Sicherungsverzeichnis
+  // benutzt werden, also ggf. ein Verzeichnis, das sehr
+  // alte Bilder noch gespeichert hat.
+  //
+  // Ziel: Diese werden alle wieder an den Anfang der
+  // Verwarbeitungskette gestellt.
+  //
+
   TRNs := TStringList.Create;
   SrcKandidaten := TStringList.Create;
   TRNs_Fail := TStringList.Create;
 
-  QuellPfad := Edit10.Text;
-  TransaktionenFName := Edit11.Text;
+  QuellPfad := Edit_Rollback_Quelle.Text;
+  TransaktionenFName := Edit_RollBack_Transaktionen.Text;
   ListBox12.clear;
   TRNs.LoadFromFile(TransaktionenFName);
   for n := 0 to pred(TRNs.Count) do
@@ -371,10 +414,10 @@ begin
             SrcKandidaten.Delete(m);
         end;
 
-        // Mehrfache versionslieferungen eines Motives geht noch nicht!
-        // imp pend!
         if (SrcKandidaten.Count > 1) then
         begin
+          // Mehrfache versionslieferungen eines Motives geht noch nicht!
+          // imp pend!
           ListBox12.Items.Add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' +
             IntToStr(SrcKandidaten.Count) + 'x');
           TRNs_Fail.Add(TRNs[n]);
@@ -388,10 +431,10 @@ begin
             { } MobUploadPath + SrcFName);
 
           FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' +
-            SrcFName,MobUploadPath + SrcFName);
+            SrcFName, MobUploadPath + SrcFName);
         end;
       end;
-     Application.ProcessMessages;
+      Application.ProcessMessages;
     end;
   TRNs_Fail.SaveToFile(TransaktionenFName + '.fail.txt');
 
@@ -401,24 +444,80 @@ begin
 
 end;
 
-procedure TFormFotoService.Button22Click(Sender: TObject);
+procedure TFormFotoService.Button26Click(Sender: TObject);
+var
+  tREFERENZ: tsTable;
+  Column_RID: integer;
+  r, c, m: integer;
+  sRID: string;
+  QuellPfad: string;
+  SrcKandidaten: TStringList;
+  FotoSize: int64;
 begin
-  Edit10.Text := cBackUpPath;
-end;
+  //
+  // Rollback anhand der Baustellenzugehörigkeit
+  // ===========================================
+  //
+  // Ausgangssituation: Man will Bilder der Baustelle
+  // nochmals in die Umbenennungskette stellen.
+  //
+  // Baustellen mit "Fotobenennung=6" verfügen über
+  // Referenzdateien, die den Umbenennungsprozess steuern.
+  // Diese Datei wird zu Rate gezogen um alle Bilder
+  // nochmals aufzufinden und neu Umbenennen zu lassen.
+  //
 
-procedure TFormFotoService.Button23Click(Sender: TObject);
-begin
-  Edit10.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
-end;
+  QuellPfad := Edit_Rollback_Quelle.Text + cLocation_MOB;
+  SrcKandidaten := TStringList.Create;
+  tREFERENZ := tsTable.Create;
+  with tREFERENZ do
+  begin
+    insertfromFile(JonDaServerPath + cDBPath + Edit_Rollback_Baustelle.Text +
+      '\' + cE_FotoBenennung + '.csv');
+    Column_RID := colof(cRID_Suchspalte, true);
+    for r := 1 to RowCount do
+    begin
+      sRID := readCell(r, Column_RID);
+      dir(QuellPfad + '*-' + sRID + '*.jpg', SrcKandidaten, false, true);
 
-procedure TFormFotoService.Button24Click(Sender: TObject);
-begin
- openShell(MyWorkingPath + cMonDaServer_Baustelle);
-end;
+      if SrcKandidaten.Count > 0 then
+      begin
+        // Identische Rausreduzieren
+        for m := pred(SrcKandidaten.Count) downto 1 do
+        begin
+          FotoSize := FSize(QuellPfad + SrcKandidaten[pred(m)]);
+          if
+          { } (FotoSize > 0) and
+          { } (FotoSize = FSize(QuellPfad + SrcKandidaten[m]))
+          then
+            SrcKandidaten.Delete(m);
+        end;
 
-procedure TFormFotoService.Button25Click(Sender: TObject);
-begin
- openShell(MyWorkingPath + cFotoTransaktionenFName);
+        if (SrcKandidaten.Count > 1) then
+        begin
+          // Mehrfache versionslieferungen eines Motives geht noch nicht!
+          // imp pend!
+          ListBox12.Items.Add('ERROR: ' + sRID + ' kommt mehrfach vor: ' +
+            IntToStr(SrcKandidaten.Count) + 'x');
+        end
+        else
+        begin
+          for c := 0 to pred(SrcKandidaten.Count) do
+            ListBox12.Items.Add(SrcKandidaten[c]);
+          if (SrcKandidaten.Count = 0) then
+            ListBox12.Items.Add('ERROR: ' + sRID + ' nichts gefunden!');
+        end;
+
+      end;
+
+      if (r=30) then
+       break;
+
+    end;
+  end;
+  tREFERENZ.Free;
+  SrcKandidaten.Free;
+
 end;
 
 procedure TFormFotoService.Button2Click(Sender: TObject);
@@ -580,12 +679,12 @@ end;
 procedure TFormFotoService.Button15Click(Sender: TObject);
 begin
   // Read MemCached
-(*
-  if not(assigned(MemCache)) then
+  (*
+    if not(assigned(MemCache)) then
     MemCache := TMemCache.Create;
 
-  MemCache.CheckServers;
-  ListBox9.Items.Add(
+    MemCache.CheckServers;
+    ListBox9.Items.Add(
 
     IntToStr(MemCache.Increment('sequence.69VVTGKZ1')));
   *)
@@ -796,7 +895,7 @@ begin
     // Delete Entry
     with WARTEND do
     begin
-      insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+      insertfromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
       r := locate('RID', IntToStr(AUFTRAG_R));
       if (r = -1) then
         break;
@@ -882,14 +981,14 @@ begin
 
     // Initialer Lauf
     tBAUSTELLE := tsTable.Create;
-    tBAUSTELLE.insertFromFile(MyWorkingPath + cMonDaServer_Baustelle);
+    tBAUSTELLE.insertfromFile(MyWorkingPath + cMonDaServer_Baustelle);
     if FileExists(MyWorkingPath + cMonDaServer_Baustelle_manuell) then
     begin
       with tBAUSTELLE do
       begin
-        insertFromFile(MyWorkingPath + cMonDaServer_Baustelle_manuell);
+        insertfromFile(MyWorkingPath + cMonDaServer_Baustelle_manuell);
         for r := RowCount downto 1 do
-          if (length(ReadCell(r, cE_FTPUSER)) < 3) then
+          if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
         SaveToFile(MyWorkingPath + 'baustelle-alle.csv');
       end;
@@ -1497,7 +1596,7 @@ var
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.ReadCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
         { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
@@ -1596,7 +1695,7 @@ var
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.ReadCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
         { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
@@ -1629,12 +1728,12 @@ begin
 
   // Infos über Baustellen
   tabelleBAUSTELLE := tsTable.Create;
-  tabelleBAUSTELLE.insertFromFile(MyWorkingPath + cMonDaServer_Baustelle);
-  Col_FTP_Benutzer := tabelleBAUSTELLE.colOf(cE_FTPUSER);
+  tabelleBAUSTELLE.insertfromFile(MyWorkingPath + cMonDaServer_Baustelle);
+  Col_FTP_Benutzer := tabelleBAUSTELLE.colof(cE_FTPUSER);
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
-  WARTEND.insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+  WARTEND.insertfromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
 
   //
   if (Edit3.Text = '') then
@@ -2036,7 +2135,7 @@ begin
             begin
               // Belegung der Foto-Parameter
               sFotoCall.Values[cParameter_foto_Modus] :=
-                tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FotoBenennung);
+                tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -2053,7 +2152,7 @@ begin
                 zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
               sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath
-                + cdbPath;
+                + cDBPath;
               sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath +
                 sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
@@ -2094,8 +2193,8 @@ begin
         //
         if (BAUSTELLE_Index > -1) and not(RenameError) then
         begin
-          FotoZiel := tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FTPUSER);
-          FotoHost := tBAUSTELLE.ReadCell(BAUSTELLE_Index, cE_FTPHOST);
+          FotoZiel := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FTPUSER);
+          FotoHost := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FTPHOST);
           repeat
 
             if (length(FotoZiel) < 3) then
@@ -2295,7 +2394,7 @@ begin
   begin
 
     // load+sort
-    insertFromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+    insertfromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
     Stat_Anfangsbestand := RowCount;
     SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
@@ -2308,9 +2407,9 @@ begin
     // all zu alte Einträge löschen
     MomentTimeout := DatePlus(DateGet, -10);
     i := 0;
-    c := colOf('MOMENT');
+    c := colof('MOMENT');
     for r := RowCount downto 1 do
-      if (StrToIntDef(ReadCell(r, c), 0) < MomentTimeout) then
+      if (StrToIntDef(readCell(r, c), 0) < MomentTimeout) then
       begin
         del(r);
         inc(i);
@@ -2328,11 +2427,11 @@ begin
   for r := WARTEND.RowCount downto 1 do
   begin
 
-    RID := StrToIntDef(WARTEND.ReadCell(r, 'RID'), 0);
+    RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
     ZAEHLER_NUMMER_NEU := '';
 
     // Nachtrag der Baustellen-Info
-    sBaustelle := WARTEND.ReadCell(r, 'BAUSTELLE');
+    sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
     if (sBaustelle = '') then
       if bOrgaMon.exist(RID) then
       begin
@@ -2349,7 +2448,7 @@ begin
       if (BAUSTELLE_Index > -1) then
       begin
         FotoBenennungsModus := StrToIntDef(
-          { } tBAUSTELLE.ReadCell(
+          { } tBAUSTELLE.readCell(
           { } BAUSTELLE_Index,
           { } cE_FotoBenennung), 0);
 
@@ -2365,7 +2464,7 @@ begin
       ZAEHLER_NUMMER_NEU :=
       { } ZaehlerNummerNeu(
         { } RID,
-        { } WARTEND.ReadCell(r, 'GERAETENO'));
+        { } WARTEND.readCell(r, 'GERAETENO'));
 
     // Zuschaltbare Alternative: den Inhalt einer CSV prüfen
     if (ZAEHLER_NUMMER_NEU = '') then
@@ -2374,11 +2473,11 @@ begin
         if not(assigned(CSV)) then
         begin
           CSV := tsTable.Create;
-          CSV.insertFromFile(MyWorkingPath + 'ZaehlerNummerNeu.xls.csv');
+          CSV.insertfromFile(MyWorkingPath + 'ZaehlerNummerNeu.xls.csv');
         end;
         ro := CSV.locate('ReferenzIdentitaet', IntToStr(RID));
         if (ro <> -1) then
-          ZAEHLER_NUMMER_NEU := CSV.ReadCell(ro, 'ZaehlerNummerNeu');
+          ZAEHLER_NUMMER_NEU := CSV.readCell(ro, 'ZaehlerNummerNeu');
       end;
 
     // kein Ergebnis -> keine Aktion
@@ -2386,7 +2485,7 @@ begin
       continue;
 
     // Umbenennung starten
-    FNameAlt := WARTEND.ReadCell(r, 'DATEINAME_AKTUELL');
+    FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
     FPath := nextp(FNameAlt, '\', 0) + '\';
 
     if not(FileExists(cWorkPath + FNameAlt)) then
@@ -2431,7 +2530,7 @@ begin
 
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
         Values[cParameter_foto_Datei] := cWorkPath + FNameAlt;
-        Values[cParameter_foto_Pfad] := JonDaServerPath + cdbPath;
+        Values[cParameter_foto_Pfad] := JonDaServerPath + cDBPath;
       end;
 
       // set default result (ERROR RESULT)
@@ -2527,12 +2626,12 @@ begin
     tSENDEN := tsTable.Create;
     with tSENDEN do
     begin
-      insertFromFile(MyProgramPath + cdbPath + 'SENDEN.csv');
+      insertfromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
       i := addCol('PAPERCOLOR');
-      k := WARTEND.colOf('GERAETENO');
-      c := colOf('ID');
+      k := WARTEND.colof('GERAETENO');
+      c := colof('ID');
       for r := 1 to RowCount do
-        if (WARTEND.locate(k, ReadCell(r, c)) <> -1) then
+        if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FF9900');
       SaveToHTML(MyProgramPath + cStatistikPath + 'senden.html');
     end;
@@ -2599,14 +2698,14 @@ begin
     FName := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
-    EINGABE.insertFromFile(FName, cHeader_Eingabe);
+    EINGABE.insertfromFile(FName, cHeader_Eingabe);
     _GeraeteNo := GeraeteNo;
   end;
 
   // RID suchen
   r := EINGABE.locate('RID', IntToStr(AUFTRAG_R));
   if (r <> -1) then
-    result := EINGABE.ReadCell(r, 'ZAEHLER_NUMMER_NEU')
+    result := EINGABE.readCell(r, 'ZAEHLER_NUMMER_NEU')
   else
     result := '';
 

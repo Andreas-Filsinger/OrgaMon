@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet11
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -708,55 +708,62 @@ object FormFotoService: TFormFotoService
       Caption = 'Rollback'
       ImageIndex = 9
       object Label12: TLabel
-        Left = 3
+        Left = 11
         Top = 16
         Width = 30
         Height = 13
         Caption = 'Quelle'
       end
       object Label13: TLabel
-        Left = 3
-        Top = 35
+        Left = 11
+        Top = 394
         Width = 95
         Height = 13
         Caption = 'Transaktionsauszug'
       end
-      object Edit10: TEdit
-        Left = 139
+      object Label14: TLabel
+        Left = 11
+        Top = 429
+        Width = 43
+        Height = 13
+        Caption = 'Baustelle'
+      end
+      object Edit_Rollback_Quelle: TEdit
+        Left = 104
         Top = 13
-        Width = 198
+        Width = 250
         Height = 21
         TabOrder = 0
         Text = 'X:\JonDaServer\#83\'
       end
-      object Edit11: TEdit
-        Left = 139
-        Top = 32
+      object Edit_RollBack_Transaktionen: TEdit
+        Left = 145
+        Top = 391
         Width = 249
         Height = 21
         TabOrder = 1
         Text = 'W:\JonDaServer\St'#246'rung\Rollback.txt'
       end
       object Button21: TButton
-        Left = 575
-        Top = 453
-        Width = 148
+        Left = 408
+        Top = 389
+        Width = 307
         Height = 25
-        Caption = 'Rollback'
+        Caption = 'Rollback anhand der Transaktion'
         TabOrder = 2
         OnClick = Button21Click
       end
       object ListBox12: TListBox
         Left = 3
-        Top = 54
+        Top = 42
         Width = 720
-        Height = 393
+        Height = 343
         ItemHeight = 13
         TabOrder = 3
       end
       object Button22: TButton
         Left = 360
-        Top = 3
+        Top = 11
         Width = 115
         Height = 25
         Caption = '<- Produktiv-Ablage'
@@ -764,20 +771,37 @@ object FormFotoService: TFormFotoService
         OnClick = Button22Click
       end
       object Button23: TButton
-        Left = 512
-        Top = 3
+        Left = 481
+        Top = 11
         Width = 137
         Height = 25
         Caption = '<- Laufende DaSi'
         TabOrder = 5
         OnClick = Button23Click
       end
+      object Edit_Rollback_Baustelle: TEdit
+        Left = 145
+        Top = 426
+        Width = 249
+        Height = 21
+        TabOrder = 6
+        Text = 'EnPara'
+      end
+      object Button26: TButton
+        Left = 408
+        Top = 424
+        Width = 307
+        Height = 25
+        Caption = 'Rollback anhand der Baustellenzugeh'#246'rigkeit'
+        TabOrder = 7
+        OnClick = Button26Click
+      end
     end
   end
   object Timer1: TTimer
     Interval = 2000
     OnTimer = Timer1Timer
-    Left = 504
-    Top = 8
+    Left = 528
+    Top = 80
   end
 end

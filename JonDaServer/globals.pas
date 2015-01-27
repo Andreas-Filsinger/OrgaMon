@@ -36,11 +36,11 @@ const
   version: single = 2.209; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
-  cVersion_JonDa : single = 1.118;
-  cVersion_OrgaMonApp : single = 2.000;
+  cVersion_JonDa: single = 1.118;
+  cVersion_OrgaMonApp: single = 2.000;
 
   // Mindest-Anforderungen
-  cMinVersion_OrgaMonApp : single = 2.026;
+  cMinVersion_OrgaMonApp: single = 2.026;
 
   NoTimer: boolean = false;
   AllSystemsRunning: boolean = true;
@@ -64,6 +64,7 @@ const
   cIni_Activate = 'JA';
   cIni_Deactivate = 'NEIN';
   cRID_FirstValid = 1;
+  cRID_Suchspalte = 'ReferenzIdentitaet';
 
   //
   cCRLF = #13#10;
@@ -115,8 +116,10 @@ const
   EigeneOrgaMonDateienPfad: string = '';
 
   // Eingabe.nnn.txt
-  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
-  cHeader_UmbenennungUnvollstaendig = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+  cHeader_Eingabe =
+    'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
+  cHeader_UmbenennungUnvollstaendig =
+    'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
 
 const
   cMonDa_Status_unbearbeitet = 0;
@@ -183,7 +186,7 @@ const
   cE_FotoAblage = 'FotoAblage'; // default -ohne- Ablage
   cE_FotosLaden = 'FotosLaden';
   cE_FotosMaxAnzahl = 'FotosMaxAnzahl'; // Maximale Anzahl Bilder im ZIP
-  cE_FotoBenennung  = 'FotoBenennung'; // Art der Bilder Namensgebung
+  cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung
   cE_CoreFTP = 'CoreFTP'; // Besonderer Upload über Core-FTP
   cE_AuchMitFoto = 'AuchMitFoto'; // wenn Fotos mit in das Zip sollen
   cE_SpalteAlsText = 'SpalteAlsText'; // bei der Ausgabe an Excel wichtig
@@ -191,6 +194,7 @@ const
 type
   // soll in Zukunft nur noch eine interne Datenstruktur sein ...
   TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
+
   TMDERec = packed record
 
     { von GaZMa }
@@ -306,8 +310,8 @@ begin
       // weitere Datenbanknamen
       AllTheMandanten.add(iDataBaseName);
       for n := 2 to cMaxMandanten do
-        AllTheMandanten.add(ReadString(sGroup, cDataBaseName + inttostr(n),
-            ''));
+        AllTheMandanten.add(ReadString(sGroup,
+          cDataBaseName + inttostr(n), ''));
       for n := pred(AllTheMandanten.count) downto 1 do
         if (AllTheMandanten[n] = '') then
           AllTheMandanten.delete(n);
@@ -319,8 +323,8 @@ begin
         ParamWhatBase := AnsiUpperCase(ParamStr(n));
         if pos(cUpperBaseSettingParam, ParamWhatBase) = 1 then
         begin
-          ChosenIndex := strtointdef(nextp(ParamWhatBase,
-              cUpperBaseSettingParam, 1), 1);
+          ChosenIndex :=
+            strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
           if (ChosenIndex <= AllTheMandanten.count) then
           begin
             iDataBaseName := AllTheMandanten[pred(ChosenIndex)];
@@ -373,4 +377,5 @@ begin
   MyProgramPath := MyApplicationPath;
   EigeneOrgaMonDateienPfad := PersonalDataDir + cApplicationName + '\';
   LoadIniF;
+
 end.
