@@ -310,6 +310,8 @@ procedure e_x_dereference(dependencies: string; fromref: string;
 // Server Infos
 function e_r_fbClientVersion: string;
 function e_r_ConnectionCount: integer;
+function e_r_Revision_Latest: single;
+function e_r_Revision_Zwang: single;
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
@@ -2487,6 +2489,16 @@ begin
   if (abs(result) <= cWahrnehmungsSchwelle) then
     result := 0;
   EndHourGlass;
+end;
+
+function e_r_Revision_Latest: single;
+begin
+  result := e_r_sql('select max(RID) from REVISION') / 1000.0;
+end;
+
+function e_r_Revision_Zwang: single;
+begin
+ result := e_r_sql('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
 end;
 
 end.

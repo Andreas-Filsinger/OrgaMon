@@ -21,6 +21,7 @@ DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-RC
 AppVersion=«RevMitPunkt» RC
+VersionInfoVersion=«RevMitPunkt».0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP

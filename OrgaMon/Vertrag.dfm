@@ -816,6 +816,10 @@ object FormVertrag: TFormVertrag
     object TabSheet3: TTabSheet
       Caption = 'Referenzen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label13: TLabel
         Left = 94
         Top = 16
@@ -1085,7 +1089,7 @@ object FormVertrag: TFormVertrag
   end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1
-    AppStoragePath = '%FORM_NAME%'
+    AppStoragePath = '%FORM_NAME%\'
     Options = [fpSize, fpLocation]
     StoredValues = <>
     Left = 488

@@ -55,7 +55,7 @@ const
   cUpdate_Fehlerhaft = 2;
   // Update müsste vorliegen kann aber nicht angewendet werden
   cUpdate_Kritisch = 3;
-  // Die aktuelle Version ist abgelaufen und MUSS geupdatet werden
+  // Die aktuelle Version ist abgelaufen oder nicht empfohlen und MUSS geupdatet werden
   cUpdate_Laufend = 4;
   // Die aktuelle Version darf nicht gestartet werden, da ein Update läuft
   cUpdate_Ungeprueft = 5;
@@ -74,7 +74,6 @@ type
     Button2: TButton;
     ListBox1: TListBox;
     CheckBox1: TCheckBox;
-    IB_Query1: TIB_Query;
     IB_Script1: TIB_Script;
     Label2: TLabel;
     Label6: TLabel;
@@ -101,11 +100,14 @@ type
     Button6: TButton;
     Label9: TLabel;
     Button7: TButton;
-    SpeedButton4: TSpeedButton;
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     IdHTTP1: TIdHTTP;
     CheckBox3: TCheckBox;
+    Label10: TLabel;
+    SpeedButton3: TSpeedButton;
+    StaticText7: TStaticText;
+    Button12: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -134,12 +136,11 @@ type
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
   private
     { Private-Deklarationen }
-    BaseUpdateRev: single;
-    CargoBayRev: single;
     ErrorCount: Integer;
-    LastHttpDisplayTime: dword;
     SQLUpdateScript: TStringList;
     SQLUpdateLog: TStringList;
     FireOnceInformed: Boolean;
@@ -147,11 +148,14 @@ type
     function CargobayWebAdress: string;
     function SetupUpdateFName(Rev: single): string;
     procedure SetToActualRevision(pIBC: TIB_Connection);
-    procedure ObtainBaseRevision(pIBC: TIB_Connection);
+
+    procedure ObtainBaseRevisions;
+    procedure ObtainUpdatePathRevision;
+    procedure ObtainCargoBayRevision;
+
     procedure DownloadUpdate(Rev: single);
     procedure UpdateRevCaptions;
 
-    function NewestUpdateRev: single;
     function NewestCargobayRev: single;
     procedure EnsureSQLUpdateScript;
     procedure UpdateUserCount;
@@ -172,7 +176,13 @@ type
   public
     { Public-Deklarationen }
     IBC: TIB_Connection;
-    BaseRev: single;
+
+    // Programm Versionen
+    BaseRev: single; // in der REVISION Tabelle
+    BaseMetaDataRev: single; // im SQL Update Script
+    ForceRev: single; // in der REVISION - Tabelle
+    CargoBayRev: single; // im Internet
+    UpdatePathRev: single; // im ./Updates Pfad
 
     function CheckIfUpdateNeeded(pIBC: TIB_Connection): Integer;
     function EnforceApplicationUpdateTo(Rev: single): Boolean;
@@ -226,7 +236,7 @@ begin
 
   // mark, that nothing is initialized
   BaseRev := cRevNotAValidProject;
-  BaseUpdateRev := cRevNotAValidProject;
+  BaseMetaDataRev := cRevNotAValidProject;
   PageControl1.ActivePage := TabSheet1;
 
   //
@@ -373,7 +383,7 @@ begin
 
       end;
 
-      BaseUpdateRev := strtodouble(copy(SQLUpdateScript[0], 2, MaxInt));
+      BaseMetaDataRev := strtodouble(copy(SQLUpdateScript[0], 2, MaxInt));
 
     end;
 end;
@@ -399,8 +409,11 @@ begin
       result := cUpdate_Aktuell;
     if iRCversion > RevAsInteger(globals.version) then
     begin
-      ShowMessage('Es ist ein verbesserter RC erschienen!' + #13 +
-        'Führen Sie bitte  die Update-Funktion aus ...');
+      ShowMessage(
+        { } 'Es ist ein verbesserter RC erschienen!' + #13 +
+        { } 'Führen Sie bitte die Update-Funktion aus.' + #13 +
+        { } 'Dies wird nur diesen RC aktualisieren.' + #13 +
+        { } 'Die stabile Version des OrgaMon bleibt bestehen.');
       result := cUpdate_Verfuegbar;
     end;
     exit;
@@ -410,9 +423,9 @@ begin
   repeat
 
     //
-    // Aktuelle Datenbank-Version ermitteln
+    // Aktuelle Datenbank-Versionen ermitteln
     //
-    ObtainBaseRevision(IBC);
+    ObtainBaseRevisions;
 
     if (RevAsInteger(BaseRev) >= 9998) then
     begin
@@ -421,7 +434,7 @@ begin
         #13 + 'Dieser Vorgang ist normalerweise innerhalb weniger Minuten abgeschlossen!'
         + #13 + 'Versuchen Sie später nocheinmal, ' + cApplicationName +
         ' zu starten. Erhalten Sie langandauernd' + #13 +
-        'diese Meldung wenden Sie sich an die EDV-Hilfestellung.' + #13 + #13 +
+        'diese Meldung wenden Sie sich an die IT-Unterstützung.' + #13 + #13 +
         'DRÜCKEN SIE JETZT <OK> UM DIE ANWENDUNG ZU BEENDEN!' + #13 +
         '<Abbrechen> würde den Updatevorgang unterbrechen und könnte schwerwiegende Folgen haben!'
         + #13 + 'Möchten Sie ' + cApplicationName + ' jetzt beenden', true))
@@ -438,6 +451,28 @@ begin
     end;
 
     IB_Events1.registered := true;
+
+    if (ForceRev > 8.0) then
+      if (RevAsInteger(globals.version) <> RevAsInteger(ForceRev)) then
+      begin
+        if doitTimeout(
+          { } 'Sie starten gerade eine Programm-Version die nicht' + #13 +
+          { } 'freigegeben ist. Wenden Sie sich an die IT-Unterstützung um' +
+          #13 +
+          { } #13 +
+          { } cApplicationName + ' Rev. ' + RevToStr(ForceRev) + #13 +
+          { } #13 +
+          { } 'zu installieren! Drücken Sie jetzt OK' + #13 +
+          { } 'um das Programm zu beenden!', 20000, true) then
+        begin
+          IBC.disconnect;
+          application.terminate;
+          result := cUpdate_Laufend;
+          exit;
+        end;
+        result := cUpdate_Kritisch;
+        break;
+      end;
 
     // alles OK?
     if (globals.version = BaseRev) then
@@ -461,7 +496,7 @@ begin
     EnsureSQLUpdateScript;
 
     // Ist die Datenbank veraltet?
-    if RevAsInteger(BaseUpdateRev) > RevAsInteger(BaseRev) then
+    if RevAsInteger(BaseMetaDataRev) > RevAsInteger(BaseRev) then
     begin
       SQL_UpdateNotwendig := true;
       break;
@@ -486,24 +521,20 @@ var
   _iCareTakerOffline: Boolean;
 begin
   BeginHourGlass;
-  if not(assigned(IBC)) then
-    IBC := pIBC;
-  with IB_Query1 do
-  begin
-    IB_Connection := IBC;
-    Open;
-    insert;
-    FieldByName('RID').AsInteger := round(globals.version * 1000);
-    FieldByName('DATUM').AsDateTime := now;
-    post;
-    close;
-  end;
+
+  e_x_sql(
+    { } 'insert into REVISION ' +
+    { } '(RID,DATUM) ' +
+    { } 'values (' +
+    { } inttostr(round(globals.version * 1000)) + ',' +
+    { } 'CURRENT_TIMESTAMP)');
+
   BaseRev := globals.version;
 
   // Erfolg verbuchen
   _iCareTakerOffline := iCareTakerOffline;
   iCareTakerOffline := false;
-  if CareTakerLog(cApplicationName + ' Rev. ' + RevTostr(globals.version) +
+  if CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) +
     ' active!') <> -1 then
     NachMeldungen;
   iCareTakerOffline := _iCareTakerOffline;
@@ -513,28 +544,68 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormBaseUpdate.ObtainBaseRevision;
+procedure TFormBaseUpdate.ObtainBaseRevisions;
 begin
-  if not(assigned(IBC)) then
-    IBC := pIBC;
-  if (BaseRev < 0.999) then
-  begin
-    BaseRev := 0.999;
-    try
-      with IB_Query1 do
-      begin
-        IB_Connection := IBC;
-        Open;
-        Last;
-        if not(eof) then
-          BaseRev := FieldByName('RID').AsInteger / 1000.0;
-        close;
-      end;
-    except
-      // ;
-    end;
+  BaseRev := e_r_Revision_Latest;
+  ForceRev := e_r_Revision_Zwang;
+end;
+
+procedure TFormBaseUpdate.ObtainCargoBayRevision;
+var
+  wow: string;
+  k: Integer;
+begin
+  CargoBayRev := cRevNotAValidProject;
+  try
+    if isBeta then
+      wow := IdHTTP1.get(CargobayWebAdress + cApplicationName +
+        '-RC.html' + '?')
+    else
+      wow := IdHTTP1.get(CargobayWebAdress + cApplicationName +
+        'Rev.html' + '?');
+
+    k := pos(' Rev ', wow);
+    if (k <> -1) then
+      CargoBayRev := strtodouble(copy(wow, k + 5, 4)) / 1000
+    else
+      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + IdHTTP1.ResponseText);
+  except
+    on e: exception do
+      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + e.message);
   end;
-  UpdateRevCaptions;
+end;
+
+procedure TFormBaseUpdate.ObtainUpdatePathRevision;
+var
+  NewestUpdatesL: TStringList;
+  _Version: string;
+
+begin
+  if isBeta then
+  begin
+    _Version := FileVersion(UpdatePath + 'Setup-' + cApplicationName +
+      '-RC.exe');
+    UpdatePathRev :=
+        { } strtodoubledef(nextp(_Version, '.', 0), 0.0) +
+    { } strtodoubledef(nextp(_Version, '.', 1), 0.0) / 1000.0;
+  end
+  else
+  begin
+    //
+    NewestUpdatesL := TStringList.create;
+    dir(UpdatePath + '*-Update.exe', NewestUpdatesL, false);
+    if (NewestUpdatesL.count = 0) then
+    begin
+      UpdatePathRev := 0.000;
+    end
+    else
+    begin
+      NewestUpdatesL.sort;
+      UpdatePathRev := strtointdef(nextp(NewestUpdatesL[pred(NewestUpdatesL.count)],
+        '-', 2), 0) / 1000;
+    end;
+    NewestUpdatesL.Free;
+  end;
 end;
 
 procedure TFormBaseUpdate.FormActivate(Sender: TObject);
@@ -626,7 +697,7 @@ begin
   if isBeta then
     result := 'Setup-' + cApplicationName + '-' + 'RC.exe'
   else
-    result := 'Setup-' + cApplicationName + '-' + StrFilter(RevTostr(Rev), '.',
+    result := 'Setup-' + cApplicationName + '-' + StrFilter(RevToStr(Rev), '.',
       true) + '-' + 'Update.exe'
 end;
 
@@ -645,6 +716,11 @@ end;
 procedure TFormBaseUpdate.IdHTTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 begin
   ProgressBar1.Position := 0;
+end;
+
+function TFormBaseUpdate.NewestCargobayRev: single;
+begin
+
 end;
 
 procedure TFormBaseUpdate.DownloadUpdate(Rev: single);
@@ -692,11 +768,12 @@ end;
 procedure TFormBaseUpdate.UpdateRevCaptions;
 begin
   BeginHourGlass;
-  StaticText1.caption := RevTostr(BaseRev);
-  StaticText2.caption := RevTostr(globals.version);
-  StaticText3.caption := RevTostr(CargoBayRev);
-  StaticText5.caption := RevTostr(BaseUpdateRev);
-  StaticText6.caption := RevTostr(NewestUpdateRev);
+  StaticText1.caption := RevToStr(BaseRev);
+  StaticText2.caption := RevToStr(globals.version);
+  StaticText7.caption := RevToStr(ForceRev);
+  StaticText6.caption := RevToStr(UpdatePathRev);
+  StaticText3.caption := RevToStr(CargoBayRev);
+  StaticText5.caption := RevToStr(BaseMetaDataRev);
   Label5.caption := iDataBaseName;
   EndHourGlass;
 end;
@@ -723,28 +800,10 @@ begin
   Timer1.Enabled := false;
 end;
 
-function TFormBaseUpdate.NewestUpdateRev: single;
-var
-  NewestUpdatesL: TStringList;
-begin
-  NewestUpdatesL := TStringList.create;
-  dir(UpdatePath + '*-Update.exe', NewestUpdatesL, false);
-  if (NewestUpdatesL.count = 0) then
-  begin
-    result := 0.000;
-  end
-  else
-  begin
-    NewestUpdatesL.sort;
-    result := strtointdef(nextp(NewestUpdatesL[pred(NewestUpdatesL.count)], '-',
-      2), 0) / 1000;
-  end;
-  NewestUpdatesL.Free;
-end;
 
 procedure TFormBaseUpdate.Button9Click(Sender: TObject);
 begin
-  EnforceApplicationUpdateTo(NewestUpdateRev);
+  EnforceApplicationUpdateTo(UpdatePathRev);
 end;
 
 procedure TFormBaseUpdate.Button10Click(Sender: TObject);
@@ -765,7 +824,8 @@ begin
     end;
     REVISION.Free;
     BaseRev := cRevNotAValidProject;
-    ObtainBaseRevision(IBC);
+    ObtainBaseRevisions;
+    UpdateRevCaptions;
   end;
 end;
 
@@ -773,6 +833,11 @@ procedure TFormBaseUpdate.Button11Click(Sender: TObject);
 begin
   EnsureSQLUpdateScript;
   UpdateRevCaptions;
+end;
+
+procedure TFormBaseUpdate.Button12Click(Sender: TObject);
+begin
+  EnforceApplicationUpdateTo(ForceRev);
 end;
 
 procedure TFormBaseUpdate.IB_Events1EventAlert(Sender: TObject;
@@ -808,30 +873,6 @@ begin
   FireEvent(9.998);
 end;
 
-function TFormBaseUpdate.NewestCargobayRev: single;
-var
-  wow: string;
-  k: Integer;
-begin
-  result := cRevNotAValidProject;
-  try
-    if isBeta then
-      wow := IdHTTP1.get(CargobayWebAdress + cApplicationName +
-        '-RC.html' + '?')
-    else
-      wow := IdHTTP1.get(CargobayWebAdress + cApplicationName +
-        'Rev.html' + '?');
-
-    k := pos(' Rev ', wow);
-    if (k <> -1) then
-      result := strtodouble(copy(wow, k + 5, 4)) / 1000
-    else
-      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + IdHTTP1.ResponseText);
-  except
-    on e: exception do
-      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + e.message);
-  end;
-end;
 
 function TFormBaseUpdate.CargobayWebAdress: string;
 begin
@@ -1026,7 +1067,7 @@ begin
   begin
 
     // Datenbank-Änderungen durchführen
-    HeaderStr := ':' + RevTostr(BringTo / 1000.0);
+    HeaderStr := ':' + RevToStr(BringTo / 1000.0);
     k := UpdateData.indexof(HeaderStr);
     if k <> -1 then
     begin
@@ -1223,12 +1264,19 @@ end;
 
 procedure TFormBaseUpdate.SpeedButton2Click(Sender: TObject);
 begin
-  CargoBayRev := NewestCargobayRev;
+  ObtainCargobayRevision;
+  UpdateRevCaptions;
+end;
+
+procedure TFormBaseUpdate.SpeedButton3Click(Sender: TObject);
+begin
+  ObtainBaseRevisions;
   UpdateRevCaptions;
 end;
 
 procedure TFormBaseUpdate.SpeedButton1Click(Sender: TObject);
 begin
+  ObtainUpdatePathRevision;
   UpdateRevCaptions;
 end;
 
