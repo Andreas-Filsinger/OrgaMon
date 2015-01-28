@@ -349,10 +349,14 @@ var
 begin
   // anlegen!
   VERTRAG_R := e_w_gen('GEN_VERTRAG');
-  e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' +
-    'values (' + inttostr(VERTRAG_R) + ',' + inttostr(FormKontext.PERSON_R) +
-    ',' + inttostr(FormKontext.BAUSTELLE_R) + ',' +
-    inttostr(FormKontext.BELEG_R) + ')');
+  e_x_sql(
+    { } 'insert into VERTRAG ' +
+    { } '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' +
+    { } 'values (' +
+    { } inttostr(VERTRAG_R) + ',' +
+    { } inttostr(FormKontext.PERSON_R) + ',' +
+    { } inttostr(FormKontext.BAUSTELLE_R) + ',' +
+    { } inttostr(FormKontext.BELEG_R) + ')');
 
   // Anzeigen, hoffentlich ohne refresh!
   show;

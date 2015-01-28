@@ -506,7 +506,7 @@ begin
     // Lokale Release-Updates durchführen (jeder Client!)
     ThisRev := RevAsInteger(globals.Version);
 
-    // zuletzt benutze Version ermitteln
+    // die zuletzt benutze Version ermitteln
     try
       CheckCreateDir(EigeneOrgaMonDateienPfad);
       LastRun := TIniFile.Create(EigeneOrgaMonDateienPfad + 'LastRun.ini');

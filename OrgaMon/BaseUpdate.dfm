@@ -51,7 +51,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Label6: TLabel
         Left = 139
-        Top = 199
+        Top = 227
         Width = 194
         Height = 13
         Margins.Left = 4
@@ -62,7 +62,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Label4: TLabel
         Left = 102
-        Top = 175
+        Top = 203
         Width = 231
         Height = 13
         Margins.Left = 4
@@ -88,47 +88,9 @@ object FormBaseUpdate: TFormBaseUpdate
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object SpeedButton4: TSpeedButton
-        Left = 335
-        Top = 148
-        Width = 20
-        Height = 20
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
-          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
-          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
-          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
-          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
-          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
-          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
-          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
-          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
-          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
-          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
-          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
-          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
-          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
-          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
-          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
-          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
-          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
-          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
-          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
-          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
-        OnClick = SpeedButton4Click
-      end
       object SpeedButton1: TSpeedButton
         Left = 335
-        Top = 171
+        Top = 199
         Width = 20
         Height = 20
         Margins.Left = 4
@@ -166,7 +128,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object SpeedButton2: TSpeedButton
         Left = 335
-        Top = 195
+        Top = 223
         Width = 20
         Height = 20
         Margins.Left = 4
@@ -202,6 +164,51 @@ object FormBaseUpdate: TFormBaseUpdate
           A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
         OnClick = SpeedButton2Click
       end
+      object Label10: TLabel
+        Left = 158
+        Top = 176
+        Width = 175
+        Height = 13
+        Caption = 'verpflichtende Programm Rev.'
+      end
+      object SpeedButton3: TSpeedButton
+        Left = 335
+        Top = 172
+        Width = 20
+        Height = 20
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        OnClick = SpeedButton3Click
+      end
       object StaticText2: TStaticText
         Left = 357
         Top = 149
@@ -218,7 +225,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object StaticText3: TStaticText
         Left = 357
-        Top = 196
+        Top = 223
         Width = 47
         Height = 17
         Margins.Left = 4
@@ -232,7 +239,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Button8: TButton
         Left = 406
-        Top = 196
+        Top = 224
         Width = 69
         Height = 22
         Margins.Left = 4
@@ -246,7 +253,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object ProgressBar1: TProgressBar
         Left = 7
-        Top = 224
+        Top = 248
         Width = 468
         Height = 17
         Margins.Left = 4
@@ -257,7 +264,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Button4: TButton
         Left = 406
-        Top = 149
+        Top = 148
         Width = 69
         Height = 22
         Margins.Left = 4
@@ -270,7 +277,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object Button9: TButton
         Left = 406
-        Top = 172
+        Top = 197
         Width = 69
         Height = 22
         Margins.Left = 4
@@ -283,7 +290,7 @@ object FormBaseUpdate: TFormBaseUpdate
       end
       object StaticText6: TStaticText
         Left = 357
-        Top = 172
+        Top = 198
         Width = 48
         Height = 18
         Margins.Left = 4
@@ -333,6 +340,33 @@ object FormBaseUpdate: TFormBaseUpdate
         Caption = 'Rechner neu starten'
         TabOrder = 9
         OnClick = Button7Click
+      end
+      object StaticText7: TStaticText
+        Left = 357
+        Top = 173
+        Width = 48
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        AutoSize = False
+        BorderStyle = sbsSunken
+        Caption = 'StaticText2'
+        TabOrder = 10
+      end
+      object Button12: TButton
+        Left = 406
+        Top = 172
+        Width = 69
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Ausf'#252'hren'
+        TabOrder = 11
+        OnClick = Button12Click
       end
     end
     object TabSheet2: TTabSheet
@@ -574,18 +608,6 @@ object FormBaseUpdate: TFormBaseUpdate
         TabOrder = 12
       end
     end
-  end
-  object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
-    IB_Connection = DataModuleDatenbank.IB_Connection1
-    SQL.Strings = (
-      'SELECT *'
-      'FROM REVISION'
-      'ORDER BY RID'
-      'FOR UPDATE')
-    RequestLive = True
-    Left = 296
-    Top = 5
   end
   object IB_Script1: TIB_Script
     OnError = IB_Script1Error

@@ -25,9 +25,9 @@ unit anfix32;
 interface
 
 uses
-{$ifndef linux}
+{$IFNDEF linux}
   windows,
-{$endif}
+{$ENDIF}
   classes,
   SysUtils;
 
@@ -371,7 +371,7 @@ procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
 function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
 function mkDateTime(s: string): TDateTime; overload;
 function DatumUhr: string; // Zeitstempel Datum " " Uhr
-function dTimeStamp(d:TDateTime): string;
+function dTimeStamp(d: TDateTime): string;
 
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;
@@ -736,9 +736,9 @@ begin
   result := DatumLog + ' ' + uhr8;
 end;
 
-function dTimeStamp(d:TDateTime): string;
+function dTimeStamp(d: TDateTime): string;
 begin
- result := long2dateLog(d) + ' ' + SecondsToStr(d);
+  result := long2dateLog(d) + ' ' + SecondsToStr(d);
 end;
 
 function JahresZahl: string;
@@ -1123,7 +1123,6 @@ begin
 
 end;
 
-
 function long2date { 10 } (dlong: longint): string; overload;
 var
   j, m, T: Word;
@@ -1173,7 +1172,7 @@ end;
 
 function long2dateLog(dlong: TDateTime): string; // JJJJMMJJ
 begin
- result := long2dateLog(DateTime2Long(dlong));
+  result := long2dateLog(DateTime2long(dlong));
 end;
 
 function long2date(dlong: TDateTime): string; overload;
@@ -4450,7 +4449,6 @@ begin
   until true;
 end;
 
-
 function NextMonth(dlong: TAnfixDate): TAnfixDate;
 var
   m, d, y: integer;
@@ -4545,21 +4543,21 @@ end;
 
 function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
 var
- Richtung : integer;
+  Richtung: integer;
 begin
   result := dlong;
-  if (Plus=0) then
-   exit;
+  if (plus = 0) then
+    exit;
 
-  if (Plus>0) then
-   Richtung := 1
+  if (plus > 0) then
+    Richtung := 1
   else
-   Richtung := -1;
+    Richtung := -1;
 
   repeat
     result := datePlus(result, Richtung);
     if (WeekDay(result) < cDATE_SAMSTAG) and not(Feiertag(result)) then
-     Plus := Plus - Richtung;
+      plus := plus - Richtung;
   until (plus = 0);
 end;
 
@@ -5741,10 +5739,11 @@ begin
         nFixFInfo := 0;
         if VerQueryValue(pFileInfo, '\', pointer(pFixFInfo), nFixFInfo) then
         begin
-          result := format('%d.%d.%d.%d', [HiWord(pFixFInfo^.dwFileVersionMS),
-            LoWord(pFixFInfo^.dwFileVersionMS),
-            HiWord(pFixFInfo^.dwFileVersionLS),
-            LoWord(pFixFInfo^.dwFileVersionLS)]);
+          result := format('%d.%d.%d.%d', [
+            { } HiWord(pFixFInfo^.dwFileVersionMS),
+            { } LoWord(pFixFInfo^.dwFileVersionMS),
+            { } HiWord(pFixFInfo^.dwFileVersionLS),
+            { } LoWord(pFixFInfo^.dwFileVersionLS)]);
         end;
       end;
     finally
@@ -6079,4 +6078,4 @@ begin
   FreeMem(_PerfData);
 end;
 
-end.
+end.
