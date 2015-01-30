@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -25,12 +25,6 @@
   |
 }
 unit BaseUpdate;
-//
-// todo
-//
-// Bei einem Server die OrgaMon.bat starten!
-// (Und nicht den OrgaMon mit irgendwelchen Parametern)
-//
 
 interface
 
@@ -125,19 +119,18 @@ type
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure TabSheet1Show(Sender: TObject);
     procedure ermittelnClick(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormDestroy(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
-    procedure SpeedButton4Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
+    procedure TabSheet2Show(Sender: TObject);
+    procedure TabSheet1Show(Sender: TObject);
   private
     { Private-Deklarationen }
     ErrorCount: Integer;
@@ -149,15 +142,9 @@ type
     function SetupUpdateFName(Rev: single): string;
     procedure SetToActualRevision(pIBC: TIB_Connection);
 
-    procedure ObtainBaseRevisions;
-    procedure ObtainUpdatePathRevision;
-    procedure ObtainCargoBayRevision;
-
     procedure DownloadUpdate(Rev: single);
     procedure UpdateRevCaptions;
 
-    function NewestCargobayRev: single;
-    procedure EnsureSQLUpdateScript;
     procedure UpdateUserCount;
 
     procedure FireEvent(Rev: single);
@@ -189,6 +176,11 @@ type
     procedure DataBaseUpdate;
     procedure RestartApplication;
     function CloseOtherInstances: Boolean;
+
+    procedure ObtainBaseRevisions;
+    procedure ObtainUpdatePathRevision;
+    procedure ObtainCargoBayRevision;
+    procedure ObtainMetadataRevision;
 
   end;
 
@@ -228,18 +220,25 @@ end;
 
 procedure TFormBaseUpdate.FormCreate(Sender: TObject);
 begin
-  //
-  IB_Events1.OnEventALert := IB_Events1EventAlert;
-  //
   SQLUpdateScript := TStringList.create;
   SQLUpdateLog := TStringList.create;
+
+  // imp pend: Register Leak(SQLUpdateScript)
+  // imp pend: Register Leak(SQLUpdateLog)
+
+  //
+  IB_Events1.OnEventALert := IB_Events1EventAlert;
 
   // mark, that nothing is initialized
   BaseRev := cRevNotAValidProject;
   BaseMetaDataRev := cRevNotAValidProject;
+  ForceRev := cRevNotAValidProject;
+  CargoBayRev := cRevNotAValidProject;
+  UpdatePathRev := cRevNotAValidProject;
+
   PageControl1.ActivePage := TabSheet1;
 
-  //
+  // Register OrgaMon-Firebird-Events
   IB_Events1.events.add(cEventsDisconnect);
   IB_Events1.events.add(cEventsDown);
 
@@ -266,7 +265,7 @@ begin
   inc(ErrorCount);
 end;
 
-procedure TFormBaseUpdate.EnsureSQLUpdateScript;
+procedure TFormBaseUpdate.ObtainMetadataRevision;
 var
   n, k: Integer;
   MetaDataUpdateFname: string;
@@ -278,11 +277,11 @@ begin
 
       if FileExists(MyApplicationPath + cApplicationName + '.drc') then
       begin
+        // Entwickler-Version: laden aus der Rev-Datei des .\rev Verzeichnisses
 
         sDRC := TStringList.create;
         sDRC.LoadFromFile(MyApplicationPath + cApplicationName + '.drc');
 
-        // !Entwickler-Version: laden aus der Rev-Datei des .\rev Verzeichnisses
         repeat
 
           for n := pred(sDRC.count) downto max(0, sDRC.count - 10) do
@@ -399,26 +398,6 @@ begin
   if not(assigned(IBC)) then
     IBC := pIBC;
 
-  // Applikationsnamen wie OrgaMon.6700.exe, -RC.exe werden beim Updatesystem
-  // aussen vor gelassen! (Anwendung für Server / Betas)!
-  //
-  if isBeta then
-  begin
-    iRCversion := RevAsInteger(NewestCargobayRev);
-    if iRCversion > RevAsInteger(globals.version) then
-      result := cUpdate_Aktuell;
-    if iRCversion > RevAsInteger(globals.version) then
-    begin
-      ShowMessage(
-        { } 'Es ist ein verbesserter RC erschienen!' + #13 +
-        { } 'Führen Sie bitte die Update-Funktion aus.' + #13 +
-        { } 'Dies wird nur diesen RC aktualisieren.' + #13 +
-        { } 'Die stabile Version des OrgaMon bleibt bestehen.');
-      result := cUpdate_Verfuegbar;
-    end;
-    exit;
-  end;
-
   SQL_UpdateNotwendig := false;
   repeat
 
@@ -451,6 +430,27 @@ begin
     end;
 
     IB_Events1.registered := true;
+
+    // Applikationsnamen wie OrgaMon.6700.exe, -RC.exe werden beim Updatesystem
+    // aussen vor gelassen! (Anwendung für Server / Betas)!
+    //
+    if isBeta then
+    begin
+      ObtainCargoBayRevision;
+      iRCversion := RevAsInteger(CargoBayRev);
+      if iRCversion > RevAsInteger(globals.version) then
+        result := cUpdate_Aktuell;
+      if iRCversion > RevAsInteger(globals.version) then
+      begin
+        ShowMessage(
+          { } 'Es ist ein verbesserter RC erschienen!' + #13 +
+          { } 'Führen Sie bitte die Update-Funktion aus.' + #13 +
+          { } 'Dies wird nur diesen RC aktualisieren.' + #13 +
+          { } 'Die stabile Version des OrgaMon bleibt bestehen.');
+        result := cUpdate_Verfuegbar;
+      end;
+      exit;
+    end;
 
     if (ForceRev > 8.0) then
       if (RevAsInteger(globals.version) <> RevAsInteger(ForceRev)) then
@@ -493,7 +493,7 @@ begin
     end;
 
     // Infos nachladen ...
-    EnsureSQLUpdateScript;
+    ObtainMetadataRevision;
 
     // Ist die Datenbank veraltet?
     if RevAsInteger(BaseMetaDataRev) > RevAsInteger(BaseRev) then
@@ -586,7 +586,7 @@ begin
     _Version := FileVersion(UpdatePath + 'Setup-' + cApplicationName +
       '-RC.exe');
     UpdatePathRev :=
-        { } strtodoubledef(nextp(_Version, '.', 0), 0.0) +
+    { } strtodoubledef(nextp(_Version, '.', 0), 0.0) +
     { } strtodoubledef(nextp(_Version, '.', 1), 0.0) / 1000.0;
   end
   else
@@ -601,27 +601,18 @@ begin
     else
     begin
       NewestUpdatesL.sort;
-      UpdatePathRev := strtointdef(nextp(NewestUpdatesL[pred(NewestUpdatesL.count)],
-        '-', 2), 0) / 1000;
+      UpdatePathRev :=
+        strtointdef(nextp(NewestUpdatesL[pred(NewestUpdatesL.count)], '-', 2),
+        0) / 1000;
     end;
     NewestUpdatesL.Free;
   end;
-end;
-
-procedure TFormBaseUpdate.FormActivate(Sender: TObject);
-begin
-  BeginHourGlass;
-  CargoBayRev := NewestCargobayRev;
-  UpdateRevCaptions;
-  Timer1.Enabled := true;
-  EndHourGlass;
 end;
 
 function TFormBaseUpdate.EnforceApplicationUpdateTo(Rev: single): Boolean;
 var
   UpdateQuellen: TStringList;
   UpdateQuelleGefunden: Boolean;
-  ImInternetRev: single;
 
   function CheckUpdateQuellen: Boolean;
   var
@@ -659,13 +650,13 @@ begin
   if not(UpdateQuelleGefunden) then
   begin
     // Jetzt noch via Internet suchen
-    ImInternetRev := NewestCargobayRev;
+    ObtainCargoBayRevision;
 
-    if (Rev <= ImInternetRev) and (ImInternetRev <> cRevNotAValidProject) then
+    if (Rev <= CargoBayRev) and (CargoBayRev <> cRevNotAValidProject) then
     begin
       // OK, im Internet liegt auf alle Fälle was
       UpdateQuellen.clear;
-      UpdateQuellen.add(UpdatePath + SetupUpdateFName(ImInternetRev));
+      UpdateQuellen.add(UpdatePath + SetupUpdateFName(CargoBayRev));
 
       // schon zuvor mal downgeloaded?
       UpdateQuelleGefunden := CheckUpdateQuellen;
@@ -673,7 +664,7 @@ begin
       if not(UpdateQuelleGefunden) then
       begin
         // downloaden, und nochmal versuchen!
-        DownloadUpdate(ImInternetRev);
+        DownloadUpdate(CargoBayRev);
         UpdateQuelleGefunden := CheckUpdateQuellen;
       end;
 
@@ -689,7 +680,6 @@ begin
     CareTakerLog(cERRORTExt + ' EnforceBaseUpdate: "' + SetupUpdateFName(Rev) +
       '" fehlt!');
   end;
-
 end;
 
 function TFormBaseUpdate.SetupUpdateFName(Rev: single): string;
@@ -716,11 +706,6 @@ end;
 procedure TFormBaseUpdate.IdHTTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 begin
   ProgressBar1.Position := 0;
-end;
-
-function TFormBaseUpdate.NewestCargobayRev: single;
-begin
-
 end;
 
 procedure TFormBaseUpdate.DownloadUpdate(Rev: single);
@@ -778,6 +763,25 @@ begin
   EndHourGlass;
 end;
 
+procedure TFormBaseUpdate.TabSheet1Show(Sender: TObject);
+begin
+  BeginHourGlass;
+  ObtainBaseRevisions;
+  ObtainCargoBayRevision;
+  ObtainUpdatePathRevision;
+  UpdateRevCaptions;
+  EndHourGlass;
+end;
+
+procedure TFormBaseUpdate.TabSheet2Show(Sender: TObject);
+begin
+  BeginHourGlass;
+  ObtainBaseRevisions;
+  ObtainMetadataRevision;
+  UpdateRevCaptions;
+  EndHourGlass;
+end;
+
 procedure TFormBaseUpdate.Timer1Timer(Sender: TObject);
 begin
   if NoTimer then
@@ -795,11 +799,15 @@ begin
   UpdateUserCount;
 end;
 
+procedure TFormBaseUpdate.FormActivate(Sender: TObject);
+begin
+  Timer1.Enabled := true;
+end;
+
 procedure TFormBaseUpdate.FormDeactivate(Sender: TObject);
 begin
   Timer1.Enabled := false;
 end;
-
 
 procedure TFormBaseUpdate.Button9Click(Sender: TObject);
 begin
@@ -831,7 +839,7 @@ end;
 
 procedure TFormBaseUpdate.Button11Click(Sender: TObject);
 begin
-  EnsureSQLUpdateScript;
+  ObtainMetadataRevision;
   UpdateRevCaptions;
 end;
 
@@ -873,16 +881,9 @@ begin
   FireEvent(9.998);
 end;
 
-
 function TFormBaseUpdate.CargobayWebAdress: string;
 begin
-  result := 'http://cargobay.orgamon.net/';
-end;
-
-procedure TFormBaseUpdate.TabSheet1Show(Sender: TObject);
-begin
-  CargoBayRev := NewestCargobayRev;
-  UpdateRevCaptions;
+  result := 'http://CargoBay.OrgaMon.net/';
 end;
 
 procedure TFormBaseUpdate.FireEvent(Rev: single);
@@ -1000,7 +1001,7 @@ var
 begin
   // hole neueste Infos
   SQLUpdateLog.clear;
-  EnsureSQLUpdateScript;
+  ObtainMetadataRevision;
 
   // alle freundlich aufordern, das Programm zu verlassen!
   BeginHourGlass;
@@ -1169,11 +1170,6 @@ begin
   end;
 end;
 
-procedure TFormBaseUpdate.FormDestroy(Sender: TObject);
-begin
-  SQLUpdateScript.Free;
-end;
-
 procedure TFormBaseUpdate.RestartApplication;
 var
   AllParams: string;
@@ -1264,7 +1260,7 @@ end;
 
 procedure TFormBaseUpdate.SpeedButton2Click(Sender: TObject);
 begin
-  ObtainCargobayRevision;
+  ObtainCargoBayRevision;
   UpdateRevCaptions;
 end;
 
@@ -1277,11 +1273,6 @@ end;
 procedure TFormBaseUpdate.SpeedButton1Click(Sender: TObject);
 begin
   ObtainUpdatePathRevision;
-  UpdateRevCaptions;
-end;
-
-procedure TFormBaseUpdate.SpeedButton4Click(Sender: TObject);
-begin
   UpdateRevCaptions;
 end;
 

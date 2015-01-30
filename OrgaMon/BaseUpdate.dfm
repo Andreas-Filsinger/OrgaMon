@@ -15,7 +15,6 @@ object FormBaseUpdate: TFormBaseUpdate
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
   PixelsPerInch = 96
   TextHeight = 13
@@ -36,7 +35,7 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = 'Anwendungs Update'
+      Caption = 'Anwendungs-Update'
       OnShow = TabSheet1Show
       object Label2: TLabel
         Left = 243
@@ -374,8 +373,9 @@ object FormBaseUpdate: TFormBaseUpdate
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = 'Datenbank Update'
+      Caption = 'Datenbank-Update'
       ImageIndex = 1
+      OnShow = TabSheet2Show
       object Label1: TLabel
         Left = 153
         Top = 45

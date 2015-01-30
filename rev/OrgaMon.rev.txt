@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.081 (30.01.15) Andreas Filsinger
+
+ Neu: Update: Verbesserte RC- und Rev. Update Logik
+ Neu: Update: REVISION: Verstellen des DATUM in die Zukunft: Zwang auf diese Version
+
 Rev 8.080 (23.01.15) Andreas Filsinger
 
  Bug: Scanner: Taste <F2> markierte NICHT den alten Inhalt des Eingabefeldes

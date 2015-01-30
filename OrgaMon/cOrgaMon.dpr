@@ -81,6 +81,7 @@ var
   Ident: TIndentitaet;
   Modus: string;
   _iDataBaseName: string;
+  ForceRev: single;
 
 procedure RunAsXMLRPC;
 var
@@ -332,6 +333,18 @@ begin
       DebugMode := true;
       DebugLogPath := globals.DiagnosePath;
     end;
+
+    // Aktueller Versionszwang?
+    ForceRev := e_r_Revision_Zwang;
+    if (ForceRev > 8.0) then
+      if (RevAsInteger(globals.version) <> RevAsInteger(ForceRev)) then
+      begin
+        writeln(
+          { } cERRORText +
+          { } ' Es besteht Versionszwang zu Rev. ' +
+          { } RevToStr(ForceRev) + '!');
+        halt(1);
+      end;
 
     // Systemparameter ermitteln
     e_r_LadeParameter;
