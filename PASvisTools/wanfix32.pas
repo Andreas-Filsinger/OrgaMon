@@ -784,10 +784,10 @@ procedure BMPScramble(const b: TBitmap; Key: integer);
 // different key-values for different pictures.
 //
 //
-// Rev. 1.001 (2001-12-02) Andreas Filsinger, www.cargobay.de
+// Rev. 1.001 (2001-12-02) Andreas Filsinger
 // new: "global" var "BMPScrambleSeed"
 // fix: NextModulu Bug
-// Rev. 1.000 (2001-12-02) Andreas Filsinger, www.cargobay.de
+// Rev. 1.000 (2001-12-02) Andreas Filsinger
 // info: This is my delphi 6.01 Version: There where two reasons
 // because i rewrite the code.
 // 1) In the Delphi Help there is a hint, that you should NOT
