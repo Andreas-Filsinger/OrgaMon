@@ -55,6 +55,13 @@ class twebshop_cart extends tvisual {
         global $orgamon;
         
         $delivery = $orgamon->getDeliveryPrice($this->person_r);
+        
+        /* --> 04.02.2015 michaelhacksoftware : Standardversandkosten anzeigen, wenn unbekannt */
+        if ($delivery == twebshop_price::TYPE_UNKNOWN) {
+            $delivery = DEFAULT_DELIVERY_PRICE;
+        }
+        /* <-- */
+
         $this->delivery->setValues($delivery);
         unset($delivery);
         
