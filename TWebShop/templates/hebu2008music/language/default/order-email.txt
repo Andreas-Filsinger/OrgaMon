@@ -2,6 +2,27 @@
 
 wir haben Ihre WebShop-Bestellung soeben erhalten. 
 Die Nummer des Bestellbelegs lautet ~BELEG_NO~.
- 
-Wir danken für Ihre Bestellung,
-mfG, Ihr HeBu-Team
+
+Bestellübersicht
+
+----------------------------------------------------------------------------------------------
+Menge  Art.-Nr.    Titel                                                            Betrag EUR
+                   Komponist / Arrangeur / Originalverlag
+----------------------------------------------------------------------------------------------
+~ORDER_LIST_ITEMS~
+----------------------------------------------------------------------------------------------
+Versandkosten                                                                 ~ORDER_SUM_SHIP~
+==============================================================================================
+Gesamtsumme                                                                  ~ORDER_SUM_TOTAL~
+==============================================================================================
+~ORDER_DELIVERY~
+Wir danken für Ihre Bestellung
+Ihr Team vom
+
+HeBu Musikverlag GmbH
+Gottlieb-Daimler-Straße 22
+D-76703 Kraichtal (Germany)
+Tel. +49 (0)7250 9228-10
+Fax +49 (0)7250 9228-29
+mailto:noten@hebu-music.de
+www.hebu-music.de 

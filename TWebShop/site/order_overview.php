@@ -3,7 +3,7 @@ if ($site->isActive()) {
     $template->setTemplates(array(twebshop_article::CLASS_NAME => _TEMPLATE_ARTICLE_ORDER,
         twebshop_cart::CLASS_NAME => _TEMPLATE_CART_ORDER,
         twebshop_article_variants::CLASS_NAME => _TEMPLATE_VERSIONS_ORDER,
-        twebshop_price::CLASS_NAME => _TEMPLATE_PRICE_ORDER,
+        twebshop_price::CLASS_NAME => $user->showDiscount() ? _TEMPLATE_PRICE_ORDER_DISCOUNT : _TEMPLATE_PRICE_ORDER,
         twebshop_delivery::CLASS_NAME => _TEMPLATE_PRICE_ORDER_DELIVERY,
         twebshop_person::CLASS_NAME => _TEMPLATE_PERSON_ORDER_OVERVIEW,
         twebshop_user::CLASS_NAME => _TEMPLATE_PERSON_ORDER_OVERVIEW,

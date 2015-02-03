@@ -2,7 +2,9 @@
 
 if ($session->getTmpVar("tob_accepted", $shop->getCurrentSite())) {
 
+    $Summary = $cart->getOrderSummary($user->showDiscount()); // 02.02.15 michaelhacksoftware: Zusammenfassung für Bestätigungsmail erstellen
     $beleg_r = $orgamon->execOrder($user->getID());
+
     while (true) {
         
         if ($errorlist->error) {
@@ -65,7 +67,24 @@ if ($session->getTmpVar("tob_accepted", $shop->getCurrentSite())) {
 
         $messagelist->add($message);
 
-        $orgamon->sendMail($user->getID(), $message, str_replace("~BELEG_NO~", $beleg_no, $user->getFromHTMLTemplate(_TEMPLATE_PERSON_ORDER_EMAIL)));
+        /* --> 02.02.2015 michaelhacksoftware: Detaillierte Bestellübersicht */
+        if ($bill->TERMIN != "01.01.1970") {
+            $Delivery = CRLF . SENTENCE_EXPECTED_DATE_OF_DELIVERY . ": " . $bill->TERMIN . CRLF;
+        } else {
+            $Delivery = "";
+        }
+        
+        $Template = $user->getFromHTMLTemplate(_TEMPLATE_PERSON_ORDER_EMAIL);
+        
+        $Template = str_replace("~BELEG_NO~",         $beleg_no,            $Template);
+        $Template = str_replace("~ORDER_LIST_ITEMS~", $Summary['Items'],    $Template);
+        $Template = str_replace("~ORDER_SUM_SHIP~",   $Summary['Shipping'], $Template);
+        $Template = str_replace("~ORDER_SUM_TOTAL~",  $Summary['Total'],    $Template);
+        $Template = str_replace("~ORDER_DELIVERY~",   $Delivery,            $Template);
+
+        $orgamon->sendMail($user->getID(), $message, $Template);
+        /* <-- */
+        
         $messagelist->add(SENTENCE_YOU_WILL_RECEIVE_A_CONFIRMATION_EMAIL);
         break;
     }

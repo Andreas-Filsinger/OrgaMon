@@ -98,6 +98,10 @@ class twebshop_price extends tvisual {
         return $this->flat_netto;
     }
 
+    public function getPercent() {
+        return $this->percent;
+    }
+    
     public function getSumNetto() {
         return $this->sum_netto;
     }

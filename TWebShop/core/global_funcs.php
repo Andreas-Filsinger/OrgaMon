@@ -322,6 +322,18 @@ function str2url($Text) {
 }
 /* <-- */
 
+/* --> 01.02.2015 michaelhacksoftware: Text mit fester Länge ausgeben */
+function str_fixed_len($Text, $Len) {
+
+    if (strlen($Text) > $Len) {
+        return substr($Text, 0, $Len);
+    }
+
+    return str_pad($Text, $Len);
+
+}
+/* <-- */
+    
 //ZEIT/DATUM
 function ISO2Unix($iso) {
     return mktime(intval(substr($iso, 11, 2)), intval(substr($iso, 14, 2)), intval(substr($iso, 17, 2)), intval(substr($iso, 5, 2)), intval(substr($iso, 8, 2)), intval(substr($iso, 0, 4)));
