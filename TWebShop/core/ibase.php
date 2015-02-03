@@ -86,8 +86,6 @@ class tibase {
             $errorlist->add("ibase: Weiss nicht, auf wen ich konnektieren soll");
         }
 
-$this->ib_passwd = "masterkey";
-
         $this->connectionHandle = @ibase_connect($this->ib_name, $this->ib_user, $this->ib_passwd);
         if ($this->connectionHandle == "") {
             $this->set_error(0);

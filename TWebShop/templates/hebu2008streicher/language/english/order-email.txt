@@ -1,7 +1,28 @@
-Dear ~VORNAME~  ~NACHNAME~,
+﻿Dear ~VORNAME~  ~NACHNAME~,
 
 we have just received your order. Thank you!
 The order number is ~BELEG_NO~.
- 
+
+Order overview
+
+----------------------------------------------------------------------------------------------
+Quant. Order id    Title                                                             Price EUR
+                   Composer / Arranger / Publisher
+----------------------------------------------------------------------------------------------
+~ORDER_LIST_ITEMS~
+----------------------------------------------------------------------------------------------
+Shipping                                                                      ~ORDER_SUM_SHIP~
+==============================================================================================
+Sum                                                                          ~ORDER_SUM_TOTAL~
+==============================================================================================
+~ORDER_DELIVERY~
 best regards,
-the HeBu-team
+the team of
+
+HeBu Musikverlag GmbH
+Gottlieb-Daimler-Straße 22
+D-76703 Kraichtal (Germany)
+Phone +49 (0)7250 9228-10
+Fax +49 (0)7250 9228-29
+mailto:noten@hebu-music.de
+www.hebu-music.de

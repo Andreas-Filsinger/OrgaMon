@@ -277,6 +277,44 @@ class twebshop_cart extends tvisual {
         return $template;
     }
 
+    /* --> 02.02.2015 michaelhacksoftware: Artikelübersicht für Bestellmail erstellen */
+    public function getOrderSummary($Discount) {
+    
+        $Values = array();
+
+        /* === Artikelliste === */
+        $Values['Items'] = "";
+
+        foreach ($this->article as $Article) {
+        
+            $Values['Items'] .= str_fixed_len($Article->quantity, 6) . " " .
+                                str_fixed_len($Article->NUMERO,  11) . " " .
+                                str_fixed_len($Article->TITEL,   64) . " " .
+                                str_pad(number_format($Article->price->getSumBrutto(), 2, ",", "."), 10, ' ', STR_PAD_LEFT) .
+                                
+                                CRLF .
+                                
+                                str_fixed_len("", 19) .
+                                str_fixed_len($Article->getComposer() . " / " . $Article->getArranger() . " / " . $Article->getPublisher(), 59) . " " .
+                                str_pad($Discount ? "(" . number_format($Article->price->getSumNetto(), 2, ",", ".") . " - " . $Article->price->getPercent() . "%)" : "", 15, ' ', STR_PAD_LEFT) . 
+
+                                CRLF;
+
+        }
+
+        $Values['Items'] = substr($Values['Items'], 0, -2);
+        
+        /* === Versandkosten === */
+        $Values['Shipping'] = str_pad(number_format($this->getDeliveryPriceSumme(), 2, ",", "."), 16, ' ', STR_PAD_LEFT);
+        
+        /* === Gesamtpreis === */
+        $Values['Total'] = str_pad(number_format($this->getSum(), 2, ",", "."), 17, ' ', STR_PAD_LEFT);
+
+        return $Values;
+
+    }
+    /* <-- */
+
     /* public function __sleep()
       { //return array_merge(array("person_r","positions","sum","delivery","article"),parent::__sleep());
       } */

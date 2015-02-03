@@ -249,6 +249,7 @@ define("SENTENCE_DOWNLOAD_FLASH","Macromedia Flash Player herunterladen");
 define("SENTENCE_DOWNLOAD_WAS_SUCCESSFUL","Download erfolgreich.");
 define("SENTENCE_ERROR_HAS_OCCURED","Es sind Fehler aufgetreten.");
 define("SENTENCE_EXTENDED_SEARCH","Detailsuche");
+define("SENTENCE_EXPECTED_DATE_OF_DELIVERY","Voraussichtliches Versanddatum");
 define("SENTENCE_FLASH_REQUIRED","Zum Anh&ouml;ren der H&ouml;rproben ist der Macromedia Flash-Player erforderlich.");
 define("SENTENCE_FORGOTTEN_PASSWORD","Passwort vergessen ?");
 define("SENTENCE_FREE_OF_CHARGE","kostenlos");
