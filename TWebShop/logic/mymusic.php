@@ -89,8 +89,8 @@ class twebshop_mymusic extends tvisual {
 class twebshop_mymusic_item extends tvisual {
 
     static public $properties = array("ARTIKEL", "ARTIKEL_R", "MENGE_AGENT", "MENGE_GELIEFERT", "BELEG_R", "ANLAGE"); //oben auch im SQL-Statement ergänzen
-    private $rid = 0;
-    private $article = NULL;
+    protected $rid = 0;
+    protected $article = NULL;
 
     const TABLE = TABLE_DELIVERY;
     const CLASS_NAME = "PHP5CLASS T_WEBSHOP_MYMUSIC_ITEM";
