@@ -14,6 +14,18 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2014 by Michael Hack
 // INFO END
 
+Rev 3.030 (04.02.15) Michael Hack
+
+ Neu: Downloadbare Einzelstimmen als PDF
+ Neu: Bestellübersicht in Bestätigungsmails
+ Neu: Standardversandkosten anzeigen, wenn genaue Versandkosten unbekannt sind
+
+ Geändert: Versandkosten immer abfragen und nicht mehr zwischenspeichern
+
+ Bug: Ausgabe nach PDF Datei beenden
+ Bug: Rabatt in Schritt 3/4 des Bestellprozesses anzeigen
+ Bug: Fehlende Template Dateien im "hebu2008streicher" hinzugefügt
+
 Rev 3.029 (19.11.14) Andreas Filsinger
 
  Neu: semipersistent via memcache: "pconnect" anstelle von "connect"
