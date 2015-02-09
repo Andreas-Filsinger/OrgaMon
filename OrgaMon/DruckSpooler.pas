@@ -123,7 +123,9 @@ uses
   basic32, CareTakerClient, Artikel,
   WarenBewegung, dbOrgaMon,
   wanfix32, Datenbank, main;
+
 {$R *.dfm}
+
 function Resolve(const VarName: ShortString): ShortString;
 var
   sTable: string;

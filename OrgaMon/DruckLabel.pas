@@ -103,8 +103,8 @@ implementation
 
 uses
   globals, anfix32, printers,
-  basic32, DruckSpooler, Funktionen_Beleg,
-  CareTakerClient, wanfix32;
+  basic32, DruckSpooler, dbOrgaMon,
+  Funktionen_Beleg, CareTakerClient, wanfix32;
 
 procedure TFormDruckLabel.Button1Click(Sender: TObject);
 begin

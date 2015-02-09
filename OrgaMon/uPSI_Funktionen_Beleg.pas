@@ -315,7 +315,6 @@ begin
  S.RegisterDelphiFunction(@e_r_Artikel, 'e_r_Artikel', cdRegister);
  S.RegisterDelphiFunction(@e_r_ArtikelSortieren, 'e_r_ArtikelSortieren', cdRegister);
  S.RegisterDelphiFunction(@e_r_ArtikelLink, 'e_r_ArtikelLink', cdRegister);
- S.RegisterDelphiFunction(@ResolveSQL, 'ResolveSQL', cdRegister);
  S.RegisterDelphiFunction(@e_x_dereference, 'e_x_dereference', cdRegister);
  S.RegisterDelphiFunction(@e_x_dereference2_P, 'e_x_dereference2', cdRegister);
  S.RegisterDelphiFunction(@e_r_ErwarteteMenge, 'e_r_ErwarteteMenge', cdRegister);

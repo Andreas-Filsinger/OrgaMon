@@ -215,6 +215,9 @@ function Datum_coalesce(f: TdboField; d: TANFiXDate): TANFiXDate;
 function bool2cC(b: boolean): string;
 function bool2cC_AsString(b: boolean): string;
 
+// Callback für D-BASIC
+function ResolveSQL(const VarName: ShortString): ShortString;
+
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
 function RIDtostr(RID: integer): string;
@@ -2392,9 +2395,13 @@ end;
 function ResolveSQL(const VarName: ShortString): ShortString;
 begin
   if (pos('select', VarName) = 1) then
+  begin
     result := e_r_sqls(VarName)
-  else
+  end else
+  begin
     e_x_sql(VarName);
+    result := '';
+  end;
 end;
 
 const
