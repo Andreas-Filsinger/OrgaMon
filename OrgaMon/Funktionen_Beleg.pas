@@ -74,9 +74,6 @@ procedure e_r_ArtikelSortieren(const RIDS: TList);
 function e_r_ArtikelLink(ARTIKEL_R: integer): string;
 //
 
-function ResolveSQL(const VarName: ShortString): ShortString;
-//
-
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 // Liefert den Lager-Platz des Artikels
 
@@ -9157,11 +9154,6 @@ begin
   if (_e_r_FreiesLager = MaxInt) then
     _e_r_FreiesLager := e_r_VERLAG_R_fromVerlag(cVerlagFreiesLager);
   result := _e_r_FreiesLager;
-end;
-
-function ResolveSQL(const VarName: ShortString): ShortString;
-begin
-  result := e_r_sqls(VarName);
 end;
 
 function t_r_Beleg(BELEG_R: integer): boolean;
