@@ -164,11 +164,6 @@ begin
   result := format('%.2f', [StrToDoubleDef(result, 0)]);
 end;
 
-function _ResolveSQL(const VarName: ShortString): ShortString;
-begin
-  result := e_r_sqls(VarName);
-end;
-
 procedure TFormArtikelKasse.ArtikelTouch(ARTIKEL_R: integer);
 var
   ArtikelRow: integer;
@@ -1134,7 +1129,7 @@ begin
     with sDisplay do
     begin
       PicturePath := MyProgramPath + cHTMLTemplatesDir;
-      ResolveSQL := _ResolveSQL;
+      ResolveSQL := ResolveSQL;
       addStrings
         (e_r_sqlt('select DEFINITION from DRUCK where NAME=''Display'''));
       ShouldRUN := true;
@@ -1145,7 +1140,7 @@ begin
     with sDrucker do
     begin
       PicturePath := MyProgramPath + cHTMLTemplatesDir;
-      ResolveSQL := _ResolveSQL;
+      ResolveSQL := ResolveSQL;
       addStrings
         (e_r_sqlt(
         'select DEFINITION from DRUCK where NAME=''Kassenzettel-Kopf'''));

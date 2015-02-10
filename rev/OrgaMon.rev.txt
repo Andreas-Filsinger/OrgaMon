@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.084 (10.02.15) Andreas Filsinger
+
+ Neu: Foto: Fotobenennung=10: wie 7 aber mit "-Neu" Umbenennung
+
+Rev 8.083 (10.02.15) Andreas Filsinger
+
+ Neu: BASIC: Zentrales ResovleSQL, "update" nun möglich
+
 Rev 8.082 (02.02.15) Andreas Filsinger
 
  Bug: 400: Sollte "FileAge" misslingen wurde abgelegt.

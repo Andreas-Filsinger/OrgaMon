@@ -3015,6 +3015,39 @@ begin
             { } cValidFNameChars + '_') + '-';
 
         end;
+      10:
+        begin
+          // Erdgas Südwest
+          repeat
+
+            if (pos('FR', FotoParameter) = 1) then
+            begin
+              FotoPrefix := 'V-' +
+              { } sParameter.values[cParameter_foto_ort] + ' ' +
+              { } sParameter.values[cParameter_foto_strasse];
+              ersetze(' ', '_', FotoPrefix);
+              FotoPrefix := StrFilter(
+                { } FotoPrefix,
+                { } cValidFNameChars + '_') + '-';
+              break;
+            end;
+
+            if (pos('FL', FotoParameter) = 1) then
+            begin
+              FotoPrefix := 'N-' +
+              { } sParameter.values[cParameter_foto_ort] + ' ' +
+              { } sParameter.values[cParameter_foto_strasse];
+              ersetze(' ', '_', FotoPrefix);
+              FotoPrefix := StrFilter(
+                { } FotoPrefix,
+                { } cValidFNameChars + '_') + '-';
+              break;
+            end;
+            FotoPrefix := '';
+
+          until true;
+
+        end;
     else
 
       // Standard, 0
