@@ -216,7 +216,7 @@ function bool2cC(b: boolean): string;
 function bool2cC_AsString(b: boolean): string;
 
 // Callback für D-BASIC
-function ResolveSQL(const VarName: ShortString): ShortString;
+function ResolveSQL(const sql: String): String;
 
 // Tools für SQL Abfragen
 function isRID(RID: integer): string;
@@ -2392,14 +2392,14 @@ begin
   sl.free;
 end;
 
-function ResolveSQL(const VarName: ShortString): ShortString;
+function ResolveSQL(const sql: String): String;
 begin
-  if (pos('select', VarName) = 1) then
+  if (pos('select', sql) = 1) then
   begin
-    result := e_r_sqls(VarName)
+    result := e_r_sqls(sql)
   end else
   begin
-    e_x_sql(VarName);
+    e_x_sql(sql);
     result := '';
   end;
 end;

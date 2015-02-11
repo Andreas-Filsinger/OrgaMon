@@ -170,7 +170,7 @@ type
 
   SemantikProc = procedure(No: byte) of object;
   { No ist Position im der Object-Line }
-  TResolveProc = function(const VarName: ShortString): ShortString;
+  TResolveProc = function(const Request: String): String;
 
   TBasicProcessor = class(TStringList)
   private

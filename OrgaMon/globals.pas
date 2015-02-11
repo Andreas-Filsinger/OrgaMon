@@ -942,10 +942,10 @@ var
   FotoPath: string;
   KassePath: string;
 
-  // aus der ini Datei
-  iDataBaseName: AnsiString; // alles
-  iDataBaseUser: AnsiString; //
-  iDataBasePassword: AnsiString; //
+  // aus der OrgaMon.ini Datei
+  iDataBaseName: string;
+  iDataBaseUser: string;
+  iDataBasePassword: string;
 
   i_c_DataBaseFName: string; // (calculated) pfad/Dateiname der Datenbank
   i_c_DataBasePath: string; // pfad der Datenbank

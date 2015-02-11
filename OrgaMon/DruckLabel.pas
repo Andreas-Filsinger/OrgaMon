@@ -214,7 +214,7 @@ begin
   NewPrinter;
 end;
 
-function Resolve(const s: ShortString): ShortString;
+function Resolve(const s: String): String;
 begin
   result := s;
 end;
