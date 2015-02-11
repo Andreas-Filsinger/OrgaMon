@@ -126,7 +126,7 @@ uses
 
 {$R *.dfm}
 
-function Resolve(const VarName: ShortString): ShortString;
+function Resolve(const VarName: String): String;
 var
   sTable: string;
   sField: string;
