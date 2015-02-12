@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.085 (12.02.15) Andreas Filsinger
+
+ Neu: BASIC: "SQL"-Befehle > 255 Zeichen nun möglich
+ Neu: Foto: Fotobenennung=11: wie 0 aber FH mit Strasse Ort
+ Neu: FTP: Weiche bei einem Lock einer .$$$ auf eine andere Datei aus
+ Neu: FTP: Ignoriere "Connection Closed Gracefully" in einer Situation
+
 Rev 8.084 (10.02.15) Andreas Filsinger
 
  Neu: Foto: Fotobenennung=10: wie 7 aber mit "-Neu" Umbenennung

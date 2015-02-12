@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+
+Rev 1.056 (12.02.15) Andreas Filsinger
+
+ Neu: Foto: Neuer Benennungsmodus "11" = bei -FH:
+      ~Strasse~ "_" ~Ort~ "-" ~Ausbauzählernummer~
+
 Rev 1.055 (10.02.15) Andreas Filsinger
 
  Neu: Foto: Fotobenennung=10: wie 7 aber mit "-Neu" Umbenennung

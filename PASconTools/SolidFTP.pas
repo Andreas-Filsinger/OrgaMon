@@ -118,7 +118,7 @@ uses
   CareTakerClient, SimplePassword,
 
   // Indy FTP
-  IdFTPCommon, IDFtpList, IdGlobal,
+  IdFTPCommon, IDFtpList, IdGlobal, IdException,
   IdResourceStringsProtocols, IdFTPListParseBase, IdStack,
   IdFTPListParseUnix, IdFTPListParseWindowsNT, IdReplyRFC,
 
@@ -338,6 +338,8 @@ end;
 function solidHandleException(ftp: TIdFTP; ActRetry: integer;
   sMsg: string): boolean;
 begin
+  // Status "Fatal - Give up" als default
+  result := false;
   if (ActRetry >= SolidFTP_Retries) then
   begin
 
@@ -367,7 +369,6 @@ begin
       end;
 
     end;
-    result := false
   end
   else
   begin
@@ -384,6 +385,10 @@ begin
       SolidSingleStepLog('disconnect');
       ftp.Disconnect;
     except
+
+      on E: EIdConnClosedGracefully do
+      begin;
+      end;
 
       on E: EIdSocketError do
       begin
@@ -1024,8 +1029,10 @@ end;
 
 function soliddownOne(ftp: TIdFTP; SourcePath, SourceFName, DestPath: string;
   RemoteDelete: boolean = false): boolean;
+
 var
   ActRetry: integer;
+  TmpPathAndFileName: string;
 
   function _logID: string;
   begin
@@ -1049,19 +1056,30 @@ begin
         solidcdOne(ftp, SourcePath);
 
         // Weg freimachen für die neue Datei!
-        if DestPath <> '' then
+        if (DestPath <> '') then
         begin
-          if (FSize(DestPath + SourceFName + cTmpFileExtension) >= 0) then
-            FileDelete(DestPath + SourceFName + cTmpFileExtension);
+
+          // Wir downloaden in einen TMP-File
+          TmpPathAndFileName :=
+          { } DestPath +
+          { } SourceFName +
+          { } cTmpFileExtension;
+
+          if FileExists(TmpPathAndFileName) then
+            TmpPathAndFileName :=
+            { } DestPath +
+            { } SourceFName + '.' +
+            { } FindANewPassword +
+            { } cTmpFileExtension;
 
           // Datei runterladen
-          SolidSingleStepLog('get ' + SourceFName);
-          Get(SourceFName, DestPath + SourceFName + cTmpFileExtension, true);
+          SolidSingleStepLog('get ' + SourceFName + ' > ' + TmpPathAndFileName);
+          Get(SourceFName, TmpPathAndFileName, true);
 
           // Jetzt umbenenen
           FileDelete(DestPath + SourceFName);
-          FileRename(DestPath + SourceFName + cTmpFileExtension,
-            DestPath + SourceFName);
+          FileRename(TmpPathAndFileName, DestPath + SourceFName);
+
         end;
 
         if RemoteDelete then

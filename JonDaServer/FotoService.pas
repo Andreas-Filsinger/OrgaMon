@@ -38,7 +38,7 @@ uses
   JonDaExec, memcache;
 
 const
-  Version: single = 1.055; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.056; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
