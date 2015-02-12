@@ -2774,6 +2774,9 @@ begin
     { } OrtPostalisch(
     { } sParameter.values[cParameter_foto_ort]));
   FotoDateiNameBisher := sParameter.values[cParameter_foto_Datei];
+
+  // Init
+  FotoPrefix := '';
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
   ShouldAbort := false;
@@ -2810,7 +2813,6 @@ begin
         end;
       5:
         begin
-          FotoPrefix := '';
           // FH Bilder laufen in eine andere Baustelle
           if (pos('FH', FotoParameter) = 1) then
           begin
@@ -2835,7 +2837,6 @@ begin
 
           tNAMES := TsTable.Create;
           tNAMES.oTextHasLF := true;
-          FotoPrefix := '';
           repeat
 
             if (Path = '') then
@@ -2990,14 +2991,13 @@ begin
                 { } cValidFNameChars + '_') + '-';
               break;
             end;
-            FotoPrefix := '';
 
           until true;
 
         end;
       8:
         begin
-          // manuelle Weiterbearbeitung, z.B. Weiterleitung pre eMail
+          // manuelle Weiterbearbeitung, z.B. Weiterleitung per eMail
           FotoPrefix :=
           { } sParameter.values[cParameter_foto_baustelle] + '-' +
           { } sParameter.values[cParameter_foto_ABNummer] + '-';
@@ -3017,7 +3017,9 @@ begin
         end;
       10:
         begin
-          // Erdgas Südwest
+          // wie "7" Erdgas Südwest, jedoch mit Z#Neu
+          // da der OrgaMonApp-Server im Modus "7" keine "-Neu"
+          // umbenennung macht und will. Ursache unklar
           repeat
 
             if (pos('FR', FotoParameter) = 1) then
@@ -3043,39 +3045,29 @@ begin
                 { } cValidFNameChars + '_') + '-';
               break;
             end;
-            FotoPrefix := '';
 
           until true;
 
         end;
-    else
-
-      // Standard, 0
-      repeat
-
-        if (pos('SEWA Weskamp', Zaehler_Info) > 0) then
+      11:
         begin
-          FotoPrefix := 'Weskamp-';
-          break;
+          // FA,FN normal - FH = Strasse und Ort
+          repeat
+            if (pos('FH', FotoParameter) = 1) then
+            begin
+              FotoPrefix :=
+              { } sParameter.values[cParameter_foto_strasse] + ' ' +
+              { } sParameter.values[cParameter_foto_ort];
+              ersetze(' ', '_', FotoPrefix);
+              FotoPrefix := StrFilter(
+                { } FotoPrefix,
+                { } cValidFNameChars + '_') + '-';
+              break;
+            end;
+
+          until true;
+
         end;
-
-        if (pos('SEWA Hoehner', Zaehler_Info) > 0) or
-          (pos('SEWA H”hner', Zaehler_Info) > 0) or
-          (pos('SEWA Höhner', Zaehler_Info) > 0) then
-        begin
-          FotoPrefix := 'Höhner-';
-          break;
-        end;
-
-        if pos('SEWA Heupel', Zaehler_Info) > 0 then
-        begin
-          FotoPrefix := 'Heupel-';
-          break;
-        end;
-        FotoPrefix := '';
-
-      until true;
-
     end;
 
     // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
