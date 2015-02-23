@@ -1054,7 +1054,7 @@ object FormArtikel: TFormArtikel
     Top = 296
     Width = 978
     Height = 206
-    ActivePage = TabSheet6
+    ActivePage = TabSheet8
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -1806,7 +1806,7 @@ object FormArtikel: TFormArtikel
       Caption = 'Transaktionen'
       ImageIndex = 7
       object Edit4: TEdit
-        Left = 22
+        Left = 29
         Top = 29
         Width = 43
         Height = 21
@@ -2340,7 +2340,8 @@ object FormArtikel: TFormArtikel
       'ERSTEINTRAG=ERSTEINTRAG;ERSTEINTRAG DESC'
       'LETZTEAENDERUNG=LETZTEAENDERUNG;LETZTEAENDERUNG DESC'
       'LETZTERVERKAUF=LETZTERVERKAUF;LETZTERVERKAUF DESC'
-      'PAPERCOLOR=PAPERCOLOR;PAPERCOLOR DESC')
+      'PAPERCOLOR=PAPERCOLOR;PAPERCOLOR DESC'
+      'DAUER=DAUER;DAUER DESC')
     OrderingLinks.Strings = (
       'TITEL=ITEM=1'
       'MENGE=ITEM=2'
@@ -2349,7 +2350,8 @@ object FormArtikel: TFormArtikel
       'ERSTEINTRAG=ITEM=5'
       'LETZTEAENDERUNG=ITEM=6'
       'LETZTERVERKAUF=ITEM=7'
-      'PAPERCOLOR=ITEM=8')
+      'PAPERCOLOR=ITEM=8'
+      'DAUER=ITEM=9')
     RequestLive = True
     AfterPost = IB_Query1AfterPost
     AfterScroll = IB_Query1AfterScroll

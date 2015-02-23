@@ -76,7 +76,12 @@ procedure doHAB(lRID: TgpIntegerList);
 // bei "Sparte=Einbau" wird FA=, gemacht
 procedure doHAC(lRID: TgpIntegerList);
 
+// (c) Andreas Filsinger
+
 procedure doFI1(lRID: TgpIntegerList);
+
+procedure doFI2(lRID: TgpIntegerList);
+
 
 // (c) Sengül Aynaci 2012
 
@@ -412,6 +417,12 @@ begin
     if (TransaktionsName = 'FI1') then
     begin
       doFI1(lRID);
+      break;
+    end;
+
+    if (TransaktionsName = 'FI2') then
+    begin
+      doFI2(lRID);
       break;
     end;
 
@@ -1713,12 +1724,12 @@ begin
     OPen;
   end;
 
-  xImport := TXLSFIle.create(true);
+  xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
   with xImport do
   begin
-    Open(MyProgramPath + 'NonDa/Nachtrag.xls');
+    OPen(MyProgramPath + 'NonDa/Nachtrag.xls');
     ActiveSheet := 1;
     for r := 2 to RowCount do
       setHinweise(rC(r, 5), rC(r, 6));
@@ -1834,7 +1845,7 @@ begin
 
   with xImport do
   begin
-    Open(MyProgramPath + 'NonDa/Bericht.xls');
+    OPen(MyProgramPath + 'NonDa/Bericht.xls');
     ActiveSheet := 1;
     for r := 2 to RowCount do
       setMarkiert(rC(r, 4)); // Excel Spalte D
@@ -1852,7 +1863,7 @@ end;
 
 procedure doAH3(lRID: TgpIntegerList);
 var
-  xImport: TXLSFIle;
+  xImport: TXLSFile;
   cAUFTRAG: TIB_Cursor;
   cABLAGE: TIB_Cursor;
 
@@ -1901,7 +1912,7 @@ begin
   end;
 
   // Excel-Dokument öffnen
-  xImport := TXLSFIle.create(true);
+  xImport := TXLSFile.create(true);
 
   sRIDs := TStringList.create;
   sRIDs.add('RID');
@@ -1910,7 +1921,7 @@ begin
 
   with xImport do
   begin
-    Open(MyProgramPath + 'NonDa/Bericht.xls');
+    OPen(MyProgramPath + 'NonDa/Bericht.xls');
     ActiveSheet := 1;
     for r := 2 to RowCount do
     begin
@@ -2115,7 +2126,7 @@ end;
 procedure doKE9(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
-  xImport: TXLSFIle;
+  xImport: TXLSFile;
   qAUFTRAG: TIB_Query;
   sDiagnose: TStringList;
   sProtokoll: TStringList;
@@ -2156,12 +2167,12 @@ begin
     OPen;
   end;
 
-  xImport := TXLSFIle.create(true);
+  xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
   with xImport do
   begin
-    Open(MyProgramPath + 'NonDa/Nachtrag.xls');
+    OPen(MyProgramPath + 'NonDa/Nachtrag.xls');
     ActiveSheet := 1;
 
     Col_ZaehlerNummer := -1;
@@ -2304,6 +2315,85 @@ begin
   qAUFTRAG.free;
   lProtokoll.free;
   EndHourGlass;
+end;
+
+procedure doFI2(lRID: TgpIntegerList);
+var
+  n, m, o: integer;
+  qARTIKEL: TIB_Query;
+  IMEI_Hits: TStringList;
+  Log: TStringList;
+  datum, StopDatum: TAnfixDate;
+  IMEI: string;
+begin
+
+  Log := TStringList.create;
+  Log.LoadFromFile('W:\JonDaServer\JonDaServer.Log');
+  StopDatum := DatePlus(DateGet, -40);
+  IMEI_Hits := TStringList.create;
+
+  for n := pred(Log.count) downto 0 do
+  begin
+
+    if (length(Log[n]) = 23) then
+      if
+      { } (Log[n][5] = '.') and
+      { } (Log[n][8] = '.') then
+      begin
+        datum := date2long(copy(Log[n], 3, 8));
+        if (datum < StopDatum) then
+          break;
+      end;
+
+    if (pos('    IMEI ', Log[n]) = 1) then
+    begin
+      IMEI := copy(Log[n], 10, 15);
+      m := IMEI_Hits.indexof(IMEI);
+      if (m = -1) then
+        IMEI_Hits.addobject(IMEI, TObject(integer(1)))
+      else
+        IMEI_Hits.objects[m] := TObject(succ(integer(IMEI_Hits.objects[m])));
+    end;
+
+  end;
+
+  Log.free;
+
+  qARTIKEL := nQuery;
+  with qARTIKEL do
+  begin
+    sql.add('select VERLAGNO,DAUER from ARTIKEL where RID=:CROSSREF for update');
+    OPen;
+    for n := 0 to pred(lRID.count) do
+    begin
+      ParamByName('CROSSREF').AsInteger := lRID[n];
+      if not(eof) then
+      begin
+        IMEI := FieldByName('VERLAGNO').AsString;
+        if (length(IMEI) = 15) then
+        begin
+          o := IMEI_Hits.indexof(IMEI);
+          edit;
+          if (o <> -1) then
+          begin
+            FieldByName('DAUER').AsString := inttostrN( integer(IMEI_Hits.objects[o]),4);
+            IMEI_Hits.delete(o);
+          end
+          else
+          begin
+            FieldByName('DAUER').clear;
+          end;
+          post;
+        end;
+
+      end;
+    end;
+  end;
+
+  IMEI_Hits.SaveToFile(DiagnosePath + 'IMEI-unbekannt.csv');
+  qARTIKEL.free;
+  IMEI_Hits.free;
+
 end;
 
 procedure doHAC(lRID: TgpIntegerList);
@@ -2475,7 +2565,6 @@ var
   AUFTRAG_R: integer;
   qAUFTRAG: TIB_Query;
   lProtokoll: TStringList;
-  N2: string;
 begin
   BeginHourGlass;
   qAUFTRAG := DataModuleDatenbank.nQuery;

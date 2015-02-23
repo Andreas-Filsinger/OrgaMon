@@ -384,7 +384,6 @@ const
   cE_FotoQuelle = 'FotoQuelle'; // Quellverzeichnis für die Speicherkarte
   cE_FotoZiel = 'FotoZiel'; // default ~BaustellenPfad~ Fotos
   cE_FotoAblage = 'FotoAblage'; // default -ohne- Ablage
-  cE_FotosLaden = 'FotosLaden';
   cE_FotosMaxAnzahl = 'FotosMaxAnzahl'; // Maximale Anzahl Bilder im ZIP
   cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung
   cE_CoreFTP = 'CoreFTP'; // Besonderer Upload über Core-FTP
