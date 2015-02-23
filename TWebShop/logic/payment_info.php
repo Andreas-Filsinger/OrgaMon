@@ -132,7 +132,7 @@ class twebshop_payment_info extends tvisual {
 
     static public function buildMaskedBAN($ban) {
         $ban = strval($ban);
-        $length_unmasked = 3; // relativ: floor(strlen($ban) / 2);
+        $length_unmasked = 8; // relativ: floor(strlen($ban) / 2);
         $length_masked = strlen($ban) - $length_unmasked;
         return sprintf("%'*{$length_masked}s", "") . substr($ban, -$length_unmasked);
     }

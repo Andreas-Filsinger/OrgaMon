@@ -38,7 +38,7 @@ function geturl_index() {
 /* <-- */
 
 function path() {
-    return "http://" . $_SERVER["HTTP_HOST"] . pathinfo($_SERVER["PHP_SELF"], PATHINFO_DIRNAME) . "/";
+    return "http://" . $_SERVER["HTTP_HOST"] . str_replace("\\", "", pathinfo($_SERVER["PHP_SELF"], PATHINFO_DIRNAME)) . "/";
 }
 
 //ALLGEMEIN
