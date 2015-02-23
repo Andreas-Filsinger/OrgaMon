@@ -3248,7 +3248,6 @@ begin
   EnsureEntry(cE_FotoZiel, IB_Memo5.Lines);
   EnsureEntry(cE_FotosMaxAnzahl, IB_Memo5.Lines);
   EnsureEntry(cE_FotoAblage, IB_Memo5.Lines);
-  EnsureEntry(cE_FotosLaden, IB_Memo5.Lines);
   EnsureEntry(cE_FotoBenennung, IB_Memo5.Lines);
   EnsureEntry(cE_CoreFTP, IB_Memo5.Lines);
   EnsureEntry(cE_AuchMitFoto, IB_Memo5.Lines);
@@ -3554,7 +3553,7 @@ begin
     except
       on E: Exception do
       begin
-        solidLog(cERRORText + ' FotosLaden: ' + E.Message);
+        solidLog(cERRORText + ' Fotos laden: ' + E.Message);
       end;
     end;
     SolidEndTransaction;

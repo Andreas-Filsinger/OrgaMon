@@ -1888,7 +1888,7 @@ begin
       except
         on E: Exception do
         begin
-          SolidLog(cERRORText + ' FotosLaden: ' + E.Message);
+          SolidLog(cERRORText + ' Fotos laden: ' + E.Message);
         end;
       end;
       SolidLog(cINFOText + ' ... OK');
