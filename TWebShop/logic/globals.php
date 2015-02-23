@@ -96,12 +96,12 @@ $_GLOBALS = array(
     "f_payment" => new tglobal("f_payment", T_VARIABLE_TYPE_INTEGER),
 // Zahlungsart: Kontoinhaber
     "f_depositor" => new tglobal("f_depositor", T_VARIABLE_TYPE_STRING, array("form_input"), array("not_empty" => ERROR_NO_DEPOSITOR_GIVEN)),
-// Zahlungsart: Kontonummer (bank account number)
-    "f_ban" => new tglobal("f_ban", T_VARIABLE_TYPE_STRING, array("form_input"), array("numeric_int" => ERROR_INVALID_BAN)),
+// Zahlungsart: IBAN (international bank account number)
+    "f_ban" => new tglobal("f_ban", T_VARIABLE_TYPE_STRING, array("form_input"), array("iban" => ERROR_INVALID_BAN)),
 // Zahlungsart: Name der Bank
     "f_bank" => new tglobal("f_bank", T_VARIABLE_TYPE_STRING, array("form_input"), array("not_empty" => ERROR_NO_BANK_GIVEN)),
-// Zahlungsart: Bankleitzahl BLZ (bank identification code)
-    "f_bic" => new tglobal("f_bic", T_VARIABLE_TYPE_STRING, array("form_input"), array("numeric_int" => ERROR_INVALID_BIC)),
+// Zahlungsart: BIC (bank identification code)
+    "f_bic" => new tglobal("f_bic", T_VARIABLE_TYPE_STRING, array("form_input"), array("bic" => ERROR_INVALID_BIC)),
 // Datum 
     "f_date" => new tglobal("f_date", T_VARIABLE_TYPE_STRING, array("form_input"), array("date" => ERROR_INVALID_DATE))
 );

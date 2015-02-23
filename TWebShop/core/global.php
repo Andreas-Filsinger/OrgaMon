@@ -160,6 +160,56 @@ class tglobal {
         return (preg_match("/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/", $time) OR preg_match("/^[0-9]{2}:[0-9]{2}$/", $time));
     }
 
+    /* --> 23.02.2015 michaelhacksoftware : BIC Überprüfung */
+    static public function validate_bic($bic) {
+
+        // Leerzeichen entfernen
+        $bic = str_replace(' ', '', $bic);
+
+        // Genau Länge prüfen: immer 8 oder 11
+        if (strlen($bic) ==  8) return true;
+        if (strlen($bic) == 11) return true;
+
+        return false;
+
+    }
+    /* <-- */
+
+    /* --> 23.02.2015 michaelhacksoftware : IBAN Überprüfung */
+    static public function validate_iban($iban) {
+
+        // Leerzeichen entfernen
+        $iban = str_replace(' ', '', $iban);
+
+        // Länge der IBAN prüfen
+        if (strlen($iban) < 12) return false;
+        if (strlen($iban) > 34) return false;
+
+        // Landeskennzahl und Prüfziffern hinten anfügen
+        $iban1 = substr($iban, 4)
+               . strval(ord($iban{0}) - 55)
+               . strval(ord($iban{1}) - 55)
+               . substr($iban, 2, 2);
+
+        // Buchstaben in ausländischen IBANs ersetzen
+        for ($i = 0; $i < strlen($iban1); $i++) {
+            if (ord($iban1{$i}) > 64 && ord($iban1{$i}) < 91) {
+                $iban1 = substr($iban1, 0, $i) . strval(ord($iban1{$i}) - 55) . substr($iban1, $i + 1);
+            }
+        }
+
+        // Prüfsumme mit Modulo 97-10 berechnen
+        $rest = 0;
+
+        for ($pos = 0; $pos < strlen($iban1); $pos += 7) {
+            $part = strval($rest) . substr($iban1, $pos, 7);
+            $rest = intval($part) % 97;
+        }
+
+        return ($rest == 1) ? true : false;
+    }
+    /* <-- */
+
     static private function filter_form_input($input) {
         $input = strip_tags($input);
         $input = stripslashes($input);
