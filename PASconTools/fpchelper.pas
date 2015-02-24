@@ -34,7 +34,7 @@ For use when the JCL string functions are not avaialable
 interface
 
 uses
-  SysUtils, Classes, graphics, gettext;
+  SysUtils, Classes, graphics, gettext, activex;
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;
@@ -405,6 +405,10 @@ function PathExtractFileNameNoExt(const Path: string): string;
 function PadNumber(const pi: integer): string;
 function StrHasAlpha(const str: String): boolean;
 procedure RegisterExpectedMemoryLeak(var a);
+
+function GetProgramFilesFolder : string;
+function GetPersonalFolder : string;
+function GetAppdataFolder : string;
 
 type
   EJcfConversionError = class(Exception)
@@ -865,5 +869,65 @@ end;
 procedure RegisterExpectedMemoryLeak(var a);
 begin
                               end;
+
+function GetProgramFilesFolder : string;
+begin
+  result := '// imp pend';
+end;
+procedure StrResetLength(var S: AnsiString);
+var
+  I: SizeInt;
+begin
+  for I := 0 to Length(S) - 1 do
+    if S[I + 1] = #0 then
+    begin
+      SetLength(S, I);
+      Exit;
+    end;
+end;
+
+function PidlToPath(IdList: PItemIdList): string;
+begin
+  SetLength(Result, MAX_PATH);
+  if SHGetPathFromIdList(IdList, PChar(Result)) then
+    StrResetLength(Result)
+  else
+    Result := '';
+end;
+
+//----------------------------------------------------------------------------
+
+function GetSpecialFolderLocation(const Folder: Integer): string;
+var
+  FolderPidl: PItemIdList;
+begin
+  FolderPidl := nil;
+  if Succeeded(SHGetSpecialFolderLocation(0, Folder, FolderPidl)) then
+  begin
+    try
+      Result := PidlToPath(FolderPidl);
+    finally
+      CoTaskMemFree(FolderPidl);
+    end;
+  end
+  else
+    Result := '';
+end;
+
+
+function GetPersonalFolder : string;
+begin
+  {$IFDEF UNIX}
+  Result := GetEnvironmentVariable('HOME') + '/';
+  {$ENDIF UNIX}
+  {$IFDEF MSWINDOWS}
+  Result := GetSpecialFolderLocation(CSIDL_PERSONAL) + '\';
+  {$ENDIF MSWINDOWS}
+end;
+
+function GetAppdataFolder : string;
+begin
+  result := '// imp pend';
+end;
 
 end.
