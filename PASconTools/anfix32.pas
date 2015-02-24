@@ -1510,12 +1510,6 @@ begin
     Result := GetISOYearNumberOfWeeks(_y);
 end;
 
-
-
-
-
-
-
 function Kalenderwoche(ADate: TAnfixDate): integer; //
 begin
   if dateOK(ADate) then
@@ -2987,6 +2981,7 @@ var
   SicherungFName: string;
 
 begin
+  result := false;
 
   // Kopiert eine Datei, "sichert" aber die alte Version der Datei
   // nach DateiName "-n" ".Extension". Dabei wird n zunächst aus
@@ -3057,7 +3052,7 @@ begin
   if not(FileCopy(SourceFName, DestFName)) then
     raise Exception.create('FileVersionedCopy: konnte ' + DestFName +
       ' nicht erstellen');
-
+  result := true;
 end;
 
 // FConcat

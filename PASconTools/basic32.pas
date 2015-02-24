@@ -60,7 +60,8 @@ unit basic32;
   19.07.10 integration in OLAP
   08.06.11 PAGE (Seitenumbruch), Bugfixes im Dokumenthandling
   컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
-{$H-}
+{$mode delphi}
+
 
 interface
 

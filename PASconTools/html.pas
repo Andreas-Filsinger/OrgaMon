@@ -26,7 +26,10 @@
 }
 unit html;
 
+{$ifndef FPC}
 {$I jcl.inc}
+{$endif}
+
 // ------------------------------------------------------------------
 //
 // (c)'18.04.00 by Andreas Filsinger, http://OrgaMon.org
