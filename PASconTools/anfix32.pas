@@ -532,6 +532,9 @@ implementation
 uses
 {$IFDEF fpc}
   lazUTF8Classes,
+{$ifdef linux}
+ BaseUnix,
+{$endif}
   fpchelper,
 {$ELSE}
  JclDateTime,
@@ -3944,7 +3947,26 @@ begin
   CloseFile(InF);
 end;
 
+
 function Betriebssystem: string;
+
+{$ifdef fpc}
+
+{$ifdef linux}
+var
+  name: UtsName;
+begin
+  FpUname(name);
+  with name do
+  result := Sysname + Release + Version ;
+end;
+{$else}
+begin
+  result := 'Windows';
+end;
+{$endif}
+
+{$else}
 type
   Twine_get_version = function: PAnsiChar; stdcall;
 var
@@ -3962,6 +3984,7 @@ begin
     FreeLibrary(HNtDll);
   end;
 end;
+{$endif}
 
 // WIN REBOOT
 
