@@ -20,7 +20,9 @@
 *)
 unit anfix32;
 
+{$ifndef FPC}
 {$I jcl.inc}
+{$endif}
 
 interface
 
@@ -530,10 +532,11 @@ uses
 {$IFDEF fpc}
   lazUTF8Classes,
   fpchelper,
+{$ELSE}
+ JclDateTime,
+ JclSysInfo,
 {$ENDIF}
   math,
-  JclDateTime,
-  JclSysInfo,
   registry,
   shellapi;
 
@@ -1309,6 +1312,52 @@ begin
   else
     result := '???';
 end;
+// Calculates and returns Easter Day for specified year.
+// Originally from Mark Lussier, AppVision <MLussier att best dott com>.
+// Corrected to prevent integer overflow if it is inadvertedly
+// passed a year of 6554 or greater.
+
+function EasterSunday(const Year: Integer): TDateTime;
+var
+  Month, Day, Moon, Epact, Sunday,
+  Gold, Cent, Corx, Corz: Integer;
+begin
+  { The Golden Number of the year in the 19 year Metonic Cycle: }
+  Gold := Year mod 19 + 1;
+  { Calculate the Century: }
+  Cent := Year div 100 + 1;
+  { Number of years in which leap year was dropped in order... }
+  { to keep in step with the sun: }
+  Corx := (3 * Cent) div 4 - 12;
+  { Special correction to syncronize Easter with moon's orbit: }
+  Corz := (8 * Cent + 5) div 25 - 5;
+  { Find Sunday: }
+  Sunday := (Longint(5) * Year) div 4 - Corx - 10;
+              { ^ To prevent overflow at year 6554}
+  { Set Epact - specifies occurrence of full moon: }
+  Epact := (11 * Gold + 20 + Corz - Corx) mod 30;
+  if Epact < 0 then
+    Epact := Epact + 30;
+  if ((Epact = 25) and (Gold > 11)) or (Epact = 24) then
+    Epact := Epact + 1;
+  { Find Full Moon: }
+  Moon := 44 - Epact;
+  if Moon < 21 then
+    Moon := Moon + 30;
+  { Advance to Sunday: }
+  Moon := Moon + 7 - ((Sunday + Moon) mod 7);
+  if Moon > 31 then
+  begin
+    Month := 4;
+    Day := Moon - 31;
+  end
+  else
+  begin
+    Month := 3;
+    Day := Moon;
+  end;
+  Result := EncodeDate(Year, Month, Day);
+end;
 
 function Feiertag(ADate: TAnfixDate): boolean;
 var
@@ -1364,7 +1413,7 @@ begin
   { } ((m = 4) and (d > 26)) then
     exit;
 
-  OsterSonntag := DateTime2long(JclDateTime.EasterSunday(y));
+  OsterSonntag := DateTime2long(EasterSunday(y));
 
   OsterMOntag := datePlus(OsterSonntag, 1);
   result := (ADate = OsterMOntag);
