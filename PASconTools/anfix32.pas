@@ -294,7 +294,8 @@ function date2long(date: string): TAnfixDate;
 function DateGet: TAnfixDate; //
 function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer
 function WeekGet(ADate: TAnfixDate): integer; overload; // Wochen Nummer
-function WeekDay(ADate: TAnfixDate): byte; // 1= Montag .. 7 = Sonntag
+function WeekDay(ADate: TAnfixDate): byte; overload; // 1= Montag .. 7 = Sonntag
+function WeekDay(ADate: TDateTime): byte; overload; // 1=Montag .. 7 = Sonntag
 function WeekDayS(ADate: TAnfixDate): string;
 function WeekDayL(ADate: TAnfixDate): string;
 
@@ -1291,6 +1292,14 @@ begin
     result := 7;
 end;
 
+function WeekDay(ADate: TDateTime): byte; // 1= Montag, 7=Sonntag
+begin
+  result := pred(DayOfWeek(ADate));
+  if (result = 0) then
+    result := 7;
+end;
+
+
 function WeekDayS(ADate: TAnfixDate): string;
 var
   d: integer;
@@ -1427,10 +1436,87 @@ begin
 
 end;
 
+// Determines if the ISO Year is ordinary  (52 weeks) or Long (53 weeks). Uses a rule first
+// suggested by Sven Pran (Norway) and Lars Nordentoft (Denmark) - according to
+// http://www.phys.uu.nl/~vgent/calendar/isocalendar.htm
+
+function IsISOLongYear(const DateTime: TDateTime): Boolean; overload;
+var
+  TmpYear, m, d: Word;
+begin
+  decodeDate(DateTime, TmpYear, m, d);
+  Result := IsISOLongYear(TmpYear);
+end;
+
+function IsISOLongYear(const Year: Word): Boolean; overload;
+var
+  TmpWeekday: Word;
+  dt : TDateTime;
+begin
+  dt := EncodeDate(Year, 1, 1);
+  TmpWeekday := WeekDay(dt);
+  Result := (IsLeapYear(Year) and ((TmpWeekday = 3) or (TmpWeekday = 4))) or (TmpWeekday = 4);
+end;
+
+function GetISOYearNumberOfWeeks(const Year: Word): Word;
+begin
+  Result := 52;
+  if IsISOLongYear(Year) then
+    Result := 53;
+end;
+
+
+// ISOWeekNumber function returns Integer 1..7 equivalent to Sunday..Saturday.
+// ISO 8601 weeks start with Monday and the first week of a year is the one which
+// includes the first Thursday
+
+function ISOWeekNumber(dt: TDateTime): Integer;
+var
+  January4th: TDateTime;
+  FirstMonday: TDateTime;
+
+  _y, y, YearOfWeekNumber, m, d, wd: Word;
+begin
+  // Applying the rule: The first calender week is the week that includes January, 4th
+  decodedate(dt, y, m, d);
+  _y := y;
+
+  wd := WeekDay(dt);
+  // adjust if we are between 12/29 and 12/31
+  if (m = 12) and (d >= 29) and
+    (wd <= 3) then
+    y := y + 1;
+
+  January4th := encodedate(y,1,4);
+  FirstMonday := January4th + 1 - WeekDay(January4th);
+
+  // If our date is < FirstMonday we are in the last week of the previous year
+  if dt < FirstMonday then
+  begin
+    Result := GetISOYearNumberOfWeeks(y - 1);
+    YearOfWeekNumber := y - 1;
+    Exit;
+  end
+  else
+  begin
+    YearOfWeekNumber := y;
+    Result := (Trunc(dt - FirstMonday) div 7) + 1;
+  end;
+
+  if Result > GetISOYearNumberOfWeeks(_y) then
+    Result := GetISOYearNumberOfWeeks(_y);
+end;
+
+
+
+
+
+
+
 function Kalenderwoche(ADate: TAnfixDate): integer; //
 begin
   if dateOK(ADate) then
-    result := JclDateTime.ISOWeekNumber(long2datetime(ADate))
+    result := ISOWeekNumber(long2datetime(ADate))
   else
     result := 0;
 end;
