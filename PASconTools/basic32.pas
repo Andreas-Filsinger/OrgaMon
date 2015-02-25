@@ -59,9 +59,8 @@ unit basic32;
   12.12.06 erweitert um PREIS ( ) Funktion (erstmalige Anbindung an eCommerce)
   19.07.10 integration in OLAP
   08.06.11 PAGE (Seitenumbruch), Bugfixes im Dokumenthandling
+  25.02.15 FPC Port
   컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
-{$mode delphi}
-
 
 interface
 

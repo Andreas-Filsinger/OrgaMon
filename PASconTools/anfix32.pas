@@ -299,9 +299,6 @@ function WeekDay(ADate: TDateTime): byte; overload; // 1=Montag .. 7 = Sonntag
 function WeekDayS(ADate: TAnfixDate): string;
 function WeekDayL(ADate: TAnfixDate): string;
 
-function Feiertag(ADate: TAnfixDate): boolean; // imp pend: Feiertage
-function Kalenderwoche(ADate: TAnfixDate): integer; //
-function Quartal(ADate: TAnfixDate): integer; //
 function Fdate(const FName: string): longint;
 function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
 function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
@@ -330,19 +327,23 @@ function dateNotOK(dlong: TAnfixDate): boolean; overload;
 function dateOK(dlong: string): boolean; overload;
 function dateNotOK(dlong: string): boolean; overload;
 function DateExact(dlong: TAnfixDate): boolean;
-function leapyear(dlong: TAnfixDate): boolean; { Gerald Rohr }
 
-// Zeit-Routinen
+// Kalenderfunktionen
+function Feiertag(ADate: TAnfixDate): boolean; // imp pend: Feiertage
+function Kalenderwoche(ADate: TAnfixDate): integer; //
+function Kalenderwochen(const Year: Word): Word;
+function Kalenderwoche53(const Year: Word): boolean; overload;
+function Kalenderwoche53(const DateTime: TDateTime): boolean; overload;
+function Quartal(ADate: TAnfixDate): integer; //
+function Schaltjahr(dlong: TAnfixDate): boolean;
+
+// Zeit-Routinen ("Seconds"-Funktionen, komplette Zeitangaben in LongInts speichern)
 function uhr: string;
 function uhr8: string;
 procedure GetTime(var hr, Min, Sec, sec100: Word);
-
-{ Time-Funktionen }
-function TimeGet: longint;
-function Long2Time(x: longint): string;
+function TimeGet: TAnfixTime;
+function Long2Time(x: TAnfixTime): string;
 function UhrOK(secs: TAnfixTime): boolean;
-
-{ Second-Funktionen, komplette Zeitangaben in LongInts speichern }
 function SecondsGet: TAnfixTime;
 function UpTime: TAnfixTime;
 function RunTime: TAnfixTime;
@@ -355,15 +356,12 @@ function SecondsToStr8(secs: TAnfixTime): string; // (h)hh:mm:ss
 function SecondsToStr9(secs: TAnfixTime): string; // hhh:mm:ss
 function StrToSeconds(Sstr: string): TAnfixTime;
 function StrToSecondsdef(Sstr: string; def: TAnfixTime): TAnfixTime;
-
 function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime; overload; // 1>2
 function SecondsDiff(s1, s2: TDateTime): TAnfixTime; overload; // 1>2
 function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload; //
 function SecondsDiff(d1, s1, d2, s2: TAnfixTime): TAnfixTime; overload; // 1>2
 function SecondsDiffABS(d1, s1, d2, s2: longint): TAnfixTime; overload; //
-
 function SecondsOK(secs: TAnfixTime): boolean;
-
 function SecondsAdd(s1, s2: longint): longint;
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): longint; overload;
 function dateTime2Seconds(dt: TDateTime): TAnfixTime; overload;
@@ -465,9 +463,9 @@ function NetworkInstalled: boolean;
 function WinNT: boolean;
 function Betriebssystem: string;
 
-// spezielle Pfade, jetzt über JclSysInfo
-function ProgramFilesDir: string; // mit Slash am ENde!
-function PersonalDataDir: string; //
+// spezielle Pfade, im Moment noch über JclSysInfo, mit Slash am Ende!
+function ProgramFilesDir: string;
+function PersonalDataDir: string;
 function ApplicationDataDir: string;
 
 // CD-Player Utils
@@ -532,13 +530,12 @@ implementation
 uses
 {$IFDEF fpc}
   lazUTF8Classes,
-{$ifdef linux}
- BaseUnix,
-{$endif}
+{$IFDEF linux}
+  BaseUnix,
+{$ENDIF}
   fpchelper,
 {$ELSE}
- JclDateTime,
- JclSysInfo,
+  JclSysInfo,
 {$ENDIF}
   math,
   registry,
@@ -932,7 +929,10 @@ begin
     result := Res;
 end;
 
-function leapyear(dlong: longint): boolean; { Gerald Rohr }
+//  Gerald Rohr
+//  function leapyear
+
+function Schaltjahr(dlong: longint): boolean;
 var
   dat: TDateTimeBorlandPascal;
   yr: Word;
@@ -946,8 +946,8 @@ begin
     long2datetimeBorlandPascal(dlong, dat);
     yr := dat.Year;
   end;
-  leapyear := ((yr mod 4 = 0) and (not(yr mod 100 = 0))) or (yr mod 400 = 0);
-end; { function leapyear }
+  Schaltjahr := ((yr mod 4 = 0) and (not(yr mod 100 = 0))) or (yr mod 400 = 0);
+end;
 
 procedure long2datetimeBorlandPascal(dlong: longint;
   var date: TDateTimeBorlandPascal);
@@ -968,7 +968,7 @@ var
   bufdat: TDateTimeBorlandPascal;
 begin
   long2datetimeBorlandPascal(dlong, bufdat);
-  if leapyear(bufdat.Year) then
+  if Schaltjahr(bufdat.Year) then
     result := 366
   else
     result := 365;
@@ -997,7 +997,7 @@ begin
   long2datetimeBorlandPascal(dlong, bufdat);
   case bufdat.Month of
     2:
-      if leapyear(bufdat.Year) then
+      if Schaltjahr(bufdat.Year) then
         result := 29
       else
         result := 28;
@@ -1058,7 +1058,7 @@ begin
         end
         else
         begin
-          if not leapyear(yr) then
+          if not Schaltjahr(yr) then
             goto raus;
         end;
       end;
@@ -1302,7 +1302,6 @@ begin
     result := 7;
 end;
 
-
 function WeekDayS(ADate: TAnfixDate): string;
 var
   d: integer;
@@ -1329,23 +1328,22 @@ end;
 // Corrected to prevent integer overflow if it is inadvertedly
 // passed a year of 6554 or greater.
 
-function EasterSunday(const Year: Integer): TDateTime;
+function EasterSunday(const Year: integer): TDateTime;
 var
-  Month, Day, Moon, Epact, Sunday,
-  Gold, Cent, Corx, Corz: Integer;
+  Month, Day, Moon, Epact, Sunday, Gold, cent, Corx, Corz: integer;
 begin
   { The Golden Number of the year in the 19 year Metonic Cycle: }
   Gold := Year mod 19 + 1;
   { Calculate the Century: }
-  Cent := Year div 100 + 1;
+  cent := Year div 100 + 1;
   { Number of years in which leap year was dropped in order... }
   { to keep in step with the sun: }
-  Corx := (3 * Cent) div 4 - 12;
+  Corx := (3 * cent) div 4 - 12;
   { Special correction to syncronize Easter with moon's orbit: }
-  Corz := (8 * Cent + 5) div 25 - 5;
+  Corz := (8 * cent + 5) div 25 - 5;
   { Find Sunday: }
-  Sunday := (Longint(5) * Year) div 4 - Corx - 10;
-              { ^ To prevent overflow at year 6554}
+  Sunday := (longint(5) * Year) div 4 - Corx - 10;
+  { ^ To prevent overflow at year 6554 }
   { Set Epact - specifies occurrence of full moon: }
   Epact := (11 * Gold + 20 + Corz - Corx) mod 30;
   if Epact < 0 then
@@ -1368,7 +1366,7 @@ begin
     Month := 3;
     Day := Moon;
   end;
-  Result := EncodeDate(Year, Month, Day);
+  result := encodedate(Year, Month, Day);
 end;
 
 function Feiertag(ADate: TAnfixDate): boolean;
@@ -1443,37 +1441,38 @@ end;
 // suggested by Sven Pran (Norway) and Lars Nordentoft (Denmark) - according to
 // http://www.phys.uu.nl/~vgent/calendar/isocalendar.htm
 
-function IsISOLongYear(const DateTime: TDateTime): Boolean; overload;
-var
-  TmpYear, m, d: Word;
-begin
-  decodeDate(DateTime, TmpYear, m, d);
-  Result := IsISOLongYear(TmpYear);
-end;
-
-function IsISOLongYear(const Year: Word): Boolean; overload;
+function Kalenderwoche53(const Year: Word): boolean;
 var
   TmpWeekday: Word;
-  dt : TDateTime;
+  dt: TDateTime;
 begin
-  dt := EncodeDate(Year, 1, 1);
+  dt := encodedate(Year, 1, 1);
   TmpWeekday := WeekDay(dt);
-  Result := (IsLeapYear(Year) and ((TmpWeekday = 3) or (TmpWeekday = 4))) or (TmpWeekday = 4);
+  result := (IsLeapYear(Year) and ((TmpWeekday = 3) or (TmpWeekday = 4))) or
+    (TmpWeekday = 4);
 end;
 
-function GetISOYearNumberOfWeeks(const Year: Word): Word;
+function Kalenderwoche53(const DateTime: TDateTime): boolean;
+var
+  y, m, d: Word;
 begin
-  Result := 52;
-  if IsISOLongYear(Year) then
-    Result := 53;
+  decodedate(DateTime, y, m, d);
+  result := Kalenderwoche53(y);
 end;
 
+function Kalenderwochen(const Year: Word): Word;
+begin
+  if Kalenderwoche53(Year) then
+    result := 53
+  else
+    result := 52;
+end;
 
 // ISOWeekNumber function returns Integer 1..7 equivalent to Sunday..Saturday.
 // ISO 8601 weeks start with Monday and the first week of a year is the one which
 // includes the first Thursday
 
-function ISOWeekNumber(dt: TDateTime): Integer;
+function ISOWeekNumber(dt: TDateTime): integer;
 var
   January4th: TDateTime;
   FirstMonday: TDateTime;
@@ -1486,28 +1485,27 @@ begin
 
   wd := WeekDay(dt);
   // adjust if we are between 12/29 and 12/31
-  if (m = 12) and (d >= 29) and
-    (wd <= 3) then
+  if (m = 12) and (d >= 29) and (wd <= 3) then
     y := y + 1;
 
-  January4th := encodedate(y,1,4);
+  January4th := encodedate(y, 1, 4);
   FirstMonday := January4th + 1 - WeekDay(January4th);
 
   // If our date is < FirstMonday we are in the last week of the previous year
   if dt < FirstMonday then
   begin
-    Result := GetISOYearNumberOfWeeks(y - 1);
+    result := Kalenderwochen(y - 1);
     YearOfWeekNumber := y - 1;
-    Exit;
+    exit;
   end
   else
   begin
     YearOfWeekNumber := y;
-    Result := (Trunc(dt - FirstMonday) div 7) + 1;
+    result := (Trunc(dt - FirstMonday) div 7) + 1;
   end;
 
-  if Result > GetISOYearNumberOfWeeks(_y) then
-    Result := GetISOYearNumberOfWeeks(_y);
+  if result > Kalenderwochen(_y) then
+    result := Kalenderwochen(_y);
 end;
 
 function Kalenderwoche(ADate: TAnfixDate): integer; //
@@ -1590,7 +1588,7 @@ begin
   if ADate < firstOfYear then
     result := 53
   else
-    result := (trunc(ADate - firstOfYear) div 7) + 1;
+    result := (Trunc(ADate - firstOfYear) div 7) + 1;
 end;
 
 function DateGet: TAnfixDate;
@@ -1897,7 +1895,7 @@ begin
     longint(ms);
 end;
 
-function Long2Time(x: longint): string;
+function Long2Time(x: TAnfixTime): string;
 var
   OutStr: string;
   h, m, s: byte;
@@ -3942,26 +3940,25 @@ begin
   CloseFile(InF);
 end;
 
-
 function Betriebssystem: string;
 
-{$ifdef fpc}
-
-{$ifdef linux}
+{$IFDEF fpc}
+{$IFDEF linux}
 var
-  name: UtsName;
+  Name: UtsName;
 begin
   FpUname(name);
   with name do
-  result := Sysname + Release + Version ;
+    result := Sysname + Release + Version;
 end;
-{$else}
+{$ELSE}
+
 begin
   result := 'Windows';
 end;
-{$endif}
+{$ENDIF}
+{$ELSE}
 
-{$else}
 type
   Twine_get_version = function: PAnsiChar; stdcall;
 var
@@ -3979,8 +3976,7 @@ begin
     FreeLibrary(HNtDll);
   end;
 end;
-{$endif}
-
+{$ENDIF}
 // WIN REBOOT
 
 function SetPrivilege(privilegeName: string; enable: boolean): boolean;
@@ -4345,7 +4341,7 @@ begin
       jdt.Day := 0
     else
     begin
-      if (leapyear(Year)) and (Month > 2) then
+      if (Schaltjahr(Year)) and (Month > 2) then
         jdt.Day := 1
       else
         jdt.Day := 0;
@@ -4371,7 +4367,7 @@ begin
     else
     begin
       workday := jdt.Day;
-      if (leapyear(jdt.yr)) and (workday > 59) then
+      if (Schaltjahr(jdt.yr)) and (workday > 59) then
         workday := workday - 1; { make it look like a non-leap year }
       i := 1;
       repeat
@@ -4380,7 +4376,7 @@ begin
       i := i - 1;
       Month := i;
       Day := workday - monthtotal[i];
-      if leapyear(jdt.yr) and (jdt.Day = 60) then
+      if Schaltjahr(jdt.yr) and (jdt.Day = 60) then
         Day := Day + 1
     end;
   end;
@@ -4405,14 +4401,14 @@ begin
     if dt2.Year > dt1.Year then
     begin
       for i := dt1.Year to dt2.Year - 1 do
-        if leapyear(i) then
+        if Schaltjahr(i) then
           num_leap_yrs := num_leap_yrs + 1
     end;
 
     if dt1.Year > dt2.Year then
     begin
       for i := dt2.Year to dt1.Year - 1 do
-        if leapyear(i) then
+        if Schaltjahr(i) then
           num_leap_yrs := num_leap_yrs - 1;
     end;
 
@@ -4474,7 +4470,7 @@ begin
         begin
           inc(jahr);
         end
-        else if leapyear(jahr) then
+        else if Schaltjahr(jahr) then
           d := 366
         else
           d := 365;
@@ -4513,7 +4509,7 @@ begin
       if d = 0 then
       begin
         Dec(jahr);
-        if leapyear(jahr) then
+        if Schaltjahr(jahr) then
           d := 366
         else
           d := 365;
@@ -4529,7 +4525,7 @@ begin
     begin
       if (d < 365) then
         inc(d)
-      else if leapyear(jahr) then
+      else if Schaltjahr(jahr) then
       begin
         if d = 366 then
         begin

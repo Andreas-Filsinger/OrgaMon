@@ -809,17 +809,33 @@ function TFormDatensicherung.die400: TStringList;
 
 const
   cMinAge = 400;
+var
+  DiagnoseFName: string;
 
   procedure CheckAndAdd(sPath, sExtension: string);
   var
     n: Integer;
     sFiles: TStringList;
+    FindOne: boolean;
   begin
+    FindOne := false;
     sFiles := TStringList.create;
     dir(sPath + '*' + sExtension, sFiles, false);
     for n := 0 to pred(sFiles.count) do
       if FileRetire(sPath + sFiles[n], cMinAge) then
+      begin
         result.add(sPath + sFiles[n]);
+        if not(FindOne) then
+        begin
+          AppendStringsToFile(sPath, DiagnoseFName);
+          FindOne := true;
+        end;
+        AppendStringsToFile(
+          { } ' ' +
+          { } Long2date(FileDate(sPath + sFiles[n])) +
+          { } ' ' + sFiles[n],
+          { } DiagnoseFName);
+      end;
     sFiles.free;
   end;
 
@@ -830,6 +846,12 @@ var
   n, m: Integer;
 
 begin
+  DiagnoseFName :=
+  { } DiagnosePath +
+  { } 'Ablage-400-' +
+  { } inttostr(DateGet) +
+  { } '.log.txt';
+
   result := TStringList.create;
   sBAUSTELLEN := TStringList.create;
   sFOTOS := TStringList.create;
@@ -1156,7 +1178,7 @@ procedure TFormDatensicherung.SaveLog;
 begin
   if assigned(sLog) then
   begin
-    appendStringstofile(sLog, DiagnosePath + 'Datensicherung-' + DatumLog +
+    AppendStringsToFile(sLog, DiagnosePath + 'Datensicherung-' + DatumLog +
       '.log.txt');
     sLog.clear;
   end;
