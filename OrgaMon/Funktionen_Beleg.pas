@@ -698,7 +698,7 @@ uses
   Funktionen_Auftrag;
 
 const
-  cAllSettingsAnz = 180;
+  cAllSettingsAnz = 181;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)
     ] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
@@ -748,7 +748,7 @@ const
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel',
     'TPicUploadPfad', 'VerlagsdatenabgleichPfad', 'KartenProfil',
-    'SchubladePort', 'TagwacheBaustelle', 'memcacheHost');
+    'SchubladePort', 'TagwacheBaustelle', 'memcacheHost', 'Ablage');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8388,6 +8388,7 @@ begin
     ['NachTagwacheAnwendungNeustart'] = cIni_Activate;
   iTagesabschlussRang := sSystemSettings.values['TagesabschlussBerechneRang'] <>
     cIni_DeActivate;
+  iAblage := sSystemSettings.values['Ablage'] <> cIni_DeActivate;
   iTagWacheWochentage := sSystemSettings.values['TagWacheWochentage'];
   iTagwacheBaustelle := strtointdef(sSystemSettings.values['TagwacheBaustelle'],
     cRID_Null);
