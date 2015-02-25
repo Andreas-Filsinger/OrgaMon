@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.086 (25.02.15) Andreas Filsinger
+
+ Neu: Systemparameter: "Ablage" Soll die 400 Tage Ablage durchgeführt werden
+ Neu: Ablage: Protokollierung warum was abgelegt wurde in "Ablage-400-*" Dateien
+
 Rev 8.085 (12.02.15) Andreas Filsinger
 
  Neu: BASIC: "SQL"-Befehle > 255 Zeichen nun möglich

@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.085; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.086; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1052,6 +1052,7 @@ var
   iEinzelpreisNetto: boolean;
   iGOT: boolean; // Gebührenordnung für Tierärtze
   iBruttoVersandGewicht: boolean;
+  iAblage: boolean;
 
   iMahnSchwelle: double;
   iMahnFaelligkeitstoleranz: integer;
