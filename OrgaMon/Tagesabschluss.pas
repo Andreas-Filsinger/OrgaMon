@@ -195,7 +195,9 @@ begin
               begin
                 // Dateien verschieben, die zu lange ausser Gebrauch sind!
                 if iAblage then
-                  FormDatensicherung.do400(TagesAbschluss_TAN);
+                  FormDatensicherung.do400(TagesAbschluss_TAN)
+                else
+                  FormDatensicherung.die400.Free;
 
                 // Datei-Löschungen
                 FileDelete(DiagnosePath + '*', 20);
