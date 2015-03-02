@@ -99,14 +99,27 @@ class twebshop_cart extends tvisual {
     }
 
     public function addArticle($article_r, $quantity = 1, $version_r = 0, $detail = "", $cart_r = 0) {
+
+        global $errorlist;
+        
         $uid = twebshop_article::buildUID($article_r, $version_r, $detail);
-        if ($this->inCart($uid)) { // Genau dieser Artikel schon im Einkaufswagen ?  
+        
+        if ($this->inCart($uid)) { // Genau dieser Artikel schon im Einkaufswagen ?
             $index = $this->getIndexByUID($uid); // Ja, Menge anpassen
             $this->article[$index]->incQuantity($quantity);
             $this->article[$index]->cart_r = max($this->article[$index]->cart_r, $cart_r);
             $this->updateInDataBase($index);
         } else {
+
             $article = new twebshop_article($article_r, $version_r, $this->person_r, $quantity, $detail, $cart_r); // Nein, neuen Artikel hinzufügen
+
+            /* --> 02.03.2015 michaelhacksoftware : Mp3 Downloads und reguläre Artikel nicht im Warenkorb mischen lassen */
+            if ($this->positions > 0 and !$this->containsVersion($article->getVersion())) {
+                $errorlist->add(SENTENCE_CART_MP3_REGULAR_MIX_NOT_ALLOWED);
+                return null;
+            }
+            /* <-- */
+            
             $this->article[] = $article;
             $index = $this->getIndexByUID($uid);
             $this->insertIntoDataBase($index);

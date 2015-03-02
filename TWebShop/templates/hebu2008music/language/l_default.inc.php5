@@ -227,6 +227,7 @@
 @define("SENTENCE_BILL_WILL_BE_DELIVERED_WITH_SHIPPING","Die Rechnung wird der Lieferung beigelegt.");
 @define("SENTENCE_BILL_WILL_BE_SENT_SEPARATELY","Die Rechnung wird separat an die Rechnungsanschrift gesendet.");
 @define("SENTENCE_BUY_MP3_DOWNLOAD","MP3-Download kaufen");
+@define("SENTENCE_CART_MP3_REGULAR_MIX_NOT_ALLOWED", "Der Artikel konnte nicht zum Warenkorb hinzugefügt werden. Ein Mischen von Mp3 Downloads und regulären Artikeln ist nicht möglich.");
 @define("SENTENCE_CHANGE_CART","Warenkorb &auml;ndern");
 @define("SENTENCE_CHANGE_ENTRIES","Angaben &auml;ndern");
 @define("SENTENCE_CHANGE_PASSWORD","Passwort &auml;ndern");
