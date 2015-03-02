@@ -8,7 +8,7 @@ class twebshop_user extends twebshop_person {
     protected $logged_in = false;
     protected $services = NULL;
     protected $bills = array();
-    protected $payment_infos = array();
+    protected $payment_info = NULL;
     protected $mymusic = NULL;
 
     const CLASS_NAME = "PHP5CLASS TWEBSHOP_USER";
@@ -119,24 +119,19 @@ class twebshop_user extends twebshop_person {
         return $this->bills;
     }
 
-    public function getPaymentInfos($force_rescan = false) {
+    /* --> 27.02.2015 michaelhacksoftware : Lastschriftdaten der Person holen */
+    public function getPaymentInfo($force_rescan = false) {
 
-        global $ibase;
-        if ($this->getID() != 0) {
-            if ((count($this->payment_infos) == 0) OR $force_rescan) {
-                $this->payment_infos = array();
-
-
-                $ids = $ibase->get_list_as_array("SELECT DISTINCT ZAHLUNGSPFLICHTIGER_R AS ID FROM BELEG WHERE (PERSON_R={$this->getID()}) AND (ZAHLUNGSPFLICHTIGER_R IS NOT NULL)", "RID");
-                foreach ($ids as $id) {
-                    $this->payment_infos[] = new twebshop_payment_info($id);
-                    unset($id);
-                }
-                unset($ids);
-            }
+        if (!$this->getID()) return NULL;
+        
+        if ($this->payment_info == NULL OR $force_rescan) {
+            $this->payment_info = new twebshop_payment_info($this->getID());
         }
-        return $this->payment_infos;
+
+        return $this->payment_info;
+
     }
+    /* <-- */
 
     public function getMyMusic($force_rescan = false) {
         if ($this->getID() != 0) {
