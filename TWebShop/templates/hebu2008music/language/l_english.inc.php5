@@ -226,6 +226,7 @@ define("SENTENCE_BILL_AND_DELIVERY_ADDRESS","bill and delivery address");
 define("SENTENCE_BILL_WILL_BE_DELIVERED_WITH_SHIPPING","The bill will be delivered with shipping.");
 define("SENTENCE_BILL_WILL_BE_SENT_SEPARATELY","The bill will be sent separatly to the given bill address.");
 define("SENTENCE_BUY_MP3_DOWNLOAD","buy mp3");
+define("SENTENCE_CART_MP3_REGULAR_MIX_NOT_ALLOWED", "The article couldn't be added to cart. Mixing mp3 downloads and regular articles is not possible.");
 define("SENTENCE_CHANGE_CART","change cart");
 define("SENTENCE_CHANGE_ENTRIES","change entries");
 define("SENTENCE_CHANGE_PASSWORD","change password");
