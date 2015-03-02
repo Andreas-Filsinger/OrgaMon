@@ -24,24 +24,25 @@ if ($session->getTmpVar("tob_accepted", $shop->getCurrentSite())) {
         $bill->setDate($session->getTmpVar("date", $shop->getCurrentSite()));
         $bill->setDeliveryType($session->getTmpVar("bill_delivery_type", $shop->getCurrentSite()));
 
+        /* --> 27.02.2015 michaelhacksoftware : Zahlungsinfos direkt im Beleg speichern */
         if ($session->isRegisteredTmp("payment", $shop->getCurrentSite())) {
+
             $payment_info = new twebshop_payment_info($session->getTmpVar("payment", $shop->getCurrentSite()));
+
             if ($payment_info->getID() == 0) {
-                $payment_info->setID($orgamon->newPerson());
                 $payment_info->setDepositor($session->getTmpVar("depositor", $shop->getCurrentSite()));
                 $payment_info->setBAN($session->getTmpVar("ban", $shop->getCurrentSite()));
                 $payment_info->setBank($session->getTmpVar("bank", $shop->getCurrentSite()));
                 $payment_info->setBIC($session->getTmpVar("bic", $shop->getCurrentSite()));
-                if (!$payment_info->updateInDataBase()) {
-                    $errorlist->add(ERROR_PAYMENT_INFO_COULD_NOT_BE_SAVED);
-                    //Loggen? eMail an Admin?
-                }
+                $payment_info->setType($session->getTmpVar("type", $shop->getCurrentSite()));
             }
-            $bill->setPayer($payment_info->getID());
-            $bill->setModeOfPayment(4);
-            unset($payment_info);
-        }
 
+            $bill->setPaymentInfo($payment_info);
+            $bill->setModeOfPayment(4);
+
+        }
+        /* <-- */
+        
         if (!$bill->updateInDataBase()) {
             $errorlist->add(ERROR_BILL_AND_DELIVERY_CONTACTS_COULD_NOT_BE_SAVED);
             //Loggen? eMail an Admin?
@@ -49,7 +50,10 @@ if ($session->getTmpVar("tob_accepted", $shop->getCurrentSite())) {
 
         if (($orgamon->execAccounting($beleg_r, $user->getID()) < 1) AND $cart->containsVersion($article_variants->getVersionIDByShortName(TWEBSHOP_ARTICLE_VERSION_SHORT_MP3))) {
             $event = $bill->getEvent(torgamon_event::eT_WebShopBestellung);
-            $errorlist->add($event->getInfo());
+            $info  = $event->getInfo();
+            if (strpos($info, "Zahlungspflichtiger") == FALSE) { // Vorrübergehend Fehler direkt auslassen --> Orgamon anpassen
+                $errorlist->add($info);
+            }
             unset($event);
         }
 

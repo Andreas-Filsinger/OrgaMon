@@ -31,10 +31,11 @@ class terrorlist {
     }
 
     public function add($msg) {
-
         if (is_array($msg)) {
-            foreach ($msg as $line)
+            foreach ($msg as $line) {
+                $this->error = true;
                 $this->error_msg[] = $line;
+            }
         } else {
             if (!$this->error) {
                 trigger_error($msg, E_USER_WARNING);

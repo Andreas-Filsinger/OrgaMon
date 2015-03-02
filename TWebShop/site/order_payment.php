@@ -1,13 +1,18 @@
 <?php
 if ($site->isActive()) {
-    
-    $ids = $ibase->get_list_as_array("SELECT DISTINCT ZAHLUNGSPFLICHTIGER_R FROM BELEG WHERE (PERSON_R={$user->getID()}) AND (ZAHLUNGSPFLICHTIGER_R IS NOT NULL)", "ZAHLUNGSPFLICHTIGER_R");
+
+    $default_payment = 0;
     $obj_payment_infos = "";
-    foreach ($ids as $id) {
-        $payment_info = new twebshop_payment_info($id);
-        $payment_info->addOption("CHECKED", ($payment_info->getID() == $session->getTmpVar("payment", $shop->getCurrentSite(), 0) AND $payment_info->getType() == $session->getTmpVar("type", $shop->getCurrentSite(), PAYMENT_DIRECT_DEBITING)) ? "checked=\"checked\"" : "");
-        $obj_payment_infos.= $payment_info->getFromHTMLTemplate(_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_PREVIOUS);
+
+    /* --> 27.02.2015 michaelhacksoftware : Lastschriftdaten von der Person holen */
+    $payment_info = $user->getPaymentInfo();
+
+    if ($payment_info->getType() == $session->getTmpVar("type", $shop->getCurrentSite(), PAYMENT_DIRECT_DEBITING)) {
+        $default_payment = $payment_info->getID();
+        $payment_info->addOption("CHECKED", $payment_info->getID() == $session->getTmpVar("payment", $shop->getCurrentSite(), $default_payment) ? "checked=\"checked\"" : "");
+        $obj_payment_infos .= $payment_info->getFromHTMLTemplate(_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_PREVIOUS);
     }
+    /* <-- */
 
     $payment_info = new twebshop_payment_info(0, PAYMENT_DIRECT_DEBITING);
     $payment_info->setDepositor($session->getTmpVar("depositor", $shop->getCurrentSite(), ""));
@@ -18,7 +23,7 @@ if ($site->isActive()) {
     $payment_info->addOption("BAN", _TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BAN);
     $payment_info->addOption("BANK", _TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BANK);
     $payment_info->addOption("BIC", _TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW_OPTION_BIC);
-    $payment_info->addOption("CHECKED", ($payment_info->getID() == $session->getTmpVar("payment", $shop->getCurrentSite(), 0) AND $payment_info->getType() == $session->getTmpVar("type", $shop->getCurrentSite(), PAYMENT_DIRECT_DEBITING)) ? "checked=\"checked\"" : "");
+    $payment_info->addOption("CHECKED", $payment_info->getID() == $session->getTmpVar("payment", $shop->getCurrentSite(), $default_payment) ? "checked=\"checked\"" : "");
     $obj_payment_infos.= $payment_info->getFromHTMLTemplate(_TEMPLATE_PAYMENT_INFO_ORDER_PAYMENT_NEW);
     unset($payment_info);
 

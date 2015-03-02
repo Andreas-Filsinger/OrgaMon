@@ -2,7 +2,7 @@
 
 class twebshop_bill extends tvisual {
 
-    static public $properties = array("DAVON_BEZAHLT", "PERSON_R", "RECHNUNGS_BETRAG", "MOTIVATION", "ZAHLUNGSPFLICHTIGER_R", "ZAHLUNGTYP_R", "TERMIN", "RECHNUNGSNUMMER", "BELEG_R", "TEILLIEFERUNG", "LIEFERANSCHRIFT_R", "RECHNUNGSANSCHRIFT_R", "RECHNUNG");
+    static public $properties = array("DAVON_BEZAHLT", "PERSON_R", "RECHNUNGS_BETRAG", "MOTIVATION", "ZAHLUNGSPFLICHTIGER_R", "ZAHLUNGTYP_R", "TERMIN", "RECHNUNGSNUMMER", "BELEG_R", "TEILLIEFERUNG", "LIEFERANSCHRIFT_R", "RECHNUNGSANSCHRIFT_R", "RECHNUNG", "INTERN_INFO");
     static public $properties1 = array("DAVON_BEZAHLT", "PERSON_R", "RECHNUNGS_BETRAG", "MOTIVATION", "ZAHLUNGSPFLICHTIGER_R", "ZAHLUNGTYP_R", "TERMIN");
     private $rid = 0;
     private $part = 0;
@@ -85,6 +85,18 @@ class twebshop_bill extends tvisual {
         return $this->ZAHLUNGSPFLICHTIGER_R;
     }
 
+    /* --> 27.02.2015 michaelhacksoftware : Lastschriftdaten im Beleg speichern */
+    public function setPaymentInfo($payment_info) {
+
+        $this->INTERN_INFO = "Zahlungsinformationen:"      . CRLF .
+                             $payment_info->getDepositor() . CRLF .
+                             $payment_info->getBank()      . CRLF .
+                             $payment_info->getBAN()       . CRLF .
+                             $payment_info->getBIC();
+
+    }
+    /* <-- */
+    
     public function setModeOfPayment($mode) {
         $this->ZAHLUNGTYP_R = $mode;
     }
@@ -171,7 +183,8 @@ class twebshop_bill extends tvisual {
 		ZAHLUNGSPFLICHTIGER_R=" . tibase::null2str($this->ZAHLUNGSPFLICHTIGER_R) . ",
 		ZAHLUNGTYP_R=" . tibase::null2str($this->ZAHLUNGTYP_R) . ", 
 		TERMIN=" . tibase::format_for_insert($this->TERMIN, false, true) . ",
-		KUNDEN_INFO=" . tibase::format_for_insert($this->KUNDEN_INFO, false, true) . "
+		KUNDEN_INFO=" . tibase::format_for_insert($this->KUNDEN_INFO, false, true) . ",
+                INTERN_INFO=" . tibase::format_for_insert($this->INTERN_INFO, false, true) . "
 WHERE RID={$this->rid}";
             //trigger_error($sql, E_USER_NOTICE);
             $result = $ibase->exec($sql);

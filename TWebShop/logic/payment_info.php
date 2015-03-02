@@ -3,8 +3,8 @@
 class twebshop_payment_info extends tvisual {
 
     static public $properties = array("Z_ELV_KONTO_INHABER", "Z_ELV_BANK_NAME", "Z_ELV_BLZ", "Z_ELV_KONTO");
-    private $rid = 0;
-    private $type = 0;
+    protected $rid = 0;
+    protected $type = 0;
 
     const PAYMENT_INFO_TYPE_AMERICAN_EXPRESS = PAYMENT_AMERICAN_EXPRESS;
     const PAYMENT_INFO_TYPE_CLICKNBUY = PAYMENT_CLICKNBUY;
