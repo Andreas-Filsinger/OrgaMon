@@ -593,7 +593,7 @@ class twebshop_article extends tvisual {
             if ($Part[2] != "0") continue; // Aktuell nur kostenlose Stimmen zulassen
 
             // Namen anhand der Ausgabeart ermitteln
-            $Kind = substr($Item[1], 6);
+            $Kind = substr($Part[1], 6);
             $Name = self::getPartKindName($Kind);
 
             if (!$Name) continue;
