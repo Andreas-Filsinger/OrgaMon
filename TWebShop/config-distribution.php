@@ -33,7 +33,7 @@ define("TWEBSHOP_FIRST_SITE","promo_pakets");
 // 
 // default "twebshop"
 //
-define("TWEBSHOP_TEMPLATE","hebu2008music");
+define("TWEBSHOP_TEMPLATE","twebshop");
 
 // Beispiel: define("TWEBSHOP_INACTIVE_BLOCKS","FIRSTBLOCK,NEXTBLOCK,LASTBLOCK");
 // default ""
@@ -50,13 +50,7 @@ define("TWEBSHOP_NAMESPACE","abu");
 // XMLRPC 
 // default "name=localhost,port=3049,path=,user=,password=,timeout=20,retries=0"
 // Kopiervorlage "name=,port=,path=,user=,password=,timeout="
-#define("XMLRPC_1","name=KARLSRUHE,port=3040,path=,user=,password=,timeout=10,retries=2");
-#define("XMLRPC_1","name=KARLSRUHE,port=3048,path=,user=,password=,timeout=8,retries=1");
 define("XMLRPC_1","name=LOCALHOST,port=3049,path=,user=,password=,timeout=8,retries=1");
-#define("XMLRPC_2","name=KHAO,port=3048,path=,user=,password=,timeout=8,retries=1");
-#define("XMLRPC_3","name=KHAO,port=3047,path=,user=,password=,timeout=8,retries=1");
-#define("XMLRPC_4","name=KHAO,port=3046,path=,user=,password=,timeout=8,retries=1");
-#define("XMLRPC_1","name=KARLSRUHE,port=3040,path=,user=,password=,timeout=8,retries=1");
 
 // LOG - Einstellungen
 #define("XMLRPC_LOG",true);
@@ -87,7 +81,7 @@ define("TWEBSHOP_ARTICLE_VERSION_SHORT_MP3","MP3");
 // STANDARDWERTE
 define("DEFAULT_LANGUAGE","german");
 define("DEFAULT_CURRENCY","&euro;");
-define("DEFAULT_DELIVERY_PRICE", 4.20);
+define("DEFAULT_DELIVERY_PRICE", 6.90);
 
 // TPICUPLOAD
 define("TPICUPLOAD_THUMB_WIDTH",80);
@@ -125,8 +119,8 @@ define("MP3_DOWNLOAD_LOG_NAME","download.log");
 
 // VERZEICHNISSE
 define("SHOP_WWW",         "http://localhost/TWebShop/");
-define("SHOP_ROOT",        "C:\Temp\Build\TWebShop");
+define("SHOP_ROOT",        "C:\TWebShop");
 define("SHOP_SITEMAP_DIR", "sitemap/");
-define("SHOP_PARTS_DIR",   "HeBuParts/");
+define("SHOP_PARTS_DIR",   "Parts/");
 
 ?>
