@@ -2722,6 +2722,7 @@ var
   SkipIt: boolean;
   NoBELEG_R: boolean;
   SumValue: double;
+  Verzug: boolean;
 
   // Beleg-Listen
   Checked_BELEG_R: TStringList; // Saldo aller bisher berührten Belege
@@ -2732,8 +2733,11 @@ var
   // Fälligkeit ausgesetzt
   Ausgesetzt_BELEG_R: TgpIntegerList;
 
-  // Lister der Belege, in die das Buchungsdatum schon eingetragen wurde
+  // Liste der Belege, in die das Buchungsdatum schon eingetragen wurde
   Verbucht_BELEG_R: TStringList;
+
+  // Liste der Belege, die im Status "Verzug" stehen
+  Verzug_BELEG_R: TgpIntegerList;
 
   Unausgeglichen: TDoubleObject;
   SaldoLautBeleg: double;
@@ -2833,6 +2837,17 @@ var
     end;
   end;
 
+  function _BetragAsHTML(d: double): string;
+  begin
+    result := format('%m', [d]);
+    if Verzug then
+      result :=
+      { } cRawHTMLPrefix +
+      { } '<b>' +
+      { } Ansi2html(result) +
+      { } '</b>';
+  end;
+
 begin
   result := TStringList.create;
   if (PERSON_R < cRID_FirstValid) then
@@ -2844,6 +2859,7 @@ begin
   Checked_BELEG_R := TStringList.create;
   Ausgeglichen_BELEG_R := TgpIntegerList.create;
   Ausgesetzt_BELEG_R := TgpIntegerList.create;
+  Verzug_BELEG_R := TgpIntegerList.create;
   KontoTexte := TStringList.create;
   Verbucht_BELEG_R := TStringList.create;
   LastschriftTexteAlle := TStringList.create;
@@ -3064,11 +3080,13 @@ begin
           begin
 
             // Micro - Ausgeglichenheit in dieser Teillieferung prüfen!
-            if isZeroMoney
-              (e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where' +
-              ' (KUNDE_R=' + inttostr(PERSON_R) + ') and' + ' (BELEG_R=' +
-              FieldByName('BELEG_R').AsString + ') and' + ' (TEILLIEFERUNG=' +
-              FieldByName('TEILLIEFERUNG').AsString + ')')) then
+            if isZeroMoney(e_r_sqld(
+              { } 'select sum(BETRAG) from AUSGANGSRECHNUNG where' +
+              { } ' (KUNDE_R=' + inttostr(PERSON_R) + ') and' +
+              { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+              { } ' (TEILLIEFERUNG=' + FieldByName('TEILLIEFERUNG')
+              .AsString + ')'
+              { } )) then
               SkipIt := true;
           end;
 
@@ -3101,6 +3119,7 @@ begin
           KontoTexte.clear;
           MoreText := '';
           BetragVerzug := 0.0;
+          Verzug := false;
 
           // maunellen Text laden
           if not(FieldByName('TEXT').IsNull) then
@@ -3154,11 +3173,14 @@ begin
                 qBELEG.FieldByName('MOTIVATION').AsString);
 
               // Laschrifttexte des Beleges (Eine Art Topic)
-              LastschriftTexte :=
-                e_r_sqlsl('select ARTIKEL from POSTEN ' + 'where' + ' (BELEG_R='
-                + inttostr(BELEG_R) + ') and' + ' (AUSGABEART_R=' +
-                inttostr(iAusgabeartLastschriftText) + ')' + 'order by' +
-                ' POSNO,RID');
+              LastschriftTexte := e_r_sqlsl(
+                { } 'select ARTIKEL from POSTEN ' +
+                { } 'where' +
+                { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+                { } ' (AUSGABEART_R=' +
+                inttostr(iAusgabeartLastschriftText) + ')' +
+                { } 'order by' +
+                { } ' POSNO,RID');
               DatensammlerLokal.add('LastschriftText=' +
                 HugeSingleLine(LastschriftTexte));
               for n := pred(LastschriftTexte.count) downto 0 do
@@ -3206,8 +3228,8 @@ begin
                     if pVerbuchen then
                       if (Verbucht_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
                         .AsString) = -1) and
-                        (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
-                        .AsInteger) = -1) then
+                        Ausgesetzt_BELEG_R.Lacks(qBELEG.FieldByName('RID')
+                        .AsInteger) then
                       begin
 
                         with qBELEG do
@@ -3275,8 +3297,8 @@ begin
                         end;
                       end;
 
-                    if (Ausgesetzt_BELEG_R.IndexOf(qBELEG.FieldByName('RID')
-                      .AsInteger) = -1) then
+                    if Ausgesetzt_BELEG_R.Lacks(qBELEG.FieldByName('RID')
+                      .AsInteger) then
                     begin
 
                       if (FaelligSeit = 1) then
@@ -3288,6 +3310,8 @@ begin
                       MaxTageVerzug := max(MaxTageVerzug, FaelligSeit);
                       BetragVerzug := BuchungsBetrag;
                       Summe_Verzug := Summe_Verzug + BuchungsBetrag;
+                      Verzug := true;
+                      Verzug_BELEG_R.add(BELEG_R);
 
                     end
                     else
@@ -3368,9 +3392,8 @@ begin
 
               // Zinsberechnung?
               if (SaldoLautBeleg > 0) then
-                if (FaelligSeit > 1) and
-                  (Ausgesetzt_BELEG_R.IndexOf(FieldByName('BELEG_R').AsInteger)
-                  = -1) then
+                if (FaelligSeit > 1) and Ausgesetzt_BELEG_R.Lacks
+                  (FieldByName('BELEG_R').AsInteger) then
                 begin
 
                   // wirkliche Zinsberechnung
@@ -3438,8 +3461,8 @@ begin
               DatensammlerLokal.add('BelegFaellig=' +
                 long2dateLocalized(DateTime2Long(FieldByName('VALUTA')
                 .AsDateTime)) + #13 + MoreText + _KontoTexte);
-              DatensammlerLokal.add('BelegBetrag=' + format('%m',
-                [BuchungsBetrag]));
+              DatensammlerLokal.add('BelegBetrag=' +
+                _BetragAsHTML(BuchungsBetrag));
 
               DatensammlerLokal.add('Betrag.Bezahlt=');
               DatensammlerLokal.add('Betrag.Offen=' + format('%m',
@@ -3457,8 +3480,8 @@ begin
                 long2dateLocalized(DateTime2Long(FieldByName('VALUTA')
                 .AsDateTime)) + #13 + _('(kostenfreie Nachlieferung)') +
                 _KontoTexte);
-              DatensammlerLokal.add('BelegBetrag=' + format('%m',
-                [BuchungsBetrag]));
+              DatensammlerLokal.add('BelegBetrag=' +
+                _BetragAsHTML(BuchungsBetrag));
 
               DatensammlerLokal.add('Betrag.Bezahlt=');
               DatensammlerLokal.add('Betrag.Offen=');
@@ -3473,6 +3496,13 @@ begin
             // Eine Zahlung des Kunden
             BelegNo := '---';
             RECHNUNGSNUMMER := '---';
+            if Ausgesetzt_BELEG_R.Lacks(BELEG_R) then
+            begin
+              Summe_Zahlungen := Summe_Zahlungen + -BuchungsBetrag;
+              if Verzug_BELEG_R.Contains(BELEG_R) then
+                Verzug := true;
+            end;
+
             DatensammlerLokal.add('MREF=');
             DatensammlerLokal.add('Medium=');
             DatensammlerLokal.add('Motivation=');
@@ -3490,25 +3520,23 @@ begin
               begin
                 DatensammlerLokal.add('BelegFaellig=' +
                   _('Ihre Zahlung zu den Rechnungen') + ' ' +
-                  HugeSingleLine(e_r_RechnungsNummern(FieldByName('BELEG_R')
-                  .AsInteger), ', '));
+                  HugeSingleLine(e_r_RechnungsNummern(BELEG_R), ', '));
               end
               else
               begin
                 DatensammlerLokal.add('BelegFaellig=' +
                   _('Ihre Zahlung zur Rechnung') + ' ' +
-                  e_r_RechnungsNummer(FieldByName('BELEG_R').AsInteger,
-                  FieldByName('TEILLIEFERUNG').AsInteger));
+                  e_r_RechnungsNummer(BELEG_R, FieldByName('TEILLIEFERUNG')
+                  .AsInteger));
               end;
             end;
 
-            DatensammlerLokal.add('BelegBetrag=' + format('%m',
-              [BuchungsBetrag]));
+            DatensammlerLokal.add('BelegBetrag=' +
+              _BetragAsHTML(BuchungsBetrag));
             DatensammlerLokal.add('Betrag.Bezahlt=' + format('%m',
               [-BuchungsBetrag]));
             DatensammlerLokal.add('Betrag.Offen=');
             DatensammlerLokal.add('Betrag.Forderung=');
-            Summe_Zahlungen := Summe_Zahlungen + -BuchungsBetrag;
           end;
 
           // Prüfung, ob Konto bisher ausgeglichen ist!
@@ -3553,6 +3581,10 @@ begin
       if pMahnGebuehr then
         if (MahnGebuehr > 0) then
         begin
+          Summe_Verzug := Summe_Verzug + MahnGebuehr;
+          Summe_Offen := Summe_Offen + MahnGebuehr;
+          Verzug := true;
+
           LoadArtikelBlock;
           DatensammlerLokal.add('BelegNo=');
           DatensammlerLokal.add('Rechnung=');
@@ -3562,16 +3594,13 @@ begin
           DatensammlerLokal.add('LastschriftText=' + _('Mahngebühr'));
           DatensammlerLokal.add('LastschriftTextNeu=' + _('Mahngebühr'));
           DatensammlerLokal.add('BelegFaellig=' + _('Mahngebühr'));
-          DatensammlerLokal.add('BelegBetrag=' + format('%m', [MahnGebuehr]));
+          DatensammlerLokal.add('BelegBetrag=' + _BetragAsHTML(MahnGebuehr));
           DatensammlerLokal.add('Betrag.Bezahlt=');
           DatensammlerLokal.add('Betrag.Verzug=' + format('%m', [MahnGebuehr]));
           DatensammlerLokal.add('Betrag.Offen=');
           DatensammlerLokal.add('Betrag.Forderung=' + format('%m',
             [MahnGebuehr]));
-
           DatensammlerLokal.add(cPageBreakHerePossible);
-          Summe_Verzug := Summe_Verzug + MahnGebuehr;
-          Summe_Offen := Summe_Offen + MahnGebuehr;
         end;
 
       if pMahnGebuehr then
@@ -3580,6 +3609,10 @@ begin
           VerzugszinsGesamt := cPreisRundung(VerzugszinsGesamt);
           if (VerzugszinsGesamt > 0.0) then
           begin
+            Summe_Verzug := Summe_Verzug + VerzugszinsGesamt;
+            Summe_Offen := Summe_Offen + VerzugszinsGesamt;
+            Verzug := true;
+
             LoadArtikelBlock;
             DatensammlerLokal.add('BelegNo=');
             DatensammlerLokal.add('Rechnung=');
@@ -3589,8 +3622,8 @@ begin
             DatensammlerLokal.add('LastschriftText=' + _('Verzugszins'));
             DatensammlerLokal.add('LastschriftTextNeu=' + _('Verzugszins'));
             DatensammlerLokal.add('BelegFaellig=' + _('Verzugszins'));
-            DatensammlerLokal.add('BelegBetrag=' + format('%m',
-              [VerzugszinsGesamt]));
+            DatensammlerLokal.add('BelegBetrag=' +
+              _BetragAsHTML(VerzugszinsGesamt));
             DatensammlerLokal.add('Betrag.Bezahlt=');
             DatensammlerLokal.add('Betrag.Verzug=' + format('%m',
               [VerzugszinsGesamt]));
@@ -3598,8 +3631,6 @@ begin
             DatensammlerLokal.add('Betrag.Forderung=' + format('%m',
               [VerzugszinsGesamt]));
             DatensammlerLokal.add(cPageBreakHerePossible);
-            Summe_Verzug := Summe_Verzug + VerzugszinsGesamt;
-            Summe_Offen := Summe_Offen + VerzugszinsGesamt;
           end;
         end;
 
@@ -3707,6 +3738,7 @@ begin
   Checked_BELEG_R.free;
   Ausgeglichen_BELEG_R.free;
   Ausgesetzt_BELEG_R.free;
+  Verzug_BELEG_R.free;
   Verbucht_BELEG_R.free;
   cBELEGSALDO.free;
   cPERSON.free;

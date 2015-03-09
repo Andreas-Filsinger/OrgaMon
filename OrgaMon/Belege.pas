@@ -1816,12 +1816,21 @@ end;
 
 procedure TFormBelege.Spool(AusgabeFName: string);
 begin
-  FileCopy(AusgabeFName, SpoolDir + inttostrN(IB_Query1.FieldByName('RID')
-    .AsInteger, 10) + '-' + inttostrN(IB_Query1.FieldByName('TEILLIEFERUNG')
-    .AsInteger, 2) + '.html');
-  FileSetAttr(SpoolDir + inttostrN(IB_Query1.FieldByName('RID').AsInteger, 10) +
-    '-' + inttostrN(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger, 2) +
-    '.html', faReadOnly);
+
+  FileCopy(AusgabeFName,
+    { } SpoolDir +
+    { } inttostrN(IB_Query1.FieldByName('RID').AsInteger, 10) +
+    { } '-' +
+    { } inttostrN(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger, 2) +
+    { } '.html');
+
+  FileSetAttr(
+    { } SpoolDir +
+    { } inttostrN(IB_Query1.FieldByName('RID').AsInteger, 10) +
+    { } '-' +
+    { } inttostrN(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger, 2) +
+    { } '.html',
+    { } faReadOnly);
 end;
 
 procedure TFormBelege.Button21Click(Sender: TObject);

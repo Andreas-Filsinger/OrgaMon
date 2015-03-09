@@ -832,7 +832,7 @@ var
         end;
         AppendStringsToFile(
           { } ' ' +
-          { } Long2date(FileDate(sPath + sFiles[n])) +
+          { } Long2date(LastDate) +
           { } ' ' + sFiles[n],
           { } DiagnoseFName);
       end;

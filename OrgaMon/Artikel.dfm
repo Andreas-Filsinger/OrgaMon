@@ -2341,7 +2341,8 @@ object FormArtikel: TFormArtikel
       'LETZTEAENDERUNG=LETZTEAENDERUNG;LETZTEAENDERUNG DESC'
       'LETZTERVERKAUF=LETZTERVERKAUF;LETZTERVERKAUF DESC'
       'PAPERCOLOR=PAPERCOLOR;PAPERCOLOR DESC'
-      'DAUER=DAUER;DAUER DESC')
+      'DAUER=DAUER;DAUER DESC'
+      'CODE=CODE;CODE DESC')
     OrderingLinks.Strings = (
       'TITEL=ITEM=1'
       'MENGE=ITEM=2'
@@ -2351,7 +2352,8 @@ object FormArtikel: TFormArtikel
       'LETZTEAENDERUNG=ITEM=6'
       'LETZTERVERKAUF=ITEM=7'
       'PAPERCOLOR=ITEM=8'
-      'DAUER=ITEM=9')
+      'DAUER=ITEM=9'
+      'CODE=ITEM=10')
     RequestLive = True
     AfterPost = IB_Query1AfterPost
     AfterScroll = IB_Query1AfterScroll
