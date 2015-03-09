@@ -373,6 +373,7 @@ type
     procedure Assign(list: TGpIntegerList); overload; virtual;
     procedure Clear; virtual;
     function  Contains(item: integer): boolean;     {$IFDEF GpLists_Inline}inline;{$ENDIF}
+    function  Lacks(item: integer): boolean;     {$IFDEF GpLists_Inline}inline;{$ENDIF}
     function CountReducedBy(list: TGpIntegerList): integer;
     procedure CustomSort(sortMethod: TGpIntegerListSortCompare);
     procedure Delete(idx: integer); virtual;
@@ -1350,6 +1351,11 @@ end; { TGpIntegerList.Clear }
 function TGpIntegerList.Contains(item: integer): boolean;
 begin
   Result := (IndexOf(item) >= 0);
+end; { TGpIntegerList.Contains }
+
+function TGpIntegerList.Lacks(item: integer): boolean;
+begin
+  Result := (IndexOf(item) = -1);
 end; { TGpIntegerList.Contains }
 
 function TGpIntegerList.CountReducedBy(list: TGpIntegerList): integer;

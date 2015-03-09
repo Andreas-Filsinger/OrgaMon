@@ -19,6 +19,19 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.089 (09.03.15) Andreas Filsinger
+
+ Neu: Mahnung: Beträge in Verzug sind nun im Schriftstil "fett" ausbelichtet
+
+Rev 8.088 (06.03.15) Andreas Filsinger
+
+ Bug: Mahnung: Zahlungen an ausgesetzten Mahnungen wurden vom fälligen Betrag
+      abgezogen.
+
+ Neu: Belege: Selektion nach "Mahnung ausgesetzt"
+ Neu: Belege: Taste "M" (aktuelle Mahnung erstellen)
+ Neu: Belege: Formulargrösse einstellbar und persistent
+
 Rev 8.087 (25.02.15) Andreas Filsinger
 
  Neu: Bei Ablage=NEIN wird dennoch ein Protokoll verfasst

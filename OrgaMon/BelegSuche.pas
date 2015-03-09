@@ -45,36 +45,20 @@ uses
   IB_Grid,
   IB_UpdateBar,
   IB_NavigationBar,
-  IB_SearchBar;
+  IB_SearchBar, JvComponentBase, JvFormPlacement;
 
 type
   TFormBelegSuche = class(TForm)
-    IB_Query1: TIB_Query;
-    IB_DataSource1: TIB_DataSource;
-    IB_Grid1: TIB_Grid;
-    IB_Memo1: TIB_Memo;
-    IB_Query2: TIB_Query;
-    IB_DataSource2: TIB_DataSource;
-    Panel3: TPanel;
-    IB_SearchBar3: TIB_SearchBar;
-    IB_NavigationBar3: TIB_NavigationBar;
-    IB_UpdateBar3: TIB_UpdateBar;
-    IB_Query3: TIB_Query;
-    IB_DataSource3: TIB_DataSource;
-    IB_Grid3: TIB_Grid;
-    IB_Query4: TIB_Query;
-    IB_Query5: TIB_Query;
-    OpenDialog1: TOpenDialog;
-    Label3: TLabel;
-    Button2: TButton;
-    Label5: TLabel;
-    Button9: TButton;
-    Button8: TButton;
-    Label1: TLabel;
+    Panel1: TPanel;
     Label2: TLabel;
     SpeedButton1: TSpeedButton;
     Label4: TLabel;
     SpeedButton9: TSpeedButton;
+    SpeedButton20: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton41: TSpeedButton;
+    IB_Grid1: TIB_Grid;
+    IB_Memo1: TIB_Memo;
     IB_SearchBar1: TIB_SearchBar;
     IB_UpdateBar1: TIB_UpdateBar;
     Button1: TButton;
@@ -85,9 +69,28 @@ type
     Edit1: TEdit;
     Button5: TButton;
     Button7: TButton;
-    SpeedButton20: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton41: TSpeedButton;
+    IB_Query1: TIB_Query;
+    IB_DataSource1: TIB_DataSource;
+    IB_Query2: TIB_Query;
+    IB_DataSource2: TIB_DataSource;
+    IB_Query4: TIB_Query;
+    Button18: TButton;
+    Panel2: TPanel;
+    Label3: TLabel;
+    Label5: TLabel;
+    IB_Grid3: TIB_Grid;
+    Button2: TButton;
+    IB_Query3: TIB_Query;
+    IB_DataSource3: TIB_DataSource;
+    IB_Query5: TIB_Query;
+    OpenDialog1: TOpenDialog;
+    IB_SearchBar3: TIB_SearchBar;
+    IB_NavigationBar3: TIB_NavigationBar;
+    IB_UpdateBar3: TIB_UpdateBar;
+    Button9: TButton;
+    Button8: TButton;
+    JvFormStorage1: TJvFormStorage;
+    Splitter1: TSplitter;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
@@ -110,6 +113,7 @@ type
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton41Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
   private
     { Private-Deklarationen }
     ItemRIDs: TgpIntegerList;
@@ -134,11 +138,20 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   ArtikelVerlag, Lager, WarenBewegung,
-  dbOrgaMon, Jvgnugettext,
+  dbOrgaMon, Jvgnugettext, main,
   Kontext, Datenbank, wanfix32,
   GUIHelp;
 
 {$R *.DFM}
+
+procedure TFormBelegSuche.Button18Click(Sender: TObject);
+var
+ PERSON_R: integer;
+begin
+ PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
+ e_w_KontoInfo(PERSON_R).free;
+ openShell(MahnungFName(PERSON_R));
+end;
 
 procedure TFormBelegSuche.Button1Click(Sender: TObject);
 begin
@@ -390,6 +403,7 @@ var
   cMahnung2: string;
   cMahnung3: string;
   cMahnBescheid: string;
+  cMahnungAusgesetzt: string;
   cOLAPEntry : string;
 
   procedure AddLines(s: string; StrList: TStrings);
@@ -526,6 +540,12 @@ begin
     'ORDER BY ANLAGE' + #13 +
     'FOR UPDATE';
 
+  cMahnungAusgesetzt := cSelectFields + #13 +
+    'FROM BELEG' + #13 +
+    'WHERE (MAHNUNG_AUSGESETZT=''Y'')' + #13 +
+    'ORDER BY ANLAGE' + #13 +
+    'FOR UPDATE';
+
   cTerminierte := cSelectFields + #13 +
     'FROM BELEG' + #13 +
     'WHERE (TERMIN IS NOT NULL)' + #13 +
@@ -581,8 +601,10 @@ begin
       15:
         AddLines(cMahnbescheid, sql);
       16:
-        AddLines(cOLAPEntry, sql);
+        AddLines(cMahnungAusgesetzt, sql);
       17:
+        AddLines(cOLAPEntry, sql);
+      18:
         AddLines(cTerminierte, sql);
     else
       AddLines(cStdEntry, sql);
@@ -630,6 +652,7 @@ begin
     ComboBox1.Items.Add(_('Mahnung 2'));
     ComboBox1.Items.Add(_('Mahnung 3'));
     ComboBox1.Items.Add(_('Mahnbescheid'));
+    ComboBox1.Items.Add(_('Mahnung ausgesetzt'));
     ComboBox1.Items.add(_(cOLAP_Ergebnis));
     ComboBox1.Items.add(_('Terminierte'));
 
