@@ -519,6 +519,8 @@ class twebshop_article extends tvisual {
         $template = str_replace("~TREE_PATH~", $this->getTreePath(), $template);
         $template = str_replace("~VERSION_R~", $this->version_r, $template);
         $template = str_replace("~WID~", $this->wid, $template);
+        $template = str_replace("~PARTS_LIST~",    $this->templatePartsList(),    $template);   // 14.01.2015 michaelhacksoftware : Downloadbare Stimmen anzeigen
+        $template = str_replace("~YOUTUBE_FRAME~", $this->templateYouTubeFrame(), $template);   // 06.03.2015 michaelhacksoftware : YouTube Videos eingebettet anzeigen
 
         unset($members);
 
@@ -526,10 +528,10 @@ class twebshop_article extends tvisual {
     }
 
     /* --> 14.01.2015 michaelhacksoftware : Downloadbare Stimmen */
-    public function getPartsList() {
+    public function getParts() {
     
         $Items = array();
-        
+
         /* === Verfügbare Stimmen ermitteln === */
         foreach (glob(SHOP_PARTS_DIR . $this->NUMERO . "-*-*.pdf") as $File) {
 
@@ -540,37 +542,90 @@ class twebshop_article extends tvisual {
 
         }
 
-        if (!count($Items)) return "";
-
-        /* === Einleitungstext === */
-        $Out = "<br><b>" . SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD . "</b><br><br>";
-        
-        /* === Stimmen auflisten und Namen ermitteln === */
-        foreach ($Items as $Item) {
-
-            if ($Item[2] != "0") continue; // Aktuell nur kostenlose Stimmen zulassen
-            
-            // Namen anhand von Ausgabeart ermitteln
-            $Kind = substr($Item[1], 6);
-            $Name = self::getPartKindName($Kind);
-            
-            // Stimme hinzufügen
-            if ($Name) {
-            
-                $Template = _TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM;
-                $Template = str_replace("~PART_NAME~", $Name, $Template);
-                $Template = str_replace("~PART_KIND~", $Kind, $Template);
-
-                $Out .= $Template . "<br>";
-
-            }
-            
-        }
-
-        return $Out;
+        return $Items;
 
     }
     /* <-- */
+
+    /* --> 06.03.2015 michaelhacksoftware : YouTube ID ausgeben, sofern vorhanden */
+    public function getYouTubeID() {
+
+        /* === Alle vorhandenen Songs durchgehen === */
+        foreach ($this->sounds as $Sound) {
+
+            $Url = parse_url($Sound);
+
+            /* === Link auf YouTube Video prüfen === */
+            if ((strtolower($Url['host']) == "www.youtube.com") and strtolower($Url['path']) == "/watch") {
+
+                parse_str($Url['query'], $Query);
+
+                if (isset($Query['v'])) {
+                    return $Query['v'];
+                }
+
+            }
+
+        }
+
+        return "";
+
+    }
+    /* <-- */
+
+
+    /* --> 14.01.2015 michaelhacksoftware : Template für Downloadbare Stimmen erzeugen */
+    private function templatePartsList() {
+
+        /* === Stimmen holen === */
+        $Parts = $this->getParts();
+        
+        if (!count($Parts)) {
+            return "";
+        }
+
+        /* === Einleitungstext === */
+        $PartsList = "<br><b>" . SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD . "</b><br><br>";
+
+        /* === Stimmen auflisten und Namen ermitteln === */
+        foreach ($Parts as $Part) {
+
+            if ($Part[2] != "0") continue; // Aktuell nur kostenlose Stimmen zulassen
+
+            // Namen anhand der Ausgabeart ermitteln
+            $Kind = substr($Item[1], 6);
+            $Name = self::getPartKindName($Kind);
+
+            if (!$Name) continue;
+
+            // Stimme hinzufügen
+            $Line = str_replace("~PART_NAME~", $Name, _TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM);
+            $Line = str_replace("~PART_KIND~", $Kind, $Line);
+
+            $PartsList .= $Line . "<br>";
+
+        }
+
+        return $PartsList;
+
+    }
+    /* <-- */
+
+    /* --> 06.03.2015 michaelhacksoftware : Template für YouTube Videos erzeugen */
+    private function templateYouTubeFrame() {
+
+        /* === YouTube ID ermitteln === */
+        $YouTubeID = $this->getYouTubeID();
+
+        if (!$YouTubeID) {
+            return "";
+        }
+
+        return str_replace("~YOUTUBEID~", $YouTubeID, _TEMPLATE_ARTICLE_YOUTUBE_FRAME);
+
+    }
+    /* <-- */
+
 
     static public function buildUID($article_r, $version_r, $detail) {
         return md5($article_r . $version_r . $detail);
@@ -650,6 +705,7 @@ class twebshop_article extends tvisual {
 
     }
     /* <-- */
-    
+
 }
+
 ?>

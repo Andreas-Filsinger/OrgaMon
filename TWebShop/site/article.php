@@ -26,22 +26,21 @@ if ($site->isActive()) {
     }
     /* <-- */
 
-    $article->addOption("CART", _TEMPLATE_ARTICLE_ARTICLE_OPTION_CART);
-    $article->addOption("PLAY", (count($article->getSounds(true))  > 0) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_PLAY : "");
-    $article->addOption("DEMO", (count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_DEMO : "");
-    $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MINISCORE : ""));
-    $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_RECORDS : ""));
-    $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_THUMB : "");
-    $article->addOption("MP3", ($article->existsMP3Download()) ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MP3 : "" );
-    
-    /* --> 14.01.2015 michaelhacksoftware : Downloadbare Stimmen anzeigen */
-    $article->addOption("PARTS_LIST", $article->getPartsList());
-    /* <-- */
+    $MiniScore = $orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH);
+
+    $article->addOption("CART",        _TEMPLATE_ARTICLE_ARTICLE_OPTION_CART);
+    $article->addOption("PLAY",        count($article->getSounds(true))  > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_PLAY      : "");
+    $article->addOption("DEMO",        count($article->getSounds(false)) > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_DEMO      : "");
+    $article->addOption("MINISCORE",   $article->getMiniScore($MiniScore)    ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MINISCORE : "");
+    $article->addOption("RECORDS",     $article->existRecords()              ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_RECORDS   : "");
+    $article->addOption("THUMB",       count($article->getThumbs()) > 0      ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_THUMB     : "");
+    $article->addOption("MP3",         $article->existsMP3Download()         ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MP3       : "");
 
     /* --> 22.08.2014 michaelhacksoftware : Keywords zur Seite hinzufügen. */
     if ($article->KOMPONIST_R) $site->appendKeywords($article->getComposer());
     if ($article->ARRANGEUR_R) $site->appendKeywords($article->getArranger());
     if ($article->VERLAG_R)    $site->appendKeywords($article->getPublisher());
+
     $site->appendKeywords($article->NUMERO);
     $site->appendKeywords($article->VERLAGNO);
     /* <-- */
