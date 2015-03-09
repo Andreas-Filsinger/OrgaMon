@@ -80,9 +80,9 @@ define("_TEMPLATE_ARTICLE_ARTICLE",
 "  <p><b>" . WORD_DIFFICULTY . ":</b>&nbsp;~SCHWER_GRUPPE~&nbsp;~SCHWER_DETAILS~</p>" . CRLF .
 "  <p><b>" . WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p><hr>" . CRLF .
 "  <p>~BEM~</p><!--~PUBLISHER~--><hr>" . CRLF .
-"  <p>~MEMBERS~</p><hr>" . CRLF .
+"  <p>~MEMBERS~</p>~YOUTUBE_FRAME~<hr>" . CRLF .
 "  <p id=\"article_options\">~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~</p>" . CRLF .
-"  ~OPTION_PARTS_LIST~" . CRLF .
+"  ~PARTS_LIST~" . CRLF .
 "</div>" . CRLF .
 "<div class=\"article_side\">~OPTION_THUMB~</div>" . CRLF .
 "<div class=\"clear\"></div>" . CRLF .
@@ -382,4 +382,8 @@ define("_TEMPLATE_ARTICLE_WISHLIST_OPTION_MOVE_TO_CART",
 "<a href=\"" . __INDEX . "?site=cart&action=move_to_cart&aid=~AID~&wid=~WID~&uid=~UID~\">" . nbsp(SENTENCE_INTO_CART) . image_tag(__TEMPLATE_IMAGES_PATH."option_add_to_cart.png",SENTENCE_ADD_TO_CART) . "</a>"
 );
 
+// TEMPLATE FÜR YOUTUBE FRAME
+define("_TEMPLATE_ARTICLE_YOUTUBE_FRAME",
+    "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/~YOUTUBEID~\" frameborder=\"0\" allowfullscreen></iframe>"
+);
 ?>
