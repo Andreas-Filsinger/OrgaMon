@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.090 (17.03.15) Andreas Filsinger
+
+ Neu: Ticket: Rechner auf einer eigenen Seite
+
 Rev 8.089 (09.03.15) Andreas Filsinger
 
  Neu: Mahnung: Beträge in Verzug sind nun im Schriftstil "fett" ausbelichtet
