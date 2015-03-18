@@ -487,6 +487,9 @@ class twebshop_article extends tvisual {
             unset($tmp_member);
         }
 
+        $template = str_replace("~PARTS_LIST~",    $this->templatePartsList(),    $template);   // 14.01.2015 michaelhacksoftware : Downloadbare Stimmen anzeigen
+        $template = str_replace("~YOUTUBE_FRAME~", $this->templateYouTubeFrame(), $template);   // 06.03.2015 michaelhacksoftware : YouTube Videos eingebettet anzeigen
+
         $template = str_replace("~ARRANGER~", $this->getArranger(false), $template);
         $template = str_replace("~ARRANGER_LINK~", $this->getArranger(true), $template);
         $template = str_replace("~AVAILABILITY~", ($this->availability != NULL) ? $this->availability->getFromHTMLTemplate($this->_ttemplate) : "", $template);
@@ -519,8 +522,6 @@ class twebshop_article extends tvisual {
         $template = str_replace("~TREE_PATH~", $this->getTreePath(), $template);
         $template = str_replace("~VERSION_R~", $this->version_r, $template);
         $template = str_replace("~WID~", $this->wid, $template);
-        $template = str_replace("~PARTS_LIST~",    $this->templatePartsList(),    $template);   // 14.01.2015 michaelhacksoftware : Downloadbare Stimmen anzeigen
-        $template = str_replace("~YOUTUBE_FRAME~", $this->templateYouTubeFrame(), $template);   // 06.03.2015 michaelhacksoftware : YouTube Videos eingebettet anzeigen
 
         unset($members);
 

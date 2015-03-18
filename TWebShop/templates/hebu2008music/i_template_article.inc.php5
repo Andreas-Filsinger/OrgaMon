@@ -126,7 +126,7 @@ _TEMPLATE_ARTICLE_SEARCH_OPTION_MP3
 
 //TEMPLTATE FÜR OPTION DOWNLOADBARE STIMMEN
 define("_TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM",
-"<a href=\"" . __INDEX . "?site=~SITE~&action=download_part&part=~PART_KIND~&nr=~NUMERO~&id=~RID~\">~PART_NAME~</a>"
+"<a href=\"" . __INDEX . "?site=article&action=download_part&part=~PART_KIND~&nr=~NUMERO~&id=~RID~\">~PART_NAME~</a>"
 );
 
 // ARTIKEL-TEMPLATE FÜR DEN EINKAUFSWAGEN
