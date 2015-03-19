@@ -2185,6 +2185,7 @@ var
   Bemerkung: TStringList;
   FieldNames: TStringList;
   XLS: TXLSFIle;
+  FName : string;
 
   procedure TagDBField(FieldName: string; BoolValue: Boolean);
   begin
@@ -2196,7 +2197,7 @@ var
 
 begin
   //
-  if Button15.Caption = 'XLS-Import' then
+  if (Button15.Caption = 'XLS-Import') then
   begin
     BeginHourGlass;
     Bemerkung := TStringList.create;
@@ -2205,6 +2206,8 @@ begin
     qPERSON := DataModuleDatenbank.nQuery;
     qANSCHRIFT := DataModuleDatenbank.nQuery;
     XLS := TXLSFile.create(true);
+    FName := Edit5.Text;
+    patchPath(Fname);
 
     Aenderungen := 0;
 
@@ -2212,7 +2215,7 @@ begin
     Button15.Caption := 'Abbruch';
     with XLS do
     begin
-      Open(Edit5.Text);
+      Open(FName);
 
       with qPERSON do
       begin

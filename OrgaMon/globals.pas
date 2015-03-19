@@ -1482,6 +1482,9 @@ function iSkriptePath: string;
 function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
 
+// Umsetzer, Platzhalter in Pfaden
+procedure patchPath(var s : string);
+
 // dynamische Parameter
 function JonDaVorlauf: integer;
 
@@ -1558,13 +1561,20 @@ begin
   result := copy(result, succ(k), MaxInt);
 end;
 
+procedure patchPath(var s : string);
+begin
+  ersetze('{app}', ProgramFilesDir, s);
+  ersetze('{exe}', MyApplicationPath, s);
+  ersetze('{own}', EigeneOrgaMonDateienPfad, s);
+  ersetze('{doc}', PersonalDataDir, s);
+  ersetze('{org}', MyProgramPath, s);
+  ersetze('\.\', '\', s);
+end;
+
 function evalPath(iDataBaseName: string): string;
 begin
   result := iDataBaseName;
-  ersetze('{app}', ProgramFilesDir, result);
-  ersetze('{exe}', MyApplicationPath, result);
-  ersetze('{own}', EigeneOrgaMonDateienPfad, result);
-  ersetze('{doc}', PersonalDataDir, result);
+  PatchPath(result);
 end;
 
 const
