@@ -254,8 +254,9 @@ class txmlrpc {
 
     static public function crlf($n = 1) {
         $crlf = "";
-        for ($i = 0; $i < $n; $i++)
+        for ($i = 0; $i < $n; $i++) {
             $crlf .= self::CRLF;
+        }    
         return $crlf;
     }
 
@@ -330,8 +331,9 @@ class txmlrpc_client {
         $c = count($this->hosts);
         $i = 0;
         while ($i < $c) {
-            if ($this->isBadHost($i))
+            if ($this->isBadHost($i)) {
                 $r[] = $this->hosts[$i]->getConnect();
+            }    
             $i++;
         }
         return implode(",", $r);
@@ -342,8 +344,9 @@ class txmlrpc_client {
         $r = array();
         $c = count($this->hosts);
         $i = 0;
-        while ($i < $c)
+        while ($i < $c) {
             $r[] = $this->hosts[$i++]->getConnect();
+        }    
         return implode(",", $r);
     }
 
@@ -446,8 +449,9 @@ class txmlrpc_client {
                 $i = 0;
                 while ($i++ <= $c) {
                     $active = getSemiPersistentSequence() % $c;
-                    if (!$this->isBadHost($active))
+                    if (!$this->isBadHost($active)) {
                         break;
+                    }
                     if ($i == $c) {
                         $this->fatalError("xmlrpc_client: no good hosts left");
                         return false;
@@ -465,7 +469,6 @@ class txmlrpc_client {
             while (($result == false) AND ($try++ <= $retries)) {
 
                 // open tcp connection
-                $fp = null;
                 $fp = @fsockopen($server, $port, $errno, $errstr, max($timeout, 1));
                 if (!$fp) {
                     $this->addProblem("fsockopen(" . $server . ":" . $port . ") returned error code " . $errno);
@@ -513,16 +516,18 @@ class txmlrpc_client {
 
 
         if ($this->logCALL) {
-            if (is_array($params))
-               fb($method . "(" . implode(",", $params) . ")","xmlrpc-call",FirePHP::INFO);
-            else
-               fb($method . "(" . $params . ")","xmlrpc-call",FirePHP::INFO);
+            if (is_array($params)) {
+                fb($method . "(" . implode(",", $params) . ")", "xmlrpc-call", FirePHP::INFO);
+            } else {
+                fb($method . "(" . $params . ")", "xmlrpc-call", FirePHP::INFO);
+            }
         }
 
         $this->startTime();
 
-        if ($this->gaveUp)
+        if ($this->gaveUp) {
             return NULL;
+        }
 
         if ($method != "") {
             $this->setMethod($method);

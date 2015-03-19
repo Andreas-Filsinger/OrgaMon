@@ -28,8 +28,9 @@ class twebshop_cart extends tvisual {
 
     public function setPerson($person_r = 0) {
         $this->person_r = $person_r;
-        foreach (array_keys($this->article) as $index)
+        foreach (array_keys($this->article) as $index) {
             $this->article[$index]->setPerson($this->person_r);
+        }
         $this->buildSum();
     }
 
@@ -37,8 +38,9 @@ class twebshop_cart extends tvisual {
     
         $this->sum = 0;
 
-        foreach ($this->article as $article)
+        foreach ($this->article as $article) {
             $this->sum += $article->price->getSumBrutto();
+        }
 
         $this->sum += $this->getDeliveryPriceSumme();
 
