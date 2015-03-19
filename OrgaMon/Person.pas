@@ -47,7 +47,7 @@ uses
 
   // HeBuAdmin-Projekt
   Buttons,
-  JvGIF,  JvExExtCtrls, JvRadioGroup,
+  JvGIF, JvExExtCtrls, JvRadioGroup,
   CheckLst, IB_NavigationBar, IB_SearchBar, IB_Controls, ComCtrls, ExtCtrls,
   IB_UpdateBar, ToolWin, IB_EditButton;
 
@@ -1525,7 +1525,7 @@ begin
       { } FieldByName('Z_ELV_KONTO').AsString);
     Edit_GueltigBis.Text := 'NOCARD';
     FillContext;
-    if (PERSON_R <> FieldByName('RID').AsInteger) and (PERSON_R<>-1) then
+    if (PERSON_R <> FieldByName('RID').AsInteger) and (PERSON_R <> -1) then
       ShowMessage('RID=' + inttostr(PERSON_R) +
         ' hat dieselben Kontodaten (Dublette?)!')
     else
@@ -2177,15 +2177,17 @@ var
   qANSCHRIFT: TIB_Query;
   PERSON_R: Integer;
   nPERSON_R: Integer;
+  PERSON_R_Unbenutzt: Integer;
   Tabelle: string;
   Spalte: string;
   CellStr: string;
   ModifiedStr: string;
   IgnoreField: Boolean;
   Bemerkung: TStringList;
+  extraSQL: TStringList;
   FieldNames: TStringList;
   XLS: TXLSFIle;
-  FName : string;
+  FName: string;
 
   procedure TagDBField(FieldName: string; BoolValue: Boolean);
   begin
@@ -2201,13 +2203,14 @@ begin
   begin
     BeginHourGlass;
     Bemerkung := TStringList.create;
+    extraSQL := TStringList.create;
     FieldNames := TStringList.create;
     HeaderNames := TStringList.create;
     qPERSON := DataModuleDatenbank.nQuery;
     qANSCHRIFT := DataModuleDatenbank.nQuery;
-    XLS := TXLSFile.create(true);
+    XLS := TXLSFIle.create(true);
     FName := Edit5.Text;
-    patchPath(Fname);
+    patchPath(FName);
 
     Aenderungen := 0;
 
@@ -2232,7 +2235,6 @@ begin
         for n := 0 to pred(Fields.ColumnCount) do
           FieldNames.add('ANSCHRIFT.' + Fields[n].FieldName);
       end;
-      FieldNames.add('ANSCHRIFT.PLZORT');
 
       // Spalten-Überschriften speichern
       for n := 1 to ColCountInRow(1) do
@@ -2252,6 +2254,7 @@ begin
       begin
         DoPost := false;
         Bemerkung.clear;
+        extraSQL.clear;
         try
           for m := 1 to ColCountInRow(1) do // Spalten
           begin
@@ -2260,7 +2263,7 @@ begin
             Spalte := nextp(HeaderNames[pred(m)], '.', 1);
             if (Spalte <> '') then
             begin
-              CellStr := cutblank(getCellValue(n, m).ToStringInvariant);
+              CellStr := cutblank(GetStringFromCell(n, m));
               if (CellStr <> '') then
                 repeat
 
@@ -2269,6 +2272,7 @@ begin
 
                     if (Spalte = 'RID') then
                     begin
+
                       // Änderungen einspielen!
                       IgnoreField := true;
                       PERSON_R := strtointdef(CellStr, 0);
@@ -2342,6 +2346,44 @@ begin
                     until true;
                   end;
 
+                  if (Spalte = 'SQL') then
+                  begin
+                    DoPost := true;
+                    ersetze('$PERSON_R', inttostr(PERSON_R), CellStr);
+                    extraSQL.add(CellStr);
+                    IgnoreField := true;
+                  end;
+
+                  if (Spalte = 'BEMERKUNG') then
+                  begin
+                    DoPost := true;
+                    Bemerkung.add(CellStr);
+                    IgnoreField := true;
+                  end;
+
+                  if (Spalte = 'VERTRAG_R') then
+                  begin
+                    DoPost := true;
+                    extraSQL.add
+                      ('insert into VERTRAG (RID,PERSON_R,BELEG_R) values (' +
+                      { } '0,' +
+                      { } inttostr(PERSON_R) + ',' +
+                      { } CellStr + ')');
+                    IgnoreField := true;
+
+                  end;
+
+                  if (Spalte = 'PLZORT') then
+                  begin
+                    qANSCHRIFT.FieldByName('PLZ').AsInteger :=
+                      strtointdef(nextp(CellStr, ' ', 0), 0);
+                    qANSCHRIFT.FieldByName('ORT').AsString :=
+                      nextp(CellStr, ' ', 1);
+                    DoPost := true;
+                    IgnoreField := true;
+                  end;
+
+                  // Unbekannte Spalten
                   if (FieldNames.indexof(Tabelle + '.' + Spalte) = -1) then
                   begin
                     DoPost := true;
@@ -2354,32 +2396,12 @@ begin
 
                   if (Tabelle = 'PERSON') then
                   begin
-
-                    if (Spalte = 'BEMERKUNG') then
-                    begin
-                      Bemerkung.add(CellStr);
-                      DoPost := true;
-                      break;
-                    end;
-
                     qPERSON.FieldByName(Spalte).AsString := CellStr;
                     DoPost := true;
                   end;
 
                   if (Tabelle = 'ANSCHRIFT') then
                   begin
-
-                    if (Spalte = 'PLZORT') then
-                    begin
-                      qANSCHRIFT.FieldByName('PLZ').AsInteger :=
-                        strtointdef(nextp(CellStr, ' ', 0), 0);
-                      qANSCHRIFT.FieldByName('ORT').AsString :=
-                        nextp(CellStr, ' ', 1);
-                      DoPost := true;
-                      break;
-
-                    end;
-
                     qANSCHRIFT.FieldByName(Spalte).AsString := CellStr;
                     DoPost := true;
                   end;
@@ -2399,6 +2421,7 @@ begin
               break;
           end;
         end;
+
         if DoPost then
         begin
           // save !!
@@ -2407,10 +2430,16 @@ begin
           qANSCHRIFT.close;
           qPERSON.post;
           qPERSON.close;
+
+          // Folge SQL
+          for k := 0 to pred(extraSQL.count) do
+            e_x_sql(extraSQL[k]);
+
           Label56.Caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) +
             '(' + inttostr(Aenderungen) + ' Änderungen)';
           application.processmessages;
-        end;
+        end en
+
         if UserBreak then
           break;
       end;
@@ -2423,7 +2452,7 @@ begin
     Bemerkung.Free;
     FieldNames.Free;
     HeaderNames.Free;
-    XLS.free;
+    XLS.Free;
     EndHourGlass;
   end
   else
