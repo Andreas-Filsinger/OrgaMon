@@ -2170,14 +2170,14 @@ end;
 procedure TFormPerson.Button15Click(Sender: TObject);
 var
   HeaderNames: TStringList;
-  DoPost: Boolean;
+  DatenVorhanden, DatenWeglassen: Boolean;
   Aenderungen: Integer;
-  n, m, k: Integer;
+  r, c, i: Integer;
   qPERSON: TIB_Query;
   qANSCHRIFT: TIB_Query;
   PERSON_R: Integer;
-  nPERSON_R: Integer;
   PERSON_R_Unbenutzt: Integer;
+
   Tabelle: string;
   Spalte: string;
   CellStr: string;
@@ -2213,6 +2213,8 @@ begin
     patchPath(FName);
 
     Aenderungen := 0;
+    PERSON_R_Unbenutzt := cRID_Null;
+    PERSON_R := cRID_Null;
 
     UserBreak := false;
     Button15.Caption := 'Abbruch';
@@ -2224,72 +2226,83 @@ begin
       begin
         sql.add('select * from PERSON where RID=:CROSSREF for update');
         prepare;
-        for n := 0 to pred(Fields.ColumnCount) do
-          FieldNames.add('PERSON.' + Fields[n].FieldName);
+        for r := 0 to pred(Fields.ColumnCount) do
+          FieldNames.add('PERSON.' + Fields[r].FieldName);
       end;
 
       with qANSCHRIFT do
       begin
         sql.add('select * from ANSCHRIFT where RID=:CROSSREF for update');
         prepare;
-        for n := 0 to pred(Fields.ColumnCount) do
-          FieldNames.add('ANSCHRIFT.' + Fields[n].FieldName);
+        for r := 0 to pred(Fields.ColumnCount) do
+          FieldNames.add('ANSCHRIFT.' + Fields[r].FieldName);
       end;
 
       // Spalten-Überschriften speichern
-      for n := 1 to ColCountInRow(1) do
+      for c := 1 to ColCountInRow(1) do
       begin
-        Spalte := StrFilter(getCellValue(1, n).ToStringInvariant,
-          '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_.');
+        Spalte := StrFilter(
+          { } GetStringFromCell(1, c),
+          { } '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_.');
         repeat
-          k := pos('_', Spalte);
-          if k = 1 then
+          i := pos('_', Spalte);
+          if (i = 1) then
             system.delete(Spalte, 1, 1);
-        until k <> 1;
+        until i <> 1;
         HeaderNames.add(Spalte);
       end;
 
       // Nun der Import
-      for n := 2 to RowCount do // Zeilen
+      for r := 2 to RowCount do // Zeilen
       begin
-        DoPost := false;
+        DatenVorhanden := false;
+        DatenWeglassen := false;
         Bemerkung.clear;
         extraSQL.clear;
         try
-          for m := 1 to ColCountInRow(1) do // Spalten
+          for c := 1 to ColCountInRow(1) do // Spalten
           begin
             IgnoreField := false;
-            Tabelle := nextp(HeaderNames[pred(m)], '.', 0);
-            Spalte := nextp(HeaderNames[pred(m)], '.', 1);
+            Tabelle := nextp(HeaderNames[pred(c)], '.', 0);
+            Spalte := nextp(HeaderNames[pred(c)], '.', 1);
             if (Spalte <> '') then
             begin
-              CellStr := cutblank(GetStringFromCell(n, m));
+              CellStr := cutblank(GetStringFromCell(r, c));
               if (CellStr <> '') then
                 repeat
 
-                  if (m = 1) then
+                  if (c = 1) then
                   begin
 
                     if (Spalte = 'RID') then
                     begin
 
-                      // Änderungen einspielen!
+                      // eine Änderungen einspielen!
                       IgnoreField := true;
                       PERSON_R := strtointdef(CellStr, 0);
 
                       if (e_r_sql('select COUNT(RID) from PERSON where RID=' +
                         inttostr(PERSON_R)) = 0) then
                       begin
-                        nPERSON_R := e_w_PersonNeu;
                         e_x_sql('update PERSON set RID=' + inttostr(PERSON_R) +
-                          ' where RID=' + inttostr(nPERSON_R));
+                          ' where RID=' + inttostr(e_w_PersonNeu));
                       end;
 
                     end
                     else
                     begin
+
                       // Neuanlage!
-                      PERSON_R := e_w_PersonNeu;
+                      if (PERSON_R_Unbenutzt = cRID_Null) then
+                      begin
+                        PERSON_R := e_w_PersonNeu;
+                        PERSON_R_Unbenutzt := PERSON_R;
+                      end
+                      else
+                      begin
+                        PERSON_R := PERSON_R_Unbenutzt;
+                      end;
+
                     end;
 
                     // PERSON
@@ -2303,12 +2316,6 @@ begin
                     qANSCHRIFT.Open;
                     qANSCHRIFT.edit;
 
-                  end;
-
-                  if (Spalte = 'MIETERSEIT') then
-                  begin
-                    CellStr :=
-                      long2date(datetime2long(strtodoubledef(CellStr, 0)));
                   end;
 
                   if (Spalte = 'ZWE') then
@@ -2348,7 +2355,7 @@ begin
 
                   if (Spalte = 'SQL') then
                   begin
-                    DoPost := true;
+                    DatenVorhanden := true;
                     ersetze('$PERSON_R', inttostr(PERSON_R), CellStr);
                     extraSQL.add(CellStr);
                     IgnoreField := true;
@@ -2356,20 +2363,35 @@ begin
 
                   if (Spalte = 'BEMERKUNG') then
                   begin
-                    DoPost := true;
+                    DatenVorhanden := true;
                     Bemerkung.add(CellStr);
                     IgnoreField := true;
                   end;
 
+                  if (Spalte = 'EMAIL_NEU') then
+                  begin
+                    i := e_r_sql
+                      ('select count(RID) from PERSON where EMAIL containing '''
+                      + CellStr + '''');
+                    if (i > 0) then
+                      DatenWeglassen := true
+                    else
+                    begin
+                      DatenVorhanden := true;
+                      qPERSON.FieldByName('EMAIL').AsString := CellStr;
+                      break;
+                    end;
+                  end;
+
                   if (Spalte = 'VERTRAG_R') then
                   begin
-                    DoPost := true;
+                    DatenVorhanden := true;
                     extraSQL.add
                       ('insert into VERTRAG (RID,PERSON_R,BELEG_R) values (' +
                       { } '0,' +
                       { } inttostr(PERSON_R) + ',' +
                       { } CellStr + ')');
-                    IgnoreField := true;
+                    break;
 
                   end;
 
@@ -2379,16 +2401,16 @@ begin
                       strtointdef(nextp(CellStr, ' ', 0), 0);
                     qANSCHRIFT.FieldByName('ORT').AsString :=
                       nextp(CellStr, ' ', 1);
-                    DoPost := true;
-                    IgnoreField := true;
+                    DatenVorhanden := true;
+                    break;
                   end;
 
                   // Unbekannte Spalten
                   if (FieldNames.indexof(Tabelle + '.' + Spalte) = -1) then
                   begin
-                    DoPost := true;
+                    DatenVorhanden := true;
                     Bemerkung.add(Spalte + '=' + CellStr);
-                    IgnoreField := true;
+                    break;
                   end;
 
                   if IgnoreField then
@@ -2397,13 +2419,13 @@ begin
                   if (Tabelle = 'PERSON') then
                   begin
                     qPERSON.FieldByName(Spalte).AsString := CellStr;
-                    DoPost := true;
+                    DatenVorhanden := true;
                   end;
 
                   if (Tabelle = 'ANSCHRIFT') then
                   begin
                     qANSCHRIFT.FieldByName(Spalte).AsString := CellStr;
-                    DoPost := true;
+                    DatenVorhanden := true;
                   end;
 
                 until true;
@@ -2412,8 +2434,8 @@ begin
         except
           on E: Exception do
           begin
-            DoPost := false;
-            if doit('Zeile ' + inttostr(n) + '' + #13 + 'Spalte "' + Spalte +
+            DatenVorhanden := false;
+            if doit('Zeile ' + inttostr(r) + '' + #13 + 'Spalte "' + Spalte +
               '"' + #13 + 'Inhalt: "' + CellStr + '"' + #13 +
               '----------------------------------------' + #13 + E.Message + #13
               + '----------------------------------------' + #13 +
@@ -2422,8 +2444,9 @@ begin
           end;
         end;
 
-        if DoPost then
+        if DatenVorhanden and not(DatenWeglassen) then
         begin
+
           // save !!
           qPERSON.FieldByName('BEMERKUNG').assign(Bemerkung);
           qANSCHRIFT.post;
@@ -2432,19 +2455,31 @@ begin
           qPERSON.close;
 
           // Folge SQL
-          for k := 0 to pred(extraSQL.count) do
-            e_x_sql(extraSQL[k]);
+          for i := 0 to pred(extraSQL.count) do
+            e_x_sql(extraSQL[i]);
 
-          Label56.Caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) +
-            '(' + inttostr(Aenderungen) + ' Änderungen)';
+          inc(Aenderungen);
+          PERSON_R_Unbenutzt := cRID_Null;
+
+          Label56.Caption :=
+          { } 'Zeile ' +
+          { } inttostr(r) + '/' + inttostr(RowCount) +
+          { } '(' + inttostr(Aenderungen) + ' Neuanlagen/Änderungen bisher)';
           application.processmessages;
-        end en
+
+        end
+        else
+        begin
+          qANSCHRIFT.Cancel;
+          qANSCHRIFT.close;
+          qPERSON.Cancel;
+          qPERSON.close;
+        end;
 
         if UserBreak then
           break;
       end;
     end;
-    SpeedButton2Click(Sender);
     Button15.Caption := 'XLS-Import';
     Label23.Caption := '-';
     qANSCHRIFT.Free;
