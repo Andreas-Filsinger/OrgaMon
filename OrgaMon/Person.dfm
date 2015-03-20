@@ -1032,7 +1032,7 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet3
+    ActivePage = TabSheet5
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
@@ -1774,10 +1774,6 @@ object FormPerson: TFormPerson
     object TabSheet5: TTabSheet
       Caption = 'Internet Dienste'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 5
         Top = 9
@@ -2170,10 +2166,6 @@ object FormPerson: TFormPerson
     object TabSheet9: TTabSheet
       Caption = 'Zahlung'
       ImageIndex = 8
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label38: TLabel
         Left = 29
         Top = 21
@@ -2753,10 +2745,6 @@ object FormPerson: TFormPerson
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0
