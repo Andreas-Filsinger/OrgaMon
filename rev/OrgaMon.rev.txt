@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.092 (23.03.15) Andreas Filsinger
+
+ Neu: Person: Import: Änderungen am Altbestand im Feld ".VERTRAG"
+
+Rev 8.091 (23.03.15) Andreas Filsinger
+
+ Neu: Person: Import: ".VERTRAG" und ".SQL"
+
 Rev 8.090 (17.03.15) Andreas Filsinger
 
  Neu: Ticket: Rechner auf einer eigenen Seite
