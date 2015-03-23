@@ -1032,14 +1032,10 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet5
+    ActivePage = TabSheet10
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 27
         Top = 36
@@ -1317,10 +1313,6 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29
@@ -1933,10 +1925,6 @@ object FormPerson: TFormPerson
     object TabSheet6: TTabSheet
       Caption = 'Lieferant'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label30: TLabel
         Left = 15
         Top = 19
@@ -2000,10 +1988,6 @@ object FormPerson: TFormPerson
     object TabSheet7: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label31: TLabel
         Left = 4
         Top = 67
@@ -2058,10 +2042,6 @@ object FormPerson: TFormPerson
     object TabSheet8: TTabSheet
       Caption = 'Prorata/Monteur'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 10
         Top = 56
@@ -2437,10 +2417,6 @@ object FormPerson: TFormPerson
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Image3: TImage
         Left = 703
         Top = 16
@@ -2620,10 +2596,6 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn II'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label14: TLabel
         Left = 23
         Top = 66
