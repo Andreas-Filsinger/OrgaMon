@@ -33,15 +33,11 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet3
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 40
@@ -196,21 +192,12 @@ object FormGUI: TFormGUI
         State = cbChecked
         TabOrder = 10
       end
-      object Button16: TButton
-        Left = 303
-        Top = 313
-        Width = 106
-        Height = 25
-        Caption = 'Melden!'
-        TabOrder = 11
-        OnClick = Button16Click
-      end
       object Edit20: TEdit
         Left = 151
         Top = 276
         Width = 73
         Height = 21
-        TabOrder = 12
+        TabOrder = 11
       end
       object Button1: TButton
         Left = 305
@@ -218,7 +205,7 @@ object FormGUI: TFormGUI
         Width = 104
         Height = 26
         Caption = 'Statistik!'
-        TabOrder = 13
+        TabOrder = 12
         OnClick = Button1Click
       end
       object CheckBox22: TCheckBox
@@ -227,7 +214,7 @@ object FormGUI: TFormGUI
         Width = 185
         Height = 17
         Caption = 'Daten aus access_log'
-        TabOrder = 14
+        TabOrder = 13
       end
     end
     object TabSheet2: TTabSheet
@@ -864,6 +851,23 @@ object FormGUI: TFormGUI
         Caption = 'BLA nach BLA+TS'
         TabOrder = 0
         OnClick = Button19Click
+      end
+      object Edit23: TEdit
+        Left = 24
+        Top = 104
+        Width = 113
+        Height = 21
+        TabOrder = 1
+        Text = 'VSTW.TXT'
+      end
+      object Button16: TButton
+        Left = 143
+        Top = 102
+        Width = 514
+        Height = 25
+        Caption = 'Protokoll-Konvertierung: JonDa -> OrgaMon-App'
+        TabOrder = 2
+        OnClick = Button16Click
       end
     end
     object TabSheet6: TTabSheet

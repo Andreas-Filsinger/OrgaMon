@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.093 (26.03.15) Andreas Filsinger
+
+ Neu: Vertag: BEZAHLT_BIS
+
 Rev 8.092 (23.03.15) Andreas Filsinger
 
  Neu: Person: Import: Änderungen am Altbestand im Feld ".VERTRAG"
@@ -10913,6 +10917,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.093
+
+alter table VERTRAG
+add BEZAHLT_BIS timestamp;
 
 :8.058
 

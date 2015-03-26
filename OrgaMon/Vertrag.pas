@@ -103,6 +103,8 @@ type
     Button4: TButton;
     Button5: TButton;
     JvFormStorage1: TJvFormStorage;
+    Label18: TLabel;
+    IB_Date5: TIB_Date;
     procedure Image2Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure IB_Query1BeforeInsert(IB_Dataset: TIB_Dataset);
