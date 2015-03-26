@@ -611,15 +611,11 @@ object FormVertrag: TFormVertrag
     Top = 374
     Width = 755
     Height = 141
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35
@@ -649,14 +645,14 @@ object FormVertrag: TFormVertrag
         Caption = 'Vorlauf'
       end
       object Label7: TLabel
-        Left = 425
+        Left = 424
         Top = 38
         Width = 92
         Height = 13
         Caption = 'Wiederholungen'
       end
       object Label8: TLabel
-        Left = 454
+        Left = 453
         Top = 65
         Width = 63
         Height = 13
@@ -682,6 +678,13 @@ object FormVertrag: TFormVertrag
         Width = 24
         Height = 13
         Caption = 'zum'
+      end
+      object Label18: TLabel
+        Left = 455
+        Top = 91
+        Width = 61
+        Height = 13
+        Caption = 'bezahlt bis'
       end
       object IB_Date1: TIB_Date
         Left = 85
@@ -797,6 +800,18 @@ object FormVertrag: TFormVertrag
         Hint = 'Datum f'#252'r Einzelanwendung (optional)'
         TabOrder = 9
       end
+      object IB_Date5: TIB_Date
+        Left = 521
+        Top = 88
+        Width = 96
+        Height = 21
+        DataField = 'BEZAHLT_BIS'
+        DataSource = IB_DataSource1
+        TabOrder = 10
+        IncCellHeight = 1
+        IncCellWidth = 2
+        DrawYearArrow = False
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Zus'#228'tzlich'
@@ -816,10 +831,6 @@ object FormVertrag: TFormVertrag
     object TabSheet3: TTabSheet
       Caption = 'Referenzen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label13: TLabel
         Left = 94
         Top = 16
@@ -958,8 +969,8 @@ object FormVertrag: TFormVertrag
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 59
-    Top = 456
+    Left = 91
+    Top = 288
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
@@ -979,12 +990,14 @@ object FormVertrag: TFormVertrag
       'for '
       ' update')
     ColorScheme = True
+    KeyLinks.Strings = (
+      'VERTRAG.RID')
     RequestLive = True
     AfterDelete = IB_Query1AfterDelete
     BeforeInsert = IB_Query1BeforeInsert
     OnConfirmDelete = IB_Query1ConfirmDelete
-    Left = 27
-    Top = 456
+    Left = 35
+    Top = 288
     ParamValues = (
       'CROSSREF=')
   end
@@ -1047,7 +1060,8 @@ object FormVertrag: TFormVertrag
       ' ANSCHRIFT.NAME2,'
       ' ANSCHRIFT.STRASSE,'
       ' ANSCHRIFT.ORT,'
-      ' PERSON.RID PERSON_R'
+      ' PERSON.RID PERSON_R,'
+      ' VERTRAG.BEZAHLT_BIS'
       'from'
       ' VERTRAG'
       'join'
@@ -1063,24 +1077,30 @@ object FormVertrag: TFormVertrag
       'order by'
       ' ANSCHRIFT.NAME1,PERSON.NACHNAME')
     OrderingItems.Strings = (
-      'RID=VERTRAG.RID;VERTRAG.RID DESC'
-      'VORNAME=PERSON.VORNAME;PERSON.VORNAME DESC'
-      'NACHNAME=PERSON.NACHNAME;PERSON.NACHNAME DESC'
-      'NAME1=ANSCHRIFT.NAME1;ANSCHRIFT.NAME1 DESC'
-      'NAME2=ANSCHRIFT.NAME2;ANSCHRIFT.NAME2 DESC'
-      'STRASSE=ANSCHRIFT.STRASSE;ANSCHRIFT.STRASSE DESC'
-      'ORT=ANSCHRIFT.ORT;ANSCHRIFT.ORT DESC')
+      'VERTRAG.BEZAHLT_BIS=VERTRAG.BEZAHLT_BIS;VERTRAG.BEZAHLT_BIS DESC'
+      'ANSCHRIFT.NAME1=ANSCHRIFT.NAME1;ANSCHRIFT.NAME1 DESC'
+      'PERSON.VORNAME=PERSON.VORNAME;PERSON.VORNAME DESC'
+      'PERSON.NACHNAME=PERSON.NACHNAME;PERSON.NACHNAME DESC'
+      'ANSCHRIFT.NAME2=ANSCHRIFT.NAME2;ANSCHRIFT.NAME2 DESC'
+      'ANSCHRIFT.STRASSE=ANSCHRIFT.STRASSE;ANSCHRIFT.STRASSE DESC'
+      'ANSCHRIFT.ORT=ANSCHRIFT.ORT;ANSCHRIFT.ORT DESC'
+      'PERSON_R=PERSON_R;PERSON_R DESC'
+      'VERTRAG.RID=VERTRAG.RID;VERTRAG.RID DESC')
     OrderingLinks.Strings = (
-      'RID=ITEM=1'
-      'VORNAME=ITEM=2'
-      'NACHNAME=ITEM=3'
-      'NAME1=ITEM=4'
-      'NAME2=ITEM=5'
-      'STRASSE=ITEM=6'
-      'ORT=ITEM=7')
+      'VERTRAG.BEZAHLT_BIS=ITEM=1'
+      'ANSCHRIFT.NAME1=ITEM=2'
+      'PERSON.VORNAME=ITEM=3'
+      'PERSON.NACHNAME=ITEM=4'
+      'ANSCHRIFT.NAME2=ITEM=5'
+      'ANSCHRIFT.STRASSE=ITEM=6'
+      'ANSCHRIFT.ORT=ITEM=7'
+      'PERSON_R=ITEM=8'
+      'VERTRAG.RID=ITEM=9')
     AfterScroll = IB_Query3AfterScroll
     Left = 40
     Top = 240
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSource3: TIB_DataSource
     Dataset = IB_Query3

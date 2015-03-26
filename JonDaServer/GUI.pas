@@ -124,7 +124,6 @@ type
     Edit19: TEdit;
     Label26: TLabel;
     CheckBox19: TCheckBox;
-    Button16: TButton;
     Label27: TLabel;
     Edit20: TEdit;
     Button1: TButton;
@@ -151,6 +150,8 @@ type
     Button22: TButton;
     Button23: TButton;
     TabSheet7: TTabSheet;
+    Edit23: TEdit;
+    Button16: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -167,7 +168,6 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Edit19KeyPress(Sender: TObject; var Key: Char);
-    procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
@@ -181,6 +181,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure Button22Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -1114,9 +1115,13 @@ begin
 end;
 
 procedure TFormGUI.Button16Click(Sender: TObject);
+var
+ SourceFName, DestFNAme : string;
 begin
-  ShowMessage
-    ('Hier muss auf einen Aufruf mit geräte-Nummer 999 migriert werden!');
+ SourceFname :=  JonDaX.ProtokollPath(cVersion_JonDa) + edit23.Text;
+ DestFName := MyProgramPath +   cProtPrefix +  cProtExtension ;
+ JonDaX.migrateProtokoll(SourceFname, DestFName);
+ OpenShell(DEstFName);
 end;
 
 procedure TFormGUI.Button17Click(Sender: TObject);

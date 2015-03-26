@@ -34,8 +34,6 @@ object FormBelegSuche: TFormBelegSuche
     Height = 433
     Align = alTop
     TabOrder = 0
-    ExplicitTop = -6
-    ExplicitWidth = 1000
     object Label2: TLabel
       Left = 765
       Top = 11
@@ -139,7 +137,7 @@ object FormBelegSuche: TFormBelegSuche
       OnClick = SpeedButton9Click
     end
     object SpeedButton20: TSpeedButton
-      Left = 295
+      Left = 279
       Top = 8
       Width = 22
       Height = 22
@@ -176,7 +174,7 @@ object FormBelegSuche: TFormBelegSuche
       OnClick = SpeedButton20Click
     end
     object SpeedButton2: TSpeedButton
-      Left = 244
+      Left = 228
       Top = 8
       Width = 22
       Height = 22
@@ -229,7 +227,7 @@ object FormBelegSuche: TFormBelegSuche
       OnClick = SpeedButton2Click
     end
     object SpeedButton41: TSpeedButton
-      Left = 269
+      Left = 253
       Top = 7
       Width = 23
       Height = 23
@@ -269,6 +267,43 @@ object FormBelegSuche: TFormBelegSuche
       ShowHint = True
       OnClick = SpeedButton41Click
     end
+    object SpeedButton13: TSpeedButton
+      Left = 399
+      Top = 8
+      Width = 23
+      Height = 22
+      Hint = 'an offenen Budgets abschreiben'
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        1800000000000003000000000000000000000000000000000000FFFEFFFDFDFD
+        FBFFFEC6D6CB7B968253795B36623E38774D2A603B426D526E8B7BAFC1BAF1FC
+        FAF8FFFFEFF7F7FFFFFFFFFCFCFFFFF77FB2972A76567BA289C1BFB4FFFFF9C3
+        DACBFFFFF8E8E0D9A2C0B5236F5D287762F1FFF7FFFBF3FFFEFFF3F2EE899E8F
+        43715AA3D0B6F4FFF4FBFFF7EAFCEF4A7C64DFF5E3FFFFF8EEF7EDC8ECDE73A5
+        935A7D69E6F0DFFFFDFEB6D4C7427664D0EEDBF8FBECFDFFF5B0CBBB5C827019
+        603F55866AB7CBB8FFFFF7FFFFF8D8E5D75B846F5B9A80FFFFFB31624E85B7A5
+        FFFFF8FFFFF8C7DECF2C5A47496C5836754E4989653D6D51CCD9C9FFF0E7FFFF
+        F7C9EBDA216B51C9DCCD50816BDAECDFFFFDFBFFFCF96D9C8C3F7460D1E1CF40
+        6943CCFFE3266B4A739F88FFFFF7FFFFF8E8F9EC7BA89779A68B6E957CFCF9F1
+        FFFCFEF4F9F8DDFFFBAED7C2F3FFEB476C44B4EDC6256A495D937CEFFFF7FFFF
+        FCF7F8F4C0CEC846846090A890FFFFF9EFF4F5F8FFFFF6FBF9F6FFF5B5D8BE3E
+        7B4F407C54417155A7C4B4E4F0EAFFFFFFFFFEFFC7C9CA2D6F45ADBDA5F3FFF9
+        E3FFFFFAFEFFFFFAFE979184367253116C3B407F5892AF96FFFFF8FFFFFEF0EF
+        F3F3F6FBD8DCE133724670947CE8EFECFFFBFFFFFCFFB7C7BC43734F488E593B
+        7453DBFFECF6FFFBFFFDFFFFF9FFFFFEFFECF4EDB9CBBE43855C42624FF4FFFC
+        F8FAFBE9EEECA9BEAF3B6748A9E6BA326948DEFFEDC4D6C9F7F8F6FFFCFDFDFE
+        FCF4FFF9809A8A7CA58961796D8CA296F1FFF8EBFFF3B8D7C2436A507BA98C36
+        6C4983AF92516B59CAD5CDF9FFFBF3FFFACDE7D93B5E4ACEDDCFC2D2CB4B6555
+        C1E5CDE4FFF1DCFFEA799C884868572E613F446D5186A590D8EDDEF3FFF9EAFF
+        F55577667EA590FEFFFBF8FFFE8AA395385C44B4E0C3E4FFF2DDFDECDFF7EB42
+        6E4FE1FFEECFF1D9ECFFF5DDF7E76B8577678776D9FBEAFFFEFFE3E6E4F4FFF9
+        B2CDBD48695462826FCDEADADBF5E5E4FFF1D4F8E0D0EFDAA1BDAA3F56477C90
+        83EAFEF2F1FFF9FAFCFDFFFFFCE0E6E1F5FFFBD5E6DD87A092526E5A42624A33
+        513E4F6D5A55715E5D7767BACCBFF8FFFBFBFFFCF6F7F5FFFFFE}
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = SpeedButton13Click
+    end
     object IB_Grid1: TIB_Grid
       Left = 1
       Top = 43
@@ -292,7 +327,7 @@ object FormBelegSuche: TFormBelegSuche
       AutoSize = False
     end
     object IB_SearchBar1: TIB_SearchBar
-      Left = 7
+      Left = 3
       Top = 8
       Width = 120
       Height = 22
@@ -304,7 +339,7 @@ object FormBelegSuche: TFormBelegSuche
       CustomGlyphsSupplied = []
     end
     object IB_UpdateBar1: TIB_UpdateBar
-      Left = 133
+      Left = 123
       Top = 8
       Width = 104
       Height = 22
@@ -355,7 +390,7 @@ object FormBelegSuche: TFormBelegSuche
       TabOrder = 7
     end
     object Button3: TButton
-      Left = 368
+      Left = 352
       Top = 8
       Width = 22
       Height = 22
@@ -376,7 +411,7 @@ object FormBelegSuche: TFormBelegSuche
       OnExit = Edit1Exit
     end
     object Button5: TButton
-      Left = 344
+      Left = 328
       Top = 8
       Width = 22
       Height = 22
@@ -385,7 +420,7 @@ object FormBelegSuche: TFormBelegSuche
       OnClick = Button7Click
     end
     object Button7: TButton
-      Left = 392
+      Left = 376
       Top = 8
       Width = 22
       Height = 22
@@ -403,7 +438,7 @@ object FormBelegSuche: TFormBelegSuche
       OnClick = Button8Click
     end
     object Button18: TButton
-      Left = 319
+      Left = 303
       Top = 8
       Width = 22
       Height = 22
@@ -422,8 +457,6 @@ object FormBelegSuche: TFormBelegSuche
     Height = 355
     Align = alClient
     TabOrder = 1
-    ExplicitTop = 438
-    ExplicitHeight = 353
     object Label3: TLabel
       Left = 7
       Top = 10
@@ -454,8 +487,6 @@ object FormBelegSuche: TFormBelegSuche
       Align = alBottom
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
-      ExplicitTop = 72
-      ExplicitWidth = 1082
     end
     object Button2: TButton
       Left = 255
@@ -852,7 +883,7 @@ object FormBelegSuche: TFormBelegSuche
   end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1
-    AppStoragePath = '%FORM_NAME%'
+    AppStoragePath = '%FORM_NAME%\'
     StoredValues = <>
     Left = 112
     Top = 208
