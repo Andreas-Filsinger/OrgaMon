@@ -21,7 +21,8 @@ Dokumentation
 
 Rev 8.093 (26.03.15) Andreas Filsinger
 
- Neu: Vertag: BEZAHLT_BIS
+ Neu: Vertrag: BEZAHLT_BIS
+ Neu: Belege: Bezahlt bis der Verträge aus bezahlten Belegen füllen
 
 Rev 8.092 (23.03.15) Andreas Filsinger
 
