@@ -272,7 +272,7 @@ object FormBelegSuche: TFormBelegSuche
       Top = 8
       Width = 23
       Height = 22
-      Hint = 'an offenen Budgets abschreiben'
+      Hint = 'Beleg in Vertr'#228'gen als Bezahlt eintragen'
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
         1800000000000003000000000000000000000000000000000000FFFEFFFDFDFD
