@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.235 (10.04.15) Andreas Filsinger
+
+ Bug: Split: Kam mit leerer Spalte am Ende nicht zurecht
+ Neu: xls2csv: Wilken: Zählwerk wird nicht mehr auf '' gesetzt
+
 Rev 1.234 (04.11.14) Andreas Filsinger
 
  Neu: xml2csv: Mehrere WRITE_AT aufreihbar

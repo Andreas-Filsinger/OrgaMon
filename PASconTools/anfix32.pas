@@ -119,7 +119,7 @@ var
   TestMode: boolean = false;
   DebugMode: boolean = false;
   DebugLogPath: string = '';
-  LastDate: TANFiXDate;
+  LastDate: TAnfixDate;
 
   // Debug-Sachen
 procedure StartDebug(s: string);
@@ -930,8 +930,8 @@ begin
     result := Res;
 end;
 
-//  Gerald Rohr
-//  function leapyear
+// Gerald Rohr
+// function leapyear
 
 function Schaltjahr(dlong: longint): boolean;
 var
@@ -4938,6 +4938,11 @@ begin
       inc(result);
 end;
 
+// split('A;;C') = ['A','','C']
+// split('') = ['']
+// split(';') = ['','']
+
+
 function Split(s: string; Delimiter: string = ';'; Quote: string = '')
   : TStringList;
 var
@@ -4948,13 +4953,23 @@ begin
   result := TStringList.create;
   if (QuoteLength = 0) then
   begin
-    while (s <> '') do
-      result.add(NextP(s, Delimiter));
+    repeat
+
+      if (pos(Delimiter, s) = 0) then
+      begin
+        result.add(s);
+        break;
+      end
+      else
+      begin
+        result.add(NextP(s, Delimiter));
+      end;
+    until false;
   end
   else
   begin
-    while (s <> '') do
-    begin
+    repeat
+
       if (pos(Quote, s) = 1) then
       begin
         system.delete(s, 1, QuoteLength);
@@ -4974,9 +4989,17 @@ begin
       end
       else
       begin
-        result.add(NextP(s, Delimiter));
+        if (pos(Delimiter, s) = 0) then
+        begin
+          result.add(s);
+          break;
+        end
+        else
+        begin
+          result.add(NextP(s, Delimiter));
+        end;
       end;
-    end;
+    until false;
   end;
 end;
 

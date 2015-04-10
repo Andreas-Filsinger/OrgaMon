@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.234; // ../rev/Oc.rev.txt
+  Version: single = 1.235; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -5045,8 +5045,8 @@ begin
         if (r = 1) then
         begin
 
-          // Zelle einer Kopfzeile
-          if c <= MaxSpalte then
+          // Spaltenname-Zelle der Kopfzeile
+          if (c <= MaxSpalte) then
             header.add(OneCell);
         end
         else
@@ -5181,9 +5181,10 @@ begin
           Content_S := Content_S + OneCell;
 
           // Separator nur dazumachen, wenn nicht unterdrückt!
-          if (c < MaxSpalte) then
+          if (c <> MaxSpalte) then
             if (pos(IntToStrN(c, 3), JoinColumn) = 0) then
               Content_S := Content_S + Separator;
+
         end;
 
       end;
@@ -5214,6 +5215,7 @@ begin
       if pWilken and (r > 1) then
       begin
 
+        // 1. Block: AUSBAU
         for z := 1 to max(1, ZaehlwerkeAusbau) do
         begin
           Content_Wilken := Split(Content_S);
@@ -5221,7 +5223,6 @@ begin
           // Modifier
           Content_Wilken[col_tgw_altzaehlerflag] := '0';
           Content_Wilken[col_zae_nr_neu] := '';
-          Content_Wilken[col_tgw_teilgeraetenr] := '';
           Content_Wilken[col_tgw_wandlerfaktor] := '';
           case z of
             1:
@@ -5235,6 +5236,7 @@ begin
           Content_Wilken.Free;
         end;
 
+        // 2. Block EINBAU
         for z := 1 to max(1, ZaehlwerkeEinbau) do
         begin
           Content_Wilken := Split(Content_S);
