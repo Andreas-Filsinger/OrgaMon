@@ -35,7 +35,6 @@ unit Funktionen_Beleg;
 // r_ (=read) granted read only access (guaranteed no "w")
 // x_ (=execute) SQL Satement
 //
-// SQL-Aktions-Logging in ein SQL-Log
 //
 
 interface
@@ -5437,7 +5436,7 @@ end;
 function e_r_BelegSaldo(BELEG_R: integer;
   TEILLIEFERUNG: integer = cRID_Null): double;
 begin
-  if TEILLIEFERUNG = cRID_Null then
+  if (TEILLIEFERUNG = cRID_Null) then
     result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where BELEG_R='
       + inttostr(BELEG_R))
   else
@@ -12289,7 +12288,7 @@ var
   sDiagnose: TStringList;
   sKassenKontos: TSearchStringList;
   sKK: TStringList;
-  KontoINdex: integer;
+  KontoIndex: integer;
   KontoKasse: string;
   VALUTA: TAnfixDate;
 begin
@@ -12334,13 +12333,13 @@ begin
           inttostr(RIDS[n])));
 
         // Ermittlung des Ziel-Kassen Kontos
-        KontoINdex := sKassenKontos.FindPos(e_r_sqls(
+        KontoIndex := sKassenKontos.FindPos(e_r_sqls(
           { } 'select MOTIVATION from BELEG' +
           { } ' where RID=' + inttostr(RIDS[n])));
-        if (KontoINdex = -1) then
+        if (KontoIndex = -1) then
           KontoKasse := cKonto_Kasse
         else
-          KontoKasse := nextp(sKassenKontos[KontoINdex], ';', 0);
+          KontoKasse := nextp(sKassenKontos[KontoIndex], ';', 0);
 
         // Forderungsausgleich
         b_w_ForderungAusgleich(format(
@@ -12352,19 +12351,16 @@ begin
           { } cRID_Null,
           { } 'SOFORTZAHLUNG=JA',
           { } KontoKasse,
-          { } 0,
+          { * } cRID_Null,
           { } cRID_Null]), sDiagnose);
 
       end;
     end;
     RIDS.free;
-
-    // Bezahlte Kassen-Belege löschen, imp pend
-    // if DateDiff(VALUTA,DateGet)>90 then
-    // DeleteBeleg(RIDS[n]);
-
-    sDiagnose.SaveToFile(DiagnosePath + 'Schnelle-Rechnung-Ausgleich-' +
-      DatumLog + '.txt');
+    AppendStringsToFile(
+      { } sDiagnose,
+      { } DiagnosePath + 'Schnelle-Rechnung-Ausgleich-' +
+      { } DatumLog + '.txt');
     sDiagnose.free;
   end;
 
@@ -12376,7 +12372,7 @@ begin
     result := 0
   else
   begin
-    if mDatum = cIllegalDate then
+    if (mDatum = cIllegalDate) then
       mDatum := DateGet;
 
     result := e_r_sqld('select SATZ from MWST where ' + ' (NAME=''SATZ' +
