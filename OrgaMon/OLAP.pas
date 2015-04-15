@@ -1029,16 +1029,18 @@ var
         if (CompleteStrL.values['STEUER3'] = '') then
           CompleteStrL.values['STEUER3'] := cOLAPNull;
 
-        result := // Beleg-Teillieferung;NETTO1;NETTO2;NETTO3;MWST1;MWST2;MWST3
-          inttostr(BELEG_R) + '-' + inttostrN(TEILLIEFERUNG, 2) +
-          cOLAPcsvSeparator + CompleteStrL.values['NETTO1'] + cOLAPcsvSeparator
-          + CompleteStrL.values['SATZ1'] + cOLAPcsvSeparator +
-          CompleteStrL.values['STEUER1'] + cOLAPcsvSeparator +
-          CompleteStrL.values['NETTO2'] + cOLAPcsvSeparator +
-          CompleteStrL.values['SATZ2'] + cOLAPcsvSeparator + CompleteStrL.values
-          ['STEUER2'] + cOLAPcsvSeparator + CompleteStrL.values['NETTO3'] +
-          cOLAPcsvSeparator + CompleteStrL.values['SATZ3'] + cOLAPcsvSeparator +
-          CompleteStrL.values['STEUER3'];
+        result := // Beleg-Teillieferung;NETTO1;SATZ1;MWST1;NETTO2;SATZ2;MWST2;NETTO3;SATZ3;MWST3
+        { } inttostr(BELEG_R) + '-' +
+        { } inttostrN(TEILLIEFERUNG, 2) + cOLAPcsvSeparator +
+        { } CompleteStrL.values['NETTO1'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['SATZ1'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['STEUER1'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['NETTO2'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['SATZ2'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['STEUER2'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['NETTO3'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['SATZ3'] + cOLAPcsvSeparator +
+        { } CompleteStrL.values['STEUER3'];
 
         CompleteStrL.free;
         break;
@@ -2266,8 +2268,10 @@ begin
           begin
             if (Line = '-') then
             begin
-              if not(FileCompare(RohdatenFName(pred(RohdatenCount)),LoadFname)) then
-               FileVersionedCopy(RohdatenFName(pred(RohdatenCount)),LoadFname);
+              if not(FileCompare(RohdatenFName(pred(RohdatenCount)), LoadFname))
+              then
+                FileVersionedCopy(RohdatenFName(pred(RohdatenCount)),
+                  LoadFname);
               State := cState_Rohdaten;
             end;
           end;
