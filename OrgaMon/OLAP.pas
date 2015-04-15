@@ -255,6 +255,8 @@ const
   cState_html = 27; // der HTML Prozessor
   cState_evaluation = 28; // Auswertungen anwerfen
   cState_store = 29; // Ergebnisdatei in ein andere Verzeichnis kopieren
+  cState_header = 30; // Tauscht den Header aus
+  cState_integrate3 = 31; // aggregate
 
 var
   m, k, l: integer;
@@ -286,6 +288,7 @@ var
   SingleValue: string;
   IntegrateCol: integer;
   IntegrateAnkerCol: integer;
+  IntegrateOperation: string;
   AnkerS: string;
   DatumGranularitaet: TDatum_Granularitaet;
 
@@ -414,7 +417,8 @@ var
   TargetCol: integer;
 
   // add
-  addValue: double;
+  addValueD: double;
+  addValueI: integer;
 
   // AppendMode
   AppendMode: boolean;
@@ -1396,6 +1400,19 @@ begin
         continue;
       end;
 
+      if (Line = 'integrate3') then
+      begin
+        State := cState_integrate3;
+        continue;
+      end;
+
+      if (Line = 'header') then
+      begin
+        State := cState_header;
+        continue;
+
+      end;
+
       if (Line = 'sort') then // über Spalten sortieren
       begin
         State := cState_Sort;
@@ -2063,11 +2080,19 @@ begin
                 SingleValue := nextp(Line, cOLAPcsvSeparator);
                 if (SingleValue = '=SUMME') then
                 begin
-                  addValue := 0.0;
+                  addValueD := 0.0;
                   for l := 1 to (BigJoin.count - 2) do
-                    addValue := addValue +
+                    addValueD := addValueD +
                       strtodoubledef(TStringList(BigJoin[l])[k], 0.0);
-                  SingleValue := format('%.2f', [addValue]);
+                  SingleValue := format('%.2f', [addValueD]);
+                end;
+                if (SingleValue = '=N') then
+                begin
+                  addValueI := 0;
+                  for l := 1 to (BigJoin.count - 2) do
+                    addValueI := addValueI +
+                      strtointdef(TStringList(BigJoin[l])[k], 0);
+                  SingleValue := format('%d', [addValueI]);
                 end;
                 JoinedL.add(ResolveParameter(SingleValue));
               end;
@@ -3161,6 +3186,138 @@ begin
               Log(cERRORText + ' Spalte ' + 'x' + 'nicht gefunden!');
             end;
 
+          end;
+        cState_integrate3:
+          begin
+
+            // Aufsummieren und Integrale bilden
+            LoadFromFileCSV(true, sl, RohdatenFName(pred(RohdatenCount)));
+
+            // Header unbehandelt hinzu
+            ThisHeader := sl[0];
+            IntegratedL.add(TStringList.create);
+            with TStringList(IntegratedL[0]) do
+            begin
+              while (ThisHeader <> '') do
+                add(nextp(ThisHeader, cOLAPcsvSeparator));
+            end;
+
+            // Welche Spalte soll als Integrations-Anker verwendet werden
+            IntegrateAnkerCol := TStringList(IntegratedL[0])
+              .indexof('GROUP BY');
+
+            for m := 1 to pred(sl.count) do
+            begin
+
+              //
+              OneLine := sl[m];
+
+              // Anker ermitteln
+              AnkerS := nextp(OneLine, cOLAPcsvSeparator, IntegrateAnkerCol);
+
+              // nun diesen Ankerwert in der vorhandenen Liste suchen, ggf neue Zeile erstellen
+              IntegratFound := false;
+              for k := 1 to pred(IntegratedL.count) do
+              begin
+                if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol])
+                then
+                begin
+                  // ok gefunden -> jetzt summieren / integrieren
+                  IntegrateCol := 0;
+                  while (OneLine <> '') do
+                  begin
+
+                    SingleValue := nextp(OneLine, cOLAPcsvSeparator);
+
+                    repeat
+
+                      // Nichts tun bei der Ankerspalte
+                      if IntegrateCol = IntegrateAnkerCol then
+                        break;
+
+                      if (SingleValue = cOLAPNull) then
+                        break;
+
+                      // Was soll mit dieser Spalte gemacht werden
+                      IntegrateOperation := TStringList(IntegratedL[0])
+                        [IntegrateCol];
+
+                      // nix
+                      if (IntegrateOperation = '') then
+                        break;
+
+                      // d+d
+                      if (IntegrateOperation = 'add MONEY') then
+                      begin
+                        // Geld addieren
+                        TStringList(IntegratedL[k])[IntegrateCol] :=
+                        { } MoneyToStr(
+                          { } StrToMoneyDef(TStringList(IntegratedL[k])
+                          [IntegrateCol]) + { } StrToMoneyDef(SingleValue)
+                          { } );
+                        break;
+                      end;
+
+                      if (IntegrateOperation = 'add INTEGER') then
+                      begin
+                        // Geld addieren
+                        TStringList(IntegratedL[k])[IntegrateCol] :=
+                        { } inttostr(
+                          { } strtointdef(TStringList(IntegratedL[k])
+                          [IntegrateCol], 0) + { } strtointdef(SingleValue, 0)
+                          { } );
+                        break;
+                      end;
+
+                      TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "'+IntegrateOperation+'" unbekannt';
+
+                    until true;
+
+                    inc(IntegrateCol);
+                  end;
+                  IntegratFound := true;
+                  break;
+                end;
+              end;
+
+              if not(IntegratFound) then
+              begin
+
+                // Zeile 1:1 neu hinzu
+                IntegratedNewL := TStringList.create;
+                IntegratedL.add(IntegratedNewL);
+                with IntegratedNewL do
+                begin
+                  while (OneLine <> '') do
+                    add(nextp(OneLine, cOLAPcsvSeparator));
+                end;
+              end;
+
+            end;
+
+            // speichern
+            sl.clear;
+            for m := 0 to pred(IntegratedL.count) do
+              sl.add(HugeSingleLine(TStringList(IntegratedL[m]),
+                cOLAPcsvSeparator));
+
+            sl.savetofile(RohdatenFName(RohdatenCount));
+            SaveCopy(RohdatenFName(RohdatenCount));
+            inc(RohdatenCount);
+          end;
+        cState_header:
+          begin
+            if (Line <> '-') then
+            begin
+
+              // Einfach die Kopfzeile austauschen
+              LoadFromFileCSV(true, sl, RohdatenFName(pred(RohdatenCount)));
+              sl[0] := Line;
+              sl.savetofile(RohdatenFName(RohdatenCount));
+              SaveCopy(RohdatenFName(RohdatenCount));
+              inc(RohdatenCount);
+
+            end;
           end;
         cState_subtract:
           begin

@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.096 (15.04.15) Andreas Filsinger
+
+ Neu: OLAP: add: "=N" für die Ganzzahl-Addition
+ Neu: OLAP: header: ganz neue Spaltenüberschriften erzwingen
+ Neu: OLAP: integrate3: Aggregation anhand von Befehlen in der Spaltenüberschrift
+      "GROUP BY", "add MONEY", "add INTEGER"
+
 Rev 8.095 (14.04.15) Andreas Filsinger
 
  Bug: Schnelle Rechnung: Forderungsausgleich war nicht "*" in der Teillieferung
