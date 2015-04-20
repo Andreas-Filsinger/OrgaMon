@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 PrivilegesRequired=Admin
 AppName=OrgaMon
 AppVerName=OrgaMon «RevMitPunkt»
-AppCopyright=Copyright (C) 1988-2011 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2015 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -62,7 +62,7 @@ Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesnte
 Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 
 ; Shared Object: Firebird embedded Server
-Source: "Distribution\Firebird-2.5.2.26540-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\FirebirdEmbed\Firebird-2.5.4.26856-0_Win32_embed\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 ; Anwendungs Zubehör
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"

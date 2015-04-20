@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -665,7 +665,10 @@ var
   LastTrnNo: string; // Vom Gerät
   Optionen: string; // Vom Gerät
   IMEI: string; // Vom Gerät
-  NAME: string; // Vom Gerät
+
+  // Aus der IMEI Tabelle
+  NAME: string;
+  BEZAHLT_BIS: TANFiXDate;
 
   OneJLine: string;
   JProtokoll: string;
@@ -1493,6 +1496,7 @@ begin
         Optionen := JondaAll.values['OPTIONEN'];
         IMEI := JondaAll.values['IMEI'];
         NAME := JondaAll.values['NAME'];
+        BEZAHLT_BIS := date2long(JondaAll.values['BEZAHLT_BIS']);
 
         // nun alle Setting-Lines entfernen
         if (JondaAll.count > 0) then
@@ -2228,37 +2232,46 @@ begin
 
       // Alte Datei löschen
       FileDelete(MyProgramPath + AktTrn + '\auftrag.txt');
-      if (RevIsFrom(RemoteRev, cVersion_OrgaMonApp)) then
-      begin
-        // OrgaMon-App
-        if (RevIsFrom(RemoteRev, cMinVersion_OrgaMonApp)) then
-        begin
 
-          // Auftrag.txt nun wirklich bereitstellen!
-          FileReName(MyProgramPath + AktTrn + '\auftrag.$$$',
-            MyProgramPath + AktTrn + '\auftrag.txt')
-        end
-        else
-        begin
+      // Neue Aufträge bereitstellen
+      repeat
 
+        // noch JonDa?
+        if not(RevIsFrom(RemoteRev, cVersion_OrgaMonApp)) then
+        begin
+          log('WARNUNG: JonDa ' + RevToStr(RemoteRev) +
+            ' wird nicht mehr unterstützt!');
+          FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend.txt',
+            MyProgramPath + AktTrn + '\auftrag.txt');
+          break;
+        end;
+
+        // zu alte OrgaMon-App?
+        if not(RevIsFrom(RemoteRev, cMinVersion_OrgaMonApp)) then
+        begin
           // Programmversion ist zu alt!
           log('WARNUNG: Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
           FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend' +
             cUTF8DataExtension, MyProgramPath + AktTrn + '\auftrag' +
             cUTF8DataExtension);
+          break;
         end;
 
-      end
-      else
-      begin
+        // Vertragszeitraum nicht bezahlt?
+        if DateOK(BEZAHLT_BIS) and (_DateGet > BEZAHLT_BIS) then
+        begin
+          // Programmversion ist zu alt!
+          log('WARNUNG: Unbezahlter Zeitraum!');
+          FileCopy(ProtokollPath(RemoteRev) + 'Unbezahlt' + cUTF8DataExtension,
+            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          break;
+        end;
 
-        // JonDa
-        log('WARNUNG: JonDa ' + RevToStr(RemoteRev) +
-          ' wird nicht mehr unterstützt!');
-        FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend.txt',
-          MyProgramPath + AktTrn + '\auftrag.txt');
+        // Auftrag.txt nun wirklich bereitstellen!
+        FileReName(MyProgramPath + AktTrn + '\auftrag.$$$',
+          MyProgramPath + AktTrn + '\auftrag.txt')
 
-      end;
+      until true;
 
       if (GeraeteNo <> '000') then
         if (Stat_Meldungen > 0) then
@@ -2480,6 +2493,7 @@ var
   _TAN: string;
   VERSION, Optionen, UHR, IMEI, NAME: string;
   TAN: string;
+  BEZAHLT_BIS: TANFiXDate;
   Einstellungen: TStringList; // vorbereitete Einstellungen für dieses Gerät
   OptionStrings: TStringList;
   MomentDate: TANFiXDate;
@@ -2507,6 +2521,7 @@ begin
     try
 
       NAME := '';
+      BEZAHLT_BIS := cMaxDate;
       s := '';
       GeraetID := sParameter.values['GERAET'];
       if (GeraetID = '') then
@@ -2583,9 +2598,15 @@ begin
             begin
               _GeraetID := tIMEI.readCell(r, 'GERAET');
               if (_GeraetID <> GeraetID) then
+              begin
                 log(cWARNINGText + ' 2357:' + ' Bei IMEI "' + IMEI +
                   '" sollte GERAET "' + _GeraetID +
                   '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
+              end
+              else
+              begin
+                BEZAHLT_BIS := Date2Long(tIMEI.readCell(r, 'BEZAHLT_BIS'));
+              end;
             end;
           end;
 
@@ -2641,6 +2662,7 @@ begin
               secondstostr8(MomentTime));
             add('GERAET=' + GeraetID);
             AddStrings(Einstellungen);
+            add('BEZAHLT_BIS='+long2date(BEZAHLT_BIS));
           end;
           if RevIsFrom(strtodoubledef(VERSION, 0), cVersion_OrgaMonApp) then
             SaveStringsToFileUTF8(OptionStrings, MyProgramPath + TAN + '\' +
