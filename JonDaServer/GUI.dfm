@@ -33,7 +33,7 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet5
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -220,6 +220,10 @@ object FormGUI: TFormGUI
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -349,6 +353,10 @@ object FormGUI: TFormGUI
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 16
         Top = 24
@@ -719,6 +727,10 @@ object FormGUI: TFormGUI
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -873,6 +885,10 @@ object FormGUI: TFormGUI
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -912,6 +928,10 @@ object FormGUI: TFormGUI
     object TabSheet7: TTabSheet
       Caption = 'AUFTRAG+TS'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object ProgressBar1: TProgressBar

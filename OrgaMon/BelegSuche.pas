@@ -754,22 +754,39 @@ begin
                   { } ' (PERSON.VORNAME=' + SQLString(VORNAME) + ') and' +
                   { } ' (PERSON.NACHNAME=' + SQLString(NACHNAME) + ')');
 
-                if (lPERSON_R.count = 0) then
-                begin
-                  ShowMessage('Person nicht gefunden, oder hat keine Vertrag');
-                  break;
-                end;
+                repeat
 
-                if (lPERSON_R.count > 1) then
-                begin
-                  ShowMessage('Mehrere Personen könnten passen');
-                  break;
-                end;
+                  if (lPERSON_R.count = 1) then
+                  begin
+                    inc(AutoMataState);
+                    break;
+                  end;
 
-                if (lPERSON_R.count = 1) then
-                begin
-                  inc(AutoMataState);
-                end;
+                  if (lPERSON_R.count = 0) then
+                  begin
+                    ShowMessage(
+                      { } 'Person "' +
+                      { } VORNAME +
+                      { } ' ' +
+                      { } NACHNAME +
+                      { } '" nicht gefunden, oder hat keinen Vertrag mehr!');
+                    FreeAndNil(lPERSON_R);
+                    break;
+                  end;
+
+                  if (lPERSON_R.count > 1) then
+                  begin
+                    ShowMessage(
+                      { } 'Person "' +
+                      { } VORNAME +
+                      { } ' ' +
+                      { } NACHNAME +
+                      { } '": Mehrere Treffer!');
+                    FreeAndNil(lPERSON_R);
+                    break;
+                  end;
+
+                until true;
 
               end;
 
@@ -790,9 +807,9 @@ begin
                   { } ' (RID=' + inttostr(lPERSON_R[0]) + ') and ' +
                   { } ' ((BEZAHLT_BIS is null) or' +
                   { } '  (BEZAHLT_BIS < ' + SQLString(DATUM) + '))');
-                  FreeAndNil(lPERSON_R);
-                  AutomataState := 0;
-                end;
+                FreeAndNil(lPERSON_R);
+                AutoMataState := 0;
+              end;
             end;
           end;
       end;
