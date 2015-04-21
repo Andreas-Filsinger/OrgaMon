@@ -630,7 +630,7 @@ var
   BELEG_R: Integer;
   PERSON_R: Integer;
   TEILLIEFERUNG: Integer;
-  Betrag: double;
+  Betrag, saldo: double;
   VALUTA: string;
   sVOLUMEN: TsTable;
   r: Integer;
@@ -659,32 +659,41 @@ begin
       for r := 1 to RowCount do
       begin
         // Nun die einzelnen Zahlungsereignisse
-        Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
-        BELEG_R := StrToIntDef(readCell(r, 'BELEG_R'), cRID_Null);
         PERSON_R := StrToIntDef(readCell(r, 'PERSON_R'), cRID_Null);
+        BELEG_R := StrToIntDef(readCell(r, 'BELEG_R'), cRID_Null);
         TEILLIEFERUNG := StrToIntDef(readCell(r, 'TEILLIEFERUNG'), 0);
+        Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
 
-        // Jetzt den ganzen Rattenschwanz buchen
-        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
-          { } PERSON_R,
-          { } BELEG_R,
-          { } Betrag,
-          { } VALUTA,
-          { } cRID_Null,
-          { } 'Lastschrift',
-          { } cKonto_Bank,
-          { } TEILLIEFERUNG,
-          { } EREIGNIS_R]));
+        // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
+        saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
+          { } '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
+          { } '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
-        // Nun bei der Person die Freigabe wieder zurücksetzen
-        e_x_sql(
-          { } 'update PERSON set ' +
-          { } ' Z_ELV_FREIGABE=' +
-          { } 'coalesce(Z_ELV_FREIGABE,' +
-          { } FloatToStrISO(Betrag, 2) + ') - ' +
-          { } FloatToStrISO(Betrag, 2) + ' ' +
-          { } 'where' +
-          { } ' RID=' + inttostr(PERSON_R));
+        if isHaben(saldo) then
+        begin
+
+          // Jetzt den ganzen Rattenschwanz buchen
+          b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+            { } PERSON_R,
+            { } BELEG_R,
+            { } Betrag,
+            { } VALUTA,
+            { } cRID_Null,
+            { } 'Lastschrift',
+            { } cKonto_Bank,
+            { } TEILLIEFERUNG,
+            { } EREIGNIS_R]));
+
+          // Nun bei der Person die Freigabe wieder zurücksetzen
+          e_x_sql(
+            { } 'update PERSON set ' +
+            { } ' Z_ELV_FREIGABE=' +
+            { } 'coalesce(Z_ELV_FREIGABE,' +
+            { } FloatToStrISO(Betrag, 2) + ') - ' +
+            { } FloatToStrISO(Betrag, 2) + ' ' +
+            { } 'where' +
+            { } ' RID=' + inttostr(PERSON_R));
+        end;
 
       end;
     end;

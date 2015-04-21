@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.097 (21.04.15) Andreas Filsinger
+
+ Neu: Lastschriften: Volumen-Info nun auch in der Tabelle DOKUMENT
+
 Rev 8.096 (15.04.15) Andreas Filsinger
 
  Neu: OLAP: add: "=N" für die Ganzzahl-Addition
@@ -10934,6 +10938,16 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.097
+
+alter table DOKUMENT
+add EREIGNIS_R DOM_REFERENCE;
+
+alter table DOKUMENT
+add constraint FK_DOKUMENT_EREIGNIS
+foreign key (EREIGNIS_R)
+references EREIGNIS(RID);
 
 :8.093
 

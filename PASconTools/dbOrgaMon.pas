@@ -241,14 +241,15 @@ function nScript: TdboScript;
 function for_update(s: TStrings = nil): string;
 
 { Datenbank Abfragen allgemein }
-function e_r_IsRID(FieldName: string; RID: integer): boolean;
+
 // SQL selects, die einen Einzelnen Wert zurückgeben
+function e_r_IsRID(FieldName: string; RID: integer): boolean;
 
-function e_r_sql(s: string): integer; overload;
 // Nur das erste Feld aus der ersten Zeile als Integer
+function e_r_sql(s: string): integer; overload;
 
-function e_r_sql(s: string; sl: TStringList): integer; overload;
 // Nur das erste Feld aus der Element als Text-Blob, result=1
+function e_r_sql(s: string; sl: TStringList): integer; overload;
 
 // Nur das erste Feld des ersten Records als Text-Blob
 function e_r_sqlt(s: string): TStringList; overload;
@@ -259,11 +260,11 @@ procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 // Schreiben eines Datenbank Blob-Feldes
 procedure e_w_sqlt(Field: TdboField; s: TStrings);
 
-function e_w_GEN(GenName: string; Increment: integer = 1): integer;
 // erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
+function e_w_GEN(GenName: string; Increment: integer = 1): integer;
 
-function e_r_GEN(GenName: string): integer;
 // liefert den aktuellen Wert des Generators
+function e_r_GEN(GenName: string): integer;
 
 // Zeit aus dem Datenbankserver lesen
 function e_r_now: TdateTime;
@@ -271,9 +272,13 @@ function e_r_now: TdateTime;
 // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
 function r_Local_vs_Server_TimeDifference: TANFiXTime;
 
-//
+// Die erste Zelle einer Datenbankabfrage als Stirng
 function e_r_sqls(s: string): string;
+
+// Die erste Zelle einer Datenbankabfrage als Boolean
 function e_r_sqlb(s: string): boolean;
+
+// Die erste Zelle einer Datenbankabfrage als Double
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
 
 // Erste Ergebnis-Spalte als TStringList

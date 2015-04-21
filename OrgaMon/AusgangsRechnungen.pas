@@ -83,6 +83,7 @@ type
     IB_ComboBox2: TIB_ComboBox;
     Label38: TLabel;
     SpeedButton3: TSpeedButton;
+    SpeedButton2: TSpeedButton;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -106,6 +107,7 @@ type
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -448,185 +450,244 @@ begin
         if (e_r_sql
           ('select count(RID) from BUCH where (BETRAG is null) and NAME=''' +
           cKonto_Kasse + '''') > 0) then
-          Konto := cKonto_Kasse until true;
+          Konto := cKonto_Kasse;
+      until true;
 
-        // Jetzt den ganzen Rattenschwanz buchen
-        sDiagnose := TStringList.create;
-        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, BELEG_R,
-          _AktuelleZahlung, '', cRID_Null, '', Konto, TEILLIEFERUNG, cRID_Null]
-          ), sDiagnose);
-        FormCareServer.ShowIfError(sDiagnose);
-        sDiagnose.free;
+      // Jetzt den ganzen Rattenschwanz buchen
+      sDiagnose := TStringList.create;
+      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, BELEG_R,
+        _AktuelleZahlung, '', cRID_Null, '', Konto, TEILLIEFERUNG, cRID_Null]),
+        sDiagnose);
+      FormCareServer.ShowIfError(sDiagnose);
+      sDiagnose.free;
 
-        // Zahlung jetzt buchen
-        with IB_Query1 do
-        begin
+      // Zahlung jetzt buchen
+      with IB_Query1 do
+      begin
 
-          // refresh ...
-          formBelegSuche.IB_UpdateBar1.BtnClick(ubRefreshAll);
+        // refresh ...
+        formBelegSuche.IB_UpdateBar1.BtnClick(ubRefreshAll);
 
-          Edit5.Text := '';
-          IB_UpdateBar1.BtnClick(ubRefreshAll);
-          refreshSumme;
+        Edit5.Text := '';
+        IB_UpdateBar1.BtnClick(ubRefreshAll);
+        refreshSumme;
 
-          application.ProcessMessages;
-          IB_Grid1.SetFocus;
+        application.ProcessMessages;
+        IB_Grid1.SetFocus;
 
-        end;
       end;
     end;
+end;
 
-  procedure TFormAusgangsRechnungen.SetContextCustomer(Kunde_RID: Integer);
+procedure TFormAusgangsRechnungen.SetContextCustomer(Kunde_RID: Integer);
+begin
+  //
+  PERSON_R := Kunde_RID;
+  IB_Query2.ParamByName('CROSSREF').AsInteger := Kunde_RID;
+  IB_Query3.ParamByName('CROSSREF').AsInteger :=
+    IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+  Label1.caption := e_r_name(IB_Query2) + ' (' + IB_Query2.FieldByName('NUMMER')
+    .AsString + ') ' + e_r_ort(IB_Query3);
+end;
+
+procedure TFormAusgangsRechnungen.SpeedButton13Click(Sender: TObject);
+begin
+  refreshSumme;
+end;
+
+procedure TFormAusgangsRechnungen.SpeedButton1Click(Sender: TObject);
+begin
+  FormArtikelPOS.Schublade_Auf(iSchubladePort);
+end;
+
+procedure TFormAusgangsRechnungen.SpeedButton2Click(Sender: TObject);
+var
+  BELEG_R: Integer;
+  TEILLIEFERUNG: Integer;
+  Betrag: double;
+  BUCH_R: Integer;
+  Konto: string;
+begin
+  //
+  with IB_Query1 do
   begin
+
     //
-    PERSON_R := Kunde_RID;
-    IB_Query2.ParamByName('CROSSREF').AsInteger := Kunde_RID;
-    IB_Query3.ParamByName('CROSSREF').AsInteger :=
-      IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
-    Label1.caption := e_r_name(IB_Query2) + ' (' + IB_Query2.FieldByName
-      ('NUMMER').AsString + ') ' + e_r_ort(IB_Query3);
-  end;
+    BELEG_R := FieldByName('BELEG_R').AsInteger;
+    TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
+    Betrag := FieldByName('BETRAG').AsDouble;
+    BUCH_R := FieldByName('RECHNUNG').AsInteger;
 
-  procedure TFormAusgangsRechnungen.SpeedButton13Click(Sender: TObject);
-  begin
-    refreshSumme;
-  end;
-
-  procedure TFormAusgangsRechnungen.SpeedButton1Click(Sender: TObject);
-  begin
-    FormArtikelPOS.Schublade_Auf(iSchubladePort);
-  end;
-
-  procedure TFormAusgangsRechnungen.SpeedButton3Click(Sender: TObject);
-  begin
-    RefreshZahlungtypCombo;
-    IB_Query1.Refresh;
-
-  end;
-
-  procedure TFormAusgangsRechnungen.StaticText7Click(Sender: TObject);
-  begin
-    Edit4.Text := '';
-    Edit6.Text := '';
-  end;
-
-  procedure TFormAusgangsRechnungen.IB_Grid1CellGainFocus(Sender: TObject;
-    ACol, ARow: Integer);
-  begin
-    FormBelege.setShortCut(IB_DataSource1);
-  end;
-
-  procedure TFormAusgangsRechnungen.FormCreate(Sender: TObject);
-  begin
-    Label2.caption := FormatSettings.CurrencyString;
-  end;
-
-  procedure TFormAusgangsRechnungen.Button9Click(Sender: TObject);
-  var
-    Bericht: TStringList;
-  begin
-    Bericht := e_w_KontoInfo(PERSON_R);
-    Bericht.free;
-    openShell(MahnungFName(PERSON_R));
-  end;
-
-  procedure TFormAusgangsRechnungen.Edit5KeyPress(Sender: TObject;
-    var Key: Char);
-  begin
-    if Key = #13 then
+    if (FieldByName('VORGANG').AsString = cVorgang_Rechnung) then
     begin
-      Key := #0;
-      Button8Click(self);
+
+      // Forderung
+      ShowMessage('Storno einer Forderung ist noch nicht programmiert!');
+    end
+    else
+    begin
+
+      // BUCH Datensätze löschen
+      if (BUCH_R > cRID_FirstValid) then
+      begin
+        Konto := e_r_sqls(
+          { } 'select NAME from BUCH where RID=' +
+          { } inttostr(BUCH_R));
+        b_w_DeleteBuch(BUCH_R);
+      end;
+
+      // Forderunsbetrag in dem Beleg wieder erhöhen
+      e_x_sql(
+        { } 'update BELEG set' +
+        { } ' DAVON_BEZAHLT = DAVON_BEZAHLT + ' +
+        { } FloatToStrISO(Betrag) + ' ' +
+        { } 'where' +
+        { } ' (RID=' + inttostr(BELEG_R) + ')');
+
+      // Nun bei der Person die ELV-Freigabe wieder hochsetzen
+      if Konto = cKonto_Bank then
+        e_x_sql(
+          { } 'update PERSON set ' +
+          { } ' Z_ELV_FREIGABE = Z_ELV_FREIGABE + ' +
+          { } FloatToStrISO(-Betrag) + ' ' +
+          { } 'where' +
+          { } ' RID=' + inttostr(PERSON_R));
+
     end;
+
+    delete;
+    Refresh;
   end;
 
-  procedure TFormAusgangsRechnungen.IB_Query1AfterScroll
-    (IB_Dataset: TIB_Dataset);
-  begin
-    BELEG_R := IB_Query1.FieldByName('BELEG_R').AsInteger;
-  end;
+end;
 
-  procedure TFormAusgangsRechnungen.IB_Query1ConfirmDelete(Sender: TComponent;
-    var Confirmed: Boolean);
-  begin
-    with Sender as TIB_Dataset do
-      Confirmed := DoIt('Buchung über ' + #13 + format('%m',
-        [FieldByName('BETRAG').AsDouble]) + #13 + 'wirklich löschen');
-  end;
+procedure TFormAusgangsRechnungen.SpeedButton3Click(Sender: TObject);
+begin
+  RefreshZahlungtypCombo;
+  IB_Query1.Refresh;
+end;
 
-  procedure TFormAusgangsRechnungen.refreshSumme;
-  var
-    LastSet: dword;
-    RecN: Integer;
+procedure TFormAusgangsRechnungen.StaticText7Click(Sender: TObject);
+begin
+  Edit4.Text := '';
+  Edit6.Text := '';
+end;
+
+procedure TFormAusgangsRechnungen.IB_Grid1CellGainFocus(Sender: TObject;
+  ACol, ARow: Integer);
+begin
+  FormBelege.setShortCut(IB_DataSource1);
+end;
+
+procedure TFormAusgangsRechnungen.FormCreate(Sender: TObject);
+begin
+  Label2.caption := FormatSettings.CurrencyString;
+end;
+
+procedure TFormAusgangsRechnungen.Button9Click(Sender: TObject);
+var
+  Bericht: TStringList;
+begin
+  Bericht := e_w_KontoInfo(PERSON_R);
+  Bericht.free;
+  openShell(MahnungFName(PERSON_R));
+end;
+
+procedure TFormAusgangsRechnungen.Edit5KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
   begin
-    BeginHourGlass;
-    Summe := 0.0;
-    enabled := false;
-    LastSet := 0;
-    RecN := 0;
-    with IB_Query1 do
+    Key := #0;
+    Button8Click(self);
+  end;
+end;
+
+procedure TFormAusgangsRechnungen.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
+begin
+  BELEG_R := IB_Query1.FieldByName('BELEG_R').AsInteger;
+end;
+
+procedure TFormAusgangsRechnungen.IB_Query1ConfirmDelete(Sender: TComponent;
+  var Confirmed: Boolean);
+begin
+  with Sender as TIB_Dataset do
+    Confirmed := DoIt('Buchung über ' + #13 + format('%m',
+      [FieldByName('BETRAG').AsDouble]) + #13 + 'wirklich löschen');
+end;
+
+procedure TFormAusgangsRechnungen.refreshSumme;
+var
+  LastSet: dword;
+  RecN: Integer;
+begin
+  BeginHourGlass;
+  Summe := 0.0;
+  enabled := false;
+  LastSet := 0;
+  RecN := 0;
+  with IB_Query1 do
+  begin
+    DisableControls;
+    first;
+    while not(eof) do
     begin
-      DisableControls;
-      first;
+      inc(RecN);
+      Summe := Summe + FieldByName('BETRAG').AsFloat;
+      next;
+    end;
+    EnableControls;
+  end;
+  enabled := true;
+  StaticText5.caption := format('%m', [abs(Summe)]);
+  if (Summe <= 0) then
+    StaticText5.Color := cllime
+  else
+    StaticText5.Color := clred;
+  if (Summe = 0) and CloseIfzero then
+    close;
+  EndHourGlass;
+end;
+
+procedure TFormAusgangsRechnungen.RefreshZahlungtypCombo;
+var
+  cZAHLUNGTYP: TIB_Cursor;
+begin
+  with IB_ComboBox2 do
+  begin
+    Items.clear;
+    Itemvalues.clear;
+    Items.add('- Standard -');
+    Itemvalues.add('');
+    cZAHLUNGTYP := DataModuleDatenbank.nCursor;
+    with cZAHLUNGTYP do
+    begin
+      sql.add(
+        { } 'select RID,BEZEICHNUNG from ZAHLUNGTYP ' +
+        { } 'where ' +
+        { } ' (AUTOZAHLUNG is null) or (AUTOZAHLUNG=' +
+        cC_False_AsString + ') ' +
+        { } 'order by ' +
+        { } ' BEZEICHNUNG');
+      ApiFirst;
       while not(eof) do
       begin
-        inc(RecN);
-        Summe := Summe + FieldByName('BETRAG').AsFloat;
-        next;
+        Items.add(FieldByName('BEZEICHNUNG').AsString);
+        Itemvalues.add(FieldByName('RID').AsString);
+        apinext;
       end;
-      EnableControls;
     end;
-    enabled := true;
-    StaticText5.caption := format('%m', [abs(Summe)]);
-    if (Summe <= 0) then
-      StaticText5.Color := cllime
-    else
-      StaticText5.Color := clred;
-    if (Summe = 0) and CloseIfzero then
-      close;
-    EndHourGlass;
+    ItemIndex := 0;
+    cZAHLUNGTYP.free;
   end;
+end;
 
-  procedure TFormAusgangsRechnungen.RefreshZahlungtypCombo;
-  var
-    cZAHLUNGTYP: TIB_Cursor;
-  begin
-    with IB_ComboBox2 do
-    begin
-      Items.clear;
-      Itemvalues.clear;
-      Items.add('- Standard -');
-      Itemvalues.add('');
-      cZAHLUNGTYP := DataModuleDatenbank.nCursor;
-      with cZAHLUNGTYP do
-      begin
-        sql.add(
-          { } 'select RID,BEZEICHNUNG from ZAHLUNGTYP ' +
-          { } 'where ' +
-          { } ' (AUTOZAHLUNG is null) or (AUTOZAHLUNG=' +
-          cC_False_AsString + ') ' +
-          { } 'order by ' +
-          { } ' BEZEICHNUNG');
-        ApiFirst;
-        while not(eof) do
-        begin
-          Items.add(FieldByName('BEZEICHNUNG').AsString);
-          Itemvalues.add(FieldByName('RID').AsString);
-          apinext;
-        end;
-      end;
-      ItemIndex := 0;
-      cZAHLUNGTYP.free;
-    end;
-  end;
-
-  procedure TFormAusgangsRechnungen.IB_Grid1GetDisplayText(Sender: TObject;
-    ACol, ARow: Integer; var AString: string);
-  begin
-    if (ARow > 0) then
-      if (ACol = 6) then
-        if (AString <> '') then
-          AString := format('%m', [strtodoubledef(AString, 0.0)]);
-  end;
+procedure TFormAusgangsRechnungen.IB_Grid1GetDisplayText(Sender: TObject;
+  ACol, ARow: Integer; var AString: string);
+begin
+  if (ARow > 0) then
+    if (ACol = 6) then
+      if (AString <> '') then
+        AString := format('%m', [strtodoubledef(AString, 0.0)]);
+end;
 
 end.
