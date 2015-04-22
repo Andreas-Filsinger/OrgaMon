@@ -14,7 +14,7 @@ if ($site->isActive()) {
         twebshop_article_link::CLASS_NAME => _TEMPLATE_ARTICLE_LINK_ARTICLE_MEMBER
     ));
 
-    $article = new twebshop_article($id);
+    $article = new twebshop_article($id, 0, $user->getID());
     
     $article->getAll();
     $article->getInfo();
