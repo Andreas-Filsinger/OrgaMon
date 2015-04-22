@@ -21,7 +21,9 @@ Dokumentation
 
 Rev 8.097 (21.04.15) Andreas Filsinger
 
+ Neu: Ausgangsrechnungen: Stornieren von Zahlungen
  Neu: Lastschriften: Volumen-Info nun auch in der Tabelle DOKUMENT
+ Neu: Lastschriften: Ausgleich nur, noch wenn überhaupt offen
 
 Rev 8.096 (15.04.15) Andreas Filsinger
 

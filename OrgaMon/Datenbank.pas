@@ -75,7 +75,6 @@ type
     procedure BeginFreeze;
     procedure EndFreeze;
 
-
     // Schwierigkeiten bei IBO 4.9.9
     function nQuery : TIB_Query;
     function nCursor : TIB_Cursor;

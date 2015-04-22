@@ -506,17 +506,12 @@ var
   TEILLIEFERUNG: Integer;
   Betrag: double;
   BUCH_R: Integer;
+  AUSGANGSRECHNUNG_R: Integer;
   Konto: string;
 begin
   //
   with IB_Query1 do
   begin
-
-    //
-    BELEG_R := FieldByName('BELEG_R').AsInteger;
-    TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
-    Betrag := FieldByName('BETRAG').AsDouble;
-    BUCH_R := FieldByName('RECHNUNG').AsInteger;
 
     if (FieldByName('VORGANG').AsString = cVorgang_Rechnung) then
     begin
@@ -526,39 +521,77 @@ begin
     end
     else
     begin
-
-      // BUCH Datensätze löschen
-      if (BUCH_R > cRID_FirstValid) then
+      if DoIt('Zahlung stornieren') then
       begin
-        Konto := e_r_sqls(
-          { } 'select NAME from BUCH where RID=' +
-          { } inttostr(BUCH_R));
-        b_w_DeleteBuch(BUCH_R);
-      end;
 
-      // Forderunsbetrag in dem Beleg wieder erhöhen
-      e_x_sql(
-        { } 'update BELEG set' +
-        { } ' DAVON_BEZAHLT = DAVON_BEZAHLT + ' +
-        { } FloatToStrISO(Betrag) + ' ' +
-        { } 'where' +
-        { } ' (RID=' + inttostr(BELEG_R) + ')');
+        BeginHourGlass;
 
-      // Nun bei der Person die ELV-Freigabe wieder hochsetzen
-      if Konto = cKonto_Bank then
+        //
+        BELEG_R := FieldByName('BELEG_R').AsInteger;
+        TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
+        Betrag := FieldByName('BETRAG').AsDouble;
+        BUCH_R := FieldByName('RECHNUNG').AsInteger;
+        AUSGANGSRECHNUNG_R := FieldByName('RID').AsInteger;
+
+        // Forderunsbetrag in dem Beleg wieder erhöhen
         e_x_sql(
-          { } 'update PERSON set ' +
-          { } ' Z_ELV_FREIGABE = Z_ELV_FREIGABE + ' +
-          { } FloatToStrISO(-Betrag) + ' ' +
+          { } 'update BELEG set' +
+          { } ' DAVON_BEZAHLT = DAVON_BEZAHLT + ' +
+          { } FloatToStrISO(Betrag) + ' ' +
           { } 'where' +
-          { } ' RID=' + inttostr(PERSON_R));
+          { } ' (RID=' + inttostr(BELEG_R) + ')');
 
+        repeat
+
+          if (BUCH_R<cRID_FirstValid) then
+           break;
+
+          Konto := e_r_sqls(
+            { } 'select NAME from BUCH where RID=' +
+            { } inttostr(BUCH_R));
+
+          if (Konto='') then
+           break;
+
+          // Nun bei der Person die ELV-Freigabe wieder hochsetzen
+          if (Konto = cKonto_Bank) then
+          begin
+            e_x_sql(
+              { } 'update PERSON set ' +
+              { } ' Z_ELV_FREIGABE = Z_ELV_FREIGABE + ' +
+              { } FloatToStrISO(-Betrag) + ' ' +
+              { } 'where' +
+              { } ' RID=' + inttostr(PERSON_R));
+
+            // Lastschrift Gegenbuchung löschen
+            b_w_DeleteBuch(BUCH_R);
+            break;
+          end;
+
+          // Kassen-Einnahme löschen
+          if (Konto = cKonto_Kasse) then
+          begin
+            b_w_DeleteBuch(BUCH_R);
+            break;
+          end;
+
+          // unbar über ein Giro-Konto
+          // oder eventuell über ein andere Kassenkonto
+
+          b_w_reset(BUCH_R);
+
+
+        until true;
+        // Nun die Forderungszeile löschen
+        e_x_sql('delete from AUSGANGSRECHNUNG where RID=' +
+          inttostr(AUSGANGSRECHNUNG_R));
+
+        Refresh;
+        refreshSumme;
+        EndHourGlass;
+      end;
     end;
-
-    delete;
-    Refresh;
   end;
-
 end;
 
 procedure TFormAusgangsRechnungen.SpeedButton3Click(Sender: TObject);
@@ -664,8 +697,8 @@ begin
       sql.add(
         { } 'select RID,BEZEICHNUNG from ZAHLUNGTYP ' +
         { } 'where ' +
-        { } ' (AUTOZAHLUNG is null) or (AUTOZAHLUNG=' +
-        cC_False_AsString + ') ' +
+        { } ' (AUTOZAHLUNG is null) or' +
+        { } ' (AUTOZAHLUNG=' + cC_False_AsString + ') ' +
         { } 'order by ' +
         { } ' BEZEICHNUNG');
       ApiFirst;

@@ -210,7 +210,9 @@ end;
 
 procedure TFormBaseUpdate.Button1Click(Sender: TObject);
 begin
+  Button1.Enabled := false;
   DataBaseUpdate;
+  Button1.Enabled := true;
 end;
 
 procedure TFormBaseUpdate.Button2Click(Sender: TObject);

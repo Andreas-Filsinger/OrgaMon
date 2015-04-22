@@ -664,11 +664,11 @@ begin
         TEILLIEFERUNG := StrToIntDef(readCell(r, 'TEILLIEFERUNG'), 0);
         Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
 
-        // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
         saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
           { } '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
           { } '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
+        // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
         if isHaben(saldo) then
         begin
 
@@ -697,8 +697,14 @@ begin
 
       end;
     end;
-    e_x_sql('update EREIGNIS set BEENDET=CURRENT_TIMESTAMP where RID=' +
-      inttostr(EREIGNIS_R));
+
+    e_x_sql(
+      { } 'update EREIGNIS ' +
+      { } 'set' +
+      { } ' BEENDET=CURRENT_TIMESTAMP ' +
+      { } 'where' +
+      { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
+
     sVOLUMEN.free;
     IB_Query2.Refresh;
     EndHourGlass;
@@ -2384,23 +2390,32 @@ var
   c, r: Integer;
   EREIGNIS_R: Integer;
   qEREIGNIS: TIB_Query;
+  qDOKUMENT: TIB_Query;
   sINFO: TStringList;
+  sCSV: TStringList;
+  sCSV_FileName: string;
 
-  procedure FileSave(PostFix: string);
+  function FileSave(PostFix: string): string;
   begin
+    result :=
+    { } MyProgramPath +
+    { } cHBCIPath +
+    { } 'DTAUS-' +
+    { } inttostrN(EREIGNIS_R, 8) +
+    { } '.' + PostFix;
     FileCopy(
       { } MyProgramPath + cHBCIPath + 'DTAUS.' + PostFix,
-      { } MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.'
-      + PostFix);
-    FileTouch(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) +
-      '.' + PostFix);
+      { } result);
+    FileTouch(result);
   end;
 
 begin
   sVOLUMEN := TsTable.Create;
   sDTAUS := TsTable.Create;
   qEREIGNIS := DataModuleDatenbank.nQuery;
+  qDOKUMENT := DataModuleDatenbank.nQuery;
   sINFO := TStringList.Create;
+  sCSV := TStringList.Create;
 
   EREIGNIS_R := e_w_gen('EREIGNIS_GID');
 
@@ -2441,12 +2456,27 @@ begin
         { } 'where RID=' +
         { } readCell(r, c));
   end;
-  FileSave('csv');
+  sCSV_FileName := FileSave('csv');
+  sCSV.LoadFromFile(sCSV_FileName);
+
+  // Das Paket als Dokument speichern
+  with qDOKUMENT do
+  begin
+    sql.add('select * from DOKUMENT');
+    insert;
+    FieldByName('RID').AsInteger := cRID_AutoInc;
+    FieldByName('MEDIUM_R').AsInteger := e_x_ensureMedium('CSV Tabelle');
+    FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
+    FieldByName('BEMERKUNG').Assign(sCSV);
+    post;
+  end;
 
   sINFO.free;
   qEREIGNIS.free;
+  qDOKUMENT.free;
   sDTAUS.free;
   sVOLUMEN.free;
+  sCSV.free;
 end;
 
 function TFormBuchhalter.e_w_KontoSync(Konten: string;
