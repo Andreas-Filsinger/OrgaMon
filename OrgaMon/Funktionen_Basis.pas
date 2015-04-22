@@ -63,6 +63,8 @@ function e_r_BaustellenPfadFoto(Values: TStrings): String;
 function e_r_BaustellenPfad(Values: TStrings): String;
 
 function e_w_Medium: string;
+function e_x_ensureMedium(Name: string): TDOM_Reference;
+
 procedure e_a_Infos(s: TStrings);
 function cAusgabeArt_Aufnahme_MP3: TDOM_Reference;
 
@@ -351,6 +353,35 @@ end;
 function e_w_Medium: string;
 begin
   result := inttostrN(e_w_GEN('GEN_MEDIUM'), 8);
+end;
+
+const
+ _e_x_ensureMedium_Cache_R : TDOM_Reference = cRID_Null;
+ _e_x_ensureMedium_Cache_S : string = '';
+
+function e_x_ensureMedium(Name: string): TDOM_Reference;
+begin
+  if (Name=_e_x_ensureMedium_Cache_S) then
+  begin
+    result := _e_x_ensureMedium_Cache_R;
+    exit;
+  end;
+
+  result := e_r_sql(
+    { } 'select RID from MEDIUM where DATEI_ERWEITERUNG=' +
+    { } SQLstring(Name));
+
+  if (result<cRID_FirstValid) then
+  begin
+    e_x_sql(
+    {} 'insert into MEDIUM (RID,DATEI_ERWEITERUNG) values (0,'+
+                       SQLstring(Name) + ')');
+    result := e_x_ensureMedium(Name);
+  end;
+
+ _e_x_ensureMedium_Cache_R := result;
+ _e_x_ensureMedium_Cache_S := Name;
+
 end;
 
 procedure e_w_MusikerChangeRef(FROM_RID, TO_RID: string);

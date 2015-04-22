@@ -73,47 +73,44 @@ procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
 // "Bezahlt" Info wieder zurücknehmen
 procedure b_w_ForderungAusgleichStorno(EREIGNIS_R: integer);
 
+// aus einem Beleg die Gesamt-Forderung auf ein Konto buchen!
 function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double)
   : TStringList;
-// aus einem Beleg die Gesamt-Forderung auf ein Konto buchen!
-//
 
-procedure b_w_Rechnungsdatum(BELEG_R: integer; RechnungsDatum: TAnfixDate);
+// eine unbare Konto-Buchung wieder in den Original, unverbuchten Zustand versetzen
+procedure b_w_reset(BUCH_R: integer);
+
 // Nachträgliches Verändern des Rechnungsdatums sowie der
 // Fälligkeit
+procedure b_w_Rechnungsdatum(BELEG_R: integer; RechnungsDatum: TAnfixDate);
 
-function b_r_MwSt(KONTO: string): double; overload;
 // liefert den "üblichen" / "vorbelegten" MwSt Satz aus dem Konto-Deckblatt
+function b_r_MwSt(KONTO: string): double; overload;
 
-function b_r_AusgleichKonten: TStringList;
 // Liste der AR ausgleichenden Konten
-//
+function b_r_AusgleichKonten: TStringList;
 
-function b_r_HBCIKonten: TStringList;
 // Liste der HBCI Konten
-//
+function b_r_HBCIKonten: TStringList;
 
-function b_r_Konto(SORTIMENT_R: integer): string;
 // Liefert die Konto-Nummer zu einem Artikel
-//
+function b_r_Konto(SORTIMENT_R: integer): string;
 
-function b_r_KontoSuchindexFName(KONTO: string): string;
 // Liefert den Dateinamen des TWordIndex Suchindex
+function b_r_KontoSuchindexFName(KONTO: string): string;
 
-function b_r_PersonSaldo(PERSON_R: integer): double;
 // aktueller Saldo des "Kunden" Kontos
-//
+function b_r_PersonSaldo(PERSON_R: integer): double;
 
 function b_r_Person_ELV_BLZ(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
 function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
 
-function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
 // Saldo des Kontos "Konto" am "Datum"
-//
+function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
 
-function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 // Berechnet hochgerechnete jährliche Kosten im Zeitraum
 // "Von" bis "Bis"
+function b_r_Anno(Suchbegriff: string; Von, Bis: TAnfixDate): double;
 
 procedure b_w_preDeleteBuch(BUCH_R: integer);
 procedure b_w_DeleteBuch(BUCH_R: integer);
@@ -1107,6 +1104,39 @@ var
 begin
   for n := 0 to pred(BUCH_R.count) do
     b_w_buche(BUCH_R[n], Diagnose);
+end;
+
+procedure b_w_reset(BUCH_R: integer);
+var
+  qBUCH: TdboQuery;
+  ScriptText: TStringList;
+begin
+  qBUCH := nQuery;
+  with qBUCH do
+  begin
+    sql.add('select * from BUCH');
+    sql.add('where RID=' + inttostr(BUCH_R));
+    for_update(sql);
+    open;
+    first;
+    if not(eof) then
+    begin
+      ScriptText := TStringList.create;
+      FieldByName('SKRIPT').AssignTo(ScriptText);
+      ScriptText.Values['COLOR'] := '';
+      ScriptText.Values['BELEG'] := '';
+      edit;
+      FieldByName('SKRIPT').Assign(ScriptText);
+      FieldByName('EREIGNIS_R').clear;
+      FieldByName('PERSON_R').clear;
+      FieldByName('GEGENKONTO').clear;
+      FieldByName('ERTRAG').clear;
+      ScriptText.Free;
+      post;
+    end;
+  end;
+  qBUCH.Free;
+  b_w_buche(BUCH_R);
 end;
 
 procedure b_w_ForderungAusgleich(sList: TStrings; Diagnose: TStrings);
