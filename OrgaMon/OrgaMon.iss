@@ -81,11 +81,11 @@ Source: "Distribution\Noten\*"; DestDir: "{userdocs}\OrgaMon\Daten\Noten"; Flags
 Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\LeereDatenbank"; Flags: onlyifdoesntexist
 Source: "Distribution\anfisoft\*"; DestDir: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: onlyifdoesntexist
 
-; Fonts
-Source: "Distribution\WineFonts\wingding.ttf"; DestDir: "{fonts}"; FontInstall: "Wingdings"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "Distribution\WineFonts\tahoma.ttf"; DestDir: "{fonts}"; FontInstall: "Tahoma"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "Distribution\WineFonts\verdana.ttf"; DestDir: "{fonts}"; FontInstall: "Verdana"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "Distribution\WineFonts\webdings.ttf"; DestDir: "{fonts}"; FontInstall: "Webdings"; Flags: onlyifdoesntexist uninsneveruninstall
+; diese Fonts sind nötig bei der Verwendung unter Wine
+;Source: "Distribution\WineFonts\wingding.ttf"; DestDir: "{fonts}"; FontInstall: "Wingdings"; Flags: onlyifdoesntexist uninsneveruninstall
+;Source: "Distribution\WineFonts\tahoma.ttf"; DestDir: "{fonts}"; FontInstall: "Tahoma"; Flags: onlyifdoesntexist uninsneveruninstall
+;Source: "Distribution\WineFonts\verdana.ttf"; DestDir: "{fonts}"; FontInstall: "Verdana"; Flags: onlyifdoesntexist uninsneveruninstall
+;Source: "Distribution\WineFonts\webdings.ttf"; DestDir: "{fonts}"; FontInstall: "Webdings"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"
