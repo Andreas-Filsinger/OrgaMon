@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet7
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -344,7 +344,7 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = 'HBCI-Sammellastschrift'
+      Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
       DesignSize = (
         892
@@ -1045,8 +1045,8 @@ object FormBuchhalter: TFormBuchhalter
         OnKeyPress = Edit10KeyPress
       end
       object Button6: TButton
-        Left = 142
-        Top = 471
+        Left = 143
+        Top = 472
         Width = 24
         Height = 22
         Hint = 'TAN verarbeiten'
@@ -2788,65 +2788,6 @@ object FormBuchhalter: TFormBuchhalter
         ShowHint = True
         OnClick = SpeedButton32Click
       end
-      object SpeedButton33: TSpeedButton
-        Left = 799
-        Top = 32
-        Width = 32
-        Height = 22
-        Hint = '1200-Gutschrift aus OrgaMon-Sammellastschrift'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          62050000424D62050000000000003604000028000000140000000F0000000100
-          0800000000002C0100000000000000000000000100000001000000000000FF8C
-          0800FF94100018181800211818002918180031181800E7841800291821003118
-          210021212100FF9C2100FF9C290039393900FFA53900E79442004A4A4A00E79C
-          4A00EF9C4A00FFAD4A00FFB552005A5A5A00DE9C5A0063636300EFAD63006B6B
-          6B007B6B6B00737373007B7B7B00E7B584008C8C8C00948C8C0094948C003129
-          940094949400F7CE9C00A5A5A500FFD6A500ADADAD00B5B5AD00B5B5B500BDB5
-          B500BDBDB500BDBDBD00C6BDBD00C6C6BD00CEC6C600CECEC600E7D6C600CECE
-          CE00D6D6CE00D6D6D600DED6D6002121DE007B7BDE00DEDEDE00E7DEDE004242
-          E7004A4AE7005252E700E7E7E700EFE7E7005A5AEF006363EF006B6BEF007373
-          EF007B7BEF008C8CEF00EFEFEF009C9CF700F7F7F700FFFFF700BDBDFF00F7F7
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF000A1717171717
-          171717171717171717171717170A174A4A4A462D33372D2E4A4A4A4A4A4A4A4A
-          4A17174A4A4A4A292C312819464A4A4A4A4A4A4A4A17174A4A4A37292C312819
-          2631333133374A4A4A17174A4A372629292929222426292929263C4A4A17174A
-          4A31294A4A4A4A44292C4A4A4A29314A4A17174A4A332846464649462C2A3C4A
-          4A29314A4A17174A4A2316181A3B3B45322E284A4A29314A4A17174A4A140211
-          0939353E282026292922334A4A17174A4A140E322143403F000A240D000A314A
-          4A17174A4A1401070836282617171E201017314A4A17174A4A140C1D08434241
-          1E1E1B291C24464A4A17174A4A140B0F083B353F464A3C2624374A4A4A17174A
-          4A23130F1A3A3B48464A4A3324464A4A4A170A17171717171717171717171717
-          17171717170A}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton33Click
-      end
       object Label43: TLabel
         Left = 677
         Top = 326
@@ -3404,32 +3345,15 @@ object FormBuchhalter: TFormBuchhalter
       end
     end
     object TabSheet7: TTabSheet
-      Caption = 'Ausgleich Lastschriften'
+      Caption = 'verz'#246'gerte Lastschriften'
       ImageIndex = 6
       OnShow = TabSheet7Show
       DesignSize = (
         892
         519)
-      object Label27: TLabel
-        Left = 25
-        Top = 22
-        Width = 143
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '4) Erfolg verbuchen'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object SpeedButton37: TSpeedButton
-        Left = 25
-        Top = 46
+        Left = 4
+        Top = 6
         Width = 23
         Height = 22
         Margins.Left = 4
@@ -3467,7 +3391,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object SpeedButton43: TSpeedButton
         Left = 770
-        Top = 46
+        Top = 6
         Width = 23
         Height = 22
         Hint = 'Ausgleich r'#252'ckbuchen'
@@ -3508,8 +3432,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton43Click
       end
       object SpeedButton44: TSpeedButton
-        Left = 51
-        Top = 46
+        Left = 28
+        Top = 6
         Width = 22
         Height = 22
         Hint = 'L'#246'schen'
@@ -3549,8 +3473,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton44Click
       end
       object SpeedButton45: TSpeedButton
-        Left = 78
-        Top = 46
+        Left = 51
+        Top = 6
         Width = 22
         Height = 22
         Hint = 'Buchungen nochmals zur Lastschrift bereitstellen'
@@ -3575,8 +3499,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton45Click
       end
       object SpeedButton48: TSpeedButton
-        Left = 107
-        Top = 45
+        Left = 74
+        Top = 5
         Width = 24
         Height = 23
         Hint = 'Einzugsmandate '#246'ffnen'
@@ -3616,8 +3540,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton48Click
       end
       object Button11: TButton
-        Left = 837
-        Top = 46
+        Left = 864
+        Top = 6
         Width = 24
         Height = 22
         Hint = 'Geldeingang des Lastschriftlaufes verbuchen'
@@ -3639,13 +3563,13 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button11Click
       end
       object IB_Grid2: TIB_Grid
-        Left = 25
-        Top = 75
-        Width = 836
-        Height = 423
+        Left = 0
+        Top = 35
+        Width = 892
+        Height = 484
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource2
-        Anchors = [akLeft, akTop, akRight, akBottom]
+        Align = alBottom
         ReadOnly = True
         TabOrder = 1
         RowSelect = True
@@ -3654,7 +3578,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Edit14: TEdit
         Left = 696
-        Top = 47
+        Top = 7
         Width = 67
         Height = 21
         Hint = 'Ereignis (#11) RID'
@@ -3978,7 +3902,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C010104000900A40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900AC0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

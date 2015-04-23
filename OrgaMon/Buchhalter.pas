@@ -121,7 +121,6 @@ type
     Label28: TLabel;
     SpeedButton32: TSpeedButton;
     CheckBox5: TCheckBox;
-    SpeedButton33: TSpeedButton;
     TabSheet6: TTabSheet;
     SpeedButton34: TSpeedButton;
     Edit8: TEdit;
@@ -195,7 +194,6 @@ type
     IB_Query2: TIB_Query;
     IB_DataSource2: TIB_DataSource;
     TabSheet7: TTabSheet;
-    Label27: TLabel;
     SpeedButton37: TSpeedButton;
     Button11: TButton;
     IB_Grid2: TIB_Grid;
@@ -275,7 +273,6 @@ type
     procedure Button3Click(Sender: TObject);
     procedure SpeedButton32Click(Sender: TObject);
     procedure CheckBox5Click(Sender: TObject);
-    procedure SpeedButton33Click(Sender: TObject);
     procedure SpeedButton34Click(Sender: TObject);
     procedure Edit8KeyPress(Sender: TObject; var Key: Char);
     procedure JvArrayButton1ArrayButtonClicked(ACol, ARow: Integer);
@@ -342,6 +339,8 @@ type
     // Debi-Suche
     ItemDebiRIDs: TgpIntegerList;
     DebiSearchIndex: TWordIndex;
+
+    // ausführlichere Suche AN/AUS
     mehrDebis: boolean;
 
     // Aktueller Forderungsausgleich-Vorschlag
@@ -378,7 +377,7 @@ type
     procedure SyncKontoUmsaetze;
     procedure SyncNeueEingaenge;
     procedure hideForderung(BUCH_R: Integer);
-    procedure bucheAusgleich(ZielKonto: string);
+    procedure bucheAufKonto(ZielKonto: string);
 
     procedure Draw_NeueEingaengeSaldo(saldo: double);
     procedure Draw_PersonSaldo(saldo: double);
@@ -556,7 +555,7 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormBuchhalter.bucheAusgleich(ZielKonto: string);
+procedure TFormBuchhalter.bucheAufKonto(ZielKonto: string);
 var
   BUCH_R: Integer;
   qBUCH: TIB_Query;
@@ -565,7 +564,6 @@ var
   sDiagnose: TStringList;
 begin
   sDiagnose := TStringList.Create;
-  // Als "durchlaufender Posten" markieren
   BUCH_R := rBUCH_R;
   if (BUCH_R >= cRID_FirstValid) then
   begin
@@ -627,15 +625,7 @@ end;
 procedure TFormBuchhalter.Button11Click(Sender: TObject);
 var
   EREIGNIS_R: Integer;
-  BELEG_R: Integer;
-  PERSON_R: Integer;
-  TEILLIEFERUNG: Integer;
-  Betrag, saldo: double;
-  VALUTA: string;
-  sVOLUMEN: TsTable;
-  r: Integer;
 begin
-
   //
   EREIGNIS_R := IB_Query2.FieldByName('RID').AsInteger;
   if (EREIGNIS_R < cRID_FirstValid) then
@@ -648,64 +638,8 @@ begin
     'eingereicht? Darf nun der Zahlungseingang für' + #13 +
     'alle Einzugsmandate verbucht werden') then
   begin
-
     BeginHourGlass;
-    VALUTA := long2date(DatePlus(DateGet, 10));
-    sVOLUMEN := TsTable.Create;
-    sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' +
-      inttostrN(EREIGNIS_R, 8) + '.csv');
-    with sVOLUMEN do
-    begin
-      for r := 1 to RowCount do
-      begin
-        // Nun die einzelnen Zahlungsereignisse
-        PERSON_R := StrToIntDef(readCell(r, 'PERSON_R'), cRID_Null);
-        BELEG_R := StrToIntDef(readCell(r, 'BELEG_R'), cRID_Null);
-        TEILLIEFERUNG := StrToIntDef(readCell(r, 'TEILLIEFERUNG'), 0);
-        Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
-
-        saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
-          { } '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
-          { } '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
-
-        // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
-        if isHaben(saldo) then
-        begin
-
-          // Jetzt den ganzen Rattenschwanz buchen
-          b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
-            { } PERSON_R,
-            { } BELEG_R,
-            { } Betrag,
-            { } VALUTA,
-            { } cRID_Null,
-            { } 'Lastschrift',
-            { } cKonto_Bank,
-            { } TEILLIEFERUNG,
-            { } EREIGNIS_R]));
-
-          // Nun bei der Person die Freigabe wieder zurücksetzen
-          e_x_sql(
-            { } 'update PERSON set ' +
-            { } ' Z_ELV_FREIGABE=' +
-            { } 'coalesce(Z_ELV_FREIGABE,' +
-            { } FloatToStrISO(Betrag, 2) + ') - ' +
-            { } FloatToStrISO(Betrag, 2) + ' ' +
-            { } 'where' +
-            { } ' RID=' + inttostr(PERSON_R));
-        end;
-
-      end;
-    end;
-
-    e_x_sql(
-      { } 'update EREIGNIS ' +
-      { } 'set' +
-      { } ' BEENDET=CURRENT_TIMESTAMP ' +
-      { } 'where' +
-      { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
-
-    sVOLUMEN.free;
+    b_w_ForderungAusgleich(EREIGNIS_R);
     IB_Query2.Refresh;
     EndHourGlass;
   end;
@@ -887,6 +821,9 @@ begin
 
     // Bezahlen wie es steht!
     b_w_ForderungAusgleich(sAusgleich);
+
+    // Noch eventuelle Folgebuchungen
+    b_w_LastschriftAusgleich(sAusgleich);
 
     // Neuen Saldo auffrischen
     Betrag := e_r_sqld('select BETRAG from BUCH where RID=' + inttostr(BUCH_R));
@@ -1569,15 +1506,14 @@ end;
 procedure TFormBuchhalter.SpeedButton26Click(Sender: TObject);
 begin
   SpeedButton26.enabled := false;
-
-  bucheAusgleich(cKonto_DurchlaufenderPosten);
+  bucheAufKonto(cKonto_DurchlaufenderPosten);
   SpeedButton26.enabled := true;
 end;
 
 procedure TFormBuchhalter.SpeedButton27Click(Sender: TObject);
 begin
   RefreshKontoSearch;
-  if Edit1.Text <> '' then
+  if (Edit1.Text <> '') then
     doSuche;
 end;
 
@@ -1695,13 +1631,6 @@ begin
     { } cBuch_HeaderLineFOrderungen + #13 + HugeSingleLine(sForderungen) +
     { } #13 + #13 +
     { } cBuch_HeaderLineAusgleich + #13 + HugeSingleLine(sAusgleich));
-end;
-
-procedure TFormBuchhalter.SpeedButton33Click(Sender: TObject);
-begin
-  SpeedButton33.enabled := false;
-  bucheAusgleich(cKonto_Bank);
-  SpeedButton33.enabled := true;
 end;
 
 procedure TFormBuchhalter.SpeedButton34Click(Sender: TObject);
@@ -3418,6 +3347,7 @@ procedure TFormBuchhalter.DrawGrid1DrawCell(Sender: TObject;
   ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var
   BUCH_R: Integer;
+  VORGANG: string;
   Fokusiert: boolean;
   UeberweisungsText: TStringList;
 
@@ -3425,6 +3355,7 @@ var
   n: Integer;
   DatensatzVorhanden: boolean;
   RowHeight: Integer;
+  tmpColor: TColor;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -3545,8 +3476,18 @@ begin
               end
               else
               begin
-                TextOut(Rect.left + 2, Rect.top + cPlanY,
-                  FieldByName('VORGANG').AsString);
+                VORGANG := FieldByName('VORGANG').AsString;
+                if (pos(VORGANG, cVorgang_Lastschrift) > 0) then
+                begin
+                  tmpColor := brush.color;
+                  brush.color := HTMLColor2TColor($FFBE00);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
+                  brush.color := tmpColor;
+                end
+                else
+                begin
+                  TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
+                end;
               end;
               TextOut(Rect.left + 2, Rect.top + 2 * cPlanY,
                 'PN' + FieldByName('STEMPEL_NO').AsString);
@@ -3668,6 +3609,8 @@ var
   DatensatzVorhanden: boolean;
   RowHeight: Integer;
   Betrag, BetragNominal: double;
+  VORGANG: string;
+  tmpColor: TColor;
 begin
   if (ARow >= 0) then
     with DrawGrid2.canvas, IB_Cursor1 do
@@ -3761,8 +3704,20 @@ begin
               font.size := 9;
               TextRect(Rect, Rect.left + 2, Rect.top,
                 FieldByName('NAME').AsString);
-              TextOut(Rect.left + 2, Rect.top + cPlanY,
-                FieldByName('VORGANG').AsString);
+
+              VORGANG := FieldByName('VORGANG').AsString;
+              if (pos(VORGANG, cVorgang_Lastschrift) > 0) then
+              begin
+                tmpColor := brush.color;
+                brush.color := HTMLColor2TColor($FFBE00);
+                TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
+                brush.color := tmpColor;
+              end
+              else
+              begin
+                TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
+              end;
+
               TextOut(Rect.left + 2, Rect.top + 2 * cPlanY,
                 'PN' + FieldByName('STEMPEL_NO').AsString);
             end;
@@ -3815,6 +3770,10 @@ begin
               if Fokusiert then
                 if (DrawGrid2_LastFocused <> ARow) then
                 begin
+                  if (pos(FieldByName('VORGANG').AsString,
+                    cVorgang_Lastschrift) > 0) then
+                    UeberweisungsText.add(cVorgang_LSG + '=' + cIni_Activate);
+
                   DrawGrid2_LastFocused := ARow;
                   setDebiContext(
                     { } UeberweisungsText,
@@ -3953,6 +3912,12 @@ begin
                 // Status Kalt oder Warm oder HOT-HOT-HOT
                 brush.color := HTMLColor2TColor(cBUCH_Farbe_Kalt); // kalt
                 repeat
+                  if (PERSON_R = cRID_Person_Lastschrift) then
+                  begin
+                    brush.color := HTMLColor2TColor(cBUCH_Farbe_OK);
+                    break;
+                  end;
+
                   if (b_r_Auszug_KontoIBAN(sBuchungsText) <>
                     e_r_sqls('select Z_ELV_KONTO from PERSON ' + 'where RID=' +
                     inttostr(PERSON_R))) then
@@ -3982,12 +3947,20 @@ begin
 
                 // Name
                 font.size := 10;
-                TextRect(Rect, Rect.left + 2, Rect.top, e_r_Person(PERSON_R));
-                TextOut(Rect.left + 2, Rect.top + cPlanY,
-                  e_r_sqls('select ANSCHRIFT.STRASSE from' + ' PERSON ' + 'join'
-                  + ' ANSCHRIFT ' +
-                  'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' + 'where' +
-                  ' (PERSON.RID=' + inttostr(PERSON_R) + ')'));
+                if (PERSON_R = cRID_Person_Lastschrift) then
+                begin
+                  TextRect(Rect, Rect.left + 2, Rect.top,
+                    'Konto ' + cKonto_Bank);
+                end
+                else
+                begin
+                  TextRect(Rect, Rect.left + 2, Rect.top, e_r_Person(PERSON_R));
+                  TextOut(Rect.left + 2, Rect.top + cPlanY,
+                    e_r_sqls('select ANSCHRIFT.STRASSE from' + ' PERSON ' +
+                    'join' + ' ANSCHRIFT ' +
+                    'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' + 'where' +
+                    ' (PERSON.RID=' + inttostr(PERSON_R) + ')'));
+                end;
 
               end;
             2:
@@ -4002,7 +3975,10 @@ begin
                 // Beleg-Daten
                 font.size := 10;
                 font.Style := [fsbold];
-                saldo := b_r_PersonSaldo(PERSON_R);
+                if (PERSON_R = cRID_Person_Lastschrift) then
+                  saldo := b_r_LastschriftSaldo
+                else
+                  saldo := b_r_PersonSaldo(PERSON_R);
                 TextRect(Rect, Rect.left + 2, Rect.top,
                   format('%15m', [saldo]));
                 font.Style := [];
@@ -4012,7 +3988,7 @@ begin
                 begin
                   if (DrawGrid3_PERSON_R <> PERSON_R) then
                   begin
-                    // label42.caption := label42.caption + ',' + inttostr(PERSON_R);
+
                     Draw_PersonSaldo(saldo);
                     Erzeuge_sForderungen(PERSON_R);
                     Erzeuge_Show_sYellow(sBetrag);
@@ -4334,6 +4310,12 @@ begin
           break;
         end;
 
+        if (ComboBox1.Text = cKonto_Bank) then
+        begin
+          sql.add('order by EREIGNIS_R,POSNO,RID');
+          break;
+        end;
+
         sql.add('order by DATUM,POSNO');
       until true;
 
@@ -4467,17 +4449,20 @@ begin
     cBUCH := DataModuleDatenbank.nCursor;
     with cBUCH do
     begin
-      sql.add('select TEXT,SKRIPT,BETRAG,DATUM from BUCH where RID=' +
+      sql.add('select TEXT,SKRIPT,BETRAG,DATUM,VORGANG from BUCH where RID=' +
         inttostr(BUCH_R));
       ApiFirst;
       if not(eof) then
       begin
         FieldByName('TEXT').AssignTo(sl);
         FieldByName('SKRIPT').AssignTo(ScriptText);
-        Betrag := StrToDoubledef(ScriptText.values['BETRAG'],
-          cGeld_keinElement);
+        Betrag := StrToDoubledef(
+          { } ScriptText.values['BETRAG'],
+          { } cGeld_keinElement);
         if isNoMoney(Betrag) then
           Betrag := FieldByName('BETRAG').AsDouble;
+        if (pos(FieldByName('VORGANG').AsString, cVorgang_Lastschrift) > 0) then
+          sl.add(cVorgang_LSG + '=' + cIni_Activate);
       end;
 
       if (AddInfo <> '') then
@@ -4572,9 +4557,14 @@ begin
 
       // sForderungen auflösen!
       BELEG_R := StrToIntDef(nextp(sForderungen[n], ';', 2), cRID_Null);
-      PERSON_R := e_r_sql(
-        { } 'select PERSON_R from BELEG where RID=' +
-        { } inttostr(BELEG_R));
+      //
+      // bisher wurde die Person immer berechnet,
+      // möglicherweise Problematisch, da
+//      PERSON_R := e_r_sql(
+//        { } 'select PERSON_R from BELEG where RID=' +
+//        { } inttostr(BELEG_R));
+
+      PERSON_R := StrToIntDef(nextp(sForderungen[n], ';', 5), cRID_Null);
       TEILLIEFERUNG := StrToIntDef(nextp(sForderungen[n], ';', 3), cRID_Null);
       UrsprungsForderung := StrToDoubledef(nextp(sForderungen[n], ';', 1), 0);
       ZahlungenBisher := StrToDoubledef(nextp(sForderungen[n], ';', 4), 0);
@@ -4759,7 +4749,8 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
           { } Forderung,
           { } BELEG_R,
           { } 0,
-          { } Zahlung]));
+          { } Zahlung,
+          { } PERSON_R]));
         ApiNext;
       end;
     end;
@@ -4772,7 +4763,8 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
         { } Forderungen - DetailForderungen + Zahlungen,
         { } BELEG_R,
         { } 0,
-        { } Zahlungen]));
+        { } Zahlungen,
+        { } PERSON_R]));
 
   end;
 
@@ -4823,7 +4815,8 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
             { } GESAMT_FORDERUNG,
             { } BELEG_R,
             { } TEILLIEFERUNG,
-            { } GESAMT_FORDERUNG - saldo]));
+            { } GESAMT_FORDERUNG - saldo,
+            { } PERSON_R]));
 
         end;
         ApiNext;
@@ -4835,8 +4828,10 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
 
 var
   cAUSGANGSRECHNUNGEN: TIB_Cursor;
+  cEREIGNIS: TIB_Cursor;
   n: Integer;
-  GesamteForderung: double;
+  Forderung, GesamteForderung: double;
+  sINFO: TStringList;
 begin
   sAusgleich_FirstButtonOffset := 0;
 
@@ -4849,6 +4844,39 @@ begin
     sForderungen.addstrings(sForderungenFixed);
 
   GesamteForderung := 0;
+
+  if (PERSON_R = cRID_Person_Lastschrift) then
+  begin
+    cEREIGNIS := nCursor;
+    sINFO := TStringList.Create;
+    with cEREIGNIS do
+    begin
+      sql.add('select * from EREIGNIS where');
+      sql.add(' (ART=11) and');
+      sql.add(' (BEENDET is null)');
+      sql.add('order by');
+      sql.add('AUFTRITT');
+      ApiFirst;
+      while not(eof) do
+      begin
+        //
+        e_r_sqlt(FieldByName('INFO'), sINFO);
+        Forderung := StrToMoneyDef(sINFO.values['BETRAG']);
+
+        sForderungen.add(format(cBuch_Forderungen, [
+          { } FieldByName('MENGE').AsString + ':' + sINFO.values['TAN'],
+          { } Forderung,
+          { } FieldByName('RID').AsInteger,
+          { } 0,
+          { } cGeld_Zero,
+          { } PERSON_R]));
+
+        ApiNext;
+      end
+    end;
+    cEREIGNIS.free;
+    sINFO.free;
+  end;
 
   if (PERSON_R >= cRID_FirstValid) then
   begin
@@ -5079,6 +5107,15 @@ begin
     if (sBuchungsText.count > 0) then
     begin
       repeat
+
+        // ist es gar keine Person, sondern ein EINZUG
+        if (sBuchungsText.IndexOf(cVorgang_LSG + '=' + cIni_Activate) <> -1)
+        then
+        begin
+          ItemDebiRIDs.add(cRID_Person_Lastschrift);
+          isGreen := true;
+          break;
+        end;
 
         // über ~RechnungsNummer~
         // -> es wird nur nach ~BelegNummer~ "-" ~Teillieferung~ umgesetzt

@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.098 (23.04.15) Andreas Filsinger
+
+ Neu: Ausgleich Forderungen: Gutschriften aus vorgelegten Lastschriften
+
 Rev 8.097 (21.04.15) Andreas Filsinger
 
  Neu: Ausgangsrechnungen: Stornieren von Zahlungen

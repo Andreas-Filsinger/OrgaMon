@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.097; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.098; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -123,6 +123,9 @@ const
   cKonto_Deckblatt = 'Deckblatt';
   cKonto_Ungebucht = 'Ungebucht';
 
+  // Bezeichnung für Gutschrift aus Lastschrift-Vorlagen
+  cVorgang_LSG = 'LASTSCHRIFT-EINZUG';
+
   // Masken für Teillieferungen
   cTEILLIEFERUNG_FILTER_ALLE = -1;
 
@@ -131,8 +134,8 @@ const
   cBuch_Ausgleich = '%d;%d;%m;%s;%d;%s;%s;%d;%d';
 
   cBuch_HeaderLineForderungen =
-    'Überschrift;UrsprünglicheGesamtForderung;BELEG_R;TEILLIEFERUNG;Anzahlungen';
-  cBuch_Forderungen = '%s;%m;%d;%d;%m';
+    'Überschrift;UrsprünglicheGesamtForderung;BELEG_R;TEILLIEFERUNG;Anzahlungen;PERSON_R';
+  cBuch_Forderungen = '%s;%m;%d;%d;%m;%d';
 
   // Suchindizes
   cAuftragsIndexFName = 'Auftrag' + c_wi_FileExtension;
@@ -457,6 +460,9 @@ const
   // Spaltenüberschrift des "RID"
   cRID_Suchspalte = 'ReferenzIdentitaet';
 
+  // Spezieller interner Person RID für die
+  // Bankenidentiät, Buchungskonto 1200
+  cRID_Person_Lastschrift = -71;
 
 type
   TZaehlerNummerType = string[cMonDa_FieldLength_ZaehlerNummer];
