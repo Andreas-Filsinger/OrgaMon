@@ -2379,11 +2379,11 @@ begin
     c := colOf('RID', true);
     for r := 1 to RowCount do
       e_x_sql(
-        { } 'update AUSGANGSRECHNUNG set EREIGNIS_R=' +
-        { } inttostr(EREIGNIS_R) + ', ' +
-        { } 'POSNO=' + inttostr(r) + ' ' +
-        { } 'where RID=' +
-        { } readCell(r, c));
+        { } 'update AUSGANGSRECHNUNG set' +
+        { } ' EREIGNIS_R=' + inttostr(EREIGNIS_R) + ', ' +
+        { } ' POSNO=' + inttostr(r) + ' ' +
+        { } 'where' +
+        { } ' (RID=' + readCell(r, c) + ')');
   end;
   sCSV_FileName := FileSave('csv');
   sCSV.LoadFromFile(sCSV_FileName);
@@ -4560,9 +4560,9 @@ begin
       //
       // bisher wurde die Person immer berechnet,
       // möglicherweise Problematisch, da
-//      PERSON_R := e_r_sql(
-//        { } 'select PERSON_R from BELEG where RID=' +
-//        { } inttostr(BELEG_R));
+      // PERSON_R := e_r_sql(
+      // { } 'select PERSON_R from BELEG where RID=' +
+      // { } inttostr(BELEG_R));
 
       PERSON_R := StrToIntDef(nextp(sForderungen[n], ';', 5), cRID_Null);
       TEILLIEFERUNG := StrToIntDef(nextp(sForderungen[n], ';', 3), cRID_Null);
@@ -5448,12 +5448,15 @@ begin
 
   with cBUCH do
   begin
-    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME, KONTO, GEGENKONTO, BELEG_R from BUCH where');
+    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME, ');
+    sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
     sql.addstrings(getSQLwhere);
     ApiFirst;
     while not(eof) do
     begin
       FieldByName('TEXT').AssignTo(sBuchText);
+      if FieldByName('EREIGNIS_R').IsNotNull then
+        sBuchText.add('E' + FieldByName('EREIGNIS_R').AsString);
       FieldByName('BEMERKUNG').AssignTo(sBemerkungText);
       si.addwords(
         { } HugeSingleLine(sBuchText, ' ') + ' ' +

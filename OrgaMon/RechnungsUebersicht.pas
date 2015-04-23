@@ -93,7 +93,8 @@ uses
 {$R *.dfm}
 
 const
-  sSQL_NurUnbezahlte = ' select' +
+  sSQL_NurUnbezahlte =
+  { } ' select' +
   { } '  VERSAND.RECHNUNG,' +
   { } '  VERSAND.LIEFERBETRAG,' +
   { } '  (select' +
@@ -135,7 +136,6 @@ const
   { } '     ((B.VORGANG<>''' + cVorgang_Rechnung +
     ''') or (B.VORGANG is null))' +
   { } '   ),0.0) + 0.01) and' +
-
   { } ' ((select' +
   { } '    SUM(B.BETRAG)' +
   { } '  from' +
@@ -145,19 +145,41 @@ const
   { } ' order by' +
   { } '  VERSAND.AUSGANG descending ';
 
-  sSQL_Alle = ' select' + '  VERSAND.RECHNUNG,' + '  VERSAND.LIEFERBETRAG,' +
-    '  (select' + '    SUM(-B.BETRAG)' + '   from' + '    AUSGANGSRECHNUNG B' +
-    '   where' + '    (VERSAND.BELEG_R=B.BELEG_R) and' +
-    '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' + '    ((B.VORGANG<>''' +
-    cVorgang_Rechnung + ''') or (B.VORGANG is null))' + '   ) as DAVON_BEZAHLT,'
-    + '  VERSAND.BELEG_R,' + '  VERSAND.TEILLIEFERUNG,' + '  VERSAND.AUSGANG,' +
-    '  BELEG.MAHNSTUFE,' + '  PERSON.RID as PERSON_R,' + '  PERSON.SUCHBEGRIFF'
-    + ' from' + '  VERSAND' + ' join' + '  BELEG' + ' on' +
-    '  (BELEG.RID=VERSAND.BELEG_R)' + ' join' + '  PERSON' + ' on' +
-    '  (PERSON.RID=BELEG.PERSON_R)' + ' where' +
-    '  (VERSAND.RECHNUNG is not null) and' +
-    '  (VERSAND.AUSGANG>CURRENT_DATE-365) ' + ' order by' +
-    '  VERSAND.AUSGANG descending ';
+  sSQL_Alle =
+  { } ' select' +
+  { } '  VERSAND.RECHNUNG,' +
+  { } '  VERSAND.LIEFERBETRAG,' +
+  { } '  (select' +
+  { } '    SUM(-B.BETRAG)' +
+  { } '   from' +
+  { } '    AUSGANGSRECHNUNG B' +
+  { } '   where' +
+  { } '    (VERSAND.BELEG_R=B.BELEG_R) and' +
+  { } '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' +
+  { } '    ((B.VORGANG<>''' + cVorgang_Rechnung +
+    ''') or (B.VORGANG is null))' +
+  { } '   ) as DAVON_BEZAHLT,' +
+  { } '  VERSAND.BELEG_R,' +
+  { } '  VERSAND.TEILLIEFERUNG,' +
+  { } '  VERSAND.AUSGANG,' +
+  { } '  BELEG.MAHNSTUFE,' +
+  { } '  PERSON.RID as PERSON_R,' +
+  { } '  PERSON.SUCHBEGRIFF' +
+  { } ' from' +
+  { } '  VERSAND' +
+  { } ' join' +
+  { } '  BELEG' +
+  { } ' on' +
+  { } '  (BELEG.RID=VERSAND.BELEG_R)' +
+  { } ' join' +
+  { } '  PERSON' +
+  { } ' on' +
+  { } '  (PERSON.RID=BELEG.PERSON_R)' +
+  { } ' where' +
+  { } '  (VERSAND.RECHNUNG is not null) and' +
+  { } '  (VERSAND.AUSGANG>CURRENT_DATE-365) ' +
+  { } ' order by' +
+  { } '  VERSAND.AUSGANG descending ';
 
 procedure TFormRechnungsUebersicht.FormActivate(Sender: TObject);
 begin

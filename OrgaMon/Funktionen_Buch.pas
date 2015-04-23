@@ -1244,11 +1244,11 @@ begin
     TEILLIEFERUNG := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
     EREIGNIS_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
 
-    // Autogen
-    if (BUCH_R<0) then
-     POSNO := -BUCH_R
+    // Autogenerate
+    if (BUCH_R < 0) then
+      POSNO := -BUCH_R
     else
-     POSNO := 0;
+      POSNO := 0;
 
     if (PERSON_R = cRID_Person_Lastschrift) then
     begin
@@ -1461,7 +1461,7 @@ end;
 
 procedure b_w_ForderungAusgleich(EREIGNIS_R: integer);
 var
-  BELEG_R: integer;
+  BELEG_R, BUCH_R: integer;
   PERSON_R: integer;
   TEILLIEFERUNG: integer;
   Betrag, saldo: double;
@@ -1474,7 +1474,19 @@ begin
     inttostrN(EREIGNIS_R, 8) + '.csv');
   with sVOLUMEN do
   begin
-    VALUTA := long2date(DatePlus(DateGet, 10));
+
+    // Valuta aus der Kontobuchung ermitteln
+    BUCH_R := e_r_sql(
+      { } 'select MASTER_R from BUCH ' +
+      { } 'where ' +
+      { } ' (EREIGNIS_R=' + inttostr(EREIGNIS_R) + ') and' +
+      { } ' (GEGENKONTO is null)');
+
+    VALUTA := e_r_sqls(
+      { } 'select CAST(WERTSTELLUNG as DATE) from ' +
+      { } 'BUCH where RID=' + inttostr(BUCH_R));
+
+    long2date(DatePlus(DateGet, 10));
     for r := 1 to RowCount do
     begin
 
