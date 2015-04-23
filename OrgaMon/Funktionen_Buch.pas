@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -27,14 +27,15 @@
 unit Funktionen_Buch;
 
 //
-// b_r_* lesende Buchungsregeln
-// b_w_* schreibende Buchungsregeln
+// b_r_* lesende Buchungsfunktionen
+// b_w_* schreibende Buchungsfunktionen
 //
 
 //
 // [[Make everything as simple as possible, but not simpler.]]
 // Albert Einstein
 // Gestalte alles so einfach wie möglich, aber nicht einfacher
+//
 
 interface
 
@@ -52,22 +53,39 @@ const
   cBUCH_Farbe_Teilzahlung = $33CCFF;
   cBUCH_Farbe_Neutral = $DDDDDD;
 
-  { Public-Deklarationen }
+  // stellt sicher, dass zu einem Buchungssatz der
+  // initiale Buchungssatz geliefert wird
 function e_r_InitialerBuchungssatz(BUCH_R: integer): integer;
-// stellt sicher, dass zu einem Buchungssatz der
-// initiale Buchungssatz geliefert wird
 
+// Verbuchen
 procedure b_w_buche(BUCH_R: integer; Diagnose: TStrings = nil); overload;
 procedure b_w_buche(BUCH_R: TgpIntegerList; Diagnose: TStrings = nil); overload;
 procedure b_w_buche(Diagnose: TStrings = nil); overload;
+
+// Kopie erstellen
 function b_w_copy(BUCH_R: integer): integer;
 
-procedure b_w_ForderungAusgleich(sList: TStrings;
-  Diagnose: TStrings = nil); overload;
-procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
 // Forderungs-Ausgleichbuchung!
 //
 // [PERSON_R,BELEG_R,Betrag,BDatum,BUCH_R,Meldung,Konto,TEILLIEFERUNG,EREIGNIS_R]
+//
+// Ausgleich über beliebige Zahlungen
+//
+procedure b_w_ForderungAusgleich(sList: TStrings;
+  Diagnose: TStrings = nil); overload;
+procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
+
+// Forderungs-Ausgleichbuchung!
+//
+// [EREIGNIS_R]
+//
+// Ausgleich über einen vollständig erhaltenen Lastschrift-Einzug
+//
+procedure b_w_ForderungAusgleich(EREIGNIS_R: integer); overload;
+
+//
+// Stapel Ausgleich von eingegangenen Lastschrift-Einzügen
+procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
 
 //
 // "Bezahlt" Info wieder zurücknehmen
@@ -101,6 +119,9 @@ function b_r_KontoSuchindexFName(KONTO: string): string;
 
 // aktueller Saldo des "Kunden" Kontos
 function b_r_PersonSaldo(PERSON_R: integer): double;
+
+// aktueller Saldo ausstehender Lastschrift Einzüge
+function b_r_LastschriftSaldo: double;
 
 function b_r_Person_ELV_BLZ(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
 function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
@@ -147,7 +168,7 @@ uses
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
-  globals,
+  globals, html,
 
   CareTakerClient, Geld, dbOrgaMon,
   WordIndex, DCPcrypt2, DCPmd5;
@@ -813,6 +834,14 @@ var
       FieldByName('MASTER_R').AsInteger := BUCH_R;
       FieldByName('NAME').AsString := Ziel;
 
+      // Ereignis gesetzt?
+      if (Skript.Values['EREIGNIS'] <> '') then
+      begin
+        FieldByName('EREIGNIS_R').AsInteger :=
+          StrToInt(Skript.Values['EREIGNIS']);
+        FieldByName('POSNO').AsInteger := 0;
+      end;
+
       // copy fields
       FolgeFelderErben;
       post;
@@ -1158,6 +1187,7 @@ var
   InfoText: TStringList;
   Meldung: string;
   lBUCH: TgpIntegerList;
+  POSNO: integer;
 begin
   lBUCH := TgpIntegerList.create;
   qBELEG := nQuery;
@@ -1192,7 +1222,7 @@ begin
     sql.add('select');
     sql.add(' RID,NAME,SKRIPT,GEGENKONTO,PERSON_R,TEXT,');
     sql.add(' BELEG_R,TEILLIEFERUNG,WERTSTELLUNG,BETRAG,');
-    sql.add(' ERTRAG,BEARBEITER_R,EREIGNIS_R');
+    sql.add(' ERTRAG,BEARBEITER_R,EREIGNIS_R,POSNO');
     sql.add('from BUCH');
     sql.add(' where RID=:CROSSREF');
     sql.add('for update');
@@ -1202,20 +1232,52 @@ begin
   for n := 0 to pred(sList.count) do
   begin
 
+    // Parameter
     s := sList[n];
     PERSON_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    BELEG_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    Betrag := cPreisRundung(nextp(s, cOLAPcsvSeparator));
+    VALUTA := date2long(nextp(s, cOLAPcsvSeparator));
+    BUCH_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    Meldung := nextp(s, cOLAPcsvSeparator);
+    KONTO := nextp(s, cOLAPcsvSeparator);
+    TEILLIEFERUNG := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    EREIGNIS_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+
+    // Autogen
+    if (BUCH_R<0) then
+     POSNO := -BUCH_R
+    else
+     POSNO := 0;
+
+    if (PERSON_R = cRID_Person_Lastschrift) then
+    begin
+      // Vorhandene Buchung (Konto meist Giro) nur ergänzen!
+      with qBUCH do
+      begin
+        ParamByName('CROSSREF').AsInteger := BUCH_R;
+        open;
+        first;
+        if not(eof) then
+        begin
+          e_r_sqlt(FieldByName('SKRIPT'), ScriptText);
+          ScriptText.Values['COLOR'] := cColor_Gruen;
+          ScriptText.Values['EREIGNIS'] := inttostr(BELEG_R);
+          edit;
+          FieldByName('GEGENKONTO').AsString := cKonto_Bank;
+          ScriptText.add(Meldung);
+          FieldByName('SKRIPT').Assign(ScriptText);
+          post;
+        end;
+        close;
+      end;
+
+      // verbuchen sicherstellen
+      lBUCH.add(BUCH_R);
+    end;
+
     if (PERSON_R >= cRID_FirstValid) then
     begin
-
-      // Parameter-Liste einholen
-      BELEG_R := strtoint(nextp(s, cOLAPcsvSeparator));
-      Betrag := cPreisRundung(nextp(s, cOLAPcsvSeparator));
-      VALUTA := date2long(nextp(s, cOLAPcsvSeparator));
-      BUCH_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
-      Meldung := nextp(s, cOLAPcsvSeparator);
-      KONTO := nextp(s, cOLAPcsvSeparator);
-      TEILLIEFERUNG := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
-      EREIGNIS_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
 
       // Defaults
       if isZeroMoney(Betrag) then
@@ -1265,7 +1327,7 @@ begin
               if not(eof) then
               begin
                 e_r_sqlt(FieldByName('SKRIPT'), ScriptText);
-                ScriptText.Values['COLOR'] := '#00FF66'; // grün
+                ScriptText.Values['COLOR'] := cColor_Gruen;
                 edit;
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
                 FieldByName('ERTRAG').AsString := cC_True;
@@ -1286,7 +1348,7 @@ begin
           else
           begin
 
-            // Neuanlage (meist bei Zahlung via Kasse)!
+            // Neuanlage (meist bei Zahlung via Kasse oder Lastschrift)!
             BUCH_R := e_w_Gen('GEN_BUCH');
             e_x_sql('insert into BUCH (RID,DATUM) values(' + inttostr(BUCH_R) +
               ',CURRENT_TIMESTAMP)');
@@ -1315,6 +1377,8 @@ begin
                 FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
                 if (EREIGNIS_R >= cRID_FirstValid) then
                   FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
+                if (POSNO > 0) then
+                  FieldByName('POSNO').AsInteger := POSNO;
 
                 ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG,
                   Betrag]));
@@ -1393,6 +1457,93 @@ begin
   sl.add(s);
   b_w_ForderungAusgleich(sl, Diagnose);
   sl.Free;
+end;
+
+procedure b_w_ForderungAusgleich(EREIGNIS_R: integer);
+var
+  BELEG_R: integer;
+  PERSON_R: integer;
+  TEILLIEFERUNG: integer;
+  Betrag, saldo: double;
+  VALUTA: string;
+  sVOLUMEN: TsTable;
+  r: integer;
+begin
+  sVOLUMEN := TsTable.create;
+  sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' +
+    inttostrN(EREIGNIS_R, 8) + '.csv');
+  with sVOLUMEN do
+  begin
+    VALUTA := long2date(DatePlus(DateGet, 10));
+    for r := 1 to RowCount do
+    begin
+
+      // Nun die einzelnen Zahlungsereignisse
+      PERSON_R := strtointdef(readCell(r, 'PERSON_R'), cRID_Null);
+      BELEG_R := strtointdef(readCell(r, 'BELEG_R'), cRID_Null);
+      TEILLIEFERUNG := strtointdef(readCell(r, 'TEILLIEFERUNG'), 0);
+      Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
+
+      saldo := e_r_sqld(
+        { } 'select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
+        { } '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
+        { } '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+
+      // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
+      if isHaben(saldo) then
+      begin
+
+        // Jetzt den ganzen Rattenschwanz buchen
+        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+          { } PERSON_R,
+          { } BELEG_R,
+          { } Betrag,
+          { } VALUTA,
+          { BUCH_R } -r,
+          { } 'Lastschrift',
+          { } cKonto_Bank,
+          { } TEILLIEFERUNG,
+          { } EREIGNIS_R]));
+
+        // Nun bei der Person die Freigabe wieder zurücksetzen
+        e_x_sql(
+          { } 'update PERSON set ' +
+          { } ' Z_ELV_FREIGABE=' +
+          { } 'coalesce(Z_ELV_FREIGABE,' +
+          { } FloatToStrISO(Betrag, 2) + ') - ' +
+          { } FloatToStrISO(Betrag, 2) + ' ' +
+          { } 'where' +
+          { } ' RID=' + inttostr(PERSON_R));
+      end;
+
+    end;
+  end;
+
+  e_x_sql(
+    { } 'update EREIGNIS ' +
+    { } 'set' +
+    { } ' BEENDET=CURRENT_TIMESTAMP ' +
+    { } 'where' +
+    { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
+
+  sVOLUMEN.Free;
+
+end;
+
+procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
+var
+  n: integer;
+  PERSON_R, EREIGNIS_R: integer;
+  s: string;
+begin
+  for n := 0 to pred(sList.count) do
+  begin
+    s := sList[n];
+    PERSON_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    EREIGNIS_R := strtointdef(nextp(s, cOLAPcsvSeparator), cRID_Null);
+    if (PERSON_R = cRID_Person_Lastschrift) then
+      b_w_ForderungAusgleich(EREIGNIS_R);
+  end;
 end;
 
 procedure b_w_ForderungAusgleichStorno(EREIGNIS_R: integer);
@@ -1868,6 +2019,31 @@ begin
     ' NAME in ('+cKonto_Forderungen+cKonto_Anzahlungen+')
 
   *)
+end;
+
+function b_r_LastschriftSaldo: double;
+var
+  cEREIGNIS: TdboCursor;
+  sINFO: TStringList;
+begin
+  result := 0.0;
+  cEREIGNIS := nCursor;
+  sINFO := TStringList.create;
+  with cEREIGNIS do
+  begin
+    sql.add('select INFO from EREIGNIS where');
+    sql.add(' (ART=11) and');
+    sql.add(' (BEENDET is NULL)');
+    ApiFirst;
+    while not(eof) do
+    begin
+      e_r_sqlt(FieldByName('INFO'), sINFO);
+      result := result + StrToMoneyDef(sINFO.Values['BETRAG']);
+      ApiNext;
+    end;
+  end;
+  cEREIGNIS.Free;
+  sINFO.Free;
 end;
 
 procedure b_w_preDeleteBuch(BUCH_R: integer);

@@ -44,7 +44,8 @@ const
   // kleinste Stückelung des Euros = 1 Cent
   cGeld_KleinsterBetrag = 0.01;
   cGeld_Schwellwert = cGeld_KleinsterBetrag / 2;
-  cGeld_KeinElement = cGeld_Schwellwert; // Geldwert, der durch Addition niemals entstehen kann!
+  cGeld_KeinElement = cGeld_Schwellwert;
+  // Geldwert, der durch Addition niemals entstehen kann!
 
   // M.MMggGGGG#
   cGeld_Bedeutungslos = 0.000000001;
@@ -87,6 +88,11 @@ const
   // vom OrgaMon benutzte Vorgangscodes für die Buchhaltung
   cVorgang_Rechnung = 'RECHNUNG (73)';
   cVorgang_Abschluss = 'ABSCHLUSS (805)';
+  cVorgang_Lastschrift =
+  { } 'LASTSCHR. (71);' +
+  { } 'SAMMEL-LS-EINZUG (192);' +
+  { } 'LASTSCHRIFTEINR (71);' +
+  { } 'EINZELLASTSCHRIFTSEINZUG (171)';
 
   // Pfad für BLZ Dateien
   iSystemPath: string = '';
@@ -105,22 +111,22 @@ function isZeroMoney(Betrag: double): boolean; // =0 ?
 function isHaben(Betrag: double): boolean; // >0 ?
 function isEqual(Betrag1, Betrag2: double): boolean;
 function isOther(Betrag1, Betrag2: double): boolean;
-function isNoMoney(Betrag:double): boolean; // = cGeld_KeinElement
+function isNoMoney(Betrag: double): boolean; // = cGeld_KeinElement
 
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
 
 // String-Routinen
 function StrToMoney(x: string): double; // strto
 function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
-function MoneyToStr(d : double):string;
+function MoneyToStr(d: double): string;
 
 // Object Routinen
-function MoneyAsObject(Wert: double):TObject;
-function ObjectAsMoney(Wert: TObject):double;
+function MoneyAsObject(Wert: double): TObject;
+function ObjectAsMoney(Wert: TObject): double;
 
 // Integer Routinen
-function MoneyAsCent(Wert: double):integer;
-function CentAsMoney(Wert: integer):double;
+function MoneyAsCent(Wert: double): integer;
+function CentAsMoney(Wert: integer): double;
 
 type
   // Salden-Objekt, zur Bestimmung des Endsaldo eines Kontos
@@ -144,13 +150,13 @@ type
   end;
 
   TGeldBetrag = class(TObject)
-    Betrag : double;
+    Betrag: double;
   end;
 
   TSteuerSatz = class(TObject)
-    Satz : double;
+    Satz: double;
     Netto: boolean;
-    NettoWieBrutto:boolean;
+    NettoWieBrutto: boolean;
   end;
 
   // MwSt-Objekt zur Datenhaltung und Bestimmung der einzelnen MwSt Summen
@@ -171,7 +177,7 @@ type
     MwSt: array of TMwstRecord;
     constructor Create;
     destructor Destroy; override;
-    function add(pSatz, pSumme: double; pKonto: string = '') : integer;
+    function add(pSatz, pSumme: double; pKonto: string = ''): integer;
     function count: integer;
     procedure calc(EinzelpreisNetto: boolean);
     procedure clear;
@@ -276,7 +282,7 @@ end;
 procedure TSaldo.addAbschluss(bDatum: TAnfixdate; bBetrag: double);
 begin
   SetLength(Umsatz, High(Umsatz) + 2);
-  with Umsatz[ High(Umsatz)] do
+  with Umsatz[High(Umsatz)] do
   begin
     Datum := bDatum;
     Betrag := bBetrag;
@@ -288,7 +294,7 @@ end;
 procedure TSaldo.addUmsatz(bDatum: TAnfixdate; bBetrag: double);
 begin
   SetLength(Umsatz, High(Umsatz) + 2);
-  with Umsatz[ High(Umsatz)] do
+  with Umsatz[High(Umsatz)] do
   begin
     Datum := bDatum;
     Betrag := bBetrag;
@@ -401,7 +407,7 @@ end;
 
 function TMwSt.count: integer;
 begin
-  result := succ( High(MwSt));
+  result := succ(High(MwSt));
 end;
 
 constructor TMwSt.Create;
@@ -447,7 +453,7 @@ begin
     result := result + MwSt[n].MwStSumme + MwSt[n].NettoSumme;
 end;
 
-function TMwSt.add(pSatz, pSumme: double; pKonto: string) : integer;
+function TMwSt.add(pSatz, pSumme: double; pKonto: string): integer;
 var
   n: integer;
   MwStFound: boolean;
@@ -501,9 +507,10 @@ begin
   result := not(isZeroMoney(Betrag));
 end;
 
-function isNoMoney(Betrag:double): boolean; // = cGeld_KeinElement
+function isNoMoney(Betrag: double): boolean; // = cGeld_KeinElement
 begin
- result := ( Betrag+cGeld_Bedeutungslos >= cGeld_KeinElement) and (Betrag-cGeld_Bedeutungslos<= cGeld_KeinElement);
+  result := (Betrag + cGeld_Bedeutungslos >= cGeld_KeinElement) and
+    (Betrag - cGeld_Bedeutungslos <= cGeld_KeinElement);
 end;
 
 function cAbschreiben(var GesamtVolumen, AbschreibeMenge: double): double;
@@ -623,20 +630,23 @@ begin
       if (i <> -1) then
       begin
         NameLautBundesBank := cutblank(copy(sBLZs[i], 10, 58));
-      end else
+      end
+      else
       begin
         log('ERROR: Die BLZ ist der Bundesbank nicht bekannt!');
         break;
       end;
-    end else
+    end
+    else
     begin
       log('WARNING: Es liegt kein BLZ Verzeichnis vor!');
     end;
 
     //
-    if (NameLautBundesBank<>'') then
-     if (AnsiUpperCase(Name)<>AnsiUpperCase(NameLautBundesBank)) then
-      log('WARNING: Der Name der Bank sollte "'+NameLautBundesBank+'" sein, ist aber "'+Name+'"!');
+    if (NameLautBundesBank <> '') then
+      if (AnsiUpperCase(Name) <> AnsiUpperCase(NameLautBundesBank)) then
+        log('WARNING: Der Name der Bank sollte "' + NameLautBundesBank +
+          '" sein, ist aber "' + Name + '"!');
 
     result := true;
   until true;
@@ -645,40 +655,39 @@ end;
 
 function StrToMoney(x: string): double; // strto
 begin
-  result := StrToDouble(x);
+  result := strtodouble(x);
 end;
 
 function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
 begin
-  result := StrToDoubleDef(x,d);
+  result := StrToDoubleDef(x, d);
 end;
 
-function MoneyToStr(d : double):string;
+function MoneyToStr(d: double): string;
 begin
-  result := format('%m',[d]);
+  result := format('%m', [d]);
 end;
 
-function MoneyAsObject(Wert: double):TObject;
+function MoneyAsObject(Wert: double): TObject;
 begin
-  result := TObject(Integer(round(Wert*100.0)));
+  result := TObject(integer(round(Wert * 100.0)));
 end;
 
-function ObjectAsMoney(Wert: TObject):double;
+function ObjectAsMoney(Wert: TObject): double;
 begin
- result := Integer(Wert);
- result := result / 100.0;
+  result := integer(Wert);
+  result := result / 100.0;
 end;
 
-function MoneyAsCent(Wert: double):integer;
+function MoneyAsCent(Wert: double): integer;
 begin
-  result := round(Wert*100.0);
+  result := round(Wert * 100.0);
 end;
 
-function CentAsMoney(Wert: integer):double;
+function CentAsMoney(Wert: integer): double;
 begin
- result := Wert;
- result := result / 100.0;
+  result := Wert;
+  result := result / 100.0;
 end;
-
 
 end.
