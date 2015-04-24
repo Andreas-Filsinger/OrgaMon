@@ -137,8 +137,8 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    RowSelect = True
     DrawFocusSelected = True
+    OnGetCellProps = IB_Grid1GetCellProps
     OnGetDisplayText = IB_Grid1GetDisplayText
   end
   object Button1: TButton
