@@ -65,14 +65,18 @@ procedure b_w_buche(Diagnose: TStrings = nil); overload;
 // Kopie erstellen
 function b_w_copy(BUCH_R: integer): integer;
 
+// Status einer Forderung
+//
+function b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG: integer): integer; overload;
+function b_r_ForderungStatus(AUSGANGSRECHNUNG_R: integer): integer; overload;
+
 // Forderungs-Ausgleichbuchung!
 //
 // [PERSON_R,BELEG_R,Betrag,BDatum,BUCH_R,Meldung,Konto,TEILLIEFERUNG,EREIGNIS_R]
 //
 // Ausgleich über beliebige Zahlungen
 //
-procedure b_w_ForderungAusgleich(sList: TStrings;
-  Diagnose: TStrings = nil); overload;
+procedure b_w_ForderungAusgleich(sList: TStrings; Diagnose: TStrings = nil); overload;
 procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
 
 // Forderungs-Ausgleichbuchung!
@@ -92,8 +96,7 @@ procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
 procedure b_w_ForderungAusgleichStorno(EREIGNIS_R: integer);
 
 // aus einem Beleg die Gesamt-Forderung auf ein Konto buchen!
-function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double)
-  : TStringList;
+function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double): TStringList;
 
 // eine unbare Konto-Buchung wieder in den Original, unverbuchten Zustand versetzen
 procedure b_w_reset(BUCH_R: integer);
@@ -198,8 +201,8 @@ var
   function setBetrag(BUCH_R: integer; Betrag: double): double;
   begin
     result := 0;
-    e_x_sql('update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) + ' where RID='
-      + inttostr(BUCH_R));
+    e_x_sql('update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) + ' where RID=' +
+      inttostr(BUCH_R));
     result := Betrag;
   end;
 
@@ -214,8 +217,8 @@ var
     end;
   end;
 
-  function SteuerBuchung(pSteuer: string; BruttoBetrag: double;
-    mDatum: TAnfixDate; NETTO_R: integer): double; // [gebuchte Steuer]
+  function SteuerBuchung(pSteuer: string; BruttoBetrag: double; mDatum: TAnfixDate;
+    NETTO_R: integer): double; // [gebuchte Steuer]
   var
     pSatz: integer;
     pBetrag: double;
@@ -251,8 +254,7 @@ var
       end;
 
       // Vorzeichen aus BruttoBetrag übernehmen!
-      if ((BruttoBetrag > 0) and (pBetrag < 0)) or
-        ((BruttoBetrag < 0) and (pBetrag > 0)) then
+      if ((BruttoBetrag > 0) and (pBetrag < 0)) or ((BruttoBetrag < 0) and (pBetrag > 0)) then
         pBetrag := -pBetrag;
 
       result := pBetrag;
@@ -267,8 +269,7 @@ var
         // den Steueranteil selbst anhand
         // des aktuell gültigen Satzes berechnen
         Vorgang := format('MWST %.1f%% (%d)', [SteuerSatz, pSatz]);
-        result := BruttoBetrag - cPreisRundung
-          (BruttoBetrag / (1.0 + (SteuerSatz / 100.0)));
+        result := BruttoBetrag - cPreisRundung(BruttoBetrag / (1.0 + (SteuerSatz / 100.0)));
       end;
 
     end;
@@ -326,22 +327,19 @@ var
         if (StempelName = '') then
           StempelName := Regel.Values['STEMPEL'];
         if (StempelName = '') then
-          raise Exception.create('Ich kann kein STEMPEL= im Deckblatt "' + Ziel
-            + '" finden');
+          raise Exception.create('Ich kann kein STEMPEL= im Deckblatt "' + Ziel + '" finden');
         if (StempelName = cIni_DeActivate) then
           exit;
-        STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX=''' +
-          StempelName + '''');
+        STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX=''' + StempelName + '''');
         if (STEMPEL_R < cRID_FirstValid) then
-          raise Exception.create('Der Stempel ' + StempelName +
-            ' existiert nicht');
-        e_x_sql('update BUCH set STEMPEL_R=' + inttostr(STEMPEL_R) +
-          ' where RID=' + inttostr(BUCH_R));
+          raise Exception.create('Der Stempel ' + StempelName + ' existiert nicht');
+        e_x_sql('update BUCH set STEMPEL_R=' + inttostr(STEMPEL_R) + ' where RID=' +
+          inttostr(BUCH_R));
       end;
 
       // neuen Wert eintragen Stempel erhöhen
-      e_x_sql('update BUCH set STEMPEL_DOKUMENT=' +
-        inttostr(e_w_Stempel(STEMPEL_R)) + ' where RID=' + inttostr(BUCH_R));
+      e_x_sql('update BUCH set STEMPEL_DOKUMENT=' + inttostr(e_w_Stempel(STEMPEL_R)) + ' where RID='
+        + inttostr(BUCH_R));
 
       // lese die neuen Werte auch in den cINITAL ein!
       cINITIAL.Refresh;
@@ -351,8 +349,7 @@ var
 
   function BucheBeleg: double;
 
-    procedure bucheTeilzahlung(BELEG_R, TEILLIEFERUNG: integer;
-      BruttoBetrag, Forderung: double);
+    procedure bucheTeilzahlung(BELEG_R, TEILLIEFERUNG: integer; BruttoBetrag, Forderung: double);
     var
       Teilzahlungen: double;
       AUSGLEICH_R: integer;
@@ -370,8 +367,8 @@ var
         { } ' (GEGENKONTO=''' + cKonto_Erloese + ''')');
       if (AUSGLEICH_ALT_R = BUCH_R) then
         raise Exception.create('Löschung der alten ' + cKonto_Anzahlungen +
-          '-Ausgleichsbuchung würde zur Löschung des initialen Buchungssatzes (RID='
-          + inttostr(BUCH_R) + ') führen');
+          '-Ausgleichsbuchung würde zur Löschung des initialen Buchungssatzes (RID=' +
+          inttostr(BUCH_R) + ') führen');
       if (AUSGLEICH_ALT_R >= cRID_FirstValid) then
         b_w_DeleteBuch(AUSGLEICH_ALT_R);
 
@@ -391,10 +388,9 @@ var
         post;
       end;
 
-      Teilzahlungen := e_r_sqld('select SUM(BETRAG) from BUCH where ' +
-        ' (NAME=''' + cKonto_Anzahlungen + ''') and' + ' (BELEG_R=' +
-        inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-        inttostr(TEILLIEFERUNG) + ')');
+      Teilzahlungen := e_r_sqld('select SUM(BETRAG) from BUCH where ' + ' (NAME=''' +
+        cKonto_Anzahlungen + ''') and' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+        ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
       // Ist Summe(Anzahlungen)=-Forderung wird ein (neuer) Ausgleichs-Folgesatz erstellt!
       // Dies ist ein automatischer Initialer Buchungssatz, dieser musss
@@ -413,8 +409,7 @@ var
           //
           ScriptText.add('VORZEICHENWECHSEL=' + cIni_Activate);
           // ScriptText.add('ZWISCHENSATZ=' + cIni_Activate);
-          ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG,
-            Forderung]));
+          ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Forderung]));
 
           insert;
           FieldByName('RID').AsInteger := AUSGLEICH_R;
@@ -440,8 +435,7 @@ var
       ScriptText.Free;
     end;
 
-    procedure bucheVollausgleich(BELEG_R, TEILLIEFERUNG: integer;
-      BruttoBetrag: double);
+    procedure bucheVollausgleich(BELEG_R, TEILLIEFERUNG: integer; BruttoBetrag: double);
     var
       _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
       _Rabatt, _EinzelPreis, _MwStSatz: double;
@@ -460,26 +454,20 @@ var
       MwSt_Satz_Saver := TMwSt.create;
 
       // Gibt es diese Teillieferung
-      VERSAND_R := e_r_sql('select RID from VERSAND where ' + ' (BELEG_R=' +
-        inttostr(BELEG_R) + ') and ' + ' (TEILLIEFERUNG=' +
-        inttostr(TEILLIEFERUNG) + ')');
+      VERSAND_R := e_r_sql('select RID from VERSAND where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
+        ') and ' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if (VERSAND_R < cRID_FirstValid) then
-        raise Exception.create(format('Die Teillieferung (%d) existiert nicht',
-          [TEILLIEFERUNG]));
+        raise Exception.create(format('Die Teillieferung (%d) existiert nicht', [TEILLIEFERUNG]));
 
       // Stimmt der Gesamt-Betrag?
-      VersandGesamtSumme :=
-        e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' + ' (BELEG_R=' +
-        inttostr(BELEG_R) + ') and ' + ' (TEILLIEFERUNG=' +
-        inttostr(TEILLIEFERUNG) + ')');
+      VersandGesamtSumme := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' + ' (BELEG_R=' +
+        inttostr(BELEG_R) + ') and ' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if isOther(VersandGesamtSumme, BruttoBetrag) then
-        Log(cWARNINGText, format('Betrag (%m) aus VERSAND ist abweichend',
-          [VersandGesamtSumme]));
+        Log(cWARNINGText, format('Betrag (%m) aus VERSAND ist abweichend', [VersandGesamtSumme]));
 
       // Übergeordnete Einstellung ermitteln
       EinzelpreisNetto :=
-        (e_r_sqls('select EINZELPREIS_NETTO from BELEG where RID=' +
-        inttostr(BELEG_R)) = cC_True);
+        (e_r_sqls('select EINZELPREIS_NETTO from BELEG where RID=' + inttostr(BELEG_R)) = cC_True);
 
       // Posten laden und über ihr Sortiment iterieren, netto und Satz buchen!
       with cPOSTEN do
@@ -514,8 +502,7 @@ var
         ApiFirst;
         if eof then
         begin
-          Log(cWARNINGText,
-            'Es gibt hierzu keine Posten in der Tabelle GELIEFERT');
+          Log(cWARNINGText, 'Es gibt hierzu keine Posten in der Tabelle GELIEFERT');
           MwSt_Satz_Saver.add(e_r_Prozent(1, DateGet), BruttoBetrag);
           MwSt_Konto_Saver.add(e_r_Prozent(1, DateGet), BruttoBetrag, '');
         end
@@ -527,20 +514,17 @@ var
             // Zwang zur Konto-Zuordnung
             if not(FieldByName('ARTIKEL_R').IsNull) then
               if FieldByName('KONTO').AsString = '' then
-                raise Exception.create('Beim Sortiment "' +
-                  FieldByName('BEZEICHNUNG').AsString +
+                raise Exception.create('Beim Sortiment "' + FieldByName('BEZEICHNUNG').AsString +
                   '" fehlt die Kontozuordnung');
 
-            e_r_PostenInfo(cPOSTEN, false, EinzelpreisNetto, _Anz, _AnzAuftrag,
-              _AnzGeliefert, _AnzStorniert, _AnzAgent, _Rabatt, _EinzelPreis,
-              _MwStSatz);
+            e_r_PostenInfo(cPOSTEN, false, EinzelpreisNetto, _Anz, _AnzAuftrag, _AnzGeliefert,
+              _AnzStorniert, _AnzAgent, _Rabatt, _EinzelPreis, _MwStSatz);
             _PreisProPosition := e_c_Rabatt(e_r_PostenPreis(_EinzelPreis, _Anz,
               FieldByName('EINHEIT_R').AsInteger), _Rabatt);
 
             // MwSt Tabellen pflegen
             MwSt_Satz_Saver.add(_MwStSatz, _PreisProPosition);
-            MwSt_Konto_Saver.add(_MwStSatz, _PreisProPosition,
-              FieldByName('KONTO').AsString);
+            MwSt_Konto_Saver.add(_MwStSatz, _PreisProPosition, FieldByName('KONTO').AsString);
 
             ApiNext;
           end;
@@ -553,10 +537,8 @@ var
       MwSt_Konto_Saver.calc(EinzelpreisNetto);
 
       // Stimmt eigentlich der Betrag?
-      if (abs(MwSt_Satz_Saver.Brutto - BruttoBetrag) >= cGeld_KleinsterBetrag)
-      then
-        raise Exception.create
-          (format('Betrag (%m) aus GELIEFERT ist abweichend',
+      if (abs(MwSt_Satz_Saver.Brutto - BruttoBetrag) >= cGeld_KleinsterBetrag) then
+        raise Exception.create(format('Betrag (%m) aus GELIEFERT ist abweichend',
           [MwSt_Satz_Saver.Brutto]));
 
       // aufgeteilt auf die Konten
@@ -566,17 +548,14 @@ var
           begin
             if (Satz = MwSt_Satz_Saver.MwSt[m].Satz) then
             begin
-              MwSt_Satz_Saver.MwSt[m].NettoSumme := MwSt_Satz_Saver.MwSt[m]
-                .NettoSumme - NettoSumme;
-              MwSt_Satz_Saver.MwSt[m].MwStSumme := MwSt_Satz_Saver.MwSt[m]
-                .MwStSumme - MwStSumme;
+              MwSt_Satz_Saver.MwSt[m].NettoSumme := MwSt_Satz_Saver.MwSt[m].NettoSumme - NettoSumme;
+              MwSt_Satz_Saver.MwSt[m].MwStSumme := MwSt_Satz_Saver.MwSt[m].MwStSumme - MwStSumme;
               break; // abziehen ist nur einmal notwendig
             end;
           end;
 
       // Die Reste (=die Rundungsfehler) nun wieder auf die Konten verteilen!
-      while isSomeMoney(MwSt_Satz_Saver.Netto) or
-        isSomeMoney(MwSt_Satz_Saver.Steuer) do
+      while isSomeMoney(MwSt_Satz_Saver.Netto) or isSomeMoney(MwSt_Satz_Saver.Steuer) do
       begin
 
         for m := 0 to pred(MwSt_Satz_Saver.count) do
@@ -591,14 +570,14 @@ var
                 begin
                   if NettoSumme > 0 then
                   begin
-                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt
-                      [n].NettoSumme + cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme +
+                      cGeld_KleinsterBetrag;
                     NettoSumme := NettoSumme - cGeld_KleinsterBetrag;
                   end
                   else
                   begin
-                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt
-                      [n].NettoSumme - cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme -
+                      cGeld_KleinsterBetrag;
                     NettoSumme := NettoSumme + cGeld_KleinsterBetrag;
                   end;
                 end;
@@ -608,14 +587,14 @@ var
                 begin
                   if MwStSumme > 0 then
                   begin
-                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt
-                      [n].MwStSumme + cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme +
+                      cGeld_KleinsterBetrag;
                     MwStSumme := MwStSumme - cGeld_KleinsterBetrag;
                   end
                   else
                   begin
-                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt
-                      [n].MwStSumme - cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme -
+                      cGeld_KleinsterBetrag;
                     MwStSumme := MwStSumme + cGeld_KleinsterBetrag;
                   end;
                 end;
@@ -650,16 +629,14 @@ var
               // Nachsehen, welcher Satz hier zugeordnet ist
               SatzN := e_r_Satz(Satz, bDatum);
               if (SatzN < 1) then
-                raise Exception.create
-                  (format('MwSt Satz mit %.1f%% nicht gefunden', [Satz]));
+                raise Exception.create(format('MwSt Satz mit %.1f%% nicht gefunden', [Satz]));
 
               // Satz - Buchung durchführen
               insert;
               FieldByName('RID').AsInteger := cRID_AutoInc;
               FieldByName('MASTER_R').AsInteger := BUCH_R;
               FieldByName('ZUSAMMENHANG_R').AsInteger := NETTO_R;
-              FieldByName('NAME').AsString := cKonto_SatzPrefix +
-                inttostr(SatzN);
+              FieldByName('NAME').AsString := cKonto_SatzPrefix + inttostr(SatzN);
               FieldByName('BETRAG').AsFloat := MwStSumme;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
               FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
@@ -676,8 +653,7 @@ var
       MwSt_Satz_Saver.Free;
     end;
 
-    function bucheBelegAusgleich(BELEG_R, TEILLIEFERUNG: integer;
-      BruttoBetrag: double): double;
+    function bucheBelegAusgleich(BELEG_R, TEILLIEFERUNG: integer; BruttoBetrag: double): double;
     var
       Forderung: double;
       cVERSAND: TdboCursor;
@@ -698,12 +674,10 @@ var
 
           if isZeroMoney(Forderung) then
             if not(e_r_IsRID('BELEG_R', BELEG_R)) then
-              raise Exception.create(format('Beleg (%d) existiert nicht',
-                [BELEG_R]));
+              raise Exception.create(format('Beleg (%d) existiert nicht', [BELEG_R]));
 
           if isSomeMoney(Forderung - BruttoBetrag) then
-            raise Exception.create
-              (format('Betrag (%m) aus VERSAND ist abweichend', [Forderung]));
+            raise Exception.create(format('Betrag (%m) aus VERSAND ist abweichend', [Forderung]));
 
           cVERSAND := nCursor;
           with cVERSAND do
@@ -737,8 +711,7 @@ var
 
         if isZeroMoney(Forderung) then
           if not(e_r_IsRID('BELEG_R', BELEG_R)) then
-            raise Exception.create(format('Beleg (%d) existiert nicht',
-              [BELEG_R]));
+            raise Exception.create(format('Beleg (%d) existiert nicht', [BELEG_R]));
 
         if isSomeMoney(Forderung - BruttoBetrag) then
           bucheTeilzahlung(BELEG_R, TEILLIEFERUNG, BruttoBetrag, Forderung)
@@ -812,8 +785,8 @@ var
       // Restbetrag auf Ausbuchungskonto
       if (pos('BETRAG=', Skript[n]) = 1) then
       begin
-        BetragUnberuecksichtigt := BruttoBetrag -
-          strtodoubledef(nextp(Skript[n], '=', 1), cGeld_Zero);
+        BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1),
+          cGeld_Zero);
         result := result + bucheRest(
           { } BetragUnberuecksichtigt,
           { } nextp(Skript[n], ';', 1));
@@ -850,8 +823,7 @@ var
       // Ereignis gesetzt?
       if (Skript.Values['EREIGNIS'] <> '') then
       begin
-        FieldByName('EREIGNIS_R').AsInteger :=
-          StrToInt(Skript.Values['EREIGNIS']);
+        FieldByName('EREIGNIS_R').AsInteger := StrToInt(Skript.Values['EREIGNIS']);
         FieldByName('POSNO').AsInteger := 0;
       end;
 
@@ -871,8 +843,8 @@ var
     for n := 0 to pred(Skript.count) do
       if (pos(cKonto_SatzPrefix + '=', Skript[n]) = 1) then
       begin
-        SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1),
-          BruttoBetrag, bDatum, NETTO_R);
+        SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1), BruttoBetrag,
+          bDatum, NETTO_R);
         SATZfound := true;
       end;
 
@@ -881,8 +853,8 @@ var
     begin
       for n := 0 to pred(Regel.count) do
         if (pos(cKonto_SatzPrefix + '=', Regel[n]) = 1) then
-          SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1),
-            BruttoBetrag, bDatum, NETTO_R);
+          SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1), BruttoBetrag,
+            bDatum, NETTO_R);
     end;
 
     // jetzt noch den fehlenden Netto-Anteil verbuchen!
@@ -963,14 +935,12 @@ var
         RegelOverwrite.Free;
 
         if not(SATZfound) then
-          raise Exception.create
-            (format(cKonto_SatzPrefix + '= im Deckblatt "%s" nicht gefunden',
+          raise Exception.create(format(cKonto_SatzPrefix + '= im Deckblatt "%s" nicht gefunden',
             [ZielKonto]));
 
         setBetrag(NETTO_R, TeilBetragBrutto - TeilSteuerAnteil);
 
-        TeilBetragNettoSumme := TeilBetragNettoSumme + TeilBetragBrutto -
-          TeilSteuerAnteil;
+        TeilBetragNettoSumme := TeilBetragNettoSumme + TeilBetragBrutto - TeilSteuerAnteil;
         TeilSteuerAnteilSumme := TeilSteuerAnteilSumme + TeilSteuerAnteil;
       end;
     end;
@@ -1003,8 +973,7 @@ begin
         sql.add('select * from BUCH where RID=' + inttostr(BUCH_R));
         ApiFirst;
         if eof then
-          raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) +
-            ') existiert nicht');
+          raise Exception.create('Angegebene Referenz (' + inttostr(BUCH_R) + ') existiert nicht');
 
         e_r_sqlt(FieldByName('SKRIPT'), Skript);
         if (Skript.Values['ZWISCHENSATZ'] = cIni_Activate) then
@@ -1074,8 +1043,7 @@ begin
         sql.add(' (NAME=''' + Ziel + ''')');
         ApiFirst;
         if eof then
-          raise Exception.create('Deckblatt "''' + Ziel +
-            '''" existiert nicht');
+          raise Exception.create('Deckblatt "''' + Ziel + '''" existiert nicht');
         e_r_sqlt(FieldByName('SKRIPT'), Regel);
       end;
 
@@ -1118,8 +1086,7 @@ begin
           [BUCH_R, GebuchterBetrag, BruttoBetrag]));
 
     // Erfolg verbuchen!
-    e_x_sql('update BUCH set GEBUCHT=CURRENT_TIMESTAMP where RID=' +
-      inttostr(BUCH_R));
+    e_x_sql('update BUCH set GEBUCHT=CURRENT_TIMESTAMP where RID=' + inttostr(BUCH_R));
 
   except
     on E: Exception do
@@ -1316,8 +1283,8 @@ begin
             FieldByName('DAVON_BEZAHLT').AsFloat :=
               cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
 
-            if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat -
-              FieldByName('DAVON_BEZAHLT').AsFloat) then
+            if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat - FieldByName('DAVON_BEZAHLT')
+              .AsFloat) then
             begin
               // jetzt als vollständig bezahlt markieren.
               FieldByName('MAHNUNG1').clear;
@@ -1361,8 +1328,7 @@ begin
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
                 if (EREIGNIS_R >= cRID_FirstValid) then
                   FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
-                ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG,
-                  Betrag]));
+                ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
                 ScriptText.add(Meldung);
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
@@ -1385,9 +1351,8 @@ begin
 
             InfoText.add(e_r_Person(PERSON_R));
             InfoText.add(format(cRECHNUNGStr + '%d',
-              [e_r_sql('select RECHNUNG from VERSAND where ' + ' (BELEG_R=' +
-              inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-              inttostr(TEILLIEFERUNG) + ')')]));
+              [e_r_sql('select RECHNUNG from VERSAND where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
+              ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')]));
 
             with qBUCH do
             begin
@@ -1407,8 +1372,7 @@ begin
                 if (POSNO > 0) then
                   FieldByName('POSNO').AsInteger := POSNO;
 
-                ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG,
-                  Betrag]));
+                ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
                 ScriptText.add(Meldung);
 
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
@@ -1416,8 +1380,7 @@ begin
 
                 FieldByName('BETRAG').AsFloat := Betrag;
                 if DateOK(VALUTA) then
-                  FieldByName('WERTSTELLUNG').AsDateTime :=
-                    long2datetime(VALUTA);
+                  FieldByName('WERTSTELLUNG').AsDateTime := long2datetime(VALUTA);
                 FieldByName('TEXT').Assign(InfoText);
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
@@ -1497,8 +1460,7 @@ var
   r: integer;
 begin
   sVOLUMEN := TsTable.create;
-  sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' +
-    inttostrN(EREIGNIS_R, 8) + '.csv');
+  sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.csv');
   with sVOLUMEN do
   begin
 
@@ -1640,12 +1602,10 @@ end;
 
 function e_r_InitialerBuchungssatz(BUCH_R: integer): integer;
 begin
-  result := e_r_sql('select COALESCE(MASTER_R,RID) from BUCH where RID=' +
-    inttostr(BUCH_R));
+  result := e_r_sql('select COALESCE(MASTER_R,RID) from BUCH where RID=' + inttostr(BUCH_R));
 end;
 
-function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double)
-  : TStringList;
+function b_w_ForderungBuchen(BELEG_R: integer; RechnungsBetrag: double): TStringList;
 var
   cBELEG: TdboCursor;
   qBELEG: TdboQuery;
@@ -1697,8 +1657,7 @@ begin
       ForderungsFrist := e_r_ZahlungFrist(PERSON_R);
 
       // hier noch erweiterte Fälligkeitslogik einfügen
-      FAELLIG := long2datetime(DatePlus(datetime2long(RechnungsDatum),
-        ForderungsFrist));
+      FAELLIG := long2datetime(DatePlus(datetime2long(RechnungsDatum), ForderungsFrist));
 
       // (muss noch in das normale Kontenschema verschoben werden!)
       with qAUSGANGSRECHNUNG do
@@ -1714,16 +1673,14 @@ begin
         if (RECHNUNGSANSCHRIFT_R >= cRID_FirstValid) then
           FieldByName('MANDANT_R').AsInteger := RECHNUNGSANSCHRIFT_R;
         if (ZAHLUNGSPFLICHTIGER_R >= cRID_FirstValid) then
-          FieldByName('ZAHLUNGSPFLICHTIGER_R').AsInteger :=
-            ZAHLUNGSPFLICHTIGER_R;
+          FieldByName('ZAHLUNGSPFLICHTIGER_R').AsInteger := ZAHLUNGSPFLICHTIGER_R;
         if (ZAHLUNGTYP_R >= cRID_FirstValid) then
           FieldByName('ZAHLUNGTYP_R').AsInteger := ZAHLUNGTYP_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
         FieldByName('BETRAG').AsFloat := RechnungsBetrag;
         FieldByName('RECHNUNG').AsInteger :=
-          e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
-          inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-          inttostr(TEILLIEFERUNG) + ')');
+          e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and'
+          + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
         if (sPARAMETER.count > 0) then
           FieldByName('TEXT').Assign(sPARAMETER);
         post;
@@ -1739,8 +1696,8 @@ begin
         sql.add('from BELEG where RID=' + inttostr(BELEG_R) + ' for update');
         open;
         edit;
-        FieldByName('RECHNUNGS_BETRAG').AsFloat :=
-          FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
+        FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG').AsFloat +
+          RechnungsBetrag;
         FieldByName('TEILLIEFERUNG').AsInteger := succ(TEILLIEFERUNG);
         FieldByName('RECHNUNG').AsDateTime := RechnungsDatum;
         FieldByName('FAELLIG').AsDateTime := FAELLIG;
@@ -1757,8 +1714,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' b_w_ForderungBuchen(' + inttostr(BELEG_R) +
-        '): ' + E.Message);
+      CareTakerLog(cERRORText + ' b_w_ForderungBuchen(' + inttostr(BELEG_R) + '): ' + E.Message);
     end;
   end;
   qBELEG.Free;
@@ -1771,8 +1727,7 @@ procedure b_w_buche(Diagnose: TStrings);
 var
   ALL: TgpIntegerList;
 begin
-  ALL := e_r_sqlm('select RID from BUCH where' +
-    ' (RID=MASTER_R) and (BETRAG is not null)');
+  ALL := e_r_sqlm('select RID from BUCH where' + ' (RID=MASTER_R) and (BETRAG is not null)');
   b_w_buche(ALL, Diagnose);
   ALL.Free;
 end;
@@ -1824,8 +1779,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' b_w_Copy(' + inttostr(BUCH_R) + '): ' +
-        E.Message);
+      CareTakerLog(cERRORText + ' b_w_Copy(' + inttostr(BUCH_R) + '): ' + E.Message);
     end;
 
   end;
@@ -1859,8 +1813,7 @@ begin
   if (SORTIMENT_R < cRID_FirstValid) then
     result := cKonto_FreierErloes
   else
-    result := e_r_sqls('select KONTO from SORTIMENT where RID=' +
-      inttostr(SORTIMENT_R));
+    result := e_r_sqls('select KONTO from SORTIMENT where RID=' + inttostr(SORTIMENT_R));
 end;
 
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate): double;
@@ -1906,11 +1859,9 @@ begin
         if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
           if (UeberweisungsText.count >= 3) then
           begin
-            ABSCHLUSSper :=
-              date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3],
+            ABSCHLUSSper := date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3],
               'PER', 1));
-            Abschluss := strtodoubledef
-              (UeberweisungsText[pred(UeberweisungsText.count)],
+            Abschluss := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)],
               cGeld_KeinElement);
 
             if DateOK(ABSCHLUSSper) and (Abschluss <> cGeld_KeinElement) then
@@ -2031,8 +1982,7 @@ begin
     AppendStringsToFile(
       { } Suchbegriff + ';' +
       { } 'S' + ';' +
-      { } format('%s|%d', [long2date(ErstesDatum) + '-' + long2date(Bis),
-      round(d1)]) + ';' +
+      { } format('%s|%d', [long2date(ErstesDatum) + '-' + long2date(Bis), round(d1)]) + ';' +
       { } format('%m', [result]), DiagnosePath + b_r_Anno_LogFile);
 end;
 
@@ -2079,12 +2029,12 @@ procedure b_w_preDeleteBuch(BUCH_R: integer);
 begin
 
   // zunächst die Zusammenhang-Referenz entfernen
-  e_x_sql('update BUCH set ' + ' ZUSAMMENHANG_R=null ' + 'where' + ' (MASTER_R='
-    + inttostr(BUCH_R) + ') and' + ' (ZUSAMMENHANG_R is not null)');
+  e_x_sql('update BUCH set ' + ' ZUSAMMENHANG_R=null ' + 'where' + ' (MASTER_R=' + inttostr(BUCH_R)
+    + ') and' + ' (ZUSAMMENHANG_R is not null)');
 
   // nun die Folgebuchungssätze löschen
-  e_x_sql('delete from BUCH where ' + ' (MASTER_R=' + inttostr(BUCH_R) + ') and'
-    + ' (RID<>' + inttostr(BUCH_R) + ')');
+  e_x_sql('delete from BUCH where ' + ' (MASTER_R=' + inttostr(BUCH_R) + ') and' + ' (RID<>' +
+    inttostr(BUCH_R) + ')');
 
   // Referenzen auf den Hauptdatensatz nullen
   e_w_dereference(BUCH_R, 'DOKUMENT', 'BUCH_R');
@@ -2173,8 +2123,7 @@ var
 begin
   result := '';
   ganzesPaket := HugeSingleLine(s, ' ');
-  if (pos(cBLZStr, ganzesPaket) > 0) or (pos(cRECHNUNGStr, ganzesPaket) > 0)
-  then
+  if (pos(cBLZStr, ganzesPaket) > 0) or (pos(cRECHNUNGStr, ganzesPaket) > 0) then
     for n := 0 to pred(s.count) do
     begin
       if (pos(cBLZStr, s[n]) = 0) and (pos(cRECHNUNGStr, s[n]) = 0) then
@@ -2312,6 +2261,92 @@ begin
     { } copy(IBAN, 5, 8) + ' ' +
     { } Bank_Konto(copy(IBAN, 13, 10));
   end;
+end;
+
+function b_r_ForderungStatus(AUSGANGSRECHNUNG_R: integer): integer;
+var
+  EREIGNIS_R: integer;
+  BEENDET: TDateTime;
+  ART: integer;
+  n: integer;
+begin
+  result := cForderung_Unklar;
+  repeat
+
+    // Ist ein Ereignis eingetragen
+    EREIGNIS_R := e_r_sql(
+      { } 'select EREIGNIS_R from AUSGANGSRECHNUNG ' +
+      { } 'where' +
+      { } ' (RID=' + inttostr(AUSGANGSRECHNUNG_R) + ')');
+    if (EREIGNIS_R < cRID_FirstValid) then
+    begin
+
+      // Könnte das ein Autozahlungs-Kandidat sein?
+      n := e_r_sql(
+        { } 'select' +
+        { } ' count(AR.RID) ' +
+        { } 'from' +
+        { } ' AUSGANGSRECHNUNG AR ' +
+        { } 'join' +
+        { } ' BELEG ' +
+        { } 'on' +
+        { } ' (AR.BELEG_R=BELEG.RID) and' +
+        { } ' ((BELEG.DAVON_BEZAHLT IS NULL) or' +
+        { } '  (BELEG.RECHNUNGS_BETRAG - BELEG.DAVON_BEZAHLT >= 0.01)' +
+        { } ' ) ' +
+        { } 'join' +
+        { } ' PERSON ' +
+        { } 'on' +
+        { } ' (COALESCE(BELEG.RECHNUNGSANSCHRIFT_R,BELEG.PERSON_R)=PERSON.RID) ' +
+        { } 'left join' +
+        { } ' ZAHLUNGTYP ' +
+        { } 'on' +
+        { } ' (PERSON.ZAHLUNGTYP_R=ZAHLUNGTYP.RID) ' +
+        { } 'where' +
+        { } ' (AR.RID=' + inttostr(AUSGANGSRECHNUNG_R) + ') and' +
+        { } ' (AR.ZAHLUNGTYP_R is null) and' +
+        { } ' (AR.DATUM between (CURRENT_TIMESTAMP-365) and CURRENT_TIMESTAMP) and' +
+        { } ' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or (PERSON.Z_ELV_FREIGABE>=0.01))');
+      if (n = 1) then
+        result := cForderung_Lastschrift_Anstehend
+      else
+        result := cForderung_Zahlungsart_Frei;
+      break;
+    end;
+
+    // Ereignis, JA - aber welches
+    ART := e_r_sql('select ART from EREIGNIS where RID=' + inttostr(EREIGNIS_R));
+    if (ART <> eT_ZahlungPerLastschrift) then
+    begin
+      result := cForderung_Zahlungsart_Unbekannt;
+      break;
+    end;
+
+    // Ist das Lastschrift Ereignis schon beendet?
+    n := e_r_sql(
+      { } 'select count(RID) from EREIGNIS where' +
+      { } ' (RID=' + inttostr(EREIGNIS_R) + ') and' +
+      { } ' (BEENDET is not NULL)');
+    if (n = 1) then
+      result := cForderung_Lastschrift_Erhalten
+    else
+      result := cForderung_Lastschrift_Vorgemerkt;
+
+  until true;
+
+end;
+
+function b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG: integer): integer; overload;
+begin
+  result := b_r_ForderungStatus(e_r_sql(
+    { } 'select' +
+    { } ' RID ' +
+    { } 'from' +
+    { } ' AUSGANGSRECHNUNG ' +
+    { } 'where' +
+    { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+    { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ') and' +
+    { } ' (VORGANG=' + SQLString(cVorgang_Rechnung) + ')'));
 end;
 
 end.

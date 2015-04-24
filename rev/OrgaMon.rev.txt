@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.102 (24.04.15) Andreas Filsinger
+
+ Neu: Rechnungen: Farben
+      "Hell Gelb", steht bereit in der aktuellen Lastschrift Liste, der Bank noch unbekannt
+      "Gelb", wurde an die Bank übertragen, wartet auf Gutschrift
+      "dunkleres Ocker", Gutschrift erfolgt
+
 Rev 8.101 (24.04.15) Andreas Filsinger
 
  Bug: Buch: Schema "BELEG", komische Fehlermeldung wenn der Beleg nicht existiert

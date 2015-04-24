@@ -78,6 +78,14 @@ const
   // Forderungen (ehemals Tabelle "AUSGANGSRECHNUNGEN")
   cKonto_Forderungen = '1400';
 
+  // Aktueller Status einer Forderung
+  cForderung_Unklar = 0;
+  cForderung_Zahlungsart_Frei = 1;
+  cForderung_Zahlungsart_Unbekannt = 2;
+  cForderung_Lastschrift_Anstehend = 3;
+  cForderung_Lastschrift_Vorgemerkt = 4;
+  cForderung_Lastschrift_Erhalten = 5;
+
   // Teilzahlung / Anzahlung / Gutscheine
   cKonto_Anzahlungen = '1710';
 

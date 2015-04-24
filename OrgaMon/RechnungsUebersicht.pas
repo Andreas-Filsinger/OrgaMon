@@ -61,11 +61,11 @@ type
     procedure SpeedButton8Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
-    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: String);
+    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: String);
     procedure CheckBox1Click(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
     procedure Image4Click(Sender: TObject);
+    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+      var AColor: TColor; AFont: TFont);
   private
     { Private-Deklarationen }
     procedure setSQL;
@@ -80,7 +80,7 @@ var
 implementation
 
 uses
-  globals,
+  globals, GUIHelp, html,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -133,8 +133,7 @@ const
   { } '    where' +
   { } '     (VERSAND.BELEG_R=B.BELEG_R) and' +
   { } '     (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' +
-  { } '     ((B.VORGANG<>''' + cVorgang_Rechnung +
-    ''') or (B.VORGANG is null))' +
+  { } '     ((B.VORGANG<>''' + cVorgang_Rechnung + ''') or (B.VORGANG is null))' +
   { } '   ),0.0) + 0.01) and' +
   { } ' ((select' +
   { } '    SUM(B.BETRAG)' +
@@ -156,8 +155,7 @@ const
   { } '   where' +
   { } '    (VERSAND.BELEG_R=B.BELEG_R) and' +
   { } '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' +
-  { } '    ((B.VORGANG<>''' + cVorgang_Rechnung +
-    ''') or (B.VORGANG is null))' +
+  { } '    ((B.VORGANG<>''' + cVorgang_Rechnung + ''') or (B.VORGANG is null))' +
   { } '   ) as DAVON_BEZAHLT,' +
   { } '  VERSAND.BELEG_R,' +
   { } '  VERSAND.TEILLIEFERUNG,' +
@@ -210,9 +208,8 @@ end;
 procedure TFormRechnungsUebersicht.Button3Click(Sender: TObject);
 begin
   FormAusgangsrechnungen.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger,
-    IB_Query1.FieldByName('BELEG_R').AsInteger,
-    IB_Query1.FieldByName('LIEFERBETRAG').AsDouble + IB_Query1.FieldByName
-    ('DAVON_BEZAHLT').AsDouble);
+    IB_Query1.FieldByName('BELEG_R').AsInteger, IB_Query1.FieldByName('LIEFERBETRAG').AsDouble +
+    IB_Query1.FieldByName('DAVON_BEZAHLT').AsDouble);
 end;
 
 procedure TFormRechnungsUebersicht.SetContext(PERSON_R: Integer);
@@ -234,8 +231,8 @@ end;
 
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);
 begin
-  openShell(MyProgramPath + cRechnungPath + '\' +
-    RIDasStr(IB_Query1.FieldByName('PERSON_R').AsInteger));
+  openShell(MyProgramPath + cRechnungPath + '\' + RIDasStr(IB_Query1.FieldByName('PERSON_R')
+    .AsInteger));
 end;
 
 procedure TFormRechnungsUebersicht.Button4Click(Sender: TObject);
@@ -246,11 +243,6 @@ begin
       { } FieldByName('BELEG_R').AsInteger,
       { } FieldByName('TEILLIEFERUNG').AsInteger));
 end;
-
-procedure TFormRechnungsUebersicht.Button5Click(Sender: TObject);
-begin
-end;
-// FormRechnungen.show;
 
 procedure TFormRechnungsUebersicht.CheckBox1Click(Sender: TObject);
 begin
@@ -265,7 +257,7 @@ var
   PERSON_R: Integer;
 begin
   PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
-  if PERSON_R > 0 then
+  if (PERSON_R >= cRID_FirstValid) then
   begin
     Bericht := e_w_KontoInfo(PERSON_R);
     Bericht.free;
@@ -273,8 +265,86 @@ begin
   end;
 end;
 
-procedure TFormRechnungsUebersicht.IB_Grid1GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+var
+  LastRow: Integer = -1;
+  LastBackgroundCol: TColor;
+  LastFontCol: TColor;
+  cCOL_BELEG_R: Integer = -1;
+  cCOL_TEILLIEFERUNG: Integer = -1;
+
+procedure TFormRechnungsUebersicht.IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
+  AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+var
+  BELEG_R, TEILLIEFERUNG: Integer;
+  ForderungsStatus: Integer;
+begin
+
+  // Im Status "gelb" bitte GAR nix zeichnen oder verändern,
+  // sonst wird verhindert dass man den wichtigen geändert sTatus überhuapt
+  // als user erkennen und sehen kann!
+  if (IB_Query1.State = dssedit) or not(IB_Query1.active) then
+    exit;
+
+  // Wird die fokusierte Zeile ausgegeben muss das Caching verhindert werden,
+  // da sich das Grid in der ersten Zeile zunächst leer selbst zeichnet,
+  // danach die erste Zeile nochmals, diesmal mit Daten, durch das Caching
+  // würde der Fehler entstehen, dass die Farbe aus dem ersten Zeichenversuch
+  // in den 2. Versuch übernommen wird.
+  if gdFocused in AState then
+    LastRow := -1;
+
+  if not(gdFixed in AState) and not(gdFocused in AState) then
+    with IB_Grid1, IB_Query1 do
+    begin
+      if (ARow <> LastRow) then
+      begin
+
+        // Spalte der "PAPERCOLOR" bestimmen
+        if (cCOL_BELEG_R <= 0) then
+          cCOL_BELEG_R := ColOfGrid(IB_Grid1, 'BELEG_R');
+        if (cCOL_BELEG_R <= 0) then
+          raise Exception.create('Spalte "BELEG_R" ist undefiniert!');
+
+        if (cCOL_TEILLIEFERUNG <= 0) then
+          cCOL_TEILLIEFERUNG := ColOfGrid(IB_Grid1, 'TEILLIEFERUNG');
+        if (cCOL_TEILLIEFERUNG <= 0) then
+          raise Exception.create('Spalte "TEILLIEFERUNG" ist undefiniert!');
+
+        // Wert aus PAPERCOLOR bestimmen
+        BELEG_R := StrToIntDef(GetCellDisplayText(cCOL_BELEG_R, ARow), cRID_Null);
+        TEILLIEFERUNG := StrToIntDef(GetCellDisplayText(cCOL_TEILLIEFERUNG, ARow), 0);
+
+        ForderungsStatus := b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG);
+        case ForderungsStatus of
+          cForderung_Unklar:
+            LastBackgroundCol := clbtnface;
+          cForderung_Zahlungsart_Frei:
+            LastBackgroundCol := clwhite;
+          cForderung_Zahlungsart_Unbekannt:
+            LastBackgroundCol := clblue;
+          cForderung_Lastschrift_Anstehend:
+            LastBackgroundCol := HTMLColor2TColor($FFFFBB);
+          cForderung_Lastschrift_Vorgemerkt:
+            LastBackgroundCol := HTMLColor2TColor($FFEE30);
+          cForderung_Lastschrift_Erhalten:
+            LastBackgroundCol := HTMLColor2TColor($FFBE00);   // SEPA - Color
+        end;
+
+        //
+        LastFontCol := VisibleContrast(LastBackgroundCol);
+
+        // Cache-Flag setzen
+        LastRow := ARow;
+      end;
+
+      AColor := LastBackgroundCol;
+      AFont.color := LastFontCol;
+    end;
+
+end;
+
+procedure TFormRechnungsUebersicht.IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
+  var AString: string);
 begin
   if (ARow > 0) then
     if (AString <> '') then
@@ -282,7 +352,7 @@ begin
         2, 3:
           AString := format('%m', [strtodoubledef(AString, 0.0)]);
         8:
-          AString := e_r_Person(strtointdef(AString, cRID_NULL));
+          AString := e_r_Person(StrToIntDef(AString, cRID_Null));
       end;
 end;
 
@@ -302,8 +372,7 @@ begin
     Edit_GueltigBis.Text := 'NOCARD';
     FillContext;
     if (PERSON_R <> FormPerson.IB_Query1.FieldByName('RID').AsInteger) then
-      ShowMEssage('RID=' + inttostr(PERSON_R) +
-        ' hat dieselben Kontodaten (Dublette?)!')
+      ShowMEssage('RID=' + inttostr(PERSON_R) + ' hat dieselben Kontodaten (Dublette?)!')
     else
       show;
   end;
