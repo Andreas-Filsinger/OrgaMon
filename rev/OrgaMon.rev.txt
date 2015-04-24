@@ -19,6 +19,24 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.101 (24.04.15) Andreas Filsinger
+
+ Bug: Buch: Schema "BELEG", komische Fehlermeldung wenn Beleg nicht existiert
+ Bug: Lastschriftenausgleich: Es ist falsch Rücksicht auf die Höhe der Forderung
+      zu nehmen
+
+Rev 8.100 (24.04.15) Andreas Filsinger
+
+ Bug: Kasse: eine leere Zeile am Ende und Löschen der Motivation
+
+Rev 8.099 (24.04.15) Andreas Filsinger
+
+ Bug: Lastschrift: Ausgleichbuchungen aufgrund Eingangsbuchung aus Lastschrift
+      hatten nicht die Valuta der Kontobewegung.
+
+ Neu: Buch: Suche nach Ereignis Eintrag über den Prefix "E" nun möglich.
+      Suchbegriff "E~EREIGNIS_R~".
+
 Rev 8.098 (23.04.15) Andreas Filsinger
 
  Neu: Ausgleich Forderungen: Gutschriften aus vorgelegten Lastschriften

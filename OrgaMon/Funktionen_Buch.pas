@@ -327,14 +327,14 @@ var
           StempelName := Regel.Values['STEMPEL'];
         if (StempelName = '') then
           raise Exception.create('Ich kann kein STEMPEL= im Deckblatt "' + Ziel
-            + '" finden!');
+            + '" finden');
         if (StempelName = cIni_DeActivate) then
           exit;
         STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX=''' +
           StempelName + '''');
         if (STEMPEL_R < cRID_FirstValid) then
           raise Exception.create('Der Stempel ' + StempelName +
-            ' existiert nicht!');
+            ' existiert nicht');
         e_x_sql('update BUCH set STEMPEL_R=' + inttostr(STEMPEL_R) +
           ' where RID=' + inttostr(BUCH_R));
       end;
@@ -362,10 +362,12 @@ var
       ScriptText := TStringList.create;
 
       // ggf. alte Gegenbuchung löschen! (Falls vorhanden!)
-      AUSGLEICH_ALT_R := e_r_sql('select RID from BUCH where ' + ' (NAME=''' +
-        cKonto_Anzahlungen + ''') and' + ' (BELEG_R=' + inttostr(BELEG_R) +
-        ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ') and' +
-        ' (GEGENKONTO=''' + cKonto_Erloese + ''')');
+      AUSGLEICH_ALT_R := e_r_sql(
+        { } 'select RID from BUCH where ' +
+        { } ' (NAME=''' + cKonto_Anzahlungen + ''') and' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ') and' +
+        { } ' (GEGENKONTO=''' + cKonto_Erloese + ''')');
       if (AUSGLEICH_ALT_R = BUCH_R) then
         raise Exception.create('Löschung der alten ' + cKonto_Anzahlungen +
           '-Ausgleichsbuchung würde zur Löschung des initialen Buchungssatzes (RID='
@@ -694,6 +696,11 @@ var
             { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
             { } ' (RECHNUNG is not null)');
 
+          if isZeroMoney(Forderung) then
+            if not(e_r_IsRID('BELEG_R', BELEG_R)) then
+              raise Exception.create(format('Beleg (%d) existiert nicht',
+                [BELEG_R]));
+
           if isSomeMoney(Forderung - BruttoBetrag) then
             raise Exception.create
               (format('Betrag (%m) aus VERSAND ist abweichend', [Forderung]));
@@ -723,9 +730,15 @@ var
         end;
 
         // Forderungsbetrag ermitteln
-        Forderung := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' +
-          ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-          inttostr(TEILLIEFERUNG) + ')');
+        Forderung := e_r_sqld(
+          { } 'select SUM(LIEFERBETRAG) from VERSAND where ' +
+          { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+          { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+
+        if isZeroMoney(Forderung) then
+          if not(e_r_IsRID('BELEG_R', BELEG_R)) then
+            raise Exception.create(format('Beleg (%d) existiert nicht',
+              [BELEG_R]));
 
         if isSomeMoney(Forderung - BruttoBetrag) then
           bucheTeilzahlung(BELEG_R, TEILLIEFERUNG, BruttoBetrag, Forderung)
@@ -1012,11 +1025,16 @@ begin
             raise Exception.create('Dies ist kein initialer Buchungssatz');
 
           // zunächst mal "alte" Folge - Buchungssätze löschen (neues Spiel, neues Glück!)
-          e_x_sql('update BUCH set ' + ' ZUSAMMENHANG_R=null ' + 'where' +
-            ' (MASTER_R=' + inttostr(BUCH_R) + ') and' +
-            ' (ZUSAMMENHANG_R is not null)');
-          e_x_sql('delete from BUCH where' + ' (MASTER_R=' + inttostr(BUCH_R) +
-            ') and' + ' (RID<>MASTER_R)');
+          e_x_sql(
+            { } 'update BUCH set ' +
+            { } ' ZUSAMMENHANG_R=null ' +
+            { } 'where' +
+            { } ' (MASTER_R=' + inttostr(BUCH_R) + ') and' +
+            { } ' (ZUSAMMENHANG_R is not null)');
+          e_x_sql(
+            { } 'delete from BUCH where' +
+            { } ' (MASTER_R=' + inttostr(BUCH_R) + ') and' +
+            { } ' (RID<>MASTER_R)');
 
         end;
 
@@ -1057,7 +1075,7 @@ begin
         ApiFirst;
         if eof then
           raise Exception.create('Deckblatt "''' + Ziel +
-            '''" existiert nicht!');
+            '''" existiert nicht');
         e_r_sqlt(FieldByName('SKRIPT'), Regel);
       end;
 
@@ -1292,22 +1310,30 @@ begin
           ParamByName('CROSSREF').AsInteger := BELEG_R;
           open;
           first;
-          edit;
-          FieldByName('DAVON_BEZAHLT').AsFloat :=
-            cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
-
-          if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat -
-            FieldByName('DAVON_BEZAHLT').AsFloat) then
+          if not(eof) then
           begin
-            // jetzt als vollständig bezahlt markieren.
-            FieldByName('MAHNUNG1').clear;
-            FieldByName('MAHNUNG2').clear;
-            FieldByName('MAHNUNG3').clear;
-            FieldByName('MAHNBESCHEID').clear;
-            FieldByName('MAHNSTUFE').clear;
-          end;
+            edit;
+            FieldByName('DAVON_BEZAHLT').AsFloat :=
+              cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
 
-          post;
+            if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat -
+              FieldByName('DAVON_BEZAHLT').AsFloat) then
+            begin
+              // jetzt als vollständig bezahlt markieren.
+              FieldByName('MAHNUNG1').clear;
+              FieldByName('MAHNUNG2').clear;
+              FieldByName('MAHNUNG3').clear;
+              FieldByName('MAHNBESCHEID').clear;
+              FieldByName('MAHNSTUFE').clear;
+            end;
+
+            post;
+          end
+          else
+          begin
+            // Beleg nicht (mehr) gefunden
+            BELEG_R := cRID_Null;
+          end;
           close;
         end;
 
@@ -1373,7 +1399,8 @@ begin
                 edit;
                 FieldByName('NAME').AsString := KONTO;
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
-                FieldByName('BELEG_R').AsInteger := BELEG_R;
+                if (BELEG_R >= cRID_FirstValid) then
+                  FieldByName('BELEG_R').AsInteger := BELEG_R;
                 FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
                 if (EREIGNIS_R >= cRID_FirstValid) then
                   FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
@@ -1496,37 +1523,27 @@ begin
       TEILLIEFERUNG := strtointdef(readCell(r, 'TEILLIEFERUNG'), 0);
       Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
 
-      saldo := e_r_sqld(
-        { } 'select SUM(BETRAG) from AUSGANGSRECHNUNG where' +
-        { } '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
-        { } '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+      // Jetzt den ganzen Rattenschwanz buchen
+      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+        { } PERSON_R,
+        { } BELEG_R,
+        { } Betrag,
+        { } VALUTA,
+        { BUCH_R } -r,
+        { } 'Lastschrift',
+        { } cKonto_Bank,
+        { } TEILLIEFERUNG,
+        { } EREIGNIS_R]));
 
-      // Ist überhaupt noch was auszugleichen - bei diesem Beleg?
-      if isHaben(saldo) then
-      begin
-
-        // Jetzt den ganzen Rattenschwanz buchen
-        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
-          { } PERSON_R,
-          { } BELEG_R,
-          { } Betrag,
-          { } VALUTA,
-          { BUCH_R } -r,
-          { } 'Lastschrift',
-          { } cKonto_Bank,
-          { } TEILLIEFERUNG,
-          { } EREIGNIS_R]));
-
-        // Nun bei der Person die Freigabe wieder zurücksetzen
-        e_x_sql(
-          { } 'update PERSON set ' +
-          { } ' Z_ELV_FREIGABE=' +
-          { } 'coalesce(Z_ELV_FREIGABE,' +
-          { } FloatToStrISO(Betrag, 2) + ') - ' +
-          { } FloatToStrISO(Betrag, 2) + ' ' +
-          { } 'where' +
-          { } ' RID=' + inttostr(PERSON_R));
-      end;
+      // Nun bei der Person die Freigabe wieder zurücksetzen
+      e_x_sql(
+        { } 'update PERSON set ' +
+        { } ' Z_ELV_FREIGABE=' +
+        { } 'coalesce(Z_ELV_FREIGABE,' +
+        { } FloatToStrISO(Betrag, 2) + ') - ' +
+        { } FloatToStrISO(Betrag, 2) + ' ' +
+        { } 'where' +
+        { } ' RID=' + inttostr(PERSON_R));
 
     end;
   end;

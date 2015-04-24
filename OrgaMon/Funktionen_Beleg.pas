@@ -3910,6 +3910,8 @@ begin
       begin
         if (lKasse[n] = 'Rep') then
           continue;
+        if (lKasse[n] = '') then
+          continue;
 
         // Look ahead
         MENGE := 1;
@@ -12944,87 +12946,4 @@ begin
   DebugStr.free;
 end;
 
-(*
-  KNO := TStringList.create;
-  RechnungInhalt := TStringList.create;
-
-  // Alle Personen mit ihrer alten RID auflisten!
-  lPersonen := e_r_sqlm
-  ('select RID from PERSON where A01='''
-  + cC_True + '''');
-  for n := pred(lPersonen.count) downto 0 do
-  begin
-  PERSON_R := lPersonen[n];
-  PersonBemerkungen := e_r_sqlT
-  ('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
-  _KNO := PersonBemerkungen.values['KNO'];
-
-  if (_KNO <> '') then
-  KNO.addObject(_KNO, pointer(PERSON_R));
-  PersonBemerkungen.free;
-  end;
-  lPersonen.free;
-
-
-
-
-
-  // Quellrechnungen auflisten
-  AllTheRechnungen := TStringList.create;
-  AllTheRechnungenStartIndex := 0;
-  for SubDir := 'A' to 'E' do
-  begin
-  dir(Edit5.text + SubDir + 'DIR\*', AllTheRechnungen, false, false);
-  // Pfad vervollständigen!
-  if AllTheRechnungen.count > AllTheRechnungenStartIndex then
-  begin
-  for n := AllTheRechnungenStartIndex to pred(AllTheRechnungen.count) do
-  AllTheRechnungen[n] := SubDir + 'DIR\' + AllTheRechnungen[n];
-  AllTheRechnungenStartIndex := AllTheRechnungen.count;
-  end;
-  end;
-
-  for n := 0 to pred(AllTheRechnungen.count) do
-  begin
-  repeat
-
-  // Person lokalisieren
-  _KNO := inttostr(strtointdef(nextp(ExtractFileName
-  (Edit5.text + AllTheRechnungen[n]), '.', 0), 0));
-  k := KNO.indexof(_KNO);
-  if (k = -1) then
-  break;
-
-  PersonBemerkungen := e_r_sqlT
-  ('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
-
-  PERSON_R := integer(KNO.objects[k]);
-  BELEG_R := e_w_BelegNeu(PERSON_R);
-
-  // Ursprüngliche Zeilen laden!
-  RechnungInhalt.loadfromfile(Edit5.text + AllTheRechnungen[n]);
-
-  with qBELEG do
-  begin
-  ParamByName('CROSSREF').AsInteger := BELEG_R;
-  if not(Active) then
-  open;
-  edit;
-  FieldByName('BSTATUS').AsString := 'V';
-  FieldByName('MEDIUM').AsString := RechnungInhalt[1];
-  post;
-  end;
-
-  //
-
-  until true;
-  end;
-
-  qBELEG.free;
-  qPOSTEN.free;
-  KNO.free;
-  RechnungInhalt.free;
-
-  end;
-*)
 end.
