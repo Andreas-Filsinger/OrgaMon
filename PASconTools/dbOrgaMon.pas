@@ -2024,8 +2024,13 @@ begin
     if (RID < cRID_FirstValid) then
       break;
 
-    result := (e_r_sql('select count(RID) from ' + nextp(FieldName, '_',
-      0) + ' where RID=' + inttostr(RID)) = 1);
+    result := (e_r_sql(
+      { } 'select' +
+      { } ' count(RID) ' +
+      { } 'from' +
+      { } ' ' + nextp(FieldName, '_', 0) + ' ' +
+      { } 'where' +
+      { } ' RID=' + inttostr(RID)) = 1);
   until true;
 end;
 
@@ -2402,7 +2407,8 @@ begin
   if (pos('select', sql) = 1) then
   begin
     result := e_r_sqls(sql)
-  end else
+  end
+  else
   begin
     e_x_sql(sql);
     result := '';
@@ -2496,7 +2502,7 @@ begin
   BeginHourGlass;
   LocalDate := DateGet;
   LocalTime := SecondsGet;
-  DateTime2long(e_r_Now, ServerDate, ServerTime);
+  DateTime2Long(e_r_now, ServerDate, ServerTime);
   result := SecondsDiff(LocalDate, LocalTime, ServerDate, ServerTime);
   if (abs(result) <= cWahrnehmungsSchwelle) then
     result := 0;
@@ -2510,7 +2516,8 @@ end;
 
 function e_r_Revision_Zwang: single;
 begin
- result := e_r_sql('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
+  result := e_r_sql
+    ('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
 end;
 
 end.
