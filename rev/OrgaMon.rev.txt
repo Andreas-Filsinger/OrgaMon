@@ -21,9 +21,9 @@ Dokumentation
 
 Rev 8.101 (24.04.15) Andreas Filsinger
 
- Bug: Buch: Schema "BELEG", komische Fehlermeldung wenn Beleg nicht existiert
+ Bug: Buch: Schema "BELEG", komische Fehlermeldung wenn der Beleg nicht existiert
  Bug: Lastschriftenausgleich: Es ist falsch Rücksicht auf die Höhe der Forderung
-      zu nehmen
+      zu nehmen, stur durchbuchen!
 
 Rev 8.100 (24.04.15) Andreas Filsinger
 
