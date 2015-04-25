@@ -562,7 +562,7 @@ procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
 
 function e_r_Adressat(PERSON_R: integer): TStringList;
 function e_r_Ort(PERSON_R: integer): string; overload;
-function e_r_Ort(ib_q: TdboDataSet): string; overload;
+function e_r_Ort(dboDS: TdboDataSet): string; overload;
 function e_r_Name(ib_q: TdboDataSet): string; overload;
 function e_r_Name(PERSON_R: integer): string; overload;
 function e_r_NameVorname(ib_q: TdboDataSet): string; overload;
@@ -5125,7 +5125,7 @@ begin
       result := strtointdef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
-function e_r_Ort(ib_q: TdboDataSet): string; overload;
+function e_r_Ort(dboDS: TdboDataSet): string; overload;
 // benötigt
 //
 // (LAND_R, STATE, ORT, PLZ)
@@ -5135,7 +5135,7 @@ var
   k: integer;
   PLZlength: integer;
 begin
-  with ib_q do
+  with dboDS do
   begin
     result := e_r_LaenderOrtFormat(FieldByName('LAND_R').AsInteger);
 
@@ -5148,14 +5148,14 @@ begin
         begin
           PLZlength := strtointdef(result[k + 2], cPLZlength_default);
           System.delete(result, k + 2, 1);
-          ersetze('%p', e_r_plz(ib_q, PLZlength), result);
+          ersetze('%p', e_r_plz(dboDS, PLZlength), result);
           break;
         end;
       end;
-      ersetze('%p', e_r_plz(ib_q, cPLZlength_default), result);
+      ersetze('%p', e_r_plz(dboDS, cPLZlength_default), result);
     until true;
 
-    ersetze('%l', e_r_land(ib_q), result);
+    ersetze('%l', e_r_land(dboDS), result);
     ersetze('%s', FieldByName('STATE').AsString, result);
     ersetze('%o', FieldByName('ORT').AsString, result);
     ersetze('%c', e_r_LaenderInternational(FieldByName('LAND_R').AsInteger), result);

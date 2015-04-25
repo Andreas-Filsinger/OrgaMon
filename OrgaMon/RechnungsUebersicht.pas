@@ -301,14 +301,15 @@ begin
 
         // Spalte der "PAPERCOLOR" bestimmen
         if (cCOL_BELEG_R <= 0) then
+        begin
           cCOL_BELEG_R := ColOfGrid(IB_Grid1, 'BELEG_R');
-        if (cCOL_BELEG_R <= 0) then
-          raise Exception.create('Spalte "BELEG_R" ist undefiniert!');
+          if (cCOL_BELEG_R <= 0) then
+            raise Exception.create('Spalte "BELEG_R" ist undefiniert!');
 
-        if (cCOL_TEILLIEFERUNG <= 0) then
           cCOL_TEILLIEFERUNG := ColOfGrid(IB_Grid1, 'TEILLIEFERUNG');
-        if (cCOL_TEILLIEFERUNG <= 0) then
-          raise Exception.create('Spalte "TEILLIEFERUNG" ist undefiniert!');
+          if (cCOL_TEILLIEFERUNG <= 0) then
+            raise Exception.create('Spalte "TEILLIEFERUNG" ist undefiniert!');
+        end;
 
         // Wert aus PAPERCOLOR bestimmen
         BELEG_R := StrToIntDef(GetCellDisplayText(cCOL_BELEG_R, ARow), cRID_Null);
@@ -327,7 +328,7 @@ begin
           cForderung_Lastschrift_Vorgemerkt:
             LastBackgroundCol := HTMLColor2TColor($FFEE30);
           cForderung_Lastschrift_Erhalten:
-            LastBackgroundCol := HTMLColor2TColor($FFBE00);   // SEPA - Color
+            LastBackgroundCol := HTMLColor2TColor($FFBE00); // SEPA - Color
         end;
 
         //

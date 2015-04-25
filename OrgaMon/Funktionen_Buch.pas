@@ -2336,6 +2336,9 @@ begin
 
 end;
 
+var
+ b_r_ForderungStatus_cAR : TdboCursor =nil;
+
 function b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG: integer): integer; overload;
 begin
   result := b_r_ForderungStatus(e_r_sql(
