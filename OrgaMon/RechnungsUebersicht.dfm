@@ -4,23 +4,23 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   Anchors = [akLeft, akTop, akRight, akBottom]
   Caption = 'Rechnungen'
   ClientHeight = 623
-  ClientWidth = 931
+  ClientWidth = 958
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
-  Font.Name = 'Tahoma'
+  Font.Name = 'Verdana'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   DesignSize = (
-    931
+    958
     623)
   PixelsPerInch = 96
   TextHeight = 14
   object SpeedButton8: TSpeedButton
-    Left = 721
+    Left = 748
     Top = 3
     Width = 23
     Height = 22
@@ -59,7 +59,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     ExplicitLeft = 677
   end
   object Image4: TImage
-    Left = 750
+    Left = 777
     Top = 4
     Width = 28
     Height = 20
@@ -131,7 +131,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   object IB_Grid1: TIB_Grid
     Left = 0
     Top = 28
-    Width = 931
+    Width = 958
     Height = 595
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
@@ -140,9 +140,10 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     DrawFocusSelected = True
     OnGetCellProps = IB_Grid1GetCellProps
     OnGetDisplayText = IB_Grid1GetDisplayText
+    ExplicitWidth = 931
   end
   object Button1: TButton
-    Left = 820
+    Left = 847
     Top = 3
     Width = 22
     Height = 22
@@ -150,9 +151,10 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&P'
     TabOrder = 1
     OnClick = Button1Click
+    ExplicitLeft = 820
   end
   object Button2: TButton
-    Left = 847
+    Left = 874
     Top = 3
     Width = 22
     Height = 22
@@ -160,9 +162,10 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&B'
     TabOrder = 2
     OnClick = Button2Click
+    ExplicitLeft = 847
   end
   object Button3: TButton
-    Left = 902
+    Left = 929
     Top = 3
     Width = 22
     Height = 22
@@ -170,6 +173,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&Z'
     TabOrder = 3
     OnClick = Button3Click
+    ExplicitLeft = 902
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 3
@@ -186,7 +190,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     VisibleButtons = [ubRefreshAll]
   end
   object Button4: TButton
-    Left = 783
+    Left = 810
     Top = 3
     Width = 22
     Height = 22
@@ -203,9 +207,10 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     ShowHint = True
     TabOrder = 5
     OnClick = Button4Click
+    ExplicitLeft = 783
   end
   object Button18: TButton
-    Left = 874
+    Left = 901
     Top = 3
     Width = 22
     Height = 22
@@ -216,6 +221,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     ShowHint = True
     TabOrder = 6
     OnClick = Button18Click
+    ExplicitLeft = 874
   end
   object CheckBox1: TCheckBox
     Left = 32
@@ -251,11 +257,11 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
       'BELEG_R=58'
       'TEILLIEFERUNG=30'
       'BETRAG=110'
-      'DAVON_BEZAHLT=100'
+      'DAVON_BEZAHLT=93'
       'VERSAND.LIEFERBETRAG=100'
       'PERSON.SUCHBEGRIFF=100'
       'PERSON.RID=320'
-      'VERSAND.AUSGANG=137'
+      'VERSAND.AUSGANG=142'
       'BELEG.MAHNSTUFE=25')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (

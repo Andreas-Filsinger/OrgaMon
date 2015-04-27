@@ -716,7 +716,7 @@ function e_r_Kunde(PERSON_R: Integer): string;
 var
   cPERSON: TdboCursor;
   cANSCHRIFT: TdboCursor;
-  Name: string;
+  BEGRIFF: string;
 begin
   cPERSON := nCursor;
   with cPERSON do
@@ -747,10 +747,10 @@ begin
     end
     else
     begin
-      Name := cANSCHRIFT.FieldByName('NAME1').AsString;
-      if (Name = '') then
-        Name := cPERSON.FieldByName('SUCHBEGRIFF').AsString;
-      result := Name + ' (' + cPERSON.FieldByName('NUMMER').AsString + ')';
+      BEGRIFF := cANSCHRIFT.FieldByName('NAME1').AsString;
+      if (BEGRIFF = '') then
+        BEGRIFF := cPERSON.FieldByName('SUCHBEGRIFF').AsString;
+      result := BEGRIFF + ' (' + cPERSON.FieldByName('NUMMER').AsString + ')';
     end;
     cANSCHRIFT.free;
   end
@@ -767,8 +767,14 @@ var
 
 function e_r_Person(PERSON_R: Integer): string;
 var
-  Name: string;
+  BEGRIFF: string;
 begin
+
+  if (PERSON_R=iSchnelleRechnung_PERSON_R) then
+  begin
+    result := '* schnelle Rechnung *';
+    exit;
+  end;
 
   if not(assigned(_e_r_Person_cPERSON)) then
   begin
@@ -827,11 +833,11 @@ begin
         end
         else
         begin
-          Name := _e_r_Person_cANSCHRIFT.FieldByName('NAME1').AsString;
-          if (Name = '') then
-            Name := FieldByName('SUCHBEGRIFF').AsString;
+          BEGRIFF := _e_r_Person_cANSCHRIFT.FieldByName('NAME1').AsString;
+          if (BEGRIFF = '') then
+            BEGRIFF := FieldByName('SUCHBEGRIFF').AsString;
           result :=
-          { } Name +
+          { } BEGRIFF +
           { } ' (' + FieldByName('NUMMER').AsString + ') ' +
           { } e_r_Ort(_e_r_Person_cANSCHRIFT);
         end;
