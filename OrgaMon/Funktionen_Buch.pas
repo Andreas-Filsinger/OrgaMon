@@ -2263,50 +2263,104 @@ begin
   end;
 end;
 
+var
+  b_r_ForderungStatus_cAR1: TdboCursor = nil;
+  b_r_ForderungStatus_cAR2: TdboCursor = nil;
+  b_r_ForderungStatus_cAR3: TdboCursor = nil;
+  b_r_ForderungStatus_EREIGNIS_R: integer = cRID_Unset;
+  b_r_ForderungStatus_cER: TdboCursor = nil;
+
 function b_r_ForderungStatus(AUSGANGSRECHNUNG_R: integer): integer;
 var
   EREIGNIS_R: integer;
-  BEENDET: TDateTime;
-  ART: integer;
   n: integer;
 begin
+  if not(assigned(b_r_ForderungStatus_cAR1)) then
+  begin
+
+    b_r_ForderungStatus_cAR1 := nCursor;
+    with b_r_ForderungStatus_cAR1 do
+    begin
+      sql.add('select EREIGNIS_R from AUSGANGSRECHNUNG ');
+      sql.add('where');
+      sql.add(' (RID=:CR)');
+      open;
+    end;
+
+    b_r_ForderungStatus_cAR2 := nCursor;
+    with b_r_ForderungStatus_cAR2 do
+    begin
+      sql.add('select');
+      sql.add(' count(AR.RID) ');
+      sql.add('from');
+      sql.add(' AUSGANGSRECHNUNG AR ');
+      sql.add('join');
+      sql.add(' BELEG ');
+      sql.add('on');
+      sql.add(' (AR.BELEG_R=BELEG.RID) and');
+      sql.add(' ((BELEG.DAVON_BEZAHLT IS NULL) or');
+      sql.add('  (BELEG.RECHNUNGS_BETRAG - BELEG.DAVON_BEZAHLT >= 0.01)');
+      sql.add(' ) ');
+      sql.add('join');
+      sql.add(' PERSON ');
+      sql.add('on');
+      sql.add(' (COALESCE(BELEG.RECHNUNGSANSCHRIFT_R,BELEG.PERSON_R)=PERSON.RID) ');
+      sql.add('left join');
+      sql.add(' ZAHLUNGTYP ');
+      sql.add('on');
+      sql.add(' (PERSON.ZAHLUNGTYP_R=ZAHLUNGTYP.RID) ');
+      sql.add('where');
+      sql.add(' (AR.RID=:CR) and');
+      sql.add(' (AR.ZAHLUNGTYP_R is null) and');
+      sql.add(' (AR.DATUM between (CURRENT_TIMESTAMP-365) and CURRENT_TIMESTAMP) and');
+      sql.add(' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or (PERSON.Z_ELV_FREIGABE>=0.01))');
+      open;
+    end;
+
+    b_r_ForderungStatus_cER := nCursor;
+    with b_r_ForderungStatus_cER do
+    begin
+      sql.add('select');
+      sql.add(' ART,');
+      sql.add(' BEENDET');
+      sql.add('from');
+      sql.add(' EREIGNIS');
+      sql.add('where');
+      sql.add(' RID=:CR');
+      open;
+    end;
+
+  end;
+
   result := cForderung_Unklar;
   repeat
 
-    // Ist ein Ereignis eingetragen
-    EREIGNIS_R := e_r_sql(
-      { } 'select EREIGNIS_R from AUSGANGSRECHNUNG ' +
-      { } 'where' +
-      { } ' (RID=' + inttostr(AUSGANGSRECHNUNG_R) + ')');
+    // Ist ein Ereignis bereits eingetragen
+    if (b_r_ForderungStatus_EREIGNIS_R <> cRID_Unset) then
+    begin
+      EREIGNIS_R := b_r_ForderungStatus_EREIGNIS_R
+    end
+    else
+    begin
+      with b_r_ForderungStatus_cAR1 do
+      begin
+        Params[0].AsInteger := AUSGANGSRECHNUNG_R;
+        ApiFirst;
+        EREIGNIS_R := Fields[0].AsInteger;
+      end;
+    end;
+
+    // Es ist noch KEIN Ereignis eingetragen
     if (EREIGNIS_R < cRID_FirstValid) then
     begin
 
       // Könnte das ein Autozahlungs-Kandidat sein?
-      n := e_r_sql(
-        { } 'select' +
-        { } ' count(AR.RID) ' +
-        { } 'from' +
-        { } ' AUSGANGSRECHNUNG AR ' +
-        { } 'join' +
-        { } ' BELEG ' +
-        { } 'on' +
-        { } ' (AR.BELEG_R=BELEG.RID) and' +
-        { } ' ((BELEG.DAVON_BEZAHLT IS NULL) or' +
-        { } '  (BELEG.RECHNUNGS_BETRAG - BELEG.DAVON_BEZAHLT >= 0.01)' +
-        { } ' ) ' +
-        { } 'join' +
-        { } ' PERSON ' +
-        { } 'on' +
-        { } ' (COALESCE(BELEG.RECHNUNGSANSCHRIFT_R,BELEG.PERSON_R)=PERSON.RID) ' +
-        { } 'left join' +
-        { } ' ZAHLUNGTYP ' +
-        { } 'on' +
-        { } ' (PERSON.ZAHLUNGTYP_R=ZAHLUNGTYP.RID) ' +
-        { } 'where' +
-        { } ' (AR.RID=' + inttostr(AUSGANGSRECHNUNG_R) + ') and' +
-        { } ' (AR.ZAHLUNGTYP_R is null) and' +
-        { } ' (AR.DATUM between (CURRENT_TIMESTAMP-365) and CURRENT_TIMESTAMP) and' +
-        { } ' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or (PERSON.Z_ELV_FREIGABE>=0.01))');
+      with b_r_ForderungStatus_cAR2 do
+      begin
+        Params[0].AsInteger := AUSGANGSRECHNUNG_R;
+        ApiFirst;
+        n := Fields[0].AsInteger;
+      end;
       if (n = 1) then
         result := cForderung_Lastschrift_Anstehend
       else
@@ -2314,42 +2368,64 @@ begin
       break;
     end;
 
-    // Ereignis, JA - aber welches
-    ART := e_r_sql('select ART from EREIGNIS where RID=' + inttostr(EREIGNIS_R));
-    if (ART <> eT_ZahlungPerLastschrift) then
+    with b_r_ForderungStatus_cER do
     begin
-      result := cForderung_Zahlungsart_Unbekannt;
-      break;
+      Params[0].AsInteger := EREIGNIS_R;
+      ApiFirst;
+      if (Fields[0].AsInteger <> eT_ZahlungPerLastschrift) then
+      begin
+        result := cForderung_Zahlungsart_Unbekannt;
+        break;
+      end;
+      if (Fields[1].IsNull) then
+        result := cForderung_Lastschrift_Vorgemerkt
+      else
+        result := cForderung_Lastschrift_Erhalten;
     end;
 
-    // Ist das Lastschrift Ereignis schon beendet?
-    n := e_r_sql(
-      { } 'select count(RID) from EREIGNIS where' +
-      { } ' (RID=' + inttostr(EREIGNIS_R) + ') and' +
-      { } ' (BEENDET is not NULL)');
-    if (n = 1) then
-      result := cForderung_Lastschrift_Erhalten
-    else
-      result := cForderung_Lastschrift_Vorgemerkt;
-
   until true;
-
+  b_r_ForderungStatus_EREIGNIS_R := cRID_Unset;
 end;
 
-var
- b_r_ForderungStatus_cAR : TdboCursor =nil;
-
 function b_r_ForderungStatus(BELEG_R, TEILLIEFERUNG: integer): integer; overload;
+var
+  AUSGANGSRECHNUNG_R: integer;
 begin
-  result := b_r_ForderungStatus(e_r_sql(
-    { } 'select' +
-    { } ' RID ' +
-    { } 'from' +
-    { } ' AUSGANGSRECHNUNG ' +
-    { } 'where' +
-    { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
-    { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ') and' +
-    { } ' (VORGANG=' + SQLString(cVorgang_Rechnung) + ')'));
+
+  if not(assigned(b_r_ForderungStatus_cAR3)) then
+  begin
+    b_r_ForderungStatus_cAR3 := nCursor;
+    with b_r_ForderungStatus_cAR3 do
+    begin
+      sql.add('select');
+      sql.add(' RID,');
+      sql.add(' EREIGNIS_R');
+      sql.add('from');
+      sql.add(' AUSGANGSRECHNUNG');
+      sql.add('where');
+      sql.add(' (BELEG_R=:CR1) and');
+      sql.add(' (TEILLIEFERUNG=:CR2) and');
+      sql.add(' (VORGANG=' + SQLString(cVorgang_Rechnung) + ')');
+      open;
+    end;
+  end;
+
+  with b_r_ForderungStatus_cAR3 do
+  begin
+    Params.BeginUpdate;
+    Params[0].AsInteger := BELEG_R;
+    Params[1].AsInteger := TEILLIEFERUNG;
+    Params.EndUpdate(true);
+    ApiFirst;
+    if not(eof) then
+    begin
+      b_r_ForderungStatus_EREIGNIS_R := Fields[1].AsInteger;
+      result := b_r_ForderungStatus(Fields[0].AsInteger)
+    end
+    else
+      result := cForderung_Unklar;
+  end;
+
 end;
 
 end.
