@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.103 (27.04.15) Andreas Filsinger
+
+ Neu: Person: Beschleunigung von e_r_Person
+ Neu: Buch: Beschleunigung von b_e_ForderungStatus
+
 Rev 8.102 (24.04.15) Andreas Filsinger
 
  Neu: Rechnungen: Farben
