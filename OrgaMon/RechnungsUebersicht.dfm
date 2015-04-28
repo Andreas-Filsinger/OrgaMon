@@ -2,7 +2,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   Left = 88
   Top = 120
   Anchors = [akLeft, akTop, akRight, akBottom]
-  Caption = 'Rechnungen'
   ClientHeight = 623
   ClientWidth = 958
   Color = clBtnFace
@@ -140,7 +139,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     DrawFocusSelected = True
     OnGetCellProps = IB_Grid1GetCellProps
     OnGetDisplayText = IB_Grid1GetDisplayText
-    ExplicitWidth = 931
   end
   object Button1: TButton
     Left = 847
@@ -151,7 +149,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&P'
     TabOrder = 1
     OnClick = Button1Click
-    ExplicitLeft = 820
   end
   object Button2: TButton
     Left = 874
@@ -162,7 +159,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&B'
     TabOrder = 2
     OnClick = Button2Click
-    ExplicitLeft = 847
   end
   object Button3: TButton
     Left = 929
@@ -173,7 +169,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     Caption = '&Z'
     TabOrder = 3
     OnClick = Button3Click
-    ExplicitLeft = 902
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 3
@@ -207,7 +202,6 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     ShowHint = True
     TabOrder = 5
     OnClick = Button4Click
-    ExplicitLeft = 783
   end
   object Button18: TButton
     Left = 901
@@ -221,16 +215,55 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     ShowHint = True
     TabOrder = 6
     OnClick = Button18Click
-    ExplicitLeft = 874
   end
   object CheckBox1: TCheckBox
     Left = 32
     Top = 7
-    Width = 137
+    Width = 153
     Height = 16
     Caption = 'bezahlte einblenden'
     TabOrder = 7
     OnClick = CheckBox1Click
+  end
+  object Panel1: TPanel
+    Left = 216
+    Top = 3
+    Width = 22
+    Height = 22
+    Hint = 
+      'aktuell in der Lastschriftliste, aber noch nicht der Bank bekann' +
+      't'
+    Color = 12320767
+    ParentBackground = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 8
+  end
+  object Panel2: TPanel
+    Left = 244
+    Top = 3
+    Width = 22
+    Height = 22
+    Hint = 
+      'an die Bank erfolgreich '#252'bertragen aber noch nicht gebucht, nur ' +
+      'dort vorgemerkt'
+    Color = 3206911
+    ParentBackground = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 9
+  end
+  object Panel3: TPanel
+    Left = 273
+    Top = 3
+    Width = 22
+    Height = 22
+    Hint = 'Die Gutschrift aus der Lastschrift-Einreichung ist erfolgt'
+    Color = 48895
+    ParentBackground = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 10
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'

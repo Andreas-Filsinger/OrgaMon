@@ -218,8 +218,8 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
     procedure FormActivate(Sender: TObject);
     procedure TabSheet4Show(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
@@ -239,14 +239,14 @@ type
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure DrawGrid2DblClick(Sender: TObject);
-    procedure DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
     procedure ComboBox2KeyPress(Sender: TObject; var Key: Char);
     procedure ComboBox2Select(Sender: TObject);
     procedure SpeedButton20Click(Sender: TObject);
     procedure SpeedButton23Click(Sender: TObject);
-    procedure DrawGrid3DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid3DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
     procedure SpeedButton24Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
@@ -298,8 +298,7 @@ type
     procedure SpeedButton36Click(Sender: TObject);
     procedure SpeedButton37Click(Sender: TObject);
     procedure TabSheet7Show(Sender: TObject);
-    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure SpeedButton42Click(Sender: TObject);
     procedure SpeedButton43Click(Sender: TObject);
     procedure SpeedButton44Click(Sender: TObject);
@@ -395,18 +394,16 @@ type
     procedure RefreshKontoSearch;
     procedure RefreshDebis(AddInfo: string = '');
     function SetScriptValue(ParamName, ParamValue: string): Integer;
-    procedure setDebiContext(s: TStrings = nil; b: double = 0.0;
-      d: TAnfixDate = 0);
+    procedure setDebiContext(s: TStrings = nil; b: double = 0.0; d: TAnfixDate = 0);
     function getSQLwhere: TStringList;
 
     function rPERSON_R: Integer;
     function rBUCH_R: Integer;
     function rERRORs: Integer;
-    function e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string;
-      AlleUmsaetze: boolean; Buchen: boolean): Integer;
-    function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
-    function e_x_KontoSyncLog(KontoNummer: string; AlleUmsaetze: boolean;
+    function e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean;
       Buchen: boolean): Integer;
+    function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
+    function e_x_KontoSyncLog(KontoNummer: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
     procedure ensureTimerState;
     function LogFName(KontoNummer: string): string;
     procedure MemoLog(s: TStrings); overload;
@@ -539,10 +536,8 @@ begin
       Refresh;
       SecureSetRow(DrawGrid1, pred(RowCount));
     end;
-    if (ItemKontoAuszugRIDs.count > 0) and (ItemKontoAuszugRIDs.count < 500)
-    then
-      RefreshKontoAuszugSaldo
-        (e_r_sqld('select SUM(BETRAG) from BUCH where RID in ' +
+    if (ItemKontoAuszugRIDs.count > 0) and (ItemKontoAuszugRIDs.count < 500) then
+      RefreshKontoAuszugSaldo(e_r_sqld('select SUM(BETRAG) from BUCH where RID in ' +
         ListAsSQL(ItemKontoAuszugRIDs)))
     else
       RefreshKontoAuszugSaldo(0);
@@ -634,9 +629,16 @@ begin
     exit;
   end;
 
-  if doit('Wurde die Sammellastschrift erfolgreich' + #13 +
-    'eingereicht? Darf nun der Zahlungseingang für' + #13 +
-    'alle Einzugsmandate verbucht werden') then
+  if doit(
+    { } 'Die Ausbuchung wird in der Regel durch' + #13 +
+    { } 'den Reiter "Ausgleich Forderungen" durchgeführt' + #13 +
+    { } 'sobald die Gutschrift erfolgt ist. Dieser Schritt' + #13 +
+    { } 'ist also nur in Ausnahmefällen notwendig.' + #13 +
+    { } #13 +
+    { } 'Wurde die Sammellastschrift erfolgreich' + #13 +
+    { } 'eingereicht? Wurde auch ein Zahlungseingang sichergestellt?' + #13 +
+    { } 'Darf nun der Zahlungseingang für' + #13 +
+    { } 'alle Einzugsmandate verbucht werden') then
   begin
     BeginHourGlass;
     b_w_ForderungAusgleich(EREIGNIS_R);
@@ -746,8 +748,7 @@ procedure TFormBuchhalter.Button12Click(Sender: TObject);
     n: Integer;
   begin
     result := -1;
-    s := nextp(s, ';', 0) + ';' + nextp(s, ';', 1) + ';' +
-      nextp(s, ';', 2) + ';';
+    s := nextp(s, ';', 0) + ';' + nextp(s, ';', 1) + ';' + nextp(s, ';', 2) + ';';
     for n := 1 to pred(sDTA.count) do
       if (pos(s, sDTA[n]) = 1) then
       begin
@@ -872,22 +873,19 @@ begin
   qPERSON := DataModuleDatenbank.nQuery;
   with qPERSON do
   begin
-    sql.add('select * from PERSON where RID=' + inttostr(PERSON_R) +
-      ' for update');
+    sql.add('select * from PERSON where RID=' + inttostr(PERSON_R) + ' for update');
     open;
     edit;
     KontoInhaber := b_r_Auszug_Inhaber(sBuchungsText);
     if (pos(',', KontoInhaber) = 0) then
     begin
       FieldByName('VORNAME').AsString := nextp(KontoInhaber, ' ', 0);
-      FieldByName('NACHNAME').AsString :=
-        copy(KontoInhaber, pos(' ', KontoInhaber) + 1, MaxInt);
+      FieldByName('NACHNAME').AsString := copy(KontoInhaber, pos(' ', KontoInhaber) + 1, MaxInt);
     end
     else
     begin
       FieldByName('VORNAME').AsString := nextp(KontoInhaber, ',', 0);;
-      FieldByName('NACHNAME').AsString :=
-        copy(KontoInhaber, pos(',', KontoInhaber) + 1, MaxInt);
+      FieldByName('NACHNAME').AsString := copy(KontoInhaber, pos(',', KontoInhaber) + 1, MaxInt);
     end;
     post;
   end;
@@ -961,8 +959,7 @@ var
           break;
         end;
 
-        Forderung := cSkonto(FieldByName('SKONTO').AsDouble,
-          FieldByName('BETRAG').AsDouble);
+        Forderung := cSkonto(FieldByName('SKONTO').AsDouble, FieldByName('BETRAG').AsDouble);
 
         if isHaben(Forderung) then
         begin
@@ -971,12 +968,10 @@ var
         end
         else
         begin
-          result.add('Gutschrift ' + FieldByName('RECHNUNG').AsString +
-            ' über');
+          result.add('Gutschrift ' + FieldByName('RECHNUNG').AsString + ' über');
           sVerwendungsZweck := format('%m vom %s', [
             { } Forderung,
-            { } long2date8(datetime2long(FieldByName('RECHNUNGS_DATUM')
-            .AsDate))]);
+            { } long2date8(datetime2long(FieldByName('RECHNUNGS_DATUM').AsDate))]);
           ersetze('€', 'EUR', sVerwendungsZweck);
           result.add(sVerwendungsZweck);
 
@@ -1095,9 +1090,8 @@ begin
   RIDs_Used := TgpIntegerList.Create;
 
   // defaults aus den Zahlungsarten
-  _UeberweisungsSettings := e_r_sqlt('select EINSTELLUNGEN from ZAHLUNGTYP ' +
-    'where' + ' (AUTOZAHLUNG=''' + cC_True + ''') ' + 'order by ' +
-    ' BEZEICHNUNG');
+  _UeberweisungsSettings := e_r_sqlt('select EINSTELLUNGEN from ZAHLUNGTYP ' + 'where' +
+    ' (AUTOZAHLUNG=''' + cC_True + ''') ' + 'order by ' + ' BEZEICHNUNG');
 
   // Die aktuelle Abfrage ausgeben
   ExportTable(IB_Query1.sql, DiagnosePath + 'DTAUS.csv');
@@ -1173,8 +1167,7 @@ begin
     first;
     while not(eof) do
     begin
-      Forderung := cSkonto(FieldByName('SKONTO').AsDouble,
-        FieldByName('BETRAG').AsDouble);
+      Forderung := cSkonto(FieldByName('SKONTO').AsDouble, FieldByName('BETRAG').AsDouble);
 
       if isHaben(Forderung) then
       begin
@@ -1189,8 +1182,8 @@ begin
 
           zahlerName := cutblank(FieldByName('Z_ELV_KONTO_INHABER').AsString);
           if (zahlerName = '') then
-            zahlerName := cutblank(FieldByName('VORNAME').AsString + ' ' +
-              FieldByName('NACHNAME').AsString);
+            zahlerName := cutblank(FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME')
+              .AsString);
           if (zahlerName = '') then
             zahlerName := FieldByName('NAME1').AsString;
           zahlerOrt := '';
@@ -1203,12 +1196,10 @@ begin
             if (Gutschriften[n] = GutschriftKey) then
               if isHaben(Forderung + dGutschriften[n]) then
               begin
-                VerwendungszweckGutschrift :=
-                  TStringList(Gutschriften.Objects[n]);
+                VerwendungszweckGutschrift := TStringList(Gutschriften.Objects[n]);
                 Forderung := Forderung + dGutschriften[n];
                 for i := 0 to pred(VerwendungszweckGutschrift.count) do
-                  if (Verwendungszweck.IndexOf(VerwendungszweckGutschrift[i])
-                    = -1) then
+                  if (Verwendungszweck.IndexOf(VerwendungszweckGutschrift[i]) = -1) then
                     Verwendungszweck.add(VerwendungszweckGutschrift[i]);
                 RIDs_Used.add(Gutschriften_RID[n]);
                 Gutschriften_RID.Delete(n);
@@ -1470,16 +1461,14 @@ begin
       begin
         if (DrawGrid2.Row = pred(DrawGrid2.RowCount)) then
           break;
-        SecureSetRow(DrawGrid2, min(pred(DrawGrid2.RowCount),
-          Succ(DrawGrid2.Row)));
+        SecureSetRow(DrawGrid2, min(pred(DrawGrid2.RowCount), Succ(DrawGrid2.Row)));
       end;
       application.processmessages;
 
     until false;
     EndHourGlass;
     if (AnzVerbuchungen = 0) then
-      ShowMessage
-        ('Keine Datensätze zum automatischen Forderungsausgleich gefunden!')
+      ShowMessage('Keine Datensätze zum automatischen Forderungsausgleich gefunden!')
     else
       ShowMessage(inttostr(AnzVerbuchungen) + ' Forderungen ausgeglichen!');
   end;
@@ -1499,8 +1488,7 @@ end;
 procedure TFormBuchhalter.SpeedButton25Click(Sender: TObject);
 begin
   //
-  ShowMessage('Noch nicht automatisiert!' + #13 +
-    'Siehe Hilfe für den manuellen Weg!');
+  ShowMessage('Noch nicht automatisiert!' + #13 + 'Siehe Hilfe für den manuellen Weg!');
 end;
 
 procedure TFormBuchhalter.SpeedButton26Click(Sender: TObject);
@@ -1523,8 +1511,8 @@ var
 begin
   BeginHourGlass;
   BUCH_R := IB_Query1.FieldByName('RID').AsInteger;
-  e_x_sql('update AUSGANGSRECHNUNG set DATUM=CURRENT_TIMESTAMP + 1.0 where RID='
-    + inttostr(BUCH_R));
+  e_x_sql('update AUSGANGSRECHNUNG set DATUM=CURRENT_TIMESTAMP + 1.0 where RID=' +
+    inttostr(BUCH_R));
   RefreshLastschriften;
   EndHourGlass;
 end;
@@ -1542,9 +1530,8 @@ begin
   if _NewPoint >= cRID_FirstValid then
   begin
     BeginHourGlass;
-    sNeu := e_r_sqlm('select RID from BUCH ' + 'where ' + ' (RID>' +
-      inttostr(_NewPoint) + ') and ' + ' (RID=MASTER_R) ' +
-      'order by DATUM,POSNO');
+    sNeu := e_r_sqlm('select RID from BUCH ' + 'where ' + ' (RID>' + inttostr(_NewPoint) + ') and '
+      + ' (RID=MASTER_R) ' + 'order by DATUM,POSNO');
 
     // RID-Liste aus OLAP-Laden!
     if (sNeu.count > 0) then
@@ -1606,9 +1593,9 @@ begin
   if (DrawGrid1.Row <> -1) then
   begin
     if doit('Bitte beim Löschen beachten:' + #13 +
-      'Handelt es sich um einen initialen Buchungssatz, so verschwinden auch alle Folgesätze!'
-      + #13 + 'Beim Löschen eines Folge-Buchungssatzes, wird auch der initiale Buchungssatz gelöscht!'
-      + #13 + 'Bei einem via HBCI synchronisierten Konto kann durch den Kontenabgleich die Buchung wiederum entstehen!'
+      'Handelt es sich um einen initialen Buchungssatz, so verschwinden auch alle Folgesätze!' + #13
+      + 'Beim Löschen eines Folge-Buchungssatzes, wird auch der initiale Buchungssatz gelöscht!' +
+      #13 + 'Bei einem via HBCI synchronisierten Konto kann durch den Kontenabgleich die Buchung wiederum entstehen!'
       + #13 + #13 + 'Buchung wirklich löschen') then
     begin
       // Referenz aus Liste
@@ -1846,8 +1833,8 @@ begin
     begin
       //
       sql.add('select * from BUCH where');
-      sql.add(' (DATUM between ''' + long2date(Von) + ' 00:00:00'' and ''' +
-        long2date(Bis) + ' 23:59:59'') and ');
+      sql.add(' (DATUM between ''' + long2date(Von) + ' 00:00:00'' and ''' + long2date(Bis) +
+        ' 23:59:59'') and ');
       sql.add(' (MASTER_R=RID) and');
       sql.add(' (GEGENKONTO is not null)');
       sql.add('order by');
@@ -1870,8 +1857,7 @@ begin
         // Vorbereitungen für "STEMPEL"
         STEMPEL_R := FieldByName('STEMPEL_R').AsInteger;
         if (STEMPEL_R >= cRID_FirstValid) then
-          STEMPEL := e_r_sqls('select PREFIX from STEMPEL where RID=' +
-            inttostr(STEMPEL_R))
+          STEMPEL := e_r_sqls('select PREFIX from STEMPEL where RID=' + inttostr(STEMPEL_R))
         else
           STEMPEL := '';
 
@@ -1930,18 +1916,15 @@ begin
 
             sFolgeBuchungssatz[8] := KontoAsAlias(Konto);
             if WarEbenErloesKonto then
-              sFolgeBuchungssatz[10] :=
-                e_r_RechnungsNummer(FieldByName('BELEG_R').AsInteger,
+              sFolgeBuchungssatz[10] := e_r_RechnungsNummer(FieldByName('BELEG_R').AsInteger,
                 FieldByName('TEILLIEFERUNG').AsInteger);
 
             if (pos('S', Konto) = 1) then
             begin
 
               sFolgeBuchungssatz[11] :=
-                format(cFormatMwSt,
-                [e_r_Prozent(StrToInt(StrFilter(Konto, cZiffern)), DATUM)]);
-              sFolgeBuchungssatz[6] :=
-                format(cFormatMoney, [-FieldByName('BETRAG').AsDouble]);
+                format(cFormatMwSt, [e_r_Prozent(StrToInt(StrFilter(Konto, cZiffern)), DATUM)]);
+              sFolgeBuchungssatz[6] := format(cFormatMoney, [-FieldByName('BETRAG').AsDouble]);
 
               sFolgeBuchungssatz[5] := sFolgeVorgaenger[5];
               sFolgeBuchungssatz[8] := sFolgeVorgaenger[8];
@@ -1969,8 +1952,7 @@ begin
             end
             else
             begin
-              sFolgeBuchungssatz[5] :=
-                format(cFormatMoney, [-FieldByName('BETRAG').AsDouble]);
+              sFolgeBuchungssatz[5] := format(cFormatMoney, [-FieldByName('BETRAG').AsDouble]);
               sFolgeBuchungssatz[4] := sFolgeBuchungssatz[5];
               sFolgeBuchungssatz[6] := '';
             end;
@@ -2018,16 +2000,14 @@ var
   BUCH_R: Integer;
   sInitialSaetze: TgpIntegerList;
 begin
-  if doit(format('Sollen %d Buchungssätze neu gebucht werden',
-    [ItemKontoAuszugRIDs.count])) then
+  if doit(format('Sollen %d Buchungssätze neu gebucht werden', [ItemKontoAuszugRIDs.count])) then
   begin
     sInitialSaetze := TgpIntegerList.Create;
     sDiagnose := TStringList.Create;
     BeginHourGlass;
     for n := 0 to pred(ItemKontoAuszugRIDs.count) do
     begin
-      BUCH_R := e_r_sql('select MASTER_R from BUCH where RID=' +
-        inttostr(ItemKontoAuszugRIDs[n]));
+      BUCH_R := e_r_sql('select MASTER_R from BUCH where RID=' + inttostr(ItemKontoAuszugRIDs[n]));
       if (sInitialSaetze.IndexOf(BUCH_R) = -1) then
         sInitialSaetze.add(BUCH_R);
     end;
@@ -2048,9 +2028,9 @@ begin
   //
   KlassischeTAN := Edit10.Text;
   Memo1.lines.clear;
-  sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' +
-    StrFilter(iKontoBLZ, cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern),
-    MyProgramPath + cHBCIPath + 'DTAUS.DTA.SEPA.csv');
+  sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ,
+    cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern), MyProgramPath + cHBCIPath +
+    'DTAUS.DTA.SEPA.csv');
   LastschriftJobID := DataModuleREST.TAN;
   MemoLog(sTANAbfrage);
   sTANAbfrage.free;
@@ -2074,8 +2054,8 @@ begin
   end;
 end;
 
-procedure TFormBuchhalter.IB_Grid2GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+procedure TFormBuchhalter.IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer;
+  var AString: string);
 begin
   if (ACol = 2) then
   begin
@@ -2139,8 +2119,7 @@ end;
 
 function TFormBuchhalter.LogFName(KontoNummer: string): string;
 begin
-  result := MyProgramPath + cHBCIPath + KontoNummer + '\' +
-    inttostrN(_NewPoint, 8) + '.log.txt';
+  result := MyProgramPath + cHBCIPath + KontoNummer + '\' + inttostrN(_NewPoint, 8) + '.log.txt';
 end;
 
 procedure TFormBuchhalter.MemoLog(s: String);
@@ -2196,8 +2175,8 @@ begin
       if CheckBox4.Checked then
         e_r_Saldo(pKonto + ':' + ':' + pBLZ)
       else
-        Stat_NeueBuchungen := e_w_KontoSync(pKonto + ':' + ':' + pBLZ,
-          CheckBox1.Checked, CheckBox2.Checked);
+        Stat_NeueBuchungen := e_w_KontoSync(pKonto + ':' + ':' + pBLZ, CheckBox1.Checked,
+          CheckBox2.Checked);
     end
     else
     begin
@@ -2234,8 +2213,7 @@ begin
     if (length(iTAN) <> cTAN_AnzahlStellen) then
     begin
       EndHourGlass;
-      ShowMessage('TAN sollte ' + inttostr(cTAN_AnzahlStellen) +
-        '-stellig sein!');
+      ShowMessage('TAN sollte ' + inttostr(cTAN_AnzahlStellen) + '-stellig sein!');
       break;
     end;
 
@@ -2251,8 +2229,7 @@ begin
       end;
 
       Memo1.lines.clear;
-      Response := DataModuleREST.REST(iHBCIRest + 'itan/' + LastschriftJobID +
-        '/' + iTAN);
+      Response := DataModuleREST.REST(iHBCIRest + 'itan/' + LastschriftJobID + '/' + iTAN);
       MemoLog(Response);
       Response.free;
     end;
@@ -2301,8 +2278,7 @@ begin
     result[n] := '  ' + cutblank(result[n]);
 end;
 
-procedure TFormBuchhalter.e_w_HBCI_EreignisDel(EREIGNIS_R: Integer;
-  Grund: string);
+procedure TFormBuchhalter.e_w_HBCI_EreignisDel(EREIGNIS_R: Integer; Grund: string);
 begin
   e_x_sql(
     { } 'update EREIGNIS set ' +
@@ -2408,8 +2384,8 @@ begin
   sCSV.free;
 end;
 
-function TFormBuchhalter.e_w_KontoSync(Konten: string;
-  AlleUmsaetze: boolean = false; Buchen: boolean = true): Integer;
+function TFormBuchhalter.e_w_KontoSync(Konten: string; AlleUmsaetze: boolean = false;
+  Buchen: boolean = true): Integer;
 var
   OneKonto: string;
   sINFO: TStringList;
@@ -2451,8 +2427,7 @@ begin
 
       if RadioButton9.Checked then
       begin
-        ListBox1.Items.add(nextp(OneKonto, ':', 2) + '-' + nextp(OneKonto, ':',
-          0) + ' ...');
+        ListBox1.Items.add(nextp(OneKonto, ':', 2) + '-' + nextp(OneKonto, ':', 0) + ' ...');
         application.processmessages;
 
         Anzahl_NeueBuchungen := e_x_KontoSyncREST(nextp(OneKonto, ':', 2),
@@ -2462,8 +2437,7 @@ begin
 
         if (Anzahl_NeueBuchungen >= 0) then
         begin
-          ListBox1.Items.add('  ' + inttostr(Anzahl_NeueBuchungen) +
-            ' neue Buchung(en).');
+          ListBox1.Items.add('  ' + inttostr(Anzahl_NeueBuchungen) + ' neue Buchung(en).');
           inc(result, Anzahl_NeueBuchungen);
         end
         else
@@ -2490,8 +2464,8 @@ begin
   end;
 end;
 
-function TFormBuchhalter.e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string;
-  AlleUmsaetze: boolean; Buchen: boolean): Integer;
+function TFormBuchhalter.e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean;
+  Buchen: boolean): Integer;
 var
   ErrorCount: Integer;
   DiagnoseLog: TStringList;
@@ -2593,8 +2567,7 @@ begin
     begin
       with cBUCH do
       begin
-        sql.add('select max(DATUM) DATUM from BUCH where NAME=''' +
-          KontoNummer + '''');
+        sql.add('select max(DATUM) DATUM from BUCH where NAME=''' + KontoNummer + '''');
         ApiFirst;
         if eof then
           AlleUmsaetze := true
@@ -2623,8 +2596,8 @@ begin
     end
     else
     begin
-      sResult := DataModuleREST.REST(iHBCIRest + 'umsatz/' + BLZ + '/' +
-        KontoNummer + '/' + long2date(AbfrageStartDatum));
+      sResult := DataModuleREST.REST(iHBCIRest + 'umsatz/' + BLZ + '/' + KontoNummer + '/' +
+        long2date(AbfrageStartDatum));
       ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
     end;
     DiagnoseLog.addstrings(sResult);
@@ -2638,8 +2611,7 @@ begin
     // Überhaupt was da?
     if (sResult.count > 0) then
       // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
-      if (pos(cDTA_UmsatzHeader, sResult[0]) = 1) or
-        (pos(sResult[0], cDTA_UmsatzHeader) = 1) then
+      if (pos(cDTA_UmsatzHeader, sResult[0]) = 1) or (pos(sResult[0], cDTA_UmsatzHeader) = 1) then
       begin
 
         Headers := split(sResult[0]);
@@ -2668,14 +2640,13 @@ begin
 
           if CheckBox7.Checked then
             BereitsGespeichert :=
-              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
-              KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
-              ''') and ' + '(MD5=''' + MD5 + ''')') <> 0)
+              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' + KontoNummer + ''') and '
+              + '(DATUM=''' + long2date(EntryDate) + ''') and ' + '(MD5=''' + MD5 + ''')') <> 0)
           else
             BereitsGespeichert :=
-              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
-              KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
-              ''') and ' + '(POSNO=' + inttostr(LfdNo) + ')') <> 0);
+              (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' + KontoNummer + ''') and '
+              + '(DATUM=''' + long2date(EntryDate) + ''') and ' + '(POSNO=' + inttostr(LfdNo) +
+              ')') <> 0);
 
           // Fingerabdruck suchen
           if not(BereitsGespeichert) then
@@ -2770,8 +2741,7 @@ begin
                 uText.clear;
                 uText.addstrings(vonName);
                 if (BusinessTransactionCode = '1') then
-                  if (CustomerReference <> 'NONREF') and
-                    (CustomerReference <> '') then
+                  if (CustomerReference <> 'NONREF') and (CustomerReference <> '') then
                     uText.add('Schecknummer: ' + CustomerReference);
 
                 if (BankCode <> '') or (AccountNumber <> '') then
@@ -2780,26 +2750,23 @@ begin
                   // keine Kontonummer in der SEPA Welt leer?
                   if (AccountNumber = '') then
                   begin
-                    s := StrFilter(BuchungsText.Text,
-                      cZiffern + cBuchstaben + ':');
+                    s := StrFilter(BuchungsText.Text, cZiffern + cBuchstaben + ':');
                     n := pos('IBAN:DE', s);
                     if (n > 0) then
                       AccountNumber := Bank_Konto(copy(s, n + 4 + 13, 10));
                   end;
 
                   // "Konto: %s BLZ: %s"
-                  uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr +
-                    ' ' + BankCode);
+                  uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr + ' ' + BankCode);
                 end;
 
                 uText.addstrings(BuchungsText);
 
                 FieldByName('TEXT').Assign(uText);
                 FieldByName('BETRAG').AsDouble := Amount;
-                FieldByName('VORGANG').AsString := BusinessTransactionText +
-                  ' (' + BusinessTransactionCode + ')';
-                FieldByName('STEMPEL_NO').AsInteger :=
-                  StrToIntDef(PrimaNoteNumber, 0);
+                FieldByName('VORGANG').AsString := BusinessTransactionText + ' (' +
+                  BusinessTransactionCode + ')';
+                FieldByName('STEMPEL_NO').AsInteger := StrToIntDef(PrimaNoteNumber, 0);
                 FieldByName('MD5').AsString := MD5;
                 post;
 
@@ -2849,8 +2816,8 @@ begin
 
 end;
 
-function TFormBuchhalter.e_x_KontoSyncLog(KontoNummer: string;
-  AlleUmsaetze: boolean; Buchen: boolean): Integer;
+function TFormBuchhalter.e_x_KontoSyncLog(KontoNummer: string; AlleUmsaetze: boolean;
+  Buchen: boolean): Integer;
 var
   ErrorCount: Integer;
   Headers: TStringList;
@@ -2953,8 +2920,7 @@ begin
     sDir.sort;
     for n := 0 to pred(sDir.count) do
     begin
-      sResult.LoadFromFile(MyProgramPath + cHBCIPath + KontoNummer + '\'
-        + sDir[n]);
+      sResult.LoadFromFile(MyProgramPath + cHBCIPath + KontoNummer + '\' + sDir[n]);
       i := sResult.IndexOf('1');
       if i <> -1 then
       begin
@@ -2966,8 +2932,7 @@ begin
       end;
 
     end;
-    sCompleteLog.savetofile(DiagnosePath + 'HBCI-Complete-' + KontoNummer
-      + '.txt');
+    sCompleteLog.savetofile(DiagnosePath + 'HBCI-Complete-' + KontoNummer + '.txt');
 
     AutomataState := 0;
     for n := 0 to pred(sCompleteLog.count) do
@@ -3069,13 +3034,12 @@ begin
         15:
           begin
             MD5 := sCompleteLog[n];
-            if (EntryDate >= AbfrageStartDatum) and
-              (EntryDate <= AbfrageEndeDatum) then
+            if (EntryDate >= AbfrageStartDatum) and (EntryDate <= AbfrageEndeDatum) then
             begin
 
-              if e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' +
-                KontoNummer + ''') and ' + '(DATUM=''' + long2date(EntryDate) +
-                ''') and ' + '(MD5=''' + MD5 + ''')') = 0 then
+              if e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' + KontoNummer +
+                ''') and ' + '(DATUM=''' + long2date(EntryDate) + ''') and ' + '(MD5=''' + MD5 +
+                ''')') = 0 then
               begin
 
                 if Buchen then
@@ -3089,8 +3053,7 @@ begin
                     FieldByName('NAME').AsString := KontoNummer;
 
                     FieldByName('DATUM').AsDate := long2datetime(EntryDate);
-                    FieldByName('WERTSTELLUNG').AsDate :=
-                      long2datetime(ValutaDate);
+                    FieldByName('WERTSTELLUNG').AsDate := long2datetime(ValutaDate);
                     FieldByName('POSNO').AsInteger := LfdNo;
 
                     Script.clear;
@@ -3101,25 +3064,22 @@ begin
                     uText.clear;
                     uText.addstrings(vonName);
                     if (BusinessTransactionCode = '1') then
-                      if (CustomerReference <> 'NONREF') and
-                        (CustomerReference <> '') then
+                      if (CustomerReference <> 'NONREF') and (CustomerReference <> '') then
                         uText.add('Schecknummer: ' + CustomerReference);
 
                     if (BankCode <> '') or (AccountNumber <> '') then
                     begin
                       // "Konto: %s BLZ: %s"
-                      uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr
-                        + ' ' + BankCode);
+                      uText.add(cKontoStr + ' ' + AccountNumber + ' ' + cBLZStr + ' ' + BankCode);
                     end;
 
                     uText.addstrings(BuchungsText);
 
                     FieldByName('TEXT').Assign(uText);
                     FieldByName('BETRAG').AsDouble := Amount;
-                    FieldByName('VORGANG').AsString := BusinessTransactionText +
-                      ' (' + BusinessTransactionCode + ')';
-                    FieldByName('STEMPEL_NO').AsInteger :=
-                      StrToIntDef(PrimaNoteNumber, 0);
+                    FieldByName('VORGANG').AsString := BusinessTransactionText + ' (' +
+                      BusinessTransactionCode + ')';
+                    FieldByName('STEMPEL_NO').AsInteger := StrToIntDef(PrimaNoteNumber, 0);
                     FieldByName('MD5').AsString := MD5;
                     post;
 
@@ -3278,8 +3238,7 @@ begin
     end
     else
     begin
-      sResult := DataModuleREST.REST(iHBCIRest + 'saldo/' + BLZ + '/' +
-        KontoNummer);
+      sResult := DataModuleREST.REST(iHBCIRest + 'saldo/' + BLZ + '/' + KontoNummer);
       ListBox1.Items.add('  [' + DataModuleREST.TAN + ']');
     end;
     DiagnoseLog.addstrings(sResult);
@@ -3343,8 +3302,8 @@ begin
   FormBuchung.setContext(Integer(ItemKontoAuszugRIDs[DrawGrid1.Row]));
 end;
 
-procedure TFormBuchhalter.DrawGrid1DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormBuchhalter.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   BUCH_R: Integer;
   VORGANG: string;
@@ -3441,16 +3400,13 @@ begin
 
               font.size := 10;
               if FieldByName('DATUM').IsNull then
-                TextRect(Rect, Rect.left + 2, Rect.top,
-                  FieldByName('NAME').AsString)
+                TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString)
               else
-                TextRect(Rect, Rect.left + 2, Rect.top,
-                  long2date(FieldByName('DATUM').AsDate));
+                TextRect(Rect, Rect.left + 2, Rect.top, long2date(FieldByName('DATUM').AsDate));
               if FieldByName('GEGENKONTO').IsNotNull then
                 if FieldByName('GEBUCHT').IsNull then
                   font.Style := [fsStrikeOut];
-              TextOut(Rect.left + 2, Rect.top + cPlanY,
-                FieldByName('GEGENKONTO').AsString);
+              TextOut(Rect.left + 2, Rect.top + cPlanY, FieldByName('GEGENKONTO').AsString);
               font.Style := [];
 
             end;
@@ -3465,14 +3421,12 @@ begin
             begin
               // Vorgang
               font.size := 9;
-              TextRect(Rect, Rect.left + 2, Rect.top,
-                FieldByName('NAME').AsString);
+              TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
 
               if FieldByName('VORGANG').IsNull then
               begin
-                TextOut(Rect.left + 2, Rect.top + cPlanY,
-                  inttostr(FieldByName('BELEG_R').AsInteger) + '-' +
-                  inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2))
+                TextOut(Rect.left + 2, Rect.top + cPlanY, inttostr(FieldByName('BELEG_R').AsInteger)
+                  + '-' + inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2))
               end
               else
               begin
@@ -3489,8 +3443,8 @@ begin
                   TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
                 end;
               end;
-              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY,
-                'PN' + FieldByName('STEMPEL_NO').AsString);
+              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO')
+                .AsString);
             end;
           4:
             begin
@@ -3502,8 +3456,7 @@ begin
                 FieldByName('TEXT').AssignTo(UeberweisungsText);
 
               // Zeilehöhe anpassen - falls notwendig!
-              RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count)
-                + dpiX(2);
+              RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count) + dpiX(2);
               if (RowHeight <> DrawGrid1.RowHeights[ARow]) then
               begin
                 DrawGrid1.RowHeights[ARow] := RowHeight;
@@ -3528,8 +3481,7 @@ begin
 
                 // weitere Zeilen
                 for n := 1 to pred(UeberweisungsText.count) do
-                  TextOut(Rect.left + 2, Rect.top + cPlanY * n,
-                    UeberweisungsText[n]);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY * n, UeberweisungsText[n]);
 
               until true;
 
@@ -3539,8 +3491,8 @@ begin
           5:
             begin
               if (FieldByName('ERTRAG').AsString = 'N') or
-                ((FieldByName('BETRAG').AsDouble < 0) and
-                (FieldByName('ERTRAG').AsString <> 'Y')) then
+                ((FieldByName('BETRAG').AsDouble < 0) and (FieldByName('ERTRAG').AsString <> 'Y'))
+              then
               begin
                 font.size := 10;
                 font.Style := [fsbold];
@@ -3558,8 +3510,8 @@ begin
           6:
             begin
               if (FieldByName('ERTRAG').AsString = 'Y') or
-                ((FieldByName('BETRAG').AsDouble >= 0) and
-                (FieldByName('ERTRAG').AsString <> 'N')) then
+                ((FieldByName('BETRAG').AsDouble >= 0) and (FieldByName('ERTRAG').AsString <> 'N'))
+              then
               begin
                 font.size := 10;
                 font.Style := [fsbold];
@@ -3598,8 +3550,8 @@ begin
   FormBuchung.setContext(Integer(ItemKontoAuszugRIDs[DrawGrid2.Row]));
 end;
 
-procedure TFormBuchhalter.DrawGrid2DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormBuchhalter.DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   BUCH_R: Integer;
   Fokusiert: boolean;
@@ -3685,10 +3637,8 @@ begin
             begin
               // Datum
               font.size := 10;
-              TextRect(Rect, Rect.left + 2, Rect.top,
-                long2date(FieldByName('DATUM').AsDate));
-              TextOut(Rect.left + 2, Rect.top + cPlanY,
-                'RID' + FieldByName('RID').AsString);
+              TextRect(Rect, Rect.left + 2, Rect.top, long2date(FieldByName('DATUM').AsDate));
+              TextOut(Rect.left + 2, Rect.top + cPlanY, 'RID' + FieldByName('RID').AsString);
 
             end;
           2:
@@ -3702,8 +3652,7 @@ begin
             begin
               // Vorgang
               font.size := 9;
-              TextRect(Rect, Rect.left + 2, Rect.top,
-                FieldByName('NAME').AsString);
+              TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
 
               VORGANG := FieldByName('VORGANG').AsString;
               if (pos(VORGANG, cVorgang_Lastschrift) > 0) then
@@ -3718,8 +3667,8 @@ begin
                 TextOut(Rect.left + 2, Rect.top + cPlanY, VORGANG);
               end;
 
-              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY,
-                'PN' + FieldByName('STEMPEL_NO').AsString);
+              TextOut(Rect.left + 2, Rect.top + 2 * cPlanY, 'PN' + FieldByName('STEMPEL_NO')
+                .AsString);
             end;
           4:
             begin
@@ -3728,15 +3677,13 @@ begin
               FieldByName('TEXT').AssignTo(UeberweisungsText);
               ScriptText := TStringList.Create;
               FieldByName('SKRIPT').AssignTo(ScriptText);
-              Betrag := StrToDoubledef(ScriptText.values['BETRAG'],
-                cGeld_keinElement);
+              Betrag := StrToDoubledef(ScriptText.values['BETRAG'], cGeld_keinElement);
               if isNoMoney(Betrag) then
                 Betrag := FieldByName('BETRAG').AsDouble;
               ScriptText.free;
 
               // ################
-              RowHeight := max(cPlanY * 3, cPlanY * UeberweisungsText.count)
-                + dpiX(2);
+              RowHeight := max(cPlanY * 3, cPlanY * UeberweisungsText.count) + dpiX(2);
               if (RowHeight <> DrawGrid2.RowHeights[ARow]) then
               begin
                 DrawGrid2.RowHeights[ARow] := RowHeight;
@@ -3761,8 +3708,7 @@ begin
 
                 // weitere Zeilen
                 for n := 1 to pred(UeberweisungsText.count) do
-                  TextOut(Rect.left + 2, Rect.top + cPlanY * n,
-                    UeberweisungsText[n]);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY * n, UeberweisungsText[n]);
 
               until true;
 
@@ -3770,8 +3716,7 @@ begin
               if Fokusiert then
                 if (DrawGrid2_LastFocused <> ARow) then
                 begin
-                  if (pos(FieldByName('VORGANG').AsString,
-                    cVorgang_Lastschrift) > 0) then
+                  if (pos(FieldByName('VORGANG').AsString, cVorgang_Lastschrift) > 0) then
                     UeberweisungsText.add(cVorgang_LSG + '=' + cIni_Activate);
 
                   DrawGrid2_LastFocused := ARow;
@@ -3808,25 +3753,21 @@ begin
                 // BETRAG=
                 ScriptText := TStringList.Create;
                 FieldByName('SKRIPT').AssignTo(ScriptText);
-                BetragNominal := StrToDoubledef(ScriptText.values['BETRAG'],
-                  cGeld_keinElement);
+                BetragNominal := StrToDoubledef(ScriptText.values['BETRAG'], cGeld_keinElement);
                 ScriptText.free;
 
                 font.size := 10;
                 if isNoMoney(BetragNominal) then
                 begin
                   font.Style := [fsbold];
-                  TextRect(Rect, Rect.left + 2, Rect.top,
-                    format('%15m', [Betrag]));
+                  TextRect(Rect, Rect.left + 2, Rect.top, format('%15m', [Betrag]));
                 end
                 else
                 begin
                   font.Style := [fsItalic];
-                  TextRect(Rect, Rect.left + 2, Rect.top,
-                    format('%15m', [Betrag]));
+                  TextRect(Rect, Rect.left + 2, Rect.top, format('%15m', [Betrag]));
                   font.Style := [fsbold];
-                  TextOut(Rect.left + 2, Rect.top + cPlanY * 1,
-                    format('%15m', [BetragNominal]));
+                  TextOut(Rect.left + 2, Rect.top + cPlanY * 1, format('%15m', [BetragNominal]));
                 end;
 
                 font.Style := [];
@@ -3853,8 +3794,8 @@ begin
     end;
 end;
 
-procedure TFormBuchhalter.DrawGrid3DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormBuchhalter.DrawGrid3DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   PERSON_R: Integer;
   Fokusiert: boolean;
@@ -3919,19 +3860,17 @@ begin
                   end;
 
                   if (b_r_Auszug_KontoIBAN(sBuchungsText) <>
-                    e_r_sqls('select Z_ELV_KONTO from PERSON ' + 'where RID=' +
-                    inttostr(PERSON_R))) then
+                    e_r_sqls('select Z_ELV_KONTO from PERSON ' + 'where RID=' + inttostr(PERSON_R)))
+                  then
                     break;
 
-                  if (b_r_Auszug_BLZBIC(sBuchungsText) <>
-                    e_r_sqls('select Z_ELV_BLZ from PERSON ' + 'where RID=' +
-                    inttostr(PERSON_R))) then
+                  if (b_r_Auszug_BLZBIC(sBuchungsText) <> e_r_sqls('select Z_ELV_BLZ from PERSON ' +
+                    'where RID=' + inttostr(PERSON_R))) then
                     break;
 
-                  if (e_r_sqls('select Z_ELV_BANK_NAME from PERSON ' +
-                    'where RID=' + inttostr(PERSON_R)) = cOrgaMonPrivat) then
-                    brush.color :=
-                      HTMLColor2TColor(cBUCH_Farbe_DurchlaufenderPosten)
+                  if (e_r_sqls('select Z_ELV_BANK_NAME from PERSON ' + 'where RID=' +
+                    inttostr(PERSON_R)) = cOrgaMonPrivat) then
+                    brush.color := HTMLColor2TColor(cBUCH_Farbe_DurchlaufenderPosten)
                     // rosa
                   else
                     brush.color := HTMLColor2TColor(cBUCH_Farbe_OK);
@@ -3949,17 +3888,15 @@ begin
                 font.size := 10;
                 if (PERSON_R = cRID_Person_Lastschrift) then
                 begin
-                  TextRect(Rect, Rect.left + 2, Rect.top,
-                    'Konto ' + cKonto_Bank);
+                  TextRect(Rect, Rect.left + 2, Rect.top, 'Konto ' + cKonto_Bank);
                 end
                 else
                 begin
                   TextRect(Rect, Rect.left + 2, Rect.top, e_r_Person(PERSON_R));
                   TextOut(Rect.left + 2, Rect.top + cPlanY,
-                    e_r_sqls('select ANSCHRIFT.STRASSE from' + ' PERSON ' +
-                    'join' + ' ANSCHRIFT ' +
-                    'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' + 'where' +
-                    ' (PERSON.RID=' + inttostr(PERSON_R) + ')'));
+                    e_r_sqls('select ANSCHRIFT.STRASSE from' + ' PERSON ' + 'join' + ' ANSCHRIFT ' +
+                    'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' + 'where' + ' (PERSON.RID=' +
+                    inttostr(PERSON_R) + ')'));
                 end;
 
               end;
@@ -3979,8 +3916,7 @@ begin
                   saldo := b_r_LastschriftSaldo
                 else
                   saldo := b_r_PersonSaldo(PERSON_R);
-                TextRect(Rect, Rect.left + 2, Rect.top,
-                  format('%15m', [saldo]));
+                TextRect(Rect, Rect.left + 2, Rect.top, format('%15m', [saldo]));
                 font.Style := [];
 
                 // nun die aktuellen Forderungen anzeigen
@@ -4025,8 +3961,7 @@ begin
   begin
     //
     Key := #0;
-    ShowMessage
-      ('Die TAN wird erst übertragen sobald Sie den Briefumschlag drücken!');
+    ShowMessage('Die TAN wird erst übertragen sobald Sie den Briefumschlag drücken!');
   end;
 end;
 
@@ -4213,9 +4148,8 @@ begin
 
   if ComboBox3.Text = '' then
   begin
-    AlleKonten := e_r_sqlsl('select distinct NAME from BUCH where' +
-      ' (NAME is not null) and' + ' (NAME<>'''') and' +
-      ' (BETRAG is not null)');
+    AlleKonten := e_r_sqlsl('select distinct NAME from BUCH where' + ' (NAME is not null) and' +
+      ' (NAME<>'''') and' + ' (BETRAG is not null)');
     AlleKonten.sort;
     ComboBox3.Items.Assign(AlleKonten);
     AlleKonten.free;
@@ -4337,12 +4271,9 @@ begin
             FieldByName('TEXT').AssignTo(UeberweisungsText);
             if (UeberweisungsText.count >= 3) then
             begin
-              ABSCHLUSSper :=
-                Date2Long(nextp(UeberweisungsText[UeberweisungsText.count - 3],
+              ABSCHLUSSper := Date2Long(nextp(UeberweisungsText[UeberweisungsText.count - 3],
                 'PER', 1));
-              Abschluss :=
-                StrToDoubledef
-                (UeberweisungsText[pred(UeberweisungsText.count)], 0.005);
+              Abschluss := StrToDoubledef(UeberweisungsText[pred(UeberweisungsText.count)], 0.005);
 
               if DateOK(ABSCHLUSSper) and (Abschluss <> 0.005) then
               begin
@@ -4415,8 +4346,7 @@ begin
         saldo := saldo + FieldByName('BETRAG').AsDouble;
 
         // ...
-        DrawGrid2.RowHeights[RecN] :=
-          max(cPlanY * 3, cPlanY * UeberweisungsText.count) + 2;
+        DrawGrid2.RowHeights[RecN] := max(cPlanY * 3, cPlanY * UeberweisungsText.count) + 2;
         inc(RecN);
         ApiNext;
       end;
@@ -4449,8 +4379,7 @@ begin
     cBUCH := DataModuleDatenbank.nCursor;
     with cBUCH do
     begin
-      sql.add('select TEXT,SKRIPT,BETRAG,DATUM,VORGANG from BUCH where RID=' +
-        inttostr(BUCH_R));
+      sql.add('select TEXT,SKRIPT,BETRAG,DATUM,VORGANG from BUCH where RID=' + inttostr(BUCH_R));
       ApiFirst;
       if not(eof) then
       begin
@@ -4626,8 +4555,8 @@ begin
           break;
         end;
 
-        if (Zahlung - RestForderung >= cGeld_KleinsterBetrag) and
-          (n = pred(sForderungen.count)) then
+        if (Zahlung - RestForderung >= cGeld_KleinsterBetrag) and (n = pred(sForderungen.count))
+        then
         begin
 
           // Überzahlung
@@ -4701,12 +4630,12 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
   begin
 
     // Bisherige (An)zahlungen bestimmen!
-    Zahlungen := -e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' +
-      ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (BETRAG<0)');
+    Zahlungen := -e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' +
+      inttostr(BELEG_R) + ') and' + ' (BETRAG<0)');
 
     // Forderungen bestimmen!
-    Forderungen := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' +
-      ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (BETRAG>0)');
+    Forderungen := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' +
+      inttostr(BELEG_R) + ') and' + ' (BETRAG>0)');
 
     // Forderungs-Details bestimmen! (Wenn vorhanden!)
     DetailForderungen := 0;
@@ -4731,8 +4660,7 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
       while not(eof) do
       begin
         // hier noch die vollständige e_r_PostenPreis Routine
-        Forderung := FieldByName('PREIS').AsDouble * FieldByName('MENGE')
-          .AsInteger;
+        Forderung := FieldByName('PREIS').AsDouble * FieldByName('MENGE').AsInteger;
         DetailForderungen := DetailForderungen + Forderung;
         aDate := datetime2long(FieldByName('AUSFUEHRUNG').AsDate);
         if (Zahlungen > 0) then
@@ -4803,9 +4731,8 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
         RECHNUNG := FieldByName('RECHNUNG').AsString;
         GESAMT_FORDERUNG := FieldByName('LIEFERBETRAG').AsDouble;
 
-        saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG ' + 'where'
-          + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-          inttostr(TEILLIEFERUNG) + ')');
+        saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG ' + 'where' + ' (BELEG_R=' +
+          inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
         if isSomeMoney(saldo) then
         begin
@@ -4916,8 +4843,7 @@ begin
 
     // Summe der Gesamt-Forderungen bilden!
     for n := 0 to pred(sForderungen.count) do
-      GesamteForderung := GesamteForderung +
-        StrToDoubledef(nextp(sForderungen[n], ';', 1), 0);
+      GesamteForderung := GesamteForderung + StrToDoubledef(nextp(sForderungen[n], ';', 1), 0);
 
     cAUSGANGSRECHNUNGEN.free;
   end;
@@ -4932,8 +4858,7 @@ begin
   BeginHourGlass;
 
   // alten Zustand speichern!
-  if (ItemKontoAuszugRIDs.count > 0) and
-    (ItemKontoAuszugRIDs.count = DrawGrid1.RowCount) then
+  if (ItemKontoAuszugRIDs.count > 0) and (ItemKontoAuszugRIDs.count = DrawGrid1.RowCount) then
     BUCH_R := ItemKontoAuszugRIDs[DrawGrid1.Row]
   else
     BUCH_R := cRID_Null;
@@ -4988,8 +4913,7 @@ end;
 procedure TFormBuchhalter.Button9Click(Sender: TObject);
 begin
   with IB_Query1 do
-    FormBelege.setContext(FieldByName('PERSON_R').AsInteger,
-      FieldByName('BELEG_R').AsInteger);
+    FormBelege.setContext(FieldByName('PERSON_R').AsInteger, FieldByName('BELEG_R').AsInteger);
 end;
 
 procedure TFormBuchhalter.CheckBox5Click(Sender: TObject);
@@ -5109,8 +5033,7 @@ begin
       repeat
 
         // ist es gar keine Person, sondern ein EINZUG
-        if (sBuchungsText.IndexOf(cVorgang_LSG + '=' + cIni_Activate) <> -1)
-        then
+        if (sBuchungsText.IndexOf(cVorgang_LSG + '=' + cIni_Activate) <> -1) then
         begin
           ItemDebiRIDs.add(cRID_Person_Lastschrift);
           isGreen := true;
@@ -5126,8 +5049,7 @@ begin
           with cVERSAND do
           begin
             sql.add('select BELEG_R, TEILLIEFERUNG from VERSAND where');
-            sql.add(' RECHNUNG in (' + HugeSingleLine(RechnungsNummern,
-              ',') + ')');
+            sql.add(' RECHNUNG in (' + HugeSingleLine(RechnungsNummern, ',') + ')');
             ApiFirst;
             while not(eof) do
             begin
@@ -5156,8 +5078,7 @@ begin
                 e_r_sql('select coalesce(RECHNUNGSANSCHRIFT_R,PERSON_R) from BELEG where RID='
                 + inttostr(BELEG_R));
               *)
-              PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' +
-                inttostr(BELEG_R));
+              PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
               if (PERSON_R >= cRID_FirstValid) then
                 if (ItemDebiRIDs.IndexOf(PERSON_R) = -1) then
                 begin
@@ -5224,9 +5145,8 @@ begin
               begin
 
                 // Volltreffer im ersten Datensatz?!
-                if (e_r_sqls('select Z_ELV_BANK_NAME from PERSON ' +
-                  'where RID=' + inttostr(ItemDebiRIDs[0])) = cOrgaMonPrivat)
-                then
+                if (e_r_sqls('select Z_ELV_BANK_NAME from PERSON ' + 'where RID=' +
+                  inttostr(ItemDebiRIDs[0])) = cOrgaMonPrivat) then
                   isRose := true
                 else
                   isGreen := true;
@@ -5328,20 +5248,17 @@ begin
   begin
 
     //
-    sBUCHUNGSTEXTE := e_r_sqlt('select TEXT from BUCH where RID=' +
-      inttostr(BUCH_R));
+    sBUCHUNGSTEXTE := e_r_sqlt('select TEXT from BUCH where RID=' + inttostr(BUCH_R));
 
     //
     e_x_sql('update PERSON set ' +
-      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE)
-      + ''', ' +
+      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE) + ''', ' +
       { } ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
-      { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' +
-      'where' + ' RID=' + inttostr(PERSON_R));
+      { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' + 'where' + ' RID=' +
+      inttostr(PERSON_R));
 
-    e_x_sql('update PERSON set ' + ' Z_ELV_BANK_NAME=null ' + 'where' + ' (RID='
-      + inttostr(PERSON_R) + ') and' + ' (Z_ELV_BANK_NAME=''' +
-      cOrgaMonPrivat + ''')');
+    e_x_sql('update PERSON set ' + ' Z_ELV_BANK_NAME=null ' + 'where' + ' (RID=' +
+      inttostr(PERSON_R) + ') and' + ' (Z_ELV_BANK_NAME=''' + cOrgaMonPrivat + ''')');
 
     sBUCHUNGSTEXTE.free;
     DrawGrid3.Refresh;
@@ -5361,13 +5278,11 @@ begin
   if (BUCH_R >= cRID_FirstValid) and (PERSON_R >= cRID_FirstValid) then
   begin
     //
-    sBUCHUNGSTEXTE := e_r_sqlt('select TEXT from BUCH where RID=' +
-      inttostr(BUCH_R));
+    sBUCHUNGSTEXTE := e_r_sqlt('select TEXT from BUCH where RID=' + inttostr(BUCH_R));
 
     //
     e_x_sql('update PERSON set ' +
-      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE)
-      + ''', ' +
+      { } ' Z_ELV_KONTO_INHABER=''' + b_r_Auszug_Inhaber(sBUCHUNGSTEXTE) + ''', ' +
       { } ' Z_ELV_BANK_NAME=''' + cOrgaMonPrivat + ''', ' +
       { } ' Z_ELV_BLZ=''' + b_r_Auszug_BLZBIC(sBUCHUNGSTEXTE) + ''', ' +
       { } ' Z_ELV_KONTO=''' + b_r_Auszug_KontoIBAN(sBUCHUNGSTEXTE) + ''' ' +
@@ -5388,8 +5303,8 @@ begin
   BeginHourGlass;
 
   // ComboBox1: Alle Konten auflisten
-  AlleKonten := e_r_sqlsl('select distinct NAME from BUCH where' +
-    ' (NAME is not null) and' + ' (NAME<>'''') and' + ' (BETRAG is not null)');
+  AlleKonten := e_r_sqlsl('select distinct NAME from BUCH where' + ' (NAME is not null) and' +
+    ' (NAME<>'''') and' + ' (BETRAG is not null)');
   AlleKonten.sort;
   AlleKonten.insert(0, '');
   AlleKonten.add('*');
@@ -5461,13 +5376,11 @@ begin
       si.addwords(
         { } HugeSingleLine(sBuchText, ' ') + ' ' +
         { } HugeSingleLine(sBemerkungText, ' ') + ' ' +
-        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsDouble *
-        100.0))) + ' ' +
+        { } 'B' + inttostr(round(abs(FieldByName('BETRAG').AsDouble * 100.0))) + ' ' +
         { } 'K' + FieldByName('NAME').AsString + ' ' +
         { } FieldByName('KONTO').AsString + ' ' +
         { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
-        { } 'BELEG' + FieldByName('BELEG_R').AsString,
-        pointer(FieldByName('RID').AsInteger));
+        { } 'BELEG' + FieldByName('BELEG_R').AsString, pointer(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
@@ -5750,9 +5663,8 @@ begin
     exit;
   end;
 
-  if doit('Wurde diese Sammellastschrift' + 'nicht erfolgreich durchgeführt?' +
-    #13 + 'Kann dieser Eintrag - ohne jede weitere Aktion - gelöscht werden')
-  then
+  if doit('Wurde diese Sammellastschrift' + 'nicht erfolgreich durchgeführt?' + #13 +
+    'Kann dieser Eintrag - ohne jede weitere Aktion - gelöscht werden') then
   begin
     BeginHourGlass;
     e_w_HBCI_EreignisDel(EREIGNIS_R, 'nicht erfolgreich ausgeführt!');
@@ -5769,8 +5681,7 @@ begin
   EREIGNIS_R := IB_Query2.FieldByName('RID').AsInteger;
   if (EREIGNIS_R >= cRID_FirstValid) then
   begin
-    if doit('Soll dieses Sammellastschriftvolumen wieder aktiv gestellt werden')
-    then
+    if doit('Soll dieses Sammellastschriftvolumen wieder aktiv gestellt werden') then
     begin
       BeginHourGlass;
 
@@ -5810,8 +5721,7 @@ var
   FName: string;
 begin
   EREIGNIS_R := IB_Query2.FieldByName('RID').AsInteger;
-  FName := MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R,
-    8) + '.csv';
+  FName := MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.csv';
   if FileExists(FName) then
     openShell(FName)
   else
@@ -5901,8 +5811,7 @@ begin
   if (BUCH_R >= cRID_FirstValid) then
     if (Edit7.Text <> '') then
     begin
-      e_x_sql('update BUCH set GEGENKONTO=''' + Edit7.Text + ''' where RID=' +
-        inttostr(BUCH_R));
+      e_x_sql('update BUCH set GEGENKONTO=''' + Edit7.Text + ''' where RID=' + inttostr(BUCH_R));
       FormBuchung.doBuche(BUCH_R);
     end;
 end;
@@ -5982,8 +5891,7 @@ begin
   sLine := sForderungen[ForderungINdex];
   BELEG_R := StrToIntDef(nextp(sLine, ';', 2), cRID_Null);
   TEILLIEFERUNG := StrToIntDef(nextp(sLine, ';', 3), cRID_Null);
-  PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' +
-    inttostr(BELEG_R));
+  PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
   FName := RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG);
   if FileExists(FName) then
     openShell(FName)
