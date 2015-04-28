@@ -266,8 +266,8 @@ type
     { Public-Deklarationen }
     procedure UpdateBenutzer(Sender: TObject);
     procedure ReflectUpdateStatus;
-    procedure registerHot(EventName: string; ShiftState: THKModifiers;
-      Key: TVirtKey; Active: boolean = true);
+    procedure registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
+      Active: boolean = true);
     procedure hotEvent;
   end;
 
@@ -426,8 +426,7 @@ var
   r: integer;
   LastRun: TIniFile;
 
-  procedure DisableServer(sParam: string; const Panel: TPanel;
-    var pDisabled: boolean);
+  procedure DisableServer(sParam: string; const Panel: TPanel; var pDisabled: boolean);
   begin
     if IsParam(sParam) then
     begin
@@ -523,8 +522,7 @@ begin
 
     //
     if DebugMode then
-      AppendStringsTofile(sBootSequence, EigeneOrgaMonDateienPfad + iMandant +
-        '-Boot.log');
+      AppendStringsTofile(sBootSequence, EigeneOrgaMonDateienPfad + iMandant + '-Boot.log');
 
     // Arbeiten durchführen, die bei Releaseänderungen gemacht werden müssen
     for r := succ(LastRev) to ThisRev do
@@ -543,7 +541,8 @@ begin
             for m := 0 to pred(ComponentCount) do
               if Components[m] is TPanel then
                 with Components[m] as TPanel do
-                  color := iFormColor;
+                  if ParentColor then
+                    color := iFormColor;
           end;
 
           // Einstellungen für Queries
@@ -625,8 +624,8 @@ begin
     Button56.enabled := (iSchnelleRechnung_PERSON_R >= cRID_FirstValid);
 
     // Scanner
-    JvAppIniFileStorage1.FileName := AnwenderPath+'Formularpositionen.ini';
-    Button49.Enabled := true;
+    JvAppIniFileStorage1.FileName := AnwenderPath + 'Formularpositionen.ini';
+    Button49.enabled := true;
 
     EndHourGlass;
 
@@ -833,7 +832,7 @@ end;
 procedure TFormMain.UpdateBenutzer(Sender: TObject);
 begin
   sBEARBEITER := FormBearbeiter.sBEARBEITER;
-  sBearbeiterKurz := FormBearbeiter.sBEARBEITERKurz;
+  sBearbeiterKurz := FormBearbeiter.sBearbeiterKurz;
   Image1.Picture.Bitmap.Assign(FormBearbeiter.FetchBILDFromRID(sBEARBEITER));
   Label1.caption := MachineID;
   FormQMain.UpdateBenutzer;
@@ -1144,8 +1143,8 @@ begin
   end;
 end;
 
-procedure TFormMain.registerHot(EventName: string; ShiftState: THKModifiers;
-  Key: TVirtKey; Active: boolean);
+procedure TFormMain.registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
+  Active: boolean);
 var
   iHotIndex: integer;
 begin

@@ -78,7 +78,6 @@ procedure e_w_QAuftragEnsure(AUFTRAG_R: Integer);
 
 // Personen Monteure
 function e_r_Person(PERSON_R: Integer): string;
-function e_r_Kunde(PERSON_R: Integer): string;
 function e_r_Person2Zeiler(PERSON_R: Integer): TStringList;
 function e_r_MonteurRIDFromKuerzel(str: string): Integer;
 function e_r_MonteurRIDfromGeraeteID(str: string): Integer;
@@ -710,55 +709,6 @@ begin
     result := 1 + (i div (24 * 3600))
   else
     result := 0;
-end;
-
-function e_r_Kunde(PERSON_R: Integer): string;
-var
-  cPERSON: TdboCursor;
-  cANSCHRIFT: TdboCursor;
-  BEGRIFF: string;
-begin
-  cPERSON := nCursor;
-  with cPERSON do
-  begin
-    sql.Add('select VORNAME,NACHNAME,NUMMER,SUCHBEGRIFF,PRIV_ANSCHRIFT_R from PERSON where RID=' +
-      inttostr(PERSON_R));
-    ApiFirst;
-  end;
-  if not(cPERSON.eof) then
-  begin
-
-    cANSCHRIFT := nCursor;
-    with cANSCHRIFT do
-    begin
-      sql.Add('select PLZ,STATE,ORT,LAND_R,STRASSE,NAME1,NAME2 from ANSCHRIFT where RID=' +
-        cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
-      ApiFirst;
-    end;
-
-    if (noblank(cPERSON.FieldByName('VORNAME').AsString + cPERSON.FieldByName('NACHNAME').AsString)
-      <> '') then
-    begin
-      result :=
-      { } e_r_NameVorname(cPERSON) +
-      { } ' (' +
-      { } cPERSON.FieldByName('NUMMER').AsString +
-      { } ')';
-    end
-    else
-    begin
-      BEGRIFF := cANSCHRIFT.FieldByName('NAME1').AsString;
-      if (BEGRIFF = '') then
-        BEGRIFF := cPERSON.FieldByName('SUCHBEGRIFF').AsString;
-      result := BEGRIFF + ' (' + cPERSON.FieldByName('NUMMER').AsString + ')';
-    end;
-    cANSCHRIFT.free;
-  end
-  else
-  begin
-    result := 'RID ' + inttostr(PERSON_R) + '?';
-  end;
-  cPERSON.free;
 end;
 
 var

@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet1
+    ActivePage = TabSheet7
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -3345,7 +3345,7 @@ object FormBuchhalter: TFormBuchhalter
       end
     end
     object TabSheet7: TTabSheet
-      Caption = 'verz'#246'gerte Lastschriften'
+      Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
       DesignSize = (
@@ -3902,7 +3902,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C010104000900B00110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900B40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

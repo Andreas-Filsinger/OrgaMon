@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.105 (27.04.15) Andreas Filsinger
+
+ Neu: Rechnungen: Erklärung der Farben
+ Neu: b_w_ForderungsAusgleich: Es wird bei Lastschriften die Tabelle Dokument zu Rate gezogen.
+ Neu: Buch: ausstehende Lastschrift: verbesserter Text
+
 Rev 8.104 (27.04.15) Andreas Filsinger
 
  Bug: Rechnungen: Meldung "falscher Komponentenname"

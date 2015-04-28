@@ -1456,11 +1456,19 @@ var
   TEILLIEFERUNG: integer;
   Betrag, saldo: double;
   VALUTA: string;
+  sCSV: TStringList;
   sVOLUMEN: TsTable;
   r: integer;
 begin
+
   sVOLUMEN := TsTable.create;
-  sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.csv');
+  sCSV := e_r_sqlsl('select BEMERKUNG from DOKUMENT where EREIGNIS_R=' + inttostr(EREIGNIS_R));
+  if (sCSV.count > 1) then
+    sVOLUMEN.insertFromStrings(sCSV)
+  else
+    sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8)
+      + '.csv');
+
   with sVOLUMEN do
   begin
 
@@ -1518,6 +1526,7 @@ begin
     { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
 
   sVOLUMEN.Free;
+  sCSV.Free;
 
 end;
 

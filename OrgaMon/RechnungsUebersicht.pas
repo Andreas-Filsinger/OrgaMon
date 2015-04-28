@@ -54,6 +54,9 @@ type
     Button18: TButton;
     CheckBox1: TCheckBox;
     Image4: TImage;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);

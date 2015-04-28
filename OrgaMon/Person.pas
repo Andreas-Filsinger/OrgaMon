@@ -843,7 +843,7 @@ begin
   ersetze('~USER_PWD~', IB_Query1.FieldByName('USER_PWD').AsString, s);
 
   // Names-Ermittlung
-  p := e_r_Kunde(IB_Query1.FieldByName('RID').AsInteger);
+  p := e_r_Person(IB_Query1.FieldByName('RID').AsInteger);
   if (IB_Query1.FieldByName('A13').AsString = 'Y') then
     p := p + ' Fremd';
 
