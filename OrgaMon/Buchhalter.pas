@@ -1153,7 +1153,7 @@ begin
     KontoInhaberName := iKontoInhaber;
     KontoInhaberOrt := '';
     Lastschrift := true;
-    AusfuehrungsDatum := datePlusWorking(DateGet, iKOntoSEPAFrist);
+    AusfuehrungsDatum := datePlusWorking(DateGet, iKontoSEPAFrist);
   end;
 
   SollCount := 0;

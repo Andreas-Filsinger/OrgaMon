@@ -1136,11 +1136,11 @@ begin
     if not(eof) then
     begin
       ScriptText := TStringList.create;
-      FieldByName('SKRIPT').AssignTo(ScriptText);
+      e_r_sqlt(FieldByName('SKRIPT'), ScriptText);
       ScriptText.Values['COLOR'] := '';
       ScriptText.Values['BELEG'] := '';
       edit;
-      FieldByName('SKRIPT').Assign(ScriptText);
+      e_w_sqlt(FieldByName('SKRIPT'),ScriptText);
       FieldByName('EREIGNIS_R').clear;
       FieldByName('PERSON_R').clear;
       FieldByName('GEGENKONTO').clear;
@@ -2424,7 +2424,11 @@ begin
     Params.BeginUpdate;
     Params[0].AsInteger := BELEG_R;
     Params[1].AsInteger := TEILLIEFERUNG;
+{$ifdef fpc}
+    Params.EndUpdate;
+{$else}
     Params.EndUpdate(true);
+{$endif}
     ApiFirst;
     if not(eof) then
     begin

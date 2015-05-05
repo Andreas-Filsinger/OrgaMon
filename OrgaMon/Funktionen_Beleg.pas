@@ -675,8 +675,8 @@ uses
   Funktionen_Buch,
   Funktionen_Auftrag;
 
-const
-  cAllSettingsAnz = 181;
+CONST
+  cAllSettingsAnz = 182;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel',
     'NachlieferungInfo', 'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
     'SicherungsPfad', 'SicherungsPrefix', 'SicherungenAnzahl', 'NichtMehrLieferbarInfo',
@@ -716,7 +716,7 @@ const
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP', 'FotoPfad',
     'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad',
     'VerlagsdatenabgleichPfad', 'KartenProfil', 'SchubladePort', 'TagwacheBaustelle',
-    'memcacheHost', 'Ablage');
+    'memcacheHost', 'Ablage','KontoSEPAFrist');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 1995 - 2014  Andreas Filsinger
+  |    Copyright (C) 1995 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -44,17 +44,18 @@ unit DTA;
   04.01.08 Salden-Objekt
   19.03.08 UTF-8 Codierung der CSV
   29.07.14 SEPA Codierung der CSV
+  30.04.15 SEPA COR1
 
 }
 
 interface
 
 uses
-  classes, Anfix32, DCPcrypt2, DCPmd5;
+  classes, anfix32, DCPcrypt2, DCPmd5;
 
 const
   cDTA_csvSeparator = ';';
-  cDTA_DatumAutomatisch = 0;
+  cDTA_DatumAutomatisch = cIllegalDate;
   cDTA_LastschriftHeader =
   { } 'RID' + cDTA_csvSeparator +
   { } 'Name' + cDTA_csvSeparator +
@@ -102,7 +103,7 @@ const
   { } 'Betrag' + cDTA_csvSeparator +
   { } 'Waehrung';
 
-  cDTA_LastschriftVerzoegerung : integer = 5;
+  cDTA_LastschriftVerzoegerung: integer = 5;
 
 type
   // Kopf-Daten: Eigenes Konto
@@ -115,7 +116,7 @@ type
     KontoInhaberOrt: string[27];
     GlaeubigerID: string[18]; // CRED = Gläubiger-ID
     Lastschrift: boolean;
-    AusfuehrungsDatum : TANFixDate; //
+    AusfuehrungsDatum: TANFixDate; //
   end;
 
   // EREF+ = Ende-zu-Ende-Referenz, xml: <EndToEndId>
@@ -130,12 +131,12 @@ type
     zahlerName: string[27];
     zahlerOrt: string[27];
     VZweck: array [1 .. 7] of string[27]; // SVWZ = Verwendungszweck
-    MandatsDatum: TANfixDate;
-    AusfuehrungsDatum: TANfixDate; // Default aus dem Kopf
+    MandatsDatum: TANFixDate;
+    AusfuehrungsDatum: TANFixDate; // Default aus dem Kopf
     // +MandatID: string[27];
   end;
 
-// Lastschrift Funktionen
+  // Lastschrift Funktionen
 procedure DtaOpen(header: DtaDataType);
 procedure DtaPut(CSatz: CSatzType);
 function DtaClose: TStringList;
@@ -161,10 +162,10 @@ var
 
 const
   NumSet: set of Ansichar = ['0' .. '9'];
-  AlphaSet: set of Ansichar = ['0' .. '9', 'A' .. 'Z', ' ', '.', ',', '&', '-',
-    '+', '*', '%', '/', '$', 'Ä', 'Ö', 'Ü', 'ß'];
-  AlphaSetSEPA: set of Ansichar = ['0' .. '9', 'a' .. 'z', 'A' .. 'Z', ' ', '/',
-    '?', ':', '(', ')', '.', ',', '''', '+', '-'];
+  AlphaSet: set of Ansichar = ['0' .. '9', 'A' .. 'Z', ' ', '.', ',', '&', '-', '+', '*', '%', '/',
+    '$', 'Ä', 'Ö', 'Ü', 'ß'];
+  AlphaSetSEPA: set of Ansichar = ['0' .. '9', 'a' .. 'z', 'A' .. 'Z', ' ', '/', '?', ':', '(', ')',
+    '.', ',', '''', '+', '-'];
 
   {
     ANSI-, UTF-8-, DTA- Kodierungen, SEPA
@@ -277,12 +278,10 @@ begin
     BankName := BankName + fill(' ', 27 - length(BankName));
 
     KontoInhaberName := Ansi2DTA(cutblank(AnsiUpperCase(KontoInhaberName)));
-    KontoInhaberName := KontoInhaberName +
-      fill(' ', 27 - length(KontoInhaberName));
+    KontoInhaberName := KontoInhaberName + fill(' ', 27 - length(KontoInhaberName));
 
     KontoInhaberOrt := Ansi2DTA(cutblank(AnsiUpperCase(KontoInhaberOrt)));
-    KontoInhaberOrt := KontoInhaberOrt +
-      fill(' ', 27 - length(KontoInhaberOrt));
+    KontoInhaberOrt := KontoInhaberOrt + fill(' ', 27 - length(KontoInhaberOrt));
   end;
 end;
 
@@ -300,8 +299,8 @@ begin
     if (length(blz) <> 8) then
     begin
       result := false;
-      LogMessage('ERROR: (RID=' + inttostr(RID) + ') BLZ "' + blz + '" bei ' +
-        zahlerName + ' falsch');
+      LogMessage('ERROR: (RID=' + inttostr(RID) + ') BLZ "' + blz + '" bei ' + zahlerName +
+        ' falsch');
     end;
 
     ktonr := noblank(ValidNum(ktonr));
@@ -311,8 +310,7 @@ begin
     if (betrag <= 0.0) then
     begin
       result := false;
-      LogMessage('ERROR: (RID=' + inttostr(RID) + ') Betrag bei ' + zahlerName +
-        ' ist <=0');
+      LogMessage('ERROR: (RID=' + inttostr(RID) + ') Betrag bei ' + zahlerName + ' ist <=0');
     end;
 
     zahlerName := Ansi2DTA(cutblank(AnsiUpperCase(zahlerName)));
@@ -334,8 +332,8 @@ begin
     if (Count_LeererVerwendungszweck = 7) then
     begin
       result := false;
-      LogMessage('ERROR: (RID=' + inttostr(RID) +
-        ') kein Verwendungszweck angegeben bei ' + zahlerName);
+      LogMessage('ERROR: (RID=' + inttostr(RID) + ') kein Verwendungszweck angegeben bei ' +
+        zahlerName);
     end;
 
     { Datum }
@@ -466,6 +464,7 @@ var
   VZCount: byte;
   hstr: string[27];
   sAusgabe: string;
+  sBetrag: string;
   Count: byte;
   WriteAnz: byte;
 
@@ -479,13 +478,14 @@ begin
     with CSatz do
     begin
 
-      hstr := StrFilter(rtostr(betrag, 13, 2), '0123456789,');
+      sBetrag := StrFilter(rtostr(betrag, 13, 2), '0123456789,');
       sAusgabe :=
-      { } inttostr(RID) + cDTA_csvSeparator + '"' +
-      { } cutblank(zahlerName) + '"' + cDTA_csvSeparator + '"' +
-      { } cutblank(zahlerOrt) + '"' + cDTA_csvSeparator +
+      { } inttostr(RID) + cDTA_csvSeparator +
+      { } '"' + cutblank(zahlerName) + '"' + cDTA_csvSeparator +
+      { } '"' + cutblank(zahlerOrt) + '"' + cDTA_csvSeparator +
       { } blz + cDTA_csvSeparator +
-      { } ktonr + cDTA_csvSeparator + { } hstr + cDTA_csvSeparator +
+      { } ktonr + cDTA_csvSeparator +
+      { } sBetrag + cDTA_csvSeparator +
       { } '"' + cutblank(VZweck[1]) + '"' + cDTA_csvSeparator +
       { } '"' + cutblank(VZweck[2]) + '"' + cDTA_csvSeparator +
       { } '"' + cutblank(VZweck[3]) + '"' + cDTA_csvSeparator +
@@ -642,18 +642,14 @@ begin
 
     str(DtaEC, hstr);
     writeln(BerichtF, 'Anzahl der Datensaetze "C"  : ' + hstr);
-    writeln(BerichtF, 'Summe EURO                  : ' + RealToDta(DtaEBetrag,
-      17) + ' CENT');
-    writeln(BerichtF, 'Kontroll-Summe Kontonummern : ' +
-      CompToDta(DtaEKtoNr, 17));
-    writeln(BerichtF, 'Kontroll-Summe BLZ          : ' +
-      CompToDta(DtaEblz, 17));
+    writeln(BerichtF, 'Summe EURO                  : ' + RealToDta(DtaEBetrag, 17) + ' CENT');
+    writeln(BerichtF, 'Kontroll-Summe Kontonummern : ' + CompToDta(DtaEKtoNr, 17));
+    writeln(BerichtF, 'Kontroll-Summe BLZ          : ' + CompToDta(DtaEblz, 17));
     writeln(BerichtF, '');
     writeln(BerichtF, 'Name der Bank               : ' + DTA2Ansi(BankName));
     writeln(BerichtF, 'BLZ                         : ' + blz);
     writeln(BerichtF, 'Konto-Nummer                : ' + ktonr);
-    writeln(BerichtF, 'Auftraggeber                : ' +
-      DTA2Ansi(KontoInhaberName));
+    writeln(BerichtF, 'Auftraggeber                : ' + DTA2Ansi(KontoInhaberName));
     writeln(BerichtF, '');
     writeln(BerichtF, '');
     writeln(BerichtF, '_____________________________________________________');
