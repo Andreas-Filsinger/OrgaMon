@@ -10,6 +10,13 @@
 Eine Web-Kassenanwendung mit JSON Anbindung an den OrgaMon
 // INFO END
 
+Rev 1.022 (07.05.15) Andreas Filsinger
+
+ Neu: Tasten- und Funktions-Pieps Töne
+ Neu: Multiplikations Taste
+ Neu: Sortimentesanzeige jetzt grösser und unten
+ Neu: Nach "EC", "Bar", Disable der Buttons
+
 Rev 1.021 (28.09.10) Andreas Filsinger
 
  Bug: <-: Berechnet zumindest bei einer Position das Minus

@@ -212,6 +212,11 @@ const
   cBON_Beleg_Bearbeiter = 'BEARBEITER';
   cBON_Beleg_Gegeben = 'GEGEBEN';
 
+  // WEB Kasse
+  cKasse_Wiederholung = 'Rep';
+  cKasse_Faktor = ' mal ...';
+  cKasse_Sortiment_Delimiter = ':';
+
 type
   TDOM_Reference = integer;
 
