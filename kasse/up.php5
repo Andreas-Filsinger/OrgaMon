@@ -1,15 +1,15 @@
 <?php
 
-// Kasse Rev 1.021
-
+// Initialisierung
 date_default_timezone_set('Europe/Berlin');
-mb_internal_encoding("UTF-8");
+mb_internal_encoding("iso-8859-1");
+mb_http_output("iso-8859-1");
+header('Content-Type: application/jsonrequest; charset=iso-8859-1');
 ini_set('ibase.timestampformat', "%d.%m.%Y %H:%M:%S");
 ini_set('ibase.dateformat', "%d.%m.%Y");
 ini_set('ibase.timeformat', "%H:%M:%S");
 
-header("Content-type: application/jsonrequest");
-
+// Tools
 include("i_config.inc.php5");
 include("t_errorlist.inc.php5");
 include("t_xmlrpc.inc.php5");
@@ -19,95 +19,102 @@ include("t_cryption.inc.php5");
 $server_info = array();
 $debug = "";
 
-function base_plug() {
-    global
-    $server_info, $debug;
+function base_plug()
+{ 
+  global 
+   $server_info, $debug;
 
-    $xmlcon = txmlrpc::create(XMLRPCHost, XMLRPCPort, XMLRPCPath, 5);
-    $response = $xmlcon->sendRequest("abu.BasePlug");
+  $xmlcon = txmlrpc::create(XMLRPCHost, XMLRPCPort, XMLRPCPath, 5);
+  $response = $xmlcon->sendRequest("abu.BasePlug");
 
-    if (($response != NULL) AND ( !$xmlcon->error)) {
-
-        $server_info = $response;
-        $xmlrpc = true;
-    } else {
-        $xmlrpc = false;
-    }
-
-    return $xmlrpc;
+  if (($response != NULL) AND (!$xmlcon->error)) {
+  
+    $server_info = $response;
+    $xmlrpc = true;  
+  }	else { 
+   $xmlrpc = false; 
+  }
+  
+  return $xmlrpc;
 }
 
-function decodePassword($password) {
-    if (strlen($password) == 48) { // Password ist verschlï¿½sselt
-        $hex = $password;
-        $str = "";
-        while (strlen($hex) > 1) {
-            $str .= chr(hexdec(substr($hex, 0, 2)));
-            $hex = substr($hex, 2);
-        }
-        $cryption = new tcryption("anfisoftOrgaMon");
-        $result = trim($cryption->decrypt($str));
-        unset($cryption);
-    } else {  // Password ist in Klartext
-        $result = $password;
+function decodePassword($password) 
+  { if (strlen($password) == 48) // Password ist verschlüsselt
+    { $hex = $password;
+      $str = "";
+      while (strlen($hex) > 1) 
+	  { $str .= chr(hexdec(substr($hex,0,2)));
+		$hex = substr($hex,2);
+      }
+	  $cryption = new tcryption("anfisoftOrgaMon");
+	  $result = trim($cryption->decrypt($str));
+	  unset($cryption);
+    } 
+	else  // Password ist in Klartext
+	{ $result = $password;
     }
-    return $result;
+	return $result;
 }
 
-function logPOST() {
+function logPOST(){
 
-    global
-    $HTTP_RAW_POST_DATA;
+ global
+  $HTTP_RAW_POST_DATA;  
 
     // Log 
-    $fp = fopen("kasse.log.txt", "a");
-    flock($fp, LOCK_EX);
-    fputs($fp, "--------------------------- " . date("d.m.Y - H:i:s") . "\n\r");
+    $fp = fopen("kasse.log.txt","a");
+    flock($fp,LOCK_EX);
+	fputs($fp,"--------------------------- " . date("d.m.Y - H:i:s") . "\n\r");
 //	fputs($fp,$server_info[19] . "@" . $server_info[0] . "\n\r");
-    fputs($fp, urldecode($HTTP_RAW_POST_DATA) . "\n\r");
-    flock($fp, LOCK_UN);
+    fputs($fp,urldecode($HTTP_RAW_POST_DATA) . "\n\r");
+    flock($fp,LOCK_UN);
     fclose($fp);
+
 }
-
-logPOST();
-
-if (base_plug() == true) {
-
-
+  
+ if (base_plug() == true) { 
+ 
+    logPOST();
+ 
     while (true) {
+	
+    // Datenbank öffnen
+    $ibase = tibase::create($server_info[0],
+                           $server_info[17],
+		                   decodePassword($server_info[19]) );
+	if (is_null($ibase)) {
+      echo ("{ ERROR: \"".$server_info[17]." konnte Datenbank '".$server_info[0]."' nicht öffnen\" }");
+	  break;
+	}
+						   
+	// Ereignis-RID erzeugen!
+	$rid = $ibase->gen_id("EREIGNIS_GID");
+	if ($rid<1) {
+      echo ("{ ERROR: \"Ereignis RID nicht erhalten\" }");
+	  break;
+	}
 
-        // Datenbank ï¿½ffnen
-        $ibase = tibase::create($server_info[0], $server_info[17], decodePassword($server_info[19]));
-        if (is_null($ibase)) {
-            echo ("{ ERROR: \"" . $server_info[17] . " konnte Datenbank '" . $server_info[0] . "' nicht oeffnen\" }");
-            break;
-        }
+	// Anfrage reinschreiben Firebird Server 2.x
+    if (!$ibase->insert(
+	  "insert into EREIGNIS (RID,ART,INFO) values (" .
+	  " " . $rid . "," .
+	  " 17," .
+	  " '" . $HTTP_RAW_POST_DATA . "')")) {
+      echo ("{ ERROR: \"Einfügen in die Datenbank ohne Erfolg\" }");
+	  break;
+	} 
+	unset($ibase);
 
-        // Ereignis-RID erzeugen!
-        $rid = $ibase->gen_id("EREIGNIS_GID");
-        if ($rid < 1) {
-            echo ("{ ERROR: \"Ereignis RID nicht erhalten\" }");
-            break;
-        }
+    // Ergebnis JSON Formatiert ausgeben
+    echo ("{ Buch: \"" . $rid . "\" }");
+	unset($rid);
 
-        // Anfrage reinschreiben Firebird Server 2.x
-        if (!$ibase->insert(
-                        "insert into EREIGNIS (RID,ART,INFO) values (" .
-                        " " . $rid . "," .
-                        " 17," .
-                        " '" . $HTTP_RAW_POST_DATA . "')")) {
-            echo ("{ ERROR: \"Einfï¿½gen in die Datenbank ohne Erfolg\" }");
-            break;
-        }
-        unset($ibase);
+    break;
+	 
+	}
 
-        // Ergebnis JSON Formatiert ausgeben
-        echo ("{ Buch: \"" . $rid . "\" }");
-        unset($rid);
+ } else { 
+  echo ("{ ERROR: \"XMLRPC läuft nicht\" }");
+ }
 
-        break;
-    }
-} else {
-    echo ("{ ERROR: \"XMLRPC lï¿½uft nicht\" }");
-}
 ?>

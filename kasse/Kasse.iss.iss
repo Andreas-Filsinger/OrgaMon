@@ -6,31 +6,33 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=kasse
-AppVerName=kasse 1.021
-AppCopyright=Copyright (C) 2009-2010 Thorsten Schroff / Andreas Filsinger
+AppVerName=kasse 1.022
+AppCopyright=Copyright (C) 2009-2015 Thorsten Schroff / Andreas Filsinger
 DefaultDirName={userdocs}\htdocs\kasse
 DefaultGroupName=kasse
 LicenseFile=gnu-gpl-twebshop-dev.txt
 DisableStartupPrompt=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-Kasse-1.021
-AppVersion=1.021
+OutputBaseFilename=Setup-Kasse-1.022
+AppVersion=1.022
 ChangesAssociations=no
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
 
 [Dirs]
-; Verzeichnisse
-; Name: "{app}\admin\updates"
+Name: "{app}\OLAP"
 
 [Files]
 ; Anwendung
 Source: "up.php5"; DestDir: "{app}";
 Source: "i_config.inc.php5-dist"; DestDir: "{app}"; DestName: "i_config.inc.php5"; Flags: OnlyIfdoesntexist;
 Source: "index.html"; DestDir: "{app}";
-Source: "kasse.html"; DestDir: "{app}";
 Source: "gnu-gpl-twebshop-dev.txt"; DestDir: "{app}";
+
+; für OrgaMon - OLAP-Verzeichnis
+Source: "kasse.html"; DestDir: "{app}\OLAP";
+Source: "Tagwache.Kasse-JavaScript.OLAP.txt"; DestDir: "{app}\OLAP";
 
 ; Includes
 Source: "..\PHPIncludes\t_cryption.inc.php5"; DestDir: "{app}";

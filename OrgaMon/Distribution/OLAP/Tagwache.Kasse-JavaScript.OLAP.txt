@@ -1,0 +1,93 @@
+--
+-- Generiert aus dem aktuellen ARTIKEL / SORTIMENT 
+-- Datenbestand die Java-Script Konstanten
+-- (c) 08.2010 Andreas Filsinger 
+--
+
+select
+ KASSE, 
+ TITEL, 
+ CAST(EURO*100 as BIGINT) as PREIS 
+from 
+ ARTIKEL 
+where 
+ (KASSE is not null) and (KASSE not like '%''%') 
+
+append 
+
+select
+ ARTIKEL_AA.KASSE,
+ ARTIKEL.TITEL||' ['||AUSGABEART.NAME||']' as TITEL,
+ CAST(ARTIKEL_AA.EURO*100 as BIGINT) as PREIS
+from 
+ ARTIKEL_AA
+join
+ ARTIKEL
+on
+ (ARTIKEL_AA.ARTIKEL_R=ARTIKEL.RID)
+join
+ AUSGABEART
+on
+ (ARTIKEL_AA.AUSGABEART_R=AUSGABEART.RID)    
+where
+ ARTIKEL_AA.KASSE is not null 
+
+sort
+numeric KASSE
+-
+
+list
+
+numeric KASSE
+TITEL
+numeric PREIS
+-
+
+nop
+nop
+nop
+   
+select
+ BEZEICHNUNG
+from 
+ SORTIMENT
+where
+ (ZOLLCODE is not null) 
+order by 
+ cast(ZOLLCODE as INTEGER)
+
+list
+
+BEZEICHNUNG
+-
+
+select 
+ CAST(CURRENT_TIMESTAMP as VARCHAR(30)) as ERZEUGT,
+ '*/' as KOMMENTAR
+from 
+ RDB$$DATABASE
+ 
+add
+
+Code=new Array $1;
+Titel=new Array $2;
+Preis=new Array $3;
+Sortiment=new Array $4;/*
+- 
+
+html kasse
+
+save W:\Kasse\index.html
+-
+
+return
+
+-
+
+excel
+
+open
+-
+
+  
+ 

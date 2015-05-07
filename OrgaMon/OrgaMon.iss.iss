@@ -7,8 +7,8 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 PrivilegesRequired=Admin
 AppName=OrgaMon
-AppVerName=OrgaMon 8.096
-AppCopyright=Copyright (C) 1988-2011 Andreas Filsinger
+AppVerName=OrgaMon 8.105
+AppCopyright=Copyright (C) 1988-2015 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8096
-AppVersion=8.096
-VersionInfoVersion=8.096.0.0
+OutputBaseFilename=Setup-OrgaMon-8105
+AppVersion=8.105
+VersionInfoVersion=8.105.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -43,8 +43,8 @@ Name: "{userdocs}\OrgaMon\Daten\anfisoft"; Flags: uninsneveruninstall
 [Files]
 
 ; Anwendungen
-Source: "C:\Program Files (x86)\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "C:\Program Files (x86)\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "C:\Program Files\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "C:\Program Files\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
 Source: "Distribution\Hilfe\OrgaMon-VNC.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
