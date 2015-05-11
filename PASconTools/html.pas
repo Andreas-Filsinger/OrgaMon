@@ -430,6 +430,15 @@ function THTMLTemplate.CheckReplaceOne(n: integer;
     result := fill('0', StellenAnz - length(result)) + result;
   end;
 
+  function zeitstempel_F(s: string): string;
+  begin
+    // JJJJ "-" MM "-" TT "T" HH ":" MM ":" SS ":"
+    // Beispiel: 2015-05-11T10:23:18
+    //
+    result := dTimeStamp(mkDateTime(s));
+    ersetze(' ','T',result);
+  end;
+
   function zeit_F(s: string): string;
   var
     DiagDump: string;
@@ -584,6 +593,12 @@ begin
         continue;
       end;
 
+      if isCommand('Zeitstempel') then
+      begin
+        NewValue := zeitstempel_F(NewValue);
+        continue;
+      end;
+
       if isCommand('Zeit') then
       begin
         NewValue := zeit_F(NewValue);
@@ -603,6 +618,12 @@ begin
           Rest := '';
           strings[n] := '';
         end;
+        continue;
+      end;
+
+      if isCommand('^T') then
+      begin
+        ersetze('  ',' ',strings,n);
         continue;
       end;
 
