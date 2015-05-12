@@ -142,7 +142,7 @@ type
     // +MandatID: string[27];
   end;
 
-  // Lastschrift Funktionen
+// Lastschrift Funktionen
 procedure DtaOpen(header: DtaDataType);
 procedure DtaPut(CSatz: CSatzType);
 function DtaClose: TStringList;
@@ -153,7 +153,7 @@ function DtaUmsatzMD5(UmsatzLine: string): string;
 implementation
 
 uses
-  SysUtils, html;
+  SysUtils, Geld, html;
 
 var
 
@@ -197,6 +197,8 @@ var
   DtaListeAnsi: TextFile; // ANSI Zeichensatz
   DtaListeUTF8: TextFile; // UTF8 Zeichensatz
   DtaListeSEPA: TextFile; // SEPA Zeichensatz
+  PainDoc : THTMLTemplate;
+
 
 function DTA2Ansi(s: AnsiString): string;
 var
@@ -399,6 +401,7 @@ end;
 procedure DtaOpen(header: DtaDataType);
 var
   hstr: string;
+  sPath: string;
 begin
   // Log vorbereiten
   if assigned(sLog) then
@@ -414,7 +417,7 @@ begin
     assignFile(DtaDatei, FName);
     rewrite(DtaDatei);
 
-    { "LOG" Datei fÅr die Ablage }
+    { Verschiedene Auspr‰gungen der Datei }
     assignFile(DtaListeAnsi, FName + '.CSV');
     rewrite(DtaListeAnsi);
     assignFile(DtaListeUTF8, FName + '.UTF-8.csv');
@@ -428,6 +431,12 @@ begin
     writeln(DtaListeUTF8, cDTA_LastschriftPosten_Header);
     writeln(DtaListeRAW, cDTA_LastschriftPosten_Header);
     writeln(DtaListeSEPA, cDTA_LastschriftPosten_Header);
+
+    // SEPA
+    sPath := ExtractFilePath(FName)+'\';
+    PainDoc := THTMLTemplate.create;
+    PainDoc.LoadFromFile(sPath+'..\HTML Vorlagen\COR1.xml');
+
 
     { Schreibe Datensatz A }
     if Lastschrift then
