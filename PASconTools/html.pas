@@ -623,7 +623,7 @@ begin
 
       if isCommand('^T') then
       begin
-        ersetze('  ',' ',strings,n);
+        ersetze('  ',' ',self,n);
         continue;
       end;
 

@@ -44,7 +44,7 @@ unit DTA;
   04.01.08 Salden-Objekt
   19.03.08 UTF-8 Codierung der CSV
   29.07.14 SEPA Codierung der CSV
-  30.04.15 SEPA COR1
+  30.04.15 SEPA COR1 xml
 
 }
 
@@ -62,7 +62,7 @@ uses
 const
   cDTA_csvSeparator = ';';
   cDTA_DatumAutomatisch = cIllegalDate;
-  cDTA_LastschriftHeader =
+  cDTA_LastschriftPosten_Header =
   { } 'RID' + cDTA_csvSeparator +
   { } 'Name' + cDTA_csvSeparator +
   { } 'Ort' + cDTA_csvSeparator +
@@ -79,7 +79,7 @@ const
   { } 'AusfuehrungsDatum' + cDTA_csvSeparator +
   { } 'MandatsDatum';
 
-  cDTA_UmsatzHeader =
+  cDTA_Umsatz_Header =
   { } 'PosNo' + cDTA_csvSeparator + // *** Veränderlich ***
   { } 'Datum' + cDTA_csvSeparator +
   { } 'Valuta' + cDTA_csvSeparator + // *** Veränderlich ***
@@ -105,7 +105,7 @@ const
   { } 'GlaeubigerID' + cDTA_csvSeparator +
   { } 'EndeZuEndeReferenz';
 
-  cDTA_SaldoHeader =
+  cDTA_Saldo_Header =
   { } 'Betrag' + cDTA_csvSeparator +
   { } 'Waehrung';
 
@@ -153,7 +153,7 @@ function DtaUmsatzMD5(UmsatzLine: string): string;
 implementation
 
 uses
-  SysUtils;
+  SysUtils, html;
 
 var
 
@@ -424,10 +424,10 @@ begin
     assignFile(DtaListeSEPA, FName + '.SEPA.csv');
     rewrite(DtaListeSEPA);
 
-    writeln(DtaListeAnsi, cDTA_LastschriftHeader);
-    writeln(DtaListeUTF8, cDTA_LastschriftHeader);
-    writeln(DtaListeRAW, cDTA_LastschriftHeader);
-    writeln(DtaListeSEPA, cDTA_LastschriftHeader);
+    writeln(DtaListeAnsi, cDTA_LastschriftPosten_Header);
+    writeln(DtaListeUTF8, cDTA_LastschriftPosten_Header);
+    writeln(DtaListeRAW, cDTA_LastschriftPosten_Header);
+    writeln(DtaListeSEPA, cDTA_LastschriftPosten_Header);
 
     { Schreibe Datensatz A }
     if Lastschrift then
@@ -628,7 +628,7 @@ begin
   closeFile(DtaListeRAW);
   closeFile(DtaListeSEPA);
 
-  { Datentr„ger-Begleitzettel }
+  { Datenträger-Begleitzettel }
   with DtaData do
   begin
     assignFile(BerichtF, FName + '.ini');
@@ -681,7 +681,7 @@ begin
 
   if (DtaMD5_UmsatzHeader = nil) then
   begin
-    DtaMD5_UmsatzHeader := split(cDTA_UmsatzHeader);
+    DtaMD5_UmsatzHeader := split(cDTA_Umsatz_Header);
     DtaMD5_BlackList := split('PosNo;Valuta');
     DtaMD5_MD5 := TDCP_md5.create(nil);
   end;
