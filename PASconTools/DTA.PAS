@@ -48,10 +48,61 @@ unit DTA;
 
 }
 
-{
+{ SEPA-COR1-Beispiel
+
  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
  <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd">
- <CstmrDrctDbtInitn><GrpHdr><MsgId>2015-05-08T16:30:44:0389</MsgId><CreDtTm>2015-05-08T16:30:44</CreDtTm><NbOfTxs>1</NbOfTxs><CtrlSum>0.12</CtrlSum><InitgPty><Nm>Andreas und Susanne Filsing</Nm></InitgPty></GrpHdr><PmtInf><PmtInfId>2015-05-08T16:30:44:0389</PmtInfId><PmtMtd>DD</PmtMtd><NbOfTxs>1</NbOfTxs><CtrlSum>0.12</CtrlSum><PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl><LclInstrm><Cd>COR1</Cd></LclInstrm><SeqTp>FRST</SeqTp></PmtTpInf><ReqdColltnDt>1999-01-01</ReqdColltnDt><Cdtr><Nm>Andreas und Susanne Filsing</Nm></Cdtr><CdtrAcct><Id><IBAN>DE14660617240010504104</IBAN></Id></CdtrAcct><CdtrAgt><FinInstnId><BIC>GENODE61WGA</BIC></FinInstnId></CdtrAgt><ChrgBr>SLEV</ChrgBr><DrctDbtTxInf><PmtId><EndToEndId>E2E0</EndToEndId></PmtId><InstdAmt Ccy="EUR">0.12</InstdAmt><DrctDbtTx><MndtRltdInf><MndtId>RID123</MndtId><DtOfSgntr>2015-05-08</DtOfSgntr><AmdmntInd>false</AmdmntInd></MndtRltdInf><CdtrSchmeId><Id><PrvtId><Othr><Id>DE70HIB00000296984</Id><SchmeNm><Prtry>SEPA</Prtry></SchmeNm></Othr></PrvtId></Id></CdtrSchmeId></DrctDbtTx><DbtrAgt><FinInstnId><BIC>GENODE61WGA</BIC></FinInstnId></DbtrAgt><Dbtr><Nm>Romeo Filsinger</Nm></Dbtr><DbtrAcct><Id><IBAN>DE02660617240030936400</IBAN></Id></DbtrAcct><RmtInf><Ustrd>SEPA COR1 Test</Ustrd></RmtInf></DrctDbtTxInf></PmtInf></CstmrDrctDbtInitn></Document>'
+  <CstmrDrctDbtInitn>
+   <GrpHdr>
+    <MsgId>2015-05-08T16:30:44:0389</MsgId>
+    <CreDtTm>2015-05-08T16:30:44</CreDtTm>
+    <NbOfTxs>1</NbOfTxs>
+    <CtrlSum>0.12</CtrlSum>
+    <InitgPty><Nm>Andreas und Susanne Filsing</Nm></InitgPty>
+   </GrpHdr>
+   <PmtInf>
+    <PmtInfId>2015-05-08T16:30:44:0389</PmtInfId>
+    <PmtMtd>DD</PmtMtd>
+    <BtchBookg>true</BtchBookg>
+    <NbOfTxs>1</NbOfTxs>
+    <CtrlSum>0.12</CtrlSum>
+    <PmtTpInf>
+     <SvcLvl><Cd>SEPA</Cd></SvcLvl>
+     <LclInstrm><Cd>COR1</Cd></LclInstrm>
+     <SeqTp>FRST</SeqTp>
+    </PmtTpInf>
+    <ReqdColltnDt>1999-01-01</ReqdColltnDt>
+    <Cdtr><Nm>Andreas Filsinger</Nm></Cdtr>
+    <CdtrAcct>
+     <Id><IBAN>DE14660617240000000000</IBAN></Id>
+    </CdtrAcct>
+    <CdtrAgt><FinInstnId><BIC>GENODE61WGA</BIC></FinInstnId></CdtrAgt>
+    <ChrgBr>SLEV</ChrgBr>
+    <DrctDbtTxInf>
+     <PmtId><EndToEndId>E2E0</EndToEndId></PmtId>
+     <InstdAmt Ccy="EUR">0.12</InstdAmt>
+     <DrctDbtTx>
+      <MndtRltdInf>
+       <MndtId>RID123</MndtId>
+       <DtOfSgntr>2015-05-08</DtOfSgntr>
+       <AmdmntInd>false</AmdmntInd>
+      </MndtRltdInf>
+      <CdtrSchmeId><Id><PrvtId>
+       <Othr>
+        <Id>DE70HIB00000200000</Id>
+        <SchmeNm><Prtry>SEPA</Prtry></SchmeNm>
+       </Othr>
+      </PrvtId></Id></CdtrSchmeId>
+     </DrctDbtTx>
+     <DbtrAgt><FinInstnId><BIC>GENODE61WGA</BIC></FinInstnId></DbtrAgt>
+     <Dbtr><Nm>Romeo Filsinger</Nm></Dbtr>
+     <DbtrAcct><Id><IBAN>DE02660617240000000000</IBAN></Id></DbtrAcct>
+     <RmtInf><Ustrd>SEPA COR1 Test</Ustrd></RmtInf>
+    </DrctDbtTxInf>
+   </PmtInf>
+  </CstmrDrctDbtInitn>
+ </Document>'
+
 }
 
 interface
