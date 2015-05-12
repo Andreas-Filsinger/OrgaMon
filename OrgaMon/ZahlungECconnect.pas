@@ -93,14 +93,12 @@ type
     { Private-Deklarationen }
     KeyCaptureMode: boolean;
     sKeyLog: TStringList;
-    sBLZ: TSearchStringList;
     LastCard: string;
     LastschriftFName: string;
     Betrag: double;
     VerwendungsZweck: string;
     Name1, Name2: string;
 
-    function _bank(BLZ: string): string;
     function _blz: string;
     function _konto: string;
     function _gueltig: string;
@@ -424,7 +422,7 @@ begin
   BeginHourGlass;
 
   // BLZ in Bankname umsetzen prüfen
-  StaticText1.caption := _bank(Edit_BLZ.text);
+  StaticText1.caption := getBank(Edit_BLZ.text);
   Edit8.text := '';
 
   // Person dazu ermitteln!
@@ -579,32 +577,6 @@ begin
   fillContext;
 end;
 
-function TFormZahlungECconnect._bank(BLZ: string): string;
-var
-  sDir: TStringList;
-  k: integer;
-begin
-
-  //
-  if not(assigned(sBLZ)) then
-  begin
-    sBLZ := TSearchStringList.create;
-    sDir := TStringList.create;
-    dir(SystemPath + '\BLZ_*.txt', sDir, false);
-    sDir.sort;
-    if (sDir.count > 0) then
-      sBLZ.LoadFromFile(SystemPath + '\' + sDir[pred(sDir.count)]);
-    sDir.free;
-  end;
-
-  //
-  k := sBLZ.findinc(BLZ);
-  if (k <> -1) then
-    result := cutblank(copy(sBLZ[k], 10, 58))
-  else
-    result := '';
-
-end;
 
 function TFormZahlungECconnect._blz: string;
 begin

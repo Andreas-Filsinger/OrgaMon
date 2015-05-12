@@ -121,20 +121,25 @@ function isEqual(Betrag1, Betrag2: double): boolean;
 function isOther(Betrag1, Betrag2: double): boolean;
 function isNoMoney(Betrag: double): boolean; // = cGeld_KeinElement
 
-function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
-
-// String-Routinen
+// String-Funktionen
 function StrToMoney(x: string): double; // strto
 function StrToMoneyDef(x: string; d: double = cGeld_Zero): double;
 function MoneyToStr(d: double): string;
 
-// Object Routinen
+// Object-Funktionen
 function MoneyAsObject(Wert: double): TObject;
 function ObjectAsMoney(Wert: TObject): double;
 
-// Integer Routinen
+// Integer-Funktionen
 function MoneyAsCent(Wert: double): integer;
 function CentAsMoney(Wert: integer): double;
+
+// Banken-Funktionen
+function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
+function checkIBAN(const sIban: String): boolean;
+function calcIBAN_DE(const sBlz, sKto: String): String;
+function getBIC(BLZ_oder_IBAN: string): string;
+function getBank(BLZ_oder_IBAN: string): string;
 
 type
   // Salden-Objekt, zur Bestimmung des Endsaldo eines Kontos
@@ -402,8 +407,8 @@ begin
       end;
 
       // Info
-      log(cINFOText, format('Konto %s;%.1f;%.3f;%.3f;%.3f', [Konto, Satz, summe,
-        NettoSumme, MwStSumme]));
+      log(cINFOText, format('Konto %s;%.1f;%.3f;%.3f;%.3f', [Konto, Satz, summe, NettoSumme,
+        MwStSumme]));
 
     end;
 end;
@@ -562,6 +567,24 @@ end;
 var
   sBLZs: TSearchStringList = nil;
 
+procedure ensureBLZ;
+begin
+  if not(assigned(sBLZs)) then
+  begin
+    sBLZs := TSearchStringList.Create;
+    if (iSystemPath <> '') then
+    begin
+      dir(iSystemPath + '\BLZ_*.txt', sBLZs, false);
+      if (sBLZs.count > 0) then
+      begin
+        sBLZs.sort;
+        sBLZs.LoadFromFile(iSystemPath + '\' + sBLZs[pred(sBLZs.count)]);
+      end;
+    end;
+  end;
+
+end;
+
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
 
   procedure log(s: string);
@@ -616,19 +639,7 @@ begin
     end;
 
     //
-    if not(assigned(sBLZs)) then
-    begin
-      sBLZs := TSearchStringList.Create;
-      if (iSystemPath <> '') then
-      begin
-        dir(iSystemPath + '\BLZ_*.txt', sBLZs, false);
-        if (sBLZs.count > 0) then
-        begin
-          sBLZs.sort;
-          sBLZs.LoadFromFile(iSystemPath + '\' + sBLZs[pred(sBLZs.count)]);
-        end;
-      end;
-    end;
+    ensureBLZ;
 
     //
     NameLautBundesBank := '';
@@ -647,18 +658,110 @@ begin
     end
     else
     begin
-      log('WARNING: Es liegt kein BLZ Verzeichnis vor!');
+      log('WARNING: Es liegt keine BLZ_ Datei im System-Verzeichnis vor!');
     end;
 
     //
     if (NameLautBundesBank <> '') then
       if (AnsiUpperCase(Name) <> AnsiUpperCase(NameLautBundesBank)) then
-        log('WARNING: Der Name der Bank sollte "' + NameLautBundesBank +
-          '" sein, ist aber "' + Name + '"!');
+        log('WARNING: Der Name der Bank sollte "' + NameLautBundesBank + '" sein, ist aber "' +
+          Name + '"!');
 
     result := true;
   until true;
 
+end;
+
+// Prüfung einer IBAN auf formale Korrektheit (ohne Prüfung der Gültigkeit des Länderkürzels)
+// Autor: Dr. Michael Schramm
+function checkIBAN(const sIban: String): boolean;
+var
+  k, n, rest: integer;
+  c: char;
+begin
+  result := false;
+  n := length(sIban);
+  if (n < 5) or (n > 34) then
+    exit;
+  rest := 0;
+  k := 5;
+  repeat // Zeichen der IBAN in geänderter Reihenfolge per Modulo-97 prüfen
+    c := sIban[k];
+    case c of
+      '0' .. '9':
+        rest := (rest * 10 + ord(c) - 48) mod 97; // Ziffer als solche einbeziehen
+      'A' .. 'Z':
+        rest := (rest * 100 + ord(c) - 55) mod 97 // 'A' wie '10, 'B' wie '11' usw.
+    else
+      exit
+    end;
+    inc(k);
+    if (k > n) then
+      k := 1;
+  until (k = 5);
+  result := (rest = 1)
+end;
+
+// IBAN für deutsches Konto aus BLZ und Kontonummer konstruieren
+// Autor: Dr. Michael Schramm
+function calcIBAN_DE(const sBlz, sKto: String): String;
+var
+  k, i: integer;
+  sK, s: String;
+begin
+  result := '';
+  k := length(sKto);
+  if (k = 0) or (k > 10) or (length(sBlz) <> 8) then
+    exit;
+  if k = 10 then
+    sK := sKto
+  else
+    sK := stringOfChar('0', 10 - k) + sKto;
+  s := sBlz + sK + '131400'; // "D" "E" "*"
+  i := 0;
+  for k := 1 to 24 do
+  begin
+    i := (10 * i + ord(s[k]) - 48) mod 97;
+  end;
+  s := intToStr(98 - i);
+  if length(s) = 1 then
+    s := '0' + s;
+  result := 'DE' + s + sBlz + sK
+end;
+
+function getBIC(BLZ_oder_IBAN: string): string;
+var
+  BLZ: string;
+  i: integer;
+begin
+  if (pos('DE', blz_oder_IBAN) = 1) then
+    BLZ := copy(blz_oder_IBAN, 5, 6)
+  else
+    BLZ := blz_oder_IBAN;
+  ensureBLZ;
+  i := sBLZs.findinc(BLZ);
+  if (i <> -1) then
+    result := copy(sBLZs[i], 140, 11)
+  else
+    result := '';
+end;
+
+function getBank(BLZ_oder_IBAN: string): string;
+var
+  sDir: TStringList;
+  i: integer;
+  BLZ: string;
+begin
+  if (pos('DE', blz_oder_IBAN) = 1) then
+    BLZ := copy(blz_oder_IBAN, 5, 6)
+  else
+    BLZ := blz_oder_IBAN;
+  ensureBLZ;
+  i := sBLZs.findinc(BLZ);
+  if (i <> -1) then
+    result := cutblank(copy(sBLZs[i], 10, 58))
+  else
+    result := '';
 end;
 
 function StrToMoney(x: string): double; // strto

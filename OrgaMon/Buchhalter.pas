@@ -1090,8 +1090,12 @@ begin
   RIDs_Used := TgpIntegerList.Create;
 
   // defaults aus den Zahlungsarten
-  _UeberweisungsSettings := e_r_sqlt('select EINSTELLUNGEN from ZAHLUNGTYP ' + 'where' +
-    ' (AUTOZAHLUNG=''' + cC_True + ''') ' + 'order by ' + ' BEZEICHNUNG');
+  _UeberweisungsSettings := e_r_sqlt(
+    { } 'select EINSTELLUNGEN from ZAHLUNGTYP ' +
+    { } 'where' +
+    { } ' (AUTOZAHLUNG=''' + cC_True + ''') ' +
+    { } 'order by ' +
+    { } ' BEZEICHNUNG');
 
   // Die aktuelle Abfrage ausgeben
   ExportTable(IB_Query1.sql, DiagnosePath + 'DTAUS.csv');
@@ -2611,7 +2615,7 @@ begin
     // Überhaupt was da?
     if (sResult.count > 0) then
       // OrgaMon oder AQB kann jeweils weiterentwickelt sein, ->kein Problem
-      if (pos(cDTA_UmsatzHeader, sResult[0]) = 1) or (pos(sResult[0], cDTA_UmsatzHeader) = 1) then
+      if (pos(cDTA_Umsatz_Header, sResult[0]) = 1) or (pos(sResult[0], cDTA_Umsatz_Header) = 1) then
       begin
 
         Headers := split(sResult[0]);
@@ -3251,7 +3255,7 @@ begin
 
     //
     if (sResult.count > 0) then
-      if pos(cDTA_SaldoHeader, sResult[0]) = 1 then
+      if pos(cDTA_Saldo_Header, sResult[0]) = 1 then
       begin
 
         Headers := split(sResult[0]);
