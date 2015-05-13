@@ -10,6 +10,11 @@
 Eine Web-Kassenanwendung mit JSON Anbindung an den OrgaMon
 // INFO END
 
+Rev 1.023 (13.05.15) Andreas Filsinger
+
+ Bug: Sortiment: Töne hatten gefehlt
+ Bug: "+": "Rep": Töne hatten gefehlt 
+
 Rev 1.022 (07.05.15) Andreas Filsinger
 
  Neu: Tasten- und Funktions-Pieps Töne
