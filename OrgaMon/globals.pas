@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.105; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.106; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -216,6 +216,7 @@ const
   cKasse_Wiederholung = 'Rep';
   cKasse_Faktor = ' mal ...';
   cKasse_Sortiment_Delimiter = ':';
+  cKasse_Log_Prefix = '{';
 
 type
   TDOM_Reference = integer;
