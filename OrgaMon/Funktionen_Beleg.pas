@@ -716,7 +716,7 @@ CONST
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP', 'FotoPfad',
     'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad',
     'VerlagsdatenabgleichPfad', 'KartenProfil', 'SchubladePort', 'TagwacheBaustelle',
-    'memcacheHost', 'Ablage','KontoSEPAFrist');
+    'memcacheHost', 'Ablage', 'KontoSEPAFrist');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -3779,26 +3779,37 @@ begin
 
       for n := 0 to pred(lKasse.count) do
       begin
-        if (lKasse[n] = 'Rep') then
-          continue;
+
+        // Aussortieren
         if (lKasse[n] = '') then
+          continue;
+        if (lKasse[n][1] = cKasse_Log_Prefix) then
+          continue;
+        if (lKasse[n] = cKasse_Wiederholung) then
+          continue;
+        if (pos(cKasse_Faktor, lKasse[n]) > 0) then
           continue;
 
         // Look ahead
         MENGE := 1;
         for m := succ(n) to pred(lKasse.count) do
-          if (lKasse[m] = 'Rep') then
+          if (lKasse[m] = cKasse_Wiederholung) then
             inc(MENGE)
           else
             break;
 
-        DoppelPunktPos := pos(':', lKasse[n]);
+        // Look back
+        if (pred(n) >= 0) then
+          if (pos(cKasse_Faktor, lKasse[pred(n)]) > 0) then
+            MENGE := MENGE + pred(StrToIntDef(nextp(lKasse[pred(n)], ' ', 0), 1));
+
+        DoppelPunktPos := pos(cKasse_Sortiment_Delimiter, lKasse[n]);
         if (DoppelPunktPos > 0) then
         begin
           sCode := copy(lKasse[n], 1, pred(DoppelPunktPos));
           if pos(',', sCode) = 0 then
           begin
-            nCode := strtointdef(sCode, -1);
+            nCode := StrToIntDef(sCode, -1);
             if (nCode > 0) then
             begin
 
@@ -3849,7 +3860,7 @@ begin
           begin
             // Direkte Preis-Angabe!
             // MwST aus entsprechendem Sortiment
-            iSortiment := strtointdef(ExtractSegmentBetween(lKasse[n], '(', ')'), 0);
+            iSortiment := StrToIntDef(ExtractSegmentBetween(lKasse[n], '(', ')'), 0);
 
             SORTIMENT_R :=
             { } e_r_sql(
@@ -4538,7 +4549,7 @@ begin
     pOLAP.add('$BELEG_R=' + inttostr(BELEG_R));
     xOLAP.LoadFromFile(FName);
     rOLAP := e_r_OLAP(xOLAP, pOLAP);
-    result := strtointdef(rOLAP.values['ANZAHL'], cRID_Null) = 0;
+    result := StrToIntDef(rOLAP.values['ANZAHL'], cRID_Null) = 0;
     pOLAP.free;
     rOLAP.free;
     xOLAP.free;
@@ -4946,7 +4957,7 @@ begin
       eResult := e_r_BelegInfo(BELEG_R);
       Log(eResult);
       AuftragsWert := StrtoDouble(eResult.values['AUFTRAGSWERT']);
-      MENGE_AUFNAHMEN := strtointdef(eResult.values['AUFNAHMEN'], 0);
+      MENGE_AUFNAHMEN := StrToIntDef(eResult.values['AUFNAHMEN'], 0);
 
       PortoModus := ePortoAuto;
       repeat
@@ -5122,7 +5133,7 @@ begin
   k := pos('%p', _LandFormatStr);
   if (k > 0) and (k + 2 <= length(_LandFormatStr)) then
     if (_LandFormatStr[k + 2] in ['0' .. '9']) then
-      result := strtointdef(_LandFormatStr[k + 2], cPLZlength_default);
+      result := StrToIntDef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
 function e_r_Ort(dboDS: TdboDataSet): string; overload;
@@ -5146,7 +5157,7 @@ begin
       begin
         if (result[k + 2] in ['0' .. '9']) then
         begin
-          PLZlength := strtointdef(result[k + 2], cPLZlength_default);
+          PLZlength := StrToIntDef(result[k + 2], cPLZlength_default);
           System.delete(result, k + 2, 1);
           ersetze('%p', e_r_plz(dboDS, PLZlength), result);
           break;
@@ -7611,7 +7622,7 @@ begin
     pOLAP.add('$BELEG_R=' + inttostr(BELEG_R));
     xOLAP.LoadFromFile(FName);
     rOLAP := e_r_OLAP(xOLAP, pOLAP);
-    result := strtointdef(rOLAP.values['STEMPEL_R'], cRID_Null);
+    result := StrToIntDef(rOLAP.values['STEMPEL_R'], cRID_Null);
     pOLAP.free;
     rOLAP.free;
     xOLAP.free;
@@ -8115,7 +8126,7 @@ begin
   iSicherungsPfad := sSystemSettings.values['SicherungsPfad'];
   FotoPath := sSystemSettings.values['FotoPfad'];
   iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
-  iSicherungenAnzahl := strtointdef(sSystemSettings.values['SicherungenAnzahl'], 10);
+  iSicherungenAnzahl := StrToIntDef(sSystemSettings.values['SicherungenAnzahl'], 10);
   iNichtMehrLieferbar := sSystemSettings.values['NichtMehrLieferbarInfo'];
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
@@ -8134,7 +8145,7 @@ begin
   iTagesabschlussRang := sSystemSettings.values['TagesabschlussBerechneRang'] <> cIni_DeActivate;
   iAblage := sSystemSettings.values['Ablage'] <> cIni_DeActivate;
   iTagWacheWochentage := sSystemSettings.values['TagWacheWochentage'];
-  iTagwacheBaustelle := strtointdef(sSystemSettings.values['TagwacheBaustelle'], cRID_Null);
+  iTagwacheBaustelle := StrToIntDef(sSystemSettings.values['TagwacheBaustelle'], cRID_Null);
   iTagesabschlussWochentage := sSystemSettings.values['TagesabschlussWochentage'];
 
   iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
@@ -8145,7 +8156,7 @@ begin
   iAutoUpFTP := sSystemSettings.values['AutoUpFTP'];
   iMobilFTP := sSystemSettings.values['MobilFTP'];
   iFtpProxyHost := sSystemSettings.values['FTPProxyHost'];
-  iFtpProxyPort := strtointdef(sSystemSettings.values['FTPProxyPort'], 0);
+  iFtpProxyPort := StrToIntDef(sSystemSettings.values['FTPProxyPort'], 0);
   iTagWacheUm := strtoseconds(sSystemSettings.values['TagWacheUm']);
   iTagWacheAuf := cutblank(sSystemSettings.values['TagWacheAuf']);
   iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren']
@@ -8155,11 +8166,11 @@ begin
   iKontoNummer := sSystemSettings.values['KontoNummer'];
   iKontoBLZ := sSystemSettings.values['KontoBLZ'];
   iKontoPIN := sSystemSettings.values['KontoPIN'];
-  iKontoSEPAFrist := strtointdef(sSystemSettings.values['KontoSEPAFrist'],
+  iKontoSEPAFrist := StrToIntDef(sSystemSettings.values['KontoSEPAFrist'],
     cDTA_LastschriftVerzoegerung);
   iKontenHBCI := sSystemSettings.values['KontenHBCI'];
   iHBCIRest := sSystemSettings.values['HBCIRest'];
-  iBuchFokus := strtointdef(sSystemSettings.values['BuchFokus'], -1);
+  iBuchFokus := StrToIntDef(sSystemSettings.values['BuchFokus'], -1);
   if (iBuchFokus > 0) then
     iBuchFokus := DatePlus(DateGet, -iBuchFokus)
   else
@@ -8204,10 +8215,10 @@ begin
   iAuftragsmotivation := sSystemSettings.values['Auftragsmotivation'];
   iAuftragsGrundRueckfrage := sSystemSettings.values['AuftragsGrundRückfrage'] <> cIni_DeActivate;
   iDataBase_SYSDBA_Pwd := sSystemSettings.values['SysdbaPasswort'];
-  iRangZeitfenster := strtointdef(sSystemSettings.values['RangZeitfenster'], 60);
-  iLieferzeitZeitfenster := strtointdef(sSystemSettings.values['LieferzeitZeitfenster'], 365);
-  iStandardLieferZeit := strtointdef(sSystemSettings.values['StandardLieferzeit'], 5);
-  iSchnelleRechnung_PERSON_R := strtointdef(sSystemSettings.values['PersonSchnelleRechnung'], 0);
+  iRangZeitfenster := StrToIntDef(sSystemSettings.values['RangZeitfenster'], 60);
+  iLieferzeitZeitfenster := StrToIntDef(sSystemSettings.values['LieferzeitZeitfenster'], 365);
+  iStandardLieferZeit := StrToIntDef(sSystemSettings.values['StandardLieferzeit'], 5);
+  iSchnelleRechnung_PERSON_R := StrToIntDef(sSystemSettings.values['PersonSchnelleRechnung'], 0);
   iFormColor := HTMLColor2TColor(sSystemSettings.values['Farbe']);
   iReplikation := sSystemSettings.values['Replikation'] = cIni_Activate;
   iGOT := sSystemSettings.values['GOT'] = cIni_Activate;
@@ -8221,7 +8232,7 @@ begin
   iEinzelpreisNetto := sSystemSettings.values['EinzelpreisNetto'] = cIni_Activate;
   iEinzelPositionNetto := sSystemSettings.values['EinzelPositionNetto'];
   iMahnSchwelle := strtodoubledef(sSystemSettings.values['Mahnschwelle'], 6.00);
-  iMahnFaelligkeitstoleranz := strtointdef(sSystemSettings.values['Mahnfälligkeitstoleranz'], 5);
+  iMahnFaelligkeitstoleranz := StrToIntDef(sSystemSettings.values['Mahnfälligkeitstoleranz'], 5);
   iMahnungAusgelicheneDazwischenAnzeigen := sSystemSettings.values
     ['MahnungAusgelicheneDazwischenAnzeigen'] = cIni_Activate;
   iMahnungErstAbUnausgeglichenheit := sSystemSettings.values['MahnungErstAbUnausgeglichenheit']
@@ -8236,9 +8247,9 @@ begin
   iMahnungZinsSatzGewerblich :=
     strtodoubledef(sSystemSettings.values['MahnungZinsSatzGewerblich'], 0.0);
   iMahnungMindestZins := strtodoubledef(sSystemSettings.values['MahnungMindestZins'], 0.0);
-  iMahnstufeZinsEintritt := strtointdef(sSystemSettings.values['MahnungMahnstufeZinsEintritt'],
+  iMahnstufeZinsEintritt := StrToIntDef(sSystemSettings.values['MahnungMahnstufeZinsEintritt'],
     pred(MaxInt));
-  iMahnfreierZeitraum := strtointdef(sSystemSettings.values['MahnungAbstand'], 14);
+  iMahnfreierZeitraum := StrToIntDef(sSystemSettings.values['MahnungAbstand'], 14);
   // [Tage], solange wird nochmaliges Mahnen verhindert
   iKommaFaktor := sSystemSettings.values['KommaFaktor'] = cIni_Activate;
   iBelegAnzeigeNachBuchen := (sSystemSettings.values['BelegAnzeigeNachBuchen'] = cIni_Activate) or
@@ -8260,11 +8271,11 @@ begin
   iAblageZeitraum := strtol(sSystemSettings.values['AblageVerzögerung']);
   if (iAblageZeitraum = 0) then
     iAblageZeitraum := 70;
-  iAusgabeartLastschriftText := strtointdef(sSystemSettings.values['AusgabeartLastschriftText'],
+  iAusgabeartLastschriftText := StrToIntDef(sSystemSettings.values['AusgabeartLastschriftText'],
     cRID_Null);
   iBuchSonstigeErloese := sSystemSettings.values['BuchSonstigeErlöse'];
   iBaustellenPfad := sSystemSettings.values['BaustellenPfad'];
-  iMusikDownloadsProArtikel := strtointdef(sSystemSettings.values['MaxDownloadsProArtikel'], 0);
+  iMusikDownloadsProArtikel := StrToIntDef(sSystemSettings.values['MaxDownloadsProArtikel'], 0);
 
   // Relative Pfade erweitern
   ersetze('.\', MyProgramPath, iPDFPathApp);
@@ -8291,12 +8302,12 @@ begin
     iSchalterTexte.add(sSystemSettings.values['Schalter' + inttostrN(succ(n), 2)]);
 
   iLagerHoheDiversitaet := sSystemSettings.values['LagerHoheDiversität'] = cIni_Activate;
-  iNeuanlageZeitraum := strtointdef(sSystemSettings.values['NeuanlageZeitraum'], 3);
+  iNeuanlageZeitraum := StrToIntDef(sSystemSettings.values['NeuanlageZeitraum'], 3);
   // [Tage], solange Artikel/Personen als Neuanlage gelten
   iKartenPfad := sSystemSettings.values['KartenPfad'];
   iKartenHost := sSystemSettings.values['KartenHost'];
   iKartenProfil := sSystemSettings.values['KartenProfil'];
-  iJonDaAdmin := strtointdef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
+  iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iFSPath := sSystemSettings.values['FunktionsSicherungstellungsPfad'];
 
   // defaults
@@ -9216,7 +9227,7 @@ begin
     for_update(sql);
     Open;
     First;
-    BTYP := strtointdef(FieldByName('BTYP').AsString, 0);
+    BTYP := StrToIntDef(FieldByName('BTYP').AsString, 0);
 
     if (BTYP > 0) then
     begin
@@ -9369,7 +9380,7 @@ begin
       if eof then
         raise exception.create('Quell-Beleg ' + inttostr(BELEG_R_FROM) + ' nicht gefunden');
       e_r_sqlt(FieldByName('INTERN_INFO'), BelegOptions);
-      BTYP := strtointdef(FieldByName('BTYP').AsString, 0);
+      BTYP := StrToIntDef(FieldByName('BTYP').AsString, 0);
     end;
 
     // aktuelle Settings und Optionen mit in den Beleg nehmen
@@ -11725,7 +11736,7 @@ begin
     begin
       pOLAP := TStringList.create;
       pOLAP.add('$PERSON_R=' + inttostr(PERSON_R));
-      xOLAP := e_r_text(strtointdef(nextp(iPortoFreiAbBrutto, ':', 1), 0));
+      xOLAP := e_r_text(StrToIntDef(nextp(iPortoFreiAbBrutto, ':', 1), 0));
       rOLAP := e_r_OLAP(xOLAP, pOLAP);
       result := strtodoubledef(rOLAP.values['PORTOFREIAB'], 0);
       pOLAP.free;
@@ -11933,7 +11944,7 @@ begin
   if (Prozent = 0) then
     result := 0
   else
-    result := strtointdef(
+    result := StrToIntDef(
       { } StrFilter('0123456789', e_r_sqls(
       { } 'select NAME from MWST where ' +
       { } ' (SATZ=' + FloatToStrISO(Prozent) + ') and ' +
@@ -11990,7 +12001,7 @@ begin
       try
 
         //
-        BELEG_R := strtointdef(StrFilter(sBELEGE[n], cZiffern), cRID_Null);
+        BELEG_R := StrToIntDef(StrFilter(sBELEGE[n], cZiffern), cRID_Null);
         if (BELEG_R < cRID_FirstValid) then
           continue;
         FNameA := cBON_Bon + RIDasStr(BELEG_R) + '.csv';
@@ -12023,7 +12034,7 @@ begin
           FieldByName('EINZELPREIS_NETTO').AsString := cC_False;
 
           //
-          BEARBEITER_R := strtointdef(sBELEG.values[cBON_Beleg_Bearbeiter], sBearbeiter);
+          BEARBEITER_R := StrToIntDef(sBELEG.values[cBON_Beleg_Bearbeiter], sBearbeiter);
           if (R_BEARBEITER.IndexOf(BEARBEITER_R) <> -1) then
             FieldByName('ANLEGER_R').AsInteger := BEARBEITER_R;
 
@@ -12043,14 +12054,14 @@ begin
             Insert;
             FieldByName('RID').AsInteger := cRID_AutoInc;
             FieldByName('BELEG_R').AsInteger := BELEG_R;
-            FieldByName('MENGE').AsInteger := strtointdef(sBON.readCell(r, 'ANZAHL'), 0);
+            FieldByName('MENGE').AsInteger := StrToIntDef(sBON.readCell(r, 'ANZAHL'), 0);
             FieldByName('ARTIKEL').AsString := sBON.readCell(r, 'TITEL');
             FieldByName('PREIS').AsFloat := strtodoubledef(sBON.readCell(r, 'EURO'), 0.0);
             FieldByName('NETTO').AsString := cC_False;
             FieldByName('MWST').AsFloat := strtodoubledef(sBON.readCell(r, 'SATZ'), 0);
 
             //
-            ARTIKEL_R := strtointdef(sBON.readCell(r, 'RID'), cRID_Null);
+            ARTIKEL_R := StrToIntDef(sBON.readCell(r, 'RID'), cRID_Null);
             if (R_ARTIKEL.IndexOf(ARTIKEL_R) <> -1) then
               FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
 
