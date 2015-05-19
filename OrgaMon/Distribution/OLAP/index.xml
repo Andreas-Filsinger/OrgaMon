@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE DataSet SYSTEM "gdpdu-01-09-2004.dtd">
+<DataSet>
+	<Version>1.0</Version>
+	<DataSupplier>
+	    <!-- Hier ändern -->
+		<Name>Ihre Firma</Name>
+		<Location>Ihr Ort</Location>
+		<Comment>OrgaMon Rev. 8.106, Datenüberlassung nach GDPdU</Comment>
+	</DataSupplier>
+	<Media>
+		<Name>Kasse-Journal.OLAP.txt</Name>
+		<Table>
+			<URL>OLAP.tmp0.csv</URL>
+			<Name>Posten</Name>
+			<Description>Verkaufseinzelpositionen</Description>
+			<Validity>
+				<Range>
+	    <!-- Hier ändern -->
+					<From>20110101</From>
+					<To>20131231</To>
+				</Range>
+				<Format>YYYYMMDD</Format>
+			</Validity>
+			<DecimalSymbol>,</DecimalSymbol>
+			<DigitGroupingSymbol>.</DigitGroupingSymbol>
+			<SkipNumBytes>154</SkipNumBytes>
+			<VariableLength>
+				<VariablePrimaryKey>
+					<Name>LIEFER_POSITION</Name>
+					<Numeric/>
+				</VariablePrimaryKey>
+				<VariableColumn>
+					<Name>BELEG_NUMMER</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>TEILLIEFERUNG</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>ARTIKEL_NUMMER</Name>
+					<AlphaNumeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>ARTIKEL_BEZEICHNUNG</Name>
+					<AlphaNumeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>VERKAUFS_MENGE</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>EINZEL_PREIS_BRUTTO</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>EINZEL_PREIS_IST_NETTO</Name>
+					<AlphaNumeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>ENTHALTENE_MWST</Name>
+					<Numeric/>
+				</VariableColumn>
+				<ForeignKey>
+					<Name>BELEG_NUMMER</Name>
+					<References>Belege</References>
+				</ForeignKey>
+			</VariableLength>
+		</Table>
+		<Table>
+			<URL>OLAP.tmp1.csv</URL>
+			<Name>Belege</Name>
+			<Description>Kassenbelege</Description>
+			<Validity>
+				<Range>
+	    <!-- Hier ändern -->
+					<From>20110101</From>
+					<To>20131231</To>
+				</Range>
+				<Format>YYYYMMDD</Format>
+			</Validity>
+			<DecimalSymbol>,</DecimalSymbol>
+			<DigitGroupingSymbol>.</DigitGroupingSymbol>
+			<SkipNumBytes>78</SkipNumBytes>
+			<VariableLength>
+				<VariablePrimaryKey>
+					<Name>BELEG_NUMMER</Name>
+					<Numeric/>
+				</VariablePrimaryKey>
+				<VariableColumn>
+					<Name>TEILLIEFERUNG</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>BUCHUNGS_MOMENT</Name>
+					<AlphaNumeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>GESAMTSUMME_BRUTTO</Name>
+					<Numeric/>
+				</VariableColumn>
+				<VariableColumn>
+					<Name>KASSE_GEGEBEN</Name>
+					<AlphaNumeric/>
+				</VariableColumn>
+			</VariableLength>
+		</Table>
+	</Media>
+</DataSet>
