@@ -197,10 +197,9 @@ procedure TFormOLAP.Button2Click(Sender: TObject);
     DropTable(ErgebnisTableName(n));
 
     // Tabelle neu anlegen
-    e_x_sql('create table ' + ErgebnisTableName(n) + ' (' +
-      'RID DOM_REFERENCE NOT NULL)');
-    e_x_sql('alter table ' + ErgebnisTableName(n) + ' add constraint PK_' +
-      ErgebnisTableName(n) + ' primary key (RID)');
+    e_x_sql('create table ' + ErgebnisTableName(n) + ' (' + 'RID DOM_REFERENCE NOT NULL)');
+    e_x_sql('alter table ' + ErgebnisTableName(n) + ' add constraint PK_' + ErgebnisTableName(n) +
+      ' primary key (RID)');
     e_x_sql('delete from ' + ErgebnisTableName(n));
 
   end;
@@ -475,11 +474,9 @@ var
         inc(l);
       until false;
       if IsNumeric then
-        ersetze(copy(result, k, l - k),
-          LoadSQLInclude(strtoint(copy(result, k, l - k))), result)
+        ersetze(copy(result, k, l - k), LoadSQLInclude(strtoint(copy(result, k, l - k))), result)
       else
-        ersetze(copy(result, k, l - k),
-          getValueofParameter(copy(result, k, l - k)), result);
+        ersetze(copy(result, k, l - k), getValueofParameter(copy(result, k, l - k)), result);
 
       // Iterationskontrolle
       inc(i);
@@ -532,14 +529,12 @@ var
 
           // Controlls füllen!
           DimensionValues := TStringList.create;
-          DimensionValues.loadfromFile
-            (RohdatenFName(strtointdef(nextp(Line, 'from', 1), 0)));
+          DimensionValues.loadfromFile(RohdatenFName(strtointdef(nextp(Line, 'from', 1), 0)));
           DimensionValues.delete(0);
           for n := 0 to pred(DimensionValues.count) do
           begin
             if (pos('"', DimensionValues[n]) = 1) then
-              DimensionValues[n] := ExtractSegmentBetween(DimensionValues[n],
-                '"', '"');
+              DimensionValues[n] := ExtractSegmentBetween(DimensionValues[n], '"', '"');
           end;
           DimensionValues.sort;
 
@@ -600,13 +595,11 @@ var
     else
     begin
       if (excelFormats.values[cExcel_TabellenName] = '') then
-        excelFormats.values[cExcel_TabellenName] :=
-          getValueofParameter('$Skript');
+        excelFormats.values[cExcel_TabellenName] := getValueofParameter('$Skript');
     end;
 
     // als Excel ausgeben
-    ExcelExport(RohdatenxlsFName(RohdatenCount), BigJoin, nil,
-      excelFormats, pXLS);
+    ExcelExport(RohdatenxlsFName(RohdatenCount), BigJoin, nil, excelFormats, pXLS);
 
     // wegkopieren?
     SaveCopy(RohdatenxlsFName(RohdatenCount));
@@ -615,8 +608,7 @@ var
     if (getValueofParameter('$AuchAlsPDF') = cIni_Activate) then
       if (pXLS = nil) then
       begin
-        MakePDF(RohdatenxlsFName(RohdatenCount), RohdatenxlsFName(RohdatenCount)
-          + cPDF_Extension);
+        MakePDF(RohdatenxlsFName(RohdatenCount), RohdatenxlsFName(RohdatenCount) + cPDF_Extension);
 
         // wegkopieren?
         SaveCopy(RohdatenxlsFName(RohdatenCount) + cPDF_Extension);
@@ -636,16 +628,14 @@ var
     else
     begin
       if (excelFormats.values[cExcel_TabellenName] = '') then
-        excelFormats.values[cExcel_TabellenName] :=
-          getValueofParameter('$Skript');
+        excelFormats.values[cExcel_TabellenName] := getValueofParameter('$Skript');
     end;
     sData := TsTable.create;
     sData.insertFromFile(RohdatenFName(RohdatenCount));
     sData.SaveToHTML(RohdatenHTMLFName(RohdatenCount), excelFormats);
     Pfad := getValueofParameter('$KopieSpeichernUnter');
     if (Pfad <> '') then
-      FileCopy(RohdatenHTMLFName(RohdatenCount),
-        Pfad + RohdatenHTMLFName(RohdatenCount, false));
+      FileCopy(RohdatenHTMLFName(RohdatenCount), Pfad + RohdatenHTMLFName(RohdatenCount, false));
     sData.free;
   end;
 
@@ -807,22 +797,19 @@ var
 
       if (ParamFunction = 'Arbeit') then
       begin
-        result := e_r_Arbeit(strtointdef(ParamVal1, cRID_Null),
-          date2long(ParamVal2));
+        result := e_r_Arbeit(strtointdef(ParamVal1, cRID_Null), date2long(ParamVal2));
         break;
       end;
 
       if (ParamFunction = 'Anno') then
       begin
-        result := format('%.2m', [b_r_Anno(ParamVal1, date2long(ParamVal2),
-          DateGet)]);
+        result := format('%.2m', [b_r_Anno(ParamVal1, date2long(ParamVal2), DateGet)]);
         break;
       end;
 
       if (ParamFunction = 'Einsatz') then
       begin
-        result := e_r_Einsatz(strtointdef(ParamVal1, cRID_Null),
-          date2long(ParamVal2));
+        result := e_r_Einsatz(strtointdef(ParamVal1, cRID_Null), date2long(ParamVal2));
         break;
       end;
 
@@ -905,8 +892,7 @@ var
         Rabatt := strtodoubledef(sRow[ParamCol + 1], 0);
         if (Rabatt > 0) then
           EinzelPreisUnrabattiert :=
-            cPreisRundung(EinzelPreisUnrabattiert - (EinzelPreisUnrabattiert *
-            (Rabatt / 100.0)));
+            cPreisRundung(EinzelPreisUnrabattiert - (EinzelPreisUnrabattiert * (Rabatt / 100.0)));
         result := format('%.2m', [EinzelPreisUnrabattiert]);
         break;
       end;
@@ -919,8 +905,7 @@ var
 
       if (ParamFunction = 'Preis') then
       begin
-        result := format('%.2m',
-          [e_r_PreisBrutto(0, strtointdef(ParamVal1, 0))]);
+        result := format('%.2m', [e_r_PreisBrutto(0, strtointdef(ParamVal1, 0))]);
         break;
       end;
 
@@ -932,8 +917,7 @@ var
 
       if (ParamFunction = 'Bemerkung') then
       begin
-        CompleteStrL := e_r_sqlt('select INTERN_INFO from ARTIKEL where RID=' +
-          ParamVal1);
+        CompleteStrL := e_r_sqlt('select INTERN_INFO from ARTIKEL where RID=' + ParamVal1);
         result := ReadLongStr('BEM', CompleteStrL, '|');
         ersetze('"', '''', result);
         result := '"' + result + '"';
@@ -950,14 +934,12 @@ var
         else
         begin
           CompleteStrL := e_r_Adressat(strtointdef(ParamVal1, 0));
-          result := CSVsecure(CompleteStrL[0]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[1]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator +
+          result := CSVsecure(CompleteStrL[0]) + cOLAPcsvSeparator + CSVsecure(CompleteStrL[1]) +
+            cOLAPcsvSeparator + CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator +
             CSVsecure(CompleteStrL[3]) + cOLAPcsvSeparator +
             CSVsecure(e_r_sqls('SELECT STRASSE from ANSCHRIFT where RID' +
-            '=(SELECT PRIV_ANSCHRIFT_R from PERSON where RID=' + ParamVal1 +
-            ')')) + cOLAPcsvSeparator +
-            CSVsecure(e_r_Ort(strtointdef(ParamVal1, 0)));
+            '=(SELECT PRIV_ANSCHRIFT_R from PERSON where RID=' + ParamVal1 + ')')) +
+            cOLAPcsvSeparator + CSVsecure(e_r_Ort(strtointdef(ParamVal1, 0)));
           CompleteStrL.free;
         end;
         break;
@@ -1105,8 +1087,7 @@ var
       if (ParamFunction = 'Protokoll') then
       begin
         //
-        Protokoll := e_r_sqlt('SELECT PROTOKOLL from AUFTRAG where RID=' +
-          ParamVal1);
+        Protokoll := e_r_sqlt('SELECT PROTOKOLL from AUFTRAG where RID=' + ParamVal1);
         for l := 0 to pred(CompleteHeader.count) do
         begin
           s := Protokoll.values[nextp(CompleteHeader[l], ':', 0)];
@@ -1196,8 +1177,7 @@ var
         //
         cCalc := DataModuleDatenbank.nCursor;
         CalculateStatement := TStringList.create;
-        CalculateStatement.loadfromFile(iOlapPath + cOLAPDimPreFix +
-          ParamFunction + '.txt');
+        CalculateStatement.loadfromFile(iOlapPath + cOLAPDimPreFix + ParamFunction + '.txt');
         ExecuteStatement := HugeSingleLine(CalculateStatement, ' ');
 
         // Aus der aktuellen Zeile alle Werte in die Parameter schreiben
@@ -1233,8 +1213,7 @@ var
       end;
 
       // ERROR: Unknown Funktion
-      raise Exception.create('complete "' + ParamFunction +
-        '" nicht gefunden!');
+      raise Exception.create('complete "' + ParamFunction + '" nicht gefunden!');
 
     until true;
   end;
@@ -1272,8 +1251,8 @@ begin
     ParameterL.add('$Skript=' + nextp(ComboBox1.text, cOLAPExtension, 0));
 
     if DebugMode then
-      AppendStringsToFile(ParameterL, DebugLogPath + 'OLAP-' + inttostr(DateGet)
-        + '.txt', DatumUhr);
+      AppendStringsToFile(ParameterL, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt',
+        DatumUhr);
 
     repeat
 
@@ -1333,8 +1312,7 @@ begin
       begin
         // imp pend: echtes include! Ist im Moment so ein "Jump"
         // ohne den $Skript anzupassen, ist das gewollt? JA!
-        SynMemo1.lines.loadfromFile(iOlapPath + nextp(Line, ' ', 1) +
-          cOLAPExtension);
+        SynMemo1.lines.loadfromFile(iOlapPath + nextp(Line, ' ', 1) + cOLAPExtension);
         LineIndex := -1;
         continue;
       end;
@@ -1653,14 +1631,12 @@ begin
 
                 // ParameterL
                 for m := 0 to pred(ParameterL.count) do
-                  WriteVal(nextp(ParameterL[m], '=', 0),
-                    nextp(ParameterL[m], '=', 1));
+                  WriteVal(nextp(ParameterL[m], '=', 0), nextp(ParameterL[m], '=', 1));
 
                 // GlobalVars
                 if assigned(GlobalVars) then
                   for m := 0 to pred(GlobalVars.count) do
-                    WriteVal(nextp(GlobalVars[m], '=', 0),
-                      nextp(GlobalVars[m], '=', 1));
+                    WriteVal(nextp(GlobalVars[m], '=', 0), nextp(GlobalVars[m], '=', 1));
 
                 if RUN then
                 begin
@@ -1669,14 +1645,12 @@ begin
                   begin
                     // erweitere das aktuelle Skript nach dem "-"
                     for m := 0 to pred(BasicOutPut.count) do
-                      SynMemo1.lines.insert(succ(LineIndex + m),
-                        BasicOutPut[m]);
+                      SynMemo1.lines.insert(succ(LineIndex + m), BasicOutPut[m]);
                   end;
                 end
                 else
                 begin
-                  ParameterL.values['$RESULT'] :=
-                    HugeSingleLine(BasicErrors, '|');
+                  ParameterL.values['$RESULT'] := HugeSingleLine(BasicErrors, '|');
                 end;
               end;
               BASIC.free;
@@ -1717,8 +1691,7 @@ begin
                 if (pos(':', ConnectionList[DataBaseChosen]) = 0) then
                 begin
                   Password := SysDBAPassword;
-                  DataBaseName := iDataBaseHost + ':' + ConnectionList
-                    [DataBaseChosen];
+                  DataBaseName := iDataBaseHost + ':' + ConnectionList[DataBaseChosen];
                 end
                 else
                 begin
@@ -1759,11 +1732,10 @@ begin
 
               // Ist es ein Select-Statement oder ein Script?
               if (pos('SELECT', AnsiUpperCase(cutblank(Line))) = 1) then
-                ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount),
-                  cOLAPcsvSeparator, AppendMode)
+                ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator,
+                  AppendMode)
               else
-                ExportScript(ExecuteStatement, RohdatenFName(RohdatenCount),
-                  cOLAPcsvSeparator);
+                ExportScript(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator);
 
               // Kopie speichern!
               SaveCopy(RohdatenFName(RohdatenCount));
@@ -1783,15 +1755,13 @@ begin
                 // commando ausarbeiten
                 for m := 1 to pred(sl.count) do
                 begin
-                  sl[m] := nextp(nextp(sl[m], cOLAPcsvSeparator, 0), ' ', 0) +
-                    cOLAPcsvSeparator + nextp(sl[m], cOLAPcsvSeparator, 1) +
-                    cOLAPcsvSeparator;
+                  sl[m] := nextp(nextp(sl[m], cOLAPcsvSeparator, 0), ' ', 0) + cOLAPcsvSeparator +
+                    nextp(sl[m], cOLAPcsvSeparator, 1) + cOLAPcsvSeparator;
                 end;
                 break;
               end;
               sl.savetofile(RohdatenFName(CastCount));
               SaveCopy(RohdatenFName(CastCount));
-
             end;
             inc(CastCount);
           end;
@@ -1812,16 +1782,15 @@ begin
 
               sl_ConsultIndex := TStringList.create;
               if not(FileExists(iOlapPath + LoadFname)) then
-                raise Exception.create('Datei ' + iOlapPath + LoadFname +
-                  ' nicht gefunden!');
+                raise Exception.create('Datei ' + iOlapPath + LoadFname + ' nicht gefunden!');
               LoadFromFileCSV(true, JoinL, iOlapPath + LoadFname);
 
               // Quell Spalte suchen
               AllHeader := TStringList(BigJoin[0]);
               col_Question := AllHeader.indexof(nextp(Line, ',', 0));
               if (col_Question = -1) then
-                raise Exception.create('Referenzierende Spalte "' + nextp(Line,
-                  ',', 0) + '" nicht gefunden!');
+                raise Exception.create('Referenzierende Spalte "' + nextp(Line, ',', 0) +
+                  '" nicht gefunden!');
 
               // Index und Antwort suchen
               col_ConsultAnswer := -1;
@@ -1850,23 +1819,23 @@ begin
                 until false;
               end;
               if (col_ConsultIndex = -1) then
-                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1)
-                  + '" in Datei "' + LoadFname + '" nicht gefunden!');
+                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' +
+                  LoadFname + '" nicht gefunden!');
               if (col_ConsultAnswer = -1) then
-                raise Exception.create('Antwort Spalte "' + nextp(Line, ',', 2)
-                  + '" in Datei "' + LoadFname + '" nicht gefunden!');
+                raise Exception.create('Antwort Spalte "' + nextp(Line, ',', 2) + '" in Datei "' +
+                  LoadFname + '" nicht gefunden!');
 
               // Antwort Index aufbauen
               for m := 1 to pred(JoinL.count) do
-                sl_ConsultIndex.addobject(nextp(JoinL[m], cOLAPcsvSeparator,
-                  col_ConsultIndex), pointer(m));
+                sl_ConsultIndex.addobject(nextp(JoinL[m], cOLAPcsvSeparator, col_ConsultIndex),
+                  pointer(m));
               sl_ConsultIndex.sort;
               sl_ConsultIndex.sorted := true;
 
               // Doppelte sollten hier vermieden werden.
               if (RemoveDuplicates(sl_ConsultIndex) > 0) then
-                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1)
-                  + '" in Datei "' + LoadFname + '" hat doppelte Einträge!');
+                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' +
+                  LoadFname + '" hat doppelte Einträge!');
 
               // Nun den Referenzierlauf
               for m := 1 to pred(BigJoin.count) do
@@ -1876,8 +1845,8 @@ begin
                 if (k = -1) then
                   AllHeader.add(cOLAPNull)
                 else
-                  AllHeader.add(nextp(JoinL[integer(sl_ConsultIndex.objects[k])
-                    ], cOLAPcsvSeparator, col_ConsultAnswer));
+                  AllHeader.add(nextp(JoinL[integer(sl_ConsultIndex.objects[k])], cOLAPcsvSeparator,
+                    col_ConsultAnswer));
               end;
 
               sl_ConsultIndex.free;
@@ -1926,36 +1895,29 @@ begin
                   AnkerParam := StatementParams.values['Erzähle'];
                   while (AnkerParam <> '') do
                   begin
-                    k := AllHeader.indexof
-                      (nextp(AnkerParam, cOLAPcsvSeparator));
+                    k := AllHeader.indexof(nextp(AnkerParam, cOLAPcsvSeparator));
                     if (k <> -1) then
                     begin
                       if (TargetCol = -1) then
                       begin
-                        TStringList(BigJoin[LastAnkerLine])
-                          .add(TStringList(BigJoin[m])[k]);
+                        TStringList(BigJoin[LastAnkerLine]).add(TStringList(BigJoin[m])[k]);
                       end
                       else
                       begin
                         SortRow := cutblank(TStringList(BigJoin[m])[k]);
                         if (SortRow <> '') and (SortRow <> cOLAPNull) then
                         begin
-                          SortStr :=
-                            cutblank(TStringList(BigJoin[LastAnkerLine])
-                            [TargetCol]);
+                          SortStr := cutblank(TStringList(BigJoin[LastAnkerLine])[TargetCol]);
                           if (SortStr = '') or (SortStr = cOLAPNull) then
                             SortStr := TStringList(BigJoin[m])[k]
                           else
-                            SortStr := SortStr + ', ' +
-                              cutblank(TStringList(BigJoin[m])[k]);
-                          TStringList(BigJoin[LastAnkerLine])[TargetCol]
-                            := SortStr;
+                            SortStr := SortStr + ', ' + cutblank(TStringList(BigJoin[m])[k]);
+                          TStringList(BigJoin[LastAnkerLine])[TargetCol] := SortStr;
                         end;
                       end;
                     end;
                   end;
-                  StoryMaxCol :=
-                    max(StoryMaxCol, TStringList(BigJoin[LastAnkerLine]).count);
+                  StoryMaxCol := max(StoryMaxCol, TStringList(BigJoin[LastAnkerLine]).count);
                   StoryFree.add(m);
                 end
                 else
@@ -2040,8 +2002,7 @@ begin
               ThisHeader := JoinL[0];
               SetLength(HeaderOrder, ThisHeaderAnz);
               for m := 0 to pred(ThisHeaderAnz) do
-                HeaderOrder[m] :=
-                  AllHeader.indexof(nextp(ThisHeader, cOLAPcsvSeparator));
+                HeaderOrder[m] := AllHeader.indexof(nextp(ThisHeader, cOLAPcsvSeparator));
 
               // Alle Daten nachtragen - In der richtigen Reihenfolge
               for m := 1 to pred(JoinL.count) do
@@ -2082,16 +2043,14 @@ begin
                 begin
                   addValueD := 0.0;
                   for l := 1 to (BigJoin.count - 2) do
-                    addValueD := addValueD +
-                      strtodoubledef(TStringList(BigJoin[l])[k], 0.0);
+                    addValueD := addValueD + strtodoubledef(TStringList(BigJoin[l])[k], 0.0);
                   SingleValue := format('%.2f', [addValueD]);
                 end;
                 if (SingleValue = '=N') then
                 begin
                   addValueI := 0;
                   for l := 1 to (BigJoin.count - 2) do
-                    addValueI := addValueI +
-                      strtointdef(TStringList(BigJoin[l])[k], 0);
+                    addValueI := addValueI + strtointdef(TStringList(BigJoin[l])[k], 0);
                   SingleValue := format('%d', [addValueI]);
                 end;
                 JoinedL.add(ResolveParameter(SingleValue));
@@ -2139,8 +2098,7 @@ begin
               ThisHeader := JoinL[0];
               SetLength(HeaderOrder, ThisHeaderAnz);
               for m := 0 to pred(ThisHeaderAnz) do
-                HeaderOrder[m] :=
-                  AllHeader.indexof(nextp(ThisHeader, cOLAPcsvSeparator));
+                HeaderOrder[m] := AllHeader.indexof(nextp(ThisHeader, cOLAPcsvSeparator));
 
               // Alle Daten nachtragen - In der richtigen Reihenfolge
               for m := 1 to pred(JoinL.count) do
@@ -2199,8 +2157,7 @@ begin
                     end
                     else
                     begin
-                      ListResults.add('''' + TStringList(BigJoin[m])
-                        [ListCol] + '''');
+                      ListResults.add('''' + TStringList(BigJoin[m])[ListCol] + '''');
                     end;
                   end;
                 end;
@@ -2221,8 +2178,7 @@ begin
               end
               else
               begin
-                raise Exception.create('list: Spalte ' + ListColName +
-                  ' nicht gefunden');
+                raise Exception.create('list: Spalte ' + ListColName + ' nicht gefunden');
               end;
               ListResults.free;
             end;
@@ -2240,8 +2196,7 @@ begin
               cRepeat := DataModuleDatenbank.nCursor;
               with cRepeat do
               begin
-                ExecuteStatement := 'select * from ' +
-                  ErgebnisTableName(RohdatenCount - 2);
+                ExecuteStatement := 'select * from ' + ErgebnisTableName(RohdatenCount - 2);
                 sql.add(ExecuteStatement);
                 setWaitCaption(ExecuteStatement);
                 ApiFirst;
@@ -2255,12 +2210,11 @@ begin
                   while (RepeatSQL <> '') do
                   begin
                     ExecuteStatement := nextp(RepeatSQL, '~');
-                    if (pos('SELECT', AnsiUpperCase(cutblank(ExecuteStatement))
-                      ) = 1) then
+                    if (pos('SELECT', AnsiUpperCase(cutblank(ExecuteStatement))) = 1) then
                     begin
                       // select part
-                      ExportTable(ExecuteStatement,
-                        RohdatenFName(RohdatenCount), cOLAPcsvSeparator, true);
+                      ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount),
+                        cOLAPcsvSeparator, true);
                     end
                     else
                     begin
@@ -2293,10 +2247,8 @@ begin
           begin
             if (Line = '-') then
             begin
-              if not(FileCompare(RohdatenFName(pred(RohdatenCount)), LoadFname))
-              then
-                FileVersionedCopy(RohdatenFName(pred(RohdatenCount)),
-                  LoadFname);
+              if not(FileCompare(RohdatenFName(pred(RohdatenCount)), LoadFname)) then
+                FileVersionedCopy(RohdatenFName(pred(RohdatenCount)), LoadFname);
               State := cState_Rohdaten;
             end;
           end;
@@ -2310,16 +2262,14 @@ begin
               if (pos(':', LoadFname) > 0) then
               begin
                 if not(FileExists(LoadFname)) then
-                  raise Exception.create('Datei "' + LoadFname +
-                    '" nicht gefunden!');
+                  raise Exception.create('Datei "' + LoadFname + '" nicht gefunden!');
                 FileCopy(LoadFname, iOlapPath + ExtractFileName(LoadFname));
                 LoadFname := ExtractFileName(LoadFname);
               end;
 
               // gibt es die Quelle im OLAP-Pfad?
               if not(FileExists(iOlapPath + LoadFname)) then
-                raise Exception.create('Datei "' + iOlapPath + LoadFname +
-                  '" nicht gefunden!');
+                raise Exception.create('Datei "' + iOlapPath + LoadFname + '" nicht gefunden!');
 
               // bisherige Tabelle löschen
               DropTable(ErgebnisTableName(RohdatenCount));
@@ -2334,14 +2284,12 @@ begin
                   LoadSQL := LoadSQL + ', ';
               end;
 
-              e_x_sql('create table ' + ErgebnisTableName(RohdatenCount) + ' ( '
-                + LoadSQL + ')');
+              e_x_sql('create table ' + ErgebnisTableName(RohdatenCount) + ' ( ' + LoadSQL + ')');
 
               LoadSQL := '';
               for m := pred(SpaltenNamen.count) downto 0 do
               begin
-                LoadSQL := LoadSQL +
-                  nextp(SpaltenNamen[pred(SpaltenNamen.count) - m], ' ', 0);
+                LoadSQL := LoadSQL + nextp(SpaltenNamen[pred(SpaltenNamen.count) - m], ' ', 0);
                 if (m <> 0) then
                   LoadSQL := LoadSQL + ',';
               end;
@@ -2355,10 +2303,8 @@ begin
               LoadSpalteType := TgpIntegerList.create;
               for m := 0 to pred(SpaltenNamen.count) do
               begin
-                LoadSpalte.add(TStringList(BigJoin[0])
-                  .indexof(nextp(SpaltenNamen[m], ' ', 2)));
-                if pos('CHAR', AnsiUpperCase(nextp(SpaltenNamen[m], ' ', 1))) > 0
-                then
+                LoadSpalte.add(TStringList(BigJoin[0]).indexof(nextp(SpaltenNamen[m], ' ', 2)));
+                if pos('CHAR', AnsiUpperCase(nextp(SpaltenNamen[m], ' ', 1))) > 0 then
                   LoadSpalteType.add(SQL_TEXT)
                 else
                   LoadSpalteType.add(0);
@@ -2372,8 +2318,7 @@ begin
               begin
 
                 //
-                LoadSQLinsert := 'insert into ' +
-                  ErgebnisTableName(RohdatenCount) + '(' + LoadSQL +
+                LoadSQLinsert := 'insert into ' + ErgebnisTableName(RohdatenCount) + '(' + LoadSQL +
                   ') values (';
 
                 //
@@ -2383,13 +2328,12 @@ begin
                   case LoadSpalteType[k] of
                     SQL_TEXT:
                       begin
-                        LoadSQLinsert := LoadSQLinsert + '''' +
-                          TStringList(BigJoin[m])[LoadSpalte[k]] + '''';
+                        LoadSQLinsert := LoadSQLinsert + '''' + TStringList(BigJoin[m])
+                          [LoadSpalte[k]] + '''';
 
                       end;
                   else
-                    LoadSQLinsert := LoadSQLinsert + TStringList(BigJoin[m])
-                      [LoadSpalte[k]];
+                    LoadSQLinsert := LoadSQLinsert + TStringList(BigJoin[m])[LoadSpalte[k]];
 
                   end;
 
@@ -2481,9 +2425,8 @@ begin
                   if (TStringList(BigJoin[m])[ListCol] <> cOLAPNull) then
                   begin
                     if ListNumeric then
-                      e_x_sql('insert into ' +
-                        ErgebnisTableName(pred(RohdatenCount)) + '(RID)values('
-                        + TStringList(BigJoin[m])[ListCol] + ')');
+                      e_x_sql('insert into ' + ErgebnisTableName(pred(RohdatenCount)) +
+                        '(RID)values(' + TStringList(BigJoin[m])[ListCol] + ')');
                   end;
                 end;
 
@@ -2512,34 +2455,29 @@ begin
               VerlagL := TgpIntegerList.create;
               for m := 1 to pred(BigJoin.count) do
                 if (TStringList(BigJoin[m])[1] <> cOLAPNull) then
-                  if VerlagL.indexof(strtointdef(TStringList(BigJoin[m])[1], 0)
-                    ) = -1 then
+                  if VerlagL.indexof(strtointdef(TStringList(BigJoin[m])[1], 0)) = -1 then
                     VerlagL.add(strtointdef(TStringList(BigJoin[m])[1], 0));
 
               VerlagL.sort;
               SpaltenIst := TStringList(BigJoin[0]).count;
               SpaltenSoll := SpaltenIst + VerlagL.count;
               for m := 0 to pred(VerlagL.count) do
-                TStringList(BigJoin[0])
-                  .add(SpreadColName + '_' + inttostr(VerlagL[m]));
+                TStringList(BigJoin[0]).add(SpreadColName + '_' + inttostr(VerlagL[m]));
 
               for m := 1 to pred(BigJoin.count) do
               begin
                 for l := 1 to m do // von oben bis zu dieser Zeile suchen
                 begin
-                  if (TStringList(BigJoin[m])[0] = TStringList(BigJoin[l])[0])
-                  then
+                  if (TStringList(BigJoin[m])[0] = TStringList(BigJoin[l])[0]) then
                   begin
-                    k := VerlagL.indexof
-                      (strtointdef(TStringList(BigJoin[m])[1], 0));
+                    k := VerlagL.indexof(strtointdef(TStringList(BigJoin[m])[1], 0));
 
                     // ggf. die Breite der Zeile sicherstellen
                     while TStringList(BigJoin[l]).count < SpaltenSoll do
                       TStringList(BigJoin[l]).add('0');
 
                     TStringList(BigJoin[l])[k + SpaltenIst] :=
-                      inttostr(strtointdef(TStringList(BigJoin[l])
-                      [k + SpaltenIst], 0) +
+                      inttostr(strtointdef(TStringList(BigJoin[l])[k + SpaltenIst], 0) +
                       strtointdef(TStringList(BigJoin[m])[2], 0));
 
                     break;
@@ -2580,8 +2518,7 @@ begin
               SpaltenIst := TStringList(BigJoin[0]).count;
               SpaltenSoll := SpaltenIst + SpreadTitle.count;
               for m := 0 to pred(SpreadTitle.count) do
-                TStringList(BigJoin[0])
-                  .add(SpreadColName + '_' + SpreadTitle[m]);
+                TStringList(BigJoin[0]).add(SpreadColName + '_' + SpreadTitle[m]);
 
               // nun summieren ...
               for m := 1 to pred(BigJoin.count) do
@@ -2590,8 +2527,7 @@ begin
                 for l := 1 to m do
                 begin
                   // Ist "Name" identisch?
-                  if (TStringList(BigJoin[m])[0] = TStringList(BigJoin[l])[0])
-                  then
+                  if (TStringList(BigJoin[m])[0] = TStringList(BigJoin[l])[0]) then
                   begin
                     k := SpreadTitle.indexof(TStringList(BigJoin[m])[1]);
 
@@ -2600,8 +2536,7 @@ begin
                       TStringList(BigJoin[l]).add('0');
 
                     TStringList(BigJoin[l])[k + SpaltenIst] :=
-                      inttostr(strtointdef(TStringList(BigJoin[l])
-                      [k + SpaltenIst], 0) +
+                      inttostr(strtointdef(TStringList(BigJoin[l])[k + SpaltenIst], 0) +
                       strtointdef(TStringList(BigJoin[m])[2], 0));
 
                     break;
@@ -2636,10 +2571,8 @@ begin
             begin
 
               //
-              AssignDatumCol := TStringList(BigJoin[0])
-                .indexof(nextp(Line, ' ', 0));
-              AssignWertCol := TStringList(BigJoin[0])
-                .indexof(nextp(Line, ' ', 1));
+              AssignDatumCol := TStringList(BigJoin[0]).indexof(nextp(Line, ' ', 0));
+              AssignWertCol := TStringList(BigJoin[0]).indexof(nextp(Line, ' ', 1));
 
               // Header um die Zeiten $Start ... $Ende erweitern
               MonatsNamen := TStringList.create;
@@ -2666,14 +2599,10 @@ begin
               // Unscharf machen
               for m := 1 to pred(BigJoin.count) do
               begin
-                MonatsName :=
-                  AssignDate
-                  (date2long(nextp(TStringList(BigJoin[m])[AssignDatumCol],
+                MonatsName := AssignDate(date2long(nextp(TStringList(BigJoin[m])[AssignDatumCol],
                   ' ', 0)));
                 MonatsN := MonatsNamen.indexof(MonatsName);
-                AssignWert :=
-                  format('%.2m',
-                  [strtodouble(TStringList(BigJoin[m])[AssignWertCol])]);
+                AssignWert := format('%.2m', [strtodouble(TStringList(BigJoin[m])[AssignWertCol])]);
                 TStringList(BigJoin[m])[AssignWertCol] := AssignWert;
 
                 for k := 0 to pred(MonatsNamen.count) do
@@ -2711,8 +2640,7 @@ begin
               begin
                 ReplaceIndex := AllHeader.indexof(NewColumnName);
                 if ReplaceIndex = -1 then
-                  raise Exception.create('replace Spalte "' + NewColumnName +
-                    '" nicht gefunden!');
+                  raise Exception.create('replace Spalte "' + NewColumnName + '" nicht gefunden!');
               end
               else
               begin
@@ -2775,8 +2703,7 @@ begin
                     ParamVal2 := '';
                   end;
 
-                  CompleteResult := CompleteResult +
-                    completeFunc(TStringList(BigJoin[m]));
+                  CompleteResult := CompleteResult + completeFunc(TStringList(BigJoin[m]));
                 end;
 
                 if (ReplaceIndex <> -1) then
@@ -2795,8 +2722,7 @@ begin
                   else
                   begin
                     while (CompleteResult <> '') do
-                      TStringList(BigJoin[m])
-                        .add(nextp(CompleteResult, cOLAPcsvSeparator));
+                      TStringList(BigJoin[m]).add(nextp(CompleteResult, cOLAPcsvSeparator));
                   end;
                 end;
 
@@ -2886,8 +2812,7 @@ begin
             begin
 
               TabelleHorizontal := TsTable.create;
-              TabelleHorizontal.insertFromFile
-                (RohdatenFName(pred(RohdatenCount)));
+              TabelleHorizontal.insertFromFile(RohdatenFName(pred(RohdatenCount)));
 
               // Es kommen alle Zellen der ersten Datenspalte hinzu
               CompleteHeader.clear;
@@ -2899,8 +2824,7 @@ begin
                 CompleteHeader.add(CompleteResult);
               end;
 
-              ProgressBar1.max := pred(BigJoin.count) *
-                pred(TabelleHorizontal.count);
+              ProgressBar1.max := pred(BigJoin.count) * pred(TabelleHorizontal.count);
               StartWait := 0;
               k := 0;
               for l := 1 to pred(TabelleHorizontal.count) do
@@ -2961,8 +2885,7 @@ begin
                       ParamVal2 := '';
                     end;
 
-                    CompleteResult := CompleteResult +
-                      completeFunc(TStringList(BigJoin[m]));
+                    CompleteResult := CompleteResult + completeFunc(TStringList(BigJoin[m]));
                   end;
 
                   // Nun die Werte zur Tabelle dazu!
@@ -2973,8 +2896,7 @@ begin
                   else
                   begin
                     while (CompleteResult <> '') do
-                      TStringList(BigJoin[m])
-                        .add(nextp(CompleteResult, cOLAPcsvSeparator));
+                      TStringList(BigJoin[m]).add(nextp(CompleteResult, cOLAPcsvSeparator));
                   end;
                   inc(k);
                 end;
@@ -3026,8 +2948,7 @@ begin
                   TDG_Monat:
                     DatumS := copy(DatumS, 7, 4) + '_' + copy(DatumS, 4, 2);
                   TDG_Quartal:
-                    DatumS := copy(DatumS, 7, 4) + '_Q' +
-                      inttostr(Quartal(date2long(DatumS)));
+                    DatumS := copy(DatumS, 7, 4) + '_Q' + inttostr(Quartal(date2long(DatumS)));
                   TDG_Jahr:
                     DatumS := copy(DatumS, 7, 4);
                 end;
@@ -3048,22 +2969,20 @@ begin
                       //
                       if (SingleValue <> cOLAPNull) then
                       begin
-                        if (pos(',', SingleValue + TStringList(IntegratedL[k])
-                          [IntegrateCol]) > 0) then
+                        if (pos(',', SingleValue + TStringList(IntegratedL[k])[IntegrateCol]) > 0)
+                        then
                         begin
                           // DOUBLE - Typ
                           TStringList(IntegratedL[k])[IntegrateCol] :=
-                            format('%.2f',
-                            [strtodouble(TStringList(IntegratedL[k])
-                            [IntegrateCol]) + strtodouble(SingleValue)]);
+                            format('%.2f', [strtodouble(TStringList(IntegratedL[k])[IntegrateCol]) +
+                            strtodouble(SingleValue)]);
                         end
                         else
                         begin
                           // INTEGER - Typ
                           TStringList(IntegratedL[k])[IntegrateCol] :=
-                            format('%d',
-                            [strtoint(TStringList(IntegratedL[k])[IntegrateCol])
-                            + strtoint(SingleValue)]);
+                            format('%d', [strtoint(TStringList(IntegratedL[k])[IntegrateCol]) +
+                            strtoint(SingleValue)]);
                         end;
                       end;
                     end;
@@ -3090,8 +3009,7 @@ begin
               // speichern
               sl.clear;
               for m := 0 to pred(IntegratedL.count) do
-                sl.add(HugeSingleLine(TStringList(IntegratedL[m]),
-                  cOLAPcsvSeparator));
+                sl.add(HugeSingleLine(TStringList(IntegratedL[m]), cOLAPcsvSeparator));
 
               sl.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
@@ -3114,8 +3032,7 @@ begin
             end;
 
             // Welche Spalte soll als Integrations-Anker verwendet werden
-            IntegrateAnkerCol := TStringList(IntegratedL[0])
-              .indexof(nextp(Line, ' ', 0));
+            IntegrateAnkerCol := TStringList(IntegratedL[0]).indexof(nextp(Line, ' ', 0));
             if IntegrateAnkerCol <> -1 then
             begin
 
@@ -3132,8 +3049,7 @@ begin
                 IntegratFound := false;
                 for k := 1 to pred(IntegratedL.count) do
                 begin
-                  if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol])
-                  then
+                  if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol]) then
                   begin
                     // ok gefunden -> jetzt summieren / integrieren
                     IntegrateCol := 0;
@@ -3145,9 +3061,8 @@ begin
                       begin
                         // DOUBLE - Typ
                         TStringList(IntegratedL[k])[IntegrateCol] :=
-                          format('%.2m',
-                          [strtodouble(TStringList(IntegratedL[k])[IntegrateCol]
-                          ) + strtodouble(SingleValue)]);
+                          format('%.2m', [strtodouble(TStringList(IntegratedL[k])[IntegrateCol]) +
+                          strtodouble(SingleValue)]);
                       end;
                       inc(IntegrateCol);
                     end;
@@ -3174,8 +3089,7 @@ begin
               // speichern
               sl.clear;
               for m := 0 to pred(IntegratedL.count) do
-                sl.add(HugeSingleLine(TStringList(IntegratedL[m]),
-                  cOLAPcsvSeparator));
+                sl.add(HugeSingleLine(TStringList(IntegratedL[m]), cOLAPcsvSeparator));
 
               sl.savetofile(RohdatenFName(RohdatenCount));
               SaveCopy(RohdatenFName(RohdatenCount));
@@ -3203,8 +3117,7 @@ begin
             end;
 
             // Welche Spalte soll als Integrations-Anker verwendet werden
-            IntegrateAnkerCol := TStringList(IntegratedL[0])
-              .indexof('GROUP BY');
+            IntegrateAnkerCol := TStringList(IntegratedL[0]).indexof('GROUP BY');
 
             for m := 1 to pred(sl.count) do
             begin
@@ -3219,8 +3132,7 @@ begin
               IntegratFound := false;
               for k := 1 to pred(IntegratedL.count) do
               begin
-                if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol])
-                then
+                if (AnkerS = TStringList(IntegratedL[k])[IntegrateAnkerCol]) then
                 begin
                   // ok gefunden -> jetzt summieren / integrieren
                   IntegrateCol := 0;
@@ -3239,8 +3151,7 @@ begin
                         break;
 
                       // Was soll mit dieser Spalte gemacht werden
-                      IntegrateOperation := TStringList(IntegratedL[0])
-                        [IntegrateCol];
+                      IntegrateOperation := TStringList(IntegratedL[0])[IntegrateCol];
 
                       // nix
                       if (IntegrateOperation = '') then
@@ -3252,8 +3163,8 @@ begin
                         // Geld addieren
                         TStringList(IntegratedL[k])[IntegrateCol] :=
                         { } MoneyToStr(
-                          { } StrToMoneyDef(TStringList(IntegratedL[k])
-                          [IntegrateCol]) + { } StrToMoneyDef(SingleValue)
+                          { } StrToMoneyDef(TStringList(IntegratedL[k])[IntegrateCol]) +
+                          { } StrToMoneyDef(SingleValue)
                           { } );
                         break;
                       end;
@@ -3263,13 +3174,14 @@ begin
                         // Geld addieren
                         TStringList(IntegratedL[k])[IntegrateCol] :=
                         { } inttostr(
-                          { } strtointdef(TStringList(IntegratedL[k])
-                          [IntegrateCol], 0) + { } strtointdef(SingleValue, 0)
+                          { } strtointdef(TStringList(IntegratedL[k])[IntegrateCol], 0) +
+                          { } strtointdef(SingleValue, 0)
                           { } );
                         break;
                       end;
 
-                      TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "'+IntegrateOperation+'" unbekannt';
+                      TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "' +
+                        IntegrateOperation + '" unbekannt';
 
                     until true;
 
@@ -3298,8 +3210,7 @@ begin
             // speichern
             sl.clear;
             for m := 0 to pred(IntegratedL.count) do
-              sl.add(HugeSingleLine(TStringList(IntegratedL[m]),
-                cOLAPcsvSeparator));
+              sl.add(HugeSingleLine(TStringList(IntegratedL[m]), cOLAPcsvSeparator));
 
             sl.savetofile(RohdatenFName(RohdatenCount));
             SaveCopy(RohdatenFName(RohdatenCount));
@@ -3321,7 +3232,6 @@ begin
           end;
         cState_subtract:
           begin
-
             if (Line = '-') then
             begin
               LoadJoin(false);
@@ -3336,7 +3246,6 @@ begin
                   JoinDeleteLine(m);
               SaveJoin;
             end;
-
           end;
         cState_evaluation:
           begin
@@ -3346,8 +3255,7 @@ begin
             end
             else
             begin
-              if FileExists(iOlapPath + Line + cVorlageExtension +
-                cExcelExtension) then
+              if FileExists(iOlapPath + Line + cVorlageExtension + cExcelExtension) then
               begin
                 FormAuswertung.vorlageOLAP(Line, true);
                 // Imp pend: Da Auswertungen auch wieder OLAP rufen
@@ -3392,12 +3300,10 @@ begin
                 begin
                   SortStr := nextp(sl[m], cOLAPcsvSeparator, k);
                   if FormatNumeric then
-                    SortStr :=
-                      inttostrN(round(strtodoubledef(SortStr, 0) * 100.0), 15);
+                    SortStr := inttostrN(round(strtodoubledef(SortStr, 0) * 100.0), 15);
                   if DoReverse and FormatNumeric then
                     for l := 1 to length(SortStr) do
-                      SortStr[l] :=
-                        chr(ord('0') + pred(pos(SortStr[l], '9876543210')));
+                      SortStr[l] := chr(ord('0') + pred(pos(SortStr[l], '9876543210')));
                   ClientSorter[pred(m)] := ClientSorter[pred(m)] + SortStr;
                 end;
               end;
@@ -3420,9 +3326,15 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage(Line + #13 + HugeSingleLine(ParameterL, #13) + #13 + 'FILE: '
-        + ActFName + #13 + #13 + 'SQL: ' + ExecuteStatement + #13 + #13 +
-        cERRORText + ' OLAP: ' + #13 + E.Message);
+      ShowMessage(
+        { } Line + #13 +
+        { } HugeSingleLine(ParameterL, #13) + #13 +
+        { } 'FILE: ' + ActFName + #13 +
+        { } #13 +
+        { } 'SQL: ' + ExecuteStatement + #13 +
+        { } #13 +
+        { } cERRORText + ' OLAP: ' + #13 +
+        { } E.Message);
     end;
   end;
 
@@ -3500,8 +3412,7 @@ begin
     result := 'OLAP.tmp' + inttostr(max(0, n)) + '.csv'
 end;
 
-function TFormOLAP.RohdatenxlsFName(n: integer;
-  MitPfad: boolean = true): string;
+function TFormOLAP.RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
 begin
   if MitPfad then
     result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
@@ -3509,8 +3420,7 @@ begin
     result := 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.xls'
 end;
 
-function TFormOLAP.RohdatenHTMLFName(n: integer;
-  MitPfad: boolean = true): string;
+function TFormOLAP.RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
 begin
   if MitPfad then
     result := AnwenderPath + 'OLAP-Ergebnis' + inttostr(max(0, n)) + '.html'
@@ -3569,8 +3479,7 @@ begin
     begin
       repeat
         //
-        if bnBilligung('OLAP:' + nextp(ExtractFileName(FName),
-          cOLAPExtension, 0)) then
+        if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0)) then
           break;
 
         // Lister der Globales Variable aufbauen!
@@ -3592,10 +3501,9 @@ begin
               else
               begin
                 case SQLType of
-                  SQL_DOUBLE, SQL_DOUBLE_, SQL_INT64, SQL_INT64_, SQL_SHORT,
-                    SQL_SHORT_, SQL_LONG, SQL_LONG_, SQL_VARYING, SQL_VARYING_,
-                    SQL_TEXT, SQL_TEXT_, SQL_TIMESTAMP, SQL_TIMESTAMP_,
-                    SQL_TYPE_DATE, SQL_TYPE_DATE_:
+                  SQL_DOUBLE, SQL_DOUBLE_, SQL_INT64, SQL_INT64_, SQL_SHORT, SQL_SHORT_, SQL_LONG,
+                    SQL_LONG_, SQL_VARYING, SQL_VARYING_, SQL_TEXT, SQL_TEXT_, SQL_TIMESTAMP,
+                    SQL_TIMESTAMP_, SQL_TYPE_DATE, SQL_TYPE_DATE_:
                     begin
                       GlobalVars.add('$' + FieldName + '=' + AsString);
                     end;
@@ -3626,14 +3534,12 @@ begin
   FormOLAP.DoContextOLAP(g);
 end;
 
-procedure TFormOLAP.DoContextOLAP(GlobalVars, OLAPScript: TStringList;
-  Connection: TIB_Connection);
+procedure TFormOLAP.DoContextOLAP(GlobalVars, OLAPScript: TStringList; Connection: TIB_Connection);
 begin
   // #-#
 end;
 
-procedure TFormOLAP.DoContextOLAP(FName: string; GlobalVar: TStringList = nil;
-  XLS: TXLSFile = nil);
+procedure TFormOLAP.DoContextOLAP(FName: string; GlobalVar: TStringList = nil; XLS: TXLSFile = nil);
 var
   sOLAPs: TStringList;
   n: integer;
@@ -3643,8 +3549,7 @@ begin
   begin
     repeat
 
-      if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0))
-      then
+      if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0)) then
         break;
 
       SynMemo1.lines.loadfromFile(FName);
