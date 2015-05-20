@@ -164,8 +164,7 @@ const
   // Datenbank-Inhalt als Tabelle exportieren
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
   AppendMode: boolean = false); overload;
-procedure ExportTable(TSql: TStrings; FName: string;
-  Seperator: char = ';'); overload;
+procedure ExportTable(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
 
 // Stringlist Table
 function slTable(TSql: string): TStringList; overload;
@@ -177,17 +176,14 @@ function csTable(TSql: TStrings): TsTable; overload;
 
 procedure fbDump(TSql: string; Dump: TStrings); overload;
 procedure fbDump(TSql: TStrings; Dump: TStrings); overload;
-procedure fbDump(_R: integer; References: TStringList;
-  Dump: TStringList); overload;
+procedure fbDump(_R: integer; References: TStringList; Dump: TStringList); overload;
 
 // Datenbank Record exportiern
 function AsKeyValue(q: TdboQuery): TStringList;
 
 // Script
-procedure ExportScript(TSql: TStrings; FName: string;
-  Seperator: char = ';'); overload;
-procedure ExportScript(TSql: string; FName: string;
-  Seperator: char = ';'); overload;
+procedure ExportScript(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
+procedure ExportScript(TSql: string; FName: string; Seperator: char = ';'); overload;
 
 procedure JoinTables(SourceL: TStringList; DestFName: string);
 procedure RenameColumnHeader(fromS, toS: string; DestFName: string);
@@ -296,8 +292,7 @@ function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
 procedure e_x_sql(s: string); overload;
 procedure e_x_sql(s: TStrings); overload;
 procedure e_x_update(s: string; sl: TStringList);
-procedure e_w_dereference(RID: integer; TableN, FieldN: string;
-  DeleteIt: boolean = false);
+procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false);
 
 // BASIC Prozessor
 procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
@@ -312,8 +307,16 @@ procedure e_x_commit;
 //
 procedure e_x_dereference(dependencies: TStringList; fromref: string;
   toref: string = 'NULL'); overload;
-procedure e_x_dereference(dependencies: string; fromref: string;
-  toref: string = 'NULL'); overload;
+procedure e_x_dereference(dependencies: string; fromref: string; toref: string = 'NULL'); overload;
+
+// Name einer temporären OLAP-Tabelle
+function e_r_OLAP_Tabellenname(n: integer): string;
+
+// temporäre OLAP Tabelle anlegen
+procedure e_n_OLAP(n: integer);
+
+// Bulk insert in eine OLAP Tabelle
+procedure e_w_OLAP(n: integer; Werte: TgpIntegerList);
 
 // Server Infos
 function e_r_fbClientVersion: string;
@@ -400,13 +403,11 @@ var
   ResultSQL: TStringList;
   TheRIDs: TsTable;
   r, RID: integer;
-  sRID: string;
   cCol_RID: integer;
   lRESULT: TgpIntegerList;
 begin
   TheRIDs := TsTable.create;
   lRESULT := TgpIntegerList.create;
-
   try
     TheRIDs.InsertFromFile(FName);
     ResultSQL := TStringList.create;
@@ -433,7 +434,6 @@ begin
   end;
   TheRIDs.free;
   lRESULT.free;
-
 end;
 
 procedure qSelectOne(q: TdboQuery);
@@ -499,8 +499,7 @@ begin
     sql.add(TSql);
 
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
 
     // Kopfzeile
@@ -563,8 +562,8 @@ begin
 
               SQL_TIMESTAMP, SQL_TIMESTAMP_:
                 begin
-                  Infostr := Infostr + long2date(DateTime2Long(AsDateTime)) +
-                    ' ' + secondstostr(DateTime2seconds(AsDateTime));
+                  Infostr := Infostr + long2date(DateTime2Long(AsDateTime)) + ' ' +
+                    secondstostr(DateTime2seconds(AsDateTime));
                 end;
 
               SQL_TYPE_DATE, SQL_TYPE_DATE_:
@@ -574,12 +573,10 @@ begin
 
               SQL_TYPE_TIME, SQL_TYPE_TIME_:
                 begin
-                  Infostr := Infostr +
-                    secondstostr(DateTime2seconds(AsDateTime));
+                  Infostr := Infostr + secondstostr(DateTime2seconds(AsDateTime));
                 end;
             else
-              Infostr := Infostr + 'SQLType ' + inttostr(SQLType) +
-                ' unbekannt!';
+              Infostr := Infostr + 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
 {$ENDIF}
           end
@@ -632,8 +629,7 @@ begin
 {$ENDIF}
       sql.add(TSql);
       if DebugMode then
-        AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
-          '.txt', DatumUhr);
+        AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
       ApiFirst;
 
       // Kopfzeile
@@ -695,8 +691,8 @@ begin
 
                 SQL_TIMESTAMP, SQL_TIMESTAMP_:
                   begin
-                    Infostr := Infostr + long2date(DateTime2Long(AsDateTime)) +
-                      ' ' + secondstostr(DateTime2seconds(AsDateTime));
+                    Infostr := Infostr + long2date(DateTime2Long(AsDateTime)) + ' ' +
+                      secondstostr(DateTime2seconds(AsDateTime));
                   end;
 
                 SQL_TYPE_DATE, SQL_TYPE_DATE_:
@@ -705,12 +701,10 @@ begin
                   end;
                 SQL_TYPE_TIME, SQL_TYPE_TIME_:
                   begin
-                    Infostr := Infostr +
-                      secondstostr(DateTime2seconds(AsDateTime));
+                    Infostr := Infostr + secondstostr(DateTime2seconds(AsDateTime));
                   end;
               else
-                Infostr := Infostr + 'SQLType ' + inttostr(SQLType) +
-                  ' unbekannt!';
+                Infostr := Infostr + 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
               end;
 {$ENDIF}
             end
@@ -860,8 +854,7 @@ begin
   begin
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
 
     // Kopfzeile
@@ -993,20 +986,17 @@ begin
   DestL.free;
 end;
 
-procedure ExportTable(TSql: TStrings; FName: string;
-  Seperator: char = ';'); overload;
+procedure ExportTable(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
 begin
   ExportTable(HugeSingleLine(TSql, ' '), FName, Seperator);
 end;
 
-procedure ExportScript(TSql: TStrings; FName: string;
-  Seperator: char = ';'); overload;
+procedure ExportScript(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
 begin
   ExportScript(HugeSingleLine(TSql, ' '), FName, Seperator);
 end;
 
-procedure ExportScript(TSql: string; FName: string;
-  Seperator: char = ';'); overload;
+procedure ExportScript(TSql: string; FName: string; Seperator: char = ';'); overload;
 {$IFDEF fpc}
 var
   Ablage: TStringList;
@@ -1247,8 +1237,7 @@ begin
         sql.add('select * from ' + TableName + ' where RID=' + inttostr(RID));
 
         if DebugMode then
-          AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
-            '.txt', DatumUhr);
+          AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 
         ApiFirst;
         if eof then
@@ -1279,8 +1268,7 @@ begin
             if cSOURCE.FieldByName(_FieldName).IsNull then
               break;
 
-            qDEST.FieldByName(_FieldName)
-              .Assign(cSOURCE.FieldByName(_FieldName));
+            qDEST.FieldByName(_FieldName).Assign(cSOURCE.FieldByName(_FieldName));
 
           until true;
         end;
@@ -1570,8 +1558,7 @@ var
       end
       else
       begin
-        raise Exception.create('fbDump: SQL: "' + cToken_FROM +
-          '" nicht gefunden!');
+        raise Exception.create('fbDump: SQL: "' + cToken_FROM + '" nicht gefunden!');
       end;
     end;
     result := _TableName;
@@ -1598,8 +1585,7 @@ begin
 
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     cFIELDCOUNT := FieldCount;
 
@@ -1669,8 +1655,7 @@ begin
                 end;
               SQL_TYPE_TIME, SQL_TYPE_TIME_:
                 begin
-                  Content := '''' +
-                    secondstostr(DateTime2seconds(AsDateTime)) + '''';
+                  Content := '''' + secondstostr(DateTime2seconds(AsDateTime)) + '''';
                 end;
             else
               Content := 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
@@ -1713,8 +1698,7 @@ begin
   fbDump(HugeSingleLine(TSql), Dump);
 end;
 
-procedure fbDump(_R: integer; References: TStringList;
-  Dump: TStringList); overload;
+procedure fbDump(_R: integer; References: TStringList; Dump: TStringList); overload;
 var
   cDATA: TdboCursor;
   Dependency: string;
@@ -1761,14 +1745,13 @@ begin
           if (m = 1) then
             CalculatedSQL := FieldByName('RID').AsString
           else
-            CalculatedSQL := CalculatedSQL + fbDumpKomma +
-              FieldByName('RID').AsString;
+            CalculatedSQL := CalculatedSQL + fbDumpKomma + FieldByName('RID').AsString;
 
           // Script ab und zu auftrennen
           if (m > 500) then
           begin
-            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
-              inttostr(_R) + ' where RID in (' + CalculatedSQL + ');');
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
+              ' where RID in (' + CalculatedSQL + ');');
             m := 0;
           end;
 
@@ -1784,13 +1767,13 @@ begin
 
           if (m = 1) then
           begin
-            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
-              inttostr(_R) + ' where RID=' + CalculatedSQL + ';');
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
+              ' where RID=' + CalculatedSQL + ';');
             break;
           end;
 
-          Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' +
-            inttostr(_R) + ' where RID in (' + CalculatedSQL + ');')
+          Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
+            ' where RID in (' + CalculatedSQL + ');')
 
         until true;
       end;
@@ -1802,8 +1785,7 @@ end;
 procedure e_x_sql(s: string);
 begin
   if DebugMode then
-    AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt',
-      DatumUhr);
+    AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 {$IFDEF fpc}
   fbConnection.ExecuteDirect(s);
 {$ELSE}
@@ -1897,8 +1879,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsInteger;
   end;
@@ -1992,8 +1973,7 @@ begin
 end;
 
 type
-  eConnectionCountMethod = (eCCM_unchecked, eCCM_impossible,
-    eCCM_MonitorTables);
+  eConnectionCountMethod = (eCCM_unchecked, eCCM_impossible, eCCM_MonitorTables);
 
 const
   CCM: eConnectionCountMethod = eCCM_unchecked;
@@ -2002,8 +1982,7 @@ function e_r_ConnectionCount: integer;
 begin
   if (CCM = eCCM_unchecked) then
   begin
-    if (e_r_sql('SELECT' + ' count(RDB$RELATION_NAME) ' + 'FROM' +
-      ' RDB$RELATIONS ' + 'WHERE' +
+    if (e_r_sql('SELECT' + ' count(RDB$RELATION_NAME) ' + 'FROM' + ' RDB$RELATIONS ' + 'WHERE' +
       ' (RDB$RELATION_NAME=''MON$ATTACHMENTS'')') = 1) then
       CCM := eCCM_MonitorTables
     else
@@ -2055,8 +2034,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], sl);
   end;
@@ -2073,8 +2051,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], result);
   end;
@@ -2091,8 +2068,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2113,8 +2089,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2138,8 +2113,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2159,8 +2133,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsString;
   end;
@@ -2181,8 +2154,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     if eof then
       result := ifnull
@@ -2196,8 +2168,7 @@ begin
   cSQL.free;
 end;
 
-procedure e_w_dereference(RID: integer; TableN, FieldN: string;
-  DeleteIt: boolean = false);
+procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false);
 var
   sql: TStringList;
 begin
@@ -2249,8 +2220,7 @@ var
       until false;
 
       // Nun austauschen
-      ersetze(copy(result, k, l - k), ParameterL.Values[copy(result, k, l - k)
-        ], result);
+      ersetze(copy(result, k, l - k), ParameterL.Values[copy(result, k, l - k)], result);
 
     until false;
     ersetze('€€', '$', result);
@@ -2318,8 +2288,7 @@ begin
   begin
     sql.add(ResolveParameter(sSQL));
     if DebugMode then
-      AppendStringsToFile(sql, DiagnosePath + 'rSQL-' + inttostr(DateGet) +
-        '.txt', DatumUhr);
+      AppendStringsToFile(sql, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName + '=' + Fields[n].AsString);
@@ -2343,8 +2312,7 @@ begin
   cNOW.free;
 end;
 
-procedure e_x_dereference(dependencies: TStringList;
-  fromref, toref: string); overload;
+procedure e_x_dereference(dependencies: TStringList; fromref, toref: string); overload;
 var
   Dependency: string;
   Condition: string;
@@ -2369,17 +2337,15 @@ begin
       if (Condition <> '') then
         Condition := ' and (' + Condition + ')';
 
-      CalculatedSQL := 'update ' + TableName + ' set ' + FieldName + ' = ' +
-        toref + AddFields + ' where (' + FieldName + ' = ' + fromref + ')' +
-        Condition;
+      CalculatedSQL := 'update ' + TableName + ' set ' + FieldName + ' = ' + toref + AddFields +
+        ' where (' + FieldName + ' = ' + fromref + ')' + Condition;
 
       try
         e_x_sql(CalculatedSQL);
       except
         on E: Exception do
         begin
-          CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL +
-            '"): ' + E.Message);
+          CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL + '"): ' + E.Message);
         end;
       end;
 
@@ -2516,8 +2482,56 @@ end;
 
 function e_r_Revision_Zwang: single;
 begin
-  result := e_r_sql
-    ('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
+  result := e_r_sql('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
+end;
+
+function e_r_OLAP_Tabellenname(n: integer): string;
+begin
+  result := 'OLAP$TMP' + inttostr(n);
+end;
+
+procedure e_n_OLAP(n: integer);
+begin
+
+  // Tabelle löschen
+  DropTable(e_r_OLAP_Tabellenname(n));
+
+  // Tabelle neu anlegen
+  e_x_sql('create table ' + e_r_OLAP_Tabellenname(n) + ' (' + 'RID DOM_REFERENCE NOT NULL)');
+  e_x_sql('alter table ' + e_r_OLAP_Tabellenname(n) + ' add constraint PK_' +
+    e_r_OLAP_Tabellenname(n) + ' primary key (RID)');
+
+  // e_x_sql('delete from ' + e_r_OLAP_Tabellenname(n));
+
+end;
+
+procedure e_w_OLAP(n: integer; Werte: TgpIntegerList);
+var
+  OLAP: TdboScript;
+  i: integer;
+begin
+  // imp pend: Schliesse dies in eine Transaktion ein
+
+  // imp pend: nicht 1000 einzelne inserts, sondern
+  // die ganze TgpIntegerList als Block zum Server schieben
+  // soll doch der die ganzen inserts machen ...
+
+  OLAP := nScript;
+  with OLAP do
+  begin
+    sql.add('insert into');
+    sql.add(e_r_OLAP_Tabellenname(n));
+    sql.add(' (RID)');
+    sql.add('values');
+    sql.add(' (:CR1)');
+    prepare;
+    for i := 0 to pred(Werte.count) do
+    begin
+      Params[0].AsInteger := Werte[i];
+      execute;
+    end;
+  end;
+  OLAP.free;
 end;
 
 end.

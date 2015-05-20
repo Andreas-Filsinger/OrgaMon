@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.107 (20.05.15) Andreas Filsinger
+
+ Neu: OLAP: save: implizit distinct mit Prüfung
+ Neu: OLAP: save: 100% schneller
+
 Rev 8.106 (13.05.15) Andreas Filsinger
 
  Neu: Kasse: Unterstützung für Rev 1.022 ('*', Multiplikation)
@@ -10988,6 +10993,14 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.107
+
+CREATE GENERATOR GEN_OLAP0;
+
+CREATE GENERATOR GEN_OLAP1;
+
+CREATE GENERATOR GEN_OLAP2;
 
 :8.097
 

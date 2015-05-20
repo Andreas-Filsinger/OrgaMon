@@ -185,25 +185,6 @@ end;
 
 procedure TFormOLAP.Button2Click(Sender: TObject);
 
-  function ErgebnisTableName(n: integer): string;
-  begin
-    result := 'OLAP$TMP' + inttostr(n);
-  end;
-
-  procedure AliveOLAP(n: integer);
-  begin
-
-    // Tabelle löschen
-    DropTable(ErgebnisTableName(n));
-
-    // Tabelle neu anlegen
-    e_x_sql('create table ' + ErgebnisTableName(n) + ' (' + 'RID DOM_REFERENCE NOT NULL)');
-    e_x_sql('alter table ' + ErgebnisTableName(n) + ' add constraint PK_' + ErgebnisTableName(n) +
-      ' primary key (RID)');
-    e_x_sql('delete from ' + ErgebnisTableName(n));
-
-  end;
-
   function IncludeFName(n: integer): string;
   begin
     result := iOlapPath + 'SQL.' + inttostr(max(0, n)) + '.txt';
@@ -366,7 +347,7 @@ var
   // spread-alpha
   SpreadTitle: TStringList;
 
-  // load
+  // load / save
   LoadFname: string;
   LoadSQL: string;
   LoadSQLinsert: string;
@@ -2196,7 +2177,7 @@ begin
               cRepeat := DataModuleDatenbank.nCursor;
               with cRepeat do
               begin
-                ExecuteStatement := 'select * from ' + ErgebnisTableName(RohdatenCount - 2);
+                ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(RohdatenCount - 2);
                 sql.add(ExecuteStatement);
                 setWaitCaption(ExecuteStatement);
                 ApiFirst;
@@ -2272,7 +2253,7 @@ begin
                 raise Exception.create('Datei "' + iOlapPath + LoadFname + '" nicht gefunden!');
 
               // bisherige Tabelle löschen
-              DropTable(ErgebnisTableName(RohdatenCount));
+              DropTable(e_r_OLAP_Tabellenname(RohdatenCount));
 
               // jetzt wird die Tabelle angelegt
               LoadSQL := '';
@@ -2284,7 +2265,8 @@ begin
                   LoadSQL := LoadSQL + ', ';
               end;
 
-              e_x_sql('create table ' + ErgebnisTableName(RohdatenCount) + ' ( ' + LoadSQL + ')');
+              e_x_sql('create table ' + e_r_OLAP_Tabellenname(RohdatenCount) + ' ( ' +
+                LoadSQL + ')');
 
               LoadSQL := '';
               for m := pred(SpaltenNamen.count) downto 0 do
@@ -2318,8 +2300,8 @@ begin
               begin
 
                 //
-                LoadSQLinsert := 'insert into ' + ErgebnisTableName(RohdatenCount) + '(' + LoadSQL +
-                  ') values (';
+                LoadSQLinsert := 'insert into ' + e_r_OLAP_Tabellenname(RohdatenCount) + '(' +
+                  LoadSQL + ') values (';
 
                 //
                 for k := 0 to pred(SpaltenNamen.count) do
@@ -2400,46 +2382,37 @@ begin
           end;
         cState_Save:
           begin
-
             if (Line <> '-') then
             begin
-
-              //
-              ListResults := TStringList.create;
+              LoadSpalte := TgpIntegerList.create;
               ListColName := Line;
               ListNumeric := pos('numeric', Line) > 0;
               if ListNumeric then
                 ersetze('numeric', '', ListColName);
-
               ListColName := cutblank(ListColName);
               AllHeader := TStringList(BigJoin[0]);
               ListCol := AllHeader.indexof(ListColName);
               if (ListCol <> -1) then
               begin
-
-                AliveOLAP(pred(RohdatenCount));
-
-                // nun speichern!
-                for m := 1 to pred(BigJoin.count) do
-                begin
-                  if (TStringList(BigJoin[m])[ListCol] <> cOLAPNull) then
-                  begin
-                    if ListNumeric then
-                      e_x_sql('insert into ' + ErgebnisTableName(pred(RohdatenCount)) +
-                        '(RID)values(' + TStringList(BigJoin[m])[ListCol] + ')');
-                  end;
-                end;
-
+                e_n_OLAP(pred(RohdatenCount));
+                if ListNumeric then
+                  for m := 1 to pred(BigJoin.count) do
+                    if (TStringList(BigJoin[m])[ListCol] <> cOLAPNull) then
+                    begin
+                      k := strtointdef(TStringList(BigJoin[m])[ListCol], cRID_UnSet);
+                      if (k <> cRID_UnSet) then
+                        if (LoadSpalte.indexof(k) = -1) then
+                          LoadSpalte.add(k);
+                    end;
+                e_w_OLAP(pred(RohdatenCount), LoadSpalte);
               end
               else
               begin
                 ShowMessage('save: Spalte ' + ListColName + ' nicht gefunden!');
               end;
-              ListResults.free;
-
+              LoadSpalte.free;
               State := cState_Rohdaten;
             end;
-
           end;
         cState_spread:
           begin
