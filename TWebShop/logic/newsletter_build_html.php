@@ -52,6 +52,34 @@ function get_articles($params) {
     return $articles;
 }
 
+function get_articles_detail($params) {
+    global $orgamon;
+    $template = new ttemplate(array(twebshop_article::CLASS_NAME => _TEMPLATE_ARTICLE_NEWSLETTER_DETAIL,
+                twebshop_price::CLASS_NAME => _TEMPLATE_PRICE_SEARCH,
+                twebshop_availability::CLASS_NAME => _TEMPLATE_AVAILABILITY
+            ));
+
+    $ids = explode(",", $params);
+
+    $articles = "";
+    foreach ($ids as $id) {
+        $article = new twebshop_article($id);
+        $article->getAll();
+        $article->addOption("CART", _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_CART);
+        $article->addOption("PLAY", (count($article->getSounds(true))  > 0) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_PLAY : "");
+        $article->addOption("DEMO", (count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DEMO : "");
+        $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_MINISCORE : ""));
+        $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_RECORDS : ""));
+        $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_THUMB : "");
+        $article->addOption("MP3", ($article->existsMP3Download()) ? _TEMPLATE_ARTICLE_NEWSLETTER_OPTION_MP3 : "" );
+       
+        $articles.= $article->getFromHTMLTemplate($template);
+
+        unset($article);
+    }
+    return $articles;
+}
+
 $f_subject = strip_tags($f_subject);
 $f_text = str_replace("\\\"", "\"", $f_text);
 $f_text = str_replace("\\'", "'", $f_text);

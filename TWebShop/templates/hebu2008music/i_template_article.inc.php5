@@ -247,6 +247,30 @@ WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p></div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF
 );
 
+// ARTIKEL-DETAIL-TEMPLATE FÜR DEN NEWSLETTER
+define("_TEMPLATE_ARTICLE_NEWSLETTER_DETAIL",
+"<!-- ~RID_INT~ //-->" . CRLF .
+"<div class=\"article_main_container\">" . CRLF .
+"<div class=\"article_header\">" . CRLF .
+"  <div class=\"left\"><p>~TITEL~</p>&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
+"  <div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
+"</div><div class=\"clear\"></div>" . CRLF .
+"<div class=\"article_body\">" . CRLF .
+"  <p><b>" . WORD_COMPOSER . ":</b>&nbsp;~COMPOSER_LINK~</p>" . CRLF .
+"  <p><b>" . WORD_ARRANGER . ":</b>&nbsp;~ARRANGER_LINK~</p>" . CRLF .
+"  <p><b>" . WORD_DURATION . ":</b>&nbsp;~DAUER~</p><hr>" . CRLF .
+"  <p><b>" . WORD_GENRE . ":</b>&nbsp;~TREE_PATH~</p>" . CRLF .
+"  <p><b>" . WORD_DIFFICULTY . ":</b>&nbsp;~SCHWER_GRUPPE~&nbsp;~SCHWER_DETAILS~</p>" . CRLF .
+"  <p><b>" . WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p><hr>" . CRLF .
+"  <p>~BEM~</p><!--~PUBLISHER~--><hr>" . CRLF .
+"  <p>~MEMBERS~</p><p>~YOUTUBE_LINK~</p><hr>" . CRLF .
+"  <p id=\"article_options\">~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~</p>" . CRLF .
+"  ~PARTS_LIST~" . CRLF .
+"</div>" . CRLF .
+"<div class=\"article_side\">~OPTION_THUMB~</div>" . CRLF .
+"<div class=\"clear\"></div>" . CRLF .
+"</div><div class=\"clear\"></div>" . CRLF
+);
 
 // TEMPLATE FÜR OPTION INFO IM NEWSLETTER
 define("_TEMPLATE_ARTICLE_NEWSLETTER_OPTION_DETAILS",
@@ -385,5 +409,10 @@ define("_TEMPLATE_ARTICLE_WISHLIST_OPTION_MOVE_TO_CART",
 // TEMPLATE FÜR YOUTUBE FRAME
 define("_TEMPLATE_ARTICLE_YOUTUBE_FRAME",
     "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/~YOUTUBEID~\" frameborder=\"0\" allowfullscreen></iframe>"
+);
+
+// TEMPLATE FÜR YOUTUBE LINK
+define("_TEMPLATE_ARTICLE_YOUTUBE_LINK",
+    "<a href=\"https://www.youtube.com/watch?v=~YOUTUBEID~\">https://www.youtube.com/watch?v=~YOUTUBEID~</a>"
 );
 ?>
