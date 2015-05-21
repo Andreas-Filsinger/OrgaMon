@@ -489,6 +489,7 @@ class twebshop_article extends tvisual {
 
         $template = str_replace("~PARTS_LIST~",    $this->templatePartsList(),    $template);   // 14.01.2015 michaelhacksoftware : Downloadbare Stimmen anzeigen
         $template = str_replace("~YOUTUBE_FRAME~", $this->templateYouTubeFrame(), $template);   // 06.03.2015 michaelhacksoftware : YouTube Videos eingebettet anzeigen
+        $template = str_replace("~YOUTUBE_LINK~",  $this->templateYouTubeLink(),  $template);   // 21.05.2015 michaelhacksoftware : YouTube Links anzeigen
 
         $template = str_replace("~ARRANGER~", $this->getArranger(false), $template);
         $template = str_replace("~ARRANGER_LINK~", $this->getArranger(true), $template);
@@ -627,7 +628,22 @@ class twebshop_article extends tvisual {
     }
     /* <-- */
 
+    /* --> 21.05.2015 michaelhacksoftware : Template für YouTube Links erzeugen */
+    private function templateYouTubeLink() {
 
+        /* === YouTube ID ermitteln === */
+        $YouTubeID = $this->getYouTubeID();
+
+        if (!$YouTubeID) {
+            return "";
+        }
+
+        return str_replace("~YOUTUBEID~", $YouTubeID, _TEMPLATE_ARTICLE_YOUTUBE_LINK);
+
+    }
+    /* <-- */
+
+    
     static public function buildUID($article_r, $version_r, $detail) {
         return md5($article_r . $version_r . $detail);
     }

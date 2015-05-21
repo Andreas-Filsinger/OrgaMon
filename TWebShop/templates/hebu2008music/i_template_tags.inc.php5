@@ -7,6 +7,13 @@ $_TAGS = array(
   "TEMPLATE" => "",
   "FUNCTION" => "get_articles",
   "VALUE_REPLACED_BY_SELECTED_TEXT" => 0
+),
+"ARTICLES_DETAIL" => array(
+  "NAME" => "Detailansicht Artikel",
+  "CODE" => "[ARTICLES_DETAIL]1,2,3[/ARTICLES_DETAIL]",
+  "TEMPLATE" => "",
+  "FUNCTION" => "get_articles_detail",
+  "VALUE_REPLACED_BY_SELECTED_TEXT" => 0
 ));
 
 
