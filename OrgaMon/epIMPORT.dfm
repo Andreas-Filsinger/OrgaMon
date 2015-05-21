@@ -32,14 +32,10 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 17
@@ -175,10 +171,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet2: TTabSheet
       Caption = 'GaZMa'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 7
         Top = 97
@@ -222,10 +214,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet3: TTabSheet
       Caption = 'Datafactory Postalcode'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button6: TButton
         Left = 48
         Top = 33
@@ -360,10 +348,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet6: TTabSheet
       Caption = 'Buch'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button12: TButton
         Left = 33
         Top = 33
@@ -386,10 +370,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet7: TTabSheet
       Caption = '1400'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 16
         Top = 16
@@ -426,10 +406,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet8: TTabSheet
       Caption = 'eMail'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 3
         Top = 48

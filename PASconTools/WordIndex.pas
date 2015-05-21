@@ -193,6 +193,9 @@ type
 
     function Row(r: integer): TStringList;
 
+    // Ersetze in einem String alle Spaltenwerte
+    procedure ersetze(Row: integer; var s : string);
+
     // ACHTUNG: r darf nach addRow nicht freigegeben werden
     function addRow(r: TStringList = nil): integer;
     function RowCount: integer;
@@ -1165,6 +1168,18 @@ begin
   inherited;
 end;
 
+procedure TsTable.ersetze(Row: integer; var s: string);
+var
+ c: integer;
+begin
+ for c := 0 to pred(header.count) do
+ begin
+   if pos('$',s)=0 then
+    break;
+   anfix32.ersetze('$'+header[c],readCell(Row,c),s);
+ end;
+end;
+
 function TsTable.getSeparator: string;
 begin
   if (oSeparator <> '') then
@@ -1537,7 +1552,7 @@ begin
     if sl.Count > 1 then
       if (pos('"' + getSeparator, sl[0]) > 0) or
         (pos('"' + getSeparator, sl[1]) > 0) then
-        ersetze('"', '', sl);
+        anfix32.ersetze('"', '', sl);
 
   // Noblank aller Zeilen?!
   if oNoblank then
@@ -1691,7 +1706,7 @@ begin
     if JoinL.Count > 1 then
       if (pos('"' + getSeparator, JoinL[0]) > 0) or
         (pos('"' + getSeparator, JoinL[1]) > 0) then
-        ersetze('"', '', JoinL);
+        anfix32.ersetze('"', '', JoinL);
 
   // Noblank aller Zeilen?!
   if oNoblank then
@@ -1896,12 +1911,12 @@ begin
       SortColumn := sFields[n];
       FormatNumeric := pos('numeric', SortColumn) > 0;
       if FormatNumeric then
-        ersetze('numeric', '', SortColumn);
+        anfix32.ersetze('numeric', '', SortColumn);
       DoReverse := pos('descending', SortColumn) > 0;
       if DoReverse then
-        ersetze('descending', '', SortColumn)
+        anfix32.ersetze('descending', '', SortColumn)
       else
-        ersetze('ascending', '', SortColumn);
+        anfix32.ersetze('ascending', '', SortColumn);
       SortColumn := cutblank(SortColumn);
       k := header.indexof(SortColumn);
       if (k = -1) then

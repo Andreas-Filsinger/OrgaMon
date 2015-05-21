@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.108 (21.05.15) Andreas Filsinger
+
+ Neu: System: Stapeltransaktionen: freies SQL
+
 Rev 8.107 (20.05.15) Andreas Filsinger
 
  Neu: OLAP: save: implizit distinct mit Prüfung
