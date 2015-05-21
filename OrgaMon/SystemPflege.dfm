@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -470,6 +470,30 @@ object FormSystemPflege: TFormSystemPflege
         Width = 33
         Height = 21
         TabOrder = 10
+      end
+      object RadioButton7: TRadioButton
+        Left = 40
+        Top = 167
+        Width = 113
+        Height = 17
+        Caption = 'freies SQL'
+        TabOrder = 11
+      end
+      object Edit16: TEdit
+        Left = 200
+        Top = 168
+        Width = 418
+        Height = 21
+        TabOrder = 12
+        Text = 'update PERSON set KONTO_AR=$KONTO_AR where RID=$RID'
+      end
+      object CheckBox7: TCheckBox
+        Left = 16
+        Top = 455
+        Width = 97
+        Height = 17
+        Caption = 'Abbruch'
+        TabOrder = 13
       end
     end
     object TabSheet4: TTabSheet
@@ -929,8 +953,8 @@ object FormSystemPflege: TFormSystemPflege
   end
   object IdSysLog1: TIdSysLog
     OnStatus = IdSysLog1Status
-    Left = 40
-    Top = 160
+    Left = 392
+    Top = 56
   end
   object IdCmdTCPServer1: TIdCmdTCPServer
     Bindings = <>

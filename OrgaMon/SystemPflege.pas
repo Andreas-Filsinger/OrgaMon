@@ -31,7 +31,7 @@ interface
 uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
-  Forms, Dialogs, StdCtrls,
+  Forms, Dialogs, StdCtrls, Buttons,
 
   // IB-Objects
   IB_Access,
@@ -40,6 +40,7 @@ uses
   IB_Script,
   IB_Dialogs,
   IB_MetaData,
+  IB_UtilityBar,
 
   // SynEdit
   SynEdit, SynMemo, SynEditHighlighter,
@@ -49,7 +50,10 @@ uses
   ComCtrls, ExtCtrls,
 
   // ANFiX
-  gplists, Buttons, IdBaseComponent, IdComponent, IB_UtilityBar, IdUDPBase,
+  gplists, WordIndex,
+
+  // Indy
+  IdBaseComponent, IdComponent, IdUDPBase,
   IdUDPClient, IdSysLog, IdContext, IdCustomTCPServer, IdTCPServer,
   IdCmdTCPServer;
 
@@ -162,6 +166,9 @@ type
     IdCmdTCPServer1: TIdCmdTCPServer;
     Button19: TButton;
     ListBox4: TListBox;
+    RadioButton7: TRadioButton;
+    Edit16: TEdit;
+    CheckBox7: TCheckBox;
     procedure CheckBox8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -189,12 +196,13 @@ type
       const AStatusText: string);
     procedure CheckBox6Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
-    procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer;
-      var AData: string; AContext: TIdContext);
+    procedure IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer; var AData: string;
+      AContext: TIdContext);
     procedure Button19Click(Sender: TObject);
   private
     { Private-Deklarationen }
     lTRN: TgpIntegerList;
+    tTRN: TsTable;
   public
     { Public-Deklarationen }
     function MetaDataFName: string;
@@ -234,14 +242,14 @@ begin
   PageControl1.ActivePage := TabSheet1;
 end;
 
-procedure TFormSystemPflege.IdCmdTCPServer1BeforeCommandHandler(
-  ASender: TIdCmdTCPServer; var AData: string; AContext: TIdContext);
+procedure TFormSystemPflege.IdCmdTCPServer1BeforeCommandHandler(ASender: TIdCmdTCPServer;
+  var AData: string; AContext: TIdContext);
 begin
- Listbox4.Items.Add(AData);
+  ListBox4.Items.Add(AData);
 end;
 
-procedure TFormSystemPflege.IdSysLog1Status(ASender: TObject;
-  const AStatus: TIdStatus; const AStatusText: string);
+procedure TFormSystemPflege.IdSysLog1Status(ASender: TObject; const AStatus: TIdStatus;
+  const AStatusText: string);
 begin
   if AStatus = hsStatusText then
     Memo3.Lines.Add(AStatusText);
@@ -373,8 +381,7 @@ begin
     if pos('RDB$PRIMARY', ListBox1.Items[n]) > 0 then
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
-        ' active;');
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) + ' active;');
       try
         if CheckBox2.Checked then
         begin
@@ -392,8 +399,7 @@ begin
     if pos('RDB$FOREIGN', ListBox1.Items[n]) > 0 then
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
-        ' active;');
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) + ' active;');
       try
         if CheckBox3.Checked then
         begin
@@ -410,8 +416,7 @@ begin
     else
     begin
       IB_Script1.sql.Clear;
-      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) +
-        ' active;');
+      IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[n]) + ' active;');
       try
         if CheckBox4.Checked then
         begin
@@ -441,8 +446,8 @@ begin
   if ListBox1.ItemIndex <> -1 then
   begin
     IB_Script1.sql.Clear;
-    IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items
-      [ListBox1.ItemIndex]) + ' active;');
+    IB_Script1.sql.Add('alter index ' + ClearIndexName(ListBox1.Items[ListBox1.ItemIndex]) +
+      ' active;');
     try
       IB_Script1.Execute;
     except
@@ -467,9 +472,16 @@ begin
     BeginHourGlass;
 
     if not(assigned(lTRN)) then
-      lTRN := TgpIntegerList.create
-    else
+    begin
+      lTRN := TgpIntegerList.create;
+      tTRN := TsTable.Create;
+    end else
+    begin
       lTRN.Clear;
+      tTRN.Clear;
+    end;
+
+    tTRN.insertFromFile(OpenDialog1.FileName);
 
     ImportL := TStringList.create;
     LoadFromFileCSV(false, ImportL, OpenDialog1.FileName);
@@ -508,6 +520,7 @@ const
   xMode_ORDER_DEL = 4;
   xMode_FORDERUNG_DEL = 5;
   xMode_Free = 6;
+  xMode_SQL = 7;
 var
   n, SuccessN: integer;
   StartTime: dword;
@@ -518,6 +531,7 @@ var
   sDiagnose: TStringList;
   sLog: TStringList;
   PERSON_R: integer;
+  xSQL: string;
 begin
   if not(assigned(lTRN)) then
   begin
@@ -544,6 +558,8 @@ begin
     xMode := xMode_FORDERUNG_DEL;
   if RadioButton6.Checked then
     xMode := xMode_Free;
+  if RadioButton7.Checked then
+    xMode := xMode_SQL;
 
   if (xMode > 0) then
   begin
@@ -587,21 +603,25 @@ begin
               end;
             xMode_FORDERUNG_DEL:
               begin
-                Betrag := e_r_sqld('select SUM(BETRAG) from ' +
-                  ' AUSGANGSRECHNUNG where ' + ' BELEG_R=' + inttostr(RID));
+                Betrag := e_r_sqld('select SUM(BETRAG) from ' + ' AUSGANGSRECHNUNG where ' +
+                  ' BELEG_R=' + inttostr(RID));
                 if (Betrag > 0) then
                 begin
-                  PERSON_R := e_r_sql('select PERSON_R from BELEG ' +
-                    'where RID=' + inttostr(RID));
+                  PERSON_R := e_r_sql('select PERSON_R from BELEG ' + 'where RID=' + inttostr(RID));
 
                   sDiagnose := TStringList.create;
-                  b_w_ForderungAusgleich(format(cBuch_Ausgleich,
-                    [PERSON_R, RID, Betrag, '31.12.2006', cRID_Null,
-                    'Transaktion Forderungsausgleich', '', 0, cRID_Null]),
+                  b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, RID, Betrag,
+                    '31.12.2006', cRID_Null, 'Transaktion Forderungsausgleich', '', 0, cRID_Null]),
                     sDiagnose);
                   sLog.addstrings(sDiagnose);
                   sDiagnose.free;
                 end;
+              end;
+            xMode_SQL:
+              begin
+                xSQL := edit16.Text;
+                tTRN.ersetze(n+1,xSQL);
+                e_x_sql(xSQL);
               end;
           end;
           inc(SuccessN);
@@ -615,6 +635,8 @@ begin
           ProgressBar1.position := n;
           Label15.caption := format(DisplayFormatstr, [SuccessN, lTRN.count]);
           application.ProcessMessages;
+          if CheckBox7.Checked then
+           break;
         end;
 
       end;
@@ -639,8 +661,7 @@ begin
   BeginHourGlass;
   ReBuild;
   EndHourGlass;
-  Label18.caption :=
-    'Indizierung abgeschlossen: OrgaMon sollte neu gestartet werden!';
+  Label18.caption := 'Indizierung abgeschlossen: OrgaMon sollte neu gestartet werden!';
 end;
 
 procedure TFormSystemPflege.Button9Click(Sender: TObject);
@@ -702,8 +723,7 @@ begin
   ResultStrL.insert(0, '*/');
   ResultStrL.insert(0, '// Metadatenextraktion vom ' + datum + '  ' + uhr);
   ResultStrL.insert(0, '// DataBase Rev. ' + RevTostr(FormBaseUpdate.BaseRev));
-  ResultStrL.insert(0, '// ' + cApplicationName + ' Rev. ' +
-    RevTostr(globals.version));
+  ResultStrL.insert(0, '// ' + cApplicationName + ' Rev. ' + RevTostr(globals.version));
   ResultStrL.insert(0, '//');
   ResultStrL.insert(0, '// ' + iDataBaseName);
   ResultStrL.insert(0, '/*');
@@ -720,8 +740,8 @@ end;
 
 function TFormSystemPflege.MetaDataFName: string;
 begin
-  result := DiagnosePath + cApplicationName + '-' + RevTostr(globals.version) +
-    '-' + 'Metadata.sql.txt';
+  result := DiagnosePath + cApplicationName + '-' + RevTostr(globals.version) + '-' +
+    'Metadata.sql.txt';
 end;
 
 procedure TFormSystemPflege.PerfDataTransport;
@@ -758,8 +778,7 @@ begin
   end;
   cDOKUMENT.free;
   a := Speed.Stop;
-  Memo2.Lines.Add('Summe ist ' + inttostr(SizeOverAll DIV (1024 * 1024)) +
-    ' MiByte');
+  Memo2.Lines.Add('Summe ist ' + inttostr(SizeOverAll DIV (1024 * 1024)) + ' MiByte');
   Memo2.Lines.Add(format('Benötigte Zeit %.3f s', [a]));
 
   b := SizeOverAll;
@@ -783,8 +802,7 @@ begin
     ResetAll;
     ExtractToStrings(ResultStrL);
   end;
-  Memo2.Lines.Add(format('SQL-Metadaten Analyse dauerte  %.3f s',
-    [Speed.Stop]));
+  Memo2.Lines.Add(format('SQL-Metadaten Analyse dauerte  %.3f s', [Speed.Stop]));
   ResultStrL.free;
   Speed.free;
 end;
@@ -900,10 +918,8 @@ begin
       inc(Matches, i);
       FirewallScript.Add(inttostrN(i, 5) + ';' + BlackList[n]);
     end;
-    Log('Average Attacks per IP [Attacks] : ' +
-      inttostr(round(Matches / BlackList.count)));
-    Log('Top Count Attacks per most active IP [Attacks] : ' +
-      inttostr(MAxMAtches));
+    Log('Average Attacks per IP [Attacks] : ' + inttostr(round(Matches / BlackList.count)));
+    Log('Top Count Attacks per most active IP [Attacks] : ' + inttostr(MAxMAtches));
     FirewallScript.Sort;
     FirewallScript.SaveToFile('I:\Blacklist.txt');
     FirewallScript.free;
@@ -948,7 +964,7 @@ end;
 
 procedure TFormSystemPflege.Button19Click(Sender: TObject);
 begin
- IdCmdTCPServer1.Active := true;
+  IdCmdTCPServer1.Active := true;
 end;
 
 procedure TFormSystemPflege.Button1Click(Sender: TObject);
