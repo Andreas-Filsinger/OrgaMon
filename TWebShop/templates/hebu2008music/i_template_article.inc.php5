@@ -17,7 +17,7 @@ WORD_GENRE . ":</b>&nbsp;~TREE_PATH~</p><p><b>" .
 WORD_DIFFICULTY . ":</b>&nbsp;~SCHWER_GRUPPE~&nbsp;~SCHWER_DETAILS~</p><p><b>" .
 WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p></div>" . CRLF .
 "<div class=\"search_body_right\">~OPTION_THUMB~</div>" . CRLF .
-"<div class=\"article_options\">~OPTION_DETAILS~~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~</div>" . CRLF .
+"<div class=\"article_options\">~OPTION_DETAILS~~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~~OPTION_WISHLIST~</div>" . CRLF .
 "<div class=\"clear\"></div>" . CRLF . 
 "</div><div class=\"clear\"></div>" . CRLF
 );
@@ -62,6 +62,10 @@ define("_TEMPLATE_ARTICLE_SEARCH_OPTION_MP3",
 "<a href=\"" . __INDEX . "?site=cart&action=add_to_cart&aid=~AID~&vid=~VERSION_MP3~&id=~RID~#~NUMERO~\">" . nbsp(SENTENCE_BUY_MP3_DOWNLOAD) . image_tag(__TEMPLATE_IMAGES_PATH."option_buy_mp3.png",SENTENCE_BUY_MP3_DOWNLOAD) . "</a>"
 );
 
+// TEMPLATE FÜR OPTION MERKLISTE IN DER SUCHTREFFERANSICHT
+define("_TEMPLATE_ARTICLE_SEARCH_OPTION_WISHLIST",
+"<a href=\"" . __INDEX . "?site=~SITE~&action=add_to_wishlist&aid=~AID~&id=~RID~#~NUMERO~\">" . nbsp(SENTENCE_INTO_WISHLIST) . image_tag(__TEMPLATE_IMAGES_PATH."option_add_to_wishlist.png",SENTENCE_ADD_TO_WISHLIST) . "</a>"
+);
 
 
 // ARTIKEL-TEMPLATE FÜR DIE ARTIKEL-EINZELANSICHT
@@ -81,7 +85,7 @@ define("_TEMPLATE_ARTICLE_ARTICLE",
 "  <p><b>" . WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p><hr>" . CRLF .
 "  <p>~BEM~</p><!--~PUBLISHER~--><hr>" . CRLF .
 "  <p>~MEMBERS~</p>~YOUTUBE_FRAME~<hr>" . CRLF .
-"  <p id=\"article_options\">~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~</p>" . CRLF .
+"  <p id=\"article_options\">~OPTION_MINISCORE~~OPTION_PLAY~~OPTION_DEMO~~OPTION_RECORDS~~OPTION_MP3~~OPTION_CART~~OPTION_WISHLIST~</p>" . CRLF .
 "  ~PARTS_LIST~" . CRLF .
 "</div>" . CRLF .
 "<div class=\"article_side\">~OPTION_THUMB~</div>" . CRLF .
@@ -127,6 +131,11 @@ _TEMPLATE_ARTICLE_SEARCH_OPTION_MP3
 //TEMPLTATE FÜR OPTION DOWNLOADBARE STIMMEN
 define("_TEMPLATE_ARTICLE_ARTICLE_OPTION_PARTS_ITEM",
 "<a href=\"" . __INDEX . "?site=article&action=download_part&part=~PART_KIND~&nr=~NUMERO~&id=~RID~\">~PART_NAME~</a>"
+);
+
+// TEMPLATE FÜR OPTION MERKLISTE IN DER EINZELANSICHT
+define("_TEMPLATE_ARTICLE_ARTICLE_OPTION_WISHLIST",
+_TEMPLATE_ARTICLE_SEARCH_OPTION_WISHLIST
 );
 
 // ARTIKEL-TEMPLATE FÜR DEN EINKAUFSWAGEN
@@ -324,8 +333,8 @@ define("_TEMPLATE_ARTICLE_MYSHOP_MYMUSIC",
 define("_TEMPLATE_ARTICLE_WISHLIST",
 "<div class=\"article_main_container\">" . CRLF .
 "<div class=\"article_header\">" . CRLF .
-"  <div class=\"left\"><p>~POSITION~.</p>&nbsp;~OPTION_DETAILS~&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
-"  <div class=\"right\"><b>Stück:&nbsp;~QUANTITY~x</b>&nbsp;&nbsp;<b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
+"  <div class=\"left\">~OPTION_DETAILS~&nbsp;(" . WORD_ORDER_NO . " ~NUMERO~)</div>" .  CRLF .
+"  <div class=\"right\"><b>" . WORD_PRICE . "</b>&nbsp;~PRICE~</div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<div class=\"article_body\">" . CRLF .
 "<form id=\"~UID~\" action=\"" . __INDEX . "\" method=\"post\">" . CRLF .
@@ -337,15 +346,14 @@ define("_TEMPLATE_ARTICLE_WISHLIST",
 "  <input type=\"hidden\" name=\"id\" value=\"~WID~\" />" . CRLF .
 "  <!-- <p class=\"hint\">~COMPOSER~&nbsp;|&nbsp;~ARRANGER~ --><!-- &nbsp;|&nbsp;~PUBLISHER~ --><!-- </p> -->" . CRLF .
 "  <p><b>" . WORD_AVAILABILITY . ":</b>&nbsp;~AVAILABILITY~</p>" . CRLF .
-"  <p id=\"article_options\">" . SENTENCE_CHANGE_QUANTITY . CRLF .
-"    <input id=\"quantity\" type=\"text\" class=\"minimal\" name=\"f_quantity\" value=\"~QUANTITY~\" size=\"1\" maxlength=\"2\" style=\"vertical-align:baseline; text-align:center; margin-bottom:5px;\" onblur=\"submit();\" />~OPTION_REFRESH~" . CRLF .
+"  <br>" . CRLF .
+"  <p id=\"article_options\">" .
 "    ~OPTION_DELETE~" . CRLF .
 "    ~OPTION_MOVE_TO_CART~" . CRLF .
 "  </p>" . CRLF .
-"  <p>~OPTION_VERSION~&nbsp;~OPTION_COPY~</p>" . CRLF .
 "</form>" . CRLF .
 "</div>" . CRLF .
-"<div class=\"article_side\">~OPTION_THUMB~</div>" . CRLF .
+"<div class=\"article_side\">~OPTION_THUMB~<br><br></div>" . CRLF .
 "<div class=\"clear\"></div>" . CRLF .
 "</div><div class=\"clear\"></div>" . CRLF .
 "<script type=\"text/javascript\"> checkDetail('~UID~'); </script>" . CRLF
@@ -403,7 +411,7 @@ define("_TEMPLATE_ARTICLE_WISHLIST_OPTION_VERSION_NOT_PUBLIC",
 
 // TEMPLATE FÜR OPTION EINKAUFSWAGEN IN DER MERKLISTE
 define("_TEMPLATE_ARTICLE_WISHLIST_OPTION_MOVE_TO_CART",
-"<a href=\"" . __INDEX . "?site=cart&action=move_to_cart&aid=~AID~&wid=~WID~&uid=~UID~\">" . nbsp(SENTENCE_INTO_CART) . image_tag(__TEMPLATE_IMAGES_PATH."option_add_to_cart.png",SENTENCE_ADD_TO_CART) . "</a>"
+"<a href=\"" . __INDEX . "?site=~SITE~&action=move_to_cart&aid=~AID~&wid=~WID~&uid=~UID~\">" . nbsp(SENTENCE_INTO_CART) . image_tag(__TEMPLATE_IMAGES_PATH."option_add_to_cart.png",SENTENCE_ADD_TO_CART) . "</a>"
 );
 
 // TEMPLATE FÜR YOUTUBE FRAME

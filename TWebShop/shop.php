@@ -245,6 +245,7 @@ if ($i == 0) {
     $user = $session->getVar("user", twebshop_user::create());
     $user->clearOptions();
     $cart = $session->getVar("cart", twebshop_cart::create());
+    $wishlist = $session->getVar("wishlist", twebshop_wishlist::getInstance());
     $search = $session->getVar("search", twebshop_search::create());
     $search_result_pages = $session->getVar("search_result_pages", new twebshop_search_result_pages($search->getResult(), $search->getID(), $user->WEBSHOP_TREFFERPROSEITE));
     $tree = $session->getVar("tree", new twebshop_article_tree());
