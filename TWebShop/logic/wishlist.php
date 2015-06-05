@@ -98,8 +98,12 @@ class twebshop_wishlist extends twebshop_cart {
         $index = $this->getIndexByUID($uid);
 
         /* === Artikel in Warenkorb hinzufügen und aus Merkliste löschen === */
-        $cart->addArticle($this->article[$index]->getRID(), 1, $this->article[$index]->getVersion());
-        $this->deleteArticle($uid);
+        if ($cart->addArticle($this->article[$index]->getRID(), 1, $this->article[$index]->getVersion())) {
+            $this->deleteArticle($uid);
+            return true;
+        }
+        
+        return false;
 
     }
 
