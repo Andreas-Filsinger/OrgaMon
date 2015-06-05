@@ -27,16 +27,15 @@ SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/myshop-mymusic.txt
   <a href="~CONST___INDEX~?site=myshop&subsite=mymusic"><b>~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;</b></a>
 </p>
 
-<!--
-<a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_WISHLISTS~</b></a>
-<p class="text" id="justify"> --><!--
+<a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_WISHLIST~</b></a>
+<p class="text" id="justify">
 <!-- BEGIN TEXT
 SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/myshop-wishlists.txt
 !HTML2TXT=1
 !NL2BR=1
 -->TEXT: myshop-wishlists.txt<!-- END TEXT -->
-<!--  <a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;</b></a>
-</p> -->
+  <a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;</b></a>
+</p>
 
 <a href="~CONST___INDEX~?site=myshop&subsite=order_state"><b>~CONST_SENTENCE_ORDER_STATE~</b></a>
 <p class="text" id="justify">
@@ -273,10 +272,12 @@ DESCRIPTION=
 <!-- END STEP -->
 <!-- BEGIN STEP 
 NAME=wishlists
-TITLE=~CONST_WORD_WISHLISTS~
+TITLE=~CONST_WORD_WISHLIST~
 DESCRIPTION=
 -->
-  <p class="steptitle">~CONST_WORD_WISHLISTS~</p>
+  <p class="steptitle">~CONST_WORD_WISHLIST~</p>
+  <br>
+  
   <script type="text/javascript">
     function checkDetail(id, submit) 
     { var hasDetail = new Array();
@@ -298,8 +299,11 @@ DESCRIPTION=
       document.forms[id].submit();
     }
   </script>
-  <!-- 
-  ~OBJ_ERRORLIST~
+  
+  ~OBJ_ERRORLIST~~OBJ_MESSAGELIST~
+  
   ~OBJ_WISHLIST~
-  -->
+
+  <a href="?site=myshop&subsite=wishlists&action=clear_wishlist">~CONST_SENTENCE_CLEAR_WISHLIST~</a>
+
 <!-- END STEP -->

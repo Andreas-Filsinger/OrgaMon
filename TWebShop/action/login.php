@@ -14,7 +14,13 @@ if (!$user->loggedIn()) {
         $cart->synchronizeWithDataBase();
         $messagelist->add(SENTENCE_YOUR_CART_HAS_BEEN_UPDATED);
 
+        /* 04.05.2015 michaelhacksoftware : Wishlist in Session erstellen */
+        $wishlist = twebshop_wishlist::create($user->getID(), 1);
+        $session->registerVar("wishlist", $wishlist);
+        /* --- */
+
         $shop->loadVars("login");
+
     } else {
         $errorlist->add(ERROR_LOGIN_FAILED);
     }

@@ -225,7 +225,7 @@ class twebshop_cart extends tvisual {
         if ($this->person_r != 0 AND $article->cart_r == 0) {
 
             $rid = $ibase->gen_id("GEN_WARENKORB");
-            $sql = "INSERT INTO WARENKORB(RID,ARTIKEL_R,PERSON_R,MENGE,AUSGABEART_R,BEMERKUNG) VALUES ($rid,{$article->getiRID()},{$this->person_r},{$article->quantity},{$article->getVersion(true)},'{$article->detail}')";
+            $sql = "INSERT INTO WARENKORB(RID,ARTIKEL_R,PERSON_R,MENGE,AUSGABEART_R,BEMERKUNG,SCHRANK) VALUES ($rid,{$article->getiRID()},{$this->person_r},{$article->quantity},{$article->getVersion(true)},'{$article->detail}'," . tibase::format_for_insert($article->getWID()) . ")";
             $result = $ibase->exec($sql);
             $this->article[$index]->cart_r = $rid;
             unset($rid);

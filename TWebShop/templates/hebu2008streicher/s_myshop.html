@@ -27,6 +27,16 @@ SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/myshop-mymusic.txt
   <a href="~CONST___INDEX~?site=myshop&subsite=mymusic"><b>~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;</b></a>
 </p>
 
+<a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_WISHLIST~</b></a>
+<p class="text" id="justify">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/myshop-wishlists.txt
+!HTML2TXT=1
+!NL2BR=1
+-->TEXT: myshop-wishlists.txt<!-- END TEXT -->
+  <a href="~CONST___INDEX~?site=myshop&subsite=wishlists"><b>~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;</b></a>
+</p>
+
 <a href="~CONST___INDEX~?site=myshop&subsite=order_state"><b>~CONST_SENTENCE_ORDER_STATE~</b></a>
 <p class="text" id="justify">
 <!-- BEGIN TEXT
@@ -228,7 +238,7 @@ DESCRIPTION=
   -->
   
   <!--
-  <div class="fieldname">Empf�nger:</div>
+  <div class="fieldname">Empfänger:</div>
   <div class="field">~OBJ_RECIPIENT_CHECKBOX_LIST~</div>
   <div class="clear"></div>
   -->
@@ -259,4 +269,41 @@ DESCRIPTION=
     ~OBJ_MYMUSIC~
   </div>
   <a href="?site=myshop&subsite=overview">~CONST_WORD_BACK~</a>
+<!-- END STEP -->
+<!-- BEGIN STEP 
+NAME=wishlists
+TITLE=~CONST_WORD_WISHLIST~
+DESCRIPTION=
+-->
+  <p class="steptitle">~CONST_WORD_WISHLIST~</p>
+  <br>
+  
+  <script type="text/javascript">
+    function checkDetail(id, submit) 
+    { var hasDetail = new Array();
+ 
+      ~JS_HAS_DETAIL~
+
+      var index = document.forms[id].elements['version'].options.selectedIndex;
+      var value = document.forms[id].elements['version'].options[index].value;
+      if(!hasDetail[value])
+      { //document.forms[id].elements['detail'].disabled = true;
+        document.forms[id].elements['detail'].className = 'hide';
+	    document.forms[id].elements['detail'].value = '';
+      }
+      else
+      { //document.forms[id].elements['detail'].disabled = false;
+        document.forms[id].elements['detail'].className = '';
+      }
+      if (submit)// && !hasDetail[value]) 
+      document.forms[id].submit();
+    }
+  </script>
+  
+  ~OBJ_ERRORLIST~~OBJ_MESSAGELIST~
+  
+  ~OBJ_WISHLIST~
+
+  <a href="?site=myshop&subsite=wishlists&action=clear_wishlist">~CONST_SENTENCE_CLEAR_WISHLIST~</a>
+
 <!-- END STEP -->

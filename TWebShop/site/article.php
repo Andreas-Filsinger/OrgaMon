@@ -35,6 +35,7 @@ if ($site->isActive()) {
     $article->addOption("RECORDS",     $article->existRecords()              ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_RECORDS   : "");
     $article->addOption("THUMB",       count($article->getThumbs()) > 0      ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_THUMB     : "");
     $article->addOption("MP3",         $article->existsMP3Download()         ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MP3       : "");
+    $article->addOption("WISHLIST",    _TEMPLATE_ARTICLE_ARTICLE_OPTION_WISHLIST);
 
     /* --> 22.08.2014 michaelhacksoftware : Keywords zur Seite hinzufügen. */
     if ($article->KOMPONIST_R) $site->appendKeywords($article->getComposer());

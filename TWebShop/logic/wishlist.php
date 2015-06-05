@@ -3,64 +3,104 @@
 //**** KLASSE ZUR ABBILDUNG DES EINKAUFWAGENS ****************************************************************************************
 class twebshop_wishlist extends twebshop_cart {
 
+    static private $instance = NULL;
     static private $properties = array("RID", "ARTIKEL_R", "MENGE", "AUSGABEART_R", "BEMERKUNG", "POSNO", "SCHRANK", "ANLAGE");
-    private $id = NULL;
-    //private $name = "";
-    //private $datetime = "";
-
-    private $timestamp_last_added = 0;
+    protected $id = NULL;
 
     const CLASS_NAME = "PHP5CLASS T_WEBSHOP_WISHLIST";
 
     protected $_CLASS_NAME = self::CLASS_NAME;
 
-    public function __construct($person_r, $id = NULL) { //$this->delivery = new twebshop_delivery();
+    public function __construct($person_r, $id = NULL) {
         $this->setPerson($person_r);
         $this->setID($id);
+
         $this->delivery = new twebshop_delivery();
         if ($this->person_r != 0 AND $this->id != NULL) {
             $this->readFromDataBase();
         }
     }
 
+    /* 04.05.2015 michaelhacksoftware : Klasse als Singleton implementieren */
+    static public function create($person_r, $id) {
+
+        self::$instance = new twebshop_wishlist($person_r, $id);
+
+        return self::$instance;
+
+    }
+    static public function destroy() {
+
+        self::$instance = NULL;
+
+    }
+    static public function getInstance() {
+
+        return self::$instance;
+
+    }
+    /* --- */
+
     public function setPerson($person_r = 0) {
         $this->person_r = intval($person_r);
     }
-
-    public function getPerson() {
-        return $this->person_r;
-    }
-
     public function setID($id) {
         $this->id = intval($id);
     }
 
-    public function getTimestampLastAdded() {
-        $timestamp = $this->timestamp_last_added;
-        foreach ($this->article as $index => $article) {
-            if ($timestamp < tibase::timestamp($article->timestamp)) {
-                $timestamp = tibase::timestamp($article->timestamp);
-            }
+    /* 04.05.2015 michaelhacksoftware : Angepasste Funktion für die Merkliste */
+    public function addArticle($article_r, $quantity = 1, $version_r = 0, $detail = "", $cart_r = 0) {
+
+        global $errorlist;
+
+        $new = false;
+        $uid = twebshop_article::buildUID($article_r, $version_r, $detail);
+
+        if (!$this->inCart($uid)) {
+            $this->article[] = new twebshop_article($article_r, $version_r, $this->person_r, 1, $detail, $cart_r);
+            $new = true;
         }
-        $this->timestamp_last_added = date("m-d-Y H:i:s", $timestamp);
-        return $this->timestamp_last_added;
+
+        $index = $this->getIndexByUID($uid);
+
+        $this->article[$index]->setWID($this->id);
+        $this->article[$index]->timestamp = time();
+        $this->positions = count($this->article);
+
+        if ($new) {
+            $this->insertIntoDataBase($index);
+        } else {
+            $this->updateInDataBase($index);
+        }
+
+        return $this->article[$index];
+
     }
 
-    public function addArticle($article_r, $quantity = 1, $version_r = 0, $detail = "", $cart_r = 0, $position = 0, $timestamp = "") {
-        $article = parent::addArticle($article_r, $quantity, $version_r, $detail, $cart_r);
-        $index = $this->getIndexByUID($article->getUID());
-        unset($article);
-        $this->article[$index]->setPosition($position);
-        $this->article[$index]->timestamp = $timestamp;
-        $this->article[$index]->setWID($this->id);
+    public function clear() {
+
+        foreach ($this->article as $index => $item) {
+            $this->deleteFromDataBase($index);
+        }
+
+        unset($this->article);
+
+        $this->article   = array();
+        $this->positions = 0;
+
     }
+    /* --- */
 
     public function moveToCart($uid) {
+
+        global $cart;
+
         $index = $this->getIndexByUID($uid);
-        $this->article[$index]->setWID(NULL);
-        $this->article[$index]->setPosition(NULL);
-        $this->updateInDataBase($index);
-        unset($index);
+
+        /* === Artikel in Warenkorb hinzufügen und aus Merkliste löschen === */
+        $cart->addArticle($this->article[$index]->getRID(), 1, $this->article[$index]->getVersion());
+        $this->deleteArticle($uid);
+
     }
 
     protected function readFromDataBase() {
@@ -83,26 +123,21 @@ class twebshop_wishlist extends twebshop_cart {
     }
 
     public function getFromHTMLTemplate($template = NULL, $clear = false) {
+
+        global $article_variants;
+
         $template = parent::getFromHTMLTemplate($template, false);
 
-        $template = str_replace("~NAME~", $this->BEMERKUNG, $template);
-        $template = str_replace("~ANLAGE~", tibase::datetime($this->ANLAGE), $template);
-        $template = str_replace("~ANLAGE_DATUM~", $this->ANLAGE, $template);
-        $template = str_replace("~ANLAGE_ZEIT~", tibase::time($this->ANLAGE), $template);
-        $template = str_replace("~LAST_ADDED~", $this->getTimestampLastAdded(), $template);
+        foreach ($this->article as $index => $article) {
+            $template .= $article->getFromHTMLTemplate($this->_ttemplate) . "<!-- INDEX $index -->";
+        }
 
         if ($clear) {
             $this->clearHTMLTemplate();
         }
+
         return $template;
-    }
 
-    public function __wakeup() {
-        self::$instance = $this;
-    }
-
-    public function __toString() {
-        return self::CLASS_NAME;
     }
 
 }

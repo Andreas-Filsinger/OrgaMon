@@ -189,6 +189,7 @@
 @define("WORD_VERSION","Ausgabeart");
 @define("WORD_WEBSHOP","Webshop");
 @define("WORD_WELCOME","Willkommen");
+@define("WORD_WISHLIST","Merkliste");
 @define("WORD_WISHLISTS","Merklisten");
 @define("WORD_WORKINGTIME","Arbeitszeit");
 @define("WORD_YES","Ja");
@@ -209,14 +210,18 @@
 @define("SENTENCE_ACCESS_VIA_EMAIL_PASSWORD","Zugang mit E-Mail &amp; Passwort");
 @define("SENTENCE_ACCOUNT_BALANCE","Kontostand");
 @define("SENTENCE_ADD_TO_CART","in den Warenkorb");
+@define("SENTENCE_ADD_TO_WISHLIST","in die Merkliste");
 @define("SENTENCE_ADDRESS_DETAILS","Angaben zu Ihrer Anschrift");
 @define("SENTENCE_ALPHABETICAL_ASCENDING","Alphabet (aufsteigend)");
 @define("SENTENCE_ALPHABETICAL_DESCENDING","Alphabet (absteigend)");
 @define("SENTENCE_ALPHABETICAL_INDEX","Alphabetischer Index");
 @define("SENTENCE_AMOUNT_OUTSTANDING","Offener Betrag");
 @define("SENTENCE_ARTICLE_DETAIL_VIEW","Artikel Detailansicht");
+@define("SENTENCE_ARTICLE_HAS_BEEN_MOVED_TO_CART","Der Artikel wurde in den Warenkorb verschoben.");
 @define("SENTENCE_ARTICLE_HAS_BEEN_REMOVED_FROM_CART","Der Artikel wurde aus dem Warenkorb entfernt.");
+@define("SENTENCE_ARTICLE_HAS_BEEN_REMOVED_FROM_WISHLIST","Der Artikel wurde von der Merkliste entfernt.");
 @define("SENTENCE_ARTICLE_HAS_BEEN_ADDED_TO_CART","Der Artikel wurde dem Warenkorb hinzugef&uuml;gt.");
+@define("SENTENCE_ARTICLE_HAS_BEEN_ADDED_TO_WISHLIST","Der Artikel wurde zur Merkliste hinzugef&uuml;gt.");
 @define("SENTENCE_AVAILABLE_IMMEDIATELY_BY_EMAIL","sofort via eMail");
 @define("SENTENCE_AVAILABLE_IMMEDIATELY_VIA_DOWNLOAD","sofort per Download");
 @define("SENTENCE_AVAILABLE_SINGLEPARTS_TO_DOWNLOAD", "Verfügbare Einzelstimmen zum Download:");
@@ -234,6 +239,7 @@
 @define("SENTENCE_CHANGE_QUANTITY","Menge &auml;ndern");
 @define("SENTENCE_CHANGES_HAVE_BEEN_SAVED","Ihre &Auml;nderungen wurden gespeichert");
 @define("SENTENCE_CHOOSE_COUNTRY","Land w&auml;hlen");
+@define("SENTENCE_CLEAR_WISHLIST","Gesamte Merkliste löschen");
 @define("SENTENCE_CLUB_NAME","Verein");
 @define("SENTENCE_COMPANY_NAME","Name der Firma");
 @define("SENTENCE_COMPLETE_DELIVERY_ON","Komplettlieferung: Versand am");
@@ -246,6 +252,7 @@
 @define("SENTENCE_CUSTOMER_DATA_AND_ADDRESS","Pers&ouml;nliche Daten &amp; Anschrift");
 @define("SENTENCE_CUSTOMER_LOGIN","Kunden-Login");
 @define("SENTENCE_DELETE_FROM_CART","Diesen Artikel l&ouml;schen");
+@define("SENTENCE_DELETE_FROM_WISHLIST","Diesen Artikel entfernen");
 @define("SENTENCE_DOWNLOAD_FAILED","Download fehlgeschlagen.");
 @define("SENTENCE_DOWNLOAD_FLASH","Macromedia Flash Player herunterladen");
 @define("SENTENCE_DOWNLOAD_WAS_SUCCESSFUL","Download erfolgreich.");
@@ -259,6 +266,7 @@
 @define("SENTENCE_GO_TO_CHECKOUT","zur Kasse gehen");
 @define("SENTENCE_HOWTO_DELETE_ITEMS","Um einen Artikel aus dem Warenkorb zu entfernen, geben Sie als Menge &quot;0&quot; ein und klicken Sie aktualisieren. ");
 @define("SENTENCE_INTO_CART","in den Einkaufswagen");
+@define("SENTENCE_INTO_WISHLIST","in die Merkliste");
 @define("SENTENCE_LOAD_LAST_CART","Den Warenkorb vom letzten Mal laden.");
 @define("SENTENCE_LOGGED_OUT","Sie haben sich ausgeloggt.");
 @define("SENTENCE_LOGIN_SUCCESSFUL","Sie haben sich erfolgreich eingeloggt.");
