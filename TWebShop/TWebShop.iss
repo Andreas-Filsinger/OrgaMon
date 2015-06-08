@@ -43,7 +43,7 @@ Source: "FirePHPCore\*"; DestDir: "{app}\FirePHPCore"; Flags: recursesubdirs
 
 Source: "cryption.sig"; DestDir: "{app}";
 Source: "gnu-gpl-twebshop.txt"; DestDir: "{app}";
-Source: "config.php"; DestDir: "{app}"; DestName: "config-distribution.php";
+Source: "config-distribution.php"; DestDir: "{app}";
 Source: "id.sig"; DestDir: "{app}";
 Source: "index.php"; DestDir: "{app}";
 Source: "shop.php"; DestDir: "{app}";

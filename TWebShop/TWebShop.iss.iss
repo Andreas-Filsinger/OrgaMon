@@ -6,7 +6,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=TWebShop
-AppVerName=TWebShop 3.031
+AppVerName=TWebShop 3.032
 AppCopyright=Copyright (C) 2002-2012 Thorsten Schroff
 DefaultDirName={pf}\www\htdocs\TWebShop
 DefaultGroupName=TWebShop
@@ -14,8 +14,8 @@ LicenseFile=gnu-gpl-twebshop.txt
 DisableStartupPrompt=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-TWebShop-3.031
-AppVersion=3.031
+OutputBaseFilename=Setup-TWebShop-3.032
+AppVersion=3.032
 ChangesAssociations=no
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -43,7 +43,7 @@ Source: "FirePHPCore\*"; DestDir: "{app}\FirePHPCore"; Flags: recursesubdirs
 
 Source: "cryption.sig"; DestDir: "{app}";
 Source: "gnu-gpl-twebshop.txt"; DestDir: "{app}";
-Source: "config.php"; DestDir: "{app}"; DestName: "config-distribution.php";
+Source: "config-distribution.php"; DestDir: "{app}";
 Source: "id.sig"; DestDir: "{app}";
 Source: "index.php"; DestDir: "{app}";
 Source: "shop.php"; DestDir: "{app}";
