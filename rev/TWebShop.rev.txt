@@ -14,6 +14,18 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2014 - 2015 by Michael Hack
 // INFO END
 
+Rev 3.032 (08.06.15) Michael Hack
+
+ Neu: YouTube Medien im Artikel als eingebetteter YouTube Frame
+ Neu: YouTube Medien im Artikel als direkter Link zum Video
+ Neu: Einzelansicht für Artikel im Newsletter
+ Neu: Zusätzliche Merkliste pro Kundenkonto (Verschieben von Artikeln in Warenkorb möglich)
+
+ Geändert: Templategenerierung von Artikeldetails in Funktionen ausgelagert
+
+ Bug: Sonderpreise wurden in den Artikeldetails nicht angezeigt
+ Bug: Variablen wurden in der URL Generierung nicht ersetzt
+
 Rev 3.031 (02.03.15) Michael Hack
 
  Neu: IBAN und BIC auf korrekte Prüfzimmer und Länge prüfen
