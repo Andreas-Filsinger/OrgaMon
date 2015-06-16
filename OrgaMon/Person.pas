@@ -1524,6 +1524,7 @@ begin
       { } FieldByName('Z_ELV_BLZ').AsString,
       { } FieldByName('Z_ELV_KONTO').AsString);
     Edit_GueltigBis.Text := 'NOCARD';
+    DatenKommenVonDerKarte := false;
     FillContext;
     if (PERSON_R <> FieldByName('RID').AsInteger) and (PERSON_R <> -1) then
       ShowMessage('RID=' + inttostr(PERSON_R) +

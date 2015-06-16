@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.110 (16.06.15) Andreas Filsinger
+
+ Neu: COR1.xml nun Teil der Distribution
+
+Rev 8.109 (12.06.15) Andreas Filsinger
+
+ Neu: EC-POZ: Nachfrage, wenn die Daten NICHT von der Karte kommen
+
 Rev 8.108 (21.05.15) Andreas Filsinger
 
  Neu: System: Stapeltransaktionen: freies SQL

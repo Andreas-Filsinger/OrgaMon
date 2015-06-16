@@ -107,6 +107,7 @@ type
   public
 
     PERSON_R: integer;
+    DatenKommenVonDerKarte: boolean;
 
     { Public-Deklarationen }
     procedure Log(s: string);
@@ -151,8 +152,18 @@ procedure TFormZahlungECconnect.Button11Click(Sender: TObject);
 var
   sSQL: string;
 begin
-  if (PERSON_R >= cRID_FirstValid) then
-  begin
+  repeat
+
+    // Keine Person gesetzt
+    if (PERSON_R < cRID_FirstValid) then
+      break;
+
+    // Warnung, wenn die Karte gar nicht gelesen werden
+    // konnte UND die Daten bereits aus einer letzten
+    // Zahlung kamen.
+    if not(DatenKommenVonDerKarte) then
+      if not(Doit('Die Daten kommen nicht von der Karte! Dennoch buchen')) then
+        break;
 
     // SQL bilden
     sSQL := 'update PERSON set' +
@@ -175,10 +186,13 @@ begin
     // Kontodaten übertragen, EC-Freigabe geben!
     e_x_sql(sSQL);
 
+    // Ev. verhindern dass mehrfach gebucht wird!
+    DatenKommenVonDerKarte := false;
+
     // Fenster schliessen!
     close;
-  end;
 
+  until true;
 end;
 
 procedure TFormZahlungECconnect.Button1Click(Sender: TObject);
@@ -220,6 +234,7 @@ begin
   setPERSON_R(cRID_null);
   Betrag := 0.0;
   LastschriftFName := '';
+  DatenKommenVonDerKarte := false;
 
   // Karten Daten
   Edit_BLZ.text := '';
@@ -331,6 +346,7 @@ begin
         { } DiagnosePath + 'Zahlung.POZ.log.txt');
 
       loadFromCard;
+
       fillContext;
     end;
   end;
@@ -354,6 +370,7 @@ begin
   Edit_BLZ.text := _blz;
   Edit_Konto.text := _konto;
   Edit_GueltigBis.text := _gueltig;
+  DatenKommenVonDerKarte := true;
 end;
 
 procedure TFormZahlungECconnect.Log(s: string);
@@ -526,9 +543,8 @@ begin
 
       if (p1 <> p2) and (p1 > 0) and (p2 > 0) then
       begin
-        if doit('OK:' + #13 + e_r_Person(p1) + #13 + #13 + 'Abbrechen:' + #13 +
-          e_r_Person(p2) + #13 + #13 + 'Welche Person soll eingesetzt werden')
-        then
+        if Doit('OK:' + #13 + e_r_Person(p1) + #13 + #13 + 'Abbrechen:' + #13 + e_r_Person(p2) + #13
+          + #13 + 'Welche Person soll eingesetzt werden') then
           p := p1
         else
           p := p2;
@@ -551,7 +567,7 @@ begin
 
       // Nachfrage
       if (PERSON_R >= cRID_FirstValid) and (PERSON_R <> p) then
-        if not(doit('Soll wirklich eine andere Person eingesetzt werden?')) then
+        if not(Doit('Soll wirklich eine andere Person eingesetzt werden?')) then
           break;
 
       // neue Person eintragen ...
@@ -576,7 +592,6 @@ procedure TFormZahlungECconnect.SpeedButton5Click(Sender: TObject);
 begin
   fillContext;
 end;
-
 
 function TFormZahlungECconnect._blz: string;
 begin
