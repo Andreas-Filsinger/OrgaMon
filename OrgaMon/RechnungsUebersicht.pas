@@ -374,6 +374,7 @@ begin
       { } FieldByName('Z_ELV_BLZ').AsString,
       { } FieldByName('Z_ELV_KONTO').AsString);
     Edit_GueltigBis.Text := 'NOCARD';
+    DatenKommenVonDerKarte:= false;
     FillContext;
     if (PERSON_R <> FormPerson.IB_Query1.FieldByName('RID').AsInteger) then
       ShowMEssage('RID=' + inttostr(PERSON_R) + ' hat dieselben Kontodaten (Dublette?)!')
