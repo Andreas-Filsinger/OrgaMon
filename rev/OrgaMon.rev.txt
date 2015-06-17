@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.112 (17.06.15) Andreas Filsinger
+
+ Bug: COR1.xml immer noch nicht zugänglich
+
+Rev 8.111 (16.06.15) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.236" neu compiliert!
+
 Rev 8.110 (16.06.15) Andreas Filsinger
 
  Neu: COR1.xml nun Teil der Distribution

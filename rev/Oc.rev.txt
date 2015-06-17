@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.236 (16.06.15) Andreas Filsinger
+
+ Bug: IDOC: Formatierung "0", nimmt "Blanks" im Falle dass Buchstaben drin sind ...
+
 Rev 1.235 (10.04.15) Andreas Filsinger
 
  Bug: Split: Kam mit leerer Spalte am Ende nicht zurecht

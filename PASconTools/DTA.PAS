@@ -248,7 +248,7 @@ var
   DtaListeAnsi: TextFile; // ANSI Zeichensatz
   DtaListeUTF8: TextFile; // UTF8 Zeichensatz
   DtaListeSEPA: TextFile; // SEPA Zeichensatz
-  PainDoc : THTMLTemplate;
+//  PainDoc : THTMLTemplate;
 
 
 function DTA2Ansi(s: AnsiString): string;
@@ -485,8 +485,8 @@ begin
 
     // SEPA
     sPath := ExtractFilePath(FName)+'\';
-    PainDoc := THTMLTemplate.create;
-    PainDoc.LoadFromFile(sPath+'..\HTML Vorlagen\COR1.xml');
+//    PainDoc := THTMLTemplate.create;
+//    PainDoc.LoadFromFile(sPath+'..\HTML Vorlagen\COR1.xml');
 
 
     { Schreibe Datensatz A }

@@ -50,9 +50,9 @@ Source: "..\libxml2\bin\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoes
 Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 
-; neue notwendige Files
-Source: "Distribution\HTML Vorlagen\COR1.xml"; DestDir: "{app}\HTML Vorlagen"; Flags: onlyifdoesntexist
-Source: "Distribution\System\BLZ_*"; DestDir: "{app}\System"; Flags: onlyifdoesntexist
+; neue und aktualisierte notwendige Files
+Source: "Distribution\HTML Vorlagen\COR1.xml"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
+Source: "Distribution\System\BLZ_*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
 
 [Icons]
 Name: "{group}\OrgaMon"; Filename: "{app}\OrgaMon.exe"
