@@ -33,7 +33,7 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet1
+    ActivePage = TabSheet8
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -220,10 +220,6 @@ object FormGUI: TFormGUI
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -353,10 +349,6 @@ object FormGUI: TFormGUI
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 16
         Top = 24
@@ -727,10 +719,6 @@ object FormGUI: TFormGUI
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -885,10 +873,6 @@ object FormGUI: TFormGUI
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -928,10 +912,34 @@ object FormGUI: TFormGUI
     object TabSheet7: TTabSheet
       Caption = 'AUFTRAG+TS'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+    end
+    object TabSheet8: TTabSheet
+      Caption = 'IMEI'
+      ImageIndex = 7
+      object Label23: TLabel
+        Left = 40
+        Top = 48
+        Width = 26
+        Height = 13
+        Caption = 'IMEI'
+      end
+      object Edit24: TEdit
+        Left = 40
+        Top = 72
+        Width = 121
+        Height = 21
+        TabOrder = 0
+        Text = '352069051149176'
+      end
+      object Button24: TButton
+        Left = 176
+        Top = 70
+        Width = 75
+        Height = 25
+        Caption = 'OK?'
+        TabOrder = 1
+        OnClick = Button24Click
+      end
     end
   end
   object ProgressBar1: TProgressBar

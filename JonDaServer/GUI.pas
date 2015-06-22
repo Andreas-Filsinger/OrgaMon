@@ -152,6 +152,10 @@ type
     TabSheet7: TTabSheet;
     Edit23: TEdit;
     Button16: TButton;
+    TabSheet8: TTabSheet;
+    Edit24: TEdit;
+    Label23: TLabel;
+    Button24: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -182,6 +186,7 @@ type
     procedure Button22Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
+    procedure Button24Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -263,8 +268,7 @@ begin
 
   // interne Varibale setzen
   DiagnosePath := MyProgramPath;
-  caption := 'JonDaServer [' + UserName + '@' + MyProgramPath + '] Rev ' +
-    RevToStr(Version);
+  caption := 'JonDaServer [' + UserName + '@' + MyProgramPath + '] Rev ' + RevToStr(Version);
 
   // Ini-Datei öffnen
   MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
@@ -298,10 +302,9 @@ begin
   sLog.free;
 
   //
-  JonDaX.BeginAction('Start ' + cApplicationName + ' Rev. ' +
-    RevToStr(globals.Version) + ' [' + UserName + ']');
-  CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.Version) +
-    ' gestartet');
+  JonDaX.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.Version) + ' [' +
+    UserName + ']');
+  CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.Version) + ' gestartet');
 
   // Verzeichnisse Anlegen
   if FileExists(MyProgramPath + cIniFName) then
@@ -427,8 +430,7 @@ begin
             if (dMeldung > ausfuehren_ist_datum) then
               if (dMeldung > DatePlus(ausfuehren_ist_datum, 1)) then
               begin
-                lFehlDatum.add(lMeldungen[i] + ';' +
-                  secondstostr(ausfuehren_ist_uhr));
+                lFehlDatum.add(lMeldungen[i] + ';' + secondstostr(ausfuehren_ist_uhr));
                 if dMeldung >= dTimeOut then
                   if lHeuteFehlDatum.IndexOf(GeraeteNo) = -1 then
                     lHeuteFehlDatum.add(GeraeteNo);
@@ -451,8 +453,8 @@ begin
           continue;
         _SecondsGet := strtoseconds(nextp(lMeldungen[i], ';', 1));
         UHR := nextp(lMeldungen[i], ';', 7);
-        if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)
-          ), strtoseconds(nextp(UHR, ' - ', 1))) > 60 * 5 then
+        if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)),
+          strtoseconds(nextp(UHR, ' - ', 1))) > 60 * 5 then
         begin
           GeraeteNo := nextp(lMeldungen[i], ';', 3);
           if lHeuteFehlDatum.IndexOf(GeraeteNo) = -1 then
@@ -489,12 +491,11 @@ begin
   lFehlDatum.SaveToFile(MyProgramPath + '000-Datum.txt');
   lFehlDatum.free;
   // lHeuteFehlDatum.Sort;
-  lHeuteFehlDatum.SaveToFile(MyProgramPath + 'Geräte-Datum-Falsch-' +
-    inttostr(dTimeOut) + '.txt');
+  lHeuteFehlDatum.SaveToFile(MyProgramPath + 'Geräte-Datum-Falsch-' + inttostr(dTimeOut) + '.txt');
   lHeuteFehlDatum.free;
 
-  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] +
-    '(' + inttostr(Stat_Meldungen) + 'x) ' + 'OK';
+  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' +
+    inttostr(Stat_Meldungen) + 'x) ' + 'OK';
   beep;
 
 end;
@@ -514,8 +515,7 @@ begin
     SetForegroundWindow(handle);
     Initialized := true;
     Label25.caption := JonDaX.NewTrn(false);
-    Memo1.lines.add('FTP-Login is ' + iJonDa_FTPUserName + '@' +
-      iJonDa_FTPHost);
+    Memo1.lines.add('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
     Nachmeldungen;
   end;
 end;
@@ -568,8 +568,7 @@ begin
     Memo1.lines.add('verarbeite ' + Edit1.text + ' ... ');
     sResult := JonDaX.proceed(sParameter);
     sResult.free;
-    Memo1.lines[pred(Memo1.lines.count)] :=
-      Memo1.lines[pred(Memo1.lines.count)] + 'OK';
+    Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + 'OK';
   end
   else
   begin
@@ -582,8 +581,7 @@ begin
         Memo1.lines.add('verarbeite ' + inttostrN(n, 5) + ' ... ');
         sResult := JonDaX.proceed(sParameter);
         sResult.free;
-        Memo1.lines[pred(Memo1.lines.count)] :=
-          Memo1.lines[pred(Memo1.lines.count)] + 'OK';
+        Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + 'OK';
       end;
   end;
   sParameter.free;
@@ -633,36 +631,29 @@ var
 
         Doppelte.add(inttostr(MonDaRec.RID));
         if ((MonDaRec.RID = RID) or (RID = 0)) and
-          ((pos(Edit5.text, MonDaRec.zaehlernummer_neu) > 0) or
-          (Edit5.text = '*')) and
+          ((pos(Edit5.text, MonDaRec.zaehlernummer_neu) > 0) or (Edit5.text = '*')) and
         { } ((pos(Edit8.text, MonDaRec.monteur) = 1) or (Edit8.text = '*')) and
-        { } ((strtointdef(Edit9.text, MaxInt) = MonDaRec.ausfuehren_ist_datum)
-          or (Date2Long(Edit9.text) = MonDaRec.ausfuehren_ist_datum) or
-          (Edit9.text = '*')) and
-          ((Date2Long(Edit13.text) = MonDaRec.ausfuehren_soll) or
-          (Edit13.text = '*')) and
-          ((pos(Edit6.text, MonDaRec.zaehlernummer_alt) > 0) or
-          (Edit6.text = '*')) and
-          ((pos(Edit10.text, MonDaRec.ProtokollInfo) > 0) or (Edit10.text = '*')
-          ) and ((pos(Edit12.text, MonDaRec.ABNummer) > 0) or
-          (Edit12.text = '*')) and
-          ((pos(Edit11.text, MonDaRec.Zaehler_Strasse) > 0) or
-          (Edit11.text = '*')) and ((pos(Edit15.text, MonDaRec.Baustelle) > 0)
-          or (Edit15.text = '*')) and true then
+        { } ((strtointdef(Edit9.text, MaxInt) = MonDaRec.ausfuehren_ist_datum) or
+          (Date2Long(Edit9.text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.text = '*')) and
+          ((Date2Long(Edit13.text) = MonDaRec.ausfuehren_soll) or (Edit13.text = '*')) and
+          ((pos(Edit6.text, MonDaRec.zaehlernummer_alt) > 0) or (Edit6.text = '*')) and
+          ((pos(Edit10.text, MonDaRec.ProtokollInfo) > 0) or (Edit10.text = '*')) and
+          ((pos(Edit12.text, MonDaRec.ABNummer) > 0) or (Edit12.text = '*')) and
+          ((pos(Edit11.text, MonDaRec.Zaehler_Strasse) > 0) or (Edit11.text = '*')) and
+          ((pos(Edit15.text, MonDaRec.Baustelle) > 0) or (Edit15.text = '*')) and true then
         begin
           WasGefunden := true;
           if not(FoundOne) then
           begin
             FoundOne := true;
-            sDiagnose_Log.add(Header + ' [' + FName + ',' +
-              long2date(FDate(FName)) + ',' + secondstostr(FSeconds(FName)) +
-              ',' + inttostr(FSize(FName)) + ',' + 'MD5 ' + md5 + ']');
+            sDiagnose_Log.add(Header + ' [' + FName + ',' + long2date(FDate(FName)) + ',' +
+              secondstostr(FSeconds(FName)) + ',' + inttostr(FSize(FName)) + ',' + 'MD5 ' +
+              md5 + ']');
           end
           else
           begin
             if CheckBox9.Checked then
-              sDiagnose_Log.add
-                ('            ------------------------------------');
+              sDiagnose_Log.add('            ------------------------------------');
           end;
           if CheckBox9.Checked then
           begin
@@ -672,9 +663,8 @@ var
           begin
             if CheckBox10.Checked then
               with MonDaRec do
-                sDiagnose_Log.add(Baustelle + ';' + zaehlernummer_alt + ';' +
-                  monteur + ';' + inttostr(RID) + ';' +
-                  long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
+                sDiagnose_Log.add(Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' +
+                  inttostr(RID) + ';' + long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
 
           end;
         end;
@@ -741,8 +731,7 @@ begin
       if (GeraeteNummer = '') then
         continue;
 
-      GeraetZIPFName := Edit2.text + AllTRN[n] + '\' + GeraeteNummer +
-        cZIPExtension;
+      GeraetZIPFName := Edit2.text + AllTRN[n] + '\' + GeraeteNummer + cZIPExtension;
       GeraetZIPDatum := FDate(GeraetZIPFName);
 
       sMeldung.LoadFromFile(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + '.txt');
@@ -750,23 +739,19 @@ begin
       if not(FileExists(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + '.dat')) then
         sLostProceed.add(AllTRN[n]);
 
-      MoreInfo := AllTRN[n] + '\' +
-        long2date(FDate(Edit2.text + AllTRN[n] + '\NEW.ZIP')) + ' ' +
+      MoreInfo := AllTRN[n] + '\' + long2date(FDate(Edit2.text + AllTRN[n] + '\NEW.ZIP')) + ' ' +
         secondstostr(FSeconds(Edit2.text + AllTRN[n] + '\NEW.ZIP'));
 
       // Was kam vom Gerät
       if CheckBox6.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\MONDA.DAT',
-          MoreInfo + ' MonDa-Gerät bisher');
+        CheckOut(Edit2.text + AllTRN[n] + '\MONDA.DAT', MoreInfo + ' MonDa-Gerät bisher');
 
       // Was bleibt auf dem Gerät?
       if CheckBox11.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\STAY.DAT',
-          MoreInfo + ' verbleibt auf dem Gerät');
+        CheckOut(Edit2.text + AllTRN[n] + '\STAY.DAT', MoreInfo + ' verbleibt auf dem Gerät');
 
       if CheckBox16.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\LOST.DAT',
-          MoreInfo + ' wurde zwangsentfernt!');
+        CheckOut(Edit2.text + AllTRN[n] + '\LOST.DAT', MoreInfo + ' wurde zwangsentfernt!');
 
       // Was kommt von OrgaMon
       if CheckBox5.Checked then
@@ -774,8 +759,7 @@ begin
         dir(Edit2.text + AllTRN[n] + '\???.DAT', OrgaMonFile, false);
         for m := 0 to pred(OrgaMonFile.count) do
           if OrgaMonFile[m][1] in ['0' .. '9'] then
-            CheckOut(Edit2.text + AllTRN[n] + '\' + OrgaMonFile[m],
-              MoreInfo + ' OrgaMon-Daten');
+            CheckOut(Edit2.text + AllTRN[n] + '\' + OrgaMonFile[m], MoreInfo + ' OrgaMon-Daten');
       end;
 
       // Was geht zum OrgaMon
@@ -785,8 +769,7 @@ begin
 
       // Was geht wieder auf das Gerät
       if CheckBox7.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\AUFTRAG.DAT',
-          MoreInfo + ' MonDa-Gerät neu');
+        CheckOut(Edit2.text + AllTRN[n] + '\AUFTRAG.DAT', MoreInfo + ' MonDa-Gerät neu');
 
       // Was kam eigentlich über das Web
       // im Moment nur RID-Suche vorgesehen
@@ -807,9 +790,8 @@ begin
             break;
 
         sTAN_Log.add(AllTRN[n] + ';' + long2date(GeraetZIPDatum) + ' ' +
-          secondstostr(FSeconds(GeraetZIPFName)) + ';' + GeraeteNummer + ';' +
-          'M' + ';' + 'B' + ';' + sMeldung.Values['VERSION'] + ';' +
-          sMeldung.Values['OPTIONEN']);
+          secondstostr(FSeconds(GeraetZIPFName)) + ';' + GeraeteNummer + ';' + 'M' + ';' + 'B' + ';'
+          + sMeldung.Values['VERSION'] + ';' + sMeldung.Values['OPTIONEN']);
       until true;
 
     except
@@ -825,8 +807,7 @@ begin
     dir(Edit2.text + '0000\???.DAT', OrgaMonFile, false);
     for m := 0 to pred(OrgaMonFile.count) do
       if OrgaMonFile[m][1] in ['0' .. '9'] then
-        CheckOut(Edit2.text + '0000\' + OrgaMonFile[m],
-          OrgaMonFile[m] + ' OrgaMon-Daten');
+        CheckOut(Edit2.text + '0000\' + OrgaMonFile[m], OrgaMonFile[m] + ' OrgaMon-Daten');
   end;
   ProgressBar1.position := 0;
   sLostProceed.SaveToFile(MyProgramPath + 'Ohne-Proceed.txt');
@@ -880,10 +861,8 @@ begin
     outLog('            Reglernummer_korr    : ' + Reglernummer_korr);
     outLog('            Reglernummer_neu     : ' + Reglernummer_neu);
     outLog('            ProtokollInfo        : ' + ProtokollInfo);
-    outLog('            ausfuehren_ist_datum : ' + TJonDaExec.AusfuehrenStr
-      (ausfuehren_ist_datum));
-    outLog('            ausfuehren_ist_uhr   : ' +
-      secondstostr(ausfuehren_ist_uhr));
+    outLog('            ausfuehren_ist_datum : ' + TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum));
+    outLog('            ausfuehren_ist_uhr   : ' + secondstostr(ausfuehren_ist_uhr));
   end;
 end;
 
@@ -1069,8 +1048,7 @@ begin
   end;
 
   //
-  sNeu.SaveToFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID +
-    '-Neu.txt');
+  sNeu.SaveToFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
 
   sAlt.free;
   sNeu.free;
@@ -1116,12 +1094,12 @@ end;
 
 procedure TFormGUI.Button16Click(Sender: TObject);
 var
- SourceFName, DestFNAme : string;
+  SourceFName, DestFNAme: string;
 begin
- SourceFname :=  JonDaX.ProtokollPath(cVersion_JonDa) + edit23.Text;
- DestFName := MyProgramPath +   cProtPrefix +  cProtExtension ;
- JonDaX.migrateProtokoll(SourceFname, DestFName);
- OpenShell(DEstFName);
+  SourceFName := JonDaX.ProtokollPath(cVersion_JonDa) + Edit23.text;
+  DestFNAme := MyProgramPath + cProtPrefix + cProtExtension;
+  JonDaX.migrateProtokoll(SourceFName, DestFNAme);
+  openshell(DestFNAme);
 end;
 
 procedure TFormGUI.Button17Click(Sender: TObject);
@@ -1174,8 +1152,7 @@ begin
     rewrite(OrgaMonErgebnis);
 
     // Lade die fertigen!
-    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath +
-      'abgearbeitet.dat');
+    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
 
     // Lade alle Meldungen!
     lMeldungen.LoadFromFile(MyProgramPath + 'XXX.txt');
@@ -1229,8 +1206,7 @@ begin
       if (FSize(sOrgaMonFName) > 0) then
         JonDaX.sput(sOrgaMonFName, cFixedTAN_FName, iFTP)
       else
-        JonDaX.log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' +
-          cFixedTAN_FName);
+        JonDaX.log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
       Disconnect;
     end;
 
@@ -1244,8 +1220,8 @@ begin
   lFehlEingaben.free;
   iFTP.free;
 
-  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] +
-    '(' + inttostr(Stat_Meldungen) + 'x) ' + 'OK';
+  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' +
+    inttostr(Stat_Meldungen) + 'x) ' + 'OK';
 
 end;
 
@@ -1293,8 +1269,7 @@ begin
 
   //
   WARTEND := TsTable.create;
-  WARTEND.insertFromFile(MyProgramPath + cFotoPath +
-    cFotoUmbenennungAusstehend);
+  WARTEND.insertFromFile(MyProgramPath + cFotoPath + cFotoUmbenennungAusstehend);
 
   // init
   sRoot := 'W:\';
@@ -1345,8 +1320,7 @@ begin
       if (sPics.count > 0) then
       begin
         for m := pred(sPics.count) downto 0 do
-          if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1)
-          then
+          if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1) then
             sPics.Delete(m);
       end;
 
@@ -1373,8 +1347,7 @@ begin
               if sFotos.count > 0 then
               begin
                 sFotos.sort;
-                FotosSequence :=
-                  strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
+                FotosSequence := strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
                   'Fotos-', '.zip'), -1);
               end;
             end;
@@ -1532,6 +1505,29 @@ begin
   BeginHourGlass;
   JonDaX.maintainGERAETE;
   EndHourGlass;
+end;
+
+procedure TFormGUI.Button24Click(Sender: TObject);
+begin
+  // JonDaX
+
+  if (JonDaX.tIMEI.count = 0) then
+  begin
+    // lade IMEI
+    JonDaX.tIMEI.insertFromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+
+    // lade IMEI-OK
+    JonDaX.tIMEI_OK.insertFromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+  end;
+
+  with JonDaX.tIMEI_OK do
+  begin
+    if (locate('IMEI', Edit24.text) = -1) then
+      ShowMessage(cWARNINGText + ' Unbekanntes Handy!')
+    else
+      ShowMessage('OK!');
+  end;
+
 end;
 
 procedure TFormGUI.Button1Click(Sender: TObject);

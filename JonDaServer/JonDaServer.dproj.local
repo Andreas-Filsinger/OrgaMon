@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.811,C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\JonDaServer.dproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\JonDaServer-XE.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.757,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\infozip\infozip.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.811,C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\JonDaServer-XE.dproj=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\JonDaServer\JonDaServer.dproj</Transaction>
+    <Transaction>2015.06.22 11:29:42.632,=C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon\rev\WordIndex.rev.txt</Transaction>
   </Transactions>
 </BorlandProject>

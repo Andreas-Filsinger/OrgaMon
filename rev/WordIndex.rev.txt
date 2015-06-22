@@ -45,6 +45,11 @@ TExtendedList<br>
 <br>
 // INFO END
 
+Rev 1.025 (22.06.15) Andreas Filsinger
+
+ Bug: TsTable: automatisches Entfernen der Quotes bei Zellen hatte bei einspaltigen Tabellen
+      nicht funktioniert.
+
 Rev 1.024 (12.02.14) Andreas Filsinger
 
  Neu: TsTable: oTextHasLF, muss gesetzt werden wenn die CSV chr(LF) in
