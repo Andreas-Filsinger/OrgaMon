@@ -33,7 +33,7 @@ uses
 
 const
   cApplicationName = 'JonDaServer';
-  version: single = 2.212; // ..\rev\JonDaServer.rev.txt
+  version: single = 2.213; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
   cVersion_JonDa: single = 1.118;

@@ -32,13 +32,11 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.024; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.025; // ..\rev\WordIndex.rev.txt
   c_wi_TranslateFrom = 'ﬂƒÀ÷‹¡¿…»⁄Ÿ”Õ «≈';
   c_wi_TranslateTo = 'SAEOUAAEEUUOIECA';
-  c_wi_ValidChars = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' +
-    c_wi_TranslateFrom;
-  c_wi_ValidCharsSort = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' +
-    c_wi_TranslateTo;
+  c_wi_ValidChars = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
+  c_wi_ValidCharsSort = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
   c_wi_WhiteSpace_noblank = '_()*+-:&ß",/!?=;<>#{}$%''¥`^' + #$0D;
   c_wi_WhiteSpace_exact = ' ' + c_wi_WhiteSpace_noblank;
   c_wi_WhiteSpace = '.' + c_wi_WhiteSpace_exact;
@@ -53,8 +51,7 @@ type
     function FindPos(const SearchStr: string): integer;
     procedure IncRef(Index: integer);
     procedure SaveToFileWithReferences(const FName: string);
-    function EnsureValues(ValueList: TStrings;
-      RemoveUnknown: boolean = true): boolean;
+    function EnsureValues(ValueList: TStrings; RemoveUnknown: boolean = true): boolean;
     function Find(const SearchStr: string): TgpIntegerList;
   end;
 
@@ -91,8 +88,7 @@ type
     OptionDiagFile_IncludeCount: boolean;
     Generation: integer;
 
-    constructor Create(Mother: TStringList; MinWordLenght: word = 2;
-      SearchDelimiter: string = '');
+    constructor Create(Mother: TStringList; MinWordLenght: word = 2; SearchDelimiter: string = '');
     destructor Destroy; override;
     procedure Search(s: string);
     procedure SaveToFile(const FName: string); override;
@@ -162,7 +158,7 @@ type
     function locateDuplicates(Col: integer; sValue: string;
       CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
     // [array of row]
-    function next(Row,Col: integer; sValue: string): integer; overload; // [row]
+    function next(Row, Col: integer; sValue: string): integer; overload; // [row]
     function next(Row: integer; Col, sValue: string): integer; overload; // [row]
 
     function readCell(Row, Col: integer): string; overload;
@@ -178,10 +174,8 @@ type
     procedure SortBy(sFields: String); overload;
 
     function isHeader(HeaderName: string): boolean;
-    function colOf(HeaderName: string;
-      RaiseIfNotExists: boolean = false): integer;
-    function addCol(HeaderName: string; DefaultValue: string = '')
-      : integer; overload;
+    function colOf(HeaderName: string; RaiseIfNotExists: boolean = false): integer;
+    function addCol(HeaderName: string; DefaultValue: string = ''): integer; overload;
     function addCol(HeaderName: string; Values: TStringList): integer; overload;
     function Col(c: integer): TStringList;
 
@@ -194,7 +188,7 @@ type
     function Row(r: integer): TStringList;
 
     // Ersetze in einem String alle Spaltenwerte
-    procedure ersetze(Row: integer; var s : string);
+    procedure ersetze(Row: integer; var s: string);
 
     // ACHTUNG: r darf nach addRow nicht freigegeben werden
     function addRow(r: TStringList = nil): integer;
@@ -222,15 +216,14 @@ uses
   IdGlobal, IdHash, IdHashMessageDigest;
 
 const
-  cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) +
-    (ord('I') shl 16) + (26 shl 24);
+  cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) + (ord('I') shl 16) +
+    (26 shl 24);
   cWordIndex_GlobalSequence: integer = 0;
 
 type
   TBinaereSucheResult = (BS_Found, BS_NotFound, BS_SimilarFound);
 
-constructor TWordIndex.Create(Mother: TStringList; MinWordLenght: word;
-  SearchDelimiter: string);
+constructor TWordIndex.Create(Mother: TStringList; MinWordLenght: word; SearchDelimiter: string);
 var
   n, k: integer;
 begin
@@ -271,8 +264,7 @@ var
   procedure WordOut;
   begin
     if wEnd - wStart >= pMinWordLenght then
-      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart),
-        ToObject);
+      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), ToObject);
   end;
 
   function ValidChar(var c: char): boolean;
@@ -641,8 +633,7 @@ begin
       end;
 end;
 
-procedure TWordIndex.SaveToDiagFile(FName: string;
-  MinSubElementCount, MaxSubElementCount: integer);
+procedure TWordIndex.SaveToDiagFile(FName: string; MinSubElementCount, MaxSubElementCount: integer);
 var
   n, m: integer;
   OutStr: string;
@@ -954,8 +945,8 @@ begin
   Blockread(f, List[0], Count * sizeof(pointer));
 end;
 
-function TSearchStringList.EnsureValues(ValueList: TStrings;
-  RemoveUnknown: boolean = true): boolean;
+function TSearchStringList.EnsureValues(ValueList: TStrings; RemoveUnknown: boolean = true)
+  : boolean;
 
   procedure EnsureEntry(EntryName: string; var OneChanged: boolean);
   var
@@ -966,8 +957,7 @@ function TSearchStringList.EnsureValues(ValueList: TStrings;
     begin
       LineSettingFound := false;
       for n := 0 to pred(Count) do
-        if pos(AnsiUpperCase(EntryName + '='), AnsiUpperCase(strings[n])) = 1
-        then
+        if pos(AnsiUpperCase(EntryName + '='), AnsiUpperCase(strings[n])) = 1 then
         begin
           LineSettingFound := true;
           break;
@@ -1170,14 +1160,14 @@ end;
 
 procedure TsTable.ersetze(Row: integer; var s: string);
 var
- c: integer;
+  c: integer;
 begin
- for c := 0 to pred(header.count) do
- begin
-   if pos('$',s)=0 then
-    break;
-   anfix32.ersetze('$'+header[c],readCell(Row,c),s);
- end;
+  for c := 0 to pred(header.Count) do
+  begin
+    if pos('$', s) = 0 then
+      break;
+    Anfix32.ersetze('$' + header[c], readCell(Row, c), s);
+  end;
 end;
 
 function TsTable.getSeparator: string;
@@ -1326,23 +1316,23 @@ end;
 
 procedure TsTable.BlowUp(SearchCol, FName, ExtCol: string);
 var
-  B: TsTable;
+  b: TsTable;
   refCol, cB, rA, rB: integer;
 begin
-  B := TsTable.Create;
-  B.insertFromFile(FName);
-  for cB := 0 to pred(B.header.Count) do
-    if (colOf(SearchCol + '.' + B.header[cB]) = -1) then
-      addCol(SearchCol + '.' + B.header[cB]);
+  b := TsTable.Create;
+  b.insertFromFile(FName);
+  for cB := 0 to pred(b.header.Count) do
+    if (colOf(SearchCol + '.' + b.header[cB]) = -1) then
+      addCol(SearchCol + '.' + b.header[cB]);
   refCol := colOf(SearchCol, true);
   for rA := 1 to RowCount do
   begin
-    rB := B.locate(ExtCol, readCell(rA, refCol));
+    rB := b.locate(ExtCol, readCell(rA, refCol));
     if (rB <> -1) then
-      for cB := 0 to pred(B.header.Count) do
-        writeCell(rA, SearchCol + '.' + B.header[cB], B.readCell(rB, cB));
+      for cB := 0 to pred(b.header.Count) do
+        writeCell(rA, SearchCol + '.' + b.header[cB], b.readCell(rB, cB));
   end;
-  B.free;
+  b.free;
 end;
 
 function TsTable.Col(c: integer): TStringList;
@@ -1359,8 +1349,7 @@ begin
   result := header.Count;
 end;
 
-function TsTable.colOf(HeaderName: string;
-  RaiseIfNotExists: boolean = false): integer;
+function TsTable.colOf(HeaderName: string; RaiseIfNotExists: boolean = false): integer;
 begin
   result := header.indexof(HeaderName);
   if RaiseIfNotExists then
@@ -1550,9 +1539,8 @@ begin
   // clean Quoting entfernen
   if not(oNoAutoQuote) then
     if sl.Count > 1 then
-      if (pos('"' + getSeparator, sl[0]) > 0) or
-        (pos('"' + getSeparator, sl[1]) > 0) then
-        anfix32.ersetze('"', '', sl);
+      if (pos('"' + getSeparator, sl[0]) > 0) or (pos('"' + getSeparator, sl[1]) > 0) then
+        Anfix32.ersetze('"', '', sl);
 
   // Noblank aller Zeilen?!
   if oNoblank then
@@ -1662,8 +1650,7 @@ procedure TsTable.incCell(Row, Col: integer);
 begin
   if (Col >= 0) then
   begin
-    TStringList(Items[Row])[Col] :=
-      inttostr(succ(StrToIntDef(TStringList(Items[Row])[Col], 0)));
+    TStringList(Items[Row])[Col] := inttostr(succ(StrToIntDef(TStringList(Items[Row])[Col], 0)));
     Changed := true;
   end;
 end;
@@ -1681,6 +1668,7 @@ var
   SingleHeader: string;
   ThisData: string;
   ColCount: integer;
+  SingleCol: boolean;
   JoinL: TStringList;
   Col, r: integer;
   //
@@ -1701,12 +1689,32 @@ begin
   else
     LoadFromFileCSV(false, JoinL, FName);
 
-  // clean Quoting entfernen
+  // Quoting entfernen, "xxx";3 -> xxx;3
   if not(oNoAutoQuote) then
-    if JoinL.Count > 1 then
-      if (pos('"' + getSeparator, JoinL[0]) > 0) or
-        (pos('"' + getSeparator, JoinL[1]) > 0) then
-        anfix32.ersetze('"', '', JoinL);
+  begin
+
+    repeat
+      if (JoinL.Count = 0) then
+        break;
+      SingleCol := (pos(getSeparator, JoinL[0]) = 0);
+
+      if SingleCol then
+        ThisData := '"'
+      else
+        ThisData := '"' + getSeparator;
+
+      // Nur eine Headerzeile und sonst nix?
+      if (JoinL.Count = 1) then
+        if pos(ThisData, JoinL[0]) = 0 then
+          break;
+
+      if (pos(ThisData, JoinL[0]) = 0) and (pos(ThisData, JoinL[1]) = 0) then
+        break;
+
+      Anfix32.ersetze('"', '', JoinL);
+
+    until true;
+  end;
 
   // Noblank aller Zeilen?!
   if oNoblank then
@@ -1872,7 +1880,7 @@ var
   r: integer;
 begin
   result := -1;
-  for r := row to pred(Count) do
+  for r := Row to pred(Count) do
     if (TStringList(Items[r])[Col] = sValue) then
     begin
       result := r;
@@ -1888,9 +1896,8 @@ end;
 
 function TsTable.next(Row: integer; Col, sValue: string): integer;
 begin
- result := next(Row,colOf(Col), sValue);
+  result := next(Row, colOf(Col), sValue);
 end;
-
 
 procedure TsTable.SortBy(sFields: TStrings);
 var
@@ -1911,12 +1918,12 @@ begin
       SortColumn := sFields[n];
       FormatNumeric := pos('numeric', SortColumn) > 0;
       if FormatNumeric then
-        anfix32.ersetze('numeric', '', SortColumn);
+        Anfix32.ersetze('numeric', '', SortColumn);
       DoReverse := pos('descending', SortColumn) > 0;
       if DoReverse then
-        anfix32.ersetze('descending', '', SortColumn)
+        Anfix32.ersetze('descending', '', SortColumn)
       else
-        anfix32.ersetze('ascending', '', SortColumn);
+        Anfix32.ersetze('ascending', '', SortColumn);
       SortColumn := cutblank(SortColumn);
       k := header.indexof(SortColumn);
       if (k = -1) then
@@ -2011,8 +2018,7 @@ var
 begin
   TableDump := data;
   hashMessageDigest5 := TIdHashMessageDigest5.Create;
-  result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex
-    (TableDump.Text));
+  result := IdGlobal.IndyLowerCase(hashMessageDigest5.HashStringAsHex(TableDump.Text));
   hashMessageDigest5.free;
   TableDump.free;
 end;
