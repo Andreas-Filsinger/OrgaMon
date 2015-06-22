@@ -69,6 +69,9 @@ const
   // Hauptkonto für ELV (Bank)
   cKonto_Bank = '1200';
 
+  // erteilte SEPA Mandate
+  cKonto_Mandat = '1260';
+
   // Hauptkonto für Bar Ausgaben / Einnahmen
   cKonto_Kasse = '1000';
 

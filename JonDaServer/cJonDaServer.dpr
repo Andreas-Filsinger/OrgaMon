@@ -69,6 +69,11 @@ begin
     JonDa.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
     writeln(IntToStr(JonDa.tIMEI.Count));
 
+    // lade IMEI-OK
+    write('Lade Tabelle IMEI-OK ... ');
+    JonDa.tIMEI_OK.insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+    writeln(IntToStr(JonDa.tIMEI_OK.Count));
+
     // Ini-Datei öffnen
     MyIni := TIniFile.Create(MyProgramPath + cIniFName);
     with MyIni do

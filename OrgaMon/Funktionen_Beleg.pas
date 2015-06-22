@@ -3022,7 +3022,7 @@ begin
                 if (FieldByName('DATUM').AsDateTime >= now - 2) then
                   SkipIt := true;
 
-          // Belege, die bereits in einem Lastschriftvolumen vorgemerkt sind!
+          // Belege, die bereits in einem ausstehenden Lastschriftvolumen vorgemerkt sind!
           if not(SkipIt) then
             if (pOhneAusstehende) then
               if (VORGANG = cVorgang_Rechnung) then

@@ -492,9 +492,8 @@ begin
   sResult.add('RID;ORDER.id;EXPORT.Dateiname;RWSI');
   sOrderListe := TSearchStringList.create;
   sOrderListe.LoadFromFile(DiagnosePath + 'EXPORT.Cache.txt');
-  ExportTable('select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where ' +
-    ' (BAUSTELLE_R=312) and ' + ' (RID=MASTER_R)',
-    DiagnosePath + 'RWSI.Status.csv');
+  ExportTable('select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where ' + ' (BAUSTELLE_R=312) and ' +
+    ' (RID=MASTER_R)', DiagnosePath + 'RWSI.Status.csv');
 
   sOrgaMon := TSearchStringList.create;
   sOrgaMon.LoadFromFile(DiagnosePath + 'RWSI.Status.csv');
@@ -551,8 +550,8 @@ var
   n: integer;
 begin
   for n := 0 to pred(lRID.count) do
-    e_x_sql('update AUFTRAG set ' + ' MONTEUREXPORT=null ' + 'where' +
-      ' (MASTER_R=' + inttostr(integer(lRID[n])) + ') and' + ' (STATUS=6)');
+    e_x_sql('update AUFTRAG set ' + ' MONTEUREXPORT=null ' + 'where' + ' (MASTER_R=' +
+      inttostr(integer(lRID[n])) + ') and' + ' (STATUS=6)');
 end;
 
 procedure doAY3(lRID: TgpIntegerList);
@@ -587,9 +586,8 @@ begin
   for n := 0 to pred(lRID.count) do
   begin
     AUFTRAG_R := integer(lRID[n]);
-    lHistorische := e_r_sqlm('select RID from AUFTRAG where ' + '(MASTER_R=' +
-      inttostr(AUFTRAG_R) + ') and ' + '(STATUS=6) ' + 'order by ' +
-      'RID descending');
+    lHistorische := e_r_sqlm('select RID from AUFTRAG where ' + '(MASTER_R=' + inttostr(AUFTRAG_R) +
+      ') and ' + '(STATUS=6) ' + 'order by ' + 'RID descending');
 
     for m := 0 to pred(lHistorische.count) do
     begin
@@ -620,8 +618,7 @@ begin
             begin
               edit;
               for k := 0 to pred(lRestoreFelder.count) do
-                FieldByName(lRestoreFelder[k])
-                  .assign(cHIST.FieldByName(lRestoreFelder[k]));
+                FieldByName(lRestoreFelder[k]).assign(cHIST.FieldByName(lRestoreFelder[k]));
               AuftragBeforePost(qAUFTRAG);
               post;
             end;
@@ -674,8 +671,7 @@ begin
         edit;
         for m := 1 to pred(sCommandSet.count) do
           if pos('|', sCommandSet[m]) > 0 then
-            ersetze(nextp(sCommandSet[m], '|', 0), nextp(sCommandSet[m], '|',
-              1), lInternInfo);
+            ersetze(nextp(sCommandSet[m], '|', 0), nextp(sCommandSet[m], '|', 1), lInternInfo);
         FieldByName(sCommandSet[0]).assign(lInternInfo);
         post;
       end;
@@ -784,8 +780,7 @@ begin
       if not(eof) then
       begin
         repeat
-          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger)
-          then
+          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger) then
             break;
           if (FieldByName('STEMPEL_DOKUMENT').IsNull) then
             break;
@@ -797,8 +792,7 @@ begin
           // machs
           FieldByName('Skript').AssignTo(Skript);
           Skript.add(format('BELEG=%d;%d;%m', [FieldByName('BELEG_R').AsInteger,
-            FieldByName('STEMPEL_DOKUMENT').AsInteger,
-            FieldByName('BETRAG').AsDouble]));
+            FieldByName('STEMPEL_DOKUMENT').AsInteger, FieldByName('BETRAG').AsDouble]));
 
           edit;
           FieldByName('SKRIPT').assign(Skript);
@@ -981,9 +975,8 @@ begin
     begin
 
       //
-      AUFTRAG_R := e_r_sql('select RID from AUFTRAG where ' +
-        '(BAUSTELLE_R=301) and ' + '(ZAEHLER_NUMMER=''' + ZaehlerNummer +
-        ''') and ' + '(STATUS<>6)');
+      AUFTRAG_R := e_r_sql('select RID from AUFTRAG where ' + '(BAUSTELLE_R=301) and ' +
+        '(ZAEHLER_NUMMER=''' + ZaehlerNummer + ''') and ' + '(STATUS<>6)');
 
       if (AUFTRAG_R > 0) then
       begin
@@ -1004,14 +997,11 @@ begin
             FieldByName('PROTOKOLL').AssignTo(sProtokoll);
             DontTouch := false;
             repeat
-              if (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT)
-              then
+              if (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT) then
                 break;
-              if (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT)
-              then
+              if (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT) then
                 break;
-              if (FieldByName('ZAEHLER_WECHSEL').AsDate <>
-                Long2datetime(AbleseDatum)) then
+              if (FieldByName('ZAEHLER_WECHSEL').AsDate <> Long2datetime(AbleseDatum)) then
                 break;
               if (sProtokoll.Values['SA'] <> 'X') then
                 break;
@@ -1042,21 +1032,17 @@ begin
                     break;
                   end;
                 if (FieldByName('ZAEHLER_STAND_ALT').AsString <> '') and
-                  (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT)
-                then
+                  (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT) then
                 begin
-                  sLog.add(ZaehlerNummer + '.HT: Änderung von ' +
-                    FieldByName('ZAEHLER_STAND_ALT').AsString + ' auf ' +
-                    ZaehlerStandHT);
+                  sLog.add(ZaehlerNummer + '.HT: Änderung von ' + FieldByName('ZAEHLER_STAND_ALT')
+                    .AsString + ' auf ' + ZaehlerStandHT);
                 end;
 
                 if (FieldByName('ZAEHLER_STAND_NEU').AsString <> '') and
-                  (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT)
-                then
+                  (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT) then
                 begin
-                  sLog.add(ZaehlerNummer + '.NT: Änderung von ' +
-                    FieldByName('ZAEHLER_STAND_NEU').AsString + ' auf ' +
-                    ZaehlerStandNT);
+                  sLog.add(ZaehlerNummer + '.NT: Änderung von ' + FieldByName('ZAEHLER_STAND_NEU')
+                    .AsString + ' auf ' + ZaehlerStandNT);
                 end;
 
                 edit;
@@ -1069,8 +1055,7 @@ begin
                   FieldByName('ZAEHLER_STAND_NEU').AsString := ZaehlerStandNT;
                 end;
                 if DateOK(AbleseDatum) then
-                  FieldByName('ZAEHLER_WECHSEL').AsDate :=
-                    Long2datetime(AbleseDatum)
+                  FieldByName('ZAEHLER_WECHSEL').AsDate := Long2datetime(AbleseDatum)
                 else
                   FieldByName('ZAEHLER_WECHSEL').AsDate := now;
                 FieldByName('STATUS').AsInteger := ord(ctsErfolg);
@@ -1086,8 +1071,7 @@ begin
           end
           else
           begin
-            sLog.add('Zählernummer ' + ZaehlerNummer +
-              ' nicht wiedergefunden!');
+            sLog.add('Zählernummer ' + ZaehlerNummer + ' nicht wiedergefunden!');
           end;
           close;
         end;
@@ -1155,12 +1139,10 @@ begin
       if not(eof) then
       begin
         ZaehlerNummer := FieldByName('ZAEHLER_NUMMER').AsString;
-        if (pos('550', ZaehlerNummer) = 1) and (pos('G', ZaehlerNummer) = 0)
-        then
+        if (pos('550', ZaehlerNummer) = 1) and (pos('G', ZaehlerNummer) = 0) then
         begin
           edit;
-          FieldByName('ZAEHLER_NUMMER').AsString := '550G' +
-            copy(ZaehlerNummer, 4, MaxInt);
+          FieldByName('ZAEHLER_NUMMER').AsString := '550G' + copy(ZaehlerNummer, 4, MaxInt);
           post;
         end;
       end;
@@ -1228,10 +1210,8 @@ begin
           cAUFTRAG.ApiFirst;
           if not(cAUFTRAG.eof) then
           begin
-            SperreVon :=
-              DateTime2long(cAUFTRAG.FieldByName('SPERRE_VON').AsDate);
-            SperreBis :=
-              DateTime2long(cAUFTRAG.FieldByName('SPERRE_BIS').AsDate);
+            SperreVon := DateTime2long(cAUFTRAG.FieldByName('SPERRE_VON').AsDate);
+            SperreBis := DateTime2long(cAUFTRAG.FieldByName('SPERRE_BIS').AsDate);
           end
           else
           begin
@@ -1246,8 +1226,8 @@ begin
         end
         else
         begin
-          sBericht.add(cWARNINGText + ' ' + FieldByName('ZAEHLER_NUMMER')
-            .AsString + ': Ableseeinheit ist leer!');
+          sBericht.add(cWARNINGText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString +
+            ': Ableseeinheit ist leer!');
         end;
 
         if DateOK(SperreVon) and DateOK(SperreBis) then
@@ -1272,10 +1252,9 @@ begin
           if (_SperreVon <> SperreVon) or (_SperreBis <> SperreBis) then
           begin
 
-            sBericht.add(cINFOText + ' ' + FieldByName('ZAEHLER_NUMMER')
-              .AsString + ' Änderung von ' + long2date(_SperreVon) + '-' +
-              long2date(_SperreBis) + ' auf ' + long2date(SperreVon) + '-' +
-              long2date(SperreBis));
+            sBericht.add(cINFOText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString + ' Änderung von '
+              + long2date(_SperreVon) + '-' + long2date(_SperreBis) + ' auf ' + long2date(SperreVon)
+              + '-' + long2date(SperreBis));
 
             edit;
             FieldByName('SPERRE_VON').AsDate := Long2datetime(SperreVon);
@@ -1333,17 +1312,15 @@ begin
       first;
       if not(eof) then
       begin
-        if (FieldByName('KUNDE_ORT').AsString = FieldByName('BRIEF_ORT')
-          .AsString) then
+        if (FieldByName('KUNDE_ORT').AsString = FieldByName('BRIEF_ORT').AsString) then
           if (FieldByName('BRIEF_STRASSE').AsString <> '') then
-            if (pos(FieldByName('BRIEF_STRASSE').AsString,
-              FieldByName('KUNDE_STRASSE').AsString) = 1) then
+            if (pos(FieldByName('BRIEF_STRASSE').AsString, FieldByName('KUNDE_STRASSE')
+              .AsString) = 1) then
               if (length(FieldByName('BRIEF_STRASSE').AsString) <
                 length(FieldByName('KUNDE_STRASSE').AsString)) then
               begin
                 edit;
-                FieldByName('BRIEF_STRASSE').AsString :=
-                  FieldByName('KUNDE_STRASSE').AsString;
+                FieldByName('BRIEF_STRASSE').AsString := FieldByName('KUNDE_STRASSE').AsString;
                 post;
               end;
       end;
@@ -1528,10 +1505,8 @@ begin
 
     // Baustellen Settings holen
     AUFTRAG_R := integer(lRID[0]);
-    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-      inttostr(AUFTRAG_R));
-    sSettings :=
-      e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
+    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+    sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
       inttostr(BAUSTELLE_R));
 
     // QS - Liste frisch erzeugen
@@ -1545,8 +1520,7 @@ begin
 
       if QS_gut(sQS, sSettings) then
       begin
-        e_x_sql('update AUFTRAG set VERBRAUCH_PRO_JAHR=null where RID=' +
-          inttostr(AUFTRAG_R));
+        e_x_sql('update AUFTRAG set VERBRAUCH_PRO_JAHR=null where RID=' + inttostr(AUFTRAG_R));
       end
       else
       begin
@@ -1627,15 +1601,13 @@ var
 
         if eof then
         begin
-          sDiagnose.add(cERRORTEXT + ' +Vorgezogen: ' + ZaehlerNummer +
-            ' nicht gefunden');
+          sDiagnose.add(cERRORTEXT + ' +Vorgezogen: ' + ZaehlerNummer + ' nicht gefunden');
           break;
         end;
 
         if Recordcount <> 1 then
         begin
-          sDiagnose.add(cERRORTEXT + ' +Vorgezogen: ' + ZaehlerNummer +
-            ' gibt es mehrfach');
+          sDiagnose.add(cERRORTEXT + ' +Vorgezogen: ' + ZaehlerNummer + ' gibt es mehrfach');
           break;
         end;
 
@@ -1668,15 +1640,13 @@ var
 
         if eof then
         begin
-          sDiagnose.add(cERRORTEXT + ' +Hinweis: ' + ZaehlerNummer +
-            ' nicht gefunden');
+          sDiagnose.add(cERRORTEXT + ' +Hinweis: ' + ZaehlerNummer + ' nicht gefunden');
           break;
         end;
 
         if (Recordcount <> 1) then
         begin
-          sDiagnose.add(cERRORTEXT + ' +Hinweis: ' + ZaehlerNummer +
-            ' gibt es mehrfach');
+          sDiagnose.add(cERRORTEXT + ' +Hinweis: ' + ZaehlerNummer + ' gibt es mehrfach');
           break;
         end;
 
@@ -1707,8 +1677,7 @@ var
 begin
   BeginHourGlass;
   // um welche Baustelle geht es
-  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-    inttostr(integer(lRID[0])));
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
 
   // Excel-Dokument öffnen
   qAUFTRAG := DataModuleDatenbank.nQuery;
@@ -1771,16 +1740,14 @@ var
             first;
             if eof then
             begin
-              sDiagnose.add(cERRORTEXT + ' Zählernummer "' + ZaehlerNummer +
-                '" nicht gefunden');
+              sDiagnose.add(cERRORTEXT + ' Zählernummer "' + ZaehlerNummer + '" nicht gefunden');
             end
             else
             begin
               while not(eof) do
               begin
                 AUFTRAG_R := FieldByName('RID').AsInteger;
-                if (FormAuftragArbeitsplatz.ItemsMARKED.indexof
-                  (pointer(AUFTRAG_R)) = -1) then
+                if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
                   FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
                 next;
               end;
@@ -1792,8 +1759,7 @@ var
           while not(eof) do
           begin
             AUFTRAG_R := FieldByName('RID').AsInteger;
-            if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R))
-              = -1) then
+            if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
               FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
             next;
           end;
@@ -1812,8 +1778,7 @@ var
 begin
   BeginHourGlass;
   // um welche Baustelle geht es
-  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-    inttostr(integer(lRID[0])));
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
   FormAuftragArbeitsplatz.ItemsMARKED.clear;
   // Excel-Dokument öffnen
   cAUFTRAG := DataModuleDatenbank.nCursor;
@@ -2015,9 +1980,8 @@ begin
           e_w_unlocate(POSTLEITZAHL_R);
 
         // referenzen wieder eintragen
-        POSTLEITZAHL_R := FormGeoLokalisierung.locate
-          (FieldByName('KUNDE_STRASSE').AsString, FieldByName('KUNDE_ORT')
-          .AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
+        POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
+          FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
 
         // Ergebnis eintragen
         if (POSTLEITZAHL_R > 0) then
@@ -2025,8 +1989,7 @@ begin
           edit;
           FieldByName('POSTLEITZAHL_R').AsInteger := POSTLEITZAHL_R;
           if (FieldByName('KUNDE_ORTSTEIL').AsString = '') then
-            FieldByName('KUNDE_ORTSTEIL').AsString :=
-              FormGeoLokalisierung.r_ortsteil;
+            FieldByName('KUNDE_ORTSTEIL').AsString := FormGeoLokalisierung.r_ortsteil;
           post;
         end
 
@@ -2068,8 +2031,8 @@ begin
         begin
           l := pos('=', lInternInfo[m]);
           if l > 0 then
-            lInternInfo[m] := StrFilter(copy(lInternInfo[m], 1, pred(l)),
-              ' ;:,*?/\', true) + copy(lInternInfo[m], l, MaxInt);
+            lInternInfo[m] := StrFilter(copy(lInternInfo[m], 1, pred(l)), ' ;:,*?/\', true) +
+              copy(lInternInfo[m], l, MaxInt);
         end;
         FieldByName('INTERN_INFO').assign(lInternInfo);
         post;
@@ -2111,8 +2074,7 @@ begin
         if (pos('60', ZAEHLER_NR_NEU) <> 1) then
         begin
           edit;
-          FieldByName('ZAEHLER_NR_NEU').AsString :=
-            '60' + FieldByName('ZAEHLER_NR_NEU').AsString;
+          FieldByName('ZAEHLER_NR_NEU').AsString := '60' + FieldByName('ZAEHLER_NR_NEU').AsString;
           post;
         end;
       end;
@@ -2150,8 +2112,7 @@ begin
   sProtokoll := TStringList.create;
 
   // um welche Baustelle geht es
-  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-    inttostr(integer(lRID[0])));
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
 
   // Excel-Dokument öffnen
   qAUFTRAG := DataModuleDatenbank.nQuery;
@@ -2199,8 +2160,7 @@ begin
 
           if eof then
           begin
-            sDiagnose.add(cERRORTEXT + ' Z# "' + ZAEHLER_NUMMER +
-              '" nicht gefunden');
+            sDiagnose.add(cERRORTEXT + ' Z# "' + ZAEHLER_NUMMER + '" nicht gefunden');
             break;
           end;
 
@@ -2327,11 +2287,11 @@ var
   IMEI: string;
 begin
 
-  Log := TStringList.create;
-  Log.LoadFromFile('W:\JonDaServer\JonDaServer.Log');
-  StopDatum := DatePlus(DateGet, -40);
+  StopDatum := DatePlus(DateGet, -60);
   IMEI_Hits := TStringList.create;
 
+  Log := TStringList.create;
+  Log.LoadFromFile('W:\JonDaServer\JonDaServer.Log');
   for n := pred(Log.count) downto 0 do
   begin
 
@@ -2347,16 +2307,17 @@ begin
 
     if (pos('    IMEI ', Log[n]) = 1) then
     begin
-      IMEI := copy(Log[n], 10, 15);
-      m := IMEI_Hits.indexof(IMEI);
-      if (m = -1) then
-        IMEI_Hits.addobject(IMEI, TObject(integer(1)))
-      else
-        IMEI_Hits.objects[m] := TObject(succ(integer(IMEI_Hits.objects[m])));
+      IMEI := StrFilter(copy(Log[n], 10, 15), cZiffern);
+      if length(IMEI) = 15 then
+      begin
+        m := IMEI_Hits.indexof(IMEI);
+        if (m = -1) then
+          IMEI_Hits.addobject(IMEI, TObject(integer(1)))
+        else
+          IMEI_Hits.objects[m] := TObject(succ(integer(IMEI_Hits.objects[m])));
+      end;
     end;
-
   end;
-
   Log.free;
 
   qARTIKEL := nQuery;
@@ -2376,7 +2337,7 @@ begin
           edit;
           if (o <> -1) then
           begin
-            FieldByName('DAUER').AsString := inttostrN( integer(IMEI_Hits.objects[o]),4);
+            FieldByName('DAUER').AsString := inttostrN(integer(IMEI_Hits.objects[o]), 4);
             IMEI_Hits.delete(o);
           end
           else
@@ -2385,13 +2346,19 @@ begin
           end;
           post;
         end;
-
       end;
     end;
   end;
-
-  IMEI_Hits.SaveToFile(DiagnosePath + 'IMEI-unbekannt.csv');
   qARTIKEL.free;
+
+  // Um die Anzahl der Treffer ergänzen
+  for n := 0 to pred(IMEI_Hits.count) do
+    IMEI_Hits[n] := IMEI_Hits[n] + ';' + inttostr(integer(IMEI_Hits.objects[n]));
+  IMEI_Hits.Insert(0, 'IMEI;COUNT');
+
+  // Speichern
+  IMEI_Hits.SaveToFile(DiagnosePath + 'IMEI-unbekannt.csv');
+
   IMEI_Hits.free;
 
 end;
@@ -2619,8 +2586,7 @@ begin
       if (pos(',', DAUER) > 0) then
       begin
         ersetze(',', ':', DAUER);
-        sBericht.add(inttostr(ARTIKEL_R) + ';' + FieldByName('DAUER').AsString +
-          ';' + DAUER);
+        sBericht.add(inttostr(ARTIKEL_R) + ';' + FieldByName('DAUER').AsString + ';' + DAUER);
         edit;
         FieldByName('DAUER').AsString := DAUER;
         post;
@@ -2727,8 +2693,7 @@ begin
         FieldByName('PROTOKOLL').AssignTo(lInternInfo);
         edit;
         for m := 0 to pred(sErsetze.count) do
-          ersetze(nextp(sErsetze[m], ';', 0), nextp(sErsetze[m], ';', 1),
-            lInternInfo);
+          ersetze(nextp(sErsetze[m], ';', 0), nextp(sErsetze[m], ';', 1), lInternInfo);
         FieldByName('PROTOKOLL').assign(lInternInfo);
         post;
       end;
@@ -2884,8 +2849,8 @@ begin
           end
           else
           begin
-            oCompiler.MakeError('', ecUnsatisfiedForward,
-              'missing procedure ' + TransaktionsName + '(RID:Integer);');
+            oCompiler.MakeError('', ecUnsatisfiedForward, 'missing procedure ' + TransaktionsName +
+              '(RID:Integer);');
           end;
         end;
       end;
