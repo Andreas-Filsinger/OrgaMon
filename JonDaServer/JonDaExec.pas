@@ -80,8 +80,7 @@ const
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
 
 type
-  TJonDaExec_ZaehlerNummerNeu = function(RID: integer; FotoGeraeteNo: string)
-    : string of object;
+  TJonDaExec_ZaehlerNummerNeu = function(RID: integer; FotoGeraeteNo: string): string of object;
 
   TJonDaExec = class(TObject)
   private
@@ -146,8 +145,9 @@ type
     // Call-Backs
     callback_ZaehlerNummerNeu: TJonDaExec_ZaehlerNummerNeu;
 
-    // IMEI-Tabelle
+    // IMEI-Tabellen
     tIMEI: TsTable;
+    tIMEI_OK: TsTable;
 
     // core
     constructor Create;
@@ -189,10 +189,8 @@ type
     function GeraeteAlias(GeraeteID: string; iFTP: TIdFTP): string;
     // [GeraeteID]
 
-    function isProd(pGeraeteNo: string; pRID: integer;
-      pFertig: TANFiXDate): boolean;
-    function isTest(pGeraeteNo: string; pRID: integer;
-      pFertig: TANFiXDate): boolean;
+    function isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
+    function isTest(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 
     // TOOL: Allgemein
     procedure ClearStat;
@@ -414,8 +412,7 @@ begin
   tSENDEN.free;
 end;
 
-class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum
-  : TANFiXDate): string;
+class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
 begin
   begin
     case ausfuehren_ist_datum of
@@ -637,8 +634,7 @@ begin
     add('ANFiX Rev. ' + RevToStr(VersionAnfix32));
     add(ComputerName);
     add(datum + ' ' + uhr8);
-    addobject(ActTRN + '.' + cServerFunctions_Meta_CallCount,
-      TXMLRPC_Server.oMetaString);
+    addobject(ActTRN + '.' + cServerFunctions_Meta_CallCount, TXMLRPC_Server.oMetaString);
     add(iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
     add(Betriebssystem);
   end;
@@ -779,8 +775,7 @@ var
 
   function FName_Abgezogen: string;
   begin
-    result := format(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgezogenFName,
-      [GeraeteNo]);
+    result := format(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgezogenFName, [GeraeteNo]);
   end;
 
   procedure SaveOneStay;
@@ -800,9 +795,8 @@ var
       // heute ausgeführt?
       if (mderec.ausfuehren_ist_datum = _DateGet) or
       // für heute geplant oder vorgezogen?
-        (mderec.ausfuehren_soll > _DateGet) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
+        (mderec.ausfuehren_soll > _DateGet) or (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant)
+        or (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
         (mderec.ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or
         (mderec.ausfuehren_ist_datum = cMonDa_Status_Vorgezogen) then
       begin
@@ -822,8 +816,7 @@ var
   procedure CloseJonDa;
   begin
     CloseFile(MonDaAasTxt);
-    SaveStringsToFileUTF8(Auftrag, MyProgramPath + AktTrn + '\auftrag' +
-      cUTF8DataExtension);
+    SaveStringsToFileUTF8(Auftrag, MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -937,8 +930,7 @@ var
       slGeraet := TStringList.Create;
       ilGemeldeteRIDS := TgpIntegerList.Create;
       try
-        slGeraet.LoadFromFile(MyProgramPath + cMeldungPath + GeraeteNo
-          + '.txt');
+        slGeraet.LoadFromFile(MyProgramPath + cMeldungPath + GeraeteNo + '.txt');
         if (JondaAll.count > 0) then
           slGeraet.AddStrings(JondaAll);
         JondaAll.Clear;
@@ -1014,8 +1006,7 @@ var
     sTAN_FName: string;
   begin
     sPendings := TStringList.Create;
-    sPendings.LoadFromFile(MyProgramPath + AktTrn + '\' +
-      cMonDaServer_UnberuecksichtigtFName);
+    sPendings.LoadFromFile(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
     for n := 0 to pred(sPendings.count) do
     begin
       sTAN_FName := cutblank(sPendings[n]);
@@ -1073,15 +1064,13 @@ var
       with mderecOrgaMon do
       begin
 
-        iDetails := Oem2asci(Zaehler_Strasse) + cLineSeparator +
-          Oem2asci(Zaehler_Ort);
+        iDetails := Oem2asci(Zaehler_Strasse) + cLineSeparator + Oem2asci(Zaehler_Ort);
 
         // Text beim Termin (Spalte 1)
         iTermin :=
         { BAU-00000 } Oem2asci(Baustelle) + '-' + ABNummer + #13 +
         { MON } WeekDayS(ausfuehren_soll) + #160 +
-        { 23.02. } copy(long2date(ausfuehren_soll), 1, 5) +
-          VormittagsStr(vormittags);
+        { 23.02. } copy(long2date(ausfuehren_soll), 1, 5) + VormittagsStr(vormittags);
 
         if (sEingabeIndex <> -1) then
         begin
@@ -1098,11 +1087,9 @@ var
             iAusbau := sProtokoll.values['FA'];
             iEinbau := sProtokoll.values['FN'];
             if (iAusbau <> '') then
-              iDetails := iDetails + #13 + 'Foto' + #160 + 'Ausbau' + #160
-                + iAusbau;
+              iDetails := iDetails + #13 + 'Foto' + #160 + 'Ausbau' + #160 + iAusbau;
             if (iEinbau <> '') then
-              iDetails := iDetails + #13 + 'Foto' + #160 + 'Einbau' + #160
-                + iEinbau;
+              iDetails := iDetails + #13 + 'Foto' + #160 + 'Einbau' + #160 + iEinbau;
             sProtokoll.free;
             Status := 0;
             break;
@@ -1199,12 +1186,10 @@ var
       add('save&delete AUFTRAG LAST');
     end;
 
-    bFoto.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderecFoto,
-      sizeof(TMdeRec));
+    bFoto.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderecFoto, sizeof(TMdeRec));
     bFoto.BeginTransaction(now);
 
-    bOrgaMon.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS', mderecOrgaMon,
-      sizeof(TMdeRec));
+    bOrgaMon.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMdeRec));
     bOrgaMon.BeginTransaction(now);
 
     // der "neue" Auftrag ist massgeblich!
@@ -1217,10 +1202,8 @@ var
     end;
 
     // Laden der "Eingabe.???.txt"
-    if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo +
-      '.txt') then
-      sEingabe.LoadFromFile(MyProgramPath + cStatistikPath + 'Eingabe.' +
-        GeraeteNo + '.txt');
+    if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt') then
+      sEingabe.LoadFromFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt');
 
     // Über die Eingaben des Monteurs selbst
     FirstFoto := false;
@@ -1240,8 +1223,7 @@ var
           begin
             fillchar(mderecOrgaMon, sizeof(mderec), 0);
             mderecOrgaMon.ausfuehren_ist_datum := cMonDa_Status_OhneInfo;
-            mderecOrgaMon.ausfuehren_soll :=
-              Date2Long(nextp(sEingabe[n], ';', 0));
+            mderecOrgaMon.ausfuehren_soll := Date2Long(nextp(sEingabe[n], ';', 0));
           end;
 
           HasFoto := bFoto.exist(AUFTRAG_R);
@@ -1311,8 +1293,7 @@ var
     end;
     with DatensammlerGlobal do
     begin
-      add('MehrInfo=' +
-        'Verbesserungsvorschläge bitte an Andreas Filsinger 07251/966100');
+      add('MehrInfo=' + 'Verbesserungsvorschläge bitte an Andreas Filsinger 07251/966100');
     end;
     MonteurInfo := THTMLTemplate.Create;
     with MonteurInfo do
@@ -1397,8 +1378,7 @@ begin
       GeraeteNo := detectGeraeteNummer(MyProgramPath + AktTrn);
       if (GeraeteNo = '') then
       begin
-        log(cERRORText + ' 880:"' + MyProgramPath + AktTrn +
-          '\nnn.zip" fehlt!');
+        log(cERRORText + ' 880:"' + MyProgramPath + AktTrn + '\nnn.zip" fehlt!');
         inc(ErrorCount);
         break;
       end;
@@ -1407,8 +1387,7 @@ begin
 
       // Verarbeitungsdatum
       if not(Online) then
-        _DateGet := FDate(MyProgramPath + AktTrn + '\' + GeraeteNo +
-          cZIPExtension)
+        _DateGet := FDate(MyProgramPath + AktTrn + '\' + GeraeteNo + cZIPExtension)
       else
         _DateGet := DateGet;
 
@@ -1419,28 +1398,23 @@ begin
       _DateGetTimeOut := DatePlus(_DateGet, -13);
 
       // Parameter für diesen Lauf auswerten
-      if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraeteNo + '.ini')
-      then
-        Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen +
-          GeraeteNo + '.ini');
+      if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraeteNo + '.ini') then
+        Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen + GeraeteNo + '.ini');
 
       // Optionen setzen
-      proceed_EinfacheListe :=
-        (Einstellungen.values[cServerOption_EinfacheListe] = cIni_Activate);
+      proceed_EinfacheListe := (Einstellungen.values[cServerOption_EinfacheListe] = cIni_Activate);
 
       // den neuesten <GeraeteNo>.DAT aus dem Internet holen
       // wenn nicht schon vorhanden!
       if not(ftpDown(GeraeteNo, AktTrn, iFTP)) then
       begin
-        log(cERRORText + ' 936:FTPdown(' + GeraeteNo + ',' + AktTrn +
-          ') fail!');
+        log(cERRORText + ' 936:FTPdown(' + GeraeteNo + ',' + AktTrn + ') fail!');
         inc(ErrorCount);
         break;
       end;
 
       // abgearbeitete Laden
-      if FileExists(MyProgramPath + AktTrn + '\' +
-        cMonDaServer_AbgearbeitetFName) then
+      if FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) then
       begin
         OrgaMonAbgearbeitet.LoadFromFile(MyProgramPath + AktTrn + '\' +
           cMonDaServer_AbgearbeitetFName);
@@ -1453,8 +1427,7 @@ begin
       // JonDaServer seine eigenen Schlusse daraus ziehen.
       //
       // Abgearbeitete der anderen Monteure und anderen TAN laden
-      if FileExists(MyProgramPath + AktTrn + '\' +
-        cMonDaServer_UnberuecksichtigtFName) then
+      if FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName) then
         addPending;
       Stat_OrgaMonPending := OrgaMonAbgearbeitet.count - Stat_OrgaMonGruen;
 
@@ -1496,7 +1469,7 @@ begin
         Optionen := JondaAll.values['OPTIONEN'];
         IMEI := JondaAll.values['IMEI'];
         NAME := JondaAll.values['NAME'];
-        BEZAHLT_BIS := date2long(JondaAll.values['BEZAHLT_BIS']);
+        BEZAHLT_BIS := Date2Long(JondaAll.values['BEZAHLT_BIS']);
 
         // nun alle Setting-Lines entfernen
         if (JondaAll.count > 0) then
@@ -1510,8 +1483,7 @@ begin
         // bei aufeinanderfolgenden Meldungen zu identischen RIDs immer die letzte Meldung nehmen
         for n := pred(JondaAll.count) downto 1 do
           if (pos('-1;', JondaAll[n]) <> 1) then
-            if nextp(JondaAll[n], ';', 0) = nextp(JondaAll[pred(n)], ';', 0)
-            then
+            if nextp(JondaAll[n], ';', 0) = nextp(JondaAll[pred(n)], ';', 0) then
               JondaAll.Delete(pred(n));
 
         // versehentlich doppelt übertragene Datensätze löschen
@@ -1523,8 +1495,7 @@ begin
           MergeMeldung;
 
         // Es wird nun die ursprüngliche AUFTRAG.DAT des Handys rekonstruiert
-        assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn +
-          '\AUFTRAG.DAT');
+        assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn + '\AUFTRAG.DAT');
         try
           rewrite(f_OrgaMonApp_Ergebnis);
         except
@@ -1559,8 +1530,7 @@ begin
               if (length(JProtokoll) > 254) then
                 log(cWARNINGText + ' 1259:' + 'Protokoll zu lange!');
               ProtokollInfo := JProtokoll;
-              ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'),
-                cMonDa_Status_unbearbeitet);
+              ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
               ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
               Monteur_Info := OneJLine;
 
@@ -1578,8 +1548,8 @@ begin
             break;
 
           // "AUFTRAG.DAT" aus globaler Ablage
-          JAuftragBisherFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' +
-            GeraeteNo + cDATExtension;
+          JAuftragBisherFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo +
+            cDATExtension;
           if FileExists(JAuftragBisherFName) then
             break;
 
@@ -1708,8 +1678,7 @@ begin
       { Quell-Datei vorhanden? }
       if not(FileExists(MyProgramPath + AktTrn + '\AUFTRAG.DAT')) then
       begin
-        EndAction('WARNUNG: "' + MyProgramPath + AktTrn +
-          '\AUFTRAG.DAT" fehlt!');
+        EndAction(cWARNINGText + ' "' + MyProgramPath + AktTrn + '\AUFTRAG.DAT" fehlt!');
         FileEmpty(MyProgramPath + AktTrn + '\AUFTRAG.DAT');
       end;
 
@@ -1717,17 +1686,14 @@ begin
         FileDelete(MyProgramPath + AktTrn + '\MONDA.DAT');
 
       if not(FileExists(MyProgramPath + AktTrn + '\MONDA.DAT')) then
-        FileReName(MyProgramPath + AktTrn + '\AUFTRAG.DAT',
-          MyProgramPath + AktTrn + '\MONDA.DAT');
+        FileReName(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + AktTrn + '\MONDA.DAT');
 
       // Foto-Datei
-      bFotoErgebnis.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderec,
-        sizeof(TMdeRec));
+      bFotoErgebnis.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
       bFotoErgebnis.BeginTransaction(long2datetime(_DateGet));
 
       // aktuelle, neue OrgaMon Daten fürs Gerät
-      assignFile(f_OrgaMon_Auftrag, MyProgramPath + AktTrn + '\' + GeraeteNo +
-        cDATExtension);
+      assignFile(f_OrgaMon_Auftrag, MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
       try
         reset(f_OrgaMon_Auftrag);
       except
@@ -1736,8 +1702,7 @@ begin
       end;
 
       // an OrgaMon gemeldete Ergebnisse
-      assignFile(fOrgaMonErgebnis, MyProgramPath + AktTrn + '\' + AktTrn +
-        cDATExtension);
+      assignFile(fOrgaMonErgebnis, MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension);
       try
         rewrite(fOrgaMonErgebnis);
       except
@@ -1748,11 +1713,9 @@ begin
       // aktuelle MonDa Daten
       if (OldTrn <> '') then
       begin
-        FileConcat(MyProgramPath + AktTrn + '\MONDA.DAT',
-          MyProgramPath + OldTrn + '\MONDA.DAT', MyProgramPath + AktTrn +
-          '\MONDA.$$$');
-        FileCopy(MyProgramPath + AktTrn + '\MONDA.$$$', MyProgramPath + AktTrn +
-          '\MONDA.DAT');
+        FileConcat(MyProgramPath + AktTrn + '\MONDA.DAT', MyProgramPath + OldTrn + '\MONDA.DAT',
+          MyProgramPath + AktTrn + '\MONDA.$$$');
+        FileCopy(MyProgramPath + AktTrn + '\MONDA.$$$', MyProgramPath + AktTrn + '\MONDA.DAT');
       end;
 
       assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn + '\MONDA.DAT');
@@ -1765,8 +1728,7 @@ begin
       Stat_Bisher := FileSize(f_OrgaMonApp_Ergebnis);
 
       // neue, kommende JonDa-Daten!
-      assignFile(f_OrgaMonApp_NeuerAuftrag, MyProgramPath + AktTrn +
-        '\AUFTRAG.DAT');
+      assignFile(f_OrgaMonApp_NeuerAuftrag, MyProgramPath + AktTrn + '\AUFTRAG.DAT');
       try
         rewrite(f_OrgaMonApp_NeuerAuftrag);
       except
@@ -1803,8 +1765,7 @@ begin
       { erst mal die neuen RIDs sammeln! }
       { das sind die, welche vom OrgaMon auf dem Gerät gesehen werden }
       { sollen. }
-      bOrgaMonAuftrag.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS',
-        mderec, sizeof(TMdeRec));
+      bOrgaMonAuftrag.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS', mderec, sizeof(TMdeRec));
       bOrgaMonAuftrag.BeginTransaction(long2datetime(_DateGet));
       EntryPointReached := false;
       for m := 1 to FileSize(f_OrgaMon_Auftrag) do
@@ -1837,8 +1798,8 @@ begin
           GoodMonteurL.add(mderec.monteur);
         end;
 
-        if (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or
-          (mderec.ausfuehren_soll >= _DateGet) or EntryPointReached then
+        if (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or (mderec.ausfuehren_soll >= _DateGet)
+          or EntryPointReached then
         begin
           //
           // ist es eine aktuelle News von OrgaMon -> beibehalten
@@ -1891,8 +1852,7 @@ begin
               if (pos('ZZ=J', mderec.ProtokollInfo) > 0) then
                 if (
                   { } (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
-                  { } (mderec.ausfuehren_ist_datum = cMonDa_Status_unbearbeitet))
-                then
+                  { } (mderec.ausfuehren_ist_datum = cMonDa_Status_unbearbeitet)) then
                 begin
                   inc(Stat_AusfuehrungsMomentKorrektur);
                   WechselmomentKorrektur.add(mderec.RID);
@@ -1978,9 +1938,9 @@ begin
                   WriteOrgaMon;
 
                   with mderec do
-                    log('FallBack: ' + Baustelle + ';' + zaehlernummer_alt + ';'
-                      + monteur + ';' + inttostr(RID) + ';' +
-                      long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
+                    log('FallBack: ' + Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' +
+                      inttostr(RID) + ';' + long2date(ausfuehren_soll) + ';' +
+                      BoolToStr(vormittags));
 
                 end
                 else
@@ -2009,8 +1969,7 @@ begin
                       // zum Monda-Auftrag rausschreiben, da es vom OrgaMon
                       // nicht mehr kommt!
                       //
-                      if not(proceed_RestantenLoeschen) and
-                        not(proceed_EinfacheListe) then
+                      if not(proceed_RestantenLoeschen) and not(proceed_EinfacheListe) then
                       begin
                         add_OrgaMonApp_NeuerAuftrag;
                       end;
@@ -2079,8 +2038,8 @@ begin
         //
         read(f_OrgaMon_Auftrag, mderec);
         if (mderec.ausfuehren_soll = cMonDa_ImmerAusfuehren) or
-          (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or
-          (mderec.ausfuehren_soll >= _DateGet) or EntryPointReached then
+          (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or (mderec.ausfuehren_soll >= _DateGet)
+          or EntryPointReached then
         begin
           EntryPointReached := true;
           k := MondaStay.IndexOf(inttostr(mderec.RID));
@@ -2119,8 +2078,8 @@ begin
       CloseFile(f_OrgaMon_Auftrag);
       CloseFile(fOrgaMonErgebnis);
 
-      SaveStringsToFileUTF8(sOrgaMonErgebnis, MyProgramPath + AktTrn + '\' +
-        AktTrn + cUTF8DataExtension);
+      SaveStringsToFileUTF8(sOrgaMonErgebnis, MyProgramPath + AktTrn + '\' + AktTrn +
+        cUTF8DataExtension);
       CloseFile(f_OrgaMonApp_Ergebnis);
       CloseFile(f_OrgaMonApp_NeuerAuftrag);
       CloseFile(MonDaA_StayF);
@@ -2131,18 +2090,14 @@ begin
       RemoveDuplicates(MondaBaustellen);
 
       // Datensicherung der Monteur-Eingabe-Datei erstellen
-      if not(FileExists(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo +
-        '.txt')) then
+      if not(FileExists(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')) then
       begin
-        if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo +
-          '.txt') then
+        if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt') then
           FileCopy(
-            { } MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo
-            + '.txt',
+            { } MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt',
             { } MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')
         else
-          FileAlive(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo
-            + '.txt');
+          FileAlive(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt');
       end;
 
       // BilderAll
@@ -2156,22 +2111,19 @@ begin
       m := 0;
       repeat
         if (m = 0) then
-          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo +
-            '.Neu.txt'
+          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
         else
-          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo +
-            '.Neu-' + inttostr(m) + '.txt';
+          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' +
+            inttostr(m) + '.txt';
         inc(m);
       until not(FileExists(Fname));
-      FileCopy(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo +
-        '.txt', Fname);
+      FileCopy(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt', Fname);
 
       // alle Zuordnungen ansehen,
       // Beispiel:    PLED3->PLE & PLED2->PLE
       for m := 0 to pred(sProtokolle.count) do
       begin
-        OneJLine := AnsiUpperCase(nextp(sProtokolle[m],
-          cJondaProtokollDelimiter, 1));
+        OneJLine := AnsiUpperCase(nextp(sProtokolle[m], cJondaProtokollDelimiter, 1));
         if (OneJLine <> '') then
           if (ProtocolAll.IndexOf(OneJLine) = -1) then
             ProtocolAll.add(OneJLine);
@@ -2184,8 +2136,7 @@ begin
         WriteJonDa(':' + ProtS);
 
         //
-        ProtocolL.LoadFromFile(ProtokollPath(RemoteRev) + ProtocolAll[m] +
-          cProtExtension);
+        ProtocolL.LoadFromFile(ProtokollPath(RemoteRev) + ProtocolAll[m] + cProtExtension);
 
         if RevIsBefore(RemoteRev, cVersion_OrgaMonApp) then
         begin
@@ -2212,12 +2163,10 @@ begin
 
       // nun alle (einmaligen) Geräte-Kommandos
       if (RevIsFrom(RemoteRev, 2.016)) then
-        if FileExists(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini')
-        then
+        if FileExists(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini') then
         begin
           Einstellungen := TStringList.Create;
-          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteKommandos +
-            GeraeteNo + '.ini');
+          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini');
           for k := 0 to pred(Einstellungen.count) do
             WriteJonDa('$' + Einstellungen[k]);
           Einstellungen.free;
@@ -2239,8 +2188,7 @@ begin
         // noch JonDa?
         if not(RevIsFrom(RemoteRev, cVersion_OrgaMonApp)) then
         begin
-          log('WARNUNG: JonDa ' + RevToStr(RemoteRev) +
-            ' wird nicht mehr unterstützt!');
+          log(cWARNINGText + ' JonDa ' + RevToStr(RemoteRev) + ' wird nicht mehr unterstützt!');
           FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend.txt',
             MyProgramPath + AktTrn + '\auftrag.txt');
           break;
@@ -2250,26 +2198,34 @@ begin
         if not(RevIsFrom(RemoteRev, cMinVersion_OrgaMonApp)) then
         begin
           // Programmversion ist zu alt!
-          log('WARNUNG: Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
-          FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend' +
-            cUTF8DataExtension, MyProgramPath + AktTrn + '\auftrag' +
-            cUTF8DataExtension);
+          log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
+          FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend' + cUTF8DataExtension,
+            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           break;
         end;
 
         // Vertragszeitraum nicht bezahlt?
         if DateOK(BEZAHLT_BIS) and (_DateGet > BEZAHLT_BIS) then
         begin
-          // Programmversion ist zu alt!
-          log('WARNUNG: Unbezahlter Zeitraum!');
+          // Unbezahlt!
+          log(cWARNINGText + ' Unbezahlter Zeitraum!');
           FileCopy(ProtokollPath(RemoteRev) + 'Unbezahlt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           break;
         end;
 
+        // IMEI überhaupt gültig?
+        if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
+        begin
+          // Unbezahlt!
+          log(cWARNINGText + ' Unbekanntes Handy!');
+          FileCopy(ProtokollPath(RemoteRev) + 'Unbekannt' + cUTF8DataExtension,
+            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          break;
+        end;
+
         // Auftrag.txt nun wirklich bereitstellen!
-        FileReName(MyProgramPath + AktTrn + '\auftrag.$$$',
-          MyProgramPath + AktTrn + '\auftrag.txt')
+        FileReName(MyProgramPath + AktTrn + '\auftrag.$$$', MyProgramPath + AktTrn + '\auftrag.txt')
 
       until true;
 
@@ -2287,8 +2243,7 @@ begin
         end;
 
       if (Stat_OrgaMonGruen <> 0) or (Stat_OrgaMonPending <> 0) then
-        log('OrgaMon grün  : ' + inttostr(Stat_OrgaMonGruen) + '+' +
-          inttostr(Stat_OrgaMonPending));
+        log('OrgaMon grün  : ' + inttostr(Stat_OrgaMonGruen) + '+' + inttostr(Stat_OrgaMonPending));
       if (Stat_Bisher <> 0) then
         log('Bisher        : ' + inttostr(Stat_Bisher));
       if (Stat_Unbearbeitet <> 0) then
@@ -2300,8 +2255,7 @@ begin
       if (Stat_NeuAnschreiben <> 0) then
         log('NeuAnschr.    : ' + inttostr(Stat_NeuAnschreiben));
       if (Stat_Restanten <> 0) or (Stat_AutoRestant <> 0) then
-        log('Restant/AutoR : ' + inttostr(Stat_Restanten) + '/' +
-          inttostr(Stat_AutoRestant));
+        log('Restant/AutoR : ' + inttostr(Stat_Restanten) + '/' + inttostr(Stat_AutoRestant));
       if (Stat_FallBack <> 0) then
         log('Fallback      : ' + inttostr(Stat_FallBack));
       if (Stat_Unmoeglich <> 0) then
@@ -2322,8 +2276,7 @@ begin
       if (Stat_MondaStay <> 0) then
         log('Stay-liste    : ' + inttostr(Stat_MondaStay));
       if (Stat_Meldungen <> 0) or (Stat_SelbstAnlagen <> 0) then
-        log('->OrgaMon/Neu : ' + inttostr(Stat_Meldungen) + '/' +
-          inttostr(Stat_SelbstAnlagen));
+        log('->OrgaMon/Neu : ' + inttostr(Stat_Meldungen) + '/' + inttostr(Stat_SelbstAnlagen));
       if (Stat_MondaNeu <> 0) then
         log('->JonDa       : ' + inttostr(Stat_MondaNeu));
       log('Baustellen    : ' + HugeSingleLine(MondaBaustellen, ','));
@@ -2340,8 +2293,7 @@ begin
       writeln(MonDaGeraetF, AktTrn);
       CloseFile(MonDaGeraetF);
 
-      assignFile(MonDaGeraetF, MyProgramPath + cStatistikPath + GeraeteNo
-        + '.txt');
+      assignFile(MonDaGeraetF, MyProgramPath + cStatistikPath + GeraeteNo + '.txt');
       try
         rewrite(MonDaGeraetF);
       except
@@ -2359,17 +2311,15 @@ begin
         if (GeraeteNo <> '000') then
         begin
 
-          FileCopy(MyProgramPath + AktTrn + '\AUFTRAG.DAT',
-            MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo +
-            cDATExtension);
+          FileCopy(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + cServerDataPath +
+            'AUFTRAG.' + GeraeteNo + cDATExtension);
           try
             with iFTP do
             begin
               //
               if not(connected) then
                 connect;
-              if (FSize(MyProgramPath + AktTrn + '\' + AktTrn +
-                cDATExtension) > 0) then
+              if (FSize(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension) > 0) then
               begin
                 // TAN Upload
                 sput(
@@ -2377,16 +2327,14 @@ begin
                   { } AktTrn + cDATExtension,
                   { } iFTP);
                 sput(
-                  { } MyProgramPath + AktTrn + '\' + AktTrn +
-                  cUTF8DataExtension,
+                  { } MyProgramPath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
                   { } AktTrn + cUTF8DataExtension,
                   { } iFTP);
 
               end
               else
               begin
-                log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN '
-                  + AktTrn);
+                log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
               sput(MyProgramPath + AktTrn + '\AUFTRAG.DAT',
                 'AUFTRAG.' + GeraeteNo + cDATExtension, iFTP);
@@ -2472,9 +2420,8 @@ begin
       log(cERRORText + ' 1541:' + E.Message);
   end;
 
-  AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';'
-    + inttostr(RDTSCms - StartTime) + 'ms',
-    MyProgramPath + cJonDaServer_XMLRPCLogFName);
+  AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';' +
+    inttostr(RDTSCms - StartTime) + 'ms', MyProgramPath + cJonDaServer_XMLRPCLogFName);
 
 end;
 
@@ -2572,8 +2519,7 @@ begin
         if (length(IMEI) = 0) then
         begin
 
-          log(cWARNINGText + ' 2344:' + ' IMEI ist leer bei Gerät "' +
-            GeraetID + '"');
+          log(cWARNINGText + ' 2344:' + ' IMEI ist leer bei Gerät "' + GeraetID + '"');
           // break;
 
         end
@@ -2582,8 +2528,8 @@ begin
 
           if (length(IMEI) <> 15) then
           begin
-            log(cWARNINGText + ' 2344:' + ' IMEI "' + IMEI +
-              '" hat keine 15 Stellen bei GERAET "' + GeraetID + '"');
+            log(cWARNINGText + ' 2344:' + ' IMEI "' + IMEI + '" hat keine 15 Stellen bei GERAET "' +
+              GeraetID + '"');
             // break;
           end;
 
@@ -2592,16 +2538,14 @@ begin
             r := tIMEI.locate('IMEI', IMEI);
             if (r = -1) then
               log(cWARNINGText + ' 2344:' + ' IMEI "' + IMEI +
-                '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' +
-                GeraetID + '"');
+                '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' + GeraetID + '"');
             if (r <> -1) then
             begin
               _GeraetID := tIMEI.readCell(r, 'GERAET');
               if (_GeraetID <> GeraetID) then
               begin
-                log(cWARNINGText + ' 2357:' + ' Bei IMEI "' + IMEI +
-                  '" sollte GERAET "' + _GeraetID +
-                  '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
+                log(cWARNINGText + ' 2357:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID
+                  + '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
               end
               else
               begin
@@ -2613,13 +2557,10 @@ begin
         end;
 
         // Einstellungen laden
-        if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraetID + '.ini')
-        then
+        if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraetID + '.ini') then
         begin
-          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen +
-            GeraetID + '.ini');
-          if (Einstellungen.values[cServerOption_ZeitPruefung] = cIni_Deactivate)
-          then
+          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen + GeraetID + '.ini');
+          if (Einstellungen.values[cServerOption_ZeitPruefung] = cIni_Deactivate) then
             start_NoTimeCheck := true;
         end;
 
@@ -2631,11 +2572,11 @@ begin
           if SecondsDiffABS(DateGet, secondsget, rDate, rSeconds) > 60 * 5 then
           begin
             if (DateGet <> rDate) then
-              TAN := 'Das Datum sollte ' + long2date(DateGet) +
-                ' sein (Ist aber ' + long2date(rDate) + ').'
+              TAN := 'Das Datum sollte ' + long2date(DateGet) + ' sein (Ist aber ' +
+                long2date(rDate) + ').'
             else
-              TAN := 'Die Uhrzeit sollte ' + secondstostr8(secondsget + 1) +
-                ' sein (Ist aber ' + UHR + ').';
+              TAN := 'Die Uhrzeit sollte ' + secondstostr8(secondsget + 1) + ' sein (Ist aber ' +
+                UHR + ').';
             break;
           end;
         end;
@@ -2658,18 +2599,15 @@ begin
             add('NAME=' + NAME);
 
             // Format: "26.09.2005 - 07:21:05"
-            add('MOMENT=' + long2date(MomentDate) + ' - ' +
-              secondstostr8(MomentTime));
+            add('MOMENT=' + long2date(MomentDate) + ' - ' + secondstostr8(MomentTime));
             add('GERAET=' + GeraetID);
             AddStrings(Einstellungen);
-            add('BEZAHLT_BIS='+long2date(BEZAHLT_BIS));
+            add('BEZAHLT_BIS=' + long2date(BEZAHLT_BIS));
           end;
           if RevIsFrom(strtodoubledef(VERSION, 0), cVersion_OrgaMonApp) then
-            SaveStringsToFileUTF8(OptionStrings, MyProgramPath + TAN + '\' +
-              TAN + '.txt')
+            SaveStringsToFileUTF8(OptionStrings, MyProgramPath + TAN + '\' + TAN + '.txt')
           else
-            AppendStringsToFile(OptionStrings, MyProgramPath + TAN + '\' + TAN
-              + '.txt');
+            AppendStringsToFile(OptionStrings, MyProgramPath + TAN + '\' + TAN + '.txt');
           OptionStrings.free;
         end;
 
@@ -2683,9 +2621,8 @@ begin
     end;
 
     // Ergebnis und den Call loggen!
-    AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'StartTAN:' + TAN + ';' +
-      VERSION + ';' + Optionen + ';' + UHR + ';' + IMEI,
-      MyProgramPath + cJonDaServer_XMLRPCLogFName);
+    AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'StartTAN:' + TAN + ';' + VERSION + ';' +
+      Optionen + ';' + UHR + ';' + IMEI, MyProgramPath + cJonDaServer_XMLRPCLogFName);
 
   until true;
   Einstellungen.free;
@@ -2754,8 +2691,8 @@ var
     if (result.values[cParameter_foto_Fehler] = '') then
       result.values[cParameter_foto_Fehler] := s
     else
-      result.values[cParameter_foto_Fehler] :=
-        result.values[cParameter_foto_Fehler] + cLineSeparator + s;
+      result.values[cParameter_foto_Fehler] := result.values[cParameter_foto_Fehler] +
+        cLineSeparator + s;
     result.values[cParameter_foto_fertig] := cIni_Deactivate;
     ShouldAbort := true;
   end;
@@ -2776,8 +2713,7 @@ begin
   Zaehler_Info := sParameter.values[cParameter_foto_zaehler_info];
 
   // Limitierung mit der führenden Null
-  zaehlernummer_neu := FormatZaehlerNummerNeu
-    (sParameter.values[cParameter_foto_zaehlernummer_neu]);
+  zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_zaehlernummer_neu]);
 
   zaehlernummer_alt := sParameter.values[cParameter_foto_zaehlernummer_alt];
   if (length(zaehlernummer_alt) > cMonDa_FieldLength_ZaehlerNummer) then
@@ -2896,8 +2832,7 @@ begin
                     if (Token = 'JJJJMMTT') then
                     begin
 
-                      WechselDatum :=
-                        Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
                       if DateOK(WechselDatum) then
                       begin
                         Value := long2dateLog(WechselDatum);
@@ -2911,8 +2846,7 @@ begin
                       end;
                       if not(FileExists(FotoDateiNameBisher)) then
                       begin
-                        FatalError('Datei "' + FotoDateiNameBisher +
-                          '" nicht gefunden');
+                        FatalError('Datei "' + FotoDateiNameBisher + '" nicht gefunden');
                         break;
                       end;
                       Value := long2dateLog(FileDate(FotoDateiNameBisher));
@@ -2970,13 +2904,11 @@ begin
 
               // Diagnose
               if DebugMode then
-                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') <
-                  FileAge(Fname) then
+                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(Fname) then
                 begin
 
                   ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
-                  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' +
-                    cRID_Suchspalte + '.csv');
+                  ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
                   ReferenzDiagnose.free;
                 end;
 
@@ -3099,8 +3031,7 @@ begin
     repeat
 
       // Ausbau
-      if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1)
-      then
+      if (pos('FA', FotoParameter) = 1) or (pos('Ausbau', FotoParameter) = 1) then
       begin
         if NameOhneZaehlerNummerAlt then
           FotoDateiNameNeu := FotoPrefix
@@ -3111,16 +3042,15 @@ begin
       end;
 
       // Einbau
-      if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1)
-      then
+      if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
       begin
         ZAEHLER_NUMMER_NEU := zaehlernummer_neu;
 
         if (ZAEHLER_NUMMER_NEU = '') then
         begin
           FotoGeraeteNo := sParameter.values[cParameter_foto_geraet];
-          ZAEHLER_NUMMER_NEU := FormatZaehlerNummerNeu
-            (callback_ZaehlerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
+          ZAEHLER_NUMMER_NEU := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R,
+            FotoGeraeteNo));
         end;
 
         if (ZAEHLER_NUMMER_NEU = '') then
@@ -3202,19 +3132,16 @@ begin
       begin
         if not(connected) then
           connect;
-        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath +
-          'abgearbeitet.$$$');
+        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet.$$$');
       end;
 
       // die unverarbeiteten Dateien vom Server holen!
-      SolidDir(iFTP, cSolidFTP_DirCurrent, cJonDa_ErgebnisMaske_deprecated,
-        sErgebnisTANs);
+      SolidDir(iFTP, cSolidFTP_DirCurrent, cJonDa_ErgebnisMaske_deprecated, sErgebnisTANs);
       sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath +
         cMonDaServer_UnberuecksichtigtFName);
 
       // Die Datei bereitstellen!
-      FileDelete(MyProgramPath + cServerDataPath +
-        cMonDaServer_AbgearbeitetFName);
+      FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
       FileReName(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
         MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
@@ -3223,18 +3150,15 @@ begin
     end;
 
     // von cFreshDataPath -> ins lokale Verzeichnis!
-    if FileExists(MyProgramPath + cServerDataPath +
-      cMonDaServer_AbgearbeitetFName) then
+    if FileExists(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName) then
     begin
       result :=
       // abgearbeitet.dat
-        FileCopy(MyProgramPath + cServerDataPath +
-        cMonDaServer_AbgearbeitetFName, MyProgramPath + AktTrn + '\' +
-        cMonDaServer_AbgearbeitetFName) and
+        FileCopy(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName,
+        MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) and
       // unberuecksichtigte.txt
-        FileCopy(MyProgramPath + cServerDataPath +
-        cMonDaServer_UnberuecksichtigtFName, MyProgramPath + AktTrn + '\' +
-        cMonDaServer_UnberuecksichtigtFName);
+        FileCopy(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName,
+        MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
     end
     else
     begin
@@ -3256,8 +3180,7 @@ begin
         begin
           if not(connected) then
             connect;
-          get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath +
-            FName_Abgezogen + '.$$$');
+          get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$');
         end;
 
         // Die Datei bereitstellen!
@@ -3284,8 +3207,7 @@ begin
     end;
 
   // 3) GeraeteNo.dat (das Auftragsvolumen!)
-  if not(FileExists(MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension))
-  then
+  if not(FileExists(MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension)) then
   begin
 
     if (GeraeteNoSrc = '000') then
@@ -3298,35 +3220,31 @@ begin
     begin
 
       try
-        FileDelete(MyProgramPath + cServerDataPath + GeraeteNo +
-          cTmpFileExtension);
+        FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
         with iFTP do
         begin
           if not(connected) then
             connect;
-          get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath +
-            GeraeteNo + cTmpFileExtension);
+          get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo +
+            cTmpFileExtension);
           // DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true) - TIdSysVCL.OffsetFromUTC;
           DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true);
         end;
         FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
-        FileReName(MyProgramPath + cServerDataPath + GeraeteNo +
-          cTmpFileExtension, MyProgramPath + cServerDataPath + GeraeteNo +
-          cDATExtension);
+        FileReName(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
+          MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
         if (DownFileDate > 0) then
-          FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo +
-            cDATExtension, DateTimeToFileDate(DownFileDate));
+          FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
+            DateTimeToFileDate(DownFileDate));
       except
         on E: Exception do
           log(cWARNINGText + ' 2212:' + E.Message);
       end;
 
-      if FileExists(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension)
-      then
+      if FileExists(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension) then
       begin
-        result := FileCopy(MyProgramPath + cServerDataPath + GeraeteNo +
-          cDATExtension, MyProgramPath + AktTrn + '\' + GeraeteNo +
-          cDATExtension);
+        result := FileCopy(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
+          MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
       end
       else
       begin
@@ -3369,8 +3287,7 @@ var
 
     // Copy Fresh to Original
     if FileDelete(Fname + cBL_FileExtension) then
-      FileMove(Fname + cBL_FreshPostfix + cBL_FileExtension,
-        Fname + cBL_FileExtension);
+      FileMove(Fname + cBL_FreshPostfix + cBL_FileExtension, Fname + cBL_FileExtension);
   end;
 
 begin
@@ -3518,8 +3435,8 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     end;
 
     sStatistik.add('');
-    sStatistik.add('JonDa-Server ' + um_Baustelle + '-Statistik vom ' +
-      long2date(iDate) + ' - ' + secondstostr(iTime));
+    sStatistik.add('JonDa-Server ' + um_Baustelle + '-Statistik vom ' + long2date(iDate) + ' - ' +
+      secondstostr(iTime));
     sStatistik.add('');
 
     sStatistik.add
@@ -3578,8 +3495,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       if not(FileExists(MyProgramPath + cMeldungPath + um_Geraet + '.txt')) then
       begin
         FileAlive(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
-        FileTouch(MyProgramPath + cMeldungPath + um_Geraet + '.txt',
-          cMonDa_FreieTerminWahl, 0);
+        FileTouch(MyProgramPath + cMeldungPath + um_Geraet + '.txt', cMonDa_FreieTerminWahl, 0);
       end;
 
       // Über Meldungen berichten!!
@@ -3601,8 +3517,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       OneLine := OneLine + ';' + OneCell;
 
       // Anzahl der Datensätze auf dem Gerät
-      sAuftragFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' +
-        um_Geraet + '.DAT';
+      sAuftragFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + um_Geraet + '.DAT';
       if FileExists(sAuftragFName) then
       begin
         assignFile(fAUFTRAG, sAuftragFName);
@@ -3621,10 +3536,9 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       if (mDate > 0) then
       begin
         mTimeDiff := SecondsDiff(iDate, iTime, mDate, mTime);
-        sMeldungen.LoadFromFile(MyProgramPath + cStatistikPath + um_Geraet
-          + '.txt');
-        OneCell := '  -' + secondstostr9(mTimeDiff) + ' h (' + sMeldungen[0] +
-          ':' + format('%4d', [Stat_Auftrag]) + ')';
+        sMeldungen.LoadFromFile(MyProgramPath + cStatistikPath + um_Geraet + '.txt');
+        OneCell := '  -' + secondstostr9(mTimeDiff) + ' h (' + sMeldungen[0] + ':' +
+          format('%4d', [Stat_Auftrag]) + ')';
         OneCell := OneCell + format('x%2d', [Stat_Anzahl_Senden(um_Geraet)]);
         if (mTimeDiff > tt_Senden) then
           OneCell[1] := '#';
@@ -3642,8 +3556,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
         Stat_Stueckzahl := 0;
         Stat_Blau := 0;
         Stat_Heute := 0;
-        sMeldungen.LoadFromFile(MyProgramPath + cMeldungPath + um_Geraet
-          + '.txt');
+        sMeldungen.LoadFromFile(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
         sRIDs.Clear;
         for m := pred(sMeldungen.count) downto 0 do
         begin
@@ -3654,8 +3567,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
             begin
               sRIDs.add(RID);
               sMeldungsDetails := SplitUp(sMeldungen[m]);
-              dAusfuehrung :=
-                strtointdef(sMeldungsDetails[meld_col_Ausfuehrung], 0);
+              dAusfuehrung := strtointdef(sMeldungsDetails[meld_col_Ausfuehrung], 0);
               repeat
 
                 if (dAusfuehrung > 0) then
@@ -3696,27 +3608,23 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     end;
     sStatistik.add
       ('----------------;--------------;------------------------------;-----------;-----');
-    sStatistik.add
-      (format('Summe      %5d;                                    %5d     %5d/%5d;%5d',
-      [Stat_Summe_Planung, Stat_Summe_Auftrag, Stat_Summe_Heute,
-      Stat_Summe_Stueckzahl, Stat_Summe_Blau]));
+    sStatistik.add(format('Summe      %5d;                                    %5d     %5d/%5d;%5d',
+      [Stat_Summe_Planung, Stat_Summe_Auftrag, Stat_Summe_Heute, Stat_Summe_Stueckzahl,
+      Stat_Summe_Blau]));
     sStatistik.add('');
     sStatistik.add(' # erfordert eine tel. Rückfrage bei Ableser!');
     sStatistik.add('');
     sStatistik.add(' Gerät: 3 stellige Monteurs-Identifikation');
     sStatistik.add(' Kurz: Monteurs-Namenskürzel');
     sStatistik.add(' AnzAu: Gerätevolumen abrufbar auf dem JonDaServer');
-    sStatistik.add
-      (' letzte Meldung: verstrichene Zeit (HHH:MM:SS) seit der letzten Meldung');
-    sStatistik.add
-      (' letztes Senden: verstrichene Zeit (HHH:MM:SS) seit dem letzten Senden');
+    sStatistik.add(' letzte Meldung: verstrichene Zeit (HHH:MM:SS) seit der letzten Meldung');
+    sStatistik.add(' letztes Senden: verstrichene Zeit (HHH:MM:SS) seit dem letzten Senden');
     sStatistik.add
       ('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
     iFTP.DisConnect;
-    sStatistik.SaveToFile(MyProgramPath + cStatistikPath + 'Info-' +
-      um_Baustelle + '.txt');
+    sStatistik.SaveToFile(MyProgramPath + cStatistikPath + 'Info-' + um_Baustelle + '.txt');
     sStatistik.free;
     sUmfang.free;
     sMeldungen.free;
@@ -3754,8 +3662,7 @@ begin
 
   try
     SolidGet(iFTP, '', cMonDaServer_Baustelle, MyProgramPath + cSyncPath, true);
-    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv',
-      MyProgramPath + cSyncPath, true);
+    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', MyProgramPath + cSyncPath, true);
     iFTP.DisConnect;
   except
 
@@ -3791,8 +3698,7 @@ begin
   begin
 
     // Lese den Pfad aus dem Dateinamen
-    BaustellePath := ExtractSegmentBetween(sDir[n],
-      cE_FotoBenennung + '-', '.csv');
+    BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
 
     // JonDa - Limitation!
     BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
@@ -3801,12 +3707,10 @@ begin
 
     if not(FileCompare(
       { } MyProgramPath + cSyncPath + sDir[n],
-      { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv'))
-    then
+      { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv')) then
       FileVersionedCopy(
         { } MyProgramPath + cSyncPath + sDir[n],
-        { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung
-        + '.csv');
+        { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv');
 
     FileDelete(MyProgramPath + cSyncPath + sDir[n]);
   end;
@@ -3852,8 +3756,7 @@ begin
     rewrite(OrgaMonErgebnis);
 
     // Lade die fertigen!
-    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath +
-      'abgearbeitet.dat');
+    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
 
     // Lade alle Meldungen!
     lMeldungen.LoadFromFile(MyProgramPath + cMeldungPath + '000.txt');
@@ -3935,8 +3838,7 @@ begin
       end
       else
       begin
-        log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' +
-          cFixedTAN_FName);
+        log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
       end;
       DisConnect;
     end;
@@ -3962,8 +3864,7 @@ begin
     result := 'N';
 end;
 
-function TJonDaExec.toProtokollFName(const mderec: TMdeRec;
-  RemoteRev: single): string;
+function TJonDaExec.toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
 // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
 // Protokollnamen, es gibt ein Caching über sProtokolle
 var
@@ -3988,46 +3889,40 @@ begin
     begin
       result := '';
       repeat
-        if FileExists(ProtokollPath(RemoteRev) + _baustelle + Art +
-          cProtExtension) then
+        if FileExists(ProtokollPath(RemoteRev) + _baustelle + Art + cProtExtension) then
         begin
           result := _baustelle + Art;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + _baustelle + cProtExtension)
-        then
+        if FileExists(ProtokollPath(RemoteRev) + _baustelle + cProtExtension) then
         begin
           result := _baustelle;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + Art +
-          cProtExtension) then
+        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + Art + cProtExtension) then
         begin
           result := cProtPrefix + Art;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + cProtExtension)
-        then
+        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + cProtExtension) then
         begin
           result := cProtPrefix;
           break;
         end;
       until true;
 
-      if (result = cProtPrefix) and RevIsFrom(RemoteRev, cVersion_OrgaMonApp)
-      then
+      if (result = cProtPrefix) and RevIsFrom(RemoteRev, cVersion_OrgaMonApp) then
       begin
         // Gibt es etwas passenderes aus der JonDa-Zeit
         JonDaProtokoll := toProtokollFName(mderec, cVersion_JonDa);
         if (JonDaProtokoll <> result) then
         begin
           // Autogen des Protokolles
-          if migrateProtokoll(ProtokollPath(cVersion_JonDa) + JonDaProtokoll +
-            cProtExtension, ProtokollPath(cVersion_OrgaMonApp) + JonDaProtokoll
-            + cProtExtension) then
+          if migrateProtokoll(ProtokollPath(cVersion_JonDa) + JonDaProtokoll + cProtExtension,
+            ProtokollPath(cVersion_OrgaMonApp) + JonDaProtokoll + cProtExtension) then
             result := JonDaProtokoll;
         end;
       end
@@ -4110,8 +4005,7 @@ begin
         break;
       end;
 
-      if (pos('SEWA Hoehner', Zaehler_Info) > 0) or
-        (pos('SEWA H”hner', Zaehler_Info) > 0) or
+      if (pos('SEWA Hoehner', Zaehler_Info) > 0) or (pos('SEWA H”hner', Zaehler_Info) > 0) or
         (pos('SEWA Höhner', Zaehler_Info) > 0) then
       begin
         Prefix := 'Höhner-';
@@ -4143,8 +4037,7 @@ begin
   end;
 end;
 
-function TJonDaExec.isProd(pGeraeteNo: string; pRID: integer;
-  pFertig: TANFiXDate): boolean;
+function TJonDaExec.isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 begin
   result := true;
   if (pGeraeteNo > '299') then
@@ -4173,8 +4066,7 @@ begin
     end;
 end;
 
-function TJonDaExec.isTest(pGeraeteNo: string; pRID: integer;
-  pFertig: TANFiXDate): boolean;
+function TJonDaExec.isTest(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 begin
   result := not(isProd(pGeraeteNo, pRID, pFertig));
 end;
@@ -4212,6 +4104,7 @@ constructor TJonDaExec.Create;
 begin
   inherited Create;
   tIMEI := TsTable.Create;
+  tIMEI_OK := TsTable.Create;
 end;
 
 destructor TJonDaExec.Destroy;
@@ -4220,6 +4113,7 @@ begin
     sSendenLog.free;
   if assigned(sProtokolle) then
     sProtokolle.free;
+  tIMEI_OK.free;
   tIMEI.free;
 
   inherited;
@@ -4435,8 +4329,8 @@ begin
         sTerminInfo := 'FTW';
       // Freie Termin Wahl
     else
-      sTerminInfo := WeekDayS(ausfuehren_soll) + ' ' +
-        copy(long2date(ausfuehren_soll), 1, 5) + VormittagsStr(vormittags);
+      sTerminInfo := WeekDayS(ausfuehren_soll) + ' ' + copy(long2date(ausfuehren_soll), 1, 5) +
+        VormittagsStr(vormittags);
     end;
 
     result :=
@@ -4510,8 +4404,7 @@ begin
       insert(3, '#');
     end;
 
-    sMigrationsVorlage.LoadFromFile(ProtokollPath(cVersion_OrgaMonApp) +
-      cMigrationsVorlage_FName);
+    sMigrationsVorlage.LoadFromFile(ProtokollPath(cVersion_OrgaMonApp) + cMigrationsVorlage_FName);
 
     // Einfüge Punkt suchen
     InsertPoint := sMigrationsVorlage.IndexOf(cJondaProtokollDelimiter);
@@ -4544,8 +4437,7 @@ begin
       // Ankreuzhaken
       if (pos('[', sInput[InputIndex]) = 1) then
       begin
-        sTxt := cutblank(ExtractSegmentBetween(sInput[InputIndex], ']',
-          cRightBorder));
+        sTxt := cutblank(ExtractSegmentBetween(sInput[InputIndex], ']', cRightBorder));
         sParameter := cutblank(nextp(sInput[InputIndex], '$', 1));
         sOutput.add(sParameter + '=');
         sOutput.add('H;' + sTxt);
@@ -4556,8 +4448,7 @@ begin
       if (pos('{', sInput[InputIndex]) = 1) then
       begin
         //
-        sTxt := cutblank(ExtractSegmentBetween(sInput[InputIndex], '}',
-          cRightBorder));
+        sTxt := cutblank(ExtractSegmentBetween(sInput[InputIndex], '}', cRightBorder));
         sOutput.add(sTxt);
 
         sParameter := cutblank(nextp(sInput[InputIndex], '$', 1));
