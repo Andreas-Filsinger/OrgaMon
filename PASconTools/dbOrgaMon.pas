@@ -499,7 +499,7 @@ begin
     sql.add(TSql);
 
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
 
     // Kopfzeile
@@ -629,7 +629,7 @@ begin
 {$ENDIF}
       sql.add(TSql);
       if DebugMode then
-        AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+        AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
       ApiFirst;
 
       // Kopfzeile
@@ -854,7 +854,7 @@ begin
   begin
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
 
     // Kopfzeile
@@ -1024,6 +1024,9 @@ begin
     if assigned(cConnection) then
       ib_connection := cConnection;
     sql.add(TSql);
+  if DebugMode then
+    AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+
     execute;
 
     // imp pend: hier sollte mal die Anzahl der betroffenen Datensätze
@@ -1237,7 +1240,7 @@ begin
         sql.add('select * from ' + TableName + ' where RID=' + inttostr(RID));
 
         if DebugMode then
-          AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+          AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 
         ApiFirst;
         if eof then
@@ -1585,7 +1588,7 @@ begin
 
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     cFIELDCOUNT := FieldCount;
 
@@ -1785,7 +1788,7 @@ end;
 procedure e_x_sql(s: string);
 begin
   if DebugMode then
-    AppendStringsToFile(s, DiagnosePath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+    AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 {$IFDEF fpc}
   fbConnection.ExecuteDirect(s);
 {$ELSE}
@@ -1879,7 +1882,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsInteger;
   end;
@@ -2034,7 +2037,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], sl);
   end;
@@ -2051,7 +2054,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     e_r_sqlt(Fields[0], result);
   end;
@@ -2068,7 +2071,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2089,7 +2092,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2113,7 +2116,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     while not(eof) do
     begin
@@ -2133,7 +2136,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     result := Fields[0].AsString;
   end;
@@ -2154,7 +2157,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     if eof then
       result := ifnull
@@ -2288,7 +2291,7 @@ begin
   begin
     sql.add(ResolveParameter(sSQL));
     if DebugMode then
-      AppendStringsToFile(sql, DiagnosePath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
     ApiFirst;
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName + '=' + Fields[n].AsString);

@@ -2647,6 +2647,7 @@ var
   Summe_Verzug: double; // gesamtsumme der Beträge in Verzug (incl. der offenen)
   Summe_Zahlungen: double; // alle Zahlungen
   Summe_Ausgleich: double; // Summe der völlig Ausgelichenen Belege
+  Summe_Anzahl: integer; // Anzahl der bisher aufgelisteten Belege
   _ustid: string;
   OutPath: string;
   ActLines: integer;
@@ -2657,6 +2658,7 @@ var
   NoBELEG_R: boolean;
   SumValue: double;
   Verzug: boolean;
+  Einzelner_BELEG_R: integer;
 
   // Beleg-Listen
   Checked_BELEG_R: TStringList; // Saldo aller bisher berührten Belege
@@ -2718,10 +2720,12 @@ var
   pMahnMoment: TDateTime;
   pMahnGebuehr: boolean;
   pOhneAusstehende: boolean;
+  pNurEinBeleg: boolean;
 
   // Ausgabeparameter
   RECHNUNGEN: string;
   VORGANG: string;
+  BELEGE: string;
 
   function GetSaldo(BELEG_R: integer): double;
   var
@@ -2811,6 +2815,8 @@ begin
     VerzugszinsGesamt := 0;
     MahnbescheidTAN := 0;
     RECHNUNGEN := '';
+    BELEGE := '';
+    Einzelner_BELEG_R := cRID_unset;
 
     if assigned(sOptionen) then
     begin
@@ -2824,6 +2830,7 @@ begin
         pMahnMoment := mkDateTime(values['moment']);
         pMahnGebuehr := (values['mahngebühr'] <> cIni_DeActivate);
         pOhneAusstehende := (values['ohneAusstehende'] = cIni_Activate);
+        pNurEinBeleg := (values['nurEinBeleg'] = cIni_Activate);
       end;
 
       // ins Log
@@ -2840,6 +2847,7 @@ begin
       pMahnMoment := now;
       pMahnGebuehr := true;
       pOhneAusstehende := false;
+      pNurEinBeleg := false;
     end;
 
     // verbuchen -> aktuellen Mahnbeleg wegkopieren!
@@ -2953,6 +2961,7 @@ begin
     Summe_Verzug := 0;
     Summe_Zahlungen := 0;
     Summe_Ausgleich := 0;
+    Summe_Anzahl := 0;
     ActLines := 0;
     DeleteAusgeglichen := 0;
     MoreTextManuell := false;
@@ -2963,7 +2972,10 @@ begin
     begin
 
       sql.add('SELECT * FROM AUSGANGSRECHNUNG WHERE KUNDE_R=' + inttostr(PERSON_R));
-      sql.add('ORDER BY BELEG_R,DATUM');
+      sql.add('ORDER BY BELEG_R');
+      if pNurEinBeleg then
+        sql.add('descending');
+      sql.add(',DATUM');
       ApiFirst;
       while not(eof) do
       begin
@@ -3029,6 +3041,13 @@ begin
                 if not(FieldByName('EREIGNIS_R').IsNull) then
                   SkipIt := true;
 
+          // mehr als ein Beleg werden ignoriert
+          if not(SkipIt) then
+            if (pNurEinBeleg) then
+              if (Summe_Anzahl > 0) then
+                if (Einzelner_BELEG_R <> BELEG_R) then
+                  SkipIt := true;
+
         end
         else
         begin
@@ -3062,6 +3081,11 @@ begin
 
           if (VORGANG = cVorgang_Rechnung) then
           begin
+
+            inc(Summe_Anzahl);
+            if (Einzelner_BELEG_R = cRID_unset) then
+              Einzelner_BELEG_R := BELEG_R;
+          BELEGE := cutblank(BELEGE + ' ' + IntToStr(BELEG_R));
 
             DatensammlerLokal.add('MREF=RID' + FieldByName('RID').AsString);
 
@@ -3525,6 +3549,7 @@ begin
       result.add(format('MAHNSTUFE=%d', [MaxMahnstufe]));
       result.add(format('SEIT=%d', [MaxTageVerzug]));
       result.add('RECHNUNGEN=' + RECHNUNGEN);
+      result.Add('BELEGE='+ BELEGE);
 
       if (Summe_Offen < 0) then
         result.add('GUTSCHRIFT=' + cC_True);

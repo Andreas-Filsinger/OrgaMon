@@ -288,7 +288,7 @@ begin
   //
   // # öffne die Excel-Vorlage
   // # das Arbeitsblatt 1 (meist "Deckblatt") bleibt vollig unberührt
-  // # schreibe die Parameter in Arbeitsblatt 2 (meist "Parameter")
+  // # schreibe die Parameter in Arbeitsblatt 2+ (Name "Parameter" wird gesucht)
   // # lade zu jedem weiteren Arbeitsblatt das OLAP Vorlagename.ArbeitsblattName.OLAP.txt
   // und fülle das Blatt entsprechend dem Ergebnis.
   // #

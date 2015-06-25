@@ -162,8 +162,8 @@ begin
     CheckCreateDir(iOlapPath);
     if FileExists(DefaultFName) then
     begin
-      SynMemo1.lines.loadfromFile(DefaultFName);
       ActFName := DefaultFName;
+      SynMemo1.lines.loadfromFile(DefaultFName);
     end;
     ComboBox1.text := ExtractFileName(DefaultFName);
     SaveDialog1.DefaultExt := cOLAPExtension + '|' + 'OLAP Definitions Script';
@@ -274,6 +274,7 @@ var
 
   // Parameter Verwaltung
   ParameterL: TStringList;
+  DebugInfos: TStringList;
 
   // "complete" Sachen
   ParamCol: integer;
@@ -283,6 +284,7 @@ var
   ParamVal1: string;
   ParamVal2: string;
   CompleteResult: string;
+  CompleteResultL: TStringList;
   sLine, FullLine: string;
   CompleteStrL: TStringList;
   CalculateStatement: TStringList;
@@ -1228,12 +1230,21 @@ begin
     xlsAutoPrint := false;
     xlsAutoHTML := false;
 
+    ParameterL.add('$Skript=' + nextp(ExtractFileName(ActFName), cOLAPExtension, 0));
+    ParameterL.add('$Lines=' + inttostr(SynMemo1.lines.count));
     StandardParameter(ParameterL);
-    ParameterL.add('$Skript=' + nextp(ComboBox1.text, cOLAPExtension, 0));
 
     if DebugMode then
-      AppendStringsToFile(ParameterL, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt',
+    begin
+      DebugInfos := TStringList.create;
+      DebugInfos.add('-- Parameter --');
+      DebugInfos.AddStrings(ParameterL);
+      DebugInfos.add('-- Global Vars --');
+      DebugInfos.addStrings(GlobalVars);
+      AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt',
         DatumUhr);
+      DebugInfos.free;
+    end;
 
     repeat
 
@@ -2686,92 +2697,15 @@ begin
                 else
                 begin
                   // Nun die Werte zur Tabelle dazu!
-                  if (CompleteResult = '') then
-                  begin
-                    if true then
-
-                      TStringList(BigJoin[m]).add('');
-                  end
-                  else
-                  begin
-                    while (CompleteResult <> '') do
-                      TStringList(BigJoin[m]).add(nextp(CompleteResult, cOLAPcsvSeparator));
-                  end;
+                  CompleteResultL := split(CompleteResult, cOLAPcsvSeparator);
+                  TStringList(BigJoin[m]).AddStrings(CompleteResultL);
+                  CompleteResultL.Free;
                 end;
 
               end;
               ProgressBar1.Position := 0;
             end;
           end;
-        (*
-          begin
-
-          if (Line = '-') then
-          begin
-
-          SaveJoin;
-
-          end
-          else
-          begin
-
-          // Name der neuen Spalte(n) hinzufügen
-          CompleteHeader.clear;
-          AllHeader := TStringList(BigJoin[0]);
-          NewColumnName := nextp(Line, ' ', max(1, CharCount(' ', Line)));
-          if (NewColumnName = '') then
-          NewColumnName := ParamFunction;
-
-          ProgressBar1.max := BigJoin.count;
-          StartWait := 0;
-          for m := 1 to pred(BigJoin.count) do
-          begin
-
-          if frequently(StartWait, 333) then
-          begin
-          ProgressBar1.Position := m;
-          application.processmessages;
-          end;
-
-          FullLine := nextp(Line, ' ', 0);
-          CompleteResult := '';
-          while (FullLine <> '') do
-          begin
-          sLine := nextp(FullLine, cC_concant);
-
-          // Ersetzen-Funktion
-          ParamFunction := nextp(sLine, '(', 0);
-
-          // Quell-Parameter
-          ParamAll := ExtractSegmentBetween(sLine, '(', ')');
-          ParamConstant := ExtractSegmentBetween(sLine, '"', '"');
-
-          // 2. Parameter
-          ParamCol := AllHeader.indexof(nextp(ParamAll, ',', 1));
-          if (ParamCol <> -1) then
-          ParamVal2 := TStringList(BigJoin[m])[ParamCol]
-          else
-          ParamVal2 := '';
-
-          // 1. Parameter
-          ParamCol := AllHeader.indexof(nextp(ParamAll, ',', 0));
-          if (ParamCol <> -1) then
-          ParamVal1 := TStringList(BigJoin[m])[ParamCol]
-          else
-          ParamVal1 := '';
-
-          CompleteResult := CompleteResult +
-          completeFunc(TStringList(BigJoin[m]));
-          end;
-
-          // Nun die Werte in der Tabelle überschreiben!
-          TStringList(BigJoin[m])[ReplaceIndex] := CompleteResult;
-
-          end;
-          ProgressBar1.Position := 0;
-          end;
-          end;
-        *)
         cState_table:
           begin
 
@@ -3340,8 +3274,8 @@ begin
   if UnSaved then
     if DoIt('OLAP-Script geändert!' + #13 + 'Jetzt speichern') then
       SynMemo1.lines.savetofile(ActFName);
-  SynMemo1.lines.loadfromFile(iOlapPath + ComboBox1.text);
   ActFName := iOlapPath + ComboBox1.text;
+  SynMemo1.lines.loadfromFile(iOlapPath + ComboBox1.text);
 end;
 
 procedure TFormOLAP.Image2Click(Sender: TObject);
@@ -3486,9 +3420,9 @@ begin
         end;
 
         // Ausführen
-        SynMemo1.lines.loadfromFile(FName);
         ActFName := FName;
-        SynMemo1.lines.addstrings(GlobalVars);
+        SynMemo1.lines.loadfromFile(FName);
+        SynMemo1.lines.AddStrings(GlobalVars);
         SilentMode := (SynMemo1.lines.values['$Silent'] <> cINI_deactivate);
         Button2Click(nil);
       until true;
@@ -3525,8 +3459,8 @@ begin
       if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0)) then
         break;
 
-      SynMemo1.lines.loadfromFile(FName);
       ActFName := FName;
+      SynMemo1.lines.loadfromFile(FName);
       SilentMode := true;
 
       // Liste der Globales Variable aufbauen!
@@ -3536,7 +3470,7 @@ begin
           GlobalVars.clear
         else
           GlobalVars := TStringList.create;
-        GlobalVars.addstrings(GlobalVar);
+        GlobalVars.AddStrings(GlobalVar);
       end;
 
       Button2Click(nil);

@@ -19,6 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.115 (25.06.15) Andreas Filsinger
+
+ Bug: OLAP: complete: fehlende Datenzelle bei mehr als einer Ergebnisspalte, wenn letzte Zelle leer
+
+ Neu: OLAP: verbesserte Debug/Diagnose-Ausgaben
+ Neu: SQL: verbesserte Debug/Diagnose-Ausgaben
+
+Rev 8.114 (24.06.15) Andreas Filsinger
+
+ Bug: Auswertung: Vorlagen-Generator: Löschen und Einfügen von Orten hatte nicht mehr funktioniert
+
+Rev 8.113 (23.06.15) Andreas Filsinger
+
+ Neu: Lastschrift: Nur der "letzte" Beleg ist auf dem Unterschreibbeleg
+
 Rev 8.112 (17.06.15) Andreas Filsinger
 
  Bug: COR1.xml immer noch nicht zugänglich
