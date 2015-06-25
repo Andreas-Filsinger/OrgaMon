@@ -1628,7 +1628,7 @@ object FormMain: TFormMain
     AutoReload = True
     Location = flCustom
     SubStorages = <>
-    Left = 104
+    Left = 136
     Top = 264
   end
 end

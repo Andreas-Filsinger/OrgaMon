@@ -75,7 +75,7 @@ object FormAGM_Main: TFormAGM_Main
     end
   end
   object MainMenu: TMainMenu
-    Left = 8
+    Left = 24
     Top = 32
     object Menu_File: TMenuItem
       Caption = '&Datei'
@@ -113,7 +113,7 @@ object FormAGM_Main: TFormAGM_Main
     end
   end
   object PopupMenuListView: TPopupMenu
-    Left = 40
+    Left = 64
     Top = 32
     object PopupMenu_Add: TMenuItem
       Caption = 'Hinzuf'#252'gen...'
@@ -139,12 +139,12 @@ object FormAGM_Main: TFormAGM_Main
   object OpenDialogXLS: TOpenDialog
     Filter = '*.xls (MS Excel Dateien)|*.xls|*.* (Alle Dateien)|*.*'
     Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
-    Left = 72
+    Left = 104
     Top = 32
   end
   object SaveDialogXLS: TSaveDialog
     Filter = '*.xls (MS Excel Dateien)|*.xls|*.* (Alle Dateien)|*.*'
-    Left = 104
+    Left = 136
     Top = 32
   end
 end

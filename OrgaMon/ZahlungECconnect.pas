@@ -96,6 +96,7 @@ type
     LastCard: string;
     LastschriftFName: string;
     Betrag: double;
+    BELEG_R: integer;
     VerwendungsZweck: string;
     Name1, Name2: string;
 
@@ -233,6 +234,7 @@ begin
   // Context-Sachen
   setPERSON_R(cRID_null);
   Betrag := 0.0;
+  BELEG_R := cRID_null;
   LastschriftFName := '';
   DatenKommenVonDerKarte := false;
 
@@ -268,6 +270,7 @@ begin
       add('aktuell=' + cIni_Activate);
       add('mahngebühr=' + cIni_DeActivate);
       add('ohneAusstehende=' + cIni_Activate);
+      add('nurEinBeleg=' + cIni_Activate);
       add('ELV_KontoNummer=' + Bank_Konto(Edit_Konto.text));
       add('ELV_BLZ=' + Edit_BLZ.text);
       add('ELV_Bank=' + StaticText1.caption);
@@ -277,6 +280,7 @@ begin
     // Person gefunden!
     BelegInfo := e_w_KontoInfo(PERSON_R, sELV_Option);
     Betrag := strtodoubledef(BelegInfo.values['OFFEN'], 0);
+    BELEG_R := strtointdef(BelegInfo.values['BELEGE'], cRID_Null);
     LastschriftFName := BelegInfo.values['OUT'];
     VerwendungsZweck := BelegInfo.values['RECHNUNGEN'];
 
