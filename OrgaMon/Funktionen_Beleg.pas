@@ -2694,6 +2694,7 @@ var
   VerzugszinsGesamt: double;
   VerzugszinsSatz: double;
   BerechneterZins: double;
+  ForderungStatus: integer;
 
   cAUSGANGSRECHNUNG: TdboCursor;
   cPERSON: TdboCursor;
@@ -2706,6 +2707,8 @@ var
 
   // db-Caching
   BELEG_R: integer;
+  AUSGANGSRECHNUNG_R: integer;
+  TEILLIEFERUNG: integer;
   Adressat: TStringList;
   OneDifferenz: boolean;
 
@@ -2982,7 +2985,9 @@ begin
 
         NoBELEG_R := FieldByName('BELEG_R').IsNull;
         BELEG_R := FieldByName('BELEG_R').AsInteger;
+        TEILLIEFERUNG := FieldByName('TEILLIEFERUNG').AsInteger;
         VORGANG := FieldByName('VORGANG').AsString;
+        AUSGANGSRECHNUNG_R := FieldByName('RID').AsInteger;
 
         if not(NoBELEG_R) then
         begin
@@ -3085,7 +3090,7 @@ begin
             inc(Summe_Anzahl);
             if (Einzelner_BELEG_R = cRID_unset) then
               Einzelner_BELEG_R := BELEG_R;
-          BELEGE := cutblank(BELEGE + ' ' + IntToStr(BELEG_R));
+            BELEGE := cutblank(BELEGE + ' ' + inttostr(BELEG_R));
 
             DatensammlerLokal.add('MREF=RID' + FieldByName('RID').AsString);
 
@@ -3151,9 +3156,9 @@ begin
                 { } qBELEG.FieldByName('DAVON_BEZAHLT').AsFloat) then
               begin
 
-                if
-                { } FieldByName('EREIGNIS_R').IsNull or
-                { } (FaelligSeit > cDTA_LastschriftVerzoegerung + iMahnFaelligkeitstoleranz) then
+                ForderungStatus := b_r_ForderungStatus(AUSGANGSRECHNUNG_R);
+
+                if (ForderungStatus < cForderung_Lastschrift_Anstehend) then
                 begin
                   if (FaelligSeit > 0) then
                   begin
@@ -3276,7 +3281,16 @@ begin
                 end
                 else
                 begin
-                  MoreText := MoreText + ' ' + _('(wird abgebucht)');
+                  case ForderungStatus of
+                    cForderung_Lastschrift_Anstehend:
+                      MoreText := MoreText + ' ' + _('(wartet auf Abbuchung)');
+                    cForderung_Lastschrift_Vorgemerkt:
+                      MoreText := MoreText + ' ' + _('(wird abgebucht)');
+                    cForderung_Lastschrift_Erhalten:
+                      MoreText := MoreText + ' ' + _('(wurde abgebucht)');
+                  else
+                      MoreText := MoreText + ' ' + _('(Unbekannter Abbuchungsstatus)');
+                  end;
                 end;
               end
               else
@@ -3549,7 +3563,7 @@ begin
       result.add(format('MAHNSTUFE=%d', [MaxMahnstufe]));
       result.add(format('SEIT=%d', [MaxTageVerzug]));
       result.add('RECHNUNGEN=' + RECHNUNGEN);
-      result.Add('BELEGE='+ BELEGE);
+      result.add('BELEGE=' + BELEGE);
 
       if (Summe_Offen < 0) then
         result.add('GUTSCHRIFT=' + cC_True);
