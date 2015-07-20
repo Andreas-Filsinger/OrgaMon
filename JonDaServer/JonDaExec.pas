@@ -2501,18 +2501,25 @@ begin
         end;
 
         // Gerät-bekannt?
-        g := tIMEI.locate('GERAET', GeraetID);
-        if (g = -1) then
+        if (GeraetID <> '000') then
         begin
-          log(cWARNINGText + ' 2337:' + ' GERAET "' + GeraetID +
-            '" ist in der IMEI-Tabelle nicht bekannt');
-          // break;
-        end
-        else
-        begin
-          NAME :=
-          { } tIMEI.readCell(g, 'VORNAME') + ' ' +
-          { } tIMEI.readCell(g, 'NACHNAME');
+
+          g := tIMEI.locate('GERAET', GeraetID);
+          if (g = -1) then
+          begin
+            log(cWARNINGText + ' 2337:' + ' GERAET "' + GeraetID +
+              '" ist in der IMEI-Tabelle nicht bekannt');
+            BEZAHLT_BIS := cMonDa_ErsteEingabe;
+          end
+          else
+          begin
+            NAME :=
+            { } tIMEI.readCell(g, 'VORNAME') + ' ' +
+            { } tIMEI.readCell(g, 'NACHNAME');
+            BEZAHLT_BIS :=
+            { } Date2Long(tIMEI.readCell(g, 'BEZAHLT_BIS'));
+          end;
+
         end;
 
         // Plausibilität "IMEI-Nummer"
@@ -2546,10 +2553,6 @@ begin
               begin
                 log(cWARNINGText + ' 2357:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID
                   + '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
-              end
-              else
-              begin
-                BEZAHLT_BIS := Date2Long(tIMEI.readCell(r, 'BEZAHLT_BIS'));
               end;
             end;
           end;
