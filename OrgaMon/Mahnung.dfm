@@ -160,7 +160,7 @@ object FormMahnung: TFormMahnung
     Top = 42
     Width = 941
     Height = 579
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mahnliste &erstellen'
