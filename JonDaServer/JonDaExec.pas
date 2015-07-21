@@ -110,6 +110,7 @@ type
     Stat_Schlafmuetzen: integer;
     Stat_OrgaMonGruen: integer; // die Abgearbeiteten des OrgaMon
     Stat_OrgaMonPending: integer;
+    Stat_PostError: string; // Fehler über ein Problem im Nachgang
 
     // die Abschlüsse von denen der OrgaMon noch nichts weiss
     Stat_Abberufen: integer;
@@ -374,6 +375,9 @@ begin
   sGeraete.free;
 end;
 
+const
+  maintainSENDEN_Cache_Init: boolean = false;
+
 procedure TJonDaExec.maintainSENDEN;
 const
   cOlderThan = 10;
@@ -381,13 +385,31 @@ var
   tSENDEN: TsTable;
   r, c, n: integer;
   CellDate, d: TANFiXDate;
+  sSENDEN: TStringList;
 begin
+
+  // senden.csv angelegt?
+  if not(maintainSENDEN_Cache_Init) then
+    if not(FileExists(MyProgramPath + cDBPath + 'SENDEN.csv')) then
+    begin
+      sSENDEN := TStringList.Create;
+      sSENDEN.add('IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR');
+      sSENDEN.SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      sSENDEN.free;
+    end;
+
   // Nach "SENDEN" Tabelle protokollieren
-  // IMEI;NAME;ID;MOMENT;TAN;REV
   tSENDEN := TsTable.Create;
   with tSENDEN do
   begin
     InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+
+    if not(maintainSENDEN_Cache_Init) then
+    begin
+      addCol('ERROR');
+      addCol('PAPERCOLOR');
+    end;
+
     c := colof('MOMENT', true);
     d := DatePlus(DateGet, -cOlderThan);
     // zu alte Zeile löschen
@@ -410,6 +432,9 @@ begin
     end;
   end;
   tSENDEN.free;
+
+  maintainSENDEN_Cache_Init := true;
+
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -2201,6 +2226,7 @@ begin
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
           FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          Stat_PostError := 'veraltet';
           break;
         end;
 
@@ -2211,16 +2237,18 @@ begin
           log(cWARNINGText + ' Unbezahlter Zeitraum!');
           FileCopy(ProtokollPath(RemoteRev) + 'Unbezahlt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          Stat_PostError := 'unbezahlt';
           break;
         end;
 
         // IMEI überhaupt gültig?
         if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
         begin
-          // Unbezahlt!
+          // Unbekannt
           log(cWARNINGText + ' Unbekanntes Handy!');
           FileCopy(ProtokollPath(RemoteRev) + 'Unbekannt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          Stat_PostError := 'unbekannt';
           break;
         end;
 
@@ -2376,19 +2404,36 @@ begin
       if (n <> -1) then
         Del(n);
 
+      // neue Zeile hinzu
       sSENDEN := TStringList.Create;
       with sSENDEN do
       begin
+        { IMEI }
         add(IMEI);
+        { NAME }
         add(NAME);
+        { ID }
         add(GeraeteNo);
+        { MOMENT }
         add(sTimeStamp);
+        { TAN }
         add(AktTrn);
+        { REV }
         add(RevToStr(RemoteRev));
+        { ERROR }
+        add(Stat_PostError);
+        { PAPERCOLOR }
+        if (Stat_PostError = '') then
+          add('')
+        else
+          add('#C36241');
       end;
       addRow(sSENDEN);
 
+      // Sortieren
       SortBy('descending MOMENT');
+
+      // speichern
       SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
       SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
     end;
@@ -4100,6 +4145,7 @@ begin
   Stat_IgnoriertFehlenderAuftrag := 0;
   Stat_AusfuehrungsMomentKorrektur := 0;
   Stat_FotoMeldungen := 0;
+  Stat_PostError := '';
   sProtokolle.Clear;
 end;
 

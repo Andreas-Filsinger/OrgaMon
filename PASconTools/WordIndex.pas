@@ -1390,7 +1390,7 @@ begin
   lastRow := pred(Count);
   cPAPERCOLOR := colOf('PAPERCOLOR');
   lastCol := pred(ColCount);
-  if cPAPERCOLOR = lastCol then
+  if (cPAPERCOLOR = lastCol) then
     lastCol := pred(lastCol);
 
   OutS := TStringList.Create;

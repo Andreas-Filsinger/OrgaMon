@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -156,6 +156,7 @@ type
     Edit24: TEdit;
     Label23: TLabel;
     Button24: TButton;
+    Button25: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -187,6 +188,7 @@ type
     procedure Button23Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button24Click(Sender: TObject);
+    procedure Button25Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -1528,6 +1530,11 @@ begin
       ShowMessage('OK!');
   end;
 
+end;
+
+procedure TFormGUI.Button25Click(Sender: TObject);
+begin
+ JonDaX.maintainSENDEN;
 end;
 
 procedure TFormGUI.Button1Click(Sender: TObject);

@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 2.215 (21.07.15) Andreas Filsinger
+
+ Neu: Fehlercode in der senden.csv / HTML-Tabelle
+ Neu: Einfärbung in der senden.csv / HTML-Tabelle
+
 Rev 2.214 (16.07.15) Andreas Filsinger
 
  Bug: IMEIs können auch mal wechseln (Hardware-Ausfallkonzept). Aber bezahlte Zeiträume

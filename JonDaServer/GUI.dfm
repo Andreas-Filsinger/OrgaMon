@@ -33,7 +33,7 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet8
+    ActivePage = TabSheet6
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -907,6 +907,15 @@ object FormGUI: TFormGUI
         Caption = 'Baustellen-Infos laden'
         TabOrder = 2
         OnClick = Button22Click
+      end
+      object Button25: TButton
+        Left = 11
+        Top = 373
+        Width = 633
+        Height = 52
+        Caption = 'Alte Angaben aus senden.csv entfernen'
+        TabOrder = 3
+        OnClick = Button25Click
       end
     end
     object TabSheet7: TTabSheet

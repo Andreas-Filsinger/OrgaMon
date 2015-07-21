@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.116; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.117; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -993,6 +993,7 @@ var
   iKontoBLZ: string;
   iKontoPIN: string;
   iKontoSEPAFrist: integer;
+  iKontoLSErkennung: boolean;
   iKontenHBCI: string;
   iHBCIRest: string;
   iMusicPath: string;

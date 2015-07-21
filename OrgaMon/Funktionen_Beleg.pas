@@ -8207,6 +8207,7 @@ begin
   iKontoPIN := sSystemSettings.values['KontoPIN'];
   iKontoSEPAFrist := StrToIntDef(sSystemSettings.values['KontoSEPAFrist'],
     cDTA_LastschriftVerzoegerung);
+  iKontoLSErkennung := sSystemSettings.values['KontoSEPAFrist']<>cIni_DeActivate;
   iKontenHBCI := sSystemSettings.values['KontenHBCI'];
   iHBCIRest := sSystemSettings.values['HBCIRest'];
   iBuchFokus := StrToIntDef(sSystemSettings.values['BuchFokus'], -1);
