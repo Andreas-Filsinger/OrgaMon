@@ -3435,7 +3435,7 @@ begin
               else
               begin
                 VORGANG := FieldByName('VORGANG').AsString;
-                if (pos(VORGANG, cVorgang_Lastschrift) > 0) then
+                if b_r_GutschriftAusLS(VORGANG) then
                 begin
                   tmpColor := brush.color;
                   brush.color := HTMLColor2TColor($FFBE00);
@@ -3659,7 +3659,7 @@ begin
               TextRect(Rect, Rect.left + 2, Rect.top, FieldByName('NAME').AsString);
 
               VORGANG := FieldByName('VORGANG').AsString;
-              if (pos(VORGANG, cVorgang_Lastschrift) > 0) then
+              if b_r_GutschriftAusLS(VORGANG) then
               begin
                 tmpColor := brush.color;
                 brush.color := HTMLColor2TColor($FFBE00);
@@ -3720,7 +3720,7 @@ begin
               if Fokusiert then
                 if (DrawGrid2_LastFocused <> ARow) then
                 begin
-                  if (pos(FieldByName('VORGANG').AsString, cVorgang_Lastschrift) > 0) then
+                  if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
                     UeberweisungsText.add(cVorgang_LSG + '=' + cIni_Activate);
 
                   DrawGrid2_LastFocused := ARow;
@@ -4394,7 +4394,7 @@ begin
           { } cGeld_keinElement);
         if isNoMoney(Betrag) then
           Betrag := FieldByName('BETRAG').AsDouble;
-        if (pos(FieldByName('VORGANG').AsString, cVorgang_Lastschrift) > 0) then
+        if b_r_GutschriftAusLS(FieldByName('VORGANG').AsString) then
           sl.add(cVorgang_LSG + '=' + cIni_Activate);
       end;
 

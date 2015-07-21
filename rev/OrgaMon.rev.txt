@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.117 (21.07.15) Andreas Filsinger
+
+ Neu: Buch: Forderungsausgleich: Lastschrift Erkennung ist durch
+      KontoSEPAFrist=NEIN
+      deaktivierbar.
+
 Rev 8.116 (20.07.15) Andreas Filsinger
 
  Bug: Mahnung: Autozahlungs-Beleg sollte nicht "fällig" werden. Die zeitnahe Abbuchung plant der

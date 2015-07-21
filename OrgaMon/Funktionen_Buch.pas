@@ -152,6 +152,9 @@ function b_r_Auszug_Inhaber(s: TStrings): string;
 function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
 function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
 
+// cVorgang_Lastschrift
+function b_r_GutschriftAusLS(VORGANG: string): boolean;
+
 // deutsche IBAN zerlegen in BLZ und Kontonummer
 function IBAN_BLZ_Konto(IBAN: string): string;
 
@@ -224,9 +227,9 @@ var
     pBetrag: double;
     pSkonto: double;
     SteuerSatz: double;
-    Vorgang: string;
+    VORGANG: string;
   begin
-    Vorgang := '';
+    VORGANG := '';
     result := 0.0;
 
     // Auf welchen Satz soll gebucht werden
@@ -246,11 +249,11 @@ var
       if (pSkonto <> 0) then
       begin
         pBetrag := cSkonto(pSkonto, pBetrag);
-        Vorgang := format('MWST FIXIERT (%d) -%f.1%% Skonto', [pSatz, pSkonto]);
+        VORGANG := format('MWST FIXIERT (%d) -%f.1%% Skonto', [pSatz, pSkonto]);
       end
       else
       begin
-        Vorgang := format('MWST FIXIERT (%d)', [pSatz]);
+        VORGANG := format('MWST FIXIERT (%d)', [pSatz]);
       end;
 
       // Vorzeichen aus BruttoBetrag übernehmen!
@@ -268,7 +271,7 @@ var
       begin
         // den Steueranteil selbst anhand
         // des aktuell gültigen Satzes berechnen
-        Vorgang := format('MWST %.1f%% (%d)', [SteuerSatz, pSatz]);
+        VORGANG := format('MWST %.1f%% (%d)', [SteuerSatz, pSatz]);
         result := BruttoBetrag - cPreisRundung(BruttoBetrag / (1.0 + (SteuerSatz / 100.0)));
       end;
 
@@ -286,7 +289,7 @@ var
       FieldByName('ZUSAMMENHANG_R').AsInteger := NETTO_R;
       FieldByName('NAME').AsString := cKonto_SatzPrefix + inttostr(pSatz);
       FieldByName('BETRAG').AsFloat := result;
-      FieldByName('VORGANG').AsString := Vorgang;
+      FieldByName('VORGANG').AsString := VORGANG;
 
       // copy fields
       FolgeFelderErben;
@@ -1140,7 +1143,7 @@ begin
       ScriptText.Values['COLOR'] := '';
       ScriptText.Values['BELEG'] := '';
       edit;
-      e_w_sqlt(FieldByName('SKRIPT'),ScriptText);
+      e_w_sqlt(FieldByName('SKRIPT'), ScriptText);
       FieldByName('EREIGNIS_R').clear;
       FieldByName('PERSON_R').clear;
       FieldByName('GEGENKONTO').clear;
@@ -2424,11 +2427,11 @@ begin
     Params.BeginUpdate;
     Params[0].AsInteger := BELEG_R;
     Params[1].AsInteger := TEILLIEFERUNG;
-{$ifdef fpc}
+{$IFDEF fpc}
     Params.EndUpdate;
-{$else}
+{$ELSE}
     Params.EndUpdate(true);
-{$endif}
+{$ENDIF}
     ApiFirst;
     if not(eof) then
     begin
@@ -2439,6 +2442,14 @@ begin
       result := cForderung_Unklar;
   end;
 
+end;
+
+function b_r_GutschriftAusLS(VORGANG: string): boolean;
+begin
+ if iKontoLSErkennung then
+  result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
+ else
+  result := false;
 end;
 
 end.
