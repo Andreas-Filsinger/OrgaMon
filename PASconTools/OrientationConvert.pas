@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.236; // ../rev/Oc.rev.txt
+  Version: single = 1.237; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -4373,10 +4373,15 @@ var
             if (FormatCommand = '0') then
             begin
               if (StrFilter(AnsiupperCase(s), cBuchstaben) = '') then
-                FillChar := '0'
+              begin
+                FillChar := '0';
+                LeftSide := true;
+              end
               else
+              begin
                 FillChar := ' ';
-              LeftSide := true;
+                LeftSide := false;
+              end;
               break;
             end;
 

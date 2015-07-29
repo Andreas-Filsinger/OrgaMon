@@ -94,8 +94,8 @@ type
     procedure IB_Query2AfterScroll(IB_Dataset: TIB_Dataset);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure DrawGrid1DblClick(Sender: TObject);
-    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
     procedure DrawGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -113,8 +113,8 @@ type
     procedure Button3Click(Sender: TObject);
     procedure IB_Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure Button10Click(Sender: TObject);
-    procedure IB_Grid3DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure IB_Grid3DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+      State: TGridDrawState);
     procedure Image2Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure IB_Query4BeforePost(IB_Dataset: TIB_Dataset);
@@ -234,16 +234,14 @@ begin
       { [7] }
       SubItem.add(e_r_PreisText(0, FieldByName('RID').AsInteger));
       { [8] }
-      SubItem.add(FieldByName('SCHWER_GRUPPE').AsString + ' ' +
-        FieldByName('SCHWER_DETAILS').AsString);
+      SubItem.add(FieldByName('SCHWER_GRUPPE').AsString + ' ' + FieldByName('SCHWER_DETAILS')
+        .AsString);
       { [9] }
       SubItem.add(e_r_LaenderISO(FieldByName('LAND_R').AsInteger));
       { [10] }
-      SubItem.add(FieldByName('MENGE').AsString + '/' +
-        FieldByName('MINDESTBESTAND').AsString);
+      SubItem.add(FieldByName('MENGE').AsString + '/' + FieldByName('MINDESTBESTAND').AsString);
       { [11] }
-      SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
-        .AsInteger));
+      SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R').AsInteger));
       { [12] }
       SubItem.add(VersendetagToStr(e_r_ArtikelVersendetag(0, RID)));
       { [13] }
@@ -307,8 +305,8 @@ begin
   AusSucheUebernehmen;
 end;
 
-procedure TFormArtikelContext.DrawGrid1DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormArtikelContext.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   WaitRect: TRect;
   SubItems: TStringList;
@@ -390,11 +388,10 @@ begin
               // Nummer / Lager
               font.size := 8;
               font.Style := [];
-              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Numero)]
-                + ' (' + SubItems[ord(eSS_Rang)] + ')');
+              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Numero)] + ' (' +
+                SubItems[ord(eSS_Rang)] + ')');
               TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Menge)] + ' (Schw.: ' +
-                SubItems[ord(eSS_Schwer)] + ')');
+                SubItems[ord(eSS_Menge)] + ' (Schw.: ' + SubItems[ord(eSS_Schwer)] + ')');
             end;
           2:
             begin
@@ -402,18 +399,16 @@ begin
               font.size := 8;
               font.Style := [];
               TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Titel)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Land)] + '-' + SubItems[ord(eSS_Verlag)])
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Land)] + '-' +
+                SubItems[ord(eSS_Verlag)])
             end;
           3:
             begin
               // arang
               font.size := 8;
               font.Style := [];
-              TextRect(Rect, Rect.left + 5, Rect.top,
-                SubItems[ord(eSS_Komponist)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Arranger)])
+              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Komponist)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Arranger)])
             end;
           4:
             begin
@@ -429,13 +424,11 @@ begin
                 OutStr := '';
 
               // PRO/DMO stimmen
-              OutStr := OutStr + SubItems[ord(eSS_MengeProbe)] + '/' +
-                SubItems[ord(eSS_MengeDemo)];
+              OutStr := OutStr + SubItems[ord(eSS_MengeProbe)] + '/' + SubItems[ord(eSS_MengeDemo)];
 
               //
               TextRect(Rect, Rect.left + 5, Rect.top, OutStr);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_VersendeTag)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_VersendeTag)]);
             end;
           5:
             begin
@@ -443,8 +436,7 @@ begin
               font.size := 8;
               font.Style := [];
               TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Preis)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Serie)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Serie)]);
             end;
         else
           FillRect(Rect);
@@ -530,8 +522,7 @@ begin
   // Den Context_R noch bestimmen!
   CONTEXT_R := IB_Query1.FieldByName('RID').AsInteger;
   if (CONTEXT_R = 0) then
-    CONTEXT_R :=
-      e_r_sql('select context_r from ARTIKEL_MITGLIED where MASTER_R=' +
+    CONTEXT_R := e_r_sql('select context_r from ARTIKEL_MITGLIED where MASTER_R=' +
       inttostr(COLLECTION_R));
 
   POSNO := e_r_sql('select max(POSNO) from ARTIKEL_MITGLIED where MASTER_R=' +
@@ -540,8 +531,8 @@ begin
   with xMITGLIED do
   begin
     sql.add('insert into ARTIKEL_MITGLIED (RID,ARTIKEL_R,CONTEXT_R,MASTER_R,POSNO) values');
-    sql.add(' (0,' + inttostr(Grid_ARTIKEL_R) + ',' + inttostr(CONTEXT_R) + ','
-      + inttostr(COLLECTION_R) + ',' + inttostr(POSNO + 1) + ')');
+    sql.add(' (0,' + inttostr(Grid_ARTIKEL_R) + ',' + inttostr(CONTEXT_R) + ',' +
+      inttostr(COLLECTION_R) + ',' + inttostr(POSNO + 1) + ')');
     execute;
   end;
   if CheckBox1.checked then
@@ -662,11 +653,11 @@ procedure TFormArtikelContext.SpeedButton3Click(Sender: TObject);
 begin
   with IB_Query3 do
   begin
-    if doit('Artikel ' + #13 + FieldByName('NUMERO').AsString + #13 +
-      FieldByName('TITEL').AsString + #13 + 'wirklich vom Artikel lösen?') then
+    if doit('Artikel ' + #13 + FieldByName('NUMERO').AsString + #13 + FieldByName('TITEL').AsString
+      + #13 + 'wirklich vom Artikel lösen?') then
     begin
-      e_x_sql('update ARTIKEL_MITGLIED set ARTIKEL_R = null where RID=' +
-        FieldByName('RID').AsString);
+      e_x_sql('update ARTIKEL_MITGLIED set ARTIKEL_R = null where RID=' + FieldByName('RID')
+        .AsString);
       refresh;
     end;
   end;
@@ -674,8 +665,8 @@ end;
 
 procedure TFormArtikelContext.SpeedButton4Click(Sender: TObject);
 begin
-  e_x_sql('update ARTIKEL_MITGLIED set TITEL = null where RID=' +
-    IB_Query3.FieldByName('RID').AsString);
+  e_x_sql('update ARTIKEL_MITGLIED set TITEL = null where RID=' + IB_Query3.FieldByName('RID')
+    .AsString);
   IB_Query3.refresh;
 end;
 
@@ -697,8 +688,7 @@ begin
   IB_Query3.close;
   // Neuanlage
   ARTIKEL_MITGLIED_R := e_w_gen('GEN_ARTIKEL_MITGLIED');
-  e_x_sql(format
-    ('insert into ARTIKEL_MITGLIED (RID,CONTEXT_R,MASTER_R,POSNO) values (%d,%d,%d,%d)',
+  e_x_sql(format('insert into ARTIKEL_MITGLIED (RID,CONTEXT_R,MASTER_R,POSNO) values (%d,%d,%d,%d)',
     [ARTIKEL_MITGLIED_R, CONTEXT_R, MASTER_R, POSNO]));
   IB_Query3.Open;
   IB_Query3.locate('RID', ARTIKEL_MITGLIED_R, []);
@@ -709,12 +699,10 @@ procedure TFormArtikelContext.SpeedButton6Click(Sender: TObject);
 begin
   with IB_Query3 do
   begin
-    if doit('Artikel ' + #13 + FieldByName('NUMERO').AsString + #13 +
-      FieldByName('TITEL').AsString + #13 +
-      'wirklich aus dem Context entfernen') then
+    if doit('Artikel ' + #13 + FieldByName('NUMERO').AsString + #13 + FieldByName('TITEL').AsString
+      + #13 + 'wirklich aus dem Context entfernen') then
     begin
-      e_x_sql('delete from ARTIKEL_MITGLIED where RID=' + FieldByName('RID')
-        .AsString);
+      e_x_sql('delete from ARTIKEL_MITGLIED where RID=' + FieldByName('RID').AsString);
       refresh;
     end;
   end;
@@ -725,12 +713,11 @@ procedure TFormArtikelContext.SpeedButton7Click(Sender: TObject);
 begin
   with IB_Query2 do
   begin
-    if doit('Sind Sie sicher, dass Sie die Collection ' + #13 +
-      FieldByName('TITEL').AsString + #13 + 'löschen wollen') then
+    if doit('Sind Sie sicher, dass Sie die Collection ' + #13 + FieldByName('TITEL').AsString + #13
+      + 'löschen wollen') then
     begin
       // lösche alle CONTEXT_R Mitglieder!
-      e_x_sql('delete from ARTIKEL_MITGLIED where MASTER_R=' +
-        FieldByName('RID').AsString);
+      e_x_sql('delete from ARTIKEL_MITGLIED where MASTER_R=' + FieldByName('RID').AsString);
       // lösche den Datensatz selbst
       // e_x_sql('delete from ARTIKEL_CONTEXT where RID=' + FieldByNAme('RID').AsString);
     end;
@@ -768,6 +755,7 @@ var
   ButtonCaption: string;
   FunktionsName: string;
   x, y: Integer;
+  execStr: string;
 
   function Gimp_FileName(s: string): string;
   begin
@@ -783,17 +771,17 @@ var
     { } inttostr(GetBValue(c)) + ')';
   end;
 
-  procedure Gimp_Button(x, y, PAPERCOLOR: Integer; sText: TStringList;
-    TextSize: Integer; Disabled: boolean = false); overload;
+  procedure Gimp_Button(x, y, PAPERCOLOR: Integer; sText: TStringList; TextSize: Integer;
+    Disabled: boolean = false); overload;
   var
     _x, _y: Integer;
-    TextSize2 : Integer;
-    d : Double;
+    TextSize2: Integer;
+    d: Double;
   begin
     _x := x * dx + ZwischenraumX;
     _y := y * dy + ZwischenraumY;
     d := TextSize;
-    TextSize2 := round (d * 0.8);
+    TextSize2 := round(d * 0.8);
     with sGimpScript do
     begin
       if not(Disabled) then
@@ -822,27 +810,21 @@ var
           [_x, _y + dy, _x, _y]));
       end;
       add('  (gimp-palette-set-foreground ''(0 0 0))');
-      add(format
-        ('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")',
-        [
+      add(format('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")', [
         { x } _x + 2 * ZwischenraumX,
         { y } _y + 3 * ZwischenraumY,
         { Text } sText[0],
         { Pixel } TextSize,
         { FontName } cFontName]));
       if sText.count > 1 then
-        add(format
-          ('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")',
-          [
+        add(format('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")', [
           { x } _x + 2 * ZwischenraumX,
           { y } _y + 4 * ZwischenraumY + TextSize,
           { Text } sText[1],
           { Pixel } TextSize2,
           { FontName } cFontName]));
       if sText.count > 2 then
-        add(format
-          ('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")',
-          [
+        add(format('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")', [
           { x } _x + 2 * ZwischenraumX,
           { y } _y + 5 * ZwischenraumY + TextSize + TextSize2,
           { Text } sText[2],
@@ -851,8 +833,8 @@ var
     end;
   end;
 
-  procedure Gimp_Button(x, y, PAPERCOLOR: Integer; sText: string;
-    TextSize: Integer; Disabled: boolean = false); overload;
+  procedure Gimp_Button(x, y, PAPERCOLOR: Integer; sText: string; TextSize: Integer;
+    Disabled: boolean = false); overload;
   var
     sTextAsStringList: TStringList;
   begin
@@ -862,16 +844,15 @@ var
     sTextAsStringList.free;
   end;
 
-  procedure Gimp_ButtonSystem(x, y, PAPERCOLOR: Integer; sText: string;
-    TextSize: Integer; Disabled: boolean = false; dy: Integer = 64);
+  procedure Gimp_ButtonSystem(x, y, PAPERCOLOR: Integer; sText: string; TextSize: Integer;
+    Disabled: boolean = false; dy: Integer = 64);
   const
     dx = 88;
   var
     SystemArea: string;
   begin
     // System-Touch-Bereich bekannt machen
-    SystemArea := format('System-%s@%s=%d;%d;%d;%d', [sText, inttostr(MASTER_R),
-      x, y, dx, dy]);
+    SystemArea := format('System-%s@%s=%d;%d;%d;%d', [sText, inttostr(MASTER_R), x, y, dx, dy]);
     if (sTouch.indexof(SystemArea) = -1) then
       sTouch.add(SystemArea);
 
@@ -904,9 +885,7 @@ var
 
       end;
       add('  (gimp-palette-set-foreground ''(255 255 255))');
-      add(format
-        ('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")',
-        [
+      add(format('  (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")', [
         { x } x + 2 * ZwischenraumX,
         { y } y + 2 * ZwischenraumY,
         { Text } sText,
@@ -972,6 +951,9 @@ begin
   sql.add(' ARTIKEL.NUMERO,');
   sql.add(' ARTIKEL.TITEL,');
   sql.add(' ARTIKEL.PAPERCOLOR');
+
+  ExportTable(sql, SystemPath + '\' + 'Folien.csv');
+
   sCOLLECTION := csTable(sql);
   sCOLLECTION.SaveToHTML(SystemPath + '\' + 'Folien.html');
 
@@ -1029,9 +1011,7 @@ begin
       add('  (gimp-drawable-fill text-layer BACKGROUND-FILL)');
 
       // Copyright
-      add(format
-        ('   (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")',
-        [
+      add(format('   (gimp-text-fontname das-bild text-layer %d %d "%s" 0 TRUE %d PIXELS "%s")', [
         { x } ZwischenraumX,
         { y } 755,
         { Text } cOrgaMonCopyright,
@@ -1042,19 +1022,17 @@ begin
       Gimp_ButtonSystem(1279, 464 + 0, clblack, 'Storno', 15, false);
       Gimp_ButtonSystem(1279, 464 + 62, clblack, 'Merke', 20, false, 61);
 
-    if bErlaubnis('Kasse Tine') then
-    begin
-      Gimp_ButtonSystem(1279, 464 + 62 + 59, clblack, 'Gegeben', 12, false, 120);
-      Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59 + 59, clblack, 'Bon', 30,
-        false, 61);
-    end else
-    begin
-      Gimp_ButtonSystem(1279, 464 + 62 + 59, clblack, 'Gegeben', 12, false, 61);
-      Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59, clblack, 'Bar', 30,
-        false, 61);
-      Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59 + 59, clblack, 'Bon', 30,
-        false, 61);
-    end;
+      if bErlaubnis('Kasse Tine') then
+      begin
+        Gimp_ButtonSystem(1279, 464 + 62 + 59, clblack, 'Gegeben', 12, false, 120);
+        Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59 + 59, clblack, 'Bon', 30, false, 61);
+      end
+      else
+      begin
+        Gimp_ButtonSystem(1279, 464 + 62 + 59, clblack, 'Gegeben', 12, false, 61);
+        Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59, clblack, 'Bar', 30, false, 61);
+        Gimp_ButtonSystem(1279, 464 + 62 + 59 + 59 + 59, clblack, 'Bon', 30, false, 61);
+      end;
 
       // Die Navigation
       x := 0;
@@ -1101,6 +1079,10 @@ begin
         sql.add(' (ARTIKEL_MITGLIED.CONTEXT_R=' + inttostr(CONTEXT_R) + ')');
         sql.add('order by');
         sql.add(' ARTIKEL_MITGLIED.POSNO');
+
+        ExportTable(sql, SystemPath + '\' + 'Folie-' + inttostr(MASTER_R) + '-' +
+          inttostr(CONTEXT_R) + '.csv');
+
         x := 0;
         y := 1;
         ApiFirst;
@@ -1131,8 +1113,8 @@ begin
             // normaler Button
             Gimp_Button(x, y, PAPERCOLOR, sButtonText, 17);
 
-            sTouch.add(inttostr(x) + 'x' + inttostr(y) + '@' +
-              inttostr(MASTER_R) + '=Artikel;' + inttostr(ARTIKEL_R));
+            sTouch.add(inttostr(x) + 'x' + inttostr(y) + '@' + inttostr(MASTER_R) + '=Artikel;' +
+              inttostr(ARTIKEL_R));
 
             inc(x);
           until true;
@@ -1144,8 +1126,7 @@ begin
 
       // ;  S A V E
       add('  (set! ergebnis-layer (car(gimp-image-merge-visible-layers das-bild CLIP-TO-BOTTOM-LAYER)))');
-      add('  (file-bmp-save RUN-NONINTERACTIVE das-bild ergebnis-layer "' +
-        Gimp_FileName(
+      add('  (file-bmp-save RUN-NONINTERACTIVE das-bild ergebnis-layer "' + Gimp_FileName(
         { } SystemPath + '\' +
         { } FunktionsName + '.bmp') +
         { } '" "")');
@@ -1166,12 +1147,16 @@ begin
   Gimp_Save(sCallScript, Prefix);
 
   // Gimp anhauen!
-  JclMiscel.WinExec32AndWait(
-    { } cGimpExecutePath +
-    { } 'gimp-console-2.6.exe' +
-    { } ' ' +
-    { } '--verbose ' +
-    { } '--batch="(' + Prefix + ')"', SW_SHOWNORMAL);
+  execStr :=
+  { } cGimpExecutePath +
+  { } 'gimp-console-2.6.exe' +
+  { } ' ' +
+  { } '--verbose ' +
+  { } '--batch="(' + Prefix + ')"';
+  JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+
+  if debugmode then
+    AppendStringsToFile(execStr, DiagnosePath + 'exec.log.txt');
 
   sTouch.SaveToFile(SystemPath + '\' + 'Kasse-Touch.ini');
 
@@ -1210,8 +1195,8 @@ begin
   POSTEN := DataModuleDatenbank.nDSQL;
   with POSTEN do
   begin
-    sql.add('UPDATE ARTIKEL_MITGLIED SET POSNO = ' + inttostr(POSNO) +
-      ' WHERE RID = ' + inttostr(RID));
+    sql.add('UPDATE ARTIKEL_MITGLIED SET POSNO = ' + inttostr(POSNO) + ' WHERE RID = ' +
+      inttostr(RID));
     execute;
   end;
   POSTEN.free;
@@ -1328,14 +1313,12 @@ begin
   end;
 end;
 
-procedure TFormArtikelContext.SetContextArtikel(ARTIKEL_R: Integer;
-  num: string = '');
+procedure TFormArtikelContext.SetContextArtikel(ARTIKEL_R: Integer; num: string = '');
 var
   lMASTER: TgpIntegerList;
 begin
   BeginHourGlass;
-  lMASTER := e_r_sqlm
-    ('select distinct MASTER_R from ARTIKEL_MITGLIED where ARTIKEL_R=' +
+  lMASTER := e_r_sqlm('select distinct MASTER_R from ARTIKEL_MITGLIED where ARTIKEL_R=' +
     inttostr(ARTIKEL_R));
   EndHourGlass;
   if (lMASTER.count > 0) then
@@ -1354,8 +1337,7 @@ begin
     IB_Query2.sql.add('join artikel A on');
     IB_Query2.sql.add(' A.RID=ARTIKEL_MITGLIED.MASTER_R');
     IB_Query2.sql.add('where ARTIKEL_MITGLIED.MASTER_R IN ' + lMASTER.AsString);
-    IB_Query2.sql.add
-      ('Group by ARTIKEL_MITGLIED.MASTER_R,A.RID,A.NUMERO,A.TITEL');
+    IB_Query2.sql.add('Group by ARTIKEL_MITGLIED.MASTER_R,A.RID,A.NUMERO,A.TITEL');
     IB_Query2.Open;
     DoNotEnsureOpen := true;
     show;
@@ -1370,8 +1352,7 @@ begin
   lMASTER.free;
 end;
 
-procedure TFormArtikelContext.SetContextContext(MASTER_R: Integer;
-  num: string = '');
+procedure TFormArtikelContext.SetContextContext(MASTER_R: Integer; num: string = '');
 begin
   BeginHourGlass;
   //
@@ -1387,8 +1368,7 @@ begin
   IB_Query2.sql.add('join artikel A on');
   IB_Query2.sql.add('A.RID=ARTIKEL_MITGLIED.MASTER_R');
   IB_Query2.sql.add('where ARTIKEL_MITGLIED.MASTER_R = ' + inttostr(MASTER_R));
-  IB_Query2.sql.add
-    ('Group by ARTIKEL_MITGLIED.MASTER_R,A.RID,A.NUMERO,A.TITEL');
+  IB_Query2.sql.add('Group by ARTIKEL_MITGLIED.MASTER_R,A.RID,A.NUMERO,A.TITEL');
   IB_Query2.Open;
   if IB_Query2.eof then
   begin
@@ -1431,8 +1411,8 @@ begin
   IB_Query1.Open;
 end;
 
-procedure TFormArtikelContext.IB_Grid3DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormArtikelContext.IB_Grid3DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   _CellDisplayText: string;
 begin
@@ -1485,8 +1465,7 @@ begin
     begin
       canvas.brush.color := _NewCol;
       canvas.font.color := VisibleContrast(canvas.brush.color);
-      DefaultDrawCell(ACol, ARow, Rect, State, _CellDisplayText,
-        GetCellAlignment(ACol, ARow));
+      DefaultDrawCell(ACol, ARow, Rect, State, _CellDisplayText, GetCellAlignment(ACol, ARow));
     end;
   end;
 end;
@@ -1505,8 +1484,8 @@ begin
   cARTIKEL := DataModuleDatenbank.nCursor;
   with cARTIKEL do
   begin
-    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' +
-      long2date(DatePlus(DateGet, -3)) + '''');
+    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' + long2date(DatePlus(DateGet,
+      -3)) + '''');
     ApiFirst;
     while not(eof) do
     begin
@@ -1522,11 +1501,11 @@ end;
 
 end.
 
-  var CONTEXT: string; CONTEXT_R: Integer; RID: Integer; DebugL: TStringList;
-cARTIKEL: TIB_Cursor; INternInfo: TStringList;
+  var CONTEXT: string; CONTEXT_R: Integer; RID: Integer; DebugL: TStringList; cARTIKEL: TIB_Cursor;
+INternInfo: TStringList;
 
-cCATALOG_ARTIKEL: TIB_Cursor; NewEntry: TIB_DSQL; StartTime: dword;
-RecN: Integer; NewOnes: Integer; AllRIDs: string;
+cCATALOG_ARTIKEL: TIB_Cursor; NewEntry: TIB_DSQL; StartTime: dword; RecN: Integer; NewOnes: Integer;
+AllRIDs: string;
 
 // Auslesen
 with IB_Query1 do begin CONTEXT := FieldByName
@@ -1535,40 +1514,34 @@ with IB_Query1 do begin CONTEXT := FieldByName
 
 //
 if doit
-('Migration ' + #13 + CONTEXT + '=' + #13 + 'durchführen?')
-then begin BeginHourGlass; Abbruch := false; StartTime := 0; NewOnes := 0;
-INternInfo := TStringList.create; DebugL := TStringList.create;
-cARTIKEL := DataModuleDatenbank.nCursor; with cARTIKEL do begin sql.add
-('select RID,INTERN_INFO from ARTIKEL'); Open; Progressbar1.Max := RecordCount;
-ApiFirst; while not
+('Migration ' + #13 + CONTEXT + '=' + #13 + 'durchführen?') then begin BeginHourGlass;
+Abbruch := false; StartTime := 0; NewOnes := 0; INternInfo := TStringList.create;
+DebugL := TStringList.create; cARTIKEL := DataModuleDatenbank.nCursor;
+with cARTIKEL do begin sql.add
+('select RID,INTERN_INFO from ARTIKEL'); Open; Progressbar1.Max := RecordCount; ApiFirst; while not
 (eof) do begin
 // Werbe RID auslesen
-FieldByName('INTERN_INFO').AssignTo(INternInfo);
-AllRIDs := INternInfo.values[CONTEXT]; while
+FieldByName('INTERN_INFO').AssignTo(INternInfo); AllRIDs := INternInfo.values[CONTEXT]; while
 (AllRIDs <> '') do begin RID := strtointdef(nextp(AllRIDs, ';'), 0); if
 (RID <> 0) then begin
 
 // ist der "Hauptartikel" schon angelegt?
-cCATALOG_ARTIKEL := DataModuleDatenbank.nCursor;
-with cCATALOG_ARTIKEL do begin sql.add
+cCATALOG_ARTIKEL := DataModuleDatenbank.nCursor; with cCATALOG_ARTIKEL do begin sql.add
 ('select count(RID) AM_COUNT from ARTIKEL_MITGLIED where'); sql.add
 (' (ARTIKEL_R=' + cARTIKEL.FieldByName('RID').AsString + ') AND'); sql.add
 (' (CONTEXT_R=' + inttostr(CONTEXT_R) + ') AND'); sql.add
 (' (MASTER_R=' + inttostr(RID) + ')'); ApiFirst; if
-(FieldByName('AM_COUNT').AsInteger < 1) then begin NewEntry :=
-  DataModuleDatenbank.nDSQL; with NewEntry do begin sql.add
-('insert into ARTIKEL_MITGLIED (RID,ARTIKEL_R,CONTEXT_R,MASTER_R) values');
-sql.add
-(' (0,' + cARTIKEL.FieldByName('RID').AsString + ',' + inttostr(CONTEXT_R) + ','
-  + inttostr(RID) + ')'); try execute; inc
+(FieldByName('AM_COUNT').AsInteger < 1) then begin NewEntry := DataModuleDatenbank.nDSQL;
+with NewEntry do begin sql.add
+('insert into ARTIKEL_MITGLIED (RID,ARTIKEL_R,CONTEXT_R,MASTER_R) values'); sql.add
+(' (0,' + cARTIKEL.FieldByName('RID').AsString + ',' + inttostr(CONTEXT_R) + ',' + inttostr(RID) +
+  ')'); try execute; inc
 (NewOnes); except DebugL.add
 ('#################################'); DebugL.addstrings
-(sql); end; end; NewEntry.free; end; end; cCATALOG_ARTIKEL.free; end; end;
-ApiNext; inc
+(sql); end; end; NewEntry.free; end; end; cCATALOG_ARTIKEL.free; end; end; ApiNext; inc
 (RecN); if frequently
-(StartTime, 333) or eof then begin if Abbruch then break;
-Progressbar1.Position := RecN; application.processmessages; end; end;
-cARTIKEL.free; end; DebugL.SaveToFile
+(StartTime, 333) or eof then begin if Abbruch then break; Progressbar1.Position := RecN;
+application.processmessages; end; end; cARTIKEL.free; end; DebugL.SaveToFile
 (DiagnosePath + 'Migration_' + CONTEXT + '.txt'); openShell
 (DiagnosePath + 'Migration_' + CONTEXT + '.txt'); INternInfo.free; DebugL.free;
 Progressbar1.Position := 0; EndHourGlass; end;
