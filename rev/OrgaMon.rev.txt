@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.118 (29.07.15) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.237" neu compiliert!
+
 Rev 8.117 (21.07.15) Andreas Filsinger
 
  Neu: Buch: Forderungsausgleich: Lastschrift Erkennung ist durch
