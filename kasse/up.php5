@@ -24,7 +24,7 @@ function base_plug()
   global 
    $server_info, $debug;
 
-  $xmlcon = txmlrpc::create(XMLRPCHost, XMLRPCPort, XMLRPCPath, 5);
+  $xmlcon = txmlrpc_client::create(XMLRPCHost, XMLRPCPort, XMLRPCPath, 5, 1);
   $response = $xmlcon->sendRequest("abu.BasePlug");
 
   if (($response != NULL) AND (!$xmlcon->error)) {

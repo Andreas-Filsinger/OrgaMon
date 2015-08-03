@@ -33,7 +33,7 @@ object FormGUI: TFormGUI
     Top = 61
     Width = 686
     Height = 487
-    ActivePage = TabSheet6
+    ActivePage = TabSheet8
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -948,6 +948,39 @@ object FormGUI: TFormGUI
         Caption = 'OK?'
         TabOrder = 1
         OnClick = Button24Click
+      end
+      object Edit25: TEdit
+        Left = 48
+        Top = 189
+        Width = 121
+        Height = 21
+        TabOrder = 2
+        TextHint = 'n'
+      end
+      object Edit26: TEdit
+        Left = 48
+        Top = 216
+        Width = 121
+        Height = 21
+        TabOrder = 3
+        TextHint = 'k'
+      end
+      object ListBox2: TListBox
+        Left = 175
+        Top = 189
+        Width = 186
+        Height = 188
+        ItemHeight = 13
+        TabOrder = 4
+      end
+      object Button26: TButton
+        Left = 48
+        Top = 248
+        Width = 75
+        Height = 25
+        Caption = 'n '#252'ber k'
+        TabOrder = 5
+        OnClick = Button26Click
       end
     end
   end

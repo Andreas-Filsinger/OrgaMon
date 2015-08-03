@@ -38,7 +38,7 @@ unit Geld;
 interface
 
 uses
-  classes, anfix32;
+  classes, anfix32, gplists;
 
 const
   // kleinste Stückelung des Euros = 1 Cent
@@ -136,6 +136,11 @@ function ObjectAsMoney(Wert: TObject): double;
 // Integer-Funktionen
 function MoneyAsCent(Wert: double): integer;
 function CentAsMoney(Wert: integer): double;
+
+// Kombinatorik, Kombinationen ohne Wiederholung
+// Wenn Kunden Rechnungen in einem Betrag zahlen muss ermittelt
+// werden welche der offenen Forderungen kombiniert wurden
+function nk(n: integer; k: integer; const v: TgpINtegerList) : boolean;
 
 // Banken-Funktionen
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
@@ -737,10 +742,10 @@ var
   BLZ: string;
   i: integer;
 begin
-  if (pos('DE', blz_oder_IBAN) = 1) then
-    BLZ := copy(blz_oder_IBAN, 5, 6)
+  if (pos('DE', BLZ_oder_IBAN) = 1) then
+    BLZ := copy(BLZ_oder_IBAN, 5, 6)
   else
-    BLZ := blz_oder_IBAN;
+    BLZ := BLZ_oder_IBAN;
   ensureBLZ;
   i := sBLZs.findinc(BLZ);
   if (i <> -1) then
@@ -755,10 +760,10 @@ var
   i: integer;
   BLZ: string;
 begin
-  if (pos('DE', blz_oder_IBAN) = 1) then
-    BLZ := copy(blz_oder_IBAN, 5, 6)
+  if (pos('DE', BLZ_oder_IBAN) = 1) then
+    BLZ := copy(BLZ_oder_IBAN, 5, 6)
   else
-    BLZ := blz_oder_IBAN;
+    BLZ := BLZ_oder_IBAN;
   ensureBLZ;
   i := sBLZs.findinc(BLZ);
   if (i <> -1) then
@@ -802,6 +807,115 @@ function CentAsMoney(Wert: integer): double;
 begin
   result := Wert;
   result := result / 100.0;
+end;
+
+(*
+
+  24.12.2008 last modification: 26.06.2013
+  Copyright (c) 2008-2013 by Siegfried Koepf
+
+  This file is distributed under the terms of the GNU General Public License
+  version 3 as published by the Free Software Foundation.
+  For information on usage and redistribution and for a disclaimer of all
+  warranties, see the file COPYING in this distribution.
+
+  k-combinations without repetition in lexicographic order
+
+  Algorithm by Siegfried Koepf, inspired by Donald Knuth and many others
+
+  Functions:
+  int gen_comb_norep_lex_init(unsigned char *vector, const unsigned char n, const unsigned char k)
+  Test for special cases
+  Initialization of vector
+  Possible return values are: GEN_ERROR, GEN_EMPTY, GEN_NEXT
+
+  int gen_comb_norep_lex_next(unsigned char *vector, const unsigned char n, const unsigned char k)
+  Transforms current figure in vector into its successor
+  Possible return values are: GEN_NEXT, GEN_TERM
+
+  Arguments:
+  unsigned char *vector; //pointer to the array where the current figure is stored
+  const unsigned char n; //length of alphabet
+  const unsigned char k; //length of figures
+
+  Usage and restrictions:
+  Arguments and elements in vector are restricted to the interval (0, 255)
+  Memory allocation for vector must be provided by the calling process
+  k must be <= n
+
+  Cardinality:
+  n! / ((n - k)! * k!) == Binomial(n, k)
+
+*)
+
+//
+// true: Gültige Kombination in v
+// false: v unverändert, nichts passendes gefunden
+//
+
+function nk(n: integer; k: integer; const v: TgpINtegerList): boolean;
+var
+  i, j: integer;
+begin
+
+  result := false;
+
+  // ohne v? : kein Ergebnis speicherbar
+  if (v = nil) then
+    exit;
+
+  // Initialisierung nötig?
+  if (v.count = 0) then
+  begin
+
+    // Parameter einmalig prüfen auf
+    // mathematisch Undefiniertes
+    if (k > n) then
+      exit;
+    if (n <= 0) or (k <= 0) then
+      exit;
+
+    // die initiale Kombination
+    // v := {0,1,2,3,...,pred(k)}
+    for i := 0 to pred(k) do
+      v.add(i);
+
+    result := true;
+    exit;
+  end;
+
+  // easy case, increase rightmost element
+  if (v[pred(k)] < pred(n)) then
+  begin
+    v[pred(k)] := succ(v[pred(k)]);
+    result := true;
+    exit;
+  end;
+
+  // find rightmost element to increase
+  j := k - 2;
+  while (j >= 0) do
+  begin
+    if (v[j] < n - k + j) then
+      break;
+    dec(j);
+  end;
+
+  // terminate if vector[0] == n - k
+  if (j < 0) then
+    exit;
+
+  // increase
+  v[j] := succ(v[j]);
+
+  // set right-hand elements
+  while (j < k - 1) do
+  begin
+    v[j + 1] := v[j] + 1;
+    inc(j);
+  end;
+
+  result := true;
 end;
 
 end.

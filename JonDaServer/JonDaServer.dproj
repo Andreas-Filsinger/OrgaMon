@@ -175,6 +175,7 @@
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
 			<DCCReference Include="..\PASvisTools\wanfix32.pas"/>
 			<DCCReference Include="..\infozip\infozip.pas"/>
+			<DCCReference Include="..\PASconTools\Geld.pas"/>
 			<None Include="..\OrgaMon\MDEREC.INC"/>
 			<None Include="..\rev\JonDaServer.rev.txt"/>
 			<None Include="..\rev\WordIndex.rev.txt"/>
