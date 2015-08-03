@@ -4428,7 +4428,6 @@ procedure TFormBuchhalter.RefreshForderungen;
 begin
   Erzeuge_sForderungen(rPERSON_R);
   Erzeuge_Show_sYellow(sBetrag);
-
 end;
 
 procedure TFormBuchhalter.Erzeuge_Show_sYellow(Zahlung: double);
@@ -4451,8 +4450,27 @@ procedure TFormBuchhalter.Erzeuge_Show_sYellow(Zahlung: double);
     end;
   end;
 
+  function sForderungen_saldo(i: Integer): double; overload;
+  var
+    UrsprungsForderung: double;
+    ZahlungenBisher: double;
+  begin
+    UrsprungsForderung := StrToDoubledef(nextp(sForderungen[i], ';', 1), 0);
+    ZahlungenBisher := StrToDoubledef(nextp(sForderungen[i], ';', 4), 0);
+    result := UrsprungsForderung - ZahlungenBisher;
+  end;
+
+  function sForderungen_saldo(v: TgpIntegerList): double; overload;
+  var
+    i: Integer;
+  begin
+    result := 0.0;
+    for i := 0 to pred(v.count) do
+      result := result + sForderungen_saldo(v[i]);
+  end;
+
 var
-  n: Integer;
+  n, k, i: Integer;
   BELEG_R, PERSON_R: Integer;
   TEILLIEFERUNG: Integer;
   TITEL: string;
@@ -4461,7 +4479,9 @@ var
   UrsprungsForderung: double;
   ZahlungenBisher: double;
   AnzeigeIndex: Integer;
-
+  v: TgpIntegerList;
+  VolltrefferGefunden: boolean;
+  sForderungenNeu: TStringList;
 begin
 
   if not(assigned(sAusgleich)) then
@@ -4483,6 +4503,42 @@ begin
   Panel3.color := clBtnFace;
 
   if assigned(sForderungen) then
+  begin
+
+    // Volltreffer durch Kombinatorik suchen
+    VolltrefferGefunden := false;
+    n := sForderungen.count;
+    for k := 1 to n do
+    begin
+      v := TgpIntegerList.Create;
+      while (nk(n, k, v)) do
+      begin
+        if isEqual(Zahlung, sForderungen_saldo(v)) then
+        begin
+          sForderungenNeu := TStringList.Create;
+
+          // Passendes: Vorne die Gutschriften, dann die Forderungen
+          for i := 0 to pred(v.count) do
+            if isHaben(sForderungen_saldo(v[i])) then
+              sForderungenNeu.add(sForderungen[v[i]])
+            else
+              sForderungenNeu.insert(0, sForderungen[v[i]]);
+
+          // Unpassendes: Hinten dran
+          for i := 0 to pred(n) do
+            if (v.IndexOf(i) = -1) then
+              sForderungenNeu.add(sForderungen[i]);
+
+          FreeAndNil(sForderungen);
+          sForderungen := sForderungenNeu;
+          VolltrefferGefunden := true;
+          break;
+        end;
+      end;
+      if VolltrefferGefunden then
+        break;
+    end;
+
     for n := 0 to pred(sForderungen.count) do
     begin
 
@@ -4519,6 +4575,7 @@ begin
       // Anzeigen!
       setCaption(AnzeigeIndex, 0, TITEL); // Überschrift
       setCaption(AnzeigeIndex, 1, nextp(sForderungen[n], ';', 1));
+
       // Ursprüngliche Gesamtforderung
       if isSomeMoney(ZahlungenBisher) then // Anzahlungen
         setCaption(AnzeigeIndex, 2, format('%m', [-ZahlungenBisher]))
@@ -4612,6 +4669,7 @@ begin
       // break;
 
     end;
+  end;
   JvArrayButton1.Refresh;
 
   // noch das Gesamt-Ergebnis darstellen

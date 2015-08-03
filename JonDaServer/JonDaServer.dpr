@@ -18,7 +18,8 @@ uses
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   wanfix32 in '..\PASvisTools\wanfix32.pas',
-  infozip in '..\infozip\infozip.pas';
+  infozip in '..\infozip\infozip.pas',
+  Geld in '..\PASconTools\Geld.pas';
 
 {$R *.res}
 

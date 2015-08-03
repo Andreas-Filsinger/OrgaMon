@@ -34,7 +34,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
   anfix32, DCPcrypt2,
-  DCPmd5, WordIndex,
+  DCPmd5, WordIndex, geld,
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
@@ -157,6 +157,10 @@ type
     Label23: TLabel;
     Button24: TButton;
     Button25: TButton;
+    Edit25: TEdit;
+    Edit26: TEdit;
+    ListBox2: TListBox;
+    Button26: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -189,6 +193,7 @@ type
     procedure Button16Click(Sender: TObject);
     procedure Button24Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
+    procedure Button26Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -1535,6 +1540,20 @@ end;
 procedure TFormGUI.Button25Click(Sender: TObject);
 begin
  JonDaX.maintainSENDEN;
+end;
+
+procedure TFormGUI.Button26Click(Sender: TObject);
+var
+ n, k : integer;
+ v : TgpIntegerList;
+begin
+ listbox2.clear;
+ n := StrToInt(edit25.Text);
+ k := StrToInt(edit26.Text);
+ v := TgpIntegerList.create;
+ while (nk(n,k,v)) do
+   listbox2.items.add('('+v.AsDelimitedText(',')+')');
+ v.free;
 end;
 
 procedure TFormGUI.Button1Click(Sender: TObject);

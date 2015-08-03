@@ -1552,7 +1552,6 @@ begin
   end;
 end;
 
-
 function TGpIntegerList.IndexOf(item: integer): integer;
 begin
   if Sorted then begin
