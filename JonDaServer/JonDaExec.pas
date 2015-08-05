@@ -2230,6 +2230,17 @@ begin
           break;
         end;
 
+        // Gerätenummer gar nicht bekannt?
+        if (BEZAHLT_BIS = cMonDa_ErsteEingabe) then
+        begin
+          // Unbekannte Gerätenummer
+          log(cWARNINGText + ' Unbekannte Gerätenummer!');
+          FileCopy(ProtokollPath(RemoteRev) + 'Undefiniert' + cUTF8DataExtension,
+            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+          Stat_PostError := 'undefiniert';
+          break;
+        end;
+
         // Vertragszeitraum nicht bezahlt?
         if DateOK(BEZAHLT_BIS) and (_DateGet > BEZAHLT_BIS) then
         begin
@@ -2244,7 +2255,7 @@ begin
         // IMEI überhaupt gültig?
         if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
         begin
-          // Unbekannt
+          // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
           FileCopy(ProtokollPath(RemoteRev) + 'Unbekannt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
