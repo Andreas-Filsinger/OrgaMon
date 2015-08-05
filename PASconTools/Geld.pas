@@ -138,8 +138,11 @@ function MoneyAsCent(Wert: double): integer;
 function CentAsMoney(Wert: integer): double;
 
 // Kombinatorik, Kombinationen ohne Wiederholung
-// Wenn Kunden Rechnungen in einem Betrag zahlen muss ermittelt
-// werden welche der offenen Forderungen kombiniert wurden
+// =============================================
+//
+// Wenn Kunden Rechnungen in einem Betrag zahlen, muss ermittelt
+// werden, welche der offenen Forderungen kombiniert wurden.
+//
 function nk(n: integer; k: integer; const v: TgpINtegerList) : boolean;
 
 // Banken-Funktionen
@@ -870,12 +873,12 @@ begin
 
     // Parameter einmalig prüfen auf
     // mathematisch Undefiniertes
-    if (k > n) then
-      exit;
     if (n <= 0) or (k <= 0) then
       exit;
+    if (k > n) then
+      exit;
 
-    // die initiale Kombination
+    // die initiale Kombination liefern
     // v := {0,1,2,3,...,pred(k)}
     for i := 0 to pred(k) do
       v.add(i);
