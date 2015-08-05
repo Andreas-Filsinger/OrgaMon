@@ -80,17 +80,11 @@ const
 
   // Forderungen (ehemals Tabelle "AUSGANGSRECHNUNGEN")
   cKonto_Forderungen = '1400';
-
-  // Aktueller Status einer Forderung
-  cForderung_Unklar = 0;
-  cForderung_Zahlungsart_Frei = 1;
-  cForderung_Zahlungsart_Unbekannt = 2;
-  cForderung_Lastschrift_Anstehend = 3;
-  cForderung_Lastschrift_Vorgemerkt = 4;
-  cForderung_Lastschrift_Erhalten = 5;
+  cKonto_Forderungen_AsDBString = '''' + cKonto_Forderungen + '''';
 
   // Teilzahlung / Anzahlung / Gutscheine
   cKonto_Anzahlungen = '1710';
+  cKonto_Anzahlungen_AsDBString = '''' + cKonto_Anzahlungen + '''';
 
   // Konto für Umsatz- Vor- Mehrwert- Steuer
   cKonto_SatzPrefix = 'SATZ';
@@ -107,6 +101,15 @@ const
 
   // Pfad für BLZ Dateien
   iSystemPath: string = '';
+
+  // Aktueller Status einer Forderung
+  cForderung_Unklar = 0;
+  cForderung_Zahlungsart_Frei = 1;
+  cForderung_Zahlungsart_Unbekannt = 2;
+  cForderung_Lastschrift_Anstehend = 3;
+  cForderung_Lastschrift_Vorgemerkt = 4;
+  cForderung_Lastschrift_Erhalten = 5;
+
 
 function cPreisRundung(d: double): double; overload;
 function cPreisRundung(s: string): double; overload;
