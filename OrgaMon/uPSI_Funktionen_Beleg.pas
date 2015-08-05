@@ -322,9 +322,6 @@ begin
  S.RegisterDelphiFunction(@e_r_OffeneMenge, 'e_r_OffeneMenge', cdRegister);
  S.RegisterDelphiFunction(@e_r_UnbestellteMenge, 'e_r_UnbestellteMenge', cdRegister);
  S.RegisterDelphiFunction(@e_r_VorschlagMenge, 'e_r_VorschlagMenge', cdRegister);
- S.RegisterDelphiFunction(@e_r_Localize, 'e_r_Localize', cdRegister);
- S.RegisterDelphiFunction(@e_r_Localize2, 'e_r_Localize2', cdRegister);
- S.RegisterDelphiFunction(@e_r_text, 'e_r_text', cdRegister);
  S.RegisterDelphiFunction(@e_w_Stempel, 'e_w_Stempel', cdRegister);
  S.RegisterDelphiFunction(@e_r_UngelieferteMengeUeberBedarf, 'e_r_UngelieferteMengeUeberBedarf', cdRegister);
  S.RegisterDelphiFunction(@e_r_MindestMenge, 'e_r_MindestMenge', cdRegister);
@@ -373,7 +370,6 @@ begin
  S.RegisterDelphiFunction(@e_r_Rabatt, 'e_r_Rabatt', cdRegister);
  S.RegisterDelphiFunction(@e_r_VerlagsRabatt, 'e_r_VerlagsRabatt', cdRegister);
  S.RegisterDelphiFunction(@e_r_ekRabatt, 'e_r_ekRabatt', cdRegister);
- S.RegisterDelphiFunction(@e_r_ObtainISOfromRID, 'e_r_ObtainISOfromRID', cdRegister);
  S.RegisterDelphiFunction(@e_r_MwSt, 'e_r_MwSt', cdRegister);
  S.RegisterDelphiFunction(@e_r_MwSt2_P, 'e_r_MwSt2', cdRegister);
  S.RegisterDelphiFunction(@e_r_Prozent, 'e_r_Prozent', cdRegister);

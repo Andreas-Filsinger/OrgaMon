@@ -265,9 +265,6 @@ function e_r_VerlagsRabatt(VERLAG_R, PERSON_R: integer): double;
 function e_r_ekRabatt(ARTIKEL_R: integer): double;
 // liefert den Rabatt, mit dem dieser Artikel eingekauft wird
 
-function e_r_ObtainISOfromRID(LAND_R: integer): string;
-// liefert das ISO Landeskennzeichen
-
 function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 // MwSt: liefert die MwSt des Artikels
 
@@ -498,60 +495,61 @@ function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringLi
 function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
 // true wenn keine Forderung / Gutschrift mehr
 
-function e_r_BelegSaldo(BELEG_R: integer; TEILLIEFERUNG: integer = cRID_Null): double;
 // Saldo dieser Teillieferung
 // Falls Teillieferung=cRID_NULL, Saldo dieses Beleges
+function e_r_BelegSaldo(BELEG_R: integer; TEILLIEFERUNG: integer = cRID_Null): double;
+function e_r_BelegForderungen(BELEG_R: integer): double;
+function e_r_BelegZahlungen(BELEG_R: integer): double;
 
-function e_w_BerechneBeleg(BELEG_R: integer; NurGeliefertes: boolean = false): TStringList;
 { : diverse ermittelte Werte }
 // die Auftragsmengen entsprechend auf die Mengen verteilen Daumen, es erfolgen
 // Lagerbuchungen.
 // RECHNUNGSBETRAG=
 // LIEFERGEWICHT=
 // BUDGETVOLUMEN=
+function e_w_BerechneBeleg(BELEG_R: integer; NurGeliefertes: boolean = false): TStringList;
 
+//
+//
 function e_w_VertragBuchen(VERTRAG_R: integer; sSettings: TStringList): TStringList; overload;
-//
-//
 
-function e_w_VertragBuchen(VERTRAG_R: integer; Erzwingen: boolean = false): TStringList; overload;
 // Einen einzelnen Vertrag buchen, ohne besondere Optionen
 //
+function e_w_VertragBuchen(VERTRAG_R: integer; Erzwingen: boolean = false): TStringList; overload;
 
-function e_w_VertragBuchen: TStringList; overload;
 // Alle Verträge anwenden und buchen
 //
+function e_w_VertragBuchen: TStringList; overload;
 
-function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
 // Alle Verträge der Liste anwenden und buchen
 //
+function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
 
-function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
 // Kann für diesen Vertrag eine Abrechnung erfolgen?
 //
+function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
 
-function e_w_BelegBuchen(BELEG_R: integer; LabelDatensatz: boolean = false): string;
 // Briefumschlag-Funktion in den Belegen, Berechnete Mengen werden auf
 // geliefert gesetzt. Budgets werden abgeschrieben. Textelemente werden ersetzt.
+function e_w_BelegBuchen(BELEG_R: integer; LabelDatensatz: boolean = false): string;
 
-function e_w_BelegNeu(PERSON_R: integer): integer; { }
 // legt einen neuen Kunden-Beleg an
+function e_w_BelegNeu(PERSON_R: integer): integer; { }
 
-function e_w_BelegNeuAusWarenkorb(PERSON_R: integer): integer; // [BELEG_R]
 // setzt den Warenkorb in einen neuen Bestellung um.
+function e_w_BelegNeuAusWarenkorb(PERSON_R: integer): integer; // [BELEG_R]
 
-function e_w_BelegNeuAusKasse(EREIGNIS_R: integer): integer; // [BELEG_R]
 // setzt den Text im Ereignis als eine neue Bestellung um.
+function e_w_BelegNeuAusKasse(EREIGNIS_R: integer): integer; // [BELEG_R]
 
-function e_r_LohnKalkulation(Betrag: double; Datum: TAnfixDate): string;
 // setze einen Auszahlungsbetrag in die
 // entsprechende Arbeitszeit um
+function e_r_LohnKalkulation(Betrag: double; Datum: TAnfixDate): string;
 
 function e_r_LandRID(ISO: string): integer;
-//
 
-function e_r_LohnFName(RID: integer): string;
 // zu dem jeweiligen LOHNTABELLEN RID die passende Tabelle
+function e_r_LohnFName(RID: integer): string;
 
 function e_r_LadeParameter: TStringList; { }
 //
@@ -588,12 +586,12 @@ procedure e_w_preDeleteTier(TIER_R: integer);
 function e_w_BelegStatusBuchen(BELEG_R: integer): boolean;
 function e_w_BBelegStatusBuchen(BBELEG_R: integer): boolean;
 
-procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
-procedure e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R: integer;
-  qPosten: TdboQuery);
 // vor dem setzen weiterer Felder kann hier Standardasiert ein Artikel in
 // den aktuellen Posten kopiert werden. Zentrale Funktion zum Füllen einer
 // Posten zeile
+procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
+procedure e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R: integer;
+  qPosten: TdboQuery);
 
 // Caching
 procedure e_w_InvalidateCaches;
@@ -623,19 +621,11 @@ function e_r_Sparte(Art: string): string; // Ermittlung der Sparte
 // Qualitäts-Sicherungs Sachen
 procedure e_w_Ticket(sContext: string); overload;
 procedure e_w_Ticket(slContext: TStringList); overload;
-function e_r_Localize(RID, LAND_R: integer): string;
 //
 
-function e_r_Localize2(RID, LANGUAGE: integer): string;
-// Landesspezifiesche Strings
-//
-
-function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
-// System Texte
-
-function e_w_Stempel(STEMPEL_R: integer): integer;
 // erhöht den Stempel um eins und liefert nun diesen Wert.
 //
+function e_w_Stempel(STEMPEL_R: integer): integer;
 
 type
   TRegelErgebnis = class(TObject)
@@ -3289,7 +3279,7 @@ begin
                     cForderung_Lastschrift_Erhalten:
                       MoreText := MoreText + ' ' + _('(wurde abgebucht)');
                   else
-                      MoreText := MoreText + ' ' + _('(Unbekannter Abbuchungsstatus)');
+                    MoreText := MoreText + ' ' + _('(Unbekannter Abbuchungsstatus)');
                   end;
                 end;
               end
@@ -5324,13 +5314,50 @@ end;
 
 function e_r_BelegSaldo(BELEG_R: integer; TEILLIEFERUNG: integer = cRID_Null): double;
 begin
-  if (TEILLIEFERUNG = cRID_Null) then
-    result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where BELEG_R=' +
-      inttostr(BELEG_R))
-  else
-    result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where ' + '(BELEG_R=' +
-      inttostr(BELEG_R) + ') and ' + '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
 
+  if is1400 then
+  begin
+    if (TEILLIEFERUNG = cRID_Null) then
+      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where BELEG_R=' +
+        inttostr(BELEG_R))
+    else
+      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where ' + '(BELEG_R=' +
+        inttostr(BELEG_R) + ') and ' + '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
+  end
+  else
+  begin
+    if (TEILLIEFERUNG = cRID_Null) then
+      result := e_r_sqld(
+        { } 'select sum(BETRAG) from BUCH where' +
+        { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
+    else
+      result := e_r_sqld(
+        { } 'select sum(BETRAG) from BUCH where ' +
+        { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
+  end;
+end;
+
+function e_r_BelegForderungen(BELEG_R: integer): double;
+begin
+  if is1400 then
+    result := e_r_sqld(
+      { } 'select sum(BETRAG) from BUCH where' +
+      { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
+      { } ' (VORGANG=' + SQLstring(cVorgang_Rechnung) + ') and' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
+end;
+
+function e_r_BelegZahlungen(BELEG_R: integer): double;
+begin
+  if is1400 then
+    result := e_r_sqld(
+      { } 'select sum(BETRAG) from BUCH where' +
+      { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
+      { } ' ((VORGANG<>' + SQLstring(cVorgang_Rechnung) + ') or (VORGANG is null)) and' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
 end;
 
 function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
@@ -8060,11 +8087,6 @@ begin
   end;
 end;
 
-function e_r_ObtainISOfromRID(LAND_R: integer): string;
-begin
-  result := e_r_sqls('select ISO_KURZZEICHEN from LAND where RID=' + inttostr(LAND_R));
-end;
-
 function e_r_LadeParameter: TStringList;
 
   procedure EnsureEntry(EntryName: string; Lines: TStrings; var OneChanged: boolean);
@@ -8207,7 +8229,7 @@ begin
   iKontoPIN := sSystemSettings.values['KontoPIN'];
   iKontoSEPAFrist := StrToIntDef(sSystemSettings.values['KontoSEPAFrist'],
     cDTA_LastschriftVerzoegerung);
-  iKontoLSErkennung := sSystemSettings.values['KontoSEPAFrist']<>cIni_DeActivate;
+  iKontoLSErkennung := sSystemSettings.values['KontoSEPAFrist'] <> cIni_DeActivate;
   iKontenHBCI := sSystemSettings.values['KontenHBCI'];
   iHBCIRest := sSystemSettings.values['HBCIRest'];
   iBuchFokus := StrToIntDef(sSystemSettings.values['BuchFokus'], -1);
@@ -8438,37 +8460,6 @@ begin
   result := sSystemSettings;
 end;
 
-function e_r_Localize(RID, LAND_R: integer): string;
-var
-  InfoText: TStringList;
-  cINTERNATIONALTEXT: TdboCursor;
-begin
-  cINTERNATIONALTEXT := nCursor;
-  with cINTERNATIONALTEXT do
-  begin
-    sql.add('SELECT INT_TEXT');
-    sql.add('FROM INTERNATIONALTEXT');
-    sql.add('WHERE RID=' + inttostr(RID) + ' AND');
-    sql.add('LAND_R=' + inttostr(LAND_R));
-    ApiFirst;
-    if eof then
-    begin
-      result := inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R);
-    end
-    else
-    begin
-      InfoText := TStringList.create;
-      e_r_sqlt(FieldByName('INT_TEXT'), InfoText);
-      if InfoText.count > 0 then
-        result := InfoText[0]
-      else
-        result := '';
-      InfoText.free;
-    end;
-  end;
-  cINTERNATIONALTEXT.free;
-end;
-
 function e_r_telefon(ib_q: TdboDataSet): string;
 begin
   with ib_q do
@@ -8486,77 +8477,6 @@ begin
     until true;
   end;
 end;
-
-function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
-var
-  cINTERNATIONALTEXT: TdboCursor;
-begin
-  result := TStringList.create;
-  cINTERNATIONALTEXT := nCursor;
-  with cINTERNATIONALTEXT do
-  begin
-    sql.add('SELECT INT_TEXT');
-    sql.add('FROM INTERNATIONALTEXT');
-    sql.add('WHERE RID=' + inttostr(RID));
-    if LAND_R > 0 then
-      sql.add('and (LAND_R=' + inttostr(LAND_R) + ')');
-    ApiFirst;
-    if eof then
-    begin
-      result.add(inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R));
-    end
-    else
-    begin
-      e_r_sqlt(FieldByName('INT_TEXT'), result);
-    end;
-  end;
-  cINTERNATIONALTEXT.free;
-end;
-
-function e_r_Localize2(RID, LANGUAGE: integer): string;
-var
-  Land: TdboCursor;
-  IntTxt: TdboCursor;
-  Bigmemo: TStringList;
-begin
-  if (RID <= 0) then
-  begin
-    result := '';
-    exit;
-  end;
-  //
-  Bigmemo := TStringList.create;
-  Land := nCursor;
-  IntTxt := nCursor;
-  //
-  Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + inttostr(RID));
-  Land.First;
-  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' +
-    Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' + inttostr(LANGUAGE) + ')');
-  IntTxt.First;
-  e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
-  Bigmemo.add('');
-  result := cutblank(Bigmemo[0]);
-  //
-  Bigmemo.free;
-  Land.Close;
-  Land.free;
-  IntTxt.Close;
-  IntTxt.free;
-end;
-
-{ procedure e_x_sql(s: string);
-  var
-  x: TIB_dsql;
-  begin
-  x := TIB_dsql.create(self);
-  with x do
-  begin
-  sql.add(s);
-  execute;
-  end;
-  x.free;
-  end; }
 
 function e_r_EndPreis(PERSON_R, AUSGABEART_R, ARTIKEL_R: integer): double;
 var

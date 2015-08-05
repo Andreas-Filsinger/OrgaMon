@@ -91,10 +91,21 @@ function e_r_LaenderPost(RID: integer): string;
 function e_r_LaenderInternational(RID: integer): string;
 function e_r_LaenderOrtFormat(RID: integer): string;
 function e_r_LaenderCache: TStringList;
+// liefert das ISO Landeskennzeichen
+function e_r_ObtainISOfromRID(LAND_R: integer): string;
 
 function enCrypt_Hex(s: string): string;
 function deCrypt_Hex(s: string): string;
 procedure MigrateFrom(BringTo: integer);
+
+// Landesspezifiesche Strings
+//
+function e_r_Localize(RID, LAND_R: integer): string;
+function e_r_Localize2(RID, LANGUAGE: integer): string;
+
+// System Texte
+function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
+
 
 function SysDBApassword: string;
 //
@@ -1093,6 +1104,99 @@ begin
     { } '(Z_ELV_BLZ=''' + BLZ + ''')) or ' +
     { } '(Z_ELV_KONTO containing ''' + BLZ + inttostrN(Konto, 10) +
     { } ''')');
+end;
+function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
+var
+  cINTERNATIONALTEXT: TdboCursor;
+begin
+  result := TStringList.create;
+  cINTERNATIONALTEXT := nCursor;
+  with cINTERNATIONALTEXT do
+  begin
+    sql.add('SELECT INT_TEXT');
+    sql.add('FROM INTERNATIONALTEXT');
+    sql.add('WHERE RID=' + inttostr(RID));
+    if LAND_R > 0 then
+      sql.add('and (LAND_R=' + inttostr(LAND_R) + ')');
+    ApiFirst;
+    if eof then
+    begin
+      result.add(inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R));
+    end
+    else
+    begin
+      e_r_sqlt(FieldByName('INT_TEXT'), result);
+    end;
+  end;
+  cINTERNATIONALTEXT.free;
+end;
+
+function e_r_ObtainISOfromRID(LAND_R: integer): string;
+begin
+  result := e_r_sqls('select ISO_KURZZEICHEN from LAND where RID=' + inttostr(LAND_R));
+end;
+
+function e_r_Localize(RID, LAND_R: integer): string;
+var
+  InfoText: TStringList;
+  cINTERNATIONALTEXT: TdboCursor;
+begin
+  cINTERNATIONALTEXT := nCursor;
+  with cINTERNATIONALTEXT do
+  begin
+    sql.add('SELECT INT_TEXT');
+    sql.add('FROM INTERNATIONALTEXT');
+    sql.add('WHERE RID=' + inttostr(RID) + ' AND');
+    sql.add('LAND_R=' + inttostr(LAND_R));
+    ApiFirst;
+    if eof then
+    begin
+      result := inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R);
+    end
+    else
+    begin
+      InfoText := TStringList.create;
+      e_r_sqlt(FieldByName('INT_TEXT'), InfoText);
+      if InfoText.count > 0 then
+        result := InfoText[0]
+      else
+        result := '';
+      InfoText.free;
+    end;
+  end;
+  cINTERNATIONALTEXT.free;
+end;
+
+function e_r_Localize2(RID, LANGUAGE: integer): string;
+var
+  Land: TdboCursor;
+  IntTxt: TdboCursor;
+  Bigmemo: TStringList;
+begin
+  if (RID <= 0) then
+  begin
+    result := '';
+    exit;
+  end;
+  //
+  Bigmemo := TStringList.create;
+  Land := nCursor;
+  IntTxt := nCursor;
+  //
+  Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + inttostr(RID));
+  Land.First;
+  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' +
+    Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' + inttostr(LANGUAGE) + ')');
+  IntTxt.First;
+  e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
+  Bigmemo.add('');
+  result := cutblank(Bigmemo[0]);
+  //
+  Bigmemo.free;
+  Land.Close;
+  Land.free;
+  IntTxt.Close;
+  IntTxt.free;
 end;
 
 const

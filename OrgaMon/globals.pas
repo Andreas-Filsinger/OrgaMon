@@ -73,6 +73,7 @@ const
 
   // wenn true, kein Update der DB-Meta-Daten, andere Update-Quelle
   isBeta: boolean = true;
+  is1400: boolean = false;
 
   LanguageDriver: string = '';
 
