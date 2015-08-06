@@ -8130,6 +8130,7 @@ var
 begin
   try
     repeat
+  is1400 := not(TableExists('AUSGANGSRECHNUNG'));
 
 {$IFDEF CONSOLE}
       sSystemSettings := e_r_sqlt('select SETTINGS from EINSTELLUNG');
