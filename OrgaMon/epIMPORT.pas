@@ -61,7 +61,6 @@ type
     IB_QueryMWST: TIB_Query;
     IB_QueryBELEG: TIB_Query;
     IB_QueryPOSTEN: TIB_Query;
-    IB_QueryAUSGANGSRECHNUNG: TIB_Query;
     Label4: TLabel;
     Edit4: TEdit;
     Button4: TButton;
@@ -107,6 +106,7 @@ type
     Button19: TButton;
     StaticText1: TStaticText;
     Abbruch: TCheckBox;
+    IB_QueryFORDERUNG: TIB_Query;
     procedure Button6Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -631,6 +631,7 @@ var
   BUCH_R: integer;
   n: integer;
 begin
+  // 1400er Migration
   BeginHourGlass;
   cAUSGANGSRECHNUNGEN := nCursor;
   qBUCH := nQuery;
@@ -663,8 +664,10 @@ begin
       qBUCH.FieldByName('RID').AsInteger := BUCH_R;
       qBUCH.FieldByName('MASTER_R').AsInteger := BUCH_R;
       qBUCH.FieldByName('NAME').AsString := cKonto_Forderungen;
+      // nicht Namensgleich
       qBUCH.FieldByName('PERSON_R').Assign(FieldByName('KUNDE_R'));
       qBUCH.FieldByName('WERTSTELLUNG').Assign(FieldByName('VALUTA'));
+      // Namensgleich
       qBUCH.FieldByName('BELEG_R').Assign(FieldByName('BELEG_R'));
       qBUCH.FieldByName('TEILLIEFERUNG').Assign(FieldByName('TEILLIEFERUNG'));
       qBUCH.FieldByName('RECHNUNG').Assign(FieldByName('RECHNUNG'));
@@ -727,6 +730,8 @@ begin
 
   // d) Indexe löschen
   e_x_sql('drop index BELEG_RECHNUNG_A');
+  e_x_sql('drop index MAHNUNG_AUSGESETZT_BELEG_A');
+  e_x_sql('drop index MAHNUNG_AUSGESETZT_BELEG_D');
 
   // d) Felder aus BELEG löschen!
   e_x_sql('alter table BELEG drop RECHNUNGS_BETRAG');
@@ -1549,7 +1554,7 @@ begin
 
   sql('delete from warenbewegung');
   sql('delete from versand');
-  sql('delete from ausgangsrechnung');
+  sql('delete from BUCH');
   sql('delete from posten');
   sql('delete from geliefert');
   sql('delete from versand');
@@ -1720,7 +1725,7 @@ begin
   CursorPERSON.free;
   IB_QueryBELEG.close;
   IB_QueryPOSTEN.close;
-  IB_QueryAUSGANGSRECHNUNG.close;
+  IB_QueryFORDERUNG.close;
   AllTheRechnungen.free;
   drv_txt.free;
   ProgressBar1.position := 0;
@@ -1951,7 +1956,7 @@ begin
   CursorPERSON.free;
   IB_QueryBELEG.close;
   IB_QueryPOSTEN.close;
-  IB_QueryAUSGANGSRECHNUNG.close;
+  IB_QueryFORDERUNG.close;
   drv_txt.free;
   EndHourGlass;
 end;
@@ -3203,7 +3208,7 @@ begin
 
   sql('delete from warenbewegung');
   sql('delete from versand');
-  sql('delete from ausgangsrechnung');
+  sql('delete from BUCH');
   sql('delete from posten');
   sql('delete from beleg');
 
@@ -3227,6 +3232,7 @@ begin
   ProgressBar1.max := AllTheRechnungen.count;
   ListBox1.clear;
   StartTime := 0;
+  PERSON_R := cRID_Null;
   for n := 0 to pred(AllTheRechnungen.count) do
   begin
     //
@@ -3328,11 +3334,12 @@ begin
         Anzahlung.add(drv_txt[drv_poi]);
         ListBox1.items.add(drv_txt[drv_poi]);
 
-        with IB_QueryAUSGANGSRECHNUNG do
+        with IB_QueryFORDERUNG do
         begin
           insert;
+          FieldByName('NAME').AsString := cKonto_Forderungen;
           FieldByName('BELEG_R').AsInteger := rbNummer;
-          FieldByName('KUNDE_R').AsInteger := PERSON_R;
+          FieldByName('PERSON_R').AsInteger := PERSON_R;
           FieldByName('BETRAG').AsDouble := -rpPreis;
           FieldByName('TEXT').Assign(Anzahlung);
           post;
@@ -3370,13 +3377,14 @@ begin
 
     end;
 
-    with IB_QueryAUSGANGSRECHNUNG do
+    with IB_QueryFORDERUNG do
     begin
       insert;
+      FieldByName('NAME').AsString := cKonto_Forderungen;
       if IB_QueryBELEG.FieldByName('FAELLIG').IsNotNull then
-        FieldByName('VALUTA').Assign(IB_QueryBELEG.FieldByName('FAELLIG'));
+        FieldByName('WERTSTELLUNG').Assign(IB_QueryBELEG.FieldByName('FAELLIG'));
       FieldByName('BELEG_R').AsInteger := rbNummer;
-      FieldByName('KUNDE_R').AsInteger := PERSON_R;
+      FieldByName('PERSON_R').AsInteger := PERSON_R;
       FieldByName('BETRAG').AsDouble := rbBetrag;
       post;
     end;
@@ -3395,7 +3403,7 @@ begin
   CursorPERSON.free;
   IB_QueryBELEG.close;
   IB_QueryPOSTEN.close;
-  IB_QueryAUSGANGSRECHNUNG.close;
+  IB_QueryFORDERUNG.close;
   AllTheRechnungen.free;
   Anzahlung.free;
   drv_txt.free;

@@ -1105,6 +1105,7 @@ begin
     { } '(Z_ELV_KONTO containing ''' + BLZ + inttostrN(Konto, 10) +
     { } ''')');
 end;
+
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
 var
   cINTERNATIONALTEXT: TdboCursor;

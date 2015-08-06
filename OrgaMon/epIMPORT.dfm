@@ -32,7 +32,7 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet1
+    ActivePage = TabSheet7
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
@@ -457,10 +457,6 @@ object FormepIMPORT: TFormepIMPORT
     object TabSheet10: TTabSheet
       Caption = 'FPSpreadSheet'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 32
         Top = 32
@@ -593,6 +589,10 @@ object FormepIMPORT: TFormepIMPORT
       'for update')
     RequestLive = True
     Left = 568
+    Top = 8
+  end
+  object IB_QueryFORDERUNG: TIB_Query
+    Left = 256
     Top = 8
   end
 end
