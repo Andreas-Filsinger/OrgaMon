@@ -130,12 +130,10 @@ type
     BreakIt: boolean;
     sRechnungen: TStringList;
 
-    procedure e_w_RechnungDatumSetzen(ib_q: TIB_Query;
-      Aufdatum: TDateTime); overload;
+    procedure e_w_RechnungDatumSetzen(ib_q: TIB_Query; Aufdatum: TDateTime); overload;
     // historisch !! - löschen wenn möglich
 
-    procedure e_w_RechnungDatumSetzen(ib_q: TIB_Query;
-      Aufdatum: TANFiXDate); overload;
+    procedure e_w_RechnungDatumSetzen(ib_q: TIB_Query; Aufdatum: TANFiXDate); overload;
     // historisch !! - löschen wenn möglich
   public
 
@@ -215,13 +213,11 @@ begin
     RechnungInhalt := TStringList.create;
 
     // Alle Personen mit ihrer alten RID auflisten!
-    lPersonen := e_r_sqlm('select RID from PERSON where A01=''' +
-      cC_True + '''');
+    lPersonen := e_r_sqlm('select RID from PERSON where A01=''' + cC_True + '''');
     for n := pred(lPersonen.count) downto 0 do
     begin
       PERSON_R := lPersonen[n];
-      PersonBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID=' +
-        inttostr(PERSON_R));
+      PersonBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
       _KNO := PersonBemerkungen.values['KNO'];
 
       if (_KNO <> '') then
@@ -250,15 +246,14 @@ begin
       repeat
 
         // Person lokalisieren
-        _KNO := inttostr
-          (strtointdef(nextp(ExtractFileName(Edit5.text + AllTheRechnungen[n]),
+        _KNO := inttostr(strtointdef(nextp(ExtractFileName(Edit5.text + AllTheRechnungen[n]),
           '.', 0), 0));
         k := KNO.indexof(_KNO);
         if (k = -1) then
           break;
 
-        PersonBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID='
-          + inttostr(PERSON_R));
+        PersonBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID=' +
+          inttostr(PERSON_R));
 
         PERSON_R := integer(KNO.objects[k]);
         BELEG_R := e_w_BelegNeu(PERSON_R);
@@ -286,12 +281,9 @@ begin
             insert;
             FieldByName('RID').AsInteger := cRID_AutoInc;
             FieldByName('BELEG_R').AsInteger := BELEG_R;
-            FieldByName('MENGE').AsInteger :=
-              strtointdef(copy(RechnungInhalt[m], 9, 2), 0);
-            FieldByName('ARTIKEL').AsString :=
-              OEM2Ansi(copy(RechnungInhalt[m], 11, 35));
-            FieldByName('PREIS').AsDouble :=
-              StrToDouble(copy(RechnungInhalt[m], 47, 8));
+            FieldByName('MENGE').AsInteger := strtointdef(copy(RechnungInhalt[m], 9, 2), 0);
+            FieldByName('ARTIKEL').AsString := OEM2Ansi(copy(RechnungInhalt[m], 11, 35));
+            FieldByName('PREIS').AsDouble := StrToDouble(copy(RechnungInhalt[m], 47, 8));
             FieldByName('NETTO').AsString := cC_True;
             FieldByName('MWST').AsDouble := 19.0;
             FieldByName('INFO').AsString := 'SATZ1';
@@ -345,8 +337,8 @@ begin
   // Profil05=(M) Manueller Zahler
   // Profil06=(G) anderer zahlt
   // Profil07=(X) Verweigerer
-  lPersonen := e_r_sqlm('select RID from PERSON where ' + '(A02=''Y'') or ' +
-    '(A03=''Y'') or ' + '(A04=''Y'') or ' + '(A05=''Y'') or ' + '(A06=''Y'')');
+  lPersonen := e_r_sqlm('select RID from PERSON where ' + '(A02=''Y'') or ' + '(A03=''Y'') or ' +
+    '(A04=''Y'') or ' + '(A05=''Y'') or ' + '(A06=''Y'')');
 
   // Verträge zuordnen
   for n := 0 to pred(lPersonen.count) do
@@ -357,8 +349,7 @@ begin
 
     //
     PERSON_R := lPersonen[n];
-    PersonenBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID=' +
-      inttostr(PERSON_R));
+    PersonenBemerkungen := e_r_sqlT('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
     Betrag1 := strtodoubledef(PersonenBemerkungen.values['BETRAG1'], 0);
     Betrag2 := strtodoubledef(PersonenBemerkungen.values['BETRAG2'], 0);
     BetragProMonat := cPreisRundung(Betrag2 / 3);
@@ -473,8 +464,8 @@ begin
     begin
       _KontoNummer := strtointdef(nextp(OneLIne, ' '), 0);
       _KontoName := OneLIne;
-      e_x_sql('insert into BUCH (NAME,KONTO) values (' + '''' +
-        inttostrN(_KontoNummer, 4) + ''',' + '''' + _KontoName + ''')');
+      e_x_sql('insert into BUCH (NAME,KONTO) values (' + '''' + inttostrN(_KontoNummer, 4) + ''',' +
+        '''' + _KontoName + ''')');
     end;
   end;
   sKONTEN.free;
@@ -526,8 +517,7 @@ begin
             edit;
             FieldByName('STEMPEL_R').AsInteger := STEMPEL_AR_R;
             FieldByName('STEMPEL_DOKUMENT').AsInteger := AR;
-            FieldByName('GEGENKONTO').AsString :=
-              inttostrN(strtointdef(GegenKonto, 0), 4);
+            FieldByName('GEGENKONTO').AsString := inttostrN(strtointdef(GegenKonto, 0), 4);
             post;
           end;
           break;
@@ -544,8 +534,7 @@ begin
             edit;
             FieldByName('STEMPEL_R').AsInteger := STEMPEL_ER_R;
             FieldByName('STEMPEL_DOKUMENT').AsInteger := ER;
-            FieldByName('GEGENKONTO').AsString :=
-              inttostrN(strtointdef(GegenKonto, 0), 4);
+            FieldByName('GEGENKONTO').AsString := inttostrN(strtointdef(GegenKonto, 0), 4);
             post;
           end;
           break;
@@ -559,10 +548,8 @@ begin
   qBUCH.free;
 
   // Stempel setzen auf das MAX!
-  e_x_sql('update STEMPEL set STAND=' + inttostr(AR_MAX) + ' where RID=' +
-    inttostr(STEMPEL_AR_R));
-  e_x_sql('update STEMPEL set STAND=' + inttostr(ER_MAX) + ' where RID=' +
-    inttostr(STEMPEL_ER_R));
+  e_x_sql('update STEMPEL set STAND=' + inttostr(AR_MAX) + ' where RID=' + inttostr(STEMPEL_AR_R));
+  e_x_sql('update STEMPEL set STAND=' + inttostr(ER_MAX) + ' where RID=' + inttostr(STEMPEL_ER_R));
 
 end;
 
@@ -591,10 +578,8 @@ begin
       begin
         FName := Edit1.text + SubDir + 'DIR\' + sDir[n];
         drv_txt.loadfromfile(FName);
-        AnzahlRechnungen := e_r_sql('select count(RID) from BELEG where RID=' +
-          drv_txt[1]);
-        sRechnungen.add(drv_txt[1] + ';' + FName + ';' +
-          inttostr(AnzahlRechnungen));
+        AnzahlRechnungen := e_r_sql('select count(RID) from BELEG where RID=' + drv_txt[1]);
+        sRechnungen.add(drv_txt[1] + ';' + FName + ';' + inttostr(AnzahlRechnungen));
       end;
     end;
     sRechnungen.sort;
@@ -677,16 +662,14 @@ begin
       qBUCH.FieldByName('ZAHLUNGTYP_R').Assign(FieldByName('ZAHLUNGTYP_R'));
       qBUCH.FieldByName('EREIGNIS_R').Assign(FieldByName('EREIGNIS_R'));
       qBUCH.FieldByName('VORGANG').Assign(FieldByName('VORGANG'));
-      qBUCH.FieldByName('ZAHLUNGSPFLICHTIGER_R')
-        .Assign(FieldByName('ZAHLUNGSPFLICHTIGER_R'));
+      qBUCH.FieldByName('ZAHLUNGSPFLICHTIGER_R').Assign(FieldByName('ZAHLUNGSPFLICHTIGER_R'));
       qBUCH.FieldByName('POSNO').Assign(FieldByName('POSNO'));
       qBUCH.FieldByName('MANDANT_R').Assign(FieldByName('MANDANT_R'));
 
-      if (FieldByName('VORGANG').AsString = cVorgang_Rechnung) and
-        (FieldByName('BELEG_R').IsNotNull) then
+      if (FieldByName('VORGANG').AsString = cVorgang_Rechnung) and (FieldByName('BELEG_R').IsNotNull)
+      then
       begin
-        cBELEG.ParamByName('CROSSREF').AsInteger := FieldByName('BELEG_R')
-          .AsInteger;
+        cBELEG.ParamByName('CROSSREF').AsInteger := FieldByName('BELEG_R').AsInteger;
         cBELEG.open;
         if cBELEG.eof then
           raise Exception.create('Beleg nicht mehr gefunden');
@@ -698,20 +681,20 @@ begin
         qBUCH.FieldByName('MAHNUNG1').Assign(cBELEG.FieldByName('MAHNUNG1'));
         qBUCH.FieldByName('MAHNUNG2').Assign(cBELEG.FieldByName('MAHNUNG2'));
         qBUCH.FieldByName('MAHNUNG3').Assign(cBELEG.FieldByName('MAHNUNG3'));
-        qBUCH.FieldByName('MAHNBESCHEID')
-          .Assign(cBELEG.FieldByName('MAHNBESCHEID'));
-        qBUCH.FieldByName('MAHNUNG_AUSGESETZT')
-          .Assign(cBELEG.FieldByName('MAHNUNG_AUSGESETZT'));
+        qBUCH.FieldByName('MAHNBESCHEID').Assign(cBELEG.FieldByName('MAHNBESCHEID'));
+        qBUCH.FieldByName('MAHNUNG_AUSGESETZT').Assign(cBELEG.FieldByName('MAHNUNG_AUSGESETZT'));
         cBELEG.close;
       end;
 
       qBUCH.post;
       inc(n);
-      ProgressBar1.position := n;
       if (n MOD 10 = 0) then
+      begin
+        ProgressBar1.position := n;
         application.processmessages;
-      if Abbruch.Checked then
-        break;
+        if Abbruch.Checked then
+          break;
+      end;
 
       ApiNext;
     end;
@@ -747,6 +730,8 @@ begin
   e_x_sql('alter table BELEG drop MAHNUNG_AUSGESETZT');
   // e_x_sql('alter table BELEG drop ABSCHLUSS
   e_x_commit;
+
+  ListBox2.items.add('ENDE');
 
   EndHourGlass;
 end;
@@ -825,14 +810,12 @@ begin
   end;
 
   // erst mal sehen was schon drin ist
-  sBISHER := e_r_sqlm('select PERSON_R from VERTRAG where BELEG_R=' +
-    inttostr(BELEG_R));
+  sBISHER := e_r_sqlm('select PERSON_R from VERTRAG where BELEG_R=' + inttostr(BELEG_R));
 
   Log(inttostr(sBISHER.count) + ' bisherige Abonennten');
 
   // die Liste aller eMail-Adresse ermitteln
-  sMAIL := e_r_sqlslo
-    ('select EMAIL,RID from PERSON where (EMAIL is not null) and (EMAIL<>'''')');
+  sMAIL := e_r_sqlslo('select EMAIL,RID from PERSON where (EMAIL is not null) and (EMAIL<>'''')');
 
   Log(inttostr(sMAIL.count) + ' Mail Adressen bisher');
 
@@ -851,8 +834,8 @@ begin
   for n := pred(sMAIL.count) downto 0 do
     if not(eMailAdresseOK(sMAIL[n])) then
     begin
-      Log(cERRORText + ' (RID=' + inttostr(integer(sMAIL.objects[n])) + ') ' +
-        sMAIL[n] + ' ist keine gültige eMail Adresse');
+      Log(cERRORText + ' (RID=' + inttostr(integer(sMAIL.objects[n])) + ') ' + sMAIL[n] +
+        ' ist keine gültige eMail Adresse');
       sMAIL.delete(n);
     end;
 
@@ -865,8 +848,8 @@ begin
   Log(inttostr(sl_DeleteCount) + ' sind doppelt:');
 
   for n := 0 to pred(sl_Dups.count) do
-    Log(cERRORText + ' (RID=' + inttostr(integer(sl_Dups.objects[n])) + ') ' +
-      sl_Dups[n] + ' ist doppeltet in der Liste');
+    Log(cERRORText + ' (RID=' + inttostr(integer(sl_Dups.objects[n])) + ') ' + sl_Dups[n] +
+      ' ist doppeltet in der Liste');
 
   // OK, nun für jede Newletter-Adresse den RID ermitteln
   ProgressBar1.max := sCSV.count;
@@ -1002,8 +985,7 @@ begin
   MyWorksheet.WriteUsedFormatting(0, 1, [uffBold]);
 
   // Save the spreadsheet to a file
-  MyWorkbook.WriteToFile(DiagnosePath + 'test' + cExcelExtension,
-    sfExcel8, false);
+  MyWorkbook.WriteToFile(DiagnosePath + 'test' + cExcelExtension, sfExcel8, false);
   MyWorkbook.free;
 {$ENDIF}
   openShell(DiagnosePath + 'test' + cExcelExtension);
@@ -1066,16 +1048,14 @@ var
       Sortimente.add(SortimentS);
   end;
 
-  procedure InsertLeirecAs(leirec: leirectype; NUMERO: integer;
-    PAKET_R: integer = -1);
+  procedure InsertLeirecAs(leirec: leirectype; NUMERO: integer; PAKET_R: integer = -1);
   begin
     with leirec, IB_QueryARTIKEL do
     begin
       insert;
       FieldByName('TITEL').AsString := OEM2Ansi(bez);
       FieldByName('CODE').AsString := OEM2Ansi(abk);
-      FieldByName('EURO').AsDouble :=
-        round(brutto(pre, (100 + mwst_klasse[meh])) * 100.0) / 100.0;
+      FieldByName('EURO').AsDouble := round(brutto(pre, (100 + mwst_klasse[meh])) * 100.0) / 100.0;
       FieldByName('SORTIMENT_R').AsInteger := integer(Sortimente.objects[k]);
       FieldByName('ERSTEINTRAG').AsDateTime := now;
       FieldByName('NUMERO').AsInteger := NUMERO;
@@ -1160,8 +1140,7 @@ begin
           break;
         insert;
         FieldByName('BEZEICHNUNG').AsString := Sortimente[n];
-        FieldByName('MWST_R').AsInteger :=
-          MwSt_R[strtoint(nextp(Sortimente[n], ',', 1))];
+        FieldByName('MWST_R').AsInteger := MwSt_R[strtoint(nextp(Sortimente[n], ',', 1))];
         FieldByName('NAECHSTE_NUMMER').AsInteger := -1;
         post;
         refresh;
@@ -1693,8 +1672,7 @@ begin
             FieldByName('AUSFUEHRUNG').AsDateTime := long2datetime(rpDatum);
           FieldByName('MENGE').AsInteger := 0;
           FieldByName('PREIS').AsDouble := -rpPreis;
-          FieldByName('ARTIKEL').AsString :=
-            format('Anzahlung %s', [rpBezeichnung]);
+          FieldByName('ARTIKEL').AsString := format('Anzahlung %s', [rpBezeichnung]);
           post;
         end;
       end;
@@ -1707,9 +1685,9 @@ begin
       // Teilweise ausgeglichen?
       if isSomeMoney(rbAnzahlung) then
       begin
-        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, rbNummer,
-          rbAnzahlung, long2date(rbDatumRechnung), cRID_NULL, 'Anzahlung',
-          cKonto_DurchlaufenderPosten, 0, cRID_NULL]));
+        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, rbNummer, rbAnzahlung,
+          long2date(rbDatumRechnung), cRID_NULL, 'Anzahlung', cKonto_DurchlaufenderPosten, 0,
+          cRID_NULL]));
       end;
     end;
 
@@ -1932,8 +1910,7 @@ begin
           FieldByName('AUSFUEHRUNG').AsDateTime := long2datetime(rpDatum);
         FieldByName('MENGE').AsInteger := 0;
         FieldByName('PREIS').AsDouble := -rpPreis;
-        FieldByName('ARTIKEL').AsString :=
-          format('Anzahlung %s', [rpBezeichnung]);
+        FieldByName('ARTIKEL').AsString := format('Anzahlung %s', [rpBezeichnung]);
         post;
       end;
     end;
@@ -1946,9 +1923,9 @@ begin
     // Teilweise ausgeglichen?
     if isSomeMoney(rbAnzahlung) then
     begin
-      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, rbNummer,
-        rbAnzahlung, long2date(rbDatumRechnung), cRID_NULL, 'Anzahlung',
-        cKonto_DurchlaufenderPosten, 0, cRID_NULL]));
+      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, rbNummer, rbAnzahlung,
+        long2date(rbDatumRechnung), cRID_NULL, 'Anzahlung', cKonto_DurchlaufenderPosten, 0,
+        cRID_NULL]));
     end;
   end;
 
@@ -2025,8 +2002,7 @@ begin
         if not(Active) then
           open;
         insert;
-        FieldByName('PERSON_R').AsInteger := NummerCursor.FieldByName('RID')
-          .AsInteger;
+        FieldByName('PERSON_R').AsInteger := NummerCursor.FieldByName('RID').AsInteger;
         FieldByName('ART').AsString := tierec.art;
         FieldByName('RASSE').AsString := tierec.ras;
         FieldByName('NAME').AsString := tierec.nam;
@@ -2125,8 +2101,7 @@ var
         repeat
           if qBAUSTELLE.Active then
             qBAUSTELLE.close;
-          qBAUSTELLE.ParamByName('CROSSREF').AsInteger :=
-            cBAUSTELLE.FieldByName('RID').AsInteger;
+          qBAUSTELLE.ParamByName('CROSSREF').AsInteger := cBAUSTELLE.FieldByName('RID').AsInteger;
           qBAUSTELLE.open;
           if qBAUSTELLE.eof then
           begin
@@ -2264,8 +2239,7 @@ begin
       repeat
         if qPERSON.Active then
           qPERSON.close;
-        qPERSON.ParamByName('CROSSREF').AsInteger := cMONTEUR.FieldByName('RID')
-          .AsInteger;
+        qPERSON.ParamByName('CROSSREF').AsInteger := cMONTEUR.FieldByName('RID').AsInteger;
         qPERSON.open;
         if qPERSON.eof then
           e_w_PersonNeu
@@ -2275,8 +2249,8 @@ begin
 
       if qANSCHRIFT.Active then
         qANSCHRIFT.close;
-      qANSCHRIFT.ParamByName('CROSSREF').AsInteger :=
-        qPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+      qANSCHRIFT.ParamByName('CROSSREF').AsInteger := qPERSON.FieldByName('PRIV_ANSCHRIFT_R')
+        .AsInteger;
       qANSCHRIFT.open;
       if qANSCHRIFT.eof then
         ShowMessage('ANSCHRIFT verloren!');
@@ -2288,28 +2262,24 @@ begin
         cutblank(nextp(cMONTEUR.FieldByName('NAME1').AsString, ',', 1));
       qPERSON.FieldByName('nachname').AsString :=
         cutblank(nextp(cMONTEUR.FieldByName('NAME1').AsString, ',', 0));
-      qPERSON.FieldByName('suchbegriff')
-        .Assign(cMONTEUR.FieldByName('KUERZEL'));
+      qPERSON.FieldByName('suchbegriff').Assign(cMONTEUR.FieldByName('KUERZEL'));
       qPERSON.FieldByName('kuerzel').Assign(cMONTEUR.FieldByName('KUERZEL'));
       qPERSON.FieldByName('anrede').Assign(cMONTEUR.FieldByName('ANREDE'));
       qANSCHRIFT.FieldByName('name2').Assign(cMONTEUR.FieldByName('NAME2'));
       qANSCHRIFT.FieldByName('strasse').AsString :=
-        cutblank(cMONTEUR.FieldByName('STRASSE').AsString + ' ' +
-        cMONTEUR.FieldByName('HAUSNUMMER').AsString);
+        cutblank(cMONTEUR.FieldByName('STRASSE').AsString + ' ' + cMONTEUR.FieldByName('HAUSNUMMER')
+        .AsString);
       if cMONTEUR.FieldByName('PLZ').IsNotNull then
         qANSCHRIFT.FieldByName('plz').AsInteger :=
           strtointdef(cMONTEUR.FieldByName('PLZ').AsString, 0);
       qANSCHRIFT.FieldByName('ort').Assign(cMONTEUR.FieldByName('ORT'));
-      qANSCHRIFT.FieldByName('ortsteil')
-        .Assign(cMONTEUR.FieldByName('ORTSTEIL'));
-      qPERSON.FieldByName('ansprache')
-        .Assign(cMONTEUR.FieldByName('ANSPRACHE'));
+      qANSCHRIFT.FieldByName('ortsteil').Assign(cMONTEUR.FieldByName('ORTSTEIL'));
+      qPERSON.FieldByName('ansprache').Assign(cMONTEUR.FieldByName('ANSPRACHE'));
       qPERSON.FieldByName('PRIV_TEL').Assign(cMONTEUR.FieldByName('TELEFON'));
       qPERSON.FieldByName('PRIV_FAX').Assign(cMONTEUR.FieldByName('FAX'));
       qPERSON.FieldByName('HANDY').Assign(cMONTEUR.FieldByName('MOBILE'));
       qPERSON.FieldByName('email').Assign(cMONTEUR.FieldByName('EMAIL'));
-      qPERSON.FieldByName('bemerkung')
-        .Assign(cMONTEUR.FieldByName('BEMERKUNG'));
+      qPERSON.FieldByName('bemerkung').Assign(cMONTEUR.FieldByName('BEMERKUNG'));
       qPERSON.FieldByName('monda').Assign(cMONTEUR.FieldByName('MONDA'));
 
       qANSCHRIFT.post;
@@ -2337,8 +2307,7 @@ begin
       repeat
         if qPERSON.Active then
           qPERSON.close;
-        qPERSON.ParamByName('CROSSREF').AsInteger :=
-          cAUFTRAGGEBER.FieldByName('RID').AsInteger;
+        qPERSON.ParamByName('CROSSREF').AsInteger := cAUFTRAGGEBER.FieldByName('RID').AsInteger;
         qPERSON.open;
         if qPERSON.eof then
           e_w_PersonNeu
@@ -2348,25 +2317,22 @@ begin
 
       if qANSCHRIFT.Active then
         qANSCHRIFT.close;
-      qANSCHRIFT.ParamByName('CROSSREF').AsInteger :=
-        qPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+      qANSCHRIFT.ParamByName('CROSSREF').AsInteger := qPERSON.FieldByName('PRIV_ANSCHRIFT_R')
+        .AsInteger;
       qANSCHRIFT.open;
       if qANSCHRIFT.eof then
         ShowMessage('ANSCHRIFT verloren!');
 
       qANSCHRIFT.edit;
       qPERSON.edit;
-      qANSCHRIFT.FieldByName('name1')
-        .Assign(cAUFTRAGGEBER.FieldByName('NAME1'));
+      qANSCHRIFT.FieldByName('name1').Assign(cAUFTRAGGEBER.FieldByName('NAME1'));
       qPERSON.FieldByName('vorname').AsString :=
         cutblank(nextp(cAUFTRAGGEBER.FieldByName('NAME1').AsString, ',', 1));
       qPERSON.FieldByName('nachname').AsString :=
         cutblank(nextp(cAUFTRAGGEBER.FieldByName('NAME1').AsString, ',', 0));
-      qPERSON.FieldByName('suchbegriff')
-        .Assign(cAUFTRAGGEBER.FieldByName('name1'));
+      qPERSON.FieldByName('suchbegriff').Assign(cAUFTRAGGEBER.FieldByName('name1'));
       qPERSON.FieldByName('anrede').Assign(cAUFTRAGGEBER.FieldByName('ANREDE'));
-      qANSCHRIFT.FieldByName('name2')
-        .Assign(cAUFTRAGGEBER.FieldByName('NAME2'));
+      qANSCHRIFT.FieldByName('name2').Assign(cAUFTRAGGEBER.FieldByName('NAME2'));
       qANSCHRIFT.FieldByName('strasse').AsString :=
         cutblank(cAUFTRAGGEBER.FieldByName('STRASSE').AsString + ' ' +
         cAUFTRAGGEBER.FieldByName('HAUSNUMMER').AsString);
@@ -2374,17 +2340,13 @@ begin
         qANSCHRIFT.FieldByName('plz').AsInteger :=
           strtointdef(cAUFTRAGGEBER.FieldByName('PLZ').AsString, 0);
       qANSCHRIFT.FieldByName('ort').Assign(cAUFTRAGGEBER.FieldByName('ORT'));
-      qANSCHRIFT.FieldByName('ortsteil')
-        .Assign(cAUFTRAGGEBER.FieldByName('ORTSTEIL'));
-      qPERSON.FieldByName('ansprache')
-        .Assign(cAUFTRAGGEBER.FieldByName('ANSPRACHE'));
-      qPERSON.FieldByName('PRIV_TEL')
-        .Assign(cAUFTRAGGEBER.FieldByName('TELEFON'));
+      qANSCHRIFT.FieldByName('ortsteil').Assign(cAUFTRAGGEBER.FieldByName('ORTSTEIL'));
+      qPERSON.FieldByName('ansprache').Assign(cAUFTRAGGEBER.FieldByName('ANSPRACHE'));
+      qPERSON.FieldByName('PRIV_TEL').Assign(cAUFTRAGGEBER.FieldByName('TELEFON'));
       qPERSON.FieldByName('PRIV_FAX').Assign(cAUFTRAGGEBER.FieldByName('FAX'));
       qPERSON.FieldByName('HANDY').Assign(cAUFTRAGGEBER.FieldByName('MOBILE'));
       qPERSON.FieldByName('email').Assign(cAUFTRAGGEBER.FieldByName('EMAIL'));
-      qPERSON.FieldByName('bemerkung')
-        .Assign(cAUFTRAGGEBER.FieldByName('BEMERKUNG'));
+      qPERSON.FieldByName('bemerkung').Assign(cAUFTRAGGEBER.FieldByName('BEMERKUNG'));
       qANSCHRIFT.post;
       qPERSON.post;
       Log('Auftraggeber ' + FieldByName('RID').AsString);
@@ -2510,26 +2472,23 @@ const
 
   function CheckCreateAusgabeart: integer; // [AUSGABEART_R]
   begin
-    result := e_r_sql('select RID from AUSGABEART where (NAME=' +
-      SQLstring(aaAusgabeart) + ')');
+    result := e_r_sql('select RID from AUSGABEART where (NAME=' + SQLstring(aaAusgabeart) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GEN_AUSGABEART');
-      e_x_sql('insert into AUSGABEART (RID,NAME) values (' + inttostr(result) +
-        ',' + SQLstring(aaAusgabeart) + ')');
+      e_x_sql('insert into AUSGABEART (RID,NAME) values (' + inttostr(result) + ',' +
+        SQLstring(aaAusgabeart) + ')');
     end;
   end;
 
   function CheckCreateSortiment: integer; // [SORTIMENT_R]
   begin
-    result := e_r_sql('select RID from sortiment where ' + ' (BEZEICHNUNG=' +
-      SQLstring(aaSortiment) + ') and ' + ' (MWST_R=' +
-      inttostr(_MWST_R) + ')');
+    result := e_r_sql('select RID from sortiment where ' + ' (BEZEICHNUNG=' + SQLstring(aaSortiment)
+      + ') and ' + ' (MWST_R=' + inttostr(_MWST_R) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GLOBAL_GID');
-      e_x_sql('insert into SORTIMENT (RID,NAECHSTE_NUMMER,NETTO,MWST_R,BEZEICHNUNG) values ('
-        +
+      e_x_sql('insert into SORTIMENT (RID,NAECHSTE_NUMMER,NETTO,MWST_R,BEZEICHNUNG) values (' +
         { } inttostr(result) + ',' +
         { } '-1,' +
         { } cC_True_AsString + ',' +
@@ -2540,8 +2499,7 @@ const
 
   function CheckCreateArtikel: integer; // [ARTIKEL_R]
   begin
-    result := e_r_sql('select RID from ARTIKEL where ' + ' (DAUER=' +
-      SQLstring(INDEX) + ')');
+    result := e_r_sql('select RID from ARTIKEL where ' + ' (DAUER=' + SQLstring(INDEX) + ')');
     if (result < cRID_FirstValid) then
     begin
       // erste Anlage!!
@@ -2580,46 +2538,41 @@ const
     PreisProEinheit := StrToDouble(VKN4);
 
     // Stückpreis eintragen
-    ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' + ' (ARTIKEL_R='
-      + inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' +
-      inttostr(AUSGABEART_R) + ') and ' + ' (EINHEIT_R is null)');
+    ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' + ' (ARTIKEL_R=' +
+      inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
+      ' (EINHEIT_R is null)');
     if (ARTIKEL_AA_R < cRID_FirstValid) then
     begin
       ARTIKEL_AA_R := e_w_GEN('GEN_ARTIKEL_AA');
       e_x_sql('insert into ARTIKEL_AA (RID, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) '
-        + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(ARTIKEL_R) + ','
-        + inttostr(AUSGABEART_R) + ',' + '-1,' + '-1,' +
-        FloatToStrISO(PreisKomplett) + ',' + 'CURRENT_TIMESTAMP' + ')');
+        + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(ARTIKEL_R) + ',' +
+        inttostr(AUSGABEART_R) + ',' + '-1,' + '-1,' + FloatToStrISO(PreisKomplett) + ',' +
+        'CURRENT_TIMESTAMP' + ')');
     end
     else
     begin
-      e_x_sql('update ARTIKEL_AA set ' + ' EURO=' + FloatToStrISO(PreisKomplett)
-        + ',' + ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' + 'where RID=' +
-        inttostr(ARTIKEL_AA_R));
+      e_x_sql('update ARTIKEL_AA set ' + ' EURO=' + FloatToStrISO(PreisKomplett) + ',' +
+        ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' + 'where RID=' + inttostr(ARTIKEL_AA_R));
     end;
 
     // Preis pro Einheit eintragen falls interessant
     if (PreisProEinheit > 0.0) and (PreisKomplett <> PreisProEinheit) then
     begin
-      ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' +
-        ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' +
-        inttostr(AUSGABEART_R) + ') and ' + ' (EINHEIT_R=' +
-        inttostr(EINHEIT_R) + ')');
+      ARTIKEL_AA_R := e_r_sql('select RID from ARTIKEL_AA where ' + ' (ARTIKEL_R=' +
+        inttostr(ARTIKEL_R) + ') and ' + ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ') and ' +
+        ' (EINHEIT_R=' + inttostr(EINHEIT_R) + ')');
       if (ARTIKEL_AA_R < cRID_FirstValid) then
       begin
         ARTIKEL_AA_R := e_w_GEN('GEN_ARTIKEL_AA');
         e_x_sql('insert into ARTIKEL_AA (RID, EINHEIT_R, ARTIKEL_R, AUSGABEART_R, MINDESTBESTAND, GEWICHT, EURO, LETZTEAENDERUNG) '
-          + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(EINHEIT_R) +
-          ',' + inttostr(ARTIKEL_R) + ',' + inttostr(AUSGABEART_R) + ',' + '-1,'
-          + '-1,' + FloatToStrISO(PreisProEinheit) + ',' +
-          'CURRENT_TIMESTAMP' + ')');
+          + ' values (' + inttostr(ARTIKEL_AA_R) + ',' + inttostr(EINHEIT_R) + ',' +
+          inttostr(ARTIKEL_R) + ',' + inttostr(AUSGABEART_R) + ',' + '-1,' + '-1,' +
+          FloatToStrISO(PreisProEinheit) + ',' + 'CURRENT_TIMESTAMP' + ')');
       end
       else
       begin
-        e_x_sql('update ARTIKEL_AA set ' + ' EURO=' +
-          FloatToStrISO(PreisProEinheit) + ',' +
-          ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' + 'where RID=' +
-          inttostr(ARTIKEL_AA_R));
+        e_x_sql('update ARTIKEL_AA set ' + ' EURO=' + FloatToStrISO(PreisProEinheit) + ',' +
+          ' LETZTEAENDERUNG=CURRENT_TIMESTAMP ' + 'where RID=' + inttostr(ARTIKEL_AA_R));
       end;
     end;
 
@@ -2628,13 +2581,13 @@ const
   function CheckCreateEinheit: integer;
   begin
     //
-    result := e_r_sql('select RID from EINHEIT ' +
-      'where (EINHEIT=1) and (BASIS=' + SQLstring(ABG) + ')');
+    result := e_r_sql('select RID from EINHEIT ' + 'where (EINHEIT=1) and (BASIS=' +
+      SQLstring(ABG) + ')');
     if (result < cRID_FirstValid) then
     begin
       result := e_w_GEN('GEN_EINHEIT');
-      e_x_sql('insert into EINHEIT (RID,EINHEIT,BASIS) values ' + '(' +
-        inttostr(result) + ',' + '1,' + SQLstring(ABG) + ')');
+      e_x_sql('insert into EINHEIT (RID,EINHEIT,BASIS) values ' + '(' + inttostr(result) + ',' +
+        '1,' + SQLstring(ABG) + ')');
     end;
   end;
 
@@ -2650,8 +2603,7 @@ const
     if (result < cRID_FirstValid) then
       result := e_w_PersonNeu;
 
-    ANSCHRIFT_R := e_r_sql('select PRIV_ANSCHRIFT_R from PERSON where RID=' +
-      inttostr(result));
+    ANSCHRIFT_R := e_r_sql('select PRIV_ANSCHRIFT_R from PERSON where RID=' + inttostr(result));
 
     e_x_sql('update PERSON set ' +
       { } ' SUCHBEGRIFF=''' + EnsureSQL(copy(VKURZ, 1, 45)) + ' Barsoi'', ' +
@@ -3113,8 +3065,7 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormepIMPORT.e_w_RechnungDatumSetzen(ib_q: TIB_Query;
-  Aufdatum: TDateTime);
+procedure TFormepIMPORT.e_w_RechnungDatumSetzen(ib_q: TIB_Query; Aufdatum: TDateTime);
 var
   _NewDate: TANFiXDate;
   BELEG_R: integer;
@@ -3134,14 +3085,13 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_RechnungsDatumSetzen(' + inttostr(BELEG_R)
-        + '): ' + E.Message);
+      CareTakerLog(cERRORText + ' e_w_RechnungsDatumSetzen(' + inttostr(BELEG_R) + '): ' +
+        E.Message);
     end;
   end;
 end;
 
-procedure TFormepIMPORT.e_w_RechnungDatumSetzen(ib_q: TIB_Query;
-  Aufdatum: TANFiXDate);
+procedure TFormepIMPORT.e_w_RechnungDatumSetzen(ib_q: TIB_Query; Aufdatum: TANFiXDate);
 begin
   e_w_RechnungDatumSetzen(ib_q, long2datetime(Aufdatum));
 end;
@@ -3232,7 +3182,7 @@ begin
   ProgressBar1.max := AllTheRechnungen.count;
   ListBox1.clear;
   StartTime := 0;
-  PERSON_R := cRID_Null;
+  PERSON_R := cRID_NULL;
   for n := 0 to pred(AllTheRechnungen.count) do
   begin
     //
