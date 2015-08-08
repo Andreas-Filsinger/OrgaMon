@@ -373,9 +373,9 @@ object FormepIMPORT: TFormepIMPORT
       object Label11: TLabel
         Left = 16
         Top = 16
-        Width = 272
+        Width = 257
         Height = 13
-        Caption = 'Migration "AUSGANGSRECHNUNGEN" -> "1400"'
+        Caption = 'Migration "AUSGANGSRECHNUNG" -> "1400"'
       end
       object Button16: TButton
         Left = 494
