@@ -2146,6 +2146,8 @@ begin
 
     // templates Archive downloaden
     FileDelete(cAutoUpPath + cTemplatesArchiveFName);
+
+    SolidInit(IdFTP1);
     with IdFTP1 do
     begin
       Host := iAutoUpFTP_host;
@@ -2158,6 +2160,7 @@ begin
         Log('FTP: connect ' + UserName + '@' + Host + ' ...');
         connect;
       end;
+
       if (iAutoUpFTP_root <> '') then
         ChangeDir(iAutoUpFTP_root);
 

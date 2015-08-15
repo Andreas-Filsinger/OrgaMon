@@ -6,7 +6,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=JonDaServer
-AppVerName=JonDaServer 2.215
+AppVerName=JonDaServer 2.216
 AppCopyright=Copyright (C) 2009-2012 Andreas Filsinger
 DefaultDirName={pf}\JonDaServer
 DefaultGroupName=JonDaServer
@@ -15,8 +15,8 @@ DisableStartupPrompt=yes
 DisableDirPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-JonDaServer-2215
-AppVersion=2.215
+OutputBaseFilename=Setup-JonDaServer-2216
+AppVersion=2.216
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
