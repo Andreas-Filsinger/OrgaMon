@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.120 (16.08.15) Andreas Filsinger
+
+ Bug: Ausgleich Forderungen: Eigene Sortierung war nicht mehr möglich
+ Bug: Ausgleich Forderungen: Verschieben der Liste war nicht möglich
+
+ Neu: Ausgleich Forderungen: Optimierung nur bis 12 offenen Posten
+
 Rev 8.119 (03.08.15) Andreas Filsinger
 
  Bug: Ausgleich Forderungen: Blind für Treffer bei folgenden Gutschriften

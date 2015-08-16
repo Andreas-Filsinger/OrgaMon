@@ -371,7 +371,7 @@ type
 
     function CreateSymbol(id: Integer): TBitMap;
     procedure Erzeuge_sForderungen(PERSON_R: Integer);
-    procedure Erzeuge_Show_sYellow(Zahlung: double);
+    procedure Erzeuge_Show_sYellow(Zahlung: double; SuchePassendeKombination: boolean);
 
     procedure SyncKontoUmsaetze;
     procedure SyncNeueEingaenge;
@@ -1406,6 +1406,7 @@ begin
   begin
 
     BeginHourGlass;
+    SpeedButton22.Enabled := false;
     AnzVerbuchungen := 0;
     setRow(0);
 
@@ -1470,6 +1471,7 @@ begin
       application.processmessages;
 
     until false;
+    SpeedButton22.Enabled := true;
     EndHourGlass;
     if (AnzVerbuchungen = 0) then
       ShowMessage('Keine Datensätze zum automatischen Forderungsausgleich gefunden!')
@@ -1681,7 +1683,7 @@ end;
 procedure TFormBuchhalter.SpeedButton38Click(Sender: TObject);
 begin
   inc(sAusgleich_FirstButtonOffset);
-  Erzeuge_Show_sYellow(sBetrag);
+  Erzeuge_Show_sYellow(sBetrag,false);
 end;
 
 procedure TFormBuchhalter.SpeedButton39Click(Sender: TObject);
@@ -1689,7 +1691,7 @@ begin
   if (sAusgleich_FirstButtonOffset > 0) then
   begin
     dec(sAusgleich_FirstButtonOffset);
-    Erzeuge_Show_sYellow(sBetrag);
+    Erzeuge_Show_sYellow(sBetrag,false);
   end;
 end;
 
@@ -2096,6 +2098,7 @@ begin
   // swap
   if (sForderungen.count > 1) then
   begin
+    BeginHourGlass;
     repeat
       sForderungen_Index := ACol - sAusgleich_FirstButtonOffset;
 
@@ -2116,7 +2119,8 @@ begin
       end;
 
     until true;
-    Erzeuge_Show_sYellow(sBetrag);
+    Erzeuge_Show_sYellow(sBetrag, false);
+    EndHourGlass;
   end;
 
 end;
@@ -3931,7 +3935,7 @@ begin
 
                     Draw_PersonSaldo(saldo);
                     Erzeuge_sForderungen(PERSON_R);
-                    Erzeuge_Show_sYellow(sBetrag);
+                    Erzeuge_Show_sYellow(sBetrag,true);
 
                     // Arbeit aufzeichnen im Cache
                     DrawGrid3_PERSON_R := PERSON_R;
@@ -4427,10 +4431,10 @@ end;
 procedure TFormBuchhalter.RefreshForderungen;
 begin
   Erzeuge_sForderungen(rPERSON_R);
-  Erzeuge_Show_sYellow(sBetrag);
+  Erzeuge_Show_sYellow(sBetrag,true);
 end;
 
-procedure TFormBuchhalter.Erzeuge_Show_sYellow(Zahlung: double);
+procedure TFormBuchhalter.Erzeuge_Show_sYellow(Zahlung: double; SuchePassendeKombination: boolean);
 
   procedure setCaption(ACol, ARow: Integer; s: string);
   begin
@@ -4506,38 +4510,41 @@ begin
   begin
 
     // Volltreffer durch Kombinatorik suchen
+    // sForderungen entsprechend rumwirbeln
     VolltrefferGefunden := false;
     n := sForderungen.count;
-    for k := 1 to n do
-    begin
-      v := TgpIntegerList.Create;
-      while (nk(n, k, v)) do
-      begin
-        if isEqual(Zahlung, sForderungen_saldo(v)) then
+    if SuchePassendeKombination then
+      if (n <= 12) then
+        for k := 1 to n do
         begin
-          sForderungenNeu := TStringList.Create;
+          v := TgpIntegerList.Create;
+          while (nk(n, k, v)) do
+          begin
+            if isEqual(Zahlung, sForderungen_saldo(v)) then
+            begin
+              sForderungenNeu := TStringList.Create;
 
-          // Passendes: Vorne die Gutschriften, dann die Forderungen
-          for i := 0 to pred(v.count) do
-            if isHaben(sForderungen_saldo(v[i])) then
-              sForderungenNeu.add(sForderungen[v[i]])
-            else
-              sForderungenNeu.insert(0, sForderungen[v[i]]);
+              // Passendes: Vorne die Gutschriften, dann die Forderungen
+              for i := 0 to pred(v.count) do
+                if isHaben(sForderungen_saldo(v[i])) then
+                  sForderungenNeu.add(sForderungen[v[i]])
+                else
+                  sForderungenNeu.insert(0, sForderungen[v[i]]);
 
-          // Unpassendes: Hinten dran
-          for i := 0 to pred(n) do
-            if (v.IndexOf(i) = -1) then
-              sForderungenNeu.add(sForderungen[i]);
+              // Unpassendes: Hinten dran
+              for i := 0 to pred(n) do
+                if (v.IndexOf(i) = -1) then
+                  sForderungenNeu.add(sForderungen[i]);
 
-          FreeAndNil(sForderungen);
-          sForderungen := sForderungenNeu;
-          VolltrefferGefunden := true;
-          break;
+              FreeAndNil(sForderungen);
+              sForderungen := sForderungenNeu;
+              VolltrefferGefunden := true;
+              break;
+            end;
+          end;
+          if VolltrefferGefunden then
+            break;
         end;
-      end;
-      if VolltrefferGefunden then
-        break;
-    end;
 
     for n := 0 to pred(sForderungen.count) do
     begin
@@ -4980,13 +4987,15 @@ end;
 
 procedure TFormBuchhalter.CheckBox5Click(Sender: TObject);
 begin
+  BeginHourGlass;
   Erzeuge_sForderungen(rPERSON_R);
-  Erzeuge_Show_sYellow(sBetrag);
+  Erzeuge_Show_sYellow(sBetrag,true);
+  EndHourGlass;
 end;
 
 procedure TFormBuchhalter.CheckBox6Click(Sender: TObject);
 begin
-  Erzeuge_Show_sYellow(sBetrag);
+  Erzeuge_Show_sYellow(sBetrag,false);
 end;
 
 procedure TFormBuchhalter.CheckBox7Click(Sender: TObject);
@@ -5276,7 +5285,7 @@ begin
     if (ItemDebiRIDs.count = 0) then
     begin
       Erzeuge_sForderungen(cRID_Null);
-      Erzeuge_Show_sYellow(sBetrag);
+      Erzeuge_Show_sYellow(sBetrag,false);
       Draw_PersonSaldo(0);
     end;
     DrawGrid3.Refresh;
