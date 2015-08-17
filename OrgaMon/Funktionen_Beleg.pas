@@ -5314,17 +5314,7 @@ end;
 
 function e_r_BelegSaldo(BELEG_R: integer; TEILLIEFERUNG: integer = cRID_Null): double;
 begin
-
   if is1400 then
-  begin
-    if (TEILLIEFERUNG = cRID_Null) then
-      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where BELEG_R=' +
-        inttostr(BELEG_R))
-    else
-      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where ' + '(BELEG_R=' +
-        inttostr(BELEG_R) + ') and ' + '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
-  end
-  else
   begin
     if (TEILLIEFERUNG = cRID_Null) then
       result := e_r_sqld(
@@ -5337,6 +5327,15 @@ begin
         { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
         { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
+  end
+  else
+  begin
+    if (TEILLIEFERUNG = cRID_Null) then
+      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where BELEG_R=' +
+        inttostr(BELEG_R))
+    else
+      result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where ' + '(BELEG_R=' +
+        inttostr(BELEG_R) + ') and ' + '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
   end;
 end;
 

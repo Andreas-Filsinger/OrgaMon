@@ -210,6 +210,7 @@ type
     Label1: TLabel;
     CheckBox7: TCheckBox;
     SpeedButton48: TSpeedButton;
+    SpeedButton33: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -306,6 +307,7 @@ type
     procedure SpeedButton46Click(Sender: TObject);
     procedure SpeedButton47Click(Sender: TObject);
     procedure SpeedButton48Click(Sender: TObject);
+    procedure SpeedButton33Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -1406,7 +1408,7 @@ begin
   begin
 
     BeginHourGlass;
-    SpeedButton22.Enabled := false;
+    SpeedButton22.enabled := false;
     AnzVerbuchungen := 0;
     setRow(0);
 
@@ -1471,7 +1473,7 @@ begin
       application.processmessages;
 
     until false;
-    SpeedButton22.Enabled := true;
+    SpeedButton22.enabled := true;
     EndHourGlass;
     if (AnzVerbuchungen = 0) then
       ShowMessage('Keine Datensätze zum automatischen Forderungsausgleich gefunden!')
@@ -1626,6 +1628,12 @@ begin
     { } cBuch_HeaderLineAusgleich + #13 + HugeSingleLine(sAusgleich));
 end;
 
+procedure TFormBuchhalter.SpeedButton33Click(Sender: TObject);
+begin
+  Erzeuge_sForderungen(rPERSON_R);
+  Erzeuge_Show_sYellow(sBetrag, false);
+end;
+
 procedure TFormBuchhalter.SpeedButton34Click(Sender: TObject);
 var
   sOLAPFName: TStringList;
@@ -1683,7 +1691,7 @@ end;
 procedure TFormBuchhalter.SpeedButton38Click(Sender: TObject);
 begin
   inc(sAusgleich_FirstButtonOffset);
-  Erzeuge_Show_sYellow(sBetrag,false);
+  Erzeuge_Show_sYellow(sBetrag, false);
 end;
 
 procedure TFormBuchhalter.SpeedButton39Click(Sender: TObject);
@@ -1691,7 +1699,7 @@ begin
   if (sAusgleich_FirstButtonOffset > 0) then
   begin
     dec(sAusgleich_FirstButtonOffset);
-    Erzeuge_Show_sYellow(sBetrag,false);
+    Erzeuge_Show_sYellow(sBetrag, false);
   end;
 end;
 
@@ -3935,7 +3943,7 @@ begin
 
                     Draw_PersonSaldo(saldo);
                     Erzeuge_sForderungen(PERSON_R);
-                    Erzeuge_Show_sYellow(sBetrag,true);
+                    Erzeuge_Show_sYellow(sBetrag, true);
 
                     // Arbeit aufzeichnen im Cache
                     DrawGrid3_PERSON_R := PERSON_R;
@@ -4431,7 +4439,7 @@ end;
 procedure TFormBuchhalter.RefreshForderungen;
 begin
   Erzeuge_sForderungen(rPERSON_R);
-  Erzeuge_Show_sYellow(sBetrag,true);
+  Erzeuge_Show_sYellow(sBetrag, true);
 end;
 
 procedure TFormBuchhalter.Erzeuge_Show_sYellow(Zahlung: double; SuchePassendeKombination: boolean);
@@ -4514,7 +4522,7 @@ begin
     VolltrefferGefunden := false;
     n := sForderungen.count;
     if SuchePassendeKombination then
-      if (n <= 12) then
+      if (n >= 2) and (n <= 12) then
         for k := 1 to n do
         begin
           v := TgpIntegerList.Create;
@@ -4538,6 +4546,7 @@ begin
 
               FreeAndNil(sForderungen);
               sForderungen := sForderungenNeu;
+              SpeedButton33.enabled := true;
               VolltrefferGefunden := true;
               break;
             end;
@@ -4829,6 +4838,7 @@ var
   Forderung, GesamteForderung: double;
   sINFO: TStringList;
 begin
+  SpeedButton33.enabled := false;
   sAusgleich_FirstButtonOffset := 0;
 
   if not(assigned(sForderungen)) then
@@ -4989,13 +4999,13 @@ procedure TFormBuchhalter.CheckBox5Click(Sender: TObject);
 begin
   BeginHourGlass;
   Erzeuge_sForderungen(rPERSON_R);
-  Erzeuge_Show_sYellow(sBetrag,true);
+  Erzeuge_Show_sYellow(sBetrag, true);
   EndHourGlass;
 end;
 
 procedure TFormBuchhalter.CheckBox6Click(Sender: TObject);
 begin
-  Erzeuge_Show_sYellow(sBetrag,false);
+  Erzeuge_Show_sYellow(sBetrag, false);
 end;
 
 procedure TFormBuchhalter.CheckBox7Click(Sender: TObject);
@@ -5281,14 +5291,17 @@ begin
         end;
       until true;
     end;
+
     DrawGrid3.RowCount := ItemDebiRIDs.count;
+    DrawGrid3.Row := 0;
     if (ItemDebiRIDs.count = 0) then
     begin
       Erzeuge_sForderungen(cRID_Null);
-      Erzeuge_Show_sYellow(sBetrag,false);
+      Erzeuge_Show_sYellow(sBetrag, false);
       Draw_PersonSaldo(0);
     end;
     DrawGrid3.Refresh;
+
     repeat
 
       if isGreen then

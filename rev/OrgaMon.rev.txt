@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.121 (17.08.15) Andreas Filsinger
+
+ Bug: Forderungs-Saldo eines einzelnen Belegs wurde mit "0" berechnet
+ Bug: Ausgleich Forderungen: Debitorenliste blieb bei Debitorwechsel auf der aktuellen Listen-
+      position stehen
+
+ Neu: Ausgleich Forderungen: Kombinatorischer Ausgleichsvorschlag kann deaktiviert werden
+
 Rev 8.120 (16.08.15) Andreas Filsinger
 
  Bug: Ausgleich Forderungen: Eigene Sortierung war nicht mehr möglich
