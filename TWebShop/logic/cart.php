@@ -116,9 +116,21 @@ class twebshop_cart extends tvisual {
             $article = new twebshop_article($article_r, $version_r, $this->person_r, $quantity, $detail, $cart_r); // Nein, neuen Artikel hinzufügen
 
             /* --> 02.03.2015 michaelhacksoftware : Mp3 Downloads und reguläre Artikel nicht im Warenkorb mischen lassen */
-            if ($this->positions > 0 and !$this->containsVersion($article->getVersion())) {
-                $errorlist->add(SENTENCE_CART_MP3_REGULAR_MIX_NOT_ALLOWED);
-                return null;
+            if ($this->positions > 0) {
+                
+                $abort = false;
+                
+                if ($article->getVersion() == toption::$properties["VERSION_MP3"]) {
+                    if (!$this->containsVersion(toption::$properties["VERSION_MP3"])) $abort = true;
+                } else {
+                    if ($this->containsVersion(toption::$properties["VERSION_MP3"])) $abort = true;
+                }
+                
+                if ($abort) {
+                    $errorlist->add(SENTENCE_CART_MP3_REGULAR_MIX_NOT_ALLOWED);
+                    return null;
+                }
+                
             }
             /* <-- */
             
