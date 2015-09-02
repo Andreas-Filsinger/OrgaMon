@@ -25,10 +25,6 @@ object FormDruckSpooler: TFormDruckSpooler
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Drucken'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton4: TSpeedButton
         Left = 647
         Top = 10

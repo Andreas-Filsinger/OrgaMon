@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.237; // ../rev/Oc.rev.txt
+  Version: single = 1.238; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -91,7 +91,6 @@ begin
   result := 0;
 end;
 
-end.
 
 {$ELSE}
   uses Windows, SysUtils, IniFiles, math,
@@ -4372,7 +4371,7 @@ var
 
             if (FormatCommand = '0') then
             begin
-              if (StrFilter(AnsiupperCase(s), cBuchstaben) = '') then
+              if (StrFilter(AnsiupperCase(s), cBuchstaben + cZeichen) = '') then
               begin
                 FillChar := '0';
                 LeftSide := true;
@@ -10908,5 +10907,7 @@ begin
   result := (ErrorCount = 0);
 end;
 
-end.
 {$ENDIF}
+
+end.
+

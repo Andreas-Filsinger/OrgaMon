@@ -1050,7 +1050,7 @@ var
   AUSGABEART_R: integer;
   BuchenOK: boolean;
 begin
-  // Auf den Artikel springen!
+  // "W", Wareneingang buchen
   with IB_Query2 do
   begin
     Button17.enabled := false;

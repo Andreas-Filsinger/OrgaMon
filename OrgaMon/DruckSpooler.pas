@@ -133,190 +133,188 @@ var
   PERSON_R: integer;
   n: integer;
 begin
- with FormDruckSpooler do
- begin
-  if not(assigned(cLAGER)) then
+  with FormDruckSpooler do
   begin
-    // defaults
-    PERSON_R := cRID_Null;
-
-    // Warenbewegung
-    cWARENBEWEGUNG := DataModuleDatenbank.nCursor;
-    with cWARENBEWEGUNG do
+    if not(assigned(cLAGER)) then
     begin
-      sql.Add('select * from WARENBEWEGUNG where RID=' + inttostr(JobIsAbout));
-      ApiFirst;
-      if eof then
-        Log('ERROR: Warenbewegung_R Referenz ungültig!');
-    end;
+      // defaults
+      PERSON_R := cRID_Null;
 
-    // Lager
-    cLAGER := DataModuleDatenbank.nCursor;
-    if not(cWARENBEWEGUNG.FieldByName('LAGER_R').IsNull) then
-    begin
-      with cLAGER do
+      // Warenbewegung
+      cWARENBEWEGUNG := DataModuleDatenbank.nCursor;
+      with cWARENBEWEGUNG do
       begin
-        sql.Add('select * from LAGER where RID = ' + inttostr
-            (cWARENBEWEGUNG.FieldByName('LAGER_R').AsInteger));
+        sql.Add('select * from WARENBEWEGUNG where RID=' + inttostr(JobIsAbout));
         ApiFirst;
         if eof then
-          Log('ERROR: LAGER_R Referenz ungültig!');
+          Log('ERROR: Warenbewegung_R Referenz ungültig!');
       end;
-    end;
 
-    // Artikel
-    cARTIKEL := DataModuleDatenbank.nCursor;
-    if not(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').IsNull) then
-      with cARTIKEL do
+      // Lager
+      cLAGER := DataModuleDatenbank.nCursor;
+      if not(cWARENBEWEGUNG.FieldByName('LAGER_R').IsNull) then
       begin
-        sql.Add('select * from ARTIKEL where RID = ' + inttostr
-            (cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
-        ApiFirst;
-        if eof then
-          Log('ERROR: ARTIKEL_R Referenz ungültig!');
-      end;
-
-    // Beleg
-    cBELEG := DataModuleDatenbank.nCursor;
-    with cBELEG do
-    begin
-      sql.Add('select * from BELEG where RID=' + inttostr
-          (cWARENBEWEGUNG.FieldByName('BELEG_R').AsInteger));
-      ApiFirst;
-      if not(eof) then
-      begin
-        if FieldByName('LIEFERANSCHRIFT_R').IsNull then
-          PERSON_R := FieldByName('PERSON_R').AsInteger
-        else
-          PERSON_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
-      end;
-    end;
-
-    // Person
-    cPERSON := DataModuleDatenbank.nCursor;
-    if (PERSON_R >= cRID_FirstValid) then
-      with cPERSON do
-      begin
-        sql.Add('select * from PERSON where RID=' + inttostr(PERSON_R));
-        ApiFirst;
-      end;
-
-    // Anschrift
-    cANSCHRIFT := DataModuleDatenbank.nCursor;
-    if (PERSON_R >= cRID_FirstValid) then
-      with cANSCHRIFT do
-      begin
-        sql.Add('select * from ANSCHRIFT where RID=' + inttostr
-            (cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
-        ApiFirst;
-      end;
-
-    // Adresse
-    if (PERSON_R >= cRID_FirstValid) then
-    begin
-      cADRESSE := e_r_Adressat(PERSON_R);
-      cADRESSE.Add(cANSCHRIFT.FieldByName('STRASSE').AsString);
-      cADRESSE.Add(e_r_ort(cANSCHRIFT));
-    end
-    else
-    begin
-      cADRESSE := TStringList.create;
-      for n := 0 to 5 do
-        cADRESSE.Add('');
-    end;
-
-  end;
-
-  sTable := nextp(VarName, '.', 0);
-  sField := nextp(VarName, '.', 1);
-
-  result := '?';
-  try
-
-    // Warenbewegung
-    if (sTable = 'WARENBEWEGUNG') then
-    begin
-      repeat
-
-        if (sField = 'ePreis') then
+        with cLAGER do
         begin
-          result := e_r_PreisText
-            (cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
-            cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger);
-          break;
+          sql.Add('select * from LAGER where RID = ' +
+            inttostr(cWARENBEWEGUNG.FieldByName('LAGER_R').AsInteger));
+          ApiFirst;
+          if eof then
+            Log('ERROR: LAGER_R Referenz ungültig!');
+        end;
+      end;
+
+      // Artikel
+      cARTIKEL := DataModuleDatenbank.nCursor;
+      if not(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').IsNull) then
+        with cARTIKEL do
+        begin
+          sql.Add('select * from ARTIKEL where RID = ' +
+            inttostr(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
+          ApiFirst;
+          if eof then
+            Log('ERROR: ARTIKEL_R Referenz ungültig!');
         end;
 
-        if cWARENBEWEGUNG.FieldByName(sField).IsNull then
-          result := '0'
-        else
-          result := cWARENBEWEGUNG.FieldByName(sField).AsString;
-      until true;
-    end;
-
-    // Artikel
-    if (sTable = 'ARTIKEL') then
-    begin
-      repeat
-
-        if (sField = 'ePreis') then
+      // Beleg
+      cBELEG := DataModuleDatenbank.nCursor;
+      with cBELEG do
+      begin
+        sql.Add('select * from BELEG where RID=' + inttostr(cWARENBEWEGUNG.FieldByName('BELEG_R')
+          .AsInteger));
+        ApiFirst;
+        if not(eof) then
         begin
-          result := e_r_PreisText(0,
-            cARTIKEL.FieldByName('RID').AsInteger);
-          break;
+          if FieldByName('LIEFERANSCHRIFT_R').IsNull then
+            PERSON_R := FieldByName('PERSON_R').AsInteger
+          else
+            PERSON_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
+        end;
+      end;
+
+      // Person
+      cPERSON := DataModuleDatenbank.nCursor;
+      if (PERSON_R >= cRID_FirstValid) then
+        with cPERSON do
+        begin
+          sql.Add('select * from PERSON where RID=' + inttostr(PERSON_R));
+          ApiFirst;
         end;
 
-        if cARTIKEL.FieldByName(sField).IsNull then
+      // Anschrift
+      cANSCHRIFT := DataModuleDatenbank.nCursor;
+      if (PERSON_R >= cRID_FirstValid) then
+        with cANSCHRIFT do
+        begin
+          sql.Add('select * from ANSCHRIFT where RID=' +
+            inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
+          ApiFirst;
+        end;
+
+      // Adresse
+      if (PERSON_R >= cRID_FirstValid) then
+      begin
+        cADRESSE := e_r_Adressat(PERSON_R);
+        cADRESSE.Add(cANSCHRIFT.FieldByName('STRASSE').AsString);
+        cADRESSE.Add(e_r_ort(cANSCHRIFT));
+      end
+      else
+      begin
+        cADRESSE := TStringList.create;
+        for n := 0 to 5 do
+          cADRESSE.Add('');
+      end;
+
+    end;
+
+    sTable := nextp(VarName, '.', 0);
+    sField := nextp(VarName, '.', 1);
+
+    result := '?';
+    try
+
+      // Warenbewegung
+      if (sTable = 'WARENBEWEGUNG') then
+      begin
+        repeat
+
+          if (sField = 'ePreis') then
+          begin
+            result := e_r_PreisText(cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
+              cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger);
+            break;
+          end;
+
+          if cWARENBEWEGUNG.FieldByName(sField).IsNull then
+            result := '0'
+          else
+            result := cWARENBEWEGUNG.FieldByName(sField).AsString;
+        until true;
+      end;
+
+      // Artikel
+      if (sTable = 'ARTIKEL') then
+      begin
+        repeat
+
+          if (sField = 'ePreis') then
+          begin
+            result := e_r_PreisText(0, cARTIKEL.FieldByName('RID').AsInteger);
+            break;
+          end;
+
+          if cARTIKEL.FieldByName(sField).IsNull then
+            result := '0'
+          else
+            result := cARTIKEL.FieldByName(sField).AsString;
+        until true;
+      end;
+
+      // Lager
+      if (sTable = 'LAGER') then
+        if cLAGER.active then
+          result := cLAGER.FieldByName(sField).AsString
+        else
+          result := '';
+
+      // Person
+      if (sTable = 'PERSON') then
+      begin
+        if cPERSON.FieldByName(sField).IsNull then
           result := '0'
         else
-          result := cARTIKEL.FieldByName(sField).AsString;
-      until true;
-    end;
-
-    // Lager
-    if (sTable = 'LAGER') then
-      if cLAGER.active then
-        result := cLAGER.FieldByName(sField).AsString
-      else
-        result := '';
-
-    // Person
-    if (sTable = 'PERSON') then
-    begin
-      if cPERSON.FieldByName(sField).IsNull then
-        result := '0'
-      else
-        result := cPERSON.FieldByName(sField).AsString;
-    end;
-
-    // Anschrift
-    if (sTable = 'ANSCHRIFT') then
-    begin
-      if cANSCHRIFT.FieldByName(sField).IsNull then
-        result := '0'
-      else
-        result := cANSCHRIFT.FieldByName(sField).AsString;
-    end;
-
-    // Beleg
-    if (sTable = 'BELEG') then
-    begin
-      if cBELEG.FieldByName(sField).IsNull then
-        result := '0'
-      else
-        result := cBELEG.FieldByName(sField).AsString;
-    end;
-
-    // Adresse
-    if (sTable = 'ADRESSE') then
-    begin
-      result := cADRESSE[strtoint(sField)];
-    end;
-
-  except
-    on e: exception do
-      Log('ERROR: ' + e.message);
-  end;
+          result := cPERSON.FieldByName(sField).AsString;
       end;
+
+      // Anschrift
+      if (sTable = 'ANSCHRIFT') then
+      begin
+        if cANSCHRIFT.FieldByName(sField).IsNull then
+          result := '0'
+        else
+          result := cANSCHRIFT.FieldByName(sField).AsString;
+      end;
+
+      // Beleg
+      if (sTable = 'BELEG') then
+      begin
+        if cBELEG.FieldByName(sField).IsNull then
+          result := '0'
+        else
+          result := cBELEG.FieldByName(sField).AsString;
+      end;
+
+      // Adresse
+      if (sTable = 'ADRESSE') then
+      begin
+        result := cADRESSE[strtoint(sField)];
+      end;
+
+    except
+      on e: exception do
+        Log('ERROR: ' + e.message);
+    end;
+  end;
 end;
 
 procedure TFormDruckSpooler.CheckBox1Click(Sender: TObject);
@@ -331,17 +329,14 @@ var
 begin
   with ListBox2 do
     if (items.count > 0) then
-      if doit(
-        'Sind alle Druckaufträge in ausreichender Anzahl einwandfrei ausgedruckt'
-        ) then
+      if doit('Sind alle Druckaufträge in ausreichender Anzahl einwandfrei ausgedruckt') then
       begin
         BeginHourGlass;
-        sMovePath := inttostrN(e_w_GEN('GEN_TICKET'), 10)
-          + '\';
+        sMovePath := inttostrN(e_w_GEN('GEN_TICKET'), 10) + '\';
         CheckCreateDir(MyProgramPath + cDruckauftragPath + sMovePath);
         for n := 0 to pred(items.count) do
-          FileMove(MyProgramPath + cDruckauftragPath + items[n],
-            MyProgramPath + cDruckauftragPath + sMovePath + items[n]);
+          FileMove(MyProgramPath + cDruckauftragPath + items[n], MyProgramPath + cDruckauftragPath +
+            sMovePath + items[n]);
         refreshDruckauftraege;
         EndHourGlass;
       end;
@@ -410,8 +405,7 @@ begin
 
               // Inventur-Label
               if FieldByName('MENGE_BISHER').IsNotNull then
-                if (FieldByName('MENGE_BISHER').AsInteger = FieldByName
-                    ('MENGE_NEU').AsInteger) then
+                if (FieldByName('MENGE_BISHER').AsInteger = FieldByName('MENGE_NEU').AsInteger) then
                 begin
                   BASICName := cInventur;
                   break;
@@ -425,8 +419,7 @@ begin
               end;
 
               // Waren-Eingang ins Lager oder ins Übergangsfach
-              if e_r_IsUebergangsfach
-                (FieldByName('LAGER_R').AsInteger) then
+              if e_r_IsUebergangsfach(FieldByName('LAGER_R').AsInteger) then
                 BASICName := cZugangsVorgang + ' ' + cVerlagUebergangsfach
               else
                 BASICName := cZugangsVorgang + ' ' + cLagerBegriff;
@@ -436,8 +429,7 @@ begin
             cDRUCK := DataModuleDatenbank.nCursor;
             with cDRUCK do
             begin
-              sql.Add('select DEFINITION from DRUCK where NAME=''' +
-                  BASICName + '''');
+              sql.Add('select DEFINITION from DRUCK where NAME=''' + BASICName + '''');
               ApiFirst;
               if eof then
                 Log('WARNING: Druckstück "' + BASICName + '" nicht gefunden!')
@@ -511,12 +503,13 @@ begin
         begin
 
           // Check if service is wanted
-          Timer1.Enabled := not(pDisableDrucker) and
-            (AnsiUpperCase(ComputerName) = AnsiUpperCase(iLabelHost)
-            );
+          Timer1.Enabled :=
+          { } not(pDisableDrucker) and
+          { } (AnsiUpperCase(ComputerName) = AnsiUpperCase(iLabelHost));
+
           CheckBox1.Checked := Timer1.Enabled;
-          if Timer1.enabled then
-           FormMain.panel6.color := cllime;
+          if Timer1.Enabled then
+            FormMain.Panel6.color := cllime;
 
           //
           inc(TimerState);
@@ -539,7 +532,6 @@ begin
     end;
   end;
 end;
-
 
 procedure TFormDruckSpooler.Button20Click(Sender: TObject);
 var
@@ -580,8 +572,7 @@ begin
 
         // Inventur-Label
         if FieldByName('MENGE_BISHER').IsNotNull then
-          if (FieldByName('MENGE_BISHER').AsInteger = FieldByName('MENGE_NEU')
-              .AsInteger) then
+          if (FieldByName('MENGE_BISHER').AsInteger = FieldByName('MENGE_NEU').AsInteger) then
           begin
             BASICName := cInventur;
             break;
@@ -595,8 +586,7 @@ begin
         end;
 
         // Waren-Eingang ins Lager oder ins Übergangsfach
-        if e_r_IsUebergangsfach
-          (FieldByName('LAGER_R').AsInteger) then
+        if e_r_IsUebergangsfach(FieldByName('LAGER_R').AsInteger) then
           BASICName := cZugangsVorgang + ' ' + cVerlagUebergangsfach
         else
           BASICName := cZugangsVorgang + ' ' + cLagerBegriff;
@@ -606,8 +596,7 @@ begin
       cDRUCK := DataModuleDatenbank.nCursor;
       with cDRUCK do
       begin
-        sql.Add('select DEFINITION from DRUCK where NAME=''' + BASICName +
-            '''');
+        sql.Add('select DEFINITION from DRUCK where NAME=''' + BASICName + '''');
         ApiFirst;
         if eof then
           Log('WARNING: Druckstück "' + BASICName + '" nicht gefunden!')
@@ -756,7 +745,7 @@ begin
       with DSQL do
       begin
         sql.Add('update WARENBEWEGUNG set GEDRUCKT = :CROSSREF where RID=' +
-            inttostr(IB_Query1.FieldByName('RID').AsInteger));
+          inttostr(IB_Query1.FieldByName('RID').AsInteger));
         parambyname('CROSSREF').AsDate := Date;
         execute;
       end;
@@ -776,9 +765,8 @@ begin
   if IB_Query1.active then
     if IB_Query1.FieldByName('GEDRUCKT').IsNotNull then
     begin
-      e_x_sql(
-        'update WARENBEWEGUNG set GEDRUCKT = NULL where RID=' + inttostr
-          (IB_Query1.FieldByName('RID').AsInteger));
+      e_x_sql('update WARENBEWEGUNG set GEDRUCKT = NULL where RID=' +
+        inttostr(IB_Query1.FieldByName('RID').AsInteger));
       IB_Query1.Refresh;
       ActionDone := true;
     end;
@@ -800,8 +788,7 @@ end;
 
 procedure TFormDruckSpooler.Button8Click(Sender: TObject);
 begin
-  FormWarenbewegung.SetContextArtikel(IB_Query1.FieldByName('ARTIKEL_R')
-      .AsInteger);
+  FormWarenbewegung.SetContextArtikel(IB_Query1.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
 procedure TFormDruckSpooler.Button9Click(Sender: TObject);

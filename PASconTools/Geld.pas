@@ -78,13 +78,17 @@ const
   // Konto für bedeutungslose/private/durchlaufende Buchungen
   cKonto_DurchlaufenderPosten = '1590';
 
-  // Forderungen (ehemals Tabelle "AUSGANGSRECHNUNGEN")
+  // Forderungen (ehemals Tabelle "AUSGANGSRECHNUNG")
   cKonto_Forderungen = '1400';
   cKonto_Forderungen_AsDBString = '''' + cKonto_Forderungen + '''';
 
   // Teilzahlung / Anzahlung / Gutscheine
   cKonto_Anzahlungen = '1710';
   cKonto_Anzahlungen_AsDBString = '''' + cKonto_Anzahlungen + '''';
+
+  // Löhne (ehemals Tabelle "AUSGANGSRECHNUNG")
+  cKonto_Loehne = '4100';
+  cKonto_Loehne_AsDBString = '''' + cKonto_Loehne + '''';
 
   // Konto für Umsatz- Vor- Mehrwert- Steuer
   cKonto_SatzPrefix = 'SATZ';

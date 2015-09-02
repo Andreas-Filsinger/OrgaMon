@@ -81,15 +81,13 @@ const
   // Eigentlich  0=30.12.1899 erste "gültige" Datum also der 31.12.1899
   ccMaxDate = 99991231;
   cMaxDateTime: double = 9999 * 365;
-  cTageNamenKurz: array [1 .. 7] of string = ('MON', 'DIE', 'MIT', 'DON', 'FRE',
-    'SAM', 'SON');
-  cTageNamenLang: array [1 .. 7] of string = ('Montag', 'Dienstag', 'Mittwoch',
-    'Donnerstag', 'Freitag', 'Samstag', 'Sonntag');
-  cMonatNamenLang: array [1 .. 12] of string = ('Januar', 'Februar', 'März',
-    'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober',
-    'November', 'Dezember');
-  cMonatWeb: array [1 .. 12] of string = ('Jan', 'Feb', 'Mär', 'Apr', 'Mai',
-    'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez');
+  cTageNamenKurz: array [1 .. 7] of string = ('MON', 'DIE', 'MIT', 'DON', 'FRE', 'SAM', 'SON');
+  cTageNamenLang: array [1 .. 7] of string = ('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
+    'Freitag', 'Samstag', 'Sonntag');
+  cMonatNamenLang: array [1 .. 12] of string = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
+  cMonatWeb: array [1 .. 12] of string = ('Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
+    'Sep', 'Okt', 'Nov', 'Dez');
 
 const
   // Win32
@@ -97,8 +95,7 @@ const
   ABOVE_NORMAL_PRIORITY_CLASS = $8000;
 
   // Dateien
-  cValidFNameChars =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
+  cValidFNameChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
   cInvalidFNameChars = ':/\?*"<>|';
   cTmpFileExtension = '.$$$';
   cFSize_NotExists = -1;
@@ -107,6 +104,7 @@ const
   // für Filter
   cZiffern = '0123456789';
   cBuchstaben = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  cZeichen = '!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~';
   cLineSeparator = '|';
 
   // Geld
@@ -128,22 +126,17 @@ procedure StartDebug(s: string);
 {$IFDEF SUPPORTS_UNICODE}
 procedure ersetze(const find_str, ersetze_str: string; var d: String); overload;
 {$ENDIF}
-procedure ersetze(const find_str, ersetze_str: string;
-  var d: AnsiString); overload;
-procedure ersetze(const find_str, ersetze_str: string;
-  var d: Shortstring); overload;
+procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString); overload;
+procedure ersetze(const find_str, ersetze_str: string; var d: Shortstring); overload;
 procedure ersetze(s: TStrings; var d: string); overload;
 procedure ersetze(const find_str, ersetze_str: string; s: TStrings); overload;
-procedure ersetze(const find_str, ersetze_str: string; s: TStrings;
-  Index: integer); overload;
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings; Index: integer); overload;
 procedure ersetzeUpper(find_str, ersetze_str: string; var d: string);
 function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
   Upper: boolean = false): string;
-function StrFilter(s, Filter: string; DeleteHits: boolean = false)
-  : string; overload;
+function StrFilter(s, Filter: string; DeleteHits: boolean = false): string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
-function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false)
-  : string; Overload;
+function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false): string; Overload;
 function noblank(const InpStr: string): string;
 function noDoubleBlank(s: string): string;
 
@@ -175,8 +168,7 @@ function StrRange(s: string): string;
 function btostr(b: byte; st: byte): string;
 function ltostr(l: longint; st: byte): string;
 function rtostr(r: real; stv, stn: byte): string; { pretty-Format }
-function boolToStr(b: boolean; _true: string = 'Y';
-  _false: string = 'N'): string;
+function boolToStr(b: boolean; _true: string = 'Y'; _false: string = 'N'): string;
 function IntToStrN(const i: int64; n: byte): string; overload;
 function IntToStrN(const s: string; n: byte): string; overload;
 function int64tostr(i: int64): string; // nur wrapper für inttostr
@@ -213,26 +205,19 @@ function asci(const x: string): string;
 // Str - Utils : Delimter getrennte Daten
 function NextP(var s: string; Delimiter: string = ';'): string; overload;
 {$IFNDEF fpc}
-function NextP(var s: AnsiString; Delimiter: string = ';'): AnsiString;
-  overload;
+function NextP(var s: AnsiString; Delimiter: string = ';'): AnsiString; overload;
 {$ENDIF}
-function NextP(var s: Shortstring; Delimiter: Shortstring = ';')
-  : Shortstring; overload;
-function NextP(s: string; Delimiter: string; SkipCount: integer)
-  : string; overload;
+function NextP(var s: Shortstring; Delimiter: Shortstring = ';'): Shortstring; overload;
+function NextP(s: string; Delimiter: string; SkipCount: integer): string; overload;
 function FromP(s: string; Delimiter: string; SkipCount: integer): string;
 function rNextP(var s: string; Delimiter: string): string;
-function ReplaceP(s: string; Delimiter: string; SkipCount: integer;
-  NewP: string): string;
+function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string): string;
 function FieldCount(const s: string; Delimiter: char): integer;
-function HugeSingleLine(s: TStrings; Delimiter: string = #13;
-  MaxLines: integer = MaxInt): string;
-function Split(s: string; Delimiter: string = ';'; Quote: string = '')
-  : TStringList;
+function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
+function Split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
 
 // String-List Utils
-procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
-  const FName: string);
+procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV_CR(clear: boolean; s: TStrings; const FName: string);
 procedure LoadFromFileCSV_LF(clear: boolean; s: TStrings; const FName: string);
@@ -243,12 +228,9 @@ procedure SaveStringsToFileUTF8(List: TStrings; const FileName: string);
 procedure SaveToUnixFile(s: TStrings; const FName: string);
 function RemoveDuplicates(s: TStrings): integer; overload;
 procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer); overload;
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer;
-  Dups: TStrings); overload;
-procedure AppendStringsToFile(s: TStrings; const FName: string;
-  Encapsulate: string = ''); overload;
-procedure AppendStringsToFile(s: string; const FName: string;
-  Encapsulate: string = ''); overload;
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings); overload;
+procedure AppendStringsToFile(s: TStrings; const FName: string; Encapsulate: string = ''); overload;
+procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = ''); overload;
 
 // DOS Utils
 procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
@@ -284,8 +266,7 @@ function long2dateLocalized(dt: TDateTime): string; overload;
 function DatumLocalized: string;
 
 function long2datetime(dlong: TAnfixDate): TDateTime;
-procedure long2datetimeBorlandPascal(dlong: TAnfixDate;
-  var date: TDateTimeBorlandPascal);
+procedure long2datetimeBorlandPascal(dlong: TAnfixDate; var date: TDateTimeBorlandPascal);
 procedure long2details(dlong: TAnfixDate; var j, m, T: integer);
 function Details2Long(j, m, T: integer): TAnfixDate;
 function extractYear(dlong: TAnfixDate): integer;
@@ -303,8 +284,8 @@ function WeekDayL(ADate: TAnfixDate): string;
 function Fdate(const FName: string): longint;
 function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
 function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
-function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate;
-  var ASeconds: TAnfixTime): TAnfixDate; overload;
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime)
+  : TAnfixDate; overload;
 function LastDayOfMonth(dlong: TAnfixDate): integer;
 function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate;
 // Datum des letzten Tages dieses Monats
@@ -377,15 +358,12 @@ function dTimeStamp(d: TDateTime): string;
 
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;
-function FileDelete(const Mask: string; OlderThan: TAnfixDate)
+function FileDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer)
   : boolean; overload;
-function FileDelete(const Mask: string; OlderThan: TAnfixDate;
-  RemainingFileCount: integer): boolean; overload;
-function FileDeleteUntil(const Mask: string;
-  RemainingFileCount: integer): boolean;
+function FileDeleteUntil(const Mask: string; RemainingFileCount: integer): boolean;
 function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
-function FileCopy(const Mask, Dest: string; Move: boolean = false;
-  Touch: boolean = false): boolean;
+function FileCopy(const Mask, Dest: string; Move: boolean = false; Touch: boolean = false): boolean;
 function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
 function FileMove(const Mask, Dest: string): boolean;
 function FileOperationMove(Source, Destination: string): boolean;
@@ -404,23 +382,21 @@ function ValidateFName(x: string): string;
 function ValidatePathName(x: string): string; // Pfadname OHNE Slash am Ende
 procedure FileTouch(FName: string); overload; // Datei-Zeitstempel auf "now"
 procedure FileTouch(FName: string; ToDate: TAnfixDate); overload;
-procedure FileTouch(FName: string; ToDate: TAnfixDate;
-  ToTime: TAnfixTime); overload;
+procedure FileTouch(FName: string; ToDate: TAnfixDate; ToTime: TAnfixTime); overload;
 procedure FileTouch(FileName: string; date: TDateTime); overload;
 procedure FileRemoveBOM(FileName: string);
 procedure SystemLog(Event: string); // system sysutils
 
 // Directory Funktionen
-procedure dir(const Mask: string; FileNames: TStrings;
-  uppercase: boolean = true; ClearList: boolean = true); overload;
+procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true;
+  ClearList: boolean = true); overload;
 function dir(const Mask: string): integer; overload;
 function dirs(const Path: string): TStringList;
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
 procedure CheckCreateDir(dir: string); // recourse create dir
 function DirDelete(const Mask: string): boolean; overload;
-function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
-  overload;
+function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
 
 // Drive-Function
 function FSerial(DriveName: string): string;
@@ -489,8 +465,7 @@ procedure rZero(var r: TRect);
 
 function mkrect(x, y, xl, yl: integer): TRect;
 function InSide(const x, y: integer; const r: TRect): boolean; overload;
-function InSide(const x, y: integer; Polygon: array of TPoint)
-  : boolean; overload;
+function InSide(const x, y: integer; Polygon: array of TPoint): boolean; overload;
 
 function RectCollision(const a, b: TRect): boolean;
 function Str2Rect(ValueStr: string): TRect;
@@ -499,8 +474,7 @@ function rNull(const r: TRect): boolean;
 
 // verschlüsselung binär
 procedure DataScramble(var data; datasize: integer); overload;
-procedure DataScramble(var data; datasize: integer; const key: string);
-  overload;
+procedure DataScramble(var data; datasize: integer; const key: string); overload;
 
 // verschlüsselung String
 function StrEncode(const s: string; key: string): string;
@@ -552,8 +526,7 @@ type
   end;
 
 const
-  monthtotal: montharray = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304,
-    334, 365);
+  monthtotal: montharray = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365);
 
 var
   DateSeparator: char = '.';
@@ -662,8 +635,8 @@ begin
     result := cIllegalDate;
 end;
 
-function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate;
-  var ASeconds: TAnfixTime): TAnfixDate;
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime)
+  : TAnfixDate;
 begin
   result := DateTime2long(dt);
   ADate := result;
@@ -804,8 +777,8 @@ begin
   // JJJJ-MM-TT
   if length(date) = 10 then
     if pos('-', date) = 5 then
-      date := NextP(date, '-', 2) + DateSeparator + NextP(date, '-', 1) +
-        DateSeparator + NextP(date, '-', 0);
+      date := NextP(date, '-', 2) + DateSeparator + NextP(date, '-', 1) + DateSeparator +
+        NextP(date, '-', 0);
 
   ersetze(',', DateSeparator, date);
   ersetze('-', DateSeparator, date);
@@ -826,8 +799,7 @@ begin
           // interpretiert als "MMJJ"
           m := strtol(copy(date, 1, 2));
           if m <= 12 then
-            date := '01' + DateSeparator + copy(date, 1, 2) + DateSeparator +
-              copy(date, 3, 2)
+            date := '01' + DateSeparator + copy(date, 1, 2) + DateSeparator + copy(date, 3, 2)
           else
           begin
             result := strtol(date) * 10000;
@@ -837,20 +809,20 @@ begin
       5:
         begin
           // interpretiert als "TMMJJ"
-          date := '0' + copy(date, 1, 1) + DateSeparator + copy(date, 2, 2) +
-            DateSeparator + copy(date, 4, 2);
+          date := '0' + copy(date, 1, 1) + DateSeparator + copy(date, 2, 2) + DateSeparator +
+            copy(date, 4, 2);
         end;
       6:
         begin
           // interpretiert als "TTMMJJ"
-          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) +
-            DateSeparator + copy(date, 5, 2);
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator +
+            copy(date, 5, 2);
         end;
       8:
         begin
           // interpretiert als "TTMMJJJJ"
-          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) +
-            DateSeparator + copy(date, 5, 4);
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator +
+            copy(date, 5, 4);
         end;
     end;
     p1 := pos(DateSeparator, date);
@@ -950,8 +922,7 @@ begin
   Schaltjahr := ((yr mod 4 = 0) and (not(yr mod 100 = 0))) or (yr mod 400 = 0);
 end;
 
-procedure long2datetimeBorlandPascal(dlong: longint;
-  var date: TDateTimeBorlandPascal);
+procedure long2datetimeBorlandPascal(dlong: longint; var date: TDateTimeBorlandPascal);
 var
   r: longint;
 begin
@@ -1266,8 +1237,7 @@ begin
   m := dlong div 100;
   dlong := dlong mod 100;
   T := dlong;
-  result := cTageNamenLang[d] + ', ' + inttostr(T) + '. ' + cMonatNamenLang[m] +
-    ' ' + inttostr(j);
+  result := cTageNamenLang[d] + ', ' + inttostr(T) + '. ' + cMonatNamenLang[m] + ' ' + inttostr(j);
 end;
 
 function long2datetime(dlong: TAnfixDate): TDateTime;
@@ -1449,8 +1419,7 @@ var
 begin
   dt := encodedate(Year, 1, 1);
   TmpWeekday := WeekDay(dt);
-  result := (IsLeapYear(Year) and ((TmpWeekday = 3) or (TmpWeekday = 4))) or
-    (TmpWeekday = 4);
+  result := (IsLeapYear(Year) and ((TmpWeekday = 3) or (TmpWeekday = 4))) or (TmpWeekday = 4);
 end;
 
 function Kalenderwoche53(const DateTime: TDateTime): boolean;
@@ -1802,8 +1771,7 @@ begin
   d := WorkStr;
 end;
 
-procedure ersetze(const find_str, ersetze_str: string; s: TStrings;
-  Index: integer); overload;
+procedure ersetze(const find_str, ersetze_str: string; s: TStrings; Index: integer); overload;
 var
   _s: string;
 begin
@@ -1892,8 +1860,7 @@ var
   h, m, s, ms: Word;
 begin
   GetTime(h, m, s, ms);
-  TimeGet := longint(h) * 1000000 + longint(m) * 10000 + longint(s) * 100 +
-    longint(ms);
+  TimeGet := longint(h) * 1000000 + longint(m) * 10000 + longint(s) * 100 + longint(ms);
 end;
 
 function Long2Time(x: TAnfixTime): string;
@@ -1913,8 +1880,7 @@ end;
 
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): TAnfixTime;
 begin
-  dateTime2Seconds := longint(dt.Hour) * 60 * 60 + longint(dt.Min) * 60 +
-    longint(dt.Sec);
+  dateTime2Seconds := longint(dt.Hour) * 60 * 60 + longint(dt.Min) * 60 + longint(dt.Sec);
 end;
 
 function dateTime2Seconds(dt: TDateTime): TAnfixTime;
@@ -2062,8 +2028,7 @@ begin
   ReadNext(h);
   ReadNext(m);
   ReadNext(s);
-  StrToSeconds := (longint(h) * longint(3600) + longint(m) * longint(60) +
-    longint(s)) * Faktor;
+  StrToSeconds := (longint(h) * longint(3600) + longint(m) * longint(60) + longint(s)) * Faktor;
 end;
 
 function StrToSecondsdef(Sstr: string; def: longint): longint;
@@ -2108,8 +2073,7 @@ begin
   OutStr := InpStr;
   while (OutStr <> '') and ((OutStr[1] = ' ') or (OutStr[1] = #160)) do
     delete(OutStr, 1, 1);
-  while (OutStr <> '') and ((OutStr[length(OutStr)] = ' ') or
-    (OutStr[length(OutStr)] = #160)) do
+  while (OutStr <> '') and ((OutStr[length(OutStr)] = ' ') or (OutStr[length(OutStr)] = #160)) do
     delete(OutStr, length(OutStr), 1);
   cutblank := OutStr;
 end;
@@ -2217,8 +2181,8 @@ begin
   result := (LastDate < OlderThan) and (LastDate <> cIllegalDate);
 end;
 
-function FileDelete(const Mask: string; OlderThan: TAnfixDate;
-  RemainingFileCount: integer): boolean;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer)
+  : boolean;
 {
   Lösche eventuell nur solche Dateien die älter sind als "OlderThan"
   prüfe aber ob zumindest insgesamt "RemainingFileCount" Dateien dabei
@@ -2248,8 +2212,7 @@ begin
   result := (ErrorCount = 0);
 end;
 
-function FileDeleteUntil(const Mask: string;
-  RemainingFileCount: integer): boolean;
+function FileDeleteUntil(const Mask: string; RemainingFileCount: integer): boolean;
 {
   Lösche Dateianzahl runter bis auf "RemainingFileCount"
 }
@@ -2348,8 +2311,7 @@ begin
   result := true;
 end;
 
-function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean;
-  overload;
+function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
 var
   AllTheDirs: TStringList;
   n: integer;
@@ -2393,8 +2355,7 @@ var
 begin
   result := false;
   MyTick := GetTickCount;
-  if (LastTime = 0) or (MyTick > LastTime + DelayCount) or (MyTick < LastTime)
-  then
+  if (LastTime = 0) or (MyTick > LastTime + DelayCount) or (MyTick < LastTime) then
   begin
     result := true;
     LastTime := MyTick;
@@ -2562,14 +2523,12 @@ begin
     if GetDriveType(ClearedDriveName) = DRIVE_REMOTE then
     begin
       Size := SizeOf(RemoteNameInfo);
-      ErrCode := WNetGetUniversalName(ClearedDriveName,
-        UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
+      ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL,
+        @RemoteNameInfo, Size);
       if (ErrCode = NO_ERROR) then
-        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo)
-          .lpUniversalName + '\');
+        StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo).lpUniversalName + '\');
     end;
-    if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0)
-    then
+    if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0) then
       result := format('%.8x', [SerialNum]);
   end;
 end;
@@ -2598,8 +2557,7 @@ end;
 function InSide(const x, y: integer; const r: TRect): boolean;
 begin
   // may use PtInRect
-  InSide := (x >= r.left) and (x <= r.right) and (y >= r.top) and
-    (y <= r.Bottom);
+  InSide := (x >= r.left) and (x <= r.right) and (y >= r.top) and (y <= r.Bottom);
 end;
 
 function InSide(const x, y: integer; Polygon: array of TPoint): boolean;
@@ -2613,8 +2571,8 @@ end;
 
 function InSideRect(const a, b: TRect): boolean;
 begin
-  result := InSide(a.left, a.top, b) or InSide(a.left, a.Bottom, b) or
-    InSide(a.right, a.top, b) or InSide(a.right, a.Bottom, b);
+  result := InSide(a.left, a.top, b) or InSide(a.left, a.Bottom, b) or InSide(a.right, a.top, b) or
+    InSide(a.right, a.Bottom, b);
 end;
 
 function RectCollision(const a, b: TRect): boolean;
@@ -2815,8 +2773,7 @@ var
   k: integer;
 begin
   k := pos(',', ValueStr);
-  result := point(strtoint(copy(ValueStr, 1, pred(k))),
-    strtoint(copy(ValueStr, succ(k), MaxInt)));
+  result := point(strtoint(copy(ValueStr, 1, pred(k))), strtoint(copy(ValueStr, succ(k), MaxInt)));
 end;
 
 function revCopy(const s: string; start, len: integer): string;
@@ -2907,8 +2864,8 @@ end (* FileOperation *);
 
 function FileOperationMove(Source, Destination: string): boolean;
 begin
-  result := FileOperation(Source, Destination, FO_MOVE,
-    FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR + FOF_NOERRORUI);
+  result := FileOperation(Source, Destination, FO_MOVE, FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR +
+    FOF_NOERRORUI);
 end;
 
 //
@@ -2917,8 +2874,7 @@ end;
 //
 //
 
-function FileCopy(const Mask, Dest: string; Move: boolean = false;
-  Touch: boolean = false): boolean;
+function FileCopy(const Mask, Dest: string; Move: boolean = false; Touch: boolean = false): boolean;
 var
   FileL: TStringList;
   ErrorCount: integer;
@@ -2945,8 +2901,7 @@ begin
     _Source := ExtractFilePath(Mask);
     CheckCreateDir(Dest);
     for n := 0 to pred(FileL.Count) do
-      if not(FileCopy(_Source + FileL[n], _Dest + '\' + FileL[n], Move, Touch))
-      then
+      if not(FileCopy(_Source + FileL[n], _Dest + '\' + FileL[n], Move, Touch)) then
         inc(ErrorCount);
     result := (ErrorCount = 0);
     FileL.free;
@@ -3016,11 +2971,9 @@ begin
       ZielExtensionLength := length(ZielExtension);
       for n := 0 to pred(sIni.Count) do
       begin
-        sRecordVersion := copy(sIni[n], 1, length(sIni[n]) -
-          ZielExtensionLength);
+        sRecordVersion := copy(sIni[n], 1, length(sIni[n]) - ZielExtensionLength);
         j := revPos('-', sRecordVersion);
-        _MaxCount := StrToIntDef(copy(sRecordVersion, succ(j), MaxInt),
-          MaxCount);
+        _MaxCount := StrToIntDef(copy(sRecordVersion, succ(j), MaxInt), MaxCount);
         MaxCount := max(_MaxCount, MaxCount);
       end;
 
@@ -3029,14 +2982,12 @@ begin
     inc(MaxCount);
 
     // Die alte Datei entsprechend der Nummer umbenennen
-    SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) +
-      ZielExtension;
+    SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) + ZielExtension;
     if FileExists(SicherungFName) then
       raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName +
         ' existiert bereits');
     if not(FileRename(DestFName, SicherungFName)) then
-      raise Exception.create('FileVersionedCopy: konnte ' + DestFName +
-        ' nicht wegsichern');
+      raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht wegsichern');
 
     // Zuletzt benutzer Wert abspeichern
     sIni.clear;
@@ -3047,8 +2998,7 @@ begin
 
   // 2) Umkopieren
   if not(FileCopy(SourceFName, DestFName)) then
-    raise Exception.create('FileVersionedCopy: konnte ' + DestFName +
-      ' nicht erstellen');
+    raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht erstellen');
   result := true;
 end;
 
@@ -3150,16 +3100,13 @@ begin
   begin
     RootKey := HKEY_CURRENT_USER;
     LazyWrite := false;
-    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer',
-      false);
-    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
-      SizeOf(AutoRunSetting));
+    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', false);
+    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting, SizeOf(AutoRunSetting));
     if vAutoRun then
       AutoRunSetting := AutoRunSetting and not(1 shl 5)
     else
       AutoRunSetting := AutoRunSetting or (1 shl 5);
-    reg.WriteBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
-      SizeOf(AutoRunSetting));
+    reg.WriteBinaryData('NoDriveTypeAutoRun', AutoRunSetting, SizeOf(AutoRunSetting));
     CloseKey;
     free;
   end;
@@ -3175,10 +3122,8 @@ begin
   with reg do
   begin
     RootKey := HKEY_CURRENT_USER;
-    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer',
-      false);
-    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting,
-      SizeOf(AutoRunSetting));
+    OpenKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', false);
+    ReadBinaryData('NoDriveTypeAutoRun', AutoRunSetting, SizeOf(AutoRunSetting));
     CloseKey;
     free;
   end;
@@ -3371,8 +3316,7 @@ begin
 
   dwDataSize := SizeOf(dword);
 
-  RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage),
-    @dwDataSize);
+  RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage), @dwDataSize);
 
   RegCloseKey(h);
 
@@ -3440,13 +3384,11 @@ begin
       repeat
 
         // ObtainToken
-        if not(OpenThreadToken(GetCurrentThread, TOKEN_QUERY, true, hToken))
-        then
+        if not(OpenThreadToken(GetCurrentThread, TOKEN_QUERY, true, hToken)) then
         begin
           if (GetLastError = ERROR_NO_TOKEN) then
           begin
-            if not(OpenProcessToken(GetCurrentProcess, TOKEN_QUERY, hToken))
-            then
+            if not(OpenProcessToken(GetCurrentProcess, TOKEN_QUERY, hToken)) then
               break;
           end
           else
@@ -3457,16 +3399,15 @@ begin
 
         // ObtainSID
         cbInfoBuffer := SizeOf(InfoBuffer);
-        if not(GetTokenInformation(hToken, TokenUser, @InfoBuffer, cbInfoBuffer,
-          cbInfoBuffer)) then
+        if not(GetTokenInformation(hToken, TokenUser, @InfoBuffer, cbInfoBuffer, cbInfoBuffer)) then
           break;
         CloseHandle(hToken);
 
         // ObtainDomain
         cchUserName := SizeOf(UserName);
         cchDomainName := SizeOf(DomainName);
-        if not(LookupAccountSid(nil, PTOKEN_USER(@InfoBuffer)^.user.sid,
-          UserName, cchUserName, DomainName, cchDomainName, snu)) then
+        if not(LookupAccountSid(nil, PTOKEN_USER(@InfoBuffer)^.user.sid, UserName, cchUserName,
+          DomainName, cchDomainName, snu)) then
           break;
         _Domain := DomainName;
       until true;
@@ -3526,8 +3467,8 @@ begin
   x.free;
 end;
 
-procedure dir(const Mask: string; FileNames: TStrings;
-  uppercase: boolean = true; ClearList: boolean = true); overload;
+procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true;
+  ClearList: boolean = true); overload;
 var
   sr: Tsearchrec;
   fr: integer;
@@ -3609,8 +3550,7 @@ begin
   end;
 end;
 
-function boolToStr(b: boolean; _true: string = 'Y';
-  _false: string = 'N'): string;
+function boolToStr(b: boolean; _true: string = 'Y'; _false: string = 'N'): string;
 begin
   if b then
     result := _true
@@ -3649,8 +3589,7 @@ begin
   DataScramble(data, datasize, 'ANFiSOFT');
 end;
 
-procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer;
-  Dups: TStrings);
+procedure RemoveDuplicates(s: TStrings; var DeleteCount: integer; Dups: TStrings);
 var
   n: integer;
 begin
@@ -3683,8 +3622,7 @@ begin
   RemoveDuplicates(s, result);
 end;
 
-procedure LoadFromFileHugeLines(clear: boolean; s: TStrings;
-  const FName: string);
+procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
 var
   InF: file;
   _fsize: integer;
@@ -3985,8 +3923,7 @@ var
   dwRetLen: dword;
 begin
   result := false;
-  OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or
-    TOKEN_QUERY, token);
+  OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or TOKEN_QUERY, token);
   tp.PrivilegeCount := 1;
   if LookupPrivilegeValue(nil, PCHAR(privilegeName), tp.Privileges[0].LUID) then
   begin
@@ -3995,8 +3932,7 @@ begin
     else
       tp.Privileges[0].Attributes := 0;
     dwRetLen := 0;
-    result := windows.AdjustTokenPrivileges(token, false, tp, SizeOf(tpPrev),
-      tpPrev, dwRetLen);
+    result := windows.AdjustTokenPrivileges(token, false, tp, SizeOf(tpPrev), tpPrev, dwRetLen);
   end;
   CloseHandle(token);
 end;
@@ -4048,10 +3984,9 @@ end;
 // WindowsClose(EW_REBOOTSYSTEM);
 // end;
 
-function NewAdjustTokenPrivileges(TokenHandle: THandle;
-  DisableAllPrivileges: bool; const NewState: TTokenPrivileges;
-  BufferLength: dword; PreviousState: PTokenPrivileges; ReturnLength: pdword)
-  : bool; stdcall; external advapi32 name 'AdjustTokenPrivileges';
+function NewAdjustTokenPrivileges(TokenHandle: THandle; DisableAllPrivileges: bool;
+  const NewState: TTokenPrivileges; BufferLength: dword; PreviousState: PTokenPrivileges;
+  ReturnLength: pdword): bool; stdcall; external advapi32 name 'AdjustTokenPrivileges';
 
 procedure WindowsNeuStarten;
 { Restarts the computer. The function will NOT return if it is successful,
@@ -4060,8 +3995,7 @@ procedure WindowsNeuStarten;
 
   procedure RestartErrorMessage;
   begin
-    MessageBox(0, PCHAR('Neustart nicht möglich'), PCHAR('Fehler'),
-      MB_OK or MB_ICONEXCLAMATION);
+    MessageBox(0, PCHAR('Neustart nicht möglich'), PCHAR('Fehler'), MB_OK or MB_ICONEXCLAMATION);
   end;
 
 var
@@ -4072,8 +4006,7 @@ const
 begin
   if Win32Platform = VER_PLATFORM_WIN32_NT then
   begin
-    if not OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or
-      TOKEN_QUERY, token) then
+    if not OpenProcessToken(GetCurrentProcess, TOKEN_ADJUST_PRIVILEGES or TOKEN_QUERY, token) then
     begin
       RestartErrorMessage;
       exit;
@@ -4286,15 +4219,13 @@ function fmMonetary(x: string): string;
 begin
   x := StrFilter(x, '0123456789.,-+E');
 
-  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos('.', x) < pos(',', x))
-  then
+  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos('.', x) < pos(',', x)) then
   begin
     // DE-Tausender-Punkte löschen!
     ersetze('.', '', x);
   end;
 
-  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos(',', x) < pos('.', x))
-  then
+  if (pos(',', x) > 0) and (pos('.', x) > 0) and (pos(',', x) < pos('.', x)) then
   begin
     // US-Tausender-Kommas löschen!
     ersetze(',', '', x);
@@ -4411,8 +4342,7 @@ begin
           num_leap_yrs := num_leap_yrs - 1;
     end;
 
-    dateDiff := jdt2.Day - jdt1.Day + ((jdt2.yr - jdt1.yr) * 365) +
-      num_leap_yrs;
+    dateDiff := jdt2.Day - jdt1.Day + ((jdt2.yr - jdt1.yr) * 365) + num_leap_yrs;
   end
   else
     dateDiff := maxlongint; { something's wrong }
@@ -4632,8 +4562,7 @@ end;
 
 function Details2Long(j, m, T: integer): TAnfixDate;
 begin
-  result := (j * cDATE_YEAR_FAKTOR) + (m * cDATE_MONTH_FAKTOR) +
-    (T * cDATE_DAY_FAKTOR);
+  result := (j * cDATE_YEAR_FAKTOR) + (m * cDATE_MONTH_FAKTOR) + (T * cDATE_DAY_FAKTOR);
 end;
 
 function ThisMonth(dlong: TAnfixDate): TAnfixDate;
@@ -4913,8 +4842,7 @@ begin
 
 end;
 
-function ReplaceP(s: string; Delimiter: string; SkipCount: integer;
-  NewP: string): string;
+function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string): string;
 var
   Pre: string;
 begin
@@ -4942,9 +4870,7 @@ end;
 // split('') = ['']
 // split(';') = ['','']
 
-
-function Split(s: string; Delimiter: string = ';'; Quote: string = '')
-  : TStringList;
+function Split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
 var
   QuoteLength: integer;
   QuoteEnd: integer;
@@ -5003,8 +4929,7 @@ begin
   end;
 end;
 
-function HugeSingleLine(s: TStrings; Delimiter: string = #13;
-  MaxLines: integer = MaxInt): string;
+function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
 var
   n: integer;
 
@@ -5058,8 +4983,7 @@ var
   _FileGetAttr: integer;
 begin
   _FileGetAttr := FileGetAttr(ValidatePathName(dir));
-  result := (_FileGetAttr <> -1) and
-    (_FileGetAttr and faDirectory = faDirectory);
+  result := (_FileGetAttr <> -1) and (_FileGetAttr and faDirectory = faDirectory);
 end;
 
 function DirSize(dir: string): int64; // WARNING: Time consuming
@@ -5366,8 +5290,7 @@ begin
     if (PrefixIndex = 0) then
       exit;
     inc(PrefixIndex, length(prefix));
-    PostfixIndex := pred(PrefixIndex + pos(postfix, copy(InpStr, PrefixIndex,
-      MaxInt)));
+    PostfixIndex := pred(PrefixIndex + pos(postfix, copy(InpStr, PrefixIndex, MaxInt)));
   end;
   if (PostfixIndex = 0) then
     exit;
@@ -5394,8 +5317,7 @@ begin
       delete(result, length(result), 1);
 end;
 
-procedure AppendStringsToFile(s: TStrings; const FName: string;
-  Encapsulate: string = '');
+procedure AppendStringsToFile(s: TStrings; const FName: string; Encapsulate: string = '');
 var
   OutF: TextFile;
   n: integer;
@@ -5420,8 +5342,7 @@ begin
   end;
 end;
 
-procedure AppendStringsToFile(s: string; const FName: string;
-  Encapsulate: string = '');
+procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: string = '');
 var
   OutF: TextFile;
 begin
@@ -5543,8 +5464,7 @@ begin
       result[n] := Hit;
 end;
 
-function StrFilter(s: string; Filter: TSysCharSet;
-  DeleteHits: boolean = false): string;
+function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false): string;
 var
   n: integer;
 begin
@@ -5719,8 +5639,8 @@ begin
   if _IsWinNT then
   begin
     BS := _BufferSize;
-    while (RegQueryValueEx(HKEY_PERFORMANCE_DATA, Processor_IDX_Str, nil, nil,
-      PBYTE(_PerfData), @BS) = ERROR_MORE_DATA) do
+    while (RegQueryValueEx(HKEY_PERFORMANCE_DATA, Processor_IDX_Str, nil, nil, PBYTE(_PerfData),
+      @BS) = ERROR_MORE_DATA) do
     begin
       // Get a buffer that is big enough.
       inc(_BufferSize, $1000);
@@ -5739,8 +5659,7 @@ begin
 
     // Check for success
     if _POT.ObjectNameTitleIndex <> Processor_IDX then
-      raise Exception.create
-        ('Unable to locate the "Processor" performance object');
+      raise Exception.create('Unable to locate the "Processor" performance object');
 
     if _ProcessorsCount < 0 then
     begin
@@ -5762,22 +5681,18 @@ begin
 
     // Check for success
     if _PCD.CounterNameTitleIndex <> CPUUsageIDX then
-      raise Exception.create
-        ('Unable to locate the "% of CPU usage" performance counter');
+      raise Exception.create('Unable to locate the "% of CPU usage" performance counter');
 
     // Collecting coutners
-    _PID_Instance := PPERF_INSTANCE_DEFINITION
-      (dword(_POT) + _POT.DefinitionLength);
+    _PID_Instance := PPERF_INSTANCE_DEFINITION(dword(_POT) + _POT.DefinitionLength);
     for i := 0 to _ProcessorsCount - 1 do
     begin
-      _PCB_Instance := PPERF_COUNTER_BLOCK(dword(_PID_Instance) +
-        _PID_Instance.ByteLength);
+      _PCB_Instance := PPERF_COUNTER_BLOCK(dword(_PID_Instance) + _PID_Instance.ByteLength);
 
       _PrevCounters[i] := _Counters[i];
       _Counters[i] := int64(PInt64(dword(_PCB_Instance) + _PCD.CounterOffset)^);
 
-      _PID_Instance := PPERF_INSTANCE_DEFINITION(dword(_PCB_Instance) +
-        _PCB_Instance.ByteLength);
+      _PID_Instance := PPERF_INSTANCE_DEFINITION(dword(_PCB_Instance) + _PCB_Instance.ByteLength);
     end;
 
     _PrevSysTime := _SysTime;
@@ -5788,20 +5703,17 @@ begin
   begin
     if not _W9xCollecting then
     begin
-      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StartStat', 0,
-        KEY_ALL_ACCESS, h);
+      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StartStat', 0, KEY_ALL_ACCESS, h);
       if (r <> ERROR_SUCCESS) then
         raise Exception.create('Unable to start performance monitoring');
 
       dwDataSize := SizeOf(dword);
 
-      RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage),
-        @dwDataSize);
+      RegQueryValueEx(h, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage), @dwDataSize);
 
       RegCloseKey(h);
 
-      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StatData', 0, KEY_READ,
-        _W9xCpuKey);
+      r := RegOpenKeyEx(HKEY_DYN_DATA, 'PerfStats\StatData', 0, KEY_READ, _W9xCpuKey);
 
       if (r <> ERROR_SUCCESS) then
         raise Exception.create('Unable to read performance data');
@@ -5810,8 +5722,7 @@ begin
     end;
 
     dwDataSize := SizeOf(dword);
-    RegQueryValueEx(_W9xCpuKey, 'KERNEL\CPUUsage', nil, @dwType,
-      PBYTE(@_W9xCpuUsage), @dwDataSize);
+    RegQueryValueEx(_W9xCpuKey, 'KERNEL\CPUUsage', nil, @dwType, PBYTE(@_W9xCpuUsage), @dwDataSize);
   end;
 end;
 {$O+}
@@ -5841,8 +5752,7 @@ begin
     if _PrevSysTime = _SysTime then
       result := 0
     else
-      result := 1 - (_Counters[index] - _PrevCounters[index]) /
-        (_SysTime - _PrevSysTime);
+      result := 1 - (_Counters[index] - _PrevCounters[index]) / (_SysTime - _PrevSysTime);
   end
   else
   begin
@@ -5929,8 +5839,8 @@ procedure SystemLog(Event: string);
 var
   OutF: TextFile;
 begin
-  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix
-    (ExtractFileName(Paramstr(0))) + '.log');
+  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix(ExtractFileName(Paramstr(0)))
+    + '.log');
 {$I-}
   append(OutF);
 {$I+}
@@ -5971,12 +5881,11 @@ begin
       exit;
     GetMem(ptgGroups, dwInfoBufferSize);
     try
-      if not GetTokenInformation(hAccessToken, TokenGroups, ptgGroups,
-        dwInfoBufferSize, dwInfoBufferSize) then
+      if not GetTokenInformation(hAccessToken, TokenGroups, ptgGroups, dwInfoBufferSize,
+        dwInfoBufferSize) then
         exit;
-      if not AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2,
-        SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
-        psidAdministrators) then
+      if not AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID,
+        DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, psidAdministrators) then
         exit;
       try
         for x := 0 to ptgGroups^.GroupCount - 1 do
@@ -6142,9 +6051,8 @@ Type
 
   byteset = Set of 0 .. 7;
 Const
-  shiftkeys: Array [1 .. 3] of TShiftKeyInfo = ((shift: ord(ssCtrl);
-    vkey: VK_CONTROL), (shift: ord(ssShift); vkey: VK_SHIFT),
-    (shift: ord(ssAlt); vkey: VK_MENU));
+  shiftkeys: Array [1 .. 3] of TShiftKeyInfo = ((shift: ord(ssCtrl); vkey: VK_CONTROL),
+    (shift: ord(ssShift); vkey: VK_SHIFT), (shift: ord(ssAlt); vkey: VK_MENU));
 Var
   flag: dword;
   bShift: byteset absolute shift;
@@ -6167,8 +6075,7 @@ Begin
   For i := 3 DownTo 1 Do
   Begin
     If shiftkeys[i].shift In bShift Then
-      keybd_event(shiftkeys[i].vkey, MapVirtualKey(shiftkeys[i].vkey, 0),
-        KEYEVENTF_KEYUP, 0);
+      keybd_event(shiftkeys[i].vkey, MapVirtualKey(shiftkeys[i].vkey, 0), KEYEVENTF_KEYUP, 0);
   End; { For }
 End; { PostKeyEx32 }
 
