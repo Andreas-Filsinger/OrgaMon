@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -70,6 +70,7 @@ type
   TdboScript = class(TZSQLProcessor)
   public
     function sql: TStrings;
+    procedure Prepare;
   end;
 
   TdboField = TField;
@@ -1077,11 +1078,17 @@ begin
 end;
 
 {$IFDEF fpc}
+
 { TdboScript }
 
 function TdboScript.sql: TStrings;
 begin
   result := Script;
+end;
+
+procedure TdboScript.Prepare;
+begin
+  parse;
 end;
 
 { TdboCursor }

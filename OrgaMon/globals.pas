@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.121; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.122; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -60,6 +60,9 @@ const
   cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
   cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
   cSettings_SysdbaPassword = 'SysdbaPasswort';
+
+  // Datenbank Migrations Hilfen
+  TABELLE_AR = 'AUSGANGSRECHNUNG' deprecated 'Migriere nach 1400';
 
   // Anwendungs Sachen
   HourGlassLevel: integer = 0;

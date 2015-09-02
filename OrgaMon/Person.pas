@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -313,8 +313,7 @@ type
     procedure SpeedButton7Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure Button18Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
@@ -325,10 +324,10 @@ type
     procedure SpeedButton8Click(Sender: TObject);
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
     procedure IB_Query3BeforePrepare(Sender: TIB_Statement);
-    procedure SpeedButton8MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure SpeedButton8MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Edit3Exit(Sender: TObject);
     procedure Image2Click(Sender: TObject);
@@ -339,8 +338,7 @@ type
     procedure Button21Click(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
-    procedure IB_Grid1KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure IB_Grid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton11Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure SpeedButton12Click(Sender: TObject);
@@ -359,8 +357,8 @@ type
     procedure IB_Query1AfterCancel(IB_Dataset: TIB_Dataset);
     procedure CheckListBox1ClickCheck(Sender: TObject);
     procedure SpeedButton16Click(Sender: TObject);
-    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+      var AColor: TColor; AFont: TFont);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure Button5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
@@ -371,8 +369,7 @@ type
     procedure ComboBox1DropDown(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
     procedure SpeedButton19Click(Sender: TObject);
-    procedure IB_DataSource1StateChanged(Sender: TIB_DataSource;
-      ADataset: TIB_Dataset);
+    procedure IB_DataSource1StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
     procedure SpeedButton21Click(Sender: TObject);
   private
     { Private-Deklarationen }
@@ -501,8 +498,7 @@ begin
   FormBelege.setContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
-procedure TFormPerson.IB_DataSource1StateChanged(Sender: TIB_DataSource;
-  ADataset: TIB_Dataset);
+procedure TFormPerson.IB_DataSource1StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
 begin
   if ADataset.State in [dssedit, dssinsert] then
     Panel1.Color := ADataset.IB_Session.EditingColor
@@ -513,8 +509,7 @@ end;
 procedure TFormPerson.IB_Edit18Change(Sender: TObject);
 begin
   if (length(IB_Edit18.Text) = e_r_PLZlength(IB_Query2)) then
-    IB_Query3.ParamByName('CROSSREFERENCE').AsInteger :=
-      StrToInt(IB_Edit18.Text);
+    IB_Query3.ParamByName('CROSSREFERENCE').AsInteger := StrToInt(IB_Edit18.Text);
 end;
 
 procedure TFormPerson.Button8Click(Sender: TObject);
@@ -562,8 +557,8 @@ begin
       // Pfade vorbereiten!
       VorlageFName := WordPath + ComboBox5.Text + iTextDocumentExtension;
       OutPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
-      DokumentFName := OutPath + ComboBox5.Text + '-' +
-        RIDasStr(e_w_gen('GEN_DOKUMENT')) + iTextDocumentExtension;
+      DokumentFName := OutPath + ComboBox5.Text + '-' + RIDasStr(e_w_gen('GEN_DOKUMENT')) +
+        iTextDocumentExtension;
 
       CheckCreateDir(OutPath);
       if FileExists(VorlageFName) then
@@ -586,9 +581,9 @@ end;
 function TFormPerson.TakeActual: Boolean;
 begin
   EnsureThatQuerysAreOpen;
-  result := doit('Wollen Sie den Eintrag' + #13 + IB_Query1.FieldByName
-    ('NACHNAME').AsString + ', ' + IB_Query1.FieldByName('VORNAME').AsString +
-    #13 + IB_Query2.FieldByName('NAME1').AsString + #13 + 'jetzt übernehmen');
+  result := doit('Wollen Sie den Eintrag' + #13 + IB_Query1.FieldByName('NACHNAME').AsString + ', '
+    + IB_Query1.FieldByName('VORNAME').AsString + #13 + IB_Query2.FieldByName('NAME1').AsString +
+    #13 + 'jetzt übernehmen');
 end;
 
 procedure TFormPerson.Button4Click(Sender: TObject);
@@ -603,8 +598,7 @@ var
   DatensammlerLokal: TStringList;
   FullTemplateFname: string;
 begin
-  FullTemplateFname := MyProgramPath + cHTMLTemplatesDir + Edit1.Text +
-    cHTMLextension;
+  FullTemplateFname := MyProgramPath + cHTMLTemplatesDir + Edit1.Text + cHTMLextension;
   if FileExists(FullTemplateFname) then
   begin
     CheckCreateOnce(EigeneOrgaMonDateienPfad);
@@ -708,8 +702,8 @@ begin
   if not(IB_Query1.eof) then
   begin
     PERSON_R := IB_Query1.FieldByName('RID').AsInteger;
-    IB_Query2.ParamByName('CROSSREF').AsInteger :=
-      IB_Query1.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+    IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PRIV_ANSCHRIFT_R')
+      .AsInteger;
     if not(IB_Query2.active) then
       IB_Query2.active := true;
 
@@ -719,18 +713,15 @@ begin
     else
       Color := iFormColor;
 
-    Label24.Caption := LieferzeitToStr(IB_Query1.FieldByName('LIEFERZEIT')
-      .AsInteger);
+    Label24.Caption := LieferzeitToStr(IB_Query1.FieldByName('LIEFERZEIT').AsInteger);
     Label33.Caption := '?';
 
     // Verträge
     CheckListBox1.Items.BeginUpdate;
     CheckListBox1.Color := clwhite;
-    sVertraege := e_r_sqlm('select BELEG_R from VERTRAG where PERSON_R=' +
-      inttostr(PERSON_R));
+    sVertraege := e_r_sqlm('select BELEG_R from VERTRAG where PERSON_R=' + inttostr(PERSON_R));
     for n := 0 to pred(lVertragsVarianten.count) do
-      CheckListBox1.checked[n] :=
-        (sVertraege.indexof(lVertragsVarianten[n]) <> -1);
+      CheckListBox1.checked[n] := (sVertraege.indexof(lVertragsVarianten[n]) <> -1);
     sVertraege.Free;
     CheckListBox1.Items.EndUpdate;
 
@@ -753,10 +744,16 @@ begin
     begin
 
       // Monats-Summe
-      Summe := e_r_sqld('select sum(BETRAG) from' + ' AUSGANGSRECHNUNG ' +
-        'join PERSON on' + ' (AUSGANGSRECHNUNG.KUNDE_R=PERSON.RID) and' +
-        ' (A00=''Y'') ' + 'where' + ' (DATUM=''01.' + Edit3.Text + ''') and' +
-        ' (BETRAG>0)');
+      Summe := e_r_sqld(
+        { } 'select sum(BETRAG) from' +
+        { } ' BUCH ' +
+        { } 'join PERSON on' +
+        { } ' (BUCH.PERSON_R=PERSON.RID) and' +
+        { } ' (A00=''Y'') ' +
+        { } 'where' +
+        { } ' (NAME=' + cKonto_Loehne_AsDBString + ') and' +
+        { } ' (DATUM=''01.' + Edit3.Text + ''') and' +
+        { } ' (BETRAG>0)');
 
       StaticText1.Caption := format('%m', [abs(Summe)]);
       if isHaben(Summe) then
@@ -765,11 +762,17 @@ begin
         StaticText1.Color := cllime;
 
       // Jahres-Summe
-      Summe := e_r_sqld('select sum(BETRAG) from' + ' AUSGANGSRECHNUNG ' +
-        'join PERSON on' + ' (AUSGANGSRECHNUNG.KUNDE_R=PERSON.RID) and' +
-        ' (A00=''Y'') ' + 'where' + ' (DATUM between ''01.01.' +
-        copy(Edit3.Text, 4, 4) + ''' and ''31.12.' + copy(Edit3.Text, 4, 4) +
-        ''') and' + ' (BETRAG>0)');
+      Summe := e_r_sqld(
+        { } 'select sum(BETRAG) from' +
+        { } ' BUCH ' +
+        { } 'join PERSON on' +
+        { } ' (BUCH.PERSON_R=PERSON.RID) and' +
+        { } ' (A00=''Y'') ' +
+        { } 'where' +
+        { } ' (NAME=' + cKonto_Loehne_AsDBString + ') and' +
+        { } ' (DATUM between ''01.01.' + copy(Edit3.Text, 4, 4) + ''' and ''31.12.' +
+        copy(Edit3.Text, 4, 4) + ''') and' +
+        { } ' (BETRAG>0)');
 
       StaticText3.Caption := format('%m', [abs(Summe)]);
       if isHaben(Summe) then
@@ -778,10 +781,12 @@ begin
         StaticText3.Color := cllime;
 
       //
-      Summe := e_r_sqld
-        ('select sum(betrag) S from ausgangsrechnung where (datum=''01.' +
-        Edit3.Text + ''') and (KUNDE_R=' + IB_Query1.FieldByName('RID')
-        .AsString + ')');
+      Summe := e_r_sqld(
+        { } 'select sum(betrag) S from BUCH ' +
+        { } 'where' +
+        { } ' (NAME=' + cKonto_Loehne_AsDBString + ') and' +
+        { } ' (datum=''01.' + Edit3.Text + ''') and' +
+        { } ' (KUNDE_R=' + IB_Query1.FieldByName('RID').AsString + ')');
       Edit2.Text := format('%m', [abs(Summe)]);
 
       //
@@ -825,8 +830,7 @@ begin
     WebsiteLogins := TStringList.create;
     dir(iMacroWorkPath + 'OrgaMon-*.iim', WebsiteLogins, false);
     for n := 0 to pred(WebsiteLogins.count) do
-      ComboBox1.Items.add(ExtractSegmentBetween(WebsiteLogins[n],
-        'OrgaMon-', '.iim'));
+      ComboBox1.Items.add(ExtractSegmentBetween(WebsiteLogins[n], 'OrgaMon-', '.iim'));
     iMacroInitialisiert := true;
   end;
 end;
@@ -889,8 +893,8 @@ end;
 procedure TFormPerson.Button16Click(Sender: TObject);
 begin
   openShell(format('http://%s?site=login&action=login&f_user=%s&f_pass=%s',
-    [iShopDomain, IB_Query1.FieldByName('USER_ID').AsString,
-    IB_Query1.FieldByName('USER_PWD').AsString]));
+    [iShopDomain, IB_Query1.FieldByName('USER_ID').AsString, IB_Query1.FieldByName('USER_PWD')
+    .AsString]));
 end;
 
 procedure TFormPerson.Button17Click(Sender: TObject);
@@ -925,16 +929,13 @@ begin
     //
     if FieldByName('EMAIL').IsNotNull then
       if FieldByName('USER_ID').IsNull then
-        FieldByName('USER_ID').AsString :=
-          noblank(nextp(FieldByName('EMAIL').AsString, ';', 0));
+        FieldByName('USER_ID').AsString := noblank(nextp(FieldByName('EMAIL').AsString, ';', 0));
     if FieldByName('USER_ID').IsModified then
       if FieldByName('USER_ID').IsNotNull then
-        FieldByName('USER_ID').AsString :=
-          AnsiLowerCase(FieldByName('USER_ID').AsString);
+        FieldByName('USER_ID').AsString := AnsiLowerCase(FieldByName('USER_ID').AsString);
 
     // Verträge
-    sIst := e_r_sqlm('select distinct BELEG_R from VERTRAG where PERSON_R=' +
-      inttostr(PERSON_R));
+    sIst := e_r_sqlm('select distinct BELEG_R from VERTRAG where PERSON_R=' + inttostr(PERSON_R));
     sIst.sort;
     sSoll := TgpIntegerList.create;
     for n := 0 to pred(lVertragsVarianten.count) do
@@ -948,8 +949,8 @@ begin
       if (k = -1) then
       begin
         // muss neu angelegt werden!
-        e_x_sql('insert into VERTRAG (RID,PERSON_R,BELEG_R) values ' + '(0,' +
-          inttostr(PERSON_R) + ',' + inttostr(sSoll[n]) + ')');
+        e_x_sql('insert into VERTRAG (RID,PERSON_R,BELEG_R) values ' + '(0,' + inttostr(PERSON_R) +
+          ',' + inttostr(sSoll[n]) + ')');
       end
       else
       begin
@@ -960,8 +961,8 @@ begin
     for n := 0 to pred(sIst.count) do
     begin
       // was übrig bleibt muss weg
-      e_x_sql('delete from VERTRAG where ' + ' (BELEG_R=' + inttostr(sIst[n]) +
-        ') and ' + ' (PERSON_R=' + inttostr(PERSON_R) + ')');
+      e_x_sql('delete from VERTRAG where ' + ' (BELEG_R=' + inttostr(sIst[n]) + ') and ' +
+        ' (PERSON_R=' + inttostr(PERSON_R) + ')');
     end;
 
     sIst.Free;
@@ -997,8 +998,8 @@ begin
       IB_Query1.FieldByName('RID').AsString);
     sql.add('group by PERSON_R');
     Open;
-    Label33.Caption := format('%d Beleg(e): %m',
-      [FieldByName('ANZAHL').AsInteger, FieldByName('BETRAG').AsDouble]);
+    Label33.Caption := format('%d Beleg(e): %m', [FieldByName('ANZAHL').AsInteger,
+      FieldByName('BETRAG').AsDouble]);
   end;
   qUMSATZ.Free;
 
@@ -1026,20 +1027,17 @@ begin
 
   try
     CheckCreateOnce(EigeneOrgaMonDateienPfad);
-    ExcelExport(EigeneOrgaMonDateienPfad + 'Personen.xls', PersonList, nil,
-      xlsOptions);
+    ExcelExport(EigeneOrgaMonDateienPfad + 'Personen.xls', PersonList, nil, xlsOptions);
   except
-    ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei'
-      + #13 + EigeneOrgaMonDateienPfad + 'Personen.xls' + #13 +
-      'im Moment geöffnet?');
+    ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei' + #13 +
+      EigeneOrgaMonDateienPfad + 'Personen.xls' + #13 + 'im Moment geöffnet?');
   end;
 
   try
     CSVExport(EigeneOrgaMonDateienPfad + 'Personen.csv', PersonList);
   except
-    ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei'
-      + #13 + EigeneOrgaMonDateienPfad + 'Personen.csv' + #13 +
-      'im Moment geöffnet?');
+    ShowMessage('Die Datenquelle kann nicht aktualisiert werden! Ist die Datei' + #13 +
+      EigeneOrgaMonDateienPfad + 'Personen.csv' + #13 + 'im Moment geöffnet?');
   end;
 
   sExcelOptions.Free;
@@ -1220,14 +1218,13 @@ begin
   result := IB_Query1.FieldByName('RID').AsInteger;
 end;
 
-procedure TFormPerson.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormPerson.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
   begin
-    if doit('Person ' + #13 + FieldByName('VORNAME').AsString + ' ' +
-      FieldByName('NACHNAME').AsString + #13 + 'wirklich löschen') then
+    if doit('Person ' + #13 + FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME')
+      .AsString + #13 + 'wirklich löschen') then
     begin
       BeginHourGlass;
       FormKontext.cnPERSON.delContext(FieldByName('RID').AsInteger);
@@ -1335,8 +1332,8 @@ begin
     if (FieldByName('KONTAKTAM').AsDate = Date) then
     begin
       // heute
-      ShowMessage('Kontakt um ' + secondstostr8
-        (DateTime2seconds(FieldByName('KONTAKTAM').AsDateTime)));
+      ShowMessage('Kontakt um ' + secondstostr8(DateTime2seconds(FieldByName('KONTAKTAM')
+        .AsDateTime)));
     end
     else
     begin
@@ -1368,12 +1365,11 @@ begin
   LoadHeaderSettings(IB_Grid2, AnwenderPath + HeaderSettingsFName(IB_Grid2));
 end;
 
-procedure TFormPerson.SpeedButton8MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormPerson.SpeedButton8MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true)
-    then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid1));
       IB_Query1.close;
@@ -1383,12 +1379,11 @@ begin
     end;
 end;
 
-procedure TFormPerson.SpeedButton17MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormPerson.SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true)
-    then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid2));
       IB_Query2.close;
@@ -1410,9 +1405,17 @@ begin
   wSQL := TStringList.create;
 
   // Springe auf die Ansicht mit allen Zahlungspflichtigen
-  Zahlungspflichtige := e_r_sqlm(
-    { } 'select DISTINCT ZAHLUNGSPFLICHTIGER_R from AUSGANGSRECHNUNG where' +
-    { } ' (KUNDE_R=' + inttostr(PERSON_R) + ')');
+  if is1400 then
+    Zahlungspflichtige := e_r_sqlm(
+      { } 'select distinct ZAHLUNGSPFLICHTIGER_R from' +
+      { } ' BUCH ' +
+      { } 'where' +
+      { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
+      { } ' (PERSON_R=' + inttostr(PERSON_R) + ')')
+  else
+    Zahlungspflichtige := e_r_sqlm(
+      { } 'select DISTINCT ZAHLUNGSPFLICHTIGER_R from ' + TABELLE_AR + ' where' +
+      { } ' (KUNDE_R=' + inttostr(PERSON_R) + ')');
 
   if (Zahlungspflichtige.count = 0) then
   begin
@@ -1435,7 +1438,6 @@ begin
   Zahlungspflichtige.Free;
   wSQL.Free;
   EndHourGlass;
-
 end;
 
 procedure TFormPerson.SpeedButton19Click(Sender: TObject);
@@ -1462,17 +1464,17 @@ begin
   if (Key = #13) then
   begin
     PERSON_R := IB_Query1.FieldByName('RID').AsInteger;
-    AUSGANGSRECHNUNG_R :=
-      e_r_sql('select RID from AUSGANGSRECHNUNG where (KUNDE_R=' +
+    AUSGANGSRECHNUNG_R := e_r_sql('select RID from AUSGANGSRECHNUNG where (KUNDE_R=' +
       inttostr(PERSON_R) + ') and (DATUM=''01.' + Edit3.Text + ''')');
 
     if (AUSGANGSRECHNUNG_R > 0) then
     begin
+    // imp pend: umstellen auf x_sql
       qAUSGANGSRECHNUNG := DataModuleDatenbank.nQuery;
       with qAUSGANGSRECHNUNG do
       begin
-        sql.add('select * from AUSGANGSRECHNUNG where RID=' +
-          inttostr(AUSGANGSRECHNUNG_R) + ' for update');
+        sql.add('select * from AUSGANGSRECHNUNG where RID=' + inttostr(AUSGANGSRECHNUNG_R) +
+          ' for update');
         Open;
         edit;
         FieldByName('BETRAG').AsDouble := strtodoubledef(Edit2.Text, 0);
@@ -1482,9 +1484,13 @@ begin
     end
     else
     begin
-      e_x_sql('insert into AUSGANGSRECHNUNG (RID,KUNDE_R,DATUM,BETRAG) values' +
-        ' (0,' + inttostr(PERSON_R) + ',''01.' + Edit3.Text + ''',' +
-        FloatToStrISO(strtodoubledef(Edit2.Text, 0)) + ')');
+      e_x_sql('insert into BUCH (RID,NAME,KUNDE_R,DATUM,BETRAG) values (' +
+        { } '0,' +
+        { } cKonto_Loehne_AsDBString + ',' +
+        { } inttostr(PERSON_R) + ',' +
+        { } '''01.' + Edit3.Text + ''',' +
+        { } FloatToStrISO(strtodoubledef(Edit2.Text, 0)) +
+        { } ')');
     end;
     Key := #0;
     IB_Query1.next;
@@ -1527,8 +1533,7 @@ begin
     DatenKommenVonDerKarte := false;
     FillContext;
     if (PERSON_R <> FieldByName('RID').AsInteger) and (PERSON_R <> -1) then
-      ShowMessage('RID=' + inttostr(PERSON_R) +
-        ' hat dieselben Kontodaten (Dublette?)!')
+      ShowMessage('RID=' + inttostr(PERSON_R) + ' hat dieselben Kontodaten (Dublette?)!')
     else
       show;
   end;
@@ -1621,8 +1626,7 @@ begin
     begin
       PERSON_R := e_w_PersonNeu;
       sql.clear;
-      sql.add('select * from PERSON where RID=' + inttostr(PERSON_R) +
-        ' for update');
+      sql.add('select * from PERSON where RID=' + inttostr(PERSON_R) + ' for update');
       Open;
       edit;
       if not(eof) then
@@ -1673,40 +1677,35 @@ procedure TFormPerson.Button22Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrte Frau') + ' ' +
-    IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrte Frau') + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.Button23Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrter Herr') + ' ' +
-    IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrter Herr') + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.Button24Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Hallo') + ' ' +
-    IB_Edit2.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Hallo') + ' ' + IB_Edit2.Text;
 end;
 
 procedure TFormPerson.Button25Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString :=
-    _('Sehr geehrte Damen und Herren');
+  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrte Damen und Herren');
 end;
 
 procedure TFormPerson.Button26Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Liebe Familie') + ' ' +
-    IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Liebe Familie') + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.SpeedButton10Click(Sender: TObject);
@@ -1717,8 +1716,8 @@ var
   xlsOptions: TStringList;
   n: Integer;
 begin
-  if doit('Serienbriefsteuerdatei mit ' + inttostr(IB_Query1.RecordCount) +
-    ' Datensätzen erstellen') then
+  if doit('Serienbriefsteuerdatei mit ' + inttostr(IB_Query1.RecordCount) + ' Datensätzen erstellen')
+  then
   begin
 
     //
@@ -1794,17 +1793,16 @@ end;
 
 function TFormPerson.csvAddHeader: TStringList;
 const
-  csvHeaderLines = 'Vorname;Nachname;Name1;Name2;Strasse;Ort;Telefon;Fax;Datum;'
-    + 'Tier_Art;Tier_Rasse;Tier_Name;Tier_Geburt;Tier_Geschlecht;' +
-    'Tier_Tätowiernummer;Tier_Chipnummer;Anrede;Ansprache;Adressat1;Adressat2;'
-    + 'Adressat3;Adressat4;LohnJahr;' +
-    'Lohn01;Arbeitszeit01;Lohn02;Arbeitszeit02;' +
+  csvHeaderLines = 'Vorname;Nachname;Name1;Name2;Strasse;Ort;Telefon;Fax;Datum;' +
+    'Tier_Art;Tier_Rasse;Tier_Name;Tier_Geburt;Tier_Geschlecht;' +
+    'Tier_Tätowiernummer;Tier_Chipnummer;Anrede;Ansprache;Adressat1;Adressat2;' +
+    'Adressat3;Adressat4;LohnJahr;' + 'Lohn01;Arbeitszeit01;Lohn02;Arbeitszeit02;' +
     'Lohn03;Arbeitszeit03;Lohn04;Arbeitszeit04;Lohn05;Arbeitszeit05;' +
     'Lohn06;Arbeitszeit06;Lohn07;Arbeitszeit07;Lohn08;Arbeitszeit08;' +
-    'Lohn09;Arbeitszeit09;Lohn10;Arbeitszeit10;Lohn11;Arbeitszeit11;' +
-    'Lohn12;Arbeitszeit12;' + 'LohnSumme;Zusätzlich;Beruf;Geburtsdatum;' +
-    'Baustelle_Name;Vertrag_Nummer;Vertrag_Beginn;Vertrag_Ende;Vertrag_Stichtag;'
-    + 'Vertrag_Volumen;Vertrag_Betrag;PIN;Handy;Versicherungsnummer;Passwort';
+    'Lohn09;Arbeitszeit09;Lohn10;Arbeitszeit10;Lohn11;Arbeitszeit11;' + 'Lohn12;Arbeitszeit12;' +
+    'LohnSumme;Zusätzlich;Beruf;Geburtsdatum;' +
+    'Baustelle_Name;Vertrag_Nummer;Vertrag_Beginn;Vertrag_Ende;Vertrag_Stichtag;' +
+    'Vertrag_Volumen;Vertrag_Betrag;PIN;Handy;Versicherungsnummer;Passwort';
 var
   FullHeader: string;
 begin
@@ -1857,8 +1855,8 @@ var
   // Tier
   Tier: TIB_Cursor;
   TIER_R: Integer;
-  Tier_Art, Tier_Rasse, Tier_Name, Tier_Geburt, Tier_Geschlecht,
-    Tier_Taetowiernummer, Tier_Chipnummer: string;
+  Tier_Art, Tier_Rasse, Tier_Name, Tier_Geburt, Tier_Geschlecht, Tier_Taetowiernummer,
+    Tier_Chipnummer: string;
 
   // Vertrag
   VERTRAG_R: Integer;
@@ -1945,8 +1943,7 @@ begin
   end;
 
   // Vertrag
-  VERTRAG_R := e_r_sql('select max(RID) from VERTRAG where PERSON_R=' +
-    inttostr(PERSON_R));
+  VERTRAG_R := e_r_sql('select max(RID) from VERTRAG where PERSON_R=' + inttostr(PERSON_R));
   if VERTRAG_R >= cRID_FirstValid then
   begin
     cVERTRAG := DataModuleDatenbank.nCursor;
@@ -1960,10 +1957,9 @@ begin
       Vertrag_Beginn := long2dateLocalized(FieldByName('VON').AsDate);
       Vertrag_Ende := long2dateLocalized(FieldByName('BIS').AsDate);
       Vertrag_Stichtag := long2dateLocalized(FieldByName('STICHTAG').AsDate);
-      Vertrag_Einzeln := e_r_sqld('select VOLUMEN from BELEG where RID=' +
-        FieldByName('BELEG_R').AsString);
-      Vertrag_Gesamt := Vertrag_Einzeln * FieldByName('WIEDERHOLUNGEN')
-        .AsInteger;
+      Vertrag_Einzeln := e_r_sqld('select VOLUMEN from BELEG where RID=' + FieldByName('BELEG_R')
+        .AsString);
+      Vertrag_Gesamt := Vertrag_Einzeln * FieldByName('WIEDERHOLUNGEN').AsInteger;
       Vertrag_Volumen := format('%m', [Vertrag_Einzeln]);
       Vertrag_Betrag := format('%m', [Vertrag_Gesamt]);
     end;
@@ -1979,12 +1975,10 @@ begin
     repeat
 
       //
-      MonatsStartDatum := date2long('01.' + inttostrN(Monat, 2) + '.' +
-        copy(Edit3.Text, 4, 4));
-      MonatsBetrag :=
-        e_r_sqld('select sum(betrag) S from ausgangsrechnung where (datum=''' +
-        long2date(MonatsStartDatum) + ''') and (KUNDE_R=' +
-        Person.FieldByName('RID').AsString + ')');
+      MonatsStartDatum := date2long('01.' + inttostrN(Monat, 2) + '.' + copy(Edit3.Text, 4, 4));
+      MonatsBetrag := e_r_sqld('select sum(betrag) S from ausgangsrechnung where (datum=''' +
+        long2date(MonatsStartDatum) + ''') and (KUNDE_R=' + Person.FieldByName('RID')
+        .AsString + ')');
       JahresBetrag := JahresBetrag + MonatsBetrag;
 
       // Zuweisung der Ergebnisse
@@ -2054,8 +2048,7 @@ begin
     add(sLohn[24]);
     add(nosemi(zusaetzlich));
     add(nosemi(Person.FieldByName('BERUF').AsString));
-    add('"' + long2dateLocalized(Person.FieldByName('GEBURTSTAG')
-      .AsDate) + '"');
+    add('"' + long2dateLocalized(Person.FieldByName('GEBURTSTAG').AsDate) + '"');
     add(nosemi(Baustelle_Name));
     add(nosemi(Vertrag_Nummer));
     add(nosemi(Vertrag_Beginn));
@@ -2127,8 +2120,7 @@ begin
     end;
 end;
 
-procedure TFormPerson.IB_Grid1KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormPerson.IB_Grid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if ssAlt in Shift then
     if (Key = ord('X')) then
@@ -2288,11 +2280,11 @@ begin
                   IgnoreField := true;
                   PERSON_R := strtointdef(CellStr, 0);
 
-                  if (e_r_sql('select COUNT(RID) from PERSON where RID=' +
-                    inttostr(PERSON_R)) = 0) then
+                  if (e_r_sql('select COUNT(RID) from PERSON where RID=' + inttostr(PERSON_R)) = 0)
+                  then
                   begin
-                    e_x_sql('update PERSON set RID=' + inttostr(PERSON_R) +
-                      ' where RID=' + inttostr(e_w_PersonNeu));
+                    e_x_sql('update PERSON set RID=' + inttostr(PERSON_R) + ' where RID=' +
+                      inttostr(e_w_PersonNeu));
                   end;
 
                 end
@@ -2354,9 +2346,8 @@ begin
                       TagDBField('A07', ModifiedStr = 'U');
 
                       // Profil09=(Y) Objekt
-                      TagDBField('A08', (ModifiedStr = '') or
-                        (ModifiedStr = 'T1') or (ModifiedStr = 'T2') or
-                        (ModifiedStr = 'U') or (ModifiedStr = 'Y') or
+                      TagDBField('A08', (ModifiedStr = '') or (ModifiedStr = 'T1') or
+                        (ModifiedStr = 'T2') or (ModifiedStr = 'U') or (ModifiedStr = 'Y') or
                         (ModifiedStr = 'YS') or (ModifiedStr = 'S'));
 
                       // Profil10=(T) Treppenhaus
@@ -2382,8 +2373,7 @@ begin
 
                   if (Spalte = 'EMAIL_NEU') then
                   begin
-                    i := e_r_sql
-                      ('select count(RID) from PERSON where EMAIL containing ' +
+                    i := e_r_sql('select count(RID) from PERSON where EMAIL containing ' +
                       SQLstring(CellStr));
                     if (i > 0) then
                       DatenWeglassen := true
@@ -2398,8 +2388,7 @@ begin
                   if (Spalte = 'VERTRAG') then
                   begin
                     DatenVorhanden := true;
-                    extraSQL.add
-                      ('insert into VERTRAG (RID,PERSON_R,BELEG_R) values (' +
+                    extraSQL.add('insert into VERTRAG (RID,PERSON_R,BELEG_R) values (' +
                       { } '0,' +
                       { } inttostr(PERSON_R) + ',' +
                       { } CellStr + ')');
@@ -2426,27 +2415,22 @@ begin
                         { } 'on' +
                         { } ' (PERSON.PRIV_ANSCHRIFT_R=ANSCHRIFT.RID) ' +
                         { } 'where' +
-                        { } ' (PERSON.VORNAME=' +
-                        SQLstring(qPERSON.FieldByName('VORNAME').AsString)
+                        { } ' (PERSON.VORNAME=' + SQLstring(qPERSON.FieldByName('VORNAME').AsString)
                         + ') and' +
-                        { } ' (PERSON.NACHNAME=' +
-                        SQLstring(qPERSON.FieldByName('NACHNAME').AsString)
-                        + ') and' +
-                        { } ' (ANSCHRIFT.ORT=' +
-                        SQLstring(qANSCHRIFT.FieldByName('ORT')
+                        { } ' (PERSON.NACHNAME=' + SQLstring(qPERSON.FieldByName('NACHNAME')
+                        .AsString) + ') and' +
+                        { } ' (ANSCHRIFT.ORT=' + SQLstring(qANSCHRIFT.FieldByName('ORT')
                         .AsString) + ')');
                       if (PERSON_R_Altbestand >= cRID_FirstValid) then
                       begin
                         DatenWeglassen := true;
                         i := e_r_sql(
                           { } 'select RID from VERTRAG where ' +
-                          { } ' (PERSON_R=' + inttostr(PERSON_R_Altbestand)
-                          + ') and' +
+                          { } ' (PERSON_R=' + inttostr(PERSON_R_Altbestand) + ') and' +
                           { } ' (BELEG_R=' + CellStr + ')');
                         if (i < cRID_FirstValid) then
                         begin
-                          e_x_sql('insert into VERTRAG (RID,PERSON_R,BELEG_R) values ('
-                            +
+                          e_x_sql('insert into VERTRAG (RID,PERSON_R,BELEG_R) values (' +
                             { } '0,' +
                             { } inttostr(PERSON_R_Altbestand) + ',' +
                             { } CellStr + ')');
@@ -2459,18 +2443,17 @@ begin
                     break;
                   end;
 
-                  if (Spalte='PLZ') then
+                  if (Spalte = 'PLZ') then
                   begin
-                    if pos('-',CellStr)>0 then
-                     CellStr := nextp(CellStr,'-',1);
+                    if pos('-', CellStr) > 0 then
+                      CellStr := nextp(CellStr, '-', 1);
                   end;
 
                   if (Spalte = 'PLZORT') then
                   begin
                     qANSCHRIFT.FieldByName('PLZ').AsInteger :=
                       strtointdef(nextp(CellStr, ' ', 0), 0);
-                    qANSCHRIFT.FieldByName('ORT').AsString :=
-                      nextp(CellStr, ' ', 1);
+                    qANSCHRIFT.FieldByName('ORT').AsString := nextp(CellStr, ' ', 1);
                     DatenVorhanden := true;
                     break;
                   end;
