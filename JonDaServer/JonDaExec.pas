@@ -3095,7 +3095,7 @@ begin
         if NameOhneZaehlerNummerAlt then
           FotoDateiNameNeu := FotoPrefix
         else
-          FotoDateiNameNeu := FotoPrefix + zaehlernummer_alt;
+          FotoDateiNameNeu := FotoPrefix + StrFilter(zaehlernummer_alt, cValidFNameChars + '_');
         UmbenennungAbgeschlossen := true;
         break;
       end;

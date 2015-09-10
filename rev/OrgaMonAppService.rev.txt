@@ -19,6 +19,14 @@ Dokumentation
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
 
+Rev 1.058 (08.09.15) Andreas Filsinger
+
+ Bug: Sonderzeichen in der "ZählernummerAlt" verhinderte das Kopieren
+
+Rev 1.057 (08.09.15) Andreas Filsinger
+
+ Neu: Störung beim Kopieren: Erweiterte Fehlermeldung
+
 Rev 1.056 (12.02.15) Andreas Filsinger
 
  Neu: Foto: Neuer Benennungsmodus "11" = bei -FH:
