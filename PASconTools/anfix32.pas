@@ -1582,20 +1582,20 @@ begin
   else
   begin
     GetTime(h, m, s, ms);
-    SecondsGet := longint(h) * 60 * 60 + longint(m) * 60 + longint(s);
+    SecondsGet := longint(h) * cOneHourInSeconds + longint(m) * cOneMinuteInSeconds + longint(s);
   end;
 end;
 
 function SecondsAdd(s1, s2: longint): longint;
 begin
-  SecondsAdd := (s1 + s2) mod (24 * 60 * 60);
+  SecondsAdd := (s1 + s2) mod (24 * cOneHourInSeconds);
 end;
 
 procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
 var
   FullDays: integer;
 begin
-  FullDays := (s1 + plus) div (24 * 60 * 60);
+  FullDays := (s1 + plus) div (24 * cOneHourInSeconds);
   s2 := SecondsAdd(s1, plus);
   d2 := datePlus(d1, FullDays);
 end;
@@ -1603,13 +1603,13 @@ end;
 function SecondsDiff(s1, s2: TAnfixTime): TAnfixTime;
 begin
   if (s1 < s2) then
-    inc(s1, 24 * 60 * 60);
+    inc(s1, 24 * cOneHourInSeconds);
   SecondsDiff := s1 - s2;
 end;
 
 function SecondsOK(secs: TAnfixTime): boolean;
 begin
-  result := (secs >= 0) and (secs < 24 * 60 * 60);
+  result := (secs >= 0) and (secs < 24 * cOneHourInSeconds);
 end;
 
 function SecondsDiffABS(s1, s2: TAnfixTime): TAnfixTime; overload;
@@ -1640,7 +1640,7 @@ begin
   else
   begin
     FullDays := Min(pred(dateDiff(d2, d1)), 40); //
-    result := (24 * 60 * 60 - s2) + (FullDays * 24 * 60 * 60) + s1;
+    result := (24 * cOneHourInSeconds - s2) + (FullDays * 24 * cOneHourInSeconds) + s1;
   end;
 end;
 
@@ -1664,7 +1664,7 @@ begin
   else
   begin
     FullDays := Min(pred(dateDiff(d2, d1)), 40); //
-    result := abs((24 * 60 * 60 - s2) + (FullDays * 24 * 60 * 60) + s1);
+    result := abs((24 * cOneHourInSeconds - s2) + (FullDays * 24 * cOneHourInSeconds) + s1);
   end;
 end;
 
@@ -1880,7 +1880,7 @@ end;
 
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): TAnfixTime;
 begin
-  dateTime2Seconds := longint(dt.Hour) * 60 * 60 + longint(dt.Min) * 60 + longint(dt.Sec);
+  dateTime2Seconds := longint(dt.Hour) * cOneHourInSeconds + longint(dt.Min) * cOneMinuteInSeconds + longint(dt.Sec);
 end;
 
 function dateTime2Seconds(dt: TDateTime): TAnfixTime;
@@ -1888,7 +1888,7 @@ var
   h, m, s, ms: Word;
 begin
   decodetime(dt, h, m, s, ms);
-  result := longint(h) * 60 * 60 + longint(m) * 60 + longint(s);
+  result := longint(h) * cOneHourInSeconds + longint(m) * cOneMinuteInSeconds + longint(s);
 end;
 
 function SecondsToStr(secs: longint): string;
@@ -1906,10 +1906,10 @@ begin
   else
     Negative := false;
 
-  h := secs div (60 * 60);
-  secs := secs - (h * 60 * 60);
-  m := secs div 60;
-  secs := secs - (m * 60);
+  h := secs div (cOneHourInSeconds);
+  secs := secs - (h * cOneHourInSeconds);
+  m := secs div cOneMinuteInSeconds;
+  secs := secs - (m * cOneMinuteInSeconds);
   s := secs;
   OutStr := IntToStrN(h, 2) + ':' + IntToStrN(m, 2) + ':' + IntToStrN(s, 2);
 
@@ -1940,10 +1940,10 @@ begin
   else
     Negative := false;
 
-  h := secs div (60 * 60);
-  secs := secs - (h * 60 * 60);
-  m := secs div 60;
-  secs := secs - (m * 60);
+  h := secs div (cOneHourInSeconds);
+  secs := secs - (h * cOneHourInSeconds);
+  m := secs div cOneMinuteInSeconds;
+  secs := secs - (m * cOneMinuteInSeconds);
   s := secs;
   OutStr := IntToStrN(h, 3) + ':' + IntToStrN(m, 2) + ':' + IntToStrN(s, 2);
   ersetze(' ', '0', OutStr);
@@ -2028,7 +2028,7 @@ begin
   ReadNext(h);
   ReadNext(m);
   ReadNext(s);
-  StrToSeconds := (longint(h) * longint(3600) + longint(m) * longint(60) + longint(s)) * Faktor;
+  StrToSeconds := (longint(h) * longint(cOneHourInSeconds) + longint(m) * longint(cOneMinuteInSeconds) + longint(s)) * Faktor;
 end;
 
 function StrToSecondsdef(Sstr: string; def: longint): longint;
@@ -5561,11 +5561,10 @@ begin
   //
   if SecondsOK(Time) then
   begin
-
-    ho := Time div 3600;
-    Time := Time mod 3600;
-    mi := Time div 60;
-    Time := Time mod 60;
+    ho := Time div cOneHourInSeconds;
+    Time := Time mod cOneHourInSeconds;
+    mi := Time div cOneMinuteInSeconds;
+    Time := Time mod cOneMinuteInSeconds;
     se := Time;
   end
   else

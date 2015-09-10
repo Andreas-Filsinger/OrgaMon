@@ -38,7 +38,7 @@ uses
   JonDaExec, memcache;
 
 const
-  Version: single = 1.056; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.058; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -157,14 +157,17 @@ type
     Label14: TLabel;
     Edit_Rollback_Baustelle: TEdit;
     Button26: TButton;
+    StaticText1: TStaticText;
+    Button27: TButton;
+    Edit10: TEdit;
+    Edit11: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure ListBox3Click(Sender: TObject);
-    procedure ListBox3KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure ListBox3KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton2Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -195,6 +198,8 @@ type
     procedure Button24Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
     procedure Button26Click(Sender: TObject);
+    procedure ListBox5Click(Sender: TObject);
+    procedure Button27Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -212,6 +217,7 @@ type
     tBAUSTELLE: tsTable;
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
+    sLog: TStringList;
 
     procedure Log(s: string);
     function GEN_ID: integer;
@@ -335,8 +341,7 @@ end;
 
 procedure TFormFotoService.Button23Click(Sender: TObject);
 begin
-  Edit_Rollback_Quelle.Text := cBackUpPath + cLocation_JonDaServer +
-    '#~AktuelleNummer~\';
+  Edit_Rollback_Quelle.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
 end;
 
 procedure TFormFotoService.Button24Click(Sender: TObject);
@@ -393,8 +398,8 @@ begin
     if pos('cp ', TRNs[n]) = 1 then
     begin
       SrcFName := nextp(TRNs[n], ' ', 1);
-      dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName,
-        SrcKandidaten, false, true);
+      dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName, SrcKandidaten,
+        false, true);
       if (SrcKandidaten.Count = 0) then
       begin
         ListBox12.Items.Add('ERROR: ' + SrcFName + ' nicht in dieser Quelle');
@@ -409,8 +414,7 @@ begin
           FotoSize := FSize(QuellPfad + cLocation_MOB + SrcKandidaten[pred(m)]);
           if
           { } (FotoSize > 0) and
-          { } (FotoSize = FSize(QuellPfad + cLocation_MOB + SrcKandidaten[m]))
-          then
+          { } (FotoSize = FSize(QuellPfad + cLocation_MOB + SrcKandidaten[m])) then
             SrcKandidaten.Delete(m);
         end;
 
@@ -426,12 +430,11 @@ begin
         begin
           TransaktionsCount := nextp(SrcKandidaten[0], '-', 0);
           ListBox12.Items.Add(
-            { } 'cp ' + QuellPfad + cLocation_MOB + TransaktionsCount + '-' +
-            SrcFName + ' ' +
+            { } 'cp ' + QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName + ' ' +
             { } MobUploadPath + SrcFName);
 
-          FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' +
-            SrcFName, MobUploadPath + SrcFName);
+          FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName,
+            MobUploadPath + SrcFName);
         end;
       end;
       Application.ProcessMessages;
@@ -482,8 +485,8 @@ begin
   tREFERENZ := tsTable.Create;
   with tREFERENZ do
   begin
-    insertfromFile(JonDaServerPath + cDBPath + Edit_Rollback_Baustelle.Text +
-      '\' + cE_FotoBenennung + '.csv');
+    insertfromFile(JonDaServerPath + cDBPath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung
+      + '.csv');
     Column_RID := colof(cRID_Suchspalte, true);
     for r := 1 to RowCount do
     begin
@@ -532,7 +535,32 @@ begin
   end;
   tREFERENZ.Free;
   SrcKandidaten.Free;
+end;
 
+procedure TFormFotoService.Button27Click(Sender: TObject);
+var
+  FName, FNameRemote: string;
+  n: integer;
+begin
+  if (ListBox5.ItemIndex <> -1) then
+  begin
+    FName := ListBox5.Items[ListBox5.ItemIndex];
+    FNameRemote := nextp(FName, '+', 1);
+    FileMove(
+      { } MobUploadPath + cLocation_Unverarbeitet + FName,
+      { } MyWorkingPath + 'Amnestie\' + Edit10.Text + FNameRemote);
+
+    // delete one Line
+    n := ListBox5.ItemIndex;
+    ListBox5.Items.Delete(n);
+    Label10.Caption := IntToStr(ListBox5.Count);
+    if ListBox5.Count > 0 then
+    begin
+      ListBox5.ItemIndex := n;
+      ListBox5.SetFocus;
+      ListBox5.OnClick(Sender);
+    end;
+  end;
 end;
 
 procedure TFormFotoService.Button2Click(Sender: TObject);
@@ -548,7 +576,6 @@ begin
     doRemote(GeraeteNo, 'mv', FNameRemote);
     // DeleteFile(MobUploadPath+cSubDirUnverarbeitet+'\'+ListBox5.Items[n]);
   end;
-
 end;
 
 procedure TFormFotoService.Button3Click(Sender: TObject);
@@ -559,8 +586,7 @@ procedure TFormFotoService.Button3Click(Sender: TObject);
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
-    FileMove(MobUploadPath + cLocation_Unverarbeitet + FName,
-      MobUploadPath + FNameRemote);
+    FileMove(MobUploadPath + cLocation_Unverarbeitet + FName, MobUploadPath + FNameRemote);
   end;
 
 var
@@ -571,6 +597,8 @@ begin
   begin
     doWork(ListBox5.ItemIndex);
     ListBox5.Items.Delete(ListBox5.ItemIndex);
+    Label10.Caption := IntToStr(ListBox5.Count);
+
   end
   else
   begin
@@ -713,8 +741,7 @@ end;
 
 procedure TFormFotoService.Button17Click(Sender: TObject);
 begin
-  ListBox10.Items.Add(IntToStr(DirSize('X:\JonDaServer\#61')
-    DIV (1024 * 1024)));
+  ListBox10.Items.Add(IntToStr(DirSize('X:\JonDaServer\#61') DIV (1024 * 1024)));
 end;
 
 procedure TFormFotoService.Button18Click(Sender: TObject);
@@ -746,14 +773,12 @@ begin
         with bOrgaMon do
         begin
           ListBox11.Items.Add('check ' + AllTRN[n] + ' ...');
-          Init(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon,
-            sizeof(TMDERec));
+          Init(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
           BeginTransaction(now);
           if exist(AUFTRAG_R) then
           begin
             get;
-            ListBox11.Items.Add(mderecOrgaMon.Baustelle + '-' +
-              mderecOrgaMon.ABNummer + ' ' +
+            ListBox11.Items.Add(mderecOrgaMon.Baustelle + '-' + mderecOrgaMon.ABNummer + ' ' +
               Long2date(mderecOrgaMon.ausfuehren_soll));
             AuftragFound := true;
           end;
@@ -902,8 +927,7 @@ begin
       break;
     i := ListBox6.ItemIndex;
 
-    AUFTRAG_R := StrToIntDef(nextp(ListBox6.Items[ListBox6.ItemIndex], ';', 2),
-      cRID_Null);
+    AUFTRAG_R := StrToIntDef(nextp(ListBox6.Items[ListBox6.ItemIndex], ';', 2), cRID_Null);
     if (AUFTRAG_R < cRID_FirstValid) then
       break;
 
@@ -1055,8 +1079,7 @@ begin
   LoadPic;
 end;
 
-procedure TFormFotoService.ListBox3KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormFotoService.ListBox3KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   FindStr, Ablage, Path: string;
   FoundStr: string;
@@ -1226,6 +1249,30 @@ begin
 
 end;
 
+procedure TFormFotoService.ListBox5Click(Sender: TObject);
+var
+  n: integer;
+  FName: string;
+begin
+
+  if not(assigned(sLog)) then
+  begin
+    sLog := TStringList.Create;
+    sLog.LoadFromFile(MyWorkingPath + 'FotoService.log.txt');
+  end;
+
+  FName := nextp(ListBox5.Items[ListBox5.ItemIndex], '+', 1);
+  Edit11.Text := nextp(FName, '-', 1);
+
+  for n := pred(sLog.Count) downto 0 do
+    if pos(FName, sLog[n]) > 0 then
+    begin
+      StaticText1.Caption := sLog[n];
+      break;
+    end;
+
+end;
+
 procedure TFormFotoService.LoadPic;
 begin
   Image1.Picture.LoadFromFile(Edit4.Text + ListBox3.Items[ListBox3.ItemIndex]);
@@ -1294,11 +1341,15 @@ procedure TFormFotoService.SpeedButton2Click(Sender: TObject);
 var
   sDir: TStringList;
 begin
+  if assigned(sLog) then
+    FreeAndNil(sLog);
+
   sDir := TStringList.Create;
   dir(MobUploadPath + cLocation_Unverarbeitet + '*.jpg', sDir, false);
   Label10.Caption := IntToStr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
+
 end;
 
 procedure TFormFotoService.SpeedButton3Click(Sender: TObject);
@@ -1439,11 +1490,12 @@ begin
       // Alle 5 Min!
       if (TimerWartend > 5 * 60 * 1000) then
       begin
+        TimerWartend := 0;
+
         // Ab und zu die neuen Daten beachten
         releaseGlobals;
 
         // Wartende verarbeiten
-        TimerWartend := 0;
         workWartend(true);
 
         // Status Seite neu bearbeiten
@@ -1475,8 +1527,7 @@ procedure TFormFotoService.workAblage;
 
   procedure Log(Source, Dest: string);
   begin
-    AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest,
-      MyWorkingPath + AblageFname);
+    AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest, MyWorkingPath + AblageFname);
   end;
 
 const
@@ -1533,8 +1584,7 @@ var
 
       // reduziere um "wartende" Bilder
       for m := pred(sPics.Count) downto 0 do
-        if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1)
-        then
+        if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1) then
           sPics.Delete(m);
       if (sPics.Count = 0) then
         break;
@@ -1570,8 +1620,7 @@ var
       // (immer noch) nicht gefunden?
       if (r = -1) then
       begin
-        FormFotoService.Log('ERROR: FTP-Benutzer "' + FTP_Benutzer +
-          '" unbekannt');
+        FormFotoService.Log('ERROR: FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
         Pending := false;
         break;
       end;
@@ -1587,9 +1636,8 @@ var
           if sFotos.Count > 0 then
           begin
             sFotos.sort;
-            FotosSequence :=
-              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)],
-              'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)], 'Fotos-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1601,13 +1649,11 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(sPath + 'Fotos-' + inttostrN(FotosSequence,
-        cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(sPath + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
         { } sPath +
-        { } 'Fotos-' + inttostrN(FotosSequence,
-        cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
@@ -1686,8 +1732,7 @@ var
           if sFotos.Count > 0 then
           begin
             sFotos.sort;
-            FotosSequence :=
-              StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)],
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.Count)],
               'Wechselbelege-', '.zip'), -1);
           end;
         end;
@@ -1700,13 +1745,12 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence,
-        cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+        '.zip', '.');
       if (zip(
         { } sPics,
         { } sPath +
-        { } 'Wechselbelege-' + inttostrN(FotosSequence,
-        cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
         { } infozip_RootPath + '=' + sPath + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
@@ -1958,8 +2002,8 @@ begin
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.Count) do
-    if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID
-      + '-' + sFiles[n])) then
+    if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID + '-' + sFiles[n]))
+    then
     begin
       Log('ERROR: ' + 'can not write to ' + cBackUpPath + cLocation_MOB);
       Timer1.Enabled := false;
@@ -2040,8 +2084,7 @@ begin
     if FileExists(MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension) then
     begin
       bOrgaMonOld := TBLager.Create;
-      bOrgaMonOld.Init(MyWorkingPath + '_AUFTRAG+TS', mderecOrgaMon,
-        sizeof(TMDERec));
+      bOrgaMonOld.Init(MyWorkingPath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
       bOrgaMonOld.BeginTransaction(now);
     end
     else
@@ -2085,8 +2128,7 @@ begin
           break;
         end;
 
-        Log('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMon.FileName +
-          ' nicht vorhanden!');
+        Log('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
 
         // In der Alternative suchen
         if (assigned(bOrgaMonOld)) then
@@ -2098,13 +2140,12 @@ begin
             break;
           end;
 
-          Log('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMonOld.FileName +
-            ' nicht vorhanden!');
+          Log('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, JonDaServerPath + cServerDataPath +
-          FotoGeraeteNo + cDATExtension);
+        assignFile(fOrgaMonAuftrag, JonDaServerPath + cServerDataPath + FotoGeraeteNo +
+          cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -2125,8 +2166,7 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log('ERROR: ' + sFiles[m] + ': RID ' + IntToStr(RID) +
-          ' konnte nicht gefunden werden!');
+        Log('ERROR: ' + sFiles[m] + ': RID ' + IntToStr(RID) + ' konnte nicht gefunden werden!');
         break;
       end;
 
@@ -2149,27 +2189,22 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] :=
-                tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
+                cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
-              sFotoCall.Values[cParameter_foto_strasse] :=
-                Oem2asci(Zaehler_Strasse);
+              sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
               sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
               sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
               sFotoCall.Values[cParameter_foto_RID] := IntToStr(RID);
 
               sFotoCall.Values[cParameter_foto_ART] := art;
-              sFotoCall.Values[cParameter_foto_zaehlernummer_alt] :=
-                zaehlernummer_alt;
-              sFotoCall.Values[cParameter_foto_zaehlernummer_neu] :=
-                zaehlernummer_neu;
+              sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
+              sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath
-                + cDBPath;
-              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath +
-                sFiles[m];
+              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath + cDBPath;
+              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
             sFotoResult := JonDaExec.foto(sFotoCall);
@@ -2178,8 +2213,7 @@ begin
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
             UmbenennungAbgeschlossen :=
-              (sFotoResult.Values[cParameter_foto_fertig]
-              = JonDaExec.active(true));
+              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -2198,8 +2232,7 @@ begin
           //
           if (BAUSTELLE_Index <= -1) then
           begin
-            Log('ERROR: ' + sFiles[m] + ': Baustelle "' + sBaustelle +
-              '" unbekannt!');
+            Log('ERROR: ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
           end;
 
           break;
@@ -2214,8 +2247,7 @@ begin
 
             if (length(FotoZiel) < 3) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle +
-                ': Keine Internet-Ablage definiert');
+              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Keine Internet-Ablage definiert');
               break;
             end;
 
@@ -2229,8 +2261,7 @@ begin
 
             if not(DirExists(cWorkPath + FotoZiel)) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle +
-                ': Internet-Ablage "' + FotoZiel +
+              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
                 '": Das Verzeichnis existiert nicht');
               break;
             end;
@@ -2239,17 +2270,14 @@ begin
             FotoDateiNameVerfuegbar := FotoDateiName;
             i := 1;
             repeat
-              if not(FileExists(cWorkPath + FotoZiel + '\' +
-                FotoDateiNameVerfuegbar)) then
+              if not(FileExists(cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
                 FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' +
-                  IntToStr(i) + '.jpg'
+                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + IntToStr(i) + '.jpg'
               else
                 FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' +
-                  IntToStr(i) + '.jpg';
+                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + IntToStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -2267,18 +2295,15 @@ begin
               begin
                 if not(FileRename(
                   { } cWorkPath + FotoZiel + '\' + FotoDateiName,
-                  { } cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar))
-                then
+                  { } cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 begin
-                  Log('ERROR: ' + sFiles[m] +
-                    ': Platz schaffen nicht erfolgreich');
+                  Log('ERROR: ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
                   break;
                 end;
               end
               else
               begin
-                Log('INFO: ' + sFiles[m] +
-                  ': Veraltetes Bild, behalte Neueres');
+                Log('INFO: ' + sFiles[m] + ': Veraltetes Bild, behalte Neueres');
                 FotoDateiName := FotoDateiNameVerfuegbar;
               end;
             end;
@@ -2306,7 +2331,9 @@ begin
               { } MobUploadPath + sFiles[m],
               { } cWorkPath + FotoZiel + '\' + FotoDateiName)) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': Kopieren nicht erfolgreich');
+              Log('ERROR: {' + sFiles[m] + ': Kopieren nicht erfolgreich');
+              Log('Quelle war: "' + MobUploadPath + sFiles[m] + '"');
+              Log('Ziel war: "' + cWorkPath + FotoZiel + '\' + FotoDateiName + '" }');
               break;
             end;
 
@@ -2430,8 +2457,7 @@ begin
         inc(i);
       end;
     if (i > 0) then
-      Log('INFO: ' + 'gebe ' + IntToStr(i) +
-        ' Dateieinträge frei, da sie älter als 10 Tage sind');
+      Log('INFO: ' + 'gebe ' + IntToStr(i) + ' Dateieinträge frei, da sie älter als 10 Tage sind');
 
   end;
 
@@ -2515,8 +2541,7 @@ begin
     k := pos('-Neu', FNameNeu);
     if (k = 0) then
     begin
-      Log('ERROR: ' + 'keine Ahnung wie man "' + FNameNeu +
-        '" umbenennen soll');
+      Log('ERROR: ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
       continue;
     end;
 
@@ -2591,8 +2616,8 @@ begin
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "'
-        + FPath + '" fehlt');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath +
+        '" fehlt');
       continue;
     end;
 
@@ -2610,11 +2635,9 @@ begin
         if not(FileExists(cWorkPath + FNameNeu)) then
           break;
         if (i = 1) then
-          FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' +
-            IntToStr(i) + '.jpg'
+          FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' + IntToStr(i) + '.jpg'
         else
-          FNameNeu := copy(FNameNeu, 1, revpos('-', FNameNeu) - 1) + '-' +
-            IntToStr(i) + '.jpg';
+          FNameNeu := copy(FNameNeu, 1, revpos('-', FNameNeu) - 1) + '-' + IntToStr(i) + '.jpg';
         inc(i);
       until false;
 
@@ -2696,8 +2719,7 @@ begin
   end;
 end;
 
-function TFormFotoService.ZaehlerNummerNeu(AUFTRAG_R: integer;
-  GeraeteNo: string): string;
+function TFormFotoService.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
 var
   FName: string;
   r: integer;
