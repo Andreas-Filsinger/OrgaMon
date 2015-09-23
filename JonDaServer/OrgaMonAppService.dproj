@@ -117,6 +117,7 @@
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
 			<DCCReference Include="..\PASvisTools\wanfix32.pas"/>
 			<DCCReference Include="..\PASconTools\memcache.pas"/>
+			<DCCReference Include="..\PASconTools\Foto.pas"/>
 			<None Include="..\rev\JonDaServer.rev.txt"/>
 			<None Include="..\rev\OrgaMonAppService.rev.txt"/>
 			<BuildConfiguration Include="Release">

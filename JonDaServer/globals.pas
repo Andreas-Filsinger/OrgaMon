@@ -236,6 +236,7 @@ type
 
 function StrassePostalisch(s: string): string;
 function OrtPostalisch(s: string): string;
+function cCopyright: string;
 
 implementation
 
@@ -244,6 +245,12 @@ uses
 
 const
   LoadIniFCalled: boolean = false;
+
+function cCopyright: string;
+begin
+  result := cApplicationName + '™ Rev ' + RevToStr(globals.Version)
+    + ' ©1987-' + JahresZahl + ' http://www.orgamon.org';
+end;
 
 procedure LoadIniF;
 const
