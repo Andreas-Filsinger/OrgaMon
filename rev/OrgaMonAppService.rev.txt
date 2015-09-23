@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.059 (11.09.15) Andreas Filsinger
+
+ Neu: Unverarbeitete: Fehler wird nun angezeigt
+ Neu: Unverarbeitete: RID wird nun angezeigt
+ Neu: Unverarbeitete: Amnestie ins Amnestie-Unterverzeichnis nun möglich (mit Grund)
 
 Rev 1.058 (08.09.15) Andreas Filsinger
 

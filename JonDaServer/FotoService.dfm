@@ -20,11 +20,15 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet4
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -130,6 +134,10 @@ object FormFotoService: TFormFotoService
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button24: TButton
         Left = 48
         Top = 56
@@ -152,6 +160,10 @@ object FormFotoService: TFormFotoService
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -316,13 +328,18 @@ object FormFotoService: TFormFotoService
           'F1 : Die Datei ist korrupt - sie muss nochmals '#252'bertragen werden'
           'F2 : Die Umbenennung muss nochmals durchgef'#252'hrt werden'
           'F3 : Dieses Bild ist nicht mehr notwendig, einfach l'#246'schen'
-          'F4 : Dieses Bild zur "-Neu" umbenennung vormerken')
+          'F4 : Dieses Bild zur "-Neu" umbenennung vormerken'
+          'F5 : Dateigr'#246'sse des Bildes korrigieren')
         TabOrder = 3
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -439,6 +456,10 @@ object FormFotoService: TFormFotoService
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         726
         481)
@@ -519,6 +540,10 @@ object FormFotoService: TFormFotoService
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -539,6 +564,20 @@ object FormFotoService: TFormFotoService
         Width = 216
         Height = 13
         Caption = 'Einzelne Datei, z.B. "W:\mitgas\123.zip.html"'
+      end
+      object Label15: TLabel
+        Left = 444
+        Top = 72
+        Width = 89
+        Height = 13
+        Caption = 'Zielgr'#246'sse [k Byte]'
+      end
+      object Label16: TLabel
+        Left = 444
+        Top = 99
+        Width = 123
+        Height = 13
+        Caption = 'erlaubte Abweichung [%]'
       end
       object Button8: TButton
         Left = 136
@@ -574,10 +613,11 @@ object FormFotoService: TFormFotoService
       end
       object Edit2: TEdit
         Left = 136
-        Top = 280
+        Top = 275
         Width = 228
         Height = 21
         TabOrder = 4
+        Text = 'mark-e'
       end
       object Edit3: TEdit
         Left = 136
@@ -619,11 +659,39 @@ object FormFotoService: TFormFotoService
         ItemHeight = 13
         TabOrder = 9
       end
+      object Edit12: TEdit
+        Left = 575
+        Top = 69
+        Width = 50
+        Height = 21
+        TabOrder = 10
+        Text = '100'
+      end
+      object Edit13: TEdit
+        Left = 575
+        Top = 96
+        Width = 50
+        Height = 21
+        TabOrder = 11
+        Text = '10'
+      end
+      object Button28: TButton
+        Left = 444
+        Top = 312
+        Width = 181
+        Height = 25
+        Caption = 'Fotos-reduziert'
+        TabOrder = 12
+      end
     end
     object TabSheet7: TTabSheet
       Caption = 'PostgreSQL'
       ImageIndex = 6
       OnShow = TabSheet7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 32
         Top = 24
@@ -652,6 +720,10 @@ object FormFotoService: TFormFotoService
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -674,6 +746,10 @@ object FormFotoService: TFormFotoService
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -743,6 +819,10 @@ object FormFotoService: TFormFotoService
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -837,7 +917,7 @@ object FormFotoService: TFormFotoService
   object Timer1: TTimer
     Interval = 2000
     OnTimer = Timer1Timer
-    Left = 528
-    Top = 80
+    Left = 48
+    Top = 64
   end
 end

@@ -27,7 +27,8 @@ uses
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   wanfix32 in '..\PASvisTools\wanfix32.pas',
-  memcache in '..\PASconTools\memcache.pas';
+  memcache in '..\PASconTools\memcache.pas',
+  Foto in '..\PASconTools\Foto.pas';
 
 {$R *.res}
 
