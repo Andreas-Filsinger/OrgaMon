@@ -1463,7 +1463,7 @@ begin
           continue;
 
         repeat
-          if (r = lastRow) and (c = pred(sRow.Count)) then
+          if (r = lastRow) and (c = lastCol) then
           begin
             tdExtras := 'class=gright';
             break;
@@ -1503,7 +1503,7 @@ begin
         if (tdData = '') then
           tdData := #160;
 
-        if tdExtras <> '' then
+        if (tdExtras <> '') then
           tdExtras := ' ' + cutblank(tdExtras);
 
         add(
