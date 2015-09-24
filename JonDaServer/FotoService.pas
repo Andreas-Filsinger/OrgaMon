@@ -38,7 +38,7 @@ uses
   JonDaExec, memcache, Foto;
 
 const
-  Version: single = 1.060; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.061; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1640,7 +1640,7 @@ var
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
-        FotosAbzug := (ReadString('System', 'Sequence', cINI_DEACTIVATE) = cINI_ACTIVATE);
+        FotosAbzug := (ReadString('System', 'Abzug', cINI_DEACTIVATE) = cINI_ACTIVATE);
         if FotosSequence < 0 then
         begin
           dir(sPath + 'Fotos-????.zip', sFotos, false);
@@ -1700,6 +1700,7 @@ var
           Pending := false;
           break;
         end;
+
       end;
 
       // Fotos-nnnn.ini erhöhen
@@ -1707,7 +1708,7 @@ var
       mIni.WriteString('System', 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
-      // nun die eben archivierten JPGS löschen!
+      // nun die eben archivierten JPGS schlussendlich löschen!
       for m := 0 to pred(sPics.count) do
         FileDelete(sPath + sPics[m]);
 

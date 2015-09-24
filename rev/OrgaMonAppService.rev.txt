@@ -18,6 +18,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.061 (24.09.15) Andreas Filsinger
+
+ Bug: Abzug= wurde nicht ausgewertet
+ Bug: Die Foto-nnnn.zip - Routine hat Abhängigkeiten zum GUI (Ist immer noch so)
+
 Rev 1.060 (23.09.15) Andreas Filsinger
 
  Neu: Bei Abzug=JA werden grössenverminderte Fotos abgelegt

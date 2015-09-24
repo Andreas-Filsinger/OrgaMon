@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet3
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -232,6 +232,10 @@ object FormFotoService: TFormFotoService
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         726
         481)
@@ -540,10 +544,6 @@ object FormFotoService: TFormFotoService
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -617,7 +617,6 @@ object FormFotoService: TFormFotoService
         Width = 228
         Height = 21
         TabOrder = 4
-        Text = 'mark-e'
       end
       object Edit3: TEdit
         Left = 136
