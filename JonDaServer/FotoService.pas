@@ -29,7 +29,7 @@ unit FotoService;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,  System.SysUtils,
+  Winapi.Windows, Winapi.Messages, System.SysUtils,
   System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   Vcl.ExtCtrls, Vcl.StdCtrls, WordIndex,
@@ -38,7 +38,7 @@ uses
   JonDaExec, memcache, Foto;
 
 const
-  Version: single = 1.059; // ..\rev\OrgaMonAppService.rev.txt
+  Version: single = 1.060; // ..\rev\OrgaMonAppService.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -1558,8 +1558,11 @@ var
 
   FTP_Benutzer: string;
   mIni: TIniFile;
-  FotosSequence: integer;
   Col_FTP_Benutzer: integer;
+
+  // Parameter
+  FotosSequence: integer;
+  FotosAbzug: boolean;
 
   //
   WARTEND: tsTable;
@@ -1632,10 +1635,12 @@ var
       end;
 
       // Die Nummer des zu erzeugenden ZIP suchen
+      FotosAbzug := false;
       mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
+        FotosAbzug := (ReadString('System', 'Sequence', cINI_DEACTIVATE) = cINI_ACTIVATE);
         if FotosSequence < 0 then
         begin
           dir(sPath + 'Fotos-????.zip', sFotos, false);
@@ -1672,9 +1677,30 @@ var
         break;
       end;
 
-      // Archivieren auch in Abzug-nnnn.zip
+      if FotosAbzug then
+      begin
+        // Archivieren auch in Abzug-nnnn.zip
 
-      // imp pend
+        for m := 0 to pred(sPics.count) do
+          FotoCompress(sPath + sPics[m], sPath + sPics[m], 94, 6);
+
+        Log(sPath + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        if (zip(
+          { } sPics,
+          { } sPath +
+          { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+          { } infozip_RootPath + '=' + sPath + ';' +
+          { } infozip_Password + '=' +
+          { } deCrypt_Hex(
+          { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
+          { } infozip_Level + '=' + '0') <> sPics.count) then
+        begin
+          // Problem anzeigen
+          FormFotoService.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
+          Pending := false;
+          break;
+        end;
+      end;
 
       // Fotos-nnnn.ini erhöhen
       mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
@@ -2217,7 +2243,7 @@ begin
               sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
-            sFotoResult := JonDaExec.foto(sFotoCall);
+            sFotoResult := JonDaExec.Foto(sFotoCall);
             sFotoCall.Free;
 
             // Ergebnis auswerten
@@ -2587,7 +2613,7 @@ begin
       FNameNeu := '';
 
       // execute
-      rFoto := JonDaExec.foto(sFotoCall);
+      rFoto := JonDaExec.Foto(sFotoCall);
       sFotoCall.Free;
       with rFoto do
       begin
@@ -2599,7 +2625,7 @@ begin
             break;
           end;
 
-          if (Values[cParameter_foto_fertig] = cIni_Activate) then
+          if (Values[cParameter_foto_fertig] = cINI_ACTIVATE) then
           begin
             FNameNeu := rFoto.Values[cParameter_foto_neu];
             if (pos('\', FNameNeu) = 0) then
