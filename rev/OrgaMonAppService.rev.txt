@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 1.060 (23.09.15) Andreas Filsinger
+
+ Neu: Bei Abzug=JA werden grössenverminderte Fotos abgelegt
+
 Rev 1.059 (11.09.15) Andreas Filsinger
 
  Neu: Unverarbeitete: Fehler wird nun angezeigt

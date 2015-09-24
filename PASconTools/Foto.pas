@@ -103,7 +103,7 @@ var
       add('     1 ; optimize');
       add('     0 ; progressive');
       add('     "" ; comment');
-      add('     0 ; subsmp (0-4)');
+      add('     0 ; subsampling');
       add('     1 ; baseline');
       add('     0 ; restart');
       add('     0 ; dct');
