@@ -32,7 +32,7 @@ uses
   math, gplists;
 
 const
-  WordIndexVersion: single = 1.025; // ..\rev\WordIndex.rev.txt
+  WordIndexVersion: single = 1.026; // ..\rev\WordIndex.rev.txt
   c_wi_TranslateFrom = 'ﬂƒÀ÷‹¡¿…»⁄Ÿ”Õ «≈';
   c_wi_TranslateTo = 'SAEOUAAEEUUOIECA';
   c_wi_ValidChars = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
