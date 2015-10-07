@@ -102,6 +102,7 @@ type
 
 const
   cSQLwhereMarker = '-- BEGIN';
+  cSQLExtension = '.sql.txt';
 
   // Datenbank Ankreuzfelder (Check)
   cC_True = 'Y';
@@ -118,6 +119,8 @@ const
   cRID_Impossible = MaxInt;
   sRID_AutoInc = '0';
   cRID_FirstValid = 1;
+
+
 
 type
   TSQLStringList = class(TStringList)

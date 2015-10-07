@@ -207,6 +207,9 @@ const
   cVersendetag_OffsetLagernd = 100;
   cVersendetag_OffsetTage = 10;
 
+  // Rückgängigmachen von Löschaktionen
+  cROLL_BACK = 'RollBack-';
+
   // POS Kasse
   cBON_gemerkt = 'Gemerkt-';
   cBON_Bon = 'Bon-';
