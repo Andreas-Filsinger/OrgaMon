@@ -124,8 +124,8 @@ end;
 procedure TFormTagesAbschluss.Log(s: string);
 begin
   try
-    AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' +
-      inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
+    AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) +
+      '.log.txt');
 
     if (pos(cERRORText, s) > 0) then
       CareTakerLog(s);
@@ -207,9 +207,9 @@ begin
                 FileDelete(WordPath + '*.html', 10);
                 FileDelete(MyProgramPath + cRechnungsKopiePath + '*', 90);
                 if (iSchnelleRechnung_PERSON_R >= cRID_FirstValid) then
-                  FilesLimit(MyProgramPath + cRechnungPath +
-                    RIDasStr(iSchnelleRechnung_PERSON_R) + '\*' +
-                    cHTMLextension, 2000, 1500);
+                  FilesLimit(
+                    { } cPersonPath(iSchnelleRechnung_PERSON_R) + '*' +
+                    { } cHTMLextension, 2000, 1500);
 
                 if (DatensicherungPath <> '') then
                   FileDelete(DatensicherungPath + '*', 3, 3);
@@ -231,8 +231,7 @@ begin
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
                 // Context-OLAPs
-                FormOLAP.DoContextOLAP(iSystemOLAPPath + 'Tagesabschluss.*' +
-                  cOLAPExtension);
+                FormOLAP.DoContextOLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
 
               end;
             5:
@@ -351,8 +350,7 @@ begin
     SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
-    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' +
-      cOLAPExtension);
+    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
     EofTagesabschluss;
 
     EndHourGlass;
@@ -401,11 +399,11 @@ begin
       CheckListBox1.checked[n] := false;
 
   if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagesAbschlussAuf)) then
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) +
-      ' hier auf ' + iTagesAbschlussAuf
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' hier auf ' +
+      iTagesAbschlussAuf
   else
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) +
-      ' auf ' + iTagesAbschlussAuf;
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' auf ' +
+      iTagesAbschlussAuf;
 end;
 
 procedure TFormTagesAbschluss.Timer1Timer(Sender: TObject);
@@ -459,8 +457,7 @@ begin
       begin
         if (pos(WeekDayS(DateGet), iTagesabschlussWochentage) = 0) then
         begin
-          Label2.caption := 'heute nicht (nur ' +
-            iTagesabschlussWochentage + ')';
+          Label2.caption := 'heute nicht (nur ' + iTagesabschlussWochentage + ')';
           cPanelActive := clred; // nicht vorgesehen
           break;
         end;

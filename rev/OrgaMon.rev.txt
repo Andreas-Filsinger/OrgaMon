@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.123 (07.10.15) Andreas Filsinger
+
+ Neu: "Rollback" - Infrastruktur verbessert
+ Neu: verbesserter Rollback-Domain "Löschung-Person"
+ Neu: verbesserter Rollback-Domain "Storno-Beleg"
+
 Rev 8.122 (21.08.15) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.238" neu compiliert!

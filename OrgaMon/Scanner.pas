@@ -1003,7 +1003,7 @@ end;
 
 procedure TFormScanner.SpeedButton1Click(Sender: TObject);
 begin
-  openShell(MyProgramPath + cRechnungPath + RIDasStr(Selected_PERSON_R));
+  openShell(cPersonPath(Selected_PERSON_R));
 end;
 
 procedure TFormScanner.SpeedButton2Click(Sender: TObject);

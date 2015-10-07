@@ -133,8 +133,7 @@ type
     BlackList_Active: boolean;
 
     procedure IdSMTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
-    procedure IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode;
-      AWorkCount: Int64);
+    procedure IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 
     function MakeSendList: TgpIntegerList;
     function LastSQL: string;
@@ -219,8 +218,8 @@ begin
     // Den Nachrichten Text jetzt speichern
     with qMAIL do
     begin
-      sql.add('select DATEI_ANLAGE,NACHRICHT,EMPFAENGER from EMAIL where RID=' +
-        inttostr(EMAIL_R) + ' for update');
+      sql.add('select DATEI_ANLAGE,NACHRICHT,EMPFAENGER from EMAIL where RID=' + inttostr(EMAIL_R) +
+        ' for update');
       Open;
       first;
       edit;
@@ -228,8 +227,7 @@ begin
       if (eMessage.count > 0) then
         FieldByName('NACHRICHT').Assign(eMessage);
       if CheckBox3.checked then
-        FieldByName('DATEI_ANLAGE').AsString := MyProgramPath +
-          'system\StartUp.bmp';
+        FieldByName('DATEI_ANLAGE').AsString := MyProgramPath + 'system\StartUp.bmp';
       if CheckBox5.checked then
         FieldByName('DATEI_ANLAGE').AsString := Edit3.text;
 
@@ -274,9 +272,8 @@ end;
 
 procedure TFormPersonMailer.SpeedButton5Click(Sender: TObject);
 begin
-  e_x_sql('update EMAIL set AUSGANG=null, ' +
-    'VERSUCHE=null where (VERSUCHE>2) and (RID>' + IB_Query1.FieldByName('RID')
-    .AsString + ')');
+  e_x_sql('update EMAIL set AUSGANG=null, ' + 'VERSUCHE=null where (VERSUCHE>2) and (RID>' +
+    IB_Query1.FieldByName('RID').AsString + ')');
 end;
 
 procedure TFormPersonMailer.SpeedButton6Click(Sender: TObject);
@@ -303,8 +300,8 @@ begin
       sCSV.Clear;
       sCSV.insertFromFile(FName);
       for r := 1 to sCSV.RowCount do
-        FormAuftragArbeitsplatz.AddMarkierte
-          (StrToIntDef(sCSV.readCell(r, 'ReferenzIdentitaet'), cRID_Null));
+        FormAuftragArbeitsplatz.AddMarkierte(StrToIntDef(sCSV.readCell(r, 'ReferenzIdentitaet'),
+          cRID_Null));
     end;
   sCSV.free;
   sNachricht.free;
@@ -393,8 +390,7 @@ begin
           end;
 
           // nicht mehr als 3 Minuten ununterbrochen an einer Liste mailen
-          if (SecondsDiff(DateGet, SecondsGet, StartDate, StartTime) > 3 * 60)
-          then
+          if (SecondsDiff(DateGet, SecondsGet, StartDate, StartTime) > 3 * 60) then
           begin
             Log('INFO: Timelimit Break!');
             break;
@@ -425,8 +421,7 @@ begin
     IB_Query1.Open;
 end;
 
-procedure TFormPersonMailer.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFormPersonMailer.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   IB_Query1.close;
 end;
@@ -488,8 +483,7 @@ begin
   EMAIL_R := MakeSendList;
   EndHourGlass;
 
-  if doit('Sollen wirklich ' + inttostr(EMAIL_R.count) +
-    ' eMails versendet werden') then
+  if doit('Sollen wirklich ' + inttostr(EMAIL_R.count) + ' eMails versendet werden') then
   begin
 
     BeginHourGlass;
@@ -539,8 +533,7 @@ procedure TFormPersonMailer.SendeEmail(EMAIL_R: integer);
             break;
           end;
 
-          if (BlackList_sl.indexof('*@' + nextp(sAddresses[n], '@', 1)) <> -1)
-          then
+          if (BlackList_sl.indexof('*@' + nextp(sAddresses[n], '@', 1)) <> -1) then
           begin
             AddressOK := false;
             break;
@@ -655,8 +648,7 @@ begin
       begin
 
         // SQL eintragen
-        sql.add('select * from EMAIL where RID=' + inttostr(EMAIL_R) +
-          ' for update');
+        sql.add('select * from EMAIL where RID=' + inttostr(EMAIL_R) + ' for update');
         Open;
         first;
 
@@ -664,8 +656,7 @@ begin
         if FieldByName('VORLAGE_R').IsNotNull then
           with cVORLAGE_EMAIL do
           begin
-            sql.add('select * from EMAIL where RID=' +
-              qEMAIL.FieldByName('VORLAGE_R').AsString);
+            sql.add('select * from EMAIL where RID=' + qEMAIL.FieldByName('VORLAGE_R').AsString);
             ApiFirst;
           end;
 
@@ -731,8 +722,7 @@ begin
             if cVORLAGE_EMAIL.Active then
               if cVORLAGE_EMAIL.FieldByName('DATEI_ANLAGE').IsNotNull then
               begin
-                DATEI_ANLAGE := cVORLAGE_EMAIL.FieldByName
-                  ('DATEI_ANLAGE').AsString;
+                DATEI_ANLAGE := cVORLAGE_EMAIL.FieldByName('DATEI_ANLAGE').AsString;
                 if (DATEI_ANLAGE <> '') then
                   break;
               end;
@@ -775,9 +765,8 @@ begin
                 ApiFirst;
                 if not(eof) then
                 begin
-                  InfoVomAdmin := 'Sie erhielten diese Datei bereits am ' +
-                    FieldByName('GESENDET').AsString +
-                    ', der Anhang wurde entfernt!';
+                  InfoVomAdmin := 'Sie erhielten diese Datei bereits am ' + FieldByName('GESENDET')
+                    .AsString + ', der Anhang wurde entfernt!';
                   DATEI_ANLAGE := '';
                 end;
                 close;
@@ -791,9 +780,8 @@ begin
           end;
 
           // eMail Header zusammen setzen!
-          MsgId := '<' + inttostr(EMAIL_R) + '-' +
-            inttostr(FieldByName('VERSUCHE').AsInteger) + '@' + iMandant +
-            '.orgamon.org>';
+          MsgId := '<' + inttostr(EMAIL_R) + '-' + inttostr(FieldByName('VERSUCHE').AsInteger) + '@'
+            + iMandant + '.orgamon.org>';
 
           headers.values['Message-Id'] := MsgId;
 
@@ -845,18 +833,16 @@ begin
 
               // im 1. Rang: aus "EMail"
               Versand_An :=
-                noblank(e_r_sqls('select EMAIL from PERSON where RID=' +
-                inttostr(ZIEL_R)));
+                noblank(e_r_sqls('select EMAIL from PERSON where RID=' + inttostr(ZIEL_R)));
 
               // im 2. Rang: aus "USER-ID"
               if (Versand_An = '') then
                 Versand_An :=
-                  noblank(e_r_sqls('select USER_ID from PERSON where RID=' +
-                  inttostr(ZIEL_R)));
+                  noblank(e_r_sqls('select USER_ID from PERSON where RID=' + inttostr(ZIEL_R)));
 
               // die "cc=", "bcc=" Tabelle laden
-              e_r_sql('select USER_DIENSTE from PERSON where RID=' +
-                inttostr(ZIEL_R), USER_DIENSTE);
+              e_r_sql('select USER_DIENSTE from PERSON where RID=' + inttostr(ZIEL_R),
+                USER_DIENSTE);
             end;
 
             // cc Empfänger hinzunehmen
@@ -866,8 +852,7 @@ begin
                 if (Versand_CC = '') then
                   Versand_CC := nextp(USER_DIENSTE[n], 'cc=', 1)
                 else
-                  Versand_CC := Versand_CC + ';' + nextp(USER_DIENSTE[n],
-                    'cc=', 1);
+                  Versand_CC := Versand_CC + ';' + nextp(USER_DIENSTE[n], 'cc=', 1);
 
             // bcc Empfänger hinzunehmen
             if CheckBox4.checked then
@@ -879,8 +864,7 @@ begin
                 if (Versand_Bcc = '') then
                   Versand_Bcc := nextp(USER_DIENSTE[n], 'bcc=', 1)
                 else
-                  Versand_Bcc := Versand_Bcc + ';' + nextp(USER_DIENSTE[n],
-                    'bcc=', 1);
+                  Versand_Bcc := Versand_Bcc + ';' + nextp(USER_DIENSTE[n], 'bcc=', 1);
 
           end;
 
@@ -1003,8 +987,8 @@ begin
         Log(cERRORText + ' sendeeMail: ' + E.Message);
 
         // Anzahl der bisherigen Versuche prüfen
-        VersucheBisher := e_r_sql('select VERSUCHE from EMAIL ' + ' where RID='
-          + inttostr(EMAIL_R));
+        VersucheBisher := e_r_sql('select VERSUCHE from EMAIL ' + ' where RID=' +
+          inttostr(EMAIL_R));
 
         // entsprechende Wartezeiten einbauen
         case VersucheBisher of
@@ -1020,8 +1004,7 @@ begin
 
         // Jetzt die Datenbank updaten!
         e_x_sql('update EMAIL set ' + ' VERSUCHE = COALESCE(VERSUCHE,0) + 1,' +
-          ' AUSGANG = CURRENT_TIMESTAMP + ' + _WaitTime + ' where RID=' +
-          inttostr(EMAIL_R));
+          ' AUSGANG = CURRENT_TIMESTAMP + ' + _WaitTime + ' where RID=' + inttostr(EMAIL_R));
 
       end;
 
@@ -1050,18 +1033,15 @@ begin
   dec(PersonMailer_Active);
 end;
 
-procedure TFormPersonMailer.SetSenden(EMAIL_R: integer;
-  ClearIt: boolean = false);
+procedure TFormPersonMailer.SetSenden(EMAIL_R: integer; ClearIt: boolean = false);
 begin
   if ClearIt then
     e_x_sql('update EMAIL set GESENDET = NULL where RID=' + inttostr(EMAIL_R))
   else
-    e_x_sql('update EMAIL set GESENDET = ''NOW'' where RID=' +
-      inttostr(EMAIL_R));
+    e_x_sql('update EMAIL set GESENDET = ''NOW'' where RID=' + inttostr(EMAIL_R));
 end;
 
-procedure TFormPersonMailer.Replace(EMAIL_R: integer; sText: TStrings;
-  Attachments: TStrings);
+procedure TFormPersonMailer.Replace(EMAIL_R: integer; sText: TStrings; Attachments: TStrings);
 var
   cEMAIL: TIB_Cursor;
   cPERSON: TIB_Cursor;
@@ -1107,8 +1087,7 @@ begin
           // Dateianlagen
           if (pos(ceMail_Anlage, eMail_Parameter[n]) = 1) then
           begin
-            FName := cutblank(copy(eMail_Parameter[n],
-              succ(pos(':', eMail_Parameter[n])), MaxInt));
+            FName := cutblank(copy(eMail_Parameter[n], succ(pos(':', eMail_Parameter[n])), MaxInt));
             if FileExists(FName) then
               Attachments.add(FName)
             else
@@ -1120,8 +1099,7 @@ begin
           // Text-Includes via "Baustein:<DateiName>"
           if (pos(ceMail_Baustein, eMail_Parameter[n]) = 1) then
           begin
-            FName := cutblank(copy(eMail_Parameter[n],
-              succ(pos(':', eMail_Parameter[n])), MaxInt));
+            FName := cutblank(copy(eMail_Parameter[n], succ(pos(':', eMail_Parameter[n])), MaxInt));
             // Sicherheit
             ersetze('*', '', FName);
             ersetze('?', '', FName);
@@ -1141,8 +1119,7 @@ begin
           // Raw-eMail
           if (pos(ceMail_eml, eMail_Parameter[n]) = 1) then
           begin
-            FName := cutblank(copy(eMail_Parameter[n],
-              succ(pos(':', eMail_Parameter[n])), MaxInt));
+            FName := cutblank(copy(eMail_Parameter[n], succ(pos(':', eMail_Parameter[n])), MaxInt));
             // Sicherheit
             ersetze('*', '', FName);
             ersetze('?', '', FName);
@@ -1178,8 +1155,7 @@ begin
         cANSCHRIFT := DataModuleDatenbank.nCursor;
         with cPERSON do
         begin
-          sql.add('select * from PERSON where RID=' +
-            cEMAIL.FieldByName('PERSON_R').AsString);
+          sql.add('select * from PERSON where RID=' + cEMAIL.FieldByName('PERSON_R').AsString);
           ApiFirst;
           for n := 0 to pred(FieldCount) do
             with Fields[n] do
@@ -1187,8 +1163,8 @@ begin
         end;
         with cANSCHRIFT do
         begin
-          sql.add('select * from ANSCHRIFT where RID=' +
-            cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
+          sql.add('select * from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R')
+            .AsString);
           ApiFirst;
           for n := 0 to pred(FieldCount) do
             with Fields[n] do
@@ -1203,8 +1179,7 @@ begin
         cARTIKEL := DataModuleDatenbank.nCursor;
         with cARTIKEL do
         begin
-          sql.add('select * from ARTIKEL where RID=' +
-            cEMAIL.FieldByName('ARTIKEL_R').AsString);
+          sql.add('select * from ARTIKEL where RID=' + cEMAIL.FieldByName('ARTIKEL_R').AsString);
           ApiFirst;
           for n := 0 to pred(FieldCount) do
             with Fields[n] do
@@ -1319,8 +1294,7 @@ begin
     Log(inttostr(result.count) + ' noch zu senden ...');
 end;
 
-procedure TFormPersonMailer.IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode;
-  AWorkCount: Int64);
+procedure TFormPersonMailer.IdSMTP1Work(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
 
   if (ProgressBar1.max > 0) then
@@ -1341,8 +1315,7 @@ begin
     end;
 end;
 
-procedure TFormPersonMailer.IdSMTP1WorkEnd(Sender: TObject;
-  AWorkMode: TWorkMode);
+procedure TFormPersonMailer.IdSMTP1WorkEnd(Sender: TObject; AWorkMode: TWorkMode);
 begin
   ProgressBar1.position := 0;
   Label2.caption := 'OK';
@@ -1400,15 +1373,13 @@ var
         EREIGNIS_R := FieldByName('RID').AsInteger;
 
         if FieldByName('ARTIKEL_R').IsNull then
-          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString +
-            ': ARTIKEL_R IS NULL');
+          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString + ': ARTIKEL_R IS NULL');
 
         if FieldByName('PERSON_R').IsNull then
-          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString +
-            ': PERSON_R IS NULL');
+          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString + ': PERSON_R IS NULL');
 
-        NUMERO := e_r_sqls('select NUMERO from ARTIKEL WHERE RID=' +
-          FieldByName('ARTIKEL_R').AsString);
+        NUMERO := e_r_sqls('select NUMERO from ARTIKEL WHERE RID=' + FieldByName('ARTIKEL_R')
+          .AsString);
 
         // einen eMail Eintrag erzeugen
         FName := iPDFPathPublicApp + NUMERO + cPDFExtension;
@@ -1436,8 +1407,7 @@ var
             end
             else
             begin
-              e_w_EreignisAbschluss(EREIGNIS_R,
-                cERRORText + ' eMail Vorlage "PDF" fehlt');
+              e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "PDF" fehlt');
             end;
 
           end
@@ -1448,13 +1418,11 @@ var
             // der Kunde bekommt seine pdf - noch "Close" des Tickets schicken?
             // ohne Abzeichnen: -> eMail Entschuldigung
             TicketInfo.Clear;
-            TicketInfo.add('Datei "' + FName +
-              '" muss auf unter 8 M Byte verkleinert werden!');
+            TicketInfo.add('Datei "' + FName + '" muss auf unter 8 M Byte verkleinert werden!');
             TicketInfo.add('ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString);
 
             Aktion.Clear;
-            Aktion.values['NACH_LÖSUNG'] :=
-              'update EREIGNIS set BEARBEITER_R = NULL where RID = ' +
+            Aktion.values['NACH_LÖSUNG'] := 'update EREIGNIS set BEARBEITER_R = NULL where RID = ' +
               FieldByName('RID').AsString;
             Aktion.values['NACH_UNLÖSBAR'] := 'OLAP KundeAbwatschen(PERSON_R)';
             PostTicket;
@@ -1470,8 +1438,7 @@ var
             // Kunde: Das Problem wurde heute untersucht, es konnte aber noch
             // keine Lösung gefunden werden. Wir erwarten eine Klärung
             // bis ~Datum~
-            e_w_EreignisAbschluss(EREIGNIS_R,
-              cERRORText + ' Datei ist zu gross');
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' Datei ist zu gross');
 
           end;
 
@@ -1495,15 +1462,13 @@ var
           // Q von Orgamon sinkt!
 
           TicketInfo.Clear;
-          TicketInfo.add('Datei "' + FName +
-            '" muss verfügbar gemacht werden!');
+          TicketInfo.add('Datei "' + FName + '" muss verfügbar gemacht werden!');
           TicketInfo.add('ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString);
 
           Aktion.Clear;
 
           //
-          Aktion.values['NACH_LÖSUNG'] :=
-            'update EREIGNIS set BEARBEITER_R = NULL where RID = ' +
+          Aktion.values['NACH_LÖSUNG'] := 'update EREIGNIS set BEARBEITER_R = NULL where RID = ' +
             FieldByName('RID').AsString;
 
           //
@@ -1549,8 +1514,7 @@ var
         EREIGNIS_R := FieldByName('RID').AsInteger;
 
         if FieldByName('VERSAND_R').IsNull then
-          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString +
-            ': VERSAND_R IS NULL');
+          raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString + ': VERSAND_R IS NULL');
         VERSAND_R := FieldByName('VERSAND_R').AsInteger;
 
         with cVERSAND do
@@ -1562,8 +1526,7 @@ var
               { } ' VERSAND.BELEG_R,' +
               { } ' VERSAND.TEILLIEFERUNG,' +
               { } ' VERSAND.PAKETID,' +
-              { } ' COALESCE(BELEG.LIEFERANSCHRIFT_R,BELEG.PERSON_R) PERSON_R,'
-              +
+              { } ' COALESCE(BELEG.LIEFERANSCHRIFT_R,BELEG.PERSON_R) PERSON_R,' +
               { } ' VERSENDER.BEZEICHNUNG ' +
               { } 'from VERSAND ' +
               { } 'join BELEG on' +
@@ -1578,12 +1541,10 @@ var
           Open;
           first;
           if eof then
-            raise Exception.create('VERSAND ' + inttostr(VERSAND_R) +
-              ': nicht gefunden');
+            raise Exception.create('VERSAND ' + inttostr(VERSAND_R) + ': nicht gefunden');
 
           PERSON_R := cVERSAND.FieldByName('PERSON_R').AsInteger;
-          VorlageName := cMailvorlage_Versand +
-            FieldByName('BEZEICHNUNG').AsString;
+          VorlageName := cMailvorlage_Versand + FieldByName('BEZEICHNUNG').AsString;
           VORLAGE_R := e_r_VorlageMail(VorlageName);
 
           if (VORLAGE_R > 0) then
@@ -1594,17 +1555,17 @@ var
             begin
               values['PAKETID'] := FieldByName('PAKETID').AsString;
 
-              add('Baustein:' + MyProgramPath + cRechnungPath +
-                RIDasStr(FieldByName('PERSON_R').AsInteger) + '\' +
-                inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
-                inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#M' +
-                chtmlExtension);
+              add('Baustein:' +
+                { } cPersonPath(FieldByName('PERSON_R').AsInteger) +
+                { } inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
+                { } inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#M' +
+                { } chtmlExtension);
 
-              add('Anlage:' + MyProgramPath + cRechnungPath +
-                RIDasStr(FieldByName('PERSON_R').AsInteger) + '\' +
-                inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
-                inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#W' +
-                chtmlExtension);
+              add('Anlage:' +
+                { } cPersonPath(FieldByName('PERSON_R').AsInteger) +
+                { } inttostrN(FieldByName('BELEG_R').AsInteger, 10) + '-' +
+                { } inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + '#W' +
+                { } chtmlExtension);
 
             end;
 
@@ -1625,8 +1586,8 @@ var
           end
           else
           begin
-            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "' +
-              VorlageName + '" nicht gefunden');
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "' + VorlageName +
+              '" nicht gefunden');
           end;
 
         end;

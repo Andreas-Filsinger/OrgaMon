@@ -623,7 +623,7 @@ var
 begin
   Bericht := e_w_KontoInfo(PERSON_R);
   Bericht.free;
-  openShell(MahnungFName(PERSON_R));
+  openShell(e_r_MahnungFName(PERSON_R));
 end;
 
 procedure TFormAusgangsRechnungen.Edit5KeyPress(Sender: TObject; var Key: Char);

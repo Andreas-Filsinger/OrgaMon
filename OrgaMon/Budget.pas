@@ -128,11 +128,10 @@ var
 begin
   BeginHourGlass;
   Beleg_R := StrToIntDef(Edit11.Text, cRID_Null);
-  WorkPath := MyProgramPath + cRechnungPath +
-    RIDasStr(IB_Query1.FieldByName('PERSON_R').AsInteger) + '\';
+  WorkPath := cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger);
   e_w_BudgetAbschreiben(Beleg_R, WorkPath + cHTML_ArbeitszeitFName);
-  FileMove(WorkPath + cHTML_ArbeitszeitFName, WorkPath + inttostrN(Beleg_R, 10)
-    + '-verbuchte-' + cHTML_ArbeitszeitFName);
+  FileMove(WorkPath + cHTML_ArbeitszeitFName, WorkPath + inttostrN(Beleg_R, 10) + '-verbuchte-' +
+    cHTML_ArbeitszeitFName);
   EndHourGlass;
 end;
 
@@ -149,8 +148,7 @@ begin
 
   //
   StundenSatz := e_r_StundenSatz(IB_Query1.FieldByName('RID').AsInteger);
-  Arbeitslohn := cPreisRundung((StrToIntDef(Edit1.Text, 0) * StundenSatz)
-    / 3600.0);
+  Arbeitslohn := cPreisRundung((StrToIntDef(Edit1.Text, 0) * StundenSatz) / 3600.0);
   Edit2.Text := format('%m', [Arbeitslohn]);
 
   //
@@ -250,14 +248,14 @@ begin
     moreSettings.add('STUNDENSATZ=' + cC_False);
 
   //
-  e_w_BudgetEinfuegen(cRID_Null, Edit10.Text, IB_Query1.FieldByName('PERSON_R')
-    .AsInteger, moreSettings);
+  e_w_BudgetEinfuegen(cRID_Null, Edit10.Text, IB_Query1.FieldByName('PERSON_R').AsInteger,
+    moreSettings);
   moreSettings.free;
 
   //
-  openShell(MyProgramPath + cRechnungPath +
-    RIDasStr(IB_Query1.FieldByName('PERSON_R').AsInteger) + '\' +
-    cHTML_ArbeitszeitFName);
+  openShell(
+    { } cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger) +
+    { } cHTML_ArbeitszeitFName);
 
 end;
 
@@ -276,8 +274,7 @@ function TFormBudget.e_r_StundenSatz(BUDGET_R: integer): double;
 var
   ARTIKEL_R: integer;
 begin
-  ARTIKEL_R := e_r_sql('select ARTIKEL_R from BUGET where RID=' +
-    inttostr(BUDGET_R));
+  ARTIKEL_R := e_r_sql('select ARTIKEL_R from BUGET where RID=' + inttostr(BUDGET_R));
   result := e_r_PreisNetto(0, ARTIKEL_R);
 end;
 
@@ -306,9 +303,8 @@ begin
     begin
       BUDGET_R := FieldByName('RID').AsInteger;
       MONTEUR_R := FieldByName('MONTEUR_R').AsInteger;
-      e_x_sql('update ARBEITSZEIT set' + ' MONTEUR_R=' + inttostr(MONTEUR_R) +
-        ' ' + 'where ' + ' (BUGET_R=' + inttostr(BUDGET_R) + ') and ' +
-        ' (MONTEUR_R is null)');
+      e_x_sql('update ARBEITSZEIT set' + ' MONTEUR_R=' + inttostr(MONTEUR_R) + ' ' + 'where ' +
+        ' (BUGET_R=' + inttostr(BUDGET_R) + ') and ' + ' (MONTEUR_R is null)');
     end;
   end;
 

@@ -804,7 +804,7 @@ var
 begin
   Bericht := e_w_KontoInfo(rPERSON_R);
   Bericht.free;
-  openShell(MahnungFName(rPERSON_R));
+  openShell(e_r_MahnungFName(rPERSON_R));
 end;
 
 procedure TFormBuchhalter.Button14Click(Sender: TObject);
@@ -5976,7 +5976,7 @@ begin
   BELEG_R := StrToIntDef(nextp(sLine, ';', 2), cRID_Null);
   TEILLIEFERUNG := StrToIntDef(nextp(sLine, ';', 3), cRID_Null);
   PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
-  FName := RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG);
+  FName := e_r_BelegFName(PERSON_R, BELEG_R, TEILLIEFERUNG);
   if FileExists(FName) then
     openShell(FName)
   else

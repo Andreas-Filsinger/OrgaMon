@@ -720,7 +720,7 @@ var
   BEGRIFF: string;
 begin
 
-  if (PERSON_R=iSchnelleRechnung_PERSON_R) then
+  if (PERSON_R = iSchnelleRechnung_PERSON_R) then
   begin
     result := '* schnelle Rechnung *';
     exit;
@@ -5191,8 +5191,7 @@ var
   begin
     repeat
       InFName :=
-      { } MyProgramPath + cRechnungPath +
-      { } RIDasStr(PERSON_R) + '\' +
+      { } cPersonPath(PERSON_R) +
       { } cHTMLTemplatesDir + cHTML_ArbeitszeitFName;
       if FileExists(InFName) then
         break;
@@ -5209,7 +5208,7 @@ var
         // CanUseQuick := true;
         WriteValue(DatensammlerLokal, DatensammlerGlobal);
         SortPages;
-        OutPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+        OutPath := cPersonPath(PERSON_R);
         CheckCreateDir(OutPath);
         SaveToFileCompressed(OutPath + cHTML_ArbeitszeitFName);
       end;

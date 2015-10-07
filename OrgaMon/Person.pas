@@ -556,7 +556,7 @@ begin
 
       // Pfade vorbereiten!
       VorlageFName := WordPath + ComboBox5.Text + iTextDocumentExtension;
-      OutPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+      OutPath := cPersonPath(PERSON_R);
       DokumentFName := OutPath + ComboBox5.Text + '-' + RIDasStr(e_w_gen('GEN_DOKUMENT')) +
         iTextDocumentExtension;
 
@@ -1072,8 +1072,7 @@ procedure TFormPerson.SpeedButton1Click(Sender: TObject);
 var
   OpenPathName: string;
 begin
-  OpenPathName := MyProgramPath + cRechnungPath +
-    inttostrN(IB_Query1.FieldByName('RID').AsInteger, 10);
+  OpenPathName := cPersonPath(IB_Query1.FieldByName('RID').AsInteger);
   if DirExists(OpenPathName) then
   begin
     openShell(OpenPathName)
@@ -1266,7 +1265,7 @@ begin
   PERSON_R := IB_Query1.FieldByName('RID').AsInteger;
   Bericht := e_w_KontoInfo(PERSON_R);
   Bericht.Free;
-  openShell(MahnungFName(PERSON_R));
+  openShell(e_r_MahnungFName(PERSON_R));
 end;
 
 procedure TFormPerson.RefreshZahlungtypCombo;

@@ -120,8 +120,6 @@ const
   sRID_AutoInc = '0';
   cRID_FirstValid = 1;
 
-
-
 type
   TSQLStringList = class(TStringList)
   public

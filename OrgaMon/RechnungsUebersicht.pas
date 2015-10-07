@@ -234,14 +234,13 @@ end;
 
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);
 begin
-  openShell(MyProgramPath + cRechnungPath + '\' + RIDasStr(IB_Query1.FieldByName('PERSON_R')
-    .AsInteger));
+  openShell(cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger));
 end;
 
 procedure TFormRechnungsUebersicht.Button4Click(Sender: TObject);
 begin
   with IB_Query1 do
-    openShell(RechnungFName(
+    openShell(e_r_BelegFName(
       { } FieldByName('PERSON_R').AsInteger,
       { } FieldByName('BELEG_R').AsInteger,
       { } FieldByName('TEILLIEFERUNG').AsInteger));
@@ -264,7 +263,7 @@ begin
   begin
     Bericht := e_w_KontoInfo(PERSON_R);
     Bericht.free;
-    openShell(MahnungFName(PERSON_R));
+    openShell(e_r_MahnungFName(PERSON_R));
   end;
 end;
 
