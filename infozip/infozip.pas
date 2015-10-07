@@ -26,7 +26,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -62,21 +62,43 @@ const
   infozip_ExtraInfo = 'ExtraInfos';
 
   {
-   Versions-Infos dieser API Unit (nicht Info-Zip)
-   ===============================================
+    Versions-Infos dieser API Unit (nicht Info-Zip)
+    ===============================================
 
-   Rev. 1.000 | R0212 | 25.08.2009 | Initial Check in
-   Rev. 1.001 | R0682 | 19.08.2010 | Passwort Support
-   Rev. 1.002 | R1114 | 16.05.2012 | Options-Delimiter dokumentiert
-   Rev. 1.003 | R1308 | 04.03.2013 | 7z Support
-   Rev. 1.004 |       | 12.09.2013 | Fix: zip Filesnames starting with "-" (Minus)
-   Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port ...
+    Rev. 1.000 | R0212 | 25.08.2009 | Initial Check in
+    Rev. 1.001 | R0682 | 19.08.2010 | Passwort Support
+    Rev. 1.002 | R1114 | 16.05.2012 | Options-Delimiter dokumentiert
+    Rev. 1.003 | R1308 | 04.03.2013 | 7z Support
+    Rev. 1.004 |       | 12.09.2013 | Fix: zip Filesnames starting with "-" (Minus)
+    Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port ...
   }
 
   infozip_Version: single = 1.005;
 
 var
   zMessages: TStringList;
+
+  { zip(sFiles,FName,Options)
+    |
+    |  sFiles :    Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
+    |  FName :     Name des neuen Arives, Datei sollte nicht existieren
+    |  Options :
+    |  RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
+    |               Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
+    |               aufgenommen. Auf RootPath selbst finden sich keine Hinweise im enstehenden
+    |               Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
+    |
+    |  Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
+    |  Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
+    |               eingesetzt werden soll.
+    |               0 = keine Komprimierung (Store) ...
+    |               9 = höchste Komprimierung (default)
+    |  ExtraInfos = <leer> (default>
+    |               0 Aktiv
+    |               genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht
+    |               deterministischen Zips. Deshalb wird es bei alles Tests deaktiviert, sonst
+    |               lasse ich es auf Default also incl. der Extra infos!
+  }
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil)
   : integer { AnzahlDateien }; overload;
@@ -89,43 +111,27 @@ function zip(sFiles: TStringList; FName: string; Options: string): integer
 function zip(sFile: String; FName: string; Options: string = ''): integer
 { AnzahlDateien }; overload;
 
-//
-// sFiles : Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
-// FName: Name des neuen Arives, Datei sollte nicht existieren
-// Options
-// RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
-// Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
-// aufgenommen. Auf RootPath selbst finden sich keine Hinweise im enstehenden
-// Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
-//
-// Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
-// Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
-// eingesetzt werden soll. 0 = keine Komprimierung (Store) ... 9 = höchste Komprimierung
-// ExtraInfos = genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht deterministischen
-// Zips. Deshalb wird es bei alles Tests deaktiviert, sonst lasse ich es auf Default
-// also incl. der Extra infos!
-
 function unzip(FName: string; Destination: string; Options: TStringList = nil)
   : integer { AnzahlDateien };
 
 implementation
 
 uses
-  {$ifdef fpc}
+{$IFDEF fpc}
   fpchelper,
   AbConst,
   Abzipper,
   AbUnzper,
-  {$endif}
+{$ENDIF}
   windows,
   registry,
   SysUtils,
   JclMiscel,
   JclSysInfo;
 
-{$ifdef fpc}
+{$IFDEF fpc}
+{$ELSE}
 
-{$else}
 // globals
 type
   z_uint8 = int64;
@@ -185,16 +191,15 @@ type
   DLLPRNT = function(buffer: PAnsiChar; bufsiz: longword): integer; stdcall;
 
   // typedef int (WINAPI DLLPASSWORD) (LPSTR pwbuf, int bufsiz, LPCSTR promptmsg, LPCSTR entryname);
-  DLLPASSWORD = function(pwbuf: PAnsiChar; bufsiz: integer;
-    promptmsg, entryname: PAnsiChar): integer; stdcall;
+  DLLPASSWORD = function(pwbuf: PAnsiChar; bufsiz: integer; promptmsg, entryname: PAnsiChar)
+    : integer; stdcall;
 
   // unzip: typedef int (WINAPI DLLSERVICE) (LPCSTR entryname, z_uint8 uncomprsiz);
   // zip: typedef int (WINAPI DLLSERVICE) (LPCSTR, unsigned __int64);
-  DLLSERVICE = function(entryname: PAnsiChar; uncomprsiz: z_uint8)
-    : integer; stdcall;
+  DLLSERVICE = function(entryname: PAnsiChar; uncomprsiz: z_uint8): integer; stdcall;
   // zip: typedef int (WINAPI DLLSERVICE_NO_INT64) (LPCSTR, unsigned long, unsigned long);
-  DLLSERVICE_NO_INT64 = function(Msg: PAnsiChar; sizHi: longword;
-    sizLo: longword): integer; stdcall;
+  DLLSERVICE_NO_INT64 = function(Msg: PAnsiChar; sizHi: longword; sizLo: longword)
+    : integer; stdcall;
 
   // typedef int (WINAPI DLLSERVICE_I32) (LPCSTR entryname, unsigned long ucsz_lo, unsigned long ucsz_hi);
 
@@ -206,9 +211,8 @@ type
   // typedef void (WINAPI DLLMESSAGE) (z_uint8 ucsize, z_uint8 csize,
   // unsigned cfactor,    unsigned mo, unsigned dy, unsigned yr, unsigned hh, unsigned mm,
   // char c, LPCSTR filename, LPCSTR methbuf, unsigned long crc, char fCrypt);
-  DLLMESSAGE = procedure(ucsize, csiz: z_uint8;
-    cfactor, mo, dy, yr, hh, mm: z_unsigned; c: byte; FName, meth: PAnsiChar;
-    crc: longword; fCrypt: byte); stdcall;
+  DLLMESSAGE = procedure(ucsize, csiz: z_uint8; cfactor, mo, dy, yr, hh, mm: z_unsigned; c: byte;
+    FName, meth: PAnsiChar; crc: longword; fCrypt: byte); stdcall;
 
   // typedef void (WINAPI DLLMESSAGE_I32) (unsigned long ucsiz_l,
   // unsigned long ucsiz_h, unsigned long csiz_l, unsigned long csiz_h,
@@ -406,16 +410,15 @@ begin
   result := 0;
 end;
 
-function _DLLPASSWORD(pwbuf: PAnsiChar; bufsiz: integer;
-  promptmsg, entryname: PAnsiChar): integer; stdcall; far;
+function _DLLPASSWORD(pwbuf: PAnsiChar; bufsiz: integer; promptmsg, entryname: PAnsiChar): integer;
+  stdcall; far;
 begin
   zMessages.add(format('pwd %s %s', [promptmsg, entryname]));
   StrPCopy(pwbuf, copy(FilePassword, 1, pred(bufsiz)));
   result := 0;
 end;
 
-function _DLLSERVICE(entryname: PAnsiChar; uncomprsiz: z_uint8): integer;
-  stdcall; far;
+function _DLLSERVICE(entryname: PAnsiChar; uncomprsiz: z_uint8): integer; stdcall; far;
 begin
   zMessages.add(format('service %d %s', [uncomprsiz, entryname]));
   inc(FileCount);
@@ -432,9 +435,8 @@ begin
   result := 0;
 end;
 
-procedure _DLLMESSAGE(ucsize, csiz: z_uint8;
-  cfactor, mo, dy, yr, hh, mm: z_unsigned; c: byte; FName, meth: PAnsiChar;
-  crc: longword; fCrypt: byte); stdcall; far;
+procedure _DLLMESSAGE(ucsize, csiz: z_uint8; cfactor, mo, dy, yr, hh, mm: z_unsigned; c: byte;
+  FName, meth: PAnsiChar; crc: longword; fCrypt: byte); stdcall; far;
 begin
   zMessages.add('message ' + FName);
 end;
@@ -442,15 +444,13 @@ end;
 // Used DLL-Functions
 
 // Version-Info: to ensure correct DLL
-function UzpVersion2(ver2: LPUzpVer2): integer; stdcall;
-  external 'unzip32.dll' name 'UzpVersion2';
-function ZpVersion(ver: LPZpVer): integer; stdcall;
-  external 'zip32z64.dll' name 'ZpVersion';
+function UzpVersion2(ver2: LPUzpVer2): integer; stdcall; external 'unzip32.dll' name 'UzpVersion2';
+function ZpVersion(ver: LPZpVer): integer; stdcall; external 'zip32z64.dll' name 'ZpVersion';
 
 // #### unzip ####
 
-function Wiz_SingleEntryUnzip(ifnc: integer; ifnv: pointer; xfnc: integer;
-  xfnv: pointer; DCL: LPDCL; UserFunc: LPUSERFUNCTIONS): integer; stdcall;
+function Wiz_SingleEntryUnzip(ifnc: integer; ifnv: pointer; xfnc: integer; xfnv: pointer;
+  DCL: LPDCL; UserFunc: LPUSERFUNCTIONS): integer; stdcall;
   external 'unzip32.dll' name 'Wiz_SingleEntryUnzip';
 
 (*
@@ -481,8 +481,7 @@ function ZpInit(lpZipUserFunc: LPZIPUSERFUNCTIONS): integer; stdcall;
 function ZpArchive(c: ZCL; Opts: LPZPOPT): integer; stdcall;
   external 'zip32z64.dll' name 'ZpArchive';
 
-{$endif}
-
+{$ENDIF}
 // #### tools ####
 
 function NextP(var s: string; Delimiter: string): string;
@@ -502,8 +501,7 @@ begin
   end;
 end;
 
-function split(s: string; Delimiter: string = ';'; Quote: string = '')
-  : TStringList;
+function split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
 var
   QuoteLength: integer;
   QuoteEnd: integer;
@@ -579,84 +577,84 @@ end;
 
 // End - User - API
 
-function zip(sFiles: TStringList; FName: string;
-  Options: TStringList = nil): integer;
-{$ifdef fpc}
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
+{$IFDEF fpc}
 var
-  zipArchive : TABZipper;
+  zipArchive: TABZipper;
 begin
- zipArchive := TABZipper.Create(nil);
- with zipArchive do
- begin
-   // Archiv-Name
-   FileName := FName;
+  zipArchive := TABZipper.Create(nil);
+  with zipArchive do
+  begin
+    // Archiv-Name
+    FileName := FName;
 
-   // Dateien
-   repeat
+    // Dateien
+    repeat
 
-     if not(assigned(sFiles)) then
-     begin
-   //    AddFiles('*');
-       break;
-     end;
+      if not(assigned(sFiles)) then
+      begin
+        // AddFiles('*');
+        break;
+      end;
 
-     if (sFiles.Count = 0) then
-     begin
-   //    AddFiles('*');
-       break;
-     end;
+      if (sFiles.Count = 0) then
+      begin
+        // AddFiles('*');
+        break;
+      end;
 
-  //   AddFiles(sFiles);
+      // AddFiles(sFiles);
 
-   until true;
+    until true;
 
-   if assigned(Options) then
-   begin
+    if assigned(Options) then
+    begin
 
-     // Recurse SubDirs
-     if (Options.Values[infozip_RootPath] <> '') then
-     begin
-     //  szRootDir := oRootDir;
-    //   fRecurse := 1;
-     end
-     else
-     begin
-    //   fNoDirEntries := true;
-      // fJunkDir := true;
-     end;
+      // Recurse SubDirs
+      if (Options.Values[infozip_RootPath] <> '') then
+      begin
+        // szRootDir := oRootDir;
+        // fRecurse := 1;
+      end
+      else
+      begin
+        // fNoDirEntries := true;
+        // fJunkDir := true;
+      end;
 
-     // Password
-     if (Options.Values[infozip_Password] <> '') then
-     begin
-    //   FilePassword := Options.Values[infozip_Password];
-   //    fEncrypt := 1;
-     end;
-   {
-     // Compression Level
-     if (Options.Values[infozip_Level] <> '') then
-       fLevel := ord(Options.Values[infozip_Level][1])
-     else
-       fLevel := ord('9');
+      // Password
+      if (Options.Values[infozip_Password] <> '') then
+      begin
+        // FilePassword := Options.Values[infozip_Password];
+        // fEncrypt := 1;
+      end;
+      {
+        // Compression Level
+        if (Options.Values[infozip_Level] <> '') then
+        fLevel := ord(Options.Values[infozip_Level][1])
+        else
+        fLevel := ord('9');
 
-     // Extra Infos
-     if (Options.Values[infozip_ExtraInfo] = '0') then
-       fExtra := true;
-  }
-   end
-   else
-   begin
-   {
-     // Defaults!
-     fNoDirEntries := true;
-     fJunkDir := true;
-     fLevel := ord('9');
-   }
-   end;
+        // Extra Infos
+        if (Options.Values[infozip_ExtraInfo] = '0') then
+        fExtra := true;
+      }
+    end
+    else
+    begin
+      {
+        // Defaults!
+        fNoDirEntries := true;
+        fJunkDir := true;
+        fLevel := ord('9');
+      }
+    end;
 
-   //ZipAllFiles;
- end;
+    // ZipAllFiles;
+  end;
 
-{$else}
+{$ELSE}
+
 var
   FilesStore: pointer;
   FilesStoreCount: integer;
@@ -802,7 +800,7 @@ begin
   dispose(ZipOptions);
   sFilesInternal.free;
   FS_free;
-{$endif}
+{$ENDIF}
 end;
 
 function zip(sFiles: TStringList; FName: string; Options: string): integer
@@ -878,33 +876,31 @@ const
   cUnzipMethod_Unzip_exe = 1;
   cUnzipMethod_7z_exe = 2;
 
-
-function unzip(FName: string; Destination: string;
-  Options: TStringList = nil): integer;
-{$ifdef fpc}
+function unzip(FName: string; Destination: string; Options: TStringList = nil): integer;
+{$IFDEF fpc}
 var
- zipArchive : TAbUnZipper;
+  zipArchive: TAbUnZipper;
 begin
- result := 0;
+  result := 0;
 
- if not(FileExists(FName)) then
-   raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
+  if not(FileExists(FName)) then
+    raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
 
- zipArchive := TAbUnzipper.create(nil);
- with zipArchive do
- begin
-   FileName := FName;
-   BaseDirectory := Destination;
+  zipArchive := TAbUnZipper.Create(nil);
+  with zipArchive do
+  begin
+    FileName := FName;
+    BaseDirectory := Destination;
     // ExtractOptions := [];
 
-       if assigned(Options) then
+    if assigned(Options) then
       if (Options.Values[infozip_Password] <> '') then
-        Password := Options.Values[infozip_Password];
-   ExtractFiles('*');
- end;
+        password := Options.Values[infozip_Password];
+    ExtractFiles('*');
+  end;
 
+{$ELSE}
 
- {$else}
 var
   CommandLine: string;
 begin
@@ -950,8 +946,7 @@ begin
 
     CommandLine := CommandLine + ' "' + FName + '" -d ' + Destination;
 
-    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine,
-      SW_SHOWNORMAL);
+    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
 
     result := 1;
   end;
@@ -965,30 +960,27 @@ begin
     // Password
     if assigned(Options) then
       if (Options.Values[infozip_Password] <> '') then
-        CommandLine := CommandLine + ' -p"' + Options.Values
-          [infozip_Password] + '"';
+        CommandLine := CommandLine + ' -p"' + Options.Values[infozip_Password] + '"';
 
     // Destination
     CommandLine := CommandLine + ' -o"' + Destination + '" "' + FName + '"';
 
-    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine,
-      SW_SHOWNORMAL);
+    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
 
     result := 1;
 
   end;
-{$endif}
+{$ENDIF}
 end;
 
 begin
- zMessages := TStringList.Create;
- RegisterExpectedMemoryLeak(zMessages);
+  zMessages := TStringList.Create;
+  RegisterExpectedMemoryLeak(zMessages);
 
-  {$ifdef fpc}
- unzip_Version:= 'unzip ' + AbConst.AbVersionS;
- zip_Version:= 'zip ' +  AbConst.AbVersionS;
-  {$else}
-
+{$IFDEF fpc}
+  unzip_Version := 'unzip ' + AbConst.AbVersionS;
+  zip_Version := 'zip ' + AbConst.AbVersionS;
+{$ELSE}
   // ZIP Versions-Nummer
   new(ZipVersionInfo);
   RegisterExpectedMemoryLeak(ZipVersionInfo);
@@ -997,8 +989,8 @@ begin
   ZpVersion(ZipVersionInfo);
 
   with ZipVersionInfo^ do
-    zip_Version := format('zip %d.%d.%d%s (%s)',
-      [zip.major, zip.minor, zip.patchlevel, betalevel, date]);
+    zip_Version := format('zip %d.%d.%d%s (%s)', [zip.major, zip.minor, zip.patchlevel,
+      betalevel, date]);
 
   // UNZIP Versions-Nummer
   new(UnzipVersionInfo);
@@ -1008,8 +1000,8 @@ begin
   UzpVersion2(UnzipVersionInfo);
 
   with UnzipVersionInfo^ do
-    unzip_Version := format('unzip %d.%d.%d%s (%s)', [unzip.major, unzip.minor,
-      unzip.patchlevel, betalevel, date]);
+    unzip_Version := format('unzip %d.%d.%d%s (%s)', [unzip.major, unzip.minor, unzip.patchlevel,
+      betalevel, date]);
 
   // ZIP - DLL - Init
   new(ZipCallBacks);
@@ -1036,5 +1028,6 @@ begin
     SendApplicationMessage := _DLLMESSAGE;
     ServCallBk := _DLLSERVICE;
   end;
- {$endif}
+{$ENDIF}
+
 end.

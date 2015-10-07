@@ -48,7 +48,8 @@ uses
   dbOrgaMon,
   anfix32,
   globals,
-  gplists;
+  gplists,
+  InfoZIP;
 
 type
   eSuchSubs = (eSS_Titel, eSS_Numero, eSS_PaperColor, eSS_Verlag, eSS_Serie, eSS_Komponist,
@@ -8129,7 +8130,7 @@ var
 begin
   try
     repeat
-  is1400 := not(TableExists('AUSGANGSRECHNUNG'));
+      is1400 := not(TableExists('AUSGANGSRECHNUNG'));
 
 {$IFDEF CONSOLE}
       sSystemSettings := e_r_sqlt('select SETTINGS from EINSTELLUNG');
@@ -8648,8 +8649,11 @@ var
   n: integer;
   DeleteMode: boolean;
   RollBackDump: TStringList;
+  RollBackDomain: string;
+  ArchiveOptions: TStringList;
 begin
   RollBackDump := TStringList.create;
+  RollBackDomain := 'Löschung-PERSON-' + RIDasStr(PERSON_R_FROM);
   result := 0;
   try
 
@@ -8661,8 +8665,26 @@ begin
 
     if DeleteMode then
     begin
+
       fbdump('select * from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM, RollBackDump);
+
+      // Imp pend: das ist viel komplizierter hier einen gesamten Kunden zu
+      // löschen, bzw. alle dessen Kundenbezogene Buchungen!
+
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
+
+      ArchiveOptions := TStringList.create;
+      ArchiveOptions.values[infozip_RootPath] := MyProgramPath + cRechnungPath +
+        RIDasStr(PERSON_R_FROM);
+
+      zip(nil,
+        { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,
+        { } ArchiveOptions);
+      ArchiveOptions.free;
+
+      DirDelete(MyProgramPath + cRechnungPath +
+        RIDasStr(PERSON_R_FROM));
+
     end
     else
     begin
@@ -8673,13 +8695,15 @@ begin
       // Einzelne Beleg umkopieren
       for n := 0 to pred(lBELEGE.count) do
         e_w_MoveBeleg(lBELEGE[n], PERSON_R_TO);
+
       lBELEGE.free;
 
-    end;
+      // Alle Dokumente umkopieren!
+      FileMove(
+        { } MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_FROM) + '\*',
+        { } MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_TO));
 
-    // Alle Dokumente umkopieren!
-    FileMove(MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_FROM) + '\*',
-      MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_TO));
+    end;
 
     //
     References := TStringList.create;
@@ -8734,17 +8758,20 @@ begin
     References.add('VERTRAG.PERSON_R');
     References.add('EMAIL.INITIATOR_R');
 
-    fbdump(PERSON_R_FROM, References, RollBackDump);
-
     //
     if DeleteMode then
-      e_x_dereference(References, _PERSON_R_FROM, 'NULL')
+    begin
+      fbdump(PERSON_R_FROM, References, RollBackDump);
+      e_x_dereference(References, _PERSON_R_FROM, 'NULL');
+      fbdump('select * from PERSON where RID=' + _PERSON_R_FROM, RollBackDump);
+      RollBackDump.SaveToFile(DiagnosePath + cROLL_BACK + RollBackDomain + cSQLExtension);
+    end
     else
+    begin
       e_x_dereference(References, _PERSON_R_FROM, _PERSON_R_TO);
+    end;
 
     References.free;
-
-    fbdump('select * from PERSON where RID=' + _PERSON_R_FROM, RollBackDump);
 
   except
     on E: exception do
@@ -8753,14 +8780,12 @@ begin
         inttostr(PERSON_R_TO) + '): ' + E.Message);
     end;
   end;
-  RollBackDump.SaveToFile(DiagnosePath + 'RollBack-Löschung-PERSON-' + inttostr(PERSON_R_FROM)
-    + '.SQL');
   RollBackDump.free;
 end;
 
 procedure e_w_preDeletePerson(PERSON_R: integer);
 begin
-  e_w_JoinPerson(PERSON_R, 0);
+  e_w_JoinPerson(PERSON_R, cRID_Null);
 end;
 
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
