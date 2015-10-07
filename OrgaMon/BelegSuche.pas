@@ -152,7 +152,7 @@ var
 begin
   PERSON_R := IB_Query1.FieldByName('PERSON_R').AsInteger;
   e_w_KontoInfo(PERSON_R).free;
-  openShell(MahnungFName(PERSON_R));
+  openShell(e_r_MahnungFName(PERSON_R));
 end;
 
 procedure TFormBelegSuche.Button1Click(Sender: TObject);

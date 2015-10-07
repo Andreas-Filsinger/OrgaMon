@@ -155,8 +155,7 @@ type
     procedure Image1Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
     procedure TabSheet3Show(Sender: TObject);
-    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: String);
+    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: String);
     procedure Button18Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
@@ -167,16 +166,16 @@ type
   private
     { Private-Deklarationen }
     BlackList: TgpIntegerList; // Liste der Personen, die NICHT gemahnt werden
-                             // sollen (via System-OLAP) oder können (Fehler)
+    // sollen (via System-OLAP) oder können (Fehler)
     SilentMode: boolean;
 
     procedure ClearCustomers;
-    function AddCustomerByRID(PERSON_R: integer): boolean;
-    function MarkedPERSON_R: integer;
-    function MarkedPERSON_R2: integer;
+    function AddCustomerByRID(PERSON_R: Integer): boolean;
+    function MarkedPERSON_R: Integer;
+    function MarkedPERSON_R2: Integer;
     procedure ShowSaldo(st: TStaticText; summe: double; InversColor: boolean = false);
 
-    procedure StartWait(titel: string; MaxCount: integer);
+    procedure StartWait(titel: string; MaxCount: Integer);
     procedure EndWait;
     procedure EnsureMahnungUpdate;
     procedure EnsureOnline;
@@ -184,9 +183,9 @@ type
   public
     { Public-Deklarationen }
     function ErzeugeMahnliste(Silent: boolean; KundeInformiert: boolean = false): double;
-    function ErzeugeKundenListe : integer; // [[AnzahlDerFehler]]
+    function ErzeugeKundenListe: Integer; // [[AnzahlDerFehler]]
     procedure ErzeugeAusschluss;
-    function Execute(TAN: integer = 0) : boolean;
+    function Execute(TAN: Integer = 0): boolean;
   end;
 
 var
@@ -203,7 +202,7 @@ uses
   InternationaleTexte,
   CareTakerClient, Einstellungen,
   DruckSpooler, Geld, OLAP,
-  Datenbank, dbOrgaMon,  wanfix32;
+  Datenbank, dbOrgaMon, wanfix32;
 
 {$R *.DFM}
 
@@ -211,8 +210,8 @@ procedure TFormMahnung.ShowSaldo(st: TStaticText; summe: double; InversColor: bo
 begin
   with st do
   begin
-    caption := format('%m', [abs(Summe)]);
-    if InversCOlor then
+    caption := format('%m', [abs(summe)]);
+    if InversColor then
       summe := -summe;
     if (summe > cGeld_KleinsterBetrag) then
       Color := clred
@@ -229,13 +228,12 @@ end;
 procedure TFormMahnung.Button2Click(Sender: TObject);
 begin
   ClearCustomers;
-  if (ErzeugeKundenListe<>0) then
-   ShowMessage(
-    'Es wurden problematische Mahneinträge entdeckt!'+#13+
-    'Bitte bearbeiten Sie die Einträge mit vorangestelltem !Ausrufezeichen.');
+  if (ErzeugeKundenListe <> 0) then
+    ShowMessage('Es wurden problematische Mahneinträge entdeckt!' + #13 +
+      'Bitte bearbeiten Sie die Einträge mit vorangestelltem !Ausrufezeichen.');
   if CheckBox7.checked then
-    ErzeugeMahnListe(false);
-  pagecontrol1.activepage := TabSheet2;
+    ErzeugeMahnliste(false);
+  PageControl1.activepage := TabSheet2;
 end;
 
 procedure TFormMahnung.Button8Click(Sender: TObject);
@@ -248,32 +246,32 @@ begin
   FormAusgangsRechnungen.SetContext(MarkedPERSON_R);
 end;
 
-function TFormMahnung.AddCustomerByRid(PERSON_R: integer): boolean;
+function TFormMahnung.AddCustomerByRID(PERSON_R: Integer): boolean;
 begin
   result := false;
-  if (PERSON_R >=cRID_FirstValid) then
+  if (PERSON_R >= cRID_FirstValid) then
   begin
-      result := (e_r_sql('select count(rid) from MAHNLAUF where PERSON_R=' + inttostr(PERSON_R)) = 0);
-      if result then
-        e_x_sql('insert into MAHNLAUF (RID,PERSON_R) values (0,' + inttostr(PERSON_R) + ')');
+    result := (e_r_sql('select count(rid) from MAHNLAUF where PERSON_R=' + inttostr(PERSON_R)) = 0);
+    if result then
+      e_x_sql('insert into MAHNLAUF (RID,PERSON_R) values (0,' + inttostr(PERSON_R) + ')');
   end;
 end;
 
 procedure TFormMahnung.ClearCustomers;
 begin
-  if not (e_w_NeuerMahnlauf) then
+  if not(e_w_NeuerMahnlauf) then
     if doit('In der aktuellen Mahnliste sind noch einzelne Personen angekreuzt!' + #13 +
       'Wollen Sie wirklich eine neue Liste erstellen lassen') then
       e_w_NeuerMahnlauf(true);
 
 end;
 
-function TFormMahnung.ErzeugeMahnListe(Silent: boolean; KundeInformiert: boolean = false): double;
+function TFormMahnung.ErzeugeMahnliste(Silent: boolean; KundeInformiert: boolean = false): double;
 var
-  RecN: integer;
+  RecN: Integer;
   _Global_Offen: double;
   _Global_Verzug: double;
-  PERSON_R: integer;
+  PERSON_R: Integer;
   Bericht: TStringList;
   sKontoOptionen: TStringList;
   mQ: TIB_Query;
@@ -285,7 +283,7 @@ begin
   BeginHourGlass;
 
   //
-  Mahnschwelle := strtodoubledef(edit3.text, iMahnSchwelle);
+  Mahnschwelle := strtodoubledef(Edit3.text, iMahnSchwelle);
   sNullMahnungen := TgpIntegerList.create;
 
   // vom Mahnen ausgeschlossene Beleg
@@ -304,7 +302,8 @@ begin
     if KundeInformiert then
     begin
       StartWait('Mahnungen verbuchen', RecordCount);
-    end else
+    end
+    else
     begin
       StartWait('Mahnbelege erstellen', RecordCount);
     end;
@@ -312,7 +311,7 @@ begin
     _Global_Offen := 0;
     _Global_Verzug := 0;
     first;
-    while not (eof) do
+    while not(eof) do
     begin
       PERSON_R := FieldByName('PERSON_R').AsInteger;
 
@@ -320,17 +319,20 @@ begin
       Bericht := nil;
       if KundeInformiert then
       begin
-        if (FieldByName('BRIEF').AsString = cC_True) or (FieldByName('MAHNBESCHEID').AsString = cC_True) then
+        if (FieldByName('BRIEF').AsString = cC_True) or
+          (FieldByName('MAHNBESCHEID').AsString = cC_True) then
         begin
           sKontoOptionen := TStringList.create;
           sKontoOptionen.add('verbuchen=' + cIni_Activate);
-          sKontoOptionen.add('mahnbescheid=' + bool2cO(FieldByName('MAHNBESCHEID').AsString = cC_True));
+          sKontoOptionen.add('mahnbescheid=' + bool2cO(FieldByName('MAHNBESCHEID')
+            .AsString = cC_True));
           sKontoOptionen.add('moment=' + DatumUhr);
           Bericht := e_w_KontoInfo(PERSON_R, sKontoOptionen);
           sKontoOptionen.free;
         end;
         FieldByName('BRIEF').AsString := cC_False;
-      end else
+      end
+      else
       begin
         Bericht := e_w_KontoInfo(PERSON_R);
         FieldByName('BRIEF').AsString := cC_True;
@@ -349,18 +351,17 @@ begin
         FreeAndNil(Bericht);
 
         // ausblenden
-        if (VERZUG<MahnSchwelle) then
+        if (VERZUG < Mahnschwelle) then
           sNullMahnungen.add(FieldByName('RID').AsInteger);
 
         // dokumentieren
-        if (VERZUG>cGeld_KleinsterBetrag) and (VERZUG<MahnSchwelle) then
-          listbox1.items.addobject(
-            format('Unterhalb der Mahnschwelle %m %s', [VERZUG, e_r_Person(PERSON_R)])
-            ,TObject(PERSON_R));
+        if (VERZUG > cGeld_KleinsterBetrag) and (VERZUG < Mahnschwelle) then
+          ListBox1.items.addobject(format('Unterhalb der Mahnschwelle %m %s',
+            [VERZUG, e_r_Person(PERSON_R)]), TObject(PERSON_R));
       end;
 
       post;
-      progressbar1.position := RecN;
+      ProgressBar1.position := RecN;
       application.processmessages;
       inc(RecN);
       next;
@@ -372,9 +373,7 @@ begin
 
   // jetzt noch die unterschwelligen Mahnungen löschen
   for n := 0 to pred(sNullMahnungen.count) do
-    e_x_sql(
-      'delete from MAHNLAUF '+
-      'where RID='+inttostr(sNullMahnungen[n]));
+    e_x_sql('delete from MAHNLAUF ' + 'where RID=' + inttostr(sNullMahnungen[n]));
 
   EndHourGlass;
   result := _Global_Offen;
@@ -382,12 +381,12 @@ end;
 
 procedure TFormMahnung.Button20Click(Sender: TObject);
 begin
-  printhtmlOK(MahnungFName(MarkedPERSON_R));
+  printhtmlOK(e_r_MahnungFName(MarkedPERSON_R));
 end;
 
 procedure TFormMahnung.Button3Click(Sender: TObject);
 begin
-  openShell(MahnungFName(MarkedPERSON_R));
+  openShell(e_r_MahnungFName(MarkedPERSON_R));
 end;
 
 procedure TFormMahnung.CheckListBox1DblClick(Sender: TObject);
@@ -398,8 +397,7 @@ end;
 procedure TFormMahnung.Button11Click(Sender: TObject);
 begin
   // diesen Datensatz buchen!
-  if doit('Dürfen wirklich ' +
-    inttostr(e_r_sql('select count(rid) from MAHNLAUF where BRIEF=''' +
+  if doit('Dürfen wirklich ' + inttostr(e_r_sql('select count(rid) from MAHNLAUF where BRIEF=''' +
     cC_True + '''')) + #13 + ' Mahnungen abgeschlossen werden') then
   begin
     BeginHourGlass;
@@ -410,7 +408,7 @@ begin
   end;
 end;
 
-function TFormMahnung.MarkedPERSON_R: integer;
+function TFormMahnung.MarkedPERSON_R: Integer;
 begin
   if IB_QueryMahnlauf.Active then
     result := IB_QueryMahnlauf.FieldByName('PERSON_R').AsInteger
@@ -418,17 +416,17 @@ begin
     result := cRID_Null;
 end;
 
-function TFormMahnung.MarkedPERSON_R2: integer;
+function TFormMahnung.MarkedPERSON_R2: Integer;
 begin
-  if (listbox1.itemindex >= 0) then
-    result := integer(listbox1.items.objects[listbox1.itemindex])
+  if (ListBox1.itemindex >= 0) then
+    result := Integer(ListBox1.items.objects[ListBox1.itemindex])
   else
     result := -1;
 end;
 
 procedure TFormMahnung.Button5Click(Sender: TObject);
 begin
-  if DoIt('Alle Häkchen bei "Brief" entfernen') then
+  if doit('Alle Häkchen bei "Brief" entfernen') then
   begin
     e_x_sql('update MAHNLAUF set BRIEF=''' + cC_False + '''');
     EnsureOnline;
@@ -442,25 +440,25 @@ end;
 
 procedure TFormMahnung.FormActivate(Sender: TObject);
 begin
-  if (edit2.text = '') then
-    edit2.text := inttostr(iMahnFaelligkeitstoleranz);
-  if (edit3.text = '') then
-    edit3.text := format('%.2f', [iMahnSchwelle]);
+  if (Edit2.text = '') then
+    Edit2.text := inttostr(iMahnFaelligkeitstoleranz);
+  if (Edit3.text = '') then
+    Edit3.text := format('%.2f', [iMahnSchwelle]);
 end;
 
 procedure TFormMahnung.FormCreate(Sender: TObject);
 begin
   BlackList := TgpIntegerList.create;
-  pagecontrol1.activepage := TabSheet2;
+  PageControl1.activepage := TabSheet2;
 end;
 
 procedure TFormMahnung.Button7Click(Sender: TObject);
 var
   TheLine: string;
 begin
-  if (listbox1.itemindex <> -1) then
+  if (ListBox1.itemindex <> -1) then
   begin
-    TheLine := listbox1.items[listbox1.itemindex];
+    TheLine := ListBox1.items[ListBox1.itemindex];
     if pos('[', TheLine) * pos(']', TheLine) > 0 then
       FormBelege.SetContext(0, strtointdef(ExtractSegmentBetween(TheLine, '[', ']'), 0));
   end;
@@ -481,25 +479,22 @@ begin
   BeginHourGlass;
   if assigned(sAugesetzteBelege) then
     FreeAndNil(sAugesetzteBelege);
-  if (date2long(edit4.Text)>date2long(cOrgaMonBirthDay)) then
+  if (date2long(Edit4.text) > date2long(cOrgaMonBirthDay)) then
   begin
-    sAugesetzteBelege := e_r_sqlm(
-      'select distinct BELEG_R from AUSGANGSRECHNUNG where '+
-      ' (BETRAG>0) and ' +
-      ' (BELEG_R is not null) and ' +
-      ' (VALUTA>='''+edit4.Text+''')');
+    sAugesetzteBelege := e_r_sqlm('select distinct BELEG_R from AUSGANGSRECHNUNG where ' +
+      ' (BETRAG>0) and ' + ' (BELEG_R is not null) and ' + ' (VALUTA>=''' + Edit4.text + ''')');
   end;
   EndHourGlass;
 end;
 
-function TFormMahnung.ErzeugeKundenListe : integer;
+function TFormMahnung.ErzeugeKundenListe: Integer;
 var
-  RecRead: integer;
+  RecRead: Integer;
   cFAELLIGE: TIB_Cursor;
   cAUSGANGSRECHNUNG: TIB_Cursor;
   cUNPLAUSIBEL: TIB_Cursor;
   cBELEG: TIB_Cursor;
-  PERSON_R: integer;
+  PERSON_R: Integer;
   SummeLautAusgangsRechnung: double;
   SummeLautBelege: double;
   BetragsDifferenz: double;
@@ -508,21 +503,22 @@ var
   sDirOLAP: TStringList;
   sAusnahmen: TgpIntegerList;
   sKuerzlichGemahnte: TgpIntegerList;
-  n,m: integer;
+  n, m: Integer;
   AusschlussName: string;
 
-  procedure addBlack(PERSON_R:integer; Msg: string);
+  procedure addBlack(PERSON_R: Integer; Msg: string);
   begin
-    if (BlackList.indexof(PERSON_R)=-1) then
+    if (BlackList.indexof(PERSON_R) = -1) then
       BlackList.add(PERSON_R);
-    if (Msg<>'') then
+    if (Msg <> '') then
     begin
-      if (pos('!',Msg)=1)then
+      if (pos('!', Msg) = 1) then
       begin
-        listbox1.items.insertobject(0,Msg,TObject(PERSON_R));
+        ListBox1.items.insertobject(0, Msg, TObject(PERSON_R));
         inc(result);
-      end else
-        listbox1.items.addobject(Msg,TObject(PERSON_R));
+      end
+      else
+        ListBox1.items.addobject(Msg, TObject(PERSON_R));
     end;
   end;
 
@@ -533,47 +529,49 @@ begin
   // Parameter lesen
   StartTime := 0;
   RecRead := 0;
-  Listbox1.items.BeginUpdate;
+  ListBox1.items.BeginUpdate;
   ListBox1.Clear;
-  BlackList.clear;
+  BlackList.Clear;
 
   // "Schnelle Rechnung" KANN nicht gemahnt werden!
-  if iSchnelleRechnung_PERSON_R>=cRID_FirstValid then
-   BlackList.Add(iSchnelleRechnung_PERSON_R);
+  if iSchnelleRechnung_PERSON_R >= cRID_FirstValid then
+    BlackList.add(iSchnelleRechnung_PERSON_R);
 
   // Blacklist um alle "unerwünschten" erweitern
   // Diese bleiben ausserhalb des Mahnsystems
-  sDirOLAP:= TStringList.create;
-  dir (iOlapPath+'System.Mahnung.Ausschluss.*'+cOLAPExtension, sDirOLAP, false);
+  sDirOLAP := TStringList.create;
+  dir(iOlapPath + 'System.Mahnung.Ausschluss.*' + cOLAPExtension, sDirOLAP, false);
   for n := 0 to pred(sDirOLAP.count) do
   begin
-    AusschlussName := ExtractSegmentBetween(sDirOLAP[n],'System.Mahnung.Ausschluss.',cOLAPExtension);
+    AusschlussName := ExtractSegmentBetween(sDirOLAP[n], 'System.Mahnung.Ausschluss.',
+      cOLAPExtension);
     sAusnahmen := FormOLAP.OLAP(sDirOLAP[n]);
-    StartWait('Ausschluss "'+AusschlussName+'" ermitteln',sAusnahmen.count);
+    StartWait('Ausschluss "' + AusschlussName + '" ermitteln', sAusnahmen.count);
     for m := 0 to pred(sAusnahmen.count) do
     begin
-      addBlack(sAusnahmen[m],format('Ausschluss "'+AusschlussName+'" %s', [e_r_Person(sAusnahmen[m])]));
-      Progressbar1.position := m;
+      addBlack(sAusnahmen[m], format('Ausschluss "' + AusschlussName + '" %s',
+        [e_r_Person(sAusnahmen[m])]));
+      ProgressBar1.position := m;
     end;
-    sAusnahmen.Free;
+    sAusnahmen.free;
   end;
   sDirOLAP.free;
 
   // Kürzlich gemahnte Personen ausklammern
-  sKuerzlichGemahnte := e_r_sqlm(
-    'select distinct PERSON_R from BELEG where' +
-    ' (MAHNUNG>=''' + Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''')');
-  StartWait('Ausschluss "Kürzlich gemahnt" ermitteln',sKuerzlichGemahnte.count);
+  sKuerzlichGemahnte := e_r_sqlm('select distinct PERSON_R from BELEG where' + ' (MAHNUNG>=''' +
+    Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''')');
+  StartWait('Ausschluss "Kürzlich gemahnt" ermitteln', sKuerzlichGemahnte.count);
   for m := 0 to pred(sKuerzlichGemahnte.count) do
   begin
-    addBlack(sKuerzlichGemahnte[m],format('Ausschluss "Kürzlich gemahnt" %s', [e_r_Person(sKuerzlichGemahnte[m])]));
-    Progressbar1.position := m;
+    addBlack(sKuerzlichGemahnte[m], format('Ausschluss "Kürzlich gemahnt" %s',
+      [e_r_Person(sKuerzlichGemahnte[m])]));
+    ProgressBar1.position := m;
   end;
   sKuerzlichGemahnte.free;
 
   // Plausi-Prüfungen
-  StartWait('Prüfungen durchführen',3);
-  Progressbar1.position := 1;
+  StartWait('Prüfungen durchführen', 3);
+  ProgressBar1.position := 1;
   cUNPLAUSIBEL := DataModuleDatenbank.nCursor;
   with cUNPLAUSIBEL do
   begin
@@ -589,31 +587,28 @@ begin
     sql.add(' ( (mahnstufe=2) and (mahnung2<>mahnung) ) or');
     sql.add(' ( (mahnstufe=3) and (mahnung3<>mahnung) ) ');
     ApiFirst;
-    while not (eof) do
+    while not(eof) do
     begin
       PERSON_R := FieldByName('PERSON_R').AsInteger;
-      if (BlackList.IndexOf(PERSON_R)=-1) then
-        addBlack(
-          PERSON_R,
-          format('!Unplausible Mahndaten im Beleg [%d] %s', [
-          FieldByName('RID').AsInteger,
-          e_r_Person(PERSON_R)]));
+      if (BlackList.indexof(PERSON_R) = -1) then
+        addBlack(PERSON_R, format('!Unplausible Mahndaten im Beleg [%d] %s',
+          [FieldByName('RID').AsInteger, e_r_Person(PERSON_R)]));
       ApiNext;
     end;
   end;
   cUNPLAUSIBEL.free;
-  Progressbar1.position := 2;
+  ProgressBar1.position := 2;
 
   // Kundenliste aufbauen ...
 
   cAUSGANGSRECHNUNG := DataModuleDatenbank.nCursor;
   with cAUSGANGSRECHNUNG do
   begin
-    sql.Add('select distinct kunde_r from AUSGANGSRECHNUNG');
+    sql.add('select distinct kunde_r from AUSGANGSRECHNUNG');
     ApiFirst;
     StartWait('Mahnbedürftigkeit Feststellen', RecordCount);
     close;
-    sql.clear;
+    sql.Clear;
     sql.add('select kunde_r,sum(betrag) betrag from ausgangsrechnung group by kunde_r');
     Open;
     ApiFirst;
@@ -621,7 +616,7 @@ begin
     while not(eof) do
     begin
       PERSON_R := FieldByName('KUNDE_R').AsInteger;
-      if (BlackList.indexof(PERSON_R)=-1) then
+      if (BlackList.indexof(PERSON_R) = -1) then
       begin
 
         SummeLautAusgangsRechnung := FieldByName('BETRAG').AsDouble;
@@ -634,8 +629,9 @@ begin
           sql.add('from beleg where');
           sql.add(' person_r=' + inttostr(PERSON_R));
           sql.add('group by person_r');
-          APiFirst;
-          SummeLautBelege := FieldByName('rechnungs_betrag').AsDouble - FieldByNAme('davon_bezahlt').AsDouble;
+          ApiFirst;
+          SummeLautBelege := FieldByName('rechnungs_betrag').AsDouble -
+            FieldByName('davon_bezahlt').AsDouble;
         end;
         cBELEG.free;
 
@@ -643,27 +639,23 @@ begin
 
         repeat
 
-          if (BetragsDifferenz>=cGeld_KleinsterBetrag) then // Fehler!
+          if (BetragsDifferenz >= cGeld_KleinsterBetrag) then // Fehler!
           begin
-            addBlack(
-              PERSON_R,
-              format('!Differenz %m %m %m %s', [SummeLautAusgangsRechnung, SummeLautBelege, SummeLautAusgangsRechnung - SummeLautBelege, e_r_Person(PERSON_R)])
-              );
+            addBlack(PERSON_R, format('!Differenz %m %m %m %s', [SummeLautAusgangsRechnung,
+              SummeLautBelege, SummeLautAusgangsRechnung - SummeLautBelege, e_r_Person(PERSON_R)]));
             break;
           end;
 
-          if (SummeLautAusgangsRechnung<-cGeld_KleinsterBetrag) then // Guthaben!
+          if (SummeLautAusgangsRechnung < -cGeld_KleinsterBetrag) then // Guthaben!
           begin
-            addBlack(
-              PERSON_R,
-              format('Guthaben %m %s', [SummeLautAusgangsRechnung, e_r_Person(PERSON_R)])
-              );
+            addBlack(PERSON_R, format('Guthaben %m %s', [SummeLautAusgangsRechnung,
+              e_r_Person(PERSON_R)]));
             break;
           end;
 
-          if (SummeLautAusgangsRechnung<cGeld_KleinsterBetrag) then // geringfügige Forderung
+          if (SummeLautAusgangsRechnung < cGeld_KleinsterBetrag) then // geringfügige Forderung
           begin
-            addBlack(PERSON_R,'');
+            addBlack(PERSON_R, '');
             break;
           end;
 
@@ -674,7 +666,7 @@ begin
       inc(RecRead);
       if frequently(StartTime, 777) or eof then
       begin
-        progressbar1.Position := RecRead;
+        ProgressBar1.position := RecRead;
         application.processmessages;
       end;
       ApiNext;
@@ -683,7 +675,7 @@ begin
 
   end;
   cAUSGANGSRECHNUNG.free;
-  Progressbar1.position := 3;
+  ProgressBar1.position := 3;
 
   // Personen hinzunehmen, die fällige Beträge haben
   cFAELLIGE := DataModuleDatenbank.nCursor;
@@ -698,24 +690,25 @@ begin
     sql.add(' (RECHNUNGS_BETRAG>=0.01) and');
     sql.add(' ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>=0.01) or (DAVON_BEZAHLT is null)) and');
     sql.add(' (MAHNBESCHEID is null) and');
-    sql.add(' (FAELLIG<''' + Long2date(DatePlus(DateGet, -strtointdef(edit2.Text, iMahnFaelligkeitstoleranz))) + ''')');
+    sql.add(' (FAELLIG<''' + Long2date(DatePlus(DateGet, -strtointdef(Edit2.text,
+      iMahnFaelligkeitstoleranz))) + ''')');
 
-    AppendStringsToFile(sql,DiagnosePath+'Mahnung.PERSON_R.txt');
+    AppendStringsToFile(sql, DiagnosePath + 'Mahnung.PERSON_R.txt');
     ApiFirst;
     RecRead := 0;
-    StartWait('Liste aufbauen ', RecordCount );
-    while not (eof) do
+    StartWait('Liste aufbauen ', RecordCount);
+    while not(eof) do
     begin
 
       // Personen die nicht auf der Blacklist sind aufnehmen!
       PERSON_R := FieldByName('PERSON_R').AsInteger;
-      if (BlackList.IndexOf(PERSON_R) = -1) then
-        AddCustomerByRid(PERSON_R);
+      if (BlackList.indexof(PERSON_R) = -1) then
+        AddCustomerByRID(PERSON_R);
 
       inc(RecRead);
       if frequently(StartTime, 777) then
       begin
-        progressbar1.Position := RecRead;
+        ProgressBar1.position := RecRead;
         application.processmessages;
       end;
       ApiNext;
@@ -725,33 +718,33 @@ begin
   end;
 
   EndWait;
-  listbox1.items.EndUpdate;
+  ListBox1.items.EndUpdate;
   EndHourGlass;
 end;
 
 procedure TFormMahnung.EndWait;
 begin
-  progressbar1.position := 0;
-  label4.caption := '';
+  ProgressBar1.position := 0;
+  Label4.caption := '';
 end;
 
-procedure TFormMahnung.StartWait(titel: string; MaxCount: integer);
+procedure TFormMahnung.StartWait(titel: string; MaxCount: Integer);
 begin
-  progressbar1.position := 0;
-  progressbar1.max := MaxCount;
-  label4.caption := titel;
+  ProgressBar1.position := 0;
+  ProgressBar1.max := MaxCount;
+  Label4.caption := titel;
   application.processmessages;
 end;
 
 procedure TFormMahnung.EnsureOnline;
 begin
   BeginHourGlass;
-  if not (IB_QueryMahnlauf.active) then
-    IB_QueryMahnlauf.open
+  if not(IB_QueryMahnlauf.Active) then
+    IB_QueryMahnlauf.Open
   else
     IB_QueryMahnlauf.refresh;
-  if not (IB_QueryAusgesetzteBelege.active) then
-    IB_QueryAusgesetzteBelege.open
+  if not(IB_QueryAusgesetzteBelege.Active) then
+    IB_QueryAusgesetzteBelege.Open
   else
     IB_QueryAusgesetzteBelege.refresh;
   EndHourGlass;
@@ -759,8 +752,7 @@ end;
 
 procedure TFormMahnung.EnsureMahnungUpdate;
 begin
-  e_x_sql(
-    'update MAHNLAUF M set '+
+  e_x_sql('update MAHNLAUF M set ' +
     'MAHNUNG = (select max(B.MAHNUNG) from BELEG B where B.PERSON_R=M.PERSON_R)');
 end;
 
@@ -769,33 +761,33 @@ begin
   openShell(cHelpURL + 'Mahnsystem');
 end;
 
-function TFormMahnung.Execute(TAN: integer) : boolean;
+function TFormMahnung.Execute(TAN: Integer): boolean;
 var
   sLOG: TStringList;
 begin
   result := false;
   try
     SilentMode := true;
-   repeat
-    pagecontrol1.ActivePage := TabSheet1;
-    show;
-    if (ErzeugeKundenListe<>0) then
-     break;
-    ErzeugeMahnListe(false);
-    result := true;
-   until true;
+    repeat
+      PageControl1.activepage := TabSheet1;
+      show;
+      if (ErzeugeKundenListe <> 0) then
+        break;
+      ErzeugeMahnliste(false);
+      result := true;
+    until true;
     close;
   except
     on E: Exception do
     begin
-      listbox1.items.Add(cERRORText + ' Mahnung: ' + E.Message);
+      ListBox1.items.add(cERRORText + ' Mahnung: ' + E.Message);
       CareTakerLog(cERRORText + ' Mahnung: ' + E.Message);
     end;
   end;
 
   sLOG := TStringList.create;
-  sLOG.addstrings(Listbox1.items);
-  if (sLOG.Count>0) then
+  sLOG.addstrings(ListBox1.items);
+  if (sLOG.count > 0) then
     sLOG.saveToFile(DiagnosePath + 'Mahnlauf-' + inttostrN(TAN, 8) + '.log.txt');
   sLOG.free;
 
@@ -817,8 +809,8 @@ begin
   EnsureOnline;
 end;
 
-procedure TFormMahnung.IB_Grid2GetDisplayText(Sender: TObject; ACol,
-  ARow: Integer; var AString: string);
+procedure TFormMahnung.IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer;
+  var AString: string);
 begin
   if (ARow > 0) then
     if (AString <> '') then
@@ -826,13 +818,15 @@ begin
         1:
           ; // RID
         2:
-        begin // PERSON
-          AString := e_r_Person(strtoint(AString));
-        end;
+          begin // PERSON
+            AString := e_r_Person(strtoint(AString));
+          end;
         3:
-        begin // SALDO
-          AString := format('%m', [e_r_sqld('select SUM(BETRAG) from Ausgangsrechnung where BELEG_R=' + AString)]);
-        end;
+          begin // SALDO
+            AString :=
+              format('%m', [e_r_sqld('select SUM(BETRAG) from Ausgangsrechnung where BELEG_R=' +
+              AString)]);
+          end;
       end;
 end;
 
@@ -842,13 +836,13 @@ var
 begin
   Bericht := e_w_KontoInfo(MarkedPERSON_R);
   Bericht.free;
-  openShell(MahnungFName(MarkedPERSON_R));
+  openShell(e_r_MahnungFName(MarkedPERSON_R));
 end;
 
 procedure TFormMahnung.Button1Click(Sender: TObject);
 begin
- Listbox1.items.SaveToFile(DiagnosePath+'Mahnvorlauf.log.txt');
- openShell(DiagnosePath+'Mahnvorlauf.log.txt');
+  ListBox1.items.saveToFile(DiagnosePath + 'Mahnvorlauf.log.txt');
+  openShell(DiagnosePath + 'Mahnvorlauf.log.txt');
 end;
 
 procedure TFormMahnung.Button12Click(Sender: TObject);
@@ -863,24 +857,24 @@ end;
 
 procedure TFormMahnung.Button14Click(Sender: TObject);
 begin
-  Formbelege.SetContext(0, IB_QueryAusgesetzteBelege.FieldByName('RID').AsInteger);
+  FormBelege.SetContext(0, IB_QueryAusgesetzteBelege.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormMahnung.RefreshAussenstaende;
 var
-  Summe: double;
+  summe: double;
   Aussenstaende: double;
   Offen: double;
-  VerZug: double;
+  VERZUG: double;
   faellig: double;
   m1, m2, m3, mb: double;
   ungemahnt_r, ungemahnt_m1, ungemahnt_m2, ungemahnt_m3, ungemahnt_mb: double;
   cBELEGE: TIB_Cursor;
-  n: integer;
-  LastValue: integer;
-  ThisValue: integer;
+  n: Integer;
+  LastValue: Integer;
+  ThisValue: Integer;
 
-  function Sign(i: integer): string;
+  function Sign(i: Integer): string;
   begin
     if i >= 0 then
       result := '+'
@@ -890,9 +884,9 @@ var
 
 begin
   BeginHourGlass;
-  listbox1.items.clear;
-  Summe := e_r_sqld('select SUM(BETRAG) from ausgangsrechnung');
-  ShowSaldo(StaticText1, Summe, true);
+  ListBox1.items.Clear;
+  summe := e_r_sqld('select SUM(BETRAG) from ausgangsrechnung');
+  ShowSaldo(StaticText1, summe, true);
 
   cBELEGE := DataModuleDatenbank.nCursor;
   with cBELEGE do
@@ -901,12 +895,13 @@ begin
     // Alle Aussenstaende
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     ApiFirst;
-    Aussenstaende := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    Aussenstaende := FieldByName('RECHNUNGS_BETRAG').AsDouble -
+      FieldByName('DAVON_BEZAHLT').AsDouble;
     close;
     ShowSaldo(StaticText11, Aussenstaende, true);
 
     // offene Beträge = Fälligkeit erst in der Zukunft
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (FAELLIG>''' + Long2date(DateGet) + ''')');
@@ -916,19 +911,19 @@ begin
     ShowSaldo(StaticText9, Offen, true);
 
     // Beträge in VerZug, ggf aber gemahnt!
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''')');
     ApiFirst;
-    Verzug := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    VERZUG := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
     close;
-    ShowSaldo(StaticText8, Verzug, true);
+    ShowSaldo(StaticText8, VERZUG, true);
 
-    faellig := Aussenstaende - (Offen + Verzug);
+    faellig := Aussenstaende - (Offen + VERZUG);
 
     // in Mahnung 1 / 2 / 3
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (MAHNBESCHEID is null) AND');
@@ -941,7 +936,7 @@ begin
     ShowSaldo(StaticText3, m1, true);
 
     // in aktueller Mahnung "1"
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (MAHNBESCHEID is null) AND');
@@ -954,7 +949,7 @@ begin
     ShowSaldo(StaticText4, m2, true);
 
     // in aktueller Mahnung "2"
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (MAHNBESCHEID is null) AND');
@@ -967,7 +962,7 @@ begin
     ShowSaldo(StaticText5, m3, true);
 
     // im Mahnbescheid
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
     sql.add('      (MAHNBESCHEID is not null)');
@@ -977,17 +972,18 @@ begin
     ShowSaldo(StaticText6, mb, true);
 
     // Berechnet "ungemahnt"
-    ShowSaldo(StaticText7, verzug - (m1 + m2 + m3 + mb), true);
-    ShowSaldo(StaticText10, verzug, true);
+    ShowSaldo(StaticText7, VERZUG - (m1 + m2 + m3 + mb), true);
+    ShowSaldo(StaticText10, VERZUG, true);
 
     // Berechnet "fällige Beträge"
-    ShowSaldo(StaticText2, Faellig, true);
+    ShowSaldo(StaticText2, faellig, true);
 
     // bisher ungemahnte Mahnbare Rechnungen
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
-    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''') AND');
+    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) +
+      ''') AND');
     sql.add('      (MAHNUNG1 is null)');
     ApiFirst;
     ungemahnt_r := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
@@ -995,78 +991,89 @@ begin
     ShowSaldo(StaticText12, ungemahnt_r, true);
 
     // bisher ungemahnte Mahnbare M1
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
-    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''') AND');
+    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) +
+      ''') AND');
     sql.add('      (MAHNUNG<''' + Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''') AND');
     sql.add('      (MAHNUNG1 is not null) AND');
     sql.add('      (MAHNUNG2 is null)');
     ApiFirst;
-    ungemahnt_m1 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    ungemahnt_m1 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT')
+      .AsDouble;
     close;
     ShowSaldo(StaticText13, ungemahnt_m1, true);
 
     // bisher ungemahnte Mahnbare M2
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
-    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''') AND');
+    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) +
+      ''') AND');
     sql.add('      (MAHNUNG<''' + Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''') AND');
     sql.add('      (MAHNUNG1 is not null) AND');
     sql.add('      (MAHNUNG2 is not null) AND');
     sql.add('      (MAHNUNG3 is null)');
     ApiFirst;
-    ungemahnt_m2 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    ungemahnt_m2 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT')
+      .AsDouble;
     close;
     ShowSaldo(StaticText14, ungemahnt_m2, true);
 
     // bisher ungemahnte Mahnbare M3
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
-    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''') AND');
+    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) +
+      ''') AND');
     sql.add('      (MAHNUNG<''' + Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''') AND');
     sql.add('      (MAHNUNG1 is not null) AND');
     sql.add('      (MAHNUNG2 is not null) AND');
     sql.add('      (MAHNUNG3 is not null) AND');
     sql.add('      (MAHNBESCHEID is null)');
     ApiFirst;
-    ungemahnt_m3 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    ungemahnt_m3 := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT')
+      .AsDouble;
     close;
     ShowSaldo(StaticText15, ungemahnt_m3, true);
 
     // bisher ungemahnte Mahnbare MB
-    sql.clear;
+    sql.Clear;
     sql.add('select sum(RECHNUNGS_BETRAG) RECHNUNGS_BETRAG,SUM(DAVON_BEZAHLT) DAVON_BEZAHLT from BELEG');
     sql.add('where');
-    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) + ''') AND');
-    sql.add('      (MAHNUNG<''' + Long2date(DatePlus(DateGet, -iMahnungMahnBescheidLaufzeit)) + ''') AND');
+    sql.add('      (FAELLIG<''' + Long2date(DatePlus(DateGet, -iMahnFaelligkeitstoleranz)) +
+      ''') AND');
+    sql.add('      (MAHNUNG<''' + Long2date(DatePlus(DateGet, -iMahnungMahnBescheidLaufzeit)) +
+      ''') AND');
     sql.add('      (MAHNBESCHEID is not null)');
     ApiFirst;
-    ungemahnt_mb := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble;
+    ungemahnt_mb := FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT')
+      .AsDouble;
     close;
     ShowSaldo(StaticText16, ungemahnt_mb, true);
 
     //
-    ShowSaldo(StaticText17, ungemahnt_r + ungemahnt_m1 + ungemahnt_m2 + ungemahnt_m3 + ungemahnt_mb, true);
+    ShowSaldo(StaticText17, ungemahnt_r + ungemahnt_m1 + ungemahnt_m2 + ungemahnt_m3 +
+      ungemahnt_mb, true);
 
     // Anzahl der ungemahnten Personen
     LastValue := 0;
     for n := -3 to iMahnfreierZeitraum + 3 do
     begin
-      sql.clear;
+      sql.Clear;
       sql.add('select distinct count(PERSON_R) PERSON_R from BELEG');
       sql.add('where');
       sql.add('    ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) or (RECHNUNGS_BETRAG>0.0 and DAVON_BEZAHLT is null)) and');
       sql.add('    (MAHNBESCHEID is null) and');
-      sql.add('    (FAELLIG<''' + Long2date(DatePlus(DateGet, n + -iMahnFaelligkeitstoleranz)) + ''') and');
-      sql.add('    ((MAHNUNG<''' + Long2date(DatePlus(DateGet, n + -iMahnfreierZeitraum)) + ''') or (MAHNUNG1 is NULL))');
+      sql.add('    (FAELLIG<''' + Long2date(DatePlus(DateGet, n + -iMahnFaelligkeitstoleranz)) +
+        ''') and');
+      sql.add('    ((MAHNUNG<''' + Long2date(DatePlus(DateGet, n + -iMahnfreierZeitraum)) +
+        ''') or (MAHNUNG1 is NULL))');
       ApiFirst;
       ThisValue := FieldByName('PERSON_R').AsInteger;
-      listbox1.items.add(long2date(DatePlus(DateGet, n)) + '  ' + inttostrN(ThisValue, 4) +
-        ' (' + sign(ThisValue - LastValue) + inttostrN(abs(ThisValue - LastValue), 3) + ')'
-        );
+      ListBox1.items.add(Long2date(DatePlus(DateGet, n)) + '  ' + inttostrN(ThisValue, 4) + ' (' +
+        Sign(ThisValue - LastValue) + inttostrN(abs(ThisValue - LastValue), 3) + ')');
       LastValue := ThisValue;
       close;
       application.processmessages;
@@ -1076,7 +1083,6 @@ begin
   cBELEGE.free;
   EndHourGlass;
 end;
-
 
 procedure TFormMahnung.Button15Click(Sender: TObject);
 begin
@@ -1089,4 +1095,3 @@ begin
 end;
 
 end.
-

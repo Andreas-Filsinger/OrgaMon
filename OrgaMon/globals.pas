@@ -29,9 +29,9 @@ unit globals;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-windows,
-  {$ENDIF}
+{$IFDEF MSWINDOWS}
+  windows,
+{$ENDIF}
   classes,
   graphics,
 {$IFNDEF CONSOLE}
@@ -47,7 +47,7 @@ windows,
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.122; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.123; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -421,15 +421,13 @@ const
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
 
-  cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern',
-    'POST=Abschicken', 'CANCEL=Abbruch', 'CANCELSEARCH=Suche abbrechen',
-    'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',
-    'FIRST=Erster Datensatz', 'PRIOR=vorheriger Datensatz',
-    'NEXT=nächster Datensatz', 'LAST=Letzter Datensatz', 'SEARCH=Suchen',
-    'COUNT=Anzahl der Datensätze', 'INSERT=Datensatz einfügen',
-    'DELETE=Datensatz löschen', 'REFRESH=Aktualisieren',
-    'REFRESHKEYS=Aktualisieren', 'REFRESHROWS=Aktualisieren',
-    'POSTSEARCH=Abschicken', 'CANCELEDIT=Änderung abbrechen',
+  cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern', 'POST=Abschicken',
+    'CANCEL=Abbruch', 'CANCELSEARCH=Suche abbrechen', 'POSTEDIT=Abschicken',
+    'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken', 'FIRST=Erster Datensatz',
+    'PRIOR=vorheriger Datensatz', 'NEXT=nächster Datensatz', 'LAST=Letzter Datensatz',
+    'SEARCH=Suchen', 'COUNT=Anzahl der Datensätze', 'INSERT=Datensatz einfügen',
+    'DELETE=Datensatz löschen', 'REFRESH=Aktualisieren', 'REFRESHKEYS=Aktualisieren',
+    'REFRESHROWS=Aktualisieren', 'POSTSEARCH=Abschicken', 'CANCELEDIT=Änderung abbrechen',
     'CANCELINSERT=Einfügen abbrechen', 'CANCELDELETE=Löschen abbrechen');
 
 type
@@ -702,37 +700,32 @@ const
   cWordHeaderLine2 =
 
   // Bereich I : Zählerdaten
-    'Art;' + 'Zaehler_Nummer;' + 'ReglerNummerAlt;' + 'Sperre;' + 'SperreKurz;'
-    + 'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
+    'Art;' + 'Zaehler_Nummer;' + 'ReglerNummerAlt;' + 'Sperre;' + 'SperreKurz;' +
+    'ZaehlerInfo1;ZaehlerInfo2;ZaehlerInfo3;ZaehlerInfo4;ZaehlerInfo5;' +
     'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
 
   // Bereich II : Liegenschaft
     'Verbraucher_Name;' + 'Verbraucher_Name2;' + 'Verbraucher_Strasse;' +
-    'Verbaucher_Strasse_Teil1;' + 'Verbaucher_Strasse_Teil2;' +
-    'Verbaucher_Strasse_Teil3;' + 'Planquadrat;' + 'OrtsteilCode;' +
-    'Verbraucher_Ortsteil;' + 'Verbraucher_Ort;' +
+    'Verbaucher_Strasse_Teil1;' + 'Verbaucher_Strasse_Teil2;' + 'Verbaucher_Strasse_Teil3;' +
+    'Planquadrat;' + 'OrtsteilCode;' + 'Verbraucher_Ortsteil;' + 'Verbraucher_Ort;' +
 
   // Bereich III: Anschreiben
-    'KundeNummer;' + 'Anschreiben_Name;' + 'Anschreiben_Name2' +
-    'Anschreiben_Strasse;' + 'Anschreiben_Ort;' + 'WordEmpfaenger;' +
-    'WordAnzahl;' +
+    'KundeNummer;' + 'Anschreiben_Name;' + 'Anschreiben_Name2' + 'Anschreiben_Strasse;' +
+    'Anschreiben_Ort;' + 'WordEmpfaenger;' + 'WordAnzahl;' +
 
   // Bereich IV: Termin Info
-    'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' +
-    'WochentagKurz;' + 'Datum;' + 'DatumText;' + 'Zeit;' + 'ZeitText;' +
-    ';Monteur;' + 'MonteurHandy;' +
+    'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' + 'WochentagKurz;' +
+    'Datum;' + 'DatumText;' + 'Zeit;' + 'ZeitText;' + ';Monteur;' + 'MonteurHandy;' +
     'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
-    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
-    'Bemerkung;' +
+    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Bemerkung;' +
 
   // Bereich V: OrgaMon Interna, ohne Bedeutung für den Auftraggeber
-    'ReferenzIdentitaet;' + 'Status1;' + 'Status2;' + 'Geaendert;' +
-    'Bearbeiter;' +
+    'ReferenzIdentitaet;' + 'Status1;' + 'Status2;' + 'Geaendert;' + 'Bearbeiter;' +
 
   // Bereich VI: Ergebnisse für den Auftraggeber
-    'WechselDatum;' + 'WechselZeit;' + 'ZaehlerNummerKorrektur;' +
-    'ZaehlerStandAlt;' + 'ZaehlerNummerNeu;' + 'ZaehlerStandNeu;' +
-    'ReglerNummerKorrektur;' + 'ReglerNummerNeu;' + 'Protokoll;' + 'Leer';
+    'WechselDatum;' + 'WechselZeit;' + 'ZaehlerNummerKorrektur;' + 'ZaehlerStandAlt;' +
+    'ZaehlerNummerNeu;' + 'ZaehlerStandNeu;' + 'ReglerNummerKorrektur;' + 'ReglerNummerNeu;' +
+    'Protokoll;' + 'Leer';
 
   // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
 
@@ -747,18 +740,16 @@ const
     'Verbraucher_Ortsteil;ZaehlerNummerKorrektur;ZaehlerNummerNeu;' +
     'ZaehlerStandAlt;ZaehlerStandNeu;Protokoll;WechselDatum;WechselZeit;' +
     'ReglerNummerAlt;ReglerNummerKorrektur;ReglerNummerNeu;' +
-    'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;'
-    + 'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;'
-    + 'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
-    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' +
-    'Status3;ZeitraumKurz;' +
+    'Verbaucher_Strasse_Teil1;Verbaucher_Strasse_Teil2;Verbaucher_Strasse_Teil3;' +
+    'WordEmpfaenger;ReferenzIdentitaet;WordAnzahl;OrtsteilCode;SperreKurz;MonteurHandy;' +
+    'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
+    'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Status3;ZeitraumKurz;' +
 
   // immer notwendig
     'Leer';
 
   // Spalten, die nicht an den Auftraggeber übertragen werden!
-  cRedHeaderLine =
-    'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +
+  cRedHeaderLine = 'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +
     'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' +
     'InternInfo10;Leer';
 
@@ -907,13 +898,11 @@ type
     { } cwb_Zuordnung,
     { } cwb_Vermutung);
 
-  TeTerminarbeitsplatzSortMode = (csm_normalSortierung, csm_PLZSortierung,
-    csm_PostSortierung, csm_ZeitSortierung, csm_ZaehlernummerSortierung,
-    csm_BriefadresseSortierung, csm_ABNummerSortierung, csm_StatusSortierung,
-    csm_WechselSortierung);
+  TeTerminarbeitsplatzSortMode = (csm_normalSortierung, csm_PLZSortierung, csm_PostSortierung,
+    csm_ZeitSortierung, csm_ZaehlernummerSortierung, csm_BriefadresseSortierung,
+    csm_ABNummerSortierung, csm_StatusSortierung, csm_WechselSortierung);
 
-  eRechnungsNummerVergabeMoment = (ernvm_Anlage, ernvm_Berechnen,
-    ernvm_Vorschau, ernvm_Verbuchen);
+  eRechnungsNummerVergabeMoment = (ernvm_Anlage, ernvm_Berechnen, ernvm_Vorschau, ernvm_Verbuchen);
 
 const
   cPhasenStatusText: array [0 .. ord(ctsLast) + 6] of UnicodeString = (
@@ -1419,8 +1408,7 @@ const
   cDeleteRegistry: boolean = false;
 
   FeldNamenAnz = 8;
-  cFelderNamen: array [1 .. FeldNamenAnz] of word = (39, 40, 41, 42, 43,
-    44, 45, 99);
+  cFelderNamen: array [1 .. FeldNamenAnz] of word = (39, 40, 41, 42, 43, 44, 45, 99);
 
 var
   noten: tDataBaseRec; // aktueller Datensatz "notenblatt"
@@ -1480,8 +1468,6 @@ procedure BeginHourGlass;
 procedure EnsureHourGlass;
 procedure EndHourGlass;
 procedure EnsureDefaultCursor;
-function MahnungFName(PERSON_R: integer): string;
-function RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG: integer): string;
 
 // Allgemeine String Utils
 function bool2cO(b: boolean): string;
@@ -1492,6 +1478,7 @@ function OrtPostalisch(s: string): string;
 
 // dynamische Pfade
 function cAuftragErgebnisPath: string;
+function cPersonPath(PERSON_R: integer): string;
 function iOlapPath: string;
 function iSystemOLAPPath: string;
 function iPDFPathPublicShop: string;
@@ -1503,7 +1490,7 @@ function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
 
 // Umsetzer, Platzhalter in Pfaden
-procedure patchPath(var s : string);
+procedure patchPath(var s: string);
 
 // dynamische Parameter
 function JonDaVorlauf: integer;
@@ -1535,18 +1522,18 @@ const
 
 function cOrgaMonCopyright: string;
 begin
-  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version)
-    + ' ©1987-' + JahresZahl + ' http://www.orgamon.org';
+  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version) + ' ©1987-' +
+    JahresZahl + ' http://www.orgamon.org';
 end;
 
 function cAppName: string;
 begin
   if isBeta then
-    result := cApplicationName + cTradeMark + '-RC Rev. ' +
-      RevToStr(globals.Version) + ' [' + iMandant + ']'
+    result := cApplicationName + cTradeMark + '-RC Rev. ' + RevToStr(globals.Version) + ' [' +
+      iMandant + ']'
   else
-    result := cApplicationName + cTradeMark + ' Rev. ' +
-      RevToStr(globals.Version) + ' [' + iMandant + ']';
+    result := cApplicationName + cTradeMark + ' Rev. ' + RevToStr(globals.Version) + ' [' +
+      iMandant + ']';
 end;
 
 function iDataBaseHost: string;
@@ -1581,7 +1568,7 @@ begin
   result := copy(result, succ(k), MaxInt);
 end;
 
-procedure patchPath(var s : string);
+procedure patchPath(var s: string);
 begin
   ersetze('{app}', ProgramFilesDir, s);
   ersetze('{exe}', MyApplicationPath, s);
@@ -1594,7 +1581,7 @@ end;
 function evalPath(iDataBaseName: string): string;
 begin
   result := iDataBaseName;
-  PatchPath(result);
+  patchPath(result);
 end;
 
 const
@@ -1659,8 +1646,7 @@ begin
     begin
       // Passwort
       iDataBaseUser := AnsiString(ReadString(sGroup, cDataBaseUser, 'SYSDBA'));
-      iDataBasePassword := AnsiString(ReadString(sGroup, cDataBasePwd,
-        'masterkey'));
+      iDataBasePassword := AnsiString(ReadString(sGroup, cDataBasePwd, 'masterkey'));
 
       // erster Datenbankname ermitteln
       repeat
@@ -1669,8 +1655,7 @@ begin
         if (iDataBaseName <> '') then
           break;
 
-        iDataBaseName :=
-          AnsiString(ReadString(sGroup, cDataBaseName + '1', ''));
+        iDataBaseName := AnsiString(ReadString(sGroup, cDataBaseName + '1', ''));
         if (iDataBaseName <> '') then
           break;
 
@@ -1686,8 +1671,7 @@ begin
       // weitere Datenbanknamen
       AllTheMandanten.Add(iDataBaseName);
       for n := 2 to cMaxMandanten do
-        AllTheMandanten.Add(ReadString(sGroup,
-          cDataBaseName + inttostr(n), ''));
+        AllTheMandanten.Add(ReadString(sGroup, cDataBaseName + inttostr(n), ''));
       for n := pred(AllTheMandanten.count) downto 1 do
         if (AllTheMandanten[n] = '') then
         begin
@@ -1706,8 +1690,7 @@ begin
         ParamWhatBase := AnsiUpperCase(ParamStr(n));
         if pos(cUpperBaseSettingParam, ParamWhatBase) = 1 then
         begin
-          ChosenIndex :=
-            strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
+          ChosenIndex := strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
           if (ChosenIndex <= AllTheMandanten.count) then
           begin
             iDataBaseName := AllTheMandanten[pred(ChosenIndex)];
@@ -1727,8 +1710,7 @@ begin
 {$IFDEF fpc}
         LogBootStage(AllTheMandanten[0]);
         iDataBaseName := AllTheMandanten[0];
-        iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(1),
-          iDataBasePassword);
+        iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(1), iDataBasePassword);
 
 {$ELSE}
         FormMandantAuswahl := TFormMandantAuswahl.create(nil);
@@ -1745,8 +1727,7 @@ begin
           begin
             LogBootStage(Mandant);
             iDataBaseName := Mandant;
-            iDataBasePassword :=
-              ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)),
+            iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)),
               iDataBasePassword);
           end;
         end;
@@ -1763,9 +1744,9 @@ begin
 {$ELSE}
         writeln(
 {$ENDIF}
-          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName +
-          #13#10 + #13#10 + '[' + sGroup + ']' + #13#10 + cDataBaseName + '=' +
-          #13#10 + #13#10 + ' notwendige Einstellung ist ohne Wert!');
+          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName + #13#10 + #13#10 + '['
+          + sGroup + ']' + #13#10 + cDataBaseName + '=' + #13#10 + #13#10 +
+          ' notwendige Einstellung ist ohne Wert!');
 
         halt;
       end
@@ -1793,8 +1774,8 @@ begin
 {$ELSE}
             writeln(
 {$ENDIF}
-              'ERROR: Die Datei' + #13#10 + #13#10 + iDataBaseName + cIniFName +
-              #13#10 + #13#10 + 'existiert nicht!');
+              'ERROR: Die Datei' + #13#10 + #13#10 + iDataBaseName + cIniFName + #13#10 + #13#10 +
+              'existiert nicht!');
             halt;
           end;
 
@@ -1806,8 +1787,8 @@ begin
 {$ELSE}
           writeln(
 {$ENDIF}
-            'ERROR: Das Verzeichnis' + #13#10 + #13#10 + iDataBaseName + #13#10
-            + #13#10 + 'existiert nicht oder ist zur Zeit nicht verfügbar!');
+            'ERROR: Das Verzeichnis' + #13#10 + #13#10 + iDataBaseName + #13#10 + #13#10 +
+            'existiert nicht oder ist zur Zeit nicht verfügbar!');
           halt;
 
         end;
@@ -1950,20 +1931,9 @@ begin
   result := RIDasStr(integer(PERSON_R));
 end;
 
-function MahnungFName(PERSON_R: integer): string;
+function cPersonPath(PERSON_R: integer): string;
 begin
-  result := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\' +
-    cHTML_MahnungFName;
-end;
-
-function RechnungFName(PERSON_R, BELEG_R, TEILLIEFERUNG: integer): string;
-begin
-  result :=
-  { } MyProgramPath + cRechnungPath + '\' +
-  { } RIDasStr(PERSON_R) + '\' +
-  { } RIDasStr(BELEG_R) + '-' +
-  { } inttostrN(TEILLIEFERUNG, 2) +
-  { } '.html';
+  result := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
 end;
 
 const
@@ -2098,8 +2068,8 @@ IB_GetClientLibNameFunc := GetFBClientLibName;
 cNachFrage := _(cNachFrage);
 
 DebugMode := false;
-isBeta := isParam('-b') or (pos(inttostr(RevAsInteger(globals.Version)),
-  ParamStr(0)) > 0) or (pos('-RC.exe', ParamStr(0)) > 0);
+isBeta := isParam('-b') or (pos(inttostr(RevAsInteger(globals.Version)), ParamStr(0)) > 0) or
+  (pos('-RC.exe', ParamStr(0)) > 0);
 
 iProfilTexte := TStringList.create;
 iSchalterTexte := TStringList.create;
@@ -2193,4 +2163,4 @@ sBootSequence.free;
 if assigned(MyIni) then
   FreeAndNil(MyIni);
 
-end.
+end.

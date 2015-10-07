@@ -1895,7 +1895,7 @@ begin
     { } pred(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
   sMask := sMainDoc;
   ersetze('.html', '*.html', sMask);
-  sPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+  sPath := cPersonPath(PERSON_R);
 
   // Beleg HTMLS zusammenführen
   bigDocument := THTMLTemplate.create;
@@ -2057,7 +2057,7 @@ begin
   Arbeitszeiten := THTMLAusgabe.create;
   ARBEITSZEIT_R := niL;
   ArbeitszeitOK := false;
-  OutPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+  OutPath := cPersonPath(PERSON_R);
   CheckCreateDir(OutPath);
 
   //
@@ -2422,7 +2422,7 @@ end;
 
 procedure TFormBelege.SpeedButton8Click(Sender: TObject);
 begin
-  openShell(MyProgramPath + cRechnungPath + RIDasStr(PERSON_R));
+  openShell(cPersonPath(PERSON_R));
 end;
 
 procedure TFormBelege.SpeedButton9Click(Sender: TObject);
@@ -2660,9 +2660,9 @@ var
 begin
   Bericht := e_w_KontoInfo(PERSON_R);
   Bericht.free;
-  openShell(MahnungFName(PERSON_R));
+  openShell(e_r_MahnungFName(PERSON_R));
   //
-  MakePDF(MahnungFName(PERSON_R), MahnungFName(PERSON_R) + '.pdf');
+  MakePDF(e_r_MahnungFName(PERSON_R), e_r_MahnungFName(PERSON_R) + '.pdf');
 
 end;
 
@@ -2716,9 +2716,9 @@ begin
   Button5Click(Sender);
   sBudgetSettings.free;
   EndHourGlass;
-  openShell(MyProgramPath + cRechnungPath +
-    RIDasStr(IB_Query1.FieldByName('PERSON_R').AsInteger) + '\' +
-    cHTML_ArbeitszeitFName);
+  openShell(
+  {} cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger) +
+  {} cHTML_ArbeitszeitFName);
 end;
 
 procedure TFormBelege.SpeedButton14Click(Sender: TObject);

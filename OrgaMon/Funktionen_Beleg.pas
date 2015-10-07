@@ -469,6 +469,9 @@ function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
 function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0;
   AsMask: boolean = false): string;
 
+// Dateiname des Belegs
+function e_r_MahnungFName(PERSON_R: integer): string;
+
 function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringList;
 { : diverse ermittelten Werte }
 //
@@ -2801,7 +2804,7 @@ begin
   cBELEGSALDO := nCursor;
   MahnungsBeleg := THTMLTemplate.create;
   try
-    OutPath := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\';
+    OutPath := cPersonPath(PERSON_R);
     CheckCreateDir(OutPath);
 
     MaxMahnstufe := 0;
@@ -2847,14 +2850,15 @@ begin
     // verbuchen -> aktuellen Mahnbeleg wegkopieren!
     if pVerbuchen then
     begin
-      FileCopy(MahnungFName(PERSON_R), OutPath + 'Mahnung_' + inttostr(DateGet) + chtmlextension);
+      FileCopy(e_r_MahnungFName(PERSON_R), OutPath + 'Mahnung_' + inttostr(DateGet) +
+        chtmlextension);
     end;
 
     // TAN für Mahnbescheid auslesen!
     if pAuchMahnbescheid then
     begin
       MahnbescheidTAN := e_r_gen('GEN_MAHNBESCHEID');
-      FileCopy(MahnungFName(PERSON_R), MahnbescheidPath + 'Mahnbescheid.html');
+      FileCopy(e_r_MahnungFName(PERSON_R), MahnbescheidPath + 'Mahnbescheid.html');
     end;
 
     // ausgesetzte Belege ermitteln
@@ -3181,9 +3185,10 @@ begin
                                 FieldByName('MAHNBESCHEID').AsDateTime := pMahnMoment;
 
                                 // alle infos rausgeben
-                                FileCopy(MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\' +
-                                  inttostrN(FieldByName('RID').AsInteger, 10) + '-*',
-                                  MahnbescheidPath);
+                                FileCopy(
+                                  { } cPersonPath(PERSON_R) +
+                                  { } inttostrN(FieldByName('RID').AsInteger, 10) + '-*',
+                                  { } MahnbescheidPath);
 
                                 // auch Adress-Infos ausgeben
                                 e_f_PersonInfo(PERSON_R, MahnbescheidPath);
@@ -5387,16 +5392,27 @@ function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: inte
   AsMask: boolean = false): string;
 begin
   if (PERSON_R >= cRID_FirstValid) then
-    result := MyProgramPath + cRechnungPath + RIDasStr(PERSON_R) + '\' + RIDasStr(BELEG_R) + '-' +
-      inttostrN(TEILLIEFERUNG, 2)
+    result :=
+    { } cPersonPath(PERSON_R) +
+    { } RIDasStr(BELEG_R) + '-' +
+    { } inttostrN(TEILLIEFERUNG, 2)
   else
-    result := MyProgramPath + cRechnungsKopiePath + '\' + RIDasStr(BELEG_R) + '-' +
-      inttostrN(TEILLIEFERUNG, 2);
+    result :=
+    { } MyProgramPath + cRechnungsKopiePath + '\' +
+    { } RIDasStr(BELEG_R) + '-' +
+    { } inttostrN(TEILLIEFERUNG, 2);
 
   if AsMask then
     result := result + '*'
   else
     result := result + chtmlextension;
+end;
+
+function e_r_MahnungFName(PERSON_R: integer): string;
+begin
+  result :=
+  { } cPersonPath(PERSON_R) +
+  { } cHTML_MahnungFName;
 end;
 
 function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringList;
@@ -8623,11 +8639,13 @@ begin
   _PERSON_R_FROM := inttostr(PERSON_R_FROM);
   _PERSON_R_TO := inttostr(PERSON_R_TO);
 
-  CheckCreateDir(MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_TO));
+  CheckCreateDir(cPersonPath(PERSON_R_TO));
 
   // Alle Teillieferungen dieses Beleges umkopieren
-  FileMove(MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_FROM) + '\' + inttostrN(BELEG_R_FROM,
-    10) + '*', MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_TO));
+  FileMove(
+    { } cPersonPath(PERSON_R_FROM) +
+    { } inttostrN(BELEG_R_FROM, 10) + '*',
+    { } cPersonPath(PERSON_R_TO));
 
   // Alle Personenzugehörigkeiten umbiegen
   References := TStringList.create;
@@ -8674,16 +8692,15 @@ begin
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
 
       ArchiveOptions := TStringList.create;
-      ArchiveOptions.values[infozip_RootPath] := MyProgramPath + cRechnungPath +
-        RIDasStr(PERSON_R_FROM);
+      // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
+      ArchiveOptions.values[infozip_RootPath] := cPersonPath(PERSON_R_FROM);
 
       zip(nil,
         { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,
         { } ArchiveOptions);
       ArchiveOptions.free;
 
-      DirDelete(MyProgramPath + cRechnungPath +
-        RIDasStr(PERSON_R_FROM));
+      DirDelete(cPersonPath(PERSON_R_FROM));
 
     end
     else
@@ -8700,8 +8717,8 @@ begin
 
       // Alle Dokumente umkopieren!
       FileMove(
-        { } MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_FROM) + '\*',
-        { } MyProgramPath + cRechnungPath + RIDasStr(PERSON_R_TO));
+        { } cPersonPath(PERSON_R_FROM) + '*',
+        { } cPersonPath(PERSON_R_TO));
 
     end;
 
@@ -9881,8 +9898,7 @@ begin
     end;
 
     // Ausgabebeleg dauerhaft kopieren
-    OutPath := MyProgramPath + cRechnungPath +
-      RIDasStr(qBELEG.FieldByName('PERSON_R').AsInteger) + '\';
+    OutPath := cPersonPath(qBELEG.FieldByName('PERSON_R').AsInteger);
     OutFName := inttostrN(BELEG_R, 10) + '-' + inttostrN(TEILLIEFERUNG, 2);
 
     // Hauptbeleg Ins Kundenverzeichnis
@@ -10299,7 +10315,13 @@ var
   cVERSAND: TdboCursor;
   qTICKET: TdboQuery;
   PERSON_R: integer;
+  RollBackDump: TStringList;
+  RollBackDomain: string;
+  BelegDokumente: TStringList;
+  n: integer;
 begin
+  RollBackDump := TStringList.create;
+  RollBackDomain := 'Storno-BELEG-' + RIDasStr(BELEG_R);
   result := false;
   try
     PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
@@ -10320,8 +10342,10 @@ begin
     qTICKET.free;
 
     // Forderungen und Ausgleich-Zahlungen löschen
+    fbdump('select * from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R), RollBackDump);
     e_x_sql('delete from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R));
 
+    fbdump('select * from VERSAND where BELEG_R=' + inttostr(BELEG_R), RollBackDump);
     cVERSAND := nCursor;
     with cVERSAND do
     begin
@@ -10330,10 +10354,21 @@ begin
       while not(eof) do
       begin
 
-        // Rechnung*
-        FileDelete(e_r_BelegFName(PERSON_R, BELEG_R, FieldByName('TEILLIEFERUNG').AsInteger, true));
+        // sichere "Rechnung*"
+        BelegDokumente := TStringList.create;
+        Dir(
+          { } e_r_BelegFName(PERSON_R, BELEG_R, FieldByName('TEILLIEFERUNG').AsInteger, true),
+          { } BelegDokumente,
+          { } false);
+        for n := 0 to pred(BelegDokumente.count) do
+          FileMove(
+            { } cPersonPath(PERSON_R) + BelegDokumente[n],
+            { } DiagnosePath +
+            { } RollBackDomain + '-' +
+            { } BelegDokumente[n]);
+        BelegDokumente.free;
 
-        // Rechnungskopie*
+        // lösche "Rechnungskopie*"
         FileDelete(e_r_BelegFName(cRID_Null, BELEG_R, FieldByName('TEILLIEFERUNG')
           .AsInteger, true));
 
@@ -10346,6 +10381,7 @@ begin
 
     e_x_sql('delete from VERSAND where BELEG_R=' + inttostr(BELEG_R));
 
+    fbdump('select * from GELIEFERT where BELEG_R=' + inttostr(BELEG_R), RollBackDump);
     // Artikel wieder ins Lager nehmen
     cGELIEFERT := nCursor;
     with cGELIEFERT do
@@ -10370,8 +10406,13 @@ begin
     cGELIEFERT.free;
 
     e_x_sql('delete from GELIEFERT where BELEG_R=' + inttostr(BELEG_R));
+
+    fbdump('select * from BELEG where RID=' + inttostr(BELEG_R), RollBackDump);
     e_w_preDeleteBeleg(BELEG_R);
     e_x_sql('delete from BELEG where RID=' + inttostr(BELEG_R));
+
+    RollBackDump.SaveToFile(DiagnosePath + RollBackDomain + cSQLExtension);
+    RollBackDump.free;
 
     result := true;
 
@@ -11186,7 +11227,7 @@ begin
     MyBeleg.free;
 
     // weitere Varianten ausbelichten!
-    dir(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '#?' + chtmlextension,
+    Dir(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '#?' + chtmlextension,
       sDuplikate, false);
     for n := 0 to pred(sDuplikate.count) do
     begin
@@ -11961,7 +12002,7 @@ begin
     exit;
 
   sBELEGE := TStringList.create;
-  dir(KassePath + cBON_Bon + '*.ini', sBELEGE, false);
+  Dir(KassePath + cBON_Bon + '*.ini', sBELEGE, false);
   if (sBELEGE.count > 0) then
   begin
     e_w_GEN('GEN_ZUSAMMENHANG');
