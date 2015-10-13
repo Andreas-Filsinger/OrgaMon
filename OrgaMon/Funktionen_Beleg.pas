@@ -2723,6 +2723,7 @@ var
   RECHNUNGEN: string;
   VORGANG: string;
   BELEGE: string;
+  TEILLIEFERUNGEN: string;
 
   function GetSaldo(BELEG_R: integer): double;
   var
@@ -2813,6 +2814,7 @@ begin
     MahnbescheidTAN := 0;
     RECHNUNGEN := '';
     BELEGE := '';
+    TEILLIEFERUNGEN := '';
     Einzelner_BELEG_R := cRID_unset;
 
     if assigned(sOptionen) then
@@ -3086,6 +3088,7 @@ begin
             if (Einzelner_BELEG_R = cRID_unset) then
               Einzelner_BELEG_R := BELEG_R;
             BELEGE := cutblank(BELEGE + ' ' + inttostr(BELEG_R));
+            TEILLIEFERUNGEN := cutblank(TEILLIEFERUNGEN + ' ' + inttostr(TEILLIEFERUNG));
 
             DatensammlerLokal.add('MREF=RID' + FieldByName('RID').AsString);
 
@@ -3560,6 +3563,7 @@ begin
       result.add(format('SEIT=%d', [MaxTageVerzug]));
       result.add('RECHNUNGEN=' + RECHNUNGEN);
       result.add('BELEGE=' + BELEGE);
+      result.Add('TEILLIEFERUNGEN=' + TEILLIEFERUNGEN);
 
       if (Summe_Offen < 0) then
         result.add('GUTSCHRIFT=' + cC_True);

@@ -97,6 +97,7 @@ type
     LastschriftFName: string;
     Betrag: double;
     BELEG_R: integer;
+    TEILLIEFERUNG: integer;
     VerwendungsZweck: string;
     Name1, Name2: string;
 
@@ -152,6 +153,7 @@ const
 procedure TFormZahlungECconnect.Button11Click(Sender: TObject);
 var
   sSQL: string;
+  BUCH_R: integer;
 begin
   repeat
 
@@ -174,6 +176,26 @@ begin
     { } ' Z_ELV_FREIGABE=coalesce(Z_ELV_FREIGABE,0.0) + ' + FloatToStrISO(Betrag, 2) + ' ' +
     { } 'where' +
     { } ' RID=' + inttostr(PERSON_R);
+
+    // erteiltes Mandat buchen
+    BUCH_R := e_w_Gen('GEN_BUCH');
+    e_x_sql(
+      { } 'insert into BUCH ' +
+      { } '(RID, DATUM, NAME, KONTO, IBAN,' +
+      { } ' PERSON_R, BELEG_R, TEILLIEFERUNG,' +
+      { } ' BETRAG, VORGANG, TEXT) values (' +
+      { } inttostr(BUCH_R) + ',' +
+      { } 'CURRENT_TIMESTAMP,' +
+      { } SQLstring(cKonto_Mandat) + ',' +
+      { } SQLstring(_name) + ',' +
+      { } SQLstring(calcIBAN_DE(Edit_BLZ.text, Edit_Konto.text)) + ',' +
+      { } inttostr(PERSON_R) + ',' +
+      { } inttostr(BELEG_R) + ',' +
+      { } inttostr(TEILLIEFERUNG) + ',' +
+      { } FloatToStrISO(Betrag, 2) + ',' +
+      { } SQLstring(cVorgang_Mandatserteilung) + ',' +
+      { } SQLstring(cRECHNUNGStr + VerwendungsZweck) +
+      { } ')');
 
     // Log
     AppendStringsToFile(
@@ -280,7 +302,8 @@ begin
     // Person gefunden!
     BelegInfo := e_w_KontoInfo(PERSON_R, sELV_Option);
     Betrag := strtodoubledef(BelegInfo.values['OFFEN'], 0);
-    BELEG_R := strtointdef(BelegInfo.values['BELEGE'], cRID_Null);
+    BELEG_R := strtointdef(BelegInfo.values['BELEGE'], cRID_null);
+    TEILLIEFERUNG := strtointdef(BelegInfo.values['TEILLIEFERUNGEN'], cRID_unset);
     LastschriftFName := BelegInfo.values['OUT'];
     VerwendungsZweck := BelegInfo.values['RECHNUNGEN'];
 

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007-2014  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -96,6 +96,9 @@ const
 
   // vom OrgaMon benutzte Vorgangscodes für die Buchhaltung
   cVorgang_Rechnung = 'RECHNUNG (73)';
+  cVorgang_Mandatserteilung = 'MANDAT (17)';
+
+  // von deutschen Banken benutzte Vorgangscodes
   cVorgang_Abschluss = 'ABSCHLUSS (805)';
   cVorgang_Lastschrift =
   { } 'LASTSCHR. (71);' +
