@@ -114,6 +114,7 @@ define("WORD_HINT","hint");
 define("WORD_HIT","hit");
 define("WORD_HITS","hits");
 define("WORD_HOME","home");
+define("WORD_IMPRINT","imprint");
 define("WORD_ITALY","Italy");
 define("WORD_LISTEN","listen");
 define("WORD_LINKS","hyperlinks");

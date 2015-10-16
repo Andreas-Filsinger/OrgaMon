@@ -114,6 +114,7 @@
 @define("WORD_HIT","Treffer");
 @define("WORD_HITS","Treffer");
 @define("WORD_HOME","Startseite");
+@define("WORD_IMPRINT","Impressum");
 @define("WORD_ITALY","Italien");
 @define("WORD_LINKS","Links");
 @define("WORD_LISTEN","anh&ouml;ren");
