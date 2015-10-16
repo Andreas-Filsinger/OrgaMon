@@ -80,6 +80,7 @@
 @define("WORD_COMPOSER","Komponist");
 @define("WORD_CONFIRMATION","Best&auml;tigung");
 @define("WORD_CONTACT","Kontakt");
+@define("WORD_IMPRINT","Impressum");
 @define("WORD_CONTACTINFO","Kontaktdaten");
 @define("WORD_CREATE","Erstellen");
 @define("WORD_CUSTOMER_DATA","Kundendaten");
