@@ -93,10 +93,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Edit5KeyPress(Sender: TObject; var Key: Char);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
-    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
+    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure IB_Grid1CellGainFocus(Sender: TObject; ACol, ARow: Integer);
     procedure SpeedButton13Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -124,8 +122,7 @@ type
     { Public-Deklarationen }
     procedure EnsureOpen;
     procedure SetContext(Kunde_RID: Integer); overload;
-    procedure SetContext(Kunde_RID: Integer; Beleg_RID: Integer;
-      Betrag: double = 0.0); overload;
+    procedure SetContext(Kunde_RID: Integer; Beleg_RID: Integer; Betrag: double = 0.0); overload;
     procedure RefreshZahlungtypCombo;
   end;
 
@@ -192,8 +189,7 @@ begin
         IB_Query1.FieldByName('BELEG_R').AsInteger);
       exit;
     end;
-  ShowMessage
-    ('Kein Datensatz im Moment angeklickt oder kein Beleg der Zahlung zugeordnet!');
+  ShowMessage('Kein Datensatz im Moment angeklickt oder kein Beleg der Zahlung zugeordnet!');
 end;
 
 procedure TFormAusgangsRechnungen.Button3Click(Sender: TObject);
@@ -247,8 +243,7 @@ begin
   begin
     if not(FirstAND) then
       NewLine := NewLine + ' AND ';
-    NewLine := NewLine + '((VORGANG<>''' + cVorgang_Rechnung +
-      ''') or (VORGANG is null))' + #13;
+    NewLine := NewLine + '((VORGANG<>''' + cVorgang_Rechnung + ''') or (VORGANG is null))' + #13;
     FirstAND := false;
   end;
 
@@ -269,8 +264,7 @@ end;
 
 procedure TFormAusgangsRechnungen.Button5Click(Sender: TObject);
 begin
-  FormBuchhalter.SetContext(cKonto_Anzahlungen, IB_Query1.FieldByName('BELEG_R')
-    .AsInteger);
+  FormBuchhalter.SetContext(cKonto_Anzahlungen, IB_Query1.FieldByName('BELEG_R').AsInteger);
 end;
 
 procedure TFormAusgangsRechnungen.Button6Click(Sender: TObject);
@@ -303,8 +297,8 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer;
-  Beleg_RID: Integer; Betrag: double);
+procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer; Beleg_RID: Integer;
+  Betrag: double);
 begin
   BeginHourGlass;
   EnsureOpen;
@@ -407,20 +401,18 @@ begin
         IB_Query4.ParamByName('CROSSREF').AsInteger := BELEG_R;
         if IB_Query4.IsEmpty then
         begin
-          ShowMessage
-            ('Angegebener Beleg nicht gefunden! Buchung nicht möglich!');
+          ShowMessage('Angegebener Beleg nicht gefunden! Buchung nicht möglich!');
           exit;
         end;
 
         // bisherigen davon bezahlt holen!
         if not(IB_Query4.FieldByName('DAVON_BEZAHLT').IsNull) then
-          _davonbezahlt :=
-            cPreisRundung(IB_Query4.FieldByName('DAVON_BEZAHLT').AsDouble)
+          _davonbezahlt := cPreisRundung(IB_Query4.FieldByName('DAVON_BEZAHLT').AsDouble)
         else
           _davonbezahlt := 0.0;
 
-        _RestZahlung := cPreisRundung(IB_Query4.FieldByName('RECHNUNGS_BETRAG')
-          .AsDouble) - _davonbezahlt;
+        _RestZahlung := cPreisRundung(IB_Query4.FieldByName('RECHNUNGS_BETRAG').AsDouble) -
+          _davonbezahlt;
 
         if (_RestZahlung - _AktuelleZahlung >= cGeld_KleinsterBetrag) then
           if not(DoIt('Wollen Sie wirklich diese Teilzahlung buchen')) then
@@ -434,8 +426,8 @@ begin
       else
       begin
         if not(DoIt('Es ist keine Belegnummer angegeben.' + #13 +
-          'Diese Zahlung kann dann keinem Beleg zugezuordnet werden.' + #13 +
-          'Wirklich buchen')) then
+          'Diese Zahlung kann dann keinem Beleg zugezuordnet werden.' + #13 + 'Wirklich buchen'))
+        then
           exit;
       end;
 
@@ -447,17 +439,15 @@ begin
           CheckBox1.checked := false;
           break;
         end;
-        if (e_r_sql
-          ('select count(RID) from BUCH where (BETRAG is null) and NAME=''' +
-          cKonto_Kasse + '''') > 0) then
+        if (e_r_sql('select count(RID) from BUCH where (BETRAG is null) and NAME=''' + cKonto_Kasse
+          + '''') > 0) then
           Konto := cKonto_Kasse;
       until true;
 
       // Jetzt den ganzen Rattenschwanz buchen
       sDiagnose := TStringList.create;
-      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, BELEG_R,
-        _AktuelleZahlung, '', cRID_Null, '', Konto, TEILLIEFERUNG, cRID_Null]),
-        sDiagnose);
+      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, BELEG_R, _AktuelleZahlung, '',
+        cRID_Null, '', Konto, TEILLIEFERUNG, cRID_Null]), sDiagnose);
       FormCareServer.ShowIfError(sDiagnose);
       sDiagnose.free;
 
@@ -484,10 +474,10 @@ begin
   //
   PERSON_R := Kunde_RID;
   IB_Query2.ParamByName('CROSSREF').AsInteger := Kunde_RID;
-  IB_Query3.ParamByName('CROSSREF').AsInteger :=
-    IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
-  Label1.caption := e_r_name(IB_Query2) + ' (' + IB_Query2.FieldByName('NUMMER')
-    .AsString + ') ' + e_r_ort(IB_Query3);
+  IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query2.FieldByName('PRIV_ANSCHRIFT_R')
+    .AsInteger;
+  Label1.caption := e_r_name(IB_Query2) + ' (' + IB_Query2.FieldByName('NUMMER').AsString + ') ' +
+    e_r_ort(IB_Query3);
 end;
 
 procedure TFormAusgangsRechnungen.SpeedButton13Click(Sender: TObject);
@@ -543,25 +533,27 @@ begin
 
         repeat
 
-          if (BUCH_R<cRID_FirstValid) then
-           break;
+          if (BUCH_R < cRID_FirstValid) then
+            break;
 
           Konto := e_r_sqls(
             { } 'select NAME from BUCH where RID=' +
             { } inttostr(BUCH_R));
 
-          if (Konto='') then
-           break;
+          if (Konto = '') then
+            break;
 
           // Nun bei der Person die ELV-Freigabe wieder hochsetzen
           if (Konto = cKonto_Bank) then
           begin
+
             e_x_sql(
               { } 'update PERSON set ' +
               { } ' Z_ELV_FREIGABE = Z_ELV_FREIGABE + ' +
               { } FloatToStrISO(-Betrag) + ' ' +
               { } 'where' +
-              { } ' RID=' + inttostr(PERSON_R));
+              { } ' (RID=' + inttostr(PERSON_R) + ') and' +
+              { } ' (Z_ELV_FREIGABE is not null)');
 
             // Lastschrift Gegenbuchung löschen
             b_w_DeleteBuch(BUCH_R);
@@ -580,11 +572,9 @@ begin
 
           b_w_reset(BUCH_R);
 
-
         until true;
         // Nun die Forderungszeile löschen
-        e_x_sql('delete from AUSGANGSRECHNUNG where RID=' +
-          inttostr(AUSGANGSRECHNUNG_R));
+        e_x_sql('delete from AUSGANGSRECHNUNG where RID=' + inttostr(AUSGANGSRECHNUNG_R));
 
         Refresh;
         refreshSumme;
@@ -606,8 +596,7 @@ begin
   Edit6.Text := '';
 end;
 
-procedure TFormAusgangsRechnungen.IB_Grid1CellGainFocus(Sender: TObject;
-  ACol, ARow: Integer);
+procedure TFormAusgangsRechnungen.IB_Grid1CellGainFocus(Sender: TObject; ACol, ARow: Integer);
 begin
   FormBelege.setShortCut(IB_DataSource1);
 end;
@@ -644,8 +633,8 @@ procedure TFormAusgangsRechnungen.IB_Query1ConfirmDelete(Sender: TComponent;
   var Confirmed: Boolean);
 begin
   with Sender as TIB_Dataset do
-    Confirmed := DoIt('Buchung über ' + #13 + format('%m',
-      [FieldByName('BETRAG').AsDouble]) + #13 + 'wirklich löschen');
+    Confirmed := DoIt('Buchung über ' + #13 + format('%m', [FieldByName('BETRAG').AsDouble]) + #13 +
+      'wirklich löschen');
 end;
 
 procedure TFormAusgangsRechnungen.refreshSumme;
@@ -714,8 +703,8 @@ begin
   end;
 end;
 
-procedure TFormAusgangsRechnungen.IB_Grid1GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+procedure TFormAusgangsRechnungen.IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
+  var AString: string);
 begin
   if (ARow > 0) then
     if (ACol = 6) then
