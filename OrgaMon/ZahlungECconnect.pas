@@ -152,7 +152,6 @@ const
 
 procedure TFormZahlungECconnect.Button11Click(Sender: TObject);
 var
-  sSQL: string;
   BUCH_R: integer;
 begin
   repeat
@@ -167,15 +166,6 @@ begin
     if not(DatenKommenVonDerKarte) then
       if not(Doit('Die Daten kommen nicht von der Karte! Dennoch buchen')) then
         break;
-
-    // SQL bilden
-    sSQL := 'update PERSON set' +
-    { } ' Z_ELV_KONTO_INHABER=''' + _name + ''', ' +
-    { } ' Z_ELV_BLZ=''' + Edit_BLZ.text + ''', ' +
-    { } ' Z_ELV_KONTO=''' + Bank_Konto(Edit_Konto.text) + ''', ' +
-    { } ' Z_ELV_FREIGABE=coalesce(Z_ELV_FREIGABE,0.0) + ' + FloatToStrISO(Betrag, 2) + ' ' +
-    { } 'where' +
-    { } ' RID=' + inttostr(PERSON_R);
 
     // erteiltes Mandat buchen
     BUCH_R := e_w_Gen('GEN_BUCH');
@@ -196,18 +186,6 @@ begin
       { } SQLstring(cVorgang_Mandatserteilung) + ',' +
       { } SQLstring(cRECHNUNGStr + VerwendungsZweck) +
       { } ')');
-
-    // Log
-    AppendStringsToFile(
-      { } datum + cOLAPcsvSeparator +
-      { } uhr8 + cOLAPcsvSeparator +
-      { } FormBearbeiter.sBearbeiterKurz + cOLAPcsvSeparator +
-      { } ComputerName + cOLAPcsvSeparator +
-      { } sSQL,
-      { } DiagnosePath + 'Zahlung.POZ.log.txt');
-
-    // Kontodaten übertragen, EC-Freigabe geben!
-    e_x_sql(sSQL);
 
     // Ev. verhindern dass mehrfach gebucht wird!
     DatenKommenVonDerKarte := false;

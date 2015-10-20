@@ -1509,14 +1509,14 @@ begin
         { } EREIGNIS_R]));
 
       // Nun bei der Person die Freigabe wieder zurücksetzen
+      // (wenn überhaupt darüber gebucht wurde)
       e_x_sql(
         { } 'update PERSON set ' +
         { } ' Z_ELV_FREIGABE=' +
-        { } 'coalesce(Z_ELV_FREIGABE,' +
-        { } FloatToStrISO(Betrag, 2) + ') - ' +
-        { } FloatToStrISO(Betrag, 2) + ' ' +
+        { } ' (Z_ELV_FREIGABE - ' + FloatToStrISO(Betrag, 2) + ') ' +
         { } 'where' +
-        { } ' RID=' + inttostr(PERSON_R));
+        { } ' (RID=' + inttostr(PERSON_R) + ') and' +
+        { } ' (Z_ELV_FREIGABE is not null)');
 
     end;
   end;
@@ -2321,11 +2321,20 @@ begin
       sql.add(' ZAHLUNGTYP ');
       sql.add('on');
       sql.add(' (PERSON.ZAHLUNGTYP_R=ZAHLUNGTYP.RID) ');
+      sql.add('left join');
+      sql.add(' BUCH');
+      sql.add('ON');
+      sql.add(' (BUCH.NAME=' + SQLString(cKonto_Mandat) + ') and');
+      sql.add(' (BUCH.GEBUCHT is null) and');
+      sql.add(' (AR.BELEG_R=BUCH.BELEG_R) and');
+      sql.add(' (AR.TEILLIEFERUNG=BUCH.TEILLIEFERUNG)');
       sql.add('where');
       sql.add(' (AR.RID=:CR) and');
       sql.add(' (AR.ZAHLUNGTYP_R is null) and');
       sql.add(' (AR.DATUM between (CURRENT_TIMESTAMP-365) and CURRENT_TIMESTAMP) and');
-      sql.add(' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or (PERSON.Z_ELV_FREIGABE>=0.01))');
+      sql.add(' ((ZAHLUNGTYP.AUTOZAHLUNG=''Y'') or');
+      sql.add('  (PERSON.Z_ELV_FREIGABE>=0.01) or');
+      sql.add('  (BUCH.BETRAG is not null))');
       open;
     end;
 
@@ -2446,10 +2455,10 @@ end;
 
 function b_r_GutschriftAusLS(VORGANG: string): boolean;
 begin
- if iKontoLSErkennung then
-  result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
- else
-  result := false;
+  if iKontoLSErkennung then
+    result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
+  else
+    result := false;
 end;
 
 end.

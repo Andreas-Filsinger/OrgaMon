@@ -117,6 +117,11 @@ const
   cForderung_Lastschrift_Vorgemerkt = 4;
   cForderung_Lastschrift_Erhalten = 5;
 
+  // Ursache für die Einstufung als Lastschrift
+  cLastschrift_Grund_Unklar = 0;
+  cLastschrift_Grund_Zahlungsart = 1;
+  cLastschrift_Grund_FreigabeBetrag = 2;
+  cLastschrift_Grund_Mandat = 3;
 
 function cPreisRundung(d: double): double; overload;
 function cPreisRundung(s: string): double; overload;
@@ -153,7 +158,7 @@ function CentAsMoney(Wert: integer): double;
 // Wenn Kunden Rechnungen in einem Betrag zahlen, muss ermittelt
 // werden, welche der offenen Forderungen kombiniert wurden.
 //
-function nk(n: integer; k: integer; const v: TgpINtegerList) : boolean;
+function nk(n: integer; k: integer; const v: TgpINtegerList): boolean;
 
 // Banken-Funktionen
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;

@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -39,8 +39,8 @@ object FormBuchhalter: TFormBuchhalter
         892
         519)
       object Label2: TLabel
-        Left = 39
-        Top = 15
+        Left = 37
+        Top = 7
         Width = 278
         Height = 13
         Margins.Left = 4
@@ -51,7 +51,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object SpeedButton11: TSpeedButton
         Left = 9
-        Top = 9
+        Top = 4
         Width = 23
         Height = 22
         Margins.Left = 4
@@ -277,7 +277,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object IB_Grid1: TIB_Grid
         Left = 9
-        Top = 34
+        Top = 30
         Width = 864
         Height = 452
         Margins.Left = 4
@@ -3873,10 +3873,12 @@ object FormBuchhalter: TFormBuchhalter
       ' AR.VALUTA,'
       ' AR.TEXT,'
       ' PERSON.SUCHBEGRIFF,'
-      ' PERSON.Z_ELV_BLZ,'
-      ' PERSON.Z_ELV_KONTO,'
-      ' PERSON.Z_ELV_KONTO_INHABER,'
-      ' PERSON.Z_ELV_FREIGABE,'
+      ' COALESCE(BUCH.IBAN,PERSON.Z_ELV_BLZ) as Z_ELV_BLZ,'
+      ' COALESCE(BUCH.IBAN,PERSON.Z_ELV_KONTO) as Z_ELV_KONTO,'
+      
+        ' COALESCE(BUCH.KONTO,PERSON.Z_ELV_KONTO_INHABER) as Z_ELV_KONTO_' +
+        'INHABER,'
+      ' COALESCE(BUCH.BETRAG,PERSON.Z_ELV_FREIGABE) as Z_ELV_FREIGABE,'
       ' AR.RID,'
       ' COALESCE(BELEG.RECHNUNGSANSCHRIFT_R,BELEG.PERSON_R) PERSON_R,'
       ' PERSON.ZAHLUNGTYP_R,'
@@ -3974,7 +3976,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C010104000900E40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900F00110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
