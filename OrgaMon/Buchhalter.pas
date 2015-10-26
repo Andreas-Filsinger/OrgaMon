@@ -211,13 +211,15 @@ type
     CheckBox7: TCheckBox;
     SpeedButton48: TSpeedButton;
     SpeedButton33: TSpeedButton;
+    Image1: TImage;
+    Image3: TImage;
+    Image4: TImage;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure TabSheet1Show(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-    procedure Image2Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
       State: TGridDrawState);
@@ -308,6 +310,10 @@ type
     procedure SpeedButton47Click(Sender: TObject);
     procedure SpeedButton48Click(Sender: TObject);
     procedure SpeedButton33Click(Sender: TObject);
+    procedure Image4Click(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
+    procedure Image2Click(Sender: TObject);
+    procedure Image3Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -1064,7 +1070,7 @@ var
   i, n: Integer;
   DTAlog: TStringList;
   SollCount: Integer;
-  Forderung: double;
+  Forderung, Mandat: double;
   BLZ: string[8];
   ktonr: string[10];
 
@@ -1076,6 +1082,7 @@ var
   // Aufsummierung des Volumens
   Summe_Anzahl: Integer;
   Summe_Wert: double;
+  Summe_Mandat: double;
 
   // Ausgabevolumen
   tDTAUS: TsTable;
@@ -1083,7 +1090,7 @@ var
 
 begin
   BeginHourGlass;
-
+  Memo1.lines.clear;
   Gutschriften := TStringList.Create;
   Gutschriften_RID := TgpIntegerList.Create;
   tDTAUS := TsTable.Create;
@@ -1165,6 +1172,7 @@ begin
   SollCount := 0;
   Summe_Anzahl := 0;
   Summe_Wert := 0.0;
+  Summe_Mandat := 0.0;
   Limit_Erreicht := false;
 
   DtaOpen(DTA_Header);
@@ -1174,6 +1182,34 @@ begin
     while not(eof) do
     begin
       Forderung := cSkonto(FieldByName('SKONTO').AsDouble, FieldByName('BETRAG').AsDouble);
+
+      Mandat := e_r_sqld(
+        { } 'select BETRAG ' +
+        { } 'from BUCH where ' +
+        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
+        { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+        { } ' (TEILLIEFERUNG=' + FieldByName('TEILLIEFERUNG').AsString + ')', cPreis_ungesetzt);
+
+      if isequal(Mandat, cPreis_ungesetzt) then
+      begin
+        Memo1.Lines.add(
+          { } cINFOText +
+          { } ' Zum Beleg ' +
+          { } FieldByName('BELEG_R').AsString + '-' +
+          { } FieldByName('TEILLIEFERUNG').AsString + ' ' +
+          { } 'gibt es kein explizites Mandat');
+      end
+      else
+      begin
+        if isother(Forderung, Mandat) then
+          Memo1.Lines.add(
+            { } cWARNINGText +
+            { } ' Beim Beleg ' +
+            { } FieldByName('BELEG_R').AsString + '-' +
+            { } FieldByName('TEILLIEFERUNG').AsString + ' ' +
+            { } 'beläuft sich das Mandat auf ' + MoneyToStr(Mandat) + ' ' +
+            { } 'aber die Forderung ist ' + MoneyToStr(Forderung));
+      end;
 
       if isHaben(Forderung) then
       begin
@@ -1656,7 +1692,7 @@ end;
 
 procedure TFormBuchhalter.SpeedButton35Click(Sender: TObject);
 begin
-  Memo2.lines.savetofile(SystemPath + '\Konten-Alias.ini');
+  Memo2.Lines.savetofile(SystemPath + '\Konten-Alias.ini');
 end;
 
 procedure TFormBuchhalter.SpeedButton36Click(Sender: TObject);
@@ -1832,7 +1868,7 @@ begin
     sCSV := TStringList.Create;
     sText := TStringList.Create;
     sKontenAlias := TStringList.Create;
-    sKontenAlias.Assign(Memo2.lines);
+    sKontenAlias.Assign(Memo2.Lines);
     sCSV.add(cHeaderLine);
     WarEbenErloesKonto := false;
 
@@ -2041,7 +2077,7 @@ begin
 
   //
   KlassischeTAN := Edit10.Text;
-  Memo1.lines.clear;
+  Memo1.Lines.clear;
   sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ,
     cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern), MyProgramPath + cHBCIPath +
     'DTAUS.DTA.SEPA.csv');
@@ -2053,8 +2089,8 @@ begin
 
   if (KlassischeTAN <> '') then
   begin
-    if (Memo1.lines.count > 0) then
-      if (StrToIntDef(Memo1.lines[0], 0) > 10000) then
+    if (Memo1.Lines.count > 0) then
+      if (StrToIntDef(Memo1.Lines[0], 0) > 10000) then
       begin
         Edit10.Text := KlassischeTAN;
         KlassischeTAN := '';
@@ -2078,9 +2114,24 @@ begin
   end;
 end;
 
+procedure TFormBuchhalter.Image1Click(Sender: TObject);
+begin
+  openShell(cHelpURL + 'Lastschriften');
+end;
+
 procedure TFormBuchhalter.Image2Click(Sender: TObject);
 begin
+  openShell(cHelpURL + 'Lastschriften');
+end;
+
+procedure TFormBuchhalter.Image3Click(Sender: TObject);
+begin
   openShell(cHelpURL + 'HBCI');
+end;
+
+procedure TFormBuchhalter.Image4Click(Sender: TObject);
+begin
+  openShell(cHelpURL + 'Buchfuehrung');
 end;
 
 procedure TFormBuchhalter.JvArrayButton1ArrayButtonClicked(ACol, ARow: Integer);
@@ -2152,8 +2203,8 @@ procedure TFormBuchhalter.MemoLog(s: TStrings);
 begin
   with Memo1 do
   begin
-    lines.addstrings(s);
-    SelStart := SendMessage(Handle, EM_LINEINDEX, pred(lines.count), 0);
+    Lines.addstrings(s);
+    SelStart := SendMessage(Handle, EM_LINEINDEX, pred(Lines.count), 0);
     SendMessage(Handle, EM_SCROLLCARET, 0, 0);
   end;
 end;
@@ -2244,7 +2295,7 @@ begin
         break;
       end;
 
-      Memo1.lines.clear;
+      Memo1.Lines.clear;
       Response := DataModuleREST.REST(iHBCIRest + 'itan/' + LastschriftJobID + '/' + iTAN);
       MemoLog(Response);
       Response.free;
@@ -2308,7 +2359,11 @@ procedure TFormBuchhalter.e_w_HBCI_Group(TAN: string; JobID: string);
 var
   sVOLUMEN: TsTable;
   sDTAUS: TsTable;
-  c, r: Integer;
+  r: Integer;
+  col_RID: Integer;
+  col_BELEG_R: Integer;
+  col_TEILLIEFERUNG: Integer;
+
   EREIGNIS_R: Integer;
   qEREIGNIS: TIB_Query;
   qDOKUMENT: TIB_Query;
@@ -2316,7 +2371,7 @@ var
   sCSV: TStringList;
   sCSV_FileName: string;
 
-  function FileSave(PostFix: string): string;
+  function DateiAblegen(PostFix: string): string;
   begin
     result :=
     { } MyProgramPath +
@@ -2354,30 +2409,46 @@ begin
     sINFO.values['TAN'] := TAN;
     sINFO.values['JOB'] := JobID;
     FieldByName('INFO').Assign(sINFO);
-    if (sBearbeiter > 0) then
+    if (sBearbeiter >= cRID_FirstValid) then
       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
     post;
   end;
-  FileSave('DTA');
-  FileSave('DTA.CSV');
-  FileSave('DTA.raw.csv');
-  FileSave('DTA.UTF-8.csv');
-  FileSave('DTA.SEPA.csv');
+  DateiAblegen('DTA');
+  DateiAblegen('DTA.CSV');
+  DateiAblegen('DTA.raw.csv');
+  DateiAblegen('DTA.UTF-8.csv');
+  DateiAblegen('DTA.SEPA.csv');
 
   // EREIGNIS_R in allen Forderungsdatensätzen buchen
   with sVOLUMEN do
   begin
     insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS.csv');
-    c := colOf('RID', true);
+    col_RID := colOf('RID', true);
+    col_BELEG_R := colOf('BELEG_R', true);
+    col_TEILLIEFERUNG := colOf('TEILLIEFERUNG', true);
     for r := 1 to RowCount do
+    begin
+      // Markiere die Forderung als "an die Bank übertragen"
       e_x_sql(
         { } 'update AUSGANGSRECHNUNG set' +
         { } ' EREIGNIS_R=' + inttostr(EREIGNIS_R) + ', ' +
         { } ' POSNO=' + inttostr(r) + ' ' +
         { } 'where' +
-        { } ' (RID=' + readCell(r, c) + ')');
+        { } ' (RID=' + readCell(r, col_RID) + ')');
+
+      // Markiere das Mandat (wenn vorhanden) als "benutzt"
+      e_x_sql(
+        { } 'update BUCH set' +
+        { } ' EREIGNIS_R=' + inttostr(EREIGNIS_R) + ',' +
+        { } ' WERTSTELLUNG=CURRENT_TIMESTAMP ' +
+        { } 'where' +
+        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
+        { } ' (BELEG_R=' + readCell(r, col_BELEG_R) + ') and' +
+        { } ' (TEILLIEFERUNG=' + readCell(r, col_TEILLIEFERUNG) + ')');
+
+    end;
   end;
-  sCSV_FileName := FileSave('csv');
+  sCSV_FileName := DateiAblegen('csv');
   sCSV.LoadFromFile(sCSV_FileName);
 
   // Das Paket als Dokument speichern
@@ -3909,10 +3980,14 @@ begin
                 else
                 begin
                   TextRect(Rect, Rect.left + 2, Rect.top, e_r_Person(PERSON_R));
-                  TextOut(Rect.left + 2, Rect.top + cPlanY,
-                    e_r_sqls('select ANSCHRIFT.STRASSE from' + ' PERSON ' + 'join' + ' ANSCHRIFT ' +
-                    'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' + 'where' + ' (PERSON.RID=' +
-                    inttostr(PERSON_R) + ')'));
+                  TextOut(Rect.left + 2, Rect.top + cPlanY, e_r_sqls(
+                    { } 'select ANSCHRIFT.STRASSE from' +
+                    { } ' PERSON ' +
+                    { } 'join' +
+                    { } ' ANSCHRIFT ' +
+                    { } 'on (ANSCHRIFT.RID=PERSON.PRIV_ANSCHRIFT_R) ' +
+                    { } 'where' +
+                    { } ' (PERSON.RID=' + inttostr(PERSON_R) + ')'));
                 end;
 
               end;
@@ -4158,9 +4233,9 @@ procedure TFormBuchhalter.TabSheet6Show(Sender: TObject);
 var
   AlleKonten: TStringList;
 begin
-  if Memo2.lines.count = 0 then
+  if Memo2.Lines.count = 0 then
     if FileExists(SystemPath + '\Konten-Alias.ini') then
-      Memo2.lines.LoadFromFile(SystemPath + '\Konten-Alias.ini');
+      Memo2.Lines.LoadFromFile(SystemPath + '\Konten-Alias.ini');
 
   if ComboBox3.Text = '' then
   begin
@@ -4528,7 +4603,7 @@ begin
           v := TgpIntegerList.Create;
           while (nk(n, k, v)) do
           begin
-            if isEqual(Zahlung, sForderungen_saldo(v)) then
+            if isequal(Zahlung, sForderungen_saldo(v)) then
             begin
               sForderungenNeu := TStringList.Create;
 
@@ -5165,7 +5240,7 @@ begin
                 begin
                   ItemDebiRIDs.add(PERSON_R);
                   if (ItemDebiRIDs.count = 1) then
-                    if isEqual(sBetrag, BelegSaldo) then
+                    if isequal(sBetrag, BelegSaldo) then
                       isGreen := true; // Volltreffer !
                 end;
             end;

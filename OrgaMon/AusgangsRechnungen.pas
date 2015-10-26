@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ type
     Label38: TLabel;
     SpeedButton3: TSpeedButton;
     SpeedButton2: TSpeedButton;
+    CheckBox2: TCheckBox;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -288,6 +289,7 @@ begin
   RadioButton1.checked := false;
   RadioButton2.checked := false;
   CheckBox1.checked := false;
+  CheckBox2.checked := false;
 
   application.ProcessMessages;
   Button4Click(self);
@@ -308,6 +310,7 @@ begin
   RadioButton1.checked := false;
   RadioButton2.checked := false;
   CheckBox1.checked := false;
+  CheckBox2.checked := false;
   application.ProcessMessages;
   Button4Click(self);
   refreshSumme;
@@ -431,23 +434,43 @@ begin
           exit;
       end;
 
-      // auf Kasse buchen, nur wenn es existiert!
+      // Ursprung der Geldquelle wählen
       repeat
+
+        // ohne besondere Ursprung / kein Rahmen vorhanden
         Konto := '';
         if CheckBox1.checked then
         begin
           CheckBox1.checked := false;
           break;
         end;
-        if (e_r_sql('select count(RID) from BUCH where (BETRAG is null) and NAME=''' + cKonto_Kasse
-          + '''') > 0) then
+
+        // Forderungsverlust
+        if CheckBox2.checked then
+        begin
+          CheckBox2.checked := false;
+          if isKonto(cKonto_Forderungsverlust) then
+            Konto := cKonto_Forderungsverlust;
+          break;
+        end;
+
+        // Kasse
+        if isKonto(cKonto_Kasse) then
           Konto := cKonto_Kasse;
       until true;
 
       // Jetzt den ganzen Rattenschwanz buchen
       sDiagnose := TStringList.create;
-      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, BELEG_R, _AktuelleZahlung, '',
-        cRID_Null, '', Konto, TEILLIEFERUNG, cRID_Null]), sDiagnose);
+      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+        { } PERSON_R,
+        { } BELEG_R,
+        { } _AktuelleZahlung,
+        { } '',
+        { } cRID_Null,
+        { } '',
+        { } Konto,
+        { } TEILLIEFERUNG,
+        { } cRID_Null]), sDiagnose);
       FormCareServer.ShowIfError(sDiagnose);
       sDiagnose.free;
 
@@ -499,7 +522,7 @@ var
   AUSGANGSRECHNUNG_R: Integer;
   Konto: string;
 begin
-  //
+
   with IB_Query1 do
   begin
 
@@ -511,6 +534,8 @@ begin
     end
     else
     begin
+
+      // Zahlung stornieren
       if DoIt('Zahlung stornieren') then
       begin
 
@@ -544,35 +569,20 @@ begin
             break;
 
           // Nun bei der Person die ELV-Freigabe wieder hochsetzen
-          if (Konto = cKonto_Bank) then
+          if (Konto = cKonto_Bank) or (Konto = cKonto_Kasse) then
           begin
 
-            e_x_sql(
-              { } 'update PERSON set ' +
-              { } ' Z_ELV_FREIGABE = Z_ELV_FREIGABE + ' +
-              { } FloatToStrISO(-Betrag) + ' ' +
-              { } 'where' +
-              { } ' (RID=' + inttostr(PERSON_R) + ') and' +
-              { } ' (Z_ELV_FREIGABE is not null)');
-
-            // Lastschrift Gegenbuchung löschen
-            b_w_DeleteBuch(BUCH_R);
-            break;
-          end;
-
-          // Kassen-Einnahme löschen
-          if (Konto = cKonto_Kasse) then
-          begin
+            // Buchung löschen
             b_w_DeleteBuch(BUCH_R);
             break;
           end;
 
           // unbar über ein Giro-Konto
           // oder eventuell über ein andere Kassenkonto
-
           b_w_reset(BUCH_R);
 
         until true;
+
         // Nun die Forderungszeile löschen
         e_x_sql('delete from AUSGANGSRECHNUNG where RID=' + inttostr(AUSGANGSRECHNUNG_R));
 

@@ -19,6 +19,20 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.126 (23.10.15-26.10.15) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: SpalteAlsText= hat nicht funktioniert
+
+Rev 8.125 (19.10.15-22.10.15) Andreas Filsinger
+
+ Bug: Logging: SQL: e_r_GEN und e_w_GEN hatten gefehlt.
+
+ Neu: Ausgleich Forderungen: Lastschrift: Tabelle wird aus dem DOKUMENT gelesen
+ Neu: Ausgleich Forderungen: Lastschrift: Mandatssumme wird auf 1260 gegengebucht
+ Neu: Lastschriften: Es wird angezeigt, für welchen Einzug kein explizites Mandat besteht
+ Neu: Lastschriften: Es wird angezeigt, für welchen Einzug das explizite Mandat vom Betrag her nicht passt
+ Neu: differenzierte Hilfe im "Zahlung"
+
 Rev 8.124 (13.10.15-19.10.15) Andreas Filsinger
 
  Neu: (SEPA-)Mandatserteilung über Konto 1260

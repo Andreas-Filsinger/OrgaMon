@@ -108,6 +108,9 @@ procedure b_w_Rechnungsdatum(BELEG_R: integer; RechnungsDatum: TAnfixDate);
 // liefert den "üblichen" / "vorbelegten" MwSt Satz aus dem Konto-Deckblatt
 function b_r_MwSt(KONTO: string): double; overload;
 
+// Konto überhaupt vorhanden?
+function isKonto(KONTO: string): boolean;
+
 // Liste der AR ausgleichenden Konten
 function b_r_AusgleichKonten: TStringList;
 
@@ -1343,7 +1346,7 @@ begin
           else
           begin
 
-            // Neuanlage (meist bei Zahlung via Kasse oder Lastschrift)!
+            // Neuanlage wenn Quelle "Kasse", "Lastschrift", oder "Forderungsverlust" ist
             BUCH_R := e_w_Gen('GEN_BUCH');
             e_x_sql('insert into BUCH (RID,DATUM) values(' + inttostr(BUCH_R) +
               ',CURRENT_TIMESTAMP)');
@@ -1353,9 +1356,10 @@ begin
             ScriptText.clear;
 
             InfoText.add(e_r_Person(PERSON_R));
-            InfoText.add(format(cRECHNUNGStr + '%d',
-              [e_r_sql('select RECHNUNG from VERSAND where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
-              ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')]));
+            InfoText.add(format(cRECHNUNGStr + '%d', [e_r_sql(
+              { } 'select RECHNUNG from VERSAND where ' +
+              { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+              { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')]));
 
             with qBUCH do
             begin
@@ -1374,17 +1378,14 @@ begin
                   FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
                 if (POSNO > 0) then
                   FieldByName('POSNO').AsInteger := POSNO;
-
                 ScriptText.add(format('BELEG=%d;%d;%m', [BELEG_R, TEILLIEFERUNG, Betrag]));
-                ScriptText.add(Meldung);
-
                 FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
                 FieldByName('ERTRAG').AsString := cC_True;
-
                 FieldByName('BETRAG').AsFloat := Betrag;
                 if DateOK(VALUTA) then
                   FieldByName('WERTSTELLUNG').AsDateTime := long2datetime(VALUTA);
                 FieldByName('TEXT').Assign(InfoText);
+                ScriptText.add(Meldung);
                 FieldByName('SKRIPT').Assign(ScriptText);
                 post;
               end;
@@ -1457,7 +1458,7 @@ var
   BELEG_R, BUCH_R: integer;
   PERSON_R: integer;
   TEILLIEFERUNG: integer;
-  Betrag, saldo: double;
+  Betrag, MandatsSumme: double;
   VALUTA: string;
   sCSV: TStringList;
   sVOLUMEN: TsTable;
@@ -1465,12 +1466,13 @@ var
 begin
 
   sVOLUMEN := TsTable.create;
-  sCSV := e_r_sqlsl('select BEMERKUNG from DOKUMENT where EREIGNIS_R=' + inttostr(EREIGNIS_R));
+  sCSV := e_r_sqlt('select BEMERKUNG from DOKUMENT where EREIGNIS_R=' + inttostr(EREIGNIS_R));
   if (sCSV.count > 1) then
     sVOLUMEN.insertFromStrings(sCSV)
   else
     sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8)
       + '.csv');
+  MandatsSumme := 0.0;
 
   with sVOLUMEN do
   begin
@@ -1508,19 +1510,47 @@ begin
         { } TEILLIEFERUNG,
         { } EREIGNIS_R]));
 
-      // Nun bei der Person die Freigabe wieder zurücksetzen
-      // (wenn überhaupt darüber gebucht wurde)
+      // Bei der Person die Freigabe wieder zurücksetzen
       e_x_sql(
         { } 'update PERSON set ' +
         { } ' Z_ELV_FREIGABE=' +
         { } ' (Z_ELV_FREIGABE - ' + FloatToStrISO(Betrag, 2) + ') ' +
         { } 'where' +
         { } ' (RID=' + inttostr(PERSON_R) + ') and' +
+        // (wenn überhaupt darüber gebucht wurde)
         { } ' (Z_ELV_FREIGABE is not null)');
 
+      // Falls über ein Mandat gebucht wird, ebenfalls die Summe bilden
+      // jedoch der tatsächlich benutzte Betrag, nicht die Mandatshöhe
+      if e_r_sql(
+        { } 'select count(RID) from BUCH where' +
+        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
+      { } > 0 then
+        MandatsSumme := MandatsSumme + Betrag;
     end;
   end;
 
+  if isHaben(MandatsSumme) then
+  begin
+    // Mandat erfüllt
+    BUCH_R := e_w_Gen('GEN_BUCH');
+    e_x_sql('insert into BUCH (' +
+      { 1 } 'RID,' +
+      { 2 } 'DATUM,' +
+      { 3 } 'NAME,' +
+      { 4 } 'EREIGNIS_R,' +
+      { 5 } 'BETRAG' +
+      { - } ') values(' +
+      { 1 } inttostr(BUCH_R) + ',' +
+      { 2 } 'CURRENT_TIMESTAMP,' +
+      { 3 } SQLString(cKonto_Mandat) + ',' +
+      { 4 } inttostr(EREIGNIS_R) + ',' +
+      { 5 } FloatToStrISO(-MandatsSumme) + ')');
+  end;
+
+  // Ereignis beenden
   e_x_sql(
     { } 'update EREIGNIS ' +
     { } 'set' +
@@ -1530,7 +1560,6 @@ begin
 
   sVOLUMEN.Free;
   sCSV.Free;
-
 end;
 
 procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
@@ -1798,6 +1827,36 @@ begin
   cBUCH.Free;
   qBUCH.Free;
   BlackList.Free;
+end;
+
+const
+  isKonto_Cache: TStringList = nil;
+
+function isKonto(KONTO: string): boolean;
+var
+  i: integer;
+begin
+
+  if not(assigned(isKonto_Cache)) then
+    isKonto_Cache := TStringList.create;
+
+  with isKonto_Cache do
+  begin
+    i := indexof(KONTO);
+
+    if (i = -1) then
+    begin
+      AddObject(
+        { } KONTO,
+        { } TObject(
+        { } e_r_sql('select count(RID) from BUCH where (BETRAG is null) and NAME=' +
+        { } SQLString(KONTO))));
+      isKonto_Cache.Sort;
+      i := indexof(KONTO);
+    end;
+
+    result := integer(Objects[i]) > 0;
+  end;
 end;
 
 function b_r_AusgleichKonten: TStringList;
@@ -2201,7 +2260,8 @@ begin
     begin
       // Überweisungstexte hinzunehmen
       for n := pred(s.count) downto 0 do
-        if (pos(cBLZStr, s[n]) = 0) then // bitte nicht die Kontonummern-Zeile!
+        if (pos(cBLZStr, s[n]) = 0) then
+          // bitte nicht die Kontonummern-Zeile!
           addwords(s[n], nil);
 
       // Führende Nullen löschen
