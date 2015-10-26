@@ -429,10 +429,10 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
   end
   object IB_Memo1: TIB_Memo
-    Left = -1
-    Top = 436
+    Left = 0
+    Top = 435
     Width = 787
-    Height = 65
+    Height = 81
     DataField = 'TEXT'
     DataSource = IB_DataSource1
     Anchors = [akBottom]
@@ -447,27 +447,27 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   end
   object Panel4: TPanel
     Left = 0
-    Top = 501
+    Top = 512
     Width = 786
-    Height = 68
+    Height = 49
     Anchors = [akBottom]
     TabOrder = 4
     DesignSize = (
       786
-      68)
+      49)
     object Label2: TLabel
       Left = 592
-      Top = 35
-      Width = 19
+      Top = 22
+      Width = 7
       Height = 13
       Anchors = [akRight, akBottom]
-      Caption = 'WS'
+      Caption = #8364
     end
     object Button8: TButton
       Left = 618
-      Top = 32
+      Top = 12
       Width = 155
-      Height = 22
+      Height = 30
       Anchors = [akRight, akBottom]
       Caption = '&Zahlungseingang buchen'
       TabOrder = 0
@@ -475,7 +475,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     end
     object Edit5: TEdit
       Left = 384
-      Top = 28
+      Top = 15
       Width = 200
       Height = 26
       Anchors = [akRight, akBottom]
@@ -489,13 +489,21 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       OnKeyPress = Edit5KeyPress
     end
     object CheckBox1: TCheckBox
-      Left = 622
-      Top = 7
-      Width = 158
+      Left = 143
+      Top = 10
+      Width = 218
       Height = 18
       Anchors = [akRight, akBottom]
       Caption = 'ohne Buchung "Kasse"'
       TabOrder = 2
+    end
+    object CheckBox2: TCheckBox
+      Left = 143
+      Top = 28
+      Width = 218
+      Height = 17
+      Caption = 'als Forderungsverlust buchen'
+      TabOrder = 3
     end
   end
   object IB_Query1: TIB_Query

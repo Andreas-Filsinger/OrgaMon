@@ -249,7 +249,7 @@ function e_r_sql(s: string): integer; overload;
 // Nur das erste Feld aus der Element als Text-Blob, result=1
 function e_r_sql(s: string; sl: TStringList): integer; overload;
 
-// Nur das erste Feld des ersten Records als Text-Blob
+// Nur das erste Feld des ersten Records als mehrzeilige TStringList
 function e_r_sqlt(s: string): TStringList; overload;
 
 // Ersatz für "assignto" bei IBObjects
@@ -259,7 +259,7 @@ procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
 procedure e_w_sqlt(Field: TdboField; s: TStrings);
 
 // erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
-function e_w_GEN(GenName: string; Increment: integer = 1): integer;
+function e_w_GEN(GenName: string): integer;
 
 // liefert den aktuellen Wert des Generators
 function e_r_GEN(GenName: string): integer;
@@ -279,7 +279,7 @@ function e_r_sqlb(s: string): boolean;
 // Die erste Zelle einer Datenbankabfrage als Double
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
 
-// Erste Ergebnis-Spalte als TStringList
+// Erste Ergebnis-Spalte mehrerer Records als TStringList
 function e_r_sqlsl(s: string): TStringList;
 
 // wie sqlsl, jedoch noch den "RID" in der 2. Spalte
@@ -1026,8 +1026,8 @@ begin
     if assigned(cConnection) then
       ib_connection := cConnection;
     sql.add(TSql);
-  if DebugMode then
-    AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+    if DebugMode then
+      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 
     execute;
 
@@ -1079,7 +1079,6 @@ begin
 end;
 
 {$IFDEF fpc}
-
 { TdboScript }
 
 function TdboScript.sql: TStrings;
@@ -1822,7 +1821,7 @@ begin
 {$ENDIF}
 end;
 
-function e_w_GEN(GenName: string; Increment: integer = 1): integer;
+function e_w_GEN(GenName: string): integer;
 {$IFDEF fpc}
 var
   s: TZSequence;
@@ -1834,30 +1833,53 @@ begin
   begin
     connection := fbConnection;
     SequenceName := GenName;
-    if (Increment = 0) then
-    begin
-      // This is now "read-only": "Change Context to read"
-      result := GetCurrentValue;
-    end
-    else
-    begin
-      BlockSize := Increment;
-      result := GetNextValue;
-    end;
+    BlockSize := 1;
+    result := GetNextValue;
   end;
   s.free;
 {$ELSE}
 {$IFDEF CONSOLE}
-  result := fbConnection.gen_id(GenName, Increment);
+  result := fbConnection.gen_id(GenName, 1);
 {$ELSE}
-  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, Increment);
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
 {$ENDIF}
 {$ENDIF}
+  if DebugMode then
+    AppendStringsToFile(
+      { } 'select GEN_ID(' +
+      { } GenName +
+      { } ',1) from RDB$DATABASE',
+      { } DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 end;
 
 function e_r_GEN(GenName: string): integer;
+{$IFDEF fpc}
+var
+  s: TZSequence;
+{$ENDIF}
 begin
-  result := e_w_GEN(GenName, 0);
+{$IFDEF fpc}
+  s := TZSequence.create(nil);
+  with s do
+  begin
+    connection := fbConnection;
+    SequenceName := GenName;
+    result := GetCurrentValue;
+  end;
+  s.free;
+{$ELSE}
+{$IFDEF CONSOLE}
+  result := fbConnection.gen_id(GenName, 0);
+{$ELSE}
+  result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
+{$ENDIF}
+{$ENDIF}
+  if DebugMode then
+    AppendStringsToFile(
+      { } 'select GEN_ID(' +
+      { } GenName +
+      { } ',0) from RDB$DATABASE',
+      { } DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
 end;
 
 procedure e_x_update(s: string; sl: TStringList);
@@ -2535,7 +2557,7 @@ begin
     sql.add(' (RID)');
     sql.add('values');
     sql.add(' (:CR1)');
-    prepare;
+    Prepare;
     for i := 0 to pred(Werte.count) do
     begin
       Params[0].AsInteger := Werte[i];

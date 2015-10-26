@@ -60,8 +60,11 @@ const
   cPreis_unbekannt = -3.0;
   cPreis_ungesetzt = -4.0;
 
-  // vom OrgaMon intern benutzte Konten
+  // Erlöse (reines Verteilerkonto)
   cKonto_Erloese = '8200';
+
+  // Forderungsverlust
+  cKonto_Forderungsverlust = '2400';
 
   // Verzweigungskonto zur weiteren Verbuchung von Erlösen!
   cKonto_FreierErloes = '8450';
