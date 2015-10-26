@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.239 (26.10.15) Andreas Filsinger
+
+ Neu: Vorlage.xls: mit "'" kann man eine Stringformatierung erhalten
+
 Rev 1.238 (21.08.15) Andreas Filsinger
 
  Bug: IDOC: Formatierung "0": nimmt nun linksbündig und füllt rechts mit "Blanks"
