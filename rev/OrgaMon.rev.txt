@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.127 (26.10.15) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.239" neu compiliert!
+
 Rev 8.126 (23.10.15-26.10.15) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: SpalteAlsText= hat nicht funktioniert

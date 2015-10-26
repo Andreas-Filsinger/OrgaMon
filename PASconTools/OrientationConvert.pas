@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.238; // ../rev/Oc.rev.txt
+  Version: single = 1.239; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -91,18 +91,18 @@ begin
   result := 0;
 end;
 
-
 {$ELSE}
-  uses Windows, SysUtils, IniFiles, math,
 
-// OrgaMon - Tools
-geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
+uses Windows, SysUtils, IniFiles, math,
 
-// libxml
-libxml2,
+  // OrgaMon - Tools
+  geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
 
-// FlexCel
-FlexCel.Core, FlexCel.xlsAdapter;
+  // libxml
+  libxml2,
+
+  // FlexCel
+  FlexCel.Core, FlexCel.xlsAdapter;
 
 
 // Tmemorystream
@@ -6649,7 +6649,9 @@ var
     NextSubFieldName: string;
     kk: integer;
     FormatIndex: integer;
+    ForceFormat: boolean;
   begin
+    ForceFormat := false;
     for c := 1 to OutCommands.count do
     begin
       try
@@ -6856,6 +6858,13 @@ var
               break;
             end;
 
+            // Erzwingen des Text Formates
+            if (pos('''', Command) = 1) then
+            begin
+              ForceFormat := true;
+              system.delete(Command, 1, 1);
+            end;
+
             // letzte Möglichkeit 1:1 Beziehung
             k := getHeaderIndex(Command);
             if (k > 0) then
@@ -6875,7 +6884,17 @@ var
             end
             else
             begin
-              xVorlage.SetCellFromString(TargetRow, c, MonDaCode(ContentAsWideString), FormatIndex);
+              if ForceFormat then
+              begin
+                xVorlage.SetCellFormat(TargetRow, c, FormatIndex);
+                xVorlage.SetCellValue(TargetRow, c, MonDaCode(ContentAsWideString));
+                ForceFormat := false;
+              end
+              else
+              begin
+                xVorlage.SetCellFromString(TargetRow, c, MonDaCode(ContentAsWideString),
+                  FormatIndex);
+              end;
             end;
           end
           else
@@ -7034,7 +7053,7 @@ begin
               OutCommandsRegler.addobject(xExportRegler.getCellValue(TargetStartRow + 1, c)
                 .ToStringInvariant, TObject(FormatIndex));
 
-            // imp pend: Just claer?
+            // imp pend: Just clear it?
             SetCellFromString(TargetStartRow, c, '', FormatIndex);
             SetCellFromString(TargetStartRow + 1, c, '', FormatIndex);
           end;
@@ -7857,11 +7876,11 @@ begin
               begin
                 if AusgabeRotiert then
                 begin
-                  xExport.setCellFormat(c, TargetRow, xExport.getCellFormat(c, TargetStartRow));
+                  xExport.SetCellFormat(c, TargetRow, xExport.getCellFormat(c, TargetStartRow));
                   xExport.setColWidth(TargetRow, xExport.getColWidth(TargetStartRow));
                 end
                 else
-                  xExport.setCellFormat(TargetRow, c, xExport.getCellFormat(TargetStartRow, c));
+                  xExport.SetCellFormat(TargetRow, c, xExport.getCellFormat(TargetStartRow, c));
               end;
               if (ErrorCount > 0) then
                 break;
@@ -10910,4 +10929,3 @@ end;
 {$ENDIF}
 
 end.
-

@@ -2789,6 +2789,21 @@ begin
   if (PERSON_R < cRID_FirstValid) then
     exit;
 
+  // Person Datenfelder
+  cPERSON := nCursor;
+  with cPERSON do
+  begin
+    sql.add('select * from PERSON where RID=' + inttostr(PERSON_R));
+    ApiFirst;
+  end;
+
+  if cPERSON.eof then
+  begin
+    // Person nicht gefunden
+    cPERSON.free;
+    exit;
+  end;
+
   // Vorlauf
   DatensammlerGlobal := TStringList.create;
   DatensammlerLokal := TStringList.create;
@@ -2800,7 +2815,6 @@ begin
   Verbucht_BELEG_R := TStringList.create;
   LastschriftTexteAlle := TStringList.create;
   qBELEG := nQuery;
-  cPERSON := nCursor;
   cANSCHRIFT := nCursor;
   cBELEGSALDO := nCursor;
   MahnungsBeleg := THTMLTemplate.create;
@@ -2884,13 +2898,6 @@ begin
       SkipManuelleZahlungen := isZeroMoney(FieldByName('SUM').AsFloat);
     end;
     cAUSGANGSRECHNUNG.free;
-
-    // Person Datenfelder
-    with cPERSON do
-    begin
-      sql.add('select * from PERSON where RID=' + inttostr(PERSON_R));
-      ApiFirst;
-    end;
 
     // Gewerblicher Kunde?
     if (cPERSON.FieldByName('RABATT_CODE').AsString = '') then
@@ -3563,7 +3570,7 @@ begin
       result.add(format('SEIT=%d', [MaxTageVerzug]));
       result.add('RECHNUNGEN=' + RECHNUNGEN);
       result.add('BELEGE=' + BELEGE);
-      result.Add('TEILLIEFERUNGEN=' + TEILLIEFERUNGEN);
+      result.add('TEILLIEFERUNGEN=' + TEILLIEFERUNGEN);
 
       if (Summe_Offen < 0) then
         result.add('GUTSCHRIFT=' + cC_True);
@@ -5357,6 +5364,8 @@ begin
       { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
       { } ' (VORGANG=' + SQLstring(cVorgang_Rechnung) + ') and' +
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
+  else
+   result :=   cGeld_Zero;
 end;
 
 function e_r_BelegZahlungen(BELEG_R: integer): double;
@@ -5367,6 +5376,8 @@ begin
       { } ' (NAME=' + cKonto_Forderungen_AsDBString + ') and' +
       { } ' ((VORGANG<>' + SQLstring(cVorgang_Rechnung) + ') or (VORGANG is null)) and' +
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
+  else
+   result :=   cGeld_Zero;
 end;
 
 function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
@@ -8148,9 +8159,9 @@ var
   n: integer;
   SettingsChanged: boolean;
 begin
+  sSystemSettings := nil;
   try
     repeat
-      is1400 := not(TableExists('AUSGANGSRECHNUNG'));
 
 {$IFDEF CONSOLE}
       sSystemSettings := e_r_sqlt('select SETTINGS from EINSTELLUNG');
@@ -8198,6 +8209,13 @@ begin
     end;
 
   end;
+
+  // völlig ohne Konfiguration?
+  if not(assigned(sSystemSettings)) then
+   sSystemSettings := TStringList.Create;
+
+  // selbst berechenbare PArameter
+  is1400 := not(TableExists('AUSGANGSRECHNUNG'));
 
   // Systemparameter
   iMwStSatzManuelleArtikel := strtofloatdef(sSystemSettings.values['MwStSatzManuelleArtikel'], 0.0);
