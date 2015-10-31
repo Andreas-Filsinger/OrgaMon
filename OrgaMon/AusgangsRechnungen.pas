@@ -264,8 +264,17 @@ begin
 end;
 
 procedure TFormAusgangsRechnungen.Button5Click(Sender: TObject);
+var
+  cRIDs: TgpIntegerList;
 begin
-  FormBuchhalter.SetContext(cKonto_Anzahlungen, IB_Query1.FieldByName('BELEG_R').AsInteger);
+  // FormBuchhalter.SetContext(cKonto_Anzahlungen, IB_Query1.FieldByName('BELEG_R').AsInteger);
+
+  cRIDs := e_r_sqlm('select RID from BUCH where ' +
+    { } '(NAME=' + cKonto_Anzahlungen_AsDBString + ') and' +
+    { } '(BELEG_R=' + IB_Query1.FieldByName('BELEG_R').AsString + ')');
+  FormBuchhalter.SetContext(cRIDs);
+  cRIDs.free;
+
 end;
 
 procedure TFormAusgangsRechnungen.Button6Click(Sender: TObject);
@@ -450,7 +459,11 @@ begin
         begin
           CheckBox2.checked := false;
           if isKonto(cKonto_Forderungsverlust) then
+          begin
+            // wenn es bereits buchungen auf dem 1710er gibt!
+            _AktuelleZahlung := b_w_ForderungsAusfall(BELEG_R, _AktuelleZahlung);
             Konto := cKonto_Forderungsverlust;
+          end;
           break;
         end;
 
@@ -459,22 +472,24 @@ begin
           Konto := cKonto_Kasse;
       until true;
 
-      // Jetzt den ganzen Rattenschwanz buchen
-      sDiagnose := TStringList.create;
-      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
-        { } PERSON_R,
-        { } BELEG_R,
-        { } _AktuelleZahlung,
-        { } '',
-        { } cRID_Null,
-        { } '',
-        { } Konto,
-        { } TEILLIEFERUNG,
-        { } cRID_Null]), sDiagnose);
-      FormCareServer.ShowIfError(sDiagnose);
-      sDiagnose.free;
+      // Zahlung
+      if IsSomeMoney(_AktuelleZahlung) then
+      begin
+        sDiagnose := TStringList.create;
+        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+          { } PERSON_R,
+          { } BELEG_R,
+          { } _AktuelleZahlung,
+          { } '',
+          { } cRID_Null,
+          { } '',
+          { } Konto,
+          { } TEILLIEFERUNG,
+          { } cRID_Null]), sDiagnose);
+        FormCareServer.ShowIfError(sDiagnose);
+        sDiagnose.free;
+      end;
 
-      // Zahlung jetzt buchen
       with IB_Query1 do
       begin
 

@@ -50,7 +50,7 @@ uses
   ComCtrls, ExtCtrls,
 
   // ANFiX
-  gplists, WordIndex,
+  Geld, gplists, WordIndex,
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
@@ -474,8 +474,9 @@ begin
     if not(assigned(lTRN)) then
     begin
       lTRN := TgpIntegerList.create;
-      tTRN := TsTable.Create;
-    end else
+      tTRN := TsTable.create;
+    end
+    else
     begin
       lTRN.Clear;
       tTRN.Clear;
@@ -603,24 +604,44 @@ begin
               end;
             xMode_FORDERUNG_DEL:
               begin
-                Betrag := e_r_sqld('select SUM(BETRAG) from ' + ' AUSGANGSRECHNUNG where ' +
-                  ' BELEG_R=' + inttostr(RID));
-                if (Betrag > 0) then
-                begin
-                  PERSON_R := e_r_sql('select PERSON_R from BELEG ' + 'where RID=' + inttostr(RID));
+                Betrag := e_r_sqld(
+                  { } 'select sum(BETRAG) from' +
+                  { } ' AUSGANGSRECHNUNG where ' +
+                  { } ' BELEG_R=' + inttostr(RID));
 
-                  sDiagnose := TStringList.create;
-                  b_w_ForderungAusgleich(format(cBuch_Ausgleich, [PERSON_R, RID, Betrag,
-                    '31.12.2006', cRID_Null, 'Transaktion Forderungsausgleich', '', 0, cRID_Null]),
-                    sDiagnose);
-                  sLog.addstrings(sDiagnose);
-                  sDiagnose.free;
+                if isHaben(Betrag) then
+                begin
+
+                  // für eine Person sorgen
+                  PERSON_R := e_r_sql(
+                    { } 'select PERSON_R from BELEG ' +
+                    { } 'where RID=' + inttostr(RID));
+
+                  // ev. eine 1710er Buchung?
+                  Betrag := b_w_ForderungsAusfall(RID, Betrag);
+
+                  if IsSomeMoney(Betrag) then
+                  begin
+                    sDiagnose := TStringList.create;
+                    b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+                      { } PERSON_R,
+                      { } RID,
+                      { } Betrag,
+                      { } '',
+                      { } cRID_Null,
+                      { } 'Transaktion Forderungsverlust',
+                      { } cKonto_Forderungsverlust,
+                      { } 0,
+                      { } cRID_Null]), sDiagnose);
+                    sLog.addstrings(sDiagnose);
+                    sDiagnose.free;
+                  end;
                 end;
               end;
             xMode_SQL:
               begin
-                xSQL := edit16.Text;
-                tTRN.ersetze(n+1,xSQL);
+                xSQL := Edit16.Text;
+                tTRN.ersetze(n + 1, xSQL);
                 e_x_sql(xSQL);
               end;
           end;
@@ -636,7 +657,7 @@ begin
           Label15.caption := format(DisplayFormatstr, [SuccessN, lTRN.count]);
           application.ProcessMessages;
           if CheckBox7.Checked then
-           break;
+            break;
         end;
 
       end;

@@ -88,6 +88,11 @@ procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
 procedure b_w_ForderungAusgleich(EREIGNIS_R: integer); overload;
 
 //
+// Storno des ganzen oder teilweise
+//
+function b_w_ForderungsAusfall(BELEG_R: integer; Betrag: double = 0.0): double;
+
+//
 // Stapel Ausgleich von eingegangenen Lastschrift-Einzügen
 procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
 
@@ -394,9 +399,10 @@ var
         post;
       end;
 
-      Teilzahlungen := e_r_sqld('select SUM(BETRAG) from BUCH where ' + ' (NAME=''' +
-        cKonto_Anzahlungen + ''') and' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
-        ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+      Teilzahlungen := e_r_sqld('select SUM(BETRAG) from BUCH where ' +
+        { } ' (NAME=''' + cKonto_Anzahlungen + ''') and' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
       // Ist Summe(Anzahlungen)=-Forderung wird ein (neuer) Ausgleichs-Folgesatz erstellt!
       // Dies ist ein automatischer Initialer Buchungssatz, dieser musss
@@ -460,14 +466,16 @@ var
       MwSt_Satz_Saver := TMwSt.create;
 
       // Gibt es diese Teillieferung
-      VERSAND_R := e_r_sql('select RID from VERSAND where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
-        ') and ' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+      VERSAND_R := e_r_sql('select RID from VERSAND where ' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if (VERSAND_R < cRID_FirstValid) then
         raise Exception.create(format('Die Teillieferung (%d) existiert nicht', [TEILLIEFERUNG]));
 
       // Stimmt der Gesamt-Betrag?
-      VersandGesamtSumme := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' + ' (BELEG_R=' +
-        inttostr(BELEG_R) + ') and ' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+      VersandGesamtSumme := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' +
+        { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
+        { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if isOther(VersandGesamtSumme, BruttoBetrag) then
         Log(cWARNINGText, format('Betrag (%m) aus VERSAND ist abweichend', [VersandGesamtSumme]));
 
@@ -761,48 +769,57 @@ var
     result := cGeld_Zero;
     BucheStempel;
 
-    AnzahlBuchungen := 0;
-    for n := 0 to pred(Skript.count) do
+    if (Quelle = cKonto_Forderungsverlust) then
+    begin
+      result := result - bucheRest(-BruttoBetrag);
+    end
+    else
     begin
 
-      // Beleg-Ausgleich
-      if (pos('BELEG=', Skript[n]) = 1) then
+      AnzahlBuchungen := 0;
+
+      for n := 0 to pred(Skript.count) do
       begin
-        sData := nextp(Skript[n], 'BELEG=', 1);
 
-        BELEG_R := strtointdef(nextp(sData, ';', 0), cRID_Null);
-        _TEILLIEFERUNG := nextp(sData, ';', 1);
-        Betrag := strtodoubledef(nextp(sData, ';', 2), BruttoBetrag);
-        if (_TEILLIEFERUNG = '*') then
-          TEILLIEFERUNG := cTEILLIEFERUNG_FILTER_ALLE
-        else
-          TEILLIEFERUNG := strtointdef(_TEILLIEFERUNG, 0);
+        // Beleg-Ausgleich
+        if (pos('BELEG=', Skript[n]) = 1) then
+        begin
+          sData := nextp(Skript[n], 'BELEG=', 1);
 
-        result :=
-        { } result +
-        { } bucheBelegAusgleich(
-          { } BELEG_R,
-          { } TEILLIEFERUNG,
-          { } Betrag);
-        inc(AnzahlBuchungen);
-        continue;
+          BELEG_R := strtointdef(nextp(sData, ';', 0), cRID_Null);
+          _TEILLIEFERUNG := nextp(sData, ';', 1);
+          Betrag := strtodoubledef(nextp(sData, ';', 2), BruttoBetrag);
+          if (_TEILLIEFERUNG = '*') then
+            TEILLIEFERUNG := cTEILLIEFERUNG_FILTER_ALLE
+          else
+            TEILLIEFERUNG := strtointdef(_TEILLIEFERUNG, 0);
+
+          result :=
+          { } result +
+          { } bucheBelegAusgleich(
+            { } BELEG_R,
+            { } TEILLIEFERUNG,
+            { } Betrag);
+          inc(AnzahlBuchungen);
+          continue;
+        end;
+
+        // Restbetrag auf Ausbuchungskonto
+        if (pos('BETRAG=', Skript[n]) = 1) then
+        begin
+          BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1),
+            cGeld_Zero);
+          result := result + bucheRest(
+            { } BetragUnberuecksichtigt,
+            { } nextp(Skript[n], ';', 1));
+          continue;
+        end;
+
       end;
-
-      // Restbetrag auf Ausbuchungskonto
-      if (pos('BETRAG=', Skript[n]) = 1) then
-      begin
-        BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1),
-          cGeld_Zero);
-        result := result + bucheRest(
-          { } BetragUnberuecksichtigt,
-          { } nextp(Skript[n], ';', 1));
-        continue;
-      end;
+      if (AnzahlBuchungen = 0) then
+        raise Exception.create('BELEG= wurde nicht angegeben');
 
     end;
-
-    if (AnzahlBuchungen = 0) then
-      raise Exception.create('BELEG= wurde nicht angegeben');
 
   end;
 
@@ -1348,8 +1365,9 @@ begin
 
             // Neuanlage wenn Quelle "Kasse", "Lastschrift", oder "Forderungsverlust" ist
             BUCH_R := e_w_Gen('GEN_BUCH');
-            e_x_sql('insert into BUCH (RID,DATUM) values(' + inttostr(BUCH_R) +
-              ',CURRENT_TIMESTAMP)');
+            e_x_sql('insert into BUCH (RID,DATUM) values(' +
+              { } inttostr(BUCH_R) +
+              { } ',CURRENT_TIMESTAMP)');
 
             // Infos zum Beleg bilden!
             InfoText.clear;
@@ -1560,6 +1578,72 @@ begin
 
   sVOLUMEN.Free;
   sCSV.Free;
+end;
+
+function b_w_ForderungsAusfall(BELEG_R: integer; Betrag: double = 0.0): double;
+var
+  Teilzahlungen, Forderung: double;
+  qAUSGLEICH: TdboQuery;
+  AUSGLEICH_R: integer;
+  ScriptText: TStringList;
+begin
+  result := Betrag;
+
+  // wenn es Teilzahlungen gab ist nun alles ausgeglichen
+  Teilzahlungen := e_r_BelegTeilzahlungen(BELEG_R);
+
+  if isSomeMoney(Teilzahlungen) then
+  begin
+
+    // Forderungsverlust in den Beleg eintragen
+    e_x_sql('insert into POSTEN (BELEG_R,MENGE,ARTIKEL,PREIS,MWST) values (' +
+      { } inttostr(BELEG_R) + ',' +
+      { } '1,' +
+      { } SQLString('Forderungsverlust') + ',' +
+      { } FloatToStrISO(-Betrag) + ',' +
+      { } FloatToStrISO(iMwStSatzManuelleArtikel) + ')');
+
+    // eine weitere Teillieferung buchen
+    e_w_BelegBuchen(BELEG_R);
+
+    // nun die "neue" Gesamtforderung berechnen
+    Forderung := e_r_BelegForderungen(BELEG_R);
+
+    if isEqual(Teilzahlungen, Forderung) then
+    begin
+      // Es ist Zeit für einen Vollausgelich!
+      ScriptText := TStringList.create;
+      qAUSGLEICH := nQuery;
+      AUSGLEICH_R := e_w_Gen('GEN_BUCH');
+      with qAUSGLEICH do
+      begin
+        sql.add('select * from BUCH for update');
+
+        //
+        ScriptText.add('VORZEICHENWECHSEL=' + cIni_Activate);
+        // ScriptText.add('ZWISCHENSATZ=' + cIni_Activate);
+        ScriptText.add(format('BELEG=%d;*;%m', [BELEG_R, Forderung]));
+
+        insert;
+        FieldByName('RID').AsInteger := AUSGLEICH_R;
+        FieldByName('MASTER_R').AsInteger := AUSGLEICH_R;
+        FieldByName('NAME').AsString := cKonto_Anzahlungen;
+        FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
+        FieldByName('ERTRAG').AsString := cC_True;
+        FieldByName('DATUM').AsDateTime := now;
+        FieldByName('SKRIPT').Assign(ScriptText);
+        FieldByName('BETRAG').AsFloat := -Forderung;
+        FieldByName('BELEG_R').AsInteger := BELEG_R;
+        post;
+
+      end;
+      qAUSGLEICH.Free;
+      ScriptText.Free;
+      b_w_buche(AUSGLEICH_R);
+      result := cGeld_Zero;
+
+    end;
+  end;
 end;
 
 procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);
@@ -2100,12 +2184,16 @@ procedure b_w_preDeleteBuch(BUCH_R: integer);
 begin
 
   // zunächst die Zusammenhang-Referenz entfernen
-  e_x_sql('update BUCH set ' + ' ZUSAMMENHANG_R=null ' + 'where' + ' (MASTER_R=' + inttostr(BUCH_R)
-    + ') and' + ' (ZUSAMMENHANG_R is not null)');
+  e_x_sql('update BUCH set ' +
+    { } ' ZUSAMMENHANG_R=null ' +
+    { } 'where' +
+    { } ' (MASTER_R=' + inttostr(BUCH_R) + ') and' +
+    { } ' (ZUSAMMENHANG_R is not null)');
 
   // nun die Folgebuchungssätze löschen
-  e_x_sql('delete from BUCH where ' + ' (MASTER_R=' + inttostr(BUCH_R) + ') and' + ' (RID<>' +
-    inttostr(BUCH_R) + ')');
+  e_x_sql('delete from BUCH where ' +
+    { } ' (MASTER_R=' + inttostr(BUCH_R) + ') and' +
+    { } ' (RID<>' + inttostr(BUCH_R) + ')');
 
   // Referenzen auf den Hauptdatensatz nullen
   e_w_dereference(BUCH_R, 'DOKUMENT', 'BUCH_R');

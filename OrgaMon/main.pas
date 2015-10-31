@@ -462,11 +462,16 @@ begin
         // entschlüsseltes Passwort anzeigen
         if IsParam('-sp') then
           ShowMessage(Password);
+
+        // Eventuelle Masken im Datenbankname entfernen
+        iDataBaseName := e_r_NameFromMask(iDataBaseName);
+
         if (iDataBaseName = '') then
         begin
           ShowMessage('Kein Datenbankname angegeben!');
           halt;
         end;
+
         Connect;
         MachineIDChanged;
       end;

@@ -504,6 +504,7 @@ function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
 function e_r_BelegSaldo(BELEG_R: integer; TEILLIEFERUNG: integer = cRID_Null): double;
 function e_r_BelegForderungen(BELEG_R: integer): double;
 function e_r_BelegZahlungen(BELEG_R: integer): double;
+function e_r_BelegTeilzahlungen(BELEG_R: integer): double;
 
 { : diverse ermittelte Werte }
 // die Auftragsmengen entsprechend auf die Mengen verteilen Daumen, es erfolgen
@@ -5365,7 +5366,10 @@ begin
       { } ' (VORGANG=' + SQLstring(cVorgang_Rechnung) + ') and' +
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
   else
-   result :=   cGeld_Zero;
+    result := e_r_sqld(
+      { } 'select sum(BETRAG) from ' + TABELLE_AR + ' where' +
+      { } ' (VORGANG=' + SQLstring(cVorgang_Rechnung) + ') and' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
 end;
 
 function e_r_BelegZahlungen(BELEG_R: integer): double;
@@ -5377,7 +5381,18 @@ begin
       { } ' ((VORGANG<>' + SQLstring(cVorgang_Rechnung) + ') or (VORGANG is null)) and' +
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ')')
   else
-   result :=   cGeld_Zero;
+    result := e_r_sqld(
+      { } 'select sum(BETRAG) from ' + TABELLE_AR + ' where' +
+      { } ' ((VORGANG<>' + SQLstring(cVorgang_Rechnung) + ') or (VORGANG is null)) and' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ')');
+end;
+
+function e_r_BelegTeilzahlungen(BELEG_R: integer): double;
+begin
+  result := e_r_sqld(
+    { } 'select sum(BETRAG) from BUCH where' +
+    { } ' (NAME=' + cKonto_Anzahlungen_AsDBString + ') and' +
+    { } ' (BELEG_R=' + inttostr(BELEG_R) + ')');
 end;
 
 function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
@@ -8212,7 +8227,7 @@ begin
 
   // völlig ohne Konfiguration?
   if not(assigned(sSystemSettings)) then
-   sSystemSettings := TStringList.Create;
+    sSystemSettings := TStringList.create;
 
   // selbst berechenbare PArameter
   is1400 := not(TableExists('AUSGANGSRECHNUNG'));
@@ -8350,8 +8365,8 @@ begin
   iMahnungMindestZins := strtodoubledef(sSystemSettings.values['MahnungMindestZins'], 0.0);
   iMahnstufeZinsEintritt := StrToIntDef(sSystemSettings.values['MahnungMahnstufeZinsEintritt'],
     pred(MaxInt));
-  iMahnfreierZeitraum := StrToIntDef(sSystemSettings.values['MahnungAbstand'], 14);
   // [Tage], solange wird nochmaliges Mahnen verhindert
+  iMahnfreierZeitraum := StrToIntDef(sSystemSettings.values['MahnungAbstand'], 14);
   iKommaFaktor := sSystemSettings.values['KommaFaktor'] = cIni_Activate;
   iBelegAnzeigeNachBuchen := (sSystemSettings.values['BelegAnzeigeNachBuchen'] = cIni_Activate) or
     (sSystemSettings.values['BelegAnzeigeNachBuchen'] = '');

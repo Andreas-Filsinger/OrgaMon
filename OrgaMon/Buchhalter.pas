@@ -417,6 +417,7 @@ type
     procedure MemoLog(s: TStrings); overload;
     procedure MemoLog(s: String); overload;
     procedure showBeleg(ForderungINdex: Integer);
+    procedure CheckInitialized;
 
   public
     // Auffrischen der Liste
@@ -438,6 +439,7 @@ type
 
     procedure setContext(Konto: string; BELEG_R: Integer = -1); overload;
     procedure setContext(BUCH_R: Integer); overload;
+    procedure setContext(RIDs: TgpIntegerList); overload;
   end;
 
 var
@@ -1192,7 +1194,7 @@ begin
 
       if isequal(Mandat, cPreis_ungesetzt) then
       begin
-        Memo1.Lines.add(
+        Memo1.lines.add(
           { } cINFOText +
           { } ' Zum Beleg ' +
           { } FieldByName('BELEG_R').AsString + '-' +
@@ -1202,7 +1204,7 @@ begin
       else
       begin
         if isother(Forderung, Mandat) then
-          Memo1.Lines.add(
+          Memo1.lines.add(
             { } cWARNINGText +
             { } ' Beim Beleg ' +
             { } FieldByName('BELEG_R').AsString + '-' +
@@ -1574,8 +1576,12 @@ begin
   if _NewPoint >= cRID_FirstValid then
   begin
     BeginHourGlass;
-    sNeu := e_r_sqlm('select RID from BUCH ' + 'where ' + ' (RID>' + inttostr(_NewPoint) + ') and '
-      + ' (RID=MASTER_R) ' + 'order by DATUM,POSNO');
+    sNeu := e_r_sqlm(
+      { } 'select RID from BUCH ' +
+      { } 'where ' +
+      { } ' (RID>' + inttostr(_NewPoint) + ') and ' +
+      { } ' (RID=MASTER_R) ' +
+      { } 'order by DATUM,POSNO');
 
     // RID-Liste aus OLAP-Laden!
     if (sNeu.count > 0) then
@@ -1692,7 +1698,7 @@ end;
 
 procedure TFormBuchhalter.SpeedButton35Click(Sender: TObject);
 begin
-  Memo2.Lines.savetofile(SystemPath + '\Konten-Alias.ini');
+  Memo2.lines.savetofile(SystemPath + '\Konten-Alias.ini');
 end;
 
 procedure TFormBuchhalter.SpeedButton36Click(Sender: TObject);
@@ -1868,7 +1874,7 @@ begin
     sCSV := TStringList.Create;
     sText := TStringList.Create;
     sKontenAlias := TStringList.Create;
-    sKontenAlias.Assign(Memo2.Lines);
+    sKontenAlias.Assign(Memo2.lines);
     sCSV.add(cHeaderLine);
     WarEbenErloesKonto := false;
 
@@ -2077,7 +2083,7 @@ begin
 
   //
   KlassischeTAN := Edit10.Text;
-  Memo1.Lines.clear;
+  Memo1.lines.clear;
   sTANAbfrage := DataModuleREST.REST(iHBCIRest + 'sammellastschrift/' + StrFilter(iKontoBLZ,
     cZiffern) + '/' + StrFilter(iKontoNummer, cZiffern), MyProgramPath + cHBCIPath +
     'DTAUS.DTA.SEPA.csv');
@@ -2089,8 +2095,8 @@ begin
 
   if (KlassischeTAN <> '') then
   begin
-    if (Memo1.Lines.count > 0) then
-      if (StrToIntDef(Memo1.Lines[0], 0) > 10000) then
+    if (Memo1.lines.count > 0) then
+      if (StrToIntDef(Memo1.lines[0], 0) > 10000) then
       begin
         Edit10.Text := KlassischeTAN;
         KlassischeTAN := '';
@@ -2203,8 +2209,8 @@ procedure TFormBuchhalter.MemoLog(s: TStrings);
 begin
   with Memo1 do
   begin
-    Lines.addstrings(s);
-    SelStart := SendMessage(Handle, EM_LINEINDEX, pred(Lines.count), 0);
+    lines.addstrings(s);
+    SelStart := SendMessage(Handle, EM_LINEINDEX, pred(lines.count), 0);
     SendMessage(Handle, EM_SCROLLCARET, 0, 0);
   end;
 end;
@@ -2295,7 +2301,7 @@ begin
         break;
       end;
 
-      Memo1.Lines.clear;
+      Memo1.lines.clear;
       Response := DataModuleREST.REST(iHBCIRest + 'itan/' + LastschriftJobID + '/' + iTAN);
       MemoLog(Response);
       Response.free;
@@ -4108,83 +4114,7 @@ end;
 
 procedure TFormBuchhalter.FormActivate(Sender: TObject);
 begin
-  if not(Initialized) then
-  begin
-
-    ItemKontoAuszugRIDs := TgpIntegerList.Create;
-    ItemKontoAuszugAll := TgpIntegerList.Create;
-    ItemMarked := TgpIntegerList.Create;
-    ItemDebiRIDs := TgpIntegerList.Create;
-
-    // Konto
-    with DrawGrid1, canvas do
-    begin
-      cPlanY := dpiX(16);
-      DefaultRowHeight := cPlanY * 2;
-      font.NAME := 'Courier New';
-      font.color := clblack;
-      ColCount := 8;
-      ColWidths[0] := dpiX(25);
-      // Status
-      ColWidths[1] := dpiX(88); // Datum
-      ColWidths[2] := dpiX(88); // Valuta
-      ColWidths[3] := -dpiX(100); // Vorgang
-      ColWidths[4] := -dpiX(230); // Text
-      ColWidths[5] := dpiX(125); // Betrag Soll
-      ColWidths[6] := dpiX(125); // Betrag Haben
-      ColWidths[7] := 1; // Dummy
-      RowCount := 0;
-    end;
-    dgAutoSize(DrawGrid1, true);
-
-    // Eingänge
-    with DrawGrid2, canvas do
-    begin
-      cPlanY := dpiX(16);
-      DefaultRowHeight := cPlanY * 2;
-      font.NAME := 'Courier New';
-      font.color := clblack;
-      ColCount := 8;
-      ColWidths[0] := dpiX(25);
-      // Status
-      ColWidths[1] := dpiX(88); // Datum
-      ColWidths[2] := dpiX(88); // Valuta
-      ColWidths[3] := -dpiX(100); // Vorgang
-      ColWidths[4] := -dpiX(230); // Text
-      ColWidths[5] := dpiX(125); // Betrag Soll
-      ColWidths[6] := dpiX(125); // Betrag Haben
-      ColWidths[7] := 1; // Dummy
-      RowCount := 0;
-    end;
-    dgAutoSize(DrawGrid2);
-
-    with DrawGrid3, canvas do
-    begin
-      cPlanY := dpiX(16);
-      DefaultRowHeight := cPlanY * 2;
-      font.NAME := 'Courier New';
-      font.color := clblack;
-      ColCount := 5;
-      ColWidths[0] := dpiX(25);
-      // Status
-      ColWidths[1] := -dpiX(500); // Name
-      ColWidths[2] := -dpiX(190); // Vertragsdaten / Forderungen
-      ColWidths[3] := dpiX(125); // Betrag
-      ColWidths[4] := 1; // Dummy
-      RowCount := 0;
-    end;
-    dgAutoSize(DrawGrid3);
-
-    SetLength(StatusBMPs, 4);
-    StatusBMPs[0] := CreateSymbol(0);
-    StatusBMPs[1] := CreateSymbol(1);
-    StatusBMPs[2] := CreateSymbol(2);
-    StatusBMPs[3] := CreateSymbol(3);
-
-    Initialized := true;
-    PageControl1.ActivePage := TabSheet3;
-  end;
-
+  CheckInitialized;
   if refreshOnActivate then
   begin
     if (PageControl1.ActivePage = TabSheet5) then
@@ -4233,9 +4163,9 @@ procedure TFormBuchhalter.TabSheet6Show(Sender: TObject);
 var
   AlleKonten: TStringList;
 begin
-  if Memo2.Lines.count = 0 then
+  if Memo2.lines.count = 0 then
     if FileExists(SystemPath + '\Konten-Alias.ini') then
-      Memo2.Lines.LoadFromFile(SystemPath + '\Konten-Alias.ini');
+      Memo2.lines.LoadFromFile(SystemPath + '\Konten-Alias.ini');
 
   if ComboBox3.Text = '' then
   begin
@@ -5088,6 +5018,87 @@ begin
   ensureTimerState;
 end;
 
+procedure TFormBuchhalter.CheckInitialized;
+begin
+  if not(Initialized) then
+  begin
+
+    ItemKontoAuszugRIDs := TgpIntegerList.Create;
+    ItemKontoAuszugAll := TgpIntegerList.Create;
+    ItemMarked := TgpIntegerList.Create;
+    ItemDebiRIDs := TgpIntegerList.Create;
+
+    // Konto
+    with DrawGrid1, canvas do
+    begin
+      cPlanY := dpiX(16);
+      DefaultRowHeight := cPlanY * 2;
+      font.NAME := 'Courier New';
+      font.color := clblack;
+      ColCount := 8;
+      ColWidths[0] := dpiX(25);
+      // Status
+      ColWidths[1] := dpiX(88); // Datum
+      ColWidths[2] := dpiX(88); // Valuta
+      ColWidths[3] := -dpiX(100); // Vorgang
+      ColWidths[4] := -dpiX(230); // Text
+      ColWidths[5] := dpiX(125); // Betrag Soll
+      ColWidths[6] := dpiX(125); // Betrag Haben
+      ColWidths[7] := 1; // Dummy
+      RowCount := 0;
+    end;
+    dgAutoSize(DrawGrid1, true);
+
+    // Eingänge
+    with DrawGrid2, canvas do
+    begin
+      cPlanY := dpiX(16);
+      DefaultRowHeight := cPlanY * 2;
+      font.NAME := 'Courier New';
+      font.color := clblack;
+      ColCount := 8;
+      ColWidths[0] := dpiX(25);
+      // Status
+      ColWidths[1] := dpiX(88); // Datum
+      ColWidths[2] := dpiX(88); // Valuta
+      ColWidths[3] := -dpiX(100); // Vorgang
+      ColWidths[4] := -dpiX(230); // Text
+      ColWidths[5] := dpiX(125); // Betrag Soll
+      ColWidths[6] := dpiX(125); // Betrag Haben
+      ColWidths[7] := 1; // Dummy
+      RowCount := 0;
+    end;
+    dgAutoSize(DrawGrid2);
+
+    with DrawGrid3, canvas do
+    begin
+      cPlanY := dpiX(16);
+      DefaultRowHeight := cPlanY * 2;
+      font.NAME := 'Courier New';
+      font.color := clblack;
+      ColCount := 5;
+      ColWidths[0] := dpiX(25);
+      // Status
+      ColWidths[1] := -dpiX(500); // Name
+      ColWidths[2] := -dpiX(190); // Vertragsdaten / Forderungen
+      ColWidths[3] := dpiX(125); // Betrag
+      ColWidths[4] := 1; // Dummy
+      RowCount := 0;
+    end;
+    dgAutoSize(DrawGrid3);
+
+    SetLength(StatusBMPs, 4);
+    StatusBMPs[0] := CreateSymbol(0);
+    StatusBMPs[1] := CreateSymbol(1);
+    StatusBMPs[2] := CreateSymbol(2);
+    StatusBMPs[3] := CreateSymbol(3);
+
+    Initialized := true;
+    PageControl1.ActivePage := TabSheet3;
+  end;
+
+end;
+
 procedure TFormBuchhalter.RefreshKontoAuszugSaldo(saldo: double);
 begin
   StaticText5.Caption := format('%m', [abs(saldo)]);
@@ -5095,6 +5106,33 @@ begin
     StaticText5.color := cllime
   else
     StaticText5.color := clred;
+end;
+
+procedure TFormBuchhalter.setContext(RIDs: TgpIntegerList);
+var
+  n: Integer;
+begin
+  BeginHourGlass;
+  show;
+  PageControl1.ActivePage := TabSheet4;
+                     ItemKontoAuszugRIDs.assign(RIDs);
+(*
+  ItemKontoAuszugRIDs.clear;
+  for n := 0 to pred(RIDs.count) do
+    ItemKontoAuszugRIDs.add(RIDs[n]); *)
+  ItemKontoAuszugRIDs.sort;
+  with DrawGrid1 do
+  begin
+    RowCount := ItemKontoAuszugRIDs.count;
+    Refresh;
+    SecureSetRow(DrawGrid1, pred(RowCount));
+  end;
+  if (ItemKontoAuszugRIDs.count > 0) and (ItemKontoAuszugRIDs.count < 500) then
+    RefreshKontoAuszugSaldo(e_r_sqld('select SUM(BETRAG) from BUCH where RID in ' +
+      ListAsSQL(ItemKontoAuszugRIDs)))
+  else
+    RefreshKontoAuszugSaldo(0);
+  EndHourGlass;
 end;
 
 procedure TFormBuchhalter.setContext(Konto: string; BELEG_R: Integer = -1);
