@@ -99,6 +99,7 @@ uses
 {$R *.DFM}
 
 
+
 procedure TDataModuleDatenbank.IB_Connection1BeforeConnect(Sender: TIB_Connection);
 var
   _iDataBaseName: string;

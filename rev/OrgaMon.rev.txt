@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.128 (31.10.15) Andreas Filsinger
+
+ Neu: Forderungsausfall: automatische weitere Teillieferung
+ Neu: Zahlungsausgleich: automatischer 1710 Ausgleich bei Forderungsminderung
+
 Rev 8.127 (26.10.15) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.239" neu compiliert!

@@ -325,6 +325,7 @@ function e_r_fbClientVersion: string;
 function e_r_ConnectionCount: integer;
 function e_r_Revision_Latest: single;
 function e_r_Revision_Zwang: single;
+function e_r_NameFromMask(iDataBaseName: string): string;
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
@@ -2565,6 +2566,56 @@ begin
     end;
   end;
   OLAP.free;
+end;
+
+function e_r_NameFromMask(iDataBaseName: string): string;
+var
+  sDir: TStringList;
+  k, j, l: integer;
+  Mask: string;
+  Path: string;
+begin
+  k := pos('*', iDataBaseName);
+  if (k = 0) then
+  begin
+    result := iDataBaseName;
+  end
+  else
+  begin
+    result := '';
+    j := pos(';', iDataBaseName);
+    if (j = 0) then
+    begin
+      // Datenbank auf "localhost"
+      l := max(
+        { } revpos('\', iDataBaseName),
+        { } revpos('/', iDataBaseName));
+      Mask := copy(iDataBaseName, succ(l), j - l);
+      iDataBaseName := copy(iDataBaseName, 1, l);
+      Path := iDataBaseName;
+    end
+    else
+    begin
+      // Datenbank auf "remotehost"
+      Path := copy(iDataBaseName, succ(j), MaxInt);
+      iDataBaseName := copy(iDataBaseName, 1, pred(j));
+      l := max(
+        { } revpos('\', iDataBaseName),
+        { } revpos('/', iDataBaseName));
+
+      Mask := copy(iDataBaseName, succ(l), j - l);
+      iDataBaseName := copy(iDataBaseName, 1, l);
+    end;
+
+    sDir := TStringList.create;
+    dir(Path + Mask, sDir, false, false);
+    if (sDir.count > 0) then
+    begin
+      sDir.sort;
+      result := iDataBaseName + sDir[pred(sDir.count)];
+    end;
+  end;
+
 end;
 
 end.

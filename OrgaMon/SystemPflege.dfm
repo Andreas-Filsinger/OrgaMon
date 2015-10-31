@@ -453,7 +453,7 @@ object FormSystemPflege: TFormSystemPflege
         Top = 110
         Width = 273
         Height = 16
-        Caption = 'Belege ausgleichen'
+        Caption = 'Forderungsverlust aus Belegen'
         TabOrder = 8
       end
       object RadioButton6: TRadioButton
