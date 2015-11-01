@@ -21,8 +21,12 @@ Dokumentation
 
 Rev 8.128 (31.10.15) Andreas Filsinger
 
- Neu: Forderungsausfall: automatische weitere Teillieferung
+ Neu: Forderungsausfall: bei Anzahlungen: Artikel "Forderungsausfall" für den Rest, und
+      automatische weitere Teillieferung
  Neu: Zahlungsausgleich: automatischer 1710 Ausgleich bei Forderungsminderung
+ Neu: Forderungsausfall: vollständig: verbuchen auf 2400
+ Neu: OrgaMon.ini: DataBaseName= kann eine Dateisuchmaske enthalten (mit einem '*')
+ Neu: OrgaMon.ini: DataBaseName= kann einen Suchpfad für Datenbanknamen enthalten
 
 Rev 8.127 (26.10.15) Andreas Filsinger
 
