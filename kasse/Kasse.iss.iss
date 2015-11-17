@@ -6,7 +6,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=kasse
-AppVerName=kasse 1.025
+AppVerName=kasse 1.026
 AppCopyright=Copyright (C) 2009-2015 Thorsten Schroff / Andreas Filsinger
 DefaultDirName={userdocs}\htdocs\kasse
 DefaultGroupName=kasse
@@ -14,8 +14,8 @@ LicenseFile=gnu-gpl-twebshop-dev.txt
 DisableStartupPrompt=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-Kasse-1.025
-AppVersion=1.025
+OutputBaseFilename=Setup-Kasse-1.026
+AppVersion=1.026
 ChangesAssociations=no
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
