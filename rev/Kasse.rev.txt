@@ -10,6 +10,10 @@
 Eine Web-Kassenanwendung mit JSON Anbindung an den OrgaMon
 // INFO END
 
+Rev 1.026 (17.11.15) Andreas Filsinger
+
+ Bug: Löschtaste hatte bei mehrmaliger Benutzung nicht funktioniert
+
 Rev 1.025 (29.07.15) Andreas Filsinger
 
  Bug: up.php5: xmlrpc Klasse heisst jetzt anders
