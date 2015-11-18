@@ -3,7 +3,7 @@
 //
 // pre init: Prüfen der notwendigen Module
 $i = 0;
-$_PHPEXTENSIONS = array("interbase", "session", "mcrypt", "memcache", "mbstring");
+$_PHPEXTENSIONS = array("dom", "interbase", "session", "mcrypt", "memcache", "mbstring");
 foreach ($_PHPEXTENSIONS as $_EXTENSION)
     if (!extension_loaded($_EXTENSION)) {
         echo "FATAL ERROR: missing PHP-extension: $_EXTENSION<br />";   // => Low-Level-LOG
