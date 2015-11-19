@@ -47,10 +47,42 @@ define("TWEBSHOP_INACTIVE_BLOCKS","");
 // default "abu"
 define("TWEBSHOP_NAMESPACE","abu");
 
-// XMLRPC 
+// XMLRPC
+//
+// komplexere Aufgaben des Webshops werden an die Anwendung
+// cOrgaMon (Win32-Executable) oder lOrgaMon (Linux-Binary) weitergeleitet.
+// der GUI OrgaMon  kann auch zu Diagnose-Zwecken als XMLRPC Server verwendet
+// werden. Die Kopplung der beiden Systeme erfolgt über XMLRPC-Aufrufe. Dabei 
+// initiiert TWebShop vereinbarte Funktionsaufrufe, die hier 
+// (http://www.orgamon.org/index.php5/ECommerce) dokumentiert sind.
+//
+//  name= Hostname oder IP-Adresse des Systems, auf dem der XMLRPC Server läuft bzw. erreichbar ist
+//  port= TCP/IP Port die kontaktiert wird
+//  path= - ohne Bedeutung -
+//  user= - ohne Bedeutung -
+//  password= - ohne Bedeutung -
+//  timeout= maximale Anzahl von Sekunden bis der XMLRPC-Server auf einen Verbindungsversuch reagieren muss
+//  retries= Anzahl der Versuche erneut eine Verbindung herzustellen wenn es einen Timeout oder Abbruch gab 
+// 
 // default "name=localhost,port=3049,path=,user=,password=,timeout=20,retries=0"
-// Kopiervorlage "name=,port=,path=,user=,password=,timeout="
-define("XMLRPC_1","name=LOCALHOST,port=3049,path=,user=,password=,timeout=8,retries=1");
+define("XMLRPC","name=LOCALHOST,port=3049,path=,user=,password=,timeout=8,retries=1");
+
+// XMLRPC_~n~
+//
+// bei steigender Nutzerzahl die zeitgleich das System über das Internet 
+// verwenden kann es notwendig werden mehrere XMLRPC-Server zu installieren.
+// Auf einem Host können mehrere XLMRPC Server-Prozesse gestartet werden.
+// Jedem XMLRPC Server ist so ein eigener Port zuzuweisen. Der TWebShop wird
+// im Round Robin Verfahren die Last gleichmäßig auf alle Server verteilen.
+// Die Parameter sind analog zu "XMLRPC" anzuwenden. Entweder man verwendet einen
+// einzelnen monolithischen XMLRPC-Server mit "XMÖRPC", oder die Variante der
+// Lastverteilung mit "XMLRPC_1", "XMLRPC_2", usw.
+//
+// default - keine Verwendung der Lastverteilung -
+#define("XMLRPC_1","name=RIO,port=3041,path=,user=,password=,timeout=80,retries=1");
+#define("XMLRPC_2","name=RIO,port=3042,path=,user=,password=,timeout=80,retries=1");
+#define("XMLRPC_3","name=MOSKAU,port=3041,path=,user=,password=,timeout=80,retries=1");
+#define("XMLRPC_4","name=MOSKAU,port=3049,path=,user=,password=,timeout=80,retries=1");
 
 // LOG - Einstellungen
 #define("XMLRPC_LOG",true);
@@ -59,13 +91,12 @@ define("XMLRPC_1","name=LOCALHOST,port=3049,path=,user=,password=,timeout=8,retr
 define("ACTION_LOG",true);
 #define("STATEFULL_LOG",true);
 
-
 // EMAIL
-define("EMAIL_ADMIN","thorsten.schroff@orgamon.org");
-define("EMAIL_DEVELOPER","thorsten.schroff@orgamon.org");
-define("SMTP_HOST","");
-define("SMTP_USER","");
-define("SMTP_PASSWORD","");
+define("EMAIL_ADMIN","thorsten.schroff@twebshop.de");
+define("EMAIL_DEVELOPER","thorsten.schroff@twebshop.de");
+define("SMTP_HOST","mx.twebshop.de");
+define("SMTP_USER","thorsten.schroff");
+define("SMTP_PASSWORD","the-pwd");
 
 // DATENBANKABHÄNGIGE-KLASSEN-PARAMETER 
 define("TWEBSHOP_ARTICLE_CONTEXT_R_PROMO",4);
@@ -78,7 +109,7 @@ define("TWEBSHOP_PERSON_DEFAULT_WEBSHOP_TREFFERPROSEITE",5);
 define("TWEBSHOP_PERSON_DEFAULT_WEBSHOP_RABATT","N");
 define("TWEBSHOP_ARTICLE_VERSION_SHORT_MP3","MP3");
 
-// STANDARDWERTE
+// Lokalisierung
 define("DEFAULT_LANGUAGE","german");
 define("DEFAULT_CURRENCY","&euro;");
 define("DEFAULT_DELIVERY_PRICE", 6.90);
