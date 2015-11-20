@@ -263,6 +263,8 @@ begin
     erwartet wird:
     Im Prinzip verhilft man den Zahlen, die hoffnungslos in der Perioden-
     Darstellung gefangen sind durch einen leichten Schups über den Rundungs-Zaun.
+    Bildlich hilft man ganz leicht zu dünnen Schafen, die den Sprung nicht mehr
+    schaffen über den Zaun, indem man die Latte hauchdünn nach unten drückt.
     Bei Zahlen die eigentlich den Schups nicht benötigt hätten und
     gerne nicht gesprungen wären machen wir einen Fehler, RICHTIG, aber
     dieser liegt ausserhalb der geforderten Genauigkeit, so dass das
