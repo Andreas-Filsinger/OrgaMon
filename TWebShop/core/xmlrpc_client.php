@@ -320,7 +320,11 @@ class txmlrpc_client {
 
     private function isBadHost($id) {
 
+      if (defined("XMLRPC")) {
+       return false;
+     } else {  
         return semiPersistentIsKnown($this->hosts[$id]->getConnect());
+     }   
     }
 
     // Listet alle Hosts auf, die im Moment
