@@ -360,8 +360,7 @@ begin
       if (BELEG_R >= cRID_FirstValid) then
       begin
 
-        // Teillieferungs Kandidaten mal ermitteln
-
+        // den passenden Teillieferungs Kandidaten mal ermitteln
         cTL := DataModuleDatenbank.nCursor;
         with cTL do
         begin
@@ -391,16 +390,20 @@ begin
             OFFEN := FieldByName('OFFEN').AsDouble;
             if IsSomeMoney(OFFEN) then
             begin
-              if OFFEN < 0 then
+              if isSoll(OFFEN) then
               begin
                 //
-                if OFFEN + _AktuelleZahlung <= 0 then
-                  break;
+                if isZeroMoney(OFFEN + _AktuelleZahlung) then
+                 break;
+                if isSoll(OFFEN + _AktuelleZahlung) then
+                 break;
               end
               else
               begin
-                if OFFEN + _AktuelleZahlung >= 0 then
-                  break;
+                if isZeroMoney(OFFEN + _AktuelleZahlung) then
+                 break;
+                if isHaben(OFFEN + _AktuelleZahlung) then
+                 break;
               end;
             end;
             apinext;
