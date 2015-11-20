@@ -39,7 +39,7 @@ class tcryptID {
     public function encrypt($id) {
         $this->ID = $id;
         $str = self::IDToStr($id);
-        $str = mcrypt_cfb(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_ENCRYPT, $this->init);
+        $str = mcrypt_encrypt(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_MODE_cfb, $this->init );
         $str = base64_encode($str);
         // $str = urlencode($str); // URLENCODE kann in Formularen nicht benutzt werden, wird sonst doppelt codiert
         return $str;
@@ -49,7 +49,7 @@ class tcryptID {
         $this->str = $str;
         // URLDECODE wird von PHP oder APACHE erledigt, DARF NICHT mehr durchgeführt werden
         $id = base64_decode($str);
-        $id = mcrypt_cfb(MCRYPT_BLOWFISH, $this->key, $id, MCRYPT_DECRYPT, $this->init);
+        $id = mcrypt_decrypt(MCRYPT_BLOWFISH, $this->key, $id, MCRYPT_MODE_cfb, $this->init );
         $id = self::StrToID($id);
         return $id;
     }

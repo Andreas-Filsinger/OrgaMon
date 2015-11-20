@@ -40,7 +40,7 @@ class tcryption {
     public function encrypt($enc) {
         $this->encrypt = $enc;
         $str = $enc;
-        $str = mcrypt_cfb(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_ENCRYPT, $this->init);
+        $str = mcrypt_encrypt(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_MODE_cfb, $this->init );
         $str = base64_encode($str);
         $str = urlencode($str);
         return $str;
@@ -51,7 +51,7 @@ class tcryption {
         $str = $dec;
         // URLDECODE wird von PHP oder APACHE erledigt, DARF NICHT mehr durchgeführt werden
         $str = base64_decode($str);
-        $str = mcrypt_cfb(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_DECRYPT, $this->init);
+        $str = mcrypt_decrypt(MCRYPT_BLOWFISH, $this->key, $str, MCRYPT_MODE_cfb, $this->init );
         return $str;
     }
 

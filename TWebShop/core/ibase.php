@@ -1,14 +1,23 @@
 ﻿<?php
+
+   
+   
+// Grundsätzliche Parameter   
+ini_set('ibase.timestampformat', "%d.%m.%Y %H:%M:%S");
+ini_set('ibase.dateformat', "%d.%m.%Y");
+ini_set('ibase.timeformat', "%H:%M:%S");
+                      
+
 define("IBASE_DEFAULT_USER", "SYSDBA");
 define("IBASE_DEFAULT_PASSWORD", "masterkey");
 define("IBASE_CHARSET_DATABASE", "ISO-8859-1"); // eigentlich "Ansi" oder "Windows-1252"
 define("IBASE_CHARSET_SITE", "UTF-8");
 
-define("CALLBACK_requestConnectivity", "requestConnectivity");
-
 // AF: das Datenbank Objekt kann zunächst unverbunden instanziert werden.
 //     checkConnect() erzwingt die Datenbankverbindung
 //     Ein lazy Call Back ermittelt dann spätmöglichst die Zugangsdaten
+
+define("CALLBACK_requestConnectivity", "requestConnectivity");
 
 class tibase {
 
