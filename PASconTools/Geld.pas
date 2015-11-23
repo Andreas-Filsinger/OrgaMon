@@ -119,6 +119,7 @@ const
   cForderung_Lastschrift_Anstehend = 3;
   cForderung_Lastschrift_Vorgemerkt = 4;
   cForderung_Lastschrift_Erhalten = 5;
+  cForderung_Lastschrift_Zurueck = 6;
 
   // Ursache für die Einstufung als Lastschrift
   cLastschrift_Grund_Unklar = 0;

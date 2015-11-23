@@ -19,9 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.129 (03.11.15) Andreas Filsinger
+Rev 8.129 (03.11.15-23.11.15) Andreas Filsinger
 
- Bug: Mahnung:
+ Bug: Mahnung: "wurde abgebucht" war falsch
+ Bug: Person löschen: Die Archivierung blieb bei nicht vorhandenem Dokumentverzeichnis hängen
+ Bug: zia* Fragmente im Diagnose-Verzeichnis
 
 Rev 8.128 (31.10.15) Andreas Filsinger
 

@@ -2083,7 +2083,6 @@ MyApplicationPath := ExtractFilePath(ParamStr(0));
 MyProgramPath := MyApplicationPath;
 EigeneOrgaMonDateienPfad := PersonalDataDir + cApplicationName + '\';
 
-
 // Namespace;Bad;Color;Priorität
 
 sSperre_Wert_Baustelle := TStringList.create;

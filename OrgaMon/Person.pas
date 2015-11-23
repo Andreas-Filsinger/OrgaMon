@@ -961,8 +961,10 @@ begin
     for n := 0 to pred(sIst.count) do
     begin
       // was übrig bleibt muss weg
-      e_x_sql('delete from VERTRAG where ' + ' (BELEG_R=' + inttostr(sIst[n]) + ') and ' +
-        ' (PERSON_R=' + inttostr(PERSON_R) + ')');
+      e_x_sql(
+        { } 'delete from VERTRAG where ' +
+        { } ' (BELEG_R=' + inttostr(sIst[n]) + ') and ' +
+        { } ' (PERSON_R=' + inttostr(PERSON_R) + ')');
     end;
 
     sIst.Free;
@@ -1468,7 +1470,7 @@ begin
 
     if (AUSGANGSRECHNUNG_R > 0) then
     begin
-    // imp pend: umstellen auf x_sql
+      // imp pend: umstellen auf x_sql
       qAUSGANGSRECHNUNG := DataModuleDatenbank.nQuery;
       with qAUSGANGSRECHNUNG do
       begin
