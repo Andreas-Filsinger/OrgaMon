@@ -699,6 +699,7 @@ var
   oRootDir: array [0 .. 1023] of AnsiChar;
   oArchiveName: array [0 .. 1023] of AnsiChar;
   sFilesInternal: TStringList;
+  PreError: boolean;
 begin
   // Pre Check
   if sizeof(pointer) <> sizeof(integer) then
@@ -707,6 +708,7 @@ begin
   // Init
   zMessages.clear;
   FileCount := 0;
+  PreError := false;
   StrPCopy(oArchiveName, FName);
   sFilesInternal := TStringList.Create;
 
@@ -744,9 +746,17 @@ begin
       // Recurse SubDirs
       if (Options.Values[infozip_RootPath] <> '') then
       begin
-        StrPCopy(oRootDir, Options.Values[infozip_RootPath]);
-        szRootDir := oRootDir;
-        fRecurse := 1;
+        if (FileGetAttr(Options.Values[infozip_RootPath]) and faDirectory = faDirectory) then
+        begin
+          StrPCopy(oRootDir, Options.Values[infozip_RootPath]);
+          szRootDir := oRootDir;
+          fRecurse := 1;
+        end
+        else
+        begin
+          // das genannte Verzeichnis existiert nicht
+          PreError := true;
+        end;
       end
       else
       begin
@@ -791,11 +801,18 @@ begin
   end;
 
   DeleteFile(FName);
-  result := ZpArchive(ZipControl, ZipOptions);
-  if result = 0 then
-    result := FileCount
+  if PreError then
+  begin
+    result := -1;
+  end
   else
-    result := -result;
+  begin
+    result := ZpArchive(ZipControl, ZipOptions);
+    if (result = 0) then
+      result := FileCount
+    else
+      result := -result;
+  end;
 
   dispose(ZipOptions);
   sFilesInternal.free;

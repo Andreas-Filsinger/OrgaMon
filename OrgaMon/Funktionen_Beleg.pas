@@ -3294,7 +3294,7 @@ begin
                     cForderung_Lastschrift_Vorgemerkt:
                       MoreText := MoreText + ' ' + _('(wird abgebucht)');
                     cForderung_Lastschrift_Erhalten:
-                      MoreText := MoreText + ' ' + _('(wurde abgebucht)');
+                      MoreText := MoreText + ' ' + _('(Bank versuchte den Einzug)');
                   else
                     MoreText := MoreText + ' ' + _('(Unbekannter Abbuchungsstatus)');
                   end;
@@ -8706,6 +8706,7 @@ var
   RollBackDump: TStringList;
   RollBackDomain: string;
   ArchiveOptions: TStringList;
+  ArchivePath: string;
 begin
   RollBackDump := TStringList.create;
   RollBackDomain := 'Löschung-PERSON-' + RIDasStr(PERSON_R_FROM);
@@ -8728,16 +8729,24 @@ begin
 
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
 
-      ArchiveOptions := TStringList.create;
-      // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
-      ArchiveOptions.values[infozip_RootPath] := cPersonPath(PERSON_R_FROM);
+      ArchivePath := cPersonPath(PERSON_R_FROM);
+      if DirExists(ArchivePath) then
+      begin
+        ArchiveOptions := TStringList.create;
+        // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
+        ArchiveOptions.values[infozip_RootPath] := ArchivePath;
 
-      zip(nil,
-        { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,
-        { } ArchiveOptions);
-      ArchiveOptions.free;
+        zip(nil,
+          { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,
+          { } ArchiveOptions);
+        ArchiveOptions.free;
 
-      DirDelete(cPersonPath(PERSON_R_FROM));
+        DirDelete(ArchivePath);
+      end
+      else
+      begin
+        RollBackDump.add('-- empty ''' + ArchivePath + '''');
+      end;
 
     end
     else
