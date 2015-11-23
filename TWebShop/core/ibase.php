@@ -75,6 +75,9 @@ class tibase {
     private function checkConnect() {
 
         global $errorlist;
+        if ($this->connected) 
+         return;
+
         $this->start_time();
 
         if (!$this->connected) {
@@ -155,13 +158,15 @@ class tibase {
 
         global $messagelist;
 
+
+        $this->start_time();
+        $this->checkConnect();
+
         // Log?
         if ($this->logSQL) {
             fb($sql, "SQL", FirePHP::INFO);
         }
 
-        $this->start_time();
-        $this->checkConnect();
         $sm = ibase_query($this->transaction(), $this->nativeSQL($sql));
         //trigger_error("COUNT: " . count($this->statementHandles) . " / RESULT $sm / QUERY: $sql",E_USER_NOTICE);
         array_push($this->statementHandles, $sm);
