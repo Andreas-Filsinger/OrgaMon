@@ -558,8 +558,10 @@ begin
   sDirOLAP.free;
 
   // Kürzlich gemahnte Personen ausklammern
-  sKuerzlichGemahnte := e_r_sqlm('select distinct PERSON_R from BELEG where' + ' (MAHNUNG>=''' +
-    Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''')');
+  sKuerzlichGemahnte := e_r_sqlm(
+    { } 'select distinct PERSON_R from BELEG where' +
+    { } ' (MAHNUNG>=''' + Long2date(DatePlus(DateGet, -iMahnfreierZeitraum)) + ''')'
+    { } );
   StartWait('Ausschluss "Kürzlich gemahnt" ermitteln', sKuerzlichGemahnte.count);
   for m := 0 to pred(sKuerzlichGemahnte.count) do
   begin
@@ -600,7 +602,6 @@ begin
   ProgressBar1.position := 2;
 
   // Kundenliste aufbauen ...
-
   cAUSGANGSRECHNUNG := DataModuleDatenbank.nCursor;
   with cAUSGANGSRECHNUNG do
   begin

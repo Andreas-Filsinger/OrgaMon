@@ -3164,16 +3164,26 @@ begin
 
                 ForderungStatus := b_r_ForderungStatus(AUSGANGSRECHNUNG_R);
 
+                if (FaelligSeit > cDTA_LastschriftVerzoegerung) then
+                  if (ForderungStatus = cForderung_Lastschrift_Erhalten) then
+                  begin
+                    // offensichtlich zurückgebucht da schon so lange her
+                    ForderungStatus := 0;
+                  end;
+
                 if (ForderungStatus < cForderung_Lastschrift_Anstehend) then
                 begin
                   if (FaelligSeit > 0) then
                   begin
 
-                    //
+                    // Abbuchung
                     if not(FieldByName('EREIGNIS_R').IsNull) then
-                      MoreText := MoreText + ' ' + _('(wird abgebucht)');
+                      if (FaelligSeit < cDTA_LastschriftVerzoegerung) then
+                        MoreText := MoreText + ' ' + _('(wird abgebucht)')
+                      else
+                        MoreText := MoreText + ' ' + _('(Abbuchung ohne Erfolg)');
 
-                    // auch buchen?
+                        // auch buchen?
                     if pVerbuchen then
                       if (Verbucht_BELEG_R.IndexOf(qBELEG.FieldByName('RID').AsString) = -1) and
                         Ausgesetzt_BELEG_R.Lacks(qBELEG.FieldByName('RID').AsInteger) then
