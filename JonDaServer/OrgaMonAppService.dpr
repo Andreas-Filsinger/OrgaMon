@@ -28,7 +28,8 @@ uses
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   wanfix32 in '..\PASvisTools\wanfix32.pas',
   memcache in '..\PASconTools\memcache.pas',
-  Foto in '..\PASconTools\Foto.pas';
+  Foto in '..\PASconTools\Foto.pas',
+  FotoExec in 'FotoExec.pas';
 
 {$R *.res}
 

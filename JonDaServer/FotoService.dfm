@@ -20,7 +20,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet7
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -515,6 +515,7 @@ object FormFotoService: TFormFotoService
         Anchors = [akRight, akBottom]
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
         TabOrder = 3
+        OnClick = CheckBox3Click
       end
     end
     object TabSheet6: TTabSheet
