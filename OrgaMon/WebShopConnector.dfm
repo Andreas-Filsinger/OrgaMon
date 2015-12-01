@@ -35,7 +35,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alTop
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -44,10 +44,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'XMLRPC - Server'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 439
         Top = 123
@@ -177,10 +173,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Caption = 'XMLRPC - Funktionen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label13: TLabel
         Left = 3
         Top = 80
@@ -256,10 +248,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - Medien'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 8
         Top = 69
@@ -573,10 +561,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - MySQL'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button6: TButton
         Left = 498
         Top = 192
@@ -730,10 +714,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'REST'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button11: TButton
         Left = 17
         Top = 39
@@ -763,10 +743,6 @@ object FormWebShopConnector: TFormWebShopConnector
     object TabSheet6: TTabSheet
       Caption = 'memcache'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label17: TLabel
         Left = 61
         Top = 24
