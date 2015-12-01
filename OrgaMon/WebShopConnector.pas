@@ -502,8 +502,7 @@ begin
   with XServer do
   begin
     active := true;
-    Log('XML-RPC-Server wurde gestartet (' + ComputerName + ':' +
-      inttostr(DefaultPort) + ')');
+    Log('XML-RPC-Server wurde gestartet (' + ComputerName + ':' + inttostr(DefaultPort) + ')');
   end;
 
   Timer1.enabled := true;
@@ -561,9 +560,8 @@ begin
         PatchIndex := 0;
 
       //
-      e_x_sql('update ARTIKEL set LAUFNUMMER=' +
-        inttostr(e_w_GEN('GEN_ARTIKEL_LAUFNUMMER')) + ' where RID=' +
-        inttostr(ARTIKEL_R[PatchIndex]));
+      e_x_sql('update ARTIKEL set LAUFNUMMER=' + inttostr(e_w_GEN('GEN_ARTIKEL_LAUFNUMMER')) +
+        ' where RID=' + inttostr(ARTIKEL_R[PatchIndex]));
       ARTIKEL_R.Delete(PatchIndex);
 
     until false;
@@ -728,8 +726,8 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      e_x_sql('update PERSON set USER_PWD=''' + FindANewPassword('', 5) +
-        ''' where RID=' + FieldByName('RID').AsString);
+      e_x_sql('update PERSON set USER_PWD=''' + FindANewPassword('', 5) + ''' where RID=' +
+        FieldByName('RID').AsString);
       ApiNext;
       inc(ZwangsErmittlung);
     end;
@@ -840,8 +838,7 @@ var
     cARTIKEL := DataModuleDatenbank.nCursor;
     with cARTIKEL do
     begin
-      sql.Add('select NUMERO,LAUFNUMMER from ARTIKEL where RID=' +
-        inttostr(ARTIKEL_R));
+      sql.Add('select NUMERO,LAUFNUMMER from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
       ApiFirst;
       _NUMERO := FieldByName('NUMERO').AsString;
       _LAUFNUMMER := FieldByName('LAUFNUMMER').AsString;
@@ -857,9 +854,11 @@ var
     cDOKUMENT := DataModuleDatenbank.nCursor;
     with cDOKUMENT do
     begin
-      sql.Add('select BEMERKUNG from DOKUMENT where ' + ' (ARTIKEL_R=' +
-        inttostr(ARTIKEL_R) + ') and' + ' (MEDIUM_R=1) and' +
-        ' (BEMERKUNG is not null)');
+      sql.Add(
+        { } 'select BEMERKUNG from DOKUMENT where ' +
+        { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
+        { } ' (MEDIUM_R=1) and' +
+        { } ' (BEMERKUNG is not null)');
       ApiFirst;
       repeat
         if eof then
@@ -871,7 +870,7 @@ var
     cDOKUMENT.free;
   end;
 
-// true if target war modified
+  // true if target war modified
   function EnsureEntry(s: string; sl: TStringList): boolean;
   var
     n: integer;
@@ -976,8 +975,7 @@ var
           begin
             Log(RemoteMusikFName + ' hochladen');
 
-            if SolidPut(IdFTP1, LocalMusikFName, pShopMusicPath,
-              RemoteMusikFName) then
+            if SolidPut(IdFTP1, LocalMusikFName, pShopMusicPath, RemoteMusikFName) then
             begin
               SummeFTPFehler := 0;
               inc(SummeUploadFSize, LocalFSize);
@@ -1071,8 +1069,10 @@ begin
   Log(inttostr(MUSIC.count) + ' Artikel mit MP3 Erlaubnis');
 
   // Wer darf
-  BEMERKUNG := e_r_sqlm('select artikel_r from dokument where ' +
-    '(medium_R=1) and ' + '(bemerkung is not null)');
+  BEMERKUNG := e_r_sqlm(
+    { } 'select artikel_r from dokument where ' +
+    { } '(medium_R=1) and ' +
+    { } '(bemerkung is not null)');
   Log(inttostr(BEMERKUNG.count) + ' Artikel mit externen Links!');
 
   for w := 0 to pred(ARTIKEL.count) do
@@ -1101,8 +1101,7 @@ begin
           if (n = 0) then
             RemoteMusikFName.Add(_LAUFNUMMER + '.mp3')
           else
-            RemoteMusikFName.Add(_LAUFNUMMER + chr(pred(ord('A') + n))
-              + '.mp3');
+            RemoteMusikFName.Add(_LAUFNUMMER + chr(pred(ord('A') + n)) + '.mp3');
         end;
 
         //
@@ -1131,8 +1130,7 @@ begin
             if not(assigned(ExterneLinks)) then
               ExterneLinks := TStringList.Create;
 
-            ExterneLinksModyfied := EnsureEntry(e_r_ArtikelLink(ARTIKEL_R),
-              ExterneLinks);
+            ExterneLinksModyfied := EnsureEntry(e_r_ArtikelLink(ARTIKEL_R), ExterneLinks);
           end;
 
         end
@@ -1176,15 +1174,15 @@ begin
           begin
             // die Liste ist nun leer, ->kann gelöscht werden!
             Log(inttostr(ARTIKEL_R) + ' free Links!');
-            e_x_sql('delete from DOKUMENT where' + ' (ARTIKEL_R=' +
-              inttostr(ARTIKEL_R) + ') and' + ' (MEDIUM_R=1)');
+            e_x_sql('delete from DOKUMENT where' + ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
+              ' (MEDIUM_R=1)');
           end
           else
           begin
 
             // Link abändern!
-            DOKUMENT_R := e_r_sql('select RID from DOKUMENT where ' +
-              ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' + ' (MEDIUM_R=1)');
+            DOKUMENT_R := e_r_sql('select RID from DOKUMENT where ' + ' (ARTIKEL_R=' +
+              inttostr(ARTIKEL_R) + ') and' + ' (MEDIUM_R=1)');
 
             qDOKUMENT := DataModuleDatenbank.nQuery;
             with qDOKUMENT do
@@ -1208,8 +1206,8 @@ begin
 
                 // Update!
                 Log(inttostr(ARTIKEL_R) + ' update Links!');
-                sql.Add('select BEMERKUNG from DOKUMENT where ' + ' (RID=' +
-                  inttostr(DOKUMENT_R) + ') ' + ' for update');
+                sql.Add('select BEMERKUNG from DOKUMENT where ' + ' (RID=' + inttostr(DOKUMENT_R) +
+                  ') ' + ' for update');
                 open;
                 first;
                 if not(eof) then
@@ -1440,12 +1438,10 @@ var
     begin
       ParamByName('CROSSREF').AsINteger := ARTIKEL_R;
       ApiFirst;
-      Result := '(' + asNumber(FieldByName('RID')) + ',' +
-        asNumber(FieldByName('LAUFNUMMER')) + ',' +
-        AsString(FieldByName('TITEL')) + ',' +
+      Result := '(' + asNumber(FieldByName('RID')) + ',' + asNumber(FieldByName('LAUFNUMMER')) + ','
+        + AsString(FieldByName('TITEL')) + ',' +
         AsString(cutblank(FieldByName('SCHWER_GRUPPE').AsString + ' ' +
-        FieldByName('SCHWER_DETAILS').AsString)) + ',' +
-        AsString(FieldByName('DAUER')) + ',' +
+        FieldByName('SCHWER_DETAILS').AsString)) + ',' + AsString(FieldByName('DAUER')) + ',' +
         AsString(e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsINteger)) + ',' +
         AsString(e_r_MusikerName(FieldByName('KOMPONIST_R').AsINteger)) + ',' +
         AsString(e_r_MusikerName(FieldByName('ARRANGEUR_R').AsINteger)) + ',' +
@@ -1483,10 +1479,8 @@ begin
     // den ARTIKEL Zugriff mal sicherstellen!
     with ARTIKEL do
     begin
-      sql.Add('select RID, LAUFNUMMER, TITEL, ' +
-        ' SCHWER_GRUPPE, SCHWER_DETAILS, DAUER, ' +
-        ' VERLAG_R, KOMPONIST_R, ARRANGEUR_R ' +
-        ' from ARTIKEL where RID=:CROSSREF');
+      sql.Add('select RID, LAUFNUMMER, TITEL, ' + ' SCHWER_GRUPPE, SCHWER_DETAILS, DAUER, ' +
+        ' VERLAG_R, KOMPONIST_R, ARRANGEUR_R ' + ' from ARTIKEL where RID=:CROSSREF');
       open;
     end;
 
@@ -1501,8 +1495,8 @@ begin
 
       //
       ARTIKEL_R := FormOLAP.OLAP('Artikel.des.WebShop');
-      AppendStringsToFile(inttostr(ARTIKEL_R.count),
-        format(DiagnosePath + cMySQLdumpFName, ['Count']));
+      AppendStringsToFile(inttostr(ARTIKEL_R.count), format(DiagnosePath + cMySQLdumpFName,
+        ['Count']));
 
       StartIndex := 0;
       BlockNumber := 0;
@@ -1526,8 +1520,7 @@ begin
 
         Add(ExportOne(ARTIKEL_R[pred(EndeIndexExclusiv)]) + ';');
 
-        SaveToFile(format(DiagnosePath + cMySQLdumpFName,
-          [intToStrN(BlockNumber, 4)]));
+        SaveToFile(format(DiagnosePath + cMySQLdumpFName, [intToStrN(BlockNumber, 4)]));
 
         if (EndeIndexExclusiv = ARTIKEL_R.count) then
           break;
@@ -1600,16 +1593,15 @@ begin
         end;
 
         // Remote Tabelle "ARTIKEL" leeren ...
-        execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' +
-          cMySQLclearFName + '&pwd=' + FindANewPassword('', 15);
+        execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' + cMySQLclearFName +
+          '&pwd=' + FindANewPassword('', 15);
         sResult := DataModuleREST.REST(execRequest);
         cResult := StrToIntDef(sResult.values['COUNT'], -1);
         sResult.free;
 
         if (cResult <> 0) then
         begin
-          Log(cERRORText +
-            ' dump-Import: Artikelanzahl sollte nach Löschung=0 sein');
+          Log(cERRORText + ' dump-Import: Artikelanzahl sollte nach Löschung=0 sein');
           break;
         end;
 
@@ -1618,8 +1610,8 @@ begin
         sDir.sort;
         for n := 0 to (sDir.count - 2) do
         begin
-          execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' +
-            sDir[n] + '&pwd=' + FindANewPassword('', 15);
+          execRequest := pSiteHost + 'db/import_db.php5' + '?import_file=' + sDir[n] + '&pwd=' +
+            FindANewPassword('', 15);
           sResult := DataModuleREST.REST(execRequest);
           cResult := StrToIntDef(sResult.values['COUNT'], 0);
           sResult.free;
@@ -1637,8 +1629,7 @@ begin
         end;
 
         // Datenbank durch umschalten aktivieren ...
-        execRequest := pSiteHost + 'db/toggle_db.php5' + '?pwd=' +
-          FindANewPassword('', 15);
+        execRequest := pSiteHost + 'db/toggle_db.php5' + '?pwd=' + FindANewPassword('', 15);
         sResult := DataModuleREST.REST(execRequest);
         nResult := sResult.values['DB'];
         sResult.free;
