@@ -154,4 +154,12 @@ define("SHOP_ROOT",        "C:\TWebShop");
 define("SHOP_SITEMAP_DIR", "sitemap/");
 define("SHOP_PARTS_DIR",   "Parts/");
 
+//
+// definiert eine externe URL mit einem ./music
+// Verzeichnis und MP3 Dateien in der Form
+// ~LAUFNUMMER~.mp3, ~LAUFNUMMER~A.mp3, usw.
+//
+// default <ungesetzt>
+#define("SHOP_WIND", "http://www.myusika.ru/");
+
 ?>

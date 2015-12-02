@@ -75,38 +75,53 @@ class tibase {
     private function checkConnect() {
 
         global $errorlist;
-        if ($this->connected) 
-         return;
 
-        $this->start_time();
 
         if (!$this->connected) {
-            // Parameter der Konnektivität ermitteln, -> Callback
-            if ($this->ib_name == NULL) {
 
-                if ($this->requestImplementer != NULL) {
-                    // Rufe das Objekt, das sich als Geheimnisträger registriert hat
+          $this->start_time();
 
-                    $this->requestImplementer->{CALLBACK_requestConnectivity}();
+          // Parameter der Konnektivität ermitteln, -> Callback
+          if ($this->ib_name == NULL) {
 
-                    //call_user_func(array($this->requestImplementer, CALLBACK_requestConnectivity));
-                }
+            if ($this->requestImplementer != NULL) {
+            
+              // Rufe das Objekt, das sich als Geheimnisträger registriert hat
+              if ($this->logSQL) {
+                fb("callback Connection Informant", "SQL", FirePHP::INFO);
+              }
+              
+              $this->requestImplementer->{CALLBACK_requestConnectivity}();
             }
-        }
+          }  
 
-        if ($this->ib_name == NULL) {
+          if ($this->ib_name == NULL) {
             $errorlist->add("ibase: Weiss nicht, auf wen ich konnektieren soll");
-        }
+          }
 
-        $this->connectionHandle = @ibase_connect($this->ib_name, $this->ib_user, $this->ib_passwd);
-        if ($this->connectionHandle == "") {
+
+          if ($this->logSQL) {
+              fb("connect(". $this->ib_name . ")", "SQL", FirePHP::INFO);
+          }
+
+          $this->connectionHandle = @ibase_pconnect($this->ib_name, $this->ib_user, $this->ib_passwd);
+
+
+          if ($this->connectionHandle == "") {
+            if ($this->logSQL) {
+              fb("connect bad result = ". $this->connectionHandle, "SQL", FirePHP::INFO);
+            }
             $this->set_error(0);
             $this->connected = false;
-        } else {
+          } else {
+            if ($this->logSQL) {
+              fb("connect good result = ". $this->connectionHandle, "SQL", FirePHP::INFO);
+            }
             $this->connected = true;
-        }
+          }
 
-        $this->stop_time();
+          $this->stop_time();
+        }  
     }
 
     static public function isConnected() {
