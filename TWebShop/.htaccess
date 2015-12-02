@@ -1,0 +1,5 @@
+RewriteEngine on
+
+RewriteRule artikel/(.*)\.(.*) http://www.hebu-music.com/hebu-music/shop.php?site=article&id=$2 [QSA,B,NE,L]
+RewriteRule musiker/(.*)\.(.*) http://www.hebu-music.com/hebu-music/shop.php?site=search&action=search_musician&id=$2 [QSA,B,NE,L]
+RewriteRule verlage/(.*)\.(.*) http://www.hebu-music.com/hebu-music/shop.php?site=search&action=search_publisher&id=$2 [QSA,B,NE,L]
