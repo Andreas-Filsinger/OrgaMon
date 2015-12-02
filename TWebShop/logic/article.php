@@ -40,8 +40,6 @@ class twebshop_article extends tvisual {
     public function __construct($rid, $version_r = 0, $person_r = 0, $quantity = 1, $detail = "", $cart_r = 0) {
 
 
-////TS 25-11-2011: ereg ist deprecated 
-        //$this->rid = (ereg("^[0-9]{1,8}$",strval($rid))) ? intval($rid) : twebshop_article::decryptRID($rid);
         $this->rid = (preg_match("/^[0-9]{1,8}$/", strval($rid))) ? intval($rid) : twebshop_article::decryptRID($rid);
         //echo $this->rid;
         $this->version_r = $version_r;
@@ -159,7 +157,7 @@ class twebshop_article extends tvisual {
 
         global $ibase;
 
-        /* === Lieder aus Datenbank laden === */
+        /* === Links aus Datenbank laden === */
         if (empty($this->sounds)) {
         
             $result = $ibase->query("SELECT BEMERKUNG FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_SOUND . " AND ARTIKEL_R={$this->rid})");
@@ -169,12 +167,24 @@ class twebshop_article extends tvisual {
 
                 foreach ($Items as $Item) {
                 
-                    if ($Item == "") continue;
+                    if ($Item == "") 
+                      continue;
 
-                    /* === Links auf Windbandmusic überprüfen ### Sonderlösung ### === */
-                    if (strtolower(substr($Item, 0, 28)) == "http://www.windbandmusic.com") {
-                        $Music = $this->getWindbandmusic($this->LAUFNUMMER);
-                        $this->sounds = array_merge($this->sounds, $Music);
+                    /* === Link auf Windbandmusic überprüfen ### Sonderlösung ### === */
+                    if (defined("SHOP_WIND"))
+                    if (strtolower(substr($Item, 0, strlen(SHOP_WIND))) == SHOP_WIND) {
+
+                        $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . ".mp3"; 
+                        
+                        parse_str(parse_url($Item, PHP_URL_QUERY),$q);
+                     
+                        if (array_key_exists("q",$q)) {
+                          $q = intval($q["q"]);
+                          for ($i = 2; $i <= $q; $i++) {
+                            $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . chr(63+$i) .  ".mp3"; 
+                          }
+                        }   
+                         
                     } else {
                         $this->sounds[] = $Item;
                     }
@@ -240,40 +250,6 @@ class twebshop_article extends tvisual {
         $Code .= "</script>";
 
         return $Code;
-
-    }
-    /* <-- */
-
-    /* --> 27.06.2014 michaelhacksoftware : MP3s von Windbandmusic ermitteln ### Sonderlösung ### */
-    private function getWindbandmusic($Laufnummer) {
-
-        $Result = array();
-
-        /* === Mp3 Dateien von Windbandmusic auslesen === */
-        $Input  = "";
-        $Socket = fsockopen("www.windbandmusic.com", 80, $errno, $errstr, 5);
-
-        if ($Socket) {
-
-            fputs($Socket, "GET /index.php5?action=get_media&id=" . $Laufnummer . " HTTP/1.0\r\nHost: www.windbandmusic.com\r\n\r\n");
-
-            while (!feof($Socket)) {
-                $Input .= fgets($Socket, 256);
-            }
-
-            fclose($Socket);
-
-        }
-
-        $Input = substr($Input, strpos($Input, "\r\n\r\n") + 4);
-        $Lines = explode('\n', $Input);
-
-        foreach ($Lines as $Line) {
-            if ($Line == "") continue;
-            $Result[] = "http://www.windbandmusic.com/music/" . $Line; // Link zur Datei zusammensetzen
-        }
-
-        return $Result;
 
     }
     /* <-- */
