@@ -802,8 +802,8 @@ var
   pShopMusicPath: string;
 
   _NUMERO: string;
-
   _LAUFNUMMER: string;
+  _TRACKS: string;
   LocalMusikFName: TStringList;
   RemoteMusikFName: TStringList;
 
@@ -870,8 +870,8 @@ var
     cDOKUMENT.free;
   end;
 
-  // true if target war modified
-  function EnsureEntry(s: string; sl: TStringList): boolean;
+// true if target "sl" was modified
+  function EnsureEntry(id,tracks: string; sl: TStringList): boolean;
   var
     n: integer;
     TheNewLink: string;
@@ -888,7 +888,8 @@ var
 
     // remove old entries
     TheNewLink := pSiteHost + pSiteAction;
-    ersetze('~id~', s, TheNewLink);
+    ersetze('~id~', id, TheNewLink);
+    ersetze('~tracks~', tracks, TheNewLink);
     IsPerfect := false;
     for n := pred(sl.count) downto 0 do
       if (pos(pSiteHost, sl[n]) = 1) then
@@ -1070,9 +1071,9 @@ begin
 
   // Wer darf
   BEMERKUNG := e_r_sqlm(
-    { } 'select artikel_r from dokument where ' +
-    { } '(medium_R=1) and ' +
-    { } '(bemerkung is not null)');
+    { } 'select ARTIKEL_R from DOKUMENT where ' +
+    { } '(MEDIUM_R=1) and ' +
+    { } '(BEMERKUNG is not null)');
   Log(inttostr(BEMERKUNG.count) + ' Artikel mit externen Links!');
 
   for w := 0 to pred(ARTIKEL.count) do
@@ -1103,6 +1104,7 @@ begin
           else
             RemoteMusikFName.Add(_LAUFNUMMER + chr(pred(ord('A') + n)) + '.mp3');
         end;
+        _TRACKS := IntToStr(RemoteMusikFname.Count);
 
         //
         if member(ARTIKEL_R, MUSIC) then
@@ -1130,7 +1132,7 @@ begin
             if not(assigned(ExterneLinks)) then
               ExterneLinks := TStringList.Create;
 
-            ExterneLinksModyfied := EnsureEntry(e_r_ArtikelLink(ARTIKEL_R), ExterneLinks);
+            ExterneLinksModyfied := EnsureEntry(e_r_ArtikelLink(ARTIKEL_R),_TRACKS, ExterneLinks);
           end;
 
         end
@@ -1174,15 +1176,19 @@ begin
           begin
             // die Liste ist nun leer, ->kann gelöscht werden!
             Log(inttostr(ARTIKEL_R) + ' free Links!');
-            e_x_sql('delete from DOKUMENT where' + ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
-              ' (MEDIUM_R=1)');
+            e_x_sql(
+              { } 'delete from DOKUMENT where' +
+              { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
+              { } ' (MEDIUM_R=1)');
           end
           else
           begin
 
             // Link abändern!
-            DOKUMENT_R := e_r_sql('select RID from DOKUMENT where ' + ' (ARTIKEL_R=' +
-              inttostr(ARTIKEL_R) + ') and' + ' (MEDIUM_R=1)');
+            DOKUMENT_R := e_r_sql(
+              { } 'select RID from DOKUMENT where ' +
+              { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and' +
+              { } ' (MEDIUM_R=1)');
 
             qDOKUMENT := DataModuleDatenbank.nQuery;
             with qDOKUMENT do
