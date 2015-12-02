@@ -102,8 +102,7 @@ begin
     iJonDa_FTPHost := ReadString(UserName, 'ftphost', 'gateway');
     iJonDa_FTPUserName := ReadString(UserName, 'ftpuser', '');
     iJonDa_FTPPassword := ReadString(UserName, 'ftppwd', '');
-    JonDa.start_NoTimeCheck := ReadString(UserName, 'NoTimeCheck', '')
-      = cIni_Activate;
+    JonDa.start_NoTimeCheck := ReadString(UserName, 'NoTimeCheck', '') = cIni_Activate;
     JonDa.Option_Console := true;
   end;
   MyIni.free;
@@ -247,16 +246,21 @@ begin
 
   try
     //
-    writeln(#160#160#160#160#160#160#160'___                  __  __');
-    writeln(#160#160'___ / _ \ _ __ __ _  __ _|  \/  | ___  _ __');
-    writeln(#160'/ __| | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \');
-    writeln('| (__| |_| | | | (_| | (_| | |  | | (_) | | | |');
-    writeln(#160'\___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_| ' + Modus +
-      '-Server@' + Betriebssystem);
-    writeln(#160#160#160#160#160#160#160#160#160#160#160#160#160#160#160#160'|___/');
-    writeln;
-    write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath
-      + ' ... ');
+    if not(IsParam('-dl')) then
+    begin
+
+      writeln(Modus + '-Server@' + Betriebssystem);
+      writeln('=======================================================');
+      writeln('|         ___                  __  __                 |');
+      writeln('|    ___ / _ \ _ __ __ _  __ _|  \/  | ___  _ __      |');
+      writeln('|   / __| | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \     |');
+      writeln('|  | (__| |_| | | | (_| | (_| | |  | | (_) | | | |    |');
+      writeln('|   \___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|    |');
+      writeln('|                  |___/                              |');
+      writeln('=======================================================');
+      writeln;
+    end;
+    write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath + ' ... ');
 
     writeln(cOKText);
 
@@ -265,8 +269,7 @@ begin
 
       _iDataBaseName := iDataBaseName;
       if (iDataBaseHost <> '') then
-        i_c_DataBaseFName := copy(_iDataBaseName,
-          succ(pos(':', _iDataBaseName)), MaxInt)
+        i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
       else
         i_c_DataBaseFName := iDataBaseName;
 
@@ -300,8 +303,8 @@ begin
         writeln('ERROR: DataBaseName= ist leer');
         halt;
       end;
-      write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' +
-        string(iDataBaseName) + ' ... ');
+      write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName)
+        + ' ... ');
       Connect;
       if not(Connected) then
       begin
@@ -316,8 +319,7 @@ begin
     sBearbeiter := e_r_Bearbeiter;
     if (sBearbeiter < cRID_FirstValid) then
     begin
-      writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName +
-        '" ist noch nicht angelegt!');
+      writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName + '" ist noch nicht angelegt!');
       halt(1);
     end;
     sBearbeiterKurz :=
