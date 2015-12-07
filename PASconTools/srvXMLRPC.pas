@@ -69,8 +69,8 @@ const
 
 type
   TFeedbackHelper = class
-    class function Progress(Position: Integer; Name: string = '';
-      Maximum: Integer = 0): TStringList;
+    class function Progress(Position: Integer; Name: string = ''; Maximum: Integer = 0)
+      : TStringList;
     class function ShowMessage(Msg: string): TStringList;
   end;
 
@@ -182,18 +182,34 @@ const
   cXML_CR = #13#10;
   cXML_Head = '<?xml version="1.0"?>' + cXML_CR;
 
-  cXML_Response = cXML_Head + '<methodResponse>' + cXML_CR + ' <params>' +
-    cXML_CR + '  <param>' + cXML_CR + '   ' + cXML_Tag_Value + cXML_CR +
-    '  </param>' + cXML_CR + ' </params>' + cXML_CR + '</methodResponse>';
+  cXML_Response =
+  { } cXML_Head +
+  { } '<methodResponse>' + cXML_CR +
+  { } ' <params>' + cXML_CR +
+  { } '  <param>' + cXML_CR +
+  { } '   ' + cXML_Tag_Value + cXML_CR +
+  { } '  </param>' + cXML_CR +
+  { } ' </params>' + cXML_CR +
+  { } '</methodResponse>';
 
-  cXML_Error = cXML_Head + '<methodResponse>' + cXML_CR + ' <fault>' + cXML_CR +
-    '  <value>' + cXML_CR + '   <struct>' + cXML_CR + '    <member>' + cXML_CR +
-    '      <name>faultCode</name>' + cXML_CR + '      <value><int>' +
-    cXML_Tag_ErrorCode + '</int></value>' + cXML_CR + '    </member>' + cXML_CR
-    + '    <member>' + cXML_CR + '     <name>faultString</name>' + cXML_CR +
-    '     <value><string>' + cXML_Tag_ErrorText + '</string></value>' + cXML_CR
-    + '    </member>' + cXML_CR + '   </struct>' + cXML_CR + '  </value>' +
-    cXML_CR + ' </fault>' + cXML_CR + '</methodResponse>';
+  cXML_Error =
+  { } cXML_Head +
+  { } '<methodResponse>' + cXML_CR +
+  { } ' <fault>' + cXML_CR +
+  { } '  <value>' + cXML_CR +
+  { } '   <struct>' + cXML_CR +
+  { } '    <member>' + cXML_CR +
+  { } '      <name>faultCode</name>' + cXML_CR +
+  { } '      <value><int>' + cXML_Tag_ErrorCode + '</int></value>' + cXML_CR +
+  { } '    </member>' + cXML_CR +
+  { } '    <member>' + cXML_CR +
+  { } '     <name>faultString</name>' + cXML_CR +
+  { } '     <value><string>' + cXML_Tag_ErrorText + '</string></value>' + cXML_CR +
+  { } '    </member>' + cXML_CR +
+  { } '   </struct>' + cXML_CR +
+  { } '  </value>' + cXML_CR +
+  { } ' </fault>' + cXML_CR +
+  { } '</methodResponse>';
 
   // mögliche Typen
   cXML_SimpleType_String = $00000000;
@@ -344,11 +360,11 @@ var
   MethodName: string;
 begin
   // [0] ist immer [ Namespace "." ] MethodName
-  Parameter.InsertObject(0,Name,oMethodName);
+  Parameter.InsertObject(0, Name, oMethodName);
 
   // Prefix-Namespace abtrennen
   n := revpos(cXML_NameSpaceDelimiter, Name);
-  if n > 0 then
+  if (n > 0) then
     MethodName := copy(Name, succ(n), MaxInt)
   else
     MethodName := Name;
@@ -695,8 +711,7 @@ var
                   AutoMataState := 5;
                 end;
 
-                sMESSAGE.Values[fullName + '.' + id] :=
-                  FormatValue(ActParserValue);
+                sMESSAGE.Values[fullName + '.' + id] := FormatValue(ActParserValue);
 
               end;
           end;
@@ -728,8 +743,8 @@ begin
   result := sRESULT;
 end;
 
-procedure TXMLRPC_Server.XMLRPC_get(AContext: TIdContext;
-  ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+procedure TXMLRPC_Server.XMLRPC_get(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo;
+  AResponseInfo: TIdHTTPResponseInfo);
 var
   MethodName: string;
   Name: string;
@@ -783,8 +798,7 @@ begin
     n := inParam.IndexOfObject(oMethodName);
     if (n = -1) then
     begin
-      AResponseInfo.ContentText :=
-        bad_xml(-100, 'Kein Methodenname im XML angegeben');
+      AResponseInfo.ContentText := bad_xml(-100, 'Kein Methodenname im XML angegeben');
       break;
     end;
     MethodName := inParam[n];
@@ -800,8 +814,7 @@ begin
     n := sMethodNames.IndexOf(Name);
     if (n = -1) then
     begin
-      AResponseInfo.ContentText :=
-        bad_xml(-101, 'Methode "' + Name + '" (' + MethodName +
+      AResponseInfo.ContentText := bad_xml(-101, 'Methode "' + Name + '" (' + MethodName +
         ') ist unbekannt');
       break;
     end;
@@ -843,7 +856,7 @@ begin
         WasError := true;
 
         // Log ERROR
-        if DiagnosePath <> '' then
+        if (DiagnosePath <> '') then
         begin
           ErrorMsg := TStringList.Create;
           ErrorMsg.Add(cERRORText + ' XML-RPC: { Exception ');
@@ -855,8 +868,7 @@ begin
         end;
 
         // Send ERROR to Client
-        AResponseInfo.ContentText :=
-          bad_xml(-102, Name + '(' + HugeSingleLine(inParam, ',') +
+        AResponseInfo.ContentText := bad_xml(-102, Name + '(' + HugeSingleLine(inParam, ',') +
           ') Exception: ' + e.message);
       end;
     end;
@@ -906,8 +918,8 @@ end;
 
 { TFeedbackHelper }
 
-class function TFeedbackHelper.Progress(Position: Integer; Name: string;
-  Maximum: Integer): TStringList;
+class function TFeedbackHelper.Progress(Position: Integer; Name: string; Maximum: Integer)
+  : TStringList;
 begin
   result := TStringList.Create;
   with result do
