@@ -3183,7 +3183,7 @@ begin
                       else
                         MoreText := MoreText + ' ' + _('(Abbuchung ohne Erfolg)');
 
-                        // auch buchen?
+                    // auch buchen?
                     if pVerbuchen then
                       if (Verbucht_BELEG_R.IndexOf(qBELEG.FieldByName('RID').AsString) = -1) and
                         Ausgesetzt_BELEG_R.Lacks(qBELEG.FieldByName('RID').AsInteger) then
@@ -6205,10 +6205,12 @@ begin
 
           // Letzter Abrechnungstag verbuchen!
           LETZTER_ABRECHNUNGSTAG := DatePlus(DIESER_ABRECHNUNGSTAG, -1);
-          e_x_sql('update VERTRAG set GEBUCHT_BIS=''' + long2date(LETZTER_ABRECHNUNGSTAG) +
-            ''' where ' + ' (RID=' + inttostr(VERTRAG_R) + ') and' +
-            ' ((GEBUCHT_BIS is null) or (GEBUCHT_BIS<''' + long2date(LETZTER_ABRECHNUNGSTAG)
-            + '''))');
+          e_x_sql(
+            { } 'update VERTRAG set GEBUCHT_BIS=''' + long2date(LETZTER_ABRECHNUNGSTAG) + ''' ' +
+            { } 'where' +
+            { } ' (RID=' + inttostr(VERTRAG_R) + ') and' +
+            { } ' ((GEBUCHT_BIS is null) or' +
+            { } '  (GEBUCHT_BIS<''' + long2date(LETZTER_ABRECHNUNGSTAG) + '''))');
           result.add('GEBUCHT_BIS=' + long2date(LETZTER_ABRECHNUNGSTAG));
 
         end;
@@ -6365,7 +6367,7 @@ function e_w_VertragBuchen: TStringList; overload;
 var
   lVertraege: TgpIntegerList;
 begin
-  lVertraege := e_r_sqlm('select RID from VERTRAG');
+  lVertraege := e_r_sqlm('select RID from VERTRAG order by PERSON_R, RID');
   result := e_w_VertragBuchen(lVertraege);
   lVertraege.free;
 end;
@@ -9223,7 +9225,7 @@ var
   InternInfosUpdateZwang: boolean;
   RECHNUNGSANSCHRIFT_R, LIEFERANSCHRIFT_R: integer;
   PostenTextZiel: TStringList;
-  ARTIKEL: string;
+  ARTIKEL, INFO: string;
   BTYP: integer;
 begin
   RoteListe := TStringList.create;
@@ -9243,6 +9245,7 @@ begin
   RoteListe.add('MENGE_GELIEFERT');
   RoteListe.add('MENGE_AGENT');
   RoteListe.add('ZUSAGE');
+  RoteListe.add('INFO');
 
   // Ersetzungs-Vorgang
   with cQUELL_BELEG do
@@ -9323,7 +9326,9 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      PostenTextZiel.add(FieldByName('ARTIKEL').AsString);
+      PostenTextZiel.add(
+        { VertragsID } FieldByName('INFO').AsString +
+        { Sichtbarer Text } FieldByName('ARTIKEL').AsString);
       ApiNext;
     end;
   end;
@@ -9352,6 +9357,9 @@ begin
         FieldByName('RID').AsInteger := 0;
         FieldByName('BELEG_R').AsInteger := BELEG_R_TO;
         ARTIKEL := '';
+        INFO :=
+          { } InternInfosQuelle.values['VertragsReferenz'] + ' ' +
+          { } InternInfosQuelle.values['Objekt'];
         for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
         begin
           DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
@@ -9369,16 +9377,25 @@ begin
             end;
           end;
         end;
+
         if not(FieldByName('PREIS').IsNull) then
+        begin
           FieldByName('AUSFUEHRUNG').AsDateTime :=
             long2datetime(date2Long(InternInfosQuelle.values['von']));
+          FieldByName('ZUSAGE').AsDateTime :=
+            long2datetime(date2Long(InternInfosQuelle.values['bis']));
+        end;
+
+        // Info wird immer geschrieben
+        FieldByName('INFO').AsString := INFO;
 
         repeat
+          // Text-Dubletten Erkennung
+          // nur im selben Abrechnungs-Kontext wirksam
           if (ARTIKEL <> '') then
             if isZeroMoney(FieldByName('PREIS').AsFloat) then
-              if PostenTextZiel.IndexOf(ARTIKEL) <> -1 then
+              if PostenTextZiel.IndexOf(INFO+ARTIKEL) <> -1 then
               begin
-                // Text-Dublette erkannt -> cancel
                 cancel;
                 break;
               end;

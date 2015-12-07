@@ -114,8 +114,7 @@ type
     procedure IB_Query2AfterScroll(IB_Dataset: TIB_Dataset);
     procedure IB_Query3AfterScroll(IB_Dataset: TIB_Dataset);
     procedure FormCreate(Sender: TObject);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
@@ -139,8 +138,8 @@ type
     function VertragLogFName: string;
   public
     { Public-Deklarationen }
-    procedure setContext(VERTRAG_R: integer; PERSON_R: integer = 0;
-      BELEG_R: integer = 0; BAUSTELLE_R: integer = 0);
+    procedure setContext(VERTRAG_R: integer; PERSON_R: integer = 0; BELEG_R: integer = 0;
+      BAUSTELLE_R: integer = 0);
     procedure createVertragFromContext;
     procedure createVertragsnehmerFromContext;
   end;
@@ -173,15 +172,13 @@ begin
   begin
     if pos('BELEG_R=', LogFileDerVertragsAnwendung[n]) = 1 then
     begin
-      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1),
-        cRID_Null);
+      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1), cRID_Null);
       FormKontext.cnBELEG.addContext(RID);
       continue;
     end;
     if pos('PERSON_R=', LogFileDerVertragsAnwendung[n]) = 1 then
     begin
-      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1),
-        cRID_Null);
+      RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1), cRID_Null);
       FormKontext.cnPERSON.addContext(RID);
       continue;
     end;
@@ -255,8 +252,9 @@ begin
 
   BELEG_R := IB_Query2.FieldByName('BELEG_R').AsInteger;
   VERTRAG_R := e_r_sqlm(
-    { } 'select RID from VERTRAG where BELEG_R=' +
-    { } inttostr(BELEG_R));
+    { } 'select RID from VERTRAG where' +
+    { } ' (BELEG_R=' + inttostr(BELEG_R) + ') ' +
+    { } 'order by PERSON_R, RID');
 
   if (VERTRAG_R.Count > 0) then
   begin
@@ -300,8 +298,7 @@ procedure TFormVertrag.RefreshVertragsnehmer;
 begin
   IB_Query3.refresh;
   Label16.caption := inttostr(IB_Query3.Recordcount);
-  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID')
-    .AsInteger;
+  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID').AsInteger;
   IB_Query1.refresh;
 end;
 
@@ -321,14 +318,12 @@ begin
     sSettings := TStringList.create;
     sSettings.add('Erzwingen=' + cIni_Activate);
     sSettings.add('Per=' + Edit1.Text);
-    sDiagnose := e_w_VertragBuchen(IB_Query1.FieldByName('RID').AsInteger,
-      sSettings);
+    sDiagnose := e_w_VertragBuchen(IB_Query1.FieldByName('RID').AsInteger, sSettings);
     sSettings.free;
   end
   else
   begin
-    sDiagnose := e_w_VertragBuchen(IB_Query1.FieldByName('RID')
-      .AsInteger, true);
+    sDiagnose := e_w_VertragBuchen(IB_Query1.FieldByName('RID').AsInteger, true);
   end;
   AddKontext(sDiagnose);
   if (sDiagnose.Count > 0) then
@@ -385,10 +380,10 @@ begin
 
       VERTRAG_R := e_w_gen('GEN_VERTRAG');
 
-      e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' +
-        'values (' + inttostr(VERTRAG_R) + ', ' + inttostr(PERSON_R) + ', ' +
-        IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' +
-        IB_Query1.FieldByName('BELEG_R').AsString + ')');
+      e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' + 'values (' +
+        inttostr(VERTRAG_R) + ', ' + inttostr(PERSON_R) + ', ' +
+        IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' + IB_Query1.FieldByName('BELEG_R')
+        .AsString + ')');
 
       with IB_Query3 do
       begin
@@ -417,25 +412,21 @@ begin
     IB_Query1.FieldByName('RID').AsInteger := cRID_AutoInc;
 end;
 
-procedure TFormVertrag.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormVertrag.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := doit('Vertragskündigung mit sofortiger Wirkung');
 end;
 
 procedure TFormVertrag.IB_Query2AfterScroll(IB_Dataset: TIB_Dataset);
 begin
-  IB_Query3.ParamByName('CROSSREF').AsInteger :=
-    IB_Query2.FieldByName('BELEG_R').AsInteger;
+  IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query2.FieldByName('BELEG_R').AsInteger;
   Label16.caption := inttostr(IB_Query3.Recordcount);
-  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID')
-    .AsInteger;
+  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID').AsInteger;
 end;
 
 procedure TFormVertrag.IB_Query3AfterScroll(IB_Dataset: TIB_Dataset);
 begin
-  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID')
-    .AsInteger;
+  IB_Query1.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('RID').AsInteger;
 end;
 
 procedure TFormVertrag.Image2Click(Sender: TObject);
@@ -479,8 +470,7 @@ begin
   if (PERSON_R > 0) then
   begin
     // Ansicht über die Person
-    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from VERTRAG where PERSON_R=' +
-      inttostr(PERSON_R));
+    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from VERTRAG where PERSON_R=' + inttostr(PERSON_R));
     if (BAUSTELLE_R < cRID_FirstValid) then
     begin
       beep
