@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.131; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.132; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -296,12 +296,13 @@ const
   eT_SaldoAbruf = 19; // Es wurde ein Saldo abgerufen (Online-Banking)
   eT_BenutzerTextUpload = 20; // Blasmusikartikel werden hochgeladen
   eT_WebShopBestellung = 21;
-  // Es wurden Probleme bei der Webshopbestelltung bemerkt
+  // Es wurden Probleme bei der Webshopbestellung bemerkt
   eT_BelegStorno = 22;
   eT_Vormerken = 23;
   eT_FTP = 24; // Request für einen FTP Upload
   eT_KassenBeleg = 25; // Speicherung eines Kassenbeleges
   eT_AufgabeErledigt = 26; // Personenbezogene Aufgaben sind "erledigt"
+  eT_VertragsAnwendung = 27; // Buchungslauf für Verträge
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

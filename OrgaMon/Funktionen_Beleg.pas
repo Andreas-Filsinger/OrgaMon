@@ -5953,6 +5953,56 @@ begin
   end;
 end;
 
+const
+  _VertragBuchen_NestingLevel: integer = 0;
+  _VertragBuchen_EREIGNIS_R: integer = cRID_unset;
+
+procedure VertragBuchen_Enter;
+begin
+  inc(_VertragBuchen_NestingLevel);
+end;
+
+procedure VertragBuchen_Leave;
+begin
+  dec(_VertragBuchen_NestingLevel);
+  if (_VertragBuchen_NestingLevel = 0) then
+    _VertragBuchen_EREIGNIS_R := cRID_unset;
+end;
+
+function VertragBuchen_EREIGNIS_R: integer;
+var
+  qEREIGNIS: TdboQuery;
+begin
+  if (_VertragBuchen_NestingLevel > 0) then
+  begin
+
+    if (_VertragBuchen_EREIGNIS_R < cRID_FirstValid) then
+    begin
+      // Ereignis erzeugen
+      _VertragBuchen_EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
+      qEREIGNIS := nQuery;
+      with qEREIGNIS do
+      begin
+        sql.add('select * from EREIGNIS');
+{$IFNDEF fpc}
+        ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+        Insert;
+        FieldByName('RID').AsInteger := _VertragBuchen_EREIGNIS_R;
+        FieldByName('ART').AsInteger := eT_VertragsAnwendung;
+        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+        Post;
+      end;
+      qEREIGNIS.free;
+    end;
+    result := _VertragBuchen_EREIGNIS_R;
+  end
+  else
+  begin
+    result := cRID_unset;
+  end;
+end;
+
 function e_w_VertragBuchen(VERTRAG_R: integer; sSettings: TStringList): TStringList; overload;
 var
   cVERTRAG: TdboCursor;
@@ -5985,7 +6035,7 @@ const
   end;
 
 begin
-
+  VertragBuchen_Enter;
   // Vertrag verbuchen ....
   result := TStringList.create;
   EINSTELLUNGEN := TStringList.create;
@@ -6224,16 +6274,19 @@ begin
       CareTakerLog(cERRORText + ' e_w_VertragBuchen(' + inttostr(VERTRAG_R) + '): ' + E.Message);
     end;
   end;
+  VertragBuchen_Leave;
 end;
 
 function e_w_VertragBuchen(VERTRAG_R: integer; Erzwingen: boolean = false): TStringList; overload;
 var
   sSettings: TStringList;
 begin
+  VertragBuchen_Enter;
   sSettings := TStringList.create;
   sSettings.add('Erzwingen=' + bool2cO(Erzwingen));
   result := e_w_VertragBuchen(VERTRAG_R, sSettings);
   sSettings.free;
+  VertragBuchen_Leave;
 end;
 
 function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
@@ -6254,7 +6307,7 @@ var
   end;
 
 begin
-
+  VertragBuchen_Enter;
   // Vertrag prüfen, ob man ihn anwenden könnte ....
   result := false;
   cVERTRAG := nCursor;
@@ -6341,6 +6394,7 @@ begin
     end;
   until true;
   cVERTRAG.free;
+  VertragBuchen_Leave;
 end;
 
 function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
@@ -6349,6 +6403,7 @@ var
   sErgebnis: TStringList;
   VERTRAG_R: integer;
 begin
+  VertragBuchen_Enter;
   result := TStringList.create;
   for n := 0 to pred(lVertraege.count) do
   begin
@@ -6361,15 +6416,18 @@ begin
     end;
     sErgebnis.free;
   end;
+  VertragBuchen_Leave;
 end;
 
 function e_w_VertragBuchen: TStringList; overload;
 var
   lVertraege: TgpIntegerList;
 begin
+  VertragBuchen_Enter;
   lVertraege := e_r_sqlm('select RID from VERTRAG order by PERSON_R, RID');
   result := e_w_VertragBuchen(lVertraege);
   lVertraege.free;
+  VertragBuchen_Leave;
 end;
 
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
@@ -9358,8 +9416,8 @@ begin
         FieldByName('BELEG_R').AsInteger := BELEG_R_TO;
         ARTIKEL := '';
         INFO :=
-          { } InternInfosQuelle.values['VertragsReferenz'] + ' ' +
-          { } InternInfosQuelle.values['Objekt'];
+        { } InternInfosQuelle.values['VertragsReferenz'] + '.' +
+        { } inttostr(VertragBuchen_EREIGNIS_R);
         for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
         begin
           DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;
@@ -9394,7 +9452,7 @@ begin
           // nur im selben Abrechnungs-Kontext wirksam
           if (ARTIKEL <> '') then
             if isZeroMoney(FieldByName('PREIS').AsFloat) then
-              if PostenTextZiel.IndexOf(INFO+ARTIKEL) <> -1 then
+              if PostenTextZiel.IndexOf(INFO + ARTIKEL) <> -1 then
               begin
                 cancel;
                 break;
