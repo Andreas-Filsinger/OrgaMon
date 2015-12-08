@@ -14,6 +14,16 @@ TWebShop (eCommerce-Frontend für den OrgaMon)
 2014 - 2015 by Michael Hack
 // INFO END
 
+Rev 3.033 (08.12.15) Michael Hack
+
+ Neu: PHP7 Anpassungen (Andreas Filsinger)
+
+ Geändert: Hebu Theme - Vorübergehend Kontakt als Impressum
+
+ Bug: Partitur Variante von Artikeln wurde als Mp3 angesehen
+ Bug: Mehrere Datenbankconnects beim Seitenaufruf behoben (Andreas Filsinger)
+ Bug: Wenn SHOP_WIND Konstante nicht definiert war, wurden keine Links übernommen
+
 Rev 3.032 (08.06.15) Michael Hack
 
  Neu: YouTube Medien im Artikel als eingebetteter YouTube Frame
