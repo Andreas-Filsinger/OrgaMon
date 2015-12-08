@@ -171,23 +171,28 @@ class twebshop_article extends tvisual {
                       continue;
 
                     /* === Link auf Windbandmusic überprüfen ### Sonderlösung ### === */
-                    if (defined("SHOP_WIND"))
-                    if (strtolower(substr($Item, 0, strlen(SHOP_WIND))) == SHOP_WIND) {
-
-                        $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . ".mp3"; 
+                    if (defined("SHOP_WIND")) {
                         
-                        parse_str(parse_url($Item, PHP_URL_QUERY),$q);
-                     
-                        if (array_key_exists("q",$q)) {
-                          $q = intval($q["q"]);
-                          for ($i = 2; $i <= $q; $i++) {
-                            $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . chr(63+$i) .  ".mp3"; 
-                          }
-                        }   
+                        if (strtolower(substr($Item, 0, strlen(SHOP_WIND))) == SHOP_WIND) {
+
+                            $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . ".mp3"; 
+                            
+                            parse_str(parse_url($Item, PHP_URL_QUERY),$q);
                          
-                    } else {
-                        $this->sounds[] = $Item;
+                            if (array_key_exists("q",$q)) {
+                                $q = intval($q["q"]);
+                                for ($i = 2; $i <= $q; $i++) {
+                                    $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . chr(63+$i) .  ".mp3"; 
+                                }
+                            }   
+
+                            continue;
+
+                        }
+                    
                     }
+
+                    $this->sounds[] = $Item;
 
                 }
 
