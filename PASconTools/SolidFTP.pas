@@ -125,7 +125,9 @@ uses
   // Indy UDP
   IdUDPClient,
   globals,
+  {$ifndef fpc}
   JclMiscel,
+  {$endif}
   windows;
 
 procedure TIdFtpRestart.PutRestart(const ASourceFile, ADestFile: string;
@@ -1383,7 +1385,11 @@ begin
   end;
 
   if (sUpFiles.Count > 0) then
+  {$ifdef fpc}
+  CoreFTPExitCode := -1
+    {$else}
     CoreFTPExitCode := JclMiscel.WinExec32AndWait(CommandL, SW_SHOWNORMAL)
+    {$endif}
   else
     CoreFTPExitCode := 0;
 

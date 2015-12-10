@@ -153,8 +153,8 @@ uses
   FlexCel.Core,
   CCR.Exif.Consts,
   GHD_pngimage,
-{$ENDIF}
   JclBase,
+{$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
   TPUMain,
@@ -854,8 +854,13 @@ begin
 {$ELSE}
       { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
 {$ENDIF}
-      { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +
+{$IFDEF fpc}
+{ 10 } add('jcl Rev. unused');
+{$ELSE}
+
+{ 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +
         inttostr(JclVersionMinor));
+{$ENDIF}
 {$IFDEF CONSOLE}
       { 11 } add('jvcl Rev. N/A');
 {$ELSE}

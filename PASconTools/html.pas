@@ -320,12 +320,12 @@ implementation
 
 uses
   windows, SysUtils, math,
-  IniFiles,
 {$IFNDEF fpc}
   Soap.EncdDecd,
-{$ENDIF}
   JclSimpleXML,
-  JclStreams;
+  JclStreams,
+{$ENDIF}
+    IniFiles;
 
 const
   cERRORText = 'ERROR:';
@@ -1895,6 +1895,7 @@ begin
 end;
 
 procedure THTMLTemplate.Dereference(Options: string);
+{$ifndef fpc}
 var
   iStart, iEnd: integer;
   sXML: TStringStream;
@@ -2053,7 +2054,6 @@ begin
     if (iStart < iEnd) then
     begin
 
-{$IFNDEF FPC}
       sXML := TStringStream.create;
       XML := TJclSimpleXML.create;
       try
@@ -2075,7 +2075,6 @@ begin
         end;
       end;
       sXML.Free;
-{$ENDIF}
       // Erfolg! nun ist klar, in welchem Block gesucht werden muss
       n := 0;
       repeat
@@ -2121,6 +2120,12 @@ begin
     end;
   end;
 end;
+{$else}
+begin
+  raise exception.create('Error');
+end;
+
+{$endif}
 
 constructor THTMLTemplate.create;
 begin
