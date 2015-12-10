@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.133 (08.12.15) Andreas Filsinger
+
+ Neu: EC: Erkennung für bereits bestehende Mandate
+
 Rev 8.132 (07.12.15) Andreas Filsinger
 
  Bug: Vertrag: Duplettenerkennung für Textüberschriften räuberte im ganzen Beleg

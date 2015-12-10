@@ -49,11 +49,13 @@ const
   // Das zuletzt übergebene Dokument (print,open,exec,...)
   _Document: string = '';
 
+  // ShowMessageTimeout Default Timeout [ms]
+  cShowMessageTimeout_TIMEOUT = 5000;
+
   // Grafische Sachen
 function LoadGraphicsFile(const Filename: string): TBitmap;
 procedure DrawImage(Canvas: TCanvas; DestRect: TRect; ABitmap: TBitmap);
-procedure DisplayBitmap(const Bitmap: TBitmap; const Image: TImage;
-  FillColor: TColor);
+procedure DisplayBitmap(const Bitmap: TBitmap; const Image: TImage; FillColor: TColor);
 procedure SetBitMapSizeTo(Bitmap: TBitmap; const xl, yl: integer);
 procedure BMPScramble(const b: TBitmap; Key: integer);
 function dpiX(PixelCount: integer): integer;
@@ -69,13 +71,11 @@ function FontInstalled(const FontName: string): boolean;
 
 // System Sachen (VCL-Abhängig)
 procedure EnumAllWindows(Names: TStringList);
-function TerminateIfAlreadyRunning(ApplicationName: string;
-  BringOtherUp: boolean = true): boolean;
+function TerminateIfAlreadyRunning(ApplicationName: string; BringOtherUp: boolean = true): boolean;
 procedure delay(milliseconds: Cardinal); // sleep
 
 // Dokumente öffnen
-function openShell(dokument: string; Visibility: Word = SW_SHOWMAXIMIZED)
-  : boolean; overload;
+function openShell(dokument: string; Visibility: Word = SW_SHOWMAXIMIZED): boolean; overload;
 
 // Dokumente drucken
 function printShell(dokument: string): boolean;
@@ -94,16 +94,14 @@ function CtrlDown: boolean;
 
 // Info/Message-Boxes
 function DoIt(Frage: string; Danger: boolean = false): boolean; overload;
-function DoIt(const Frage: TStrings; Danger: boolean = false): boolean;
-  overload;
+function DoIt(const Frage: TStrings; Danger: boolean = false): boolean; overload;
 function YesNoIgnore(Frage: string): integer; // [IDYES, IDNO]
 function YesNoCancel(Frage: string): integer; // [IDYES, IDNO]
 
 // Info/Message-Boxes mit TimeOut
-procedure ShowMessageTimeout(Meldung: string; TimeOut: integer = 5000
-  { [ms] } );
-function DoItTimeOut(Frage: string; TimeOut: integer = 5000;
-  Danger: boolean = false): boolean;
+procedure ShowMessageTimeout(Meldung: string; TimeOut: integer = cShowMessageTimeout_TIMEOUT
+  { [ms] }; Danger: boolean = false);
+function DoItTimeOut(Frage: string; TimeOut: integer = cShowMessageTimeout_TIMEOUT; Danger: boolean = false): boolean;
 
 procedure dgAutoSize(const dg: TDrawGrid; VerticalScrollBar: boolean = false);
 
@@ -148,10 +146,9 @@ begin
   GetMem(Bits, BitsSize);
   try
     GetDIB(ABitmap.Handle, ABitmap.Palette, Header^, Bits^);
-    StretchDIBits(Canvas.Handle, DestRect.Left, DestRect.Top,
-      DestRect.Right - DestRect.Left, DestRect.Bottom - DestRect.Top, 0, 0,
-      ABitmap.Width, ABitmap.Height, Bits, TBitmapInfo(Header^),
-      DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(Canvas.Handle, DestRect.Left, DestRect.Top, DestRect.Right - DestRect.Left,
+      DestRect.Bottom - DestRect.Top, 0, 0, ABitmap.Width, ABitmap.Height, Bits,
+      TBitmapInfo(Header^), DIB_RGB_COLORS, SRCCOPY);
   finally
     FreeMem(Header, HeaderSize);
     FreeMem(Bits, BitsSize);
@@ -212,8 +209,7 @@ begin
   result := Color;
 end;
 
-procedure DisplayBitmap(const Bitmap: TBitmap; const Image: TImage;
-  FillColor: TColor);
+procedure DisplayBitmap(const Bitmap: TBitmap; const Image: TImage; FillColor: TColor);
 var
   Half: integer;
   Height: integer;
@@ -343,8 +339,7 @@ begin
   WindowList := nil;
 end;
 
-function TerminateIfAlreadyRunning(ApplicationName: string;
-  BringOtherUp: boolean = true): boolean;
+function TerminateIfAlreadyRunning(ApplicationName: string; BringOtherUp: boolean = true): boolean;
 var
   Wind: HWND;
   n: integer;
@@ -442,8 +437,7 @@ end;
   ShellExecute(Handle, 'printto', PChar(documentname), PChar(S), nil, SW_HIDE);
   end; *)
 
-function WinExec32TimeOut(Cmd: string; const CmdShow: integer;
-  TimeOut: dword): string;
+function WinExec32TimeOut(Cmd: string; const CmdShow: integer; TimeOut: dword): string;
 var
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
@@ -457,8 +451,8 @@ begin
   StartupInfo.wShowWindow := CmdShow;
   UniqueString(Cmd);
   // in the Unicode version the parameter lpCommandLine needs to be writable
-  apiResult := CreateProcess(nil, PChar(Cmd), nil, nil, false,
-    NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo);
+  apiResult := CreateProcess(nil, PChar(Cmd), nil, nil, false, NORMAL_PRIORITY_CLASS, nil, nil,
+    StartupInfo, ProcessInfo);
 
   if apiResult then
   begin
@@ -482,8 +476,7 @@ end;
 function printhtml(dokument: string): boolean;
 begin
   _Document := dokument;
-  result := WinExec32('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"',
-    sw_showdefault);
+  result := WinExec32('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"', sw_showdefault);
 end;
 
 function printpdf(dokument: string): boolean;
@@ -574,8 +567,7 @@ begin
     WindowList := TStringList.Create;
 
     // Ausgeben der Datei auf den Drucker
-    d(WinExec32TimeOut('rundll32.exe mshtml.dll,PrintHTML "' + FName + '"',
-      sw_showdefault, 60000));
+    d(WinExec32TimeOut('rundll32.exe mshtml.dll,PrintHTML "' + FName + '"', sw_showdefault, 60000));
 
     // "OK" drücken
     TimeWaited := 0;
@@ -647,8 +639,7 @@ end;
 
 // ************************Hook Functions***************************************
 
-function PlaybackProc(Code: integer; wParam: TwParam; lParam: TlParam)
-  : Longint; stdcall;
+function PlaybackProc(Code: integer; wParam: TwParam; lParam: TlParam): Longint; stdcall;
 begin
   PlaybackProc := 0;
   case Code of
@@ -699,8 +690,7 @@ begin
     MacroRunning := true;
     playspeed := FPlayingSpeed;
     the_Handle := FWindowHandle;
-    TheHook := SetWindowsHookEx(wh_journalplayback, @PlaybackProc,
-      hInstance, 0);
+    TheHook := SetWindowsHookEx(wh_journalplayback, @PlaybackProc, hInstance, 0);
   end;
 end;
 
@@ -861,8 +851,7 @@ var
   cc1: TRGBQuad absolute c1;
   cc2: TRGBQuad absolute c2;
 begin
-  Distance := (0.3 * abs(cc1.rgbRed - cc2.rgbRed)) +
-    (0.59 * abs(cc1.rgbGreen - cc2.rgbGreen)) +
+  Distance := (0.3 * abs(cc1.rgbRed - cc2.rgbRed)) + (0.59 * abs(cc1.rgbGreen - cc2.rgbGreen)) +
     (0.11 * abs(cc1.rgbBlue - cc2.rgbBlue));
   result := round(Distance);
 
@@ -885,11 +874,11 @@ function DoIt(Frage: string; Danger: boolean = false): boolean;
 begin
   ersetze('|', #13, Frage);
   if Danger then
-    result := (MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage),
-      MB_TOPMOST or mb_OKCANCEL or MB_ICONSTOP or MB_DEFBUTTON2) = IDOK)
+    result := (MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage), MB_TOPMOST or mb_OKCANCEL or
+      MB_ICONSTOP or MB_DEFBUTTON2) = IDOK)
   else
-    result := (MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage),
-      MB_TOPMOST or mb_OKCANCEL or MB_ICONQUESTION or MB_DEFBUTTON2) = IDOK)
+    result := (MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage), MB_TOPMOST or mb_OKCANCEL or
+      MB_ICONQUESTION or MB_DEFBUTTON2) = IDOK)
 end;
 
 function DoIt(const Frage: TStrings; Danger: boolean = false): boolean;
@@ -908,20 +897,20 @@ end;
 function YesNoIgnore(Frage: string): integer;
 begin
   ersetze('|', #13, Frage);
-  result := MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage),
-    MB_ABORTRETRYIGNORE or MB_ICONQUESTION or MB_DEFBUTTON2);
+  result := MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage), MB_ABORTRETRYIGNORE or
+    MB_ICONQUESTION or MB_DEFBUTTON2);
 end;
 
 function YesNoCancel(Frage: string): integer;
 begin
   ersetze('|', #13, Frage);
-  result := MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage),
-    MB_YESNOCANCEL or MB_ICONQUESTION or MB_DEFBUTTON1 or MB_TASKMODAL);
+  result := MessageBox(0, PChar(Frage + '?'), PChar(cNachfrage), MB_YESNOCANCEL or
+    MB_ICONQUESTION or MB_DEFBUTTON1 or MB_TASKMODAL);
 end;
 
 type
-  TMessageBoxTimeOut = function(HWND: HWND; lpText: PChar; lpCaption: PChar;
-    uType: UINT; wLanguageId: Word; dwMilliseconds: dword): integer; stdcall;
+  TMessageBoxTimeOut = function(HWND: HWND; lpText: PChar; lpCaption: PChar; uType: UINT;
+    wLanguageId: Word; dwMilliseconds: dword): integer; stdcall;
 
 const
   MB_TIMEDOUT = 32000;
@@ -929,8 +918,8 @@ const
   MessageBoxTimeOut: TMessageBoxTimeOut = nil;
   MessageBoxTimeOutInitialized: boolean = false;
 
-procedure ShowMessageTimeout(Meldung: string; TimeOut: integer = 5000
-  { [ms] } );
+procedure ShowMessageTimeout(Meldung: string; TimeOut: integer = cShowMessageTimeout_TIMEOUT
+  { [ms] }; Danger: boolean = false);
 var
   iFlags: integer;
 begin
@@ -944,20 +933,26 @@ begin
 
   if assigned(MessageBoxTimeOut) then
   begin
-    iFlags := MB_OK or MB_SETFOREGROUND or MB_SYSTEMMODAL or MB_ICONINFORMATION;
-    MessageBoxTimeOut(application.Handle, PChar(Meldung),
-      PChar(Format('Info für %d Sekunden', [TimeOut DIV 1000])), iFlags,
-      0, TimeOut);
+    if Danger then
+      iFlags := MB_OK or MB_SETFOREGROUND or MB_SYSTEMMODAL or MB_ICONERROR
+    else
+      iFlags := MB_OK or MB_SETFOREGROUND or MB_SYSTEMMODAL or MB_ICONINFORMATION;
+    MessageBoxTimeOut(
+      { } application.Handle,
+      { } PChar(Meldung),
+      { } PChar(Format('Info für %d Sekunden', [TimeOut DIV 1000])),
+      { } iFlags,
+      { } 0,
+      { } TimeOut);
   end
   else
   begin
-    // Windows 2000: (bisher) keine Entsprechung programmiert!
+    // für Windows 2000: (bisher) keine Entsprechung programmiert!
     ShowMessage(Meldung);
   end;
 end;
 
-function DoItTimeOut(Frage: string; TimeOut: integer = 5000;
-  Danger: boolean = false): boolean;
+function DoItTimeOut(Frage: string; TimeOut: integer = cShowMessageTimeout_TIMEOUT; Danger: boolean = false): boolean;
 var
   iFlags: integer;
   MBresult: integer;
@@ -975,15 +970,13 @@ begin
 
     ersetze('|', #13, Frage);
     if Danger then
-      iFlags := mb_OKCANCEL or MB_DEFBUTTON2 or MB_SETFOREGROUND or
-        MB_SYSTEMMODAL or MB_ICONSTOP
+      iFlags := mb_OKCANCEL or MB_DEFBUTTON2 or MB_SETFOREGROUND or MB_SYSTEMMODAL or MB_ICONSTOP
     else
-      iFlags := mb_OKCANCEL or MB_DEFBUTTON2 or MB_SETFOREGROUND or
-        MB_SYSTEMMODAL or MB_ICONQUESTION;
+      iFlags := mb_OKCANCEL or MB_DEFBUTTON2 or MB_SETFOREGROUND or MB_SYSTEMMODAL or
+        MB_ICONQUESTION;
 
     MBresult := MessageBoxTimeOut(application.Handle, PChar(Frage),
-      PChar(Format('OK nach %d Sekunden', [TimeOut DIV 1000])), iFlags,
-      0, TimeOut);
+      PChar(Format('OK nach %d Sekunden', [TimeOut DIV 1000])), iFlags, 0, TimeOut);
 
     result := (MBresult = MB_TIMEDOUT) or (MBresult = IDOK);
   end
@@ -1045,8 +1038,7 @@ end;
 
 // file:///
 
-function openShell(dokument: string;
-  Visibility: Word = SW_SHOWMAXIMIZED): boolean;
+function openShell(dokument: string; Visibility: Word = SW_SHOWMAXIMIZED): boolean;
 begin
   _Document := dokument;
   result := ShellExecute(0, 'open', PChar(dokument), nil, nil, Visibility) > 32;
@@ -1055,8 +1047,7 @@ end;
 function printShell(dokument: string): boolean;
 begin
   _Document := dokument;
-  result := ShellExecute(0, 'print', PChar(dokument), nil, nil,
-    SW_SHOWMAXIMIZED) > 32;
+  result := ShellExecute(0, 'print', PChar(dokument), nil, nil, SW_SHOWMAXIMIZED) > 32;
 end;
 
 function CtrlDown: boolean;
