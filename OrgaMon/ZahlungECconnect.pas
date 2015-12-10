@@ -153,12 +153,37 @@ const
 procedure TFormZahlungECconnect.Button11Click(Sender: TObject);
 var
   BUCH_R: integer;
+  BestehendesMandatBetrag: double;
 begin
   repeat
 
     // Keine Person gesetzt
     if (PERSON_R < cRID_FirstValid) then
       break;
+
+    // gibt es bereits ein Mandat über den
+    // gleichen Beleg?
+    BestehendesMandatBetrag := e_r_sqld(
+      { } 'select sum(BETRAG) from BUCH where' +
+      { } ' (NAME=' + SQLstring(cKonto_Mandat) + ') and' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+      { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ') and' +
+      { } ' (EREIGNIS_R is null)');
+
+    if isSomeMoney(BestehendesMandatBetrag) then
+    begin
+      if isEqual(BestehendesMandatBetrag, Betrag) then
+        ShowMessageTimeout(
+          { } 'Es besteht bereits ein identisches Mandat!',
+          { } cShowMessageTimeout_TIMEOUT,
+          { } true)
+      else
+        ShowMessageTimeout(
+          { } 'Es besteht bereits ein Mandat jedoch mit einem anderen Betrag!',
+          { } cShowMessageTimeout_TIMEOUT,
+          { } true);
+      break;
+    end;
 
     // Warnung, wenn die Karte gar nicht gelesen werden
     // konnte UND die Daten bereits aus einer letzten
