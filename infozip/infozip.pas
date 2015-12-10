@@ -119,15 +119,14 @@ implementation
 uses
 {$IFDEF fpc}
   fpchelper,
-  AbConst,
-  Abzipper,
-  AbUnzper,
+zipper,
+{$else}
+JclMiscel,
+JclSysInfo,
 {$ENDIF}
   windows,
   registry,
-  SysUtils,
-  JclMiscel,
-  JclSysInfo;
+  SysUtils;
 
 {$IFDEF fpc}
 {$ELSE}
@@ -579,6 +578,8 @@ end;
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
 {$IFDEF fpc}
+begin
+(*
 var
   zipArchive: TABZipper;
 begin
@@ -652,7 +653,7 @@ begin
 
     // ZipAllFiles;
   end;
-
+*)
 {$ELSE}
 
 var
@@ -895,6 +896,8 @@ const
 
 function unzip(FName: string; Destination: string; Options: TStringList = nil): integer;
 {$IFDEF fpc}
+begin
+(*
 var
   zipArchive: TAbUnZipper;
 begin
@@ -915,7 +918,7 @@ begin
         password := Options.Values[infozip_Password];
     ExtractFiles('*');
   end;
-
+*)
 {$ELSE}
 
 var
@@ -995,8 +998,11 @@ begin
   RegisterExpectedMemoryLeak(zMessages);
 
 {$IFDEF fpc}
-  unzip_Version := 'unzip ' + AbConst.AbVersionS;
-  zip_Version := 'zip ' + AbConst.AbVersionS;
+  // unzip_Version := 'unzip ' + AbConst.AbVersionS;
+  // zip_Version := 'zip ' + AbConst.AbVersionS;
+
+  unzip_Version := 'unzip ' + '?';
+  zip_Version := 'zip ' + '?';
 {$ELSE}
   // ZIP Versions-Nummer
   new(ZipVersionInfo);

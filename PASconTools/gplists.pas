@@ -203,7 +203,9 @@ uses
   Classes,
   Contnrs,
   SyncObjs,
+  {$ifndef fpc}
   JclSynch,
+  {$endif}
   Windows,
   SysUtils;
 
