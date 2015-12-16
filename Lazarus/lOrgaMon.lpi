@@ -13,6 +13,7 @@
       <Title Value="lOrgaMon"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -21,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="13"/>
+      <BuildNr Value="15"/>
       <Language Value="0407"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
@@ -69,7 +70,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\Abbrevia\source"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -78,6 +79,9 @@
       </SyntaxOptions>
     </Parsing>
     <Other>
+      <Verbosity>
+        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+      </Verbosity>
       <CustomOptions Value="-dCONSOLE"/>
     </Other>
   </CompilerOptions>

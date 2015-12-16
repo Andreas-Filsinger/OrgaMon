@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
 
 const
   cApplicationName = 'JonDaServer';
-  version: single = 2.217; // ..\rev\JonDaServer.rev.txt
+  version: single = 2.218; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
   cVersion_JonDa: single = 1.118;
@@ -69,6 +69,7 @@ const
   //
   cCRLF = #13#10;
 
+  // Daten-Verzeichnisse
   cServerDataPath = 'Daten\';
   cOrgaMonDataPath = 'OrgaMon\';
   cMeldungPath = 'Meldung\';
@@ -80,6 +81,7 @@ const
   cFotoPath = 'Fotos\';
   cDBPath = 'db\';
   cSyncPath = 'sync\';
+  cWebPath = '..\web\';
 
   cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
@@ -107,6 +109,7 @@ const
   iJonDa_FTPHost: string = '';
   iJonDa_FTPUserName: string = '';
   iJonDa_FTPPassword: string = '';
+  iJonDa_Port: integer = 0;
 
   // Globale FTP - Sachen
   iFTPProxyHost: string = '';
@@ -116,8 +119,7 @@ const
   EigeneOrgaMonDateienPfad: string = '';
 
   // Eingabe.nnn.txt
-  cHeader_Eingabe =
-    'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
+  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
   cHeader_UmbenennungUnvollstaendig =
     'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
 
@@ -248,8 +250,8 @@ const
 
 function cCopyright: string;
 begin
-  result := cApplicationName + '™ Rev ' + RevToStr(globals.Version)
-    + ' ©1987-' + JahresZahl + ' http://www.orgamon.org';
+  result := cApplicationName + '™ Rev ' + RevToStr(globals.version) + ' ©1987-' + JahresZahl +
+    ' http://www.orgamon.org';
 end;
 
 procedure LoadIniF;
@@ -284,7 +286,12 @@ begin
   if isParam('-es') then
     sGroup := 'Spare'
   else
-    sGroup := 'System';
+  begin
+    // --Id=Kundenkennung
+    sGroup := getParam('Id');
+    if (sGroup = '') then
+      sGroup := 'System';
+  end;
 
   //
   AllTheMandanten := TStringList.create;
@@ -317,8 +324,7 @@ begin
       // weitere Datenbanknamen
       AllTheMandanten.add(iDataBaseName);
       for n := 2 to cMaxMandanten do
-        AllTheMandanten.add(ReadString(sGroup,
-          cDataBaseName + inttostr(n), ''));
+        AllTheMandanten.add(ReadString(sGroup, cDataBaseName + inttostr(n), ''));
       for n := pred(AllTheMandanten.count) downto 1 do
         if (AllTheMandanten[n] = '') then
           AllTheMandanten.delete(n);
@@ -330,8 +336,7 @@ begin
         ParamWhatBase := AnsiUpperCase(ParamStr(n));
         if pos(cUpperBaseSettingParam, ParamWhatBase) = 1 then
         begin
-          ChosenIndex :=
-            strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
+          ChosenIndex := strtointdef(nextp(ParamWhatBase, cUpperBaseSettingParam, 1), 1);
           if (ChosenIndex <= AllTheMandanten.count) then
           begin
             iDataBaseName := AllTheMandanten[pred(ChosenIndex)];
@@ -341,7 +346,7 @@ begin
         end;
       end;
 
-      if iDataBaseName <> '' then
+      if (iDataBaseName <> '') then
       begin
         // auf den nächsten verweisen, im Fall, dass kein Server angegeben ist.
         MyProgramPath := iDataBaseName;

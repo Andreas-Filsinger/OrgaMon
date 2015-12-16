@@ -371,7 +371,7 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html');
+  sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
   sGeraete.free;
 end;
 
@@ -427,7 +427,7 @@ begin
 
     if changed then
     begin
-      SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
+      SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
       SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
     end;
   end;
@@ -595,7 +595,7 @@ end;
 
 function TJonDaExec.UpFName(AktTrn: string): string;
 begin
-  result := MyProgramPath + AktTrn + '\' + AktTrn + '.txt';
+  result := MyProgramPath + cWebPath + AktTrn + '.txt';
 end;
 
 function TJonDaExec.NewTrn(IncrementIt: boolean = true): string;
@@ -841,7 +841,12 @@ var
   procedure CloseJonDa;
   begin
     CloseFile(MonDaAasTxt);
-    SaveStringsToFileUTF8(Auftrag, MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+
+    // Das Ergebnis im Web bereitstellen
+    SaveStringsToFileUTF8(Auftrag,
+      { } MyProgramPath +
+      { } cWebPath +
+      { } AktTrn + '.auftrag' + cUTF8DataExtension);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1313,8 +1318,8 @@ var
     with DatensammlerLokal do
     begin
       add('load AUFTRAG LAST,AUFTRAG');
-      add('SummeOffen=' + 'Beta!');
-      add('SummeDetails=' + 'Test');
+      add('SummeOffen=#');
+      add('SummeDetails=#');
     end;
     with DatensammlerGlobal do
     begin
@@ -1325,7 +1330,7 @@ var
     begin
       LoadFromFile(MyProgramPath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      SaveToFileCompressed(MyProgramPath + 'Info\' + GeraeteNo + '.html');
+      SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -2400,55 +2405,60 @@ begin
     end;
 
     // Nach "SENDEN" Tabelle protokollieren
-    // IMEI;NAME;ID;MOMENT;TAN;REV
-    tSENDEN := TsTable.Create;
-    with tSENDEN do
+    // IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR
+
+    if FileExists(MyProgramPath + cDBPath + 'SENDEN.csv') then
     begin
-      InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
 
-      // Alte Zeile löschen
-      n := -1;
-      if (IMEI <> '') then
-        n := locate('IMEI', IMEI)
-      else
-        n := locate('ID', GeraeteNo);
-      if (n <> -1) then
-        Del(n);
-
-      // neue Zeile hinzu
-      sSENDEN := TStringList.Create;
-      with sSENDEN do
+      tSENDEN := TsTable.Create;
+      with tSENDEN do
       begin
-        { IMEI }
-        add(IMEI);
-        { NAME }
-        add(NAME);
-        { ID }
-        add(GeraeteNo);
-        { MOMENT }
-        add(sTimeStamp);
-        { TAN }
-        add(AktTrn);
-        { REV }
-        add(RevToStr(RemoteRev));
-        { ERROR }
-        add(Stat_PostError);
-        { PAPERCOLOR }
-        if (Stat_PostError = '') then
-          add('')
+        InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+
+        // Alte Zeile löschen
+        n := -1;
+        if (IMEI <> '') then
+          n := locate('IMEI', IMEI)
         else
-          add('#C36241');
+          n := locate('ID', GeraeteNo);
+        if (n <> -1) then
+          Del(n);
+
+        // neue Zeile hinzu
+        sSENDEN := TStringList.Create;
+        with sSENDEN do
+        begin
+          { IMEI }
+          add(IMEI);
+          { NAME }
+          add(NAME);
+          { ID }
+          add(GeraeteNo);
+          { MOMENT }
+          add(sTimeStamp);
+          { TAN }
+          add(AktTrn);
+          { REV }
+          add(RevToStr(RemoteRev));
+          { ERROR }
+          add(Stat_PostError);
+          { PAPERCOLOR }
+          if (Stat_PostError = '') then
+            add('')
+          else
+            add('#C36241');
+        end;
+        addRow(sSENDEN);
+
+        // Sortieren
+        SortBy('descending MOMENT');
+
+        // speichern
+        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+        SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
       end;
-      addRow(sSENDEN);
-
-      // Sortieren
-      SortBy('descending MOMENT');
-
-      // speichern
-      SaveToHTML(MyProgramPath + cStatistikPath + 'index.html');
-      SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      tSENDEN.free;
     end;
-    tSENDEN.free;
 
     EndAction(GeraeteNo);
 
@@ -2473,7 +2483,7 @@ begin
 
   except
     on E: Exception do
-      log(cERRORText + ' 1541:' + E.Message);
+      log(cERRORText + ' 2481:' + E.Message);
   end;
 
   AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';' +
@@ -2663,10 +2673,7 @@ begin
             AddStrings(Einstellungen);
             add('BEZAHLT_BIS=' + long2date(BEZAHLT_BIS));
           end;
-          if RevIsFrom(strtodoubledef(VERSION, 0), cVersion_OrgaMonApp) then
-            SaveStringsToFileUTF8(OptionStrings, MyProgramPath + TAN + '\' + TAN + '.txt')
-          else
-            AppendStringsToFile(OptionStrings, MyProgramPath + TAN + '\' + TAN + '.txt');
+          SaveStringsToFileUTF8(OptionStrings, UpFName(TAN));
           OptionStrings.free;
         end;
 
@@ -3977,13 +3984,15 @@ begin
       begin
         // Gibt es etwas passenderes aus der JonDa-Zeit
         JonDaProtokoll := toProtokollFName(mderec, cVersion_JonDa);
-        if (JonDaProtokoll <> result) then
-        begin
-          // Autogen des Protokolles
-          if migrateProtokoll(ProtokollPath(cVersion_JonDa) + JonDaProtokoll + cProtExtension,
-            ProtokollPath(cVersion_OrgaMonApp) + JonDaProtokoll + cProtExtension) then
-            result := JonDaProtokoll;
-        end;
+        if (JonDaProtokoll <> '') then
+          if (JonDaProtokoll <> result) then
+          begin
+            // Autogen des Protokolles
+            if migrateProtokoll(
+              { } ProtokollPath(cVersion_JonDa) + JonDaProtokoll + cProtExtension,
+              { } ProtokollPath(cVersion_OrgaMonApp) + JonDaProtokoll + cProtExtension) then
+              result := JonDaProtokoll;
+          end;
       end
       else
       begin
