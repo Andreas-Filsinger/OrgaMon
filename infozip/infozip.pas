@@ -1,21 +1,24 @@
 {
+  |  InfoZIP.pas, create and unpack ".zip" - Files
+  |  =============================================
   |
-  |  Copyright (c) 1990-2009 Info-ZIP.  All rights reserved.
   |
-  |  See the accompanying file LICENSE, version 2009-Jan-2 or later
-  |  (the contents of which are also included in zip.h) for terms of use.
-  |  If, for some reason, all these files are missing, the Info-ZIP license
-  |  also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
-
+  |    1) Delphi uses infozip-Windows DLLs
   |
-  |  =========================================================================
+  |       Copyright (c) 1990-2009 Info-ZIP.  All rights reserved.
   |
-  |    infozip.pas is a single unit api - Translation to Delphi for the Windows DLLs
+  |       See the accompanying file LICENSE, version 2009-Jan-2 or later
+  |       (the contents of which are also included in zip.h) for terms of use.
+  |       If, for some reason, all these files are missing, the Info-ZIP license
+  |       also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
   |
-  |    unzip32.dll(6.0)
-  |    zip32z64.dll(3.1)
+  |       unzip32.dll(6.0)    released by infozip.org.
+  |       zip32z64.dll(3.1)   released by infozip.org.
   |
-  |    released by infozip.org. API is NOT completed but you can zip and unzip with
+  |    2) FreePascal uses the included "zipper" Tool
+  |
+  |
+  |    API is NOT completed but you can zip and unzip with
   |    common Options. The interface Routines "zip" and "unzip" do a very good job
   |    for me - you may extend functionality. This work was done as a part of ...
   |
@@ -70,10 +73,11 @@ const
     Rev. 1.002 | R1114 | 16.05.2012 | Options-Delimiter dokumentiert
     Rev. 1.003 | R1308 | 04.03.2013 | 7z Support
     Rev. 1.004 |       | 12.09.2013 | Fix: zip Filesnames starting with "-" (Minus)
-    Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port ...
+    Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port "Abrevia" ...
+    Rev. 1.006 | R0334 | 11.12.2015 | Lazarus Port "zipper" ...
   }
 
-  infozip_Version: single = 1.005;
+  infozip_Version: single = 1.006;
 
 var
   zMessages: TStringList;
@@ -81,7 +85,7 @@ var
   { zip(sFiles,FName,Options)
     |
     |  sFiles :    Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
-    |  FName :     Name des neuen Arives, Datei sollte nicht existieren
+    |  FName :     Name des neuen Archives, Datei sollte nicht existieren
     |  Options :
     |  RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
     |               Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
@@ -111,6 +115,14 @@ function zip(sFiles: TStringList; FName: string; Options: string): integer
 function zip(sFile: String; FName: string; Options: string = ''): integer
 { AnzahlDateien }; overload;
 
+{ unzip(FName,Destination,Options)
+  |
+  |  FName :      Name des bestehenden Archives, das ausgepackt werden soll
+  |  Destination: Verzeichnis, in das entpackt werden soll
+  |  Options :
+  |  Password   = das globale Passwort, welches beim Auspacken benutzt wird
+}
+
 function unzip(FName: string; Destination: string; Options: TStringList = nil)
   : integer { AnzahlDateien };
 
@@ -119,10 +131,12 @@ implementation
 uses
 {$IFDEF fpc}
   fpchelper,
-zipper,
+  zipper,
+  zbase,
+  zdeflate,
 {$else}
-JclMiscel,
-JclSysInfo,
+  JclMiscel,
+  JclSysInfo,
 {$ENDIF}
   windows,
   registry,
@@ -998,11 +1012,8 @@ begin
   RegisterExpectedMemoryLeak(zMessages);
 
 {$IFDEF fpc}
-  // unzip_Version := 'unzip ' + AbConst.AbVersionS;
-  // zip_Version := 'zip ' + AbConst.AbVersionS;
-
-  unzip_Version := 'unzip ' + '?';
-  zip_Version := 'zip ' + '?';
+   unzip_Version := zbase.zlibversion;
+   zip_Version :=  zdeflate.deflate_copyright;
 {$ELSE}
   // ZIP Versions-Nummer
   new(ZipVersionInfo);

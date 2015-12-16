@@ -1167,6 +1167,7 @@ begin
     end;
 
     CheckCreateDir(AuftragMobilServerPath);
+    CheckCreateDir(MDEPath);
     ErrorCount := 0;
     DirList := TStringList.create;
     Bericht := TStringList.create;

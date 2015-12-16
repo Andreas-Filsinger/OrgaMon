@@ -51,6 +51,10 @@ var
 
 begin
   try
+    SectionName := getParam('Id');
+    if (SectionName='') then
+     SectionName := UserName;
+
     writeln(
       { } 'cJonDaServer Rev. ' + RevToStr(globals.version) + ' - ' +
       { } MyProgramPath);
@@ -81,7 +85,7 @@ begin
     MyIni := TIniFile.Create(MyProgramPath + cIniFName);
     with MyIni do
     begin
-      SectionName := UserName;
+      // Fall Back auf "System"
       if (ReadString(SectionName, 'ftpuser', '') = '') then
         SectionName := 'System';
 
@@ -89,6 +93,7 @@ begin
       iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
       iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
       iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+      iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')),3049);
       JonDa.start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '')
         = cIni_Activate;
       JonDa.Option_Console := true;
@@ -131,7 +136,7 @@ begin
       XMLRPC := TXMLRPC_Server.Create(nil);
       with XMLRPC do
       begin
-        DefaultPort := StrToIntDef(getParam('Port'), 3049);
+        DefaultPort := iJonDa_Port;
         write('Öffne ' + ComputerName + ':' + IntToStr(DefaultPort) + '  ... ');
         DiagnosePath := MyProgramPath;
         DebugMode := anfix32.DebugMode;

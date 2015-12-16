@@ -18,6 +18,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 2.218 (15.12.15) Andreas Filsinger
+
+ Wegfall: Verzeichnis "./JonDaServer"
+ Wegfall: Verzeichnis "./Info"
+
+ Neu: Lauffähig mit einem "..\web\" Verzeichnis
+ Neu: Web: TAN.txt
+ Neu: Web: TAN.auftrag.utf-8.txt
+ Neu: Parameter: "--Id=" für verschiedene Idenditäten
+ Neu: Ini-File: [~Id~] wird beachtet mit Fall-Back auf [System]
+ Neu: Ini-File: Port= für die Anpassung des XMLRPC Ports
+
 Rev 2.217 (25.09.15) Andreas Filsinger
 
  Neu: Wegen WordIndex Rev. 1.026 neu compiliert

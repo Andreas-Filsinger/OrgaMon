@@ -161,7 +161,7 @@ uses
   JvclVer,
 {$ENDIF}
   idglobal,
-  infozip,
+  InfoZIP,
   srvXMLRPC,
   memcache;
 
@@ -855,7 +855,7 @@ begin
       { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
 {$ENDIF}
 {$IFDEF fpc}
-{ 10 } add('jcl Rev. unused');
+{ 10 } add('jcl Rev. N/A');
 {$ELSE}
 
 { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +

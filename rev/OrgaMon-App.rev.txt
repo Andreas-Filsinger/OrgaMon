@@ -14,6 +14,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
+Rev 2.031 (16.12.15) Andreas Filsinger
+
+ Bug: Bilder sind aus der Galerie verschwunden
+
+ Wegfall: Verzeichnis "./JonDaServer"
+ Neu: Server nicht im Quelltext festgelegt
+ Neu: FTP Username nicht im Quelltext festgelegt
+
 Rev 2.027 (24.09.13) Andreas Filsinger
 
  Neu: Protokoll "%" Suffix für LOKALE Einstellungen (im Gegensatz zu "$" für globale Einstellungen)

@@ -49,13 +49,14 @@ program lOrgaMon;
  =========+=========
  flexcel  | fpspreadsheet! (Lack of Revision Number, 1.5 im Package)
  IBO      | Zeos! (Umlaut OK!)
- infozip  | Abbrevia 5.2! (Reported as 5.0)
+ infozip  | zipper!
  ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
 
 }
 
-{$mode objfpc}{$H+}
-//{ $ mode delphi}{ $ H+}
+{$mode delphi}
+{$H+}
+
 {$APPTYPE CONSOLE}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
@@ -166,124 +167,124 @@ var
       // TWebShop
       AddMethod('ArtikelSuche',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_ArtikelSuche);
       AddMethod('ArtikelPreis',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_ArtikelPreis);
       AddMethod('KontoInfo',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_KontoInfo);
       AddMethod('BestellInfo',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_BestellInfo);
       AddMethod('Land',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Land);
       AddMethod('Bestellen',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_Bestellen);
       AddMethod('Vormerken',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_Vormerken);
       AddMethod('Buchen',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_Buchen);
       AddMethod('ArtikelVersendetag',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_ArtikelVersendetag);
       AddMethod('Verlag',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Verlag);
       AddMethod('Versandkosten',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Versandkosten);
       AddMethod('ArtikelInfo',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_ArtikelInfo);
       AddMethod('BasePlug',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_BasePlug);
       AddMethod('ArtikelRabattPreis',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_ArtikelRabattPreis);
       AddMethod('PersonNeu',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_PersonNeu);
       AddMethod('Ort',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Ort);
       AddMethod('Rabatt',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Rabatt);
       AddMethod('Preis',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_r_Preis);
       AddMethod('Miniscore',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_Miniscore);
       AddMethod('LoginInfo',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_LoginInfo);
       AddMethod('Skript',
 {$ifdef fpc}
-        @
+
 {$endif}
         XMethods.rpc_e_w_Skript);
 
       // JonDa
       AddMethod('JonDaPlug',
 {$ifdef fpc}
-        @
+
 {$endif}
         JonDa.info);
       AddMethod('StartTAN',
 {$ifdef fpc}
-        @
+
 {$endif}
         JonDa.start);
       AddMethod('ProceedTAN',
 {$ifdef fpc}
-        @
+
 {$endif}
         JonDa.proceed);
 
@@ -475,4 +476,4 @@ begin
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
 
-end.
+end.
