@@ -653,10 +653,10 @@
 				<DesignClass>TDataModule</DesignClass>
 			</DCCReference>
 			<DCCReference Include="ServiceApp.pas">
-				<Form>FormGUI</Form>
+				<Form>FormServiceApp</Form>
 			</DCCReference>
 			<DCCReference Include="ServiceFoto.pas">
-				<Form>FormFotoService</Form>
+				<Form>FormServiceFoto</Form>
 			</DCCReference>
 			<DCCReference Include="..\PASconTools\Foto.pas"/>
 			<DCCReference Include="..\JonDaServer\FotoExec.pas"/>

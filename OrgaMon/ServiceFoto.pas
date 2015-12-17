@@ -1,4 +1,4 @@
-{
+f{
   |      ___                  __  __
   |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
   |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
@@ -42,7 +42,7 @@ type
 
   end;
 
-  TFormFotoService = class(TForm)
+  TFormServiceFoto = class(TForm)
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     ListBox1: TListBox;
@@ -192,7 +192,7 @@ type
   end;
 
 var
-  FormFotoService: TFormFotoService;
+  FormServiceFoto: TFormServiceFoto;
 
 implementation
 
@@ -244,18 +244,18 @@ begin
 {$ENDIF}
 end;
 
-procedure TFormFotoService.Button10Click(Sender: TObject);
+procedure TFormServiceFoto.Button10Click(Sender: TObject);
 begin
   MyFotoExec.ensureGlobals;
 end;
 
-procedure TFormFotoService.Button11Click(Sender: TObject);
+procedure TFormServiceFoto.Button11Click(Sender: TObject);
 begin
   if (TimerInit < cKikstart_delay * 60 * 1000) then
     TimerInit := pred(cKikstart_delay * 60 * 1000);
 end;
 
-procedure TFormFotoService.Button1Click(Sender: TObject);
+procedure TFormServiceFoto.Button1Click(Sender: TObject);
 begin
   if Timer1.Enabled then
   begin
@@ -269,32 +269,32 @@ begin
   end;
 end;
 
-procedure TFormFotoService.Button20Click(Sender: TObject);
+procedure TFormServiceFoto.Button20Click(Sender: TObject);
 begin
   FileDelete(MyFotoExec.MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
-procedure TFormFotoService.Button22Click(Sender: TObject);
+procedure TFormServiceFoto.Button22Click(Sender: TObject);
 begin
   Edit_Rollback_Quelle.Text := cBackUpPath;
 end;
 
-procedure TFormFotoService.Button23Click(Sender: TObject);
+procedure TFormServiceFoto.Button23Click(Sender: TObject);
 begin
   Edit_Rollback_Quelle.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
 end;
 
-procedure TFormFotoService.Button24Click(Sender: TObject);
+procedure TFormServiceFoto.Button24Click(Sender: TObject);
 begin
   openShell(MyFotoExec.MyWorkingPath + cMonDaServer_Baustelle);
 end;
 
-procedure TFormFotoService.Button25Click(Sender: TObject);
+procedure TFormServiceFoto.Button25Click(Sender: TObject);
 begin
   openShell(MyFotoExec.MyWorkingPath + cFotoTransaktionenFName);
 end;
 
-procedure TFormFotoService.Button21Click(Sender: TObject);
+procedure TFormServiceFoto.Button21Click(Sender: TObject);
 const
   // TransaktionsCountMaske = '??????-';
   TransaktionsCountMaske = '*-';
@@ -387,7 +387,7 @@ begin
 
 end;
 
-procedure TFormFotoService.Button26Click(Sender: TObject);
+procedure TFormServiceFoto.Button26Click(Sender: TObject);
 var
   tREFERENZ: tsTable;
   Column_RID: integer;
@@ -477,7 +477,7 @@ begin
   SrcKandidaten.Free;
 end;
 
-procedure TFormFotoService.Button27Click(Sender: TObject);
+procedure TFormServiceFoto.Button27Click(Sender: TObject);
 var
   FName, FNameRemote: string;
   n: integer;
@@ -503,7 +503,7 @@ begin
   end;
 end;
 
-procedure TFormFotoService.Button2Click(Sender: TObject);
+procedure TFormServiceFoto.Button2Click(Sender: TObject);
 var
   n: integer;
   FName, FNameRemote, GeraeteNo: string;
@@ -518,7 +518,7 @@ begin
   end;
 end;
 
-procedure TFormFotoService.Button3Click(Sender: TObject);
+procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
   procedure doWork(n: integer);
   var
@@ -549,18 +549,18 @@ begin
   end;
 end;
 
-procedure TFormFotoService.Button12Click(Sender: TObject);
+procedure TFormServiceFoto.Button12Click(Sender: TObject);
 begin
   ListBox5.ItemIndex := -1;
   Button3Click(Sender);
 end;
 
-procedure TFormFotoService.Button13Click(Sender: TObject);
+procedure TFormServiceFoto.Button13Click(Sender: TObject);
 begin
   ShowMessage(inttostrN(MyFotoExec.GEN_ID, cAnzahlStellen_Transaktionszaehler));
 end;
 
-procedure TFormFotoService.Button14Click(Sender: TObject);
+procedure TFormServiceFoto.Button14Click(Sender: TObject);
 const
   cPath_pdf_Temp = 'FreePDF\';
   cPDF_File = 'OrgaMon.pdf';
@@ -660,7 +660,7 @@ begin
   Button14.Enabled := true;
 end;
 
-procedure TFormFotoService.Button15Click(Sender: TObject);
+procedure TFormServiceFoto.Button15Click(Sender: TObject);
 begin
   // Read MemCached
   (*
@@ -674,18 +674,18 @@ begin
   *)
 end;
 
-procedure TFormFotoService.Button16Click(Sender: TObject);
+procedure TFormServiceFoto.Button16Click(Sender: TObject);
 begin
   MyFotoExec.ensureGlobals;
   MyFotoExec.JonDaExec.doSync;
 end;
 
-procedure TFormFotoService.Button17Click(Sender: TObject);
+procedure TFormServiceFoto.Button17Click(Sender: TObject);
 begin
   ListBox10.Items.add(InttoStr(DirSize('X:\JonDaServer\#61') DIV (1024 * 1024)));
 end;
 
-procedure TFormFotoService.Button18Click(Sender: TObject);
+procedure TFormServiceFoto.Button18Click(Sender: TObject);
 var
   AUFTRAG_R: integer;
   mderecOrgaMon: TMDERec;
@@ -743,7 +743,7 @@ begin
   AllTRN.Free;
 end;
 
-procedure TFormFotoService.Button19Click(Sender: TObject);
+procedure TFormServiceFoto.Button19Click(Sender: TObject);
 var
   TRN: string;
 begin
@@ -767,7 +767,7 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormFotoService.Button4Click(Sender: TObject);
+procedure TFormServiceFoto.Button4Click(Sender: TObject);
 var
   sParameter: TStringList;
 begin
@@ -780,17 +780,17 @@ begin
   sParameter.Free;
 end;
 
-procedure TFormFotoService.Button5Click(Sender: TObject);
+procedure TFormServiceFoto.Button5Click(Sender: TObject);
 begin
   MyFotoExec.workEingang;
 end;
 
-procedure TFormFotoService.Button6Click(Sender: TObject);
+procedure TFormServiceFoto.Button6Click(Sender: TObject);
 begin
   MyFotoExec.workWartend;
 end;
 
-procedure TFormFotoService.Button8Click(Sender: TObject);
+procedure TFormServiceFoto.Button8Click(Sender: TObject);
 var
   sParameter: TStringList;
 begin
@@ -802,7 +802,7 @@ begin
   Edit2.Text := '';
 end;
 
-procedure TFormFotoService.Button9Click(Sender: TObject);
+procedure TFormServiceFoto.Button9Click(Sender: TObject);
 var
   WARTEND: tsTable;
   AUFTRAG_R: integer;
@@ -843,12 +843,12 @@ begin
 
 end;
 
-procedure TFormFotoService.CheckBox3Click(Sender: TObject);
+procedure TFormServiceFoto.CheckBox3Click(Sender: TObject);
 begin
   MyFotoExec.ZaehlerNummerNeuXlsCsv_Vorhanden := CheckBox3.checked;
 end;
 
-procedure TFormFotoService.doRemote(GeraeteNo, Command, FName: string);
+procedure TFormServiceFoto.doRemote(GeraeteNo, Command, FName: string);
 const
   cRemoteFotoPath = '/mnt/sdcard/DCIM/Camera/';
 var
@@ -882,19 +882,19 @@ begin
 
 end;
 
-procedure TFormFotoService.FormCreate(Sender: TObject);
+procedure TFormServiceFoto.FormCreate(Sender: TObject);
 begin
-  Caption := 'OrgaMonAppService Rev. ' + RevToStr(Version);
+  Caption := 'Service-Foto Rev. ' + RevToStr(FotoExec.Version);
   PageControl1.ActivePage := TabSheet1;
   MyFotoExec := TownFotoExec.Create;
 end;
 
-procedure TFormFotoService.ListBox3Click(Sender: TObject);
+procedure TFormServiceFoto.ListBox3Click(Sender: TObject);
 begin
   LoadPic;
 end;
 
-procedure TFormFotoService.ListBox3KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFormServiceFoto.ListBox3KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   FindStr, Ablage, Path: string;
   FoundStr: string;
@@ -1080,7 +1080,7 @@ begin
 
 end;
 
-procedure TFormFotoService.ListBox5Click(Sender: TObject);
+procedure TFormServiceFoto.ListBox5Click(Sender: TObject);
 var
   n: integer;
   FName: string;
@@ -1104,12 +1104,12 @@ begin
 
 end;
 
-procedure TFormFotoService.LoadPic;
+procedure TFormServiceFoto.LoadPic;
 begin
   Image1.Picture.LoadFromFile(Edit4.Text + ListBox3.Items[ListBox3.ItemIndex]);
 end;
 
-procedure TFormFotoService.SpeedButton1Click(Sender: TObject);
+procedure TFormServiceFoto.SpeedButton1Click(Sender: TObject);
 var
   sDir: TStringList;
   n: integer;
@@ -1133,7 +1133,7 @@ begin
   sMoveTransaktionen.LoadFromFile(MyFotoExec.MyWorkingPath + cFotoTransaktionenFName);
 end;
 
-procedure TFormFotoService.SpeedButton2Click(Sender: TObject);
+procedure TFormServiceFoto.SpeedButton2Click(Sender: TObject);
 var
   sDir: TStringList;
 begin
@@ -1148,7 +1148,7 @@ begin
 
 end;
 
-procedure TFormFotoService.SpeedButton3Click(Sender: TObject);
+procedure TFormServiceFoto.SpeedButton3Click(Sender: TObject);
 var
   sWartend: TStringList;
 begin
@@ -1158,7 +1158,7 @@ begin
   sWartend.Free;
 end;
 
-procedure TFormFotoService.SpeedButton8Click(Sender: TObject);
+procedure TFormServiceFoto.SpeedButton8Click(Sender: TObject);
 var
   sDir: TStringList;
 begin
@@ -1176,18 +1176,18 @@ begin
   sDir.Free;
 end;
 
-function TFormFotoService.AuftragFName(GeraeteNo: string): string;
+function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
 begin
   result := MyFotoExec.JonDaServerPath + 'Daten\' + 'AUFTRAG.' + GeraeteNo + '.DAT';
 end;
 
-procedure TFormFotoService.TabSheet9Show(Sender: TObject);
+procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
 begin
   if Edit9.Text = '' then
     Edit9.Text := MyFotoExec.JonDaServerPath;
 end;
 
-procedure TFormFotoService.Timer1Timer(Sender: TObject);
+procedure TFormServiceFoto.Timer1Timer(Sender: TObject);
 begin
 
   if (pos('+' + Computername + '+', '+KHAO+MAILAND+WERDER+') > 0) then
@@ -1259,7 +1259,7 @@ end;
 
 procedure TownFotoExec.Log(s: string);
 begin
-  with FormFotoService do
+  with FormServiceFoto do
   begin
     ListBox1.Items.add(s);
     if (pos('ERROR', s) > 0) then

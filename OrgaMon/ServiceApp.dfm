@@ -1,7 +1,7 @@
-object FormGUI: TFormGUI
+object FormServiceApp: TFormServiceApp
   Left = 49
   Top = 106
-  Caption = 'FormGUI'
+  Caption = 'FormServiceApp'
   ClientHeight = 548
   ClientWidth = 686
   Color = clBtnFace

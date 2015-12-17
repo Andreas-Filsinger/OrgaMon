@@ -44,7 +44,7 @@ uses
   globals, JonDaExec, Buttons;
 
 type
-  TFormGUI = class(TForm)
+  TFormServiceApp = class(TForm)
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -223,7 +223,7 @@ type
   end;
 
 var
-  FormGUI: TFormGUI;
+  FormServiceApp: TFormServiceApp;
 
 implementation
 
@@ -262,7 +262,7 @@ end;
 
 // Datum;Uhrzeit;RID;Z#alt;Z#neu;Prefix
 
-procedure TFormGUI.FormCreate(Sender: TObject);
+procedure TFormServiceApp.FormCreate(Sender: TObject);
 var
   MyIni: TIniFile;
   sLog: TStringList;
@@ -275,7 +275,7 @@ begin
 
   // interne Varibale setzen
   DiagnosePath := MyProgramPath;
-  caption := 'JonDaServer [' + UserName + '@' + MyProgramPath + '] Rev ' + RevToStr(Version);
+  caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' + RevToStr(JonDaExec.Version);
 
   // Ini-Datei öffnen
   MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
@@ -339,7 +339,7 @@ begin
 
 end;
 
-procedure TFormGUI.FormDestroy(Sender: TObject);
+procedure TFormServiceApp.FormDestroy(Sender: TObject);
 begin
   if assigned(JonDaX) then
     JonDaX.free;
@@ -349,12 +349,12 @@ begin
 
 end;
 
-procedure TFormGUI.Button4Click(Sender: TObject);
+procedure TFormServiceApp.Button4Click(Sender: TObject);
 begin
   openshell(JonDaX.LogFName);
 end;
 
-procedure TFormGUI.Button5Click(Sender: TObject);
+procedure TFormServiceApp.Button5Click(Sender: TObject);
 const
   cFixedTAN_FName = '90000.DAT';
 var
@@ -507,13 +507,13 @@ begin
 
 end;
 
-procedure TFormGUI.Button3Click(Sender: TObject);
+procedure TFormServiceApp.Button3Click(Sender: TObject);
 begin
   FileAlive(MyProgramPath + cIniFName);
   openshell(MyProgramPath + cIniFName);
 end;
 
-procedure TFormGUI.FormActivate(Sender: TObject);
+procedure TFormServiceApp.FormActivate(Sender: TObject);
 begin
 
   if not(Initialized) then
@@ -527,7 +527,7 @@ begin
   end;
 end;
 
-procedure TFormGUI.Button2Click(Sender: TObject);
+procedure TFormServiceApp.Button2Click(Sender: TObject);
 var
   n: integer;
   sParameter, sResult: TStringList;
@@ -594,7 +594,7 @@ begin
   sParameter.free;
 end;
 
-procedure TFormGUI.Button6Click(Sender: TObject);
+procedure TFormServiceApp.Button6Click(Sender: TObject);
 var
   AllTRN: TStringList;
   RID: integer;
@@ -836,7 +836,7 @@ begin
   sLostProceed.free;
 end;
 
-procedure TFormGUI.Diagnose_Log(One: TMdeRec; log: TStringList);
+procedure TFormServiceApp.Diagnose_Log(One: TMdeRec; log: TStringList);
 
   procedure outLog(s: string);
   begin
@@ -873,12 +873,12 @@ begin
   end;
 end;
 
-procedure TFormGUI.Button7Click(Sender: TObject);
+procedure TFormServiceApp.Button7Click(Sender: TObject);
 begin
   ListBox1.items.add(Edit4.text + ',' + ComboBox2.text + ',' + Edit7.text);
 end;
 
-procedure TFormGUI.Edit19KeyPress(Sender: TObject; var Key: Char);
+procedure TFormServiceApp.Edit19KeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #13) then
   begin
@@ -887,17 +887,17 @@ begin
   end;
 end;
 
-procedure TFormGUI.Edit2Exit(Sender: TObject);
+procedure TFormServiceApp.Edit2Exit(Sender: TObject);
 begin
   Edit2.text := ValidatePathName(Edit2.text) + '\';
 end;
 
-procedure TFormGUI.Button8Click(Sender: TObject);
+procedure TFormServiceApp.Button8Click(Sender: TObject);
 begin
   openshell(Edit2.text + ComboBox1.text + '\restanten.txt');
 end;
 
-procedure TFormGUI.Button9Click(Sender: TObject);
+procedure TFormServiceApp.Button9Click(Sender: TObject);
 var
   sResult, sParameter: TStringList;
 begin
@@ -909,7 +909,7 @@ begin
   sParameter.free;
 end;
 
-procedure TFormGUI.Button10Click(Sender: TObject);
+procedure TFormServiceApp.Button10Click(Sender: TObject);
 var
   TheX: TStringList;
 
@@ -944,22 +944,22 @@ begin
   openshell(MyProgramPath + 'Diagnose.txt');
 end;
 
-function TFormGUI.iXMLRPCHost: string;
+function TFormServiceApp.iXMLRPCHost: string;
 begin
   result := ComputerName;
 end;
 
-function TFormGUI.iXMLRPCPort: string;
+function TFormServiceApp.iXMLRPCPort: string;
 begin
   result := '3049';
 end;
 
-procedure TFormGUI.SpeedButton2Click(Sender: TObject);
+procedure TFormServiceApp.SpeedButton2Click(Sender: TObject);
 begin
   openshell(MyProgramPath + cGeraeteEinstellungen);
 end;
 
-procedure TFormGUI.Button11Click(Sender: TObject);
+procedure TFormServiceApp.Button11Click(Sender: TObject);
 const
   cRID_Null = -1;
   cRID_FirstValid = 1;
@@ -1064,26 +1064,26 @@ begin
 
 end;
 
-procedure TFormGUI.Button12Click(Sender: TObject);
+procedure TFormServiceApp.Button12Click(Sender: TObject);
 begin
   ShowMessage
     ('nichtmehr imple,mentiert: VErwenden Sie eine FTP-CLient um Ergebnis-TANS hochzuladen!');
 end;
 
-procedure TFormGUI.Button13Click(Sender: TObject);
+procedure TFormServiceApp.Button13Click(Sender: TObject);
 begin
   STOP := true;
 end;
 
 //
 
-procedure TFormGUI.Button14Click(Sender: TObject);
+procedure TFormServiceApp.Button14Click(Sender: TObject);
 begin
   Nachmeldungen;
   ShowMessage(inttostr(CareTakerLog('Hallo')));
 end;
 
-procedure TFormGUI.Button15Click(Sender: TObject);
+procedure TFormServiceApp.Button15Click(Sender: TObject);
 var
   AllNames: TStringList;
   n: integer;
@@ -1099,7 +1099,7 @@ begin
   openshell(MyProgramPath + 'AlleNamen.txt');
 end;
 
-procedure TFormGUI.Button16Click(Sender: TObject);
+procedure TFormServiceApp.Button16Click(Sender: TObject);
 var
   SourceFName, DestFNAme: string;
 begin
@@ -1109,7 +1109,7 @@ begin
   openshell(DestFNAme);
 end;
 
-procedure TFormGUI.Button17Click(Sender: TObject);
+procedure TFormServiceApp.Button17Click(Sender: TObject);
 const
   cFixedTAN_FName = '50000.DAT';
 var
@@ -1232,7 +1232,7 @@ begin
 
 end;
 
-procedure TFormGUI.Button18Click(Sender: TObject);
+procedure TFormServiceApp.Button18Click(Sender: TObject);
 const
   cIsAblageMarkerFile = 'ampel-horizontal.gif';
   cFileTimeOutDays = 50 + 10;
@@ -1400,7 +1400,7 @@ begin
 
 end;
 
-procedure TFormGUI.Button19Click(Sender: TObject);
+procedure TFormServiceApp.Button19Click(Sender: TObject);
 
   procedure Migrate(FName: string);
   var
@@ -1418,7 +1418,7 @@ begin
   Migrate(MyProgramPath + cServerDataPath + 'AUFTRAG');
 end;
 
-procedure TFormGUI.Button20Click(Sender: TObject);
+procedure TFormServiceApp.Button20Click(Sender: TObject);
 
   procedure toText(FName: string);
   var
@@ -1477,12 +1477,12 @@ begin
   toText(MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + Postfix);
 end;
 
-procedure TFormGUI.Button21Click(Sender: TObject);
+procedure TFormServiceApp.Button21Click(Sender: TObject);
 begin
   JonDaX.DoAbschluss;
 end;
 
-procedure TFormGUI.Button22Click(Sender: TObject);
+procedure TFormServiceApp.Button22Click(Sender: TObject);
 var
   iFTP: TIdFTP;
 begin
@@ -1507,14 +1507,14 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormGUI.Button23Click(Sender: TObject);
+procedure TFormServiceApp.Button23Click(Sender: TObject);
 begin
   BeginHourGlass;
   JonDaX.maintainGERAETE;
   EndHourGlass;
 end;
 
-procedure TFormGUI.Button24Click(Sender: TObject);
+procedure TFormServiceApp.Button24Click(Sender: TObject);
 begin
   // JonDaX
 
@@ -1537,12 +1537,12 @@ begin
 
 end;
 
-procedure TFormGUI.Button25Click(Sender: TObject);
+procedure TFormServiceApp.Button25Click(Sender: TObject);
 begin
  JonDaX.maintainSENDEN;
 end;
 
-procedure TFormGUI.Button26Click(Sender: TObject);
+procedure TFormServiceApp.Button26Click(Sender: TObject);
 var
  n, k : integer;
  v : TgpIntegerList;
@@ -1556,7 +1556,7 @@ begin
  v.free;
 end;
 
-procedure TFormGUI.Button1Click(Sender: TObject);
+procedure TFormServiceApp.Button1Click(Sender: TObject);
 var
   iFTP: TIdFTP;
 begin
