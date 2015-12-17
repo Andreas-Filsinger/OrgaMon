@@ -36,6 +36,8 @@ uses
   anfix32, wordindex, IdFTP;
 
 const
+  version: single = 2.218; // ..\rev\Service-App.rev.txt
+
   // Für ungesetzte Daten-Bank RIDs
   cRID_Null = -1;
 
@@ -654,7 +656,7 @@ begin
   with result do
   begin
     add(MyProgramPath);
-    add(cApplicationName + ' Rev. ' + RevToStr(globals.VERSION));
+    add(cApplicationName + ' Rev. ' + RevToStr(version));
     add(gsIdProductName + ' Rev. ' + gsIdVersion);
     add('ANFiX Rev. ' + RevToStr(VersionAnfix32));
     add(ComputerName);

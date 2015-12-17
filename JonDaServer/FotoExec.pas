@@ -41,6 +41,8 @@ uses
   globals;
 
 const
+  Version: single = 1.061; // ..\rev\Service-Foto.rev.txt
+
   // root Locations
   cWorkPath = 'W:\';
   cBackUpPath = 'I:\KundenDaten\SEWA\';

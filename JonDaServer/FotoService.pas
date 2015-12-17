@@ -37,9 +37,6 @@ uses
   ZDataset, ZAbstractConnection, ZConnection,
   JonDaExec, memcache, Foto, FotoExec;
 
-const
-  Version: single = 1.061; // ..\rev\OrgaMonAppService.rev.txt
-
 type
   TownFotoExec = class(TFotoExec)
     procedure Log(s: string);
@@ -161,7 +158,6 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -866,14 +862,14 @@ end;
 
 procedure TFormFotoService.Button8Click(Sender: TObject);
 var
- sParameter : TStringList;
+  sParameter: TStringList;
 begin
- sParameter := TStringList.create;
- sParameter.Add('DATUM='+Edit3.text);
- sParameter.Add('EINZELN='+Edit2.text);
+  sParameter := TStringList.Create;
+  sParameter.add('DATUM=' + Edit3.Text);
+  sParameter.add('EINZELN=' + Edit2.Text);
 
- MyFotoExec.workAblage(sParameter);
- Edit2.Text := '';
+  MyFotoExec.workAblage(sParameter);
+  Edit2.Text := '';
 end;
 
 procedure TFormFotoService.Button9Click(Sender: TObject);
@@ -1334,18 +1330,7 @@ begin
 
 end;
 
-procedure TFormFotoService.FormDestroy(Sender: TObject);
-begin
-(*
-  if assigned(EINGABE) then
-    EINGABE.Free;
-  if assigned(tBAUSTELLE) then
-  begin
-    tBAUSTELLE.Free;
-    JonDaExec.Free;
-  end;
-  *)
-end;
+
 
 { TownFotoExec }
 
