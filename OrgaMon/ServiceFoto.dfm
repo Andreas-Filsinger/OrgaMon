@@ -19,7 +19,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet10
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -657,35 +657,6 @@ object FormFotoService: TFormFotoService
         Height = 25
         Caption = 'Fotos-reduziert'
         TabOrder = 12
-      end
-    end
-    object TabSheet7: TTabSheet
-      Caption = 'PostgreSQL'
-      ImageIndex = 6
-      OnShow = TabSheet7Show
-      object Label7: TLabel
-        Left = 32
-        Top = 24
-        Width = 31
-        Height = 13
-        Caption = 'Label7'
-      end
-      object Button7: TButton
-        Left = 587
-        Top = 436
-        Width = 75
-        Height = 25
-        Caption = 'Button7'
-        TabOrder = 0
-        OnClick = Button7Click
-      end
-      object ListBox8: TListBox
-        Left = 32
-        Top = 43
-        Width = 630
-        Height = 387
-        ItemHeight = 13
-        TabOrder = 1
       end
     end
     object TabSheet8: TTabSheet

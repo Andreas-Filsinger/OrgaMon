@@ -542,6 +542,17 @@ const
   cMonDaServer_Baustelle_manuell = 'baustelle-manuell.csv';
   cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
 
+  cActionRestantenLeeren = 'Restanten ignorieren';
+  cActionRestantenAddieren = 'Restanten addieren';
+  cActionFremdMonteurLoeschen = 'Fremdmonteur löschen';
+  // alle Monteure aus <Geräte>.dat sammeln
+  // alle anderen Monteure fliegen raus!
+  cActionAusAlterTAN = 'Datenmitnahme aus alter TAN';
+  // alle Reste aus alter AUFTRAG.DAT einer alten
+  // TAN wieder laden. Einfach alle RIDs die nicht
+  // in der aktuellen Datei zu finden sind! So ne Art
+  // externe STAY.DAT
+
   cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';

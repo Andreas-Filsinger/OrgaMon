@@ -652,6 +652,14 @@
 				<Form>DataModuleGUIhelp</Form>
 				<DesignClass>TDataModule</DesignClass>
 			</DCCReference>
+			<DCCReference Include="ServiceApp.pas">
+				<Form>FormGUI</Form>
+			</DCCReference>
+			<DCCReference Include="ServiceFoto.pas">
+				<Form>FormFotoService</Form>
+			</DCCReference>
+			<DCCReference Include="..\PASconTools\Foto.pas"/>
+			<DCCReference Include="..\JonDaServer\FotoExec.pas"/>
 			<None Include="..\rev\Oc.rev.txt"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<None Include="..\rev\TPicUpload.rev.txt"/>
