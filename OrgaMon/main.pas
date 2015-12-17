@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -156,6 +156,8 @@ type
     Button89: TButton;
     Button90: TButton;
     JvAppIniFileStorage1: TJvAppIniFileStorage;
+    Button54: TButton;
+    Button91: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -256,6 +258,8 @@ type
     procedure Button52Click(Sender: TObject);
     procedure Button89Click(Sender: TObject);
     procedure Button90Click(Sender: TObject);
+    procedure Button91Click(Sender: TObject);
+    procedure Button54Click(Sender: TObject);
   private
     { Private-Deklarationen }
     FirstStarted: boolean;
@@ -310,7 +314,7 @@ uses
   Buchhalter, JclMiscel,
   AutoUp, GeoArbeitsplatz, GeoLokalisierung,
   AuftragGeo, IniFiles, TPUmain,
-  GeoPostleitzahlen,
+  GeoPostleitzahlen, ServiceFoto, ServiceApp,
   QTicketArbeitsplatz, OLAPArbeitsplatz,
   ZahlungECconnect, Medium, Jvgnugettext,
   IB_Controls, Vertrag, Kontext,
@@ -671,6 +675,11 @@ begin
   FormCron.show;
 end;
 
+procedure TFormMain.Button91Click(Sender: TObject);
+begin
+  FormServiceApp.show;
+end;
+
 procedure TFormMain.Button9Click(Sender: TObject);
 begin
   FormPersonSuche.show;
@@ -801,6 +810,11 @@ end;
 procedure TFormMain.Button53Click(Sender: TObject);
 begin
   FormArtikelRang.show;
+end;
+
+procedure TFormMain.Button54Click(Sender: TObject);
+begin
+  FormServiceFoto.show;
 end;
 
 procedure TFormMain.Button55Click(Sender: TObject);

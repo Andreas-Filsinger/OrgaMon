@@ -1610,6 +1610,24 @@ object FormMain: TFormMain
     TabOrder = 96
     OnClick = Button90Click
   end
+  object Button54: TButton
+    Left = 306
+    Top = 315
+    Width = 75
+    Height = 25
+    Caption = 'Foto'
+    TabOrder = 97
+    OnClick = Button54Click
+  end
+  object Button91: TButton
+    Left = 78
+    Top = 237
+    Width = 75
+    Height = 25
+    Caption = 'App'
+    TabOrder = 98
+    OnClick = Button91Click
+  end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
@@ -1618,8 +1636,8 @@ object FormMain: TFormMain
   end
   object IdAntiFreeze1: TIdAntiFreeze
     OnlyWhenIdle = False
-    Left = 32
-    Top = 264
+    Left = 96
+    Top = 24
   end
   object JvAppIniFileStorage1: TJvAppIniFileStorage
     StorageOptions.BooleanStringTrueValues = 'TRUE, YES, Y'
@@ -1628,7 +1646,7 @@ object FormMain: TFormMain
     AutoReload = True
     Location = flCustom
     SubStorages = <>
-    Left = 136
-    Top = 264
+    Left = 184
+    Top = 16
   end
 end
