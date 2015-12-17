@@ -530,6 +530,7 @@ const
   cDBPath = 'db\';
   cSyncPath = 'sync\';
   cFotoPath = 'Fotos\';
+  cWebPath = '..\web\';
 
   cTrnFName = 'Transaktionsnummer.ini';
   cFirstTrn = '10000';

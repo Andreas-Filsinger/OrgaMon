@@ -12,7 +12,6 @@ object FormFotoService: TFormFotoService
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
@@ -20,7 +19,7 @@ object FormFotoService: TFormFotoService
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet6
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -130,6 +129,10 @@ object FormFotoService: TFormFotoService
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button24: TButton
         Left = 48
         Top = 56

@@ -33,7 +33,6 @@ uses
 
 const
   cApplicationName = 'JonDaServer';
-  version: single = 2.218; // ..\rev\JonDaServer.rev.txt
 
   // Typische Client-Programmversionen
   cVersion_JonDa: single = 1.118;
@@ -238,7 +237,7 @@ type
 
 function StrassePostalisch(s: string): string;
 function OrtPostalisch(s: string): string;
-function cCopyright: string;
+function cCopyright(Version: Single): string;
 
 implementation
 
@@ -248,9 +247,9 @@ uses
 const
   LoadIniFCalled: boolean = false;
 
-function cCopyright: string;
+function cCopyright(Version: Single): string;
 begin
-  result := cApplicationName + '™ Rev ' + RevToStr(globals.version) + ' ©1987-' + JahresZahl +
+  result := cApplicationName + '™ Rev ' + RevToStr(version) + ' ©1987-' + JahresZahl +
     ' http://www.orgamon.org';
 end;
 
