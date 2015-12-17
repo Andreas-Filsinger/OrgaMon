@@ -539,10 +539,18 @@ const
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
   cMonDaServer_Baustelle = 'baustelle.csv';
+  cMonDaServer_Baustelle_manuell = 'baustelle-manuell.csv';
+  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
+
   cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';
   cProtExtension = '.TXT';
+
+  // Eingabe.nnn.txt
+  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
+  cHeader_UmbenennungUnvollstaendig =
+    'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
 
   // Creator Sachen!
   cHistorieTextFName = 'Creator\historie.txt';
@@ -1122,6 +1130,7 @@ var
   iJonDa_FTPHost: string = '';
   iJonDa_FTPUserName: string = '';
   iJonDa_FTPPassword: string = '';
+  iJonDa_Port: integer = 3049;
 
   // aus AutoUp / Tests
   iAutoUpRevDir: string;
