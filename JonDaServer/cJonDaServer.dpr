@@ -56,7 +56,7 @@ begin
      SectionName := UserName;
 
     writeln(
-      { } 'cJonDaServer Rev. ' + RevToStr(globals.version) + ' - ' +
+      { } 'cJonDaServer Rev. ' + RevToStr(JonDaExec.version) + ' - ' +
       { } MyProgramPath);
     JonDa := TJonDaExec.Create;
 
@@ -104,8 +104,8 @@ begin
 
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' +
-      RevToStr(globals.version) + ' [' + UserName + ']');
-    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) +
+      RevToStr(JonDaExec.version) + ' [' + SectionName + ']');
+    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(JonDaExec.version) +
       ' gestartet');
 
     repeat

@@ -72,16 +72,198 @@ uses
   ExcelHelper in '..\PASconTools\ExcelHelper.pas',
   basic32 in '..\PASconTools\basic32.pas',
   DTA in '..\PASconTools\DTA.PAS',
-  memcache in '..\PASconTools\memcache.pas';
+  memcache in '..\PASconTools\memcache.pas',
+  FotoExec in '..\JonDaServer\FotoExec.pas',
+  Foto in '..\PASconTools\Foto.pas';
 
 type
-  TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);
+  TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto);
 
 var
   Ident: TIndentitaet;
   Modus: string;
   _iDataBaseName: string;
   ForceRev: single;
+
+procedure connectOrgamon;
+var
+  l, k: integer;
+begin
+  with dbOrgaMon.fbConnection do
+  begin
+
+    _iDataBaseName := iDataBaseName;
+    if (iDataBaseHost <> '') then
+      i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
+    else
+      i_c_DataBaseFName := iDataBaseName;
+
+    i_c_DataBasePath := i_c_DataBaseFName;
+    l := revpos('.', i_c_DataBasePath);
+    k := max(revpos('\', i_c_DataBasePath), revpos('/', i_c_DataBasePath));
+    if (k > 0) then
+    begin
+      i_c_DataBasePath := copy(i_c_DataBaseFName, 1, k);
+      MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
+    end;
+
+    DataBaseName := _iDataBaseName;
+    if (iDataBaseHost = '') then
+    begin
+      Server := '';
+      protocol := cplocal;
+    end
+    else
+    begin
+      protocol := cpTCP_IP;
+    end;
+
+    UserName := iDataBaseUser;
+    if (length(iDataBasePassword) > 25) then
+      Password := deCrypt_Hex(iDataBasePassword)
+    else
+      Password := iDataBasePassword;
+    if (iDataBaseName = '') then
+    begin
+      writeln('ERROR: DataBaseName= ist leer');
+      halt;
+    end;
+    write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) +
+      ' ... ');
+    Connect;
+    if not(Connected) then
+    begin
+      writeln('ERROR: DataBase.connect erfolglos');
+      halt;
+    end;
+    MachineIDChanged;
+  end;
+
+  dbOrgaMon.cConnection := fbConnection;
+
+  sBearbeiter := e_r_Bearbeiter;
+  if (sBearbeiter < cRID_FirstValid) then
+  begin
+    writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName + '" ist noch nicht angelegt!');
+    halt(1);
+  end;
+  sBearbeiterKurz :=
+  { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
+  { } e_r_Kontext;
+
+  writeln(cOKText);
+
+  // Debug-Modus aktiv?
+  if IsParam('-al') then
+  begin
+    writeln('DebugMode @' + DiagnosePath);
+    DebugMode := true;
+    DebugLogPath := globals.DiagnosePath;
+  end;
+
+  // Aktueller Versionszwang?
+  ForceRev := e_r_Revision_Zwang;
+  if (ForceRev > 8.0) then
+    if (RevAsInteger(globals.version) <> RevAsInteger(ForceRev)) then
+    begin
+      writeln(
+        { } cERRORText +
+        { } ' Es besteht Versionszwang zu Rev. ' +
+        { } RevToStr(ForceRev) + '!');
+      halt(1);
+    end;
+
+  // Systemparameter ermitteln
+  e_r_LadeParameter;
+  AllSystemsRunning := true;
+end;
+
+type
+  TownFotoExec = class(TFotoExec)
+    procedure Log(s: string);
+
+  end;
+
+  { TownFotoExec }
+
+procedure TownFotoExec.Log(s: string);
+begin
+  writeln(s);
+  if (pos('ERROR', s) > 0) then
+    AppendStringsToFile(s, MyWorkingPath + 'FotoService.log.txt');
+  if (pos('FATAL', s) = 1) then
+    halt(1);
+end;
+
+procedure RunAsFoto;
+const
+  Timer_Intervall = 2000;
+var
+  MyFotoExec: TownFotoExec;
+  TimerWartend: integer;
+  TimerInit: integer;
+  sMoveTransaktionen: TStringList;
+  sLog: TStringList;
+
+begin
+  MyFotoExec := TownFotoExec.Create;
+  TimerWartend := 0;
+  TimerInit := 0;
+  sMoveTransaktionen := TStringList.Create;
+  sLog := TStringList.Create;
+
+  while true do
+  begin
+
+    try
+      if (TimerInit < cKikstart_delay * 60 * 1000) then
+      begin
+        if (TimerInit = 0) then
+          MyFotoExec.Log('Warte ' + InttoStr(cKikstart_delay) + ' Minuten ...');
+        inc(TimerInit, Timer_Intervall);
+        if (TimerInit >= cKikstart_delay * 60 * 1000) then
+        begin
+          MyFotoExec.Log('Erwacht ... ');
+        end;
+      end
+      else
+      begin
+
+        // Alle 5 Min!
+        if (TimerWartend > 5 * 60 * 1000) then
+        begin
+          TimerWartend := 0;
+
+          // Ab und zu die neuen Daten beachten
+          MyFotoExec.releaseGlobals;
+
+          // Wartende verarbeiten
+          MyFotoExec.workWartend;
+
+          // Status Seite neu bearbeiten
+          MyFotoExec.workStatus;
+
+          // Zwischen 00:00 und ]01:00
+          if (SecondsGet < (1 * 3600)) then
+            // nur machen, wenn nicht in Arbeit oder fertig
+            if not(FileExists(MyFotoExec.MyWorkingPath + MyFotoExec.AblageFname)) then
+              // Zips verschieben, Fotos zippen
+              MyFotoExec.workAblage;
+
+        end;
+
+        // Jedes Mal
+        MyFotoExec.workEingang;
+      end;
+
+    except
+
+    end;
+    inc(TimerWartend, Timer_Intervall);
+
+    sleep(Timer_Intervall);
+  end;
+end;
 
 procedure RunAsXMLRPC;
 var
@@ -132,12 +314,12 @@ begin
     // Listen-Port des Servers setzen
     DefaultPort := UsedPort;
     // iXMLRPCPort muss aber auch entsprechende gesetzt sein!
-    iXMLRPCPort := IntToStr(UsedPort);
+    iXMLRPCPort := InttoStr(UsedPort);
 
     DebugMode := anfix32.DebugMode;
     DiagnosePath := globals.DiagnosePath;
     TimingStats := IsParam('-at');
-    LogContext := DatumLog + '-' + ComputerName + '-' + IntToStr(DefaultPort);
+    LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
     if TimingStats then
       writeln('Performance-Log aktiv: ' + LogContext);
 
@@ -208,10 +390,131 @@ begin
 
 end;
 
+procedure RunAsServiceApp;
 var
-  k, l: integer;
+  XMLRPC: TXMLRPC_Server;
+  JonDa: TJonDaExec;
+  MyIni: TIniFile;
+  SectionName: string;
 
 begin
+  try
+    SectionName := getParam('Id');
+    if (SectionName = '') then
+      SectionName := UserName;
+
+    writeln(
+      { } 'cJonDaServer Rev. ' + RevToStr(JonDaExec.version) + ' - ' +
+      { } MyProgramPath);
+    JonDa := TJonDaExec.Create;
+
+    // DebugMode?
+    if IsParam('-al') then
+    begin
+      writeln('DebugMode @' + MyProgramPath);
+      DebugMode := true;
+      DebugLogPath := globals.MyProgramPath;
+    end;
+
+    // lade IMEI
+    write('Lade Tabelle IMEI ... ');
+    JonDa.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+    writeln(InttoStr(JonDa.tIMEI.Count));
+
+    // lade IMEI-OK
+    write('Lade Tabelle IMEI-OK ... ');
+    with JonDa.tIMEI_OK do
+    begin
+      insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+      writeln(InttoStr(Count));
+    end;
+
+    // Ini-Datei öffnen
+    MyIni := TIniFile.Create(MyProgramPath + cIniFName);
+    with MyIni do
+    begin
+      // Fall Back auf "System"
+      if (ReadString(SectionName, 'ftpuser', '') = '') then
+        SectionName := 'System';
+
+      // Ftp-Bereich für diesen Server
+      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+      iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')), 3049);
+      JonDa.start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+      JonDa.Option_Console := true;
+    end;
+    MyIni.free;
+    writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost + ' für FTP');
+
+    // Log den Neustart
+    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(JonDaExec.version) + ' [' +
+      SectionName + ']');
+    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(JonDaExec.version) + ' gestartet');
+
+    repeat
+
+      // Disable Abschluss ?!
+      write('Abschluss ... ');
+      if not(IsParam('-da')) then
+      begin
+
+        // Binäres Auftragslager
+        JonDa.doAbschluss;
+        writeln('OK');
+
+        write('Auftragsdaten ... ');
+        FileCopy(
+          { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
+          { } MyProgramPath + cFotoPath + 'AUFTRAG+TS' + cBL_FileExtension);
+        writeln('OK');
+
+      end
+      else
+      begin
+        writeln('SKIP');
+      end;
+
+      // Erstelle den Dienst
+      XMLRPC := TXMLRPC_Server.Create(nil);
+      with XMLRPC do
+      begin
+        DefaultPort := iJonDa_Port;
+        write('Öffne ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
+        DiagnosePath := MyProgramPath;
+        DebugMode := anfix32.DebugMode;
+        TimingStats := IsParam('-at');
+
+        // Methoden registrieren
+        AddMethod('BasePlug', JonDa.info);
+        AddMethod('StartTAN', JonDa.start);
+        AddMethod('ProceedTAN', JonDa.proceed);
+
+        active := true;
+
+        writeln('OK');
+      end;
+
+      // Aktueller Stand
+      writeln('Nächste TAN ... ' + JonDa.NewTrn(false));
+
+      // Arbeite ...
+      while true do
+        sleep(1000);
+      XMLRPC.free;
+
+    until true;
+    JonDa.free;
+  except
+    on E: Exception do
+      writeln(E.ClassName, ': ', E.Message);
+  end;
+
+end;
+
+begin
+  // Bestimmen in welchem Modus das Programm laufen soll
   repeat
     if IsParam('--order') then
     begin
@@ -228,6 +531,16 @@ begin
       Ident := id_Druck;
       break;
     end;
+    if IsParam('--app') then
+    begin
+      Ident := id_App;
+      break;
+    end;
+    if IsParam('--foto') then
+    begin
+      Ident := id_Foto;
+      break;
+    end;
     // Default
     Ident := id_XMLRPC;
   until true;
@@ -242,6 +555,10 @@ begin
       Modus := 'MAIL';
     id_Druck:
       Modus := 'PRINT';
+    id_App:
+      Modus := 'Service-App';
+    id_Foto:
+      Modus := 'Service-Foto';
   end;
 
   try
@@ -264,99 +581,25 @@ begin
 
     writeln(cOKText);
 
-    with fbConnection do
-    begin
-
-      _iDataBaseName := iDataBaseName;
-      if (iDataBaseHost <> '') then
-        i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)
-      else
-        i_c_DataBaseFName := iDataBaseName;
-
-      i_c_DataBasePath := i_c_DataBaseFName;
-      l := revpos('.', i_c_DataBasePath);
-      k := max(revpos('\', i_c_DataBasePath), revpos('/', i_c_DataBasePath));
-      if (k > 0) then
-      begin
-        i_c_DataBasePath := copy(i_c_DataBaseFName, 1, k);
-        MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
-      end;
-
-      DataBaseName := _iDataBaseName;
-      if (iDataBaseHost = '') then
-      begin
-        Server := '';
-        protocol := cplocal;
-      end
-      else
-      begin
-        protocol := cpTCP_IP;
-      end;
-
-      UserName := iDataBaseUser;
-      if (length(iDataBasePassword) > 25) then
-        Password := deCrypt_Hex(iDataBasePassword)
-      else
-        Password := iDataBasePassword;
-      if (iDataBaseName = '') then
-      begin
-        writeln('ERROR: DataBaseName= ist leer');
-        halt;
-      end;
-      write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName)
-        + ' ... ');
-      Connect;
-      if not(Connected) then
-      begin
-        writeln('ERROR: DataBase.connect erfolglos');
-        halt;
-      end;
-      MachineIDChanged;
-    end;
-
-    dbOrgaMon.cConnection := fbConnection;
-
-    sBearbeiter := e_r_Bearbeiter;
-    if (sBearbeiter < cRID_FirstValid) then
-    begin
-      writeln(cERRORText + ' Bearbeiter "' + anfix32.UserName + '" ist noch nicht angelegt!');
-      halt(1);
-    end;
-    sBearbeiterKurz :=
-    { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
-    { } e_r_Kontext;
-
-    writeln(cOKText);
-
-    // Debug-Modus aktiv?
-    if IsParam('-al') then
-    begin
-      writeln('DebugMode @' + DiagnosePath);
-      DebugMode := true;
-      DebugLogPath := globals.DiagnosePath;
-    end;
-
-    // Aktueller Versionszwang?
-    ForceRev := e_r_Revision_Zwang;
-    if (ForceRev > 8.0) then
-      if (RevAsInteger(globals.version) <> RevAsInteger(ForceRev)) then
-      begin
-        writeln(
-          { } cERRORText +
-          { } ' Es besteht Versionszwang zu Rev. ' +
-          { } RevToStr(ForceRev) + '!');
-        halt(1);
-      end;
-
-    // Systemparameter ermitteln
-    e_r_LadeParameter;
-    AllSystemsRunning := true;
-
     case Ident of
       id_XMLRPC:
-        RunAsXMLRPC;
+        begin
+          connectOrgamon;
+          RunAsXMLRPC;
+        end;
       id_Bestellen:
-        RunAsOrder;
+        begin
+          connectOrgamon;
+          RunAsOrder;
+        end;
+      id_App:
+        begin
+          RunAsServiceApp;
+        end;
+      id_Foto:
+        begin
+          RunAsFoto;
+        end
     else
       RunAsUnImplemented;
 
