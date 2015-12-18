@@ -44,7 +44,7 @@ object FormServiceFoto: TFormServiceFoto
         Top = 439
         Width = 75
         Height = 25
-        Caption = 'Stopp'
+        Caption = 'Starte Timer'
         TabOrder = 1
         OnClick = Button1Click
       end
@@ -881,6 +881,7 @@ object FormServiceFoto: TFormServiceFoto
     end
   end
   object Timer1: TTimer
+    Enabled = False
     Interval = 2000
     OnTimer = Timer1Timer
     Left = 48

@@ -76,6 +76,7 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<Debugger_RunParams>--foto --Id=sewa</Debugger_RunParams>
 			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
 			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
@@ -141,6 +142,8 @@
 			<DCCReference Include="..\JonDaServer\FotoExec.pas"/>
 			<DCCReference Include="..\PASconTools\Foto.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
+			<None Include="..\rev\Service-App.rev.txt"/>
+			<None Include="..\rev\Service-Foto.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

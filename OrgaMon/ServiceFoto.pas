@@ -1,4 +1,4 @@
-f{
+{
   |      ___                  __  __
   |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
   |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
@@ -38,10 +38,10 @@ uses
 
 type
   TownFotoExec = class(TFotoExec)
-    procedure Log(s: string);
-
+    procedure Log(s: string); override;
   end;
 
+type
   TFormServiceFoto = class(TForm)
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
@@ -199,9 +199,7 @@ implementation
 uses
   binlager32, anfix32, globals,
   IniFiles, InfoZip, math,
-  CCR.Exif, wanfix32, dbOrgaMon
-
-;
+  CCR.Exif, wanfix32, dbOrgaMon;
 
 {$R *.dfm}
 
@@ -1183,7 +1181,7 @@ end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
 begin
-  if Edit9.Text = '' then
+  if (Edit9.Text = '') then
     Edit9.Text := MyFotoExec.JonDaServerPath;
 end;
 

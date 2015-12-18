@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.134 (18.12.15) Andreas Filsinger
+
+ Neu: Migration "JonDaServer" -> "OrgaMon" -> App
+ Neu: Migration "cJonDaServer" -> "cOrgaMon" -> Kommandozeile "--app"
+ Neu: Migration "OrgaMonServiceApp" (GUI) -> "OrgaMon" -> Foto
+ Neu: Migration "OrgaMonServiceApp" (Server) -> "cOrgaMon" -> Kommandozeile "--foto"
+
+ Info: cOrgaMon ist EINE exe, die in unterschiedlicher Idendität agieren kann
+ Info: Versionssprung "foto" Identität auf 2.000 - ehemals OrgaMonServiceApp
+ Info: Versionssprung "app" Identität auf 3.000 - ehemals JonDaServer
+
 Rev 8.133 (08.12.15) Andreas Filsinger
 
  Neu: EC: Erkennung für bereits bestehende Mandate

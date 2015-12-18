@@ -36,7 +36,7 @@ uses
   anfix32, wordindex, IdFTP;
 
 const
-  version: single = 2.218; // ..\rev\Service-App.rev.txt
+  version: single = 3.000; // ..\rev\Service-App.rev.txt
 
   // Für ungesetzte Daten-Bank RIDs
   cRID_Null = -1;

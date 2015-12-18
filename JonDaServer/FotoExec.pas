@@ -41,7 +41,7 @@ uses
   globals;
 
 const
-  Version: single = 1.061; // ..\rev\Service-Foto.rev.txt
+  Version: single = 2.000; // ..\rev\Service-Foto.rev.txt
 
   // root Locations
   cWorkPath = 'W:\';
@@ -99,7 +99,7 @@ type
     procedure workStatus;
 
     // muss IMMER überladen werden
-    procedure Log(s: string);
+    procedure Log(s: string); virtual; abstract;
 
     // Implementierungen von JonDaExec - Prototypen
     function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
@@ -163,7 +163,9 @@ begin
     MyIni := TIniFile.Create(MyProgramPath + cIniFName);
     with MyIni do
     begin
-      SectionName := UserName;
+      SectionName := getParam('Id');
+      if (SectionName='') then
+       SectionName := UserName;
       if (ReadString(SectionName, 'ftpuser', '') = '') then
         SectionName := 'System';
 
@@ -226,11 +228,6 @@ end;
 function TFotoExec.JonDaServerPath: string;
 begin
   result := cWorkPath + cLocation_JonDaServer;
-end;
-
-procedure TFotoExec.Log(s: string);
-begin
-  raise Exception.Create('Log: Diese Funktion muss überladen werden!');
 end;
 
 function TFotoExec.MobUploadPath: string;
@@ -444,8 +441,8 @@ begin
 
         if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
         begin
-          Log('INFO: ' + sFiles[n] + ': Dateizeitstempel korrigiert');
           FileTouch(FName, iEXIF.DateTimeOriginal);
+          Log('INFO: ' + sFiles[n] + ': Dateizeitstempel korrigiert');
         end;
         FullSuccess := true;
 

@@ -180,7 +180,7 @@ end;
 
 type
   TownFotoExec = class(TFotoExec)
-    procedure Log(s: string);
+    procedure Log(s: string); override;
 
   end;
 
@@ -204,11 +204,18 @@ var
   TimerInit: integer;
   sMoveTransaktionen: TStringList;
   sLog: TStringList;
-
 begin
+
+  // imp pend: Wie könnte man dies Steuern?
+  MyProgramPath := 'W:\JonDaServer\';
+
   MyFotoExec := TownFotoExec.Create;
   TimerWartend := 0;
   TimerInit := 0;
+
+  if (ComputerName = 'KHAO') then
+    TimerInit := cKikstart_delay * 60 * 1000;
+
   sMoveTransaktionen := TStringList.Create;
   sLog := TStringList.Create;
 
@@ -245,7 +252,7 @@ begin
 
           // Zwischen 00:00 und ]01:00
           if (SecondsGet < (1 * 3600)) then
-            // nur machen, wenn nicht in Arbeit oder fertig
+            // nur machen, wenn nicht in Arbeit oder bereits fertig
             if not(FileExists(MyFotoExec.MyWorkingPath + MyFotoExec.AblageFname)) then
               // Zips verschieben, Fotos zippen
               MyFotoExec.workAblage;
@@ -541,7 +548,7 @@ begin
       Ident := id_Foto;
       break;
     end;
-    // Default
+    // Default "--twebshop"
     Ident := id_XMLRPC;
   until true;
 
@@ -566,20 +573,17 @@ begin
     if not(IsParam('-dl')) then
     begin
 
-      writeln(Modus + '-Server@' + Betriebssystem);
       writeln('/---------------------------------------------------\');
       writeln('|         ___                  __  __               |');
       writeln('|    ___ / _ \ _ __ __ _  __ _|  \/  | ___  _ __    |');
       writeln('|   / __| | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \   |');
       writeln('|  | (__| |_| | | | (_| | (_| | |  | | (_) | | | |  |');
       writeln('|   \___|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|  |');
-      writeln('|                  |___/                            |');
+      writeln('|    Rev. ' + RevToStr(globals.version) + '    |___/                            |');
       writeln('\---------------------------------------------------/');
       writeln;
     end;
-    write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath + ' ... ');
-
-    writeln(cOKText);
+    writeln(Modus + '-Server@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
 
     case Ident of
       id_XMLRPC:
