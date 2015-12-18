@@ -161,10 +161,10 @@ type
     Edit26: TEdit;
     ListBox2: TListBox;
     Button26: TButton;
+    Button27: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
@@ -194,6 +194,8 @@ type
     procedure Button24Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
     procedure Button26Click(Sender: TObject);
+    procedure Button27Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -203,6 +205,9 @@ type
     // Log-Sachen
     sSendenLog: TStringList;
 
+    // Arbeits Verzeichnis initialisieren
+    procedure EnsureSetup;
+
   public
 
     { Public-Deklarationen }
@@ -210,7 +215,6 @@ type
     // ermittelte Werte
     JonDaX: TJonDaExec;
     GeraeteNo: string;
-
 
 
     // Filter und Entry-Points
@@ -262,81 +266,14 @@ end;
 
 // Datum;Uhrzeit;RID;Z#alt;Z#neu;Prefix
 
-procedure TFormServiceApp.FormCreate(Sender: TObject);
-var
-  MyIni: TIniFile;
-  sLog: TStringList;
-  n: integer;
-  iDateFromLog: TANFiXDate;
-  SectionName: string;
+procedure TFormServiceApp.FormActivate(Sender: TObject);
 begin
-  JonDaX := TJonDaExec.create;
-  sSendenLog := TStringList.create;
+  EnsureSetup;
+end;
 
-  // interne Varibale setzen
-  DiagnosePath := MyProgramPath;
-  caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' + RevToStr(JonDaExec.Version);
-
-  // Ini-Datei öffnen
-  MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
-  with MyIni do
-  begin
-    SectionName := UserName;
-    if (ReadString(SectionName, 'ftpuser', '') = '') then
-      SectionName := 'System';
-
-    // Ftp-Bereich für diesen Server
-    iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-    iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-    iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-  end;
-  MyIni.free;
-
-  // sSendenLog aufbauen!
-  FileAlive(MyProgramPath + cJonDaServer_LogFName);
-  iDateFromLog := DatePlus(DateGet, -10);
-  sLog := TStringList.create;
-  sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
-  for n := pred(sLog.count) downto 0 do
-  begin
-    if JonDaX.LogMatch(sLog[n], cGeraetSchema) then
-    begin
-      if (Date2Long(nextp(sLog[n], ' ', 2)) < iDateFromLog) then
-        break;
-      sSendenLog.insert(0, sLog[n]);
-    end;
-  end;
-  sLog.free;
-
-  //
-  JonDaX.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.Version) + ' [' +
-    UserName + ']');
-  CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.Version) + ' gestartet');
-
-  // Verzeichnisse Anlegen
-  if FileExists(MyProgramPath + cIniFName) then
-  begin
-    checkcreatedir(MyProgramPath + cServerDataPath);
-    checkcreatedir(MyProgramPath + cOrgaMonDataPath);
-    checkcreatedir(MyProgramPath + cMeldungPath);
-    checkcreatedir(MyProgramPath + cStatistikPath);
-    // checkcreatedir(MyProgramPath + cUpdatePath);
-    checkcreatedir(MyProgramPath + cProtokollPath);
-    checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
-    checkcreatedir(MyProgramPath + cFotoPath);
-    checkcreatedir(MyProgramPath + cDBPath);
-    checkcreatedir(MyProgramPath + cSyncPath);
-  end;
-
+procedure TFormServiceApp.FormCreate(Sender: TObject);
+begin
   PageControl1.ActivePage := TabSheet1;
-
-  //
-  ComboBox2.items.Clear;
-  ComboBox2.items.add(cActionRestantenLeeren);
-  ComboBox2.items.add(cActionRestantenAddieren);
-  ComboBox2.items.add(cActionFremdMonteurLoeschen);
-  ComboBox2.items.add(cActionAusAlterTAN);
-
 end;
 
 procedure TFormServiceApp.FormDestroy(Sender: TObject);
@@ -513,17 +450,95 @@ begin
   openshell(MyProgramPath + cIniFName);
 end;
 
-procedure TFormServiceApp.FormActivate(Sender: TObject);
+procedure TFormServiceApp.EnsureSetup;
+var
+  MyIni: TIniFile;
+  sLog: TStringList;
+  n: integer;
+  iDateFromLog: TANFiXDate;
+  SectionName: string;
 begin
-
-  if not(Initialized) then
+  if FileExists(MyProgramPath + cJonDaServer_LogFName) then
   begin
-    show;
-    SetForegroundWindow(handle);
-    Initialized := true;
-    Label25.caption := JonDaX.NewTrn(false);
-    Memo1.lines.add('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
-    Nachmeldungen;
+    if not(Initialized) then
+    begin
+
+      JonDaX := TJonDaExec.create;
+      sSendenLog := TStringList.create;
+
+      // interne Varibale setzen
+      DiagnosePath := MyProgramPath;
+      caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' +
+        RevToStr(JonDaExec.Version);
+
+      // Ini-Datei öffnen
+      MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
+      with MyIni do
+      begin
+        SectionName := UserName;
+        if (ReadString(SectionName, 'ftpuser', '') = '') then
+          SectionName := 'System';
+
+        // Ftp-Bereich für diesen Server
+        iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+        iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+        iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+      end;
+      MyIni.free;
+
+      // sSendenLog aufbauen!
+      iDateFromLog := DatePlus(DateGet, -10);
+      sLog := TStringList.create;
+      sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
+      for n := pred(sLog.count) downto 0 do
+      begin
+        if JonDaX.LogMatch(sLog[n], cGeraetSchema) then
+        begin
+          if (Date2Long(nextp(sLog[n], ' ', 2)) < iDateFromLog) then
+            break;
+          sSendenLog.insert(0, sLog[n]);
+        end;
+      end;
+      sLog.free;
+
+      //
+      JonDaX.BeginAction(
+        { } 'Start ' + cApplicationName +
+        { } ' Rev. ' + RevToStr(JonDaExec.Version) +
+        { } ' [' + UserName + ']');
+
+      CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(JonDaExec.Version) + ' gestartet');
+
+      // Verzeichnisse Anlegen
+      if FileExists(MyProgramPath + cIniFName) then
+      begin
+        checkcreatedir(MyProgramPath + cServerDataPath);
+        checkcreatedir(MyProgramPath + cOrgaMonDataPath);
+        checkcreatedir(MyProgramPath + cMeldungPath);
+        checkcreatedir(MyProgramPath + cStatistikPath);
+        // checkcreatedir(MyProgramPath + cUpdatePath);
+        checkcreatedir(MyProgramPath + cProtokollPath);
+        checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
+        checkcreatedir(MyProgramPath + cFotoPath);
+        checkcreatedir(MyProgramPath + cDBPath);
+        checkcreatedir(MyProgramPath + cSyncPath);
+      end;
+
+      //
+      ComboBox2.items.Clear;
+      ComboBox2.items.add(cActionRestantenLeeren);
+      ComboBox2.items.add(cActionRestantenAddieren);
+      ComboBox2.items.add(cActionFremdMonteurLoeschen);
+      ComboBox2.items.add(cActionAusAlterTAN);
+      Initialized := true;
+      Label25.caption := JonDaX.NewTrn(false);
+      Memo1.lines.add('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
+      Nachmeldungen;
+    end;
+  end
+  else
+  begin
+     Memo1.lines.add( MyProgramPath + cJonDaServer_LogFName+ ' existiert nicht, der Pfad ist nicht richtig gesetzt oder der Setup! ist nicht ausgeführt!');
   end;
 end;
 
@@ -1539,21 +1554,27 @@ end;
 
 procedure TFormServiceApp.Button25Click(Sender: TObject);
 begin
- JonDaX.maintainSENDEN;
+  JonDaX.maintainSENDEN;
 end;
 
 procedure TFormServiceApp.Button26Click(Sender: TObject);
 var
- n, k : integer;
- v : TgpIntegerList;
+  n, k: integer;
+  v: TgpIntegerList;
 begin
- listbox2.clear;
- n := StrToInt(edit25.Text);
- k := StrToInt(edit26.Text);
- v := TgpIntegerList.create;
- while (nk(n,k,v)) do
-   listbox2.items.add('('+v.AsDelimitedText(',')+')');
- v.free;
+  ListBox2.Clear;
+  n := strtoint(Edit25.text);
+  k := strtoint(Edit26.text);
+  v := TgpIntegerList.create;
+  while (nk(n, k, v)) do
+    ListBox2.items.add('(' + v.AsDelimitedText(',') + ')');
+  v.free;
+end;
+
+procedure TFormServiceApp.Button27Click(Sender: TObject);
+begin
+  FileAlive(MyProgramPath + cJonDaServer_LogFName);
+  EnsureSetup;
 end;
 
 procedure TFormServiceApp.Button1Click(Sender: TObject);

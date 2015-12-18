@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 3.000 (18.12.15) Andreas Filsinger
+
+ Neu: Integration in den cOrgaMon
+
 Rev 2.218 (15.12.15) Andreas Filsinger
 
  Wegfall: Verzeichnis "./JonDaServer"

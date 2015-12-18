@@ -18,6 +18,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 2.000 (18.12.15) Andreas Filsinger
+
+ Neu: Integration in den cOrgaMon
+
 Rev 1.061 (24.09.15) Andreas Filsinger
 
  Bug: Abzug= wurde nicht ausgewertet
