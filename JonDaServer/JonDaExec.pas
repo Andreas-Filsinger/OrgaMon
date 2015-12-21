@@ -36,7 +36,7 @@ uses
   anfix32, wordindex, IdFTP;
 
 const
-  version: single = 3.000; // ..\rev\Service-App.rev.txt
+  version: single = 3.001; // ..\rev\Service-App.rev.txt
 
   // Für ungesetzte Daten-Bank RIDs
   cRID_Null = -1;
@@ -89,6 +89,8 @@ type
     //
     TabCounter: integer;
     sSendenLog: TStringList;
+
+    function oldInfrastructure: boolean;
 
   public
     //
@@ -373,7 +375,10 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
+  if oldInfrastructure then
+    sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html')
+  else
+    sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
   sGeraete.free;
 end;
 
@@ -429,14 +434,15 @@ begin
 
     if changed then
     begin
-      SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+      if oldInfrastructure then
+        SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
+      else
+        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
       SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
     end;
   end;
   tSENDEN.free;
-
   maintainSENDEN_Cache_Init := true;
-
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -597,7 +603,10 @@ end;
 
 function TJonDaExec.UpFName(AktTrn: string): string;
 begin
-  result := MyProgramPath + cWebPath + AktTrn + '.txt';
+  if oldInfrastructure then
+    result := MyProgramPath + AktTrn + '\' + AktTrn + '.txt'
+  else
+    result := MyProgramPath + cWebPath + AktTrn + '.txt';
 end;
 
 function TJonDaExec.NewTrn(IncrementIt: boolean = true): string;
@@ -648,6 +657,11 @@ begin
 
   end;
 
+end;
+
+function TJonDaExec.oldInfrastructure: boolean;
+begin
+  result := (pos('\JonDaServer\', MyProgramPath) > 0);
 end;
 
 function TJonDaExec.info(sParameter: TStringList): TStringList;
@@ -845,10 +859,13 @@ var
     CloseFile(MonDaAasTxt);
 
     // Das Ergebnis im Web bereitstellen
-    SaveStringsToFileUTF8(Auftrag,
-      { } MyProgramPath +
-      { } cWebPath +
-      { } AktTrn + '.auftrag' + cUTF8DataExtension);
+    if oldInfrastructure then
+      SaveStringsToFileUTF8(Auftrag, MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension)
+    else
+      SaveStringsToFileUTF8(Auftrag,
+        { } MyProgramPath +
+        { } cWebPath +
+        { } AktTrn + '.auftrag' + cUTF8DataExtension);
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1332,7 +1349,10 @@ var
     begin
       LoadFromFile(MyProgramPath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
+      if oldInfrastructure then
+        SaveToFileCompressed(MyProgramPath + 'Info\' + GeraeteNo + '.html')
+      else
+        SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -2456,7 +2476,10 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+        if oldInfrastructure then
+          SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
+          else
+          SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
         SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
       end;
       tSENDEN.free;
@@ -2506,7 +2529,7 @@ var
   s: string;
   GeraetID, _GeraetID: string;
   _TAN: string;
-  VERSION, Optionen, UHR, IMEI, NAME: string;
+  version, Optionen, UHR, IMEI, NAME: string;
   TAN: string;
   BEZAHLT_BIS: TANFiXDate;
   Einstellungen: TStringList; // vorbereitete Einstellungen für dieses Gerät
@@ -2545,7 +2568,7 @@ begin
           s := sParameter[1];
         GeraetID := nextp(s, ',');
         _TAN := nextp(s, ',');
-        VERSION := nextp(s, ',');
+        version := nextp(s, ',');
         Optionen := nextp(s, ',');
         UHR := nextp(s, ',');
         IMEI := nextp(s, ',');
@@ -2553,7 +2576,7 @@ begin
       else
       begin
         _TAN := sParameter.values['TAN'];
-        VERSION := sParameter.values['VERSION'];
+        version := sParameter.values['VERSION'];
         Optionen := sParameter.values['OPTIONEN'];
         UHR := sParameter.values['UHR'];
         IMEI := sParameter.values['IMEI'];
@@ -2663,7 +2686,7 @@ begin
           with OptionStrings do
           begin
             add('TAN=' + _TAN);
-            add('VERSION=' + VERSION);
+            add('VERSION=' + version);
             add('OPTIONEN=' + Optionen);
             add('UHR=' + UHR);
             add('IMEI=' + IMEI);
@@ -2689,7 +2712,7 @@ begin
     end;
 
     // Ergebnis und den Call loggen!
-    AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'StartTAN:' + TAN + ';' + VERSION + ';' +
+    AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'StartTAN:' + TAN + ';' + version + ';' +
       Optionen + ';' + UHR + ';' + IMEI, MyProgramPath + cJonDaServer_XMLRPCLogFName);
 
   until true;
