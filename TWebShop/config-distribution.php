@@ -51,38 +51,36 @@ define("TWEBSHOP_NAMESPACE","abu");
 //
 // komplexere Aufgaben des Webshops werden an die Anwendung
 // cOrgaMon (Win32-Executable) oder lOrgaMon (Linux-Binary) weitergeleitet.
-// der GUI OrgaMon  kann auch zu Diagnose-Zwecken als XMLRPC Server verwendet
-// werden. Die Kopplung der beiden Systeme erfolgt über XMLRPC-Aufrufe. Dabei 
+// der GUI-OrgaMon kann auch zu Diagnose-Zwecken als XMLRPC Server verwendet
+// werden (Button "WebShop"). Die Kopplung der beiden Systeme erfolgt über XMLRPC-Aufrufe. Dabei 
 // initiiert TWebShop vereinbarte Funktionsaufrufe, die hier 
 // (http://www.orgamon.org/index.php5/ECommerce) dokumentiert sind.
 //
-//  name= Hostname oder IP-Adresse des Systems, auf dem der XMLRPC Server läuft bzw. erreichbar ist
+//  host= Hostname oder IP-Adresse des Systems, auf dem der XMLRPC Server läuft bzw. erreichbar ist
 //  port= TCP/IP Port die kontaktiert wird
-//  path= - ohne Bedeutung -
-//  user= - ohne Bedeutung -
-//  password= - ohne Bedeutung -
-//  timeout= maximale Anzahl von Sekunden bis der XMLRPC-Server auf einen Verbindungsversuch reagieren muss
+//  timeout_open= maximale Anzahl von Sekunden bis der XMLRPC-Server auf einen Verbindungsversuch reagieren muss
+//  timeout_read= maximale Anzahl von Sekunden bis der XMLRPC-Server eine Antwort liefern muss
 //  retries= Anzahl der Versuche erneut eine Verbindung herzustellen wenn es einen Timeout oder Abbruch gab 
 // 
-// default "name=localhost,port=3049,path=,user=,password=,timeout=20,retries=0"
-define("XMLRPC","name=LOCALHOST,port=3049,path=,user=,password=,timeout=8,retries=1");
+// default "name=localhost,port=3049,timeout_read=20,timeout_open=2,retries=0"
+define("XMLRPC","host=LOCALHOST,port=3049,timeout_read=30,timeout_open=2,retries=1");
 
 // XMLRPC_~n~
 //
 // bei steigender Nutzerzahl die zeitgleich das System über das Internet 
 // verwenden kann es notwendig werden mehrere XMLRPC-Server zu installieren.
-// Auf einem Host können mehrere XLMRPC Server-Prozesse gestartet werden.
-// Jedem XMLRPC Server ist so ein eigener Port zuzuweisen. Der TWebShop wird
-// im Round Robin Verfahren die Last gleichmäßig auf alle Server verteilen.
-// Die Parameter sind analog zu "XMLRPC" anzuwenden. Entweder man verwendet einen
-// einzelnen monolithischen XMLRPC-Server mit "XMÖRPC", oder die Variante der
-// Lastverteilung mit "XMLRPC_1", "XMLRPC_2", usw.
+// Auf einem Host können mehrere XLMRPC-Server-Prozesse gestartet werden.
+// Jedem XMLRPC Server ist jedoch ein eigener Port zuzuweisen. Der TWebShop wird
+// im Round-Robin-Verfahren die Last gleichmäßig auf alle Server verteilen.
+// Die Parameter sind analog zu "XMLRPC" anzuwenden. Im Multi-Server Betrieb
+// darf die Konstante XMLRPC für einen einzelnen Server jedoch nicht mehr 
+// definiert werden.
 //
-// default - keine Verwendung der Lastverteilung -
-#define("XMLRPC_1","name=RIO,port=3041,path=,user=,password=,timeout=80,retries=1");
-#define("XMLRPC_2","name=RIO,port=3042,path=,user=,password=,timeout=80,retries=1");
-#define("XMLRPC_3","name=MOSKAU,port=3041,path=,user=,password=,timeout=80,retries=1");
-#define("XMLRPC_4","name=MOSKAU,port=3049,path=,user=,password=,timeout=80,retries=1");
+// default - Verwendung nur eines einzelnen Servers -
+#define("XMLRPC_1","host=RIO,port=3041,timeout_read=80,timeout_open=2,retries=1");
+#define("XMLRPC_2","host=RIO,port=3042,timeout_read=80,timeout_open=2,retries=1");
+#define("XMLRPC_3","host=MOSKAU,port=3041,timeout_read=80,timeout_open=2,retries=1");
+#define("XMLRPC_4","host=MOSKAU,port=3049,timeout_read=80,timeout_open=2,retries=1");
 
 // LOG - Einstellungen
 #define("XMLRPC_LOG",true);

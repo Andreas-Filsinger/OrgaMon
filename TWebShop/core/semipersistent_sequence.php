@@ -7,7 +7,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 define("SEQUENCE_HOST", "localhost");
 define("SEQUENCE_NAMESPACE", ".69VVTGKZ1");
 define("SEQUENCE_NAME", "sequence");
+define("SEQUENCE_PORT", 11211);
 
 // globales MemCache-Object, hält während der ganzen
 // Laufzeit des Scriptes eine Verbindung zum Memcache
@@ -42,7 +43,6 @@ $m_spc = null;
 // 1 .. MaxInt = normale Increments 
 $c_spc = 0;
 
-
 // Stellt sicher, dass entweder
 // * die Verbindung zum MemCache besteht
 // * c_spc = -1, das bedeutet der Server läuft nicht
@@ -54,12 +54,13 @@ function semiEnsureOpen() {
 
     // Init?
     if ($m_spc == null) {
-        $m_spc = new Memcache();
-        if ($m_spc->pconnect(SEQUENCE_HOST)) {
+        $m_spc = new Memcached(TWEBSHOP_ID . SEQUENCE_NAMESPACE);
+        if ($m_spc->addServer(SEQUENCE_HOST, SEQUENCE_PORT)) {
             $m_spc->add(SEQUENCE_NAME . SEQUENCE_NAMESPACE, 0);
         } else {
+            trigger_error("Verbindung zu " . SEQUENCE_HOST . " fehlgeschlagen!", E_USER_ERROR);
             $c_spc = -1;
-            $errorlist->add("memcache: Verbindung zu " . SEQUENCE_HOST . " fehlgeschlagen!");
+            $errorlist->add("memcached: Verbindung zu " . SEQUENCE_HOST . " fehlgeschlagen!");
         }
     }
 }
@@ -107,26 +108,34 @@ function lastSemiPersistentSequence() {
 function semiPersistentIsKnown($key) {
 
     global $m_spc;
-    global $c_spc;
 
     semiEnsureOpen();
-    if ($c_spc >= 0)
-        return ($m_spc->get($key . SEQUENCE_NAMESPACE) != false);
-    else
-        return false;
+
+    $r = $m_spc->get($key . SEQUENCE_NAMESPACE);
+    if (!$r) {
+        
+         if ($m_spc->getResultCode() == Memcached::RES_NOTFOUND) {
+          // Unbekannt
+          return false;
+         } else {
+          trigger_error("memcached: unclear answer", E_USER_ERROR);
+          return false;
+         } 
+    } else {
+       // Bekannt!
+       return true;        
+  }
 }
 
 // Einen Key für eine gewisse Zeit speichern,
-// iN dieser Zeit liefert dann semiPersistenIsKnown
+// in dieser Zeit liefert dann semiPersistenIsKnown
 // true
 function semiPersistentBrand($key, $releaseTime) {
 
     global $m_spc;
-    global $c_spc;
 
     semiEnsureOpen();
-    if ($c_spc >= 0)
-        $m_spc->add($key . SEQUENCE_NAMESPACE, "true", 0, $releaseTime);
+    $m_spc->set($key . SEQUENCE_NAMESPACE, TRUE, $releaseTime);
 }
 
 ?>
