@@ -1,96 +1,105 @@
 <?php
-// TXMLRPC CLASS, PHP5
-// by Thorsten Schroff, 2011
-
-define("XMLRPC_DEFAULT_PORT", 3049);
-define("XMLRPC_DEFAULT_PATH", "");
-define("XMLRPC_DEFAULT_USER", ""); // bisher keine Authentifizierung nötig / möglich
-define("XMLRPC_DEFAULT_PASSWORD", ""); // bisher keine Authenifizierung nötig / möglich
-define("XMLRPC_DEFAULT_NAMESPACE", "abu");
-
-// TS 23-04-2012: wie oft wird nach dem ersten Fehlschlagen wiederholt? Wert 2 bedeutet: insgesamt 3 Versuche
-define("XMLRPC_DEFAULT_TIMEOUT", 20);
-
-// wird ein XMLRPC Server als "bad" markiert
-// wird er für die hier angegebene Zeit als "schlecht" markiert
-// in dieser Zeit werden seine Dienste nicht mehr in Anspruch 
-// genommen. Erst nach verstreichen dieser Zeit wird ein
-// erneuter Verbindungsversuch unternommen.
-define("XMLRPC_RECOVERY_TIME", 120);
+/*
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2011  Thorsten Schroff
+  |    Copyright (C) 2015  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+ */
 
 //
+// TXMLRPC CLASS, PHP5
+//
+
+// Parameter Defaults
+define("XMLRPC_DEFAULT_PORT", 3049);
+define("XMLRPC_DEFAULT_TIMEOUT_OPEN", 2);
+define("XMLRPC_DEFAULT_TIMEOUT_READ", 20);
 define("XMLRPC_DEFAULT_RETRIES", 2);
-define("XMLRPC_DEFAULT_LOG", "xmlrpc.log");
+
+define("XMLRPC_DEFAULT_NAMESPACE", "abu");
+
+// wird ein XMLRPC Server als "bad" markiert wird er für die 
+// hier angegebene Zeit als "schlecht" markiert. In dieser Zeit
+// werden seine Dienste global nicht mehr in Anspruch genommen.
+// Erst nach Verstreichen dieser Zeit wird ein erneuter Verbindungsversuch
+// unternommen.
+define("XMLRPC_RECOVERY_TIME", 25);
+
+//
+// in der Regel ist CRLF bereits definiert
+//
+#define("CRLF","\r\n");
 
 require_once("semipersistent_sequence.php");
 
-class thost {
+class tserver_identity {
 
-    private $name = "";
-    private $port = NULL;
-    private $path = "";
-    private $user = "";
-    private $password = "";
-    private $timeout = 0;
-    private $retries = 0;
+    public $host = "";
+    public $port = NULL;
+    public $timeout_open = 0;
+    public $timeout_read = 0;
+    public $retries = 0;
 
-    const CLASS_NAME = "PHP5CLASS T_HOST";
+    public function __construct(
+     $host,
+     $port = XMLRPC_DEFAULT_PORT,
+     $timeout_open = XMLRPC_DEFAULT_TIMEOUT_OPEN,
+     $timeout_read = XMLRPC_DEFAULT_TIMEOUT_READ,
+     $retries = XMLRPC_DEFAULT_RETRIES) {
 
-    public function __construct($name, $port, $path, $user, $password, $timeout, $retries) {
-        $this->name = $name;
+        $this->host = $host;
         $this->port = intval($port);
-        $this->path = $path;
-        $this->user = $user;
-        $this->password = $password;
-        $this->setTimeout($timeout);
-        $this->setRetries($retries);
-    }
-
-    public function setTimeout($timeout) {
-        $this->timeout = intval($timeout);
-    }
-
-    public function setRetries($retries) {
+        $this->timeout_open = intval($timeout_open);
+        $this->timeout_read = intval($timeout_read);
         $this->retries = intval($retries);
     }
+    
+    static public function rConnectStr($host, $port) {
+    
+        return $host . ":" . $port;
+    } 
 
-    public function getName() {
-        return $this->name;
+    public function setDefaults() {
+    
+       $this->port = XMLRPC_DEFAULT_PORT;
+       $this->timeout_open = XMLRPC_DEFAULT_TIMEOUT_OPEN;
+       $this->timeout_read = XMLRPC_DEFAULT_TIMEOUT_READ;
+       $this->retries = XMLRPC_DEFAULT_RETRIES;
     }
 
-    public function getPort() {
-        return $this->port;
+    public function ConnectStr() {
+    
+        return tserver_identity::rConnectStr($this->host,$this->port);
     }
 
-    public function getConnect() {
-        return $this->name . ":" . $this->port;
+    public function __wakeup() {
+        trigger_error("someone try to create " . self::CLASS_NAME . " from session", E_USER_NOTICE);
     }
-
-    public function getPath() {
-        return $this->path;
-    }
-
-    public function getUser() {
-        return $this->user;
-    }
-
-    public function getPassword() {
-        return $this->password;
-    }
-
-    public function getTimeout() {
-        return $this->timeout;
-    }
-
-    public function getRetries() {
-        return $this->retries;
-    }
-
 }
 
 class txmlrpc {
 
-    const CRLF = "\r\n";
     const BLOCK_SIZE = 32768;
     const CLASS_NAME = "PHP5CLASS T_XMLRPC";
     const GLOBAL_NAME = "xmlrpc";
@@ -101,65 +110,54 @@ class txmlrpc {
     }
 
     static public function encodeRequest($method, $params) {
-        $xml = new DOMDocument();
-        $x_methodCall = $xml->createElement("methodCall");
-        //echo $method;
-        $x_methodName = $xml->createElement("methodName");
-        $x_methodName->appendChild($xml->createTextNode($method));
-        $x_params = $xml->createElement("params");
-        if ($params == NULL) {
-            $x_param = $xml->createElement("param");
-            $x_value = $xml->createElement("value");
-            $x_type = $xml->createElement("string");
-            $x_value->appendChild($x_type);
-            $x_param->appendChild($x_value);
-            $x_params->appendChild($x_param);
-        }
+
+	$xml = "<?xml version=\"1.0\"?>" . CRLF;
+
+	if ($params==NULL) {
+
+	  return $xml . "<methodCall><methodName>" . $method . "</methodName></methodCall>";
+		 
+    } else
+	{
+
         if (is_array($params)) {
+
+            $xml .= "<methodCall><methodName>" . $method . "</methodName><params>" . CRLF;
+			
             foreach ($params as $param) {
-                $x_param = $xml->createElement("param");
-                $x_value = $xml->createElement("value");
+				
                 switch (true) {
                     case(is_int($param)) : {
-                            $x_type = $xml->createElement("int");
+                            $type = "int";
                             break;
                         }
                     case(is_double($param)): {
-                            $x_type = $xml->createElement("double");
+                            $type = "double";
                             break;
                         }
                     case(is_string($param)): {
-                            $x_type = $xml->createElement("string");
-                            break;
-                        }
-                    case(is_array($param)) : {
-                            $x_type = $xml->createElement("array");
-                            break;
-                        }
-                    case(is_object($param)): {
-                            $x_type = $xml->createElement("object");
+                            $type = "string";
                             break;
                         }
                     case(is_bool($param)) : {
-                            $x_type = $xml->createElement("boolean");
+                            $type = "boolean";
                             break;
                         }
                     default: {
-                            $xtype = $xml->createElement("unknown type");
+                            trigger_error("xmlrpc_client: can not encode " . var_dump($param));
                             break;
                         }
-                } // switch
-                $x_type->appendChild($xml->createTextNode(txmlrpc::encodeString($param)));
-                $x_value->appendChild($x_type);
-                $x_param->appendChild($x_value);
-                $x_params->appendChild($x_param);
+                } 
+				
+				$xml .= "<param><value><" . $type . ">" . txmlrpc::encodeString($param) . "</" . $type . "></value></param>" . CRLF;
             }
-        }
-        $x_methodCall->appendChild($x_methodName);
-        $x_methodCall->appendChild($x_params);
-        $xml->appendChild($x_methodCall);
-        return $xml->saveXML();
-    }
+            return $xml . "</params></methodCall>";
+        } else {
+            trigger_error("xmlrpc_client: \$params is no array, nothing to call");
+			return $xml;
+		}
+	}
+}
 
     static private function getAsPHPVariable($xml_var) {
         switch ($xml_var->nodeName) {
@@ -198,33 +196,6 @@ class txmlrpc {
         return $php_var;
     }
 
-    static public function encodeResponse($xml) {
-        $xml = DOMDocument::loadXML(utf8_encode($xml));
-        try {
-            $xp = new DOMXPath($xml);
-            $xml_vars = $xp->query("//params/param/value/child::*");
-            switch ($xml_vars->length) {
-                case(0): {
-                        $result = NULL;
-                        break;
-                    }
-                case(1): {
-                        $result = self::getAsPHPVariable($xml_vars->item(0));
-                        break;
-                    }
-                default: {
-                        $result = array();
-                        foreach ($xml_vars as $xml_var)
-                            $result[] = self::getAsPHPVariable($xml_var);
-                        break;
-                    }
-            }
-        } catch (Exception $e) {
-            $result = NULL;
-        }
-        return $result;
-    }
-
     static public function decodeResponse($xml) {
         $xml = DOMDocument::loadXML(utf8_encode($xml));
         try {
@@ -252,32 +223,24 @@ class txmlrpc {
         return $result;
     }
 
-    static public function crlf($n = 1) {
-        $crlf = "";
-        for ($i = 0; $i < $n; $i++) {
-            $crlf .= self::CRLF;
-        }    
-        return $crlf;
+    public function __wakeup() {
+        trigger_error("someone try to create " . self::CLASS_NAME . " from session", E_USER_NOTICE);
     }
-
 }
 
 class txmlrpc_client {
 
-    // Public
-    public $xml_request = "";
-    public $xml_response = "";
-    public $xml_host = "";
-    public $error = false;
+    public $lastServer = ""; // store the last good server
+	public $error = false;
     public $gaveUp = false;
     public $errno = 0;
     public $errstr = "";
     public $logCALL = false;
-    private $hosts = array(); // TS 09-05-2012: array of thost
+
+    private $hosts = array(); //  array of tserver_identity
     private $method = "";
     private $params = "";
     private $xml = "";
-    private $php = NULL;
 
     const CLASS_NAME = "PHP5CLASS T_XMLRPC_CLIENT";
 
@@ -292,6 +255,7 @@ class txmlrpc_client {
     private $time_needed = 0.0;
 
     private function addProblem($msg) {
+        trigger_error($msg);
         $this->error_chain[] = $msg;
     }
 
@@ -303,19 +267,15 @@ class txmlrpc_client {
         $errorlist->add($msg);
     }
 
-    public function addHost(
-    $host, $port = XMLRPC_DEFAULT_PORT, $path = XMLRPC_DEFAULT_PATH, $user = XMLRPC_DEFAULT_USER, $password = XMLRPC_DEFAULT_PASSWORD, $timeout = XMLRPC_DEFAULT_TIMEOUT, $retries = XMLRPC_DEFAULT_RETRIES) {
-        if (is_string($host)) {
-            $this->hosts[] = new thost($host, $port, $path, $user, $password, $timeout, $retries);
-        }
-        if (is_object($host)) {
-            $this->hosts[] = $host;
-        }
+    public function add($host) {
+
+        $this->hosts[] = $host;
     }
 
     private function markHostAsBad($id) {
 
-        semiPersistentBrand($this->hosts[$id]->getConnect(), XMLRPC_RECOVERY_TIME);
+        trigger_error("XMLRPC-Server " . $this->hosts[$id]->ConnectStr() . " branded", E_USER_WARNING);
+        semiPersistentBrand($this->hosts[$id]->ConnectStr(), XMLRPC_RECOVERY_TIME);
     }
 
     private function isBadHost($id) {
@@ -323,7 +283,7 @@ class txmlrpc_client {
       if (defined("XMLRPC")) {
        return false;
      } else {  
-        return semiPersistentIsKnown($this->hosts[$id]->getConnect());
+        return semiPersistentIsKnown($this->hosts[$id]->ConnectStr());
      }   
     }
 
@@ -336,7 +296,7 @@ class txmlrpc_client {
         $i = 0;
         while ($i < $c) {
             if ($this->isBadHost($i)) {
-                $r[] = $this->hosts[$i]->getConnect();
+                $r[] = $this->hosts[$i]->ConnectStr();
             }    
             $i++;
         }
@@ -349,22 +309,10 @@ class txmlrpc_client {
         $c = count($this->hosts);
         $i = 0;
         while ($i < $c) {
-            $r[] = $this->hosts[$i++]->getConnect();
+            $r[] = $this->hosts[$i++]->ConnectStr();
         }    
         return implode(",", $r);
     }
-
-    /*
-      private function buildID() { //die ersten 8 Zeichen eines MD5?
-      //mit was wird der md5 gefüttert? Methodenname und Parameter, Datum, Uhrzeit, Remote-IP? Letzteres wäre ziemlich eindeutig.
-      $this->id = strtoupper(substr(md5($this->getID() . "_" . $this->getMethod() . "_" . date("Y-m-d H:i:u") . "_" . $_SERVER["REMOTE_ADDR"]), 0, 8));
-      return $this->id;
-      }
-
-      public function getID() {
-      return $this->id;
-      }
-     */
 
     private function setMethod($method = "") {
         $this->method = $method;
@@ -383,48 +331,22 @@ class txmlrpc_client {
     }
 
     private function getHeader($h) {
-        $auth = "";
-        if ($h->getUser() != "") {
-            $auth = "Authorization: Basic " . base64_encode($h->getUser() . ":" . $h->getPassword()) . txmlrpc::crlf();
-        }
-        $header = "POST {$h->getPath()} HTTP/1.0" . txmlrpc::crlf() . "User-Agent: " . self::CLASS_NAME . txmlrpc::crlf() . "Host: {$h->getName()}" . txmlrpc::crlf() .
-                "{$auth}Content-Type: text/xml" . txmlrpc::crlf() . "Content-Length: " . strlen($this->xml) . txmlrpc::crlf(2);
-        return $header;
+
+        return  "POST /RPC2 HTTP/1.0" . CRLF . 
+                "User-Agent: xmlrpc_client.php" . CRLF . 
+                "Host: " . $h->ConnectStr() . CRLF .
+                "Content-Type: text/xml" . CRLF . 
+                "Content-Length: " . strlen($this->xml) . CRLF . CRLF;
     }
 
-    private function cutHeader($payload) { //var_dump($payload);
-        $pos = strpos($payload, txmlrpc::crlf(2) . "<?xml", 1);
+    private function cutHeader($payload) { 
+        $pos = strpos($payload, "<?xml", 1);
         if ($pos !== false) {
-            $this->xml_response = substr($payload, $pos + strlen(txmlrpc::crlf(2)));
+            return substr($payload, $pos);
         } else {
             $this->setLogicError(102, "Keine Antwort");
-            $this->xml_response = "";
+            return "";
         }
-        return $this->xml_response;
-    }
-
-    private function toXML() {
-        /* xmlrpc ist leider immer noch "experimentell"
-          if (in_array("xmlrpc", get_loaded_extensions())) {
-          $this->xml_request = xmlrpc_encode_request($this->method, $this->params);
-          } else {
-          $this->xml_request = txmlrpc::encodeRequest($this->method, $this->params);
-          }
-         */
-        $this->xml_request = txmlrpc::encodeRequest($this->method, $this->params);
-        //echo "<pre>" . htmlentities($this->xml_request) . "</pre>";
-        return $this->xml_request;
-    }
-
-    private function fromXML() { //echo "<pre>" . htmlentities($this->xml) . "</pre>";
-        /* xmlrpc ist leider immer noch "experimentell"
-          if (in_array("xmlrpc", get_loaded_extensions())) {
-          $this->php = xmlrpc_decode_request($this->xml, $this->method);
-          } else {
-          $this->php = txmlrpc::decodeResponse($this->xml);
-          } */
-        $this->php = txmlrpc::decodeResponse($this->xml);
-        return $this->php;
     }
 
     private function overHTTP($timeout) {
@@ -462,20 +384,18 @@ class txmlrpc_client {
                     }
                 }
             }
+
             $h = $this->hosts[$active];
-
-            $server = $h->getName();
-            $port = $h->getPort();
-            $timeout = ($timeout == 0) ? $h->getTimeout() : $timeout;
-            $retries = $h->getRetries();
-
             $try = 0;
-            while (($result == false) AND ($try++ <= $retries)) {
+            while (($result == false) AND ($try++ <= $h->retries)) {
+
+                // log
+                // trigger_error("remote-call '"  . $h->host . ":" . $h->port . "." . $this->method . "();' ... ");
 
                 // open tcp connection
-                $fp = @fsockopen($server, $port, $errno, $errstr, max($timeout, 1));
+                $fp = @fsockopen($h->host, $h->port, $errno, $errstr, max($h->timeout_open, 1));
                 if (!$fp) {
-                    $this->addProblem("fsockopen(" . $server . ":" . $port . ") returned error code " . $errno);
+                    $this->addProblem("fsockopen(" . $h->host . ":" . $h->port . ") returned error code " . $errno);
                     continue;
                 }
 
@@ -484,21 +404,21 @@ class txmlrpc_client {
 
                 // send request
                 if (!@fwrite($fp, $payload, strlen($payload))) {
-                    $this->addProblem("fwrite(" . $server . ":" . $port . ") failed ");
+                    $this->addProblem("fwrite(" . $h->host . ":" . $h->port . ") failed ");
                     @fclose($fp);
                     continue;
                 }
 
                 // read response
                 $result = "";
-                @stream_set_timeout($fp, max($timeout, 1));
+                @stream_set_timeout($fp, max($h->timeout_read, 1));
                 while ($data = @fread($fp, txmlrpc::BLOCK_SIZE))
                     $result .= $data;
 
                 // response problems?
                 $info = @stream_get_meta_data($fp);
                 if ($info["timed_out"]) {
-                    $this->addProblem("fread(" . $server . ":" . $port . ") gave up after $timeout seconds");
+                    $this->addProblem("fread(" . $h->host . ":" . $h->port . ") gave up after " . $h->timeout_read . " seconds");
                     @fclose($fp);
                     continue;
                 }
@@ -506,12 +426,13 @@ class txmlrpc_client {
             }
 
             if (($result === false) or ($result === "")) {
-                $this->markHostAsBad($active);
+
+			  $this->markHostAsBad($active);
             } else {
-                $this->xml_host = $server;
+				$this->lastServer = $h->ConnectStr();
                 break;
             }
-        };
+        }
 
         return $result;
     }
@@ -538,9 +459,8 @@ class txmlrpc_client {
             if ($params != "") {
                 $this->setParams($params);
             }
-            //$this->buildID();
-            //$this->addToLog("START / ID: " . $this->getID() . " / METHOD: " . $method . " / PARAMCOUNT: " . count($this->getParams()));
-            $this->xml = $this->toXML();
+        
+            $this->xml = txmlrpc::encodeRequest($this->method, $this->params);
             $response = $this->overHTTP($timeout);
         } else {
             $this->setLogicError(800, "Es wurde keine Methode angegeben");
@@ -555,8 +475,8 @@ class txmlrpc_client {
             if ($this->xml == "") {
                 $result = NULL;
             } else {
-                $result = $this->fromXML();
-                if (is_array($result) AND array_key_exists("faultCode", $result)) {
+			   $result = txmlrpc::decodeResponse($this->xml);
+               if (is_array($result) AND array_key_exists("faultCode", $result)) {
                     $this->setLogicError($result["faultCode"], $result["faultString"]);
                     $result = NULL;
                 }
@@ -564,7 +484,6 @@ class txmlrpc_client {
         }
 
         $this->stopTime();
-        //$this->addToLog("STOP  / ID: " . $this->getID() . " / METHOD: " . $method . " / XMLCOUNT: " . strlen($this->xml) . " / TRIES: " . $try . " / NEEDED: " . $this->getTime());
         return $result;
     }
 
@@ -598,28 +517,6 @@ class txmlrpc_client {
     public function getTime() {
         return $this->time_needed;
     }
-
-    public function addToLog($entry) {
-        if (!empty($this->log)) {
-            $entry = date("d-m-Y H:i:s") . " --- " . $entry . txmlrpc::crlf();
-            file_put_contents($this->log, $entry, FILE_APPEND);
-        }
-    }
-
-    /*
-     * AF: bin nicht der Ansicht dass xmlrpc in die Session sollte
-      public function __wakeup() {
-      self::$instance = $this;
-      //$this->time_started = 0.0;
-      //$this->time_stopped = 0.0;
-      //$this->time_needed  = 0.0;
-      }
-
-      public function __toString() {
-      return self::CLASS_NAME;
-      }
-     * 
-     */
 
     public function __wakeup() {
         trigger_error("someone try to create " . self::CLASS_NAME . " from session", E_USER_NOTICE);

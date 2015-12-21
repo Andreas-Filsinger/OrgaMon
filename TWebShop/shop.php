@@ -1,14 +1,65 @@
 <?php
 
+
+// Stage "0" Init - keine Abhängigkeiten zu ext(ra) php-Modulen
+
+include_once("./core/performance.php");     // Klasse zum Erfassen der Performance (benötigte Zeiten)
+tperformance::setTimeStarted();
+
+// richtige PHP-Einstellungen sicherstellen
+
+date_default_timezone_set('Europe/Berlin');
+mb_internal_encoding("UTF-8");
+
+
+// Stage "1" Init - Pre-Config, keine Abhängigkeiten zur Shop-Konfiguration
+
+include_once("./FirePHPCore/fb.php"); // Ausgabe von Log-Texten in die Firefox FireBug Konsole
+include_once("./core/global_funcs.php"); // Globale Funktionensammlung
+include_once("./logic/global_const.php"); // Globale System Konstanten 
+include_once("./core/errorlist.php");       // Klasse zur Fehlerausgabe
+
+include_once("./core/cryption.php");  // Verschlüsselungs-Klasse 
+include_once("./core/crypt_id.php");        // Klasse zur Verschlüsselung der Datenbank-IDs
+include_once("./core/shopstate.php");     // Verwaltet den Status der Anwendung, sie wird dadurch StateFull
+include_once("./core/visual.php");         // Standardklassen, die beerbt werden
+include_once("./core/global.php");          // Klasse zur Deklaration & Registrierung von globalen Variablen
+include_once("./core/messagelist.php");     // Klasse zur Meldungsausgabe
+include_once("./core/stringlist.php");      // Klasse zur Verwaltung von Stringlisten
+include_once("./core/multistringlist.php"); // Vererbte Klasse zur Verwaltung von Stringlisten von Werten mit mehreren Zeilen 
+include_once("./core/xmlrpc_client.php");   // XMLRPC - Client 
+include_once("./core/session.php");         // Klasse zur Erleichterung des Handlings der $_SESSION
+
+// Stage "2" Init - DIE SHOP KONFIGURATION
+
+include_once("config.php");             // Konfiguration
+
 //
-// pre init: Prüfen der notwendigen Module
+// pre init: Prüfen der zum Funktionieren notwendigen PHP-ext(ra)-Module, z.B. "php5-dom"
 $i = 0;
-$_PHPEXTENSIONS = array("dom", "interbase", "session", "mcrypt", "memcache", "mbstring");
+
+// statische / unabänderliche Abhängigkeiten
+
+$_PHPEXTENSIONS = array("dom", "iconv", "interbase", "mbstring", "mcrypt", "session");
+
+// dynamische Abhängigkeiten, je nach Konfiguration
+// a) Bei monolithischem XMLRPC ist kein memcached notwendig
+
+if (defined("XMLRPC")) {
+
+  define("XMLRPC_1", XMLRPC);
+} else {
+
+  array_push($_PHPEXTENSIONS, "memcached");
+}    
+
+// nun ALLE fehlenden Module ohne "Fail after Fail" direket auflisten
 foreach ($_PHPEXTENSIONS as $_EXTENSION)
     if (!extension_loaded($_EXTENSION)) {
         echo "FATAL ERROR: missing PHP-extension: $_EXTENSION<br />";   // => Low-Level-LOG
         $i++;
     }
+    
 
 // Prüfung der Verschlüsselungsmöglichkeiten    
 if (CRYPT_SHA256 != 1) {
@@ -18,64 +69,24 @@ if (CRYPT_SHA256 != 1) {
 
 if ($i == 0) {
 
-// richtige PHP-Einstellungen sicherstellen
-    date_default_timezone_set('Europe/Berlin');
-    mb_internal_encoding("UTF-8");
-    ini_set('ibase.timestampformat', "%d.%m.%Y %H:%M:%S");
-    ini_set('ibase.dateformat', "%d.%m.%Y");
-    ini_set('ibase.timeformat', "%H:%M:%S");
 
+// Stage "3" - Existenz aller notwendigen Module ist sichergestellt
+//             Konfiguration ist da 
 
-    // echo ini_get('memory_limit');
-// pre Ring 0, System-Konstanten und Performance-Infrastruktur
-//
-    include_once("./core/performance.php");     // Klasse zum Erfassen der Performance (benötigte Zeiten)
-    tperformance::setTimeStarted();
-    include_once("./FirePHPCore/fb.php");
-
-    // Log-Sample
-    /*
-      if (!fb("Welt","Hallo",FirePHP::INFO)) {
-      echo "fb() funktioniert nicht!";
-      }
-     */
-
-    include_once("./core/global_funcs.php"); // Globale Funktionensammlung
-    include_once("./logic/global_const.php"); // Globale System Konstanten 
-    include_once("./core/errorlist.php");       // Klasse zur Fehlerausgabe
-    //
-// Webshop - Kernel Ring 0 
-//
-
-    include_once("./core/cryption.php");  // Verschlüsselungs-Klasse 
-    include_once("./core/crypt_id.php");        // Klasse zur Verschlüsselung der Datenbank-IDs
-    include_once("./core/shopstate.php");     // Verwaltet den Status der Anwendung, sie wird dadurch StateFull
-    include_once("./core/visual.php");         // Standardklassen, die beerbt werden
-    include_once("./core/global.php");          // Klasse zur Deklaration & Registrierung von globalen Variablen
-    include_once("./core/messagelist.php");     // Klasse zur Meldungsausgabe
-    include_once("./core/stringlist.php");      // Klasse zur Verwaltung von Stringlisten
-    include_once("./core/multistringlist.php"); // Vererbte Klasse zur Verwaltung von Stringlisten von Werten mit mehreren Zeilen 
-    include_once("./core/xmlrpc_client.php");   // XMLRPC - Client 
-    include_once("./core/session.php");         // Klasse zur Erleichterung des Handlings der $_SESSION
-// Webshop - Konfiguration (Optionen hier möglich für die Core-Bibliotheken)
-//
-    include_once("config.php");             // Konfiguration
-// Webshop - Kernel Ring 1 (Abhängigkeiten zur aktuellen Konfiguration möglich)
-//
     include_once("./core/ibase.php");           // Klasse zur Interbase-Anbindung
     include_once("./core/site.php");            // Klasse zur Verwaltung von Webseiten
     include_once("./core/pages.php");           // Klasse zur Verwaltung von Unterseiten (z.B. mehrseitige Suchtrefferanzeige) 
     include_once("./core/steps.php");           // Klasse zur Abbildung von Einzelschritten als Unterseiten (z.B. Seite Anmelden hat mehrere Schritte)
     include_once("./core/option.php");          // Klasse zur Abbildung von Benutzer-Optionen
     include_once("./core/template.php");        // Klasse zur Übergabe von Templates
-    //
-// Webshop - Logik Ring 2 (Shop-Logik-Core)
-//
+
+// Stage "3" Webshop - Logik-Core
+
     include_once("./logic/orgamon.php");         // OrgaMon-Client-Klasse (nutzt XMLRPC-Client) und OrgaMon-Ereignis-Klasse
     include_once("./logic/orgatix.php");         // OrgaTix-Klasse 
-    //
-// Webshop - Logik Ring 3 (Shop-Logik für Site-Implementierungen)
-//
+
+// Stage "4" Webshop - Logik für "Sites"
+
     include_once("./logic/account.php");
     include_once("./logic/address.php");
     include_once("./logic/article.php");
@@ -198,16 +209,19 @@ if ($i == 0) {
     while (defined("XMLRPC_$i")) {
         $params = new tstringlist();
         $params->assignString(constant("XMLRPC_$i"), ",");
-        $h = new thost(
-                        $params->getValueByName("name"),
+        $h = new tserver_identity(
+                        $params->getValueByName("host"),
                         $params->getValueByName("port"),
-                        $params->getValueByName("path"),
-                        $params->getValueByName("user"),
-                        $params->getValueByName("password"),
-                        $params->getValueByName("timeout"),
+                        $params->getValueByName("timeout_open"),
+                        $params->getValueByName("timeout_read"),
                         $params->getValueByName("retries")
         );
-        $xmlrpc->addHost($h);
+
+        if (!semiPersistentIsKnown($h->ConnectStr())) {
+
+         $xmlrpc->add($h);
+        }
+        
         $i++;
         unset($params);
     }

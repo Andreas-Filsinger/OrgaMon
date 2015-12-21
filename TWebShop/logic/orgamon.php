@@ -110,7 +110,7 @@ class torgamon {
             }
             if (($system_strings != NULL) AND (!$xmlrpc->error)) {
 
-                $system_strings[0] = str_replace("XMLRPC", $xmlrpc->xml_host, $system_strings[0]);
+                $system_strings[0] = str_replace("XMLRPC", $xmlrpc->lastServer, $system_strings[0]);
                 $this->sys_strings = $system_strings;
             }
         }
