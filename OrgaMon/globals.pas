@@ -56,6 +56,7 @@ const
 
   // INI Sachen
   cIniFName = cApplicationName + '.ini';
+  cIniFNameConsole = 'c' + cApplicationName + '.ini';
   cDataBaseName = 'DatabaseName';
   cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
   cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
@@ -1636,10 +1637,15 @@ begin
   // in diesem Falle wird vorrangig Spare gefragt, wenn leer
   // fällt Spare wieder auf das Original zurück
   if isParam('-es') then
-    sGroup := 'Spare'
+  begin
+    sGroup := 'Spare';
+  end
   else
-    sGroup := 'System';
-
+  begin
+    sGroup := getParam('Id');
+    if (sGroup = '') then
+      sGroup := 'System';
+  end;
   sBootSequence.Add('Namespace=' + sGroup);
 
   //
@@ -1783,23 +1789,10 @@ begin
 
         if DirExists(iDataBaseName) then
         begin
+          MyProgramPath := iDataBaseName;
 
           if FileExists(iDataBaseName + cIniFName) then
-          begin
-            MyProgramPath := iDataBaseName;
             LoadIniF;
-          end
-          else
-          begin
-{$IFNDEF CONSOLE}
-            ShowMessage(
-{$ELSE}
-            writeln(
-{$ENDIF}
-              'ERROR: Die Datei' + #13#10 + #13#10 + iDataBaseName + cIniFName + #13#10 + #13#10 +
-              'existiert nicht!');
-            halt;
-          end;
 
         end
         else

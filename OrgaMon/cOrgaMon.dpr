@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2015  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ uses
   Foto in '..\PASconTools\Foto.pas';
 
 type
-  TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto);
+  TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto);
 
 var
   Ident: TIndentitaet;
@@ -91,6 +91,13 @@ var
 begin
   with dbOrgaMon.fbConnection do
   begin
+
+    if IsParam('-al') then
+    begin
+      writeln('WARNING: DebugMode @' + DiagnosePath);
+      DebugMode := true;
+      DebugLogPath := globals.DiagnosePath;
+    end;
 
     _iDataBaseName := iDataBaseName;
     if (iDataBaseHost <> '') then
@@ -152,14 +159,6 @@ begin
   { } e_r_Kontext;
 
   writeln(cOKText);
-
-  // Debug-Modus aktiv?
-  if IsParam('-al') then
-  begin
-    writeln('DebugMode @' + DiagnosePath);
-    DebugMode := true;
-    DebugLogPath := globals.DiagnosePath;
-  end;
 
   // Aktueller Versionszwang?
   ForceRev := e_r_Revision_Zwang;
@@ -272,29 +271,14 @@ begin
   end;
 end;
 
-procedure RunAsXMLRPC;
+procedure RunAsTWebShop;
 var
-  JonDa: TJonDaExec;
-  MyIni: TIniFile;
   UsedPort: integer;
   XMethods: TeConnect;
   XServer: TXMLRPC_Server;
   BasePlug: TStringList;
 begin
-  JonDa := TJonDaExec.Create;
 
-  // Ini-Datei öffnen
-  MyIni := TIniFile.Create(MyProgramPath + cIniFName);
-  with MyIni do
-  begin
-    // Ftp-Bereich für diesen Server
-    iJonDa_FTPHost := ReadString(UserName, 'ftphost', 'gateway');
-    iJonDa_FTPUserName := ReadString(UserName, 'ftpuser', '');
-    iJonDa_FTPPassword := ReadString(UserName, 'ftppwd', '');
-    JonDa.start_NoTimeCheck := ReadString(UserName, 'NoTimeCheck', '') = cIni_Activate;
-    JonDa.Option_Console := true;
-  end;
-  MyIni.free;
   // Caching Objekte voraktivieren
   write('Cache ');
   e_r_Preis_ensureCache;
@@ -327,6 +311,7 @@ begin
     DiagnosePath := globals.DiagnosePath;
     TimingStats := IsParam('-at');
     LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
+
     if TimingStats then
       writeln('Performance-Log aktiv: ' + LogContext);
 
@@ -352,11 +337,6 @@ begin
     AddMethod('Miniscore', XMethods.rpc_e_w_Miniscore);
     AddMethod('LoginInfo', XMethods.rpc_e_w_LoginInfo);
     AddMethod('Skript', XMethods.rpc_e_w_Skript);
-
-    // JonDa
-    AddMethod('JonDaPlug', JonDa.info);
-    AddMethod('StartTAN', JonDa.start);
-    AddMethod('ProceedTAN', JonDa.proceed);
 
     // Starten
     BasePlug := e_r_BasePlug;
@@ -422,6 +402,10 @@ begin
       DebugMode := true;
       DebugLogPath := globals.MyProgramPath;
     end;
+    if IsParam('-at') then
+    begin
+      writeln('TimingStatistics @' + MyProgramPath);
+    end;
 
     // lade IMEI
     write('Lade Tabelle IMEI ... ');
@@ -437,7 +421,7 @@ begin
     end;
 
     // Ini-Datei öffnen
-    MyIni := TIniFile.Create(MyProgramPath + cIniFName);
+    MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
     with MyIni do
     begin
       // Fall Back auf "System"
@@ -489,9 +473,10 @@ begin
       begin
         DefaultPort := iJonDa_Port;
         write('Öffne ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
-        DiagnosePath := MyProgramPath;
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
+        DiagnosePath := MyProgramPath;
+        LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
 
         // Methoden registrieren
         AddMethod('BasePlug', JonDa.info);
@@ -549,13 +534,13 @@ begin
       break;
     end;
     // Default "--twebshop"
-    Ident := id_XMLRPC;
+    Ident := id_TWebShop;
   until true;
 
   // Ident- String
   case Ident of
-    id_XMLRPC:
-      Modus := 'XMLRPC';
+    id_TWebShop:
+      Modus := 'TWebShop'; // XMLRPC Server
     id_Bestellen:
       Modus := 'ORDER';
     id_Mail:
@@ -563,7 +548,7 @@ begin
     id_Druck:
       Modus := 'PRINT';
     id_App:
-      Modus := 'Service-App';
+      Modus := 'Service-App'; // XMLRPC Server
     id_Foto:
       Modus := 'Service-Foto';
   end;
@@ -586,10 +571,10 @@ begin
     writeln(Modus + '-Server@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
 
     case Ident of
-      id_XMLRPC:
+      id_TWebShop:
         begin
           connectOrgamon;
-          RunAsXMLRPC;
+          RunAsTWebShop;
         end;
       id_Bestellen:
         begin

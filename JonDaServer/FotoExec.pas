@@ -44,20 +44,21 @@ const
   Version: single = 2.000; // ..\rev\Service-Foto.rev.txt
 
   // root Locations
-  cWorkPath = 'W:\';
-  cBackUpPath = 'I:\KundenDaten\SEWA\';
-  cWebPath = 'W:\status\';
+  cWorkPath = 'W:\' deprecated 'read it from ini';
+  cBackUpPath = 'I:\KundenDaten\SEWA\' deprecated 'read it from ini';
+  cWebPath = 'W:\status\' deprecated 'read it from ini';
+
+  // Sub Locations
+  cLocation_MOB = 'orgamon-mob\' deprecated 'read it from ini';
+  cLocation_JonDaServer = 'JonDaServer\' deprecated 'read it from ini';
+  cLocation_Unverarbeitet = 'unverarbeitet\' deprecated 'read it from ini';
+  cLocation_Manuell = 'manuell\' deprecated 'read it from ini';
 
   // Warte Zeiten [min]
   cKikstart_delay = 10;
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
 
-  // Sub Locations
-  cLocation_MOB = 'orgamon-mob\';
-  cLocation_JonDaServer = 'JonDaServer\';
-  cLocation_Unverarbeitet = 'unverarbeitet\';
-  cLocation_Manuell = 'manuell\';
 
   // File Names
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
