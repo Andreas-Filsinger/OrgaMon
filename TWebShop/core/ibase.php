@@ -19,6 +19,12 @@ define("IBASE_CHARSET_SITE", "UTF-8");
 
 define("CALLBACK_requestConnectivity", "requestConnectivity");
 
+#
+# SQL Statement Cache
+#
+$ibase_get_field_cache = array();
+$ibase_get_field_results = array();
+
 class tibase {
 
     // Object, das "function CALLBACK_requestConnectivity()" implementieren muss
@@ -312,20 +318,44 @@ class tibase {
 
     public function get_field($sql, $name = "RID") {
 
-        $this->start_time();
-        $this->query($sql);
-        //$data = ($this->count() > 0) ? $this->fetch_object() : false;
-        //$this->free_result();
-        if ($this->count() > 0) {
-            $data = $this->fetch_object();
-            //$this->free_result();
-        }
-        else
-            $data = false;
-        $this->free_result();
-        $this->stop_time();
+        global $ibase_get_field_cache;
+        global $ibase_get_field_results;
+        
+        $cache_id = $sql . "." . $name;
+        $i = array_search($cache_id, $ibase_get_field_cache);
+        
+        if ($i===false) {
+        
+            
+           // im Chache nicht vorhanden -> wirklich die Daten-
+           // Bank fragen
+           $this->start_time();
+           $this->query($sql);
+           if ($this->count() > 0) {
 
-        return (isset($data->{$name})) ? ($data->{$name}) : (false);
+            $data = $this->fetch_object();
+            if (isset($data->{$name})) {
+             $field = $data->{$name};
+            } else {
+             $field = false;
+            }
+           } else {
+            $field = false;
+           } 
+        
+           $this->free_result();
+           $this->stop_time();
+
+           $ibase_get_field_cache[] = $cache_id;
+           $ibase_get_field_results[] = $field;
+
+           return $field;
+           
+        } else {
+
+            fb($sql, "SQL", FirePHP::LOG);
+            return $ibase_get_field_results[$i];
+        }
     }
 
     public function get_list_as_string($sql, $name = "RID", $separator = ",") {
@@ -410,9 +440,9 @@ class tibase {
         //TS 24-04-2012: i kann 0 sein, wenn es sich um das erste Array-Element handelt.
         if ($i !== false) {
 
-            if ($this->logSQL) {
-                fb("close", "SQL", FirePHP::INFO);
-            }
+            //if ($this->logSQL) {
+            //    fb("close", "SQL", FirePHP::INFO);
+            //}
             ibase_free_result($result);
             unset($this->statementHandles[$i]);
             //trigger_error(count($this->statementHandles) . ":free($i)");
