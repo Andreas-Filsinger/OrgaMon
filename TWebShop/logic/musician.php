@@ -13,6 +13,7 @@ class twebshop_musician {
 
         $this->rid = $rid;
         $this->getProperties();
+        
     }
 
     /* --> 10.10.2014 michaelhacksoftware : Sprechenden Link erstellen */

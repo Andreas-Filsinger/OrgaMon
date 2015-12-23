@@ -42,6 +42,8 @@ class tibase {
     private $time_needed = 0.0;
     static private $errormsg = array("Die Verbindung zur Datenbank konnte nicht hergestellt werden [~ERROR~]");
 
+    const BOOLEAN_TRUE = "'Y'";
+    const BOOLEAN_FALSE = "'N'";
     const CLASS_NAME = "PHP5CLASS_T_IBASE";
     const GLOBAL_NAME = "ibase";
 

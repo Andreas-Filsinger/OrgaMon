@@ -9,7 +9,7 @@ if ($site->isActive())
   $shop->saveVars("s_demo",array("id"));
 
   $article = new twebshop_article($id);
-  $sounds  = $article->getSounds(false);
+  $sounds  = $article->getDemos();
   
   foreach($sounds as $link)
   { $link->addOption("BROKEN_LINK",_TEMPLATE_ARTICLE_LINK_DEMO_OPTION_BROKEN_LINK);

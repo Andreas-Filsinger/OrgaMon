@@ -56,12 +56,11 @@ if ($site->isActive()) {
     $performance->addToken("search_obj_articles");
     for ($i = $search_result_pages->getItemStartIndex(); $i <= $search_result_pages->getItemStopIndex(); $i++) {
         $article = new twebshop_article($search_result_pages->getItem($i), 0, $user->getID());
-        $article->getAll();
         $article->addOption("CART", _TEMPLATE_ARTICLE_SEARCH_OPTION_CART);
         if (defined("_TEMPLATE_ARTICLE_SEARCH_OPTION_DETAILS"))
             $article->addOption("DETAILS", _TEMPLATE_ARTICLE_SEARCH_OPTION_DETAILS);
-        $article->addOption("PLAY", (count($article->getSounds(true))  > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_PLAY : "");
-        $article->addOption("DEMO", (count($article->getSounds(false)) > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_DEMO : "");
+        $article->addOption("PLAY", (count($article->getSounds())  > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_PLAY : "");
+        $article->addOption("DEMO", (count($article->getDemos()) > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_DEMO : "");
         $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_MINISCORE : ""));
         $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_SEARCH_OPTION_RECORDS : ""));
         $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_THUMB : "");
