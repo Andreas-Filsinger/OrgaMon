@@ -29,8 +29,8 @@ if ($site->isActive()) {
     $MiniScore = $orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH);
 
     $article->addOption("CART",        _TEMPLATE_ARTICLE_ARTICLE_OPTION_CART);
-    $article->addOption("PLAY",        count($article->getSounds(true))  > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_PLAY      : "");
-    $article->addOption("DEMO",        count($article->getSounds(false)) > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_DEMO      : "");
+    $article->addOption("PLAY",        count($article->getSounds())  > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_PLAY      : "");
+    $article->addOption("DEMO",        count($article->getDemos()) > 0 ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_DEMO      : "");
     $article->addOption("MINISCORE",   $article->getMiniScore($MiniScore)    ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_MINISCORE : "");
     $article->addOption("RECORDS",     $article->existRecords()              ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_RECORDS   : "");
     $article->addOption("THUMB",       count($article->getThumbs()) > 0      ? _TEMPLATE_ARTICLE_ARTICLE_OPTION_THUMB     : "");

@@ -16,10 +16,9 @@
       </Unit0>
       <Unit1>
         <Filename Value="..\PASconTools\anfix32.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="5312"/>
-        <CursorPos Y="5332"/>
+        <TopLine Value="5161"/>
+        <CursorPos Y="5325"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -211,9 +210,10 @@
       </Unit27>
       <Unit28>
         <Filename Value="..\PASconTools\srvXMLRPC.pas"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="362"/>
-        <CursorPos Y="383"/>
+        <TopLine Value="30"/>
+        <CursorPos X="34" Y="21"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -1008,7 +1008,7 @@
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -1016,13 +1016,6 @@
         <Source Value="..\PASconTools\srvXMLRPC.pas"/>
         <Line Value="788"/>
       </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\PASconTools\anfix32.pas"/>
-        <Line Value="5325"/>
-      </Item2>
     </BreakPoints>
     <Watches Count="1">
       <Item1>

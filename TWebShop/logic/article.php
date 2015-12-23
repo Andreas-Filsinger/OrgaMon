@@ -152,85 +152,11 @@ class twebshop_article extends tvisual {
         return $this->NUMERO;
     }
 
-    /* --> 27.06.2014 michaelhacksoftware : Nur tatsächlich abspielbare Lieder und Links trennen */
-    public function getSounds($OnlyPlayable) {
-
-        global $ibase;
-
-        /* === Links aus Datenbank laden === */
-        if (empty($this->sounds)) {
-        
-            $result = $ibase->query("SELECT BEMERKUNG FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_SOUND . " AND ARTIKEL_R={$this->rid})");
-            while ($data = $ibase->fetch_object($result)) {
-
-                $Items = preg_split("/((\r)*(\n)+)+/", $ibase->get_blob($data->BEMERKUNG, 4096));
-
-                foreach ($Items as $Item) {
-                
-                    if ($Item == "") 
-                      continue;
-
-                    /* === Link auf Windbandmusic überprüfen ### Sonderlösung ### === */
-                    if (defined("SHOP_WIND")) {
-                        
-                        if (strtolower(substr($Item, 0, strlen(SHOP_WIND))) == SHOP_WIND) {
-
-                            $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . ".mp3"; 
-                            
-                            parse_str(parse_url($Item, PHP_URL_QUERY),$q);
-                         
-                            if (array_key_exists("q",$q)) {
-                                $q = intval($q["q"]);
-                                for ($i = 2; $i <= $q; $i++) {
-                                    $this->sounds[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . chr(63+$i) .  ".mp3"; 
-                                }
-                            }   
-
-                            continue;
-
-                        }
-                    
-                    }
-
-                    $this->sounds[] = $Item;
-
-                }
-
-            }
-            $ibase->free_result($result);
-
-        }
-
-        $Sounds = array();
-
-        foreach ($this->sounds as $Sound) {
-
-            /* === Abspielbare Lieder anhand Endung ermitteln === */
-            if (strtolower(substr($Sound, -4)) == ".mp3") {
-                $Playable = true;
-            } else {
-                $Playable = false;
-            }
-
-            /* === Abspielbare Lieder und Links trennen === */
-            if ($OnlyPlayable) {
-                if ($Playable)  $Sounds[] = $Sound;
-            } else {
-                if (!$Playable) $Sounds[] = new twebshop_article_link(self::encryptRID($this->rid), $this->TITEL, $Sound);
-            }
-
-        }
-
-        return $Sounds;
-
-    }
-    /* <-- */
-
     /* --> 27.06.2014 michaelhacksoftware : JavaScript Code zum Abspielen der Titel generieren */
     public function getPlayCode() {
 
         /* === Alle abspielbaren Titel laden === */
-        $Sounds = $this->getSounds(true);
+        $Sounds = $this->getSounds();
         if (!count($Sounds)) return "";
         
         /* === JavaScript Code generieren === */
