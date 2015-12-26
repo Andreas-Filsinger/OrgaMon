@@ -27,16 +27,6 @@ function get_revision($infohtml = "", $path = "") {
     return $rev;
 }
 
-/* --> 07.07.2014 michaelhacksoftware : Für externe Inhalte, wie Newsletter, den korrekten Pfad auf die Index bereitstellen */
-function geturl_shop() {
-    return path() . FILE_SHOP;
-}
-
-function geturl_index() {
-    return path() . FILE_INDEX;
-}
-/* <-- */
-
 function path() {
     return "http://" . $_SERVER["HTTP_HOST"] . str_replace("\\", "", pathinfo($_SERVER["PHP_SELF"], PATHINFO_DIRNAME)) . "/";
 }

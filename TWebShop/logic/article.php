@@ -7,6 +7,21 @@ class twebshop_article extends tvisual {
     protected $rid = 0;
     protected $uid = "";
     protected $wid = NULL;
+
+    // Caching
+    protected $image_r = NULL; // DOKUMENT.RID
+    protected $image = NULL; // FileName des Artikelbildes
+    protected $thumb = NULL; // FileName des Thumbnails des Artikelbildes
+    protected $info = NULL;
+
+    protected $links = NULL; // Alle gespeicherten Links zu einem Artikel
+    protected $sounds = NULL; // Aus "links" alle mp3 Dateien
+    protected $demos = NULL; // Aus "links" den ganzen Rest
+    protected $members = NULL; // CD - Tracks
+    protected $records = NULL; // CD - Tracks Anzahl
+    protected $publisher = NULL; // Verlag
+
+    public $notice = "";
     public $version_r = 0;
     public $person_r = 0;
     public $cart_r = 0;
@@ -16,17 +31,9 @@ class twebshop_article extends tvisual {
     public $detail = "";
     public $price = NULL;
     public $availability = NULL;
-    public $publisher = "";
-    public $info = NULL;
-    public $notice = "";
-    public $thumbs = array();
-    public $images = array();
-    public $sounds = array();
-    public $members = array();
+   
     private $autoplay = false;
     
-    const MEDIUM_R_SOUND = TWEBSHOP_ARTICLE_MEDIUM_R_SOUND;
-    const MEDIUM_R_IMAGE = TWEBSHOP_ARTICLE_MEDIUM_R_IMAGE;
     const CONTEXT_R_RECORD = TWEBSHOP_ARTICLE_CONTEXT_R_RECORD;
     const MP3_DOWNLOAD_POSTFIX = MP3_DOWNLOAD_POSTFIX;
 
@@ -121,37 +128,106 @@ class twebshop_article extends tvisual {
 
     public function getNotice() {
         if ($this->notice == "") {
-            if ($this->info == NULL) {
-                $this->getInfo();
-            }
-            //$this->notice = $this->info->getValueByName("BEM");
-            $this->notice = torgamon::processText($this->info->getValueByName("BEM"));
+
+            $this->notice = torgamon::processText($this->getInfo()->getValueByName("BEM"));
         }
         return $this->notice;
-    }
-
-    public function getThumbs() {
-        $this->thumbs = self::getArticleThumbs($this->rid);
-        return $this->thumbs;
-    }
-
-    public function getThumb($index = 0) {
-        return $this->thumbs[$index];
-    }
-
-    public function getImages() {
-        $this->images = self::getArticleImages($this->rid);
-        return $this->images;
-    }
-
-    public function getImage($index = 0) {
-        return $this->images[$index];
     }
 
     public function getMediaName() {
         return $this->NUMERO;
     }
 
+    // getLinks() bildet nebenbei noch $sounds und $demos 
+    private function getLinks() {
+        
+       global $ibase;
+
+       if ($this->links===NULL) {
+           
+           $this->links = array();
+           $this->sounds = array();
+           $this->demos = array();
+
+           $result = $ibase->query(
+                    " select"
+                    ." BEMERKUNG "
+                    ."from"
+                    ." DOKUMENT "
+                    ."where"
+                    ." (MEDIUM_R=" . TWEBSHOP_ARTICLE_MEDIUM_R_SOUND . ") and"
+                    ." (ARTIKEL_R={$this->rid})");
+           while ($data = $ibase->fetch_object($result)) {
+
+                $Items = preg_split("/((\r)*(\n)+)+/", $ibase->get_blob($data->BEMERKUNG, 4096));
+                foreach ($Items as $Item) {
+                
+                    if ($Item == "") 
+                      continue;
+
+                    /* === Link auf Windbandmusic überprüfen ### Sonderlösung ### === */
+                    if (defined("SHOP_WIND")) {
+                        
+                        if (strtolower(substr($Item, 0, strlen(SHOP_WIND))) == SHOP_WIND) {
+
+                            $this->links[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . ".mp3"; 
+                            
+                            parse_str(parse_url($Item, PHP_URL_QUERY),$q);
+                         
+                            if (array_key_exists("q",$q)) {
+                                $q = intval($q["q"]);
+                                for ($i = 2; $i <= $q; $i++) {
+                                    $this->links[] = SHOP_WIND . "music/" . $this->LAUFNUMMER . chr(63+$i) .  ".mp3"; 
+                                }
+                            }   
+                            continue;
+                        }
+                    }
+                    $this->links[] = $Item;
+                }
+            }
+            $ibase->free_result($result);
+        
+
+        foreach ($this->links as $item) {
+
+            /* === Abspielbare Lieder anhand Endung ermitteln === */
+            if (strtolower(substr($item, -4)) == ".mp3") {
+                $this->sounds[] = $item;
+            } else {
+                $this->demos[] = new twebshop_article_link(self::encryptRID($this->rid), $this->TITEL,$item);
+            }
+        }
+        
+        // fb(sprintf("(sounds=%d,demos=%d)",count($this->sounds),count($this->demos)), "Media", FirePHP::INFO);
+
+      }
+      
+      return $this->links; // Alle gespeicherten Links zu einem Artikel
+    }
+    
+    
+    /* --> 27.06.2014 michaelhacksoftware : Nur tatsächlich abspielbare Lieder und Links trennen */
+    /* getSounds() die direkt ansprechbaren .mp3 Dateien */
+    /* getDemos() der ganze Rest */
+    
+    public function getDemos() {
+        
+        if ($this->demos===NULL) {
+            $this->getLinks();
+        }    
+        return $this->demos;
+        
+    }
+    
+    public function getSounds() {
+
+        if ($this->sounds===NULL) {
+            $this->getLinks();
+        }    
+        return $this->sounds;
+    }
+    
     /* --> 27.06.2014 michaelhacksoftware : JavaScript Code zum Abspielen der Titel generieren */
     public function getPlayCode() {
 
@@ -191,16 +267,7 @@ class twebshop_article extends tvisual {
     }
     /* <-- */
     
-    public function existRecords() { //Tonträger (CD)
-        global $ibase;
-        $sql = "SELECT COUNT(*) FROM " . TABLE_ARTICLE_MEMBER . " WHERE (ARTIKEL_R={$this->rid}) AND (MASTER_R != {$this->rid}) AND (CONTEXT_R=" . self::CONTEXT_R_RECORD . ")";
-        $count = $ibase->get_field($sql, "COUNT");
-
-        if ($this->info == NULL) {
-            $this->getInfo();
-        }
-        return (($this->info != NULL AND trim($this->info->getValueByName("CDRID")) != "") OR $count > 0);
-    }
+ 
 
     public function existsMP3Download($path = "") { //Downloadbare MP3-Datei
         return file_exists($this->getMP3DownloadFileName($path));
@@ -221,16 +288,50 @@ class twebshop_article extends tvisual {
         //echo $file;
         return (file_exists($file)) ? $file : false;
     }
+    
+    public function existRecords() { //Tonträger (CD)
+
+        global $ibase;
+        if ($this->records===NULL) {
+            
+            $this->records = 0;
+            if (trim($this->getInfo()->getValueByName("CDRID")) != "") {
+              $this->records++;  
+            } else {
+                  $sql = 
+                       "SELECT COUNT(*) FROM " 
+                          . TABLE_ARTICLE_MEMBER 
+                          . " WHERE (ARTIKEL_R={$this->rid}) AND (MASTER_R != {$this->rid}) AND (CONTEXT_R=" . self::CONTEXT_R_RECORD . ")";
+                   $this->records = $ibase->get_field($sql, "COUNT");
+               
+            }
+        }
+        return ($this->records > 0);
+        
+    }
 
     public function getMembers() {
 
         global $ibase;
-        $this->members = array();
-        
-
-        $result = $ibase->query("SELECT COALESCE( A.RID, 0) AS RID, M.POSNO||'. '||COALESCE( M.TITEL, A.TITEL ) AS TITEL FROM " . TABLE_ARTICLE_MEMBER . " AS M LEFT JOIN " .
-                self::TABLE . " AS A ON M.ARTIKEL_R=A.RID WHERE M.MASTER_R={$this->rid} ORDER BY M.POSNO");
-        while ($data = $ibase->fetch_object($result)) {
+                
+        if ($this->members===NULL) {
+            
+          $this->members = array();
+          $result = $ibase->query(
+            "select "
+            ." coalesce (A.RID, 0) as RID,"
+            ." M.POSNO||'. '||coalesce (M.TITEL, A.TITEL) as TITEL "
+            ."from" 
+            ." ARTIKEL_MITGLIED as M " 
+            ."left join " 
+            ." ARTIKEL as A "
+            ."on"
+            ." (M.ARTIKEL_R=A.RID) "
+            ."where"
+            ." (M.MASTER_R={$this->rid}) "
+            ."order by"
+            ." M.POSNO");
+          while ($data = $ibase->fetch_object($result)) {
             $id = $data->RID;
             $title = $data->TITEL;
             if ($id != 0) {
@@ -238,33 +339,35 @@ class twebshop_article extends tvisual {
             } else {
                 $this->members[] = $title;
             }
+          }
+          $ibase->free_result();
         }
-        $ibase->free_result();
-        
+     
         return $this->members;
     }
 
     public function getPublisher() {
 
         global $orgamon;
+       
+        if ($this->publisher===NULL) {
         
-        if (!$this->publisher) {
             if ($this->VERLAG_R == NULL) { $this->VERLAG_R = 0; }
             if ($this->LAND_R == NULL)   { $this->LAND_R   = 0; }
             $this->publisher = $orgamon->getPublisher($this->LAND_R,$this->VERLAG_R);
         }
-
         return $this->publisher;
-
     }
 
     public function getDuration() {
         return ($this->DAUER != "") ? ($this->DAUER . "&nbsp;min") : "";
     }
 
-    public function getAvailability() { //15.08.2011: eigentlich sollte bei der Abfrage auch noch die Menge übergeben werden
+        //15.08.2011: eigentlich sollte bei der Abfrage auch noch die Menge übergeben werden
         //05.12.2011: kann aber per availability->getQuantity abgefragt werden
         //15.08.2011: Wenn noch NULL ODER (ein Objekt AND veraltet) neu instanzieren ODER updaten
+    public function getAvailability() { 
+
         if ($this->availability == NULL) {
             $this->availability = new twebshop_availability($this->rid, $this->version_r);
         } else if (is_object($this->availability) AND ($this->availability->needsUpdate($this->rid, $this->version_r))) {
@@ -304,13 +407,6 @@ class twebshop_article extends tvisual {
 
     public function getWID() {
         return $this->wid;
-    }
-
-    public function getAll() {
-        $this->getThumbs();
-        $this->getImages();
-        $this->getPublisher();
-        $this->getAvailability();
     }
 
     public function setVersion($version_r = 0) {
@@ -384,6 +480,7 @@ class twebshop_article extends tvisual {
             }
         }
 
+        $this->getMembers();
         $members = "";
         foreach ($this->members as $tmp_member) {
             if (is_object($tmp_member) AND is_a($tmp_member, "twebshop_article_link")) {
@@ -408,22 +505,28 @@ class twebshop_article extends tvisual {
         $template = str_replace("~DAUER~", $this->getDuration(), $template);
         $template = str_replace("~DETAIL~", $this->detail, $template);
         $template = str_replace("~UID~", ($this->uid == "") ? $this->getUID() : $this->uid, $template);
-        $template = str_replace("~IMAGE~", (count($this->images) > 0) ? $this->getImage(0) : "", $template);
-        $template = str_replace("~IMAGES~", (count($this->images) > 0) ? implode(",", $this->images) : "", $template);
+        $template = str_replace("~IMAGE~", ($this->getFileName_Image()==false) ? "" : $this->getFileName_Image(), $template);
+        //$template = str_replace("~IMAGES~", ($this->getFileName_Image()==false) ? "" : $this->getFileName_Image(), $template);
         $template = str_replace("~LINK~", $this->createLink(), $template);
         $template = str_replace("~MEMBERS~", $members, $template);
         $template = (strpos($template, "~MP3_FILE_SIZE~", 0) !== false) ? str_replace("~MP3_FILE_SIZE~", ($this->existsMP3Download()) ? file_size_MB($this->getMP3DownloadFileName()) : "", $template) : $template;
         $template = str_replace("~NUMERO~", $this->NUMERO, $template);
         $template = str_replace("~POSITION~", $this->position, $template);
         $template = str_replace("~PRICE~", ($this->price != NULL) ? $this->price->getFromHTMLTemplate($this->_ttemplate) : "", $template);
-        $template = str_replace("~PUBLISHER~", "", $template); /*$template = (strpos($template, "~PUBLISHER~", 0) !== false) ? str_replace("~PUBLISHER~", ($this->publisher == "") ? $this->getPublisher() : $this->publisher, $template) : $template; # 22.08.2014 michaelhacksoftware | getPublisher wieder aktiviert, deswegen auskommentiert */
+
+        //$template = str_replace("~PUBLISHER~", "", $template);
+        /*$template = (strpos($template, "~PUBLISHER~", 0) !== false) ? 
+         * str_replace("~PUBLISHER~", ($this->publisher == "") ? 
+         * $this->getPublisher() : $this->publisher, $template) : $template; 
+         * # 22.08.2014 michaelhacksoftware | getPublisher wieder aktiviert, deswegen auskommentiert */
+        
         $template = str_replace("~QUANTITY~", $this->quantity, $template);
         $template = str_replace("~RID~", urlencode(twebshop_article::encryptRID($this->rid)), $template);
         $template = str_replace("~RID_INT~", $this->rid, $template);
         $template = str_replace("~RID_RAW~", twebshop_article::encryptRID($this->rid), $template);
         $template = str_replace("~SCHWER_DETAILS~", (($this->SCHWER_DETAILS != NULL) ? ("(" . $this->SCHWER_DETAILS . ")") : ""), $template);
         $template = str_replace("~SCHWER_GRUPPE~", $this->SCHWER_GRUPPE, $template);
-        $template = str_replace("~THUMB~", (count($this->thumbs) > 0) ? $this->getThumb(0) : "", $template);
+        $template = str_replace("~THUMB~", ($this->getFileName_Thumbnail()==false) ? "" : $this->getFileName_Thumbnail(), $template);
         $template = str_replace("~TITEL~", $this->TITEL, $template);
         $template = str_replace("~TITEL_NO_QUOTES~", stripquotes($this->TITEL), $template);
         $template = str_replace("~TREE_CODE~", $this->getTreeCode(), $template);
@@ -565,42 +668,63 @@ class twebshop_article extends tvisual {
         return $crypt_ID->decrypt($id);
     }
 
-    static public function getArticleThumbs($article_r) {
+    public function getImage_R() {
 
         global $ibase;
-        global $orgamon;
+        
+        if ($this->image_r===NULL) {
 
-        $ibase->query("SELECT RID FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_IMAGE . " AND ARTIKEL_R=$article_r)");
-        $thumbs = array();
-        while ($data = $ibase->fetch_object()) {
-            $thumbs[] = $orgamon->getThumbFileName($data->RID);
+            $ibase->query(
+                    "select RID from DOKUMENT where (MEDIUM_R=" 
+                    . TWEBSHOP_ARTICLE_MEDIUM_R_IMAGE . ") and (ARTIKEL_R=$this->rid)");
+            $data=$ibase->fetch_object();
+            if ($data) {
+                $this->image_r = $data->RID;
+                fb($this->image_r,"image_r");
+            } else {
+                $this->image_r = false;
+            }
+            $ibase->free_result();
         }
-        $ibase->free_result();
-        return $thumbs;
+	return $this->image_r;
+   }
+	
+    public function getFileName_Thumbnail() {
+
+        global $orgamon;
+        
+        if ($this->thumb===NULL) {
+            $id = $this->getImage_R();
+            if ($id==false) {
+                $this->thumb = false;
+            } else {
+                $this->thumb = $orgamon->getThumbFileName($id);
+            }
+        }
+        return $this->thumb;
     }
 
-    static public function getArticleImages($article_r) {
+    public function getFileName_Image() {
 
-        global $ibase;
         global $orgamon;
-
-        $ibase->query("SELECT RID FROM " . TABLE_DOCUMENT . " WHERE (MEDIUM_R=" . self::MEDIUM_R_IMAGE . " AND ARTIKEL_R=$article_r)");
-        $images = array();
-        while ($data = $ibase->fetch_object()) {
-            $images[] = $orgamon->getImageFileName($data->RID);
+        
+        if ($this->image===NULL) {
+            $id = $this->getImage_R();
+            if ($id==false) {
+                $this->image = false;
+            } else {
+                $this->image = $orgamon->getImageFileName($id);
+            }
         }
-        $ibase->free_result();
-        return $images;
+        return $this->image;
     }
 
     static public function getArticleProperty($article_r, $property) {
 
         global $ibase;
 
-
         $sql = "SELECT $property FROM " . self::TABLE . " WHERE RID={$article_r}";
         $result = $ibase->get_field($sql, $property);
-
 
         return $result;
     }

@@ -11,29 +11,35 @@ class twebshop_wishlist extends twebshop_cart {
 
     protected $_CLASS_NAME = self::CLASS_NAME;
 
-    public function __construct($person_r, $id = NULL) {
-        $this->setPerson($person_r);
-        $this->setID($id);
-
-        $this->delivery = new twebshop_delivery();
-        if ($this->person_r != 0 AND $this->id != NULL) {
-            $this->readFromDataBase();
-        }
+    protected function __construct() {
+     parent::__construct();
     }
 
     /* 04.05.2015 michaelhacksoftware : Klasse als Singleton implementieren */
-    static public function create($person_r, $id) {
+    static public function create() {
 
-        self::$instance = new twebshop_wishlist($person_r, $id);
+        self::$instance = new twebshop_wishlist();
+        
+/*
+        self::$instance->setPerson($person_r);
+        self::$instance->setID($id);
+
+        self::$instance->delivery = new twebshop_delivery();
+        if (self::$instance->person_r != 0 AND self::$instance->id != NULL) {
+            self::$instance->readFromDataBase();
+        }
+*/
 
         return self::$instance;
 
     }
+
     static public function destroy() {
 
         self::$instance = NULL;
 
     }
+
     static public function getInstance() {
 
         return self::$instance;

@@ -3,26 +3,48 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=9">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
 <meta name="keywords" content="~VAR_META_KEYWORDS~">
 <title>~CONST_TWEBSHOP_TITLE~~CONST_TWEBSHOP_TITLE_SEPARATOR~~VAR_SITE_TITLE~</title>
 <script type="text/javascript" src="./js/cookies.js"></script>
 <script type="text/javascript" src="./js/jquery.js"></script>
+<script type="text/javascript" src="./js/jplayer/jplayer.js"></script>
+<script type="text/javascript" src="./js/jplayer/jplayer-playlist.js"></script>
 ~OBJ_COOKIES~
 <link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~style.css">
 <link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~diversion.css">
+<link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~jplayer.css" >
 <link rel="shortcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
+
 
     <script type="text/javascript">
 
-        /* 09.07.2014 michaelhacksoftware : Wenn Seite nicht im iFrame geladen, dann neu laden */
-        if (top.location == self.location) {
-            window.location.href = "~CONST___INDEX_EXT~" + window.location.search;
-        }
-        /* --- */
-        
-        /* 27.06.2014 michaelhacksoftware : jPlayer an die richtige Position setzen */
-        $(document).ready(function() {
+           var myPlaylist;
+            var isPlaying = false;
 
+            /* 27.06.2014 michaelhacksoftware : jPlayer vorbereiten */
+            $(document).ready(function(){
+
+                myPlaylist = new jPlayerPlaylist({
+                    jPlayer: "#jp_player_1",
+                    cssSelectorAncestor: "#jp_container_1"
+                }, [], {
+                    playlistOptions: {
+                        enableRemoveControls: true
+                    },
+                    swfPath: "js/jplayer",
+                    supplied: "mp3",
+                    smoothPlayBar: true
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.play, function(event) {
+                    isPlaying = true;
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.pause, function(event) {
+                    isPlaying = false;
+                });
+/*
             var position = $('.PlayerPosition').position();
 
             parent.$('#jp_container_1').css('top',  position.top);
@@ -30,8 +52,44 @@
 
             parent.document.title = document.title;
 
-        });
+*/
+            });
+            /* --- */
+
+            /* 08.07.2014 michaelhacksoftware : ResizeFunction für den iFrame */
+            function ResizeFrame() {
+
+/*
+                var frame   = document.getElementById('frmShop');
+                var content = frame.contentDocument.getElementsByTagName('body')[0];
+
+                frame.scrolling        = 'no';
+                content.style.overflow = 'hidden';
+
+                var height = eval(content.offsetHeight + 20) + 'px';
+
+                if (document.all && !window.opera) {
+                    height = eval(content.scrollHeight + 20) + 'px';
+                }
+
+                if (frame.style.height != height) {
+                    frame.style.height = height;
+                }
+
+                scrollTo(0, 0);
+ */ 
+                
+            }
+            /* --- */
+
+        /* 09.07.2014 michaelhacksoftware : Wenn Seite nicht im iFrame geladen, dann neu laden */
+        if (top.location == self.location) {
+/*
+            window.location.href = "~CONST___INDEX_EXT~" + window.location.search;
+*/
+        }
         /* --- */
+        
 
     </script>
 
@@ -124,12 +182,53 @@
 	<!-- <a id="mainmenuitem" href="~CONST___INDEX~?site=die_blasmusik">~CONST_WORD_MAGAZINE~ "Die&nbsp;Blasmusik"</a> -->
     ~OBJ_NEWSLETTER~
     <a id="mainmenuitem" href="~CONST___INDEX~?site=links">~CONST_WORD_LINKS~</a>
-    <a id="mainmenuitem" href="~CONST___INDEX~?site=contact">~CONST_WORD_IMPRINT~</a>
+    <a id="mainmenuitem" href="~CONST___INDEX~?site=contact">~CONST_WORD_CONTACT~</a>
 	<a id="mainmenuitem" href="~CONST___INDEX~?site=inmemoriam">In&nbsp;Memoriam Christian&nbsp;Buss</a>
 
     <div class="mainmenuitem" id="mainmenutitle"><b>~CONST_WORD_PLAYER~</b></div>
     <a id="mainmenuitem" href="" class="PlayerPosition">&nbsp;</a>
 
+        <div id="jp_container_1" class="jp-audio">
+            <div class="jp-type-playlist">
+                <div id="jp_player_1" class="jp-jplayer"></div>
+                <div class="jp-gui">
+                    <div class="jp-interface">
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+                        <div class="jp-current-time"></div>
+                        <div class="jp-duration"></div>
+                        <div class="jp-volume-holder">
+
+                            <div class="jp-volume-bar">
+                                <div class="jp-volume-bar-value"></div>
+                            </div>
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                            </ul>
+                        </div>
+                        <div class="jp-controls-holder">
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-previous" tabindex="1">previous</a></li>
+                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                                <li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
+                                <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="jp-playlist"><ul><li></li></ul></div>
+            </div>
+        </div>
+	
+	
+	
+	
   </div>
   <!-- MAINMENU_END -->
   </td>
@@ -153,3 +252,5 @@ SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/javascript-warning.txt
   <script type="text/javascript">
     document.getElementById("javascript").style.display = "none";
   </script>
+
+  
