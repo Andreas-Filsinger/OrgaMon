@@ -31,14 +31,13 @@ if ($site->isActive()) {
     $promo_pakets = "";
     $_year = "";
     while ($data = $ibase->fetch_object($result)) {
+        
         $id = intval($data->RID);
         $year = substr($data->ERSTEINTRAG, 6, 4);
-        
-        $thumbs = $orgamon->getThumbFileName(intval($data->DOKUMENT_R));
-      
+        $thumb = $orgamon->getThumbFileName(intval($data->DOKUMENT_R));
 
         $tmp_promo_paket = new twebshop_article_link(twebshop_article::encryptRID($id), $data->TITEL, "");
-        $tmp_promo_paket->addOption("THUMB", (count($thumbs) > 0) ? str_replace("~THUMB~", $thumbs[0], _TEMPLATE_ARTICLE_LINK_PROMO_PAKETS_OPTION_THUMB) : "");
+        $tmp_promo_paket->addOption("THUMB", str_replace("~THUMB~", $thumb, _TEMPLATE_ARTICLE_LINK_PROMO_PAKETS_OPTION_THUMB));
         $tmp_promo_paket->addOption("SID", $search->getNextID());
 
         if ($year != $_year) {

@@ -1,5 +1,10 @@
 <?php
 
+#
+# bereits angefragte Musiker bleiben hier gespeichert
+#
+$webshop_musician_cache = array();
+
 //**** KLASSE ZUR ABBILDUNG DES MUSIKERS **********************************************************************************************
 class twebshop_musician {
 
@@ -13,7 +18,6 @@ class twebshop_musician {
 
         $this->rid = $rid;
         $this->getProperties();
-        
     }
 
     /* --> 10.10.2014 michaelhacksoftware : Sprechenden Link erstellen */
@@ -29,9 +33,23 @@ class twebshop_musician {
     public function getProperties() {
 
         global $ibase;
+        global $webshop_musician_cache;
 
-        if (!$this->rid) return;
+        if (!$this->rid) 
+            return;
+        
+        // Bereits im Cache?
+        foreach ($webshop_musician_cache as $wm) {
+            
+            if ($wm->rid==$this->rid) {
+               foreach (twebshop_musician::$properties as $name) {
+                  $this->{$name} = $wm->{$name};
+               }
+               return;      
+            }
+        } 
 
+        // Die Datenbank fragen
         $sql = "SELECT " . implode(",", twebshop_musician::$properties) . " FROM MUSIKER WHERE RID=" . $this->rid;
         $ibase->query($sql);
         $data = $ibase->fetch_object();
@@ -39,12 +57,11 @@ class twebshop_musician {
         foreach (twebshop_musician::$properties as $name) {
             $this->{$name} = $data->{$name};
         }
-
+        $webshop_musician_cache[] = $this;
     }
 
     public function __toString() {
         return twebshop_musician::CLASS_NAME;
     }
-
 }
 ?>

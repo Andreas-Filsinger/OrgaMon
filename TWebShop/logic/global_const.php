@@ -1,13 +1,10 @@
 <?php
 
 // Feste Dateinamen
-define("FILE_INDEX", "index.php");
-define("FILE_SHOP",  "shop.php");
-
 define("__PROJECTNAME","TWebShop");
-define("__INDEX",     geturl_shop());
-define("__INDEX_EXT", geturl_index());
-define("__PATH",path());
+define("__INDEX", path());
+define("__INDEX_EXT", path());
+define("__PATH", path());
 define("LF","\n");
 define("CRLF","\r\n");
 define("TAB","\t");

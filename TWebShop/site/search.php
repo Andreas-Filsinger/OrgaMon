@@ -63,7 +63,7 @@ if ($site->isActive()) {
         $article->addOption("DEMO", (count($article->getDemos()) > 0) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_DEMO : "");
         $article->addOption("MINISCORE", ($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH)) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_MINISCORE : ""));
         $article->addOption("RECORDS", ($article->existRecords() ? _TEMPLATE_ARTICLE_SEARCH_OPTION_RECORDS : ""));
-        $article->addOption("THUMB", (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_THUMB : "");
+        $article->addOption("THUMB", ($article->getFileName_Thumbnail()==false) ? "" : _TEMPLATE_ARTICLE_SEARCH_OPTION_THUMB );
         $article->addOption("MP3", ($article->existsMP3Download()) ? _TEMPLATE_ARTICLE_SEARCH_OPTION_MP3 : "" );
         $article->addOption("WISHLIST", _TEMPLATE_ARTICLE_SEARCH_OPTION_WISHLIST);
         $site->appendComponent("OBJ_ARTICLE", $article->getFromHTMLTemplate($template));
