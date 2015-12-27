@@ -1,4 +1,0 @@
-<?php
-
-$tree()->closeNode($id);
-?>

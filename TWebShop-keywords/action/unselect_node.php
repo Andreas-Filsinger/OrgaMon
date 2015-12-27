@@ -1,5 +1,0 @@
-<?php
-  
-  $tree()->unselectNode($id);
-  
-?>

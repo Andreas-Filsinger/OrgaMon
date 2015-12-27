@@ -1,5 +1,0 @@
-<?php
-  
-  $tree()->selectNode($id);
-  
-?>

@@ -1,7 +1,0 @@
-Change the settings of your browser so that it accepts cookies:<br />with Internet Explorer choose extras, then internet options and the rider called privacy<br />with Mozilla Firefox choose extras, then settings and the rider called "privacy"
-
-Check if date and time (clock) of your system are valid.
-
-Try to update your browser to the latest version.<br />
-<a href="http://www.microsoft.com/windows/ie/default.htm" target="_blank">Microsoft Internet Explorer</a><br />
-<a href="http://www.mozilla.com/en-US/firefox/all.html" target="_blank">Mozilla Firefox</a>
