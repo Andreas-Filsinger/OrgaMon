@@ -1,7 +1,0 @@
-Dear ~VORNAME~  ~NACHNAME~,
-
-we have just received your order. Thank you!
-The order number is ~BELEG_NO~.
- 
-best regards,
-the HeBu-team
