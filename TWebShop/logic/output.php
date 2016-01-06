@@ -2,20 +2,10 @@
 
 ob_start();
 
-// AUSGABE
-//Kopf
-if ($site->hasHeader()) 
-{ echo $header->getFromHTMLTemplate();
-}
 // Inhalt
-if ($site->hasContent()) 
-{ echo $site->getFromHTMLTemplate();
+if ($site->hasContent()) { 
+    echo $site->getFromHTMLTemplate();
 }
-// Fuss
-if ($site->hasFooter()) 
-{ echo $footer->getFromHTMLTemplate();
-}
-
 
 $buffer = ob_get_clean();
 //$config = array("indent" => false, "output-xhtml" => true, "wrap" => 200);
@@ -26,4 +16,3 @@ $buffer = ob_get_clean();
 //echo $output;
 echo trim($buffer);
 
-?>

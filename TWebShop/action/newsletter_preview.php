@@ -1,10 +1,9 @@
 <?php
+
 if ($user->isService(MOD_NEWSLETTER_USER_SERVICE_NAME)) {
     
-    $site->setHeader(false);
-    $site->setFooter(false);
 
-    include_once("./logic/newsletter_build_html.php");
+    require_once("./logic/newsletter_build_html.php");
 
     echo $html;
 
@@ -16,4 +15,3 @@ if ($user->isService(MOD_NEWSLETTER_USER_SERVICE_NAME)) {
 } else {
     $errorlist->add(ERROR_NO_AUTHORIZATION_TO_RUN_THIS_ACTION);
 }
-?>

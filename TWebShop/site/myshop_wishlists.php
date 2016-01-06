@@ -16,7 +16,7 @@ if ($site->isActive()) {
         $wishlist->article[$index]->addOption("DETAILS",      _TEMPLATE_ARTICLE_WISHLIST_OPTION_DETAILS);
         $wishlist->article[$index]->addOption("DELETE",       _TEMPLATE_ARTICLE_WISHLIST_OPTION_DELETE);
         $wishlist->article[$index]->addOption("MOVE_TO_CART", _TEMPLATE_ARTICLE_WISHLIST_OPTION_MOVE_TO_CART);
-        $wishlist->article[$index]->addOption("THUMB",        (count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_WISHLIST_OPTION_THUMB : "");
+        $wishlist->article[$index]->addOption("THUMB",       ($article->getFileName_Thumbnail()==false) ? "" : _TEMPLATE_ARTICLE_WISHLIST_OPTION_THUMB );
     }
 
     foreach ($article_variants->version as $rid => $version) {

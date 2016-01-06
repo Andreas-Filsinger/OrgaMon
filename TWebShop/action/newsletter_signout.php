@@ -7,11 +7,10 @@ if (($person_r = twebshop_person::doeseMailExist($f_user)) != 0) { //$messagelis
     if ($tmp_person->isUser()) {
         header("Location: ?site=myshop&subsite=mailings");
     } else {
-        include_once("./action/newsletter_signout_send_activation.php");
+        require_once("./action/newsletter_signout_send_activation.php");
     }
 } else { //$messagelist->add("eMailadresse unbekannt ($person_r).");
 }
 
 unset($person_r);
 unset($tmp_person);
-?>

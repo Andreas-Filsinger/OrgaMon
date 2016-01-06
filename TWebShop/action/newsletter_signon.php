@@ -7,16 +7,15 @@ if (($person_r = twebshop_person::doeseMailExist($f_user)) != 0) { //$messagelis
     if ($tmp_person->isUser()) {
         header("Location: ?site=myshop&subsite=mailings");
     } else {
-        include_once("./action/newsletter_signon_send_activation.php");
+        require_once("./action/newsletter_signon_send_activation.php");
     }
 } else { //$messagelist->add("eMailadresse unbekannt ($person_r).");
     $tmp_person = new twebshop_person(0, $f_firstname, $f_surname, "", $f_user);
     if ($tmp_person->setID($orgamon->newPerson()) != 0 AND $tmp_person->updateInDataBase()) {
         $messagelist->add(SENTENCE_YOUR_EMAIL_ADDRESS_HAS_BEEN_APPLIED);
-        include_once("./action/newsletter_signon_send_activation.php");
+        require_once("./action/newsletter_signon_send_activation.php");
     }
 }
 
 unset($person_r);
 unset($tmp_person);
-?>
