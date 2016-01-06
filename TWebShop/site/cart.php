@@ -30,8 +30,8 @@ if ($site->isActive())
     $cart->article[$index]->addOption("MINISCORE",($article->getMiniScore($orgamon->getSystemString(torgamon::BASEPLUG_MINISCORE_PATH))) ? _TEMPLATE_ARTICLE_CART_OPTION_MINISCORE : "");
     $cart->article[$index]->addOption("RECORDS",($article->existRecords() ? _TEMPLATE_ARTICLE_CART_OPTION_RECORDS : ""));
     $cart->article[$index]->addOption("COPY",($article_variants->hasDetail($article->version_r) AND $article->detail != "") ? _TEMPLATE_ARTICLE_CART_OPTION_COPY : "");
-	$cart->article[$index]->addOption("THUMB",(count($article->getThumbs()) > 0 ) ? _TEMPLATE_ARTICLE_CART_OPTION_THUMB : "");
-	$cart->article[$index]->addOption("VERSION",($article_variants->existsVersion($article->getVersion()) AND $article_variants->getByID($article->getVersion())->isPublic()) ? _TEMPLATE_ARTICLE_CART_OPTION_VERSION_PUBLIC : _TEMPLATE_ARTICLE_CART_OPTION_VERSION_NOT_PUBLIC);
+    $cart->article[$index]->addOption("THUMB",($article->getFileName_Thumbnail()==false) ? "" : _TEMPLATE_ARTICLE_CART_OPTION_THUMB );
+    $cart->article[$index]->addOption("VERSION",($article_variants->existsVersion($article->getVersion()) AND $article_variants->getByID($article->getVersion())->isPublic()) ? _TEMPLATE_ARTICLE_CART_OPTION_VERSION_PUBLIC : _TEMPLATE_ARTICLE_CART_OPTION_VERSION_NOT_PUBLIC);
     unset($article);
   }
   

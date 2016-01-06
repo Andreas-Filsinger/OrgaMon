@@ -137,5 +137,3 @@ function semiPersistentBrand($key, $releaseTime) {
     semiEnsureOpen();
     $m_spc->set($key . SEQUENCE_NAMESPACE, TRUE, $releaseTime);
 }
-
-?>

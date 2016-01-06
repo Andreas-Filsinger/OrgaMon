@@ -1,10 +1,10 @@
 <?php
 
-include_once("./core/email.php");
+require_once("./core/email.php");
 
 if ($user->isService(MOD_NEWSLETTER_USER_SERVICE_NAME)) {
     
-    include_once("./logic/newsletter_build_html.php");
+    require_once("./logic/newsletter_build_html.php");
 
     if (!$errorlist->error) {
         $result = false;

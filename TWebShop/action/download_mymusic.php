@@ -17,9 +17,7 @@ if ($user->loggedIn() AND (isset($id)))
   { if (is_readable($mp3))
     { $size = filesize($mp3);
 	
-	  $site->setHeader(false);
       $site->setContent(false);
-      $site->setFooter(false);
   
       header("Content-Type: audio/mpeg");
       header("Content-Length: $size");
@@ -84,5 +82,3 @@ else
 }
 
 unset($log);
-
-?>

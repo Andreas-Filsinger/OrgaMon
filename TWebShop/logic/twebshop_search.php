@@ -190,11 +190,13 @@ class twebshop_search {
             echo "not in cache";
     }
 
-    public function getSortOrderType() { //TS 08.12.2011: aufgrund folgender Fehlermeldung (z.B. reproduzierbar, wenn zwischen dem Blättern in den Suchtreffern die Session gelöscht wird, oder wenn die Seite 
+    public function getSortOrderType() { 
+    //
+    ////TS 08.12.2011: aufgrund folgender Fehlermeldung (z.B. reproduzierbar, wenn zwischen dem Blättern in den Suchtreffern die Session gelöscht wird, oder wenn die Seite 
         //               ohne vorherige Suche aufgerufen wird (was praktisch nie vorkommen dürfte), es könnte aber auch noch andere Ursachen geben, exzessives Benutzen 
         //               der Browsernavigation in die Vergangenheit konnte aber in einem ersten Versuch ausgeschlossen werden)
         //               wird eine Überprüfung der eigenen ID und der Eigenschaft result (sollte ein Objekt sein) durchgeführt
-        //[07-Dec-2011 23:01:33] PHP Fatal error:  Call to a member function getSortOrder() on a non-object in /srv/www/htdocs/hebu-music/classes/t_webshop_search.inc.php5 on line 179
+        //[07-Dec-2011 23:01:33] PHP Fatal error:  Call to a member function getSortOrder() on a non-object in /srv/www/htdocs/hebu-music/classes/t_webshop_search.inc.php on line 179
         return ($this->getID() != 0 AND isset($this->result) AND is_a($this->result, "twebshop_search_result")) ? $this->result->getSortOrder()->getType() : twebshop_search_result_sort_order::DEFAULT_TYPE;
         //return $this->result->getSortOrder()->getType();
     }

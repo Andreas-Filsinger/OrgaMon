@@ -4,22 +4,21 @@
 
 class tsite {
 
+    static public $title_separator = " : ";
+    static private $deactivated_blocks = array();
+
     private $name = "";
     private $title = "";
     private $keywords = array();
     private $template = "";
     private $active = true;
     private $sitemap = false;
-    private $header = true;
     private $content = true;
-    private $footer = true;
     private $components = array();
     private $step = 1;
     private $stepname = "";
     public $steps = array();
     private $_steps = array();
-    static public $title_separator = " : ";
-    static private $deactivated_blocks = array();
     private $autoplay = false;
     
     const CLASS_NAME = "PHP5CLASS T_SITE";
@@ -48,28 +47,12 @@ class tsite {
         return ($this->getName() != "") ? true : false;
     }
 
-    public function hasHeader() {
-        return $this->header;
-    }
-
     public function hasContent() {
         return $this->content;
     }
 
-    public function hasFooter() {
-        return $this->footer;
-    }
-
-    public function setHeader($header = true) {
-        $this->header = $header;
-    }
-
     public function setContent($content = true) {
         $this->content = $content;
-    }
-
-    public function setFooter($footer = true) {
-        $this->footer = $footer;
     }
 
     public function activateStepByName($name) {
@@ -355,20 +338,26 @@ class tsite {
         return $this->template;
     }
 
-    public function loadTemplate($path, $extension = ".html", $prefix = "s_") {
-        $filename = $path . $prefix . $this->getName() . $extension;
+    public function loadTemplate($path) {
+
+        $envelop = file_get_contents($path . "envelope.html");
+        $filename = $path . $this->getName() . ".html";
+
         if (file_exists($filename)) {
-            $this->setTemplate(file_get_contents($filename));
-            $result = true;
+           
+            $lines = file_get_contents($filename);
         } else {
+            
             trigger_error("loadTemplate '" . $filename . "' fail", E_USER_WARNING);
-            $this->setTemplate("");
-            $result = false;
+            $lines = "";
         }
+        
+        $lines = str_replace("~CONTENT~",$lines, $envelop);
+        $this->setTemplate($lines);
+            
         if ($this->getStepName() != "") {
             $this->setStepByName($this->getStepName());
         }
-        return $result;
     }
 
     private function buildTemplate() {
@@ -421,5 +410,3 @@ class tsite {
     }
 
 }
-
-?>

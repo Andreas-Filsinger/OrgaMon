@@ -10,6 +10,30 @@ while (true) {
     if (strpos($agent, "DotBot") != false)
         break;
 
+    if (strpos($agent, "AhrefsBot") != false)
+        break;
+    
+    if (strpos($agent, "XoviBot") != false)
+        break;
+    
+    if (strpos($agent, "MJ12bot") != false)
+        break;
+    
+    if (strpos($agent, "bingbot") != false)
+        break;
+    
+    if (strpos($agent, "EasouSpider") != false)
+        break;
+    
+    if (strpos($agent, "waybackarchive.org") != false)
+        break;
+    
+    if (strpos($agent, "publiclibraryarchive.org") != false)
+        break;
+    
+    if (strpos($agent, "memorybot") != false)
+        break;
+                
     $article = new twebshop_article($id);
 
     $message = SYS_VARIABLE_TEXT_BROKEN_LINK_REPORT_EMAIL;
