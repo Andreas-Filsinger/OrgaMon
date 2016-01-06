@@ -1,0 +1,269 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta name="keywords" content="~VAR_META_KEYWORDS~">
+<title>~CONST_TWEBSHOP_TITLE~~CONST_TWEBSHOP_TITLE_SEPARATOR~~VAR_SITE_TITLE~</title>
+<script type="text/javascript" src="./js/cookies.js"></script>
+<script type="text/javascript" src="./js/jquery.js"></script>
+<script type="text/javascript" src="./js/jplayer/jplayer.js"></script>
+<script type="text/javascript" src="./js/jplayer/jplayer-playlist.js"></script>
+~OBJ_COOKIES~
+<link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~style.css">
+<link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~diversion.css">
+<link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~jplayer.css" >
+<link rel="shortcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
+
+
+    <script type="text/javascript">
+
+           var myPlaylist;
+            var isPlaying = false;
+
+            /* 27.06.2014 michaelhacksoftware : jPlayer vorbereiten */
+            $(document).ready(function(){
+
+                myPlaylist = new jPlayerPlaylist({
+                    jPlayer: "#jp_player_1",
+                    cssSelectorAncestor: "#jp_container_1"
+                }, [], {
+                    playlistOptions: {
+                        enableRemoveControls: true
+                    },
+                    swfPath: "js/jplayer",
+                    supplied: "mp3",
+                    smoothPlayBar: true
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.play, function(event) {
+                    isPlaying = true;
+                });
+
+                $("#jp_player_1").bind($.jPlayer.event.pause, function(event) {
+                    isPlaying = false;
+                });
+/*
+            var position = $('.PlayerPosition').position();
+
+            parent.$('#jp_container_1').css('top',  position.top);
+            parent.$('#jp_container_1').css('left', position.left);
+
+            parent.document.title = document.title;
+
+*/
+            });
+            /* --- */
+
+            /* 08.07.2014 michaelhacksoftware : ResizeFunction für den iFrame */
+            function ResizeFrame() {
+
+/*
+                var frame   = document.getElementById('frmShop');
+                var content = frame.contentDocument.getElementsByTagName('body')[0];
+
+                frame.scrolling        = 'no';
+                content.style.overflow = 'hidden';
+
+                var height = eval(content.offsetHeight + 20) + 'px';
+
+                if (document.all && !window.opera) {
+                    height = eval(content.scrollHeight + 20) + 'px';
+                }
+
+                if (frame.style.height != height) {
+                    frame.style.height = height;
+                }
+
+                scrollTo(0, 0);
+ */ 
+                
+            }
+            /* --- */
+
+        /* 09.07.2014 michaelhacksoftware : Wenn Seite nicht im iFrame geladen, dann neu laden */
+        if (top.location == self.location) {
+/*
+            window.location.href = "~CONST___INDEX_EXT~" + window.location.search;
+*/
+        }
+        /* --- */
+        
+
+    </script>
+
+</head>
+
+<body>
+
+<!-- LANGUAGEMENU_BEGIN -->
+<div id="languagemenu">
+  <a class="languagemenuitem" id="first" href="~CONST___INDEX~?action=set_language&language=german"><img class="languageicon" src="~CONST___TEMPLATE_IMAGES_PATH~icon_german.png" hspace="0" vspace="0">deutsch</a>
+  <a class="languagemenuitem" id="next" href="~CONST___INDEX~?action=set_language&language=english"><img class="languageicon" src="~CONST___TEMPLATE_IMAGES_PATH~icon_english.png" hspace="0" vspace="0">english</a>
+</div>
+<!-- LANGUAGEMENU_END -->
+
+<!-- HEADERS_BEGIN -->
+<div id="headers">
+
+<div class="header_box" id="header1box">
+  <div class="header_title">
+    <a class="headers" id="header1" href="~CONST___INDEX~?site=~CONST_TWEBSHOP_FIRST_SITE~">hebu-music</a>
+  </div>
+  <div class="header_shadow"></div>
+</div>
+<div class="header_box" id="header2box">
+  <div class="header_title">
+    <a class="headers" id="header2" href="http://www.hebu-music.com/streicher/" target="_top">Streicher und Sinfonieorchester</a>
+  </div>
+  <div class="header_shadow"></div>
+</div>
+<!--
+<div class="header_box" id="header3box">
+  <div class="header_title">
+    <a class="headers" id="header3" href="http://www.hebu-music.com/stage3/">hebu-musikverlag</a>
+  </div>
+  <div class="header_shadow"></div>
+</div>
+-->
+
+<!-- LOGO_BEGIN -->
+<div style="position:relative; top:-10px; text-align:right; z-index:0; float:right; margin-right:20px;">
+  <img src="~CONST___TEMPLATE_IMAGES_PATH~logo122x53.png" alt="~CONST_TWEBSHOP_TITLE~" style="border:0px;">
+</div>
+<!-- LOGO_END -->
+
+</div>
+<!-- HEADERS_END -->
+
+<!-- USERMENU_BEGIN -->
+<div id="usermenu">
+<a class="usermenuitem" id="prev" href="~CONST___INDEX~?site=myshop&subsite=overview">~CONST_SENTENCE_MY_HEBU~<img class="usermenuicon" src="~CONST___TEMPLATE_IMAGES_PATH~icon_user.png" /></a>
+<a class="usermenuitem" id="prev2" href="~CONST___INDEX~?site=help">~CONST_WORD_HELP~<img class="usermenuicon" src="~CONST___TEMPLATE_IMAGES_PATH~icon_help.png" /></a>
+<a class="usermenuitem" id="last" href="~CONST___INDEX~?site=cart">~CONST_SENTENCE_MY_CART~<img class="usermenuicon" src="~CONST___TEMPLATE_IMAGES_PATH~icon_cart.png" /></a>
+<p class="usermenu">(~VAR_CART_POSITIONS~ ~CONST_WORD_ARTICLES~ | ~VAR_CART_SUM~)</p>
+</div>
+<!-- USERMENU_END -->
+
+
+<table style="margin:0px; padding:0px; width:100%; height:100%; background:url('~CONST___TEMPLATE_IMAGES_PATH~back_footer.png') bottom repeat-x;" cellspacing="0">
+<tr>
+  <td style="width:260px; max-width:260px; margin:0px; vertical-align:top; overflow:visible;">
+  <!-- MAINMENU_BEGIN -->
+  <div id="mainmenu">
+    <div class="mainmenuitem" id="mainmenutitle"><b>~CONST_WORD_WEBSHOP~</b></div>
+    <div class="mainmenuitem" id="mainmenuitem">
+      <p>~CONST_SENTENCE_SEARCH_FOR_KEYWORDS~</p>
+	  <form name="form_search" action="~CONST___INDEX~" method="get">
+        <input type="text" id="search" maxlength="100" name="f_search_expression" value="~VAR_SEARCH_USER_EXPRESSION~" onclick="clearSearchInputHint()" onblur="showSearchInputHint()" />
+	    <input type="submit" class="buttonaslink" value="&gt;&gt;&gt;" style="color:#FFF; text-align:right; padding:0px; margin:0px;" />
+	    <input type="hidden" name="action" value="search_user_expression" />
+        <input type="hidden" name="site" value="search" />
+	    <input type="hidden" name="sid" value="~VAR_NEXT_SEARCH_ID~" />
+        <input type="hidden" name="page" value="1" />
+	  </form>
+	  <script type="text/javascript" src="~CONST___TEMPLATE_PATH~js/search.js"></script>
+	  <script type="text/javascript">
+	    var SEARCH_HINT = '~CONST_SENTENCE_SEARCH_EXPRESSION_HINT_TITLE_COMPOSER_ARRANGER_ETC~';
+		var search_expression_empty = false;		
+		showSearchInputHint();
+      </script>
+    </div>
+    <a id="mainmenuitem" href="~CONST___INDEX~?site=article_tree">~CONST_SENTENCE_EXTENDED_SEARCH~</a>
+    <!-- <a id="mainmenuitem" href="">~CONST_WORD_BESTSELLERS~</a>
+    <a id="mainmenuitem" href="">~CONST_SENTENCE_NEW_PUBLICATIONS~</a> -->
+	<a id="mainmenuitem" href="~CONST___INDEX~?site=promo_pakets">~CONST_WORD_CATALOGUES~</a>
+
+    ~OBJ_LOGIN~
+  
+    <div class="mainmenuitem" id="mainmenutitle"><b>hebu-music</b></div>
+	<a id="mainmenuitem" href="~CONST___INDEX~?site=about">~CONST_SENTENCE_ABOUT_US~</a>
+	<!-- <a id="mainmenuitem" href="~CONST___INDEX~?site=die_blasmusik">~CONST_WORD_MAGAZINE~ "Die&nbsp;Blasmusik"</a> -->
+    ~OBJ_NEWSLETTER~
+    <a id="mainmenuitem" href="~CONST___INDEX~?site=links">~CONST_WORD_LINKS~</a>
+    <a id="mainmenuitem" href="~CONST___INDEX~?site=contact">~CONST_WORD_CONTACT~</a>
+	<a id="mainmenuitem" href="~CONST___INDEX~?site=inmemoriam">In&nbsp;Memoriam Christian&nbsp;Buss</a>
+
+    <div class="mainmenuitem" id="mainmenutitle"><b>~CONST_WORD_PLAYER~</b></div>
+    <a id="mainmenuitem" href="" class="PlayerPosition">&nbsp;</a>
+
+        <div id="jp_container_1" class="jp-audio">
+            <div class="jp-type-playlist">
+                <div id="jp_player_1" class="jp-jplayer"></div>
+                <div class="jp-gui">
+                    <div class="jp-interface">
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+                        <div class="jp-current-time"></div>
+                        <div class="jp-duration"></div>
+                        <div class="jp-volume-holder">
+
+                            <div class="jp-volume-bar">
+                                <div class="jp-volume-bar-value"></div>
+                            </div>
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                            </ul>
+                        </div>
+                        <div class="jp-controls-holder">
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-previous" tabindex="1">previous</a></li>
+                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                                <li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
+                                <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="jp-playlist"><ul><li></li></ul></div>
+            </div>
+        </div>
+	
+	
+	
+	
+  </div>
+  <!-- MAINMENU_END -->
+  </td>
+  <td style="margin:0px; vertical-align:top; overflow:visible;">
+  <!-- CONTENT_BEGIN -->
+  <div id="content">
+  
+  <div id="javascript">
+    <div class="errorlist">
+      <p><b>
+	    <span style="color:#CC0000;">
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/javascript-warning.txt
+!HTML2TXT=1
+!NL2BR=1
+-->TEXT: javascript-warning.txt<!-- END TEXT -->	      
+	    </span>
+	  </b></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+    document.getElementById("javascript").style.display = "none";
+  </script>
+~CONTENT~  
+  </div>
+  <!-- CONTENT_END -->
+  </td>
+</tr>
+<tr>
+  <td>
+  <p id="footer">
+    ~CONST___TEMPLATE_PROJECTNAME~&nbsp;Rev.&nbsp;~VAR_REVISION~&nbsp;&nbsp;<b>~VAR_PERF_MS~</b>&nbsp;ms&nbsp;(RPC=<b>~VAR_PERF_XMLRPC~</b>&nbsp;|&nbsp;SQL=<b>~VAR_PERF_SQL~</b>&nbsp;|&nbsp;PHP=<b>~VAR_PERF_PHP~</b>)
+  </p>
+  </td>
+</tr>
+</table>
+</body>
+</html>
