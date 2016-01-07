@@ -1,16 +1,16 @@
 <?php
 
-// Stage "-1", PHP Setup
+// Stage "-1": PHP Setup
 
 date_default_timezone_set('Europe/Berlin');
 mb_internal_encoding("UTF-8");
 
-// Stage "0" Init - keine Abhängigkeiten zu ext(ra) php-Modulen
+// Stage "0": Init - keine Abhängigkeiten zu ext(ra) php-Modulen
 
 require_once("./core/performance.php");     // Klasse zum Erfassen der Performance (benötigte Zeiten)
 tperformance::setTimeStarted();
 
-// Stage "1" Init - Pre-Config, keine Abhängigkeiten zur Shop-Konfiguration
+// Stage "1": Init - Pre-Config, keine Abhängigkeiten zur Shop-Konfiguration
 
 require_once("./FirePHPCore/fb.php");       // Ausgabe von Log-Texten in die Firefox FireBug Konsole
 require_once("./core/global_funcs.php");    // Globale Funktionensammlung
@@ -27,10 +27,13 @@ require_once("./core/multistringlist.php"); // Vererbte Klasse zur Verwaltung vo
 require_once("./core/xmlrpc_client.php");   // XMLRPC - Client 
 require_once("./core/session.php");         // Klasse zur Erleichterung des Handlings der $_SESSION
 
-// Stage "2" Init - DIE SHOP KONFIGURATION
+// Stage "2": Init - DIE SHOP KONFIGURATION laden
 
 require_once("config.php");                 // Die TWebShop-Konfiguration
 
+
+// Stage "3": Prüfen, ob die notwendigen PHP-Module verfügbar sind
+// 
 //
 // pre init: Prüfen der zum Funktionieren notwendigen PHP-ext(ra)-Module, z.B. "php5-dom"
 $i = 0;
@@ -40,13 +43,9 @@ $i = 0;
 $_PHPEXTENSIONS = array("dom", "iconv", "interbase", "mbstring", "mcrypt", "session");
 
 // dynamische Abhängigkeiten, je nach Konfiguration
-// a) Bei monolithischem XMLRPC ist kein memcached notwendig
 
-if (defined("XMLRPC")) {
-
-  define("XMLRPC_1", XMLRPC);
-} else {
-
+if (defined("XMLRPC_1")) {
+    
   array_push($_PHPEXTENSIONS, "memcached");
 }    
 
@@ -67,8 +66,9 @@ if (CRYPT_SHA256 != 1) {
 if ($i == 0) {
 
 
-// Stage "3" - Existenz aller notwendigen Module ist sichergestellt
-//             Konfiguration ist da 
+// Stage "4": - Existenz aller notwendigen Module ist nun sichergestellt
+//              weitere, komplexere Module laden    
+
 
     require_once("./core/ibase.php");           // Klasse zur Firebird-Anbindung
     require_once("./core/site.php");            // Klasse zur Verwaltung von Webseiten
@@ -77,21 +77,22 @@ if ($i == 0) {
     require_once("./core/option.php");          // Klasse zur Abbildung von Benutzer-Optionen
     require_once("./core/template.php");        // Klasse zur Übergabe von Templates
 
-// Stage "3" Webshop - Logik-Core
+// Stage "5": Webshop - Logik-Core
 
     require_once("./logic/orgamon.php");         // OrgaMon-Client-Klasse (nutzt XMLRPC-Client) und OrgaMon-Ereignis-Klasse
     require_once("./logic/orgatix.php");         // OrgaTix-Klasse 
-
-// Stage "4" Webshop - Logik für "Sites"
-
-    require_once("./logic/account.php");
-    require_once("./logic/address.php");
-    require_once("./logic/article.php");
+    require_once("./logic/article.php");         // ARTIKEL
+    require_once("./logic/article_variants.php");
     require_once("./logic/article_context.php");
     require_once("./logic/article_link.php");
     require_once("./logic/article_tree.php");
     require_once("./logic/articles.php");
     require_once("./logic/availability.php");
+
+// Stage "6": Webshop - 'x' Logik für "Site=x"
+
+    require_once("./logic/account.php");
+    require_once("./logic/address.php");
     require_once("./logic/bill.php");
     require_once("./logic/cart.php");
     require_once("./logic/country.php");
@@ -109,15 +110,10 @@ if ($i == 0) {
     require_once("./logic/twebshop_search.php");
     require_once("./logic/search_result_pages.php");
     require_once("./logic/user.php");
-    require_once("./logic/article_variants.php");
     require_once("./logic/wishlist.php");
 
-// neuer Ring ?, die "_GLOBALS" sind da!
-// Webshop - Ring 4 - "Template, Language" - Phase
-// Webshop - Ring 5 - "Action" - Phase
-// Webshop - Ring 6 - "Site" - Phase
-######## TEMPLATES ##############
-// TEMPLATE AUS COOKIE ERMITTELN
+// Stage "7": Template+Sprache berücksichtigen
+    
     if (isset($_COOKIE["c_template"])) {
         $_TEMPLATE = $_COOKIE["c_template"];
     }
@@ -133,8 +129,9 @@ if ($i == 0) {
     define("__TEMPLATE_PATH", __TEMPLATES_PATH . $_TEMPLATE . "/");
     define("__TEMPLATE_IMAGES_PATH", __TEMPLATE_PATH . "images/");
 
-    if (!is_dir(__TEMPLATE_PATH))
+    if (!is_dir(__TEMPLATE_PATH)) {
         die(sprintf(SYS_VARIABLE_SENTENCE_TEMPLATE_PATH_NOT_FOUND, __TEMPLATE_PATH));
+    }    
 
 // SPRACHDATEIEN LADEN
 ### LANGUAGE ###
@@ -173,8 +170,9 @@ if ($i == 0) {
 
 #################################
 
+// Stage "8": erstmals Code ausführen, Infrastruktur anlegen
+
     require_once("./logic/globals.php");            // Deklaration & Registrierung der globalen Variablen
-// WebShop - Ring 7 - "Session gestartet" Phase
 // INIT
     $errorlist = terrorlist::create("", "#CC0000", __TEMPLATE_IMAGES_PATH . "icon_error.png", _TEMPLATE_ERRORLIST);
     $errorlist->add($_REGISTRATION_ERRORS);
@@ -203,6 +201,7 @@ if ($i == 0) {
 
     if (defined("XMLRPC")) {
 
+        // Nur ein XMLRPC-Server vorhanden    
         $params = new tstringlist();
         $params->assignString(constant("XMLRPC"), ",");
         $h = new tserver_identity(
@@ -215,6 +214,7 @@ if ($i == 0) {
         $xmlrpc->add($h);
     } else {
 
+        // Team aus XMLRPC-Servern vorhanden
         $i = 1;
         while (defined("XMLRPC_$i")) {
             $params = new tstringlist();
@@ -227,11 +227,11 @@ if ($i == 0) {
                     /**/ $params->getValueByName("retries")
             );
 
+            // Nur anfügen wenn nicht als "defekt" bekannt
             if (!semiPersistentIsKnown($h->ConnectStr())) {
 
                 $xmlrpc->add($h);
             }
-
             $i++;
             unset($params);
         }
@@ -284,6 +284,8 @@ if ($i == 0) {
     $template = new ttemplate();
 
 
+// BEGIN AF: 07.01.2016 DAS gehört eigentlich zum Know-How des Templates   
+    
 // Prüft ob ein User-Login für die aufgerufene Seite/Aktion erforderlich ist
 // SEITEN, DIE EINEN LOGIN ERFORDERN (INDEX = SEITENNAME, WERT = HINWEISTEXT)
     $login_requiring_sites = array(
@@ -291,7 +293,6 @@ if ($i == 0) {
         "myshop" => SENTENCE_PLEASE_LOGIN_TO_CHANGE_SETTINGS,
         "order" => SENTENCE_PLEASE_LOGIN
     );
-
 
 // AKTIONEN, DIE EINEN LOGIN ERFORDERN
     $login_requiring_actions = array(
@@ -308,7 +309,8 @@ if ($i == 0) {
         "add_to_wishlist" => SENTENCE_PLEASE_LOGIN
     );
 
-
+// END AF:
+ 
     // PRÜFEN OB EIN LOGIN ERFORDERLICH IST 
     $login_required_by_site = ($site->set() AND array_key_exists($site->getName(), $login_requiring_sites)) OR (!$site->set() AND array_key_exists($shop->getCurrentSite(), $login_requiring_sites));
 
@@ -333,6 +335,9 @@ if ($i == 0) {
     unset($login_required_by_site);
     unset($login_required_by_action);
 
+    
+// Stage "9": action= ausführen
+    
 // AF: Die Verarbeitung einer action kann wiederum eine andere auslösen
     // Aktion-Ketten, wobei es eine API gibt, an die man sich zufügen kann
     // wären mir da lieber - aber ich löse das mit einer Logik die einfach nur
@@ -410,8 +415,9 @@ if ($i == 0) {
         }
     }
 
+// Stage "10": site= ausführen
 
-####  SITE  #### 
+
     $performance->addToken("p_site");
 
 //$site->set() liefert true, wenn $site->name != ""
@@ -428,13 +434,12 @@ if ($i == 0) {
         }    
     }
 
-#####################
-
     $performance->getTimeNeededBy("p_site");
 
 
     require_once("./logic/messages.php");           // Ausgabe Messagelist & Errorlist vorbereiten
-// WebShop - Ring 7 (alle infos sind nun gesammelt -> Belichtung der Ausgabe!!)
+
+// Stage "11": alle infos sind nun gesammelt -> Belichtung der Ausgabe!!
 //
 
     require_once(__TEMPLATE_PATH . "envelope.php");
@@ -448,6 +453,9 @@ if ($i == 0) {
 // Objekt in die Session zu tragen, also dass man genau steuern kann
 // und muss was man in der session haben will ...
 //
+
+
+// Stage "12": Objekte löschen um die Speicherung in der Session zu verhindern (glaub ich!)
 
     unset($errorlist);
     unset($messagelist);
@@ -484,7 +492,11 @@ if ($i == 0) {
             )
     );
 
+// Stage "13": Auslieferung der Page    
+    
     require_once("./logic/output.php");             // reine Ausgabe, keine Fragen mehr!
+
+// Stage "14": Sachen in der Session speichern
 
     $session->cleanupTmpVars($shop->getCurrentSite());
 
