@@ -1,6 +1,6 @@
 ====================================
 * PROJEKT: TWebShop
-* INFO: WebShop für den OrgaMon (php5.5,memcache,xmlrpc,firebird)
+* INFO: WebShop für den OrgaMon (php5.5,memcached,xmlrpc,firebird)
 * SOURCE DIR: ..\TWebShop
 * TXT VERSIONING: YES
 * INNO SETUP SCRIPT: TWebShop.iss
@@ -9,10 +9,20 @@
 // INFO BEGIN
 TWebShop (eCommerce-Frontend für den OrgaMon)
 2002 - 2012 by Thorsten Schroff 
-2012 - 2014 by Andreas Filsinger
+2012 - 2016 by Andreas Filsinger
 2013 by Alexander Knam
 2014 - 2015 by Michael Hack
 // INFO END
+
+Rev 3.034 (07.01.16) Andreas Filsinger
+
+ Bug: Template: OrgaMon hatte einen Player, "envelope.html" eingeführt
+ Bug: Unnötige Abhängigkeit: PHP memcached ist nicht notwendig wenn es nur
+      einen XMLRPC-Server gibt
+
+ Neu: Sicherheit: include "i_template*" (Unterschieben von Code)
+ Neu: Transparenz: site=x hat im Template die entsprechende x.html - Vorlage, nicht mehr s_x
+ Neu: xmlrpc: Speed Up
 
 Rev 3.033 (08.12.15) Michael Hack
 

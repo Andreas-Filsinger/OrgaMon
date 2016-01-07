@@ -6,16 +6,16 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=TWebShop
-AppVerName=TWebShop 3.033
-AppCopyright=Copyright (C) 2002-2012 Thorsten Schroff
+AppVerName=TWebShop 3.034
+AppCopyright=Copyright (C) 2002 - 2012 Thorsten Schroff
 DefaultDirName={pf}\www\htdocs\TWebShop
 DefaultGroupName=TWebShop
 LicenseFile=gnu-gpl-twebshop.txt
 DisableStartupPrompt=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-TWebShop-3.033
-AppVersion=3.033
+OutputBaseFilename=Setup-TWebShop-3.034
+AppVersion=3.034
 ChangesAssociations=no
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -46,7 +46,6 @@ Source: "gnu-gpl-twebshop.txt"; DestDir: "{app}";
 Source: "config-distribution.php"; DestDir: "{app}";
 Source: "id.sig"; DestDir: "{app}";
 Source: "index.php"; DestDir: "{app}";
-Source: "shop.php"; DestDir: "{app}";
 Source: "tpicupload.php"; DestDir: "{app}";
 Source: "viewer.php"; DestDir: "{app}";
 Source: "favicon.ico"; DestDir: "{app}"; Flags:onlyifdoesntexist
