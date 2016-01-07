@@ -1,34 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=9">
 <!---  meta http-equiv="expires" content="0" //--->
 <title>~CONST_TWEBSHOP_TITLE~ : ~VAR_SITE_TITLE~</title>
-<script type="text/javascript" src="./js/jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="~CONST___TEMPLATE_PATH~style.css">
-<link rel="shurtcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
-
-    <script type="text/javascript">
-
-        /* 09.07.2014 michaelhacksoftware : Wenn Seite nicht im iFrame geladen, dann neu laden */
-        if (top.location == self.location) {
-            window.location.href = "~CONST___INDEX_EXT~" + window.location.search;
-        }
-        /* --- */
-        
-        /* 27.06.2014 michaelhacksoftware : jPlayer an die richtige Position setzen */
-        $(document).ready(function() {
-
-            var position = $('.PlayerPosition').position();
-
-            parent.$('#jp_container_1').css('top',  position.top);
-            parent.$('#jp_container_1').css('left', position.left);
-
-        });
-        /* --- */
-
-    </script>
-
+<link rel="shortcut icon" href="~CONST___TEMPLATE_PATH~favicon.ico">
 </head>
 
 <body>
@@ -104,3 +80,32 @@ STYLE=padding:0px; margin:0px; border:0px;
   
 </td></tr>
 <tr><td  style="vertical-align:top; padding:10px; padding-left:10px; border:0px #DDDDDD solid; ">
+~CONTENT~
+</td></tr>
+<tr><td style="height:30px; padding:0px;">
+
+  <table style="width:800px; table-layout:fixed;" cellspacing="0">
+  <tr>
+    <td style="height:20px; text-align:left; vertical-align:middle; font-size:11px; background-color:#DDDDDD; padding-left:10px; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_status_bar.png'); background-repeat:repeat-x;">
+      <span class="smallgrey">Rev.&nbsp;~VAR_REVISION~&nbsp; &nbsp;~VAR_PERF_MS~&nbsp;ms&nbsp;(~VAR_PERF_XMLRPC~/~VAR_PERF_SQL~)</span>
+	  <!-- ~CONST___TEMPLATE_PROJECTNAME~ Rev. ~VAR_TEMPLATE_REVISION~ -->
+	  <!-- [ <a class="a05" href="./~CONST___PROJECTNAME~_Info.html" target="_blank">Info</a> ]
+	  //-->
+    </td>
+    <td style="height:20px; text-align:right; vertical-align:middle; font-size:11px; background-color:#DDDDDD; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_status_bar.png'); background-repeat:repeat-x;">
+      <a class="a05" href="~CONST___INDEX~?site=terms">~CONST_SHORT_TERMS_OF_BUSINESS~</a> | 
+      <a class="a05" href="~CONST___INDEX~?site=contact">~CONST_SENTENCE_CONTACT_AND_IMPRINT~</a> |
+	  <a class="a05" href="~CONST___INDEX~?site=sitemap">~CONST_WORD_SITEMAP~</a>
+    </td>
+    <td style="width:27px; height:20px; text-align:center; vertical-align:middle; font-size:11px; background-color:#DDDDDD; background-image:url('~CONST___TEMPLATE_IMAGES_PATH~back_status_bar.png'); background-repeat:repeat-x;">
+	</td>
+  </tr>
+  <tr>
+  <td colspan="3" style="height:10px; background-color:#ADCBE7;"></td>
+  </tr>
+  </table>
+  
+</td></tr>
+</table>
+</body>
+</html>
