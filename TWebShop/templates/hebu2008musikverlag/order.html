@@ -1,0 +1,91 @@
+~OBJ_MESSAGELIST~~OBJ_ERRORLIST~
+<p class="title">~CONST_SENTENCE_PLACE_ORDER~</p>
+<p class="steptitle">~CONST_WORD_STEP~ ~VAR_STEP~: ~VAR_SITE_STEP_TITLE~ - ~VAR_SITE_STEP_DESCRIPTION~</p>
+<br />
+~TEMPLATE_STEP~
+<!-- BEGIN STEP
+NAME=tob
+TITLE=~CONST_SENTENCE_TERMS_OF_BUSINESS~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_READ_OUR_TOB~
+-->
+<textarea style="height:400px;">
+<!-- BEGIN RAW_TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/terms-of-business.txt
+-->RAW_TEXT: terms-of-business.txt<!-- END RAW_TEXT -->
+</textarea>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_accept_tob">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_LAST_SITE~';" style="">
+<input type="submit" class="buttonaslink" value="~CONST_WORD_ACCEPT~&nbsp;&gt;&gt;&gt;" style="">
+</form>
+<!-- END STEP -->
+<!-- BEGIN STEP
+NAME=addresses
+TITLE=~CONST_SENTENCE_BILL_AND_DELIVERY_ADDRESS~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_SELECT_YOUR_PREFERRED_BILL_AND_DELIVERY_ADDRESSES~
+-->
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<p class="subtitle">~CONST_WORD_BILL_ADDRESS~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_CONTACTS_BILL~
+</div>
+<p class="subtitle">~CONST_WORD_DELIVERY_ADDRESS~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_CONTACTS_DELIVERY~
+</div>
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_select_addresses">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';" />
+<input type="submit" class="buttonaslink" value="~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;" />
+</form>
+<!-- END STEP -->
+<!-- BEGIN STEP
+ACTIVE=N
+NAME=payment
+TITLE=~CONST_WORD_MODE_OF_PAYMENT~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_SELECT_YOUR_PREFERRED_MODE_OF_PAYMENT~
+-->
+<script type="text/javascript" src="./js/functions.js"></script>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<!-- <p class="subtitle"></p> -->
+<p class="subtitle">~CONST_WORD_DIRECT_DEBITING_SYSTEM~</p>
+<div style="margin-left:50px; margin-bottom:20px;">
+~OBJ_PAYMENT_INFOS~
+</div>
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order_payment">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';" />
+<input type="submit" class="buttonaslink" value="~CONST_WORD_GOON~&nbsp;&gt;&gt;&gt;" />
+</form>
+<!-- END STEP -->
+<!-- BEGIN STEP
+NAME=overview
+TITLE=~CONST_SENTENCE_ORDER_OVERVIEW~
+DESCRIPTION=~CONST_SENTENCE_PLEASE_VALIDATE_YOUR_ORDER~
+-->
+<p>~OBJ_CART~</p><hr>
+~OBJ_PAYMENT_INFO~
+<p class="subtitle">~CONST_WORD_BILL_ADDRESS~</p>
+<p>~OBJ_CONTACT_BILL~</p>
+<hr />
+<p class="subtitle">~CONST_WORD_DELIVERY_ADDRESS~</p>
+<p>~OBJ_CONTACT_DELIVERY~</p>
+<hr />
+<p class="text" id="justify"><b>
+<!-- BEGIN TEXT
+SRC=~CONST___LANGUAGE_PATH~~CONST___LANGUAGE~/order-important-hint.txt
+!NL2BR=true
+-->TEXT: order-important-hint.txt<!-- END TEXT -->
+</b></p>
+<form action="~CONST___INDEX~" method="post" style="margin:0px; margin-top:15px;">
+<input type="hidden" name="site" value="~VAR_SITE~">
+<input type="hidden" name="action" value="order">
+<input type="hidden" name="aid" value="~VAR_NEXT_ACTION_ID~">
+<input type="button" class="buttonaslink" value="&lt;&lt;&lt;&nbsp;~CONST_WORD_BACK~" onClick="javascript:location.href='~CONST___INDEX~?site=~VAR_SITE~&action=order_back&aid=~VAR_NEXT_ACTION_ID~';">
+<p class="text" id="right"><input type="submit" class="buttonaslink" value="&gt;&gt;&gt;&nbsp;~CONST_SENTENCE_PLACE_ORDER~"></p>
+<!-- END STEP -->
+
