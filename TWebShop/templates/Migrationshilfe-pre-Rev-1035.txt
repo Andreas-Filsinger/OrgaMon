@@ -1,8 +1,11 @@
 Template-Migration:
 
-1) mache alle s_ weg von den html Dateien
+1) mache alle Prefixe "s_" im Dateinamen weg von den *.html Dateien
 2) Kombiniere h_header.html, dann die Zeile ~CONTENT~, dann f_footer.html zu envelope.html
 3) lösche h_header.html und f_footer.html
 4) Kopiere aus "HebuMusic2008" das envelope.php ins Verzeichnis, prüfe ob dies alles nötig ist
 5) kombiniere alle "i_template*.inc.php5" zu einer const.php
-
+z.B. im linux: cat i_template* >>const.php
+danach das const.php editieren und alle Zeile mit ?> rauslöschen
+danach alle i_template* löschen
+6) 
