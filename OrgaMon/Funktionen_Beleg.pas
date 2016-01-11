@@ -671,7 +671,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 182;
+  cAllSettingsAnz = 184;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel',
     'NachlieferungInfo', 'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
     'SicherungsPfad', 'SicherungsPrefix', 'SicherungenAnzahl', 'NichtMehrLieferbarInfo',
@@ -711,7 +711,7 @@ CONST
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP', 'FotoPfad',
     'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad',
     'VerlagsdatenabgleichPfad', 'KartenProfil', 'SchubladePort', 'TagwacheBaustelle',
-    'memcacheHost', 'Ablage', 'KontoSEPAFrist');
+    'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf', 'TagesabschlussIdle');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8317,6 +8317,7 @@ begin
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
   iTagesAbschlussAuf := cutblank(sSystemSettings.values['TagesabschlussAuf']);
   iCronAuf := cutblank(sSystemSettings.values['CronAuf']);
+  iIdleProzessPrioritaetAbschluesse := cutblank(sSystemSettings.values['TagesabschlussIdle']) <> cIni_DeActivate;
   iNachTagesAbschlussHerunterfahren := sSystemSettings.values['NachTagesAbschlussHerunterfahren']
     = cIni_Activate;
   iNachTagesAbschlussRechnerNeustarten := sSystemSettings.values

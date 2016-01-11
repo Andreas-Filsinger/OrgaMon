@@ -38,17 +38,19 @@ Source: "action\*"; DestDir: "{app}\action"; Flags: recursesubdirs
 Source: "site\*"; DestDir: "{app}\site"; Flags: recursesubdirs
 Source: "images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
 Source: "templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs
-; Source: "newsletter\*"; DestDir: "{app}\newsletter"; Flags: recursesubdirs 
 Source: "FirePHPCore\*"; DestDir: "{app}\FirePHPCore"; Flags: recursesubdirs
 
 Source: "cryption.sig"; DestDir: "{app}";
 Source: "gnu-gpl-twebshop.txt"; DestDir: "{app}";
-Source: "config-distribution.php"; DestDir: "{app}";
 Source: "id.sig"; DestDir: "{app}";
+Source: "favicon.ico"; DestDir: "{app}"; Flags:onlyifdoesntexist
+
+; PHP Skripts
+Source: "config-distribution.php"; DestDir: "{app}";
 Source: "index.php"; DestDir: "{app}";
 Source: "tpicupload.php"; DestDir: "{app}";
 Source: "viewer.php"; DestDir: "{app}";
-Source: "favicon.ico"; DestDir: "{app}"; Flags:onlyifdoesntexist
+
 
 ; Doku
 Source: "..\..\CargoBay\TWebShop_Info.html"; DestDir: "{app}"
