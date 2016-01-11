@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.134; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.135; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1065,6 +1065,7 @@ var
   iTagWacheUm: TAnfixTime;
   iNachTagwacheHerunterfahren: boolean;
   iTextDocumentExtension: string;
+  iIdleProzessPrioritaetAbschluesse: boolean;
 
   iNachTagesAbschlussHerunterfahren: boolean;
   iTagWacheWochentage: string;

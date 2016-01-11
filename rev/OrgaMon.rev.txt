@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.135 (11.01.16) Andreas Filsinger
+
+ Neu: System: Parameter "TagesabschlussIdle" =JA|NEIN. NEIN verhindert das Setzen der
+      Prozesspriorität, was auf dem Windows Server 2012 eine Exception auslöst.
+
 Rev 8.134 (18.12.15) Andreas Filsinger
 
  Neu: Migration "JonDaServer" -> "OrgaMon" -> App

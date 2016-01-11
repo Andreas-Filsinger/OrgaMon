@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2014 Andreas Filsinger
+  |    Copyright (C) 2007 - 2016 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -159,7 +159,8 @@ begin
     Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' +
       secondstostr(LetzerTagesAbschlussWarUm) + ' h auf ' + ComputerName);
 
-    SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));
+    if iIdleProzessPrioritaetAbschluesse then
+      SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));
     ProgressBar1.max := CheckListBox1.items.Count;
     Ticket := CareTakerLog('Tagesabschluss START');
     Log('Ticket ' + inttostr(Ticket) + ' erhalten');
@@ -347,7 +348,8 @@ begin
     if (ErrorCount > 0) then
       Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
     CareTakerClose(Ticket);
-    SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
+    if iIdleProzessPrioritaetAbschluesse then
+      SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
     FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
