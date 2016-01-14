@@ -1054,7 +1054,7 @@ object FormArtikel: TFormArtikel
     Top = 296
     Width = 978
     Height = 206
-    ActivePage = TabSheet8
+    ActivePage = TabSheet1
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet

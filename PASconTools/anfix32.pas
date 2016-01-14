@@ -394,6 +394,7 @@ function dir(const Mask: string): integer; overload;
 function dirs(const Path: string): TStringList;
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
+function DirQuota(const Mask: string; SizeLimit: int64): boolean; // WARNING: Delete oldest Files to Ensure Quota
 procedure CheckCreateDir(dir: string); // recourse create dir
 function DirDelete(const Mask: string): boolean; overload;
 function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
@@ -2155,7 +2156,7 @@ var
   n: integer;
   ErrorCount: integer;
 begin
-  if OlderThan < 1000 then
+  if (OlderThan < 1000) then
     OlderThan := datePlus(DateGet, -OlderThan);
   ErrorCount := 0;
   SelektedFiles := TStringList.create;
@@ -2342,6 +2343,24 @@ begin
     DelTree(PathName + AllTheDirs[n]);
   AllTheDirs.free;
   result := true;
+end;
+
+function DirQuota(const Mask: string; SizeLimit: int64): boolean;
+var
+ sDir : TStringList;
+ n : integer;
+ Path : string;
+begin
+ sDir := TStringList.Create;
+ Path := ExtractFilePath(Mask)+'\';
+ dir(Mask,sDir,false);
+ for n := 0 to pred(sDir.Count) do
+  sDir[n] := dTimeStamp(FileDateTime(Path+sDir[n]))+'*'+ sDir[n];
+ sDir.Sort;
+ //
+ sDir.Free;
+
+
 end;
 
 function Frequently: dword;
