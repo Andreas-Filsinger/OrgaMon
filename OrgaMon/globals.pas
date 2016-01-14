@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.135; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.136; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1154,8 +1154,8 @@ var
   iFtpProxyHost: string = '';
   iFtpProxyPort: integer = 0;
 
-  // für Kartensachen
-  iKartenPfad: string; // Ablage-Fläche für Karten-Bild-Dateien
+  // für Kartensachen TxOrtung
+  iKartenPfad: string; // Ablage-Fläche auf der Karten-Bild-Dateien bereitgestellt werden
   iKartenHost: string; // Tile-Server, der Angesprochen wird
   iKartenProfil: string; // Zusatz-Einstellungen für das Outfitt der Karten
 

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -231,8 +231,7 @@ type
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure Button7Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -256,8 +255,8 @@ type
     procedure IB_Query13BeforePost(IB_Dataset: TIB_Dataset);
     procedure SpeedButton17Click(Sender: TObject);
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
-    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
     procedure Button1Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure SpeedButton15Click(Sender: TObject);
@@ -265,16 +264,15 @@ type
     procedure SpeedButton18Click(Sender: TObject);
     procedure IB_Query3AfterScroll(IB_Dataset: TIB_Dataset);
     procedure Button3Click(Sender: TObject);
-    procedure IB_Query3ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query3ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure Button5Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
-    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+      var AColor: TColor; AFont: TFont);
     procedure Button20Click(Sender: TObject);
     procedure SpeedButton19Click(Sender: TObject);
-    procedure IB_Grid2GetCellProps(Sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+    procedure IB_Grid2GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+      var AColor: TColor; AFont: TFont);
     procedure IB_Query13BeforePrepare(Sender: TIB_Statement);
     procedure Edit4KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton21Click(Sender: TObject);
@@ -396,8 +394,7 @@ end;
 
 procedure TFormArtikel.Button17Click(Sender: TObject);
 begin
-  openShell(format
-    ('http://%s?site=search&action=search_user_expression&f_search_expression=%s',
+  openShell(format('http://%s?site=search&action=search_user_expression&f_search_expression=%s',
     [iShopDomain, AnsiToRFC1738(Edit2.text)]));
 end;
 
@@ -479,19 +476,16 @@ begin
     MengeProWocheAnfang := 0.0;
     ArtikelMenge.clear;
 
-    IB_Query7.ParamByName('CROSSREF').AsInteger := IB_Query6.FieldByName('RID')
-      .AsInteger;
+    IB_Query7.ParamByName('CROSSREF').AsInteger := IB_Query6.FieldByName('RID').AsInteger;
     if not(IB_Query7.IsEmpty) then
     begin
       IB_Query7.first;
       with IB_Query7 do
         while not(eof) do
         begin
-          IB_Query8.ParamByName('CROSSREF').AsInteger := FieldByName('BELEG_R')
-            .AsInteger;
+          IB_Query8.ParamByName('CROSSREF').AsInteger := FieldByName('BELEG_R').AsInteger;
           if not(IB_Query8.IsEmpty) then
-            ArtikelMenge.addObject
-              (inttostr(datetime2long(IB_Query8.FieldByName('ANLAGE').AsDate)),
+            ArtikelMenge.addObject(inttostr(datetime2long(IB_Query8.FieldByName('ANLAGE').AsDate)),
               pointer(FieldByName('MENGE_GELIEFERT').AsInteger));
           next;
         end;
@@ -525,12 +519,11 @@ begin
     end;
     IB_Query6.FieldByName('INTERN_INFO').AssignTo(ArtikelINfo);
 
-    OutL.add(NoSemi(e_r_Verlag_PERSON_R(IB_Query6.FieldByName('VERLAG_R')
-      .AsInteger)) + ';' + inttostr(IB_Query6.FieldByName('NUMERO').AsInteger) +
-      ';' + NoSemi(IB_Query6.FieldByName('TITEL').AsString) + ';' +
-      inttostr(IB_Query6.FieldByName('MENGE').AsInteger) + ';' +
-      long2date(_ErstesDatum) + ';' + long2date(_LetztesDatum) + ';' +
-      inttostr(Zeitraum) + ';' + inttostr(GelieferteMenge) + ';' +
+    OutL.add(NoSemi(e_r_Verlag_PERSON_R(IB_Query6.FieldByName('VERLAG_R').AsInteger)) + ';' +
+      inttostr(IB_Query6.FieldByName('NUMERO').AsInteger) + ';' +
+      NoSemi(IB_Query6.FieldByName('TITEL').AsString) + ';' +
+      inttostr(IB_Query6.FieldByName('MENGE').AsInteger) + ';' + long2date(_ErstesDatum) + ';' +
+      long2date(_LetztesDatum) + ';' + inttostr(Zeitraum) + ';' + inttostr(GelieferteMenge) + ';' +
       format('%.2f;%.2f', [MengeProWoche, MengeProWocheAnfang]) + ';' +
       NoSemi(ArtikelINfo.Values['BEM']) + ';' + e_r_LagerPlatzNameFromLAGER_R
       (IB_Query6.FieldByName('LAGER_R').AsInteger) + ';' +
@@ -635,8 +628,7 @@ begin
     if FieldByName('LAGER_R').IsNull then
       ComboBox3.text := '-'
     else
-      ComboBox3.text := e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
-        .AsInteger);
+      ComboBox3.text := e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R').AsInteger);
     ComboBox3.refresh;
   end;
 end;
@@ -738,8 +730,8 @@ begin
     ReflectPREIS_R;
 
     // Titel des Forms
-    caption := 'Artikel - [' + FieldByName('NUMERO').AsString + ' ' +
-      FieldByName('TITEL').AsString + ']';
+    caption := 'Artikel - [' + FieldByName('NUMERO').AsString + ' ' + FieldByName('TITEL')
+      .AsString + ']';
 
     // Farbe des Formulars
     if FieldByName('PAPERCOLOR').IsNotNull then
@@ -779,8 +771,7 @@ end;
 
 procedure TFormArtikel.Button15Click(Sender: TObject);
 begin
-  FormPerson.SetContext(e_r_Lieferant(IB_Query1.FieldByName('RID')
-    .AsInteger, 0));
+  FormPerson.SetContext(e_r_Lieferant(IB_Query1.FieldByName('RID').AsInteger, 0));
 end;
 
 procedure TFormArtikel.ReflectPREIS_R;
@@ -814,11 +805,9 @@ begin
       while not(eof) do
       begin
         if FieldByName('EURO').IsNull then
-          IB_ComboBox2.Items.add(FieldByName('CODE').AsString +
-            format(' (%.2f %s) %.2m', [FieldByName('PREIS').AsDouble,
-            FieldByName('ISO_WAEHRUNG').AsString,
-            round(FieldByName('PREIS').AsDouble * FieldByName('KURS').AsDouble *
-            100.0) / 100.0]))
+          IB_ComboBox2.Items.add(FieldByName('CODE').AsString + format(' (%.2f %s) %.2m',
+            [FieldByName('PREIS').AsDouble, FieldByName('ISO_WAEHRUNG').AsString,
+            round(FieldByName('PREIS').AsDouble * FieldByName('KURS').AsDouble * 100.0) / 100.0]))
         else
           IB_ComboBox2.Items.add(FieldByName('CODE').AsString + format(' %.2m',
             [FieldByName('EURO').AsDouble]));
@@ -829,17 +818,16 @@ begin
     end;
     PREIS.free;
   end;
-  IB_ComboBox2.itemindex := IB_ComboBox2.ItemValues.IndexOf
-    (IB_Query1.FieldByName('PREIS_R').AsString);
+  IB_ComboBox2.itemindex := IB_ComboBox2.ItemValues.IndexOf(IB_Query1.FieldByName('PREIS_R')
+    .AsString);
 end;
 
-procedure TFormArtikel.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormArtikel.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(FieldByName('NUMERO').AsString + #13 + FieldByName('TITEL').AsString
-      + #13 + 'wirklich löschen') then
+    if doit(FieldByName('NUMERO').AsString + #13 + FieldByName('TITEL').AsString + #13 +
+      'wirklich löschen') then
     begin
       BeginHourGlass;
       e_w_preDeleteArtikel(FieldByName('RID').AsInteger);
@@ -859,8 +847,7 @@ begin
   begin
     if FieldByName('RID').IsNull then
       FieldByName('RID').AsInteger := 0;
-    FieldByName('ARTIKEL_R').AsInteger := IB_Query1.FieldByName('RID')
-      .AsInteger;
+    FieldByName('ARTIKEL_R').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
     FieldByName('MEDIUM_R').AsInteger := cMediumWeblink;
   end;
 end;
@@ -875,8 +862,7 @@ begin
       Label7.caption := e_r_Person(FieldByName('PERSON_R').AsInteger);
 end;
 
-procedure TFormArtikel.IB_Query3ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormArtikel.IB_Query3ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
@@ -1042,8 +1028,7 @@ begin
   begin
     loadfromfile(iShopQRPath + cHTMLTemplatesDir + 'index.html');
     DatensammlerGlobal := AsKeyValue(IB_Query1);
-    DatensammlerGlobal.add('id=' + e_r_ArtikelLink(FieldByName('RID')
-      .AsInteger));
+    DatensammlerGlobal.add('id=' + e_r_ArtikelLink(FieldByName('RID').AsInteger));
 
     OutPath := iShopQRPath + FieldByName('NUMERO').AsString + '\';
     WriteValue(DatensammlerLokal, DatensammlerGlobal);
@@ -1199,8 +1184,7 @@ end;
 
 procedure TFormArtikel.Button20Click(Sender: TObject);
 begin
-  FormArtikelSortiment.SetContext(IB_Query1.FieldByName('SORTIMENT_R')
-    .AsInteger);
+  FormArtikelSortiment.SetContext(IB_Query1.FieldByName('SORTIMENT_R').AsInteger);
 end;
 
 procedure TFormArtikel.Button21Click(Sender: TObject);
@@ -1217,8 +1201,8 @@ begin
   cARTIKEL := DataModuleDatenbank.nCursor;
   with cARTIKEL do
   begin
-    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' +
-      long2date(DatePlus(DateGet, -iNeuanlageZeitraum)) + '''');
+    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' + long2date(DatePlus(DateGet,
+      -iNeuanlageZeitraum)) + '''');
     APIfirst;
     ArtikelSucheWI.FoundList.clear;
     while not(eof) do
@@ -1238,9 +1222,8 @@ var
   g1_LastBackgroundCol: TColor;
   g1_LastFontCol: TColor;
 
-procedure TFormArtikel.IB_Grid1GetCellProps(Sender: TObject;
-  ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
-  AFont: TFont);
+procedure TFormArtikel.IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
+  AState: TGridDrawState; var AColor: TColor; AFont: TFont);
 var
   PAPERCOLOR: string;
 begin
@@ -1289,9 +1272,8 @@ var
   g2_LastBackgroundCol: TColor;
   g2_LastFontCol: TColor;
 
-procedure TFormArtikel.IB_Grid2GetCellProps(Sender: TObject;
-  ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
-  AFont: TFont);
+procedure TFormArtikel.IB_Grid2GetCellProps(Sender: TObject; ACol, ARow: Integer;
+  AState: TGridDrawState; var AColor: TColor; AFont: TFont);
 var
   PAPERCOLOR: string;
 begin
@@ -1350,8 +1332,8 @@ begin
     if (state = dssedit) then
       if FieldByName('EURO').IsModified then
       begin
-        FormArtikelPreis.SetContext(FieldByName('AUSGABEART_R').AsInteger,
-          ARTIKEL_R, FieldByName('EURO').AsDouble, 0);
+        FormArtikelPreis.SetContext(FieldByName('AUSGABEART_R').AsInteger, ARTIKEL_R,
+          FieldByName('EURO').AsDouble, 0);
       end;
   end;
 end;
@@ -1396,12 +1378,11 @@ begin
   g1_cCOL_PAPERCOLOR := 0;
 end;
 
-procedure TFormArtikel.SpeedButton17MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormArtikel.SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true)
-    then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid1));
       IB_Query1.close;
@@ -1537,6 +1518,8 @@ begin
 end;
 
 procedure TFormArtikel.Button1Click(Sender: TObject);
+const
+  MEDIUM_R = 1;
 var
   HeaderNames: TStringList;
   SaveChanges: Boolean;
@@ -1544,18 +1527,20 @@ var
   n, m, k: Integer;
   qARTIKEL: TIB_Query;
   ARTIKEL_R: Integer;
+  SORTIMENT_R: Integer;
+  DOKUMENT_R: Integer;
   Spalte: string;
   CellStr: string;
   IMPORT_R: Integer;
   MyStrL: TStringList;
   VerlagNo: string;
-  XLS : TXLSFIle;
+  XLS: TXLSFIle;
 begin
   //
-  if Button1.caption = 'Import' then
+  if (Button1.caption = 'Import') then
   begin
     BeginHourGlass;
-  XLS := TXLSFIle.create(true);
+    XLS := TXLSFIle.create(true);
     Aenderungen := 0;
 
     UserBreak := false;
@@ -1577,8 +1562,8 @@ begin
       for n := 1 to ColCountInRow(1) do
       begin
         Spalte := StrFilter(
-         {} getCellValue(1, n).ToStringInvariant,
-         {} 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
+          { } getCellValue(1, n).ToStringInvariant,
+          { } 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_');
         repeat
           k := pos('_', Spalte);
           if k = 1 then
@@ -1588,13 +1573,18 @@ begin
       end;
 
       // Nun der Import
-      for n := 2 to RowCount do // Zeilen
+      for n := 2 to RowCount do
       begin
+
+        // Zeilen
         SaveChanges := false;
+        ARTIKEL_R := cRID_Unset;
+
         try
-          for m := 1 to ColCountInRow(1) do // Spalten
+          for m := 1 to ColCountInRow(1) do
           begin
 
+            // Spalten
             Spalte := HeaderNames[pred(m)];
             if (Spalte <> '') then
             begin
@@ -1624,8 +1614,7 @@ begin
                   begin
                     if not(SaveChanges) then
                     begin
-                      ARTIKEL_R :=
-                        e_r_sql('select RID from ARTIKEL where VERLAGNO=''' +
+                      ARTIKEL_R := e_r_sql('select RID from ARTIKEL where VERLAGNO=''' +
                         CellStr + '''');
                       if (ARTIKEL_R > 0) then
                       begin
@@ -1646,8 +1635,9 @@ begin
                   begin
                     if not(SaveChanges) then
                     begin
-                      qARTIKEL.ParamByName('CROSSREF').AsInteger :=
-                        e_w_ArtikelNeu(strtoint(CellStr));
+                      SORTIMENT_R := strtoint(CellStr);
+                      ARTIKEL_R := e_w_ArtikelNeu(SORTIMENT_R);
+                      qARTIKEL.ParamByName('CROSSREF').AsInteger := ARTIKEL_R;
                       qARTIKEL.edit;
                       qARTIKEL.FieldByName('IMPORT_RID').AsInteger := IMPORT_R;
                       qARTIKEL.FieldByName('VERLAGNO').AsString := VerlagNo;
@@ -1676,8 +1666,7 @@ begin
                   begin
                     CellStr := noblank(CellStr);
                     while (CellStr <> '') do
-                      FormArtikelKategorie.AddKategorie
-                        (qARTIKEL.FieldByName('RID').AsInteger,
+                      FormArtikelKategorie.AddKategorie(qARTIKEL.FieldByName('RID').AsInteger,
                         nextp(CellStr, ';'));
                     break;
                   end;
@@ -1687,8 +1676,7 @@ begin
                     if (IB_ComboBox3.Items.IndexOf(CellStr) <> -1) then
                       qARTIKEL.FieldByName('SCHWER_GRUPPE').AsString := CellStr
                     else
-                      qARTIKEL.FieldByName('SCHWER_DETAILS').AsString
-                        := CellStr;
+                      qARTIKEL.FieldByName('SCHWER_DETAILS').AsString := CellStr;
                     break;
                   end;
 
@@ -1701,10 +1689,38 @@ begin
                     break;
                   end;
 
+                  if (Spalte = 'DOKUMENT') then
+                  begin
+                    if (ARTIKEL_R >= cRID_FirstValid) then
+                    begin
+                      if (e_r_sql(
+                        { } 'select count(RID) from DOKUMENT where' +
+                        { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and ' +
+                        { } ' (MEDIUM_R=' + inttostr(MEDIUM_R) + ') and ' +
+                        { } ' (BEMERKUNG containing ' + SQLstring(CellStr) + ')') = 0) then
+                      begin
+                        DOKUMENT_R := e_r_sql('select RID from DOKUMENT where' +
+                          { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and ' +
+                          { } ' (MEDIUM_R=' + inttostr(MEDIUM_R) + ')');
+                        if DOKUMENT_R >= cRID_FirstValid then
+                          e_x_sql('update DOKUMENT set' +
+                            { } ' BEMERKUNG = BEMERKUNG||ASCII_CHAR(13)||ASCII_CHAR(10)||' +
+                            SQLstring(CellStr) + ' ' +
+                            { } 'where' +
+                            { } ' (RID=' + inttostr(DOKUMENT_R) + ')')
+                        else
+                          e_x_sql('insert into DOKUMENT (ARTIKEL_R,MEDIUM_R,BEMERKUNG) values(' +
+                            { } inttostr(ARTIKEL_R) + ',' +
+                            { } inttostr(MEDIUM_R) + ',' +
+                            { } SQLstring(CellStr) + ')');
+                      end;
+                    end;
+                    break;
+                  end;
+
                   // Wert speichern
                   if (strtointdef(getCellValue(n, m).ToStringInvariant, 0) > 0) then
-                    qARTIKEL.FieldByName(Spalte).AsInteger :=
-                      strtointdef(CellStr, 0)
+                    qARTIKEL.FieldByName(Spalte).AsInteger := strtointdef(CellStr, 0)
                   else
                     qARTIKEL.FieldByName(Spalte).AsString := CellStr;
 
@@ -1718,10 +1734,9 @@ begin
           on E: Exception do
           begin
             SaveChanges := false;
-            if doit('Zeile ' + inttostr(n) + '' + #13 + 'Spalte "' + Spalte +
-              '"' + #13 + 'Inhalt: "' + CellStr + '"' + #13 +
-              '----------------------------------------' + #13 + E.Message + #13
-              + '----------------------------------------' + #13 +
+            if doit('Zeile ' + inttostr(n) + '' + #13 + 'Spalte "' + Spalte + '"' + #13 +
+              'Inhalt: "' + CellStr + '"' + #13 + '----------------------------------------' + #13 +
+              E.Message + #13 + '----------------------------------------' + #13 +
               'Import abbrechen', true) then
               break;
           end;
@@ -1730,8 +1745,8 @@ begin
         begin
           qARTIKEL.post;
           SaveChanges := false;
-          Label23.caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) +
-            '(' + inttostr(Aenderungen) + ' Änderungen)';
+          Label23.caption := 'Zeile ' + inttostr(n) + '/' + inttostr(RowCount) + '(' +
+            inttostr(Aenderungen) + ' Änderungen)';
           application.processmessages;
         end;
         if UserBreak then

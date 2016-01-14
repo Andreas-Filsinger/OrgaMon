@@ -14,7 +14,7 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
 
-Rev 2.031 (16.12.15) Andreas Filsinger
+Rev 2.031 (16.12.15-13.01.16) Andreas Filsinger
 
  Bug: Bilder sind aus der Galerie verschwunden
 
