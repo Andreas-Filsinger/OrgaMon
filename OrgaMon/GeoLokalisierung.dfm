@@ -327,4 +327,13 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     TabOrder = 11
     Text = 'Ubstadt'
   end
+  object Button2: TButton
+    Left = 584
+    Top = 31
+    Width = 260
+    Height = 25
+    Caption = 'Karten-Cache auf 1 GB k'#252'rzen'
+    TabOrder = 12
+    OnClick = Button2Click
+  end
 end

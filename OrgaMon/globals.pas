@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.136; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.137; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -1158,6 +1158,7 @@ var
   iKartenPfad: string; // Ablage-Fläche auf der Karten-Bild-Dateien bereitgestellt werden
   iKartenHost: string; // Tile-Server, der Angesprochen wird
   iKartenProfil: string; // Zusatz-Einstellungen für das Outfitt der Karten
+  iKartenQuota: int64; // Limitierung des Kartenverzeichnisses
 
   // für Baustellensachen
   iBaustellenPfad: string;

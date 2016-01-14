@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.137 (14.01.16) Andreas Filsinger
+
+ Neu: System: Parameter: KartenQuota, ermöglicht eine platz-limitierende Pflege des KartenPfades
+
 Rev 8.136 (14.01.16) Andreas Filsinger
 
  Neu: Artikel: Import: Spalte "DOKUMENT" (mehrfach möglich)

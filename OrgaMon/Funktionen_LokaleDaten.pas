@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -52,6 +52,9 @@ procedure Rebuild;
 
 // Suchindex Cache neu erstellen
 procedure PersonSuchindex;
+
+// Kartenverzeichnis auf Quota bringen
+procedure KartenQuota;
 
 implementation
 
@@ -112,9 +115,8 @@ begin
   end
   else
   begin
-    if not(FileExists(SearchDir + cKreativeCacheFName + cItemsCacheFExtension))
-      or not(FileExists(SearchDir + cKreativeCacheFName + cValueCacheFExtension))
-    then
+    if not(FileExists(SearchDir + cKreativeCacheFName + cItemsCacheFExtension)) or
+      not(FileExists(SearchDir + cKreativeCacheFName + cValueCacheFExtension)) then
     begin
       AusgabeItems := TStringList.create;
       AusgabeValues := TStringList.create;
@@ -126,10 +128,8 @@ begin
         AusgabeItems.add(cache[n]);
         AusgabeValues.add(inttostr(integer(cache.objects[n])));
       end;
-      AusgabeItems.SaveToFile(SearchDir + cKreativeCacheFName +
-        cItemsCacheFExtension);
-      AusgabeValues.SaveToFile(SearchDir + cKreativeCacheFName +
-        cValueCacheFExtension);
+      AusgabeItems.SaveToFile(SearchDir + cKreativeCacheFName + cItemsCacheFExtension);
+      AusgabeValues.SaveToFile(SearchDir + cKreativeCacheFName + cValueCacheFExtension);
       AusgabeItems.free;
       AusgabeValues.free;
     end;
@@ -212,8 +212,7 @@ begin
     begin
       with cANSCHRIFT do
       begin
-        ParamByName('CROSSREF').AsInteger :=
-          cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+        ParamByName('CROSSREF').AsInteger := cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
         if not(Active) then
           Open;
         APIFirst;
@@ -235,8 +234,7 @@ begin
             { } cPERSON.FieldByName('Z_ELV_KONTO').AsString) + ' ' +
             { } cPERSON.FieldByName('KONTO_ER').AsString + ' ' +
             { } cPERSON.FieldByName('KONTO_AR').AsString + ' ' +
-            { } strFilter(cPERSON.FieldByName('HANDY').AsString,
-            cZiffern) + ' ' +
+            { } strFilter(cPERSON.FieldByName('HANDY').AsString, cZiffern) + ' ' +
 
             // ANSCHRIFT Felder
             { } FieldByName('NAME1').AsString + ' ' +
@@ -286,9 +284,8 @@ begin
   end
   else
   begin
-    if not(FileExists(SearchDir + cSortimentCacheFName + cItemsCacheFExtension))
-      or not(FileExists(SearchDir + cSortimentCacheFName +
-      cValueCacheFExtension)) then
+    if not(FileExists(SearchDir + cSortimentCacheFName + cItemsCacheFExtension)) or
+      not(FileExists(SearchDir + cSortimentCacheFName + cValueCacheFExtension)) then
     begin
       AusgabeItems := TStringList.create;
       AusgabeValues := TStringList.create;
@@ -301,18 +298,15 @@ begin
         APIFirst;
         while not(eof) do
         begin
-          AusgabeItems.add(format('%s (%.2f%% MwSt)',
-            [FieldByName('BEZEICHNUNG').AsString,
+          AusgabeItems.add(format('%s (%.2f%% MwSt)', [FieldByName('BEZEICHNUNG').AsString,
             FieldByName('SATZ').AsFloat]));
           AusgabeValues.add(FieldByName('RID').AsString);
           ApiNext;
         end;
       end;
       cSORTIMENT.free;
-      AusgabeItems.SaveToFile(SearchDir + cSortimentCacheFName +
-        cItemsCacheFExtension);
-      AusgabeValues.SaveToFile(SearchDir + cSortimentCacheFName +
-        cValueCacheFExtension);
+      AusgabeItems.SaveToFile(SearchDir + cSortimentCacheFName + cItemsCacheFExtension);
+      AusgabeValues.SaveToFile(SearchDir + cSortimentCacheFName + cValueCacheFExtension);
       AusgabeItems.free;
       AusgabeValues.free;
     end;
@@ -328,18 +322,14 @@ var
 begin
   if Purge then
   begin
-    FileDelete(SearchDir + cVertragsVariantenCacheFName +
-      cItemsCacheFExtension);
-    FileDelete(SearchDir + cVertragsVariantenCacheFName +
-      cValueCacheFExtension);
+    FileDelete(SearchDir + cVertragsVariantenCacheFName + cItemsCacheFExtension);
+    FileDelete(SearchDir + cVertragsVariantenCacheFName + cValueCacheFExtension);
     result := '';
   end
   else
   begin
-    if not(FileExists(SearchDir + cVertragsVariantenCacheFName +
-      cItemsCacheFExtension)) or
-      not(FileExists(SearchDir + cVertragsVariantenCacheFName +
-      cValueCacheFExtension)) then
+    if not(FileExists(SearchDir + cVertragsVariantenCacheFName + cItemsCacheFExtension)) or
+      not(FileExists(SearchDir + cVertragsVariantenCacheFName + cValueCacheFExtension)) then
     begin
       AusgabeItems := TStringList.create;
       AusgabeValues := TgpIntegerList.create;
@@ -359,15 +349,19 @@ begin
         end;
       end;
       cVertragsVarianten.free;
-      AusgabeItems.SaveToFile(SearchDir + cVertragsVariantenCacheFName +
-        cItemsCacheFExtension);
-      AusgabeValues.SaveToFile(SearchDir + cVertragsVariantenCacheFName +
-        cValueCacheFExtension);
+      AusgabeItems.SaveToFile(SearchDir + cVertragsVariantenCacheFName + cItemsCacheFExtension);
+      AusgabeValues.SaveToFile(SearchDir + cVertragsVariantenCacheFName + cValueCacheFExtension);
       AusgabeItems.free;
       AusgabeValues.free;
     end;
     result := SearchDir + cVertragsVariantenCacheFName;
   end;
+end;
+
+procedure KartenQuota;
+begin
+  if (iKartenPfad <> '') and (iKartenQuota > 0) then
+    DirQuota(iKartenPfad + '*.png', iKartenQuota);
 end;
 
 end.
