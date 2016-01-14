@@ -394,7 +394,8 @@ function dir(const Mask: string): integer; overload;
 function dirs(const Path: string): TStringList;
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
-function DirQuota(const Mask: string; SizeLimit: int64): boolean; // WARNING: Delete oldest Files to Ensure Quota
+function DirQuota(const Mask: string; SizeLimit: int64): boolean;
+// WARNING: Delete oldest Files to Ensure Quota
 procedure CheckCreateDir(dir: string); // recourse create dir
 function DirDelete(const Mask: string): boolean; overload;
 function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
@@ -1881,7 +1882,8 @@ end;
 
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): TAnfixTime;
 begin
-  dateTime2Seconds := longint(dt.Hour) * cOneHourInSeconds + longint(dt.Min) * cOneMinuteInSeconds + longint(dt.Sec);
+  dateTime2Seconds := longint(dt.Hour) * cOneHourInSeconds + longint(dt.Min) * cOneMinuteInSeconds +
+    longint(dt.Sec);
 end;
 
 function dateTime2Seconds(dt: TDateTime): TAnfixTime;
@@ -2029,7 +2031,8 @@ begin
   ReadNext(h);
   ReadNext(m);
   ReadNext(s);
-  StrToSeconds := (longint(h) * longint(cOneHourInSeconds) + longint(m) * longint(cOneMinuteInSeconds) + longint(s)) * Faktor;
+  StrToSeconds := (longint(h) * longint(cOneHourInSeconds) + longint(m) *
+    longint(cOneMinuteInSeconds) + longint(s)) * Faktor;
 end;
 
 function StrToSecondsdef(Sstr: string; def: longint): longint;
@@ -2347,20 +2350,33 @@ end;
 
 function DirQuota(const Mask: string; SizeLimit: int64): boolean;
 var
- sDir : TStringList;
- n : integer;
- Path : string;
+  sDir: TStringList;
+  n: integer;
+  Path: string;
+  Size: int64;
+  FName: string;
 begin
- sDir := TStringList.Create;
- Path := ExtractFilePath(Mask)+'\';
- dir(Mask,sDir,false);
- for n := 0 to pred(sDir.Count) do
-  sDir[n] := dTimeStamp(FileDateTime(Path+sDir[n]))+'*'+ sDir[n];
- sDir.Sort;
- //
- sDir.Free;
-
-
+  result := true;
+  sDir := TStringList.create;
+  Path := ExtractFilePath(Mask);
+  dir(Mask, sDir, false);
+  for n := 0 to pred(sDir.Count) do
+    sDir[n] := dTimeStamp(FileDateTime(Path + sDir[n])) + '*' + sDir[n];
+  sDir.sort;
+  Size := 0;
+  for n := pred(sDir.Count) downto 0 do
+  begin
+    FName := Path + NextP(sDir[n], '*', 1);
+    if (Size >= SizeLimit) then
+    begin
+      if not(DeleteFile(FName)) then
+       result := false;
+    end else
+    begin
+      inc(Size, FSize(FName));
+    end;
+  end;
+  sDir.free;
 end;
 
 function Frequently: dword;

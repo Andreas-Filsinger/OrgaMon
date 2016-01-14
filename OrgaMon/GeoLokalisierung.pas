@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -72,12 +72,14 @@ type
     CheckBox1: TCheckBox;
     Edit1: TEdit;
     Image2: TImage;
+    Button2: TButton;
     procedure Button4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private-Deklarationen }
     RequestTime: dword;
@@ -104,10 +106,10 @@ type
     r_error: string;
 
     // locate mit Anhauen des
-    function locate(Strasse, PLZ, Ort, Ortsteil: string; var p: Tpoint2D)
-      : integer; { [POSTLEITZAHLEN_R] } overload;
-    function locate(Strasse, PLZ_Ort, Ortsteil: string; var p: Tpoint2D)
-      : integer; { [POSTLEITZAHLEN_R] } overload;
+    function locate(Strasse, PLZ, Ort, Ortsteil: string; var p: Tpoint2D): integer;
+    { [POSTLEITZAHLEN_R] } overload;
+    function locate(Strasse, PLZ_Ort, Ortsteil: string; var p: Tpoint2D): integer;
+    { [POSTLEITZAHLEN_R] } overload;
 
     // Diagnose + Problembehebung
     procedure SetDiagMode;
@@ -134,7 +136,8 @@ uses
   Datenbank,
   Funktionen_Basis,
   Funktionen_Beleg,
-  Funktionen_Auftrag;
+  Funktionen_Auftrag,
+  Funktionen_LokaleDaten;
 
 {$R *.dfm}
 
@@ -153,12 +156,11 @@ end;
 
 procedure TFormGeoLokalisierung.Button1Click(Sender: TObject);
 begin
-  ShowMessage(format('%g', [Distance(8.41177, 49.00937, 8.39295, 49.01005) *
-    111.136]));
+  ShowMessage(format('%g', [Distance(8.41177, 49.00937, 8.39295, 49.01005) * 111.136]));
 end;
 
-function TFormGeoLokalisierung.locate(Strasse, PLZ, Ort, Ortsteil: string;
-  var p: Tpoint2D): integer;
+function TFormGeoLokalisierung.locate(Strasse, PLZ, Ort, Ortsteil: string; var p: Tpoint2D)
+  : integer;
 var
   StrassenName: string;
   StrasseHausnummer: string;
@@ -214,8 +216,8 @@ var
             Diversitaet := (FieldByName('PLZ_DIVERSITAET').AsString = cc_True);
 
           //
-          if StrassenNameIdentisch(StrassenName,
-            ObtainStrassenName(FieldByName('STRASSE').AsString)) then
+          if StrassenNameIdentisch(StrassenName, ObtainStrassenName(FieldByName('STRASSE').AsString))
+          then
           begin
 
             //
@@ -380,8 +382,8 @@ begin
 
     OrtsteilRelevant := pos('!', Ortsteil) > 0;
 
-    EntryFound := False;
-    Diversitaet := False;
+    EntryFound := false;
+    Diversitaet := false;
     StrasseID := -1;
 
     // schon in der PLZ Tabelle?
@@ -398,9 +400,9 @@ begin
       // Lister aller Alternativ PLZ abfragen!
       if (StrasseID > 0) then
       begin
-        PLZl := e_r_sqlm('select distinct PLZ from POSTLEITZAHLEN ' + ' where '
-          + '(STRASSEID=' + inttostr(StrasseID) + ') and ' +
-          '(PLZ_DIVERSITAET IS NOT NULL) and ' + '(PLZ<>' + PLZ + ')');
+        PLZl := e_r_sqlm('select distinct PLZ from POSTLEITZAHLEN ' + ' where ' + '(STRASSEID=' +
+          inttostr(StrasseID) + ') and ' + '(PLZ_DIVERSITAET IS NOT NULL) and ' + '(PLZ<>' +
+          PLZ + ')');
         for n := 0 to pred(PLZl.count) do
         begin
           CacheCheck(PLZl[n]);
@@ -427,8 +429,7 @@ begin
       if not(visible) then
         show;
 
-    httpRequest := iKartenHost + cLocateScript + '?tan=' +
-      pFormat(FindANewPassword);
+    httpRequest := iKartenHost + cLocateScript + '?tan=' + pFormat(FindANewPassword);
 
     if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
     begin
@@ -526,8 +527,8 @@ begin
           if
           { PLZ } (PLZ = nextp(rList[n], ';', 4)) and
           { Ort } OrtIdentisch(Ort, nextp(rList[n], ';', 5)) and
-          { Strasse } (not(StrasseRelevant) or
-            StrassenNameIdentisch(nextp(rList[n], ';', 5), StrassenName)) then
+          { Strasse } (not(StrasseRelevant) or StrassenNameIdentisch(nextp(rList[n], ';', 5),
+            StrassenName)) then
           begin
             EntryFound := true;
             rLine := rList[n];
@@ -555,10 +556,8 @@ begin
     end;
 
     // Ergebnisse extrahieren
-    { X           0 } p.x := strtodoubledef(nextp(rLine, ';'), 0) /
-      cGEODEZIMAL_Faktor;
-    { Y           1 } p.y := strtodoubledef(nextp(rLine, ';'), 0) /
-      cGEODEZIMAL_Faktor;
+    { X           0 } p.x := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
+    { Y           1 } p.y := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
     { Strasse     2 } r_strasse := nextp(rLine, ';');
     { Hausnummer  3 } nextp(rLine, ';');
     { PLZ         4 } r_plz := nextp(rLine, ';');
@@ -621,8 +620,7 @@ begin
 
       // primärer Eintrag
       n := e_w_GEN('GEN_POSTLEITZAHLEN');
-      e_x_sql('insert into POSTLEITZAHLEN (RID,PLZ,ORT,ORTSTEIL,STRASSE,X,Y,EINTRAG) values ('
-        +
+      e_x_sql('insert into POSTLEITZAHLEN (RID,PLZ,ORT,ORTSTEIL,STRASSE,X,Y,EINTRAG) values (' +
         { RID } inttostr(n) + ',' +
         { PLZ } PLZ + ',' +
         { Ort } '''' + EnsureSQL(r_ort) + ''',' +
@@ -637,8 +635,7 @@ begin
       begin
 
         // Alias Eintrag
-        e_x_sql('insert into POSTLEITZAHLEN (RID,PLZ,ORT,ORTSTEIL,STRASSE,X,Y,EINTRAG) values ('
-          +
+        e_x_sql('insert into POSTLEITZAHLEN (RID,PLZ,ORT,ORTSTEIL,STRASSE,X,Y,EINTRAG) values (' +
           { RID } inttostr(e_w_GEN('GEN_POSTLEITZAHLEN')) + ',' +
           { PLZ } PLZ + ',' +
           { Ort } '''' + EnsureSQL(Ort) + '?'',' + // **!!**
@@ -665,8 +662,7 @@ begin
           Memo1.Lines.add(
             { } 'INFO: Alias-Eintrag mit Ort "' +
             { } Ort +
-            { } '?" wurde gespeichert, da die Lokalisierung einen anderen Ort ergeben hat ('
-            +
+            { } '?" wurde gespeichert, da die Lokalisierung einen anderen Ort ergeben hat (' +
             { } r_ort + ')!');
         end;
 
@@ -685,7 +681,7 @@ begin
   until true;
 
   Result := POSTLEITZAHLEN_R;
-  p_OffLineMode := False;
+  p_OffLineMode := false;
 
   if Diagnose_Ergebnis then
   begin
@@ -698,8 +694,7 @@ begin
   end;
 end;
 
-function TFormGeoLokalisierung.locate(Strasse, PLZ_Ort, Ortsteil: string;
-  var p: Tpoint2D): integer;
+function TFormGeoLokalisierung.locate(Strasse, PLZ_Ort, Ortsteil: string; var p: Tpoint2D): integer;
 var
   pStrasse, pPLZ_Ort, pOrtsteil: string;
   k: integer;
@@ -730,11 +725,9 @@ begin
   //
   pOrtsteil := quickCheck(Ortsteil);
   if (pos(' ', pPLZ_Ort) = 6) or (length(pPLZ_Ort) = 5) then
-    Result := locate(pStrasse, copy(pPLZ_Ort, 1, 5), copy(pPLZ_Ort, 7, MaxInt),
-      pOrtsteil, p)
+    Result := locate(pStrasse, copy(pPLZ_Ort, 1, 5), copy(pPLZ_Ort, 7, MaxInt), pOrtsteil, p)
   else
-    Result := locate(pStrasse, cImpossiblePLZ, copy(pPLZ_Ort, 1, MaxInt),
-      pOrtsteil, p);
+    Result := locate(pStrasse, cImpossiblePLZ, copy(pPLZ_Ort, 1, MaxInt), pOrtsteil, p);
 end;
 
 procedure TFormGeoLokalisierung.SetDiagMode;
@@ -744,15 +737,20 @@ end;
 
 procedure TFormGeoLokalisierung.UnSetDiagMode;
 begin
-  CheckBox1.Checked := False;
-Diagnose_PHP := false;
-  Diagnose_Ergebnis := False;
+  CheckBox1.Checked := false;
+  Diagnose_PHP := false;
+  Diagnose_Ergebnis := false;
 end;
 
 procedure TFormGeoLokalisierung.ShowResult(p: Tpoint2D);
 begin
   StaticText1.caption := format('%g;%g', [p.x, p.y]);
   StaticText2.caption := format('%d ms Abfragedauer', [RequestTime]);
+end;
+
+procedure TFormGeoLokalisierung.Button2Click(Sender: TObject);
+begin
+  KartenQuota;
 end;
 
 procedure TFormGeoLokalisierung.Button3Click(Sender: TObject);
@@ -786,8 +784,8 @@ begin
       p.x := FieldByName('X').AsDouble;
       p.y := FieldByName('Y').AsDouble;
 
-      CompareStr := FieldByName('PLZ').AsString + ';' + FieldByName('ORT')
-        .AsString + ';' + FieldByName('STRASSE').AsString;
+      CompareStr := FieldByName('PLZ').AsString + ';' + FieldByName('ORT').AsString + ';' +
+        FieldByName('STRASSE').AsString;
 
       repeat
 
@@ -847,8 +845,8 @@ begin
     begin
       repeat
         p_OffLineMode := true;
-        POSTLEITZAHL_R := locate(FieldByName('STRASSE').AsString,
-          FieldByName('PLZ').AsString, FieldByName('ORT').AsString, '', p);
+        POSTLEITZAHL_R := locate(FieldByName('STRASSE').AsString, FieldByName('PLZ').AsString,
+          FieldByName('ORT').AsString, '', p);
         if (POSTLEITZAHL_R > 0) then
         begin
 
@@ -857,21 +855,20 @@ begin
           e_x_dereference('AUFTRAG.POSTLEITZAHL_R', inttostr(POSTLEITZAHL_R));
 
           // b) set x,y = null
-          e_x_sql('update POSTLEITZAHLEN set X=null,y=null,eintrag=null where RID='
-            + inttostr(POSTLEITZAHL_R));
+          e_x_sql('update POSTLEITZAHLEN set X=null,y=null,eintrag=null where RID=' +
+            inttostr(POSTLEITZAHL_R));
 
         end
         else
         begin
           break;
         end;
-      until False;
+      until false;
       ApiNext;
       if frequently(StartTime, 333) or eof then
       begin
         application.processmessages;
-        StaticText2.caption := FieldByName('PLZ').AsString + ' ' +
-          FieldByName('STRASSE').AsString;
+        StaticText2.caption := FieldByName('PLZ').AsString + ' ' + FieldByName('STRASSE').AsString;
       end;
     end;
   end;

@@ -222,6 +222,7 @@ begin
 
                 // Verzeichnis Löschungen
                 DirDelete(ImportePath + '*', 10);
+                KartenQuota;
 
               end;
             3:

@@ -32,7 +32,7 @@ object FormepIMPORT: TFormepIMPORT
     Top = 56
     Width = 594
     Height = 345
-    ActivePage = TabSheet7
+    ActivePage = TabSheet3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'EP'
@@ -212,7 +212,7 @@ object FormepIMPORT: TFormepIMPORT
       end
     end
     object TabSheet3: TTabSheet
-      Caption = 'Datafactory Postalcode'
+      Caption = 'Geo'
       ImageIndex = 2
       object Button6: TButton
         Left = 48

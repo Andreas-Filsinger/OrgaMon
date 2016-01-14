@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007-2014  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -671,7 +671,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 184;
+  cAllSettingsAnz = 185;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel',
     'NachlieferungInfo', 'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad',
     'SicherungsPfad', 'SicherungsPrefix', 'SicherungenAnzahl', 'NichtMehrLieferbarInfo',
@@ -711,7 +711,8 @@ CONST
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP', 'FotoPfad',
     'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad',
     'VerlagsdatenabgleichPfad', 'KartenProfil', 'SchubladePort', 'TagwacheBaustelle',
-    'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf', 'TagesabschlussIdle');
+    'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf', 'TagesabschlussIdle',
+    'KartenQuota');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8494,6 +8495,8 @@ begin
   iKartenPfad := sSystemSettings.values['KartenPfad'];
   iKartenHost := sSystemSettings.values['KartenHost'];
   iKartenProfil := sSystemSettings.values['KartenProfil'];
+  iKartenQuota := StrToInt64Def(sSystemSettings.values['KartenQuota'],0);
+
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iFSPath := sSystemSettings.values['FunktionsSicherungstellungsPfad'];
 
@@ -8536,6 +8539,7 @@ begin
     iKartenPfad := EigeneOrgaMonDateienPfad + 'Karten\';
   if (iKartenHost = '') then
     iKartenHost := cOpenStreetMap_TileURL;
+
 
   if (iAuftragsAblagePath = '') then
     iAuftragsAblagePath := iAuftragsObjektPath;
