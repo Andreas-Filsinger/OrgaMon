@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.137; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.138; // ..\rev\OrgaMon.rev.txt
   cVersion_JonDa: single = 1.118;
   cVersion_OrgaMonApp: single = 2.000;
 
@@ -2142,6 +2142,7 @@ KassePath := MyProgramPath + 'Kasse\';
 
 StartDebug('CheckCreate.begin');
 
+{$ifndef CONSOLE}
 CheckCreateDir(WebPath);
 CheckCreateDir(ProtokollePath);
 CheckCreateDir(ContextPath);
@@ -2165,6 +2166,7 @@ CheckCreateDir(WebDir);
 CheckCreateDir(SearchDir);
 CheckCreateDir(CDRAusgabe);
 CheckCreateDir(AnwenderPath);
+{$endif}
 
 StartDebug('CheckCreate.end');
 

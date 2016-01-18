@@ -469,7 +469,7 @@ begin
       // interne Varibale setzen
       DiagnosePath := MyProgramPath;
       caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' +
-        RevToStr(JonDaExec.Version);
+        RevToStr(Version);
 
       // Ini-Datei öffnen
       MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
@@ -504,10 +504,10 @@ begin
       //
       JonDaX.BeginAction(
         { } 'Start ' + cApplicationName +
-        { } ' Rev. ' + RevToStr(JonDaExec.Version) +
+        { } ' Rev. ' + RevToStr(Version) +
         { } ' [' + UserName + ']');
 
-      CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(JonDaExec.Version) + ' gestartet');
+      CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(Version) + ' gestartet');
 
       // Verzeichnisse Anlegen
       if FileExists(MyProgramPath + cIniFName) then

@@ -390,9 +390,7 @@ begin
     if (SectionName = '') then
       SectionName := UserName;
 
-    writeln(
-      { } 'cJonDaServer Rev. ' + RevToStr(JonDaExec.version) + ' - ' +
-      { } MyProgramPath);
+    writeln('Service-App [' + MyProgramPath + ']');
     JonDa := TJonDaExec.Create;
 
     // DebugMode?
@@ -440,9 +438,9 @@ begin
     writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost + ' für FTP');
 
     // Log den Neustart
-    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(JonDaExec.version) + ' [' +
+    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' +
       SectionName + ']');
-    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(JonDaExec.version) + ' gestartet');
+    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' gestartet');
 
     repeat
 

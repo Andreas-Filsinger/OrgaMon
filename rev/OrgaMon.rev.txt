@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.138 (15.01.16-18.01.16) Andreas Filsinger
+
+ Neu: Vertrag: Zusätzlich: Neuer Parameter "Rechnungsempfänger=~PERSON_R~", richtet die Abrechnung des
+      Vertrages nicht an den Vertragsnehmer sondern eine andere Person
+ Neu: Beleg: Kopie: der abweichende Rechnungsempfänger wird nicht mehr mitkopiert
+ Neu: Beleg: Kopie: die abweichende Lieferanschrift wird nicht mehr mitkopiert
+ Neu: OLAP: store funktioniert jetzt auch mit $Variablen
+
+ Merge: JonDaServer 3.002
+ Merge: FotoExec 2.000
+
 Rev 8.137 (14.01.16) Andreas Filsinger
 
  Neu: System: Parameter: KartenQuota, ermöglicht eine platz-limitierende Pflege des KartenPfades

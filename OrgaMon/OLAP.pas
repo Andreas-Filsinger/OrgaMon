@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1481,7 +1481,7 @@ begin
       if (pos('store', Line) = 1) then
       begin
         State := cState_store;
-        LoadFname := nextp(Line, ' ', 1);
+        LoadFname := ResolveParameter(nextp(Line, ' ', 1));
         continue;
       end;
 

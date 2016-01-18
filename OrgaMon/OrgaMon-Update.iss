@@ -52,6 +52,7 @@ Source: "..\libxml2\bin\libxml2.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesn
 
 ; neue und aktualisierte notwendige Files
 Source: "Distribution\HTML Vorlagen\COR1.xml"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
+Source: "Distribution\HTML Vorlagen\+*"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
 Source: "Distribution\System\BLZ_*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
 
 [Icons]

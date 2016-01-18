@@ -850,18 +850,18 @@ procedure TFormServiceFoto.doRemote(GeraeteNo, Command, FName: string);
 const
   cRemoteFotoPath = '/mnt/sdcard/DCIM/Camera/';
 var
-  sKOmmandos: TStringList;
+  sKommandos: TStringList;
   KommandoFName: String;
 begin
-  sKOmmandos := TStringList.Create;
+  sKommandos := TStringList.Create;
 
   KommandoFName := MyFotoExec.JonDaServerPath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
-    sKOmmandos.LoadFromFile(KommandoFName);
+    sKommandos.LoadFromFile(KommandoFName);
 
   // mv
-  if Command = 'mv' then
-    sKOmmandos.add(
+  if (Command = 'mv') then
+    sKommandos.add(
       { } Command + ' ' +
       { } cRemoteFotoPath + 'u' +
       { } FName + ' ' +
@@ -869,20 +869,20 @@ begin
       { } FName);
 
   // rm
-  if Command = 'rm' then
-    sKOmmandos.add(
+  if (Command = 'rm') then
+    sKommandos.add(
       { } Command + ' ' +
       { } cRemoteFotoPath + 'u' +
       { } FName);
 
-  sKOmmandos.SaveToFile(KommandoFName, TEncoding.UTF8);
-  sKOmmandos.Free;
+  sKommandos.SaveToFile(KommandoFName, TEncoding.UTF8);
+  sKommandos.Free;
 
 end;
 
 procedure TFormServiceFoto.FormCreate(Sender: TObject);
 begin
-  Caption := 'Service-Foto Rev. ' + RevToStr(FotoExec.Version);
+  Caption := 'Service-Foto Rev. ' + RevToStr(Version);
   PageControl1.ActivePage := TabSheet1;
   MyFotoExec := TownFotoExec.Create;
 end;

@@ -711,8 +711,7 @@ CONST
     'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP', 'FotoPfad',
     'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad',
     'VerlagsdatenabgleichPfad', 'KartenProfil', 'SchubladePort', 'TagwacheBaustelle',
-    'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf', 'TagesabschlussIdle',
-    'KartenQuota');
+    'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf', 'TagesabschlussIdle', 'KartenQuota');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -6151,8 +6150,10 @@ begin
           // weitere Daten bestimmen!
           PERSON_R := FieldByName('PERSON_R').AsInteger;
           BELEG_R := FieldByName('BELEG_R').AsInteger;
-          PERSON_RECHNUNG_R := e_r_sql(
-            { } 'select RECHNUNGSANSCHRIFT_R from BELEG where RID=' + inttostr(BELEG_R));
+          PERSON_RECHNUNG_R := StrToIntDef(EINSTELLUNGEN.values['Rechnungsempfänger'], cRID_unset);
+          if (PERSON_RECHNUNG_R < cRID_FirstValid) then
+            PERSON_RECHNUNG_R := e_r_sql(
+              { } 'select RECHNUNGSANSCHRIFT_R from BELEG where RID=' + inttostr(BELEG_R));
 
           // Vertragsanwendungsbeginn und VertragsanwendungsEnde bestimmen
           VertragsTexte.values['Beginn'] := long2date(ERSTER_ABRECHNUNGSTAG);
@@ -6189,6 +6190,7 @@ begin
           if (PERSON_RECHNUNG_R >= cRID_FirstValid) then
           begin
             PERSON_R := PERSON_RECHNUNG_R;
+            // suche einen bereits angefangen Beleg und erweitere den
             ZIEL_BELEG_R := e_r_sql(
               { } 'select max(RID) from BELEG where' +
               { } ' (PERSON_R=' + inttostr(PERSON_R) + ') and' +
@@ -8318,7 +8320,8 @@ begin
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
   iTagesAbschlussAuf := cutblank(sSystemSettings.values['TagesabschlussAuf']);
   iCronAuf := cutblank(sSystemSettings.values['CronAuf']);
-  iIdleProzessPrioritaetAbschluesse := cutblank(sSystemSettings.values['TagesabschlussIdle']) <> cIni_DeActivate;
+  iIdleProzessPrioritaetAbschluesse := cutblank(sSystemSettings.values['TagesabschlussIdle']) <>
+    cIni_DeActivate;
   iNachTagesAbschlussHerunterfahren := sSystemSettings.values['NachTagesAbschlussHerunterfahren']
     = cIni_Activate;
   iNachTagesAbschlussRechnerNeustarten := sSystemSettings.values
@@ -8495,7 +8498,7 @@ begin
   iKartenPfad := sSystemSettings.values['KartenPfad'];
   iKartenHost := sSystemSettings.values['KartenHost'];
   iKartenProfil := sSystemSettings.values['KartenProfil'];
-  iKartenQuota := StrToInt64Def(sSystemSettings.values['KartenQuota'],0);
+  iKartenQuota := StrToInt64Def(sSystemSettings.values['KartenQuota'], 0);
 
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iFSPath := sSystemSettings.values['FunktionsSicherungstellungsPfad'];
@@ -8539,7 +8542,6 @@ begin
     iKartenPfad := EigeneOrgaMonDateienPfad + 'Karten\';
   if (iKartenHost = '') then
     iKartenHost := cOpenStreetMap_TileURL;
-
 
   if (iAuftragsAblagePath = '') then
     iAuftragsAblagePath := iAuftragsObjektPath;
@@ -9528,7 +9530,7 @@ begin
           BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
 
     // prüfe Existenz der Ziel-Person
-    if e_r_sql('select count(rid) from person where RID=' + inttostr(PERSON_R_TO)) <> 1 then
+    if e_r_sql('select count(RID) from PERSON where RID=' + inttostr(PERSON_R_TO)) <> 1 then
       break;
 
     // lege neuen Beleg an
@@ -9540,6 +9542,8 @@ begin
     BlackList.add('GENERATION');
     BlackList.add('NUMMER');
     BlackList.add('PERSON_R');
+    BlackList.add('RECHNUNGSANSCHRIFT_R');
+    BlackList.add('LIEFERANSCHRIFT_R');
     BlackList.add('INTERN_INFO');
     BlackList.add('ANLAGE');
     BlackList.add('ABSCHLUSS');
