@@ -75,7 +75,7 @@ Source: "Distribution\OrgaMon-Daten.ini"; DestDir: "{userdocs}\OrgaMon\Daten"; D
 
 Source: "Distribution\OLAP\*"; DestDir: "{userdocs}\OrgaMon\Daten\OLAP"; Flags: onlyifdoesntexist
 Source: "Distribution\Mahnung.Unplausibel.OLAP.txt"; DestDir: "{userdocs}\OrgaMon\Daten\OLAP"
-Source: "Distribution\HTML Vorlagen\*.html"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
+Source: "Distribution\HTML Vorlagen\*"; DestDir: "{userdocs}\OrgaMon\Daten\HTML Vorlagen"; Flags: onlyifdoesntexist
 Source: "Distribution\System\*"; DestDir: "{userdocs}\OrgaMon\Daten\System"; Flags: onlyifdoesntexist
 Source: "Distribution\Noten\*"; DestDir: "{userdocs}\OrgaMon\Daten\Noten"; Flags: onlyifdoesntexist
 Source: "Distribution\LeereDatenbank\*"; DestDir: "{userdocs}\OrgaMon\Daten\LeereDatenbank"; Flags: onlyifdoesntexist

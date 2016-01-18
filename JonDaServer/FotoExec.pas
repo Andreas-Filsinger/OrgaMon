@@ -41,8 +41,6 @@ uses
   globals;
 
 const
-  Version: single = 2.000; // ..\rev\Service-Foto.rev.txt
-
   // root Locations
   cWorkPath = 'W:\' deprecated 'read it from ini';
   cBackUpPath = 'I:\KundenDaten\SEWA\' deprecated 'read it from ini';

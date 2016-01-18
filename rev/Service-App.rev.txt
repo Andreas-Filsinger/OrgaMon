@@ -18,6 +18,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/mediawiki/index.php5/JonDa.Server"><font color="blue">Weblink: Onlinedokumentation "JonDaServer"</font></a href>
 
+Rev 3.002 (18.01.16) Andreas Filsinger
+
+ Bug: Erkennung der Gerätenumnmer anhand der *.zip Datei schlug fehl
+
+ --- letzter Eintrag, Entwicklung geht im cOrgaMon Projekt weiter ---
+
 Rev 3.001 (21.12.15) Andreas Filsinger
 
  Neu: Lauffähig auf der "alten" Verzeichnisstruktur "JonDaServer"

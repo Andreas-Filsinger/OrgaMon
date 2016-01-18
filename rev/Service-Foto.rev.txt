@@ -22,6 +22,8 @@ Rev 2.000 (18.12.15) Andreas Filsinger
 
  Neu: Integration in den cOrgaMon
 
+ --- letzter Eintrag, Entwicklung geht im cOrgaMon Projekt weiter ---
+
 Rev 1.061 (24.09.15) Andreas Filsinger
 
  Bug: Abzug= wurde nicht ausgewertet

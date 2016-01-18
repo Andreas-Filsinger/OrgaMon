@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -73,9 +73,6 @@ type
     Label11: TLabel;
     IB_Query2: TIB_Query;
     IB_DataSource2: TIB_DataSource;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton3: TSpeedButton;
     IB_Query3: TIB_Query;
     IB_DataSource3: TIB_DataSource;
     TabSheet3: TTabSheet;
@@ -115,9 +112,6 @@ type
     procedure IB_Query3AfterScroll(IB_Dataset: TIB_Dataset);
     procedure FormCreate(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
-    procedure SpeedButton1Click(Sender: TObject);
-    procedure SpeedButton2Click(Sender: TObject);
-    procedure SpeedButton3Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
@@ -484,21 +478,6 @@ begin
 
   Label16.caption := inttostr(IB_Query3.Recordcount);
 
-end;
-
-procedure TFormVertrag.SpeedButton1Click(Sender: TObject);
-begin
-  ShowMessage('-- ohne Funktion --');
-end;
-
-procedure TFormVertrag.SpeedButton2Click(Sender: TObject);
-begin
-  ShowMessage('-- ohne Funktion --');
-end;
-
-procedure TFormVertrag.SpeedButton3Click(Sender: TObject);
-begin
-  ShowMessage('-- ohne Funktion --');
 end;
 
 procedure TFormVertrag.SpeedButton4Click(Sender: TObject);

@@ -36,8 +36,6 @@ uses
   anfix32, wordindex, IdFTP;
 
 const
-  version: single = 3.001; // ..\rev\Service-App.rev.txt
-
   // Für ungesetzte Daten-Bank RIDs
   cRID_Null = -1;
 
@@ -1430,7 +1428,7 @@ begin
       GeraeteNo := detectGeraeteNummer(MyProgramPath + AktTrn);
       if (GeraeteNo = '') then
       begin
-        log(cERRORText + ' 880:"' + MyProgramPath + AktTrn + '\nnn.zip" fehlt!');
+        log(cERRORText + ' 1433:"' + MyProgramPath + AktTrn + '\nnn.zip" fehlt!');
         inc(ErrorCount);
         break;
       end;
@@ -4593,7 +4591,7 @@ var
 begin
   result := '';
   DirEntries := TStringList.Create;
-  dir(ValidatePathName(sPath) + '\*' + cZIPExtension, DirEntries);
+  dir(ValidatePathName(sPath) + '\*' + cZIPExtension, DirEntries, false);
   for i := 0 to DirEntries.count - 1 do
   begin
     ZipPraefix := nextp(DirEntries[i], cZIPExtension, 0);
