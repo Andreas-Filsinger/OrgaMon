@@ -47,12 +47,10 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.138; // ..\rev\OrgaMon.rev.txt
-  cVersion_JonDa: single = 1.118;
-  cVersion_OrgaMonApp: single = 2.000;
+  Version: single = 8.139; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
-  cMinVersion_OrgaMonApp: single = 2.016;
+  cMinVersion_OrgaMonApp: single = 2.020;
 
   // INI Sachen
   cIniFName = cApplicationName + '.ini';
@@ -557,7 +555,7 @@ const
   cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';
-  cProtExtension = '.TXT';
+  cProtExtension = '.txt';
 
   // Eingabe.nnn.txt
   cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';

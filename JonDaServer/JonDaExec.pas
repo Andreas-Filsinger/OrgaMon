@@ -202,7 +202,6 @@ type
     class function FormatZaehlerNummerNeu(const s: string): string;
 
     class function active(a: boolean): string;
-    class function ProtokollPath(Rev: single): string;
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
     class function toBild(const mderec: TMdeRec): string;
@@ -1896,22 +1895,6 @@ begin
             end;
           end;
 
-          // pre 2.019 Bug: "Alles fertig",
-          if (RevIsFrom(RemoteRev, cVersion_OrgaMonApp)) then
-            if (RevIsBefore(RemoteRev, 2.019)) then
-              if (pos('ZZ=J', mderec.ProtokollInfo) > 0) then
-                if (
-                  { } (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
-                  { } (mderec.ausfuehren_ist_datum = cMonDa_Status_unbearbeitet)) then
-                begin
-                  inc(Stat_AusfuehrungsMomentKorrektur);
-                  WechselmomentKorrektur.add(mderec.RID);
-
-                  // Auf "heute" 12:00:00 h umstellen!
-                  mderec.ausfuehren_ist_datum := _DateGet;
-                  mderec.ausfuehren_ist_uhr := cNoon;
-                end;
-
           // isTest, damit kann man Eingaben ignorieren!
           // z.B. Test-Eingabe "Thüga" alle ignorieren!
           if isTest(GeraeteNo, mderec.RID, mderec.ausfuehren_ist_datum) then
@@ -2186,22 +2169,12 @@ begin
         WriteJonDa(':' + ProtS);
 
         //
-        ProtocolL.LoadFromFile(ProtokollPath(RemoteRev) + ProtocolAll[m] + cProtExtension);
+        ProtocolL.LoadFromFile(MyProgramPath + cProtokollPath + ProtocolAll[m] + cProtExtension);
 
-        if RevIsBefore(RemoteRev, cVersion_OrgaMonApp) then
-        begin
-          for k := 0 to pred(ProtocolL.count) do
-            if (length(ProtocolL[k]) > 0) then
-              if (ProtocolL[k][1] <> ':') then
-                WriteJonDa(Oem2asci(ProtocolL[k]));
-        end
-        else
-        begin
-          for k := 0 to pred(ProtocolL.count) do
-            if (length(ProtocolL[k]) > 0) then
-              if (ProtocolL[k][1] <> ':') then
-                WriteJonDa(ProtocolL[k]);
-        end;
+        for k := 0 to pred(ProtocolL.count) do
+          if (length(ProtocolL[k]) > 0) then
+            if (ProtocolL[k][1] <> ':') then
+              WriteJonDa(ProtocolL[k]);
       end;
 
       // nun alle Geräte-Optionen noch anfügen, falls vorhanden
@@ -2235,21 +2208,12 @@ begin
       // Neue Aufträge bereitstellen
       repeat
 
-        // noch JonDa?
-        if not(RevIsFrom(RemoteRev, cVersion_OrgaMonApp)) then
-        begin
-          log(cWARNINGText + ' JonDa ' + RevToStr(RemoteRev) + ' wird nicht mehr unterstützt!');
-          FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend.txt',
-            MyProgramPath + AktTrn + '\auftrag.txt');
-          break;
-        end;
-
         // zu alte OrgaMon-App?
         if not(RevIsFrom(RemoteRev, cMinVersion_OrgaMonApp)) then
         begin
           // Programmversion ist zu alt!
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
-          FileCopy(ProtokollPath(RemoteRev) + 'VersionNichtAusreichend' + cUTF8DataExtension,
+          FileCopy(MyProgramPath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           Stat_PostError := 'veraltet';
           break;
@@ -2260,7 +2224,7 @@ begin
         begin
           // Unbekannte Gerätenummer
           log(cWARNINGText + ' Unbekannte Gerätenummer!');
-          FileCopy(ProtokollPath(RemoteRev) + 'Undefiniert' + cUTF8DataExtension,
+          FileCopy(MyProgramPath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           Stat_PostError := 'undefiniert';
           break;
@@ -2271,7 +2235,7 @@ begin
         begin
           // Unbezahlt!
           log(cWARNINGText + ' Unbezahlter Zeitraum!');
-          FileCopy(ProtokollPath(RemoteRev) + 'Unbezahlt' + cUTF8DataExtension,
+          FileCopy(MyProgramPath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           Stat_PostError := 'unbezahlt';
           break;
@@ -2282,7 +2246,7 @@ begin
         begin
           // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
-          FileCopy(ProtokollPath(RemoteRev) + 'Unbekannt' + cUTF8DataExtension,
+          FileCopy(MyProgramPath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension,
             MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
           Stat_PostError := 'unbekannt';
           break;
@@ -2476,7 +2440,7 @@ begin
         // speichern
         if oldInfrastructure then
           SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
-          else
+        else
           SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
         SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
       end;
@@ -2512,14 +2476,6 @@ begin
   AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';' +
     inttostr(RDTSCms - StartTime) + 'ms', MyProgramPath + cJonDaServer_XMLRPCLogFName);
 
-end;
-
-class function TJonDaExec.ProtokollPath(Rev: single): string;
-begin
-  if RevIsFrom(Rev, cVersion_OrgaMonApp) then
-    result := MyProgramPath + cProtokollPath
-  else
-    result := MyProgramPath + cUpdatePath;
 end;
 
 function TJonDaExec.start(sParameter: TStringList): TStringList;
@@ -3976,53 +3932,32 @@ begin
     end
     else
     begin
+
       result := '';
       repeat
-        if FileExists(ProtokollPath(RemoteRev) + _baustelle + Art + cProtExtension) then
+        if FileExists(MyProgramPath + cProtokollPath + _baustelle + Art + cProtExtension) then
         begin
           result := _baustelle + Art;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + _baustelle + cProtExtension) then
+        if FileExists(MyProgramPath + cProtokollPath + _baustelle + cProtExtension) then
         begin
           result := _baustelle;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + Art + cProtExtension) then
+        if FileExists(MyProgramPath + cProtokollPath + cProtPrefix + Art + cProtExtension) then
         begin
           result := cProtPrefix + Art;
           break;
         end;
 
-        if FileExists(ProtokollPath(RemoteRev) + cProtPrefix + cProtExtension) then
-        begin
-          result := cProtPrefix;
-          break;
-        end;
+        result := cProtPrefix;
+
       until true;
 
-      if (result = cProtPrefix) and RevIsFrom(RemoteRev, cVersion_OrgaMonApp) then
-      begin
-        // Gibt es etwas passenderes aus der JonDa-Zeit
-        JonDaProtokoll := toProtokollFName(mderec, cVersion_JonDa);
-        if (JonDaProtokoll <> '') then
-          if (JonDaProtokoll <> result) then
-          begin
-            // Autogen des Protokolles
-            if migrateProtokoll(
-              { } ProtokollPath(cVersion_JonDa) + JonDaProtokoll + cProtExtension,
-              { } ProtokollPath(cVersion_OrgaMonApp) + JonDaProtokoll + cProtExtension) then
-              result := JonDaProtokoll;
-          end;
-      end
-      else
-      begin
-        result := AnsiUpperCase(result);
-      end;
       sProtokolle.add(_baustelle + Art + cJondaProtokollDelimiter + result);
-
     end;
   end;
 end;
@@ -4496,7 +4431,7 @@ begin
       insert(3, '#');
     end;
 
-    sMigrationsVorlage.LoadFromFile(ProtokollPath(cVersion_OrgaMonApp) + cMigrationsVorlage_FName);
+    sMigrationsVorlage.LoadFromFile(MyProgramPath + 'Update\' + cMigrationsVorlage_FName);
 
     // Einfüge Punkt suchen
     InsertPoint := sMigrationsVorlage.IndexOf(cJondaProtokollDelimiter);

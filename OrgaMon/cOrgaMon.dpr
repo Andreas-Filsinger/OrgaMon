@@ -205,13 +205,13 @@ var
   sLog: TStringList;
 begin
 
-  // imp pend: Wie könnte man dies Steuern?
-  MyProgramPath := 'W:\JonDaServer\';
-
   MyFotoExec := TownFotoExec.Create;
+  MyFotoExec.readIni;
+
   TimerWartend := 0;
   TimerInit := 0;
 
+  // auf der Entwicklung-Maschine sofortiges Starten sicherstellen
   if (ComputerName = 'KHAO') then
     TimerInit := cKikstart_delay * 60 * 1000;
 
@@ -390,7 +390,6 @@ begin
     if (SectionName = '') then
       SectionName := UserName;
 
-    writeln('Service-App [' + MyProgramPath + ']');
     JonDa := TJonDaExec.Create;
 
     // DebugMode?
@@ -407,15 +406,18 @@ begin
 
     // lade IMEI
     write('Lade Tabelle IMEI ... ');
-    JonDa.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
-    writeln(InttoStr(JonDa.tIMEI.Count));
+    with JonDa.tIMEI do
+    begin
+      insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+      writeln(InttoStr(RowCount));
+    end;
 
     // lade IMEI-OK
     write('Lade Tabelle IMEI-OK ... ');
     with JonDa.tIMEI_OK do
     begin
       insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
-      writeln(InttoStr(Count));
+      writeln(InttoStr(RowCount));
     end;
 
     // Ini-Datei öffnen

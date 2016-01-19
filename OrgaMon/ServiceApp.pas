@@ -1118,7 +1118,7 @@ procedure TFormServiceApp.Button16Click(Sender: TObject);
 var
   SourceFName, DestFNAme: string;
 begin
-  SourceFName := JonDaX.ProtokollPath(cVersion_JonDa) + Edit23.text;
+  SourceFName := MyProgramPath + 'Update\' + Edit23.text;
   DestFNAme := MyProgramPath + cProtPrefix + cProtExtension;
   JonDaX.migrateProtokoll(SourceFName, DestFNAme);
   openshell(DestFNAme);
