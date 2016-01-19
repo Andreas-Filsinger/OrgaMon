@@ -45,6 +45,8 @@ const
 
   // Warte Zeiten [min]
   cKikstart_delay = 10;
+
+  // Anzahl der Stellen verschiedener Ablagesysteme
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
 
@@ -68,20 +70,25 @@ type
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
 
     // Ini-Sachen
-    // Einstiegs-Pfade
-    cWorkPath: string; // 'W:\'
-    cBackUpPath: string; // 'I:\KundenDaten\SEWA\'
-    cWebPath: string; // 'W:\status\'
 
-    // Unterverzeichnisse
-    cLocation_MOB: string; // 'orgamon-mob\'
-    cLocation_JonDaServer: string; // 'JonDaServer\'
-    cLocation_Unverarbeitet: string; // 'unverarbeitet\'
-    cLocation_Manuell: string; // 'manuell\'
+    // 'W:\' Ausgangspunkt der Internet-Ablagen
+    pAblageRootPath: string;
+
+    // 'I:\KundenDaten\SEWA\JonDaServer\'
+    pBackUpPath: string;
+
+    // 'W:\status\'
+    pWebPath: string;
+
+    // W:\orgamon-mob\
+    pFTPPath: string;
+
+    // W:\orgamon-mob\unverarbeitet\
+    pUnverarbeitetPath: string;
 
     // Verzeichnisse
     function MyWorkingPath: string;
-    function MobUploadPath: string;
+    function MyBackupPath: string;
 
     // Dateinamen
     function AblageFname: string;
@@ -216,15 +223,12 @@ begin
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
 
     // die ganzen Pfade
-    cWorkPath := ReadString(SectionName, 'WorkPath', 'W:\');
-    cBackUpPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
-    cWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
-
-    // Unterverzeichnisse
-    cLocation_MOB := ReadString(SectionName, 'Location_MOB', 'orgamon-mob\');
-    cLocation_JonDaServer := ReadString(SectionName, 'Location_JonDaServer', 'JonDaServer\');
-    cLocation_Unverarbeitet := ReadString(SectionName, 'Location_Unverarbeitet', 'unverarbeitet\');
-    cLocation_Manuell := ReadString(SectionName, 'Location_Manuell', 'manuell\');
+    pAblageRootPath := ReadString(SectionName, 'WorkPath', 'W:\');
+    pBackUpPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
+    pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
+    pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath',
+      'W:\orgamon-mob\unverarbeitet');
 
   end;
   MyIni.Free;
@@ -244,9 +248,21 @@ begin
   end;
 end;
 
-function TFotoExec.MobUploadPath: string;
+function TFotoExec.MyBackupPath: string;
+var
+  sDirs: TStringList;
+  n: integer;
 begin
-  result := cWorkPath + cLocation_MOB;
+  // cFotosPath
+  // Zielbestimmung Sicherungsunterverzeichnis
+  sDirs := TStringList.Create;
+  dir(pBackUpPath + '*.', sDirs, false);
+  sDirs.sort;
+  for n := pred(sDirs.count) downto 0 do
+    if (pos('.', sDirs[n]) = 1) then
+      sDirs.Delete(n);
+  result := pBackUpPath + sDirs[pred(sDirs.count)] + '\';
+  sDirs.Free;
 end;
 
 function TFotoExec.MyWorkingPath: string;
@@ -259,7 +275,7 @@ var
   mIni: TIniFile;
   i: int64;
 begin
-  mIni := TIniFile.Create(MobUploadPath + 'Backup-Service.ini');
+  mIni := TIniFile.Create(MyProgramPath + 'Backup-Service.ini');
   with mIni do
   begin
     result := StrToInt(ReadString('System', 'Sequence', '0'));
@@ -325,8 +341,8 @@ var
 
     // Datei wegsperren, aber nicht löschen!
     FileMove(
-      { } MobUploadPath + sFiles[m],
-      { } MobUploadPath + cLocation_Unverarbeitet + ID + '+' + sFiles[m]);
+      { } pFTPPath + sFiles[m],
+      { } pUnverarbeitetPath + ID + '+' + sFiles[m]);
 
     // Datei aus der Verarbeitungskette entfernen
     sFiles.Delete(m);
@@ -348,14 +364,14 @@ begin
   ID := '';
 
   // get File List
-  dir(MobUploadPath + '*.jpg', sFiles, false);
+  dir(pFTPPath + '*.jpg', sFiles, false);
 
   // reduce to Files-Age > 5 Seconds
   d := DateGet;
   s := SecondsGet;
   for n := pred(sFiles.count) downto 0 do
   begin
-    FName := MobUploadPath + sFiles[n];
+    FName := pFTPPath + sFiles[n];
     FileAge(FName, FileTimeStamp);
     File_Date := DateTime2long(FileTimeStamp);
     File_Seconds := cIllegalSeconds;
@@ -401,13 +417,16 @@ begin
 
   // Generate Work-TAN
   if (sFiles.count > 0) then
+  begin
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
+    CheckCreateDir(MyBackupPath + cFotosPath);
+  end;
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID + '-' + sFiles[n])) then
+    if not(FileCopy(pFTPPath + sFiles[n], MyBackupPath + cFotosPath + ID + '-' + sFiles[n])) then
     begin
-      Log('ERROR: ' + 'can not write to ' + cBackUpPath + cLocation_MOB);
+      Log('ERROR: ' + 'can not write to ' + MyBackupPath + cFotosPath);
       Log('FATAL');
       exit;
     end;
@@ -416,7 +435,7 @@ begin
   for n := pred(sFiles.count) downto 0 do
   begin
     FullSuccess := false;
-    FName := MobUploadPath + sFiles[n];
+    FName := pFTPPath + sFiles[n];
     Image := TJPEGImage.Create;
     iEXIF := TExifData.Create;
     try
@@ -546,7 +565,8 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, MyProgramPath + cServerDataPath + FotoGeraeteNo + cDATExtension);
+        assignFile(fOrgaMonAuftrag, MyProgramPath + cServerDataPath + FotoGeraeteNo +
+          cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -590,7 +610,8 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
+                cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -604,7 +625,7 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
               sFotoCall.Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
-              sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
+              sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
             sFotoResult := JonDaExec.Foto(sFotoCall);
@@ -612,7 +633,8 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen :=
+              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -658,7 +680,7 @@ begin
             // des SAP Verzeichnisses
             FotoZiel := nextp(FotoZiel, '\', 0);
 
-            if not(DirExists(cWorkPath + FotoZiel)) then
+            if not(DirExists(pAblageRootPath + FotoZiel)) then
             begin
               Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
                 '": Das Verzeichnis existiert nicht');
@@ -669,14 +691,14 @@ begin
             FotoDateiNameVerfuegbar := FotoDateiName;
             i := 1;
             repeat
-              if not(FileExists(cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
+              if not(FileExists(pAblageRootPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -688,13 +710,13 @@ begin
             if (FotoDateiName <> FotoDateiNameVerfuegbar) then
             begin
               if (
-                { } FotoAufnahmeMoment(MobUploadPath + sFiles[m])
+                { } FotoAufnahmeMoment(pFTPPath + sFiles[m])
                 { } >=
-                { } FotoAufnahmeMoment(cWorkPath + FotoZiel + '\' + FotoDateiName)) then
+                { } FotoAufnahmeMoment(pAblageRootPath + FotoZiel + '\' + FotoDateiName)) then
               begin
                 if not(FileRename(
-                  { } cWorkPath + FotoZiel + '\' + FotoDateiName,
-                  { } cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
+                  { } pAblageRootPath + FotoZiel + '\' + FotoDateiName,
+                  { } pAblageRootPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 begin
                   Log('ERROR: ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
                   break;
@@ -727,12 +749,12 @@ begin
 
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
-              { } MobUploadPath + sFiles[m],
-              { } cWorkPath + FotoZiel + '\' + FotoDateiName)) then
+              { } pFTPPath + sFiles[m],
+              { } pAblageRootPath + FotoZiel + '\' + FotoDateiName)) then
             begin
               Log('ERROR: {' + sFiles[m] + ': Kopieren nicht erfolgreich');
-              Log('Quelle war: "' + MobUploadPath + sFiles[m] + '"');
-              Log('Ziel war: "' + cWorkPath + FotoZiel + '\' + FotoDateiName + '" }');
+              Log('Quelle war: "' + pFTPPath + sFiles[m] + '"');
+              Log('Ziel war: "' + pAblageRootPath + FotoZiel + '\' + FotoDateiName + '" }');
               break;
             end;
 
@@ -783,7 +805,7 @@ begin
 
       Log(ID);
       for n := 0 to pred(sFiles.count) do
-        if not(FileDelete(MobUploadPath + sFiles[n])) then
+        if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
           Log('ERROR: ' + sFiles[n] + ': Nicht löschbar');
           Log('FATAL');
@@ -931,9 +953,10 @@ begin
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
     FPath := nextp(FNameAlt, '\', 0) + '\';
 
-    if not(FileExists(cWorkPath + FNameAlt)) then
+    if not(FileExists(pAblageRootPath + FNameAlt)) then
     begin
-      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt + '" frei, da verschwunden, oder bereits umbenannt');
+      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt +
+        '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
@@ -970,7 +993,7 @@ begin
         Values[cParameter_foto_zaehlernummer_alt] := copy(FNameNeu, 1, pred(k));
 
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
-        Values[cParameter_foto_Datei] := cWorkPath + FNameAlt;
+        Values[cParameter_foto_Datei] := pAblageRootPath + FNameAlt;
         Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
       end;
 
@@ -1017,7 +1040,8 @@ begin
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath + '" fehlt');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath +
+        '" fehlt');
       continue;
     end;
 
@@ -1032,7 +1056,7 @@ begin
       // freien Ziel-Dateinamen finden:
       i := 1;
       repeat
-        if not(FileExists(cWorkPath + FNameNeu)) then
+        if not(FileExists(pAblageRootPath + FNameNeu)) then
           break;
         if (i = 1) then
           FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' + InttoStr(i) + '.jpg'
@@ -1041,7 +1065,7 @@ begin
         inc(i);
       until false;
 
-      if FileMove(cWorkPath + FNameAlt, cWorkPath + FNameNeu) then
+      if FileMove(pAblageRootPath + FNameAlt, pAblageRootPath + FNameNeu) then
       begin
         AppendStringsToFile(
           { } 'mv ' + FNameAlt +
@@ -1226,7 +1250,8 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1347,8 +1372,8 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Wechselbelege-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
+              'Wechselbelege-', '.zip'), -1);
           end;
         end;
 
@@ -1360,7 +1385,8 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+        '.zip', '.');
       if (zip(
         { } sPics,
         { } sPath +
@@ -1435,7 +1461,7 @@ begin
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
 
   // Zielbestimmung Sicherungsunterverzeichnis
-  sBackupRoot := cBackUpPath + cLocation_JonDaServer;
+  sBackupRoot := pBackUpPath;
   dir(sBackupRoot + '*.', sDirs, false);
   sDirs.sort;
   for n := pred(sDirs.count) downto 0 do
@@ -1446,7 +1472,7 @@ begin
 
   // work what?
   if (pEinzeln = '') then
-    dir(cWorkPath + '*.', sDirs, false)
+    dir(pAblageRootPath + '*.', sDirs, false)
   else
   begin
     sDirs.Clear;
@@ -1460,7 +1486,7 @@ begin
     if (pos('.', sDirs[n]) = 1) then
       continue;
     sPathShort := sDirs[n] + '\';
-    sPath := cWorkPath + sPathShort;
+    sPath := pAblageRootPath + sPathShort;
 
     if FileExists(sPath + cIsAblageMarkerFile) then
     begin
@@ -1518,13 +1544,13 @@ begin
   sTabelle := tsTable.Create;
 
   try
-    dir(MobUploadPath + '*.$$$', sDir, false);
+    dir(pFTPPath + '*.$$$', sDir, false);
     sDir.sort;
 
     // Aktuelle Uploads (=Dateien im aktuellem Zugriff) entfernen
     for n := pred(sDir.count) downto 0 do
     begin
-      if not(FileAge(MobUploadPath + sDir[n], FileDateTime)) then
+      if not(FileAge(pFTPPath + sDir[n], FileDateTime)) then
       begin
         // Datei ist verschwunden!
         sDir.Delete(n);
@@ -1546,8 +1572,9 @@ begin
     end;
 
     sTabelle.addCol('Gerät', sMonteure);
-    sTabelle.SaveToHTML(cWebPath + 'index.html');
-    sTabelle.SaveToFile(cWebPath + 'ausstehende-fotos.csv');
+    sTabelle.SaveToHTML(pWebPath + 'index.html');
+    sTabelle.SaveToFile(pWebPath + 'ausstehende-fotos.csv');
+
   except
 
   end;
