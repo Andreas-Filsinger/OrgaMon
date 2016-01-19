@@ -211,8 +211,8 @@ begin
   TimerWartend := 0;
   TimerInit := 0;
 
-  // auf der Entwicklung-Maschine sofortiges Starten sicherstellen
-  if (ComputerName = 'KHAO') then
+  // sofortiges Starten sicherstellen? (direct start)
+  if isParam('+ds') then
     TimerInit := cKikstart_delay * 60 * 1000;
 
   sMoveTransaktionen := TStringList.Create;
