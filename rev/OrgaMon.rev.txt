@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.139 (19.01.16) Andreas Filsinger
+
+ Bug: Service-App: Anzahl der angezeigten IMEI, IMEI-OK stimmte nicht
+ Bug: Service-App: Probleme bei Schreibweise der Dateinamen von Protokollen
+
+ Wegfall: Online-Migrationshilfe von alten JonDa-Protokollen
+
 Rev 8.138 (15.01.16-18.01.16) Andreas Filsinger
 
  Neu: Vertrag: Zusätzlich: Neuer Parameter "Rechnungsempfänger=~PERSON_R~", richtet die Abrechnung des

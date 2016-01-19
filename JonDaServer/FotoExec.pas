@@ -1,4 +1,3 @@
-unit FotoExec;
 {
   |      ___                  __  __
   |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
@@ -7,7 +6,7 @@ unit FotoExec;
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015  Andreas Filsinger
+  |    Copyright (C) 2015 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -25,6 +24,7 @@ unit FotoExec;
   |    http://orgamon.org/
   |
 }
+unit FotoExec;
 
 interface
 
@@ -32,31 +32,21 @@ uses
   // System
   classes, inifiles, SysUtils,
   math, jpeg, CCR.Exif,
+
   // Tools
   anfix32, WordIndex, binlager32,
   Foto, InfoZip,
+
   // OrgaMon
-  JonDaExec,
-  // OrgaMon-App
-  globals;
+  globals,
+  JonDaExec;
 
 const
-  // root Locations
-  cWorkPath = 'W:\' deprecated 'read it from ini';
-  cBackUpPath = 'I:\KundenDaten\SEWA\' deprecated 'read it from ini';
-  cWebPath = 'W:\status\' deprecated 'read it from ini';
-
-  // Sub Locations
-  cLocation_MOB = 'orgamon-mob\' deprecated 'read it from ini';
-  cLocation_JonDaServer = 'JonDaServer\' deprecated 'read it from ini';
-  cLocation_Unverarbeitet = 'unverarbeitet\' deprecated 'read it from ini';
-  cLocation_Manuell = 'manuell\' deprecated 'read it from ini';
 
   // Warte Zeiten [min]
   cKikstart_delay = 10;
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
-
 
   // File Names
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
@@ -77,8 +67,19 @@ type
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
 
+    // Ini-Sachen
+    // Einstiegs-Pfade
+    cWorkPath: string; // 'W:\'
+    cBackUpPath: string; // 'I:\KundenDaten\SEWA\'
+    cWebPath: string; // 'W:\status\'
+
+    // Unterverzeichnisse
+    cLocation_MOB: string; // 'orgamon-mob\'
+    cLocation_JonDaServer: string; // 'JonDaServer\'
+    cLocation_Unverarbeitet: string; // 'unverarbeitet\'
+    cLocation_Manuell: string; // 'manuell\'
+
     // Verzeichnisse
-    function JonDaServerPath: string;
     function MyWorkingPath: string;
     function MobUploadPath: string;
 
@@ -88,6 +89,7 @@ type
     // Init, Deinit
     procedure ensureGlobals;
     procedure releaseGlobals;
+    procedure readIni;
 
     // Work
     function GEN_ID: integer;
@@ -147,8 +149,6 @@ end;
 
 procedure TFotoExec.ensureGlobals;
 var
-  MyIni: TIniFile;
-  SectionName: string;
   r: integer;
 begin
   if not(assigned(tBAUSTELLE)) then
@@ -157,23 +157,6 @@ begin
     //
     JonDaExec := TJonDaExec.Create;
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
-
-    // Wir brauchen FTP-Zugangsdaten wegen des Sync
-    MyIni := TIniFile.Create(MyProgramPath + cIniFName);
-    with MyIni do
-    begin
-      SectionName := getParam('Id');
-      if (SectionName='') then
-       SectionName := UserName;
-      if (ReadString(SectionName, 'ftpuser', '') = '') then
-        SectionName := 'System';
-
-      // Ftp-Bereich für diesen Server
-      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-    end;
-    MyIni.Free;
 
     // die aktuellen Daten aus dem FTP-Bereich abholen
     JonDaExec.doSync;
@@ -211,6 +194,43 @@ begin
 
 end;
 
+procedure TFotoExec.readIni;
+var
+  MyIni: TIniFile;
+  SectionName: string;
+begin
+
+  // Wir brauchen FTP-Zugangsdaten wegen des Sync
+  MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
+  with MyIni do
+  begin
+    SectionName := getParam('Id');
+    if (SectionName = '') then
+      SectionName := UserName;
+    if (ReadString(SectionName, 'ftpuser', '') = '') then
+      SectionName := 'System';
+
+    // Ftp-Bereich für diesen Server
+    iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+    iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+    iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+
+    // die ganzen Pfade
+    cWorkPath := ReadString(SectionName, 'WorkPath', 'W:\');
+    cBackUpPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
+    cWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
+
+    // Unterverzeichnisse
+    cLocation_MOB := ReadString(SectionName, 'Location_MOB', 'orgamon-mob\');
+    cLocation_JonDaServer := ReadString(SectionName, 'Location_JonDaServer', 'JonDaServer\');
+    cLocation_Unverarbeitet := ReadString(SectionName, 'Location_Unverarbeitet', 'unverarbeitet\');
+    cLocation_Manuell := ReadString(SectionName, 'Location_Manuell', 'manuell\');
+
+  end;
+  MyIni.Free;
+
+end;
+
 procedure TFotoExec.releaseGlobals;
 begin
   if assigned(tBAUSTELLE) then
@@ -224,11 +244,6 @@ begin
   end;
 end;
 
-function TFotoExec.JonDaServerPath: string;
-begin
-  result := cWorkPath + cLocation_JonDaServer;
-end;
-
 function TFotoExec.MobUploadPath: string;
 begin
   result := cWorkPath + cLocation_MOB;
@@ -236,7 +251,7 @@ end;
 
 function TFotoExec.MyWorkingPath: string;
 begin
-  result := JonDaServerPath + 'Fotos\';
+  result := MyProgramPath + 'Fotos\';
 end;
 
 function TFotoExec.GEN_ID: integer;
@@ -390,8 +405,7 @@ begin
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID + '-' + sFiles[n]))
-    then
+    if not(FileCopy(MobUploadPath + sFiles[n], cBackUpPath + cLocation_MOB + ID + '-' + sFiles[n])) then
     begin
       Log('ERROR: ' + 'can not write to ' + cBackUpPath + cLocation_MOB);
       Log('FATAL');
@@ -532,8 +546,7 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, JonDaServerPath + cServerDataPath + FotoGeraeteNo +
-          cDATExtension);
+        assignFile(fOrgaMonAuftrag, MyProgramPath + cServerDataPath + FotoGeraeteNo + cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -577,8 +590,7 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
-                cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -591,7 +603,7 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := JonDaServerPath + cDBPath;
+              sFotoCall.Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
               sFotoCall.Values[cParameter_foto_Datei] := MobUploadPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
@@ -600,8 +612,7 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen :=
-              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -661,11 +672,11 @@ begin
               if not(FileExists(cWorkPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -922,8 +933,7 @@ begin
 
     if not(FileExists(cWorkPath + FNameAlt)) then
     begin
-      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt +
-        '" frei, da verschwunden, oder bereits umbenannt');
+      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt + '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
@@ -961,7 +971,7 @@ begin
 
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
         Values[cParameter_foto_Datei] := cWorkPath + FNameAlt;
-        Values[cParameter_foto_Pfad] := JonDaServerPath + cDBPath;
+        Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
       end;
 
       // set default result (ERROR RESULT)
@@ -1007,8 +1017,7 @@ begin
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath +
-        '" fehlt');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath + '" fehlt');
       continue;
     end;
 
@@ -1217,8 +1226,7 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
           end;
         end;
 
@@ -1339,8 +1347,8 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
-              'Wechselbelege-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Wechselbelege-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1352,8 +1360,7 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
-        '.zip', '.');
+      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
         { } sPath +
