@@ -1,0 +1,55 @@
+
+input[type="text"],
+textarea {
+  background-color: #00d1d1;
+}
+
+
+<input type="text" />
+<br /><br />
+<textarea></textarea>
+<br /><br />
+<input type="button" value="button" />
+
+
+ <input type="text" onkeypress="myFunction()">
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>This example uses the addEventListener() method to attach a "keypress" event to an input element.</p>
+
+<p>Press a key inside the text field to set a red background color.</p>
+
+<input type="text" id="demo">
+
+<script>
+document.getElementById("demo").addEventListener("keypress", myFunction);
+
+function myFunction() {
+    document.getElementById("demo").style.backgroundColor = "red";
+}
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>This example demonstrates how to assign an "onkeypress" event to an input element.</p>
+
+<p>Press a key inside the text field to set a red background color.</p>
+
+<input type="text" id="demo" onkeypress="myFunction()">
+
+<script>
+function myFunction() {
+    document.getElementById("demo").style.backgroundColor = "red";
+}
+</script>
+
+</body>
+</html>
