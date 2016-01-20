@@ -536,7 +536,6 @@
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="eConnect.pas"/>
-			<DCCReference Include="..\JonDaServer\JonDaExec.pas"/>
 			<DCCReference Include="Kalender.pas">
 				<Form>FormKalender</Form>
 			</DCCReference>
@@ -659,7 +658,8 @@
 				<Form>FormServiceFoto</Form>
 			</DCCReference>
 			<DCCReference Include="..\PASconTools\Foto.pas"/>
-			<DCCReference Include="..\JonDaServer\FotoExec.pas"/>
+			<DCCReference Include="JonDaExec.pas"/>
+			<DCCReference Include="FotoExec.pas"/>
 			<None Include="..\rev\Oc.rev.txt"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<None Include="..\rev\TPicUpload.rev.txt"/>
