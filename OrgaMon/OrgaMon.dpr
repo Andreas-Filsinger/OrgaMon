@@ -133,7 +133,6 @@ uses
   Rechnungen in 'Rechnungen.pas' {FormRechnungen},
   RechnungenFrame in 'RechnungenFrame.pas' {FrameRechnungUeberblick: TFrame},
   eConnect in 'eConnect.pas',
-  JonDaExec in '..\JonDaServer\JonDaExec.pas',
   Kalender in 'Kalender.pas' {FormKalender},
   Auswertung in 'Auswertung.pas' {FormAuswertung},
   Audit in 'Audit.pas' {FormAudit},
@@ -208,7 +207,8 @@ uses
   ServiceApp in 'ServiceApp.pas' {FormServiceApp},
   ServiceFoto in 'ServiceFoto.pas' {FormServiceFoto},
   Foto in '..\PASconTools\Foto.pas',
-  FotoExec in '..\JonDaServer\FotoExec.pas';
+  JonDaExec in 'JonDaExec.pas',
+  FotoExec in 'FotoExec.pas';
 
 {$R *.RES}
 
