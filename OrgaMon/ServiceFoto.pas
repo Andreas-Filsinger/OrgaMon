@@ -203,6 +203,10 @@ uses
 
 {$R *.dfm}
 
+const
+  cLocation_MOB = 'orgamon-mob\';
+  cLocation_Unverarbeitet = 'unverarbeitet\';
+
 procedure BeginHourGlass;
 begin
   if (HourGlassLevel = 0) then
@@ -274,12 +278,13 @@ end;
 
 procedure TFormServiceFoto.Button22Click(Sender: TObject);
 begin
-  Edit_Rollback_Quelle.Text := cBackUpPath;
+  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpPath;
 end;
 
 procedure TFormServiceFoto.Button23Click(Sender: TObject);
 begin
-  Edit_Rollback_Quelle.Text := cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
+  Edit_Rollback_Quelle.Text := MyFotoExec.MyBackupPath;
+  // cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
 end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
@@ -336,8 +341,7 @@ begin
     if pos('cp ', TRNs[n]) = 1 then
     begin
       SrcFName := nextp(TRNs[n], ' ', 1);
-      dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName, SrcKandidaten,
-        false, true);
+      dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName, SrcKandidaten, false, true);
       if (SrcKandidaten.count = 0) then
       begin
         ListBox12.Items.add('ERROR: ' + SrcFName + ' nicht in dieser Quelle');
@@ -360,8 +364,7 @@ begin
         begin
           // Mehrfache versionslieferungen eines Motives geht noch nicht!
           // imp pend!
-          ListBox12.Items.add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' +
-            InttoStr(SrcKandidaten.count) + 'x');
+          ListBox12.Items.add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.count) + 'x');
           TRNs_Fail.add(TRNs[n]);
         end
         else
@@ -369,10 +372,9 @@ begin
           TransaktionsCount := nextp(SrcKandidaten[0], '-', 0);
           ListBox12.Items.add(
             { } 'cp ' + QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName + ' ' +
-            { } MyFotoExec.MobUploadPath + SrcFName);
+            { } MyFotoExec.pFTPPath + SrcFName);
 
-          FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName,
-            MyFotoExec.MobUploadPath + SrcFName);
+          FileCopy(QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName, MyFotoExec.pFTPPath + SrcFName);
         end;
       end;
       Application.ProcessMessages;
@@ -423,8 +425,7 @@ begin
   tREFERENZ := tsTable.Create;
   with tREFERENZ do
   begin
-    insertfromFile(MyFotoExec.JonDaServerPath + cDBPath + Edit_Rollback_Baustelle.Text + '\' +
-      cE_FotoBenennung + '.csv');
+    insertfromFile(MyFotoExec.MyWorkingPath + cDBPath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
     Column_RID := colof(cRID_Suchspalte, true);
     for r := 1 to RowCount do
     begin
@@ -450,8 +451,7 @@ begin
         if (SrcKandidaten.count > 1) then
         begin
           ListBox12.Items.add('---------------------------');
-          ListBox12.Items.add('ERROR: ' + sRID + ' kommt mehrfach vor: ' +
-            InttoStr(SrcKandidaten.count) + 'x');
+          ListBox12.Items.add('ERROR: ' + sRID + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.count) + 'x');
           for c := 0 to pred(SrcKandidaten.count) do
           begin
             ListBox12.Items.add(SrcKandidaten[c]);
@@ -485,7 +485,7 @@ begin
     FName := ListBox5.Items[ListBox5.ItemIndex];
     FNameRemote := nextp(FName, '+', 1);
     FileMove(
-      { } MyFotoExec.MobUploadPath + cLocation_Unverarbeitet + FName,
+      { } MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName,
       { } MyFotoExec.MyWorkingPath + 'Amnestie\' + Edit10.Text + FNameRemote);
 
     // delete one Line
@@ -524,8 +524,7 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
-    FileMove(MyFotoExec.MobUploadPath + cLocation_Unverarbeitet + FName,
-      MyFotoExec.MobUploadPath + FNameRemote);
+    FileMove(MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName, MyFotoExec.pFTPpath + FNameRemote);
   end;
 
 var
@@ -855,7 +854,7 @@ var
 begin
   sKommandos := TStringList.Create;
 
-  KommandoFName := MyFotoExec.JonDaServerPath + cGeraeteKommandos + GeraeteNo + '.ini';
+  KommandoFName := MyFotoExec.MyWorkingPath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
     sKommandos.LoadFromFile(KommandoFName);
 
@@ -960,9 +959,9 @@ begin
         if (pos(FindStr, sMoveTransaktionen[n]) > 0) then
         begin
           FoundStr := nextp(sMoveTransaktionen[n], ' ', 1);
-          if not(FileExists(MyFotoExec.MobUploadPath + FoundStr)) then
+          if not(FileExists(MyFotoExec.pFTPPath + FoundStr)) then
           begin
-            FileMove(Edit4.Text + ListBox3.Items[_ItemIndex], MyFotoExec.MobUploadPath + FoundStr);
+            FileMove(Edit4.Text + ListBox3.Items[_ItemIndex], MyFotoExec.pFTPPath + FoundStr);
             ListBox3.DeleteSelected;
           end;
           break;
@@ -1019,7 +1018,7 @@ begin
           // Es kann aber sein, dass wir schon direkt in der Ablage sind
           // in disem Fall kann das Kopieren unterbleiben
           FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-          FNameDest := { } cWorkPath +
+          FNameDest := { } myFotoExec.pAblageRootPath +
           { } Ablage + '\' +
           { } ListBox3.Items[_ItemIndex];
           if (FNameSource <> FNameDest) then
@@ -1055,7 +1054,7 @@ begin
   begin
     BeginHourGlass;
     FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-    FNameDest := { } cWorkPath +
+    FNameDest := { } myFotoExec.pAblageRootPath +
     { } ListBox3.Items[_ItemIndex];
 
     FotoCompress(FNameSource, FNameDest, 120, 5);
@@ -1139,7 +1138,7 @@ begin
     FreeAndNil(sLog);
 
   sDir := TStringList.Create;
-  dir(MyFotoExec.MobUploadPath + cLocation_Unverarbeitet + '*.jpg', sDir, false);
+  dir(MyFotoExec.pUnverarbeitetPath + '*.jpg', sDir, false);
   Label10.Caption := InttoStr(sDir.count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
@@ -1161,14 +1160,14 @@ var
   sDir: TStringList;
 begin
   sDir := TStringList.Create;
-  dir(MyFotoExec.MobUploadPath + '*.$$$', sDir, false);
+  dir(MyFotoExec.pFTPPath + '*.$$$', sDir, false);
   sDir.sort;
   ListBox2.Items.Assign(sDir);
   sDir.Free;
   MyFotoExec.workStatus;
 
   sDir := TStringList.Create;
-  dir(MyFotoExec.MobUploadPath + '*.jpg', sDir, false);
+  dir(MyFotoExec.pFTPPath + '*.jpg', sDir, false);
   sDir.sort;
   ListBox7.Items.Assign(sDir);
   sDir.Free;
@@ -1176,13 +1175,13 @@ end;
 
 function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
 begin
-  result := MyFotoExec.JonDaServerPath + 'Daten\' + 'AUFTRAG.' + GeraeteNo + '.DAT';
+  result := MyFotoExec.MyWorkingPath + 'Daten\' + 'AUFTRAG.' + GeraeteNo + '.DAT';
 end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
 begin
   if (Edit9.Text = '') then
-    Edit9.Text := MyFotoExec.JonDaServerPath;
+    Edit9.Text := MyFotoExec.MyWorkingPath;
 end;
 
 procedure TFormServiceFoto.Timer1Timer(Sender: TObject);

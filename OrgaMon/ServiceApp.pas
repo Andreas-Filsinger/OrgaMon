@@ -172,7 +172,6 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
-    procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
@@ -196,6 +195,7 @@ type
     procedure Button26Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -397,8 +397,8 @@ begin
           continue;
         _SecondsGet := strtoseconds(nextp(lMeldungen[i], ';', 1));
         UHR := nextp(lMeldungen[i], ';', 7);
-        if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)),
-          strtoseconds(nextp(UHR, ' - ', 1))) > 60 * 5 then
+        if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)), strtoseconds(nextp(UHR, ' - ', 1))) >
+          60 * 5 then
         begin
           GeraeteNo := nextp(lMeldungen[i], ';', 3);
           if lHeuteFehlDatum.IndexOf(GeraeteNo) = -1 then
@@ -438,8 +438,8 @@ begin
   lHeuteFehlDatum.SaveToFile(MyProgramPath + 'Geräte-Datum-Falsch-' + inttostr(dTimeOut) + '.txt');
   lHeuteFehlDatum.free;
 
-  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' +
-    inttostr(Stat_Meldungen) + 'x) ' + 'OK';
+  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' + inttostr(Stat_Meldungen) +
+    'x) ' + 'OK';
   beep;
 
 end;
@@ -468,8 +468,7 @@ begin
 
       // interne Varibale setzen
       DiagnosePath := MyProgramPath;
-      caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' +
-        RevToStr(Version);
+      caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' + RevToStr(Version);
 
       // Ini-Datei öffnen
       MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
@@ -538,7 +537,8 @@ begin
   end
   else
   begin
-     Memo1.lines.add( MyProgramPath + cJonDaServer_LogFName+ ' existiert nicht, der Pfad ist nicht richtig gesetzt oder der Setup! ist nicht ausgeführt!');
+    Memo1.lines.add(MyProgramPath + cJonDaServer_LogFName +
+      ' existiert nicht, der Pfad ist nicht richtig gesetzt oder der Setup! ist nicht ausgeführt!');
   end;
 end;
 
@@ -652,8 +652,8 @@ var
         TJonDaExec.toAnsi(MonDaRec);
 
         Doppelte.add(inttostr(MonDaRec.RID));
-        if ((MonDaRec.RID = RID) or (RID = 0)) and
-          ((pos(Edit5.text, MonDaRec.zaehlernummer_neu) > 0) or (Edit5.text = '*')) and
+        if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.text, MonDaRec.zaehlernummer_neu) > 0) or
+          (Edit5.text = '*')) and
         { } ((pos(Edit8.text, MonDaRec.monteur) = 1) or (Edit8.text = '*')) and
         { } ((strtointdef(Edit9.text, MaxInt) = MonDaRec.ausfuehren_ist_datum) or
           (Date2Long(Edit9.text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.text = '*')) and
@@ -668,9 +668,8 @@ var
           if not(FoundOne) then
           begin
             FoundOne := true;
-            sDiagnose_Log.add(Header + ' [' + FName + ',' + long2date(FDate(FName)) + ',' +
-              secondstostr(FSeconds(FName)) + ',' + inttostr(FSize(FName)) + ',' + 'MD5 ' +
-              md5 + ']');
+            sDiagnose_Log.add(Header + ' [' + FName + ',' + long2date(FDate(FName)) + ',' + secondstostr(FSeconds(FName)
+              ) + ',' + inttostr(FSize(FName)) + ',' + 'MD5 ' + md5 + ']');
           end
           else
           begin
@@ -685,8 +684,8 @@ var
           begin
             if CheckBox10.Checked then
               with MonDaRec do
-                sDiagnose_Log.add(Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' +
-                  inttostr(RID) + ';' + long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
+                sDiagnose_Log.add(Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' + inttostr(RID) + ';' +
+                  long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
 
           end;
         end;
@@ -786,8 +785,7 @@ begin
 
       // Was geht zum OrgaMon
       if CheckBox8.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + cDATExtension,
-          MoreInfo + ' Meldung an OrgaMon');
+        CheckOut(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + cDATExtension, MoreInfo + ' Meldung an OrgaMon');
 
       // Was geht wieder auf das Gerät
       if CheckBox7.Checked then
@@ -811,9 +809,8 @@ begin
           if not(WasGefunden) then
             break;
 
-        sTAN_Log.add(AllTRN[n] + ';' + long2date(GeraetZIPDatum) + ' ' +
-          secondstostr(FSeconds(GeraetZIPFName)) + ';' + GeraeteNummer + ';' + 'M' + ';' + 'B' + ';'
-          + sMeldung.Values['VERSION'] + ';' + sMeldung.Values['OPTIONEN']);
+        sTAN_Log.add(AllTRN[n] + ';' + long2date(GeraetZIPDatum) + ' ' + secondstostr(FSeconds(GeraetZIPFName)) + ';' +
+          GeraeteNummer + ';' + 'M' + ';' + 'B' + ';' + sMeldung.Values['VERSION'] + ';' + sMeldung.Values['OPTIONEN']);
       until true;
 
     except
@@ -1080,9 +1077,36 @@ begin
 end;
 
 procedure TFormServiceApp.Button12Click(Sender: TObject);
+var
+  iFTP: TIdFTP;
+  n: integer;
+  Path, TAN: string;
 begin
-  ShowMessage
-    ('nichtmehr imple,mentiert: VErwenden Sie eine FTP-CLient um Ergebnis-TANS hochzuladen!');
+
+  Path := 'W:\JonDaServer\';
+  if (Edit20.text = '') then
+    Edit20.text := Edit1.text;
+
+  iFTP := TIdFTP.create(self);
+  SolidInit(iFTP);
+  with iFTP do
+  begin
+    Host := 'raib25';
+    UserName := 'ftp-sewa';
+    Password := '169B42GX5';
+    connect;
+  end;
+  for n := strtointdef(Edit1.text, MaxInt) to strtointdef(Edit20.text, -1) do
+  begin
+    TAN := inttostrN(n, 5);
+    if FSize(Path + TAN + '\' + TAN + cDATExtension) > 0 then
+    begin
+      solidPut(iFTP, Path + TAN + '\' + TAN + cUTF8DataExtension, '', TAN + cUTF8DataExtension);
+      solidPut(iFTP, Path + TAN + '\' + TAN + cDATExtension, '', TAN + cDATExtension);
+    end;
+  end;
+  iFTP.Disconnect;
+  iFTP.free;
 end;
 
 procedure TFormServiceApp.Button13Click(Sender: TObject);
@@ -1242,8 +1266,8 @@ begin
   lFehlEingaben.free;
   iFTP.free;
 
-  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' +
-    inttostr(Stat_Meldungen) + 'x) ' + 'OK';
+  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' + inttostr(Stat_Meldungen) +
+    'x) ' + 'OK';
 
 end;
 
@@ -1369,8 +1393,7 @@ begin
               if sFotos.count > 0 then
               begin
                 sFotos.sort;
-                FotosSequence := strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
-                  'Fotos-', '.zip'), -1);
+                FotosSequence := strtointdef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
               end;
             end;
 
