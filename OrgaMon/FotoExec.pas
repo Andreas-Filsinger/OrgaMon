@@ -75,7 +75,7 @@ type
     // Ini-Sachen
 
     // 'I:\KundenDaten\SEWA\JonDaServer\'
-    pBackUpPath: string;
+    pBackUpRootPath: string;
 
     // 'W:\status\'
     pWebPath: string;
@@ -86,6 +86,12 @@ type
     // W:\orgamon-mob\unverarbeitet\
     pUnverarbeitetPath: string;
 
+    // W:\JonDaServer\
+    pAppServicePath: string;
+
+    // W:\JonDaServer\Statistik\
+    pAppStatistikPath: string;
+
     // Verzeichnisse
     function MyWorkingPath: string;
     function MyBackupPath: string;
@@ -93,17 +99,19 @@ type
     // Dateinamen
     function AblageFname: string;
 
+    // load Settings
+    procedure readIni(SectionName: string = ''; Path: string = '');
+
     // Init, Deinit
     procedure ensureGlobals;
     procedure releaseGlobals;
-    procedure readIni;
+
+    function GEN_ID: integer;
 
     // Work
-    function GEN_ID: integer;
     procedure workEingang(sParameter: TStringList = nil);
     procedure workWartend(sParameter: TStringList = nil);
     procedure workAblage(sParameter: TStringList = nil);
-
     procedure workStatus;
 
     // muss IMMER überladen werden
@@ -138,7 +146,7 @@ begin
       EINGABE := tsTable.Create
     else
       EINGABE.Clear;
-    FName := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
+    FName := pAppServicePath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
@@ -183,7 +191,7 @@ begin
       end;
     end;
 
-    tABLAGE:= tsTable.Create;
+    tABLAGE := tsTable.Create;
     tABLAGE.insertfromFile(MyWorkingPath + cFotoAblage);
 
     // Datei der Wartenden sicherstellen, Header anlegen
@@ -204,17 +212,22 @@ begin
 
 end;
 
-procedure TFotoExec.readIni;
+procedure TFotoExec.readIni(SectionName: string = ''; Path: string = '');
 var
   MyIni: TIniFile;
-  SectionName: string;
 begin
 
+  // Path
+  if (Path = '') then
+    Path := MyProgramPath;
+  pAppServicePath := Path;
+
   // Wir brauchen FTP-Zugangsdaten wegen des Sync
-  MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
+  MyIni := TIniFile.Create(pAppServicePath + cIniFNameConsole);
   with MyIni do
   begin
-    SectionName := getParam('Id');
+    if (SectionName = '') then
+      SectionName := getParam('Id');
     if (SectionName = '') then
       SectionName := UserName;
     if (ReadString(SectionName, 'ftpuser', '') = '') then
@@ -226,11 +239,11 @@ begin
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
 
     // die ganzen Pfade
-    pBackUpPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
+    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
+    pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath',
-      'W:\orgamon-mob\unverarbeitet');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet');
 
   end;
   MyIni.Free;
@@ -243,6 +256,7 @@ begin
   begin
     try
       FreeAndNil(tBAUSTELLE);
+      FreeAndNil(tABLAGE);
       FreeAndNil(JonDaExec);
     except
       ;
@@ -258,18 +272,18 @@ begin
   // cFotosPath
   // Zielbestimmung Sicherungsunterverzeichnis
   sDirs := TStringList.Create;
-  dir(pBackUpPath + '*.', sDirs, false);
+  dir(pBackUpRootPath + '*.', sDirs, false);
   sDirs.sort;
   for n := pred(sDirs.count) downto 0 do
     if (pos('.', sDirs[n]) = 1) then
       sDirs.Delete(n);
-  result := pBackUpPath + sDirs[pred(sDirs.count)] + '\';
+  result := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
   sDirs.Free;
 end;
 
 function TFotoExec.MyWorkingPath: string;
 begin
-  result := MyProgramPath + 'Fotos\';
+  result := pAppServicePath + 'Fotos\';
 end;
 
 function TFotoExec.GEN_ID: integer;
@@ -277,7 +291,7 @@ var
   mIni: TIniFile;
   i: int64;
 begin
-  mIni := TIniFile.Create(MyProgramPath + 'Backup-Service.ini');
+  mIni := TIniFile.Create(pAppServicePath + 'Backup-Service.ini');
   with mIni do
   begin
     result := StrToInt(ReadString('System', 'Sequence', '0'));
@@ -314,7 +328,7 @@ var
   // Kompletter Dateiname
   FotoZiel: string;
   FotoHost: string;
-  FotoAblage: string;
+  FotoAblage_PFAD: string;
 
   FullSuccess: boolean;
   FoundAuftrag: boolean;
@@ -568,8 +582,7 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, MyProgramPath + cServerDataPath + FotoGeraeteNo +
-          cDATExtension);
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -613,8 +626,7 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
-                cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -627,7 +639,7 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
+              sFotoCall.Values[cParameter_foto_Pfad] := pAppServicePath + cDBPath;
               sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
@@ -636,8 +648,7 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen :=
-              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -683,20 +694,20 @@ begin
             // des SAP Verzeichnisses
             FotoZiel := nextp(FotoZiel, '\', 0);
 
-            r := tABLAGE.locate('NAME',FotoZiel);
+            r := tABLAGE.locate('NAME', FotoZiel);
 
-            if (r=-1) then
+            if (r = -1) then
             begin
               Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
                 '": Die Ablage ist nicht bekannt');
               break;
             end;
 
-            FotoAblage := tABLAGE.readCell(r,'PFAD');
-            if not(DirExists(FotoAblage)) then
+            FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
+            if not(DirExists(FotoAblage_PFAD)) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Das Verzeichnis "'+FotoAblage+'" existiert nicht');
+              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel + '": Das Verzeichnis "'
+                + FotoAblage_PFAD + '" existiert nicht');
               break;
             end;
 
@@ -704,14 +715,14 @@ begin
             FotoDateiNameVerfuegbar := FotoDateiName;
             i := 1;
             repeat
-              if not(FileExists(pAblageRootPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
+              if not(FileExists(FotoAblage_PFAD + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -725,11 +736,11 @@ begin
               if (
                 { } FotoAufnahmeMoment(pFTPPath + sFiles[m])
                 { } >=
-                { } FotoAufnahmeMoment(pAblageRootPath + FotoZiel + '\' + FotoDateiName)) then
+                { } FotoAufnahmeMoment(FotoAblage_PFAD + FotoZiel + '\' + FotoDateiName)) then
               begin
                 if not(RenameFile(
-                  { } pAblageRootPath + FotoZiel + '\' + FotoDateiName,
-                  { } pAblageRootPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
+                  { } FotoAblage_PFAD + FotoZiel + '\' + FotoDateiName,
+                  { } FotoAblage_PFAD + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 begin
                   Log('ERROR: ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
                   break;
@@ -763,11 +774,11 @@ begin
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
               { } pFTPPath + sFiles[m],
-              { } pAblageRootPath + FotoZiel + '\' + FotoDateiName)) then
+              { } FotoAblage_PFAD + '\' + FotoDateiName)) then
             begin
               Log('ERROR: {' + sFiles[m] + ': Kopieren nicht erfolgreich');
               Log('Quelle war: "' + pFTPPath + sFiles[m] + '"');
-              Log('Ziel war: "' + pAblageRootPath + FotoZiel + '\' + FotoDateiName + '" }');
+              Log('Ziel war: "' + FotoAblage_PFAD + '\' + FotoDateiName + '" }');
               break;
             end;
 
@@ -966,10 +977,9 @@ begin
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
     FPath := nextp(FNameAlt, '\', 0) + '\';
 
-    if not(FileExists(pAblageRootPath + FNameAlt)) then
+    if not(FileExists(FNameAlt)) then
     begin
-      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt +
-        '" frei, da verschwunden, oder bereits umbenannt');
+      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt + '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
@@ -1006,8 +1016,8 @@ begin
         Values[cParameter_foto_zaehlernummer_alt] := copy(FNameNeu, 1, pred(k));
 
         Values[cParameter_foto_zaehlernummer_neu] := ZAEHLER_NUMMER_NEU;
-        Values[cParameter_foto_Datei] := pAblageRootPath + FNameAlt;
-        Values[cParameter_foto_Pfad] := MyProgramPath + cDBPath;
+        Values[cParameter_foto_Datei] := FNameAlt;
+        Values[cParameter_foto_Pfad] := pAppServicePath + cDBPath;
       end;
 
       // set default result (ERROR RESULT)
@@ -1051,10 +1061,16 @@ begin
       continue;
 
     // Pfad ging irgendwie verloren
-    if (CharCount('\', FNameNeu) <> 1) then
+    if (CharCount('\', FNameNeu) < 2) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath +
-        '" fehlt');
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath + '" fehlt');
+      continue;
+    end;
+
+    // Laufwerksbuchstaben
+    if (CharCount(':', FNameNeu) <> 1) then
+    begin
+      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerk "' + FPath + '" fehlt');
       continue;
     end;
 
@@ -1069,7 +1085,7 @@ begin
       // freien Ziel-Dateinamen finden:
       i := 1;
       repeat
-        if not(FileExists(pAblageRootPath + FNameNeu)) then
+        if not(FileExists(FNameNeu)) then
           break;
         if (i = 1) then
           FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' + InttoStr(i) + '.jpg'
@@ -1078,7 +1094,7 @@ begin
         inc(i);
       until false;
 
-      if FileMove(pAblageRootPath + FNameAlt, pAblageRootPath + FNameNeu) then
+      if FileMove(FNameAlt, FNameNeu) then
       begin
         AppendStringsToFile(
           { } 'mv ' + FNameAlt +
@@ -1101,19 +1117,19 @@ begin
     tSENDEN := tsTable.Create;
     with tSENDEN do
     begin
-      insertfromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      insertfromFile(pAppServicePath + cDBPath + 'SENDEN.csv');
       i := addCol('PAPERCOLOR');
       k := WARTEND.colof('GERAETENO');
       c := colof('ID');
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FF9900');
-      SaveToHTML(MyProgramPath + cStatistikPath + 'senden.html');
+      SaveToHTML(pAppStatistikPath + 'senden.html');
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.SaveToHTML(MyProgramPath + cStatistikPath + '-neu.html');
+    WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
     WARTEND.SaveToFile(MyWorkingPath + cFotoUmbenennungAusstehend);
 
     // LOG
@@ -1158,11 +1174,10 @@ var
   sPics: TStringList;
   sFotos: TStringList;
   n, m: integer;
-  sPath, sPathShort: string;
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
 
-  sBackupRoot, sDest, sDestShort: string;
+  BackupPath: string;
   MovedToDay: int64;
   tabelleBAUSTELLE: tsTable;
   r: integer;
@@ -1183,6 +1198,10 @@ var
   pDatum: string;
   pEinzeln: string;
 
+  //
+  Ablage_NAME: string;
+  Ablage_PFAD: string;
+
   procedure serviceJPG;
   const
     cMaxZIP_Size = 100 * 1024 * 1024;
@@ -1195,20 +1214,20 @@ var
     sPics.Clear;
     repeat
       // Jpegs
-      dir(sPath + '*.jpg', sPics, false);
+      dir(Ablage_PFAD + '*.jpg', sPics, false);
       if (sPics.count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
       for m := pred(sPics.count) downto 0 do
-        if (FileDate(sPath + sPics[m]) >= PIC_OlderThan) then
+        if (FileDate(Ablage_PFAD + sPics[m]) >= PIC_OlderThan) then
           sPics.Delete(m);
       if (sPics.count = 0) then
         break;
 
       // reduziere um "wartende" Bilder
       for m := pred(sPics.count) downto 0 do
-        if (WARTEND.locate('DATEINAME_AKTUELL', sPathShort + sPics[m]) <> -1) then
+        if (WARTEND.locate('DATEINAME_AKTUELL', Ablage_PFAD + sPics[m]) <> -1) then
           sPics.Delete(m);
       if (sPics.count = 0) then
         break;
@@ -1224,12 +1243,12 @@ var
         end
         else
         begin
-          inc(FotoFSize, FSize(sPath + sPics[m]));
+          inc(FotoFSize, FSize(Ablage_PFAD + sPics[m]));
         end;
       end;
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
-      FTP_Benutzer := nextp(sPath, '\', 1);
+      FTP_Benutzer := Ablage_NAME;
       r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
       if (r = -1) then
       begin
@@ -1251,19 +1270,18 @@ var
 
       // Die Nummer des zu erzeugenden ZIP suchen
       FotosAbzug := false;
-      mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
+      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
         FotosAbzug := (ReadString('System', 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
         if FotosSequence < 0 then
         begin
-          dir(sPath + 'Fotos-????.zip', sFotos, false);
+          dir(Ablage_PFAD + 'Fotos-????.zip', sFotos, false);
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
           end;
         end;
 
@@ -1275,12 +1293,12 @@ var
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      Log(sPath + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
-        { } sPath +
+        { } Ablage_PFAD +
         { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + sPath + ';' +
+        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
         { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
@@ -1297,14 +1315,14 @@ var
         // Archivieren auch in Abzug-nnnn.zip
 
         for m := 0 to pred(sPics.count) do
-          FotoCompress(sPath + sPics[m], sPath + sPics[m], 94, 6);
+          FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        Log(sPath + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        Log(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
         if (zip(
           { } sPics,
-          { } sPath +
+          { } Ablage_PFAD +
           { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-          { } infozip_RootPath + '=' + sPath + ';' +
+          { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
           { } infozip_Password + '=' +
           { } deCrypt_Hex(
           { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
@@ -1319,13 +1337,13 @@ var
       end;
 
       // Fotos-nnnn.ini erhöhen
-      mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
+      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
       mIni.WriteString('System', 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten JPGS schlussendlich löschen!
       for m := 0 to pred(sPics.count) do
-        FileDelete(sPath + sPics[m]);
+        FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
 
@@ -1342,20 +1360,20 @@ var
     repeat
 
       // Jpegs
-      dir(sPath + '*.zip.html', sPics, false);
+      dir(Ablage_PFAD + '*.zip.html', sPics, false);
       if (sPics.count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
       for m := pred(sPics.count) downto 0 do
-        if (FileDate(sPath + sPics[m]) >= PIC_OlderThan) then
+        if (FileDate(Ablage_PFAD + sPics[m]) >= PIC_OlderThan) then
           sPics.Delete(m);
       if (sPics.count = 0) then
         break;
 
       // reduziere um "wartende" Wechselbelege, bei denen das pdf fehlt!
       for m := pred(sPics.count) downto 0 do
-        if not(FileExists(sPath + sPics[m] + '.pdf')) then
+        if not(FileExists(Ablage_PFAD + sPics[m] + '.pdf')) then
           sPics.Delete(m);
       if (sPics.count = 0) then
         break;
@@ -1366,7 +1384,7 @@ var
         sPics.add(sPics[m] + '.pdf');
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
-      FTP_Benutzer := nextp(sPath, '\', 1);
+      FTP_Benutzer := Ablage_NAME;
       if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
         FTP_Benutzer := 'u' + FTP_Benutzer;
       r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
@@ -1374,18 +1392,18 @@ var
         break;
 
       // Die Nummer des zu erzeugenden ZIP suchen
-      mIni := TIniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
+      mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
       with mIni do
       begin
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
-        if FotosSequence < 0 then
+        if (FotosSequence < 0) then
         begin
-          dir(sPath + 'Wechselbelege-????.zip', sFotos, false);
+          dir(Ablage_PFAD + 'Wechselbelege-????.zip', sFotos, false);
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
-              'Wechselbelege-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Wechselbelege-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1397,13 +1415,12 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(sPath + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
-        '.zip', '.');
+      Log(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
-        { } sPath +
+        { } Ablage_PFAD +
         { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + sPath + ';' +
+        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
         { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
@@ -1415,13 +1432,13 @@ var
       end;
 
       // Laufnummer erhöhen
-      mIni := TIniFile.Create(sPath + 'Wechselbelege-nnnn.ini');
+      mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
       mIni.WriteString('System', 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten löschen!
       for m := 0 to pred(sPics.count) do
-        FileDelete(sPath + sPics[m]);
+        FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
   end;
@@ -1443,7 +1460,6 @@ begin
   FileAlive(MyWorkingPath + AblageFname);
 
   // prepare
-  sDirs := TStringList.Create;
   sZips := TStringList.Create;
   sPics := TStringList.Create;
   sFotos := TStringList.Create;
@@ -1472,68 +1488,54 @@ begin
   ZIP_OlderThan := DatePlus(BasisDatum, -cFileTimeOutDays);
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
 
-  // Zielbestimmung Sicherungsunterverzeichnis
-  sBackupRoot := pBackUpPath;
-  dir(sBackupRoot + '*.', sDirs, false);
+  // Zielbestimmung Sicherungsunterverzeichnis '..\#nnn\'
+  sDirs := TStringList.Create;
+  dir(pBackUpRootPath + '*.', sDirs, false);
   sDirs.sort;
   for n := pred(sDirs.count) downto 0 do
     if (pos('.', sDirs[n]) = 1) then
       sDirs.Delete(n);
-  sDestShort := sDirs[pred(sDirs.count)];
-  sDest := sBackupRoot + sDestShort + '\';
+  BackupPath := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
+  FreeAndNil(sDirs);
 
-  // work what?
-  if (pEinzeln = '') then
-    dir(pAblageRootPath + '*.', sDirs, false)
-  else
+  for r := 1 to tABLAGE.RowCount do
   begin
-    sDirs.Clear;
-    sDirs.add(pEinzeln);
-  end;
 
-  // sDirs.Clear;
-  // sDirs.Add('orgamon-mob');
-  for n := 0 to pred(sDirs.count) do
-  begin
-    if (pos('.', sDirs[n]) = 1) then
-      continue;
-    sPathShort := sDirs[n] + '\';
-    sPath := pAblageRootPath + sPathShort;
+    Ablage_NAME := tABLAGE.readCell(r, 'NAME');
+    //
+    if (pEinzeln <> '') then
+      if (pEinzeln <> Ablage_NAME) then
+        continue;
 
-    if FileExists(sPath + cIsAblageMarkerFile) then
-    begin
+    //
+    Ablage_PFAD := tABLAGE.readCell(r, 'PFAD');
 
-      repeat
+    repeat
 
-        // Zips ablegen
-        dir(sPath + '*.zip', sZips, false);
-        for m := 0 to pred(sZips.count) do
+      // Zips ablegen
+      dir(Ablage_PFAD + '*.zip', sZips, false);
+      for m := 0 to pred(sZips.count) do
+      begin
+        if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
         begin
-          if (FileDate(sPath + sZips[m]) < ZIP_OlderThan) then
-          begin
-            CheckCreateDir(sDest + sDirs[n]);
-            inc(MovedToDay, FSize(sPath + sZips[m]));
-            Log(sPath + sZips[m], sDestShort);
-            FileMove(sPath + sZips[m], sDest + sDirs[n] + '\' + sZips[m]);
-          end;
+          CheckCreateDir(BackupPath + Ablage_NAME);
+          inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
+          Log(Ablage_PFAD + sZips[m], BackupPath);
+          FileMove(Ablage_PFAD + sZips[m], BackupPath + Ablage_NAME + '\' + sZips[m]);
         end;
+      end;
 
-        if (sDirs[n] = 'orgamon-mob') then
-          break;
+      // jpgs zippen
+      serviceJPG;
 
-        // jpgs zippen
-        serviceJPG;
+      // htmls zippen
+      serviceHTML;
 
-        // htmls zippen
-        serviceHTML;
+    until true;
 
-      until true;
-
-    end;
   end;
 
   // unprepare
-  sDirs.Free;
   sZips.Free;
   sPics.Free;
   sFotos.Free;
@@ -1590,11 +1592,9 @@ begin
   except
 
   end;
-
   sDir.Free;
   sMonteure.Free;
   sTabelle.Free;
-
 end;
 
 end.

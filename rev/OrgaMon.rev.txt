@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.141 (22.01.16) Andreas Filsinger
+
+ Neu: Service-Foto: Verzeichnisse konfigurierbar
+ Neu: Service-Foto: Mit einem OrgaMon Mandant beliebige Service-Foto Identitäten steuern
+
 Rev 8.140 (20.01.16) Andreas Filsinger
 
  Neu: solidftp: nach "rename" Prüfung auf dessen Erfolg
