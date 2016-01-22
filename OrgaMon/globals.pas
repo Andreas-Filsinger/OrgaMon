@@ -516,7 +516,7 @@ type
   end;
 
 const
-  // JonDa Sachen
+  // App-Service
   cJonDaServer_LogFName = 'JonDaServer.log';
   cGeraetSchema = '  ??.??.?? ??:??:?? ?????:???';
   cServerDataPath = 'Daten\';
@@ -528,7 +528,6 @@ const
   cGeraeteEinstellungen = 'Einstellungen\';
   cDBPath = 'db\';
   cSyncPath = 'sync\';
-  cFotoPath = 'Fotos\';
   cWebPath = '..\web\';
 
   cTrnFName = 'Transaktionsnummer.ini';
@@ -539,7 +538,7 @@ const
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
   cMonDaServer_Baustelle = 'baustelle.csv';
   cMonDaServer_Baustelle_manuell = 'baustelle-manuell.csv';
-  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
+
 
   cActionRestantenLeeren = 'Restanten ignorieren';
   cActionRestantenAddieren = 'Restanten addieren';
@@ -561,6 +560,11 @@ const
   cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
   cHeader_UmbenennungUnvollstaendig =
     'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+
+  // Foto-Service
+  cFotoPath = 'Fotos\';
+  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
+  cFotoAblage = 'ablage.csv';
 
   // Creator Sachen!
   cHistorieTextFName = 'Creator\historie.txt';

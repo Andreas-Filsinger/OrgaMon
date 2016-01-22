@@ -814,16 +814,18 @@ begin
 
     until true;
     if DoDelete then
-     sDirs.Delete(n);
+      sDirs.Delete(n);
 
   end;
   sDirs.sort;
-  for n := 0 to pred(sDirs.Count) do
-   sDirs[n] := '"' + pAblageRootPath + sDirs[n] + '\"';
+  for n := 0 to pred(sDirs.count) do
+    sDirs[n] :=
+    { } '"' + sDirs[n] + '"' + ';' +
+    { } '"' + pAblageRootPath + sDirs[n] + '\"';
 
-  sDirs.insert(0,'PFAD');
-  sDirs.SaveToFile(pAblageRootPath+'ABLAGE'+'.csv');
-  sDirs.free;
+  sDirs.insert(0, 'NAME;PFAD');
+  sDirs.SaveToFile(pAblageRootPath + 'ABLAGE' + '.csv');
+  sDirs.Free;
 end;
 
 procedure TFormServiceFoto.Button8Click(Sender: TObject);

@@ -112,7 +112,6 @@
 			<DCCReference Include="..\PASconTools\SolidFTP.pas"/>
 			<DCCReference Include="..\PASconTools\sperre.pas"/>
 			<DCCReference Include="..\PASconTools\txlib.pas"/>
-			<DCCReference Include="..\JonDaServer\JonDaExec.pas"/>
 			<DCCReference Include="..\PASconTools\binlager32.pas"/>
 			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
 			<DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
@@ -139,8 +138,9 @@
 			<DCCReference Include="..\PASconTools\basic32.pas"/>
 			<DCCReference Include="..\PASconTools\DTA.PAS"/>
 			<DCCReference Include="..\PASconTools\memcache.pas"/>
-			<DCCReference Include="..\JonDaServer\FotoExec.pas"/>
 			<DCCReference Include="..\PASconTools\Foto.pas"/>
+			<DCCReference Include="JonDaExec.pas"/>
+			<DCCReference Include="FotoExec.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
