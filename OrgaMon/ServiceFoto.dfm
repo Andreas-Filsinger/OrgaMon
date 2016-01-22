@@ -11,7 +11,7 @@ object FormServiceFoto: TFormServiceFoto
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
+  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet6
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -31,20 +31,41 @@ object FormServiceFoto: TFormServiceFoto
         Height = 13
         Caption = 'Arbeit beschr'#228'nken auf RID'
       end
+      object Label7: TLabel
+        Left = 8
+        Top = 12
+        Width = 18
+        Height = 13
+        Caption = '--Id'
+      end
+      object Label17: TLabel
+        Left = 8
+        Top = 39
+        Width = 22
+        Height = 13
+        Caption = 'Pfad'
+      end
+      object Label18: TLabel
+        Left = 8
+        Top = 72
+        Width = 26
+        Height = 13
+        Caption = 'Timer'
+      end
       object ListBox1: TListBox
         Left = 3
-        Top = 16
+        Top = 96
         Width = 574
-        Height = 361
+        Height = 281
         ItemHeight = 13
         TabOrder = 0
       end
       object Button1: TButton
-        Left = 354
-        Top = 439
-        Width = 75
+        Left = 216
+        Top = 65
+        Width = 153
         Height = 25
-        Caption = 'Starte Timer'
+        Caption = 'Start'
         TabOrder = 1
         OnClick = Button1Click
       end
@@ -83,25 +104,25 @@ object FormServiceFoto: TFormServiceFoto
         TabOrder = 5
       end
       object Button10: TButton
-        Left = 273
-        Top = 439
-        Width = 75
+        Left = 216
+        Top = 34
+        Width = 153
         Height = 25
         Caption = 'ensureGlobals'
         TabOrder = 6
         OnClick = Button10Click
       end
       object Button11: TButton
-        Left = 435
-        Top = 439
-        Width = 97
+        Left = 375
+        Top = 65
+        Width = 162
         Height = 25
         Caption = 'Starte sofort!'
         TabOrder = 7
         OnClick = Button11Click
       end
       object Button13: TButton
-        Left = 538
+        Left = 354
         Top = 439
         Width = 75
         Height = 25
@@ -118,12 +139,46 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Button16: TButton
         Left = 273
-        Top = 412
+        Top = 439
         Width = 75
         Height = 25
         Caption = 'Sync'
         TabOrder = 10
         OnClick = Button16Click
+      end
+      object Edit14: TEdit
+        Left = 48
+        Top = 9
+        Width = 145
+        Height = 21
+        TabOrder = 11
+        Text = 'gwe'
+      end
+      object Edit15: TEdit
+        Left = 48
+        Top = 36
+        Width = 145
+        Height = 21
+        TabOrder = 12
+        Text = 'W:\gwe-services\dat\'
+      end
+      object Button17: TButton
+        Left = 216
+        Top = 7
+        Width = 153
+        Height = 25
+        Caption = 'Prepare Service'
+        TabOrder = 13
+        OnClick = Button17Click
+      end
+      object Button29: TButton
+        Left = 543
+        Top = 65
+        Width = 121
+        Height = 25
+        Caption = '5 Min rum!'
+        TabOrder = 14
+        OnClick = Button29Click
       end
     end
     object TabSheet11: TTabSheet
@@ -848,7 +903,7 @@ object FormServiceFoto: TFormServiceFoto
     Enabled = False
     Interval = 2000
     OnTimer = Timer1Timer
-    Left = 48
-    Top = 64
+    Left = 32
+    Top = 144
   end
 end

@@ -136,9 +136,15 @@ type
     Label16: TLabel;
     Button28: TButton;
     Button7: TButton;
+    Edit14: TEdit;
+    Edit15: TEdit;
+    Label7: TLabel;
+    Label17: TLabel;
+    Button17: TButton;
+    Label18: TLabel;
+    Button29: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure ListBox3Click(Sender: TObject);
@@ -173,6 +179,9 @@ type
     procedure Button27Click(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure Button29Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -278,7 +287,7 @@ end;
 
 procedure TFormServiceFoto.Button22Click(Sender: TObject);
 begin
-  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpPath;
+  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpRootPath;
 end;
 
 procedure TFormServiceFoto.Button23Click(Sender: TObject);
@@ -478,27 +487,35 @@ end;
 procedure TFormServiceFoto.Button27Click(Sender: TObject);
 var
   FName, FNameRemote: string;
+  AmnestiePath: string;
   n: integer;
 begin
   if (ListBox5.ItemIndex <> -1) then
   begin
     FName := ListBox5.Items[ListBox5.ItemIndex];
     FNameRemote := nextp(FName, '+', 1);
+    AmnestiePath := MyFotoExec.MyBackupPath + 'Amnestie\';
+    CheckCreateDIr( AmnestiePath);
     FileMove(
-      { } MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName,
-      { } MyFotoExec.MyWorkingPath + 'Amnestie\' + Edit10.Text + FNameRemote);
+      { } MyFotoExec.pUnverarbeitetPath + FName,
+      { } AmnestiePath + Edit10.Text + FNameRemote);
 
     // delete one Line
     n := ListBox5.ItemIndex;
     ListBox5.Items.Delete(n);
     Label10.Caption := InttoStr(ListBox5.count);
-    if ListBox5.count > 0 then
+    if (ListBox5.count > 0) then
     begin
       ListBox5.ItemIndex := n;
       ListBox5.SetFocus;
       ListBox5.OnClick(Sender);
     end;
   end;
+end;
+
+procedure TFormServiceFoto.Button29Click(Sender: TObject);
+begin
+  TimerWartend := succ(5 * 60 * 1000);
 end;
 
 procedure TFormServiceFoto.Button2Click(Sender: TObject);
@@ -524,7 +541,7 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
-    FileMove(MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName, MyFotoExec.pFTPPath + FNameRemote);
+    FileMove(MyFotoExec.pUnverarbeitetPath + FName, MyFotoExec.pFTPPath + FNameRemote);
   end;
 
 var
@@ -536,7 +553,6 @@ begin
     doWork(ListBox5.ItemIndex);
     ListBox5.Items.Delete(ListBox5.ItemIndex);
     Label10.Caption := InttoStr(ListBox5.count);
-
   end
   else
   begin
@@ -675,6 +691,11 @@ procedure TFormServiceFoto.Button16Click(Sender: TObject);
 begin
   MyFotoExec.ensureGlobals;
   MyFotoExec.JonDaExec.doSync;
+end;
+
+procedure TFormServiceFoto.Button17Click(Sender: TObject);
+begin
+  MyFotoExec.readIni(Edit14.Text, Edit15.Text);
 end;
 
 procedure TFormServiceFoto.Button18Click(Sender: TObject);
@@ -832,11 +853,14 @@ procedure TFormServiceFoto.Button8Click(Sender: TObject);
 var
   sParameter: TStringList;
 begin
+  BeginHourGlass;
   sParameter := TStringList.Create;
   sParameter.add('DATUM=' + Edit3.Text);
   sParameter.add('EINZELN=' + Edit2.Text);
   MyFotoExec.workAblage(sParameter);
   Edit2.Text := '';
+  sParameter.Free;
+  EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button9Click(Sender: TObject);
@@ -919,11 +943,14 @@ begin
 
 end;
 
-procedure TFormServiceFoto.FormCreate(Sender: TObject);
+procedure TFormServiceFoto.FormActivate(Sender: TObject);
 begin
-  Caption := 'Service-Foto Rev. ' + RevToStr(Version);
-  PageControl1.ActivePage := TabSheet1;
-  MyFotoExec := TownFotoExec.Create;
+  if (MyFotoExec = nil) then
+  begin
+    Caption := 'Service-Foto Rev. ' + RevToStr(Version);
+    PageControl1.ActivePage := TabSheet1;
+    MyFotoExec := TownFotoExec.Create;
+  end;
 end;
 
 procedure TFormServiceFoto.ListBox3Click(Sender: TObject);
@@ -1058,7 +1085,7 @@ begin
           // Es kann aber sein, dass wir schon direkt in der Ablage sind
           // in disem Fall kann das Kopieren unterbleiben
           FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-          FNameDest := { } MyFotoExec.pAblageRootPath +
+          FNameDest :=
           { } Ablage + '\' +
           { } ListBox3.Items[_ItemIndex];
           if (FNameSource <> FNameDest) then
@@ -1094,7 +1121,7 @@ begin
   begin
     BeginHourGlass;
     FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-    FNameDest := { } MyFotoExec.pAblageRootPath +
+    FNameDest :=
     { } ListBox3.Items[_ItemIndex];
 
     FotoCompress(FNameSource, FNameDest, 120, 5);
@@ -1157,7 +1184,7 @@ begin
   dir(Edit4.Text + '*.jpg', sDir, false);
 
   // Maske Reduce
-  if Edit5.Text <> '*' then
+  if (Edit5.Text <> '*') then
     for n := pred(sDir.count) downto 0 do
       if pos(Edit5.Text, sDir[n]) = 0 then
         sDir.Delete(n);
@@ -1176,13 +1203,11 @@ var
 begin
   if assigned(sLog) then
     FreeAndNil(sLog);
-
   sDir := TStringList.Create;
   dir(MyFotoExec.pUnverarbeitetPath + '*.jpg', sDir, false);
   Label10.Caption := InttoStr(sDir.count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
-
 end;
 
 procedure TFormServiceFoto.SpeedButton3Click(Sender: TObject);
@@ -1211,6 +1236,7 @@ begin
   sDir.sort;
   ListBox7.Items.Assign(sDir);
   sDir.Free;
+
 end;
 
 function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
@@ -1226,13 +1252,6 @@ end;
 
 procedure TFormServiceFoto.Timer1Timer(Sender: TObject);
 begin
-
-  if (pos('+' + Computername + '+', '+KHAO+MAILAND+WERDER+') > 0) then
-  begin
-    MyFotoExec.Log('Timer ist nun AUS, da dieses System auf der Blacklist steht ...');
-    Timer1.Enabled := false;
-    exit;
-  end;
 
   if (TimerInit < cKikstart_delay * 60 * 1000) then
   begin
