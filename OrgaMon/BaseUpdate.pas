@@ -735,7 +735,7 @@ begin
   if (IdHTTP1.ResponseCode = 200) then
   begin
     FileDelete(UpdatePath + SetupUpdateFName(Rev));
-    FileRename(TmpFName, UpdatePath + SetupUpdateFName(Rev));
+    RenameFile(TmpFName, UpdatePath + SetupUpdateFName(Rev));
   end;
 
   cursor := crdefault;

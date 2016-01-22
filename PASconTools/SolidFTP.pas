@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ uses
 
 type
   TIdFtpRestart = class(TIdFTP)
-    procedure PutRestart(const ASourceFile, ADestFile: string;
-      const StartPosition: int64);
+    procedure PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
   end;
 
 const
@@ -67,23 +66,18 @@ procedure SolidEndTransaction;
 procedure SolidLogin(ftp: TIdFTP);
 
 // FTP - Upload: Variante "neu startender / immer überschreibender Upload"
-function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string)
-  : boolean; overload;
+function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean; overload;
 function SolidPut(ftp: TIdFTP; CommandList: TStringList): boolean; overload;
 
 // FTP - Upload: Variante "ggf. restart, nicht überschreibender Upload"
-function SolidStore(ftp: TIdFtpRestart;
-  SourceFName, DestPath, DestFName: string): boolean; overload;
-function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList)
-  : boolean; overload;
+function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
+function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 
 // FTP - Download
-function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string;
-  RemoteDelete: boolean = false): boolean;
+function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string; RemoteDelete: boolean = false): boolean;
 
 // FTP - Dir
-function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string;
-  FileList: TStringList): boolean;
+function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string; FileList: TStringList): boolean;
 
 //
 // FTP - FileSize
@@ -93,10 +87,8 @@ function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string;
 function SolidSize(ftp: TIdFTP; SourcePath, SourceFName: string): int64;
 
 // FTP - Delete
-function SolidDel(ftp: TIdFTP; SourcePath: string; DeleteList: TStringList)
-  : boolean; overload;
-function SolidDel(ftp: TIdFTP; SourcePath: string; DelFName: string)
-  : boolean; overload;
+function SolidDel(ftp: TIdFTP; SourcePath: string; DeleteList: TStringList): boolean; overload;
+function SolidDel(ftp: TIdFTP; SourcePath: string; DelFName: string): boolean; overload;
 
 
 // function SolidSync(ftp: TIdFTP; SourcePath, DestDir): boolean; overload;
@@ -125,13 +117,12 @@ uses
   // Indy UDP
   IdUDPClient,
   globals,
-  {$ifndef fpc}
+{$IFNDEF fpc}
   JclMiscel,
-  {$endif}
+{$ENDIF}
   windows;
 
-procedure TIdFtpRestart.PutRestart(const ASourceFile, ADestFile: string;
-  const StartPosition: int64);
+procedure TIdFtpRestart.PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
 var
   LSourceStream: TStream;
   LDestFileName: String;
@@ -144,8 +135,7 @@ begin
   LSourceStream := TIdReadFileNonExclusiveStream.Create(ASourceFile);
   try
     if ADestFile = '' then
-      raise EIdFTPUploadFileNameCanNotBeEmpty.Create
-        (RSFTPFileNameCanNotBeEmpty);
+      raise EIdFTPUploadFileNameCanNotBeEmpty.Create(RSFTPFileNameCanNotBeEmpty);
     LSourceStream.Position := StartPosition;
     DoBeforePut(LSourceStream);
     SendCmd('REST ' + IntToStr(StartPosition), [350]); { Do not localize }
@@ -200,8 +190,7 @@ begin
       m := 0;
       while (s <> '') do
       begin
-        _FailOvers.values[nextp(s, '>') + ':' + IntToStr(m)] :=
-          nextp(s, '>', 1);
+        _FailOvers.values[nextp(s, '>') + ':' + IntToStr(m)] := nextp(s, '>', 1);
         inc(m);
       end;
     end;
@@ -270,8 +259,7 @@ begin
   begin
     if (SolidFTP_LogDir <> '') then
       if (SolidFTP_sLog.Count > 0) then
-        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' +
-          IntToStr(DateGet) + '.log.txt');
+        AppendStringsToFile(SolidFTP_sLog, SolidFTP_LogDir + 'Solid-FTP-' + IntToStr(DateGet) + '.log.txt');
     SolidFTP_sLog.clear;
   end;
 end;
@@ -279,8 +267,7 @@ end;
 procedure SolidSingleStepLog(s: string);
 begin
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' +
-      IntToStr(DateGet) + '.log.txt');
+    AppendStringsToFile(uhr8 + ':' + s, SolidFTP_LogDir + 'Solid-Step-FTP-' + IntToStr(DateGet) + '.log.txt');
 end;
 
 procedure SolidEndTransaction;
@@ -332,13 +319,11 @@ begin
 
   //
   if SolidFTP_SingleStepLog then
-    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' +
-      IntToStr(DateGet) + '.log.txt');
+    AppendStringsToFile(s, SolidFTP_LogDir + 'Solid-Step-FTP-' + IntToStr(DateGet) + '.log.txt');
 
 end;
 
-function solidHandleException(ftp: TIdFTP; ActRetry: integer;
-  sMsg: string): boolean;
+function solidHandleException(ftp: TIdFTP; ActRetry: integer; sMsg: string): boolean;
 begin
   // Status "Fatal - Give up" als default
   result := false;
@@ -360,14 +345,12 @@ begin
 
       on E: EIdSocketError do
       begin
-        solidLog(cEXCEPTIONText + ' [250] Socket Error: ' +
-          IntToStr(E.LastError), false);
+        solidLog(cEXCEPTIONText + ' [250] Socket Error: ' + IntToStr(E.LastError), false);
       end;
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [279] ' + E.ClassName + ':' +
-          E.Message, false);
+        solidLog(cEXCEPTIONText + ' [279] ' + E.ClassName + ':' + E.Message, false);
       end;
 
     end;
@@ -394,14 +377,12 @@ begin
 
       on E: EIdSocketError do
       begin
-        solidLog(cEXCEPTIONText + ' [295] Socket Error: ' +
-          IntToStr(E.LastError), false);
+        solidLog(cEXCEPTIONText + ' [295] Socket Error: ' + IntToStr(E.LastError), false);
       end;
 
       on E: Exception do
       begin
-        solidLog(cEXCEPTIONText + ' [301] ' + E.ClassName + ':' +
-          E.Message, false);
+        solidLog(cEXCEPTIONText + ' [301] ' + E.ClassName + ':' + E.Message, false);
       end;
 
     end;
@@ -459,8 +440,7 @@ begin
     if CharInSet(UserName[1], ['0' .. '9']) then
     begin
       UserName := 'u' + UserName;
-      solidLog(cINFOText + ' Prefixed Login-Name with "u", now "' +
-        UserName + '"');
+      solidLog(cINFOText + ' Prefixed Login-Name with "u", now "' + UserName + '"');
     end;
 
     n := 0;
@@ -476,23 +456,20 @@ begin
         begin
 
           // Fehlerprotokollierung
-          solidLog(cEXCEPTIONText + ' ' + E.ClassName + ': ' +
-            E.Message, false);
+          solidLog(cEXCEPTIONText + ' ' + E.ClassName + ': ' + E.Message, false);
 
           // zusätzliche Fehlerprotokollierung
           if E is EIdReplyRFCError then
           begin
             RemoteSystemErrorCode := EIdReplyRFCError(E).ErrorCode;
-            solidLog(cINFOText + ' zusätzlicher Fehlercode: ' +
-              IntToStr(RemoteSystemErrorCode), false);
+            solidLog(cINFOText + ' zusätzlicher Fehlercode: ' + IntToStr(RemoteSystemErrorCode), false);
 
             if (RemoteSystemErrorCode = 530) then
             begin
               // Bei "Passwort/User falsch" ist ein
               // nerviges Retry,Retry,Retry, sinnlos. Also sofortige
               // Aufgabe der Aktion ist nötig!
-              solidLog(cERRORText +
-                ' Benutzername/Passwort wurde nicht akzeptiert.');
+              solidLog(cERRORText + ' Benutzername/Passwort wurde nicht akzeptiert.');
               sTransactionFatalError := true;
             end;
 
@@ -538,8 +515,7 @@ var
 
 begin
   result := true;
-  if (DestPath <> sActualServerWorkingDirectory) and
-    (DestPath <> cSolidFTP_DirCurrent) then
+  if (DestPath <> sActualServerWorkingDirectory) and (DestPath <> cSolidFTP_DirCurrent) then
   begin
     with ftp do
     begin
@@ -573,8 +549,7 @@ begin
 
           on E: EIdSocketError do
           begin
-            solidLog(cEXCEPTIONText + ' [373] Socket Error: ' +
-              IntToStr(E.LastError));
+            solidLog(cEXCEPTIONText + ' [373] Socket Error: ' + IntToStr(E.LastError));
             solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message);
           end;
 
@@ -590,16 +565,14 @@ begin
   end;
 end;
 
-function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string;
-  FileList: TStringList): boolean;
+function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string; FileList: TStringList): boolean;
 var
   ActRetry: integer;
   n: integer;
 
   function _logID: string;
   begin
-    result := 'dir(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
-      SourceMask + ')';
+    result := 'dir(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' + SourceMask + ')';
   end;
 
 begin
@@ -641,18 +614,15 @@ begin
       except
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [408] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [408] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [414] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
       end;
@@ -666,8 +636,7 @@ var
 
   function _logID: string;
   begin
-    result := 'commit(' + ftp.host + ',' + ftp.UserName + ',' + DestPath + ',' +
-      DestFName + ')';
+    result := 'commit(' + ftp.host + ',' + ftp.UserName + ',' + DestPath + ',' + DestFName + ')';
   end;
 
 begin
@@ -689,20 +658,17 @@ begin
         begin
           if (Size(DestFName) >= 0) then
           begin
-            solidLog(cWARNINGText + 'solidCommit: ' + DestFName +
-              ' gab es bereits');
+            solidLog(cWARNINGText + 'solidCommit: ' + DestFName + ' gab es bereits');
             SolidSingleStepLog('delete ' + DestFName);
             Delete(DestFName);
           end;
-          SolidSingleStepLog('rename ' + DestFName + cTmpFileExtension + ' ' +
-            DestFName);
+          SolidSingleStepLog('rename ' + DestFName + cTmpFileExtension + ' ' + DestFName);
           Rename(DestFName + cTmpFileExtension, DestFName);
           result := true;
         end
         else
         begin
-          solidLog(cERRORText + 'solidCommit: ' + DestFName + cTmpFileExtension
-            + ' verschwunden');
+          solidLog(cERRORText + 'solidCommit: ' + DestFName + cTmpFileExtension + ' verschwunden');
         end;
 
         break;
@@ -711,18 +677,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [474] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [474] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [480] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
@@ -731,15 +694,13 @@ begin
   end;
 end;
 
-function solidupOne(ftp: TIdFTP; SourceFName, DestPath,
-  DestFName: string): boolean;
+function solidupOne(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean;
 var
   ActRetry: integer;
 
   function _logID: string;
   begin
-    result := 'up(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ',' +
-      DestPath + ',' + DestFName + ')';
+    result := 'up(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ',' + DestPath + ',' + DestFName + ')';
   end;
 
 begin
@@ -762,8 +723,7 @@ begin
         SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
         if Size(DestFName + cTmpFileExtension) >= 0 then
         begin
-          solidLog(cWARNINGText + 'solidUp: ' + DestFName + cTmpFileExtension +
-            ' gab es schon');
+          solidLog(cWARNINGText + 'solidUp: ' + DestFName + cTmpFileExtension + ' gab es schon');
           SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
           Delete(DestFName + cTmpFileExtension);
         end;
@@ -780,18 +740,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [539] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [539] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [539] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
@@ -800,16 +757,14 @@ begin
   end;
 end;
 
-function solidstoreOne(ftp: TIdFtpRestart;
-  SourceFName, DestPath, DestFName: string): boolean;
+function solidstoreOne(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean;
 var
   ActRetry: integer;
   rSize, lSize: int64;
 
   function _logID: string;
   begin
-    result := 'store(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ','
-      + DestPath + ',' + DestFName + ')';
+    result := 'store(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ',' + DestPath + ',' + DestFName + ')';
   end;
 
 begin
@@ -847,8 +802,7 @@ begin
             if (rSize < lSize) then
             begin
               // Datei da, aber unvollständig
-              SolidSingleStepLog('putrestart@' + IntToStr(rSize) + ' ' +
-                DestFName + cTmpFileExtension);
+              SolidSingleStepLog('putrestart@' + IntToStr(rSize) + ' ' + DestFName + cTmpFileExtension);
               PutRestart(SourceFName, DestFName + cTmpFileExtension, rSize);
               break;
             end;
@@ -864,8 +818,8 @@ begin
             end;
 
             if rSize > lSize then
-              raise Exception.Create('FTP: remote Datei ist ' +
-                IntToStr(rSize - lSize) + ' Bytes grösser als die lokale');
+              raise Exception.Create('FTP: remote Datei ist ' + IntToStr(rSize - lSize) +
+                ' Bytes grösser als die lokale');
 
           until true;
         end;
@@ -878,18 +832,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [664] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [664] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [673] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
@@ -904,8 +855,7 @@ var
 
   function _logID: string;
   begin
-    result := 'size(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ','
-      + SourcePath + ',' + SourceFName + ')';
+    result := 'size(' + ftp.host + ',' + ftp.UserName + ',' + SourceFName + ',' + SourcePath + ',' + SourceFName + ')';
   end;
 
 begin
@@ -933,18 +883,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [592] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [592] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := -1;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [592] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := -1;
         end;
 
@@ -959,8 +906,7 @@ var
 
   function _logID: string;
   begin
-    result := 'del(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
-      SourceFName + ')';
+    result := 'del(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' + SourceFName + ')';
   end;
 
 begin
@@ -989,18 +935,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [646] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [646] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
           solidLog(cEXCEPTIONText + ' [646] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
@@ -1009,8 +952,7 @@ begin
   end;
 end;
 
-function SolidDel(ftp: TIdFTP; SourcePath: string;
-  DeleteList: TStringList): boolean;
+function SolidDel(ftp: TIdFTP; SourcePath: string; DeleteList: TStringList): boolean;
 var
   n: integer;
 begin
@@ -1023,14 +965,12 @@ begin
     end;
 end;
 
-function SolidDel(ftp: TIdFTP; SourcePath: string; DelFName: string)
-  : boolean; overload;
+function SolidDel(ftp: TIdFTP; SourcePath: string; DelFName: string): boolean; overload;
 begin
   result := SolidDelOne(ftp, SourcePath, DelFName);
 end;
 
-function soliddownOne(ftp: TIdFTP; SourcePath, SourceFName, DestPath: string;
-  RemoteDelete: boolean = false): boolean;
+function soliddownOne(ftp: TIdFTP; SourcePath, SourceFName, DestPath: string; RemoteDelete: boolean = false): boolean;
 
 var
   ActRetry: integer;
@@ -1038,8 +978,7 @@ var
 
   function _logID: string;
   begin
-    result := 'down(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' +
-      SourceFName + ',' + DestPath + ')';
+    result := 'down(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ',' + SourceFName + ',' + DestPath + ')';
   end;
 
 begin
@@ -1061,12 +1000,13 @@ begin
         if (DestPath <> '') then
         begin
 
-          // Wir downloaden in einen TMP-File
+          // Wir downloaden in einen TMP-File (.$$$)
           TmpPathAndFileName :=
           { } DestPath +
           { } SourceFName +
           { } cTmpFileExtension;
 
+          // Gibt es den schon müssen wir uns einen neuen Dateinamen einfallen lassen (.~PWD~.$$$)
           if FileExists(TmpPathAndFileName) then
             TmpPathAndFileName :=
             { } DestPath +
@@ -1078,9 +1018,28 @@ begin
           SolidSingleStepLog('get ' + SourceFName + ' > ' + TmpPathAndFileName);
           Get(SourceFName, TmpPathAndFileName, true);
 
-          // Jetzt umbenenen
-          FileDelete(DestPath + SourceFName);
-          FileRename(TmpPathAndFileName, DestPath + SourceFName);
+          // alte Version der Datei vorhanden?
+          if FileExists(DestPath + SourceFName) then
+          begin
+            SolidSingleStepLog('delete ' + DestPath + SourceFName);
+            FileDelete(DestPath + SourceFName);
+          end;
+
+          // alte Version immer noch vorhanden?
+          if FileExists(DestPath + SourceFName) then
+            raise Exception.Create('[1090] can not delete ' + DestPath + SourceFName);
+
+          // Jetzt lokal umbenenen
+          if not(RenameFile(TmpPathAndFileName, DestPath + SourceFName)) then
+            raise Exception.Create('[1093] rename impossible ' + TmpPathAndFileName + ' to ' + DestPath + SourceFName);
+
+          // alter noch da?
+          if FileExists(TmpPathAndFileName) then
+            raise Exception.Create('[1095] after rename still there ' + TmpPathAndFileName);
+
+          // neuer nicht da?
+          if not(FileExists(DestPath + SourceFName)) then
+            raise Exception.Create('[1097] disappeared ' + DestPath + SourceFName);
 
         end;
 
@@ -1098,18 +1057,15 @@ begin
 
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [929] Socket Error: ' +
-            IntToStr(E.LastError));
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [1121] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
-          solidLog(cEXCEPTIONText + ' [938] ' + E.Message);
-          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message))
-          then
+          solidLog(cEXCEPTIONText + ' [1130] ' + E.Message);
+          if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
@@ -1136,8 +1092,7 @@ begin
       if not(solidupOne(ftp,
         { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
-        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName)))
-      then
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
       begin
         WasError := true;
         break;
@@ -1150,8 +1105,7 @@ begin
     for n := 0 to pred(CommandList.Count) do
       if not(solidcommitOne(ftp,
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
-        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName)))
-      then
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
       begin
         WasError := true;
         break;
@@ -1163,8 +1117,7 @@ begin
   SolidEndTransaction;
 end;
 
-function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string)
-  : boolean; overload;
+function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean; overload;
 var
   CommandList: TStringList;
 begin
@@ -1174,8 +1127,7 @@ begin
   CommandList.free;
 end;
 
-function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList)
-  : boolean; overload;
+function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 var
   n, k: integer;
   WasError: boolean;
@@ -1194,8 +1146,7 @@ begin
       if not(solidstoreOne(ftp,
         { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
-        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName)))
-      then
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
       begin
         WasError := true;
         break;
@@ -1208,8 +1159,7 @@ begin
     // zuvor *NICHT* überschrieben werden
     for n := 0 to pred(CommandList.Count) do
     begin
-      DestFName := nextp(CommandList[n], ';',
-        SolidFTP_Command_DestinationFileName);
+      DestFName := nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName);
       if SolidSize(ftp,
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
         { } DestFName) > 0 then
@@ -1235,8 +1185,7 @@ begin
     for n := 0 to pred(CommandList.Count) do
       if not(solidcommitOne(ftp,
         { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
-        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName)))
-      then
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
       begin
         WasError := true;
         break;
@@ -1249,8 +1198,7 @@ begin
 
 end;
 
-function SolidStore(ftp: TIdFtpRestart;
-  SourceFName, DestPath, DestFName: string): boolean; overload;
+function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
 var
   CommandList: TStringList;
 begin
@@ -1260,8 +1208,7 @@ begin
   CommandList.free;
 end;
 
-function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string;
-  RemoteDelete: boolean = false): boolean;
+function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string; RemoteDelete: boolean = false): boolean;
 var
   WasError: boolean;
   n: integer;
@@ -1280,8 +1227,7 @@ begin
 
     for n := 0 to pred(FileList.Count) do
     begin
-      if not(soliddownOne(ftp, SourcePath, FileList[n], DestPath, RemoteDelete))
-      then
+      if not(soliddownOne(ftp, SourcePath, FileList[n], DestPath, RemoteDelete)) then
       begin
         WasError := true;
         break;
@@ -1377,19 +1323,18 @@ begin
   // Log ?!
   if (SolidFTP_LogDir <> '') then
   begin
-    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + IntToStr(DateGet) +
-      '.log.txt';
+    CoreFTPLogFName := SolidFTP_LogDir + 'CoreFTP-' + IntToStr(DateGet) + '.log.txt';
 
     CommandL := CommandL + ' -log ' + CoreFTPLogFName;
     AppendStringsToFile(uhr8 + ': { ' + CommandL, CoreFTPLogFName);
   end;
 
   if (sUpFiles.Count > 0) then
-  {$ifdef fpc}
-  CoreFTPExitCode := -1
-    {$else}
+{$IFDEF fpc}
+    CoreFTPExitCode := -1
+{$ELSE}
     CoreFTPExitCode := JclMiscel.WinExec32AndWait(CommandL, SW_SHOWNORMAL)
-    {$endif}
+{$ENDIF}
   else
     CoreFTPExitCode := 0;
 
@@ -1398,8 +1343,7 @@ begin
   begin
     if (sUpFiles.Count = 0) then
     begin
-      AppendStringsToFile(cWARNINGText + ' Keine Dateien gefunden!',
-        CoreFTPLogFName);
+      AppendStringsToFile(cWARNINGText + ' Keine Dateien gefunden!', CoreFTPLogFName);
     end
     else
     begin
@@ -1409,22 +1353,19 @@ begin
       for n := pred(sLog.Count) downto 0 do
         if pos(cCoreFTP_MsgUploadedFiles, sLog[n]) = 1 then
         begin
-          AnzahlErfolgreicherUploads :=
-            StrToIntDef(noblank(nextp(sLog[n], ':', 1)), 0);
+          AnzahlErfolgreicherUploads := StrToIntDef(noblank(nextp(sLog[n], ':', 1)), 0);
           break;
         end;
       sLog.free;
     end;
     if AnzahlErfolgreicherUploads <> sUpFiles.Count then
-      AppendStringsToFile(cERRORText + format('Nur %d/%d Uploads!',
-        [AnzahlErfolgreicherUploads, sUpFiles.Count]), CoreFTPLogFName);
+      AppendStringsToFile(cERRORText + format('Nur %d/%d Uploads!', [AnzahlErfolgreicherUploads, sUpFiles.Count]),
+        CoreFTPLogFName);
 
-    AppendStringsToFile(format('%s: CoreFTPExitCode:%d }',
-      [uhr8, CoreFTPExitCode]), CoreFTPLogFName);
+    AppendStringsToFile(format('%s: CoreFTPExitCode:%d }', [uhr8, CoreFTPExitCode]), CoreFTPLogFName);
   end;
 
-  result := (CoreFTPExitCode <> Cardinal($FFFFFFFF)) and
-    (AnzahlErfolgreicherUploads = sUpFiles.Count);
+  result := (CoreFTPExitCode <> Cardinal($FFFFFFFF)) and (AnzahlErfolgreicherUploads = sUpFiles.Count);
   sUpFiles.free;
 end;
 

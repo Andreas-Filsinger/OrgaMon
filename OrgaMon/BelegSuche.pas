@@ -109,8 +109,8 @@ type
     procedure IB_Query3BeforePrepare(Sender: TIB_Statement);
     procedure FormCreate(Sender: TObject);
     procedure SpeedButton20Click(Sender: TObject);
-    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
+      AFont: TFont);
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton41Click(Sender: TObject);
@@ -187,9 +187,8 @@ var
   LastBackgroundCol: TColor;
   LastFontCol: TColor;
 
-procedure TFormBelegSuche.IB_Grid1GetCellProps(Sender: TObject;
-  ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
-  AFont: TFont);
+procedure TFormBelegSuche.IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+  var AColor: TColor; AFont: TFont);
 var
   PAPERCOLOR: string;
 begin
@@ -236,15 +235,12 @@ end;
 
 procedure TFormBelegSuche.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
-  IB_Query2.ParamByName('CROSSREF').AsInteger :=
-    IB_Query1.FieldByName('PERSON_R').AsInteger;
-  IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID')
-    .AsInteger;
+  IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PERSON_R').AsInteger;
+  IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
   if IB_Query1.FieldByName('LAGER_R').IsNull then
     Label3.Caption := '---'
   else
-    Label3.Caption := e_r_LagerPlatzNameFromLAGER_R
-      (IB_Query1.FieldByName('LAGER_R').AsInteger);
+    Label3.Caption := e_r_LagerPlatzNameFromLAGER_R(IB_Query1.FieldByName('LAGER_R').AsInteger);
   Label5.Caption := e_r_Person(IB_Query1.FieldByName('PERSON_R').AsInteger);
 end;
 
@@ -258,8 +254,7 @@ begin
   FormBelege.setContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
   FormBelege.show;
   application.processmessages;
-  FormBelege.IB_Query1.Locate('RID', IB_Query1.FieldByName('RID')
-    .AsInteger, []);
+  FormBelege.IB_Query1.Locate('RID', IB_Query1.FieldByName('RID').AsInteger, []);
 end;
 
 procedure TFormBelegSuche.ComboBox1Change(Sender: TObject);
@@ -300,10 +295,8 @@ begin
     ProgressBar1.position := 0;
 
     DisableControls;
-    SaveBlockToFile('ZEILE EVEN', MyProgramPath + cHTMLBlocksDir +
-      'SUBITEM ZEILE EVEN.html');
-    SaveBlockToFile('ZEILE ODD', MyProgramPath + cHTMLBlocksDir +
-      'SUBITEM ZEILE ODD.html');
+    SaveBlockToFile('ZEILE EVEN', MyProgramPath + cHTMLBlocksDir + 'SUBITEM ZEILE EVEN.html');
+    SaveBlockToFile('ZEILE ODD', MyProgramPath + cHTMLBlocksDir + 'SUBITEM ZEILE ODD.html');
     ClearBlock('ZEILE EVEN');
     ClearBlock('ZEILE ODD');
     first;
@@ -311,11 +304,9 @@ begin
     begin
       { welche Zeile soll geladen werden! }
       if even then
-        LoadBlockFromFile('MERKER', MyProgramPath + cHTMLBlocksDir +
-          'SUBITEM ZEILE EVEN.html')
+        LoadBlockFromFile('MERKER', MyProgramPath + cHTMLBlocksDir + 'SUBITEM ZEILE EVEN.html')
       else
-        LoadBlockFromFile('MERKER', MyProgramPath + cHTMLBlocksDir +
-          'SUBITEM ZEILE ODD.html');
+        LoadBlockFromFile('MERKER', MyProgramPath + cHTMLBlocksDir + 'SUBITEM ZEILE ODD.html');
       even := not(even);
 
       Rechnungs_Betrag := FieldByName('RECHNUNGS_BETRAG').AsDouble;
@@ -325,16 +316,12 @@ begin
       WriteValueOnce('vom', FieldByName('ANLAGE').AsString);
 
       // komplette Anschrift laden!
-      IB_Query2.ParamByName('CROSSREF').AsInteger :=
-        IB_Query1.FieldByName('PERSON_R').AsInteger;
-      IB_Query4.ParamByName('CROSSREF').AsInteger :=
-        IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+      IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PERSON_R').AsInteger;
+      IB_Query4.ParamByName('CROSSREF').AsInteger := IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
 
-      _AddStr := IB_Query2.FieldByName('VORNAME').AsString + ' ' +
-        IB_Query2.FieldByName('NACHNAME').AsString + ' (' +
-        IB_Query2.FieldByName('NUMMER').AsString + ') ' + #13 +
-        IB_Query4.FieldByName('NAME1').AsString + #13 + IB_Query4.FieldByName
-        ('STRASSE').AsString + #13 + e_r_ort(IB_Query4);
+      _AddStr := IB_Query2.FieldByName('VORNAME').AsString + ' ' + IB_Query2.FieldByName('NACHNAME').AsString + ' (' +
+        IB_Query2.FieldByName('NUMMER').AsString + ') ' + #13 + IB_Query4.FieldByName('NAME1').AsString + #13 +
+        IB_Query4.FieldByName('STRASSE').AsString + #13 + e_r_ort(IB_Query4);
 
       WriteValueOnce('Anschrift', _AddStr);
       WriteValueOnce('RB', format('%.2m', [Rechnungs_Betrag]));
@@ -371,9 +358,8 @@ end;
 procedure TFormBelegSuche.Button7Click(Sender: TObject);
 begin
   with IB_Query1 do
-    FormAusgangsrechnungen.setContext(FieldByName('PERSON_R').AsInteger,
-      FieldByName('RID').AsInteger, FieldByName('RECHNUNGS_BETRAG').AsDouble -
-      FieldByName('DAVON_BEZAHLT').AsDouble);
+    FormAusgangsrechnungen.setContext(FieldByName('PERSON_R').AsInteger, FieldByName('RID').AsInteger,
+      FieldByName('RECHNUNGS_BETRAG').AsDouble - FieldByName('DAVON_BEZAHLT').AsDouble);
 end;
 
 function nosemi(const s: string): string;
@@ -432,26 +418,21 @@ begin
       else
         cSelectFields := cSelectFields + #13 + strings[n];
 
-  cStdEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'ORDER BY RID' + #13 +
-    'FOR UPDATE';
+  cStdEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
 
-  cOffeneEntry := cSelectFields + #13 + 'FROM BELEG ' + #13 + 'WHERE ' + #13 +
-    ' (RECHNUNGS_BETRAG>0.0) and ' + #13 +
-    ' ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) or (DAVON_BEZAHLT is null)) ' +
-    #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
+  cOffeneEntry := cSelectFields + #13 + 'FROM BELEG ' + #13 + 'WHERE ' + #13 + ' (RECHNUNGS_BETRAG>0.0) and ' + #13 +
+    ' ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) or (DAVON_BEZAHLT is null)) ' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
 
   cFaelligeEntry := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND'
-    + #13 + '      (FAELLIG<''' +
-    Long2date(DatePlus(DateGet, -strtoint(Edit1.Text))) + ''')' + #13 +
-    'ORDER BY RID' + #13 + 'FOR UPDATE';
+    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND' + #13 +
+    '      (FAELLIG<''' + Long2date(DatePlus(DateGet, -strtoint(Edit1.Text))) + ''')' + #13 + 'ORDER BY RID' + #13 +
+    'FOR UPDATE';
 
-  cVersandfaehigEntry := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE MENGE_RECHNUNG>0' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
+  cVersandfaehigEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE MENGE_RECHNUNG>0' + #13 + 'ORDER BY RID' +
+    #13 + 'FOR UPDATE';
 
-  cVersandfertigEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE' +
-    #13 + ' ((MENGE_RECHNUNG>0) AND (MENGE_AGENT=0)) OR' + #13 + ' (TERMIN = '''
-    + Datum10 + ''')' + #13 +
+  cVersandfertigEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE' + #13 +
+    ' ((MENGE_RECHNUNG>0) AND (MENGE_AGENT=0)) OR' + #13 + ' (TERMIN = ''' + Datum10 + ''')' + #13 +
   //
   // where
   // cast(TERMIN AS DATE) > '01.01.2006'
@@ -459,64 +440,57 @@ begin
   //
     'ORDER BY RID' + #13 + 'FOR UPDATE';
 
-  cUngeliefert := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE MENGE_AGENT>0' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
+  cUngeliefert := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE MENGE_AGENT>0' + #13 + 'ORDER BY RID' + #13 +
+    'FOR UPDATE';
 
-  cErwartet := cSelectFields + #13 + 'FROM BELEG' + #13 + 'where RID in ' + #13
-    + '(select distinct' + #13 + ' POSTEN.BELEG_R' + #13 + 'from' + #13 +
-    ' POSTEN' + #13 + 'join' + #13 + ' bposten' + #13 + 'on' + #13 +
+  cErwartet := cSelectFields + #13 + 'FROM BELEG' + #13 + 'where RID in ' + #13 + '(select distinct' + #13 +
+    ' POSTEN.BELEG_R' + #13 + 'from' + #13 + ' POSTEN' + #13 + 'join' + #13 + ' bposten' + #13 + 'on' + #13 +
     ' (POSTEN.artikel_r=bposten.artikel_R) and' + #13 +
     ' ((POSTEN.ausgabeart_r=bposten.ausgabeart_r) or ((POSTEN.ausgabeart_r is null) and (BPOSTEN.ausgabeart_r is null))) and'
-    + #13 + ' (BPOSTEN.MENGE_ERWARTET>0)' + #13 + 'where' + #13 +
-    ' (MENGE_AGENT>0)' + #13 + ')' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
-
-  cFehlerHaftEntry := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE VERSAND_STATUS>=' + inttostr(cV_Fehler + cV_ZeroState) + #13 +
-    'ORDER BY RID' + #13 + 'FOR UPDATE';
-
-  cAlleStatusEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'ORDER BY RID'
+    + #13 + ' (BPOSTEN.MENGE_ERWARTET>0)' + #13 + 'where' + #13 + ' (MENGE_AGENT>0)' + #13 + ')' + #13 + 'ORDER BY RID'
     + #13 + 'FOR UPDATE';
 
-  cAbgewickelt := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE MENGE_AUFTRAG=MENGE_GELIEFERT' + #13 + 'ORDER BY RID' + #13 +
-    'FOR UPDATE';
+  cFehlerHaftEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE VERSAND_STATUS>=' +
+    inttostr(cV_Fehler + cV_ZeroState) + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
 
-  cUebergangsFachEntry := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE NOT(LAGER_R IS NULL)' + #13 + 'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
+  cAlleStatusEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
+
+  cAbgewickelt := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE MENGE_AUFTRAG=MENGE_GELIEFERT' + #13 +
+    'ORDER BY RID' + #13 + 'FOR UPDATE';
+
+  cUebergangsFachEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE NOT(LAGER_R IS NULL)' + #13 +
+    'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
   cMahnung1 := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND'
-    + #13 + '      (mahnung1 is not null) and (mahnung2 is null) and (mahnung3 is null) and (mahnbescheid is null)'
-    + 'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
+    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND' + #13 +
+    '      (mahnung1 is not null) and (mahnung2 is null) and (mahnung3 is null) and (mahnbescheid is null)' +
+    'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
   cMahnung2 := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND'
-    + #13 + '      (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is null) and (mahnbescheid is null)'
-    + 'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
+    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND' + #13 +
+    '      (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is null) and (mahnbescheid is null)' +
+    'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
   cMahnung3 := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND'
-    + #13 + '      (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is not null) and (mahnbescheid is null)'
-    + 'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
+    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND' + #13 +
+    '      (mahnung1 is not null) and (mahnung2 is not null) and (mahnung3 is not null) and (mahnbescheid is null)' +
+    'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
   cMahnBescheid := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND'
-    + #13 + '      (mahnbescheid is not null)' + #13 + 'ORDER BY ANLAGE' + #13 +
-    'FOR UPDATE';
+    'WHERE ((RECHNUNGS_BETRAG-DAVON_BEZAHLT>0.009) OR (RECHNUNGS_BETRAG>0 AND DAVON_BEZAHLT IS NULL)) AND' + #13 +
+    '      (mahnbescheid is not null)' + #13 + 'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
-  cMahnungAusgesetzt := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE (MAHNUNG_AUSGESETZT=''Y'')' + #13 + 'ORDER BY ANLAGE' + #13 +
-    'FOR UPDATE';
+  cMahnungAusgesetzt := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE (MAHNUNG_AUSGESETZT=''Y'')' + #13 +
+    'ORDER BY ANLAGE' + #13 + 'FOR UPDATE';
 
-  cTerminierte := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE (TERMIN IS NOT NULL)' + #13 + 'ORDER BY TERMIN' + #13 + 'FOR UPDATE';
+  cTerminierte := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE (TERMIN IS NOT NULL)' + #13 + 'ORDER BY TERMIN' +
+    #13 + 'FOR UPDATE';
 
-  cUngebucht := cSelectFields + #13 + 'FROM BELEG' + #13 +
-    'WHERE (RECHNUNGS_BETRAG is null) or' + #13 + '(RECHNUNG is null)' + #13 +
-    'ORDER BY RID descending' + #13 + 'FOR UPDATE';
+  cUngebucht := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE (RECHNUNGS_BETRAG is null) or' + #13 +
+    '(RECHNUNG is null)' + #13 + 'ORDER BY RID descending' + #13 + 'FOR UPDATE';
 
-  cOLAPEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE RID in ' +
-    ListasSQL(ItemRIDs) + #13 + 'ORDER BY RID' + #13 + 'FOR UPDATE';
+  cOLAPEntry := cSelectFields + #13 + 'FROM BELEG' + #13 + 'WHERE RID in ' + ListasSQL(ItemRIDs) + #13 + 'ORDER BY RID'
+    + #13 + 'FOR UPDATE';
 
   with IB_Query1 do
   begin
@@ -650,10 +624,8 @@ begin
   IB_Query1.first;
   while not(IB_Query1.eof) do
   begin
-    IB_Query2.ParamByName('CROSSREF').AsInteger :=
-      IB_Query1.FieldByName('PERSON_R').AsInteger;
-    IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID')
-      .AsInteger;
+    IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PERSON_R').AsInteger;
+    IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
     IB_Query3.first;
     while not(IB_Query3.eof) do
     begin
@@ -666,8 +638,7 @@ begin
         begin
 
           //
-          ParamByName('CROSSREF').AsInteger :=
-            IB_Query3.FieldByName('ARTIKEL_R').AsInteger;
+          ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('ARTIKEL_R').AsInteger;
           if not(Active) then
             Open;
 
@@ -676,13 +647,11 @@ begin
           begin
             FieldByName('INTERN_INFO').AssignTo(ArtikelInfo);
             for n := 1 to MENGE do
-              OutL.add(nosemi(e_r_Verlag_PERSON_R(FieldByName('VERLAG_R')
-                .AsInteger)) + ';' + inttostr(FieldByName('NUMERO').AsInteger) +
-                ';' + nosemi(FieldByName('TITEL').AsString) + ';' + inttostr(n)
-                + '/' + inttostr(MENGE) + ';' + nosemi(ArtikelInfo.Values['BEM']
-                ) + ';' + e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
-                .AsInteger) + ';' + nosemi(ArtikelInfo.Values['VERLAGNO']) + ';'
-                + IB_Query2.FieldByName('NUMMER').AsString + ';' +
+              OutL.add(nosemi(e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsInteger)) + ';' +
+                inttostr(FieldByName('NUMERO').AsInteger) + ';' + nosemi(FieldByName('TITEL').AsString) + ';' +
+                inttostr(n) + '/' + inttostr(MENGE) + ';' + nosemi(ArtikelInfo.Values['BEM']) + ';' +
+                e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R').AsInteger) + ';' +
+                nosemi(ArtikelInfo.Values['VERLAGNO']) + ';' + IB_Query2.FieldByName('NUMMER').AsString + ';' +
                 IB_Query1.FieldByName('RID').AsString);
           end;
         end;
@@ -718,9 +687,12 @@ var
   VORNAME, NACHNAME: string;
   DATUM: string;
   BEZAHLT_BIS: TDateTime;
+  // Namensbearbeitung
+  VollerName: string;
+  i: Integer;
 begin
 
-  // Zahlung in den Vertrag eintragen -> BEZAHLT_BIS
+  // erfolgte Zahlung in den Vertrag eintragen -> BEZAHLT_BIS
   AutoMataState := 0;
   lPERSON_R := nil;
 
@@ -740,8 +712,19 @@ begin
               if (pos('IMEI', ARTIKEL) > 0) then
               begin
 
-                VORNAME := ExtractSegmentBetween(ARTIKEL, '<i>', ' ');
-                NACHNAME := ExtractSegmentBetween(ARTIKEL, ' ', ':');
+                VollerName := ExtractSegmentBetween(ARTIKEL, '<i>', ':');
+                i := revpos(' ', VollerName);
+                if (i > 0) then
+                begin
+                  VORNAME := copy(VollerName, 1, pred(i));
+                  NACHNAME := copy(VollerName, succ(i), MAxInt);
+                end
+                else
+                begin
+                  VORNAME := '';
+                  NACHNAME := VollerName;
+                end;
+
                 lPERSON_R := e_r_sqlm(
                   { } 'select VERTRAG.RID from' +
                   { } ' PERSON ' +
@@ -837,8 +820,7 @@ end;
 
 procedure TFormBelegSuche.SpeedButton41Click(Sender: TObject);
 begin
-  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true)
-  then
+  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true) then
   begin
     BeginHourGlass;
     e_w_BelegStorno(IB_Query1.FieldByName('RID').AsInteger);
@@ -874,8 +856,7 @@ end;
 
 procedure TFormBelegSuche.IB_Query3BeforePrepare(Sender: TIB_Statement);
 begin
-  LoadHeaderSettings(IB_Grid3, AnwenderPath + HeaderSettingsFName
-    (FormBelege.IB_grid2));
+  LoadHeaderSettings(IB_Grid3, AnwenderPath + HeaderSettingsFName(FormBelege.IB_grid2));
 end;
 
 end.

@@ -9646,7 +9646,7 @@ begin
           else
           begin
             ErrorFName := WorkPath + 'Oc-ERROR-' + RID + '.xml';
-            FileRename(WorkPath + c_ML_CheckFName, ErrorFName);
+            RenameFile(WorkPath + c_ML_CheckFName, ErrorFName);
             AppendStringsToFile(sCheckErgebnis, ErrorFName);
           end;
           sCheckErgebnis.Free;

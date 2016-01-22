@@ -371,7 +371,6 @@ function FileConcat(const Source1, Source2, Dest: string): boolean;
 procedure FileLimitTo(const TextFName: string; TextFSize: dword);
 procedure FileEmpty(const FName: string);
 procedure FileAlive(const FName: string);
-function FileRename(const Source, Dest: string): boolean;
 function FileVersion(const FName: string): string;
 function FileCompare(const FName1, FName2: string): boolean;
 function FSize(FName: string): int64;
@@ -3021,7 +3020,7 @@ begin
     if FileExists(SicherungFName) then
       raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName +
         ' existiert bereits');
-    if not(FileRename(DestFName, SicherungFName)) then
+    if not(RenameFile(DestFName, SicherungFName)) then
       raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht wegsichern');
 
     // Zuletzt benutzer Wert abspeichern
@@ -3091,18 +3090,6 @@ end;
 function FileMove(const Mask, Dest: string): boolean;
 begin
   result := FileCopy(Mask, Dest, true);
-end;
-
-function FileRename(const Source, Dest: string): boolean;
-var
-  F: file;
-begin
-  FileSetAttr(Source, 0);
-  assignFile(F, Source);
-{$I-}
-  rename(F, Dest);
-{$I+}
-  result := (ioresult = 0);
 end;
 
 function AlreadyRunning(ApplicationName: string): boolean;
