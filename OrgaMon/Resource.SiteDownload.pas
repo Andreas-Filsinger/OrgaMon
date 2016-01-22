@@ -368,7 +368,7 @@ begin
 
           // make visible
           FileDelete(d);
-          FileRename(d + cTmpFileExtension, d);
+          RenameFile(d + cTmpFileExtension, d);
 
           // polish
           FileSetDate(d, DateTimeToFileDate(IdHTTP1.REsponse.LastModified));

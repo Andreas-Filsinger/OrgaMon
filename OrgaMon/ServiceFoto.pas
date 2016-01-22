@@ -100,7 +100,6 @@ type
     Label8: TLabel;
     Button16: TButton;
     Label9: TLabel;
-    Button17: TButton;
     ListBox10: TListBox;
     Label10: TLabel;
     TabSheet9: TTabSheet;
@@ -136,6 +135,7 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Button28: TButton;
+    Button7: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -159,7 +159,6 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
-    procedure Button17Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
@@ -173,6 +172,7 @@ type
     procedure ListBox5Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -524,7 +524,7 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
-    FileMove(MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName, MyFotoExec.pFTPpath + FNameRemote);
+    FileMove(MyFotoExec.pFTPPath + cLocation_Unverarbeitet + FName, MyFotoExec.pFTPPath + FNameRemote);
   end;
 
 var
@@ -677,11 +677,6 @@ begin
   MyFotoExec.JonDaExec.doSync;
 end;
 
-procedure TFormServiceFoto.Button17Click(Sender: TObject);
-begin
-  ListBox10.Items.add(InttoStr(DirSize('X:\JonDaServer\#61') DIV (1024 * 1024)));
-end;
-
 procedure TFormServiceFoto.Button18Click(Sender: TObject);
 var
   AUFTRAG_R: integer;
@@ -787,6 +782,50 @@ begin
   MyFotoExec.workWartend;
 end;
 
+procedure TFormServiceFoto.Button7Click(Sender: TObject);
+const
+  pAblageRootPath = 'W:\';
+var
+  sDirs: TStringList;
+  n: integer;
+  sPathShort: string;
+  sPath: string;
+  DoDelete: boolean;
+begin
+  sDirs := TStringList.Create;
+  dir(pAblageRootPath + '*.', sDirs, false);
+  for n := pred(sDirs.count) downto 0 do
+  begin
+
+    repeat
+      DoDelete := true;
+      if (pos('.', sDirs[n]) = 1) then
+        break;
+      if (sDirs[n] = 'orgamon-mob') then
+        break;
+
+      sPathShort := sDirs[n] + '\';
+      sPath := pAblageRootPath + sPathShort;
+
+      if not(FileExists(sPath + cIsAblageMarkerFile)) then
+        break;
+
+      DoDelete := false;
+
+    until true;
+    if DoDelete then
+     sDirs.Delete(n);
+
+  end;
+  sDirs.sort;
+  for n := 0 to pred(sDirs.Count) do
+   sDirs[n] := '"' + pAblageRootPath + sDirs[n] + '\"';
+
+  sDirs.insert(0,'PFAD');
+  sDirs.SaveToFile(pAblageRootPath+'ABLAGE'+'.csv');
+  sDirs.free;
+end;
+
 procedure TFormServiceFoto.Button8Click(Sender: TObject);
 var
   sParameter: TStringList;
@@ -794,7 +833,6 @@ begin
   sParameter := TStringList.Create;
   sParameter.add('DATUM=' + Edit3.Text);
   sParameter.add('EINZELN=' + Edit2.Text);
-
   MyFotoExec.workAblage(sParameter);
   Edit2.Text := '';
 end;
@@ -1018,7 +1056,7 @@ begin
           // Es kann aber sein, dass wir schon direkt in der Ablage sind
           // in disem Fall kann das Kopieren unterbleiben
           FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-          FNameDest := { } myFotoExec.pAblageRootPath +
+          FNameDest := { } MyFotoExec.pAblageRootPath +
           { } Ablage + '\' +
           { } ListBox3.Items[_ItemIndex];
           if (FNameSource <> FNameDest) then
@@ -1054,7 +1092,7 @@ begin
   begin
     BeginHourGlass;
     FNameSource := Edit4.Text + ListBox3.Items[_ItemIndex];
-    FNameDest := { } myFotoExec.pAblageRootPath +
+    FNameDest := { } MyFotoExec.pAblageRootPath +
     { } ListBox3.Items[_ItemIndex];
 
     FotoCompress(FNameSource, FNameDest, 120, 5);

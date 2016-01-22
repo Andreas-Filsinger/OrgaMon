@@ -53,6 +53,7 @@ const
   // File Names
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
+  cIsAblageMarkerFile = 'ampel-horizontal.gif';
 
   // Bild-Namenskonvention
   //
@@ -714,7 +715,7 @@ begin
                 { } >=
                 { } FotoAufnahmeMoment(pAblageRootPath + FotoZiel + '\' + FotoDateiName)) then
               begin
-                if not(FileRename(
+                if not(RenameFile(
                   { } pAblageRootPath + FotoZiel + '\' + FotoDateiName,
                   { } pAblageRootPath + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 begin
@@ -1136,7 +1137,6 @@ procedure TFotoExec.workAblage(sParameter: TStringList = nil);
   end;
 
 const
-  cIsAblageMarkerFile = 'ampel-horizontal.gif';
   cFileTimeOutDays = 50 + 10;
   cPicTimeOutDays = 0;
   // 0 = gestern ist schon zu alt

@@ -1735,7 +1735,7 @@ begin
         FileDelete(MyProgramPath + AktTrn + '\MONDA.DAT');
 
       if not(FileExists(MyProgramPath + AktTrn + '\MONDA.DAT')) then
-        FileReName(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + AktTrn + '\MONDA.DAT');
+        ReNameFile(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + AktTrn + '\MONDA.DAT');
 
       // Foto-Datei
       bFotoErgebnis.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
@@ -2253,7 +2253,7 @@ begin
         end;
 
         // Auftrag.txt nun wirklich bereitstellen!
-        FileReName(MyProgramPath + AktTrn + '\auftrag.$$$', MyProgramPath + AktTrn + '\auftrag.txt')
+        ReNameFile(MyProgramPath + AktTrn + '\auftrag.$$$', MyProgramPath + AktTrn + '\auftrag.txt')
 
       until true;
 
@@ -3187,7 +3187,7 @@ begin
 
       // Die Datei bereitstellen!
       FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
-      FileReName(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
+      ReNameFile(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
         MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
       on E: Exception do
@@ -3230,7 +3230,7 @@ begin
 
         // Die Datei bereitstellen!
         FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen);
-        FileReName(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$',
+        ReNameFile(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$',
           MyProgramPath + cServerDataPath + FName_Abgezogen);
       except
         on E: Exception do
@@ -3276,7 +3276,7 @@ begin
           DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true);
         end;
         FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
-        FileReName(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
+        ReNameFile(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
           MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
         if (DownFileDate > 0) then
           FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,

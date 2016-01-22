@@ -1019,7 +1019,7 @@ begin
       Log('Archiv wird umbenannt!');
 
       // Einfach nur umbenennen
-      if not(FileRename(TmpFName + cTmpFileExtension,
+      if not(RenameFile(TmpFName + cTmpFileExtension,
         DestFName + CompressorExtension)) then
         raise Exception.create('Gesamtsicherung: Umbenennen nicht möglich');
 

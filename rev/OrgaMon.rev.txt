@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.140 (20.01.16) Andreas Filsinger
+
+ Neu: solidftp: nach "rename" Prüfung auf dessen Erfolg
+ Neu: Verzeichnis: OrgaMon-App
+
+ Wegfall: Entwickler-Verzeichnis: JonDaServer
+
 Rev 8.139 (19.01.16) Andreas Filsinger
 
  Bug: Service-App: Anzahl der angezeigten IMEI, IMEI-OK stimmte nicht
