@@ -46,7 +46,6 @@ uses
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   sperre in '..\PASconTools\sperre.pas',
   txlib in '..\PASconTools\txlib.pas',
-  JonDaExec in '..\JonDaServer\JonDaExec.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
@@ -73,8 +72,9 @@ uses
   basic32 in '..\PASconTools\basic32.pas',
   DTA in '..\PASconTools\DTA.PAS',
   memcache in '..\PASconTools\memcache.pas',
-  FotoExec in '..\JonDaServer\FotoExec.pas',
-  Foto in '..\PASconTools\Foto.pas';
+  Foto in '..\PASconTools\Foto.pas',
+  JonDaExec in 'JonDaExec.pas',
+  FotoExec in 'FotoExec.pas';
 
 type
   TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto);

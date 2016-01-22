@@ -53,7 +53,8 @@ const
   // File Names
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
-  cIsAblageMarkerFile = 'ampel-horizontal.gif';
+
+  cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
 
   // Bild-Namenskonvention
   //
@@ -66,14 +67,12 @@ type
   TFotoExec = class(TObject)
   public
     tBAUSTELLE: tsTable;
+    tABLAGE: tsTable;
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
 
     // Ini-Sachen
-
-    // 'W:\' Ausgangspunkt der Internet-Ablagen
-    pAblageRootPath: string;
 
     // 'I:\KundenDaten\SEWA\JonDaServer\'
     pBackUpPath: string;
@@ -162,14 +161,14 @@ begin
   if not(assigned(tBAUSTELLE)) then
   begin
 
-    //
+    // Initialer Lauf
+
     JonDaExec := TJonDaExec.Create;
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
 
-    // die aktuellen Daten aus dem FTP-Bereich abholen
+    // die aktuellen Daten aus dem FTP-Bereich jetzt abholen
     JonDaExec.doSync;
 
-    // Initialer Lauf
     tBAUSTELLE := tsTable.Create;
     tBAUSTELLE.insertfromFile(MyWorkingPath + cMonDaServer_Baustelle);
     if FileExists(MyWorkingPath + cMonDaServer_Baustelle_manuell) then
@@ -183,6 +182,9 @@ begin
         SaveToFile(MyWorkingPath + 'baustelle-alle.csv');
       end;
     end;
+
+    tABLAGE:= tsTable.Create;
+    tABLAGE.insertfromFile(MyWorkingPath + cFotoAblage);
 
     // Datei der Wartenden sicherstellen, Header anlegen
     if not(FileExists(MyWorkingPath + cFotoUmbenennungAusstehend)) then
@@ -224,7 +226,6 @@ begin
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
 
     // die ganzen Pfade
-    pAblageRootPath := ReadString(SectionName, 'WorkPath', 'W:\');
     pBackUpPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
@@ -295,7 +296,7 @@ var
   // Überspringen weil zu neu?!
   sFilesClientSorter: TStringList;
   sTemp: TStringList;
-  n, m, i, f: integer;
+  n, m, i, f, r: integer;
   FileTimeStamp: TDateTime;
   d, File_Date: TANFiXDate;
   s, File_Seconds: TANFiXTime;
@@ -313,6 +314,7 @@ var
   // Kompletter Dateiname
   FotoZiel: string;
   FotoHost: string;
+  FotoAblage: string;
 
   FullSuccess: boolean;
   FoundAuftrag: boolean;
@@ -681,10 +683,20 @@ begin
             // des SAP Verzeichnisses
             FotoZiel := nextp(FotoZiel, '\', 0);
 
-            if not(DirExists(pAblageRootPath + FotoZiel)) then
+            r := tABLAGE.locate('NAME',FotoZiel);
+
+            if (r=-1) then
             begin
               Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Das Verzeichnis existiert nicht');
+                '": Die Ablage ist nicht bekannt');
+              break;
+            end;
+
+            FotoAblage := tABLAGE.readCell(r,'PFAD');
+            if not(DirExists(FotoAblage)) then
+            begin
+              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                '": Das Verzeichnis "'+FotoAblage+'" existiert nicht');
               break;
             end;
 
