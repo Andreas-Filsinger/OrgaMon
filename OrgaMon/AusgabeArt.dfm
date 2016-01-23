@@ -29,7 +29,7 @@ object FormAusgabeArt: TFormAusgabeArt
       'RID=NOTREQUIRED'
       'WEBSHOP=BOOLEAN=Y,N'
       'FREIERTEXT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.91:test.fdb'
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID'
