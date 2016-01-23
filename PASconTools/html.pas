@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1047,6 +1047,7 @@ var
 begin
   if DebugMode then
   begin
+    FullPage.SaveToFile(DebugLogPath + 'WriteValue.txt');
     DebugSave('Init');
     AppendStringsToFile(
       { } FileName,
@@ -1264,8 +1265,6 @@ begin
   FullPage.addStrings(FullPageGlobal);
   FullPage.add('local');
   FullPage.addStrings(FullPageLokal);
-  if DebugMode then
-    FullPage.SaveToFile(DebugLogPath + 'WriteValue.txt');
   WriteValue(FullPage);
   FullPage.Free;
 end;

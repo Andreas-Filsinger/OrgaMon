@@ -46,7 +46,6 @@ type
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
-    function RIDtoKurz(AUSGABEART_R: integer): string;
   end;
 
 var
@@ -65,21 +64,6 @@ end;
 procedure TFormAusgabeArt.IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
 begin
   IB_Dataset.Refresh;
-end;
-
-function TFormAusgabeArt.RIDtoKurz(AUSGABEART_R: integer): string;
-begin
-  result := '';
-  if (AusgabeArt_r <> 0) then
-  begin
-    with IB_Query1 do
-    begin
-      if not (Active) then
-        Open;
-      locate('RID', AUSGABEART_R, []);
-      result := FieldByNAme('KUERZEL').AsString + ' ';
-    end;
-  end;
 end;
 
 end.
