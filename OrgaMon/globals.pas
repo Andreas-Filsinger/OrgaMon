@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.142; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.143; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -322,7 +322,6 @@ const
   cNoBearbeiter = -1;
   cVormittagsChar = 'V';
   cNachmittagsChar = 'N';
-  cHTMLBlockPath = 'Blocks\';
   cGEO_PQ_Length = 5; // Bei der Routenplanung
   cZaehlerNummerFieldLength = 40;
 

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -186,11 +186,9 @@ type
     MenuItem_WechselDatumSortierung: TMenuItem;
     JvFormStorage1: TJvFormStorage;
     procedure ToolButton37Click(Sender: TObject);
-    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
-    procedure DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Button4Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
     procedure ToolButton10Click(Sender: TObject);
@@ -237,8 +235,7 @@ type
     procedure ToolButton26Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ToolButton29Click(Sender: TObject);
-    procedure DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure Button5Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -261,8 +258,7 @@ type
     procedure DrawGrid2KeyPress(Sender: TObject; var Key: Char);
     procedure ToolButton36Click(Sender: TObject);
     procedure DrawGrid2Click(Sender: TObject);
-    procedure DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure ToolButton48Click(Sender: TObject);
@@ -286,8 +282,7 @@ type
     procedure ToolButton33Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
-    procedure ToolButton38MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure ToolButton38MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure SpeedButton4Click(Sender: TObject);
     procedure ToolButton21Click(Sender: TObject);
     procedure Edit3KeyPress(Sender: TObject; var Key: Char);
@@ -302,8 +297,7 @@ type
     procedure SpeedButton5Click(Sender: TObject);
     procedure ToolButton6Click(Sender: TObject);
     procedure MenuItem_WechselDatumSortierungClick(Sender: TObject);
-    procedure ToolButton6MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure ToolButton6MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
 
     { Private-Deklarationen }
@@ -414,14 +408,16 @@ type
     procedure RefreshBaustellenAuslastung;
     procedure SaveCursorPosition;
     procedure RestoreCursorPosition;
-    procedure ProduceInfoBlatt(Datum_RIDs, Monteur_RIDs,
-      Single_RIDs: TgpIntegerList; MondaMode: boolean = false;
-      FaxMode: boolean = false);
+    procedure ProduceInfoBlatt(
+      { } Datum_RIDs,
+      { } Monteur_RIDs,
+      { } Single_RIDs: TgpIntegerList;
+      { } MondaMode: boolean = false;
+      { } FaxMode: boolean = false);
     function getProbleme(AUFTRAG_R: Integer): TStringlist;
     procedure ToggleStatusMode(RID: Integer; Mode: Integer);
     function MonteurSelected: Integer;
-    procedure ToggleSortMode(NewMode: TeTerminarbeitsplatzSortMode;
-      ForceChange: boolean = false);
+    procedure ToggleSortMode(NewMode: TeTerminarbeitsplatzSortMode; ForceChange: boolean = false);
     procedure ReflectBaustelleChange;
     procedure MarkiereLeeresPlanquadrat(Import_RID, Anzahl: Integer);
     procedure ShowAuftrag;
@@ -434,11 +430,9 @@ type
     // Ausgabe der aktuellen Selektion
     function OutCSV(RID: Integer; s_Baustelle: Integer): string; overload;
     // [FileName]
-    function OutCSV(RIDs: TgpIntegerList; s_Baustelle: Integer): string;
-      overload; // [FileName]
+    function OutCSV(RIDs: TgpIntegerList; s_Baustelle: Integer): string; overload; // [FileName]
     // Auftrags-info-Blatt erstellen
-    function AsHTML(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Unset)
-      : string; overload; // [Fname]
+    function AsHTML(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Unset): string; overload; // [Fname]
     function AsHTML(lAUFTRAG: TgpIntegerList): string; overload; // [Fname]
 
     // ganze Context Geschichte
@@ -516,8 +510,8 @@ const
   cPlanY_div_2: Integer = 0;
 {$R *.DFM}
 
-procedure TFormAuftragArbeitsplatz.DrawGrid1DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormAuftragArbeitsplatz.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   SubItems: TStringlist;
   TERMINIERT_R: Integer;
@@ -600,8 +594,7 @@ begin
 
                 // Status in der fokusierten Zeile
                 if (ARow = DrawGrid1.Row) then
-                  EnsureSchlageZeile
-                    (e_r_BaustelleRIDFromKuerzel(SubItems[twh_Baustelle]));
+                  EnsureSchlageZeile(e_r_BaustelleRIDFromKuerzel(SubItems[twh_Baustelle]));
               end;
             1:
               begin
@@ -614,19 +607,15 @@ begin
 
                 if vStatus in [ctvHistorisch, ctvHistorischInformiert] then
                 begin
-                  TextRect(Rect, Rect.left + 16 + 4, Rect.top,
-                    SubItems[twh_Baustelle] + '-');
-                  TextOut(Rect.left + 16 + 4, Rect.top + cPlanY_div_2,
-                    SubItems[twh_Auftrags_Nummer]);
-                  draw(Rect.left + 1, Rect.top + dpiX(9),
-                    StatusBMPs[strtointdef(SubItems[twh_Status3], 6)]);
+                  TextRect(Rect, Rect.left + 16 + 4, Rect.top, SubItems[twh_Baustelle] + '-');
+                  TextOut(Rect.left + 16 + 4, Rect.top + cPlanY_div_2, SubItems[twh_Auftrags_Nummer]);
+                  draw(Rect.left + 1, Rect.top + dpiX(9), StatusBMPs[strtointdef(SubItems[twh_Status3], 6)]);
                   // Status
                 end
                 else
                 begin
-                  TextRect(Rect, Rect.left + 2, Rect.top + dpiX(9),
-                    SubItems[twh_Baustelle] + '-' + SubItems
-                    [twh_Auftrags_Nummer]);
+                  TextRect(Rect, Rect.left + 2, Rect.top + dpiX(9), SubItems[twh_Baustelle] + '-' +
+                    SubItems[twh_Auftrags_Nummer]);
                 end;
 
               end;
@@ -634,8 +623,7 @@ begin
               begin
                 // Fittnes
                 FillRect(Rect);
-                draw(Rect.left + 1, Rect.top + dpiX(9),
-                  FitnessBMPs[strtointdef(SubItems[twh_Status2], 0)]);
+                draw(Rect.left + 1, Rect.top + dpiX(9), FitnessBMPs[strtointdef(SubItems[twh_Status2], 0)]);
                 // Fitness
               end;
             3:
@@ -644,8 +632,7 @@ begin
                 font.size := 8;
                 font.style := [];
                 TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Monteur]);
-                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2,
-                  SubItems[twh_Art]);
+                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_Art]);
               end;
             4:
               begin
@@ -653,19 +640,17 @@ begin
                 font.size := 8;
                 font.style := [];
                 TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Datum]);
-                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2,
-                  SubItems[twh_WochentagKurz] + ' - ' + SubItems[twh_Zeit]);
+                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_WochentagKurz] + ' - ' +
+                  SubItems[twh_Zeit]);
               end;
             5:
               begin
                 // Name
                 font.size := 8;
                 font.style := [];
-                TextRect(Rect, Rect.left + 2, Rect.top,
-                  SubItems[twh_Verbraucher_Strasse] + ' ' +
+                TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Verbraucher_Strasse] + ' ' +
                   SubItems[twh_Verbraucher_Ort]);
-                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2,
-                  SubItems[twh_Verbraucher_Name]);
+                TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_Verbraucher_Name]);
               end;
             6:
               begin
@@ -676,10 +661,8 @@ begin
                     font.name := 'Courier New';
                     font.size := 10;
                     font.style := [];
-                    TextRect(Rect, Rect.left + 4, Rect.top,
-                      SubItems[twh_Zaehler_Nummer]);
-                    TextOut(Rect.left + 4, Rect.top + cPlanY_div_2,
-                      SubItems[twh_Art]);
+                    TextRect(Rect, Rect.left + 4, Rect.top, SubItems[twh_Zaehler_Nummer]);
+                    TextOut(Rect.left + 4, Rect.top + cPlanY_div_2, SubItems[twh_Art]);
                     break;
                   end;
 
@@ -688,18 +671,12 @@ begin
                     font.name := 'Tahoma';
                     font.size := 7;
                     font.style := [];
-                    TextRect(Rect, Rect.left + 2, Rect.top,
-                      SubItems[twh_ZaehlerInfo1] + ' ' +
-                      SubItems[twh_ZaehlerInfo2] + ' ' +
-                      SubItems[twh_ZaehlerInfo3]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3),
-                      SubItems[twh_ZaehlerInfo4] + ' ' +
-                      SubItems[twh_ZaehlerInfo5] + ' ' +
-                      SubItems[twh_ZaehlerInfo6]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2,
-                      SubItems[twh_ZaehlerInfo7] + ' ' +
-                      SubItems[twh_ZaehlerInfo8] + ' ' +
-                      SubItems[twh_ZaehlerInfo9]);
+                    TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_ZaehlerInfo1] + ' ' +
+                      SubItems[twh_ZaehlerInfo2] + ' ' + SubItems[twh_ZaehlerInfo3]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3), SubItems[twh_ZaehlerInfo4] + ' ' +
+                      SubItems[twh_ZaehlerInfo5] + ' ' + SubItems[twh_ZaehlerInfo6]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2, SubItems[twh_ZaehlerInfo7] + ' ' +
+                      SubItems[twh_ZaehlerInfo8] + ' ' + SubItems[twh_ZaehlerInfo9]);
                     break;
 
                   end;
@@ -709,15 +686,11 @@ begin
                     font.name := 'Tahoma';
                     font.size := 7;
                     font.style := [];
-                    sProtokoll := Split(SubItems[twh_Protokoll],
-                      cProtokollTrenner);
+                    sProtokoll := Split(SubItems[twh_Protokoll], cProtokollTrenner);
 
-                    TextRect(Rect, Rect.left + 2, Rect.top,
-                      sProtokoll.values['V1']);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3),
-                      sProtokoll.values['V2']);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2,
-                      sProtokoll.values['V3']);
+                    TextRect(Rect, Rect.left + 2, Rect.top, sProtokoll.values['V1']);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3), sProtokoll.values['V2']);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2, sProtokoll.values['V3']);
                     sProtokoll.free;
                     break;
                   end;
@@ -729,10 +702,8 @@ begin
                     font.style := [];
                     sProtokoll := getProbleme(AUFTRAG_R);
                     TextRect(Rect, Rect.left + 2, Rect.top, sProtokoll[0]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3),
-                      sProtokoll[1]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2,
-                      sProtokoll[2]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3), sProtokoll[1]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2, sProtokoll[2]);
                     sProtokoll.free;
                     break;
                   end;
@@ -741,12 +712,9 @@ begin
                   font.name := 'Tahoma';
                   font.size := 7;
                   font.style := [];
-                  TextRect(Rect, Rect.left + 2, Rect.top,
-                    SubItems[twh_Anschreiben_Name]);
-                  TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3),
-                    SubItems[twh_Anschreiben_Strasse]);
-                  TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2,
-                    SubItems[twh_Anschreiben_Ort]);
+                  TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Anschreiben_Name]);
+                  TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3), SubItems[twh_Anschreiben_Strasse]);
+                  TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2, SubItems[twh_Anschreiben_Ort]);
 
                 until true;
                 font.name := 'Verdana';
@@ -760,8 +728,7 @@ begin
                     font.name := 'Tahoma';
                     font.size := 7;
                     font.style := [];
-                    sProtokoll := Split(SubItems[twh_Protokoll],
-                      cProtokollTrenner);
+                    sProtokoll := Split(SubItems[twh_Protokoll], cProtokollTrenner);
                     sAlter := TStringlist.create;
                     sAlter.Add(sProtokoll.values['B1']);
                     sAlter.Add(sProtokoll.values['B2']);
@@ -773,8 +740,7 @@ begin
                     sAlter.Add(sProtokoll.values['I4']);
                     sAlter.Add(sProtokoll.values['I5']);
                     for n := 0 to pred(sProtokoll.count) do
-                      if (pos(copy(sProtokoll[n], 1, 2),
-                        'V1V2V3B1B2B3B4I3I4I5I6I7I8') = 0) then
+                      if (pos(copy(sProtokoll[n], 1, 2), 'V1V2V3B1B2B3B4I3I4I5I6I7I8') = 0) then
                         sAlter.Add(sProtokoll[n]);
                     for n := pred(sAlter.count) downto 0 do
                       if (sAlter[n] = '') then
@@ -788,10 +754,8 @@ begin
                       sAlter.Add('');
 
                     TextRect(Rect, Rect.left + 2, Rect.top, sAlter[0]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3),
-                      sAlter[1]);
-                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2,
-                      sAlter[2]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3), sAlter[1]);
+                    TextOut(Rect.left + 2, Rect.top + (rYL(Rect) div 3) * 2, sAlter[2]);
                     sProtokoll.free;
                     break;
                   end;
@@ -800,22 +764,17 @@ begin
                   begin
                     font.size := 8;
                     font.style := [];
-                    TextRect(Rect, Rect.left + 2, Rect.top,
-                      SubItems[twh_Bemerkung]);
-                    TextOut(Rect.left + 2, Rect.top + cPlanY_div_2,
-                      SubItems[twh_OrtsteilCode] + '~' +
-                      SubItems[twh_Planquadrat] + ' ' +
-                      SubItems[twh_ZeitraumKurz]);
+                    TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Bemerkung]);
+                    TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_OrtsteilCode] + '~' +
+                      SubItems[twh_Planquadrat] + ' ' + SubItems[twh_ZeitraumKurz]);
                     break;
                   end;
 
                   font.size := 8;
                   font.style := [];
-                  TextRect(Rect, Rect.left + 2, Rect.top,
-                    SubItems[twh_Bemerkung]);
-                  TextOut(Rect.left + 2, Rect.top + cPlanY_div_2,
-                    SubItems[twh_OrtsteilCode] + '~' + SubItems[twh_Planquadrat]
-                    + ' ' + SubItems[twh_SperreKurz]);
+                  TextRect(Rect, Rect.left + 2, Rect.top, SubItems[twh_Bemerkung]);
+                  TextOut(Rect.left + 2, Rect.top + cPlanY_div_2, SubItems[twh_OrtsteilCode] + '~' +
+                    SubItems[twh_Planquadrat] + ' ' + SubItems[twh_SperreKurz]);
 
                 until true;
               end;
@@ -825,21 +784,15 @@ begin
                 // Benutzer-Logo des letzten Bearbeuters.
                 font.size := 7;
                 font.style := [];
-                GEAENDERT_R := strtointdef(nextp(SubItems[twh_Bearbeiter],
-                  '/', 0), 0);
-                TERMINIERT_R :=
-                  strtointdef(nextp(SubItems[twh_Bearbeiter], '/', 1), 0);
+                GEAENDERT_R := strtointdef(nextp(SubItems[twh_Bearbeiter], '/', 0), 0);
+                TERMINIERT_R := strtointdef(nextp(SubItems[twh_Bearbeiter], '/', 1), 0);
                 if (GEAENDERT_R <> TERMINIERT_R) then
                 begin
-                  brush.color := FormBearbeiter.FetchBackGroundColorFromRiD
-                    (TERMINIERT_R);
-                  font.color := FormBearbeiter.FetchForeGroundColorFromRiD
-                    (TERMINIERT_R);
+                  brush.color := FormBearbeiter.FetchBackGroundColorFromRiD(TERMINIERT_R);
+                  font.color := FormBearbeiter.FetchForeGroundColorFromRiD(TERMINIERT_R);
                 end;
-                TextRect(Rect, Rect.left + 1, Rect.top + cPlanY_div_2 + 1,
-                  SubItems[twh_Geaendert]);
-                draw(Rect.left + 1, Rect.top + 1,
-                  FormBearbeiter.FetchBILDFromRid(GEAENDERT_R));
+                TextRect(Rect, Rect.left + 1, Rect.top + cPlanY_div_2 + 1, SubItems[twh_Geaendert]);
+                draw(Rect.left + 1, Rect.top + 1, FormBearbeiter.FetchBILDFromRid(GEAENDERT_R));
                 font.color := clblack;
                 pen.color := FocusColor;
                 MoveTo(Rect.left, Rect.top);
@@ -1027,8 +980,8 @@ begin
   }
 end;
 
-procedure TFormAuftragArbeitsplatz.DrawGrid1MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormAuftragArbeitsplatz.DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 var
   ACol: Integer;
 begin
@@ -1147,8 +1100,7 @@ begin
       if (s_Monteur >= 0) then
       begin
         CheckOneIf;
-        sql.Add('    ( (MONTEUR1_R=' + inttostr(s_Monteur) + ') OR (MONTEUR2_R='
-          + inttostr(s_Monteur) + ') )');
+        sql.Add('    ( (MONTEUR1_R=' + inttostr(s_Monteur) + ') OR (MONTEUR2_R=' + inttostr(s_Monteur) + ') )');
       end;
 
       if (s_Monteur = -2) then
@@ -1265,8 +1217,7 @@ begin
 
         //
         with FormAuftragSuche do
-          doExtraFIlter := (eMonteur_Info <> '') or (eZaehler_Info <> '') or
-            (eIntern_Info <> '');
+          doExtraFIlter := (eMonteur_Info <> '') or (eZaehler_Info <> '') or (eIntern_Info <> '');
         //
         if doExtraFIlter then
           dec(sqlCountBeforeExtended); // spei - übel
@@ -1318,8 +1269,7 @@ begin
         if WellPQ(edit8.Text) <> '' then
         begin
           CheckOneIf;
-          sql.Add('    (PLANQUADRAT starts with ''' +
-            WellPQ(edit8.Text) + ''')');
+          sql.Add('    (PLANQUADRAT starts with ''' + WellPQ(edit8.Text) + ''')');
         end;
 
         // Einschränkung nach Sperrfrist
@@ -1350,8 +1300,7 @@ begin
         if Trim(edit7.Text) <> '' then
         begin
           CheckOneIf;
-          sql.Add('    (UPPER(PROTOKOLL) like ''%' + UpperCase(Trim(edit7.Text))
-            + '%'')');
+          sql.Add('    (UPPER(PROTOKOLL) like ''%' + UpperCase(Trim(edit7.Text)) + '%'')');
         end;
 
         //
@@ -1402,9 +1351,8 @@ begin
 
     if ShowExtendedWarning then
       if (sqlCountBeforeExtended <> sqlCountAfterExtended) then
-        ShowMessage
-          ('Beachten Sie, dass immer noch eingaben der Erweiterten Suche' + #13
-          + '(Lupensymbol) die Suchergebnisse einschränken!');
+        ShowMessage('Beachten Sie, dass immer noch eingaben der Erweiterten Suche' + #13 +
+          '(Lupensymbol) die Suchergebnisse einschränken!');
     ShowExtendedWarning := false;
 
     try
@@ -1518,8 +1466,7 @@ end;
 
 procedure TFormAuftragArbeitsplatz.RefreshCountAnzeige;
 begin
-  Label2.caption := inttostr(ItemsMARKED.count) + '/' +
-    inttostr(ItemsGRID.count);
+  Label2.caption := inttostr(ItemsMARKED.count) + '/' + inttostr(ItemsGRID.count);
   Button2.caption := '&Alle ' + inttostr(ItemsQUERY.count) + ' zeigen';
 end;
 
@@ -1589,8 +1536,7 @@ begin
     for n := 0 to pred(ItemsMARKED.count) do
     begin
       AUFTRAG_R := Integer(ItemsMARKED[n]);
-      MONTEUR_R := e_r_sql('select MONTEUR1_R from AUFTRAG where RID=' +
-        inttostr(AUFTRAG_R));
+      MONTEUR_R := e_r_sql('select MONTEUR1_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
       k := sMonteure.indexof(MONTEUR_R);
       if (k = -1) then
       begin
@@ -1604,8 +1550,7 @@ begin
 
       // Verbuchen
       { 1 } sAttachements.Add(AsHTML(AUFTRAG_R));
-      { 2 } e_x_sql('update AUFTRAG set MONTEUREXPORT=''now'' where RID=' +
-        inttostr(AUFTRAG_R));
+      { 2 } e_x_sql('update AUFTRAG set MONTEUREXPORT=''now'' where RID=' + inttostr(AUFTRAG_R));
       inc(Stat_Auftraege);
     end;
 
@@ -1623,8 +1568,7 @@ begin
       with eMessage do
       begin
         if sAttachements.count > 1 then
-          Add('Info zu ' + inttostr(sAttachements.count) + ' Aufträgen ' + ' ('
-            + DatumLog + ' ' + uhr8 + ')')
+          Add('Info zu ' + inttostr(sAttachements.count) + ' Aufträgen ' + ' (' + DatumLog + ' ' + uhr8 + ')')
         else
           Add('Info zu einem Auftrag ' + ' (' + DatumLog + ' ' + uhr8 + ')');
         Add('Mit freundlichen Grüssen');
@@ -1652,14 +1596,14 @@ begin
     sMonteure.free;
     EndHourGlass;
 
-    ShowMessage('In ' + inttostr(Stat_Mails) + ' Mail(s) wurde über ' +
-      inttostr(Stat_Auftraege) + ' Aufträge informiert!');
+    ShowMessage('In ' + inttostr(Stat_Mails) + ' Mail(s) wurde über ' + inttostr(Stat_Auftraege) +
+      ' Aufträge informiert!');
 
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.ToolButton6MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormAuftragArbeitsplatz.ToolButton6MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 begin
   ToolButton6Ctrl := ssCtrl in Shift;
 
@@ -1760,8 +1704,7 @@ begin
     OutCSV(Integer(ItemsGRID[DrawGrid1.Row]), s_Baustelle);
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_WechselDatumSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_WechselDatumSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_WechselSortierung);
   Suche;
@@ -1780,9 +1723,8 @@ begin
   ItemsMARKED.LogicalAND(ItemsGRID);
   if (ItemsMARKED.count > 0) then
     if doit('Es sind markierte Zeilen enthalten.' + #13 +
-      'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!'
-      + #13 + 'Sollen nur ' + inttostr(ItemsMARKED.count) +
-      ' markierte Datensätze verwendet werden') then
+      'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!' + #13 + 'Sollen nur ' +
+      inttostr(ItemsMARKED.count) + ' markierte Datensätze verwendet werden') then
       UseMarked := true;
 
   // Liste erstellen und ausgeben!
@@ -1931,11 +1873,9 @@ begin
         if not(eof) then
         begin
           edit;
-          FieldByName('MONTEUR1_R').AsInteger :=
-            e_r_MonteurRIDFromKuerzel(_Monteur1);
+          FieldByName('MONTEUR1_R').AsInteger := e_r_MonteurRIDFromKuerzel(_Monteur1);
           if (_Monteur2 <> '') then
-            FieldByName('MONTEUR2_R').AsInteger :=
-              e_r_MonteurRIDFromKuerzel(_Monteur2)
+            FieldByName('MONTEUR2_R').AsInteger := e_r_MonteurRIDFromKuerzel(_Monteur2)
           else
             FieldByName('MONTEUR2_R').clear;
           FieldByName('AUSFUEHREN').AsDate := long2datetime(Date2Long(_date));
@@ -1983,8 +1923,7 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.Edit1KeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFormAuftragArbeitsplatz.Edit1KeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #13) then
   begin
@@ -1993,8 +1932,7 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.Edit3KeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFormAuftragArbeitsplatz.Edit3KeyPress(Sender: TObject; var Key: Char);
 var
   lRID: TgpIntegerList;
 begin
@@ -2114,9 +2052,8 @@ begin
             ParamByName('CROSSREF').AsInteger := RID;
             ApiFirst;
             if not(eof) then
-              ClientSorter.AddObject
-                (e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R').AsInteger) +
-                FieldByName('STRASSE').AsString, pointer(RID));
+              ClientSorter.AddObject(e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R').AsInteger) + FieldByName('STRASSE')
+                .AsString, pointer(RID));
           end;
           ClientSorter.sort;
           _TheSearch.FoundList.clear;
@@ -2231,8 +2168,7 @@ begin
   s_Art := ComboBox6.Text;
 end;
 
-procedure TFormAuftragArbeitsplatz.RefreshMonteurAuslastung
-  (BAUSTELLE_R: Integer);
+procedure TFormAuftragArbeitsplatz.RefreshMonteurAuslastung(BAUSTELLE_R: Integer);
 var
   _Datum: TANFiXDate;
 
@@ -2249,8 +2185,8 @@ var
   AUFWAND_C, AUFWAND_S: Integer;
   mBAUSTELLE_R: Integer;
 
-  function AddEntry(MONTEUR_R: Integer; Col: Integer; AUFWAND_C: Integer;
-    AUFWAND_S: Integer; BAUSTELLE_R: Integer): Integer;
+  function AddEntry(MONTEUR_R: Integer; Col: Integer; AUFWAND_C: Integer; AUFWAND_S: Integer;
+    BAUSTELLE_R: Integer): Integer;
   begin
     result := Auslastung.indexof(MONTEUR_R);
     if (result <> -1) then
@@ -2326,10 +2262,9 @@ begin
       sql.Add(' count(AUFWAND) AUFWAND_C,');
       sql.Add(' sum(AUFWAND) AUFWAND_S');
       sql.Add('from AUFTRAG where');
-      sql.Add(' (AUSFUEHREN between ' + '''' + Long2date(v_MonteurMontag) + ''''
-        + ' and ' + '''' + Long2date(v_MonteurSonntag) + '''' + ') and ');
-      sql.Add(' (STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' +
-        inttostr(ord(ctsAngeschrieben)) + ',' +
+      sql.Add(' (AUSFUEHREN between ' + '''' + Long2date(v_MonteurMontag) + '''' + ' and ' + '''' +
+        Long2date(v_MonteurSonntag) + '''' + ') and ');
+      sql.Add(' (STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' + inttostr(ord(ctsAngeschrieben)) + ',' +
         inttostr(ord(ctsMonteurinformiert)) + ') ) and');
       sql.Add(' (AUFWAND>0)');
       sql.Add('group by');
@@ -2338,8 +2273,7 @@ begin
       while not(eof) do
       begin
 
-        Col := round(FieldByName('AUSFUEHREN').AsDate -
-          v_MonteurMontagAsDate) * 2;
+        Col := round(FieldByName('AUSFUEHREN').AsDate - v_MonteurMontagAsDate) * 2;
         AUFWAND_C := FieldByName('AUFWAND_C').AsInteger * 2;
         AUFWAND_S := FieldByName('AUFWAND_S').AsInteger;
         mBAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
@@ -2351,18 +2285,15 @@ begin
         begin
 
           // hey - Doppeltermin, jeder halbe Last
-          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C div 2,
-            AUFWAND_S div 2, mBAUSTELLE_R);
-          AddEntry(FieldByName('MONTEUR2_R').AsInteger, Col, AUFWAND_C div 2,
-            AUFWAND_S div 2, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR2_R').AsInteger, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
 
         end
         else
         begin
 
           // Normaler Termin, 1 Monteur ...
-          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C,
-            AUFWAND_S, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C, AUFWAND_S, mBAUSTELLE_R);
 
         end;
         APInext;
@@ -2422,8 +2353,7 @@ begin
 
     //
     // nichts aktualisieren, wenn **neueste** Datei die gleiche wie früher ist
-    ProblemInfosFileAge :=
-      FileAge(DiagnosePath + sExports[pred(sExports.count)]);
+    ProblemInfosFileAge := FileAge(DiagnosePath + sExports[pred(sExports.count)]);
     if ProblemInfosFileAge = _ProblemInfosFileAge then
       break;
     _ProblemInfosFileAge := ProblemInfosFileAge;
@@ -2558,8 +2488,7 @@ begin
   RefreshMonteurAuslastung(s_Baustelle);
 end;
 
-procedure TFormAuftragArbeitsplatz.DatePick1Change(Sender: TDatePick;
-  Value: TDatePickResult);
+procedure TFormAuftragArbeitsplatz.DatePick1Change(Sender: TDatePick; Value: TDatePickResult);
 begin
   DatePick1.visible := false;
   v_MonteurMontag := DateTime2long(DatePick1.date);
@@ -2809,8 +2738,7 @@ begin
     TageRIDs.Add(v_MonteurTag);
     ProduceInfoBlatt(TageRIDs, MonteurRIDs, nil, false, true);
     if (ItemInformiert.count = 0) then
-      ShowMessage('Der markierte Monteur hat am ' + long2datetext(v_MonteurTag)
-        + ' keinen Termin!');
+      ShowMessage('Der markierte Monteur hat am ' + long2datetext(v_MonteurTag) + ' keinen Termin!');
   end
   else
   begin
@@ -2838,8 +2766,7 @@ begin
     //
     ProduceInfoBlatt(TageRIDs, MonteurRIDs, nil, false, true);
     if (ItemInformiert.count = 0) then
-      ShowMessage('Am ' + long2datetext(v_MonteurTag) +
-        ' gibt es keinen einzigen Termin!');
+      ShowMessage('Am ' + long2datetext(v_MonteurTag) + ' gibt es keinen einzigen Termin!');
   end
   else
   begin
@@ -2847,9 +2774,8 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.ProduceInfoBlatt(Datum_RIDs, Monteur_RIDs,
-  Single_RIDs: TgpIntegerList; MondaMode: boolean = false;
-  FaxMode: boolean = false);
+procedure TFormAuftragArbeitsplatz.ProduceInfoBlatt(Datum_RIDs, Monteur_RIDs, Single_RIDs: TgpIntegerList;
+  MondaMode: boolean = false; FaxMode: boolean = false);
 
 const
   chtml_MIDAUFTRAG = 'load AUFTRAG MID,AUFTRAG';
@@ -2864,6 +2790,7 @@ var
   Master_RID: Integer;
   SubItems: TStringlist;
   AnschriftText: TStringlist;
+  BriefText: TStringlist;
   Zaehlertext: TStringlist;
   InfoText: TStringlist;
   FirstNachmittag: boolean;
@@ -2895,6 +2822,7 @@ var
   AUSFUEHREN_SOLL: TANFiXDate;
   Protokoll: TStringlist;
   _RueckKanal: string;
+  sVorlagen: TStringlist;
 
   function TerminStr: string; // aus dem aktuellen Datensatz einen
   // eindeutigen Termin-String zaubern
@@ -2920,8 +2848,7 @@ var
     AusschlussL: TgpIntegerList;
   begin
     result := '';
-    AusschlussL := e_r_sqlm('select RID from BAUSTELLE where TERMINLISTE_AUS='''
-      + cC_True + '''');
+    AusschlussL := e_r_sqlm('select RID from BAUSTELLE where TERMINLISTE_AUS=''' + cC_True + '''');
     if (AusschlussL.count > 0) then
     begin
       result := ' (BAUSTELLE_R not in ' + ListasSQL(AusschlussL) + ') and';
@@ -2950,9 +2877,8 @@ var
   begin
     DatumsStr := SubItems[twh_DatumText];
     ersetze(',', ' ' + SubItems[twh_ZeitText] + ',', DatumsStr);
-    result := e_r_BaustelleNameFromKuerzel(Hauptbaustelle) + ': ' +
-      SubItems[twh_MonteurText] + ' ' + DatumsStr + ' (KW ' +
-      inttostr(WeekGet(Date2Long(SubItems[twh_Datum]))) + ')';
+    result := e_r_BaustelleNameFromKuerzel(Hauptbaustelle) + ': ' + SubItems[twh_MonteurText] + ' ' + DatumsStr +
+      ' (KW ' + inttostr(WeekGet(Date2Long(SubItems[twh_Datum]))) + ')';
   end;
 
   procedure OpenHeader;
@@ -2974,8 +2900,7 @@ var
         break;
       if (pos(chtml_MIDAUFTRAG, DatensammlerLokal[n]) = 1) then
       begin
-        DatensammlerLokal[n] := 'load AUFTRAG LAST' +
-          VormittagsToChar(vormittags) + ',AUFTRAG';
+        DatensammlerLokal[n] := 'load AUFTRAG LAST' + VormittagsToChar(vormittags) + ',AUFTRAG';
         dec(Headers);
         break;
       end;
@@ -2989,10 +2914,8 @@ var
     Baustellen.clear;
     for n := 0 to pred(PreLookl.count) do
     begin
-      if not(TePhaseStatus(strtol(nextp(PreLookl[n], ';', 3)))
-        in [ctsHistorisch, ctsUnmoeglich, ctsVorgezogen]) then
-        Baustellen.Add(e_r_BaustelleKuerzel(strtointdef(nextp(PreLookl[n],
-          ';', 4), 0)));
+      if not(TePhaseStatus(strtol(nextp(PreLookl[n], ';', 3))) in [ctsHistorisch, ctsUnmoeglich, ctsVorgezogen]) then
+        Baustellen.Add(e_r_BaustelleKuerzel(strtointdef(nextp(PreLookl[n], ';', 4), 0)));
     end;
     Baustellen.sort;
     removeDuplicates(Baustellen);
@@ -3004,6 +2927,7 @@ begin
   // Vorlauf
   Baustellen := TStringlist.create;
   AnschriftText := TStringlist.create;
+  BriefText := TStringlist.create;
   Zaehlertext := TStringlist.create;
   InfoText := TStringlist.create;
   Protokoll := TStringlist.create;
@@ -3044,14 +2968,11 @@ begin
       sql.Add(' (AUSFUEHREN=:AUSF) and');
       sql.Add(' (VORMITTAGS IS NOT NULL) and');
       sql.Add(' ((MONTEUR1_R=:MON) OR (MONTEUR2_R=:MON)) and');
-      sql.Add(' ((STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' +
-        inttostr(ord(ctsAngeschrieben)) + ',' +
-        inttostr(ord(ctsMonteurinformiert)) + ',' +
-        inttostr(ord(ctsNeuAnschreiben)) + ',' + inttostr(ord(ctsRestant)) + ','
-        + inttostr(ord(ctsVorgezogen)) + ',' + inttostr(ord(ctsErfolg)) + ',' +
-        inttostr(ord(ctsUnmoeglich)) + ')) OR');
-      sql.Add('       ((STATUS=' + inttostr(ord(ctsHistorisch)) +
-        ') and MONTEUREXPORT is not null)');
+      sql.Add(' ((STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' + inttostr(ord(ctsAngeschrieben)) + ',' +
+        inttostr(ord(ctsMonteurinformiert)) + ',' + inttostr(ord(ctsNeuAnschreiben)) + ',' + inttostr(ord(ctsRestant)) +
+        ',' + inttostr(ord(ctsVorgezogen)) + ',' + inttostr(ord(ctsErfolg)) + ',' + inttostr(ord(ctsUnmoeglich))
+        + ')) OR');
+      sql.Add('       ((STATUS=' + inttostr(ord(ctsHistorisch)) + ') and MONTEUREXPORT is not null)');
       sql.Add('      )');
     end;
     sql.Add('ORDER BY');
@@ -3074,7 +2995,6 @@ begin
     prepare;
   end;
 
-  CheckCreateDir(HtmlVorlagenPath + cHTMLBlockPath);
   ItemInformiert.clear; // Auftrags-Sammler
   _LastTerminCount := 0;
 
@@ -3085,8 +3005,7 @@ begin
     CheckCreateDir(MDEPath);
     if (Monteur_RIDs.count = 1) then
     begin
-      assignFile(MonDaOutF, MDEPath + e_r_MonteurGeraeteID(Monteur_RIDs[0])
-        + '.DAT');
+      assignFile(MonDaOutF, MDEPath + e_r_MonteurGeraeteID(Monteur_RIDs[0]) + '.DAT');
 {$I-}
       reset(MonDaOutF);
 {$I+}
@@ -3105,8 +3024,7 @@ begin
     cBAUSTELLE := DataModuleDatenbank.nCursor;
     with cBAUSTELLE do
     begin
-      sql.Add('select RID from BAUSTELLE where EXPORT_MONDA=''' +
-        cC_True + '''');
+      sql.Add('select RID from BAUSTELLE where EXPORT_MONDA=''' + cC_True + '''');
       ApiFirst;
       while not(eof) do
       begin
@@ -3164,8 +3082,7 @@ begin
             { [01] } FieldByName('VORMITTAGS').AsString + ';' +
             { [02] } FieldByName('MASTER_R').AsString + ';' +
             { [03] } FieldByName('STATUS').AsString + ';' +
-            { [04] } FieldByName('BAUSTELLE_R').AsString,
-            TObject(FieldByName('RID').AsInteger));
+            { [04] } FieldByName('BAUSTELLE_R').AsString, TObject(FieldByName('RID').AsInteger));
           APInext;
         end;
 
@@ -3179,10 +3096,8 @@ begin
             // echter Datensatz! -> lösche alle historischen!
             for PreN := pred(PreLookl.count) downto 0 do
               if (PreN <> PreM) then
-                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';',
-                  1)) and // V/N
-                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2))
-                then // gleicher !master!
+                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
+                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2)) then // gleicher !master!
                 begin
                   PreLookl.Delete(PreN);
                   if (PreN < PreM) then
@@ -3196,14 +3111,10 @@ begin
             // historischer! -> lösche alle älteren historischen
             for PreN := pred(PreLookl.count) downto 0 do
               if (PreN <> PreM) then
-                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';',
-                  1)) and // V/N
-                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2)
-                  ) and // gleicher !master!
-                  (nextp(PreLookl[PreN], ';', 3) = inttostr(ord(ctsHistorisch)))
-                  and // Staus=6
-                  (strtointdef(nextp(PreLookl[PreN], ';', 0), 0) <
-                  strtointdef(nextp(PreLookl[PreM], ';', 0), 0)) then
+                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
+                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2)) and // gleicher !master!
+                  (nextp(PreLookl[PreN], ';', 3) = inttostr(ord(ctsHistorisch))) and // Staus=6
+                  (strtointdef(nextp(PreLookl[PreN], ';', 0), 0) < strtointdef(nextp(PreLookl[PreM], ';', 0), 0)) then
                 // RID kleiner
                 begin
                   PreLookl.Delete(PreN);
@@ -3240,8 +3151,8 @@ begin
             // auf das Gerät!
             STATUS := TePhaseStatus(FieldByName('STATUS').AsInteger);
             if (v_MonteurTag = cMonDa_FreieTerminWahl) then
-              if STATUS in [ctsDatenFehlen, ctsErfolg, ctsNeuAnschreiben,
-                ctsHistorisch, ctsVorgezogen, ctsUnmoeglich] then
+              if STATUS in [ctsDatenFehlen, ctsErfolg, ctsNeuAnschreiben, ctsHistorisch, ctsVorgezogen, ctsUnmoeglich]
+              then
                 break;
 
             Master_RID := FieldByName('MASTER_R').AsInteger;
@@ -3263,10 +3174,8 @@ begin
               ABNummer := SubItems[twh_Auftrags_Nummer];
               Monteur := Ansi2Oem(SubItems[twh_Monteur]);
               Art := SubItems[twh_Art];
-              if (length(SubItems[twh_Zaehler_Nummer]) >
-                cMonDa_FieldLength_ZaehlerNummer) then
-                zaehlernummer_alt := revCopy(SubItems[twh_Zaehler_Nummer], 1,
-                  cMonDa_FieldLength_ZaehlerNummer)
+              if (length(SubItems[twh_Zaehler_Nummer]) > cMonDa_FieldLength_ZaehlerNummer) then
+                zaehlernummer_alt := revCopy(SubItems[twh_Zaehler_Nummer], 1, cMonDa_FieldLength_ZaehlerNummer)
               else
                 zaehlernummer_alt := SubItems[twh_Zaehler_Nummer];
               reglernummer_alt := SubItems[twh_ReglerNummerAlt];
@@ -3300,8 +3209,7 @@ begin
                     if FieldByName('ZAEHLER_WECHSEL').IsNull then
                       ausfuehren_ist_datum := DateGet
                     else
-                      ausfuehren_ist_datum :=
-                        DateTime2long(FieldByName('ZAEHLER_WECHSEL').AsDate);
+                      ausfuehren_ist_datum := DateTime2long(FieldByName('ZAEHLER_WECHSEL').AsDate);
                   end;
               else
                 ausfuehren_ist_datum := cMonDa_Status_unbearbeitet;
@@ -3355,29 +3263,22 @@ begin
             end;
 
             case STATUS of
-              ctsRestant, ctsHistorisch, ctsErfolg, ctsVorgezogen,
-                ctsUnmoeglich:
-                DatensammlerLokal.Add('No=' + _a + '(' + SubItems[twh_Baustelle]
-                  + '-' + SubItems[twh_Auftrags_Nummer] + ')' + #13 +
-                  SubItems[twh_Zaehler_Nummer])
+              ctsRestant, ctsHistorisch, ctsErfolg, ctsVorgezogen, ctsUnmoeglich:
+                DatensammlerLokal.Add('No=' + _a + '(' + SubItems[twh_Baustelle] + '-' + SubItems[twh_Auftrags_Nummer] +
+                  ')' + #13 + SubItems[twh_Zaehler_Nummer])
             else
               if (SubItems[twh_WordEmpfaenger] <> '') then
               begin
-                DatensammlerLokal.Add('No=@' + Ansi2html(_a) + '<u>' +
-                  Ansi2html(SubItems[twh_Baustelle] + '-' +
-                  SubItems[twh_Auftrags_Nummer]) + '</u><br>' +
-                  Ansi2html(SubItems[twh_Zaehler_Nummer]));
+                DatensammlerLokal.Add('No=@' + Ansi2html(_a) + '<u>' + Ansi2html(SubItems[twh_Baustelle] + '-' +
+                  SubItems[twh_Auftrags_Nummer]) + '</u><br>' + Ansi2html(SubItems[twh_Zaehler_Nummer]));
               end
               else
-                DatensammlerLokal.Add('No=' + _a + SubItems[twh_Baustelle] + '-'
-                  + SubItems[twh_Auftrags_Nummer] + #13 +
+                DatensammlerLokal.Add('No=' + _a + SubItems[twh_Baustelle] + '-' + SubItems[twh_Auftrags_Nummer] + #13 +
                   SubItems[twh_Zaehler_Nummer])
 
             end;
 
-            DatensammlerLokal.Add
-              ('VN=' + AnsiUpperCase(SubItems[twh_ZeitText][1]) + #13 +
-              SubItems[twh_Art]);
+            DatensammlerLokal.Add('VN=' + AnsiUpperCase(SubItems[twh_ZeitText][1]) + #13 + SubItems[twh_Art]);
 
             // zwingendes Blank
             AnschriftText.clear;
@@ -3395,20 +3296,53 @@ begin
             ersetze(' ', cNonBreakableSpace, _b);
             AnschriftText.Add(cutblank(_a + ' ' + _b));
 
-            // !!Ortsteil noch hinzu!!
             DatensammlerLokal.Add('Anschrift=' + HugeSingleLine(AnschriftText));
 
+            // Anschreiben
+            if
+            { } (
+              { } (SubItems[twh_Anschreiben_Strasse] <> '') or
+              { } (SubItems[twh_Anschreiben_Name] <> '') or
+              { } (SubItems[twh_Anschreiben_Name2] <> '') or
+              { } (SubItems[twh_Anschreiben_Ort] <> '')
+              { } ) and
+            { } (
+              { } (SubItems[twh_Verbraucher_Strasse] <> SubItems[twh_Anschreiben_Strasse]) or
+              { } (SubItems[twh_Verbraucher_Name] <> SubItems[twh_Anschreiben_Name]) or
+              { } (SubItems[twh_Verbraucher_Name2] <> SubItems[twh_Anschreiben_Name2]) or
+              { } (SubItems[twh_Verbraucher_Ort] <> SubItems[twh_Anschreiben_Ort])
+              { } ) then
+            begin
+              // Brief-Text
+              BriefText.clear;
+              _a := cutblank(SubItems[twh_Anschreiben_Strasse]);
+              ersetze(' ', cNonBreakableSpace, _a);
+              _b := cutblank(SubItems[twh_Anschreiben_Name]);
+              ersetze(' ', cNonBreakableSpace, _b);
+              _c := cutblank(SubItems[twh_Anschreiben_Name2]);
+              ersetze(' ', cNonBreakableSpace, _c);
+              BriefText.Add(cutblank(_a + ' ' + _b + ' ' + _c));
+              _a := cutblank(SubItems[twh_Anschreiben_Ort]);
+              ersetze(' ', cNonBreakableSpace, _a);
+              BriefText.Add(cutblank(_a));
+
+              DatensammlerLokal.Add('Brief=' + HugeSingleLine(BriefText));
+            end
+            else
+            begin
+              DatensammlerLokal.Add('Brief=');
+            end;
+
             FieldByName('ZAEHLER_INFO').AssignTo(Zaehlertext);
-            DatensammlerLokal.Add
-              ('Zähler=' + HugeSingleLine(Zaehlertext, ', '));
+            DatensammlerLokal.Add('Zähler=' + HugeSingleLine(Zaehlertext, ', '));
 
             FieldByName('MONTEUR_INFO').AssignTo(InfoText);
 
             // Werte aus dem Protokoll zurück in die Terminänderunsliste
             FieldByName('PROTOKOLL').AssignTo(Protokoll);
             with Protokoll do
-              _RueckKanal := cutblank(values['I1'] + ' ' + values['I2'] + ' ' +
-                values['I6'] + ' ' + values['I7'] + ' ' + values['I8']);
+              _RueckKanal := cutblank(values['I1'] + ' ' + values['I2'] + ' ' + values['I6'] + ' ' + values['I7'] + ' '
+                + values['I8']);
             if (_RueckKanal <> '') then
               InfoText.Add('[' + _RueckKanal + ']');
 
@@ -3422,18 +3356,14 @@ begin
 
                 // Nachladen des aktuellen Masters
                 SubItems := e_r_AuftragItems(Master_RID);
-                STATUS_MASTER := TeVirtualPhaseStatus
-                  (strtol(SubItems[twh_Status1]));
-                e_r_sql('select MONTEUR_INFO from AUFTRAG where RID=' +
-                  inttostr(Master_RID), InfoText);
+                STATUS_MASTER := TeVirtualPhaseStatus(strtol(SubItems[twh_Status1]));
+                e_r_sql('select MONTEUR_INFO from AUFTRAG where RID=' + inttostr(Master_RID), InfoText);
 
                 repeat
 
                   // - -
-                  if (STATUS_MASTER in [ctvTerminiert, ctvAngeschrieben,
-                    ctvMonteurinformiert, ctvRestant, ctvNeuAnschreiben,
-                    ctvAngeschriebenInformiert]) and
-                    (SubItems[twh_Monteur] <> '') then
+                  if (STATUS_MASTER in [ctvTerminiert, ctvAngeschrieben, ctvMonteurinformiert, ctvRestant,
+                    ctvNeuAnschreiben, ctvAngeschriebenInformiert]) and (SubItems[twh_Monteur] <> '') then
                   begin
                     if (SubItems[twh_ZeitText] <> '?') then
                       InfoText.insert(0, '   (neuer Termin:' + TerminStr + ')');
@@ -3510,17 +3440,14 @@ begin
               end;
 
               // Wechselzeitraum!
-              if FieldByName('ZEITRAUM_VON').IsNotNull or
-                FieldByName('ZEITRAUM_BIS').IsNotNull then
+              if FieldByName('ZEITRAUM_VON').IsNotNull or FieldByName('ZEITRAUM_BIS').IsNotNull then
               begin
-                ZEITRAUM_VON :=
-                  DateTime2long(FieldByName('ZEITRAUM_VON').AsDate);
-                ZEITRAUM_BIS :=
-                  DateTime2long(FieldByName('ZEITRAUM_BIS').AsDate);
-                if (abs(DateDiff(ZEITRAUM_VON, v_MonteurTag)) <= 7) or
-                  (abs(DateDiff(ZEITRAUM_BIS, v_MonteurTag)) <= 7) then
-                  InfoText.insert(0, 'zwischen ' + copy(Long2date(ZEITRAUM_VON),
-                    1, 6) + ' und ' + copy(Long2date(ZEITRAUM_BIS), 1, 6));
+                ZEITRAUM_VON := DateTime2long(FieldByName('ZEITRAUM_VON').AsDate);
+                ZEITRAUM_BIS := DateTime2long(FieldByName('ZEITRAUM_BIS').AsDate);
+                if (abs(DateDiff(ZEITRAUM_VON, v_MonteurTag)) <= 7) or (abs(DateDiff(ZEITRAUM_BIS, v_MonteurTag)) <= 7)
+                then
+                  InfoText.insert(0, 'zwischen ' + copy(Long2date(ZEITRAUM_VON), 1, 6) + ' und ' +
+                    copy(Long2date(ZEITRAUM_BIS), 1, 6));
               end;
 
               // keine weiteren Texte bei Sonder-Terminen
@@ -3559,8 +3486,7 @@ begin
                 end;
 
               if RawMode then
-                DatensammlerLokal.Add
-                  ('Info=@' + HugeSingleLine(InfoText, '<br>'))
+                DatensammlerLokal.Add('Info=@' + HugeSingleLine(InfoText, '<br>'))
               else
                 DatensammlerLokal.Add('Info=' + HugeSingleLine(InfoText));
 
@@ -3589,15 +3515,12 @@ begin
           CloseHeader(false);
           case Baustellen.count of
             0:
-              DatensammlerLokal.Add
-                ('MehrInfo=' + 'An diesem Tag sind keine Termine vorhanden!');
+              DatensammlerLokal.Add('MehrInfo=' + 'An diesem Tag sind keine Termine vorhanden!');
             1:
-              DatensammlerLokal.Add
-                ('MehrInfo=' + 'An diesem Tag kein Wechsel der Baustelle!');
+              DatensammlerLokal.Add('MehrInfo=' + 'An diesem Tag kein Wechsel der Baustelle!');
           else
-            DatensammlerLokal.Add('MehrInfo=' + 'Sie arbeiten heute auf ' +
-              inttostr(Baustellen.count) + ' Baustellen (' +
-              HugeSingleLine(Baustellen, ',') + ')!');
+            DatensammlerLokal.Add('MehrInfo=' + 'Sie arbeiten heute auf ' + inttostr(Baustellen.count) + ' Baustellen ('
+              + HugeSingleLine(Baustellen, ',') + ')!');
           end;
           DatensammlerLokal.Add('NochMehrInfo=' + cOrgaMonCopyright);
         end;
@@ -3619,6 +3542,7 @@ begin
 
   Baustellen.free;
   AnschriftText.free;
+  BriefText.free;
   Zaehlertext.free;
   InfoText.free;
   Protokoll.free;
@@ -3629,9 +3553,17 @@ begin
   // hier jetzt noch den Index-HTML neu erzeugen!
   if (Headers <> 0) then
     ShowMessage('ERROR: html nicht vollständig korrekt!');
+
+  //
+  sVorlagen := TStringlist.create;
+  dir(HtmlVorlagenPath + 'Monteur.?.???.html', sVorlagen, false);
+  sVorlagen.sort;
+
   // Jetzt belichten
   InfoBlatt := THTMLTemplate.create;
-  InfoBlatt.LoadFromFile(HtmlVorlagenPath + 'Monteur.1.242.html');
+  InfoBlatt.LoadFromFile(HtmlVorlagenPath + sVorlagen[pred(sVorlagen.count)]);
+  sVorlagen.free;
+
   with InfoBlatt do
   begin
     CanUseQuick := true;
@@ -3645,16 +3577,13 @@ begin
       if (Monteur_RIDs.count > 1) then
       begin
         if (Datum_RIDs.count > 1) then
-          FName := WebPath + 'w' + inttostr(WeekGet(Integer(Datum_RIDs[0])))
-            + '.html'
+          FName := WebPath + 'w' + inttostr(WeekGet(Integer(Datum_RIDs[0]))) + '.html'
         else
           FName := WebPath + 'g' + inttostr(v_MonteurTag) + '.html';
       end
       else
-        FName := WebPath + 'm' + inttostr(Monteur_RIDs[0]) + '-' +
-          inttostr(v_MonteurTag) + '.html';
+        FName := WebPath + 'm' + inttostr(Monteur_RIDs[0]) + '-' + inttostr(v_MonteurTag) + '.html';
     end;
-    // SaveToFile(FName+'.unsortiert.html');
     SortPages;
     SaveToFileCompressed(FName);
   end;
@@ -3679,8 +3608,7 @@ const
   cModeNeuAnschreiben = 4;
   cModeVorgezogen = 5;
 
-procedure TFormAuftragArbeitsplatz.ToggleStatusMode(RID: Integer;
-  Mode: Integer);
+procedure TFormAuftragArbeitsplatz.ToggleStatusMode(RID: Integer; Mode: Integer);
 var
   _Monteur: string;
   _date: string;
@@ -3753,42 +3681,36 @@ begin
             if IB_Query1.FieldByName('WORDEXPORT').IsNull then
             begin
               IB_Query1.FieldByName('WORDEXPORT').AsDateTime := now;
-              IB_Query1.FieldByName('WORDANZ').AsInteger :=
-                IB_Query1.FieldByName('WORDANZ').AsInteger + 1;
+              IB_Query1.FieldByName('WORDANZ').AsInteger := IB_Query1.FieldByName('WORDANZ').AsInteger + 1;
             end
             else
               IB_Query1.FieldByName('WORDEXPORT').clear;
           end;
         cModeUnmoeglich:
           begin
-            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsUnmoeglich))
-            then
+            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsUnmoeglich)) then
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsUnmoeglich)
             else
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsTerminiert);
           end;
         cModeVorgezogen:
           begin
-            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsVorgezogen))
-            then
+            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsVorgezogen)) then
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsVorgezogen)
             else
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsTerminiert);
           end;
         cModeRestant:
           begin
-            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsRestant))
-            then
+            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsRestant)) then
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsRestant)
             else
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsTerminiert);
           end;
         cModeNeuAnschreiben:
           begin
-            if (IB_Query1.FieldByName('STATUS').AsInteger <>
-              ord(ctsNeuAnschreiben)) then
-              IB_Query1.FieldByName('STATUS').AsInteger :=
-                ord(ctsNeuAnschreiben)
+            if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsNeuAnschreiben)) then
+              IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsNeuAnschreiben)
             else
               IB_Query1.FieldByName('STATUS').AsInteger := ord(ctsTerminiert);
           end;
@@ -3834,8 +3756,7 @@ begin
         sql.clear;
         sql.Add('SELECT STATUS,RID');
         sql.Add('FROM AUFTRAG');
-        sql.Add('WHERE (MASTER_R=' +
-          inttostr(Integer(ItemsGRID[DrawGrid1.Row])) + ')');
+        sql.Add('WHERE (MASTER_R=' + inttostr(Integer(ItemsGRID[DrawGrid1.Row])) + ')');
         sql.Add('ORDER BY RID');
         GridDisable := true;
         StartTime := 0;
@@ -3882,15 +3803,14 @@ begin
   ItemsMARKED.Add(pointer(AUFTRAG_R));
 end;
 
-procedure TFormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT
-  (RID_AT_IMPORT: Integer);
+procedure TFormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(RID_AT_IMPORT: Integer);
 var
   sAUFTRAG_R: TgpIntegerList;
   n: Integer;
 begin
   SaveContext;
-  sAUFTRAG_R := e_r_sqlm('select RID from AUFTRAG where (RID_AT_IMPORT=' +
-    inttostr(RID_AT_IMPORT) + ') and (RID=MASTER_R)');
+  sAUFTRAG_R := e_r_sqlm('select RID from AUFTRAG where (RID_AT_IMPORT=' + inttostr(RID_AT_IMPORT) +
+    ') and (RID=MASTER_R)');
   for n := 0 to pred(sAUFTRAG_R.count) do
     AddMarkierte(sAUFTRAG_R[n]);
   sAUFTRAG_R.free;
@@ -3924,8 +3844,7 @@ begin
   AnzeigenRefresh;
 end;
 
-procedure TFormAuftragArbeitsplatz.Protokollangabenanzeigen1Click
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.Protokollangabenanzeigen1Click(Sender: TObject);
 begin
   ProtokollangabenAnzeigen := not(ProtokollangabenAnzeigen);
   ZaehlerNummerAnzeigen := false;
@@ -3984,8 +3903,7 @@ begin
     ToggleStatusMode(Integer(ItemsGRID[DrawGrid1.Row]), cModeWord);
 end;
 
-procedure TFormAuftragArbeitsplatz.StatusMonteurinformiertANAUS1Click
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.StatusMonteurinformiertANAUS1Click(Sender: TObject);
 begin
   if (ItemsGRID.count > 0) then
     ToggleStatusMode(Integer(ItemsGRID[DrawGrid1.Row]), cModeMonteur);
@@ -3998,9 +3916,8 @@ var
   _now: TDateTime;
   qAUFTRAG: TIB_Query;
 begin
-  if doit('Es wurden ' + inttostr(_MonteurRIDsCount) + ' Monteur(e) informiert!'
-    + #13 + 'Es wurden ' + inttostr(ItemInformiert.count) +
-    ' Termine ausgegeben!' + #13 + #13 + 'Soll dies verbucht werden') then
+  if doit('Es wurden ' + inttostr(_MonteurRIDsCount) + ' Monteur(e) informiert!' + #13 + 'Es wurden ' +
+    inttostr(ItemInformiert.count) + ' Termine ausgegeben!' + #13 + #13 + 'Soll dies verbucht werden') then
   begin
 
     BeginHourGlass;
@@ -4036,8 +3953,7 @@ begin
     qAUFTRAG.close;
     qAUFTRAG.free;
     EndHourGlass;
-    ShowMessage('Über ' + inttostr(InfoAnz) +
-      ' neue(n) Termin(e) wurde informiert!');
+    ShowMessage('Über ' + inttostr(InfoAnz) + ' neue(n) Termin(e) wurde informiert!');
     InvalidateCache_Auftrag;
     DrawGrid1.refresh;
   end;
@@ -4058,14 +3974,12 @@ var
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
       if not(eof) then
         if (FieldByName('WORDEXPORT').IsNull) and
-          (FieldByName('STATUS').AsInteger in [ord(ctsTerminiert),
-          ord(ctsNeuAnschreiben), ord(ctsAngeschrieben),
+          (FieldByName('STATUS').AsInteger in [ord(ctsTerminiert), ord(ctsNeuAnschreiben), ord(ctsAngeschrieben),
           ord(ctsMonteurinformiert)]) then
         begin
           edit;
           FieldByName('WORDEXPORT').AsDateTime := _now;
-          FieldByName('WORDANZ').AsInteger := FieldByName('WORDANZ')
-            .AsInteger + 1;
+          FieldByName('WORDANZ').AsInteger := FieldByName('WORDANZ').AsInteger + 1;
           FieldByName('STATUS').AsInteger := ord(ctsAngeschrieben);
           post;
           inc(WordAnz);
@@ -4084,8 +3998,7 @@ begin
     // Neues verhalten
     AllCsv := TStringlist.create;
     AllCsv.LoadFromFile(FName);
-    if doit('Die letzte csv umfasst ' + inttostr(pred(AllCsv.count)) +
-      ' Datensätze!' + #13 +
+    if doit('Die letzte csv umfasst ' + inttostr(pred(AllCsv.count)) + ' Datensätze!' + #13 +
       'Soll anhand dieser Liste der Word-Status gebucht werden') then
     begin
       BeginHourGlass;
@@ -4094,8 +4007,7 @@ begin
       WordAnz := 0;
 
       for n := 1 to pred(AllCsv.count) do
-        BookOne(strtointdef(nextp(AllCsv[n], ';',
-          ord(twh_ReferenzIdentitaet)), 0));
+        BookOne(strtointdef(nextp(AllCsv[n], ';', ord(twh_ReferenzIdentitaet)), 0));
       IB_Query9.close;
       EndHourGlass;
 
@@ -4107,8 +4019,7 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFormAuftragArbeitsplatz.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FormAuftrag.close;
   SaveContext;
@@ -4145,8 +4056,7 @@ begin
   DrawGrid1.refresh;
 end;
 
-procedure TFormAuftragArbeitsplatz.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormAuftragArbeitsplatz.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if ssAlt in Shift then
   begin
@@ -4361,10 +4271,8 @@ begin
         ItemsMARKED.Add(Dupletten.objects[n]);
 
     //
-    if doit('Es gibt insgesamt ' + inttostr(DeleteCount) + ' doppelte.' + #13 +
-      'Die doppelten sind jetzt markiert!' + #13 +
-      'Wollen Sie eine Liste der doppelten Nummern' + #13 + 'jetzt einsehen')
-    then
+    if doit('Es gibt insgesamt ' + inttostr(DeleteCount) + ' doppelte.' + #13 + 'Die doppelten sind jetzt markiert!' +
+      #13 + 'Wollen Sie eine Liste der doppelten Nummern' + #13 + 'jetzt einsehen') then
     begin
       Dupletten.SaveToFile(DiagnosePath + 'Doppelte-Nummern.txt');
       OpenShell(DiagnosePath + 'Doppelte-Nummern.txt');
@@ -4436,11 +4344,9 @@ begin
   // alle Monteure
   if (MonteurSelected <> -1) then
   begin
-    if not(doit('Soll die ganze Woche für' + #13 +
-      e_r_MonteurName(MonteurSelected) + #13 + 'ausgegeben werden?' + #13 + #13
-      + '(Drücken Sie jetzt abbrechen, um die Auswahl eines' + #13 +
-      'einzelnen Monteures aufzuheben. Danach können Sie die' + #13 +
-      'ganze Woche für alle Monteure ausgeben)')) then
+    if not(doit('Soll die ganze Woche für' + #13 + e_r_MonteurName(MonteurSelected) + #13 + 'ausgegeben werden?' + #13 +
+      #13 + '(Drücken Sie jetzt abbrechen, um die Auswahl eines' + #13 +
+      'einzelnen Monteures aufzuheben. Danach können Sie die' + #13 + 'ganze Woche für alle Monteure ausgeben)')) then
     begin
       Button5.SetFocus;
       exit;
@@ -4470,22 +4376,18 @@ begin
           else
           begin
             // Nur die der aktuellen Baustelle, die auch Termine haben
-            lMonteur := e_r_sqlm('select MONTEUR1_R from AUFTRAG where ' +
-              ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
-              ' (RID=MASTER_R) and ' + ' (MONTEUR1_R is not null) and ' +
-              ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' +
-              Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
+            lMonteur := e_r_sqlm('select MONTEUR1_R from AUFTRAG where ' + ' (BAUSTELLE_R=' + inttostr(s_Baustelle) +
+              ') and ' + ' (RID=MASTER_R) and ' + ' (MONTEUR1_R is not null) and ' + ' (AUSFUEHREN between ''' +
+              Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
               ' MONTEUR1_R');
             for n := 0 to pred(lMonteur.count) do
               if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
                 MonteurRIDs.Add(lMonteur[n]);
             lMonteur.free;
 
-            lMonteur := e_r_sqlm('select MONTEUR2_R from AUFTRAG where ' +
-              ' (BAUSTELLE_R=' + inttostr(s_Baustelle) + ') and ' +
-              ' (RID=MASTER_R) and ' + ' (MONTEUR2_R is not null) and ' +
-              ' (AUSFUEHREN between ''' + Long2date(TageRIDs[0]) + ''' and ''' +
-              Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
+            lMonteur := e_r_sqlm('select MONTEUR2_R from AUFTRAG where ' + ' (BAUSTELLE_R=' + inttostr(s_Baustelle) +
+              ') and ' + ' (RID=MASTER_R) and ' + ' (MONTEUR2_R is not null) and ' + ' (AUSFUEHREN between ''' +
+              Long2date(TageRIDs[0]) + ''' and ''' + Long2date(TageRIDs[pred(TageRIDs.count)]) + ''') ' + 'group by ' +
               ' MONTEUR2_R');
             for n := 0 to pred(lMonteur.count) do
               if (MonteurRIDs.indexof(lMonteur[n]) = -1) then
@@ -4514,8 +4416,7 @@ begin
   // Nun die tatsächliche List erzeugen!
   ProduceInfoBlatt(TageRIDs, MonteurRIDs, nil, false, true);
   if (ItemInformiert.count = 0) then
-    ShowMessage('In KW ' + inttostr(WeekGet(v_MonteurMontag)) +
-      ' gibt es keinen Termin!');
+    ShowMessage('In KW ' + inttostr(WeekGet(v_MonteurMontag)) + ' gibt es keinen Termin!');
 end;
 
 function TFormAuftragArbeitsplatz.MonteurSelected: Integer;
@@ -4527,8 +4428,8 @@ begin
     result := -1;
 end;
 
-procedure TFormAuftragArbeitsplatz.DrawGrid2DrawCell(Sender: TObject;
-  ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
+procedure TFormAuftragArbeitsplatz.DrawGrid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
+  State: TGridDrawState);
 var
   _ACol: Integer;
   _TextWidth: Integer;
@@ -4622,8 +4523,7 @@ var
         end;
 
         _TextWidth := TextWidth(CellText);
-        TextRect(Rect, Rect.left + succ(((rxl(Rect) - _TextWidth) div 2)),
-          Rect.top, CellText);
+        TextRect(Rect, Rect.left + succ(((rxl(Rect) - _TextWidth) div 2)), Rect.top, CellText);
       end;
     end;
   end;
@@ -4681,10 +4581,8 @@ begin
           // Zahlen
           _ACol := (pred(ACol) * 2);
 
-          DrawMicroCell(Auslastung[ARow][_ACol], mkrect(Rect.left, Rect.top,
-            rxl(Rect), cPlanY_div_2));
-          DrawMicroCell(Auslastung[ARow][_ACol + 1],
-            mkrect(Rect.left, Rect.top + cPlanY_div_2 - 2, rxl(Rect),
+          DrawMicroCell(Auslastung[ARow][_ACol], mkrect(Rect.left, Rect.top, rxl(Rect), cPlanY_div_2));
+          DrawMicroCell(Auslastung[ARow][_ACol + 1], mkrect(Rect.left, Rect.top + cPlanY_div_2 - 2, rxl(Rect),
             cPlanY_div_2 + 2));
 
           // normalize
@@ -4694,8 +4592,7 @@ begin
           // Rahmen zeichnen
           MoveTo(Rect.left, Rect.top);
 
-          if (ACol = v_Kursiv_cell) or (ACol = v_Kursiv_cell + 1) or FocusedLine
-          then
+          if (ACol = v_Kursiv_cell) or (ACol = v_Kursiv_cell + 1) or FocusedLine then
           begin
             pen.color := clblack; // HTMLColor2TColor($0066CC)
             frameRect(Rect);
@@ -4726,8 +4623,7 @@ begin
       begin
         MoveTo(Rect.left, Rect.top);
 
-        if (ACol = v_Kursiv_cell) or (ACol = v_Kursiv_cell + 1) or FocusedLine
-        then
+        if (ACol = v_Kursiv_cell) or (ACol = v_Kursiv_cell + 1) or FocusedLine then
         begin
           pen.color := clblack; // HTMLColor2TColor($0066CC)
           frameRect(Rect);
@@ -4857,8 +4753,7 @@ var
     begin
       if not(doit(
         { } 'Das Feld "' + FieldName + '" zu erweitern ist riskant.' + #13 +
-        { } 'In der Regel ist dies nicht notwendig, es sei denn Sie wissen genau was Sie tun!'
-        + #13 +
+        { } 'In der Regel ist dies nicht notwendig, es sei denn Sie wissen genau was Sie tun!' + #13 +
         { } 'Dieses Feld jetzt wirklich ändern', true)) then
         ChangeFields.Delete(k);
     end;
@@ -4893,23 +4788,17 @@ begin
       if (ItemsMARKED.count = SichtbarMarkierte.count) then
       begin
         // alle Markierten sind auch sichtbar!
-        WorkerPermission := doit('Es sind ' + inttostr(ItemsMARKED.count) +
-          ' Datensätze markiert!' + #13 + 'Folgende Felder werden bei ' + #13 +
-          'den markierten Datenfeldern überschrieben:' + #13 + #13 +
-          HugeSingleLine(ChangeFields, #13) + #13 + #13 +
-          'Sollen die Feldinhalte geändert werden');
+        WorkerPermission := doit('Es sind ' + inttostr(ItemsMARKED.count) + ' Datensätze markiert!' + #13 +
+          'Folgende Felder werden bei ' + #13 + 'den markierten Datenfeldern überschrieben:' + #13 + #13 +
+          HugeSingleLine(ChangeFields, #13) + #13 + #13 + 'Sollen die Feldinhalte geändert werden');
         rWorkerList := ItemsMARKED;
         break;
       end;
-      WorkerDialogResult := YesNoCancel('Es sind ' + inttostr(ItemsMARKED.count)
-        + ' Datensätze markiert!' + #13 + 'Davon sind aber nur ' +
-        inttostr(SichtbarMarkierte.count) +
-        ' in der aktuellen Ansicht enthalten!' + #13 +
-        'Folgende Felder werden bei ' + #13 +
-        'den markierten Datenfeldern geändert:' + #13 + #13 +
-        HugeSingleLine(ChangeFields, #13) + #13 + #13 + '<JA> Es werden nur ' +
-        inttostr(SichtbarMarkierte.count) + ' sichtbar markierte geändert!' +
-        #13 + '<NEIN> Es werden alle ' + inttostr(ItemsMARKED.count) +
+      WorkerDialogResult := YesNoCancel('Es sind ' + inttostr(ItemsMARKED.count) + ' Datensätze markiert!' + #13 +
+        'Davon sind aber nur ' + inttostr(SichtbarMarkierte.count) + ' in der aktuellen Ansicht enthalten!' + #13 +
+        'Folgende Felder werden bei ' + #13 + 'den markierten Datenfeldern geändert:' + #13 + #13 +
+        HugeSingleLine(ChangeFields, #13) + #13 + #13 + '<JA> Es werden nur ' + inttostr(SichtbarMarkierte.count) +
+        ' sichtbar markierte geändert!' + #13 + '<NEIN> Es werden alle ' + inttostr(ItemsMARKED.count) +
         ' markierten geändert!' + #13 + '<ABBRECHEN> Es wird nichts geändert!');
 
       case WorkerDialogResult of
@@ -4944,8 +4833,7 @@ begin
         for n := 0 to pred(rWorkerList.count) do
         begin
 
-          IB_Query2.ParamByName('CROSSREF').AsInteger :=
-            Integer(rWorkerList[n]);
+          IB_Query2.ParamByName('CROSSREF').AsInteger := Integer(rWorkerList[n]);
           if not(IB_Query2.Active) then
             IB_Query2.open;
 
@@ -4958,8 +4846,8 @@ begin
             end
             else
             begin
-              if (IB_Query2.FieldByName(ChangeFields[m]).IsText) and
-                (IB_Query2.FieldByName(ChangeFields[m]).IsBlob) then
+              if (IB_Query2.FieldByName(ChangeFields[m]).IsText) and (IB_Query2.FieldByName(ChangeFields[m]).IsBlob)
+              then
               begin
                 cAUFTRAG.FieldByName(ChangeFields[m]).AssignTo(INFO_NEW);
                 IB_Query2.FieldByName(ChangeFields[m]).AssignTo(INFO_ORG);
@@ -4968,8 +4856,7 @@ begin
               end
               else
               begin
-                IB_Query2.FieldByName(ChangeFields[m])
-                  .assign(cAUFTRAG.FieldByName(ChangeFields[m]));
+                IB_Query2.FieldByName(ChangeFields[m]).assign(cAUFTRAG.FieldByName(ChangeFields[m]));
               end;
             end;
           end;
@@ -5030,10 +4917,9 @@ begin
     try
       if DeleteAll then
       begin
-        if doit('Dadurch werden die Monteure nicht mehr' + #13 +
-          'über den Wegfall eines Termines informiert!' + #13 +
-          'Soll wirklich bei allen historischen Datensätzen' + #13 +
-          'das "Monteur informiert" Symbol entfernt werden') then
+        if doit('Dadurch werden die Monteure nicht mehr' + #13 + 'über den Wegfall eines Termines informiert!' + #13 +
+          'Soll wirklich bei allen historischen Datensätzen' + #13 + 'das "Monteur informiert" Symbol entfernt werden')
+        then
         begin
 
           // Umfang festlegen
@@ -5041,9 +4927,8 @@ begin
           ItemsMARKED.LogicalAND(ItemsGRID);
           if (ItemsMARKED.count > 0) then
             if doit('Es sind markierte Zeilen enthalten.' + #13 +
-              'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!'
-              + #13 + 'Sollen nur ' + inttostr(ItemsMARKED.count) +
-              ' markierte Datensätze verwendet werden') then
+              'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!' + #13 + 'Sollen nur ' +
+              inttostr(ItemsMARKED.count) + ' markierte Datensätze verwendet werden') then
               UseMarked := true;
 
           if UseMarked then
@@ -5084,8 +4969,7 @@ begin
           begin
             with IB_Query_MonteurInfoEinzeln do
             begin
-              ParamByName('CROSSREF').AsInteger :=
-                Integer(OutList[DrawGrid1.Row]);
+              ParamByName('CROSSREF').AsInteger := Integer(OutList[DrawGrid1.Row]);
               if not(Active) then
                 open;
               if not(Isempty) then
@@ -5118,8 +5002,7 @@ begin
     HistorischeFlash;
 end;
 
-procedure TFormAuftragArbeitsplatz.MarkiereLeeresPlanquadrat(Import_RID,
-  Anzahl: Integer);
+procedure TFormAuftragArbeitsplatz.MarkiereLeeresPlanquadrat(Import_RID, Anzahl: Integer);
 
 var
   StartTime: dword;
@@ -5162,8 +5045,7 @@ var
       ShowMessage('Fehler: Strasse Hausnummer, weder gerade noch ungerade!');
 
     IB_Query15.ParamByName('CROSSREF').AsInteger := Integer(ItemsGRID[iIndex]);
-    strasse2 := copy(IB_Query15.FieldByName('STRASSE').AsString,
-      succ(cSTRASSE_PLANQUADRAT_Length), MaxInt);
+    strasse2 := copy(IB_Query15.FieldByName('STRASSE').AsString, succ(cSTRASSE_PLANQUADRAT_Length), MaxInt);
 
     if copy(strasse, 1, pred(k)) = copy(strasse2, 1, pred(k)) then
     begin
@@ -5199,12 +5081,10 @@ begin
       if (_RID_AT_IMPORT >= Import_RID) or (Import_RID = 0) then
       begin
         if (_Planquadrat = '') then
-          Kandidaten.AddObject(fill('9', cSTRASSE_HausNummern_Length) + ',' + _Strasse,
-            pointer(ItemsGRID[n]))
+          Kandidaten.AddObject(fill('9', cSTRASSE_HausNummern_Length) + ',' + _Strasse, pointer(ItemsGRID[n]))
         else
-          Kandidaten.AddObject(inttostrN(min(StrassenDiff(_Strasse, n - 1),
-            StrassenDiff(_Strasse, n + 1)), cSTRASSE_HausNummern_Length) + ',' +
-            _Strasse, pointer(ItemsGRID[n]));
+          Kandidaten.AddObject(inttostrN(min(StrassenDiff(_Strasse, n - 1), StrassenDiff(_Strasse, n + 1)),
+            cSTRASSE_HausNummern_Length) + ',' + _Strasse, pointer(ItemsGRID[n]));
       end;
       if frequently(StartTime, 333) then
       begin
@@ -5241,11 +5121,9 @@ var
 begin
   ItemsMARKED.LogicalAND(ItemsGRID);
   if ItemsMARKED.count > 0 then
-    if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) +
-      ' Aufträge gelöscht werden', true) then
+    if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) + ' Aufträge gelöscht werden', true) then
       if not(doit('Das Löschen ist in der Regel nicht notwendig!' + #13 +
-        'Haben Sie zuvor eine Wordausgabedatei erzeugt?' + #13 +
-        'Liegen die Daten in einer Importdatei vor?' + #13 +
+        'Haben Sie zuvor eine Wordausgabedatei erzeugt?' + #13 + 'Liegen die Daten in einer Importdatei vor?' + #13 +
         'Wenn Sie jetzt <abbrechen> drücken wird gelöscht')) then
       begin
         BeginHourGlass;
@@ -5346,8 +5224,7 @@ begin
   EndHourGlass;
 end;
 
-function TFormAuftragArbeitsplatz.SaveContext(InternalUse
-  : boolean = false): boolean;
+function TFormAuftragArbeitsplatz.SaveContext(InternalUse: boolean = false): boolean;
 //
 //
 // * Read-Pointer                  * WritePointer
@@ -5418,8 +5295,7 @@ begin
       ContextReadPos := -1;
 
     // nur wenn was geändert wurde speichern
-    if (ContextReadPos = -1) or
-      not(FileCompare(_NewFName, ContextFName(ContextReadPos))) then
+    if (ContextReadPos = -1) or not(FileCompare(_NewFName, ContextFName(ContextReadPos))) then
     begin
       CameraFlash;
       ContextWritePos := getContext(true);
@@ -5507,8 +5383,7 @@ begin
     cBAUSTELLE := DataModuleDatenbank.nCursor;
     with cBAUSTELLE do
     begin
-      sql.Add('select NUMMERN_PREFIX, SCHLAGZEILE, VON, BIS  from BAUSTELLE where RID='
-        + inttostr(s_Baustelle));
+      sql.Add('select NUMMERN_PREFIX, SCHLAGZEILE, VON, BIS  from BAUSTELLE where RID=' + inttostr(s_Baustelle));
       ApiFirst;
       FieldByName('SCHLAGZEILE').AssignTo(Memo1.lines);
       s_BaustelleStart := DateTime2long(FieldByName('VON').AsDate);
@@ -5523,8 +5398,7 @@ begin
     ComboBox3.items.Add('ohne');
 
     // Anwendungs-Titel
-    caption := 'Auftragarbeitsplatz - [' + ComboBox1.Text + '-' +
-      e_r_BaustelleName(s_Baustelle) + ']';
+    caption := 'Auftragarbeitsplatz - [' + ComboBox1.Text + '-' + e_r_BaustelleName(s_Baustelle) + ']';
 
   end
   else
@@ -5542,8 +5416,7 @@ end;
 
 function TFormAuftragArbeitsplatz.ContextFName(Position: Integer): string;
 begin
-  result := ContextPath + inttostr(sBearbeiter) + '_' + inttostr(Position) +
-    cContextExtension;
+  result := ContextPath + inttostr(sBearbeiter) + '_' + inttostr(Position) + cContextExtension;
 end;
 
 procedure TFormAuftragArbeitsplatz.ShowAuftrag;
@@ -5614,13 +5487,10 @@ var
 begin
   ItemsMARKED.LogicalAND(ItemsGRID);
   if ItemsMARKED.count > 0 then
-    if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) +
-      ' Aufträge in die Ablage verschoben werden', true) then
-      if not(doit('Aufträge in der Ablage sind im Moment NICHT abrufbar!' + #13
-        + 'Erst in einer zukünftigen Programmversion können Sie im' + #13 +
-        'Auftragarbeitsplatz abgerufen werden.' + #13 +
-        'Wenn Sie jetzt <abbrechen> drücken wird in die Ablage verschoben'))
-      then
+    if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) + ' Aufträge in die Ablage verschoben werden', true) then
+      if not(doit('Aufträge in der Ablage sind im Moment NICHT abrufbar!' + #13 +
+        'Erst in einer zukünftigen Programmversion können Sie im' + #13 + 'Auftragarbeitsplatz abgerufen werden.' + #13
+        + 'Wenn Sie jetzt <abbrechen> drücken wird in die Ablage verschoben')) then
       begin
         BeginHourGlass;
         e_w_gen('GEN_ZUSAMMENHANG');
@@ -5655,8 +5525,7 @@ begin
     ToggleStatusMode(Integer(ItemsGRID[DrawGrid1.Row]), cModeRestant);
 end;
 
-procedure TFormAuftragArbeitsplatz.StatusNeuanschreibenANAUS1Click
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.StatusNeuanschreibenANAUS1Click(Sender: TObject);
 begin
   if (ItemsGRID.count > 0) then
     ToggleStatusMode(Integer(ItemsGRID[DrawGrid1.Row]), cModeNeuAnschreiben);
@@ -5805,8 +5674,7 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.DrawGrid2KeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFormAuftragArbeitsplatz.DrawGrid2KeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = '+') then
     SwitchAuslastung;
@@ -5861,10 +5729,8 @@ var // "R" Rückgängig
           if qAUFTRAG.eof then
             raise exception.create('Ziel nicht gefunden!');
 
-          if (cAUFTRAG.FieldByName('RID_AT_IMPORT').AsInteger <>
-            qAUFTRAG.FieldByName('RID_AT_IMPORT').AsInteger) then
-            raise exception.create
-              ('Import-RID ist unterschiedlich, ev. Neuanlage?');
+          if (cAUFTRAG.FieldByName('RID_AT_IMPORT').AsInteger <> qAUFTRAG.FieldByName('RID_AT_IMPORT').AsInteger) then
+            raise exception.create('Import-RID ist unterschiedlich, ev. Neuanlage?');
 
           qAUFTRAG.edit;
           for n := 0 to pred(FieldCount) do
@@ -5879,8 +5745,7 @@ var // "R" Rückgängig
           on e: exception do
           begin
             inc(ExceptionCount);
-            sDiagnose.Add(cERRORText + ' update(' + inttostr(RID) + '): ' +
-              e.message);
+            sDiagnose.Add(cERRORText + ' update(' + inttostr(RID) + '): ' + e.message);
           end;
         end;
 
@@ -5946,16 +5811,14 @@ begin
 
     rCONNECTION.connect;
 
-    if doit(inttostr(ItemsMARKED.count) +
-      ' Datensätze, genau so wie hier angezeigt in die fremde Datenbank ' +
-      #13#13 + Edit1.Text + #13#13 + ' schreiben', true) then
+    if doit(inttostr(ItemsMARKED.count) + ' Datensätze, genau so wie hier angezeigt in die fremde Datenbank ' + #13#13 +
+      Edit1.Text + #13#13 + ' schreiben', true) then
     begin
       qAUFTRAG := DataModuleDatenbank.nQuery;
       with qAUFTRAG do
       begin
         IB_connection := rCONNECTION;
-        sql.Add('select * from ' + DestTable +
-          ' where RID=:CROSSREF for update');
+        sql.Add('select * from ' + DestTable + ' where RID=:CROSSREF for update');
       end;
       Anz_Inserts := 0;
       InsertData;
@@ -5972,8 +5835,7 @@ begin
     sDiagnose.free;
     EndHourGlass;
 
-    ShowMessage(inttostr(Anz_Inserts) + ' Datensätze eingefügt!' + #13 +
-      inttostr(ExceptionCount) + ' Fehler!');
+    ShowMessage(inttostr(Anz_Inserts) + ' Datensätze eingefügt!' + #13 + inttostr(ExceptionCount) + ' Fehler!');
 
     if (ExceptionCount > 0) then
       OpenShell(DiagnosePath + 'Auftrag-Restore.txt');
@@ -5986,9 +5848,8 @@ begin
     BAUSTELLE_R := e_r_BaustelleRIDFromKuerzel(AnsiUpperCase(ComboBox1.Text));
 
     //
-    if doit('Sollen ' + inttostr(ItemsMARKED.count) + ' markierte wirklich ' +
-      ' in die Baustelle ' + e_r_BaustelleKuerzel(BAUSTELLE_R) +
-      ' verschoben werden') then
+    if doit('Sollen ' + inttostr(ItemsMARKED.count) + ' markierte wirklich ' + ' in die Baustelle ' +
+      e_r_BaustelleKuerzel(BAUSTELLE_R) + ' verschoben werden') then
     begin
       BeginHourGlass;
 
@@ -5996,9 +5857,8 @@ begin
       AuftragHistorischerDatensatz(ItemsMARKED);
 
       // nun verschieben!
-      e_x_sql('update Auftrag set' + ' NUMMER = null,' + ' PLANQUADRAT = null,'
-        + ' BAUSTELLE_R = ' + inttostr(BAUSTELLE_R) + ' ' + 'where ' +
-        ' RID in ' + ListasSQL(ItemsMARKED));
+      e_x_sql('update Auftrag set' + ' NUMMER = null,' + ' PLANQUADRAT = null,' + ' BAUSTELLE_R = ' +
+        inttostr(BAUSTELLE_R) + ' ' + 'where ' + ' RID in ' + ListasSQL(ItemsMARKED));
 
       EndHourGlass;
     end;
@@ -6062,8 +5922,8 @@ begin
       sql.Add(' count(AUFWAND) AUFWAND_C');
       // sql.add(' sum(AUFWAND) AUFWAND_S');
       sql.Add('from AUFTRAG where');
-      sql.Add(' (AUSFUEHREN between ' + '''' + Long2date(v_MonteurMontag) + ''''
-        + ' and ' + '''' + Long2date(v_MonteurSonntag) + '''' + ') and');
+      sql.Add(' (AUSFUEHREN between ' + '''' + Long2date(v_MonteurMontag) + '''' + ' and ' + '''' +
+        Long2date(v_MonteurSonntag) + '''' + ') and');
       sql.Add(' (STATUS in (1,2,3,5,8))');
       sql.Add('group by');
       sql.Add(' BAUSTELLE_R, AUSFUEHREN, VORMITTAGS, STATUS');
@@ -6073,8 +5933,7 @@ begin
         //
         //
         AUFWAND_C := FieldByName('AUFWAND_C').AsInteger * 2;
-        Col := round(FieldByName('AUSFUEHREN').AsDate -
-          v_MonteurMontagAsDate) * 2;
+        Col := round(FieldByName('AUSFUEHREN').AsDate - v_MonteurMontagAsDate) * 2;
         if (FieldByName('VORMITTAGS').AsString = 'N') then
           inc(Col);
         k := Auslastung.indexof(FieldByName('BAUSTELLE_R').AsInteger);
@@ -6113,8 +5972,8 @@ begin
   //
 end;
 
-procedure TFormAuftragArbeitsplatz.DrawGrid2MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormAuftragArbeitsplatz.DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 var
   Col, Row: Integer;
 begin
@@ -6179,8 +6038,7 @@ begin
   // noch nix sinnvolles
 end;
 
-function TFormAuftragArbeitsplatz.OutCSV(RID: Integer;
-  s_Baustelle: Integer): string;
+function TFormAuftragArbeitsplatz.OutCSV(RID: Integer; s_Baustelle: Integer): string;
 var
   RIDs: TgpIntegerList;
 begin
@@ -6190,8 +6048,7 @@ begin
   RIDs.free;
 end;
 
-function TFormAuftragArbeitsplatz.OutCSV(RIDs: TgpIntegerList;
-  s_Baustelle: Integer): string;
+function TFormAuftragArbeitsplatz.OutCSV(RIDs: TgpIntegerList; s_Baustelle: Integer): string;
 var
   AllOutData: TStringlist;
   OneLine: string;
@@ -6232,9 +6089,8 @@ begin
   begin
 
     //
-    if not(doit
-      ('Der csv ist keine Baustelle zugeordnet. Erweiterte Protokollspalten werden fehlen.'
-      + #13 + 'Die csv dennoch erzeugen')) then
+    if not(doit('Der csv ist keine Baustelle zugeordnet. Erweiterte Protokollspalten werden fehlen.' + #13 +
+      'Die csv dennoch erzeugen')) then
       exit;
   end;
 
@@ -6394,24 +6250,20 @@ begin
       ProtokollOut.clear;
       for k := 0 to pred(ProtokollFelder.count) do
       begin
-        ProtokollOut.Add
-          (csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[k]])));
+        ProtokollOut.Add(csvCheck(KommaCheck(Protokoll.values[ProtokollFelder[k]])));
       end;
 
       if (InternFelder.count > 0) then
       begin
-        INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' +
-          inttostr(AUFTRAG_R));
+        INTERN_INFO := e_r_sqlt('select INTERN_INFO from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
         for k := 0 to pred(InternFelder.count) do
-          ProtokollOut.Add
-            (csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[k]])));
+          ProtokollOut.Add(csvCheck(KommaCheck(INTERN_INFO.values[InternFelder[k]])));
         INTERN_INFO.free;
       end;
 
       xSubs.AddStrings(ProtokollOut);
 
-      AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' +
-        HugeSingleLine(ProtokollOut, ';'));
+      AllOutData.Add(e_r_AuftragLine(AUFTRAG_R) + ';' + HugeSingleLine(ProtokollOut, ';'));
     end
     else
     begin
@@ -6428,8 +6280,7 @@ begin
   end;
 
   // Speichern als CSV
-  AllOutData.SaveToFile(MyProgramPath + FormBearbeiter.sBearbeiterKurz
-    + '.csv');
+  AllOutData.SaveToFile(MyProgramPath + FormBearbeiter.sBearbeiterKurz + '.csv');
 
   // Speichern als XLS
   xFName := iBaustellenPath + Baustellen[0];
@@ -6443,8 +6294,7 @@ begin
 
   // Kopieren der .csv nach .\Word
   CheckCreateOnce(WordPath);
-  result := WordPath + inttostrN(e_w_gen('GEN_CSV'), 6) + '-' +
-    FormBearbeiter.sBearbeiterKurz + '.csv';
+  result := WordPath + inttostrN(e_w_gen('GEN_CSV'), 6) + '-' + FormBearbeiter.sBearbeiterKurz + '.csv';
   FileCopy(MyProgramPath + FormBearbeiter.sBearbeiterKurz + '.csv', result);
 
   FreeAndNil(AllOutData);
@@ -6461,8 +6311,7 @@ begin
   EndHourGlass;
 
   if (Baustellen.count > 1) then
-    ShowMessage('Warnung: Es ist ein Mix aus mehreren Baustellen in der csv:' +
-      #13 + HugeSingleLine(Baustellen));
+    ShowMessage('Warnung: Es ist ein Mix aus mehreren Baustellen in der csv:' + #13 + HugeSingleLine(Baustellen));
   FreeAndNil(Baustellen);
 
   // gleich das Excel öffnen
@@ -6499,9 +6348,8 @@ begin
     ItemsMARKED.LogicalAND(ItemsGRID);
     if (ItemsMARKED.count > 0) then
       if doit('Es sind markierte Zeilen enthalten.' + #13 +
-        'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!'
-        + #13 + 'Sollen nur ' + inttostr(ItemsMARKED.count) +
-        ' markierte Datensätze verwendet werden') then
+        'Drücken Sie <abbrechen>, um alle Datensätze in der Anzeige zu verwenden!' + #13 + 'Sollen nur ' +
+        inttostr(ItemsMARKED.count) + ' markierte Datensätze verwendet werden') then
         UseMarked := true;
     if UseMarked then
       FormAnschriftOptimierung.setContext(ItemsMARKED)
@@ -6574,8 +6422,8 @@ begin
 
     with cAUFTRAG do
     begin
-      sql.Add('select' + ' KUNDE_STRASSE,BAUSTELLE_R,POSTLEITZAHL_R ' +
-        'from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
+      sql.Add('select' + ' KUNDE_STRASSE,BAUSTELLE_R,POSTLEITZAHL_R ' + 'from AUFTRAG where RID=' +
+        inttostr(AUFTRAG_R));
       ApiFirst;
       strasse := StrasseUnify(FieldByName('KUNDE_STRASSE').AsString);
       POSTLEITZAHL_R := FieldByName('POSTLEITZAHL_R').AsInteger;
@@ -6583,8 +6431,7 @@ begin
     end;
 
     if (POSTLEITZAHL_R = 0) then
-      ShowMessage
-        ('FEHLER: Diese Baustelle ist scheinbar nicht geolokalisiert!');
+      ShowMessage('FEHLER: Diese Baustelle ist scheinbar nicht geolokalisiert!');
 
     with cLIST do
     begin
@@ -6652,20 +6499,15 @@ begin
     cLIST := DataModuleDatenbank.nCursor;
     FoundL := TList.create;
 
-    cAUFTRAG.sql.Add
-      ('select AUSFUEHREN, MONTEUR1_R, MONTEUR2_R from AUFTRAG where RID=' +
-      inttostr(AUFTRAG_R));
+    cAUFTRAG.sql.Add('select AUSFUEHREN, MONTEUR1_R, MONTEUR2_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
     cAUFTRAG.ApiFirst;
     with cLIST do
     begin
       sql.Add('select RID from AUFTRAG where');
-      sql.Add(' (MONTEUR1_R=' + cAUFTRAG.FieldByName('MONTEUR1_R').AsString
-        + ') AND');
+      sql.Add(' (MONTEUR1_R=' + cAUFTRAG.FieldByName('MONTEUR1_R').AsString + ') AND');
       if cAUFTRAG.FieldByName('MONTEUR2_R').IsNotNull then
-        sql.Add(' (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString
-          + ') AND');
-      sql.Add(' (AUSFUEHREN=''' + Long2date(cAUFTRAG.FieldByName('AUSFUEHREN')
-        .AsDate) + ''') AND');
+        sql.Add(' (MONTEUR2_R=' + cAUFTRAG.FieldByName('MONTEUR2_R').AsString + ') AND');
+      sql.Add(' (AUSFUEHREN=''' + Long2date(cAUFTRAG.FieldByName('AUSFUEHREN').AsDate) + ''') AND');
       sql.Add(' (MASTER_R=RID)');
       sql.Add('ORDER BY STRASSE');
       ApiFirst;
@@ -6726,8 +6568,7 @@ begin
   end;
 end;
 
-function TFormAuftragArbeitsplatz.getContext
-  (Increment: boolean = false): Integer;
+function TFormAuftragArbeitsplatz.getContext(Increment: boolean = false): Integer;
 var
   TrnFile: TextFile;
   TrnLine: string;
@@ -6884,8 +6725,7 @@ begin
   end;
 end;
 
-procedure TFormAuftragArbeitsplatz.ToggleSortMode
-  (NewMode: TeTerminarbeitsplatzSortMode; ForceChange: boolean = false);
+procedure TFormAuftragArbeitsplatz.ToggleSortMode(NewMode: TeTerminarbeitsplatzSortMode; ForceChange: boolean = false);
 begin
   if (s_SortMode <> NewMode) or ForceChange then
   begin
@@ -6895,15 +6735,11 @@ begin
     MenuItem_PostSortierung.checked := (s_SortMode = csm_PostSortierung);
     MenuItem_PLZSortierung.checked := (s_SortMode = csm_PLZSortierung);
     MenuItem_ZeitSortierung.checked := (s_SortMode = csm_ZeitSortierung);
-    MenuItem_ZaehlernummerSortierung.checked :=
-      (s_SortMode = csm_ZaehlernummerSortierung);
-    MenuItem_BriefadresseSortierung.checked :=
-      (s_SortMode = csm_BriefadresseSortierung);
-    MenuItem_ABNummerSortierung.checked :=
-      (s_SortMode = csm_ABNummerSortierung);
+    MenuItem_ZaehlernummerSortierung.checked := (s_SortMode = csm_ZaehlernummerSortierung);
+    MenuItem_BriefadresseSortierung.checked := (s_SortMode = csm_BriefadresseSortierung);
+    MenuItem_ABNummerSortierung.checked := (s_SortMode = csm_ABNummerSortierung);
     MenuItem_StatusSortierung.checked := (s_SortMode = csm_StatusSortierung);
-    MenuItem_WechselDatumSortierung.checked :=
-      (s_SortMode = csm_WechselSortierung);
+    MenuItem_WechselDatumSortierung.checked := (s_SortMode = csm_WechselSortierung);
   end;
 end;
 
@@ -6913,50 +6749,43 @@ begin
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_PostSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_PostSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_PostSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_ZeitSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_ZeitSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_ZeitSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_ZaehlernummerSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_ZaehlernummerSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_ZaehlernummerSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_normalSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_normalSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_normalSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_ABNummerSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_ABNummerSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_ABNummerSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_BriefadresseSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_BriefadresseSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_BriefadresseSortierung);
   Suche;
 end;
 
-procedure TFormAuftragArbeitsplatz.MenuItem_StatusSortierungClick
-  (Sender: TObject);
+procedure TFormAuftragArbeitsplatz.MenuItem_StatusSortierungClick(Sender: TObject);
 begin
   ToggleSortMode(csm_StatusSortierung);
   Suche;
@@ -6977,8 +6806,7 @@ begin
       cBAUSTELLE := DataModuleDatenbank.nCursor;
       with cBAUSTELLE do
       begin
-        sql.Add('select SCHLAGZEILE from BAUSTELLE where RID=' +
-          inttostr(BAUSTELLE_R));
+        sql.Add('select SCHLAGZEILE from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
         ApiFirst;
         if not(eof) then
           if Fields[0].IsNotNull then
@@ -7025,12 +6853,10 @@ begin
     cAUFTRAG := DataModuleDatenbank.nCursor;
     with cAUFTRAG do
     begin
-      sql.Add('select KUNDE_STRASSE, KUNDE_ORT from AUFTRAG where RID=' +
-        inttostr(RID));
+      sql.Add('select KUNDE_STRASSE, KUNDE_ORT from AUFTRAG where RID=' + inttostr(RID));
       ApiFirst;
-      FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
-        FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL')
-        .AsString, p);
+      FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString, FieldByName('KUNDE_ORT').AsString,
+        FieldByName('KUNDE_ORTSTEIL').AsString, p);
     end;
     cAUFTRAG.free;
 
@@ -7098,8 +6924,8 @@ begin
     FormBaustelle.setContext(s_Baustelle);
 end;
 
-procedure TFormAuftragArbeitsplatz.ToolButton38MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormAuftragArbeitsplatz.ToolButton38MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 var
   n: Integer;
 begin
@@ -7107,8 +6933,7 @@ begin
   begin
     ItemsMARKED.LogicalAND(ItemsGRID);
     if ItemsMARKED.count > 0 then
-      if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) +
-        ' Geolokalisierungen aufgehoben werden', true) then
+      if doit('Sollen wirklich ' + inttostr(ItemsMARKED.count) + ' Geolokalisierungen aufgehoben werden', true) then
       begin
         BeginHourGlass;
         for n := 0 to pred(ItemsMARKED.count) do
@@ -7168,17 +6993,14 @@ begin
     cAUFTRAG := DataModuleDatenbank.nCursor;
     cLIST := DataModuleDatenbank.nCursor;
     ResultRIDs := TgpIntegerList.create;
-    cAUFTRAG.sql.Add('select BAUSTELLE_R,POSTLEITZAHL_R from AUFTRAG where RID='
-      + inttostr(AUFTRAG_R));
+    cAUFTRAG.sql.Add('select BAUSTELLE_R,POSTLEITZAHL_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
     cAUFTRAG.ApiFirst;
     with cLIST do
     begin
       sql.Add('select RID from AUFTRAG where');
-      sql.Add(' (POSTLEITZAHL_R=''' + cAUFTRAG.FieldByName('POSTLEITZAHL_R')
-        .AsString + ''') AND');
+      sql.Add(' (POSTLEITZAHL_R=''' + cAUFTRAG.FieldByName('POSTLEITZAHL_R').AsString + ''') AND');
       sql.Add(' (MASTER_R=RID) AND');
-      sql.Add(' (BAUSTELLE_R=' + cAUFTRAG.FieldByName('BAUSTELLE_R')
-        .AsString + ')');
+      sql.Add(' (BAUSTELLE_R=' + cAUFTRAG.FieldByName('BAUSTELLE_R').AsString + ')');
       ApiFirst;
       while not(eof) do
       begin
@@ -7233,8 +7055,7 @@ begin
 
 end;
 
-function TFormAuftragArbeitsplatz.AsHTML(AUFTRAG_R,
-  BAUSTELLE_R: Integer): string;
+function TFormAuftragArbeitsplatz.AsHTML(AUFTRAG_R, BAUSTELLE_R: Integer): string;
 var
   CSVFName: string;
   HTMLFName: string;
@@ -7246,8 +7067,7 @@ var
 begin
   result := '';
   if (BAUSTELLE_R < cRID_FirstValid) then
-    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-      inttostr(AUFTRAG_R));
+    BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
 
   if (AUFTRAG_R < cRID_FirstValid) or (BAUSTELLE_R < cRID_FirstValid) then
     exit;
@@ -7263,8 +7083,7 @@ begin
 
   // html-Vorlage laden!
   repeat
-    HTMLVorlageFName := HtmlVorlagenPath + 'Auftrag-' +
-      e_r_BaustelleKuerzel(BAUSTELLE_R) + '.html';
+    HTMLVorlageFName := HtmlVorlagenPath + 'Auftrag-' + e_r_BaustelleKuerzel(BAUSTELLE_R) + '.html';
     if FileExists(HTMLVorlageFName) then
     begin
       sMonteurInfo.LoadFromFile(HTMLVorlageFName);
@@ -7288,8 +7107,7 @@ begin
   DatensammlerLokal.Add('pagebreak');
 
   sMonteurInfo.WriteValue(DatensammlerLokal, DatensammlerGlobal);
-  HTMLFName := WordPath + inttostrN(e_r_gen('GEN_CSV'), 6) + '-' +
-    FormBearbeiter.sBearbeiterKurz + '.html';
+  HTMLFName := WordPath + inttostrN(e_r_gen('GEN_CSV'), 6) + '-' + FormBearbeiter.sBearbeiterKurz + '.html';
   sMonteurInfo.SaveToFileCompressed(HTMLFName);
 
   DatensammlerGlobal.free;
@@ -7313,8 +7131,7 @@ var
 begin
 
   result := '';
-  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-    inttostr(lAUFTRAG[0]));
+  BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(lAUFTRAG[0]));
 
   sCSV := TStringlist.create;
   DatensammlerGlobal := TStringlist.create;
@@ -7327,8 +7144,7 @@ begin
 
   // html-Vorlage laden!
   repeat
-    HTMLVorlageFName := HtmlVorlagenPath + 'Auftrag-' +
-      e_r_BaustelleKuerzel(BAUSTELLE_R) + '_n.html';
+    HTMLVorlageFName := HtmlVorlagenPath + 'Auftrag-' + e_r_BaustelleKuerzel(BAUSTELLE_R) + '_n.html';
     if FileExists(HTMLVorlageFName) then
     begin
       sMonteurInfo.LoadFromFile(HTMLVorlageFName);
@@ -7352,8 +7168,7 @@ begin
     DatensammlerLokal.Add(cPageBreakHerePossible);
   end;
   sMonteurInfo.WriteValue(DatensammlerLokal, DatensammlerGlobal);
-  HTMLFName := WordPath + inttostrN(e_r_gen('GEN_CSV'), 6) + '-' +
-    FormBearbeiter.sBearbeiterKurz + '.html';
+  HTMLFName := WordPath + inttostrN(e_r_gen('GEN_CSV'), 6) + '-' + FormBearbeiter.sBearbeiterKurz + '.html';
   sMonteurInfo.SaveToFileCompressed(HTMLFName);
 
   DatensammlerGlobal.free;
