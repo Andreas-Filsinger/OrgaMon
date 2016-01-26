@@ -795,7 +795,7 @@ var
         break;
 
       k := pos('=', FullPage[CB_LastChecked]);
-      if k > 0 then
+      if (k > 0) then
       begin
         pName := copy(FullPage[CB_LastChecked], 1, pred(k));
 
