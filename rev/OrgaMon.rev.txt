@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.143 (23.01.16) Andreas Filsinger
+
+ Neu: Monteur-Info: Brief- bzw. Anschreiben- Anschrift kann ausgegeben werden.
+
 Rev 8.142 (23.01.16) Andreas Filsinger
 
  Neu: Order, Beleg: Neue Infofelder zu Artikel
