@@ -82,12 +82,12 @@ const
   ccMaxDate = 99991231;
   cMaxDateTime: double = 9999 * 365;
   cTageNamenKurz: array [1 .. 7] of string = ('MON', 'DIE', 'MIT', 'DON', 'FRE', 'SAM', 'SON');
-  cTageNamenLang: array [1 .. 7] of string = ('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
-    'Freitag', 'Samstag', 'Sonntag');
-  cMonatNamenLang: array [1 .. 12] of string = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
-  cMonatWeb: array [1 .. 12] of string = ('Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
-    'Sep', 'Okt', 'Nov', 'Dez');
+  cTageNamenLang: array [1 .. 7] of string = ('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag',
+    'Sonntag');
+  cMonatNamenLang: array [1 .. 12] of string = ('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August',
+    'September', 'Oktober', 'November', 'Dezember');
+  cMonatWeb: array [1 .. 12] of string = ('Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt',
+    'Nov', 'Dez');
 
 const
   // Win32
@@ -132,8 +132,7 @@ procedure ersetze(s: TStrings; var d: string); overload;
 procedure ersetze(const find_str, ersetze_str: string; s: TStrings); overload;
 procedure ersetze(const find_str, ersetze_str: string; s: TStrings; Index: integer); overload;
 procedure ersetzeUpper(find_str, ersetze_str: string; var d: string);
-function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
-  Upper: boolean = false): string;
+function ExtractSegmentBetween(const InpStr, prefix, postfix: string; Upper: boolean = false): string;
 function StrFilter(s, Filter: string; DeleteHits: boolean = false): string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
 function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false): string; Overload;
@@ -215,6 +214,7 @@ function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string
 function FieldCount(const s: string; Delimiter: char): integer;
 function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
 function Split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
+procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
 // String-List Utils
 procedure LoadFromFileHugeLines(clear: boolean; s: TStrings; const FName: string);
@@ -284,8 +284,7 @@ function WeekDayL(ADate: TAnfixDate): string;
 function Fdate(const FName: string): longint;
 function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
 function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
-function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime)
-  : TAnfixDate; overload;
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime): TAnfixDate; overload;
 function LastDayOfMonth(dlong: TAnfixDate): integer;
 function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate;
 // Datum des letzten Tages dieses Monats
@@ -359,8 +358,7 @@ function dTimeStamp(d: TDateTime): string;
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;
 function FileDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
-function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer)
-  : boolean; overload;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer): boolean; overload;
 function FileDeleteUntil(const Mask: string; RemainingFileCount: integer): boolean;
 function FileRetire(const FileName: string; OlderThan: TAnfixDate): boolean;
 function FileCopy(const Mask, Dest: string; Move: boolean = false; Touch: boolean = false): boolean;
@@ -387,8 +385,7 @@ procedure FileRemoveBOM(FileName: string);
 procedure SystemLog(Event: string); // system sysutils
 
 // Directory Funktionen
-procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true;
-  ClearList: boolean = true); overload;
+procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true; ClearList: boolean = true); overload;
 function dir(const Mask: string): integer; overload;
 function dirs(const Path: string): TStringList;
 function DirExists(const dir: string): boolean;
@@ -636,8 +633,7 @@ begin
     result := cIllegalDate;
 end;
 
-function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime)
-  : TAnfixDate;
+function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime): TAnfixDate;
 begin
   result := DateTime2long(dt);
   ADate := result;
@@ -778,8 +774,7 @@ begin
   // JJJJ-MM-TT
   if length(date) = 10 then
     if pos('-', date) = 5 then
-      date := NextP(date, '-', 2) + DateSeparator + NextP(date, '-', 1) + DateSeparator +
-        NextP(date, '-', 0);
+      date := NextP(date, '-', 2) + DateSeparator + NextP(date, '-', 1) + DateSeparator + NextP(date, '-', 0);
 
   ersetze(',', DateSeparator, date);
   ersetze('-', DateSeparator, date);
@@ -810,20 +805,17 @@ begin
       5:
         begin
           // interpretiert als "TMMJJ"
-          date := '0' + copy(date, 1, 1) + DateSeparator + copy(date, 2, 2) + DateSeparator +
-            copy(date, 4, 2);
+          date := '0' + copy(date, 1, 1) + DateSeparator + copy(date, 2, 2) + DateSeparator + copy(date, 4, 2);
         end;
       6:
         begin
           // interpretiert als "TTMMJJ"
-          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator +
-            copy(date, 5, 2);
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator + copy(date, 5, 2);
         end;
       8:
         begin
           // interpretiert als "TTMMJJJJ"
-          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator +
-            copy(date, 5, 4);
+          date := copy(date, 1, 2) + DateSeparator + copy(date, 3, 2) + DateSeparator + copy(date, 5, 4);
         end;
     end;
     p1 := pos(DateSeparator, date);
@@ -1881,8 +1873,7 @@ end;
 
 function dateTime2Seconds(dt: TDateTimeBorlandPascal): TAnfixTime;
 begin
-  dateTime2Seconds := longint(dt.Hour) * cOneHourInSeconds + longint(dt.Min) * cOneMinuteInSeconds +
-    longint(dt.Sec);
+  dateTime2Seconds := longint(dt.Hour) * cOneHourInSeconds + longint(dt.Min) * cOneMinuteInSeconds + longint(dt.Sec);
 end;
 
 function dateTime2Seconds(dt: TDateTime): TAnfixTime;
@@ -2030,8 +2021,8 @@ begin
   ReadNext(h);
   ReadNext(m);
   ReadNext(s);
-  StrToSeconds := (longint(h) * longint(cOneHourInSeconds) + longint(m) *
-    longint(cOneMinuteInSeconds) + longint(s)) * Faktor;
+  StrToSeconds := (longint(h) * longint(cOneHourInSeconds) + longint(m) * longint(cOneMinuteInSeconds) + longint(s)
+    ) * Faktor;
 end;
 
 function StrToSecondsdef(Sstr: string; def: longint): longint;
@@ -2184,8 +2175,7 @@ begin
   result := (LastDate < OlderThan) and (LastDate <> cIllegalDate);
 end;
 
-function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer)
-  : boolean;
+function FileDelete(const Mask: string; OlderThan: TAnfixDate; RemainingFileCount: integer): boolean;
 {
   Lösche eventuell nur solche Dateien die älter sind als "OlderThan"
   prüfe aber ob zumindest insgesamt "RemainingFileCount" Dateien dabei
@@ -2369,8 +2359,9 @@ begin
     if (Size >= SizeLimit) then
     begin
       if not(DeleteFile(FName)) then
-       result := false;
-    end else
+        result := false;
+    end
+    else
     begin
       inc(Size, FSize(FName));
     end;
@@ -2557,8 +2548,7 @@ begin
     if GetDriveType(ClearedDriveName) = DRIVE_REMOTE then
     begin
       Size := SizeOf(RemoteNameInfo);
-      ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL,
-        @RemoteNameInfo, Size);
+      ErrCode := WNetGetUniversalName(ClearedDriveName, UNIVERSAL_NAME_INFO_LEVEL, @RemoteNameInfo, Size);
       if (ErrCode = NO_ERROR) then
         StrPCopy(ClearedDriveName, PRemoteNameInfo(@RemoteNameInfo).lpUniversalName + '\');
     end;
@@ -2898,8 +2888,7 @@ end (* FileOperation *);
 
 function FileOperationMove(Source, Destination: string): boolean;
 begin
-  result := FileOperation(Source, Destination, FO_MOVE, FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR +
-    FOF_NOERRORUI);
+  result := FileOperation(Source, Destination, FO_MOVE, FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR + FOF_NOERRORUI);
 end;
 
 //
@@ -2983,8 +2972,7 @@ begin
     ZielIdentifier := ExtractFileName(DestFName);
     ExtensionPos := revPos('.', ZielIdentifier);
     if (ExtensionPos < 3) then
-      raise Exception.create
-        ('FileVersionedCopy: keine gültige Dateinamen-Erweiterung der Zieldatei');
+      raise Exception.create('FileVersionedCopy: keine gültige Dateinamen-Erweiterung der Zieldatei');
     ZielExtension := copy(ZielIdentifier, ExtensionPos, MaxInt);
     ZielNamensraum := copy(ZielIdentifier, 1, pred(ExtensionPos));
     IniFName := ZielPath + ZielNamensraum + '.ini';
@@ -3018,8 +3006,7 @@ begin
     // Die alte Datei entsprechend der Nummer umbenennen
     SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) + ZielExtension;
     if FileExists(SicherungFName) then
-      raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName +
-        ' existiert bereits');
+      raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName + ' existiert bereits');
     if not(RenameFile(DestFName, SicherungFName)) then
       raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht wegsichern');
 
@@ -3428,8 +3415,8 @@ begin
         // ObtainDomain
         cchUserName := SizeOf(UserName);
         cchDomainName := SizeOf(DomainName);
-        if not(LookupAccountSid(nil, PTOKEN_USER(@InfoBuffer)^.user.sid, UserName, cchUserName,
-          DomainName, cchDomainName, snu)) then
+        if not(LookupAccountSid(nil, PTOKEN_USER(@InfoBuffer)^.user.sid, UserName, cchUserName, DomainName,
+          cchDomainName, snu)) then
           break;
         _Domain := DomainName;
       until true;
@@ -3489,8 +3476,7 @@ begin
   x.free;
 end;
 
-procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true;
-  ClearList: boolean = true); overload;
+procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true; ClearList: boolean = true); overload;
 var
   sr: Tsearchrec;
   fr: integer;
@@ -4006,9 +3992,9 @@ end;
 // WindowsClose(EW_REBOOTSYSTEM);
 // end;
 
-function NewAdjustTokenPrivileges(TokenHandle: THandle; DisableAllPrivileges: bool;
-  const NewState: TTokenPrivileges; BufferLength: dword; PreviousState: PTokenPrivileges;
-  ReturnLength: pdword): bool; stdcall; external advapi32 name 'AdjustTokenPrivileges';
+function NewAdjustTokenPrivileges(TokenHandle: THandle; DisableAllPrivileges: bool; const NewState: TTokenPrivileges;
+  BufferLength: dword; PreviousState: PTokenPrivileges; ReturnLength: pdword): bool; stdcall;
+  external advapi32 name 'AdjustTokenPrivileges';
 
 procedure WindowsNeuStarten;
 { Restarts the computer. The function will NOT return if it is successful,
@@ -4951,6 +4937,21 @@ begin
   end;
 end;
 
+// values['Name'] := '' delete this Line completely - i dont want this
+
+procedure SetValueSmart(s: TStrings; Name, Value: string);
+var
+  i: integer;
+begin
+  with s do
+  begin
+    i := IndexOfName(Name);
+    if (i < 0) then
+      i := add('');
+    s[i] := Name + NameValueSeparator + Value;
+  end;
+end;
+
 function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
 var
   n: integer;
@@ -5290,8 +5291,7 @@ begin
   end;
 end;
 
-function ExtractSegmentBetween(const InpStr, prefix, postfix: string;
-  Upper: boolean = false): string;
+function ExtractSegmentBetween(const InpStr, prefix, postfix: string; Upper: boolean = false): string;
 var
   PrefixIndex, PostfixIndex: integer;
   InpStr2: string;
@@ -5660,8 +5660,8 @@ begin
   if _IsWinNT then
   begin
     BS := _BufferSize;
-    while (RegQueryValueEx(HKEY_PERFORMANCE_DATA, Processor_IDX_Str, nil, nil, PBYTE(_PerfData),
-      @BS) = ERROR_MORE_DATA) do
+    while (RegQueryValueEx(HKEY_PERFORMANCE_DATA, Processor_IDX_Str, nil, nil, PBYTE(_PerfData), @BS)
+      = ERROR_MORE_DATA) do
     begin
       // Get a buffer that is big enough.
       inc(_BufferSize, $1000);
@@ -5860,8 +5860,7 @@ procedure SystemLog(Event: string);
 var
   OutF: TextFile;
 begin
-  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix(ExtractFileName(Paramstr(0)))
-    + '.log');
+  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix(ExtractFileName(Paramstr(0))) + '.log');
 {$I-}
   append(OutF);
 {$I+}
@@ -5902,11 +5901,10 @@ begin
       exit;
     GetMem(ptgGroups, dwInfoBufferSize);
     try
-      if not GetTokenInformation(hAccessToken, TokenGroups, ptgGroups, dwInfoBufferSize,
-        dwInfoBufferSize) then
+      if not GetTokenInformation(hAccessToken, TokenGroups, ptgGroups, dwInfoBufferSize, dwInfoBufferSize) then
         exit;
-      if not AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID,
-        DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, psidAdministrators) then
+      if not AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0,
+        0, 0, 0, 0, 0, psidAdministrators) then
         exit;
       try
         for x := 0 to ptgGroups^.GroupCount - 1 do
@@ -5946,8 +5944,7 @@ begin
 
   if (Nachkommastellen > 0) then
   begin
-    result := result + fill('0', Nachkommastellen -
-      (length(result) - pos(FormatSettings.DecimalSeparator, result)));
+    result := result + fill('0', Nachkommastellen - (length(result) - pos(FormatSettings.DecimalSeparator, result)));
   end;
 
   //
@@ -6072,8 +6069,8 @@ Type
 
   byteset = Set of 0 .. 7;
 Const
-  shiftkeys: Array [1 .. 3] of TShiftKeyInfo = ((shift: ord(ssCtrl); vkey: VK_CONTROL),
-    (shift: ord(ssShift); vkey: VK_SHIFT), (shift: ord(ssAlt); vkey: VK_MENU));
+  shiftkeys: Array [1 .. 3] of TShiftKeyInfo = ((shift: ord(ssCtrl); vkey: VK_CONTROL), (shift: ord(ssShift);
+    vkey: VK_SHIFT), (shift: ord(ssAlt); vkey: VK_MENU));
 Var
   flag: dword;
   bShift: byteset absolute shift;

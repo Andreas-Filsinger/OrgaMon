@@ -8328,7 +8328,7 @@ begin
   iShopArtikelBilderPath := sSystemSettings.values['ShopArtikelBilderPfad'];
   iPDFPathShop := sSystemSettings.values['PDFPathShop'];
   iPDFPathApp := sSystemSettings.values['PDFPathApp'];
-  iPDFVersender := sSystemSettings.values['PDFVersender'];
+  iMailHost := sSystemSettings.values['PDFVersender'];
   iPDFAdmin := sSystemSettings.values['PDFAdmin'];
   iPDFSend := sSystemSettings.values['PDFSend'];
   iShopDomain := sSystemSettings.values['ShopHost'];
@@ -10973,9 +10973,9 @@ begin
           else
           begin
             // ohne Artikel Referenz
-            values['VerlagNo'] := UnbreakAble(FieldByName('INFO').AsString);
+            SetValueSmart(DatensammlerArtikel, 'VerlagNo',  UnbreakAble(FieldByName('INFO').AsString));
             if (_Anz <> 0) then
-              values['Konto'] := b_r_Konto(cRID_Null);
+              SetValueSmart(DatensammlerArtikel, 'Konto', b_r_Konto(cRID_Null));
           end;
         end;
         DatensammlerLokal.addstrings(DatensammlerArtikel);
