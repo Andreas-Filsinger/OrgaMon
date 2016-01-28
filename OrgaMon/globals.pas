@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.143; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.144; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -408,11 +408,6 @@ const
   // Nach dem 'commit' noch eine Nacharbeitung
   cE_Postfix_Foto = '-Foto';
 
-  // Mail-Vorlagen
-  cMailvorlage_Login = 'LOGIN';
-  cMailvorlage_Ergebnis = 'ERGEBNIS';
-  cMailvorlage_Dokument = 'PDF';
-  cMailvorlage_Versand = 'Versand@';
 
   // virtuelle Settings
   cE_TAN = 'TAN';
@@ -595,6 +590,12 @@ const
   ceMail_eml = 'eml:';
   ceMail_ResetPasswort = 'Aktion:PasswortNeu';
   cMail_BlackListed = 'BLACKLISTED';
+
+  // Mail-Vorlagen
+  cMailvorlage_Login = 'LOGIN';
+  cMailvorlage_Ergebnis = 'ERGEBNIS';
+  cMailvorlage_Dokument = 'PDF';
+  cMailvorlage_Versand = 'Versand@';
 
   // für die Drucklabels
   cZugangsVorgang = 'Warenzugang';
@@ -1017,7 +1018,7 @@ var
   iHBCIRest: string;
   iMusicPath: string;
   iPDFPathApp: string;
-  iPDFVersender: string;
+  iMailHost: string;
   iPDFAdmin: string;
   iPDFSend: string;
   iJonDaAdmin: integer;

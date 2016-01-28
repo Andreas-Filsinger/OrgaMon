@@ -1515,13 +1515,13 @@ begin
       begin
         if not(FieldByName('ARTIKEL_R').IsNull) then
         begin
-          values['Numero'] := values['A.Numero'] + '.' + FieldByName('AUSGABEART_R').AsString;
-          values['VerlagNo'] := e_r_AusgabeArtKurz(FieldByName('AUSGABEART_R').AsInteger) + values['A.VerlagNo'];
+          SetValueSmart(DatensammlerArtikel, 'Numero', values['A.Numero'] + '.' + FieldByName('AUSGABEART_R').AsString);
+          SetValueSmart(DatensammlerArtikel, 'VerlagNo', e_r_AusgabeArtKurz(FieldByName('AUSGABEART_R').AsInteger) + values['A.VerlagNo']);
         end
         else
         begin
-          values['Numero'] := FieldByName('NUMERO').AsString;
-          values['VerlagNo'] := FieldByName('VERLAGNO').AsString;
+          SetValueSmart(DatensammlerArtikel, 'Numero',  FieldByName('NUMERO').AsString);
+          SetValueSmart(DatensammlerArtikel, 'VerlagNo',  FieldByName('VERLAGNO').AsString);
         end;
       end;
       DatenSammlerLokal.addStrings(DatensammlerArtikel);

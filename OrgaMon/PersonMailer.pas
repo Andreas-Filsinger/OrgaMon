@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -335,10 +335,10 @@ begin
         exit;
       end;
 
-      if (AnsiUpperCase(ComputerName) <> AnsiUpperCase(ipdfversender)) then
+      if (AnsiUpperCase(ComputerName) <> AnsiUpperCase(iMailHost)) then
       begin
         Timer1.enabled := false;
-        CheckBox1.caption := ipdfversender + ' ist Server';
+        CheckBox1.caption := iMailHost + ' ist Server';
         exit;
       end;
 
@@ -359,7 +359,7 @@ begin
       // prüfen, ob aus Ereignissen,
       // Mails produziert werden können.
       // Das macht NUR der eMail Versender
-      if (AnsiUpperCase(ComputerName) = AnsiUpperCase(ipdfversender)) then
+      if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iMailHost)) then
         produceMailFromEREIGNIS;
 
       // alle eMail senden, die für diesen Server anstehen
