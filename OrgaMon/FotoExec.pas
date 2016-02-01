@@ -39,6 +39,7 @@ uses
   // Tools
   anfix32, WordIndex, binlager32,
   Foto, InfoZip, SolidFTP,
+  CareTakerClient,
 
   // OrgaMon
   globals,
@@ -53,7 +54,7 @@ const
   cAnzahlStellen_Transaktionszaehler = 5;
   cAnzahlStellen_FotosTagwerk = 4;
 
-  // File Names
+  // Filenames
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
 
@@ -65,6 +66,7 @@ const
   // "-" N wird nur angefügt sobald auf dem Smartphone eine Bildnamensgleichheit
   // erkannt wird.
   //
+  cFotoService_AbortTag = 'FATAL';
 
 type
   TFotoExec = class(TObject)
@@ -222,7 +224,7 @@ var
   SubPath: string;
 begin
 
-  // Path
+  // Root Path
   if (Path = '') then
     Path := MyProgramPath;
   pAppServicePath := Path;
@@ -248,7 +250,8 @@ begin
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath',
+      'W:\orgamon-mob\unverarbeitet');
     DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
 
   end;
@@ -267,26 +270,27 @@ begin
       sDirs.Delete(n);
   if (sDirs.count = 0) then
   begin
-    Log('ERROR: ' + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
-    Log('FATAL');
+    Log(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
+    Log(cFotoService_AbortTag);
   end;
 
-  SubPath := StrFilter(sDirs[pred(sDirs.count)],'#'+cZiffern);
-  if (length(SubPath)<>4) then
+  SubPath := StrFilter(sDirs[pred(sDirs.count)], '#' + cZiffern);
+  if (length(SubPath) <> 4) then
   begin
-    Log('ERROR: ' + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-    Log('FATAL');
+    Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+    Log(cFotoService_AbortTag);
   end;
-  if (SubPath[1]<>'#') then
+  if (SubPath[1] <> '#') then
   begin
-    Log('ERROR: ' + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-    Log('FATAL');
+    Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+    Log(cFotoService_AbortTag);
   end;
 
   //
   pBackUpRootPath := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
   sDirs.Free;
 
+  Log('Backup to ' + pBackUpRootPath);
 end;
 
 procedure TFotoExec.releaseGlobals;
@@ -462,10 +466,11 @@ begin
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(pFTPPath + sFiles[n], pBackUpRootPath + cServiceFoto_FTPBackupSubPath + ID + '-' + sFiles[n])) then
+    if not(FileCopy(pFTPPath + sFiles[n], pBackUpRootPath + cServiceFoto_FTPBackupSubPath + ID + '-'
+      + sFiles[n])) then
     begin
-      Log('ERROR: ' + 'can not write to ' + pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
-      Log('FATAL');
+      Log(cERRORText + ' can not write to ' + pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
+      Log(cFotoService_AbortTag);
       exit;
     end;
 
@@ -492,20 +497,20 @@ begin
 
         if (Image.Width < 640) then
         begin
-          Log('ERROR: ' + sFiles[n] + ': Breite kleiner als 640');
+          Log(cERRORText + ' ' + sFiles[n] + ': Breite kleiner als 640');
           break;
         end;
 
         if (Image.Height < 480) then
         begin
-          Log('ERROR: ' + sFiles[n] + ': Höhe kleiner als 480');
+          Log(cERRORText + ' ' + sFiles[n] + ': Höhe kleiner als 480');
           break;
         end;
 
         // get Foto-Moment, touch File-Date-Time
         if not(iEXIF.LoadFromJPEG(FName)) then
         begin
-          Log('ERROR: ' + sFiles[n] + ': EXiF konnte nicht geladen werden');
+          Log(cERRORText + ' ' + sFiles[n] + ': EXiF konnte nicht geladen werden');
           break;
         end;
 
@@ -521,7 +526,7 @@ begin
     except
       on e: Exception do
       begin
-        Log('ERROR: ' + sFiles[n] + ': ' + e.Message);
+        Log(cERRORText + ' ' + sFiles[n] + ': ' + e.Message);
       end;
     end;
     Image.Free;
@@ -575,7 +580,7 @@ begin
 
         if (RID < 1) then
         begin
-          Log('ERROR: ' + sFiles[m] + ': RID konnte nicht ermittelt werden!');
+          Log(cERRORText + ' ' + sFiles[m] + ': RID konnte nicht ermittelt werden!');
           break;
         end;
 
@@ -603,12 +608,13 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo +
+          cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
           on e: Exception do
-            Log('ERROR: 519: ' + sFiles[m] + ':' + e.Message);
+            Log(cERRORText + ' 614: ' + sFiles[m] + ':' + e.Message);
         end;
 
         for f := 1 to FileSize(fOrgaMonAuftrag) do
@@ -624,7 +630,8 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log('ERROR: ' + sFiles[m] + ': RID ' + InttoStr(RID) + ' konnte nicht gefunden werden!');
+        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(RID) +
+          ' konnte nicht gefunden werden!');
         break;
       end;
 
@@ -647,7 +654,8 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
+                cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -669,13 +677,14 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen :=
+              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
             begin
               RenameError := true;
-              Log('ERROR: ' + sFotoResult.Values[cParameter_foto_Fehler]);
+              Log(cERRORText + ' ' + sFotoResult.Values[cParameter_foto_Fehler]);
             end;
 
             sFotoResult.Free;
@@ -688,7 +697,7 @@ begin
           //
           if (BAUSTELLE_Index <= -1) then
           begin
-            Log('ERROR: ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
+            Log(cERRORText + ' ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
           end;
 
           break;
@@ -703,7 +712,8 @@ begin
 
             if (length(FotoZiel) < 3) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Keine Internet-Ablage definiert');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle +
+                ': Keine Internet-Ablage definiert');
               break;
             end;
 
@@ -719,16 +729,16 @@ begin
 
             if (r = -1) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Die Ablage ist nicht bekannt');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
+                FotoZiel + '": Die Ablage ist nicht bekannt');
               break;
             end;
 
             FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
             if not(DirExists(FotoAblage_PFAD)) then
             begin
-              Log('ERROR: ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel + '": Das Verzeichnis "'
-                + FotoAblage_PFAD + '" existiert nicht');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
+                FotoZiel + '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
               break;
             end;
 
@@ -739,11 +749,11 @@ begin
               if not(FileExists(FotoAblage_PFAD + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -763,7 +773,7 @@ begin
                   { } FotoAblage_PFAD + FotoZiel + '\' + FotoDateiName,
                   { } FotoAblage_PFAD + FotoZiel + '\' + FotoDateiNameVerfuegbar)) then
                 begin
-                  Log('ERROR: ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
+                  Log(cERRORText + ' ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
                   break;
                 end;
               end
@@ -797,7 +807,7 @@ begin
               { } pFTPPath + sFiles[m],
               { } FotoAblage_PFAD + '\' + FotoDateiName)) then
             begin
-              Log('ERROR: {' + sFiles[m] + ': Kopieren nicht erfolgreich');
+              Log(cERRORText + ' {' + sFiles[m] + ': Kopieren nicht erfolgreich');
               Log('Quelle war: "' + pFTPPath + sFiles[m] + '"');
               Log('Ziel war: "' + FotoAblage_PFAD + '\' + FotoDateiName + '" }');
               break;
@@ -852,8 +862,8 @@ begin
       for n := 0 to pred(sFiles.count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
-          Log('ERROR: ' + sFiles[n] + ': Nicht löschbar');
-          Log('FATAL');
+          Log(cERRORText + ' ' + sFiles[n] + ': Nicht löschbar');
+          Log(cFotoService_AbortTag);
           exit;
         end;
 
@@ -997,7 +1007,8 @@ begin
 
     if not(FileExists(FNameAlt)) then
     begin
-      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt + '" frei, da verschwunden, oder bereits umbenannt');
+      Log('INFO: ' + 'gebe Dateieintrag "' + FNameAlt +
+        '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
@@ -1006,7 +1017,7 @@ begin
     k := pos('-Neu', FNameNeu);
     if (k = 0) then
     begin
-      Log('ERROR: ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
+      Log(cERRORText + ' ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
       continue;
     end;
 
@@ -1081,14 +1092,16 @@ begin
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) < 2) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath + '" fehlt');
+      Log(cERRORText + ' Umbenennung zu "' + FNameNeu + '" ist ungültig. Pfadangabe "' + FPath +
+        '" fehlt');
       continue;
     end;
 
     // Laufwerksbuchstaben
     if (CharCount(':', FNameNeu) <> 1) then
     begin
-      Log('ERROR: Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerk "' + FPath + '" fehlt');
+      Log(cERRORText + ' Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerk "' + FPath +
+        '" fehlt');
       continue;
     end;
 
@@ -1281,7 +1294,7 @@ var
       // (immer noch) nicht gefunden?
       if (r = -1) then
       begin
-        self.Log('ERROR: FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
+        self.Log(cERRORText + ' FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
         Pending := false;
         break;
       end;
@@ -1299,7 +1312,8 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1311,7 +1325,8 @@ var
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      Log(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+        '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1323,7 +1338,7 @@ var
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
-        self.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
+        self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
         Pending := false;
         break;
       end;
@@ -1335,7 +1350,8 @@ var
         for m := 0 to pred(sPics.count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        Log(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        Log(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+          '.zip', '.');
         if (zip(
           { } sPics,
           { } Ablage_PFAD +
@@ -1347,7 +1363,7 @@ var
           { } infozip_Level + '=' + '0') <> sPics.count) then
         begin
           // Problem anzeigen
-          self.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
+          self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
           Pending := false;
           break;
         end;
@@ -1420,8 +1436,8 @@ var
           if sFotos.count > 0 then
           begin
             sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Wechselbelege-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)],
+              'Wechselbelege-', '.zip'), -1);
           end;
         end;
 
@@ -1433,7 +1449,8 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      Log(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+        '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1445,7 +1462,7 @@ var
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
-        self.Log('ERROR: ' + HugeSingleLine(zMessages, '|'));
+        self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
         break;
       end;
 

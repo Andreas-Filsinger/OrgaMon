@@ -190,7 +190,7 @@ begin
   writeln(s);
   if (pos('ERROR', s) > 0) then
     AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
-  if (pos('FATAL', s) = 1) then
+  if (pos(cFotoService_AbortTag, s) = 1) then
     halt(1);
 end;
 
