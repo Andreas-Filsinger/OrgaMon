@@ -79,6 +79,8 @@ const
   cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
 
+  //
+
 type
   TJonDaExec_ZaehlerNummerNeu = function(RID: integer; FotoGeraeteNo: string): string of object;
 
