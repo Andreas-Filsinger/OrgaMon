@@ -188,6 +188,9 @@ type
     procedure log(s: TStrings); overload;
     procedure log(s: string); overload;
 
+    // Dateinamen
+    function TrnFName: string;
+
     // TOOL: Gerät
     function GeraeteAlias(GeraeteID: string; iFTP: TIdFTP): string;
     // [GeraeteID]
@@ -263,7 +266,7 @@ uses
 
 function TJonDaExec.LogFName: string;
 begin
-  result := MyProgramPath + cJonDaServer_LogFName;
+  result := DiagnosePath + cJonDaServer_LogFName;
 end;
 
 function TJonDaExec.LogMatch(Pattern, Schema: string): boolean;
@@ -323,7 +326,7 @@ begin
 
   // Log laden und auswerten
   sLog := TStringList.Create;
-  sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
+  sLog.LoadFromFile(LogFName);
   for n := pred(sLog.count) downto 0 do
   begin
     if LogMatch(sLog[n], cGeraetSchema) then
@@ -613,13 +616,13 @@ var
 begin
 
   // Lade aktuelle TAN, das ist auch Rückgabewert!
-  if not(FileExists(MyProgramPath + cTrnFName)) then
+  if not(FileExists(TrnFName)) then
   begin
     TrnLine := cFirstTrn;
   end
   else
   begin
-    assignFile(TrnFile, MyProgramPath + cTrnFName);
+    assignFile(TrnFile, TrnFName);
     try
       reset(TrnFile);
     except
@@ -642,7 +645,7 @@ begin
     if (strtoint(TrnLine) >= strtoint(cFirstTrn) * 10) then
       TrnLine := cFirstTrn;
 
-    assignFile(TrnFile, MyProgramPath + cTrnFName);
+    assignFile(TrnFile, TrnFName);
     try
       rewrite(TrnFile);
     except
@@ -3681,7 +3684,7 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cMonDaServer_Baustelle, MyProgramPath + cSyncPath, true);
+    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, MyProgramPath + cSyncPath, true);
     SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', MyProgramPath + cSyncPath, true);
     iFTP.DisConnect;
   except
@@ -3689,29 +3692,27 @@ begin
   end;
   iFTP.free;
 
-  // baustelle.csv -> MyProgramPath + cFotoPath
-  if FileExists(MyProgramPath + cSyncPath + cMonDaServer_Baustelle) then
+  // baustelle.csv -> sync
+  if FileExists(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName) then
   begin
 
     // prepare
-    validateBaustelleCSV(MyProgramPath + cSyncPath + cMonDaServer_Baustelle);
+    validateBaustelleCSV(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName);
 
     // compare + copy
     if not(FileCompare(
-      { } MyProgramPath + cSyncPath + cMonDaServer_Baustelle,
-      { } MyProgramPath + cFotoPath + cMonDaServer_Baustelle)) then
+      { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
+      { } MyProgramPath + cdbPath + cServiceFoto_BaustelleFName)) then
       FileVersionedCopy(
-        { } MyProgramPath + cSyncPath + cMonDaServer_Baustelle,
-        { } MyProgramPath + cFotoPath + cMonDaServer_Baustelle);
+        { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
+        { } MyProgramPath + cdbPath + cServiceFoto_BaustelleFName);
 
     // delete
-    FileDelete(MyProgramPath + cSyncPath + cMonDaServer_Baustelle);
+    FileDelete(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName);
   end;
 
-  //
-  //
   // FotoBenennung-*.csv -> MyProgramPath + cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
-
+  //
   sDir := TStringList.Create;
   dir(MyProgramPath + cSyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
   for n := 0 to pred(sDir.count) do
@@ -3935,6 +3936,11 @@ begin
       sProtokolle.add(_baustelle + Art + cJondaProtokollDelimiter + result);
     end;
   end;
+end;
+
+function TJonDaExec.TrnFName: string;
+begin
+ result := MyProgramPath + cDBPath + cTrnFName;
 end;
 
 class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);

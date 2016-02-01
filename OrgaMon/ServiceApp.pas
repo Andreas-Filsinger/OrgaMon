@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -518,7 +518,7 @@ begin
         // checkcreatedir(MyProgramPath + cUpdatePath);
         checkcreatedir(MyProgramPath + cProtokollPath);
         checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
-        checkcreatedir(MyProgramPath + cFotoPath);
+//        checkcreatedir(MyProgramPath + cFotoPath);
         checkcreatedir(MyProgramPath + cDBPath);
         checkcreatedir(MyProgramPath + cSyncPath);
       end;
@@ -1310,12 +1310,12 @@ begin
   sFotos := TStringList.create;
 
   tBAUSTELLE := TsTable.create;
-  tBAUSTELLE.insertFromFile(MyProgramPath + cFotoPath + cMonDaServer_Baustelle);
+  tBAUSTELLE.insertFromFile(MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
   Col_FTP_Benutzer := tBAUSTELLE.colOf(cE_FTPUSER);
 
   //
   WARTEND := TsTable.create;
-  WARTEND.insertFromFile(MyProgramPath + cFotoPath + cFotoUmbenennungAusstehend);
+  WARTEND.insertFromFile(MyProgramPath + cDBPath + cFotoUmbenennungAusstehend);
 
   // init
   sRoot := 'W:\';
@@ -1535,8 +1535,8 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cMonDaServer_Baustelle, MyProgramPath + cFotoPath);
-    validateBaustelleCSV(MyProgramPath + cFotoPath + cMonDaServer_Baustelle);
+    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, MyProgramPath + cDBPath);
+    validateBaustelleCSV(MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
     iFTP.Disconnect;
   except
 

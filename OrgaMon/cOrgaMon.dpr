@@ -189,7 +189,7 @@ procedure TownFotoExec.Log(s: string);
 begin
   writeln(s);
   if (pos('ERROR', s) > 0) then
-    AppendStringsToFile(s, MyWorkingPath + 'FotoService.log.txt');
+    AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
   if (pos('FATAL', s) = 1) then
     halt(1);
 end;
@@ -201,8 +201,6 @@ var
   MyFotoExec: TownFotoExec;
   TimerWartend: integer;
   TimerInit: integer;
-  sMoveTransaktionen: TStringList;
-  sLog: TStringList;
 begin
 
   MyFotoExec := TownFotoExec.Create;
@@ -214,9 +212,6 @@ begin
   // sofortiges Starten sicherstellen? (direct start)
   if isParam('+ds') then
     TimerInit := cKikstart_delay * 60 * 1000;
-
-  sMoveTransaktionen := TStringList.Create;
-  sLog := TStringList.Create;
 
   while true do
   begin
@@ -252,7 +247,7 @@ begin
           // Zwischen 00:00 und ]01:00
           if (SecondsGet < (1 * 3600)) then
             // nur machen, wenn nicht in Arbeit oder bereits fertig
-            if not(FileExists(MyFotoExec.MyWorkingPath + MyFotoExec.AblageFname)) then
+            if not(FileExists(MyFotoExec.AblageFname)) then
               // Zips verschieben, Fotos zippen
               MyFotoExec.workAblage;
 
@@ -433,10 +428,15 @@ begin
       iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
       iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
       iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')), 3049);
+      DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
+
       JonDa.start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
       JonDa.Option_Console := true;
     end;
     MyIni.free;
+
+  // Einstellungen weitergeben
+  SolidFTP.SolidFTP_LogDir := DiagnosePath;
     writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost + ' für FTP');
 
     // Log den Neustart
@@ -458,7 +458,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } MyProgramPath + cFotoPath + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } MyProgramPath + cDbPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end
@@ -507,6 +507,7 @@ end;
 
 begin
   // Bestimmen in welchem Modus das Programm laufen soll
+  Ident := id_TWebShop;
   repeat
     if IsParam('--order') then
     begin
@@ -533,8 +534,6 @@ begin
       Ident := id_Foto;
       break;
     end;
-    // Default "--twebshop"
-    Ident := id_TWebShop;
   until true;
 
   // Ident- String
