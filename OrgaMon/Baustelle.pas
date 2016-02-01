@@ -3806,7 +3806,7 @@ begin
   end;
 
   SolidBeginTransaction;
-  SolidPut(IdFTP1, MdePath + cMonDaServer_Baustelle, '', cMonDaServer_Baustelle);
+  SolidPut(IdFTP1, MdePath + cServiceFoto_BaustelleFName, '', cServiceFoto_BaustelleFName);
   SolidEndTransaction;
 
   try

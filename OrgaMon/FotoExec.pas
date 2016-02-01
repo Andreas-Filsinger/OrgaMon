@@ -29,13 +29,16 @@ unit FotoExec;
 interface
 
 uses
+{$IFNDEF linux}
+  windows,
+{$ENDIF}
   // System
   classes, inifiles, SysUtils,
   math, jpeg, CCR.Exif,
 
   // Tools
   anfix32, WordIndex, binlager32,
-  Foto, InfoZip,
+  Foto, InfoZip, SolidFTP,
 
   // OrgaMon
   globals,
@@ -74,27 +77,26 @@ type
 
     // Ini-Sachen
 
-    // 'I:\KundenDaten\SEWA\JonDaServer\'
+    // bisher fix 'I:\KundenDaten\SEWA\JonDaServer\' jetzt Parameter "BackupPath"
     pBackUpRootPath: string;
 
-    // 'W:\status\'
+    // bisher fix 'W:\status\' jetzt Parameter "WebPath"
     pWebPath: string;
 
-    // W:\orgamon-mob\
+    // bisher fix 'W:\orgamon-mob\' jetzt Parameter "FTPPath"
     pFTPPath: string;
 
-    // W:\orgamon-mob\unverarbeitet\
+    // bisher fix 'W:\orgamon-mob\unverarbeitet\' jetzt Parameter "UnverarbeitetPath"
     pUnverarbeitetPath: string;
 
-    // W:\JonDaServer\
+    // bisher fix 'W:\JonDaServer\' jetzt Anwendungsverzeichnis, Endpunkt der ini-Kette, Home von cOrgaMon.ini
     pAppServicePath: string;
 
-    // W:\JonDaServer\Statistik\
+    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "StatistikPath" mit Default "WebPath"
     pAppStatistikPath: string;
 
     // Verzeichnisse
-    function MyWorkingPath: string;
-    function MyBackupPath: string;
+    function MyDataBasePath: string;
 
     // Dateinamen
     function AblageFname: string;
@@ -178,34 +180,34 @@ begin
     JonDaExec.doSync;
 
     tBAUSTELLE := tsTable.Create;
-    tBAUSTELLE.insertfromFile(MyWorkingPath + cMonDaServer_Baustelle);
-    if FileExists(MyWorkingPath + cMonDaServer_Baustelle_manuell) then
+    tBAUSTELLE.insertfromFile(MyDataBasePath + cServiceFoto_BaustelleFName);
+    if FileExists(MyDataBasePath + cServiceFoto_BaustelleManuellFName) then
     begin
       with tBAUSTELLE do
       begin
-        insertfromFile(MyWorkingPath + cMonDaServer_Baustelle_manuell);
+        insertfromFile(MyDataBasePath + cServiceFoto_BaustelleManuellFName);
         for r := RowCount downto 1 do
           if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
-        SaveToFile(MyWorkingPath + 'baustelle-alle.csv');
+        SaveToFile(MyDataBasePath + 'baustelle-alle.csv');
       end;
     end;
 
     tABLAGE := tsTable.Create;
-    tABLAGE.insertfromFile(MyWorkingPath + cFotoAblage);
+    tABLAGE.insertfromFile(MyDataBasePath + cFotoAblage);
 
     // Datei der Wartenden sicherstellen, Header anlegen
-    if not(FileExists(MyWorkingPath + cFotoUmbenennungAusstehend)) then
+    if not(FileExists(MyDataBasePath + cFotoUmbenennungAusstehend)) then
       AppendStringsToFile(
         { } cHeader_UmbenennungUnvollstaendig,
-        { } MyWorkingPath + cFotoUmbenennungAusstehend);
+        { } MyDataBasePath + cFotoUmbenennungAusstehend);
 
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
     begin
       AppendStringsToFile(
         { } 'timestamp ' + sTimeStamp,
-        { } MyWorkingPath + cFotoTransaktionenFName);
+        { } DiagnosePath + cFotoTransaktionenFName);
       LastLogWasTimeStamp := true;
     end;
   end;
@@ -215,6 +217,9 @@ end;
 procedure TFotoExec.readIni(SectionName: string = ''; Path: string = '');
 var
   MyIni: TIniFile;
+  sDirs: TStringList;
+  n: integer;
+  SubPath: string;
 begin
 
   // Path
@@ -244,9 +249,43 @@ begin
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
     pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet');
+    DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
 
   end;
   MyIni.Free;
+
+  // Einstellungen weitergeben
+  SolidFTP.SolidFTP_LogDir := DiagnosePath;
+
+  // Backup-Path bestimmen
+  // Zielbestimmung Sicherungsunterverzeichnis
+  sDirs := TStringList.Create;
+  dir(pBackUpRootPath + '*.', sDirs, false);
+  sDirs.sort;
+  for n := pred(sDirs.count) downto 0 do
+    if (pos('.', sDirs[n]) = 1) then
+      sDirs.Delete(n);
+  if (sDirs.count = 0) then
+  begin
+    Log('ERROR: ' + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
+    Log('FATAL');
+  end;
+
+  SubPath := StrFilter(sDirs[pred(sDirs.count)],'#'+cZiffern);
+  if (length(SubPath)<>4) then
+  begin
+    Log('ERROR: ' + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+    Log('FATAL');
+  end;
+  if (SubPath[1]<>'#') then
+  begin
+    Log('ERROR: ' + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+    Log('FATAL');
+  end;
+
+  //
+  pBackUpRootPath := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
+  sDirs.Free;
 
 end;
 
@@ -264,34 +303,16 @@ begin
   end;
 end;
 
-function TFotoExec.MyBackupPath: string;
-var
-  sDirs: TStringList;
-  n: integer;
+function TFotoExec.MyDataBasePath: string;
 begin
-  // cFotosPath
-  // Zielbestimmung Sicherungsunterverzeichnis
-  sDirs := TStringList.Create;
-  dir(pBackUpRootPath + '*.', sDirs, false);
-  sDirs.sort;
-  for n := pred(sDirs.count) downto 0 do
-    if (pos('.', sDirs[n]) = 1) then
-      sDirs.Delete(n);
-  result := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
-  sDirs.Free;
-end;
-
-function TFotoExec.MyWorkingPath: string;
-begin
-  result := pAppServicePath + 'Fotos\';
+  result := pAppServicePath + cDBPath;
 end;
 
 function TFotoExec.GEN_ID: integer;
 var
   mIni: TIniFile;
-  i: int64;
 begin
-  mIni := TIniFile.Create(pAppServicePath + 'Backup-Service.ini');
+  mIni := TIniFile.Create(MyDataBasePath + 'Backup-Service.ini');
   with mIni do
   begin
     result := StrToInt(ReadString('System', 'Sequence', '0'));
@@ -436,14 +457,14 @@ begin
   if (sFiles.count > 0) then
   begin
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
-    CheckCreateDir(MyBackupPath + cFotosPath);
+    CheckCreateDir(pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
   end;
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(pFTPPath + sFiles[n], MyBackupPath + cFotosPath + ID + '-' + sFiles[n])) then
+    if not(FileCopy(pFTPPath + sFiles[n], pBackUpRootPath + cServiceFoto_FTPBackupSubPath + ID + '-' + sFiles[n])) then
     begin
-      Log('ERROR: ' + 'can not write to ' + MyBackupPath + cFotosPath);
+      Log('ERROR: ' + 'can not write to ' + pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
       Log('FATAL');
       exit;
     end;
@@ -516,13 +537,13 @@ begin
     ensureGlobals;
 
     bOrgaMon := TBLager.Create;
-    bOrgaMon.Init(MyWorkingPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+    bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
     bOrgaMon.BeginTransaction(now);
 
-    if FileExists(MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    if FileExists(MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
     begin
       bOrgaMonOld := TBLager.Create;
-      bOrgaMonOld.Init(MyWorkingPath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+      bOrgaMonOld.Init(MyDataBasePath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
       bOrgaMonOld.BeginTransaction(now);
     end
     else
@@ -757,7 +778,7 @@ begin
             AppendStringsToFile(
               { } 'cp ' + sFiles[m] +
               { } ' ' + FotoZiel + '\' +
-              { } FotoDateiName, MyWorkingPath + cFotoTransaktionenFName);
+              { } FotoDateiName, DiagnosePath + cFotoTransaktionenFName);
             LastLogWasTimeStamp := false;
 
             // Auszeichnen, wenn die Umbenennung vorläufig ist
@@ -769,7 +790,7 @@ begin
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } ';' +
                 { MOMENT } DatumLog,
-                { Dateiname } MyWorkingPath + cFotoUmbenennungAusstehend);
+                { Dateiname } MyDataBasePath + cFotoUmbenennungAusstehend);
 
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
@@ -868,9 +889,6 @@ var
   // senden einfärben
   tSENDEN: tsTable;
 
-  // Parameter
-  pAll: boolean;
-
 begin
 
   // Init
@@ -884,7 +902,7 @@ begin
   begin
 
     // load+sort
-    insertfromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+    insertfromFile(MyDataBasePath + cFotoUmbenennungAusstehend);
     Stat_Anfangsbestand := RowCount;
     SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
@@ -910,7 +928,7 @@ begin
   end;
 
   bOrgaMon := TBLager.Create;
-  bOrgaMon.Init(MyWorkingPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+  bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
   bOrgaMon.BeginTransaction(now);
 
   for r := WARTEND.RowCount downto 1 do
@@ -962,7 +980,7 @@ begin
         if not(assigned(CSV)) then
         begin
           CSV := tsTable.Create;
-          CSV.insertfromFile(MyWorkingPath + 'ZaehlerNummerNeu.xls.csv');
+          CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
         end;
         ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
         if (ro <> -1) then
@@ -1099,7 +1117,7 @@ begin
         AppendStringsToFile(
           { } 'mv ' + FNameAlt +
           { } ' ' + FNameNeu,
-          { } MyWorkingPath + cFotoTransaktionenFName);
+          { } DiagnosePath + cFotoTransaktionenFName);
         LastLogWasTimeStamp := false;
 
         WARTEND.del(r);
@@ -1130,7 +1148,7 @@ begin
 
     // save WARTEND / save as html
     WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
-    WARTEND.SaveToFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+    WARTEND.SaveToFile(MyDataBasePath + cFotoUmbenennungAusstehend);
 
     // LOG
     if (Stat_Anfangsbestand - WARTEND.RowCount > 0) then
@@ -1154,14 +1172,14 @@ end;
 
 function TFotoExec.AblageFname: string;
 begin
-  result := format(cFotoAblageFName, [DatumLog]);
+  result := DiagnosePath + format(cFotoAblageFName, [DatumLog]);
 end;
 
 procedure TFotoExec.workAblage(sParameter: TStringList = nil);
 
   procedure Log(Source, Dest: string);
   begin
-    AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest, MyWorkingPath + AblageFname);
+    AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest, AblageFname);
   end;
 
 const
@@ -1457,7 +1475,7 @@ begin
   end;
 
   // Set "Lock"
-  FileAlive(MyWorkingPath + AblageFname);
+  FileAlive(AblageFname);
 
   // prepare
   sZips := TStringList.Create;
@@ -1466,12 +1484,12 @@ begin
 
   // Infos über Baustellen
   tabelleBAUSTELLE := tsTable.Create;
-  tabelleBAUSTELLE.insertfromFile(MyWorkingPath + cMonDaServer_Baustelle);
+  tabelleBAUSTELLE.insertfromFile(MyDataBasePath + cServiceFoto_BaustelleFName);
   Col_FTP_Benutzer := tabelleBAUSTELLE.colof(cE_FTPUSER);
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
-  WARTEND.insertfromFile(MyWorkingPath + cFotoUmbenennungAusstehend);
+  WARTEND.insertfromFile(MyDataBasePath + cFotoUmbenennungAusstehend);
 
   //
   if (pDatum = '') then

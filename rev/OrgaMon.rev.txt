@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.145 (01.02.16) Andreas Filsinger
+
+ Neu: App-Service: neue Pfad-Struktur
+ Neu: Foto-Service: neue Pfad-Struktur
+
+ Wegfall: ./Fotos/ in den Service-Apps, Migration auf ./db/ und ../log/
+
 Rev 8.144 (28.01.16) Andreas Filsinger
 
  Bug: Beleg: ~VerlagNo~ blieb stehen

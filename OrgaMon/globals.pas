@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.144; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.145; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -108,7 +108,6 @@ const
   cTransitionPath = 'Transition\';
   cDruckauftragPath = 'Druckauftrag\';
   cRechnungsKopiePath = 'Rechnungskopie\';
-  cFotosPath = 'Fotos\';
   cGeraeteKommandos = 'Kommandos\';
   cHBCIPath = 'HBCI\';
   cDBASICPath = 'D-BASIC\';
@@ -530,9 +529,13 @@ const
   cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
-  cMonDaServer_Baustelle = 'baustelle.csv';
-  cMonDaServer_Baustelle_manuell = 'baustelle-manuell.csv';
 
+  // Foto-Service
+  cServiceFoto_BaustelleFName = 'baustelle.csv';
+  cServiceFoto_BaustelleManuellFName = 'baustelle-manuell.csv';
+  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
+  cFotoAblage = 'ablage.csv';
+  cServiceFoto_FTPBackupSubPath = 'Fotos\';
 
   cActionRestantenLeeren = 'Restanten ignorieren';
   cActionRestantenAddieren = 'Restanten addieren';
@@ -554,11 +557,6 @@ const
   cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
   cHeader_UmbenennungUnvollstaendig =
     'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
-
-  // Foto-Service
-  cFotoPath = 'Fotos\';
-  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
-  cFotoAblage = 'ablage.csv';
 
   // Creator Sachen!
   cHistorieTextFName = 'Creator\historie.txt';

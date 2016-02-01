@@ -809,6 +809,7 @@ function TFormDatensicherung.die400: TStringList;
 
 const
   cMinAge = 400;
+  cFotosPath = 'Fotos\';
 var
   DiagnoseFName: string;
 

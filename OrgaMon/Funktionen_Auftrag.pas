@@ -204,8 +204,7 @@ function Liefertag(Liefertag: TAnfixTime): TAnfixTime;
 
 function VormittagsToChar(vormittags: boolean): char;
 function VormittagsToTime(s: string): TDateTime;
-procedure ObtainStrasseHausnummerPos(const _strasseFull: string;
-  var _FirstNummernPos, _LastNummernPos: Integer);
+procedure ObtainStrasseHausnummerPos(const _strasseFull: string; var _FirstNummernPos, _LastNummernPos: Integer);
 function ObtainStrassenName(const _strasseFull: string): string;
 function ObtainStrassenHausNummer(const _strasseFull: string): string;
 function ObtainStrassenHausNummerOhneZusatz(const _strasseFull: string): string;
@@ -473,8 +472,7 @@ begin
   result := DeleteCount;
 end;
 
-procedure ObtainStrasseHausnummerPos(const _strasseFull: string;
-  var _FirstNummernPos, _LastNummernPos: Integer);
+procedure ObtainStrasseHausnummerPos(const _strasseFull: string; var _FirstNummernPos, _LastNummernPos: Integer);
 var
   n: Integer;
 begin
@@ -832,8 +830,7 @@ begin
   cANSCHRIFT := nCursor;
   with cANSCHRIFT do
   begin
-    sql.Add('select * from ANSCHRIFT where RID=' + inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R')
-      .AsInteger));
+    sql.Add('select * from ANSCHRIFT where RID=' + inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
     ApiFirst;
   end;
 
@@ -996,15 +993,13 @@ begin
           // Änderung im Termin-Datum?
           repeat
 
-            if (cOldVersion.FieldByName('AUSFUEHREN').AsDate <> FieldByName('AUSFUEHREN').AsDate)
-            then
+            if (cOldVersion.FieldByName('AUSFUEHREN').AsDate <> FieldByName('AUSFUEHREN').AsDate) then
             begin
               TerminChanged := true;
               break;
             end;
 
-            if (cOldVersion.FieldByName('VORMITTAGS').AsString <> FieldByName('VORMITTAGS').AsString)
-            then
+            if (cOldVersion.FieldByName('VORMITTAGS').AsString <> FieldByName('VORMITTAGS').AsString) then
             begin
               TerminChanged := true;
               break;
@@ -1015,15 +1010,13 @@ begin
           // Änderung in der Monteur-Zuordnung?
           repeat
 
-            if (cOldVersion.FieldByName('MONTEUR1_R').AsString <> FieldByName('MONTEUR1_R').AsString)
-            then
+            if (cOldVersion.FieldByName('MONTEUR1_R').AsString <> FieldByName('MONTEUR1_R').AsString) then
             begin
               MonteurChanged := true;
               break;
             end;
 
-            if (cOldVersion.FieldByName('MONTEUR2_R').AsString <> FieldByName('MONTEUR2_R').AsString)
-            then
+            if (cOldVersion.FieldByName('MONTEUR2_R').AsString <> FieldByName('MONTEUR2_R').AsString) then
             begin
               MonteurChanged := true;
               break;
@@ -1083,8 +1076,7 @@ begin
 
           // Erzeugung eines Historischen Datensatzes ?
 
-          MakeHistCopy := ForceHistorischer or MonteurChanged or TerminChanged or
-            (sBearbeiter <> _sBearbeiter);
+          MakeHistCopy := ForceHistorischer or MonteurChanged or TerminChanged or (sBearbeiter <> _sBearbeiter);
 
           if not(MakeHistCopy) then
             for n := 0 to pred(AuftragCriticalFields.count) do
@@ -1101,8 +1093,8 @@ begin
             cAnzHistorische := nCursor;
             with cAnzHistorische do
             begin
-              sql.Add('select count(rid) from AUFTRAG where (MASTER_R=' +
-                inttostr(AuftragLastChangeRID) + ') and (STATUS=6)');
+              sql.Add('select count(rid) from AUFTRAG where (MASTER_R=' + inttostr(AuftragLastChangeRID) +
+                ') and (STATUS=6)');
               ApiFirst;
               AnzHistorische := Fields[0].AsInteger;
             end;
@@ -1235,14 +1227,13 @@ begin
 
         // Planquadrat, leere unten!!
         _Koordinaten := cutblank(FieldByName('PLANQUADRAT').AsString);
-        _Koordinaten := copy(_Koordinaten + fill('z', cSTRASSE_PLANQUADRAT_Length -
-          length(_Koordinaten)), 1, cSTRASSE_PLANQUADRAT_Length);
+        _Koordinaten := copy(_Koordinaten + fill('z', cSTRASSE_PLANQUADRAT_Length - length(_Koordinaten)), 1,
+          cSTRASSE_PLANQUADRAT_Length);
 
         // Extraction der Wohneinheit
         _Wohneinheit := ObtainStrassenWohnungseinheit(_strasseFull);
         if (_Wohneinheit <> '') then
-          _Wohneinheit := fill('0', cSTRASSE_Wohneinheit_Length - length(_Wohneinheit)) +
-            _Wohneinheit + ':';
+          _Wohneinheit := fill('0', cSTRASSE_Wohneinheit_Length - length(_Wohneinheit)) + _Wohneinheit + ':';
 
         // Extraction der Hausnummer
         ObtainStrasseHausnummerPos(_strasseFull, _FirstNummernPos, _LastNummernPos);
@@ -1267,10 +1258,8 @@ begin
         end
         else
         begin
-          _HausNummerZusatz :=
-            cutblank(nextp(copy(_strasseFull, succ(_LastNummernPos), MaxInt), '#', 0));
-          _HausNummerNumerischerZusatz :=
-            strtointdef(ObtainStrassenHausNummerNumerischerZusatz(_strasseFull), 0);
+          _HausNummerZusatz := cutblank(nextp(copy(_strasseFull, succ(_LastNummernPos), MaxInt), '#', 0));
+          _HausNummerNumerischerZusatz := strtointdef(ObtainStrassenHausNummerNumerischerZusatz(_strasseFull), 0);
         end;
 
         // Gerade und ungerade Hausnummern
@@ -1327,15 +1316,13 @@ begin
           if not(STATUS in [ctsVorgezogen, ctsUnmoeglich, ctsErfolg, ctsHistorisch]) then
             FieldByName('EXPORT_TAN').clear;
 
-        if not(STATUS in [ctsVorgezogen, ctsUnmoeglich, ctsErfolg, ctsRestant, ctsNeuAnschreiben])
-        then
+        if not(STATUS in [ctsVorgezogen, ctsUnmoeglich, ctsErfolg, ctsRestant, ctsNeuAnschreiben]) then
         begin
           repeat
 
             // den Status manipulieren!
             if ((FieldByName('AUSFUEHREN').IsNull) or (pos(FieldByName('VORMITTAGS').AsString,
-              cVormittagsChar + cNachmittagsChar) = 0)) and FieldByName('ZAEHLER_WECHSEL').IsNull
-            then
+              cVormittagsChar + cNachmittagsChar) = 0)) and FieldByName('ZAEHLER_WECHSEL').IsNull then
             begin
               // unvollständige Daten!
               FieldByName('STATUS').AsInteger := ord(ctsDatenFehlen);
@@ -1394,20 +1381,16 @@ begin
           Kontext := e_r_BaustelleAddSperre(FieldByName('BAUSTELLE_R').AsInteger, Umstand, _Sperre);
           if not(FieldByName('SPERRE_VON').IsNull) and not(FieldByName('SPERRE_BIS').IsNull) then
           begin
-            _Sperre.Add(FieldByName('SPERRE_VON').AsDate, FieldByName('SPERRE_BIS').AsDate, true,
-              cSperreZaehler);
+            _Sperre.Add(FieldByName('SPERRE_VON').AsDate, FieldByName('SPERRE_BIS').AsDate, true, cSperreZaehler);
           end;
 
-          if not(FieldByName('ZEITRAUM_VON').IsNull) and not(FieldByName('ZEITRAUM_BIS').IsNull)
-          then
+          if not(FieldByName('ZEITRAUM_VON').IsNull) and not(FieldByName('ZEITRAUM_BIS').IsNull) then
           begin
-            _Sperre.Add(FieldByName('ZEITRAUM_VON').AsDate, FieldByName('ZEITRAUM_BIS').AsDate,
-              false, cSperreZaehler);
+            _Sperre.Add(FieldByName('ZEITRAUM_VON').AsDate, FieldByName('ZEITRAUM_BIS').AsDate, false, cSperreZaehler);
           end;
 
-          if _Sperre.CheckIt(FieldByName('AUSFUEHREN').AsDate +
-            VormittagsToTime(FieldByName('VORMITTAGS').AsString), Kontext) <> TColors.SysDefault
-          then
+          if _Sperre.CheckIt(FieldByName('AUSFUEHREN').AsDate + VormittagsToTime(FieldByName('VORMITTAGS').AsString),
+            Kontext) <> TColors.SysDefault then
             FieldByName('FITNESS').AsInteger := ord(cisSperreVerletzt)
           else
             FieldByName('FITNESS').AsInteger := ord(cisOK);
@@ -1514,8 +1497,7 @@ begin
   repeat
 
     // WA = Wasser
-    if (pos('WASSER', Material) > 0) or (pos('QN', Material) > 0) or (Material = 'W') or
-      (Material = 'WA') then
+    if (pos('WASSER', Material) > 0) or (pos('QN', Material) > 0) or (Material = 'W') or (Material = 'WA') then
     begin
       result := 'WA';
       break;
@@ -1711,7 +1693,8 @@ begin
   result :=
   { } iBaustellenPath +
   { } e_r_BaustelleKuerzel(BAUSTELLE_R) +
-  { } '\' + cFotosPath;
+  { } '\' +
+  { } 'Fotos\';
 end;
 
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
@@ -1744,8 +1727,7 @@ begin
   if (FotoPath <> '') then
   begin
 
-    lBAUSTELLEN :=
-      e_r_sqlm('select RID from BAUSTELLE where NUMMERN_PREFIX starts with ''+'' order by NUMMERN_PREFIX');
+    lBAUSTELLEN := e_r_sqlm('select RID from BAUSTELLE where NUMMERN_PREFIX starts with ''+'' order by NUMMERN_PREFIX');
 
     for m := 0 to pred(lBAUSTELLEN.count) do
     begin
@@ -1758,8 +1740,7 @@ begin
       FotoFTP := TIdFTP.create;
 
       // checks
-      settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-        inttostr(lBAUSTELLEN[m]));
+      settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(lBAUSTELLEN[m]));
 
       CheckCreateDir(FotoPath);
       WorkPath := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
@@ -1925,11 +1906,10 @@ begin
   end;
 
   // Modus noch ermitteln
-  sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-    inttostr(BAUSTELLE_R));
+  sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
   sParameter.values[cParameter_foto_Modus] := sSettings.values[cE_FotoBenennung];
-  sParameter.values[JonDaExec.cParameter_foto_Datei] := FotoPath + e_r_BaustellenPfad(sSettings) +
-    '\' + nextp(AktuellerWert, ',', 0);
+  sParameter.values[JonDaExec.cParameter_foto_Datei] := FotoPath + e_r_BaustellenPfad(sSettings) + '\' +
+    nextp(AktuellerWert, ',', 0);
   sSettings.free;
 
   // Funktion ausführen
@@ -2081,14 +2061,12 @@ begin
           end;
 
           Verfall.addobject(inttostr(_StartDatum) + ';' + POSTEN.FieldByName('RID').AsString + ';' +
-            MEILENSTEIN.FieldByName('RID').AsString,
-            TObject(MEILENSTEIN.FieldByName('GRUPPE_R').AsInteger));
+            MEILENSTEIN.FieldByName('RID').AsString, TObject(MEILENSTEIN.FieldByName('GRUPPE_R').AsInteger));
           ErsterVerfall := false;
         end
         else
         begin
-          MaxAbschluss := max(MaxAbschluss, DateTime2Long(MEILENSTEIN.FieldByName('ABSCHLUSS')
-            .AsDateTime));
+          MaxAbschluss := max(MaxAbschluss, DateTime2Long(MEILENSTEIN.FieldByName('ABSCHLUSS').AsDateTime));
         end;
       end;
 
@@ -2158,8 +2136,7 @@ begin
     FieldByName('DAUER').AsInteger := MaxPostenDauer;
     if not(FieldByName('EINGANG').IsNull) and OneHasDauer then
       FieldByName('ABSCHLUSS_C').AsDateTime :=
-        long2datetime(WerktagDatePlus(DateTime2Long(FieldByName('EINGANG').AsDateTime),
-        MaxPostenDauer))
+        long2datetime(WerktagDatePlus(DateTime2Long(FieldByName('EINGANG').AsDateTime), MaxPostenDauer))
     else
       FieldByName('ABSCHLUSS_C').clear;
 
@@ -2286,21 +2263,16 @@ begin
       while not(eof) do
       begin
         IsFrei := FieldByName('A00').AsString <> cC_False;
-        CacheMonteur.addobject(FieldByName('NAME1').AsString,
-          TObject(FieldByName('RID').AsInteger));
-        MonteurKuerzel.addobject(FieldByName('KUERZEL').AsString,
-          TObject(FieldByName('RID').AsInteger));
+        CacheMonteur.addobject(FieldByName('NAME1').AsString, TObject(FieldByName('RID').AsInteger));
+        MonteurKuerzel.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
         if IsFrei then
-          MonteurKuerzel_freie.addobject(FieldByName('KUERZEL').AsString,
-            TObject(FieldByName('RID').AsInteger));
+          MonteurKuerzel_freie.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
 
         if (FieldByName('MONDA').AsString <> '') then
         begin
-          MonteurKuerzelGeraeteID.addobject(FieldByName('KUERZEL').AsString,
-            TObject(FieldByName('RID').AsInteger));
+          MonteurKuerzelGeraeteID.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
           if IsFrei then
-            MonteurJonDa_freie.addobject(FieldByName('KUERZEL').AsString,
-              TObject(FieldByName('RID').AsInteger));
+            MonteurJonDa_freie.addobject(FieldByName('KUERZEL').AsString, TObject(FieldByName('RID').AsInteger));
         end;
 
         //
@@ -2435,8 +2407,7 @@ end;
 
 function e_r_VorlageMail(VorlageName: string): Integer;
 begin
-  result := e_r_sql('select RID from EMAIL where ' + '(VORLAGE_R IS NULL) and ' + '(UID=''' +
-    VorlageName + ''')');
+  result := e_r_sql('select RID from EMAIL where ' + '(VORLAGE_R IS NULL) and ' + '(UID=''' + VorlageName + ''')');
 end;
 
 function e_r_MonteureCache(Alle: boolean = true): TStringList;
@@ -2785,8 +2756,7 @@ begin
   result := TStringList.create;
   EnsureCache_Baustelle;
   for n := 0 to pred(CacheBaustelle.count) do
-    result.addobject(TStringList(CacheBaustelle.Objects[n])[0],
-      TObject(strtoint(CacheBaustelle[n])));
+    result.addobject(TStringList(CacheBaustelle.Objects[n])[0], TObject(strtoint(CacheBaustelle[n])));
   result.sort;
 end;
 
@@ -2797,8 +2767,7 @@ begin
   result := TStringList.create;
   EnsureCache_Baustelle;
   for n := 0 to pred(CacheBaustelle.count) do
-    result.addobject(TStringList(CacheBaustelle.Objects[n])[1],
-      TObject(strtoint(CacheBaustelle[n])));
+    result.addobject(TStringList(CacheBaustelle.Objects[n])[1], TObject(strtoint(CacheBaustelle[n])));
   result.sort;
 end;
 
@@ -2856,8 +2825,8 @@ begin
 
       // ganz normale Ausführung laden
       if not(FieldByName('VON').IsNull) and not(FieldByName('BIS').IsNull) then
-        Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime, false,
-          cSperreAusfuehren, cPrio_BaustellenSperre);
+        Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime, false, cSperreAusfuehren,
+          cPrio_BaustellenSperre);
 
       // einzelne Sperren dazwischen
       MemoInfo := TStringList.create;
@@ -2961,8 +2930,7 @@ begin
           //
           _c2_Ortsteil := Ort;
           _c2_BAUSTELLE_R := BAUSTELLE_R;
-          _c2_Code := copy(nextp(CacheBaustelleOrtsteile[FoundIndex], '=', 1) + '--', 1,
-            cSTRASSE_OrtsteilcodeLength);
+          _c2_Code := copy(nextp(CacheBaustelleOrtsteile[FoundIndex], '=', 1) + '--', 1, cSTRASSE_OrtsteilcodeLength);
           result := _c2_Code;
         end
         else
@@ -3119,8 +3087,7 @@ begin
     EnsureCache_Baustelle;
     FoundIndex := CacheBaustelle.indexof(inttostr(rid));
     if (FoundIndex <> -1) then
-      CacheBaustelleArbeitsZeitV_Value :=
-        strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[7], 0)
+      CacheBaustelleArbeitsZeitV_Value := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[7], 0)
     else
       CacheBaustelleArbeitsZeitV_Value := 0;
   end;
@@ -3256,8 +3223,7 @@ begin
         begin
           _Monteur := e_r_MonteurKuerzel(FieldByName('MONTEUR1_R').AsInteger);
           if not(FieldByName('MONTEUR2_R').IsNull) then
-            _Monteur := _Monteur + c2Monteure + e_r_MonteurKuerzel
-              (FieldByName('MONTEUR2_R').AsInteger);
+            _Monteur := _Monteur + c2Monteure + e_r_MonteurKuerzel(FieldByName('MONTEUR2_R').AsInteger);
           result.Add(_Monteur);
         end
         else
@@ -3800,8 +3766,7 @@ begin
 
 end;
 
-function e_r_Baustelle(MONTEUR_R: Integer; MOMENT: TDateTime;
-  var Wertigkeit: TeWertigkeitBaustellenzuordnung): Integer;
+function e_r_Baustelle(MONTEUR_R: Integer; MOMENT: TDateTime; var Wertigkeit: TeWertigkeitBaustellenzuordnung): Integer;
 var
   EchteEinplanung: TgpIntegerList;
   EchteEinplanungAndererHalbtag: TgpIntegerList;
@@ -3905,8 +3870,7 @@ begin
 
     if (EchteEinplanung.count = 0) then
     begin
-      EchteEinplanungAndererHalbtag := e_r_Baustelle_Einsatz.CheckEm(e_r_AndererHalbtag(MOMENT),
-        MONTEUR_R);
+      EchteEinplanungAndererHalbtag := e_r_Baustelle_Einsatz.CheckEm(e_r_AndererHalbtag(MOMENT), MONTEUR_R);
 
       if (EchteEinplanungAndererHalbtag.count > 0) then
       begin
@@ -4140,8 +4104,7 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
       // Sollte es keinen Termin geben, Berechne mal den komplementär-Termin
       if (EchteEinplanung.count = 0) then
       begin
-        EchteEinplanungAndererHalbtag := e_r_Baustelle_Einsatz.CheckEm(e_r_AndererHalbtag(DATUM),
-          MONTEUR_R);
+        EchteEinplanungAndererHalbtag := e_r_Baustelle_Einsatz.CheckEm(e_r_AndererHalbtag(DATUM), MONTEUR_R);
         for n := 0 to pred(EchteEinplanungAndererHalbtag.count) do
           addBaustelleAs(EchteEinplanungAndererHalbtag[n], '!');
         EchteEinplanungAndererHalbtag.free;
@@ -4458,8 +4421,7 @@ begin
     EnsureCache_Baustelle;
     FoundIndex := CacheBaustelle.indexof(inttostr(rid));
     if (FoundIndex <> -1) then
-      CacheBaustelleArbeitsZeitN_Value :=
-        strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[8], 0)
+      CacheBaustelleArbeitsZeitN_Value := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[8], 0)
     else
       CacheBaustelleArbeitsZeitN_Value := 0;
   end;
@@ -4519,7 +4481,7 @@ begin
       tBAUSTELLE.addRow(Row);
       Apinext;
     end;
-    tBAUSTELLE.SaveToFile(MdePath + cMonDaServer_Baustelle);
+    tBAUSTELLE.SaveToFile(MdePath + cServiceFoto_BaustelleFName);
   end;
 
   tBAUSTELLE.free;
@@ -4851,8 +4813,7 @@ begin
     with cBAUSTELLE do
     begin
       //
-      sql.Add('select NUMMERN_PREFIX from BAUSTELLE where RID in (' + RIDs +
-        ') order by NUMMERN_PREFIX');
+      sql.Add('select NUMMERN_PREFIX from BAUSTELLE where RID in (' + RIDs + ') order by NUMMERN_PREFIX');
       ApiFirst;
       while not(eof) do
       begin
@@ -4876,11 +4837,9 @@ procedure e_w_unlocate(POSTLEITZAHL_R: Integer);
 begin
   if (POSTLEITZAHL_R >= cRID_FirstValid) and (dummyPLZ_R <> POSTLEITZAHL_R) then
   begin
-    e_x_sql('update auftrag set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' +
-      inttostr(POSTLEITZAHL_R));
+    e_x_sql('update auftrag set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' + inttostr(POSTLEITZAHL_R));
 
-    e_x_sql('update ablage set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' +
-      inttostr(POSTLEITZAHL_R));
+    e_x_sql('update ablage set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' + inttostr(POSTLEITZAHL_R));
 
     e_x_sql('delete from postleitzahlen where rid = ' + inttostr(POSTLEITZAHL_R));
   end;
@@ -4960,11 +4919,9 @@ begin
       lRID := e_r_sqlm('select RID from POSTLEITZAHLEN where PLZ=' + cImpossiblePLZ);
       for n := 0 to pred(lRID.count) do
       begin
-        e_x_sql('update auftrag set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' +
-          inttostr(lRID[n]));
+        e_x_sql('update auftrag set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' + inttostr(lRID[n]));
 
-        e_x_sql('update ablage set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' +
-          inttostr(lRID[n]));
+        e_x_sql('update ablage set ' + ' POSTLEITZAHL_R = NULL ' + 'where POSTLEITZAHL_R =' + inttostr(lRID[n]));
 
       end;
       lRID.free;
@@ -4986,8 +4943,7 @@ begin
   Arbeitszeiten.LoadFromFile(FName);
   ARBEITSZEIT_R := Arbeitszeiten.AsIntegerList('ARBEITSZEIT_R');
   for n := 0 to pred(ARBEITSZEIT_R.count) do
-    e_x_sql('update ARBEITSZEIT set BELEG_R=' + inttostr(BELEG_R) + ' ' + ' where RID=' +
-      inttostr(ARBEITSZEIT_R[n]));
+    e_x_sql('update ARBEITSZEIT set BELEG_R=' + inttostr(BELEG_R) + ' ' + ' where RID=' + inttostr(ARBEITSZEIT_R[n]));
   Arbeitszeiten.free;
 end;
 
@@ -5046,8 +5002,8 @@ var
     begin
       // erst mal über den Abrechnungsbeleg versuchen!
       if not(FieldByName('BELEG_R').IsNull) then
-        result := e_r_sqld('select PREIS from POSTEN where ' + ' (BELEG_R=' + FieldByName('BELEG_R')
-          .AsString + ') and ' + ' (ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString + ')')
+        result := e_r_sqld('select PREIS from POSTEN where ' + ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and '
+          + ' (ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString + ')')
       else
         result := e_r_PreisNativ(0, FieldByName('ARTIKEL_R').AsInteger);
     end;
@@ -5075,8 +5031,8 @@ var
       _Datum := DATUM;
       _Stundensatz := format('%m', [Stundensatz]);
       _SingleArbeitszeit := SingleArbeitsZeit;
-      StundenSaetze.values[_Stundensatz] :=
-        inttostr(strtointdef(StundenSaetze.values[_Stundensatz], 0) + _SingleArbeitszeit);
+      StundenSaetze.values[_Stundensatz] := inttostr(strtointdef(StundenSaetze.values[_Stundensatz], 0) +
+        _SingleArbeitszeit);
 
       // Ausgabe
       DatensammlerLokal.Add('ARBEITSZEIT_R=' + FieldByName('RID').AsString);
@@ -5140,8 +5096,8 @@ var
         Sekunden := Integer(sKostenstellen.Objects[n]);
         DatensammlerLokal.Add('KOSTENSTELLE=' + sKostenstellen[n]);
         DatensammlerLokal.Add('SEKUNDEN=' + inttostr(Sekunden));
-        DatensammlerLokal.Add('ZEIT=' + _('Kostenstelle') + #160 + sKostenstellen[n] + #160#160#160
-          + secondstostr(Sekunden));
+        DatensammlerLokal.Add('ZEIT=' + _('Kostenstelle') + #160 + sKostenstellen[n] + #160#160#160 +
+          secondstostr(Sekunden));
         Lohn := cPreisRundung((Sekunden * Stundensatz) / 3600.0);
         DatensammlerLokal.Add('LOHN=' + format('%m', [Lohn]));
       end;
@@ -5228,8 +5184,7 @@ var
 
     if (pDateFrom <> cIllegalDate) and (pDateTo <> cIllegalDate) then
     begin
-      TITEL := TITEL + ' (' + long2dateLocalized(pDateFrom) + ' .. ' +
-        long2dateLocalized(pDateTo) + ')';
+      TITEL := TITEL + ' (' + long2dateLocalized(pDateFrom) + ' .. ' + long2dateLocalized(pDateTo) + ')';
     end;
 
     if (SubBudget <> '*') then
@@ -5381,8 +5336,7 @@ begin
     // Anschriftsdaten
     with cANSCHRIFT do
     begin
-      sql.Add('select * from ANSCHRIFT where RID=' +
-        inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
+      sql.Add('select * from ANSCHRIFT where RID=' + inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
       ApiFirst;
     end;
 
@@ -5395,10 +5349,8 @@ begin
     e_r_Anschrift(PERSON_R, DatensammlerGlobal);
 
     // weitere Globale Felder:
-    DatensammlerGlobal.Add('Geburtstag=' + long2dateLocalized(cPERSON.FieldByName('GEBURTSTAG')
-      .AsDateTime));
-    DatensammlerGlobal.Add('Versicherungsnummer=' + cPERSON.FieldByName('VERSICHERUNGSNUMMER')
-      .AsString);
+    DatensammlerGlobal.Add('Geburtstag=' + long2dateLocalized(cPERSON.FieldByName('GEBURTSTAG').AsDateTime));
+    DatensammlerGlobal.Add('Versicherungsnummer=' + cPERSON.FieldByName('VERSICHERUNGSNUMMER').AsString);
 
     // Nun die Arbeitszeit an sich!
     with cARBEIT do
@@ -5423,8 +5375,7 @@ begin
 
       if (pDateFrom <> cIllegalDate) and (pDateTo <> cIllegalDate) then
       begin
-        sql.Add(' (ARBEITSZEIT.DATUM between ''' + Long2date(pDateFrom) + ''' and ''' +
-          Long2date(pDateTo) + ''') AND');
+        sql.Add(' (ARBEITSZEIT.DATUM between ''' + Long2date(pDateFrom) + ''' and ''' + Long2date(pDateTo) + ''') AND');
       end
       else
       begin
@@ -5691,8 +5642,7 @@ begin
     Visited_Verlag_R := TStringList.create;
     repeat
       sql.clear;
-      sql.Add('SELECT ALIAS_R FROM PREIS WHERE (VERLAG_R=' + inttostr(VERLAG_R) +
-        ') AND (ALIAS_R IS NOT NULL)');
+      sql.Add('SELECT ALIAS_R FROM PREIS WHERE (VERLAG_R=' + inttostr(VERLAG_R) + ') AND (ALIAS_R IS NOT NULL)');
       First;
       if eof then
         break;
@@ -5763,8 +5713,7 @@ var
 begin
   result := false;
   try
-    settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-      inttostr(BAUSTELLE_R));
+    settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
     QUELLE_R := strtointdef(settings.values[cE_KopieVon], cRID_Null);
 
     if (QUELLE_R >= cRID_FirstValid) then

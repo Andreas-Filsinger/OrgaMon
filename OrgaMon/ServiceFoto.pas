@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2015  Andreas Filsinger
+  |    Copyright (C) 2012 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -282,7 +282,7 @@ end;
 
 procedure TFormServiceFoto.Button20Click(Sender: TObject);
 begin
-  FileDelete(MyFotoExec.MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension);
+  FileDelete(MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
 procedure TFormServiceFoto.Button22Click(Sender: TObject);
@@ -292,18 +292,18 @@ end;
 
 procedure TFormServiceFoto.Button23Click(Sender: TObject);
 begin
-  Edit_Rollback_Quelle.Text := MyFotoExec.MyBackupPath;
+  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpRootPath;
   // cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
 end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyWorkingPath + cMonDaServer_Baustelle);
+  openShell(MyFotoExec.MyDataBasePath + cServiceFoto_BaustelleFName);
 end;
 
 procedure TFormServiceFoto.Button25Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyWorkingPath + cFotoTransaktionenFName);
+  openShell(MyFotoExec.MyDataBasePath + cFotoTransaktionenFName);
 end;
 
 procedure TFormServiceFoto.Button21Click(Sender: TObject);
@@ -434,7 +434,7 @@ begin
   tREFERENZ := tsTable.Create;
   with tREFERENZ do
   begin
-    insertfromFile(MyFotoExec.MyWorkingPath + cDBPath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
+    insertfromFile(MyFotoExec.MyDataBasePath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
     Column_RID := colof(cRID_Suchspalte, true);
     for r := 1 to RowCount do
     begin
@@ -494,8 +494,8 @@ begin
   begin
     FName := ListBox5.Items[ListBox5.ItemIndex];
     FNameRemote := nextp(FName, '+', 1);
-    AmnestiePath := MyFotoExec.MyBackupPath + 'Amnestie\';
-    CheckCreateDIr( AmnestiePath);
+    AmnestiePath := MyFotoExec.pBackUpRootPath + 'Amnestie\';
+    CheckCreateDIr(AmnestiePath);
     FileMove(
       { } MyFotoExec.pUnverarbeitetPath + FName,
       { } AmnestiePath + Edit10.Text + FNameRemote);
@@ -775,7 +775,7 @@ begin
   end;
   if FileCopy(
     { } Edit9.Text + TRN + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
-    { } MyFotoExec.MyWorkingPath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    { } MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
     Label11.Caption := 'OK';
   EndHourGlass;
 end;
@@ -885,12 +885,12 @@ begin
     // Delete Entry
     with WARTEND do
     begin
-      insertfromFile(MyFotoExec.MyWorkingPath + cFotoUmbenennungAusstehend);
+      insertfromFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
       r := locate('RID', InttoStr(AUFTRAG_R));
       if (r = -1) then
         break;
       del(r);
-      SaveToFile(MyFotoExec.MyWorkingPath + cFotoUmbenennungAusstehend);
+      SaveToFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
     end;
 
   until true;
@@ -918,7 +918,7 @@ var
 begin
   sKommandos := TStringList.Create;
 
-  KommandoFName := MyFotoExec.MyWorkingPath + cGeraeteKommandos + GeraeteNo + '.ini';
+  KommandoFName := MyFotoExec.MyDataBAsePath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
     sKommandos.LoadFromFile(KommandoFName);
 
@@ -1104,7 +1104,7 @@ begin
               { GERAETENO } GeraeteNo + ';' +
               { BAUSTELLE } ';' +
               { MOMENT } DatumLog,
-              { Dateiname } MyFotoExec.MyWorkingPath + cFotoUmbenennungAusstehend);
+              { Dateiname } MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
 
             ListBox3.DeleteSelected;
           end;
@@ -1153,7 +1153,7 @@ begin
   if not(assigned(sLog)) then
   begin
     sLog := TStringList.Create;
-    sLog.LoadFromFile(MyFotoExec.MyWorkingPath + 'FotoService.log.txt');
+    sLog.LoadFromFile(DiagnosePath + 'FotoService.log.txt');
   end;
 
   FName := nextp(ListBox5.Items[ListBox5.ItemIndex], '+', 1);
@@ -1194,7 +1194,7 @@ begin
   sDir.Free;
   if not(assigned(sMoveTransaktionen)) then
     sMoveTransaktionen := TStringList.Create;
-  sMoveTransaktionen.LoadFromFile(MyFotoExec.MyWorkingPath + cFotoTransaktionenFName);
+  sMoveTransaktionen.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
 end;
 
 procedure TFormServiceFoto.SpeedButton2Click(Sender: TObject);
@@ -1215,7 +1215,7 @@ var
   sWartend: TStringList;
 begin
   sWartend := TStringList.Create;
-  sWartend.LoadFromFile(MyFotoExec.MyWorkingPath + cFotoUmbenennungAusstehend);
+  sWartend.LoadFromFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
   ListBox6.Items.Assign(sWartend);
   sWartend.Free;
 end;
@@ -1241,13 +1241,13 @@ end;
 
 function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
 begin
-  result := MyFotoExec.MyWorkingPath + 'Daten\' + 'AUFTRAG.' + GeraeteNo + '.DAT';
+  result := MyFotoExec.pAppServicePath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + '.DAT';
 end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
 begin
   if (Edit9.Text = '') then
-    Edit9.Text := MyFotoExec.MyWorkingPath;
+    Edit9.Text := MyFotoExec.pAppServicePath;
 end;
 
 procedure TFormServiceFoto.Timer1Timer(Sender: TObject);
@@ -1292,7 +1292,7 @@ begin
         // Zwischen 00:00 und ]01:00
         if (SecondsGet < (1 * 3600)) then
           // nur machen, wenn nicht in Arbeit oder fertig
-          if not(FileExists(MyFotoExec.MyWorkingPath + MyFotoExec.AblageFname)) then
+          if not(FileExists(MyFotoExec.AblageFname)) then
             // Zips verschieben, Fotos zippen
             MyFotoExec.workAblage;
 
@@ -1319,7 +1319,7 @@ begin
   begin
     ListBox1.Items.add(s);
     if (pos('ERROR', s) > 0) then
-      AppendStringsToFile(s, MyWorkingPath + 'FotoService.log.txt');
+      AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
     if (pos('FATAL', s) = 1) then
       Timer1.Enabled := false;
   end;
