@@ -208,7 +208,8 @@ uses
   ServiceFoto in 'ServiceFoto.pas' {FormServiceFoto},
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
-  FotoExec in 'FotoExec.pas';
+  FotoExec in 'FotoExec.pas',
+  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl};
 
 {$R *.RES}
 
@@ -358,6 +359,7 @@ begin
   Application.CreateForm(TDataModuleGUIhelp, DataModuleGUIhelp);
   Application.CreateForm(TFormServiceApp, FormServiceApp);
   Application.CreateForm(TFormServiceFoto, FormServiceFoto);
+  Application.CreateForm(TFormArtikelAusgabeartAuswahl, FormArtikelAusgabeartAuswahl);
   Application.Run;
 end.
 
