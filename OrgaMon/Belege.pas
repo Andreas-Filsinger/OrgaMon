@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ uses
 
   // HeBu Projekt
   Buttons, ComCtrls,
-  JvGIF, JvComponentBase, JvFormPlacement;
+  JvGIF, JvComponentBase, JvFormPlacement, IB_EditButton;
 
 type
   TFormBelege = class(TForm)
@@ -171,8 +171,8 @@ type
     SpeedButton23: TSpeedButton;
     SpeedButton24: TSpeedButton;
     JvFormStorage1: TJvFormStorage;
-    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    IB_Edit1: TIB_Edit;
+    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
@@ -197,8 +197,7 @@ type
     procedure Button16Click(Sender: TObject);
     procedure IB_Grid2DblClick(Sender: TObject);
     procedure Button17Click(Sender: TObject);
-    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
-      Rect: TRect; State: TGridDrawState);
+    procedure DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure DrawGrid1DblClick(Sender: TObject);
@@ -229,10 +228,8 @@ type
     procedure SpeedButton7Click(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
     procedure SpeedButton9Click(Sender: TObject);
-    procedure IB_Query2ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query2ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure Button3Click(Sender: TObject);
     procedure IB_Query2AfterScroll(IB_Dataset: TIB_Dataset);
     procedure Button19Click(Sender: TObject);
@@ -240,8 +237,7 @@ type
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button28Click(Sender: TObject);
     procedure SpeedButton12Click(Sender: TObject);
-    procedure SpeedButton12MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure SpeedButton12MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Image2Click(Sender: TObject);
     procedure Button29Click(Sender: TObject);
     procedure SpeedButton13Click(Sender: TObject);
@@ -250,8 +246,7 @@ type
     procedure SpeedButton16Click(Sender: TObject);
     procedure SpeedButton17Click(Sender: TObject);
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
-    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure SpeedButton18Click(Sender: TObject);
     procedure SpeedButton19Click(Sender: TObject);
     procedure Edit2Change(Sender: TObject);
@@ -262,21 +257,20 @@ type
     procedure SpeedButton20Click(Sender: TObject);
     procedure Button31Click(Sender: TObject);
     procedure IB_Query2BeforePrepare(Sender: TIB_Statement);
-    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    procedure IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button32Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure SpeedButton21Click(Sender: TObject);
-    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+    procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
+      AFont: TFont);
     procedure Button4Click(Sender: TObject);
     procedure SpeedButton22Click(Sender: TObject);
     procedure Button34Click(Sender: TObject);
     procedure SpeedButton41Click(Sender: TObject);
-    procedure IB_DataSource2StateChanged(Sender: TIB_DataSource;
-      ADataset: TIB_Dataset);
+    procedure IB_DataSource2StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
     procedure SpeedButton23Click(Sender: TObject);
     procedure SpeedButton24Click(Sender: TObject);
+    procedure IB_Grid2InplaceEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
 
     { Private-Deklarationen }
@@ -295,6 +289,7 @@ type
     Grid1_Col_Anleger: Integer;
     Grid2_Col_Bearbeiter: Integer;
     Grid2_Col_Anleger: Integer;
+    Grid2_Col_AusgabeArt: Integer;
     cCOL_PAPERCOLOR: Integer;
 
     // Event Disabler
@@ -302,12 +297,14 @@ type
     DisableAutoRefreshOnActive: Boolean;
     DisablePostenEvents: Boolean;
 
+    // Caching
+    procedure ensureGrid2Cols;
+
     function LineDataFromRID1(RID: Integer): TStringList;
     function Grid_ARTIKEL_R: Integer;
     procedure GridRefresh;
     procedure AusSucheUebernehmen;
-    procedure BerechneBeleg(var RechnungsBetrag: double;
-      var RechnungsGewicht: Integer; NurGeliefertes: Boolean);
+    procedure BerechneBeleg(var RechnungsBetrag: double; var RechnungsGewicht: Integer; NurGeliefertes: Boolean);
     procedure EnsureThatItsOpen;
     procedure ReflectHeaders;
     procedure Spool(AusgabeFName: string);
@@ -323,8 +320,7 @@ type
 
     { Public-Deklarationen }
 
-    procedure SetContext(Kunde_rid: Integer; Beleg_rid: Integer = 0;
-      Posten_Rid: Integer = 0); overload;
+    procedure SetContext(Kunde_rid: Integer; Beleg_rid: Integer = 0; Posten_Rid: Integer = 0); overload;
     procedure DoTheArtikelSearch;
     function getContext_PERSON_R: Integer;
     function Neu: Integer;
@@ -362,7 +358,7 @@ uses
   Vertrag, Kontext,
   ArtikelAAA, BelegSuche, Geld,
   Datenbank, wanfix32,
-  DruckSpooler, BuchBarKasse;
+  DruckSpooler, BuchBarKasse, ArtikelAusgabeartAuswahl;
 
 {$R *.DFM}
 //
@@ -388,8 +384,7 @@ begin
   BeginHourGlass;
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
   BerechneBeleg(RechnungsBetrag, RechnungsGewicht, CheckBox2.Checked);
-  AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked,
-    CheckBox3.Checked);
+  AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked, CheckBox3.Checked);
   if (AusgabeFName.count > 0) then
   begin
     e_w_DruckBeleg(BELEG_R);
@@ -427,8 +422,8 @@ begin
     // Sicherstellen, dass die Sub Budget Eintragung gemacht wird.
     BelegIntern := TStringList.create;
     FieldByName('INTERN_INFO').AssignTo(BelegIntern);
-    if (Edit2.text <> '*') and ((BelegIntern.values['SUB_BUDGET'] <> '') or
-      (BelegIntern.values['SUB_BUDGET'] <> '*')) then
+    if (Edit2.text <> '*') and ((BelegIntern.values['SUB_BUDGET'] <> '') or (BelegIntern.values['SUB_BUDGET'] <> '*'))
+    then
     begin
       BelegIntern.values['SUB_BUDGET'] := Edit2.text;
       FieldByName('INTERN_INFO').Assign(BelegIntern);
@@ -459,8 +454,7 @@ begin
     begin
 
       // Stornierungs-Aufgaben machen
-      if (FieldByName('MENGE_RECHNUNG').AsInteger +
-        FieldByName('MENGE_GELIEFERT').AsInteger = 0) then
+      if (FieldByName('MENGE_RECHNUNG').AsInteger + FieldByName('MENGE_GELIEFERT').AsInteger = 0) then
       begin
         FieldByName('MENGE_RECHNUNG').clear;
         FieldByName('MENGE_GELIEFERT').clear;
@@ -473,8 +467,7 @@ begin
       // ev. ungesetztes "Netto"
       if (iEinzelPositionNetto <> '') then
         if FieldByName('NETTO').IsNull then
-          FieldByName('NETTO').AsString :=
-            bool2cC(iEinzelPositionNetto = cIni_Activate);
+          FieldByName('NETTO').AsString := bool2cC(iEinzelPositionNetto = cIni_Activate);
 
       // Ausgabeart geändert?
       repeat
@@ -489,26 +482,22 @@ begin
 
         // Setze Text neu
         FieldByName('ARTIKEL').AsString :=
-          cutblank(e_r_Ausgabeart(AUSGABEART_R) +
-          e_r_sqls('select TITEL from ARTIKEL where RID=' +
+          cutblank(e_r_Ausgabeart(AUSGABEART_R) + e_r_sqls('select TITEL from ARTIKEL where RID=' +
           inttostr(ARTIKEL_R)));
 
         // Setze Gewicht neu
-        FieldByName('GEWICHT').AsInteger := e_r_gewicht(AUSGABEART_R,
-          ARTIKEL_R);
+        FieldByName('GEWICHT').AsInteger := e_r_gewicht(AUSGABEART_R, ARTIKEL_R);
 
         // Setze EINHEIT_R neu!
 
         // Setze Preis neu
-        e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R,
-          IB_Query2);
+        e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R, IB_Query2);
 
         if FieldByName('AUSGABEART_R').IsNotNull then
         begin
 
           // Sonstige Verarbeitungs-Optionen
-          case e_r_sql('select VERARBEITUNGSART from AUSGABEART where RID=' +
-            inttostr(AUSGABEART_R)) of
+          case e_r_sql('select VERARBEITUNGSART from AUSGABEART where RID=' + inttostr(AUSGABEART_R)) of
             1:
               begin
                 //
@@ -537,14 +526,14 @@ begin
     begin
 
       if FieldByName('PREIS').IsModified and (ARTIKEL_R > 0) then
-        FormArtikelPreis.SetContext(AUSGABEART_R, ARTIKEL_R,
-          FieldByName('PREIS').AsDouble, FieldByName('RID').AsInteger);
+        FormArtikelPreis.SetContext(AUSGABEART_R, ARTIKEL_R, FieldByName('PREIS').AsDouble,
+          FieldByName('RID').AsInteger);
 
       // Nachträgliche Textänderungen
       if FieldByName('MENGE_GELIEFERT').AsInteger > 0 then
         if FieldByName('ARTIKEL').IsModified then
-          if not(doit(_('Es wurde bereits geliefert!') + #13 +
-            _('Sind Sie sicher das der Text geändert werden kann'))) then
+          if not(doit(_('Es wurde bereits geliefert!') + #13 + _('Sind Sie sicher das der Text geändert werden kann')))
+          then
             FieldByName('ARTIKEL').Revert;
 
       // Faktor Berechungen
@@ -566,8 +555,7 @@ begin
           POSTEN := DataModuleDatenbank.nCursor;
           with POSTEN do
           begin
-            sql.add('SELECT PREIS,FAKTOR FROM POSTEN WHERE RID=' +
-              inttostr(IB_Dataset.FieldByName('RID').AsInteger));
+            sql.add('SELECT PREIS,FAKTOR FROM POSTEN WHERE RID=' + inttostr(IB_Dataset.FieldByName('RID').AsInteger));
             APiFirst;
             _preis := FieldByName('PREIS').AsDouble;
             _faktor := FieldByName('FAKTOR').AsDouble;
@@ -578,23 +566,18 @@ begin
 
           repeat
 
-            if (FieldByName('FAKTOR').AsDouble <> _faktor) and
-              (FieldByName('PREIS').AsDouble = _preis) then
+            if (FieldByName('FAKTOR').AsDouble <> _faktor) and (FieldByName('PREIS').AsDouble = _preis) then
             begin
               // Änderung des Faktors -> Preis anpassen
-              FieldByName('PREIS').AsDouble :=
-                cPreisRundung((_preis / _faktor) * FieldByName('FAKTOR')
-                .AsDouble);
+              FieldByName('PREIS').AsDouble := cPreisRundung((_preis / _faktor) * FieldByName('FAKTOR').AsDouble);
               break;
             end;
 
-            if (FieldByName('PREIS').AsDouble <> _preis) and
-              (FieldByName('FAKTOR').AsDouble = _faktor) and (_preis <> 0) then
+            if (FieldByName('PREIS').AsDouble <> _preis) and (FieldByName('FAKTOR').AsDouble = _faktor) and (_preis <> 0)
+            then
             begin
               // Änderung des Preises -> Faktor anpassen
-              FieldByName('FAKTOR').AsDouble :=
-                cPreisRundung(FieldByName('PREIS').AsDouble /
-                (_preis / _faktor));
+              FieldByName('FAKTOR').AsDouble := cPreisRundung(FieldByName('PREIS').AsDouble / (_preis / _faktor));
               break;
             end;
 
@@ -616,8 +599,8 @@ begin
   Grid2_Col_Anleger := -2;
 end;
 
-procedure TFormBelege.BerechneBeleg(var RechnungsBetrag: double;
-  var RechnungsGewicht: Integer; NurGeliefertes: Boolean);
+procedure TFormBelege.BerechneBeleg(var RechnungsBetrag: double; var RechnungsGewicht: Integer;
+  NurGeliefertes: Boolean);
 var
   BerechneteInfos: TStringList;
   BELEG_R: Integer;
@@ -659,15 +642,14 @@ begin
   begin
 
     IB_Query2.edit;
-    e_w_SetPostenData(IB_Query2.FieldByName('ARTIKEL_R').AsInteger,
-      IB_Query1.FieldByName('PERSON_R').AsInteger, IB_Query2);
+    e_w_SetPostenData(IB_Query2.FieldByName('ARTIKEL_R').AsInteger, IB_Query1.FieldByName('PERSON_R').AsInteger,
+      IB_Query2);
     IB_Query2.post;
 
   end
   else
   begin
-    ShowMessage
-      ('Fehler: Dieser Artikel enthält keine Referenz auf einen Artikel aus dem Bestand!');
+    ShowMessage('Fehler: Dieser Artikel enthält keine Referenz auf einen Artikel aus dem Bestand!');
   end;
 end;
 
@@ -770,8 +752,7 @@ begin
   ShowQuickCalc;
 end;
 
-procedure TFormBelege.SetContext(Kunde_rid: Integer; Beleg_rid: Integer = 0;
-  Posten_Rid: Integer = 0);
+procedure TFormBelege.SetContext(Kunde_rid: Integer; Beleg_rid: Integer = 0; Posten_Rid: Integer = 0);
 begin
   BeginHourGlass;
 
@@ -779,11 +760,9 @@ begin
 
   // Parameter nachtragen
   if (Beleg_rid = 0) and (Posten_Rid <> 0) then
-    Beleg_rid := e_r_sql('select BELEG_R from POSTEN where RID=' +
-      inttostr(Posten_Rid));
+    Beleg_rid := e_r_sql('select BELEG_R from POSTEN where RID=' + inttostr(Posten_Rid));
   if (Kunde_rid = 0) then
-    Kunde_rid := e_r_sql('SELECT PERSON_R FROM BELEG WHERE RID=' +
-      inttostr(Beleg_rid));
+    Kunde_rid := e_r_sql('SELECT PERSON_R FROM BELEG WHERE RID=' + inttostr(Beleg_rid));
 
   PERSON_R := Kunde_rid;
   IB_Query1.Parambyname('CROSSREF').AsInteger := PERSON_R;
@@ -846,8 +825,7 @@ procedure TFormBelege.Label6Click(Sender: TObject);
 begin
   if FormPerson.TakeActual then
   begin
-    IB_Query1.FieldByName('LIEFERANSCHRIFT_R').AsInteger :=
-      FormPerson.IB_Query1.FieldByName('RID').AsInteger;
+    IB_Query1.FieldByName('LIEFERANSCHRIFT_R').AsInteger := FormPerson.IB_Query1.FieldByName('RID').AsInteger;
     IB_Query1.post;
   end;
 end;
@@ -856,16 +834,14 @@ procedure TFormBelege.Label7Click(Sender: TObject);
 begin
   if FormPerson.TakeActual then
   begin
-    IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger :=
-      FormPerson.IB_Query1.FieldByName('RID').AsInteger;
+    IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger := FormPerson.IB_Query1.FieldByName('RID').AsInteger;
     IB_Query1.post;
   end;
 end;
 
 procedure TFormBelege.Panel6Click(Sender: TObject);
 begin
-  FormAusgangsRechnungen.SetContext(IB_Query1.FieldByName('PERSON_R')
-    .AsInteger);
+  FormAusgangsRechnungen.SetContext(IB_Query1.FieldByName('PERSON_R').AsInteger);
 end;
 
 procedure TFormBelege.Button12Click(Sender: TObject);
@@ -902,8 +878,7 @@ end;
 
 procedure TFormBelege.Button14Click(Sender: TObject);
 begin
-  FormPerson.SetContext(IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R')
-    .AsInteger);
+  FormPerson.SetContext(IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger);
 end;
 
 procedure TFormBelege.Button15Click(Sender: TObject);
@@ -928,8 +903,7 @@ var
       EnsureHourGlass;
 
       // Felder vorbelegen
-      FieldByName('BELEG_R').AsInteger := IB_Query1.FieldByName('RID')
-        .AsInteger;
+      FieldByName('BELEG_R').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
       FieldByName('ANLEGER_R').AsInteger := sBearbeiter;
       if (MENGE = 0) then
       begin
@@ -944,21 +918,18 @@ var
       if (ARTIKEL_AA_R >= cRID_FirstValid) then
       begin
         // Ausgabeart
-        AUSGABEART_R := e_r_sql('select AUSGABEART_R from ARTIKEL_AA where RID='
-          + inttostr(ARTIKEL_AA_R));
+        AUSGABEART_R := e_r_sql('select AUSGABEART_R from ARTIKEL_AA where RID=' + inttostr(ARTIKEL_AA_R));
         if (AUSGABEART_R >= cRID_FirstValid) then
           FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
 
         // Einheit
-        EINHEIT_R := e_r_sql('select EINHEIT_R from ARTIKEL_AA where RID=' +
-          inttostr(ARTIKEL_AA_R));
+        EINHEIT_R := e_r_sql('select EINHEIT_R from ARTIKEL_AA where RID=' + inttostr(ARTIKEL_AA_R));
         if (EINHEIT_R >= cRID_FirstValid) then
           FieldByName('EINHEIT_R').AsInteger := EINHEIT_R;
       end;
 
       // Artikeldaten hinzusetzen
-      e_w_SetPostenData(ARTIKEL_R, IB_Query1.FieldByName('PERSON_R').AsInteger,
-        IB_Query2);
+      e_w_SetPostenData(ARTIKEL_R, IB_Query1.FieldByName('PERSON_R').AsInteger, IB_Query2);
       EnsureHourGlass;
 
       // Menge ev. wieder auf "NULL" zwingen -> dadurch fettdruck
@@ -985,25 +956,22 @@ begin
 
       with cARTIKEL do
       begin
-        sql.add('select GEWICHT,EURO,PREIS_R from ARTIKEL where RID=' +
-          inttostr(ARTIKEL_R));
+        sql.add('select GEWICHT,EURO,PREIS_R from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
         APiFirst;
       end;
 
       //
       if cARTIKEL.FieldByName('GEWICHT').IsNull then
-        if doit('Es ist kein Gewicht im Artikel eingetragen!' + #13 +
-          'Jetzt ein Gewicht eingeben?' + #13 + #13 +
+        if doit('Es ist kein Gewicht im Artikel eingetragen!' + #13 + 'Jetzt ein Gewicht eingeben?' + #13 + #13 +
           '<OK> : sie landen in der Artikeleingabe beim richtigen' + #13 +
           ' Artikel, dort das Gewicht nachtragen. "Status gelb"' + #13 +
           ' unbedingt beenden. Artikelfenster schließen, und den' + #13 +
-          ' Artikel nochmal übernehmen (Doppelklick auf Artikel' + #13 +
-          ' oder Taste "übernehmen")!' + #13 +
+          ' Artikel nochmal übernehmen (Doppelklick auf Artikel' + #13 + ' oder Taste "übernehmen")!' + #13 +
           '<ABBRECHEN> : der Artikel wird übernommen. Sie können später' + #13 +
-          ' mit der Taste [A] den Artikel ansteuern und das Gewicht ändern!' +
-          #13 + ' nach der Änderung können die Artikeldaten inerhalb der Belegzeilen'
-          + #13 + ' (=Posten) mit einem rechten Mausklick, dann aktualisieren' +
-          #13 + ' auf den neuesten (Gewichts-)Stand gebracht werden.') then
+          ' mit der Taste [A] den Artikel ansteuern und das Gewicht ändern!' + #13 +
+          ' nach der Änderung können die Artikeldaten inerhalb der Belegzeilen' + #13 +
+          ' (=Posten) mit einem rechten Mausklick, dann aktualisieren' + #13 +
+          ' auf den neuesten (Gewichts-)Stand gebracht werden.') then
         begin
           FormArtikel.SetContext(ARTIKEL_R);
           exit;
@@ -1013,8 +981,7 @@ begin
       ARTIKEL_AA_R := cRID_NULL;
       if cARTIKEL.FieldByName('EURO').IsNull then
         if cARTIKEL.FieldByName('PREIS_R').IsNull then
-          if e_r_sql('select COUNT(RID) from ARTIKEL_AA where ' + ' (ARTIKEL_R='
-            + inttostr(ARTIKEL_R) + ')') > 0 then
+          if e_r_sql('select COUNT(RID) from ARTIKEL_AA where ' + ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')') > 0 then
           begin
             FormArtikelAAA.SetContext(ARTIKEL_R);
             ARTIKEL_AA_R := FormArtikelAAA.ARTIKEL_AA_R;
@@ -1033,8 +1000,8 @@ begin
       cPAKET := DataModuleDatenbank.nCursor;
       with cPAKET do
       begin
-        sql.add('select rid,paket_menge,Paket_Artikel_r,Paket_Artikel_AA_R from artikel where paket_r='
-          + inttostr(ARTIKEL_R));
+        sql.add('select rid,paket_menge,Paket_Artikel_r,Paket_Artikel_AA_R from artikel where paket_r=' +
+          inttostr(ARTIKEL_R));
         sql.add('order by paket_posno');
         APiFirst;
         while not(eof) do
@@ -1043,12 +1010,10 @@ begin
           if FieldByName('PAKET_ARTIKEL_R').IsNotNull then
           begin
             ARTIKEL_AA_R := FieldByName('PAKET_ARTIKEL_AA_R').AsInteger;
-            InsertOne(FieldByName('PAKET_ARTIKEL_R').AsInteger,
-              FieldByName('PAKET_MENGE').AsInteger)
+            InsertOne(FieldByName('PAKET_ARTIKEL_R').AsInteger, FieldByName('PAKET_MENGE').AsInteger)
           end
           else
-            InsertOne(FieldByName('RID').AsInteger, FieldByName('PAKET_MENGE')
-              .AsInteger);
+            InsertOne(FieldByName('RID').AsInteger, FieldByName('PAKET_MENGE').AsInteger);
           ApiNext;
         end;
         close;
@@ -1106,8 +1071,7 @@ begin
       ARTIKEL_R := e_r_VersandKosten(BELEG_R);
       eResult.add('Versandkosten.ARTIKEL_R=' + inttostr(ARTIKEL_R));
       if (ARTIKEL_R >= cRID_FirstValid) then
-        eResult.add(format('Versandkosten=%m',
-          [e_r_PreisBrutto(0, ARTIKEL_R)]));
+        eResult.add(format('Versandkosten=%m', [e_r_PreisBrutto(0, ARTIKEL_R)]));
 
       ShowMessage(HugeSingleLine(eResult));
     end;
@@ -1118,8 +1082,7 @@ begin
         Summe := strtodouble(values['NETTO'])
       else
         Summe := strtodouble(values['SUMME']);
-      Label12.caption := values['LIEFERGEWICHT'] + 'g / ' +
-        values['AUFTRAGSGEWICHT'] + 'g';
+      Label12.caption := values['LIEFERGEWICHT'] + 'g / ' + values['AUFTRAGSGEWICHT'] + 'g';
       StaticText1.caption := format('%m', [abs(Summe)]);
       if (Summe > 0.01) then
       begin
@@ -1134,8 +1097,7 @@ begin
           end;
 
           // Über dem Portofrei Betrag?
-          if (strtodouble(values['AUFTRAGSSUMME']) < e_r_PortoFreiabBrutto
-            (PERSON_R)) then
+          if (strtodouble(values['AUFTRAGSSUMME']) < e_r_PortoFreiabBrutto(PERSON_R)) then
           begin
             StaticText1.Color := clred;
             break;
@@ -1167,8 +1129,7 @@ var
 begin
   // Angaben zur Versand-Art bearbeiten!
   BerechneBeleg(RechnungsBetrag, RechnungsGewicht, false);
-  FormBelegVersand.SetContext(IB_Query1.FieldByName('RID').AsInteger,
-    IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger);
+  FormBelegVersand.SetContext(IB_Query1.FieldByName('RID').AsInteger, IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger);
 end;
 
 var
@@ -1176,15 +1137,14 @@ var
   LastBackgroundCol: TColor;
   LastFontCol: TColor;
 
-procedure TFormBelege.IB_DataSource2StateChanged(Sender: TIB_DataSource;
-  ADataset: TIB_Dataset);
+procedure TFormBelege.IB_DataSource2StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
 begin
   IB_UpdateBar2.Enabled := ADataset.State <> dssedit;
 
 end;
 
-procedure TFormBelege.IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer;
-  AState: TGridDrawState; var AColor: TColor; AFont: TFont);
+procedure TFormBelege.IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
+  var AColor: TColor; AFont: TFont);
 var
   PAPERCOLOR: string;
 
@@ -1235,8 +1195,7 @@ begin
 
 end;
 
-procedure TFormBelege.IB_Grid1GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+procedure TFormBelege.IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
 begin
   if (Grid1_Col_Bearbeiter = -2) then
   begin
@@ -1271,8 +1230,7 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormBelege.IB_Grid2CellGainFocus(Sender: TObject;
-  ACol, ARow: Integer);
+procedure TFormBelege.IB_Grid2CellGainFocus(Sender: TObject; ACol, ARow: Integer);
 begin
   setShortCut(IB_DataSource2);
 end;
@@ -1282,14 +1240,19 @@ begin
   Button7.click;
 end;
 
-procedure TFormBelege.IB_Grid2GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+procedure TFormBelege.ensureGrid2Cols;
 begin
   if (Grid2_Col_Bearbeiter = -2) then
   begin
     Grid2_Col_Bearbeiter := HeaderACol(IB_Grid2, 'BEARBEITER_R');
     Grid2_Col_Anleger := HeaderACol(IB_Grid2, 'ANLEGER_R');
+    Grid2_Col_AusgabeArt := HeaderACol(IB_Grid2, 'AUSGABEART_R');
   end;
+end;
+
+procedure TFormBelege.IB_Grid2GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
+begin
+  ensureGrid2Cols;
   if (ARow > 0) then
   begin
     if (AString <> '') then
@@ -1298,15 +1261,33 @@ begin
   end;
 end;
 
+procedure TFormBelege.IB_Grid2InplaceEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  c: TGridCoord;
+  ARTIKEL_R: Integer;
+begin
+  ensureGrid2Cols;
+  c := IB_Grid2.FocusedCell;
+  if (c.X = Grid2_Col_AusgabeArt) and (Key = VK_SPACE) then
+  begin
+    ARTIKEL_R := IB_Grid2.DataSource.Dataset.FieldByName('ARTIKEL_R').AsInteger;
+    if (ARTIKEL_R >= cRID_FirstValid) then
+    begin
+      FormArtikelAusgabeartAuswahl.exec;
+      if (FormArtikelAusgabeartAuswahl.AUSGABEART_R >= cRID_FirstValid) then
+        IB_Grid2.DataSource.Dataset.FieldByName('AUSGABEART_R').AsInteger := FormArtikelAusgabeartAuswahl.AUSGABEART_R;
+      Key := 0;
+    end;
+  end;
+end;
+
 procedure TFormBelege.Button17Click(Sender: TObject);
 begin
   if not(IB_Query2.FieldByName('ARTIKEL_R').IsNull) then
-    FormBestellArbeitsplatz.SetContext(IB_Query2.FieldByName('ARTIKEL_R')
-      .AsInteger);
+    FormBestellArbeitsplatz.SetContext(IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
-procedure TFormBelege.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer;
-  Rect: TRect; State: TGridDrawState);
+procedure TFormBelege.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
 var
   SubItems: TStringList;
   OutStr: string;
@@ -1379,10 +1360,8 @@ begin
               // Nummer / Lager
               font.size := 8;
               font.Style := [];
-              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Numero)]
-                + ' (' + SubItems[ord(eSS_Rang)] + ')');
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Menge)] + ' (Schw.: ' +
+              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Numero)] + ' (' + SubItems[ord(eSS_Rang)] + ')');
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Menge)] + ' (Schw.: ' +
                 SubItems[ord(eSS_Schwer)] + ')');
             end;
           2:
@@ -1394,19 +1373,16 @@ begin
               font.size := 8;
               font.Style := [];
               TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Titel)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Land)] + '-' + SubItems[ord(eSS_Verlag)] + ' ('
-                + SubItems[ord(eSS_VerlagNo)] + ')')
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Land)] + '-' +
+                SubItems[ord(eSS_Verlag)] + ' (' + SubItems[ord(eSS_VerlagNo)] + ')')
             end;
           3:
             begin
               // arang
               font.size := 8;
               font.Style := [];
-              TextRect(Rect, Rect.left + 5, Rect.top,
-                SubItems[ord(eSS_Komponist)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Arranger)])
+              TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Komponist)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Arranger)])
             end;
           4:
             begin
@@ -1422,13 +1398,11 @@ begin
                 OutStr := '';
 
               // PRO/DMO stimmen
-              OutStr := OutStr + SubItems[ord(eSS_MengeProbe)] + '/' +
-                SubItems[ord(eSS_MengeDemo)];
+              OutStr := OutStr + SubItems[ord(eSS_MengeProbe)] + '/' + SubItems[ord(eSS_MengeDemo)];
 
               //
               TextRect(Rect, Rect.left + 5, Rect.top, OutStr);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_VersendeTag)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_VersendeTag)]);
             end;
           5:
             begin
@@ -1436,8 +1410,7 @@ begin
               font.size := 8;
               font.Style := [];
               TextRect(Rect, Rect.left + 5, Rect.top, SubItems[ord(eSS_Preis)]);
-              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2),
-                SubItems[ord(eSS_Serie)]);
+              TextOut(Rect.left + 5, Rect.top + (rYL(Rect) div 2), SubItems[ord(eSS_Serie)]);
             end;
         else
           FillRect(Rect);
@@ -1564,16 +1537,13 @@ begin
       { [7] }
       SubItem.add(e_r_PreisText(0, FieldByName('RID').AsInteger));
       { [8] }
-      SubItem.add(FieldByName('SCHWER_GRUPPE').AsString + ' ' +
-        FieldByName('SCHWER_DETAILS').AsString);
+      SubItem.add(FieldByName('SCHWER_GRUPPE').AsString + ' ' + FieldByName('SCHWER_DETAILS').AsString);
       { [9] }
       SubItem.add(e_r_LaenderISO(FieldByName('LAND_R').AsInteger));
       { [10] }
-      SubItem.add(inttostr(e_r_Menge(cRID_Unset, cRID_Unset, RID)) + '/' +
-        FieldByName('MINDESTBESTAND').AsString);
+      SubItem.add(inttostr(e_r_Menge(cRID_Unset, cRID_Unset, RID)) + '/' + FieldByName('MINDESTBESTAND').AsString);
       { [11] }
-      SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R')
-        .AsInteger));
+      SubItem.add(e_r_LagerPlatzNameFromLAGER_R(FieldByName('LAGER_R').AsInteger));
       { [12] }
       SubItem.add(VersendetagToStr(e_r_ArtikelVersendetag(0, RID)));
       { [13] }
@@ -1608,8 +1578,7 @@ begin
   if not(assigned(ArtikelSucheWI)) then
   begin
     ArtikelSucheWI := TWordIndex.create(nil);
-    ArtikelSucheWI.LoadFromFile(SearchDir + format(cArtikelSuchindexFName,
-      [cArtikelSuchindexIntern]));
+    ArtikelSucheWI.LoadFromFile(SearchDir + format(cArtikelSuchindexFName, [cArtikelSuchindexIntern]));
   end
   else
   begin
@@ -1711,8 +1680,7 @@ begin
   if not(IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R').IsNull) then
   begin
     Button14.Enabled := true;
-    NewStr := e_r_Person(IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R')
-      .AsInteger);
+    NewStr := e_r_Person(IB_Query1.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger);
   end
   else
   begin
@@ -1775,8 +1743,7 @@ begin
 
 end;
 
-procedure TFormBelege.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormBelege.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if ssAlt in Shift then
     case Key of
@@ -1802,8 +1769,7 @@ begin
   begin
     BerechneBeleg(RechnungsBetrag, RechnungsGewicht, CheckBox2.Checked);
     BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
-    AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked,
-      CheckBox3.Checked);
+    AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked, CheckBox3.Checked);
     if (AusgabeFName.count > 0) then
     begin
       e_w_DruckBeleg(BELEG_R);
@@ -1922,8 +1888,7 @@ end;
 procedure TFormBelege.SpeedButton41Click(Sender: TObject);
 begin
   // Storno
-  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true)
-  then
+  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true) then
   begin
     BeginHourGlass;
     e_w_BelegStorno(IB_Query1.FieldByName('RID').AsInteger);
@@ -1948,8 +1913,7 @@ end;
 
 procedure TFormBelege.SpeedButton5Click(Sender: TObject);
 begin
-  openShell('mailto:' + e_r_sqls('select EMAIL from PERSON where RID=' +
-    inttostr(PERSON_R)));
+  openShell('mailto:' + e_r_sqls('select EMAIL from PERSON where RID=' + inttostr(PERSON_R)));
 end;
 
 procedure TFormBelege.BucheVersand;
@@ -1968,16 +1932,12 @@ begin
   if VerbuchenOK then
   begin
 
-    VersenderName :=
-      e_r_sqls('select BEZEICHNUNG from VERSENDER where STANDARD=''' +
-      cC_True + '''');
+    VersenderName := e_r_sqls('select BEZEICHNUNG from VERSENDER where STANDARD=''' + cC_True + '''');
     if (VersenderName <> '') then
-      LabelOK := doit(_('Wollen Sie einen') + #13 + VersenderName + #13 +
-        _('Datensatz schreiben'));
+      LabelOK := doit(_('Wollen Sie einen') + #13 + VersenderName + #13 + _('Datensatz schreiben'));
 
     BeginHourGlass;
-    OutFName := e_w_BelegBuchen(IB_Query1.FieldByName('RID').AsInteger,
-      LabelOK);
+    OutFName := e_w_BelegBuchen(IB_Query1.FieldByName('RID').AsInteger, LabelOK);
     IB_Query1.refresh;
     IB_Query1AfterScroll(IB_Query1);
     EndHourGlass;
@@ -2071,8 +2031,7 @@ begin
   else
   begin
 
-    VerbuchenOK :=
-      doit(_('Darf der Beleg ins Dokumentverzeichnis kopiert werden'));
+    VerbuchenOK := doit(_('Darf der Beleg ins Dokumentverzeichnis kopiert werden'));
     if VerbuchenOK then
     begin
 
@@ -2082,9 +2041,7 @@ begin
         Arbeitszeiten.LoadFromFile(OutPath + cHTML_ArbeitszeitFName);
         ARBEITSZEIT_R := Arbeitszeiten.AsIntegerList('ARBEITSZEIT_R');
         if (ARBEITSZEIT_R.count > 0) then
-          ArbeitszeitOK :=
-            doit(_('Es gibt ' + inttostr(ARBEITSZEIT_R.count) +
-            ' Arbeitszeiten!' + #13 +
+          ArbeitszeitOK := doit(_('Es gibt ' + inttostr(ARBEITSZEIT_R.count) + ' Arbeitszeiten!' + #13 +
             'Dürfen diese als verbucht markiert werden'));
       end;
 
@@ -2104,11 +2061,9 @@ begin
           { } cHTML_ArbeitszeitFName);
       end;
 
-      AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked,
-        CheckBox3.Checked);
+      AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked, CheckBox3.Checked);
       e_w_DruckBeleg(BELEG_R);
-      OutFName := inttostrN(BELEG_R, 10) + '-' + BSTATUS + inttostr(GENERATION)
-        + '.html';
+      OutFName := inttostrN(BELEG_R, 10) + '-' + BSTATUS + inttostr(GENERATION) + '.html';
       FileCopy(AusgabeFName[0], OutPath + OutFName);
 
       //
@@ -2120,10 +2075,8 @@ begin
       begin
         refresh;
         edit;
-        FieldByName('RECHNUNGS_BETRAG').AsDouble :=
-          FieldByName('RECHNUNGS_BETRAG').AsDouble + RechnungsBetrag;
-        FieldByName('DAVON_BEZAHLT').AsDouble := FieldByName('DAVON_BEZAHLT')
-          .AsDouble + RechnungsBetrag;
+        FieldByName('RECHNUNGS_BETRAG').AsDouble := FieldByName('RECHNUNGS_BETRAG').AsDouble + RechnungsBetrag;
+        FieldByName('DAVON_BEZAHLT').AsDouble := FieldByName('DAVON_BEZAHLT').AsDouble + RechnungsBetrag;
         post;
       end;
 
@@ -2137,8 +2090,7 @@ end;
 
 procedure TFormBelege.SpeedButton6Click(Sender: TObject);
 begin
-  FormPreAuftrag.SetValues(IB_Query1.FieldByName('MEDIUM').AsString,
-    IB_Query1.FieldByName('MOTIVATION').AsString);
+  FormPreAuftrag.SetValues(IB_Query1.FieldByName('MEDIUM').AsString, IB_Query1.FieldByName('MOTIVATION').AsString);
   if (FormPreAuftrag.execute <> -1) then
   begin
     with IB_Query1 do
@@ -2163,8 +2115,7 @@ var
     POSTEN := DataModuleDatenbank.nDSQL;
     with POSTEN do
     begin
-      sql.add('UPDATE POSTEN SET POSNO = ' + inttostr(POSNO) + ' WHERE RID = ' +
-        inttostr(RID));
+      sql.add('UPDATE POSTEN SET POSNO = ' + inttostr(POSNO) + ' WHERE RID = ' + inttostr(RID));
       execute;
     end;
     POSTEN.free;
@@ -2215,8 +2166,7 @@ var
     POSTEN := DataModuleDatenbank.nDSQL;
     with POSTEN do
     begin
-      sql.add('UPDATE POSTEN SET POSNO = ' + inttostr(POSNO) + ' WHERE RID = ' +
-        inttostr(RID));
+      sql.add('UPDATE POSTEN SET POSNO = ' + inttostr(POSNO) + ' WHERE RID = ' + inttostr(RID));
       execute;
     end;
     POSTEN.free;
@@ -2262,8 +2212,7 @@ begin
   POSTEN := DataModuleDatenbank.nDSQL;
   with POSTEN do
   begin
-    sql.add('UPDATE POSTEN SET POSNO = RID WHERE BELEG_R = ' +
-      IB_Query2.FieldByName('BELEG_R').AsString);
+    sql.add('UPDATE POSTEN SET POSNO = RID WHERE BELEG_R = ' + IB_Query2.FieldByName('BELEG_R').AsString);
     execute;
   end;
   POSTEN.free;
@@ -2328,8 +2277,7 @@ begin
         // Noch gar nix eingegeben
         if IB_Query2.IsEmpty then
           break;
-        if (IB_Query2.FieldByName('ARTIKEL').AsString = '*') or
-          (IB_Query2.FieldByName('ARTIKEL').AsString = '') or
+        if (IB_Query2.FieldByName('ARTIKEL').AsString = '*') or (IB_Query2.FieldByName('ARTIKEL').AsString = '') or
           (IB_Query2.FieldByName('MENGE').AsInteger = 0) then
         begin
           DoInsert := false;
@@ -2342,8 +2290,7 @@ begin
         if DoInsert then
           Insert;
         edit;
-        FieldByName('ARTIKEL').AsString := cTIER.FieldByName('ART').AsString +
-          ' ' + cTIER.FieldByName('NAME').AsString;
+        FieldByName('ARTIKEL').AsString := cTIER.FieldByName('ART').AsString + ' ' + cTIER.FieldByName('NAME').AsString;
         FieldByName('TIER_R').AsInteger := TIER_R;
         FieldByName('MWST').AsDouble := 0;
       end;
@@ -2367,8 +2314,7 @@ begin
         FieldByName('AUSFUEHRUNG').AsDateTime := now
       else
         FieldByName('AUSFUEHRUNG').AsDateTime :=
-          long2datetime(DatePlus(datetime2long(FieldByName('AUSFUEHRUNG')
-          .AsDateTime), -1));
+          long2datetime(DatePlus(datetime2long(FieldByName('AUSFUEHRUNG').AsDateTime), -1));
     end;
   end;
 end;
@@ -2406,11 +2352,9 @@ begin
     showmodal;
     if (BELEG_R >= cRID_FirstValid) then
     begin
-      PERSON_TO_R := e_r_sql('select PERSON_R from BELEG where RID=' +
-        inttostr(BELEG_R));
+      PERSON_TO_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
       if (PERSON_R = PERSON_TO_R) then
-        e_w_JoinBeleg(BELEG_R, FormBelege.IB_Query1.FieldByName('RID')
-          .AsInteger)
+        e_w_JoinBeleg(BELEG_R, FormBelege.IB_Query1.FieldByName('RID').AsInteger)
       else
         e_w_MoveBeleg(BELEG_R, PERSON_TO_R);
 
@@ -2449,14 +2393,12 @@ begin
   end;
 end;
 
-procedure TFormBelege.IB_Query2ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormBelege.IB_Query2ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
   begin
-    if doit(_('Posten') + #13 + FieldByName('ARTIKEL').AsString + #13 +
-      _('wirklich löschen'), true) then
+    if doit(_('Posten') + #13 + FieldByName('ARTIKEL').AsString + #13 + _('wirklich löschen'), true) then
     begin
       e_w_preDeletePosten(FieldByName('RID').AsInteger);
       Confirmed := true;
@@ -2464,8 +2406,7 @@ begin
   end;
 end;
 
-procedure TFormBelege.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormBelege.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 var
   BELEG_R: Integer;
 begin
@@ -2481,8 +2422,7 @@ begin
       break;
 
     if not(e_r_BelegeAusgeglichen(BELEG_R)) then
-      if not(doit(_('Der Beleg ist nicht ausgeglichen!|' +
-        'Beleg dennoch löschen'), true)) then
+      if not(doit(_('Der Beleg ist nicht ausgeglichen!|' + 'Beleg dennoch löschen'), true)) then
         break;
 
     e_w_preDeleteBeleg(BELEG_R);
@@ -2524,8 +2464,7 @@ begin
   BeginHourGlass;
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
   BerechneBeleg(RechnungsBetrag, RechnungsGewicht, CheckBox2.Checked);
-  AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked,
-    CheckBox3.Checked);
+  AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked, CheckBox3.Checked);
   if (AusgabeFName.count > 0) then
   begin
     e_w_DruckBeleg(BELEG_R);
@@ -2535,7 +2474,6 @@ begin
   CheckBox2.Checked := false;
   IB_Query1.refresh;
   EndHourGlass;
-
 end;
 
 procedure TFormBelege.Button3Click(Sender: TObject);
@@ -2581,8 +2519,8 @@ begin
   begin
     with IB_Dataset do
     begin
-      Button19.Enabled := e_r_ErwarteteMenge(FieldByName('AUSGABEART_R')
-        .AsInteger, FieldByName('ARTIKEL_R').AsInteger) > 0;
+      Button19.Enabled := e_r_ErwarteteMenge(FieldByName('AUSGABEART_R').AsInteger,
+        FieldByName('ARTIKEL_R').AsInteger) > 0;
       Button7.Enabled := FieldByName('ARTIKEL_R').IsNotNull;
       Button27.Enabled := Button7.Enabled;
       Button29.Enabled := Button7.Enabled;
@@ -2599,18 +2537,15 @@ begin
   sList := TStringList.create;
   sBBelege := TStringList.create;
   with IB_Query2 do
-    e_r_ErwarteteMenge(FieldByName('AUSGABEART_R').AsInteger,
-      FieldByName('ARTIKEL_R').AsInteger, sList);
+    e_r_ErwarteteMenge(FieldByName('AUSGABEART_R').AsInteger, FieldByName('ARTIKEL_R').AsInteger, sList);
   if (sList.count > 0) then
   begin
     for n := 0 to pred(sList.count) do
       sBBelege.add(nextp(sList[n], ';', 1));
     RemoveDuplicates(sBBelege);
     if (sBBelege.count > 1) then
-      ShowMessage(_('Warnung: Der Artikel wird in mehreren Ordern erwartet:') +
-        #13 + HugeSingleLine(sBBelege, #13));
-    FormBBelege.SetContext(0, strtoint(nextp(sList[0], ';', 1)),
-      strtoint(nextp(sList[0], ';', 0)));
+      ShowMessage(_('Warnung: Der Artikel wird in mehreren Ordern erwartet:') + #13 + HugeSingleLine(sBBelege, #13));
+    FormBBelege.SetContext(0, strtoint(nextp(sList[0], ';', 1)), strtoint(nextp(sList[0], ';', 0)));
   end;
   sBBelege.free;
   sList.free;
@@ -2645,8 +2580,7 @@ begin
     BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
     ImportL := TStringList.create;
     ImportL.LoadFromFile(OpenDialog1.FileName);
-    if doit(_('Soll(en) jetzt') + ' ' + inttostr(pred(ImportL.count)) + ' ' +
-      _('Beleg(e) angelegt werden')) then
+    if doit(_('Soll(en) jetzt') + ' ' + inttostr(pred(ImportL.count)) + ' ' + _('Beleg(e) angelegt werden')) then
       for n := 1 to pred(ImportL.count) do
         e_w_CopyBeleg(BELEG_R, strtointdef(nextp(ImportL[n], ';', 0), -1));
     ImportL.free;
@@ -2669,18 +2603,14 @@ end;
 procedure TFormBelege.SpeedButton12Click(Sender: TObject);
 begin
   SaveHeaderSettings(IB_Grid2, AnwenderPath + HeaderSettingsFName(IB_Grid2));
-  IB_Query2.sql.SaveToFile(DiagnosePath + HeaderSettingsFName(IB_Grid2) +
-    '.sql.txt');
-  IB_Query2.FieldsDisplayWidth.SaveToFile
-    (DiagnosePath + HeaderSettingsFName(IB_Grid2) + '.width.txt');
+  IB_Query2.sql.SaveToFile(DiagnosePath + HeaderSettingsFName(IB_Grid2) + '.sql.txt');
+  IB_Query2.FieldsDisplayWidth.SaveToFile(DiagnosePath + HeaderSettingsFName(IB_Grid2) + '.width.txt');
 end;
 
-procedure TFormBelege.SpeedButton12MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormBelege.SpeedButton12MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true)
-    then
+    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid2));
       IB_Query2.close;
@@ -2710,15 +2640,14 @@ begin
   BeginHourGlass;
   sBudgetSettings := TStringList.create;
   IB_Query1.FieldByName('INTERN_INFO').AssignTo(sBudgetSettings);
-  e_w_BudgetEinfuegen(IB_Query1.FieldByName('RID').AsInteger, Edit2.text,
-    cRID_NULL, sBudgetSettings);
+  e_w_BudgetEinfuegen(IB_Query1.FieldByName('RID').AsInteger, Edit2.text, cRID_NULL, sBudgetSettings);
   IB_Query2.refresh;
   Button5Click(Sender);
   sBudgetSettings.free;
   EndHourGlass;
   openShell(
-  {} cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger) +
-  {} cHTML_ArbeitszeitFName);
+    { } cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger) +
+    { } cHTML_ArbeitszeitFName);
 end;
 
 procedure TFormBelege.SpeedButton14Click(Sender: TObject);
@@ -2742,8 +2671,7 @@ begin
   cARTIKEL := DataModuleDatenbank.nCursor;
   with cARTIKEL do
   begin
-    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' +
-      long2date(DatePlus(DateGet, -iNeuanlageZeitraum)) + '''');
+    sql.add('select RID from ARTIKEL where ERSTEINTRAG>''' + long2date(DatePlus(DateGet, -iNeuanlageZeitraum)) + '''');
     APiFirst;
     while not(eof) do
     begin
@@ -2770,12 +2698,10 @@ begin
   cCOL_PAPERCOLOR := 0;
 end;
 
-procedure TFormBelege.SpeedButton17MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFormBelege.SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true)
-    then
+    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid1));
       IB_Query1.close;
@@ -2834,8 +2760,7 @@ begin
 
     // jetzt die neuen Nummern setzen
     for n := 0 to pred(qRids.count) do
-      e_x_sql('update POSTEN set POSNO=' + inttostr(qPosNo[n]) + ' where RID=' +
-        inttostr(qRids[n]));
+      e_x_sql('update POSTEN set POSNO=' + inttostr(qPosNo[n]) + ' where RID=' + inttostr(qRids[n]));
 
     qRids.free;
     qPosNo.free;

@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.147 (03.02.16) Andreas Filsinger
+
+ Neu: Beleg: Posten: Zeilen mit Artikel-Referenz: In der Spalte Ausgabeart: <Leertaste> ruft eine Schreibhilfe auf
+
+ Neu: Ausgabeart: Formular mit einer inkrementellen Suche steht zur Verfügung
+
 Rev 8.146 (03.02.16) Andreas Filsinger
 
  Bug: cOrgaMon: Foto: "XMLRPC.log" wurde ins Anwendungsverzeichnis geschrieben

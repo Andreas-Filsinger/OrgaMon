@@ -441,9 +441,9 @@ object FormBelege: TFormBelege
         end
         object IB_Grid2: TIB_Grid
           Left = 0
-          Top = 48
+          Top = 31
           Width = 923
-          Height = 171
+          Height = 188
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -453,6 +453,7 @@ object FormBelege: TFormBelege
           TabOrder = 0
           OnCellGainFocus = IB_Grid2CellGainFocus
           OnGetDisplayText = IB_Grid2GetDisplayText
+          OnInplaceEditKeyDown = IB_Grid2InplaceEditKeyDown
         end
         object IB_NavigationBar2: TIB_NavigationBar
           Left = 71
@@ -1214,6 +1215,15 @@ object FormBelege: TFormBelege
       ShowHint = True
       TabOrder = 5
       OnClick = Button32Click
+    end
+    object IB_Edit1: TIB_Edit
+      Left = 67
+      Top = 6
+      Width = 121
+      Height = 21
+      DataField = 'AUSGABEART_R'
+      DataSource = IB_DataSource2
+      TabOrder = 6
     end
   end
   object Panel1: TPanel
@@ -2250,7 +2260,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100140110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100180110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
