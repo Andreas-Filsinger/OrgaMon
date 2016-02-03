@@ -158,6 +158,9 @@ type
     constructor Create;
     destructor Destroy; override;
 
+    // load cOrgaMon.ini
+    procedure readIni(SectionName: string = '');
+
     // SERVICE: "info"
     function info(sParameter: TStringList): TStringList;
 
@@ -262,7 +265,7 @@ uses
   BinLager32, CareTakerClient, html,
   gplists, SolidFTP, idGlobal,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
-  srvXMLRPC;
+  srvXMLRPC, IniFiles;
 
 { TJonDaExec }
 
@@ -2471,6 +2474,36 @@ begin
 
   AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';' + inttostr(RDTSCms - StartTime) + 'ms',
     MyProgramPath + cJonDaServer_XMLRPCLogFName);
+
+end;
+
+procedure TJonDaExec.readIni(SectionName: string = '');
+var
+   MyIni: TIniFile;
+begin
+    // Ini-Datei öffnen
+    MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
+    with MyIni do
+    begin
+    // Fallback auf [~UserName~]
+    if (SectionName = '') then
+      SectionName := UserName;
+
+
+      // Fall Back auf [System]
+      if (ReadString(SectionName, 'ftpuser', '') = '') then
+        SectionName := 'System';
+
+      // Ftp-Bereich für diesen Server
+      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+      iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')), 3049);
+      DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
+
+      start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+    end;
+    MyIni.free;
 
 end;
 

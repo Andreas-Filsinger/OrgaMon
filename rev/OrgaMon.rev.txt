@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.146 (03.02.16) Andreas Filsinger
+
+ Bug: cOrgaMon: Foto: "XMLRPC.log" wurde ins Anwendungsverzeichnis geschrieben
+
 Rev 8.145 (01.02.16) Andreas Filsinger
 
  Neu: App-Service: neue Pfad-Struktur

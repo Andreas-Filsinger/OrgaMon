@@ -135,8 +135,7 @@ begin
       writeln('ERROR: DataBaseName= ist leer');
       halt;
     end;
-    write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) +
-      ' ... ');
+    write(anfix32.UserName + ' oeffnet ' + string(UserName) + '@' + string(iDataBaseName) + ' ... ');
     Connect;
     if not(Connected) then
     begin
@@ -206,11 +205,22 @@ begin
   MyFotoExec := TownFotoExec.Create;
   MyFotoExec.readIni;
 
+    // DebugMode?
+    if IsParam('-al') then
+    begin
+      writeln('DebugMode @' + DiagnosePath);
+      DebugMode := true;
+      DebugLogPath := DiagnosePath;
+    end else
+    begin
+      SolidFTP_SingleStepLog := false;
+    end;
+
   TimerWartend := 0;
   TimerInit := 0;
 
   // sofortiges Starten sicherstellen? (direct start)
-  if isParam('+ds') then
+  if IsParam('+ds') then
     TimerInit := cKikstart_delay * 60 * 1000;
 
   while true do
@@ -376,27 +386,32 @@ procedure RunAsServiceApp;
 var
   XMLRPC: TXMLRPC_Server;
   JonDa: TJonDaExec;
-  MyIni: TIniFile;
   SectionName: string;
 
 begin
   try
-    SectionName := getParam('Id');
-    if (SectionName = '') then
-      SectionName := UserName;
 
     JonDa := TJonDaExec.Create;
+    with JonDa do
+    begin
+      Option_Console := true;
+      SectionName := getParam('Id');
+      JonDa.readIni(SectionName);
+    end;
 
     // DebugMode?
     if IsParam('-al') then
     begin
-      writeln('DebugMode @' + MyProgramPath);
+      writeln('DebugMode @' + DiagnosePath);
       DebugMode := true;
-      DebugLogPath := globals.MyProgramPath;
+      DebugLogPath := DiagnosePath;
+    end else
+    begin
+      SolidFTP_SingleStepLog := false;
     end;
     if IsParam('-at') then
     begin
-      writeln('TimingStatistics @' + MyProgramPath);
+      writeln('TimingStatistics @' + DiagnosePath);
     end;
 
     // lade IMEI
@@ -415,33 +430,12 @@ begin
       writeln(InttoStr(RowCount));
     end;
 
-    // Ini-Datei öffnen
-    MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
-    with MyIni do
-    begin
-      // Fall Back auf "System"
-      if (ReadString(SectionName, 'ftpuser', '') = '') then
-        SectionName := 'System';
-
-      // Ftp-Bereich für diesen Server
-      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-      iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')), 3049);
-      DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
-
-      JonDa.start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
-      JonDa.Option_Console := true;
-    end;
-    MyIni.free;
-
-  // Einstellungen weitergeben
-  SolidFTP.SolidFTP_LogDir := DiagnosePath;
+    // Einstellungen weitergeben
+    SolidFTP.SolidFTP_LogDir := DiagnosePath;
     writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost + ' für FTP');
 
     // Log den Neustart
-    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' +
-      SectionName + ']');
+    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' gestartet');
 
     repeat
@@ -458,7 +452,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } MyProgramPath + cDbPath + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } MyProgramPath + cDBPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end
@@ -475,7 +469,7 @@ begin
         write('Öffne ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
-        DiagnosePath := MyProgramPath;
+        DiagnosePath := globals.DiagnosePath;
         LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
 
         // Methoden registrieren
@@ -502,7 +496,6 @@ begin
     on E: Exception do
       writeln(E.ClassName, ': ', E.Message);
   end;
-
 end;
 
 begin
