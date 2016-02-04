@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.148 (03.02.16) Andreas Filsinger
+
+ Neu: OLAP: save as html: Angabe einer Zieldatei möglich
+
+ Bug: Foto-Service: Ausstehend erzeugte "index.html", nun "ausstehende-fotos.html"
+
 Rev 8.147 (03.02.16) Andreas Filsinger
 
  Neu: Beleg: Posten: Zeilen mit Artikel-Referenz: In der Spalte Ausgabeart: <Leertaste> ruft eine Schreibhilfe auf
