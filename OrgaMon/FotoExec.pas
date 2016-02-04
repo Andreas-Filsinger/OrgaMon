@@ -1621,8 +1621,8 @@ begin
     end;
 
     sTabelle.addCol('Gerät', sMonteure);
-    sTabelle.SaveToHTML(pWebPath + 'index.html');
-    sTabelle.SaveToFile(pWebPath + 'ausstehende-fotos.csv');
+    sTabelle.SaveToHTML(pWebPath + 'ausstehende-fotos.html');
+//    sTabelle.SaveToFile(pWebPath + 'ausstehende-fotos.csv');
 
   except
 

@@ -101,10 +101,8 @@ type
     // Haupt - Auswerte Funktionen
     procedure StandardParameter(s: TStrings);
     procedure DoContextOLAP(g: TIB_Grid); overload;
-    procedure DoContextOLAP(GlobalVars, OLAPScript: TStringList;
-      Connection: TIB_Connection); overload;
-    procedure DoContextOLAP(FName: string; GlobalVar: TStringList = nil;
-      XLS: TXLSFile = nil); overload;
+    procedure DoContextOLAP(GlobalVars, OLAPScript: TStringList; Connection: TIB_Connection); overload;
+    procedure DoContextOLAP(FName: string; GlobalVar: TStringList = nil; XLS: TXLSFile = nil); overload;
     function OLAP(FName: string): TgpIntegerList;
 
     // Tool Funktionen
@@ -382,6 +380,7 @@ var
   xlsAutoOpen: boolean;
   xlsAutoPrint: boolean;
   xlsAutoHTML: boolean;
+  xlsHTMLCopy: string;
   excelFormats: TStringList;
 
   // delete
@@ -852,8 +851,7 @@ var
 
       if (ParamFunction = 'VerlagsRabatt') then
       begin
-        result := format('%.1f', [e_r_VerlagsRabatt(strtointdef(ParamVal1, 0),
-          strtointdef(ParamVal2, 0))]);
+        result := format('%.1f', [e_r_VerlagsRabatt(strtointdef(ParamVal1, 0), strtointdef(ParamVal2, 0))]);
         break;
       end;
 
@@ -917,12 +915,11 @@ var
         else
         begin
           CompleteStrL := e_r_Adressat(strtointdef(ParamVal1, 0));
-          result := CSVsecure(CompleteStrL[0]) + cOLAPcsvSeparator + CSVsecure(CompleteStrL[1]) +
-            cOLAPcsvSeparator + CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[3]) + cOLAPcsvSeparator +
+          result := CSVsecure(CompleteStrL[0]) + cOLAPcsvSeparator + CSVsecure(CompleteStrL[1]) + cOLAPcsvSeparator +
+            CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator + CSVsecure(CompleteStrL[3]) + cOLAPcsvSeparator +
             CSVsecure(e_r_sqls('SELECT STRASSE from ANSCHRIFT where RID' +
-            '=(SELECT PRIV_ANSCHRIFT_R from PERSON where RID=' + ParamVal1 + ')')) +
-            cOLAPcsvSeparator + CSVsecure(e_r_Ort(strtointdef(ParamVal1, 0)));
+            '=(SELECT PRIV_ANSCHRIFT_R from PERSON where RID=' + ParamVal1 + ')')) + cOLAPcsvSeparator +
+            CSVsecure(e_r_Ort(strtointdef(ParamVal1, 0)));
           CompleteStrL.free;
         end;
         break;
@@ -945,8 +942,7 @@ var
         // könnte auch ein TimeStamp sein, sooo genau wollen wir das nicht!
         EinDatum := date2long(nextp(ParamVal1, ' ', 0));
         if DateOK(EinDatum) then
-          result := inttostrN(extractYear(EinDatum), 4) + '_KW' +
-            inttostrN(anfix32.Kalenderwoche(EinDatum), 2);
+          result := inttostrN(extractYear(EinDatum), 4) + '_KW' + inttostrN(anfix32.Kalenderwoche(EinDatum), 2);
         break;
       end;
 
@@ -1055,8 +1051,7 @@ var
 
       if (ParamFunction = 'Lohn') then
       begin
-        result := e_r_LohnKalkulation(strtodoubledef(ParamVal1, 0),
-          date2long('01.' + ResolveParameter('$MonatJahr')));
+        result := e_r_LohnKalkulation(strtodoubledef(ParamVal1, 0), date2long('01.' + ResolveParameter('$MonatJahr')));
         break;
       end;
 
@@ -1240,9 +1235,8 @@ begin
       DebugInfos.add('-- Parameter --');
       DebugInfos.AddStrings(ParameterL);
       DebugInfos.add('-- Global Vars --');
-      DebugInfos.addStrings(GlobalVars);
-      AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt',
-        DatumUhr);
+      DebugInfos.AddStrings(GlobalVars);
+      AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt', DatumUhr);
       DebugInfos.free;
     end;
 
@@ -1541,6 +1535,7 @@ begin
         xlsAutoOpen := false;
         xlsAutoPrint := false;
         xlsAutoHTML := false;
+        xlsHTMLCopy := '';
         InitJoin;
         LoadJoin;
         continue;
@@ -1568,8 +1563,11 @@ begin
                 xlsAutoOpen := true;
               if (Line = 'print') then
                 xlsAutoPrint := true;
-              if (Line = 'save as html') then
+              if (pos('save as html', Line) = 1) then
+              begin
                 xlsAutoHTML := true;
+                xlsHTMLCopy := ResolveParameter(cutblank(nextp(Line, 'save as html', 1)));
+              end;
 
               if (pos('=', Line) > 0) then
                 excelFormats.add(Line);
@@ -1577,9 +1575,15 @@ begin
             else
             begin
               if xlsAutoHTML then
-                SaveJoinAsHTML
+              begin
+                SaveJoinAsHTML;
+                if (xlsHTMLCopy <> '') then
+                  FileCopy(RohdatenHTMLFName(pred(RohdatenCount)), xlsHTMLCopy);
+              end
               else
+              begin
                 SaveJoinAsExcel;
+              end;
 
               if xlsAutoOpen then
                 if (getValueofParameter('$ExcelOpen') <> cINI_deactivate) then
@@ -1724,8 +1728,7 @@ begin
 
               // Ist es ein Select-Statement oder ein Script?
               if (pos('SELECT', AnsiUpperCase(cutblank(Line))) = 1) then
-                ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator,
-                  AppendMode)
+                ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, AppendMode)
               else
                 ExportScript(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator);
 
@@ -1781,8 +1784,7 @@ begin
               AllHeader := TStringList(BigJoin[0]);
               col_Question := AllHeader.indexof(nextp(Line, ',', 0));
               if (col_Question = -1) then
-                raise Exception.create('Referenzierende Spalte "' + nextp(Line, ',', 0) +
-                  '" nicht gefunden!');
+                raise Exception.create('Referenzierende Spalte "' + nextp(Line, ',', 0) + '" nicht gefunden!');
 
               // Index und Antwort suchen
               col_ConsultAnswer := -1;
@@ -1811,23 +1813,22 @@ begin
                 until false;
               end;
               if (col_ConsultIndex = -1) then
-                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' +
-                  LoadFname + '" nicht gefunden!');
+                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' + LoadFname +
+                  '" nicht gefunden!');
               if (col_ConsultAnswer = -1) then
-                raise Exception.create('Antwort Spalte "' + nextp(Line, ',', 2) + '" in Datei "' +
-                  LoadFname + '" nicht gefunden!');
+                raise Exception.create('Antwort Spalte "' + nextp(Line, ',', 2) + '" in Datei "' + LoadFname +
+                  '" nicht gefunden!');
 
               // Antwort Index aufbauen
               for m := 1 to pred(JoinL.count) do
-                sl_ConsultIndex.addobject(nextp(JoinL[m], cOLAPcsvSeparator, col_ConsultIndex),
-                  pointer(m));
+                sl_ConsultIndex.addobject(nextp(JoinL[m], cOLAPcsvSeparator, col_ConsultIndex), pointer(m));
               sl_ConsultIndex.sort;
               sl_ConsultIndex.sorted := true;
 
               // Doppelte sollten hier vermieden werden.
               if (RemoveDuplicates(sl_ConsultIndex) > 0) then
-                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' +
-                  LoadFname + '" hat doppelte Einträge!');
+                raise Exception.create('Referenz Spalte "' + nextp(Line, ',', 1) + '" in Datei "' + LoadFname +
+                  '" hat doppelte Einträge!');
 
               // Nun den Referenzierlauf
               for m := 1 to pred(BigJoin.count) do
@@ -2205,8 +2206,7 @@ begin
                     if (pos('SELECT', AnsiUpperCase(cutblank(ExecuteStatement))) = 1) then
                     begin
                       // select part
-                      ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount),
-                        cOLAPcsvSeparator, true);
+                      ExportTable(ExecuteStatement, RohdatenFName(RohdatenCount), cOLAPcsvSeparator, true);
                     end
                     else
                     begin
@@ -2270,14 +2270,12 @@ begin
               LoadSQL := '';
               for m := pred(SpaltenNamen.count) downto 0 do
               begin
-                LoadSQL := LoadSQL + nextp(SpaltenNamen[m], ' ', 0) + ' ' +
-                  nextp(SpaltenNamen[m], ' ', 1);
+                LoadSQL := LoadSQL + nextp(SpaltenNamen[m], ' ', 0) + ' ' + nextp(SpaltenNamen[m], ' ', 1);
                 if (m <> 0) then
                   LoadSQL := LoadSQL + ', ';
               end;
 
-              e_x_sql('create table ' + e_r_OLAP_Tabellenname(RohdatenCount) + ' ( ' +
-                LoadSQL + ')');
+              e_x_sql('create table ' + e_r_OLAP_Tabellenname(RohdatenCount) + ' ( ' + LoadSQL + ')');
 
               LoadSQL := '';
               for m := pred(SpaltenNamen.count) downto 0 do
@@ -2311,8 +2309,7 @@ begin
               begin
 
                 //
-                LoadSQLinsert := 'insert into ' + e_r_OLAP_Tabellenname(RohdatenCount) + '(' +
-                  LoadSQL + ') values (';
+                LoadSQLinsert := 'insert into ' + e_r_OLAP_Tabellenname(RohdatenCount) + '(' + LoadSQL + ') values (';
 
                 //
                 for k := 0 to pred(SpaltenNamen.count) do
@@ -2321,8 +2318,7 @@ begin
                   case LoadSpalteType[k] of
                     SQL_TEXT:
                       begin
-                        LoadSQLinsert := LoadSQLinsert + '''' + TStringList(BigJoin[m])
-                          [LoadSpalte[k]] + '''';
+                        LoadSQLinsert := LoadSQLinsert + '''' + TStringList(BigJoin[m])[LoadSpalte[k]] + '''';
 
                       end;
                   else
@@ -2583,8 +2579,7 @@ begin
               // Unscharf machen
               for m := 1 to pred(BigJoin.count) do
               begin
-                MonatsName := AssignDate(date2long(nextp(TStringList(BigJoin[m])[AssignDatumCol],
-                  ' ', 0)));
+                MonatsName := AssignDate(date2long(nextp(TStringList(BigJoin[m])[AssignDatumCol], ' ', 0)));
                 MonatsN := MonatsNamen.indexof(MonatsName);
                 AssignWert := format('%.2m', [strtodouble(TStringList(BigJoin[m])[AssignWertCol])]);
                 TStringList(BigJoin[m])[AssignWertCol] := AssignWert;
@@ -2699,7 +2694,7 @@ begin
                   // Nun die Werte zur Tabelle dazu!
                   CompleteResultL := split(CompleteResult, cOLAPcsvSeparator);
                   TStringList(BigJoin[m]).AddStrings(CompleteResultL);
-                  CompleteResultL.Free;
+                  CompleteResultL.free;
                 end;
 
               end;
@@ -2738,8 +2733,7 @@ begin
               begin
                 // $-Parameter
                 for m := 0 to pred(TabelleHorizontal.Header.count) do
-                  ParameterL.values['$' + TabelleHorizontal.Header[m]] :=
-                    TabelleHorizontal.readCell(l, m);
+                  ParameterL.values['$' + TabelleHorizontal.Header[m]] := TabelleHorizontal.readCell(l, m);
 
                 for m := 1 to pred(BigJoin.count) do
                 begin
@@ -2774,16 +2768,14 @@ begin
                       if (ParamCol <> -1) then
                         ParamVal2 := TStringList(BigJoin[m])[ParamCol]
                       else
-                        ParamVal2 := TabelleHorizontal.readCell(l,
-                          TabelleHorizontal.colOf(nextp(ParamAll, ',', 1)));
+                        ParamVal2 := TabelleHorizontal.readCell(l, TabelleHorizontal.colOf(nextp(ParamAll, ',', 1)));
 
                       // 1. Parameter
                       ParamCol := AllHeader.indexof(nextp(ParamAll, ',', 0));
                       if (ParamCol <> -1) then
                         ParamVal1 := TStringList(BigJoin[m])[ParamCol]
                       else
-                        ParamVal1 := TabelleHorizontal.readCell(l,
-                          TabelleHorizontal.colOf(nextp(ParamAll, ',', 0)));
+                        ParamVal1 := TabelleHorizontal.readCell(l, TabelleHorizontal.colOf(nextp(ParamAll, ',', 0)));
 
                     end
                     else
@@ -2850,8 +2842,7 @@ begin
                 DatumS := nextp(DatumS, ' '); // ev. ist es ein Timestamp!
                 case DatumGranularitaet of
                   TDG_Woche:
-                    DatumS := copy(DatumS, 7, 4) + '_KW' +
-                      inttostrN(Kalenderwoche(date2long(DatumS)), 2);
+                    DatumS := copy(DatumS, 7, 4) + '_KW' + inttostrN(Kalenderwoche(date2long(DatumS)), 2);
                   TDG_Monat:
                     DatumS := copy(DatumS, 7, 4) + '_' + copy(DatumS, 4, 2);
                   TDG_Quartal:
@@ -2876,8 +2867,7 @@ begin
                       //
                       if (SingleValue <> cOLAPNull) then
                       begin
-                        if (pos(',', SingleValue + TStringList(IntegratedL[k])[IntegrateCol]) > 0)
-                        then
+                        if (pos(',', SingleValue + TStringList(IntegratedL[k])[IntegrateCol]) > 0) then
                         begin
                           // DOUBLE - Typ
                           TStringList(IntegratedL[k])[IntegrateCol] :=
@@ -2888,8 +2878,7 @@ begin
                         begin
                           // INTEGER - Typ
                           TStringList(IntegratedL[k])[IntegrateCol] :=
-                            format('%d', [strtoint(TStringList(IntegratedL[k])[IntegrateCol]) +
-                            strtoint(SingleValue)]);
+                            format('%d', [strtoint(TStringList(IntegratedL[k])[IntegrateCol]) + strtoint(SingleValue)]);
                         end;
                       end;
                     end;
@@ -3087,8 +3076,8 @@ begin
                         break;
                       end;
 
-                      TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "' +
-                        IntegrateOperation + '" unbekannt';
+                      TStringList(IntegratedL[k])[IntegrateCol] := 'ERROR: Operation "' + IntegrateOperation +
+                        '" unbekannt';
 
                     until true;
 
@@ -3408,9 +3397,9 @@ begin
               else
               begin
                 case SQLType of
-                  SQL_DOUBLE, SQL_DOUBLE_, SQL_INT64, SQL_INT64_, SQL_SHORT, SQL_SHORT_, SQL_LONG,
-                    SQL_LONG_, SQL_VARYING, SQL_VARYING_, SQL_TEXT, SQL_TEXT_, SQL_TIMESTAMP,
-                    SQL_TIMESTAMP_, SQL_TYPE_DATE, SQL_TYPE_DATE_:
+                  SQL_DOUBLE, SQL_DOUBLE_, SQL_INT64, SQL_INT64_, SQL_SHORT, SQL_SHORT_, SQL_LONG, SQL_LONG_,
+                    SQL_VARYING, SQL_VARYING_, SQL_TEXT, SQL_TEXT_, SQL_TIMESTAMP, SQL_TIMESTAMP_, SQL_TYPE_DATE,
+                    SQL_TYPE_DATE_:
                     begin
                       GlobalVars.add('$' + FieldName + '=' + AsString);
                     end;
