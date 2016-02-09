@@ -9597,17 +9597,15 @@ function e_r_ZahlungFrist(PERSON_R: integer): integer;
 var
   ZAHLUNG_R: integer;
 begin
-  // Default
-  result := 10;
+  result := cStandard_ZahlungFrist;
   ZAHLUNG_R := e_r_ZahlungRID(PERSON_R);
   repeat
-
     if (ZAHLUNG_R < cRID_FirstValid) then
       break;
-
-    result := e_r_sql('select COALESCE(FAELLIG,' + inttostr(cStandard_ZahlungFrist) + ') from ZAHLUNGTYP where RID=' +
-      inttostr(ZAHLUNG_R));
-
+    result := e_r_sql(
+      { } 'select COALESCE(FAELLIG,' + inttostr(cStandard_ZahlungFrist) + ') ' +
+      { } 'from ZAHLUNGTYP where' +
+      { } ' RID=' + inttostr(ZAHLUNG_R));
   until true;
 end;
 
@@ -9766,9 +9764,10 @@ var
   DateTimeOut: TAnfixDate;
   n: integer;
 begin
-  DateTimeOut := DatePlus(DateGet, -14);
-  FreeList := TgpIntegerList.create;
   cARTIKEL := nCursor;
+  FreeList := TgpIntegerList.create;
+
+  DateTimeOut := DatePlus(DateGet, -14);
   with cARTIKEL do
   begin
     sql.add('select A.RID,');
@@ -9819,8 +9818,10 @@ var
 begin
   if (RIDS.count > 1) then
   begin
-    // TITEL ermitteln
     cARTIKEL := nCursor;
+    ClientSorter := TStringList.create;
+
+    // TITEL ermitteln
     with cARTIKEL do
     begin
       sql.add('select');
@@ -9830,7 +9831,6 @@ begin
       sql.add('from ARTIKEL where RID=:CROSSREF');
       prepare;
     end;
-    ClientSorter := TStringList.create;
     for n := 0 to pred(RIDS.count) do
     begin
       cARTIKEL.ParamByName('CROSSREF').AsInteger := integer(RIDS[n]);
@@ -9857,7 +9857,6 @@ begin
 
       ClientSorter.AddObject(s, Pointer(RIDS[n]));
     end;
-    cARTIKEL.free;
 
     // Sortieren und ausgeben
     ClientSorter.sort;
@@ -9865,6 +9864,7 @@ begin
       RIDS[n] := ClientSorter.Objects[n];
 
     ClientSorter.free;
+    cARTIKEL.free;
   end;
 end;
 
@@ -10973,7 +10973,7 @@ begin
           else
           begin
             // ohne Artikel Referenz
-            SetValueSmart(DatensammlerArtikel, 'VerlagNo',  UnbreakAble(FieldByName('INFO').AsString));
+            SetValueSmart(DatensammlerArtikel, 'VerlagNo', UnbreakAble(FieldByName('INFO').AsString));
             if (_Anz <> 0) then
               SetValueSmart(DatensammlerArtikel, 'Konto', b_r_Konto(cRID_Null));
           end;

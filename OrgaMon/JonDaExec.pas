@@ -42,7 +42,8 @@ const
   // Foto - Beobachtungszeitraum:
   // ============================
   // Innerhalb dieses Zeitraumes müssen JonDa-Eingabe und Foto-Aufnahme
-  // abgeglichen sein, später vergisst der Server die Eingabe Liste
+  // abgeglichen sein, später vergisst der Server die Eingabe Liste.
+  // Die Eingabe.nnn.txt wird automatisch dementsprechend gekürzt
   cMaxAge_Foto = 32; // [Tage] Solange bleiben Eingaben gesichert
 
   // Monteur-Individuelle Optionen
@@ -51,38 +52,44 @@ const
   cServerOption_EinfacheListe = 'EinfacheListe';
 
 const
-  // Namens-konvention Bild: Gerät-RID-Parameter.jpg
+  // Namens-konvention Bild: Gerät-RID-ProtokollParameter.jpg
 
   // INPUT
-  cParameter_foto_Modus = 'MODUS'; // Benennung=0..6
-  cParameter_foto_parameter = 'PARAMETER';
+  // =====
+
+  // Benennung=0 .. 12
+  cParameter_foto_Modus = 'MODUS';
   // bisheriger Bildparameter "FA", "FN"
-  cParameter_foto_baustelle = 'NUMMERN_PREFIX';
+  cParameter_foto_parameter = 'PARAMETER';
   // Kurzform der Baustellen Bez "KARL"
+  cParameter_foto_baustelle = 'NUMMERN_PREFIX';
   cParameter_foto_strasse = 'STRASSE'; //
   cParameter_foto_ort = 'ORT'; //
   cParameter_foto_zaehler_info = 'ZAEHLER_INFO';
   cParameter_foto_RID = 'RID';
   cParameter_foto_ART = 'ART';
-  cParameter_foto_zaehlernummer_alt = 'ZAEHLERNUMMER_ALT';
-  cParameter_foto_zaehlernummer_neu = 'ZAEHLERNUMMER_NEU';
+  cParameter_foto_Zaehlernummer_alt = 'ZAEHLERNUMMER_ALT';
+  cParameter_foto_Zaehlernummer_neu = 'ZAEHLERNUMMER_NEU';
+  cParameter_foto_Reglernummer_Neu = 'REGLERNUMMER_NEU';
   cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
-  cParameter_foto_geraet = 'GERAET'; // 3stellige Gerätenummer
-  cParameter_foto_Pfad = 'PFAD';
+  cParameter_foto_geraet = 'GERAET'; // 3-stellige Gerätenummer
+  cParameter_foto_Pfad = 'PFAD'; // Ort der Baustellen-Unterverzeichnisse
 
   // INPUT OPTIONAL
+  // =====
+
   cParameter_foto_Datei = 'DATEI'; // Dateiname des Fotos (incl. Pfad)
 
   // OUTPUT
+  // =====
+
   cParameter_foto_fertig = 'ENDGUELTIG'; //
   cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname - ohne Pfad
   cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
 
-  //
-
 type
-  TJonDaExec_ZaehlerNummerNeu = function(RID: integer; FotoGeraeteNo: string): string of object;
+  TJonDaExec_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
 
   TJonDaExec = class(TObject)
   private
@@ -148,7 +155,8 @@ type
     proceed_ProceedAblehnen: boolean; // not imp
 
     // Call-Backs
-    callback_ZaehlerNummerNeu: TJonDaExec_ZaehlerNummerNeu;
+    callback_ZaehlerNummerNeu: TJonDaExec_TMoreInfo;
+    callback_ReglerNummerNeu: TJonDaExec_TMoreInfo;
 
     // IMEI-Tabellen
     tIMEI: TsTable;
@@ -215,7 +223,7 @@ type
     class function toBild(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
     procedure LogBilder(sBilder: TStringList; GeraeteID: string);
-    procedure LogBilder2(sBilder: TStringList; GeraeteID: string);
+    procedure LogBilder_WechselMomentKorrigiert(sBilder: TStringList; GeraeteID: string);
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Migration
@@ -699,7 +707,7 @@ var
   ProtocolAll: TStringList;
   JondaAll: TSearchStringList;
   BilderAll: TStringList;
-  BilderAll2: TStringList;
+  BilderAll_WechselMomentKorrigiert: TStringList;
   Einstellungen: TStringList;
 
   //
@@ -933,7 +941,7 @@ var
       if (WechselmomentKorrektur.IndexOf(mderec.RID) = -1) then
         BilderAll.add(toBild(mderec))
       else
-        BilderAll2.add(toBild(mderec));
+        BilderAll_WechselMomentKorrigiert.add(toBild(mderec));
 
     // Bild-Zuordnung protokollieren
     if (pos('FA=', mderec.ProtokollInfo) > 0) then
@@ -1415,7 +1423,7 @@ begin
 
     // Foto-Sachen
     BilderAll := TStringList.Create;
-    BilderAll2 := TStringList.Create;
+    BilderAll_WechselMomentKorrigiert := TStringList.Create;
     bOrgaMonAuftrag := TBLager.Create;
     bFotoErgebnis := TBLager.Create;
 
@@ -2139,8 +2147,8 @@ begin
       if (BilderAll.count > 0) then
         LogBilder(BilderAll, GeraeteNo);
 
-      if (BilderAll2.count > 0) then
-        LogBilder2(BilderAll2, GeraeteNo);
+      if (BilderAll_WechselMomentKorrigiert.count > 0) then
+        LogBilder_WechselMomentKorrigiert(BilderAll_WechselMomentKorrigiert, GeraeteNo);
 
       // Nun die neue Eingabe.txt sichern
       m := 0;
@@ -2460,7 +2468,7 @@ begin
     JondaAll.free;
     sOrgaMonErgebnis.free;
     BilderAll.free;
-    BilderAll2.free;
+    BilderAll_WechselMomentKorrigiert.free;
     bOrgaMonAuftrag.free;
     bFotoErgebnis.free;
     WechselmomentKorrektur.free;
@@ -2479,31 +2487,30 @@ end;
 
 procedure TJonDaExec.readIni(SectionName: string = '');
 var
-   MyIni: TIniFile;
+  MyIni: TIniFile;
 begin
-    // Ini-Datei öffnen
-    MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
-    with MyIni do
-    begin
+  // Ini-Datei öffnen
+  MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
+  with MyIni do
+  begin
     // Fallback auf [~UserName~]
     if (SectionName = '') then
       SectionName := UserName;
 
+    // Fall Back auf [System]
+    if (ReadString(SectionName, 'ftpuser', '') = '') then
+      SectionName := 'System';
 
-      // Fall Back auf [System]
-      if (ReadString(SectionName, 'ftpuser', '') = '') then
-        SectionName := 'System';
+    // Ftp-Bereich für diesen Server
+    iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
+    iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
+    iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
+    iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
+    DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
 
-      // Ftp-Bereich für diesen Server
-      iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-      iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-      iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-      iJonDa_Port := StrToIntDef(ReadString(SectionName, 'port', getParam('Port')), 3049);
-      DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
-
-      start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
-    end;
-    MyIni.free;
+    start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+  end;
+  MyIni.free;
 
 end;
 
@@ -2735,8 +2742,8 @@ var
   FotoParameter: string;
   Zaehler_Info: string;
   zaehlernummer_neu: string;
+  Reglernummer_neu: String;
   zaehlernummer_alt: string;
-  ZAEHLER_NUMMER_NEU: string;
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
   NameOhneZaehlerNummerAlt: boolean;
@@ -2769,11 +2776,7 @@ var
 begin
   result := TStringList.Create;
   FotoDateiNameNeu := '';
-  // mderecOrgaMon.Baustelle / cParameter_foto_baustelle
-  // mderecOrgaMon.Zaehler_Strasse / cParameter_foto_strasse
-  // mderecOrgaMon.Zaehler_Ort / cParameter_foto_ort
-  // mderecOrgaMon.zaehlernummer_alt / cParameter_foto_zaehlernummer_alt
-  // mderecOrgaMon.zaehlernummer_neu / cParameter_foto_zaehlernummer_neu
+
   // cE_FotoBenennung
   FotoBenennung := strtointdef(sParameter.values[cParameter_foto_Modus], 0);
   Baustelle := sParameter.values[cParameter_foto_baustelle];
@@ -2782,14 +2785,18 @@ begin
   Zaehler_Info := sParameter.values[cParameter_foto_zaehler_info];
 
   // Limitierung mit der führenden Null
-  zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_zaehlernummer_neu]);
+  zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Zaehlernummer_neu]);
+  Reglernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Reglernummer_Neu]);
 
-  zaehlernummer_alt := sParameter.values[cParameter_foto_zaehlernummer_alt];
+  zaehlernummer_alt := sParameter.values[cParameter_foto_Zaehlernummer_alt];
   if (length(zaehlernummer_alt) > cMonDa_FieldLength_ZaehlerNummer) then
     zaehlernummer_alt := revCopy(
       { } zaehlernummer_alt,
       { } 1,
       { } cMonDa_FieldLength_ZaehlerNummer);
+
+  //
+  // Verzeichnis wo es Baustellen Unterverzeichnisse gibt für Modus=6
   Path := sParameter.values[cParameter_foto_Pfad];
   AUFTRAG_R := strtointdef(sParameter.values[cParameter_foto_RID], cRID_Null);
   sParameter.values[cParameter_foto_strasse] :=
@@ -3091,6 +3098,18 @@ begin
           until true;
 
         end;
+      12:
+        begin
+          // FA,FN normal - FE = Regler, ohne ZählernummerAlt
+          repeat
+            if (pos('FE', FotoParameter) = 1) then
+            begin
+              FotoPreFix := '(RID'+inttostr(AUFTRAG_R)+')-';
+              NameOhneZaehlerNummerAlt := true;
+              break;
+            end;
+          until true;
+        end;
     end;
 
     // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig
@@ -3110,18 +3129,17 @@ begin
         break;
       end;
 
-      // Einbau
+      // Einbau "Zähler"
       if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
       begin
-        ZAEHLER_NUMMER_NEU := zaehlernummer_neu;
 
-        if (ZAEHLER_NUMMER_NEU = '') then
+        if (zaehlernummer_neu = '') then
         begin
           FotoGeraeteNo := sParameter.values[cParameter_foto_geraet];
-          ZAEHLER_NUMMER_NEU := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
+          zaehlernummer_neu := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
         end;
 
-        if (ZAEHLER_NUMMER_NEU = '') then
+        if (zaehlernummer_neu = '') then
         begin
           FotoDateiNameNeu :=
           { } FotoPrefix +
@@ -3132,22 +3150,55 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } ZAEHLER_NUMMER_NEU
+            { } zaehlernummer_neu
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } ZAEHLER_NUMMER_NEU;
+            { } zaehlernummer_neu;
           UmbenennungAbgeschlossen := true;
         end;
         break;
       end;
 
-      // Sonstige
+      // Einbau "Regler"
+      if (pos('FE', FotoParameter) = 1) or (pos('Regler', FotoParameter) = 1) then
+      begin
+
+        if (reglernummer_neu = '') then
+        begin
+          FotoGeraeteNo := sParameter.values[cParameter_foto_geraet];
+          reglernummer_neu := FormatZaehlerNummerNeu(callback_ReglerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
+        end;
+
+        if (reglernummer_neu = '') then
+        begin
+          FotoDateiNameNeu :=
+          { } FotoPrefix +
+          { } zaehlernummer_alt + '-Neu';
+        end
+        else
+        begin
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } reglernummer_neu
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt + '-' +
+            { } reglernummer_neu;
+          UmbenennungAbgeschlossen := true;
+        end;
+        break;
+      end;
+
+      // Sonstige / Standard
       FotoDateiNameNeu :=
       { } FotoPrefix +
       { } zaehlernummer_alt +
-      { } '-' + FotoParameter;
+      { } '-' +
+      { } FotoParameter;
       UmbenennungAbgeschlossen := true;
 
     until true;
@@ -3737,10 +3788,10 @@ begin
     // compare + copy
     if not(FileCompare(
       { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
-      { } MyProgramPath + cdbPath + cServiceFoto_BaustelleFName)) then
+      { } MyProgramPath + cDBPath + cServiceFoto_BaustelleFName)) then
       FileVersionedCopy(
         { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
-        { } MyProgramPath + cdbPath + cServiceFoto_BaustelleFName);
+        { } MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
 
     // delete
     FileDelete(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName);
@@ -3975,7 +4026,7 @@ end;
 
 function TJonDaExec.TrnFName: string;
 begin
- result := MyProgramPath + cDBPath + cTrnFName;
+  result := MyProgramPath + cDBPath + cTrnFName;
 end;
 
 class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);
@@ -3998,87 +4049,20 @@ class function TJonDaExec.toBild(const mderec: TMdeRec): string;
 // _ansi =             'üöäÜÖÄß';
 // _oem  : string[7] = '”„š™Žá';
 
-  function MVVFName: string;
-  begin
-    with mderec do
-      result := Oem2asci(Zaehler_Strasse) + ' ' + Oem2asci(Zaehler_Ort);
-    ersetze(' ', '_', result);
-    result := StrFilter(result, cValidFNameChars + '_');
-  end;
-
-var
-  Prefix: string;
 begin
   with mderec do
   begin
-
-    // Prefix: Initialisierungen
-    repeat
-
-      if (pos('CELL', Baustelle) = 1) then
-      begin
-        Prefix := Baustelle + '-';
-        break;
-      end;
-
-      if (pos('MVHA', Baustelle) = 1) or
-      { } (pos('OHG', Baustelle) = 1) or
-      { } (pos('MVVW', Baustelle) = 1) then
-      begin
-        Prefix := MVVFName + '-';
-        break;
-      end;
-
-      if (pos('RWTR', Baustelle) = 1) then
-      begin
-        Prefix := 'MaxAnzahl=12' + cProtokollTrenner;
-        break;
-      end;
-
-      if (pos('ENW', Baustelle) = 1) then
-      begin
-        Prefix := 'MaxAnzahl=9' + cProtokollTrenner;
-        break;
-      end;
-
-      if pos('SEWA Weskamp', Zaehler_Info) > 0 then
-      begin
-        Prefix := 'Weskamp-';
-        break;
-      end;
-
-      if (pos('SEWA Hoehner', Zaehler_Info) > 0) or (pos('SEWA H”hner', Zaehler_Info) > 0) or
-        (pos('SEWA Höhner', Zaehler_Info) > 0) then
-      begin
-        Prefix := 'Höhner-';
-        break;
-      end;
-
-      if pos('SEWA Heupel', Zaehler_Info) > 0 then
-      begin
-        Prefix := 'Heupel-';
-        break;
-      end;
-
-      Prefix := '';
-    until true;
-
-    // Prefix: zusätzliche Erweiterungen
-    if (pos('Schrott', Zaehler_Info) > 0) then
-      Prefix := Prefix + 'Schrott-';
-
-    //
-
-    // Format der 'Eingabe.???.txt'
-    result := long2date(ausfuehren_ist_datum) + ';' + // 0
-      secondstostr8(ausfuehren_ist_uhr) + ';' + // 1
-      inttostr(RID) + ';' + // 2
-      zaehlernummer_alt + ';' + // 3
-      zaehlernummer_neu + ';' + // 4
-      Prefix; // 5
+    // Format der 'Eingabe.???.txt':
+    result :=
+    { 0 } long2date(ausfuehren_ist_datum) + ';' +
+    { 1 } secondstostr8(ausfuehren_ist_uhr) + ';' +
+    { 2 } inttostr(RID) + ';' +
+    { 3 } Reglernummer_neu + ';' +
+    { 4 } zaehlernummer_neu;
   end;
 end;
 
+// Produktiv- oder Test- Daten
 function TJonDaExec.isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 begin
   result := true;
@@ -4190,7 +4174,7 @@ begin
   if FileExists(Fname) then
     oBilder.LoadFromFile(Fname);
 
-  // Neu kommende Bilder erst mal rauslöschen!
+  // Jeden RID nur einmal
   for n := pred(oBilder.count) downto 0 do
   begin
     NeuesBild := strtointdef(nextp(oBilder[n], ';', 2), cRID_Null);
@@ -4244,7 +4228,7 @@ end;
 
 // wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
 // fehlende Einträge nachgetragen!
-procedure TJonDaExec.LogBilder2(sBilder: TStringList; GeraeteID: string);
+procedure TJonDaExec.LogBilder_WechselMomentKorrigiert(sBilder: TStringList; GeraeteID: string);
 var
   Fname: string;
   oBilder: TStringList;
@@ -4267,12 +4251,12 @@ begin
   if FileExists(Fname) then
     oBilder.LoadFromFile(Fname);
 
-  // RIDs der neuen Bilder sammeln
+  // RIDs der neuen sBilder sammeln
   for n := 0 to pred(oBilder.count) do
     BisherInfos.add(strtointdef(nextp(oBilder[n], ';', 2), cRID_Null));
   BisherInfos.sort;
 
-  //
+  // sehen, ob es neue Infos gibt, die bisher noch nicht da waren
   for n := 0 to pred(sBilder.count) do
   begin
     AUFTRAG_R := strtointdef(nextp(sBilder[n], ';', 2), cRID_Null);

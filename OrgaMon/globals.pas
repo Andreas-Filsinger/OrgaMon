@@ -399,7 +399,7 @@ const
   cE_FotoZiel = 'FotoZiel'; // default ~BaustellenPfad~ Fotos
   cE_FotoAblage = 'FotoAblage'; // default -ohne- Ablage
   cE_FotosMaxAnzahl = 'FotosMaxAnzahl'; // Maximale Anzahl Bilder im ZIP
-  cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung
+  cE_FotoBenennung = 'FotoBenennung'; // Art der Bilder Namensgebung, sowie "FotoBenennung.csv" Dateien
   cE_CoreFTP = 'CoreFTP'; // Besonderer Upload über Core-FTP
   cE_AuchMitFoto = 'AuchMitFoto'; // wenn Fotos mit in das Zip sollen
   cE_SpalteAlsText = 'SpalteAlsText'; // bei der Ausgabe an Excel wichtig
@@ -479,10 +479,10 @@ type
     ABNummer: string[5];
     Monteur: string[6];
     Art: string[2];
-    zaehlernummer_alt: TZaehlerNummerType;
+    Zaehlernummer_alt: TZaehlerNummerType;
     Reglernummer_alt: TZaehlerNummerType;
-    ausfuehren_soll: TAnfixDate;
-    vormittags: boolean;
+    Ausfuehren_soll: TAnfixDate;
+    Vormittags: boolean;
     Monteur_Info: string[255];
     Zaehler_Info: string[255]; { auch Plausibilitätsfelder }
     Zaehler_Name1: string[35];
@@ -491,10 +491,10 @@ type
     Zaehler_Ort: string[35];
 
     { von Monda }
-    zaehlernummer_korr: TZaehlerNummerType;
-    zaehlernummer_neu: TZaehlerNummerType;
-    zaehlerstand_neu: string[8];
-    zaehlerstand_alt: string[8];
+    Zaehlernummer_korr: TZaehlerNummerType;
+    Zaehlernummer_neu: TZaehlerNummerType;
+    Zaehlerstand_neu: string[8];
+    Zaehlerstand_alt: string[8];
     Reglernummer_korr: TZaehlerNummerType;
     Reglernummer_neu: TZaehlerNummerType;
     ProtokollInfo: string[255];
@@ -503,10 +503,10 @@ type
     { <0: Sonderstati, Bedeutung siehe obige Konstanten }
     { 00: Unerledigt }
     { >0: Erledigt }
-    ausfuehren_ist_datum: TAnfixDate; { Tr�ger von cMonDa_Status }
-    ausfuehren_ist_uhr: TAnfixTime;
+    Ausfuehren_ist_datum: TAnfixDate; { Tr�ger von cMonDa_Status }
+    Ausfuehren_ist_uhr: TAnfixTime;
 
-  end;
+  end deprecated 'Migriere nach UTF8-Textfiles';
 
 const
   // App-Service
@@ -554,7 +554,9 @@ const
   cProtExtension = '.txt';
 
   // Eingabe.nnn.txt
-  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;ZAEHLER_NUMMER_ALT;ZAEHLER_NUMMER_NEU;PRAEFIX';
+  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;REGLER_NUMMER_NEU;ZAEHLER_NUMMER_NEU';
+
+  // Für wartende "-Neu" Bilddateien
   cHeader_UmbenennungUnvollstaendig =
     'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
 
@@ -980,20 +982,47 @@ var
   i_c_DataBasePath: string; // pfad der Datenbank
 
   // aus System-Parameter Tabelle
-  iMwStSatzManuelleArtikel: double = 19.0;
-  iPortoFreiAbBrutto: string;
-  iPortoMwStLogik: boolean;
   iSicherungsPfad: string;
   iSicherungsPreFix: string;
   iSicherungenAnzahl: integer;
 
   // Belege / Rechnungen
+  iUnterdrueckeGeliefertes: boolean;
+  iRechnungsNummerVergabeMoment: eRechnungsNummerVergabeMoment;
+  iMwStSatzManuelleArtikel: double = 19.0;
+  iPortoFreiAbBrutto: string;
+  iPortoMwStLogik: boolean;
   iNachlieferungInfo: string;
   iBereitsGeliefertInfo: string;
   iNichtMehrLieferbar: string;
   iStandardTextRechnung: string;
-  iUnterdrueckeGeliefertes: boolean;
-  iRechnungsNummerVergabeMoment: eRechnungsNummerVergabeMoment;
+  iAuftragsMotivation: string;
+  iAuftragsGrundRueckfrage: boolean;
+  iSchnelleRechnung_PERSON_R: integer;
+  iRechnungGlattstellen: boolean;
+  iEinzelpreisNetto: boolean;
+  iGOT: boolean; // Gebührenordnung für Tierärtze
+  iBruttoVersandGewicht: boolean;
+  iMahnSchwelle: double;
+  iMahnFaelligkeitstoleranz: integer;
+  iMahnungAusgelicheneDazwischenAnzeigen: boolean;
+  iMahnungErstAbUnausgeglichenheit: boolean;
+  iMahnungGebuehr1: double;
+  iMahnungGebuehr2: double;
+  iMahnungGebuehr3: double;
+  iMahnungZinsSatzPrivat: double;
+  iMahnungZinsSatzGewerblich: double;
+  iMahnstufeZinsEintritt: integer;
+  iMahnungMindestZins: double;
+  iMahnfreierZeitraum: integer;
+  iMahnungMahnBescheidLaufzeit: integer = 100;
+  iMahnlaufbeiTagesabschluss: boolean;
+  iEinzelPositionNetto: string;
+  iKommaFaktor: boolean;
+  iBelegAnzeigeNachBuchen: boolean;
+  iBelegAutoSetMengeNull: boolean;
+  iBelegMengenSortierung: boolean;
+  iBelegArtikelNeu: boolean;
 
   iTranslatePath: string;
   iDataBaseBackUpDir: string;
@@ -1055,10 +1084,6 @@ var
   iScannerAutoBuchen: boolean;
   iMagnetoHost: string;
   iSchubladePort: string;
-  iAuftragsMotivation: string;
-  iAuftragsGrundRueckfrage: boolean;
-  iSchnelleRechnung_PERSON_R: integer;
-  iRechnungGlattstellen: boolean;
   iLabelHost: string;
   iKasseHost: string;
   iTagWacheAuf: string;
@@ -1081,36 +1106,13 @@ var
   iHeimatLand: integer;
   iAnschriftNameOben: boolean;
   iOrtFormat: string;
-  iEinzelpreisNetto: boolean;
-  iGOT: boolean; // Gebührenordnung für Tierärtze
-  iBruttoVersandGewicht: boolean;
   iAblage: boolean;
 
-  iMahnSchwelle: double;
-  iMahnFaelligkeitstoleranz: integer;
-  iMahnungAusgelicheneDazwischenAnzeigen: boolean;
-  iMahnungErstAbUnausgeglichenheit: boolean;
-  iMahnungGebuehr1: double;
-  iMahnungGebuehr2: double;
-  iMahnungGebuehr3: double;
-  iMahnungZinsSatzPrivat: double;
-  iMahnungZinsSatzGewerblich: double;
-  iMahnstufeZinsEintritt: integer;
-  iMahnungMindestZins: double;
-  iMahnfreierZeitraum: integer;
-  iMahnungMahnBescheidLaufzeit: integer = 100;
-  iMahnlaufbeiTagesabschluss: boolean;
 
   iProfilTexte: TStringList;
   iSchalterTexte: TStringList;
   iLagerHoheDiversitaet: boolean;
-  iEinzelPositionNetto: string;
-  iKommaFaktor: boolean;
   iOLAPpublic: boolean;
-  iBelegAnzeigeNachBuchen: boolean;
-  iBelegAutoSetMengeNull: boolean;
-  iBelegMengenSortierung: boolean;
-  iBelegArtikelNeu: boolean;
   iNeuanlageZeitraum: integer; // [Tage]
   iOpenOfficePDF: boolean;
   iAusgabeartLastschriftText: integer;

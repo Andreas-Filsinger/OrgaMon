@@ -432,7 +432,7 @@ begin
 
     // Einstellungen weitergeben
     SolidFTP.SolidFTP_LogDir := DiagnosePath;
-    writeln('Verwende ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost + ' für FTP');
+    writeln('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
@@ -466,7 +466,7 @@ begin
       with XMLRPC do
       begin
         DefaultPort := iJonDa_Port;
-        write('Öffne ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
+        write('Aktiviere ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
         DiagnosePath := globals.DiagnosePath;
@@ -483,7 +483,7 @@ begin
       end;
 
       // Aktueller Stand
-      writeln('Nächste TAN ... ' + JonDa.NewTrn(false));
+      writeln('TAN-Vergabe steht bei ... ' + JonDa.NewTrn(false));
 
       // Arbeite ...
       while true do
