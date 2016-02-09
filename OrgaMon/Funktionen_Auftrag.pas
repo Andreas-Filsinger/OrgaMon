@@ -1838,12 +1838,12 @@ end;
 
 type
   TFotoCallBacks = class(TObject)
-    function ZaehlerNummerNeu(rid: Integer; FotoGeraeteNo: string): string;
+    function ResultEmpty(rid: Integer; FotoGeraeteNo: string): string;
   end;
 
   { TFotoCallBacks }
 
-function TFotoCallBacks.ZaehlerNummerNeu(rid: Integer; FotoGeraeteNo: string): string;
+function TFotoCallBacks.ResultEmpty(rid: Integer; FotoGeraeteNo: string): string;
 begin
   result := '';
 end;
@@ -1866,7 +1866,8 @@ begin
   begin
     FotoName_JonDaX := TJonDaExec.create;
     FotoName_CallBacks := TFotoCallBacks.create;
-    FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ZaehlerNummerNeu;
+    FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ResultEmpty;
+    FotoName_JonDaX.callback_ReglerNummerNeu := FotoName_CallBacks.ResultEmpty;
   end;
 
   sParameter := TStringList.create;
@@ -1885,6 +1886,7 @@ begin
     sql.Add(' AUFTRAG.ZAEHLER_INFO,');
     sql.Add(' AUFTRAG.ZAEHLER_NUMMER,');
     sql.Add(' AUFTRAG.ZAEHLER_NR_NEU,');
+    sql.Add(' AUFTRAG.REGLER_NR_NEU,');
     sql.Add(' AUFTRAG.BAUSTELLE_R,');
     sql.Add(' BAUSTELLE.NUMMERN_PREFIX');
     sql.Add('from AUFTRAG');
@@ -1902,6 +1904,7 @@ begin
     sParameter.values[cParameter_foto_zaehler_info] := HugeSingleLine(sZaehlerInfo, '|');
     sParameter.values[cParameter_foto_zaehlernummer_alt] := FieldByName('ZAEHLER_NUMMER').AsString;
     sParameter.values[cParameter_foto_zaehlernummer_neu] := FieldByName('ZAEHLER_NR_NEU').AsString;
+    sParameter.values[cParameter_foto_reglernummer_neu] := FieldByName('REGLER_NR_NEU').AsString;
     // cParameter_foto_geraet = 'GERAET';
   end;
 

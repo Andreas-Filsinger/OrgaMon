@@ -123,7 +123,8 @@ type
 
     // Implementierungen von JonDaExec - Prototypen
     function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
-    procedure invalidateZaehlerNummerNeuCache;
+    function ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+    procedure invalidate_NummerNeuCache;
   end;
 
 implementation
@@ -132,7 +133,7 @@ const
   _GeraeteNo: string = '';
   EINGABE: tsTable = nil;
 
-procedure TFotoExec.invalidateZaehlerNummerNeuCache;
+procedure TFotoExec.invalidate_NummerNeuCache;
 begin
   _GeraeteNo := '';
 end;
@@ -166,6 +167,35 @@ begin
 
 end;
 
+function TFotoExec.ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+var
+  FName: string;
+  r: integer;
+begin
+
+  // Datenspeicher laden
+  if (GeraeteNo <> _GeraeteNo) then
+  begin
+    if not(assigned(EINGABE)) then
+      EINGABE := tsTable.Create
+    else
+      EINGABE.Clear;
+    FName := pAppServicePath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
+    if FileExists(FName) then
+      FileAlive(FName);
+    EINGABE.insertfromFile(FName, cHeader_Eingabe);
+    _GeraeteNo := GeraeteNo;
+  end;
+
+  // RID suchen
+  r := EINGABE.locate('RID', InttoStr(AUFTRAG_R));
+  if (r <> -1) then
+    result := EINGABE.readCell(r, 'REGLER_NUMMER_NEU')
+  else
+    result := '';
+
+end;
+
 procedure TFotoExec.ensureGlobals;
 var
   r: integer;
@@ -177,6 +207,7 @@ begin
 
     JonDaExec := TJonDaExec.Create;
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
+    JonDaExec.callback_ReglerNummerNeu := ReglerNummerNeu;
 
     // die aktuellen Daten aus dem FTP-Bereich jetzt abholen
     JonDaExec.doSync;
@@ -882,7 +913,10 @@ var
   MomentTimeout: TANFiXDate;
   CSV: tsTable;
   r, i, k, ro, c: integer;
+
   ZAEHLER_NUMMER_NEU: string;
+  ORIGINAL_DATEI: string;
+  PARAMETER: string;
   FNameAlt, FNameNeu, FPath: string;
   RID: integer;
   sBaustelle: string;
@@ -903,7 +937,7 @@ begin
 
   // Init
   ensureGlobals;
-  invalidateZaehlerNummerNeuCache;
+  invalidate_NummerNeuCache;
 
   Stat_NachtragBaustelle := 0;
   CSV := nil;
@@ -944,6 +978,19 @@ begin
   for r := WARTEND.RowCount downto 1 do
   begin
 
+    ORIGINAL_DATEI := WARTEND.readCell(r, 'DATEINAME_ORIGINAL');
+    PARAMETER := nextp(ORIGINAL_DATEI,'-',2);
+    ersetze(PARAMETER,'.jpg','');
+
+    repeat
+      if (PARAMETER='FN') then
+       break;
+      if (PARAMETER='FE') then
+       break;
+xx
+      Log(cERRORText + ' 987: keine Ahnung wie man "' + PARAMETER + '" behandeln soll');
+    until true;
+
     RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
     ZAEHLER_NUMMER_NEU := '';
 
@@ -976,14 +1023,14 @@ begin
       end;
     end;
 
-    // Umbenennungsversuch über die Monteurs-Eingabe
+    // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
     if (ZAEHLER_NUMMER_NEU = '') then
       ZAEHLER_NUMMER_NEU :=
       { } ZaehlerNummerNeu(
         { } RID,
         { } WARTEND.readCell(r, 'GERAETENO'));
 
-    // Zuschaltbare Alternative: den Inhalt einer CSV prüfen
+    // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
     if (ZAEHLER_NUMMER_NEU = '') then
       if ZaehlerNummerNeuXlsCsv_Vorhanden then
       begin
@@ -1621,7 +1668,11 @@ begin
     end;
 
     sTabelle.addCol('Gerät', sMonteure);
+    // imp pend:
+    // bisher W:\status\index.html
     sTabelle.SaveToHTML(pWebPath + 'ausstehende-fotos.html');
+    // imp pend:
+    // bisher W:\status\ausstehende-fotos.csv
 //    sTabelle.SaveToFile(pWebPath + 'ausstehende-fotos.csv');
 
   except
