@@ -216,6 +216,8 @@ type
     class function VormittagsStr(vormittags: boolean): string;
     class function AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
     class function FormatZaehlerNummerNeu(const s: string): string;
+    class function clearTempTag(const s: string): string;
+    class function createTempTag(RID: integer): string;
 
     class function active(a: boolean): string;
 
@@ -640,7 +642,7 @@ begin
       reset(TrnFile);
     except
       on E: Exception do
-        log(cERRORText + ' 1771:' + E.Message);
+        log(cERRORText + ' 645:' + E.Classname + ': ' + E.Message);
     end;
     readln(TrnFile, TrnLine);
     CloseFile(TrnFile);
@@ -2479,10 +2481,6 @@ begin
     on E: Exception do
       log(cERRORText + ' 2481:' + E.Message);
   end;
-
-  AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'ProceedTAN:' + AktTrn + ';' + inttostr(RDTSCms - StartTime) + 'ms',
-    MyProgramPath + cJonDaServer_XMLRPCLogFName);
-
 end;
 
 procedure TJonDaExec.readIni(SectionName: string = '');
@@ -2615,7 +2613,7 @@ begin
 
           if (length(IMEI) <> 15) then
           begin
-            log(cWARNINGText + ' 2344:' + ' IMEI "' + IMEI + '" hat keine 15 Stellen bei GERAET "' + GeraetID + '"');
+            log(cWARNINGText + ' 2616:' + ' IMEI "' + IMEI + '" hat keine 15 Stellen bei GERAET "' + GeraetID + '"');
             // break;
           end;
 
@@ -2623,14 +2621,14 @@ begin
           begin
             r := tIMEI.locate('IMEI', IMEI);
             if (r = -1) then
-              log(cWARNINGText + ' 2344:' + ' IMEI "' + IMEI + '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' +
+              log(cWARNINGText + ' 2624:' + ' IMEI "' + IMEI + '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' +
                 GeraetID + '"');
             if (r <> -1) then
             begin
               _GeraetID := tIMEI.readCell(r, 'GERAET');
               if (_GeraetID <> GeraetID) then
               begin
-                log(cWARNINGText + ' 2357:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID +
+                log(cWARNINGText + ' 2631:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID +
                   '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
               end;
             end;
@@ -2694,13 +2692,8 @@ begin
       until true;
     except
       on E: Exception do
-        log(cERRORText + ' 620:' + E.Message);
+        log(cERRORText + ' 2696:' + E.Classname + ': ' + E.Message);
     end;
-
-    // Ergebnis und den Call loggen!
-    AppendStringsToFile(DatumLog + ';' + uhr8 + ';' + 'StartTAN:' + TAN + ';' + version + ';' + Optionen + ';' + UHR +
-      ';' + IMEI, MyProgramPath + cJonDaServer_XMLRPCLogFName);
-
   until true;
   Einstellungen.free;
   result.add(TAN);
@@ -2749,7 +2742,6 @@ var
   NameOhneZaehlerNummerAlt: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
-  FotoGeraeteNo: string;
   Path: string;
   tNAMES: TsTable;
   sNAMES: TStringList;
@@ -2995,7 +2987,7 @@ begin
         end;
       7:
         begin
-          // Erdgas Südwest
+          // Erdgas Südwest, FN soll nicht weiterverarbeitet werden?!
           repeat
 
             if (pos('FR', FotoParameter) = 1) then
@@ -3021,6 +3013,8 @@ begin
                 { } cValidFNameChars + '_') + '-';
               break;
             end;
+
+            UmbenennungAbgeschlossen := true;
 
           until true;
 
@@ -3104,8 +3098,8 @@ begin
           repeat
             if (pos('FE', FotoParameter) = 1) then
             begin
-              FotoPreFix := '(RID'+inttostr(AUFTRAG_R)+')-';
               NameOhneZaehlerNummerAlt := true;
+              FotoPrefix := createTempTag(AUFTRAG_R);
               break;
             end;
           until true;
@@ -3134,16 +3128,20 @@ begin
       begin
 
         if (zaehlernummer_neu = '') then
-        begin
-          FotoGeraeteNo := sParameter.values[cParameter_foto_geraet];
-          zaehlernummer_neu := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
-        end;
+          zaehlernummer_neu := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R,
+            sParameter.values[cParameter_foto_geraet]));
 
         if (zaehlernummer_neu = '') then
         begin
-          FotoDateiNameNeu :=
-          { } FotoPrefix +
-          { } zaehlernummer_alt + '-Neu';
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } 'Neu'
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt + '-' +
+            { } 'Neu';
         end
         else
         begin
@@ -3165,29 +3163,33 @@ begin
       if (pos('FE', FotoParameter) = 1) or (pos('Regler', FotoParameter) = 1) then
       begin
 
-        if (reglernummer_neu = '') then
-        begin
-          FotoGeraeteNo := sParameter.values[cParameter_foto_geraet];
-          reglernummer_neu := FormatZaehlerNummerNeu(callback_ReglerNummerNeu(AUFTRAG_R, FotoGeraeteNo));
-        end;
+        if (Reglernummer_neu = '') then
+          Reglernummer_neu := FormatZaehlerNummerNeu(callback_ReglerNummerNeu(AUFTRAG_R,
+            sParameter.values[cParameter_foto_geraet]));
 
-        if (reglernummer_neu = '') then
+        if (Reglernummer_neu = '') then
         begin
-          FotoDateiNameNeu :=
-          { } FotoPrefix +
-          { } zaehlernummer_alt + '-Neu';
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } 'Neu'
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt + '-' +
+            { } 'Neu'
         end
         else
         begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } reglernummer_neu
+            { } Reglernummer_neu
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } reglernummer_neu;
+            { } Reglernummer_neu;
           UmbenennungAbgeschlossen := true;
         end;
         break;
@@ -3217,6 +3219,10 @@ begin
     // Ergebnis
     if not(ShouldAbort) then
     begin
+      // Wenn fertig, dann die TMP-Sachen wieder wegmachen!
+      if UmbenennungAbgeschlossen then
+        FotoDateiNameNeu := clearTempTag(FotoDateiNameNeu);
+
       result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
       result.values[cParameter_foto_neu] := FotoDateiNameNeu + '.jpg';
       result.values[cParameter_foto_ziel] := ZielBaustelle;
@@ -4125,6 +4131,33 @@ begin
   Stat_FotoMeldungen := 0;
   Stat_PostError := '';
   sProtokolle.Clear;
+end;
+
+const
+  TmpNameTagOpen = '(RID';
+  TmpNameTagClose = ')-';
+
+class function TJonDaExec.clearTempTag(const s: string): string;
+var
+  k, l: integer;
+  _s: string;
+begin
+  result := s;
+  k := pos(TmpNameTagOpen, s);
+  if (k > 0) then
+  begin
+    _s := copy(s, k + length(TmpNameTagOpen), MaxInt);
+    l := pos(TmpNameTagClose, _s);
+    if (l > 0) then
+      result :=
+      { } copy(s, 1, pred(k)) +
+      { } copy(s, pred(k) + l + length(TmpNameTagOpen) + length(TmpNameTagClose), MaxInt);
+  end;
+end;
+
+class function TJonDaExec.createTempTag(RID: integer): string;
+begin
+  result := TmpNameTagOpen + inttostr(RID) + TmpNameTagClose;
 end;
 
 constructor TJonDaExec.Create;

@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.150 (10.02.16) Andreas Filsinger
+
+ Wegfall: XMLRPC.log
+
+Rev 8.149 (09.02.16-10.02.16) Andreas Filsinger
+
+ Neu: Foto-Service: Reglernummer_Neu im Dateinamen bei FE möglich
+
 Rev 8.148 (03.02.16) Andreas Filsinger
 
  Neu: OLAP: save as html: Angabe einer Zieldatei möglich

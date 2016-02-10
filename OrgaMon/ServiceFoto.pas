@@ -1292,7 +1292,7 @@ begin
         // Zwischen 00:00 und ]01:00
         if (SecondsGet < (1 * 3600)) then
           // nur machen, wenn nicht in Arbeit oder fertig
-          if not(FileExists(MyFotoExec.AblageFname)) then
+          if not(FileExists(MyFotoExec.AblageLogFname)) then
             // Zips verschieben, Fotos zippen
             MyFotoExec.workAblage;
 

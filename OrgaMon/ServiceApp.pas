@@ -385,7 +385,7 @@ begin
     end;
 
     lHeuteFehlDatum.add('###');
-
+(*
     lMeldungen.LoadFromFile(MyProgramPath + cJonDaServer_XMLRPCLogFName);
     for i := pred(lMeldungen.count) downto 0 do
     begin
@@ -408,7 +408,7 @@ begin
       end;
 
     end;
-
+*)
     // Falsches Datum
 
     CloseFile(OrgaMonErgebnis);
