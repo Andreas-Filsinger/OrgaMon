@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.148; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.150; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -548,7 +548,6 @@ const
   // in der aktuellen Datei zu finden sind! So ne Art
   // externe STAY.DAT
 
-  cJonDaServer_XMLRPCLogFName = 'XMLRPC.log';
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';
   cProtExtension = '.txt';

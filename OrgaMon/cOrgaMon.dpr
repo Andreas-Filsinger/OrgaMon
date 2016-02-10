@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2015  Andreas Filsinger
+  |    Copyright (C) 2012 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -200,27 +200,32 @@ var
   MyFotoExec: TownFotoExec;
   TimerWartend: integer;
   TimerInit: integer;
+  doDirectStart: boolean;
 begin
 
   MyFotoExec := TownFotoExec.Create;
   MyFotoExec.readIni;
 
-    // DebugMode?
-    if IsParam('-al') then
-    begin
-      writeln('DebugMode @' + DiagnosePath);
-      DebugMode := true;
-      DebugLogPath := DiagnosePath;
-    end else
-    begin
-      SolidFTP_SingleStepLog := false;
-    end;
+  // DebugMode?
+  if IsParam('-al') then
+  begin
+    writeln('DebugMode @' + DiagnosePath);
+    DebugMode := true;
+    DebugLogPath := DiagnosePath;
+  end
+  else
+  begin
+    SolidFTP_SingleStepLog := false;
+  end;
+
+  // Server direkt durchstarten?
 
   TimerWartend := 0;
   TimerInit := 0;
 
   // sofortiges Starten sicherstellen? (direct start)
-  if IsParam('+ds') then
+  doDirectStart := IsParam('+ds');
+  if doDirectStart then
     TimerInit := cKikstart_delay * 60 * 1000;
 
   while true do
@@ -241,9 +246,10 @@ begin
       begin
 
         // Alle 5 Min!
-        if (TimerWartend > 5 * 60 * 1000) then
+        if (TimerWartend > 5 * 60 * 1000) or doDirectStart then
         begin
           TimerWartend := 0;
+          doDirectStart := false;
 
           // Ab und zu die neuen Daten beachten
           MyFotoExec.releaseGlobals;
@@ -257,7 +263,7 @@ begin
           // Zwischen 00:00 und ]01:00
           if (SecondsGet < (1 * 3600)) then
             // nur machen, wenn nicht in Arbeit oder bereits fertig
-            if not(FileExists(MyFotoExec.AblageFname)) then
+            if not(FileExists(MyFotoExec.AblageLogFname)) then
               // Zips verschieben, Fotos zippen
               MyFotoExec.workAblage;
 
@@ -268,7 +274,8 @@ begin
       end;
 
     except
-
+      on E: Exception do
+        MyFotoExec.Log(cERRORText + ' :' + E.ClassName + ': ' + E.Message);
     end;
     inc(TimerWartend, Timer_Intervall);
 
@@ -405,7 +412,8 @@ begin
       writeln('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
-    end else
+    end
+    else
     begin
       SolidFTP_SingleStepLog := false;
     end;
@@ -532,17 +540,17 @@ begin
   // Ident- String
   case Ident of
     id_TWebShop:
-      Modus := 'TWebShop'; // XMLRPC Server
+      Modus := 'TWebShop-Server'; // XMLRPC Server für den Webshop
     id_Bestellen:
-      Modus := 'ORDER';
+      Modus := 'ORDER-Server';
     id_Mail:
-      Modus := 'MAIL';
+      Modus := 'MAIL-Server';
     id_Druck:
-      Modus := 'PRINT';
+      Modus := 'PRINT-Server';
     id_App:
-      Modus := 'Service-App'; // XMLRPC Server
+      Modus := 'App-Service'; // XMLRPC Server für die OrgaMon App
     id_Foto:
-      Modus := 'Service-Foto';
+      Modus := 'Foto-Service'; // Foto Dienst für die OrgaMon App
   end;
 
   try
@@ -560,7 +568,7 @@ begin
       writeln('\---------------------------------------------------/');
       writeln;
     end;
-    writeln(Modus + '-Server@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
+    writeln(Modus + '@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
 
     case Ident of
       id_TWebShop:
