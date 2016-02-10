@@ -196,6 +196,7 @@ type
 
     // TOOL: Logging
     function LogFName: string;
+    function AuftragFName(Trn: string): string;
     procedure BeginAction(ActionText: string);
     procedure EndAction(ActionText: string = '');
     procedure log(s: TStrings); overload;
@@ -458,6 +459,21 @@ begin
   end;
   tSENDEN.free;
   maintainSENDEN_Cache_Init := true;
+end;
+
+function TJonDaExec.AuftragFName(Trn: string): string;
+begin
+  // Das Ergebnis im Web bereitstellen
+  if oldInfrastructure then
+    result :=
+    { } MyProgramPath +
+    { } Trn +
+    { } '\auftrag' + cUTF8DataExtension
+  else
+    result :=
+    { } MyProgramPath +
+    { } cWebPath +
+    { } Trn + '.auftrag' + cUTF8DataExtension;
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -844,15 +860,15 @@ var
         break;
 
       //
-      if (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) and (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl)
-      then
+      if (mderec.ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) and
+        (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) then
         break;
 
       // heute ausgeführt?
       if (mderec.ausfuehren_ist_datum = _DateGet) or
       // für heute geplant oder vorgezogen?
-        (mderec.ausfuehren_soll > _DateGet) or (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant) or
-        (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
+        (mderec.ausfuehren_soll > _DateGet) or (mderec.ausfuehren_ist_datum = cMonDa_Status_Restant)
+        or (mderec.ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
         (mderec.ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or
         (mderec.ausfuehren_ist_datum = cMonDa_Status_Vorgezogen) then
       begin
@@ -871,19 +887,11 @@ var
 
   procedure CloseJonDa;
   begin
+    //
     CloseFile(MonDaAasTxt);
 
-    // Das Ergebnis im Web bereitstellen
-    if oldInfrastructure then
-      SaveStringsToFileUTF8(Auftrag,
-        { } MyProgramPath +
-        { } AktTrn +
-        { } '\auftrag' + cUTF8DataExtension)
-    else
-      SaveStringsToFileUTF8(Auftrag,
-        { } MyProgramPath +
-        { } cWebPath +
-        { } AktTrn + '.auftrag' + cUTF8DataExtension);
+    // Das Ergebnis zum Download bereitstellen
+    SaveStringsToFileUTF8(Auftrag, AuftragFName(AktTrn));
   end;
 
   procedure add_OrgaMonApp_NeuerAuftrag;
@@ -1054,9 +1062,10 @@ var
       begin
         if RID > 0 then
         begin
-          if (ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) or (ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
-            (ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or (ausfuehren_ist_datum = cMonDa_Status_Vorgezogen)
-          then
+          if (ausfuehren_ist_datum > cMonDa_Status_unbearbeitet) or
+            (ausfuehren_ist_datum = cMonDa_Status_Unmoeglich) or
+            (ausfuehren_ist_datum = cMonDa_Status_NeuAnschreiben) or
+            (ausfuehren_ist_datum = cMonDa_Status_Vorgezogen) then
             if OrgaMonAbgearbeitet.IndexOf(RID) = -1 then
               OrgaMonAbgearbeitet.add(RID);
         end;
@@ -1485,7 +1494,8 @@ begin
       // abgearbeitete Laden
       if FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) then
       begin
-        OrgaMonAbgearbeitet.LoadFromFile(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
+        OrgaMonAbgearbeitet.LoadFromFile(MyProgramPath + AktTrn + '\' +
+          cMonDaServer_AbgearbeitetFName);
         Stat_OrgaMonGruen := OrgaMonAbgearbeitet.count;
       end;
 
@@ -1616,7 +1626,8 @@ begin
             break;
 
           // "AUFTRAG.DAT" aus globaler Ablage
-          JAuftragBisherFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + cDATExtension;
+          JAuftragBisherFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo +
+            cDATExtension;
           if FileExists(JAuftragBisherFName) then
             break;
 
@@ -1664,7 +1675,8 @@ begin
                   if (length(JProtokoll) > 254) then
                     log(cWARNINGText + ' 1324:' + 'Protokoll zu lange!');
                   ProtokollInfo := JProtokoll;
-                  ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
+                  ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'),
+                    cMonDa_Status_unbearbeitet);
                   ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
                   JondaAll.Delete(k);
                 end;
@@ -1706,7 +1718,8 @@ begin
                 if (length(JProtokoll) > 254) then
                   log(cWARNINGText + ' 1365:' + 'Protokoll zu lange!');
                 ProtokollInfo := JProtokoll;
-                ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), cMonDa_Status_unbearbeitet);
+                ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'),
+                  cMonDa_Status_unbearbeitet);
                 ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
               end;
               write(f_OrgaMonApp_Ergebnis, mderec);
@@ -1863,8 +1876,8 @@ begin
           GoodMonteurL.add(mderec.monteur);
         end;
 
-        if (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or (mderec.ausfuehren_soll >= _DateGet) or EntryPointReached
-        then
+        if (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or (mderec.ausfuehren_soll >= _DateGet)
+          or EntryPointReached then
         begin
           //
           // ist es eine aktuelle News von OrgaMon -> beibehalten
@@ -1924,7 +1937,8 @@ begin
           // unbearbeitete aus der Vergangenheit verfallen automatisch in den
           // Status Restant, hier wurde ja gar nichts gemacht!!!
           //
-          if (mderec.ausfuehren_soll < _DateGet) and (mderec.ausfuehren_soll <> cMonDa_FreieTerminWahl) and
+          if (mderec.ausfuehren_soll < _DateGet) and
+            (mderec.ausfuehren_soll <> cMonDa_FreieTerminWahl) and
             (mderec.ausfuehren_ist_datum = cMonDa_Status_unbearbeitet) then
           begin
             inc(Stat_AutoRestant);
@@ -1986,8 +2000,9 @@ begin
                   WriteOrgaMon;
 
                   with mderec do
-                    log('FallBack: ' + Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' + inttostr(RID) + ';' +
-                      long2date(ausfuehren_soll) + ';' + BoolToStr(vormittags));
+                    log('FallBack: ' + Baustelle + ';' + zaehlernummer_alt + ';' + monteur + ';' +
+                      inttostr(RID) + ';' + long2date(ausfuehren_soll) + ';' +
+                      BoolToStr(vormittags));
 
                 end
                 else
@@ -2084,8 +2099,9 @@ begin
 
         //
         read(f_OrgaMon_Auftrag, mderec);
-        if (mderec.ausfuehren_soll = cMonDa_ImmerAusfuehren) or (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or
-          (mderec.ausfuehren_soll >= _DateGet) or EntryPointReached then
+        if (mderec.ausfuehren_soll = cMonDa_ImmerAusfuehren) or
+          (mderec.ausfuehren_soll = cMonDa_FreieTerminWahl) or (mderec.ausfuehren_soll >= _DateGet)
+          or EntryPointReached then
         begin
           EntryPointReached := true;
           k := MondaStay.IndexOf(inttostr(mderec.RID));
@@ -2124,7 +2140,9 @@ begin
       CloseFile(f_OrgaMon_Auftrag);
       CloseFile(fOrgaMonErgebnis);
 
-      SaveStringsToFileUTF8(sOrgaMonErgebnis, MyProgramPath + AktTrn + '\' + AktTrn + cUTF8DataExtension);
+      SaveStringsToFileUTF8(sOrgaMonErgebnis,
+       {} MyProgramPath + AktTrn + '\' + AktTrn +
+        cUTF8DataExtension);
       CloseFile(f_OrgaMonApp_Ergebnis);
       CloseFile(f_OrgaMonApp_NeuerAuftrag);
       CloseFile(MonDaA_StayF);
@@ -2158,7 +2176,8 @@ begin
         if (m = 0) then
           Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
         else
-          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
+          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' +
+            inttostr(m) + '.txt';
         inc(m);
       until not(FileExists(Fname));
       FileCopy(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt', Fname);
@@ -2206,8 +2225,8 @@ begin
           Einstellungen.free;
 
           // Als verarbeitet markieren indem es nach AktTrn verschoben wird
-          FileMove(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini', MyProgramPath + AktTrn + '\' + GeraeteNo
-            + '.ini');
+          FileMove(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini',
+            MyProgramPath + AktTrn + '\' + GeraeteNo + '.ini');
         end;
 
       //
@@ -2225,7 +2244,7 @@ begin
           // Programmversion ist zu alt!
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
           FileCopy(MyProgramPath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
-            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+            AuftragFName(AktTrn));
           Stat_PostError := 'veraltet';
           break;
         end;
@@ -2236,7 +2255,7 @@ begin
           // Unbekannte Gerätenummer
           log(cWARNINGText + ' Unbekannte Gerätenummer!');
           FileCopy(MyProgramPath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension,
-            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+            AuftragFName(AktTrn));
           Stat_PostError := 'undefiniert';
           break;
         end;
@@ -2247,7 +2266,7 @@ begin
           // Unbezahlt!
           log(cWARNINGText + ' Unbezahlter Zeitraum!');
           FileCopy(MyProgramPath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension,
-            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+            AuftragFName(AktTrn));
           Stat_PostError := 'unbezahlt';
           break;
         end;
@@ -2258,7 +2277,7 @@ begin
           // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
           FileCopy(MyProgramPath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension,
-            MyProgramPath + AktTrn + '\auftrag' + cUTF8DataExtension);
+            AuftragFName(AktTrn));
           Stat_PostError := 'unbekannt';
           break;
         end;
@@ -2273,8 +2292,8 @@ begin
         begin
 
           // Sicherung ins "OrgaMon" Verzeichnis!
-          FileCopy(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension, MyProgramPath + cOrgaMonDataPath + AktTrn +
-            cDATExtension);
+          FileCopy(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension,
+            MyProgramPath + cOrgaMonDataPath + AktTrn + cDATExtension);
 
           // Web-Statistik anfertigen!
           if (Stat_FotoMeldungen > 0) then
@@ -2310,7 +2329,8 @@ begin
       if (Stat_Abberufen <> 0) then
         log('Abberufen     : ' + inttostr(Stat_Abberufen));
       if (Stat_IgnoriertTest <> 0) or (Stat_IgnoriertFehlenderAuftrag <> 0) then
-        log('Ignoriert     : ' + inttostr(Stat_IgnoriertTest) + '/' + inttostr(Stat_IgnoriertFehlenderAuftrag));
+        log('Ignoriert     : ' + inttostr(Stat_IgnoriertTest) + '/' +
+          inttostr(Stat_IgnoriertFehlenderAuftrag));
       if (Stat_MondaStay <> 0) then
         log('Stay-liste    : ' + inttostr(Stat_MondaStay));
       if (Stat_Meldungen <> 0) or (Stat_SelbstAnlagen <> 0) then
@@ -2349,8 +2369,8 @@ begin
         if (GeraeteNo <> '000') then
         begin
 
-          FileCopy(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo +
-            cDATExtension);
+          FileCopy(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + cServerDataPath +
+            'AUFTRAG.' + GeraeteNo + cDATExtension);
           try
             with iFTP do
             begin
@@ -2374,7 +2394,8 @@ begin
               begin
                 log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
-              sput(MyProgramPath + AktTrn + '\AUFTRAG.DAT', 'AUFTRAG.' + GeraeteNo + cDATExtension, iFTP);
+              sput(MyProgramPath + AktTrn + '\AUFTRAG.DAT',
+                'AUFTRAG.' + GeraeteNo + cDATExtension, iFTP);
               try
                 DisConnect;
               except
@@ -2586,7 +2607,8 @@ begin
           g := tIMEI.locate('GERAET', GeraetID);
           if (g = -1) then
           begin
-            log(cWARNINGText + ' 2337:' + ' GERAET "' + GeraetID + '" ist in der IMEI-Tabelle nicht bekannt');
+            log(cWARNINGText + ' 2337:' + ' GERAET "' + GeraetID +
+              '" ist in der IMEI-Tabelle nicht bekannt');
             BEZAHLT_BIS := cMonDa_ErsteEingabe;
           end
           else
@@ -2613,7 +2635,8 @@ begin
 
           if (length(IMEI) <> 15) then
           begin
-            log(cWARNINGText + ' 2616:' + ' IMEI "' + IMEI + '" hat keine 15 Stellen bei GERAET "' + GeraetID + '"');
+            log(cWARNINGText + ' 2616:' + ' IMEI "' + IMEI + '" hat keine 15 Stellen bei GERAET "' +
+              GeraetID + '"');
             // break;
           end;
 
@@ -2621,15 +2644,15 @@ begin
           begin
             r := tIMEI.locate('IMEI', IMEI);
             if (r = -1) then
-              log(cWARNINGText + ' 2624:' + ' IMEI "' + IMEI + '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' +
-                GeraetID + '"');
+              log(cWARNINGText + ' 2624:' + ' IMEI "' + IMEI +
+                '" ist in der IMEI-Tabelle nicht bekannt bei GERAET "' + GeraetID + '"');
             if (r <> -1) then
             begin
               _GeraetID := tIMEI.readCell(r, 'GERAET');
               if (_GeraetID <> GeraetID) then
               begin
-                log(cWARNINGText + ' 2631:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID +
-                  '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
+                log(cWARNINGText + ' 2631:' + ' Bei IMEI "' + IMEI + '" sollte GERAET "' + _GeraetID
+                  + '" verwendet werden, ist aber GERAET "' + GeraetID + '"');
               end;
             end;
           end;
@@ -2652,9 +2675,11 @@ begin
           if SecondsDiffABS(DateGet, secondsget, rDate, rSeconds) > 60 * 5 then
           begin
             if (DateGet <> rDate) then
-              TAN := 'Das Datum sollte ' + long2date(DateGet) + ' sein (Ist aber ' + long2date(rDate) + ').'
+              TAN := 'Das Datum sollte ' + long2date(DateGet) + ' sein (Ist aber ' +
+                long2date(rDate) + ').'
             else
-              TAN := 'Die Uhrzeit sollte ' + secondstostr8(secondsget + 1) + ' sein (Ist aber ' + UHR + ').';
+              TAN := 'Die Uhrzeit sollte ' + secondstostr8(secondsget + 1) + ' sein (Ist aber ' +
+                UHR + ').';
             break;
           end;
         end;
@@ -2760,7 +2785,8 @@ var
     if (result.values[cParameter_foto_Fehler] = '') then
       result.values[cParameter_foto_Fehler] := s
     else
-      result.values[cParameter_foto_Fehler] := result.values[cParameter_foto_Fehler] + cLineSeparator + s;
+      result.values[cParameter_foto_Fehler] := result.values[cParameter_foto_Fehler] +
+        cLineSeparator + s;
     result.values[cParameter_foto_fertig] := cIni_Deactivate;
     ShouldAbort := true;
   end;
@@ -3262,12 +3288,13 @@ begin
 
       // die unverarbeiteten Dateien vom Server holen!
       SolidDir(iFTP, cSolidFTP_DirCurrent, cJonDa_ErgebnisMaske_deprecated, sErgebnisTANs);
-      sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
+      sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath +
+        cMonDaServer_UnberuecksichtigtFName);
 
       // Die Datei bereitstellen!
       FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
-      ReNameFile(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$', MyProgramPath + cServerDataPath +
-        'abgearbeitet.dat');
+      ReNameFile(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
+        MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
       on E: Exception do
         log(cERRORText + ' 2174:' + E.Message);
@@ -3309,8 +3336,8 @@ begin
 
         // Die Datei bereitstellen!
         FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen);
-        ReNameFile(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$', MyProgramPath + cServerDataPath +
-          FName_Abgezogen);
+        ReNameFile(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$',
+          MyProgramPath + cServerDataPath + FName_Abgezogen);
       except
         on E: Exception do
           log(cERRORText + ' 2153:' + E.Message);
@@ -3349,7 +3376,8 @@ begin
         begin
           if not(connected) then
             connect;
-          get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
+          get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo +
+            cTmpFileExtension);
           // DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true) - TIdSysVCL.OffsetFromUTC;
           DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true);
         end;
@@ -3357,7 +3385,8 @@ begin
         ReNameFile(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
           MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
         if (DownFileDate > 0) then
-          FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension, DateTimeToFileDate(DownFileDate));
+          FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
+            DateTimeToFileDate(DownFileDate));
       except
         on E: Exception do
           log(cWARNINGText + ' 2212:' + E.Message);
@@ -3418,10 +3447,10 @@ begin
   LastTrn := inttostr(pred(strtoint(ActTRN)));
 
   // erst mal 'ne Datensicherung machen
-  FileCopy(MyProgramPath + cServerDataPath + 'FOTO+TS' + cBL_FileExtension, MyProgramPath + LastTrn + '\FOTO+TS' +
-    cBL_FileExtension);
-  FileCopy(MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension, MyProgramPath + LastTrn + '\AUFTRAG+TS' +
-    cBL_FileExtension);
+  FileCopy(MyProgramPath + cServerDataPath + 'FOTO+TS' + cBL_FileExtension,
+    MyProgramPath + LastTrn + '\FOTO+TS' + cBL_FileExtension);
+  FileCopy(MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
+    MyProgramPath + LastTrn + '\AUFTRAG+TS' + cBL_FileExtension);
 
   // Zeitlimit für alte Aufträge setzen
   MinimumDate := long2datetime(DatePlus(DateGet, -cMaxAge_Foto));
@@ -3557,11 +3586,14 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     end;
 
     sStatistik.add('');
-    sStatistik.add('JonDa-Server ' + um_Baustelle + '-Statistik vom ' + long2date(iDate) + ' - ' + secondstostr(iTime));
+    sStatistik.add('JonDa-Server ' + um_Baustelle + '-Statistik vom ' + long2date(iDate) + ' - ' +
+      secondstostr(iTime));
     sStatistik.add('');
 
-    sStatistik.add('Gerät(Kurz)AnzAu;letzte Meldung; letztes Senden (TAN:Anz)  Anz; Fertig    ; Blau');
-    sStatistik.add('----------------;--------------;------------------------------;-----------;-----');
+    sStatistik.add
+      ('Gerät(Kurz)AnzAu;letzte Meldung; letztes Senden (TAN:Anz)  Anz; Fertig    ; Blau');
+    sStatistik.add
+      ('----------------;--------------;------------------------------;-----------;-----');
 
     Stat_Summe_Stueckzahl := 0;
     Stat_Summe_Blau := 0;
@@ -3581,7 +3613,8 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
 
       if (sUmfang[n][1] = '-') then
       begin
-        sStatistik.add('--------------------------------------------------------------------------------');
+        sStatistik.add
+          ('--------------------------------------------------------------------------------');
         continue;
       end;
 
@@ -3724,9 +3757,11 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       sStatistik.add(OneLine);
 
     end;
-    sStatistik.add('----------------;--------------;------------------------------;-----------;-----');
+    sStatistik.add
+      ('----------------;--------------;------------------------------;-----------;-----');
     sStatistik.add(format('Summe      %5d;                                    %5d     %5d/%5d;%5d',
-      [Stat_Summe_Planung, Stat_Summe_Auftrag, Stat_Summe_Heute, Stat_Summe_Stueckzahl, Stat_Summe_Blau]));
+      [Stat_Summe_Planung, Stat_Summe_Auftrag, Stat_Summe_Heute, Stat_Summe_Stueckzahl,
+      Stat_Summe_Blau]));
     sStatistik.add('');
     sStatistik.add(' # erfordert eine tel. Rückfrage bei Ableser!');
     sStatistik.add('');
@@ -3735,7 +3770,8 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     sStatistik.add(' AnzAu: Gerätevolumen abrufbar auf dem JonDaServer');
     sStatistik.add(' letzte Meldung: verstrichene Zeit (HHH:MM:SS) seit der letzten Meldung');
     sStatistik.add(' letztes Senden: verstrichene Zeit (HHH:MM:SS) seit dem letzten Senden');
-    sStatistik.add('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
+    sStatistik.add
+      ('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
     iFTP.DisConnect;
