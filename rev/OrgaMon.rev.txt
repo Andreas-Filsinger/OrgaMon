@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.152 (11.02.16) Andreas Filsinger
+
+ Neu: App-Service: StartTAN: Schon hier abprüfen der IMEI-OK
+
+Rev 8.151 (11.02.16) Andreas Filsinger
+
+ Bug: App-Service: Konzequenzlose Prüfung der IMEI
+
 Rev 8.150 (10.02.16) Andreas Filsinger
 
  Wegfall: XMLRPC.log
