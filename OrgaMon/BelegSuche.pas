@@ -681,7 +681,7 @@ end;
 procedure TFormBelegSuche.SpeedButton13Click(Sender: TObject);
 var
   ARTIKEL: string;
-  lPERSON_R: TgpIntegerList;
+  lVERTRAG_R: TgpIntegerList;
   AutoMataState: Integer;
   VERTRAG_R: Integer;
   VORNAME, NACHNAME: string;
@@ -689,16 +689,16 @@ var
   BEZAHLT_BIS: TDateTime;
   // Namensbearbeitung
   VollerName: string;
-  i: Integer;
+  i, n: Integer;
 begin
 
   // erfolgte Zahlung in den Vertrag eintragen -> BEZAHLT_BIS
   AutoMataState := 0;
-  lPERSON_R := nil;
+  lVERTRAG_R := nil;
+  VERTRAG_R := cRID_unset;
 
   with IB_Query3 do
   begin
-
     first;
     while not(eof) do
     begin
@@ -709,6 +709,7 @@ begin
             if FieldByName('MENGE').IsNull then
             begin
               ARTIKEL := FieldByName('ARTIKEL').AsString;
+              VERTRAG_R := strtointdef(nextp(FieldByName('INFO').AsString, '.', 0), cRID_unset);
               if (pos('IMEI', ARTIKEL) > 0) then
               begin
 
@@ -725,7 +726,7 @@ begin
                   NACHNAME := VollerName;
                 end;
 
-                lPERSON_R := e_r_sqlm(
+                lVERTRAG_R := e_r_sqlm(
                   { } 'select VERTRAG.RID from' +
                   { } ' PERSON ' +
                   { } 'join' +
@@ -739,13 +740,13 @@ begin
 
                 repeat
 
-                  if (lPERSON_R.count = 1) then
-                  begin
-                    inc(AutoMataState);
-                    break;
-                  end;
+                  // Versuchen die Liste auf EINEN zu verkürzen
+                  if (VERTRAG_R >= cRID_FirstValid) then
+                    for n := pred(lVERTRAG_R.count) downto 0 do
+                      if (VERTRAG_R <> lVERTRAG_R[n]) then
+                        lVERTRAG_R.Delete(n);
 
-                  if (lPERSON_R.count = 0) then
+                  if (lVERTRAG_R.count = 0) then
                   begin
                     ShowMessage(
                       { } 'Person "' +
@@ -753,11 +754,11 @@ begin
                       { } ' ' +
                       { } NACHNAME +
                       { } '" nicht gefunden, oder hat keinen Vertrag mehr!');
-                    FreeAndNil(lPERSON_R);
+                    FreeAndNil(lVERTRAG_R);
                     break;
                   end;
 
-                  if (lPERSON_R.count > 1) then
+                  if (lVERTRAG_R.count > 1) then
                   begin
                     ShowMessage(
                       { } 'Person "' +
@@ -765,14 +766,32 @@ begin
                       { } ' ' +
                       { } NACHNAME +
                       { } '": Mehrere Treffer!');
-                    FreeAndNil(lPERSON_R);
+                    FreeAndNil(lVERTRAG_R);
+                    break;
+                  end;
+
+                  if (VERTRAG_R >= cRID_FirstValid) then
+                    if (lVERTRAG_R[0] <> VERTRAG_R) then
+                    begin
+                      ShowMessage(
+                        { } 'Person "' +
+                        { } VORNAME +
+                        { } ' ' +
+                        { } NACHNAME +
+                        { } '": Unklare Treffer!');
+                      FreeAndNil(lVERTRAG_R);
+                      VERTRAG_R := cRID_unset;
+                      break;
+                    end;
+
+                  if (lVERTRAG_R.count = 1) then
+                  begin
+                    inc(AutoMataState);
                     break;
                   end;
 
                 until true;
-
               end;
-
             end;
           end;
         1: // ermittle das "bis" Datum
@@ -787,11 +806,12 @@ begin
                   { } 'update VERTRAG ' +
                   { } 'set BEZAHLT_BIS=' + SQLString(DATUM) + ' ' +
                   { } 'where' +
-                  { } ' (RID=' + inttostr(lPERSON_R[0]) + ') and ' +
+                  { } ' (RID=' + inttostr(lVERTRAG_R[0]) + ') and ' +
                   { } ' ((BEZAHLT_BIS is null) or' +
                   { } '  (BEZAHLT_BIS < ' + SQLString(DATUM) + '))');
-                FreeAndNil(lPERSON_R);
+                FreeAndNil(lVERTRAG_R);
                 AutoMataState := 0;
+                VERTRAG_R := cRID_unset;
               end;
             end;
           end;
