@@ -9520,6 +9520,7 @@ begin
     BlackList.add('MENGE_AGENT');
     BlackList.add('ZUSAGE');
     BlackList.add('POSNO');
+    BlackList.add('INFO');
 
     with qZIEL_POSTEN do
     begin
@@ -9537,6 +9538,10 @@ begin
           Insert;
           FieldByName('RID').AsInteger := 0;
           FieldByName('BELEG_R').AsInteger := BELEG_R;
+          if assigned(sTexte) then
+            FieldByName('INFO').AsString :=
+            { } sTexte.values['VertragsReferenz'] + '.' +
+            { } inttostr(VertragBuchen_EREIGNIS_R);
           for n := 0 to pred(cQUELL_POSTEN.FieldCount) do
           begin
             DBFieldName := cQUELL_POSTEN.Fields[n].FieldName;

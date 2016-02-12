@@ -250,8 +250,7 @@ type
     procedure IB_Query1AfterCancel(IB_Dataset: TIB_Dataset);
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure IB_Date1Strike(Sender: TIB_CustomDate; CheckThisDate: TDateTime;
-      var CrossColor: TColor);
+    procedure IB_Date1Strike(Sender: TIB_CustomDate; CheckThisDate: TDateTime; var CrossColor: TColor);
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -261,8 +260,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
-    procedure IB_Edit28IsValidChar(Sender: TObject; var AChar: Char;
-      var IsValid: Boolean);
+    procedure IB_Edit28IsValidChar(Sender: TObject; var AChar: Char; var IsValid: Boolean);
     procedure IB_Edit28SetEditText(Sender: TObject; var AString: string);
     procedure Button9Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -376,8 +374,7 @@ begin
   begin
     ShouldRefreshListe := true;
     ShouldRefreshBelastung := true;
-    ShouldRefreshBelastungbaustelle := IB_Dataset.FieldByName('BAUSTELLE_R')
-      .AsInteger;
+    ShouldRefreshBelastungbaustelle := IB_Dataset.FieldByName('BAUSTELLE_R').AsInteger;
     if DateOK(_datum) then
       v_MonteurMontag := _datum;
   end;
@@ -435,15 +432,13 @@ end;
 
 procedure TFormAuftrag.ComboBox1DropDown(Sender: TObject);
 begin
-  ComboBox1.items.assign
-    (e_r_BaustelleMonteure(IB_Query1.FieldByName('BAUSTELLE_R').AsInteger));
+  ComboBox1.items.assign(e_r_BaustelleMonteure(IB_Query1.FieldByName('BAUSTELLE_R').AsInteger));
   ComboBox1.items.insert(0, '*');
 end;
 
 procedure TFormAuftrag.ComboBox2DropDown(Sender: TObject);
 begin
-  ComboBox2.items.assign
-    (e_r_BaustelleMonteure(IB_Query1.FieldByName('BAUSTELLE_R').AsInteger));
+  ComboBox2.items.assign(e_r_BaustelleMonteure(IB_Query1.FieldByName('BAUSTELLE_R').AsInteger));
   ComboBox2.items.insert(0, '*');
 end;
 
@@ -492,8 +487,7 @@ end;
 
 function TFormAuftrag.RadioAsStr: string;
 begin
-  result := format('%d%d%d', [ord(RadioButton1.Checked),
-    ord(RadioButton2.Checked), ord(RadioButton3.Checked)]);
+  result := format('%d%d%d', [ord(RadioButton1.Checked), ord(RadioButton2.Checked), ord(RadioButton3.Checked)]);
 end;
 
 function TFormAuftrag.RadioChangeDetect: Boolean;
@@ -531,8 +525,7 @@ procedure TFormAuftrag.ReflectQuality;
 begin
   // Ticket Sachen
   Memo1.lines.clear;
-  Memo1.lines.addstrings(FormAuftragArbeitsplatz.getProbleme
-    (IB_Query1.FieldByName('RID').AsInteger));
+  Memo1.lines.addstrings(FormAuftragArbeitsplatz.getProbleme(IB_Query1.FieldByName('RID').AsInteger));
 end;
 
 procedure TFormAuftrag.ReflectTheQueryData;
@@ -622,8 +615,7 @@ begin
   end;
 end;
 
-procedure TFormAuftrag.IB_Date1Strike(Sender: TIB_CustomDate;
-  CheckThisDate: TDateTime; var CrossColor: TColor);
+procedure TFormAuftrag.IB_Date1Strike(Sender: TIB_CustomDate; CheckThisDate: TDateTime; var CrossColor: TColor);
 begin
   CrossColor := _Sperre.CheckIt(CheckThisDate, Kontext);
 end;
@@ -651,8 +643,8 @@ begin
       NewRID := RecordCopy('AUFTRAG', 'GEN_AUFTRAG', SourceRID);
 
       // Numero und MASTER_R anpassen!
-      e_x_sql('UPDATE AUFTRAG SET ' + 'MASTER_R=' + inttostr(NewRID) + ', ' +
-        'NUMMER=0 ' + 'WHERE (RID=' + inttostr(NewRID) + ')');
+      e_x_sql('UPDATE AUFTRAG SET ' + 'MASTER_R=' + inttostr(NewRID) + ', ' + 'NUMMER=0 ' + 'WHERE (RID=' +
+        inttostr(NewRID) + ')');
 
       // Jetzt noch auf NewRID lokalisieren und öffnen
       FormAuftragArbeitsplatz.add(NewRID);
@@ -716,19 +708,15 @@ begin
   Sperre_Von := IB_Date2.Field.AsDateTime;
   Sperre_bis := IB_Date3.Field.AsDateTime;
 
-  if DateOK(DateTime2long(Sperre_Von)) and DateOK(DateTime2long(Sperre_bis))
-  then
-    _Sperre.add(Sperre_Von, Sperre_bis, true, cSperreZaehler,
-      cPrio_ZaehlerSperre);
+  if DateOK(DateTime2long(Sperre_Von)) and DateOK(DateTime2long(Sperre_bis)) then
+    _Sperre.add(Sperre_Von, Sperre_bis, true, cSperreZaehler, cPrio_ZaehlerSperre);
 
   // Zähler Wunschzeitraum
   Zeitraum_Von := IB_Date6.Field.AsDateTime;
   Zeitraum_bis := IB_Date7.Field.AsDateTime;
 
-  if DateOK(DateTime2long(Zeitraum_Von)) and DateOK(DateTime2long(Zeitraum_bis))
-  then
-    _Sperre.add(Zeitraum_Von, Zeitraum_bis, false, cSperreZaehler,
-      cPrio_ZaehlerSperre);
+  if DateOK(DateTime2long(Zeitraum_Von)) and DateOK(DateTime2long(Zeitraum_bis)) then
+    _Sperre.add(Zeitraum_Von, Zeitraum_bis, false, cSperreZaehler, cPrio_ZaehlerSperre);
 
   if DebugMode then
     _Sperre.SaveToFile(DiagnosePath + 'Sperre-Auftrag.csv');
@@ -737,8 +725,7 @@ end;
 
 procedure TFormAuftrag.IB_Edit3Change(Sender: TObject);
 begin
-  if (IB_Edit3.Text = '') and not(IB_Query1.FieldByName('KUNDE_NAME1').IsNull)
-  then
+  if (IB_Edit3.Text = '') and not(IB_Query1.FieldByName('KUNDE_NAME1').IsNull) then
     IB_Query1.FieldByName('KUNDE_NAME1').clear;
 end;
 
@@ -807,19 +794,18 @@ var
     { } FotoParameter + '=' +
     { } FotoFname;
 
-    AppendStringsToFile(result, DiagnosePath + 'Fotos-' + DatumLog +
-      '.log.txt');
+    AppendStringsToFile(result, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt');
   end;
 
 begin
-
   AUFTRAG_R := IB_Query1.FieldByName('RID').AsInteger;
   BAUSTELLE_R := IB_Query1.FieldByName('BAUSTELLE_R').AsInteger;
 
-  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-    inttostr(BAUSTELLE_R));
+  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
 
-  FotoDir := FotoPath + e_r_BaustellenPfad(Settings) + '\';
+  FotoDir :=
+  { } FotoPath +
+  { } e_r_BaustellenPfad(Settings) + '\';
 
   ShowMessage(FotoDir + #13 +
     { } InfoStr('FA') + #13 +
@@ -903,8 +889,7 @@ begin
   begin
     PhoneInfo := TStringList.create;
     FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
-    PhoneInfo.add('CALL=' + datum + ';' + secondstostr(SecondsGet) + ';' +
-      FormBearbeiter.sBearbeiterKurz);
+    PhoneInfo.add('CALL=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
     FieldByName('INTERN_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
@@ -941,8 +926,7 @@ end;
 
 procedure TFormAuftrag.setStatusNormal;
 begin
-  if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsMonteurinformiert))
-  then
+  if (IB_Query1.FieldByName('STATUS').AsInteger <> ord(ctsMonteurinformiert)) then
   begin
     EnsureEditState;
     IB_Query1.FieldByName('ZAEHLER_WECHSEL').clear;
@@ -950,29 +934,25 @@ begin
   end;
 end;
 
-procedure TFormAuftrag.IB_Edit28GetDisplayText(Sender: TObject;
-  var AString: string);
+procedure TFormAuftrag.IB_Edit28GetDisplayText(Sender: TObject; var AString: string);
 begin
   AString := secondstostr(strtointdef(AString, 0));
 
 end;
 
-procedure TFormAuftrag.IB_Edit28GetEditText(Sender: TObject;
-  var AString: string);
+procedure TFormAuftrag.IB_Edit28GetEditText(Sender: TObject; var AString: string);
 begin
   AString := secondstostr(strtointdef(AString, 0));
 
 end;
 
-procedure TFormAuftrag.IB_Edit28IsValidChar(Sender: TObject; var AChar: Char;
-  var IsValid: Boolean);
+procedure TFormAuftrag.IB_Edit28IsValidChar(Sender: TObject; var AChar: Char; var IsValid: Boolean);
 begin
   if (AChar = ':') then
     IsValid := true;
 end;
 
-procedure TFormAuftrag.IB_Edit28SetEditText(Sender: TObject;
-  var AString: string);
+procedure TFormAuftrag.IB_Edit28SetEditText(Sender: TObject; var AString: string);
 begin
   AString := inttostr(strtoseconds(AString));
 end;
@@ -996,8 +976,7 @@ begin
     InternalP := TStringList.create;
     FieldByName('ZAEHLER_INFO').AssignTo(InternalP);
     FieldByName('ZAEHLER_STAND_ALT').AsString :=
-      inttostr(max((strtoint64def(InternalP.Values['P0'],
-      0) + strtoint64def(InternalP.Values['P1'], 0)) div 2,
+      inttostr(max((strtoint64def(InternalP.Values['P0'], 0) + strtoint64def(InternalP.Values['P1'], 0)) div 2,
       strtointdef(FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString, 0)));
     InternalP.Free;
     // Ausführungsdatum
@@ -1015,18 +994,13 @@ begin
   with IB_Query1 do
   begin
     FieldByName('PROTOKOLL').AssignTo(Protokoll);
-    ProtokollName := e_r_BaustelleProtokollName(FieldByName('RID').AsInteger,
-      FieldByName('BAUSTELLE_R').AsInteger);
-    Protokoll.add('Titel=' + e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R')
-      .AsInteger) + '-' + inttostrN(FieldByName('NUMMER').AsInteger,
-      cAuftragsNummer_Length));
+    ProtokollName := e_r_BaustelleProtokollName(FieldByName('RID').AsInteger, FieldByName('BAUSTELLE_R').AsInteger);
+    Protokoll.add('Titel=' + e_r_BaustelleKuerzel(FieldByName('BAUSTELLE_R').AsInteger) + '-' +
+      inttostrN(FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length));
   end;
-  AusbelichtetesProtokoll := pem_toHTML(HtmlVorlagenPath + 'PEM.html',
-    ProtokollePath + ProtokollName, Protokoll);
-  AusbelichtetesProtokoll.SaveToFile(AnwenderPath + ProtokollName +
-    '.raw.html');
-  AusbelichtetesProtokoll.SaveToFileCompressed(AnwenderPath + ProtokollName
-    + '.html');
+  AusbelichtetesProtokoll := pem_toHTML(HtmlVorlagenPath + 'PEM.html', ProtokollePath + ProtokollName, Protokoll);
+  AusbelichtetesProtokoll.SaveToFile(AnwenderPath + ProtokollName + '.raw.html');
+  AusbelichtetesProtokoll.SaveToFileCompressed(AnwenderPath + ProtokollName + '.html');
   openShell(AnwenderPath + ProtokollName + '.html');
   Protokoll.Free;
   AusbelichtetesProtokoll.Free;
@@ -1039,8 +1013,7 @@ begin
   // Einfach nur das Protokoll laden
   with IB_Query1 do
   begin
-    ProtokollName := e_r_BaustelleProtokollName(FieldByName('RID').AsInteger,
-      FieldByName('BAUSTELLE_R').AsInteger);
+    ProtokollName := e_r_BaustelleProtokollName(FieldByName('RID').AsInteger, FieldByName('BAUSTELLE_R').AsInteger);
   end;
   openShell(ProtokollePath + ProtokollName + cProtExtension);
 end;
@@ -1058,8 +1031,7 @@ begin
   begin
     PhoneInfo := TStringList.create;
     FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
-    PhoneInfo.add('QS_NOGO=' + datum + ';' + secondstostr(SecondsGet) + ';' +
-      FormBearbeiter.sBearbeiterKurz);
+    PhoneInfo.add('QS_NOGO=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
     FieldByName('INTERN_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
@@ -1094,8 +1066,7 @@ begin
     if (KeySaver.count > 0) then
     begin
       BeginHourGlass;
-      KeySaver.add('----------- ' + datum + ' ----- ' + uhr8 +
-        ' ----------------------------------------');
+      KeySaver.add('----------- ' + datum + ' ----- ' + uhr8 + ' ----------------------------------------');
       KeySaver.add('');
       AppendStringsToFile(KeySaver, AnwenderPath + cTasteFName);
       FileLimitTo(AnwenderPath + cTasteFName, 256 * 1024);
@@ -1117,9 +1088,8 @@ begin
   GeoCache := TGeoCache.create;
   with IB_Query1 do
   begin
-    FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
-      FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL')
-      .AsString, p);
+    FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString, FieldByName('KUNDE_ORT').AsString,
+      FieldByName('KUNDE_ORTSTEIL').AsString, p);
     GeoCache.add(p, FieldByName('RID').AsInteger, cPunkt_rot, 0, true);
   end;
   EndHourGlass;
@@ -1167,8 +1137,7 @@ begin
   cLIST := DataModuleDatenbank.nCursor;
   with cLIST do
   begin
-    sql.add('select X,Y from POSTLEITZAHLEN where RID=' +
-      inttostr(POSTLEITZAHLEN_R));
+    sql.add('select X,Y from POSTLEITZAHLEN where RID=' + inttostr(POSTLEITZAHLEN_R));
     ApiFirst;
     POI.x := FieldByName('X').AsDouble;
     POI.y := FieldByName('Y').AsDouble;
@@ -1187,9 +1156,8 @@ begin
     sql.add('where');
     sql.add(' (AUFTRAG.BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
     sql.add(' (AUFTRAG.AUSFUEHREN=''' + long2date(datum) + ''') and');
-    sql.add(' (AUFTRAG.STATUS IN (' + inttostr(cs_Terminiert) + ',' +
-      inttostr(cs_Angeschrieben) + ',' + inttostr(cs_Monteurinformiert) + ',' +
-      inttostr(cs_Restant) + ')) and');
+    sql.add(' (AUFTRAG.STATUS IN (' + inttostr(cs_Terminiert) + ',' + inttostr(cs_Angeschrieben) + ',' +
+      inttostr(cs_Monteurinformiert) + ',' + inttostr(cs_Restant) + ')) and');
     sql.add(' (AUFTRAG.RID<>' + inttostr(AUFTRAG_R) + ')');
     ApiFirst;
     while not(eof) do
@@ -1217,8 +1185,7 @@ begin
     IB_Query1.FieldByName('EXPORT_TAN').clear;
     PhoneInfo := TStringList.create;
     IB_Query1.FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
-    PhoneInfo.add('UNGEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' +
-      FormBearbeiter.sBearbeiterKurz);
+    PhoneInfo.add('UNGEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
     IB_Query1.FieldByName('INTERN_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
@@ -1231,16 +1198,13 @@ begin
   IB_Query1.FieldByName('EXPORT_TAN').AsInteger := 0;
   PhoneInfo := TStringList.create;
   IB_Query1.FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
-  PhoneInfo.add('GEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' +
-    FormBearbeiter.sBearbeiterKurz);
+  PhoneInfo.add('GEMELDET=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
   IB_Query1.FieldByName('INTERN_INFO').assign(PhoneInfo);
   PhoneInfo.Free;
 
   with IB_Query1 do
-    clipboard.AsText := FieldByName('ART').AsString + '-' +
-      FieldByName('ZAEHLER_NUMMER').AsString + ';' +
-      FieldByName('ZAEHLER_STAND_ALT').AsString + ';' +
-      FieldByName('ZAEHLER_STAND_NEU').AsString + ';' +
+    clipboard.AsText := FieldByName('ART').AsString + '-' + FieldByName('ZAEHLER_NUMMER').AsString + ';' +
+      FieldByName('ZAEHLER_STAND_ALT').AsString + ';' + FieldByName('ZAEHLER_STAND_NEU').AsString + ';' +
       FieldByName('ZAEHLER_WECHSEL').AsString;
 
 end;
@@ -1253,8 +1217,7 @@ begin
   begin
     PhoneInfo := TStringList.create;
     FieldByName('INTERN_INFO').AssignTo(PhoneInfo);
-    PhoneInfo.add('QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';'
-      + FormBearbeiter.sBearbeiterKurz);
+    PhoneInfo.add('QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz);
     FieldByName('INTERN_INFO').assign(PhoneInfo);
     PhoneInfo.Free;
   end;
@@ -1274,8 +1237,7 @@ begin
 
   if (Monteur_R >= cRID_FirstValid) then
   begin
-    AttachementFName := FormAuftragArbeitsplatz.AsHTML
-      (IB_Query1.FieldByName('RID').AsInteger,
+    AttachementFName := FormAuftragArbeitsplatz.AsHTML(IB_Query1.FieldByName('RID').AsInteger,
       IB_Query1.FieldByName('BAUSTELLE_R').AsInteger);
 
     if (AttachementFName <> '') then
@@ -1290,11 +1252,9 @@ begin
       with eMessage do
       begin
         add('Info zum Auftrag ' +
-          { Baustelle } e_r_BaustelleKuerzel
-          (IB_Query1.FieldByName('BAUSTELLE_R').AsInteger) +
+          { Baustelle } e_r_BaustelleKuerzel(IB_Query1.FieldByName('BAUSTELLE_R').AsInteger) +
           { - } '-' +
-          { ABNummer } inttostrN(IB_Query1.FieldByName('NUMMER').AsInteger,
-          cAuftragsNummer_Length) +
+          { ABNummer } inttostrN(IB_Query1.FieldByName('NUMMER').AsInteger, cAuftragsNummer_Length) +
           { Zeitstempel } ' (' + DatumLog + ' ' + uhr8 + ')');
         add('Mit freundlichen Grüssen');
         add('Ihr Auftrags - Team');
@@ -1333,8 +1293,7 @@ procedure TFormAuftrag.SpeedButton9Click(Sender: TObject);
 begin
   FormAuftragArbeitsplatz.InvalidateCache_ProblemInfos;
   Memo1.lines.clear;
-  Memo1.lines.addstrings(FormAuftragArbeitsplatz.getProbleme
-    (IB_Query1.FieldByName('RID').AsInteger));
+  Memo1.lines.addstrings(FormAuftragArbeitsplatz.getProbleme(IB_Query1.FieldByName('RID').AsInteger));
 end;
 
 procedure TFormAuftrag.TabSheet9Show(Sender: TObject);
@@ -1404,13 +1363,11 @@ begin
     end;
 
     // referenzen wieder eintragen
-    POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE')
-      .AsString, FieldByName('KUNDE_ORT').AsString,
-      FieldByName('KUNDE_ORTSTEIL').AsString, p);
+    POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
+      FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
 
     Label54.Caption := FormGeoLokalisierung.r_Strasse;
-    Label46.Caption := FormGeoLokalisierung.r_plz + ' ' +
-      FormGeoLokalisierung.r_Ort;
+    Label46.Caption := FormGeoLokalisierung.r_plz + ' ' + FormGeoLokalisierung.r_Ort;
     Label47.Caption := FormGeoLokalisierung.r_ortsteil;
     Label56.Caption := FormGeoLokalisierung.r_Error;
 
@@ -1426,24 +1383,22 @@ begin
 
       // neues Ortsteil eintragen
       if (FieldByName('KUNDE_ORTSTEIL').AsString = '') or CheckBox1.Checked then
-        FieldByName('KUNDE_ORTSTEIL').AsString :=
-          FormGeoLokalisierung.r_ortsteil;
+        FieldByName('KUNDE_ORTSTEIL').AsString := FormGeoLokalisierung.r_ortsteil;
 
       // PLZ ergänzen
       if FormGeoLokalisierung.q_PLZ = cImpossiblePLZ then
       begin
-        if (FieldByName('KUNDE_ORT').AsString = FieldByName('BRIEF_ORT')
-          .AsString) then
+        if (FieldByName('KUNDE_ORT').AsString = FieldByName('BRIEF_ORT').AsString) then
         begin
-          FieldByName('BRIEF_ORT').AsString := FormGeoLokalisierung.r_plz + ' '
-            + cutblank(FieldByName('KUNDE_ORT').AsString);
-          FieldByName('KUNDE_ORT').AsString := FormGeoLokalisierung.r_plz + ' '
-            + cutblank(FieldByName('KUNDE_ORT').AsString);
+          FieldByName('BRIEF_ORT').AsString := FormGeoLokalisierung.r_plz + ' ' +
+            cutblank(FieldByName('KUNDE_ORT').AsString);
+          FieldByName('KUNDE_ORT').AsString := FormGeoLokalisierung.r_plz + ' ' +
+            cutblank(FieldByName('KUNDE_ORT').AsString);
         end
         else
         begin
-          FieldByName('KUNDE_ORT').AsString := FormGeoLokalisierung.r_plz + ' '
-            + cutblank(FieldByName('KUNDE_ORT').AsString);
+          FieldByName('KUNDE_ORT').AsString := FormGeoLokalisierung.r_plz + ' ' +
+            cutblank(FieldByName('KUNDE_ORT').AsString);
         end;
       end;
     end
@@ -1467,13 +1422,11 @@ begin
   cORTE := DataModuleDatenbank.nCursor;
   with cORTE do
   begin
-    sql.add('select distinct ORT,ORTSTEIL from POSTLEITZAHLEN where PLZ=' +
-      PLZ);
+    sql.add('select distinct ORT,ORTSTEIL from POSTLEITZAHLEN where PLZ=' + PLZ);
     ApiFirst;
     while not(eof) do
     begin
-      ResultList.add(PLZ + ' ' + FieldByName('ORT').AsString + ' ' +
-        FieldByName('ORTSTEIL').AsString);
+      ResultList.add(PLZ + ' ' + FieldByName('ORT').AsString + ' ' + FieldByName('ORTSTEIL').AsString);
       ApiNext;
     end;
   end;
@@ -1511,8 +1464,8 @@ procedure TFormAuftrag.Button16Click(Sender: TObject);
 var
   FName: string;
 begin
-  FName := FormAuftragArbeitsplatz.AsHTML(IB_Query1.FieldByName('RID')
-    .AsInteger, IB_Query1.FieldByName('BAUSTELLE_R').AsInteger);
+  FName := FormAuftragArbeitsplatz.AsHTML(IB_Query1.FieldByName('RID').AsInteger, IB_Query1.FieldByName('BAUSTELLE_R')
+    .AsInteger);
   if (FName <> '') then
     openShell(FName);
 end;
@@ -1525,8 +1478,7 @@ end;
 procedure TFormAuftrag.Image4Click(Sender: TObject);
 begin
   with IB_Query1 do
-    wanfix32.openShell('http://maps.google.de/maps?q=' +
-      AnsiToRFC1738(FieldByName('KUNDE_ORT').AsString + ', ' +
+    wanfix32.openShell('http://maps.google.de/maps?q=' + AnsiToRFC1738(FieldByName('KUNDE_ORT').AsString + ', ' +
       FieldByName('KUNDE_STRASSE').AsString));
 end;
 
@@ -1556,8 +1508,7 @@ begin
     ersetze('Ä', 'Ae', s);
     ersetze('ß', 'ss', s);
 
-    wanfix32.openShell('http://nominatim.openstreetmap.org/search.php?q=' +
-      AnsiToRFC1738(s));
+    wanfix32.openShell('http://nominatim.openstreetmap.org/search.php?q=' + AnsiToRFC1738(s));
   end;
 end;
 
