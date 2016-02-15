@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.153; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.154; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -515,7 +515,7 @@ const
   cServerDataPath = 'Daten\';
   cOrgaMonDataPath = 'OrgaMon\';
   cMeldungPath = 'Meldung\';
-  cStatistikPath = 'Statistik\';
+  cStatistikPath = 'Statistik\' deprecated 'Migriere nach pStatistikPath';
   cUpdatePath = 'Update\';
   cProtokollPath = 'Protokolle\';
   cGeraeteEinstellungen = 'Einstellungen\';

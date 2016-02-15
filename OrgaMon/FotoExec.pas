@@ -97,6 +97,9 @@ type
     // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "StatistikPath" mit Default "WebPath"
     pAppStatistikPath: string;
 
+    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "TextPath" mit Default
+    pAppTextPath: string;
+
     // Verzeichnisse
     function MyDataBasePath: string;
 
@@ -151,7 +154,7 @@ begin
       EINGABE := tsTable.Create
     else
       EINGABE.Clear;
-    FName := pAppServicePath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
+    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
@@ -180,7 +183,7 @@ begin
       EINGABE := tsTable.Create
     else
       EINGABE.Clear;
-    FName := pAppServicePath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt';
+    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
@@ -279,6 +282,7 @@ begin
     pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
+    pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
     pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet');
     DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);

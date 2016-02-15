@@ -100,6 +100,9 @@ type
     function oldInfrastructure: boolean;
 
   public
+    // ehemals ./Statistik Pfad
+    pAppTextPath : string;
+
     //
     Option_Console: boolean;
 
@@ -1280,8 +1283,8 @@ var
     end;
 
     // Laden der "Eingabe.???.txt"
-    if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt') then
-      sEingabe.LoadFromFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt');
+    if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
+      sEingabe.LoadFromFile(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt');
 
     // Über die Eingaben des Monteurs selbst
     FirstFoto := false;
@@ -2150,9 +2153,9 @@ begin
       // Datensicherung der Monteur-Eingabe-Datei erstellen
       if not(FileExists(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')) then
       begin
-        if FileExists(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt') then
+        if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
           FileCopy(
-            { } MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt',
+            { } pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt',
             { } MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')
         else
           FileAlive(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt');
@@ -2174,7 +2177,7 @@ begin
           Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
         inc(m);
       until not(FileExists(Fname));
-      FileCopy(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteNo + '.txt', Fname);
+      FileCopy(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt', Fname);
 
       // alle Zuordnungen ansehen,
       // Beispiel:    PLED3->PLE & PLED2->PLE
@@ -2342,7 +2345,7 @@ begin
       writeln(MonDaGeraetF, AktTrn);
       CloseFile(MonDaGeraetF);
 
-      assignFile(MonDaGeraetF, MyProgramPath + cStatistikPath + GeraeteNo + '.txt');
+      assignFile(MonDaGeraetF, pAppTextPath + GeraeteNo + '.txt');
       try
         rewrite(MonDaGeraetF);
       except
@@ -2516,7 +2519,7 @@ begin
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
     DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
-
+    pAppTextPath := ReadString(SectionName, 'TextPath', MyProgramPath + cStatistikPath);
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
   end;
   MyIni.free;
@@ -3572,7 +3575,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     sRIDs := TgpIntegerList.Create;
 
     // Umfang laden
-    sUmfang.LoadFromFile(MyProgramPath + cStatistikPath + UmfangFName);
+    sUmfang.LoadFromFile(pAppTextPath + UmfangFName);
 
     // Colum - Defaults
     um_Col_Gerate := 0;
@@ -3684,12 +3687,12 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       end;
 
       // Senden
-      mDate := FDate(MyProgramPath + cStatistikPath + um_Geraet + '.txt');
-      mTime := FSeconds(MyProgramPath + cStatistikPath + um_Geraet + '.txt');
+      mDate := FDate(pAppTextPath + um_Geraet + '.txt');
+      mTime := FSeconds(pAppTextPath + um_Geraet + '.txt');
       if (mDate > 0) then
       begin
         mTimeDiff := SecondsDiff(iDate, iTime, mDate, mTime);
-        sMeldungen.LoadFromFile(MyProgramPath + cStatistikPath + um_Geraet + '.txt');
+        sMeldungen.LoadFromFile(pAppTextPath + um_Geraet + '.txt');
         OneCell := '  -' + secondstostr9(mTimeDiff) + ' h (' + sMeldungen[0] + ':' +
           format('%4d', [Stat_Auftrag]) + ')';
         OneCell := OneCell + format('x%2d', [Stat_Anzahl_Senden(um_Geraet)]);
@@ -3774,7 +3777,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
     iFTP.DisConnect;
-    sStatistik.SaveToFile(MyProgramPath + cStatistikPath + 'Info-' + um_Baustelle + '.txt');
+    sStatistik.SaveToFile(pAppTextPath + 'Info-' + um_Baustelle + '.txt');
     sStatistik.free;
     sUmfang.free;
     sMeldungen.free;
@@ -3786,7 +3789,7 @@ var
   n: integer;
 begin
   sDir := TStringList.Create;
-  dir(MyProgramPath + cStatistikPath + 'Umfang.*.csv', sDir, false);
+  dir(pAppTextPath + 'Umfang.*.csv', sDir, false);
   for n := 0 to pred(sDir.count) do
     StatSingle(sDir[n]);
   sDir.free;
@@ -4238,7 +4241,7 @@ begin
   NeueInfos.sort;
 
   Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  Fname := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '.txt';
+  Fname := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
   if FileExists(Fname) then
     oBilder.LoadFromFile(Fname);
 
@@ -4315,7 +4318,7 @@ begin
   BisherInfos := TgpIntegerList.Create;
 
   Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  Fname := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '.txt';
+  Fname := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
   if FileExists(Fname) then
     oBilder.LoadFromFile(Fname);
 
