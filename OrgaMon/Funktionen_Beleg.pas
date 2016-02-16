@@ -10946,7 +10946,7 @@ begin
               values['Konto'] := '';
 
             // Verlag - Nummer (GOT-Kürzel!)
-            if cPOSTEN.FieldByName('INFO').IsNotNull then
+            if not(cPOSTEN.FieldByName('INFO').IsNull) then
               values['VerlagNo'] := UnbreakAble(cPOSTEN.FieldByName('INFO').AsString);
 
             // Lager-Packliste ausgeben!
