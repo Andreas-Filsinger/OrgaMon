@@ -88,12 +88,11 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Mapping in '..\PASconTools\Mapping.pas',
   OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
   globals,
-  laz_fpspreadsheet,
   Funktionen_Auftrag,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-  eConnect;
+  eConnect, indylaz, fpspreadsheet;
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);

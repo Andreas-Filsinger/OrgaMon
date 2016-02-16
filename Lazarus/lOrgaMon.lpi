@@ -40,7 +40,7 @@
     </RunParams>
     <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="laz_fpspreadsheet"/>
+        <PackageName Value="indylaz"/>
       </Item1>
       <Item2>
         <PackageName Value="zcomponent"/>
@@ -55,11 +55,15 @@
         <PackageName Value="LCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="1">
+    <Units Count="2">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit1>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -70,7 +74,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\fpspreadsheet"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
