@@ -54,12 +54,9 @@ uses
   Mapping in '..\PASconTools\Mapping.pas',
   GHD_pngimage in '..\PASconTools\GHD_pngimage.pas',
   GHD_pnglang in '..\PASconTools\GHD_pnglang.pas',
-  CCR.Exif.Consts in '..\CCR Exif\CCR.Exif.Consts.pas',
-  CCR.Exif.JpegUtils in '..\CCR Exif\CCR.Exif.JpegUtils.pas',
-  CCR.Exif in '..\CCR Exif\CCR.Exif.pas',
-  CCR.Exif.StreamHelper in '..\CCR Exif\CCR.Exif.StreamHelper.pas',
-  CCR.Exif.TagIDs in '..\CCR Exif\CCR.Exif.TagIDs.pas',
-  CCR.Exif.XMPUtils in '..\CCR Exif\CCR.Exif.XMPUtils.pas',
+  CCR.Exif.StreamHelper in '..\ccr-exif\CCR.Exif.StreamHelper.pas',
+  CCR.Exif.TagIDs in '..\ccr-exif\CCR.Exif.TagIDs.pas',
+  CCR.Exif.XMPUtils in '..\ccr-exif\CCR.Exif.XMPUtils.pas',
   eConnect in 'eConnect.pas',
   OpenStreetMap in '..\PASconTools\OpenStreetMap.pas',
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
@@ -75,8 +72,12 @@ uses
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
-  Identitaet in 'Identitaet.pas';
-
+  Identitaet in 'Identitaet.pas',
+  CCR.Exif.BaseUtils in '..\ccr-exif\CCR.Exif.BaseUtils.pas',
+  CCR.Exif.Consts in '..\ccr-exif\CCR.Exif.Consts.pas',
+  CCR.Exif.JpegUtils in '..\ccr-exif\CCR.Exif.JpegUtils.pas',
+  CCR.Exif in '..\ccr-exif\CCR.Exif.pas',
+  CCR.Exif.TiffUtils in '..\ccr-exif\CCR.Exif.TiffUtils.pas';
 
 begin
  setIdentitaetAndRun;
