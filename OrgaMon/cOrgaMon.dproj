@@ -141,6 +141,7 @@
 			<DCCReference Include="..\PASconTools\Foto.pas"/>
 			<DCCReference Include="JonDaExec.pas"/>
 			<DCCReference Include="FotoExec.pas"/>
+			<DCCReference Include="Identitaet.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
