@@ -541,7 +541,7 @@ begin
         end;
 
         // get Foto-Moment, touch File-Date-Time
-        if not(iEXIF.LoadFromJPEG(FName)) then
+        if not(iEXIF.LoadFromGraphic(FName)) then
         begin
           Log(cERRORText + ' ' + sFiles[n] + ': EXiF konnte nicht geladen werden');
           break;

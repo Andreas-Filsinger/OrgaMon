@@ -144,7 +144,9 @@
 			<DCCReference Include="..\ccr-exif\CCR.Exif.JpegUtils.pas"/>
 			<DCCReference Include="..\ccr-exif\CCR.Exif.pas"/>
 			<DCCReference Include="..\ccr-exif\CCR.Exif.TiffUtils.pas"/>
+			<DCCReference Include="..\ccr-exif\CCR.Exif.IPTC.pas"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
+			<None Include="..\ccr-exif\CCR.Exif.inc"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

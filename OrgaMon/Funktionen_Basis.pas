@@ -902,7 +902,7 @@ begin
 {$IFDEF fpc}
       { 25 } add('exiftool Rev. ' + 'N/A');
 {$ELSE}
-      { 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.Version);
+      { 25 } add('CCR.Exif Rev. ' + CCR.Exif.Consts.CCRExifVersion);
 {$ENDIF}
       { 26 } add(e_r_Kontext);
       { 27 } add(Betriebssystem);
