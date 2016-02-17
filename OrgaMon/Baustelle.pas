@@ -4388,9 +4388,9 @@ var
           if (pos('!', sBilder[n]) <> 1) then
             With iEXIF do
             begin
-              if LoadFromJPEG(cFotoQuelle + sBilder[n]) then // Read in file
+              if LoadFromGraphic(cFotoQuelle + sBilder[n]) then // Read in file
               begin
-                AufnahmeMoment := DateTimeOriginal + FotoOffset;
+                AufnahmeMoment := DateTimeOriginal.Value + FotoOffset;
                 sBilderSorter.addObject(inttostrN(DateTime2long(AufnahmeMoment),
                   8) + '-' + SecondsToStr8(DateTime2seconds(AufnahmeMoment)) +
                   '-' + 'E' + '-' + sBilder[n], pointer(n));
@@ -4525,7 +4525,7 @@ var
       // EXiF Moment
       With iEXIF do
       begin
-        if LoadFromJPEG(cFotoQuelle + sBilder[n]) then // Read in file
+        if LoadFromGraphic(cFotoQuelle + sBilder[n]) then // Read in file
         begin
           EXiFMoment := DateTimeOriginal;
         end;

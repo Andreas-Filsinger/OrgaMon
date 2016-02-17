@@ -23,7 +23,7 @@ begin
   iEXIF := TExifData.Create;
   result := 0.0;
   try
-    iEXIF.LoadFromJPEG(FName);
+    iEXIF.LoadFromGraphic(FName);
     result := iEXIF.DateTimeOriginal;
   except
 

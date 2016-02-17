@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.154 (17.02.16) Andreas Filsinger
+
+ Neu: App-Service: Parameter: "TextPath" für Eingabe.nnn.txt Dateien
+
+ Wegfall: App-Service: .\Statistik Pfad
+
 Rev 8.153 (12.02.16) Andreas Filsinger
 
  Neu: Vertrag: Bezahlt bis geht nun zusätzlicher über das Feld "INFO"

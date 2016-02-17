@@ -257,8 +257,8 @@ begin
     iEXIF := TExifData.create;
     With iEXIF do
     begin
-      if LoadFromJPEG(Path + sImages[ImageIndex]) then
-        AufnahmeMoment := DateTimeOriginal + FotoOffset
+      if LoadFromGraphic(Path + sImages[ImageIndex]) then
+        AufnahmeMoment := DateTimeOriginal.Value + FotoOffset
       else
         AufnahmeMoment := 0.0;
     end;

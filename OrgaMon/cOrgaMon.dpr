@@ -77,7 +77,8 @@ uses
   CCR.Exif.Consts in '..\ccr-exif\CCR.Exif.Consts.pas',
   CCR.Exif.JpegUtils in '..\ccr-exif\CCR.Exif.JpegUtils.pas',
   CCR.Exif in '..\ccr-exif\CCR.Exif.pas',
-  CCR.Exif.TiffUtils in '..\ccr-exif\CCR.Exif.TiffUtils.pas';
+  CCR.Exif.TiffUtils in '..\ccr-exif\CCR.Exif.TiffUtils.pas',
+  CCR.Exif.IPTC in '..\ccr-exif\CCR.Exif.IPTC.pas';
 
 begin
  setIdentitaetAndRun;
