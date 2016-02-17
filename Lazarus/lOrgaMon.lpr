@@ -6,7 +6,7 @@
   |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2014  Andreas Filsinger
+  |    Copyright (C) 2014 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -37,9 +37,8 @@ program lOrgaMon;
  Voraussetzungen
  ===============
 
- zeos
- jcl
  Indy
+ zeos
  fpspreadsheet
 
  Vergleiche
@@ -92,7 +91,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
-  eConnect, indylaz, fpspreadsheet;
+  eConnect,
+  indylaz,
+  fpspreadsheet;
 
 type
   TIndentitaet = (id_XMLRPC, id_Bestellen, id_Mail, id_Druck);
@@ -164,128 +165,32 @@ var
         writeln('Performance-Log aktiv: ' + LogContext);
 
       // TWebShop
-      AddMethod('ArtikelSuche',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_ArtikelSuche);
-      AddMethod('ArtikelPreis',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_ArtikelPreis);
-      AddMethod('KontoInfo',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_KontoInfo);
-      AddMethod('BestellInfo',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_BestellInfo);
-      AddMethod('Land',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Land);
-      AddMethod('Bestellen',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_Bestellen);
-      AddMethod('Vormerken',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_Vormerken);
-      AddMethod('Buchen',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_Buchen);
-      AddMethod('ArtikelVersendetag',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_ArtikelVersendetag);
-      AddMethod('Verlag',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Verlag);
-      AddMethod('Versandkosten',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Versandkosten);
-      AddMethod('ArtikelInfo',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_ArtikelInfo);
-      AddMethod('BasePlug',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_BasePlug);
-      AddMethod('ArtikelRabattPreis',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_ArtikelRabattPreis);
-      AddMethod('PersonNeu',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_PersonNeu);
-      AddMethod('Ort',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Ort);
-      AddMethod('Rabatt',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Rabatt);
-      AddMethod('Preis',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_r_Preis);
-      AddMethod('Miniscore',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_Miniscore);
-      AddMethod('LoginInfo',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_LoginInfo);
-      AddMethod('Skript',
-{$ifdef fpc}
-
-{$endif}
-        XMethods.rpc_e_w_Skript);
+      AddMethod('ArtikelSuche', XMethods.rpc_e_r_ArtikelSuche);
+      AddMethod('ArtikelPreis', XMethods.rpc_e_r_ArtikelPreis);
+      AddMethod('KontoInfo', XMethods.rpc_e_r_KontoInfo);
+      AddMethod('BestellInfo', XMethods.rpc_e_r_BestellInfo);
+      AddMethod('Land', XMethods.rpc_e_r_Land);
+      AddMethod('Bestellen', XMethods.rpc_e_w_Bestellen);
+      AddMethod('Vormerken', XMethods.rpc_e_w_Vormerken);
+      AddMethod('Buchen', XMethods.rpc_e_w_Buchen);
+      AddMethod('ArtikelVersendetag', XMethods.rpc_e_r_ArtikelVersendetag);
+      AddMethod('Verlag', XMethods.rpc_e_r_Verlag);
+      AddMethod('Versandkosten', XMethods.rpc_e_r_Versandkosten);
+      AddMethod('ArtikelInfo', XMethods.rpc_e_r_ArtikelInfo);
+      AddMethod('BasePlug', XMethods.rpc_e_r_BasePlug);
+      AddMethod('ArtikelRabattPreis', XMethods.rpc_e_r_ArtikelRabattPreis);
+      AddMethod('PersonNeu', XMethods.rpc_e_w_PersonNeu);
+      AddMethod('Ort', XMethods.rpc_e_r_Ort);
+      AddMethod('Rabatt', XMethods.rpc_e_r_Rabatt);
+      AddMethod('Preis', XMethods.rpc_e_r_Preis);
+      AddMethod('Miniscore', XMethods.rpc_e_w_Miniscore);
+      AddMethod('LoginInfo', XMethods.rpc_e_w_LoginInfo);
+      AddMethod('Skript', XMethods.rpc_e_w_Skript);
 
       // JonDa
-      AddMethod('JonDaPlug',
-{$ifdef fpc}
-
-{$endif}
-        JonDa.info);
-      AddMethod('StartTAN',
-{$ifdef fpc}
-
-{$endif}
-        JonDa.start);
-      AddMethod('ProceedTAN',
-{$ifdef fpc}
-
-{$endif}
-        JonDa.proceed);
+      AddMethod('JonDaPlug', JonDa.info);
+      AddMethod('StartTAN', JonDa.start);
+      AddMethod('ProceedTAN', JonDa.proceed);
 
       // Starten
       BasePlug := e_r_BasePlug;
@@ -370,8 +275,8 @@ begin
     writeln(' | |/ _ \ _ __ __ _  __ _|  \/  | ___  _ __');
     writeln(' | | | | | ''__/ _` |/ _` | |\/| |/ _ \| ''_ \');
     writeln(' | | |_| | | | (_| | (_| | |  | | (_) | | | |');
-    writeln(' |_|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_| ' +
-      Modus + '-Server@' + Betriebssystem);
+    writeln(' |_|\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_| ' + Modus +
+      '-Server@' + Betriebssystem);
     writeln('              |___/');
     writeln;
     Write('Rev. ' + RevToStr(globals.version) + ' lade ' + MyProgramPath + ' ... ');
@@ -443,8 +348,8 @@ begin
       halt(1);
     end;
     sBearbeiterKurz :=
-    { } e_r_BearbeiterKuerzel(sBearbeiter) + '@' +
-    { } e_r_Kontext;
+      e_r_BearbeiterKuerzel(sBearbeiter) + '@' + e_r_Kontext;
+
 
     writeln(cOKText);
 
