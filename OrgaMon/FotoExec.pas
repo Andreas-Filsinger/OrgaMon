@@ -34,7 +34,10 @@ uses
 {$ENDIF}
   // System
   classes, inifiles, SysUtils,
-  math, jpeg, CCR.Exif,
+  math,
+{$ifndef FPC}
+jpeg, CCR.Exif,
+{$endif}
 
   // Tools
   anfix32, WordIndex, binlager32,

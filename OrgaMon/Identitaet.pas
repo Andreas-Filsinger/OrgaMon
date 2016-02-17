@@ -53,7 +53,11 @@ uses
  binlager32,
 
  // DB
+{$ifdef FPC}
+
+{$else}
  IB_Session,
+{$endif}
 
  // OrgaMon-Globals
  globals,
@@ -110,18 +114,26 @@ begin
       MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
     end;
 
-    DataBaseName := _iDataBaseName;
-    if (iDataBaseHost = '') then
-    begin
-      Server := '';
-      protocol := cplocal;
-    end
-    else
-    begin
-      protocol := cpTCP_IP;
-    end;
 
-    UserName := iDataBaseUser;
+    {$ifdef fpc}
+          User := iDataBaseUser;
+          HostName := iDataBaseHost;
+          Database := i_c_DataBaseFName;
+    {$else}
+          DataBaseName := _iDataBaseName;
+          if (iDataBaseHost = '') then
+          begin
+            Server := '';
+            protocol := cplocal;
+          end
+          else
+          begin
+            protocol := cpTCP_IP;
+          end;
+          UserName := iDataBaseUser;
+    {$endif}
+
+
     if (length(iDataBasePassword) > 25) then
       Password := deCrypt_Hex(iDataBasePassword)
     else
