@@ -19,7 +19,7 @@ $xLocate = new XLocateWSService($wsdl_url, array(
   'proxy_port' => HTTP_PROXY_PORT,
   'login' => LOGIN,
   'password'=> PASS,
-  'uri' => "http://test-uri/")
+  'uri' => "http://orgamon.org/?token=")
 );  
 
 //define address

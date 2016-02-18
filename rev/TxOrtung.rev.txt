@@ -18,7 +18,6 @@
 * UPDATE: XMap.xml.xServer-1.12
 * INFO: Simple HTTP Interface for Map&Guide XServer SOAP API
 * PUBLIC: YES
-* ARCHIVE: YES
 ====================================
 
 // INFO BEGIN
@@ -27,6 +26,11 @@ These scripts are a Communication Proxies wich hide the Complexity of the Map&Gu
  XServer SOAP API. Clients can use simple HTTP-Requests for the two function calls, "locate" and
  "getmap". This Code is derived from the (c)M&G PHP Codesamples. 
 // INFO END
+
+Rev 4.012 (18.02.16) Andreas Filsinger
+
+ Neu: config: "HOST"
+ Neu: Korrekter Eintrag des Hostes in den HTTP Request (anstelle von "localhost")
 
 Rev 4.011 (28.03.11) Andreas Filsinger
 
