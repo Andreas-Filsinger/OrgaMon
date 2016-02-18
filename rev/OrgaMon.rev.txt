@@ -21,8 +21,10 @@ Dokumentation
 
 Rev 8.154 (17.02.16) Andreas Filsinger
 
- Neu: App-Service: Parameter: "TextPath" für Eingabe.nnn.txt Dateien
+ Bug: OLAP: im Diagnose-Modus -> Absturz wenn Globale Variable fehlen
 
+ Neu: App-Service: Parameter: "TextPath" für Eingabe.nnn.txt Dateien
+ Neu: Migration auf CCR Exif 1.5.3
  Wegfall: App-Service: .\Statistik Pfad
 
 Rev 8.153 (12.02.16) Andreas Filsinger

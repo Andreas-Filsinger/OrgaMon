@@ -1234,8 +1234,11 @@ begin
       DebugInfos := TStringList.create;
       DebugInfos.add('-- Parameter --');
       DebugInfos.AddStrings(ParameterL);
-      DebugInfos.add('-- Global Vars --');
-      DebugInfos.AddStrings(GlobalVars);
+      if assigned(GlobalVars) then
+      begin
+        DebugInfos.add('-- Global Vars --');
+        DebugInfos.AddStrings(GlobalVars);
+      end;
       AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt', DatumUhr);
       DebugInfos.free;
     end;

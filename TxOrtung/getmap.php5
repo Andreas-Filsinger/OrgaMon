@@ -1,4 +1,7 @@
 <?php
+// TxOrtung 4.012
+
+
 $time_start = microtime(true);
 
 require_once("i_config.inc.php5");
@@ -80,6 +83,7 @@ catch (SoapFault $exception) {
 
 $image_url = $resultMessage->result->image->url;
 $image_url = (substr($image_url,0,7) != "http://") ? "http://".$image_url : $image_url;
+$image_url = str_replace("localhost",HOST,$image_url);
 
 $bounding_box = $resultMessage->result->visibleSection->boundingBox;
 list($lox, $loy) = Mercator2GeoDecimal($bounding_box->leftTop->point->x, $bounding_box->leftTop->point->y, true);

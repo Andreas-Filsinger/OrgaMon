@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ const
   cUnofficial = '* UNOFFICIAL: YES';
   cPUBLIC = '* PUBLIC: YES'; // * Info.html geht raus als "projekt Info"
   cSOURCEBALL = '* SOURCEBALL: YES'; // aktuelle Sourcen als ZIP sichern?
-  cARCHIVE = '* ARCHIVE: YES'; // erzeugtes Ergebnis ins .\Archiv
+  cARCHIVE = '* ARCHIVE: YES'; // erzeugtes zip-Ergebnis ins Quellverzeichnis
   cVersion = '* VERSION:';
   // Quelle, aus der die Projekt-Version ermittelt wird,
   // keine weitere Bedeutung, es wird nur die Version an
