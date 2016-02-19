@@ -665,7 +665,6 @@
 				<Form>FormArtikelAusgabeartAuswahl</Form>
 				<FormType>dfm</FormType>
 			</DCCReference>
-			<DCCReference Include="..\PASconTools\IndySecureMailClient.pas"/>
 			<None Include="..\rev\Oc.rev.txt"/>
 			<None Include="..\rev\OrgaMon.rev.txt"/>
 			<None Include="..\rev\TPicUpload.rev.txt"/>

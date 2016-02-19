@@ -209,8 +209,7 @@ uses
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
-  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
-  IndySecureMailClient in '..\PASconTools\IndySecureMailClient.pas';
+  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl};
 
 {$R *.RES}
 
