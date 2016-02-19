@@ -35,9 +35,12 @@ uses
   // System
   classes, inifiles, SysUtils,
   math,
-{$ifndef FPC}
-jpeg, CCR.Exif,
-{$endif}
+{$ifdef FPC}
+fpImage, FPReadJPEG, Graphics,
+{$else}
+  jpeg,
+  {$endif}
+  CCR.Exif,
 
   // Tools
   anfix32, WordIndex, binlager32,
@@ -392,7 +395,11 @@ var
   FullSuccess: boolean;
   FoundAuftrag: boolean;
   UmbenennungAbgeschlossen: boolean;
-  Image: TJPEGImage;
+{$ifdef FPC}
+Image: TPicture;
+{$else}
+Image: TJPEGImage;
+{$endif}
   sBaustelle: string;
   sZiel: string;
 
@@ -512,7 +519,11 @@ begin
   begin
     FullSuccess := false;
     FName := pFTPPath + sFiles[n];
+{$ifdef FPC}
+Image := TPicture.Create;
+    {$else}
     Image := TJPEGImage.Create;
+    {$endif}
     iEXIF := TExifData.Create;
     try
       repeat

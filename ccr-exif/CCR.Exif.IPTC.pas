@@ -294,7 +294,9 @@ type
     property ObjectDataSection: TIPTCSection index 8 read GetSection;
     property SecondDescriptorSection: TIPTCSection index 9 read GetSection;
     property Sections[ID: TIPTCSectionID]: TIPTCSection read GetSectionByID; default;
-  published
+    {$ifndef FPC}
+    published
+    {$endif}
     property AlwaysAssumeUTF8Encoding: Boolean read FAlwaysAssumeUTF8Encoding write FAlwaysAssumeUTF8Encoding default False;
     property Empty: Boolean read GetEmpty;
     property UTF8Encoded: Boolean read GetUTF8Encoded write SetUTF8Encoded default True;

@@ -421,7 +421,9 @@ type
     procedure Assign(Source: TPersistent); override;
     function MissingOrInvalid: Boolean; override;
     property BitSet: TWordBitSet read GetBitSet write SetBitSet stored False;
+{$ifndef FPC}
   published
+{$endif}
     property Fired: Boolean read GetFired write SetFired stored False;
     property Mode: TExifFlashMode read GetMode write SetMode stored False;
     property Present: Boolean read GetPresent write SetPresent stored False;
@@ -545,7 +547,9 @@ type
     function MissingOrInvalid: Boolean; override;
     function ToString: string; override;
     property Section: TExifSection read FSection;
+{$ifndef FPC}
   published
+{$endif}
     property X: TExifFraction read GetX write SetX stored False;
     property Y: TExifFraction read GetY write SetY stored False;
     property Units: TExifResolutionUnit read GetUnit write SetUnit stored False;
@@ -1192,7 +1196,9 @@ type
     property Modified: Boolean read FModified write SetModified;
     property Sections[Section: TExifSectionKind]: TExifSection read GetSection; default;
     property XMPPacket: TXMPPacket read FXMPPacket;
+{$ifndef FPC}
   published
+{$endif}
     property AlwaysWritePreciseTimes: Boolean read FAlwaysWritePreciseTimes write FAlwaysWritePreciseTimes default False;
     property Empty: Boolean read GetEmpty;
     property EnforceASCII: Boolean read FEnforceASCII write FEnforceASCII default True;
@@ -1319,6 +1325,10 @@ type
   public
     constructor Create(const AFileName: string); reintroduce; overload;
     destructor Destroy; override;
+{$ifdef FPC}
+    procedure GetImage(const Dest: IStreamPersist);
+    procedure GetThumbnail(Dest: TPersistent);
+{$else}
     { the following two methods originally had params typed to TJpegImage; these
       have been made more weakly typed for FMX compatibility }
     {$IF CompilerVersion >= 22}
@@ -1328,6 +1338,7 @@ type
     procedure GetImage(const Dest: IStreamPersist);
     procedure GetThumbnail(Dest: TPersistent);
     {$IFEND}
+{$endif}
     procedure OpenFile(const JPEGFileName: string);
     procedure UpdateFile;
     procedure CloseFile(SaveChanges: Boolean = False);
@@ -2236,7 +2247,7 @@ end;
 procedure TExifTag.UpdateData(NewDataType: TExifDataType;
   NewElementCount: Integer; const NewData);
 const
-  IntDataTypes = [tdByte, tdWord, tdLongWord, tdShortInt, tdSmallInt, tdLongWord];
+  IntDataTypes = [tdByte, tdWord, tdLongWord, tdShortInt, tdSmallInt];
 var
   OldDataSize, NewDataSize, I: Integer;
   OldIntVals: array of LongWord;
@@ -3589,8 +3600,8 @@ end;
 
 function TCustomExifResolution.MissingOrInvalid: Boolean;
 begin
-  Result := not Section.TagExists(FXTagID, [tdLongWordFraction, tdLongWordFraction]) or
-    not Section.TagExists(FYTagID, [tdLongWordFraction, tdLongWordFraction]);
+  Result := not Section.TagExists(FXTagID, [tdLongWordFraction]) or
+    not Section.TagExists(FYTagID, [tdLongWordFraction]);
 end;
 
 procedure TCustomExifResolution.SetUnit(const Value: TExifResolutionUnit);
@@ -3851,7 +3862,11 @@ end;
 procedure TISOSpeedRatings.SetItem(Index: Integer; const Value: Word);
   procedure WriteXMP;
   begin
-    with Owner.XMPPacket[XMPSchema][XMPName] do
+{$ifdef FPC}
+with Owner.XMPPacket[XMPSchema].PropertiesByString[XMPName] do
+{$else}
+with Owner.XMPPacket[XMPSchema][XMPName] do
+{$endif}
     begin
       Kind := XMPKind;
       Count := Max(Count, Succ(Index));
@@ -5254,8 +5269,8 @@ begin
   if not Result.MissingOrInvalid then Exit;
   FocalLengthFrac := FocalLength;
   if FocalLengthFrac.MissingOrInvalid then Exit;
-  ExifWidth := ExifImageWidth;
-  ExifHeight := ExifImageHeight;
+  ExifWidth := ExifImageWidth.Value;
+  ExifHeight := ExifImageHeight.Value;
   if (ExifWidth = 0) or (ExifHeight = 0) then Exit;
   case FocalPlaneResolution.Units of
     trInch: ResUnit := 25.4;
@@ -5572,7 +5587,7 @@ var
 begin
   if FSections[esDetails].Find(ttSubjectLocation, Tag) and
     (Tag.DataType in [tdWord, tdSmallInt]) and (Tag.ElementCount >= 2) then
-    Result := PSmallPoint(Tag.Data)^
+    Result := TSmallPoint(PSmallPoint(Tag.Data)^)
   else
   begin
     Result.x := -1;
@@ -5595,7 +5610,11 @@ begin
         MinRating..MaxRating: Exit;
       end
   else
-    if TryStrToInt(XMPPacket[xsXMPBasic].Properties['Rating'].ReadValue, I) then
+{$ifdef FPC}
+if TryStrToInt(XMPPacket[xsXMPBasic].PropertiesByString['Rating'].ReadValue, I) then
+{$else}
+if TryStrToInt(XMPPacket[xsXMPBasic].Properties['Rating'].ReadValue, I) then
+{$endif}
       if not EnsureEnumsInRange or InRange(I, MinRating, MaxRating) then
       begin
         Result := TWindowsStarRating(I);
@@ -6214,22 +6233,30 @@ begin
     Result := '';
 end;
 
+{$ifdef FPC}
+procedure TExifDataPatcher.GetImage(const Dest: IStreamPersist);
+{$else}
 {$IF CompilerVersion >= 22}
 procedure TExifDataPatcher.GetImage<T>(const Dest: T);
 {$ELSE}
 procedure TExifDataPatcher.GetImage(const Dest: IStreamPersist);
 {$IFEND}
+{$endif}
 begin
   CheckFileIsOpen;
   FStream.Position := 0;
   Dest.LoadFromStream(FStream);
 end;
 
+{$ifdef FPC}
+procedure TExifDataPatcher.GetThumbnail(Dest: TPersistent);
+{$else}
 {$IF CompilerVersion >= 22}
 procedure TExifDataPatcher.GetThumbnail<T>(const Dest: T);
 {$ELSE}
 procedure TExifDataPatcher.GetThumbnail(Dest: TPersistent);
 {$IFEND}
+{$endif}
 begin
   CheckFileIsOpen;
   Dest.Assign(Thumbnail);
@@ -7222,7 +7249,7 @@ class function TNikonType2MakerNote.FormatIsOK(SourceTag: TExifTag;
   out HeaderSize: Integer): Boolean;
 begin
   HeaderSize := 0;
-  Result := StartsStr('NIKON', SourceTag.Section.Owner.CameraMake); //can be NIKON or NIKON CORPORATION
+  Result := AnsiStartsStr('NIKON', SourceTag.Section.Owner.CameraMake); //can be NIKON or NIKON CORPORATION
 end;
 
 { TNikonType3MakerNote }
