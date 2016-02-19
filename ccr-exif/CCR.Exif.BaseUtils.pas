@@ -27,6 +27,7 @@ uses
   Types, SysUtils, Classes, {$IFNDEF UNICODE}WideStrings,{$ENDIF}
   {$IFDEF NeedHausladenByteStringsFix}System.ByteStrings,{$ENDIF}
   {$IFDEF HasGenerics}Generics.Collections{$ELSE}Contnrs{$ENDIF},
+  {$IFDEF FPC}LazUtf8,{$ENDIF}
   CCR.Exif.StreamHelper;
 
 { Mappings for compatibility with compilers for mobile }
@@ -89,7 +90,11 @@ type
   TMetadataLoadError = (leBadOffset, leBadTagCount, leBadTagHeader);
   TMetadataLoadErrors = set of TMetadataLoadError;
 
+{$ifdef FPC}
+  TNoRefCountInterfacedObject = class(TInterfacedObject)
+{$else}
   TNoRefCountInterfacedObject = class(TObject, IInterface)
+{$endif}
   protected
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
     function _AddRef: Integer; stdcall;
@@ -693,7 +698,11 @@ var
   S: UTF8String;
 begin
   SetString(S, PAnsiChar(UTF8Buffer), ByteLen);
+  {$ifdef FPC}
+  Result := S;
+  {$else}
   Result := UTF8ToString(S);
+  {$endif}
 end;
 
 function BinToHexStr(Data: Pointer; Size: Integer): string;

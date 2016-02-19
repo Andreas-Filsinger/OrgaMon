@@ -1,3 +1,18 @@
+{$ifdef FPC}
+
+{$DEFINE CanInline}
+{$DEFINE DepCom}
+{$DEFINE HasToString}
+{$DEFINE NoRecEnumBug}
+{.$DEFINE HasTTimeZone}
+{.$DEFINE HasGenerics}
+{$DEFINE HasFormatSettings}
+{$DEFINE UNICODE}
+
+{$mode delphi}
+{$H+}
+
+{$else}
 {.$DEFINE FMX}                //*** remove the dot to assume FMX on Windows ***
 
 {$IFNDEF MSWINDOWS}           //no VCL outside of Windows
@@ -59,4 +74,5 @@
 
 {$IFOPT R-}
   {$DEFINE RangeCheckingOff}
+{$ENDIF}
 {$ENDIF}

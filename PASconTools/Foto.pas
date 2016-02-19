@@ -12,9 +12,15 @@ function FotoCompress(FName: string; DestFName: string; kByte: integer; Abweichu
 implementation
 
 uses
-  Winapi.Windows, Winapi.Messages,
-  System.SysUtils, Classes, anfix32,
-  CCR.Exif, JclMiscel, globals;
+  Windows, Messages, SysUtils,
+  Classes,
+
+  anfix32,
+  CCR.Exif,
+  {$ifndef FPC}
+  JclMiscel,
+  {$endif}
+  globals;
 
 function FotoAufnahmeMoment(FName: string): TDateTime;
 var
@@ -50,7 +56,7 @@ const
     { } cGimpScriptPath +
     { } FunktionsName +
     { } cGimpScriptExtension;
-    Script.SaveToFile(SkriptFileName, TEncoding.UTF8);
+    SaveStringsToFileUTF8(Script, SkriptFileName);
 
     // Gimp Bug, can not cope with BOM
     FileRemoveBOM(SkriptFileName);
@@ -122,7 +128,10 @@ var
     { } ' ' +
     { } '--verbose ' +
     { } '--batch="(' + cGimpScriptNAME + ')"';
-    JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+{$ifdef FPC}
+{$else}
+JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+{$endif}
     if debugmode then
       AppendStringsToFile(execStr, DiagnosePath + 'exec.log.txt');
 

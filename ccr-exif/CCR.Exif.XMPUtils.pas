@@ -40,11 +40,27 @@ unit CCR.Exif.XMPUtils;
 interface
 
 uses
-  Types, SysUtils, Classes, xmldom, CCR.Exif.BaseUtils, CCR.Exif.TiffUtils;
+  Types, SysUtils, Classes,
+{$ifdef FPC}
+  DOM, XMLRead,
+{$else}
+  xmldom,
+{$endif}
+
+  CCR.Exif.BaseUtils, CCR.Exif.TiffUtils;
 
 type
   EInvalidXMPPacket = class(Exception);
   EInvalidXMPOperation = class(EInvalidOperation);
+
+{$ifdef FPC}
+  IDOMNode = TDOMNode;
+  IDOMNamedNodeMap = TDOMNamedNodeMap;
+  IDOMElement = TDOMElement;
+  IDOMDocument = TXMLDocument;
+  IDOMPersist =TXMLDocument;
+{$endif}
+
 
   TXMPProperty = class;
   TXMPSchema = class;
@@ -170,7 +186,11 @@ type
     property ParentNamespace: Boolean read FParentNameSpace write SetParentNamespace default True;
     property ParentProperty: TXMPProperty read FParentProperty;
     property Schema: TXMPSchema read FSchema;
+    {$ifdef FPC}
+    property SubPropertiesByString[const Name: UnicodeString]: TXMPProperty read GetSubPropertyByName;  //adds if necessary
+    {$else}
     property SubProperties[const Name: UnicodeString]: TXMPProperty read GetSubPropertyByName; default; //adds if necessary
+    {$endif}
     property SubProperties[Index: Integer]: TXMPProperty read GetSubProperty; default;
     property SubPropertyCount: Integer read GetSubPropertyCount write SetSubPropertyCount;
   end;
@@ -200,7 +220,11 @@ type
     function RemoveProperties(const ANames: array of UnicodeString): Boolean;
     property NamespaceInfo: TXMPNamespaceInfo read FNamespaceInfo;
     property Owner: TXMPPacket read FOwner;
+{$ifdef FPC}
+    property PropertiesByString[const Name: UnicodeString]: TXMPProperty read FindOrAddProperty;
+{$else}
     property Properties[const Name: UnicodeString]: TXMPProperty read FindOrAddProperty; default;
+{$endif}
     property Properties[Index: Integer]: TXMPProperty read GetProperty; default;
     property PropertyCount: Integer read GetPropertyCount;
   end;
@@ -299,8 +323,13 @@ type
       const PropName: UnicodeString; const NewValue: TDateTimeTagValue; ApplyLocalBias: Boolean = True); overload;
     property AboutAttributeValue: UnicodeString read FAboutAttributeValue write SetAboutAttributeValue;
     property DataToLazyLoad: IMetadataBlock read FDataToLazyLoad write SetDataToLazyLoad;
+{$ifdef FPC}
+    property SchemasByNamespace[Kind: TXMPKnownNamespace]: TXMPSchema read FindOrAddSchema;
+    property SchemasByInteger[Index: Integer]: TXMPSchema read GetSchema;
+{$else}
     property Schemas[Kind: TXMPKnownNamespace]: TXMPSchema read FindOrAddSchema; default;
     property Schemas[Index: Integer]: TXMPSchema read GetSchema; default;
+{$endif}
     property Schemas[const URI: UnicodeString]: TXMPSchema read FindOrAddSchema; default;
     { TCustomIniFile-like value getters and setters for convenience }
     function ReadBool(SchemaKind: TXMPKnownNamespace; const PropertyName: string; DefValue: Boolean): Boolean; overload;
@@ -586,16 +615,23 @@ begin
     Free;
   end;
 end;
-
+{$ifdef FPC}
+function FindRootRDFNode(const Document: TDOMDocument; out Node: TDOMNode): Boolean;
+{$else}
 function FindRootRDFNode(const Document: IDOMDocument; out Node: IDOMNode): Boolean;
+{$endif}
 begin
   Result := True;
   Node := Document.firstChild;
   while Node <> nil do
   begin
     if Node.nodeType = ELEMENT_NODE then
+    {$ifdef FPC}
+    case AnsiIndexStr(Node.localName, ['RDF', 'xmpmeta', 'xapmeta']) of
+    {$else}
       case IndexStr(Node.localName, ['RDF', 'xmpmeta', 'xapmeta']) of
-        0: Exit; //support ExifTool's XML dumps, which don't parent the RDF node
+      {$endif}
+      0: Exit; //support ExifTool's XML dumps, which don't parent the RDF node
         1..2: Break;
       end;
     Node := Node.nextSibling;
@@ -853,8 +889,13 @@ begin
   FSubProperties := TObjectList.Create;
   if ASourceNode = nil then Exit;
   //figure out our kind
-  PropAndNodeStructure := Supports(ASourceNode, IDOMElement, SourceAsElem) and
+  {$ifdef FPC}
+  PropAndNodeStructure :=
     (SourceAsElem.getAttributeNS(RDF.URI, 'parseType') = 'Resource'); //http://www.w3.org/TR/REC-rdf-syntax/#section-Syntax-parsetype-resource
+  {$else}
+  PropAndNodeStructure := Supports(ASourceNode,  IDOMElement, SourceAsElem) and
+    (SourceAsElem.getAttributeNS(RDF.URI, 'parseType') = 'Resource'); //http://www.w3.org/TR/REC-rdf-syntax/#section-Syntax-parsetype-resource
+  {$endif}
   if PropAndNodeStructure then
   begin
     FKind := xpStructure;
@@ -1080,7 +1121,11 @@ var
 begin
   case Kind of
     xpSimple: if Pointer(FValue) <> nil then Result := FValue else Result := Default;
-    xpAltArray: Result := SubProperties[DefaultLangIdent].ReadValue(Default);
+    {$ifdef FPC}
+      xpAltArray: Result := SubPropertiesByString[DefaultLangIdent].ReadValue(Default);
+      {$else}
+      xpAltArray: Result := SubProperties[DefaultLangIdent].ReadValue(Default);
+    {$endif}
     xpBagArray, xpSeqArray:
       case SubPropertyCount of
         0: Result := Default;
@@ -1233,7 +1278,12 @@ begin
         Changed;
       end;
     xpStructure: raise EInvalidXMPOperation.CreateRes(@SCannotWriteSingleValueToStructureProperty);
-    xpAltArray: SubProperties[DefaultLangIdent].WriteValue(NewValue);
+{$ifdef FPC}
+xpAltArray: SubPropertiesByString[DefaultLangIdent].WriteValue(NewValue);
+{$else}
+xpAltArray: SubProperties[DefaultLangIdent].WriteValue(NewValue);
+{$endif}
+
   else
     Strings := TUnicodeStringList.Create;
     try
@@ -1447,9 +1497,9 @@ end;
 procedure TXMPPacket.AssignTo(Dest: TPersistent);
 begin
   if Dest is TStrings then
-    TStrings(Dest).Text := UTF8ToString(RawXML)
+    TStrings(Dest).Text := {$ifndef FPC}UTF8ToString{$endif}(RawXML)
   else if Dest is TUnicodeStrings then
-    TUnicodeStrings(Dest).Text := UTF8ToString(RawXML)
+    TUnicodeStrings(Dest).Text := {$ifndef FPC}UTF8ToString{$endif}(RawXML)
   else
     inherited;
 end;
@@ -1870,7 +1920,11 @@ var
 begin
   Result := False;
   Stream.TryReadHeader(TJPEGSegment.XMPHeader, SizeOf(TJPEGSegment.XMPHeader)); //doesn't matter whether it was there or not
-  Document := GetDOM.createDocument('', '', nil);
+{$ifdef FPC}
+Document :=TXMLDocument.create;
+{$else}
+Document := GetDOM.createDocument('', '', nil);
+{$endif}
   NewStream := TMemoryStream.Create;
   try
     NewStream.SetSize(Stream.Size - Stream.Position);
@@ -1878,13 +1932,22 @@ begin
     CharsPtr := NewStream.Memory;
     for I := NewStream.Size - 1 downto 0 do //MSXML chokes on embedded nulls
       if CharsPtr[I] = #0 then CharsPtr[I] := ' ';
-    if not (Document as IDOMPersist).loadFromStream(NewStream) then Exit;
+{$ifdef FPC}
+ ReadXMLFile(Document, NewStream);
+{$else}
+if not (Document as IDOMPersist).loadFromStream(NewStream) then Exit;
+
+{$endif}
     if not FindRootRDFNode(Document, RootRDFNode) then Exit;
     Clear(True);
     if (NewStream.Size > SizeOf(XPacketStart)) and CompareMem(CharsPtr, @XPacketStart, SizeOf(XPacketStart)) then
       SetString(FRawXMLCache, CharsPtr, NewStream.Size)
     else
-      FRawXMLCache := UTF8Encode((Document as IDOMPersist).xml)
+    {$ifdef FPC}
+    FRawXMLCache := UTF8Encode(Document.TextContent)
+    {$else}
+    FRawXMLCache := UTF8Encode((Document as IDOMPersist).xml)
+    {$endif}
   finally
     NewStream.Free;
   end;
@@ -2157,42 +2220,74 @@ end;
 
 procedure TXMPPacket.WriteBool(SchemaKind: TXMPKnownNamespace; const PropertyName: string; Value: Boolean);
 begin
-  Schemas[SchemaKind].Properties[PropertyName].WriteValue(Value);
+{$ifdef FPC}
+Schemas[SchemaKind].PropertiesByString[PropertyName].WriteValue(Value);
+{$else}
+Schemas[SchemaKind].Properties[PropertyName].WriteValue(Value);
+{$endif}
 end;
 
 procedure TXMPPacket.WriteBool(const SchemaURI: string; const PropertyName: string; Value: Boolean);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaURI].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaURI].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteDateTime(SchemaKind: TXMPKnownNamespace; const PropertyName: string; const Value: TDateTime);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaKind].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaKind].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteDateTime(const SchemaURI: string; const PropertyName: string; const Value: TDateTime);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaURI].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaURI].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteInteger(SchemaKind: TXMPKnownNamespace; const PropertyName: string; Value: Integer);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaKind].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaKind].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteInteger(const SchemaURI: string; const PropertyName: string; Value: Integer);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaURI].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaURI].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteString(SchemaKind: TXMPKnownNamespace; const PropertyName: string; const Value: string);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaKind].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaKind].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 procedure TXMPPacket.WriteString(const SchemaURI: string; const PropertyName: string; const Value: string);
 begin
+  {$ifdef FPC}
+  Schemas[SchemaURI].PropertiesByString[PropertyName].WriteValue(Value);
+  {$else}
   Schemas[SchemaURI].Properties[PropertyName].WriteValue(Value);
+  {$endif}
 end;
 
 { TXMPPacket.TEnumerator }
@@ -2205,7 +2300,11 @@ end;
 
 function TXMPPacket.TEnumerator.GetCurrent: TXMPSchema;
 begin
-  Result := FPacket[FIndex];
+{$ifdef FPC}
+Result := FPacket.SchemasByInteger[FIndex];
+{$else}
+Result := FPacket[FIndex];
+{$endif}
 end;
 
 function TXMPPacket.TEnumerator.MoveNext: Boolean;

@@ -74,7 +74,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\fpspreadsheet"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\fpspreadsheet;..\ccr-exif"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
