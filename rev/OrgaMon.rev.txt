@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.155 (19.02.16) Andreas Filsinger
+
+ Neu: eMail: SSL/TLS Support bei Port=465 und Port=587
+
 Rev 8.154 (17.02.16) Andreas Filsinger
 
  Bug: OLAP: im Diagnose-Modus -> Absturz wenn Globale Variable fehlen
