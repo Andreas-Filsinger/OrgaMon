@@ -40,6 +40,7 @@ uses
 
   gplists,
 
+  // SMTP
   IdEMAILAddress,
   IdContext,
   IdBaseComponent,
@@ -49,7 +50,17 @@ uses
   IdSMTP,
   IdMessage,
   IdSMTPBase,
-  IdGlobal;
+  IdGlobal,
+
+  // SSL / TLS
+  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase,
+  IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack,
+  IdSSL, IdSSLOpenSSL, IdSASLLogin,
+  IdSASL_CRAM_SHA1, IdSASL, IdSASLUserPass,
+  IdSASL_CRAMBase, IdSASL_CRAM_MD5, IdSASLSKey,
+  IdSASLPlain, IdSASLOTP, IdSASLExternal,
+  IdSASLDigest, IdSASLAnonymous, IdUserPassProvider,
+  IdSSLOpenSSLHeaders;
 
 type
   TFormPersonMailer = class(TForm)
@@ -218,8 +229,7 @@ begin
     // Den Nachrichten Text jetzt speichern
     with qMAIL do
     begin
-      sql.add('select DATEI_ANLAGE,NACHRICHT,EMPFAENGER from EMAIL where RID=' + inttostr(EMAIL_R) +
-        ' for update');
+      sql.add('select DATEI_ANLAGE,NACHRICHT,EMPFAENGER from EMAIL where RID=' + inttostr(EMAIL_R) + ' for update');
       Open;
       first;
       edit;
@@ -300,8 +310,7 @@ begin
       sCSV.Clear;
       sCSV.insertFromFile(FName);
       for r := 1 to sCSV.RowCount do
-        FormAuftragArbeitsplatz.AddMarkierte(StrToIntDef(sCSV.readCell(r, 'ReferenzIdentitaet'),
-          cRID_Null));
+        FormAuftragArbeitsplatz.AddMarkierte(StrToIntDef(sCSV.readCell(r, 'ReferenzIdentitaet'), cRID_Null));
     end;
   sCSV.free;
   sNachricht.free;
@@ -591,6 +600,71 @@ var
   Versand_CC: string;
   Versand_Bcc: string;
 
+  procedure addSecurity;
+  var
+    SSLHandler: TIdSSLIOHandlerSocketOpenSSL;
+    IdUserPassProvider: TIdUserPassProvider;
+    IdSASLCRAMMD5: TIdSASLCRAMMD5;
+    IdSASLCRAMSHA1: TIdSASLCRAMSHA1;
+    IdSASLPlain: TIdSASLPlain;
+    IdSASLLogin: TIdSASLLogin;
+    IdSASLSKey: TIdSASLSKey;
+    IdSASLOTP: TIdSASLOTP;
+    IdSASLAnonymous: TIdSASLAnonymous;
+    IdSASLExternal: TIdSASLExternal;
+  begin
+
+    // SSL Handler
+    SSLHandler := TIdSSLIOHandlerSocketOpenSSL.create(SMTP);
+    // SSL/TLS handshake determines the highest available SSL/TLS version dynamically
+    SSLHandler.SSLOptions.Method := DEF_SSLVERSION;
+    SSLHandler.SSLOptions.Mode := sslmClient;
+    SSLHandler.SSLOptions.VerifyMode := [];
+    SSLHandler.SSLOptions.VerifyDepth := 0;
+    SMTP.IOHandler := SSLHandler;
+
+    case SMTP.Port of
+      25:
+        ;
+      587:
+        SMTP.UseTLS := utUseExplicitTLS;
+    else
+      SMTP.UseTLS := utUseImplicitTLS;
+    end;
+
+    // Passwort
+    SMTP.AuthType := satSASL;
+    IdUserPassProvider := TIdUserPassProvider.create(SMTP);
+    IdUserPassProvider.Username := SMTP.Username;
+    IdUserPassProvider.Password := SMTP.Password;
+
+    IdSASLCRAMSHA1 := TIdSASLCRAMSHA1.create(SMTP);
+    IdSASLCRAMSHA1.UserPassProvider := IdUserPassProvider;
+    IdSASLCRAMMD5 := TIdSASLCRAMMD5.create(SMTP);
+    IdSASLCRAMMD5.UserPassProvider := IdUserPassProvider;
+    IdSASLSKey := TIdSASLSKey.create(SMTP);
+    IdSASLSKey.UserPassProvider := IdUserPassProvider;
+    IdSASLOTP := TIdSASLOTP.create(SMTP);
+    IdSASLOTP.UserPassProvider := IdUserPassProvider;
+    IdSASLAnonymous := TIdSASLAnonymous.create(SMTP);
+    IdSASLExternal := TIdSASLExternal.create(SMTP);
+    IdSASLLogin := TIdSASLLogin.create(SMTP);
+    IdSASLLogin.UserPassProvider := IdUserPassProvider;
+    IdSASLPlain := TIdSASLPlain.create(SMTP);
+    IdSASLPlain.UserPassProvider := IdUserPassProvider;
+
+    SMTP.SASLMechanisms.add.SASL := IdSASLCRAMSHA1;
+    SMTP.SASLMechanisms.add.SASL := IdSASLCRAMMD5;
+    SMTP.SASLMechanisms.add.SASL := IdSASLSKey;
+    SMTP.SASLMechanisms.add.SASL := IdSASLOTP;
+    SMTP.SASLMechanisms.add.SASL := IdSASLAnonymous;
+    SMTP.SASLMechanisms.add.SASL := IdSASLExternal;
+    SMTP.SASLMechanisms.add.SASL := IdSASLLogin;
+    SMTP.SASLMechanisms.add.SASL := IdSASLPlain;
+
+    SMTP.ConnectTimeout := 30000;
+  end;
+
 begin
   inc(PersonMailer_Active);
 
@@ -765,8 +839,8 @@ begin
                 ApiFirst;
                 if not(eof) then
                 begin
-                  InfoVomAdmin := 'Sie erhielten diese Datei bereits am ' + FieldByName('GESENDET')
-                    .AsString + ', der Anhang wurde entfernt!';
+                  InfoVomAdmin := 'Sie erhielten diese Datei bereits am ' + FieldByName('GESENDET').AsString +
+                    ', der Anhang wurde entfernt!';
                   DATEI_ANLAGE := '';
                 end;
                 close;
@@ -780,8 +854,8 @@ begin
           end;
 
           // eMail Header zusammen setzen!
-          MsgId := '<' + inttostr(EMAIL_R) + '-' + inttostr(FieldByName('VERSUCHE').AsInteger) + '@'
-            + iMandant + '.orgamon.org>';
+          MsgId := '<' + inttostr(EMAIL_R) + '-' + inttostr(FieldByName('VERSUCHE').AsInteger) + '@' + iMandant +
+            '.orgamon.org>';
 
           headers.values['Message-Id'] := MsgId;
 
@@ -812,6 +886,10 @@ begin
             until true;
           end;
 
+          // SSL, TLS Sicherheit hinzufügen
+          if (Port = 465) or (Port = 587) then
+            addSecurity;
+
           if CheckBox2.checked then
           begin
             // Nur an Testperson versenden!
@@ -832,17 +910,14 @@ begin
             begin
 
               // im 1. Rang: aus "EMail"
-              Versand_An :=
-                noblank(e_r_sqls('select EMAIL from PERSON where RID=' + inttostr(ZIEL_R)));
+              Versand_An := noblank(e_r_sqls('select EMAIL from PERSON where RID=' + inttostr(ZIEL_R)));
 
               // im 2. Rang: aus "USER-ID"
               if (Versand_An = '') then
-                Versand_An :=
-                  noblank(e_r_sqls('select USER_ID from PERSON where RID=' + inttostr(ZIEL_R)));
+                Versand_An := noblank(e_r_sqls('select USER_ID from PERSON where RID=' + inttostr(ZIEL_R)));
 
               // die "cc=", "bcc=" Tabelle laden
-              e_r_sql('select USER_DIENSTE from PERSON where RID=' + inttostr(ZIEL_R),
-                USER_DIENSTE);
+              e_r_sql('select USER_DIENSTE from PERSON where RID=' + inttostr(ZIEL_R), USER_DIENSTE);
             end;
 
             // cc Empfänger hinzunehmen
@@ -987,8 +1062,7 @@ begin
         Log(cERRORText + ' sendeeMail: ' + E.Message);
 
         // Anzahl der bisherigen Versuche prüfen
-        VersucheBisher := e_r_sql('select VERSUCHE from EMAIL ' + ' where RID=' +
-          inttostr(EMAIL_R));
+        VersucheBisher := e_r_sql('select VERSUCHE from EMAIL ' + ' where RID=' + inttostr(EMAIL_R));
 
         // entsprechende Wartezeiten einbauen
         case VersucheBisher of
@@ -1003,8 +1077,8 @@ begin
         end;
 
         // Jetzt die Datenbank updaten!
-        e_x_sql('update EMAIL set ' + ' VERSUCHE = COALESCE(VERSUCHE,0) + 1,' +
-          ' AUSGANG = CURRENT_TIMESTAMP + ' + _WaitTime + ' where RID=' + inttostr(EMAIL_R));
+        e_x_sql('update EMAIL set ' + ' VERSUCHE = COALESCE(VERSUCHE,0) + 1,' + ' AUSGANG = CURRENT_TIMESTAMP + ' +
+          _WaitTime + ' where RID=' + inttostr(EMAIL_R));
 
       end;
 
@@ -1141,8 +1215,7 @@ begin
           // Ist es ein Parameter
           if (pos('=', eMail_Parameter[n]) > 0) then
           begin
-            ersetze('~' + nextp(eMail_Parameter[n], '=', 0) + '~',
-              nextp(eMail_Parameter[n], '=', 1), sText);
+            ersetze('~' + nextp(eMail_Parameter[n], '=', 0) + '~', nextp(eMail_Parameter[n], '=', 1), sText);
             continue;
           end;
 
@@ -1163,8 +1236,7 @@ begin
         end;
         with cANSCHRIFT do
         begin
-          sql.add('select * from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R')
-            .AsString);
+          sql.add('select * from ANSCHRIFT where RID=' + cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
           ApiFirst;
           for n := 0 to pred(FieldCount) do
             with Fields[n] do
@@ -1190,8 +1262,7 @@ begin
 
       if cEMAIL.FieldByName('EREIGNIS_R').IsNotNull then
       begin
-        VERSAND_R := e_r_sql('select VERSAND_R from EREIGNIS where RID=' +
-          cEMAIL.FieldByName('EREIGNIS_R').AsString);
+        VERSAND_R := e_r_sql('select VERSAND_R from EREIGNIS where RID=' + cEMAIL.FieldByName('EREIGNIS_R').AsString);
 
         if (VERSAND_R >= cRID_FirstValid) then
         begin
@@ -1378,8 +1449,7 @@ var
         if FieldByName('PERSON_R').IsNull then
           raise Exception.create('EREIGNIS ' + FieldByName('RID').AsString + ': PERSON_R IS NULL');
 
-        NUMERO := e_r_sqls('select NUMERO from ARTIKEL WHERE RID=' + FieldByName('ARTIKEL_R')
-          .AsString);
+        NUMERO := e_r_sqls('select NUMERO from ARTIKEL WHERE RID=' + FieldByName('ARTIKEL_R').AsString);
 
         // einen eMail Eintrag erzeugen
         FName := iPDFPathPublicApp + NUMERO + cPDFExtension;
@@ -1586,8 +1656,7 @@ var
           end
           else
           begin
-            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "' + VorlageName +
-              '" nicht gefunden');
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "' + VorlageName + '" nicht gefunden');
           end;
 
         end;
