@@ -382,8 +382,6 @@ var
   RID: integer;
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
-  FotoMussWarten: boolean;
-  FotoPrefix: string;
   FotoGeraeteNo: string;
   FotoParameter: string;
   // FA, Ausbau, FN, Anlage usw.
@@ -404,12 +402,10 @@ Image: TJPEGImage;
   sZiel: string;
 
   BAUSTELLE_Index: integer;
-  ZAEHLER_NUMMER_NEU: string;
 
   // alternativer Auftragspool
   fOrgaMonAuftrag: file of TMDERec;
   iEXIF: TExifData;
-  AufnahmeMoment: TDateTime;
 
   // Foto - Umbenennung
   sFotoCall: TStringList;
@@ -520,10 +516,10 @@ begin
     FullSuccess := false;
     FName := pFTPPath + sFiles[n];
 {$ifdef FPC}
-Image := TPicture.Create;
-    {$else}
+    Image := TPicture.Create;
+{$else}
     Image := TJPEGImage.Create;
-    {$endif}
+{$endif}
     iEXIF := TExifData.Create;
     try
       repeat
@@ -684,15 +680,12 @@ Image := TPicture.Create;
         while true do
         begin
 
+          // Modus der Fotobenennung ermitteln über Tabelle "BAUSTELLE"
           BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
           if (BAUSTELLE_Index > -1) then
           begin
 
-            // Modus der Fotobenennung ermitteln
-            FotoMussWarten := false;
-
             sFotoCall := TStringList.Create;
-
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
@@ -939,9 +932,6 @@ var
   mderecOrgaMon: TMDERec;
   FotoBenennungsModus: integer;
 
-  // Foto Benennungs Funktion
-  sFotoCall, rFoto: TStringList;
-
   // senden einfärben
   tSENDEN: tsTable;
 
@@ -1023,6 +1013,7 @@ begin
       end;
 
     // Ist bei dieser Baustelle eine Umbenennung überhaupt erwünscht?
+    // Die Frage sei dann aber erlaubt: Warum steht es dann in WARTEND?
     if (sBaustelle <> '') then
     begin
       BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
@@ -1112,7 +1103,8 @@ begin
     end;
 
     FNameNeu := FNameAlt;
-    k := pos('-Neu.jpg', FNameNeu);
+    // das letzte "Neu" am Ende des Dateinamens zählt
+    k := revpos('Neu', FNameNeu);
     if (k = 0) then
     begin
       Log(cERRORText + ' ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
