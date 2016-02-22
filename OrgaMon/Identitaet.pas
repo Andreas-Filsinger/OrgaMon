@@ -74,10 +74,11 @@ uses
 
  // Service
  FotoExec,
- JonDaExec;
+ JonDaExec,
+ TestExec;
 
 type
-  TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto);
+  TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto, id_Test);
 
 var
   Ident: TIndentitaet;
@@ -516,7 +517,7 @@ end;
 
 procedure setIdentitaetAndRun;
 begin
-    // Bestimmen in welchem Modus das Programm laufen soll
+  // Bestimmen in welchem Modus das Programm laufen soll
   Ident := id_TWebShop;
   repeat
     if IsParam('--order') then
@@ -544,6 +545,11 @@ begin
       Ident := id_Foto;
       break;
     end;
+    if IsParam('--test') then
+    begin
+      Ident := id_Test;
+      break;
+    end;
   until true;
 
   // Ident- String
@@ -560,6 +566,8 @@ begin
       Modus := 'App-Service'; // XMLRPC-Server für die OrgaMon-App (up.php)
     id_Foto:
       Modus := 'Foto-Service'; // Foto Dienst für die OrgaMon App
+    id_Test:
+      Modus := 'Test-Service'; // vollführt Testszenarien
   end;
 
   try
@@ -597,7 +605,10 @@ begin
       id_Foto:
         begin
           RunAsFoto;
-        end
+        end;
+       id_Test:begin
+          RunAsTest;
+       end
     else
       RunAsUnImplemented;
 

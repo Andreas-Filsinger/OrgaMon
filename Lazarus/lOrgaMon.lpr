@@ -30,7 +30,7 @@ program lOrgaMon;
 
  l("l" für Lazarus / Linux)OrgaMon
 
- cOrgaMon ist der Embarcadero/Delphi XMLRPC Server für Win32
+ cOrgaMon ist der Embarcadero/Delphi XMLRPC-Server für Win32
  dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für die Plattform Win32 und Linux (Yeah!)
 
 
@@ -49,7 +49,6 @@ program lOrgaMon;
  flexcel  | fpspreadsheet! (Lack of Revision Number, 1.5 im Package)
  IBO      | Zeos! (Umlaut OK!)
  infozip  | zipper!
- ccr-exif | ?: dexif, commandline "exiftool", oder ccr-exif-port, es geht eigentlich nur um das Datum?!
 
 }
 
@@ -94,7 +93,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   eConnect,
   indylaz,
   fpspreadsheet,
-  Identitaet, FotoExec;
+  Identitaet, FotoExec, TestExec;
 
 {$R *.res}
 
