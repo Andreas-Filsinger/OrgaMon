@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -117,7 +117,6 @@ type
     Button5: TButton;
     ListBox1: TListBox;
     Label6: TLabel;
-    Button3: TButton;
     Button4: TButton;
     TabSheet2: TTabSheet;
     Edit1: TEdit;
@@ -168,7 +167,6 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -199,7 +197,6 @@ type
     { Public-Deklarationen }
     function LoadLogViaHTTP(Datum: TAnfixDate): string;
     procedure insertRecords(sl: TStrings);
-    procedure SendeMail;
     function UnScramble(FName: string): TStringList;
     function ShowIfError(sDiagnose: TStringList): boolean;
 
@@ -332,182 +329,101 @@ begin
     result := '';
   end;
 end;
-
-procedure TFormCareServer.OcTest(Path: string);
+procedure TFormCareServer.Button1Click(Sender: TObject);
 var
-  sOcSettings: TStringList;
-  Content_Mode: Integer;
-  FName: string;
+  S: string;
+  Str: string;
+  cBLOWFISH: TDCP_blowfish;
+  CryptKey: array [0 .. 1023] of char;
 begin
-  // diese Routine soll später durch add() unnötig werden
-  // bzw. die implementierung sollte woanders hin wandern!
 
-  // Beispielhafte Oc Implementierung!
-  sOcSettings := TStringList.create;
-  if FileExists(Path + 'Test.ini') then
-    sOcSettings.LoadFromFile(Path + 'Test.ini');
-
-  Content_Mode := strtointdef(sOcSettings.values['Content_Mode'], -1);
-  FName := sOcSettings.values['DateiName'];
-
-  if (Content_Mode > 0) then
-    if (FName <> '') then
-      OrientationConvert.doConversion(Content_Mode, Path + FName);
-
-  sOcSettings.Free;
-
-end;
-
-procedure TFormCareServer.htmlTest(Path: string);
-var
-  html: THTMLTemplate;
-  Datensammler: TStringList;
-begin
-  if FileExists(Path + 'WriteValue.txt') then
+  cBLOWFISH := TDCP_blowfish.create(nil);
+  with cBLOWFISH do
   begin
+    StrPCopy(CryptKey, pKey);
+    Init(CryptKey, Length(pKey) * 8, nil);
 
-    html := THTMLTemplate.create;
-    Datensammler := TStringList.create;
-    html.LoadFromFile(Path + 'Template.html');
-    Datensammler.LoadFromFile(Path + 'WriteValue.txt');
-    html.writeValue(Datensammler);
-    html.SaveToFileCompressed(Path + 'Ergebnis.html');
-    html.Free;
-    Datensammler.Free;
-  end
-  else
-  begin
-    html := THTMLTemplate.create;
-    html.LoadFromFile(Path + 'A.html');
-    html.InsertDocument(Path + 'B.html');
-    html.SaveToFile(Path + 'Ergebnis.html');
-    html.Free;
+    if (Edit1.Text <> '') then
+      Str := Edit1.Text
+    else
+      Str := Int64asKeyStr(strtoint64def(Edit4.Text, 0));
+
+    SetLength(S, Length(Str));
+    EncryptCFB8bit(Str[1], S[1], Length(Str));
+    Edit2.Text := S;
+    Edit3.Text := Base64EncodeStr(S);
+    Edit5.Text := AnsiTorfc1738(Edit3.Text);
 
   end;
+  cBLOWFISH.Free;
+
 end;
 
-procedure TFormCareServer.txlibTest(Path: string);
+procedure TFormCareServer.Button6Click(Sender: TObject);
 var
-  txlibSettings: TIniFile;
-  test: String;
+  cBLOWFISH: TDCP_blowfish;
+  CryptKey: array [0 .. 1023] of char;
+  S: string;
+  r: string;
+begin
+  cBLOWFISH := TDCP_blowfish.create(nil);
+  with cBLOWFISH do
+  begin
+    StrPCopy(CryptKey, pKey);
+    Init(CryptKey, Length(pKey) * 8, nil);
+    S := Base64DecodeStr(Edit3.Text);
+    r := S;
+    SetLength(r, Length(S));
+    Edit2.Text := S;
+    DecryptCFB8bit(r[1], r[1], Length(r));
+    Edit1.Text := r;
+    if (Length(r) = 8) then
+      Edit4.Text := IntToStr(KeystrasInt64(r))
+    else
+      Edit4.Text := '';
+  end;
+  cBLOWFISH.Free;
+end;
 
-  // TTXStringList testen:
-  // - Suchen
-  // - Lineare Suche
-  // - AVL-Baum-Suche
-  // - Hash-Suche
-  procedure TestStringList;
-  var
-    StrList: TTXStringList;
-    S: String;
+procedure TFormCareServer.Button7Click(Sender: TObject);
+begin
+  Edit3.Text := rfc1738toAnsi(Edit5.Text);
+  Button6Click(Sender);
+end;
 
-    procedure SearchTest;
-    var
-      Source: TStringList;
-      Dest: TStringList;
-      I, C: Integer;
+procedure TFormCareServer.Button8Click(Sender: TObject);
+var
+  TheLogPath: string;
+  TheFiles: TStringList;
+  TheLog: TStringList;
+  AllTheLog: TStringList;
+  n: Integer;
+begin
+  BeginHourGlass;
+  AllTheLog := TStringList.create;
+  TheLogPath := Edit7.Text;
+  TheFiles := TStringList.create;
+  dir(TheLogPath + '*.log', TheFiles, false);
+  TheFiles.sort;
+  for n := 0 to pred(TheFiles.count) do
+    if pos('.', TheFiles[n]) = 5 then
     begin
-      Source := TStringList.create;
-      Dest := TStringList.create;
-
-      try
-        // Quell-Testdaten laden
-        Source.LoadFromFile(Path + 'quelle.txt');
-
-        // TTXStringList mit Testdaten füllen
-        C := Source.count - 1;
-        for I := 0 to C do
-          StrList.add(Source.Strings[I]);
-
-        // TTXStringList gegen Source testen. Gefundene Suchwerte werden
-        // anhand des Index in Dest geschrieben
-        C := Source.count - 1;
-        for I := 0 to C do
-          Dest.add(IntToStr(StrList.Find(Source.Strings[I])));
-
-        // Gefundene Einträge werden gespeichert
-        Dest.SaveToFile(Path + 'ergebnis.txt');
-      finally
-        Source.Free;
-        Dest.Free;
-      end;
+      //
+      TheLog := UnScramble(TheLogPath + TheFiles[n]);
+      AllTheLog.addstrings(TheLog);
+      TheLog.Free;
     end;
-
-  begin
-    StrList := TTXStringList.create;
-
-    try
-      with StrList do
-      begin
-        S := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
-          'SearchMethod', '')));
-        if S = 'hash' then
-          SearchMethod := smHash
-        else if S = 'avl' then
-          SearchMethod := smAVL
-        else
-          SearchMethod := smLinear;
-
-        HashSize := txlibSettings.ReadInteger('TTXStringList',
-          'Hashsize', 1024);
-        CaseSensitive := txlibSettings.ReadBool('TTXStringList',
-          'CaseSensitive', false);
-        Trimmed := txlibSettings.ReadBool('TTXStringList', 'Trimmed', false);
-        Umlaut := txlibSettings.ReadBool('TTXStringList', 'Umlaut', false);
-      end;
-
-      test := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
-        'Test', '')));
-      if test = 'search' then
-        SearchTest;
-    finally
-      StrList.Free;
-    end;
-  end;
-
-begin
-  txlibSettings := TIniFile.create(Path + 'Test.ini');
-  try
-    test := LowerCase(Trim(txlibSettings.ReadString('Global', 'Test', '')));
-    if test = 'stringlist' then
-      TestStringList;
-  finally
-    txlibSettings.Free;
-  end;
+  TheFiles.Free;
+  AllTheLog.SaveToFile(DiagnosePath + 'caretaker.log.txt');
+  AllTheLog.Free;
+  EndHourGlass;
 end;
 
-procedure TFormCareServer.infozipTest(Path: string);
-const
-  cTestArchiveName = 'test.zip';
-var
-  sTest: TStringList;
-  sFiles: TStringList;
-  sOptions: TStringList;
+procedure TFormCareServer.Button9Click(Sender: TObject);
 begin
-  sTest := TStringList.create;
-
-  //
-  sTest.LoadFromFile(Path + 'Test.ini');
-  sOptions := anfix32.Split(sTest.values['Options']);
-  ersetze('~Path~', Path, sOptions);
-  sFiles := anfix32.Split(sTest.values['Files']);
-  ersetze('~Path~', Path, sFiles);
-
-  if (sTest.values['Test'] = 'unzip') then
-  begin
-    unzip(Path + cTestArchiveName, Path, sOptions);
-  end
-  else
-  begin
-    zip(sFiles, Path + cTestArchiveName, sOptions);
-  end;
-
-  InfoZip.zMessages.SaveToFile(Path + 'Diagnose.txt');
-
-  sFiles.Free;
-  sOptions.Free;
-  sTest.Free;
+  Edit9.Text := deCrypt_Hex(Edit9.Text);
 end;
+
 
 function TFormCareServer.pKey: string;
 begin
@@ -535,14 +451,6 @@ end;
 procedure TFormCareServer.EndHourGlass;
 begin
   screen.cursor := crDefault;
-end;
-
-procedure TFormCareServer.Button3Click(Sender: TObject);
-begin
-  //
-  BeginHourGlass;
-  SendeMail;
-  EndHourGlass;
 end;
 
 procedure TFormCareServer.Button4Click(Sender: TObject);
@@ -692,211 +600,6 @@ begin
     4:
       result := DateGet;
   end;
-end;
-
-procedure TFormCareServer.SendeMail;
-{$IFDEF UNICODE}
-const
-  atDefault = satDefault;
-{$ENDIF}
-var
-  ToMailLines: TStringList;
-  iMsg: TIDMessage;
-  TICKET_RID_MAILED: TList;
-  TransactionDate: TDateTime;
-
-  procedure BeginNewMail(Index: Integer);
-  var
-    cPERSON: TIB_Cursor;
-    AdressList: string;
-  begin
-    with IdSMTP1 do
-    begin
-      AuthType := atDefault; // atDefault atUserPass
-      Username := 'web1p1';
-      Password := 'BN2XXSKVX';
-      Host := '217.160.221.231';
-      iMsg := TIDMessage.create(self);
-      with iMsg do
-      begin
-        Subject := '[' + nextp(ToMailLines[INdex], ';', 0) + ']';
-        from.address := 'caretaker@orgamon.de';
-        from.name := 'CareTaker';
-
-        AdressList := '';
-        cPERSON := DataModuleDatenbank.nCursor;
-        with cPERSON do
-        begin
-          sql.add('select EMAIL from PERSON where RID in ');
-          sql.add('(select TICKET_PERSON_R from TICKET_ZIEL where TICKET_GRUPPE_R='
-            + nextp(ToMailLines[Index], ';', 1) + ')');
-          ApiFirst;
-          while not(eof) do
-          begin
-            if (AdressList = '') then
-              AdressList := FieldByName('EMAIL').AsString
-            else
-              AdressList := AdressList + ';' + FieldByName('EMAIL').AsString;
-            ApiNext;
-          end;
-        end;
-        cPERSON.Free;
-        Recipients.EMailAddresses := AdressList;
-      end;
-    end;
-  end;
-
-  procedure SendThisMail;
-  var
-    n: Integer;
-    xTICKET: TIB_DSQL;
-  begin
-    if assigned(iMsg) then
-    begin
-      with IdSMTP1 do
-      begin
-        connect;
-        try
-          send(iMsg);
-        finally
-          disconnect;
-          // Nun als gemeldet buchen
-          if (TICKET_RID_MAILED.count > 0) then
-          begin
-            xTICKET := DataModuleDatenbank.nDSQL;
-            with xTICKET do
-            begin
-              sql.add('update TICKET set EMAIL=:CROSSREF where RID in (');
-              for n := 0 to pred(TICKET_RID_MAILED.count) do
-                if n < pred(TICKET_RID_MAILED.count) then
-                  sql.add(IntToStr(Integer(TICKET_RID_MAILED[n])) + ',')
-                else
-                  sql.add(IntToStr(Integer(TICKET_RID_MAILED[n])));
-              sql.add(')');
-              ParamByName('CROSSREF').AsDateTime := TransactionDate;
-              execute;
-            end;
-            xTICKET.Free;
-          end;
-          FreeAndNil(iMsg);
-        end;
-      end;
-    end;
-  end;
-
-var
-  cTICKET: TIB_Cursor;
-  xTICKET: TIB_DSQL;
-  cGRUPPEN: TIB_Cursor;
-  TICKET_RID_OK: TList;
-  FullScrambledText: TStringList;
-  RECHNER_R: Integer;
-  KlarText: string;
-  LastMailedGroup: string;
-  n: Integer;
-
-begin
-  TransactionDate := now;
-  FullScrambledText := TStringList.create;
-  ToMailLines := TStringList.create;
-  TICKET_RID_MAILED := TList.create;
-  TICKET_RID_OK := TList.create;
-
-  // wer hat noch keinen eMail Eintrag
-  // und ist noch realtiv zeitnah
-  cTICKET := DataModuleDatenbank.nCursor;
-  with cTICKET do
-  begin
-    sql.add('select * from TICKET where (EMAIL is null) and (MOMENT>CURRENT_DATE-3)');
-    ApiFirst;
-    while not(eof) do
-    begin
-      RECHNER_R := FieldByName('RECHNER_R').AsInteger;
-      FieldByName('INFO').AssignTo(FullScrambledText);
-      KlarText := deCrypt(FullScrambledText[0]);
-      if (pos(cERRORText, KlarText) > 0) then
-      begin
-        // bestimme alle Gruppen zu diesem Rechner
-        // alle zugeordnete Gruppen bekommen ja eine Mail
-        // füge die Gruppe als erster Parameter hinzu!
-        // dubliziere für jede Gruppe die aufbereitete Zeile
-        cGRUPPEN := DataModuleDatenbank.nCursor;
-        with cGRUPPEN do
-        begin
-          sql.add('select G.RID, G.NAME, R.HOST from TICKET_QUELLE Q');
-          sql.add('join TICKET_GRUPPE G on');
-          sql.add(' Q.TICKET_GRUPPE_R=G.RID');
-          sql.add('join RECHNER R on');
-          sql.add(' Q.TICKET_RECHNER_R=R.RID');
-          sql.add('where TICKET_RECHNER_R=' + IntToStr(RECHNER_R));
-          ApiFirst;
-          while not(eof) do
-          begin
-            ToMailLines.add(FieldByName('NAME').AsString + ';' + { 0 = Gruppe }
-              FieldByName('RID').AsString + ';' + { 1 = Gruppe RID }
-              FieldByName('HOST').AsString + ';' + { 2 = Hostname }
-              cTICKET.FieldByName('RID').AsString + ';' + { 3 = Ticket RID }
-              cTICKET.FieldByName('NUMMER').AsString + ';' + { 4 = Ticket No }
-              cTICKET.FieldByName('MOMENT').AsString + ';' + { 5 = Appear }
-              KlarText { 6 = Text }
-              );
-            ApiNext;
-          end;
-        end;
-        cGRUPPEN.Free;
-      end
-      else
-      begin
-        // Limit wegen maximaler Länge des SQL Statements
-        if (TICKET_RID_OK.count < 150) then
-          TICKET_RID_OK.add(TObject(FieldByName('RID').AsInteger));
-      end;
-      ApiNext;
-    end;
-  end;
-  cTICKET.Free;
-
-  // Jetzt mailen!
-  LastMailedGroup := '-1';
-  iMsg := nil;
-  ToMailLines.sort;
-  ToMailLines.SaveToFile(DiagnosePath + 'CareTaker-Mail.txt');
-  for n := 0 to pred(ToMailLines.count) do
-  begin
-    if (LastMailedGroup <> nextp(ToMailLines[n], ';', 0)) then
-    begin
-      SendThisMail;
-      BeginNewMail(n);
-    end;
-    LastMailedGroup := nextp(ToMailLines[n], ';', 0);
-    if assigned(iMsg) then
-    begin
-      TICKET_RID_MAILED.add(TObject(strtointdef(nextp(ToMailLines[n],
-        ';', 3), 0)));
-      iMsg.body.add(ToMailLines[n]);
-    end;
-  end;
-  SendThisMail;
-
-  TICKET_RID_MAILED.Free;
-
-  if (TICKET_RID_OK.count > 0) then
-  begin
-    xTICKET := DataModuleDatenbank.nDSQL;
-    with xTICKET do
-    begin
-      sql.add('update TICKET set EMAIL=CURRENT_DATE where RID in (');
-      for n := 0 to pred(TICKET_RID_OK.count) do
-        if (n < pred(TICKET_RID_OK.count)) then
-          sql.add(IntToStr(Integer(TICKET_RID_OK[n])) + ',')
-        else
-          sql.add(IntToStr(Integer(TICKET_RID_OK[n])));
-      sql.add(')');
-      execute;
-    end;
-    xTICKET.Free;
-  end;
-  TICKET_RID_OK.Free;
 end;
 
 procedure TFormCareServer.SpeedButton1Click(Sender: TObject);
@@ -1200,6 +903,184 @@ begin
   LastData.Free;
 end;
 
+// TESTS
+
+procedure TFormCareServer.OcTest(Path: string);
+var
+  sOcSettings: TStringList;
+  Content_Mode: Integer;
+  FName: string;
+begin
+  // diese Routine soll später durch add() unnötig werden
+  // bzw. die implementierung sollte woanders hin wandern!
+
+  // Beispielhafte Oc Implementierung!
+  sOcSettings := TStringList.create;
+  if FileExists(Path + 'Test.ini') then
+    sOcSettings.LoadFromFile(Path + 'Test.ini');
+
+  Content_Mode := strtointdef(sOcSettings.values['Content_Mode'], -1);
+  FName := sOcSettings.values['DateiName'];
+
+  if (Content_Mode > 0) then
+    if (FName <> '') then
+      OrientationConvert.doConversion(Content_Mode, Path + FName);
+
+  sOcSettings.Free;
+
+end;
+
+procedure TFormCareServer.htmlTest(Path: string);
+var
+  html: THTMLTemplate;
+  Datensammler: TStringList;
+begin
+  if FileExists(Path + 'WriteValue.txt') then
+  begin
+
+    html := THTMLTemplate.create;
+    Datensammler := TStringList.create;
+    html.LoadFromFile(Path + 'Template.html');
+    Datensammler.LoadFromFile(Path + 'WriteValue.txt');
+    html.writeValue(Datensammler);
+    html.SaveToFileCompressed(Path + 'Ergebnis.html');
+    html.Free;
+    Datensammler.Free;
+  end
+  else
+  begin
+    html := THTMLTemplate.create;
+    html.LoadFromFile(Path + 'A.html');
+    html.InsertDocument(Path + 'B.html');
+    html.SaveToFile(Path + 'Ergebnis.html');
+    html.Free;
+
+  end;
+end;
+
+procedure TFormCareServer.txlibTest(Path: string);
+var
+  txlibSettings: TIniFile;
+  test: String;
+
+  // TTXStringList testen:
+  // - Suchen
+  // - Lineare Suche
+  // - AVL-Baum-Suche
+  // - Hash-Suche
+  procedure TestStringList;
+  var
+    StrList: TTXStringList;
+    S: String;
+
+    procedure SearchTest;
+    var
+      Source: TStringList;
+      Dest: TStringList;
+      I, C: Integer;
+    begin
+      Source := TStringList.create;
+      Dest := TStringList.create;
+
+      try
+        // Quell-Testdaten laden
+        Source.LoadFromFile(Path + 'quelle.txt');
+
+        // TTXStringList mit Testdaten füllen
+        C := Source.count - 1;
+        for I := 0 to C do
+          StrList.add(Source.Strings[I]);
+
+        // TTXStringList gegen Source testen. Gefundene Suchwerte werden
+        // anhand des Index in Dest geschrieben
+        C := Source.count - 1;
+        for I := 0 to C do
+          Dest.add(IntToStr(StrList.Find(Source.Strings[I])));
+
+        // Gefundene Einträge werden gespeichert
+        Dest.SaveToFile(Path + 'ergebnis.txt');
+      finally
+        Source.Free;
+        Dest.Free;
+      end;
+    end;
+
+  begin
+    StrList := TTXStringList.create;
+
+    try
+      with StrList do
+      begin
+        S := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
+          'SearchMethod', '')));
+        if S = 'hash' then
+          SearchMethod := smHash
+        else if S = 'avl' then
+          SearchMethod := smAVL
+        else
+          SearchMethod := smLinear;
+
+        HashSize := txlibSettings.ReadInteger('TTXStringList',
+          'Hashsize', 1024);
+        CaseSensitive := txlibSettings.ReadBool('TTXStringList',
+          'CaseSensitive', false);
+        Trimmed := txlibSettings.ReadBool('TTXStringList', 'Trimmed', false);
+        Umlaut := txlibSettings.ReadBool('TTXStringList', 'Umlaut', false);
+      end;
+
+      test := LowerCase(Trim(txlibSettings.ReadString('TTXStringList',
+        'Test', '')));
+      if test = 'search' then
+        SearchTest;
+    finally
+      StrList.Free;
+    end;
+  end;
+
+begin
+  txlibSettings := TIniFile.create(Path + 'Test.ini');
+  try
+    test := LowerCase(Trim(txlibSettings.ReadString('Global', 'Test', '')));
+    if test = 'stringlist' then
+      TestStringList;
+  finally
+    txlibSettings.Free;
+  end;
+end;
+
+procedure TFormCareServer.infozipTest(Path: string);
+const
+  cTestArchiveName = 'test.zip';
+var
+  sTest: TStringList;
+  sFiles: TStringList;
+  sOptions: TStringList;
+begin
+  sTest := TStringList.create;
+
+  //
+  sTest.LoadFromFile(Path + 'Test.ini');
+  sOptions := anfix32.Split(sTest.values['Options']);
+  ersetze('~Path~', Path, sOptions);
+  sFiles := anfix32.Split(sTest.values['Files']);
+  ersetze('~Path~', Path, sFiles);
+
+  if (sTest.values['Test'] = 'unzip') then
+  begin
+    unzip(Path + cTestArchiveName, Path, sOptions);
+  end
+  else
+  begin
+    zip(sFiles, Path + cTestArchiveName, sOptions);
+  end;
+
+  InfoZip.zMessages.SaveToFile(Path + 'Diagnose.txt');
+
+  sFiles.Free;
+  sOptions.Free;
+  sTest.Free;
+end;
+
 procedure TFormCareServer.HashTest(Path: string);
 var
   sTestData: TStringList;
@@ -1481,111 +1362,211 @@ begin
   EndHourGlass;
 end;
 
-procedure TFormCareServer.Button1Click(Sender: TObject);
-var
-  S: string;
-  Str: string;
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of char;
-begin
 
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, pKey);
-    Init(CryptKey, Length(pKey) * 8, nil);
-
-    if (Edit1.Text <> '') then
-      Str := Edit1.Text
-    else
-      Str := Int64asKeyStr(strtoint64def(Edit4.Text, 0));
-
-    SetLength(S, Length(Str));
-    EncryptCFB8bit(Str[1], S[1], Length(Str));
-    Edit2.Text := S;
-    Edit3.Text := Base64EncodeStr(S);
-    Edit5.Text := AnsiTorfc1738(Edit3.Text);
-
-  end;
-  cBLOWFISH.Free;
-
-end;
+end.
 
 (*
 
+{$IFDEF UNICODE}
+const
+  atDefault = satDefault;
+{$ENDIF}
+var
+  ToMailLines: TStringList;
+  iMsg: TIDMessage;
+  TICKET_RID_MAILED: TList;
+  TransactionDate: TDateTime;
+
+  procedure BeginNewMail(Index: Integer);
   var
+    cPERSON: TIB_Cursor;
+    AdressList: string;
   begin
+    with IdSMTP1 do
+    begin
+
+      iMsg := TIDMessage.create(self);
+      with iMsg do
+      begin
+        Subject := '[' + nextp(ToMailLines[INdex], ';', 0) + ']';
+        from.address := 'caretaker@orgamon.de';
+        from.name := 'CareTaker';
+
+        AdressList := '';
+        cPERSON := DataModuleDatenbank.nCursor;
+        with cPERSON do
+        begin
+          sql.add('select EMAIL from PERSON where RID in ');
+          sql.add('(select TICKET_PERSON_R from TICKET_ZIEL where TICKET_GRUPPE_R='
+            + nextp(ToMailLines[Index], ';', 1) + ')');
+          ApiFirst;
+          while not(eof) do
+          begin
+            if (AdressList = '') then
+              AdressList := FieldByName('EMAIL').AsString
+            else
+              AdressList := AdressList + ';' + FieldByName('EMAIL').AsString;
+            ApiNext;
+          end;
+        end;
+        cPERSON.Free;
+        Recipients.EMailAddresses := AdressList;
+      end;
+    end;
   end;
 
-  function deCrypt(s: string): string;
+  procedure SendThisMail;
+  var
+    n: Integer;
+    xTICKET: TIB_DSQL;
   begin
+    if assigned(iMsg) then
+    begin
+      with IdSMTP1 do
+      begin
+        connect;
+        try
+          send(iMsg);
+        finally
+          disconnect;
+          // Nun als gemeldet buchen
+          if (TICKET_RID_MAILED.count > 0) then
+          begin
+            xTICKET := DataModuleDatenbank.nDSQL;
+            with xTICKET do
+            begin
+              sql.add('update TICKET set EMAIL=:CROSSREF where RID in (');
+              for n := 0 to pred(TICKET_RID_MAILED.count) do
+                if n < pred(TICKET_RID_MAILED.count) then
+                  sql.add(IntToStr(Integer(TICKET_RID_MAILED[n])) + ',')
+                else
+                  sql.add(IntToStr(Integer(TICKET_RID_MAILED[n])));
+              sql.add(')');
+              ParamByName('CROSSREF').AsDateTime := TransactionDate;
+              execute;
+            end;
+            xTICKET.Free;
+          end;
+          FreeAndNil(iMsg);
+        end;
+      end;
+    end;
   end;
+
+var
+  cTICKET: TIB_Cursor;
+  xTICKET: TIB_DSQL;
+  cGRUPPEN: TIB_Cursor;
+  TICKET_RID_OK: TList;
+  FullScrambledText: TStringList;
+  RECHNER_R: Integer;
+  KlarText: string;
+  LastMailedGroup: string;
+  n: Integer;
+
+begin
+  TransactionDate := now;
+  FullScrambledText := TStringList.create;
+  ToMailLines := TStringList.create;
+  TICKET_RID_MAILED := TList.create;
+  TICKET_RID_OK := TList.create;
+
+  // wer hat noch keinen eMail Eintrag
+  // und ist noch realtiv zeitnah
+  cTICKET := DataModuleDatenbank.nCursor;
+  with cTICKET do
+  begin
+    sql.add('select * from TICKET where (EMAIL is null) and (MOMENT>CURRENT_DATE-3)');
+    ApiFirst;
+    while not(eof) do
+    begin
+      RECHNER_R := FieldByName('RECHNER_R').AsInteger;
+      FieldByName('INFO').AssignTo(FullScrambledText);
+      KlarText := deCrypt(FullScrambledText[0]);
+      if (pos(cERRORText, KlarText) > 0) then
+      begin
+        // bestimme alle Gruppen zu diesem Rechner
+        // alle zugeordnete Gruppen bekommen ja eine Mail
+        // füge die Gruppe als erster Parameter hinzu!
+        // dubliziere für jede Gruppe die aufbereitete Zeile
+        cGRUPPEN := DataModuleDatenbank.nCursor;
+        with cGRUPPEN do
+        begin
+          sql.add('select G.RID, G.NAME, R.HOST from TICKET_QUELLE Q');
+          sql.add('join TICKET_GRUPPE G on');
+          sql.add(' Q.TICKET_GRUPPE_R=G.RID');
+          sql.add('join RECHNER R on');
+          sql.add(' Q.TICKET_RECHNER_R=R.RID');
+          sql.add('where TICKET_RECHNER_R=' + IntToStr(RECHNER_R));
+          ApiFirst;
+          while not(eof) do
+          begin
+            ToMailLines.add(FieldByName('NAME').AsString + ';' + { 0 = Gruppe }
+              FieldByName('RID').AsString + ';' + { 1 = Gruppe RID }
+              FieldByName('HOST').AsString + ';' + { 2 = Hostname }
+              cTICKET.FieldByName('RID').AsString + ';' + { 3 = Ticket RID }
+              cTICKET.FieldByName('NUMMER').AsString + ';' + { 4 = Ticket No }
+              cTICKET.FieldByName('MOMENT').AsString + ';' + { 5 = Appear }
+              KlarText { 6 = Text }
+              );
+            ApiNext;
+          end;
+        end;
+        cGRUPPEN.Free;
+      end
+      else
+      begin
+        // Limit wegen maximaler Länge des SQL Statements
+        if (TICKET_RID_OK.count < 150) then
+          TICKET_RID_OK.add(TObject(FieldByName('RID').AsInteger));
+      end;
+      ApiNext;
+    end;
+  end;
+  cTICKET.Free;
+
+  // Jetzt mailen!
+  LastMailedGroup := '-1';
+  iMsg := nil;
+  ToMailLines.sort;
+  ToMailLines.SaveToFile(DiagnosePath + 'CareTaker-Mail.txt');
+  for n := 0 to pred(ToMailLines.count) do
+  begin
+    if (LastMailedGroup <> nextp(ToMailLines[n], ';', 0)) then
+    begin
+      SendThisMail;
+      BeginNewMail(n);
+    end;
+    LastMailedGroup := nextp(ToMailLines[n], ';', 0);
+    if assigned(iMsg) then
+    begin
+      TICKET_RID_MAILED.add(TObject(strtointdef(nextp(ToMailLines[n],
+        ';', 3), 0)));
+      iMsg.body.add(ToMailLines[n]);
+    end;
+  end;
+  SendThisMail;
+
+  TICKET_RID_MAILED.Free;
+
+  if (TICKET_RID_OK.count > 0) then
+  begin
+    xTICKET := DataModuleDatenbank.nDSQL;
+    with xTICKET do
+    begin
+      sql.add('update TICKET set EMAIL=CURRENT_DATE where RID in (');
+      for n := 0 to pred(TICKET_RID_OK.count) do
+        if (n < pred(TICKET_RID_OK.count)) then
+          sql.add(IntToStr(Integer(TICKET_RID_OK[n])) + ',')
+        else
+          sql.add(IntToStr(Integer(TICKET_RID_OK[n])));
+      sql.add(')');
+      execute;
+    end;
+    xTICKET.Free;
+  end;
+  TICKET_RID_OK.Free;
+end;
 
 *)
 
-procedure TFormCareServer.Button6Click(Sender: TObject);
-var
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of char;
-  S: string;
-  r: string;
-begin
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, pKey);
-    Init(CryptKey, Length(pKey) * 8, nil);
-    S := Base64DecodeStr(Edit3.Text);
-    r := S;
-    SetLength(r, Length(S));
-    Edit2.Text := S;
-    DecryptCFB8bit(r[1], r[1], Length(r));
-    Edit1.Text := r;
-    if (Length(r) = 8) then
-      Edit4.Text := IntToStr(KeystrasInt64(r))
-    else
-      Edit4.Text := '';
-  end;
-  cBLOWFISH.Free;
-end;
-
-procedure TFormCareServer.Button7Click(Sender: TObject);
-begin
-  Edit3.Text := rfc1738toAnsi(Edit5.Text);
-  Button6Click(Sender);
-end;
-
-procedure TFormCareServer.Button8Click(Sender: TObject);
-var
-  TheLogPath: string;
-  TheFiles: TStringList;
-  TheLog: TStringList;
-  AllTheLog: TStringList;
-  n: Integer;
-begin
-  BeginHourGlass;
-  AllTheLog := TStringList.create;
-  TheLogPath := Edit7.Text;
-  TheFiles := TStringList.create;
-  dir(TheLogPath + '*.log', TheFiles, false);
-  TheFiles.sort;
-  for n := 0 to pred(TheFiles.count) do
-    if pos('.', TheFiles[n]) = 5 then
-    begin
-      //
-      TheLog := UnScramble(TheLogPath + TheFiles[n]);
-      AllTheLog.addstrings(TheLog);
-      TheLog.Free;
-    end;
-  TheFiles.Free;
-  AllTheLog.SaveToFile(DiagnosePath + 'caretaker.log.txt');
-  AllTheLog.Free;
-  EndHourGlass;
-end;
-
-procedure TFormCareServer.Button9Click(Sender: TObject);
-begin
-  Edit9.Text := deCrypt_Hex(Edit9.Text);
-end;
-
-end.

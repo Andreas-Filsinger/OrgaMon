@@ -25,7 +25,7 @@ object FormCareServer: TFormCareServer
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -34,7 +34,6 @@ object FormCareServer: TFormCareServer
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'W'#228'chter Log'
-      ExplicitHeight = 503
       object Label6: TLabel
         Left = 179
         Top = 5
@@ -299,7 +298,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Tickets'
       ImageIndex = 2
-      ExplicitHeight = 503
       object Label1: TLabel
         Left = 0
         Top = 23
@@ -486,19 +484,6 @@ object FormCareServer: TFormCareServer
         TabOrder = 8
         OnClick = Button5Click
       end
-      object Button3: TButton
-        Left = 821
-        Top = 477
-        Width = 70
-        Height = 23
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Senden'
-        TabOrder = 9
-        OnClick = Button3Click
-      end
       object Button4: TButton
         Left = 749
         Top = 477
@@ -509,7 +494,7 @@ object FormCareServer: TFormCareServer
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = 'Eintragen'
-        TabOrder = 10
+        TabOrder = 9
         OnClick = Button4Click
       end
     end
@@ -837,7 +822,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Kryptographie'
       ImageIndex = 2
-      ExplicitHeight = 503
       object Label7: TLabel
         Left = 86
         Top = 47
@@ -1095,7 +1079,6 @@ object FormCareServer: TFormCareServer
       Margins.Bottom = 4
       Caption = 'Funktions Sicherstellung'
       ImageIndex = 3
-      ExplicitHeight = 503
       object Label16: TLabel
         Left = 8
         Top = 8
