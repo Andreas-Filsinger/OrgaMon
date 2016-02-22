@@ -57,10 +57,12 @@ const
   // INPUT
   // =====
 
-  // Benennung=0 .. 12
+  // Benennung=1 .. 12 (0 = default)
   cParameter_foto_Modus = 'MODUS';
+
   // bisheriger Bildparameter "FA", "FN"
   cParameter_foto_parameter = 'PARAMETER';
+
   // Kurzform der Baustellen Bez "KARL"
   cParameter_foto_baustelle = 'NUMMERN_PREFIX';
   cParameter_foto_strasse = 'STRASSE'; //
@@ -3025,7 +3027,7 @@ begin
         end;
       7:
         begin
-          // Erdgas Südwest, FN soll nicht weiterverarbeitet werden?!
+          // Erdgas Südwest, "FN" soll nicht weiterverarbeitet werden!
           repeat
 
             if (pos('FR', FotoParameter) = 1) then
@@ -3079,9 +3081,7 @@ begin
         end;
       10:
         begin
-          // wie "7" Erdgas Südwest, jedoch mit Z#Neu
-          // da der OrgaMonApp-Server im Modus "7" keine "-Neu"
-          // umbenennung macht und will. Ursache unklar
+          // wie "7" Erdgas Südwest, jedoch mit "Neu" Umbenennung
           repeat
 
             if (pos('FR', FotoParameter) = 1) then
