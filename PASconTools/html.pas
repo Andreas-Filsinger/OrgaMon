@@ -106,7 +106,8 @@ uses
     ,
   System.UITypes
 {$ELSE}
-    , Graphics, fpchelper
+  , lazutf8, strutils, strings,
+   Graphics, fpchelper
 {$ENDIF}
     ;
 
@@ -988,7 +989,7 @@ var
   begin
     result := '';
     for n := 1 to length(s) do
-      if ord(s[n]) > 127 then
+      if (ord(s[n]) > 127) then
         result := result + '#$' + inttohex(ord(s[n]), 2)
       else
         result := result + s[n];
@@ -1725,18 +1726,6 @@ begin
       break;
     end;
 end;
-
-(*
-  procedure THTMLTemplate.DuplicateBlock(Block : string);
-  var
-  n,m,k : integer;
-  begin
-  n := BlockStart(Block);
-  m := BlockEnd(Block);
-  for k := 0 to m-n do
-  insert(succ(m+k),strings[n+k]);
-  end;
-*)
 
 function HTMLColor2RGBConst(Value: string): string;
 begin

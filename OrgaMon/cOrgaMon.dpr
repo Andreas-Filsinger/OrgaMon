@@ -72,13 +72,13 @@ uses
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
-  Identitaet in 'Identitaet.pas',
   CCR.Exif.BaseUtils in '..\ccr-exif\CCR.Exif.BaseUtils.pas',
   CCR.Exif.Consts in '..\ccr-exif\CCR.Exif.Consts.pas',
-  CCR.Exif.JpegUtils in '..\ccr-exif\CCR.Exif.JpegUtils.pas',
   CCR.Exif in '..\ccr-exif\CCR.Exif.pas',
   CCR.Exif.TiffUtils in '..\ccr-exif\CCR.Exif.TiffUtils.pas',
-  CCR.Exif.IPTC in '..\ccr-exif\CCR.Exif.IPTC.pas';
+  CCR.Exif.IPTC in '..\ccr-exif\CCR.Exif.IPTC.pas',
+  Identitaet in 'Identitaet.pas',
+  TestExec in 'TestExec.pas';
 
 begin
  setIdentitaetAndRun;

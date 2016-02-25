@@ -1,11 +1,11 @@
 ====================================
 * PROJEKT: domadd
-* SOURCE DIR: G:\freepascal\domadd
-* HELP COPY: YES
+* SOURCE DIR: ..\domadd
 * PUBLIC: YES
-* UPDATE: G:\freepascal\domadd\domadd.pas
-* UPDATE: G:\rev\domadd.rev
-* INFO: Neuen Passwort-geschützten Subdomain automatisiert anlegen
+* HELP COPY: YES
+* UPDATE: domadd.pas
+* UPDATE: ..\rev\domadd.rev.txt
+* INFO: Programm zur Erstellung eines passwort-geschützten Subdomains unter Linux/Apache2
 ====================================
 
 // INFO BEGIN
@@ -22,6 +22,10 @@
 Dokumentation
 
 @<a href="http://orgamon.org/mediawiki/index.php/Domadd"><font color="blue">Weblink: Onlinedokumentation "domadd"</font></a href>
+
+Rev 1.003 (25.02.16) Andreas Filsinger
+
+ Neu: Anpassung an fpc 2.6.x
 
 Rev 1.002 (11.02.12) Andreas Filsinger
 
