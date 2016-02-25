@@ -35,7 +35,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="--Test"/>
+        <CommandLineParams Value="--Test --exec=Rechnung.html"/>
       </local>
     </RunParams>
     <RequiredPackages Count="5">

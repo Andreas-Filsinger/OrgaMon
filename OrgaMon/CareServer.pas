@@ -1093,6 +1093,9 @@ begin
   DCP_md51 := TDCP_md5.create(self);
   sTestData := TStringList.create;
   MD5s := TStringList.create;
+  BraketLevel:= 0;
+  LineNo:= 0;
+
   // MD5 Test
   sTestData.LoadFromFile(Path + 'Test-MD5.txt');
   for n := 0 to pred(sTestData.count) do

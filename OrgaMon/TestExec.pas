@@ -1,6 +1,8 @@
-unit TestExec;
+﻿unit TestExec;
 
+{$ifdef FPC}
 {$mode delphi}
+{$endif}
 
 interface
 
@@ -72,7 +74,6 @@ var
 begin
   if FileExists(Path + 'WriteValue.txt') then
   begin
-
     html := THTMLTemplate.Create;
     Datensammler := TStringList.Create;
     html.LoadFromFile(Path + 'Template.html');
@@ -89,7 +90,6 @@ begin
     html.InsertDocument(Path + 'B.html');
     html.SaveToFile(Path + 'Ergebnis.html');
     html.Free;
-
   end;
 end;
 
@@ -224,6 +224,8 @@ begin
   DCP_md51 := TDCP_md5.Create(nil);
   sTestData := TStringList.Create;
   MD5s := TStringList.Create;
+  BraketLevel:= 0;
+  LineNo:= 0;
   // MD5 Test
   sTestData.LoadFromFile(Path + 'Test-MD5.txt');
   for n := 0 to pred(sTestData.Count) do
@@ -245,11 +247,13 @@ begin
 
     if (sTestData[n] = '#') then
     begin
+      // calculate
       AppendStringsToFile(DCP_md51.FromStrings(MD5s), Path + 'MD5.txt');
       MD5s.Clear;
     end
     else
     begin
+      // add
       if (BraketLevel = 1) and (LineNo > 1) then
         MD5s.add(#$0D#$0A + sTestData[n])
       else
@@ -340,8 +344,8 @@ var
           // Datei-Grössen vergleichen
           if FileCompare_UseSize then
           begin
-            if (FSize(FullPath + TestSourceFName) <> FSize(FullPath +
-              cPath_ErgebnisSoll + sErgebnisseSoll[n])) then
+            if (FSize(FullPath + TestSourceFName) <> FSize(FullPath + cPath_ErgebnisSoll +
+              sErgebnisseSoll[n])) then
               raise Exception.Create('Grössenunterschiede bei "' + sErgebnisseSoll[n] + '"');
             break;
           end;
@@ -410,8 +414,8 @@ var
 
 begin
   TestMask := GetParam('exec');
-  if TestMAsk='' then
-   TestMAsk := '*.*';
+  if TestMAsk = '' then
+    TestMAsk := '*.*';
   iFSPath := 'C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon-fs\';
   // Test starten
   sNameSpaces := TStringList.Create;
@@ -479,8 +483,16 @@ begin
             // Der Test an sich
             SingleTest(sNameSpaces[n], sTests[m]);
 
-            for o := 0 to pred(sDiagnose.Count) do
-              writeln(' ' + sDiagnose[o]);
+            if (sDiagnose.Count = 0) then
+            begin
+              writeln(' OK');
+            end
+            else
+            begin
+              writeln(cERRORText);
+              for o := 0 to pred(sDiagnose.Count) do
+                writeln(' ' + sDiagnose[o]);
+            end;
           end;
 
       end;
@@ -490,6 +502,7 @@ begin
   sNameSpaces.Free;
   sTests.Free;
   sDiagnose.Free;
+  readln;
 end;
 
 end.
