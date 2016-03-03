@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.155; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.157; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1048,8 +1048,7 @@ var
   iPDFAdmin: string;
   iPDFSend: string;
   iJonDaAdmin: integer;
-  // imp pend: Noch einen Parameter draus machen, OHNE diesen Default!
-  iJonDaServer: string = 'http://217.91.31.84/';
+  iJonDaServer: string;
 
   // Shop Sachen
   iShopDomain: string;

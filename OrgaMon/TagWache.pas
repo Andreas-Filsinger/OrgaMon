@@ -1,10 +1,10 @@
-{
-  |††††††___                  __  __
-  |†††††/ _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |††††| | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |††††| |_| | | | (_| | (_| | |  | | (_) | | | |
-  |†††††\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |†††††††††††††††|___/
+Ôªø{
+  |¬†¬†¬†¬†¬†¬†___                  __  __
+  |¬†¬†¬†¬†¬†/ _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |¬†¬†¬†¬†| | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |¬†¬†¬†¬†| |_| | | | (_| | (_| | |  | | (_) | | | |
+  |¬†¬†¬†¬†¬†\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†¬†|___/
   |
   |    Copyright (C) 2007  Andreas Filsinger
   |
@@ -90,7 +90,7 @@ uses
 
 procedure TFormTagWache.Button1Click(Sender: TObject);
 var
-  n, m: integer;
+  n: integer;
   ErrorCount: integer;
   Ticket: TTroubleTicket;
 begin
@@ -134,12 +134,12 @@ begin
               begin
                 // Die neuesten Fotos laden
                 e_w_GrabFotos;
-                // F¸r den Foto Server, aber auch lokal damit die
+                // F√ºr den Foto Server, aber auch lokal damit die
                 // Bildumbenennung mit aktuellem Wechseldatum klappt
                 e_r_Sync_AuftraegeAlle;
               end;
             2:
-              FormAuftragErgebnis.UploadNewTANS;
+              FormAuftragErgebnis.UploadNewTANS(-1,false);
             3:
               if (iTagwacheBaustelle >= cRID_FirstValid) then
               begin
@@ -207,7 +207,7 @@ begin
     CareTakerClose(Ticket);
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
-    // Tagwache-OLAPs ausf¸hren
+    // Tagwache-OLAPs ausf√ºhren
     FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' +
       cOLAPExtension);
 
@@ -303,9 +303,9 @@ begin
 
     if TagwacheAktiv then
     begin
-      Label2.caption := 'l‰uft seit ' +
+      Label2.caption := 'l√§uft seit ' +
         secondstostr(SecondsDiff(SecondsGet, LetzteTagWacheWarUm)) + 'h';
-      cPanelActive := clyellow; // l‰uft
+      cPanelActive := clyellow; // l√§uft
       break;
     end;
 
@@ -315,7 +315,7 @@ begin
         LetzteTagWacheWarUm);
       if (BeendetSeit < 60) then
       begin
-        // lief k¸rzlich
+        // lief k√ºrzlich
         Label2.caption := 'beendet seit ' + secondstostr(BeendetSeit) + 'h';
         cPanelActive := clAqua;
         break;
@@ -343,7 +343,7 @@ begin
       begin
         if (pos(WeekDayS(DateGet), iTagWacheWochentage) = 0) then
         begin
-          Label2.caption := 'heute nicht (nur ' + iTagWacheWochentage + ')';
+          Label2.caption := 'heute nicht da ‚àâ [' + iTagWacheWochentage + ']';
           cPanelActive := clred; // nicht vorgesehen
           break;
         end;
@@ -360,7 +360,7 @@ begin
     end;
 
     // !! Start !!
-    Label2.caption := 'l‰uft';
+    Label2.caption := 'l√§uft';
     Show;
     Button1.Click;
 

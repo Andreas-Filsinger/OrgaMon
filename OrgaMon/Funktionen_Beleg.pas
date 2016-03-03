@@ -670,7 +670,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 185;
+  cAllSettingsAnz = 186;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -703,7 +703,7 @@ CONST
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
-    'TagesabschlussIdle', 'KartenQuota');
+    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8445,6 +8445,7 @@ begin
   iKartenQuota := StrToInt64Def(sSystemSettings.values['KartenQuota'], 0);
 
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
+  iJonDaServer := sSystemSettings.values['AppServerURL'];
   iFSPath := sSystemSettings.values['FunktionsSicherungstellungsPfad'];
 
   // defaults

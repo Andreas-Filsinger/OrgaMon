@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="161">
+    <Units Count="162">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -55,7 +55,7 @@
       </Unit4>
       <Unit5>
         <Filename Value="..\PASconTools\anfix32.pas"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="2479"/>
         <CursorPos X="18" Y="2511"/>
         <UsageCount Value="46"/>
@@ -173,7 +173,7 @@
       </Unit20>
       <Unit21>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="661"/>
         <CursorPos X="37" Y="688"/>
         <UsageCount Value="26"/>
@@ -766,7 +766,6 @@
       </Unit108>
       <Unit109>
         <Filename Value="..\PASconTools\html.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="960"/>
         <CursorPos Y="997"/>
@@ -1002,7 +1001,7 @@
       <Unit141>
         <Filename Value="C:\lazarus\components\lazutils\lazutf8.pas"/>
         <UnitName Value="LazUTF8"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="714"/>
         <CursorPos X="13" Y="727"/>
         <UsageCount Value="24"/>
@@ -1010,7 +1009,7 @@
       </Unit141>
       <Unit142>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\inc\systemh.inc"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="498"/>
         <CursorPos X="36" Y="517"/>
         <UsageCount Value="24"/>
@@ -1073,7 +1072,7 @@
       </Unit149>
       <Unit150>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\rtl-objpas\src\inc\strutils.pp"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="26"/>
         <CursorPos Y="52"/>
         <UsageCount Value="23"/>
@@ -1138,7 +1137,7 @@
       </Unit158>
       <Unit159>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-base\src\gettext.pp"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="50"/>
         <CursorPos Y="50"/>
         <UsageCount Value="18"/>
@@ -1146,10 +1145,20 @@
       </Unit159>
       <Unit160>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\inc\strings.pp"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
       </Unit160>
+      <Unit161>
+        <Filename Value="..\..\firebird\examples\dbcrypt\cryptDb.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="206"/>
+        <CursorPos Y="206"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit161>
     </Units>
     <JumpHistory Count="29" HistoryIndex="28">
       <Position1>

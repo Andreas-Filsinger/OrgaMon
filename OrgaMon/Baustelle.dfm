@@ -2,8 +2,8 @@ object FormBaustelle: TFormBaustelle
   Left = 256
   Top = 210
   Caption = 'Baustelle'
-  ClientHeight = 521
-  ClientWidth = 844
+  ClientHeight = 539
+  ClientWidth = 847
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -19,8 +19,8 @@ object FormBaustelle: TFormBaustelle
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   DesignSize = (
-    844
-    521)
+    847
+    539)
   PixelsPerInch = 96
   TextHeight = 13
   object Image2: TImage
@@ -385,8 +385,8 @@ object FormBaustelle: TFormBaustelle
   object IB_Grid1: TIB_Grid
     Left = 0
     Top = 24
-    Width = 841
-    Height = 101
+    Width = 844
+    Height = 119
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -395,6 +395,8 @@ object FormBaustelle: TFormBaustelle
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
+    ExplicitWidth = 841
+    ExplicitHeight = 101
   end
   object IB_UpdateBar1: TIB_UpdateBar
     Left = 195
@@ -441,8 +443,8 @@ object FormBaustelle: TFormBaustelle
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 496
-    Width = 844
+    Top = 514
+    Width = 847
     Height = 25
     Panels = <
       item
@@ -453,29 +455,30 @@ object FormBaustelle: TFormBaustelle
       item
         Width = 50
       end>
+    ExplicitTop = 496
+    ExplicitWidth = 844
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 124
-    Width = 844
+    Top = 142
+    Width = 847
     Height = 372
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet7
+    ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 3
+    ExplicitTop = 124
+    ExplicitWidth = 844
     object TabSheet1: TTabSheet
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = '&Daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -763,6 +766,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Zus'#228'tzlich'
       ImageIndex = 1
+      ExplicitWidth = 836
       object Label8: TLabel
         Left = 7
         Top = 7
@@ -822,10 +826,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1003,10 +1004,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -1723,6 +1721,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Aufwand'
       ImageIndex = 4
+      ExplicitWidth = 836
       object Label6: TLabel
         Left = 209
         Top = 225
@@ -1966,10 +1965,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -2180,6 +2176,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Exporte'
       ImageIndex = 6
+      ExplicitWidth = 836
       object Label24: TLabel
         Left = 19
         Top = 22
@@ -2399,6 +2396,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Lokalisierun&g'
       ImageIndex = 7
+      ExplicitWidth = 836
       object Label14: TLabel
         Left = 449
         Top = 71
@@ -2590,10 +2588,10 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
+      DesignSize = (
+        839
+        344)
       object SpeedButton3: TSpeedButton
         Left = 4
         Top = 27
@@ -3088,44 +3086,6 @@ object FormBaustelle: TFormBaustelle
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
       end
-      object Label42: TLabel
-        Left = 635
-        Top = 7
-        Width = 185
-        Height = 14
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Bericht '#252'ber fehlende Bilder'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold, fsUnderline]
-        ParentFont = False
-      end
-      object JvArrayButton1: TJvArrayButton
-        Left = 635
-        Top = 29
-        Width = 134
-        Height = 302
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Rows = 10
-        Cols = 3
-        Captions.Strings = (
-          '000'
-          '111')
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold]
-        OnArrayButtonClicked = JvArrayButton1ArrayButtonClicked
-      end
       object SpeedButton10: TSpeedButton
         Left = 48
         Top = 27
@@ -3510,14 +3470,16 @@ object FormBaustelle: TFormBaustelle
       object ListBox1: TListBox
         Left = 4
         Top = 116
-        Width = 623
+        Width = 824
         Height = 213
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
+        ExplicitWidth = 821
       end
       object CheckBox36: TCheckBox
         Left = 386
@@ -3541,10 +3503,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object Label41: TLabel
         Left = 314
         Top = 58
@@ -3940,10 +3899,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 836
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -4042,6 +3998,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 2
       Caption = 'Protokolle'
       ImageIndex = 11
+      ExplicitWidth = 836
       object Label43: TLabel
         Left = 41
         Top = 7

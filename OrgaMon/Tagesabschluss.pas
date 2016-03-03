@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2016 Andreas Filsinger
   |
@@ -200,7 +200,7 @@ begin
                 else
                   FormDatensicherung.die400.Free;
 
-                // Datei-Löschungen
+                // Datei-LÃ¶schungen
                 FileDelete(DiagnosePath + '*', 20);
                 FileDelete(MyProgramPath + 'Bestellungskopie\*', 30);
                 FileDelete(UpdatePath + '*', 30, 3);
@@ -220,7 +220,7 @@ begin
                 FileDelete(WebPath + '*', 10);
                 FileDelete(cAuftragErgebnisPath + '*', 5);
 
-                // Verzeichnis Löschungen
+                // Verzeichnis LÃ¶schungen
                 DirDelete(ImportePath + '*', 10);
                 KartenQuota;
 
@@ -229,7 +229,7 @@ begin
               FormVersenderPaketID.Execute;
             4:
               begin
-                // sich selbst enthaltende Kollektionen löschen!
+                // sich selbst enthaltende Kollektionen lÃ¶schen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
                 // Context-OLAPs
@@ -248,10 +248,10 @@ begin
               end;
             7:
               begin
-                // Für den Foto Server
+                // FÃ¼r den Foto Server
                 e_r_Sync_AuftraegeAlle;
 
-                // Für externe Auftrags-Routen
+                // FÃ¼r externe Auftrags-Routen
                 if not(FormAuftragExtern.DoJob) then
                   Log(cERRORText + ' AuftragExtern fail');
               end;
@@ -306,11 +306,11 @@ begin
                 begin
                   if not(FormMahnung.Execute(TagesAbschluss_TAN)) then
                     Log(cERRORText +
-                      ' kein neuer Mahnlauf möglich, da noch Fehler abgearbeitet werden müssen!');
+                      ' kein neuer Mahnlauf mÃ¶glich, da noch Fehler abgearbeitet werden mÃ¼ssen!');
                 end
                 else
                   Log(cERRORText +
-                    ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
+                    ' kein neuer Mahnlauf mÃ¶glich, da noch teilweise "Brief" angekreuzt ist!');
               end;
             24:
               e_w_VertragBuchen;
@@ -435,7 +435,7 @@ begin
     begin
       Label2.caption := 'seit ' + secondstostr(SecondsDiff(SecondsGet,
         LetzerTagesAbschlussWarUm)) + 'h';
-      cPanelActive := clyellow; // läuft
+      cPanelActive := clyellow; // lÃ¤uft
       break;
     end;
 
@@ -460,7 +460,7 @@ begin
       begin
         if (pos(WeekDayS(DateGet), iTagesabschlussWochentage) = 0) then
         begin
-          Label2.caption := 'heute nicht (nur ' + iTagesabschlussWochentage + ')';
+          Label2.caption := 'heute nicht, da âˆ‰ [' + iTagesabschlussWochentage + ']';
           cPanelActive := clred; // nicht vorgesehen
           break;
         end;
@@ -490,7 +490,7 @@ end;
 procedure TFormTagesAbschluss.Tagesabschluss;
 begin
   show;
-  Label2.caption := 'läuft';
+  Label2.caption := 'lÃ¤uft';
   Button1.Click;
 end;
 

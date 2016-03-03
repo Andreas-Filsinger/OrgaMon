@@ -40,42 +40,40 @@ procedure RunAsTWebShop;
 implementation
 
 uses
- // Pascal-Core
- SysUtils,
- math,
- Classes,
+  // Pascal-Core
+  SysUtils,
+  math,
+  Classes,
 
- // Tools
- anfix32,
- CaretakerClient,
- srvXMLRPC,
- SolidFTP,
- binlager32,
+  // Tools
+  anfix32,
+  CaretakerClient,
+  srvXMLRPC,
+  SolidFTP,
+  binlager32,
 
- // DB
-{$ifdef FPC}
+  // DB
+{$IFDEF FPC}
+{$ELSE}
+  IB_Session,
+{$ENDIF}
+  // OrgaMon-Globals
+  globals,
+  dbOrgaMon,
 
-{$else}
- IB_Session,
-{$endif}
+  // OrgaMon-Core
+  Funktionen_Auftrag,
+  Funktionen_Basis,
+  Funktionen_Beleg,
+  Funktionen_LokaleDaten,
 
- // OrgaMon-Globals
- globals,
- dbOrgaMon,
+  // hm
+  eConnect,
 
- // OrgaMon-Core
- Funktionen_Auftrag,
- Funktionen_Basis,
- Funktionen_Beleg,
- Funktionen_LokaleDaten,
-
- // hm
- eConnect,
-
- // Service
- FotoExec,
- JonDaExec,
- TestExec;
+  // Service
+  FotoExec,
+  JonDaExec,
+  TestExec;
 
 type
   TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto, id_Test);
@@ -115,26 +113,23 @@ begin
       MandantName := copy(i_c_DataBaseFName, succ(k), pred(l - k));
     end;
 
-
-    {$ifdef fpc}
-          User := iDataBaseUser;
-          HostName := iDataBaseHost;
-          Database := i_c_DataBaseFName;
-    {$else}
-          DataBaseName := _iDataBaseName;
-          if (iDataBaseHost = '') then
-          begin
-            Server := '';
-            protocol := cplocal;
-          end
-          else
-          begin
-            protocol := cpTCP_IP;
-          end;
-          UserName := iDataBaseUser;
-    {$endif}
-
-
+{$IFDEF fpc}
+    User := iDataBaseUser;
+    HostName := iDataBaseHost;
+    Database := i_c_DataBaseFName;
+{$ELSE}
+    DataBaseName := _iDataBaseName;
+    if (iDataBaseHost = '') then
+    begin
+      Server := '';
+      protocol := cplocal;
+    end
+    else
+    begin
+      protocol := cpTCP_IP;
+    end;
+    UserName := iDataBaseUser;
+{$ENDIF}
     if (length(iDataBasePassword) > 25) then
       Password := deCrypt_Hex(iDataBasePassword)
     else
@@ -197,7 +192,11 @@ procedure TownFotoExec.Log(s: string);
 begin
   writeln(s);
   if (pos('ERROR', s) > 0) then
-    AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
+    AppendStringsToFile(
+      { } sTimeStamp + ';' +
+      { } inttostr(AUFTRAG_R) + ';' +
+      { } s,
+      { } DiagnosePath + 'FotoService.log.txt');
   if (pos(cFotoService_AbortTag, s) = 1) then
     halt(1);
 end;
@@ -244,7 +243,7 @@ begin
       if (TimerInit < cKikstart_delay * 60 * 1000) then
       begin
         if (TimerInit = 0) then
-          MyFotoExec.Log('Warte ' + InttoStr(cKikstart_delay) + ' Minuten ...');
+          MyFotoExec.Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
         inc(TimerInit, Timer_Intervall);
         if (TimerInit >= cKikstart_delay * 60 * 1000) then
         begin
@@ -326,12 +325,12 @@ begin
     // Listen-Port des Servers setzen
     DefaultPort := UsedPort;
     // iXMLRPCPort muss aber auch entsprechende gesetzt sein!
-    iXMLRPCPort := InttoStr(UsedPort);
+    iXMLRPCPort := inttostr(UsedPort);
 
     DebugMode := anfix32.DebugMode;
     DiagnosePath := globals.DiagnosePath;
     TimingStats := IsParam('-at');
-    LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
+    LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
 
     if TimingStats then
       writeln('Performance-Log aktiv: ' + LogContext);
@@ -403,10 +402,9 @@ var
   XMLRPC: TXMLRPC_Server;
   JonDa: TJonDaExec;
   SectionName: string;
-
 begin
-  try
 
+  try
     JonDa := TJonDaExec.Create;
     with JonDa do
     begin
@@ -436,7 +434,7 @@ begin
     with JonDa.tIMEI do
     begin
       insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
-      writeln(InttoStr(RowCount));
+      writeln(inttostr(RowCount));
     end;
 
     // lade IMEI-OK
@@ -444,7 +442,7 @@ begin
     with JonDa.tIMEI_OK do
     begin
       insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
-      writeln(InttoStr(RowCount));
+      writeln(inttostr(RowCount));
     end;
 
     // Einstellungen weitergeben
@@ -483,11 +481,11 @@ begin
       with XMLRPC do
       begin
         DefaultPort := iJonDa_Port;
-        write('Aktiviere ' + ComputerName + ':' + InttoStr(DefaultPort) + '  ... ');
+        write('Aktiviere ' + ComputerName + ':' + inttostr(DefaultPort) + '  ... ');
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
         DiagnosePath := globals.DiagnosePath;
-        LogContext := DatumLog + '-' + ComputerName + '-' + InttoStr(DefaultPort);
+        LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
 
         // Methoden registrieren
         AddMethod('BasePlug', JonDa.info);
@@ -606,9 +604,10 @@ begin
         begin
           RunAsFoto;
         end;
-       id_Test:begin
+      id_Test:
+        begin
           RunAsTest;
-       end
+        end
     else
       RunAsUnImplemented;
 
