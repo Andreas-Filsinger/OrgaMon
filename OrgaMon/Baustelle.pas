@@ -280,8 +280,6 @@ type
     Button13: TButton;
     Label1: TLabel;
     IB_Edit10: TIB_Edit;
-    Label42: TLabel;
-    JvArrayButton1: TJvArrayButton;
     Label9: TLabel;
     Label58: TLabel;
     ComboBox1: TComboBox;
@@ -392,7 +390,6 @@ type
     procedure SpeedButton7Click(Sender: TObject);
     procedure SpeedButton9Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
-    procedure JvArrayButton1ArrayButtonClicked(ACol, ARow: Integer);
     procedure Button31Click(Sender: TObject);
     procedure Button41Click(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
@@ -452,7 +449,6 @@ type
     procedure AblageLoeschen;
     procedure SetContext(RID: Integer);
     procedure mShow;
-    procedure ReflectFotoInfo;
     procedure ReflectZustaendige;
     procedure ReadState;
 
@@ -1034,10 +1030,6 @@ begin
           'Monteuren eindeutige Kürzel!');
     end;
   end;
-
-  // Wer fotografiert hier alles
-  ReflectFotoInfo;
-
 end;
 
 function TFormBaustelle.RestoreFName: string;
@@ -3337,29 +3329,6 @@ begin
   end;
 end;
 
-procedure TFormBaustelle.ReflectFotoInfo;
-var
-  sMonteure: TStringList;
-  cFotoPath: string;
-  n: Integer;
-begin
-  JvArrayButton1.captions.Beginupdate;
-  // JvArrayButton1.captions.clear;
-
-  cFotoPath := e_r_BaustelleFotoPath(IB_Query1.FieldByName('RID').AsInteger);
-
-  sMonteure := TStringList.create;
-  dir(cFotoPath + '*.', sMonteure);
-  for n := pred(sMonteure.count) downto 0 do
-    if (length(sMonteure[n]) <> 3) or (StrToIntDef(sMonteure[n], 0) <= 0) then
-      sMonteure.Delete(n);
-  sMonteure.sort;
-  JvArrayButton1.captions.assign(sMonteure);
-  JvArrayButton1.captions.endupdate;
-  JvArrayButton1.refresh;
-
-  sMonteure.free;
-end;
 
 procedure TFormBaustelle.ReflectFotoPath;
 begin
@@ -3416,18 +3385,6 @@ end;
 procedure TFormBaustelle.Image2Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Baustelle');
-end;
-
-procedure TFormBaustelle.JvArrayButton1ArrayButtonClicked(ACol, ARow: Integer);
-var
-  Index: Integer;
-begin
-  with JvArrayButton1 do
-  begin
-    Index := (ARow * Cols) + ACol;
-    if Index < captions.count then
-      openShell(iJonDaServer + 'JonDaServer/Info/' + captions[Index] + '.html');
-  end;
 end;
 
 procedure TFormBaustelle.LogFoto(s: string);

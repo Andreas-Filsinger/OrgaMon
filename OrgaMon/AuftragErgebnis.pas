@@ -1,12 +1,12 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
-  |    Copyright (C) 2007-2014  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ type
     CheckBox4: TCheckBox;
     CheckBox5: TCheckBox;
     Label5: TLabel;
+    CheckBox6: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure RadioButton3Click(Sender: TObject);
     procedure ComboBox1DropDown(Sender: TObject);
@@ -83,7 +84,6 @@ type
 
     // Zentrale Upload - TAN
     HugeTransactionN: integer;
-    ManuellInitiiert: boolean;
     IdFTP1: TIdFTP;
     FlexCelXLS: TXLSFile;
 
@@ -117,7 +117,7 @@ type
 
   public
     { Public-Deklarationen }
-    function UploadNewTANS(BAUSTELLE_R: integer = -1): boolean;
+    function UploadNewTANS(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
     procedure SetDefaults(ResetRadioButton: boolean);
   end;
 
@@ -147,8 +147,8 @@ uses
   Mapping, InfoZIP, WordIndex;
 {$R *.dfm}
 
-function TFormAuftragErgebnis.CreateFiles(Settings: TStringList; RIDs: TgpIntegerList;
-  FailL: TgpIntegerList; Files: TStringList): boolean;
+function TFormAuftragErgebnis.CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
+  Files: TStringList): boolean;
 var
   ExcelWriteRow: integer;
 
@@ -158,7 +158,7 @@ var
 
   // Strings: A|B|C|A Objects: [0,3]|[1]|[2]|[0,3] so geht das Ding raus!!!
   HeaderDefault: TStringList; // vordefiniert
-  HeaderSuppress: TStringList; // nicht erwünschte Daten
+  HeaderSuppress: TStringList; // nicht erwÃ¼nschte Daten
   HeaderFromIntern: TStringList; // Spalten aus dem INTERN Feld
   HeaderTextFormat: TStringList; // xls Ausgabe Zellformats soll Text sein
 
@@ -170,7 +170,7 @@ var
   Oc_Bericht: TStringList;
   Oc_Result: boolean;
 
-  // Qualitäts-Sicherung
+  // QualitÃ¤ts-Sicherung
   sPlausi: string;
   PlausiMode: integer;
   sQS_kritisch: TStringList;
@@ -188,7 +188,7 @@ var
   ActColIndex: integer;
   zweizeilig: boolean;
 
-  // für die Gesamtausgabe
+  // fÃ¼r die Gesamtausgabe
   HeaderLine: string;
   HeaderName: string;
   DataLine: string;
@@ -204,7 +204,7 @@ var
   ProtokollWerte: TStringList;
   Umsetzer: TFieldMapping;
 
-  // Zählernummer Neu Umkonvertierungen
+  // ZÃ¤hlernummer Neu Umkonvertierungen
   Zaehler_nr_neu_filter: string;
   Zaehler_nr_neu_zeichen: string;
 
@@ -226,7 +226,7 @@ var
   ZaehlwerkeIst: integer; // aus der Art
   INTERN_INFO: TStringList;
 
-  // Dinge für die freien Zähler "EFRE"
+  // Dinge fÃ¼r die freien ZÃ¤hler "EFRE"
   FreieResourcen: TsTable;
   Sparten: TFieldMapping;
   EFRE_ZAEHLER_NR_NEU: string;
@@ -242,11 +242,11 @@ var
   FreieZaehlerCol_Sparte: integer;
 
   // Excel-Formate
-  // Dinge für Protokoll-Text Feld
+  // Dinge fÃ¼r Protokoll-Text Feld
   fmProtokollText: integer;
   fmInternText: integer;
 
-  // Prüfung doppelte Zählernummer neu
+  // PrÃ¼fung doppelte ZÃ¤hlernummer neu
   ZaehlerNummernNeuAusN1: boolean;
   ZaehlerNummernNeuMitA1: boolean;
   ZaehlerNummernNeu: TSearchStringList;
@@ -303,7 +303,7 @@ var
     ZaehlerNummernNeu.sort;
   end;
 
-// EFRE- Filter für "Zählernummer Neu"
+// EFRE- Filter fÃ¼r "ZÃ¤hlernummer Neu"
   function EFRE_Filter_ZaehlerNummerNeu(s: string): string;
   begin
     result := StrFilter(s, '0123456789');
@@ -343,7 +343,7 @@ var
     end;
 
   begin
-    // folgende Spalten vervollständigen:
+    // folgende Spalten vervollstÃ¤ndigen:
     CheckSet(Settings.values[cE_MaterialNummerNeu], FreieZaehlerCol_MaterialNummer);
     CheckSet(Settings.values[cE_ZaehlwerkNeu], FreieZaehlerCol_Zaehlwerk, '1');
     if (FreieZaehlerCol_Lager <> -1) then
@@ -414,7 +414,7 @@ var
             break;
           end;
 
-          // Ausdrückliche Textfelder
+          // AusdrÃ¼ckliche Textfelder
           if (HeaderTextFormat.indexof(Header[n]) <> -1) then
           begin
             fm := fmInternText;
@@ -459,7 +459,7 @@ var
     result := Zaehler_Nummer_neu;
     repeat
 
-      // Zeichen für einen Eintrag durch einen Scan
+      // Zeichen fÃ¼r einen Eintrag durch einen Scan
       if (pos('#', Zaehler_Nummer_neu) = 1) then
       begin
 
@@ -525,8 +525,8 @@ var
 
         if not(FilterMatch) then
         begin
-          Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Zählernummer Neu "' +
-            Zaehler_Nummer_neu + '" hat keine Filter-Regel!', BAUSTELLE_R, Settings.values[cE_TAN]);
+          Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ZÃ¤hlernummer Neu "' + Zaehler_Nummer_neu +
+            '" hat keine Filter-Regel!', BAUSTELLE_R, Settings.values[cE_TAN]);
           writePermission := false;
           if (FailL.indexof(AUFTRAG_R) = -1) then
             FailL.add(AUFTRAG_R);
@@ -549,7 +549,7 @@ var
 
           if (ZaehlerNummerNeu_AnzahlStellen = StrToIntDef(Raster, -1)) then
           begin
-            // Länge passt
+            // LÃ¤nge passt
             FilterMatch := true;
             break;
           end;
@@ -559,7 +559,7 @@ var
           if not(FilterMatch) then
           begin
             QS_add('[Q27] Anzahl der Stellen ":' + inttostr(ZaehlerNummerNeu_AnzahlStellen) +
-              '" von "Zählernummer-Neu" ist nicht erlaubt', sPlausi);
+              '" von "ZÃ¤hlernummer-Neu" ist nicht erlaubt', sPlausi);
           end;
 
         break;
@@ -636,7 +636,7 @@ var
       end;
     end;
 
-    // nun alle fehlenden Spaltenüberschriften hinzunehmen
+    // nun alle fehlenden SpaltenÃ¼berschriften hinzunehmen
     for n := 0 to pred(HeaderDefault.count) do
     begin
       if (HeaderSuppress.indexof(HeaderDefault[n]) = -1) then
@@ -658,7 +658,7 @@ var
       Header_col_Scan := Header.indexof('Scan_Zaehler_Nummer_Neu');
     end;
 
-    // Alias / Umbenennung der Spaltenüberschriften
+    // Alias / Umbenennung der SpaltenÃ¼berschriften
     HeaderAliasNames := TStringList.create;
     AliasNames := Settings.values[cE_SpaltenAlias];
     while (AliasNames <> '') do
@@ -729,8 +729,8 @@ var
         on e: exception do
         begin
           writePermission := false;
-          Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + Header[ActColIndex] +
-            '.ini":' + e.message, BAUSTELLE_R, Settings.values[cE_TAN]);
+          Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + Header[ActColIndex] + '.ini":' + e.message,
+            BAUSTELLE_R, Settings.values[cE_TAN]);
           if (FailL.indexof(AUFTRAG_R) = -1) then
             FailL.add(AUFTRAG_R);
         end;
@@ -747,8 +747,8 @@ var
           on e: exception do
           begin
             writePermission := false;
-            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + UmsetzerName +
-              '.ini":' + e.message, BAUSTELLE_R, Settings.values[cE_TAN]);
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + UmsetzerName + '.ini":' + e.message,
+              BAUSTELLE_R, Settings.values[cE_TAN]);
             if (FailL.indexof(AUFTRAG_R) = -1) then
               FailL.add(AUFTRAG_R);
           end;
@@ -775,22 +775,20 @@ var
 
       repeat
 
-        // Prüfung A
+        // PrÃ¼fung A
         FNameA := FotoPath + e_r_BaustellenPfad(Settings) + '\' + FNameA;
         if FileExists(FNameA) then
           break;
 
-        // Prüfung B
-        FNameB := FotoPath + e_r_BaustellenPfad(Settings) + '\' +
-          nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
+        // PrÃ¼fung B
+        FNameB := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
         if FileExists(FNameB) then
           break;
 
         if (FNameA = FNameB) then
           QS_add('[Q25] Bild-Datei "' + FNameA + '" existiert nicht', sPlausi)
         else
-          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB +
-            '" existieren nicht', sPlausi);
+          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
 
       until true;
     end;
@@ -836,7 +834,7 @@ begin
       if (Settings.values[cE_SAPQUELLE] <> '') then
       begin
 
-        // Freie Zähler laden
+        // Freie ZÃ¤hler laden
         if FileExists(cAuftragErgebnisPath + Settings.values[cE_SAPQUELLE]) then
         begin
 
@@ -856,8 +854,7 @@ begin
 
             FreieZaehlerCol_ZaehlerNummer := colof('Serialnummer');
             if (FreieZaehlerCol_ZaehlerNummer = -1) then
-              raise exception.create(Settings.values[cE_SAPQUELLE] +
-                ': Spalte "Serialnummer" fehlt');
+              raise exception.create(Settings.values[cE_SAPQUELLE] + ': Spalte "Serialnummer" fehlt');
 
             //
             FreieZaehlerCol_MaterialNummer := colof('MaterialNo');
@@ -883,7 +880,7 @@ begin
             for n := 1 to pred(count) do
             begin
 
-              // Zählernummer Neu
+              // ZÃ¤hlernummer Neu
               WriteCell(n, FreieZaehlerCol_ZaehlerNummer,
                 EFRE_Filter_ZaehlerNummerNeu(readCell(n, FreieZaehlerCol_ZaehlerNummer)));
 
@@ -938,8 +935,7 @@ begin
       ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cIni_Activate);
 
       cINTERNINFO := DataModuleDatenbank.nCursor;
-      cINTERNINFO.sql.add
-        ('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
+      cINTERNINFO.sql.add('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
       INTERN_INFO := TStringList.create;
 
       // Header ermitteln und schreiben
@@ -949,9 +945,9 @@ begin
 
       HeaderFromIntern := TStringList.create;
       // die kommen aus den intern Feldern
-      HeaderSuppress := TStringList.create; // unerwünschte Daten
+      HeaderSuppress := TStringList.create; // unerwÃ¼nschte Daten
       Umsetzer := TFieldMapping.create;
-      // Spalten, die als "Text" formatiert werden müssen
+      // Spalten, die als "Text" formatiert werden mÃ¼ssen
       HeaderTextFormat := Split(Settings.values[cE_SpalteAlsText]);
       HeaderTextFormat.sort;
 
@@ -982,7 +978,7 @@ begin
         AUFTRAG_R := integer(RIDs[n]);
         zweizeilig := false;
         writePermission := true;
-        sPlausi := ''; // Qualitätssicherung [Qnn] System initialisieren
+        sPlausi := ''; // QualitÃ¤tssicherung [Qnn] System initialisieren
 
         ProgressBar1.position := n;
         application.processmessages;
@@ -1024,7 +1020,7 @@ begin
           inc(k);
         end;
 
-        // Protokollspalten füllen
+        // Protokollspalten fÃ¼llen
         for k := 0 to pred(ProtokollFeldNamen.count) do
         begin
           ActValue := KommaCheck(ProtokollWerte.values[ProtokollFeldNamen[k]]);
@@ -1037,14 +1033,13 @@ begin
           SetCell(ProtokollFeldNamen[k], ActValue);
         end;
 
-        // Protokoll als Text auffüllen
+        // Protokoll als Text auffÃ¼llen
         ActColIndex := Header.indexof('ProtokollText');
         if (ActColIndex <> -1) then
-          SetCell(ActColIndex,
-            HugeSingleLine(pem_show(ProtokollePath + ActColumn[Header.indexof('Baustelle')] +
+          SetCell(ActColIndex, HugeSingleLine(pem_show(ProtokollePath + ActColumn[Header.indexof('Baustelle')] +
             ActColumn[Header.indexof('Art')], ProtokollWerte), #10));
 
-        // Zusätzliche Felder lesen
+        // ZusÃ¤tzliche Felder lesen
         with cINTERNINFO do
         begin
           ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
@@ -1058,15 +1053,14 @@ begin
 
           // Q-System umgehen
           if (INTERN_INFO.values['QS_UMGANGEN'] <> '') then
-            QS_add('[Q12] Qualitätssicherung übergangen', sPlausi);
+            QS_add('[Q12] QualitÃ¤tssicherung Ã¼bergangen', sPlausi);
 
-          // Q-System soll einen Stop auslösen
+          // Q-System soll einen Stop auslÃ¶sen
           if (INTERN_INFO.values['QS_NOGO'] <> '') then
             QS_add('[Q26] QS_NOGO ist gesetzt, ev. Nacharbeiten notwendig', sPlausi);
 
           // aus den normalen Daten
-          EFRE_ZAEHLER_NR_NEU := EFRE_Filter_ZaehlerNummerNeu(FieldByName('ZAEHLER_NR_NEU')
-            .AsString);
+          EFRE_ZAEHLER_NR_NEU := EFRE_Filter_ZaehlerNummerNeu(FieldByName('ZAEHLER_NR_NEU').AsString);
           zaehler_stand_neu := strtodoubledef(FieldByName('ZAEHLER_STAND_NEU').AsString, 0);
 
           // aus den intern Feldern
@@ -1074,16 +1068,15 @@ begin
           close;
         end;
 
-        // Nun noch die Intern Infos übernehmen
+        // Nun noch die Intern Infos Ã¼bernehmen
         if (HeaderFromIntern.count > 0) then
         begin
 
           if (FreieResourcen.count > 0) and (EFRE_ZAEHLER_NR_NEU <> '') then
           begin
 
-            // Gib die Liste der Einträge mit passender Zählernummer
-            EFRE := FreieResourcen.locateDuplicates(FreieZaehlerCol_ZaehlerNummer,
-              EFRE_ZAEHLER_NR_NEU);
+            // Gib die Liste der EintrÃ¤ge mit passender ZÃ¤hlernummer
+            EFRE := FreieResourcen.locateDuplicates(FreieZaehlerCol_ZaehlerNummer, EFRE_ZAEHLER_NR_NEU);
 
             FoundLine := -1;
             repeat
@@ -1107,8 +1100,7 @@ begin
 
                 // Kombination "SerialNummer" & "MaterialNummer" versuchen!
                 for k := 0 to pred(EFRE.count) do
-                  if FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt
-                  then
+                  if FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt then
                   begin
                     FoundLine := EFRE[k];
                     Fill_EFRE(FoundLine);
@@ -1146,8 +1138,8 @@ begin
                 { } ZAEHLER_NR_NEU);
 
               //
-              Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource Zählernummer "' +
-                EFRE_ZAEHLER_NR_NEU + '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN]);
+              Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource ZÃ¤hlernummer "' + EFRE_ZAEHLER_NR_NEU +
+                '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN]);
 
               //
               if (FailL.indexof(AUFTRAG_R) = -1) then
@@ -1159,26 +1151,24 @@ begin
             else
             begin
 
-              // Plausibilität Zählerstand "neu" prüfen
+              // PlausibilitÃ¤t ZÃ¤hlerstand "neu" prÃ¼fen
               zaehler_stand_neu_soll :=
-                strtodoubledef(FreieResourcen.readCell(FoundLine,
-                FreieZaehlerCol_Zaehlerstand), -1);
+                strtodoubledef(FreieResourcen.readCell(FoundLine, FreieZaehlerCol_Zaehlerstand), -1);
 
               if (zaehler_stand_neu_soll > 0) then
               begin
                 if (abs(zaehler_stand_neu - zaehler_stand_neu_soll) > 35.0) then
-                  QS_add(format
-                    ('[Q22] Einbaustand falsch (Zählerstand-EFRE=%.0f <> Zählerstand-Monteur=%.0f)',
+                  QS_add(format('[Q22] Einbaustand falsch (ZÃ¤hlerstand-EFRE=%.0f <> ZÃ¤hlerstand-Monteur=%.0f)',
                     [zaehler_stand_neu_soll, zaehler_stand_neu]), sPlausi);
               end;
 
-              // zumindest für dieses Mal diese Zeile löschen
+              // zumindest fÃ¼r dieses Mal diese Zeile lÃ¶schen
               FreieResourcen.del(FoundLine);
             end;
 
           end;
 
-          // Jetzt noch die Intern-Namen einfügen!
+          // Jetzt noch die Intern-Namen einfÃ¼gen!
           for k := 0 to pred(HeaderFromIntern.count) do
           begin
             HeaderName := HeaderFromIntern[k];
@@ -1219,7 +1209,7 @@ begin
           if (Zaehlwerk <> '') then
           begin
 
-            // Bei der Art "2" sollten Nebentarif-Stände da sein!
+            // Bei der Art "2" sollten Nebentarif-StÃ¤nde da sein!
             ZaehlwerkeIst := StrToIntDef(StrFilter(ART, '0123456789'), 1);
 
             if (ZaehlwerkeIst > 1) then
@@ -1227,12 +1217,12 @@ begin
 
               zweizeilig := true;
 
-              // Nebentarif alter Zähler
+              // Nebentarif alter ZÃ¤hler
               ActColIndex := Header.indexof('NA');
               if (ActColIndex <> -1) then
                 NA := ActColumn[ActColIndex];
 
-              // Nebentarif neuer Zähler
+              // Nebentarif neuer ZÃ¤hler
               ActColIndex := Header.indexof('NN');
               if (ActColIndex <> -1) then
                 NN := ActColumn[ActColIndex];
@@ -1243,29 +1233,29 @@ begin
               else
                 Sparte := '?';
 
-              if (Settings.values[cE_EinsZuEins] <> cIni_DeActivate) and
-                (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+              if (Settings.values[cE_EinsZuEins] <> cIni_DeActivate) and (vSTATUS in [ctvErfolg, ctvErfolgGemeldet])
+              then
               begin
-                // HIER DIE PLAUSIBILITÄTSPRÜFUNGEN
+                // HIER DIE PLAUSIBILITÃ„TSPRÃœFUNGEN
 
-                // Plausi für Nebentarif Alt
+                // Plausi fÃ¼r Nebentarif Alt
                 if (Sparte <> 'Einbau') then
                   if (NA = '') then
                   begin
                     writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' +
-                      ' Alter Zähler: Nebentarif NA fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Alter ZÃ¤hler: Nebentarif NA fehlt!',
+                      BAUSTELLE_R, Settings.values[cE_TAN]);
                     if (FailL.indexof(AUFTRAG_R) = -1) then
                       FailL.add(AUFTRAG_R);
                   end;
 
-                // Plausi für Nebentarif Neu
+                // Plausi fÃ¼r Nebentarif Neu
                 if (Sparte <> 'Ausbau') then
                   if (NN = '') then
                   begin
                     writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' +
-                      ' Neuer Zähler: Nebentarif NN fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Neuer ZÃ¤hler: Nebentarif NN fehlt!',
+                      BAUSTELLE_R, Settings.values[cE_TAN]);
                     if (FailL.indexof(AUFTRAG_R) = -1) then
                       FailL.add(AUFTRAG_R);
                   end;
@@ -1276,7 +1266,7 @@ begin
           end;
         end; // Aufgaben von Internfeldern
 
-        // Überprüfung der Zwangsfelder!
+        // ÃœberprÃ¼fung der Zwangsfelder!
         if writePermission then
         begin
           if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
@@ -1287,8 +1277,8 @@ begin
                 if (noblank(ActColumn[ActColIndex]) = '') then
                 begin
                   writePermission := false;
-                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' +
-                    MussFelder[k] + '" hat keinen Eintrag', BAUSTELLE_R, Settings.values[cE_TAN]);
+                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' + MussFelder[k] +
+                    '" hat keinen Eintrag', BAUSTELLE_R, Settings.values[cE_TAN]);
                   if (FailL.indexof(AUFTRAG_R) = -1) then
                     FailL.add(AUFTRAG_R);
                 end;
@@ -1317,7 +1307,7 @@ begin
                   begin
                     ActColIndex := Header.indexof('N1');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q02] Kein Einbauzähler', sPlausi);
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
                   end;
 
                   ActColIndex := Header.indexof('ZaehlerStandNeu');
@@ -1330,12 +1320,12 @@ begin
                   if (ZaehlwerkeIst > 1) then
                   begin
 
-                    // Nebentarif alter Zähler
+                    // Nebentarif alter ZÃ¤hler
                     ActColIndex := Header.indexof('NA');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
                       QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
 
-                    // Nebentarif neuer Zähler
+                    // Nebentarif neuer ZÃ¤hler
                     ActColIndex := Header.indexof('NN');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
                       QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
@@ -1358,7 +1348,7 @@ begin
                   begin
                     ActColIndex := Header.indexof('N1');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q02] Kein Einbauzähler', sPlausi);
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
                   end;
 
                   ActColIndex := Header.indexof('ZaehlerStandNeu');
@@ -1367,8 +1357,7 @@ begin
 
                 end;
 
-                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet,
-                  ctvUnmoeglichGemeldet]) then
+                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet, ctvUnmoeglichGemeldet]) then
                 begin
                   k := 0;
                   ActColIndex := Header.indexof('I3');
@@ -1399,7 +1388,7 @@ begin
                   begin
                     ActColIndex := Header.indexof('N1');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q02] Kein Einbauzähler', sPlausi);
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
                   end;
 
                   ActColIndex := Header.indexof('ZaehlerStandNeu');
@@ -1411,12 +1400,12 @@ begin
                   if (ZaehlwerkeIst > 1) then
                   begin
 
-                    // Nebentarif alter Zähler
+                    // Nebentarif alter ZÃ¤hler
                     ActColIndex := Header.indexof('NA');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
                       QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
 
-                    // Nebentarif neuer Zähler
+                    // Nebentarif neuer ZÃ¤hler
                     ActColIndex := Header.indexof('NN');
                     if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
                       QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
@@ -1430,8 +1419,7 @@ begin
 
                 end;
 
-                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet,
-                  ctvUnmoeglichGemeldet]) then
+                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet, ctvUnmoeglichGemeldet]) then
                 begin
                   k := 0;
                   ActColIndex := Header.indexof('I3');
@@ -1449,7 +1437,7 @@ begin
                   ActColIndex := Header.indexof('FA');
                   if (ActColIndex <> -1) then
                     if (ActColumn[ActColIndex] = '') then
-                      QS_add('[Q24] FA ist leer im Status Unmöglich oder Vorgezogen', sPlausi);
+                      QS_add('[Q24] FA ist leer im Status UnmÃ¶glich oder Vorgezogen', sPlausi);
 
                 end;
 
@@ -1468,7 +1456,7 @@ begin
 
         end;
 
-        // Dubletten-Prüfung
+        // Dubletten-PrÃ¼fung
         if (PlausiMode > 0) then
           if
           { } ((ZAEHLER_NR_NEU <> '0') and
@@ -1482,7 +1470,7 @@ begin
             else
               ZaehlerNummerNeuPreFix := '';
 
-            // Zählernumer Neu
+            // ZÃ¤hlernumer Neu
             if (ZAEHLER_NR_NEU <> '') then
             begin
               DublettenPruefling := ART + '~' + ZaehlerNummerNeuPreFix + ZAEHLER_NR_NEU;
@@ -1490,11 +1478,11 @@ begin
               for k := 0 to pred(lZNN_Dupletten.count) do
                 if (lZNN_Dupletten[k] <> AUFTRAG_R) then
                 begin
-                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' +
-                    inttostr(lZNN_Dupletten[k]) + ' ist die "Zählernummer Neu"-Dublette (' +
-                    DublettenPruefling + ')', BAUSTELLE_R, Settings.values[cE_TAN]);
+                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' + inttostr(lZNN_Dupletten[k]) +
+                    ' ist die "ZÃ¤hlernummer Neu"-Dublette (' + DublettenPruefling + ')', BAUSTELLE_R,
+                    Settings.values[cE_TAN]);
 
-                  QS_add('[Q21] Einbauzähler gibt es bereits', sPlausi);
+                  QS_add('[Q21] EinbauzÃ¤hler gibt es bereits', sPlausi);
                 end;
               lZNN_Dupletten.free;
             end;
@@ -1507,13 +1495,11 @@ begin
               for k := 0 to pred(lZNN_Dupletten.count) do
                 if (lZNN_Dupletten[k] <> AUFTRAG_R) then
                 begin
-                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' +
-                    inttostr(lZNN_Dupletten[k]) +
+                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' + inttostr(lZNN_Dupletten[k]) +
 
-                    ' ist die "N1"-Dublette (' + DublettenPruefling + ')', BAUSTELLE_R,
-                    Settings.values[cE_TAN]);
+                    ' ist die "N1"-Dublette (' + DublettenPruefling + ')', BAUSTELLE_R, Settings.values[cE_TAN]);
 
-                  QS_add('[Q21] Einbauzähler gibt es bereits', sPlausi);
+                  QS_add('[Q21] EinbauzÃ¤hler gibt es bereits', sPlausi);
                 end;
               lZNN_Dupletten.free;
             end;
@@ -1526,21 +1512,20 @@ begin
           writePermission := false;
           sQS_kritisch := QS_kritisch(sPlausi, Settings);
           for k := 0 to pred(sQS_kritisch.count) do
-            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + sQS_kritisch[k],
-              BAUSTELLE_R, Settings.values[cE_TAN]);
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + sQS_kritisch[k], BAUSTELLE_R,
+              Settings.values[cE_TAN]);
           sQS_kritisch.free;
           if (FailL.indexof(AUFTRAG_R) = -1) then
             FailL.add(AUFTRAG_R);
         end;
 
         if writePermission then
-          // ist MaxAnzahl überschritten?
+          // ist MaxAnzahl Ã¼berschritten?
           if (Stat_Erfolg.count + Stat_Vorgezogen.count + Stat_Unmoeglich.count >= MaxAnzahl) then
           begin
             writePermission := false;
-            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + ' Limit (' +
-              inttostr(MaxAnzahl) + ') der Meldungen ist erreicht!', BAUSTELLE_R,
-              Settings.values[cE_TAN]);
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + ' Limit (' + inttostr(MaxAnzahl) +
+              ') der Meldungen ist erreicht!', BAUSTELLE_R, Settings.values[cE_TAN]);
             if (FailL.indexof(AUFTRAG_R) = -1) then
               FailL.add(AUFTRAG_R);
           end;
@@ -1568,7 +1553,7 @@ begin
                   begin
                     FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
 
-                    // Rückwärtiges Ändern
+                    // RÃ¼ckwÃ¤rtiges Ã„ndern
                     ActColumn[ActColIndex] := FotoFName;
                     FotoFName := nextp(FotoFName, ',', 0);
                   end;
@@ -1576,17 +1561,16 @@ begin
                   if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
                   begin
                     writePermission := false;
-                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + FotoSpalte +
-                      '-Bild "' + FotoFName + '" fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + FotoSpalte + '-Bild "' + FotoFName +
+                      '" fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
                     if (FailL.indexof(AUFTRAG_R) = -1) then
                       FailL.add(AUFTRAG_R);
                     break;
                   end;
 
                   // Ev. Dublette anlegen (RWE-Problem!)
-                  _FotoFName := StrFilter(FotoFName, 'öäüÖÄÜß', true);
-                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName))
-                  then
+                  _FotoFName := StrFilter(FotoFName, 'Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ', true);
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName)) then
                     FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName,
                       FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName);
 
@@ -1613,7 +1597,7 @@ begin
           if zweizeilig then
           begin
 
-            // Zählwerke auf "2" setzen
+            // ZÃ¤hlwerke auf "2" setzen
             ActColIndex := Header.indexof(Zaehlwerk);
             if (ActColIndex <> -1) then
               SetCell(ActColIndex, '2');
@@ -1634,7 +1618,7 @@ begin
             if (ActColIndex <> -1) then
               SetCell(ActColIndex, NN);
 
-            // Jetzt noch die "Intern-Namen.2" einfügen!
+            // Jetzt noch die "Intern-Namen.2" einfÃ¼gen!
             for k := 0 to pred(HeaderFromIntern.count) do
             begin
               HeaderName := HeaderFromIntern[k];
@@ -1665,8 +1649,7 @@ begin
         Log(
           { } inttostr(succ(n)) + '/' + inttostr(RIDs.count) + ' ' +
           { } booltostr(zweizeilig, 'x2 ', '') +
-          { } '(' + inttostr(integer(RIDs[n])) + ' : ' + booltostr(FailL.indexof(RIDs[n])
-          = -1) + ')');
+          { } '(' + inttostr(integer(RIDs[n])) + ' : ' + booltostr(FailL.indexof(RIDs[n]) = -1) + ')');
 
       end; // for RIDS..
 
@@ -1681,9 +1664,8 @@ begin
       cINTERNINFO.free;
 
       // Ausgabe in die neue Datei
-      OutFName := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-        noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] +
-        noblank(Settings.values[cE_Postfix]) + '.xls';
+      OutFName := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + noblank(Settings.values[cE_Praefix]) +
+        'Zaehlerdaten_' + Settings.values[cE_TAN] + noblank(Settings.values[cE_Postfix]) + '.xls';
 
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
@@ -1695,8 +1677,7 @@ begin
       repeat
 
         // Oc noch rufen, um wieder eine csv draus zu machen?
-        if (Settings.values[cE_AuchAlsCSV] = cIni_Activate) and
-          (Settings.values[cE_AuchAlsXLS] <> cIni_Activate) then
+        if (Settings.values[cE_AuchAlsCSV] = cIni_Activate) and (Settings.values[cE_AuchAlsXLS] <> cIni_Activate) then
         begin
 
           // Bestimmen des Konvertierungs-Modus
@@ -1730,8 +1711,7 @@ begin
         end;
 
         // Oc noch rufen, um eine KK22 draus zu machen?
-        if (Settings.values[cE_AuchAlsKK22] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0)
-        then
+        if (Settings.values[cE_AuchAlsKK22] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(Content_Mode_KK22, OutFName, Oc_Bericht)) then
@@ -1757,8 +1737,7 @@ begin
           Oc_Bericht.free;
         end;
 
-        if (Settings.values[cE_AuchAlsXML] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0)
-        then
+        if (Settings.values[cE_AuchAlsXML] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           case CheckContent(OutFName) of
@@ -1793,8 +1772,7 @@ begin
 
         // Vorlage.xls
         if (Settings.values[cE_AuchAlsXLS] = cIni_Activate) and
-          not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and
-          (pos('.unmoeglich', OutFName) > 0)) then
+          not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
 
           if (pos('.unmoeglich', OutFName) > 0) then
@@ -1863,8 +1841,7 @@ begin
         end;
 
         // IDOC
-        if (Settings.values[cE_AuchAlsIDOC] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0)
-        then
+        if (Settings.values[cE_AuchAlsIDOC] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(Content_Mode_xls2idoc, OutFName, Oc_Bericht)) then
@@ -1916,7 +1893,7 @@ begin
   result := (ErrorCount = 0);
 end;
 
-function TFormAuftragErgebnis.UploadNewTANS(BAUSTELLE_R: integer = -1): boolean;
+function TFormAuftragErgebnis.UploadNewTANS(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
 var
   qMail: TIB_Query;
   eMailParameter: TStringList;
@@ -1962,7 +1939,7 @@ var
     end;
     dAUFTRAG.free;
 
-    // Eine Abschluss-Transaktion durchführen
+    // Eine Abschluss-Transaktion durchfÃ¼hren
     if (Settings.values[cE_AbschlussTransaktion] <> '') then
     begin
       TransaktionsName := Settings.values[cE_AbschlussTransaktion];
@@ -2015,8 +1992,7 @@ var
             values[cE_FTPPASSWORD] := IdFTP1.Password;
             values[cE_FTPVerzeichnis] := Settings.values[cE_FTPVerzeichnis];
             values['Datei'] := FTP_UploadFiles[n];
-            values['NachUploadLöschen'] :=
-              bool2cO(FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1);
+            values['NachUploadLÃ¶schen'] := bool2cO(FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1);
             values['Fehler'] := SolidFTP_LastError;
           end;
 
@@ -2047,22 +2023,21 @@ var
           if (FTP_FSize = Local_FSize) then
           begin
             inc(Stat_meldungen);
-            // Nach Erfolg ev. löschen? Nicht bei allen Dateien
+            // Nach Erfolg ev. lÃ¶schen? Nicht bei allen Dateien
             if (FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1) then
               FileDelete(FTP_UploadFiles[n]);
           end
           else
           begin
             inc(ErrorCount);
-            Log(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' +
-              inttostr(FTP_FSize) + ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) +
-              ' Byte(s) sein');
+            Log(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
+              ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein');
           end;
 
         end;
       end;
 
-      // Dateien hochladen über die Alternative CoreFTP
+      // Dateien hochladen Ã¼ber die Alternative CoreFTP
       for n := 0 to pred(FTP_UploadMasks.count) do
         if not(CoreFTP_Up(
           { Profile } nextp(Settings.values[cE_FTPUSER], '\', 0),
@@ -2097,12 +2072,11 @@ var
     else
       _Expected_TAN := StrToIntDef(Settings.values[cE_EXPORT_TAN], -2) + 1;
 
-    // Es könnte sein, dass bei der Datenquelle= die TAN rasugenommen wurde
+    // Es kÃ¶nnte sein, dass bei der Datenquelle= die TAN rasugenommen wurde
     if (_Expected_TAN = -1) then
     begin
       inc(ErrorCount);
-      Log(cERRORText +
-        ' Die neue TAN konnte nicht ermittelt werden|Letzte TAN leer oder keine Zahl');
+      Log(cERRORText + ' Die neue TAN konnte nicht ermittelt werden|Letzte TAN leer oder keine Zahl');
       exit;
     end;
 
@@ -2163,7 +2137,7 @@ var
       sql.add('order by');
       sql.add(' ZAEHLER_WECHSEL,RID');
 
-      // übers SQL informieren
+      // Ã¼bers SQL informieren
       Log(sql);
 
       // ermittelte Anzahl
@@ -2173,7 +2147,7 @@ var
       if not(eof) then
       begin
 
-        // hey! überhaupt was zu melden!
+        // hey! Ã¼berhaupt was zu melden!
         ExportL := TgpIntegerList.create;
         FailL := TgpIntegerList.create;
         FilesUp := TStringList.create;
@@ -2209,7 +2183,7 @@ var
             if (ExportL.count - FailL.count < 1) then
               break;
 
-            // FilesUp aufräumen
+            // FilesUp aufrÃ¤umen
             FilesUp.sort;
             RemoveDuplicates(FilesUp);
 
@@ -2219,18 +2193,18 @@ var
 
             Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
 
-            // ev. FTP-Masken hinzufügen (nur CoreFTP)
+            // ev. FTP-Masken hinzufÃ¼gen (nur CoreFTP)
             if (Settings.values[cE_AuchAlsIDOC] = cIni_Activate) then
               if (Settings.values[cE_CoreFTP] <> '') then
               begin
                 if Erfolgsmeldungen then
                   FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN]
-                    + '.????.idoc' + ';' + '/IDOC');
+                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '.????.idoc' +
+                    ';' + '/IDOC');
                 if Unmoeglichmeldungen then
                   FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
-                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN]
-                    + '*.xls' + ';' + '/TEXT');
+                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '*.xls' + ';'
+                    + '/TEXT');
               end;
 
             if (IdFTP1.Host <> '') then
@@ -2356,8 +2330,7 @@ begin
       if (Settings.values['Q12'] = '') then
         Settings.values['Q12'] := cQ_erloesend;
       if (StrToIntDef(Settings.values[cE_Datenquelle], cRID_Null) < cRID_FirstValid) then
-        Settings.values[cE_Datenquelle] :=
-          inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
+        Settings.values[cE_Datenquelle] := inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
       MaxAnzahl := StrToIntDef(Settings.values[cE_MaxperLoad], MaxInt);
 
       // die aktuelle Export-TAN ermitteln
@@ -2369,15 +2342,16 @@ begin
 
       repeat
 
-        if (Settings.values[cE_Wochentage] <> '') then
-          if (pos(WeekDayS(DateGet), Settings.values[cE_Wochentage]) = 0) then
-          begin
-            Log(cWARNINGText + ' ' + BaustelleKurz + ': Heute nicht, nur "' + Settings.values
-              [cE_Wochentage] + '"!');
-
-            if not(ManuellInitiiert) or (BAUSTELLE_R = -1) then
+        if not(ManuellInitiiert) then
+          if (Settings.values[cE_Wochentage] <> '') then
+            if (pos(WeekDayS(DateGet), Settings.values[cE_Wochentage]) = 0) then
+            begin
+              Log(
+                { } cWARNINGText + ' ' + BaustelleKurz + ': ' +
+                { } 'Heute nicht, ' +
+                { } 'da âˆ‰ [' + Settings.values[cE_Wochentage] + ']!');
               break;
-          end;
+            end;
 
         // Init
         SolidFTP_Retries := 200;
@@ -2421,10 +2395,10 @@ begin
             IOHandler := IdSSLIOHandlerSocketOpenSSL1;
             UseTLS := utUseExplicitTLS;
             AUTHCmd := tAuthTLS;
-            DataPortProtection := ftpdpsPrivate; // !!! Datenkanal auch verschlüsseln
+            DataPortProtection := ftpdpsPrivate; // !!! Datenkanal auch verschlÃ¼sseln
           *)
 
-          // Prüfung der FTP Daten
+          // PrÃ¼fung der FTP Daten
           if (Username = '') then
           begin
             Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPBenutzer=');
@@ -2439,14 +2413,14 @@ begin
 
         end;
 
-        // noch weitere Einzel-Upload Dateien übertragen
+        // noch weitere Einzel-Upload Dateien Ã¼bertragen
         iSourcePathAdditionalFiles := Settings.values[cE_ZusaetzlicheZips];
         if (iSourcePathAdditionalFiles = cIni_Activate) then
           iSourcePathAdditionalFiles := e_r_BaustelleUploadPath(BAUSTELLE_R);
 
         if (iSourcePathAdditionalFiles <> '') and (IdFTP1.Host <> '') then
         begin
-          // zusätzliche Zips ...
+          // zusÃ¤tzliche Zips ...
           dir(iSourcePathAdditionalFiles + '*.zip', FTP_UploadFiles, false);
           for n := 0 to pred(FTP_UploadFiles.count) do
           begin
@@ -2455,7 +2429,7 @@ begin
             { } FTP_UploadFiles[n];
             FTP_DeleteLocal.add(FTP_UploadFiles[n]);
 
-            // Das funktioniert nicht, da die Dateien gelöscht werden ...
+            // Das funktioniert nicht, da die Dateien gelÃ¶scht werden ...
             // Stat_Attachments.add(FTP_UploadFiles[n]);
           end;
         end;
@@ -2470,7 +2444,7 @@ begin
             inc(ErrorCount);
         end;
 
-        // neue Erfolgs-TANS übergeben
+        // neue Erfolgs-TANS Ã¼bergeben
         if EinzelMeldeErlaubnis then
         begin
 
@@ -2496,7 +2470,7 @@ begin
         if (ErrorCount = 0) then
           doFTP;
 
-        // Erfolg in die einzelnen Datensätze eintragen
+        // Erfolg in die einzelnen DatensÃ¤tze eintragen
         if (ErrorCount = 0) and (CommitL.count > 0) then
           doCommit;
 
@@ -2523,7 +2497,7 @@ begin
               PERSON_R := StrToIntDef(Settings.values[cE_eMail], -1);
               if not(e_r_IsRID('PERSON_R', PERSON_R)) then
               begin
-                Log(cWARNINGText + ' ' + BaustelleKurz + ':' + cE_eMail + ' ungültig');
+                Log(cWARNINGText + ' ' + BaustelleKurz + ':' + cE_eMail + ' ungÃ¼ltig');
                 PERSON_R := cRID_Null;
               end;
               VORLAGE_R := e_r_VorlageMail(cMailvorlage_Ergebnis);
@@ -2540,13 +2514,10 @@ begin
                   values['NICHT_EFRE'] := inttostr(Stat_nichtEFRE);
 
                   values['ERFOLGREICH_GEMELDET'] := inttostr(Stat_Erfolg.countReducedBy(Stat_Fail));
-                  values['VORGEZOGEN_GEMELDET'] :=
-                    inttostr(Stat_Vorgezogen.countReducedBy(Stat_Fail));
-                  values['UNMOEGLICH_GEMELDET'] :=
-                    inttostr(Stat_Unmoeglich.countReducedBy(Stat_Fail));
+                  values['VORGEZOGEN_GEMELDET'] := inttostr(Stat_Vorgezogen.countReducedBy(Stat_Fail));
+                  values['UNMOEGLICH_GEMELDET'] := inttostr(Stat_Unmoeglich.countReducedBy(Stat_Fail));
 
-                  values['ERFOLGREICH_FEHLER'] :=
-                    inttostr(Stat_Erfolg.count - Stat_Erfolg.countReducedBy(Stat_Fail));
+                  values['ERFOLGREICH_FEHLER'] := inttostr(Stat_Erfolg.count - Stat_Erfolg.countReducedBy(Stat_Fail));
                   values['VORGEZOGEN_FEHLER'] :=
                     inttostr(Stat_Vorgezogen.count - Stat_Vorgezogen.countReducedBy(Stat_Fail));
                   values['UNMOEGLICH_FEHLER'] :=
@@ -2559,12 +2530,12 @@ begin
 
                 end;
 
-                // Datei-Anlagen hinzufügen
+                // Datei-Anlagen hinzufÃ¼gen
                 if (Settings.values[cE_ZipAnlage] = cIni_Activate) then
                   for n := 0 to pred(Stat_Attachments.count) do
                     eMailParameter.add('Anlage:' + Stat_Attachments[n]);
 
-                // Fehler-Anlagen hinzufügen
+                // Fehler-Anlagen hinzufÃ¼gen
                 if (Settings.values[cE_nichtEFRE] <> '') then
                   eMailParameter.add('Anlage:' + Settings.values[cE_nichtEFRE]);
 
@@ -2617,7 +2588,6 @@ begin
   CommitL.free;
 
   result := (ErrorCount = 0);
-  ManuellInitiiert := false;
   ProgressBar2.position := 0;
   SetDefaults(false);
   SolidEndTransaction;
@@ -2629,8 +2599,7 @@ end;
 
 procedure TFormAuftragErgebnis.Button1Click(Sender: TObject);
 begin
-  ManuellInitiiert := true;
-  if UploadNewTANS then
+  if UploadNewTANS(-1, CheckBox6.checked) then
     close;
 end;
 
@@ -2662,7 +2631,7 @@ end;
 
 function TFormAuftragErgebnis.nichtEFREFName(Settings: TStringList): string;
 begin
-  // Datei mit der Liste der nicht einbaufähigen Neugeräte
+  // Datei mit der Liste der nicht einbaufÃ¤higen NeugerÃ¤te
   result :=
   { } cAuftragErgebnisPath +
   { } e_r_BaustellenPfad(Settings) + '\' +
@@ -2723,8 +2692,7 @@ begin
   Stat_meldungen := 0;
   Stat_nichtEFRE := 0;
   Stat_Attachments.clear;
-  Stat_FehlendeResourcen.add
-    ('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
+  Stat_FehlendeResourcen.add('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
 end;
 
 procedure TFormAuftragErgebnis.ComboBox1DropDown(Sender: TObject);
@@ -2793,8 +2761,7 @@ begin
   Log(AMsg);
 end;
 
-procedure TFormAuftragErgebnis.IdFTP1Status(ASender: TObject; const AStatus: TIdStatus;
-  const AStatusText: string);
+procedure TFormAuftragErgebnis.IdFTP1Status(ASender: TObject; const AStatus: TIdStatus; const AStatusText: string);
 begin
   Log(AStatusText);
 end;

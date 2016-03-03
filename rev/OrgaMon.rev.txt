@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.157 (03.03.16) Andreas Filsinger
+
+ Bug: Ergebnis: Die manuelle Auslösung überschreibt Wochentage= mit dem Default
+
+Rev 8.156 (01.03.16) Andreas Filsinger
+
+ Neu: FotoService: mv der nicht zuordenbaren Fotos wird auch protokolloiert
+ Neu: FotoService: Im Fehlerfall wird der AUFTRAG_R als Context und der Moment des Fehlers protokolliert
+ Neu: App: Wegfall der fest kodierten URL, neuer Parameter AppServerURL=
+
+ Wegfall: Fotomeldungen über Notebook
+
 Rev 8.155 (19.02.16) Andreas Filsinger
 
  Neu: eMail: SSL/TLS Support bei Port=465 und Port=587

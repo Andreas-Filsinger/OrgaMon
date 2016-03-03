@@ -35,11 +35,11 @@ uses
   // System
   classes, inifiles, SysUtils,
   math,
-{$ifdef FPC}
-fpImage, FPReadJPEG, Graphics,
-{$else}
+{$IFDEF FPC}
+  fpImage, FPReadJPEG, Graphics,
+{$ELSE}
   jpeg,
-  {$endif}
+{$ENDIF}
   CCR.Exif,
 
   // Tools
@@ -82,6 +82,7 @@ type
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
+    AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
 
     // Ini-Sachen
 
@@ -379,7 +380,6 @@ var
   s, File_Seconds: TANFiXTime;
   FName: string;
   ID: string;
-  RID: integer;
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
   FotoGeraeteNo: string;
@@ -393,11 +393,11 @@ var
   FullSuccess: boolean;
   FoundAuftrag: boolean;
   UmbenennungAbgeschlossen: boolean;
-{$ifdef FPC}
-Image: TPicture;
-{$else}
-Image: TJPEGImage;
-{$endif}
+{$IFDEF FPC}
+  Image: TPicture;
+{$ELSE}
+  Image: TJPEGImage;
+{$ENDIF}
   sBaustelle: string;
   sZiel: string;
 
@@ -416,12 +416,24 @@ Image: TJPEGImage;
   pAll: boolean;
 
   procedure unverarbeitet(m: integer);
+  var
+    FNameAlt: string;
+    FNameNeu: string;
   begin
+    FNameAlt := pFTPPath + sFiles[m];
+    FNameNeu := pUnverarbeitetPath + ID + '+' + sFiles[m];
 
     // Datei wegsperren, aber nicht löschen!
     FileMove(
-      { } pFTPPath + sFiles[m],
-      { } pUnverarbeitetPath + ID + '+' + sFiles[m]);
+      { } FNameAlt,
+      { } FNameNeu);
+
+    // Protokollieren
+    AppendStringsToFile(
+      { } 'mv ' + FNameAlt +
+      { } ' ' + FNameNeu,
+      { } DiagnosePath + cFotoTransaktionenFName);
+    LastLogWasTimeStamp := false;
 
     // Datei aus der Verarbeitungskette entfernen
     sFiles.Delete(m);
@@ -515,11 +527,11 @@ begin
   begin
     FullSuccess := false;
     FName := pFTPPath + sFiles[n];
-{$ifdef FPC}
+{$IFDEF FPC}
     Image := TPicture.Create;
-{$else}
+{$ELSE}
     Image := TJPEGImage.Create;
-{$endif}
+{$ENDIF}
     iEXIF := TExifData.Create;
     try
       repeat
@@ -609,7 +621,7 @@ begin
 
       // Parameter aus der Bilddatei berechnen
       FotoGeraeteNo := nextp(sFiles[m], '-', 0);
-      RID := StrToIntDef(nextp(sFiles[m], '-', 1), -1);
+      AUFTRAG_R := StrToIntDef(nextp(sFiles[m], '-', 1), -1);
       FotoParameter := nextp(nextp(sFiles[m], '-', 2), '.', 0);
       sBaustelle := '';
       sZiel := '';
@@ -618,14 +630,14 @@ begin
       while true do
       begin
 
-        if (RID < 1) then
+        if (AUFTRAG_R < 1) then
         begin
           Log(cERRORText + ' ' + sFiles[m] + ': RID konnte nicht ermittelt werden!');
           break;
         end;
 
         // Im OrgaMon Record-Store
-        if bOrgaMon.exist(RID) then
+        if bOrgaMon.exist(AUFTRAG_R) then
         begin
           bOrgaMon.get;
           FoundAuftrag := true;
@@ -637,7 +649,7 @@ begin
         // In der Alternative suchen
         if (assigned(bOrgaMonOld)) then
         begin
-          if bOrgaMonOld.exist(RID) then
+          if bOrgaMonOld.exist(AUFTRAG_R) then
           begin
             bOrgaMonOld.get;
             FoundAuftrag := true;
@@ -660,7 +672,7 @@ begin
         begin
 
           read(fOrgaMonAuftrag, mderecOrgaMon);
-          if (RID = mderecOrgaMon.RID) then
+          if (AUFTRAG_R = mderecOrgaMon.RID) then
           begin
             FoundAuftrag := true;
             break;
@@ -669,7 +681,7 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(RID) + ' konnte nicht gefunden werden!');
+        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
         break;
       end;
 
@@ -829,7 +841,7 @@ begin
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
                 { DATEINAME_AKTUELL } FotoAblage_PFAD + FotoDateiName + ';' +
-                { RID } InttoStr(RID) + ';' +
+                { RID } InttoStr(AUFTRAG_R) + ';' +
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } ';' +
                 { MOMENT } DatumLog,
@@ -952,7 +964,7 @@ begin
     Stat_NachtragBaustelle := 0;
     SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
-      Log(cINFOText+' Frisch sortiert');
+      Log(cINFOText + ' Frisch sortiert');
 
     // sicherstellen von Spalten
     addCol('BAUSTELLE');
@@ -969,7 +981,7 @@ begin
         inc(i);
       end;
     if (i > 0) then
-      Log(cWARNINGText +' 964: ' + 'gebe ' + InttoStr(i) + ' Dateieinträge frei, da sie älter als 10 Tage sind');
+      Log(cWARNINGText + ' 964: ' + 'gebe ' + InttoStr(i) + ' Dateieinträge frei, da sie älter als 10 Tage sind');
 
   end;
 
@@ -1097,7 +1109,8 @@ begin
 
     if not(FileExists(FNameAlt)) then
     begin
-      Log(cWARNINGText + ' 1091: ' + 'gebe Dateieintrag "' + FNameAlt + '" frei, da verschwunden, oder bereits umbenannt');
+      Log(cWARNINGText + ' 1091: ' + 'gebe Dateieintrag "' + FNameAlt +
+        '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
     end;
@@ -1117,8 +1130,7 @@ begin
     { } '.jpg';
 
     // Es ist gewünscht die (TMP..)- Sachen wieder wegzumachen
-    FNameNeu :=
-     JonDaExec.clearTempTag(FNameNeu);
+    FNameNeu := JonDaExec.clearTempTag(FNameNeu);
 
     // Laufwerksbuchstaben
     if (CharCount(':', FNameNeu) <> 1) then

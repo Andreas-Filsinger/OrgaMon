@@ -38,8 +38,8 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
     Caption = '######'
   end
   object Button1: TButton
-    Left = 760
-    Top = 368
+    Left = 761
+    Top = 367
     Width = 74
     Height = 42
     Margins.Left = 4
@@ -284,7 +284,7 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
     end
     object Label1: TLabel
       Left = 360
-      Top = 85
+      Top = 101
       Width = 89
       Height = 14
       Margins.Left = 4
@@ -408,9 +408,9 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
     end
     object Memo1: TMemo
       Left = 360
-      Top = 104
+      Top = 119
       Width = 427
-      Height = 66
+      Height = 56
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -466,6 +466,16 @@ object FormAuftragErgebnis: TFormAuftragErgebnis
       Caption = 'TAN wiederholen'
       TabOrder = 11
       OnClick = CheckBox5Click
+    end
+    object CheckBox6: TCheckBox
+      Left = 360
+      Top = 82
+      Width = 137
+      Height = 17
+      Caption = 'manuell gestartet'
+      Checked = True
+      State = cbChecked
+      TabOrder = 12
     end
   end
 end
