@@ -74,10 +74,11 @@ function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string
 function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 
 // FTP - Download
-function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string; RemoteDelete: boolean = false): boolean;
+function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern, DestPath: string;
+  RemoteDelete: boolean = false): boolean;
 
 // FTP - Dir
-function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string; FileList: TStringList): boolean;
+function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 
 //
 // FTP - FileSize
@@ -100,6 +101,7 @@ function CoreFTP_Up(Profile, Mask, DestPath: string): boolean;
 // Tools
 procedure WakeOnLan(MAC: string); // sample: WakeOnLan('00-07-95-1C-64-7E');
 function isFTP_FATAL_ERROR(s: string): boolean;
+function CheckAgainstPattern(FileName, Pattern: string): boolean;
 
 implementation
 
@@ -565,7 +567,7 @@ begin
   end;
 end;
 
-function SolidDir(ftp: TIdFTP; SourcePath, SourceMask: string; FileList: TStringList): boolean;
+function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 var
   ActRetry: integer;
   n: integer;
@@ -602,7 +604,11 @@ begin
         for n := 0 to pred(DirectoryListing.Count) do
           with DirectoryListing[n] do
             if (ItemType = ditFile) then
-              FileList.add(FileName);
+              if CheckAgainstPattern(FileName, SourcePattern) then
+              begin
+                FileList.add(FileName);
+                SolidSingleStepLog(' "' + FileName + '"');
+              end;
 
         // Sortieren
         FileList.sort;
@@ -612,19 +618,21 @@ begin
         break;
 
       except
+
         on E: EIdSocketError do
         begin
-          solidLog(cEXCEPTIONText + ' [408] Socket Error: ' + IntToStr(E.LastError));
+          solidLog(cEXCEPTIONText + ' [620] Socket Error: ' + IntToStr(E.LastError));
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
 
         on E: Exception do
         begin
-          solidLog(cEXCEPTIONText + ' [414] ' + E.Message);
+          solidLog(cEXCEPTIONText + ' [627] ' + E.Message);
           if not(solidHandleException(ftp, ActRetry, _logID + ': ' + E.Message)) then
             result := false;
         end;
+
       end;
     end;
   end;
@@ -1208,7 +1216,8 @@ begin
   CommandList.free;
 end;
 
-function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, DestPath: string; RemoteDelete: boolean = false): boolean;
+function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern, DestPath: string;
+  RemoteDelete: boolean = false): boolean;
 var
   WasError: boolean;
   n: integer;
@@ -1219,7 +1228,7 @@ begin
   FileList := TStringList.Create;
   repeat
 
-    if not(SolidDir(ftp, SourcePath, SourceMask, FileList)) then
+    if not(SolidDir(ftp, SourcePath, SourceMask, SourcePattern, FileList)) then
     begin
       WasError := true;
       break;
@@ -1372,6 +1381,34 @@ end;
 function isFTP_FATAL_ERROR(s: string): boolean;
 begin
   result := (pos('# 10054', s) = 0);
+end;
+
+function CheckAgainstPattern(FileName, Pattern: string): boolean;
+var
+  n: integer;
+begin
+  result := true;
+
+  // No Pattern, no further check
+  if (Pattern = '') then
+    exit;
+
+  // FileName's length must be length(Pattern)
+  if (length(FileName) = length(Pattern)) then
+  begin
+
+    // Patch FileName at ? Positions of Pattern
+    for n := 1 to length(FileName) do
+      if (Pattern[n] = '?') then
+        FileName[n] := '?';
+
+    // FileName must Match now 100%
+    if (FileName=Pattern) then
+     exit;
+
+  end;
+
+  result := false;
 end;
 
 end.

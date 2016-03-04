@@ -151,7 +151,6 @@ var
   sMONTEUR_R: string;
   MONTEUR_R: integer;
 
-
   procedure ShowStep;
   begin
     inc(ActionCount);
@@ -200,7 +199,7 @@ var
         begin
 
           //
-          if not(SolidDir(IdFTP1, '', '???.DAT', lUeberzaehligeGeraete)) then
+          if not(SolidDir(IdFTP1, '', '*.DAT','???.DAT', lUeberzaehligeGeraete)) then
           begin
             Log(cERRORText + ' ' + SolidFTP_LastError);
             break;
@@ -239,8 +238,7 @@ var
 
     if assigned(SolidFTP_sLog) then
       if (SolidFTP_sLog.count > 0) then
-        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN,
-          6) + '.log.txt');
+        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
 
     lUeberzaehligeGeraete.free;
   end;
@@ -307,12 +305,10 @@ begin
   begin
     Label3.caption := 'Abgearbeitete ...';
     application.ProcessMessages;
-    lAbgearbeitet := e_r_sqlm('select AUFTRAG.RID from AUFTRAG ' +
-      'join BAUSTELLE on ' + ' (BAUSTELLE.RID=AUFTRAG.BAUSTELLE_R) and' +
-      ' (BAUSTELLE.EXPORT_MONDA=''' + cC_True + ''')' + 'where' +
-      ' (AUFTRAG.STATUS in (' + inttostr(cs_Erfolg) + ',' +
-      inttostr(cs_NeuAnschreiben) + ',' + inttostr(cs_Vorgezogen) + ',' +
-      inttostr(cs_Unmoeglich) + '))');
+    lAbgearbeitet := e_r_sqlm('select AUFTRAG.RID from AUFTRAG ' + 'join BAUSTELLE on ' +
+      ' (BAUSTELLE.RID=AUFTRAG.BAUSTELLE_R) and' + ' (BAUSTELLE.EXPORT_MONDA=''' + cC_True + ''')' + 'where' +
+      ' (AUFTRAG.STATUS in (' + inttostr(cs_Erfolg) + ',' + inttostr(cs_NeuAnschreiben) + ',' + inttostr(cs_Vorgezogen)
+      + ',' + inttostr(cs_Unmoeglich) + '))');
     lAbgearbeitet.SaveToFile(MdePath + 'abgearbeitet.dat');
     FTPup.add(MdePath + 'abgearbeitet.dat' + ';' + ';' + 'abgearbeitet.dat');
   end;
@@ -341,8 +337,7 @@ begin
     //
     LoadFromFile(HtmlVorlagenPath + 'MonDa_Index.html');
     WriteGlobal('save&delete GERÄT');
-    WriteGlobal('Titel=' + long2dateText(DateGet) + ' bis ' +
-      long2dateText(DatePlus(DateGet, pred(JonDaVorlauf))));
+    WriteGlobal('Titel=' + long2dateText(DateGet) + ' bis ' + long2dateText(DatePlus(DateGet, pred(JonDaVorlauf))));
 
     //
     EnsureHourGlass;
@@ -411,35 +406,30 @@ begin
 
         //
         sMONTEUR_R := inttostr(MONTEUR_R);
-        lAbgezogen := e_r_sqlm('select distinct ' + ' H.MASTER_R ' + 'from ' +
-          ' AUFTRAG H ' + 'join AUFTRAG A on ' + ' (A.STATUS<>6) and ' +
-          ' (A.RID=H.MASTER_R) and ' + ' ( ' + '  (A.MONTEUR1_R is null) or ' +
-          '  ((A.MONTEUR1_R<>' + sMONTEUR_R +
-          ') and (A.MONTEUR2_R is null)) or ' + '  ((A.MONTEUR1_R<>' +
-          sMONTEUR_R + ') and (A.MONTEUR2_R<>' + sMONTEUR_R + ')) ' + ' ) ' +
-          'where ' + ' (H.STATUS=6) and ' +
-          ' (H.MONTEUREXPORT is not null) and ' + ' ((H.MONTEUR1_R=' +
-          sMONTEUR_R + ') or (H.MONTEUR2_R=' + sMONTEUR_R + ')) ');
+        lAbgezogen := e_r_sqlm('select distinct ' + ' H.MASTER_R ' + 'from ' + ' AUFTRAG H ' + 'join AUFTRAG A on ' +
+          ' (A.STATUS<>6) and ' + ' (A.RID=H.MASTER_R) and ' + ' ( ' + '  (A.MONTEUR1_R is null) or ' +
+          '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R is null)) or ' + '  ((A.MONTEUR1_R<>' + sMONTEUR_R +
+          ') and (A.MONTEUR2_R<>' + sMONTEUR_R + ')) ' + ' ) ' + 'where ' + ' (H.STATUS=6) and ' +
+          ' (H.MONTEUREXPORT is not null) and ' + ' ((H.MONTEUR1_R=' + sMONTEUR_R + ') or (H.MONTEUR2_R=' +
+          sMONTEUR_R + ')) ');
 
         lAbgezogen.SaveToFile(MdePath + 'abgezogen.' + GeraeteNo + '.dat');
 
-        FTPup.add(MdePath + 'abgezogen.' + GeraeteNo + '.dat' + ';' + ';' +
-          'abgezogen.' + GeraeteNo + '.dat');
+        FTPup.add(MdePath + 'abgezogen.' + GeraeteNo + '.dat' + ';' + ';' + 'abgezogen.' + GeraeteNo + '.dat');
 
         lAbgezogen.free;
       end;
 
       // Monteure-Kurz-Info
       if CheckBox2.Checked then
-        FTPup.add(MdePath + 'MonDa' + inttostr(EinMonteurL[0]) + '.html' + ';' +
-          ';' + 'MonDa' + inttostr(EinMonteurL[0]) + '.html');
+        FTPup.add(MdePath + 'MonDa' + inttostr(EinMonteurL[0]) + '.html' + ';' + ';' + 'MonDa' + inttostr(EinMonteurL[0]
+          ) + '.html');
 
       //
       WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
       WriteLocal('Link=MonDa' + FieldByName('RID').AsString + '.html');
       WriteLocal('Gerät=' + GeraeteNo);
-      WriteLocal('AnzTermine=' +
-        inttostr(FormAuftragArbeitsplatz._LastTerminCount));
+      WriteLocal('AnzTermine=' + inttostr(FormAuftragArbeitsplatz._LastTerminCount));
       WritePageBreak;
 
       //
@@ -465,8 +455,7 @@ begin
 
   //
   BerichtL.addstrings(IndexH);
-  BerichtL.SaveToFile(DiagnosePath + 'MobilVolumen_' + inttostrN(JONDA_TAN, 6) +
-    '.log.txt');
+  BerichtL.SaveToFile(DiagnosePath + 'MobilVolumen_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
 
   cPERSON.free;
   DatumsL.free;
@@ -495,12 +484,10 @@ begin
     ReadMobil;
   if CheckBox3.Checked then
     if not(WriteMobil) then
-      ShowMessage
-        ('Es gab Fehler beim Hochladen, der Vorgang war nicht erfolgreich!' +
-        #13 + 'Mögliche Ursachen: * gestörter Zugang um InterNet' + #13 +
-        '* Kein Recht für den Dienst passives FTP' + #13 +
-        '* ftp-Server ist offline!' + #13 + '* Zugang zum ftp-Server verwehrt!'
-        + #13 + '* Verbindung zum ftp-Server unterbrochen!')
+      ShowMessage('Es gab Fehler beim Hochladen, der Vorgang war nicht erfolgreich!' + #13 +
+        'Mögliche Ursachen: * gestörter Zugang um InterNet' + #13 + '* Kein Recht für den Dienst passives FTP' + #13 +
+        '* ftp-Server ist offline!' + #13 + '* Zugang zum ftp-Server verwehrt!' + #13 +
+        '* Verbindung zum ftp-Server unterbrochen!')
     else
       openShell(MdePath + 'Index.html');
 end;
@@ -597,16 +584,13 @@ var
         // Vorbelegung der Werte
         if (RID > 0) then
         begin
-          BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' +
-            inttostr(RID));
-          MONTEUR_R := e_r_sql('select MONTEUR1_R from AUFTRAG where RID=' +
-            inttostr(RID));
+          BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(RID));
+          MONTEUR_R := e_r_sql('select MONTEUR1_R from AUFTRAG where RID=' + inttostr(RID));
         end
         else
         begin
           BAUSTELLE_R := 279; // grrrrrrrrrrrrr - argh -
-          MONTEUR_R := e_r_sql('select RID from PERSON where MONDA=''' +
-            Baustelle + '''');
+          MONTEUR_R := e_r_sql('select RID from PERSON where MONDA=''' + Baustelle + '''');
         end;
 
         // ohne Monteur / Baustelle geht nix!
@@ -636,13 +620,12 @@ var
           toDataBaseString(cutblank(Protokoll.Values['BG']), 15) + ',' +
 
           // aufgenommene Strasse
-          toDataBaseString(cutblank(cutblank(Protokoll.Values['I5']) + ' ' +
-          cutblank(Protokoll.Values['I6']) + ' ' + cutblank(Protokoll.Values
-          ['I7']) + ' '), 45) + ',' +
+          toDataBaseString(cutblank(cutblank(Protokoll.Values['I5']) + ' ' + cutblank(Protokoll.Values['I6']) + ' ' +
+          cutblank(Protokoll.Values['I7']) + ' '), 45) + ',' +
 
           // aufgenommener Ort
-          toDataBaseString(cutblank(cutblank(Protokoll.Values['I3']) + ' ' +
-          cutblank(Protokoll.Values['I4'])), 45) + ',' +
+          toDataBaseString(cutblank(cutblank(Protokoll.Values['I3']) + ' ' + cutblank(Protokoll.Values['I4'])),
+          45) + ',' +
 
           // Ausführungsdatum
           toDataBaseString(long2date(ausfuehren_ist_Datum), 10) + ',' +
@@ -650,8 +633,7 @@ var
           // Ausführungsuhrzeit
           toDataBaseString(VNfromTime(ausfuehren_ist_uhr), 1) + ',' +
 
-          inttostr(MONTEUR_R) + ',' + inttostr(BAUSTELLE_R) + ',' +
-          inttostr(RID) + ')');
+          inttostr(MONTEUR_R) + ',' + inttostr(BAUSTELLE_R) + ',' + inttostr(RID) + ')');
 
         // den Auftrag durch den Kernel absegnen lassen
         qAUFTRAG := DataModuleDatenbank.nQuery;
@@ -722,8 +704,7 @@ var
           // Ersteintrag!!
           qAUFTRAG.FieldByName(sFieldName).AsString := NewValue;
           inc(Stat_Wert_Beitrag);
-          Stat_Changes := Stat_Changes + sFieldName + '=' + NewValue +
-            cProtokollTrenner;
+          Stat_Changes := Stat_Changes + sFieldName + '=' + NewValue + cProtokollTrenner;
           break;
         end;
 
@@ -735,8 +716,7 @@ var
             qAUFTRAG.FieldByName(sFieldName).AsString := NewValue;
             inc(Stat_Wert_Ueberschreibungen);
             inc(Stat_Wert_Beitrag);
-            Stat_Changes := Stat_Changes + sFieldName + '*' + NewValue +
-              cProtokollTrenner;
+            Stat_Changes := Stat_Changes + sFieldName + '*' + NewValue + cProtokollTrenner;
             break;
           end;
 
@@ -763,8 +743,7 @@ var
             qAUFTRAG.FieldByName('STATUS').AsInteger := NewStatus;
             inc(Stat_Wert_Ueberschreibungen);
             inc(Stat_Wert_Beitrag);
-            Stat_Changes := Stat_Changes + 'STATUS' + '*' + inttostr(NewStatus)
-              + cProtokollTrenner;
+            Stat_Changes := Stat_Changes + 'STATUS' + '*' + inttostr(NewStatus) + cProtokollTrenner;
             break;
           end;
 
@@ -813,8 +792,7 @@ var
     inc(Stat_Meldungen, MdeRecordCount);
 
     //
-    Bericht.add('[I] Verarbeite Monteur TAN ' + pTAN + ' mit ' +
-      inttostr(MdeRecordCount) + ' Datensätzen');
+    Bericht.add('[I] Verarbeite Monteur TAN ' + pTAN + ' mit ' + inttostr(MdeRecordCount) + ' Datensätzen');
 
     SetLength(AuftragArray, MdeRecordCount);
     for n := 0 to pred(MdeRecordCount) do
@@ -851,8 +829,7 @@ var
       sql.add(' (RID=(select MASTER_R from AUFTRAG where RID=:CROSSREF)) and');
 
       // ungesetzer Monda Schutz
-      sql.add(' ((MONDA_SCHUTZ IS NULL) OR (MONDA_SCHUTZ=''' + cC_False +
-        ''')) and');
+      sql.add(' ((MONDA_SCHUTZ IS NULL) OR (MONDA_SCHUTZ=''' + cC_False + ''')) and');
 
       // nicht ein ewiger Termin (die haben auch einen Schutz!)
       sql.add(' ((AUSFUEHREN IS NULL) OR (AUSFUEHREN <> ''01.01.2000''))');
@@ -863,8 +840,7 @@ var
       begin
         with AuftragArray[n] do
         begin
-          if (ausfuehren_ist_Datum <> cMonDa_Status_Wegfall) and
-            (ausfuehren_ist_Datum <> cMonDa_Status_Info) and
+          if (ausfuehren_ist_Datum <> cMonDa_Status_Wegfall) and (ausfuehren_ist_Datum <> cMonDa_Status_Info) and
             (ausfuehren_ist_Datum <> cMonDa_Status_unbearbeitet) then
           begin
 
@@ -925,8 +901,7 @@ var
               edit;
 
               // wird immer Eingetragen: der Ergebnis-Kontakt
-              INTERN_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) +
-                '=' + pTAN);
+              INTERN_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) + '=' + pTAN);
 
               // Protokoll-String aufbereiten
               k := sTAN.FindInc(inttostr(RID));
@@ -979,8 +954,7 @@ var
                       // Ersteintrag!!
                       Protokoll.Values[ProtParameterName] := ProtValue;
                       inc(Stat_Wert_Beitrag);
-                      Stat_Changes := Stat_Changes + ProtParameterName + '=' +
-                        ProtValue + cProtokollTrenner;
+                      Stat_Changes := Stat_Changes + ProtParameterName + '=' + ProtValue + cProtokollTrenner;
                       break;
                     end;
 
@@ -992,8 +966,7 @@ var
                         Protokoll.Values[ProtParameterName] := ProtValue;
                         inc(Stat_Wert_Ueberschreibungen);
                         inc(Stat_Wert_Beitrag);
-                        Stat_Changes := Stat_Changes + ProtParameterName + '*' +
-                          ProtValue + cProtokollTrenner;
+                        Stat_Changes := Stat_Changes + ProtParameterName + '*' + ProtValue + cProtokollTrenner;
                         break;
                       end;
 
@@ -1025,8 +998,7 @@ var
                 begin
                   Protokoll.Values[ProtParameterName] := ProtValue;
                   inc(Stat_Wert_Beitrag);
-                  Stat_Changes := Stat_Changes + ProtParameterName + '=' +
-                    ProtValue + cProtokollTrenner;
+                  Stat_Changes := Stat_Changes + ProtParameterName + '=' + ProtValue + cProtokollTrenner;
                 end;
 
               end;
@@ -1038,12 +1010,10 @@ var
                   begin
 
                     // Meint der Monteur auch diese Variante?
-                    if (ausfuehren_soll = AUSFUEHREN) and
-                      (VormittagsToChar(vormittags) = VMITTAGS) and
+                    if (ausfuehren_soll = AUSFUEHREN) and (VormittagsToChar(vormittags) = VMITTAGS) and
 
                     // Neu-Anschreiben schützt vor Status Restant
-                      (STATUS <> cs_NeuAnschreiben) and (STATUS <> cs_Erfolg)
-                      and (STATUS <> cs_Vorgezogen) and
+                      (STATUS <> cs_NeuAnschreiben) and (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and
                       (STATUS <> cs_Unmoeglich) and
 
                     // Termin liegt in der Vergangenheit
@@ -1056,10 +1026,8 @@ var
                   begin
 
                     // Meint der Monteur auch diese Variante?
-                    if (ausfuehren_soll = AUSFUEHREN) and
-                      (VormittagsToChar(vormittags) = VMITTAGS) and
-                      (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and
-                      (STATUS <> cs_Unmoeglich)
+                    if (ausfuehren_soll = AUSFUEHREN) and (VormittagsToChar(vormittags) = VMITTAGS) and
+                      (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and (STATUS <> cs_Unmoeglich)
 
                     then
                       neuerSTATUS(cs_NeuAnschreiben);
@@ -1090,8 +1058,7 @@ var
                     ausfuehren_ist_uhr := 0;
                   end;
                   if not(Ergaenzungsmodus) then
-                    FieldByName('ZAEHLER_WECHSEL').AsDateTime :=
-                      mkDateTime(ausfuehren_ist_Datum, ausfuehren_ist_uhr);
+                    FieldByName('ZAEHLER_WECHSEL').AsDateTime := mkDateTime(ausfuehren_ist_Datum, ausfuehren_ist_uhr);
                 end;
 
               end;
@@ -1123,8 +1090,7 @@ var
             begin
               // Log, dass dieser RID nicht gefunden wurde!
               inc(Stat_FehlendeRIDS);
-              Bericht.add('[E] (RID=' + inttostr(_RID) + ') (Z#=' +
-                zaehlernummer_alt + ') Datensatz nicht gefunden!');
+              Bericht.add('[E] (RID=' + inttostr(_RID) + ') (Z#=' + zaehlernummer_alt + ') Datensatz nicht gefunden!');
             end;
 
           end;
@@ -1167,7 +1133,7 @@ begin
     end;
 
     CheckCreateDir(AuftragMobilServerPath);
-    CheckCreateDir(MDEPath);
+    CheckCreateDir(MdePath);
     ErrorCount := 0;
     DirList := TStringList.create;
     Bericht := TStringList.create;
@@ -1195,10 +1161,22 @@ begin
     begin
       Label3.caption := 'FTP ...';
       application.ProcessMessages;
-      solidGet(IdFTP1, '', cJonDa_ErgebnisMaske_deprecated,
-        AuftragMobilServerPath, not(CheckBox6.Checked));
-      solidGet(IdFTP1, '', cJonDa_ErgebnisMaske_utf8, AuftragMobilServerPath,
-        not(CheckBox6.Checked));
+
+      solidGet(
+        { } IdFTP1,
+        { } '',
+        { } cJonDa_ErgebnisMaske_deprecated_FTP,
+        { } cJonDa_ErgebnisMaske_deprecated,
+        { } AuftragMobilServerPath,
+        { } not(CheckBox6.Checked));
+
+      solidGet(
+        { } IdFTP1,
+        { } '',
+        { } cJonDa_ErgebnisMaske_utf8_FTP,
+        { } cJonDa_ErgebnisMaske_utf8,
+        { } AuftragMobilServerPath,
+        { } not(CheckBox6.Checked));
       try
         IdFTP1.Disconnect;
       except
@@ -1256,15 +1234,12 @@ begin
       Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
 
     Bericht.add('-----------');
-    Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN,
-      6) + '.log.txt');
-    Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' +
-      inttostrN(ERGEBNIS_TAN, 6) + '.csv');
+    Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+    Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
 
     if assigned(SolidFTP_sLog) then
       if (SolidFTP_sLog.count > 0) then
-        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' +
-          inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
 
     DirList.free;
     Bericht.free;
@@ -1302,8 +1277,7 @@ begin
 
   DebugF := TStringList.create;
   InfoF := TStringList.create;
-  AssignFile(INf, AuftragMobilServerPath + 'AUFTRAG.' + ComboBox2.Text
-    + '.DAT');
+  AssignFile(INf, AuftragMobilServerPath + 'AUFTRAG.' + ComboBox2.Text + '.DAT');
   reset(INf);
   RecCount := FileSize(INf);
   n := 0;
@@ -1329,8 +1303,7 @@ begin
           end
           else
           begin
-            _result := ' eigentlich ' + cPhasenStatusText[_Status] + ' ' +
-              FieldByName('AUSFUEHREN').AsString + ' ' +
+            _result := ' eigentlich ' + cPhasenStatusText[_Status] + ' ' + FieldByName('AUSFUEHREN').AsString + ' ' +
               FieldByName('ZAEHLER_WECHSEL').AsString;
           end;
           if _MondaSchutz then
@@ -1342,9 +1315,8 @@ begin
           _result := 'bitte als "unmögl" markieren!';
         end;
 
-        DebugF.add(inttostr(n) + '/' + inttostr(RecCount) + ' ' + OneRec.Monteur
-          + ' ' + OneRec.Art + '-' + OneRec.zaehlernummer_alt + ': ->'
-          + _result);
+        DebugF.add(inttostr(n) + '/' + inttostr(RecCount) + ' ' + OneRec.Monteur + ' ' + OneRec.Art + '-' +
+          OneRec.zaehlernummer_alt + ': ->' + _result);
 
       end;
     end;
@@ -1371,8 +1343,7 @@ begin
   BeginHourGlass;
   DebugF := TStringList.create;
   InfoF := TStringList.create;
-  AssignFile(INf, AuftragMobilServerPath + 'AUFTRAG.' + ComboBox2.Text
-    + '.DAT');
+  AssignFile(INf, AuftragMobilServerPath + 'AUFTRAG.' + ComboBox2.Text + '.DAT');
   reset(INf);
   while not(eof(INf)) do
   begin

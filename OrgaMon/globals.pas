@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.157; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.158; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -68,7 +68,7 @@ const
   iForceAppDown: boolean = false; // Anwendung muss jetzt verlassen werden
   nosplash: boolean = false; // wenn true, kein Splash Screen beim Programmstart
 
-  // wenn true, wird keinerlei Timer Routine mehr ausgeführt
+  // wenn true, wird keinerlei Timer Routine mehr ausgeführt werden sollen
   notimer: boolean = false;
 
   TimerLevel: integer = 0; // wir erhöht, wenn jemand in einem Timer steckt!
@@ -444,8 +444,12 @@ const
   cMonDa_ErsterTermin = 20010101; // Ab hier beginnen die echten Termine
   cMonDa_ErsteEingabe = 20020601; // Erster
   cMonDa_FieldLength_ZaehlerNummer = 15;
-  cJonDa_ErgebnisMaske_deprecated = '?????' + cDATExtension;
-  cJonDa_ErgebnisMaske_utf8 = '?????' + cUTF8DataExtension;
+
+  cJonDa_ErgebnisMaske_deprecated = '?????' + cDATExtension; // this do not work in vsftp>2.3.2 anymore
+  cJonDa_ErgebnisMaske_deprecated_FTP = '*' + cDATExtension;
+
+  cJonDa_ErgebnisMaske_utf8 = '?????' + cUTF8DataExtension; // this do not work in vsftp>2.3.2 anymore
+  cJonDa_ErgebnisMaske_utf8_FTP = '*' + cUTF8DataExtension;
 
   // Aufbau der Rückmeldung
   // RID;Z#A-Korrektur;Z#N;ZSN;ZSA;R#-Korrektur;R#-Neu;Protokoll;Datum-Ist;Uhr-Ist

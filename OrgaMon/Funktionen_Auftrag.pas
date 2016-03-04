@@ -1773,9 +1773,9 @@ begin
           raise Exception.create('Verzeichnis hat keinen Eintrag');
 
         // Check if some news ...
-        SolidDir(FotoFTP, '', '????-Bilder.zip', RemoteBilder);
-        SolidDir(FotoFTP, '', 'Fotos-????.zip', RemoteFotos);
-        SolidDir(FotoFTP, '', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+        SolidDir(FotoFTP, '', '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
+        SolidDir(FotoFTP, '', 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
+        SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteFotos);
         for n := 0 to pred(RemoteBilder.count) do
@@ -1801,7 +1801,7 @@ begin
 
             SolidLog(cINFOText + ' get ' + RemoteBilder[n]);
             // lade ...
-            if SolidGet(FotoFTP, '', RemoteBilder[n], WorkPath) then
+            if SolidGet(FotoFTP, '', RemoteBilder[n], '', WorkPath) then
             begin
               ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath, ZipOptions);
               if (ZipFileCount > 0) then
