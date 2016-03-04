@@ -455,8 +455,7 @@ begin
     Edit1.Text := NewestRevFName;
 
     //
-    Label2.caption := inttostr(AllProjects.count) + ' Projekte@' + iAutoUpRevDir
-      + ' -> ' + cAutoUpContent;
+    Label2.caption := inttostr(AllProjects.count) + ' Projekte@' + iAutoUpRevDir + ' -> ' + cAutoUpContent;
 
     IsInitialized := true;
   end;
@@ -492,24 +491,21 @@ begin
 
   if iUnofficial then
   begin
-    eMailStr := eMailStr + '&body=unveröffentlicher Download-Link http://' +
-      cCargoBay + '/' + ExtractFileName(rZipFName[0]) + '%0D%0A' + '%0D%0A' +
-      'wichtige Information dazu finden Sie in der Datei' + '%0D%0A' + '"' +
-      iProjektName + '_Info.html", die sich auch im Paket befindet!'
+    eMailStr := eMailStr + '&body=unveröffentlicher Download-Link http://' + cCargoBay + '/' +
+      ExtractFileName(rZipFName[0]) + '%0D%0A' + '%0D%0A' + 'wichtige Information dazu finden Sie in der Datei' +
+      '%0D%0A' + '"' + iProjektName + '_Info.html", die sich auch im Paket befindet!'
   end
   else
   begin
     eMailStr := eMailStr + '&body=' +
-      'Die neue Software-Release wurde im InterNet bereitgestellt. Was geändert wurde können Sie auf http://'
-      + cCargoBay + '/' + iProjektName +
-      'Rev.html nachlesen. Das Paket enthält die Datei ' + iProjektName +
+      'Die neue Software-Release wurde im InterNet bereitgestellt. Was geändert wurde können Sie auf http://' +
+      cCargoBay + '/' + iProjektName + 'Rev.html nachlesen. Das Paket enthält die Datei ' + iProjektName +
       '_Info.html mit noch mehr Information. ' +
-      'Hat Ihre Software eine Update-Funktion, führen Sie diese bitte durch. ' +
-      'Ansonsten können Sie von http://' + cCargoBay +
-      ' ab sofort die neueste Version herunterladen.' + '%0D%0A' + '%0D%0A' +
+      'Hat Ihre Software eine Update-Funktion, führen Sie diese bitte durch. ' + 'Ansonsten können Sie von http://' +
+      cCargoBay + ' ab sofort die neueste Version herunterladen.' + '%0D%0A' + '%0D%0A' +
       '-------------------------------' + '%0D%0A' +
-      'wollen Sie diese automatisch erzeugte Release-Mail nicht mehr erhalten, '
-      + 'so antworten Sie mit dem Wort "unsubscribe" im Betreff.';
+      'wollen Sie diese automatisch erzeugte Release-Mail nicht mehr erhalten, ' +
+      'so antworten Sie mit dem Wort "unsubscribe" im Betreff.';
   end;
 
   openShell(eMailStr);
@@ -552,8 +548,7 @@ var
         k := pos(cUmlaute[n], s);
         if k = 0 then
           break;
-        s := copy(s, 1, pred(k)) + Ansi2Html(cUmlaute[n]) +
-          copy(s, succ(k), MaxInt);
+        s := copy(s, 1, pred(k)) + Ansi2Html(cUmlaute[n]) + copy(s, succ(k), MaxInt);
       end;
     end;
     result := s;
@@ -588,21 +583,17 @@ begin
   begin
     InfoText.clear;
     InfoText.add('Es stehen keine weiteren Informationen zur Verfügung.<br>');
-    InfoText.add
-      ('An eine Veröffentlichung ist zwar gedacht, aber es wurden<br>');
+    InfoText.add('An eine Veröffentlichung ist zwar gedacht, aber es wurden<br>');
     InfoText.add('noch keine Online-Dokumente verfasst!<br>');
-    InfoText.add
-      ('Sie könnten jedoch der(die) erste sein, der(die) das Projekt<br>');
-    InfoText.add
-      ('wieder zum Leben erweckt! Bitte schreiben Sie mir eine eMail.<br>');
+    InfoText.add('Sie könnten jedoch der(die) erste sein, der(die) das Projekt<br>');
+    InfoText.add('wieder zum Leben erweckt! Bitte schreiben Sie mir eine eMail.<br>');
   end;
 
   for n := 0 to pred(InfoText.count) do
     InfoText[n] := HtmlUmlaute(InfoText[n]);
 
   InfoText.insert(0, '<!-- BEGIN NOT FOUND -->');
-  InfoText.insert(1,
-    '<table width="100%" border=0 bgcolor="#FFFFFF" cellpadding=0 cellspacing=0>');
+  InfoText.insert(1, '<table width="100%" border=0 bgcolor="#FFFFFF" cellpadding=0 cellspacing=0>');
   InfoText.insert(2, '<tr><td width=50></td>');
   InfoText.insert(3, '<td><br>');
   InfoText.insert(4, '<b>' + prj + '</b><br>');
@@ -616,10 +607,8 @@ begin
   if FileExists(cTemplatesPath + prj + cFragmentExtension) then
   begin
     InfoText.add('<br>');
-    InfoText.add
-      ('<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 VALIGN=TOP WIDTH="100%">');
-    LoadFromFileHugeLines(false, InfoText, cTemplatesPath + prj +
-      cFragmentExtension);
+    InfoText.add('<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 VALIGN=TOP WIDTH="100%">');
+    LoadFromFileHugeLines(false, InfoText, cTemplatesPath + prj + cFragmentExtension);
     InfoText.add('</TABLE>');
     InfoText.add('<br>');
   end
@@ -678,8 +667,8 @@ var
 begin
   InnoScript := TStringList.create;
   InnoScript.LoadFromFile(SourceFName);
-  _iSourcePath := StrFilter(copy(iSourcePath, revpos('\', copy(iSourcePath, 1,
-    pred(length(iSourcePath)))), MaxInt), '\', true);
+  _iSourcePath := StrFilter(copy(iSourcePath, revpos('\', copy(iSourcePath, 1, pred(length(iSourcePath)))), MaxInt),
+    '\', true);
 
   for n := 0 to pred(InnoScript.count) do
   begin
@@ -696,8 +685,7 @@ begin
   result := InnoScript.values['OutputDir'];
   if (pos(':', result) = 0) then
     result := ExpandFileName(iSourcePath + result);
-  result := ValidatePathName(result) + '\' + InnoScript.values
-    ['OutputBaseFilename'] + '.exe';
+  result := ValidatePathName(result) + '\' + InnoScript.values['OutputBaseFilename'] + '.exe';
 
   rAutoUps.add(result);
 
@@ -732,15 +720,13 @@ begin
   eMailStr := eMailStr + 'subject=' + Memo1.lines[3];
 
   if iUnofficial then
-    eMailStr := eMailStr + '&body=unveröffentlicher Download-Link http://' +
-      cCargoBay + '/' + ExtractFileName(rZipFName[0]) + '%0D%0A' + '%0D%0A' +
-      'wichtige Information dazu finden Sie in der Datei' + '%0D%0A' + '"' +
-      iProjektName + '_Info.html", die sich auch im Paket befindet!'
+    eMailStr := eMailStr + '&body=unveröffentlicher Download-Link http://' + cCargoBay + '/' +
+      ExtractFileName(rZipFName[0]) + '%0D%0A' + '%0D%0A' + 'wichtige Information dazu finden Sie in der Datei' +
+      '%0D%0A' + '"' + iProjektName + '_Info.html", die sich auch im Paket befindet!'
   else
-    eMailStr := eMailStr + '&body=ab sofort downloadbar von http://' + cCargoBay
-      + '%0D%0A' + '%0D%0A' +
-      'wichtige Information dazu finden Sie in der Datei' + '%0D%0A' + '"' +
-      iProjektName + '_Info.html", die sich auch im Paket befindet!';
+    eMailStr := eMailStr + '&body=ab sofort downloadbar von http://' + cCargoBay + '%0D%0A' + '%0D%0A' +
+      'wichtige Information dazu finden Sie in der Datei' + '%0D%0A' + '"' + iProjektName +
+      '_Info.html", die sich auch im Paket befindet!';
 
   openShell(eMailStr);
 
@@ -778,8 +764,7 @@ begin
     begin
       Log('InRente ' + OldRevisionArchive[n] + ' ...');
 
-      FileMove(ExtractFilePath(ToDeleteMask) + OldRevisionArchive[n],
-        cHistoricPath + OldRevisionArchive[n]);
+      FileMove(ExtractFilePath(ToDeleteMask) + OldRevisionArchive[n], cHistoricPath + OldRevisionArchive[n]);
       FileTouch(cHistoricPath + OldRevisionArchive[n]);
       rAutoDels.add(ExtractFilePath(ToDeleteMask) + OldRevisionArchive[n]);
     end;
@@ -813,8 +798,7 @@ var
   SQLBegin: integer;
   DeleteCommand: string;
 
-  function CheckAndPos(FindStr: string; AllStr: string; var NextPos: integer;
-    LineNo: integer): boolean;
+  function CheckAndPos(FindStr: string; AllStr: string; var NextPos: integer; LineNo: integer): boolean;
   begin
     NextPos := pos(FindStr, AllStr);
     if (NextPos = 1) then
@@ -912,8 +896,7 @@ begin
   rZipFName.clear;
 
   if (rInfoBegin >= rInfoEnd) then
-    ShowMessage(cInfoTagBegin + #13 + cInfoTagEnd + #13 + '------------------' +
-      #13 + 'fehlt, oder falsch gesetzt!');
+    ShowMessage(cInfoTagBegin + #13 + cInfoTagEnd + #13 + '------------------' + #13 + 'fehlt, oder falsch gesetzt!');
 
   RevAsHtml := TStringList.create;
 
@@ -959,8 +942,7 @@ begin
 
     if CheckAndPos(cSourceName, ThisLine, InfoTextPos, n) then
     begin
-      iSourcePath := ValidatePathName(copy(ThisLine, InfoTextPos,
-        MaxInt)) + '\';
+      iSourcePath := ValidatePathName(copy(ThisLine, InfoTextPos, MaxInt)) + '\';
       if pos(':', iSourcePath) = 0 then
         iSourcePath := ExpandFileName(iAutoUpRevDir + iSourcePath);
       continue;
@@ -1089,8 +1071,7 @@ begin
 
     if CheckAndPos(cVersion, ThisLine, InfoTextPos, n) then
     begin
-      ShowMessage(FileVersion(iSourcePath + cutblank(copy(ThisLine, InfoTextPos,
-        MaxInt))));
+      ShowMessage(FileVersion(iSourcePath + cutblank(copy(ThisLine, InfoTextPos, MaxInt))));
       continue;
     end;
 
@@ -1145,7 +1126,7 @@ begin
     begin
       KundeID := copy(ThisLine, InfoTextPos, MaxInt);
       // imp pend: Kunden-Daten laden!
-          continue;
+      continue;
     end;
 
     if AddRevLines then
@@ -1212,11 +1193,9 @@ begin
     begin
       for n := 0 to pred(iInnoSetupScript.count) do
         if iInnoSetupOhnePunkt then
-          rZipFName.add('Setup-' + nextp(iInnoSetupScript[n], '.', 0) + '-' +
-            rLatestRevOhnePunkt + '.exe')
+          rZipFName.add('Setup-' + nextp(iInnoSetupScript[n], '.', 0) + '-' + rLatestRevOhnePunkt + '.exe')
         else
-          rZipFName.add('Setup-' + nextp(iInnoSetupScript[n], '.', 0) + '-' +
-            rLatestRevMitPunkt + '.exe');
+          rZipFName.add('Setup-' + nextp(iInnoSetupScript[n], '.', 0) + '-' + rLatestRevMitPunkt + '.exe');
       break;
     end;
 
@@ -1247,20 +1226,17 @@ begin
   CheckBox1.checked := rIconFound;
 
   // Info-Dokument
-  RevAsHtml.add('<b>' + Ansi2Html('Info Dokument für ' + iProjektName + ' Rev. '
-    + rLatestRevMitPunkt) + '</b><br>');
+  RevAsHtml.add('<b>' + Ansi2Html('Info Dokument für ' + iProjektName + ' Rev. ' + rLatestRevMitPunkt) + '</b><br>');
   RevAsHtml.add('<br>');
-  RevAsHtml.add('&nbsp;&nbsp;<A class=red0 href="#' + inttostr(0) + '">' +
-    Ansi2Html(Inhaltsverzeichnis[0]) + '</A><br>');
+  RevAsHtml.add('&nbsp;&nbsp;<A class=red0 href="#' + inttostr(0) + '">' + Ansi2Html(Inhaltsverzeichnis[0]) +
+    '</A><br>');
   RevAsHtml.add('<br>');
   RevAsHtml.add(Ansi2Html('Inhaltsverzeichnis') + '<br>');
   RevAsHtml.add('<br>');
 
   for n := 1 to pred(Inhaltsverzeichnis.count) do
-    RevAsHtml.add('&nbsp;&nbsp;' + fill('&nbsp;',
-      CountPreFix(Inhaltsverzeichnis[n])) + '<A class=red0 href="#' +
-      inttostr(n) + '">' + Ansi2Html(CutPreFix(Inhaltsverzeichnis[n])) +
-      '</A><br>');
+    RevAsHtml.add('&nbsp;&nbsp;' + fill('&nbsp;', CountPreFix(Inhaltsverzeichnis[n])) + '<A class=red0 href="#' +
+      inttostr(n) + '">' + Ansi2Html(CutPreFix(Inhaltsverzeichnis[n])) + '</A><br>');
 
   MachineState := 0;
   RefCount := 1;
@@ -1271,14 +1247,12 @@ begin
     begin
       if (MachineState = 0) then
       begin
-        RevAsHtml.add('<A class=red0 name="0">' + Ansi2Html(rRevSourceFile[n]) +
-          '</A><br>');
+        RevAsHtml.add('<A class=red0 name="0">' + Ansi2Html(rRevSourceFile[n]) + '</A><br>');
         inc(MachineState);
       end
       else
       begin
-        RevAsHtml.add('<A class=red0>' + Ansi2Html(rRevSourceFile[n]) +
-          '</A><br>');
+        RevAsHtml.add('<A class=red0>' + Ansi2Html(rRevSourceFile[n]) + '</A><br>');
       end;
       continue;
     end;
@@ -1289,8 +1263,8 @@ begin
       begin
         if not(rRevSourceFile[n][1] in [' ', #9, '@']) then
         begin
-          RevAsHtml.add('<A class=blue0 name="' + inttostr(RefCount) + '">' +
-            Ansi2Html(rRevSourceFile[n]) + '</A><br>');
+          RevAsHtml.add('<A class=blue0 name="' + inttostr(RefCount) + '">' + Ansi2Html(rRevSourceFile[n]) +
+            '</A><br>');
           inc(RefCount);
         end
         else
@@ -1313,8 +1287,7 @@ begin
 
   // Info-Dokument ausgeben
   RevAsHtml.SaveToFile(cAutoUpContent + iProjektName + '_Info.html');
-  RevAsHtml.SaveToFile(iAutoUpRevDir + '..\..\Cargobay\' + iProjektName +
-    '_Info.html');
+  RevAsHtml.SaveToFile(iAutoUpRevDir + '..\..\Cargobay\' + iProjektName + '_Info.html');
 
   rUpdateFiles.add(cAutoUpContent + iProjektName + '_Info.html');
   if not(RadioButton_SetupType_ReleaseCandidate.checked) then
@@ -1401,8 +1374,12 @@ begin
         end;
 
         SolidBeginTransaction;
-        SolidDir(IdFTP1, iAutoUpFTP_root, ExtractFileName(rFullSetUpMask),
-          OldFullSetUpFiles);
+        SolidDir(
+          { } IdFTP1,
+          { } iAutoUpFTP_root,
+          { } ExtractFileName(rFullSetUpMask),
+          { } '',
+          { } OldFullSetUpFiles);
         SolidEndTransaction;
 
         // dir(rFullSetUpMask, OldFullSetUpFiles, false);
@@ -1411,15 +1388,14 @@ begin
         begin
 
           ShowMessage('Vollsetup ' + rFullSetUpMask + ' nicht gefunden!' + #13 +
-            ' Dadurch kann der Link "Download Setup" nicht gesetzt werden!' +
-            #13 + 'Behebung: Lade den Vollsetup nach:' + #13 + cAutoUpContent);
+            ' Dadurch kann der Link "Download Setup" nicht gesetzt werden!' + #13 + 'Behebung: Lade den Vollsetup nach:'
+            + #13 + cAutoUpContent);
 
         end
         else
         begin
           OldFullSetUpFiles.Sort;
-          WriteValue(REVISIONBlock, 'ZipFName1',
-            OldFullSetUpFiles[pred(OldFullSetUpFiles.count)]);
+          WriteValue(REVISIONBlock, 'ZipFName1', OldFullSetUpFiles[pred(OldFullSetUpFiles.count)]);
         end;
         OldFullSetUpFiles.free;
 
@@ -1437,22 +1413,19 @@ begin
     if iUnofficial then
       FileDelete(cTemplatesPath + iProjektName + cFragmentExtension)
     else
-      SaveBlockToFile(REVISIONBlock, cTemplatesPath + iProjektName +
-        cFragmentExtension);
+      SaveBlockToFile(REVISIONBlock, cTemplatesPath + iProjektName + cFragmentExtension);
 
     ClearBlock('REVISION1');
     ClearBlock('REVISION2');
 
-    SaveBlockToFile('TRENNER', cTemplatesPath + 'TRENNER' +
-      cGeneratedExtension);
+    SaveBlockToFile('TRENNER', cTemplatesPath + 'TRENNER' + cGeneratedExtension);
     ClearBlock('TRENNER');
 
     // weitere Projekte dranhängen
     OldProjekts := TStringList.create;
     dir(cTemplatesPath + '*' + cFragmentExtension, OldProjekts, false);
     for n := pred(OldProjekts.count) downto 0 do
-      if DateDiff(FileDate(cTemplatesPath + OldProjekts[n]), DateGet) > cRevTopPage
-      then
+      if DateDiff(FileDate(cTemplatesPath + OldProjekts[n]), DateGet) > cRevTopPage then
         OldProjekts.delete(n);
 
     // prepare for sort, get (from-to) Date
@@ -1473,8 +1446,7 @@ begin
       if DateB = 0 then
         DateB := FileDate(cTemplatesPath + OldProjekts[n]);
 
-      SortProjekts.add(inttostr(100000000 - DateB) + ',' +
-        AnsiUpperCase(OldProjekts[n]) + ',' + inttostr(n));
+      SortProjekts.add(inttostr(100000000 - DateB) + ',' + AnsiUpperCase(OldProjekts[n]) + ',' + inttostr(n));
     end;
     SortProjekts.Sort;
 
@@ -1485,8 +1457,7 @@ begin
       LoadBlockFromFile('REVISION', cTemplatesPath + OldProjekts[m]);
       if CheckBox2.checked then
         if n <> pred(OldProjekts.count) then
-          LoadBlockFromFile('REVISION', cTemplatesPath + 'TRENNER' +
-            cGeneratedExtension);
+          LoadBlockFromFile('REVISION', cTemplatesPath + 'TRENNER' + cGeneratedExtension);
     end;
     SortProjekts.free;
 
@@ -1497,8 +1468,7 @@ begin
 
     WriteValue('PROJECTHEADER', 'Projekt Gruppe', 'Projekt-Übersicht');
 
-    SaveBlockToFile('SINGLEPROJECT', cTemplatesPath + 'PROJEKT' +
-      cGeneratedExtension);
+    SaveBlockToFile('SINGLEPROJECT', cTemplatesPath + 'PROJEKT' + cGeneratedExtension);
     ClearBlock('SINGLEPROJECT');
 
     OldProjekts.clear;
@@ -1517,8 +1487,7 @@ begin
     // Jetzt die linke Leiste, und die projekt-Seiten
     for n := 0 to pred(OldProjekts.count) do
     begin
-      LoadBlockFromFile('SINGLEPROJECT', cTemplatesPath + 'PROJEKT' +
-        cGeneratedExtension);
+      LoadBlockFromFile('SINGLEPROJECT', cTemplatesPath + 'PROJEKT' + cGeneratedExtension);
       WriteValue('SINGLEPROJECT', 'Name', OldProjekts[n]);
       WriteValue('SINGLEPROJECT', 'Projekt', OldProjekts[n] + '.html');
       if CheckBox3.checked then
@@ -1530,18 +1499,15 @@ begin
     OldProjekts.free;
 
     //
-    SaveBlockToFile('NOT FOUND', cTemplatesPath + 'NOT FOUND' +
-      cGeneratedExtension);
-    SaveBlockToFile('REVINFO', cTemplatesPath + 'REVINFO' +
-      cGeneratedExtension);
+    SaveBlockToFile('NOT FOUND', cTemplatesPath + 'NOT FOUND' + cGeneratedExtension);
+    SaveBlockToFile('REVINFO', cTemplatesPath + 'REVINFO' + cGeneratedExtension);
     ClearBlock('NOT FOUND');
     ClearBlock('REVINFO');
     ClearBlock('THEMA');
     ClearBlock('MAKTUELL');
 
     // Index Seite
-    WriteValue('Aktualisierung Revisions', long2date(RevVonDatum) + '-' +
-      long2date(RevBisDatum));
+    WriteValue('Aktualisierung Revisions', long2date(RevVonDatum) + '-' + long2date(RevBisDatum));
     WriteValue('Datum der Erzeugung', long2date(DateGet));
     //
     FileDelete(cAutoUpContent + 'index.html');
@@ -1550,8 +1516,7 @@ begin
 
     // "Nicht gefunden Seite"
     ClearBlock('MAIN');
-    LoadBlockFromFile('MAIN', cTemplatesPath + 'NOT FOUND' +
-      cGeneratedExtension);
+    LoadBlockFromFile('MAIN', cTemplatesPath + 'NOT FOUND' + cGeneratedExtension);
     FileDelete(cAutoUpContent + 'ni.html');
     SaveToFileCompressed(cAutoUpContent + 'ni.html');
     rAutoUps.add(cAutoUpContent + 'ni.html');
@@ -1687,18 +1652,16 @@ begin
   begin
     FileDelete(rStripRelocFiles[n] + '.exe');
     if not(FileCopy(rStripRelocFiles[n], rStripRelocFiles[n] + '.exe')) then
-      raise Exception.create('Copy ' + #13 + rStripRelocFiles[n] + #13 +
-        rStripRelocFiles[n] + '.exe' + #13 + 'unmöglich!');
+      raise Exception.create('Copy ' + #13 + rStripRelocFiles[n] + #13 + rStripRelocFiles[n] + '.exe' + #13 +
+        'unmöglich!');
 
     if not(FileExists(ApplicationName)) then
-      raise Exception.create('ERROR: Anwendung ' + ApplicationName +
-        ' nicht gefunden');
+      raise Exception.create('ERROR: Anwendung ' + ApplicationName + ' nicht gefunden');
     SourceName := rStripRelocFiles[n] + '.exe';
     if not(FileExists(SourceName)) then
       raise Exception.create('ERROR: ' + SourceName + ' nicht gefunden');
 
-    JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + SourceName + '"',
-      SW_SHOWNORMAL);
+    JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + SourceName + '"', SW_SHOWNORMAL);
     // ExecuteAndWait('"' + ApplicationName + '" "' + SourceName + '"',
     // iSourcePath);
 
@@ -1767,8 +1730,7 @@ begin
         end;
       }
 
-      InfoZIP.zip('*', cAutoUpContent + rZipFName[0], infozip_RootPath + '=' +
-        InstallFrom);
+      InfoZIP.zip('*', cAutoUpContent + rZipFName[0], infozip_RootPath + '=' + InstallFrom);
 
       rAutoUps.add(cAutoUpContent + rZipFName[0]);
       break;
@@ -1786,18 +1748,14 @@ begin
 
           // Full-Setup
           InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
-          InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n],
-            InnoSetupPatched);
+          InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
           ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
           if not(FileExists(ApplicationName)) then
-            raise Exception.create('ERROR: ' + ApplicationName +
-              ' nicht gefunden');
+            raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
           if not(FileExists(InnoSetupPatched)) then
-            raise Exception.create('ERROR: ' + InnoSetupPatched +
-              ' nicht gefunden');
+            raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-          JclMiscel.WinExec32AndWait('"' + ApplicationName + '"' + ' ' + '"' +
-            InnoSetupPatched + '"', SW_SHOWNORMAL);
+          JclMiscel.WinExec32AndWait('"' + ApplicationName + '"' + ' ' + '"' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
           if not FileExists(InnoResult) then
           begin
@@ -1814,18 +1772,14 @@ begin
             ersetze('.iss', '-Update.iss', iInnoSetupScript, n);
             InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
 
-            InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n],
-              InnoSetupPatched);
+            InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
             ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
             if not(FileExists(ApplicationName)) then
-              raise Exception.create('ERROR: ' + ApplicationName +
-                ' nicht gefunden');
+              raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
             if not(FileExists(InnoSetupPatched)) then
-              raise Exception.create('ERROR: ' + InnoSetupPatched +
-                ' nicht gefunden');
+              raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-            JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' +
-              InnoSetupPatched + '"', SW_SHOWNORMAL);
+            JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
             if not FileExists(InnoResult) then
             begin
@@ -1841,21 +1795,17 @@ begin
           ersetze('.iss', '-RC.iss', iInnoSetupScript, n);
           InnoSetupPatched := iSourcePath + iInnoSetupScript[n] + '.iss';
 
-          InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n],
-            InnoSetupPatched);
+          InnoResult := InnoProceed(iSourcePath + iInnoSetupScript[n], InnoSetupPatched);
           FileDelete(InnoResult);
           if FileExists(InnoResult) then
             raise Exception.create('ERROR: ' + InnoResult + ' nicht löschbar!');
           ApplicationName := ProgramFilesDir + cInnoSetUpExecPath;
           if not(FileExists(ApplicationName)) then
-            raise Exception.create('ERROR: ' + ApplicationName +
-              ' nicht gefunden');
+            raise Exception.create('ERROR: ' + ApplicationName + ' nicht gefunden');
           if not(FileExists(InnoSetupPatched)) then
-            raise Exception.create('ERROR: ' + InnoSetupPatched +
-              ' nicht gefunden');
+            raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-          JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' +
-            InnoSetupPatched + '"', SW_SHOWNORMAL);
+          JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
           if not FileExists(InnoResult) then
             raise Exception.create('Fehler im Script ' + InnoSetupPatched);
@@ -1899,13 +1849,11 @@ begin
   result := true;
   if iPostMove.count > 0 then
     for n := 0 to pred(iPostMove.count) do
-      FileMove(outFileName(nextp(iPostMove[n], ',', 0)),
-        outFileName(nextp(iPostMove[n], ',', 1)));
+      FileMove(outFileName(nextp(iPostMove[n], ',', 0)), outFileName(nextp(iPostMove[n], ',', 1)));
 
   if iPostCopy.count > 0 then
     for n := 0 to pred(iPostCopy.count) do
-      FileCopy(outFileName(nextp(iPostCopy[n], ',', 0)),
-        outFileName(nextp(iPostCopy[n], ',', 1)));
+      FileCopy(outFileName(nextp(iPostCopy[n], ',', 0)), outFileName(nextp(iPostCopy[n], ',', 1)));
 end;
 
 function TFormAutoUp.RemoveOldRevisions: boolean;
@@ -2126,12 +2074,9 @@ begin
       n := AllProjects.indexof('(' + Edit1.Text + ')');
     if (n <> -1) then
       AllProjects.delete(n);
-    FileMove(iAutoUpRevDir + Edit1.Text, iAutoUpRevDir + Edit1.Text +
-      '.deleted');
-    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) +
-      cFragmentExtension);
-    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) +
-      cInfoExtension);
+    FileMove(iAutoUpRevDir + Edit1.Text, iAutoUpRevDir + Edit1.Text + '.deleted');
+    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) + cFragmentExtension);
+    FileDelete(cTemplatesPath + nextp(Edit1.Text, cRevExtension, 0) + cInfoExtension);
   end;
 
   CheckRealName.free;

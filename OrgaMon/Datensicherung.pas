@@ -668,7 +668,7 @@ begin
               UserName := nextp(iTranslatePath, ';', 1);
               Password := nextp(iTranslatePath, ';', 2);
             end;
-            SolidGet(IdFTP1, nextp(iTranslatePath, ';', 3), fbak_FName,
+            SolidGet(IdFTP1, nextp(iTranslatePath, ';', 3), fbak_FName,'',
               DatensicherungPath, true);
           end;
         end;

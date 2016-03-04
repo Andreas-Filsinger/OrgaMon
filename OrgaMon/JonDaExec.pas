@@ -103,7 +103,7 @@ type
 
   public
     // ehemals ./Statistik Pfad
-    pAppTextPath : string;
+    pAppTextPath: string;
 
     //
     Option_Console: boolean;
@@ -3299,7 +3299,12 @@ begin
       end;
 
       // die unverarbeiteten Dateien vom Server holen!
-      SolidDir(iFTP, cSolidFTP_DirCurrent, cJonDa_ErgebnisMaske_deprecated, sErgebnisTANs);
+      SolidDir(
+        { } iFTP,
+        { } cSolidFTP_DirCurrent,
+        {} cJonDa_ErgebnisMaske_deprecated_FTP,
+        { } cJonDa_ErgebnisMaske_deprecated,
+        { } sErgebnisTANs);
       sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
 
       // Die Datei bereitstellen!
@@ -3814,8 +3819,8 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, MyProgramPath + cSyncPath, true);
-    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', MyProgramPath + cSyncPath, true);
+    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, '', MyProgramPath + cSyncPath, true);
+    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MyProgramPath + cSyncPath, true);
     iFTP.DisConnect;
   except
 

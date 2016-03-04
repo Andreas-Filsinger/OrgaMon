@@ -3460,9 +3460,9 @@ begin
     SolidBeginTransaction;
     try
       // Check if some news ...
-      SolidDir(FotoFTP, '', '????-Bilder.zip', RemoteBilder);
-      SolidDir(FotoFTP, '', 'Fotos-????.zip', RemoteFotos);
-      SolidDir(FotoFTP, '', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+      SolidDir(FotoFTP, '', '*-Bilder.zip','????-Bilder.zip', RemoteBilder);
+      SolidDir(FotoFTP, '', 'Fotos-*.zip','Fotos-????.zip', RemoteFotos);
+      SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip','????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
       RemoteBilder.AddStrings(RemoteBilderUnbenannt);
       RemoteBilder.AddStrings(RemoteFotos);
       for n := 0 to pred(RemoteBilder.count) do
@@ -3493,7 +3493,7 @@ begin
           application.processmessages;
 
           //
-          if SolidGet(FotoFTP, '', RemoteBilder[n], WorkPath) then
+          if SolidGet(FotoFTP, '', RemoteBilder[n], '', WorkPath) then
           begin
             ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath,
               ZipOptions);
@@ -3602,13 +3602,13 @@ begin
 
   try
     // Check if some news ...
-    SolidDir(FTP, Settings.values[cE_FTPVerzeichnis], '*.xml', RemoteXML);
+    SolidDir(FTP, Settings.values[cE_FTPVerzeichnis], '*.xml', '', RemoteXML);
     for n := 0 to pred(RemoteXML.count) do
     begin
       //
       Log('lade ' + RemoteXML[n] + ' ...');
       //
-      if SolidGet(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n],
+      if SolidGet(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n], '',
         WorkPath) then
       begin
         Log('validiere ' + RemoteXML[n] + ' ...');

@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.158 (04.03.16) Andreas Filsinger
+
+ Bug: FTP: vsftpd>2.3.2 "LIST ???.DAT" Bug
+
 Rev 8.157 (03.03.16) Andreas Filsinger
 
  Bug: Ergebnis: Die manuelle Auslösung überschreibt Wochentage= mit dem Default

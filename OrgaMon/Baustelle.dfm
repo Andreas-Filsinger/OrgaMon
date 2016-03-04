@@ -478,7 +478,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = '&Daten'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -766,7 +769,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Zus'#228'tzlich'
       ImageIndex = 1
-      ExplicitWidth = 836
       object Label8: TLabel
         Left = 7
         Top = 7
@@ -826,7 +828,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1004,7 +1009,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -1721,7 +1729,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Aufwand'
       ImageIndex = 4
-      ExplicitWidth = 836
       object Label6: TLabel
         Left = 209
         Top = 225
@@ -1965,7 +1972,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -2176,7 +2186,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Exporte'
       ImageIndex = 6
-      ExplicitWidth = 836
       object Label24: TLabel
         Left = 19
         Top = 22
@@ -2396,7 +2405,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Lokalisierun&g'
       ImageIndex = 7
-      ExplicitWidth = 836
       object Label14: TLabel
         Left = 449
         Top = 71
@@ -2588,7 +2596,10 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3479,7 +3490,6 @@ object FormBaustelle: TFormBaustelle
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
-        ExplicitWidth = 821
       end
       object CheckBox36: TCheckBox
         Left = 386
@@ -3503,7 +3513,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 58
@@ -3899,7 +3912,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 836
+      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144
@@ -3998,7 +4014,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 2
       Caption = 'Protokolle'
       ImageIndex = 11
-      ExplicitWidth = 836
       object Label43: TLabel
         Left = 41
         Top = 7
