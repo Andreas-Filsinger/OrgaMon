@@ -492,8 +492,8 @@ begin
   sResult.add('RID;ORDER.id;EXPORT.Dateiname;RWSI');
   sOrderListe := TSearchStringList.create;
   sOrderListe.LoadFromFile(DiagnosePath + 'EXPORT.Cache.txt');
-  ExportTable('select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where ' + ' (BAUSTELLE_R=312) and ' +
-    ' (RID=MASTER_R)', DiagnosePath + 'RWSI.Status.csv');
+  ExportTable('select REGLER_NR, RID, EXPORT_TAN from AUFTRAG where ' + ' (BAUSTELLE_R=312) and ' + ' (RID=MASTER_R)',
+    DiagnosePath + 'RWSI.Status.csv');
 
   sOrgaMon := TSearchStringList.create;
   sOrgaMon.LoadFromFile(DiagnosePath + 'RWSI.Status.csv');
@@ -550,8 +550,8 @@ var
   n: integer;
 begin
   for n := 0 to pred(lRID.count) do
-    e_x_sql('update AUFTRAG set ' + ' MONTEUREXPORT=null ' + 'where' + ' (MASTER_R=' +
-      inttostr(integer(lRID[n])) + ') and' + ' (STATUS=6)');
+    e_x_sql('update AUFTRAG set ' + ' MONTEUREXPORT=null ' + 'where' + ' (MASTER_R=' + inttostr(integer(lRID[n])) +
+      ') and' + ' (STATUS=6)');
 end;
 
 procedure doAY3(lRID: TgpIntegerList);
@@ -586,8 +586,8 @@ begin
   for n := 0 to pred(lRID.count) do
   begin
     AUFTRAG_R := integer(lRID[n]);
-    lHistorische := e_r_sqlm('select RID from AUFTRAG where ' + '(MASTER_R=' + inttostr(AUFTRAG_R) +
-      ') and ' + '(STATUS=6) ' + 'order by ' + 'RID descending');
+    lHistorische := e_r_sqlm('select RID from AUFTRAG where ' + '(MASTER_R=' + inttostr(AUFTRAG_R) + ') and ' +
+      '(STATUS=6) ' + 'order by ' + 'RID descending');
 
     for m := 0 to pred(lHistorische.count) do
     begin
@@ -975,8 +975,8 @@ begin
     begin
 
       //
-      AUFTRAG_R := e_r_sql('select RID from AUFTRAG where ' + '(BAUSTELLE_R=301) and ' +
-        '(ZAEHLER_NUMMER=''' + ZaehlerNummer + ''') and ' + '(STATUS<>6)');
+      AUFTRAG_R := e_r_sql('select RID from AUFTRAG where ' + '(BAUSTELLE_R=301) and ' + '(ZAEHLER_NUMMER=''' +
+        ZaehlerNummer + ''') and ' + '(STATUS<>6)');
 
       if (AUFTRAG_R > 0) then
       begin
@@ -1034,15 +1034,15 @@ begin
                 if (FieldByName('ZAEHLER_STAND_ALT').AsString <> '') and
                   (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT) then
                 begin
-                  sLog.add(ZaehlerNummer + '.HT: Änderung von ' + FieldByName('ZAEHLER_STAND_ALT')
-                    .AsString + ' auf ' + ZaehlerStandHT);
+                  sLog.add(ZaehlerNummer + '.HT: Änderung von ' + FieldByName('ZAEHLER_STAND_ALT').AsString + ' auf ' +
+                    ZaehlerStandHT);
                 end;
 
                 if (FieldByName('ZAEHLER_STAND_NEU').AsString <> '') and
                   (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT) then
                 begin
-                  sLog.add(ZaehlerNummer + '.NT: Änderung von ' + FieldByName('ZAEHLER_STAND_NEU')
-                    .AsString + ' auf ' + ZaehlerStandNT);
+                  sLog.add(ZaehlerNummer + '.NT: Änderung von ' + FieldByName('ZAEHLER_STAND_NEU').AsString + ' auf ' +
+                    ZaehlerStandNT);
                 end;
 
                 edit;
@@ -1226,8 +1226,7 @@ begin
         end
         else
         begin
-          sBericht.add(cWARNINGText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString +
-            ': Ableseeinheit ist leer!');
+          sBericht.add(cWARNINGText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString + ': Ableseeinheit ist leer!');
         end;
 
         if DateOK(SperreVon) and DateOK(SperreBis) then
@@ -1252,9 +1251,9 @@ begin
           if (_SperreVon <> SperreVon) or (_SperreBis <> SperreBis) then
           begin
 
-            sBericht.add(cINFOText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString + ' Änderung von '
-              + long2date(_SperreVon) + '-' + long2date(_SperreBis) + ' auf ' + long2date(SperreVon)
-              + '-' + long2date(SperreBis));
+            sBericht.add(cINFOText + ' ' + FieldByName('ZAEHLER_NUMMER').AsString + ' Änderung von ' +
+              long2date(_SperreVon) + '-' + long2date(_SperreBis) + ' auf ' + long2date(SperreVon) + '-' +
+              long2date(SperreBis));
 
             edit;
             FieldByName('SPERRE_VON').AsDate := Long2datetime(SperreVon);
@@ -1314,10 +1313,8 @@ begin
       begin
         if (FieldByName('KUNDE_ORT').AsString = FieldByName('BRIEF_ORT').AsString) then
           if (FieldByName('BRIEF_STRASSE').AsString <> '') then
-            if (pos(FieldByName('BRIEF_STRASSE').AsString, FieldByName('KUNDE_STRASSE')
-              .AsString) = 1) then
-              if (length(FieldByName('BRIEF_STRASSE').AsString) <
-                length(FieldByName('KUNDE_STRASSE').AsString)) then
+            if (pos(FieldByName('BRIEF_STRASSE').AsString, FieldByName('KUNDE_STRASSE').AsString) = 1) then
+              if (length(FieldByName('BRIEF_STRASSE').AsString) < length(FieldByName('KUNDE_STRASSE').AsString)) then
               begin
                 edit;
                 FieldByName('BRIEF_STRASSE').AsString := FieldByName('KUNDE_STRASSE').AsString;
@@ -1506,8 +1503,7 @@ begin
     // Baustellen Settings holen
     AUFTRAG_R := integer(lRID[0]);
     BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(AUFTRAG_R));
-    sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-      inttostr(BAUSTELLE_R));
+    sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
 
     // QS - Liste frisch erzeugen
     sCSV := TStringList.create;
@@ -1524,8 +1520,7 @@ begin
       end
       else
       begin
-        e_x_sql('update AUFTRAG set VERBRAUCH_PRO_JAHR=''N' + ''' where RID=' +
-          inttostr(AUFTRAG_R));
+        e_x_sql('update AUFTRAG set VERBRAUCH_PRO_JAHR=''N' + ''' where RID=' + inttostr(AUFTRAG_R));
       end;
     end;
     sCSV.sort;
@@ -1548,8 +1543,7 @@ var
   sQSmerkmal: string;
 begin
   BeginHourGlass;
-  sQSmerkmal := 'QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' +
-    FormBearbeiter.sBearbeiterKurz;
+  sQSmerkmal := 'QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz;
   qAUFTRAG := DataModuleDatenbank.nQuery;
   lInternInfo := TStringList.create;
 
@@ -2279,51 +2273,72 @@ end;
 
 procedure doFI2(lRID: TgpIntegerList);
 var
+  IMEI_Hits: TStringList;
+  IMEI_LastCall: TStringList;
+  StopDatum: TAnfixDate;
+
+  procedure WorkLog(FName: string);
+  var
+    n, m: integer;
+    Log: TStringList;
+    datum: TAnfixDate;
+    IMEI: string;
+    LastCall: string;
+  begin
+    Log := TStringList.create;
+    Log.LoadFromFile(FName);
+    for n := pred(Log.count) downto 0 do
+    begin
+
+      if (length(Log[n]) = 23) then
+        if
+        { } (Log[n][5] = '.') and
+        { } (Log[n][8] = '.') then
+        begin
+          datum := date2long(copy(Log[n], 3, 8));
+          LastCall := long2date(datum) + ' ' + copy(Log[n], 12, 8);
+          if (datum < StopDatum) then
+            break;
+        end;
+
+      if (pos('    IMEI ', Log[n]) = 1) then
+      begin
+        IMEI := StrFilter(copy(Log[n], 10, 15), cZiffern);
+        if (length(IMEI) = 15) then
+        begin
+          m := IMEI_Hits.indexof(IMEI);
+          if (m = -1) then
+          begin
+            IMEI_Hits.addobject(IMEI, TObject(integer(1)));
+            IMEI_LastCall.add(LastCall);
+          end
+          else
+            IMEI_Hits.objects[m] := TObject(succ(integer(IMEI_Hits.objects[m])));
+        end;
+      end;
+    end;
+    Log.free;
+
+  end;
+
+var
   n, m, o: integer;
   qARTIKEL: TIB_Query;
-  IMEI_Hits: TStringList;
-  Log: TStringList;
-  datum, StopDatum: TAnfixDate;
   IMEI: string;
+
 begin
 
   StopDatum := DatePlus(DateGet, -60);
   IMEI_Hits := TStringList.create;
+  IMEI_LastCall := TStringList.create;
 
-  Log := TStringList.create;
-  Log.LoadFromFile('W:\JonDaServer\JonDaServer.Log');
-  for n := pred(Log.count) downto 0 do
-  begin
-
-    if (length(Log[n]) = 23) then
-      if
-      { } (Log[n][5] = '.') and
-      { } (Log[n][8] = '.') then
-      begin
-        datum := date2long(copy(Log[n], 3, 8));
-        if (datum < StopDatum) then
-          break;
-      end;
-
-    if (pos('    IMEI ', Log[n]) = 1) then
-    begin
-      IMEI := StrFilter(copy(Log[n], 10, 15), cZiffern);
-      if length(IMEI) = 15 then
-      begin
-        m := IMEI_Hits.indexof(IMEI);
-        if (m = -1) then
-          IMEI_Hits.addobject(IMEI, TObject(integer(1)))
-        else
-          IMEI_Hits.objects[m] := TObject(succ(integer(IMEI_Hits.objects[m])));
-      end;
-    end;
-  end;
-  Log.free;
+  WorkLog('W:\JonDaServer\JonDaServer.log');
+  WorkLog('W:\gwe-services\log\JonDaServer.log');
 
   qARTIKEL := nQuery;
   with qARTIKEL do
   begin
-    sql.add('select VERLAGNO,DAUER from ARTIKEL where RID=:CROSSREF for update');
+    sql.add('select VERLAGNO,DAUER,LETZTERVERKAUF from ARTIKEL where RID=:CROSSREF for update');
     OPen;
     for n := 0 to pred(lRID.count) do
     begin
@@ -2338,7 +2353,9 @@ begin
           if (o <> -1) then
           begin
             FieldByName('DAUER').AsString := inttostrN(integer(IMEI_Hits.objects[o]), 4);
+            FieldByName('LETZTERVERKAUF').AsString := IMEI_LastCall[o];
             IMEI_Hits.delete(o);
+            IMEI_LastCall.delete(o);
           end
           else
           begin
@@ -2353,8 +2370,11 @@ begin
 
   // Um die Anzahl der Treffer ergänzen
   for n := 0 to pred(IMEI_Hits.count) do
-    IMEI_Hits[n] := IMEI_Hits[n] + ';' + inttostr(integer(IMEI_Hits.objects[n]));
-  IMEI_Hits.Insert(0, 'IMEI;COUNT');
+    IMEI_Hits[n] :=
+    { } IMEI_Hits[n] + ';' +
+    { } inttostr(integer(IMEI_Hits.objects[n])) + ';' +
+    { } IMEI_LastCall[n];
+  IMEI_Hits.Insert(0, 'IMEI;COUNT;LASTCALL');
 
   // Speichern
   IMEI_Hits.SaveToFile(DiagnosePath + 'IMEI-unbekannt.csv');
@@ -2849,8 +2869,7 @@ begin
           end
           else
           begin
-            oCompiler.MakeError('', ecUnsatisfiedForward, 'missing procedure ' + TransaktionsName +
-              '(RID:Integer);');
+            oCompiler.MakeError('', ecUnsatisfiedForward, 'missing procedure ' + TransaktionsName + '(RID:Integer);');
           end;
         end;
       end;

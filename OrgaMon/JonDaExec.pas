@@ -2964,11 +2964,19 @@ begin
                     if (Token = 'FN-Kurz') then
                     begin
                       NameOhneZaehlerNummerAlt := true;
+                      { Value bleibt leer }
+                      break;
+                    end;
+
+                    if (Token = 'ohne-Neu') then
+                    begin
+                      UmbenennungAbgeschlossen := true;
+                      { Value bleibt leer }
                       break;
                     end;
 
                     // aus einer anderen Spalte
-                    if tNAMES.colof(Token) = -1 then
+                    if (tNAMES.colof(Token) = -1) then
                     begin
                       FatalError('Spalte "' + Token + '" nicht gefunden');
                       break;

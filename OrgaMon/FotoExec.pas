@@ -77,11 +77,14 @@ const
 type
   TFotoExec = class(TObject)
   public
+    // aktueller Context
     tBAUSTELLE: tsTable;
     tABLAGE: tsTable;
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
+    BackupDir: string; // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
+
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
 
     // Ini-Sachen
@@ -208,12 +211,14 @@ end;
 procedure TFotoExec.ensureGlobals;
 var
   r: integer;
+  sDirs: TStringList;
+  n: integer;
+  SubPath: string;
 begin
   if not(assigned(tBAUSTELLE)) then
   begin
 
     // Initialer Lauf
-
     JonDaExec := TJonDaExec.Create;
     JonDaExec.callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
     JonDaExec.callback_ReglerNummerNeu := ReglerNummerNeu;
@@ -244,6 +249,35 @@ begin
         { } cHeader_UmbenennungUnvollstaendig,
         { } MyDataBasePath + cFotoUmbenennungAusstehend);
 
+    // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
+    sDirs := TStringList.Create;
+    dir(pBackUpRootPath + '*.', sDirs, false);
+    sDirs.sort;
+    for n := pred(sDirs.count) downto 0 do
+      if (pos('.', sDirs[n]) = 1) then
+        sDirs.Delete(n);
+    if (sDirs.count = 0) then
+    begin
+      Log(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
+      Log(cFotoService_AbortTag);
+    end;
+
+    SubPath := StrFilter(sDirs[pred(sDirs.count)], '#' + cZiffern);
+    if (length(SubPath) <> 4) then
+    begin
+      Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+      Log(cFotoService_AbortTag);
+    end;
+    if (SubPath[1] <> '#') then
+    begin
+      Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+      Log(cFotoService_AbortTag);
+    end;
+
+    // das gröste Element wählen
+    BackupDir := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
+    sDirs.Free;
+
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
     begin
@@ -253,15 +287,11 @@ begin
       LastLogWasTimeStamp := true;
     end;
   end;
-
 end;
 
 procedure TFotoExec.readIni(SectionName: string = ''; Path: string = '');
 var
   MyIni: TIniFile;
-  sDirs: TStringList;
-  n: integer;
-  SubPath: string;
 begin
 
   // Root Path
@@ -298,38 +328,6 @@ begin
 
   // Einstellungen weitergeben
   SolidFTP.SolidFTP_LogDir := DiagnosePath;
-
-  // Backup-Path bestimmen
-  // Zielbestimmung Sicherungsunterverzeichnis
-  sDirs := TStringList.Create;
-  dir(pBackUpRootPath + '*.', sDirs, false);
-  sDirs.sort;
-  for n := pred(sDirs.count) downto 0 do
-    if (pos('.', sDirs[n]) = 1) then
-      sDirs.Delete(n);
-  if (sDirs.count = 0) then
-  begin
-    Log(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
-    Log(cFotoService_AbortTag);
-  end;
-
-  SubPath := StrFilter(sDirs[pred(sDirs.count)], '#' + cZiffern);
-  if (length(SubPath) <> 4) then
-  begin
-    Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-    Log(cFotoService_AbortTag);
-  end;
-  if (SubPath[1] <> '#') then
-  begin
-    Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
-    Log(cFotoService_AbortTag);
-  end;
-
-  //
-  pBackUpRootPath := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
-  sDirs.Free;
-
-  Log('Backup to ' + pBackUpRootPath);
 end;
 
 procedure TFotoExec.releaseGlobals;
@@ -510,14 +508,14 @@ begin
   if (sFiles.count > 0) then
   begin
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
-    CheckCreateDir(pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
+    CheckCreateDir(BackupDir + cServiceFoto_FTPBackupSubPath);
   end;
 
   // make backup of all new Files
   for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(pFTPPath + sFiles[n], pBackUpRootPath + cServiceFoto_FTPBackupSubPath + ID + '-' + sFiles[n])) then
+    if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cServiceFoto_FTPBackupSubPath + ID + '-' + sFiles[n])) then
     begin
-      Log(cERRORText + ' can not write to ' + pBackUpRootPath + cServiceFoto_FTPBackupSubPath);
+      Log(cERRORText + ' can not write to ' + BackupDir + cServiceFoto_FTPBackupSubPath);
       Log(cFotoService_AbortTag);
       exit;
     end;
@@ -907,9 +905,9 @@ begin
       for n := 0 to pred(sFiles.count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
-          Log(cERRORText + ' ' + sFiles[n] + ': Nicht löschbar');
+          Log(cERRORText + ' "'+ pFTPPath + sFiles[n] + '" : Nicht löschbar');
           Log(cFotoService_AbortTag);
-          exit;
+          break;
         end;
 
     end;
@@ -1249,14 +1247,13 @@ var
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
 
-  BackupPath: string;
   MovedToDay: int64;
-  tabelleBAUSTELLE: tsTable;
   r: integer;
 
   FTP_Benutzer: string;
   mIni: TIniFile;
   Col_FTP_Benutzer: integer;
+  Col_ZIPPASSWORD: integer;
 
   // Parameter
   FotosSequence: integer;
@@ -1321,14 +1318,14 @@ var
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
       FTP_Benutzer := Ablage_NAME;
-      r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
+      r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
       if (r = -1) then
       begin
         // 2. Suchversuch mit prefixed "u"
         if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
         begin
           FTP_Benutzer := 'u' + FTP_Benutzer;
-          r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
+          r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
         end;
       end;
 
@@ -1373,7 +1370,7 @@ var
         { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
@@ -1397,7 +1394,7 @@ var
           { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
           { } infozip_Password + '=' +
           { } deCrypt_Hex(
-          { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
+          { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
           { } infozip_Level + '=' + '0') <> sPics.count) then
         begin
           // Problem anzeigen
@@ -1459,7 +1456,7 @@ var
       FTP_Benutzer := Ablage_NAME;
       if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
         FTP_Benutzer := 'u' + FTP_Benutzer;
-      r := tabelleBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
+      r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
       if (r = -1) then
         break;
 
@@ -1495,7 +1492,7 @@ var
         { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tabelleBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
+        { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
@@ -1517,6 +1514,8 @@ var
 
 begin
 
+  ensureGlobals;
+
   if assigned(sParameter) then
   begin
     pDatum := sParameter.Values['DATUM'];
@@ -1537,9 +1536,8 @@ begin
   sFotos := TStringList.Create;
 
   // Infos über Baustellen
-  tabelleBAUSTELLE := tsTable.Create;
-  tabelleBAUSTELLE.insertfromFile(MyDataBasePath + cServiceFoto_BaustelleFName);
-  Col_FTP_Benutzer := tabelleBAUSTELLE.colof(cE_FTPUSER);
+  Col_FTP_Benutzer := tBAUSTELLE.colof(cE_FTPUSER);
+  Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
@@ -1560,47 +1558,64 @@ begin
   ZIP_OlderThan := DatePlus(BasisDatum, -cFileTimeOutDays);
   PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
 
-  // Zielbestimmung Sicherungsunterverzeichnis '..\#nnn\'
-  sDirs := TStringList.Create;
-  dir(pBackUpRootPath + '*.', sDirs, false);
-  sDirs.sort;
-  for n := pred(sDirs.count) downto 0 do
-    if (pos('.', sDirs[n]) = 1) then
-      sDirs.Delete(n);
-  BackupPath := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
-  FreeAndNil(sDirs);
-
   for r := 1 to tABLAGE.RowCount do
   begin
 
-    Ablage_NAME := tABLAGE.readCell(r, 'NAME');
+    Ablage_NAME := cutblank(tABLAGE.readCell(r, 'NAME'));
+
+    if (Ablage_NAME = '') then
+      continue;
+
     //
     if (pEinzeln <> '') then
       if (pEinzeln <> Ablage_NAME) then
         continue;
 
     //
-    Ablage_PFAD := tABLAGE.readCell(r, 'PFAD');
+    Ablage_PFAD := cutblank(tABLAGE.readCell(r, 'PFAD'));
+
+    if (Ablage_PFAD = '') then
+    begin
+      self.Log(cERRORText + ' Bei Ablage "' + Ablage_NAME + '"  ist kein Pfad definiert');
+      self.Log(cFotoService_AbortTag);
+      break;
+    end;
+
+    if not(DirExists(Ablage_PFAD)) then
+    begin
+      self.Log(cERRORText + ' Zu Ablage "' + Ablage_NAME + '"  existiert "' + Ablage_PFAD + '" nicht');
+      self.Log(cFotoService_AbortTag);
+      break;
+    end;
 
     repeat
 
-      // Zips ablegen
-      dir(Ablage_PFAD + '*.zip', sZips, false);
+      // ganz alte Zips ablegen
+      dir(Ablage_PFAD + '*.zip', sZips, false, true);
       for m := 0 to pred(sZips.count) do
       begin
         if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
         begin
-          CheckCreateDir(BackupPath + Ablage_NAME);
-          inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
-          Log(Ablage_PFAD + sZips[m], BackupPath);
-          FileMove(Ablage_PFAD + sZips[m], BackupPath + Ablage_NAME + '\' + sZips[m]);
+          CheckCreateDir(BackupDir + Ablage_NAME);
+          if FileMove(Ablage_PFAD + sZips[m], BackupDir + Ablage_NAME + '\' + sZips[m]) then
+          begin
+            inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
+            Log(Ablage_PFAD + sZips[m], BackupDir);
+          end
+          else
+          begin
+            self.Log(cERRORText +
+              { } ' FileMove("' +
+              { } Ablage_PFAD + sZips[m] + '","' +
+              { } BackupDir + Ablage_NAME + '\' + sZips[m] + '")');
+          end;
         end;
       end;
 
-      // jpgs zippen
+      // jpgs von gestern zippen
       serviceJPG;
 
-      // htmls zippen
+      // htmls von gestern zippen
       serviceHTML;
 
     until true;
@@ -1611,7 +1626,6 @@ begin
   sZips.Free;
   sPics.Free;
   sFotos.Free;
-  tabelleBAUSTELLE.Free;
   WARTEND.Free;
   Log('ENDE', '*');
 end;

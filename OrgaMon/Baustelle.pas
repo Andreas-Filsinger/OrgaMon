@@ -346,8 +346,7 @@ type
     procedure IB_Edit7GetDisplayText(Sender: TObject; var AString: string);
     procedure IB_Edit7SetEditText(Sender: TObject; var AString: string);
     procedure IB_Edit7GetEditText(Sender: TObject; var AString: string);
-    procedure IB_Edit7IsValidChar(Sender: TObject; var AChar: Char;
-      var IsValid: Boolean);
+    procedure IB_Edit7IsValidChar(Sender: TObject; var AChar: Char; var IsValid: Boolean);
     procedure Button16Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
@@ -374,8 +373,7 @@ type
     procedure CheckBox33Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
     procedure IB_Query8AfterScroll(IB_Dataset: TIB_Dataset);
-    procedure IB_Grid4GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    procedure IB_Grid4GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button35Click(Sender: TObject);
     procedure Button36Click(Sender: TObject);
     procedure SpeedButton20Click(Sender: TObject);
@@ -398,8 +396,7 @@ type
     procedure SpeedButton10Click(Sender: TObject);
     procedure SpeedButton11Click(Sender: TObject);
     procedure Button42Click(Sender: TObject);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure SpeedButton13Click(Sender: TObject);
     procedure ComboBox7Select(Sender: TObject);
     procedure Button43Click(Sender: TObject);
@@ -429,11 +426,9 @@ type
     procedure FotoUp;
 
     // FTP-Dinger
-    procedure IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode;
-      AWorkCount: Int64);
+    procedure IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 
-    procedure IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode;
-      AWorkCountMax: Int64);
+    procedure IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
 
     procedure IdFTP1WorkEnd(ASender: TObject; AWorkMode: TWorkMode);
 
@@ -549,13 +544,11 @@ begin
   //
 end;
 
-procedure TFormBaustelle.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormBaustelle.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Baustelle') + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13
-      + _('wirklich löschen'), true) then
+    if doit(_('Baustelle') + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13 + _('wirklich löschen'), true) then
     begin
       // e_w_preDeleteBaustelle(Fieldbyname('RID').AsInteger);
       Confirmed := true;
@@ -597,8 +590,7 @@ var
   FTP_UploadFiles: TStringList;
 
   // Parameter
-  FTPServer_Fotos, FTPBenutzer_Fotos, FTPPasswort_Fotos,
-    FTPVerzeichnis_Fotos: string;
+  FTPServer_Fotos, FTPBenutzer_Fotos, FTPPasswort_Fotos, FTPVerzeichnis_Fotos: string;
 begin
   BeginHourGlass;
   FTP_UploadFiles := TStringList.create;
@@ -613,12 +605,10 @@ begin
       break;
     end;
     for n := 0 to pred(FTP_UploadFiles.count) do
-      FTP_UploadFiles[n] := e_r_BaustelleUploadPath(BAUSTELLE_R) +
-        FTP_UploadFiles[n];
+      FTP_UploadFiles[n] := e_r_BaustelleUploadPath(BAUSTELLE_R) + FTP_UploadFiles[n];
 
     // Parameter laden
-    Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID='
-      + inttostr(BAUSTELLE_R));
+    Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
     FTPServer_Fotos := e_r_ParameterFoto(Settings, cE_FTPHOST);
     FTPBenutzer_Fotos := e_r_ParameterFoto(Settings, cE_FTPUSER);
     FTPPasswort_Fotos := e_r_ParameterFoto(Settings, cE_FTPPASSWORD);
@@ -656,8 +646,7 @@ begin
       Local_FSize := FSize(FTP_UploadFiles[n]);
       NativeFileName := ExtractFileName(FTP_UploadFiles[n]);
 
-      LogFoto('Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) +
-        ' Byte(s) ...');
+      LogFoto('Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
 
       WaitFor('Datei Upload');
       if not(SolidStore(
@@ -685,10 +674,8 @@ begin
         end
         else
         begin
-          LogFoto(cERRORText + ' Datei "' + FTP_UploadFiles[n] +
-            '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
-            ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) +
-            ' Byte(s) sein');
+          LogFoto(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
+            ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein');
         end;
 
       end;
@@ -765,11 +752,9 @@ begin
   BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
   TICKET_R := e_r_GEN('GEN_TICKET') + 1;
 
-  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' +
-    inttostr(BAUSTELLE_R));
+  Settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
   sPassword := e_r_ParameterFoto(Settings, cE_ZIPPASSWORD);
-  sMaxAnzahlFotosProZip :=
-    StrToIntDef(Settings.values[cE_FotosMaxAnzahl], MaxInt);
+  sMaxAnzahlFotosProZip := StrToIntDef(Settings.values[cE_FotosMaxAnzahl], MaxInt);
   cFotoPath := e_r_BaustelleFotoPath(BAUSTELLE_R);
   cFotoZiel := Settings.values[cE_FotoZiel];
   if (cFotoZiel = '') then
@@ -788,11 +773,9 @@ begin
   CheckCreateDir(cFotoAblage + 'Zips\');
 
   // Erkannte Bilddateien
-  ZipFName := cFotoUpload + inttostrN(TICKET_R, cE_TANLENGTH) + '-Bilder' +
-    cZIPExtension;
+  ZipFName := cFotoUpload + inttostrN(TICKET_R, cE_TANLENGTH) + '-Bilder' + cZIPExtension;
   if FileExists(ZipFName) then
-    FileMove(ZipFName, cFotoUpload + FindANewPassword('', 4) + '-Bilder' +
-      cZIPExtension);
+    FileMove(ZipFName, cFotoUpload + FindANewPassword('', 4) + '-Bilder' + cZIPExtension);
 
   // Bilder auflisten
   dir(cFotoZiel + '*' + cImageExtension, sFilesErfolg, false);
@@ -813,30 +796,25 @@ begin
       { } infozip_Level + '=' + '0' + ';' +
       { } infozip_RootPath + '=' + cFotoZiel);
 
-    FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder' +
-      cZIPExtension);
+    FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);
   end;
 
   // Unbenannte Bilddateien
-  ZipFName := cFotoUpload + inttostrN(TICKET_R, cE_TANLENGTH) +
-    '-Bilder_Unbenannt' + cZIPExtension;
+  ZipFName := cFotoUpload + inttostrN(TICKET_R, cE_TANLENGTH) + '-Bilder_Unbenannt' + cZIPExtension;
   if FileExists(ZipFName) then
-    FileMove(ZipFName, cFotoUpload + FindANewPassword('', 4) +
-      '-Bilder_Unbenannt' + cZIPExtension);
+    FileMove(ZipFName, cFotoUpload + FindANewPassword('', 4) + '-Bilder_Unbenannt' + cZIPExtension);
 
   // Monteure ermitteln
   dir(cFotoPath + '*.', sMonteure);
   for n := pred(sMonteure.count) downto 0 do
-    if not((length(sMonteure[n]) = 3) and (StrToIntDef(sMonteure[n], 0) > 0))
-    then
+    if not((length(sMonteure[n]) = 3) and (StrToIntDef(sMonteure[n], 0) > 0)) then
       sMonteure.Delete(n);
 
   // Verzeichnisse durchsuchen
   for n := 0 to pred(sMonteure.count) do
   begin
-    dir(cFotoPath + sMonteure[n] + '\' + '*' + cImageExtension, sFilesUnbenannt,
-      false, true);
+    dir(cFotoPath + sMonteure[n] + '\' + '*' + cImageExtension, sFilesUnbenannt, false, true);
     for m := 0 to pred(sFilesUnbenannt.count) do
       zFiles.Add(sMonteure[n] + '\' + sFilesUnbenannt[m]);
   end;
@@ -857,8 +835,7 @@ begin
       { } infozip_Level + '=' + '0' + ';' +
       { } infozip_RootPath + '=' + cFotoPath);
 
-    FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder_Unbenannt'
-      + cZIPExtension);
+    FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder_Unbenannt' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);
   end;
 
@@ -901,8 +878,7 @@ begin
   // Anzeige der verbundenen Verträge
   if CheckBox33.Checked then
   begin
-    IB_Query8.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID')
-      .AsInteger;
+    IB_Query8.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
     if not(IB_Query8.Active) then
       IB_Query8.Open;
     IB_Query8.AfterScroll(IB_Query8);
@@ -935,8 +911,7 @@ begin
   _FirstNumber := e_r_AuftragNummer(BAUSTELLE_R) + 1;
   EndHourGlass;
 
-  if doit('Als erste Nummer wird ' + inttostr(_FirstNumber) + ' vergeben!' + #13
-    + 'Jetzt durchnummerieren') then
+  if doit('Als erste Nummer wird ' + inttostr(_FirstNumber) + ' vergeben!' + #13 + 'Jetzt durchnummerieren') then
   begin
 
     BeginHourGlass;
@@ -975,8 +950,7 @@ begin
     end;
     EndHourGlass;
     if (_FirstNumberOrg <> _FirstNumber) then
-      ShowMessage('Es wurde bis Nummer ' + inttostr(pred(_FirstNumber)) +
-        ' durchnummeriert!')
+      ShowMessage('Es wurde bis Nummer ' + inttostr(pred(_FirstNumber)) + ' durchnummeriert!')
     else
       ShowMessage('Es wurde nichts gefunden, was einer neuen Nummer bedarf!');
   end;
@@ -1025,8 +999,7 @@ begin
       if (n <> -1) then
         CheckListBox1.Checked[n] := true
       else
-        ShowMessage('ACHTUNG: Die Monteur-Zuordnung zu' + #13 +
-          'Baustellen schlägt fehl! Geben Sie allen' + #13 +
+        ShowMessage('ACHTUNG: Die Monteur-Zuordnung zu' + #13 + 'Baustellen schlägt fehl! Geben Sie allen' + #13 +
           'Monteuren eindeutige Kürzel!');
     end;
   end;
@@ -1050,11 +1023,9 @@ begin
     begin
       BackupGID := strtol(Edit1.text);
       if (iDataBaseBackUpDir = '') then
-        result := iDataBaseHost + ':' + i_c_DataBasePath + 'sicherung_' +
-          inttostrN(BackupGID, 8) + '.fdb'
+        result := iDataBaseHost + ':' + i_c_DataBasePath + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb'
       else
-        result := iDataBaseHost + ':' + iDataBaseBackUpDir + 'sicherung_' +
-          inttostrN(BackupGID, 8) + '.fdb';
+        result := iDataBaseHost + ':' + iDataBaseBackUpDir + 'sicherung_' + inttostrN(BackupGID, 8) + '.fdb';
       break;
     end;
 
@@ -1115,9 +1086,8 @@ begin
     WaitFor('unlocate');
 
     // Prepare Phase 1
-    lPOSTLEITZAHL_R :=
-      e_r_sqlm('select distinct POSTLEITZAHL_R from AUFTRAG where ' +
-      'BAUSTELLE_R=' + inttostr(BAUSTELLE_R));
+    lPOSTLEITZAHL_R := e_r_sqlm('select distinct POSTLEITZAHL_R from AUFTRAG where ' + 'BAUSTELLE_R=' +
+      inttostr(BAUSTELLE_R));
 
     // Prepare Phase 2
     cAUFTRAG := DataModuleDatenbank.nCursor;
@@ -1151,9 +1121,8 @@ begin
       begin
         repeat
           FormGeoLokalisierung.p_OffLineMode := true;
-          POSTLEITZAHL_R := FormGeoLokalisierung.locate
-            (FieldByName('KUNDE_STRASSE').AsString, FieldByName('KUNDE_ORT')
-            .AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
+          POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
+            FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
           if POSTLEITZAHL_R >= cRID_FirstValid then
             e_w_unlocate(POSTLEITZAHL_R)
           else
@@ -1257,8 +1226,7 @@ begin
         if (IstDatum >= SollDatum) then
         begin
           edit;
-          FieldByName('ZAEHLER_WECHSEL').AsDateTime :=
-            mkDateTime(SollDatum, SollUhr);
+          FieldByName('ZAEHLER_WECHSEL').AsDateTime := mkDateTime(SollDatum, SollUhr);
           post;
         end;
       until true;
@@ -1322,8 +1290,7 @@ begin
       if (IstDatum <> SollDatum) then
       begin
         edit;
-        FieldByName('ZAEHLER_WECHSEL').AsDateTime :=
-          mkDateTime(SollDatum, SollUhr);
+        FieldByName('ZAEHLER_WECHSEL').AsDateTime := mkDateTime(SollDatum, SollUhr);
         post;
       end;
 
@@ -1494,8 +1461,7 @@ begin
   // ev. aus einer anderen Datenbank?
   if (length(Edit2.text) > 0) then
   begin
-    if not((copy(Edit2.text, length(Edit2.text), 1) = '/') or
-      (copy(Edit2.text, length(Edit2.text), 1) = '/')) then
+    if not((copy(Edit2.text, length(Edit2.text), 1) = '/') or (copy(Edit2.text, length(Edit2.text), 1) = '/')) then
     begin
 
       rTRANSACTION := TIB_Transaction.create(self);
@@ -1569,8 +1535,7 @@ begin
         begin
           SuchBezeichnung := suchStr(IB_CursorZAEHLERNUMMERN);
           if (SuchBezeichnung <> '') then
-            ZielZaehlerNummern.addObject(SuchBezeichnung,
-              TObject(FieldByName('RID').AsInteger));
+            ZielZaehlerNummern.addObject(SuchBezeichnung, TObject(FieldByName('RID').AsInteger));
           ApiNext;
         end;
         close;
@@ -1580,8 +1545,8 @@ begin
       RemoveDuplicates(ZielZaehlerNummern, CountDoppelte);
       if (CountDoppelte > 0) then
         ShowMessage('Ihre Zielbaustelle hat doppelte Zählernummern!' + #13 +
-          'Dies kann zu unvollständigen Korrekturen führen!' + #13 +
-          'Es wurden ' + inttostr(CountDoppelte) + ' gefunden!');
+          'Dies kann zu unvollständigen Korrekturen führen!' + #13 + 'Es wurden ' + inttostr(CountDoppelte) +
+          ' gefunden!');
       ZielZaehlerNummern.sorted := true;
 
       qZIEL.Open;
@@ -1607,12 +1572,10 @@ begin
           if (k <> -1) then
           begin
 
-            qZIEL.ParamByName('CROSSREF').AsInteger :=
-              Integer(ZielZaehlerNummern.objects[k]);
+            qZIEL.ParamByName('CROSSREF').AsInteger := Integer(ZielZaehlerNummern.objects[k]);
             if qZIEL.IsEmpty then
             begin
-              FehlerStrings.Add('Merkmal "' + SuchBezeichnung +
-                '" nicht wiedergefunden!');
+              FehlerStrings.Add('Merkmal "' + SuchBezeichnung + '" nicht wiedergefunden!');
             end
             else
             begin
@@ -1621,51 +1584,43 @@ begin
 
                 // ev. gar keine Berechtigung?!
                 if CheckBox27.Checked then
-                  if (qZIEL.FieldByName('STATUS').AsInteger <> cs_DatenFehlen)
-                  then
+                  if (qZIEL.FieldByName('STATUS').AsInteger <> cs_DatenFehlen) then
                     break;
 
-                FormAuftragArbeitsplatz.ItemsMARKED.Add
-                  (TObject(qZIEL.FieldByName('RID').AsInteger));
+                FormAuftragArbeitsplatz.ItemsMARKED.Add(TObject(qZIEL.FieldByName('RID').AsInteger));
                 qZIEL.edit;
 
                 if CheckBox1.Checked then
-                  qZIEL.FieldByName('ZAEHLER_INFO')
-                    .assign(cQUELLE.FieldByName('ZAEHLER_INFO'));
+                  qZIEL.FieldByName('ZAEHLER_INFO').assign(cQUELLE.FieldByName('ZAEHLER_INFO'));
 
                 if CheckBox7.Checked then
                 begin
                   ZaehlerInfosBisher.clear;
                   ZaehlerInfosNeu.clear;
-                  qZIEL.FieldByName('ZAEHLER_INFO')
-                    .AssignTo(ZaehlerInfosBisher);
+                  qZIEL.FieldByName('ZAEHLER_INFO').AssignTo(ZaehlerInfosBisher);
                   cQUELLE.FieldByName('ZAEHLER_INFO').AssignTo(ZaehlerInfosNeu);
                   ZaehlerInfosBisher.AddStrings(ZaehlerInfosNeu);
                   qZIEL.FieldByName('ZAEHLER_INFO').assign(ZaehlerInfosBisher);
                 end;
 
                 if CheckBox20.Checked then
-                  qZIEL.FieldByName('MONTEUR_INFO')
-                    .assign(cQUELLE.FieldByName('MONTEUR_INFO'));
+                  qZIEL.FieldByName('MONTEUR_INFO').assign(cQUELLE.FieldByName('MONTEUR_INFO'));
 
                 if CheckBox21.Checked then
                 begin
                   ZaehlerInfosBisher.clear;
                   ZaehlerInfosNeu.clear;
-                  qZIEL.FieldByName('MONTEUR_INFO')
-                    .AssignTo(ZaehlerInfosBisher);
+                  qZIEL.FieldByName('MONTEUR_INFO').AssignTo(ZaehlerInfosBisher);
                   cQUELLE.FieldByName('MONTEUR_INFO').AssignTo(ZaehlerInfosNeu);
                   ZaehlerInfosBisher.AddStrings(ZaehlerInfosNeu);
                   qZIEL.FieldByName('MONTEUR_INFO').assign(ZaehlerInfosBisher);
                 end;
 
                 if CheckBox23.Checked then
-                  qZIEL.FieldByName('INTERN_INFO')
-                    .assign(cQUELLE.FieldByName('INTERN_INFO'));
+                  qZIEL.FieldByName('INTERN_INFO').assign(cQUELLE.FieldByName('INTERN_INFO'));
 
                 if CheckBox31.Checked then
-                  qZIEL.FieldByName('ZAEHLER_NUMMER')
-                    .assign(cQUELLE.FieldByName('ZAEHLER_NUMMER'));
+                  qZIEL.FieldByName('ZAEHLER_NUMMER').assign(cQUELLE.FieldByName('ZAEHLER_NUMMER'));
 
                 if CheckBox24.Checked then
                 begin
@@ -1687,9 +1642,7 @@ begin
                   // Nun die Werte entsprechend ändern!
                   for l := 0 to pred(ZaehlerInfosNeu.count) do
                     if (pos('=', ZaehlerInfosNeu[l]) > 1) then
-                      ZaehlerInfosBisher.values
-                        [nextp(ZaehlerInfosNeu[l], '=', 0)] :=
-                        nextp(ZaehlerInfosNeu[l], '=', 1);
+                      ZaehlerInfosBisher.values[nextp(ZaehlerInfosNeu[l], '=', 0)] := nextp(ZaehlerInfosNeu[l], '=', 1);
 
                   qZIEL.FieldByName('INTERN_INFO').assign(ZaehlerInfosBisher);
                 end;
@@ -1699,90 +1652,67 @@ begin
                   if CheckBox16.Checked then
                     qZIEL.FieldByName('PLANQUADRAT').clear
                   else
-                    qZIEL.FieldByName('PLANQUADRAT')
-                      .assign(cQUELLE.FieldByName('PLANQUADRAT'));
+                    qZIEL.FieldByName('PLANQUADRAT').assign(cQUELLE.FieldByName('PLANQUADRAT'));
                 end;
 
                 if CheckBox3.Checked then
                 begin
-                  qZIEL.FieldByName('SPERRE_VON')
-                    .assign(cQUELLE.FieldByName('SPERRE_VON'));
-                  qZIEL.FieldByName('SPERRE_BIS')
-                    .assign(cQUELLE.FieldByName('SPERRE_BIS'));
+                  qZIEL.FieldByName('SPERRE_VON').assign(cQUELLE.FieldByName('SPERRE_VON'));
+                  qZIEL.FieldByName('SPERRE_BIS').assign(cQUELLE.FieldByName('SPERRE_BIS'));
                 end;
 
                 if CheckBox4.Checked then
-                  qZIEL.FieldByName('KUNDE_NUMMER')
-                    .assign(cQUELLE.FieldByName('KUNDE_NUMMER'));
+                  qZIEL.FieldByName('KUNDE_NUMMER').assign(cQUELLE.FieldByName('KUNDE_NUMMER'));
 
                 if CheckBox5.Checked then
                 begin
-                  qZIEL.FieldByName('KUNDE_NAME1')
-                    .assign(cQUELLE.FieldByName('KUNDE_NAME1'));
-                  qZIEL.FieldByName('KUNDE_NAME2')
-                    .assign(cQUELLE.FieldByName('KUNDE_NAME2'));
-                  qZIEL.FieldByName('KUNDE_STRASSE')
-                    .assign(cQUELLE.FieldByName('KUNDE_STRASSE'));
-                  qZIEL.FieldByName('KUNDE_ORT')
-                    .assign(cQUELLE.FieldByName('KUNDE_ORT'));
+                  qZIEL.FieldByName('KUNDE_NAME1').assign(cQUELLE.FieldByName('KUNDE_NAME1'));
+                  qZIEL.FieldByName('KUNDE_NAME2').assign(cQUELLE.FieldByName('KUNDE_NAME2'));
+                  qZIEL.FieldByName('KUNDE_STRASSE').assign(cQUELLE.FieldByName('KUNDE_STRASSE'));
+                  qZIEL.FieldByName('KUNDE_ORT').assign(cQUELLE.FieldByName('KUNDE_ORT'));
                 end;
 
                 if CheckBox6.Checked then
                 begin
-                  qZIEL.FieldByName('BRIEF_NAME1')
-                    .assign(cQUELLE.FieldByName('BRIEF_NAME1'));
-                  qZIEL.FieldByName('BRIEF_NAME2')
-                    .assign(cQUELLE.FieldByName('BRIEF_NAME2'));
-                  qZIEL.FieldByName('BRIEF_STRASSE')
-                    .assign(cQUELLE.FieldByName('BRIEF_STRASSE'));
-                  qZIEL.FieldByName('BRIEF_ORT')
-                    .assign(cQUELLE.FieldByName('BRIEF_ORT'));
+                  qZIEL.FieldByName('BRIEF_NAME1').assign(cQUELLE.FieldByName('BRIEF_NAME1'));
+                  qZIEL.FieldByName('BRIEF_NAME2').assign(cQUELLE.FieldByName('BRIEF_NAME2'));
+                  qZIEL.FieldByName('BRIEF_STRASSE').assign(cQUELLE.FieldByName('BRIEF_STRASSE'));
+                  qZIEL.FieldByName('BRIEF_ORT').assign(cQUELLE.FieldByName('BRIEF_ORT'));
                 end;
 
                 if CheckBox8.Checked then
                   qZIEL.FieldByName('ART').assign(cQUELLE.FieldByName('ART'));
 
                 if CheckBox9.Checked then
-                  qZIEL.FieldByName('KUNDE_NAME1')
-                    .assign(cQUELLE.FieldByName('KUNDE_NAME1'));
+                  qZIEL.FieldByName('KUNDE_NAME1').assign(cQUELLE.FieldByName('KUNDE_NAME1'));
 
                 if CheckBox10.Checked then
-                  qZIEL.FieldByName('KUNDE_NAME2')
-                    .assign(cQUELLE.FieldByName('KUNDE_NAME2'));
+                  qZIEL.FieldByName('KUNDE_NAME2').assign(cQUELLE.FieldByName('KUNDE_NAME2'));
 
                 if CheckBox11.Checked then
-                  qZIEL.FieldByName('KUNDE_ORTSTEIL')
-                    .assign(cQUELLE.FieldByName('KUNDE_ORTSTEIL'));
+                  qZIEL.FieldByName('KUNDE_ORTSTEIL').assign(cQUELLE.FieldByName('KUNDE_ORTSTEIL'));
 
                 if CheckBox13.Checked then
                 begin
-                  qZIEL.FieldByName('VERBRAUCH_DATUM')
-                    .assign(cQUELLE.FieldByName('VERBRAUCH_DATUM'));
-                  qZIEL.FieldByName('VERBRAUCH_ZAEHLER_STAND')
-                    .assign(cQUELLE.FieldByName('VERBRAUCH_ZAEHLER_STAND'));
-                  qZIEL.FieldByName('VERBRAUCH_PRO_JAHR')
-                    .assign(cQUELLE.FieldByName('VERBRAUCH_PRO_JAHR'));
+                  qZIEL.FieldByName('VERBRAUCH_DATUM').assign(cQUELLE.FieldByName('VERBRAUCH_DATUM'));
+                  qZIEL.FieldByName('VERBRAUCH_ZAEHLER_STAND').assign(cQUELLE.FieldByName('VERBRAUCH_ZAEHLER_STAND'));
+                  qZIEL.FieldByName('VERBRAUCH_PRO_JAHR').assign(cQUELLE.FieldByName('VERBRAUCH_PRO_JAHR'));
                 end;
 
                 if CheckBox14.Checked then
-                  qZIEL.FieldByName('REGLER_NR')
-                    .assign(cQUELLE.FieldByName('REGLER_NR'));
+                  qZIEL.FieldByName('REGLER_NR').assign(cQUELLE.FieldByName('REGLER_NR'));
 
                 if CheckBox15.Checked then
-                  qZIEL.FieldByName('WORDEMPFAENGER')
-                    .assign(cQUELLE.FieldByName('WORDEMPFAENGER'));
+                  qZIEL.FieldByName('WORDEMPFAENGER').assign(cQUELLE.FieldByName('WORDEMPFAENGER'));
 
                 if CheckBox18.Checked then
-                  qZIEL.FieldByName('MONTEUR1_R')
-                    .assign(cQUELLE.FieldByName('MONTEUR1_R'));
+                  qZIEL.FieldByName('MONTEUR1_R').assign(cQUELLE.FieldByName('MONTEUR1_R'));
 
                 if CheckBox19.Checked then
-                  qZIEL.FieldByName('MONTEUR2_R')
-                    .assign(cQUELLE.FieldByName('MONTEUR2_R'));
+                  qZIEL.FieldByName('MONTEUR2_R').assign(cQUELLE.FieldByName('MONTEUR2_R'));
 
                 if CheckBox22.Checked then
-                  qZIEL.FieldByName(ComboBox4.text)
-                    .assign(cQUELLE.FieldByName(ComboBox4.text));
+                  qZIEL.FieldByName(ComboBox4.text).assign(cQUELLE.FieldByName(ComboBox4.text));
 
                 if CheckBox29.Checked then
                 begin
@@ -1803,8 +1733,7 @@ begin
           end
           else
           begin
-            FehlerStrings.Add('Merkmal "' + SuchBezeichnung +
-              '" nicht gefunden!');
+            FehlerStrings.Add('Merkmal "' + SuchBezeichnung + '" nicht gefunden!');
           end;
         end;
         cQUELLE.next;
@@ -1879,43 +1808,37 @@ begin
         case qAUFTRAG.RecordCount of
           0:
             begin
-              FehlerStrings.Add('ERROR: ' + cQUELLE.FieldByName('NUMMER')
-                .AsString + ' konnte nicht gefunden werden');
+              FehlerStrings.Add('ERROR: ' + cQUELLE.FieldByName('NUMMER').AsString + ' konnte nicht gefunden werden');
             end;
           1:
             begin
-              FormAuftragArbeitsplatz.ItemsMARKED.Add
-                (TObject(qAUFTRAG.FieldByName('RID').AsInteger));
+              FormAuftragArbeitsplatz.ItemsMARKED.Add(TObject(qAUFTRAG.FieldByName('RID').AsInteger));
               inc(Anz_Aenderungen);
               if CheckBox31.Checked then
               begin
-                if (qAUFTRAG.FieldByName('ZAEHLER_NUMMER').AsString <>
-                  cQUELLE.FieldByName('ZAEHLER_NUMMER').AsString) then
+                if (qAUFTRAG.FieldByName('ZAEHLER_NUMMER').AsString <> cQUELLE.FieldByName('ZAEHLER_NUMMER').AsString)
+                then
                 begin
                   qAUFTRAG.edit;
-                  qAUFTRAG.FieldByName('ZAEHLER_NUMMER')
-                    .assign(cQUELLE.FieldByName('ZAEHLER_NUMMER'));
+                  qAUFTRAG.FieldByName('ZAEHLER_NUMMER').assign(cQUELLE.FieldByName('ZAEHLER_NUMMER'));
                   ForceHistorischer := true;
                   AuftragBeforePost(qAUFTRAG);
                   qAUFTRAG.post;
                 end
                 else
                 begin
-                  FehlerStrings.Add('WARNUNG: ' + cQUELLE.FieldByName('NUMMER')
-                    .AsString + ' ist schon identisch');
+                  FehlerStrings.Add('WARNUNG: ' + cQUELLE.FieldByName('NUMMER').AsString + ' ist schon identisch');
                 end;
               end;
             end;
         else
-          FehlerStrings.Add('ERROR: zu ' + cQUELLE.FieldByName('NUMMER')
-            .AsString +
+          FehlerStrings.Add('ERROR: zu ' + cQUELLE.FieldByName('NUMMER').AsString +
             ' gibt es folgende Alternativen (muss manuell gemacht werden!)');
 
           while not(qAUFTRAG.eof) do
           begin
-            FehlerStrings.Add('  ' + qAUFTRAG.FieldByName('NUMMER').AsString +
-              ' ' + qAUFTRAG.FieldByName('KUNDE_NAME1').AsString + ' ' +
-              qAUFTRAG.FieldByName('KUNDE_NAME2').AsString);
+            FehlerStrings.Add('  ' + qAUFTRAG.FieldByName('NUMMER').AsString + ' ' + qAUFTRAG.FieldByName('KUNDE_NAME1')
+              .AsString + ' ' + qAUFTRAG.FieldByName('KUNDE_NAME2').AsString);
             qAUFTRAG.next;
           end;
 
@@ -1965,8 +1888,7 @@ var
   FileName: string;
 begin
   FieldName := IB_Memo4.Lines[IB_Memo4.CaretPos.y];
-  FileName := cAuftragErgebnisPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\' +
-    FieldName + '.ini';
+  FileName := cAuftragErgebnisPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\' + FieldName + '.ini';
   if FileExists(FileName) then
   begin
     myMapping := TFieldMapping.create;
@@ -2137,22 +2059,18 @@ end;
 
 procedure TFormBaustelle.IB_Query8AfterScroll(IB_Dataset: TIB_Dataset);
 begin
-  IB_Query13.ParamByName('BELEG_R').AsInteger :=
-    IB_Query8.FieldByName('BELEG_R').AsInteger;
-  IB_Query13.ParamByName('BAUSTELLE_R').AsInteger :=
-    IB_Query1.FieldByName('RID').AsInteger;
+  IB_Query13.ParamByName('BELEG_R').AsInteger := IB_Query8.FieldByName('BELEG_R').AsInteger;
+  IB_Query13.ParamByName('BAUSTELLE_R').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
   if not(IB_Query13.Active) then
     IB_Query13.Open;
 end;
 
-procedure TFormBaustelle.IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode;
-  AWorkCount: Int64);
+procedure TFormBaustelle.IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
   ProgressBar1.Position := AWorkCount;
 end;
 
-procedure TFormBaustelle.IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode;
-  AWorkCountMax: Int64);
+procedure TFormBaustelle.IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
 begin
   ProgressBar1.max := AWorkCountMax;
 end;
@@ -2179,8 +2097,7 @@ var
   k: Integer;
 begin
   AllTheBaustellen := e_r_Baustellen;
-  k := AllTheBaustellen.indexof
-    (e_r_BaustelleKuerzel(IB_Query1.FieldByName('RID').AsInteger));
+  k := AllTheBaustellen.indexof(e_r_BaustelleKuerzel(IB_Query1.FieldByName('RID').AsInteger));
   if (k <> -1) then
     AllTheBaustellen.Delete(k);
   ComboBox2.items.assign(AllTheBaustellen);
@@ -2216,8 +2133,7 @@ begin
       { } ' (MASTER_R=RID)');
 
     EndHourGlass;
-    LoeschenOK := doit('Sind Sie sicher, dass Sie ' + inttostr(AnzahlMaster) +
-      ' Datensätze löschen wollen');
+    LoeschenOK := doit('Sind Sie sicher, dass Sie ' + inttostr(AnzahlMaster) + ' Datensätze löschen wollen');
   end;
 
   if LoeschenOK then
@@ -2266,10 +2182,8 @@ var
 begin
   BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
 
-  if AutoYES or doit('Die Baustelle wird dadurch aus' + #13 +
-    'der aktuellen Bearbeitung in die' + #13 +
-    'Ablage verschoben! Die Daten stehen' + #13 +
-    'im Terminarbeitsplatz nicht mehr zur' + #13 +
+  if AutoYES or doit('Die Baustelle wird dadurch aus' + #13 + 'der aktuellen Bearbeitung in die' + #13 +
+    'Ablage verschoben! Die Daten stehen' + #13 + 'im Terminarbeitsplatz nicht mehr zur' + #13 +
     'Verfügung! Jetzt in die Ablage verschieben') then
   begin
     BeginHourGlass;
@@ -2289,8 +2203,7 @@ begin
       sql.Add(' AUFTRAG');
       sql.Add('where');
       sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or ');
-      sql.Add(' (MASTER_R in (select RID from AUFTRAG where (BAUSTELLE_R=' +
-        inttostr(BAUSTELLE_R) + ')))');
+      sql.Add(' (MASTER_R in (select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
       Open;
       // Liste der Feldnamen speichern!
       for n := 0 to pred(FieldCount) do
@@ -2348,8 +2261,7 @@ begin
         APiFirst;
         while not(eof) do
         begin
-          if (FieldByName('RID').AsInteger = FieldByName('MASTER_R').AsInteger)
-          then
+          if (FieldByName('RID').AsInteger = FieldByName('MASTER_R').AsInteger) then
             InsertCol(FieldByName('RID').AsInteger);
           ApiNext;
           if frequently(Starttime, 333) or eof then
@@ -2367,8 +2279,7 @@ begin
         APiFirst;
         while not(eof) do
         begin
-          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger)
-          then
+          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger) then
             InsertCol(FieldByName('RID').AsInteger);
           ApiNext;
           if frequently(Starttime, 333) or eof then
@@ -2421,16 +2332,14 @@ begin
   begin
     with IB_Query10 do
     begin
-      ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID')
-        .AsInteger;
+      ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
       Open;
       while not(eof) do
       begin
         if (length(FieldByName('ZAEHLER_NUMMER').AsString) <> _SollLaenge) then
         begin
           edit;
-          FieldByName('ZAEHLER_NUMMER').AsString :=
-            inttostrN(strtoint64(FieldByName('ZAEHLER_NUMMER').AsString),
+          FieldByName('ZAEHLER_NUMMER').AsString := inttostrN(strtoint64(FieldByName('ZAEHLER_NUMMER').AsString),
             _SollLaenge);
           post;
         end;
@@ -2454,9 +2363,7 @@ begin
     while not(eof) do
     begin
       //
-      _IstLaenge := max(_IstLaenge,
-        length(int64tostr(strtoint64def(FieldByName('ZAEHLER_NUMMER')
-        .AsString, 0))));
+      _IstLaenge := max(_IstLaenge, length(int64tostr(strtoint64def(FieldByName('ZAEHLER_NUMMER').AsString, 0))));
       next;
     end;
     close;
@@ -2464,11 +2371,9 @@ begin
   EndHourGlass;
   if _IstLaenge = IB_Query1.FieldByName('ZAEHLER_NR_STELLEN').AsInteger then
     ShowMessage('Der angegebene Bedarf ist korrekt!')
-  else if doit('Es wurde ein Bedarf von ' + inttostr(_IstLaenge) + ' ermittelt!'
-    + #13 + 'Soll dieser Wert in diese Baustelle eingetragen werden?' + #13 +
-    'Eine Anpassung aller Zählernummern erfolgt erst' + #13 +
-    'durch die Funktion "übernehmen ...".' + #13 + 'Jetzt den Bedarf eintragen')
-  then
+  else if doit('Es wurde ein Bedarf von ' + inttostr(_IstLaenge) + ' ermittelt!' + #13 +
+    'Soll dieser Wert in diese Baustelle eingetragen werden?' + #13 + 'Eine Anpassung aller Zählernummern erfolgt erst'
+    + #13 + 'durch die Funktion "übernehmen ...".' + #13 + 'Jetzt den Bedarf eintragen') then
   begin
     if (IB_Query1.State <> dssEdit) and (IB_Query1.State <> dssinsert) then
       IB_Query1.edit;
@@ -2514,10 +2419,8 @@ begin
   with IB_DSQL4 do
   begin
     ParamByName('SOURCE').AsInteger := IB_Query1.FieldByName('RID').AsInteger;
-    ParamByName('DESTINATION').AsInteger := e_r_BaustelleRIDFromKuerzel
-      (ComboBox3.text);
-    if doit('Wollen Sie wirklich alle Daten nach ' + ComboBox3.text +
-      ' verschieben') then
+    ParamByName('DESTINATION').AsInteger := e_r_BaustelleRIDFromKuerzel(ComboBox3.text);
+    if doit('Wollen Sie wirklich alle Daten nach ' + ComboBox3.text + ' verschieben') then
     begin
       BeginHourGlass;
       execute;
@@ -2533,8 +2436,7 @@ var
   FileName: string;
 begin
   FieldName := IB_Memo4.Lines[IB_Memo4.CaretPos.y];
-  FileName := cAuftragErgebnisPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\' +
-    FieldName + '.ini';
+  FileName := cAuftragErgebnisPath + e_r_BaustellenPfad(IB_Memo5.Lines) + '\' + FieldName + '.ini';
   // FileName := SAPPath + IB_memo5.lines.values[cE_FTPUSER]+ '\' + FieldName+'.ini';
   if FileExists(FileName) then
   begin
@@ -2552,28 +2454,24 @@ var
   k: Integer;
 begin
   AllTheBaustellen := e_r_Baustellen;
-  k := AllTheBaustellen.indexof
-    (e_r_BaustelleKuerzel(IB_Query1.FieldByName('RID').AsInteger));
+  k := AllTheBaustellen.indexof(e_r_BaustelleKuerzel(IB_Query1.FieldByName('RID').AsInteger));
   if (k <> -1) then
     AllTheBaustellen.Delete(k);
   ComboBox3.items.assign(AllTheBaustellen);
   AllTheBaustellen.free;
 end;
 
-procedure TFormBaustelle.IB_Edit7GetDisplayText(Sender: TObject;
-  var AString: string);
+procedure TFormBaustelle.IB_Edit7GetDisplayText(Sender: TObject; var AString: string);
 begin
   AString := secondstostr(StrToIntDef(AString, 0));
 end;
 
-procedure TFormBaustelle.IB_Edit7SetEditText(Sender: TObject;
-  var AString: string);
+procedure TFormBaustelle.IB_Edit7SetEditText(Sender: TObject; var AString: string);
 begin
   AString := inttostr(StrToSeconds(AString));
 end;
 
-procedure TFormBaustelle.IB_Grid4GetDisplayText(Sender: TObject;
-  ACol, ARow: Integer; var AString: string);
+procedure TFormBaustelle.IB_Grid4GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
 begin
   if (ARow > 0) then
     if (ACol = 5) then
@@ -2581,15 +2479,13 @@ begin
         AString := format('%m', [strtodoubledef(AString, 0.0)]);
 end;
 
-procedure TFormBaustelle.IB_Edit7GetEditText(Sender: TObject;
-  var AString: string);
+procedure TFormBaustelle.IB_Edit7GetEditText(Sender: TObject; var AString: string);
 begin
   with Sender as TIB_Edit do
     OnGetDisplayText(Sender, AString);
 end;
 
-procedure TFormBaustelle.IB_Edit7IsValidChar(Sender: TObject; var AChar: Char;
-  var IsValid: Boolean);
+procedure TFormBaustelle.IB_Edit7IsValidChar(Sender: TObject; var AChar: Char; var IsValid: Boolean);
 begin
   if AChar = ':' then
     IsValid := true;
@@ -2661,8 +2557,7 @@ begin
             sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND');
             sql.Add(' (ART=''' + ART + ''') AND');
             sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') OR (AUFWAND_SCHUTZ IS NULL))AND');
-            sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) +
-              ') OR (AUFWAND IS NULL))');
+            sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND IS NULL))');
             execute;
           end;
           dAUFTRAG.free;
@@ -2701,8 +2596,7 @@ var
 
         repeat
 
-          cEXISTS.ParamByName('CROSSREF').AsInteger := FieldByName('RID')
-            .AsInteger;
+          cEXISTS.ParamByName('CROSSREF').AsInteger := FieldByName('RID').AsInteger;
           cEXISTS.APiFirst;
           if cEXISTS.FieldByName('ANZAHL').AsInteger > 0 then
             break;
@@ -2768,8 +2662,7 @@ begin
 
   EndHourGlass;
 
-  if doit('Wollen Sie wirklich ' + inttostr(ANZ) + ' Datensätze reaktivieren?')
-  then
+  if doit('Wollen Sie wirklich ' + inttostr(ANZ) + ' Datensätze reaktivieren?') then
   begin
 
     BeginHourGlass;
@@ -2849,8 +2742,7 @@ begin
   with cABLAGE do
   begin
     sql.Add('select count(RID) C_RID from ABLAGE where');
-    sql.Add('  (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger)
-      + ') AND');
+    sql.Add('  (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ') AND');
     sql.Add('  (STATUS<>6)');
     APiFirst;
     ANZ := FieldByName('C_RID').AsInteger;
@@ -2858,8 +2750,7 @@ begin
   cABLAGE.free;
   EndHourGlass;
 
-  if doit('Wollen Sie wirklich ' + inttostr(ANZ) +
-    ' Datensätze aus der ABLAGE löschen?') then
+  if doit('Wollen Sie wirklich ' + inttostr(ANZ) + ' Datensätze aus der ABLAGE löschen?') then
     AblageLoeschen;
 end;
 
@@ -2873,15 +2764,13 @@ begin
   begin
     // erst die historischen
     sql.Add('delete from ABLAGE where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger)
-      + ') AND');
+    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ') AND');
     sql.Add(' (MASTER_R<>RID)');
     execute;
     sql.clear;
     // nun den ganzen Rest
     sql.Add('delete from ABLAGE where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID')
-      .AsInteger) + ')');
+    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ')');
     execute;
   end;
   dABLAGE.free;
@@ -2894,8 +2783,7 @@ var
 begin
   _pwd := FindANewPassword;
   clipboard.AsText := _pwd;
-  ShowMessage('Das generierte Passwort' + #13#10 + _pwd + #13#10 +
-    'wurde in die Zwischenablage kopiert!');
+  ShowMessage('Das generierte Passwort' + #13#10 + _pwd + #13#10 + 'wurde in die Zwischenablage kopiert!');
 end;
 
 procedure TFormBaustelle.Button19Click(Sender: TObject);
@@ -2995,8 +2883,7 @@ var
             on E: Exception do
             begin
               inc(ExceptionCount);
-              sDiagnose.Add(cERRORText + ' insert(' + inttostr(RID) + '): ' +
-                E.Message);
+              sDiagnose.Add(cERRORText + ' insert(' + inttostr(RID) + '): ' + E.Message);
             end;
           end;
         end;
@@ -3053,8 +2940,7 @@ begin
   // bekannte RIDs ausklammern
   WaitFor('Vorlauf ...');
   application.processmessages;
-  RIDl := e_r_sqlm('select RID from ' + DestTable + ' where (BAUSTELLE_R=' +
-    inttostr(BAUSTELLE_R) + ')');
+  RIDl := e_r_sqlm('select RID from ' + DestTable + ' where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')');
 
   //
   rTRANSACTION := TIB_Transaction.create(self);
@@ -3129,10 +3015,8 @@ begin
       sql.Add('from');
       sql.Add(' PERSON');
       sql.Add('where');
-      sql.Add(' (RID in (select distinct MONTEUR1_R from ' + SourceTable +
-        ' where ' + whereSource + ')) or');
-      sql.Add(' (RID in (select distinct MONTEUR2_R from ' + SourceTable +
-        ' where ' + whereSource + '))');
+      sql.Add(' (RID in (select distinct MONTEUR1_R from ' + SourceTable + ' where ' + whereSource + ')) or');
+      sql.Add(' (RID in (select distinct MONTEUR2_R from ' + SourceTable + ' where ' + whereSource + '))');
       Open;
       APiFirst;
       while not(eof) do
@@ -3141,8 +3025,7 @@ begin
         begin
           qMONTEUR.insert;
           for n := 0 to pred(FieldCount) do
-            if Fields[n].IsNotNull and
-              (PersonBlackList.indexof(Fields[n].FieldName) = -1) then
+            if Fields[n].IsNotNull and (PersonBlackList.indexof(Fields[n].FieldName) = -1) then
               qMONTEUR.FieldByName(Fields[n].FieldName).assign(Fields[n])
             else
               qMONTEUR.FieldByName(Fields[n].FieldName).clear;
@@ -3177,8 +3060,7 @@ begin
   PersonBlackList.free;
   EndHourGlass;
 
-  ShowMessage(inttostr(Anz_Inserts) + ' Datensätze eingefügt!' + #13 +
-    inttostr(ExceptionCount) + ' Fehler!');
+  ShowMessage(inttostr(Anz_Inserts) + ' Datensätze eingefügt!' + #13 + inttostr(ExceptionCount) + ' Fehler!');
 
   if (ExceptionCount > 0) then
     openShell(DiagnosePath + 'Baustelle-Restore.txt');
@@ -3251,8 +3133,7 @@ procedure TFormBaustelle.Button21Click(Sender: TObject);
 var
   xAUFTRAG: TIB_DSQL;
 begin
-  if doit('TAN zurücksetzen, und Daten als' + #13 + 'ungesendet betrachten')
-  then
+  if doit('TAN zurücksetzen, und Daten als' + #13 + 'ungesendet betrachten') then
   begin
     BeginHourGlass;
 
@@ -3265,16 +3146,14 @@ begin
       sql.Add('set');
       sql.Add(' export_tan= null');
       sql.Add('where');
-      sql.Add(' (export_tan=' + IB_Query1.FieldByName('EXPORT_TAN').AsString
-        + ') AND');
+      sql.Add(' (export_tan=' + IB_Query1.FieldByName('EXPORT_TAN').AsString + ') AND');
       sql.Add(' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ')');
       execute;
     end;
 
     // Um eines zurücksetzen
     xAUFTRAG.free;
-    IB_Query1.FieldByName('EXPORT_TAN').AsInteger :=
-      pred(IB_Query1.FieldByName('EXPORT_TAN').AsInteger);
+    IB_Query1.FieldByName('EXPORT_TAN').AsInteger := pred(IB_Query1.FieldByName('EXPORT_TAN').AsInteger);
     IB_Query1.post;
     EndHourGlass;
   end;
@@ -3287,10 +3166,8 @@ end;
 
 procedure TFormBaustelle.ReflectZustaendige;
 begin
-  ComboBox1.text := FormBearbeiter.FetchKURZFromRID
-    (IB_Query1.FieldByName('BEARBEITUNG_R').AsInteger);
-  ComboBox6.text := FormBearbeiter.FetchKURZFromRID
-    (IB_Query1.FieldByName('VERTRETUNG_R').AsInteger);
+  ComboBox1.text := FormBearbeiter.FetchKURZFromRID(IB_Query1.FieldByName('BEARBEITUNG_R').AsInteger);
+  ComboBox6.text := FormBearbeiter.FetchKURZFromRID(IB_Query1.FieldByName('VERTRETUNG_R').AsInteger);
 end;
 
 procedure TFormBaustelle.ReadState;
@@ -3315,20 +3192,15 @@ begin
     Gesamt := FieldByName('LAST_V').AsInteger + FieldByName('LAST_N').AsInteger;
     if (Gesamt > 0) then
     begin
-      REGEL_ARBEITSZEIT_V := round(iTagesArbeitszeit * FieldByName('LAST_V')
-        .AsInteger / Gesamt);
-      REGEL_ARBEITSZEIT_N := round(iTagesArbeitszeit * FieldByName('LAST_N')
-        .AsInteger / Gesamt);
-      if FieldByName('REGEL_ARBEITSZEIT_V').AsInteger <> REGEL_ARBEITSZEIT_V
-      then
+      REGEL_ARBEITSZEIT_V := round(iTagesArbeitszeit * FieldByName('LAST_V').AsInteger / Gesamt);
+      REGEL_ARBEITSZEIT_N := round(iTagesArbeitszeit * FieldByName('LAST_N').AsInteger / Gesamt);
+      if FieldByName('REGEL_ARBEITSZEIT_V').AsInteger <> REGEL_ARBEITSZEIT_V then
         FieldByName('REGEL_ARBEITSZEIT_V').AsInteger := REGEL_ARBEITSZEIT_V;
-      if FieldByName('REGEL_ARBEITSZEIT_N').AsInteger <> REGEL_ARBEITSZEIT_N
-      then
+      if FieldByName('REGEL_ARBEITSZEIT_N').AsInteger <> REGEL_ARBEITSZEIT_N then
         FieldByName('REGEL_ARBEITSZEIT_N').AsInteger := REGEL_ARBEITSZEIT_N;
     end;
   end;
 end;
-
 
 procedure TFormBaustelle.ReflectFotoPath;
 begin
@@ -3460,9 +3332,9 @@ begin
     SolidBeginTransaction;
     try
       // Check if some news ...
-      SolidDir(FotoFTP, '', '*-Bilder.zip','????-Bilder.zip', RemoteBilder);
-      SolidDir(FotoFTP, '', 'Fotos-*.zip','Fotos-????.zip', RemoteFotos);
-      SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip','????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+      SolidDir(FotoFTP, '', '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
+      SolidDir(FotoFTP, '', 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
+      SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
       RemoteBilder.AddStrings(RemoteBilderUnbenannt);
       RemoteBilder.AddStrings(RemoteFotos);
       for n := 0 to pred(RemoteBilder.count) do
@@ -3481,8 +3353,7 @@ begin
           if (LocalFSize = RemoteFSize) then
           begin
             ListBox1.items.Add('skip ' + RemoteBilder[n] + ' ...');
-            LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' +
-              sTimeStamp;
+            LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' + sTimeStamp;
             LokaleBilder.SaveToFile(WorkPath + cBildFName);
             application.processmessages;
             continue;
@@ -3495,12 +3366,10 @@ begin
           //
           if SolidGet(FotoFTP, '', RemoteBilder[n], '', WorkPath) then
           begin
-            ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath,
-              ZipOptions);
+            ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath, ZipOptions);
             if (ZipFileCount > 0) then
             begin
-              LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) +
-                ';' + sTimeStamp;
+              LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
               LokaleBilder.SaveToFile(WorkPath + cBildFName);
             end;
           end;
@@ -3608,8 +3477,7 @@ begin
       //
       Log('lade ' + RemoteXML[n] + ' ...');
       //
-      if SolidGet(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n], '',
-        WorkPath) then
+      if SolidGet(FTP, Settings.values[cE_FTPVerzeichnis], RemoteXML[n], '', WorkPath) then
       begin
         Log('validiere ' + RemoteXML[n] + ' ...');
         if validate(WorkPath + RemoteXML[n]) then
@@ -3692,10 +3560,8 @@ begin
     ImportL := TStringList.create;
     ImportL.LoadFromFile(OpenDialog1.FileName);
     for n := 1 to pred(ImportL.count) do
-      e_x_sql('update AUFTRAG set ZAEHLER_NUMMER=''' + nextp(ImportL[n], ';', 0)
-        + ''' where ' + ' (ZAEHLER_NUMMER=''' + nextp(ImportL[n], ';', 1) +
-        ''') AND' + ' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID')
-        .AsString + ')');
+      e_x_sql('update AUFTRAG set ZAEHLER_NUMMER=''' + nextp(ImportL[n], ';', 0) + ''' where ' + ' (ZAEHLER_NUMMER=''' +
+        nextp(ImportL[n], ';', 1) + ''') AND' + ' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ')');
     ImportL.free;
     EndHourGlass;
   end;
@@ -3790,8 +3656,9 @@ procedure TFormBaustelle.SpeedButton19Click(Sender: TObject);
 var
   sPath: string;
 begin
-  sPath := AuftragMobilServerPath + e_r_BaustelleKuerzel
-    (IB_Query1.FieldByName('RID').AsInteger) + '\';
+  sPath :=
+  { } AuftragMobilServerPath +
+  { } e_r_BaustelleKuerzel(IB_Query1.FieldByName('RID').AsInteger) + '\';
   CheckCreateDir(sPath);
   openShell(sPath);
 end;
@@ -3972,8 +3839,7 @@ var
         { Optionen } 'Foto' + ';' +
         { Timestamp } Datum10 + ' - ' + Uhr8);
 
-      MeldungsTAN := ExtractSegmentBetween(HugeSingleLine(sREST, ''), '<BODY>',
-        '</BODY>', true);
+      MeldungsTAN := ExtractSegmentBetween(HugeSingleLine(sREST, ''), '<BODY>', '</BODY>', true);
       sREST.free;
 
       if length(MeldungsTAN) <> 5 then
@@ -4168,8 +4034,7 @@ var
         if checkMeldung(sREST) then
         begin
           // Ausbau
-          iBild := Integer(sBilderSorter.objects
-            [SorterIndex - pred(AnzahlBilder)]);
+          iBild := Integer(sBilderSorter.objects[SorterIndex - pred(AnzahlBilder)]);
           LogFoto('Erkannt: ' + NewNameA);
           if FileCopy(cFotoQuelle + sBilder[iBild], cFotoZiel + NewNameA) then
           begin
@@ -4184,8 +4049,7 @@ var
             NewNameFF := NeuerDateiName(iWechsel, pred(AnzahlBilder - n));
             iBild := Integer(sBilderSorter.objects[SorterIndex - n]);
             LogFoto('Erkannt: ' + NewNameFF);
-            if FileCopy(cFotoQuelle + sBilder[iBild], cFotoZiel + NewNameFF)
-            then
+            if FileCopy(cFotoQuelle + sBilder[iBild], cFotoZiel + NewNameFF) then
             begin
               FileDelete(cFotoQuelle + sBilder[iBild]);
               inc(Stat_AnzahlFotosErkannt);
@@ -4293,8 +4157,7 @@ var
     end;
 
     // Parameter setzen
-    FotoOffset := strtodoubledef(sParameter.values['KameraOffset'], 0.0) *
-      (1.0 / 86400.0);
+    FotoOffset := strtodoubledef(sParameter.values['KameraOffset'], 0.0) * (1.0 / 86400.0);
 
     // Direktmedlungen von "manuellen" Umbenennungen
     MoveUmbenannt;
@@ -4313,8 +4176,7 @@ var
       sBilderSorter := TStringList.create;
 
       // Wechsel-Momente vom Server laden
-      sWechsel := DataModuleREST.REST
-        (iJonDaServer + 'JonDaServer/Statistik/Eingabe.' + iGeraet + '.txt');
+      sWechsel := DataModuleREST.REST(iJonDaServer + 'JonDaServer/Statistik/Eingabe.' + iGeraet + '.txt');
       sWechsel.Add(Datum10 + ';' + Uhr8 + ';' + '-1' + ';' + '0');
 
       for n := 0 to pred(sWechsel.count) do
@@ -4348,17 +4210,15 @@ var
               if LoadFromGraphic(cFotoQuelle + sBilder[n]) then // Read in file
               begin
                 AufnahmeMoment := DateTimeOriginal.Value + FotoOffset;
-                sBilderSorter.addObject(inttostrN(DateTime2long(AufnahmeMoment),
-                  8) + '-' + SecondsToStr8(DateTime2seconds(AufnahmeMoment)) +
-                  '-' + 'E' + '-' + sBilder[n], pointer(n));
+                sBilderSorter.addObject(inttostrN(DateTime2long(AufnahmeMoment), 8) + '-' +
+                  SecondsToStr8(DateTime2seconds(AufnahmeMoment)) + '-' + 'E' + '-' + sBilder[n], pointer(n));
                 break;
               end;
             end;
 
           // Option 2) Übers Datei-Datum
-          sBilderSorter.addObject(inttostrN(FileDate(cFotoQuelle + sBilder[n]),
-            8) + '-' + SecondsToStr8(FileSeconds(cFotoQuelle + sBilder[n])) +
-            '-' + 'F' + '-' + sBilder[n], pointer(n));
+          sBilderSorter.addObject(inttostrN(FileDate(cFotoQuelle + sBilder[n]), 8) + '-' +
+            SecondsToStr8(FileSeconds(cFotoQuelle + sBilder[n])) + '-' + 'F' + '-' + sBilder[n], pointer(n));
 
         until true;
 
@@ -4386,12 +4246,8 @@ var
                 WechselDatum := StrToIntDef(copy(Line, 1, 8), 0);
                 WechselUhr := StrToSeconds(copy(Line, 10, 8));
                 // Details einlesen
-                AUFTRAG_R :=
-                  StrToIntDef
-                  (nextp(sWechsel[Integer(sBilderSorter.objects[BildIndex])],
-                  ';', 2), cRID_Null);
-                setWechselOptions
-                  (sWechsel[Integer(sBilderSorter.objects[BildIndex])]);
+                AUFTRAG_R := StrToIntDef(nextp(sWechsel[Integer(sBilderSorter.objects[BildIndex])], ';', 2), cRID_Null);
+                setWechselOptions(sWechsel[Integer(sBilderSorter.objects[BildIndex])]);
 
                 inc(BildIndex);
               end
@@ -4414,9 +4270,8 @@ var
               else
               begin
                 // Nun Schon wieder ein "A"
-                if (SecondsDiff(WechselDatum, WechselUhr, BildDatum, BildUhr) <
-                  30 * cOneMinuteInSeconds) and (AnzahlBilder >= 1) and
-                  (AnzahlBilder <= iMaxAnzahlBilder) then
+                if (SecondsDiff(WechselDatum, WechselUhr, BildDatum, BildUhr) < 30 * cOneMinuteInSeconds) and
+                  (AnzahlBilder >= 1) and (AnzahlBilder <= iMaxAnzahlBilder) then
                 begin
                   case AnzahlBilder of
                     1:
@@ -4550,8 +4405,7 @@ begin
     if (n = 1) then
       LogFoto(cERRORText + ' 1 Foto konnte nicht zugeordnet werden')
     else
-      LogFoto(cERRORText +
-        format(' %d Fotos konnten nicht zugeordnet werden ', [n]));
+      LogFoto(cERRORText + format(' %d Fotos konnten nicht zugeordnet werden ', [n]));
   end;
 
   if RemoteServerError then
@@ -4564,8 +4418,7 @@ begin
   if (Stat_AnzahlFotosErkannt < Stat_AnzahlFotos) then
     ShowMessage(
       { } 'Es sind noch Fotos übrig, die nicht erkannt wurden.' + #13 +
-      { } 'Öffnen Sie alle Monteursverzeichnisse um die Fotos zu kontrollieren.'
-      + #13 + #13 +
+      { } 'Öffnen Sie alle Monteursverzeichnisse um die Fotos zu kontrollieren.' + #13 + #13 +
       { } '(Für mehr Infos rund ums Thema: "Zuordnen von Fotos": Drücken Sie Hilfe, dann "Fotos" dann "Anleitung für Monteure")');
 end;
 
@@ -4591,8 +4444,7 @@ begin
   // Monteure ermitteln
   dir(Path + '*.', sMonteure);
   for n := pred(sMonteure.count) downto 0 do
-    if not((length(sMonteure[n]) = 3) and (StrToIntDef(sMonteure[n], 0) > 0))
-    then
+    if not((length(sMonteure[n]) = 3) and (StrToIntDef(sMonteure[n], 0) > 0)) then
       sMonteure.Delete(n);
 
   for n := 0 to pred(sMonteure.count) do
@@ -4608,10 +4460,9 @@ begin
     if (Stat_AnzahlFotoUnbenannt > 0) then
       if not(doit(
         { } format('Es gibt %d unbenannte Bilder.' + #13 +
-        { } 'Wenn Sie jetzt hochladen werden diese in einem separaten Bild-Archiv auf die Ablage gestellt.'
-        + #13 + 'In der Regel muss dieses Archiv dann manuell nachbearbeitet werden.'
-        + #13 + 'Haben Sie schon alle Bilder überprüft?' + #13 +
-        'Sind Sie ganz sicher, dass Sie jetzt hochladen wollen',
+        { } 'Wenn Sie jetzt hochladen werden diese in einem separaten Bild-Archiv auf die Ablage gestellt.' + #13 +
+        'In der Regel muss dieses Archiv dann manuell nachbearbeitet werden.' + #13 +
+        'Haben Sie schon alle Bilder überprüft?' + #13 + 'Sind Sie ganz sicher, dass Sie jetzt hochladen wollen',
         [Stat_AnzahlFotoUnbenannt]))) then
         break;
 
@@ -4643,8 +4494,7 @@ begin
         begin
           if not(doitTimeOut(
             { } 'Die Übertragung ist fehlgeschlagen.' + #13 +
-            { } 'Prüfen Sie die Internetverbindung und die Zugangsdaten.' + #13
-            +
+            { } 'Prüfen Sie die Internetverbindung und die Zugangsdaten.' + #13 +
             { } 'Nochmal versuchen', 25000)) then
             break;
         end;
@@ -4718,9 +4568,8 @@ begin
   IB_Query1.FieldByName('PROTOKOLLFELDER').assign(QueryCodes);
 
   if (ObsoleteCodes.count > 0) then
-    ShowMessage
-      ('Folgende Codes werden nicht verwendet, oder waren bisher immer leer:' +
-      #13 + HugeSingleLine(ObsoleteCodes));
+    ShowMessage('Folgende Codes werden nicht verwendet, oder waren bisher immer leer:' + #13 +
+      HugeSingleLine(ObsoleteCodes));
 
   AllCodes.free;
   ThisCodes.free;
@@ -4771,16 +4620,14 @@ begin
     with cAUFTRAEGE do
     begin
       sql.Add('SELECT KUNDE_STRASSE,KUNDE_ORT,KUNDE_ORTSTEIL from AUFTRAG WHERE');
-      sql.Add(' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString
-        + ') and');
+      sql.Add(' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ') and');
       sql.Add(' (RID = MASTER_R)');
       APiFirst;
       ProgressBar1.max := RecordCount;
       while not(eof) do
       begin
-        FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
-          FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL')
-          .AsString, p);
+        FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString, FieldByName('KUNDE_ORT').AsString,
+          FieldByName('KUNDE_ORTSTEIL').AsString, p);
         inc(RecN);
         ApiNext;
         if frequently(Starttime, 333) then
@@ -4820,8 +4667,7 @@ begin
   begin
     sql.Add('select * from AUFTRAG where');
     if not(CheckBox35.Checked) then
-      sql.Add('(BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString +
-        ') and');
+      sql.Add('(BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ') and');
     sql.Add('(STATUS<>6)');
     sql.Add('for update');
     Open;
@@ -4922,16 +4768,14 @@ begin
         // alle Referenzen löschen und dadurch Neueintrag durch erneutes "locate" erzwingen!
         e_x_dereference('ABLAGE.POSTLEITZAHL_R', inttostr(POSTLEITZAHL_R));
         e_x_dereference('AUFTRAG.POSTLEITZAHL_R', inttostr(POSTLEITZAHL_R));
-        e_x_sql('delete from POSTLEITZAHLEN where RID=' +
-          inttostr(POSTLEITZAHL_R));
+        e_x_sql('delete from POSTLEITZAHLEN where RID=' + inttostr(POSTLEITZAHL_R));
         OneInvalid := true;
       end
       else
       begin
         if FieldByName('KUNDE_ORTSTEIL').IsNull then
-          e_x_sql('update AUFTRAG set KUNDE_ORTSTEIL = ''' +
-            ensureSQL(FieldByName('ORTSTEIL').AsString) + ''' where RID=' +
-            inttostr(AUFTRAG_R));
+          e_x_sql('update AUFTRAG set KUNDE_ORTSTEIL = ''' + ensureSQL(FieldByName('ORTSTEIL').AsString) +
+            ''' where RID=' + inttostr(AUFTRAG_R));
       end;
 
       inc(RecN);
@@ -5003,8 +4847,7 @@ begin
     first;
     while not(eof) do
     begin
-      if FieldByName('SPERRE_VON').IsNotNull and FieldByName('SPERRE_BIS').IsNotNull
-      then
+      if FieldByName('SPERRE_VON').IsNotNull and FieldByName('SPERRE_BIS').IsNotNull then
       begin
         Date1 := DateTime2long(FieldByName('SPERRE_VON').AsDate);
         Date2 := DateTime2long(FieldByName('SPERRE_BIS').AsDate);
