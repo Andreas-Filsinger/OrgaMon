@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.159 (09.03.16) Andreas Filsinger
+
+ Bug: Foto: Ablage: Exception im Index-13 : Ursache noch unklar, mehr debugging
+
+ Neu: Artikel<->Vertrag<->OgaMon-App Logs: Transaktion "FI2": Artikel LETZTERVERKAUF für letztes "senden" wird gesetzt
+ Neu: Foto: FotoBenennung=6: ~ohne-Neu~ umgeht die -Neu Umbenennung
+
 Rev 8.158 (04.03.16) Andreas Filsinger
 
  Bug: FTP: vsftpd>2.3.2 "LIST ???.DAT" Bug
