@@ -272,7 +272,10 @@ begin
           if (SecondsGet < (1 * 3600)) then
             // nur machen, wenn nicht in Arbeit oder bereits fertig
             if not(FileExists(MyFotoExec.AblageLogFname)) then
+            begin
               MyFotoExec.workAblage;
+              MyFotoExec.JonDaExec.doBackup;
+            end;
         end;
 
         // Jedes Mal

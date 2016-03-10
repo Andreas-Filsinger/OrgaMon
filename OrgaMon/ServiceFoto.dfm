@@ -88,8 +88,8 @@ object FormServiceFoto: TFormServiceFoto
         OnClick = Button5Click
       end
       object Button10: TButton
-        Left = 216
-        Top = 34
+        Left = 375
+        Top = 7
         Width = 153
         Height = 25
         Caption = 'ensureGlobals'
@@ -163,6 +163,15 @@ object FormServiceFoto: TFormServiceFoto
         Caption = '5 Min rum!'
         TabOrder = 12
         OnClick = Button29Click
+      end
+      object Button30: TButton
+        Left = 216
+        Top = 34
+        Width = 75
+        Height = 25
+        Caption = '<- set'
+        TabOrder = 13
+        OnClick = Button30Click
       end
     end
     object TabSheet11: TTabSheet
@@ -565,7 +574,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Label6: TLabel
         Left = 136
-        Top = 344
+        Top = 373
         Width = 216
         Height = 13
         Caption = 'Einzelne Datei, z.B. "W:\mitgas\123.zip.html"'
@@ -595,7 +604,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Button14: TButton
         Left = 136
-        Top = 392
+        Top = 421
         Width = 209
         Height = 25
         Caption = '.zip.html -> .zip.html.pdf'
@@ -604,14 +613,14 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Edit1: TEdit
         Left = 136
-        Top = 368
+        Top = 397
         Width = 377
         Height = 21
         TabOrder = 2
       end
       object ProgressBar1: TProgressBar
         Left = 363
-        Top = 395
+        Top = 424
         Width = 150
         Height = 17
         TabOrder = 3
@@ -632,7 +641,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object CheckBox4: TCheckBox
         Left = 136
-        Top = 423
+        Top = 452
         Width = 65
         Height = 17
         Caption = 'Abbruch'
@@ -640,7 +649,7 @@ object FormServiceFoto: TFormServiceFoto
       end
       object Edit6: TEdit
         Left = 24
-        Top = 392
+        Top = 421
         Width = 89
         Height = 21
         TabOrder = 7
@@ -686,6 +695,15 @@ object FormServiceFoto: TFormServiceFoto
         Caption = 'Migration Foto'
         TabOrder = 12
         OnClick = Button7Click
+      end
+      object Button6: TButton
+        Left = 136
+        Top = 342
+        Width = 209
+        Height = 25
+        Caption = 'doBackup'
+        TabOrder = 13
+        OnClick = Button6Click
       end
     end
     object TabSheet8: TTabSheet

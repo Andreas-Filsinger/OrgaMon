@@ -33,6 +33,7 @@ uses
   lazUTF8Classes,
 {$ENDIF}
   globals, classes, Sysutils,
+  windows,
   anfix32, wordindex, IdFTP;
 
 const
@@ -289,7 +290,6 @@ type
     //
     //
     procedure doBackup;
-
 
   end;
 
@@ -2307,8 +2307,9 @@ begin
         begin
 
           // Sicherung ins "OrgaMon" Verzeichnis!
-          FileCopy(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension, MyProgramPath + cOrgaMonDataPath + AktTrn +
-            cDATExtension);
+          FileCopy(
+            { } MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension,
+            { } MyProgramPath + cOrgaMonDataPath + AktTrn + cDATExtension);
 
           // Web-Statistik anfertigen!
           if (Stat_FotoMeldungen > 0) then
@@ -3328,7 +3329,7 @@ begin
       SolidDir(
         { } iFTP,
         { } cSolidFTP_DirCurrent,
-        {} cJonDa_ErgebnisMaske_deprecated_FTP,
+        { } cJonDa_ErgebnisMaske_deprecated_FTP,
         { } cJonDa_ErgebnisMaske_deprecated,
         { } sErgebnisTANs);
       sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
@@ -3511,30 +3512,70 @@ begin
 end;
 
 procedure TJonDaExec.doBackup;
+const
+  cTAN_BackupPath = 'TAN\';
+var
+  AllTRN: TStringList;
+  n: integer;
+  TAN: string;
+  GeraeteNummer: string;
+  TAN_OlderThan, TAN_Date: TANFiXDate;
 begin
- if OldInfrastructure then
-  exit;
+  if oldInfrastructure then
+    exit;
 
- if BackupDir='' then
-  exit;
+  if (BackupDir = '') then
+    exit;
 
- if not(DirExists(BackupDir)) then
-  exit;
+  if not(DirExists(BackupDir)) then
+    exit;
 
+  // TAN-Ablage-Bereich erstellen
+  checkcreatedir(BackupDir + cTAN_BackupPath);
 
-             cMaxAge_Produktive_Sichtbarkeit
-  // Transaktions-Datenverzeichnisse wegsichern danach löschen
+  TAN_OlderThan := DatePlus(DateGet, -cMaxAge_Produktive_Sichtbarkeit);
+  AllTRN := TStringList.Create;
+  dir(MyProgramPath + '*.', AllTRN, false);
+  AllTRN.sort;
+  for n := 0 to pred(AllTRN.count) do
+  begin
 
-  {
-  imp pend
+    TAN := AllTRN[n];
+    if (length(TAN) <> 5) then
+      continue;
 
-  nach 40 TAgen
+    TAN := StrFilter(AllTRN[n], cZiffern);
+    if (length(TAN) <> 5) then
+      continue;
 
-  move ./dat/nnnnn/ -> Backup/dat/nnnnn/
-  move web/nnnnn.txt -> Backup/dat/nnnnn/
-  move web/nnnnn.auftrag.utf-8.txt -> Backup/dat/nnnnn/
-  delete OrgaMOn/nnnnn.DAT
-  }
+    GeraeteNummer := detectGeraeteNummer(MyProgramPath + TAN);
+    if (GeraeteNummer = '') then
+      continue;
+
+    TAN_Date := FDate(MyProgramPath + TAN + '\' + GeraeteNummer + cZIPExtension);
+    if (TAN_Date < cOrgaMonBirthDayAsLong) then
+      continue;
+    if (TAN_Date >= TAN_OlderThan) then
+      break;
+
+    // Transaktions-Datenverzeichnisse wegsichern danach löschen
+    MoveFileEx(
+      { } pchar(MyProgramPath + TAN),
+      { } pchar(BackupDir + cTAN_BackupPath + TAN),
+      { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH);
+
+    if DirExists(BackupDir + cTAN_BackupPath + TAN + '\') then
+    begin
+      FileMove(UpFName(TAN), BackupDir + cTAN_BackupPath + TAN + '\' + TAN + '.txt');
+      FileMove(AuftragFName(TAN), BackupDir + cTAN_BackupPath + TAN + '\' + TAN + '.auftrag' + cUTF8DataExtension);
+    end;
+
+    // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
+    FileDelete(MyProgramPath + cOrgaMonDataPath + TAN + cDATExtension);
+
+  end;
+
+  AllTRN.free;
 end;
 
 procedure TJonDaExec.doStat(iFTP: TIdFTP);
