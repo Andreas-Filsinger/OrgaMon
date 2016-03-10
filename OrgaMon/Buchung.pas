@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -466,6 +466,7 @@ end;
 procedure TFormBuchung.SpeedButton5Click(Sender: TObject);
 begin
   locateTo(b_w_Copy(BUCH_R));
+  IB_query1.Edit;
 end;
 
 end.

@@ -19,6 +19,19 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.161 (10.03.16) Andreas Filsinger
+
+ Neu: FotoService: Ablage: Verbesserte Fehlerausgabe
+ Neu: AppService: erstmals automatische Datensicherung der Transaktionen
+
+Rev 8.160 (09.03.16) Andreas Filsinger
+
+ Neu: Foto: Ausstehende "-Neu" Umbenennungen: Amnestie für nicht mehr existierende Dateien
+ Neu: Buch: Datumseintrag für "Gebucht" wird nur noch gemacht wenn das Gegenkonto auch gefüllt, eine "Verbuchung"
+      ohne dahinter stehende Arbeit gibt es nicht mehr. "Ungebucht" ist weiterhin Gegenkonto da, aber Gebucht=null
+ Neu: Lastschriften: SEPA Mandat im 1260, "GEBUCHT" oder nicht spielt hier keine Rolle mehr. Das Mandat gilt unabhängig
+      von einer Verbuchung auf ein anderes Konto
+
 Rev 8.159 (09.03.16) Andreas Filsinger
 
  Bug: Foto: Ablage: Exception im Index-13 : Ursache noch unklar, mehr debugging

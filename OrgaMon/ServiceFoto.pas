@@ -69,13 +69,10 @@ type
     TabSheet5: TTabSheet;
     ListBox6: TListBox;
     SpeedButton3: TSpeedButton;
-    Button6: TButton;
     TabSheet6: TTabSheet;
     Button8: TButton;
     Button9: TButton;
     ListBox7: TListBox;
-    CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
     Button10: TButton;
     Label2: TLabel;
     Label3: TLabel;
@@ -155,7 +152,6 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
@@ -785,22 +781,19 @@ var
   sParameter: TStringList;
 begin
   sParameter := TStringList.Create;
-  sParameter.add('ALL=' + cINI_Deactivate);
-  if CheckBox1.checked then
-    MyFotoExec.workEingang(sParameter);
-  if CheckBox2.checked then
-    MyFotoExec.workWartend(sParameter);
+//  sParameter.add('ALL=' + cINI_Deactivate);
+  MyFotoExec.workWartend(sParameter);
   sParameter.Free;
 end;
 
 procedure TFormServiceFoto.Button5Click(Sender: TObject);
+var
+  sParameter: TStringList;
 begin
-  MyFotoExec.workEingang;
-end;
-
-procedure TFormServiceFoto.Button6Click(Sender: TObject);
-begin
-  MyFotoExec.workWartend;
+  sParameter := TStringList.Create;
+//  sParameter.add('ALL=' + cINI_Deactivate);
+  MyFotoExec.workEingang(sParameter);
+  sParameter.Free;
 end;
 
 procedure TFormServiceFoto.Button7Click(Sender: TObject);

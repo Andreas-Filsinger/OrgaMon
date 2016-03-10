@@ -278,6 +278,8 @@ begin
     BackupDir := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
     sDirs.Free;
 
+    JonDaExec.BackupDir := BackupDir;
+
     // TimeStamp in die Logdatei legen
     if not(LastLogWasTimeStamp) then
     begin
@@ -905,7 +907,7 @@ begin
       for n := 0 to pred(sFiles.count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
-          Log(cERRORText + ' "'+ pFTPPath + sFiles[n] + '" : Nicht löschbar');
+          Log(cERRORText + ' "' + pFTPPath + sFiles[n] + '" : Nicht löschbar');
           Log(cFotoService_AbortTag);
           break;
         end;
@@ -922,6 +924,12 @@ var
   WARTEND: tsTable;
   Stat_Anfangsbestand: integer;
   Stat_NachtragBaustelle: integer;
+  Stat_ZuAlt: integer;
+  Stat_Verschwunden: integer;
+
+  col_MOMENT: integer;
+  col_DATEINAME_AKTUELL: integer;
+
   MomentTimeout: TANFiXDate;
   CSV: tsTable;
   r, i, k, ro, c: integer;
@@ -969,17 +977,40 @@ begin
     addCol('MOMENT');
 
     // all zu alte Einträge löschen
-    MomentTimeout := DatePlus(DateGet, -10);
-    i := 0;
-    c := colof('MOMENT');
+    MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
+    Stat_ZuAlt := 0;
+    Stat_Verschwunden := 0;
+    col_MOMENT := colof('MOMENT');
+    col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
     for r := RowCount downto 1 do
-      if (StrToIntDef(readCell(r, c), 0) < MomentTimeout) then
+    begin
+
+      if (StrToIntDef(readCell(r, col_MOMENT), 0) < MomentTimeout) then
       begin
         del(r);
-        inc(i);
+        inc(Stat_ZuAlt);
+        continue;
       end;
-    if (i > 0) then
-      Log(cWARNINGText + ' 964: ' + 'gebe ' + InttoStr(i) + ' Dateieinträge frei, da sie älter als 10 Tage sind');
+
+      if not(FileExists(readCell(r, col_DATEINAME_AKTUELL))) then
+      begin
+        del(r);
+        inc(Stat_Verschwunden);
+        continue;
+      end;
+
+    end;
+
+    if (Stat_ZuAlt > 0) then
+      Log(
+        { } cWARNINGText + ' 1004: ' +
+        { } 'gebe ' + InttoStr(Stat_ZuAlt) + ' Einträge frei, da sie älter als ' + InttoStr(cMaxAge_Umbenennen) +
+        ' Tage sind');
+
+    if (Stat_Verschwunden > 0) then
+      Log(
+        { } cWARNINGText + ' 1009: ' +
+        { } 'gebe ' + InttoStr(Stat_Verschwunden) + ' Einträge frei, da die Dateien verschwunden sind');
 
   end;
 
@@ -1098,7 +1129,7 @@ begin
       NEU := REGLER_NUMMER_NEU { + };
     end;
 
-    // nichts machen in diesem Fall
+    // nichts neues? -> nichts machen in diesem Fall
     if (NEU = '') then
       continue;
 
@@ -1107,7 +1138,7 @@ begin
 
     if not(FileExists(FNameAlt)) then
     begin
-      Log(cWARNINGText + ' 1091: ' + 'gebe Dateieintrag "' + FNameAlt +
+      Log(cWARNINGText + ' 1138: ' + 'gebe Dateieintrag "' + FNameAlt +
         '" frei, da verschwunden, oder bereits umbenannt');
       WARTEND.del(r);
       continue;
@@ -1229,7 +1260,7 @@ end;
 
 procedure TFotoExec.workAblage(sParameter: TStringList = nil);
 
-  procedure Log(Source, Dest: string);
+  procedure AblageLog(Source, Dest: string);
   begin
     AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest, AblageLogFname);
   end;
@@ -1239,11 +1270,9 @@ const
   cPicTimeOutDays = 0;
   // 0 = gestern ist schon zu alt
 var
-  sDirs: TStringList;
-  sZips: TStringList;
   sPics: TStringList;
   sFotos: TStringList;
-  n, m: integer;
+  m: integer;
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
 
@@ -1332,7 +1361,7 @@ var
       // (immer noch) nicht gefunden?
       if (r = -1) then
       begin
-        self.Log(cERRORText + ' FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
+        Log(cERRORText + ' FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
         Pending := false;
         break;
       end;
@@ -1362,7 +1391,7 @@ var
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      Log(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1374,7 +1403,7 @@ var
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
-        self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
         Pending := false;
         break;
       end;
@@ -1386,7 +1415,7 @@ var
         for m := 0 to pred(sPics.count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        Log(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
         if (zip(
           { } sPics,
           { } Ablage_PFAD +
@@ -1398,7 +1427,7 @@ var
           { } infozip_Level + '=' + '0') <> sPics.count) then
         begin
           // Problem anzeigen
-          self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+          Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
           Pending := false;
           break;
         end;
@@ -1484,7 +1513,7 @@ var
       mIni.Free;
 
       // Archivieren
-      Log(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1496,7 +1525,7 @@ var
         { } infozip_Level + '=' + '0') <> sPics.count) then
       begin
         // Problem anzeigen
-        self.Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
         break;
       end;
 
@@ -1510,6 +1539,35 @@ var
         FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
+  end;
+
+  procedure serviceZIP;
+  var
+    sZips: TStringList;
+    m: integer;
+  begin
+    sZips := TStringList.Create;
+    dir(Ablage_PFAD + '*.zip', sZips, false);
+    for m := 0 to pred(sZips.count) do
+    begin
+      if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
+      begin
+        CheckCreateDir(BackupDir + Ablage_NAME);
+        if FileMove(Ablage_PFAD + sZips[m], BackupDir + Ablage_NAME + '\' + sZips[m]) then
+        begin
+          inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
+          AblageLog(Ablage_PFAD + sZips[m], BackupDir);
+        end
+        else
+        begin
+          Log(cERRORText +
+            { } ' FileMove("' +
+            { } Ablage_PFAD + sZips[m] + '","' +
+            { } BackupDir + Ablage_NAME + '\' + sZips[m] + '")');
+        end;
+      end;
+    end;
+    sZips.Free;
   end;
 
 begin
@@ -1531,7 +1589,6 @@ begin
   FileAlive(AblageLogFname);
 
   // prepare
-  sZips := TStringList.Create;
   sPics := TStringList.Create;
   sFotos := TStringList.Create;
 
@@ -1576,58 +1633,48 @@ begin
 
     if (Ablage_PFAD = '') then
     begin
-      self.Log(cERRORText + ' Bei Ablage "' + Ablage_NAME + '"  ist kein Pfad definiert');
-      self.Log(cFotoService_AbortTag);
-      break;
+      Log(cERRORText + ' Bei Ablage "' + Ablage_NAME + '"  ist kein Pfad definiert');
+      continue;
     end;
 
     if not(DirExists(Ablage_PFAD)) then
     begin
-      self.Log(cERRORText + ' Zu Ablage "' + Ablage_NAME + '"  existiert "' + Ablage_PFAD + '" nicht');
-      self.Log(cFotoService_AbortTag);
-      break;
+      Log(cERRORText + ' Zu Ablage "' + Ablage_NAME + '"  existiert "' + Ablage_PFAD + '" nicht');
+      continue;
     end;
 
-    repeat
+    // ganz alte Zips ablegen
+    try
+      serviceZIP;
+    except
+      on e: Exception do
+        Log(cERRORText + ' :serviceZIP('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+    end;
 
-      // ganz alte Zips ablegen
-      dir(Ablage_PFAD + '*.zip', sZips, false, true);
-      for m := 0 to pred(sZips.count) do
-      begin
-        if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
-        begin
-          CheckCreateDir(BackupDir + Ablage_NAME);
-          if FileMove(Ablage_PFAD + sZips[m], BackupDir + Ablage_NAME + '\' + sZips[m]) then
-          begin
-            inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
-            Log(Ablage_PFAD + sZips[m], BackupDir);
-          end
-          else
-          begin
-            self.Log(cERRORText +
-              { } ' FileMove("' +
-              { } Ablage_PFAD + sZips[m] + '","' +
-              { } BackupDir + Ablage_NAME + '\' + sZips[m] + '")');
-          end;
-        end;
-      end;
-
-      // jpgs von gestern zippen
+    // jpgs von gestern zippen
+    try
       serviceJPG;
+    except
+      on e: Exception do
+        Log(cERRORText + ' :serviceJPG('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+    end;
 
-      // htmls von gestern zippen
+    // htmls von gestern zippen
+    try
       serviceHTML;
-
-    until true;
+    except
+      on e: Exception do
+        Log(cERRORText + ' :serviceHTML('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+    end;
 
   end;
 
   // unprepare
-  sZips.Free;
   sPics.Free;
   sFotos.Free;
   WARTEND.Free;
-  Log('ENDE', '*');
+  AblageLog('ENDE', '*');
+
 end;
 
 procedure TFotoExec.workStatus;
