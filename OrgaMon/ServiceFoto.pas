@@ -140,6 +140,8 @@ type
     Button17: TButton;
     Label18: TLabel;
     Button29: TButton;
+    Button6: TButton;
+    Button30: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -178,6 +180,8 @@ type
     procedure FormActivate(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button29Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Button30Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -529,6 +533,11 @@ begin
   end;
 end;
 
+procedure TFormServiceFoto.Button30Click(Sender: TObject);
+begin
+  MyProgramPath := Edit15.Text;
+end;
+
 procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
   procedure doWork(n: integer);
@@ -781,7 +790,7 @@ var
   sParameter: TStringList;
 begin
   sParameter := TStringList.Create;
-//  sParameter.add('ALL=' + cINI_Deactivate);
+  // sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workWartend(sParameter);
   sParameter.Free;
 end;
@@ -791,9 +800,15 @@ var
   sParameter: TStringList;
 begin
   sParameter := TStringList.Create;
-//  sParameter.add('ALL=' + cINI_Deactivate);
+  // sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workEingang(sParameter);
   sParameter.Free;
+end;
+
+procedure TFormServiceFoto.Button6Click(Sender: TObject);
+begin
+  MyFotoExec.ensureGlobals;
+  MyFotoExec.JonDaExec.doBackup;
 end;
 
 procedure TFormServiceFoto.Button7Click(Sender: TObject);
@@ -911,7 +926,7 @@ var
 begin
   sKommandos := TStringList.Create;
 
-  KommandoFName := MyFotoExec.MyDataBAsePath + cGeraeteKommandos + GeraeteNo + '.ini';
+  KommandoFName := MyFotoExec.MyDataBasePath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
     sKommandos.LoadFromFile(KommandoFName);
 
