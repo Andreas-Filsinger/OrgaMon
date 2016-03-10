@@ -25,7 +25,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -4300,7 +4300,6 @@ object FormBuchhalter: TFormBuchhalter
       ' BUCH'
       'ON'
       ' (BUCH.NAME='#39'1260'#39') and'
-      ' (BUCH.GEBUCHT is null) and'
       ' (AR.BELEG_R=BUCH.BELEG_R) and'
       ' (AR.TEILLIEFERUNG=BUCH.TEILLIEFERUNG)'
       'where'
@@ -4365,7 +4364,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 216
     Top = 344
     Bitmap = {
-      494C010104000900000210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900080210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

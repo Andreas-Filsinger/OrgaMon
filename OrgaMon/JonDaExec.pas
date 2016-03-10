@@ -46,6 +46,19 @@ const
   // Die Eingabe.nnn.txt wird automatisch dementsprechend gekürzt
   cMaxAge_Foto = 32; // [Tage] Solange bleiben Eingaben gesichert
 
+  // Foto - Umbenennen:
+  // ==================
+  // Innerhalb dieses Zeitraumes müssen Informationen nachgeliefert
+  // werden, um "-Neu" Umbenennungen abzuschliessen.
+  // Die cFotoUmbenennungAusstehend wird automatisch dementsprechend gekürzt
+  cMaxAge_Umbenennen = 10; // [Tage] Solange bleiben die Ausstehenden in der Liste
+
+  // Verzeichnisse ./dat/nnnnn:
+  // ==========================
+  // Nach dieser Zeit werden die Verzeichnise und weitere Rand-Daten
+  // in die Datensicherung verschoben
+  cMaxAge_Produktive_Sichtbarkeit = 50;
+
   // Monteur-Individuelle Optionen
   cServerOption_ZeitPruefung = 'ZEIT_PRÜFUNG';
   cServerOption_JonDaOptionen = 'OPTIONEN';
@@ -104,6 +117,7 @@ type
   public
     // ehemals ./Statistik Pfad
     pAppTextPath: string;
+    BackupDir: string;
 
     //
     Option_Console: boolean;
@@ -225,7 +239,6 @@ type
     class function FormatZaehlerNummerNeu(const s: string): string;
     class function clearTempTag(const s: string): string;
     class function createTempTag(RID: integer): string;
-
     class function active(a: boolean): string;
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
@@ -272,6 +285,11 @@ type
     // aus dem FTP-Bereich diverse
     // Sync-Dateien holen
     procedure doSync;
+
+    //
+    //
+    procedure doBackup;
+
 
   end;
 
@@ -3488,13 +3506,35 @@ begin
   maintainGERAETE;
 
   //
-  // imp pend: Transaktions-Datenverzeichnisse wegsichern danach löschen
-  // imp pend: doAbschluss Automatisieren (per XMLRPC, per CRON, per Neustart?)
-  //
-  // imp pend: ev. Transaktionsverzeichnis erstellen, das führt aber auch
-  // zur Veränderung des Clients. Ev. kann man da was machen
-  // mit rewrite ...
+  // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
 
+end;
+
+procedure TJonDaExec.doBackup;
+begin
+ if OldInfrastructure then
+  exit;
+
+ if BackupDir='' then
+  exit;
+
+ if not(DirExists(BackupDir)) then
+  exit;
+
+
+             cMaxAge_Produktive_Sichtbarkeit
+  // Transaktions-Datenverzeichnisse wegsichern danach löschen
+
+  {
+  imp pend
+
+  nach 40 TAgen
+
+  move ./dat/nnnnn/ -> Backup/dat/nnnnn/
+  move web/nnnnn.txt -> Backup/dat/nnnnn/
+  move web/nnnnn.auftrag.utf-8.txt -> Backup/dat/nnnnn/
+  delete OrgaMOn/nnnnn.DAT
+  }
 end;
 
 procedure TJonDaExec.doStat(iFTP: TIdFTP);

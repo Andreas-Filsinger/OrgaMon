@@ -272,9 +272,7 @@ begin
           if (SecondsGet < (1 * 3600)) then
             // nur machen, wenn nicht in Arbeit oder bereits fertig
             if not(FileExists(MyFotoExec.AblageLogFname)) then
-              // Zips verschieben, Fotos zippen
               MyFotoExec.workAblage;
-
         end;
 
         // Jedes Mal

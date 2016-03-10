@@ -212,8 +212,7 @@ var
   function setBetrag(BUCH_R: integer; Betrag: double): double;
   begin
     result := 0;
-    e_x_sql('update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) + ' where RID=' +
-      inttostr(BUCH_R));
+    e_x_sql('update BUCH set BETRAG=' + FloatToStrISO(Betrag, 2) + ' where RID=' + inttostr(BUCH_R));
     result := Betrag;
   end;
 
@@ -228,8 +227,8 @@ var
     end;
   end;
 
-  function SteuerBuchung(pSteuer: string; BruttoBetrag: double; mDatum: TAnfixDate;
-    NETTO_R: integer): double; // [gebuchte Steuer]
+  function SteuerBuchung(pSteuer: string; BruttoBetrag: double; mDatum: TAnfixDate; NETTO_R: integer): double;
+  // [gebuchte Steuer]
   var
     pSatz: integer;
     pBetrag: double;
@@ -313,7 +312,7 @@ var
   GebuchterBetrag: double;
   bDatum: TAnfixDate;
   Quelle: string;
-  Ziel: string;
+  GEGENKONTO: string;
   Skript: TStringList; // Skript des Master-Buchungssatz
   Regel: TStringList; // Skript des Deckblattes des Zielkontos
   _Betrag: string;
@@ -338,19 +337,18 @@ var
         if (StempelName = '') then
           StempelName := Regel.Values['STEMPEL'];
         if (StempelName = '') then
-          raise Exception.create('Ich kann kein STEMPEL= im Deckblatt "' + Ziel + '" finden');
+          raise Exception.create('Ich kann kein STEMPEL= im Deckblatt "' + GEGENKONTO + '" finden');
         if (StempelName = cIni_DeActivate) then
           exit;
         STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX=''' + StempelName + '''');
         if (STEMPEL_R < cRID_FirstValid) then
           raise Exception.create('Der Stempel ' + StempelName + ' existiert nicht');
-        e_x_sql('update BUCH set STEMPEL_R=' + inttostr(STEMPEL_R) + ' where RID=' +
-          inttostr(BUCH_R));
+        e_x_sql('update BUCH set STEMPEL_R=' + inttostr(STEMPEL_R) + ' where RID=' + inttostr(BUCH_R));
       end;
 
       // neuen Wert eintragen Stempel erhöhen
-      e_x_sql('update BUCH set STEMPEL_DOKUMENT=' + inttostr(e_w_Stempel(STEMPEL_R)) + ' where RID='
-        + inttostr(BUCH_R));
+      e_x_sql('update BUCH set STEMPEL_DOKUMENT=' + inttostr(e_w_Stempel(STEMPEL_R)) + ' where RID=' +
+        inttostr(BUCH_R));
 
       // lese die neuen Werte auch in den cINITAL ein!
       cINITIAL.Refresh;
@@ -378,8 +376,7 @@ var
         { } ' (GEGENKONTO=''' + cKonto_Erloese + ''')');
       if (AUSGLEICH_ALT_R = BUCH_R) then
         raise Exception.create('Löschung der alten ' + cKonto_Anzahlungen +
-          '-Ausgleichsbuchung würde zur Löschung des initialen Buchungssatzes (RID=' +
-          inttostr(BUCH_R) + ') führen');
+          '-Ausgleichsbuchung würde zur Löschung des initialen Buchungssatzes (RID=' + inttostr(BUCH_R) + ') führen');
       if (AUSGLEICH_ALT_R >= cRID_FirstValid) then
         b_w_DeleteBuch(AUSGLEICH_ALT_R);
 
@@ -480,8 +477,7 @@ var
         Log(cWARNINGText, format('Betrag (%m) aus VERSAND ist abweichend', [VersandGesamtSumme]));
 
       // Übergeordnete Einstellung ermitteln
-      EinzelpreisNetto :=
-        (e_r_sqls('select EINZELPREIS_NETTO from BELEG where RID=' + inttostr(BELEG_R)) = cC_True);
+      EinzelpreisNetto := (e_r_sqls('select EINZELPREIS_NETTO from BELEG where RID=' + inttostr(BELEG_R)) = cC_True);
 
       // Posten laden und über ihr Sortiment iterieren, netto und Satz buchen!
       with cPOSTEN do
@@ -531,8 +527,8 @@ var
                 raise Exception.create('Beim Sortiment "' + FieldByName('BEZEICHNUNG').AsString +
                   '" fehlt die Kontozuordnung');
 
-            e_r_PostenInfo(cPOSTEN, false, EinzelpreisNetto, _Anz, _AnzAuftrag, _AnzGeliefert,
-              _AnzStorniert, _AnzAgent, _Rabatt, _EinzelPreis, _MwStSatz);
+            e_r_PostenInfo(cPOSTEN, false, EinzelpreisNetto, _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent,
+              _Rabatt, _EinzelPreis, _MwStSatz);
             _PreisProPosition := e_c_Rabatt(e_r_PostenPreis(_EinzelPreis, _Anz,
               FieldByName('EINHEIT_R').AsInteger), _Rabatt);
 
@@ -552,8 +548,7 @@ var
 
       // Stimmt eigentlich der Betrag?
       if (abs(MwSt_Satz_Saver.Brutto - BruttoBetrag) >= cGeld_KleinsterBetrag) then
-        raise Exception.create(format('Betrag (%m) aus GELIEFERT ist abweichend',
-          [MwSt_Satz_Saver.Brutto]));
+        raise Exception.create(format('Betrag (%m) aus GELIEFERT ist abweichend', [MwSt_Satz_Saver.Brutto]));
 
       // aufgeteilt auf die Konten
       for n := 0 to pred(MwSt_Konto_Saver.count) do
@@ -584,14 +579,12 @@ var
                 begin
                   if NettoSumme > 0 then
                   begin
-                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme +
-                      cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme + cGeld_KleinsterBetrag;
                     NettoSumme := NettoSumme - cGeld_KleinsterBetrag;
                   end
                   else
                   begin
-                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme -
-                      cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].NettoSumme := MwSt_Konto_Saver.MwSt[n].NettoSumme - cGeld_KleinsterBetrag;
                     NettoSumme := NettoSumme + cGeld_KleinsterBetrag;
                   end;
                 end;
@@ -601,14 +594,12 @@ var
                 begin
                   if MwStSumme > 0 then
                   begin
-                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme +
-                      cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme + cGeld_KleinsterBetrag;
                     MwStSumme := MwStSumme - cGeld_KleinsterBetrag;
                   end
                   else
                   begin
-                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme -
-                      cGeld_KleinsterBetrag;
+                    MwSt_Konto_Saver.MwSt[n].MwStSumme := MwSt_Konto_Saver.MwSt[n].MwStSumme - cGeld_KleinsterBetrag;
                     MwStSumme := MwStSumme + cGeld_KleinsterBetrag;
                   end;
                 end;
@@ -807,8 +798,7 @@ var
         // Restbetrag auf Ausbuchungskonto
         if (pos('BETRAG=', Skript[n]) = 1) then
         begin
-          BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1),
-            cGeld_Zero);
+          BetragUnberuecksichtigt := BruttoBetrag - strtodoubledef(nextp(Skript[n], '=', 1), cGeld_Zero);
           result := result + bucheRest(
             { } BetragUnberuecksichtigt,
             { } nextp(Skript[n], ';', 1));
@@ -841,7 +831,7 @@ var
       insert;
       FieldByName('RID').AsInteger := NETTO_R;
       FieldByName('MASTER_R').AsInteger := BUCH_R;
-      FieldByName('NAME').AsString := Ziel;
+      FieldByName('NAME').AsString := GEGENKONTO;
 
       // Ereignis gesetzt?
       if (Skript.Values['EREIGNIS'] <> '') then
@@ -866,8 +856,7 @@ var
     for n := 0 to pred(Skript.count) do
       if (pos(cKonto_SatzPrefix + '=', Skript[n]) = 1) then
       begin
-        SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1), BruttoBetrag,
-          bDatum, NETTO_R);
+        SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Skript[n], '=', 1), BruttoBetrag, bDatum, NETTO_R);
         SATZfound := true;
       end;
 
@@ -876,8 +865,7 @@ var
     begin
       for n := 0 to pred(Regel.count) do
         if (pos(cKonto_SatzPrefix + '=', Regel[n]) = 1) then
-          SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1), BruttoBetrag,
-            bDatum, NETTO_R);
+          SteuerAnteil := SteuerAnteil + SteuerBuchung(nextp(Regel[n], '=', 1), BruttoBetrag, bDatum, NETTO_R);
     end;
 
     // jetzt noch den fehlenden Netto-Anteil verbuchen!
@@ -916,8 +904,7 @@ var
         RegelOverwrite := split(nextp(sBetragParameter, ';', 2), '|');
 
         // Deckblatt holen
-        Regel := e_r_sqlt('select SKRIPT from BUCH where (NAME=''' + ZielKonto +
-          ''') and (BETRAG is null)');
+        Regel := e_r_sqlt('select SKRIPT from BUCH where (NAME=''' + ZielKonto + ''') and (BETRAG is null)');
         RegelOverwrite.AddStrings(Regel);
         Regel.Free;
 
@@ -958,8 +945,7 @@ var
         RegelOverwrite.Free;
 
         if not(SATZfound) then
-          raise Exception.create(format(cKonto_SatzPrefix + '= im Deckblatt "%s" nicht gefunden',
-            [ZielKonto]));
+          raise Exception.create(format(cKonto_SatzPrefix + '= im Deckblatt "%s" nicht gefunden', [ZielKonto]));
 
         setBetrag(NETTO_R, TeilBetragBrutto - TeilSteuerAnteil);
 
@@ -1052,10 +1038,10 @@ begin
         // Parameter füllen!
         BruttoBetrag := FieldByName('BETRAG').AsFloat;
         Quelle := FieldByName('NAME').AsString;
-        Ziel := FieldByName('GEGENKONTO').AsString;
+        GEGENKONTO := FieldByName('GEGENKONTO').AsString;
 
       end;
-      if (Ziel = '') then
+      if (GEGENKONTO = '') then
         break;
 
       // Vorlagensatz laden, fehlende Parameter ersetzen
@@ -1063,10 +1049,10 @@ begin
       begin
         sql.add('select SKRIPT from BUCH where');
         sql.add(' (BETRAG is null) and');
-        sql.add(' (NAME=''' + Ziel + ''')');
+        sql.add(' (NAME=''' + GEGENKONTO + ''')');
         ApiFirst;
         if eof then
-          raise Exception.create('Deckblatt "''' + Ziel + '''" existiert nicht');
+          raise Exception.create('Deckblatt "''' + GEGENKONTO + '''" existiert nicht');
         e_r_sqlt(FieldByName('SKRIPT'), Regel);
       end;
 
@@ -1104,12 +1090,12 @@ begin
     // Das ganze Geld muss verbraucht sein!
     if isSomeMoney(GebuchterBetrag) then
       if isSomeMoney(GebuchterBetrag - BruttoBetrag) then
-        raise Exception.create
-          (format('(RID=%d) Summe der gebuchten Beträge (%m) ist abweichend vom Gesamtbetrag (%m)',
+        raise Exception.create(format('(RID=%d) Summe der gebuchten Beträge (%m) ist abweichend vom Gesamtbetrag (%m)',
           [BUCH_R, GebuchterBetrag, BruttoBetrag]));
 
     // Erfolg verbuchen!
-    e_x_sql('update BUCH set GEBUCHT=CURRENT_TIMESTAMP where RID=' + inttostr(BUCH_R));
+    if (GEGENKONTO <> '') then
+      e_x_sql('update BUCH set GEBUCHT=CURRENT_TIMESTAMP where RID=' + inttostr(BUCH_R));
 
   except
     on E: Exception do
@@ -1118,6 +1104,7 @@ begin
     end;
   end;
 
+  // Fehler eintragen?
   if (ErrorCount > 0) then
     e_x_sql('update BUCH set GEBUCHT=null where RID=' + inttostr(BUCH_R));
 
@@ -1303,11 +1290,9 @@ begin
           if not(eof) then
           begin
             edit;
-            FieldByName('DAVON_BEZAHLT').AsFloat :=
-              cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
+            FieldByName('DAVON_BEZAHLT').AsFloat := cPreisRundung(FieldByName('DAVON_BEZAHLT').AsFloat + Betrag);
 
-            if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat - FieldByName('DAVON_BEZAHLT')
-              .AsFloat) then
+            if isZeroMoney(FieldByName('RECHNUNGS_BETRAG').AsFloat - FieldByName('DAVON_BEZAHLT').AsFloat) then
             begin
               // jetzt als vollständig bezahlt markieren.
               FieldByName('MAHNUNG1').clear;
@@ -1488,8 +1473,7 @@ begin
   if (sCSV.count > 1) then
     sVOLUMEN.insertFromStrings(sCSV)
   else
-    sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8)
-      + '.csv');
+    sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.csv');
   MandatsSumme := 0.0;
 
   with sVOLUMEN do
@@ -1803,9 +1787,8 @@ begin
           FieldByName('ZAHLUNGTYP_R').AsInteger := ZAHLUNGTYP_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TEILLIEFERUNG;
         FieldByName('BETRAG').AsFloat := RechnungsBetrag;
-        FieldByName('RECHNUNG').AsInteger :=
-          e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and'
-          + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+        FieldByName('RECHNUNG').AsInteger := e_r_sql('select RECHNUNG from VERSAND where' + ' (BELEG_R=' +
+          inttostr(BELEG_R) + ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
         if (sPARAMETER.count > 0) then
           FieldByName('TEXT').Assign(sPARAMETER);
         post;
@@ -1821,8 +1804,7 @@ begin
         sql.add('from BELEG where RID=' + inttostr(BELEG_R) + ' for update');
         open;
         edit;
-        FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG').AsFloat +
-          RechnungsBetrag;
+        FieldByName('RECHNUNGS_BETRAG').AsFloat := FieldByName('RECHNUNGS_BETRAG').AsFloat + RechnungsBetrag;
         FieldByName('TEILLIEFERUNG').AsInteger := succ(TEILLIEFERUNG);
         FieldByName('RECHNUNG').AsDateTime := RechnungsDatum;
         FieldByName('FAELLIG').AsDateTime := FAELLIG;
@@ -2014,10 +1996,8 @@ begin
         if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
           if (UeberweisungsText.count >= 3) then
           begin
-            ABSCHLUSSper := date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3],
-              'PER', 1));
-            Abschluss := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)],
-              cGeld_KeinElement);
+            ABSCHLUSSper := date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
+            Abschluss := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_KeinElement);
 
             if DateOK(ABSCHLUSSper) and (Abschluss <> cGeld_KeinElement) then
             begin
@@ -2144,8 +2124,7 @@ end;
 function b_r_PersonSaldo(PERSON_R: integer): double;
 begin
   //
-  result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=' +
-    inttostr(PERSON_R));
+  result := e_r_sqld('select sum(BETRAG) from AUSGANGSRECHNUNG where KUNDE_R=' + inttostr(PERSON_R));
   // Zukunft
   (*
     e_r_sqld(

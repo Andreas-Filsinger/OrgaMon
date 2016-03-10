@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet6
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -70,38 +70,22 @@ object FormServiceFoto: TFormServiceFoto
         OnClick = Button1Click
       end
       object Button4: TButton
-        Left = 138
-        Top = 439
+        Left = 523
+        Top = 414
         Width = 129
         Height = 25
-        Caption = 'Work one'
+        Caption = 'workWartend'
         TabOrder = 2
         OnClick = Button4Click
       end
       object Button5: TButton
-        Left = 3
-        Top = 439
+        Left = 523
+        Top = 383
         Width = 129
         Height = 25
-        Caption = 'Work all'
+        Caption = 'workEingang'
         TabOrder = 3
         OnClick = Button5Click
-      end
-      object CheckBox1: TCheckBox
-        Left = 3
-        Top = 383
-        Width = 249
-        Height = 17
-        Caption = 'Bilder "Eingang" verarbeiten'
-        TabOrder = 4
-      end
-      object CheckBox2: TCheckBox
-        Left = 3
-        Top = 406
-        Width = 249
-        Height = 17
-        Caption = 'Bilder "Wartende" verarbeiten'
-        TabOrder = 5
       end
       object Button10: TButton
         Left = 216
@@ -109,7 +93,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 153
         Height = 25
         Caption = 'ensureGlobals'
-        TabOrder = 6
+        TabOrder = 4
         OnClick = Button10Click
       end
       object Button11: TButton
@@ -118,7 +102,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 162
         Height = 25
         Caption = 'Starte sofort!'
-        TabOrder = 7
+        TabOrder = 5
         OnClick = Button11Click
       end
       object Button13: TButton
@@ -127,7 +111,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 75
         Height = 25
         Caption = 'GEN_ID'
-        TabOrder = 8
+        TabOrder = 6
         OnClick = Button13Click
       end
       object Edit7: TEdit
@@ -135,7 +119,7 @@ object FormServiceFoto: TFormServiceFoto
         Top = 404
         Width = 121
         Height = 21
-        TabOrder = 9
+        TabOrder = 7
       end
       object Button16: TButton
         Left = 273
@@ -143,7 +127,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 75
         Height = 25
         Caption = 'Sync'
-        TabOrder = 10
+        TabOrder = 8
         OnClick = Button16Click
       end
       object Edit14: TEdit
@@ -151,7 +135,7 @@ object FormServiceFoto: TFormServiceFoto
         Top = 9
         Width = 145
         Height = 21
-        TabOrder = 11
+        TabOrder = 9
         Text = 'gwe'
       end
       object Edit15: TEdit
@@ -159,7 +143,7 @@ object FormServiceFoto: TFormServiceFoto
         Top = 36
         Width = 145
         Height = 21
-        TabOrder = 12
+        TabOrder = 10
         Text = 'W:\gwe-services\dat\'
       end
       object Button17: TButton
@@ -168,7 +152,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 153
         Height = 25
         Caption = 'read cOrgaMon.ini'
-        TabOrder = 13
+        TabOrder = 11
         OnClick = Button17Click
       end
       object Button29: TButton
@@ -177,7 +161,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 121
         Height = 25
         Caption = '5 Min rum!'
-        TabOrder = 14
+        TabOrder = 12
         OnClick = Button29Click
       end
     end
@@ -540,16 +524,6 @@ object FormServiceFoto: TFormServiceFoto
         ItemHeight = 13
         TabOrder = 0
       end
-      object Button6: TButton
-        Left = 432
-        Top = 453
-        Width = 281
-        Height = 25
-        Anchors = [akRight, akBottom]
-        Caption = 'Wartende mit Hilfe neuer Infos umbenennen'
-        TabOrder = 1
-        OnClick = Button6Click
-      end
       object Button9: TButton
         Left = 24
         Top = 453
@@ -557,7 +531,7 @@ object FormServiceFoto: TFormServiceFoto
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'markierten befreien'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = Button9Click
       end
       object CheckBox3: TCheckBox
@@ -568,7 +542,7 @@ object FormServiceFoto: TFormServiceFoto
         Alignment = taLeftJustify
         Anchors = [akRight, akBottom]
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = CheckBox3Click
       end
     end
