@@ -191,12 +191,12 @@ type
 procedure TownFotoExec.Log(s: string);
 begin
   writeln(s);
-  if (pos('ERROR', s) > 0) then
-    AppendStringsToFile(
-      { } sTimeStamp + ';' +
-      { } inttostr(AUFTRAG_R) + ';' +
-      { } s,
-      { } DiagnosePath + 'FotoService.log.txt');
+  // if (pos('ERROR', s) > 0) then
+  AppendStringsToFile(
+    { } sTimeStamp + ';' +
+    { } inttostr(AUFTRAG_R) + ';' +
+    { } s,
+    { } DiagnosePath + 'FotoService.log.txt');
   if (pos(cFotoService_AbortTag, s) = 1) then
     halt(1);
 end;
@@ -212,42 +212,47 @@ var
 begin
 
   MyFotoExec := TownFotoExec.Create;
-  MyFotoExec.readIni;
 
-  // DebugMode?
-  if IsParam('-al') then
-  begin
-    writeln('DebugMode @' + DiagnosePath);
-    DebugMode := true;
-    DebugLogPath := DiagnosePath;
-  end
-  else
-  begin
-    SolidFTP_SingleStepLog := false;
-  end;
-
-  // Server direkt durchstarten?
-
-  TimerWartend := 0;
-  TimerInit := 0;
-
-  // sofortiges Starten sicherstellen? (direct start)
-  doDirectStart := IsParam('+ds');
-  if doDirectStart then
-    TimerInit := cKikstart_delay * 60 * 1000;
-
-  while true do
+  with MyFotoExec do
   begin
 
-    try
+    readIni;
+
+    // Log startup
+    Log(cINFOText + ' FotoService Rev. ' + RevToStr(version));
+
+    // DebugMode?
+    if IsParam('-al') then
+    begin
+      Log('DebugMode @' + DiagnosePath);
+      DebugMode := true;
+      DebugLogPath := DiagnosePath;
+    end
+    else
+    begin
+      SolidFTP_SingleStepLog := false;
+    end;
+
+    // Server direkt durchstarten?
+    TimerWartend := 0;
+    TimerInit := 0;
+
+    // sofortiges Starten sicherstellen? (direct start)
+    doDirectStart := IsParam('+ds');
+    if doDirectStart then
+      TimerInit := cKikstart_delay * 60 * 1000;
+
+    while true do
+    begin
+
       if (TimerInit < cKikstart_delay * 60 * 1000) then
       begin
         if (TimerInit = 0) then
-          MyFotoExec.Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
+          Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
         inc(TimerInit, Timer_Intervall);
         if (TimerInit >= cKikstart_delay * 60 * 1000) then
         begin
-          MyFotoExec.Log('Erwacht ... ');
+          Log('Erwacht ... ');
         end;
       end
       else
@@ -259,36 +264,65 @@ begin
           TimerWartend := 0;
           doDirectStart := false;
 
-          // Ab und zu die neuen Daten beachten
-          MyFotoExec.releaseGlobals;
+          try
+            // Ab und zu die neuen Daten beachten
+            releaseGlobals;
+          except
+            on E: Exception do
+              Log(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
+          end;
 
-          // Wartende verarbeiten
-          MyFotoExec.workWartend;
+          try
+            // Wartende verarbeiten
+            workWartend;
+          except
+            on E: Exception do
+              Log(cERRORText + ' 279:' + E.ClassName + ': ' + E.Message);
+          end;
 
-          // Status Seite neu bearbeiten
-          MyFotoExec.workStatus;
+          try
+            // Status Seite neu bearbeiten
+            workStatus;
+          except
+            on E: Exception do
+              Log(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
+          end;
 
-          // Zwischen 00:00 und ]01:00
+          // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prüfen!)
           if (SecondsGet < (1 * 3600)) then
             // nur machen, wenn nicht in Arbeit oder bereits fertig
-            if not(FileExists(MyFotoExec.AblageLogFname)) then
+            if not(FileExists(AblageLogFname)) then
             begin
-              MyFotoExec.workAblage;
-              MyFotoExec.JonDaExec.doBackup;
+
+              try
+                workAblage;
+              except
+                on E: Exception do
+                  Log(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
+              end;
+
+              try
+                JonDaExec.doBackup;
+              except
+                on E: Exception do
+                  Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
+              end;
             end;
         end;
 
-        // Jedes Mal
-        MyFotoExec.workEingang;
+        try
+          // Jedes Mal
+          workEingang;
+        except
+          on E: Exception do
+            Log(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
+        end;
+
       end;
 
-    except
-      on E: Exception do
-        MyFotoExec.Log(cERRORText + ' :' + E.ClassName + ': ' + E.Message);
+      sleep(Timer_Intervall);
+      inc(TimerWartend, Timer_Intervall);
     end;
-    inc(TimerWartend, Timer_Intervall);
-
-    sleep(Timer_Intervall);
   end;
 end;
 

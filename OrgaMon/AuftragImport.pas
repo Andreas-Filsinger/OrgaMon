@@ -1907,13 +1907,13 @@ begin
                     FreeAndNil(SpaltenWerte_Sekundaer);
 
                 end;
-              56:
+              56:   // C_SAP_INFO_#_#
                 begin
                   // ''
                   _InternMehrInfo.add
                     (cutblank(ParameterItems[0] + '=' + ParameterItems[1]));
                 end;
-              57:
+              57: // Transaktion
                 begin
                   // die Angegebene Transaktion ausführen
                   if (Transaktionen.indexof(ParameterItems[0]) = -1) then

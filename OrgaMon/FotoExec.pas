@@ -44,7 +44,7 @@ uses
 
   // Tools
   anfix32, WordIndex, binlager32,
-  Foto, InfoZip, SolidFTP,
+  Foto, InfoZip,
   CareTakerClient,
 
   // OrgaMon
@@ -112,6 +112,7 @@ type
 
     // Verzeichnisse
     function MyDataBasePath: string;
+    function MySyncPath: string;
 
     // Dateinamen
     function AblageLogFname: string;
@@ -130,6 +131,7 @@ type
     procedure workWartend(sParameter: TStringList = nil);
     procedure workAblage(sParameter: TStringList = nil);
     procedure workStatus;
+    procedure workSync;
 
     // muss IMMER überladen werden
     procedure Log(s: string); virtual; abstract;
@@ -141,6 +143,9 @@ type
   end;
 
 implementation
+
+uses
+  IdFTP, SolidFTP;
 
 const
   _GeraeteNo: string = '';
@@ -224,7 +229,7 @@ begin
     JonDaExec.callback_ReglerNummerNeu := ReglerNummerNeu;
 
     // die aktuellen Daten aus dem FTP-Bereich jetzt abholen
-    JonDaExec.doSync;
+    workSync;
 
     tBAUSTELLE := tsTable.Create;
     tBAUSTELLE.insertfromFile(MyDataBasePath + cServiceFoto_BaustelleFName);
@@ -288,6 +293,7 @@ begin
         { } DiagnosePath + cFotoTransaktionenFName);
       LastLogWasTimeStamp := true;
     end;
+
   end;
 end;
 
@@ -341,7 +347,8 @@ begin
       FreeAndNil(tABLAGE);
       FreeAndNil(JonDaExec);
     except
-      ;
+      on E: Exception do
+        Log(cERRORText + ' 345:' + E.ClassName + ': ' + E.Message);
     end;
   end;
 end;
@@ -349,6 +356,11 @@ end;
 function TFotoExec.MyDataBasePath: string;
 begin
   result := pAppServicePath + cDBPath;
+end;
+
+function TFotoExec.MySyncPath: string;
+begin
+  result := pAppServicePath + cSyncPath;
 end;
 
 function TFotoExec.GEN_ID: integer;
@@ -576,9 +588,9 @@ begin
       until true;
 
     except
-      on e: Exception do
+      on E: Exception do
       begin
-        Log(cERRORText + ' ' + sFiles[n] + ': ' + e.Message);
+        Log(cERRORText + ' ' + sFiles[n] + ': ' + E.Message);
       end;
     end;
     Image.Free;
@@ -664,8 +676,8 @@ begin
         try
           reset(fOrgaMonAuftrag);
         except
-          on e: Exception do
-            Log(cERRORText + ' 614: ' + sFiles[m] + ':' + e.Message);
+          on E: Exception do
+            Log(cERRORText + ' 614: ' + sFiles[m] + ':' + E.Message);
         end;
 
         for f := 1 to FileSize(fOrgaMonAuftrag) do
@@ -1647,24 +1659,24 @@ begin
     try
       serviceZIP;
     except
-      on e: Exception do
-        Log(cERRORText + ' :serviceZIP('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+      on E: Exception do
+        Log(cERRORText + ' :serviceZIP(' + Ablage_NAME + '): ' + E.ClassName + ': ' + E.Message);
     end;
 
     // jpgs von gestern zippen
     try
       serviceJPG;
     except
-      on e: Exception do
-        Log(cERRORText + ' :serviceJPG('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+      on E: Exception do
+        Log(cERRORText + ' :serviceJPG(' + Ablage_NAME + '): ' + E.ClassName + ': ' + E.Message);
     end;
 
     // htmls von gestern zippen
     try
       serviceHTML;
     except
-      on e: Exception do
-        Log(cERRORText + ' :serviceHTML('+Ablage_NAME+'): ' + e.ClassName + ': ' + e.Message);
+      on E: Exception do
+        Log(cERRORText + ' :serviceHTML(' + Ablage_NAME + '): ' + E.ClassName + ': ' + E.Message);
     end;
 
   end;
@@ -1732,6 +1744,97 @@ begin
   sDir.Free;
   sMonteure.Free;
   sTabelle.Free;
+end;
+
+procedure TFotoExec.workSync;
+var
+  iFTP: TIdFTP;
+  sDir: TStringList;
+  n: integer;
+  BaustellePath: string;
+begin
+
+  // Sync Down
+  iFTP := TIdFTP.Create(nil);
+  SolidInit(iFTP);
+  with iFTP do
+  begin
+    Host := iJonDa_FTPHost;
+    UserName := iJonDa_FTPUserName;
+    Password := iJonDa_FTPPassword;
+  end;
+
+  try
+    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, '', MySyncPath, true);
+    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MySyncPath, true);
+    iFTP.DisConnect;
+  except
+    on E: Exception do
+      Log(cERRORText + ' 1773:' + E.ClassName + ': ' + E.Message);
+  end;
+  iFTP.Free;
+
+  try
+    // baustelle.csv -> sync
+    if FileExists(MySyncPath + cServiceFoto_BaustelleFName) then
+    begin
+
+      // prepare
+      TJonDaExec.validateBaustelleCSV(MySyncPath + cServiceFoto_BaustelleFName);
+
+      // compare + copy
+      if not(FileCompare(
+        { } MySyncPath + cServiceFoto_BaustelleFName,
+        { } MyDataBasePath + cServiceFoto_BaustelleFName)) then
+      begin
+        FileVersionedCopy(
+          { } MySyncPath + cServiceFoto_BaustelleFName,
+          { } MyDataBasePath + cServiceFoto_BaustelleFName);
+        Log(cINFOText + ' neue ' + cServiceFoto_BaustelleFName);
+      end;
+
+      // delete
+      FileDelete(MySyncPath + cServiceFoto_BaustelleFName);
+    end;
+  except
+    on E: Exception do
+      Log(cERRORText + ' 1801:' + E.ClassName + ': ' + E.Message);
+  end;
+
+  try
+    // FotoBenennung-*.csv ->  cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
+    //
+    sDir := TStringList.Create;
+    dir(MySyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
+    for n := 0 to pred(sDir.count) do
+    begin
+
+      // Lese den Pfad aus dem Dateinamen
+      BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
+
+      // JonDa - Limitation!
+      BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
+
+      CheckCreateDir(MyDataBasePath + BaustellePath);
+
+      if not(FileCompare(
+        { } MySyncPath + sDir[n],
+        { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv')) then
+      begin
+        FileVersionedCopy(
+          { } MySyncPath + sDir[n],
+          { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv');
+        Log(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + '.csv');
+      end;
+
+      FileDelete(MySyncPath + sDir[n]);
+    end;
+    sDir.Free;
+  except
+    on E: Exception do
+      Log(cERRORText + ' 1835:' + E.ClassName + ': ' + E.Message);
+  end;
+
 end;
 
 end.

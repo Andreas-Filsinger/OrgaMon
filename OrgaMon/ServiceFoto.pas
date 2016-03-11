@@ -695,7 +695,7 @@ end;
 procedure TFormServiceFoto.Button16Click(Sender: TObject);
 begin
   MyFotoExec.ensureGlobals;
-  MyFotoExec.JonDaExec.doSync;
+  MyFotoExec.workSync;
 end;
 
 procedure TFormServiceFoto.Button17Click(Sender: TObject);

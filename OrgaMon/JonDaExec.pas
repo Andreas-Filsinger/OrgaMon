@@ -241,6 +241,7 @@ type
     class function clearTempTag(const s: string): string;
     class function createTempTag(RID: integer): string;
     class function active(a: boolean): string;
+    class procedure validateBaustelleCSV(Fname: string);
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
     class function toBild(const mderec: TMdeRec): string;
@@ -283,9 +284,6 @@ type
     // * SENDEN.CSV von altem Müll befreien
     procedure doAbschluss;
 
-    // aus dem FTP-Bereich diverse
-    // Sync-Dateien holen
-    procedure doSync;
 
     //
     //
@@ -295,7 +293,6 @@ type
 
 function enCrypt_Hex(s: string): string;
 function deCrypt_Hex(s: string): string;
-procedure validateBaustelleCSV(Fname: string);
 
 implementation
 
@@ -3889,80 +3886,6 @@ begin
   sDir.free;
 end;
 
-procedure TJonDaExec.doSync;
-var
-  iFTP: TIdFTP;
-  sDir: TStringList;
-  n: integer;
-  BaustellePath: string;
-begin
-
-  // Sync Down
-  iFTP := TIdFTP.Create(nil);
-  SolidInit(iFTP);
-  with iFTP do
-  begin
-    Host := iJonDa_FTPHost;
-    UserName := iJonDa_FTPUserName;
-    Password := iJonDa_FTPPassword;
-  end;
-
-  try
-    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, '', MyProgramPath + cSyncPath, true);
-    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MyProgramPath + cSyncPath, true);
-    iFTP.DisConnect;
-  except
-
-  end;
-  iFTP.free;
-
-  // baustelle.csv -> sync
-  if FileExists(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName) then
-  begin
-
-    // prepare
-    validateBaustelleCSV(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName);
-
-    // compare + copy
-    if not(FileCompare(
-      { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
-      { } MyProgramPath + cDBPath + cServiceFoto_BaustelleFName)) then
-      FileVersionedCopy(
-        { } MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName,
-        { } MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
-
-    // delete
-    FileDelete(MyProgramPath + cSyncPath + cServiceFoto_BaustelleFName);
-  end;
-
-  // FotoBenennung-*.csv -> MyProgramPath + cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
-  //
-  sDir := TStringList.Create;
-  dir(MyProgramPath + cSyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
-  for n := 0 to pred(sDir.count) do
-  begin
-
-    // Lese den Pfad aus dem Dateinamen
-    BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
-
-    // JonDa - Limitation!
-    BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
-
-    checkcreatedir(MyProgramPath + cDBPath + BaustellePath);
-
-    if not(FileCompare(
-      { } MyProgramPath + cSyncPath + sDir[n],
-      { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv')) then
-      FileVersionedCopy(
-        { } MyProgramPath + cSyncPath + sDir[n],
-        { } MyProgramPath + cDBPath + BaustellePath + cE_FotoBenennung + '.csv');
-
-    FileDelete(MyProgramPath + cSyncPath + sDir[n]);
-  end;
-  sDir.free;
-
-end;
-
 function TJonDaExec.upMeldungen(iFTP: TIdFTP): TStringList;
 const
   cFixedTAN_FName = '50000.DAT';
@@ -4099,6 +4022,33 @@ begin
 
   result.add('(' + inttostr(Stat_Meldungen) + 'x) ' + 'OK');
 
+end;
+
+class procedure TJonDaExec.validateBaustelleCSV(Fname: string);
+var
+  sBAUSTELLE: TsTable;
+  cColumnIndex_NUMMERN_PREFIX: integer;
+  r: integer;
+  NUMMERN_PREFIX, _NUMMERN_PREFIX: string;
+begin
+  sBAUSTELLE := TsTable.Create;
+  with sBAUSTELLE do
+  begin
+    InsertFromFile(Fname);
+    cColumnIndex_NUMMERN_PREFIX := colof('NUMMERN_PREFIX', true);
+    for r := 1 to RowCount do
+    begin
+      _NUMMERN_PREFIX := readCell(r, cColumnIndex_NUMMERN_PREFIX);
+      NUMMERN_PREFIX := copy(_NUMMERN_PREFIX, 1, 6);
+      if (_NUMMERN_PREFIX <> NUMMERN_PREFIX) then
+        writeCell(
+          { } r, cColumnIndex_NUMMERN_PREFIX,
+          { } NUMMERN_PREFIX);
+    end;
+    if changed then
+      SaveToFile(Fname);
+  end;
+  sBAUSTELLE.free;
 end;
 
 class function TJonDaExec.VormittagsStr(vormittags: boolean): string;
@@ -4741,31 +4691,5 @@ begin
   end;
 end;
 
-procedure validateBaustelleCSV(Fname: string);
-var
-  sBAUSTELLE: TsTable;
-  cColumnIndex_NUMMERN_PREFIX: integer;
-  r: integer;
-  NUMMERN_PREFIX, _NUMMERN_PREFIX: string;
-begin
-  sBAUSTELLE := TsTable.Create;
-  with sBAUSTELLE do
-  begin
-    InsertFromFile(Fname);
-    cColumnIndex_NUMMERN_PREFIX := colof('NUMMERN_PREFIX', true);
-    for r := 1 to RowCount do
-    begin
-      _NUMMERN_PREFIX := readCell(r, cColumnIndex_NUMMERN_PREFIX);
-      NUMMERN_PREFIX := copy(_NUMMERN_PREFIX, 1, 6);
-      if (_NUMMERN_PREFIX <> NUMMERN_PREFIX) then
-        writeCell(
-          { } r, cColumnIndex_NUMMERN_PREFIX,
-          { } NUMMERN_PREFIX);
-    end;
-    if changed then
-      SaveToFile(Fname);
-  end;
-  sBAUSTELLE.free;
-end;
-
 end.
+
