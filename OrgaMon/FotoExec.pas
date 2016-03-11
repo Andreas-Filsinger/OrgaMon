@@ -1284,12 +1284,10 @@ const
 var
   sPics: TStringList;
   sFotos: TStringList;
-  m: integer;
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
 
   MovedToDay: int64;
-  r: integer;
 
   FTP_Benutzer: string;
   mIni: TIniFile;
@@ -1316,7 +1314,7 @@ var
   const
     cMaxZIP_Size = 100 * 1024 * 1024;
   var
-    m: integer;
+    m,r: integer;
     Pending: boolean;
     FotoFSize: int64;
   begin
@@ -1464,7 +1462,7 @@ var
 
   procedure serviceHTML;
   var
-    m: integer;
+    m,r: integer;
   begin
     sPics.Clear;
     repeat
@@ -1581,6 +1579,9 @@ var
     end;
     sZips.Free;
   end;
+
+var
+ r : integer;
 
 begin
 
