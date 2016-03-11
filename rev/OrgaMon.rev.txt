@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.162 (11.03.16) Andreas Filsinger
+
+ Neu: FotoService: Ablage: Verbesserte Fehlerausgabe
+
 Rev 8.161 (10.03.16) Andreas Filsinger
 
  Neu: FotoService: Ablage: Verbesserte Fehlerausgabe

@@ -1536,7 +1536,7 @@ begin
 
   try
     SolidGet(iFTP, '', cServiceFoto_BaustelleFName, '', MyProgramPath + cDBPath);
-    validateBaustelleCSV(MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
+    TJonDaExec.validateBaustelleCSV(MyProgramPath + cDBPath + cServiceFoto_BaustelleFName);
     iFTP.Disconnect;
   except
 
