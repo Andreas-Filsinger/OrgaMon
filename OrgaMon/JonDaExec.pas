@@ -3511,6 +3511,10 @@ end;
 procedure TJonDaExec.doBackup;
 const
   cTAN_BackupPath = 'TAN\';
+{$ifdef fpc}
+  MOVEFILE_WRITE_THROUGH = 8;
+{$endif}
+
 var
   AllTRN: TStringList;
   n: integer;
