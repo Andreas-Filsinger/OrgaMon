@@ -1279,36 +1279,18 @@ procedure TFotoExec.workAblage(sParameter: TStringList = nil);
 
 const
   cFileTimeOutDays = 50 + 10;
-  cPicTimeOutDays = 0;
   // 0 = gestern ist schon zu alt
+  cPicTimeOutDays = 0;
 var
-  sPics: TStringList;
-  sFotos: TStringList;
-  ZIP_OlderThan: TANFiXDate;
-  PIC_OlderThan: TANFiXDate;
-
-  MovedToDay: int64;
-
-  FTP_Benutzer: string;
-  mIni: TIniFile;
-  Col_FTP_Benutzer: integer;
-  Col_ZIPPASSWORD: integer;
-
-  // Parameter
-  FotosSequence: integer;
-  FotosAbzug: boolean;
-
-  //
-  WARTEND: tsTable;
-  BasisDatum: TANFiXDate;
-
-  // Parameter
-  pDatum: string;
-  pEinzeln: string;
-
-  //
+  // Infrastruktur
   Ablage_NAME: string;
   Ablage_PFAD: string;
+  ZIP_OlderThan: TANFiXDate;
+  PIC_OlderThan: TANFiXDate;
+  WARTEND: tsTable;
+  Col_FTP_Benutzer: integer;
+  Col_ZIPPASSWORD: integer;
+  MovedToDay: int64;
 
   procedure serviceJPG;
   const
@@ -1317,9 +1299,16 @@ var
     m,r: integer;
     Pending: boolean;
     FotoFSize: int64;
+    sPics : TStringList;
+  mIni: TIniFile;
+  FTP_Benutzer: string;
+  FotosSequence: integer;
+  FotosAbzug: boolean;
+  sOldZips: TSTringList;
   begin
     Pending := false;
-    sPics.Clear;
+    sPics := TStringList.Create;
+    sOldZips:= TStringList.Create;
     repeat
       // Jpegs
       dir(Ablage_PFAD + '*.jpg', sPics, false);
@@ -1385,11 +1374,11 @@ var
         FotosAbzug := (ReadString('System', 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
         if FotosSequence < 0 then
         begin
-          dir(Ablage_PFAD + 'Fotos-????.zip', sFotos, false);
-          if sFotos.count > 0 then
+          dir(Ablage_PFAD + 'Fotos-????.zip', sOldZips, false);
+          if sOldZips.count > 0 then
           begin
-            sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Fotos-', '.zip'), -1);
+            sOldZips.sort;
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Fotos-', '.zip'), -1);
           end;
         end;
 
@@ -1454,42 +1443,49 @@ var
         FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
+    sPics.free;
+    sOldZips.free;
 
     if Pending then
       serviceJPG;
-
   end;
 
   procedure serviceHTML;
   var
     m,r: integer;
+    sHTMLSs : TStringList;
+  mIni: TIniFile;
+  FTP_Benutzer: string;
+  FotosSequence: integer;
+  sOldZips: TSTringList;
   begin
-    sPics.Clear;
+   sHTMLSs := TStringList.Create;
+    sOldZips:= TStringList.Create;
     repeat
 
       // Jpegs
-      dir(Ablage_PFAD + '*.zip.html', sPics, false);
-      if (sPics.count = 0) then
+      dir(Ablage_PFAD + '*.zip.html', sHTMLSs, false);
+      if (sHTMLSs.count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
-      for m := pred(sPics.count) downto 0 do
-        if (FileDate(Ablage_PFAD + sPics[m]) >= PIC_OlderThan) then
-          sPics.Delete(m);
-      if (sPics.count = 0) then
+      for m := pred(sHTMLSs.count) downto 0 do
+        if (FileDate(Ablage_PFAD + sHTMLSs[m]) >= PIC_OlderThan) then
+          sHTMLSs.Delete(m);
+      if (sHTMLSs.count = 0) then
         break;
 
       // reduziere um "wartende" Wechselbelege, bei denen das pdf fehlt!
-      for m := pred(sPics.count) downto 0 do
-        if not(FileExists(Ablage_PFAD + sPics[m] + '.pdf')) then
-          sPics.Delete(m);
-      if (sPics.count = 0) then
+      for m := pred(sHTMLSs.count) downto 0 do
+        if not(FileExists(Ablage_PFAD + sHTMLSs[m] + '.pdf')) then
+          sHTMLSs.Delete(m);
+      if (sHTMLSs.count = 0) then
         break;
 
       // .pdf muss auch mit!
       // erweitere um die .pdf Dateien
-      for m := 0 to pred(sPics.count) do
-        sPics.add(sPics[m] + '.pdf');
+      for m := 0 to pred(sHTMLSs.count) do
+        sHTMLSs.add(sHTMLSs[m] + '.pdf');
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
       FTP_Benutzer := Ablage_NAME;
@@ -1506,11 +1502,11 @@ var
         FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
         if (FotosSequence < 0) then
         begin
-          dir(Ablage_PFAD + 'Wechselbelege-????.zip', sFotos, false);
-          if sFotos.count > 0 then
+          dir(Ablage_PFAD + 'Wechselbelege-????.zip', sOldZips, false);
+          if sOldZips.count > 0 then
           begin
-            sFotos.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sFotos[pred(sFotos.count)], 'Wechselbelege-',
+            sOldZips.sort;
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Wechselbelege-',
               '.zip'), -1);
           end;
         end;
@@ -1525,14 +1521,14 @@ var
       // Archivieren
       AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
-        { } sPics,
+        { } sHTMLSs,
         { } Ablage_PFAD +
         { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
         { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
         { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.count) then
+        { } infozip_Level + '=' + '0') <> sHTMLSs.count) then
       begin
         // Problem anzeigen
         Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
@@ -1545,10 +1541,12 @@ var
       mIni.Free;
 
       // nun die eben archivierten löschen!
-      for m := 0 to pred(sPics.count) do
-        FileDelete(Ablage_PFAD + sPics[m]);
+      for m := 0 to pred(sHTMLSs.count) do
+        FileDelete(Ablage_PFAD + sHTMLSs[m]);
 
     until true;
+    sHTMLSs.free;
+    sOldZips.free;
   end;
 
   procedure serviceZIP;
@@ -1581,9 +1579,17 @@ var
   end;
 
 var
- r : integer;
+  BasisDatum: TANFiXDate;
+
+  // Parameter
+  pDatum: string;
+  pEinzeln: string;
+  r : integer;
 
 begin
+
+  // Set "Lock" for this day
+  FileAlive(AblageLogFname);
 
   ensureGlobals;
 
@@ -1597,13 +1603,6 @@ begin
     pDatum := '';
     pEinzeln := '';
   end;
-
-  // Set "Lock"
-  FileAlive(AblageLogFname);
-
-  // prepare
-  sPics := TStringList.Create;
-  sFotos := TStringList.Create;
 
   // Infos über Baustellen
   Col_FTP_Benutzer := tBAUSTELLE.colof(cE_FTPUSER);
@@ -1683,8 +1682,6 @@ begin
   end;
 
   // unprepare
-  sPics.Free;
-  sFotos.Free;
   WARTEND.Free;
   AblageLog('ENDE', '*');
 
