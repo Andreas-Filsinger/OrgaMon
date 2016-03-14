@@ -284,7 +284,6 @@ type
     // * SENDEN.CSV von altem Müll befreien
     procedure doAbschluss;
 
-
     //
     //
     procedure doBackup;
@@ -3333,11 +3332,12 @@ begin
 
       // Die Datei bereitstellen!
       FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
-      ReNameFile(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$', MyProgramPath + cServerDataPath +
-        'abgearbeitet.dat');
+      ReNameFile(
+        { } MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
+        { } MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
       on E: Exception do
-        log(cERRORText + ' 2174:' + E.Message);
+        log(cERRORText + ' 3340:' + E.Message);
     end;
 
     // von cFreshDataPath -> ins lokale Verzeichnis!
@@ -3353,7 +3353,7 @@ begin
     end
     else
     begin
-      log(cERRORText + ' 2182:' + cMonDaServer_AbgearbeitetFName + ' fehlt');
+      log(cERRORText + ' 3356:' + cMonDaServer_AbgearbeitetFName + ' fehlt');
       result := false;
     end;
 
@@ -3371,16 +3371,25 @@ begin
         begin
           if not(connected) then
             connect;
-          get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$');
+          if (Size(FName_AbgezogenSrc) > 0) then
+          begin
+            get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$')
+          end
+          else
+          begin
+            log(cWARNINGText + ' ' + FName_AbgezogenSrc + ' existiert nicht');
+            FileAlive(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$');
+          end;
         end;
 
         // Die Datei bereitstellen!
         FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen);
-        ReNameFile(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$', MyProgramPath + cServerDataPath +
-          FName_Abgezogen);
+        ReNameFile(
+          { } MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$',
+          { } MyProgramPath + cServerDataPath + FName_Abgezogen);
       except
         on E: Exception do
-          log(cERRORText + ' 2153:' + E.Message);
+          log(cERRORText + ' 3386:' + E.Message);
       end;
 
       // von cFreshDataPath -> ins lokale Verzeichnis!
@@ -3391,7 +3400,7 @@ begin
       end
       else
       begin
-        log(cERRORText + ' 2164:abgezogen.GGG.DAT fehlt');
+        log(cERRORText + ' 3397:abgezogen.GGG.DAT fehlt');
         result := false;
       end;
 
@@ -3416,13 +3425,25 @@ begin
         begin
           if not(connected) then
             connect;
-          get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
+
+          if (Size(GeraeteNoSrc + cDATExtension) > 0) then
+          begin
+            get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension)
+          end
+          else
+          begin
+            log(cWARNINGText + ' ' + GeraeteNoSrc + cDATExtension + ' existiert nicht');
+            FileAlive(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
+          end;
+
           // DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true) - TIdSysVCL.OffsetFromUTC;
           DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true);
         end;
+
         FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
-        ReNameFile(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
-          MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
+        ReNameFile(
+          { } MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
+          { } MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
         if (DownFileDate > 0) then
           FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension, DateTimeToFileDate(DownFileDate));
       except
@@ -3511,10 +3532,9 @@ end;
 procedure TJonDaExec.doBackup;
 const
   cTAN_BackupPath = 'TAN\';
-{$ifdef fpc}
+{$IFDEF fpc}
   MOVEFILE_WRITE_THROUGH = 8;
-{$endif}
-
+{$ENDIF}
 var
   AllTRN: TStringList;
   n: integer;
@@ -4696,4 +4716,3 @@ begin
 end;
 
 end.
-

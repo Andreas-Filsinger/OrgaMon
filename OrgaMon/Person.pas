@@ -899,8 +899,6 @@ end;
 
 procedure TFormPerson.Button17Click(Sender: TObject);
 begin
-  // e_w_PersonEnsurePassword(PERSON_R);
-
   if doit('OK: Direkt neu setzen'#13'Abbrechen: Über den Webshop') then
   begin
     e_w_PersonSetPassword(IB_Query1.FieldByName('RID').AsInteger);
