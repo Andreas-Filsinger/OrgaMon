@@ -463,7 +463,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet7
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet

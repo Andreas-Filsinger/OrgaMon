@@ -1032,7 +1032,7 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet9
+    ActivePage = TabSheet5
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'

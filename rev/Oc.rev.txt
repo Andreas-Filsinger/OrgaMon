@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.240 (14.03.16) Andreas Filsinger
+
+ Neu: xml2csv: Neuer Parameter "ADD_ZW", die namensgebenden Tags bei der Ausgabe von Zählwerken
+ Neu: xml2csv: Neuer Parameter "ZW_SAME_NAME_OK", es ist OK wenn Zählwerke gleiche Namen haben
+
 Rev 1.239 (26.10.15) Andreas Filsinger
 
  Neu: Vorlage.xls: mit "'" kann man eine Stringformatierung erhalten

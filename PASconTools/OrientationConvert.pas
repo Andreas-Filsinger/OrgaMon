@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.239; // ../rev/Oc.rev.txt
+  Version: single = 1.240; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -93,7 +93,9 @@ end;
 
 {$ELSE}
 
-uses Windows, SysUtils, IniFiles, math,
+uses
+  // Core
+  Windows, SysUtils, IniFiles, math,
 
   // OrgaMon - Tools
   geld, Mapping, anfix32, html, WordIndex, gplists, binlager32, ExcelHelper,
@@ -103,10 +105,6 @@ uses Windows, SysUtils, IniFiles, math,
 
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter;
-
-
-// Tmemorystream
-// TStringlist
 
 const
   // Allgemeinwissen
@@ -280,11 +278,13 @@ var
   pArgosMode: boolean;
   pUTF8: boolean;
   pWriteAt: TStringList;
+  pAddZw: TStringList;
   pDebug: boolean;
   pIgnoreZaehlwerke: TStringList;
   pSplitNameSpace: string;
   pTakeFirstValue: boolean;
   pReplaceNameSpace: string;
+  pZW_SAME_NAME_OK: boolean;
 
   procedure push(Name: string);
   begin
@@ -370,7 +370,7 @@ var
       if pArgosMode then
       begin
         ARGOSID := strtointdef(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.ID'], -1);
-        if ARGOSID > -1 then
+        if (ARGOSID > -1) then
         begin
           if (ARGOSID > MaxInt) then
             raise exception.create('TAET.ID > MaxInt');
@@ -415,7 +415,6 @@ var
     sMESSAGE.clear;
     sZaehlwerke.clear;
     Anzahl_Geraete := 0;
-
   end;
 
   procedure writeOne;
@@ -427,7 +426,7 @@ var
   procedure addZaehlwerk(zw: string);
   begin
     if (pIgnoreZaehlwerke.indexof(zw) = -1) then
-      if (sZaehlwerke.indexof(zw) = -1) then
+      if (sZaehlwerke.indexof(zw) = -1) or pZW_SAME_NAME_OK then
         sZaehlwerke.add(zw);
   end;
 
@@ -486,6 +485,10 @@ var
               sMESSAGE.values['dispo.auftrag.sperre_bis'] := '';
 
           end;
+
+          // Zählwerkbezeichnung dazu machen
+          if (pAddzw.IndexOf(_FullName)<>-1) then
+           addZaehlwerk(sMESSAGE.values[_FullName]);
 
           if (pWriteAt.indexof(_FullName) <> -1) then
           begin
@@ -877,11 +880,13 @@ var
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
     pWriteAt := Split(sMapping.values['WRITE_AT'], '|');
+    pAddZw := Split(sMapping.values['ADD_ZW'], '|');
     pDebug := sMapping.values['DEBUG'] = 'JA';
     pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|');
     pSplitNameSpace := sMapping.values['NAMESPACE'];
     pTakeFirstValue := sMapping.values['COALESCE'] = 'JA';
     pReplaceNameSpace := sMapping.values['REPLACE'];
+    pZW_SAME_NAME_OK := sMapping.values['ZW_SAME_NAME_OK'] = 'JA';
 
     // Leerzeilen aus der Mapping definition löschen!
     for n := pred(sMapping.count) downto 0 do
@@ -1166,7 +1171,7 @@ begin
 
   if pDebug then
   begin
-    sTagList.SaveToFile(WorkPath + 'Mappings.tmp');
+    sTagList.SaveToFile(WorkPath + 'Mapping.tmp');
     sMESSAGE.SaveToFile(WorkPath + 'Values.tmp');
   end;
 
@@ -1185,6 +1190,7 @@ begin
   Umsetzer.Free;
   pIgnoreZaehlwerke.Free;
   pWriteAt.Free;
+  pAddZw.free;
 end;
 
 procedure xml2csv_Multi(InFName: string; sBericht: TStringList = nil);

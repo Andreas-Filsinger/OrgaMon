@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.164 (14.03.16) Andreas Filsinger
+
+ Neu: AppService: Vertraglich freigegebene, aber noch nicht geplante Resource kann abgerufen werden
+
 Rev 8.163 (12.03.16) Andreas Filsinger
 
  Bug: FotoService: Beim Archivieren von Fotos: "Listenindex überschreitet das Maximum (12)"
