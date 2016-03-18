@@ -34,7 +34,7 @@ uses
   Forms, Dialogs, IB_UpdateBar,
   ExtCtrls, Grids, IB_Grid,
   IB_Components, IB_Access, StdCtrls, IB_Controls, JvComponentBase,
-  JvFormPlacement;
+  JvFormPlacement, Vcl.Buttons;
 
 type
   TFormBelegVersand = class(TForm)
@@ -52,19 +52,19 @@ type
     Button20: TButton;
     Button2: TButton;
     JvFormStorage1: TJvFormStorage;
+    SpeedButton1: TSpeedButton;
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
     procedure ComboBox1Change(Sender: TObject);
     procedure ComboBox2Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure IB_Query1ConfirmDelete(Sender: TComponent;
-      var Confirmed: Boolean);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
     procedure Image2Click(Sender: TObject);
     procedure Button20Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure IB_Query1BeforePrepare(Sender: TIB_Statement);
-    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer;
-      var AString: string);
+    procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Grid1_Col_Bearbeiter: Integer;
@@ -72,11 +72,11 @@ type
     procedure EnsureOpen;
     procedure SetStandardVersandData;
     procedure ReflectData;
-    function PERSON_R : integer;
+    function PERSON_R: Integer;
   public
     { Public-Deklarationen }
-    procedure EnsureLocateTo(BELEG_R: integer; TL: integer);
-    procedure SetContext(BELEG_R: integer; TL: integer);
+    procedure EnsureLocateTo(BELEG_R: Integer; TL: Integer);
+    procedure SetContext(BELEG_R: Integer; TL: Integer);
   end;
 
 var
@@ -85,19 +85,22 @@ var
 implementation
 
 uses
-  globals, Versender, Main,
-  Datenbank,
+  Jvgnugettext, JclMiscel,
+  anfix32, wanfix32,
+  globals,
+  Versender, Main, Datenbank,
   GUIHelp,
   Funktionen_Basis,
   Funktionen_Beleg,
-  dbOrgaMon, anfix32,
-  Jvgnugettext, CaretakerClient, wanfix32, Bearbeiter;
+  Funktionen_Auftrag,
+  dbOrgaMon,
+  CaretakerClient, Bearbeiter;
 
 {$R *.DFM}
 
 procedure TFormBelegVersand.EnsureOpen;
 begin
-  if not (IB_Query1.Active) then
+  if not(IB_Query1.Active) then
     IB_Query1.Open;
 end;
 
@@ -111,13 +114,13 @@ begin
   ReflectData;
 end;
 
-procedure TFormBelegVersand.SetContext(BELEG_R: integer; TL: integer);
+procedure TFormBelegVersand.SetContext(BELEG_R: Integer; TL: Integer);
 begin
   EnsureLocateTo(BELEG_R, TL);
   show;
 end;
 
-procedure TFormBelegVersand.EnsureLocateTo(BELEG_R: integer; TL: integer);
+procedure TFormBelegVersand.EnsureLocateTo(BELEG_R: Integer; TL: Integer);
 begin
   EnsureOpen;
   with IB_Query1 do
@@ -130,19 +133,20 @@ begin
     if IsEmpty then
     begin
       // Hey erst mal anlegen!
-      insert;
+      Insert;
       FieldByName('RID').AsInteger := cRID_AutoInc;
       FieldByName('BELEG_R').AsInteger := BELEG_R;
       FieldByName('TEILLIEFERUNG').AsInteger := TL;
       SetStandardVersandData;
       post;
       EnsureLocateTo(BELEG_R, TL);
-    end else
+    end
+    else
     begin
       // Existiert diese Teillieferung?
-      if not (locate('TEILLIEFERUNG', TL, [])) then
+      if not(locate('TEILLIEFERUNG', TL, [])) then
       begin
-        insert;
+        Insert;
         FieldByName('RID').AsInteger := cRID_AutoInc;
         FieldByName('BELEG_R').AsInteger := BELEG_R;
         FieldByName('TEILLIEFERUNG').AsInteger := TL;
@@ -155,8 +159,7 @@ begin
   end;
 end;
 
-procedure TFormBelegVersand.IB_Grid1GetDisplayText(Sender: TObject; ACol,
-  ARow: Integer; var AString: string);
+procedure TFormBelegVersand.IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
 begin
   if (Grid1_Col_Bearbeiter = -2) then
   begin
@@ -178,19 +181,16 @@ end;
 
 procedure TFormBelegVersand.IB_Query1BeforePrepare(Sender: TIB_Statement);
 begin
-Grid1_Col_Bearbeiter := -2;
+  Grid1_Col_Bearbeiter := -2;
 end;
 
-procedure TFormBelegVersand.IB_Query1ConfirmDelete(Sender: TComponent;
-  var Confirmed: Boolean);
+procedure TFormBelegVersand.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed: Boolean);
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Versand vom ') + #13 +
-      FieldByName('AUSGANG').AsString + #13 +
-      _('wirklich löschen'), true) then
+    if doit(_('Versand vom ') + #13 + FieldByName('AUSGANG').AsString + #13 + _('wirklich löschen'), true) then
     begin
-//      e_w_preDeleteVersand(Fieldbyname('RID').AsInteger);
+      // e_w_preDeleteVersand(Fieldbyname('RID').AsInteger);
       Confirmed := true;
     end;
 
@@ -201,37 +201,39 @@ begin
   openShell(cHelpURL + 'Versand');
 end;
 
-function TFormBelegVersand.PERSON_R: integer;
+function TFormBelegVersand.PERSON_R: Integer;
 begin
- result := e_r_sql(
-  'select PERSON_R from BELEG where RID='+inttostr(IB_Query1.FieldByName('BELEG_R').AsInteger));
+  result := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(IB_Query1.FieldByName('BELEG_R').AsInteger));
 end;
 
 procedure TFormBelegVersand.Button20Click(Sender: TObject);
 begin
   // einfach den Beleg direkt drucken
-// printto(Handle,e_r_BelegFName(PERSON_R,IB_Query1.FieldByName('BELEG_R').AsINteger,IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
-  PrintHTMLByIE(e_r_BelegFName(PERSON_R,IB_Query1.FieldByName('BELEG_R').AsINteger,IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
+  // printto(Handle,e_r_BelegFName(PERSON_R,IB_Query1.FieldByName('BELEG_R').AsINteger,IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
+  PrintHTMLByIE(e_r_BelegFName(PERSON_R, IB_Query1.FieldByName('BELEG_R').AsInteger,
+    IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
 end;
 
 procedure TFormBelegVersand.Button2Click(Sender: TObject);
 begin
- //
- openShell(e_r_BelegFName(PERSON_R,IB_Query1.FieldByName('BELEG_R').AsINteger,IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
+  //
+  openShell(e_r_BelegFName(PERSON_R, IB_Query1.FieldByName('BELEG_R').AsInteger, IB_Query1.FieldByName('TEILLIEFERUNG')
+    .AsInteger));
 end;
 
 procedure TFormBelegVersand.ComboBox1Change(Sender: TObject);
 var
-  k: integer;
+  k: Integer;
 begin
-  k := FormVersender.Versender.indexof(combobox1.Text);
+  k := FormVersender.Versender.indexof(ComboBox1.Text);
   IB_Query1.edit;
   if (k = -1) then
   begin
-    IB_Query1.FieldBYName('VERSENDER_R').clear;
-  end else
+    IB_Query1.FieldByName('VERSENDER_R').clear;
+  end
+  else
   begin
-    IB_Query1.FieldBYName('VERSENDER_R').AsInteger := integer(FormVersender.Versender.objects[k]);
+    IB_Query1.FieldByName('VERSENDER_R').AsInteger := Integer(FormVersender.Versender.objects[k]);
   end;
   IB_Query1.post;
   IB_UpdateBar1.BtnClick(ubRefreshAll);
@@ -239,18 +241,19 @@ end;
 
 procedure TFormBelegVersand.ComboBox2Change(Sender: TObject);
 var
-  k, RID: integer;
+  k, RID: Integer;
 begin
-  k := FormVersender.Versandformen.indexof(combobox2.Text);
+  k := FormVersender.Versandformen.indexof(ComboBox2.Text);
   IB_Query1.edit;
   if (k = -1) then
   begin
-    IB_Query1.FieldBYName('PACKFORM_R').clear;
+    IB_Query1.FieldByName('PACKFORM_R').clear;
     IB_Query1.FieldByName('LEERGEWICHT').clear;
-  end else
+  end
+  else
   begin
-    RID := integer(FormVersender.Versandformen.objects[k]);
-    IB_Query1.FieldBYName('PACKFORM_R').AsInteger := RID;
+    RID := Integer(FormVersender.Versandformen.objects[k]);
+    IB_Query1.FieldByName('PACKFORM_R').AsInteger := RID;
     IB_Query1.FieldByName('LEERGEWICHT').AsInteger := e_r_LeerGewicht(RID);
   end;
   IB_Query1.post;
@@ -264,8 +267,8 @@ end;
 
 procedure TFormBelegVersand.SetStandardVersandData;
 var
-  Packform_RID: integer;
-  VERSENDER_R: integer;
+  Packform_RID: Integer;
+  VERSENDER_R: Integer;
 begin
   with IB_Query1 do
   begin
@@ -282,16 +285,112 @@ begin
   end;
 end;
 
+procedure TFormBelegVersand.SpeedButton1Click(Sender: TObject);
+var
+  FName: string;
+  FName_pdf: string;
+  k: Integer;
+  VORLAGE_R: Integer;
+  ErrorMsg: string;
+  BELEG_R: Integer;
+  TEILLIEFERUNG: Integer;
+  EREIGNIS_R: Integer;
+  VERSAND_R: Integer;
+begin
+ BeginHourGlass;
+  ErrorMsg := '';
+  BELEG_R := IB_Query1.FieldByName('BELEG_R').AsInteger;
+  TEILLIEFERUNG := IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger;
+  VERSAND_R := e_r_sql(
+    { } 'select RID from VERSAND where' +
+    { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+    { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+  repeat
+    //
+    FName := e_r_BelegFName(
+      { } PERSON_R,
+      { } BELEG_R,
+      { } TEILLIEFERUNG);
+
+    //
+    FName_pdf := FName;
+    k := revpos(cHTMLextension, FName_pdf);
+    if (k > 0) then
+    begin
+      FName_pdf := copy(FName_pdf, 1, pred(k)) + cPDFExtension
+    end
+    else
+    begin
+      ErrorMsg := 'Anteil "' + cHTMLextension + '" in "' + FName + '" nicht gefunden!';
+      break;
+    end;
+    //
+    if FDate(FName) > FDate(FName_pdf) then
+    begin
+      WinExec32AndWait(
+        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
+        { } '"' + FName + '"' + ' ' +
+        { } '"' + FName_pdf + '"',
+        { } SW_SHOWDEFAULT);
+    end;
+
+    // openShell(FName_pdf);
+
+    // Ereignis sicherstellen
+    EREIGNIS_R := e_r_sql(
+      { } 'select RID from' +
+      { } ' EREIGNIS where' +
+      { } ' (ART=' + inttostr(eT_RechnungPerEMail) + ') and ' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and ' +
+      { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+
+    if (EREIGNIS_R < cRID_FirstValid) then
+    begin
+      // Ereignis anlegen
+      EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
+
+      e_x_sql('insert into EREIGNIS (RID,ART,BEARBEITER_R,PERSON_R,BELEG_R,TEILLIEFERUNG,VERSAND_R) values (' +
+        { } inttostr(EREIGNIS_R) + ',' +
+        { } inttostr(eT_RechnungPerEMail) + ',' +
+        { } inttostr(sBearbeiter) + ',' +
+        { } inttostr(PERSON_R) + ',' +
+        { } inttostr(BELEG_R) + ',' +
+        { } inttostr(TEILLIEFERUNG) + ',' +
+        { } inttostr(VERSAND_R) + ')');
+
+    end;
+
+    // Ensure eMail Entry
+    VORLAGE_R := e_r_VorlageMail('RECHNUNG');
+    if (VORLAGE_R < cRID_FirstValid) then
+    begin
+      ErrorMsg := 'eMail-Vorlage "RECHNUNG" existiert nicht!';
+      break;
+    end;
+
+    e_x_sql('insert into EMAIL (' +
+      { } 'RID,PERSON_R,VORLAGE_R,EREIGNIS_R,DATEI_ANLAGE) values (' +
+      { } '0' + ',' +
+      { } inttostr(PERSON_R) + ',' +
+      { } inttostr(VORLAGE_R) + ',' +
+      { } inttostr(EREIGNIS_R) + ',' +
+      { } '''' + FName_pdf + '''' + ')');
+
+  until true;
+  endHourGlass;
+  if ErrorMsg<>'' then
+   ShowMessage(ErrorMsg);
+
+end;
+
 procedure TFormBelegVersand.ReflectData;
 begin
   with IB_Query1 do
   begin
-    label3.caption := inttostr(FieldByName('GEWICHT').AsInteger +
-      FieldByName('LEERGEWICHT').AsInteger) + 'g';
-    combobox1.Text := FindRID(FieldByName('VERSENDER_R').AsInteger, FormVersender.Versender);
-    combobox2.Text := FindRID(FieldByName('PACKFORM_R').AsInteger, FormVersender.Versandformen);
+    Label3.caption := inttostr(FieldByName('GEWICHT').AsInteger + FieldByName('LEERGEWICHT').AsInteger) + 'g';
+    ComboBox1.Text := FindRID(FieldByName('VERSENDER_R').AsInteger, FormVersender.Versender);
+    ComboBox2.Text := FindRID(FieldByName('PACKFORM_R').AsInteger, FormVersender.Versandformen);
   end;
 end;
 
 end.
-

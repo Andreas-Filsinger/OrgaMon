@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.164; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.165; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -131,12 +131,10 @@ const
   // Masken für Teillieferungen
   cTEILLIEFERUNG_FILTER_ALLE = -1;
 
-  cBuch_HeaderLineAusgleich =
-    'PERSON_R;BELEG_R;Betrag;Valuta;BUCH_R;Meldung;Konto;TEILLIEFERUNG;EREIGNIS';
+  cBuch_HeaderLineAusgleich = 'PERSON_R;BELEG_R;Betrag;Valuta;BUCH_R;Meldung;Konto;TEILLIEFERUNG;EREIGNIS';
   cBuch_Ausgleich = '%d;%d;%m;%s;%d;%s;%s;%d;%d';
 
-  cBuch_HeaderLineForderungen =
-    'Überschrift;UrsprünglicheGesamtForderung;BELEG_R;TEILLIEFERUNG;Anzahlungen;PERSON_R';
+  cBuch_HeaderLineForderungen = 'Überschrift;UrsprünglicheGesamtForderung;BELEG_R;TEILLIEFERUNG;Anzahlungen;PERSON_R';
   cBuch_Forderungen = '%s;%m;%d;%d;%m;%d';
 
   // Suchindizes
@@ -293,14 +291,14 @@ const
   eT_Newsletter = 18; // Der Webshop hat einen Newsletter erzeugt
   eT_SaldoAbruf = 19; // Es wurde ein Saldo abgerufen (Online-Banking)
   eT_BenutzerTextUpload = 20; // Blasmusikartikel werden hochgeladen
-  eT_WebShopBestellung = 21;
-  // Es wurden Probleme bei der Webshopbestellung bemerkt
+  eT_WebShopBestellung = 21; // Es wurden Probleme bei der Webshopbestellung bemerkt
   eT_BelegStorno = 22;
   eT_Vormerken = 23;
   eT_FTP = 24; // Request für einen FTP Upload
   eT_KassenBeleg = 25; // Speicherung eines Kassenbeleges
   eT_AufgabeErledigt = 26; // Personenbezogene Aufgaben sind "erledigt"
   eT_VertragsAnwendung = 27; // Buchungslauf für Verträge
+  eT_RechnungPerEMail = 28; // Rechnungsversendung per eMail wurde angefordert
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag
@@ -407,21 +405,18 @@ const
   // Nach dem 'commit' noch eine Nacharbeitung
   cE_Postfix_Foto = '-Foto';
 
-
   // virtuelle Settings
   cE_TAN = 'TAN';
   cE_BAUSTELLE = 'BAUSTELLE';
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
 
-  cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern', 'POST=Abschicken',
-    'CANCEL=Abbruch', 'CANCELSEARCH=Suche abbrechen', 'POSTEDIT=Abschicken',
-    'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken', 'FIRST=Erster Datensatz',
-    'PRIOR=vorheriger Datensatz', 'NEXT=nächster Datensatz', 'LAST=Letzter Datensatz',
-    'SEARCH=Suchen', 'COUNT=Anzahl der Datensätze', 'INSERT=Datensatz einfügen',
-    'DELETE=Datensatz löschen', 'REFRESH=Aktualisieren', 'REFRESHKEYS=Aktualisieren',
-    'REFRESHROWS=Aktualisieren', 'POSTSEARCH=Abschicken', 'CANCELEDIT=Änderung abbrechen',
-    'CANCELINSERT=Einfügen abbrechen', 'CANCELDELETE=Löschen abbrechen');
+  cQueryHint: array [0 .. 21] of UnicodeString = ('EDIT=Datensatz ändern', 'POST=Abschicken', 'CANCEL=Abbruch',
+    'CANCELSEARCH=Suche abbrechen', 'POSTEDIT=Abschicken', 'POSTINSERT=Abschicken', 'POSTDELETE=Abschicken',
+    'FIRST=Erster Datensatz', 'PRIOR=vorheriger Datensatz', 'NEXT=nächster Datensatz', 'LAST=Letzter Datensatz',
+    'SEARCH=Suchen', 'COUNT=Anzahl der Datensätze', 'INSERT=Datensatz einfügen', 'DELETE=Datensatz löschen',
+    'REFRESH=Aktualisieren', 'REFRESHKEYS=Aktualisieren', 'REFRESHROWS=Aktualisieren', 'POSTSEARCH=Abschicken',
+    'CANCELEDIT=Änderung abbrechen', 'CANCELINSERT=Einfügen abbrechen', 'CANCELDELETE=Löschen abbrechen');
 
 type
 
@@ -560,8 +555,7 @@ const
   cHeader_Eingabe = 'DATUM;UHRZEIT;RID;REGLER_NUMMER_NEU;ZAEHLER_NUMMER_NEU';
 
   // Für wartende "-Neu" Bilddateien
-  cHeader_UmbenennungUnvollstaendig =
-    'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+  cHeader_UmbenennungUnvollstaendig = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
 
   // Creator Sachen!
   cHistorieTextFName = 'Creator\historie.txt';
@@ -732,17 +726,17 @@ const
     'ZaehlerInfo6;ZaehlerInfo7;ZaehlerInfo8;ZaehlerInfo9;ZaehlerInfo10;' +
 
   // Bereich II : Liegenschaft
-    'Verbraucher_Name;' + 'Verbraucher_Name2;' + 'Verbraucher_Strasse;' +
-    'Verbaucher_Strasse_Teil1;' + 'Verbaucher_Strasse_Teil2;' + 'Verbaucher_Strasse_Teil3;' +
-    'Planquadrat;' + 'OrtsteilCode;' + 'Verbraucher_Ortsteil;' + 'Verbraucher_Ort;' +
+    'Verbraucher_Name;' + 'Verbraucher_Name2;' + 'Verbraucher_Strasse;' + 'Verbaucher_Strasse_Teil1;' +
+    'Verbaucher_Strasse_Teil2;' + 'Verbaucher_Strasse_Teil3;' + 'Planquadrat;' + 'OrtsteilCode;' +
+    'Verbraucher_Ortsteil;' + 'Verbraucher_Ort;' +
 
   // Bereich III: Anschreiben
-    'KundeNummer;' + 'Anschreiben_Name;' + 'Anschreiben_Name2' + 'Anschreiben_Strasse;' +
-    'Anschreiben_Ort;' + 'WordEmpfaenger;' + 'WordAnzahl;' +
+    'KundeNummer;' + 'Anschreiben_Name;' + 'Anschreiben_Name2' + 'Anschreiben_Strasse;' + 'Anschreiben_Ort;' +
+    'WordEmpfaenger;' + 'WordAnzahl;' +
 
   // Bereich IV: Termin Info
-    'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' + 'WochentagKurz;' +
-    'Datum;' + 'DatumText;' + 'Zeit;' + 'ZeitText;' + ';Monteur;' + 'MonteurHandy;' +
+    'Baustelle;' + 'Auftrags_Nummer;' + 'MonteurText;' + 'WochentagLang;' + 'WochentagKurz;' + 'Datum;' + 'DatumText;' +
+    'Zeit;' + 'ZeitText;' + ';Monteur;' + 'MonteurHandy;' +
     'InternInfo1;InternInfo2;InternInfo3;InternInfo4;InternInfo5;' +
     'InternInfo6;InternInfo7;InternInfo8;InternInfo9;InternInfo10;' + 'Bemerkung;' +
 
@@ -750,15 +744,13 @@ const
     'ReferenzIdentitaet;' + 'Status1;' + 'Status2;' + 'Geaendert;' + 'Bearbeiter;' +
 
   // Bereich VI: Ergebnisse für den Auftraggeber
-    'WechselDatum;' + 'WechselZeit;' + 'ZaehlerNummerKorrektur;' + 'ZaehlerStandAlt;' +
-    'ZaehlerNummerNeu;' + 'ZaehlerStandNeu;' + 'ReglerNummerKorrektur;' + 'ReglerNummerNeu;' +
-    'Protokoll;' + 'Leer';
+    'WechselDatum;' + 'WechselZeit;' + 'ZaehlerNummerKorrektur;' + 'ZaehlerStandAlt;' + 'ZaehlerNummerNeu;' +
+    'ZaehlerStandNeu;' + 'ReglerNummerKorrektur;' + 'ReglerNummerNeu;' + 'Protokoll;' + 'Leer';
 
   // Bereich VII: weitere Ergebnisse für den Auftraggeber (speziefisch!)
 
   cWordHeaderLine = 'Datum;KundeNummer;Monteur;Bemerkung;Art;Zaehler_Nummer;' +
-    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' +
-    'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
+    'Anschreiben_Name;Anschreiben_Strasse;Verbraucher_Ort;' + 'Verbraucher_Name;Verbraucher_Strasse;Anschreiben_Ort;' +
     'Zeit;Geaendert;Auftrags_Nummer;Status1;Status2;WochentagKurz;' +
     'Verbraucher_Name2;Anschreiben_Name2;WochentagLang;MonteurText;' +
     'ZeitText;DatumText;Baustelle;Bearbeiter;Sperre;Planquadrat;' +
@@ -777,8 +769,7 @@ const
 
   // Spalten, die nicht an den Auftraggeber übertragen werden!
   cRedHeaderLine = 'Protokoll;Planquadrat;OrtsteilCode;InternInfo1;InternInfo2;InternInfo3;' +
-    'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' +
-    'InternInfo10;Leer';
+    'InternInfo4;InternInfo5;InternInfo6;InternInfo7;InternInfo8;InternInfo9;' + 'InternInfo10;Leer';
 
 const
   twh_Datum: integer = 0;
@@ -925,9 +916,9 @@ type
     { } cwb_Zuordnung,
     { } cwb_Vermutung);
 
-  TeTerminarbeitsplatzSortMode = (csm_normalSortierung, csm_PLZSortierung, csm_PostSortierung,
-    csm_ZeitSortierung, csm_ZaehlernummerSortierung, csm_BriefadresseSortierung,
-    csm_ABNummerSortierung, csm_StatusSortierung, csm_WechselSortierung);
+  TeTerminarbeitsplatzSortMode = (csm_normalSortierung, csm_PLZSortierung, csm_PostSortierung, csm_ZeitSortierung,
+    csm_ZaehlernummerSortierung, csm_BriefadresseSortierung, csm_ABNummerSortierung, csm_StatusSortierung,
+    csm_WechselSortierung);
 
   eRechnungsNummerVergabeMoment = (ernvm_Anlage, ernvm_Berechnen, ernvm_Vorschau, ernvm_Verbuchen);
 
@@ -1109,7 +1100,6 @@ var
   iAnschriftNameOben: boolean;
   iOrtFormat: string;
   iAblage: boolean;
-
 
   iProfilTexte: TStringList;
   iSchalterTexte: TStringList;
@@ -1551,18 +1541,16 @@ const
 
 function cOrgaMonCopyright: string;
 begin
-  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version) + ' ©1987-' +
-    JahresZahl + ' http://www.orgamon.org';
+  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version) + ' ©1987-' + JahresZahl +
+    ' http://www.orgamon.org';
 end;
 
 function cAppName: string;
 begin
   if isBeta then
-    result := cApplicationName + cTradeMark + '-RC Rev. ' + RevToStr(globals.Version) + ' [' +
-      iMandant + ']'
+    result := cApplicationName + cTradeMark + '-RC Rev. ' + RevToStr(globals.Version) + ' [' + iMandant + ']'
   else
-    result := cApplicationName + cTradeMark + ' Rev. ' + RevToStr(globals.Version) + ' [' +
-      iMandant + ']';
+    result := cApplicationName + cTradeMark + ' Rev. ' + RevToStr(globals.Version) + ' [' + iMandant + ']';
 end;
 
 function iDataBaseHost: string;
@@ -1761,8 +1749,7 @@ begin
           begin
             LogBootStage(Mandant);
             iDataBaseName := Mandant;
-            iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)),
-              iDataBasePassword);
+            iDataBasePassword := ReadString(sGroup, cDataBasePwd + inttostr(succ(Index)), iDataBasePassword);
           end;
         end;
         FreeAndNil(FormMandantAuswahl);
@@ -1778,9 +1765,8 @@ begin
 {$ELSE}
         writeln(
 {$ENDIF}
-          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName + #13#10 + #13#10 + '['
-          + sGroup + ']' + #13#10 + cDataBaseName + '=' + #13#10 + #13#10 +
-          ' notwendige Einstellung ist ohne Wert!');
+          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName + #13#10 + #13#10 + '[' + sGroup + ']' +
+          #13#10 + cDataBaseName + '=' + #13#10 + #13#10 + ' notwendige Einstellung ist ohne Wert!');
 
         halt;
       end
@@ -2146,7 +2132,7 @@ KassePath := MyProgramPath + 'Kasse\';
 
 StartDebug('CheckCreate.begin');
 
-{$ifndef CONSOLE}
+{$IFNDEF CONSOLE}
 CheckCreateDir(WebPath);
 CheckCreateDir(ProtokollePath);
 CheckCreateDir(ContextPath);
@@ -2170,8 +2156,7 @@ CheckCreateDir(WebDir);
 CheckCreateDir(SearchDir);
 CheckCreateDir(CDRAusgabe);
 CheckCreateDir(AnwenderPath);
-{$endif}
-
+{$ENDIF}
 StartDebug('CheckCreate.end');
 
 finalization
