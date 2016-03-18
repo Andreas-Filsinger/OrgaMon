@@ -286,7 +286,7 @@ type
 
     //
     //
-    procedure doBackup;
+    function doBackup : int64;
 
   end;
 
@@ -1809,9 +1809,13 @@ begin
       // aktuelle MonDa Daten
       if (OldTrn <> '') then
       begin
-        FileConcat(MyProgramPath + AktTrn + '\MONDA.DAT', MyProgramPath + OldTrn + '\MONDA.DAT',
-          MyProgramPath + AktTrn + '\MONDA.$$$');
-        FileCopy(MyProgramPath + AktTrn + '\MONDA.$$$', MyProgramPath + AktTrn + '\MONDA.DAT');
+        FileConcat(
+          { } MyProgramPath + AktTrn + '\MONDA.DAT',
+          { } MyProgramPath + OldTrn + '\MONDA.DAT',
+          { } MyProgramPath + AktTrn + '\MONDA'+cTmpFileExtension);
+        FileCopy(
+          { } MyProgramPath + AktTrn + '\MONDA'+cTmpFileExtension,
+          { } MyProgramPath + AktTrn + '\MONDA.DAT');
       end;
 
       assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn + '\MONDA.DAT');
@@ -1832,7 +1836,7 @@ begin
           log(cERRORText + ' 1276:' + E.Message);
       end;
 
-      assignFile(MonDaAasTxt, MyProgramPath + AktTrn + '\auftrag.$$$');
+      assignFile(MonDaAasTxt, MyProgramPath + AktTrn + '\auftrag'+cTmpFileExtension);
       try
         rewrite(MonDaAasTxt);
       except
@@ -2294,7 +2298,7 @@ begin
         end;
 
         // Auftrag.txt nun wirklich bereitstellen!
-        ReNameFile(MyProgramPath + AktTrn + '\auftrag.$$$', MyProgramPath + AktTrn + '\auftrag.txt')
+        ReNameFile(MyProgramPath + AktTrn + '\auftrag'+cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
 
       until true;
 
@@ -3313,12 +3317,12 @@ begin
 
     // vom Server -> cFreshDataPath
     try
-      FileDelete(MyProgramPath + cServerDataPath + 'abgearbeitet.$$$');
+      FileDelete(MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension);
       with iFTP do
       begin
         if not(connected) then
           connect;
-        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet.$$$');
+        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension);
       end;
 
       // die unverarbeiteten Dateien vom Server holen!
@@ -3333,7 +3337,7 @@ begin
       // Die Datei bereitstellen!
       FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
       ReNameFile(
-        { } MyProgramPath + cServerDataPath + 'abgearbeitet.$$$',
+        { } MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension,
         { } MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
       on E: Exception do
@@ -3366,26 +3370,26 @@ begin
 
       // vom Server -> cFreshDataPath
       try
-        FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$');
+        FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension);
         with iFTP do
         begin
           if not(connected) then
             connect;
-          if (Size(FName_AbgezogenSrc) > 0) then
+          if (Size(FName_AbgezogenSrc) >= 0) then
           begin
-            get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$')
+            get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension)
           end
           else
           begin
             log(cWARNINGText + ' ' + FName_AbgezogenSrc + ' existiert nicht');
-            FileAlive(MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$');
+            FileAlive(MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension);
           end;
         end;
 
         // Die Datei bereitstellen!
         FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen);
         ReNameFile(
-          { } MyProgramPath + cServerDataPath + FName_Abgezogen + '.$$$',
+          { } MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension,
           { } MyProgramPath + cServerDataPath + FName_Abgezogen);
       except
         on E: Exception do
@@ -3426,7 +3430,7 @@ begin
           if not(connected) then
             connect;
 
-          if (Size(GeraeteNoSrc + cDATExtension) > 0) then
+          if (Size(GeraeteNoSrc + cDATExtension) >= 0) then
           begin
             get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension)
           end
@@ -3529,7 +3533,7 @@ begin
 
 end;
 
-procedure TJonDaExec.doBackup;
+function TJonDaExec.doBackup : int64;
 const
   cTAN_BackupPath = 'TAN\';
 {$IFDEF fpc}
@@ -3542,6 +3546,7 @@ var
   GeraeteNummer: string;
   TAN_OlderThan, TAN_Date: TANFiXDate;
 begin
+  result := -1;
   if oldInfrastructure then
     exit;
 
@@ -3597,6 +3602,7 @@ begin
   end;
 
   AllTRN.free;
+  result := DirSize(BackupDir);
 end;
 
 procedure TJonDaExec.doStat(iFTP: TIdFTP);

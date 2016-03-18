@@ -806,9 +806,12 @@ begin
 end;
 
 procedure TFormServiceFoto.Button6Click(Sender: TObject);
+var
+ BackupSizeByNow: double;
 begin
   MyFotoExec.ensureGlobals;
-  MyFotoExec.JonDaExec.doBackup;
+  BackupSizeByNow := MyFotoExec.JonDaExec.doBackup;
+  MyFotoExec.Log(format(' %s hat %.3f GB',[MyFotoExec.JonDaExec.BackupDir,BackupSizeByNow / 1024.0 / 1024.0 / 1024.0]));
 end;
 
 procedure TFormServiceFoto.Button7Click(Sender: TObject);
