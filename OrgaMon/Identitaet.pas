@@ -209,6 +209,7 @@ var
   TimerWartend: integer;
   TimerInit: integer;
   doDirectStart: boolean;
+  BackupSizeByNow: double;
 begin
 
   MyFotoExec := TownFotoExec.Create;
@@ -301,12 +302,15 @@ begin
                   Log(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
               end;
 
+              BackupSizeByNow := 0.0;
               try
-                JonDaExec.doBackup;
+                BackupSizeByNow := JonDaExec.doBackup;
               except
                 on E: Exception do
                   Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
               end;
+
+              Log(cINFOText + format(' %s hat %.3f GB',[JonDaExec.BackupDir,BackupSizeByNow / 1024.0 / 1024.0 / 1024.0]));
             end;
         end;
 

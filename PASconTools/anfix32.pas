@@ -5052,6 +5052,7 @@ begin
   if DirExists(dir) or (length(dir) < 3) then
     exit;
   CheckCreateDir(ExtractFilePath(dir));
+  // imp pend: Migration auf CreateDir(dir);
 {$I-}
   MkDir(dir);
 {$I+}
