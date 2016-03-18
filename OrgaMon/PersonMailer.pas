@@ -166,7 +166,8 @@ implementation
 
 uses
   anfix32, globals, html,
-  WordIndex,
+  dcpcrypt2, dcpmd5,
+  WordIndex, txlib,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -1127,6 +1128,7 @@ var
   eMail_Baustein: TStringList;
   FName: string;
   VERSAND_R: integer;
+  md5: TDCP_md5;
 begin
   cEMAIL := DataModuleDatenbank.nCursor;
   eMail_Parameter := TStringList.create;
@@ -1278,6 +1280,14 @@ begin
           cVERSAND.free;
         end;
 
+      end;
+
+      if cEMAIL.FieldByName('DATEI_ANLAGE').IsNotNull then
+      begin
+        md5 := TDCP_md5.create(nil);
+        ersetze('~MD5~', md5.FromFile(cEMAIL.FieldByName('DATEI_ANLAGE').AsString), sText);
+        md5.free;
+        // ersetze('~MD5.B~',MD5File(cEMAIL.FieldByName('DATEI_ANLAGE').AsString) , sText);
       end;
 
     until true;
