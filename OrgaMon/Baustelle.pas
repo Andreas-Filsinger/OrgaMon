@@ -3127,6 +3127,8 @@ begin
   EnsureEntry(cE_AuchMitFoto, IB_Memo5.Lines);
   EnsureEntry(cE_SpaltenOhneInhalt, IB_Memo5.Lines);
   EnsureEntry(cE_SpalteAlsText, IB_Memo5.Lines);
+  EnsureEntry(cE_AbschlussTransaktion, IB_Memo5.Lines);
+  EnsureEntry(cE_InternInfos, IB_Memo5.Lines);
 end;
 
 procedure TFormBaustelle.Button21Click(Sender: TObject);

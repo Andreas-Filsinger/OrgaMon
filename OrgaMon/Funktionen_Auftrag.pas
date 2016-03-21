@@ -3049,7 +3049,7 @@ begin
       cBAUSTELLE.free;
       for n := pred(FelderListe.count) downto 0 do
       begin
-        FelderListe[n] := nextp(FelderListe[n], ' ', 0);
+        FelderListe[n] := cutblank(nextp(FelderListe[n], ' ', 0));
         if (FelderListe[n] = '') then
           FelderListe.Delete(n);
       end;

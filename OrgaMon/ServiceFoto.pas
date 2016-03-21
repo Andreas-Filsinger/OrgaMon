@@ -490,27 +490,28 @@ var
   AmnestiePath: string;
   n: integer;
 begin
-  if (ListBox5.ItemIndex <> -1) then
-  begin
-    FName := ListBox5.Items[ListBox5.ItemIndex];
-    FNameRemote := nextp(FName, '+', 1);
-    AmnestiePath := MyFotoExec.pBackUpRootPath + 'Amnestie\';
-    CheckCreateDIr(AmnestiePath);
-    FileMove(
-      { } MyFotoExec.pUnverarbeitetPath + FName,
-      { } AmnestiePath + Edit10.Text + FNameRemote);
-
-    // delete one Line
-    n := ListBox5.ItemIndex;
-    ListBox5.Items.Delete(n);
-    Label10.Caption := InttoStr(ListBox5.count);
-    if (ListBox5.count > 0) then
+  with ListBox5 do
+    if (ItemIndex <> -1) then
     begin
-      ListBox5.ItemIndex := n;
-      ListBox5.SetFocus;
-      ListBox5.OnClick(Sender);
+      FName := Items[ListBox5.ItemIndex];
+      FNameRemote := nextp(FName, '+', 1);
+      AmnestiePath := MyFotoExec.BackupDir + 'Amnestie\';
+      CheckCreateDIr(AmnestiePath);
+      FileMove(
+        { } MyFotoExec.pUnverarbeitetPath + FName,
+        { } AmnestiePath + Edit10.Text + FNameRemote);
+
+      // delete one Line
+      n := ItemIndex;
+      Items.Delete(n);
+      Label10.Caption := InttoStr(count);
+      if (count > 0) then
+      begin
+        ItemIndex := min(n, pred(count));
+        SetFocus;
+        OnClick(Sender);
+      end;
     end;
-  end;
 end;
 
 procedure TFormServiceFoto.Button29Click(Sender: TObject);
@@ -546,7 +547,9 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
-    FileMove(MyFotoExec.pUnverarbeitetPath + FName, MyFotoExec.pFTPPath + FNameRemote);
+    FileMove(
+      { } MyFotoExec.pUnverarbeitetPath + FName,
+      { } MyFotoExec.pFTPPath + FNameRemote);
   end;
 
 var
@@ -807,11 +810,12 @@ end;
 
 procedure TFormServiceFoto.Button6Click(Sender: TObject);
 var
- BackupSizeByNow: double;
+  BackupSizeByNow: double;
 begin
   MyFotoExec.ensureGlobals;
   BackupSizeByNow := MyFotoExec.JonDaExec.doBackup;
-  MyFotoExec.Log(format(' %s hat %.3f GB',[MyFotoExec.JonDaExec.BackupDir,BackupSizeByNow / 1024.0 / 1024.0 / 1024.0]));
+  MyFotoExec.Log(format(' %s hat %.3f GB', [MyFotoExec.JonDaExec.BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+    1024.0]));
 end;
 
 procedure TFormServiceFoto.Button7Click(Sender: TObject);

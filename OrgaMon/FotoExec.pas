@@ -90,6 +90,8 @@ type
     // Ini-Sachen
 
     // bisher fix 'I:\KundenDaten\SEWA\JonDaServer\' jetzt Parameter "BackupPath"
+    // direkt dorthinein nichts sichern, es gibt ".\#nnn" Unterverzeichnisse,
+    // ACHTUNG: Benutze "BackupDir" zu sichern und NICHT dieses Root-Verzeichnis aller Backups
     pBackUpRootPath: string;
 
     // bisher fix 'W:\status\' jetzt Parameter "WebPath"
