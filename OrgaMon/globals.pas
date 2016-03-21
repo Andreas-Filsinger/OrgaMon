@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.165; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.166; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -402,6 +402,9 @@ const
   cE_AuchMitFoto = 'AuchMitFoto'; // wenn Fotos mit in das Zip sollen
   cE_SpalteAlsText = 'SpalteAlsText'; // bei der Ausgabe an Excel wichtig
   cE_AbschlussTransaktion = 'AbschlussTransaktion';
+  cE_InternInfos = 'InternInfos'; // Solle ALLE InternInfos ausgegeben werden?
+  cE_verboteneSpalten = 'VerboteneSpalten'; // Diese Spalten nicht ausgeben
+
   // Nach dem 'commit' noch eine Nacharbeitung
   cE_Postfix_Foto = '-Foto';
 

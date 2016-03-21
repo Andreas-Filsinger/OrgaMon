@@ -19,7 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.166 (21.03.16) Andreas Filsinger
+
+ Neu: Baustelle: Export: InternInfos=JA aktiviert pauschal alle Internfelder für die Ausgabe
+ Neu: Baustelle: Export: VerboteneSpalten= kann die Ausgabe einzelner Spalten unterbinden
+
 Rev 8.165 (18.03.16) Andreas Filsinger
+
+ Bug: Foto: Funktion "Amnestie" und "Neu zuordnen"
 
  Neu: Beleg: PDF Erstellung aus Rechnungsbelegen
  Neu: Beleg: PDF per Mail an den Kunden

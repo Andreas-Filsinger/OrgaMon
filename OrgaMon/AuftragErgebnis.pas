@@ -584,6 +584,7 @@ var
     AliasNames: string;
     OhneInhaltNames: string;
     NewHeaderName: string;
+    InternFelder: TStringList;
     IsMuss, IsRaute: boolean;
     AllCols: TgpIntegerList;
   begin
@@ -597,6 +598,11 @@ var
     HeaderLine := cRedHeaderLine;
     while (HeaderLine <> '') do
       HeaderSuppress.add(nextp(HeaderLine, ';'));
+
+    // Red - List erweitern!
+    HeaderLine := cutblank(Settings.values[cE_verboteneSpalten]);
+    while (HeaderLine <> '') do
+      HeaderSuppress.add(cutblank(nextp(HeaderLine, ';')));
 
     // am Anfang stehen die vorgegebenen Titelspalten.
     // kommt es nicht vom "System" muss es ein "Intern"-Feld sein.
@@ -636,7 +642,7 @@ var
       end;
     end;
 
-    // nun alle fehlenden Spaltenüberschriften hinzunehmen
+    // nun alle fehlenden Spaltenüberschriften hinzunehmen (wenn nicht schon vorhanden)
     for n := 0 to pred(HeaderDefault.count) do
     begin
       if (HeaderSuppress.indexof(HeaderDefault[n]) = -1) then
@@ -644,10 +650,29 @@ var
           Header.add(HeaderDefault[n]);
     end;
 
-    // nun alle Protokollfelder hinzunehmen
+    // nun alle Protokollfelder hinzunehmen (wenn nicht schon vorhanden)
     for n := 0 to pred(ProtokollFeldNamen.count) do
-      if (Header.indexof(ProtokollFeldNamen[n]) = -1) then
-        Header.add(ProtokollFeldNamen[n]);
+      if (HeaderSuppress.indexof(ProtokollFeldNamen[n]) = -1) then
+        if (Header.indexof(ProtokollFeldNamen[n]) = -1) then
+          Header.add(ProtokollFeldNamen[n]);
+
+    // nun alle InternFelder hinzunehmen (wenn nicht schon vorhanden)
+    if (Settings.values[cE_InternInfos] = cINI_Activate) then
+    begin
+      InternFelder := TStringList.create;
+      e_r_InternExport(BAUSTELLE_R, InternFelder);
+      for n := 0 to pred(InternFelder.count) do
+      begin
+        HeaderName := InternFelder[n];
+        if (HeaderSuppress.indexof(HeaderName) = -1) then
+          if (Header.indexof(HeaderName) = -1) then
+          begin
+            Header.add(HeaderName);
+            HeaderFromIntern.add(HeaderName);
+          end;
+      end;
+      InternFelder.free;
+    end;
 
     // nun noch errechnete Spalten hinzunehmen
     if (Zaehler_nr_neu_filter <> '') then
@@ -923,7 +948,7 @@ begin
       { } (FotoPath <> '');
       if AuchMitFoto then
       begin
-        if (Settings.values[cE_AuchMitFoto] = cIni_Activate) then
+        if (Settings.values[cE_AuchMitFoto] = cINI_Activate) then
           FotoSpalten := 'FA'
         else
           FotoSpalten := Settings.values[cE_AuchMitFoto];
@@ -932,7 +957,7 @@ begin
         FotoSpalten := '';
 
       ZaehlerNummernNeuAusN1 := (Settings.values[cE_ZaehlerNummerNeuAusN1] <> cIni_DeActivate);
-      ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cIni_Activate);
+      ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cINI_Activate);
 
       cINTERNINFO := DataModuleDatenbank.nCursor;
       cINTERNINFO.sql.add('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
@@ -1178,7 +1203,6 @@ begin
               repeat
 
                 // "c" Felder (calculated)
-
                 if (HeaderName = 'cZaehlerNummerEinbau') then
                 begin
                   if (length(ZAEHLER_NR_NEU) = 11) then
@@ -1671,13 +1695,13 @@ begin
       FileDelete(OutFName);
       save(OutFName);
       if not(AuchMitFoto) then
-        if (Settings.values[cE_OhneStandardXLS] <> cIni_Activate) then
+        if (Settings.values[cE_OhneStandardXLS] <> cINI_Activate) then
           Files.add(OutFName);
 
       repeat
 
         // Oc noch rufen, um wieder eine csv draus zu machen?
-        if (Settings.values[cE_AuchAlsCSV] = cIni_Activate) and (Settings.values[cE_AuchAlsXLS] <> cIni_Activate) then
+        if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) and (Settings.values[cE_AuchAlsXLS] <> cINI_Activate) then
         begin
 
           // Bestimmen des Konvertierungs-Modus
@@ -1711,7 +1735,7 @@ begin
         end;
 
         // Oc noch rufen, um eine KK22 draus zu machen?
-        if (Settings.values[cE_AuchAlsKK22] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        if (Settings.values[cE_AuchAlsKK22] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(Content_Mode_KK22, OutFName, Oc_Bericht)) then
@@ -1737,7 +1761,7 @@ begin
           Oc_Bericht.free;
         end;
 
-        if (Settings.values[cE_AuchAlsXML] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        if (Settings.values[cE_AuchAlsXML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           case CheckContent(OutFName) of
@@ -1771,7 +1795,7 @@ begin
         end;
 
         // Vorlage.xls
-        if (Settings.values[cE_AuchAlsXLS] = cIni_Activate) and
+        if (Settings.values[cE_AuchAlsXLS] = cINI_Activate) and
           not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
 
@@ -1795,7 +1819,7 @@ begin
           Oc_Bericht.free;
 
           // die Konvertierte auch als CSV?
-          if (Settings.values[cE_AuchAlsCSV] = cIni_Activate) then
+          if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) then
           begin
             Oc_Bericht := TStringList.create;
             if not(doConversion(Content_Mode_xls2csv, conversionOutFName, Oc_Bericht)) then
@@ -1815,7 +1839,7 @@ begin
         end;
 
         // ARGOS
-        if (Settings.values[cE_AuchAlsARGOS] = cIni_Activate) then
+        if (Settings.values[cE_AuchAlsARGOS] = cINI_Activate) then
         begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(Content_Mode_ARGOS, OutFName, Oc_Bericht)) then
@@ -1841,7 +1865,7 @@ begin
         end;
 
         // IDOC
-        if (Settings.values[cE_AuchAlsIDOC] = cIni_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
           if not(doConversion(Content_Mode_xls2idoc, OutFName, Oc_Bericht)) then
@@ -2194,7 +2218,7 @@ var
             Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
 
             // ev. FTP-Masken hinzufügen (nur CoreFTP)
-            if (Settings.values[cE_AuchAlsIDOC] = cIni_Activate) then
+            if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) then
               if (Settings.values[cE_CoreFTP] <> '') then
               begin
                 if Erfolgsmeldungen then
@@ -2415,7 +2439,7 @@ begin
 
         // noch weitere Einzel-Upload Dateien übertragen
         iSourcePathAdditionalFiles := Settings.values[cE_ZusaetzlicheZips];
-        if (iSourcePathAdditionalFiles = cIni_Activate) then
+        if (iSourcePathAdditionalFiles = cINI_Activate) then
           iSourcePathAdditionalFiles := e_r_BaustelleUploadPath(BAUSTELLE_R);
 
         if (iSourcePathAdditionalFiles <> '') and (IdFTP1.Host <> '') then
@@ -2448,7 +2472,7 @@ begin
         if EinzelMeldeErlaubnis then
         begin
 
-          if (Settings.values[cE_EineDatei] = cIni_Activate) then
+          if (Settings.values[cE_EineDatei] = cINI_Activate) then
           begin
             inc(Stat_meldungen, ReportBlock(true, true));
           end
@@ -2531,7 +2555,7 @@ begin
                 end;
 
                 // Datei-Anlagen hinzufügen
-                if (Settings.values[cE_ZipAnlage] = cIni_Activate) then
+                if (Settings.values[cE_ZipAnlage] = cINI_Activate) then
                   for n := 0 to pred(Stat_Attachments.count) do
                     eMailParameter.add('Anlage:' + Stat_Attachments[n]);
 
