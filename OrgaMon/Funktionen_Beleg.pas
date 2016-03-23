@@ -60,8 +60,8 @@ type
 const
   sAugesetzteBelege: TgpIntegerList = nil;
 
-function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 // kleinere Tools für Artikel Selektion
+function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 
 function e_r_Artikel(AUSGABEART_R, ARTIKEL_R: integer): string;
 //
@@ -71,127 +71,125 @@ function e_r_ArtikelInfo(ARTIKEL_R: integer; Prefix: string = ''): TStringList;
 
 //
 procedure e_r_ArtikelSortieren(const RIDS: TList);
-//
 
 function e_r_ArtikelLink(ARTIKEL_R: integer): string;
-//
 
-function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 // Liefert den Lager-Platz des Artikels
+function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_ErwarteteMenge(AUSGABEART_R, ARTIKEL_R: integer; sDetails: TStringList = nil): integer;
 // liefert die Menge, die fest bestellt aber noch nicht eingetroffen ist (für Kunden oder Lager)
+function e_r_ErwarteteMenge(AUSGABEART_R, ARTIKEL_R: integer; sDetails: TStringList = nil): integer;
 
-function e_r_AgentMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Menge, die im Moment zu beschaffen ist (für Kunden)
+function e_r_AgentMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_OffeneMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Menge, die im Moment in der Schwebe ist (unbestellt+ungeliefert)
+function e_r_OffeneMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_UnbestellteMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Menge, die im Moment unbestellt ist
+function e_r_UnbestellteMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_VorschlagMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Menge, die das System vorschlagen würde
+function e_r_VorschlagMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_UngelieferteMengeUeberBedarf(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die überzählige Menge die vom System erwartet wird, also über "Agent" und "Mindestbestand"
 // hinaus.
+function e_r_UngelieferteMengeUeberBedarf(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_MindestMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Mindest-Menge, die auf Lager sein sollte
+function e_r_MindestMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer; Motivation: integer);
 // dem Agenten signalisieren, dass ein um MENGE erhöhter Bestell-Bedarf besteht
+procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer; Motivation: integer);
 
-procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
 // dem Agenten signalisieren, dass sich der Bestell-Bedarf um MENGE vermindert hat! (er nun nicht mehr besteht!)
+procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
 
-function e_w_SetFolge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // Order-Posten-Anz
 // Reihenfolge der Befriediung von Erwarteten Mengen voreinstellen
+function e_w_SetFolge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
 // [ZUSAMMENHANG]
 // Waren im System verteilen
+function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
 
+// liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungText(ZAHLUNGTYP_R: integer; PERSON_R: integer = 0; MoreInfo: TStringList = nil): string;
-// liefert den Zahlungstext zur jeweiligen Person
 
+// liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungRID(PERSON_R: integer): integer;
-// liefert den Zahlungstext zur jeweiligen Person
 
-function e_r_ZahlungFrist(PERSON_R: integer): integer;
 // liefert die Fälligkeit in Tagen einer Forderung
+function e_r_ZahlungFrist(PERSON_R: integer): integer;
 
-function e_r_ZahlungBezeichnung(PERSON_R: integer): string;
 // liefert den Zahlungstext zur jeweiligen Person
+function e_r_ZahlungBezeichnung(PERSON_R: integer): string;
 
-function e_r_Versender(BELEG_R: integer; TEILLIEFERUNG: integer): string;
 // liefert den Namen des Versenders
+function e_r_Versender(BELEG_R: integer; TEILLIEFERUNG: integer): string;
 
-function e_r_PackformGewicht(BELEG_R: integer): integer;
 // liefert das aktuelle Leergewicht der Lieferung
+function e_r_PackformGewicht(BELEG_R: integer): integer;
 
-function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
 // RID eines Verlages bestimmen!
+function e_r_VERLAG_R_fromVerlag(Verlag: string): integer; { RID }
 
-function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
 // Name eines Verlage bestimmen
+function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
 
-function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 // Ermittelt den Lieferanten zu diesem Artikel
+function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 
-procedure e_d_Belege;
 // Beleg-Löschung durchführen
+procedure e_d_Belege;
 
-procedure e_d_Rang;
 // Artikel-Rang neu berechnen
+procedure e_d_Rang;
 
-procedure e_d_Lieferzeit;
 // Artikel-Lieferzeit neu berechnen
+procedure e_d_Lieferzeit;
 
-procedure e_x_BelegAusPOS;
 // Belege aus POS Dateien erstellen
+procedure e_x_BelegAusPOS;
 
-function e_w_BestellBeleg(PERSON_R: integer): integer; { BBELEG_R }
 // liefert die Nummer eines Bestellbelegs, ev. wird einer neu erzeugt
+function e_w_BestellBeleg(PERSON_R: integer): integer; { BBELEG_R }
 
-function e_w_JoinBeleg(BELEG_R_FROM, BELEG_R_TO: integer): integer;
 // 2 Belege zusammen führen
+function e_w_JoinBeleg(BELEG_R_FROM, BELEG_R_TO: integer): integer;
 
-function e_w_JoinPerson(PERSON_R_FROM, PERSON_R_TO: integer): integer;
 // 2 Personen zusammen führen, Quellperson kann gelöscht werden
+function e_w_JoinPerson(PERSON_R_FROM, PERSON_R_TO: integer): integer;
 
-function e_w_MoveBeleg(BELEG_R_FROM, PERSON_R_TO: integer): integer;
 // einen Beleg von einem Verantwortlichen zum anderen führen
+function e_w_MoveBeleg(BELEG_R_FROM, PERSON_R_TO: integer): integer;
 
-function e_w_CopyBeleg(BELEG_R_FROM, PERSON_R_TO: integer; sTexte: TStringList = nil): integer;
 // Beleg neu erstellen anhand einer Vorlage
+function e_w_CopyBeleg(BELEG_R_FROM, PERSON_R_TO: integer; sTexte: TStringList = nil): integer;
 
-procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 // Beleg erweitern um neue Postenzeilen
+procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
 
-function e_r_MengenAusgabe(MENGE, EINHEIT_R: integer; FormatStr: string = '%d'): string;
 // Menge rausbelichten
+function e_r_MengenAusgabe(MENGE, EINHEIT_R: integer; FormatStr: string = '%d'): string;
 
-function e_r_EinzelPreisAusgabe(PREIS: double; EINHEIT_R: integer): string;
 // Einzelpreis rausbelichten
+function e_r_EinzelPreisAusgabe(PREIS: double; EINHEIT_R: integer): string;
 
-function e_r_PostenPreis(EinzelPreis: double; Anz, EINHEIT_R: integer): double;
 // Gesamtpreis berechnen
+function e_r_PostenPreis(EinzelPreis: double; Anz, EINHEIT_R: integer): double;
 
-function e_c_Rabatt(PREIS, Rabatt: double): double;
 // einen Preis um einen Rabatt vermindern
+function e_c_Rabatt(PREIS, Rabatt: double): double;
 
+// Alle relevANTEN Infos rund um einen Posten ermitteln
 procedure e_r_PostenInfo(IBQ: TdboDataSet; NurGeliefertes: boolean; EinzelpreisNetto: boolean;
   var _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
   var _Rabatt, _EinzelPreis, _MwStSatz: double);
-// Alle relevANTEN Infos rund um einen Posten ermitteln
 
-function e_w_AusgabeBeleg(BELEG_R: integer; NurGeliefertes: boolean; AlsLieferschein: boolean): TStringList;
 // Ausgabelauf für den aktuellen Beleg mit Anlage der htmls
 // Es wird eine Liste aller erstellten Belichtungs-Ergebnisdateien erzeugt
+function e_w_AusgabeBeleg(BELEG_R: integer; NurGeliefertes: boolean; AlsLieferschein: boolean): TStringList;
 
 // den Druck eines Beleges verbuchen und Eintragen
 procedure e_w_DruckBeleg(BELEG_R: integer);
@@ -211,120 +209,118 @@ function e_r_PreisTabelle(PREIS_R: integer): double;
 // Ist es auch ein echter preis, oder nur ein Tag
 function e_r_PreisValid(p: double): boolean;
 
-function e_r_Preis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer; var Satz: double; var Netto: boolean;
-  var NettoWieBrutto: boolean): double;
 // liefert den Preis des Artikels
 // Satz ist der Mwst-Satz
 // Netto liefert Info, ob dieser Preis ein Netto oder Brutto-Preis ist
+function e_r_Preis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer; var Satz: double; var Netto: boolean;
+  var NettoWieBrutto: boolean): double;
 
-function e_r_PreisText(AUSGABEART_R, ARTIKEL_R: integer): string;
 // liefert den Preis des Artikels, fertig als String
 // - es kann auch "auf Anfrage" geben
+function e_r_PreisText(AUSGABEART_R, ARTIKEL_R: integer): string;
 
-function e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R: integer): double;
 // liefert den Preis des Artikels
+function e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R: integer): double;
 
-function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
 // liefert die Preisangabe für diesen Artikel
 // unabhängig von netto/brutto Problematik so wie er in der
 // Datenbank steht.
+function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
 
+// liefert den Preis des Artikels
 function e_r_EndPreis(PERSON_R, AUSGABEART_R, ARTIKEL_R: integer): double;
-// liefert den Preis des Artikels
 
+// liefert den Preis des Artikels
 function e_r_PreisNetto(AUSGABEART_R, ARTIKEL_R: integer): double;
-// liefert den Preis des Artikels
 
+// liefert den Preis des Artikels
 function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
-// liefert den Preis des Artikels
 
-function e_r_Umsatz(POSTEN_R: integer): double;
 // liefert den Netto-Umsatz dieser Position
+function e_r_Umsatz(POSTEN_R: integer): double;
 
-function e_r_USD(ARTIKEL_R: integer): double;
 // liefert den United States Dollar Preis aus der Preistabelle
+function e_r_USD(ARTIKEL_R: integer): double;
 
-function e_r_RabattCode(PERSON_R: integer): string;
 // der Rabatt-Code des Kunden.
+function e_r_RabattCode(PERSON_R: integer): string;
 
-function e_r_RabattFaehig(PERSON_R: integer): boolean;
 // ist es ein Rabatt-Kunde JA/NEIN
+function e_r_RabattFaehig(PERSON_R: integer): boolean;
 
-function e_r_Rabatt(ARTIKEL_R, PERSON_R: integer; var Netto: boolean; var NettoWieBrutto: boolean): double;
 // liefert den Rabatt, den diese Person bei diesem Artikel erhält
 // nebenbei:
 // wird bei dieser Person ohne MwSt-Ausweisgearbeitet (Ausländer)?
 // soll dabei einfach der eigentliche Bruttopreis als Nettopreis ausgewiesen werden?
+function e_r_Rabatt(ARTIKEL_R, PERSON_R: integer; var Netto: boolean; var NettoWieBrutto: boolean): double;
 
-function e_r_VerlagsRabatt(VERLAG_R, PERSON_R: integer): double;
 // vermutlicher Rabatt, den PERSON_R bei diesem VERLAG_R bekommen würde
 //
 // unbeachtet bleiben:
 // Obergrenzen
 // Sortiments-Bezogene Rabatte
 // Artikel-Bezogene Rabatte
+function e_r_VerlagsRabatt(VERLAG_R, PERSON_R: integer): double;
 
-function e_r_ekRabatt(ARTIKEL_R: integer): double;
 // liefert den Rabatt, mit dem dieser Artikel eingekauft wird
+function e_r_ekRabatt(ARTIKEL_R: integer): double;
 
-function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 // MwSt: liefert die MwSt des Artikels
+function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 
-function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 // MwSt: liefert die MwSt wie in diesem Sortiment üblich
+function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 
-function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 // MwSt: liefert den Prozentwert eines Steuersatzes
+function e_r_Prozent(Satz: integer; mDatum: TAnfixDate = cIllegalDate): double;
 
-function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
 // MwSt: liefert die Satznummer (1,2, ...) anhand eines gegebenen Prozentwertes
+function e_r_Satz(Prozent: double; mDatum: TAnfixDate): integer;
 
-function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
 // Lagerplatz eintragen
+function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
 
-procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 // LAGER_R in den Beleg eintragen!
 //
+procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
+// Lagerplatz vorschlagen
 function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
   { VERLAG_R } ): integer; // [LAGER_R]
-// Lagerplatz vorschlagen
 
-function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 // Liefert die Anzahl verschiedener Artikel auf einem Lagerplatz
+function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
-//
 
-function e_r_Uebergangsfach_VERLAG_R: integer; // [[VERLAG_R]]
 // Die Verlag-RID der speziellen PERSON "Übergangsfach"
+function e_r_Uebergangsfach_VERLAG_R: integer; // [[VERLAG_R]]
 
-function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
 // Ist ein Lager aktiv?
+function e_r_LagerVorhanden(SORTIMENT_R: integer): boolean;
 
-function e_r_FreiesLager_VERLAG_R: integer;
 // Die Verlag-RID der speziellen PERSON "Freies Lager"
+function e_r_FreiesLager_VERLAG_R: integer;
 
-function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
 // Names eines Lagerplatzes anhand des LAGER_R
+function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
 
-function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
 // [LAGER_R in Übergangsfach]
 // Übergangsfach ermitteln
+function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
 
-procedure e_w_LagerFreigeben;
 // gibt Lagerplätze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
+procedure e_w_LagerFreigeben;
 
-function e_w_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE: integer; BELEG_R: integer = 0; POSTEN_R: integer = 0)
-  : integer; { MENGE }
 // bucht eine Lagermenge ab oder zu
 // liefert die neue Lagermenge
+function e_w_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, MENGE: integer; BELEG_R: integer = 0; POSTEN_R: integer = 0)
+  : integer; { MENGE }
 
-function e_w_NeuerMahnlauf(ForceNew: boolean = false): boolean;
 // erzeugt neuen Nummernkreise und leert die Mahnkandidatenliste
 //
+function e_w_NeuerMahnlauf(ForceNew: boolean = false): boolean;
 
-function e_w_KontoInfo(PERSON_R: integer; sOptionen: TStringList = nil): TStringList;
 // liefert den Kontostand des Kunden (zu zahlen!).
 // erzeugt als Nebeneffekt die aktuelle "Mahnung.html"
 //
@@ -341,93 +337,93 @@ function e_w_KontoInfo(PERSON_R: integer; sOptionen: TStringList = nil): TString
 // [GUTSCHRIFT=JA]
 // [DIFFERENZ=JA]
 //
+function e_w_KontoInfo(PERSON_R: integer; sOptionen: TStringList = nil): TStringList;
 
-function e_r_BestellInfo(PERSON_R: integer): integer;
 // liefert den Lieferrückstand des Lieferanten (erwartete Mengen!)
 // erzeugt als Nebeneffekt die aktuelle "Bestellung.html"
+function e_r_BestellInfo(PERSON_R: integer): integer;
 
-procedure e_w_WarenkorbLeeren(PERSON_R: integer);
 // Leert den aktuellen Warenkorb
+procedure e_w_WarenkorbLeeren(PERSON_R: integer);
 
-function e_w_WarenkorbEinfuegen(BELEG_R: integer): integer;
 // Fügt den aktuellen Warenkorb in den angegebenen Beleg
 // ein.
+function e_w_WarenkorbEinfuegen(BELEG_R: integer): integer;
 
-function e_w_buchen(BELEG_R, PERSON_R: TDOM_Reference): integer;
 // Gibt es was zu verbuchen?
 // BELEG_R = null -> Zeitabrechnung bei diesem Kunden
 // Rückgabewert -> Anzahl der erzeugten Belege
+function e_w_buchen(BELEG_R, PERSON_R: TDOM_Reference): integer;
 
-function e_r_Stempel(PERSON_R, BELEG_R: integer): integer; // [STEMPEL_R]
 // liefert den RID den Stemples für diese Person
+function e_r_Stempel(PERSON_R, BELEG_R: integer): integer; // [STEMPEL_R]
 
-function e_r_RechnungsNummerAnzahlDerStellen: integer;
 // Anzahl der Stellen der Rechnungsnummer bestimmen
+function e_r_RechnungsNummerAnzahlDerStellen: integer;
 
-function e_r_RechnungsNummern(BELEG_R: integer): TStringList;
 // liefert alle bisherigen Rechnungen zu diesem Beleg
+function e_r_RechnungsNummern(BELEG_R: integer): TStringList;
 
-function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 // liefert die verwendete Rechnungsnummer zu diesem Beleg
+function e_r_RechnungsNummer(BELEG_R, TEILLIEFERUNG: integer): string;
 
-function e_w_RechnungsNummer(BELEG_R: integer): integer;
 // setzt die Rechnungsnummer im Beleg falls noch leer
+function e_w_RechnungsNummer(BELEG_R: integer): integer;
 
-function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 // Ist bei dieser Beleg komplett versandfertig (alles da!)?
+function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 
-function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 // Ist bei diesem Beleg etwas versendbar?
+function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 
 // Legt einen neuen Versand-Eintrag in der Versand-Tabelle an,
 // oder füllt den vorbereiteten!
 function e_w_BelegVersand(BELEG_R: integer; Summe: double; gewicht: integer): integer;
 
-function e_w_BelegDrittlandAusfuhr(BELEG_R: integer): boolean;
 // setzt die MwSt auf "0"
+function e_w_BelegDrittlandAusfuhr(BELEG_R: integer): boolean;
 
-function e_w_BelegStorno(BELEG_R: integer): boolean;
 // wickelt eine Beleg wieder zurück ab
+function e_w_BelegStorno(BELEG_R: integer): boolean;
 
-function e_r_StandardVersender: integer;
 // VERSENDER_R des Standard-Versenders
+function e_r_StandardVersender: integer;
 
-function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 // Leergewicht einer bestimmten Packform
 //
+function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 
-function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // Gewicht eines Artikels
 //
+function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_ArtikelVersendetag(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // gibts infos über den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
+function e_r_ArtikelVersendetag(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // [Tage]
 // gibts infos über den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
+function e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-function e_w_ArtikelNeu(SORTIMENT_R: integer): integer; { : RID }
 // legt einen Artikel im angegebenen Sortiment an
 // liefert den neuen RID zurück!
+function e_w_ArtikelNeu(SORTIMENT_R: integer): integer; { : RID }
 
-function e_w_Artikel(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): boolean;
 { : Musste angelegt werden }
 // legt die Kombination Einheit.Ausgabeart.Artikel eines Artikels an, falls dieser
 // noch nicht existiert.
+function e_w_Artikel(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): boolean;
 
-function e_w_PersonNeu: integer; { : RID }
 // legt eine neue Person (vorläufig) an. Über sie kann der Kunde
 // vorbestellungen / vormerkungen anlegen.
+function e_w_PersonNeu: integer; { : RID }
 
-function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 { : VERSENDER_R }
 // Versanddatensatz vorbelegen
+function e_w_SetStandardVersandData(qVERSAND: TdboQuery): integer;
 
 function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
-//
 
 //
 // berechnet die VersandKosten anhand der Tabelle VREGEL
@@ -438,21 +434,19 @@ function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
 //
 function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
 
-function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 // ermittelt, ob es sich bei dem Angegebenen Artikel
 // um einen Versandartikel handelt, dies sind solche, die
 // in der VREGEL genannt werden.
+function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 
-function e_w_VersandKostenClear(BELEG_R: integer): integer;
 { : Anzahl der entfernten }
 // löschen der ungebuchten versandkosten des
 // letzten Buchungslaufes
+function e_w_VersandKostenClear(BELEG_R: integer): integer;
 
 function e_r_KontoInhaber(PERSON_R: integer): string;
-//
 
 function e_r_VornameNachname(PERSON_R: integer): string;
-//
 
 function e_r_ArtikelDokument(AUSGABEART_R, ARTIKEL_R, MEDIUM_R: integer): integer;
 function e_r_ArtikelBild(AUSGABEART_R, ARTIKEL_R: integer; DoFileCheck: boolean = true): string;
@@ -468,11 +462,11 @@ function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
 // Dateiname des Belegs
 function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0;
   AsMask: boolean = false): string;
+function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
 
-// Dateiname des Belegs
+// Dateiname der aktuellen Kontoübersicht / Mahnung
 function e_r_MahnungFName(PERSON_R: integer): string;
 
-function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringList;
 { : diverse ermittelten Werte }
 //
 // BELEG_R: Belegnummer
@@ -495,9 +489,10 @@ function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringLi
 // ANZAHLUNG=
 // BRUTTOKORREKTUR=
 //
+function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringList;
 
-function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
 // true wenn keine Forderung / Gutschrift mehr
+function e_r_BelegeAusgeglichen(BELEG_R: integer): boolean;
 
 // Saldo dieser Teillieferung
 // Falls Teillieferung=cRID_NULL, Saldo dieses Beleges
@@ -5445,6 +5440,12 @@ begin
     result := result + '*'
   else
     result := result + chtmlextension;
+end;
+
+function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
+begin
+  result := e_r_BelegFName(PERSON_R,BELEG_R,TEILLIEFERUNG,true);
+  ersetze('*','.combined'+cHTMLextension,result);
 end;
 
 function e_r_MahnungFName(PERSON_R: integer): string;
@@ -11625,7 +11626,6 @@ var
 
 begin
   try
-    // Singen!
     sResult := cOLAPNull;
     cAUFTRAG := nCursor;
     sProtokoll := TStringList.create;
@@ -11648,8 +11648,6 @@ begin
         e_r_sqlt(FieldByName('ZAEHLER_INFO'), sZaehlerInfo);
         e_r_sqlt(FieldByName('INTERN_INFO'), sIntern);
 
-        // AF-Patch eCommerce.pas 10678 +
-        // ZAEHLER_WECHSEL : TANFiXDate;
         ZAEHLER_WECHSEL := DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
         if (ZAEHLER_WECHSEL > DateGet) then
           Log('[Q14] Ablesedatum liegt in der Zukunft');

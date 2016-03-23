@@ -1,0 +1,27 @@
+--
+-- Erzeugen einer eMail via OLAP
+--
+--
+
+--
+-- RID der Person, die angemailt werden soll ...
+--
+$PERSON_R=1
+
+
+--
+-- RID der eMail-Vorlage "Tagesabschluss"
+--
+$VORLAGE_R=select RID from EMAIL where (VORLAGE_R IS NULL) and (UID='TAGESABSCHLUSS')
+
+--
+-- den eMail Request absetzen
+--
+insert into 
+ EMAIL 
+(RID,PERSON_R,VORLAGE_R,NACHRICHT) 
+values 
+ (0,
+  $PERSON_R,
+  $VORLAGE_R,
+  'Baustein:$Diagnose?Tagesabschluss-$SEQ_TAGESABSCHLUSS.log.txt')

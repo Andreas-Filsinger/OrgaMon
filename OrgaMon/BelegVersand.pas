@@ -297,7 +297,7 @@ var
   EREIGNIS_R: Integer;
   VERSAND_R: Integer;
 begin
- BeginHourGlass;
+  BeginHourGlass;
   ErrorMsg := '';
   BELEG_R := IB_Query1.FieldByName('BELEG_R').AsInteger;
   TEILLIEFERUNG := IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger;
@@ -306,11 +306,18 @@ begin
     { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
     { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
   repeat
-    //
-    FName := e_r_BelegFName(
+
+    // Bestimmung des Dateinamens
+    FName := e_r_BelegFNameCombined(
       { } PERSON_R,
       { } BELEG_R,
       { } TEILLIEFERUNG);
+
+    if not(FileExists(FName)) then
+      FName := e_r_BelegFName(
+        { } PERSON_R,
+        { } BELEG_R,
+        { } TEILLIEFERUNG);
 
     //
     FName_pdf := FName;
@@ -329,6 +336,7 @@ begin
     begin
       WinExec32AndWait(
         { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
+        // ggf. "--zoom 0.0..9.9" verwenden
         { } '"' + FName + '"' + ' ' +
         { } '"' + FName_pdf + '"',
         { } SW_SHOWDEFAULT);
@@ -348,7 +356,6 @@ begin
     begin
       // Ereignis anlegen
       EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
-
       e_x_sql('insert into EREIGNIS (RID,ART,BEARBEITER_R,PERSON_R,BELEG_R,TEILLIEFERUNG,VERSAND_R) values (' +
         { } inttostr(EREIGNIS_R) + ',' +
         { } inttostr(eT_RechnungPerEMail) + ',' +
@@ -357,7 +364,6 @@ begin
         { } inttostr(BELEG_R) + ',' +
         { } inttostr(TEILLIEFERUNG) + ',' +
         { } inttostr(VERSAND_R) + ')');
-
     end;
 
     // Ensure eMail Entry
@@ -377,10 +383,9 @@ begin
       { } '''' + FName_pdf + '''' + ')');
 
   until true;
-  endHourGlass;
-  if ErrorMsg<>'' then
-   ShowMessage(ErrorMsg);
-
+  EndHourGlass;
+  if (ErrorMsg <> '') then
+    ShowMessage(ErrorMsg);
 end;
 
 procedure TFormBelegVersand.ReflectData;
