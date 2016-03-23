@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<favorites>
+	<items>
+		<item>
+			<caption>
+				<![CDATA[Zählernummer ALT]]>
+			</caption>
+			<sql>
+				<![CDATA[zaehler_nummer=11186403]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[ZIP]]>
+			</caption>
+			<sql>
+				<![CDATA[EXPORT_TAN >= 128 ]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Eingabe eines Nebentarif Ablesewertes]]>
+			</caption>
+			<sql>
+				<![CDATA[protokoll like '%NA=%']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Zählernummer EINBAU]]>
+			</caption>
+			<sql>
+				<![CDATA[zaehler_nr_neu = '']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Wechsel vor einem Datum]]>
+			</caption>
+			<sql>
+				<![CDATA[ZAEHLER_WECHSEL < '16.11.2009']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Intern Info]]>
+			</caption>
+			<sql>
+				<![CDATA[INTERN_INFO like '%AkNr=300043493%'
+]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[alles ausser]]>
+			</caption>
+			<sql>
+				<![CDATA[not(ZAEHLER_INFO like '%Turnus 2010%')]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Tan Internetablage]]>
+			</caption>
+			<sql>
+				<![CDATA[EXPORT_TAN >= 128 ]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Zählernummer Neu]]>
+			</caption>
+			<sql>
+				<![CDATA[zaehler_nr_neu = '7117498'
+]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Status]]>
+			</caption>
+			<sql>
+				<![CDATA[Status=]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[EnO - Auftragsnummer]]>
+			</caption>
+			<sql>
+				<![CDATA[INTERN_INFO containing 'qAuftragsnummer=?']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Bild - OK]]>
+			</caption>
+			<sql>
+				<![CDATA[PROTOKOLL containing 'FA=']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Bild - FEHLT]]>
+			</caption>
+			<sql>
+				<![CDATA[PROTOKOLL not containing 'FA=']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Export-TAN]]>
+			</caption>
+			<sql>
+				<![CDATA[EXPORT_TAN >= 128]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Protokollfeld]]>
+			</caption>
+			<sql>
+				<![CDATA[PROTOKOLL containing 'N1=']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Wechseldatum]]>
+			</caption>
+			<sql>
+				<![CDATA[cast(zaehler_wechsel as date)='17.06.2006']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Zählerstand Einbau]]>
+			</caption>
+			<sql>
+				<![CDATA[Zaehlerstand = '']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Ortsteil]]>
+			</caption>
+			<sql>
+				<![CDATA[KUNDE_ORTSTEIL starts with 'Kulk' ]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Terminiert durch Bearbeiter]]>
+			</caption>
+			<sql>
+				<![CDATA[(TERMINIERT_R=181)]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Mögliche Wechsel am]]>
+			</caption>
+			<sql>
+				<![CDATA[-- ACHTUNG: Der Wunschtermin  muss 2 mal
+-- eingetragen werden!     
+(
+('15.10.2010' between ZEITRAUM_VON and ZEITRAUM_BIS) or 
+(ZEITRAUM_VON is null) or
+(ZEITRAUM_BIS is null)
+) and
+(
+('15.10.2010' not between SPERRE_VON and SPERRE_BIS) or
+(SPERRE_VON is null) or
+(SPERRE_BIS is null)
+)]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Wechsel von (einschliesslich) bis (ausschliesslich)]]>
+			</caption>
+			<sql>
+				<![CDATA[(zaehler_wechsel between '01.03.2015' and '31.03.2015')]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Planquadrat = oder >= .....]]>
+			</caption>
+			<sql>
+				<![CDATA[Planquadrat >= 23836]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Kundenummer]]>
+			</caption>
+			<sql>
+				<![CDATA[Kunde_Nummer = '   ']]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Geolokalisierung fraglich]]>
+			</caption>
+			<sql>
+				<![CDATA[((KUNDE_STRASSE containing '?') or 
+(KUNDE_STRASSE containing '@'))]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Adresse nicht eindeutig]]>
+			</caption>
+			<sql>
+				<![CDATA[((KUNDE_STRASSE containing '?') or (KUNDE_STRASSE containing '@'))]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Schrott]]>
+			</caption>
+			<sql>
+				<![CDATA[( (PROTOKOLL containing 'S1=J') and
+  (EXPORT_TAN >= 1) and (EXPORT_TAN <= 2) )]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Wechseldatum - OHNE EINTRAG]]>
+			</caption>
+			<sql>
+				<![CDATA[zaehler_wechsel is null]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Import RID]]>
+			</caption>
+			<sql>
+				<![CDATA[RID_AT_IMPORT = 17797550]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Änderung durch Bearbeiter]]>
+			</caption>
+			<sql>
+				<![CDATA[(BEARBEITER_R=181)]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Änderungen seit gewissen Zeitpunkt anzeigen]]>
+			</caption>
+			<sql>
+				<![CDATA[(geaendert>'07.05.2012 15:00:00')and
+(baustelle_r not in (614,438))]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Zählerstand ALT]]>
+			</caption>
+			<sql>
+				<![CDATA[Zaehler_Stand_Alt = ''
+]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[EXPORT Tan von bis anzeigen]]>
+			</caption>
+			<sql>
+				<![CDATA[EXPORT_TAN between 6 and 9]]>
+			</sql>
+		</item>
+		<item>
+			<caption>
+				<![CDATA[Zählernummer Korrektur]]>
+			</caption>
+			<sql>
+				<![CDATA[zaehler_nr_korrektur = '7117498']]>
+			</sql>
+		</item>
+	</items>
+</favorites>

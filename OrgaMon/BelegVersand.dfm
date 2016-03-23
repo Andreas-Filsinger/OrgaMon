@@ -179,7 +179,7 @@ object FormBelegVersand: TFormBelegVersand
     Top = 14
     Width = 23
     Height = 22
-    Hint = 'Probestimmen ansehen'
+    Hint = 'Rechnungsbeleg als PDF via eMail'
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000130B0000130B000000000000000000001902FE000A91
