@@ -395,7 +395,6 @@ begin
               Host := settings.values[cE_FTPHOST];
               UserName := settings.values[cE_FTPUSER];
               password := settings.values[cE_FTPPASSWORD];
-              passive := true;
 
               connect;
 

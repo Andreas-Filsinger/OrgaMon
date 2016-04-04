@@ -2411,7 +2411,6 @@ begin
             Username := nextp(Settings.values[cE_FTPUSER], '\', 0);
             Password := Settings.values[cE_FTPPASSWORD];
           end;
-          passive := true;
 
           (* // FTPES
             IdSSLIOHandlerSocketOpenSSL1.PassThrough := false;

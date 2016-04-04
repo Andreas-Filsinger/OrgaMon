@@ -176,7 +176,6 @@ var
     SolidInit(IdFTP1);
     with IdFTP1 do
     begin
-      Passive := true;
       Host := nextp(iMobilFTP, ';', 0);
       UserName := nextp(iMobilFTP, ';', 1);
       Password := nextp(iMobilFTP, ';', 2);
@@ -1150,7 +1149,6 @@ begin
     SolidInit(IdFTP1);
     with IdFTP1 do
     begin
-      Passive := true;
       Host := nextp(iMobilFTP, ';', 0);
       UserName := nextp(iMobilFTP, ';', 1);
       Password := nextp(iMobilFTP, ';', 2);

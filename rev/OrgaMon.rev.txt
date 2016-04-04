@@ -19,9 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.167 (23.03.16-) Andreas Filsinger
+Rev 8.167 (23.03.16-04.04.16) Andreas Filsinger
 
  Neu: Beleg: PDF Erstellung: nun auch "combined" möglich (Rechnungen mit Zeitabrechnung als 2 seitges Dokument)
+ Neu: FTP: PASV, misstraue den IP Adress-Angaben, nehme immer den Host des Commando-Kanals
 
 Rev 8.166 (21.03.16) Andreas Filsinger
 
