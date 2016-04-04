@@ -215,6 +215,7 @@ begin
   with ftp do
   begin
     Passive := true; // wichtig wegen NAT und Sicherheit
+    PassiveUseControlHost := true; // dem PASV Befehl mistrauen
     TransferType := ftBinary; // wichtig wegen SIZE
     // TransferTimeout := 30000; // 30 sec ohne Daten -> TimeOut
   end;

@@ -1464,12 +1464,12 @@ begin
 
     //
     iFTP := TIdFTP.Create(nil);
+    SolidInit(iFTP);
     with iFTP do
     begin
       Host := iJonDa_FTPHost;
       UserName := iJonDa_FTPUserName;
       Password := iJonDa_FTPPassword;
-      passive := true;
     end;
 
     repeat

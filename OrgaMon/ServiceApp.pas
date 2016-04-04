@@ -1171,13 +1171,13 @@ var
   iFTP: TIdFTP;
 begin
   iFTP := TIdFTP.create(self);
+
+  SolidInit(iFTP);
   with iFTP do
   begin
     Host := iJonDa_FTPHost;
     UserName := iJonDa_FTPUserName;
     Password := iJonDa_FTPPassword;
-    passive := true;
-
   end;
 
   Memo1.lines.add('melde TAN 50000 ... ');
@@ -1606,12 +1606,12 @@ var
 begin
   BeginHourGlass;
   iFTP := TIdFTP.create(self);
+  SolidInit(iFTP);
   with iFTP do
   begin
     Host := iJonDa_FTPHost;
     UserName := iJonDa_FTPUserName;
     Password := iJonDa_FTPPassword;
-    passive := true;
   end;
   MyProgramPath := 'W:\JonDaServer\';
   JonDaX.doStat(iFTP);
