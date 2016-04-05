@@ -1159,20 +1159,22 @@ begin
     end;
 
     FNameNeu := FNameAlt;
+
     // das letzte "Neu" am Ende des Dateinamens zählt
-    k := revpos('Neu', FNameNeu);
+    k := revpos(cServiceFoto_NeuPlatzhalter, FNameNeu);
     if (k = 0) then
     begin
       Log(cERRORText + ' ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
       continue;
     end;
 
+    // Neuen Dateinamen zusammenbauen
     FNameNeu :=
-    { } copy(FNameNeu, 1, k) +
+    { } copy(FNameNeu, 1, pred(k)) +
     { } TJonDaExec.FormatZaehlerNummerNeu(NEU) +
     { } '.jpg';
 
-    // Es ist gewünscht die (TMP..)- Sachen wieder wegzumachen
+    // die (TMP..)- Sachen wieder wegzumachen
     FNameNeu := JonDaExec.clearTempTag(FNameNeu);
 
     // Laufwerksbuchstaben
@@ -1298,19 +1300,19 @@ var
   const
     cMaxZIP_Size = 100 * 1024 * 1024;
   var
-    m,r: integer;
+    m, r: integer;
     Pending: boolean;
     FotoFSize: int64;
-    sPics : TStringList;
-  mIni: TIniFile;
-  FTP_Benutzer: string;
-  FotosSequence: integer;
-  FotosAbzug: boolean;
-  sOldZips: TSTringList;
+    sPics: TStringList;
+    mIni: TIniFile;
+    FTP_Benutzer: string;
+    FotosSequence: integer;
+    FotosAbzug: boolean;
+    sOldZips: TStringList;
   begin
     Pending := false;
     sPics := TStringList.Create;
-    sOldZips:= TStringList.Create;
+    sOldZips := TStringList.Create;
     repeat
       // Jpegs
       dir(Ablage_PFAD + '*.jpg', sPics, false);
@@ -1445,8 +1447,8 @@ var
         FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
-    sPics.free;
-    sOldZips.free;
+    sPics.Free;
+    sOldZips.Free;
 
     if Pending then
       serviceJPG;
@@ -1454,15 +1456,15 @@ var
 
   procedure serviceHTML;
   var
-    m,r: integer;
-    sHTMLSs : TStringList;
-  mIni: TIniFile;
-  FTP_Benutzer: string;
-  FotosSequence: integer;
-  sOldZips: TSTringList;
+    m, r: integer;
+    sHTMLSs: TStringList;
+    mIni: TIniFile;
+    FTP_Benutzer: string;
+    FotosSequence: integer;
+    sOldZips: TStringList;
   begin
-   sHTMLSs := TStringList.Create;
-    sOldZips:= TStringList.Create;
+    sHTMLSs := TStringList.Create;
+    sOldZips := TStringList.Create;
     repeat
 
       // Jpegs
@@ -1547,8 +1549,8 @@ var
         FileDelete(Ablage_PFAD + sHTMLSs[m]);
 
     until true;
-    sHTMLSs.free;
-    sOldZips.free;
+    sHTMLSs.Free;
+    sOldZips.Free;
   end;
 
   procedure serviceZIP;
@@ -1586,7 +1588,7 @@ var
   // Parameter
   pDatum: string;
   pEinzeln: string;
-  r : integer;
+  r: integer;
 
 begin
 

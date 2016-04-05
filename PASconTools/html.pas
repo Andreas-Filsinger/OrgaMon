@@ -29,7 +29,6 @@ unit html;
 {$ifndef FPC}
 {$I jcl.inc}
 {$endif}
-
 // ------------------------------------------------------------------
 //
 // (c)'18.04.00 by Andreas Filsinger, http://OrgaMon.org
@@ -106,8 +105,8 @@ uses
     ,
   System.UITypes
 {$ELSE}
-  , lazutf8, strutils, strings,
-   Graphics, fpchelper
+    , lazutf8, strutils, strings,
+  Graphics, fpchelper
 {$ENDIF}
     ;
 
@@ -193,8 +192,7 @@ type
     Diagnose: TStringList;
     Reference: TStringList;
 
-    function CheckReplaceOne(n: integer;
-      const CheckStr, toValue: string): boolean;
+    function CheckReplaceOne(n: integer; const CheckStr, toValue: string): boolean;
   public
     DateA, DateB: TAnfixDate;
     CanUseQuick: boolean;
@@ -213,8 +211,7 @@ type
 
     procedure WriteValue(BlockName, VarName, NewValue: string); overload;
     function WriteValue(VarName, NewValue: string): integer; overload;
-    procedure WriteValue(BlockName, VarName: string;
-      NewValue: TStrings); overload;
+    procedure WriteValue(BlockName, VarName: string; NewValue: TStrings); overload;
     procedure WriteValue(FullPage: TStrings); overload;
     procedure WriteValue(FullPageLokal, FullPageGlobal: TStrings); overload;
     procedure WriteValueOnce(VarName, NewValue: string);
@@ -244,12 +241,9 @@ type
 
     procedure LoadBlock(atIndex: integer; NewStrings: TStrings); overload;
     procedure LoadBlock(Block: string); overload;
-    procedure LoadBlock(FromBlock, AsBlock: string;
-      KillInsertMark: boolean = false); overload;
-    procedure LoadBlock(FromBlock, AsBlock: string; NewStrings: TStrings;
-      KillInsertMark: boolean = false); overload;
-    procedure LoadBlock(Block: string; NewStrings: TStrings;
-      KillInsertMark: boolean = false); overload;
+    procedure LoadBlock(FromBlock, AsBlock: string; KillInsertMark: boolean = false); overload;
+    procedure LoadBlock(FromBlock, AsBlock: string; NewStrings: TStrings; KillInsertMark: boolean = false); overload;
+    procedure LoadBlock(Block: string; NewStrings: TStrings; KillInsertMark: boolean = false); overload;
     procedure LoadBlockFromFile(Block, FName: string);
     procedure LoadFromFile(const FileName: string); override;
 
@@ -316,6 +310,7 @@ function RFC1738ToAnsi(s: string): string;
 function html2raw(x: string): string; overload;
 function html2raw(x: TStrings): TStrings; overload;
 function eMailAdresseOK(e: string): boolean; overload;
+function XMLEmpty(s: string): string;
 
 implementation
 
@@ -326,7 +321,7 @@ uses
   JclSimpleXML,
   JclStreams,
 {$ENDIF}
-    IniFiles;
+  IniFiles;
 
 const
   cERRORText = 'ERROR:';
@@ -398,8 +393,7 @@ begin
   end;
 end;
 
-function THTMLTemplate.CheckReplaceOne(n: integer;
-  const CheckStr, toValue: string): boolean;
+function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: string): boolean;
 
   function Komma_F(s: string): string;
   var
@@ -437,7 +431,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer;
     // Beispiel: 2015-05-11T10:23:18
     //
     result := dTimeStamp(mkDateTime(s));
-    ersetze(' ','T',result);
+    ersetze(' ', 'T', result);
   end;
 
   function zeit_F(s: string): string;
@@ -477,8 +471,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer;
     if dateOK(s) then
     begin
       result := long2date(date2long(s));
-      result := copy(result, 7, 4) + '-' + copy(result, 3, 2) + '-' +
-        copy(result, 1, 2);
+      result := copy(result, 7, 4) + '-' + copy(result, 3, 2) + '-' + copy(result, 1, 2);
     end;
   end;
 
@@ -612,6 +605,22 @@ begin
         continue;
       end;
 
+      if isCommand('^E') then
+      begin
+        if (NewValue = '') then
+        begin
+          strings[n] := XMLEmpty(copy(strings[n], 1, pred(k)) + NewValue + Rest);
+          Rest := '';
+        end;
+        continue;
+      end;
+
+      if isCommand('^T') then
+      begin
+        ersetze('  ', ' ', self, n);
+        continue;
+      end;
+
       if isCommand('^Y') then
       begin
         if NewValue = '' then
@@ -619,12 +628,6 @@ begin
           Rest := '';
           strings[n] := '';
         end;
-        continue;
-      end;
-
-      if isCommand('^T') then
-      begin
-        ersetze('  ',' ',self,n);
         continue;
       end;
 
@@ -808,15 +811,13 @@ var
         // normale Konsumer verbrauchen so viel wie er
         // Zeilen liefert
         if (pos(pName + ',', CB_Producer + ',') > 0) then
-          inc(result, charCount(#13, copy(FullPage[CB_LastChecked], succ(k),
-            MaxInt)) + 1);
+          inc(result, charCount(#13, copy(FullPage[CB_LastChecked], succ(k), MaxInt)) + 1);
       end;
       inc(CB_LastChecked);
       if (CB_LastChecked = FullPage.count) then
         break;
 
-    until (result > 0) and
-      (pos(cPageBreakHerePossible, FullPage[CB_LastChecked]) = 1);
+    until (result > 0) and (pos(cPageBreakHerePossible, FullPage[CB_LastChecked]) = 1);
 
   end;
 
@@ -866,8 +867,7 @@ var
 
           if DebugMode then
             AppendStringsToFile(
-              { } IntToStrN(PhaseCount, 3) + '-' + IntToStrN(n, 4) + ' '
-              + OneLine,
+              { } IntToStrN(PhaseCount, 3) + '-' + IntToStrN(n, 4) + ' ' + OneLine,
               { } ExtractFilePath(FileName) +
               { } 'Command.log');
 
@@ -969,10 +969,8 @@ var
     // alle Werte des Systemsheaps im Dokument belichten
     for n := 0 to pred(SystemHeap.count) do
     begin
-      WriteValueQuick(nextp(SystemHeap[n], '=', 0),
-        nextp(SystemHeap[n], '=', 1));
-      WriteValueQuick('_' + nextp(SystemHeap[n], '=', 0),
-        nextp(SystemHeap[n], '=', 1));
+      WriteValueQuick(nextp(SystemHeap[n], '=', 0), nextp(SystemHeap[n], '=', 1));
+      WriteValueQuick('_' + nextp(SystemHeap[n], '=', 0), nextp(SystemHeap[n], '=', 1));
     end;
   end;
 
@@ -1017,8 +1015,7 @@ var
           if (k > 0) then
           begin
 
-            FName := copy(strings[n], succ(length(cHTML_ComputeFile)),
-              pred(k - length(cHTML_ComputeFile)));
+            FName := copy(strings[n], succ(length(cHTML_ComputeFile)), pred(k - length(cHTML_ComputeFile)));
             PreFName := FileName + '.';
             if not(FileExists(PreFName + FName)) then
               PreFName := ExtractFilePath(FileName);
@@ -1028,8 +1025,7 @@ var
             ComputeVorlage.LoadFromFile(PreFName + FName);
             ComputeVorlage.OhneRohdaten := true;
             ComputeVorlage.WriteValue(FullPage);
-            ComputeVorlage.insert(0, cHTML_BeginBlock + FName +
-              cHTML_Comment_PostFix);
+            ComputeVorlage.insert(0, cHTML_BeginBlock + FName + cHTML_Comment_PostFix);
             ComputeVorlage.add(cHTML_EndBlock + FName + cHTML_Comment_PostFix);
 
             for m := 0 to pred(ComputeVorlage.count) do
@@ -1092,8 +1088,7 @@ begin
         LookForwardBlock := _CBnext;
         if (LookForwardBlock = 0) then // keinerlei Bedarf mehr
           break;
-        if (LookForwardBlock + ActPageFilled > FreiCount_First) and
-          (ActPageFilled > 0) then // eben voll geworden
+        if (LookForwardBlock + ActPageFilled > FreiCount_First) and (ActPageFilled > 0) then // eben voll geworden
           break; // raus ohne zu füllen
         inc(ActPageFilled, CBnext);
       until false;
@@ -1102,8 +1097,7 @@ begin
       // passt der Rest auf "last"?
       CB_Producer := FreiCount_Next_Killer;
       repeat
-        if CalcBedarf(FreiCount_Last_Killer, CB_LastChecked) <= FreiCount_Last
-        then
+        if CalcBedarf(FreiCount_Last_Killer, CB_LastChecked) <= FreiCount_Last then
         begin
           // ja -> das wird die letzte Seite
           break;
@@ -1117,8 +1111,7 @@ begin
             LookForwardBlock := _CBnext;
             if (LookForwardBlock = 0) then
               break;
-            if (LookForwardBlock + ActPageFilled > FreiCount_Next) and
-              (ActPageFilled > 0) then
+            if (LookForwardBlock + ActPageFilled > FreiCount_Next) and (ActPageFilled > 0) then
               break; // raus ohne zu füllen
             inc(ActPageFilled, CBnext);
           until false;
@@ -1281,15 +1274,13 @@ begin
       k := pos('~' + VarName + '~', strings[n]);
       if (k = 0) then
         break;
-      strings[n] := copy(strings[n], 1, pred(k)) + Ansi2html(NewValue1) + '<br>'
-        + Ansi2html(NewValue2) + copy(strings[n], k + length(VarName) +
-        2, MaxInt);
+      strings[n] := copy(strings[n], 1, pred(k)) + Ansi2html(NewValue1) + '<br>' + Ansi2html(NewValue2) +
+        copy(strings[n], k + length(VarName) + 2, MaxInt);
     end;
   end;
 end;
 
-procedure THTMLTemplate.WriteValue(BlockName, VarName: string;
-  NewValue: TStrings);
+procedure THTMLTemplate.WriteValue(BlockName, VarName: string; NewValue: TStrings);
 var
   n, k, l: integer;
   InsideBlock: boolean;
@@ -1308,8 +1299,8 @@ begin
         SourceStr := strings[n];
         delete(n);
         for l := pred(NewValue.count) downto 0 do
-          insert(n, copy(SourceStr, 1, pred(k)) + Ansi2html(NewValue[l]) +
-            copy(SourceStr, k + length(VarName) + 2, MaxInt));
+          insert(n, copy(SourceStr, 1, pred(k)) + Ansi2html(NewValue[l]) + copy(SourceStr,
+            k + length(VarName) + 2, MaxInt));
       end;
       if pos(cHTML_EndBlock + BlockName, strings[n]) = 1 then
         InsideBlock := false;
@@ -1446,8 +1437,7 @@ begin
     insert(_BlockStart + n, NewStrings[n]);
 end;
 
-procedure THTMLTemplate.LoadBlock(FromBlock, AsBlock: string;
-  KillInsertMark: boolean = false);
+procedure THTMLTemplate.LoadBlock(FromBlock, AsBlock: string; KillInsertMark: boolean = false);
 var
   k: integer;
 begin
@@ -1462,8 +1452,7 @@ begin
         { } IntToStrN(PhaseCount, 3) + ': loadBlock(' + FromBlock + ')',
         { } ExtractFilePath(FileName) +
         { } 'Command.log');
-    LoadBlock(FromBlock, AsBlock, TStringList(Blocks.Objects[k]),
-      KillInsertMark);
+    LoadBlock(FromBlock, AsBlock, TStringList(Blocks.Objects[k]), KillInsertMark);
   end
   else
   begin
@@ -1471,8 +1460,7 @@ begin
   end;
 end;
 
-procedure THTMLTemplate.LoadBlock(FromBlock, AsBlock: string;
-  NewStrings: TStrings; KillInsertMark: boolean = false);
+procedure THTMLTemplate.LoadBlock(FromBlock, AsBlock: string; NewStrings: TStrings; KillInsertMark: boolean = false);
 var
   InsertAt: integer;
 begin
@@ -1508,8 +1496,7 @@ begin
     end;
 
     // Fehler!
-    addFatalError('"[!-- INSERT|END ' + FromBlock + '|' + AsBlock +
-      ' --]" nicht gefunden!');
+    addFatalError('"[!-- INSERT|END ' + FromBlock + '|' + AsBlock + ' --]" nicht gefunden!');
 
   until true;
 
@@ -1523,8 +1510,7 @@ begin
     LoadBlock(InsertAt, NewStrings)
 end;
 
-procedure THTMLTemplate.LoadBlock(Block: string; NewStrings: TStrings;
-  KillInsertMark: boolean = false);
+procedure THTMLTemplate.LoadBlock(Block: string; NewStrings: TStrings; KillInsertMark: boolean = false);
 begin
   LoadBlock(Block, '', NewStrings, KillInsertMark);
 end;
@@ -1571,8 +1557,7 @@ var
 begin
   result := -1;
   for n := 0 to pred(count) do
-    if pos(cHTML_BeginBlock + Block + cHTML_Comment_PostFix, strings[n]) = 1
-    then
+    if pos(cHTML_BeginBlock + Block + cHTML_Comment_PostFix, strings[n]) = 1 then
     begin
       result := n;
       break;
@@ -1691,8 +1676,7 @@ begin
       l := pos(' Rev ', NewStrings[n]);
       if (l > 0) then
       begin
-        DatumBlock := ExtractSegmentBetween(copy(NewStrings[n], l + 4, MaxInt),
-          '(', ')');
+        DatumBlock := ExtractSegmentBetween(copy(NewStrings[n], l + 4, MaxInt), '(', ')');
         if DatumBlock <> '' then
         begin
           if pos('-', DatumBlock) > 0 then
@@ -1843,8 +1827,7 @@ var
 begin
   result := '';
   for n := 1 to length(s) do
-    if CharInSet(s[n], ['-', '.', ',', '?', ':', '&', '@', '=', ';', '/', '_',
-      '0' .. '9', 'a' .. 'z', 'A' .. 'Z']) then
+    if CharInSet(s[n], ['-', '.', ',', '?', ':', '&', '@', '=', ';', '/', '_', '0' .. '9', 'a' .. 'z', 'A' .. 'Z']) then
       result := result + s[n]
     else
       result := result + '%' + format('%2x', [ord(s[n])]);
@@ -1859,8 +1842,7 @@ begin
     k := pos('%', result);
     if (k = 0) then
       break;
-    result := copy(result, 1, pred(k)) +
-      chr(strtoint('$' + copy(result, k + 1, 2))) + copy(result, k + 3, MaxInt);
+    result := copy(result, 1, pred(k)) + chr(strtoint('$' + copy(result, k + 1, 2))) + copy(result, k + 3, MaxInt);
   until false;
 end;
 
@@ -1883,7 +1865,7 @@ begin
 end;
 
 procedure THTMLTemplate.Dereference(Options: string);
-{$ifndef fpc}
+{$IFNDEF fpc}
 var
   iStart, iEnd: integer;
   sXML: TStringStream;
@@ -1911,8 +1893,7 @@ var
         i := i.items.ItemNamed[cTag];
       if not(assigned(i)) then
       begin
-        result := '<!-- Element <' + cTag + '> in ' + FoundTags +
-          ' not found! -->';
+        result := '<!-- Element <' + cTag + '> in ' + FoundTags + ' not found! -->';
         break;
       end;
 
@@ -1980,8 +1961,7 @@ begin
       if not(FileExists(pFName)) then
       begin
         if TestMode then
-          addFatalError('Referenzquelle "' + ExtractFileName(pFName) +
-            '" nicht gefunden')
+          addFatalError('Referenzquelle "' + ExtractFileName(pFName) + '" nicht gefunden')
         else
           addFatalError('Referenzquelle "' + pFName + '" nicht gefunden');
 
@@ -2085,8 +2065,7 @@ begin
           continue;
         end;
 
-        Tag := copy(strings[n], k + length(cReferenceDelimiterBegin),
-          l - k - length(cReferenceDelimiterBegin));
+        Tag := copy(strings[n], k + length(cReferenceDelimiterBegin), l - k - length(cReferenceDelimiterBegin));
         if Tag = '' then
         begin
           inc(n);
@@ -2108,12 +2087,13 @@ begin
     end;
   end;
 end;
-{$else}
+{$ELSE}
+
 begin
   raise exception.create('Error');
 end;
 
-{$endif}
+{$ENDIF}
 
 constructor THTMLTemplate.create;
 begin
@@ -2185,8 +2165,7 @@ begin
     l := pos(';', fromS);
     if (l = 0) or (l > 6) then
       break;
-    ersetze(copy(result, k, l), chr(StrtoIntDef(copy(result, k + 2, l - 3),
-      ord('?'))), result);
+    ersetze(copy(result, k, l), chr(StrtoIntDef(copy(result, k + 2, l - 3), ord('?'))), result);
   until false;
 end;
 
@@ -2226,8 +2205,7 @@ begin
       begin
         if not(assigned(IncludeS)) then
           IncludeS := TStringList.create;
-        IncludeFName := copy(strings[n], succ(length(cHTML_IncludeFile)),
-          pred(k - length(cHTML_IncludeFile)));
+        IncludeFName := copy(strings[n], succ(length(cHTML_IncludeFile)), pred(k - length(cHTML_IncludeFile)));
         PreFName := FileName + '.';
         if not(FileExists(PreFName + IncludeFName)) then
           PreFName := ExtractFilePath(FileName);
@@ -2283,9 +2261,7 @@ begin
           //
           if (pos(cHTML_Copies, strings[n]) = 1) then
           begin
-            DokumentNumberOfCopies :=
-              StrtoIntDef(nextp(copy(strings[n], length(cHTML_Copies) + 1,
-              MaxInt), ' ', 0), 0);
+            DokumentNumberOfCopies := StrtoIntDef(nextp(copy(strings[n], length(cHTML_Copies) + 1, MaxInt), ' ', 0), 0);
             continue;
           end;
 
@@ -2456,8 +2432,7 @@ begin
         begin
 
           // search for "<body"
-          k := max(pos('<body ', strings[Pline]),
-            pos('</head>', strings[Pline]));
+          k := max(pos('<body ', strings[Pline]), pos('</head>', strings[Pline]));
           if (k > 0) then
             inc(MachineState);
         end;
@@ -2495,8 +2470,7 @@ begin
             if (k > 0) then
             begin
               // name und value
-              SingleForm.add(ReadAttrValue('name') + '=' +
-                ReadAttrValue('value'));
+              SingleForm.add(ReadAttrValue('name') + '=' + ReadAttrValue('value'));
               break;
             end;
 
@@ -2613,8 +2587,7 @@ begin
     begin
       if (ValCount > 0) then
         result := result + '&';
-      result := result + nextp(TheAttributes[n], '=', 0) + '=' +
-        AnsiToRFC1738(nextp(TheAttributes[n], '=', 1));
+      result := result + nextp(TheAttributes[n], '=', 0) + '=' + AnsiToRFC1738(nextp(TheAttributes[n], '=', 1));
 
       // k := pos('=',TheAttributes[n]);
       // result := result + nextp(TheAttributes[n], '=', 0) + '=' + rfc1738(copy(TheAttributes[n],k+1,MaxInt));
@@ -2875,8 +2848,7 @@ begin
   if not(Mission_complete) then
   begin
     // Fehler im B Dokument
-    addFatalError('Parser steckt im Status ' +
-      IntToStr(Automatastate) + ' fest');
+    addFatalError('Parser steckt im Status ' + IntToStr(Automatastate) + ' fest');
   end;
 
   // Es gab Fehler?
@@ -3097,6 +3069,25 @@ function UnbreakAble(s: string): string;
 begin
   result := s;
   ersetze(' ', cNonBreakableSpace, result);
+end;
+
+//
+// detects an empty element and repalce it to the short form
+// <tag></tag> -> <tag/>
+//
+
+function XMLEmpty(s: string): string;
+var
+  i, j: integer;
+begin
+  result := s;
+  i := pos('<', result);
+  j := pos('></', result);
+  if (i > 0) and (j > 0) then
+    result :=
+    { blanks } copy(result, 1, pred(i)) +
+    { tag-name } copy(result, i, j - i) +
+    { close } '/>';
 end;
 
 var

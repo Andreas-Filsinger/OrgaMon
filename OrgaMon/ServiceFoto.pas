@@ -142,6 +142,8 @@ type
     Button29: TButton;
     Button6: TButton;
     Button30: TButton;
+    Button31: TButton;
+    CheckBox1: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -182,6 +184,7 @@ type
     procedure Button29Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button30Click(Sender: TObject);
+    procedure Button31Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -206,9 +209,10 @@ var
 implementation
 
 uses
-  binlager32, anfix32, globals,
-  IniFiles, InfoZip, math,
-  CCR.Exif, wanfix32, dbOrgaMon;
+  SimplePassword, binlager32, anfix32,
+  globals, IniFiles, InfoZip,
+  math, CCR.Exif, wanfix32,
+  dbOrgaMon;
 
 {$R *.dfm}
 
@@ -539,6 +543,101 @@ begin
   MyProgramPath := Edit15.Text;
 end;
 
+procedure TFormServiceFoto.Button31Click(Sender: TObject);
+var
+  Trn: TStringList;
+
+  function rDaSiName(sSource: string): string;
+  var
+    m: integer;
+    sDeliveryName: string;
+    _sSource: string;
+    sDir: TStringList;
+  begin
+    result := '';
+    sDir := TStringList.Create;
+    for m := 0 to pred(Trn.count) do
+    begin
+      if pos(sSource, Trn[m]) > 0 then
+      begin
+        _sSource := nextp(Trn[m], ' ', 2);
+        if (sSource <> _sSource) then
+          continue;
+        sDeliveryName := nextp(Trn[m], ' ', 1);
+        dir(MyFotoExec.BackupDir + cServiceFoto_FTPBackupSubPath + '*' + sDeliveryName, sDir, false, true);
+        if (sDir.count < 1) then
+          raise Exception.Create('Datei ' + sDeliveryName + ' nicht im Backup');
+        sDir.sort;
+        result := MyFotoExec.BackupDir + cServiceFoto_FTPBackupSubPath + sDir[pred(sDir.count)];
+        break;
+      end;
+    end;
+    sDir.Free;
+  end;
+
+var
+  l, sCommand, sSource, sDest: string;
+  newSource, newDest: string;
+  n: integer;
+  sLog: TStringList;
+
+begin
+  ListBox12.Items.Clear;
+  //
+  Trn := TStringList.Create;
+  sLog := TStringList.Create;
+  sLog.add('PFAD;BISHER;NEU');
+  Trn.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  for n := 0 to pred(Trn.count) do
+  begin
+    l := Trn[n];
+
+    sCommand := nextp(l, ' ');
+    if (sCommand <> 'mv') then
+      continue;
+
+    sSource := nextp(l, ' ');
+    if pos('-Neu', sSource) = 0 then
+      continue;
+
+    sDest := nextp(l, ' ');
+    if (pos('-N', sDest) = 0) and (pos('\N', sDest) = 0) then
+      continue;
+
+    ListBox12.Items.add(Trn[n]);
+
+    //
+    newSource := rDaSiName(sSource);
+    newDest := sDest;
+    ersetze('-N', '-', newDest);
+    ersetze('\N', '\', newDest);
+
+    ListBox12.Items.add('cp ' + newSource + ' ' + newDest);
+
+    if CheckBox1.checked then
+    begin
+
+      //
+      if not(FileCopy(newSource, newDest)) then
+        raise Exception.Create('cp ' + newSource + ' ' + newDest + ' failed');
+
+      sLog.add(
+        { } ExtractFilePath(sDest) + ';' +
+        { } ExtractFileName(sDest) + ';' +
+        { } ExtractFileName(newDest));
+
+      TJonDaExec.Foto_setcorrectDateTime(newDest);
+    end;
+
+    application.processmessages;
+
+  end;
+  sLog.SaveToFile(DiagnosePath + 'N-Bug-'+FindANewPassword+'.csv');
+  sLog.Free;
+  Trn.Free;
+
+end;
+
 procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
   procedure doWork(n: integer);
@@ -766,7 +865,7 @@ end;
 
 procedure TFormServiceFoto.Button19Click(Sender: TObject);
 var
-  TRN: string;
+  Trn: string;
 begin
   BeginHourGlass;
   Label11.Caption := '';
@@ -775,14 +874,14 @@ begin
     Label11.Caption := 'ERROR: Es ist nichts markiert';
     exit;
   end;
-  TRN := StrFilter(ListBox11.Items[ListBox11.ItemIndex], cZiffern);
-  if (length(TRN) <> 5) then
+  Trn := StrFilter(ListBox11.Items[ListBox11.ItemIndex], cZiffern);
+  if (length(Trn) <> 5) then
   begin
     Label11.Caption := 'ERROR: Markierte Zeile enthält keine TRN';
     exit;
   end;
   if FileCopy(
-    { } Edit9.Text + TRN + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
+    { } Edit9.Text + Trn + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
     { } MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
     Label11.Caption := 'OK';
   EndHourGlass;

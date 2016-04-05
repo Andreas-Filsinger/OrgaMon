@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.169 (05.04.16) Andreas Filsinger
+
+ Bug: FotoService: Korrekturmöglichkeit: Opfer des "N"-Bugs
+
+Rev 8.168 (05.04.16) Andreas Filsinger
+
+ Bug: FotoService: Bei nachträglichen -Neu Umbenennungen blieb das "N" stehen
+
 Rev 8.167 (23.03.16-04.04.16) Andreas Filsinger
 
  Neu: Beleg: PDF Erstellung: nun auch "combined" möglich (Rechnungen mit Zeitabrechnung als 2 seitges Dokument)
