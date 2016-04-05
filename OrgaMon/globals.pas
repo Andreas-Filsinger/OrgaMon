@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.167; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.169; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -538,6 +538,7 @@ const
   cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
   cFotoAblage = 'ablage.csv';
   cServiceFoto_FTPBackupSubPath = 'Fotos\';
+  cServiceFoto_NeuPlatzhalter = 'Neu';
 
   cActionRestantenLeeren = 'Restanten ignorieren';
   cActionRestantenAddieren = 'Restanten addieren';

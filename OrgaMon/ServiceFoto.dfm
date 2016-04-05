@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet4
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -888,6 +888,23 @@ object FormServiceFoto: TFormServiceFoto
         Caption = 'Rollback anhand der Baustellenzugeh'#246'rigkeit'
         TabOrder = 7
         OnClick = Button26Click
+      end
+      object Button31: TButton
+        Left = 408
+        Top = 456
+        Width = 307
+        Height = 25
+        Caption = 'N-Bug Korrektur'
+        TabOrder = 8
+        OnClick = Button31Click
+      end
+      object CheckBox1: TCheckBox
+        Left = 144
+        Top = 456
+        Width = 233
+        Height = 17
+        Caption = 'Korrektur wirklich durchf'#252'hren'
+        TabOrder = 9
       end
     end
   end

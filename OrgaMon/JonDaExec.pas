@@ -240,8 +240,9 @@ type
     class function FormatZaehlerNummerNeu(const s: string): string;
     class function clearTempTag(const s: string): string;
     class function createTempTag(RID: integer): string;
+    class procedure Foto_setcorrectDateTime(FName: string);
     class function active(a: boolean): string;
-    class procedure validateBaustelleCSV(Fname: string);
+    class procedure validateBaustelleCSV(FName: string);
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
     class function toBild(const mderec: TMdeRec): string;
@@ -286,7 +287,7 @@ type
 
     //
     //
-    function doBackup : int64;
+    function doBackup: int64;
 
   end;
 
@@ -298,6 +299,7 @@ implementation
 uses
   BinLager32, CareTakerClient, html,
   gplists, SolidFTP, idGlobal,
+  CCR.Exif,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
   srvXMLRPC, IniFiles;
 
@@ -764,7 +766,7 @@ var
   OneJLine: string;
   JProtokoll: string;
   JAuftragBisherFName: string;
-  Fname: string;
+  FName: string;
   MonDaGeraetF: TextFile;
   RemoteRev: single;
 
@@ -1063,13 +1065,13 @@ var
     end;
   end;
 
-  procedure addSingle(Fname: string);
+  procedure addSingle(FName: string);
   var
     mderec: TMdeRec;
     fpending: file of TMdeRec; // neue, aufbereitete Liste an MonDa
     n: integer;
   begin
-    assignFile(fpending, Fname);
+    assignFile(fpending, FName);
     try
       reset(fpending);
     except
@@ -1812,9 +1814,9 @@ begin
         FileConcat(
           { } MyProgramPath + AktTrn + '\MONDA.DAT',
           { } MyProgramPath + OldTrn + '\MONDA.DAT',
-          { } MyProgramPath + AktTrn + '\MONDA'+cTmpFileExtension);
+          { } MyProgramPath + AktTrn + '\MONDA' + cTmpFileExtension);
         FileCopy(
-          { } MyProgramPath + AktTrn + '\MONDA'+cTmpFileExtension,
+          { } MyProgramPath + AktTrn + '\MONDA' + cTmpFileExtension,
           { } MyProgramPath + AktTrn + '\MONDA.DAT');
       end;
 
@@ -1836,7 +1838,7 @@ begin
           log(cERRORText + ' 1276:' + E.Message);
       end;
 
-      assignFile(MonDaAasTxt, MyProgramPath + AktTrn + '\auftrag'+cTmpFileExtension);
+      assignFile(MonDaAasTxt, MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension);
       try
         rewrite(MonDaAasTxt);
       except
@@ -2192,12 +2194,12 @@ begin
       m := 0;
       repeat
         if (m = 0) then
-          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
+          FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
         else
-          Fname := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
+          FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
         inc(m);
-      until not(FileExists(Fname));
-      FileCopy(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt', Fname);
+      until not(FileExists(FName));
+      FileCopy(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt', FName);
 
       // alle Zuordnungen ansehen,
       // Beispiel:    PLED3->PLE & PLED2->PLE
@@ -2298,7 +2300,7 @@ begin
         end;
 
         // Auftrag.txt nun wirklich bereitstellen!
-        ReNameFile(MyProgramPath + AktTrn + '\auftrag'+cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
+        ReNameFile(MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
 
       until true;
 
@@ -2805,7 +2807,7 @@ var
   tNAMES: TsTable;
   sNAMES: TStringList;
   r: integer;
-  Fname: string;
+  FName: string;
   FreeFormat: string;
   Token, Value: string;
   WechselDatum: TANFiXDate;
@@ -2932,16 +2934,16 @@ begin
               break;
             end;
 
-            Fname := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
-            if not(FileExists(Fname)) then
+            FName := Path + Baustelle + '\' + cE_FotoBenennung + '.csv';
+            if not(FileExists(FName)) then
             begin
               FatalError(
-                { } 'Datei "' + Fname + '"' +
+                { } 'Datei "' + FName + '"' +
                 { } ' nicht gefunden');
               break;
             end;
 
-            tNAMES.InsertFromFile(Fname);
+            tNAMES.InsertFromFile(FName);
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
             begin
@@ -3032,14 +3034,14 @@ begin
             begin
               result.values[cParameter_foto_Fehler] :=
               { } 'RID "' + inttostr(AUFTRAG_R) + '"' +
-              { } ' in Datei "' + Fname + '"' +
+              { } ' in Datei "' + FName + '"' +
               { } ' in Spalte "' + cRID_Suchspalte + '" ' +
               { } ' nicht gefunden!';
               FotoPrefix := 'ERROR' + '-';
 
               // Diagnose
               if DebugMode then
-                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(Fname) then
+                if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(FName) then
                 begin
 
                   ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
@@ -3201,12 +3203,12 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } 'Neu'
+            { } cServiceFoto_NeuPlatzhalter
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } 'Neu';
+            { } cServiceFoto_NeuPlatzhalter;
         end
         else
         begin
@@ -3237,12 +3239,12 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } 'Neu'
+            { } cServiceFoto_NeuPlatzhalter
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } 'Neu'
+            { } cServiceFoto_NeuPlatzhalter
         end
         else
         begin
@@ -3295,6 +3297,32 @@ begin
   end;
 end;
 
+class procedure TJonDaExec.Foto_setcorrectDateTime(FName: string);
+var
+  iEXIF: TExifData;
+
+begin
+  iEXIF := TExifData.Create;
+    repeat
+
+      // get Foto-Moment, touch File-Date-Time
+      if not(iEXIF.LoadFromGraphic(FName)) then
+      begin
+//        log(cERRORText + ' ' + FName + ': EXiF konnte nicht geladen werden');
+        break;
+      end;
+
+      if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
+      begin
+        FileTouch(FName, iEXIF.DateTimeOriginal);
+//        log(cINFOText + ' ' + FName + ': Dateizeitstempel korrigiert');
+      end;
+
+    until true;
+
+  iEXIF.free;
+end;
+
 function TJonDaExec.ftpDown(GeraeteNo, AktTrn: string; iFTP: TIdFTP): boolean;
 var
   DownFileDate: TDateTime;
@@ -3317,12 +3345,12 @@ begin
 
     // vom Server -> cFreshDataPath
     try
-      FileDelete(MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension);
+      FileDelete(MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension);
       with iFTP do
       begin
         if not(connected) then
           connect;
-        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension);
+        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension);
       end;
 
       // die unverarbeiteten Dateien vom Server holen!
@@ -3337,7 +3365,7 @@ begin
       // Die Datei bereitstellen!
       FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
       ReNameFile(
-        { } MyProgramPath + cServerDataPath + 'abgearbeitet'+cTmpFileExtension,
+        { } MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension,
         { } MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
     except
       on E: Exception do
@@ -3487,21 +3515,21 @@ var
   MinimumDate: TDateTime;
   LastTrn: string;
 
-  procedure Freshen(Fname: string);
+  procedure Freshen(FName: string);
   var
     bla: TBLager;
     mderec: TMdeRec;
   begin
     bla := TBLager.Create;
-    bla.Init(Fname, mderec, sizeof(TMdeRec));
+    bla.Init(FName, mderec, sizeof(TMdeRec));
     bla.BeginTransaction(now);
     bla.DeleteOld(MinimumDate);
     bla.EndTransaction;
     bla.free;
 
     // Copy Fresh to Original
-    if FileDelete(Fname + cBL_FileExtension) then
-      FileMove(Fname + cBL_FreshPostfix + cBL_FileExtension, Fname + cBL_FileExtension);
+    if FileDelete(FName + cBL_FileExtension) then
+      FileMove(FName + cBL_FreshPostfix + cBL_FileExtension, FName + cBL_FileExtension);
   end;
 
 begin
@@ -3533,7 +3561,7 @@ begin
 
 end;
 
-function TJonDaExec.doBackup : int64;
+function TJonDaExec.doBackup: int64;
 const
   cTAN_BackupPath = 'TAN\';
 {$IFDEF fpc}
@@ -4054,7 +4082,7 @@ begin
 
 end;
 
-class procedure TJonDaExec.validateBaustelleCSV(Fname: string);
+class procedure TJonDaExec.validateBaustelleCSV(FName: string);
 var
   sBAUSTELLE: TsTable;
   cColumnIndex_NUMMERN_PREFIX: integer;
@@ -4064,7 +4092,7 @@ begin
   sBAUSTELLE := TsTable.Create;
   with sBAUSTELLE do
   begin
-    InsertFromFile(Fname);
+    InsertFromFile(FName);
     cColumnIndex_NUMMERN_PREFIX := colof('NUMMERN_PREFIX', true);
     for r := 1 to RowCount do
     begin
@@ -4076,7 +4104,7 @@ begin
           { } NUMMERN_PREFIX);
     end;
     if changed then
-      SaveToFile(Fname);
+      SaveToFile(FName);
   end;
   sBAUSTELLE.free;
 end;
@@ -4293,7 +4321,7 @@ end;
 
 procedure TJonDaExec.LogBilder(sBilder: TStringList; GeraeteID: string);
 var
-  Fname: string;
+  FName: string;
   oBilder: TStringList;
   oBilderSorted: TStringList;
   ClientSorter: TStringList;
@@ -4315,9 +4343,9 @@ begin
   NeueInfos.sort;
 
   Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  Fname := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
-  if FileExists(Fname) then
-    oBilder.LoadFromFile(Fname);
+  FName := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
+  if FileExists(FName) then
+    oBilder.LoadFromFile(FName);
 
   // Jeden RID nur einmal
   for n := pred(oBilder.count) downto 0 do
@@ -4363,7 +4391,7 @@ begin
   end;
 
   RemoveDuplicates(oBilderSorted);
-  oBilderSorted.SaveToFile(Fname);
+  oBilderSorted.SaveToFile(FName);
 
   oBilder.free;
   oBilderSorted.free;
@@ -4375,7 +4403,7 @@ end;
 // fehlende Einträge nachgetragen!
 procedure TJonDaExec.LogBilder_WechselMomentKorrigiert(sBilder: TStringList; GeraeteID: string);
 var
-  Fname: string;
+  FName: string;
   oBilder: TStringList;
   oBilderSorted: TStringList;
   ClientSorter: TStringList;
@@ -4392,9 +4420,9 @@ begin
   BisherInfos := TgpIntegerList.Create;
 
   Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  Fname := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
-  if FileExists(Fname) then
-    oBilder.LoadFromFile(Fname);
+  FName := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
+  if FileExists(FName) then
+    oBilder.LoadFromFile(FName);
 
   // RIDs der neuen sBilder sammeln
   for n := 0 to pred(oBilder.count) do
@@ -4439,7 +4467,7 @@ begin
   end;
 
   RemoveDuplicates(oBilderSorted);
-  oBilderSorted.SaveToFile(Fname);
+  oBilderSorted.SaveToFile(FName);
 
   oBilder.free;
   oBilderSorted.free;
