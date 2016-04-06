@@ -270,7 +270,7 @@ function e_r_now: TdateTime;
 // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
 function r_Local_vs_Server_TimeDifference: TANFiXTime;
 
-// Die erste Zelle einer Datenbankabfrage als Stirng
+// Die erste Zelle einer Datenbankabfrage als String
 function e_r_sqls(s: string): string;
 
 // Die erste Zelle einer Datenbankabfrage als Boolean
@@ -278,6 +278,9 @@ function e_r_sqlb(s: string): boolean;
 
 // Die erste Zelle einer Datenbankabfrage als Double
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
+
+// Nur das erste Feld des ersten Records als Datum
+function e_r_sql_Date(s: string): TAnFixDate;
 
 // Erste Ergebnis-Spalte mehrerer Records als TStringList
 function e_r_sqlsl(s: string): TStringList;
@@ -2198,6 +2201,25 @@ begin
 {$ELSE}
       result := Fields[0].AsDouble;
 {$ENDIF}
+  end;
+  cSQL.free;
+end;
+
+function e_r_sql_Date(s: string): TAnFixDate;
+var
+  cSQL: TdboCursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    if DebugMode then
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+    ApiFirst;
+    if eof then
+      result := cIllegalDate
+    else
+      result := DateTime2Long(Fields[0].AsDate);
   end;
   cSQL.free;
 end;

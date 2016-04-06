@@ -100,7 +100,7 @@ type
     DataBaseChosen: integer;
     // Haupt - Auswerte Funktionen
     procedure StandardParameter(s: TStrings);
-    procedure DoContextOLAP(g: TIB_Grid); overload;
+    procedure DoContextOLAP(g: TIB_Grid; Variante: string = ''); overload;
     procedure DoContextOLAP(GlobalVars, OLAPScript: TStringList; Connection: TIB_Connection); overload;
     procedure DoContextOLAP(FName: string; GlobalVar: TStringList = nil; XLS: TXLSFile = nil); overload;
     function OLAP(FName: string): TgpIntegerList;
@@ -3367,13 +3367,13 @@ begin
   end;
 end;
 
-procedure TFormOLAP.DoContextOLAP(g: TIB_Grid);
+procedure TFormOLAP.DoContextOLAP(g: TIB_Grid; Variante: string = '');
 var
   FName: string;
   n: integer;
 begin
   try
-    FName := iOlapPath + GridSettingsIdentifier(g) + cOLAPExtension;
+    FName := iOlapPath + GridSettingsIdentifier(g) + Variante + cOLAPExtension;
     if FileExists(FName) then
     begin
       repeat

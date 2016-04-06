@@ -686,139 +686,201 @@ var
   VERTRAG_R: Integer;
   VORNAME, NACHNAME: string;
   DATUM: string;
+  DATUM_A, DATUM_B: TAnfixDate;
   BEZAHLT_BIS: TDateTime;
   // Namensbearbeitung
   VollerName: string;
   i, n: Integer;
+  sLog: TStringList;
 begin
 
   // erfolgte Zahlung in den Vertrag eintragen -> BEZAHLT_BIS
   AutoMataState := 0;
   lVERTRAG_R := nil;
   VERTRAG_R := cRID_unset;
+  sLog := TStringList.create;
 
   with IB_Query3 do
   begin
     first;
     while not(eof) do
     begin
-      case AutoMataState of
-        0: // Setze PERSON_R, Set VERTRAG_R
-          begin
 
-            if FieldByName('MENGE').IsNull then
+      while true do
+      begin
+        case AutoMataState of
+          0: // Setze PERSON_R, Set VERTRAG_R
             begin
-              ARTIKEL := FieldByName('ARTIKEL').AsString;
-              VERTRAG_R := strtointdef(nextp(FieldByName('INFO').AsString, '.', 0), cRID_unset);
-              if (pos('IMEI', ARTIKEL) > 0) then
+
+              // Aufräumen
+              if assigned(lVERTRAG_R) then
               begin
+                sLog.add('--------------------------------------------------');
+                FreeAndNil(lVERTRAG_R);
+              end;
 
-                VollerName := ExtractSegmentBetween(ARTIKEL, '<i>', ':');
-                i := revpos(' ', VollerName);
-                if (i > 0) then
+              ARTIKEL := FieldByName('ARTIKEL').AsString;
+
+              if FieldByName('MENGE').IsNull then
+              begin
+                sLog.add('ARTIKEL=' + ARTIKEL);
+
+                //
+                VERTRAG_R := strtointdef(nextp(FieldByName('INFO').AsString, '.', 0), cRID_unset);
+                sLog.add('VERTRAG_R=' + inttostr(VERTRAG_R));
+
+                if (pos('IMEI', ARTIKEL) > 0) then
                 begin
-                  VORNAME := copy(VollerName, 1, pred(i));
-                  NACHNAME := copy(VollerName, succ(i), MAxInt);
-                end
-                else
-                begin
-                  VORNAME := '';
-                  NACHNAME := VollerName;
-                end;
 
-                lVERTRAG_R := e_r_sqlm(
-                  { } 'select VERTRAG.RID from' +
-                  { } ' PERSON ' +
-                  { } 'join' +
-                  { } ' VERTRAG ' +
-                  { } 'on' +
-                  { } ' (PERSON.RID=VERTRAG.PERSON_R) and' +
-                  { } ' (VERTRAG.BAUSTELLE_R=630) ' +
-                  { } 'where' +
-                  { } ' (PERSON.VORNAME=' + SQLString(VORNAME) + ') and' +
-                  { } ' (PERSON.NACHNAME=' + SQLString(NACHNAME) + ')');
-
-                repeat
-
-                  // Versuchen die Liste auf EINEN zu verkürzen
-                  if (VERTRAG_R >= cRID_FirstValid) then
-                    for n := pred(lVERTRAG_R.count) downto 0 do
-                      if (VERTRAG_R <> lVERTRAG_R[n]) then
-                        lVERTRAG_R.Delete(n);
-
-                  if (lVERTRAG_R.count = 0) then
+                  VollerName := ExtractSegmentBetween(ARTIKEL, '<i>', ':');
+                  i := revpos(' ', VollerName);
+                  if (i > 0) then
                   begin
-                    ShowMessage(
-                      { } 'Person "' +
-                      { } VORNAME +
-                      { } ' ' +
-                      { } NACHNAME +
-                      { } '" nicht gefunden, oder hat keinen Vertrag mehr!');
-                    FreeAndNil(lVERTRAG_R);
-                    break;
+                    VORNAME := copy(VollerName, 1, pred(i));
+                    NACHNAME := copy(VollerName, succ(i), MAxInt);
+                  end
+                  else
+                  begin
+                    VORNAME := '';
+                    NACHNAME := VollerName;
                   end;
 
-                  if (lVERTRAG_R.count > 1) then
-                  begin
-                    ShowMessage(
-                      { } 'Person "' +
-                      { } VORNAME +
-                      { } ' ' +
-                      { } NACHNAME +
-                      { } '": Mehrere Treffer!');
-                    FreeAndNil(lVERTRAG_R);
-                    break;
-                  end;
+                  lVERTRAG_R := e_r_sqlm(
+                    { } 'select VERTRAG.RID from' +
+                    { } ' PERSON ' +
+                    { } 'join' +
+                    { } ' VERTRAG ' +
+                    { } 'on' +
+                    { } ' (PERSON.RID=VERTRAG.PERSON_R) and' +
+                    { } ' (VERTRAG.BAUSTELLE_R=630) ' +
+                    { } 'where' +
+                    { } ' (PERSON.VORNAME=' + SQLString(VORNAME) + ') and' +
+                    { } ' (PERSON.NACHNAME=' + SQLString(NACHNAME) + ')');
 
-                  if (VERTRAG_R >= cRID_FirstValid) then
-                    if (lVERTRAG_R[0] <> VERTRAG_R) then
+                  repeat
+
+                    // Versuchen die Liste auf EINEN zu verkürzen
+                    if (VERTRAG_R >= cRID_FirstValid) then
+                      for n := pred(lVERTRAG_R.count) downto 0 do
+                        if (VERTRAG_R <> lVERTRAG_R[n]) then
+                          lVERTRAG_R.Delete(n);
+
+                    if (lVERTRAG_R.count = 0) then
                     begin
                       ShowMessage(
                         { } 'Person "' +
                         { } VORNAME +
                         { } ' ' +
                         { } NACHNAME +
-                        { } '": Unklare Treffer!');
+                        { } '" nicht gefunden, oder hat keinen Vertrag mehr!');
+                      sLog.add('NICHT_GEFUNDEN=' + cIni_Activate);
                       FreeAndNil(lVERTRAG_R);
-                      VERTRAG_R := cRID_unset;
                       break;
                     end;
 
-                  if (lVERTRAG_R.count = 1) then
-                  begin
-                    inc(AutoMataState);
-                    break;
-                  end;
+                    if (lVERTRAG_R.count > 1) then
+                    begin
+                      ShowMessage(
+                        { } 'Person "' +
+                        { } VORNAME +
+                        { } ' ' +
+                        { } NACHNAME +
+                        { } '": Mehrere Treffer!');
+                      sLog.add('MEHRDEUTIG=' + cIni_Activate);
+                      FreeAndNil(lVERTRAG_R);
+                      break;
+                    end;
 
-                until true;
-              end;
-            end;
-          end;
-        1: // ermittle das "bis" Datum
-          begin
-            if (FieldByName('MENGE_GELIEFERT').AsInteger = 1) then
-            begin
-              ARTIKEL := FieldByName('ARTIKEL').AsString;
-              DATUM := ExtractSegmentBetween(ARTIKEL, ' - ', ' (');
-              if (length(DATUM) = 10) then
+                    if (VERTRAG_R >= cRID_FirstValid) then
+                      if (lVERTRAG_R[0] <> VERTRAG_R) then
+                      begin
+                        ShowMessage(
+                          { } 'Person "' +
+                          { } VORNAME +
+                          { } ' ' +
+                          { } NACHNAME +
+                          { } '": Unklare Treffer!');
+                        sLog.add('UNKLAR=' + cIni_Activate);
+                        FreeAndNil(lVERTRAG_R);
+                        VERTRAG_R := cRID_unset;
+                        break;
+                      end;
+
+                    if (lVERTRAG_R.count = 1) then
+                    begin
+                      inc(AutoMataState);
+                      break;
+                    end;
+
+                  until true;
+                end;
+              end
+              else
               begin
-                e_x_sql(
-                  { } 'update VERTRAG ' +
-                  { } 'set BEZAHLT_BIS=' + SQLString(DATUM) + ' ' +
-                  { } 'where' +
-                  { } ' (RID=' + inttostr(lVERTRAG_R[0]) + ') and ' +
-                  { } ' ((BEZAHLT_BIS is null) or' +
-                  { } '  (BEZAHLT_BIS < ' + SQLString(DATUM) + '))');
-                FreeAndNil(lVERTRAG_R);
-                AutoMataState := 0;
-                VERTRAG_R := cRID_unset;
+                sLog.add('ARTIKEL_IGNORE=' + ARTIKEL);
               end;
             end;
-          end;
+          1: // ermittle das "bis" Datum, Buche wenn nötig
+            begin
+
+              if not(assigned(lVERTRAG_R)) then
+                raise Exception.create('Im Status 1 muss der Vertagskontext klar sein');
+
+              if (FieldByName('MENGE_GELIEFERT').AsInteger = 1) then
+              begin
+                ARTIKEL := FieldByName('ARTIKEL').AsString;
+                DATUM := ExtractSegmentBetween(ARTIKEL, ' - ', ' (');
+                if (length(DATUM) = 10) then
+                begin
+
+                  DATUM_A := e_r_sql_Date('select BEZAHLT_BIS from VERTRAG where RID=' + inttostr(lVERTRAG_R[0]));
+                  DATUM_B := Date2Long(DATUM);
+
+                  sLog.add('DATUM_A=' + Long2date(DATUM_A));
+                  sLog.add('DATUM_B=' + Long2date(DATUM_B));
+
+                  // nur ändern wenn aktuelles Datum neuer
+                  if (DATUM_B > DATUM_A) then
+                  begin
+
+                    // buche es im Vertrag
+                    e_x_sql(
+                      { } 'update VERTRAG ' +
+                      { } 'set BEZAHLT_BIS=' + SQLString(DATUM) + ' ' +
+                      { } 'where' +
+                      { } ' (RID=' + inttostr(lVERTRAG_R[0]) + ') and ' +
+                      { } ' ((BEZAHLT_BIS is null) or' +
+                      { } '  (BEZAHLT_BIS < ' + SQLString(DATUM) + '))');
+
+                    // markiere es im Beleg
+                    edit;
+                    FieldByName('GEWICHT').AsInteger := FieldByName('GEWICHT').AsInteger + 1;
+                    post;
+
+                    sLog.add('GEBUCHT=' + cIni_Activate);
+
+                  end;
+                end;
+              end
+              else
+              begin
+                AutoMataState := 0;
+                continue;
+              end;
+            end;
+        end;
+        break;
       end;
       next;
     end;
   end;
+
+  sLog.SaveToFile(
+    { } DiagnosePath + 'BELEG-' +
+    { } IB_Query1.FieldByName('RID').AsString + '-' +
+    { } 'Bezahlt' +
+    { } '.log.txt');
+  sLog.free;
 end;
 
 procedure TFormBelegSuche.SpeedButton1Click(Sender: TObject);

@@ -609,8 +609,9 @@ begin
       begin
         if (NewValue = '') then
         begin
-          strings[n] := XMLEmpty(copy(strings[n], 1, pred(k)) + NewValue + Rest);
+          strings[n] := XMLEmpty(copy(strings[n], 1, pred(k)) + Rest);
           Rest := '';
+          k := 0;
         end;
         continue;
       end;
@@ -653,10 +654,14 @@ begin
 
     end;
 
-    if RawMode then
-      strings[n] := copy(strings[n], 1, pred(k)) + NewValue + Rest
-    else
-      strings[n] := copy(strings[n], 1, pred(k)) + Ansi2html(NewValue) + Rest;
+    // Aufbereitung des strings[n] überhaupt noch gewünscht?
+    if (k > 0) then
+    begin
+      if RawMode then
+        strings[n] := copy(strings[n], 1, pred(k)) + NewValue + Rest
+      else
+        strings[n] := copy(strings[n], 1, pred(k)) + Ansi2html(NewValue) + Rest;
+    end;
 
     result := true;
   end;
@@ -3085,9 +3090,8 @@ begin
   j := pos('></', result);
   if (i > 0) and (j > 0) then
     result :=
-    { blanks } copy(result, 1, pred(i)) +
-    { tag-name } copy(result, i, j - i) +
-    { close } '/>';
+    { blanks, tag-name } copy(result, 1, pred(j)) +
+    { empty element mark } '/>';
 end;
 
 var
