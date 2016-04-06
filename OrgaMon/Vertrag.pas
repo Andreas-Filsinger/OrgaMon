@@ -102,6 +102,7 @@ type
     JvFormStorage1: TJvFormStorage;
     Label18: TLabel;
     IB_Date5: TIB_Date;
+    SpeedButton1: TSpeedButton;
     procedure Image2Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure IB_Query1BeforeInsert(IB_Dataset: TIB_Dataset);
@@ -123,6 +124,7 @@ type
     procedure SpeedButton8Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure NeuNehmer;
@@ -478,6 +480,11 @@ begin
 
   Label16.caption := inttostr(IB_Query3.Recordcount);
 
+end;
+
+procedure TFormVertrag.SpeedButton1Click(Sender: TObject);
+begin
+  FormOLAP.DoContextOLAP(IB_Grid1,'-2');
 end;
 
 procedure TFormVertrag.SpeedButton4Click(Sender: TObject);

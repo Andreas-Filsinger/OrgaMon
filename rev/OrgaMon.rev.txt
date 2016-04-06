@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.171 (06.04.16) Andreas Filsinger
+
+ Neu: Vertrag: Buchung von BEZAHLT_BIS: "Gewicht" wird bei Relevanz um 1 erhöht, so kann man die Anwendung nach-
+      vollziehen.
+ Neu: Vertrag: Context-OLAP für eine Übersicht aller bisherigen Vertragsanwendungen
+
+ Bug: Vertrag: Buchung von BEZAHLT_BIS, mehrere Zeiträume in Folge nun buchbar
+
+Rev 8.170 (06.04.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.241" neu compiliert!
+
 Rev 8.169 (05.04.16) Andreas Filsinger
 
  Bug: FotoService: Korrekturmöglichkeit: Opfer des "N"-Bugs

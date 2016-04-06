@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.241 (06.04.16) Andreas Filsinger
+
+ Neu: xls2ml: !^E verkürzt leere <tag></tag> zu einem <tag/>
+
 Rev 1.240 (14.03.16) Andreas Filsinger
 
  Neu: xml2csv: Neuer Parameter "ADD_ZW", die namensgebenden Tags bei der Ausgabe von Zählwerken

@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.240; // ../rev/Oc.rev.txt
+  Version: single = 1.241; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV

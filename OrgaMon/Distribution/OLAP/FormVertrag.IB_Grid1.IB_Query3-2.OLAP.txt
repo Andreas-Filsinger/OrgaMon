@@ -1,0 +1,16 @@
+--
+-- Historie aller bisherigen Vertragsanwendungen
+--
+
+select
+ *
+from 
+ POSTEN
+where
+ INFO starts with '$RID.'
+order by
+ BELEG_R,POSNO
+
+excel
+open
+-  
