@@ -302,7 +302,7 @@ end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyDataBasePath + cServiceFoto_BaustelleFName);
+  openShell(MyFotoExec.MyDataBasePath + cFotoService_BaustelleFName);
 end;
 
 procedure TFormServiceFoto.Button25Click(Sender: TObject);
@@ -564,11 +564,11 @@ var
         if (sSource <> _sSource) then
           continue;
         sDeliveryName := nextp(Trn[m], ' ', 1);
-        dir(MyFotoExec.BackupDir + cServiceFoto_FTPBackupSubPath + '*' + sDeliveryName, sDir, false, true);
+        dir(MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath + '*' + sDeliveryName, sDir, false, true);
         if (sDir.count < 1) then
           raise Exception.Create('Datei ' + sDeliveryName + ' nicht im Backup');
         sDir.sort;
-        result := MyFotoExec.BackupDir + cServiceFoto_FTPBackupSubPath + sDir[pred(sDir.count)];
+        result := MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath + sDir[pred(sDir.count)];
         break;
       end;
     end;

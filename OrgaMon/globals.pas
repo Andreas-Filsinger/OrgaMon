@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.171; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.173; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -512,6 +512,7 @@ type
 
 const
   // App-Service
+  // ===========
   cJonDaServer_LogFName = 'JonDaServer.log';
   cGeraetSchema = '  ??.??.?? ??:??:?? ?????:???';
   cServerDataPath = 'Daten\';
@@ -524,22 +525,18 @@ const
   cDBPath = 'db\';
   cSyncPath = 'sync\';
   cWebPath = '..\web\';
-
   cTrnFName = 'Transaktionsnummer.ini';
   cFirstTrn = '10000';
   cERROR_TAN = '00000';
   cMonDaServer_AbgearbeitetFName = 'abgearbeitet.dat';
   cMonDaServer_AbgezogenFName = 'abgezogen.%s.dat';
   cMonDaServer_UnberuecksichtigtFName = 'unberuecksichtigt.txt';
-
-  // Foto-Service
-  cServiceFoto_BaustelleFName = 'baustelle.csv';
-  cServiceFoto_BaustelleManuellFName = 'baustelle-manuell.csv';
-  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
-  cFotoAblage = 'ablage.csv';
-  cServiceFoto_FTPBackupSubPath = 'Fotos\';
-  cServiceFoto_NeuPlatzhalter = 'Neu';
-
+  cAppService_SendenFName = 'SENDEN.csv';
+  cJondaProtokollDelimiter = '~';
+  cProtPrefix = 'PROT';
+  cProtExtension = '.txt';
+  // Eingabe.nnn.txt
+  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;REGLER_NUMMER_NEU;ZAEHLER_NUMMER_NEU';
   cActionRestantenLeeren = 'Restanten ignorieren';
   cActionRestantenAddieren = 'Restanten addieren';
   cActionFremdMonteurLoeschen = 'Fremdmonteur löschen';
@@ -551,17 +548,19 @@ const
   // in der aktuellen Datei zu finden sind! So ne Art
   // externe STAY.DAT
 
-  cJondaProtokollDelimiter = '~';
-  cProtPrefix = 'PROT';
-  cProtExtension = '.txt';
-
-  // Eingabe.nnn.txt
-  cHeader_Eingabe = 'DATUM;UHRZEIT;RID;REGLER_NUMMER_NEU;ZAEHLER_NUMMER_NEU';
-
+  // Foto-Service
+  // ===========
+  cFotoService_BaustelleFName = 'baustelle.csv';
+  cFotoService_BaustelleManuellFName = 'baustelle-manuell.csv';
   // Für wartende "-Neu" Bilddateien
   cHeader_UmbenennungUnvollstaendig = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
+  cFotoAblage = 'ablage.csv';
+  cFotoService_FTPBackupSubPath = 'Fotos\';
+  cFotoService_NeuPlatzhalter = 'Neu';
 
-  // Creator Sachen!
+  // Creator
+  // =======
   cHistorieTextFName = 'Creator\historie.txt';
   cPwdAllTextFName = 'Creator\HEntry.txt';
   SerialText = 'Creator\Serie Nummer.txt';

@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.173 (07.04.16) Andreas Filsinger
+
+ Neu: FotoService: Datei-Datum/Uhrzeit Korrektur aus Aufnahme-Datum/Uhrzeit jetzt VOR dem Backup der Datei
+
+Rev 8.172 (07.04.16) Andreas Filsinger
+
+ Bug: FotoService: Sortieren war nicht immer nötig
+
 Rev 8.171 (06.04.16) Andreas Filsinger
 
  Neu: Vertrag: Buchung von BEZAHLT_BIS: "Gewicht" wird bei Relevanz um 1 erhöht, so kann man die Anwendung nach-
