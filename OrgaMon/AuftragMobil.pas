@@ -296,7 +296,7 @@ begin
     Label3.caption := 'Baustellen-Infos ...';
     application.ProcessMessages;
     e_r_Sync_Baustelle;
-    FTPup.add(MdePath + cServiceFoto_BaustelleFName + ';' + ';' + cServiceFoto_BaustelleFName);
+    FTPup.add(MdePath + cFotoService_BaustelleFName + ';' + ';' + cFotoService_BaustelleFName);
   end;
 
   // MonDa-Server über abgearbeitete informieren

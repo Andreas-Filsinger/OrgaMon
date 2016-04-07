@@ -438,11 +438,11 @@ begin
 
   // senden.csv angelegt?
   if not(maintainSENDEN_Cache_Init) then
-    if not(FileExists(MyProgramPath + cDBPath + 'SENDEN.csv')) then
+    if not(FileExists(MyProgramPath + cDBPath + cAppService_SendenFName)) then
     begin
       sSENDEN := TStringList.Create;
       sSENDEN.add('IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR');
-      sSENDEN.SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      sSENDEN.SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
       sSENDEN.free;
     end;
 
@@ -450,7 +450,7 @@ begin
   tSENDEN := TsTable.Create;
   with tSENDEN do
   begin
-    InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+    InsertFromFile(MyProgramPath + cDBPath + cAppService_SendenFName);
 
     if not(maintainSENDEN_Cache_Init) then
     begin
@@ -479,7 +479,7 @@ begin
         SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
       else
         SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
-      SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+      SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
     end;
   end;
   tSENDEN.free;
@@ -2437,13 +2437,13 @@ begin
     // Nach "SENDEN" Tabelle protokollieren
     // IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR
 
-    if FileExists(MyProgramPath + cDBPath + 'SENDEN.csv') then
+    if FileExists(MyProgramPath + cDBPath + cAppService_SendenFName) then
     begin
 
       tSENDEN := TsTable.Create;
       with tSENDEN do
       begin
-        InsertFromFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+        InsertFromFile(MyProgramPath + cDBPath + cAppService_SendenFName);
 
         // Alte Zeile löschen
         n := -1;
@@ -2488,7 +2488,7 @@ begin
           SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
         else
           SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
-        SaveToFile(MyProgramPath + cDBPath + 'SENDEN.csv');
+        SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
     end;
@@ -3203,12 +3203,12 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } cServiceFoto_NeuPlatzhalter
+            { } cFotoService_NeuPlatzhalter
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } cServiceFoto_NeuPlatzhalter;
+            { } cFotoService_NeuPlatzhalter;
         end
         else
         begin
@@ -3239,12 +3239,12 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } cServiceFoto_NeuPlatzhalter
+            { } cFotoService_NeuPlatzhalter
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } cServiceFoto_NeuPlatzhalter
+            { } cFotoService_NeuPlatzhalter
         end
         else
         begin

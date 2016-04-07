@@ -4484,7 +4484,7 @@ begin
       tBAUSTELLE.addRow(Row);
       Apinext;
     end;
-    tBAUSTELLE.SaveToFile(MdePath + cServiceFoto_BaustelleFName);
+    tBAUSTELLE.SaveToFile(MdePath + cFotoService_BaustelleFName);
   end;
 
   tBAUSTELLE.free;

@@ -95,8 +95,7 @@ type
     procedure LoadFromFile(const FName: string); override;
     function ReloadIfNew: boolean;
     procedure SaveToDiagFile(FName: string); overload;
-    procedure SaveToDiagFile(FName: string;
-      MinSubElementCount, MaxSubElementCount: integer); overload;
+    procedure SaveToDiagFile(FName: string; MinSubElementCount, MaxSubElementCount: integer); overload;
     procedure SaveToDiagFile(OutF: TStrings); overload;
 
     //
@@ -155,8 +154,7 @@ type
     function data: TStringList;
     function locate(Col: integer; sValue: string): integer; overload; // [row]
     function locate(Col: string; sValue: string): integer; overload; // [row]
-    function locateDuplicates(Col: integer; sValue: string;
-      CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
+    function locateDuplicates(Col: integer; sValue: string; CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
     // [array of row]
     function next(Row, Col: integer; sValue: string): integer; overload; // [row]
     function next(Row: integer; Col, sValue: string): integer; overload; // [row]
@@ -216,8 +214,7 @@ uses
   IdGlobal, IdHash, IdHashMessageDigest;
 
 const
-  cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) + (ord('I') shl 16) +
-    (26 shl 24);
+  cTWordIndex_File_Tag: integer = (ord('T') shl 0) + (ord('W') shl 8) + (ord('I') shl 16) + (26 shl 24);
   cWordIndex_GlobalSequence: integer = 0;
 
 type
@@ -945,8 +942,7 @@ begin
   Blockread(f, List[0], Count * sizeof(pointer));
 end;
 
-function TSearchStringList.EnsureValues(ValueList: TStrings; RemoveUnknown: boolean = true)
-  : boolean;
+function TSearchStringList.EnsureValues(ValueList: TStrings; RemoveUnknown: boolean = true): boolean;
 
   procedure EnsureEntry(EntryName: string; var OneChanged: boolean);
   var
@@ -1906,10 +1902,18 @@ var
   SortColumn, SortStr: string;
   FormatNumeric, DoReverse: boolean;
   eSave: TObjectList;
+  LogFName: string;
+  SortierenNotwendig: boolean;
 begin
   if (Count > 2) then
   begin
-    // Aktuelle Datei sortieren
+
+    if TestMode then
+    begin
+      LogFName := DebugLogPath + 'sort.log';
+    end;
+
+    // Die Sortierkriterien bilden
     ClientSorter := TStringList.Create;
     eSave := TObjectList.Create(false);
 
@@ -1942,34 +1946,56 @@ begin
       end;
     end;
 
-    // Sort
-    ClientSorter.Sort;
-
-    // Diagnose
-    if TestMode then
-    begin
-      for n := 0 to pred(ClientSorter.Count) do
-        ClientSorter[n] :=
-        { } format('%d "%s"', [
-          { } integer(ClientSorter.Objects[n]),
-          { } ClientSorter[n]]);
-      ClientSorter.SaveToFile(DebugLogPath + 'sort.log');
-    end;
-
-    // Reihenfolge übernehmen
-    OwnsObjects := false;
-    eSave.Assign(self);
-    for m := 1 to pred(Count) do
-    begin
-      n := integer(ClientSorter.Objects[pred(m)]);
-      if (n <> m) then
+    // Sind alle Sortierkriterien (zufällig) schon in der richtigen Reihenfolge?
+    //
+    // In diesem Fall braucht nicht sortiert zu werden das ist sogar eher
+    // schädlich:
+    // Sort with identical Items can destroy original order
+    // so we need to avoid unneeded sort attemps
+    SortierenNotwendig := false;
+    for m := 0 to ClientSorter.Count - 2 do
+      // imp pend: sollte hier nicht "compare" des ClientSorters verwendet werden, ist aber nicht public!
+      if (ClientSorter[m] > ClientSorter[succ(m)]) then
       begin
-        Items[m] := eSave[n];
-        Changed := true;
+        SortierenNotwendig := true;
+        break;
       end;
-    end;
-    OwnsObjects := true;
 
+    if SortierenNotwendig then
+    begin
+
+      // sortieren
+      ClientSorter.Sort;
+
+      // Diagnose
+      if TestMode then
+      begin
+        for n := 0 to pred(ClientSorter.Count) do
+          ClientSorter[n] :=
+          { } format('%d "%s"', [
+            { } integer(ClientSorter.Objects[n]),
+            { } ClientSorter[n]]);
+        ClientSorter.SaveToFile(LogFName);
+      end;
+
+      // Reihenfolge übernehmen
+      OwnsObjects := false;
+      eSave.Assign(self);
+      for m := 1 to pred(Count) do
+      begin
+        n := integer(ClientSorter.Objects[pred(m)]);
+        if (n <> m) then
+        begin
+          if TestMode then
+            AppendStringsToFile('overwrite Items[' + inttostr(m) + '] with _Items[' + inttostr(n) + ']', LogFName);
+          Items[m] := eSave[n];
+          Changed := true;
+        end;
+      end;
+      OwnsObjects := true;
+    end;
+
+    // Finalize
     eSave.free;
     ClientSorter.free;
   end;
@@ -1984,8 +2010,8 @@ begin
   slFields.free;
 end;
 
-function TsTable.locateDuplicates(Col: integer; sValue: string;
-  CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
+function TsTable.locateDuplicates(Col: integer; sValue: string; CompareType: eTsCompareType = TsIdentical)
+  : TgpIntegerList;
 var
   Row: integer;
 begin

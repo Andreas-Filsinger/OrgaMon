@@ -234,12 +234,12 @@ begin
     workSync;
 
     tBAUSTELLE := tsTable.Create;
-    tBAUSTELLE.insertfromFile(MyDataBasePath + cServiceFoto_BaustelleFName);
-    if FileExists(MyDataBasePath + cServiceFoto_BaustelleManuellFName) then
+    tBAUSTELLE.insertfromFile(MyDataBasePath + cFotoService_BaustelleFName);
+    if FileExists(MyDataBasePath + cFotoService_BaustelleManuellFName) then
     begin
       with tBAUSTELLE do
       begin
-        insertfromFile(MyDataBasePath + cServiceFoto_BaustelleManuellFName);
+        insertfromFile(MyDataBasePath + cFotoService_BaustelleManuellFName);
         for r := RowCount downto 1 do
           if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
@@ -520,25 +520,17 @@ begin
     for n := pred(sFiles.count) downto 1 do
       sFiles.Delete(n);
 
-  // Generate Work-TAN
+  // Generate Work-TAN as "ID"
   if (sFiles.count > 0) then
   begin
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
-    CheckCreateDir(BackupDir + cServiceFoto_FTPBackupSubPath);
+    CheckCreateDir(BackupDir + cFotoService_FTPBackupSubPath);
   end;
-
-  // make backup of all new Files
-  for n := 0 to pred(sFiles.count) do
-    if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cServiceFoto_FTPBackupSubPath + ID + '-' + sFiles[n])) then
-    begin
-      Log(cERRORText + ' can not write to ' + BackupDir + cServiceFoto_FTPBackupSubPath);
-      Log(cFotoService_AbortTag);
-      exit;
-    end;
 
   // reduce to valid jpg's
   for n := pred(sFiles.count) downto 0 do
   begin
+
     FullSuccess := false;
     FName := pFTPPath + sFiles[n];
 {$IFDEF FPC}
@@ -598,8 +590,21 @@ begin
     Image.Free;
     iEXIF.Free;
 
-    if not(FullSuccess) then
+    if FullSuccess then
+    begin
+      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' + sFiles[n])) then
+      begin
+        Log(
+          { } cERRORText + ' 598: ' +
+          { } 'can not write to ' + BackupDir + cFotoService_FTPBackupSubPath);
+        Log(cFotoService_AbortTag);
+        exit;
+      end;
+    end
+    else
+    begin
       unverarbeitet(n);
+    end;
   end;
 
   if (sFiles.count > 0) then
@@ -940,6 +945,8 @@ var
   Stat_NachtragBaustelle: integer;
   Stat_ZuAlt: integer;
   Stat_Verschwunden: integer;
+  Stat_Doppelt: integer;
+  Stat_Umbenannt: integer;
 
   col_MOMENT: integer;
   col_DATEINAME_AKTUELL: integer;
@@ -953,6 +960,7 @@ var
   NEU: string;
 
   ORIGINAL_DATEI: string;
+  DATEINAME_AKTUELL: string;
   PARAMETER: string;
   FNameAlt, FNameNeu: string;
   RID: integer;
@@ -967,6 +975,9 @@ var
   // senden einfärben
   tSENDEN: tsTable;
 
+  // Doppelten Erkennung
+  slAKTUELL: TStringList;
+
 begin
 
   // Init
@@ -980,11 +991,18 @@ begin
 
     // load+sort
     insertfromFile(MyDataBasePath + cFotoUmbenennungAusstehend);
+
+    // init Global Stat
     Stat_Anfangsbestand := RowCount;
+    Stat_Umbenannt := 0;
     Stat_NachtragBaustelle := 0;
+
+    // Sortieren
     SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
-      Log(cINFOText + ' Frisch sortiert');
+      Log(
+        { } cINFOText + ' 988: ' +
+        { } ' Frisch sortiert');
 
     // sicherstellen von Spalten
     addCol('BAUSTELLE');
@@ -992,39 +1010,51 @@ begin
 
     // all zu alte Einträge löschen
     MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
+    slAKTUELL := TStringList.Create;
     Stat_ZuAlt := 0;
     Stat_Verschwunden := 0;
+    Stat_Doppelt := 0;
     col_MOMENT := colof('MOMENT');
     col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
     for r := RowCount downto 1 do
     begin
 
-      if (StrToIntDef(readCell(r, col_MOMENT), 0) < MomentTimeout) then
+      DATEINAME_AKTUELL := readCell(r, col_DATEINAME_AKTUELL);
+
+      if (StrToIntDef(readCell(r, col_MOMENT), ccMaxDate) < MomentTimeout) then
       begin
         del(r);
         inc(Stat_ZuAlt);
+        Log(
+          { } cWARNINGText + ' 1012: ' +
+          { } 'gebe ' + DATEINAME_AKTUELL + ' auf, da es älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
         continue;
       end;
 
-      if not(FileExists(readCell(r, col_DATEINAME_AKTUELL))) then
+      if not(FileExists(DATEINAME_AKTUELL)) then
       begin
         del(r);
         inc(Stat_Verschwunden);
+        Log(
+          { } cWARNINGText + ' 1023: ' +
+          { } 'gebe ' + readCell(r, col_DATEINAME_AKTUELL) + ' auf, da die Datei verschwunden ist');
         continue;
       end;
 
+      if (slAKTUELL.IndexOf(DATEINAME_AKTUELL) <> -1) then
+      begin
+        del(r);
+        inc(Stat_Doppelt);
+        Log(
+          { } cWARNINGText + ' 1040: ' +
+          { } 'gebe Item[' + InttoStr(r) + ']=' + DATEINAME_AKTUELL + ' auf, da er Eintrag doppelt ist');
+        continue;
+
+      end;
+
+      slAKTUELL.add(DATEINAME_AKTUELL);
     end;
-
-    if (Stat_ZuAlt > 0) then
-      Log(
-        { } cWARNINGText + ' 1004: ' +
-        { } 'gebe ' + InttoStr(Stat_ZuAlt) + ' Einträge frei, da sie älter als ' + InttoStr(cMaxAge_Umbenennen) +
-        ' Tage sind');
-
-    if (Stat_Verschwunden > 0) then
-      Log(
-        { } cWARNINGText + ' 1009: ' +
-        { } 'gebe ' + InttoStr(Stat_Verschwunden) + ' Einträge frei, da die Dateien verschwunden sind');
+    slAKTUELL.Free;
 
   end;
 
@@ -1149,22 +1179,15 @@ begin
 
     // Umbenennung starten
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
-
-    if not(FileExists(FNameAlt)) then
-    begin
-      Log(cWARNINGText + ' 1138: ' + 'gebe Dateieintrag "' + FNameAlt +
-        '" frei, da verschwunden, oder bereits umbenannt');
-      WARTEND.del(r);
-      continue;
-    end;
-
     FNameNeu := FNameAlt;
 
     // das letzte "Neu" am Ende des Dateinamens zählt
-    k := revpos(cServiceFoto_NeuPlatzhalter, FNameNeu);
+    k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
     if (k = 0) then
     begin
-      Log(cERRORText + ' ' + 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
+      Log(
+        { } cERRORText + ' 1179: ' +
+        { } 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
       continue;
     end;
 
@@ -1180,14 +1203,18 @@ begin
     // Laufwerksbuchstaben
     if (CharCount(':', FNameNeu) <> 1) then
     begin
-      Log(cERRORText + ' Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerksangabe mit ":" fehlt');
+      Log(
+        { } cERRORText + ' 1195: ' +
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerksangabe mit ":" fehlt');
       continue;
     end;
 
     // Pfad ging irgendwie verloren
     if (CharCount('\', FNameNeu) < 2) then
     begin
-      Log(cERRORText + ' Umbenennung zu "' + FNameNeu + '" ist ungültig. Zwei Pfadangaben "\" fehlen');
+      Log(
+        { } cERRORText + ' 1211: ' +
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Zwei Pfadtrenner "\" fehlen');
       continue;
     end;
 
@@ -1195,6 +1222,7 @@ begin
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
       WARTEND.del(r);
+      inc(Stat_Umbenannt);
     end
     else
     begin
@@ -1220,6 +1248,7 @@ begin
         LastLogWasTimeStamp := false;
 
         WARTEND.del(r);
+        inc(Stat_Umbenannt);
       end;
     end;
   end;
@@ -1230,17 +1259,17 @@ begin
   if WARTEND.Changed then
   begin
 
-    // recreate senden.html
+    // recreate senden.html, muss jemand noch "senden"
     tSENDEN := tsTable.Create;
     with tSENDEN do
     begin
-      insertfromFile(pAppServicePath + cDBPath + 'SENDEN.csv');
+      insertfromFile(pAppServicePath + cDBPath + cAppService_SendenFName);
       i := addCol('PAPERCOLOR');
       k := WARTEND.colof('GERAETENO');
       c := colof('ID');
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
-          writeCell(r, i, '#FF9900');
+          writeCell(r, i, '#FFFF00');
       SaveToHTML(pAppStatistikPath + 'senden.html');
     end;
     tSENDEN.Free;
@@ -1250,15 +1279,15 @@ begin
     WARTEND.SaveToFile(MyDataBasePath + cFotoUmbenennungAusstehend);
 
     // LOG
-    if (Stat_Anfangsbestand - WARTEND.RowCount > 0) then
-      Log(cINFOText + ' ' +
-        { } InttoStr(Stat_Anfangsbestand - WARTEND.RowCount) +
+    if (Stat_Umbenannt > 0) then
+      Log(cINFOText + ' 1276: ' +
+        { } InttoStr(Stat_Umbenannt) +
         { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
         { } InttoStr(WARTEND.RowCount) +
         { } ' verbleiben');
 
     if (Stat_NachtragBaustelle > 0) then
-      Log(cINFOText + ' ' +
+      Log(cINFOText + ' 1283: ' +
         { } InttoStr(Stat_NachtragBaustelle) +
         { } ' Baustelleninfo(s) wurde(n) nachgetragen');
 
@@ -1767,7 +1796,7 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cServiceFoto_BaustelleFName, '', MySyncPath, true);
+    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MySyncPath, true);
     SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MySyncPath, true);
     iFTP.DisConnect;
   except
@@ -1778,25 +1807,25 @@ begin
 
   try
     // baustelle.csv -> sync
-    if FileExists(MySyncPath + cServiceFoto_BaustelleFName) then
+    if FileExists(MySyncPath + cFotoService_BaustelleFName) then
     begin
 
       // prepare
-      TJonDaExec.validateBaustelleCSV(MySyncPath + cServiceFoto_BaustelleFName);
+      TJonDaExec.validateBaustelleCSV(MySyncPath + cFotoService_BaustelleFName);
 
       // compare + copy
       if not(FileCompare(
-        { } MySyncPath + cServiceFoto_BaustelleFName,
-        { } MyDataBasePath + cServiceFoto_BaustelleFName)) then
+        { } MySyncPath + cFotoService_BaustelleFName,
+        { } MyDataBasePath + cFotoService_BaustelleFName)) then
       begin
         FileVersionedCopy(
-          { } MySyncPath + cServiceFoto_BaustelleFName,
-          { } MyDataBasePath + cServiceFoto_BaustelleFName);
-        Log(cINFOText + ' neue ' + cServiceFoto_BaustelleFName);
+          { } MySyncPath + cFotoService_BaustelleFName,
+          { } MyDataBasePath + cFotoService_BaustelleFName);
+        Log(cINFOText + ' neue ' + cFotoService_BaustelleFName);
       end;
 
       // delete
-      FileDelete(MySyncPath + cServiceFoto_BaustelleFName);
+      FileDelete(MySyncPath + cFotoService_BaustelleFName);
     end;
   except
     on E: Exception do
