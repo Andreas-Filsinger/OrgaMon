@@ -1,6 +1,4 @@
 <?php
-// TxOrtung 4.012
-
 
 $time_start = microtime(true);
 
@@ -12,18 +10,18 @@ require_once("pngTextEdit.php5");
 
 define("SERVICE_PATH","/xmap/ws/XMap");
 
-$wsdl_url = (USE_STATIC_WSDL) ? CACHED_WSDL_GETMAP : SERVER.":".GETMAP_SERVICE_PORT.SERVICE_PATH."?WSDL";
+$wsdl_url = (USE_STATIC_WSDL) ? CACHED_WSDL_GETMAP : MAP_SERVER.":" . MAP_SERVICE_PORT . SERVICE_PATH . "?WSDL";
 
 // init xMap SOAP client  
 $xMap = new XMapWSService($wsdl_url, array(
-  'location' => SERVER.":".GETMAP_SERVICE_PORT.SERVICE_PATH,  
-  'trace' => '1',  
-  'exceptions' => '1',  
+  'location' => MAP_SERVER . ":" . MAP_SERVICE_PORT . SERVICE_PATH,  
+  'trace' => TRUE,  
+  'exceptions' => TRUE,  
   'proxy_host' => HTTP_PROXY_HOST,  
   'proxy_port' => HTTP_PROXY_PORT,
   'login' => LOGIN,
   'password'=> PASS,
-  'uri' => "http://test-uri/")
+  'uri' => REFERRER)
 ); 
 
 $z = (isset($z)) ? $z : 100;
@@ -82,17 +80,17 @@ catch (SoapFault $exception) {
 }
 
 $image_url = $resultMessage->result->image->url;
-$image_url = (substr($image_url,0,7) != "http://") ? "http://".$image_url : $image_url;
-$image_url = str_replace("localhost",HOST,$image_url);
+$image_url = (substr($image_url,0,strlen(TRANSPORT)) != TRANSPORT) ? TRANSPORT . $image_url : $image_url;
+$image_url = str_replace("localhost",MAP_HOST,$image_url);
 
 $bounding_box = $resultMessage->result->visibleSection->boundingBox;
 list($lox, $loy) = Mercator2GeoDecimal($bounding_box->leftTop->point->x, $bounding_box->leftTop->point->y, true);
 list($rux, $ruy) = Mercator2GeoDecimal($bounding_box->rightBottom->point->x, $bounding_box->rightBottom->point->y, true);
 list($mx, $my) = Mercator2GeoDecimal($resultMessage->result->visibleSection->center->point->x, $resultMessage->result->visibleSection->center->point->y, true);
 
-if (SAVE_MAPS)
-{ $time_soap = microtime(true);
+if (SAVE_MAPS) { 
 
+  $time_soap = microtime(true);
   $PNG = new PNGChunk($image_url);
   $time_load = microtime(true);
 

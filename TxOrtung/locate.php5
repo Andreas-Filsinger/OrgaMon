@@ -8,18 +8,18 @@ require_once("i_templates.inc.php5");
 
 define("SERVICE_PATH","/xlocate/ws/XLocate");
 
-$wsdl_url = (USE_STATIC_WSDL) ? CACHED_WSDL_LOCATE : SERVER.":".LOCATE_SERVICE_PORT.SERVICE_PATH."?WSDL";
+$wsdl_url = (USE_STATIC_WSDL) ? CACHED_WSDL_LOCATE : LOCATE_SERVER.":".LOCATE_SERVICE_PORT.SERVICE_PATH."?WSDL";
    
 // init xLocate SOAP client  
 $xLocate = new XLocateWSService($wsdl_url, array(
-  'location' => SERVER.":".LOCATE_SERVICE_PORT.SERVICE_PATH,  
-  'trace' => '1',  
-  'exceptions' => '1',  
+  'location' => LOCATE_SERVER . SERVICE_PATH,  
+  'trace' => TRUE,
+  'exceptions' => TRUE,  
   'proxy_host' => HTTP_PROXY_HOST,  
   'proxy_port' => HTTP_PROXY_PORT,
   'login' => LOGIN,
   'password'=> PASS,
-  'uri' => "http://orgamon.org/?token=")
+  'uri' => REFERRER)
 );  
 
 //define address
@@ -49,6 +49,8 @@ try {
   $resultMessage = $xLocate->findAddress($request);
 } 
 catch (SoapFault $exception) { 
+  echo "HEADERS:\n" . htmlentities($xLocate->__getLastRequestHeaders()) . "\n";
+  echo "ANFRAGE:\n" . htmlentities($xLocate->__getLastRequest()) . "\n";
   print "<pre>";
   print_r($exception);
   print "</pre>";
