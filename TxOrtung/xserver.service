@@ -1,0 +1,14 @@
+#
+# c Andreas Filsinger, Jan 2016
+#
+[Unit]
+Description=PTV xserver
+After=multi-user.target
+
+[Service]
+Type=forking
+ExecStart=/home/administrator/Dokumente/ptv/xserver/xserver-bundle.sh start
+ExecStop=/home/administrator/Dokumente/ptv/xserver/xserver-bundle.sh stop
+
+[Install]
+WantedBy=multi-user.target

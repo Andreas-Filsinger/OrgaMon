@@ -1,6 +1,7 @@
 ====================================
 * PROJEKT: TxOrtung
 * SOURCE DIR: ..\TxOrtung
+* UPDATE: PHP-Developer-Info.txt
 * UPDATE: getmap.php5
 * UPDATE: i_config.inc.php5-dist
 * UPDATE: i_coordinate_funcs.inc.php5
@@ -10,22 +11,28 @@
 * UPDATE: index.php5
 * UPDATE: locate.php5
 * UPDATE: pngTextEdit.php5
-* UPDATE: XLocate.xml
-* UPDATE: XMap.xml
+* UPDATE: XLocate.WSDL
+* UPDATE: XMap.WSDL
 * UPDATE: XLocate.xml.xServer-1.8
 * UPDATE: XLocate.xml.xServer-1.12
 * UPDATE: XMap.xml.xServer-1.8
 * UPDATE: XMap.xml.xServer-1.12
-* INFO: Simple HTTP Interface for Map&Guide XServer SOAP API
+* UPDATE: xserver.service
+* INFO: Simple HTTP Interface for Map&Guide xServer SOAP API
 * PUBLIC: YES
 ====================================
 
 // INFO BEGIN
 A SOAP API PHP - Wrapper <br>
 These scripts are a Communication Proxies wich hide the Complexity of the Map&Guide
- XServer SOAP API. Clients can use simple HTTP-Requests for the two function calls, "locate" and
+ xServer SOAP API. Clients can use simple HTTP-Requests for the two function calls, "locate" and
  "getmap". This Code is derived from the (c)M&G PHP Codesamples. 
 // INFO END
+
+Rev 4.013 (12.04.16) Andreas Filsinger
+
+ Neu: kann auch mit dem xServer in der Cloud sprechen
+ Neu: xserver.service für systemd
 
 Rev 4.012 (18.02.16) Andreas Filsinger
 

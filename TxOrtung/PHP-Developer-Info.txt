@@ -1,0 +1,29 @@
+nötige PHP-Module
+=================
+
+php5-soap
+php5-openssl
+
+WSDL dauerhaft speichern
+========================
+
+wget  https://xlocate-eu-n-test.cloud.ptvgroup.com/xlocate/ws/XLocate?WSDL
+wget  https://xmap-eu-n-test.cloud.ptvgroup.com/xmap/ws/XMap?WSDL
+
+Testpage:
+=========
+
+https://xlocate-eu-n-test.cloud.ptvgroup.com//xlocate/pages/accessStatistics.jsp
+
+Lizenz:
+=======
+
+(c) PTV
+
+ i_coordinate_funcs.inc 
+ i_global_vars.inc
+ i_types.inc
+
+(c) OrgaMon
+
+ der ganze Rest

@@ -1,17 +1,59 @@
 <?php
-// Config von TxOrtung 4.012
+/*
+
+  TxOrtung 4.013 aus dem OrgaMon.org - Projekt
+  ___                  __  __                __   __          ____
+ / _ \ _ __ __ _  __ _|  \/  | ___  _ __    / /   \ \  __  __/ ___|  ___ _ ____   _____ _ __
+| | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \  / /_____\ \ \ \/ /\___ \ / _ \ '__\ \ / / _ \ '__|
+| |_| | | | (_| | (_| | |  | | (_) | | | | \ \_____/ /  >  <  ___) |  __/ |   \ V /  __/ |
+ \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|  \_\   /_/  /_/\_\|____/ \___|_|    \_/ \___|_|
+           |___/
+		   		   
+*/
+
+define("REFERRER","http://sub.domain.tld/TxOrtung/");
+
+// Entweder: xServer in der Cloud
+
+define("LOGIN","xtok");
+define("PASS","xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+
+define("TRANSPORT","https://");
+
+define("LOCATE_HOST","xlocate-eu-n-test.cloud.ptvgroup.com");
+define("LOCATE_SERVICE_PORT","443");
+
+define("MAP_HOST","xmap-eu-n-test.cloud.ptvgroup.com");
+define("MAP_SERVICE_PORT","443");
+
+// ------------------------------------------
 
 
-//XServer, generelle Verbindungsdaten
-define("HOST","YOURHOST")
-define("SERVER","http://" . HOST);
-define("LOCATE_SERVICE_PORT","50000");
-define("GETMAP_SERVICE_PORT","50000");
+// Oder: xServer in der Lokalen Installation
+
+/*
+
 define("LOGIN","");
 define("PASS","");
 
+define("TRANSPORT","http://");
+
+define("HOST","YOURHOST");
+
+define("LOCATE_HOST",HOST);
+define("LOCATE_SERVICE_PORT","50000");
+
+define("MAP_HOST",HOST)
+define("MAP_SERVICE_PORT","50000");
+
+*/
+
+// ------------------------------------------
+
 define("HTTP_PROXY_HOST",null);
 define("HTTP_PROXY_PORT",null);
+define("LOCATE_SERVER",TRANSPORT . LOCATE_HOST);
+define("MAP_SERVER",TRANSPORT . MAP_HOST);
 
 //Statisches oder dynamisches WSDL?
 define("USE_STATIC_WSDL",true);
