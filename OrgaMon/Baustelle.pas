@@ -4509,9 +4509,7 @@ begin
     until false;
 
   until true;
-
   sDir.free;
-
 end;
 
 procedure TFormBaustelle.SpeedButton7Click(Sender: TObject);
@@ -4556,12 +4554,12 @@ begin
 
   // fehlende Codes nachtragen
   for n := 0 to pred(AllCodes.count) do
-    if QueryCodes.indexof(AllCodes[n]) = -1 then
+    if (QueryCodes.indexof(AllCodes[n]) = -1) then
       NewCodes.Add(AllCodes[n]);
 
   // überflüssige Codes löschen
   for n := pred(QueryCodes.count) downto 0 do
-    if AllCodes.indexof(QueryCodes[n]) = -1 then
+    if (AllCodes.indexof(QueryCodes[n]) = -1) then
       ObsoleteCodes.Add(QueryCodes[n]);
 
   IB_Query1.edit;

@@ -247,8 +247,6 @@ type
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
     class function toBild(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
-    procedure LogBilder(sBilder: TStringList; GeraeteID: string);
-    procedure LogBilder_WechselMomentKorrigiert(sBilder: TStringList; GeraeteID: string);
     function detectGeraeteNummer(sPath: string): string;
 
     // TOOL: Dateinamen
@@ -749,9 +747,13 @@ var
   ProtocolL: TStringList;
   ProtocolAll: TStringList;
   JondaAll: TSearchStringList;
+  Einstellungen: TStringList;
+
+  // Für die Foto "-Neu" Umbenennung werden 2. Informationen
+  // gesammelt: Zählernummer Neu und Reglernummer Neu
   BilderAll: TStringList;
   BilderAll_WechselMomentKorrigiert: TStringList;
-  Einstellungen: TStringList;
+  EingabeL: TStringList;
 
   //
   ProtS: string;
@@ -774,12 +776,19 @@ var
   f_OrgaMon_Auftrag: file of TMdeRec; // Neues von OrgaMon
   bOrgaMonAuftrag: TBLager;
 
-  fOrgaMonErgebnis: file of TMdeRec;
   // Das sind Ergebnisse von MonDa an OrgaMon ...
-  sOrgaMonErgebnis: TStringList; // ... hier als utf8-Variante
+  fOrgaMonErgebnis: file of TMdeRec;
+
   // String-List mit der Original-Protokoll-Eingabe
+  sOrgaMonErgebnis: TStringList; // ... hier als utf8-Variante
+
+  // alle Ergebnisdaten die ein FA= enthalten
   bFotoErgebnis: TBLager;
-  f_OrgaMonApp_Ergebnis: file of TMdeRec; // so kommt es von Monda
+
+  // Das Handy meldet nur Änderungen, jedoch
+  // wird der komplette Auftrag inclusive der Unveränderten rekonstruiert
+  // AUFTRAG.DAT der aktuelle Stand
+  f_OrgaMonApp_Ergebnis: file of TMdeRec;
 
   f_OrgaMonApp_NeuerAuftrag: file of TMdeRec;
   // neue, aufbereitete Liste an MonDa
@@ -1392,7 +1401,7 @@ var
     end;
     with DatensammlerGlobal do
     begin
-      add('MehrInfo=' + 'Verbesserungsvorschläge bitte an Andreas Filsinger 07251/966100');
+      add('MehrInfo=');
     end;
     MonteurInfo := THTMLTemplate.Create;
     with MonteurInfo do
@@ -1413,6 +1422,116 @@ var
     bFoto.free;
     bOrgaMon.free;
     sRIDbereitsBerichtet.free;
+  end;
+
+  procedure logEingabeL_replace(sBilder: TStringList);
+  var
+    n: integer;
+    NeueInfos: TgpIntegerList;
+    AUFTRAG_R: integer;
+  begin
+    NeueInfos := TgpIntegerList.Create;
+
+    // RIDs der neuen Bilder sammeln
+    for n := 0 to pred(sBilder.count) do
+      NeueInfos.add(strtointdef(nextp(sBilder[n], ';', 2), cRID_Null));
+    NeueInfos.sort;
+
+    // Die neuen Infos zählen, die alten Zeilen mit dem
+    // selben RID werden gelöscht
+    for n := pred(EingabeL.count) downto 0 do
+    begin
+      AUFTRAG_R := strtointdef(nextp(EingabeL[n], ';', 2), cRID_Null);
+      if (AUFTRAG_R > cRID_Null) then
+        if (NeueInfos.IndexOf(AUFTRAG_R) <> -1) then
+          EingabeL.Delete(n);
+    end;
+
+    EingabeL.AddStrings(sBilder);
+
+    NeueInfos.free;
+  end;
+
+// wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
+// fehlende Einträge nachgetragen!
+  procedure logEingabeL_add(sBilder: TStringList);
+  var
+    n: integer;
+    BisherInfos: TgpIntegerList;
+    AUFTRAG_R: integer;
+  begin
+    BisherInfos := TgpIntegerList.Create;
+
+    // RIDs der neuen sBilder sammeln
+    for n := 0 to pred(EingabeL.count) do
+      BisherInfos.add(strtointdef(nextp(EingabeL[n], ';', 2), cRID_Null));
+    BisherInfos.sort;
+
+    // sehen, ob es neue Infos gibt, die bisher noch nicht da waren
+    for n := 0 to pred(sBilder.count) do
+    begin
+      AUFTRAG_R := strtointdef(nextp(sBilder[n], ';', 2), cRID_Null);
+      if (BisherInfos.IndexOf(AUFTRAG_R) = -1) then
+        EingabeL.add(sBilder[n]);
+    end;
+
+    BisherInfos.free;
+  end;
+
+// wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
+// fehlende Einträge nachgetragen!
+  procedure sortEingabeL;
+  var
+    ClientSorter: TStringList;
+    EingabeL_Sorted: TStringList;
+    WechselDatum: TANFiXDate;
+    n, m: integer;
+    AutomataState: integer;
+    Stichtag: TANFiXDate;
+  begin
+
+    EingabeL_Sorted := TStringList.Create;
+    ClientSorter := TStringList.Create;
+    Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
+
+    for n := 0 to pred(EingabeL.count) do
+      ClientSorter.addobject(
+        // Datum als JJJJMMTT
+        inttostrN(Date2Long(nextp(EingabeL[n], ';', 0)), 8) + '-' +
+        // Uhrzeit (ist schon sortierfähig!)
+        nextp(EingabeL[n], ';', 1) + '-' +
+        // RID im 3. Rang
+        nextp(EingabeL[n], ';', 2), Pointer(n));
+    ClientSorter.sort;
+
+    AutomataState := 0;
+    for n := 0 to pred(ClientSorter.count) do
+    begin
+      m := integer(ClientSorter.objects[n]);
+      case AutomataState of
+        0:
+          begin
+            WechselDatum := Date2Long(nextp(EingabeL[m], ';', 0));
+            if (WechselDatum >= Stichtag) then
+            begin
+              AutomataState := 1;
+              EingabeL_Sorted.add(EingabeL[m]);
+            end;
+          end;
+        1:
+          begin
+            EingabeL_Sorted.add(EingabeL[m]);
+          end;
+      end;
+    end;
+
+    RemoveDuplicates(EingabeL_Sorted);
+
+    EingabeL.Assign(EingabeL_Sorted);
+
+    EingabeL_Sorted.free;
+
+    ClientSorter.free;
   end;
 
 var
@@ -1459,6 +1578,8 @@ begin
     // Foto-Sachen
     BilderAll := TStringList.Create;
     BilderAll_WechselMomentKorrigiert := TStringList.Create;
+    EingabeL := TStringList.Create;
+
     bOrgaMonAuftrag := TBLager.Create;
     bFotoErgebnis := TBLager.Create;
 
@@ -1921,7 +2042,7 @@ begin
       RemoveDuplicates(GoodMonteurL);
       seek(f_OrgaMon_Auftrag, 0);
 
-      { gelieferte Daten vom JonDa verarbeiten }
+      { gelieferte Daten (AUFTRAG.DAT) der OrgaMon-App verarbeiten }
       if not(proceed_ArbeitIgnorieren) then
         for m := 1 to FileSize(f_OrgaMonApp_Ergebnis) do
         begin
@@ -2172,34 +2293,49 @@ begin
       MondaBaustellen.sort;
       RemoveDuplicates(MondaBaustellen);
 
-      // Datensicherung der Monteur-Eingabe-Datei erstellen
-      if not(FileExists(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')) then
+      if (BilderAll.count > 0) or (BilderAll_WechselMomentKorrigiert.count > 0) then
       begin
-        if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
-          FileCopy(
-            { } pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt',
-            { } MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt')
-        else
-          FileAlive(MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt');
+
+        // Im aktuellen Verarbeitungs-Verzeichnis die aktuelle Eingabe.nnn.txt bereitstellen
+        // Sie stellt die ursprüngliche Wissensbasis dar. Beim ersten Durchlauf fehlt die
+        // Datei - sie wird reinkopiert.
+        FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt';
+        if not(FileExists(FName)) then
+        begin
+          if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
+            FileCopy(
+              { } pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt',
+              { } FName)
+          else
+            FileAlive(FName);
+        end;
+
+        EingabeL.LoadFromFile(FName);
+
+        if (BilderAll.count > 0) then
+          logEingabeL_replace(BilderAll);
+
+        if (BilderAll_WechselMomentKorrigiert.count > 0) then
+          logEingabeL_add(BilderAll_WechselMomentKorrigiert);
+
+        sortEingabeL;
+
+        // Nun die veränderte Eingabe.txt sichern
+        m := 0;
+        repeat
+          if (m = 0) then
+            FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
+          else
+            FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
+          inc(m);
+        until not(FileExists(FName));
+
+        // Save lokal
+        EingabeL.SaveToFile(FName);
+        // Save global
+        EingabeL.SaveToFile(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt');
+
       end;
-
-      // BilderAll
-      if (BilderAll.count > 0) then
-        LogBilder(BilderAll, GeraeteNo);
-
-      if (BilderAll_WechselMomentKorrigiert.count > 0) then
-        LogBilder_WechselMomentKorrigiert(BilderAll_WechselMomentKorrigiert, GeraeteNo);
-
-      // Nun die neue Eingabe.txt sichern
-      m := 0;
-      repeat
-        if (m = 0) then
-          FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
-        else
-          FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
-        inc(m);
-      until not(FileExists(FName));
-      FileCopy(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt', FName);
 
       // alle Zuordnungen ansehen,
       // Beispiel:    PLED3->PLE & PLED2->PLE
@@ -2508,6 +2644,7 @@ begin
     sOrgaMonErgebnis.free;
     BilderAll.free;
     BilderAll_WechselMomentKorrigiert.free;
+    EingabeL.free;
     bOrgaMonAuftrag.free;
     bFotoErgebnis.free;
     WechselmomentKorrektur.free;
@@ -3303,22 +3440,22 @@ var
 
 begin
   iEXIF := TExifData.Create;
-    repeat
+  repeat
 
-      // get Foto-Moment, touch File-Date-Time
-      if not(iEXIF.LoadFromGraphic(FName)) then
-      begin
-//        log(cERRORText + ' ' + FName + ': EXiF konnte nicht geladen werden');
-        break;
-      end;
+    // get Foto-Moment, touch File-Date-Time
+    if not(iEXIF.LoadFromGraphic(FName)) then
+    begin
+      // log(cERRORText + ' ' + FName + ': EXiF konnte nicht geladen werden');
+      break;
+    end;
 
-      if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
-      begin
-        FileTouch(FName, iEXIF.DateTimeOriginal);
-//        log(cINFOText + ' ' + FName + ': Dateizeitstempel korrigiert');
-      end;
+    if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
+    begin
+      FileTouch(FName, iEXIF.DateTimeOriginal);
+      // log(cINFOText + ' ' + FName + ': Dateizeitstempel korrigiert');
+    end;
 
-    until true;
+  until true;
 
   iEXIF.free;
 end;
@@ -4191,10 +4328,6 @@ begin
 end;
 
 class function TJonDaExec.toBild(const mderec: TMdeRec): string;
-// ACHTUNG: OEM-Zeichensatz beachten
-// _ansi =             'üöäÜÖÄß';
-// _oem  : string[7] = '”„š™Žá';
-
 begin
   with mderec do
   begin
@@ -4317,162 +4450,6 @@ begin
   tIMEI.free;
 
   inherited;
-end;
-
-procedure TJonDaExec.LogBilder(sBilder: TStringList; GeraeteID: string);
-var
-  FName: string;
-  oBilder: TStringList;
-  oBilderSorted: TStringList;
-  ClientSorter: TStringList;
-  n, m: integer;
-  WechselDatum: TANFiXDate;
-  Stichtag: TANFiXDate;
-  AutomataState: integer;
-  NeueInfos: TgpIntegerList;
-  NeuesBild: integer;
-begin
-  oBilder := TStringList.Create;
-  oBilderSorted := TStringList.Create;
-  ClientSorter := TStringList.Create;
-  NeueInfos := TgpIntegerList.Create;
-
-  // RIDs der neuen Bilder sammeln
-  for n := 0 to pred(sBilder.count) do
-    NeueInfos.add(strtointdef(nextp(sBilder[n], ';', 2), cRID_Null));
-  NeueInfos.sort;
-
-  Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  FName := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
-  if FileExists(FName) then
-    oBilder.LoadFromFile(FName);
-
-  // Jeden RID nur einmal
-  for n := pred(oBilder.count) downto 0 do
-  begin
-    NeuesBild := strtointdef(nextp(oBilder[n], ';', 2), cRID_Null);
-    if NeuesBild > cRID_Null then
-      if NeueInfos.IndexOf(NeuesBild) <> -1 then
-        oBilder.Delete(n);
-  end;
-
-  oBilder.AddStrings(sBilder);
-  for n := 0 to pred(oBilder.count) do
-    ClientSorter.addobject(
-      // Datum als JJJJMMTT
-      inttostrN(Date2Long(nextp(oBilder[n], ';', 0)), 8) + '-' +
-      // Uhrzeit (ist schon sortierfähig!)
-      nextp(oBilder[n], ';', 1) + '-' +
-      // RID im 3. Rang
-      nextp(oBilder[n], ';', 2)
-
-      , Pointer(n));
-  ClientSorter.sort;
-
-  AutomataState := 0;
-  for n := 0 to pred(ClientSorter.count) do
-  begin
-    m := integer(ClientSorter.objects[n]);
-    case AutomataState of
-      0:
-        begin
-          WechselDatum := Date2Long(nextp(oBilder[m], ';', 0));
-          if (WechselDatum >= Stichtag) then
-          begin
-            AutomataState := 1;
-            oBilderSorted.add(oBilder[m]);
-          end;
-        end;
-      1:
-        begin
-          oBilderSorted.add(oBilder[m]);
-        end;
-    end;
-  end;
-
-  RemoveDuplicates(oBilderSorted);
-  oBilderSorted.SaveToFile(FName);
-
-  oBilder.free;
-  oBilderSorted.free;
-  ClientSorter.free;
-  NeueInfos.free;
-end;
-
-// wie LogBilder jedoch werden keine Daten Überschrieben sondern nur
-// fehlende Einträge nachgetragen!
-procedure TJonDaExec.LogBilder_WechselMomentKorrigiert(sBilder: TStringList; GeraeteID: string);
-var
-  FName: string;
-  oBilder: TStringList;
-  oBilderSorted: TStringList;
-  ClientSorter: TStringList;
-  n, m: integer;
-  WechselDatum: TANFiXDate;
-  Stichtag: TANFiXDate;
-  AutomataState: integer;
-  BisherInfos: TgpIntegerList;
-  AUFTRAG_R: integer;
-begin
-  oBilder := TStringList.Create;
-  oBilderSorted := TStringList.Create;
-  ClientSorter := TStringList.Create;
-  BisherInfos := TgpIntegerList.Create;
-
-  Stichtag := DatePlus(DateGet, -cMaxAge_Foto);
-  FName := pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
-  if FileExists(FName) then
-    oBilder.LoadFromFile(FName);
-
-  // RIDs der neuen sBilder sammeln
-  for n := 0 to pred(oBilder.count) do
-    BisherInfos.add(strtointdef(nextp(oBilder[n], ';', 2), cRID_Null));
-  BisherInfos.sort;
-
-  // sehen, ob es neue Infos gibt, die bisher noch nicht da waren
-  for n := 0 to pred(sBilder.count) do
-  begin
-    AUFTRAG_R := strtointdef(nextp(sBilder[n], ';', 2), cRID_Null);
-    if (BisherInfos.IndexOf(AUFTRAG_R) = -1) then
-      oBilder.add(sBilder[n]);
-  end;
-
-  for n := 0 to pred(oBilder.count) do
-    ClientSorter.addobject(
-      // Datum als JJJJMMTT
-      inttostrN(Date2Long(nextp(oBilder[n], ';', 0)), 8) + '-' +
-      // Uhrzeit (ist schon sortierfähig!)
-      nextp(oBilder[n], ';', 1), Pointer(n));
-  ClientSorter.sort;
-
-  AutomataState := 0;
-  for n := 0 to pred(ClientSorter.count) do
-  begin
-    m := integer(ClientSorter.objects[n]);
-    case AutomataState of
-      0:
-        begin
-          WechselDatum := Date2Long(nextp(oBilder[m], ';', 0));
-          if (WechselDatum >= Stichtag) then
-          begin
-            AutomataState := 1;
-            oBilderSorted.add(oBilder[m]);
-          end;
-        end;
-      1:
-        begin
-          oBilderSorted.add(oBilder[m]);
-        end;
-    end;
-  end;
-
-  RemoveDuplicates(oBilderSorted);
-  oBilderSorted.SaveToFile(FName);
-
-  oBilder.free;
-  oBilderSorted.free;
-  ClientSorter.free;
-  BisherInfos.free;
 end;
 
 function TJonDaExec.WebToMdeRecString(s: AnsiString): AnsiString;
