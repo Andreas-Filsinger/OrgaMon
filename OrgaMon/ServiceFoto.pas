@@ -141,7 +141,6 @@ type
     Label18: TLabel;
     Button29: TButton;
     Button6: TButton;
-    Button30: TButton;
     Button31: TButton;
     CheckBox1: TCheckBox;
     procedure Button1Click(Sender: TObject);
@@ -179,12 +178,11 @@ type
     procedure Button27Click(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button29Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
-    procedure Button30Click(Sender: TObject);
     procedure Button31Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -538,11 +536,6 @@ begin
   end;
 end;
 
-procedure TFormServiceFoto.Button30Click(Sender: TObject);
-begin
-  MyProgramPath := Edit15.Text;
-end;
-
 procedure TFormServiceFoto.Button31Click(Sender: TObject);
 var
   Trn: TStringList;
@@ -629,10 +622,10 @@ begin
       TJonDaExec.Foto_setcorrectDateTime(newDest);
     end;
 
-    application.processmessages;
+    Application.ProcessMessages;
 
   end;
-  sLog.SaveToFile(DiagnosePath + 'N-Bug-'+FindANewPassword+'.csv');
+  sLog.SaveToFile(DiagnosePath + 'N-Bug-' + FindANewPassword + '.csv');
   sLog.Free;
   Trn.Free;
 
@@ -802,6 +795,10 @@ end;
 
 procedure TFormServiceFoto.Button17Click(Sender: TObject);
 begin
+  if (MyFotoExec = nil) then
+    MyFotoExec := TownFotoExec.Create;
+
+  MyProgramPath := Edit15.Text;
   MyFotoExec.readIni(Edit14.Text, Edit15.Text);
 end;
 
@@ -1057,14 +1054,9 @@ begin
 
 end;
 
-procedure TFormServiceFoto.FormActivate(Sender: TObject);
+procedure TFormServiceFoto.FormCreate(Sender: TObject);
 begin
-  if (MyFotoExec = nil) then
-  begin
-    Caption := 'Service-Foto Rev. ' + RevToStr(Version);
-    PageControl1.ActivePage := TabSheet1;
-    MyFotoExec := TownFotoExec.Create;
-  end;
+  PageControl1.ActivePage := TabSheet1;
 end;
 
 procedure TFormServiceFoto.ListBox3Click(Sender: TObject);

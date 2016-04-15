@@ -162,6 +162,8 @@ type
     ListBox2: TListBox;
     Button26: TButton;
     Button27: TButton;
+    Label29: TLabel;
+    Edit27: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -186,7 +188,6 @@ type
     procedure Button20Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure Button22Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
@@ -194,7 +195,6 @@ type
     procedure Button25Click(Sender: TObject);
     procedure Button26Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure Button12Click(Sender: TObject);
   private
 
@@ -202,27 +202,19 @@ type
     STOP: boolean;
     Initialized: boolean;
 
-    // Log-Sachen
-    sSendenLog: TStringList;
-
     // Arbeits Verzeichnis initialisieren
+    // Ini Laden
     procedure EnsureSetup;
+    procedure _log(s: string);
 
   public
 
     { Public-Deklarationen }
 
-    // ermittelte Werte
     JonDaX: TJonDaExec;
     GeraeteNo: string;
 
-
-    // Filter und Entry-Points
-
-    // Eigentliche Arbeit
     procedure Diagnose_Log(One: TMdeRec; log: TStringList);
-    function iXMLRPCHost: string;
-    function iXMLRPCPort: string;
 
   end;
 
@@ -239,51 +231,9 @@ uses
 
 {$R *.dfm}
 
-procedure BeginHourGlass;
-begin
-  if (HourGlassLevel = 0) then
-    screen.cursor := crHourGlass;
-  inc(HourGlassLevel);
-end;
-
-procedure EndHourGlass;
-begin
-  dec(HourGlassLevel);
-  if (HourGlassLevel = 0) then
-  begin
-    screen.cursor := crdefault;
-  end;
-end;
-
-procedure EnsureHourGlass;
-begin
-  if (HourGlassLevel > 0) then
-  begin
-    screen.cursor := crHourGlass;
-  end;
-end;
-
-
-// Datum;Uhrzeit;RID;Z#alt;Z#neu;Prefix
-
-procedure TFormServiceApp.FormActivate(Sender: TObject);
-begin
-  EnsureSetup;
-end;
-
 procedure TFormServiceApp.FormCreate(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheet1;
-end;
-
-procedure TFormServiceApp.FormDestroy(Sender: TObject);
-begin
-  if assigned(JonDaX) then
-    JonDaX.free;
-
-  if assigned(sSendenLog) then
-    sSendenLog.free;
-
 end;
 
 procedure TFormServiceApp.Button4Click(Sender: TObject);
@@ -303,7 +253,6 @@ var
   OneJLine: string;
   JProtokoll: string;
   OrgaMonErgebnis: file of TMdeRec; // Das sind Ergebnisse von MonDa
-  MyProgramPath: string;
   sOrgaMonFName: string;
   dTimeOut: TANFiXDate;
   dMeldung: TANFiXDate;
@@ -317,9 +266,7 @@ var
   _SecondsGet: TAnfixTime;
   UHR: string;
 begin
-  Memo1.lines.add('melde TAN ??? ... ');
-
-  MyProgramPath := 'W:\JonDaServer\';
+  _log('melde TAN ??? ... ');
 
   lAbgearbeitet := TgpIntegerList.create;
   lMeldungen := TStringList.create;
@@ -385,30 +332,30 @@ begin
     end;
 
     lHeuteFehlDatum.add('###');
-(*
-    lMeldungen.LoadFromFile(MyProgramPath + cJonDaServer_XMLRPCLogFName);
-    for i := pred(lMeldungen.count) downto 0 do
-    begin
+    (*
+      lMeldungen.LoadFromFile(MyProgramPath + cJonDaServer_XMLRPCLogFName);
+      for i := pred(lMeldungen.count) downto 0 do
+      begin
       if (nextp(lMeldungen[i], ';', 2) = 'StartTAN') then
       begin
 
-        _DateGet := strtoint(nextp(lMeldungen[i], ';', 0));
-        if _DateGet < dTimeOut then
-          continue;
-        _SecondsGet := strtoseconds(nextp(lMeldungen[i], ';', 1));
-        UHR := nextp(lMeldungen[i], ';', 7);
-        if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)), strtoseconds(nextp(UHR, ' - ', 1))) >
-          60 * 5 then
-        begin
-          GeraeteNo := nextp(lMeldungen[i], ';', 3);
-          if lHeuteFehlDatum.IndexOf(GeraeteNo) = -1 then
-            lHeuteFehlDatum.add(GeraeteNo);
+      _DateGet := strtoint(nextp(lMeldungen[i], ';', 0));
+      if _DateGet < dTimeOut then
+      continue;
+      _SecondsGet := strtoseconds(nextp(lMeldungen[i], ';', 1));
+      UHR := nextp(lMeldungen[i], ';', 7);
+      if SecondsDiffABS(_DateGet, _SecondsGet, Date2Long(nextp(UHR, ' - ', 0)), strtoseconds(nextp(UHR, ' - ', 1))) >
+      60 * 5 then
+      begin
+      GeraeteNo := nextp(lMeldungen[i], ';', 3);
+      if lHeuteFehlDatum.IndexOf(GeraeteNo) = -1 then
+      lHeuteFehlDatum.add(GeraeteNo);
 
-        end;
+      end;
       end;
 
-    end;
-*)
+      end;
+    *)
     // Falsches Datum
 
     CloseFile(OrgaMonErgebnis);
@@ -458,87 +405,59 @@ var
   iDateFromLog: TANFiXDate;
   SectionName: string;
 begin
-  if FileExists(MyProgramPath + cJonDaServer_LogFName) then
+  if not(Initialized) then
   begin
-    if not(Initialized) then
+
+    JonDaX := TJonDaExec.create;
+    JonDaX.readIni(Edit27.text);
+
+    // lade IMEI
+    _log('Lade Tabelle IMEI ... ');
+    with JonDaX.tIMEI do
     begin
+      insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+      _log(inttostr(RowCount));
+    end;
 
-      JonDaX := TJonDaExec.create;
-      sSendenLog := TStringList.create;
+    // lade IMEI-OK
+    _log('Lade Tabelle IMEI-OK ... ');
+    with JonDaX.tIMEI_OK do
+    begin
+      insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+      _log(inttostr(RowCount));
+    end;
 
-      // interne Varibale setzen
-      DiagnosePath := MyProgramPath;
-      caption := 'Service-App [' + UserName + '@' + MyProgramPath + '] Rev. ' + RevToStr(Version);
+    // Einstellungen weitergeben
+    SolidFTP.SolidFTP_LogDir := DiagnosePath;
+    _log('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
-      // Ini-Datei öffnen
-      MyIni := TIniFile.create(MyProgramPath + '-' + cIniFName);
-      with MyIni do
-      begin
-        SectionName := UserName;
-        if (ReadString(SectionName, 'ftpuser', '') = '') then
-          SectionName := 'System';
+    (*
 
-        // Ftp-Bereich für diesen Server
-        iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-        iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-        iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-      end;
-      MyIni.free;
-
-      // sSendenLog aufbauen!
-      iDateFromLog := DatePlus(DateGet, -10);
-      sLog := TStringList.create;
-      sLog.LoadFromFile(MyProgramPath + cJonDaServer_LogFName);
-      for n := pred(sLog.count) downto 0 do
-      begin
-        if JonDaX.LogMatch(sLog[n], cGeraetSchema) then
-        begin
-          if (Date2Long(nextp(sLog[n], ' ', 2)) < iDateFromLog) then
-            break;
-          sSendenLog.insert(0, sLog[n]);
-        end;
-      end;
-      sLog.free;
-
-      //
-      JonDaX.BeginAction(
-        { } 'Start ' + cApplicationName +
-        { } ' Rev. ' + RevToStr(Version) +
-        { } ' [' + UserName + ']');
-
-      CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(Version) + ' gestartet');
 
       // Verzeichnisse Anlegen
       if FileExists(MyProgramPath + cIniFName) then
       begin
-        checkcreatedir(MyProgramPath + cServerDataPath);
-        checkcreatedir(MyProgramPath + cOrgaMonDataPath);
-        checkcreatedir(MyProgramPath + cMeldungPath);
-        checkcreatedir(MyProgramPath + cStatistikPath);
-        // checkcreatedir(MyProgramPath + cUpdatePath);
-        checkcreatedir(MyProgramPath + cProtokollPath);
-        checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
-//        checkcreatedir(MyProgramPath + cFotoPath);
-        checkcreatedir(MyProgramPath + cDBPath);
-        checkcreatedir(MyProgramPath + cSyncPath);
+      checkcreatedir(MyProgramPath + cServerDataPath);
+      checkcreatedir(MyProgramPath + cOrgaMonDataPath);
+      checkcreatedir(MyProgramPath + cMeldungPath);
+      checkcreatedir(MyProgramPath + cStatistikPath);
+      // checkcreatedir(MyProgramPath + cUpdatePath);
+      checkcreatedir(MyProgramPath + cProtokollPath);
+      checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
+      // checkcreatedir(MyProgramPath + cFotoPath);
+      checkcreatedir(MyProgramPath + cDBPath);
+      checkcreatedir(MyProgramPath + cSyncPath);
       end;
-
-      //
-      ComboBox2.items.Clear;
-      ComboBox2.items.add(cActionRestantenLeeren);
-      ComboBox2.items.add(cActionRestantenAddieren);
-      ComboBox2.items.add(cActionFremdMonteurLoeschen);
-      ComboBox2.items.add(cActionAusAlterTAN);
-      Initialized := true;
-      Label25.caption := JonDaX.NewTrn(false);
-      Memo1.lines.add('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
-      Nachmeldungen;
-    end;
-  end
-  else
-  begin
-    Memo1.lines.add(MyProgramPath + cJonDaServer_LogFName +
-      ' existiert nicht, der Pfad ist nicht richtig gesetzt oder der Setup! ist nicht ausgeführt!');
+    *)
+    //
+    ComboBox2.items.Clear;
+    ComboBox2.items.add(cActionRestantenLeeren);
+    ComboBox2.items.add(cActionRestantenAddieren);
+    ComboBox2.items.add(cActionFremdMonteurLoeschen);
+    ComboBox2.items.add(cActionAusAlterTAN);
+    Initialized := true;
+    Label25.caption := JonDaX.NewTrn(false);
+    _log('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
   end;
 end;
 
@@ -562,7 +481,7 @@ var
         begin
           Raw := ExtractSegmentBetween(access_log[m], MatchStr, ' HTTP/1.1"');
           Raw := RFC1738ToAnsi(Raw);
-          Memo1.lines.add(Raw);
+          _log(Raw);
           AppendStringsToFile(Raw, MyProgramPath + TAN + '\' + TAN + '.txt');
         end;
     end;
@@ -573,8 +492,6 @@ begin
   access_log := nil;
   sParameter := TStringList.create;
   sParameter.Values['OFFLINE'] := cIni_Activate;
-
-  MyProgramPath := Edit14.text;
 
   if CheckBox22.Checked then
   begin
@@ -587,10 +504,10 @@ begin
     JonDaX.proceed_NoUpload := not(CheckBox17.Checked);
     sParameter.Values['TAN'] := Edit1.text;
     Nachtrag(Edit1.text);
-    Memo1.lines.add('verarbeite ' + Edit1.text + ' ... ');
+    _log('verarbeite ' + Edit1.text + ' ... ');
     sResult := JonDaX.proceed(sParameter);
     sResult.free;
-    Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + 'OK';
+    _log('OK');
   end
   else
   begin
@@ -600,10 +517,10 @@ begin
         JonDaX.proceed_NoUpload := not(CheckBox17.Checked);
         sParameter.Values['TAN'] := inttostrN(n, 5);
         Nachtrag(inttostrN(n, 5));
-        Memo1.lines.add('verarbeite ' + inttostrN(n, 5) + ' ... ');
+        _log('verarbeite ' + inttostrN(n, 5) + ' ... ');
         sResult := JonDaX.proceed(sParameter);
         sResult.free;
-        Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + 'OK';
+        _log('OK');
       end;
   end;
   sParameter.free;
@@ -956,19 +873,14 @@ begin
   openshell(MyProgramPath + 'Diagnose.txt');
 end;
 
-function TFormServiceApp.iXMLRPCHost: string;
-begin
-  result := ComputerName;
-end;
-
-function TFormServiceApp.iXMLRPCPort: string;
-begin
-  result := '3049';
-end;
-
 procedure TFormServiceApp.SpeedButton2Click(Sender: TObject);
 begin
   openshell(MyProgramPath + cGeraeteEinstellungen);
+end;
+
+procedure TFormServiceApp._log(s: string);
+begin
+  memo1.lines.add(s);
 end;
 
 procedure TFormServiceApp.Button11Click(Sender: TObject);
@@ -1031,7 +943,7 @@ begin
             reset(fauftrag);
           except
             on E: Exception do
-              Memo1.lines.add(cERRORText + ' 748:' + E.Message);
+              _log(cERRORText + ' 748:' + E.Message);
           end;
           for o := 1 to FileSize(fauftrag) do
           begin
@@ -1180,7 +1092,7 @@ begin
     Password := iJonDa_FTPPassword;
   end;
 
-  Memo1.lines.add('melde TAN 50000 ... ');
+  _log('melde TAN 50000 ... ');
 
   MyProgramPath := 'W:\JonDaServer\';
 
@@ -1310,12 +1222,12 @@ begin
   sFotos := TStringList.create;
 
   tBAUSTELLE := TsTable.create;
-  tBAUSTELLE.insertFromFile(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
+  tBAUSTELLE.insertfromFile(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
   Col_FTP_Benutzer := tBAUSTELLE.colOf(cE_FTPUSER);
 
   //
   WARTEND := TsTable.create;
-  WARTEND.insertFromFile(MyProgramPath + cDBPath + cFotoUmbenennungAusstehend);
+  WARTEND.insertfromFile(MyProgramPath + cDBPath + cFotoUmbenennungAusstehend);
 
   // init
   sRoot := 'W:\';
@@ -1559,10 +1471,10 @@ begin
   if (JonDaX.tIMEI.count = 0) then
   begin
     // lade IMEI
-    JonDaX.tIMEI.insertFromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+    JonDaX.tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
 
     // lade IMEI-OK
-    JonDaX.tIMEI_OK.insertFromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
+    JonDaX.tIMEI_OK.insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
   end;
 
   with JonDaX.tIMEI_OK do
@@ -1596,7 +1508,13 @@ end;
 
 procedure TFormServiceApp.Button27Click(Sender: TObject);
 begin
-  FileAlive(MyProgramPath + cJonDaServer_LogFName);
+  if not(FileExists(Edit14.text + 'cOrgaMon.ini')) then
+  begin
+    ShowMessage('Die ist kein Service-Verzeichnis');
+    exit;
+  end;
+
+  MyProgramPath := Edit14.text;
   EnsureSetup;
 end;
 
