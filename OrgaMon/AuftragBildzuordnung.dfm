@@ -3,7 +3,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
   Top = 0
   Caption = 'Medium Bilder'
   ClientHeight = 714
-  ClientWidth = 899
+  ClientWidth = 992
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,17 +12,18 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
   Font.Style = []
   OldCreateOrder = False
   DesignSize = (
-    899
+    992
     714)
   PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage
     Left = 360
     Top = 40
-    Width = 533
+    Width = 626
     Height = 642
     Anchors = [akLeft, akTop, akRight, akBottom]
     Stretch = True
+    ExplicitWidth = 533
   end
   object Label1: TLabel
     Left = 634
@@ -38,7 +39,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     ParentFont = False
   end
   object Image2: TImage
-    Left = 837
+    Left = 930
     Top = 8
     Width = 54
     Height = 22
@@ -253,7 +254,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Transparent = True
   end
   object SpeedButton3: TSpeedButton
-    Left = 871
+    Left = 964
     Top = 688
     Width = 22
     Height = 22
@@ -302,6 +303,57 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Font.Style = [fsBold]
     ParentFont = False
   end
+  object SpeedButton4: TSpeedButton
+    Left = 331
+    Top = 98
+    Width = 22
+    Height = 22
+    Hint = 'Setze Wechseldatum aus Bilddatum'
+    Glyph.Data = {
+      36050000424D3605000000000000360400002800000010000000100000000100
+      08000000000000010000C40E0000C40E00000001000000000000DAD1D100FBFA
+      FA00C7B9B900F6F4F4007A554C0094797900A28A8A00754E4900D6CBCB00B8A6
+      A600CCB2A200DAC1AC00D2B9A700A8929200E1D9D9006E484400AD9898008E72
+      7200552926008B6E6E005C3434005F332E00946F6300A68F8F00BCA09200D2C6
+      C60084615C006339350042181800CFC3C300C0C0C000FFFFFF00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000001F1F1F1F1F0C
+      160404160C1F1F1F1F1F1F1F1F1F0F0F051010050F0F0B1F1F1F1F1F0A121300
+      010909010005120A1F1F1F0B12021D0D1F1F1F03170002120B1F1F0413081F1F
+      1F1F1F1F1F1F0005041F180F08100E191F1F1F1F1F1F0600070C070501010814
+      050E031F1F1F031F05161510091F010E1A1C0F011F1F1F0910041510091F1F1F
+      011414011F1F1F09100407131F031F1F1F0D0D1F1F1F031F0516180F00171F1F
+      1F17171F1F1F17000F0C1F0413081F1F1F06061F1F1F0813041F1F1F12020010
+      01090903060002121F1F1F1F0A1B1300010202011911120A1F1F1F1F1F1F0407
+      1110101107041F1F1F1F1F1F1F1F0B0A1A15151A0A0B1F1F1F1F}
+    OnClick = SpeedButton4Click
+  end
   object Edit1: TEdit
     Left = 127
     Top = 8
@@ -312,16 +364,16 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
   end
   object IB_Grid1: TIB_Grid
     Left = 8
-    Top = 121
+    Top = 126
     Width = 346
-    Height = 561
+    Height = 556
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akBottom]
     TabOrder = 1
   end
   object Button1: TButton
-    Left = 771
+    Left = 864
     Top = 688
     Width = 33
     Height = 22
@@ -329,14 +381,16 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = '&Copy'
     TabOrder = 2
     OnClick = Button1Click
+    ExplicitLeft = 771
   end
   object Edit2: TEdit
-    Left = 633
+    Left = 726
     Top = 688
     Width = 134
     Height = 21
     Anchors = [akRight, akBottom]
     TabOrder = 3
+    ExplicitLeft = 633
   end
   object CheckBox1: TCheckBox
     Left = 32
@@ -359,7 +413,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     OnChange = ComboBox1Change
   end
   object Button2: TButton
-    Left = 806
+    Left = 899
     Top = 688
     Width = 59
     Height = 22
@@ -367,6 +421,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = 'Copy-&Neu'
     TabOrder = 6
     OnClick = Button2Click
+    ExplicitLeft = 806
   end
   object ComboBox2: TComboBox
     Left = 387
@@ -394,7 +449,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     TabOrder = 9
   end
   object Button3: TButton
-    Left = 471
+    Left = 564
     Top = 688
     Width = 75
     Height = 22
@@ -402,9 +457,10 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = '<<'
     TabOrder = 10
     OnClick = Button3Click
+    ExplicitLeft = 471
   end
   object Button4: TButton
-    Left = 554
+    Left = 647
     Top = 688
     Width = 75
     Height = 22
@@ -412,6 +468,7 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Caption = '>>'
     TabOrder = 11
     OnClick = Button4Click
+    ExplicitLeft = 554
   end
   object Panel1: TPanel
     Left = 548
@@ -477,6 +534,14 @@ object FormAuftragBildzuordnung: TFormAuftragBildzuordnung
     Width = 67
     Height = 21
     TabOrder = 17
+  end
+  object CheckBox5: TCheckBox
+    Left = 32
+    Top = 106
+    Width = 153
+    Height = 17
+    Caption = 'incl. Unerledigte'
+    TabOrder = 18
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'

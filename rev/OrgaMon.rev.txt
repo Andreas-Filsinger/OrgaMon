@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.174 (19.04.16) Andreas Filsinger
+
+ Neu: Foto-Zuordnung: Auch anhand des Planungsdatums
+ Neu: Foto-Zuordnung: Ausführungsdatum ist anhand des Foto-Aufnahme Momentes setzbar
+
 Rev 8.173 (07.04.16) Andreas Filsinger
 
  Neu: FotoService: Datei-Datum/Uhrzeit Korrektur aus Aufnahme-Datum/Uhrzeit jetzt VOR dem Backup der Datei

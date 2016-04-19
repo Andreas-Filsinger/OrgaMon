@@ -143,6 +143,7 @@ type
     Button6: TButton;
     Button31: TButton;
     CheckBox1: TCheckBox;
+    Button30: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -183,6 +184,7 @@ type
     procedure Button6Click(Sender: TObject);
     procedure Button31Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure Button30Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -534,6 +536,19 @@ begin
     doRemote(GeraeteNo, 'mv', FNameRemote);
     // DeleteFile(MobUploadPath+cSubDirUnverarbeitet+'\'+ListBox5.Items[n]);
   end;
+end;
+
+procedure TFormServiceFoto.Button30Click(Sender: TObject);
+var
+  i: integer;
+begin
+  with ListBox3 do
+    for i := 0 to pred(Items.count) do
+    begin
+      ItemIndex := i;
+      application.processmessages;
+      FotoTouch(Edit4.Text + Items[i]);
+    end;
 end;
 
 procedure TFormServiceFoto.Button31Click(Sender: TObject);
@@ -1298,6 +1313,7 @@ begin
   sDir.sort;
   ListBox3.Items.Assign(sDir);
   sDir.Free;
+
   if not(assigned(sMoveTransaktionen)) then
     sMoveTransaktionen := TStringList.Create;
   sMoveTransaktionen.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);

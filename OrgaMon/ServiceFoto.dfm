@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -357,6 +357,15 @@ object FormServiceFoto: TFormServiceFoto
           'F4 : Dieses Bild zur "-Neu" umbenennung vormerken'
           'F5 : Dateigr'#246'sse des Bildes korrigieren')
         TabOrder = 3
+      end
+      object Button30: TButton
+        Left = 68
+        Top = 49
+        Width = 75
+        Height = 25
+        Caption = 'Touch'
+        TabOrder = 4
+        OnClick = Button30Click
       end
     end
     object TabSheet4: TTabSheet
