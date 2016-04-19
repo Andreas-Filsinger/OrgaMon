@@ -81,16 +81,16 @@ function e_r_Person(PERSON_R: Integer): string;
 function e_r_Person2Zeiler(PERSON_R: Integer): TStringList;
 function e_r_MonteurRIDFromKuerzel(str: string): Integer;
 function e_r_MonteurRIDfromGeraeteID(str: string): Integer;
-function e_r_MonteurKuerzel(rid: Integer): string;
-function e_r_MonteurName(rid: Integer): string;
-function e_r_MonteurHandy(rid: Integer): string;
-function e_r_MonteurGeraeteID(rid: Integer): string;
+function e_r_MonteurKuerzel(PERSON_R: Integer): string;
+function e_r_MonteurName(PERSON_R: Integer): string;
+function e_r_MonteurHandy(PERSON_R: Integer): string;
+function e_r_MonteurGeraeteID(PERSON_R: Integer): string;
 
-procedure e_r_MonteurUrlaub(rid: Integer; Urlaub: TSperre);
 // Sperre=
+procedure e_r_MonteurUrlaub(PERSON_R: Integer; Urlaub: TSperre);
 
-procedure e_r_MonteurArbeit(rid: Integer; Arbeit: TSperre);
 // Arbeit und Mehrarbeit
+procedure e_r_MonteurArbeit(PERSON_R: Integer; Arbeit: TSperre);
 
 procedure e_r_MonteurZuordnung(MONTEUR_R: Integer; Arbeit: TSperre);
 function e_r_MonteureCache(Alle: boolean = true): TStringList;
@@ -2308,40 +2308,40 @@ begin
     result := Integer(MonteurKuerzel.Objects[result]);
 end;
 
-function e_r_MonteurKuerzel(rid: Integer): string;
+function e_r_MonteurKuerzel(PERSON_R: Integer): string;
 var
   _idx: Integer;
 begin
   EnsureCache_Monteur;
-  _idx := CacheMonteurKuerzel.indexof(inttostr(rid));
+  _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
   if _idx <> -1 then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[0]
   else
-    result := inttostr(rid);
+    result := inttostr(PERSON_R);
 end;
 
-function e_r_MonteurName(rid: Integer): string;
+function e_r_MonteurName(PERSON_R: Integer): string;
 var
   _idx: Integer;
 begin
   EnsureCache_Monteur;
-  _idx := CacheMonteurKuerzel.indexof(inttostr(rid));
+  _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
   if _idx <> -1 then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[1]
   else
-    result := inttostr(rid);
+    result := inttostr(PERSON_R);
 end;
 
-function e_r_MonteurHandy(rid: Integer): string;
+function e_r_MonteurHandy(PERSON_R: Integer): string;
 var
   _idx: Integer;
 begin
   EnsureCache_Monteur;
-  _idx := CacheMonteurKuerzel.indexof(inttostr(rid));
+  _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
   if _idx <> -1 then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[3]
   else
-    result := inttostr(rid);
+    result := inttostr(PERSON_R);
 end;
 
 procedure InvalidateCache_Monteur;
@@ -2355,25 +2355,25 @@ begin
   InvalidateCache_Baustelle;
 end;
 
-procedure e_r_MonteurUrlaub(rid: Integer; Urlaub: TSperre);
+procedure e_r_MonteurUrlaub(PERSON_R: Integer; Urlaub: TSperre);
 var
   MemoInfo: TStringList;
 begin
-  if (rid >= cRID_FirstValid) then
+  if (PERSON_R >= cRID_FirstValid) then
   begin
-    MemoInfo := e_r_sqlt('select BEMERKUNG from PERSON where RID=' + inttostr(rid));
+    MemoInfo := e_r_sqlt('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
     Urlaub.ReadFromMemo(MemoInfo, sSperre_Wert_Person);
     MemoInfo.free;
   end;
 end;
 
-procedure e_r_MonteurArbeit(rid: Integer; Arbeit: TSperre);
+procedure e_r_MonteurArbeit(PERSON_R: Integer; Arbeit: TSperre);
 var
   MemoInfo: TStringList;
 begin
-  if (rid >= cRID_FirstValid) then
+  if (PERSON_R >= cRID_FirstValid) then
   begin
-    MemoInfo := e_r_sqlt('select BEMERKUNG from PERSON where RID=' + inttostr(rid));
+    MemoInfo := e_r_sqlt('select BEMERKUNG from PERSON where RID=' + inttostr(PERSON_R));
     Arbeit.ReadFromMemo(MemoInfo, sSperre_Wert_Arbeit);
     MemoInfo.free;
   end;
@@ -2396,16 +2396,16 @@ begin
   end;
 end;
 
-function e_r_MonteurGeraeteID(rid: Integer): string;
+function e_r_MonteurGeraeteID(PERSON_R: Integer): string;
 var
   _idx: Integer;
 begin
   EnsureCache_Monteur;
-  _idx := CacheMonteurKuerzel.indexof(inttostr(rid));
+  _idx := CacheMonteurKuerzel.indexof(inttostr(PERSON_R));
   if (_idx <> -1) then
     result := TStringList(CacheMonteurKuerzel.Objects[_idx])[2]
   else
-    result := inttostr(rid);
+    result := inttostr(PERSON_R);
 end;
 
 function e_r_VorlageMail(VorlageName: string): Integer;

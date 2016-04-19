@@ -4,6 +4,7 @@ interface
 
 // Liefert den Aufnahme-Moment des Fotos
 function FotoAufnahmeMoment(FName: string): TDateTime;
+procedure FotoTouch(FName: string);
 
 // Verkleinert die Größe der Foto-Datei auf kByte [kByte] mit der Abweichung [Prozent]
 // Liefert die eingesparte Anzahl von Bytes
@@ -16,18 +17,21 @@ uses
   Classes,
 
   anfix32,
+  CCR.Exif.BaseUtils,
   CCR.Exif,
-  {$ifndef FPC}
+{$IFNDEF FPC}
   JclMiscel,
-  {$endif}
+{$ENDIF}
   globals;
 
 function FotoAufnahmeMoment(FName: string): TDateTime;
 var
   iEXIF: TExifData;
+  _FName: string;
 begin
+  // a) über EXiF
   iEXIF := TExifData.Create;
-  result := 0.0;
+  result := TDateTimeTagValue.CreateMissingOrInvalid;
   try
     iEXIF.LoadFromGraphic(FName);
     result := iEXIF.DateTimeOriginal;
@@ -35,6 +39,37 @@ begin
 
   end;
   iEXIF.Free;
+
+  // b) über den Dateinamen 20160414_084106
+  if (result = TDateTimeTagValue.CreateMissingOrInvalid) then
+  begin
+
+    _FName := StrFilter(ExtractFileName(FName), cZiffern);
+
+    if (length(_FName) = 14) then
+      // JJJJMMDDhhmmss
+      // 12345678901234
+
+      result := mkdatetime(
+        { } date2long(
+        { DD } copy(_FName, 7, 2) + '.' +
+        { MM } copy(_FName, 5, 2) + '.' +
+        { JJJJ } copy(_FName, 1, 4)),
+        { } StrToSeconds(
+        { hh } copy(_FName, 9, 2) + ':' +
+        { mm } copy(_FName, 11, 2) + ':' +
+        { ss } copy(_FName, 13, 2)));
+
+  end;
+end;
+
+procedure FotoTouch(FName: string);
+var
+  dt: TDateTime;
+begin
+  dt := FotoAufnahmeMoment(FName);
+  if (dt <> TDateTimeTagValue.CreateMissingOrInvalid) then
+    FileTouch(FName, dt);
 end;
 
 const
@@ -95,8 +130,8 @@ var
       add(';');
       add('');
       add('(define (' + cGimpScriptNAME + ')');
-      add(' (let* ((das-bild (car (gimp-file-load RUN-NONINTERACTIVE "' + Gimp_FileName(FName) +
-        '" "' + Gimp_FileName(FName) + '")))');
+      add(' (let* ((das-bild (car (gimp-file-load RUN-NONINTERACTIVE "' + Gimp_FileName(FName) + '" "' +
+        Gimp_FileName(FName) + '")))');
       add('       (ergebnis-layer (car (gimp-image-get-active-layer das-bild))))');
       add(' (file-jpeg-save');
       add('     RUN-NONINTERACTIVE');
@@ -128,10 +163,10 @@ var
     { } ' ' +
     { } '--verbose ' +
     { } '--batch="(' + cGimpScriptNAME + ')"';
-{$ifdef FPC}
-{$else}
-JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
-{$endif}
+{$IFDEF FPC}
+{$ELSE}
+    JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+{$ENDIF}
     if debugmode then
       AppendStringsToFile(execStr, DiagnosePath + 'exec.log.txt');
 

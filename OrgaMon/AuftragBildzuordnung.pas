@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -67,6 +67,8 @@ type
     CheckBox4: TCheckBox;
     Edit4: TEdit;
     Label3: TLabel;
+    CheckBox5: TCheckBox;
+    SpeedButton4: TSpeedButton;
     procedure Image2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
@@ -82,6 +84,7 @@ type
     procedure Panel1Click(Sender: TObject);
     procedure Panel2Click(Sender: TObject);
     procedure Panel3Click(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -119,7 +122,8 @@ implementation
 uses
   CaretakerClient, Baustelle,
   globals, math, wanfix32,
-  dbOrgaMon, Funktionen_Auftrag, CCR.Exif;
+  dbOrgaMon, Funktionen_Auftrag, CCR.Exif,
+  Foto;
 
 {$R *.dfm}
 
@@ -151,6 +155,18 @@ begin
   CheckCreateDir(Path + 'Ablage');
   FileMove(Path + sImages[ImageIndex], Path + 'Ablage\' + sImages[ImageIndex]);
   nextFoto;
+end;
+
+procedure TFormAuftragBildzuordnung.SpeedButton4Click(Sender: TObject);
+var
+  dt: TDateTime;
+begin
+  dt := FotoAufnahmeMoment(Path + Label3.Caption);
+  e_x_sql(
+    { } 'update AUFTRAG set' +
+    { } ' zaehler_wechsel=''' + long2date(dt) + ' ' + secondstostr(dt) + ''' ' +
+    { } 'where ' +
+    { } ' (RID=' + IB_Query1.FieldByName('RID').AsString + ')');
 end;
 
 procedure TFormAuftragBildzuordnung.Button3Click(Sender: TObject);
@@ -218,10 +234,9 @@ begin
     refresh_FOTO;
 end;
 
-procedure TFormAuftragBildzuordnung.IB_Query1AfterScroll
-  (IB_Dataset: TIB_Dataset);
+procedure TFormAuftragBildzuordnung.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
-  Label2.caption := IB_Query1.FieldByName('ZAEHLER_NUMMER').AsString;
+  Label2.Caption := IB_Query1.FieldByName('ZAEHLER_NUMMER').AsString;
   Edit2.text := IB_Query1.FieldByName('ZAEHLER_NUMMER').AsString;
 end;
 
@@ -264,8 +279,8 @@ begin
     end;
     iEXIF.free;
 
-    Label1.caption :=
-    { } 'Datei=' + SecondsToStr(FileSeconds(Path + sImages[ImageIndex])) +
+    Label1.Caption :=
+    { } 'Datei=' + secondstostr(FileSeconds(Path + sImages[ImageIndex])) +
     { } ' / ' +
     { } 'Exif=' + SecondsToStr8(DateTime2seconds(AufnahmeMoment));
 
@@ -273,8 +288,8 @@ begin
   else
   begin
     Image1.Picture := nil;
-    Label1.caption := '';
-    Label2.caption := '';
+    Label1.Caption := '';
+    Label2.Caption := '';
     Edit2.text := '';
     beep;
   end;
@@ -317,17 +332,28 @@ begin
     sql.add(' auftrag');
     sql.add('where');
     if (Edit4.text <> '') then
-      sql.add(' (BAUSTELLE_R in (' + inttostr(BAUSTELLE_R) + ',' + Edit4.text
-        + ')) and')
+      sql.add(' (BAUSTELLE_R in (' + inttostr(BAUSTELLE_R) + ',' + Edit4.text + ')) and')
     else
       sql.add(' (baustelle_R=:BAUSTELLE) and');
-    sql.add(' (zaehler_wechsel between :VON and :BIS) and');
+    if CheckBox5.Checked then
+    begin
+      // sql.add(' ((zaehler_wechsel between :VON and :BIS) or');
+      // sql.add('  (AUSFUEHREN between :VON and :BIS)) and');
+      sql.add('  (AUSFUEHREN between :VON and :BIS) and');
+    end
+    else
+    begin
+      sql.add(' (zaehler_wechsel between :VON and :BIS) and');
+    end;
     if (MONTEUR_JONDA_R >= cRID_FirstValid) then
-      sql.add(' ((MONTEUR1_R=' + inttostr(MONTEUR_JONDA_R) + ') or ' +
-        ' (MONTEUR2_R=' + inttostr(MONTEUR_JONDA_R) + ')) and');
+      sql.add(' ((MONTEUR1_R=' + inttostr(MONTEUR_JONDA_R) + ') or ' + ' (MONTEUR2_R=' + inttostr(MONTEUR_JONDA_R) +
+        ')) and');
     sql.add(' (status<>6)');
-    sql.add('order by');
-    sql.add(' zaehler_wechsel');
+    if not(CheckBox5.Checked) then
+    begin
+      sql.add('order by');
+      sql.add(' zaehler_wechsel');
+    end;
 
     prepare;
 
@@ -374,8 +400,7 @@ begin
     sParameter.LoadFromFile(Path + 'Parameter.ini')
   else
     sParameter.clear;
-  FotoOffset := strtodoubledef(sParameter.values['KameraOffset'], 0.0) *
-    (1.0 / 86400.0);
+  FotoOffset := strtodoubledef(sParameter.values['KameraOffset'], 0.0) * (1.0 / 86400.0);
 
   // Verzeichnis durchsuchen nach Bildern
   dir(Path + '*.jpg', sImages, false);
@@ -412,8 +437,7 @@ begin
       if (FileDate(Path + sImages[n]) <> FOTOMOMENT) then
         sImages.delete(n);
     for n := 0 to pred(sImages.count) do
-      sClientSorter.addObject(inttostrN(FileSeconds(Path + sImages[n]), 8),
-        pointer(n));
+      sClientSorter.addObject(inttostrN(FileSeconds(Path + sImages[n]), 8), pointer(n));
     sClientSorter.sort;
     for n := 0 to pred(sClientSorter.count) do
       newImages.add(sImages[integer(sClientSorter.objects[n])]);
