@@ -26,6 +26,7 @@ var
   ConversionOK: boolean;
   sLOG: TStringList;
   n: integer;
+
 begin
 
   //
@@ -44,9 +45,9 @@ begin
 
     if (Mode = '') then
     begin
-      ConversionOK := doConversion(CheckContent(InFname), InFname, sLOG);
+      ConversionOK := doConversion(CheckContent(InFName), InFName, sLOG);
       break;
-    end; 
+    end;
 
     if (Mode = '--tab') then
     begin
@@ -69,14 +70,14 @@ begin
     // XLS -> csv,xml Converter
     if (Mode = '--xls') then
     begin
-      ConversionOK := doConversion(CheckContent(InFname),InFname, sLOG);
+      ConversionOK := doConversion(CheckContent(InFName), InFName, sLOG);
       break;
     end;
 
     // XML -> csv Converter
     if (Mode = '--xml') then
     begin
-      if FileExists(ExtractFilePath(InFname)+'Schema.xsd') then
+      if FileExists(ExtractFilePath(InFName) + 'Schema.xsd') then
         ConversionOK := doConversion(Content_Mode_xsd, InFName, sLOG)
       else
         ConversionOK := doConversion(Content_Mode_xml2csv, InFName, sLOG);
@@ -86,7 +87,7 @@ begin
     // XML - Validierung
     if (Mode = '--val') then
     begin
-      if FileExists(ExtractFilePath(InFname)+'Schema.xsd') then
+      if FileExists(ExtractFilePath(InFName) + 'Schema.xsd') then
         ConversionOK := doConversion(Content_Mode_xsd, InFName, sLOG)
       else
         ConversionOK := doConversion(Content_Mode_dtd, InFName, sLOG);
@@ -94,15 +95,15 @@ begin
     end;
 
     // Fehler: Kann nicht erkannt werden
-    writeln('ERROR: Parameter 2 muss --tab, --csv, --txt, --xls oder --xml sein, ist aber "'+Mode+'"');
+    writeln('ERROR: Parameter 2 muss --tab, --csv, --txt, --xls oder --xml sein, ist aber "' + Mode + '"');
 
   until true;
 
-  if not (ConversionOK) then
+  if not(ConversionOK) then
   begin
     if FileExists(ExtractFilePath(InFName) + 'Diagnose.txt') then
     begin
-      sLOg := TStringList.create;
+      sLOG := TStringList.create;
       sLOG.loadFromFile(ExtractFilePath(InFName) + 'Diagnose.txt');
       for n := 0 to pred(sLOG.count) do
         writeln(ANSI2OEM(sLOG[n]));
@@ -113,4 +114,3 @@ begin
   end;
 
 end.
-

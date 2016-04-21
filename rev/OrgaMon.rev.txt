@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.176 (21.04.16) Andreas Filsinger
+
+ Bug: Ergebnis: Bei Problemen in der Ergebnismeldung 1. Teil (Erfolgreiche) hat er danach
+      dennoch den 2. Teil (Erfolglos/Vorgezogen) ausgeführt
+
+Rev 8.175 (20.04.16) Andreas Filsinger
+
+ Neu: Ergebnis: Bei "AuchMitFoto=" muss ev. "OhneStandardXLS=JA" gesetzt werden
+
 Rev 8.174 (19.04.16) Andreas Filsinger
 
  Neu: Foto-Zuordnung: Auch anhand des Planungsdatums

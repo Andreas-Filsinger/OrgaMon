@@ -1688,15 +1688,18 @@ begin
       cINTERNINFO.free;
 
       // Ausgabe in die neue Datei
-      OutFName := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + noblank(Settings.values[cE_Praefix]) +
-        'Zaehlerdaten_' + Settings.values[cE_TAN] + noblank(Settings.values[cE_Postfix]) + '.xls';
+      OutFName :=
+      { } cAuftragErgebnisPath +
+      { } e_r_BaustellenPfad(Settings) + '\' +
+      { } noblank(Settings.values[cE_Praefix]) +
+      { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
+      { } noblank(Settings.values[cE_Postfix]) + '.xls';
 
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
       save(OutFName);
-      if not(AuchMitFoto) then
-        if (Settings.values[cE_OhneStandardXLS] <> cINI_Activate) then
-          Files.add(OutFName);
+      if (Settings.values[cE_OhneStandardXLS] <> cINI_Activate) then
+        Files.add(OutFName);
 
       repeat
 
@@ -2175,7 +2178,6 @@ var
         ExportL := TgpIntegerList.create;
         FailL := TgpIntegerList.create;
         FilesUp := TStringList.create;
-        ErrorCount := 0;
 
         // Vorlauf
         try
@@ -2470,7 +2472,6 @@ begin
         // neue Erfolgs-TANS übergeben
         if EinzelMeldeErlaubnis then
         begin
-
           if (Settings.values[cE_EineDatei] = cINI_Activate) then
           begin
             inc(Stat_meldungen, ReportBlock(true, true));
@@ -2478,10 +2479,12 @@ begin
           else
           begin
             inc(Stat_meldungen, ReportBlock(true, false));
-            Settings.values[cE_Postfix] := '.unmoeglich';
-            inc(Stat_meldungen, ReportBlock(false, true));
+            if (ErrorCount = 0) then
+            begin
+              Settings.values[cE_Postfix] := '.unmoeglich';
+              inc(Stat_meldungen, ReportBlock(false, true));
+            end;
           end;
-
         end;
 
         if (Stat_nichtEFRE > 0) then
