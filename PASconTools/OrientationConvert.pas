@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.241; // ../rev/Oc.rev.txt
+  Version: single = 1.242; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -9192,7 +9192,8 @@ var
     end
     else
     begin
-      result := xImport.getCellValue(r, succ(_c)).ToString;
+//      result := xImport.getCellValue(r, succ(_c)).ToString;
+      result := xImport.GetStringFromCell(r, succ(_c));
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
       if isUTF8 then
@@ -9401,19 +9402,26 @@ begin
   // MUSS TEncoding.UTF8 geschaltet werden!
   // sResult.SaveToFile(WorkPath + 'test.xml', TEncoding.UTF8);
 
-  // UTF8 erkennung
+  // * UTF8 Erkennung
+  // * HTML Erkennung
   isUTF8 := false;
+  iHTML := false;
   if (sResult.count > 0) then
+  begin
     if pos('UTF-8', UpperCase(sResult[0])) > 0 then
       isUTF8 := true;
+    if pos('<html>',sResult[0])>0  then
+      iHTML := true;
+  end;
   if (sResult.count > 1) then
+  begin
     if pos('UTF-8', UpperCase(sResult[1])) > 0 then
       isUTF8 := true;
+    if pos('<html>',sResult[1])>0  then
+      iHTML := true;
+  end;
   if isUTF8 then
     sResult.forceUTF8 := true;
-
-  //
-  iHTML := FileExists(WorkPath + 'Vorlage.html');
 
   // weitere Sonderwerte!
   for n := 0 to pred(sResult.count) do
@@ -9698,6 +9706,7 @@ begin
             FileTouch(
               { } WorkPath + OutFName,
               { } xWechselMoment(r));
+
           end
           else
           begin
@@ -10762,8 +10771,6 @@ function doConversion(Mode: integer; InFName: string; sBericht: TStringList = ni
 
 var
   n: integer;
-  // DiagnoseZip: Tvclzip;
-
 begin
   sDiagnose := TStringList.create;
   sDiagFiles := TStringList.create;
@@ -10908,18 +10915,6 @@ begin
   else
   begin
     sDiagFiles.add(WorkPath + 'Diagnose.txt');
-    (*
-      DiagnoseZip := Tvclzip.create(nil);
-      with DiagnoseZip do
-      begin
-      ZipName := WorkPath + 'Diagnose.zip';
-      if FileExists(ZipName) then
-      FileDelete(ZipName);
-      FilesList.addstrings(sDiagFiles);
-      zip;
-      end;
-      DiagnoseZip.free;
-    *)
   end;
 
   // sDump
