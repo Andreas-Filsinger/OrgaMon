@@ -15,9 +15,12 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 1.242 (21.04.16) Andreas Filsinger
+Rev 1.242 (21.04.16-22.04.16) Andreas Filsinger
 
- Wegfall: Prüfung auf "Vorlage.html", wird nun automatisch erkannt
+ Bug: xls2*ml: in der Vorlage: "set Anlagenverzeichnis" wurde ignoriert
+
+ Neu: xls2html: Konvertierung einer xls anhand einer Vorlage.html, in einzelne HTML-Dateien
+ Neu: xls2*ml: ERROR.jpg nicht mehr nötig
 
 Rev 1.241 (06.04.16) Andreas Filsinger
 

@@ -46,7 +46,7 @@ const
   Content_Mode_tab2csv = 10;
   Content_Mode_xls2idoc = 11;
   Content_Mode_xls2Argos = 12; // Argos XML
-  Content_Mode_xls2ml = 13; // xls+Vorlage.ml -> xml/html
+  Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> xml/html
   Content_Mode_enBW = 14;
   Content_Mode_Datev = 15;
   Content_Mode_xsd = 16; // Prüfe xml Datei gegen eine "Schema.xsd"
@@ -54,6 +54,7 @@ const
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
   Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
   Content_Mode_xls2rwe = 20; // RWE Rev. 2.1
+  Content_Mode_xls2html = 21; // xls+Vorlage.html -> html
 
   ErrorCount: integer = 0;
   conversionOutFName: string = '';
@@ -68,6 +69,7 @@ const
   p_XLS_VorlageFName: string = '';
 
   c_ML_VorlageFName = 'Vorlage.ml';
+  c_HTML_VorlageFName = 'Vorlage.html';
   cFixedFormatsFName = 'Fixed-Formats.ini';
   cFixedFloodFName = 'Fixed-Flood.ini';
   c_ML_SchemaFName = 'Schema.xsd';
@@ -487,8 +489,8 @@ var
           end;
 
           // Zählwerkbezeichnung dazu machen
-          if (pAddzw.IndexOf(_FullName)<>-1) then
-           addZaehlwerk(sMESSAGE.values[_FullName]);
+          if (pAddZw.indexof(_FullName) <> -1) then
+            addZaehlwerk(sMESSAGE.values[_FullName]);
 
           if (pWriteAt.indexof(_FullName) <> -1) then
           begin
@@ -509,8 +511,8 @@ var
             (Argos_KurzBez = 'StandNT') or // Elektro
             (Argos_KurzBez = 'Stand') // Gas / Wasser
           then
-            addZaehlwerk(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.OBIS'] + ';' +
-              sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.EINHEIT']);
+            addZaehlwerk(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.OBIS'] + ';' + sMESSAGE.values
+              ['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.EINHEIT']);
 
           break;
         end;
@@ -530,13 +532,11 @@ var
           break;
         end;
 
-        if (_FullName =
-          'Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung')
+        if (_FullName = 'Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung')
         then
         begin
           addZaehlwerk(sMESSAGE.values
-            ['Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung']
-            );
+            ['Schnittstelle_VA_EDM.Mandant.Laufweg.Verbrauchsstelle.Kunde.Geraet.Zaehlwerk.ZWBezeichnung']);
         end;
 
       end;
@@ -552,8 +552,8 @@ var
       // RWE - Ausbau
       if (_FullName = 'FILE.MESSAGE.POSITION.ARTICLE.COUNTER') then
       begin
-        addZaehlwerk(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.edis_key'] + ';' +
-          sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.unit']);
+        addZaehlwerk(sMESSAGE.values['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.edis_key'] + ';' + sMESSAGE.values
+          ['FILE.MESSAGE.POSITION.ARTICLE.COUNTER.unit']);
         break;
       end;
 
@@ -1190,7 +1190,7 @@ begin
   Umsetzer.Free;
   pIgnoreZaehlwerke.Free;
   pWriteAt.Free;
-  pAddZw.free;
+  pAddZw.Free;
 end;
 
 procedure xml2csv_Multi(InFName: string; sBericht: TStringList = nil);
@@ -1473,8 +1473,7 @@ var
 
   function Logzaehlwerke: string;
   begin
-    result := '(' + inttostr(ZaehlwerkeAusbauSoll.count) + ':' +
-      inttostr(ZaehlwerkeEinbauSoll.count) + ')';
+    result := '(' + inttostr(ZaehlwerkeAusbauSoll.count) + ':' + inttostr(ZaehlwerkeEinbauSoll.count) + ')';
   end;
 
   function qp { uestion with parameter } (tag, Param, value: string): string;
@@ -1512,8 +1511,7 @@ var
     end;
 
     if not(FoundTag) then
-      failBecause(OrderId + Logzaehlwerke + ': ' + tag + '.' + value + ' bei ' + Param +
-        ': nicht gefunden!');
+      failBecause(OrderId + Logzaehlwerke + ': ' + tag + '.' + value + ' bei ' + Param + ': nicht gefunden!');
   end;
 
   procedure fillAufgaben;
@@ -1854,8 +1852,7 @@ var
         if (Stand = '') then
         begin
           if (STATUS <> cSTATUS_Unmoeglich) then
-            failBecause('Zählerstand in "' + Spalte + '" für "' + odis +
-              '" ist nicht eingetragen!');
+            failBecause('Zählerstand in "' + Spalte + '" für "' + odis + '" ist nicht eingetragen!');
         end
         else
         begin
@@ -1922,17 +1919,17 @@ var
     Bemerkung := '';
     MehrInfos := '';
 
-    push('MESSAGE number="' + inttostr(xmlMESSAGE) +
-      '" type="NetzArbeitsschritteImport" version="Version 1.0" date="' + xmlToday + '"');
+    push('MESSAGE number="' + inttostr(xmlMESSAGE) + '" type="NetzArbeitsschritteImport" version="Version 1.0" date="' +
+      xmlToday + '"');
     push('HEAD');
     single('ORDER id="' + OrderId + '"');
     pop;
 
     push('DATA');
 
-    push('POSITION ' + 'order_position=' + q('POSITION', 'order_position') + ' ' +
-      'reason_for_creation=' + q('POSITION', 'planning_reason') + ' ' + 'service_id=' +
-      q('POSITION', 'service_id') + ' ' + 'service=' + q('POSITION', 'service'));
+    push('POSITION ' + 'order_position=' + q('POSITION', 'order_position') + ' ' + 'reason_for_creation=' +
+      q('POSITION', 'planning_reason') + ' ' + 'service_id=' + q('POSITION', 'service_id') + ' ' + 'service=' +
+      q('POSITION', 'service'));
 
     if (ZaehlwerkeAusbauSoll.count > 0) then
     begin
@@ -2003,8 +2000,7 @@ var
       begin
 
         // Doppeltarif
-        MeldeZaehlwerk(r + 1, 'ZaehlerStandAlt', odis(2, ZaehlwerkeAusbauSoll),
-          ZaehlwerkeAusbauSoll);
+        MeldeZaehlwerk(r + 1, 'ZaehlerStandAlt', odis(2, ZaehlwerkeAusbauSoll), ZaehlwerkeAusbauSoll);
         MeldeZaehlwerk(r, 'ZaehlerStandAlt', odis(1, ZaehlwerkeAusbauSoll), ZaehlwerkeAusbauSoll);
       end
       else
@@ -2043,8 +2039,7 @@ var
         MehrInfos := MehrInfos + c_xml_CRLF + 'Abgelesen wurde: ';
         if x(r, 'NA') <> '' then
         begin
-          MehrInfos := MehrInfos + ' HT=' + x(r, 'ZaehlerStandAlt') + ' NT=' + x(r, 'NA') + ' RZ=' +
-            x(r, 'NB');
+          MehrInfos := MehrInfos + ' HT=' + x(r, 'ZaehlerStandAlt') + ' NT=' + x(r, 'NA') + ' RZ=' + x(r, 'NB');
         end
         else
         begin
@@ -2055,8 +2050,7 @@ var
     end;
 
     for n := 0 to pred(ZaehlwerkeAusbauSoll.count) do
-      failBecause('Zählwerk-Ausbau "' + ZaehlwerkeAusbauSoll[n] +
-        '" konnte nicht zugeordnet werden!');
+      failBecause('Zählwerk-Ausbau "' + ZaehlwerkeAusbauSoll[n] + '" konnte nicht zugeordnet werden!');
 
     if (x(r, 'ZaehlerNummerNeu') <> '') then
     begin
@@ -2077,9 +2071,9 @@ var
       begin
 
         // melde EINBAU
-        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART, ZAEHLER_NUMMER,
-          x(r, 'ZaehlerNummerNeu')) + '" ' + 'type_id=' + type_id + ' ' + 'defect="FALSE" ' +
-          'no_further_use="FALSE" ' + 'multiplication_constant="1"');
+        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) +
+          '" ' + 'type_id=' + type_id + ' ' + 'defect="FALSE" ' + 'no_further_use="FALSE" ' +
+          'multiplication_constant="1"');
 
         if (ZaehlwerkeEinbauSoll.count > 0) then
         begin
@@ -2138,17 +2132,14 @@ var
           if (ZaehlwerkeEinbauSoll.count > 1) then
           begin
             // Doppeltarif
-            MeldeZaehlwerk(r + 1, 'ZaehlerStandNeu', odis(2, ZaehlwerkeEinbauSoll),
-              ZaehlwerkeEinbauSoll);
-            MeldeZaehlwerk(r, 'ZaehlerStandNeu', odis(1, ZaehlwerkeEinbauSoll),
-              ZaehlwerkeEinbauSoll);
+            MeldeZaehlwerk(r + 1, 'ZaehlerStandNeu', odis(2, ZaehlwerkeEinbauSoll), ZaehlwerkeEinbauSoll);
+            MeldeZaehlwerk(r, 'ZaehlerStandNeu', odis(1, ZaehlwerkeEinbauSoll), ZaehlwerkeEinbauSoll);
           end
           else
           begin
             // Eintarif
             if (ZaehlwerkeEinbauSoll.count > 0) then
-              MeldeZaehlwerk(r, 'ZaehlerStandNeu', odis(1, ZaehlwerkeEinbauSoll),
-                ZaehlwerkeEinbauSoll);
+              MeldeZaehlwerk(r, 'ZaehlerStandNeu', odis(1, ZaehlwerkeEinbauSoll), ZaehlwerkeEinbauSoll);
           end;
 
           // Prüfen, ob noch eine Summe geliefert werden soll
@@ -2162,8 +2153,7 @@ var
 
         // Übrig gebliebene Zählwerke
         for n := 0 to pred(ZaehlwerkeEinbauSoll.count) do
-          failBecause('Zählwerk-Einbau "' + ZaehlwerkeEinbauSoll[n] +
-            '" konnte nicht zugeordnet werden!');
+          failBecause('Zählwerk-Einbau "' + ZaehlwerkeEinbauSoll[n] + '" konnte nicht zugeordnet werden!');
 
         pop; // ARTICLE NEW
 
@@ -2175,8 +2165,7 @@ var
 
         if x(r, 'NN') <> '' then
         begin
-          WichtigerHinweis := WichtigerHinweis + ' HT=' + x(r, 'ZaehlerStandNeu') + ' NT=' +
-            x(r, 'NN');
+          WichtigerHinweis := WichtigerHinweis + ' HT=' + x(r, 'ZaehlerStandNeu') + ' NT=' + x(r, 'NN');
         end
         else
         begin
@@ -2189,15 +2178,13 @@ var
     end;
 
     // JJ
-    push('TASK ' + 'id=' + q('TASK', 'id') + ' ' + 'operation=' + q('TASK', 'operation') + ' ' +
-      'operator_id=' + q('TASK', 'operator_id') + ' ' + 'operator=' + q('TASK', 'operator') + ' ' +
-      'date="' + xd(r) + '"');
+    push('TASK ' + 'id=' + q('TASK', 'id') + ' ' + 'operation=' + q('TASK', 'operation') + ' ' + 'operator_id=' +
+      q('TASK', 'operator_id') + ' ' + 'operator=' + q('TASK', 'operator') + ' ' + 'date="' + xd(r) + '"');
 
     speak;
     speak('<!-- ### our unmapped tags: please include them in next dtd ### -->');
     speak('<!-- operator_order_id="' + RID + '" -->');
-    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur'))
-      + '" -->');
+    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur')) + '" -->');
     speak('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
     speak('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
     speak('<!-- vain_attempt_3="' + xd(r, 'V3') + '" -->');
@@ -2208,25 +2195,22 @@ var
     MehrInfos := x(r, 'MonteurText') + ' (' + x(r, 'MonteurHandy') + ')';
 
     if (x(r, 'ZaehlerNummerKorrektur') <> '') then
-      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' +
-        x(r, 'ZaehlerNummerKorrektur');
+      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' + x(r, 'ZaehlerNummerKorrektur');
 
     if (ZaehlwerkeAusbauSoll.count > 2) then
-      MehrInfos := MehrInfos + c_xml_CRLF + 'Ausbau LZ (' + x(r, 'ZaehlerStandAlt') + '/' +
-        x(r, 'NA') + '/' + x(r, 'NB') + ')' + c_xml_CRLF + 'Einbaustände (' +
-        x(r, 'ZaehlerStandNeu') + '/' + x(r, 'NN') + ')';
+      MehrInfos := MehrInfos + c_xml_CRLF + 'Ausbau LZ (' + x(r, 'ZaehlerStandAlt') + '/' + x(r, 'NA') + '/' +
+        x(r, 'NB') + ')' + c_xml_CRLF + 'Einbaustände (' + x(r, 'ZaehlerStandNeu') + '/' + x(r, 'NN') + ')';
 
     Bemerkung := cutblank(x(r, 'I3') + ' ' + x(r, 'I4') + ' ' + x(r, 'I5'));
 
-    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) +
-      WichtigerHinweis;
+    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) + WichtigerHinweis;
 
     repeat
 
       if (STATUS = cSTATUS_Vorgezogen) then // vorgezogen
       begin
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung
-          + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -2238,22 +2222,21 @@ var
           break;
         end;
 
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung +
-          c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
       if (WichtigerHinweis <> '') then
       begin
-        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF +
+          MehrInfos + '"');
         break;
       end;
 
       if (Bemerkung <> '') then
       begin
-        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          MehrInfos + '"');
+        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -2398,17 +2381,17 @@ var
     Bemerkung := '';
     MehrInfos := '';
 
-    push('MESSAGE number="' + inttostr(xmlMESSAGE) +
-      '" type="NetzArbeitsschritteImport" version="Version 1.0" date="' + xmlToday + '"');
+    push('MESSAGE number="' + inttostr(xmlMESSAGE) + '" type="NetzArbeitsschritteImport" version="Version 1.0" date="' +
+      xmlToday + '"');
     push('HEAD');
     single('ORDER id="' + OrderId + '"');
     pop;
 
     push('DATA');
 
-    push('POSITION ' + 'order_position=' + q('POSITION', 'order_position') + ' ' +
-      'reason_for_creation=' + q('POSITION', 'planning_reason') + ' ' + 'service_id=' +
-      q('POSITION', 'service_id') + ' ' + 'service=' + q('POSITION', 'service'));
+    push('POSITION ' + 'order_position=' + q('POSITION', 'order_position') + ' ' + 'reason_for_creation=' +
+      q('POSITION', 'planning_reason') + ' ' + 'service_id=' + q('POSITION', 'service_id') + ' ' + 'service=' +
+      q('POSITION', 'service'));
 
     if (ZaehlwerkeAusbauSoll.count > 0) then
     begin
@@ -2461,9 +2444,9 @@ var
       begin
 
         // melde EINBAU
-        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART, ZAEHLER_NUMMER,
-          x(r, 'ZaehlerNummerNeu')) + '" ' + 'type_id=' + type_id + ' ' + 'defect="FALSE" ' +
-          'no_further_use="FALSE" ' + 'multiplication_constant="1"');
+        push('ARTICLE ' + 'new_article="TRUE" ' + 'id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerNeu')) +
+          '" ' + 'type_id=' + type_id + ' ' + 'defect="FALSE" ' + 'no_further_use="FALSE" ' +
+          'multiplication_constant="1"');
 
         for n := 6 to 11 do
           MeldeZaehlwerk(r, n);
@@ -2487,15 +2470,13 @@ var
     end;
 
     // JJ
-    push('TASK ' + 'id=' + q('TASK', 'id') + ' ' + 'operation=' + q('TASK', 'operation') + ' ' +
-      'operator_id=' + q('TASK', 'operator_id') + ' ' + 'operator=' + q('TASK', 'operator') + ' ' +
-      'date="' + xd(r) + '"');
+    push('TASK ' + 'id=' + q('TASK', 'id') + ' ' + 'operation=' + q('TASK', 'operation') + ' ' + 'operator_id=' +
+      q('TASK', 'operator_id') + ' ' + 'operator=' + q('TASK', 'operator') + ' ' + 'date="' + xd(r) + '"');
 
     speak;
     speak('<!-- ### our unmapped tags: please include them in next dtd ### -->');
     speak('<!-- operator_order_id="' + RID + '" -->');
-    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur'))
-      + '" -->');
+    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur')) + '" -->');
     speak('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
     speak('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
     speak('<!-- vain_attempt_3="' + xd(r, 'V3') + '" -->');
@@ -2506,20 +2487,18 @@ var
     MehrInfos := x(r, 'MonteurText') + ' (' + x(r, 'MonteurHandy') + ')';
 
     if (x(r, 'ZaehlerNummerKorrektur') <> '') then
-      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' +
-        x(r, 'ZaehlerNummerKorrektur');
+      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' + x(r, 'ZaehlerNummerKorrektur');
 
     Bemerkung := cutblank(x(r, 'I3') + ' ' + x(r, 'I4') + ' ' + x(r, 'I5'));
 
-    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) +
-      WichtigerHinweis;
+    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) + WichtigerHinweis;
 
     repeat
 
       if (STATUS = cSTATUS_Vorgezogen) then // vorgezogen
       begin
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung
-          + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -2531,22 +2510,21 @@ var
           break;
         end;
 
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung +
-          c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
       if (WichtigerHinweis <> '') then
       begin
-        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF +
+          MehrInfos + '"');
         break;
       end;
 
       if (Bemerkung <> '') then
       begin
-        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          MehrInfos + '"');
+        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -2873,15 +2851,13 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ORDER.id "' + OrderId + '" in ' + AuftragsMaske +
-                  ' nicht gefunden!');
+                sBericht.add('(RID=' + RID + ') ORDER.id "' + OrderId + '" in ' + AuftragsMaske + ' nicht gefunden!');
             end;
           end
           else
           begin
             if assigned(sBericht) then
-              sBericht.add('(RID=' + RID +
-                ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
+              sBericht.add('(RID=' + RID + ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
           end;
         end
         else
@@ -3207,8 +3183,7 @@ var
 
   function Logzaehlwerke: string;
   begin
-    result := '(' + inttostr(ZaehlwerkeAusbauSoll.count) + ':' +
-      inttostr(ZaehlwerkeEinbauSoll.count) + ')';
+    result := '(' + inttostr(ZaehlwerkeAusbauSoll.count) + ':' + inttostr(ZaehlwerkeEinbauSoll.count) + ')';
   end;
 
   function qp { uestion with parameter } (tag, Param, value: string): string;
@@ -3246,8 +3221,7 @@ var
     end;
 
     if not(FoundTag) then
-      failBecause(OrderId + Logzaehlwerke + ': ' + tag + '.' + value + ' bei ' + Param +
-        ': nicht gefunden!');
+      failBecause(OrderId + Logzaehlwerke + ': ' + tag + '.' + value + ' bei ' + Param + ': nicht gefunden!');
   end;
 
   procedure fillAufgaben;
@@ -3768,8 +3742,7 @@ var
     speak;
     speak('<!-- ### our unmapped tags: please include them in next dtd ### -->');
     speak('<!-- operator_order_id="' + RID + '" -->');
-    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur'))
-      + '" -->');
+    speak('<!-- article_real_id="' + rweformat(ART, ZAEHLER_NUMMER, x(r, 'ZaehlerNummerKorrektur')) + '" -->');
     speak('<!-- vain_attempt_1="' + xd(r, 'V1') + '" -->');
     speak('<!-- vain_attempt_2="' + xd(r, 'V2') + '" -->');
     speak('<!-- vain_attempt_3="' + xd(r, 'V3') + '" -->');
@@ -3780,20 +3753,18 @@ var
     MehrInfos := x(r, 'MonteurText') + ' (' + x(r, 'MonteurHandy') + ')';
 
     if (x(r, 'ZaehlerNummerKorrektur') <> '') then
-      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' +
-        x(r, 'ZaehlerNummerKorrektur');
+      WichtigerHinweis := WichtigerHinweis + c_xml_CRLF + 'Wirkliche Zählernummer: ' + x(r, 'ZaehlerNummerKorrektur');
 
     Bemerkung := cutblank(x(r, 'I3') + ' ' + x(r, 'I4') + ' ' + x(r, 'I5'));
 
-    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) +
-      WichtigerHinweis;
+    WichtigerHinweis := cutblank(x(r, 'I6') + ' ' + x(r, 'I7') + ' ' + x(r, 'I8')) + WichtigerHinweis;
 
     repeat
 
       if (STATUS = cSTATUS_Vorgezogen) then // vorgezogen
       begin
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung
-          + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Wurde bereits erledigt: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -3805,22 +3776,21 @@ var
           break;
         end;
 
-        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung +
-          c_xml_CRLF + WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="999"' + ' ' + 'text="' + 'Ausführung unmöglich: ' + Bemerkung + c_xml_CRLF +
+          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
       if (WichtigerHinweis <> '') then
       begin
-        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          WichtigerHinweis + c_xml_CRLF + MehrInfos + '"');
+        single('INDICATION ' + 'id="001"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + WichtigerHinweis + c_xml_CRLF +
+          MehrInfos + '"');
         break;
       end;
 
       if (Bemerkung <> '') then
       begin
-        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF +
-          MehrInfos + '"');
+        single('INDICATION ' + 'id="000"' + ' ' + 'text="' + Bemerkung + c_xml_CRLF + MehrInfos + '"');
         break;
       end;
 
@@ -4107,15 +4077,13 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ORDER.id "' + OrderId + '" in ' + AuftragsMaske +
-                  ' nicht gefunden!');
+                sBericht.add('(RID=' + RID + ') ORDER.id "' + OrderId + '" in ' + AuftragsMaske + ' nicht gefunden!');
             end;
           end
           else
           begin
             if assigned(sBericht) then
-              sBericht.add('(RID=' + RID +
-                ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
+              sBericht.add('(RID=' + RID + ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
           end;
         end
         else
@@ -4226,8 +4194,7 @@ var
     begin
       conversionOutFName := InFName;
       k := revPos('.', conversionOutFName);
-      conversionOutFName := copy(conversionOutFName, 1, pred(k)) + '.' + IntToStrN(IDOCNo, 4) +
-        cIDOC_Extension;
+      conversionOutFName := copy(conversionOutFName, 1, pred(k)) + '.' + IntToStrN(IDOCNo, 4) + cIDOC_Extension;
     end;
   end;
 
@@ -4537,8 +4504,7 @@ begin
     values['NIL' + '.Sequence'] := '0';
     values['TAN'] := StrFilter(ExtractFileName(InFName), '0123456789');
     values['TAN'] := copy(values['TAN'], length(values['TAN']) - pred(4), MaxInt);
-    values['TimeStamp'] := copy(Datum10, 7, 4) + copy(Datum10, 4, 2) + copy(Datum10, 1, 2) +
-      SecondsToStr6(SecondsGet);
+    values['TimeStamp'] := copy(Datum10, 7, 4) + copy(Datum10, 4, 2) + copy(Datum10, 1, 2) + SecondsToStr6(SecondsGet);
     pMEA_Naming := (values['MEA'] = 'JA');
   end;
 
@@ -4780,12 +4746,10 @@ var
       // Spalten bestimmen
       cErgebnis := header.indexof(pAuftragAnker[i]);
       if (cErgebnis = -1) then
-        raise exception.create(format('Auftrags-Referenzspalte "%s" im Ergebnis nicht gefunden!',
-          [pAuftragAnker[i]]));
+        raise exception.create(format('Auftrags-Referenzspalte "%s" im Ergebnis nicht gefunden!', [pAuftragAnker[i]]));
       cAuftrag := Auftrag.header.indexof(pAuftragAnker[i]);
       if (cAuftrag = -1) then
-        raise exception.create(format('Auftrags-Referenzspalte "%s" im Auftrag nicht gefunden!',
-          [pAuftragAnker[i]]));
+        raise exception.create(format('Auftrags-Referenzspalte "%s" im Auftrag nicht gefunden!', [pAuftragAnker[i]]));
       // Wert suchen
       sValues.add('''' + sResult[cErgebnis] + '''');
       TrefferZeilen := Auftrag.locateDuplicates(cAuftrag, sResult[cErgebnis]);
@@ -4824,8 +4788,7 @@ var
         // Spalte im Auftrag suchen
         cAuftrag := Auftrag.header.indexof(header[cErgebnis]);
         if (cAuftrag = -1) then
-          raise exception.create(format('Spalte "%s" im Auftrag nicht gefunden',
-            [header[cErgebnis]]));
+          raise exception.create(format('Spalte "%s" im Auftrag nicht gefunden', [header[cErgebnis]]));
         sResult[cErgebnis] := Auftrag.readCell(rAuftrag, cAuftrag);
       end;
 
@@ -4986,8 +4949,7 @@ begin
               if (col_Alternative <> -1) then
                 OneCell := OneCell + getCell(r, col_Alternative + 1)
               else
-                raise exception.create('Alternative Spalte "' + AlternativeZelle +
-                  '" nicht gefunden!');
+                raise exception.create('Alternative Spalte "' + AlternativeZelle + '" nicht gefunden!');
             end;
           end;
 
@@ -5042,8 +5004,7 @@ begin
                 if (OneCell = '') then
                   break;
 
-                OneCell := fill('0', strtointdef(copy(SonderFormat, 2, MaxInt), 0) - length(OneCell)
-                  ) + OneCell;
+                OneCell := fill('0', strtointdef(copy(SonderFormat, 2, MaxInt), 0) - length(OneCell)) + OneCell;
                 break;
               end;
 
@@ -5199,8 +5160,7 @@ begin
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' ' + e.message);
-      sDiagnose.add(cERRORText + ' ' + conversionOutFName +
-        ' ist durch andere Anwendung geöffnet?');
+      sDiagnose.add(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
     end;
   end;
   sDiagnose.addStrings(ExcelFormats);
@@ -5376,8 +5336,7 @@ var
       // Spalten bestimmen
       cErgebnis := header.indexof(pAuftragAnker[i]);
       if (cErgebnis = -1) then
-        raise exception.create(format('Referenzspalte "%s" im Ergebnis nicht gefunden!',
-          [pAuftragAnker[i]]));
+        raise exception.create(format('Referenzspalte "%s" im Ergebnis nicht gefunden!', [pAuftragAnker[i]]));
       sValues.add(killLeadingZero(sResult[cErgebnis]));
       cErgebnisIndex.add(cErgebnis);
     end;
@@ -5455,14 +5414,12 @@ var
       // Quell-Spalte ermitteln
       cErgebnis := header.indexof(pAuftragFlood[i]);
       if (cErgebnis = -1) then
-        raise exception.create(format('Floodspalte "%s" im Ergebnis nicht gefunden',
-          [pAuftragFlood[i]]));
+        raise exception.create(format('Floodspalte "%s" im Ergebnis nicht gefunden', [pAuftragFlood[i]]));
 
       // Ziel-Spalte im Auftrag suchen
       cAuftrag := Auftrag.header.indexof(pAuftragFlood[i]);
       if (cAuftrag = -1) then
-        raise exception.create(format('Zielspalte "%s" im Auftrag nicht gefunden',
-          [pAuftragFlood[i]]));
+        raise exception.create(format('Zielspalte "%s" im Auftrag nicht gefunden', [pAuftragFlood[i]]));
 
       // vom Ergebnis in den Auftrag übertragen
       Auftrag.writeCell(rAuftrag, cAuftrag, sResult[cErgebnis]);
@@ -5621,8 +5578,7 @@ begin
               if (col_Alternative <> -1) then
                 OneCell := getCell(r, col_Alternative + 1)
               else
-                raise exception.create('Alternative Spalte "' + AlternativeZelle +
-                  '" nicht gefunden!');
+                raise exception.create('Alternative Spalte "' + AlternativeZelle + '" nicht gefunden!');
             end;
           end;
 
@@ -5677,8 +5633,7 @@ begin
                 if (OneCell = '') then
                   break;
 
-                OneCell := fill('0', strtointdef(copy(SonderFormat, 2, MaxInt), 0) - length(OneCell)
-                  ) + OneCell;
+                OneCell := fill('0', strtointdef(copy(SonderFormat, 2, MaxInt), 0) - length(OneCell)) + OneCell;
                 break;
               end;
 
@@ -5761,8 +5716,7 @@ begin
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' ' + e.message);
-      sDiagnose.add(cERRORText + ' ' + conversionOutFName +
-        ' ist durch andere Anwendung geöffnet?');
+      sDiagnose.add(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
     end;
   end;
 
@@ -5918,8 +5872,7 @@ var
 
     function KK20_Header: string;
     begin
-      result := 'frmnam;bukrs;meterreadingunit;' +
-        'vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
+      result := 'frmnam;bukrs;meterreadingunit;' + 'vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
         'vbez;portion;abwann;street;hausnum;plz;city;vorname;nachname;' +
         'text;tariftyp;sparte;text30;tplnr;gp_pstlz;gp_ort;gp_stras;' +
         'gp_haus_num;gp_haus_alph;swerk;st_ktext;stortzus;hinweis;istablart;' +
@@ -6002,8 +5955,7 @@ var
         end;
 
         //
-        ZAEHLER_NUMMER := sSparte + '-' +
-          shortenSerial(nextp(MySourceStrings[n], ';', c_KK20_SerialNo));
+        ZAEHLER_NUMMER := sSparte + '-' + shortenSerial(nextp(MySourceStrings[n], ';', c_KK20_SerialNo));
 
         sZaehlerIndex := sZaehler.indexof(ZAEHLER_NUMMER);
         if (sZaehlerIndex = -1) then
@@ -6061,8 +6013,7 @@ var
 
           // jetzt kommen einzelne Zeilen!
           kennzif := nextp(MySourceStrings[n], ';', c_KK21_kennzif);
-          NachKommaStellen := strtointdef(nextp(MySourceStrings[n], ';',
-            c_KK21_NachKommaStellen), -1);
+          NachKommaStellen := strtointdef(nextp(MySourceStrings[n], ';', c_KK21_NachKommaStellen), -1);
           SAPmapping := nextp(kennzif, ':', 1);
 
           _lowerBound := nextp(MySourceStrings[n], ';', c_KK21_erwstd_min);
@@ -6077,12 +6028,10 @@ var
           // zunächst aus MDE Erfassung versuchen
           case K21_count of
             1:
-              Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertHT)
-                .ToStringInvariant;
+              Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertHT).ToStringInvariant;
             2:
               begin
-                Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertNT)
-                  .ToStringInvariant;
+                Zaehler_Stand := xImport.getCellValue(xls_Row, xls_col_AbleseWertNT).ToStringInvariant;
                 if not(K21_HT_ok) and (Zaehler_Stand <> '') then
                 begin
                   Zaehler_Stand := '';
@@ -6157,12 +6106,11 @@ var
             if not(Plausibel) then
               inc(Stat_Unplausibel);
 
-            Content.add('KK22;' + nextp(MySourceStrings[n], ';', c_KK21_bukrs) + ';' +
-              nextp(MySourceStrings[n], ';', c_KK21_ablbelnr) + ';' + nextp(MySourceStrings[n], ';',
-              c_KK21_pruefzahl) + ';' + ext_ui + ';' + kennzif + ';' + nextp(MySourceStrings[n],
-              ';', c_KK21_register) + ';' + kombinat + ';' + Format_ZaehlerNummer(ZAEHLER_NUMMER) +
-              ';' + Format_Eingabedatum(EingabeDatum) + ';' + ';' + Format_Eingabezeit(EingabeUhr) +
-              ';' + ';' + Format_ZaehlerStand(Zaehler_Stand) + ';' + ';' + '101;' +
+            Content.add('KK22;' + nextp(MySourceStrings[n], ';', c_KK21_bukrs) + ';' + nextp(MySourceStrings[n], ';',
+              c_KK21_ablbelnr) + ';' + nextp(MySourceStrings[n], ';', c_KK21_pruefzahl) + ';' + ext_ui + ';' + kennzif +
+              ';' + nextp(MySourceStrings[n], ';', c_KK21_register) + ';' + kombinat + ';' +
+              Format_ZaehlerNummer(ZAEHLER_NUMMER) + ';' + Format_Eingabedatum(EingabeDatum) + ';' + ';' +
+              Format_Eingabezeit(EingabeUhr) + ';' + ';' + Format_ZaehlerStand(Zaehler_Stand) + ';' + ';' + '101;' +
               Format_herkunft(EingabeUhr));
           end;
 
@@ -6181,22 +6129,21 @@ var
     end;
 
     //
-    sDiagnose.add(inttostr(Stat_ergebnisse) + '/' + inttostr(Stat_Zaehler) +
-      ' Zähler verarbeitet!');
+    sDiagnose.add(inttostr(Stat_ergebnisse) + '/' + inttostr(Stat_Zaehler) + ' Zähler verarbeitet!');
 
     d1 := Stat_Unplausibel;
     d2 := Content.count;
     d3 := (d1 / d2) * 100.0;
 
-    sDiagnose.add(inttostr(Stat_Unplausibel) + '/' + inttostr(Content.count) + ' unplausibel (' +
-      format('%.1f%%', [d3]) + ')!');
+    sDiagnose.add(inttostr(Stat_Unplausibel) + '/' + inttostr(Content.count) + ' unplausibel (' + format('%.1f%%',
+      [d3]) + ')!');
 
     d1 := Stat_NegativerVerbrauch;
     d2 := Content.count;
     d3 := (d1 / d2) * 100.0;
 
-    sDiagnose.add(inttostr(Stat_NegativerVerbrauch) + '/' + inttostr(Content.count) +
-      ' negativer Verbrauch (' + format('%.1f%%', [d3]) + ')!');
+    sDiagnose.add(inttostr(Stat_NegativerVerbrauch) + '/' + inttostr(Content.count) + ' negativer Verbrauch (' +
+      format('%.1f%%', [d3]) + ')!');
 
     sDiagnose.add(inttostr(Stat_OhneWert) + ' ohne Eingabe!');
     sDiagnose.add(inttostr(Stat_NT_fehlt) + ' NT fehlen!');
@@ -6274,8 +6221,7 @@ begin
     begin
       xls_Row := integer(sZaehler.Objects[r]);
       AUFTRAG_R := strtointdef(getCellValue(xls_Row, xls_col_RID).ToStringInvariant, -1);
-      sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' + sZaehler[r] +
-        '"in EXPORT* nicht gefunden');
+      sBericht.add('(RID=' + inttostr(AUFTRAG_R) + ') Zählernummer "' + sZaehler[r] + '"in EXPORT* nicht gefunden');
     end;
 
   end;
@@ -6361,8 +6307,7 @@ var
     end;
     TakeTodayCol := sHeader.indexof(ColumnNameAtReference);
     if (TakeTodayCol = -1) then
-      raise exception.create('gewünschte Spalte ' + ColumnNameAtReference +
-        ' ist im Nachschlagewerk nicht vorhanden!');
+      raise exception.create('gewünschte Spalte ' + ColumnNameAtReference + ' ist im Nachschlagewerk nicht vorhanden!');
 
     Key := xImport.getCellValue(Row, sREFERENCECol_Source).ToStringInvariant;
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
@@ -6379,8 +6324,7 @@ var
 
     if (KeyDuplicates > 0) then
       if assigned(sBericht) then
-        sBericht.add(cWARNINGText + ' Anker - Wert "' + Key + '" kommt ' +
-          inttostr(KeyDuplicates + 1) + ' mal vor!');
+        sBericht.add(cWARNINGText + ' Anker - Wert "' + Key + '" kommt ' + inttostr(KeyDuplicates + 1) + ' mal vor!');
 
     sCOL := TStringList(sHeader.Objects[TakeTodayCol]);
     result := sCOL[FoundRowToday];
@@ -6480,8 +6424,7 @@ var
       on e: exception do
       begin
         sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) +
-          ' konnte nicht gelesen werden!');
+        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
       end;
     end;
   end;
@@ -6793,8 +6736,7 @@ var
                 if (NextSubFieldName[1] in ['''', '"']) then
                 begin
                   // Konstanter Wert!
-                  ContentAsWideString := ContentAsWideString + copy(NextSubFieldName, 2,
-                    length(NextSubFieldName) - 2);
+                  ContentAsWideString := ContentAsWideString + copy(NextSubFieldName, 2, length(NextSubFieldName) - 2);
                   continue;
                 end;
 
@@ -6808,8 +6750,7 @@ var
                 if (pos('>', NextSubFieldName) = 1) then
                 begin
                   ContentAsWideString :=
-                    cutblank(ContentAsWideString + ' ' + getRef(r, copy(NextSubFieldName, 2,
-                    MaxInt)));
+                    cutblank(ContentAsWideString + ' ' + getRef(r, copy(NextSubFieldName, 2, MaxInt)));
                   continue;
                 end;
 
@@ -6898,8 +6839,7 @@ var
               end
               else
               begin
-                xVorlage.SetCellFromString(TargetRow, c, MonDaCode(ContentAsWideString),
-                  FormatIndex);
+                xVorlage.SetCellFromString(TargetRow, c, MonDaCode(ContentAsWideString), FormatIndex);
               end;
             end;
           end
@@ -7041,8 +6981,7 @@ begin
           begin
             OutCommands.add(getCellValue(r, TargetStartRow + 1).ToStringInvariant);
             if mitRegler then
-              OutCommandsRegler.add(xExportRegler.getCellValue(r, TargetStartRow + 1)
-                .ToStringInvariant);
+              OutCommandsRegler.add(xExportRegler.getCellValue(r, TargetStartRow + 1).ToStringInvariant);
 
             SetCellValue(r, TargetStartRow, '');
             SetCellValue(r, TargetStartRow + 1, '');
@@ -7053,11 +6992,10 @@ begin
           for c := 1 to ColCountInRow(1) do
           begin
             FormatIndex := getCellFormat(TargetStartRow, c);
-            OutCommands.addobject(getCellValue(TargetStartRow + 1, c).ToStringInvariant,
-              TObject(FormatIndex));
+            OutCommands.addobject(getCellValue(TargetStartRow + 1, c).ToStringInvariant, TObject(FormatIndex));
             if mitRegler then
-              OutCommandsRegler.addobject(xExportRegler.getCellValue(TargetStartRow + 1, c)
-                .ToStringInvariant, TObject(FormatIndex));
+              OutCommandsRegler.addobject(xExportRegler.getCellValue(TargetStartRow + 1, c).ToStringInvariant,
+                TObject(FormatIndex));
 
             // imp pend: Just clear it?
             SetCellFromString(TargetStartRow, c, '', FormatIndex);
@@ -7094,8 +7032,7 @@ begin
                 begin
                   // Eigentlich hätte man einen Regler erfassen müssen
                   // gar keine Eingabe ist ein Fehler
-                  sDiagnose.add('WARNING: (RID=' + read(r, 'Referenzidentitaet') +
-                    ') ReglerNummerNeu ist leer!');
+                  sDiagnose.add('WARNING: (RID=' + read(r, 'Referenzidentitaet') + ') ReglerNummerNeu ist leer!');
                 end;
               end;
 
@@ -7129,8 +7066,7 @@ begin
         begin
           inc(ErrorCount);
           sDiagnose.add(cERRORText + ' ' + e.message);
-          sDiagnose.add(cERRORText + ' ' + conversionOutFName +
-            ' ist durch andere Anwendung geöffnet?');
+          sDiagnose.add(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
         end;
       end;
 
@@ -7316,8 +7252,7 @@ var
       on e: exception do
       begin
         sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) +
-          ' konnte nicht gelesen werden!');
+        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
       end;
     end;
   end;
@@ -7915,8 +7850,7 @@ begin
         begin
           inc(ErrorCount);
           sDiagnose.add(cERRORText + ' ' + e.message);
-          sDiagnose.add(cERRORText + ' ' + conversionOutFName +
-            ' ist durch andere Anwendung geöffnet?');
+          sDiagnose.add(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
         end;
       end;
 
@@ -8069,8 +8003,7 @@ var
       on e: exception do
       begin
         sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) +
-          ' konnte nicht gelesen werden!');
+        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
       end;
     end;
   end;
@@ -8146,8 +8079,7 @@ begin
 
       if (Auftrag.count <= 1) then
       begin
-        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag]
-          + '*.csv');
+        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv');
         break;
       end;
 
@@ -8212,10 +8144,9 @@ begin
           //
           Wert := '#';
           Monteur := read(r, col_Ergebnis_monteur);
-          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' +
-            read(r, col_Ergebnis_bemerkung_2) + ' ' + read(r, col_Ergebnis_bemerkung_3) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_1) + ' ' + read(r, col_Ergebnis_Vergeblich_2) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_3));
+          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' + read(r, col_Ergebnis_bemerkung_2) + ' ' +
+            read(r, col_Ergebnis_bemerkung_3) + ' ' + read(r, col_Ergebnis_Vergeblich_1) + ' ' +
+            read(r, col_Ergebnis_Vergeblich_2) + ' ' + read(r, col_Ergebnis_Vergeblich_3));
           if (Bemerkung = '') then
             Bemerkung := ' ';
 
@@ -8251,8 +8182,7 @@ begin
           inc(Stat_Verarbeitet);
 
         end;
-        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) +
-          ' verarbeitet!');
+        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) + ' verarbeitet!');
 
         if (ErrorCount > 0) then
           break;
@@ -8262,8 +8192,7 @@ begin
     sMappings.SaveToFile(WorkPath + cARGOS_Mappings);
 
     // Ergebnis speichern
-    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] +
-      ExtractFileName(InFName) + '.csv';
+    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] + ExtractFileName(InFName) + '.csv';
     Ergebnis.SaveToFile(conversionOutFName);
     sDiagFiles.add(conversionOutFName);
 
@@ -8414,8 +8343,7 @@ var
       on e: exception do
       begin
         sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) +
-          ' konnte nicht gelesen werden!');
+        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
       end;
     end;
   end;
@@ -8495,8 +8423,7 @@ begin
 
       if (Auftrag.count <= 1) then
       begin
-        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag]
-          + '*.csv');
+        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv');
         break;
       end;
 
@@ -8555,10 +8482,9 @@ begin
           //
           Wert := '#';
           Monteur := read(r, col_Ergebnis_monteur);
-          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' +
-            read(r, col_Ergebnis_bemerkung_2) + ' ' + read(r, col_Ergebnis_bemerkung_3) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_1) + ' ' + read(r, col_Ergebnis_Vergeblich_2) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_3));
+          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' + read(r, col_Ergebnis_bemerkung_2) + ' ' +
+            read(r, col_Ergebnis_bemerkung_3) + ' ' + read(r, col_Ergebnis_Vergeblich_1) + ' ' +
+            read(r, col_Ergebnis_Vergeblich_2) + ' ' + read(r, col_Ergebnis_Vergeblich_3));
           if (Bemerkung = '') then
             Bemerkung := ' ';
 
@@ -8593,8 +8519,7 @@ begin
           inc(Stat_Verarbeitet);
 
         end;
-        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) +
-          ' verarbeitet!');
+        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) + ' verarbeitet!');
 
         if (ErrorCount > 0) then
           break;
@@ -8604,8 +8529,7 @@ begin
     sMappings.SaveToFile(WorkPath + cARGOS_Mappings);
 
     // Ergebnis speichern
-    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] +
-      ExtractFileName(InFName) + '.csv';
+    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] + ExtractFileName(InFName) + '.csv';
     Ergebnis.SaveToFile(conversionOutFName);
     sDiagFiles.add(conversionOutFName);
 
@@ -8808,12 +8732,12 @@ begin
         begin
 
           //
-          writeCell(n, colof('STRASSE_GP'), cutblank(cutblank(readCell(n, colof('STRASSE_GP'))) +
-            ' ' + cutblank(readCell(n, colof('HAUS_NR_GP')))));
+          writeCell(n, colof('STRASSE_GP'), cutblank(cutblank(readCell(n, colof('STRASSE_GP'))) + ' ' +
+            cutblank(readCell(n, colof('HAUS_NR_GP')))));
 
           //
-          writeCell(n, colof('STRASSE'), cutblank(cutblank(readCell(n, colof('STRASSE'))) + ' ' +
-            cutblank(readCell(n, colof('HAUS_NR')))));
+          writeCell(n, colof('STRASSE'), cutblank(cutblank(readCell(n, colof('STRASSE'))) + ' ' + cutblank(readCell(n,
+            colof('HAUS_NR')))));
 
           //
 
@@ -8826,8 +8750,7 @@ begin
     else
     begin
 
-      Error('Datei ' + InFName +
-        ' ist leer, durch eine andere Anwendung gesperrt oder keine .csv!');
+      Error('Datei ' + InFName + ' ist leer, durch eine andere Anwendung gesperrt oder keine .csv!');
     end;
     BK.Free;
     csvTABELLE.Free;
@@ -8997,6 +8920,13 @@ begin
       exit;
     end;
 
+    // Vorlage.html Modus?
+    if FileExists(WorkPath + c_HTML_VorlageFName) then
+    begin
+      result := Content_Mode_xls2html;
+      exit;
+    end;
+
     // IDOC Mode?
     if FileExists(WorkPath + cIDOC_Mappings) then
     begin
@@ -9077,7 +9007,7 @@ begin
   end;
 end;
 
-procedure xls2ml(InFName: string; sBericht: TStringList);
+procedure xls2ml(InFName: string; sBericht: TStringList; iHTML: boolean = false);
 const
   cSTATUS_Unmoeglich = 9;
   cSTATUS_Vorgezogen = 7;
@@ -9107,6 +9037,7 @@ var
   cZaehlerNummerNeu: integer;
   cQuelle: integer; // xml Referenzierungsquelle angegeben?
   cAnlagen: integer; // Quellpfad für Anlagen angegeben?
+  cHTMLBenennung: integer; // Name der Ausgabe-Datei
 
   // Datenfelder Cache
   ART: string;
@@ -9139,10 +9070,7 @@ var
   isUTF8: boolean;
   ErrorFName: string;
   OutFName: string;
-
-  // Ausgabe ist ~Zaehler_Nummer~.zip.html
-  // es werden immer kleine Dateien ausgegeben
-  iHTML: boolean;
+  isAnlagenPathAlreadySet: boolean;
 
   // über das "INSERT" Statement die Blocks erkennen
   procedure AutoFillBlocks;
@@ -9192,7 +9120,7 @@ var
     end
     else
     begin
-//      result := xImport.getCellValue(r, succ(_c)).ToString;
+      // result := xImport.getCellValue(r, succ(_c)).ToString;
       result := xImport.GetStringFromCell(r, succ(_c));
       ersetze('"', '''', result);
       ersetze('&', c_xml_ampersand, result);
@@ -9383,6 +9311,7 @@ begin
   { } copy(xmlToday, 1, 2);
   xmlMESSAGE := 1;
   bCheckOK := true;
+  isAnlagenPathAlreadySet := false;
 
   DatenSammlerGlobal.add('');
 
@@ -9395,7 +9324,10 @@ begin
     FileDelete(WorkPath + 'Oc-ERROR-*.xml');
 
   //
-  sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
+  if iHTML then
+    sResult.loadFromFile(WorkPath + c_HTML_VorlageFName)
+  else
+    sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
   // system
   // UTF8Encode
   // Gefahr: Um wieder UTF-8 codierte Ergebnisse zu Erhalten
@@ -9403,31 +9335,30 @@ begin
   // sResult.SaveToFile(WorkPath + 'test.xml', TEncoding.UTF8);
 
   // * UTF8 Erkennung
-  // * HTML Erkennung
   isUTF8 := false;
-  iHTML := false;
   if (sResult.count > 0) then
   begin
     if pos('UTF-8', UpperCase(sResult[0])) > 0 then
       isUTF8 := true;
-    if pos('<html>',sResult[0])>0  then
-      iHTML := true;
   end;
   if (sResult.count > 1) then
   begin
     if pos('UTF-8', UpperCase(sResult[1])) > 0 then
       isUTF8 := true;
-    if pos('<html>',sResult[1])>0  then
-      iHTML := true;
   end;
   if isUTF8 then
     sResult.forceUTF8 := true;
 
   // weitere Sonderwerte!
   for n := 0 to pred(sResult.count) do
-    if pos(cHTML_Comment_PreFix + 'set ', sResult[n]) = 1 then
-      DatenSammlerInit.add('set ' + ExtractSegmentBetween(sResult[n], cHTML_Comment_PreFix + 'set ',
-        cHTML_Comment_PostFix));
+    if (pos(cHTML_Comment_PreFix + 'set ', sResult[n]) = 1) then
+    begin
+      DatenSammlerInit.add(
+        { } 'set ' +
+        { } ExtractSegmentBetween(sResult[n], cHTML_Comment_PreFix + 'set ', cHTML_Comment_PostFix));
+      if (pos('set ' + cSet_AnlagePath, sResult[n]) > 0) then
+        isAnlagenPathAlreadySet := true;
+    end;
 
   AutoFillBlocks;
 
@@ -9495,6 +9426,7 @@ begin
     cQuelle := xlsHeaders.indexof('Quelle');
     cAnlagen := xlsHeaders.indexof('Anlagenverzeichnis');
     cZaehlerNummerNeu := xlsHeaders.indexof('ZaehlerNummerNeu');
+    cHTMLBenennung := xlsHeaders.indexof('HTML-Benennung');
 
     r := 2;
     repeat
@@ -9541,28 +9473,30 @@ begin
           Quelle := '';
         end;
 
-        // Anlagenverzeichnis
-        if TestMode then
+        if not(isAnlagenPathAlreadySet) then
         begin
-          ANLAGENVERZEICHNIS := '.\';
-        end
-        else
-        begin
-          if (cAnlagen <> -1) then
-            ANLAGENVERZEICHNIS := cutblank(getCellValue(r, succ(cAnlagen)).ToStringInvariant)
+          if TestMode then
+          begin
+            ANLAGENVERZEICHNIS := '.\';
+          end
           else
-            ANLAGENVERZEICHNIS := '';
+          begin
+            if (cAnlagen <> -1) then
+              ANLAGENVERZEICHNIS := cutblank(getCellValue(r, succ(cAnlagen)).ToStringInvariant)
+            else
+              ANLAGENVERZEICHNIS := '';
 
-          if (ANLAGENVERZEICHNIS = '') or (ANLAGENVERZEICHNIS = '.') then
-            ANLAGENVERZEICHNIS := WorkPath;
+            if (ANLAGENVERZEICHNIS = '') or (ANLAGENVERZEICHNIS = '.') then
+              ANLAGENVERZEICHNIS := WorkPath;
+          end;
+          DatenSammlerEinzel.add(
+            { } 'set ' + cSet_AnlagePath + ' ' +
+            { } ANLAGENVERZEICHNIS);
         end;
-        DatenSammlerEinzel.add(
-          { } 'set ' + cSet_AnlagePath + ' ' +
-          { } ANLAGENVERZEICHNIS);
+
         // Die Zählwerke werden gezählt, dabei
         // werden Context-Variable gesetzt, die beim
         // Include wieder Verwendung finden!
-
         ZaehlwerkeAusbauIst := 1;
         for ZaehlwerkPostfix := 'A' to 'M' do
         begin
@@ -9598,13 +9532,11 @@ begin
 
                 // Ev. noch Ausbau
                 if (sAlleBloecke.indexof('AUSBAU_' + inttostr(ZaehlwerkeAusbauIst)) <> -1) then
-                  DatenSammlerEinzel.add('write AUSBAU_' + inttostr(ZaehlwerkeAusbauIst) +
-                    ',AUSBAU');
+                  DatenSammlerEinzel.add('write AUSBAU_' + inttostr(ZaehlwerkeAusbauIst) + ',AUSBAU');
 
                 // Ev. noch Einbau
                 if (sAlleBloecke.indexof('EINBAU_' + inttostr(ZaehlwerkeEinbauIst)) <> -1) then
-                  DatenSammlerEinzel.add('write EINBAU_' + inttostr(ZaehlwerkeEinbauIst) +
-                    ',EINBAU');
+                  DatenSammlerEinzel.add('write EINBAU_' + inttostr(ZaehlwerkeEinbauIst) + ',EINBAU');
 
               end;
             end;
@@ -9673,8 +9605,26 @@ begin
           if iHTML then
           begin
 
-            // bisheriges eventuell vorhandenes pdf ist ungültig!
-            FileDelete(WorkPath + ZAEHLER_NUMMER + '.zip.html.pdf');
+            // Name der HTML Ausgabe-Datei
+            if (cHTMLBenennung <> -1) then
+            begin
+              OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
+            end
+            else
+            begin
+              if (ZAEHLER_NUMMER_NEU <> '') then
+                OutFName :=
+                { } ZAEHLER_NUMMER + '-' +
+                { } ZAEHLER_NUMMER_NEU
+              else
+                OutFName :=
+                { } ZAEHLER_NUMMER;
+            end;
+
+            OutFName := OutFName + '.html';
+
+            // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
+            FileDelete(WorkPath + OutFName + '.pdf');
 
             // Ausgabe speichern!
             sCheck := THTMLTemplate.create;
@@ -9684,19 +9634,15 @@ begin
             sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
 
             if assigned(sBericht) then
-              sBericht.addStrings(sCheck.Messages)
+            begin
+              sBericht.addStrings(sCheck.Messages);
+              sBericht.add(cINFOText + ' save ' + OutFName);
+            end
             else
+            begin
               sDiagnose.addStrings(sCheck.Messages);
-
-            if (ZAEHLER_NUMMER_NEU <> '') then
-              OutFName :=
-              { } ZAEHLER_NUMMER + '-' +
-              { } ZAEHLER_NUMMER_NEU +
-              { } '.zip.html'
-            else
-              OutFName :=
-              { } ZAEHLER_NUMMER +
-              { } '.zip.html';
+              sDiagnose.add(cINFOText + ' save ' + OutFName);
+            end;
 
             // speichern
             sCheck.SavetoFileCompressed(WorkPath + OutFName);
@@ -9713,9 +9659,7 @@ begin
             DatenSammlerLokal.addStrings(DatenSammlerEinzel);
           end;
         end;
-
       end;
-
       inc(r);
     until (r > RowCount);
   end;
@@ -9766,8 +9710,7 @@ begin
   end;
 end;
 
-procedure _xmlSchemaValidityWarningFunc(ctx: pointer;
-  const msg1, msg2, msg3, msg4: wasPChar); cdecl;
+procedure _xmlSchemaValidityWarningFunc(ctx: pointer; const msg1, msg2, msg3, msg4: wasPChar); cdecl;
 var
   s: string;
 begin
@@ -9825,8 +9768,7 @@ begin
     parser_ctxt := xmlSchemaNewDocParserCtxt(schema_doc);
     if (parser_ctxt = nil) then
     begin
-      sBericht.add(cERRORText + ' ' + 'unable to create a parser context for the schema "' +
-        xsdFileName + '"!');
+      sBericht.add(cERRORText + ' ' + 'unable to create a parser context for the schema "' + xsdFileName + '"!');
       xmlFreeDoc(schema_doc);
       break;
     end;
@@ -9844,8 +9786,7 @@ begin
     if (valid_ctxt = nil) then
     begin
 
-      sBericht.add(cERRORText + ' ' + 'unable to create a validation context for the schema "' +
-        xsdFileName + '"!');
+      sBericht.add(cERRORText + ' ' + 'unable to create a validation context for the schema "' + xsdFileName + '"!');
       xmlSchemaFree(schema);
       xmlSchemaFreeParserCtxt(parser_ctxt);
       xmlFreeDoc(schema_doc);
@@ -9916,8 +9857,7 @@ begin
     end;
   end
   else
-    sBericht.add(cERRORText + ' ' + 'XML-Datei "' + xmlFileName +
-      '" konnte nicht geöffnet werden!');
+    sBericht.add(cERRORText + ' ' + 'XML-Datei "' + xmlFileName + '" konnte nicht geöffnet werden!');
 end;
 
 procedure xls2argos(InFName: string; sBericht: TStringList);
@@ -10044,8 +9984,7 @@ var
     begin
       // rollbackBecause(inttostr(ARGOS) + ': Bezeichnung "' + Tag + '" nicht gefunden!');
       if assigned(sBericht) then
-        sBericht.add('WARNUNG: Bei ' + inttostr(Argos) + ': Bezeichnung "' + tag +
-          '" nicht gefunden!');
+        sBericht.add('WARNUNG: Bei ' + inttostr(Argos) + ': Bezeichnung "' + tag + '" nicht gefunden!');
     end
     else
     begin
@@ -10132,8 +10071,8 @@ var
     end;
 
     if not(FoundTag) then
-      rollbackBecause(inttostr(Argos) + '[' + inttostr(TAET_BEGIN) + ',' + inttostr(TAET_END) + ']'
-        + ': ' + tag + ' nicht gefunden!');
+      rollbackBecause(inttostr(Argos) + '[' + inttostr(TAET_BEGIN) + ',' + inttostr(TAET_END) + ']' + ': ' + tag +
+        ' nicht gefunden!');
   end;
 
   function qo { uestion optional } (tag: string; CloseTag: string = 'GERAET'): boolean;
@@ -10562,8 +10501,7 @@ var
     begin
       for n := pred(sResult.count) downto RollBackPosition do
         sResult.delete(n);
-      speak('<!-- catched ' + inttostr(Argos) +
-        ' before finish line, because of quality policies -->');
+      speak('<!-- catched ' + inttostr(Argos) + ' before finish line, because of quality policies -->');
       speak('<!-- operator_order_id="' + RID + '" -->');
       if assigned(sBericht) then
       begin
@@ -10716,15 +10654,13 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) +
-                  '" in XML.BLA nicht gefunden!');
+                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in XML.BLA nicht gefunden!');
             end;
           end
           else
           begin
             if assigned(sBericht) then
-              sBericht.add('(RID=' + RID +
-                ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
+              sBericht.add('(RID=' + RID + ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
           end;
         end
         else
@@ -10873,6 +10809,11 @@ begin
         begin
           sDiagnose.add('Modus: xls -> *ml');
           xls2ml(InFName, sBericht);
+        end;
+      Content_Mode_xls2html:
+        begin
+          sDiagnose.add('Modus: xls -> html');
+          xls2ml(InFName, sBericht, true);
         end;
       Content_Mode_xsd:
         begin
