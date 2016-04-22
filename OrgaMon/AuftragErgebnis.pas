@@ -131,6 +131,7 @@ uses
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
   wanfix32, SolidFTP, html,
+  JclMiscel,
 
   // IBO
   IB_Components, IB_Access,
@@ -216,6 +217,7 @@ var
   writePermission: boolean;
 
   // Cache-Felder von Werten aus dem Datensatz
+  // oder Parameter
   AUFTRAG_R: integer;
   BAUSTELLE_R: integer;
   N1, NA, NN, Sparte, A1: string;
@@ -225,6 +227,7 @@ var
   ZaehlerNummerNeuPreFix: string;
   ZaehlwerkeIst: integer; // aus der Art
   INTERN_INFO: TStringList;
+  HTMLBenennung: string;
 
   // Dinge für die freien Zähler "EFRE"
   FreieResourcen: TsTable;
@@ -784,6 +787,24 @@ var
     end;
   end;
 
+  function evalColumnExpression(e: string): string;
+  var
+    Token, Value: string;
+    Col: integer;
+  begin
+    result := e;
+    while (pos('~', result) > 0) do
+    begin
+      Token := ExtractSegmentBetween(result, '~', '~');
+      Col := Header.indexof(Token);
+      if (Col <> -1) then
+        Value := ActColumn[Col]
+      else
+        Value := 'REF!';
+      ersetze('~' + Token + '~', Value, result);
+    end;
+  end;
+
   function SetCell(ColumName: string; Value: string): boolean; overload;
   begin
     result := SetCell(Header.indexof(ColumName), Value);
@@ -939,6 +960,7 @@ begin
       Zaehlwerk := Settings.values[cE_Zaehlwerk];
       Zaehler_nr_neu_filter := Settings.values[cE_Filter];
       Zaehler_nr_neu_zeichen := Settings.values[cE_ZaehlerNummerNeuZeichen];
+      HTMLBenennung := Settings.values[cE_HTMLBenennung];
       PlausiMode := StrToIntDef(Settings.values[cE_QS_Mode], 4);
 
       // =JA oder =FA oder =FA;FN
@@ -1220,6 +1242,14 @@ begin
                     ActValue := e_r_FotoName(
                       { } AUFTRAG_R, copy(
                       { } HeaderName, 2, MaxInt));
+                    break;
+                  end;
+
+                // Dateiname für die HTML Ausgabe
+                if (HeaderName = 'HTML-Benennung') then
+                  if (HTMLBenennung <> '') then
+                  begin
+                    ActValue := evalColumnExpression(HTMLBenennung);
                     break;
                   end;
 
@@ -1764,6 +1794,7 @@ begin
           Oc_Bericht.free;
         end;
 
+        // XML
         if (Settings.values[cE_AuchAlsXML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
@@ -1793,6 +1824,55 @@ begin
                   FailL.add(FAIL_R);
                 Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
               end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // HTML
+        if (Settings.values[cE_AuchAlsHTML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          Oc_Result := doConversion(Content_Mode_xls2html, OutFName, Oc_Bericht);
+          if not(Oc_Result) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            for n := 0 to pred(Oc_Bericht.count) do
+            begin
+              if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
+              begin
+                OutFName :=
+                { } cAuftragErgebnisPath +
+                { } e_r_BaustellenPfad(Settings) + '\' +
+                { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
+                Files.add(OutFName);
+                if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
+                begin
+                  WinExec32AndWait(
+                    { } '"' + 'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
+                    // ggf. "--zoom 0.0..9.9" verwenden
+                    { } '"' + OutFName + '"' + ' ' +
+                    { } '"' + OutFName + '.pdf' + '"',
+                    { } SW_SHOWDEFAULT);
+
+                  Files.add(OutFName + '.pdf');
+
+                end;
+              end;
+              if (pos('(RID=', Oc_Bericht[n]) > 0) then
+              begin
+                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                if (FailL.indexof(FAIL_R) = -1) then
+                  FailL.add(FAIL_R);
+                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+              application.processmessages;
+            end;
           end;
           Oc_Bericht.free;
         end;
@@ -2212,6 +2292,9 @@ var
             // FilesUp aufräumen
             FilesUp.sort;
             RemoveDuplicates(FilesUp);
+
+            if DebugMode then
+              FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
 
             // Zip "FilesUp"
             InfoZIP.zip(FilesUp, cAuftragErgebnisPath + FTP_UploadFName,

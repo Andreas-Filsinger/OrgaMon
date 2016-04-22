@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.177 (22.04.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnismeldung: Wechselbelege als HTML und PDF mit Wunsch-Dateinamen
+ Neu: Auftrag: Ergebnismeldung: Einstellung "AuchAlsHTML="
+ Neu: Auftrag: Ergebnismeldung: Einstellung "AuchAlsPDF="
+ Neu: Auftrag: Ergebnismeldung: Einstellung "HTML-Benennung="
+
 Rev 8.176 (21.04.16) Andreas Filsinger
 
  Bug: Ergebnis: Bei Problemen in der Ergebnismeldung 1. Teil (Erfolgreiche) hat er danach
