@@ -5128,6 +5128,8 @@ begin
           Content_Wilken[col_tgw_id] := '';
           Content_Wilken[col_tgws_ableseinfo] := '';
           Content_Wilken[col_gtw_lagerort_alt] := '';
+          Content_Wilken[col_tgws_ablesedatum] :=
+            long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
           case z of
             1:
               Content_Wilken[col_tgws_ablesestand] := ZaehlerStandNeu;
@@ -5135,8 +5137,6 @@ begin
             2:
               Content_Wilken[col_tgws_ablesestand] := NN;
           end;
-          Content_Wilken[col_tgws_ablesedatum] :=
-            long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
 
           Content.add(HugeSingleLine(Content_Wilken, Separator));
           Content_Wilken.Free;
