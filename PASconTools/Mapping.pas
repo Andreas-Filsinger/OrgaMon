@@ -373,9 +373,6 @@ begin
   for I := 0 to C do
   begin
     Result.Add('|-');
-    { ResList.Add('| style="text-align:center" | ' + Items[I].FKey);
-      ResList.Add('| style="text-align:left" | ' + Items[I].FWikiDiscription);
-      ResList.Add('| style="text-align:center" | ' + Items[I].FValue); }
     Result.Add('| ' + Items[I].FKey);
     Result.Add('| ' + Items[I].FWikiDiscription);
     Result.Add('| ' + Items[I].FValue);

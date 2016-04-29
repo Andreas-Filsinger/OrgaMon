@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.178 (29.04.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.243" neu compiliert!
+
 Rev 8.177 (22.04.16) Andreas Filsinger
 
  Neu: Auftrag: Ergebnismeldung: Wechselbelege als HTML und PDF mit Wunsch-Dateinamen

@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.177; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.178; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -345,7 +345,7 @@ const
   cCSV_Column_J = 9;
   cCSV_Column_K = 10;
 
-  // Build In Diagnostic FTP
+  // Buildin Diagnostic FTP
   cFTP_Host = 'orgamon.de';
   cFTP_UserName = 'incoming';
   cFTP_Password = '1kfan8wx5';
