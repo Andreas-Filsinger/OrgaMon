@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.242; // ../rev/Oc.rev.txt
+  Version: single = 1.243; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
@@ -2672,7 +2672,7 @@ begin
     speak('<!--   ___                                  -->');
     speak('<!--  / _ \  ___                            -->');
     speak('<!-- | | | |/ __|  Orientation Convert      -->');
-    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.de  -->');
+    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
     speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
     speak('<!--                                        -->');
     speak;
@@ -3937,7 +3937,7 @@ begin
     speak('<!--   ___                                  -->');
     speak('<!--  / _ \  ___                            -->');
     speak('<!-- | | | |/ __|  Orientation Convert      -->');
-    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.de  -->');
+    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
     speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
     speak('<!--                                        -->');
     speak;
@@ -6974,7 +6974,7 @@ begin
             end;
         end;
 
-        // die Befehlszeile aufsammeln
+        // die Commandos in den Zellen aufsammeln
         if AusgabeRotiert then
         begin
           for r := 1 to RowCount do
@@ -6991,15 +6991,30 @@ begin
         begin
           for c := 1 to ColCountInRow(1) do
           begin
-            FormatIndex := getCellFormat(TargetStartRow, c);
-            OutCommands.addobject(getCellValue(TargetStartRow + 1, c).ToStringInvariant, TObject(FormatIndex));
-            if mitRegler then
-              OutCommandsRegler.addobject(xExportRegler.getCellValue(TargetStartRow + 1, c).ToStringInvariant,
-                TObject(FormatIndex));
 
-            // imp pend: Just clear it?
+            // Das Format aus Zeile 2
+            FormatIndex := getCellFormat(TargetStartRow, c);
+
+            // a) clear Cell from "Format-Line"
             SetCellFromString(TargetStartRow, c, '', FormatIndex);
+
+            // Das Commando aus Zeile 3
+            OutCommands.addobject(
+              { } getCellValue(
+              { } TargetStartRow + 1, c).ToStringInvariant,
+              { } TObject(FormatIndex));
+            // b) clear Cell from "Command-Line"
             SetCellFromString(TargetStartRow + 1, c, '', FormatIndex);
+
+            // weitere Zeile
+            if mitRegler then
+            begin
+              FormatIndex := AddFormat(xExportRegler.GetFormat(xExportRegler.getCellFormat(TargetStartRow, c)));
+              OutCommandsRegler.addobject(
+                { } xExportRegler.getCellValue(
+                { } TargetStartRow + 1, c).ToStringInvariant,
+                { } TObject(FormatIndex));
+            end;
           end;
         end;
       end;
@@ -7031,7 +7046,7 @@ begin
                 else
                 begin
                   // Eigentlich hätte man einen Regler erfassen müssen
-                  // gar keine Eingabe ist ein Fehler
+                  // gar keine Eingabe ist meldewürdig
                   sDiagnose.add('WARNING: (RID=' + read(r, 'Referenzidentitaet') + ') ReglerNummerNeu ist leer!');
                 end;
               end;
@@ -10558,7 +10573,7 @@ begin
     speak('<!--   ___                                  -->');
     speak('<!--  / _ \  ___                            -->');
     speak('<!-- | | | |/ __|  Orientation Convert      -->');
-    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.de  -->');
+    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
     speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
     speak('<!--                                        -->');
     speak;
