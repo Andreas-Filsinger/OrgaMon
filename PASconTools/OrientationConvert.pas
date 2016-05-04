@@ -9636,7 +9636,7 @@ begin
                 { } ZAEHLER_NUMMER;
             end;
 
-            OutFName := OutFName + '.html';
+            OutFName := StrFilter(OutFName, cInvalidFNameChars, true) + '.html';
 
             // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
             FileDelete(WorkPath + OutFName + '.pdf');

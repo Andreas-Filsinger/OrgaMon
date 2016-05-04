@@ -842,6 +842,7 @@ var
 
 var
   n, k, y: integer;
+  Cmd: string;
 
 begin
   ErrorCount := 0;
@@ -1844,6 +1845,7 @@ begin
           begin
             for n := 0 to pred(Oc_Bericht.count) do
             begin
+
               if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
               begin
                 OutFName :=
@@ -1853,17 +1855,29 @@ begin
                 Files.add(OutFName);
                 if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
                 begin
-                  WinExec32AndWait(
-                    { } '"' + 'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
-                    // ggf. "--zoom 0.0..9.9" verwenden
-                    { } '"' + OutFName + '"' + ' ' +
-                    { } '"' + OutFName + '.pdf' + '"',
-                    { } SW_SHOWDEFAULT);
+                  // Clear older try
+                  FileDelete(OutFName + '.pdf');
+                  Cmd :=
+                  { } '"' + ProgramFilesDir +
+                  { } 'wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
+                  { } '"' + OutFName + '"' + ' ' +
+                  { } '"' + OutFName + '.pdf' + '"';
+                  WinExec32AndWait(Cmd, SW_SHOWDEFAULT);
 
-                  Files.add(OutFName + '.pdf');
-
+                  if (FSize(OutFName + '.pdf') >= 739 { smallest PDF ever } ) then
+                  begin
+                    // Setze das .PDF Datei-Datum/Uhrzeit auf .HTML Datei-Datum/Uhrzeit
+                    FileTouch(OutFName + '.pdf', FileDateTime(OutFName));
+                    Files.add(OutFName + '.pdf');
+                  end
+                  else
+                  begin
+                    inc(ErrorCount);
+                    Log(cERRORText + ' PDF-Konvertierung ' + Cmd + ' misslungen', BAUSTELLE_R);
+                  end;
                 end;
               end;
+
               if (pos('(RID=', Oc_Bericht[n]) > 0) then
               begin
                 FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);

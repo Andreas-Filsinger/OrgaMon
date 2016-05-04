@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -242,15 +242,13 @@ begin
   if FileExists(ETFLager + cNotenTableFName) then
   begin
     StrPCopy(ExecuteString, ETFLager + cNotenTableFName);
-    ShellExecute(Application.handle, 'open', ExecuteString, '', '',
-      sw_showmaximized);
+    ShellExecute(Application.handle, 'open', ExecuteString, '', '', sw_showmaximized);
     ShowMessage('Datei neu laden?');
     ReloadNotenTable;
   end
   else
   begin
-    ShowMessage('Datei ' + cNotenTableFName + ' im Verzeichnis ' + ETFLager +
-      ' nicht gefunden!');
+    ShowMessage('Datei ' + cNotenTableFName + ' im Verzeichnis ' + ETFLager + ' nicht gefunden!');
   end;
 end;
 
@@ -404,8 +402,7 @@ end;
 procedure TFormCreatorMain.Button3Click(Sender: TObject);
 // neues MUS Verzeichnis hinzu
 begin
-  raise Exception.Create
-    ('Muss wegen TBrowseDirectoryDlg neu implementiert werden!');
+  raise Exception.Create('Muss wegen TBrowseDirectoryDlg neu implementiert werden!');
 end;
 (*
   var
@@ -491,8 +488,7 @@ begin
   end
   else
   begin
-    ShowMessage('Datei ' + cNotenTableFName + ' nicht im Verzeichnis ' +
-      ActualSource + ' gefunden!');
+    ShowMessage('Datei ' + cNotenTableFName + ' nicht im Verzeichnis ' + ActualSource + ' gefunden!');
   end;
 end;
 
@@ -527,8 +523,7 @@ begin
   end;
 
   // Test 2, -> alle MUS Dateien auch eingetragen?
-  Found := findfirst(ActualSource + '*.' + MUSExtension,
-    faAnyFile - faDirectory, sr);
+  Found := findfirst(ActualSource + '*.' + MUSExtension, faAnyFile - faDirectory, sr);
   while (Found = 0) do
   begin
     FileNameFound := false;
@@ -565,10 +560,8 @@ end;
 // tools
 
 const
-  LoStr: string =
-    'abcdefghijklmnopqrstuvwxyzäöüßABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  UpStr: string =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZAOUSABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  LoStr: string = 'abcdefghijklmnopqrstuvwxyzäöüßABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  UpStr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZAOUSABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 function LowerStr(const x: string): string;
 var
@@ -792,8 +785,7 @@ var
     if FileExists(CDRAusgabe + '..\system\Texte' + ModeStr + '.BLA') then
       FileDelete(CDRAusgabe + '..\system\Texte' + ModeStr + '.BLA');
     TextLager := TBlager.Create;
-    TextLager.init(CDRAusgabe + '..\system\Texte' + ModeStr, ReallyBigString,
-      sizeof(ReallyBigString));
+    TextLager.init(CDRAusgabe + '..\system\Texte' + ModeStr, ReallyBigString, sizeof(ReallyBigString));
     TextLager.BeginTransAction;
 
     ProgressBar1.Min := 0;
@@ -822,9 +814,7 @@ var
       end;
 
       if CDR_Ausgabe then
-        SortimentOK :=
-          (SortimentList.IndexOf(IB_Query1.FieldByName('SORTIMENT_R')
-          .AsString) <> -1);
+        SortimentOK := (SortimentList.IndexOf(IB_Query1.FieldByName('SORTIMENT_R').AsString) <> -1);
 
       if CheckBox3.Checked and (SortimentOK) then
         SortimentOK := (random(100) < RandomGrenze);
@@ -846,30 +836,25 @@ var
 
           PaperColor := FieldByName('PAPERCOLOR').AsInteger;
           if PaperColor = 0 then
-            PaperColor := clpaper + (random($80) shl 16) + (random($80) shl 08)
-              + random($80);
+            PaperColor := clpaper + (random($80) shl 16) + (random($80) shl 08) + random($80);
 
           artikelno := FieldByName('NUMERO').AsString;
 
           try
-            Land := e_r_LaenderISO(FieldByName('LAND_R')
-              .AsInteger);
+            Land := e_r_LaenderISO(FieldByName('LAND_R').AsInteger);
             Titel := FieldByName('TITEL').AsString;
 
-            ActComposer := e_r_MusikerName
-              (FieldByName('KOMPONIST_R').AsInteger);
+            ActComposer := e_r_MusikerName(FieldByName('KOMPONIST_R').AsInteger);
             Komponist := ActComposer;
             if pos(',', Komponist) > 0 then
               PostError('Das Zeichen "," ist im Komponisten verboten!');
 
-            ActArranger := e_r_MusikerName
-              (FieldByName('ARRANGEUR_R').AsInteger);;
+            ActArranger := e_r_MusikerName(FieldByName('ARRANGEUR_R').AsInteger);;
             Arranger := ActArranger;
             if pos(',', Komponist) > 0 then
               PostError('Das Zeichen "," ist im Arrangeur verboten!');
 
-            preis := e_r_PreisBrutto(0,
-              ARTIKEL_R);
+            preis := e_r_PreisBrutto(0, ARTIKEL_R);
 
             VERLAG_R := FieldByName('VERLAG_R').AsInteger;
             if (VERLAG_R > 0) then
@@ -893,11 +878,10 @@ var
             ProbeStimme := ArtikelInfo.Values['PROBESTIMME'];
             Aufnahme := ArtikelInfo.Values['AUFNAHME'];
             Sparte := ArtikelInfo.Values['GATTUNG'];
-            BildDokument := e_r_ArtikelDokument(0,ARTIKEL_R,cMediumBild);
+            BildDokument := e_r_ArtikelDokument(0, ARTIKEL_R, cMediumBild);
 
             //
-            schwer := cutblank(FieldByName('SCHWER_GRUPPE').AsString + ' ' +
-              FieldByName('SCHWER_DETAILS').AsString);
+            schwer := cutblank(FieldByName('SCHWER_GRUPPE').AsString + ' ' + FieldByName('SCHWER_DETAILS').AsString);
             Dauer := FieldByName('DAUER').AsString;
 
             if CheckBox1.Checked then
@@ -910,8 +894,7 @@ var
             if FieldByName('KOMPONIST_R').IsNull then
               ActComposerInfo := ''
             else
-              ActComposerInfo := e_r_MusikerUeber
-                (FieldByName('KOMPONIST_R').AsInteger);
+              ActComposerInfo := e_r_MusikerUeber(FieldByName('KOMPONIST_R').AsInteger);
 
             if CheckBox1.Checked then
             begin
@@ -923,8 +906,7 @@ var
             if FieldByName('ARRANGEUR_R').IsNull then
               ActArrangerInfo := ''
             else
-              ActArrangerInfo := e_r_MusikerUeber
-                (FieldByName('ARRANGEUR_R').AsInteger);
+              ActArrangerInfo := e_r_MusikerUeber(FieldByName('ARRANGEUR_R').AsInteger);
 
             if CheckBox1.Checked then
             begin
@@ -939,8 +921,7 @@ var
               begin
                 ComposerList.add(ActComposer);
                 ComposerDoppel.add(VorNachName(ActComposer));
-                ComposerOutput.add('"' + ActComposer + '","' +
-                  ActComposerInfo + '"');
+                ComposerOutput.add('"' + ActComposer + '","' + ActComposerInfo + '"');
               end;
             end;
 
@@ -950,8 +931,7 @@ var
               begin
                 ComposerList.add(ActArranger);
                 ComposerDoppel.add(VorNachName(ActArranger));
-                ComposerOutput.add('"' + ActArranger + '","' +
-                  ActArrangerInfo + '"');
+                ComposerOutput.add('"' + ActArranger + '","' + ActArrangerInfo + '"');
               end;
             end;
 
@@ -971,8 +951,7 @@ var
                     PreisStr[n1] := '#';
                   if (PreisStr[n1] = '-') then
                     PreisStr[n1] := '0';
-                  if not(PreisStr[n1] in ['#', '0' .. '9',
-                    DecimalSeparator]) then
+                  if not(PreisStr[n1] in ['#', '0' .. '9', DecimalSeparator]) then
                   begin
                     OrgCurrency := OrgCurrency + PreisStr[n1];
                     PreisStr[n1] := '#';
@@ -1012,9 +991,8 @@ var
               dealerID       := '';
             *)
 
-            BigWordStr := AnsiUpperCase(Titel + ' ' + Komponist + ' ' + Arranger
-              + ' ' + Serie + ' ' + artikelno + ' ' + verlag + ' ' +
-              BemerkungStr + ' ' + Sparte);
+            BigWordStr := AnsiUpperCase(Titel + ' ' + Komponist + ' ' + Arranger + ' ' + Serie + ' ' + artikelno + ' ' +
+              verlag + ' ' + BemerkungStr + ' ' + Sparte);
 
             // DebugOut.add(BigWordStr);
             // den String zerlegen in lauter einzelne Worte
@@ -1053,8 +1031,7 @@ var
       VERLAG_R := integer(VerlageList[n]);
 
       IB_Query3.ParamByName('CROSSREF').AsInteger := VERLAG_R;
-      IB_Query4.ParamByName('CROSSREF').AsInteger :=
-        IB_Query3.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
+      IB_Query4.ParamByName('CROSSREF').AsInteger := IB_Query3.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
 
       if not(IB_Query3.IsEmpty) and not(IB_Query4.IsEmpty) then
       begin
@@ -1293,8 +1270,7 @@ begin
   reset(BinF);
 
   TxtLager := TBlager.Create;
-  TxtLager.init(CDRAusgabe + '..\system\texte' + ModeStr, ReallyBigString,
-    sizeof(ReallyBigString));
+  TxtLager.init(CDRAusgabe + '..\system\texte' + ModeStr, ReallyBigString, sizeof(ReallyBigString));
   TxtLager.BeginTransAction;
 
   ProgressBar1.Min := 0;
@@ -1312,8 +1288,7 @@ begin
   begin
     if GetTickCount > (StartTime + 500) then
     begin
-      Label5.caption := format('[%d:%d] %s', [FilePos(BinF), Komponisten.count,
-        noten.Komponist]);
+      Label5.caption := format('[%d:%d] %s', [FilePos(BinF), Komponisten.count, noten.Komponist]);
       Application.processmessages;
       StartTime := GetTickCount;
       if UserBreak then
@@ -1356,8 +1331,7 @@ begin
   for n := 1 to MaxMedia do
   begin
     if (MediaStrings[n].count > 0) then
-      MediaStrings[n].SaveToFile(DiagnosePath + 'Inhalt von Medium ' +
-        inttostr(n) + '.txt');
+      MediaStrings[n].SaveToFile(DiagnosePath + 'Inhalt von Medium ' + inttostr(n) + '.txt');
     MediaStrings[n].free;
   end;
 
@@ -1403,8 +1377,7 @@ begin
   begin
     if (length(BigPwdInfo[n]) > 40) then
     begin
-      if (BigPwdInfo[n][11] = ';') and (BigPwdInfo[n][22] = ';') and
-        (BigPwdInfo[n][33] = ';') then
+      if (BigPwdInfo[n][11] = ';') and (BigPwdInfo[n][22] = ';') and (BigPwdInfo[n][33] = ';') then
         if (pos('²', BigPwdInfo[n]) = 0) then
         begin
           UserName := copy(BigPwdInfo[n], 45, MaxInt);
@@ -1412,19 +1385,16 @@ begin
           UserName := cutblank(UserName);
 
           if (pos('³', BigPwdInfo[n]) = 0) then
-            HEntryOut.add(copy(BigPwdInfo[n], 1, 9) + ';' + copy(BigPwdInfo[n],
-              35, 9) + ';' + UserName + ';')
+            HEntryOut.add(copy(BigPwdInfo[n], 1, 9) + ';' + copy(BigPwdInfo[n], 35, 9) + ';' + UserName + ';')
           else
-            HEntryOut.add(copy(BigPwdInfo[n], 1, 9) + ';' + copy(BigPwdInfo[n],
-              35, 9) + ';' + UserName + ';H');
+            HEntryOut.add(copy(BigPwdInfo[n], 1, 9) + ';' + copy(BigPwdInfo[n], 35, 9) + ';' + UserName + ';H');
 
         end;
     end;
     if frequently(LastUserUpdate, 300) then
       ProgressBar1.Position := n;
   end;
-  Label5.caption := inttostr(HEntryOut.count) +
-    ' Kombinationen "pwd;Serienummer"';
+  Label5.caption := inttostr(HEntryOut.count) + ' Kombinationen "pwd;Serienummer"';
   HEntryOut.SaveToFile(MyProgramPath + cPwdAllTextFName);
   BigPwdInfo.free;
   HEntryOut.free;

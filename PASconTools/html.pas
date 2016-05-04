@@ -124,7 +124,7 @@ const
   //
   // <!-- set <key> <value> -->
   //
-  cSet_Context = 'Kontext'; // damit kann ein Umgebungswert gesetzt werden
+  cSet_Context = 'Kontext'; // damit kann ein Umgebungswert gesetzt werden, in der Regel Datenbank RIDs
   // Base64 Quellpfad
   cSet_AnlagePath = 'Anlagenverzeichnis';
 
