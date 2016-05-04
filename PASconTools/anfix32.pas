@@ -94,21 +94,25 @@ const
   BELOW_NORMAL_PRIORITY_CLASS = $4000;
   ABOVE_NORMAL_PRIORITY_CLASS = $8000;
 
-  // Dateien
-  cValidFNameChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
-  cInvalidFNameChars = ':/\?*"<>|';
-  cTmpFileExtension = '.$$$';
+  // FSize()
   cFSize_NotExists = -1;
   cFSize_Null = -2;
 
-  // für Filter
+  // Filter: Basis
   cZiffern = '0123456789';
   cBuchstaben = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   cZeichen = '!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~';
-  cLineSeparator = '|';
 
-  // Geld
+  // Filter: Dateinamen
+  cInvalidFNameChars = ':/\?*"<>|';
+  cValidFNameChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
+
+  // diverses
+  cLineSeparator = '|';
   cMonetarySymbol = '€';
+
+  // TMP-Dateien
+  cTmpFileExtension = '.$$$';
 
 var
   MandantName: string = 'offline';

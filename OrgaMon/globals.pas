@@ -2081,8 +2081,10 @@ IB_GetClientLibNameFunc := GetFBClientLibName;
 cNachFrage := _(cNachFrage);
 
 DebugMode := false;
-isBeta := isParam('-b') or (pos(inttostr(RevAsInteger(globals.Version)), ParamStr(0)) > 0) or
-  (pos('-RC.exe', ParamStr(0)) > 0);
+isBeta :=
+{ } isParam('-b') or
+{ } (pos(inttostr(RevAsInteger(globals.Version)), ParamStr(0)) > 0) or
+{ } (pos('-RC.exe', ParamStr(0)) > 0);
 
 iProfilTexte := TStringList.create;
 iSchalterTexte := TStringList.create;
