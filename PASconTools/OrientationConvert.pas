@@ -32,10 +32,9 @@ uses
   Classes;
 
 const
-  Version: single = 1.243; // ../rev/Oc.rev.txt
+  Version: single = 1.244; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
-  Content_Mode_Argos = 2; // xls -> Argos(-P) CSV
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
   Content_Mode_xls2csv = 4; // xls+Fixed-Formats.ini -> csv
   Content_Mode_xls2xml = 5; // RWE Rev. 1.0
@@ -879,10 +878,10 @@ var
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
-    pWriteAt := Split(sMapping.values['WRITE_AT'], '|');
-    pAddZw := Split(sMapping.values['ADD_ZW'], '|');
+    pWriteAt := Split(sMapping.values['WRITE_AT'], '|', '', true);
+    pAddZw := Split(sMapping.values['ADD_ZW'], '|', '', true);
     pDebug := sMapping.values['DEBUG'] = 'JA';
-    pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|');
+    pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|', '', true);
     pSplitNameSpace := sMapping.values['NAMESPACE'];
     pTakeFirstValue := sMapping.values['COALESCE'] = 'JA';
     pReplaceNameSpace := sMapping.values['REPLACE'];
@@ -2642,8 +2641,8 @@ begin
   xlsHeaders := TStringList.create;
   ZaehlwerkeAusbauSoll := TStringList.create;
   ZaehlwerkeEinbauSoll := TStringList.create;
-  ZaehlwerkeIgnoriert := Split(ODIS_Ignore);
-  ZaehlwerkeMobil := Split(ODIS_MOB);
+  ZaehlwerkeIgnoriert := Split(ODIS_Ignore,';','',true);
+  ZaehlwerkeMobil := Split(ODIS_MOB,';','',true);
   xmlToday := Datum10;
   xmlToday :=
   { } copy(xmlToday, 7, 4) +
@@ -3907,8 +3906,8 @@ begin
   xlsHeaders := TStringList.create;
   ZaehlwerkeAusbauSoll := TStringList.create;
   ZaehlwerkeEinbauSoll := TStringList.create;
-  ZaehlwerkeIgnoriert := Split(ODIS_Ignore);
-  ZaehlwerkeMobil := Split(ODIS_MOB);
+  ZaehlwerkeIgnoriert := Split(ODIS_Ignore,';','',true);
+  ZaehlwerkeMobil := Split(ODIS_MOB,';','',true);
   xmlToday := Datum10;
   xmlToday :=
   { } copy(xmlToday, 7, 4) +
@@ -4902,7 +4901,7 @@ begin
     pAuftrag := FixedFormats.values['Auftrag'];
     if (pAuftrag <> '') then
       Auftrag.insertFromFile(WorkPath + pAuftrag);
-    pAuftragAnker := Split(FixedFormats.values['AuftragReferenzSpalten']);
+    pAuftragAnker := Split(FixedFormats.values['AuftragReferenzSpalten'],';','',true);
     pFileName := FixedFormats.values['FileName'];
     if (pFileName <> '') then
       conversionOutFName := WorkPath + pFileName
@@ -5540,8 +5539,8 @@ begin
       pAuftrag.Objects[i] := Auftrag;
     end;
 
-    pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten']);
-    pAuftragFlood := Split(FixedFloods.values['AuftragFlood']);
+    pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten'],';','',true);
+    pAuftragFlood := Split(FixedFloods.values['AuftragFlood'],';','',true);
 
     if (RowCount >= 1) then
       for c := 1 to ColCountInRow(1) do
@@ -8222,343 +8221,6 @@ begin
   end;
 end;
 
-procedure Argos(InFName: string; sBericht: TStringList);
-
-//
-// a:TOURNAME,a:SERIAL_NR,a:ARGOS_ID,a:ARGOS_TEXT,a:KENNZIFFER,e:WechselDatum,eWERT,eMONTEUR,eBemerkung
-//
-
-var
-  MappingDefaults: TStringList;
-  sMappings: TSearchStringList;
-  rMapping: integer;
-
-  // xls Quelle
-  xImport: TXLSFile;
-
-  //
-  Auftrag: TsTable;
-  Ergebnis: TStringList;
-  AuftragsListe: TStringList;
-  n, r, c: integer;
-  Stat_Verarbeitet: integer;
-
-  col_Auftrag_ARGOS_ID: integer;
-  col_Auftrag_SERIAL_NR: integer;
-  col_Auftrag_TOURNAME: integer;
-  col_Auftrag_KE: integer;
-  col_Auftrag_ARGOS_TEXT: integer;
-
-  col_Ergebnis_ARGOS_ID: integer;
-  col_Ergebnis_WechselDatum: integer;
-  col_Ergebnis_Datum: integer;
-  col_Ergebnis_bemerkung_1: integer;
-  col_Ergebnis_bemerkung_2: integer;
-  col_Ergebnis_bemerkung_3: integer;
-  col_Ergebnis_Vergeblich_1: integer;
-  col_Ergebnis_Vergeblich_2: integer;
-  col_Ergebnis_Vergeblich_3: integer;
-
-  col_Ergebnis_bemerkung_Buero: integer;
-  col_Ergebnis_monteur: integer;
-
-  row_Auftrag_first: integer;
-  ErgebnisHeader: TStringList;
-
-  ARGOS_ID: string;
-  SERIAL_NR: string;
-  ARGOS_TEXT: string;
-
-  WechselDatum: TDateTime;
-  sDatum: string;
-  Wert: string;
-  Monteur: string;
-  Bemerkung: string;
-  BemerkungBuero: string;
-
-  procedure WriteMapping(r: integer);
-  var
-    xlsSpalte: string;
-    c: integer;
-  begin
-    ARGOS_TEXT := Auftrag.readCell(row_Auftrag_first, col_Auftrag_ARGOS_TEXT);
-    rMapping := sMappings.findinc(ARGOS_TEXT + '=');
-    if rMapping = -1 then
-    begin
-      sMappings.add(ARGOS_TEXT + '=');
-      rMapping := pred(sMappings.count);
-    end;
-
-    xlsSpalte := nextp(sMappings[rMapping], '=', 1);
-    repeat
-
-      // übernehmen, aber einfach leer lassen
-      if (xlsSpalte = '<NULL>') then
-      begin
-        Wert := '';
-        break;
-      end;
-
-      // Referenz auf
-      if (xlsSpalte = '') then
-      begin
-        sDiagnose.add('Mapping "' + ARGOS_TEXT + '" fehlt!');
-        exit;
-      end;
-
-      // Konstante
-      if pos(':', xlsSpalte) = 1 then
-      begin
-        Wert := nextp(xlsSpalte, ':', 1);
-        break;
-      end;
-
-      // aus der Tabelle
-      c := ErgebnisHeader.indexof(xlsSpalte);
-      if (c <> -1) then
-        Wert := xImport.getCellValue(r, c).ToStringInvariant
-      else
-        Wert := '';
-
-    until true;
-
-    Ergebnis.add(
-      { A } Auftrag.readCell(row_Auftrag_first, col_Auftrag_TOURNAME) + ';' +
-      { B } SERIAL_NR + ';' +
-      { C } Auftrag.readCell(row_Auftrag_first, col_Auftrag_ARGOS_ID) + ';' +
-      { D } ARGOS_TEXT + ';' +
-      { E } Auftrag.readCell(row_Auftrag_first, col_Auftrag_KE) + ';' +
-      { F } long2date(datetime2long(WechselDatum)) + ';' +
-      { G } Wert + ';' +
-      { H } Monteur + ';' +
-      { I } Bemerkung + ';' +
-      { J } BemerkungBuero + ';');
-  end;
-
-  function col_Auftrag(s: string): integer;
-  begin
-    result := Auftrag.header.indexof(s);
-    if (result = -1) then
-      Error('Spalte "' + s + '" in Auftrag nicht gefunden!');
-  end;
-
-  function col_Ergebnis(s: string): integer;
-  begin
-    result := ErgebnisHeader.indexof(s);
-    if (result = -1) then
-      Error('Spalte "' + s + '" im Ergebnis nicht gefunden!');
-  end;
-
-  function read(r, c: integer): string;
-  begin
-    result := '';
-    try
-      result := xImport.getCellValue(r, c).ToStringInvariant;
-    except
-      on e: exception do
-      begin
-        sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
-      end;
-    end;
-  end;
-
-begin
-  if FileExists(WorkPath + 'Argos-P.ini') then
-  begin
-    ArgosP(InFName, sBericht);
-    exit;
-  end;
-
-  if FileExists(InFName) then
-  begin
-
-    //
-    sDiagFiles.add(InFName);
-
-    Ergebnis := TStringList.create;
-    sMappings := TSearchStringList.create;
-    xImport := TXLSFile.create(true);
-
-    MappingDefaults := TStringList.create;
-    with MappingDefaults do
-    begin
-      //
-      add('Strom - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Wirkarbeit ET/HT alt=ZaehlerStandAlt');
-      add('Wirkarbeit NTalt=NA');
-      add('Strom - Zählernummer neu=ZaehlerNummerNeu');
-      add('Wirkarbeit ET/HT neu=ZaehlerStandNeu');
-      add('Wirkarbeit NT neu=NN');
-      add('Wirkarbeit ET/HT alt=ZaehlerStandAlt');
-      add('Wirkarbeit ET/HT neu=ZaehlerStandNeu');
-      add('Ergebnis=Ergebnis.');
-      add('Auftrag=Auftrag_');
-      add('Wasser - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Wasser - Zählerstand alt=ZaehlerStandAlt');
-      add('Wasser - Zählernummer neu=ZaehlerNummerNeu');
-      add('Wasser - Zählerstand neu=ZaehlerStandNeu');
-      add('Gas - Zählernummer alt=ZaehlerNummerKorrektur');
-      add('Gas - Zählerstand alt=ZaehlerStandAlt');
-      add('Gas - Zählernummer neu=ZaehlerNummerNeu');
-      add('Gas - Zählerstand neu=ZaehlerStandNeu');
-    end;
-
-    if not(FileExists(WorkPath + cARGOS_Mappings)) then
-      MappingDefaults.SaveToFile(WorkPath + cARGOS_Mappings);
-
-    sMappings.loadFromFile(WorkPath + cARGOS_Mappings);
-    for n := 0 to pred(MappingDefaults.count) do
-      if sMappings.values[nextp(MappingDefaults[n], '=', 0)] = '' then
-        sMappings.values[nextp(MappingDefaults[n], '=', 0)] := MappingDefaults.values
-          [nextp(MappingDefaults[n], '=', 0)];
-    MappingDefaults.Free;
-
-    sDiagFiles.add(WorkPath + cARGOS_Mappings);
-
-    AuftragsListe := TStringList.create;
-    ErgebnisHeader := TStringList.create;
-    Auftrag := TsTable.create;
-
-    ErrorCount := 0;
-    repeat
-
-      // Alle Aufträge homogenisiert laden!
-      dir(WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv', AuftragsListe, false);
-      for n := 0 to pred(AuftragsListe.count) do
-      begin
-        sDiagnose.add('read "' + AuftragsListe[n] + '"');
-        Auftrag.insertFromFile(WorkPath + AuftragsListe[n]);
-        sDiagFiles.add(WorkPath + AuftragsListe[n]);
-        if (ErrorCount > 0) then
-          break;
-      end;
-      if (ErrorCount > 0) then
-        break;
-
-      if (Auftrag.count <= 1) then
-      begin
-        Error('Keine Aufträge vorhanden: ' + WorkPath + sMappings.values[cMappings_Auftrag] + '*.csv');
-        break;
-      end;
-
-      // Auftrag.SaveToFile(WorkPath + 'AuftragGesamt.csv');
-
-      col_Auftrag_ARGOS_ID := col_Auftrag('ARGOS_ID');
-      col_Auftrag_SERIAL_NR := col_Auftrag('SERIAL_NR');
-      col_Auftrag_TOURNAME := col_Auftrag('TOURNAME');
-      col_Auftrag_KE := col_Auftrag('KENNZIFFER');
-      col_Auftrag_ARGOS_TEXT := col_Auftrag('ARGOS_TEXT');
-      if (ErrorCount > 0) then
-        break;
-
-      with xImport do
-      begin
-        Open(InFName);
-        ErgebnisHeader.add('#');
-        for c := 1 to ColCountInRow(1) do
-          ErgebnisHeader.add(getCellValue(1, c).ToStringInvariant);
-
-        // Zwangsfelder prüfen!
-        col_Ergebnis_ARGOS_ID := col_Ergebnis('ARGOS_ID');
-        col_Ergebnis_WechselDatum := col_Ergebnis('WechselDatum');
-        col_Ergebnis_Datum := col_Ergebnis('Datum');
-        col_Ergebnis_bemerkung_1 := col_Ergebnis('I3');
-        col_Ergebnis_bemerkung_2 := col_Ergebnis('I4');
-        col_Ergebnis_bemerkung_3 := col_Ergebnis('I5');
-        col_Ergebnis_Vergeblich_1 := col_Ergebnis('V1');
-        col_Ergebnis_Vergeblich_2 := col_Ergebnis('V2');
-        col_Ergebnis_Vergeblich_3 := col_Ergebnis('V3');
-        col_Ergebnis_bemerkung_Buero := col_Ergebnis('Bemerkung');
-        col_Ergebnis_monteur := col_Ergebnis('Monteur');
-        if (ErrorCount > 0) then
-          break;
-
-        Stat_Verarbeitet := 0;
-
-        for r := 2 to RowCount do
-        begin
-
-          // ein Datum ermitteln
-          try
-            sDatum := getCellValue(r, col_Ergebnis_WechselDatum).ToStringInvariant;
-            if (noblank(sDatum) <> '') then
-              WechselDatum := getCellValue(r, col_Ergebnis_WechselDatum)
-            else
-              WechselDatum := getCellValue(r, col_Ergebnis_Datum);
-          except
-            on e: exception do
-            begin
-              sDiagnose.add('WARNING: ' + e.message);
-              sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',? konnte nicht gelesen werden!');
-            end;
-          end;
-
-          //
-          Wert := '#';
-          Monteur := read(r, col_Ergebnis_monteur);
-          Bemerkung := cutblank(read(r, col_Ergebnis_bemerkung_1) + ' ' + read(r, col_Ergebnis_bemerkung_2) + ' ' +
-            read(r, col_Ergebnis_bemerkung_3) + ' ' + read(r, col_Ergebnis_Vergeblich_1) + ' ' +
-            read(r, col_Ergebnis_Vergeblich_2) + ' ' + read(r, col_Ergebnis_Vergeblich_3));
-          if (Bemerkung = '') then
-            Bemerkung := ' ';
-
-          BemerkungBuero := cutblank(read(r, col_Ergebnis_bemerkung_Buero));
-
-          ARGOS_ID := read(r, col_Ergebnis_ARGOS_ID);
-          sDiagnose.add(ARGOS_ID);
-          row_Auftrag_first := Auftrag.Locate(col_Auftrag_ARGOS_ID, ARGOS_ID);
-          if (row_Auftrag_first = -1) then
-          begin
-            Error('ARGOS_ID "' + ARGOS_ID + '" in den Aufträgen nicht gefunden!');
-            break;
-          end;
-          SERIAL_NR := Auftrag.readCell(row_Auftrag_first, col_Auftrag_SERIAL_NR);
-
-          //
-          WriteMapping(r);
-
-          repeat
-            inc(row_Auftrag_first);
-
-            if (row_Auftrag_first = Auftrag.count) then
-              break;
-            if Auftrag.readCell(row_Auftrag_first, col_Auftrag_SERIAL_NR) <> SERIAL_NR then
-              break;
-
-            // JA eine weitere Zeile!
-            WriteMapping(r);
-
-          until false;
-
-          inc(Stat_Verarbeitet);
-
-        end;
-        sDiagnose.add(inttostr(Stat_Verarbeitet) + ' von ' + inttostr(RowCount - 1) + ' verarbeitet!');
-
-        if (ErrorCount > 0) then
-          break;
-      end;
-
-    until true;
-    sMappings.SaveToFile(WorkPath + cARGOS_Mappings);
-
-    // Ergebnis speichern
-    conversionOutFName := WorkPath + sMappings.values[cMappings_Ergebnis] + ExtractFileName(InFName) + '.csv';
-    Ergebnis.SaveToFile(conversionOutFName);
-    sDiagFiles.add(conversionOutFName);
-
-    //
-    sMappings.Free;
-    xImport.Free;
-    Auftrag.Free;
-    AuftragsListe.Free;
-    ErgebnisHeader.Free;
-
-    Ergebnis.Free;
-  end;
-end;
-
 procedure yTOx(InFName: string);
 var
   //
@@ -8985,13 +8647,6 @@ begin
           if (getCellValue(1, c).ToStringInvariant = 'KK22') then
           begin
             result := Content_Mode_KK22;
-            break;
-          end;
-
-          //
-          if (getCellValue(1, c).ToStringInvariant = 'ARGOS_ID') then
-          begin
-            result := Content_Mode_Argos;
             break;
           end;
 
@@ -10744,11 +10399,6 @@ begin
         begin
           sDiagnose.add('Modus: yTOx');
           yTOx(InFName);
-        end;
-      Content_Mode_Argos:
-        begin
-          sDiagnose.add('Modus: ARGOS');
-          Argos(InFName, sBericht);
         end;
       Content_Mode_KK22:
         begin

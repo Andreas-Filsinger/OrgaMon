@@ -4496,14 +4496,25 @@ procedure e_r_Sync_AuftraegeAlle;
 var
   RIDs: TgpIntegerList;
   n: Integer;
+  settings: TStringList;
 begin
+  // erste unscharfe Liste aller betroffenen Baustellen
   RIDs := e_r_sqlm(
     { } 'select RID from BAUSTELLE where ' +
-    { } ' (EXPORT_EINSTELLUNGEN containing ''FotoBenennung=6'') ' +
+    { } ' (EXPORT_EINSTELLUNGEN containing '''+cE_FotoBenennung+'=6'') ' +
     { } 'order by' +
     { } ' NUMMERN_PREFIX');
+
   for n := 0 to pred(RIDs.count) do
-    e_r_Sync_Auftraege(RIDs[n]);
+  begin
+    settings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(RIDs[n]));
+
+    // nur bei einer echten, nicht deaktivierten Baustelle
+    if (settings.values[cE_FotoBenennung] = '6') then
+      e_r_Sync_Auftraege(RIDs[n]);
+
+    settings.free;
+  end;
   RIDs.free;
 end;
 

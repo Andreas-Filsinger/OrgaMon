@@ -362,7 +362,7 @@ const
   cE_EXPORT_TAN = 'EXPORT_TAN';
   cE_Praefix = 'ZipPräfix';
   cE_Postfix = 'ZipPostfix'; // ".unmoeglich" oder ""
-  cE_SAPQUELLE = 'FreieZähler';
+  cE_FreieZaehler = 'FreieZähler';
   cE_SAPReihenfolge = 'SpaltenReihenfolge';
   cE_SpaltenAlias = 'SpaltenAlias';
   cE_SpaltenOhneInhalt = 'SpaltenOhneInhalt';
@@ -377,7 +377,6 @@ const
   cE_AuchAlsXLS = 'AuchAlsXLS';
   cE_AuchAlsXLSunmoeglich = 'AuchAlsXLS_Unmöglich';
   cE_AuchAlsKK22 = 'AuchAlsKK22';
-  cE_AuchAlsARGOS = 'AuchAlsARGOS';
   cE_AuchAlsHTML = 'AuchAlsHTML';
   cE_AuchAlsPDF = 'AuchAlsPDF';
   cE_HTMLBenennung = 'HTML-Benennung';
@@ -413,7 +412,7 @@ const
 
   // virtuelle Settings
   cE_TAN = 'TAN';
-  cE_BAUSTELLE = 'BAUSTELLE';
+  cE_BAUSTELLE_KURZ = 'BAUSTELLE';
   cE_nichtEFRE = 'nichtEFRE';
   cE_TANLENGTH = 4;
 

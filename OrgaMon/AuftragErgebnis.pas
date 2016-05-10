@@ -878,11 +878,11 @@ begin
     with FlexCelXLS do
     begin
 
-      if (Settings.values[cE_SAPQUELLE] <> '') then
+      if (Settings.values[cE_FreieZaehler] <> '') then
       begin
 
         // Freie Zähler laden
-        if FileExists(cAuftragErgebnisPath + Settings.values[cE_SAPQUELLE]) then
+        if FileExists(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler]) then
         begin
 
           // Sparten Umsetzer (im normalen Export-Verzeichnis)
@@ -897,26 +897,26 @@ begin
 
             oNoBlank := true;
             oDistinct := true;
-            insertFromFile(cAuftragErgebnisPath + Settings.values[cE_SAPQUELLE]);
+            insertFromFile(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler]);
 
             FreieZaehlerCol_ZaehlerNummer := colof('Serialnummer');
             if (FreieZaehlerCol_ZaehlerNummer = -1) then
-              raise exception.create(Settings.values[cE_SAPQUELLE] + ': Spalte "Serialnummer" fehlt');
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "Serialnummer" fehlt');
 
             //
             FreieZaehlerCol_MaterialNummer := colof('MaterialNo');
             if (FreieZaehlerCol_MaterialNummer = -1) then
-              raise exception.create(Settings.values[cE_SAPQUELLE] + ': Spalte "MaterialNo" fehlt');
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "MaterialNo" fehlt');
 
             //
             FreieZaehlerCol_Zaehlwerk := colof('ZWrk');
             if (FreieZaehlerCol_Zaehlwerk = -1) then
-              raise exception.create(Settings.values[cE_SAPQUELLE] + ': Spalte "ZWrk" fehlt');
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "ZWrk" fehlt');
 
             //
             FreieZaehlerCol_Zaehlerstand := colof('Stand');
             if (FreieZaehlerCol_Zaehlerstand = -1) then
-              raise exception.create(Settings.values[cE_SAPQUELLE] + ': Spalte "Stand" fehlt');
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "Stand" fehlt');
 
             // Optionale Felder!
             FreieZaehlerCol_Lager := colof('Lager');
@@ -947,7 +947,7 @@ begin
         end
         else
         begin
-          raise exception.create(cAuftragErgebnisPath + Settings.values[cE_SAPQUELLE] + ' fehlt!');
+          raise exception.create(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler] + ' fehlt!');
         end;
 
       end;
@@ -1935,32 +1935,6 @@ begin
 
         end;
 
-        // ARGOS
-        if (Settings.values[cE_AuchAlsARGOS] = cINI_Activate) then
-        begin
-          Oc_Bericht := TStringList.create;
-          if not(doConversion(Content_Mode_ARGOS, OutFName, Oc_Bericht)) then
-          begin
-            inc(ErrorCount);
-            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
-            Log(Oc_Bericht, BAUSTELLE_R);
-            break;
-          end
-          else
-          begin
-            Files.add(conversionOutFName);
-            for n := 0 to pred(Oc_Bericht.count) do
-              if (pos('(RID=', Oc_Bericht[n]) > 0) then
-              begin
-                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
-                if (FailL.indexof(FAIL_R) = -1) then
-                  FailL.add(FAIL_R);
-                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
-              end;
-          end;
-          Oc_Bericht.free;
-        end;
-
         // IDOC
         if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
@@ -2447,7 +2421,7 @@ begin
 
       // defaults!
       Settings.values[cE_BAUSTELLE_R] := FieldByName('RID').AsString;
-      Settings.values[cE_BAUSTELLE] := BaustelleKurz;
+      Settings.values[cE_BAUSTELLE_KURZ] := BaustelleKurz;
       if (Settings.values[cE_Datenquelle] = '') then
         Settings.values[cE_Datenquelle] := Settings.values[cE_BAUSTELLE_R];
       if (Settings.values['Q12'] = '') then
@@ -2649,7 +2623,7 @@ begin
                   values['FEHLER'] := inttostr(Stat_Fail.count);
                   values['ABLAGE'] := nextp(Settings.values[cE_FTPUSER], '\', 0);
                   values['TAN'] := Settings.values[cE_TAN];
-                  values['BAUSTELLE'] := Settings.values[cE_BAUSTELLE];
+                  values['BAUSTELLE'] := Settings.values[cE_BAUSTELLE_KURZ];
 
                 end;
 
@@ -2758,7 +2732,7 @@ begin
   result :=
   { } cAuftragErgebnisPath +
   { } e_r_BaustellenPfad(Settings) + '\' +
-  { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE] + '.csv';
+  { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE_KURZ] + '.csv';
 end;
 
 procedure TFormAuftragErgebnis.SetDefaults(ResetRadioButton: boolean);

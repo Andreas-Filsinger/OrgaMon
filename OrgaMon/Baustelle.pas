@@ -3086,7 +3086,7 @@ begin
   EnsureEntry(cE_VERZEICHNIS, IB_Memo5.Lines);
   EnsureEntry(cE_ZIPPASSWORD, IB_Memo5.Lines);
   EnsureEntry(cE_XLSVorlage, IB_Memo5.Lines);
-  EnsureEntry(cE_SAPQUELLE, IB_Memo5.Lines);
+  EnsureEntry(cE_FreieZaehler, IB_Memo5.Lines);
   EnsureEntry(cE_SAPReihenfolge, IB_Memo5.Lines);
   EnsureEntry(cE_SpaltenAlias, IB_Memo5.Lines);
   EnsureEntry(cE_ZusaetzlicheZips, IB_Memo5.Lines);
@@ -3101,7 +3101,6 @@ begin
   EnsureEntry(cE_AuchAlsXLS, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsXLSunmoeglich, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsKK22, IB_Memo5.Lines);
-  EnsureEntry(cE_AuchAlsARGOS, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsHTML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsPDF, IB_Memo5.Lines);
   EnsureEntry(cE_HTMLBenennung, IB_Memo5.Lines);
