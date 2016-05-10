@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -76,14 +76,13 @@ var
 implementation
 
 uses
-  globals, Datenbank,
-  Funktionen_Basis,
-  Funktionen_Beleg,
-  Funktionen_Auftrag,
-  CareTakerClient,
+  globals, wanfix32, CareTakerClient,
+  Datenbank,
+
+  Funktionen_Basis,  Funktionen_Beleg,  Funktionen_Auftrag,
   AuftragMobil, AuftragErgebnis, OLAPArbeitsplatz,
   BaseUpdate, Datensicherung, dbOrgaMon,
-  wanfix32,
+
   OLAP, Baustelle, BestellArbeitsplatz, AuftragImport, main;
 
 {$R *.DFM}
@@ -129,8 +128,6 @@ begin
 
           case n of
             0:
-              FormAuftragMobil.ReadMobil;
-            1:
               begin
                 // Die neuesten Fotos laden
                 e_w_GrabFotos;
@@ -138,6 +135,8 @@ begin
                 // Bildumbenennung mit aktuellem Wechseldatum klappt
                 e_r_Sync_AuftraegeAlle;
               end;
+            1:
+              FormAuftragMobil.ReadMobil;
             2:
               FormAuftragErgebnis.UploadNewTANS(-1,false);
             3:

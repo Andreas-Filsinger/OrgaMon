@@ -140,7 +140,8 @@ function ExtractSegmentBetween(const InpStr, prefix, postfix: string; Upper: boo
 function StrFilter(s, Filter: string; DeleteHits: boolean = false): string; overload;
 function StrFilter(s, Filter: string; Hit: char): string; overload;
 function StrFilter(s: string; Filter: TSysCharSet; DeleteHits: boolean = false): string; Overload;
-function noblank(const InpStr: string): string;
+function noblank(const InpStr: string): string; overload;
+procedure noblank(const sl: TStringList); overload;
 function noDoubleBlank(s: string): string;
 
 function nosemi(const s: string): string;
@@ -217,7 +218,7 @@ function rNextP(var s: string; Delimiter: string): string;
 function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string): string;
 function FieldCount(const s: string; Delimiter: char): integer;
 function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
-function Split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
+function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boolean = false): TStringList;
 procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
 // String-List Utils
@@ -2036,7 +2037,7 @@ begin
     result := def;
 end;
 
-function noblank(const InpStr: string): string;
+function noblank(const InpStr: string): string; overload;
 var
   i: integer;
 begin
@@ -2049,6 +2050,18 @@ begin
       break;
     delete(result, i, 1);
   until false;
+end;
+
+procedure noblank(const sl: TStringList); overload;
+var
+  n: integer;
+begin
+  for n := pred(sl.Count) downto 0 do
+  begin
+    sl[n] := noblank(sl[n]);
+    if length(sl[n]) = 0 then
+      sl.delete(n);
+  end;
 end;
 
 function noDoubleBlank(s: string): string;
@@ -4882,7 +4895,7 @@ end;
 // split('') = ['']
 // split(';') = ['','']
 
-function Split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
+function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim : boolean = false): TStringList;
 var
   QuoteLength: integer;
   QuoteEnd: integer;
@@ -4939,6 +4952,8 @@ begin
       end;
     until false;
   end;
+  if Trim then
+   noblank(result);
 end;
 
 // values['Name'] := '' delete this Line completely - i dont want this
