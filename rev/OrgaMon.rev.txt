@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.179 (31.05.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Lagerdatei: Zählernummer muss 100% übereinstimmen
+
+ Wegfall: Lager: Entfernen aller Buchstaben aus der Serialnummer, will man das alte Verhalten erreichen,
+          so setzt man ZählerNummerNeuZeichen=0123456789
+
 Rev 8.178 (29.04.16) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.243" neu compiliert!
