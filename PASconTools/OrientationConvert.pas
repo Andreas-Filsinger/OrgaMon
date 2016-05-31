@@ -10092,7 +10092,7 @@ var
 
     OptTaet('1. gescheiterter Versuch', x(r, 'V1'), r);
     OptTaet('2. gescheiterter Versuch', x(r, 'V2'), r);
-    taet('Unterschrift Monteur', x(r, 'MonteurText') + '(' + x(r, 'MonteurHandy') + ')', r);
+    OptTaet('Unterschrift Monteur', x(r, 'MonteurText') + '(' + x(r, 'MonteurHandy') + ')', r);
 
     OptTaet('Bemerkung', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
 

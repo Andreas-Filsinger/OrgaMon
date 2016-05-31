@@ -306,10 +306,16 @@ var
     ZaehlerNummernNeu.sort;
   end;
 
-// EFRE- Filter für "Zählernummer Neu"
   function EFRE_Filter_ZaehlerNummerNeu(s: string): string;
+  var
+    _Filter: string;
   begin
-    result := StrFilter(s, '0123456789');
+    // EFRE- Filter für "Zählernummer Neu"
+    _Filter := Settings.values[cE_ZaehlerNummerNeuZeichen];
+    if (_Filter <> '') then
+      result := StrFilter(s, _Filter)
+    else
+      result := s;
   end;
 
 //
