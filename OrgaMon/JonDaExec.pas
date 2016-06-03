@@ -113,8 +113,6 @@ type
     TabCounter: integer;
     sSendenLog: TStringList;
 
-    function oldInfrastructure: boolean;
-
   public
     // ehemals ./Statistik Pfad
     pAppTextPath: string;
@@ -248,6 +246,10 @@ type
     class function toBild(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
     function detectGeraeteNummer(sPath: string): string;
+
+    // PFAD-Funktionen
+    function MyDataBasePath2: string;
+    function oldInfrastructure: boolean;
 
     // TOOL: Dateinamen
     function UpFName(Trn: string): string;
@@ -4666,6 +4668,14 @@ begin
   sInput.free;
   sOutput.free;
   sMigrationsVorlage.free;
+end;
+
+function TJonDaExec.MyDataBasePath2: string;
+begin
+  if oldInfrastructure then
+    result := MyProgramPath + 'Fotos\'
+  else
+    result := MyProgramPath + cDBPath;
 end;
 
 function TJonDaExec.detectGeraeteNummer(sPath: string): string;

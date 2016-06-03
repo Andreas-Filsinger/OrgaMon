@@ -634,7 +634,8 @@ var
     end;
 
     // Passwort
-    SMTP.AuthType := satSASL;
+    // SMTP.AuthType := satSASL;
+    SMTP.AuthType := DEF_SMTP_AUTH;
     IdUserPassProvider := TIdUserPassProvider.create(SMTP);
     IdUserPassProvider.Username := SMTP.Username;
     IdUserPassProvider.Password := SMTP.Password;

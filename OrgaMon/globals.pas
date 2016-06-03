@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.179; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.181; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -407,7 +407,7 @@ const
   cE_InternInfos = 'InternInfos'; // Solle ALLE InternInfos ausgegeben werden?
   cE_verboteneSpalten = 'VerboteneSpalten'; // Diese Spalten nicht ausgeben
 
-  // Nach dem 'commit' noch eine Nacharbeitung
+  // Einstellungs-Postfix für den Foto Kontext
   cE_Postfix_Foto = '-Foto';
 
   // virtuelle Settings
@@ -555,11 +555,12 @@ const
   cFotoService_BaustelleFName = 'baustelle.csv';
   cFotoService_BaustelleManuellFName = 'baustelle-manuell.csv';
   // Für wartende "-Neu" Bilddateien
-  cHeader_UmbenennungUnvollstaendig = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
-  cFotoUmbenennungAusstehend = 'FotoService-Umbenennung-Ausstehend.csv';
-  cFotoAblage = 'ablage.csv';
+  cFotoService_UmbenennungAusstehendHeader = 'DATEINAME_ORIGINAL;DATEINAME_AKTUELL;RID;GERAETENO;BAUSTELLE;MOMENT';
+  cFotoService_UmbenennungAusstehendFName = 'FotoService-Umbenennung-Ausstehend.csv';
+  cFotoService_AblageFName = 'ablage.csv';
   cFotoService_FTPBackupSubPath = 'Fotos\';
   cFotoService_NeuPlatzhalter = 'Neu';
+  cFotoService_IdFName = 'Backup-Service.ini';
 
   // Creator
   // =======

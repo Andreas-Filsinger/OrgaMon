@@ -506,7 +506,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } MyProgramPath + cDBPath + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } Jonda.MyDataBasePath2 + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end
