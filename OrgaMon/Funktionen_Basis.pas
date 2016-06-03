@@ -58,9 +58,9 @@ procedure e_w_PersonEnsurePassword(PERSON_R: integer);
 function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 
 { Baustelle }
-function e_r_ParameterFoto(sl: TStringList; p: string): string;
-function e_r_BaustellenPfadFoto(Values: TStrings): String;
-function e_r_BaustellenPfad(Values: TStrings): String;
+function e_r_ParameterFoto(settings: TStringList; p: string): string;
+function e_r_BaustellenPfadFoto(settings: TStrings): String;
+function e_r_BaustellenPfad(settings: TStrings): String;
 
 function e_w_Medium: string;
 function e_x_ensureMedium(Name: string): TDOM_Reference;
@@ -782,35 +782,37 @@ begin
   end;
 end;
 
-function e_r_ParameterFoto(sl: TStringList; p: string): string;
+function e_r_ParameterFoto(settings: TStringList; p: string): string;
 begin
-  result := sl.Values[p + cE_Postfix_Foto];
+  result := settings.Values[p + cE_Postfix_Foto];
   if (result = '') then
-    result := sl.Values[p];
+    result := settings.Values[p];
 end;
 
-function e_r_BaustellenPfad(Values: TStrings): String;
+function e_r_BaustellenPfad(settings: TStrings): String;
 begin
-  result := Values.Values[cE_VERZEICHNIS];
+  result := settings.Values[cE_VERZEICHNIS];
   if (result = '') then
-    result := Values.Values[cE_FTPUSER];
+    result := settings.Values[cE_FTPUSER];
 end;
 
-function e_r_BaustellenPfadFoto(Values: TStrings): String;
+function e_r_BaustellenPfadFoto(settings: TStrings): String;
 begin
   repeat
 
-    result := Values.Values[cE_VERZEICHNIS + cE_Postfix_Foto];
-    if (result = '') then
-      result := Values.Values[cE_FTPUSER + cE_Postfix_Foto]
-    else
+    result := settings.Values[cE_VERZEICHNIS + cE_Postfix_Foto];
+    if (result <> '') then
       break;
 
-    result := Values.Values[cE_VERZEICHNIS];
-    if (result = '') then
-      result := Values.Values[cE_FTPUSER]
-    else
+    result := settings.Values[cE_FTPUSER + cE_Postfix_Foto];
+    if (result <> '') then
       break;
+
+    result := settings.Values[cE_VERZEICHNIS];
+    if (result <> '') then
+      break;
+
+    result := settings.Values[cE_FTPUSER]
 
   until true;
 end;

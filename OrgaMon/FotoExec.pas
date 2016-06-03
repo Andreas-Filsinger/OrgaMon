@@ -112,8 +112,9 @@ type
     // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "TextPath" mit Default
     pAppTextPath: string;
 
-    // Verzeichnisse
+    // Verzeichnisse errechnet
     function MyDataBasePath: string;
+    function MyDataBasePath2: string; // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
     function MySyncPath: string;
 
     // Dateinamen
@@ -234,27 +235,27 @@ begin
     workSync;
 
     tBAUSTELLE := tsTable.Create;
-    tBAUSTELLE.insertfromFile(MyDataBasePath + cFotoService_BaustelleFName);
-    if FileExists(MyDataBasePath + cFotoService_BaustelleManuellFName) then
+    tBAUSTELLE.insertfromFile(MyDataBasePath2 + cFotoService_BaustelleFName);
+    if FileExists(MyDataBasePath2 + cFotoService_BaustelleManuellFName) then
     begin
       with tBAUSTELLE do
       begin
-        insertfromFile(MyDataBasePath + cFotoService_BaustelleManuellFName);
+        insertfromFile(MyDataBasePath2 + cFotoService_BaustelleManuellFName);
         for r := RowCount downto 1 do
           if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
-        SaveToFile(MyDataBasePath + 'baustelle-alle.csv');
+        // SaveToFile(MyBaustellePath + 'baustelle-alle.csv');
       end;
     end;
 
     tABLAGE := tsTable.Create;
-    tABLAGE.insertfromFile(MyDataBasePath + cFotoAblage);
+    tABLAGE.insertfromFile(MyDataBasePath + cFotoService_AblageFName);
 
     // Datei der Wartenden sicherstellen, Header anlegen
-    if not(FileExists(MyDataBasePath + cFotoUmbenennungAusstehend)) then
+    if not(FileExists(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName)) then
       AppendStringsToFile(
-        { } cHeader_UmbenennungUnvollstaendig,
-        { } MyDataBasePath + cFotoUmbenennungAusstehend);
+        { } cFotoService_UmbenennungAusstehendHeader,
+        { } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
     // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
     sDirs := TStringList.Create;
@@ -326,13 +327,13 @@ begin
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
 
     // die ganzen Pfade
-    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\');
+    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\JonDaServer\');
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet');
-    DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet\');
+    DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
   end;
   MyIni.Free;
 
@@ -360,6 +361,14 @@ begin
   result := pAppServicePath + cDBPath;
 end;
 
+function TFotoExec.MyDataBasePath2: string;
+begin
+  if JonDaExec.oldInfrastructure then
+    result := DiagnosePath
+  else
+    result := MyDataBasePath;
+end;
+
 function TFotoExec.MySyncPath: string;
 begin
   result := pAppServicePath + cSyncPath;
@@ -369,7 +378,10 @@ function TFotoExec.GEN_ID: integer;
 var
   mIni: TIniFile;
 begin
-  mIni := TIniFile.Create(MyDataBasePath + 'Backup-Service.ini');
+  if JonDaExec.oldInfrastructure then
+    mIni := TIniFile.Create(pFTPPath + cFotoService_IdFName)
+  else
+    mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
   with mIni do
   begin
     result := StrToInt(ReadString('System', 'Sequence', '0'));
@@ -393,6 +405,7 @@ var
   d, File_Date: TANFiXDate;
   s, File_Seconds: TANFiXTime;
   FName: string;
+  DATEINAME_AKTUELL: string;
   ID: string;
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
@@ -613,13 +626,13 @@ begin
     ensureGlobals;
 
     bOrgaMon := TBLager.Create;
-    bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+    bOrgaMon.Init(MyDataBasePath2 + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
     bOrgaMon.BeginTransaction(now);
 
-    if FileExists(MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    if FileExists(MyDataBasePath2 + '_AUFTRAG+TS' + cBL_FileExtension) then
     begin
       bOrgaMonOld := TBLager.Create;
-      bOrgaMonOld.Init(MyDataBasePath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+      bOrgaMonOld.Init(MyDataBasePath2 + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
       bOrgaMonOld.BeginTransaction(now);
     end
     else
@@ -855,16 +868,21 @@ begin
               { } DiagnosePath + cFotoTransaktionenFName);
             LastLogWasTimeStamp := false;
 
+            // aktueller Dateiname, wo er im Moment liegt
+            DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
+            if JonDaExec.oldInfrastructure then
+              DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
+
             // Auszeichnen, wenn die Umbenennung vorläufig ist
             if not(UmbenennungAbgeschlossen) then
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
-                { DATEINAME_AKTUELL } FotoAblage_PFAD + FotoDateiName + ';' +
+                { DATEINAME_AKTUELL } DATEINAME_AKTUELL + ';' +
                 { RID } InttoStr(AUFTRAG_R) + ';' +
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } ';' +
                 { MOMENT } DatumLog,
-                { Dateiname } MyDataBasePath + cFotoUmbenennungAusstehend);
+                { Dateiname } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
@@ -990,7 +1008,7 @@ begin
   begin
 
     // load+sort
-    insertfromFile(MyDataBasePath + cFotoUmbenennungAusstehend);
+    insertfromFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
     // init Global Stat
     Stat_Anfangsbestand := RowCount;
@@ -1020,6 +1038,8 @@ begin
     begin
 
       DATEINAME_AKTUELL := readCell(r, col_DATEINAME_AKTUELL);
+      if JonDaExec.oldInfrastructure then
+        DATEINAME_AKTUELL := 'W:\' + DATEINAME_AKTUELL;
 
       if (StrToIntDef(readCell(r, col_MOMENT), ccMaxDate) < MomentTimeout) then
       begin
@@ -1059,7 +1079,7 @@ begin
   end;
 
   bOrgaMon := TBLager.Create;
-  bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+  bOrgaMon.Init(MyDataBasePath2 + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
   bOrgaMon.BeginTransaction(now);
 
   for r := WARTEND.RowCount downto 1 do
@@ -1179,6 +1199,8 @@ begin
 
     // Umbenennung starten
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+    if JonDaExec.oldInfrastructure then
+      FNameAlt := 'W:\' + FNameAlt;
     FNameNeu := FNameAlt;
 
     // das letzte "Neu" am Ende des Dateinamens zählt
@@ -1276,7 +1298,7 @@ begin
 
     // save WARTEND / save as html
     WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
-    WARTEND.SaveToFile(MyDataBasePath + cFotoUmbenennungAusstehend);
+    WARTEND.SaveToFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
     // LOG
     if (Stat_Umbenannt > 0) then
@@ -1643,7 +1665,7 @@ begin
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
-  WARTEND.insertfromFile(MyDataBasePath + cFotoUmbenennungAusstehend);
+  WARTEND.insertfromFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
   //
   if (pDatum = '') then
@@ -1816,11 +1838,11 @@ begin
       // compare + copy
       if not(FileCompare(
         { } MySyncPath + cFotoService_BaustelleFName,
-        { } MyDataBasePath + cFotoService_BaustelleFName)) then
+        { } MyDataBasePath2 + cFotoService_BaustelleFName)) then
       begin
         FileVersionedCopy(
           { } MySyncPath + cFotoService_BaustelleFName,
-          { } MyDataBasePath + cFotoService_BaustelleFName);
+          { } MyDataBasePath2 + cFotoService_BaustelleFName);
         Log(cINFOText + ' neue ' + cFotoService_BaustelleFName);
       end;
 

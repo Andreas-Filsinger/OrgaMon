@@ -1227,7 +1227,7 @@ begin
 
   //
   WARTEND := TsTable.create;
-  WARTEND.insertfromFile(MyProgramPath + cDBPath + cFotoUmbenennungAusstehend);
+  WARTEND.insertfromFile(JonDaX.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
   // init
   sRoot := 'W:\';

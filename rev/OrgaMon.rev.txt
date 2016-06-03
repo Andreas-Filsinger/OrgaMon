@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.181 (03.06.16) Andreas Filsinger
+
+ Neu: Service: Foto: lauffähig auf alter Infrastruktur "JonDaServer"
+
+Rev 8.180 (03.06.16) Andreas Filsinger
+
+ Neu: eMail: AuthType von "satSASL" auf "DEF_SMTP_AUTH" geändert
+
 Rev 8.179 (31.05.16) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: Lagerdatei: Zählernummer muss 100% übereinstimmen

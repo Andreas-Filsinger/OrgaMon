@@ -894,7 +894,7 @@ begin
   end;
   if FileCopy(
     { } Edit9.Text + Trn + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
-    { } MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    { } MyFotoExec.MyDataBasePath2 + '_AUFTRAG+TS' + cBL_FileExtension) then
     Label11.Caption := 'OK';
   EndHourGlass;
 end;
@@ -1011,12 +1011,12 @@ begin
     // Delete Entry
     with WARTEND do
     begin
-      insertfromFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
+      insertfromFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
       r := locate('RID', InttoStr(AUFTRAG_R));
       if (r = -1) then
         break;
       del(r);
-      SaveToFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
+      SaveToFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
     end;
 
   until true;
@@ -1225,7 +1225,7 @@ begin
               { GERAETENO } GeraeteNo + ';' +
               { BAUSTELLE } ';' +
               { MOMENT } DatumLog,
-              { Dateiname } MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
+              { Dateiname } MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
             ListBox3.DeleteSelected;
           end;
@@ -1337,7 +1337,7 @@ var
   sWartend: TStringList;
 begin
   sWartend := TStringList.Create;
-  sWartend.LoadFromFile(MyFotoExec.MyDataBasePath + cFotoUmbenennungAusstehend);
+  sWartend.LoadFromFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
   ListBox6.Items.Assign(sWartend);
   sWartend.Free;
 end;

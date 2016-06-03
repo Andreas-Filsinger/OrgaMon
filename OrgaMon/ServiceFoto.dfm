@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet3
+    ActivePage = TabSheet9
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -136,7 +136,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 145
         Height = 21
         TabOrder = 9
-        Text = 'gwe'
+        Text = 'sewa'
       end
       object Edit15: TEdit
         Left = 48
@@ -144,7 +144,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 145
         Height = 21
         TabOrder = 10
-        Text = 'W:\gwe-services\dat\'
+        Text = 'W:\JonDaServer\'
       end
       object Button17: TButton
         Left = 216
