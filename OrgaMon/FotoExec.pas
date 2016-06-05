@@ -82,7 +82,8 @@ type
     tABLAGE: tsTable;
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
-    BackupDir: string; // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
+    BackupDir: string;
+    // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
 
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
@@ -114,7 +115,8 @@ type
 
     // Verzeichnisse errechnet
     function MyDataBasePath: string;
-    function MyDataBasePath2: string; // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
+    function MyDataBasePath2: string;
+    // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
     function MySyncPath: string;
 
     // Dateinamen
@@ -332,7 +334,8 @@ begin
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet\');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath',
+      'W:\orgamon-mob\unverarbeitet\');
     DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
   end;
   MyIni.Free;
@@ -605,7 +608,8 @@ begin
 
     if FullSuccess then
     begin
-      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' + sFiles[n])) then
+      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' +
+        sFiles[n])) then
       begin
         Log(
           { } cERRORText + ' 598: ' +
@@ -692,7 +696,8 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo +
+          cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -713,7 +718,8 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
+        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) +
+          ' konnte nicht gefunden werden!');
         break;
       end;
 
@@ -733,7 +739,8 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
+                cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -756,7 +763,8 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen :=
+              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -790,7 +798,8 @@ begin
 
             if (length(FotoZiel) < 3) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Keine Internet-Ablage definiert');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle +
+                ': Keine Internet-Ablage definiert');
               break;
             end;
 
@@ -805,16 +814,16 @@ begin
             r := tABLAGE.locate('NAME', FotoZiel { + } );
             if (r = -1) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Die Ablage ist nicht bekannt');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
+                FotoZiel + '": Die Ablage ist nicht bekannt');
               break;
             end;
 
             FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
             if not(DirExists(FotoAblage_PFAD)) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
-                '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
+                FotoZiel + '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
               break;
             end;
 
@@ -825,11 +834,11 @@ begin
               if not(FileExists(FotoAblage_PFAD + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
-                  '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
+                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -1046,8 +1055,9 @@ begin
         del(r);
         inc(Stat_ZuAlt);
         Log(
-          { } cWARNINGText + ' 1012: ' +
-          { } 'gebe ' + DATEINAME_AKTUELL + ' auf, da es älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
+          { } cWARNINGText + ' 1049: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie älter als ' +
+          InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
         continue;
       end;
 
@@ -1056,8 +1066,8 @@ begin
         del(r);
         inc(Stat_Verschwunden);
         Log(
-          { } cWARNINGText + ' 1023: ' +
-          { } 'gebe ' + readCell(r, col_DATEINAME_AKTUELL) + ' auf, da die Datei verschwunden ist');
+          { } cWARNINGText + ' 1059: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie verschwunden ist');
         continue;
       end;
 
@@ -1066,16 +1076,14 @@ begin
         del(r);
         inc(Stat_Doppelt);
         Log(
-          { } cWARNINGText + ' 1040: ' +
-          { } 'gebe Item[' + InttoStr(r) + ']=' + DATEINAME_AKTUELL + ' auf, da er Eintrag doppelt ist');
+          { } cWARNINGText + ' 1069: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da er Eintrag doppelt ist');
         continue;
-
       end;
 
       slAKTUELL.add(DATEINAME_AKTUELL);
     end;
     slAKTUELL.Free;
-
   end;
 
   bOrgaMon := TBLager.Create;
@@ -1343,6 +1351,8 @@ var
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
   WARTEND: tsTable;
+  col_DATEINAME_AKTUELL: integer;
+
   Col_FTP_Benutzer: integer;
   Col_ZIPPASSWORD: integer;
   MovedToDay: int64;
@@ -1360,6 +1370,7 @@ var
     FotosSequence: integer;
     FotosAbzug: boolean;
     sOldZips: TStringList;
+    DATEINAME_AKTUELL: string;
   begin
     Pending := false;
     sPics := TStringList.Create;
@@ -1379,8 +1390,14 @@ var
 
       // reduziere um "wartende" Bilder
       for m := pred(sPics.count) downto 0 do
-        if (WARTEND.locate('DATEINAME_AKTUELL', Ablage_PFAD + sPics[m]) <> -1) then
+      begin
+        DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
+        if JonDaExec.oldInfrastructure then
+          DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
+
+        if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
           sPics.Delete(m);
+      end;
       if (sPics.count = 0) then
         break;
 
@@ -1433,19 +1450,19 @@ var
           if sOldZips.count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)],
+              'Fotos-', '.zip'), -1);
           end;
         end;
-
-        if FotosSequence < 0 then
+        if (FotosSequence < 0) then
           FotosSequence := 0;
-
         inc(FotosSequence);
       end;
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+        '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1469,7 +1486,8 @@ var
         for m := 0 to pred(sPics.count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
+          '.zip', '.');
         if (zip(
           { } sPics,
           { } Ablage_PFAD +
@@ -1561,8 +1579,8 @@ var
           if sOldZips.count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Wechselbelege-',
-              '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)],
+              'Wechselbelege-', '.zip'), -1);
           end;
         end;
 
@@ -1574,7 +1592,8 @@ var
       mIni.Free;
 
       // Archivieren
-      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence,
+        cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sHTMLSs,
         { } Ablage_PFAD +
@@ -1666,6 +1685,7 @@ begin
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
   WARTEND.insertfromFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
+  col_DATEINAME_AKTUELL := WARTEND.colof('DATEINAME_AKTUELL');
 
   //
   if (pDatum = '') then
