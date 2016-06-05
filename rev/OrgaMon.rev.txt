@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.182 (05.06.16) Andreas Filsinger
+
+ Bug: Service: Foto: Exception bei Fehlermedlung "Datei weg"
+ Bug: Service: Foto: Exception bei Fehlermeldung "Datei doppelt"
+ Bug: Service: Foto: Ablage: Alte Infrastruktur: "-Neu" Bilder wurden ins tägliche Zip verfrachtet
+
 Rev 8.181 (03.06.16) Andreas Filsinger
 
  Neu: Service: Foto: lauffähig auf alter Infrastruktur "JonDaServer"
