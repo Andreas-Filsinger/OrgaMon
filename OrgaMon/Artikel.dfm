@@ -954,7 +954,7 @@ object FormArtikel: TFormArtikel
     ExplicitTop = 325
   end
   object SpeedButton16: TSpeedButton
-    Left = 386
+    Left = 363
     Top = 2
     Width = 22
     Height = 22
@@ -1035,6 +1035,43 @@ object FormArtikel: TFormArtikel
     Caption = '&GEMA Werknummer'
     FocusControl = IB_Edit3
     ExplicitTop = 366
+  end
+  object SpeedButton22: TSpeedButton
+    Left = 230
+    Top = 2
+    Width = 21
+    Height = 22
+    Hint = 'Neuanlage'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000DC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC
+      00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FF21FF0021FF0021FF00DC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF21FF0021
+      FF0021FF00DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FF21FF0021FF0021FF00DC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF21FF0021
+      FF0021FF00DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      21FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF
+      00DC00FFDC00FFDC00FFDC00FFDC00FF21FF0021FF0021FF0021FF0021FF0021
+      FF0021FF0021FF0021FF0021FF0021FF00DC00FFDC00FFDC00FFDC00FFDC00FF
+      21FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF0021FF
+      00DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF21FF0021
+      FF0021FF00DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FF21FF0021FF0021FF00DC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF21FF0021
+      FF0021FF00DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FF21FF0021FF0021FF00DC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC
+      00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF
+      DC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00
+      FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC
+      00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FFDC00FF}
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton22Click
   end
   object IB_Grid1: TIB_Grid
     Left = 1
@@ -2024,7 +2061,7 @@ object FormArtikel: TFormArtikel
     VisibleButtons = [nbFirst, nbLast]
   end
   object IB_UpdateBar1: TIB_UpdateBar
-    Left = 272
+    Left = 254
     Top = 2
     Width = 108
     Height = 22
@@ -2045,15 +2082,6 @@ object FormArtikel: TFormArtikel
     DataField = 'NUMERO'
     DataSource = IB_DataSource1
   end
-  object Button4: TButton
-    Left = 230
-    Top = 2
-    Width = 41
-    Height = 22
-    Caption = 'Neu'
-    TabOrder = 21
-    OnClick = Button4Click
-  end
   object Button16: TButton
     Left = 557
     Top = 2
@@ -2061,7 +2089,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Caption = 'alle anzeigen'
     Enabled = False
-    TabOrder = 22
+    TabOrder = 21
     OnClick = Button16Click
   end
   object Button11: TButton
@@ -2073,7 +2101,7 @@ object FormArtikel: TFormArtikel
     Caption = '&O'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 23
+    TabOrder = 22
     OnClick = Button11Click
   end
   object Button14: TButton
@@ -2091,7 +2119,7 @@ object FormArtikel: TFormArtikel
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 24
+    TabOrder = 23
     OnClick = Button14Click
   end
   object Button12: TButton
@@ -2103,7 +2131,7 @@ object FormArtikel: TFormArtikel
     Caption = '&V'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 25
+    TabOrder = 24
     OnClick = Button12Click
   end
   object Button6: TButton
@@ -2112,7 +2140,7 @@ object FormArtikel: TFormArtikel
     Width = 22
     Height = 22
     Caption = '&K'
-    TabOrder = 26
+    TabOrder = 25
     OnClick = Button6Click
   end
   object Button8: TButton
@@ -2124,7 +2152,7 @@ object FormArtikel: TFormArtikel
     Caption = '&J'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 27
+    TabOrder = 26
     OnClick = Button8Click
   end
   object Button10: TButton
@@ -2136,7 +2164,7 @@ object FormArtikel: TFormArtikel
     Caption = '&M'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 28
+    TabOrder = 27
     OnClick = Button10Click
   end
   object Button2: TButton
@@ -2148,7 +2176,7 @@ object FormArtikel: TFormArtikel
     Caption = '&P'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 29
+    TabOrder = 28
     OnClick = Button2Click
   end
   object Button5: TButton
@@ -2160,7 +2188,7 @@ object FormArtikel: TFormArtikel
     Caption = 'Shop'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 30
+    TabOrder = 29
     OnClick = Button5Click
   end
   object Button17: TButton
@@ -2170,7 +2198,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'im Web-Shop'
-    TabOrder = 31
+    TabOrder = 30
     OnClick = Button17Click
   end
   object Button20: TButton
@@ -2180,7 +2208,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'S'
-    TabOrder = 32
+    TabOrder = 31
     OnClick = Button20Click
   end
   object IB_Edit3: TIB_Edit

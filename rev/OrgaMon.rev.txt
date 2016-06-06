@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.183 (06.06.16) Andreas Filsinger
+
+ Neu: Artikel: Neuanlage mit neuer Schaltfläche "+"
+
 Rev 8.182 (05.06.16) Andreas Filsinger
 
  Bug: Service: Foto: Exception bei Fehlermedlung "Datei weg"
