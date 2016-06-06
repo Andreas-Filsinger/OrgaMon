@@ -139,7 +139,6 @@ type
     IB_NavigationBar1: TIB_NavigationBar;
     IB_UpdateBar1: TIB_UpdateBar;
     IB_LocateEdit1: TIB_LocateEdit;
-    Button4: TButton;
     Button16: TButton;
     Button11: TButton;
     Button14: TButton;
@@ -214,7 +213,6 @@ type
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
-    procedure Button4Click(Sender: TObject);
     procedure IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
     procedure Button16Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -276,6 +274,7 @@ type
     procedure IB_Query13BeforePrepare(Sender: TIB_Statement);
     procedure Edit4KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton21Click(Sender: TObject);
+    procedure SpeedButton22Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _VERLAG_R: Integer;
@@ -364,26 +363,6 @@ end;
 procedure TFormArtikel.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
 begin
   ReflectArtikelInfo;
-end;
-
-procedure TFormArtikel.Button4Click(Sender: TObject);
-var
-  ARTIKEL_R: Integer;
-begin
-  if FormArtikelNeu.execute then
-  begin
-    BeginHourGlass;
-    ARTIKEL_R := e_w_ArtikelNeu(FormArtikelNeu.SORTIMENT_R);
-    with IB_Query1 do
-    begin
-      close;
-      qSelectOne(IB_Query1);
-      ParamByName('CROSSREF').AsInteger := ARTIKEL_R;
-      Open;
-      Button16.Enabled := true;
-    end;
-    EndHourGlass;
-  end;
 end;
 
 procedure TFormArtikel.Button5Click(Sender: TObject);
@@ -1042,6 +1021,26 @@ begin
   DatensammlerLokal.free;
   DatensammlerGlobal.free;
   EndHourGlass;
+end;
+
+procedure TFormArtikel.SpeedButton22Click(Sender: TObject);
+var
+  ARTIKEL_R: Integer;
+begin
+  if FormArtikelNeu.execute then
+  begin
+    BeginHourGlass;
+    ARTIKEL_R := e_w_ArtikelNeu(FormArtikelNeu.SORTIMENT_R);
+    with IB_Query1 do
+    begin
+      close;
+      qSelectOne(IB_Query1);
+      ParamByName('CROSSREF').AsInteger := ARTIKEL_R;
+      Open;
+      Button16.Enabled := true;
+    end;
+    EndHourGlass;
+  end;
 end;
 
 procedure TFormArtikel.SpeedButton2Click(Sender: TObject);

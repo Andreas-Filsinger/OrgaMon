@@ -1863,7 +1863,7 @@ object FormPerson: TFormPerson
       end
       object Button17: TButton
         Left = 319
-        Top = 59
+        Top = 58
         Width = 130
         Height = 19
         Caption = 'Passwort zuteilen'
