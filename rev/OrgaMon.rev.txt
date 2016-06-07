@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.185 (07.06.16) Andreas Filsinger
+
+ Neu: Import: SAP_Art Erkennung auf Schleupen-Schnittstelle angepasst: +"WZ", +"DSET", +"WSET"
+ Neu: Service: Foto: Abbruch falls Foto-Dateien nicht verschoben werden können
+
+Rev 8.184 (06.06.16) Andreas Filsinger
+
+ Neu: Service: Foto: Ignoriere Socket Exception 10054 beim Schliessen einer FTP Verbindung
+
 Rev 8.183 (06.06.16) Andreas Filsinger
 
  Neu: Artikel: Neuanlage mit neuer Schaltfläche "+"

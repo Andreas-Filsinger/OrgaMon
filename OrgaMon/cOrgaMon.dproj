@@ -76,7 +76,7 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-			<Debugger_RunParams>--foto --Id=sewa +ds</Debugger_RunParams>
+			<Debugger_RunParams>--foto --Id=hef-orgamon +ds</Debugger_RunParams>
 			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
 			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>

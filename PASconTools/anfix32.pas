@@ -2140,22 +2140,22 @@ end;
 
 function FileDelete(const Mask: string): boolean;
 var
-  SelektedFiles: TStringList;
+  SelectedFiles: TStringList;
   PathName: string;
   n: integer;
   ErrorCount: integer;
 begin
   ErrorCount := 0;
-  SelektedFiles := TStringList.create;
-  dir(Mask, SelektedFiles, false);
+  SelectedFiles := TStringList.create;
+  dir(Mask, SelectedFiles, false);
   PathName := ExtractFilePath(Mask);
-  for n := 0 to pred(SelektedFiles.Count) do
+  for n := 0 to pred(SelectedFiles.Count) do
   begin
-    FileSetAttr(PathName + SelektedFiles[n], 0);
-    if not(DeleteFile(PathName + SelektedFiles[n])) then
+    FileSetAttr(PathName + SelectedFiles[n], 0);
+    if not(DeleteFile(PathName + SelectedFiles[n])) then
       inc(ErrorCount);
   end;
-  SelektedFiles.free;
+  SelectedFiles.free;
   result := (ErrorCount = 0);
 end;
 
@@ -2928,7 +2928,7 @@ begin
     if result then
       result := (FileSetAttr(Dest, 0) = 0);
     if result and Move then
-      FileDelete(Mask);
+      result := FileDelete(Mask);
     if result and Touch then
       FileTouch(Dest);
   end

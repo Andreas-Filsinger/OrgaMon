@@ -1497,7 +1497,12 @@ begin
   repeat
 
     // WA = Wasser
-    if (pos('WASSER', Material) > 0) or (pos('QN', Material) > 0) or (Material = 'W') or (Material = 'WA') then
+    if
+    { } (pos('WASSER', Material) > 0) or
+    { } (pos('QN', Material) > 0) or
+    { } (Material = 'W') or
+    { } (Material = 'WA') or
+    { } (Material = 'WZ') then
     begin
       result := 'WA';
       break;
@@ -1524,6 +1529,12 @@ begin
       result := 'D';
       break;
     end;
+    if (Material='DSET') then
+    begin
+      result := 'D';
+      break;
+    end;
+
 
     // WE = Wechselstrom
     if (pos('WECHSEL', Material) > 0) and (pos('STROM', Material) > 0) then
@@ -1542,6 +1553,11 @@ begin
       break;
     end;
     if (pos('220V', Material) > 0) then
+    begin
+      result := 'WE';
+      break;
+    end;
+    if (Material='WSET') then
     begin
       result := 'WE';
       break;
@@ -4501,7 +4517,7 @@ begin
   // erste unscharfe Liste aller betroffenen Baustellen
   RIDs := e_r_sqlm(
     { } 'select RID from BAUSTELLE where ' +
-    { } ' (EXPORT_EINSTELLUNGEN containing '''+cE_FotoBenennung+'=6'') ' +
+    { } ' (EXPORT_EINSTELLUNGEN containing ''' + cE_FotoBenennung + '=6'') ' +
     { } 'order by' +
     { } ' NUMMERN_PREFIX');
 
