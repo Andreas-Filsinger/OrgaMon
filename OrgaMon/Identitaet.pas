@@ -656,7 +656,7 @@ begin
     on E: Exception do
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
-
+  sleep(2000);
 end;
 
 end.

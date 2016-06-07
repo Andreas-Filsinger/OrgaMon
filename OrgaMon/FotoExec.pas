@@ -334,8 +334,7 @@ begin
     pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
     pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath',
-      'W:\orgamon-mob\unverarbeitet\');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet\');
     DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
   end;
   MyIni.Free;
@@ -454,9 +453,13 @@ var
     FNameNeu := pUnverarbeitetPath + ID + '+' + sFiles[m];
 
     // Datei wegsperren, aber nicht löschen!
-    FileMove(
+    if not(FileMove(
       { } FNameAlt,
-      { } FNameNeu);
+      { } FNameNeu)) then
+    begin
+      Log(cERRORText + ' 460: FileMove("' + FNameAlt + '", "' + FNameNeu + '")');
+      Log(cFotoService_AbortTag);
+    end;
 
     // Protokollieren
     AppendStringsToFile(
@@ -608,8 +611,7 @@ begin
 
     if FullSuccess then
     begin
-      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' +
-        sFiles[n])) then
+      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' + sFiles[n])) then
       begin
         Log(
           { } cERRORText + ' 598: ' +
@@ -696,8 +698,7 @@ begin
         end;
 
         // Im aktuellen Auftrag des Monteurs
-        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo +
-          cDATExtension);
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
         try
           reset(fOrgaMonAuftrag);
         except
@@ -718,8 +719,7 @@ begin
         CloseFile(fOrgaMonAuftrag);
         if FoundAuftrag then
           break;
-        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) +
-          ' konnte nicht gefunden werden!');
+        Log(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
         break;
       end;
 
@@ -739,8 +739,7 @@ begin
             with mderecOrgaMon do
             begin
               // Belegung der Foto-Parameter
-              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index,
-                cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
               sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
               // bisheriger Bildparameter
               sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
@@ -763,8 +762,7 @@ begin
 
             // Ergebnis auswerten
             FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
-            UmbenennungAbgeschlossen :=
-              (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
+            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = JonDaExec.active(true));
             sZiel := sFotoResult.Values[cParameter_foto_Ziel];
 
             if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
@@ -798,8 +796,7 @@ begin
 
             if (length(FotoZiel) < 3) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle +
-                ': Keine Internet-Ablage definiert');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Keine Internet-Ablage definiert');
               break;
             end;
 
@@ -814,16 +811,16 @@ begin
             r := tABLAGE.locate('NAME', FotoZiel { + } );
             if (r = -1) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
-                FotoZiel + '": Die Ablage ist nicht bekannt');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                '": Die Ablage ist nicht bekannt');
               break;
             end;
 
             FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
             if not(DirExists(FotoAblage_PFAD)) then
             begin
-              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' +
-                FotoZiel + '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
+              Log(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
               break;
             end;
 
@@ -834,11 +831,11 @@ begin
               if not(FileExists(FotoAblage_PFAD + '\' + FotoDateiNameVerfuegbar)) then
                 break;
               if (i = 1) then
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('.', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg'
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg'
               else
-                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1,
-                  revpos('-', FotoDateiNameVerfuegbar) - 1) + '-' + InttoStr(i) + '.jpg';
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg';
               inc(i);
             until false;
 
@@ -1056,8 +1053,7 @@ begin
         inc(Stat_ZuAlt);
         Log(
           { } cWARNINGText + ' 1049: ' +
-          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie älter als ' +
-          InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
         continue;
       end;
 
@@ -1279,6 +1275,11 @@ begin
 
         WARTEND.del(r);
         inc(Stat_Umbenannt);
+      end
+      else
+      begin
+        Log(cERRORText + ' 1280: FileMove("' + FNameAlt + '", "' + FNameNeu + '")');
+        Log(cFotoService_AbortTag);
       end;
     end;
   end;
@@ -1450,8 +1451,7 @@ var
           if sOldZips.count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)],
-              'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Fotos-', '.zip'), -1);
           end;
         end;
         if (FotosSequence < 0) then
@@ -1461,8 +1461,7 @@ var
       mIni.Free;
 
       // Archivieren in Fotos-nnnn.zip
-      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
-        '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sPics,
         { } Ablage_PFAD +
@@ -1486,8 +1485,7 @@ var
         for m := 0 to pred(sPics.count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
-        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) +
-          '.zip', '.');
+        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
         if (zip(
           { } sPics,
           { } Ablage_PFAD +
@@ -1579,8 +1577,8 @@ var
           if sOldZips.count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)],
-              'Wechselbelege-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Wechselbelege-',
+              '.zip'), -1);
           end;
         end;
 
@@ -1592,8 +1590,7 @@ var
       mIni.Free;
 
       // Archivieren
-      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence,
-        cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
       if (zip(
         { } sHTMLSs,
         { } Ablage_PFAD +
@@ -1635,7 +1632,9 @@ var
       if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
       begin
         CheckCreateDir(BackupDir + Ablage_NAME);
-        if FileMove(Ablage_PFAD + sZips[m], BackupDir + Ablage_NAME + '\' + sZips[m]) then
+        if FileMove(
+         {} Ablage_PFAD + sZips[m],
+         {} BackupDir + Ablage_NAME + '\' + sZips[m]) then
         begin
           inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
           AblageLog(Ablage_PFAD + sZips[m], BackupDir);
@@ -1643,9 +1642,10 @@ var
         else
         begin
           Log(cERRORText +
-            { } ' FileMove("' +
-            { } Ablage_PFAD + sZips[m] + '","' +
+            { } ' 1645: FileMove("' +
+            { } Ablage_PFAD + sZips[m] + '", "' +
             { } BackupDir + Ablage_NAME + '\' + sZips[m] + '")');
+          Log(cFotoService_AbortTag);
         end;
       end;
     end;
@@ -1837,15 +1837,29 @@ begin
     Password := iJonDa_FTPPassword;
   end;
 
+  // Get
   try
     SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MySyncPath, true);
     SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MySyncPath, true);
-    iFTP.DisConnect;
   except
     on E: Exception do
-      Log(cERRORText + ' 1773:' + E.ClassName + ': ' + E.Message);
+      Log(cERRORText + ' 1846:' + E.ClassName + ': ' + E.Message);
   end;
-  iFTP.Free;
+
+  // close
+  try
+    iFTP.DisConnect;
+  except
+    // Ignore ALL Exceptions at Disconnect, # 10054, ...
+  end;
+
+  // free;
+  try
+    iFTP.Free;
+  except
+    on E: Exception do
+      Log(cERRORText + ' 1861:' + E.ClassName + ': ' + E.Message);
+  end;
 
   try
     // baustelle.csv -> sync
@@ -1871,7 +1885,7 @@ begin
     end;
   except
     on E: Exception do
-      Log(cERRORText + ' 1801:' + E.ClassName + ': ' + E.Message);
+      Log(cERRORText + ' 1889:' + E.ClassName + ': ' + E.Message);
   end;
 
   try
@@ -1905,7 +1919,7 @@ begin
     sDir.Free;
   except
     on E: Exception do
-      Log(cERRORText + ' 1835:' + E.ClassName + ': ' + E.Message);
+      Log(cERRORText + ' 1923:' + E.ClassName + ': ' + E.Message);
   end;
 
 end;

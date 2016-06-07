@@ -2680,9 +2680,14 @@ begin
     iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
     iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
+
+    //
     DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
     pAppTextPath := ReadString(SectionName, 'TextPath', MyProgramPath + cStatistikPath);
+
+    //
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+
   end;
   MyIni.free;
 
