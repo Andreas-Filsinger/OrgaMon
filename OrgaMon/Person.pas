@@ -112,12 +112,6 @@ type
     Label25: TLabel;
     Label26: TLabel;
     Button17: TButton;
-    Label27: TLabel;
-    Label28: TLabel;
-    IB_Edit25: TIB_Edit;
-    IB_Edit24: TIB_Edit;
-    Label29: TLabel;
-    IB_Edit26: TIB_Edit;
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     Label30: TLabel;
@@ -176,7 +170,6 @@ type
     Label46: TLabel;
     IB_ComboBox2: TIB_ComboBox;
     SpeedButton3: TSpeedButton;
-    IB_CheckBox24: TIB_CheckBox;
     Label47: TLabel;
     Label48: TLabel;
     IB_Edit39: TIB_Edit;
@@ -289,6 +282,15 @@ type
     IB_CheckBox22: TIB_CheckBox;
     IB_CheckBox23: TIB_CheckBox;
     SpeedButton21: TSpeedButton;
+    TabSheet13: TTabSheet;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    IB_Edit25: TIB_Edit;
+    IB_Edit24: TIB_Edit;
+    IB_Edit26: TIB_Edit;
+    IB_CheckBox24: TIB_CheckBox;
+    IB_Memo3: TIB_Memo;
     procedure FormActivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);

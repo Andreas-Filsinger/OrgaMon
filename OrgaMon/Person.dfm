@@ -3,7 +3,7 @@ object FormPerson: TFormPerson
   Top = 147
   Caption = 'Personen'
   ClientHeight = 704
-  ClientWidth = 1012
+  ClientWidth = 1013
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object FormPerson: TFormPerson
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
   DesignSize = (
-    1012
+    1013
     704)
   PixelsPerInch = 96
   TextHeight = 13
@@ -1032,7 +1032,7 @@ object FormPerson: TFormPerson
     Top = 215
     Width = 1008
     Height = 143
-    ActivePage = TabSheet5
+    ActivePage = TabSheet1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
@@ -1763,386 +1763,6 @@ object FormPerson: TFormPerson
         end
       end
     end
-    object TabSheet5: TTabSheet
-      Caption = 'Internet Dienste'
-      ImageIndex = 4
-      object Label9: TLabel
-        Left = 5
-        Top = 9
-        Width = 80
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'eMail;eMail;...'
-      end
-      object Label22: TLabel
-        Left = 322
-        Top = 36
-        Width = 132
-        Height = 13
-        Caption = 'Dienste und Parameter'
-      end
-      object Label25: TLabel
-        Left = 3
-        Top = 38
-        Width = 83
-        Height = 13
-        Caption = 'Benutzername'
-      end
-      object Label26: TLabel
-        Left = 35
-        Top = 61
-        Width = 51
-        Height = 13
-        Caption = 'Passwort'
-      end
-      object Label27: TLabel
-        Left = 886
-        Top = 35
-        Width = 63
-        Height = 13
-        Caption = 'Versandart'
-      end
-      object Label28: TLabel
-        Left = 846
-        Top = 56
-        Width = 104
-        Height = 13
-        Caption = 'Versand-Pr'#228'misse'
-      end
-      object Label29: TLabel
-        Left = 855
-        Top = 77
-        Width = 95
-        Height = 13
-        Caption = 'Treffer pro Seite'
-      end
-      object Label58: TLabel
-        Left = 4
-        Top = 86
-        Width = 81
-        Height = 13
-        Caption = 'Firefox-iMacro'
-      end
-      object IB_Edit9: TIB_Edit
-        Left = 89
-        Top = 7
-        Width = 905
-        Height = 21
-        DataField = 'EMAIL'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-      end
-      object IB_Edit22: TIB_Edit
-        Left = 89
-        Top = 58
-        Width = 224
-        Height = 21
-        DataField = 'USER_PWD'
-        DataSource = IB_DataSource1
-        TabOrder = 2
-      end
-      object IB_Edit23: TIB_Edit
-        Left = 89
-        Top = 35
-        Width = 224
-        Height = 21
-        DataField = 'USER_ID'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-      end
-      object IB_Memo2: TIB_Memo
-        Left = 457
-        Top = 33
-        Width = 376
-        Height = 67
-        DataField = 'USER_DIENSTE'
-        DataSource = IB_DataSource1
-        TabOrder = 3
-        AutoSize = False
-        ScrollBars = ssVertical
-      end
-      object Button17: TButton
-        Left = 319
-        Top = 58
-        Width = 130
-        Height = 19
-        Caption = 'Passwort zuteilen'
-        TabOrder = 7
-        OnClick = Button17Click
-      end
-      object IB_Edit25: TIB_Edit
-        Left = 952
-        Top = 52
-        Width = 42
-        Height = 21
-        DataField = 'WEBSHOP_TEILLIEFERUNGEN'
-        DataSource = IB_DataSource1
-        TabOrder = 5
-      end
-      object IB_Edit24: TIB_Edit
-        Left = 952
-        Top = 32
-        Width = 42
-        Height = 21
-        DataField = 'WEBSHOP_VERSANDART'
-        DataSource = IB_DataSource1
-        TabOrder = 4
-      end
-      object IB_Edit26: TIB_Edit
-        Left = 952
-        Top = 72
-        Width = 42
-        Height = 21
-        DataField = 'WEBSHOP_TREFFERPROSEITE'
-        DataSource = IB_DataSource1
-        TabOrder = 6
-      end
-      object IB_CheckBox24: TIB_CheckBox
-        Left = 860
-        Top = 97
-        Width = 135
-        Height = 16
-        DataField = 'WEBSHOP_RABATT'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 8
-        Caption = 'RABATT anzeigen'
-      end
-      object ComboBox1: TComboBox
-        Left = 89
-        Top = 83
-        Width = 145
-        Height = 21
-        Style = csDropDownList
-        ItemIndex = 0
-        TabOrder = 9
-        OnDropDown = ComboBox1DropDown
-        OnSelect = ComboBox1Select
-        Items.Strings = (
-          '')
-      end
-    end
-    object TabSheet6: TTabSheet
-      Caption = 'Lieferant'
-      ImageIndex = 5
-      object Label30: TLabel
-        Left = 15
-        Top = 19
-        Width = 131
-        Height = 13
-        Caption = 'unser Einkaufs-Rabatt:'
-      end
-      object Label32: TLabel
-        Left = 202
-        Top = 7
-        Width = 106
-        Height = 13
-        Caption = 'gew'#228'hrte Rabatte:'
-      end
-      object Label18: TLabel
-        Left = 16
-        Top = 72
-        Width = 52
-        Height = 13
-        Caption = 'Lieferzeit'
-      end
-      object Label24: TLabel
-        Left = 88
-        Top = 72
-        Width = 44
-        Height = 13
-        Caption = 'Label24'
-      end
-      object IB_Edit27: TIB_Edit
-        Left = 13
-        Top = 38
-        Width = 52
-        Height = 21
-        DataField = 'RABATT'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-      end
-      object IB_Grid4: TIB_Grid
-        Left = 312
-        Top = 0
-        Width = 673
-        Height = 102
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource4
-        TabOrder = 1
-      end
-      object IB_UpdateBar3: TIB_UpdateBar
-        Left = 168
-        Top = 24
-        Width = 115
-        Height = 25
-        Ctl3D = False
-        ParentCtl3D = False
-        TabOrder = 2
-        DataSource = IB_DataSource4
-        ReceiveFocus = False
-        CustomGlyphsSupplied = []
-        VisibleButtons = [ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
-      end
-    end
-    object TabSheet7: TTabSheet
-      Caption = 'Rabatt'
-      ImageIndex = 6
-      object Label31: TLabel
-        Left = 4
-        Top = 67
-        Width = 101
-        Height = 13
-        Caption = 'Rabatt Kategorie:'
-      end
-      object Label33: TLabel
-        Left = 111
-        Top = 33
-        Width = 44
-        Height = 13
-        Caption = 'Label33'
-      end
-      object IB_Edit28: TIB_Edit
-        Left = 111
-        Top = 64
-        Width = 124
-        Height = 21
-        DataField = 'RABATT_CODE'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-      end
-      object Button3: TButton
-        Left = 432
-        Top = 16
-        Width = 75
-        Height = 25
-        Caption = 'Info'
-        TabOrder = 1
-        OnClick = Button3Click
-      end
-      object IB_Grid5: TIB_Grid
-        Left = 513
-        Top = 16
-        Width = 481
-        Height = 72
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource5
-        TabOrder = 2
-      end
-      object Button6: TButton
-        Left = 7
-        Top = 24
-        Width = 98
-        Height = 25
-        Caption = 'Jahresumsatz:'
-        TabOrder = 3
-        OnClick = Button6Click
-      end
-    end
-    object TabSheet8: TTabSheet
-      Caption = 'Prorata/Monteur'
-      ImageIndex = 7
-      object Label11: TLabel
-        Left = 10
-        Top = 56
-        Width = 144
-        Height = 13
-        Caption = 'Prorata Guthaben (netto)'
-      end
-      object Label47: TLabel
-        Left = 305
-        Top = 14
-        Width = 36
-        Height = 13
-        Caption = 'K'#252'rzel'
-      end
-      object Label48: TLabel
-        Left = 305
-        Top = 56
-        Width = 101
-        Height = 13
-        Caption = 'MonDa-Ger'#228'te ID'
-      end
-      object Image1: TImage
-        Left = 436
-        Top = 72
-        Width = 54
-        Height = 23
-        Cursor = crHandPoint
-        AutoSize = True
-        OnClick = Image1Click
-      end
-      object Label57: TLabel
-        Left = 436
-        Top = 14
-        Width = 97
-        Height = 13
-        Caption = 'Personalnummer'
-      end
-      object IB_CheckBox3: TIB_CheckBox
-        Left = 10
-        Top = 33
-        Width = 265
-        Height = 16
-        DataField = 'PRORATA_MWST'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 0
-        Caption = 'bei Prorata Vorsteuerabzugsberechtigt'
-      end
-      object IB_Edit12: TIB_Edit
-        Left = 10
-        Top = 73
-        Width = 114
-        Height = 21
-        DataField = 'PRORATA_GUTHABEN'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-      end
-      object IB_Edit39: TIB_Edit
-        Left = 305
-        Top = 33
-        Width = 96
-        Height = 21
-        DataField = 'KUERZEL'
-        DataSource = IB_DataSource1
-        TabOrder = 2
-      end
-      object IB_Edit40: TIB_Edit
-        Left = 305
-        Top = 73
-        Width = 120
-        Height = 21
-        DataField = 'MONDA'
-        DataSource = IB_DataSource1
-        TabOrder = 3
-      end
-      object IB_Edit44: TIB_Edit
-        Left = 436
-        Top = 33
-        Width = 159
-        Height = 21
-        DataField = 'PERSONALNUMMER'
-        DataSource = IB_DataSource1
-        TabOrder = 4
-      end
-    end
-    object TabSheet4: TTabSheet
-      Caption = 'Zus'#228'tzlich'
-      ImageIndex = 7
-      object IB_Memo1: TIB_Memo
-        Left = 0
-        Top = 0
-        Width = 1000
-        Height = 115
-        DataField = 'BEMERKUNG'
-        DataSource = IB_DataSource1
-        Align = alClient
-        TabOrder = 0
-        AutoSize = False
-        ScrollBars = ssVertical
-      end
-    end
     object TabSheet9: TTabSheet
       Caption = 'Zahlung'
       ImageIndex = 8
@@ -2414,6 +2034,400 @@ object FormPerson: TFormPerson
         TabOrder = 9
       end
     end
+    object TabSheet5: TTabSheet
+      Caption = 'Internet Dienste'
+      ImageIndex = 4
+      object Label9: TLabel
+        Left = 5
+        Top = 9
+        Width = 80
+        Height = 13
+        Alignment = taRightJustify
+        Caption = 'eMail;eMail;...'
+      end
+      object Label22: TLabel
+        Left = 322
+        Top = 36
+        Width = 132
+        Height = 13
+        Caption = 'Dienste und Parameter'
+      end
+      object Label25: TLabel
+        Left = 3
+        Top = 38
+        Width = 83
+        Height = 13
+        Caption = 'Benutzername'
+      end
+      object Label26: TLabel
+        Left = 35
+        Top = 61
+        Width = 51
+        Height = 13
+        Caption = 'Passwort'
+      end
+      object Label58: TLabel
+        Left = 4
+        Top = 86
+        Width = 81
+        Height = 13
+        Caption = 'Firefox-iMacro'
+      end
+      object IB_Edit9: TIB_Edit
+        Left = 89
+        Top = 7
+        Width = 905
+        Height = 21
+        DataField = 'EMAIL'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+      end
+      object IB_Edit22: TIB_Edit
+        Left = 89
+        Top = 58
+        Width = 224
+        Height = 21
+        DataField = 'USER_PWD'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+      end
+      object IB_Edit23: TIB_Edit
+        Left = 89
+        Top = 35
+        Width = 224
+        Height = 21
+        DataField = 'USER_ID'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+      end
+      object IB_Memo2: TIB_Memo
+        Left = 457
+        Top = 33
+        Width = 376
+        Height = 67
+        DataField = 'USER_DIENSTE'
+        DataSource = IB_DataSource1
+        TabOrder = 3
+        AutoSize = False
+        ScrollBars = ssVertical
+      end
+      object Button17: TButton
+        Left = 319
+        Top = 58
+        Width = 130
+        Height = 19
+        Caption = 'Passwort zuteilen'
+        TabOrder = 4
+        OnClick = Button17Click
+      end
+      object ComboBox1: TComboBox
+        Left = 89
+        Top = 83
+        Width = 145
+        Height = 21
+        Style = csDropDownList
+        ItemIndex = 0
+        TabOrder = 5
+        OnDropDown = ComboBox1DropDown
+        OnSelect = ComboBox1Select
+        Items.Strings = (
+          '')
+      end
+    end
+    object TabSheet13: TTabSheet
+      Caption = 'WebShop'
+      ImageIndex = 12
+      object Label27: TLabel
+        Left = 796
+        Top = 10
+        Width = 63
+        Height = 13
+        Caption = 'Versandart'
+      end
+      object Label28: TLabel
+        Left = 756
+        Top = 31
+        Width = 104
+        Height = 13
+        Caption = 'Versand-Pr'#228'misse'
+      end
+      object Label29: TLabel
+        Left = 765
+        Top = 52
+        Width = 95
+        Height = 13
+        Caption = 'Treffer pro Seite'
+      end
+      object IB_Edit25: TIB_Edit
+        Left = 867
+        Top = 27
+        Width = 130
+        Height = 21
+        DataField = 'WEBSHOP_TEILLIEFERUNGEN'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+      end
+      object IB_Edit24: TIB_Edit
+        Left = 867
+        Top = 7
+        Width = 130
+        Height = 21
+        DataField = 'WEBSHOP_VERSANDART'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+      end
+      object IB_Edit26: TIB_Edit
+        Left = 867
+        Top = 47
+        Width = 130
+        Height = 21
+        DataField = 'WEBSHOP_TREFFERPROSEITE'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+      end
+      object IB_CheckBox24: TIB_CheckBox
+        Left = 867
+        Top = 71
+        Width = 130
+        Height = 16
+        DataField = 'WEBSHOP_RABATT'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 3
+        Caption = 'RABATT anzeigen'
+      end
+      object IB_Memo3: TIB_Memo
+        Left = 1
+        Top = 0
+        Width = 746
+        Height = 114
+        DataField = 'WEBSHOP_EINSTELLUNGEN'
+        DataSource = IB_DataSource1
+        TabOrder = 4
+        AutoSize = False
+      end
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'Lieferant'
+      ImageIndex = 5
+      object Label30: TLabel
+        Left = 15
+        Top = 19
+        Width = 131
+        Height = 13
+        Caption = 'unser Einkaufs-Rabatt:'
+      end
+      object Label32: TLabel
+        Left = 202
+        Top = 7
+        Width = 106
+        Height = 13
+        Caption = 'gew'#228'hrte Rabatte:'
+      end
+      object Label18: TLabel
+        Left = 16
+        Top = 72
+        Width = 52
+        Height = 13
+        Caption = 'Lieferzeit'
+      end
+      object Label24: TLabel
+        Left = 88
+        Top = 72
+        Width = 44
+        Height = 13
+        Caption = 'Label24'
+      end
+      object IB_Edit27: TIB_Edit
+        Left = 13
+        Top = 38
+        Width = 52
+        Height = 21
+        DataField = 'RABATT'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+      end
+      object IB_Grid4: TIB_Grid
+        Left = 312
+        Top = 0
+        Width = 673
+        Height = 102
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource4
+        TabOrder = 1
+      end
+      object IB_UpdateBar3: TIB_UpdateBar
+        Left = 168
+        Top = 24
+        Width = 115
+        Height = 25
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 2
+        DataSource = IB_DataSource4
+        ReceiveFocus = False
+        CustomGlyphsSupplied = []
+        VisibleButtons = [ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+      end
+    end
+    object TabSheet8: TTabSheet
+      Caption = 'Prorata/Monteur'
+      ImageIndex = 7
+      object Label11: TLabel
+        Left = 10
+        Top = 56
+        Width = 144
+        Height = 13
+        Caption = 'Prorata Guthaben (netto)'
+      end
+      object Label47: TLabel
+        Left = 305
+        Top = 14
+        Width = 36
+        Height = 13
+        Caption = 'K'#252'rzel'
+      end
+      object Label48: TLabel
+        Left = 305
+        Top = 56
+        Width = 101
+        Height = 13
+        Caption = 'MonDa-Ger'#228'te ID'
+      end
+      object Image1: TImage
+        Left = 436
+        Top = 72
+        Width = 54
+        Height = 23
+        Cursor = crHandPoint
+        AutoSize = True
+        OnClick = Image1Click
+      end
+      object Label57: TLabel
+        Left = 436
+        Top = 14
+        Width = 97
+        Height = 13
+        Caption = 'Personalnummer'
+      end
+      object IB_CheckBox3: TIB_CheckBox
+        Left = 10
+        Top = 33
+        Width = 265
+        Height = 16
+        DataField = 'PRORATA_MWST'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 0
+        Caption = 'bei Prorata Vorsteuerabzugsberechtigt'
+      end
+      object IB_Edit12: TIB_Edit
+        Left = 10
+        Top = 73
+        Width = 114
+        Height = 21
+        DataField = 'PRORATA_GUTHABEN'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+      end
+      object IB_Edit39: TIB_Edit
+        Left = 305
+        Top = 33
+        Width = 96
+        Height = 21
+        DataField = 'KUERZEL'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+      end
+      object IB_Edit40: TIB_Edit
+        Left = 305
+        Top = 73
+        Width = 120
+        Height = 21
+        DataField = 'MONDA'
+        DataSource = IB_DataSource1
+        TabOrder = 3
+      end
+      object IB_Edit44: TIB_Edit
+        Left = 436
+        Top = 33
+        Width = 159
+        Height = 21
+        DataField = 'PERSONALNUMMER'
+        DataSource = IB_DataSource1
+        TabOrder = 4
+      end
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'Rabatt'
+      ImageIndex = 6
+      object Label31: TLabel
+        Left = 4
+        Top = 67
+        Width = 101
+        Height = 13
+        Caption = 'Rabatt Kategorie:'
+      end
+      object Label33: TLabel
+        Left = 111
+        Top = 33
+        Width = 44
+        Height = 13
+        Caption = 'Label33'
+      end
+      object IB_Edit28: TIB_Edit
+        Left = 111
+        Top = 64
+        Width = 124
+        Height = 21
+        DataField = 'RABATT_CODE'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+      end
+      object Button3: TButton
+        Left = 432
+        Top = 16
+        Width = 75
+        Height = 25
+        Caption = 'Info'
+        TabOrder = 1
+        OnClick = Button3Click
+      end
+      object IB_Grid5: TIB_Grid
+        Left = 513
+        Top = 16
+        Width = 481
+        Height = 72
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource5
+        TabOrder = 2
+      end
+      object Button6: TButton
+        Left = 7
+        Top = 24
+        Width = 98
+        Height = 25
+        Caption = 'Jahresumsatz:'
+        TabOrder = 3
+        OnClick = Button6Click
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Zus'#228'tzlich'
+      ImageIndex = 7
+      object IB_Memo1: TIB_Memo
+        Left = 0
+        Top = 0
+        Width = 1000
+        Height = 115
+        DataField = 'BEMERKUNG'
+        DataSource = IB_DataSource1
+        Align = alClient
+        TabOrder = 0
+        AutoSize = False
+        ScrollBars = ssVertical
+      end
+    end
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
@@ -2594,8 +2608,9 @@ object FormPerson: TFormPerson
       end
     end
     object TabSheet11: TTabSheet
-      Caption = 'Lohn II'
+      Caption = 'Lohn'
       ImageIndex = 10
+      ExplicitTop = 26
       object Label14: TLabel
         Left = 23
         Top = 66
@@ -3155,6 +3170,7 @@ object FormPerson: TFormPerson
       ',PAPERCOLOR'
       ',KONTO_ER'
       ',KONTO_AR'
+      ',WEBSHOP_EINSTELLUNGEN'
       'FROM '
       ' PERSON'
       '-- BEGIN'
