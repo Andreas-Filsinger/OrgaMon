@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.188 (09.06.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Oc: Argos: "A6" -> Hülse [Mängelkarte] Wert "X" wird als "ja" ausgegeben alles andere als "nein"
+ Neu: Auftrag: Ergebnis: Oc: Argos: "A7" -> Hülse [Mängelart] freies Textfeld
+
+Rev 8.187 (09.06.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Oc: RWE: Arbeitsschritte 2.3 Integration
+
 Rev 8.186 (08.06.16) Andreas Filsinger
 
  Neu: Person: Feld: WEBSHOP_EINSTELLUNGEN Text-Blob für diverse Einstellungen in der Form
