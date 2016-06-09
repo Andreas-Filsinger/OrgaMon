@@ -3929,7 +3929,7 @@ begin
   begin
 
     add('<?xml version = "1.0" encoding = "UTF-8"?>');
-    add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v21.dtd" []>');
+    add('<!DOCTYPE FILE SYSTEM "ArbeitsschritteImport-v23.dtd" []>');
     push('FILE');
     speak;
 
@@ -10109,7 +10109,9 @@ var
     OptTaet('Korr. Standortzusatz', x_optional(r, 'A4'), r);
     OptTaet('Korr. Standortzusatz Freitext', x_optional(r, 'A5'), r);
 
-    // Opttaet('Mängelkarte',x_optional_JNX(r,'A3'),r);
+    Opttaet('Mängelkarte',x_optional_X(r,'A6'),r);
+    Opttaet('Mängelart',x_optional(r,'A7'),r);
+
     OptTaet('Spannungsunterbrechung', x_optional(r, 'SD'), r);
     OptTaet('Dauer Spannungsausfall', x_optional(r, 'N1'), r);
 
