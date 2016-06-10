@@ -8560,7 +8560,7 @@ var
   res:    AnsiString;
   deco:   AnsiChar;
 begin
-  if DecimalSeparator = ',' then
+  if FormatSettings.DecimalSeparator = ',' then
     deco := '.'
   else
     deco := ',';
@@ -8569,11 +8569,11 @@ begin
   l := Length(Str);
   for i := 1 to l do
     if ((Str[i] >= '0') and (Str[i] <= '9')) or
-       (Str[i] in [ '+', '-', 'E', 'e', DecimalSeparator ])
+       (Str[i] in [ '+', '-', 'E', 'e', FormatSettings.DecimalSeparator ])
                                      then
       res := res + Str[i]
     else if Str[i] = deco then
-      res := res + DecimalSeparator;
+      res := res + FormatSettings.DecimalSeparator;
 
   try
     result := StrToFloat(res);
