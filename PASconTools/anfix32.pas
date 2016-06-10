@@ -21,7 +21,27 @@
 unit anfix32;
 
 {$ifndef FPC}
-{$I jcl.inc}
+
+
+{ $ I jcl.inc}
+
+{$BOOLEVAL OFF}       // Boolean shortcut evaluation
+{$LONGSTRINGS ON}     // Long strings
+{$WRITEABLECONST ON} // Read-only typed constants
+{$TYPEDADDRESS OFF}   // Type checked pointers off
+
+{$LOCALSYMBOLS ON}    // Local symbol information
+{$DEFINITIONINFO ON}  // Symbol definition information
+{$REFERENCEINFO ON}   // Symbol reference information
+
+{$EXTENDEDSYNTAX ON}
+{$VARSTRINGCHECKS OFF}
+
+{$WARN UNSAFE_TYPE OFF}
+{$WARN UNSAFE_CODE OFF}
+{$WARN UNSAFE_CAST OFF}
+
+
 {$endif}
 
 interface
@@ -127,9 +147,7 @@ var
 procedure StartDebug(s: string);
 
 // String - Utils: Manipulation
-{$IFDEF SUPPORTS_UNICODE}
 procedure ersetze(const find_str, ersetze_str: string; var d: String); overload;
-{$ENDIF}
 procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString); overload;
 procedure ersetze(const find_str, ersetze_str: string; var d: Shortstring); overload;
 procedure ersetze(s: TStrings; var d: string); overload;
@@ -1711,7 +1729,6 @@ begin
         ersetze('~' + NextP(s[n], '=', 0) + '~', NextP(s[n], '=', 1), d);
   end;
 end;
-{$IFDEF SUPPORTS_UNICODE}
 
 procedure ersetze(const find_str, ersetze_str: string; var d: String);
 var
@@ -1735,7 +1752,6 @@ begin
   end;
   d := d + WorkStr;
 end;
-{$ENDIF}
 
 procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString);
 var
