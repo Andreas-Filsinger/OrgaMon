@@ -19,11 +19,12 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet9
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
+      OnShow = TabSheet1Show
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -51,6 +52,40 @@ object FormServiceFoto: TFormServiceFoto
         Width = 26
         Height = 13
         Caption = 'Timer'
+      end
+      object SpeedButton4: TSpeedButton
+        Left = 48
+        Top = 36
+        Width = 21
+        Height = 22
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        OnClick = SpeedButton4Click
       end
       object ListBox1: TListBox
         Left = 3
@@ -87,22 +122,13 @@ object FormServiceFoto: TFormServiceFoto
         TabOrder = 3
         OnClick = Button5Click
       end
-      object Button10: TButton
-        Left = 375
-        Top = 7
-        Width = 153
-        Height = 52
-        Caption = 'ensureGlobals'
-        TabOrder = 4
-        OnClick = Button10Click
-      end
       object Button11: TButton
         Left = 375
         Top = 65
         Width = 162
         Height = 25
         Caption = 'Starte sofort!'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = Button11Click
       end
       object Button13: TButton
@@ -111,7 +137,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 75
         Height = 25
         Caption = 'GEN_ID'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = Button13Click
       end
       object Edit7: TEdit
@@ -119,7 +145,7 @@ object FormServiceFoto: TFormServiceFoto
         Top = 404
         Width = 121
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
       end
       object Button16: TButton
         Left = 273
@@ -127,32 +153,23 @@ object FormServiceFoto: TFormServiceFoto
         Width = 75
         Height = 25
         Caption = 'Sync'
-        TabOrder = 8
+        TabOrder = 7
         OnClick = Button16Click
       end
-      object Edit14: TEdit
-        Left = 48
-        Top = 9
-        Width = 145
-        Height = 21
-        TabOrder = 9
-        Text = 'sewa'
-      end
       object Edit15: TEdit
-        Left = 48
+        Left = 72
         Top = 36
-        Width = 145
+        Width = 121
         Height = 21
-        TabOrder = 10
-        Text = 'W:\JonDaServer\'
+        TabOrder = 8
       end
       object Button17: TButton
         Left = 216
         Top = 7
         Width = 153
         Height = 52
-        Caption = 'read cOrgaMon.ini'
-        TabOrder = 11
+        Caption = 'Init'
+        TabOrder = 9
         OnClick = Button17Click
       end
       object Button29: TButton
@@ -161,8 +178,16 @@ object FormServiceFoto: TFormServiceFoto
         Width = 121
         Height = 25
         Caption = '5 Min rum!'
-        TabOrder = 12
+        TabOrder = 10
         OnClick = Button29Click
+      end
+      object ComboBox1: TComboBox
+        Left = 48
+        Top = 9
+        Width = 145
+        Height = 21
+        TabOrder = 11
+        OnSelect = ComboBox1Select
       end
     end
     object TabSheet11: TTabSheet
@@ -822,12 +847,11 @@ object FormServiceFoto: TFormServiceFoto
         Caption = 'Baustelle'
       end
       object Edit_Rollback_Quelle: TEdit
-        Left = 104
-        Top = 13
+        Left = 47
+        Top = 15
         Width = 250
         Height = 21
         TabOrder = 0
-        Text = 'X:\JonDaServer\#83\'
       end
       object Edit_RollBack_Transaktionen: TEdit
         Left = 145
@@ -854,39 +878,21 @@ object FormServiceFoto: TFormServiceFoto
         ItemHeight = 13
         TabOrder = 3
       end
-      object Button22: TButton
-        Left = 360
-        Top = 11
-        Width = 115
-        Height = 25
-        Caption = '<- Produktiv-Ablage'
-        TabOrder = 4
-        OnClick = Button22Click
-      end
-      object Button23: TButton
-        Left = 481
-        Top = 11
-        Width = 137
-        Height = 25
-        Caption = '<- Laufende DaSi'
-        TabOrder = 5
-        OnClick = Button23Click
-      end
       object Edit_Rollback_Baustelle: TEdit
         Left = 145
         Top = 426
         Width = 249
         Height = 21
-        TabOrder = 6
+        TabOrder = 4
         Text = 'EnPara'
       end
       object Button26: TButton
-        Left = 408
-        Top = 424
+        Left = 416
+        Top = 425
         Width = 307
         Height = 25
         Caption = 'Rollback anhand der Baustellenzugeh'#246'rigkeit'
-        TabOrder = 7
+        TabOrder = 5
         OnClick = Button26Click
       end
       object Button31: TButton
@@ -895,7 +901,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 307
         Height = 25
         Caption = 'N-Bug Korrektur'
-        TabOrder = 8
+        TabOrder = 6
         OnClick = Button31Click
       end
       object CheckBox1: TCheckBox
@@ -904,7 +910,7 @@ object FormServiceFoto: TFormServiceFoto
         Width = 233
         Height = 17
         Caption = 'Korrektur wirklich durchf'#252'hren'
-        TabOrder = 9
+        TabOrder = 7
       end
     end
   end

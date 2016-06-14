@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.188; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.191; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -59,6 +59,9 @@ const
   cDataBaseUser = 'DatabaseUser'; { Default = SYSDBA }
   cDataBasePwd = 'DatabasePassword'; { Default = masterkey }
   cSettings_SysdbaPassword = 'SysdbaPasswort';
+
+  cGroup_Id_Default = 'System';
+  cGroup_Id_Spare = 'Spare';
 
   // Datenbank Migrations Hilfen
   TABELLE_AR = 'AUSGANGSRECHNUNG' deprecated 'Migriere nach 1400';
@@ -1644,7 +1647,7 @@ begin
   begin
     sGroup := getParam('Id');
     if (sGroup = '') then
-      sGroup := 'System';
+      sGroup := cGroup_Id_Default;
   end;
   sBootSequence.Add('Namespace=' + sGroup);
 
@@ -1688,7 +1691,7 @@ begin
           break;
 
         if (sGroup = 'Spare') then
-          sGroup := 'System'
+          sGroup := cGroup_Id_Default
         else
           break;
 

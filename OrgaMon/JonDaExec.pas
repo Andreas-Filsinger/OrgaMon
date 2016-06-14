@@ -2673,7 +2673,7 @@ begin
 
     // Fall Back auf [System]
     if (ReadString(SectionName, 'ftpuser', '') = '') then
-      SectionName := 'System';
+      SectionName := cGroup_Id_Default;
 
     // Ftp-Bereich für diesen Server
     iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
@@ -3156,6 +3156,12 @@ begin
               else
               begin
 
+                // default Verhalten mit 4 Möglichkeiten, automatisch je nachdem was befüllt ist
+                //
+                // 1) <Leer>
+                // 2) ~Mandant~-
+                // 3) ~Mandant~-~aknr~-
+                // 4) ~aknr~-
                 //
                 Mandant := cutblank(tNAMES.readCell(r, 'Mandant'));
                 aknr := cutblank(tNAMES.readCell(r, 'aknr'));
@@ -3168,10 +3174,6 @@ begin
                 if (aknr <> '') then
                   FotoPrefix := FotoPrefix + aknr + '-';
 
-                // Bei dieser Art der Umbenennung ist
-                // das Thema scheinbar direkt abgeschlossen
-                // unabhängig von der Z# Neu
-                UmbenennungAbgeschlossen := true;
               end;
             end
             else
@@ -3200,7 +3202,7 @@ begin
         end;
       7:
         begin
-          // Erdgas Südwest, "FN" soll nicht weiterverarbeitet werden!
+          // Erdgas Südwest,
           repeat
 
             if (pos('FR', FotoParameter) = 1) then
@@ -3227,6 +3229,7 @@ begin
               break;
             end;
 
+            // "FN" soll nicht weiterverarbeitet werden!
             UmbenennungAbgeschlossen := true;
 
           until true;
@@ -3338,9 +3341,18 @@ begin
       if (pos('FN', FotoParameter) = 1) or (pos('Einbau', FotoParameter) = 1) then
       begin
 
-        if (zaehlernummer_neu = '') then
-          zaehlernummer_neu := FormatZaehlerNummerNeu(callback_ZaehlerNummerNeu(AUFTRAG_R,
-            sParameter.values[cParameter_foto_geraet]));
+        if UmbenennungAbgeschlossen then
+        begin
+          zaehlernummer_neu := '';
+        end
+        else
+        begin
+          if (zaehlernummer_neu = '') then
+            zaehlernummer_neu := FormatZaehlerNummerNeu(
+              { } callback_ZaehlerNummerNeu(
+              { } AUFTRAG_R,
+              { } sParameter.values[cParameter_foto_geraet]));
+        end;
 
         if (zaehlernummer_neu = '') then
         begin
@@ -3374,9 +3386,18 @@ begin
       if (pos('FE', FotoParameter) = 1) or (pos('Regler', FotoParameter) = 1) then
       begin
 
-        if (Reglernummer_neu = '') then
-          Reglernummer_neu := FormatZaehlerNummerNeu(callback_ReglerNummerNeu(AUFTRAG_R,
-            sParameter.values[cParameter_foto_geraet]));
+        if UmbenennungAbgeschlossen then
+        begin
+          Reglernummer_neu := '';
+        end
+        else
+        begin
+          if (Reglernummer_neu = '') then
+            Reglernummer_neu := FormatZaehlerNummerNeu(
+              { } callback_ReglerNummerNeu(
+              { } AUFTRAG_R,
+              { } sParameter.values[cParameter_foto_geraet]));
+        end;
 
         if (Reglernummer_neu = '') then
         begin

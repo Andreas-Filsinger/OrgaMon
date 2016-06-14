@@ -84,6 +84,7 @@ type
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     BackupDir: string;
     // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
+
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
 
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
@@ -140,6 +141,7 @@ type
 
     // muss IMMER überladen werden
     procedure Log(s: string); virtual; abstract;
+    procedure Dump(s: string; sl: TStringList);
 
     // Implementierungen von JonDaExec - Prototypen
     function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
@@ -218,6 +220,16 @@ begin
     result := '';
 end;
 
+procedure TFotoExec.Dump(s: string; sl: TStringList);
+var
+  n: integer;
+begin
+  Log(s + ' {');
+  for n := 0 to pred(sl.Count) do
+    Log(' ' + sl[n]);
+  Log('}');
+end;
+
 procedure TFotoExec.ensureGlobals;
 var
   r: integer;
@@ -246,7 +258,6 @@ begin
         for r := RowCount downto 1 do
           if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
-        // SaveToFile(MyBaustellePath + 'baustelle-alle.csv');
       end;
     end;
 
@@ -263,16 +274,16 @@ begin
     sDirs := TStringList.Create;
     dir(pBackUpRootPath + '*.', sDirs, false);
     sDirs.sort;
-    for n := pred(sDirs.count) downto 0 do
+    for n := pred(sDirs.Count) downto 0 do
       if (pos('.', sDirs[n]) = 1) then
         sDirs.Delete(n);
-    if (sDirs.count = 0) then
+    if (sDirs.Count = 0) then
     begin
       Log(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
       Log(cFotoService_AbortTag);
     end;
 
-    SubPath := StrFilter(sDirs[pred(sDirs.count)], '#' + cZiffern);
+    SubPath := StrFilter(sDirs[pred(sDirs.Count)], '#' + cZiffern);
     if (length(SubPath) <> 4) then
     begin
       Log(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
@@ -285,7 +296,7 @@ begin
     end;
 
     // das gröste Element wählen
-    BackupDir := pBackUpRootPath + sDirs[pred(sDirs.count)] + '\';
+    BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + '\';
     sDirs.Free;
 
     JonDaExec.BackupDir := BackupDir;
@@ -321,7 +332,7 @@ begin
     if (SectionName = '') then
       SectionName := UserName;
     if (ReadString(SectionName, 'ftpuser', '') = '') then
-      SectionName := 'System';
+      SectionName := cGroup_Id_Default;
 
     // Ftp-Bereich für diesen Server
     iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
@@ -341,6 +352,12 @@ begin
 
   // Einstellungen weitergeben
   SolidFTP.SolidFTP_LogDir := DiagnosePath;
+
+  //
+  Log(cINFOText+' Ini read!');
+
+  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
+
 end;
 
 procedure TFotoExec.releaseGlobals;
@@ -386,11 +403,11 @@ begin
     mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
   with mIni do
   begin
-    result := StrToInt(ReadString('System', 'Sequence', '0'));
+    result := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '0'));
     inc(result);
     if (result >= round(power(10, cAnzahlStellen_Transaktionszaehler))) then
       result := 1;
-    WriteString('System', 'Sequence', InttoStr(result));
+    WriteString(cGroup_Id_Default, 'Sequence', InttoStr(result));
   end;
   mIni.Free;
 end;
@@ -493,7 +510,7 @@ begin
   // reduce to Files-Age > 5 Seconds
   d := DateGet;
   s := SecondsGet;
-  for n := pred(sFiles.count) downto 0 do
+  for n := pred(sFiles.Count) downto 0 do
   begin
     FName := pFTPPath + sFiles[n];
     FileAge(FName, FileTimeStamp);
@@ -529,25 +546,25 @@ begin
   // Sort Files by "Date / Time", Oldest topmost
   sFilesClientSorter.sort;
   sTemp := TStringList.Create;
-  for n := 0 to pred(sFilesClientSorter.count) do
+  for n := 0 to pred(sFilesClientSorter.Count) do
     sTemp.add(sFiles[integer(sFilesClientSorter.Objects[n])]);
   sFiles.Assign(sTemp);
   sTemp.Free;
 
   // Reduce Work to Only One!
   if not(pAll) then
-    for n := pred(sFiles.count) downto 1 do
+    for n := pred(sFiles.Count) downto 1 do
       sFiles.Delete(n);
 
   // Generate Work-TAN as "ID"
-  if (sFiles.count > 0) then
+  if (sFiles.Count > 0) then
   begin
     ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
     CheckCreateDir(BackupDir + cFotoService_FTPBackupSubPath);
   end;
 
   // reduce to valid jpg's
-  for n := pred(sFiles.count) downto 0 do
+  for n := pred(sFiles.Count) downto 0 do
   begin
 
     FullSuccess := false;
@@ -626,7 +643,7 @@ begin
     end;
   end;
 
-  if (sFiles.count > 0) then
+  if (sFiles.Count > 0) then
   begin
 
     ensureGlobals;
@@ -649,7 +666,7 @@ begin
     sFiles.sort;
 
     // Umbenennen nach dem Standard der jeweiligen Baustelle
-    for m := pred(sFiles.count) downto 0 do
+    for m := pred(sFiles.Count) downto 0 do
     begin
       RenameError := false;
       FullSuccess := false;
@@ -757,7 +774,9 @@ begin
               sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
+            Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
             sFotoResult := JonDaExec.Foto(sFotoCall);
+            Dump(cINFOText + ' ) : ', sFotoResult);
             sFotoCall.Free;
 
             // Ergebnis auswerten
@@ -874,13 +893,16 @@ begin
               { } DiagnosePath + cFotoTransaktionenFName);
             LastLogWasTimeStamp := false;
 
-            // aktueller Dateiname, wo er im Moment liegt
-            DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
-            if JonDaExec.oldInfrastructure then
-              DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
-
             // Auszeichnen, wenn die Umbenennung vorläufig ist
             if not(UmbenennungAbgeschlossen) then
+            begin
+              // aktueller Dateiname, wo er im Moment liegt
+              DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
+              if JonDaExec.oldInfrastructure then
+                DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
+
+              Log(cINFOText + ' 898: add ' + DATEINAME_AKTUELL);
+
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
                 { DATEINAME_AKTUELL } DATEINAME_AKTUELL + ';' +
@@ -889,6 +911,7 @@ begin
                 { BAUSTELLE } ';' +
                 { MOMENT } DatumLog,
                 { Dateiname } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
+            end;
 
             // Foto in die richtige Ablage kopieren!
             if not(FileCopy(
@@ -923,7 +946,7 @@ begin
     end;
 
     // Bilder jetzt einfach sichern
-    if (sFiles.count > 0) then
+    if (sFiles.Count > 0) then
     begin
       (*
         if (zip(
@@ -947,7 +970,7 @@ begin
       *)
 
       Log(ID);
-      for n := 0 to pred(sFiles.count) do
+      for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
           Log(cERRORText + ' "' + pFTPPath + sFiles[n] + '" : Nicht löschbar');
@@ -1153,6 +1176,7 @@ begin
           begin
             CSV := tsTable.Create;
             CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
+            Log(cINFOText+' 1179: Extra Data loaded');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -1184,6 +1208,7 @@ begin
           begin
             CSV := tsTable.Create;
             CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
+            Log(cINFOText+' 1211: Extra Data loaded');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -1379,18 +1404,18 @@ var
     repeat
       // Jpegs
       dir(Ablage_PFAD + '*.jpg', sPics, false);
-      if (sPics.count = 0) then
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
         if (FileDate(Ablage_PFAD + sPics[m]) >= PIC_OlderThan) then
           sPics.Delete(m);
-      if (sPics.count = 0) then
+      if (sPics.Count = 0) then
         break;
 
       // reduziere um "wartende" Bilder
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
       begin
         DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
         if JonDaExec.oldInfrastructure then
@@ -1399,12 +1424,12 @@ var
         if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
           sPics.Delete(m);
       end;
-      if (sPics.count = 0) then
+      if (sPics.Count = 0) then
         break;
 
       // reduziere auf < 100 MByte
       FotoFSize := 0;
-      for m := pred(sPics.count) downto 0 do
+      for m := pred(sPics.Count) downto 0 do
       begin
         if (FotoFSize >= cMaxZIP_Size) then
         begin
@@ -1443,15 +1468,15 @@ var
       mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
       with mIni do
       begin
-        FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
-        FotosAbzug := (ReadString('System', 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
+        FotosSequence := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
+        FotosAbzug := (ReadString(cGroup_Id_Default, 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
         if FotosSequence < 0 then
         begin
           dir(Ablage_PFAD + 'Fotos-????.zip', sOldZips, false);
-          if sOldZips.count > 0 then
+          if sOldZips.Count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Fotos-', '.zip'), -1);
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Fotos-', '.zip'), -1);
           end;
         end;
         if (FotosSequence < 0) then
@@ -1470,7 +1495,7 @@ var
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
         { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.count) then
+        { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
         Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
@@ -1482,7 +1507,7 @@ var
       begin
         // Archivieren auch in Abzug-nnnn.zip
 
-        for m := 0 to pred(sPics.count) do
+        for m := 0 to pred(sPics.Count) do
           FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
 
         AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
@@ -1494,7 +1519,7 @@ var
           { } infozip_Password + '=' +
           { } deCrypt_Hex(
           { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
-          { } infozip_Level + '=' + '0') <> sPics.count) then
+          { } infozip_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
           Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
@@ -1506,11 +1531,11 @@ var
 
       // Fotos-nnnn.ini erhöhen
       mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
-      mIni.WriteString('System', 'Sequence', InttoStr(FotosSequence));
+      mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten JPGS schlussendlich löschen!
-      for m := 0 to pred(sPics.count) do
+      for m := 0 to pred(sPics.Count) do
         FileDelete(Ablage_PFAD + sPics[m]);
 
     until true;
@@ -1536,26 +1561,26 @@ var
 
       // Jpegs
       dir(Ablage_PFAD + '*.zip.html', sHTMLSs, false);
-      if (sHTMLSs.count = 0) then
+      if (sHTMLSs.Count = 0) then
         break;
 
       // reduziere um "zu neue" Bilder
-      for m := pred(sHTMLSs.count) downto 0 do
+      for m := pred(sHTMLSs.Count) downto 0 do
         if (FileDate(Ablage_PFAD + sHTMLSs[m]) >= PIC_OlderThan) then
           sHTMLSs.Delete(m);
-      if (sHTMLSs.count = 0) then
+      if (sHTMLSs.Count = 0) then
         break;
 
       // reduziere um "wartende" Wechselbelege, bei denen das pdf fehlt!
-      for m := pred(sHTMLSs.count) downto 0 do
+      for m := pred(sHTMLSs.Count) downto 0 do
         if not(FileExists(Ablage_PFAD + sHTMLSs[m] + '.pdf')) then
           sHTMLSs.Delete(m);
-      if (sHTMLSs.count = 0) then
+      if (sHTMLSs.Count = 0) then
         break;
 
       // .pdf muss auch mit!
       // erweitere um die .pdf Dateien
-      for m := 0 to pred(sHTMLSs.count) do
+      for m := 0 to pred(sHTMLSs.Count) do
         sHTMLSs.add(sHTMLSs[m] + '.pdf');
 
       // Prüfen, ob dies eine ordentliche Baustelle ist
@@ -1570,14 +1595,14 @@ var
       mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
       with mIni do
       begin
-        FotosSequence := StrToInt(ReadString('System', 'Sequence', '-1'));
+        FotosSequence := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
         if (FotosSequence < 0) then
         begin
           dir(Ablage_PFAD + 'Wechselbelege-????.zip', sOldZips, false);
-          if sOldZips.count > 0 then
+          if sOldZips.Count > 0 then
           begin
             sOldZips.sort;
-            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.count)], 'Wechselbelege-',
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Wechselbelege-',
               '.zip'), -1);
           end;
         end;
@@ -1599,7 +1624,7 @@ var
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
         { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
-        { } infozip_Level + '=' + '0') <> sHTMLSs.count) then
+        { } infozip_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
         Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
@@ -1608,11 +1633,11 @@ var
 
       // Laufnummer erhöhen
       mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
-      mIni.WriteString('System', 'Sequence', InttoStr(FotosSequence));
+      mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
       mIni.Free;
 
       // nun die eben archivierten löschen!
-      for m := 0 to pred(sHTMLSs.count) do
+      for m := 0 to pred(sHTMLSs.Count) do
         FileDelete(Ablage_PFAD + sHTMLSs[m]);
 
     until true;
@@ -1627,14 +1652,14 @@ var
   begin
     sZips := TStringList.Create;
     dir(Ablage_PFAD + '*.zip', sZips, false);
-    for m := 0 to pred(sZips.count) do
+    for m := 0 to pred(sZips.Count) do
     begin
       if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
       begin
         CheckCreateDir(BackupDir + Ablage_NAME);
         if FileMove(
-         {} Ablage_PFAD + sZips[m],
-         {} BackupDir + Ablage_NAME + '\' + sZips[m]) then
+          { } Ablage_PFAD + sZips[m],
+          { } BackupDir + Ablage_NAME + '\' + sZips[m]) then
         begin
           inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
           AblageLog(Ablage_PFAD + sZips[m], BackupDir);
@@ -1780,7 +1805,7 @@ begin
     sDir.sort;
 
     // Aktuelle Uploads (=Dateien im aktuellem Zugriff) entfernen
-    for n := pred(sDir.count) downto 0 do
+    for n := pred(sDir.Count) downto 0 do
     begin
       if not(FileAge(pFTPPath + sDir[n], FileDateTime)) then
       begin
@@ -1796,7 +1821,7 @@ begin
       end;
     end;
 
-    for n := 0 to pred(sDir.count) do
+    for n := 0 to pred(sDir.Count) do
     begin
       m := nextp(sDir[n], '-', 0);
       if (sMonteure.IndexOf(m) = -1) then
@@ -1893,7 +1918,7 @@ begin
     //
     sDir := TStringList.Create;
     dir(MySyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
-    for n := 0 to pred(sDir.count) do
+    for n := 0 to pred(sDir.Count) do
     begin
 
       // Lese den Pfad aus dem Dateinamen

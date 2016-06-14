@@ -1298,7 +1298,7 @@ begin
           mIni := TIniFile.create(sPath + 'Fotos-nnnn.ini');
           with mIni do
           begin
-            FotosSequence := strtoint(ReadString('System', 'Sequence', '-1'));
+            FotosSequence := strtoint(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
             if FotosSequence < 0 then
             begin
               dir(sPath + 'Fotos-????.zip', sFotos, false);
@@ -1313,7 +1313,7 @@ begin
               FotosSequence := 0;
 
             inc(FotosSequence);
-            WriteString('System', 'Sequence', inttostr(FotosSequence));
+            WriteString(cGroup_Id_Default, 'Sequence', inttostr(FotosSequence));
           end;
           mIni.free;
 
