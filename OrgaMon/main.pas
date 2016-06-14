@@ -520,9 +520,9 @@ begin
       LastRun := TIniFile.Create(EigeneOrgaMonDateienPfad + 'LastRun.ini');
       with LastRun do
       begin
-        LastRev := StrToIntDef(ReadString('System', 'Version', ''), 7680);
+        LastRev := StrToIntDef(ReadString(cGroup_Id_Default, 'Version', ''), 7680);
         if (LastRev <> ThisRev) then
-          WriteString('System', 'Version', Inttostr(ThisRev));
+          WriteString(cGroup_Id_Default, 'Version', Inttostr(ThisRev));
       end;
       LastRun.Free;
     except

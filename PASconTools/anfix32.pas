@@ -22,25 +22,7 @@ unit anfix32;
 
 {$ifndef FPC}
 
-
-{ $ I jcl.inc}
-
-{$BOOLEVAL OFF}       // Boolean shortcut evaluation
-{$LONGSTRINGS ON}     // Long strings
-{$WRITEABLECONST ON} // Read-only typed constants
-{$TYPEDADDRESS OFF}   // Type checked pointers off
-
-{$LOCALSYMBOLS ON}    // Local symbol information
-{$DEFINITIONINFO ON}  // Symbol definition information
-{$REFERENCEINFO ON}   // Symbol reference information
-
-{$EXTENDEDSYNTAX ON}
-{$VARSTRINGCHECKS OFF}
-
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CODE OFF}
-{$WARN UNSAFE_CAST OFF}
-
+{$I jcl.inc}
 
 {$endif}
 

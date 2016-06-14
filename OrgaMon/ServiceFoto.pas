@@ -73,7 +73,6 @@ type
     Button8: TButton;
     Button9: TButton;
     ListBox7: TListBox;
-    Button10: TButton;
     Label2: TLabel;
     Label3: TLabel;
     Button11: TButton;
@@ -115,8 +114,6 @@ type
     Label13: TLabel;
     Button21: TButton;
     ListBox12: TListBox;
-    Button22: TButton;
-    Button23: TButton;
     TabSheet11: TTabSheet;
     Button24: TButton;
     Button25: TButton;
@@ -133,7 +130,6 @@ type
     Label16: TLabel;
     Button28: TButton;
     Button7: TButton;
-    Edit14: TEdit;
     Edit15: TEdit;
     Label7: TLabel;
     Label17: TLabel;
@@ -144,6 +140,8 @@ type
     Button31: TButton;
     CheckBox1: TCheckBox;
     Button30: TButton;
+    ComboBox1: TComboBox;
+    SpeedButton4: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -158,7 +156,6 @@ type
     procedure SpeedButton3Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
-    procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
@@ -170,8 +167,6 @@ type
     procedure Button19Click(Sender: TObject);
     procedure TabSheet9Show(Sender: TObject);
     procedure Button21Click(Sender: TObject);
-    procedure Button22Click(Sender: TObject);
-    procedure Button23Click(Sender: TObject);
     procedure Button24Click(Sender: TObject);
     procedure Button25Click(Sender: TObject);
     procedure Button26Click(Sender: TObject);
@@ -185,6 +180,9 @@ type
     procedure Button31Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button30Click(Sender: TObject);
+    procedure TabSheet1Show(Sender: TObject);
+    procedure ComboBox1Select(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -200,6 +198,7 @@ type
 
     procedure LoadPic;
     procedure doRemote(GeraeteNo, Command, FName: string);
+    procedure RefreshFotoPath;
 
   end;
 
@@ -259,11 +258,6 @@ begin
 {$ENDIF}
 end;
 
-procedure TFormServiceFoto.Button10Click(Sender: TObject);
-begin
-  MyFotoExec.ensureGlobals;
-end;
-
 procedure TFormServiceFoto.Button11Click(Sender: TObject);
 begin
   if (TimerInit < cKikstart_delay * 60 * 1000) then
@@ -287,17 +281,6 @@ end;
 procedure TFormServiceFoto.Button20Click(Sender: TObject);
 begin
   FileDelete(MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension);
-end;
-
-procedure TFormServiceFoto.Button22Click(Sender: TObject);
-begin
-  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpRootPath;
-end;
-
-procedure TFormServiceFoto.Button23Click(Sender: TObject);
-begin
-  Edit_Rollback_Quelle.Text := MyFotoExec.pBackUpRootPath;
-  // cBackUpPath + cLocation_JonDaServer + '#~AktuelleNummer~\';
 end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
@@ -416,7 +399,12 @@ var
   begin
     DestFName := FName;
     nextp(DestFName, '-');
-    FileCopy(QuellPfad + FName, 'G:\' + DestFName);
+
+    ListBox12.Items.add(QuellPfad + FName + ' -> ' + MyFotoExec.pFTPPath + DestFName);
+
+    // Nur wirklich was machen, wenn gewollt
+    if CheckBox1.Checked then
+      FileCopy(QuellPfad + FName, MyFotoExec.pFTPPath + DestFName);
   end;
 
 begin
@@ -433,7 +421,8 @@ begin
   // nochmals aufzufinden und neu Umbenennen zu lassen.
   //
 
-  QuellPfad := Edit_Rollback_Quelle.Text + cLocation_MOB;
+  QuellPfad := Edit_Rollback_Quelle.Text;
+
   SrcKandidaten := TStringList.Create;
   tREFERENZ := tsTable.Create;
   with tREFERENZ do
@@ -461,26 +450,15 @@ begin
           inc(n);
         until (n >= pred(SrcKandidaten.count));
 
-        if (SrcKandidaten.count > 1) then
+        for c := 0 to pred(SrcKandidaten.count) do
         begin
-          ListBox12.Items.add('---------------------------');
-          ListBox12.Items.add('ERROR: ' + sRID + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.count) + 'x');
-          for c := 0 to pred(SrcKandidaten.count) do
-          begin
-            ListBox12.Items.add(SrcKandidaten[c]);
-            xmove(SrcKandidaten[c]);
-          end;
-          ListBox12.Items.add('---------------------------');
-        end
-        else
-        begin
-          ListBox12.Items.add(SrcKandidaten[0]);
-          xmove(SrcKandidaten[0]);
-        end
+          ListBox12.Items.add(SrcKandidaten[c]);
+          xmove(SrcKandidaten[c]);
+        end;
       end
       else
       begin
-        // ListBox12.Items.Add('ERROR: ' + sRID + ' nichts gefunden!');
+        ListBox12.Items.add('ERROR: ' + sRID + ' nichts gefunden!');
       end;
     end;
   end;
@@ -546,7 +524,7 @@ begin
     for i := 0 to pred(Items.count) do
     begin
       ItemIndex := i;
-      application.processmessages;
+      Application.ProcessMessages;
       FotoTouch(Edit4.Text + Items[i]);
     end;
 end;
@@ -622,7 +600,7 @@ begin
 
     ListBox12.Items.add('cp ' + newSource + ' ' + newDest);
 
-    if CheckBox1.checked then
+    if CheckBox1.Checked then
     begin
 
       //
@@ -768,7 +746,7 @@ begin
       ProgressBar1.Position := 0;
       for n := 0 to pred(sDir.count) do
       begin
-        if CheckBox4.checked then
+        if CheckBox4.Checked then
           break;
         ProgressBar1.Position := n;
         if FileExists(pPath_html + sDir[n] + '.pdf') then
@@ -810,11 +788,20 @@ end;
 
 procedure TFormServiceFoto.Button17Click(Sender: TObject);
 begin
+  BeginHourGlass;
+
   if (MyFotoExec = nil) then
     MyFotoExec := TownFotoExec.Create;
 
   MyProgramPath := Edit15.Text;
-  MyFotoExec.readIni(Edit14.Text, Edit15.Text);
+  MyFotoExec.readIni(ComboBox1.Text, Edit15.Text);
+
+  MyFotoExec.ensureGlobals;
+
+  // Pfade übernehmen
+  Edit_Rollback_Quelle.Text := MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath;
+
+  EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button18Click(Sender: TObject);
@@ -865,7 +852,7 @@ begin
       if (n mod 25 = 0) then
       begin
         Application.ProcessMessages;
-        if CheckBox5.checked then
+        if CheckBox5.Checked then
           break;
       end;
 
@@ -1032,7 +1019,13 @@ end;
 
 procedure TFormServiceFoto.CheckBox3Click(Sender: TObject);
 begin
-  MyFotoExec.ZaehlerNummerNeuXlsCsv_Vorhanden := CheckBox3.checked;
+  MyFotoExec.ZaehlerNummerNeuXlsCsv_Vorhanden := CheckBox3.Checked;
+end;
+
+procedure TFormServiceFoto.ComboBox1Select(Sender: TObject);
+
+begin
+  RefreshFotoPath;
 end;
 
 procedure TFormServiceFoto.doRemote(GeraeteNo, Command, FName: string);
@@ -1294,6 +1287,15 @@ begin
   Image1.Picture.LoadFromFile(Edit4.Text + ListBox3.Items[ListBox3.ItemIndex]);
 end;
 
+procedure TFormServiceFoto.RefreshFotoPath;
+var
+  MyIni: TIniFile;
+begin
+  MyIni := TIniFile.Create(EigeneOrgaMonDateienPfad + cIniFName);
+  Edit15.Text := MyIni.ReadString(ComboBox1.Text, cDataBaseName, MyProgramPath);
+  MyIni.Free;
+end;
+
 procedure TFormServiceFoto.SpeedButton1Click(Sender: TObject);
 var
   sDir: TStringList;
@@ -1342,6 +1344,11 @@ begin
   sWartend.Free;
 end;
 
+procedure TFormServiceFoto.SpeedButton4Click(Sender: TObject);
+begin
+  RefreshFotoPath;
+end;
+
 procedure TFormServiceFoto.SpeedButton8Click(Sender: TObject);
 var
   sDir: TStringList;
@@ -1364,6 +1371,26 @@ end;
 function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
 begin
   result := MyFotoExec.pAppServicePath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + '.DAT';
+end;
+
+procedure TFormServiceFoto.TabSheet1Show(Sender: TObject);
+var
+  sl: TStringList;
+  n: integer;
+  ID: string;
+begin
+  sl := TStringList.Create;
+  sl.LoadFromFile(EigeneOrgaMonDateienPfad + cIniFName);
+  for n := 0 to pred(sl.count) do
+    if (pos('[', sl[n]) = 1) then
+      if (revpos(']', sl[n]) = length(sl[n])) then
+      begin
+        ID := ExtractSegmentBetween(sl[n], '[', ']');
+        if (ID <> cGroup_Id_Default) then
+          ComboBox1.Items.add(ID);
+      end;
+  sl.Free;
+
 end;
 
 procedure TFormServiceFoto.TabSheet9Show(Sender: TObject);
