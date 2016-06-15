@@ -11743,9 +11743,9 @@ end;
 
 function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
 var
-  xOLAP: TStringList;
-  pOLAP: TStringList;
-  rOLAP: TStringList;
+  OLAP_Script: TStringList;
+  OLAP_Parameter: TStringList;
+  OLAP_Ergebnis: TStringList;
 begin
   result := MaxDouble;
   repeat
@@ -11768,14 +11768,14 @@ begin
     // aus INTERNATIONALTEXT mit dem Id OLAP:~Id~
     if (pos('OLAP:', iPortoFreiAbBrutto) > 0) then
     begin
-      pOLAP := TStringList.create;
-      pOLAP.add('$PERSON_R=' + inttostr(PERSON_R));
-      xOLAP := e_r_text(StrToIntDef(nextp(iPortoFreiAbBrutto, ':', 1), 0));
-      rOLAP := e_r_OLAP(xOLAP, pOLAP);
-      result := strtodoubledef(rOLAP.values['PORTOFREIAB'], 0);
-      pOLAP.free;
-      rOLAP.free;
-      xOLAP.free;
+      OLAP_Parameter := TStringList.create;
+      OLAP_Parameter.add('$PERSON_R=' + inttostr(PERSON_R));
+      OLAP_Script := e_r_text(StrToIntDef(nextp(iPortoFreiAbBrutto, ':', 1), 0));
+      OLAP_Ergebnis := e_r_OLAP(OLAP_Script, OLAP_Parameter);
+      result := strtodoubledef(OLAP_Ergebnis.values['PORTOFREIAB'], 0);
+      OLAP_Parameter.free;
+      OLAP_Ergebnis.free;
+      OLAP_Script.free;
     end;
 
   until true;
