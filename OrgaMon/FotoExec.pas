@@ -354,7 +354,7 @@ begin
   SolidFTP.SolidFTP_LogDir := DiagnosePath;
 
   //
-  Log(cINFOText+' Ini read!');
+  Log(cINFOText + ' Ini read!');
 
   ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
 
@@ -774,9 +774,15 @@ begin
               sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
-            Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
+
+            if DebugMode then
+              Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
+
             sFotoResult := JonDaExec.Foto(sFotoCall);
-            Dump(cINFOText + ' ) : ', sFotoResult);
+
+            if DebugMode then
+              Dump(cINFOText + ' ) : ', sFotoResult);
+
             sFotoCall.Free;
 
             // Ergebnis auswerten
@@ -824,7 +830,7 @@ begin
               FotoZiel := copy(FotoZiel, 2, MaxInt);
 
             // Fotoziel ist der Name der Internet-Ablage nicht der
-            // des SAP Verzeichnisses
+            // des Meldung-Verzeichnisses
             FotoZiel := nextp(FotoZiel, '\', 0);
 
             r := tABLAGE.locate('NAME', FotoZiel { + } );
@@ -901,14 +907,15 @@ begin
               if JonDaExec.oldInfrastructure then
                 DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
-              Log(cINFOText + ' 898: add ' + DATEINAME_AKTUELL);
+              if DebugMode then
+                Log(cINFOText + ' 911: '+cFotoService_UmbenennungAusstehendFName+': füge "' + DATEINAME_AKTUELL+'" hinzu'  );
 
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
                 { DATEINAME_AKTUELL } DATEINAME_AKTUELL + ';' +
                 { RID } InttoStr(AUFTRAG_R) + ';' +
                 { GERAETENO } FotoGeraeteNo + ';' +
-                { BAUSTELLE } ';' +
+                { BAUSTELLE } sBaustelle + ';' +
                 { MOMENT } DatumLog,
                 { Dateiname } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
             end;
@@ -1176,7 +1183,7 @@ begin
           begin
             CSV := tsTable.Create;
             CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
-            Log(cINFOText+' 1179: Extra Data loaded');
+            Log(cINFOText + ' 1179: Extra Data loaded');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -1208,7 +1215,7 @@ begin
           begin
             CSV := tsTable.Create;
             CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
-            Log(cINFOText+' 1211: Extra Data loaded');
+            Log(cINFOText + ' 1211: Extra Data loaded');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then

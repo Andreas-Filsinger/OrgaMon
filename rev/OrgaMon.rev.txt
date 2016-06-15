@@ -19,17 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.192 (15.06.16) Andreas Filsinger
+
+ Wegfall: Service: Foto: Ausführliches Umbenennungs Logging (wieder aktivierbar durch den DebugMode!)
+
 Rev 8.191 (14.06.16) Andreas Filsinger
 
  Neu: Foto: Rollback mit dem Umfang anhand der "FotoBenennung.csv"
 
 Rev 8.190 (14.06.16) Andreas Filsinger
 
- Bug: Serice: Foto: "-Neu" Logik-Abschaltung war nicht verlässlich, lagen Infos vor hat er dennoch umbenannt
+ Bug: Service: Foto: "-Neu" Logik-Abschaltung war nicht verlässlich, lagen Infos vor hat er dennoch umbenannt
 
 Rev 8.189 (14.06.16) Andreas Filsinger
 
- Bug: Serice: Foto: "-Neu" werden nicht in die Datei der ausstehenden Umbenennungen eingetragen
+ Bug: Service: Foto: "-Neu" werden nicht in die Datei der ausstehenden Umbenennungen eingetragen
 
 Rev 8.188 (09.06.16) Andreas Filsinger
 
