@@ -1956,7 +1956,6 @@ begin
   IB_Query1.refresh;
   IB_Query1AfterScroll(IB_Query1);
   EndHourGlass;
-
 end;
 
 procedure TFormBelege.Button11Click(Sender: TObject);

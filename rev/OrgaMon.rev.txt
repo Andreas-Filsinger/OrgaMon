@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.193 (16.06.16) Andreas Filsinger
+
+ Neu: Versand: in INTERNINFO nun auch SPALTENÜBERSCHRIFT=~Wert~ möglich. Wert kann sein:
+      http://wiki.orgamon.org/index.php5/HTML_-_Vorlagen#Personen
+
 Rev 8.192 (15.06.16) Andreas Filsinger
 
  Wegfall: Service: Foto: Ausführliches Umbenennungs Logging (wieder aktivierbar durch den DebugMode!)

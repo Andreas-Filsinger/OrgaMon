@@ -60,7 +60,7 @@ type
 const
   sAugesetzteBelege: TgpIntegerList = nil;
 
-// kleinere Tools für Artikel Selektion
+  // kleinere Tools für Artikel Selektion
 function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 
 function e_r_Artikel(AUSGABEART_R, ARTIKEL_R: integer): string;
@@ -4715,6 +4715,7 @@ begin
       Datensammler.add(Prefix + 'Fax=' + e_r_fax(PERSON));
       Datensammler.add(Prefix + 'Telefon=' + e_r_telefon(PERSON));
       Datensammler.add(Prefix + 'Handy=' + PERSON.FieldByName('HANDY').AsString);
+      Datensammler.add(Prefix + 'eMail=' + PERSON.FieldByName('USER_ID').AsString);
       Datensammler.add(Prefix + 'Versicherungsnummer=' + PERSON.FieldByName('VERSICHERUNGSNUMMER').AsString);
 
       ANSCHRIFT.sql.add('select * from ANSCHRIFT where RID=' + PERSON.FieldByName('PRIV_ANSCHRIFT_R').AsString);
@@ -5444,8 +5445,8 @@ end;
 
 function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
 begin
-  result := e_r_BelegFName(PERSON_R,BELEG_R,TEILLIEFERUNG,true);
-  ersetze('*','.combined'+cHTMLextension,result);
+  result := e_r_BelegFName(PERSON_R, BELEG_R, TEILLIEFERUNG, true);
+  ersetze('*', '.combined' + chtmlextension, result);
 end;
 
 function e_r_MahnungFName(PERSON_R: integer): string;
@@ -9883,9 +9884,11 @@ var
   OutFName: string;
   PaketS: TStringList;
   WerteS: TStringList;
+  Wert: string;
   ParameterS: TStringList;
+  PersonenDatenS: TStringList;
   OutLineS: string;
-  LieferAnschriftRID: integer;
+  LIEFERANSCHRIFT_R: integer;
   Name1_2: TStringList;
   _id: string;
   gewicht: integer;
@@ -10132,22 +10135,22 @@ begin
           gewicht := cVERSAND.FieldByName('GEWICHT').AsInteger + cVERSAND.FieldByName('LEERGEWICHT').AsInteger;
 
           // a) richtige Person lokalisieren:
-          LieferAnschriftRID := 0;
+          LIEFERANSCHRIFT_R := 0;
           repeat
 
             if not(FieldByName('LIEFERANSCHRIFT_R').IsNull) then
             begin
-              LieferAnschriftRID := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
+              LIEFERANSCHRIFT_R := FieldByName('LIEFERANSCHRIFT_R').AsInteger;
               break;
             end;
-            LieferAnschriftRID := FieldByName('PERSON_R').AsInteger;
+            LIEFERANSCHRIFT_R := FieldByName('PERSON_R').AsInteger;
 
           until true;
 
           // b) alle Personen-Daten laden:
           with cPERSON do
           begin
-            sql.add('select * from PERSON where RID=' + inttostr(LieferAnschriftRID));
+            sql.add('select * from PERSON where RID=' + inttostr(LIEFERANSCHRIFT_R));
             ApiFirst;
             if eof then;
           end;
@@ -10158,7 +10161,7 @@ begin
             if eof then;
           end;
 
-          Name1_2 := e_r_Person2Zeiler(LieferAnschriftRID);
+          Name1_2 := e_r_Person2Zeiler(LIEFERANSCHRIFT_R);
 
           PaketS := TStringList.create;
           ParameterS := TStringList.create;
@@ -10234,15 +10237,31 @@ begin
                 { 09 } 'POOL_GEWICHT' + cLimiterType2;
 
                 // zusätzliche Felder
+                PersonenDatenS := TStringList.create;
                 for n := 0 to pred(ParameterS.count) do
                 begin
                   k := pos('=', ParameterS[n]);
                   if k > 0 then
                   begin
                     OutLineS := OutLineS + cutblank(copy(ParameterS[n], 1, pred(k))) + cLimiterType2;
-                    WerteS.add(cutblank(copy(ParameterS[n], succ(k), MaxInt)));
+                    Wert := cutblank(copy(ParameterS[n], succ(k), MaxInt));
+
+                    if (length(Wert) > 2) then
+                      if (pos('~', Wert) = 1) then
+                      begin
+                        // Ein Wert aus der Datenbank
+                        Wert := ExtractSegmentBetween(Wert, '~', '~');
+                        if (PersonenDatenS.count = 0) then
+                          e_r_Anschrift(LIEFERANSCHRIFT_R, PersonenDatenS);
+
+                        //
+                        Wert := PersonenDatenS.values[Wert];
+                      end;
+
+                    WerteS.add(Wert);
                   end;
                 end;
+                PersonenDatenS.free;
 
                 // TitelZeile
                 PaketS.add(OutLineS);
@@ -10290,6 +10309,7 @@ begin
                 // Gewicht
                   format('%.3f', [gewicht / 1000.0]) + cLimiterType2;
 
+                // weitere Spalten
                 for n := 0 to pred(WerteS.count) do
                   OutLineS := OutLineS + WerteS[n] + cLimiterType2;
 
@@ -10330,8 +10350,10 @@ begin
     cVERSENDER.free;
 
     // nun noch das Ausgangsdatum buchen, dies ist das Zeichen für "versendet"!
-    e_x_sql('update VERSAND set AUSGANG=''now'' where (BELEG_R=' + inttostr(BELEG_R) + ') AND (TEILLIEFERUNG=' +
-      inttostr(TEILLIEFERUNG) + ')');
+    e_x_sql(
+      { } 'update VERSAND set AUSGANG=''now'' where' +
+      { } ' (BELEG_R=' + inttostr(BELEG_R) + ') AND' +
+      { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
     qBELEG.free;
 
