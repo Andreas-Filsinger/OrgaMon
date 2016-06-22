@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.193; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.194; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -294,7 +294,7 @@ const
   eT_Newsletter = 18; // Der Webshop hat einen Newsletter erzeugt
   eT_SaldoAbruf = 19; // Es wurde ein Saldo abgerufen (Online-Banking)
   eT_BenutzerTextUpload = 20; // Blasmusikartikel werden hochgeladen
-  eT_WebShopBestellung = 21; // Es wurden Probleme bei der Webshopbestellung bemerkt
+  eT_WebShopBestellung = 21; // Webshopbestellung
   eT_BelegStorno = 22;
   eT_Vormerken = 23;
   eT_FTP = 24; // Request für einen FTP Upload
@@ -302,6 +302,11 @@ const
   eT_AufgabeErledigt = 26; // Personenbezogene Aufgaben sind "erledigt"
   eT_VertragsAnwendung = 27; // Buchungslauf für Verträge
   eT_RechnungPerEMail = 28; // Rechnungsversendung per eMail wurde angefordert
+  eT_WebshopLogin = 29;  // Login einer Person
+  eT_WebShopLogout = 30; // Logout einer Person
+  eT_WebShopArtikelAnzeigen = 31; // Anzeige eines Artikels
+  eT_WebShopArtikelDetail = 32; // Anzeige von Details eines Artikels
+  eT_WebShopArtikelMusik = 33; // Anhören der Musik zu einem Artikel
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

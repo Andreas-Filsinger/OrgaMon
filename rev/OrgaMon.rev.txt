@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.194 (22.06.16) Andreas Filsinger
+
+ Neu: WebShop: mehr Infos in der Tabelle WEBSHOPCLICKS
+
 Rev 8.193 (16.06.16) Andreas Filsinger
 
  Neu: Versand: in INTERNINFO nun auch SPALTENÜBERSCHRIFT=~Wert~ möglich. Wert kann sein:
@@ -11434,6 +11438,32 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.194
+
+alter table WEBSHOPCLICKS
+ add ART integer;
+
+alter table WEBSHOPCLICKS
+ add AUSGABEART_R DOM_REFERENCE;
+
+alter table WEBSHOPCLICKS
+ add ARTIKEL_R DOM_REFERENCE;
+
+alter table WEBSHOPCLICKS
+ add constraint FK_WSC_PERSON
+ foreign key (PERSON_R)
+ references PERSON(RID);
+
+alter table WEBSHOPCLICKS
+ add constraint FK_WSC_AUSGABEART
+ foreign key (AUSGABEART_R)
+ references AUSGABEART(RID);
+
+alter table WEBSHOPCLICKS
+ add constraint FK_WSC_ARTIKEL
+ foreign key (ARTIKEL_R)
+ references ARTIKEL(RID);
 
 :8.186
 
