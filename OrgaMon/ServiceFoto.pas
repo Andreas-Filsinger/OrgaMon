@@ -1023,7 +1023,6 @@ begin
 end;
 
 procedure TFormServiceFoto.ComboBox1Select(Sender: TObject);
-
 begin
   RefreshFotoPath;
 end;

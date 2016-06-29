@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.195 (29.06.16) Andreas Filsinger
+
+ Neu: Service: App: Namensermittlung bei Gerät "000" über die IMEI
+
+ Wegfall: Service: App: Bezahlt-Bis bei Gerät "000" hat keine Bedeutung, entsprechende
+          Zeitraumkontrolle entfernt
+
 Rev 8.194 (22.06.16) Andreas Filsinger
 
  Neu: WebShop: mehr Infos in der Tabelle WEBSHOPCLICKS

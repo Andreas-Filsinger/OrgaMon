@@ -57,9 +57,7 @@ type
     Edit1: TEdit;
     Button2: TButton;
     CheckBox11: TCheckBox;
-    Label4: TLabel;
     Label5: TLabel;
-    Edit2: TEdit;
     Edit3: TEdit;
     Button6: TButton;
     Label6: TLabel;
@@ -97,8 +95,6 @@ type
     Label19: TLabel;
     Edit13: TEdit;
     Label20: TLabel;
-    Edit14: TEdit;
-    Label21: TLabel;
     Edit15: TEdit;
     Label22: TLabel;
     CheckBox12: TCheckBox;
@@ -149,7 +145,6 @@ type
     CheckBox18: TCheckBox;
     Button22: TButton;
     Button23: TButton;
-    TabSheet7: TTabSheet;
     Edit23: TEdit;
     Button16: TButton;
     TabSheet8: TTabSheet;
@@ -161,16 +156,18 @@ type
     Edit26: TEdit;
     ListBox2: TListBox;
     Button26: TButton;
-    Button27: TButton;
+    Label21: TLabel;
     Label29: TLabel;
-    Edit27: TEdit;
+    SpeedButton4: TSpeedButton;
+    Edit14: TEdit;
+    Button27: TButton;
+    ComboBox3: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure Edit2Exit(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
@@ -196,6 +193,9 @@ type
     procedure Button26Click(Sender: TObject);
     procedure Button27Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
+    procedure ComboBox3Select(Sender: TObject);
+    procedure TabSheet1Show(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -215,6 +215,7 @@ type
     GeraeteNo: string;
 
     procedure Diagnose_Log(One: TMdeRec; log: TStringList);
+    procedure RefreshAppPath;
 
   end;
 
@@ -234,6 +235,15 @@ uses
 procedure TFormServiceApp.FormCreate(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheet1;
+end;
+
+procedure TFormServiceApp.RefreshAppPath;
+var
+  MyIni: TIniFile;
+begin
+  MyIni := TIniFile.Create(EigeneOrgaMonDateienPfad + cIniFName);
+  Edit14.Text := MyIni.ReadString(ComboBox3.Text, cDataBaseName, MyProgramPath);
+  MyIni.Free;
 end;
 
 procedure TFormServiceApp.Button4Click(Sender: TObject);
@@ -268,15 +278,15 @@ var
 begin
   _log('melde TAN ??? ... ');
 
-  lAbgearbeitet := TgpIntegerList.create;
-  lMeldungen := TStringList.create;
-  lFehlDatum := TStringList.create;
-  lHeuteFehlDatum := TStringList.create;
+  lAbgearbeitet := TgpIntegerList.Create;
+  lMeldungen := TStringList.Create;
+  lFehlDatum := TStringList.Create;
+  lHeuteFehlDatum := TStringList.Create;
   fillchar(mderec, sizeof(mderec), 0);
   Stat_Meldungen := 0;
   try
 
-    dTimeOut := DatePlus(DateGet, strtointdef(Edit21.text, 0));
+    dTimeOut := DatePlus(DateGet, strtointdef(Edit21.Text, 0));
     sOrgaMonFName := MyProgramPath + cOrgaMonDataPath + cFixedTAN_FName;
     assignFile(OrgaMonErgebnis, sOrgaMonFName);
     rewrite(OrgaMonErgebnis);
@@ -377,13 +387,13 @@ begin
 
   except
   end;
-  lAbgearbeitet.free;
-  lMeldungen.free;
+  lAbgearbeitet.Free;
+  lMeldungen.Free;
   lFehlDatum.SaveToFile(MyProgramPath + '000-Datum.txt');
-  lFehlDatum.free;
+  lFehlDatum.Free;
   // lHeuteFehlDatum.Sort;
   lHeuteFehlDatum.SaveToFile(MyProgramPath + 'Geräte-Datum-Falsch-' + inttostr(dTimeOut) + '.txt');
-  lHeuteFehlDatum.free;
+  lHeuteFehlDatum.Free;
 
   Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' + inttostr(Stat_Meldungen) +
     'x) ' + 'OK';
@@ -408,8 +418,8 @@ begin
   if not(Initialized) then
   begin
 
-    JonDaX := TJonDaExec.create;
-    JonDaX.readIni(Edit27.text);
+    JonDaX := TJonDaExec.Create;
+    JonDaX.readIni(ComboBox3.Text);
 
     // lade IMEI
     _log('Lade Tabelle IMEI ... ');
@@ -431,24 +441,6 @@ begin
     SolidFTP.SolidFTP_LogDir := DiagnosePath;
     _log('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
-    (*
-
-
-      // Verzeichnisse Anlegen
-      if FileExists(MyProgramPath + cIniFName) then
-      begin
-      checkcreatedir(MyProgramPath + cServerDataPath);
-      checkcreatedir(MyProgramPath + cOrgaMonDataPath);
-      checkcreatedir(MyProgramPath + cMeldungPath);
-      checkcreatedir(MyProgramPath + cStatistikPath);
-      // checkcreatedir(MyProgramPath + cUpdatePath);
-      checkcreatedir(MyProgramPath + cProtokollPath);
-      checkcreatedir(MyProgramPath + cGeraeteEinstellungen);
-      // checkcreatedir(MyProgramPath + cFotoPath);
-      checkcreatedir(MyProgramPath + cDBPath);
-      checkcreatedir(MyProgramPath + cSyncPath);
-      end;
-    *)
     //
     ComboBox2.items.Clear;
     ComboBox2.items.add(cActionRestantenLeeren);
@@ -456,6 +448,8 @@ begin
     ComboBox2.items.add(cActionFremdMonteurLoeschen);
     ComboBox2.items.add(cActionAusAlterTAN);
     Initialized := true;
+
+    // Aktuellen TAN Stand anzeigen
     Label25.caption := JonDaX.NewTrn(false);
     _log('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
   end;
@@ -490,28 +484,28 @@ var
 
 begin
   access_log := nil;
-  sParameter := TStringList.create;
+  sParameter := TStringList.Create;
   sParameter.Values['OFFLINE'] := cIni_Activate;
 
   if CheckBox22.Checked then
   begin
-    access_log := TStringList.create;
+    access_log := TStringList.Create;
     access_log.LoadFromFile(MyProgramPath + 'access_log');
   end;
 
-  if (Edit20.text = '') then
+  if (Edit20.Text = '') then
   begin
     JonDaX.proceed_NoUpload := not(CheckBox17.Checked);
-    sParameter.Values['TAN'] := Edit1.text;
-    Nachtrag(Edit1.text);
-    _log('verarbeite ' + Edit1.text + ' ... ');
+    sParameter.Values['TAN'] := Edit1.Text;
+    Nachtrag(Edit1.Text);
+    _log('verarbeite ' + Edit1.Text + ' ... ');
     sResult := JonDaX.proceed(sParameter);
-    sResult.free;
+    sResult.Free;
     _log('OK');
   end
   else
   begin
-    for n := strtointdef(Edit1.text, MaxInt) to strtointdef(Edit20.text, -1) do
+    for n := strtointdef(Edit1.Text, MaxInt) to strtointdef(Edit20.Text, -1) do
       if DirExists(MyProgramPath + inttostr(n)) then
       begin
         JonDaX.proceed_NoUpload := not(CheckBox17.Checked);
@@ -519,11 +513,11 @@ begin
         Nachtrag(inttostrN(n, 5));
         _log('verarbeite ' + inttostrN(n, 5) + ' ... ');
         sResult := JonDaX.proceed(sParameter);
-        sResult.free;
+        sResult.Free;
         _log('OK');
       end;
   end;
-  sParameter.free;
+  sParameter.Free;
 end;
 
 procedure TFormServiceApp.Button6Click(Sender: TObject);
@@ -556,7 +550,7 @@ var
     if FileExists(FName) then // hex
     begin
       md5 := DCP_md51.FromFile(FName);
-      Doppelte := TStringList.create;
+      Doppelte := TStringList.Create;
       FoundOne := false;
       assignFile(MonDaF, FName);
       _FileOpenMode := FileMode;
@@ -569,17 +563,17 @@ var
         TJonDaExec.toAnsi(MonDaRec);
 
         Doppelte.add(inttostr(MonDaRec.RID));
-        if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.text, MonDaRec.zaehlernummer_neu) > 0) or
-          (Edit5.text = '*')) and
-        { } ((pos(Edit8.text, MonDaRec.monteur) = 1) or (Edit8.text = '*')) and
-        { } ((strtointdef(Edit9.text, MaxInt) = MonDaRec.ausfuehren_ist_datum) or
-          (Date2Long(Edit9.text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.text = '*')) and
-          ((Date2Long(Edit13.text) = MonDaRec.ausfuehren_soll) or (Edit13.text = '*')) and
-          ((pos(Edit6.text, MonDaRec.zaehlernummer_alt) > 0) or (Edit6.text = '*')) and
-          ((pos(Edit10.text, MonDaRec.ProtokollInfo) > 0) or (Edit10.text = '*')) and
-          ((pos(Edit12.text, MonDaRec.ABNummer) > 0) or (Edit12.text = '*')) and
-          ((pos(Edit11.text, MonDaRec.Zaehler_Strasse) > 0) or (Edit11.text = '*')) and
-          ((pos(Edit15.text, MonDaRec.Baustelle) > 0) or (Edit15.text = '*')) and true then
+        if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.Text, MonDaRec.zaehlernummer_neu) > 0) or
+          (Edit5.Text = '*')) and
+        { } ((pos(Edit8.Text, MonDaRec.monteur) = 1) or (Edit8.Text = '*')) and
+        { } ((strtointdef(Edit9.Text, MaxInt) = MonDaRec.ausfuehren_ist_datum) or
+          (Date2Long(Edit9.Text) = MonDaRec.ausfuehren_ist_datum) or (Edit9.Text = '*')) and
+          ((Date2Long(Edit13.Text) = MonDaRec.ausfuehren_soll) or (Edit13.Text = '*')) and
+          ((pos(Edit6.Text, MonDaRec.zaehlernummer_alt) > 0) or (Edit6.Text = '*')) and
+          ((pos(Edit10.Text, MonDaRec.ProtokollInfo) > 0) or (Edit10.Text = '*')) and
+          ((pos(Edit12.Text, MonDaRec.ABNummer) > 0) or (Edit12.Text = '*')) and
+          ((pos(Edit11.Text, MonDaRec.Zaehler_Strasse) > 0) or (Edit11.Text = '*')) and
+          ((pos(Edit15.Text, MonDaRec.Baustelle) > 0) or (Edit15.Text = '*')) and true then
         begin
           WasGefunden := true;
           if not(FoundOne) then
@@ -613,7 +607,7 @@ var
       if (DoppelteAnz > 0) then
         sDiagnose_Log.add(inttostr(DoppelteAnz) + ' doppelte!');
 
-      Doppelte.free;
+      Doppelte.Free;
       CloseFile(MonDaF);
     end
     else
@@ -629,18 +623,18 @@ var
 begin
   // Auswerte-Funktion
   BeginHourGlass;
-  sDiagnose_Log := TStringList.create;
-  OrgaMonFile := TStringList.create;
-  sTAN_Log := TStringList.create;
-  sMeldung := TStringList.create;
-  sLostProceed := TStringList.create;
-  AllTRN := TStringList.create;
+  sDiagnose_Log := TStringList.Create;
+  OrgaMonFile := TStringList.Create;
+  sTAN_Log := TStringList.Create;
+  sMeldung := TStringList.Create;
+  sLostProceed := TStringList.Create;
+  AllTRN := TStringList.Create;
 
   sLostProceed.add('TAN');
   sTAN_Log.add('TAN;Moment;Geraet;Monteur;Baustelle;Version;Einstellungen');
 
-  RID := strtointdef(Edit3.text, 0);
-  dir(Edit2.text + ComboBox1.text + '.', AllTRN, false);
+  RID := strtointdef(Edit3.Text, 0);
+  dir(Edit14.Text + ComboBox1.Text + '.', AllTRN, false);
   AllTRN.sort;
   if (AllTRN.count = 0) then
     AllTRN.add('.');
@@ -665,48 +659,48 @@ begin
           break;
       end;
 
-      GeraeteNummer := JonDaX.detectGeraeteNummer(Edit2.text + AllTRN[n]);
+      GeraeteNummer := JonDaX.detectGeraeteNummer(Edit14.Text + AllTRN[n]);
       if (GeraeteNummer = '') then
         continue;
 
-      GeraetZIPFName := Edit2.text + AllTRN[n] + '\' + GeraeteNummer + cZIPExtension;
+      GeraetZIPFName := Edit14.Text + AllTRN[n] + '\' + GeraeteNummer + cZIPExtension;
       GeraetZIPDatum := FDate(GeraetZIPFName);
 
-      sMeldung.LoadFromFile(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + '.txt');
+      sMeldung.LoadFromFile(Edit14.Text + AllTRN[n] + '\' + AllTRN[n] + '.txt');
 
-      if not(FileExists(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + '.dat')) then
+      if not(FileExists(Edit14.Text + AllTRN[n] + '\' + AllTRN[n] + '.dat')) then
         sLostProceed.add(AllTRN[n]);
 
-      MoreInfo := AllTRN[n] + '\' + long2date(FDate(Edit2.text + AllTRN[n] + '\NEW.ZIP')) + ' ' +
-        secondstostr(FSeconds(Edit2.text + AllTRN[n] + '\NEW.ZIP'));
+      MoreInfo := AllTRN[n] + '\' + long2date(FDate(Edit14.Text + AllTRN[n] + '\NEW.ZIP')) + ' ' +
+        secondstostr(FSeconds(Edit14.Text + AllTRN[n] + '\NEW.ZIP'));
 
       // Was kam vom Gerät
       if CheckBox6.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\MONDA.DAT', MoreInfo + ' MonDa-Gerät bisher');
+        CheckOut(Edit14.Text + AllTRN[n] + '\MONDA.DAT', MoreInfo + ' MonDa-Gerät bisher');
 
       // Was bleibt auf dem Gerät?
       if CheckBox11.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\STAY.DAT', MoreInfo + ' verbleibt auf dem Gerät');
+        CheckOut(Edit14.Text + AllTRN[n] + '\STAY.DAT', MoreInfo + ' verbleibt auf dem Gerät');
 
       if CheckBox16.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\LOST.DAT', MoreInfo + ' wurde zwangsentfernt!');
+        CheckOut(Edit14.Text + AllTRN[n] + '\LOST.DAT', MoreInfo + ' wurde zwangsentfernt!');
 
       // Was kommt von OrgaMon
       if CheckBox5.Checked then
       begin
-        dir(Edit2.text + AllTRN[n] + '\???.DAT', OrgaMonFile, false);
+        dir(Edit14.Text + AllTRN[n] + '\???.DAT', OrgaMonFile, false);
         for m := 0 to pred(OrgaMonFile.count) do
           if OrgaMonFile[m][1] in ['0' .. '9'] then
-            CheckOut(Edit2.text + AllTRN[n] + '\' + OrgaMonFile[m], MoreInfo + ' OrgaMon-Daten');
+            CheckOut(Edit14.Text + AllTRN[n] + '\' + OrgaMonFile[m], MoreInfo + ' OrgaMon-Daten');
       end;
 
       // Was geht zum OrgaMon
       if CheckBox8.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\' + AllTRN[n] + cDATExtension, MoreInfo + ' Meldung an OrgaMon');
+        CheckOut(Edit14.Text + AllTRN[n] + '\' + AllTRN[n] + cDATExtension, MoreInfo + ' Meldung an OrgaMon');
 
       // Was geht wieder auf das Gerät
       if CheckBox7.Checked then
-        CheckOut(Edit2.text + AllTRN[n] + '\AUFTRAG.DAT', MoreInfo + ' MonDa-Gerät neu');
+        CheckOut(Edit14.Text + AllTRN[n] + '\AUFTRAG.DAT', MoreInfo + ' MonDa-Gerät neu');
 
       // Was kam eigentlich über das Web
       // im Moment nur RID-Suche vorgesehen
@@ -714,9 +708,9 @@ begin
       begin
 
         // Suche nach RIDs
-        if (Edit3.text <> '*') then
+        if (Edit3.Text <> '*') then
           for m := 0 to pred(sMeldung.count) do
-            if (pos(Edit3.text + ';', sMeldung[m]) = 1) then
+            if (pos(Edit3.Text + ';', sMeldung[m]) = 1) then
               sDiagnose_Log.add('Meldung@' + AllTRN[n] + '=' + sMeldung[m]);
 
       end;
@@ -740,10 +734,10 @@ begin
   end;
   if CheckBox12.Checked then
   begin
-    dir(Edit2.text + '0000\???.DAT', OrgaMonFile, false);
+    dir(Edit14.Text + '0000\???.DAT', OrgaMonFile, false);
     for m := 0 to pred(OrgaMonFile.count) do
       if OrgaMonFile[m][1] in ['0' .. '9'] then
-        CheckOut(Edit2.text + '0000\' + OrgaMonFile[m], OrgaMonFile[m] + ' OrgaMon-Daten');
+        CheckOut(Edit14.Text + '0000\' + OrgaMonFile[m], OrgaMonFile[m] + ' OrgaMon-Daten');
   end;
   ProgressBar1.position := 0;
   sLostProceed.SaveToFile(MyProgramPath + 'Ohne-Proceed.txt');
@@ -757,12 +751,12 @@ begin
   if sLostProceed.count > 1 then
     openshell(MyProgramPath + 'Ohne-Proceed.txt');
 
-  sMeldung.free;
-  AllTRN.free;
-  sDiagnose_Log.free;
-  OrgaMonFile.free;
-  sTAN_Log.free;
-  sLostProceed.free;
+  sMeldung.Free;
+  AllTRN.Free;
+  sDiagnose_Log.Free;
+  OrgaMonFile.Free;
+  sTAN_Log.Free;
+  sLostProceed.Free;
 end;
 
 procedure TFormServiceApp.Diagnose_Log(One: TMdeRec; log: TStringList);
@@ -804,38 +798,38 @@ end;
 
 procedure TFormServiceApp.Button7Click(Sender: TObject);
 begin
-  ListBox1.items.add(Edit4.text + ',' + ComboBox2.text + ',' + Edit7.text);
+  ListBox1.items.add(Edit4.Text + ',' + ComboBox2.Text + ',' + Edit7.Text);
 end;
 
 procedure TFormServiceApp.Edit19KeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #13) then
   begin
-    Edit19.text := RFC1738ToAnsi(Edit19.text);
+    Edit19.Text := RFC1738ToAnsi(Edit19.Text);
     Key := #0;
   end;
 end;
 
-procedure TFormServiceApp.Edit2Exit(Sender: TObject);
-begin
-  Edit2.text := ValidatePathName(Edit2.text) + '\';
-end;
-
 procedure TFormServiceApp.Button8Click(Sender: TObject);
 begin
-  openshell(Edit2.text + ComboBox1.text + '\restanten.txt');
+  openshell(Edit14.Text + ComboBox1.Text + '\restanten.txt');
 end;
 
 procedure TFormServiceApp.Button9Click(Sender: TObject);
 var
   sResult, sParameter: TStringList;
 begin
-  sParameter := TStringList.create;
-  MyProgramPath := Edit14.text;
-  sParameter.Values['TAN'] := Edit1.text;
+  sParameter := TStringList.Create;
+  MyProgramPath := Edit14.Text;
+  sParameter.Values['TAN'] := Edit1.Text;
   sResult := JonDaX.proceed(sParameter);
-  sResult.free;
-  sParameter.free;
+  sResult.Free;
+  sParameter.Free;
+end;
+
+procedure TFormServiceApp.ComboBox3Select(Sender: TObject);
+begin
+  RefreshAppPath;
 end;
 
 procedure TFormServiceApp.Button10Click(Sender: TObject);
@@ -848,7 +842,7 @@ var
     n: integer;
     newl: string;
   begin
-    sl := TStringList.create;
+    sl := TStringList.Create;
     sl.LoadFromFile(s);
     for n := 0 to pred(sl.count) do
     begin
@@ -863,13 +857,13 @@ var
   end;
 
 begin
-  TheX := TStringList.create;
-  Doit(Edit17.text);
-  Doit(Edit16.text);
+  TheX := TStringList.Create;
+  Doit(Edit17.Text);
+  Doit(Edit16.Text);
   TheX.sort;
   RemoveDuplicates(TheX);
   TheX.SaveToFile(MyProgramPath + 'Diagnose.txt');
-  TheX.free;
+  TheX.Free;
   openshell(MyProgramPath + 'Diagnose.txt');
 end;
 
@@ -878,9 +872,37 @@ begin
   openshell(MyProgramPath + cGeraeteEinstellungen);
 end;
 
+procedure TFormServiceApp.SpeedButton4Click(Sender: TObject);
+begin
+  RefreshAppPath;
+end;
+
+procedure TFormServiceApp.TabSheet1Show(Sender: TObject);
+var
+  sl: TStringList;
+  n: integer;
+  ID: string;
+begin
+  sl := TStringList.Create;
+  sl.LoadFromFile(EigeneOrgaMonDateienPfad + cIniFName);
+  with ComboBox3.items do
+  begin
+    Clear;
+    for n := 0 to pred(sl.count) do
+      if (pos('[', sl[n]) = 1) then
+        if (revpos(']', sl[n]) = length(sl[n])) then
+        begin
+          ID := ExtractSegmentBetween(sl[n], '[', ']');
+          if (ID <> cGroup_Id_Default) then
+            add(ID);
+        end;
+  end;
+  sl.Free;
+end;
+
 procedure TFormServiceApp._log(s: string);
 begin
-  memo1.lines.add(s);
+  Memo1.lines.add(s);
 end;
 
 procedure TFormServiceApp.Button11Click(Sender: TObject);
@@ -902,15 +924,15 @@ var
   Gefunden: boolean;
   StartTime: dword;
 begin
-  GeraeteID := Edit22.text;
+  GeraeteID := Edit22.Text;
   StartTime := 0;
 
-  sAlt := TStringList.create;
-  sNeu := TStringList.create;
-  AllTRN := TStringList.create;
+  sAlt := TStringList.Create;
+  sNeu := TStringList.Create;
+  AllTRN := TStringList.Create;
 
   // Vorlauf
-  AllTRN := TStringList.create;
+  AllTRN := TStringList.Create;
   dir(MyProgramPath + '?????.', AllTRN, false);
   AllTRN.sort;
 
@@ -981,9 +1003,9 @@ begin
   //
   sNeu.SaveToFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
 
-  sAlt.free;
-  sNeu.free;
-  AllTRN.free;
+  sAlt.Free;
+  sNeu.Free;
+  AllTRN.Free;
   ProgressBar1.position := 0;
 
 end;
@@ -996,19 +1018,19 @@ var
 begin
 
   Path := 'W:\JonDaServer\';
-  if (Edit20.text = '') then
-    Edit20.text := Edit1.text;
+  if (Edit20.Text = '') then
+    Edit20.Text := Edit1.Text;
 
-  iFTP := TIdFTP.create(self);
+  iFTP := TIdFTP.Create(self);
   SolidInit(iFTP);
   with iFTP do
   begin
-    Host := 'raib25';
-    UserName := 'ftp-sewa';
-    Password := '169B42GX5';
+    Host := 'host';
+    UserName := 'user';
+    Password := 'pwd';
     connect;
   end;
-  for n := strtointdef(Edit1.text, MaxInt) to strtointdef(Edit20.text, -1) do
+  for n := strtointdef(Edit1.Text, MaxInt) to strtointdef(Edit20.Text, -1) do
   begin
     TAN := inttostrN(n, 5);
     if FSize(Path + TAN + '\' + TAN + cDATExtension) > 0 then
@@ -1018,7 +1040,7 @@ begin
     end;
   end;
   iFTP.Disconnect;
-  iFTP.free;
+  iFTP.Free;
 end;
 
 procedure TFormServiceApp.Button13Click(Sender: TObject);
@@ -1039,14 +1061,14 @@ var
   AllNames: TStringList;
   n: integer;
 begin
-  AllNames := TStringList.create;
-  pem_fullList(Edit2.text + cUpdatePath + Edit18.text, AllNames);
+  AllNames := TStringList.Create;
+  pem_fullList(Edit14.Text + cUpdatePath + Edit18.Text, AllNames);
   AllNames.SaveToFile(MyProgramPath + 'AlleNamen.txt');
   for n := pred(AllNames.count) downto 0 do
     if pos('//', AllNames[n]) > 0 then
       AllNames.Delete(n);
   clipboard.AsText := HugeSingleLine(AllNames, ';');
-  AllNames.free;
+  AllNames.Free;
   openshell(MyProgramPath + 'AlleNamen.txt');
 end;
 
@@ -1054,7 +1076,7 @@ procedure TFormServiceApp.Button16Click(Sender: TObject);
 var
   SourceFName, DestFNAme: string;
 begin
-  SourceFName := MyProgramPath + 'Update\' + Edit23.text;
+  SourceFName := MyProgramPath + 'Update\' + Edit23.Text;
   DestFNAme := MyProgramPath + cProtPrefix + cProtExtension;
   JonDaX.migrateProtokoll(SourceFName, DestFNAme);
   openshell(DestFNAme);
@@ -1082,7 +1104,7 @@ var
   MeldungsMoment: string;
   iFTP: TIdFTP;
 begin
-  iFTP := TIdFTP.create(self);
+  iFTP := TIdFTP.Create(self);
 
   SolidInit(iFTP);
   with iFTP do
@@ -1096,9 +1118,9 @@ begin
 
   MyProgramPath := 'W:\JonDaServer\';
 
-  lAbgearbeitet := TgpIntegerList.create;
-  lMeldungen := TStringList.create;
-  lFehlEingaben := TStringList.create;
+  lAbgearbeitet := TgpIntegerList.Create;
+  lMeldungen := TStringList.Create;
+  lFehlEingaben := TStringList.Create;
   fillchar(mderec, sizeof(mderec), 0);
   Stat_Meldungen := 0;
   try
@@ -1172,11 +1194,11 @@ begin
     JonDaX.EndAction;
   except
   end;
-  lAbgearbeitet.free;
-  lMeldungen.free;
+  lAbgearbeitet.Free;
+  lMeldungen.Free;
   lFehlEingaben.SaveToFile(MyProgramPath + 'DiagnoseHTNT.txt');
-  lFehlEingaben.free;
-  iFTP.free;
+  lFehlEingaben.Free;
+  iFTP.Free;
 
   Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' + inttostr(Stat_Meldungen) +
     'x) ' + 'OK';
@@ -1216,17 +1238,17 @@ begin
   BeginHourGlass;
 
   // prepare
-  sDirs := TStringList.create;
-  sZips := TStringList.create;
-  sPics := TStringList.create;
-  sFotos := TStringList.create;
+  sDirs := TStringList.Create;
+  sZips := TStringList.Create;
+  sPics := TStringList.Create;
+  sFotos := TStringList.Create;
 
-  tBAUSTELLE := TsTable.create;
+  tBAUSTELLE := TsTable.Create;
   tBAUSTELLE.insertfromFile(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
   Col_FTP_Benutzer := tBAUSTELLE.colOf(cE_FTPUSER);
 
   //
-  WARTEND := TsTable.create;
+  WARTEND := TsTable.Create;
   WARTEND.insertfromFile(JonDaX.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
   // init
@@ -1295,7 +1317,7 @@ begin
             break;
 
           // Die Nummer des zu erzeugenden ZIP suchen
-          mIni := TIniFile.create(sPath + 'Fotos-nnnn.ini');
+          mIni := TIniFile.Create(sPath + 'Fotos-nnnn.ini');
           with mIni do
           begin
             FotosSequence := strtoint(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
@@ -1315,7 +1337,7 @@ begin
             inc(FotosSequence);
             WriteString(cGroup_Id_Default, 'Sequence', inttostr(FotosSequence));
           end;
-          mIni.free;
+          mIni.Free;
 
           // Archivieren
           if (zip(
@@ -1339,12 +1361,12 @@ begin
   end;
 
   // unprepare
-  sDirs.free;
-  sZips.free;
-  sPics.free;
-  sFotos.free;
-  tBAUSTELLE.free;
-  WARTEND.free;
+  sDirs.Free;
+  sZips.Free;
+  sPics.Free;
+  sFotos.Free;
+  tBAUSTELLE.Free;
+  WARTEND.Free;
   ProgressBar1.position := 0;
   EndHourGlass;
 
@@ -1357,10 +1379,10 @@ procedure TFormServiceApp.Button19Click(Sender: TObject);
     bla: TBLAGER;
     mderec: TMdeRec;
   begin
-    bla := TBLAGER.create;
+    bla := TBLAGER.Create;
     bla.Init(FName, mderec, sizeof(TMdeRec));
     bla.Clone(now);
-    bla.free;
+    bla.Free;
   end;
 
 begin
@@ -1376,8 +1398,8 @@ procedure TFormServiceApp.Button20Click(Sender: TObject);
     mderec: TMdeRec;
     s: TStringList;
   begin
-    s := TStringList.create;
-    bla := TBLAGER.create;
+    s := TStringList.Create;
+    bla := TBLAGER.Create;
     bla.Init(FName, mderec, sizeof(TMdeRec));
     with bla do
     begin
@@ -1406,7 +1428,7 @@ procedure TFormServiceApp.Button20Click(Sender: TObject);
       end;
       EndTransaction;
     end;
-    bla.free;
+    bla.Free;
     s.SaveToFile(FName + '.txt');
     openshell(FName + '.txt');
   end;
@@ -1437,7 +1459,7 @@ var
   iFTP: TIdFTP;
 begin
   BeginHourGlass;
-  iFTP := TIdFTP.create(nil);
+  iFTP := TIdFTP.Create(nil);
   SolidInit(iFTP);
   with iFTP do
   begin
@@ -1453,7 +1475,7 @@ begin
   except
 
   end;
-  iFTP.free;
+  iFTP.Free;
   EndHourGlass;
 end;
 
@@ -1479,7 +1501,7 @@ begin
 
   with JonDaX.tIMEI_OK do
   begin
-    if (locate('IMEI', Edit24.text) = -1) then
+    if (locate('IMEI', Edit24.Text) = -1) then
       ShowMessage(cWARNINGText + ' Unbekanntes Handy!')
     else
       ShowMessage('OK!');
@@ -1498,23 +1520,23 @@ var
   v: TgpIntegerList;
 begin
   ListBox2.Clear;
-  n := strtoint(Edit25.text);
-  k := strtoint(Edit26.text);
-  v := TgpIntegerList.create;
+  n := strtoint(Edit25.Text);
+  k := strtoint(Edit26.Text);
+  v := TgpIntegerList.Create;
   while (nk(n, k, v)) do
     ListBox2.items.add('(' + v.AsDelimitedText(',') + ')');
-  v.free;
+  v.Free;
 end;
 
 procedure TFormServiceApp.Button27Click(Sender: TObject);
 begin
-  if not(FileExists(Edit14.text + 'cOrgaMon.ini')) then
+  if not(FileExists(Edit14.Text + 'cOrgaMon.ini')) then
   begin
     ShowMessage('Die ist kein Service-Verzeichnis');
     exit;
   end;
 
-  MyProgramPath := Edit14.text;
+  MyProgramPath := Edit14.Text;
   EnsureSetup;
 end;
 
@@ -1523,7 +1545,7 @@ var
   iFTP: TIdFTP;
 begin
   BeginHourGlass;
-  iFTP := TIdFTP.create(self);
+  iFTP := TIdFTP.Create(self);
   SolidInit(iFTP);
   with iFTP do
   begin
@@ -1533,7 +1555,7 @@ begin
   end;
   MyProgramPath := 'W:\JonDaServer\';
   JonDaX.doStat(iFTP);
-  iFTP.free;
+  iFTP.Free;
   EndHourGlass;
 end;
 

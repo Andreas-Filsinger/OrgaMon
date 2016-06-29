@@ -2396,6 +2396,16 @@ begin
       // Neue Aufträge bereitstellen
       repeat
 
+        // IMEI überhaupt gültig?
+        if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
+        begin
+          // Unbekanntes Handy
+          log(cWARNINGText + ' Unbekanntes Handy!');
+          FileCopy(MyProgramPath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn));
+          Stat_PostError := 'unbekannt';
+          break;
+        end;
+
         // zu alte OrgaMon-App?
         if not(RevIsFrom(RemoteRev, cMinVersion_OrgaMonApp)) then
         begin
@@ -2408,34 +2418,26 @@ begin
         end;
 
         // Gerätenummer gar nicht bekannt?
-        if (BEZAHLT_BIS = cMonDa_ErsteEingabe) then
-        begin
-          // Unbekannte Gerätenummer
-          log(cWARNINGText + ' Unbekannte Gerätenummer!');
-          FileCopy(MyProgramPath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension, AuftragFName(AktTrn));
-          Stat_PostError := 'undefiniert';
-          break;
-        end;
+        if (GeraeteNo <> '000') then
+          if (BEZAHLT_BIS = cMonDa_ErsteEingabe) then
+          begin
+            // Unbekannte Gerätenummer
+            log(cWARNINGText + ' Unbekannte Gerätenummer!');
+            FileCopy(MyProgramPath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension, AuftragFName(AktTrn));
+            Stat_PostError := 'undefiniert';
+            break;
+          end;
 
         // Vertragszeitraum nicht bezahlt?
-        if DateOK(BEZAHLT_BIS) and (_DateGet > BEZAHLT_BIS) then
-        begin
-          // Unbezahlt!
-          log(cWARNINGText + ' Unbezahlter Zeitraum!');
-          FileCopy(MyProgramPath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension, AuftragFName(AktTrn));
-          Stat_PostError := 'unbezahlt';
-          break;
-        end;
-
-        // IMEI überhaupt gültig?
-        if (tIMEI_OK.locate('IMEI', IMEI) = -1) then
-        begin
-          // Unbekanntes Handy
-          log(cWARNINGText + ' Unbekanntes Handy!');
-          FileCopy(MyProgramPath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn));
-          Stat_PostError := 'unbekannt';
-          break;
-        end;
+        if (GeraeteNo <> '000') then
+          if DateOK(BEZAHLT_BIS) and (_DateGet > BEZAHLT_BIS) then
+          begin
+            // Unbezahlt!
+            log(cWARNINGText + ' Unbezahlter Zeitraum!');
+            FileCopy(MyProgramPath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension, AuftragFName(AktTrn));
+            Stat_PostError := 'unbezahlt';
+            break;
+          end;
 
         // Auftrag.txt nun wirklich bereitstellen!
         ReNameFile(MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
@@ -2682,8 +2684,8 @@ begin
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
 
     //
-    DiagnosePath := ReadString(SectionName, 'LogPath', DiagnosePath);
-    pAppTextPath := ReadString(SectionName, 'TextPath', MyProgramPath + cStatistikPath);
+    DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\');
+    pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
 
     //
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
@@ -2728,6 +2730,8 @@ begin
 
     try
 
+      r := -1;
+      g := -1;
       NAME := '';
       BEZAHLT_BIS := cMonDa_ErsteEingabe;
       s := '';
@@ -2766,22 +2770,31 @@ begin
         if (GeraetID <> '000') then
         begin
 
+          // Über die Gerätenummer suchen
           g := tIMEI.locate('GERAET', GeraetID);
           if (g = -1) then
           begin
-            log(cWARNINGText + ' 2337:' + ' GERAET "' + GeraetID + '" ist in der IMEI-Tabelle nicht bekannt');
+            log(cWARNINGText + ' 2775:' + ' GERAET "' + GeraetID + '" ist in der IMEI-Tabelle nicht bekannt');
             TAN := 'Geraetenummer ist ungueltig';
             break;
-          end
-          else
-          begin
-            NAME :=
-            { } tIMEI.readCell(g, 'VORNAME') + ' ' +
-            { } tIMEI.readCell(g, 'NACHNAME');
-            BEZAHLT_BIS :=
-            { } Date2Long(tIMEI.readCell(g, 'BEZAHLT_BIS'));
           end;
 
+        end
+        else
+        begin
+
+          // bei "000" über die IMEI den Namen bestimmen
+          g := tIMEI.locate('IMEI', IMEI);
+        end;
+
+        // Setzen des Namens und des Bezahlt-Zeitraumes
+        if (g <> -1) then
+        begin
+          NAME :=
+          { } tIMEI.readCell(g, 'VORNAME') + ' ' +
+          { } tIMEI.readCell(g, 'NACHNAME');
+          BEZAHLT_BIS :=
+          { } Date2Long(tIMEI.readCell(g, 'BEZAHLT_BIS'));
         end;
 
         // Plausibilität "IMEI-Nummer"
@@ -4337,7 +4350,10 @@ end;
 
 function TJonDaExec.TrnFName: string;
 begin
-  result := MyProgramPath + cDBPath + cTrnFName;
+  if oldInfrastructure then
+    result := MyProgramPath + cTrnFName
+  else
+    result := MyProgramPath + cDBPath + cTrnFName
 end;
 
 class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);
