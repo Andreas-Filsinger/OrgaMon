@@ -2,8 +2,8 @@ object FormServiceApp: TFormServiceApp
   Left = 49
   Top = 106
   Caption = 'App.Service'
-  ClientHeight = 548
-  ClientWidth = 686
+  ClientHeight = 575
+  ClientWidth = 690
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -16,8 +16,8 @@ object FormServiceApp: TFormServiceApp
   PixelsPerInch = 96
   TextHeight = 13
   object Label28: TLabel
-    Left = 9
-    Top = 7
+    Left = 7
+    Top = 60
     Width = 7
     Height = 13
     Margins.Left = 2
@@ -26,20 +26,66 @@ object FormServiceApp: TFormServiceApp
     Margins.Bottom = 2
     Caption = '0'
   end
+  object Label21: TLabel
+    Left = 7
+    Top = 34
+    Width = 121
+    Height = 13
+    Caption = 'Verarbeitungs-Quelle'
+  end
+  object Label29: TLabel
+    Left = 106
+    Top = 10
+    Width = 22
+    Height = 13
+    Caption = '--Id'
+  end
+  object SpeedButton4: TSpeedButton
+    Left = 134
+    Top = 30
+    Width = 21
+    Height = 22
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+      7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+      FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+      99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+      8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+      FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+      98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+      DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+      FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+      A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+      E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+      FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+      B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+      E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+      FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+      A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+      F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+      4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+      FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+      FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+      A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+    OnClick = SpeedButton4Click
+  end
   object PageControl1: TPageControl
     Left = 0
-    Top = 61
-    Width = 686
+    Top = 88
+    Width = 690
     Height = 487
     ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 72
     object TabSheet1: TTabSheet
-      Caption = 'Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      Caption = 'proceed'
+      OnShow = TabSheet1Show
       object Label1: TLabel
         Left = 144
         Top = 22
@@ -60,13 +106,6 @@ object FormServiceApp: TFormServiceApp
         Width = 48
         Height = 13
         Caption = 'Test-Trn'
-      end
-      object Label21: TLabel
-        Left = 2
-        Top = 64
-        Width = 121
-        Height = 13
-        Caption = 'Verarbeitungs-Quelle'
       end
       object paStatus: TLabel
         Left = 143
@@ -95,13 +134,6 @@ object FormServiceApp: TFormServiceApp
         Height = 13
         Caption = '..'
       end
-      object Label29: TLabel
-        Left = 101
-        Top = 40
-        Width = 22
-        Height = 13
-        Caption = '--Id'
-      end
       object Memo1: TMemo
         Left = 2
         Top = 88
@@ -129,7 +161,7 @@ object FormServiceApp: TFormServiceApp
         Width = 51
         Height = 21
         TabOrder = 2
-        Text = '10097'
+        Text = '83189'
       end
       object Button2: TButton
         Left = 230
@@ -148,21 +180,13 @@ object FormServiceApp: TFormServiceApp
         Caption = 'Update'
         TabOrder = 4
       end
-      object Edit14: TEdit
-        Left = 128
-        Top = 61
-        Width = 169
-        Height = 21
-        TabOrder = 5
-        Text = 'V:\OrgaMon\dat\'
-      end
       object Button9: TButton
         Left = 478
         Top = 388
         Width = 179
         Height = 26
         Caption = 'JonDa-Export'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = Button9Click
       end
       object Button12: TButton
@@ -171,7 +195,7 @@ object FormServiceApp: TFormServiceApp
         Width = 106
         Height = 68
         Caption = 'melden'
-        TabOrder = 7
+        TabOrder = 6
         OnClick = Button12Click
       end
       object Button14: TButton
@@ -180,7 +204,7 @@ object FormServiceApp: TFormServiceApp
         Width = 130
         Height = 25
         Caption = 'CareTaker Hallo'
-        TabOrder = 8
+        TabOrder = 7
         OnClick = Button14Click
       end
       object CheckBox17: TCheckBox
@@ -189,7 +213,7 @@ object FormServiceApp: TFormServiceApp
         Width = 169
         Height = 16
         Caption = 'mit Ergebnis TAN Upload'
-        TabOrder = 9
+        TabOrder = 8
       end
       object CheckBox19: TCheckBox
         Left = 16
@@ -199,14 +223,14 @@ object FormServiceApp: TFormServiceApp
         Caption = 'FTW Meldungen'
         Checked = True
         State = cbChecked
-        TabOrder = 10
+        TabOrder = 9
       end
       object Edit20: TEdit
         Left = 151
         Top = 334
         Width = 73
         Height = 21
-        TabOrder = 11
+        TabOrder = 10
       end
       object Button1: TButton
         Left = 305
@@ -214,7 +238,7 @@ object FormServiceApp: TFormServiceApp
         Width = 104
         Height = 26
         Caption = 'Statistik!'
-        TabOrder = 12
+        TabOrder = 11
         OnClick = Button1Click
       end
       object CheckBox22: TCheckBox
@@ -223,33 +247,12 @@ object FormServiceApp: TFormServiceApp
         Width = 185
         Height = 17
         Caption = 'Daten aus access_log'
-        TabOrder = 13
-      end
-      object Button27: TButton
-        Left = 299
-        Top = 37
-        Width = 134
-        Height = 47
-        Caption = 'read cOrgaMon.ini'
-        TabOrder = 14
-        OnClick = Button27Click
-      end
-      object Edit27: TEdit
-        Left = 129
-        Top = 37
-        Width = 168
-        Height = 21
-        TabOrder = 15
-        Text = 'fkrueger'
+        TabOrder = 12
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -379,17 +382,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object Label4: TLabel
-        Left = 16
-        Top = 24
-        Width = 25
-        Height = 13
-        Caption = 'Pfad'
-      end
       object Label5: TLabel
         Left = 409
         Top = 67
@@ -481,21 +473,12 @@ object FormServiceApp: TFormServiceApp
         Height = 13
         Caption = 'Baustelle'
       end
-      object Edit2: TEdit
-        Left = 72
-        Top = 24
-        Width = 473
-        Height = 21
-        TabOrder = 0
-        Text = 'W:\JonDaServer\'
-        OnExit = Edit2Exit
-      end
       object Edit3: TEdit
         Left = 432
         Top = 64
         Width = 121
         Height = 21
-        TabOrder = 1
+        TabOrder = 0
         Text = '*'
       end
       object Button6: TButton
@@ -504,7 +487,7 @@ object FormServiceApp: TFormServiceApp
         Width = 76
         Height = 25
         Caption = 'Auswerten'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = Button6Click
       end
       object CheckBox5: TCheckBox
@@ -513,7 +496,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = '<Ger'#228't>.DAT'
-        TabOrder = 3
+        TabOrder = 2
       end
       object CheckBox6: TCheckBox
         Left = 160
@@ -521,7 +504,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = 'MONDA.DAT'
-        TabOrder = 4
+        TabOrder = 3
       end
       object CheckBox7: TCheckBox
         Left = 160
@@ -531,7 +514,7 @@ object FormServiceApp: TFormServiceApp
         Caption = 'AUFTRAG.DAT'
         Checked = True
         State = cbChecked
-        TabOrder = 5
+        TabOrder = 4
       end
       object CheckBox8: TCheckBox
         Left = 160
@@ -541,14 +524,14 @@ object FormServiceApp: TFormServiceApp
         Caption = '<TRN>.DAT'
         Checked = True
         State = cbChecked
-        TabOrder = 6
+        TabOrder = 5
       end
       object ComboBox1: TComboBox
         Left = 160
         Top = 128
         Width = 120
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
         Text = '?????'
         Items.Strings = (
           '1????'
@@ -562,7 +545,7 @@ object FormServiceApp: TFormServiceApp
         Caption = 'Details'
         Checked = True
         State = cbChecked
-        TabOrder = 8
+        TabOrder = 7
       end
       object CheckBox10: TCheckBox
         Left = 160
@@ -570,14 +553,14 @@ object FormServiceApp: TFormServiceApp
         Width = 120
         Height = 17
         Caption = 'RID ausgeben'
-        TabOrder = 9
+        TabOrder = 8
       end
       object Edit5: TEdit
         Left = 432
         Top = 128
         Width = 121
         Height = 21
-        TabOrder = 10
+        TabOrder = 9
         Text = '*'
       end
       object Edit6: TEdit
@@ -585,7 +568,7 @@ object FormServiceApp: TFormServiceApp
         Top = 152
         Width = 121
         Height = 21
-        TabOrder = 11
+        TabOrder = 10
         Text = '*'
       end
       object Button8: TButton
@@ -594,7 +577,7 @@ object FormServiceApp: TFormServiceApp
         Width = 74
         Height = 25
         Caption = 'Restaten'
-        TabOrder = 12
+        TabOrder = 11
         OnClick = Button8Click
       end
       object CheckBox11: TCheckBox
@@ -603,14 +586,14 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 18
         Caption = 'STAY.DAT'
-        TabOrder = 13
+        TabOrder = 12
       end
       object Edit8: TEdit
         Left = 432
         Top = 184
         Width = 121
         Height = 21
-        TabOrder = 14
+        TabOrder = 13
         Text = '*'
       end
       object Edit9: TEdit
@@ -618,7 +601,7 @@ object FormServiceApp: TFormServiceApp
         Top = 215
         Width = 121
         Height = 21
-        TabOrder = 15
+        TabOrder = 14
         Text = '*'
       end
       object Edit10: TEdit
@@ -626,7 +609,7 @@ object FormServiceApp: TFormServiceApp
         Top = 280
         Width = 121
         Height = 21
-        TabOrder = 16
+        TabOrder = 15
         Text = '*'
       end
       object Edit12: TEdit
@@ -634,7 +617,7 @@ object FormServiceApp: TFormServiceApp
         Top = 97
         Width = 121
         Height = 21
-        TabOrder = 17
+        TabOrder = 16
         Text = '*'
       end
       object Edit11: TEdit
@@ -642,7 +625,7 @@ object FormServiceApp: TFormServiceApp
         Top = 312
         Width = 121
         Height = 21
-        TabOrder = 18
+        TabOrder = 17
         Text = '*'
       end
       object Edit13: TEdit
@@ -650,7 +633,7 @@ object FormServiceApp: TFormServiceApp
         Top = 248
         Width = 121
         Height = 21
-        TabOrder = 19
+        TabOrder = 18
         Text = '*'
       end
       object Edit15: TEdit
@@ -658,7 +641,7 @@ object FormServiceApp: TFormServiceApp
         Top = 345
         Width = 121
         Height = 21
-        TabOrder = 20
+        TabOrder = 19
         Text = '*'
       end
       object CheckBox12: TCheckBox
@@ -667,7 +650,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = 'aktuelle'
-        TabOrder = 21
+        TabOrder = 20
       end
       object Button13: TButton
         Left = 256
@@ -675,7 +658,7 @@ object FormServiceApp: TFormServiceApp
         Width = 76
         Height = 25
         Caption = 'STOP'
-        TabOrder = 22
+        TabOrder = 21
         OnClick = Button13Click
       end
       object CheckBox16: TCheckBox
@@ -684,7 +667,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = 'LOST.DAT'
-        TabOrder = 23
+        TabOrder = 22
       end
       object Button4: TButton
         Left = 560
@@ -692,7 +675,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 25
         Caption = 'Log einsehen'
-        TabOrder = 24
+        TabOrder = 23
         OnClick = Button4Click
       end
       object Button20: TButton
@@ -701,7 +684,7 @@ object FormServiceApp: TFormServiceApp
         Width = 225
         Height = 25
         Caption = '+TS.BLA Infos'
-        TabOrder = 25
+        TabOrder = 24
         OnClick = Button20Click
       end
       object CheckBox20: TCheckBox
@@ -710,7 +693,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = '.fresh'
-        TabOrder = 26
+        TabOrder = 25
       end
       object CheckBox15: TCheckBox
         Left = 16
@@ -718,7 +701,7 @@ object FormServiceApp: TFormServiceApp
         Width = 97
         Height = 17
         Caption = '- Kopie'
-        TabOrder = 27
+        TabOrder = 26
       end
       object CheckBox21: TCheckBox
         Left = 160
@@ -728,7 +711,7 @@ object FormServiceApp: TFormServiceApp
         Caption = '<TRN>.TXT'
         Ctl3D = True
         ParentCtl3D = False
-        TabOrder = 28
+        TabOrder = 27
       end
       object CheckBox18: TCheckBox
         Left = 160
@@ -738,7 +721,7 @@ object FormServiceApp: TFormServiceApp
         Caption = 'nur die Treffer in den TAN Bericht'
         Checked = True
         State = cbChecked
-        TabOrder = 29
+        TabOrder = 28
       end
       object Button23: TButton
         Left = 257
@@ -746,17 +729,13 @@ object FormServiceApp: TFormServiceApp
         Width = 120
         Height = 25
         Caption = 'freie Ger'#228'te-ID'
-        TabOrder = 30
+        TabOrder = 29
         OnClick = Button23Click
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -881,10 +860,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48
@@ -915,10 +890,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -964,21 +935,9 @@ object FormServiceApp: TFormServiceApp
         OnClick = Button25Click
       end
     end
-    object TabSheet7: TTabSheet
-      Caption = 'AUFTRAG+TS'
-      ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-    end
     object TabSheet8: TTabSheet
       Caption = 'IMEI'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label23: TLabel
         Left = 40
         Top = 48
@@ -1039,17 +998,41 @@ object FormServiceApp: TFormServiceApp
     end
   end
   object ProgressBar1: TProgressBar
-    Left = 7
-    Top = 28
-    Width = 669
+    Left = 129
+    Top = 59
+    Width = 548
     Height = 16
     TabOrder = 1
+  end
+  object Edit14: TEdit
+    Left = 161
+    Top = 31
+    Width = 141
+    Height = 21
+    TabOrder = 2
+  end
+  object Button27: TButton
+    Left = 304
+    Top = 7
+    Width = 134
+    Height = 47
+    Caption = 'read cOrgaMon.ini'
+    TabOrder = 3
+    OnClick = Button27Click
+  end
+  object ComboBox3: TComboBox
+    Left = 132
+    Top = 7
+    Width = 170
+    Height = 21
+    TabOrder = 4
+    OnSelect = ComboBox3Select
   end
   object DCP_md51: TDCP_md5
     Id = 16
     Algorithm = 'MD5'
     HashSize = 128
-    Left = 72
-    Top = 8
+    Left = 192
+    Top = 456
   end
 end

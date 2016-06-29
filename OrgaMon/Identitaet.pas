@@ -32,7 +32,7 @@ procedure setIdentitaetAndRun;
 
 procedure connectOrgamon;
 
-procedure RunAsServiceApp;
+procedure RunAsApp;
 procedure RunAsFoto;
 procedure RunAsOrder;
 procedure RunAsTWebShop;
@@ -310,7 +310,8 @@ begin
                   Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
               end;
 
-              Log(cINFOText + format(' %s hat %.3f GB',[JonDaExec.BackupDir,BackupSizeByNow / 1024.0 / 1024.0 / 1024.0]));
+              Log(cINFOText + format(' %s hat %.3f GB', [JonDaExec.BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+                1024.0]));
             end;
         end;
 
@@ -436,7 +437,7 @@ begin
 
 end;
 
-procedure RunAsServiceApp;
+procedure RunAsApp;
 var
   XMLRPC: TXMLRPC_Server;
   JonDa: TJonDaExec;
@@ -462,10 +463,6 @@ begin
     else
     begin
       SolidFTP_SingleStepLog := false;
-    end;
-    if IsParam('-at') then
-    begin
-      writeln('TimingStatistics @' + DiagnosePath);
     end;
 
     // lade IMEI
@@ -506,7 +503,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } Jonda.MyDataBasePath2 + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } JonDa.MyDataBasePath2 + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end
@@ -520,10 +517,15 @@ begin
       with XMLRPC do
       begin
         DefaultPort := iJonDa_Port;
-        write('Aktiviere ' + ComputerName + ':' + inttostr(DefaultPort) + '  ... ');
+        DiagnosePath := globals.DiagnosePath;
+
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
-        DiagnosePath := globals.DiagnosePath;
+        // Verbrauchte Zeit pro XMLRPC
+        if TimingStats then
+        begin
+          writeln('TimingStatistics @' + DiagnosePath);
+        end;
         LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
 
         // Methoden registrieren
@@ -531,6 +533,8 @@ begin
         AddMethod('StartTAN', JonDa.start);
         AddMethod('ProceedTAN', JonDa.proceed);
 
+        // Starten
+        write('Aktiviere ' + ComputerName + ':' + inttostr(DefaultPort) + '  ... ');
         active := true;
 
         writeln('OK');
@@ -637,7 +641,7 @@ begin
         end;
       id_App:
         begin
-          RunAsServiceApp;
+          RunAsApp;
         end;
       id_Foto:
         begin
