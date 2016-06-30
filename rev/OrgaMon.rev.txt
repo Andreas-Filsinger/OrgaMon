@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.196 (30.06.16) Andreas Filsinger
+
+ Neu: Tagesabschluss: OLAP: $ExcelOpen=NEIN ist nun default
+ Neu: Tagwache: OLAP: $ExcelOpen=NEIN ist nun default
+
 Rev 8.195 (29.06.16) Andreas Filsinger
 
  Neu: Service: App: Namensermittlung bei Gerät "000" über die IMEI

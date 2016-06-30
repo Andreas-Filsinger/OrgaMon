@@ -124,8 +124,7 @@ end;
 procedure TFormTagesAbschluss.Log(s: string);
 begin
   try
-    AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) +
-      '.log.txt');
+    AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
 
     if (pos(cERRORText, s) > 0) then
       CareTakerLog(s);
@@ -140,6 +139,7 @@ var
   TimeDiff: TAnfixTime;
   ErrorCount: integer;
   Ticket: TTroubleTicket;
+  GlobalVars: TStringList;
 begin
   if TagesabschlussAktiv then
   begin
@@ -156,8 +156,8 @@ begin
     TagesAbschluss_TAN := FormDatensicherung.GENID;
     LetzerTagesAbschlussWarAm := DateGet;
     LetzerTagesAbschlussWarUm := SecondsGet;
-    Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' +
-      secondstostr(LetzerTagesAbschlussWarUm) + ' h auf ' + ComputerName);
+    Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
+      ' h auf ' + ComputerName);
 
     if iIdleProzessPrioritaetAbschluesse then
       SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));
@@ -233,7 +233,13 @@ begin
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
 
                 // Context-OLAPs
-                FormOLAP.DoContextOLAP(iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension);
+                GlobalVars := TStringList.Create;
+                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
+
+                FormOLAP.DoContextOLAP(
+                  { } iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension,
+                  { } GlobalVars);
+                GlobalVars.Free;
 
               end;
             5:
@@ -305,12 +311,10 @@ begin
                 if e_w_NeuerMahnlauf then
                 begin
                   if not(FormMahnung.Execute(TagesAbschluss_TAN)) then
-                    Log(cERRORText +
-                      ' kein neuer Mahnlauf möglich, da noch Fehler abgearbeitet werden müssen!');
+                    Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch Fehler abgearbeitet werden müssen!');
                 end
                 else
-                  Log(cERRORText +
-                    ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
+                  Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
               end;
             24:
               e_w_VertragBuchen;
@@ -318,8 +322,7 @@ begin
               begin
                 TimeDiff := r_Local_vs_Server_TimeDifference;
                 if (TimeDiff <> 0) then
-                  Log(cERRORText +
-                    format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
+                  Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
               end;
             26:
@@ -402,11 +405,9 @@ begin
       CheckListBox1.checked[n] := false;
 
   if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagesAbschlussAuf)) then
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' hier auf ' +
-      iTagesAbschlussAuf
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' hier auf ' + iTagesAbschlussAuf
   else
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' auf ' +
-      iTagesAbschlussAuf;
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagesAbschlussUm) + ' auf ' + iTagesAbschlussAuf;
 end;
 
 procedure TFormTagesAbschluss.Timer1Timer(Sender: TObject);
@@ -433,8 +434,7 @@ begin
 
     if TagesabschlussAktiv then
     begin
-      Label2.caption := 'seit ' + secondstostr(SecondsDiff(SecondsGet,
-        LetzerTagesAbschlussWarUm)) + 'h';
+      Label2.caption := 'seit ' + secondstostr(SecondsDiff(SecondsGet, LetzerTagesAbschlussWarUm)) + 'h';
       cPanelActive := clyellow; // läuft
       break;
     end;
