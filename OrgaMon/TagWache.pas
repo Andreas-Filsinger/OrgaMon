@@ -79,7 +79,7 @@ uses
   globals, wanfix32, CareTakerClient,
   Datenbank,
 
-  Funktionen_Basis,  Funktionen_Beleg,  Funktionen_Auftrag,
+  Funktionen_Basis, Funktionen_Beleg, Funktionen_Auftrag,
   AuftragMobil, AuftragErgebnis, OLAPArbeitsplatz,
   BaseUpdate, Datensicherung, dbOrgaMon,
 
@@ -92,6 +92,7 @@ var
   n: integer;
   ErrorCount: integer;
   Ticket: TTroubleTicket;
+  GlobalVars: TStringList;
 begin
   if TagwacheAktiv then
   begin
@@ -110,8 +111,8 @@ begin
     ProgressBar1.max := CheckListBox1.items.count;
     Ticket := CareTakerLog('TagWache START');
     ErrorCount := 0;
-    Log('Start am ' + long2date(LetzteTagWacheWarAm) + ' um ' +
-      secondstostr(LetzteTagWacheWarUm) + ' h auf ' + ComputerName);
+    Log('Start am ' + long2date(LetzteTagWacheWarAm) + ' um ' + secondstostr(LetzteTagWacheWarUm) + ' h auf ' +
+      ComputerName);
 
     _TagWache := iTagWacheUm;
     iTagWacheUm := 0;
@@ -138,7 +139,7 @@ begin
             1:
               FormAuftragMobil.ReadMobil;
             2:
-              FormAuftragErgebnis.UploadNewTANS(-1,false);
+              FormAuftragErgebnis.UploadNewTANS(-1, false);
             3:
               if (iTagwacheBaustelle >= cRID_FirstValid) then
               begin
@@ -178,8 +179,12 @@ begin
             6:
               begin
                 // Context-OLAPs
-                FormOLAP.DoContextOLAP(iSystemOLAPPath + 'Tagwache.*' +
-                  cOLAPExtension);
+                GlobalVars := TStringList.Create;
+                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
+                FormOLAP.DoContextOLAP(
+                  { } iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension,
+                  { } GlobalVars);
+                GlobalVars.free;
               end;
           else
             delay(2000);
@@ -207,8 +212,7 @@ begin
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
     // Tagwache-OLAPs ausführen
-    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' +
-      cOLAPExtension);
+    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
 
     EofTagwache;
     EndHourGlass;
@@ -257,18 +261,15 @@ begin
     for n := 0 to pred(CheckListBox1.items.count) do
       CheckListBox1.checked[n] := false;
   if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagWacheAuf)) then
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) +
-      ' hier auf ' + iTagWacheAuf
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) + ' hier auf ' + iTagWacheAuf
   else
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) + ' auf ' +
-      iTagWacheAuf;
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) + ' auf ' + iTagWacheAuf;
 end;
 
 procedure TFormTagWache.Log(s: string);
 begin
   try
-    AppendStringsToFile(s, DiagnosePath + 'Tagwache-' + inttostrN(Tagwache_TAN,
-      8) + '.log.txt');
+    AppendStringsToFile(s, DiagnosePath + 'Tagwache-' + inttostrN(Tagwache_TAN, 8) + '.log.txt');
 
     if (pos(cERRORText, s) > 0) then
       CareTakerLog(s);
@@ -302,16 +303,14 @@ begin
 
     if TagwacheAktiv then
     begin
-      Label2.caption := 'läuft seit ' +
-        secondstostr(SecondsDiff(SecondsGet, LetzteTagWacheWarUm)) + 'h';
+      Label2.caption := 'läuft seit ' + secondstostr(SecondsDiff(SecondsGet, LetzteTagWacheWarUm)) + 'h';
       cPanelActive := clyellow; // läuft
       break;
     end;
 
     if (LetzteTagWacheWarAm > 0) then
     begin
-      BeendetSeit := SecondsDiff(DateGet, SecondsGet, LetzteTagWacheWarAm,
-        LetzteTagWacheWarUm);
+      BeendetSeit := SecondsDiff(DateGet, SecondsGet, LetzteTagWacheWarAm, LetzteTagWacheWarUm);
       if (BeendetSeit < 60) then
       begin
         // lief kürzlich
