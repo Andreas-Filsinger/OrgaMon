@@ -1614,7 +1614,7 @@ begin
                   begin
                     FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
 
-                    // Rückwärtiges Ändern
+                    // Rückwärtiges Ändern der Spalte der Ergebnisdatei
                     ActColumn[ActColIndex] := FotoFName;
                     FotoFName := nextp(FotoFName, ',', 0);
                   end;
@@ -1629,7 +1629,7 @@ begin
                     break;
                   end;
 
-                  // Ev. Dublette anlegen (RWE-Problem!)
+                  // Ev. eine vom Bilddateinamen vereinfachte Datei-Dublette anlegen
                   _FotoFName := StrFilter(FotoFName, 'öäüÖÄÜß', true);
                   if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName)) then
                     FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName,

@@ -159,6 +159,7 @@ function b_r_Auszug_BLZBIC(s: TStrings): string;
 function b_r_Auszug_Inhaber(s: TStrings): string;
 function b_r_Auszug_BelegTeillieferung(s: TStrings): TStringList; // BELEG-TL
 function b_r_Auszug_Rechnung(s: TStrings): TStringList; // Rechnungsnummer
+procedure b_r_Auszug_Homogenisiert(s: TStrings); // Überweisungstext mehrzeilig darstellen
 
 // cVorgang_Lastschrift
 function b_r_GutschriftAusLS(VORGANG: string): boolean;
@@ -1956,7 +1957,7 @@ end;
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate): double;
 var
   cBUCH: TdboCursor;
-  Abschluss: double;
+  AbschlussBetrag: double;
   ABSCHLUSSper: TAnfixDate;
   saldo: TSaldo;
 
@@ -1994,14 +1995,17 @@ begin
       repeat
 
         if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
+        begin
+          if (UeberweisungsText.count = 1) then
+            b_r_Auszug_Homogenisiert(UeberweisungsText);
           if (UeberweisungsText.count >= 3) then
           begin
             ABSCHLUSSper := date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
-            Abschluss := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_KeinElement);
+            AbschlussBetrag := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_KeinElement);
 
-            if DateOK(ABSCHLUSSper) and (Abschluss <> cGeld_KeinElement) then
+            if DateOK(ABSCHLUSSper) and (AbschlussBetrag <> cGeld_KeinElement) then
             begin
-              saldo.addAbschluss(ABSCHLUSSper, Abschluss);
+              saldo.addAbschluss(ABSCHLUSSper, AbschlussBetrag);
               break;
             end
             else
@@ -2011,7 +2015,7 @@ begin
             end;
 
           end;
-
+        end;
         saldo.addUmsatz(_DATUM, FieldByName('BETRAG').AsFloat);
       until true;
       ApiNext;
@@ -2343,6 +2347,46 @@ begin
     end;
     result.AddStrings(sWords);
     sWords.Free;
+  end;
+end;
+
+procedure b_r_Auszug_Homogenisiert(s: TStrings); // Überweisungstext mehrzeilig darstellen
+
+  function SplitIfHit(Token: string; Before: boolean): boolean;
+  var
+    c, k: integer;
+    FullLine: string;
+  begin
+    result := false;
+    c := s.count;
+    if (c > 0) then
+    begin
+      k := pos(Token, s[pred(c)]);
+      if (k > 0) then
+      begin
+        FullLine := s[pred(c)];
+        if Before then
+        begin
+          s[pred(c)] := copy(FullLine, 1, pred(k));
+          s.add(copy(FullLine, k, MaxInt));
+        end
+        else
+        begin
+          s[pred(c)] := copy(FullLine, 1, pred(k) + length(Token));
+          s.add(copy(FullLine, k + length(Token), MaxInt));
+        end;
+        result := true;
+      end;
+    end;
+  end;
+
+begin
+  // schaue immer auf die letzte Zeile, wenn das Element vorkommt -> mache den Split
+  if SplitIfHit('SALDO', true) then
+  begin
+    SplitIfHit('RECHNUNGSABSCHLUSS', false);
+    SplitIfHit('INCL. ', true);
+    SplitIfHit('ABSCHLUSSBETRAG', false);
   end;
 end;
 
