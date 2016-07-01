@@ -52,7 +52,7 @@ const
   Content_Mode_dtd = 17; // Prüfe xml Datei gegen eine "*.dtd"
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
   Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
-  Content_Mode_xls2rwe = 20; // RWE Rev. 2.1
+  Content_Mode_xls2rwe = 20; // RWE Rev. 2.3
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> html
 
   ErrorCount: integer = 0;
