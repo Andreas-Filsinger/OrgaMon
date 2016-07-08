@@ -106,13 +106,11 @@ function e_r_Localize2(RID, LANGUAGE: integer): string;
 // System Texte
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
 
-
 function SysDBApassword: string;
 //
 //
 
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
-  delimiter: char = #13): string;
+function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
 // aus einem Memo-Feld einen Value lesen, der aber über
 // mehrere Zeilen gehen kann.
 // Wirtschafts und Lager Logik
@@ -287,17 +285,13 @@ begin
       ApiFirst;
       while not(eof) do
       begin
-        CacheMusiker.AddObject(strValidate(FieldByName('VORNAME').AsString + ' '
-          + FieldByName('NACHNAME').AsString),
+        CacheMusiker.AddObject(strValidate(FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME').AsString),
           TObject(FieldByName('RID').AsInteger));
 
-        CacheMusikerNachname.AddObject
-          (strValidate(FieldByName('NACHNAME').AsString + ', ' +
-          FieldByName('VORNAME').AsString),
-          TObject(FieldByName('RID').AsInteger));
+        CacheMusikerNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString + ', ' + FieldByName('VORNAME')
+          .AsString), TObject(FieldByName('RID').AsInteger));
 
-        CacheMusikerNurNachname.AddObject
-          (strValidate(FieldByName('NACHNAME').AsString),
+        CacheMusikerNurNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString),
           TObject(FieldByName('RID').AsInteger));
 
         ApiNext;
@@ -330,20 +324,14 @@ begin
         repeat
           close;
           sql.clear;
-          sql.add('select MUSIKER_R,EVL_R,EVL_TRENNER from MUSIKER where RID=' +
-            inttostr(RID));
+          sql.add('select MUSIKER_R,EVL_R,EVL_TRENNER from MUSIKER where RID=' + inttostr(RID));
           ApiFirst;
-          Kette := cutblank(Kette + ' ' +
-            e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+          Kette := cutblank(Kette + ' ' + e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
             FieldByName('EVL_TRENNER').AsString);
-          KetteNachname :=
-            cutblank(KetteNachname + ' ' + e_r_MusikerNachName
-            (FieldByName('MUSIKER_R').AsInteger) + ' ' +
-            FieldByName('EVL_TRENNER').AsString);
-          KetteNurNachname :=
-            cutblank(KetteNurNachname + ' ' + e_r_MusikerNurNachName
-            (FieldByName('MUSIKER_R').AsInteger) + ' ' +
-            FieldByName('EVL_TRENNER').AsString);
+          KetteNachname := cutblank(KetteNachname + ' ' + e_r_MusikerNachName(FieldByName('MUSIKER_R').AsInteger) + ' '
+            + FieldByName('EVL_TRENNER').AsString);
+          KetteNurNachname := cutblank(KetteNurNachname + ' ' + e_r_MusikerNurNachName(FieldByName('MUSIKER_R')
+            .AsInteger) + ' ' + FieldByName('EVL_TRENNER').AsString);
           if FieldByName('EVL_R').IsNull then
             break
           else
@@ -367,12 +355,12 @@ begin
 end;
 
 const
- _e_x_ensureMedium_Cache_R : TDOM_Reference = cRID_Null;
- _e_x_ensureMedium_Cache_S : string = '';
+  _e_x_ensureMedium_Cache_R: TDOM_Reference = cRID_Null;
+  _e_x_ensureMedium_Cache_S: string = '';
 
 function e_x_ensureMedium(Name: string): TDOM_Reference;
 begin
-  if (Name=_e_x_ensureMedium_Cache_S) then
+  if (Name = _e_x_ensureMedium_Cache_S) then
   begin
     result := _e_x_ensureMedium_Cache_R;
     exit;
@@ -382,28 +370,24 @@ begin
     { } 'select RID from MEDIUM where DATEI_ERWEITERUNG=' +
     { } SQLstring(Name));
 
-  if (result<cRID_FirstValid) then
+  if (result < cRID_FirstValid) then
   begin
     e_x_sql(
-    {} 'insert into MEDIUM (RID,DATEI_ERWEITERUNG) values (0,'+
-                       SQLstring(Name) + ')');
+      { } 'insert into MEDIUM (RID,DATEI_ERWEITERUNG) values (0,' + SQLstring(Name) + ')');
     result := e_x_ensureMedium(Name);
   end;
 
- _e_x_ensureMedium_Cache_R := result;
- _e_x_ensureMedium_Cache_S := Name;
+  _e_x_ensureMedium_Cache_R := result;
+  _e_x_ensureMedium_Cache_S := Name;
 
 end;
 
 procedure e_w_MusikerChangeRef(FROM_RID, TO_RID: string);
 begin
   e_x_sql('update MUSIKER set EVL_R=NULL where EVL_R=' + FROM_RID);
-  e_x_sql('update MUSIKER set MUSIKER_R=' + TO_RID + ' where (MUSIKER_R=' +
-    FROM_RID + ') AND (RID<>' + TO_RID + ')');
-  e_x_sql('update ARTIKEL set KOMPONIST_R=' + TO_RID + ' where KOMPONIST_R=' +
-    FROM_RID);
-  e_x_sql('update ARTIKEL set ARRANGEUR_R=' + TO_RID + ' where ARRANGEUR_R=' +
-    FROM_RID);
+  e_x_sql('update MUSIKER set MUSIKER_R=' + TO_RID + ' where (MUSIKER_R=' + FROM_RID + ') AND (RID<>' + TO_RID + ')');
+  e_x_sql('update ARTIKEL set KOMPONIST_R=' + TO_RID + ' where KOMPONIST_R=' + FROM_RID);
+  e_x_sql('update ARTIKEL set ARRANGEUR_R=' + TO_RID + ' where ARRANGEUR_R=' + FROM_RID);
 end;
 
 function e_r_MusikerUeber(MUSIKER_R: integer): string;
@@ -441,8 +425,7 @@ begin
   begin
     repeat
       sql.clear;
-      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' +
-        inttostr(MUSIKER_R));
+      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + inttostr(MUSIKER_R));
       ApiFirst;
       if FieldByName('MUSIKER_R').IsNull then
         AddOne(MUSIKER_R)
@@ -475,8 +458,7 @@ begin
   begin
     repeat
       sql.clear;
-      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' +
-        inttostr(MUSIKER_R));
+      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + inttostr(MUSIKER_R));
       ApiFirst;
       if FieldByName('MUSIKER_R').IsNull then
         result.add(TObject(MUSIKER_R))
@@ -509,8 +491,7 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      lRID := lRID + ',' +
-        inttostr(e_r_MusikerGroupRID(FieldByName('RID').AsInteger));
+      lRID := lRID + ',' + inttostr(e_r_MusikerGroupRID(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
@@ -572,8 +553,7 @@ begin
   if (k = -1) then
   begin
     result := succ(e_r_GEN('GEN_MUSIKER'));
-    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' + '''' +
-      MusikerListe + ''')');
+    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' + '''' + MusikerListe + ''')');
     InvalidateCache_Musiker;
   end
   else
@@ -605,8 +585,7 @@ function cAusgabeArt_Aufnahme_MP3: TDOM_Reference;
 begin
   if (_AusgabeArt_Aufnahme_MP3 = cRID_Unset) then
   begin
-    _AusgabeArt_Aufnahme_MP3 :=
-      e_r_sql('select RID from AUSGABEART where KUERZEL=''MP3''');
+    _AusgabeArt_Aufnahme_MP3 := e_r_sql('select RID from AUSGABEART where KUERZEL=''MP3''');
     if (_AusgabeArt_Aufnahme_MP3 < cRID_FirstValid) then
       _AusgabeArt_Aufnahme_MP3 := cRID_Impossible;
   end;
@@ -662,10 +641,8 @@ begin
       while not(eof) do
       begin
         if FieldByName('ARTIKEL_RELEVANT').AsString = 'Y' then
-          CacheLaender.AddObject
-            (inttostr(FieldByName('RID').AsInteger), AddOne);
-        CacheLaenderFull.AddObject
-          (inttostr(FieldByName('RID').AsInteger), AddOne);
+          CacheLaender.AddObject(inttostr(FieldByName('RID').AsInteger), AddOne);
+        CacheLaenderFull.AddObject(inttostr(FieldByName('RID').AsInteger), AddOne);
         ApiNext;
       end;
     end;
@@ -682,7 +659,7 @@ function e_r_LaenderRIDfromALT(ALT: string): integer;
 var
   n: integer;
 begin
-  result := cRID_NULL;
+  result := cRID_Null;
   EnsureCache_Laender;
   ALT := nextp(ALT, '-');
   for n := 0 to pred(CacheLaender.count) do
@@ -857,11 +834,9 @@ begin
       { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
 {$ENDIF}
 {$IFDEF fpc}
-{ 10 } add('jcl Rev. N/A');
+      { 10 } add('jcl Rev. N/A');
 {$ELSE}
-
-{ 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' +
-        inttostr(JclVersionMinor));
+      { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' + inttostr(JclVersionMinor));
 {$ENDIF}
 {$IFDEF CONSOLE}
       { 11 } add('jvcl Rev. N/A');
@@ -869,10 +844,8 @@ begin
       { 11 } add('jvcl Rev. ' + JVCL_VERSIONSTRING);
 {$ENDIF}
       { 12 } add(iShopArtikelBilderURL);
-      { 13 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' +
-        zip_Version);
-      { 14 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' +
-        unzip_Version);
+      { 13 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + zip_Version);
+      { 14 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + unzip_Version);
       { 15 } add(
         { } 'srvXMLRPC Rev. ' +
         { } RevToStr(srvXMLRPC.Version) + '@' +
@@ -889,8 +862,7 @@ begin
 {$IFDEF fpc}
       { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
 {$ELSE}
-      { 21 } add('Portable Network Graphics Delphi ' +
-        GHD_pngimage.LibraryVersion);
+      { 21 } add('Portable Network Graphics Delphi ' + GHD_pngimage.LibraryVersion);
 {$ENDIF}
       { 22 } add(iDataBaseHost);
       { 23 } add(i_c_DataBaseFName);
@@ -915,14 +887,12 @@ end;
 
 function e_r_Bearbeiter: integer;
 begin
-  result := e_r_sql('select RID from BEARBEITER where UPPER(USERNAME)=''' +
-    AnsiUpperCase(UserName) + '''');
+  result := e_r_sql('select RID from BEARBEITER where UPPER(USERNAME)=''' + AnsiUpperCase(UserName) + '''');
 end;
 
 function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 begin
-  result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' +
-    inttostr(BEARBEITER_R));
+  result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' + inttostr(BEARBEITER_R));
 end;
 
 var
@@ -953,21 +923,21 @@ end;
 function SysDBApassword: string;
 var
   cEINSTELLUNGEN: TdboCursor;
-  Settings: TStringList;
+  settings: TStringList;
 begin
   cEINSTELLUNGEN := nCursor;
   with cEINSTELLUNGEN do
   begin
     sql.add('select * from EINSTELLUNG');
     ApiFirst;
-    Settings := TStringList.create;
-    e_r_sqlt(FieldByName('SETTINGS'), Settings);
-    result := Settings.Values[cSettings_SysdbaPAssword];
+    settings := TStringList.create;
+    e_r_sqlt(FieldByName('SETTINGS'), settings);
+    result := settings.Values[cSettings_SysdbaPAssword];
     if (result = '') then
       result := 'masterkey'
     else
       result := deCrypt_Hex(result);
-    Settings.free;
+    settings.free;
   end;
   cEINSTELLUNGEN.free;
 end;
@@ -980,8 +950,7 @@ begin
         // ShowMessage('Willkommen in der Rev. 2.000');
       end;
     7129:
-      FileMove(MyProgramPath + 'favorites.xml',
-        iOlapPath + cAuftragLupeFavoritenFName);
+      FileMove(MyProgramPath + 'favorites.xml', iOlapPath + cAuftragLupeFavoritenFName);
     7681:
       if not(iOLAPpublic) then
       begin
@@ -991,8 +960,7 @@ begin
   end;
 end;
 
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
-  delimiter: char = #13): string;
+function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
 var
   MachineState: byte;
   n, k: integer;
@@ -1048,19 +1016,19 @@ var
 begin
 
   // Salt sicherstellen
-  salt := e_r_sqls('select USER_SALT from PERSON where RID=' +
-    inttostr(PERSON_R));
+  salt := e_r_sqls('select USER_SALT from PERSON where RID=' + inttostr(PERSON_R));
   if (salt = '') then
-    e_x_sql('update PERSON set USER_SALT=''' + FindANewPassword +
-      ''' where RID=' + inttostr(PERSON_R));
+    e_x_sql('update PERSON set USER_SALT=''' + FindANewPassword + ''' where RID=' + inttostr(PERSON_R));
 
   // Passwort sicherstellen
-  pwd := e_r_sqls('select USER_PWD from PERSON where RID=' +
-    inttostr(PERSON_R));
+  pwd := e_r_sqls('select USER_PWD from PERSON where RID=' + inttostr(PERSON_R));
   if (pwd = '') then
     e_w_PersonSetPassword(PERSON_R);
 
 end;
+
+const
+  e_r_ArtikelPDF_Cache: TStringList = nil;
 
 function e_r_ArtikelPDF(ARTIKEL_R: integer): TStringList;
 var
@@ -1071,18 +1039,48 @@ var
     sDir: TStringList;
     n: integer;
   begin
-    sDir := TStringList.create;
-    dir(Path + Numero + '*' + cPDFExtension, sDir, false);
-    for n := 0 to pred(sDir.count) do
-      sDir[n] := Path + sDir[n];
-    result.addstrings(sDir);
-    sDir.free;
+    if (Path <> '') then
+      if (Path <> MyProgramPath) then
+      begin
+        sDir := TStringList.create;
+        dir(Path + Numero + '*' + cPDFExtension, sDir, false);
+        if (sDir.count = 0) then
+        begin
+
+          // 2. Option, Numero ist Bestandteil des Dateinamens <Numero> { "_" <Numero> } ".pdf"
+          if not(assigned(e_r_ArtikelPDF_Cache)) then
+          begin
+            e_r_ArtikelPDF_Cache := TStringList.create;
+            dir(Path + '*' + cPDFExtension, e_r_ArtikelPDF_Cache, false);
+          end;
+          for n := 0 to pred(e_r_ArtikelPDF_Cache.count) do
+          begin
+            if pos('_' + Numero + '_', e_r_ArtikelPDF_Cache[n]) > 0 then
+            begin
+              sDir.add ( Path + e_r_ArtikelPDF_Cache[n]);
+              continue;
+            end;
+            if pos('_' + Numero + '.', e_r_ArtikelPDF_Cache[n]) > 0 then
+            begin
+              sDir.add ( Path + e_r_ArtikelPDF_Cache[n]);
+              continue;
+            end;
+          end;
+
+        end
+        else
+        begin
+          for n := 0 to pred(sDir.count) do
+            sDir[n] := Path + sDir[n];
+        end;
+        result.addstrings(sDir);
+        sDir.free;
+      end;
   end;
 
 begin
   result := TStringList.create;
-  Numero := e_r_sqls('SELECT NUMERO FROM ARTIKEL WHERE RID=' +
-    inttostr(ARTIKEL_R));
+  Numero := e_r_sqls('select NUMERO from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
   AddPath(iPDFPathApp);
   AddPath(iPDFPathPublicApp);
 end;
@@ -1193,17 +1191,17 @@ begin
   //
   Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + inttostr(RID));
   Land.First;
-  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' +
-    Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' + inttostr(LANGUAGE) + ')');
+  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' + Land.FieldByName('INT_NAME_R').AsString +
+    ') AND (LAND_R=' + inttostr(LANGUAGE) + ')');
   IntTxt.First;
   e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
   Bigmemo.add('');
   result := cutblank(Bigmemo[0]);
   //
   Bigmemo.free;
-  Land.Close;
+  Land.close;
   Land.free;
-  IntTxt.Close;
+  IntTxt.close;
   IntTxt.free;
 end;
 
