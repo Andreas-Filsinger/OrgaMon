@@ -103,6 +103,10 @@ type
     Label18: TLabel;
     IB_Date5: TIB_Date;
     SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    IB_Date6: TIB_Date;
+    Label19: TLabel;
+    Label20: TLabel;
     procedure Image2Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure IB_Query1BeforeInsert(IB_Dataset: TIB_Dataset);
@@ -125,6 +129,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure NeuNehmer;
@@ -134,8 +139,7 @@ type
     function VertragLogFName: string;
   public
     { Public-Deklarationen }
-    procedure setContext(VERTRAG_R: integer; PERSON_R: integer = 0; BELEG_R: integer = 0;
-      BAUSTELLE_R: integer = 0);
+    procedure setContext(VERTRAG_R: integer; PERSON_R: integer = 0; BELEG_R: integer = 0; BAUSTELLE_R: integer = 0);
     procedure createVertragFromContext;
     procedure createVertragsnehmerFromContext;
   end;
@@ -376,10 +380,9 @@ begin
 
       VERTRAG_R := e_w_gen('GEN_VERTRAG');
 
-      e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' + 'values (' +
-        inttostr(VERTRAG_R) + ', ' + inttostr(PERSON_R) + ', ' +
-        IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' + IB_Query1.FieldByName('BELEG_R')
-        .AsString + ')');
+      e_x_sql('insert into VERTRAG ' + '(RID,PERSON_R,BAUSTELLE_R,BELEG_R) ' + 'values (' + inttostr(VERTRAG_R) + ', ' +
+        inttostr(PERSON_R) + ', ' + IB_Query1.FieldByName('BAUSTELLE_R').AsString + ', ' +
+        IB_Query1.FieldByName('BELEG_R').AsString + ')');
 
       with IB_Query3 do
       begin
@@ -484,7 +487,27 @@ end;
 
 procedure TFormVertrag.SpeedButton1Click(Sender: TObject);
 begin
-  FormOLAP.DoContextOLAP(IB_Grid1,'-2');
+  FormOLAP.DoContextOLAP(IB_Grid1, '-2');
+end;
+
+procedure TFormVertrag.SpeedButton2Click(Sender: TObject);
+var
+  ANWENDUNG: TAnfixDate;
+begin
+ with IB_Query3 do
+ begin
+  e_r_VertragBuchen(FieldByName('RID').AsInteger, ANWENDUNG);
+  if DateOK(ANWENDUNG) then
+    e_x_sql(
+      { } 'update VERTRAG set ANWENDUNG=' +
+      { } SQLString(long2date(ANWENDUNG)) + ' ' +
+      { } 'where RID=' + FieldByName('RID').AsString)
+  else
+    e_x_sql(
+      { } 'update VERTRAG set ANWENDUNG=null ' +
+      { } 'where RID=' + FieldByName('RID').AsString);
+  Refresh;
+ end;
 end;
 
 procedure TFormVertrag.SpeedButton4Click(Sender: TObject);

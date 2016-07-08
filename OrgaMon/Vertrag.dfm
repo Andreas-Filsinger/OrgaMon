@@ -516,7 +516,7 @@ object FormVertrag: TFormVertrag
     Top = 374
     Width = 755
     Height = 141
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 7
     object TabSheet1: TTabSheet
@@ -529,7 +529,7 @@ object FormVertrag: TFormVertrag
         Caption = 'von'
       end
       object Label4: TLabel
-        Left = 206
+        Left = 238
         Top = 35
         Width = 16
         Height = 13
@@ -578,7 +578,7 @@ object FormVertrag: TFormVertrag
         Caption = 'Tage'
       end
       object Label12: TLabel
-        Left = 224
+        Left = 230
         Top = 82
         Width = 24
         Height = 13
@@ -590,6 +590,54 @@ object FormVertrag: TFormVertrag
         Width = 61
         Height = 13
         Caption = 'bezahlt bis'
+      end
+      object SpeedButton2: TSpeedButton
+        Left = 257
+        Top = 7
+        Width = 21
+        Height = 22
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        OnClick = SpeedButton2Click
+      end
+      object Label19: TLabel
+        Left = 210
+        Top = 6
+        Width = 44
+        Height = 13
+        Caption = 'n'#228'chste'
+      end
+      object Label20: TLabel
+        Left = 188
+        Top = 16
+        Width = 66
+        Height = 13
+        Caption = 'Anwendung'
       end
       object IB_Date1: TIB_Date
         Left = 85
@@ -604,9 +652,9 @@ object FormVertrag: TFormVertrag
         DrawYearArrow = False
       end
       object IB_Date2: TIB_Date
-        Left = 254
+        Left = 257
         Top = 33
-        Width = 96
+        Width = 122
         Height = 21
         DataField = 'BIS'
         DataSource = IB_DataSource1
@@ -698,9 +746,9 @@ object FormVertrag: TFormVertrag
         Caption = 'Vertrag im Moment ruhend'
       end
       object Edit1: TEdit
-        Left = 254
+        Left = 257
         Top = 79
-        Width = 96
+        Width = 122
         Height = 21
         Hint = 'Datum f'#252'r Einzelanwendung (optional)'
         TabOrder = 9
@@ -713,6 +761,18 @@ object FormVertrag: TFormVertrag
         DataField = 'BEZAHLT_BIS'
         DataSource = IB_DataSource1
         TabOrder = 10
+        IncCellHeight = 1
+        IncCellWidth = 2
+        DrawYearArrow = False
+      end
+      object IB_Date6: TIB_Date
+        Left = 280
+        Top = 8
+        Width = 99
+        Height = 21
+        DataField = 'VERTRAG.ANWENDUNG'
+        DataSource = IB_DataSource3
+        TabOrder = 11
         IncCellHeight = 1
         IncCellWidth = 2
         DrawYearArrow = False
@@ -966,7 +1026,8 @@ object FormVertrag: TFormVertrag
       ' ANSCHRIFT.STRASSE,'
       ' ANSCHRIFT.ORT,'
       ' PERSON.RID PERSON_R,'
-      ' VERTRAG.BEZAHLT_BIS'
+      ' VERTRAG.BEZAHLT_BIS,'
+      ' VERTRAG.ANWENDUNG'
       'from'
       ' VERTRAG'
       'join'
@@ -990,7 +1051,8 @@ object FormVertrag: TFormVertrag
       'ANSCHRIFT.STRASSE=ANSCHRIFT.STRASSE;ANSCHRIFT.STRASSE DESC'
       'ANSCHRIFT.ORT=ANSCHRIFT.ORT;ANSCHRIFT.ORT DESC'
       'PERSON_R=PERSON_R;PERSON_R DESC'
-      'VERTRAG.RID=VERTRAG.RID;VERTRAG.RID DESC')
+      'VERTRAG.RID=VERTRAG.RID;VERTRAG.RID DESC'
+      'VERTRAG.ANWENDUNG=VERTRAG.ANWENDUNG;VERTRAG.ANWENDUNG DESC')
     OrderingLinks.Strings = (
       'VERTRAG.BEZAHLT_BIS=ITEM=1'
       'ANSCHRIFT.NAME1=ITEM=2'
@@ -1000,7 +1062,8 @@ object FormVertrag: TFormVertrag
       'ANSCHRIFT.STRASSE=ITEM=6'
       'ANSCHRIFT.ORT=ITEM=7'
       'PERSON_R=ITEM=8'
-      'VERTRAG.RID=ITEM=9')
+      'VERTRAG.RID=ITEM=9'
+      'VERTRAG.ANWENDUNG=ITEM=10')
     AfterScroll = IB_Query3AfterScroll
     Left = 40
     Top = 240

@@ -527,7 +527,7 @@ function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overl
 
 // Kann für diesen Vertrag eine Abrechnung erfolgen?
 //
-function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
+function e_r_VertragBuchen(VERTRAG_R: integer; var ANWENDUNG: TAnfixDate): boolean;
 
 // Briefumschlag-Funktion in den Belegen, Berechnete Mengen werden auf
 // geliefert gesetzt. Budgets werden abgeschrieben. Textelemente werden ersetzt.
@@ -6006,6 +6006,7 @@ var
   ERSTER_ABRECHNUNGSTAG: TAnfixDate;
   LETZTER_ABRECHNUNGSTAG: TAnfixDate;
   DIESER_ABRECHNUNGSTAG: TAnfixDate;
+  ANWENDUNG : TAnfixDate;
   STICHTAG: TAnfixDate;
   VON: TAnfixDate;
   BIS: TAnfixDate;
@@ -6039,7 +6040,7 @@ begin
     // Vorlauf
     Erzwingen := sSettings.values['Erzwingen'] = cIni_Activate;
 
-    while (e_r_VertragBuchen(VERTRAG_R)) or Erzwingen do
+    while (e_r_VertragBuchen(VERTRAG_R, ANWENDUNG)) or Erzwingen do
     begin
 
       // es ist nur ein "Erzwingen"-Lauf möglich
@@ -6287,13 +6288,12 @@ begin
   VertragBuchen_Leave;
 end;
 
-function e_r_VertragBuchen(VERTRAG_R: integer): boolean;
+function e_r_VertragBuchen(VERTRAG_R: integer; var ANWENDUNG: TAnfixDate): boolean;
 var
   cVERTRAG: TdboCursor;
   GEBUCHT_BIS: TAnfixDate;
   ERSTER_ABRECHNUNGSTAG: TAnfixDate;
   STICHTAG: TAnfixDate;
-  TAG_DER_BELEGERSTELLUNG: TAnfixDate;
   VORLAUF: integer;
   VON: TAnfixDate;
   BIS: TAnfixDate;
@@ -6306,7 +6306,9 @@ var
 
 begin
   VertragBuchen_Enter;
+
   // Vertrag prüfen, ob man ihn anwenden könnte ....
+  ANWENDUNG := cIllegalDate;
   result := false;
   cVERTRAG := nCursor;
 
@@ -6377,8 +6379,8 @@ begin
       end;
 
       VORLAUF := FieldByName('VORLAUF').AsInteger;
-      TAG_DER_BELEGERSTELLUNG := DatePlus(ERSTER_ABRECHNUNGSTAG, -VORLAUF);
-      result := (DateGet >= TAG_DER_BELEGERSTELLUNG);
+      ANWENDUNG := DatePlus(ERSTER_ABRECHNUNGSTAG, -VORLAUF);
+      result := (DateGet >= ANWENDUNG);
 
       // Sollte er anwendbar sein, könnte "Ruhend" die Anwendung verhindern
       // Es gibt aber eine Warnung.
