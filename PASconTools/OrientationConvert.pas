@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.244; // ../rev/Oc.rev.txt
+  Version: single = 1.245; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls

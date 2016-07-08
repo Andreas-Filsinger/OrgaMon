@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.198 (08.07.16) Andreas Filsinger
+
+ Neu: Artikel: mehrere Artikel auf einem PDF möglich
+ Neu: wegen "Oc Rev. 1.245" neu compiliert!
+
 Rev 8.197 (06.07.16) Andreas Filsinger
 
  Neu: Vertrag: errechnetes Datum der nächsten ANWENDUNG

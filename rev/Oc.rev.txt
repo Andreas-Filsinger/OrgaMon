@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.245 (08.07.16) Andreas Filsinger
+
+ Wegfall: RWE 1.0
+
 Rev 1.244 (09.05.16) Andreas Filsinger
 
  Bug: xml2csv (ARGOS): Hatte nicht mehr funktioniert (Regression seit 10.04.2015)
