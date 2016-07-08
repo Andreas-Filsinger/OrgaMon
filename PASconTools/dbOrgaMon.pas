@@ -2290,13 +2290,6 @@ var
   AutoMataState: integer;
   EmptyLine: boolean;
 begin
-
-  //
-  // 12.12.2005
-  // erste Anfänge, den Kernel via OLAP Statements
-  // variable zu halten. Die OLAP Ausführungs-Funktion sollte
-  // noch vollständig in das eCommerce Modul verschoben werden.
-  //
   result := TStringList.create;
   ParameterL := TStringList.create;
   ParameterL.AddStrings(Params);

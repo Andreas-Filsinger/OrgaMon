@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.197 (06.07.16) Andreas Filsinger
+
+ Neu: Vertrag: errechnetes Datum der nächsten ANWENDUNG
+
 Rev 8.196 (30.06.16) Andreas Filsinger
 
  Neu: Tagesabschluss: OLAP: $ExcelOpen=NEIN ist nun default
@@ -11452,6 +11456,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.197
+
+alter table VERTRAG
+add ANWENDUNG date;
 
 :8.194
 
