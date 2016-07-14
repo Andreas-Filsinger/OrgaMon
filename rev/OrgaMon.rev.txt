@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.200 (14.07.16) Andreas Filsinger
+
+ Neu: D-BASIC: Fehler werden protokolliert: .\Diagnose\D-BASIC-ERROR-*.log.txt
+ Neu: D-BASIC: Im Diagnose-Modus wird die D-BASIC Ausgabe protokolliert: .\Diagnose\D-BASIC-RUN-*.log.txt
+
+Rev 8.199 (11.07.16) Andreas Filsinger
+
+ Neu: WehSop: Änderung in Tabelle WEBSHOPCLICKS
+
 Rev 8.198 (08.07.16) Andreas Filsinger
 
  Neu: Artikel: mehrere Artikel auf einem PDF möglich
@@ -11461,6 +11470,19 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.199
+
+SET TERM ^ ;
+ALTER TRIGGER WEBSHOPCLICKS_BI0 ACTIVE
+BEFORE INSERT POSITION 0
+AS
+begin
+ IF ((NEW.RID is NULL) OR (NEW.RID<1)) THEN
+  NEW.RID = GEN_ID(GEN_WEBSHOPCLICKS,1);
+ NEW.DATUM = CURRENT_DATE;
+END^
+SET TERM ; ^
 
 :8.197
 

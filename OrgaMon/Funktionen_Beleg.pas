@@ -6006,7 +6006,7 @@ var
   ERSTER_ABRECHNUNGSTAG: TAnfixDate;
   LETZTER_ABRECHNUNGSTAG: TAnfixDate;
   DIESER_ABRECHNUNGSTAG: TAnfixDate;
-  ANWENDUNG : TAnfixDate;
+  ANWENDUNG: TAnfixDate;
   STICHTAG: TAnfixDate;
   VON: TAnfixDate;
   BIS: TAnfixDate;
@@ -6619,7 +6619,8 @@ begin
       end;
 
       // Basic-Programm ausführen
-      e_x_basic(MyProgramPath + cDBASICPath + 'BerechneBeleg-1.txt',
+      e_x_basic(
+        { } MyProgramPath + cDBASICPath + 'BerechneBeleg-1.txt',
         { } 'PERSON_R=' + inttostr(PERSON_R) + ';' +
         { } 'BELEG_R=' + inttostr(BELEG_R));
 
@@ -6922,9 +6923,17 @@ begin
             if (_groesstesMwStElementIndex <> -1) then
               if iPortoMwStLogik then
               begin
-                if (e_r_sqls('select' + ' SORTIMENT.MWST_FIXIERT ' + 'from' + ' ARTIKEL ' + 'join' + ' SORTIMENT ' +
-                  'on' + ' (SORTIMENT.RID=ARTIKEL.SORTIMENT_R) ' + 'where' + ' (ARTIKEL.RID=' + inttostr(ARTIKEL_R) +
-                  ')') <> cC_True) then
+                if (e_r_sqls(
+                  { } 'select' +
+                  { } ' SORTIMENT.MWST_FIXIERT ' +
+                  { } 'from' +
+                  { } ' ARTIKEL ' +
+                  { } 'join' +
+                  { } ' SORTIMENT ' +
+                  { } 'on' +
+                  { } ' (SORTIMENT.RID=ARTIKEL.SORTIMENT_R) ' +
+                  { } 'where' +
+                  { } ' (ARTIKEL.RID=' + inttostr(ARTIKEL_R) + ')') <> cC_True) then
                   FieldByName('MWST').AsFloat := MwStSaver.MWST[_groesstesMwStElementIndex].Satz;
               end;
             FieldByName('ARTIKEL').AsString := FieldByName('ARTIKEL').AsString + ' (' + inttostr(succ(TEILLIEFERUNG)) +
