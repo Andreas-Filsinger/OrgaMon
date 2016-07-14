@@ -164,8 +164,7 @@ const
   cConnection: TIB_Connection = nil;
 {$ENDIF}
   // Datenbank-Inhalt als Tabelle exportieren
-procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
-  AppendMode: boolean = false); overload;
+procedure ExportTable(TSql: string; FName: string; Seperator: char = ';'; AppendMode: boolean = false); overload;
 procedure ExportTable(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
 
 // Stringlist Table
@@ -280,7 +279,7 @@ function e_r_sqlb(s: string): boolean;
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
 
 // Nur das erste Feld des ersten Records als Datum
-function e_r_sql_Date(s: string): TAnFixDate;
+function e_r_sql_Date(s: string): TANFiXDate;
 
 // Erste Ergebnis-Spalte mehrerer Records als TStringList
 function e_r_sqlsl(s: string): TStringList;
@@ -310,8 +309,7 @@ procedure e_x_commit;
 //
 // TABELLE "." FELD [","] [" where " CONDITION]
 //
-procedure e_x_dereference(dependencies: TStringList; fromref: string;
-  toref: string = 'NULL'); overload;
+procedure e_x_dereference(dependencies: TStringList; fromref: string; toref: string = 'NULL'); overload;
 procedure e_x_dereference(dependencies: string; fromref: string; toref: string = 'NULL'); overload;
 
 // Name einer temporären OLAP-Tabelle
@@ -458,8 +456,7 @@ begin
   ChangeWhere(q, 'FOR UPDATE');
 end;
 
-procedure ExportTable(TSql: string; FName: string; Seperator: char = ';';
-  AppendMode: boolean = false);
+procedure ExportTable(TSql: string; FName: string; Seperator: char = ';'; AppendMode: boolean = false);
 var
   cABLAGE: TdboCursor;
   Ablage: TStringList;
@@ -505,7 +502,7 @@ begin
     sql.add(TSql);
 
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
 
     // Kopfzeile
@@ -635,7 +632,7 @@ begin
 {$ENDIF}
       sql.add(TSql);
       if DebugMode then
-        AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+        AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
       ApiFirst;
 
       // Kopfzeile
@@ -800,8 +797,7 @@ begin
 
               SQL_TIMESTAMP, SQL_TIMESTAMP_:
                 begin
-                  Infostr := long2date(DateTime2Long(AsDateTime)) + ' ' +
-                    secondstostr(DateTime2seconds(AsDateTime));
+                  Infostr := long2date(DateTime2Long(AsDateTime)) + ' ' + secondstostr(DateTime2seconds(AsDateTime));
                 end;
 
               SQL_TYPE_DATE, SQL_TYPE_DATE_:
@@ -860,7 +856,7 @@ begin
   begin
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
 
     // Kopfzeile
@@ -914,8 +910,7 @@ begin
 
               SQL_TIMESTAMP, SQL_TIMESTAMP_:
                 begin
-                  Content := long2date(DateTime2Long(AsDateTime)) + ' ' +
-                    secondstostr(DateTime2seconds(AsDateTime));
+                  Content := long2date(DateTime2Long(AsDateTime)) + ' ' + secondstostr(DateTime2seconds(AsDateTime));
                 end;
 
               SQL_TYPE_DATE, SQL_TYPE_DATE_:
@@ -1031,7 +1026,7 @@ begin
       ib_connection := cConnection;
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
 
     execute;
 
@@ -1251,7 +1246,7 @@ begin
         sql.add('select * from ' + TableName + ' where RID=' + inttostr(RID));
 
         if DebugMode then
-          AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+          AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
 
         ApiFirst;
         if eof then
@@ -1599,7 +1594,7 @@ begin
 
     sql.add(TSql);
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     cFIELDCOUNT := FieldCount;
 
@@ -1764,8 +1759,8 @@ begin
           // Script ab und zu auftrennen
           if (m > 500) then
           begin
-            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
-              ' where RID in (' + CalculatedSQL + ');');
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) + ' where RID in (' +
+              CalculatedSQL + ');');
             m := 0;
           end;
 
@@ -1781,13 +1776,13 @@ begin
 
           if (m = 1) then
           begin
-            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
-              ' where RID=' + CalculatedSQL + ';');
+            Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) + ' where RID=' +
+              CalculatedSQL + ';');
             break;
           end;
 
-          Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) +
-            ' where RID in (' + CalculatedSQL + ');')
+          Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) + ' where RID in (' +
+            CalculatedSQL + ');')
 
         until true;
       end;
@@ -1799,7 +1794,7 @@ end;
 procedure e_x_sql(s: string);
 begin
   if DebugMode then
-    AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+    AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
 {$IFDEF fpc}
   fbConnection.ExecuteDirect(s);
 {$ELSE}
@@ -1853,7 +1848,7 @@ begin
       { } 'select GEN_ID(' +
       { } GenName +
       { } ',1) from RDB$DATABASE',
-      { } DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      { } DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
 end;
 
 function e_r_GEN(GenName: string): integer;
@@ -1883,7 +1878,7 @@ begin
       { } 'select GEN_ID(' +
       { } GenName +
       { } ',0) from RDB$DATABASE',
-      { } DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      { } DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
 end;
 
 procedure e_x_update(s: string; sl: TStringList);
@@ -1916,7 +1911,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     result := Fields[0].AsInteger;
   end;
@@ -2071,7 +2066,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     e_r_sqlt(Fields[0], sl);
   end;
@@ -2088,7 +2083,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     e_r_sqlt(Fields[0], result);
   end;
@@ -2105,7 +2100,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     while not(eof) do
     begin
@@ -2126,7 +2121,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     while not(eof) do
     begin
@@ -2150,7 +2145,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     while not(eof) do
     begin
@@ -2170,7 +2165,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     result := Fields[0].AsString;
   end;
@@ -2191,7 +2186,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     if eof then
       result := ifnull
@@ -2205,7 +2200,7 @@ begin
   cSQL.free;
 end;
 
-function e_r_sql_Date(s: string): TAnFixDate;
+function e_r_sql_Date(s: string): TANFiXDate;
 var
   cSQL: TdboCursor;
 begin
@@ -2214,7 +2209,7 @@ begin
   begin
     sql.add(s);
     if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     if eof then
       result := cIllegalDate
@@ -2337,7 +2332,7 @@ begin
   begin
     sql.add(ResolveParameter(sSQL));
     if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', DatumUhr);
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName + '=' + Fields[n].AsString);
@@ -2355,6 +2350,8 @@ begin
   with cNOW do
   begin
     sql.add('select CURRENT_TIMESTAMP from RDB$DATABASE');
+    if DebugMode then
+      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
     ApiFirst;
     result := Fields[0].AsDateTime;
   end;
@@ -2386,8 +2383,11 @@ begin
       if (Condition <> '') then
         Condition := ' and (' + Condition + ')';
 
-      CalculatedSQL := 'update ' + TableName + ' set ' + FieldName + ' = ' + toref + AddFields +
-        ' where (' + FieldName + ' = ' + fromref + ')' + Condition;
+      CalculatedSQL :=
+      { } 'update ' + TableName + ' ' +
+      { } 'set ' + FieldName + ' = ' + toref + AddFields + ' ' +
+      { } 'where (' + FieldName + ' = ' + fromref + ')' +
+      { } Condition;
 
       try
         e_x_sql(CalculatedSQL);
@@ -2490,7 +2490,14 @@ begin
 
       // RUN
       Assign(sBASIC);
-      RUN;
+      if not(RUN) then
+      begin
+        // Fehler bei der Ausführung
+        AppendStringsToFile(BasicErrors, DiagnosePath + 'D-BASIC-ERROR-' + inttostr(DateGet) + '.log.txt', Uhr8);
+      end;
+      if DebugMode then
+        AppendStringsToFile(BasicOutPut, DiagnosePath + 'D-BASIC-RUN-' + inttostr(DateGet) + '.log.txt', Uhr8);
+
     end;
 
   end;
@@ -2547,8 +2554,8 @@ begin
 
   // Tabelle neu anlegen
   e_x_sql('create table ' + e_r_OLAP_Tabellenname(n) + ' (' + 'RID DOM_REFERENCE NOT NULL)');
-  e_x_sql('alter table ' + e_r_OLAP_Tabellenname(n) + ' add constraint PK_' +
-    e_r_OLAP_Tabellenname(n) + ' primary key (RID)');
+  e_x_sql('alter table ' + e_r_OLAP_Tabellenname(n) + ' add constraint PK_' + e_r_OLAP_Tabellenname(n) +
+    ' primary key (RID)');
 
   // e_x_sql('delete from ' + e_r_OLAP_Tabellenname(n));
 

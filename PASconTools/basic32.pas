@@ -113,19 +113,32 @@ const
   OIdOpenMakro = '[';
   OIdCloseMakro = ']';
   OIdQuote = '"';
-  BasicErrorStrings: array [0 .. BASICLASTERROR] of AnsiString = ('OK',
-    'zuviele Objekte pro Zeile', OIdCloseMakro + ' erwartet',
-    OIdQuote + ' erwartet', 'Sprungmarke zu lang',
-    'Sprungmarke bereits vergeben', 'Zu viele Sprungmarke',
-    'Zu tiefe GOSUB-Verschachtelung oder Rekursion',
-    'RETURN ohne vorherigen GOSUB-Aufruf', 'Sprungmarke unbekannt',
-    'Anweisung unverständlich', 'Variable erwartet',
-    'Sprungmarke falsch formuliert', 'Abbruch durch Tastendruck',
-    'Bitte gültige Variable angeben', 'Division durch "0"',
-    'Variable ergibt keine Zahl', 'Bitte ®ENDE-BASIC¯ einfügen', 'PRN ohne NUL',
-    'NUL bereits eingeschaltet', 'AliasName ist zu lang',
-    'VDD-Datei nicht gefunden', 'Funktions-Aufruf nicht bekannt',
-    'Fehler beim Laden', 'DRV-Datei nicht gefunden');
+  BasicErrorStrings: array [0 .. BASICLASTERROR] of AnsiString = (
+    { } 'OK',
+    { } 'zuviele Objekte pro Zeile',
+    { } OIdCloseMakro + ' erwartet',
+    { } OIdQuote + ' erwartet',
+    { } 'Sprungmarke zu lang',
+    { } 'Sprungmarke bereits vergeben',
+    { } 'Zu viele Sprungmarke',
+    { } 'Zu tiefe GOSUB-Verschachtelung oder Rekursion',
+    { } 'RETURN ohne vorherigen GOSUB-Aufruf',
+    { } 'Sprungmarke unbekannt',
+    { } 'Anweisung unverständlich',
+    { } 'Variable erwartet',
+    { } 'Sprungmarke falsch formuliert',
+    { } 'Abbruch durch Tastendruck',
+    { } 'Bitte gültige Variable angeben',
+    { } 'Division durch "0"',
+    { } 'Variable ergibt keine Zahl',
+    { } 'Bitte ®ENDE-BASIC¯ einfügen',
+    { } 'PRN ohne NUL',
+    { } 'NUL bereits eingeschaltet',
+    { } 'AliasName ist zu lang',
+    { } 'VDD-Datei nicht gefunden',
+    { } 'Funktions-Aufruf nicht bekannt',
+    { } 'Fehler beim Laden',
+    { } 'DRV-Datei nicht gefunden');
 
 type
   p2s = ^AnsiString;
@@ -577,11 +590,14 @@ end;
 
 procedure TBasicProcessor.Err(No: byte; AddInfo: string);
 begin
-  if BasicError = 0 then
+  if (BasicError = 0) then
   begin
     BasicError := No;
-    BasicErrors.add('Zeile ' + inttostr(BasicLine) + ':' + ';' + BasicMsg + ';'
-      + AddInfo + ';' + strings[BasicLine]);
+    BasicErrors.add(
+      { } 'Zeile ' + inttostr(BasicLine) + ':' + ';' +
+      { } BasicMsg + ';' +
+      { } AddInfo + ';' +
+      { } strings[BasicLine]);
   end;
 end;
 
@@ -1151,8 +1167,7 @@ procedure TBasicProcessor.PrintIt(x: string);
 begin
   if (BasicOutPut.count = 0) then
     BasicOutPut.add('');
-  BasicOutPut[pred(BasicOutPut.count)] :=
-    BasicOutPut[pred(BasicOutPut.count)] + x;
+  BasicOutPut[pred(BasicOutPut.count)] := BasicOutPut[pred(BasicOutPut.count)] + x;
   if (DeviceOverride <> 'null') then
   begin
     EnsurePrinting;
@@ -1673,8 +1688,7 @@ begin
   begin
     delete(succ(No));
     insert(sId, No); { rss -> r }
-    puts(booltostr((gets(succ(No)) = booltostr(true)) or
-      (gets(No + 2) = booltostr(true))), No);
+    puts(booltostr((gets(succ(No)) = booltostr(true)) or (gets(No + 2) = booltostr(true))), No);
     delete(succ(No));
     delete(succ(No));
   end;
@@ -1686,8 +1700,7 @@ begin
   begin
     delete(succ(No));
     insert(sId, No); { rss -> r }
-    puts(booltostr((gets(succ(No)) = booltostr(true)) and
-      (gets(No + 2) = booltostr(true))), No);
+    puts(booltostr((gets(succ(No)) = booltostr(true)) and (gets(No + 2) = booltostr(true))), No);
     delete(succ(No));
     delete(succ(No));
   end;
@@ -1750,8 +1763,7 @@ begin
 
     if not(ANSI) then
     begin
-      smart_window(succ((ScreenX div 2) - (Slen div 2)), 12, Slen, 2,
-        'BASIC-Eingabe');
+      smart_window(succ((ScreenX div 2) - (Slen div 2)), 12, Slen, 2, 'BASIC-Eingabe');
       Fkeys_cls;
       ClearKeys;
       Fkeys_let(8, 'Ende');
@@ -2081,43 +2093,37 @@ begin
       goto cut;
 
     { lenId BraOpenId sId BraCloseId -> sId }
-    if TstMatch(chr(lenId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId),
-      ProcLen) then
+    if TstMatch(chr(lenId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId), ProcLen) then
       goto cut;
 
     { SQLId BraOpenId sId BraCloseId -> sId }
-    if TstMatch(chr(SQLId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId),
-      ProcSQL) then
+    if TstMatch(chr(SQLId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId), ProcSQL) then
       goto cut;
 
     { chrId BraOpenId sId BraCloseId -> sId }
-    if TstMatch(chr(chrID) + chr(BraOpenId) + chr(sId) + chr(BraCloseId),
-      ProcChr) then
+    if TstMatch(chr(chrID) + chr(BraOpenId) + chr(sId) + chr(BraCloseId), ProcChr) then
       goto cut;
 
     { RoundId BraOpenId sId BraCloseId -> sId }
-    if TstMatch(chr(RoundId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId),
-      ProcRound) then
+    if TstMatch(chr(RoundId) + chr(BraOpenId) + chr(sId) + chr(BraCloseId), ProcRound) then
       goto cut;
 
     { midId BraOpenId sId kommaId sId kommaId sId BraCloseId -> sId }
-    if TstMatch(chr(midId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId)
-      + chr(KommaId) + chr(sId) + chr(BraCloseId), ProcMid) then
+    if TstMatch(chr(midId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) + chr(sId) +
+      chr(BraCloseId), ProcMid) then
       goto cut;
 
     { valId BraOpenId sId kommaId sId kommaId sId BraCloseId -> sId }
-    if TstMatch(chr(valId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId)
-      + chr(KommaId) + chr(sId) + chr(BraCloseId), ProcVal) then
+    if TstMatch(chr(valId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) + chr(sId) +
+      chr(BraCloseId), ProcVal) then
       goto cut;
 
     { posId BraOpenId sId kommaId sId BraCloseId -> sId }
-    if TstMatch(chr(posId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId)
-      + chr(BraCloseId), ProcPos) then
+    if TstMatch(chr(posId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId) + chr(BraCloseId), ProcPos) then
       goto cut;
 
     { fillId BraOpenId sId kommaId sId BraCloseId -> sId }
-    if TstMatch(chr(fillId) + chr(BraOpenId) + chr(sId) + chr(KommaId) +
-      chr(sId) + chr(BraCloseId), Procfill) then
+    if TstMatch(chr(fillId) + chr(BraOpenId) + chr(sId) + chr(KommaId) + chr(sId) + chr(BraCloseId), Procfill) then
       goto cut;
 
     { BraOpenId sId BraCloseId -> sId }
@@ -2153,13 +2159,11 @@ begin
       goto cut;
 
     { letid sId eqId sId EOLId -> eps }
-    if TstFix(chr(LetId) + chr(sId) + chr(EqId) + chr(sId) + chr(EOLId),
-      ProcLetss) then
+    if TstFix(chr(LetId) + chr(sId) + chr(EqId) + chr(sId) + chr(EOLId), ProcLetss) then
       goto cut;
 
     { AliasId Sid eqId Sid EOLId -> eps }
-    if TstFix(chr(AliasId) + chr(sId) + chr(EqId) + chr(sId) + chr(EOLId),
-      ProcAlias) then
+    if TstFix(chr(AliasId) + chr(sId) + chr(EqId) + chr(sId) + chr(EOLId), ProcAlias) then
       goto cut;
 
     { sId EqId sId -> sId }
@@ -2175,18 +2179,15 @@ begin
       goto cut;
 
     { ifId sId thenId gosubid sid EOLId -> eps }
-    if TstFix(chr(IfId) + chr(sId) + chr(ThenId) + chr(GosubId) + chr(sId) +
-      chr(EOLId), ProcIfGosub) then
+    if TstFix(chr(IfId) + chr(sId) + chr(ThenId) + chr(GosubId) + chr(sId) + chr(EOLId), ProcIfGosub) then
       goto cut;
 
     { ifId sId thenId sid EOLId -> eps }
-    if TstFix(chr(IfId) + chr(sId) + chr(ThenId) + chr(sId) + chr(EOLId), ProcIf)
-    then
+    if TstFix(chr(IfId) + chr(sId) + chr(ThenId) + chr(sId) + chr(EOLId), ProcIf) then
       goto cut;
 
     { printId sId SemiId EOLId -> eps }
-    if TstFix(chr(PrintId) + chr(sId) + chr(SemiId) + chr(EOLId),
-      ProcPrintStringSemi) then
+    if TstFix(chr(PrintId) + chr(sId) + chr(SemiId) + chr(EOLId), ProcPrintStringSemi) then
       goto cut;
 
     { printId sId EOLId -> eps }
@@ -2198,8 +2199,8 @@ begin
       goto cut;
 
     { printId s,s,s EOLId -> eps }
-    if TstFix(chr(PrintId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) +
-      chr(sId) + chr(EOLId), ProcPrintPicture) then
+    if TstFix(chr(PrintId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcPrintPicture)
+    then
       goto cut;
 
     { gotoId sId EOLId -> eps }
@@ -2213,16 +2214,13 @@ begin
     { FontId sId [ [,sId], sId] }
     if TstFix(chr(FontId) + chr(sId) + chr(EOLId), ProcFontp) then
       goto cut;
-    if TstFix(chr(FontId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId),
-      ProcFontpp) then
+    if TstFix(chr(FontId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcFontpp) then
       goto cut;
-    if TstFix(chr(FontId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) +
-      chr(sId) + chr(EOLId), ProcFontppp) then
+    if TstFix(chr(FontId) + chr(sId) + chr(KommaId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcFontppp) then
       goto cut;
 
     { MoveId sId,sId }
-    if TstFix(chr(MoveId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId),
-      ProcMove) then
+    if TstFix(chr(MoveId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcMove) then
       goto cut;
 
     { gosubId sId EOLId -> eps }
@@ -2242,8 +2240,7 @@ begin
       goto cut;
 
     { InputId Sid kommaid Sid EOLId -> eps }
-    if TstFix(chr(InputId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId),
-      ProcInput) then
+    if TstFix(chr(InputId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcInput) then
       goto cut;
 
     { FINPUTId sId EOLId -> eps }
@@ -2271,13 +2268,11 @@ begin
       goto cut;
 
     { deviceID sID,sID EOLId -> eps }
-    if TstFix(chr(DeviceId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId),
-      ProcDeviceForm) then
+    if TstFix(chr(DeviceId) + chr(sId) + chr(KommaId) + chr(sId) + chr(EOLId), ProcDeviceForm) then
       goto cut;
 
     { FprintId sId SemiId EOLId -> eps }
-    if TstFix(chr(FPRINTId) + chr(sId) + chr(SemiId) + chr(EOLId),
-      ProcFPrintStringSemi) then
+    if TstFix(chr(FPRINTId) + chr(sId) + chr(SemiId) + chr(EOLId), ProcFPrintStringSemi) then
       goto cut;
 
     { FprintId sId EOLId -> eps }
@@ -2320,7 +2315,7 @@ begin
   ShouldRUN := false;
   inc(DruckStueckZaehler);
   CollectGotoMarks;
-  if BasicError = 0 then
+  if (BasicError = 0) then
   begin
     BasicLine := pred(StartLineNumber);
     repeat
@@ -2389,7 +2384,7 @@ begin
 
         { Check for Duplikates }
         for n := 1 to pred(OwnPoi) do
-          if LabelArray^[n].LName = LabelArray^[OwnPoi].LName then
+          if (LabelArray^[n].LName = LabelArray^[OwnPoi].LName) then
             Err(DUPLABEL, '');
       end;
     end;
@@ -2462,8 +2457,7 @@ begin
   if (p1 <> '') then
   begin
     printer.canvas.font.name := p1;
-    printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
-      LOGPIXELSY);
+    printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle, LOGPIXELSY);
   end;
   ObjectLine^.clear;
 end;
@@ -2480,8 +2474,7 @@ begin
   if (p2 <> '') then
   begin
     printer.canvas.font.size := -strtointdef(p2, 0);
-    printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
-      LOGPIXELSY);
+    printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle, LOGPIXELSY);
   end;
   ObjectLine^.clear;
 end;
@@ -2527,8 +2520,7 @@ begin
     if (p4 = 'italic') then
       printer.canvas.font.style := printer.canvas.font.style + [fsitalic];
   end;
-  printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
-    LOGPIXELSY);
+  printer.canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle, LOGPIXELSY);
 
   ObjectLine^.clear;
 end;
@@ -2574,8 +2566,7 @@ begin
             begin
 
               // Druckmedium ändern
-              StrLCopy(dmFormName, StrPCopy(_FormName, ReadVal(cPREDEF_FORMULAR)
-                ), CCHFORMNAME - 1);
+              StrLCopy(dmFormName, StrPCopy(_FormName, ReadVal(cPREDEF_FORMULAR)), CCHFORMNAME - 1);
               dmFields := dmFields or DM_FORMNAME;
 
               // Anzahl der Kopien ändern
@@ -2590,8 +2581,7 @@ begin
 {$ENDIF}
       BeginDoc;
       canvas.font.size := -8;
-      canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle,
-        LOGPIXELSY);
+      canvas.font.PixelsPerInch := GetDeviceCaps(printer.canvas.Handle, LOGPIXELSY);
       _pX := 0;
       _pY := 0;
     end;
