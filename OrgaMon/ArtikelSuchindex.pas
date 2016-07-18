@@ -171,7 +171,7 @@ begin
     sql.add(' RID,INTERN_INFO,TITEL,VERLAG_R,');
     sql.add(' KOMPONIST_R,ARRANGEUR_R,CODE,');
     sql.add(' NUMERO,VERLAGNO,SORTIMENT_R,LAUFNUMMER,');
-    sql.add(' WEBSHOP,GEMA_WN');
+    sql.add(' WEBSHOP,GEMA_WN,GTIN');
     sql.add('FROM');
     sql.add(' ARTIKEL');
     sql.add('WHERE');
@@ -195,7 +195,8 @@ begin
         e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsInteger) + ' ' +
         e_r_MusikerName(FieldByName('KOMPONIST_R').AsInteger) + ' ' +
         e_r_MusikerName(FieldByName('ARRANGEUR_R').AsInteger) + ' ' +
-        FieldByName('GEMA_WN').AsString;
+        FieldByName('GEMA_WN').AsString + ' ' +
+        FieldByName('GTIN').AsString;
 
       // intern Hebu
       ArtikelContext1 :=

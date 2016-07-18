@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="171">
+    <Units Count="172">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1152,11 +1152,10 @@
       </Unit160>
       <Unit161>
         <Filename Value="..\..\firebird\examples\dbcrypt\cryptDb.pas"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="206"/>
         <CursorPos Y="206"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit161>
       <Unit162>
@@ -1228,12 +1227,22 @@
       </Unit169>
       <Unit170>
         <Filename Value="..\..\fpc\rtl\darwin\sysinit.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="11"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit170>
+      <Unit171>
+        <Filename Value="..\..\lazarus\components\lazutils\lazunicode.pas"/>
+        <UnitName Value="LazUnicode"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="84"/>
+        <CursorPos X="16" Y="85"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit171>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
