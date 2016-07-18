@@ -2475,6 +2475,9 @@ begin
   else
   begin
     sBASIC := TStringList(dbBASIC_FName_Cache.Objects[n]);
+    // Im Debug-Modus: Überschreibe das gecachte Script mit dem aus dem Dateisystem
+    if DebugMode then
+      sBASIC.LoadFromFile(FName);
   end;
 
   // Execute
