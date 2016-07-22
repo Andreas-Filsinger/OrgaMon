@@ -860,6 +860,8 @@ object FormBelegSuche: TFormBelegSuche
     BeforePrepare = IB_Query3BeforePrepare
     Left = 56
     Top = 551
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSource3: TIB_DataSource
     Dataset = IB_Query3

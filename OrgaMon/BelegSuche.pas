@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011 - 2015  Andreas Filsinger
+  |    Copyright (C) 2011 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -690,7 +690,7 @@ var
   BEZAHLT_BIS: TDateTime;
   // Namensbearbeitung
   VollerName: string;
-  i, n: Integer;
+  i: Integer;
   sLog: TStringList;
 begin
 
@@ -705,6 +705,9 @@ begin
     first;
     while not(eof) do
     begin
+
+      if pos('130.', FieldByName('INFO').AsString) = 1 then
+        sLog.add('Hit');
 
       while true do
       begin
@@ -745,25 +748,32 @@ begin
                     NACHNAME := VollerName;
                   end;
 
-                  lVERTRAG_R := e_r_sqlm(
-                    { } 'select VERTRAG.RID from' +
-                    { } ' PERSON ' +
-                    { } 'join' +
-                    { } ' VERTRAG ' +
-                    { } 'on' +
-                    { } ' (PERSON.RID=VERTRAG.PERSON_R) and' +
-                    { } ' (VERTRAG.BAUSTELLE_R=630) ' +
-                    { } 'where' +
-                    { } ' (PERSON.VORNAME=' + SQLString(VORNAME) + ') and' +
-                    { } ' (PERSON.NACHNAME=' + SQLString(NACHNAME) + ')');
+                  if (VERTRAG_R > cRID_FirstValid) then
+                  begin
+                    // Der VERTRAG_R aus INFO immer im Vorrang
+                    lVERTRAG_R := TgpIntegerList.create;
+                    lVERTRAG_R.add(VERTRAG_R);
+                  end
+                  else
+                  begin
+                    // Suche des VERTRAG_R über den Namen des Vertragsnehmern
+                    lVERTRAG_R := e_r_sqlm(
+                      { } 'select VERTRAG.RID from' +
+                      { } ' PERSON ' +
+                      { } 'join' +
+                      { } ' VERTRAG ' +
+                      { } 'on' +
+                      { } ' (PERSON.RID=VERTRAG.PERSON_R) and' +
+                      { } ' (VERTRAG.BAUSTELLE_R=630) ' +
+                      { } 'where' +
+                      { } ' (PERSON.VORNAME=' + SQLString(VORNAME) + ') and' +
+                      { } ' (PERSON.NACHNAME=' + SQLString(NACHNAME) + ')');
+                  end;
 
                   repeat
 
-                    // Versuchen die Liste auf EINEN zu verkürzen
-                    if (VERTRAG_R >= cRID_FirstValid) then
-                      for n := pred(lVERTRAG_R.count) downto 0 do
-                        if (VERTRAG_R <> lVERTRAG_R[n]) then
-                          lVERTRAG_R.Delete(n);
+                    // Versuchen die Liste zu verkürzen
+                    lVERTRAG_R.RemoveDuplicates;
 
                     if (lVERTRAG_R.count = 0) then
                     begin
