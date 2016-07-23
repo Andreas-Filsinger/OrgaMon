@@ -47,7 +47,7 @@ const
   Content_Mode_xls2Argos = 12; // Argos XML
   Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> xml/html
   Content_Mode_enBW = 14;
-  Content_Mode_Datev = 15;
+  Content_Mode_Datev = 15; // xls+Datev.xls -> .xls
   Content_Mode_xsd = 16; // Prüfe xml Datei gegen eine "Schema.xsd"
   Content_Mode_dtd = 17; // Prüfe xml Datei gegen eine "*.dtd"
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen

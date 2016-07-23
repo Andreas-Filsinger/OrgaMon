@@ -1,4 +1,4 @@
-object FormServiceFoto: TFormServiceFoto
+﻿object FormServiceFoto: TFormServiceFoto
   Left = 0
   Top = 0
   Caption = 'Foto.Service'
@@ -19,7 +19,7 @@ object FormServiceFoto: TFormServiceFoto
     Top = 0
     Width = 734
     Height = 509
-    ActivePage = TabSheet6
+    ActivePage = Rückstand
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -911,6 +911,28 @@ object FormServiceFoto: TFormServiceFoto
         Height = 17
         Caption = 'Korrektur wirklich durchf'#252'hren'
         TabOrder = 7
+      end
+    end
+    object Rückstand: TTabSheet
+      Caption = 'R'#252'ckstand'
+      ImageIndex = 10
+      object Button10: TButton
+        Left = 96
+        Top = 104
+        Width = 289
+        Height = 25
+        Caption = 'R'#252'ckstand-Statistik'
+        TabOrder = 0
+        OnClick = Button10Click
+      end
+      object Button22: TButton
+        Left = 112
+        Top = 152
+        Width = 75
+        Height = 25
+        Caption = 'Sort'
+        TabOrder = 1
+        OnClick = Button22Click
       end
     end
   end
