@@ -358,7 +358,7 @@ procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
 function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
 function mkDateTime(s: string): TDateTime; overload;
 function DatumUhr: string; // Zeitstempel Datum " " Uhr
-function dTimeStamp(d: TDateTime): string;
+function dTimeStamp(d: TDateTime): string; // JJJJMMJJ hh:mm:ss
 
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;

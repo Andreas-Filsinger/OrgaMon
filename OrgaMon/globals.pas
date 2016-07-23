@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.202; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.203; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -453,10 +453,11 @@ const
   cMonDa_ErsteEingabe = 20020601; // Erster
   cMonDa_FieldLength_ZaehlerNummer = 15;
 
-  cJonDa_ErgebnisMaske_deprecated = '?????' + cDATExtension; // this do not work in vsftp>2.3.2 anymore
+  cApp_TAN_Maske = '?????';
+  cJonDa_ErgebnisMaske_deprecated = cApp_TAN_Maske + cDATExtension; // this do not work in vsftp>2.3.2 anymore
   cJonDa_ErgebnisMaske_deprecated_FTP = '*' + cDATExtension;
 
-  cJonDa_ErgebnisMaske_utf8 = '?????' + cUTF8DataExtension; // this do not work in vsftp>2.3.2 anymore
+  cJonDa_ErgebnisMaske_utf8 = cApp_TAN_Maske + cUTF8DataExtension; // this do not work in vsftp>2.3.2 anymore
   cJonDa_ErgebnisMaske_utf8_FTP = '*' + cUTF8DataExtension;
 
   // Aufbau der Rückmeldung

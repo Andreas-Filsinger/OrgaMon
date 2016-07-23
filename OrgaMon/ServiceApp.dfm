@@ -79,10 +79,9 @@ object FormServiceApp: TFormServiceApp
     Top = 88
     Width = 690
     Height = 487
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 72
     object TabSheet1: TTabSheet
       Caption = 'proceed'
       OnShow = TabSheet1Show

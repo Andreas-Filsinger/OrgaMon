@@ -142,6 +142,9 @@ type
     Button30: TButton;
     ComboBox1: TComboBox;
     SpeedButton4: TSpeedButton;
+    Rückstand: TTabSheet;
+    Button10: TButton;
+    Button22: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -183,6 +186,8 @@ type
     procedure TabSheet1Show(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -258,6 +263,202 @@ begin
 {$ENDIF}
 end;
 
+const
+  col_GERAET = 0;
+  col_NAME = 1;
+  col_AUFNAHME = 2;
+  col_ANKUENDIGUNG = 3;
+  col_LIEFERUNG = 4;
+
+procedure TFormServiceFoto.Button10Click(Sender: TObject);
+var
+  BildAnkuendigung: TStringList;
+  BildLieferung: TStringList;
+  AllTRN: TStringList;
+  TAN: string;
+  m, n, o, r: integer;
+  ProceedMoment: TDateTime;
+  ProceedMoment_First: TDateTime;
+  FName: string;
+  PROTOKOLL: string;
+  sProtokoll: TStringList;
+  sHANGOVER: TsTable;
+  BildName: string;
+  LieferMoment_First: string;
+  LieferMoment: string;
+begin
+  ProceedMoment_First := now;
+
+  sLog := TStringList.create;
+  AllTRN := TStringList.create;
+
+  BildAnkuendigung := TStringList.create;
+  BildLieferung := TStringList.create;
+
+  sHANGOVER := TsTable.create;
+  sHANGOVER.addcol('GERAET');
+  sHANGOVER.addcol('NAME');
+  sHANGOVER.addcol('AUFNAHME_MOMENT');
+  sHANGOVER.addcol('ANKÜNDIGUNG');
+  sHANGOVER.addcol('LIEFERUNG');
+
+  { Schritt 1: Bildnamen ermitteln und das Datum der Ankündigung im Protokoll }
+  dir(MyFotoExec.pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
+  for n := 0 to pred(AllTRN.Count) do
+  begin
+    TAN := AllTRN[n];
+    if (length(TAN) > 2) then
+    begin
+      FName := { } MyFotoExec.pAppServicePath +
+      { } TAN + '\' +
+      { } TAN + cUTF8DataExtension;
+
+      ProceedMoment := FileDateTime(FName);
+      if ProceedMoment <> 0 then
+      begin
+        BildLieferung.LoadFromFile(
+          { } MyFotoExec.pAppServicePath +
+          { } TAN + '\' +
+          { } TAN + cUTF8DataExtension);
+        for m := 0 to pred(BildLieferung.Count) do
+        begin
+          PROTOKOLL := nextp(BildLieferung[m], ';', cMobileMeldung_COLUMN_PROTOKOLL);
+          if pos('F', PROTOKOLL) > 0 then
+          begin
+            sProtokoll := split(PROTOKOLL, '~');
+            for o := 0 to pred(sProtokoll.Count) do
+              if (pos('F', sProtokoll[o]) = 1) then
+                if (pos('=', sProtokoll[o]) = 3) then
+                  with sHANGOVER do
+                  begin
+                    { Bilddateiname ermitteln }
+                    BildName := nextp(sProtokoll[o], '=', 1);
+
+                    { Ältestes Datum ermitteln }
+                    if (ProceedMoment < ProceedMoment_First) then
+                      ProceedMoment_First := ProceedMoment;
+
+                    { Eintrag in der Tabelle suchen }
+                    r := locate(col_NAME, BildName);
+                    if (r = -1) then
+                    begin
+                      r := addRow;
+                      writeCell(r, col_GERAET, copy(BildName, 1, 3));
+                      writeCell(r, col_NAME, BildName);
+                      writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end
+                    else
+                    begin
+                      { wir wollen den ältesten Ankündigungsmoment }
+                      if (readCell(r, col_ANKUENDIGUNG) = '') or
+                        (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
+                        writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end;
+                  end;
+            sProtokoll.Free;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  { Schritt 2: Ergänzung der Lieferdatums }
+  AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+
+  //
+  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
+  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
+  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
+  // "senden" des Monteures
+  //
+  LieferMoment_First := dTimeStamp(ProceedMoment_First - 3.0);
+
+  for n := pred(AllTRN.Count) downto 0 do
+    if (pos('timestamp ', AllTRN[n]) = 1) then
+    begin
+      LieferMoment := copy(AllTRN[n], 11, MaxInt);
+      if LieferMoment < LieferMoment_First then
+        break;
+    end;
+
+  LieferMoment := LieferMoment_First;
+  for m := n to pred(AllTRN.Count) do
+  begin
+
+    if (pos('timestamp ', AllTRN[m]) = 1) then
+    begin
+      LieferMoment := copy(AllTRN[m], 11, MaxInt);
+      continue;
+    end;
+
+    BildName := '';
+    if (pos('cp ', AllTRN[m]) = 1) then
+      BildName := nextp(AllTRN[m], ' ', 1);
+
+    if (pos('mv ', AllTRN[m]) = 1) then
+      BildName := ExtractFileName(nextp(AllTRN[m], ' ', 1));
+
+    if (BildName <> '') and (pos('Neu', BildName) = 0) then
+    begin
+
+      with sHANGOVER do
+      begin
+
+        { Eintrag in der Tabelle suchen }
+        r := locate(col_NAME, BildName);
+        if (r = -1) then
+        begin
+          //
+          // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
+          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
+          // ist optional
+          //
+          {
+            r := addRow;
+            writeCell(r, col_GERAET, copy(BildName, 1, 3));
+            writeCell(r, col_NAME, BildName);
+            writeCell(r, col_LIEFERUNG, LieferMoment);
+          }
+        end
+        else
+        begin
+          { wir wollen den ältesten Ankündigungsmoment }
+          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > LieferMoment) then
+            writeCell(r, col_LIEFERUNG, LieferMoment);
+        end;
+      end;
+    end;
+  end;
+
+  sHANGOVER.savetoFile('G:\Bildankündigungen.csv');
+  sHANGOVER.Free;
+  AllTRN.Free;
+  BildAnkuendigung.Free;
+  BildLieferung.Free;
+end;
+
+procedure TFormServiceFoto.Button22Click(Sender: TObject);
+var
+  sHANGOVER: TsTable;
+  r: integer;
+begin
+  sHANGOVER := TsTable.create;
+  with sHANGOVER do
+  begin
+    insertfromFile('G:\Bildankündigungen.csv');
+    sortby('GERAET;LIEFERUNG;ANKÜNDIGUNG');
+    savetoFile('G:\Bildankündigungen.csv');
+
+    for r := RowCount downto 1 do
+      if (readCell(r, col_LIEFERUNG) <> '') then
+        Del(r);
+
+    savetoFile('G:\Bildankündigungen-ohne-Lieferung.csv');
+
+  end;
+   sHANGOVER.Free;
+end;
+
 procedure TFormServiceFoto.Button11Click(Sender: TObject);
 begin
   if (TimerInit < cKikstart_delay * 60 * 1000) then
@@ -325,29 +526,29 @@ begin
   // Verwarbeitungskette gestellt.
   //
 
-  TRNs := TStringList.Create;
-  SrcKandidaten := TStringList.Create;
-  TRNs_Fail := TStringList.Create;
+  TRNs := TStringList.create;
+  SrcKandidaten := TStringList.create;
+  TRNs_Fail := TStringList.create;
 
   QuellPfad := Edit_Rollback_Quelle.Text;
   TransaktionenFName := Edit_RollBack_Transaktionen.Text;
   ListBox12.Clear;
   TRNs.LoadFromFile(TransaktionenFName);
-  for n := 0 to pred(TRNs.count) do
+  for n := 0 to pred(TRNs.Count) do
     if pos('cp ', TRNs[n]) = 1 then
     begin
       SrcFName := nextp(TRNs[n], ' ', 1);
       dir(QuellPfad + cLocation_MOB + TransaktionsCountMaske + SrcFName, SrcKandidaten, false, true);
-      if (SrcKandidaten.count = 0) then
+      if (SrcKandidaten.Count = 0) then
       begin
-        ListBox12.Items.add('ERROR: ' + SrcFName + ' nicht in dieser Quelle');
-        TRNs_Fail.add(TRNs[n]);
+        ListBox12.Items.Add('ERROR: ' + SrcFName + ' nicht in dieser Quelle');
+        TRNs_Fail.Add(TRNs[n]);
       end
       else
       begin
 
         // Identische Rausreduzieren
-        for m := pred(SrcKandidaten.count) downto 1 do
+        for m := pred(SrcKandidaten.Count) downto 1 do
         begin
           FotoSize := FSize(QuellPfad + cLocation_MOB + SrcKandidaten[pred(m)]);
           if
@@ -356,17 +557,17 @@ begin
             SrcKandidaten.Delete(m);
         end;
 
-        if (SrcKandidaten.count > 1) then
+        if (SrcKandidaten.Count > 1) then
         begin
           // Mehrfache versionslieferungen eines Motives geht noch nicht!
           // imp pend!
-          ListBox12.Items.add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.count) + 'x');
-          TRNs_Fail.add(TRNs[n]);
+          ListBox12.Items.Add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.Count) + 'x');
+          TRNs_Fail.Add(TRNs[n]);
         end
         else
         begin
           TransaktionsCount := nextp(SrcKandidaten[0], '-', 0);
-          ListBox12.Items.add(
+          ListBox12.Items.Add(
             { } 'cp ' + QuellPfad + cLocation_MOB + TransaktionsCount + '-' + SrcFName + ' ' +
             { } MyFotoExec.pFTPPath + SrcFName);
 
@@ -375,7 +576,7 @@ begin
       end;
       Application.ProcessMessages;
     end;
-  TRNs_Fail.SaveToFile(TransaktionenFName + '.fail.txt');
+  TRNs_Fail.savetoFile(TransaktionenFName + '.fail.txt');
 
   TRNs.Free;
   SrcKandidaten.Free;
@@ -385,7 +586,7 @@ end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);
 var
-  tREFERENZ: tsTable;
+  tREFERENZ: TsTable;
   Column_RID: integer;
   r, c, m, n: integer;
   sRID: string;
@@ -400,7 +601,7 @@ var
     DestFName := FName;
     nextp(DestFName, '-');
 
-    ListBox12.Items.add(QuellPfad + FName + ' -> ' + MyFotoExec.pFTPPath + DestFName);
+    ListBox12.Items.Add(QuellPfad + FName + ' -> ' + MyFotoExec.pFTPPath + DestFName);
 
     // Nur wirklich was machen, wenn gewollt
     if CheckBox1.Checked then
@@ -423,8 +624,8 @@ begin
 
   QuellPfad := Edit_Rollback_Quelle.Text;
 
-  SrcKandidaten := TStringList.Create;
-  tREFERENZ := tsTable.Create;
+  SrcKandidaten := TStringList.create;
+  tREFERENZ := TsTable.create;
   with tREFERENZ do
   begin
     insertfromFile(MyFotoExec.MyDataBasePath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
@@ -434,7 +635,7 @@ begin
       sRID := readCell(r, Column_RID);
       dir(QuellPfad + '*-' + sRID + '*.jpg', SrcKandidaten, false, true);
 
-      if (SrcKandidaten.count > 0) then
+      if (SrcKandidaten.Count > 0) then
       begin
 
         // Identische rausreduzieren
@@ -442,23 +643,23 @@ begin
         repeat
           FotoSize := FSize(QuellPfad + SrcKandidaten[n]);
           if (FotoSize > 0) then
-            for m := pred(SrcKandidaten.count) downto n + 1 do
+            for m := pred(SrcKandidaten.Count) downto n + 1 do
             begin
               if (FotoSize = FSize(QuellPfad + SrcKandidaten[m])) then
                 SrcKandidaten.Delete(m);
             end;
           inc(n);
-        until (n >= pred(SrcKandidaten.count));
+        until (n >= pred(SrcKandidaten.Count));
 
-        for c := 0 to pred(SrcKandidaten.count) do
+        for c := 0 to pred(SrcKandidaten.Count) do
         begin
-          ListBox12.Items.add(SrcKandidaten[c]);
+          ListBox12.Items.Add(SrcKandidaten[c]);
           xmove(SrcKandidaten[c]);
         end;
       end
       else
       begin
-        ListBox12.Items.add('ERROR: ' + sRID + ' nichts gefunden!');
+        ListBox12.Items.Add('ERROR: ' + sRID + ' nichts gefunden!');
       end;
     end;
   end;
@@ -486,10 +687,10 @@ begin
       // delete one Line
       n := ItemIndex;
       Items.Delete(n);
-      Label10.Caption := InttoStr(count);
-      if (count > 0) then
+      Label10.Caption := InttoStr(Count);
+      if (Count > 0) then
       begin
-        ItemIndex := min(n, pred(count));
+        ItemIndex := min(n, pred(Count));
         SetFocus;
         OnClick(Sender);
       end;
@@ -506,7 +707,7 @@ var
   n: integer;
   FName, FNameRemote, GeraeteNo: string;
 begin
-  for n := 0 to pred(ListBox5.Items.count) do
+  for n := 0 to pred(ListBox5.Items.Count) do
   begin
     FName := ListBox5.Items[n];
     FNameRemote := nextp(FName, '+', 1);
@@ -521,7 +722,7 @@ var
   i: integer;
 begin
   with ListBox3 do
-    for i := 0 to pred(Items.count) do
+    for i := 0 to pred(Items.Count) do
     begin
       ItemIndex := i;
       Application.ProcessMessages;
@@ -541,8 +742,8 @@ var
     sDir: TStringList;
   begin
     result := '';
-    sDir := TStringList.Create;
-    for m := 0 to pred(Trn.count) do
+    sDir := TStringList.create;
+    for m := 0 to pred(Trn.Count) do
     begin
       if pos(sSource, Trn[m]) > 0 then
       begin
@@ -551,10 +752,10 @@ var
           continue;
         sDeliveryName := nextp(Trn[m], ' ', 1);
         dir(MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath + '*' + sDeliveryName, sDir, false, true);
-        if (sDir.count < 1) then
-          raise Exception.Create('Datei ' + sDeliveryName + ' nicht im Backup');
+        if (sDir.Count < 1) then
+          raise Exception.create('Datei ' + sDeliveryName + ' nicht im Backup');
         sDir.sort;
-        result := MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath + sDir[pred(sDir.count)];
+        result := MyFotoExec.BackupDir + cFotoService_FTPBackupSubPath + sDir[pred(sDir.Count)];
         break;
       end;
     end;
@@ -570,11 +771,11 @@ var
 begin
   ListBox12.Items.Clear;
   //
-  Trn := TStringList.Create;
-  sLog := TStringList.Create;
-  sLog.add('PFAD;BISHER;NEU');
+  Trn := TStringList.create;
+  sLog := TStringList.create;
+  sLog.Add('PFAD;BISHER;NEU');
   Trn.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
-  for n := 0 to pred(Trn.count) do
+  for n := 0 to pred(Trn.Count) do
   begin
     l := Trn[n];
 
@@ -590,7 +791,7 @@ begin
     if (pos('-N', sDest) = 0) and (pos('\N', sDest) = 0) then
       continue;
 
-    ListBox12.Items.add(Trn[n]);
+    ListBox12.Items.Add(Trn[n]);
 
     //
     newSource := rDaSiName(sSource);
@@ -598,16 +799,16 @@ begin
     ersetze('-N', '-', newDest);
     ersetze('\N', '\', newDest);
 
-    ListBox12.Items.add('cp ' + newSource + ' ' + newDest);
+    ListBox12.Items.Add('cp ' + newSource + ' ' + newDest);
 
     if CheckBox1.Checked then
     begin
 
       //
       if not(FileCopy(newSource, newDest)) then
-        raise Exception.Create('cp ' + newSource + ' ' + newDest + ' failed');
+        raise Exception.create('cp ' + newSource + ' ' + newDest + ' failed');
 
-      sLog.add(
+      sLog.Add(
         { } ExtractFilePath(sDest) + ';' +
         { } ExtractFileName(sDest) + ';' +
         { } ExtractFileName(newDest));
@@ -618,7 +819,7 @@ begin
     Application.ProcessMessages;
 
   end;
-  sLog.SaveToFile(DiagnosePath + 'N-Bug-' + FindANewPassword + '.csv');
+  sLog.savetoFile(DiagnosePath + 'N-Bug-' + FindANewPassword + '.csv');
   sLog.Free;
   Trn.Free;
 
@@ -645,11 +846,11 @@ begin
   begin
     doWork(ListBox5.ItemIndex);
     ListBox5.Items.Delete(ListBox5.ItemIndex);
-    Label10.Caption := InttoStr(ListBox5.count);
+    Label10.Caption := InttoStr(ListBox5.Count);
   end
   else
   begin
-    for n := 0 to pred(ListBox5.Items.count) do
+    for n := 0 to pred(ListBox5.Items.Count) do
       doWork(n);
     ListBox5.Items.Clear;
   end;
@@ -738,13 +939,13 @@ begin
     pPath_html := Edit6.Text;
 
     // Alle
-    sDir := TStringList.Create;
+    sDir := TStringList.create;
     dir(pPath_html + '*.zip.html', sDir, false);
-    if (sDir.count > 0) then
+    if (sDir.Count > 0) then
     begin
-      ProgressBar1.Max := pred(sDir.count);
+      ProgressBar1.Max := pred(sDir.Count);
       ProgressBar1.Position := 0;
-      for n := 0 to pred(sDir.count) do
+      for n := 0 to pred(sDir.Count) do
       begin
         if CheckBox4.Checked then
           break;
@@ -791,7 +992,7 @@ begin
   BeginHourGlass;
 
   if (MyFotoExec = nil) then
-    MyFotoExec := TownFotoExec.Create;
+    MyFotoExec := TownFotoExec.create;
 
   MyProgramPath := Edit15.Text;
   MyFotoExec.readIni(ComboBox1.Text, Edit15.Text);
@@ -818,27 +1019,27 @@ begin
     exit;
 
   ListBox11.Items.Clear;
-  AllTRN := TStringList.Create;
+  AllTRN := TStringList.create;
 
   dir(Edit9.Text + '?????.', AllTRN, false);
   AllTRN.sort;
-  ListBox11.Items.add('search in ' + InttoStr(AllTRN.count) + ' subdirs ...');
-  for n := pred(AllTRN.count) downto 0 do
+  ListBox11.Items.Add('search in ' + InttoStr(AllTRN.Count) + ' subdirs ...');
+  for n := pred(AllTRN.Count) downto 0 do
   begin
     repeat
       if FileExists(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS.BLA') then
       begin
         AuftragFound := false;
-        bOrgaMon := TBLager.Create;
+        bOrgaMon := TBLager.create;
         with bOrgaMon do
         begin
-          ListBox11.Items.add('check ' + AllTRN[n] + ' ...');
+          ListBox11.Items.Add('check ' + AllTRN[n] + ' ...');
           Init(Edit9.Text + AllTRN[n] + '\AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
           BeginTransaction(now);
           if exist(AUFTRAG_R) then
           begin
             get;
-            ListBox11.Items.add(mderecOrgaMon.Baustelle + '-' + mderecOrgaMon.ABNummer + ' ' +
+            ListBox11.Items.Add(mderecOrgaMon.Baustelle + '-' + mderecOrgaMon.ABNummer + ' ' +
               Long2date(mderecOrgaMon.ausfuehren_soll));
             AuftragFound := true;
           end;
@@ -858,7 +1059,7 @@ begin
 
     until true;
   end;
-  ListBox11.Items.add('search done!');
+  ListBox11.Items.Add('search done!');
   AllTRN.Free;
 end;
 
@@ -890,7 +1091,7 @@ procedure TFormServiceFoto.Button4Click(Sender: TObject);
 var
   sParameter: TStringList;
 begin
-  sParameter := TStringList.Create;
+  sParameter := TStringList.create;
   // sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workWartend(sParameter);
   sParameter.Free;
@@ -900,7 +1101,7 @@ procedure TFormServiceFoto.Button5Click(Sender: TObject);
 var
   sParameter: TStringList;
 begin
-  sParameter := TStringList.Create;
+  sParameter := TStringList.create;
   // sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workEingang(sParameter);
   sParameter.Free;
@@ -926,9 +1127,9 @@ var
   sPath: string;
   DoDelete: boolean;
 begin
-  sDirs := TStringList.Create;
+  sDirs := TStringList.create;
   dir(pAblageRootPath + '*.', sDirs, false);
-  for n := pred(sDirs.count) downto 0 do
+  for n := pred(sDirs.Count) downto 0 do
   begin
 
     repeat
@@ -952,13 +1153,13 @@ begin
 
   end;
   sDirs.sort;
-  for n := 0 to pred(sDirs.count) do
+  for n := 0 to pred(sDirs.Count) do
     sDirs[n] :=
     { } '"' + sDirs[n] + '"' + ';' +
     { } '"' + pAblageRootPath + sDirs[n] + '\"';
 
   sDirs.insert(0, 'NAME;PFAD');
-  sDirs.SaveToFile(pAblageRootPath + 'ABLAGE' + '.csv');
+  sDirs.savetoFile(pAblageRootPath + 'ABLAGE' + '.csv');
   sDirs.Free;
 end;
 
@@ -967,9 +1168,9 @@ var
   sParameter: TStringList;
 begin
   BeginHourGlass;
-  sParameter := TStringList.Create;
-  sParameter.add('DATUM=' + Edit3.Text);
-  sParameter.add('EINZELN=' + Edit2.Text);
+  sParameter := TStringList.create;
+  sParameter.Add('DATUM=' + Edit3.Text);
+  sParameter.Add('EINZELN=' + Edit2.Text);
   MyFotoExec.workAblage(sParameter);
   Edit2.Text := '';
   sParameter.Free;
@@ -978,13 +1179,13 @@ end;
 
 procedure TFormServiceFoto.Button9Click(Sender: TObject);
 var
-  WARTEND: tsTable;
+  WARTEND: TsTable;
   AUFTRAG_R: integer;
   r: integer;
   i: integer;
 begin
 
-  WARTEND := tsTable.Create;
+  WARTEND := TsTable.create;
   repeat
 
     if (ListBox6.ItemIndex = -1) then
@@ -1002,8 +1203,8 @@ begin
       r := locate('RID', InttoStr(AUFTRAG_R));
       if (r = -1) then
         break;
-      del(r);
-      SaveToFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
+      Del(r);
+      savetoFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
     end;
 
   until true;
@@ -1012,7 +1213,7 @@ begin
   SpeedButton3Click(Sender);
 
   // set Focus
-  if i < ListBox6.Items.count then
+  if i < ListBox6.Items.Count then
     ListBox6.ItemIndex := i;
 
 end;
@@ -1034,7 +1235,7 @@ var
   sKommandos: TStringList;
   KommandoFName: String;
 begin
-  sKommandos := TStringList.Create;
+  sKommandos := TStringList.create;
 
   KommandoFName := MyFotoExec.MyDataBasePath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
@@ -1042,7 +1243,7 @@ begin
 
   // mv
   if (Command = 'mv') then
-    sKommandos.add(
+    sKommandos.Add(
       { } Command + ' ' +
       { } cRemoteFotoPath + 'u' +
       { } FName + ' ' +
@@ -1051,12 +1252,12 @@ begin
 
   // rm
   if (Command = 'rm') then
-    sKommandos.add(
+    sKommandos.Add(
       { } Command + ' ' +
       { } cRemoteFotoPath + 'u' +
       { } FName);
 
-  sKommandos.SaveToFile(KommandoFName, TEncoding.UTF8);
+  sKommandos.savetoFile(KommandoFName, TEncoding.UTF8);
   sKommandos.Free;
 
 end;
@@ -1078,7 +1279,7 @@ var
   n, _ItemIndex: integer;
   GeraeteNo, RID: string;
   KommandoFName: string;
-  WARTEND: tsTable;
+  WARTEND: TsTable;
   CopySuccess: boolean;
   FNameSource, FNameDest: string;
 begin
@@ -1091,7 +1292,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[_ItemIndex];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if pos('cp', sMoveTransaktionen[n]) = 1 then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -1123,7 +1324,7 @@ begin
     { Verzeichnis } Path +
     { Dateiname } ListBox3.Items[_ItemIndex];
 
-    for n := pred(sMoveTransaktionen.count) downto 0 do
+    for n := pred(sMoveTransaktionen.Count) downto 0 do
     begin
 
       // wurde die Datei ev. Umbenannt?
@@ -1158,7 +1359,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[_ItemIndex];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if (pos('cp', sMoveTransaktionen[n]) = 1) then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -1184,7 +1385,7 @@ begin
     { } ' ' +
     { } ExtractSegmentBetween(Edit4.Text, '\', '\') + '\' +
     { } ListBox3.Items[_ItemIndex];
-    for n := 0 to pred(sMoveTransaktionen.count) do
+    for n := 0 to pred(sMoveTransaktionen.Count) do
     begin
       if (pos('cp', sMoveTransaktionen[n]) = 1) then
         if pos(FindStr, sMoveTransaktionen[n]) > 0 then
@@ -1248,9 +1449,9 @@ begin
   //
   if (Key = 0) then
   begin
-    if (ListBox3.Items.count > 0) then
+    if (ListBox3.Items.Count > 0) then
     begin
-      ListBox3.ItemIndex := min(_ItemIndex, ListBox3.Items.count - 1);
+      ListBox3.ItemIndex := min(_ItemIndex, ListBox3.Items.Count - 1);
       LoadPic;
     end;
   end;
@@ -1265,14 +1466,14 @@ begin
 
   if not(assigned(sLog)) then
   begin
-    sLog := TStringList.Create;
+    sLog := TStringList.create;
     sLog.LoadFromFile(DiagnosePath + 'FotoService.log.txt');
   end;
 
   FName := nextp(ListBox5.Items[ListBox5.ItemIndex], '+', 1);
   Edit11.Text := nextp(FName, '-', 1);
 
-  for n := pred(sLog.count) downto 0 do
+  for n := pred(sLog.Count) downto 0 do
     if pos(FName, sLog[n]) > 0 then
     begin
       StaticText1.Caption := sLog[n];
@@ -1290,7 +1491,7 @@ procedure TFormServiceFoto.RefreshFotoPath;
 var
   MyIni: TIniFile;
 begin
-  MyIni := TIniFile.Create(EigeneOrgaMonDateienPfad + cIniFName);
+  MyIni := TIniFile.create(EigeneOrgaMonDateienPfad + cIniFName);
   Edit15.Text := MyIni.ReadString(ComboBox1.Text, cDataBaseName, MyProgramPath);
   MyIni.Free;
 end;
@@ -1302,12 +1503,12 @@ var
 begin
 
   // Bild-Tester
-  sDir := TStringList.Create;
+  sDir := TStringList.create;
   dir(Edit4.Text + '*.jpg', sDir, false);
 
   // Maske Reduce
   if (Edit5.Text <> '*') then
-    for n := pred(sDir.count) downto 0 do
+    for n := pred(sDir.Count) downto 0 do
       if pos(Edit5.Text, sDir[n]) = 0 then
         sDir.Delete(n);
 
@@ -1316,7 +1517,7 @@ begin
   sDir.Free;
 
   if not(assigned(sMoveTransaktionen)) then
-    sMoveTransaktionen := TStringList.Create;
+    sMoveTransaktionen := TStringList.create;
   sMoveTransaktionen.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
 end;
 
@@ -1326,9 +1527,9 @@ var
 begin
   if assigned(sLog) then
     FreeAndNil(sLog);
-  sDir := TStringList.Create;
+  sDir := TStringList.create;
   dir(MyFotoExec.pUnverarbeitetPath + '*.jpg', sDir, false);
-  Label10.Caption := InttoStr(sDir.count);
+  Label10.Caption := InttoStr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
 end;
@@ -1337,7 +1538,7 @@ procedure TFormServiceFoto.SpeedButton3Click(Sender: TObject);
 var
   sWartend: TStringList;
 begin
-  sWartend := TStringList.Create;
+  sWartend := TStringList.create;
   sWartend.LoadFromFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
   ListBox6.Items.Assign(sWartend);
   sWartend.Free;
@@ -1352,14 +1553,14 @@ procedure TFormServiceFoto.SpeedButton8Click(Sender: TObject);
 var
   sDir: TStringList;
 begin
-  sDir := TStringList.Create;
+  sDir := TStringList.create;
   dir(MyFotoExec.pFTPPath + '*.$$$', sDir, false);
   sDir.sort;
   ListBox2.Items.Assign(sDir);
   sDir.Free;
   MyFotoExec.workStatus;
 
-  sDir := TStringList.Create;
+  sDir := TStringList.create;
   dir(MyFotoExec.pFTPPath + '*.jpg', sDir, false);
   sDir.sort;
   ListBox7.Items.Assign(sDir);
@@ -1378,15 +1579,15 @@ var
   n: integer;
   ID: string;
 begin
-  sl := TStringList.Create;
+  sl := TStringList.create;
   sl.LoadFromFile(EigeneOrgaMonDateienPfad + cIniFName);
-  for n := 0 to pred(sl.count) do
+  for n := 0 to pred(sl.Count) do
     if (pos('[', sl[n]) = 1) then
       if (revpos(']', sl[n]) = length(sl[n])) then
       begin
         ID := ExtractSegmentBetween(sl[n], '[', ']');
         if (ID <> cGroup_Id_Default) then
-          ComboBox1.Items.add(ID);
+          ComboBox1.Items.Add(ID);
       end;
   sl.Free;
 
@@ -1465,7 +1666,7 @@ procedure TownFotoExec.Log(s: string);
 begin
   with FormServiceFoto do
   begin
-    ListBox1.Items.add(s);
+    ListBox1.Items.Add(s);
     if (pos('ERROR', s) > 0) then
       AppendStringsToFile(s, DiagnosePath + 'FotoService.log.txt');
     if (pos('FATAL', s) = 1) then
