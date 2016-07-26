@@ -144,7 +144,6 @@ type
     SpeedButton4: TSpeedButton;
     Rückstand: TTabSheet;
     Button10: TButton;
-    Button22: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -187,7 +186,6 @@ type
     procedure ComboBox1Select(Sender: TObject);
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
-    procedure Button22Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -263,200 +261,11 @@ begin
 {$ENDIF}
 end;
 
-const
-  col_GERAET = 0;
-  col_NAME = 1;
-  col_AUFNAHME = 2;
-  col_ANKUENDIGUNG = 3;
-  col_LIEFERUNG = 4;
-
 procedure TFormServiceFoto.Button10Click(Sender: TObject);
-var
-  BildAnkuendigung: TStringList;
-  BildLieferung: TStringList;
-  AllTRN: TStringList;
-  TAN: string;
-  m, n, o, r: integer;
-  ProceedMoment: TDateTime;
-  ProceedMoment_First: TDateTime;
-  FName: string;
-  PROTOKOLL: string;
-  sProtokoll: TStringList;
-  sHANGOVER: TsTable;
-  BildName: string;
-  LieferMoment_First: string;
-  LieferMoment: string;
 begin
-  ProceedMoment_First := now;
-
-  sLog := TStringList.create;
-  AllTRN := TStringList.create;
-
-  BildAnkuendigung := TStringList.create;
-  BildLieferung := TStringList.create;
-
-  sHANGOVER := TsTable.create;
-  sHANGOVER.addcol('GERAET');
-  sHANGOVER.addcol('NAME');
-  sHANGOVER.addcol('AUFNAHME_MOMENT');
-  sHANGOVER.addcol('ANKÜNDIGUNG');
-  sHANGOVER.addcol('LIEFERUNG');
-
-  { Schritt 1: Bildnamen ermitteln und das Datum der Ankündigung im Protokoll }
-  dir(MyFotoExec.pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
-  for n := 0 to pred(AllTRN.Count) do
-  begin
-    TAN := AllTRN[n];
-    if (length(TAN) > 2) then
-    begin
-      FName := { } MyFotoExec.pAppServicePath +
-      { } TAN + '\' +
-      { } TAN + cUTF8DataExtension;
-
-      ProceedMoment := FileDateTime(FName);
-      if ProceedMoment <> 0 then
-      begin
-        BildLieferung.LoadFromFile(
-          { } MyFotoExec.pAppServicePath +
-          { } TAN + '\' +
-          { } TAN + cUTF8DataExtension);
-        for m := 0 to pred(BildLieferung.Count) do
-        begin
-          PROTOKOLL := nextp(BildLieferung[m], ';', cMobileMeldung_COLUMN_PROTOKOLL);
-          if pos('F', PROTOKOLL) > 0 then
-          begin
-            sProtokoll := split(PROTOKOLL, '~');
-            for o := 0 to pred(sProtokoll.Count) do
-              if (pos('F', sProtokoll[o]) = 1) then
-                if (pos('=', sProtokoll[o]) = 3) then
-                  with sHANGOVER do
-                  begin
-                    { Bilddateiname ermitteln }
-                    BildName := nextp(sProtokoll[o], '=', 1);
-
-                    { Ältestes Datum ermitteln }
-                    if (ProceedMoment < ProceedMoment_First) then
-                      ProceedMoment_First := ProceedMoment;
-
-                    { Eintrag in der Tabelle suchen }
-                    r := locate(col_NAME, BildName);
-                    if (r = -1) then
-                    begin
-                      r := addRow;
-                      writeCell(r, col_GERAET, copy(BildName, 1, 3));
-                      writeCell(r, col_NAME, BildName);
-                      writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
-                    end
-                    else
-                    begin
-                      { wir wollen den ältesten Ankündigungsmoment }
-                      if (readCell(r, col_ANKUENDIGUNG) = '') or
-                        (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
-                        writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
-                    end;
-                  end;
-            sProtokoll.Free;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  { Schritt 2: Ergänzung der Lieferdatums }
-  AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
-
-  //
-  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
-  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
-  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
-  // "senden" des Monteures
-  //
-  LieferMoment_First := dTimeStamp(ProceedMoment_First - 3.0);
-
-  for n := pred(AllTRN.Count) downto 0 do
-    if (pos('timestamp ', AllTRN[n]) = 1) then
-    begin
-      LieferMoment := copy(AllTRN[n], 11, MaxInt);
-      if LieferMoment < LieferMoment_First then
-        break;
-    end;
-
-  LieferMoment := LieferMoment_First;
-  for m := n to pred(AllTRN.Count) do
-  begin
-
-    if (pos('timestamp ', AllTRN[m]) = 1) then
-    begin
-      LieferMoment := copy(AllTRN[m], 11, MaxInt);
-      continue;
-    end;
-
-    BildName := '';
-    if (pos('cp ', AllTRN[m]) = 1) then
-      BildName := nextp(AllTRN[m], ' ', 1);
-
-    if (pos('mv ', AllTRN[m]) = 1) then
-      BildName := ExtractFileName(nextp(AllTRN[m], ' ', 1));
-
-    if (BildName <> '') and (pos('Neu', BildName) = 0) then
-    begin
-
-      with sHANGOVER do
-      begin
-
-        { Eintrag in der Tabelle suchen }
-        r := locate(col_NAME, BildName);
-        if (r = -1) then
-        begin
-          //
-          // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
-          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
-          // ist optional
-          //
-          {
-            r := addRow;
-            writeCell(r, col_GERAET, copy(BildName, 1, 3));
-            writeCell(r, col_NAME, BildName);
-            writeCell(r, col_LIEFERUNG, LieferMoment);
-          }
-        end
-        else
-        begin
-          { wir wollen den ältesten Ankündigungsmoment }
-          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > LieferMoment) then
-            writeCell(r, col_LIEFERUNG, LieferMoment);
-        end;
-      end;
-    end;
-  end;
-
-  sHANGOVER.savetoFile('G:\Bildankündigungen.csv');
-  sHANGOVER.Free;
-  AllTRN.Free;
-  BildAnkuendigung.Free;
-  BildLieferung.Free;
-end;
-
-procedure TFormServiceFoto.Button22Click(Sender: TObject);
-var
-  sHANGOVER: TsTable;
-  r: integer;
-begin
-  sHANGOVER := TsTable.create;
-  with sHANGOVER do
-  begin
-    insertfromFile('G:\Bildankündigungen.csv');
-    sortby('GERAET;LIEFERUNG;ANKÜNDIGUNG');
-    savetoFile('G:\Bildankündigungen.csv');
-
-    for r := RowCount downto 1 do
-      if (readCell(r, col_LIEFERUNG) <> '') then
-        Del(r);
-
-    savetoFile('G:\Bildankündigungen-ohne-Lieferung.csv');
-
-  end;
-   sHANGOVER.Free;
+ BeginHourGlass;
+ MyFotoExec.workAusstehendeFotos;
+ EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button11Click(Sender: TObject);
@@ -561,7 +370,7 @@ begin
         begin
           // Mehrfache versionslieferungen eines Motives geht noch nicht!
           // imp pend!
-          ListBox12.Items.Add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' + InttoStr(SrcKandidaten.Count) + 'x');
+          ListBox12.Items.Add('ERROR: ' + SrcFName + ' kommt mehrfach vor: ' + inttostr(SrcKandidaten.Count) + 'x');
           TRNs_Fail.Add(TRNs[n]);
         end
         else
@@ -687,7 +496,7 @@ begin
       // delete one Line
       n := ItemIndex;
       Items.Delete(n);
-      Label10.Caption := InttoStr(Count);
+      Label10.Caption := inttostr(Count);
       if (Count > 0) then
       begin
         ItemIndex := min(n, pred(Count));
@@ -846,7 +655,7 @@ begin
   begin
     doWork(ListBox5.ItemIndex);
     ListBox5.Items.Delete(ListBox5.ItemIndex);
-    Label10.Caption := InttoStr(ListBox5.Count);
+    Label10.Caption := inttostr(ListBox5.Count);
   end
   else
   begin
@@ -1023,7 +832,7 @@ begin
 
   dir(Edit9.Text + '?????.', AllTRN, false);
   AllTRN.sort;
-  ListBox11.Items.Add('search in ' + InttoStr(AllTRN.Count) + ' subdirs ...');
+  ListBox11.Items.Add('search in ' + inttostr(AllTRN.Count) + ' subdirs ...');
   for n := pred(AllTRN.Count) downto 0 do
   begin
     repeat
@@ -1200,7 +1009,7 @@ begin
     with WARTEND do
     begin
       insertfromFile(MyFotoExec.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
-      r := locate('RID', InttoStr(AUFTRAG_R));
+      r := locate('RID', inttostr(AUFTRAG_R));
       if (r = -1) then
         break;
       Del(r);
@@ -1529,7 +1338,7 @@ begin
     FreeAndNil(sLog);
   sDir := TStringList.create;
   dir(MyFotoExec.pUnverarbeitetPath + '*.jpg', sDir, false);
-  Label10.Caption := InttoStr(sDir.Count);
+  Label10.Caption := inttostr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
 end;
@@ -1558,7 +1367,6 @@ begin
   sDir.sort;
   ListBox2.Items.Assign(sDir);
   sDir.Free;
-  MyFotoExec.workStatus;
 
   sDir := TStringList.create;
   dir(MyFotoExec.pFTPPath + '*.jpg', sDir, false);
@@ -1605,7 +1413,7 @@ begin
   if (TimerInit < cKikstart_delay * 60 * 1000) then
   begin
     if (TimerInit = 0) then
-      MyFotoExec.Log('Warte ' + InttoStr(cKikstart_delay) + ' Minuten ...');
+      MyFotoExec.Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
     inc(TimerInit, Timer1.Interval);
     if (TimerInit >= cKikstart_delay * 60 * 1000) then
     begin
@@ -1636,7 +1444,7 @@ begin
         MyFotoExec.workWartend;
 
         // Status Seite neu bearbeiten
-        MyFotoExec.workStatus;
+        MyFotoExec.workAusstehendeFotos;
 
         // Zwischen 00:00 und ]01:00
         if (SecondsGet < (1 * 3600)) then
