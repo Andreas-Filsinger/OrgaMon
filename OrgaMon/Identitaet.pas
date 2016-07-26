@@ -283,7 +283,7 @@ begin
 
           try
             // Status Seite neu bearbeiten
-            workStatus;
+            workAusstehendeFotos;
           except
             on E: Exception do
               Log(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);

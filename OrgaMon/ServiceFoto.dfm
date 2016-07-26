@@ -925,15 +925,6 @@
         TabOrder = 0
         OnClick = Button10Click
       end
-      object Button22: TButton
-        Left = 112
-        Top = 152
-        Width = 75
-        Height = 25
-        Caption = 'Sort'
-        TabOrder = 1
-        OnClick = Button22Click
-      end
     end
   end
   object Timer1: TTimer

@@ -83,6 +83,7 @@ type
     JonDaExec: TJonDaExec;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
     BackupDir: string;
+    Id: string;
     // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
 
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
@@ -136,8 +137,8 @@ type
     procedure workEingang(sParameter: TStringList = nil);
     procedure workWartend(sParameter: TStringList = nil);
     procedure workAblage(sParameter: TStringList = nil);
-    procedure workStatus;
     procedure workSync;
+    procedure workAusstehendeFotos;
 
     // muss IMMER überladen werden
     procedure Log(s: string); virtual; abstract;
@@ -333,6 +334,7 @@ begin
       SectionName := UserName;
     if (ReadString(SectionName, 'ftpuser', '') = '') then
       SectionName := cGroup_Id_Default;
+    Id := SectionName;
 
     // Ftp-Bereich für diesen Server
     iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
@@ -425,7 +427,7 @@ var
   s, File_Seconds: TANFiXTime;
   FName: string;
   DATEINAME_AKTUELL: string;
-  ID: string;
+  Id: string;
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
   FotoGeraeteNo: string;
@@ -467,7 +469,7 @@ var
     FNameNeu: string;
   begin
     FNameAlt := pFTPPath + sFiles[m];
-    FNameNeu := pUnverarbeitetPath + ID + '+' + sFiles[m];
+    FNameNeu := pUnverarbeitetPath + Id + '+' + sFiles[m];
 
     // Datei wegsperren, aber nicht löschen!
     if not(FileMove(
@@ -502,7 +504,7 @@ begin
   // Init Phase
   sFiles := TStringList.Create;
   sFilesClientSorter := TStringList.Create;
-  ID := '';
+  Id := '';
 
   // get File List
   dir(pFTPPath + '*.jpg', sFiles, false);
@@ -559,7 +561,7 @@ begin
   // Generate Work-TAN as "ID"
   if (sFiles.Count > 0) then
   begin
-    ID := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
+    Id := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
     CheckCreateDir(BackupDir + cFotoService_FTPBackupSubPath);
   end;
 
@@ -628,7 +630,7 @@ begin
 
     if FullSuccess then
     begin
-      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + ID + '-' + sFiles[n])) then
+      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + Id + '-' + sFiles[n])) then
       begin
         Log(
           { } cERRORText + ' 598: ' +
@@ -908,7 +910,8 @@ begin
                 DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
               if DebugMode then
-                Log(cINFOText + ' 911: '+cFotoService_UmbenennungAusstehendFName+': füge "' + DATEINAME_AKTUELL+'" hinzu'  );
+                Log(cINFOText + ' 911: ' + cFotoService_UmbenennungAusstehendFName + ': füge "' + DATEINAME_AKTUELL +
+                  '" hinzu');
 
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
@@ -976,7 +979,7 @@ begin
         end;
       *)
 
-      Log(ID);
+      Log(Id);
       for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
         begin
@@ -990,6 +993,327 @@ begin
 
   sFiles.Free;
   sFilesClientSorter.Free;
+end;
+
+const
+  col_GERAET = 0;
+  col_NAME = 1;
+  col_AUFNAHME = 2;
+  col_ANKUENDIGUNG = 3;
+  col_LIEFERUNG = 4;
+
+procedure TFotoExec.workAusstehendeFotos;
+var
+  BildAnkuendigung: TStringList;
+  BildLieferung: TStringList;
+  AllTRN: TStringList;
+  TAN: string;
+  m, n, o, r: integer;
+  StartMoment: TDateTime;
+  ProceedMoment: TDateTime;
+  ProceedMoment_First: TDateTime;
+  FName: string;
+  PROTOKOLL: string;
+  sProtokoll: TStringList;
+  sHANGOVER: tsTable;
+  sMONTEURE: tsTable;
+  BildName: string;
+  LieferMoment_First: string;
+  LieferMoment: string;
+  GERAET, _GERAET, GERAETE: string;
+  Anzahl: integer;
+  GesamtAnzahl: integer;
+  Timer: int64;
+
+  procedure WriteIt{(_GERAET)};
+  var
+    n: integer;
+  begin
+    with sMONTEURE do
+    begin
+      n := locate('GERAET', _GERAET);
+      if (n = -1) then
+      begin
+        n := addRow;
+        writeCell(n, 'GERAET', _GERAET);
+      end;
+      writeCell(n, 'RÜCKSTAND', InttoStr(Anzahl));
+    end;
+    GesamtAnzahl := GesamtAnzahl + Anzahl;
+  end;
+
+begin
+  StartMoment := now;
+
+  Timer := RDTSCms;
+  ensureGlobals;
+
+  ProceedMoment_First := StartMoment;
+
+  AllTRN := TStringList.Create;
+
+  BildAnkuendigung := TStringList.Create;
+  BildLieferung := TStringList.Create;
+
+  sHANGOVER := tsTable.Create;
+  with sHANGOVER do
+  begin
+    addcol('GERAET');
+    addcol('NAME');
+    addcol('AUFNAHME_MOMENT');
+    addcol('ANKÜNDIGUNG');
+    addcol('LIEFERUNG');
+  end;
+
+  sMONTEURE := tsTable.Create;
+  with sMONTEURE do
+  begin
+    addcol('GERAET'); // dreistellige Nummer
+    addcol('MONTEUR'); // Name des Monteures
+    addcol('LETZTER_UPLOAD'); // Datum + Uhr der letzten Bild-Lieferung
+    addcol('RÜCKSTAND'); // Anzahl der Bilder, die noch fehlen
+    addcol('VOM'); // Datum des ältesten Bildes das fehlt
+  end;
+
+  { Schritt 1: Bildnamen ermitteln und das Datum der Ankündigung im Protokoll }
+  dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
+  for n := 0 to pred(AllTRN.Count) do
+  begin
+    TAN := AllTRN[n];
+    if (length(TAN) > 2) then
+    begin
+      FName := { } pAppServicePath +
+      { } TAN + '\' +
+      { } TAN + cUTF8DataExtension;
+
+      ProceedMoment := FileDateTime(FName);
+      if (ProceedMoment <> 0) then
+      begin
+        BildLieferung.LoadFromFile(
+          { } pAppServicePath +
+          { } TAN + '\' +
+          { } TAN + cUTF8DataExtension);
+        for m := 0 to pred(BildLieferung.Count) do
+        begin
+          PROTOKOLL := nextp(BildLieferung[m], ';', cMobileMeldung_COLUMN_PROTOKOLL);
+          if pos('F', PROTOKOLL) > 0 then
+          begin
+            sProtokoll := split(PROTOKOLL, '~');
+            for o := 0 to pred(sProtokoll.Count) do
+              if (pos('F', sProtokoll[o]) = 1) then
+                if (pos('=', sProtokoll[o]) = 3) then
+                  with sHANGOVER do
+                  begin
+                    { Bilddateiname ermitteln }
+                    BildName := nextp(sProtokoll[o], '=', 1);
+
+                    { Ältestes Datum ermitteln }
+                    if (ProceedMoment < ProceedMoment_First) then
+                      ProceedMoment_First := ProceedMoment;
+
+                    { Eintrag in der Tabelle suchen }
+                    r := locate(col_NAME, BildName);
+                    if (r = -1) then
+                    begin
+                      r := addRow;
+                      writeCell(r, col_GERAET, copy(BildName, 1, 3));
+                      writeCell(r, col_NAME, BildName);
+                      writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end
+                    else
+                    begin
+                      { wir wollen den ältesten Ankündigungsmoment }
+                      if (readCell(r, col_ANKUENDIGUNG) = '') or
+                        (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
+                        writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end;
+                  end;
+            sProtokoll.Free;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  { Schritt 2: Ergänzung der Lieferdatums }
+  AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+
+  //
+  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
+  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
+  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
+  // "senden" des Monteures
+  //
+  LieferMoment_First := dTimeStamp(ProceedMoment_First - 3.0);
+
+  // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
+  // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
+  //
+  GERAETE := '';
+  with sMONTEURE do
+    for n := pred(AllTRN.Count) downto 0 do
+    begin
+
+      if (pos('timestamp ', AllTRN[n]) = 1) then
+      begin
+        LieferMoment := copy(AllTRN[n], 11, MaxInt);
+        if (LieferMoment < LieferMoment_First) then
+          break;
+      end;
+
+      BildName := '';
+      if (pos('cp ', AllTRN[n]) = 1) then
+        BildName := nextp(AllTRN[n], ' ', 1);
+
+      if (pos('mv ', AllTRN[n]) = 1) then
+        BildName := ExtractFileName(nextp(AllTRN[n], ' ', 1));
+
+      if (BildName <> '') and (pos('Neu', BildName) = 0) then
+      begin
+        //
+        GERAET := copy(BildName, 1, 3);
+        if pos('{' + GERAET + '}', GERAETE) = 0 then
+        begin
+          GERAETE := GERAETE + '{' + GERAET + '}';
+
+          r := addRow;
+          writeCell(r, 'GERAET', GERAET);
+          writeCell(r, 'LETZTER_UPLOAD', LieferMoment);
+
+        end;
+
+      end;
+
+    end;
+
+  // Nun gelieferten die Bilder in der Soll Liste ergänzen
+  LieferMoment := LieferMoment_First;
+  for m := n to pred(AllTRN.Count) do
+  begin
+
+    if (pos('timestamp ', AllTRN[m]) = 1) then
+    begin
+      LieferMoment := copy(AllTRN[m], 11, MaxInt);
+      continue;
+    end;
+
+    BildName := '';
+    if (pos('cp ', AllTRN[m]) = 1) then
+      BildName := nextp(AllTRN[m], ' ', 1);
+
+    if (pos('mv ', AllTRN[m]) = 1) then
+      BildName := ExtractFileName(nextp(AllTRN[m], ' ', 1));
+
+    if (BildName <> '') and (pos('Neu', BildName) = 0) then
+    begin
+
+      with sHANGOVER do
+      begin
+
+        { Eintrag in der Tabelle suchen }
+        r := locate(col_NAME, BildName);
+        if (r = -1) then
+        begin
+          //
+          // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
+          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
+          // ist optional
+          //
+          {
+            r := addRow;
+            writeCell(r, col_GERAET, copy(BildName, 1, 3));
+            writeCell(r, col_NAME, BildName);
+            writeCell(r, col_LIEFERUNG, LieferMoment);
+          }
+        end
+        else
+        begin
+          { wir wollen den ältesten Ankündigungsmoment }
+          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > LieferMoment) then
+            writeCell(r, col_LIEFERUNG, LieferMoment);
+        end;
+      end;
+    end;
+  end;
+
+  with sHANGOVER do
+  begin
+    sortby('GERAET;LIEFERUNG;ANKÜNDIGUNG');
+
+    //
+    // nun reduzieren auf die, die noch nicht geliefert wurden
+    //
+    for r := RowCount downto 1 do
+      if (readCell(r, col_LIEFERUNG) <> '') then
+        del(r);
+
+  end;
+
+  //
+  // Nun über die Geräte kumulieren
+  //
+  _GERAET := '';
+  Anzahl := 0;
+  with sHANGOVER do
+  begin
+    for r := 1 to RowCount do
+    begin
+      GERAET := readCell(r, 'GERAET');
+      if (GERAET = _GERAET) then
+      begin
+        inc(Anzahl);
+      end
+      else
+      begin
+        if (_GERAET <> '') then
+          WriteIt;
+        Anzahl := 1;
+        _GERAET := GERAET;
+      end;
+    end;
+    if (RowCount > 0) then
+      WriteIt;
+  end;
+
+  with sMONTEURE do
+  begin
+
+    //
+    // Reduzieren auf die Monteure, die Bilder schuldig sind
+    //
+    GesamtAnzahl := 0;
+    for r := RowCount downto 1 do
+    begin
+      Anzahl := StrToIntDef(readCell(r, 'RÜCKSTAND'), 0);
+      if (Anzahl = 0) then
+        del(r)
+      else
+        inc(GesamtAnzahl, Anzahl);
+
+    end;
+
+    // Nachrüsten der Monteurs-Namen
+
+    // imp pend
+
+    // Sortieren, die schlimmsten nach oben
+    sortby('RÜCKSTAND numeric descending');
+
+    // Ausgabe nach htlm
+    oHTML_Prefix :=
+    { } '<h2>' + Id + ' vom ' + long2date(StartMoment) +
+    { } ' um ' + secondstostr(StartMoment) + '</h2><br>' +
+    { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
+    oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
+    savetohtml(pWebPath + 'ausstehende-fotos.html');
+
+  end;
+
+  sHANGOVER.Free;
+  sMONTEURE.Free;
+  AllTRN.Free;
+  BildAnkuendigung.Free;
+  BildLieferung.Free;
 end;
 
 procedure TFotoExec.workWartend(sParameter: TStringList = nil);
@@ -1052,15 +1376,15 @@ begin
     Stat_NachtragBaustelle := 0;
 
     // Sortieren
-    SortBy('GERAETENO;MOMENT;DATEINAME_AKTUELL');
+    sortby('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
       Log(
         { } cINFOText + ' 988: ' +
         { } ' Frisch sortiert');
 
     // sicherstellen von Spalten
-    addCol('BAUSTELLE');
-    addCol('MOMENT');
+    addcol('BAUSTELLE');
+    addcol('MOMENT');
 
     // all zu alte Einträge löschen
     MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
@@ -1327,18 +1651,18 @@ begin
     with tSENDEN do
     begin
       insertfromFile(pAppServicePath + cDBPath + cAppService_SendenFName);
-      i := addCol('PAPERCOLOR');
+      i := addcol('PAPERCOLOR');
       k := WARTEND.colof('GERAETENO');
       c := colof('ID');
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FFFF00');
-      SaveToHTML(pAppStatistikPath + 'senden.html');
+      savetohtml(pAppStatistikPath + 'senden.html');
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
+    WARTEND.savetohtml(pAppStatistikPath + '-neu.html');
     WARTEND.SaveToFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
     // LOG
@@ -1792,63 +2116,6 @@ begin
   WARTEND.Free;
   AblageLog('ENDE', '*');
 
-end;
-
-procedure TFotoExec.workStatus;
-var
-  sDir: TStringList;
-  n: integer;
-  FileDateTime: TDateTime;
-  sMonteure: TStringList;
-  m: string;
-  sTabelle: tsTable;
-begin
-  sDir := TStringList.Create;
-  sMonteure := TStringList.Create;
-  sTabelle := tsTable.Create;
-
-  try
-    dir(pFTPPath + '*.$$$', sDir, false);
-    sDir.sort;
-
-    // Aktuelle Uploads (=Dateien im aktuellem Zugriff) entfernen
-    for n := pred(sDir.Count) downto 0 do
-    begin
-      if not(FileAge(pFTPPath + sDir[n], FileDateTime)) then
-      begin
-        // Datei ist verschwunden!
-        sDir.Delete(n);
-        continue;
-      end;
-      if (SecondsDiff(now, FileDateTime) < 120) then
-      begin
-        // Datei wird gerade hochgeladen, bzw. ist zu frisch
-        sDir.Delete(n);
-        continue;
-      end;
-    end;
-
-    for n := 0 to pred(sDir.Count) do
-    begin
-      m := nextp(sDir[n], '-', 0);
-      if (sMonteure.IndexOf(m) = -1) then
-        sMonteure.add(m);
-    end;
-
-    sTabelle.addCol('Gerät', sMonteure);
-    // imp pend:
-    // bisher W:\status\index.html
-    sTabelle.SaveToHTML(pWebPath + 'ausstehende-fotos.html');
-    // imp pend:
-    // bisher W:\status\ausstehende-fotos.csv
-    // sTabelle.SaveToFile(pWebPath + 'ausstehende-fotos.csv');
-
-  except
-
-  end;
-  sDir.Free;
-  sMonteure.Free;
-  sTabelle.Free;
 end;
 
 procedure TFotoExec.workSync;

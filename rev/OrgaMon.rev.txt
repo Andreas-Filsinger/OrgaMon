@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.205 (26.07.16) Andreas Filsinger
+
+ Bug: Service: Foto: ausstehende-fotos.html mit mehr Infos
+
+Rev 8.204 (26.07.16) Andreas Filsinger
+
+ Neu: Service: Foto: ausstehende-fotos.html mit mehr Infos
+
 Rev 8.203 (23.07.16) Andreas Filsinger
 
  Neu: Service: Foto: Info-Datei über Rückstand beim Fotos-Senden

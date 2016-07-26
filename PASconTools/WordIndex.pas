@@ -5,7 +5,7 @@
   TSearchStringList - Binäre Suche & Incrementelle & "Pos=1" Suche
   TExtendedList - "AND" "OR" fähige Liste
 
-  Copyright (C) 2007 - 2014  Andreas Filsinger
+  Copyright (C) 2007 - 2016  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -142,6 +142,8 @@ type
     oNoAutoQuote: boolean; // do NOT remove all the Quotes  ;"aaa"; -> ;aaa;
     oTextHasLF: boolean; // Text Cells can have internal Line Breaks (LF)
     oSeparator: string; // Trenner zwischen den Spalten
+    oHTML_Prefix: string;
+    oHTML_Postfix: string;
 
     function getSeparator: string;
     procedure insertFromFile(FName: string; StaticHeader: string = '');
@@ -1434,6 +1436,8 @@ begin
 
     add('</head>');
     add('<body bgcolor="#ffffff" text="#000000" link="#cc0000" vlink="#999999" alink="#ffcc00">');
+    if (oHTML_Prefix <> '') then
+      add(oHTML_Prefix);
     add('<font face="Verdana" size=2>');
     add('<table class=border cellpadding=1 cellspacing=0 border=1>');
 
@@ -1510,6 +1514,8 @@ begin
     end;
     add('</table>');
     add('</font>');
+    if (oHTML_Postfix <> '') then
+      add(oHTML_Postfix);
     add('</body>');
     add('</html>');
     SaveToFile(FName);

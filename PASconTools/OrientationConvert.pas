@@ -4407,12 +4407,24 @@ var
             if not(Plausibel) then
               inc(Stat_Unplausibel);
 
-            Content.add('KK22;' + nextp(MySourceStrings[n], ';', c_KK21_bukrs) + ';' + nextp(MySourceStrings[n], ';',
-              c_KK21_ablbelnr) + ';' + nextp(MySourceStrings[n], ';', c_KK21_pruefzahl) + ';' + ext_ui + ';' + kennzif +
-              ';' + nextp(MySourceStrings[n], ';', c_KK21_register) + ';' + kombinat + ';' +
-              Format_ZaehlerNummer(ZAEHLER_NUMMER) + ';' + Format_Eingabedatum(EingabeDatum) + ';' + ';' +
-              Format_Eingabezeit(EingabeUhr) + ';' + ';' + Format_ZaehlerStand(Zaehler_Stand) + ';' + ';' + '101;' +
-              Format_herkunft(EingabeUhr));
+            Content.add(
+              { } 'KK22;' +
+              { } nextp(MySourceStrings[n], ';', c_KK21_bukrs) + ';' +
+              { } nextp(MySourceStrings[n], ';', c_KK21_ablbelnr) + ';' +
+              { } nextp(MySourceStrings[n], ';', c_KK21_pruefzahl) + ';' +
+              { } ext_ui + ';' +
+              { } kennzif + ';' +
+              { } nextp(MySourceStrings[n], ';', c_KK21_register) + ';' +
+              { } kombinat + ';' +
+              { } Format_ZaehlerNummer(ZAEHLER_NUMMER) + ';' +
+              { } Format_Eingabedatum(EingabeDatum) + ';' +
+              { } ';' +
+              { } Format_Eingabezeit(EingabeUhr) + ';' +
+              { } ';' +
+              { } Format_ZaehlerStand(Zaehler_Stand) + ';' +
+              { } ';' +
+              { } '101;' +
+              { } Format_herkunft(EingabeUhr));
           end;
 
         except
