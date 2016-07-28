@@ -21,9 +21,7 @@
 unit anfix32;
 
 {$ifndef FPC}
-
 {$I jcl.inc}
-
 {$endif}
 
 interface
@@ -278,6 +276,7 @@ function extractYear(dlong: TAnfixDate): integer;
 function extractMonth(dlong: TAnfixDate): integer;
 function extractDay(dlong: TAnfixDate): integer;
 function date2long(date: string): TAnfixDate;
+function TimeStamp2long(date: string): TAnfixDate; // JJJJMMDD -> TAnfixDate
 function DateGet: TAnfixDate; //
 function WeekGet(ADate: TDateTime): integer; overload; // Wochen Nummer
 function WeekGet(ADate: TAnfixDate): integer; overload; // Wochen Nummer
@@ -356,9 +355,9 @@ function SecondsInside(s, s1, s2: TAnfixTime): boolean;
 // kombinierte Datum+Uhr Routinen
 procedure SecondsAddLong(d1, s1, plus: longint; var d2, s2: longint);
 function mkDateTime(date: TAnfixDate; Time: TAnfixTime): TDateTime; overload;
-function mkDateTime(s: string): TDateTime; overload;
+function mkDateTime(s: string; dTimeStamp: boolean = false): TDateTime; overload;
 function DatumUhr: string; // Zeitstempel Datum " " Uhr
-function dTimeStamp(d: TDateTime): string; // JJJJMMJJ hh:mm:ss
+function dTimeStamp(d: TDateTime): string; // JJJJMMJJ hh:mm:ss (für Logs und Sortierbarkeit / Vergleichbarkeit )
 
 // File-Funktionen
 function FileDelete(const Mask: string): boolean; overload;
@@ -898,6 +897,15 @@ begin
   { Tag } longint(T);
   if dateOK(Res) then
     result := Res;
+end;
+
+function TimeStamp2long(date: string): TAnfixDate; // JJJJMMDD -> TAnfixDate
+begin
+
+  result := date2long(
+    { } copy(date, 7, 2) + '.' +
+    { } copy(date, 5, 2) + '.' +
+    { } copy(date, 1, 4));
 end;
 
 // Gerald Rohr
@@ -4893,7 +4901,7 @@ end;
 // split('') = ['']
 // split(';') = ['','']
 
-function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim : boolean = false): TStringList;
+function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boolean = false): TStringList;
 var
   QuoteLength: integer;
   QuoteEnd: integer;
@@ -4951,7 +4959,7 @@ begin
     until false;
   end;
   if Trim then
-   noblank(result);
+    noblank(result);
 end;
 
 // values['Name'] := '' delete this Line completely - i dont want this
@@ -5629,12 +5637,15 @@ begin
   end;
 end;
 
-function mkDateTime(s: string): TDateTime; overload;
+function mkDateTime(s: string; dTimeStamp: boolean = false): TDateTime; overload;
 var
   pDatum: TAnfixDate;
   pUhr: TAnfixTime;
 begin
-  pDatum := date2long(NextP(s, ' ', 0));
+  if dTimeStamp then
+    pDatum := TimeStamp2long(NextP(s, ' ', 0))
+  else
+    pDatum := date2long(NextP(s, ' ', 0));
   pUhr := StrToSeconds(NextP(s, ' ', 1));
   if dateOK(pDatum) and UhrOK(pUhr) then
     result := mkDateTime(pDatum, pUhr)

@@ -63,6 +63,7 @@ const
   // Filenames
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
+  cFotoService_Pause = 'pause.txt';
 
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
 
@@ -118,11 +119,15 @@ type
     // Verzeichnisse errechnet
     function MyDataBasePath: string;
     function MyDataBasePath2: string;
+
     // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
     function MySyncPath: string;
 
     // Dateinamen
     function AblageLogFname: string;
+
+    // im Moment Pause
+    function Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
 
     // load Settings
     procedure readIni(SectionName: string = ''; Path: string = '');
@@ -162,6 +167,21 @@ const
 procedure TFotoExec.invalidate_NummerNeuCache;
 begin
   _GeraeteNo := '';
+end;
+
+function TFotoExec.Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
+var
+  FName: string;
+begin
+  FName := pAppServicePath + cFotoService_Pause;
+  if WechsleStatus then
+  begin
+    if Off then
+      FileDelete(FName)
+    else
+      FileAlive(FName);
+  end;
+  result := FileExists(FName);
 end;
 
 function TFotoExec.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
@@ -613,6 +633,13 @@ begin
         if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
         begin
           FileTouch(FName, iEXIF.DateTimeOriginal);
+
+          AppendStringsToFile(
+            { } 'touch ' + sFiles[n] +
+            { } ' ' + dTimeStamp(iEXIF.DateTimeOriginal),
+            { } DiagnosePath + cFotoTransaktionenFName);
+          LastLogWasTimeStamp := false;
+
           Log(cINFOText + ' ' + sFiles[n] + ': Dateizeitstempel korrigiert');
         end;
         FullSuccess := true;
@@ -1002,6 +1029,20 @@ const
   col_ANKUENDIGUNG = 3;
   col_LIEFERUNG = 4;
 
+  //
+  // Zeitraum der zurück geblickt wird, Foto Ankündigungen, die
+  // weiter zurück liegen werden nicht berücksichtigt
+  //
+  BETRACHTUNGS_ZEITRAUM = 25; { [Tage] }
+
+  //
+  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
+  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
+  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
+  // "senden" des Monteures
+  //
+  VERZOEGERUNG_ANKUENDIGUNG = 3; { [Tage] }
+
 procedure TFotoExec.workAusstehendeFotos;
 var
   BildAnkuendigung: TStringList;
@@ -1012,6 +1053,7 @@ var
   StartMoment: TDateTime;
   ProceedMoment: TDateTime;
   ProceedMoment_First: TDateTime;
+  ProceedMoment_Oldest: TDateTime;
   FName: string;
   PROTOKOLL: string;
   sProtokoll: TStringList;
@@ -1024,8 +1066,10 @@ var
   Anzahl: integer;
   GesamtAnzahl: integer;
   Timer: int64;
+  PAPERCOLOR: string;
+  Age: integer; // [Sekunden]
 
-  procedure WriteIt{(_GERAET)};
+  procedure WriteIt { (_GERAET) };
   var
     n: integer;
   begin
@@ -1044,18 +1088,19 @@ var
 
 begin
   StartMoment := now;
-
   Timer := RDTSCms;
+
+  AllTRN := TStringList.Create;
+  BildAnkuendigung := TStringList.Create;
+  BildLieferung := TStringList.Create;
+  sHANGOVER := tsTable.Create;
+  sMONTEURE := tsTable.Create;
+
   ensureGlobals;
 
   ProceedMoment_First := StartMoment;
+  ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
 
-  AllTRN := TStringList.Create;
-
-  BildAnkuendigung := TStringList.Create;
-  BildLieferung := TStringList.Create;
-
-  sHANGOVER := tsTable.Create;
   with sHANGOVER do
   begin
     addcol('GERAET');
@@ -1065,7 +1110,6 @@ begin
     addcol('LIEFERUNG');
   end;
 
-  sMONTEURE := tsTable.Create;
   with sMONTEURE do
   begin
     addcol('GERAET'); // dreistellige Nummer
@@ -1073,22 +1117,35 @@ begin
     addcol('LETZTER_UPLOAD'); // Datum + Uhr der letzten Bild-Lieferung
     addcol('RÜCKSTAND'); // Anzahl der Bilder, die noch fehlen
     addcol('VOM'); // Datum des ältesten Bildes das fehlt
+    addcol('PAPERCOLOR');
   end;
 
   { Schritt 1: Bildnamen ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
-  for n := 0 to pred(AllTRN.Count) do
+  AllTRN.sort;
+  for n := pred(AllTRN.Count) downto 0 do
   begin
-    TAN := AllTRN[n];
-    if (length(TAN) > 2) then
+    TAN := StrFilter(AllTRN[n], cZiffern);
+
+    if (length(TAN) = length(cFirstTrn)) then
     begin
+
+      // Dateiname der Ergebnisdatei
       FName := { } pAppServicePath +
       { } TAN + '\' +
       { } TAN + cUTF8DataExtension;
 
       ProceedMoment := FileDateTime(FName);
+
       if (ProceedMoment <> 0) then
       begin
+
+        //
+        // Abbrechen, wenn es vorhanden ist aber zu weit zurück liegt
+        //
+        if (ProceedMoment < ProceedMoment_Oldest) then
+          break;
+
         BildLieferung.LoadFromFile(
           { } pAppServicePath +
           { } TAN + '\' +
@@ -1138,13 +1195,7 @@ begin
   { Schritt 2: Ergänzung der Lieferdatums }
   AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
 
-  //
-  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
-  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
-  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
-  // "senden" des Monteures
-  //
-  LieferMoment_First := dTimeStamp(ProceedMoment_First - 3.0);
+  LieferMoment_First := dTimeStamp(ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG);
 
   // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
   // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
@@ -1286,15 +1337,60 @@ begin
     begin
       Anzahl := StrToIntDef(readCell(r, 'RÜCKSTAND'), 0);
       if (Anzahl = 0) then
+      begin
         del(r)
+      end
       else
+      begin
+        //
+        // Aufkummulieren der Gesamtfehlmenge
+        //
         inc(GesamtAnzahl, Anzahl);
 
+        // Nachrüsten der Monteurs-Namen
+        // imp pend
+
+        // Eintragen der Farbgebung
+        //
+        Age := SecondsDiff(StartMoment, mkDateTime(readCell(r, 'LETZTER_UPLOAD'), true));
+        case Age of
+          - 1 * 3600 .. 10 * 60:
+            PAPERCOLOR := '#00FF00'; { tief grün }
+          10 * 60 + 1 .. 20 * 60:
+            PAPERCOLOR := '#2EFE2E';
+          20 * 60 + 1 .. 35 * 60:
+            PAPERCOLOR := '#58FA58';
+          35 * 60 + 1 .. 120 * 60:
+            PAPERCOLOR := '#81F781';
+          120 * 60 + 1 .. 180 * 60:
+            PAPERCOLOR := '#A9F5A9';
+          180 * 60 + 1 .. 4 * 3600:
+            PAPERCOLOR := '#CEF6CE';
+          4 * 3600 + 1 .. 5 * 3600:
+            PAPERCOLOR := '#E0F8E0';
+          5 * 3600 + 1 .. 6 * 3600:
+            PAPERCOLOR := '#EFFBEF';
+          6 * 3600 + 1 .. 7 * 3600:
+            PAPERCOLOR := '#FFFFFF'; { weiß }
+          7 * 3600 + 1 .. 8 * 3600:
+            PAPERCOLOR := '#FBEFEF'; { pastel rot }
+          8 * 3600 + 1 .. 9 * 3600:
+            PAPERCOLOR := '#F6CECE';
+          9 * 3600 + 1 .. 10 * 3600:
+            PAPERCOLOR := '#F5A9A9';
+          10 * 3600 + 1 .. 11 * 3600:
+            PAPERCOLOR := '#F78181';
+          11 * 3600 + 1 .. 12 * 3600:
+            PAPERCOLOR := '#FA5858';
+          12 * 3600 + 1 .. 13 * 3600:
+            PAPERCOLOR := '#FE2E2E';
+        else
+          PAPERCOLOR := '#FF0000'; { tief rot }
+
+        end;
+        writeCell(r, 'PAPERCOLOR', PAPERCOLOR);
+      end;
     end;
-
-    // Nachrüsten der Monteurs-Namen
-
-    // imp pend
 
     // Sortieren, die schlimmsten nach oben
     sortby('RÜCKSTAND numeric descending');

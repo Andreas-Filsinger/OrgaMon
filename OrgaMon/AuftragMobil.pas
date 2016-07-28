@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ var
         begin
 
           //
-          if not(SolidDir(IdFTP1, '', '*.DAT','???.DAT', lUeberzaehligeGeraete)) then
+          if not(SolidDir(IdFTP1, '', '*.DAT', '???.DAT', lUeberzaehligeGeraete)) then
           begin
             Log(cERRORText + ' ' + SolidFTP_LastError);
             break;
@@ -304,10 +304,17 @@ begin
   begin
     Label3.caption := 'Abgearbeitete ...';
     application.ProcessMessages;
-    lAbgearbeitet := e_r_sqlm('select AUFTRAG.RID from AUFTRAG ' + 'join BAUSTELLE on ' +
-      ' (BAUSTELLE.RID=AUFTRAG.BAUSTELLE_R) and' + ' (BAUSTELLE.EXPORT_MONDA=''' + cC_True + ''')' + 'where' +
-      ' (AUFTRAG.STATUS in (' + inttostr(cs_Erfolg) + ',' + inttostr(cs_NeuAnschreiben) + ',' + inttostr(cs_Vorgezogen)
-      + ',' + inttostr(cs_Unmoeglich) + '))');
+    lAbgearbeitet := e_r_sqlm(
+      { } 'select AUFTRAG.RID from AUFTRAG ' +
+      { } 'join BAUSTELLE on ' +
+      { } ' (BAUSTELLE.RID=AUFTRAG.BAUSTELLE_R) and' +
+      { } ' (BAUSTELLE.EXPORT_MONDA=''' + cC_True + ''')' +
+      { } 'where' +
+      { } ' (AUFTRAG.STATUS in (' +
+      { } inttostr(cs_Erfolg) + ',' +
+      { } inttostr(cs_NeuAnschreiben) + ',' +
+      { } inttostr(cs_Vorgezogen) + ',' +
+      { } inttostr(cs_Unmoeglich) + '))');
     lAbgearbeitet.SaveToFile(MdePath + 'abgearbeitet.dat');
     FTPup.add(MdePath + 'abgearbeitet.dat' + ';' + ';' + 'abgearbeitet.dat');
   end;
@@ -405,12 +412,24 @@ begin
 
         //
         sMONTEUR_R := inttostr(MONTEUR_R);
-        lAbgezogen := e_r_sqlm('select distinct ' + ' H.MASTER_R ' + 'from ' + ' AUFTRAG H ' + 'join AUFTRAG A on ' +
-          ' (A.STATUS<>6) and ' + ' (A.RID=H.MASTER_R) and ' + ' ( ' + '  (A.MONTEUR1_R is null) or ' +
-          '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R is null)) or ' + '  ((A.MONTEUR1_R<>' + sMONTEUR_R +
-          ') and (A.MONTEUR2_R<>' + sMONTEUR_R + ')) ' + ' ) ' + 'where ' + ' (H.STATUS=6) and ' +
-          ' (H.MONTEUREXPORT is not null) and ' + ' ((H.MONTEUR1_R=' + sMONTEUR_R + ') or (H.MONTEUR2_R=' +
-          sMONTEUR_R + ')) ');
+        lAbgezogen := e_r_sqlm(
+          { } 'select distinct ' +
+          { } ' H.MASTER_R ' +
+          { } 'from ' +
+          { } ' AUFTRAG H ' +
+          { } 'join AUFTRAG A on ' +
+          { } ' (A.STATUS<>6) and ' +
+          { } ' (A.RID=H.MASTER_R) and ' +
+          { } ' ( ' +
+          { } '  (A.MONTEUR1_R is null) or ' +
+          { } '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R is null)) or ' +
+          { } '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R<>' + sMONTEUR_R + ')) ' +
+          { } ' ) ' +
+          { } 'where ' +
+          { } ' (H.STATUS=6) and ' +
+          { } ' (H.MONTEUREXPORT is not null) and ' +
+          { } ' ((H.MONTEUR1_R=' + sMONTEUR_R + ') or (H.MONTEUR2_R=' +
+          { } sMONTEUR_R + ')) ');
 
         lAbgezogen.SaveToFile(MdePath + 'abgezogen.' + GeraeteNo + '.dat');
 

@@ -3331,6 +3331,23 @@ begin
             end;
           until true;
         end;
+      13:
+        begin
+          // wie "1" jedoch ohne "-Neu" Logik
+          FotoPrefix :=
+          { } sParameter.values[cParameter_foto_strasse] + ' ' +
+          { } sParameter.values[cParameter_foto_ort];
+          ersetze(' ', '_', FotoPrefix);
+          FotoPrefix := StrFilter(
+            { } FotoPrefix,
+            { } cValidFNameChars + '_') + '-';
+          UmbenennungAbgeschlossen := true;
+        end;
+      14:
+        begin
+          // wie "0" jedoch ohne "-Neu" Logik
+          UmbenennungAbgeschlossen := true;
+        end;
     end;
 
     // Prefix: zusätzliche Erweiterungen, für alle Baustellen gültig

@@ -19,6 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.208 (28.07.16) Andreas Filsinger
+
+ Neu: Service: Foto: Pause/ Play Möglichkeit
+ Neu: Service: Foto: "touch <FName> <DateTime>" wird protokolliert
+
+Rev 8.207 (28.07.16) Andreas Filsinger
+
+ Neu: Foto: Benennungs-Modus "13": wie "1" jedoch ohne "-Neu" Logik
+ Neu: Foto: Benennungs-Modus "14": wie "0" jedoch ohne "-Neu" Logik
+
+Rev 8.206 (27.07.16) Andreas Filsinger
+
+ Neu: Service: Foto: ausstegende-fotos.html mit einem Limitierten Betrachtungszeitraum von 20 Tagen
+ Neu: Service: Foto: ausstehende-fotos.html mit Farben
+
 Rev 8.205 (26.07.16) Andreas Filsinger
 
  Bug: Service: Foto: ausstehende-fotos.html mit mehr Infos
