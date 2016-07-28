@@ -204,6 +204,7 @@ end;
 procedure RunAsFoto;
 const
   Timer_Intervall = 2000;
+  Sleep_Intervall = 20000;
 var
   MyFotoExec: TownFotoExec;
   TimerWartend: integer;
@@ -259,7 +260,16 @@ begin
       else
       begin
 
-        // Alle 5 Min!
+        // Ist die Verarbeitung im Moment pausiert
+        if Pause then
+        begin
+          Log('Pausiert ...');
+          ReleaseGlobals;
+          sleep(Sleep_Intervall);
+          continue;
+        end;
+
+        // Alle 5 Min:
         if (TimerWartend > 5 * 60 * 1000) or doDirectStart then
         begin
           TimerWartend := 0;
@@ -267,7 +277,7 @@ begin
 
           try
             // Ab und zu die neuen Daten beachten
-            releaseGlobals;
+            ReleaseGlobals;
           except
             on E: Exception do
               Log(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
@@ -315,8 +325,8 @@ begin
             end;
         end;
 
+        // Jedes Mal:
         try
-          // Jedes Mal
           workEingang;
         except
           on E: Exception do

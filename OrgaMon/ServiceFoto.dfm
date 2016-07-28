@@ -2,7 +2,7 @@
   Left = 0
   Top = 0
   Caption = 'Foto.Service'
-  ClientHeight = 509
+  ClientHeight = 621
   ClientWidth = 734
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,17 +14,74 @@
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object Label7: TLabel
+    Left = 8
+    Top = 12
+    Width = 18
+    Height = 13
+    Caption = '--Id'
+  end
+  object Label17: TLabel
+    Left = 8
+    Top = 39
+    Width = 22
+    Height = 13
+    Caption = 'Pfad'
+  end
+  object Label18: TLabel
+    Left = 8
+    Top = 72
+    Width = 26
+    Height = 13
+    Caption = 'Timer'
+  end
+  object SpeedButton4: TSpeedButton
+    Left = 48
+    Top = 36
+    Width = 21
+    Height = 22
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+      7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+      FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+      99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+      8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+      FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+      98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+      DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+      FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+      A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+      E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+      FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+      B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+      E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+      FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+      A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+      F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+      4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+      FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+      FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+      A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+    OnClick = SpeedButton4Click
+  end
   object PageControl1: TPageControl
     Left = 0
-    Top = 0
+    Top = 91
     Width = 734
-    Height = 509
-    ActivePage = Rückstand
-    Align = alClient
+    Height = 530
+    ActivePage = TabSheet5
+    Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
+      ExplicitTop = 32
+      ExplicitHeight = 443
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -32,77 +89,13 @@
         Height = 13
         Caption = 'Arbeit beschr'#228'nken auf RID'
       end
-      object Label7: TLabel
-        Left = 8
-        Top = 12
-        Width = 18
-        Height = 13
-        Caption = '--Id'
-      end
-      object Label17: TLabel
-        Left = 8
-        Top = 39
-        Width = 22
-        Height = 13
-        Caption = 'Pfad'
-      end
-      object Label18: TLabel
-        Left = 8
-        Top = 72
-        Width = 26
-        Height = 13
-        Caption = 'Timer'
-      end
-      object SpeedButton4: TSpeedButton
-        Left = 48
-        Top = 36
-        Width = 21
-        Height = 22
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
-          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
-          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
-          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
-          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
-          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
-          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
-          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
-          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
-          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
-          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
-          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
-          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
-          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
-          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
-          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
-          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
-          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
-          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
-          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
-          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
-        OnClick = SpeedButton4Click
-      end
       object ListBox1: TListBox
         Left = 3
-        Top = 96
+        Top = 40
         Width = 574
-        Height = 281
+        Height = 337
         ItemHeight = 13
         TabOrder = 0
-      end
-      object Button1: TButton
-        Left = 216
-        Top = 65
-        Width = 153
-        Height = 25
-        Caption = 'Start'
-        TabOrder = 1
-        OnClick = Button1Click
       end
       object Button4: TButton
         Left = 523
@@ -110,7 +103,7 @@
         Width = 129
         Height = 25
         Caption = 'workWartend'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = Button4Click
       end
       object Button5: TButton
@@ -119,16 +112,16 @@
         Width = 129
         Height = 25
         Caption = 'workEingang'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = Button5Click
       end
       object Button11: TButton
-        Left = 375
-        Top = 65
+        Left = 158
+        Top = 9
         Width = 162
         Height = 25
         Caption = 'Starte sofort!'
-        TabOrder = 4
+        TabOrder = 3
         OnClick = Button11Click
       end
       object Button13: TButton
@@ -137,7 +130,7 @@
         Width = 75
         Height = 25
         Caption = 'GEN_ID'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = Button13Click
       end
       object Edit7: TEdit
@@ -145,7 +138,7 @@
         Top = 404
         Width = 121
         Height = 21
-        TabOrder = 6
+        TabOrder = 5
       end
       object Button16: TButton
         Left = 273
@@ -153,46 +146,32 @@
         Width = 75
         Height = 25
         Caption = 'Sync'
-        TabOrder = 7
+        TabOrder = 6
         OnClick = Button16Click
       end
-      object Edit15: TEdit
-        Left = 72
-        Top = 36
-        Width = 121
-        Height = 21
-        TabOrder = 8
-      end
-      object Button17: TButton
-        Left = 216
-        Top = 7
-        Width = 153
-        Height = 52
-        Caption = 'Init'
-        TabOrder = 9
-        OnClick = Button17Click
-      end
       object Button29: TButton
-        Left = 543
-        Top = 65
+        Left = 323
+        Top = 9
         Width = 121
         Height = 25
         Caption = '5 Min rum!'
-        TabOrder = 10
+        TabOrder = 7
         OnClick = Button29Click
       end
-      object ComboBox1: TComboBox
-        Left = 48
+      object Button1: TButton
+        Left = 3
         Top = 9
-        Width = 145
-        Height = 21
-        TabOrder = 11
-        OnSelect = ComboBox1Select
+        Width = 153
+        Height = 25
+        Caption = 'Start'
+        TabOrder = 8
+        OnClick = Button1Click
       end
     end
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
+      ExplicitHeight = 571
       object Button24: TButton
         Left = 48
         Top = 56
@@ -215,6 +194,7 @@
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
+      ExplicitHeight = 571
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -283,9 +263,10 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
+      ExplicitHeight = 571
       DesignSize = (
         726
-        481)
+        502)
       object SpeedButton1: TSpeedButton
         Left = 3
         Top = 52
@@ -324,9 +305,10 @@
         Left = 312
         Top = 80
         Width = 411
-        Height = 384
+        Height = 405
         Anchors = [akLeft, akTop, akRight, akBottom]
         Stretch = True
+        ExplicitHeight = 384
       end
       object Label1: TLabel
         Left = 4
@@ -354,12 +336,13 @@
         Left = 3
         Top = 80
         Width = 303
-        Height = 384
+        Height = 405
         Anchors = [akLeft, akTop, akBottom]
         ItemHeight = 13
         TabOrder = 1
         OnClick = ListBox3Click
         OnKeyDown = ListBox3KeyDown
+        ExplicitHeight = 474
       end
       object Edit5: TEdit
         Left = 68
@@ -396,6 +379,7 @@
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
+      ExplicitHeight = 571
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -473,23 +457,13 @@
         TabOrder = 3
         OnClick = Button12Click
       end
-      object StaticText1: TStaticText
-        Left = 24
-        Top = 367
-        Width = 681
-        Height = 65
-        AutoSize = False
-        BorderStyle = sbsSunken
-        Caption = 'StaticText1'
-        TabOrder = 4
-      end
       object Button27: TButton
         Left = 630
         Top = 336
         Width = 75
         Height = 25
         Caption = 'Amnestie'
-        TabOrder = 5
+        TabOrder = 4
         OnClick = Button27Click
       end
       object Edit10: TEdit
@@ -497,7 +471,7 @@
         Top = 336
         Width = 121
         Height = 21
-        TabOrder = 6
+        TabOrder = 5
         TextHint = 'Amnestie-Grund'
       end
       object Edit11: TEdit
@@ -505,16 +479,26 @@
         Top = 3
         Width = 121
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
         Text = 'Edit11'
+      end
+      object Memo1: TMemo
+        Left = 24
+        Top = 367
+        Width = 681
+        Height = 98
+        Lines.Strings = (
+          'Memo1')
+        TabOrder = 7
       end
     end
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
+      ExplicitHeight = 571
       DesignSize = (
         726
-        481)
+        502)
       object SpeedButton3: TSpeedButton
         Left = 24
         Top = 4
@@ -549,28 +533,37 @@
           A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
         OnClick = SpeedButton3Click
       end
+      object Label19: TLabel
+        Left = 56
+        Top = 8
+        Width = 6
+        Height = 13
+        Caption = '0'
+      end
       object ListBox6: TListBox
         Left = 24
         Top = 32
         Width = 689
-        Height = 393
+        Height = 414
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
+        ExplicitHeight = 483
       end
       object Button9: TButton
         Left = 24
-        Top = 453
+        Top = 474
         Width = 225
         Height = 25
         Anchors = [akLeft, akBottom]
         Caption = 'markierten befreien'
         TabOrder = 1
         OnClick = Button9Click
+        ExplicitTop = 543
       end
       object CheckBox3: TCheckBox
         Left = 433
-        Top = 431
+        Top = 452
         Width = 280
         Height = 17
         Alignment = taLeftJustify
@@ -578,11 +571,21 @@
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
         TabOrder = 2
         OnClick = CheckBox3Click
+        ExplicitTop = 521
+      end
+      object CheckBox2: TCheckBox
+        Left = 24
+        Top = 451
+        Width = 233
+        Height = 17
+        Caption = 'Foto wieder neu einstellen'
+        TabOrder = 3
       end
     end
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
+      ExplicitHeight = 571
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -734,6 +737,7 @@
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
+      ExplicitHeight = 571
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -756,6 +760,7 @@
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitHeight = 571
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -825,6 +830,7 @@
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
+      ExplicitHeight = 571
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -916,6 +922,7 @@
     object Rückstand: TTabSheet
       Caption = 'R'#252'ckstand'
       ImageIndex = 10
+      ExplicitHeight = 571
       object Button10: TButton
         Left = 96
         Top = 104
@@ -927,11 +934,65 @@
       end
     end
   end
+  object Edit15: TEdit
+    Left = 72
+    Top = 36
+    Width = 121
+    Height = 21
+    TabOrder = 1
+  end
+  object Button17: TButton
+    Left = 216
+    Top = 7
+    Width = 153
+    Height = 52
+    Caption = 'Init'
+    TabOrder = 2
+    OnClick = Button17Click
+  end
+  object ComboBox1: TComboBox
+    Left = 48
+    Top = 9
+    Width = 145
+    Height = 21
+    TabOrder = 3
+    OnSelect = ComboBox1Select
+  end
+  object Panel1: TPanel
+    Left = 48
+    Top = 64
+    Width = 114
+    Height = 21
+    BevelEdges = []
+    BevelOuter = bvNone
+    BorderWidth = 1
+    BorderStyle = bsSingle
+    Color = clWindow
+    Ctl3D = False
+    ParentBackground = False
+    ParentCtl3D = False
+    TabOrder = 4
+  end
+  object Button22: TButton
+    Left = 168
+    Top = 63
+    Width = 25
+    Height = 22
+    Hint = '<4'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Webdings'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    OnClick = Button22Click
+  end
   object Timer1: TTimer
     Enabled = False
     Interval = 2000
     OnTimer = Timer1Timer
-    Left = 32
-    Top = 144
+    Left = 664
+    Top = 24
   end
 end
