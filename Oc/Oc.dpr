@@ -63,7 +63,7 @@ begin
 
     if (Mode = '--txt') then
     begin
-      ConversionOK := doConversion(Content_Mode_txt, InFName, sLOG);
+      ConversionOK := doConversion(CheckContent(InFName), InFName, sLOG);
       break;
     end;
 

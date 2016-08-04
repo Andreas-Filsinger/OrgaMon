@@ -1,27 +1,27 @@
 (*
-      ___                  __  __
-     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-    | |_| | | | (_| | (_| | |  | | (_) | | | |
-     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-               |___/
+  ___                  __  __
+  / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  | |_| | | | (_| | (_| | |  | | (_) | | | |
+  \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |___/
 
-    Copyright (C) 2007  Andreas Filsinger
+  Copyright (C) 2007  Andreas Filsinger
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    http://orgamon.org/
+  http://orgamon.org/
 
 *)
 unit ArtikelKategorie;
@@ -56,8 +56,7 @@ type
     procedure JvTreeView1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
-    procedure ListBox1KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure ListBox1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
   private
@@ -140,7 +139,7 @@ var
 
 begin
 
-  if not (assigned(Gattung)) then
+  if not(assigned(Gattung)) then
   begin
     cTreeColorNormal := clWindow;
     HeaderNodes := TList.create;
@@ -148,12 +147,12 @@ begin
     LastHeader := '';
 
     cGATTUNG := DataModuleDatenbank.nCursor;
-    with cGattung, JvTreeView1 do
+    with cGATTUNG, JvTreeView1 do
     begin
       sql.add('SELECT RID,CODE,BEZEICHNUNG FROM GATTUNG ORDER BY CODE');
       APIFirst;
       RecN := 0;
-      while not (eof) do
+      while not(eof) do
       begin
         inc(RecN);
 
@@ -166,17 +165,18 @@ begin
           with THeaderNode(HeaderNodes[n]) do
             if (pos(Header, ThisHeader) = 1) then
             begin
-              Gattung.addobject(NodeText, _add(Node, ThisHeader, NodeText, NodeRID));
+              Gattung.addObject(NodeText, _add(Node, ThisHeader, NodeText, NodeRID));
               break;
-            end else
+            end
+            else
             begin
               // this do not fit, purge this chain
               THeaderNode(HeaderNodes[n]).free;
               HeaderNodes.delete(n);
             end;
 
-        if HeaderNodes.count = 0 then
-          Gattung.addobject(NodeText, _add(nil, ThisHeader, NodeText, NodeRID));
+        if (HeaderNodes.count = 0) then
+          Gattung.addObject(NodeText, _add(nil, ThisHeader, NodeText, NodeRID));
 
         LastHeader := ThisHeader;
         ApiNext;
@@ -190,16 +190,16 @@ procedure TFormArtikelKategorie.execute(ARTIKEL_R: integer);
 begin
   BeginHourGlass;
   self.ARTIKEL_R := ARTIKEL_R;
-  log('execute:' + inttostr(ARTIKEL_R));
+  Log('execute:' + inttostr(ARTIKEL_R));
   if assigned(Gattung) then
 
-  InvalidateCache;
+    InvalidateCache;
   EnsureCache;
   FillCaption;
   FillTree;
-  edit1.text := '';
+  Edit1.text := '';
   show;
-  edit1.SetFocus;
+  Edit1.SetFocus;
   EndHourGlass;
 end;
 
@@ -219,7 +219,8 @@ begin
     // Setzen oder eben nicht
     lAddNode(Node);
     storeDB(Node, true);
-  end else
+  end
+  else
   begin
     // Aus Kategorie entfernen
     storeDB(Node, false);
@@ -234,7 +235,7 @@ var
   lChecked: TList;
   CurItem: TJvTreeNode;
 begin
-  log('-checkit-begin');
+  Log('-checkit-begin');
 
   // prepare
   lChecked := TList.create;
@@ -244,8 +245,8 @@ begin
   with cSETTINGS do
   begin
     sql.add('select GATTUNG_R from ARTIKEL_GATTUNG where ARTIKEL_R=' + inttostr(ARTIKEL_R));
-    ApiFirst;
-    while not (eof) do
+    APIFirst;
+    while not(eof) do
     begin
       lChecked.add(Pointer(FieldByName('GATTUNG_R').AsInteger));
       Log(FieldByName('GATTUNG_R').AsString);
@@ -255,32 +256,33 @@ begin
   cSETTINGS.free;
 
   // ganzen Baum durchlaufen & die entsprechenden Kreuzchen setzen
-  listbox1.items.clear;
-  CurItem := JvTreeView1.Items.GetFirstNode as TJvTreeNode;
+  ListBox1.items.clear;
+  CurItem := JvTreeView1.items.GetFirstNode as TJvTreeNode;
   while (CurItem <> nil) do
   begin
 
     //
-    if (lChecked.indexof(CurItem.data) >= 0) then
+    if (lChecked.indexof(CurItem.Data) >= 0) then
     begin
       // ja, ein Kreuz
-      CurItem.checked := true;
-      listbox1.items.add(CurItem.Text);
-      Log(CurItem.Text);
-    end else
+      CurItem.Checked := true;
+      ListBox1.items.add(CurItem.text);
+      Log(CurItem.text);
+    end
+    else
     begin
       // kein Kreuz
-      CurItem.checked := false;
+      CurItem.Checked := false;
     end;
 
     CurItem := CurItem.GetNext as TJvTreeNode;
   end;
-  listbox1sort;
+  Listbox1Sort;
 
   // postpare
   lChecked.free;
   JvTreeView1.color := cTreeColorNormal;
-  log('-checkit-end');
+  Log('-checkit-end');
 end;
 
 procedure TFormArtikelKategorie.ExpandIt;
@@ -290,7 +292,7 @@ var
 begin
 
   // erst mal den ganzen Baum zuklappen
-  CurItem := JvTreeView1.Items.GetFirstNode as TJvTreeNode;
+  CurItem := JvTreeView1.items.GetFirstNode as TJvTreeNode;
   while (CurItem <> nil) do
   begin
     CurItem.collapse(true);
@@ -298,10 +300,10 @@ begin
   end;
 
   // ganzen Baum durchlaufen & die entsprechenden angekreuzten öffnen
-  CurItem := JvTreeView1.Items.GetFirstNode as TJvTreeNode;
+  CurItem := JvTreeView1.items.GetFirstNode as TJvTreeNode;
   while (CurItem <> nil) do
   begin
-    if CurItem.checked then
+    if CurItem.Checked then
     begin
       HeaderItem := CurItem.Parent as TJvTreeNode; // Ttreenode
       while (HeaderItem <> nil) do
@@ -322,15 +324,15 @@ var
 begin
   Dups := TStringList.create;
   s := TStringList.create;
-  s.assign(Listbox1.items);
+  s.assign(ListBox1.items);
   s.sort;
   removeduplicates(s, DupCount, Dups);
   if (DupCount > 0) then
   begin
     for n := 0 to pred(Dups.count) do
-      log('ERROR: Removed duplicate "' + Dups[n] + '"');
+      Log('ERROR: Removed duplicate "' + Dups[n] + '"');
   end;
-  with listbox1.items do
+  with ListBox1.items do
   begin
     clear;
     addstrings(s);
@@ -383,20 +385,19 @@ begin
   if (strtointdef(Code, 0) > 0) and (ARTIKEL_R > 0) then
   begin
     EnsureCache;
-    k := Gattung.FindInc('0' + Code + ' ');
-    if (k = -1) then
-      k := Gattung.FindInc(Code + ' ');
+    k := Gattung.FindInc(Code + ' ');
     if (k <> -1) then
     begin
       GATTUNG_R := integer((Gattung.objects[k] as TTreeNode).Data);
-      RID := e_r_sql('select RID from ARTIKEL_GATTUNG where ' +
-        ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND' +
-        ' (GATTUNG_R=' + inttostr(GATTUNG_R) + ')');
+      RID := e_r_sql(
+        { } 'select RID from ARTIKEL_GATTUNG where ' +
+        { } ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND' +
+        { } ' (GATTUNG_R=' + inttostr(GATTUNG_R) + ')');
       if (RID < 1) then
-        e_x_sql(
-          format(
-          'insert into ARTIKEL_GATTUNG (RID,ARTIKEL_R,GATTUNG_R) values (0,%d,%d)',
-          [ARTIKEL_R, GATTUNG_R]));
+        e_x_sql(format(
+          { } 'insert into ARTIKEL_GATTUNG (RID,ARTIKEL_R,GATTUNG_R) values (0,%d,%d)', [
+          { } ARTIKEL_R,
+          { } GATTUNG_R]));
     end;
   end;
 end;
@@ -407,27 +408,30 @@ var
   // Ttreeview
   Node: TTreeNode;
 begin
-  if (edit1.text = '') then
+  if (Edit1.text = '') then
   begin
     JvTreeView1.FullCollapse;
-  end else
+  end
+  else
   begin
     EnsureCache;
-    k := gattung.findinc(edit1.text + ' ');
+    k := Gattung.FindInc(Edit1.text + ' ');
     if (k <> -1) then
     begin
       // TTreeView
-      Node := gattung.objects[k] as TTreeNode;
+      Node := Gattung.objects[k] as TTreeNode;
       JvTreeView1.Select(Node);
       JvTreeView1.SelectItem(Node, true);
       Node.expand(false);
-    end else
+    end
+    else
     begin
-      k := gattung.findinc(edit1.text);
+      k := Gattung.FindInc(Edit1.text);
       if (k <> -1) then
       begin
-        JvTreeView1.SelectItem(gattung.objects[k] as TTreeNode, true);
-      end else
+        JvTreeView1.SelectItem(Gattung.objects[k] as TTreeNode, true);
+      end
+      else
       begin
         JvTreeView1.FullCollapse;
       end;
@@ -435,10 +439,8 @@ begin
   end;
 end;
 
-
-procedure TFormArtikelKategorie.Edit1KeyPress(Sender: TObject;
-  var Key: Char);
-  // Ttreeview
+procedure TFormArtikelKategorie.Edit1KeyPress(Sender: TObject; var Key: Char);
+// Ttreeview
 var
   Node: TTreeNode;
 begin
@@ -450,32 +452,32 @@ begin
     lAddNode(Node);
     storeDB(Node, true);
     Key := #0;
-    Listbox1.SetFocus;
-    edit1.SetFocus;
+    ListBox1.SetFocus;
+    Edit1.SetFocus;
   end;
 
   // +
-  if (Key = '+') and (pos(' ', edit1.text) > 0) then
+  if (Key = '+') and (pos(' ', Edit1.text) > 0) then
   begin
     Button1Click(Sender);
     Key := #0;
-    edit1.SetFocus;
+    Edit1.SetFocus;
   end;
 end;
 
 procedure TFormArtikelKategorie.lAddNode(Node: TTreeNode);
 begin
-  listbox1.items.add(Node.Text);
-  listbox1sort;
+  ListBox1.items.add(Node.text);
+  Listbox1Sort;
 end;
 
 procedure TFormArtikelKategorie.lDelNode(Node: TTreeNode);
 var
   k: integer;
 begin
-  k := listbox1.items.indexof(Node.Text);
+  k := ListBox1.items.indexof(Node.text);
   if (k <> -1) then
-    listbox1.items.delete(k);
+    ListBox1.items.delete(k);
 end;
 
 procedure TFormArtikelKategorie.storeDB(Node: TTreeNode; SetIt: boolean);
@@ -489,46 +491,43 @@ begin
   begin
 
     GATTUNG_R := integer(Node.Data);
-    WasSet := (e_r_sql(
-      'select count(RID) from ARTIKEL_GATTUNG where (GATTUNG_R=' +
-      inttostr(GATTUNG_R) +
-      ') and (ARTIKEL_R=' +
-      inttostr(ARTIKEL_R) +
-      ')') > 0);
+    WasSet := (e_r_sql('select count(RID) from ARTIKEL_GATTUNG where (GATTUNG_R=' + inttostr(GATTUNG_R) +
+      ') and (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')') > 0);
 
-    if (WasSet <> Setit) then
+    if (WasSet <> SetIt) then
     begin
 
       JvTreeView1.color := clyellow;
-      if Setit then
+      if SetIt then
       begin
 
         // Kategorie setzen
         cKATEGORIESETTING := DataModuleDatenbank.nQuery;
         with cKATEGORIESETTING do
         begin
-          log('+' + inttostr(integer(Node.Data)));
+          Log('+' + inttostr(integer(Node.Data)));
           sql.add('select * from ARTIKEL_GATTUNG for update');
           insert;
           FieldByName('RID').AsInteger := 0;
           FieldByName('GATTUNG_R').AsInteger := GATTUNG_R;
           FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
-          post; {w}
+          post; { w }
         end;
         cKATEGORIESETTING.free;
 
-      end else
+      end
+      else
       begin
 
         // Kategorie löschen
         dKATEGORIESETTING := DataModuleDatenbank.nDSQL;
         with dKATEGORIESETTING do
         begin
-          log('-' + inttostr(integer(Node.Data)));
-          sql.Add('delete from ARTIKEL_GATTUNG where');
+          Log('-' + inttostr(integer(Node.Data)));
+          sql.add('delete from ARTIKEL_GATTUNG where');
           sql.add('(GATTUNG_R=' + inttostr(GATTUNG_R) + ') AND');
           sql.add('(ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')');
-          execute; {w}
+          execute; { w }
         end;
         dKATEGORIESETTING.free;
 
@@ -537,8 +536,7 @@ begin
   end;
 end;
 
-procedure TFormArtikelKategorie.ListBox1KeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFormArtikelKategorie.ListBox1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   CurItem: TJvTreeNode;
   NodeText: string;
@@ -546,11 +544,11 @@ begin
   if (ListBox1.itemindex <> -1) then
     if (Key = VK_DELETE) then
     begin
-      NodeText := Listbox1.items[Listbox1.ItemIndex];
-      CurItem := JvTreeView1.Items.GetFirstNode as TJvTreeNode;
+      NodeText := ListBox1.items[ListBox1.itemindex];
+      CurItem := JvTreeView1.items.GetFirstNode as TJvTreeNode;
       while (CurItem <> nil) do
       begin
-        if (CurItem.Text = NodeText) then
+        if (CurItem.text = NodeText) then
         begin
           storeDB(CurItem, false);
           JvTreeView1.SetChecked(CurItem, false);
@@ -561,8 +559,7 @@ begin
     end;
 end;
 
-procedure TFormArtikelKategorie.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFormArtikelKategorie.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #27) then
   begin
@@ -574,23 +571,20 @@ end;
 procedure TFormArtikelKategorie.Button1Click(Sender: TObject);
 begin
   // Neuanlage
-  e_x_sql(
-    'insert into GATTUNG (RID,CODE,BEZEICHNUNG) values (' +
-    '0,' +
-    '''' + nextp(edit1.text, ' ', 0) + '''' + ',' +
-    '''' + nextp(edit1.text, ' ', 1) + ''')');
+  e_x_sql('insert into GATTUNG (RID,CODE,BEZEICHNUNG) values (' + '0,' + '''' + nextp(Edit1.text, ' ', 0) + '''' + ',' +
+    '''' + nextp(Edit1.text, ' ', 1) + ''')');
 
   InvalidateCache;
   EnsureCache;
   FillTree;
-  edit1.Text := nextp(edit1.text, ' ', 0);
+  Edit1.text := nextp(Edit1.text, ' ', 0);
 
 end;
 
 procedure TFormArtikelKategorie.InvalidateCache;
 begin
   FreeAndNil(Gattung);
-  JvTreeView1.Items.clear;
+  JvTreeView1.items.clear;
 end;
 
 procedure TFormArtikelKategorie.FillCaption;
@@ -603,15 +597,13 @@ begin
     with cARTIKEL do
     begin
       sql.add('select NUMERO, TITEL from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
-      ApiFirst;
-      caption := format('Kategorie - (%d) %s', [
-        FieldByName('NUMERO').AsInteger,
-          FieldByName('TITEL').AsString
-          ]);
+      APIFirst;
+      caption := format('Kategorie - (%d) %s', [FieldByName('NUMERO').AsInteger, FieldByName('TITEL').AsString]);
       Log(caption);
     end;
     cARTIKEL.free;
-  end else
+  end
+  else
   begin
     caption := 'Kategorie';
   end;
@@ -627,4 +619,3 @@ begin
 end;
 
 end.
-

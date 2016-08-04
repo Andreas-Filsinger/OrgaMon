@@ -243,6 +243,7 @@ var
   FreieZaehlerCol_Lager: integer;
   FreieZaehlerCol_Werk: integer;
   FreieZaehlerCol_Sparte: integer;
+  FreieZaehlerCol_Obis: integer;
 
   // Excel-Formate
   // Dinge für Protokoll-Text Feld
@@ -359,6 +360,9 @@ var
       CheckSet('Lager', FreieZaehlerCol_Lager);
     if (FreieZaehlerCol_Werk <> -1) then
       CheckSet('Werk', FreieZaehlerCol_Werk);
+    if (FreieZaehlerCol_Obis <> -1) then
+      CheckSet('Obis', FreieZaehlerCol_Obis);
+
   end;
 
   procedure PrepareFormat;
@@ -863,6 +867,7 @@ begin
   FreieZaehlerCol_Lager := -1;
   FreieZaehlerCol_Werk := -1;
   FreieZaehlerCol_Sparte := -1;
+  FreieZaehlerCol_Obis := -1;
 
   LinesL := TList.create;
   ProtokollFeldNamen := TStringList.create;
@@ -928,6 +933,8 @@ begin
             FreieZaehlerCol_Lager := colof('Lager');
             FreieZaehlerCol_Werk := colof('Werk');
             FreieZaehlerCol_Sparte := colof('Sparte');
+            FreieZaehlerCol_Obis := colof('Obis');
+
 
             // Umkonvertierungen
             for n := 1 to pred(count) do

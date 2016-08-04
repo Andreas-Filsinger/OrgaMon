@@ -632,6 +632,7 @@ begin
 
         if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
         begin
+
           FileTouch(FName, iEXIF.DateTimeOriginal);
 
           AppendStringsToFile(
@@ -640,7 +641,6 @@ begin
             { } DiagnosePath + cFotoTransaktionenFName);
           LastLogWasTimeStamp := false;
 
-          Log(cINFOText + ' ' + sFiles[n] + ': Dateizeitstempel korrigiert');
         end;
         FullSuccess := true;
 
@@ -1298,6 +1298,10 @@ begin
       if (readCell(r, col_LIEFERUNG) <> '') then
         del(r);
 
+    // Diese Detail-Liste auch ausgeben
+    //
+    SaveToFile(MyDataBasePath + 'FotoService-Upload-Ausstehend.csv');
+    SaveToHTML(pWebPath + 'ausstehende-details.html');
   end;
 
   //
@@ -1401,6 +1405,8 @@ begin
     { } ' um ' + secondstostr(StartMoment) + '</h2><br>' +
     { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
+
+    SaveToFile(MyDataBasePath + 'FotoService-Upload-Übersicht.csv');
     savetohtml(pWebPath + 'ausstehende-fotos.html');
 
   end;

@@ -726,7 +726,7 @@ begin
   with result do
   begin
     add(MyProgramPath);
-    add(cApplicationName + ' Rev. ' + RevToStr(version));
+    add(cApplicationName + ' Rev. ' + RevToStr(globals.Version));
     add(gsIdProductName + ' Rev. ' + gsIdVersion);
     add('ANFiX Rev. ' + RevToStr(VersionAnfix32));
     add(ComputerName);
