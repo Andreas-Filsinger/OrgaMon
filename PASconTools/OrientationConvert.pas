@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.247; // ../rev/Oc.rev.txt
+  Version: single = 1.248; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3021,8 +3021,8 @@ var
 
   procedure checkSpalte(var col: integer; sName: string);
   begin
-    col := header.indexof(sName);
-    if col = -1 then
+    col := AllHeader.indexof(sName);
+    if (col = -1) then
     begin
       inc(ErrorCount);
       sDiagnose.add(cERRORText + ' Spalte ' + sName + ' nicht gefunden!');
@@ -3122,6 +3122,7 @@ var
   // Parameter
   MaxSpalte: integer;
 
+  // ============================================
   // Wilken
   ZaehlwerkeEinbau: integer;
   ZaehlwerkeAusbau: integer;
@@ -3136,7 +3137,14 @@ var
   col_gtw_lagerort_alt: integer;
   col_tgws_ablesedatum: integer;
   col_tgw_obiscode: integer;
+  col_tgw_nachkomma: integer;
+  col_tgw_vorkomma: integer;
+
+  // weitere besondere Spalten die aus der EFRE Datei kommen
   col_Obis: integer;
+  col_Werk: integer;
+  col_Lager: integer;
+  // ============================================
 
   n: TXLSFile;
   Content_Wilken: TStringList;
@@ -3389,7 +3397,13 @@ begin
           checkSpalte(col_gtw_lagerort_alt, 'gtw_lagerort_alt');
           checkSpalte(col_tgws_ablesedatum, 'tgws_ablesedatum');
           checkSpalte(col_tgw_obiscode, 'tgw_obiscode');
-          checkSpalte(col_Obis,'Obis');
+          checkSpalte(col_tgw_nachkomma, 'tgw_nachkomma');
+          checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma');
+
+          // weitere notwendige Spalten
+          checkSpalte(col_Obis, 'Obis');
+          checkSpalte(col_Werk, 'Werk');
+          checkSpalte(col_Lager, 'Lager');
         end;
         if NoHeader then
           continue;
@@ -3411,6 +3425,8 @@ begin
           Content_Wilken[col_tgw_altzaehlerflag] := '0';
           Content_Wilken[col_zae_nr_neu] := '';
           Content_Wilken[col_tgw_wandlerfaktor] := '';
+          Content_Wilken[col_tgw_nachkomma] := '';
+          Content_Wilken[col_tgw_vorkomma] := '';
           case z of
             1:
               Content_Wilken[col_tgws_ablesestand] := ZaehlerStandAlt;
@@ -3436,7 +3452,10 @@ begin
           Content_Wilken[col_tgws_ablesedatum] :=
             long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
 
-          Content_Wilken[col_tgw_obiscode] := Content_Wilken[col_Obis];
+          Content_Wilken[col_tgw_obiscode] := getCell(r, succ(col_Obis));
+          Content_Wilken[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
+          Content_Wilken[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
+
           case z of
             1:
               Content_Wilken[col_tgws_ablesestand] := ZaehlerStandNeu;
@@ -4054,8 +4073,8 @@ procedure KK20toCSV(InFName: string; sBericht: TStringList = nil);
       'kk20_resv1;kk20_resv2;kk20_resv3;kk20_resv4;kk20_resv5;' + 'v_telnr;v_house_num2;house_num2;' +
       'exvko;kk20_resv6;' + 'rolle_partner;anrede;kk20_resv7;kk20_resv8;zaehlwerk;' +
     { KK21 }
-      'ckk21;kk20_bukrs;ablbelnr;pruefzahl;zwart;register;zwtyp;stanzvor;stanznac;zwfakt;zwkenn;abrfakt;thgber;l_adat;' +
-      'l_zstand;l_ablesgr;l_ablhinw;aemme;aemmen;aempc;scode;erwzstd_min;erwzstd_max;kennziff;anzart;' +
+      'ckk21;kk20_bukrs;ablbelnr;pruefzahl;zwart;register;zwtyp;stanzvor;stanznac;zwfakt;zwkenn;abrfakt;thgber;l_adat;'
+      + 'l_zstand;l_ablesgr;l_ablhinw;aemme;aemmen;aempc;scode;erwzstd_min;erwzstd_max;kennziff;anzart;' +
       'bliwirk;massread;kk21_resv1;kk21_resv2;kk21_resv3;kk21_resv4';
   end;
 
@@ -4070,7 +4089,7 @@ begin
   sOut := TStringList.create;
   sImport.loadFromFile(InFName);
   MainLine := '';
-      z := -1;
+  z := -1;
   sOut.add(header);
   for n := 0 to pred(sImport.count) do
   begin
@@ -4079,11 +4098,12 @@ begin
     begin
       z := 1;
       MainLine := sImport[n];
-    end else
+    end
+    else
     begin
       // letzte Feld ist immer leer deshalb kein weiteres
       // Semicolon notwendig
-      sOut.add(MainLine + IntTOStr(z) + ';' + sImport[n]);
+      sOut.add(MainLine + inttostr(z) + ';' + sImport[n]);
       inc(z);
     end;
   end;
@@ -4219,7 +4239,8 @@ var
     function Format_herkunft(s: string): string;
     begin
       if (s = '00:00:00') or ZZ then
-        result := '02' // Kundenablesung
+        result := '02'
+        // Kundenablesung
       else
         result := '01'; // Ableser
     end;
@@ -6835,7 +6856,7 @@ var
 
   procedure parse(State: integer);
   var
-    werk: string;
+    Werk: string;
   begin
     case State of
       0:
@@ -6879,11 +6900,11 @@ var
         begin
           while (oneLine <> '') do
           begin
-            werk := nextp(oneLine, ' - ');
-            aWerk := nextp(werk, '/');
-            werk := cutblank(werk);
-            if (werk <> '') then
-              aKomponist := werk
+            Werk := nextp(oneLine, ' - ');
+            aWerk := nextp(Werk, '/');
+            Werk := cutblank(Werk);
+            if (Werk <> '') then
+              aKomponist := Werk
             else
               aKomponist := aHauptDarsteller;
 

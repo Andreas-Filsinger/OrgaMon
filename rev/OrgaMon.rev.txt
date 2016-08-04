@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.213 (04.08.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.248" neu compiliert!
+
+Rev 8.212 (04.08.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: vorzeitiger Abbruch wenn gar nichts mehr da ist zum melden
+ Neu: Auftrag: Ergebnis: EFRE: richtige Fehlermeldung wenn Sparte mit einbezogen wird
+
 Rev 8.211 (04.08.16) Andreas Filsinger
 
  Neu: Auftrag: Ergebnis: EFRE: Neue optionale Spalte "Obis"

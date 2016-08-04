@@ -935,7 +935,6 @@ begin
             FreieZaehlerCol_Sparte := colof('Sparte');
             FreieZaehlerCol_Obis := colof('Obis');
 
-
             // Umkonvertierungen
             for n := 1 to pred(count) do
             begin
@@ -1159,7 +1158,7 @@ begin
               else
               begin
 
-                // Kombination "SerialNummer" & "MaterialNummer" versuchen!
+                // erst Kombination "SerialNummer" & "MaterialNummer" versuchen!
                 for k := 0 to pred(EFRE.count) do
                   if FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt then
                   begin
@@ -1191,16 +1190,32 @@ begin
               inc(Stat_nichtEFRE);
 
               // Fehler Berichten
-              Stat_FehlendeResourcen.add(
-                { } EFRE_ZAEHLER_NR_NEU + ';' +
-                { } material_nummer_alt + ';' +
-                { } Settings.values[cE_TAN] + ';' +
-                { } inttostr(AUFTRAG_R) + ';' +
-                { } ZAEHLER_NR_NEU);
 
-              //
-              Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource Zählernummer "' + EFRE_ZAEHLER_NR_NEU +
-                '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN]);
+              // Sparte relevant JA/NEIN
+              if (FreieZaehlerCol_Sparte <> -1) then
+              begin
+                Stat_FehlendeResourcen.add(
+                  { } Sparte + ';' +
+                  { } EFRE_ZAEHLER_NR_NEU + ';' +
+                  { } material_nummer_alt + ';' +
+                  { } Settings.values[cE_TAN] + ';' +
+                  { } inttostr(AUFTRAG_R) + ';' +
+                  { } ZAEHLER_NR_NEU);
+                Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource Sparte+Zählernummer "' + Sparte +
+                  '"+"' + EFRE_ZAEHLER_NR_NEU + '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN])
+              end
+              else
+              begin
+                Stat_FehlendeResourcen.add(
+                  { } '*' + ';' +
+                  { } EFRE_ZAEHLER_NR_NEU + ';' +
+                  { } material_nummer_alt + ';' +
+                  { } Settings.values[cE_TAN] + ';' +
+                  { } inttostr(AUFTRAG_R) + ';' +
+                  { } ZAEHLER_NR_NEU);
+                Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource Zählernummer "' + EFRE_ZAEHLER_NR_NEU
+                  + '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
 
               //
               if (FailL.indexof(AUFTRAG_R) = -1) then
@@ -1739,6 +1754,8 @@ begin
       { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
       { } noblank(Settings.values[cE_Postfix]) + '.xls';
 
+
+
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
       save(OutFName);
@@ -1746,6 +1763,10 @@ begin
         Files.add(OutFName);
 
       repeat
+
+        // Wenn es gar nix mehr zu melden gibt? Ist hier Ende
+        if (RIDs.Count<=FailL.Count) then
+         break;
 
         // Oc noch rufen, um wieder eine csv draus zu machen?
         if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) and (Settings.values[cE_AuchAlsXLS] <> cINI_Activate) then
@@ -2802,7 +2823,7 @@ begin
   Stat_meldungen := 0;
   Stat_nichtEFRE := 0;
   Stat_Attachments.clear;
-  Stat_FehlendeResourcen.add('ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
+  Stat_FehlendeResourcen.add('Sparte;ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
 end;
 
 procedure TFormAuftragErgebnis.ComboBox1DropDown(Sender: TObject);
