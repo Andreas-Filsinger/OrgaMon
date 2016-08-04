@@ -15,6 +15,14 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.247 (04.08.16) Andreas Filsinger
+
+ Neu: xls2csv: Wilken=JA: Feld "Obis" wird ausgewertet
+
+Rev 1.246 (01.08.16) Andreas Filsinger
+
+ Neu: txt2csv: neuer Modus KK20, zur Konvertierung der Auftragsdatei
+
 Rev 1.245 (08.07.16) Andreas Filsinger
 
  Wegfall: RWE 1.0

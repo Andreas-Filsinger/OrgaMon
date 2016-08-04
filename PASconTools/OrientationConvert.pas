@@ -32,13 +32,13 @@ uses
   Classes;
 
 const
-  Version: single = 1.245; // ../rev/Oc.rev.txt
+  Version: single = 1.247; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
   Content_Mode_xls2csv = 4; // xls+Fixed-Formats.ini -> csv
-  Content_Mode_unused = 5; // - Modus noch frei -
-  Content_Mode_KK22 = 6;
+  Content_Mode_KK20 = 5; // txt -> csv
+  Content_Mode_KK22 = 6; // xls -> txt
   Content_Mode_csv = 7;
   Content_Mode_txt = 8;
   Content_Mode_xml2csv = 9; // .xml + Mapping.txt -> .csv
@@ -3135,6 +3135,8 @@ var
   col_tgws_ableseinfo: integer;
   col_gtw_lagerort_alt: integer;
   col_tgws_ablesedatum: integer;
+  col_tgw_obiscode: integer;
+  col_Obis: integer;
 
   n: TXLSFile;
   Content_Wilken: TStringList;
@@ -3386,6 +3388,8 @@ begin
           checkSpalte(col_tgws_ableseinfo, 'tgws_ableseinfo');
           checkSpalte(col_gtw_lagerort_alt, 'gtw_lagerort_alt');
           checkSpalte(col_tgws_ablesedatum, 'tgws_ablesedatum');
+          checkSpalte(col_tgw_obiscode, 'tgw_obiscode');
+          checkSpalte(col_Obis,'Obis');
         end;
         if NoHeader then
           continue;
@@ -3431,6 +3435,8 @@ begin
           Content_Wilken[col_gtw_lagerort_alt] := '';
           Content_Wilken[col_tgws_ablesedatum] :=
             long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
+
+          Content_Wilken[col_tgw_obiscode] := Content_Wilken[col_Obis];
           case z of
             1:
               Content_Wilken[col_tgws_ablesestand] := ZaehlerStandNeu;
@@ -4032,6 +4038,60 @@ begin
   pAuftrag.Free;
 end;
 
+procedure KK20toCSV(InFName: string; sBericht: TStringList = nil);
+
+  function header: string;
+  begin
+    result :=
+    { KK20 }
+      'ckk20;bukrs;meterreadingunit;vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
+      'vbez;portion;abwann;street;hausnum;plz;city;vorname;nachname;' +
+      'text;tariftyp;sparte;text30;tplnr;gp_pstlz;gp_ort01;gp_stras;' +
+      'gp_haus_num;gp_haus_alph;swerk;st_ktext;stortzus;hinweis;istablart;' +
+      'gasdru;gastem;brwgeb;tempgeb;drugeb;kombinat;matnr;herst_kz;ansjj;baujj;' +
+      'bgljahr;einbdat;sernr;equnr;herst;besitz;lager;gangfolge;mrreason;ausdat;' +
+      'austim;usid;targetmrdate;meterreader;maktx;preiskla;zwgruppe;kzwechsel;ext_ui;' +
+      'kk20_resv1;kk20_resv2;kk20_resv3;kk20_resv4;kk20_resv5;' + 'v_telnr;v_house_num2;house_num2;' +
+      'exvko;kk20_resv6;' + 'rolle_partner;anrede;kk20_resv7;kk20_resv8;zaehlwerk;' +
+    { KK21 }
+      'ckk21;kk20_bukrs;ablbelnr;pruefzahl;zwart;register;zwtyp;stanzvor;stanznac;zwfakt;zwkenn;abrfakt;thgber;l_adat;' +
+      'l_zstand;l_ablesgr;l_ablhinw;aemme;aemmen;aempc;scode;erwzstd_min;erwzstd_max;kennziff;anzart;' +
+      'bliwirk;massread;kk21_resv1;kk21_resv2;kk21_resv3;kk21_resv4';
+  end;
+
+var
+  sImport: TStringList;
+  sOut: TStringList;
+  n, z: integer;
+  MainLine, FormatTag: string;
+begin
+  conversionOutFName := InFName + '.csv';
+  sImport := TStringList.create;
+  sOut := TStringList.create;
+  sImport.loadFromFile(InFName);
+  MainLine := '';
+      z := -1;
+  sOut.add(header);
+  for n := 0 to pred(sImport.count) do
+  begin
+    FormatTag := nextp(sImport[n], ';', 0);
+    if (FormatTag = 'KK20') then
+    begin
+      z := 1;
+      MainLine := sImport[n];
+    end else
+    begin
+      // letzte Feld ist immer leer deshalb kein weiteres
+      // Semicolon notwendig
+      sOut.add(MainLine + IntTOStr(z) + ';' + sImport[n]);
+      inc(z);
+    end;
+  end;
+  sOut.SaveToFile(conversionOutFName);
+  sOut.Free;
+  sImport.Free;
+end;
+
 procedure doKK22(InFName: string; sBericht: TStringList = nil);
 const
   c_KK20_Sparte = 21;
@@ -4169,18 +4229,6 @@ var
       result := s;
       while (pos('0', result) = 1) do
         delete(result, 1, 1);
-    end;
-
-    function KK20_Header: string;
-    begin
-      result := 'frmnam;bukrs;meterreadingunit;' + 'vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
-        'vbez;portion;abwann;street;hausnum;plz;city;vorname;nachname;' +
-        'text;tariftyp;sparte;text30;tplnr;gp_pstlz;gp_ort;gp_stras;' +
-        'gp_haus_num;gp_haus_alph;swerk;st_ktext;stortzus;hinweis;istablart;' +
-        'gasdru;gastem;brwgeb;tempgeb;drugeb;kombinat;matnr;' +
-        'herst_kz;ansjj;baujj;bgljahr;einbdat;sernr;equnr;herst;' +
-        'besitz;lager;gangfolge;mrreason;ausdat;austim;usid;targetmrdate;' +
-        'meterreader;maktx;preiskla;zwgruppe;kzwechsel;ext_ui;resv1;resv2;resv3;' + 'resv4;resv5';
     end;
 
     procedure AppendSource(FName: string);
@@ -6881,8 +6929,10 @@ function CheckContent(InFName: string): integer;
 // Export Sachen
 var
   xImport: TXLSFile;
+  sImport: TStringList;
   c: integer;
   xmlFiles: TStringList;
+  FExtension: string;
 begin
   result := -1;
   if FileExists(InFName) then
@@ -6890,6 +6940,20 @@ begin
 
     // Arbeitspfad öffnen
     WorkPath := ValidatePathName(ExtractFilePath(InFName)) + '\';
+    FExtension := ExtractFileExt(InFName);
+
+    if (LowerCase(FExtension) = '.txt') then
+    begin
+      sImport := TStringList.create;
+      sImport.loadFromFile(InFName);
+      if (sImport.count > 0) then
+        if (pos('KK20', sImport[0]) = 1) then
+          result := Content_Mode_KK20
+        else
+          result := Content_Mode_txt;
+      sImport.Free;
+      exit;
+    end;
 
     // Vorlage.xls Modus?
     if FileExists(WorkPath + c_XLS_VorlageFName) then
@@ -8748,6 +8812,11 @@ begin
         begin
           sDiagnose.add('Modus: csv');
           csvTOcsv(InFName);
+        end;
+      Content_Mode_KK20:
+        begin
+          sDiagnose.add('Modus: KK20');
+          KK20toCSV(InFName);
         end;
       Content_Mode_txt:
         begin

@@ -19,6 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.211 (04.08.16) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: EFRE: Neue optionale Spalte "Obis"
+ Neu: Oc: xls2csv: Wilken: Spalte Obis muss vorhanden sein
+
+Rev 8.210 (29.07.16) Andreas Filsinger
+
+ Neu: Service: Foto: Statistik über das Foto-Senden: Detail-Datei wird nun auch als html ausgegeben.
+ Neu: Service: Foto: Statistik: Neue Tabelle 'FotoService-Upload-Ausstehend.csv'
+ Neu: Service: Foto: Statistik: Neue Tabelle 'FotoService-Upload-Übersicht.csv'
+
+Rev 8.209 (29.07.16) Andreas Filsinger
+
+ Wegfall: Artikel: Import: KATEGORIE: es wird nicht mehr eine führende Null an den Suchstring angehängt
+
 Rev 8.208 (28.07.16) Andreas Filsinger
 
  Neu: Service: Foto: Pause/ Play Möglichkeit
