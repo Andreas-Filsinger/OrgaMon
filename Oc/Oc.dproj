@@ -92,7 +92,7 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
 			<DCC_ExeOutput>$(ProgramFiles)\Oc\</DCC_ExeOutput>
-			<Debugger_RunParams>&quot;V:\Kundendaten\sewa\Aufträge\Haßloch(KK22)\TW Wasser 2015.txt&quot; --txt</Debugger_RunParams>
+			<Debugger_RunParams>&quot;V:\Kundendaten\sewa2\Wilken\stadtwerke-pinneberg\PINN_Zaehlerdaten_0001.xls&quot; --xls</Debugger_RunParams>
 			<DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 		</PropertyGroup>
