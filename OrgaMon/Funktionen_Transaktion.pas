@@ -78,10 +78,11 @@ procedure doHAC(lRID: TgpIntegerList);
 
 // (c) Andreas Filsinger
 
+// FA= im Protokoll einfach setzen auf <ZaehlerNummerAlt>.jpg
 procedure doFI1(lRID: TgpIntegerList);
 
+// cOrgaMon Id "App": Log Dateien auswerten und "Calls" in die Artikel eintragen
 procedure doFI2(lRID: TgpIntegerList);
-
 
 // (c) Sengül Aynaci 2012
 

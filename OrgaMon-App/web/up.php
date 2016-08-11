@@ -6,11 +6,10 @@ include("t_errorlist.inc.php5");
 include("t_xmlrpc.inc.php5");
 
 // Projekt Konstanten
-
-define("XMLRPCHost","localhost"); 
-define("XMLRPCPath","");
+define("XMLRPCHost","raib23");
+#define("XMLRPCHost","KHAO");
 define("XMLRPCPort",3049);
-define("UpLoadPath","./JonDaServer");
+define("XMLRPCPath","");
 
 // Elaubte Aufruf-Parameter
 $_GLOBALS = array("id","tan","proceed","data","info","m");
@@ -50,19 +49,24 @@ function proceed_tan($tan)
 do {
 
 // ID übergeben und neue TAN zurückliefern
-// iGeraeteNo; iTAN ; VERSION ; iOptionen ; getTimestamp
-if (isset($id))
-{ if ($id != "") 
-  { if (base_plug() == true)
-    { $tan = get_new_tan($id);
-      if ($tan != "00000") { $output = $tan; }
-	  else $output = "Geräte-ID ist ungültig.";
-    }
-    else { $output = "XMLRPC-Server nicht verfuegbar.";
-	       header("HTTP/1.1 500 Service Unavailable");
-	     }
+// iGeraeteNo; iTAN ; VERSION ; iOptionen ; getTimestamp ; IMEI
+if (isset($id)) { 
+  if ($id != "") { 
+    if (base_plug() == true) { 
+	  $tan = get_new_tan($id);
+      if ($tan != "00000") { 
+	    $output = $tan; 
+      }	else {
+	    $output = "Geräte-ID ist ungültig.";
+	  }	
+    } else { 
+	  $output = "XMLRPC-Server nicht verfuegbar.";
+	  header("HTTP/1.1 500 Service Unavailable");
+	}
   } 
-  else $output = "Es wurde keine ID übergeben."; 
+  else {
+    $output = "Es wurde keine ID übergeben."; 
+  }
   break;
 }
 //*************
@@ -79,7 +83,7 @@ if (isset($tan) AND isset($data))
   { 
     $filename = $tan . ".txt";
 
-    $fp = fopen(UpLoadPath . "/" . $tan . "/" . $filename, "a");
+    $fp = fopen($filename, "a");
 	if ($fp) 
 	{
       if (flock($fp,LOCK_EX)) 
@@ -124,7 +128,7 @@ if (isset($m) AND isset($data))
 { if (($m != "") AND ($data != "")) 
   { 
 	  // NNN.txt, Gerätedatei
-    $filename = UpLoadPath . "/Meldung/" . $m . ".txt";
+    $filename = "m-" . $m . ".txt";
     $fp = fopen($filename, "a");
     flock($fp,LOCK_EX);
     fputs($fp,$data . ";" . date("d.m.Y - H:i:s")  . chr(0x0D) . chr(0x0A));
@@ -132,7 +136,7 @@ if (isset($m) AND isset($data))
     fclose($fp);
     
     // 000.txt, Sicherheitskopie aller Meldungen
-	$filename = UpLoadPath . "/Meldung/000.txt";
+    $filename = "m-000.txt";
     $fp = fopen($filename, "a");
     flock($fp,LOCK_EX);
     fputs($fp,$data . ";" . date("d.m.Y - H:i:s")  . ";" . $m . chr(0x0D) . chr(0x0A));

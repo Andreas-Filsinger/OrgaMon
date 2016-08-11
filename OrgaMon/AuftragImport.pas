@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -126,8 +126,7 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure ListBox2KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure ListBox2KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -214,8 +213,7 @@ begin
   Auftrag := DataModuleDatenbank.nQuery;
   with Auftrag do
   begin
-    sql.add('SELECT RID FROM AUFTRAG WHERE RID_AT_IMPORT=' +
-      inttostr(RID_AT_IMPORT));
+    sql.add('SELECT RID FROM AUFTRAG WHERE RID_AT_IMPORT=' + inttostr(RID_AT_IMPORT));
     open;
     first;
     while not(eof) do
@@ -232,8 +230,7 @@ begin
 
   EndHourGlass;
   Edit2.Text := '';
-  ShowMessage('Es wurden ' + inttostr(DeleteCount) +
-    ' Datensätze gelöscht (incl. Historische)');
+  ShowMessage('Es wurden ' + inttostr(DeleteCount) + ' Datensätze gelöscht (incl. Historische)');
 end;
 
 procedure TFormAuftragImport.FormCreate(Sender: TObject);
@@ -307,8 +304,7 @@ begin
     // Aus Excel konvertieren?!
     sExcelFileName := copy(sFileName, 1, pred(k));
     k := revpos('.', sExcelFileName);
-    if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt))
-      = AnsiUpperCase(cExcelExtension)) then
+    if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cExcelExtension)) then
       if FileExists(sExcelFileName) then
         if (FileAge(sFileName) < FileAge(sExcelFileName)) then
         begin
@@ -341,8 +337,7 @@ begin
       while (OneLine <> '') do
       begin
         inc(SpalteNo);
-        ListBox3.items.add(inttostrN(SpalteNo, 2) + ':' + nextp(OneLine,
-          QuellDelimiter));
+        ListBox3.items.add(inttostrN(SpalteNo, 2) + ':' + nextp(OneLine, QuellDelimiter));
       end;
       SpalteNo := CharCount(QuellDelimiter, ImportFile[0]);
 
@@ -356,14 +351,12 @@ begin
       ListBox4.items.clear;
 
       //
-      Label14.Caption := '(' + inttostr(ImportFile.count - QuellHeaderLines) +
-        ' Datensätze / ' + inttostr(SpalteNo) + '(' + inttostr(SpalteNo2) +
-        ') Spalten)';
+      Label14.Caption := '(' + inttostr(ImportFile.count - QuellHeaderLines) + ' Datensätze / ' + inttostr(SpalteNo) +
+        '(' + inttostr(SpalteNo2) + ') Spalten)';
     end
     else
     begin
-      ShowMessage('Eine andere Anwendung sperrt diese Datei (Excel?!)!' + #13 +
-        'Oder die Datei ist leer!');
+      ShowMessage('Eine andere Anwendung sperrt diese Datei (Excel?!)!' + #13 + 'Oder die Datei ist leer!');
     end;
   end;
 end;
@@ -499,7 +492,7 @@ begin
   CheckBox1.checked := true;
   Edit3.Text := '';
   CheckBox5.checked := false;
-  CheckBox11.Checked := false;
+  CheckBox11.checked := false;
   CheckBox13.checked := false;
   CheckBox14.checked := false;
 
@@ -534,14 +527,12 @@ begin
   InData.free;
 end;
 
-procedure TFormAuftragImport.ListBox2KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormAuftragImport.ListBox2KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   case Key of
     VK_DELETE:
       if ListBox2.itemIndex <> -1 then
-        if doit('Zuordnung ' + ListBox2.items[ListBox2.itemIndex] + ' löschen')
-        then
+        if doit('Zuordnung ' + ListBox2.items[ListBox2.itemIndex] + ' löschen') then
         begin
           ListBox2.items.delete(ListBox2.itemIndex);
           SchemaChanged := true;
@@ -566,8 +557,7 @@ begin
     if not(AlreadyThere) then
     begin
       SchemaChanged := true;
-      ListBox2.items.add(NewLine + '(' + Fill(',',
-        max(0, pred(CharCount('#', NewLine)))) + ')');
+      ListBox2.items.add(NewLine + '(' + Fill(',', max(0, pred(CharCount('#', NewLine)))) + ')');
       ListBox2.itemIndex := pred(ListBox2.items.count);
     end
     else
@@ -580,8 +570,7 @@ begin
   if (ListBox2.itemIndex <> -1) then
     if (ListBox3.itemIndex <> -1) and (ComboBox3.Visible) then
     begin
-      ComboBox3.Text := copy(ListBox3.items[ListBox3.itemIndex], 1,
-        pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
+      ComboBox3.Text := copy(ListBox3.items[ListBox3.itemIndex], 1, pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
       ReadParameter;
     end;
 end;
@@ -591,8 +580,7 @@ begin
   if (ListBox2.itemIndex <> -1) then
     if (ListBox3.itemIndex <> -1) and (ComboBox4.Visible) then
     begin
-      ComboBox4.Text := copy(ListBox3.items[ListBox3.itemIndex], 1,
-        pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
+      ComboBox4.Text := copy(ListBox3.items[ListBox3.itemIndex], 1, pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
 
       ReadParameter;
     end;
@@ -603,8 +591,7 @@ begin
   if (ListBox2.itemIndex <> -1) then
     if (ListBox3.itemIndex <> -1) and (ComboBox5.Visible) then
     begin
-      ComboBox5.Text := copy(ListBox3.items[ListBox3.itemIndex], 1,
-        pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
+      ComboBox5.Text := copy(ListBox3.items[ListBox3.itemIndex], 1, pred(pos(':', ListBox3.items[ListBox3.itemIndex])));
 
       ReadParameter;
     end;
@@ -894,8 +881,7 @@ var
     result := 0;
     i := strtointdef(s, 0);
     if (i > date2long(cOrgaMonBirthDay)) then
-      result := date2long(copy(s, 7, 2) + '.' + copy(s, 5, 2) + '.' +
-        copy(s, 1, 4))
+      result := date2long(copy(s, 7, 2) + '.' + copy(s, 5, 2) + '.' + copy(s, 1, 4))
   end;
 
   procedure readMinMax(Zaehlwerk: integer; sMin, sMax, sAlt: string);
@@ -913,12 +899,9 @@ var
     dAlt := MinMaxToDouble(sAlt);
     if (dMin >= 0) and (dMax >= dMin) then
     begin
-      _ZaehlerMehrInfo.add('v' + inttostr(Zaehlwerk) + '=' +
-        format('%.2f', [dMin]));
-      _ZaehlerMehrInfo.add('b' + inttostr(Zaehlwerk) + '=' +
-        format('%.2f', [dMax]));
-      _ZaehlerMehrInfo.add('a' + inttostr(Zaehlwerk) + '=' +
-        format('%.2f', [dAlt]));
+      _ZaehlerMehrInfo.add('v' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dMin]));
+      _ZaehlerMehrInfo.add('b' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dMax]));
+      _ZaehlerMehrInfo.add('a' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dAlt]));
     end;
   end;
 
@@ -937,8 +920,7 @@ begin
   begin
     ParamByName('CROSSREF').AsInteger := BAUSTELLE_R;
     open;
-    Baustelle_StellenAnzZaehlerNummer := FieldByName('ZAEHLER_NR_STELLEN')
-      .AsInteger;
+    Baustelle_StellenAnzZaehlerNummer := FieldByName('ZAEHLER_NR_STELLEN').AsInteger;
     Baustelle_Ortsteilcodes := (FieldByName('ORTE_AKTIV').AsString = 'Y');
     close;
   end;
@@ -1017,10 +999,8 @@ begin
 
       if pos('Plausibilität_Min_Max_#_#_#' + '(', ListBox2.items[n]) = 1 then
       begin
-        VorberechnetePlausibilitaetVon_FieldIndex :=
-          pred(strtol(nextp(InpStr, ',')));
-        VorberechnetePlausibilitaetBis_FieldIndex :=
-          pred(strtol(nextp(InpStr, ',')));
+        VorberechnetePlausibilitaetVon_FieldIndex := pred(strtol(nextp(InpStr, ',')));
+        VorberechnetePlausibilitaetBis_FieldIndex := pred(strtol(nextp(InpStr, ',')));
         LetzterAblesestand_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
@@ -1069,19 +1049,15 @@ begin
             break;
 
         // hinzunehmen
-        _ZaehlerNummer := FormatZaehlerNummer(FieldByName('ZAEHLER_NUMMER')
-          .AsString);
+        _ZaehlerNummer := FormatZaehlerNummer(FieldByName('ZAEHLER_NUMMER').AsString);
 
         if CheckBox5.checked then
-          _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' +
-            _ZaehlerNummer;
+          _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' + _ZaehlerNummer;
 
         if CheckBox11.checked then
-          _ZaehlerNummer := FieldByName('MATERIAL_NUMMER').AsString + '~' +
-            _ZaehlerNummer;
+          _ZaehlerNummer := FieldByName('MATERIAL_NUMMER').AsString + '~' + _ZaehlerNummer;
 
-        ZaehlerNummernImBestand.addobject(_ZaehlerNummer,
-          TObject(FieldByName('RID').AsInteger));
+        ZaehlerNummernImBestand.addobject(_ZaehlerNummer, TObject(FieldByName('RID').AsInteger));
 
       until true;
 
@@ -1095,10 +1071,8 @@ begin
 
   if (DeleteCount > 0) then
   begin
-    if not(doit('Info: Die angegebene Baustelle hat schon' + #13 +
-      'ohne diesen Import doppelte Zählernummern!' + #13 +
-      'Mit dem Schalter 33/33 können Sie die doppelten' + #13 +
-      'anzeigen. Wollen Sie dennoch importieren')) then
+    if not(doit('Info: Die angegebene Baustelle hat schon' + #13 + 'ohne diesen Import doppelte Zählernummern!' + #13 +
+      'Mit dem Schalter 33/33 können Sie die doppelten' + #13 + 'anzeigen. Wollen Sie dennoch importieren')) then
     begin
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
@@ -1140,17 +1114,15 @@ begin
 
           // keine gültige Zeile -> löschen
           _zaehler_nummer := sSpaltenWert(ZaehlerNummer_FieldIndex);
-          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) +
-            FormatZaehlerNummerAsOneWord(_zaehler_nummer), TObject(m));
+          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) + FormatZaehlerNummerAsOneWord(_zaehler_nummer), TObject(m));
 
         end
         else
         begin
 
           //
-          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) +
-            FormatZaehlerNummerAsOneWord(sSpaltenWert(ZaehlerNummer_FieldIndex)),
-            TObject(m));
+          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) + FormatZaehlerNummerAsOneWord
+            (sSpaltenWert(ZaehlerNummer_FieldIndex)), TObject(m));
         end;
       until true;
       FreeAndNil(SpaltenWerte_Primaer);
@@ -1169,9 +1141,7 @@ begin
           if (_Art = '') then
             break;
 
-        ZaehlerNummernInCSV.addobject
-          (FormatZaehlerNummerAsOneWord(sSpaltenWert(ZaehlerNummer_FieldIndex)),
-          TObject(m));
+        ZaehlerNummernInCSV.addobject(FormatZaehlerNummerAsOneWord(sSpaltenWert(ZaehlerNummer_FieldIndex)), TObject(m));
       until true;
       FreeAndNil(SpaltenWerte_Primaer);
     end;
@@ -1191,12 +1161,9 @@ begin
 
   if (ZaehlerNummerAbgeschnittenCount > 0) then
   begin
-    if doit('Die Baustelle hat keinen Eintrag ' + #13 +
-      'in "Anzahl der Stellen Zählernummer".' + #13 +
-      'Es mussten daher sehr lange Zählernummern' + #13 +
-      '(>15 Zeichen) abgeschnitten werden.' + #13 +
-      'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
-      'Zurück') then
+    if doit('Die Baustelle hat keinen Eintrag ' + #13 + 'in "Anzahl der Stellen Zählernummer".' + #13 +
+      'Es mussten daher sehr lange Zählernummern' + #13 + '(>15 Zeichen) abgeschnitten werden.' + #13 +
+      'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 + 'Zurück') then
     begin
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
@@ -1206,10 +1173,9 @@ begin
 
   if (DeleteCount > 0) then
   begin
-    if doit('Es gibt ' + inttostr(DeleteCount) +
-      ' doppelte Zählernummern in der csv!' + #13 + inttostr(AllCount) +
-      ' Nummern insgesamt!' + #13 + 'Drücken Sie jetzt <OK> für eine Diagnose!'
-      + #13 + ' Sie erhalten eine Aufstellung der Doppelten und sollten' + #13 +
+    if doit('Es gibt ' + inttostr(DeleteCount) + ' doppelte Zählernummern in der csv!' + #13 + inttostr(AllCount) +
+      ' Nummern insgesamt!' + #13 + 'Drücken Sie jetzt <OK> für eine Diagnose!' + #13 +
+      ' Sie erhalten eine Aufstellung der Doppelten und sollten' + #13 +
       ' im Anschluss die "falschen" doppelten entfernen!' + #13 +
       'Drücken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
       ' Doppelte Nummern werden dabei nicht importiert!' + #13) then
@@ -1229,16 +1195,14 @@ begin
 
     if (OrtsTeil_FieldIndex > -1) then
       for m := QuellHeaderLines to pred(ImportFile.count) do
-        OrtsteileDerQuelle.add(cutblank(nextp(ImportFile[m], QuellDelimiter,
-          OrtsTeil_FieldIndex)));
+        OrtsteileDerQuelle.add(cutblank(nextp(ImportFile[m], QuellDelimiter, OrtsTeil_FieldIndex)));
     // NIX NIX ^
     OrtsteileDerQuelle.Sort;
     RemoveDuplicates(OrtsteileDerQuelle);
 
     for m := pred(OrtsteileDerQuelle.count) downto 0 do
     begin
-      if (e_r_OrtsteilCode(BAUSTELLE_R, OrtsteileDerQuelle[m]) <> '??') or
-        (OrtsteileDerQuelle[m] = '') then
+      if (e_r_OrtsteilCode(BAUSTELLE_R, OrtsteileDerQuelle[m]) <> '??') or (OrtsteileDerQuelle[m] = '') then
         OrtsteileDerQuelle.delete(m);
     end;
 
@@ -1247,18 +1211,12 @@ begin
       for m := 0 to pred(OrtsteileDerQuelle.count) do
         OrtsteileDerQuelle[m] := OrtsteileDerQuelle[m] + '=';
       OrtsteileDerQuelle.Insert(0, '// ');
-      OrtsteileDerQuelle.Insert(1,
-        '// Unten sind neue Ortsteile angegeben, die in der Baustelle noch');
-      OrtsteileDerQuelle.Insert(2,
-        '// nicht eingetragen sind. Kopieren Sie die Zeilen in die ');
-      OrtsteileDerQuelle.Insert(3,
-        '// Zwischenablage. Wählen Sie Baustelle->richtige Baustelle');
-      OrtsteileDerQuelle.Insert(4,
-        '// auswählen->Verabeiten. Fügen Sie die neuen Orsteile aus');
-      OrtsteileDerQuelle.Insert(5,
-        '// der Zwischenablage ein. Versehen Sie die Ortsteile mit');
-      OrtsteileDerQuelle.Insert(6,
-        '// einem Code. Versuchen Sie den Import danach nochmals.');
+      OrtsteileDerQuelle.Insert(1, '// Unten sind neue Ortsteile angegeben, die in der Baustelle noch');
+      OrtsteileDerQuelle.Insert(2, '// nicht eingetragen sind. Kopieren Sie die Zeilen in die ');
+      OrtsteileDerQuelle.Insert(3, '// Zwischenablage. Wählen Sie Baustelle->richtige Baustelle');
+      OrtsteileDerQuelle.Insert(4, '// auswählen->Verabeiten. Fügen Sie die neuen Orsteile aus');
+      OrtsteileDerQuelle.Insert(5, '// der Zwischenablage ein. Versehen Sie die Ortsteile mit');
+      OrtsteileDerQuelle.Insert(6, '// einem Code. Versuchen Sie den Import danach nochmals.');
       OrtsteileDerQuelle.Insert(7, '// ');
       OrtsteileDerQuelle.SaveToFile(DiagnosePath + 'NeueOrtsteile.txt');
       ShowMessage('Es gibt Ortsteile, die noch nicht eingetragen sind!');
@@ -1274,8 +1232,7 @@ begin
   InfoFile := TStringList.create;
   StrassenListeMitPlanquadrat := TSearchStringList.create;
 
-  InfoFile.add('Benutzer ' + FormBearbeiter.sBearbeiterKurz + ' mit Rev. ' +
-    RevToStr(globals.Version));
+  InfoFile.add('Benutzer ' + FormBearbeiter.sBearbeiterKurz + ' mit Rev. ' + RevToStr(globals.Version));
   InfoFile.add('Datum ' + datum);
   InfoFile.add('Uhr ' + uhr);
   InfoFile.add('Baustelle ' + inttostr(BAUSTELLE_R) + '=' + ComboBox6.Text);
@@ -1319,8 +1276,7 @@ begin
     ABNummer := e_r_AuftragNummer(BAUSTELLE_R) + 1;
 
     CheckCreateDir(ImportePath + inttostr(RID_AT_IMPORT));
-    SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' +
-      cSchemaExtension);
+    SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' + cSchemaExtension);
     ImportFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Daten.csv');
 
     Edit1.Text := inttostr(RID_AT_IMPORT);
@@ -1335,7 +1291,7 @@ begin
     _ZaehlerMehrInfo := TStringList.create;
     _MonteurMehrInfo := TStringList.create;
     _InternMehrInfo := TStringList.create;
-    _ProtokollMehrInfo := TSTringList.Create;
+    _ProtokollMehrInfo := TStringList.create;
 
     Abgelehnte := TStringList.create;
     Importierte := TStringList.create;
@@ -1346,10 +1302,8 @@ begin
       Importierte.add(ImportFile[m]);
 
     InfoFile.add('Import-Quelle: ursprüngliche Anzahl ' + inttostr(OrgCount));
-    InfoFile.add('Import-Quelle: doppelte Zählernummern ' +
-      inttostr(DeleteCount));
-    InfoFile.add('Import-Quelle: Anzahl reduziert auf ' +
-      inttostr(ImportFile.count - QuellHeaderLines));
+    InfoFile.add('Import-Quelle: doppelte Zählernummern ' + inttostr(DeleteCount));
+    InfoFile.add('Import-Quelle: Anzahl reduziert auf ' + inttostr(ImportFile.count - QuellHeaderLines));
     _LastLocation := '!null!';
 
     ZaehlerNummernImBestand.add('### neue Nummern ###');
@@ -1382,8 +1336,7 @@ begin
             qAUFTRAG := DataModuleDatenbank.nQuery;
             with qAUFTRAG do
             begin
-              sql.add('SELECT INTERN_INFO FROM AUFTRAG WHERE RID=' +
-                inttostr(AUFTRAG_R) + ' for update');
+              sql.add('SELECT INTERN_INFO FROM AUFTRAG WHERE RID=' + inttostr(AUFTRAG_R) + ' for update');
               open;
               first;
               edit;
@@ -1414,7 +1367,7 @@ begin
         _ZaehlerMehrInfo.clear;
         _MonteurMehrInfo.clear;
         _InternMehrInfo.clear;
-        _ProtokollMehrInfo.Clear;
+        _ProtokollMehrInfo.clear;
 
         Insert; // neue Auftragszeile!
 
@@ -1474,8 +1427,7 @@ begin
               07:
                 begin
                   // 'Zähler_Ort_Ort_#_#',
-                  FieldByName('KUNDE_ORT').AsString := cutblank(rSpaltenWert(1)) +
-                    ' ' + rSpaltenWert(2);
+                  FieldByName('KUNDE_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
                 end;
               08:
                 begin
@@ -1483,8 +1435,7 @@ begin
                   if (ParameterItems[0] <> '') then
                   begin
                     if (strtointdef(ParameterItems[1], -1) = -1) then
-                      _ZaehlerMehrInfo.add(ParameterItems[0] + '_' +
-                        ParameterItems[1])
+                      _ZaehlerMehrInfo.add(ParameterItems[0] + '_' + ParameterItems[1])
                     else
                       _ZaehlerMehrInfo.add(ParameterItems[0] + '_' + rSpaltenWert(2));
                   end
@@ -1499,9 +1450,7 @@ begin
                   // 'Zähler_Planquadrat',
                   _planquadrat := noblank(rSpaltenWert(1));
                   if (length(_planquadrat) < cAutoPlanquadratLength) then
-                    _planquadrat :=
-                      Fill('0', cAutoPlanquadratLength - length(_planquadrat)) +
-                      _planquadrat;
+                    _planquadrat := Fill('0', cAutoPlanquadratLength - length(_planquadrat)) + _planquadrat;
                   FieldByName('PLANQUADRAT').AsString := _planquadrat;
                 end;
               10:
@@ -1532,8 +1481,7 @@ begin
               15:
                 begin
                   // 'Kunde_Brief_Ort_#_#' );
-                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) +
-                    ' ' + rSpaltenWert(2);
+                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
                 end;
               16:
                 begin
@@ -1546,8 +1494,7 @@ begin
                   end
                   else
                   begin
-                    _MonteurMehrInfo.add
-                      (cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)))
+                    _MonteurMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)))
                   end;
                 end;
               17:
@@ -1581,14 +1528,12 @@ begin
               22:
                 begin
                   // ''
-                  FieldByName('BRIEF_NAME1').AsString := cutblank(rSpaltenWert(1)) +
-                    ' ' + rSpaltenWert(2);
+                  FieldByName('BRIEF_NAME1').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
                 end;
               23:
                 begin
                   // ''
-                  _InternMehrInfo.add
-                    (cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)));
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)));
                 end;
               24:
                 begin
@@ -1596,8 +1541,8 @@ begin
                 end;
               25:
                 begin
-                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' +
-                    cutblank(rSpaltenWert(2)) + ' ' + rSpaltenWert(3);
+                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + cutblank(rSpaltenWert(2)) + ' '
+                    + rSpaltenWert(3);
                 end;
               26:
                 begin
@@ -1609,19 +1554,16 @@ begin
                   if DateOK(date2long(rSpaltenWert(1))) then
                   begin
                     Verbrauch_1_Datum := date2long(rSpaltenWert(1));
-                    appendstringstofile
-                      (rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
+                    appendstringstofile(rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
                       ImportePath + 'datums.txt');
 
-                    FieldByName('VERBRAUCH_DATUM').AsDate :=
-                      long2datetime(date2long(rSpaltenWert(1)));
+                    FieldByName('VERBRAUCH_DATUM').AsDate := long2datetime(date2long(rSpaltenWert(1)));
                   end;
                 end;
               28:
                 begin
                   Verbrauch_1_Zaehler_Stand := strtoint64def(rSpaltenWert(1), -1);
-                  FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString :=
-                    inttostr(Verbrauch_1_Zaehler_Stand);
+                  FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString := inttostr(Verbrauch_1_Zaehler_Stand);
                 end;
               29:
                 begin
@@ -1694,18 +1636,15 @@ begin
                           if (Verbrauch_0_Datum < Verbrauch_1_Datum) then
                           begin
                             FieldByName('VERBRAUCH_PRO_JAHR').AsString :=
-                              inttostr(round((Verbrauch_1_Zaehler_Stand -
-                              Verbrauch_0_Zaehler_Stand) /
-                              DateDiff(Verbrauch_0_Datum,
-                              Verbrauch_1_Datum) * 365));
+                              inttostr(round((Verbrauch_1_Zaehler_Stand - Verbrauch_0_Zaehler_Stand) /
+                              DateDiff(Verbrauch_0_Datum, Verbrauch_1_Datum) * 365));
                           end;
 
                 end;
               39: // SAP_Info_#_#
                 begin
 
-                  _InternMehrInfo.add
-                    (cutblank(ParameterItems[0] + '=' + rSpaltenWert(2)));
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '=' + rSpaltenWert(2)));
                 end;
               40: // SAP Art
                 begin
@@ -1731,8 +1670,7 @@ begin
                     if (l > _Zaehlwerke) then
                       _Zaehlwerke := l;
 
-                    _ZaehlerNummer :=
-                      FormatZaehlerNummer(sSpaltenWert_Sekundaer(ZaehlerNummer_FieldIndex));
+                    _ZaehlerNummer := FormatZaehlerNummer(sSpaltenWert_Sekundaer(ZaehlerNummer_FieldIndex));
                     if (_ZaehlerNummer <> _zaehler_nummer) then
                     begin
                       if (l = 2) then
@@ -1792,10 +1730,8 @@ begin
                   _Date := date2long(r1AsString);
                   if DateOK(_Date) then
                   begin
-                    _Date1 := DatePlus(_Date,
-                      -strtointdef(ParameterItems[1], 0));
-                    _Date2 := DatePlus(_Date,
-                      strtointdef(ParameterItems[2], 0));
+                    _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
+                    _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
                     FieldByName('ZEITRAUM_VON').AsDate := long2datetime(_Date1);
                     FieldByName('ZEITRAUM_BIS').AsDate := long2datetime(_Date2);
                   end;
@@ -1811,10 +1747,8 @@ begin
                   _Date := date2long(r1AsString);
                   if DateOK(_Date) then
                   begin
-                    _Date1 := DatePlus(_Date,
-                      -strtointdef(ParameterItems[1], 0));
-                    _Date2 := DatePlus(_Date,
-                      strtointdef(ParameterItems[2], 0));
+                    _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
+                    _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
                     FieldByName('SPERRE_VON').AsDate := long2datetime(_Date1);
                     FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date2);
                   end;
@@ -1848,8 +1782,7 @@ begin
                     l := strtointdef(sSpaltenWert_Sekundaer(Zaehlwerk_FieldIndex), 0);
                     if (l > _Zaehlwerke) then
                     begin
-                      readMinMax(l,
-                        sSpaltenWert_Sekundaer(VorberechnetePlausibilitaetVon_FieldIndex),
+                      readMinMax(l, sSpaltenWert_Sekundaer(VorberechnetePlausibilitaetVon_FieldIndex),
                         sSpaltenWert_Sekundaer(VorberechnetePlausibilitaetBis_FieldIndex),
                         sSpaltenWert_Sekundaer(LetzterAblesestand_FieldIndex));
                       _Zaehlwerke := l;
@@ -1881,8 +1814,7 @@ begin
                   if (ParameterItems[0] = 'now') then
                     FieldByName('AUSFUEHREN').AsDate := now
                   else
-                    FieldByName('AUSFUEHREN').AsDate :=
-                      long2datetime(date2long(rSpaltenWert(1)));
+                    FieldByName('AUSFUEHREN').AsDate := long2datetime(date2long(rSpaltenWert(1)));
                   FieldByName('VORMITTAGS').AsString := cVormittagsChar;
                 end;
               55:
@@ -1907,11 +1839,10 @@ begin
                     FreeAndNil(SpaltenWerte_Sekundaer);
 
                 end;
-              56:   // C_SAP_INFO_#_#
+              56: // C_SAP_INFO_#_#
                 begin
                   // ''
-                  _InternMehrInfo.add
-                    (cutblank(ParameterItems[0] + '=' + ParameterItems[1]));
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '=' + ParameterItems[1]));
                 end;
               57: // Transaktion
                 begin
@@ -1925,21 +1856,21 @@ begin
                   // 'Material_Nummer',
                   FieldByName('MATERIAL_NUMMER').AsString := rSpaltenWert(1);
                 end;
-               59:
-               begin
-                // Protokoll_#
-                 _ProtokollMehrInfo.Add(rSpaltenWert(1));
-               end;
-               60:
-               begin
-                 // Protokoll_C_#
-                 _ProtokollMehrInfo.Add(ParameterItems[0] + '=' + rSpaltenWert(2));
-               end;
-               61:
-               begin
-                 // Protokoll_C_C
-                 _ProtokollMehrInfo.Add(ParameterItems[0] + '=' + ParameterItems[1]);
-               end;
+              59:
+                begin
+                  // Protokoll_#
+                  _ProtokollMehrInfo.add(rSpaltenWert(1));
+                end;
+              60:
+                begin
+                  // Protokoll_C_#
+                  _ProtokollMehrInfo.add(ParameterItems[0] + '=' + rSpaltenWert(2));
+                end;
+              61:
+                begin
+                  // Protokoll_C_C
+                  _ProtokollMehrInfo.add(ParameterItems[0] + '=' + ParameterItems[1]);
+                end;
             else
               // Fehler!
             end;
@@ -1953,13 +1884,11 @@ begin
         FieldByName('ZAEHLER_INFO').assign(_ZaehlerMehrInfo);
         FieldByName('MONTEUR_INFO').assign(_MonteurMehrInfo);
         FieldByName('INTERN_INFO').assign(_InternMehrInfo);
-        FieldByName('PROTOKOLL').Assign(_ProtokollMehrInfo);
+        FieldByName('PROTOKOLL').assign(_ProtokollMehrInfo);
 
         //
-        if (FieldByName('BRIEF_NAME1').AsString = '') and
-          (FieldByName('BRIEF_NAME2').AsString = '') and
-          (FieldByName('BRIEF_STRASSE').AsString = '') and
-          (FieldByName('BRIEF_ORT').AsString = '') then
+        if (FieldByName('BRIEF_NAME1').AsString = '') and (FieldByName('BRIEF_NAME2').AsString = '') and
+          (FieldByName('BRIEF_STRASSE').AsString = '') and (FieldByName('BRIEF_ORT').AsString = '') then
         begin
           FieldByName('BRIEF_NAME1').assign(FieldByName('KUNDE_NAME1'));
           FieldByName('BRIEF_NAME2').assign(FieldByName('KUNDE_NAME2'));
@@ -1974,8 +1903,7 @@ begin
             // Detectierung der Zählernummern
             _ZaehlerNummer := FieldByName('ZAEHLER_NUMMER').AsString;
             if CheckBox5.checked then
-              _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' +
-                _ZaehlerNummer;
+              _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' + _ZaehlerNummer;
 
             if (ZaehlerNummernImBestand.indexof(_ZaehlerNummer) <> -1) then
             begin
@@ -2019,8 +1947,10 @@ begin
     if (Transaktionen.count > 0) then
       if (Importierte.count - QuellHeaderLines > 0) then
       begin
-        lImportierte := e_r_sqlm('select RID from AUFTRAG where (RID_AT_IMPORT='
-          + inttostr(RID_AT_IMPORT) + ') and (RID=MASTER_R)');
+        lImportierte := e_r_sqlm(
+          { } 'select RID from AUFTRAG where' +
+          { } ' (RID_AT_IMPORT=' + inttostr(RID_AT_IMPORT) + ') and' +
+          { } ' (RID=MASTER_R)');
         for n := 0 to pred(Transaktionen.count) do
         begin
           InfoFile.add('Transaktion "' + Transaktionen[n] + '"');
@@ -2037,31 +1967,24 @@ begin
     _InternMehrInfo.free;
     _ProtokollMehrInfo.free;
 
-    InfoFile.add(cINFOText + 'Abgelehnte ' + inttostr(Abgelehnte.count -
-      QuellHeaderLines));
-    InfoFile.add('Importierte ' + inttostr(Importierte.count -
-      QuellHeaderLines));
-    InfoFile.add(cWARNINGText + 'Zählwerk_ist_"0" ' +
-      inttostr(Anzahl_Zaehlwerk_0));
-    InfoFile.add(cWARNINGText + 'Zählwerk_ist_nicht_"1" ' +
-      inttostr(Anzahl_Zaehlwerk_nicht_1));
+    InfoFile.add(cINFOText + 'Abgelehnte ' + inttostr(Abgelehnte.count - QuellHeaderLines));
+    InfoFile.add('Importierte ' + inttostr(Importierte.count - QuellHeaderLines));
+    InfoFile.add(cWARNINGText + 'Zählwerk_ist_"0" ' + inttostr(Anzahl_Zaehlwerk_0));
+    InfoFile.add(cWARNINGText + 'Zählwerk_ist_nicht_"1" ' + inttostr(Anzahl_Zaehlwerk_nicht_1));
 
     InfoFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
-    Abgelehnte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) +
-      '\Abgelehnte.csv');
-    Importierte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) +
-      '\Importierte.csv');
-    ZaehlerNummernImBestand.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) +
-      '\ZaehlerNummern.txt');
+    Abgelehnte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Abgelehnte.csv');
+    Importierte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Importierte.csv');
+    ZaehlerNummernImBestand.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\ZaehlerNummern.txt');
 
     if (Abgelehnte.count > QuellHeaderLines) then
-      ShowMessage('Es wurden ' + inttostr(Abgelehnte.count - QuellHeaderLines) +
-        ' von ' + inttostr(Importierte.count + Abgelehnte.count -
-        QuellHeaderLines - QuellHeaderLines) + ' Zählernummern abgelehnt!');
+      ShowMessage('Es wurden ' + inttostr(Abgelehnte.count - QuellHeaderLines) + ' von ' +
+        inttostr(Importierte.count + Abgelehnte.count - QuellHeaderLines - QuellHeaderLines) +
+        ' Zählernummern abgelehnt!');
     if (Anzahl_Zaehlwerk_0 > 0) then
-      ShowMessage(inttostr(Anzahl_Zaehlwerk_0) + ' Zeilen wurden überlesen ' +
-        #13 + 'da die Spalte Zählwerk (angegeben im 2. Parameter der SAP_Art_#_#())'
-        + #13 + 'leer ist, oder den Wert "0" hat.');
+      ShowMessage(inttostr(Anzahl_Zaehlwerk_0) + ' Zeilen wurden überlesen ' + #13 +
+        'da die Spalte Zählwerk (angegeben im 2. Parameter der SAP_Art_#_#())' + #13 +
+        'leer ist, oder den Wert "0" hat.');
 
     if (Importierte.count - QuellHeaderLines) = 0 then
       openShell(ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
@@ -2116,8 +2039,7 @@ begin
   MoreInfo.saveToDiagFile(DiagnosePath + 'Import-Doppelte.txt', 2, MaxInt);
   AllTheLines.Sort;
   RemoveDuplicates(AllTheLines, DeleteCount);
-  ShowMessage(inttostr(DeleteCount) + ' Doppelte' + #13 + inttostr(AllCount) +
-    ' insgesamt!');
+  ShowMessage(inttostr(DeleteCount) + ' Doppelte' + #13 + inttostr(AllCount) + ' insgesamt!');
   if (DeleteCount > 0) then
     openShell(DiagnosePath + 'Import-Doppelte.txt');
   MoreInfo.free;
