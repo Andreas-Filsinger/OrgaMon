@@ -74,14 +74,12 @@
     Top = 91
     Width = 734
     Height = 530
-    ActivePage = TabSheet5
+    ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitTop = 32
-      ExplicitHeight = 443
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -171,7 +169,6 @@
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
-      ExplicitHeight = 571
       object Button24: TButton
         Left = 48
         Top = 56
@@ -194,7 +191,6 @@
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitHeight = 571
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -263,7 +259,6 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitHeight = 571
       DesignSize = (
         726
         502)
@@ -342,7 +337,6 @@
         TabOrder = 1
         OnClick = ListBox3Click
         OnKeyDown = ListBox3KeyDown
-        ExplicitHeight = 474
       end
       object Edit5: TEdit
         Left = 68
@@ -379,7 +373,6 @@
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitHeight = 571
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -472,7 +465,7 @@
         Width = 121
         Height = 21
         TabOrder = 5
-        TextHint = 'Amnestie-Grund'
+        TextHint = 'Amnestiegrund-'
       end
       object Edit11: TEdit
         Left = 104
@@ -495,7 +488,6 @@
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitHeight = 571
       DesignSize = (
         726
         502)
@@ -548,7 +540,6 @@
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
-        ExplicitHeight = 483
       end
       object Button9: TButton
         Left = 24
@@ -559,7 +550,6 @@
         Caption = 'markierten befreien'
         TabOrder = 1
         OnClick = Button9Click
-        ExplicitTop = 543
       end
       object CheckBox3: TCheckBox
         Left = 433
@@ -571,7 +561,6 @@
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
         TabOrder = 2
         OnClick = CheckBox3Click
-        ExplicitTop = 521
       end
       object CheckBox2: TCheckBox
         Left = 24
@@ -585,7 +574,6 @@
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
-      ExplicitHeight = 571
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -737,7 +725,6 @@
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
-      ExplicitHeight = 571
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -760,7 +747,6 @@
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitHeight = 571
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -830,7 +816,6 @@
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
-      ExplicitHeight = 571
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -922,7 +907,6 @@
     object Rückstand: TTabSheet
       Caption = 'R'#252'ckstand'
       ImageIndex = 10
-      ExplicitHeight = 571
       object Button10: TButton
         Left = 96
         Top = 104
