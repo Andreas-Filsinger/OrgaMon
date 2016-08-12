@@ -1236,6 +1236,7 @@ begin
       end;
 
     end;
+  n := max(n,0);
 
   // Nun gelieferten die Bilder in der Soll Liste ergänzen
   LieferMoment := LieferMoment_First;
@@ -2227,6 +2228,12 @@ var
   n: integer;
   BaustellePath: string;
 begin
+
+  if (iJonDa_FTPHost='') or (iJonDa_FTPUserName='') or (iJonDa_FTPPassword='') then
+  begin
+    Log(cERRORText + ' 2233: workSync: FTP-Zugangsdaten sind leer');
+    exit;
+  end;
 
   // Sync Down
   iFTP := TIdFTP.Create(nil);
