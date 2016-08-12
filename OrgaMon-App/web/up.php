@@ -1,30 +1,39 @@
 <?php
+
 date_default_timezone_set('Europe/Berlin');
 
+define("CRLF","\r\n");
+
+//
 // Projekt Includes
-include("t_errorlist.inc.php5");
-include("t_xmlrpc.inc.php5");
+//
+include("xmlrpc_client.php");
 
-// Projekt Konstanten
-define("XMLRPCHost","raib23");
-#define("XMLRPCHost","KHAO");
-define("XMLRPCPort",3049);
-define("XMLRPCPath","");
-
+//
 // Elaubte Aufruf-Parameter
+//
 $_GLOBALS = array("id","tan","proceed","data","info","m");
-foreach ($_GLOBALS as $var) if (isset($_REQUEST[$var])) { $$var = $_REQUEST[$var]; }
+foreach ($_GLOBALS as $var) 
+ if (isset($_REQUEST[$var])) { 
+  $$var = $_REQUEST[$var]; 
+ }
 
+//
+// Globale Variable
+//
 $server_info = array();
-$xmlrpc = txmlrpc::create(XMLRPCHost, XMLRPCPort, XMLRPCPath, 10);
 $debug = "";
-
-ob_start();  // START OUTPUT BUFFERING
 $output = "";
 
+//
+// Client fÃ¼r einen XMLRPC-Server erstellen 
+//
+$xmlrpc = new txmlrpc_client();
+$xmlrpc->add(new tserver_identity("localhost", 3049));
 
-function base_plug()
-{ 
+// *************************************************************
+
+function base_plug() { 
   global 
     $server_info, $xmlrpc;
 
@@ -32,21 +41,31 @@ function base_plug()
   return ($server_info!=NULL);
 }
 
-function get_new_tan($id)
-{ 
+// *************************************************************
+
+function get_new_tan($id) { 
   global 
    $xmlrpc;
+
   return $xmlrpc->sendRequest("jonda.StartTAN",array($id));
 }
 
-function proceed_tan($tan)
-{ 
+// *************************************************************
+
+function proceed_tan($tan) { 
   global 
    $xmlrpc;
+
   return $xmlrpc->sendRequest("jonda.ProceedTAN",array($tan));
 }
 
+//
+// Haupt-Programm
+//
+
 do {
+
+ob_start();  // START OUTPUT BUFFERING
 
 // ID übergeben und neue TAN zurückliefern
 // iGeraeteNo; iTAN ; VERSION ; iOptionen ; getTimestamp ; IMEI
@@ -57,7 +76,7 @@ if (isset($id)) {
       if ($tan != "00000") { 
 	    $output = $tan; 
       }	else {
-	    $output = "Geräte-ID ist ungültig.";
+	    $output = "Geraete-ID ist ungueltig.";
 	  }	
     } else { 
 	  $output = "XMLRPC-Server nicht verfuegbar.";
@@ -65,7 +84,7 @@ if (isset($id)) {
 	}
   } 
   else {
-    $output = "Es wurde keine ID übergeben."; 
+    $output = "Es wurde keine ID uebergeben."; 
   }
   break;
 }
@@ -77,13 +96,13 @@ if (isset($id)) {
 // ZAEHLER_STAND_ALT ; REGLER_KORR ; REGLER_NEU ; PROTOKOLL ; 
 // EINGABE_DATUM ; EINGABE_UHR
 // 
-if (isset($tan) AND isset($data)) 
-{ 
-  if (($tan != "") AND ($data != "")) 
-  { 
-    $filename = $tan . ".txt";
+if (isset($tan) AND isset($data)) { 
 
+  if (($tan != "") AND ($data != "")) { 
+
+    $filename = $tan . ".txt";
     $fp = fopen($filename, "a");
+
 	if ($fp) 
 	{
       if (flock($fp,LOCK_EX)) 
@@ -118,16 +137,16 @@ if (isset($tan) AND isset($data))
 	  header("HTTP/1.1 500 Internal Server Error"); 
 	}
   } 
-  else $output = "Es wurde keine TAN übergeben.";
+  else $output = "Es wurde keine TAN uebergeben.";
   break;
 }
 //***************
 
 // Meldung empfangen und abspeichern
-if (isset($m) AND isset($data)) 
-{ if (($m != "") AND ($data != "")) 
-  { 
-	  // NNN.txt, Gerätedatei
+if (isset($m) AND isset($data)) { 
+ if (($m != "") AND ($data != "")) { 
+
+    // NNN.txt, Gerätedatei
     $filename = "m-" . $m . ".txt";
     $fp = fopen($filename, "a");
     flock($fp,LOCK_EX);
@@ -143,13 +162,12 @@ if (isset($m) AND isset($data))
     flock($fp,LOCK_UN);
     fclose($fp);
     
-	// $debug = "*" . ob_get_contents() . "*";
-	
-    if (ob_get_length() == 0) { $output = "OK"; }
-    else
-	{ $output = "Beim Speichern ist ein Fehler aufgetreten.";
-	  header("HTTP/1.1 500 Internal Server Error"); 
-	}
+    if (ob_get_length() == 0) { 
+     $output = "OK"; 
+    } else { 
+     $output = "Beim Speichern ist ein Fehler aufgetreten.";
+     header("HTTP/1.1 500 Internal Server Error"); 
+    }
   } 
   else 
   {
@@ -175,20 +193,33 @@ if (isset($proceed))
       }
     }
   }
-  else $output = "Es wurde keine TAN übergeben.";
+  else $output = "Es wurde keine TAN uebergeben.";
   break;
 }
 //*********************
 
 // Server-Info abrufen
-if (isset($info)) 
-{ if (base_plug() == true) { foreach($server_info as $value) $output .= $value . "<br />"; }
-  else 
-  { $output = "XMLRPC-Server nicht verfügbar.";
+if (isset($info)) { 
+ 
+ if (base_plug() == true) { 
+
+ if (is_array($server_info)) {
+  foreach($server_info as $value) $output .= $value . "<br />"; 
+ } else {
+  
+  $output = print_r($server_info);
+  }
+ }
+ else { 
+
+    $output = "XMLRPC-Server nicht verfuegbar.";
     header("HTTP/1.1 500 Service Unavailable"); 
+    
   }
   break;
 }
+//*********************
+
 
 } while(false);
 
@@ -208,8 +239,8 @@ ob_end_clean();
 
 <BODY><?php 
   echo $output;
-  if ($debug != "") 
-  { echo $debug; 
+  if ($debug != "") { 
+   echo $debug; 
   }
 ?></BODY>
 </HTML>
