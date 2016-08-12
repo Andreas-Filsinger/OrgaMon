@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.214 (12.08.16) Andreas Filsinger
+
+ Bug: Foto-Service: workWartend: Exception bei leerem Log
+ Bug: Foto-Service: workSync: Beginnt zu arbeiten bei leerem FTP-UserName
+
 Rev 8.213 (04.08.16) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.248" neu compiliert!
