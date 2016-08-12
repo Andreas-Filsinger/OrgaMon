@@ -59,8 +59,8 @@ object FormTagWache: TFormTagWache
     Color = clBtnFace
     ItemHeight = 13
     Items.Strings = (
-      'Mobil auslesen'
       'Fotos laden'
+      'Mobil auslesen'
       'Auftrag Ergebnis'
       'Automatischer Import'
       'Mobil schreiben'
