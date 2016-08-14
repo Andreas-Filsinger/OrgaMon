@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.215 (14.08.16) Andreas Filsinger
+
+ Bug: Tagwache: ersten beiden Punkte im Text waren vertauscht
+
 Rev 8.214 (12.08.16) Andreas Filsinger
 
  Bug: Foto-Service: workWartend: Exception bei leerem Log
