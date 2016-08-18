@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.216 (15.08.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.249" neu compiliert!
+
 Rev 8.215 (14.08.16) Andreas Filsinger
 
  Bug: Tagwache: ersten beiden Punkte im Text waren vertauscht

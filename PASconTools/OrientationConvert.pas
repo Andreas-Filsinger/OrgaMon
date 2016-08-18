@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.248; // ../rev/Oc.rev.txt
+  Version: single = 1.249; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -2925,6 +2925,7 @@ var
 
   // weitere Parameter
   pWilken: boolean;
+  pKK22: boolean;
   pAuftrag: string;
   pAuftragAnker: TStringList;
   pFileName: string;
@@ -3019,14 +3020,15 @@ var
     end;
   end;
 
-  procedure checkSpalte(var col: integer; sName: string);
+  procedure checkSpalte(var col: integer; sName: string; Pflichtspalte: boolean = true);
   begin
     col := AllHeader.indexof(sName);
-    if (col = -1) then
-    begin
-      inc(ErrorCount);
-      sDiagnose.add(cERRORText + ' Spalte ' + sName + ' nicht gefunden!');
-    end;
+    if Pflichtspalte then
+      if (col = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte ' + sName + ' nicht gefunden!');
+      end;
   end;
 
   function FillFromAuftrag(s: string): string;
@@ -3137,11 +3139,13 @@ var
   col_gtw_lagerort_alt: integer;
   col_tgws_ablesedatum: integer;
   col_tgw_obiscode: integer;
-  col_tgw_nachkomma: integer;
-  col_tgw_vorkomma: integer;
+  col_tgw_nachkomma: integer; // optionale Spalte
+  col_tgw_vorkomma: integer; // optionale Spalte
 
   // weitere besondere Spalten die aus der EFRE Datei kommen
   col_Obis: integer;
+  OBIS: string;
+
   col_Werk: integer;
   col_Lager: integer;
   // ============================================
@@ -3210,6 +3214,10 @@ begin
     MaxSpalte := min(MaxSpalte, ColCountInRow(1));
     pRespectFormats := FixedFormats.values['RespectFormats'] = 'JA';
     pWilken := FixedFormats.values['Wilken'] = 'JA';
+    if not(pWilken) then
+     pKK22 := FixedFormats.values['KK22'] = 'JA'
+    else
+     pKK22 := false;
     pAuftrag := FixedFormats.values['Auftrag'];
     if (pAuftrag <> '') then
       Auftrag.insertFromFile(WorkPath + pAuftrag);
@@ -3397,8 +3405,8 @@ begin
           checkSpalte(col_gtw_lagerort_alt, 'gtw_lagerort_alt');
           checkSpalte(col_tgws_ablesedatum, 'tgws_ablesedatum');
           checkSpalte(col_tgw_obiscode, 'tgw_obiscode');
-          checkSpalte(col_tgw_nachkomma, 'tgw_nachkomma');
-          checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma');
+          checkSpalte(col_tgw_nachkomma, 'tgw_nachkomma', false);
+          checkSpalte(col_tgw_vorkomma, 'tgw_vorkomma', false);
 
           // weitere notwendige Spalten
           checkSpalte(col_Obis, 'Obis');
@@ -3425,8 +3433,10 @@ begin
           Content_Wilken[col_tgw_altzaehlerflag] := '0';
           Content_Wilken[col_zae_nr_neu] := '';
           Content_Wilken[col_tgw_wandlerfaktor] := '';
-          Content_Wilken[col_tgw_nachkomma] := '';
-          Content_Wilken[col_tgw_vorkomma] := '';
+          if (col_tgw_nachkomma <> -1) then
+            Content_Wilken[col_tgw_nachkomma] := '';
+          if (col_tgw_vorkomma <> -1) then
+            Content_Wilken[col_tgw_vorkomma] := '';
           case z of
             1:
               Content_Wilken[col_tgws_ablesestand] := ZaehlerStandAlt;
@@ -3452,9 +3462,14 @@ begin
           Content_Wilken[col_tgws_ablesedatum] :=
             long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
 
-          Content_Wilken[col_tgw_obiscode] := getCell(r, succ(col_Obis));
-          Content_Wilken[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
-          Content_Wilken[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
+          OBIS := getCell(r, succ(col_Obis));
+          if (OBIS<>'') then
+          Content_Wilken[col_tgw_obiscode] := OBIS;
+
+          if (col_tgw_nachkomma <> -1) then
+            Content_Wilken[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
+          if (col_tgw_vorkomma <> -1) then
+            Content_Wilken[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
           case z of
             1:

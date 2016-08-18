@@ -474,6 +474,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = '&Daten'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -820,6 +824,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -997,6 +1005,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -1956,6 +1968,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -2576,6 +2592,10 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3489,6 +3509,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 58
@@ -3884,6 +3908,10 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144

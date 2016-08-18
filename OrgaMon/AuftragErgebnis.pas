@@ -1781,7 +1781,7 @@ begin
           else
             n := Content_Mode_xls2csv;
 
-          //
+          // Konvertieren
           Oc_Bericht := TStringList.create;
           if not(doConversion(n, OutFName, Oc_Bericht)) then
           begin
@@ -1798,33 +1798,6 @@ begin
 
             // weitere Dateien dazu
             Files.add(copy(OutFName, 1, length(OutFName) - 4) + '-*.xls');
-          end;
-          Oc_Bericht.free;
-        end;
-
-        // Oc noch rufen, um eine KK22 draus zu machen?
-        if (Settings.values[cE_AuchAlsKK22] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
-        begin
-          Oc_Bericht := TStringList.create;
-          if not(doConversion(Content_Mode_KK22, OutFName, Oc_Bericht)) then
-          begin
-            inc(ErrorCount);
-            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
-            Log(Oc_Bericht, BAUSTELLE_R);
-            break;
-          end
-          else
-          begin
-            // Gelungenes Oc
-            Files.add(OutFName + '.txt');
-            for n := 0 to pred(Oc_Bericht.count) do
-              if (pos('(RID=', Oc_Bericht[n]) > 0) then
-              begin
-                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
-                if (FailL.indexof(FAIL_R) = -1) then
-                  FailL.add(FAIL_R);
-                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
-              end;
           end;
           Oc_Bericht.free;
         end;
