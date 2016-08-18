@@ -15,6 +15,11 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.249 (15.08.16) Andreas Filsinger
+
+ Neu: xls2csv: Wilken=JA: Feld "Obis", wenn es leer ist wird 1:1 gewechselt
+ Neu: xls2csv: Wilken=JA: Feld tgw_vorkomma, tgw_nachkomma sind optional
+
 Rev 1.248 (04.08.16) Andreas Filsinger
 
  Neu: xls2csv: Wilken=JA: Feld "Lager" wird ausgewertet

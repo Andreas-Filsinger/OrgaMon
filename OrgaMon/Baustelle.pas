@@ -3100,7 +3100,6 @@ begin
   EnsureEntry(cE_AuchAlsXML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsXLS, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsXLSunmoeglich, IB_Memo5.Lines);
-  EnsureEntry(cE_AuchAlsKK22, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsHTML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsPDF, IB_Memo5.Lines);
   EnsureEntry(cE_HTMLBenennung, IB_Memo5.Lines);
