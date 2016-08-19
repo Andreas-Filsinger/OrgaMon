@@ -1262,6 +1262,13 @@ begin
       with sHANGOVER do
       begin
 
+        // durch Nachlieferungen auf einem anderen Zustellungsweg
+        // z.B. per eMail kann die Dateiendung verfälscht werden
+        // aus .jpg wird dann z.B. .JPG oder ähnlich. Wir müssen
+        // hier leider angleichen
+        if (pos('.jpg',BildName)=0) then
+         BildName := copy(BildName,1,length(BildName)-4) + '.jpg';
+
         { Eintrag in der Tabelle suchen }
         r := locate(col_NAME, BildName);
         if (r = -1) then
