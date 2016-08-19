@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.217 (19.08.16) Andreas Filsinger
+
+ Bug: Foto-Service: Statistik "ausstehende-fotos": .JPG Lieferungen (anstelle von .jpg) wurden nicht berücksichtigt
+
 Rev 8.216 (15.08.16) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.249" neu compiliert!
