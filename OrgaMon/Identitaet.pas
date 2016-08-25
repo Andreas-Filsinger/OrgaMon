@@ -203,7 +203,7 @@ end;
 
 procedure RunAsFoto;
 const
-  Timer_Intervall = 2000;
+  Worker_Intervall = 4000;
   Sleep_Intervall = 20000;
 var
   MyFotoExec: TownFotoExec;
@@ -251,7 +251,7 @@ begin
       begin
         if (TimerInit = 0) then
           Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
-        inc(TimerInit, Timer_Intervall);
+        inc(TimerInit, Worker_Intervall);
         if (TimerInit >= cKikstart_delay * 60 * 1000) then
         begin
           Log('Erwacht ... ');
@@ -335,8 +335,8 @@ begin
 
       end;
 
-      sleep(Timer_Intervall);
-      inc(TimerWartend, Timer_Intervall);
+      sleep(Worker_Intervall);
+      inc(TimerWartend, Worker_Intervall);
     end;
   end;
 end;
