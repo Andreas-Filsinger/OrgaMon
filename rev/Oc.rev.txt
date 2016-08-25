@@ -15,6 +15,15 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.251 (25.08.16) Andreas Filsinger
+
+ Neu: xls2csv: KK22
+ Neu: Fixed-Formats.ini: Formatierung "hhmm"
+
+Rev 1.250 (25.08.16) Andreas Filsinger
+
+ Neu: txt2csv: KK20: Überzählige/Nicht spezifizierte Spalten werden ignoriert
+
 Rev 1.249 (15.08.16) Andreas Filsinger
 
  Neu: xls2csv: Wilken=JA: Feld "Obis", wenn es leer ist wird 1:1 gewechselt

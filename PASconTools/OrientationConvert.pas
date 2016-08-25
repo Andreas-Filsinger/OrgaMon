@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.249; // ../rev/Oc.rev.txt
+  Version: single = 1.251; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3150,8 +3150,16 @@ var
   col_Lager: integer;
   // ============================================
 
+  // ============================================
+  // KK22
+  col_Zaehler_Nummer: integer;
+  col_ZaehlerStandAlt: integer;
+  col_ZaehlerNummerNeu: integer;
+
+  // ============================================
+
   n: TXLSFile;
-  Content_Wilken: TStringList;
+  slContent: TStringList;
 
   // Formatierungen
   SonderFormat: string;
@@ -3215,18 +3223,33 @@ begin
     pRespectFormats := FixedFormats.values['RespectFormats'] = 'JA';
     pWilken := FixedFormats.values['Wilken'] = 'JA';
     if not(pWilken) then
-     pKK22 := FixedFormats.values['KK22'] = 'JA'
+      pKK22 := FixedFormats.values['KK22'] = 'JA'
     else
-     pKK22 := false;
+      pKK22 := false;
     pAuftrag := FixedFormats.values['Auftrag'];
     if (pAuftrag <> '') then
       Auftrag.insertFromFile(WorkPath + pAuftrag);
     pAuftragAnker := Split(FixedFormats.values['AuftragReferenzSpalten'], ';', '', true);
+
+    // Bestimmung des Ausgabe-Dateinamens
     pFileName := FixedFormats.values['FileName'];
-    if (pFileName <> '') then
-      conversionOutFName := WorkPath + pFileName
-    else
+    repeat
+
+      if pKK22 then
+      begin
+        conversionOutFName := WorkPath + 'KK22_' + StrFilter(InFName, cZiffern);
+        break;
+      end;
+
+      if (pFileName <> '') then
+      begin
+        conversionOutFName := WorkPath + pFileName;
+        break;
+      end;
+
       conversionOutFName := InFName + '.csv';
+
+    until true;
 
     // Init
     sDiagFiles.add(conversionOutFName);
@@ -3336,6 +3359,13 @@ begin
                 break;
               end;
 
+              // Spezielle Zeitangabe
+              if (SonderFormat = 'hhmm') then
+              begin
+                OneCell := copy(StrFilter(OneCell, cZiffern), 1, 4);
+                break;
+              end;
+
             until true;
 
           SonderFormat := FixedFormats.values['Max' + AllHeader[pred(c)]];
@@ -3413,6 +3443,14 @@ begin
           checkSpalte(col_Werk, 'Werk');
           checkSpalte(col_Lager, 'Lager');
         end;
+
+        if pKK22 then
+        begin
+          checkSpalte(col_Zaehler_Nummer, 'Zaehler_Nummer');
+          checkSpalte(col_ZaehlerStandAlt, 'ZaehlerStandAlt');
+          checkSpalte(col_ZaehlerNummerNeu, 'ZaehlerNummerNeu');
+        end;
+
         if NoHeader then
           continue;
       end;
@@ -3427,69 +3465,110 @@ begin
         // 1. Block: AUSBAU
         for z := 1 to max(1, ZaehlwerkeAusbau) do
         begin
-          Content_Wilken := Split(Content_S);
+          slContent := Split(Content_S);
 
           // Modifier
-          Content_Wilken[col_tgw_altzaehlerflag] := '0';
-          Content_Wilken[col_zae_nr_neu] := '';
-          Content_Wilken[col_tgw_wandlerfaktor] := '';
+          slContent[col_tgw_altzaehlerflag] := '0';
+          slContent[col_zae_nr_neu] := '';
+          slContent[col_tgw_wandlerfaktor] := '';
           if (col_tgw_nachkomma <> -1) then
-            Content_Wilken[col_tgw_nachkomma] := '';
+            slContent[col_tgw_nachkomma] := '';
           if (col_tgw_vorkomma <> -1) then
-            Content_Wilken[col_tgw_vorkomma] := '';
+            slContent[col_tgw_vorkomma] := '';
           case z of
             1:
-              Content_Wilken[col_tgws_ablesestand] := ZaehlerStandAlt;
+              slContent[col_tgws_ablesestand] := ZaehlerStandAlt;
 
             2:
-              Content_Wilken[col_tgws_ablesestand] := NA;
+              slContent[col_tgws_ablesestand] := NA;
           end;
 
-          Content.add(HugeSingleLine(Content_Wilken, Separator));
-          Content_Wilken.Free;
+          Content.add(HugeSingleLine(slContent, Separator));
+          slContent.Free;
         end;
 
         // 2. Block EINBAU
         for z := 1 to max(1, ZaehlwerkeEinbau) do
         begin
-          Content_Wilken := Split(Content_S);
+          slContent := Split(Content_S);
 
           // Modifier
-          Content_Wilken[col_tgw_altzaehlerflag] := '1';
-          Content_Wilken[col_tgw_id] := '';
-          Content_Wilken[col_tgws_ableseinfo] := '';
-          Content_Wilken[col_gtw_lagerort_alt] := '';
-          Content_Wilken[col_tgws_ablesedatum] :=
-            long2date(DatePlus(date2long(Content_Wilken[col_tgws_ablesedatum]), 1));
+          slContent[col_tgw_altzaehlerflag] := '1';
+          slContent[col_tgw_id] := '';
+          slContent[col_tgws_ableseinfo] := '';
+          slContent[col_gtw_lagerort_alt] := '';
+          slContent[col_tgws_ablesedatum] := long2date(DatePlus(date2long(slContent[col_tgws_ablesedatum]), 1));
 
           OBIS := getCell(r, succ(col_Obis));
-          if (OBIS<>'') then
-          Content_Wilken[col_tgw_obiscode] := OBIS;
+          if (OBIS <> '') then
+            slContent[col_tgw_obiscode] := OBIS;
 
           if (col_tgw_nachkomma <> -1) then
-            Content_Wilken[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
+            slContent[col_tgw_nachkomma] := getCell(r, succ(col_Werk));
           if (col_tgw_vorkomma <> -1) then
-            Content_Wilken[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
+            slContent[col_tgw_vorkomma] := getCell(r, succ(col_Lager));
 
           case z of
             1:
-              Content_Wilken[col_tgws_ablesestand] := ZaehlerStandNeu;
+              slContent[col_tgws_ablesestand] := ZaehlerStandNeu;
 
             2:
-              Content_Wilken[col_tgws_ablesestand] := NN;
+              slContent[col_tgws_ablesestand] := NN;
           end;
 
-          Content.add(HugeSingleLine(Content_Wilken, Separator));
-          Content_Wilken.Free;
+          Content.add(HugeSingleLine(slContent, Separator));
+          slContent.Free;
+        end;
+        continue;
+      end;
+
+      if pKK22 and (r > 1) then
+      begin
+
+        // 1. Block: AUSBAU
+        for z := 1 to max(1, ZaehlwerkeAusbau) do
+        begin
+          slContent := Split(Content_S);
+
+          // Modifier
+          case z of
+            1:
+              slContent[col_ZaehlerStandAlt] := ZaehlerStandAlt;
+
+            2:
+              slContent[col_ZaehlerStandAlt] := NA;
+          end;
+
+          Content.add(HugeSingleLine(slContent, Separator));
+          slContent.Free;
         end;
 
-      end
-      else
-      begin
-        if (pAuftrag <> '') and (r > 1) then
-          Content_S := FillFromAuftrag(Content_S);
-        Content.add(Content_S);
+        // 2. Block EINBAU
+        for z := 1 to max(1, ZaehlwerkeEinbau) do
+        begin
+          slContent := Split(Content_S);
+
+          // Modifier
+          slContent[col_Zaehler_Nummer] := getCell(r, succ(col_ZaehlerNummerNeu));
+
+          case z of
+            1:
+              slContent[col_ZaehlerStandAlt] := ZaehlerStandNeu;
+
+            2:
+              slContent[col_ZaehlerStandAlt] := NN;
+          end;
+
+          Content.add(HugeSingleLine(slContent, Separator));
+          slContent.Free;
+        end;
+
+        continue;
       end;
+
+      if (pAuftrag <> '') and (r > 1) then
+        Content_S := FillFromAuftrag(Content_S);
+      Content.add(Content_S);
 
     end;
   end;
@@ -4074,23 +4153,36 @@ end;
 
 procedure KK20toCSV(InFName: string; sBericht: TStringList = nil);
 
+const
+  // Infos zum Objekt und Zähler
+  KK20_Header = 'ckk20;bukrs;meterreadingunit;vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
+    'vbez;portion;abwann;street;hausnum;plz;city;vorname;nachname;' +
+    'text;tariftyp;code_sparte;text30;tplnr;gp_pstlz;gp_ort01;gp_stras;' +
+    'gp_haus_num;gp_haus_alph;swerk;st_ktext;stortzus;hinweis;istablart;' +
+    'gasdru;gastem;brwgeb;tempgeb;drugeb;kombinat;matnr;herst_kz;ansjj;baujj;' +
+    'bgljahr;einbdat;sernr;equnr;herst;besitz;lager;gangfolge;mrreason;ausdat;' +
+    'austim;usid;targetmrdate;meterreader;maktx;preiskla;zwgruppe;kzwechsel;ext_ui;' +
+    'kk20_resv1;kk20_resv2;kk20_resv3;kk20_resv4;kk20_resv5;v_telnr;v_house_num2;house_num2;' +
+    'exvko;kk20_resv6;rolle_partner;anrede;kk20_resv7;kk20_resv8;typ;art';
+
+  // Infos zum Zählwerk
+  KK21_Header = 'ckk21;kk21_bukrs;ablbelnr;pruefzahl;zwart;register;zwtyp;stanzvor;stanznac;zwfakt;zwkenn;abrfakt;' +
+    'thgber;l_adat;l_zstand;l_ablesgr;l_ablhinw;aemme;aemmen;aempc;scode;erwzstd_min;erwzstd_max;kennziff;' +
+    'anzart;bliwirk;massread;kk21_resv1;kk21_resv2;kk21_resv3;kk21_resv4';
+
   function header: string;
   begin
-    result :=
-    { KK20 }
-      'ckk20;bukrs;meterreadingunit;vertrag;v_name1;v_name2;v_pstlz;v_ort01;v_stra;einzdat;' +
-      'vbez;portion;abwann;street;hausnum;plz;city;vorname;nachname;' +
-      'text;tariftyp;sparte;text30;tplnr;gp_pstlz;gp_ort01;gp_stras;' +
-      'gp_haus_num;gp_haus_alph;swerk;st_ktext;stortzus;hinweis;istablart;' +
-      'gasdru;gastem;brwgeb;tempgeb;drugeb;kombinat;matnr;herst_kz;ansjj;baujj;' +
-      'bgljahr;einbdat;sernr;equnr;herst;besitz;lager;gangfolge;mrreason;ausdat;' +
-      'austim;usid;targetmrdate;meterreader;maktx;preiskla;zwgruppe;kzwechsel;ext_ui;' +
-      'kk20_resv1;kk20_resv2;kk20_resv3;kk20_resv4;kk20_resv5;' + 'v_telnr;v_house_num2;house_num2;' +
-      'exvko;kk20_resv6;' + 'rolle_partner;anrede;kk20_resv7;kk20_resv8;zaehlwerk;' +
-    { KK21 }
-      'ckk21;kk20_bukrs;ablbelnr;pruefzahl;zwart;register;zwtyp;stanzvor;stanznac;zwfakt;zwkenn;abrfakt;thgber;l_adat;'
-      + 'l_zstand;l_ablesgr;l_ablhinw;aemme;aemmen;aempc;scode;erwzstd_min;erwzstd_max;kennziff;anzart;' +
-      'bliwirk;massread;kk21_resv1;kk21_resv2;kk21_resv3;kk21_resv4';
+    result := KK20_Header + ';zaehlwerk;' + KK21_Header;
+  end;
+
+  procedure EnsureCountTo(s: TStrings; FixedCount: integer);
+  var
+    r: integer;
+  begin
+    for r := succ(s.count) to FixedCount do
+      s.add('');
+    for r := pred(s.count) downto FixedCount do
+      s.delete(r);
   end;
 
 var
@@ -4098,13 +4190,22 @@ var
   sOut: TStringList;
   n, z: integer;
   MainLine, FormatTag: string;
+  slObjekt, slZaehlwerk: TStringList;
+  KK20_Columns, KK21_Columns: integer;
+
 begin
   conversionOutFName := InFName + '.csv';
+
+  KK20_Columns := succ(CharCount(';', KK20_Header));
+  KK21_Columns := succ(CharCount(';', KK21_Header));
+
   sImport := TStringList.create;
   sOut := TStringList.create;
   sImport.loadFromFile(InFName);
   MainLine := '';
   z := -1;
+  slObjekt := nil;
+  slZaehlwerk := nil;
   sOut.add(header);
   for n := 0 to pred(sImport.count) do
   begin
@@ -4112,13 +4213,22 @@ begin
     if (FormatTag = 'KK20') then
     begin
       z := 1;
-      MainLine := sImport[n];
+      if assigned(slObjekt) then
+        FreeAndNil(slObjekt);
+      slObjekt := Split(sImport[n]);
+      EnsureCountTo(slObjekt, KK20_Columns);
     end
     else
     begin
-      // letzte Feld ist immer leer deshalb kein weiteres
-      // Semicolon notwendig
-      sOut.add(MainLine + inttostr(z) + ';' + sImport[n]);
+
+      slZaehlwerk := Split(sImport[n]);
+      EnsureCountTo(slZaehlwerk, KK21_Columns);
+
+      sOut.add(
+        { } HugeSingleLine(slObjekt, ';') +
+        { } ';' + inttostr(z) + ';' +
+        { } HugeSingleLine(slZaehlwerk, ';'));
+      slZaehlwerk.Free;
       inc(z);
     end;
   end;

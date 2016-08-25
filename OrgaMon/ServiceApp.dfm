@@ -41,7 +41,7 @@ object FormServiceApp: TFormServiceApp
     Caption = '--Id'
   end
   object SpeedButton4: TSpeedButton
-    Left = 134
+    Left = 157
     Top = 30
     Width = 21
     Height = 22
@@ -997,21 +997,21 @@ object FormServiceApp: TFormServiceApp
     end
   end
   object ProgressBar1: TProgressBar
-    Left = 129
+    Left = 152
     Top = 59
-    Width = 548
+    Width = 532
     Height = 16
     TabOrder = 1
   end
   object Edit14: TEdit
-    Left = 161
+    Left = 184
     Top = 31
     Width = 141
     Height = 21
     TabOrder = 2
   end
   object Button27: TButton
-    Left = 304
+    Left = 327
     Top = 7
     Width = 134
     Height = 47
@@ -1020,7 +1020,7 @@ object FormServiceApp: TFormServiceApp
     OnClick = Button27Click
   end
   object ComboBox3: TComboBox
-    Left = 132
+    Left = 155
     Top = 7
     Width = 170
     Height = 21

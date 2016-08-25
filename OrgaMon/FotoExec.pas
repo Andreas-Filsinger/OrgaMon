@@ -1038,10 +1038,10 @@ const
   //
   // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
   // der Aufnahme versendet. Die Ankündigung im Protokoll wird
-  // zwar sofort eingetragen, wir wissen davon aber erst nach dem
-  // "senden" des Monteures
+  // zwar auch sofort eingetragen, wir wissen davon aber erst nach dem
+  // "senden" des Monteures.
   //
-  VERZOEGERUNG_ANKUENDIGUNG = 3; { [Tage] }
+  VERZOEGERUNG_ANKUENDIGUNG = 14; { [Tage] }
 
 procedure TFotoExec.workAusstehendeFotos;
 var
@@ -1060,8 +1060,9 @@ var
   sHANGOVER: tsTable;
   sMONTEURE: tsTable;
   BildName: string;
-  LieferMoment_First: string;
-  LieferMoment: string;
+  LieferMoment_First: TDateTime;
+  sLieferMoment_First: string;
+  sLieferMoment: string;
   GERAET, _GERAET, GERAETE: string;
   Anzahl: integer;
   GesamtAnzahl: integer;
@@ -1101,6 +1102,13 @@ begin
   ProceedMoment_First := StartMoment;
   ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
 
+  Log(
+    { } 'workAusstehendeFotos: vom ' +
+    { } long2date(ProceedMoment_Oldest) +
+    { } ' bis ' +
+    { } long2date(ProceedMoment_First) +
+    { } ' ...');
+
   with sHANGOVER do
   begin
     addcol('GERAET');
@@ -1120,7 +1128,7 @@ begin
     addcol('PAPERCOLOR');
   end;
 
-  { Schritt 1: Bildnamen ermitteln und das Datum der Ankündigung im Protokoll }
+  { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
   AllTRN.sort;
   for n := pred(AllTRN.Count) downto 0 do
@@ -1179,7 +1187,7 @@ begin
                     end
                     else
                     begin
-                      { wir wollen den ältesten Ankündigungsmoment }
+                      { wir wollen den ältesten (kleinsten) Ankündigungsmoment }
                       if (readCell(r, col_ANKUENDIGUNG) = '') or
                         (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
                         writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
@@ -1193,9 +1201,9 @@ begin
   end;
 
   { Schritt 2: Ergänzung der Lieferdatums }
+  LieferMoment_First := ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG;
+  sLieferMoment_First := dTimeStamp(LieferMoment_First);
   AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
-
-  LieferMoment_First := dTimeStamp(ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG);
 
   // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
   // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
@@ -1207,8 +1215,8 @@ begin
 
       if (pos('timestamp ', AllTRN[n]) = 1) then
       begin
-        LieferMoment := copy(AllTRN[n], 11, MaxInt);
-        if (LieferMoment < LieferMoment_First) then
+        sLieferMoment := copy(AllTRN[n], 11, MaxInt);
+        if (sLieferMoment < sLieferMoment_First) then
           break;
       end;
 
@@ -1229,23 +1237,30 @@ begin
 
           r := addRow;
           writeCell(r, 'GERAET', GERAET);
-          writeCell(r, 'LETZTER_UPLOAD', LieferMoment);
+          writeCell(r, 'LETZTER_UPLOAD', sLieferMoment);
 
         end;
 
       end;
 
     end;
-  n := max(n,0);
+  n := max(n, 0);
+
+  Log(
+    { } 'workAusstehendeFotos: Foto-Lieferungen ab ' +
+    { } long2date(LieferMoment_First) +
+    { } ' also ab Zeile ' +
+    { } InttoStr(n) +
+    { } ' ...');
 
   // Nun gelieferten die Bilder in der Soll Liste ergänzen
-  LieferMoment := LieferMoment_First;
+  sLieferMoment := sLieferMoment_First;
   for m := n to pred(AllTRN.Count) do
   begin
 
     if (pos('timestamp ', AllTRN[m]) = 1) then
     begin
-      LieferMoment := copy(AllTRN[m], 11, MaxInt);
+      sLieferMoment := copy(AllTRN[m], 11, MaxInt);
       continue;
     end;
 
@@ -1266,8 +1281,8 @@ begin
         // z.B. per eMail kann die Dateiendung verfälscht werden
         // aus .jpg wird dann z.B. .JPG oder ähnlich. Wir müssen
         // hier leider angleichen
-        if (pos('.jpg',BildName)=0) then
-         BildName := copy(BildName,1,length(BildName)-4) + '.jpg';
+        if (pos('.jpg', BildName) = 0) then
+          BildName := copy(BildName, 1, length(BildName) - 4) + '.jpg';
 
         { Eintrag in der Tabelle suchen }
         r := locate(col_NAME, BildName);
@@ -1288,8 +1303,8 @@ begin
         else
         begin
           { wir wollen den ältesten Ankündigungsmoment }
-          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > LieferMoment) then
-            writeCell(r, col_LIEFERUNG, LieferMoment);
+          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > sLieferMoment) then
+            writeCell(r, col_LIEFERUNG, sLieferMoment);
         end;
       end;
     end;
@@ -1415,7 +1430,7 @@ begin
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
 
     SaveToFile(MyDataBasePath + 'FotoService-Upload-Übersicht.csv');
-    savetohtml(pWebPath + 'ausstehende-fotos.html');
+    SaveToHTML(pWebPath + 'ausstehende-fotos.html');
 
   end;
 
@@ -1767,12 +1782,12 @@ begin
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FFFF00');
-      savetohtml(pAppStatistikPath + 'senden.html');
+      SaveToHTML(pAppStatistikPath + 'senden.html');
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.savetohtml(pAppStatistikPath + '-neu.html');
+    WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
     WARTEND.SaveToFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
 
     // LOG
@@ -2236,7 +2251,7 @@ var
   BaustellePath: string;
 begin
 
-  if (iJonDa_FTPHost='') or (iJonDa_FTPUserName='') or (iJonDa_FTPPassword='') then
+  if (iJonDa_FTPHost = '') or (iJonDa_FTPUserName = '') or (iJonDa_FTPPassword = '') then
   begin
     Log(cERRORText + ' 2233: workSync: FTP-Zugangsdaten sind leer');
     exit;

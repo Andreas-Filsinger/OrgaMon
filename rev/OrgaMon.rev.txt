@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.219 (25.08.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.251" neu compiliert!
+
+Rev 8.218 (20.08.16) Andreas Filsinger
+
+ Neu: Foto-Service: Statistik "ausstehende-fotos": Vorablieferung auf 14 Tage erhöht
+
 Rev 8.217 (19.08.16) Andreas Filsinger
 
  Bug: Foto-Service: Statistik "ausstehende-fotos": .JPG Lieferungen (anstelle von .jpg) wurden nicht berücksichtigt
