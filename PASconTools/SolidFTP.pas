@@ -1297,7 +1297,11 @@ begin
 {$IFDEF FPC}
   BroadCaster.broadcast(OutStr, 9, '');
 {$ELSE}
+{$IFDEF VER310}
+  BroadCaster.broadcast(OutStr, 9, '');
+{$ELSE}
   BroadCaster.broadcast(OutStr, 9, '', TEncoding.ANSI);
+{$ENDIF}
 {$ENDIF}
   BroadCaster.free;
 end;
