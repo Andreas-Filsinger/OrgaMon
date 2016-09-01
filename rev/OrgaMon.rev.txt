@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.220 (01.09.16) Susanne Geiger
+
+ Neu: Person: Neue Datenfelder
+
 Rev 8.219 (25.08.16) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.251" neu compiliert!
@@ -11555,6 +11559,44 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.220
+
+alter table PERSON
+add EMAIL_2 VARCHAR( 90 );
+
+alter table PERSON
+add EMAIL_3 VARCHAR( 90 );
+
+alter table PERSON
+add HANDY_2 CHAR( 25 );
+
+alter table PERSON
+add HANDY_3 CHAR( 25 );
+
+alter table PERSON
+add PRIV_TEL_2 CHAR( 25 );
+
+alter table PERSON
+add PRIV_TEL_3 CHAR( 25 );
+
+alter table PERSON
+add GESCH_TEL_2 CHAR( 25 );
+
+alter table PERSON
+add GESCH_TEL_3 CHAR( 25 );
+
+alter table ANSCHRIFT
+add PRIV_STRASSE VARCHAR( 120 );
+
+alter table ANSCHRIFT
+add PRIV_PLZ integer;
+
+alter table ANSCHRIFT
+add PRIV_ORT CHAR( 45 );
+
+alter table PERSON
+add WEBSEITE_2 VARCHAR( 120 );
 
 :8.199
 

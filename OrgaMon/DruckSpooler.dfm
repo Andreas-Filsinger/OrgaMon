@@ -174,7 +174,7 @@ object FormDruckSpooler: TFormDruckSpooler
       end
       object Button20: TButton
         Left = 699
-        Top = 10
+        Top = 9
         Width = 23
         Height = 23
         Hint = 'Jetzt ein Testausdruck durchf'#252'hren'
@@ -218,10 +218,6 @@ object FormDruckSpooler: TFormDruckSpooler
     object TabSheet2: TTabSheet
       Caption = 'Verarbeiten'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 48
@@ -251,10 +247,6 @@ object FormDruckSpooler: TFormDruckSpooler
       Caption = 'Druckauftrag'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton12: TSpeedButton
         Left = 3
         Top = 4
