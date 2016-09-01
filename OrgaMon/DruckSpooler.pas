@@ -156,8 +156,7 @@ begin
       begin
         with cLAGER do
         begin
-          sql.Add('select * from LAGER where RID = ' +
-            inttostr(cWARENBEWEGUNG.FieldByName('LAGER_R').AsInteger));
+          sql.Add('select * from LAGER where RID = ' + inttostr(cWARENBEWEGUNG.FieldByName('LAGER_R').AsInteger));
           ApiFirst;
           if eof then
             Log('ERROR: LAGER_R Referenz ungültig!');
@@ -169,8 +168,7 @@ begin
       if not(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').IsNull) then
         with cARTIKEL do
         begin
-          sql.Add('select * from ARTIKEL where RID = ' +
-            inttostr(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
+          sql.Add('select * from ARTIKEL where RID = ' + inttostr(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
           ApiFirst;
           if eof then
             Log('ERROR: ARTIKEL_R Referenz ungültig!');
@@ -180,8 +178,7 @@ begin
       cBELEG := DataModuleDatenbank.nCursor;
       with cBELEG do
       begin
-        sql.Add('select * from BELEG where RID=' + inttostr(cWARENBEWEGUNG.FieldByName('BELEG_R')
-          .AsInteger));
+        sql.Add('select * from BELEG where RID=' + inttostr(cWARENBEWEGUNG.FieldByName('BELEG_R').AsInteger));
         ApiFirst;
         if not(eof) then
         begin
@@ -206,8 +203,7 @@ begin
       if (PERSON_R >= cRID_FirstValid) then
         with cANSCHRIFT do
         begin
-          sql.Add('select * from ANSCHRIFT where RID=' +
-            inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
+          sql.Add('select * from ANSCHRIFT where RID=' + inttostr(cPERSON.FieldByName('PRIV_ANSCHRIFT_R').AsInteger));
           ApiFirst;
         end;
 
@@ -335,8 +331,9 @@ begin
         sMovePath := inttostrN(e_w_GEN('GEN_TICKET'), 10) + '\';
         CheckCreateDir(MyProgramPath + cDruckauftragPath + sMovePath);
         for n := 0 to pred(items.count) do
-          FileMove(MyProgramPath + cDruckauftragPath + items[n], MyProgramPath + cDruckauftragPath +
-            sMovePath + items[n]);
+          FileMove(
+            { } MyProgramPath + cDruckauftragPath + items[n],
+            { } MyProgramPath + cDruckauftragPath + sMovePath + items[n]);
         refreshDruckauftraege;
         EndHourGlass;
       end;
@@ -653,7 +650,7 @@ end;
 procedure TFormDruckSpooler.Button4Click(Sender: TObject);
 begin
   with ListBox2 do
-    if itemindex <> -1 then
+    if (itemindex <> -1) then
       printhtmlok(MyProgramPath + cDruckauftragPath + items[itemindex]);
 end;
 
@@ -765,8 +762,7 @@ begin
   if IB_Query1.active then
     if IB_Query1.FieldByName('GEDRUCKT').IsNotNull then
     begin
-      e_x_sql('update WARENBEWEGUNG set GEDRUCKT = NULL where RID=' +
-        inttostr(IB_Query1.FieldByName('RID').AsInteger));
+      e_x_sql('update WARENBEWEGUNG set GEDRUCKT = NULL where RID=' + inttostr(IB_Query1.FieldByName('RID').AsInteger));
       IB_Query1.Refresh;
       ActionDone := true;
     end;
