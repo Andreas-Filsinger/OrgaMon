@@ -332,7 +332,7 @@ begin
       break;
     end;
     //
-    if FDate(FName) > FDate(FName_pdf) then
+    if (FDate(FName) > FDate(FName_pdf)) then
     begin
       WinExec32AndWait(
         { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
@@ -340,6 +340,12 @@ begin
         { } '"' + FName + '"' + ' ' +
         { } '"' + FName_pdf + '"',
         { } SW_SHOWDEFAULT);
+    end;
+
+    if not(FileExists(FName_pdf)) then
+    begin
+      ErrorMsg := 'PDF-Erstellung ist nicht erfolgt. Ev. keine wkhtmltopdf Installation gefunden!';
+      break;
     end;
 
     // openShell(FName_pdf);

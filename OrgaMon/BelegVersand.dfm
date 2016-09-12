@@ -20,7 +20,7 @@ object FormBelegVersand: TFormBelegVersand
   object Label1: TLabel
     Left = 7
     Top = 243
-    Width = 59
+    Width = 58
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Versender'

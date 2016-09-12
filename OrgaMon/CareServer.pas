@@ -709,6 +709,10 @@ begin
     sApp := ProgramFilesDir + 'uvnc bvba\UltraVNC\vncviewer.exe';
     if FileExists(sApp) then
       break;
+    // auf einem 64-Bit System
+    sApp := 'C:\Program Files\uvnc bvba\UltraVNC\vncviewer.exe';
+    if FileExists(sApp) then
+      break;
 
     sApp := '';
     ShowMessage('Keine Ultra-VNC Installation gefunden');
