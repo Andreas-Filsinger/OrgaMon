@@ -1098,7 +1098,7 @@ object FormCareServer: TFormCareServer
       object Label16: TLabel
         Left = 8
         Top = 8
-        Width = 85
+        Width = 84
         Height = 12
         Margins.Left = 4
         Margins.Top = 4
