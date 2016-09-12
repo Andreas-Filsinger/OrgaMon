@@ -247,7 +247,7 @@ function TSynWordWrapPlugin.GetRowLength(aRow: integer): integer;
 // aRow is 1-based...
 begin
   if (aRow <= 0) or (aRow > RowCount) then
-    TList.Error(SListIndexError, aRow);
+TList.Error('Index Error %d', aRow);
   Result := fRowLengths[aRow - 1];
 end;
 

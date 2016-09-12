@@ -4753,7 +4753,8 @@ begin
         ScrollInfo.fMask := ScrollInfo.fMask or SIF_DISABLENOSCROLL;
       end;
 
-      if (fScrollBars in [ssBoth, ssHorizontal]) and not WordWrap then
+
+      if not WordWrap and ((fScrollBars=TScrollStyle.ssBoth) or (fScrollBars=TScrollStyle.ssHorizontal)) then
       begin
         if eoScrollPastEol in Options then
           nMaxScroll := MaxScrollWidth
@@ -7966,12 +7967,12 @@ begin
   end;
 end;
 
-procedure TCustomSynEdit.SetAdditionalIdentChars(const Value: TSysCharSet);
+procedure TCustomSynEdit.SetAdditionalIdentChars(const Value: SysUtils.TSysCharSet);
 begin
   FAdditionalIdentChars := Value;
 end;
 
-procedure TCustomSynEdit.SetAdditionalWordBreakChars(const Value: TSysCharSet);
+procedure TCustomSynEdit.SetAdditionalWordBreakChars(const Value: SysUtils.TSysCharSet);
 begin
   FAdditionalWordBreakChars := Value;
 end;

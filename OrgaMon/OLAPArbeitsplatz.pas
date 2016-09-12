@@ -57,7 +57,7 @@ uses
   ImgList, ComCtrls, JvGIF,
   ExtCtrls, StdCtrls, ToolWin,
   Grids, IB_Components, IB_Access,
-  gplists, Buttons;
+  gplists, Buttons, System.ImageList;
 
 type
   TFormOLAPArbeitsplatz = class(TForm)
@@ -3420,11 +3420,11 @@ end;
 
 procedure TFormOLAPArbeitsplatz.ToolButton33Click(Sender: TObject);
 begin
-  ShowMessage('*ShortDateFormat:' + ShortDateFormat + #13 + 'LongDateFormat:' +
-    LongDateFormat + #13 + 'TimeSeparator:' + TimeSeparator + #13 +
-    'TimeAMString:' + TimeAMString + #13 + 'TimePMString:' + TimePMString + #13
-    + 'ShortTimeFormat:' + ShortTimeFormat + #13 + '*LongTimeFormat:' +
-    LongTimeFormat + #13);
+  ShowMessage('*ShortDateFormat:' + FormatSettings.ShortDateFormat + #13 + 'LongDateFormat:' +
+    FormatSettings.LongDateFormat + #13 + 'TimeSeparator:' + FormatSettings.TimeSeparator + #13 +
+    'TimeAMString:' + FormatSettings.TimeAMString + #13 + 'TimePMString:' + FormatSettings.TimePMString + #13
+    + 'ShortTimeFormat:' + FormatSettings.ShortTimeFormat + #13 + '*LongTimeFormat:' +
+    FormatSettings.LongTimeFormat + #13);
 end;
 
 end.

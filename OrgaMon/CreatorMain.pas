@@ -941,7 +941,7 @@ var
             begin
               k := pos('.', PreisStr);
               if (k > 0) then
-                PreisStr[k] := DecimalSeparator;
+                PreisStr[k] := FormatSettings.DecimalSeparator;
               try
 
                 OrgCurrency := '';
@@ -951,7 +951,7 @@ var
                     PreisStr[n1] := '#';
                   if (PreisStr[n1] = '-') then
                     PreisStr[n1] := '0';
-                  if not(PreisStr[n1] in ['#', '0' .. '9', DecimalSeparator]) then
+                  if not(PreisStr[n1] in ['#', '0' .. '9', FormatSettings.DecimalSeparator]) then
                   begin
                     OrgCurrency := OrgCurrency + PreisStr[n1];
                     PreisStr[n1] := '#';
