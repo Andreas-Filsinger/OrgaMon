@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.221 (12.09.16) Andreas Filsinger
+
+ Neu: Compiliert mit RAD Studio 10.1 Berlin Starter Edition
+
 Rev 8.220 (01.09.16) Susanne Geiger
 
  Neu: Person: Neue Datenfelder
