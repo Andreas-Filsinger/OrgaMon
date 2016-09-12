@@ -1177,7 +1177,7 @@ function TSynPasSyn.UseUserSettings(VersionIndex: Integer): Boolean;
         begin
           VersionStr := Copy(settingTag, Length(BDSVersionPrefix) + 1, 999);
           Version := 0;
-          if not TryStrToCurr(StringReplace(VersionStr, '.', DecimalSeparator, []), Version) then
+          if not TryStrToCurr(StringReplace(VersionStr, '.', FormatSettings.DecimalSeparator, []), Version) then
           begin
             Result := False;
             Exit;

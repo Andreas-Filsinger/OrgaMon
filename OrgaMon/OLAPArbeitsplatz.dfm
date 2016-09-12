@@ -120,6 +120,57 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     ScrollBars = ssVertical
     TabOrder = 0
     OnDrawCell = DrawGrid1DrawCell
+    ColWidths = (
+      130
+      130
+      130
+      130)
+    RowHeights = (
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26)
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -1421,6 +1472,10 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = 'Z'#228'hler (METERS)'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         962
         260)
@@ -2136,7 +2191,7 @@ object FormOLAPArbeitsplatz: TFormOLAPArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010162006300380010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101620063003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000009001000001002000000000000090
       0100000000000000000000000000000000000000000000000000000000000000
       000000000000000000009999990D959595319191912F8C8C8C07000000000000

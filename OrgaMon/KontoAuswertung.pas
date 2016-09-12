@@ -174,7 +174,7 @@ begin
  _Start         := date2long(edit2.Text+'.'+edit4.Text);
  _End           := date2long(edit3.Text+'.'+edit4.Text);
  _Dauer         := succ(DateDiff(_start,_end));
- CurrencyString := comboBox2.text;
+ FormatSettings.CurrencyString := comboBox2.text;
  AddDataOK := false;
  listbox2.clear;
  listbox2.Items.add('Konto   : '+edit1.text);

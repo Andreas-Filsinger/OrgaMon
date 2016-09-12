@@ -1665,24 +1665,24 @@ begin
       Inc(i);
       if c <= $7F then
       begin
-        Dest[count] := Char(c);
+        Dest[count] := AnsiChar(c);
         Inc(count);
       end
       else if c > $7FF then
       begin
         if count + 3 > MaxDestBytes then
           break;
-        Dest[count] := Char($E0 or (c shr 12));
-        Dest[count+1] := Char($80 or ((c shr 6) and $3F));
-        Dest[count+2] := Char($80 or (c and $3F));
+        Dest[count] := ANsiChar($E0 or (c shr 12));
+        Dest[count+1] := ANsiChar($80 or ((c shr 6) and $3F));
+        Dest[count+2] := ANsiChar($80 or (c and $3F));
         Inc(count,3);
       end
       else //  $7F < Source[i] <= $7FF
       begin
         if count + 2 > MaxDestBytes then
           break;
-        Dest[count] := Char($C0 or (c shr 6));
-        Dest[count+1] := Char($80 or (c and $3F));
+        Dest[count] := ANsiChar($C0 or (c shr 6));
+        Dest[count+1] := ANsiChar($80 or (c and $3F));
         Inc(count,2);
       end;
     end;

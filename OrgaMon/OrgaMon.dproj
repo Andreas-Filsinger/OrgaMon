@@ -1,687 +1,679 @@
-﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		<PropertyGroup>
-			<ProjectGuid>{d6093f2d-392c-4537-b243-5e027f80a5b0}</ProjectGuid>
-			<MainSource>OrgaMon.dpr</MainSource>
-			<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-			<DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
-			<ProjectVersion>13.4</ProjectVersion>
-			<Config Condition="'$(Config)'==''">Debug</Config>
-			<Basis>True</Basis>
-			<AppType>Application</AppType>
-			<FrameworkType>VCL</FrameworkType>
-			<Base>True</Base>
-			<Platform Condition="'$(Platform)'==''">Win32</Platform>
-			<TargetedPlatforms>1</TargetedPlatforms>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
-			<Base_Win64>true</Base_Win64>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
-			<Base_Win32>true</Base_Win32>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
-			<Cfg_1>true</Cfg_1>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
-			<Cfg_2>true</Cfg_2>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-			<Cfg_2_Win32>true</Cfg_2_Win32>
-			<CfgParent>Cfg_2</CfgParent>
-			<Cfg_2>true</Cfg_2>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
-			<VerInfo_MinorVer>2</VerInfo_MinorVer>
-			<DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;FMXTee;$(DCC_Namespace)</DCC_Namespace>
-			<VerInfo_MajorVer>7</VerInfo_MajorVer>
-			<VerInfo_Keys>CompanyName=Andreas Filsinger;FileDescription=OrgaMon Unternehmenssoftware;FileVersion=7.2.0.1350;InternalName=OrgaMon;LegalCopyright=GPLv3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=7</VerInfo_Keys>
-			<VerInfo_Build>1350</VerInfo_Build>
-			<VerInfo_Locale>1031</VerInfo_Locale>
-			<DCC_UnitSearchPath>..\dcpcrypt\Hashes;..\dcpcrypt\Ciphers;..\dcpcrypt;..\Synedit-2.0.7\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_UsePackage>vclx;vcl;vclimg;dbrtl;Rave77VCL;bdertl;rtl;vclactnband;vcldb;vcldbx;vcltouch;xmlrtl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;vclib;ibxpress;adortl;IndyCore;IndySystem;IndyProtocols;inet;intrawebdb_100_140;Intraweb_100_140;VclSmp;vclie;inetdb;webdsnap;websnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;DbxCommonDriver;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbexpress;dbxcds;Jcl;IBO40CRT_D2010;IBO40ART_D2010;IBO40TRT_D2010;IBO40VRT_D2010;IBO40FRT_D2010;IBO40XRT_D2010;IBO40WRT_D2010;IBO40WXDT_D2010;IBO40WXRT_D2010;IBO40WSRT_D2010;IBO40RPL_D2010;IBO40FTS_D2010;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;$(DCC_UsePackage)</DCC_UsePackage>
-			<DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base_Win64)'!=''">
-			<Icon_MainIcon>OrgaMon-XE_Icon1.ico</Icon_MainIcon>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base_Win32)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<Icon_MainIcon>OrgaMon-XE_Icon1.ico</Icon_MainIcon>
-			<DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_1)'!=''">
-			<DCC_WriteableConstants>true</DCC_WriteableConstants>
-			<Version>7.0</Version>
-			<DCC_DebugInformation>False</DCC_DebugInformation>
-			<DCC_IOChecking>False</DCC_IOChecking>
-			<DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
-			<DCC_StrictVarStrings>False</DCC_StrictVarStrings>
-			<DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
-			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-			<DCC_OutputDRCFile>True</DCC_OutputDRCFile>
-			<DCC_StackSize>1048576,5242880</DCC_StackSize>
-			<DCC_DcuOutput>.\dcu</DCC_DcuOutput>
-			<DCC_ObjOutput>.\dcu</DCC_ObjOutput>
-			<DCC_HppOutput>.\dcu</DCC_HppOutput>
-			<DCC_UnitSearchPath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_ResourcePath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_ResourcePath)</DCC_ResourcePath>
-			<DCC_ObjPath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_ObjPath)</DCC_ObjPath>
-			<DCC_IncludePath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_IncludePath)</DCC_IncludePath>
-			<DCC_Define>HeBuAdmin;RELEASE;$(DCC_Define)</DCC_Define>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2)'!=''">
-			<DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
-			<DCC_WriteableConstants>true</DCC_WriteableConstants>
-			<Version>7.0</Version>
-			<DCC_IOChecking>False</DCC_IOChecking>
-			<DCC_StrictVarStrings>False</DCC_StrictVarStrings>
-			<DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
-			<DCC_OutputDRCFile>True</DCC_OutputDRCFile>
-			<DCC_StackSize>1048576,5242880</DCC_StackSize>
-			<DCC_DcuOutput>..\..\dcu</DCC_DcuOutput>
-			<DCC_ObjOutput>..\..\dcu</DCC_ObjOutput>
-			<DCC_HppOutput>..\..\dcu</DCC_HppOutput>
-			<DCC_UnitSearchPath>..\XMLRPC;..\libxml2;..\CCR Exif;..\UIB;..\fpSpreadSheet;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_ResourcePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_ResourcePath)</DCC_ResourcePath>
-			<DCC_ObjPath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_ObjPath)</DCC_ObjPath>
-			<DCC_IncludePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_IncludePath)</DCC_IncludePath>
-			<DCC_Define>HeBuAdmin;DEBUG;$(DCC_Define)</DCC_Define>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-			<DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
-			<VerInfo_MinorVer>5</VerInfo_MinorVer>
-			<Debugger_RunParams>nosplash</Debugger_RunParams>
-			<VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=7.5.0.1350;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=;ProductName=OrgaMon;ProductVersion=1.0.0.0;Comments=Software für Unternehmen</VerInfo_Keys>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-		</PropertyGroup>
-		<ProjectExtensions>
-			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
-			<Borland.ProjectType/>
-			<BorlandProject>
-				<Delphi.Personality>
-					<Parameters/>
-					<Language>
-						<Language Name="ProjectLang">$00000407</Language>
-					</Language>
-					<VersionInfo>
-						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
-						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
-						<VersionInfo Name="MajorVer">7</VersionInfo>
-						<VersionInfo Name="MinorVer">2</VersionInfo>
-						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">1355</VersionInfo>
-						<VersionInfo Name="Debug">False</VersionInfo>
-						<VersionInfo Name="PreRelease">False</VersionInfo>
-						<VersionInfo Name="Special">False</VersionInfo>
-						<VersionInfo Name="Private">False</VersionInfo>
-						<VersionInfo Name="DLL">False</VersionInfo>
-						<VersionInfo Name="Locale">1031</VersionInfo>
-						<VersionInfo Name="CodePage">1252</VersionInfo>
-					</VersionInfo>
-					<VersionInfoKeys>
-						<VersionInfoKeys Name="CompanyName">Andreas Filsinger</VersionInfoKeys>
-						<VersionInfoKeys Name="FileDescription">OrgaMon Unternehmenssoftware</VersionInfoKeys>
-						<VersionInfoKeys Name="FileVersion">7.2.0.1355</VersionInfoKeys>
-						<VersionInfoKeys Name="InternalName">OrgaMon</VersionInfoKeys>
-						<VersionInfoKeys Name="LegalCopyright">GPLv3</VersionInfoKeys>
-						<VersionInfoKeys Name="LegalTrademarks"/>
-						<VersionInfoKeys Name="OriginalFilename">OrgaMon.exe</VersionInfoKeys>
-						<VersionInfoKeys Name="ProductName">OrgaMon</VersionInfoKeys>
-						<VersionInfoKeys Name="ProductVersion">7</VersionInfoKeys>
-					</VersionInfoKeys>
-					<Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
-					</Excluded_Packages>
-					<Source>
-						<Source Name="MainSource">OrgaMon.dpr</Source>
-					</Source>
-				</Delphi.Personality>
-				<ModelSupport>False</ModelSupport>
-				<Platforms>
-					<Platform value="Win64">False</Platform>
-					<Platform value="Win32">True</Platform>
-				</Platforms>
-			</BorlandProject>
-			<ProjectFileVersion>12</ProjectFileVersion>
-		</ProjectExtensions>
-		<ItemGroup>
-			<DelphiCompile Include="$(MainSource)">
-				<MainSource>MainSource</MainSource>
-			</DelphiCompile>
-			<DCCReference Include="globals.pas"/>
-			<DCCReference Include="Datenbank.pas">
-				<Form>DataModuleDatenbank</Form>
-				<DesignClass>TDataModule</DesignClass>
-			</DCCReference>
-			<DCCReference Include="Bearbeiter.pas">
-				<Form>FormBearbeiter</Form>
-			</DCCReference>
-			<DCCReference Include="Person.pas">
-				<Form>FormPerson</Form>
-			</DCCReference>
-			<DCCReference Include="Artikel.pas">
-				<Form>FormArtikel</Form>
-			</DCCReference>
-			<DCCReference Include="main.pas">
-				<Form>FormMain</Form>
-			</DCCReference>
-			<DCCReference Include="Serie.pas">
-				<Form>FormSerie</Form>
-			</DCCReference>
-			<DCCReference Include="Laender.pas">
-				<Form>FormLaender</Form>
-			</DCCReference>
-			<DCCReference Include="InternationaleTexte.pas">
-				<Form>FormInternationaleTexte</Form>
-			</DCCReference>
-			<DCCReference Include="SystemPflege.pas">
-				<Form>FormSystemPflege</Form>
-			</DCCReference>
-			<DCCReference Include="PersonDoppelte.pas">
-				<Form>FormPersonDoppelte</Form>
-			</DCCReference>
-			<DCCReference Include="PersonExport.pas">
-				<Form>FormPersonExport</Form>
-			</DCCReference>
-			<DCCReference Include="Belege.pas">
-				<Form>FormBelege</Form>
-			</DCCReference>
-			<DCCReference Include="Lager.pas">
-				<Form>FormLager</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelSortiment.pas">
-				<Form>FormArtikelSortiment</Form>
-			</DCCReference>
-			<DCCReference Include="MwSt.pas">
-				<Form>FormMwSt</Form>
-			</DCCReference>
-			<DCCReference Include="Einstellungen.pas">
-				<Form>FormEinstellungen</Form>
-			</DCCReference>
-			<DCCReference Include="BelegSuche.pas">
-				<Form>FormBelegSuche</Form>
-			</DCCReference>
-			<DCCReference Include="PersonSuche.pas">
-				<Form>FormPersonSuche</Form>
-			</DCCReference>
-			<DCCReference Include="CreatorMain.pas">
-				<Form>FormCreatorMain</Form>
-			</DCCReference>
-			<DCCReference Include="CreatorOK.pas">
-				<Form>FormCreatorOK</Form>
-			</DCCReference>
-			<DCCReference Include="CreatorWait.pas">
-				<Form>FormCreatorWait</Form>
-			</DCCReference>
-			<DCCReference Include="AusgangsRechnungen.pas">
-				<Form>FormAusgangsRechnungen</Form>
-			</DCCReference>
-			<DCCReference Include="Mahnung.pas">
-				<Form>FormMahnung</Form>
-			</DCCReference>
-			<DCCReference Include="Inventur.pas">
-				<Form>FormInventur</Form>
-			</DCCReference>
-			<DCCReference Include="QueryEdit.pas">
-				<Form>FormQueryEdit</Form>
-			</DCCReference>
-			<DCCReference Include="Ereignis.pas">
-				<Form>FormEreignis</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelEingabe.pas">
-				<Form>FormArtikelEingabe</Form>
-			</DCCReference>
-			<DCCReference Include="Tagesabschluss.pas">
-				<Form>FormTagesAbschluss</Form>
-			</DCCReference>
-			<DCCReference Include="Versender.pas">
-				<Form>FormVersender</Form>
-			</DCCReference>
-			<DCCReference Include="BelegVersand.pas">
-				<Form>FormBelegVersand</Form>
-			</DCCReference>
-			<DCCReference Include="VersenderPaketID.pas">
-				<Form>FormVersenderPaketID</Form>
-			</DCCReference>
-			<DCCReference Include="BelegRecherche.pas">
-				<Form>FormBelegRecherche</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelSuchindex.pas">
-				<Form>FormArtikelSuchindex</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelVerlag.pas">
-				<Form>FormArtikelVerlag</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelBackorder.pas">
-				<Form>FormArtikelBackorder</Form>
-			</DCCReference>
-			<DCCReference Include="PreisCode.pas">
-				<Form>FormPreisCode</Form>
-			</DCCReference>
-			<DCCReference Include="AusgabeArt.pas">
-				<Form>FormAusgabeArt</Form>
-			</DCCReference>
-			<DCCReference Include="Prorata.pas">
-				<Form>FormProrata</Form>
-			</DCCReference>
-			<DCCReference Include="bbelege.pas">
-				<Form>FormBBelege</Form>
-			</DCCReference>
-			<DCCReference Include="BestellArbeitsplatz.pas">
-				<Form>FormBestellArbeitsplatz</Form>
-			</DCCReference>
-			<DCCReference Include="WebShopConnector.pas">
-				<Form>FormWebShopConnector</Form>
-			</DCCReference>
-			<DCCReference Include="Aktion.pas">
-				<Form>FormAktion</Form>
-			</DCCReference>
-			<DCCReference Include="WarenBewegung.pas">
-				<Form>FormWarenBewegung</Form>
-			</DCCReference>
-			<DCCReference Include="NatuerlicheResourcen.pas">
-				<Form>FormNatuerlicheResourcen</Form>
-			</DCCReference>
-			<DCCReference Include="Datensicherung.pas">
-				<Form>FormDatensicherung</Form>
-			</DCCReference>
-			<DCCReference Include="BaseUpdate.pas">
-				<Form>FormBaseUpdate</Form>
-			</DCCReference>
-			<DCCReference Include="Scanner.pas">
-				<Form>FormScanner</Form>
-			</DCCReference>
-			<DCCReference Include="PreAuftrag.pas">
-				<Form>FormPreAuftrag</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelPakete.pas">
-				<Form>FormArtikelPakete</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelNeu.pas">
-				<Form>FormArtikelNeu</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelRang.pas">
-				<Form>FormArtikelRang</Form>
-			</DCCReference>
-			<DCCReference Include="Tier.pas">
-				<Form>FormTier</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelLeistung.pas">
-				<Form>FormArtikelLeistung</Form>
-			</DCCReference>
-			<DCCReference Include="MandantAuswahl.pas">
-				<Form>FormMandantAuswahl</Form>
-			</DCCReference>
-			<DCCReference Include="Replikation.pas">
-				<Form>FormReplikation</Form>
-			</DCCReference>
-			<DCCReference Include="TierAuswahl.pas">
-				<Form>FormTierAuswahl</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelKategorie.pas">
-				<Form>FormArtikelKategorie</Form>
-			</DCCReference>
-			<DCCReference Include="OLAP.pas">
-				<Form>FormOLAP</Form>
-			</DCCReference>
-			<DCCReference Include="DruckLabel.pas">
-				<Form>FormDruckLabel</Form>
-			</DCCReference>
-			<DCCReference Include="DruckSpooler.pas">
-				<Form>FormDruckSpooler</Form>
-			</DCCReference>
-			<DCCReference Include="Objektverwaltung.pas">
-				<Form>FormObjektverwaltung</Form>
-			</DCCReference>
-			<DCCReference Include="KontoAuswertung.pas">
-				<Form>FormKontoAuswertung</Form>
-			</DCCReference>
-			<DCCReference Include="LohnTabelle.pas">
-				<Form>FormLohntabelle</Form>
-			</DCCReference>
-			<DCCReference Include="BudgetKalkulation.pas">
-				<Form>FormBudgetKalkulation</Form>
-			</DCCReference>
-			<DCCReference Include="RechnungsUebersicht.pas">
-				<Form>FormRechnungsUebersicht</Form>
-			</DCCReference>
-			<DCCReference Include="Baustelle.pas">
-				<Form>FormBaustelle</Form>
-			</DCCReference>
-			<DCCReference Include="Budget.pas">
-				<Form>FormBudget</Form>
-			</DCCReference>
-			<DCCReference Include="Arbeitszeit.pas">
-				<Form>FormArbeitszeit</Form>
-			</DCCReference>
-			<DCCReference Include="GeoPostleitzahlen.pas">
-				<Form>FormGeoPostleitzahlen</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelAusgabeart.pas">
-				<Form>FormArtikelAusgabeart</Form>
-			</DCCReference>
-			<DCCReference Include="Zahlungsart.pas">
-				<Form>FormZahlungsart</Form>
-			</DCCReference>
-			<DCCReference Include="Musiker.pas">
-				<Form>FormMusiker</Form>
-			</DCCReference>
-			<DCCReference Include="FolgeSetzen.pas">
-				<Form>FormFolgeSetzen</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelContext.pas">
-				<Form>FormArtikelContext</Form>
-			</DCCReference>
-			<DCCReference Include="QProfil.pas">
-				<Form>FormQProfil</Form>
-			</DCCReference>
-			<DCCReference Include="QArbeitsbereich.pas">
-				<Form>FormQArbeitsbereich</Form>
-			</DCCReference>
-			<DCCReference Include="QAuftrag.pas">
-				<Form>FormQAuftrag</Form>
-			</DCCReference>
-			<DCCReference Include="QGruppe.pas">
-				<Form>FormQGruppe</Form>
-			</DCCReference>
-			<DCCReference Include="Qmain.pas">
-				<Form>FormQMain</Form>
-			</DCCReference>
-			<DCCReference Include="Medium.pas">
-				<Form>FormMedium</Form>
-			</DCCReference>
-			<DCCReference Include="QAbzeichnen.pas">
-				<Form>FormQAbzeichnen</Form>
-			</DCCReference>
-			<DCCReference Include="CareServer.pas">
-				<Form>FormCareServer</Form>
-			</DCCReference>
-			<DCCReference Include="PersonMailer.pas">
-				<Form>FormPersonMailer</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelPreis.pas">
-				<Form>FormArtikelPreis</Form>
-			</DCCReference>
-			<DCCReference Include="AnschriftOptimierung.pas">
-				<Form>FormAnschriftOptimierung</Form>
-			</DCCReference>
-			<DCCReference Include="Auftrag.pas">
-				<Form>FormAuftrag</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragAssist.pas">
-				<Form>FormAuftragAssist</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragExtern.pas">
-				<Form>FormAuftragExtern</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragSuchindex.pas">
-				<Form>FormAuftragSuchindex</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragErgebnis.pas">
-				<Form>FormAuftragErgebnis</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragSuche.pas">
-				<Form>FormAuftragSuche</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragImport.pas">
-				<Form>FormAuftragImport</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragMobil.pas">
-				<Form>FormAuftragMobil</Form>
-			</DCCReference>
-			<DCCReference Include="MonteurUmfang.pas">
-				<Form>FormMonteurUmfang</Form>
-			</DCCReference>
-			<DCCReference Include="PlanquadratNachfrage.pas">
-				<Form>FormPlanquadratNachfrage</Form>
-			</DCCReference>
-			<DCCReference Include="TagWache.pas">
-				<Form>FormTagWache</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragArbeitsplatz.pas">
-				<Form>FormAuftragArbeitsplatz</Form>
-			</DCCReference>
-			<DCCReference Include="Buchhalter.pas">
-				<Form>FormBuchhalter</Form>
-			</DCCReference>
-			<DCCReference Include="AutoUp.pas">
-				<Form>FormAutoUp</Form>
-			</DCCReference>
-			<DCCReference Include="GeoLokalisierung.pas">
-				<Form>FormGeoLokalisierung</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragGeo.pas">
-				<Form>FormAuftragGeo</Form>
-			</DCCReference>
-			<DCCReference Include="GeoArbeitsplatz.pas">
-				<Form>FormGeoArbeitsplatz</Form>
-			</DCCReference>
-			<DCCReference Include="QTicketArbeitsplatz.pas">
-				<Form>FormQTicketArbeitsplatz</Form>
-			</DCCReference>
-			<DCCReference Include="OLAPArbeitsplatz.pas">
-				<Form>FormOLAPArbeitsplatz</Form>
-			</DCCReference>
-			<DCCReference Include="OLAPedit.pas">
-				<Form>FormOLAPedit</Form>
-			</DCCReference>
-			<DCCReference Include="Buchung.pas">
-				<Form>FormBuchung</Form>
-			</DCCReference>
-			<DCCReference Include="ZahlungECconnect.pas">
-				<Form>FormZahlungECconnect</Form>
-			</DCCReference>
-			<DCCReference Include="AuftragBildzuordnung.pas">
-				<Form>FormAuftragBildzuordnung</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelEinheit.pas">
-				<Form>FormArtikelEinheit</Form>
-			</DCCReference>
-			<DCCReference Include="PlakatDruck.pas">
-				<Form>FormPlakatDruck</Form>
-			</DCCReference>
-			<DCCReference Include="Vertrag.pas">
-				<Form>FormVertrag</Form>
-			</DCCReference>
-			<DCCReference Include="Kontext.pas">
-				<Form>FormKontext</Form>
-			</DCCReference>
-			<DCCReference Include="PEM.PAS"/>
-			<DCCReference Include="ArtikelAAA.pas">
-				<Form>FormArtikelAAA</Form>
-			</DCCReference>
-			<DCCReference Include="BuchBarKasse.pas">
-				<Form>FormBuchBarKasse</Form>
-			</DCCReference>
-			<DCCReference Include="REST.pas">
-				<Form>DataModuleREST</Form>
-				<DesignClass>TDataModule</DesignClass>
-			</DCCReference>
-			<DCCReference Include="BaustelleFoto.pas">
-				<Form>FormBaustelleFoto</Form>
-			</DCCReference>
-			<DCCReference Include="epIMPORT.pas">
-				<Form>FormepIMPORT</Form>
-			</DCCReference>
-			<DCCReference Include="FavoritenSQL.pas">
-				<Form>FormSQLFavoriten</Form>
-			</DCCReference>
-			<DCCReference Include="..\infozip\infozip.pas"/>
-			<DCCReference Include="..\libxml2\libxml2.pas"/>
-			<DCCReference Include="Rechnungen.pas">
-				<Form>FormRechnungen</Form>
-			</DCCReference>
-			<DCCReference Include="RechnungenFrame.pas">
-				<Form>FrameRechnungUeberblick</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="eConnect.pas"/>
-			<DCCReference Include="Kalender.pas">
-				<Form>FormKalender</Form>
-			</DCCReference>
-			<DCCReference Include="Auswertung.pas">
-				<Form>FormAuswertung</Form>
-			</DCCReference>
-			<DCCReference Include="Audit.pas">
-				<Form>FormAudit</Form>
-			</DCCReference>
-			<DCCReference Include="FotoMeldung.pas">
-				<Form>FormFotoMeldung</Form>
-			</DCCReference>
-			<DCCReference Include="FrageLoeschenMonteurInfo.pas">
-				<Form>FormFrageLoeschenMonteurInfo</Form>
-			</DCCReference>
-			<DCCReference Include="feiertage.pas">
-				<Form>FormOfficialHolidays</Form>
-			</DCCReference>
-			<DCCReference Include="feiertagbearbeiten.pas">
-				<Form>FormEditOfficialHolidays</Form>
-			</DCCReference>
-			<DCCReference Include="..\PASvisTools\wanfix32.pas"/>
-			<DCCReference Include="..\PASvisTools\txlib_UI.pas"/>
-			<DCCReference Include="..\PASvisTools\splash.pas">
-				<Form>FormSplashScreen</Form>
-			</DCCReference>
-			<DCCReference Include="..\PASvisTools\SysHot.pas"/>
-			<DCCReference Include="..\PASconTools\Geld.pas"/>
-			<DCCReference Include="..\PASconTools\GHD_pngimage.pas"/>
-			<DCCReference Include="..\PASconTools\gplists.pas"/>
-			<DCCReference Include="..\PASconTools\anfix32.pas"/>
-			<DCCReference Include="..\PASconTools\sperre.pas"/>
-			<DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
-			<DCCReference Include="..\PASconTools\WordIndex.pas"/>
-			<DCCReference Include="..\PASconTools\txlib.pas"/>
-			<DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
-			<DCCReference Include="..\PASconTools\html.pas"/>
-			<DCCReference Include="..\PASconTools\DTA.PAS"/>
-			<DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
-			<DCCReference Include="..\PASconTools\binlager32.pas"/>
-			<DCCReference Include="..\PASconTools\SolidFTP.pas"/>
-			<DCCReference Include="..\PASconTools\GeoCache.pas"/>
-			<DCCReference Include="..\PASconTools\basic32.pas"/>
-			<DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
-			<DCCReference Include="..\PASconTools\ContextBase.pas"/>
-			<DCCReference Include="..\PASconTools\FastGEO.pas"/>
-			<DCCReference Include="..\PASconTools\GHD_pnglang.pas"/>
-			<DCCReference Include="..\PASconTools\OpenOfficePDF.pas"/>
-			<DCCReference Include="..\PASconTools\SimplePassword.pas"/>
-			<DCCReference Include="..\PASvisTools\WinAmp.pas"/>
-			<DCCReference Include="..\PASconTools\Mapping.pas"/>
-			<DCCReference Include="..\PASconTools\IBExcel.pas"/>
-			<DCCReference Include="..\PASconTools\txHoliday.pas"/>
-			<DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
-			<DCCReference Include="..\TPicUpload\TPUMain.pas">
-				<Form>FormTPMain</Form>
-			</DCCReference>
-			<DCCReference Include="..\TPicUpload\TSJpeg.pas"/>
-			<DCCReference Include="..\TPicUpload\TSResample.pas"/>
-			<DCCReference Include="..\TPicUpload\MsMultiPartFormData.pas"/>
-			<DCCReference Include="..\TPicUpload\TPUIni.pas">
-				<Form>Ini</Form>
-			</DCCReference>
-			<DCCReference Include="Auswertung.Generator.MixStatistik.config.pas">
-				<Form>FormAGM_Config</Form>
-			</DCCReference>
-			<DCCReference Include="Auswertung.Generator.MixStatistik.editcity.pas">
-				<Form>FormAGM_EditCity</Form>
-			</DCCReference>
-			<DCCReference Include="Auswertung.Generator.MixStatistik.lnmits.pas"/>
-			<DCCReference Include="Auswertung.Generator.MixStatistik.main.pas">
-				<Form>FormAGM_Main</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelBild.pas">
-				<Form>FormArtikelBild</Form>
-			</DCCReference>
-			<DCCReference Include="Resource.SiteDownload.pas">
-				<Form>FormSiteDownload</Form>
-			</DCCReference>
-			<DCCReference Include="..\TPicUpload\TPUUploadProgress.pas">
-				<Form>UploadProgressForm</Form>
-			</DCCReference>
-			<DCCReference Include="..\PASconTools\eOLAP.pas"/>
-			<DCCReference Include="SkriptEditor.pas">
-				<Form>FormSkriptEditor</Form>
-			</DCCReference>
-			<DCCReference Include="Funktionen_Basis.pas"/>
-			<DCCReference Include="Funktionen_Beleg.pas"/>
-			<DCCReference Include="Funktionen_Auftrag.pas"/>
-			<DCCReference Include="Funktionen_Buch.pas"/>
-			<DCCReference Include="uPSI_eConnect.pas"/>
-			<DCCReference Include="uPSI_Funktionen_Auftrag.pas"/>
-			<DCCReference Include="uPSI_Funktionen_Basis.pas"/>
-			<DCCReference Include="uPSI_Funktionen_Beleg.pas"/>
-			<DCCReference Include="uPSI_Funktionen_Buch.pas"/>
-			<DCCReference Include="ArtikelKasse.pas">
-				<Form>FormArtikelKasse</Form>
-			</DCCReference>
-			<DCCReference Include="ArtikelPOS.pas">
-				<Form>FormArtikelPOS</Form>
-			</DCCReference>
-			<DCCReference Include="Funktionen_Transaktion.pas"/>
-			<DCCReference Include="Funktionen_LokaleDaten.pas"/>
-			<DCCReference Include="..\..\IBO5\source\core\IB_Components.pas"/>
-			<DCCReference Include="..\..\IBO5\source\access\IB_Access.pas"/>
-			<DCCReference Include="Cron.pas">
-				<Form>FormCron</Form>
-				<FormType>dfm</FormType>
-			</DCCReference>
-			<DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
-			<DCCReference Include="..\PASconTools\memcache.pas"/>
-			<DCCReference Include="..\PASvisTools\GUIhelp.pas">
-				<Form>DataModuleGUIhelp</Form>
-				<DesignClass>TDataModule</DesignClass>
-			</DCCReference>
-			<DCCReference Include="ServiceApp.pas">
-				<Form>FormServiceApp</Form>
-			</DCCReference>
-			<DCCReference Include="ServiceFoto.pas">
-				<Form>FormServiceFoto</Form>
-			</DCCReference>
-			<DCCReference Include="..\PASconTools\Foto.pas"/>
-			<DCCReference Include="JonDaExec.pas"/>
-			<DCCReference Include="FotoExec.pas"/>
-			<DCCReference Include="ArtikelAusgabeartAuswahl.pas">
-				<Form>FormArtikelAusgabeartAuswahl</Form>
-				<FormType>dfm</FormType>
-			</DCCReference>
-			<None Include="..\rev\Oc.rev.txt"/>
-			<None Include="..\rev\OrgaMon.rev.txt"/>
-			<None Include="..\rev\TPicUpload.rev.txt"/>
-			<None Include="..\rev\Hausverwaltung.rev.txt"/>
-			<None Include="..\rev\WordIndex.rev.txt"/>
-			<BuildConfiguration Include="Debug">
-				<Key>Cfg_2</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
-			<BuildConfiguration Include="Base">
-				<Key>Base</Key>
-			</BuildConfiguration>
-			<BuildConfiguration Include="Release">
-				<Key>Cfg_1</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
-		</ItemGroup>
-		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
-		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
-	</Project>
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{d6093f2d-392c-4537-b243-5e027f80a5b0}</ProjectGuid>
+        <MainSource>OrgaMon.dpr</MainSource>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+        <DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
+        <ProjectVersion>18.1</ProjectVersion>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Basis>True</Basis>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <Base>True</Base>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>OrgaMon</SanitizedProjectName>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
+        <VerInfo_MinorVer>2</VerInfo_MinorVer>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;FMXTee;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_MajorVer>7</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=Andreas Filsinger;FileDescription=OrgaMon Unternehmenssoftware;FileVersion=7.2.0.1350;InternalName=OrgaMon;LegalCopyright=GPLv3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=7.0</VerInfo_Keys>
+        <VerInfo_Build>1350</VerInfo_Build>
+        <VerInfo_Locale>1031</VerInfo_Locale>
+        <DCC_UnitSearchPath>..\dcpcrypt\Hashes;..\dcpcrypt\Ciphers;..\dcpcrypt;..\Synedit-2.0.7\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UsePackage>vclx;vcl;vclimg;dbrtl;Rave77VCL;bdertl;rtl;vclactnband;vcldb;vcldbx;vcltouch;xmlrtl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;vclib;ibxpress;adortl;IndyCore;IndySystem;IndyProtocols;inet;intrawebdb_100_140;Intraweb_100_140;VclSmp;vclie;inetdb;webdsnap;websnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;DbxCommonDriver;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbexpress;dbxcds;Jcl;IBO40CRT_D2010;IBO40ART_D2010;IBO40TRT_D2010;IBO40VRT_D2010;IBO40FRT_D2010;IBO40XRT_D2010;IBO40WRT_D2010;IBO40WXDT_D2010;IBO40WXRT_D2010;IBO40WSRT_D2010;IBO40RPL_D2010;IBO40FTS_D2010;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_DependencyCheckOutputName>OrgaMon.exe</DCC_DependencyCheckOutputName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Icon_MainIcon>OrgaMon-XE_Icon1.ico</Icon_MainIcon>
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_WriteableConstants>true</DCC_WriteableConstants>
+        <Version>7.0</Version>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_IOChecking>False</DCC_IOChecking>
+        <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+        <DCC_StrictVarStrings>False</DCC_StrictVarStrings>
+        <DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_OutputDRCFile>True</DCC_OutputDRCFile>
+        <DCC_StackSize>1048576,5242880</DCC_StackSize>
+        <DCC_DcuOutput>.\dcu</DCC_DcuOutput>
+        <DCC_ObjOutput>.\dcu</DCC_ObjOutput>
+        <DCC_HppOutput>.\dcu</DCC_HppOutput>
+        <DCC_UnitSearchPath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_ResourcePath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_ResourcePath)</DCC_ResourcePath>
+        <DCC_ObjPath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_ObjPath)</DCC_ObjPath>
+        <DCC_IncludePath>O:\DCPcrypt;O:\DCPcrypt\Ciphers;O:\DCPcrypt\hashes;O:\IBObjects;O:\VCLzip;O:\php4delphi;O:\tms;O:\FlexCel\FlexCel;O:\FlexCel\XLSAdapter;O:\SynEdit\Source;O:\SysHot;O:\XMLRPC;$(DCC_IncludePath)</DCC_IncludePath>
+        <DCC_Define>HeBuAdmin;RELEASE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
+        <DCC_WriteableConstants>true</DCC_WriteableConstants>
+        <Version>7.0</Version>
+        <DCC_IOChecking>False</DCC_IOChecking>
+        <DCC_StrictVarStrings>False</DCC_StrictVarStrings>
+        <DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
+        <DCC_OutputDRCFile>True</DCC_OutputDRCFile>
+        <DCC_StackSize>1048576,5242880</DCC_StackSize>
+        <DCC_DcuOutput>..\..\dcu</DCC_DcuOutput>
+        <DCC_ObjOutput>..\..\dcu</DCC_ObjOutput>
+        <DCC_HppOutput>..\..\dcu</DCC_HppOutput>
+        <DCC_UnitSearchPath>..\XMLRPC;..\libxml2;..\CCR Exif;..\UIB;..\fpSpreadSheet;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_ResourcePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_ResourcePath)</DCC_ResourcePath>
+        <DCC_ObjPath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_ObjPath)</DCC_ObjPath>
+        <DCC_IncludePath>..\DCPcrypt;..\DCPcrypt\Ciphers;..\DCPcrypt\hashes;..\XMLRPC;..\ZipMaster;..\libxml2;$(DCC_IncludePath)</DCC_IncludePath>
+        <DCC_Define>HeBuAdmin;DEBUG;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
+        <VerInfo_MinorVer>5</VerInfo_MinorVer>
+        <Debugger_RunParams>nosplash</Debugger_RunParams>
+        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=7.5.0.1350;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=;ProductName=OrgaMon;ProductVersion=1.0.0.0;Comments=Software für Unternehmen</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Parameters/>
+                <Language>
+                    <Language Name="ProjectLang">$00000407</Language>
+                </Language>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+                    <VersionInfo Name="MajorVer">7</VersionInfo>
+                    <VersionInfo Name="MinorVer">2</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">1355</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1031</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">Andreas Filsinger</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription">OrgaMon Unternehmenssoftware</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">7.2.0.1355</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName">OrgaMon</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalCopyright">GPLv3</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename">OrgaMon.exe</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductName">OrgaMon</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">7</VersionInfoKeys>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                </Excluded_Packages>
+                <Source>
+                    <Source Name="MainSource">OrgaMon.dpr</Source>
+                </Source>
+            </Delphi.Personality>
+            <ModelSupport>False</ModelSupport>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="globals.pas"/>
+        <DCCReference Include="Datenbank.pas">
+            <Form>DataModuleDatenbank</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Bearbeiter.pas">
+            <Form>FormBearbeiter</Form>
+        </DCCReference>
+        <DCCReference Include="Person.pas">
+            <Form>FormPerson</Form>
+        </DCCReference>
+        <DCCReference Include="Artikel.pas">
+            <Form>FormArtikel</Form>
+        </DCCReference>
+        <DCCReference Include="main.pas">
+            <Form>FormMain</Form>
+        </DCCReference>
+        <DCCReference Include="Serie.pas">
+            <Form>FormSerie</Form>
+        </DCCReference>
+        <DCCReference Include="Laender.pas">
+            <Form>FormLaender</Form>
+        </DCCReference>
+        <DCCReference Include="InternationaleTexte.pas">
+            <Form>FormInternationaleTexte</Form>
+        </DCCReference>
+        <DCCReference Include="SystemPflege.pas">
+            <Form>FormSystemPflege</Form>
+        </DCCReference>
+        <DCCReference Include="PersonDoppelte.pas">
+            <Form>FormPersonDoppelte</Form>
+        </DCCReference>
+        <DCCReference Include="PersonExport.pas">
+            <Form>FormPersonExport</Form>
+        </DCCReference>
+        <DCCReference Include="Belege.pas">
+            <Form>FormBelege</Form>
+        </DCCReference>
+        <DCCReference Include="Lager.pas">
+            <Form>FormLager</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelSortiment.pas">
+            <Form>FormArtikelSortiment</Form>
+        </DCCReference>
+        <DCCReference Include="MwSt.pas">
+            <Form>FormMwSt</Form>
+        </DCCReference>
+        <DCCReference Include="Einstellungen.pas">
+            <Form>FormEinstellungen</Form>
+        </DCCReference>
+        <DCCReference Include="BelegSuche.pas">
+            <Form>FormBelegSuche</Form>
+        </DCCReference>
+        <DCCReference Include="PersonSuche.pas">
+            <Form>FormPersonSuche</Form>
+        </DCCReference>
+        <DCCReference Include="CreatorMain.pas">
+            <Form>FormCreatorMain</Form>
+        </DCCReference>
+        <DCCReference Include="CreatorOK.pas">
+            <Form>FormCreatorOK</Form>
+        </DCCReference>
+        <DCCReference Include="CreatorWait.pas">
+            <Form>FormCreatorWait</Form>
+        </DCCReference>
+        <DCCReference Include="AusgangsRechnungen.pas">
+            <Form>FormAusgangsRechnungen</Form>
+        </DCCReference>
+        <DCCReference Include="Mahnung.pas">
+            <Form>FormMahnung</Form>
+        </DCCReference>
+        <DCCReference Include="Inventur.pas">
+            <Form>FormInventur</Form>
+        </DCCReference>
+        <DCCReference Include="QueryEdit.pas">
+            <Form>FormQueryEdit</Form>
+        </DCCReference>
+        <DCCReference Include="Ereignis.pas">
+            <Form>FormEreignis</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelEingabe.pas">
+            <Form>FormArtikelEingabe</Form>
+        </DCCReference>
+        <DCCReference Include="Tagesabschluss.pas">
+            <Form>FormTagesAbschluss</Form>
+        </DCCReference>
+        <DCCReference Include="Versender.pas">
+            <Form>FormVersender</Form>
+        </DCCReference>
+        <DCCReference Include="BelegVersand.pas">
+            <Form>FormBelegVersand</Form>
+        </DCCReference>
+        <DCCReference Include="VersenderPaketID.pas">
+            <Form>FormVersenderPaketID</Form>
+        </DCCReference>
+        <DCCReference Include="BelegRecherche.pas">
+            <Form>FormBelegRecherche</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelSuchindex.pas">
+            <Form>FormArtikelSuchindex</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelVerlag.pas">
+            <Form>FormArtikelVerlag</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelBackorder.pas">
+            <Form>FormArtikelBackorder</Form>
+        </DCCReference>
+        <DCCReference Include="PreisCode.pas">
+            <Form>FormPreisCode</Form>
+        </DCCReference>
+        <DCCReference Include="AusgabeArt.pas">
+            <Form>FormAusgabeArt</Form>
+        </DCCReference>
+        <DCCReference Include="Prorata.pas">
+            <Form>FormProrata</Form>
+        </DCCReference>
+        <DCCReference Include="bbelege.pas">
+            <Form>FormBBelege</Form>
+        </DCCReference>
+        <DCCReference Include="BestellArbeitsplatz.pas">
+            <Form>FormBestellArbeitsplatz</Form>
+        </DCCReference>
+        <DCCReference Include="WebShopConnector.pas">
+            <Form>FormWebShopConnector</Form>
+        </DCCReference>
+        <DCCReference Include="Aktion.pas">
+            <Form>FormAktion</Form>
+        </DCCReference>
+        <DCCReference Include="WarenBewegung.pas">
+            <Form>FormWarenBewegung</Form>
+        </DCCReference>
+        <DCCReference Include="NatuerlicheResourcen.pas">
+            <Form>FormNatuerlicheResourcen</Form>
+        </DCCReference>
+        <DCCReference Include="Datensicherung.pas">
+            <Form>FormDatensicherung</Form>
+        </DCCReference>
+        <DCCReference Include="BaseUpdate.pas">
+            <Form>FormBaseUpdate</Form>
+        </DCCReference>
+        <DCCReference Include="Scanner.pas">
+            <Form>FormScanner</Form>
+        </DCCReference>
+        <DCCReference Include="PreAuftrag.pas">
+            <Form>FormPreAuftrag</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelPakete.pas">
+            <Form>FormArtikelPakete</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelNeu.pas">
+            <Form>FormArtikelNeu</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelRang.pas">
+            <Form>FormArtikelRang</Form>
+        </DCCReference>
+        <DCCReference Include="Tier.pas">
+            <Form>FormTier</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelLeistung.pas">
+            <Form>FormArtikelLeistung</Form>
+        </DCCReference>
+        <DCCReference Include="MandantAuswahl.pas">
+            <Form>FormMandantAuswahl</Form>
+        </DCCReference>
+        <DCCReference Include="Replikation.pas">
+            <Form>FormReplikation</Form>
+        </DCCReference>
+        <DCCReference Include="TierAuswahl.pas">
+            <Form>FormTierAuswahl</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelKategorie.pas">
+            <Form>FormArtikelKategorie</Form>
+        </DCCReference>
+        <DCCReference Include="OLAP.pas">
+            <Form>FormOLAP</Form>
+        </DCCReference>
+        <DCCReference Include="DruckLabel.pas">
+            <Form>FormDruckLabel</Form>
+        </DCCReference>
+        <DCCReference Include="DruckSpooler.pas">
+            <Form>FormDruckSpooler</Form>
+        </DCCReference>
+        <DCCReference Include="Objektverwaltung.pas">
+            <Form>FormObjektverwaltung</Form>
+        </DCCReference>
+        <DCCReference Include="KontoAuswertung.pas">
+            <Form>FormKontoAuswertung</Form>
+        </DCCReference>
+        <DCCReference Include="LohnTabelle.pas">
+            <Form>FormLohntabelle</Form>
+        </DCCReference>
+        <DCCReference Include="BudgetKalkulation.pas">
+            <Form>FormBudgetKalkulation</Form>
+        </DCCReference>
+        <DCCReference Include="RechnungsUebersicht.pas">
+            <Form>FormRechnungsUebersicht</Form>
+        </DCCReference>
+        <DCCReference Include="Baustelle.pas">
+            <Form>FormBaustelle</Form>
+        </DCCReference>
+        <DCCReference Include="Budget.pas">
+            <Form>FormBudget</Form>
+        </DCCReference>
+        <DCCReference Include="Arbeitszeit.pas">
+            <Form>FormArbeitszeit</Form>
+        </DCCReference>
+        <DCCReference Include="GeoPostleitzahlen.pas">
+            <Form>FormGeoPostleitzahlen</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelAusgabeart.pas">
+            <Form>FormArtikelAusgabeart</Form>
+        </DCCReference>
+        <DCCReference Include="Zahlungsart.pas">
+            <Form>FormZahlungsart</Form>
+        </DCCReference>
+        <DCCReference Include="Musiker.pas">
+            <Form>FormMusiker</Form>
+        </DCCReference>
+        <DCCReference Include="FolgeSetzen.pas">
+            <Form>FormFolgeSetzen</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelContext.pas">
+            <Form>FormArtikelContext</Form>
+        </DCCReference>
+        <DCCReference Include="QProfil.pas">
+            <Form>FormQProfil</Form>
+        </DCCReference>
+        <DCCReference Include="QArbeitsbereich.pas">
+            <Form>FormQArbeitsbereich</Form>
+        </DCCReference>
+        <DCCReference Include="QAuftrag.pas">
+            <Form>FormQAuftrag</Form>
+        </DCCReference>
+        <DCCReference Include="QGruppe.pas">
+            <Form>FormQGruppe</Form>
+        </DCCReference>
+        <DCCReference Include="Qmain.pas">
+            <Form>FormQMain</Form>
+        </DCCReference>
+        <DCCReference Include="Medium.pas">
+            <Form>FormMedium</Form>
+        </DCCReference>
+        <DCCReference Include="QAbzeichnen.pas">
+            <Form>FormQAbzeichnen</Form>
+        </DCCReference>
+        <DCCReference Include="CareServer.pas">
+            <Form>FormCareServer</Form>
+        </DCCReference>
+        <DCCReference Include="PersonMailer.pas">
+            <Form>FormPersonMailer</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelPreis.pas">
+            <Form>FormArtikelPreis</Form>
+        </DCCReference>
+        <DCCReference Include="AnschriftOptimierung.pas">
+            <Form>FormAnschriftOptimierung</Form>
+        </DCCReference>
+        <DCCReference Include="Auftrag.pas">
+            <Form>FormAuftrag</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragAssist.pas">
+            <Form>FormAuftragAssist</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragExtern.pas">
+            <Form>FormAuftragExtern</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragSuchindex.pas">
+            <Form>FormAuftragSuchindex</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragErgebnis.pas">
+            <Form>FormAuftragErgebnis</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragSuche.pas">
+            <Form>FormAuftragSuche</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragImport.pas">
+            <Form>FormAuftragImport</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragMobil.pas">
+            <Form>FormAuftragMobil</Form>
+        </DCCReference>
+        <DCCReference Include="MonteurUmfang.pas">
+            <Form>FormMonteurUmfang</Form>
+        </DCCReference>
+        <DCCReference Include="PlanquadratNachfrage.pas">
+            <Form>FormPlanquadratNachfrage</Form>
+        </DCCReference>
+        <DCCReference Include="TagWache.pas">
+            <Form>FormTagWache</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragArbeitsplatz.pas">
+            <Form>FormAuftragArbeitsplatz</Form>
+        </DCCReference>
+        <DCCReference Include="Buchhalter.pas">
+            <Form>FormBuchhalter</Form>
+        </DCCReference>
+        <DCCReference Include="AutoUp.pas">
+            <Form>FormAutoUp</Form>
+        </DCCReference>
+        <DCCReference Include="GeoLokalisierung.pas">
+            <Form>FormGeoLokalisierung</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragGeo.pas">
+            <Form>FormAuftragGeo</Form>
+        </DCCReference>
+        <DCCReference Include="GeoArbeitsplatz.pas">
+            <Form>FormGeoArbeitsplatz</Form>
+        </DCCReference>
+        <DCCReference Include="QTicketArbeitsplatz.pas">
+            <Form>FormQTicketArbeitsplatz</Form>
+        </DCCReference>
+        <DCCReference Include="OLAPArbeitsplatz.pas">
+            <Form>FormOLAPArbeitsplatz</Form>
+        </DCCReference>
+        <DCCReference Include="OLAPedit.pas">
+            <Form>FormOLAPedit</Form>
+        </DCCReference>
+        <DCCReference Include="Buchung.pas">
+            <Form>FormBuchung</Form>
+        </DCCReference>
+        <DCCReference Include="ZahlungECconnect.pas">
+            <Form>FormZahlungECconnect</Form>
+        </DCCReference>
+        <DCCReference Include="AuftragBildzuordnung.pas">
+            <Form>FormAuftragBildzuordnung</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelEinheit.pas">
+            <Form>FormArtikelEinheit</Form>
+        </DCCReference>
+        <DCCReference Include="PlakatDruck.pas">
+            <Form>FormPlakatDruck</Form>
+        </DCCReference>
+        <DCCReference Include="Vertrag.pas">
+            <Form>FormVertrag</Form>
+        </DCCReference>
+        <DCCReference Include="Kontext.pas">
+            <Form>FormKontext</Form>
+        </DCCReference>
+        <DCCReference Include="PEM.PAS"/>
+        <DCCReference Include="ArtikelAAA.pas">
+            <Form>FormArtikelAAA</Form>
+        </DCCReference>
+        <DCCReference Include="BuchBarKasse.pas">
+            <Form>FormBuchBarKasse</Form>
+        </DCCReference>
+        <DCCReference Include="REST.pas">
+            <Form>DataModuleREST</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="BaustelleFoto.pas">
+            <Form>FormBaustelleFoto</Form>
+        </DCCReference>
+        <DCCReference Include="epIMPORT.pas">
+            <Form>FormepIMPORT</Form>
+        </DCCReference>
+        <DCCReference Include="FavoritenSQL.pas">
+            <Form>FormSQLFavoriten</Form>
+        </DCCReference>
+        <DCCReference Include="..\infozip\infozip.pas"/>
+        <DCCReference Include="..\libxml2\libxml2.pas"/>
+        <DCCReference Include="Rechnungen.pas">
+            <Form>FormRechnungen</Form>
+        </DCCReference>
+        <DCCReference Include="RechnungenFrame.pas">
+            <Form>FrameRechnungUeberblick</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="eConnect.pas"/>
+        <DCCReference Include="Kalender.pas">
+            <Form>FormKalender</Form>
+        </DCCReference>
+        <DCCReference Include="Auswertung.pas">
+            <Form>FormAuswertung</Form>
+        </DCCReference>
+        <DCCReference Include="Audit.pas">
+            <Form>FormAudit</Form>
+        </DCCReference>
+        <DCCReference Include="FotoMeldung.pas">
+            <Form>FormFotoMeldung</Form>
+        </DCCReference>
+        <DCCReference Include="FrageLoeschenMonteurInfo.pas">
+            <Form>FormFrageLoeschenMonteurInfo</Form>
+        </DCCReference>
+        <DCCReference Include="feiertage.pas">
+            <Form>FormOfficialHolidays</Form>
+        </DCCReference>
+        <DCCReference Include="feiertagbearbeiten.pas">
+            <Form>FormEditOfficialHolidays</Form>
+        </DCCReference>
+        <DCCReference Include="..\PASvisTools\wanfix32.pas"/>
+        <DCCReference Include="..\PASvisTools\txlib_UI.pas"/>
+        <DCCReference Include="..\PASvisTools\splash.pas">
+            <Form>FormSplashScreen</Form>
+        </DCCReference>
+        <DCCReference Include="..\PASvisTools\SysHot.pas"/>
+        <DCCReference Include="..\PASconTools\Geld.pas"/>
+        <DCCReference Include="..\PASconTools\GHD_pngimage.pas"/>
+        <DCCReference Include="..\PASconTools\gplists.pas"/>
+        <DCCReference Include="..\PASconTools\anfix32.pas"/>
+        <DCCReference Include="..\PASconTools\sperre.pas"/>
+        <DCCReference Include="..\PASconTools\ExcelHelper.pas"/>
+        <DCCReference Include="..\PASconTools\WordIndex.pas"/>
+        <DCCReference Include="..\PASconTools\txlib.pas"/>
+        <DCCReference Include="..\PASconTools\CareTakerClient.pas"/>
+        <DCCReference Include="..\PASconTools\html.pas"/>
+        <DCCReference Include="..\PASconTools\DTA.PAS"/>
+        <DCCReference Include="..\PASconTools\OrientationConvert.pas"/>
+        <DCCReference Include="..\PASconTools\binlager32.pas"/>
+        <DCCReference Include="..\PASconTools\SolidFTP.pas"/>
+        <DCCReference Include="..\PASconTools\GeoCache.pas"/>
+        <DCCReference Include="..\PASconTools\basic32.pas"/>
+        <DCCReference Include="..\PASconTools\srvXMLRPC.pas"/>
+        <DCCReference Include="..\PASconTools\ContextBase.pas"/>
+        <DCCReference Include="..\PASconTools\FastGEO.pas"/>
+        <DCCReference Include="..\PASconTools\GHD_pnglang.pas"/>
+        <DCCReference Include="..\PASconTools\OpenOfficePDF.pas"/>
+        <DCCReference Include="..\PASconTools\SimplePassword.pas"/>
+        <DCCReference Include="..\PASvisTools\WinAmp.pas"/>
+        <DCCReference Include="..\PASconTools\Mapping.pas"/>
+        <DCCReference Include="..\PASconTools\IBExcel.pas"/>
+        <DCCReference Include="..\PASconTools\txHoliday.pas"/>
+        <DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
+        <DCCReference Include="..\TPicUpload\TPUMain.pas">
+            <Form>FormTPMain</Form>
+        </DCCReference>
+        <DCCReference Include="..\TPicUpload\TSJpeg.pas"/>
+        <DCCReference Include="..\TPicUpload\TSResample.pas"/>
+        <DCCReference Include="..\TPicUpload\MsMultiPartFormData.pas"/>
+        <DCCReference Include="..\TPicUpload\TPUIni.pas">
+            <Form>Ini</Form>
+        </DCCReference>
+        <DCCReference Include="Auswertung.Generator.MixStatistik.config.pas">
+            <Form>FormAGM_Config</Form>
+        </DCCReference>
+        <DCCReference Include="Auswertung.Generator.MixStatistik.editcity.pas">
+            <Form>FormAGM_EditCity</Form>
+        </DCCReference>
+        <DCCReference Include="Auswertung.Generator.MixStatistik.lnmits.pas"/>
+        <DCCReference Include="Auswertung.Generator.MixStatistik.main.pas">
+            <Form>FormAGM_Main</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelBild.pas">
+            <Form>FormArtikelBild</Form>
+        </DCCReference>
+        <DCCReference Include="Resource.SiteDownload.pas">
+            <Form>FormSiteDownload</Form>
+        </DCCReference>
+        <DCCReference Include="..\TPicUpload\TPUUploadProgress.pas">
+            <Form>UploadProgressForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\PASconTools\eOLAP.pas"/>
+        <DCCReference Include="SkriptEditor.pas">
+            <Form>FormSkriptEditor</Form>
+        </DCCReference>
+        <DCCReference Include="Funktionen_Basis.pas"/>
+        <DCCReference Include="Funktionen_Beleg.pas"/>
+        <DCCReference Include="Funktionen_Auftrag.pas"/>
+        <DCCReference Include="Funktionen_Buch.pas"/>
+        <DCCReference Include="uPSI_eConnect.pas"/>
+        <DCCReference Include="uPSI_Funktionen_Auftrag.pas"/>
+        <DCCReference Include="uPSI_Funktionen_Basis.pas"/>
+        <DCCReference Include="uPSI_Funktionen_Beleg.pas"/>
+        <DCCReference Include="uPSI_Funktionen_Buch.pas"/>
+        <DCCReference Include="ArtikelKasse.pas">
+            <Form>FormArtikelKasse</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelPOS.pas">
+            <Form>FormArtikelPOS</Form>
+        </DCCReference>
+        <DCCReference Include="Funktionen_Transaktion.pas"/>
+        <DCCReference Include="Funktionen_LokaleDaten.pas"/>
+        <DCCReference Include="..\..\IBO5\source\core\IB_Components.pas"/>
+        <DCCReference Include="..\..\IBO5\source\access\IB_Access.pas"/>
+        <DCCReference Include="Cron.pas">
+            <Form>FormCron</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
+        <DCCReference Include="..\PASconTools\memcache.pas"/>
+        <DCCReference Include="..\PASvisTools\GUIhelp.pas">
+            <Form>DataModuleGUIhelp</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="ServiceApp.pas">
+            <Form>FormServiceApp</Form>
+        </DCCReference>
+        <DCCReference Include="ServiceFoto.pas">
+            <Form>FormServiceFoto</Form>
+        </DCCReference>
+        <DCCReference Include="..\PASconTools\Foto.pas"/>
+        <DCCReference Include="JonDaExec.pas"/>
+        <DCCReference Include="FotoExec.pas"/>
+        <DCCReference Include="ArtikelAusgabeartAuswahl.pas">
+            <Form>FormArtikelAusgabeartAuswahl</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <None Include="..\rev\Oc.rev.txt"/>
+        <None Include="..\rev\OrgaMon.rev.txt"/>
+        <None Include="..\rev\TPicUpload.rev.txt"/>
+        <None Include="..\rev\Hausverwaltung.rev.txt"/>
+        <None Include="..\rev\WordIndex.rev.txt"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+    <Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+</Project>
