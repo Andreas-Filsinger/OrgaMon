@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon-RC
-AppVerName=OrgaMon 8.084 RC
+AppVerName=OrgaMon 8.221 RC
 AppCopyright=Copyright (C) 1988-2015 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -20,8 +20,8 @@ DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-RC
-AppVersion=8.084 RC
-VersionInfoVersion=8.084.0.0
+AppVersion=8.221 RC
+VersionInfoVersion=8.221.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -29,8 +29,8 @@ PrivilegesRequired=none
 
 [Files]
 ; Anwendung
-Source: "C:\Program Files\\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
-Source: "C:\Program Files\\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
+Source: "C:\Program Files (x86)\\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "C:\Program Files (x86)\\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 Source: "Distribution\Hilfe\OrgaMon-VNC.exe"; DestDir: "{app}"; Flags: onlyifdoesntexist
 
 ; Lizenz-Infos
