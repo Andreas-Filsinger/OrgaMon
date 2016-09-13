@@ -340,7 +340,7 @@ object FormBearbeiter: TFormBearbeiter
     end
   end
   object Button2: TButton
-    Left = 304
+    Left = 297
     Top = 8
     Width = 89
     Height = 22

@@ -143,8 +143,17 @@
                     <VersionInfoKeys Name="ProductVersion">7</VersionInfoKeys>
                 </VersionInfoKeys>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Core240.bpl">FlexCel Core Library</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Core240.bpl">FlexCel Core Library for VCL</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_XlsAdapter240.bpl">FlexCel Xls/x Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Pdf240.bpl">FlexCel PDF Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Render240.bpl">FlexCel Rendering Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FlexCel_Report240.bpl">FlexCel Reporting Engine</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Components240.bpl">FlexCel Visual Components for VCL (Runtime)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\VCL_FlexCel_Components_DESIGN240.bpl">FlexCel Visual Components for VCL (Design)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Core240.bpl">FlexCel Core Library for FireMonkey</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Components240.bpl">FlexCel Visual Components for FireMonkey (Runtime)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Andreas\Documents\TMSSoftware\FlexCelVCLNT\Packages\dBerlin\bpl\Win32\FMX_FlexCel_Components_DESIGN240.bpl">FlexCel Visual Components for FireMonkey (Design)</Excluded_Packages>
                 </Excluded_Packages>
                 <Source>
                     <Source Name="MainSource">OrgaMon.dpr</Source>
