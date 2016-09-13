@@ -182,6 +182,18 @@ object FormBearbeiter: TFormBearbeiter
     ShowHint = True
     OnClick = SpeedButton21Click
   end
+  object IB_Grid1: TIB_Grid
+    Left = 8
+    Top = 36
+    Width = 583
+    Height = 207
+    CustomGlyphsSupplied = []
+    DataSource = IB_DataSource1
+    PreventDeleting = True
+    TabOrder = 0
+    ListBoxStyle = True
+    DrawCellTextOptions = [gdtShowTextBlob]
+  end
   object Panel2: TPanel
     Left = 8
     Top = 244
@@ -192,14 +204,14 @@ object FormBearbeiter: TFormBearbeiter
     object Label1: TLabel
       Left = 173
       Top = 179
-      Width = 57
+      Width = 58
       Height = 13
       Caption = 'Vorschau:'
     end
     object Label2: TLabel
       Left = 11
       Top = 129
-      Width = 101
+      Width = 102
       Height = 13
       Caption = 'NT-Anmeldename'
     end
@@ -229,13 +241,31 @@ object FormBearbeiter: TFormBearbeiter
       Font.Style = []
       ParentFont = False
     end
+    object IB_Text1: TIB_Text
+      Left = 256
+      Top = 192
+      Width = 65
+      Height = 17
+      DataField = 'RID'
+      DataSource = IB_DataSource1
+    end
+    object IB_Memo1: TIB_Memo
+      Left = 8
+      Top = 24
+      Width = 441
+      Height = 97
+      DataField = 'STATUS'
+      DataSource = IB_DataSource1
+      TabOrder = 0
+      AutoSize = False
+    end
     object StaticText1: TStaticText
       Left = 8
       Top = 7
       Width = 185
       Height = 17
       Caption = 'Status Info, Zugriffsrechte usw.'
-      TabOrder = 0
+      TabOrder = 1
     end
     object StaticText2: TStaticText
       Left = 38
@@ -243,7 +273,7 @@ object FormBearbeiter: TFormBearbeiter
       Width = 77
       Height = 17
       Caption = 'Symbolfarbe'
-      TabOrder = 1
+      TabOrder = 2
     end
     object StaticText3: TStaticText
       Left = 44
@@ -253,13 +283,32 @@ object FormBearbeiter: TFormBearbeiter
       Caption = 'Schriftfarbe'
       TabOrder = 3
     end
+    object IB_Edit1: TIB_Edit
+      Left = 117
+      Top = 150
+      Width = 121
+      Height = 21
+      DataField = 'KUERZEL'
+      DataSource = IB_DataSource1
+      TabOrder = 4
+      OnChange = IB_Edit1Change
+    end
+    object IB_Edit2: TIB_Edit
+      Left = 117
+      Top = 126
+      Width = 121
+      Height = 21
+      DataField = 'USERNAME'
+      DataSource = IB_DataSource1
+      TabOrder = 5
+    end
     object Button1: TButton
       Left = 245
       Top = 126
       Width = 161
       Height = 19
       Caption = '<- %UserName%'
-      TabOrder = 2
+      TabOrder = 6
       OnClick = Button1Click
     end
     object JvOfficeColorButton1: TJvOfficeColorButton
@@ -268,7 +317,7 @@ object FormBearbeiter: TFormBearbeiter
       Width = 44
       Height = 22
       ColorDialogOptions = [cdAnyColor]
-      TabOrder = 4
+      TabOrder = 7
       SelectedColor = clDefault
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -306,7 +355,7 @@ object FormBearbeiter: TFormBearbeiter
       Top = 197
       Width = 44
       Height = 22
-      TabOrder = 5
+      TabOrder = 8
       SelectedColor = clDefault
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -339,13 +388,44 @@ object FormBearbeiter: TFormBearbeiter
       OnColorChange = JvOfficeColorButton2ColorChange
     end
   end
+  object IB_SearchBar1: TIB_SearchBar
+    Left = 8
+    Top = 8
+    Width = 132
+    Height = 22
+    Flat = False
+    Ctl3D = False
+    ParentCtl3D = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+  end
+  object IB_UpdateBar1: TIB_UpdateBar
+    Left = 173
+    Top = 8
+    Width = 120
+    Height = 22
+    Flat = False
+    Ctl3D = False
+    ParentCtl3D = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 3
+    DataSource = IB_DataSource1
+    ReceiveFocus = False
+    CustomGlyphsSupplied = []
+    VisibleButtons = [ubEdit, ubDelete, ubPost, ubCancel, ubRefreshAll]
+  end
   object Button2: TButton
-    Left = 297
+    Left = 304
     Top = 8
     Width = 89
     Height = 22
     Caption = 'Alle anzeigen'
-    TabOrder = 0
+    TabOrder = 4
     OnClick = Button2Click
   end
   object IB_Query1: TIB_Query
