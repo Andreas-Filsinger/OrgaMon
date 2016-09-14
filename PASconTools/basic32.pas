@@ -71,6 +71,7 @@ const
   cPREDEF_FORMULAR = 'FORMULAR';
   cPREDEF_ANZAHL = 'ANZAHL';
   cPREDEF_TITEL = 'TITEL';
+  cPREDEF_ZEILE = 'ZEILE';
 
   TOOMANYIDS = 1; { zuviele Objekte pro Zeile }
   NOMACROCLOSE = 2; { "¯" nicht vorhanden }
@@ -1371,7 +1372,7 @@ end;
 
 procedure TBasicProcessor.ProcReturn(No: byte);
 begin
-  if GosubStackPoi = 0 then
+  if (GosubStackPoi = 0) then
     Err(GOSUBSTACKUNDERFLOW, '')
   else
   begin
@@ -2325,7 +2326,11 @@ begin
       x := strings[BasicLine];
       ASCII2ObjectLine(x);
       if (BasicError = 0) then
+      begin
+        if DebugMode then
+         WriteVal(cPREDEF_ZEILE,inttostr(succ(BasicLine)));
         ExecuteObjectLine;
+      end;
     until (BasicError > 0);
   end;
   result := (BasicError = 0);

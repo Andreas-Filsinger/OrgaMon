@@ -21,8 +21,10 @@ Dokumentation
 
 Rev 8.221 (12.09.16) Andreas Filsinger
 
- Neu: Compiliert mit RAD Studio 10.1 Berlin Starter Edition
- Neu: Beginn einer RC-Phase
+ Info: Beginn einer RC-Phase
+
+ Neu: Compiliert mit RAD Studio 10.1 Berlin Starter Edition auf einem Windows 10 System
+ Neu: D_BASIC: Variable ZEILE für Debug-Zwecke (wird auch nur im Debug-Modus gesetzt)
 
 Rev 8.220 (01.09.16) Susanne Geiger
 
