@@ -812,8 +812,6 @@ object FormBelege: TFormBelege
         Caption = 'Texte'
         Highlighted = True
         ImageIndex = 3
-        ExplicitTop = 24
-        ExplicitHeight = 220
         object Label13: TLabel
           Left = 0
           Top = 120
@@ -880,8 +878,6 @@ object FormBelege: TFormBelege
       object TabSheet3: TTabSheet
         Caption = 'Interninfo'
         ImageIndex = 8
-        ExplicitTop = 24
-        ExplicitHeight = 220
         object IB_Memo3: TIB_Memo
           Left = 0
           Top = 0
@@ -892,7 +888,6 @@ object FormBelege: TFormBelege
           Align = alClient
           TabOrder = 0
           AutoSize = False
-          ExplicitHeight = 220
         end
       end
     end
@@ -1154,6 +1149,57 @@ object FormBelege: TFormBelege
       OnDblClick = DrawGrid1DblClick
       OnDrawCell = DrawGrid1DrawCell
       OnKeyPress = DrawGrid1KeyPress
+      ColWidths = (
+        130
+        130
+        130
+        130)
+      RowHeights = (
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26)
     end
     object Button8: TButton
       Left = 761
@@ -2265,7 +2311,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D0031001C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100240110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

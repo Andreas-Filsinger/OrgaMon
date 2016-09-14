@@ -54,7 +54,7 @@ uses
 
   // HeBu Projekt
   Buttons, ComCtrls,
-  JvGIF, JvComponentBase, JvFormPlacement, IB_EditButton;
+  JvGIF, JvComponentBase, JvFormPlacement, IB_EditButton, System.ImageList;
 
 type
   TFormBelege = class(TForm)
@@ -1854,14 +1854,25 @@ var
   n: Integer;
 begin
   sOtherDocs := TStringList.create;
+  sPath := cPersonPath(PERSON_R);
 
-  sMainDoc := e_r_BelegFName(
+  if (IB_Query1.FieldByName('BSTATUS').AsString='*') then
+  begin
+   sMainDoc := e_r_BelegFName(
     { } IB_Query1.FieldByName('PERSON_R').AsInteger,
     { } IB_Query1.FieldByName('RID').AsInteger,
     { } pred(IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger));
+  end else
+  begin
+   sMainDoc :=
+   {} cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger) +
+    {} RIDasStr(IB_Query1.FieldByName('RID').AsInteger) +
+    {} '-' +
+    {} IB_Query1.FieldByName('BSTATUS').AsString +
+    {} IB_Query1.FieldByName('GENERATION').AsString + '.html';
+  end;
   sMask := sMainDoc;
   ersetze('.html', '*.html', sMask);
-  sPath := cPersonPath(PERSON_R);
 
   // Beleg HTMLS zusammenführen
   bigDocument := THTMLTemplate.create;
@@ -2062,7 +2073,7 @@ begin
 
       AusgabeFName := e_w_AusgabeBeleg(BELEG_R, CheckBox2.Checked, CheckBox3.Checked);
       e_w_DruckBeleg(BELEG_R);
-      OutFName := inttostrN(BELEG_R, 10) + '-' + BSTATUS + inttostr(GENERATION) + '.html';
+      OutFName := RIDasStr(BELEG_R) + '-' + BSTATUS + inttostr(GENERATION) + '.html';
       FileCopy(AusgabeFName[0], OutPath + OutFName);
 
       //
