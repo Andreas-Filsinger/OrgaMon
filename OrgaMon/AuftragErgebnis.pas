@@ -1794,7 +1794,7 @@ begin
           begin
 
             // Normales Oc Ergebnis
-            Files.add(OutFName + '.csv');
+            Files.add(conversionOutFName);
 
             // weitere Dateien dazu
             Files.add(copy(OutFName, 1, length(OutFName) - 4) + '-*.xls');

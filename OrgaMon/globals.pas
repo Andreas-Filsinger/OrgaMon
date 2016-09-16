@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.221; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.222; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1074,7 +1074,7 @@ var
   iMusicPathShop: string;
   iMusikDownloadsProArtikel: integer;
   iShopQRPath: string;
-  imemcacheHost: string; // Host [ ":" Port ]
+  imemcachedHost: string; // Host [ ":" Port ]
 
   // remote Shop Sachen
   iShopKey: string;

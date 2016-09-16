@@ -697,7 +697,7 @@ CONST
     'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
-    'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcacheHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
+    'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
     'TagesabschlussIdle', 'KartenQuota', 'AppServerURL');
 
 const
@@ -8349,7 +8349,9 @@ begin
   iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];
   iXMLRPCPort := sSystemSettings.values['XMLRPCPort'];
   iXMLRPCGeroutet := sSystemSettings.values['XMLRPCGeroutet'] = cIni_Activate;
-  imemcacheHost := sSystemSettings.values['memcacheHost'];
+  imemcachedHost := sSystemSettings.values['memcachedHost'];
+  if (imemcachedHost='') then
+   imemcachedHost := sSystemSettings.values['memcacheHost'];
   iRESTHost := sSystemSettings.values['RESTHost'];
   iRESTPort := sSystemSettings.values['RESTPort'];
   iRESTGeroutet := sSystemSettings.values['RESTGeroutet'] = cIni_Activate;

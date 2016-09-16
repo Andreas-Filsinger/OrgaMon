@@ -854,7 +854,7 @@ begin
       { 16 } add(
         { } 'memcache Rev. ' +
         { } RevToStr(memcache.Version) + '@' +
-        { } imemcacheHost);
+        { } imemcachedHost);
       { 17 } add(iDataBaseUser);
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD

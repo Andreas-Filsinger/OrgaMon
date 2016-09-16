@@ -578,7 +578,7 @@ end;
 
 procedure TFormWebShopConnector.SpeedButton1Click(Sender: TObject);
 begin
-  Edit7.Text := imemcacheHost;
+  Edit7.Text := imemcachedHost;
 end;
 
 procedure TFormWebShopConnector.EnsureCache;

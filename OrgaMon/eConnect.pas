@@ -749,6 +749,12 @@ begin
 
     // Hash-Tag bestimmen für das Caching
     WARENKORB_md5 := WARENKORB.md5;
+    if DebugMode then
+    begin
+     WARENKORB.oHTML_Postfix := '<h1>md5 '+WARENKORB_md5+'</h1>';
+     WARENKORB.SaveToHTML(DiagnosePath+'WARENKORB-'+inttostr(PERSON_R)+'.html');
+    end;
+
     WARENKORB.free;
 
     // Caching initialisieren bzw. Anfrage stellen
@@ -756,10 +762,10 @@ begin
       _VK_uninitialized:
         begin
 
-          if (imemcacheHost <> '') then
+          if (imemcachedHost <> '') then
           begin
             _Versandkosten_memcache := TmemcacheClient.create;
-            _Versandkosten_memcache.open(imemcacheHost);
+            _Versandkosten_memcache.open(imemcachedHost);
             _Versandkosten_CacheMode := _VK_memcache;
 
             // Erste Suche: andere Instanzen haben da ja schon was drin
