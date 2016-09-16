@@ -100,11 +100,12 @@
         <DCC_Define>HeBuAdmin;DEBUG;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_MajorVer>8</VerInfo_MajorVer>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>5</VerInfo_MinorVer>
         <Debugger_RunParams>nosplash</Debugger_RunParams>
-        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=7.5.0.1350;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=;ProductName=OrgaMon;ProductVersion=1.0.0.0;Comments=Software für Unternehmen</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1350;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <ProjectExtensions>

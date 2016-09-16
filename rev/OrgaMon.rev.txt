@@ -19,12 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.222 (16.09.16) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Bei Sonderbenennungen war die Ergebnisdatei nicht mit im ZIP
+
 Rev 8.221 (12.09.16) Andreas Filsinger
 
  Info: Beginn einer RC-Phase
 
  Neu: Compiliert mit RAD Studio 10.1 Berlin Starter Edition auf einem Windows 10 System
  Neu: D_BASIC: Variable ZEILE für Debug-Zwecke (wird auch nur im Debug-Modus gesetzt)
+ Neu: System: Parameter: memcachedHost, Schreibweise angepasst
 
 Rev 8.220 (01.09.16) Susanne Geiger
 
@@ -865,14 +870,14 @@ Rev 8.058 (24.11.14) Andreas Filsinger
 
 Rev 8.057 (19.11.14) Andreas Filsinger
 
- Neu: BasePlug: StringIndex[16] memcache Versionsnummer "@" Systemparameter memcacheHost
+ Neu: BasePlug: StringIndex[16] memcache Versionsnummer "@" Systemparameter memcachedHost
  Neu: Foto: FotoBenennung=9 ~Art~_~Straße~_~Ort~
 
 Rev 8.056 (19.11.14) Andreas Filsinger
 
  Neu: memcache: erste eigene Implementierung & Integration in den OrgaMon
  Neu: Versandkosten: Nutzung des memcache als Caching Lösung bei mehreren XMLRPCs
- Neu: System: Neuer Parameter memcacheHost=~Host~ [ ":" ~Port~ ]
+ Neu: System: Neuer Parameter memcachedHost=~Host~ [ ":" ~Port~ ]
 
 Rev 8.055 (17.11.14) Andreas Filsinger
 
