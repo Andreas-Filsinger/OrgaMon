@@ -209,7 +209,8 @@ uses
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
-  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl};
+  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
+  PageControlTest in 'PageControlTest.pas' {FormPageControlTest};
 
 {$R *.RES}
 
@@ -360,6 +361,7 @@ begin
   Application.CreateForm(TFormServiceApp, FormServiceApp);
   Application.CreateForm(TFormServiceFoto, FormServiceFoto);
   Application.CreateForm(TFormArtikelAusgabeartAuswahl, FormArtikelAusgabeartAuswahl);
+  Application.CreateForm(TFormPageControlTest, FormPageControlTest);
   Application.Run;
 end.
 

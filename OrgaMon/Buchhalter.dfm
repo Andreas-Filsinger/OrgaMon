@@ -1,9 +1,10 @@
 object FormBuchhalter: TFormBuchhalter
   Left = 2
   Top = 114
+  BorderWidth = 1
   Caption = 'Buchhalter'
-  ClientHeight = 547
-  ClientWidth = 900
+  ClientHeight = 512
+  ClientWidth = 884
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -12,6 +13,7 @@ object FormBuchhalter: TFormBuchhalter
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  Scaled = False
   OnActivate = FormActivate
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -19,14 +21,15 @@ object FormBuchhalter: TFormBuchhalter
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 900
-    Height = 547
+    Width = 884
+    Height = 512
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     Align = alClient
+    Anchors = []
     TabOrder = 0
     object TabSheet1: TTabSheet
       Margins.Left = 4
@@ -35,13 +38,9 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object Label2: TLabel
         Left = 37
         Top = 7
@@ -149,7 +148,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton28Click
       end
       object Image2: TImage
-        Left = 819
+        Left = 736
         Top = 4
         Width = 54
         Height = 22
@@ -277,12 +276,13 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image2Click
+        ExplicitLeft = 819
       end
       object IB_Grid1: TIB_Grid
         Left = 9
         Top = 30
         Width = 864
-        Height = 452
+        Height = 425
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -333,7 +333,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button7: TButton
         Left = 758
-        Top = 492
+        Top = 459
         Width = 115
         Height = 24
         Anchors = [akLeft, akBottom]
@@ -349,13 +349,9 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object SpeedButton1: TSpeedButton
         Left = 505
         Top = 48
@@ -566,9 +562,9 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton30Click
       end
       object Label34: TLabel
-        Left = 35
-        Top = 475
-        Width = 23
+        Left = 31
+        Top = 462
+        Width = 22
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -576,7 +572,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Bottom = 4
         Anchors = [akLeft, akBottom]
         Caption = 'TAN'
-        ExplicitTop = 530
+        ExplicitTop = 621
       end
       object Label35: TLabel
         Left = 145
@@ -972,12 +968,12 @@ object FormBuchhalter: TFormBuchhalter
       object Label1: TLabel
         Left = 264
         Top = 42
-        Width = 103
+        Width = 102
         Height = 13
         Caption = 'Anzahl-/ Wertlimit'
       end
       object Image1: TImage
-        Left = 834
+        Left = 752
         Top = 20
         Width = 54
         Height = 22
@@ -1105,6 +1101,7 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image1Click
+        ExplicitLeft = 835
       end
       object Button1: TButton
         Left = 34
@@ -1169,8 +1166,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button12Click
       end
       object Edit10: TEdit
-        Left = 66
-        Top = 472
+        Left = 62
+        Top = 459
         Width = 72
         Height = 21
         Margins.Left = 4
@@ -1182,8 +1179,8 @@ object FormBuchhalter: TFormBuchhalter
         OnKeyPress = Edit10KeyPress
       end
       object Button6: TButton
-        Left = 143
-        Top = 472
+        Left = 139
+        Top = 459
         Width = 24
         Height = 22
         Hint = 'TAN verarbeiten'
@@ -1208,7 +1205,7 @@ object FormBuchhalter: TFormBuchhalter
         Left = 35
         Top = 190
         Width = 854
-        Height = 267
+        Height = 264
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -1233,13 +1230,9 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object Label40: TLabel
         Left = 358
         Top = 8
@@ -1366,7 +1359,7 @@ object FormBuchhalter: TFormBuchhalter
         ParentFont = False
       end
       object Image3: TImage
-        Left = 819
+        Left = 736
         Top = 121
         Width = 54
         Height = 22
@@ -1494,6 +1487,7 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image3Click
+        ExplicitLeft = 819
       end
       object Button5: TButton
         Left = 699
@@ -1599,7 +1593,7 @@ object FormBuchhalter: TFormBuchhalter
         Left = 9
         Top = 150
         Width = 864
-        Height = 363
+        Height = 328
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -1680,11 +1674,11 @@ object FormBuchhalter: TFormBuchhalter
       ImageIndex = 3
       OnShow = TabSheet4Show
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object Label4: TLabel
         Left = 33
-        Top = 500
+        Top = 465
         Width = 33
         Height = 13
         Margins.Left = 4
@@ -1710,7 +1704,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label6: TLabel
         Left = 112
         Top = 40
-        Width = 36
+        Width = 35
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1721,7 +1715,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label7: TLabel
         Left = 208
         Top = 40
-        Width = 48
+        Width = 47
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1732,7 +1726,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label8: TLabel
         Left = 407
         Top = 39
-        Width = 25
+        Width = 24
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2017,7 +2011,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object SpeedButton27: TSpeedButton
         Left = 4
-        Top = 496
+        Top = 461
         Width = 22
         Height = 22
         Hint = 'Suchindex neu erstellen'
@@ -2111,8 +2105,8 @@ object FormBuchhalter: TFormBuchhalter
         Caption = 'Label28'
       end
       object SpeedButton34: TSpeedButton
-        Left = 866
-        Top = 493
+        Left = 850
+        Top = 458
         Width = 22
         Height = 22
         Hint = 'OLAP Ergebnis importieren'
@@ -2213,7 +2207,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton2Click
       end
       object Image4: TImage
-        Left = 834
+        Left = 818
         Top = 31
         Width = 54
         Height = 22
@@ -2341,10 +2335,11 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image4Click
+        ExplicitLeft = 834
       end
       object Edit1: TEdit
         Left = 70
-        Top = 496
+        Top = 461
         Width = 216
         Height = 21
         Margins.Left = 4
@@ -2358,8 +2353,8 @@ object FormBuchhalter: TFormBuchhalter
       object DrawGrid1: TDrawGrid
         Left = 4
         Top = 56
-        Width = 884
-        Height = 434
+        Width = 868
+        Height = 399
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -2378,6 +2373,10 @@ object FormBuchhalter: TFormBuchhalter
         TabOrder = 1
         OnDblClick = DrawGrid1DblClick
         OnDrawCell = DrawGrid1DrawCell
+        ColWidths = (
+          64)
+        RowHeights = (
+          80)
       end
       object StaticText5: TStaticText
         Left = 703
@@ -2417,7 +2416,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button20: TButton
         Left = 294
-        Top = 496
+        Top = 461
         Width = 89
         Height = 22
         Margins.Left = 4
@@ -2452,8 +2451,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button3Click
       end
       object Edit8: TEdit
-        Left = 814
-        Top = 494
+        Left = 798
+        Top = 459
         Width = 44
         Height = 21
         Margins.Left = 4
@@ -2481,13 +2480,9 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object Label16: TLabel
         Left = 37
         Top = 41
@@ -2502,7 +2497,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label17: TLabel
         Left = 123
         Top = 41
-        Width = 36
+        Width = 35
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2513,7 +2508,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label18: TLabel
         Left = 212
         Top = 41
-        Width = 48
+        Width = 47
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2524,7 +2519,7 @@ object FormBuchhalter: TFormBuchhalter
       object Label19: TLabel
         Left = 356
         Top = 41
-        Width = 25
+        Width = 24
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2637,7 +2632,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton13Click
       end
       object SpeedButton14: TSpeedButton
-        Left = 608
+        Left = 600
         Top = 6
         Width = 22
         Height = 22
@@ -2645,6 +2640,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           C2010000424DC20100000000000036000000280000000C0000000B0000000100
           1800000000008C010000130B0000130B00000000000000000000C0C0C00066FF
@@ -2663,9 +2659,10 @@ object FormBuchhalter: TFormBuchhalter
           0066FF0066FF}
         Transparent = False
         OnClick = SpeedButton5Click
+        ExplicitLeft = 608
       end
       object SpeedButton15: TSpeedButton
-        Left = 584
+        Left = 576
         Top = 6
         Width = 22
         Height = 22
@@ -2673,6 +2670,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           C2010000424DC20100000000000036000000280000000C0000000B0000000100
           1800000000008C010000130B0000130B0000000000000000000000FFFF3399CC
@@ -2690,9 +2688,10 @@ object FormBuchhalter: TFormBuchhalter
           99CC00FFFF3399CC3399CC3399CC3399CC3399CC3399CC3399CC3399CC3399CC
           3399CC3399CC}
         OnClick = SpeedButton6Click
+        ExplicitLeft = 584
       end
       object SpeedButton16: TSpeedButton
-        Left = 528
+        Left = 520
         Top = 6
         Width = 22
         Height = 22
@@ -2700,6 +2699,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           C2010000424DC20100000000000036000000280000000C0000000B0000000100
           1800000000008C010000130B0000130B0000000000000000000000000066FF00
@@ -2717,9 +2717,10 @@ object FormBuchhalter: TFormBuchhalter
           FF0000000066FF0066FF0066FF0066FF0066FF0066FF0066FF0066FF0066FF00
           66FF0066FF00}
         OnClick = SpeedButton7Click
+        ExplicitLeft = 528
       end
       object SpeedButton17: TSpeedButton
-        Left = 552
+        Left = 544
         Top = 6
         Width = 22
         Height = 22
@@ -2727,6 +2728,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           C2010000424DC20100000000000036000000280000000C0000000B0000000100
           1800000000008C010000130B0000130B00000000000000000000000000FF99FF
@@ -2744,9 +2746,10 @@ object FormBuchhalter: TFormBuchhalter
           99FF000000FF99FFFF99FFFF99FFFF99FFFF99FFFF99FFFF99FFFF99FFFF99FF
           FF99FFFF99FF}
         OnClick = SpeedButton8Click
+        ExplicitLeft = 552
       end
       object SpeedButton18: TSpeedButton
-        Left = 632
+        Left = 624
         Top = 6
         Width = 22
         Height = 22
@@ -2754,6 +2757,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           C2010000424DC20100000000000036000000280000000C0000000B0000000100
           1800000000008C010000130B0000130B0000000000000000000000FFFFFFFFFF
@@ -2771,9 +2775,10 @@ object FormBuchhalter: TFormBuchhalter
           FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFF}
         OnClick = SpeedButton9Click
+        ExplicitLeft = 632
       end
       object SpeedButton19: TSpeedButton
-        Left = 664
+        Left = 656
         Top = 6
         Width = 23
         Height = 22
@@ -2782,6 +2787,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -2812,10 +2818,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton19Click
+        ExplicitLeft = 664
       end
       object SpeedButton20: TSpeedButton
         Left = 9
-        Top = 280
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'Debitor-Anzeige aktualisieren'
@@ -2854,12 +2861,12 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton20Click
-        ExplicitTop = 330
+        ExplicitTop = 578
       end
       object JvArrayButton1: TJvArrayButton
         Left = 9
-        Top = 405
-        Width = 872
+        Top = 372
+        Width = 870
         Height = 112
         Margins.Left = 4
         Margins.Top = 4
@@ -2874,7 +2881,7 @@ object FormBuchhalter: TFormBuchhalter
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
         OnArrayButtonClicked = JvArrayButton1ArrayButtonClicked
-        ExplicitTop = 455
+        ExplicitTop = 704
       end
       object SpeedButton22: TSpeedButton
         Left = 218
@@ -2927,7 +2934,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object SpeedButton23: TSpeedButton
         Left = 9
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'Ausgleichsvorschlag aktualisieren'
@@ -2966,10 +2973,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton23Click
+        ExplicitTop = 681
       end
       object SpeedButton24: TSpeedButton
-        Left = 615
-        Top = 280
+        Left = 608
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'Personen Identit'#228't best'#228'tigen'
@@ -2977,7 +2985,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000C40E0000C40E00000000000000000000DC00FFDC00FF
@@ -3008,11 +3016,12 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton24Click
-        ExplicitTop = 330
+        ExplicitLeft = 615
+        ExplicitTop = 578
       end
       object SpeedButton21: TSpeedButton
-        Left = 640
-        Top = 280
+        Left = 633
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'OrgaMon neutraler Zahlungseingang (privat)'
@@ -3020,7 +3029,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Glyph.Data = {
           06030000424D060300000000000036000000280000000F0000000F0000000100
           180000000000D0020000C40E0000C40E00000000000000000000DC00FFDC00FF
@@ -3050,10 +3059,12 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton21Click
+        ExplicitLeft = 640
+        ExplicitTop = 578
       end
       object SpeedButton25: TSpeedButton
-        Left = 665
-        Top = 280
+        Left = 658
+        Top = 246
         Width = 23
         Height = 22
         Hint = 'Identit'#228'tszuordnung l'#246'sen'
@@ -3061,7 +3072,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Glyph.Data = {
           06030000424D060300000000000036000000280000000F0000000F0000000100
           180000000000D0020000C40E0000C40E00000000000000000000FF00FFFF00FF
@@ -3091,10 +3102,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton25Click
-        ExplicitTop = 330
+        ExplicitLeft = 665
+        ExplicitTop = 578
       end
       object SpeedButton26: TSpeedButton
-        Left = 833
+        Left = 825
         Top = 32
         Width = 22
         Height = 22
@@ -3103,6 +3115,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Anchors = [akTop, akRight]
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000C40E0000C40E00000000000000000000DC00FFDC00FF
@@ -3133,10 +3146,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton26Click
+        ExplicitLeft = 833
       end
       object SpeedButton32: TSpeedButton
         Left = 758
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'interne Auflistung anzeigen'
@@ -3191,10 +3205,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton32Click
+        ExplicitTop = 681
       end
       object Label43: TLabel
         Left = 677
-        Top = 326
+        Top = 292
         Width = 9
         Height = 13
         Margins.Left = 4
@@ -3203,7 +3218,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Bottom = 4
         Anchors = [akLeft, akBottom]
         Caption = '#'
-        ExplicitTop = 376
+        ExplicitTop = 624
       end
       object Label45: TLabel
         Left = 248
@@ -3218,7 +3233,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object SpeedButton38: TSpeedButton
         Left = 706
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'ganze Tabelle nach links'
@@ -3257,10 +3272,11 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton38Click
+        ExplicitTop = 681
       end
       object SpeedButton39: TSpeedButton
         Left = 731
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'ganze Tabelle nach rechts'
@@ -3299,124 +3315,15 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton39Click
-      end
-      object SpeedButton42: TSpeedButton
-        Left = 654
-        Top = 383
-        Width = 22
-        Height = 22
-        Hint = '1. Ausgleich fixieren'
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          1800000000000003000000000000000000000000000000000000CE9C00CE9C00
-          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
-          00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
-          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
-          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
-          00CE9C00CE9C00CE9C00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
-          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
-          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
-          00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
-          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
-          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
-          00FFCE00FFCE00FFCE00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
-          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
-          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
-          00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
-          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
-          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
-          00CE9C00CE9C00CE9C00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
-          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
-          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
-          00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
-          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
-          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
-          00FFCE00FFCE00FFCE00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
-          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton42Click
-      end
-      object SpeedButton46: TSpeedButton
-        Left = 679
-        Top = 383
-        Width = 23
-        Height = 22
-        Hint = 'Fixierung aufheben'
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000C40E0000C40E00000000000000000000CC9900CC9900
-          CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC99
-          00CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC
-          9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900
-          CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC99
-          00CC9900CC9900CC9900FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FF
-          CC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00
-          FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC
-          00FFCC00FFCC00FFCC00FFCC0080808080808080808080808080808080808080
-          8080808080808080808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080FFCC00FFCC
-          00FFCC00FFCC00FFCC00CC9900808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C0808080CC9900CC9900CC9900CC9900CC9900CC9900808080
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080CC9900CC99
-          00CC9900CC9900CC9900CC9900808080C0C0C00000FF0000FF0000FF0000FF00
-          00FF0000FFC0C0C0808080CC9900CC9900CC9900CC9900CC9900CC9900808080
-          C0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0808080CC9900CC99
-          00CC9900CC9900CC9900FFCC00808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C0808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080FFCC00FFCC
-          00FFCC00FFCC00FFCC00FFCC00808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C0808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
-          808080808080808080808080808080808080808080808080808080FFCC00FFCC
-          00FFCC00FFCC00FFCC00CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC
-          9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton46Click
-      end
-      object SpeedButton47: TSpeedButton
-        Left = 809
-        Top = 383
-        Width = 23
-        Height = 22
-        Hint = 'Als Anzahlung verbuchen'
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          1800000000000003000000000000000000000000000000000000FFFEFFFDFDFD
-          FBFFFEC6D6CB7B968253795B36623E38774D2A603B426D526E8B7BAFC1BAF1FC
-          FAF8FFFFEFF7F7FFFFFFFFFCFCFFFFF77FB2972A76567BA289C1BFB4FFFFF9C3
-          DACBFFFFF8E8E0D9A2C0B5236F5D287762F1FFF7FFFBF3FFFEFFF3F2EE899E8F
-          43715AA3D0B6F4FFF4FBFFF7EAFCEF4A7C64DFF5E3FFFFF8EEF7EDC8ECDE73A5
-          935A7D69E6F0DFFFFDFEB6D4C7427664D0EEDBF8FBECFDFFF5B0CBBB5C827019
-          603F55866AB7CBB8FFFFF7FFFFF8D8E5D75B846F5B9A80FFFFFB31624E85B7A5
-          FFFFF8FFFFF8C7DECF2C5A47496C5836754E4989653D6D51CCD9C9FFF0E7FFFF
-          F7C9EBDA216B51C9DCCD50816BDAECDFFFFDFBFFFCF96D9C8C3F7460D1E1CF40
-          6943CCFFE3266B4A739F88FFFFF7FFFFF8E8F9EC7BA89779A68B6E957CFCF9F1
-          FFFCFEF4F9F8DDFFFBAED7C2F3FFEB476C44B4EDC6256A495D937CEFFFF7FFFF
-          FCF7F8F4C0CEC846846090A890FFFFF9EFF4F5F8FFFFF6FBF9F6FFF5B5D8BE3E
-          7B4F407C54417155A7C4B4E4F0EAFFFFFFFFFEFFC7C9CA2D6F45ADBDA5F3FFF9
-          E3FFFFFAFEFFFFFAFE979184367253116C3B407F5892AF96FFFFF8FFFFFEF0EF
-          F3F3F6FBD8DCE133724670947CE8EFECFFFBFFFFFCFFB7C7BC43734F488E593B
-          7453DBFFECF6FFFBFFFDFFFFF9FFFFFEFFECF4EDB9CBBE43855C42624FF4FFFC
-          F8FAFBE9EEECA9BEAF3B6748A9E6BA326948DEFFEDC4D6C9F7F8F6FFFCFDFDFE
-          FCF4FFF9809A8A7CA58961796D8CA296F1FFF8EBFFF3B8D7C2436A507BA98C36
-          6C4983AF92516B59CAD5CDF9FFFBF3FFFACDE7D93B5E4ACEDDCFC2D2CB4B6555
-          C1E5CDE4FFF1DCFFEA799C884868572E613F446D5186A590D8EDDEF3FFF9EAFF
-          F55577667EA590FEFFFBF8FFFE8AA395385C44B4E0C3E4FFF2DDFDECDFF7EB42
-          6E4FE1FFEECFF1D9ECFFF5DDF7E76B8577678776D9FBEAFFFEFFE3E6E4F4FFF9
-          B2CDBD48695462826FCDEADADBF5E5E4FFF1D4F8E0D0EFDAA1BDAA3F56477C90
-          83EAFEF2F1FFF9FAFCFDFFFFFCE0E6E1F5FFFBD5E6DD87A092526E5A42624A33
-          513E4F6D5A55715E5D7767BACCBFF8FFFBFBFFFCF6F7F5FFFFFE}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton47Click
+        ExplicitTop = 681
       end
       object SpeedButton33: TSpeedButton
         Left = 131
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'Optimierung ausschalten'
+        Anchors = [akLeft, akBottom]
         Enabled = False
         Glyph.Data = {
           36060000424D3606000000000000360000002800000020000000100000000100
@@ -3473,17 +3380,135 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton33Click
+        ExplicitTop = 681
+      end
+      object SpeedButton42: TSpeedButton
+        Left = 654
+        Top = 349
+        Width = 22
+        Height = 22
+        Hint = '1. Ausgleich fixieren'
+        Anchors = [akLeft, akBottom]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000000000000000000000000000000000000CE9C00CE9C00
+          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
+          00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
+          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
+          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
+          00CE9C00CE9C00CE9C00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
+          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
+          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
+          00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
+          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
+          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
+          00FFCE00FFCE00FFCE00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
+          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
+          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
+          00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
+          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00
+          CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C
+          00CE9C00CE9C00CE9C00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
+          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
+          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
+          00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FF
+          CE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00
+          FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE00FFCE
+          00FFCE00FFCE00FFCE00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE
+          9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00CE9C00}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton42Click
+        ExplicitTop = 681
+      end
+      object SpeedButton46: TSpeedButton
+        Left = 679
+        Top = 349
+        Width = 23
+        Height = 22
+        Hint = 'Fixierung aufheben'
+        Anchors = [akLeft, akBottom]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000C40E0000C40E00000000000000000000CC9900CC9900
+          CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC99
+          00CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC
+          9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900
+          CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC99
+          00CC9900CC9900CC9900FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FF
+          CC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00
+          FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00FFCC
+          00FFCC00FFCC00FFCC00FFCC0080808080808080808080808080808080808080
+          8080808080808080808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080FFCC00FFCC
+          00FFCC00FFCC00FFCC00CC9900808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0808080CC9900CC9900CC9900CC9900CC9900CC9900808080
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080CC9900CC99
+          00CC9900CC9900CC9900CC9900808080C0C0C00000FF0000FF0000FF0000FF00
+          00FF0000FFC0C0C0808080CC9900CC9900CC9900CC9900CC9900CC9900808080
+          C0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0808080CC9900CC99
+          00CC9900CC9900CC9900FFCC00808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808080FFCC00FFCC
+          00FFCC00FFCC00FFCC00FFCC00808080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0808080FFCC00FFCC00FFCC00FFCC00FFCC00FFCC00808080
+          808080808080808080808080808080808080808080808080808080FFCC00FFCC
+          00FFCC00FFCC00FFCC00CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC
+          9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900CC9900}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton46Click
+        ExplicitTop = 681
+      end
+      object SpeedButton47: TSpeedButton
+        Left = 809
+        Top = 349
+        Width = 23
+        Height = 22
+        Hint = 'Als Anzahlung verbuchen'
+        Anchors = [akLeft, akBottom]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000000000000000000000000000000000000FFFEFFFDFDFD
+          FBFFFEC6D6CB7B968253795B36623E38774D2A603B426D526E8B7BAFC1BAF1FC
+          FAF8FFFFEFF7F7FFFFFFFFFCFCFFFFF77FB2972A76567BA289C1BFB4FFFFF9C3
+          DACBFFFFF8E8E0D9A2C0B5236F5D287762F1FFF7FFFBF3FFFEFFF3F2EE899E8F
+          43715AA3D0B6F4FFF4FBFFF7EAFCEF4A7C64DFF5E3FFFFF8EEF7EDC8ECDE73A5
+          935A7D69E6F0DFFFFDFEB6D4C7427664D0EEDBF8FBECFDFFF5B0CBBB5C827019
+          603F55866AB7CBB8FFFFF7FFFFF8D8E5D75B846F5B9A80FFFFFB31624E85B7A5
+          FFFFF8FFFFF8C7DECF2C5A47496C5836754E4989653D6D51CCD9C9FFF0E7FFFF
+          F7C9EBDA216B51C9DCCD50816BDAECDFFFFDFBFFFCF96D9C8C3F7460D1E1CF40
+          6943CCFFE3266B4A739F88FFFFF7FFFFF8E8F9EC7BA89779A68B6E957CFCF9F1
+          FFFCFEF4F9F8DDFFFBAED7C2F3FFEB476C44B4EDC6256A495D937CEFFFF7FFFF
+          FCF7F8F4C0CEC846846090A890FFFFF9EFF4F5F8FFFFF6FBF9F6FFF5B5D8BE3E
+          7B4F407C54417155A7C4B4E4F0EAFFFFFFFFFEFFC7C9CA2D6F45ADBDA5F3FFF9
+          E3FFFFFAFEFFFFFAFE979184367253116C3B407F5892AF96FFFFF8FFFFFEF0EF
+          F3F3F6FBD8DCE133724670947CE8EFECFFFBFFFFFCFFB7C7BC43734F488E593B
+          7453DBFFECF6FFFBFFFDFFFFF9FFFFFEFFECF4EDB9CBBE43855C42624FF4FFFC
+          F8FAFBE9EEECA9BEAF3B6748A9E6BA326948DEFFEDC4D6C9F7F8F6FFFCFDFDFE
+          FCF4FFF9809A8A7CA58961796D8CA296F1FFF8EBFFF3B8D7C2436A507BA98C36
+          6C4983AF92516B59CAD5CDF9FFFBF3FFFACDE7D93B5E4ACEDDCFC2D2CB4B6555
+          C1E5CDE4FFF1DCFFEA799C884868572E613F446D5186A590D8EDDEF3FFF9EAFF
+          F55577667EA590FEFFFBF8FFFE8AA395385C44B4E0C3E4FFF2DDFDECDFF7EB42
+          6E4FE1FFEECFF1D9ECFFF5DDF7E76B8577678776D9FBEAFFFEFFE3E6E4F4FFF9
+          B2CDBD48695462826FCDEADADBF5E5E4FFF1D4F8E0D0EFDAA1BDAA3F56477C90
+          83EAFEF2F1FFF9FAFCFDFFFFFCE0E6E1F5FFFBD5E6DD87A092526E5A42624A33
+          513E4F6D5A55715E5D7767BACCBFF8FFFBFBFFFCF6F7F5FFFFFE}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton47Click
+        ExplicitTop = 681
       end
       object DrawGrid2: TDrawGrid
         Left = 9
-        Top = 56
-        Width = 872
-        Height = 220
+        Top = 60
+        Width = 864
+        Height = 180
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akTop, akBottom]
+        Anchors = [akLeft, akTop, akRight, akBottom]
         ColCount = 1
         DefaultRowHeight = 80
         DefaultDrawing = False
@@ -3495,9 +3520,13 @@ object FormBuchhalter: TFormBuchhalter
         TabOrder = 0
         OnDblClick = DrawGrid2DblClick
         OnDrawCell = DrawGrid2DrawCell
+        ColWidths = (
+          64)
+        RowHeights = (
+          80)
       end
       object StaticText1: TStaticText
-        Left = 696
+        Left = 688
         Top = 4
         Width = 185
         Height = 24
@@ -3506,6 +3535,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Right = 4
         Margins.Bottom = 4
         Alignment = taRightJustify
+        Anchors = [akTop, akRight]
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = '#,## '#8364
@@ -3533,14 +3563,14 @@ object FormBuchhalter: TFormBuchhalter
       end
       object DrawGrid3: TDrawGrid
         Left = 9
-        Top = 306
-        Width = 872
+        Top = 272
+        Width = 864
         Height = 74
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akLeft, akRight, akBottom]
         DefaultRowHeight = 80
         DefaultDrawing = False
         FixedCols = 0
@@ -3550,10 +3580,18 @@ object FormBuchhalter: TFormBuchhalter
         ScrollBars = ssVertical
         TabOrder = 3
         OnDrawCell = DrawGrid3DrawCell
+        ColWidths = (
+          64
+          64
+          64
+          64
+          64)
+        RowHeights = (
+          80)
       end
       object Button14: TButton
         Left = 835
-        Top = 383
+        Top = 349
         Width = 28
         Height = 22
         Hint = 'Ausgleich buchen'
@@ -3575,8 +3613,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button14Click
       end
       object Button15: TButton
-        Left = 525
-        Top = 280
+        Left = 518
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'Zur Person springen'
@@ -3584,7 +3622,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Caption = '&P'
         ParentShowHint = False
         ShowHint = True
@@ -3592,8 +3630,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button15Click
       end
       object Button16: TButton
-        Left = 550
-        Top = 280
+        Left = 543
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'zu den Belegen springen'
@@ -3601,7 +3639,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Caption = '&B'
         ParentShowHint = False
         ShowHint = True
@@ -3609,8 +3647,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button16Click
       end
       object Button17: TButton
-        Left = 500
-        Top = 280
+        Left = 493
+        Top = 246
         Width = 22
         Height = 22
         Hint = 'Zahlungen einsehen'
@@ -3618,7 +3656,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Caption = '&Z'
         ParentShowHint = False
         ShowHint = True
@@ -3626,8 +3664,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button17Click
       end
       object StaticText2: TStaticText
-        Left = 696
-        Top = 279
+        Left = 689
+        Top = 245
         Width = 185
         Height = 24
         Margins.Left = 4
@@ -3635,7 +3673,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Right = 4
         Margins.Bottom = 4
         Alignment = taRightJustify
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         AutoSize = False
         BorderStyle = sbsSunken
         Caption = '#,## '#8364
@@ -3649,8 +3687,8 @@ object FormBuchhalter: TFormBuchhalter
         Transparent = False
       end
       object Button13: TButton
-        Left = 576
-        Top = 280
+        Left = 569
+        Top = 246
         Width = 21
         Height = 22
         Hint = 'Infos zu offenen Posten (Mahnung)'
@@ -3658,7 +3696,7 @@ object FormBuchhalter: TFormBuchhalter
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Anchors = [akLeft, akBottom]
+        Anchors = [akRight, akBottom]
         Caption = '&M'
         ParentShowHint = False
         ShowHint = True
@@ -3667,7 +3705,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button18: TButton
         Left = 442
-        Top = 280
+        Top = 246
         Width = 40
         Height = 22
         Hint = 'Neue Person aus dem Buchungstext anlegen'
@@ -3684,7 +3722,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button19: TButton
         Left = 364
-        Top = 280
+        Top = 246
         Width = 75
         Height = 22
         Hint = 'Suchen, wie im Moment der Orgamon sucht'
@@ -3701,7 +3739,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object CheckBox5: TCheckBox
         Left = 236
-        Top = 387
+        Top = 353
         Width = 229
         Height = 16
         Margins.Left = 4
@@ -3715,7 +3753,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button21: TButton
         Left = 299
-        Top = 280
+        Top = 246
         Width = 61
         Height = 22
         Hint = 'mehr Alternativen anzeigen'
@@ -3732,7 +3770,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object CheckBox6: TCheckBox
         Left = 471
-        Top = 387
+        Top = 353
         Width = 179
         Height = 16
         Margins.Left = 4
@@ -3746,7 +3784,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Panel2: TPanel
         Left = 37
-        Top = 280
+        Top = 246
         Width = 91
         Height = 22
         Margins.Left = 4
@@ -3763,7 +3801,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Edit13: TEdit
         Left = 137
-        Top = 280
+        Top = 246
         Width = 149
         Height = 21
         Margins.Left = 4
@@ -3776,7 +3814,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Panel3: TPanel
         Left = 37
-        Top = 383
+        Top = 349
         Width = 91
         Height = 21
         Margins.Left = 4
@@ -3793,7 +3831,7 @@ object FormBuchhalter: TFormBuchhalter
       end
       object Button22: TButton
         Left = 784
-        Top = 383
+        Top = 349
         Width = 22
         Height = 22
         Hint = 'abgeschlossenen Rechnungsbeleg '#246'ffnen'
@@ -3810,18 +3848,31 @@ object FormBuchhalter: TFormBuchhalter
         TabOrder = 18
         OnClick = Button22Click
       end
+      object Button24: TButton
+        Left = 155
+        Top = 349
+        Width = 21
+        Height = 22
+        Hint = 'Testdialog f'#252'r DPI-Bug'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akRight, akBottom]
+        Caption = '&T'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 19
+        OnClick = Button24Click
+      end
     end
     object TabSheet7: TTabSheet
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
-        892
-        519)
+        876
+        484)
       object SpeedButton37: TSpeedButton
         Left = 4
         Top = 6
@@ -3861,7 +3912,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton37Click
       end
       object SpeedButton43: TSpeedButton
-        Left = 770
+        Left = 754
         Top = 6
         Width = 23
         Height = 22
@@ -3901,6 +3952,7 @@ object FormBuchhalter: TFormBuchhalter
         ParentShowHint = False
         ShowHint = True
         OnClick = SpeedButton43Click
+        ExplicitLeft = 770
       end
       object SpeedButton44: TSpeedButton
         Left = 28
@@ -4011,7 +4063,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton48Click
       end
       object Button11: TButton
-        Left = 864
+        Left = 848
         Top = 6
         Width = 24
         Height = 22
@@ -4036,11 +4088,12 @@ object FormBuchhalter: TFormBuchhalter
       object IB_Grid2: TIB_Grid
         Left = 0
         Top = 35
-        Width = 892
-        Height = 484
+        Width = 876
+        Height = 449
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource2
         Align = alBottom
+        Anchors = [akLeft, akTop, akRight, akBottom]
         ReadOnly = True
         TabOrder = 1
         RowSelect = True
@@ -4048,7 +4101,7 @@ object FormBuchhalter: TFormBuchhalter
         OnGetDisplayText = IB_Grid2GetDisplayText
       end
       object Edit14: TEdit
-        Left = 696
+        Left = 680
         Top = 7
         Width = 67
         Height = 21
@@ -4067,10 +4120,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 24
         Top = 40
@@ -4368,27 +4417,27 @@ object FormBuchhalter: TFormBuchhalter
       'PERSON.Z_ELV_BLZ=ITEM=9'
       'PERSON.Z_ELV_KONTO=ITEM=10'
       'PERSON.Z_ELV_KONTO_INHABER=ITEM=11')
-    Left = 40
-    Top = 344
+    Left = 104
+    Top = 88
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 120
-    Top = 344
+    Left = 176
+    Top = 88
   end
   object IB_Cursor1: TIB_Cursor
     DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from BUCH where RID=:CROSSREF')
-    Left = 40
-    Top = 384
+    Left = 104
+    Top = 136
   end
   object ImageList1: TImageList
-    Left = 216
-    Top = 344
+    Left = 288
+    Top = 88
     Bitmap = {
-      494C0101040009000C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040009001C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4663,8 +4712,8 @@ object FormBuchhalter: TFormBuchhalter
     Enabled = False
     Interval = 1200
     OnTimer = Timer1Timer
-    Left = 288
-    Top = 344
+    Left = 352
+    Top = 88
   end
   object IB_Query2: TIB_Query
     CalculateAllFields = True
@@ -4693,12 +4742,12 @@ object FormBuchhalter: TFormBuchhalter
       ' RID desc')
     ColorScheme = True
     ReadOnly = True
-    Left = 40
-    Top = 432
+    Left = 104
+    Top = 192
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2
-    Left = 120
-    Top = 432
+    Left = 176
+    Top = 192
   end
 end

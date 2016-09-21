@@ -38,7 +38,7 @@ uses
   DCPcrypt2, DCPmd5,
   gplists, ImgList, JvExControls,
   JvArrayButton, WordIndex, anfix32,
-  Sperre, JvAnimatedImage, JvGIFCtrl;
+  Sperre, JvAnimatedImage, JvGIFCtrl, System.ImageList;
 
 type
   TFormBuchhalter = class(TForm)
@@ -198,22 +198,23 @@ type
     Button11: TButton;
     IB_Grid2: TIB_Grid;
     Image2: TImage;
-    SpeedButton42: TSpeedButton;
     Edit7: TEdit;
     SpeedButton43: TSpeedButton;
     Edit14: TEdit;
     SpeedButton44: TSpeedButton;
     SpeedButton45: TSpeedButton;
-    SpeedButton46: TSpeedButton;
-    SpeedButton47: TSpeedButton;
     Edit15: TEdit;
     Label1: TLabel;
     CheckBox7: TCheckBox;
     SpeedButton48: TSpeedButton;
-    SpeedButton33: TSpeedButton;
     Image1: TImage;
     Image3: TImage;
     Image4: TImage;
+    SpeedButton33: TSpeedButton;
+    SpeedButton42: TSpeedButton;
+    SpeedButton46: TSpeedButton;
+    SpeedButton47: TSpeedButton;
+    Button24: TButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -311,6 +312,7 @@ type
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
+    procedure Button24Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -461,7 +463,7 @@ uses
   ExcelHelper, CareServer, OLAP,
 
   REST, dbOrgaMon, wanfix32,
-  GUIhelp;
+  GUIhelp, PageControlTest;
 {$R *.dfm}
 
 const
@@ -2024,6 +2026,11 @@ begin
     openShell(DiagnosePath + 'DATEV.CSV');
   end;
 
+end;
+
+procedure TFormBuchhalter.Button24Click(Sender: TObject);
+begin
+ FormPageControlTest.show;
 end;
 
 procedure TFormBuchhalter.Button2Click(Sender: TObject);
@@ -4121,14 +4128,17 @@ procedure TFormBuchhalter.TabSheet6Show(Sender: TObject);
 var
   AlleKonten: TStringList;
 begin
-  if Memo2.lines.count = 0 then
+  if (Memo2.lines.count = 0) then
     if FileExists(SystemPath + '\Konten-Alias.ini') then
       Memo2.lines.LoadFromFile(SystemPath + '\Konten-Alias.ini');
 
-  if ComboBox3.Text = '' then
+  if (ComboBox3.Text = '') then
   begin
-    AlleKonten := e_r_sqlsl('select distinct NAME from BUCH where' + ' (NAME is not null) and' + ' (NAME<>'''') and' +
-      ' (BETRAG is not null)');
+    AlleKonten := e_r_sqlsl(
+     {} 'select distinct NAME from BUCH where' +
+     {}  ' (NAME is not null) and' +
+     {}  ' (NAME<>'''') and' +
+     {}  ' (BETRAG is not null)');
     AlleKonten.sort;
     ComboBox3.Items.Assign(AlleKonten);
     AlleKonten.free;
