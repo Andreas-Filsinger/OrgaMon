@@ -2,7 +2,7 @@ object FormArtikel: TFormArtikel
   Left = 30
   Top = 0
   Caption = 'Artikel'
-  ClientHeight = 535
+  ClientHeight = 560
   ClientWidth = 980
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -17,12 +17,12 @@ object FormArtikel: TFormArtikel
   OnDestroy = FormDestroy
   DesignSize = (
     980
-    535)
+    560)
   PixelsPerInch = 96
   TextHeight = 13
   object Label3: TLabel
     Left = 33
-    Top = 130
+    Top = 155
     Width = 27
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -31,7 +31,7 @@ object FormArtikel: TFormArtikel
   end
   object Label4: TLabel
     Left = 80
-    Top = 130
+    Top = 155
     Width = 80
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -40,7 +40,7 @@ object FormArtikel: TFormArtikel
   end
   object Label6: TLabel
     Left = 297
-    Top = 130
+    Top = 155
     Width = 32
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -49,7 +49,7 @@ object FormArtikel: TFormArtikel
   end
   object Label5: TLabel
     Left = 808
-    Top = 138
+    Top = 163
     Width = 31
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -58,7 +58,7 @@ object FormArtikel: TFormArtikel
   end
   object IB_Text1: TIB_Text
     Left = 839
-    Top = 138
+    Top = 163
     Width = 122
     Height = 17
     DataField = 'RID'
@@ -68,16 +68,16 @@ object FormArtikel: TFormArtikel
   end
   object Label10: TLabel
     Left = 396
-    Top = 130
-    Width = 135
+    Top = 155
+    Width = 134
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Verlag Statistik, erst ab'
-    ExplicitTop = 283
+    ExplicitTop = 130
   end
   object Label11: TLabel
     Left = 608
-    Top = 167
+    Top = 192
     Width = 44
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -86,7 +86,7 @@ object FormArtikel: TFormArtikel
   end
   object Label12: TLabel
     Left = 539
-    Top = 138
+    Top = 163
     Width = 57
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -95,7 +95,7 @@ object FormArtikel: TFormArtikel
   end
   object Label13: TLabel
     Left = 599
-    Top = 138
+    Top = 163
     Width = 44
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -104,7 +104,7 @@ object FormArtikel: TFormArtikel
   end
   object Label14: TLabel
     Left = 280
-    Top = 169
+    Top = 194
     Width = 56
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -113,7 +113,7 @@ object FormArtikel: TFormArtikel
   end
   object Label15: TLabel
     Left = 98
-    Top = 172
+    Top = 197
     Width = 55
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -122,7 +122,7 @@ object FormArtikel: TFormArtikel
   end
   object Label9: TLabel
     Left = 540
-    Top = 151
+    Top = 176
     Width = 54
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -131,7 +131,7 @@ object FormArtikel: TFormArtikel
   end
   object Label16: TLabel
     Left = 599
-    Top = 151
+    Top = 176
     Width = 44
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -140,7 +140,7 @@ object FormArtikel: TFormArtikel
   end
   object Label17: TLabel
     Left = 10
-    Top = 510
+    Top = 535
     Width = 38
     Height = 14
     Anchors = [akLeft, akBottom]
@@ -156,7 +156,7 @@ object FormArtikel: TFormArtikel
   end
   object Label8: TLabel
     Left = 98
-    Top = 213
+    Top = 238
     Width = 35
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -165,7 +165,7 @@ object FormArtikel: TFormArtikel
   end
   object Label18: TLabel
     Left = 98
-    Top = 258
+    Top = 283
     Width = 108
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -174,7 +174,7 @@ object FormArtikel: TFormArtikel
   end
   object Label19: TLabel
     Left = 402
-    Top = 213
+    Top = 238
     Width = 60
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -183,7 +183,7 @@ object FormArtikel: TFormArtikel
   end
   object Label20: TLabel
     Left = 402
-    Top = 259
+    Top = 284
     Width = 58
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -192,7 +192,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton2: TSpeedButton
     Left = 467
-    Top = 209
+    Top = 234
     Width = 21
     Height = 20
     Anchors = [akLeft, akBottom]
@@ -228,7 +228,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton3: TSpeedButton
     Left = 466
-    Top = 255
+    Top = 280
     Width = 21
     Height = 19
     Anchors = [akLeft, akBottom]
@@ -264,7 +264,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton4: TSpeedButton
     Left = 254
-    Top = 183
+    Top = 208
     Width = 19
     Height = 20
     Anchors = [akLeft, akBottom]
@@ -300,7 +300,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton5: TSpeedButton
     Left = 9
-    Top = 145
+    Top = 170
     Width = 20
     Height = 19
     Anchors = [akLeft, akBottom]
@@ -336,7 +336,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton6: TSpeedButton
     Left = 488
-    Top = 207
+    Top = 232
     Width = 23
     Height = 22
     Hint = #220'ber den Komponisten'
@@ -391,7 +391,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton7: TSpeedButton
     Left = 513
-    Top = 207
+    Top = 232
     Width = 22
     Height = 22
     Hint = 'Bearbeiten'
@@ -412,7 +412,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton8: TSpeedButton
     Left = 488
-    Top = 252
+    Top = 277
     Width = 22
     Height = 22
     Hint = #220'ber den Arragneur'
@@ -467,7 +467,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton9: TSpeedButton
     Left = 513
-    Top = 252
+    Top = 277
     Width = 22
     Height = 22
     Hint = 'Bearbeiten'
@@ -488,7 +488,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton10: TSpeedButton
     Left = 816
-    Top = 509
+    Top = 534
     Width = 23
     Height = 22
     Hint = 'Mitgliedschaften anzeigen'
@@ -527,7 +527,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton11: TSpeedButton
     Left = 865
-    Top = 509
+    Top = 534
     Width = 21
     Height = 22
     Hint = 'Context Teilnehmer'
@@ -566,7 +566,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton12: TSpeedButton
     Left = 839
-    Top = 509
+    Top = 534
     Width = 23
     Height = 22
     Hint = '... im Contextfenster'
@@ -605,7 +605,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton13: TSpeedButton
     Left = 888
-    Top = 509
+    Top = 534
     Width = 22
     Height = 22
     Hint = '... im Contextfenster'
@@ -813,7 +813,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton14: TSpeedButton
     Left = 912
-    Top = 509
+    Top = 534
     Width = 23
     Height = 22
     Hint = 'zeige Neuanlagen'
@@ -890,7 +890,7 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton15: TSpeedButton
     Left = 936
-    Top = 509
+    Top = 534
     Width = 23
     Height = 22
     Hint = 'Liste einlesen aus einer OLAP Abfrage'
@@ -946,7 +946,7 @@ object FormArtikel: TFormArtikel
   end
   object Image3: TImage
     Left = 10
-    Top = 172
+    Top = 197
     Width = 80
     Height = 121
     Anchors = [akLeft, akBottom]
@@ -1028,13 +1028,13 @@ object FormArtikel: TFormArtikel
   end
   object Label24: TLabel
     Left = 232
-    Top = 213
-    Width = 115
+    Top = 238
+    Width = 114
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = '&GEMA Werknummer'
     FocusControl = IB_Edit3
-    ExplicitTop = 366
+    ExplicitTop = 213
   end
   object SpeedButton22: TSpeedButton
     Left = 230
@@ -1077,7 +1077,7 @@ object FormArtikel: TFormArtikel
     Left = 1
     Top = 24
     Width = 974
-    Height = 105
+    Height = 130
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
@@ -1085,15 +1085,17 @@ object FormArtikel: TFormArtikel
     DrawCellTextOptions = [gdtShowTextBlob]
     CurrentRowColor = clInfoBk
     OnGetCellProps = IB_Grid1GetCellProps
+    ExplicitHeight = 105
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 296
+    Top = 321
     Width = 978
     Height = 206
     ActivePage = TabSheet1
     Anchors = [akLeft, akBottom]
     TabOrder = 2
+    ExplicitTop = 296
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
       object Label1: TLabel
@@ -1294,6 +1296,10 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 7
         Top = 40
@@ -1364,7 +1370,7 @@ object FormArtikel: TFormArtikel
       object Label21: TLabel
         Left = 7
         Top = 7
-        Width = 165
+        Width = 164
         Height = 13
         Caption = 'Artikel Volltext Beschreibung'
       end
@@ -1383,6 +1389,10 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1781,6 +1791,10 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1842,6 +1856,10 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -1855,16 +1873,17 @@ object FormArtikel: TFormArtikel
   end
   object ComboBox1: TComboBox
     Left = 33
-    Top = 146
+    Top = 171
     Width = 48
     Height = 21
     Anchors = [akLeft, akBottom]
     TabOrder = 3
     OnChange = ComboBox1Change
+    ExplicitTop = 146
   end
   object ComboBox2: TComboBox
     Left = 80
-    Top = 146
+    Top = 171
     Width = 217
     Height = 21
     Anchors = [akLeft, akBottom]
@@ -1872,19 +1891,21 @@ object FormArtikel: TFormArtikel
     Text = 'ComboBox2'
     OnChange = ComboBox2Change
     OnDropDown = ComboBox2DropDown
+    ExplicitTop = 146
   end
   object ComboBox3: TComboBox
     Left = 296
-    Top = 146
+    Top = 171
     Width = 74
     Height = 21
     Anchors = [akLeft, akBottom]
     TabOrder = 12
     OnDropDown = ComboBox3DropDown
+    ExplicitTop = 146
   end
   object IB_Date1: TIB_Date
     Left = 394
-    Top = 146
+    Top = 171
     Width = 129
     Height = 21
     DataField = 'VERLAG_STAT_START'
@@ -1894,20 +1915,22 @@ object FormArtikel: TFormArtikel
     IncCellHeight = 1
     IncCellWidth = 2
     DrawYearArrow = False
+    ExplicitTop = 146
   end
   object Button15: TButton
     Left = 586
-    Top = 166
+    Top = 191
     Width = 15
     Height = 15
     Anchors = [akLeft, akBottom]
     Caption = 'L'
     TabOrder = 6
     OnClick = Button15Click
+    ExplicitTop = 166
   end
   object IB_ComboBox1: TIB_ComboBox
     Left = 280
-    Top = 183
+    Top = 208
     Width = 286
     Height = 21
     DataField = 'SORTIMENT_R'
@@ -1915,10 +1938,11 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 7
     Style = csDropDownList
+    ExplicitTop = 183
   end
   object IB_ComboBox2: TIB_ComboBox
     Left = 98
-    Top = 184
+    Top = 209
     Width = 143
     Height = 21
     DataField = 'PREIS_R'
@@ -1926,10 +1950,11 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 8
     Style = csDropDownList
+    ExplicitTop = 184
   end
   object Button7: TButton
     Left = 371
-    Top = 146
+    Top = 171
     Width = 21
     Height = 22
     Hint = 'Einlagern'
@@ -1937,10 +1962,11 @@ object FormArtikel: TFormArtikel
     Caption = '+'
     TabOrder = 9
     OnClick = Button7Click
+    ExplicitTop = 146
   end
   object Edit2: TEdit
     Left = 56
-    Top = 506
+    Top = 531
     Width = 655
     Height = 22
     Anchors = [akLeft, akBottom]
@@ -1952,30 +1978,33 @@ object FormArtikel: TFormArtikel
     ParentFont = False
     TabOrder = 0
     OnKeyPress = Edit2KeyPress
+    ExplicitTop = 506
   end
   object IB_Edit1: TIB_Edit
     Left = 98
-    Top = 229
+    Top = 254
     Width = 121
     Height = 21
     DataField = 'DAUER'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 10
+    ExplicitTop = 229
   end
   object IB_Edit2: TIB_Edit
     Left = 152
-    Top = 274
+    Top = 299
     Width = 185
     Height = 21
     DataField = 'SCHWER_DETAILS'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 13
+    ExplicitTop = 274
   end
   object IB_ComboBox3: TIB_ComboBox
     Left = 98
-    Top = 274
+    Top = 299
     Width = 49
     Height = 21
     DataField = 'SCHWER_GRUPPE'
@@ -2011,10 +2040,11 @@ object FormArtikel: TFormArtikel
       '5+'
       '6'
       '6+')
+    ExplicitTop = 274
   end
   object IB_ComboBox4: TIB_ComboBox
     Left = 402
-    Top = 229
+    Top = 254
     Width = 577
     Height = 21
     DataField = 'KOMPONIST_R'
@@ -2022,10 +2052,11 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 15
     Style = csDropDownList
+    ExplicitTop = 229
   end
   object IB_ComboBox5: TIB_ComboBox
     Left = 402
-    Top = 274
+    Top = 299
     Width = 577
     Height = 21
     DataField = 'ARRANGEUR_R'
@@ -2033,6 +2064,7 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 16
     Style = csDropDownList
+    ExplicitTop = 274
   end
   object IB_SearchBar1: TIB_SearchBar
     Left = 4
@@ -2193,33 +2225,36 @@ object FormArtikel: TFormArtikel
   end
   object Button17: TButton
     Left = 717
-    Top = 509
+    Top = 534
     Width = 93
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'im Web-Shop'
     TabOrder = 30
     OnClick = Button17Click
+    ExplicitTop = 509
   end
   object Button20: TButton
     Left = 566
-    Top = 183
+    Top = 208
     Width = 23
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'S'
     TabOrder = 31
     OnClick = Button20Click
+    ExplicitTop = 183
   end
   object IB_Edit3: TIB_Edit
     Left = 232
-    Top = 229
+    Top = 254
     Width = 143
     Height = 21
     DataField = 'GEMA_WN'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 11
+    ExplicitTop = 229
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1

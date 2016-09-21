@@ -726,11 +726,11 @@ var
     BREGEL := nCursor;
     with BREGEL do
     begin
-      sql.add('SELECT');
+      sql.add('select');
       sql.add(' OUT_PERSON_R');
-      sql.add('FROM');
+      sql.add('from');
       sql.add(' BREGEL');
-      sql.add('WHERE');
+      sql.add('where');
       sql.add(Condition);
       ApiFirst;
       if not(eof) then

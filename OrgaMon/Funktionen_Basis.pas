@@ -135,6 +135,7 @@ function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 implementation
 
 uses
+  JclFileUtils,
   Windows, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
 
@@ -794,6 +795,16 @@ begin
   until true;
 end;
 
+function cBuildNumber : string;
+var
+ v : TJclFileVersionInfo;
+begin
+ v := TJclFileVersionInfo.create( HInstance);
+  result := v.FileVersionBuild;
+  v.Free;
+end;
+
+
 function e_r_BasePlug: TStringList;
 begin
   result := TStringList.create;
@@ -806,7 +817,7 @@ begin
       // ACHTUNG: geht auch über XML-RPC "BasePlug" raus!
       // ACHTUNG: Reihenfolge nicht verändern, nur erweitern!
       // ==========================================================
-      { 01 } add(cAppName);
+      { 01 } add(cAppName+' (Build '+cBuildNumber+')');
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
       { 02 } add('Zeos Rev. ' + fbConnection.Version);

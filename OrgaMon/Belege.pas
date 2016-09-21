@@ -82,36 +82,7 @@ type
     Button32: TButton;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
-    Label4: TLabel;
-    SpeedButton1: TSpeedButton;
-    SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
-    Label12: TLabel;
-    SpeedButton12: TSpeedButton;
-    SpeedButton13: TSpeedButton;
-    SpeedButton18: TSpeedButton;
     IB_Grid2: TIB_Grid;
-    IB_NavigationBar2: TIB_NavigationBar;
-    IB_UpdateBar2: TIB_UpdateBar;
-    Button5: TButton;
-    Button7: TButton;
-    Button10: TButton;
-    Button1: TButton;
-    Button16: TButton;
-    Button17: TButton;
-    Button11: TButton;
-    Button21: TButton;
-    Button6: TButton;
-    Button9: TButton;
-    Button23: TButton;
-    StaticText1: TStaticText;
-    Button25: TButton;
-    Button26: TButton;
-    Button27: TButton;
-    Button19: TButton;
-    Button29: TButton;
-    Button31: TButton;
-    Button34: TButton;
     TabSheet2: TTabSheet;
     Label13: TLabel;
     Label14: TLabel;
@@ -120,8 +91,6 @@ type
     IB_Memo2: TIB_Memo;
     Button3: TButton;
     Edit2: TEdit;
-    Label16: TLabel;
-    Image2: TImage;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
@@ -167,11 +136,41 @@ type
     Splitter2: TSplitter;
     TabSheet3: TTabSheet;
     IB_Memo3: TIB_Memo;
-    IB_UpdateBar3: TIB_UpdateBar;
     SpeedButton23: TSpeedButton;
     SpeedButton24: TSpeedButton;
     JvFormStorage1: TJvFormStorage;
     IB_Edit1: TIB_Edit;
+    Label4: TLabel;
+    SpeedButton1: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
+    Label12: TLabel;
+    SpeedButton12: TSpeedButton;
+    SpeedButton13: TSpeedButton;
+    SpeedButton18: TSpeedButton;
+    IB_NavigationBar2: TIB_NavigationBar;
+    IB_UpdateBar2: TIB_UpdateBar;
+    Button5: TButton;
+    Button7: TButton;
+    Button10: TButton;
+    Button1: TButton;
+    Button16: TButton;
+    Button17: TButton;
+    Button11: TButton;
+    Button21: TButton;
+    Button6: TButton;
+    Button9: TButton;
+    Button23: TButton;
+    StaticText1: TStaticText;
+    Button25: TButton;
+    Button26: TButton;
+    Button27: TButton;
+    Button19: TButton;
+    Button29: TButton;
+    Button31: TButton;
+    Button34: TButton;
+    IB_UpdateBar3: TIB_UpdateBar;
+    Image2: TImage;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -1700,7 +1699,7 @@ begin
   end;
   AusgangsRechnungen.free;
 
-  Label16.caption := 'Beleg Nó ' + inttostr(BelegRID) + ' ' + NewStr + ' @ ' +
+  TabSheet1.caption := 'Beleg Nó ' + inttostr(BelegRID) + ' ' + NewStr + ' @ ' +
     e_r_LagerPlatzNameFromLAGER_R(IB_Query1.FieldByName('LAGER_R').AsInteger);
 
   // Try to evaluate if there is Text inside the VALS
@@ -1801,6 +1800,9 @@ end;
 
 procedure TFormBelege.Button21Click(Sender: TObject);
 begin
+ IB_Grid2.top := dpix(32)-10+random(20);
+ Beep;
+
   HeBuPlaySound(IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
