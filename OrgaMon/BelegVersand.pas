@@ -335,8 +335,16 @@ begin
     if (FDate(FName) > FDate(FName_pdf)) then
     begin
       WinExec32AndWait(
-        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
-        // ggf. "--zoom 0.0..9.9" verwenden
+        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe' + '"' + ' ' +
+        { } '--print-media-type ' +
+        { } '--page-width 2480px ' + // DIN A4 Format
+        { } '--page-height 3508px ' +
+        { } '--margin-top 90px ' +
+        { } '--margin-bottom 9px ' +
+        { } '--margin-left 9px ' +
+        { } '--margin-right 9px ' +
+        { } '--dpi 150 ' +
+        { } '--zoom 3.12 ' +
         { } '"' + FName + '"' + ' ' +
         { } '"' + FName_pdf + '"',
         { } SW_SHOWDEFAULT);

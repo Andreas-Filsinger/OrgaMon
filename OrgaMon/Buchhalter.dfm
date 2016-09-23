@@ -27,7 +27,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet4
     Align = alClient
     Anchors = []
     TabOrder = 0
@@ -148,7 +148,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton28Click
       end
       object Image2: TImage
-        Left = 736
+        Left = 819
         Top = 4
         Width = 54
         Height = 22
@@ -276,7 +276,6 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image2Click
-        ExplicitLeft = 819
       end
       object IB_Grid1: TIB_Grid
         Left = 9
@@ -469,7 +468,7 @@ object FormBuchhalter: TFormBuchhalter
       object SpeedButton29: TSpeedButton
         Left = 536
         Top = 48
-        Width = 23
+        Width = 24
         Height = 23
         Margins.Left = 4
         Margins.Top = 4
@@ -1359,7 +1358,7 @@ object FormBuchhalter: TFormBuchhalter
         ParentFont = False
       end
       object Image3: TImage
-        Left = 736
+        Left = 819
         Top = 121
         Width = 54
         Height = 22
@@ -1487,7 +1486,6 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image3Click
-        ExplicitLeft = 819
       end
       object Button5: TButton
         Left = 699
@@ -1748,8 +1746,8 @@ object FormBuchhalter: TFormBuchhalter
       object SpeedButton3: TSpeedButton
         Left = 4
         Top = 32
-        Width = 20
-        Height = 20
+        Width = 22
+        Height = 22
         Hint = 'alle Werte neu ermitteln'
         Margins.Left = 4
         Margins.Top = 4
@@ -1800,8 +1798,8 @@ object FormBuchhalter: TFormBuchhalter
       object SpeedButton4: TSpeedButton
         Left = 4
         Top = 8
-        Width = 20
-        Height = 20
+        Width = 22
+        Height = 22
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -1836,7 +1834,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton4Click
       end
       object SpeedButton5: TSpeedButton
-        Left = 480
+        Left = 474
         Top = 8
         Width = 22
         Height = 22
@@ -1864,7 +1862,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton5Click
       end
       object SpeedButton6: TSpeedButton
-        Left = 456
+        Left = 449
         Top = 8
         Width = 22
         Height = 22
@@ -1945,7 +1943,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton8Click
       end
       object SpeedButton9: TSpeedButton
-        Left = 504
+        Left = 499
         Top = 8
         Width = 22
         Height = 22
@@ -1972,7 +1970,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton9Click
       end
       object SpeedButton10: TSpeedButton
-        Left = 557
+        Left = 547
         Top = 8
         Width = 23
         Height = 22
@@ -2207,8 +2205,8 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = SpeedButton2Click
       end
       object Image4: TImage
-        Left = 818
-        Top = 31
+        Left = 573
+        Top = 8
         Width = 54
         Height = 22
         Cursor = crHandPoint
@@ -2335,7 +2333,6 @@ object FormBuchhalter: TFormBuchhalter
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
         OnClick = Image4Click
-        ExplicitLeft = 834
       end
       object Edit1: TEdit
         Left = 70
@@ -2429,7 +2426,7 @@ object FormBuchhalter: TFormBuchhalter
         OnClick = Button20Click
       end
       object Button3: TButton
-        Left = 532
+        Left = 523
         Top = 8
         Width = 22
         Height = 22
@@ -2465,7 +2462,7 @@ object FormBuchhalter: TFormBuchhalter
         OnKeyPress = Edit8KeyPress
       end
       object Edit7: TEdit
-        Left = 333
+        Left = 339
         Top = 9
         Width = 57
         Height = 21
@@ -4437,7 +4434,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 288
     Top = 88
     Bitmap = {
-      494C0101040009001C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900200210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
