@@ -19,6 +19,25 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.226 (23.09.16) Andreas Filsinger
+
+ Bug: Buch: weitere Anzeigefehler
+ Bug: Ausgangsrechnung ("Z"): Anzeigefehler
+ Bug: Rechnung als PDF: verschiedene Grössen auf unterschiedlichen Systemen
+
+Rev 8.225 (21.09.16) Andreas Filsinger
+
+ Bug: Buch: Forderungsausgleicht: Funktionsknöpfe sind falsch plaziert
+
+Rev 8.224 (20.09.16) Andreas Filsinger
+
+ Bug: Buch: Forderungsausgleicht: Funktionsknöpfe sind falsch plaziert
+
+Rev 8.223 (20.09.16) Andreas Filsinger
+
+ Bug: Beleg: Anzeigefehler der Rechnungsposten
+ Bug: Beleg: Funktionsknöpfe fehlen
+
 Rev 8.222 (16.09.16) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: Bei Sonderbenennungen war die Ergebnisdatei nicht mit im ZIP

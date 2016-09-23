@@ -3,7 +3,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   Top = 1
   Caption = 'Konto "Ausgangs Rechnungen"'
   ClientHeight = 561
-  ClientWidth = 777
+  ClientWidth = 789
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -15,7 +15,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   OnActivate = FormActivate
   OnCreate = FormCreate
   DesignSize = (
-    777
+    789
     561)
   PixelsPerInch = 96
   TextHeight = 13
@@ -237,7 +237,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Height = 273
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
-    Anchors = [akLeft, akTop, akRight, akBottom]
+    Anchors = [akLeft, akTop, akBottom]
     TabOrder = 1
     EditorBorderStyle = bsSingle
     IndicateLongCellText = True
@@ -431,11 +431,11 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   object IB_Memo1: TIB_Memo
     Left = 0
     Top = 435
-    Width = 787
+    Width = 786
     Height = 81
     DataField = 'TEXT'
     DataSource = IB_DataSource1
-    Anchors = [akBottom]
+    Anchors = [akLeft, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -447,35 +447,37 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   end
   object Panel4: TPanel
     Left = 0
-    Top = 512
+    Top = 517
     Width = 786
-    Height = 49
-    Anchors = [akBottom]
+    Height = 44
+    Anchors = [akLeft, akBottom]
     TabOrder = 4
     DesignSize = (
       786
-      49)
+      44)
     object Label2: TLabel
       Left = 592
-      Top = 22
+      Top = 17
       Width = 7
       Height = 13
       Anchors = [akRight, akBottom]
       Caption = #8364
+      ExplicitTop = 22
     end
     object Button8: TButton
       Left = 618
-      Top = 12
+      Top = 7
       Width = 155
       Height = 30
       Anchors = [akRight, akBottom]
       Caption = '&Zahlungseingang buchen'
       TabOrder = 0
       OnClick = Button8Click
+      ExplicitTop = 12
     end
     object Edit5: TEdit
       Left = 384
-      Top = 15
+      Top = 10
       Width = 200
       Height = 26
       Anchors = [akRight, akBottom]
@@ -487,19 +489,21 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       ParentFont = False
       TabOrder = 1
       OnKeyPress = Edit5KeyPress
+      ExplicitTop = 15
     end
     object CheckBox1: TCheckBox
-      Left = 143
-      Top = 10
+      Left = 142
+      Top = 5
       Width = 218
       Height = 18
       Anchors = [akRight, akBottom]
       Caption = 'ohne Buchung "Kasse"'
       TabOrder = 2
+      ExplicitLeft = 143
     end
     object CheckBox2: TCheckBox
       Left = 143
-      Top = 28
+      Top = 21
       Width = 218
       Height = 17
       Caption = 'als Forderungsverlust buchen'

@@ -16,6 +16,7 @@ type
     ListBox1: TListBox;
     Button3: TButton;
     Button4: TButton;
+    TabSheet2: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
