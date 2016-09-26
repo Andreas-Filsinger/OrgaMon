@@ -1045,9 +1045,9 @@ object FormPerson: TFormPerson
         Caption = 'Begriff'
       end
       object Label2: TLabel
-        Left = 12
+        Left = 13
         Top = 59
-        Width = 52
+        Width = 51
         Height = 13
         Alignment = taRightJustify
         Caption = 'Vorname'
@@ -1322,41 +1322,41 @@ object FormPerson: TFormPerson
         Caption = 'Handy'
       end
       object Label5: TLabel
-        Left = 50
+        Left = 51
         Top = 49
-        Width = 68
+        Width = 67
         Height = 13
         Alignment = taRightJustify
         Caption = 'Tel. (privat)'
       end
       object Label6: TLabel
-        Left = 16
+        Left = 17
         Top = 69
-        Width = 102
+        Width = 101
         Height = 13
         Alignment = taRightJustify
         Caption = 'Tel. (gesch'#228'ftlich)'
       end
       object Label7: TLabel
-        Left = 411
+        Left = 412
         Top = 27
-        Width = 67
+        Width = 66
         Height = 13
         Alignment = taRightJustify
         Caption = 'Fax (privat)'
       end
       object Label8: TLabel
-        Left = 377
+        Left = 378
         Top = 48
-        Width = 101
+        Width = 100
         Height = 13
         Alignment = taRightJustify
         Caption = 'Fax (gesch'#228'ftlich)'
       end
       object Label10: TLabel
-        Left = 431
+        Left = 432
         Top = 67
-        Width = 47
+        Width = 46
         Height = 13
         Alignment = taRightJustify
         Caption = '&WebSite'
@@ -1776,7 +1776,7 @@ object FormPerson: TFormPerson
       object Label39: TLabel
         Left = 598
         Top = 11
-        Width = 118
+        Width = 117
         Height = 13
         Caption = 'Kreditkarte Typ+PIN'
       end
@@ -1804,7 +1804,7 @@ object FormPerson: TFormPerson
       object Label43: TLabel
         Left = 168
         Top = 11
-        Width = 110
+        Width = 109
         Height = 13
         Caption = 'ELV - Kontoinhaber'
       end
@@ -1866,7 +1866,7 @@ object FormPerson: TFormPerson
       object Label55: TLabel
         Left = 487
         Top = 62
-        Width = 75
+        Width = 74
         Height = 13
         Caption = 'ELV-Freigabe'
       end
@@ -2140,21 +2140,21 @@ object FormPerson: TFormPerson
       object Label27: TLabel
         Left = 796
         Top = 10
-        Width = 63
+        Width = 62
         Height = 13
         Caption = 'Versandart'
       end
       object Label28: TLabel
         Left = 756
         Top = 31
-        Width = 104
+        Width = 103
         Height = 13
         Caption = 'Versand-Pr'#228'misse'
       end
       object Label29: TLabel
         Left = 765
         Top = 52
-        Width = 95
+        Width = 94
         Height = 13
         Caption = 'Treffer pro Seite'
       end
@@ -2610,7 +2610,6 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn'
       ImageIndex = 10
-      ExplicitTop = 26
       object Label14: TLabel
         Left = 23
         Top = 66
@@ -2643,14 +2642,14 @@ object FormPerson: TFormPerson
       object Label53: TLabel
         Left = 546
         Top = 62
-        Width = 138
+        Width = 137
         Height = 13
         Caption = 'Betriebs-Jahres-Summe'
       end
       object Label54: TLabel
         Left = 345
         Top = 7
-        Width = 129
+        Width = 128
         Height = 13
         Caption = 'Versicherungsnummer'
       end

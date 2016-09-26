@@ -97,8 +97,9 @@ const
   ILLEGALFCCALL = 22; { Funktions-Aufruf nicht bekannt }
   DRVLOADERROR = 23; { Fehler beim Laden }
   DRVNOTEXIST = 24; { DRV-Datei nicht gefunden }
+  SQLERROR = 25; { SQL nicht ausführbar }
 
-  BASICLASTERROR = 24;
+  BASICLASTERROR = 25;
 
   USERERR = 240; { keine besondere Message }
   BASICSYSTEM = 241; { Ende durch "SYSTEM"-Statement }
@@ -139,7 +140,8 @@ const
     { } 'VDD-Datei nicht gefunden',
     { } 'Funktions-Aufruf nicht bekannt',
     { } 'Fehler beim Laden',
-    { } 'DRV-Datei nicht gefunden');
+    { } 'DRV-Datei nicht gefunden',
+    { } 'Fehler im SQL');
 
 type
   p2s = ^AnsiString;
@@ -1304,7 +1306,16 @@ begin
     delete(No);
     insert(sId, No);
     if assigned(ResolveSQL) then
+    begin
+     try
       puts(ResolveSQL(ThatSQL), No);
+     except
+      on E: Exception do
+      begin
+        Err(SQLERROR, E.Message);
+      end;
+     end;
+    end;
   end;
 end;
 
