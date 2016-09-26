@@ -1085,17 +1085,15 @@ object FormArtikel: TFormArtikel
     DrawCellTextOptions = [gdtShowTextBlob]
     CurrentRowColor = clInfoBk
     OnGetCellProps = IB_Grid1GetCellProps
-    ExplicitHeight = 105
   end
   object PageControl1: TPageControl
     Left = 0
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet1
+    ActivePage = TabSheet6
     Anchors = [akLeft, akBottom]
     TabOrder = 2
-    ExplicitTop = 296
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
       object Label1: TLabel
@@ -1296,10 +1294,6 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 7
         Top = 40
@@ -1389,10 +1383,6 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1791,10 +1781,6 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1856,10 +1842,6 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -1879,7 +1861,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 3
     OnChange = ComboBox1Change
-    ExplicitTop = 146
   end
   object ComboBox2: TComboBox
     Left = 80
@@ -1891,7 +1872,6 @@ object FormArtikel: TFormArtikel
     Text = 'ComboBox2'
     OnChange = ComboBox2Change
     OnDropDown = ComboBox2DropDown
-    ExplicitTop = 146
   end
   object ComboBox3: TComboBox
     Left = 296
@@ -1901,7 +1881,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 12
     OnDropDown = ComboBox3DropDown
-    ExplicitTop = 146
   end
   object IB_Date1: TIB_Date
     Left = 394
@@ -1915,7 +1894,6 @@ object FormArtikel: TFormArtikel
     IncCellHeight = 1
     IncCellWidth = 2
     DrawYearArrow = False
-    ExplicitTop = 146
   end
   object Button15: TButton
     Left = 586
@@ -1926,7 +1904,6 @@ object FormArtikel: TFormArtikel
     Caption = 'L'
     TabOrder = 6
     OnClick = Button15Click
-    ExplicitTop = 166
   end
   object IB_ComboBox1: TIB_ComboBox
     Left = 280
@@ -1938,7 +1915,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 7
     Style = csDropDownList
-    ExplicitTop = 183
   end
   object IB_ComboBox2: TIB_ComboBox
     Left = 98
@@ -1950,7 +1926,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 8
     Style = csDropDownList
-    ExplicitTop = 184
   end
   object Button7: TButton
     Left = 371
@@ -1962,7 +1937,6 @@ object FormArtikel: TFormArtikel
     Caption = '+'
     TabOrder = 9
     OnClick = Button7Click
-    ExplicitTop = 146
   end
   object Edit2: TEdit
     Left = 56
@@ -1978,7 +1952,6 @@ object FormArtikel: TFormArtikel
     ParentFont = False
     TabOrder = 0
     OnKeyPress = Edit2KeyPress
-    ExplicitTop = 506
   end
   object IB_Edit1: TIB_Edit
     Left = 98
@@ -1989,7 +1962,6 @@ object FormArtikel: TFormArtikel
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 10
-    ExplicitTop = 229
   end
   object IB_Edit2: TIB_Edit
     Left = 152
@@ -2000,7 +1972,6 @@ object FormArtikel: TFormArtikel
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 13
-    ExplicitTop = 274
   end
   object IB_ComboBox3: TIB_ComboBox
     Left = 98
@@ -2040,7 +2011,6 @@ object FormArtikel: TFormArtikel
       '5+'
       '6'
       '6+')
-    ExplicitTop = 274
   end
   object IB_ComboBox4: TIB_ComboBox
     Left = 402
@@ -2052,7 +2022,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 15
     Style = csDropDownList
-    ExplicitTop = 229
   end
   object IB_ComboBox5: TIB_ComboBox
     Left = 402
@@ -2064,7 +2033,6 @@ object FormArtikel: TFormArtikel
     Anchors = [akLeft, akBottom]
     TabOrder = 16
     Style = csDropDownList
-    ExplicitTop = 274
   end
   object IB_SearchBar1: TIB_SearchBar
     Left = 4
@@ -2232,7 +2200,6 @@ object FormArtikel: TFormArtikel
     Caption = 'im Web-Shop'
     TabOrder = 30
     OnClick = Button17Click
-    ExplicitTop = 509
   end
   object Button20: TButton
     Left = 566
@@ -2243,7 +2210,6 @@ object FormArtikel: TFormArtikel
     Caption = 'S'
     TabOrder = 31
     OnClick = Button20Click
-    ExplicitTop = 183
   end
   object IB_Edit3: TIB_Edit
     Left = 232
@@ -2254,7 +2220,6 @@ object FormArtikel: TFormArtikel
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 11
-    ExplicitTop = 229
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1

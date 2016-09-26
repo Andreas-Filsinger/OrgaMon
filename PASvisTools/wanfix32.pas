@@ -85,6 +85,9 @@ function printhtml(dokument: string): boolean;
 function printhtmlOK(FName: string): boolean;
 function printpdf(dokument: string): boolean;
 
+// Dokumente konvertieren
+function html2pdf(Dokument: string): TStringList;
+
 // Macros, Automatisierung
 procedure SetMousePos(x, y: integer);
 procedure PressKey(k: integer);
@@ -484,12 +487,31 @@ const
   cAdobe10 = 'Adobe\Reader 10.0\Reader\AcroRd32.exe';
   cAdobe9 = 'Adobe\Reader 9.0\Reader\AcroRd32.exe';
   cAdobe7 = 'adobe\acrobat 7.0\reader\acrord32.exe';
+  cSumatra = 'SumatraPDF\SumatraPDF.exe';
 var
   InstalledReader: string;
+  ReaderPrintOptions: string;
 begin
   _Document := dokument;
+  ReaderPrintOptions := '';
   repeat
+
+    // Sumatra Type PDF Printer
+    ReaderPrintOptions := ' -print-to-default -silent ';
     // detect newest reader
+    if FileExists('C:\Program Files\' + cSumatra) then
+    begin
+      InstalledReader := 'C:\Program Files\' + cSumatra;
+      break;
+    end;
+    if FileExists(ProgramFilesDir + cSumatra) then
+    begin
+      InstalledReader := ProgramFilesDir + cSumatra;
+      break;
+    end;
+
+    // Adobe Type PDF Printer
+    ReaderPrintOptions := ' /p /h ';
     if FileExists(ProgramFilesDir + cAdobe10) then
     begin
       InstalledReader := ProgramFilesDir + cAdobe10;
@@ -511,7 +533,8 @@ begin
   if (InstalledReader <> '') then
     result := WinExec32(
       { } '"' + InstalledReader + '"' +
-      { } ' /p /h "' + dokument + '"', sw_showdefault)
+      { } ReaderPrintOptions +
+      { } '"' + dokument + '"', sw_showdefault)
   else
     result := false;
 
@@ -1056,6 +1079,69 @@ var
 begin
   GetKeyboardState(State);
   result := ((State[vk_Control] And 128) <> 0);
+end;
+
+function html2pdf(Dokument: string): TStringList;
+const
+ cHTMLextension = '.html';
+ cPDFextension = '.pdf';
+var
+ Dokument_pdf : string;
+ k : integer;
+ ErrorMsg: string;
+begin
+repeat
+ result := TStringList.Create;
+ ErrorMsg := '';
+ if not(FileExists(Dokument)) then
+ begin
+  ErrorMsg := 'Quell-HTML nicht gefunden!';
+   break;
+ end;
+
+    Dokument_pdf := Dokument;
+
+
+    k := revpos(cHTMLextension, Dokument_pdf);
+    if (k > 0) then
+    begin
+      Dokument_pdf := copy(Dokument_pdf, 1, pred(k)) + cPDFExtension
+    end
+    else
+    begin
+      ErrorMsg := 'Anteil "' + cHTMLextension + '" in "' + Dokument + '" nicht gefunden!';
+      break;
+    end;
+    //
+    if (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
+    begin
+      WinExec32AndWait(
+        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe' + '"' + ' ' +
+        { } '--quiet ' +
+        { } '--print-media-type ' +
+        { } '--page-width 2480px ' + // DIN A4 Format
+        { } '--page-height 3508px ' +
+        { } '--margin-top 90px ' +
+        { } '--margin-bottom 9px ' +
+        { } '--margin-left 9px ' +
+        { } '--margin-right 9px ' +
+        { } '--dpi 150 ' +
+        { } '--zoom 3.12 ' +
+        { } '"' + Dokument + '"' + ' ' +
+        { } '"' + Dokument_pdf + '"',
+        { } SW_SHOWDEFAULT);
+    end;
+
+    if not(FileExists(Dokument_pdf)) then
+    begin
+      ErrorMsg := 'PDF-Erstellung ist nicht erfolgt. Ev. keine wkhtmltopdf Installation gefunden!';
+      break;
+    end;
+      until true;
+  if ErrorMsg<>'' then
+   result.values['ERROR'] := ErrorMsg
+  else
+   result.values['ConversionOutFName'] := Dokument_pdf;
 end;
 
 end.

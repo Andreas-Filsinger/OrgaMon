@@ -599,6 +599,7 @@ var
   DatensammlerGlobal: TStringList;
   DatensammlerLokal: TStringList;
   FullTemplateFname: string;
+  PDF: TStringList;
 begin
   FullTemplateFname := MyProgramPath + cHTMLTemplatesDir + Edit1.Text + cHTMLextension;
   if FileExists(FullTemplateFname) then
@@ -619,7 +620,9 @@ begin
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
       SaveToFileCompressed(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
     end;
-    printhtmlok(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
+    PDF := html2pdf(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
+    printpdf(PDF.Values['ConversionOutFName']);
+//    printhtmlok(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
     DatensammlerGlobal.Free;
     DatensammlerLokal.Free;
     DruckStueck.Free;
