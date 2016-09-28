@@ -2956,6 +2956,16 @@ end;
 
 function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
 
+  //
+  // Kopiert eine Datei, "sichert" aber die alte Version der Datei
+  // nach DateiName "-n" ".Extension". Dabei wird n zunächst aus
+  // des bisher bestehenden Sicherungen bestimmt, aber auch nach
+  // Datei.Versionen.ini gespeichert um spätere Zugriffe zu beschleunigen
+  // Ist Datei.Versionen.ini vorhanden wird die Existenz der alten Versionen
+  // nicht mehr geprüft, nur noch die der aktuellen Nummer. Ist die Datei
+  // bereits vorhanden wird hochgezählt bis eine freie Nummer gefunden ist.
+  //
+
 const
   cINI_Sequenz = 'DateiAblageSequenz';
 
@@ -2981,13 +2991,6 @@ var
 begin
   result := false;
 
-  // Kopiert eine Datei, "sichert" aber die alte Version der Datei
-  // nach DateiName "-n" ".Extension". Dabei wird n zunächst aus
-  // des bisher bestehenden Sicherungen bestimmt, aber auch nach
-  // Datei.Versionen.ini gespeichert um spätere Zugriffe zu beschleunigen
-  // Ist Datei.Versionen.ini vorhanden wird die Existenz der Versionen
-  // nicht mehr geprüft.
-
   // 1) Sicherung der alten Datei anlegen
   if FileExists(DestFName) then
   begin
@@ -3009,11 +3012,12 @@ begin
     else
     begin
       MaxCount := 0;
-      sIni.clear;
-      dir(ZielPath + ZielNamensraum + '-' + '*' + ZielExtension, sIni, false);
-      // die Maximale Zahl rausextrahieren!
-      MaxCount := 0;
       ZielExtensionLength := length(ZielExtension);
+
+      // das Dateisystem befragen
+      dir(ZielPath + ZielNamensraum + '-' + '*' + ZielExtension, sIni, false);
+
+      // die Maximale Zahl rausextrahieren!
       for n := 0 to pred(sIni.Count) do
       begin
         sRecordVersion := copy(sIni[n], 1, length(sIni[n]) - ZielExtensionLength);
@@ -3024,12 +3028,17 @@ begin
 
     end;
 
-    inc(MaxCount);
+    // Suche nach einem ordentlichen Sicherungsdateinamen
+    repeat
+     inc(MaxCount);
+
+     // Sicherungsname zusammenbauen
+     SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) + ZielExtension;
+     if not(FileExists(SicherungFName)) then
+      break;
+    until false;
 
     // Die alte Datei entsprechend der Nummer umbenennen
-    SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) + ZielExtension;
-    if FileExists(SicherungFName) then
-      raise Exception.create('FileVersionedCopy: Sicherung ' + SicherungFName + ' existiert bereits');
     if not(RenameFile(DestFName, SicherungFName)) then
       raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht wegsichern');
 
@@ -3043,6 +3052,7 @@ begin
   // 2) Umkopieren
   if not(FileCopy(SourceFName, DestFName)) then
     raise Exception.create('FileVersionedCopy: konnte ' + DestFName + ' nicht erstellen');
+
   result := true;
 end;
 

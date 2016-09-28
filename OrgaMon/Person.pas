@@ -604,6 +604,7 @@ begin
   FullTemplateFname := MyProgramPath + cHTMLTemplatesDir + Edit1.Text + cHTMLextension;
   if FileExists(FullTemplateFname) then
   begin
+    BeginHourGlass;
     CheckCreateOnce(EigeneOrgaMonDateienPfad);
     DruckStueck := THTMLTemplate.create;
     DatensammlerGlobal := TStringList.create;
@@ -622,10 +623,14 @@ begin
     end;
     PDF := html2pdf(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
     printpdf(PDF.Values['ConversionOutFName']);
-//    printhtmlok(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
+    PDF.Free;
     DatensammlerGlobal.Free;
     DatensammlerLokal.Free;
     DruckStueck.Free;
+    EndHourGlass;
+  end else
+  begin
+    ShowMessage('Vorlage "'+FullTemplateFName+'" nicht gefunden!');
   end;
 end;
 

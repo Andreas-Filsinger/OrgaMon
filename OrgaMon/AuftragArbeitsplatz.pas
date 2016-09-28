@@ -44,7 +44,7 @@ uses
   DatePick, main,
   Sperre, Buttons, globals,
   gplists, txlib, IB_Access,
-  dbOrgaMon, JvComponentBase, JvFormPlacement;
+  dbOrgaMon, JvComponentBase, JvFormPlacement, System.ImageList;
 
 type
   TFormAuftragArbeitsplatz = class(TForm)
@@ -1345,6 +1345,7 @@ begin
 
     // Sortierung in den sql-String hinzu
     SortSQL(sql);
+    dbLog(sql);
 
     if FormAuftragSuche.checkbox1.checked then
       ShowMessage(HugeSingleLine(sql, #13));

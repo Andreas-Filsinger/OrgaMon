@@ -534,7 +534,7 @@ begin
     result := WinExec32(
       { } '"' + InstalledReader + '"' +
       { } ReaderPrintOptions +
-      { } '"' + dokument + '"', sw_showdefault)
+      { } '"' + dokument + '"', SW_HIDE)
   else
     result := false;
 
@@ -1121,24 +1121,25 @@ repeat
         { } '--print-media-type ' +
         { } '--page-width 2480px ' + // DIN A4 Format
         { } '--page-height 3508px ' +
-        { } '--margin-top 90px ' +
+        { } '--margin-top 100px ' +
         { } '--margin-bottom 9px ' +
         { } '--margin-left 9px ' +
         { } '--margin-right 9px ' +
         { } '--dpi 150 ' +
-        { } '--zoom 3.12 ' +
+        { } '--zoom 3.0 ' +
         { } '"' + Dokument + '"' + ' ' +
         { } '"' + Dokument_pdf + '"',
-        { } SW_SHOWDEFAULT);
+        { } SW_HIDE);
     end;
 
-    if not(FileExists(Dokument_pdf)) then
+    if (FSize(Dokument_pdf)<739) then
     begin
       ErrorMsg := 'PDF-Erstellung ist nicht erfolgt. Ev. keine wkhtmltopdf Installation gefunden!';
       break;
     end;
-      until true;
-  if ErrorMsg<>'' then
+
+  until true;
+  if (ErrorMsg<>'') then
    result.values['ERROR'] := ErrorMsg
   else
    result.values['ConversionOutFName'] := Dokument_pdf;

@@ -19,6 +19,19 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.228 (28.09.16) Andreas Filsinger
+
+ Neu: FileVersionedCopy: Wenn es den Dateinamen der Sicherungskopie "-nnn" schon gibt wird incrementiert.
+      Das kommt vor, wenn die .ini Datei z.B. verloren geht oder veraltet aus einer Sicherung rückgesichert
+      wird, die Benennung selbst war aber bereits viel weiter.
+ Neu: FotoBenennung=6: ~ohne-Z#Neu~ (Erklärung siehe Wiki)
+ Neu: FotoBenennung=6: ~-Neu-ist-OK~ (Erklärung siehe Wiki)
+
+Rev 8.227 (27.09.16) Andreas Filsinger
+
+ Neu: html2pdf: neue Routine im wanfix32, Feintuning der Parameter
+                Es gibt jetzt 3 Stellen im Orgamon bei denen PDF erstellt werden
+
 Rev 8.226 (23.09.16) Andreas Filsinger
 
  Bug: Buch: weitere Anzeigefehler
