@@ -289,15 +289,16 @@ procedure TFormBelegVersand.SpeedButton1Click(Sender: TObject);
 var
   FName: string;
   FName_pdf: string;
-  k: Integer;
   VORLAGE_R: Integer;
   ErrorMsg: string;
   BELEG_R: Integer;
   TEILLIEFERUNG: Integer;
   EREIGNIS_R: Integer;
   VERSAND_R: Integer;
+  PDF: TStringList;
 begin
   BeginHourGlass;
+  PDF := nil;
   ErrorMsg := '';
   BELEG_R := IB_Query1.FieldByName('BELEG_R').AsInteger;
   TEILLIEFERUNG := IB_Query1.FieldByName('TEILLIEFERUNG').AsInteger;
@@ -319,40 +320,15 @@ begin
         { } BELEG_R,
         { } TEILLIEFERUNG);
 
-    //
-    FName_pdf := FName;
-    k := revpos(cHTMLextension, FName_pdf);
-    if (k > 0) then
-    begin
-      FName_pdf := copy(FName_pdf, 1, pred(k)) + cPDFExtension
-    end
-    else
-    begin
-      ErrorMsg := 'Anteil "' + cHTMLextension + '" in "' + FName + '" nicht gefunden!';
-      break;
-    end;
-    //
-    if (FDate(FName) > FDate(FName_pdf)) then
-    begin
-      WinExec32AndWait(
-        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe' + '"' + ' ' +
-        { } '--print-media-type ' +
-        { } '--page-width 2480px ' + // DIN A4 Format
-        { } '--page-height 3508px ' +
-        { } '--margin-top 90px ' +
-        { } '--margin-bottom 9px ' +
-        { } '--margin-left 9px ' +
-        { } '--margin-right 9px ' +
-        { } '--dpi 150 ' +
-        { } '--zoom 3.12 ' +
-        { } '"' + FName + '"' + ' ' +
-        { } '"' + FName_pdf + '"',
-        { } SW_SHOWDEFAULT);
-    end;
+    PDF := html2pdf(FName);
+    ErrorMsg := PDF.values['ERROR'];
+    if (ErrorMsg<>'') then
+     break;
+    FName_pdf := PDF.Values['ConversionOutFName'];
 
     if not(FileExists(FName_pdf)) then
     begin
-      ErrorMsg := 'PDF-Erstellung ist nicht erfolgt. Ev. keine wkhtmltopdf Installation gefunden!';
+      ErrorMsg := 'die PDF-Erstellung ist nicht erfolgt';
       break;
     end;
 
@@ -400,6 +376,9 @@ begin
   EndHourGlass;
   if (ErrorMsg <> '') then
     ShowMessage(ErrorMsg);
+  if assigned(PDF) then
+       PDF.Free;
+
 end;
 
 procedure TFormBelegVersand.ReflectData;

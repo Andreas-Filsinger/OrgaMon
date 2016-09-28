@@ -163,7 +163,12 @@ const
 {$ELSE}
   cConnection: TIB_Connection = nil;
 {$ENDIF}
-  // Datenbank-Inhalt als Tabelle exportieren
+
+//
+procedure dbLog(s:string;ReadOnly: boolean = true); overload;
+procedure dbLog(sl:TStrings;ReadOnly: boolean = true); overload;
+
+// Datenbank-Inhalt als Tabelle exportieren
 procedure ExportTable(TSql: string; FName: string; Seperator: char = ';'; AppendMode: boolean = false); overload;
 procedure ExportTable(TSql: TStrings; FName: string; Seperator: char = ';'); overload;
 
@@ -501,8 +506,7 @@ begin
 {$ENDIF}
     sql.add(TSql);
 
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(sql);
     ApiFirst;
 
     // Kopfzeile
@@ -631,8 +635,7 @@ begin
         ib_connection := cConnection;
 {$ENDIF}
       sql.add(TSql);
-      if DebugMode then
-        AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+      dbLog(sql);
       ApiFirst;
 
       // Kopfzeile
@@ -855,8 +858,7 @@ begin
   with cTABLE do
   begin
     sql.add(TSql);
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(sql);
     ApiFirst;
 
     // Kopfzeile
@@ -1025,9 +1027,7 @@ begin
     if assigned(cConnection) then
       ib_connection := cConnection;
     sql.add(TSql);
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
-
+    dbLog(sql,false);
     execute;
 
     // imp pend: hier sollte mal die Anzahl der betroffenen Datensätze
@@ -1244,9 +1244,7 @@ begin
       begin
 
         sql.add('select * from ' + TableName + ' where RID=' + inttostr(RID));
-
-        if DebugMode then
-          AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+        dbLog(sql);
 
         ApiFirst;
         if eof then
@@ -1593,8 +1591,7 @@ begin
   begin
 
     sql.add(TSql);
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(sql);
     ApiFirst;
     cFIELDCOUNT := FieldCount;
 
@@ -1793,8 +1790,7 @@ end;
 
 procedure e_x_sql(s: string);
 begin
-  if DebugMode then
-    AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+  dbLog(s,false);
 {$IFDEF fpc}
   fbConnection.ExecuteDirect(s);
 {$ELSE}
@@ -1843,12 +1839,11 @@ begin
   result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 1);
 {$ENDIF}
 {$ENDIF}
-  if DebugMode then
-    AppendStringsToFile(
+   dbLog(
       { } 'select GEN_ID(' +
       { } GenName +
-      { } ',1) from RDB$DATABASE',
-      { } DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+      { } ',1) from RDB$DATABASE',false);
+
 end;
 
 function e_r_GEN(GenName: string): integer;
@@ -1873,12 +1868,10 @@ begin
   result := Datamoduledatenbank.IB_connection1.gen_id(GenName, 0);
 {$ENDIF}
 {$ENDIF}
-  if DebugMode then
-    AppendStringsToFile(
+    dbLog(
       { } 'select GEN_ID(' +
       { } GenName +
-      { } ',0) from RDB$DATABASE',
-      { } DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+      { } ',0) from RDB$DATABASE');
 end;
 
 procedure e_x_update(s: string; sl: TStringList);
@@ -1910,8 +1903,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     result := Fields[0].AsInteger;
   end;
@@ -2065,8 +2057,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     e_r_sqlt(Fields[0], sl);
   end;
@@ -2082,8 +2073,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     e_r_sqlt(Fields[0], result);
   end;
@@ -2099,8 +2089,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     while not(eof) do
     begin
@@ -2120,8 +2109,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     while not(eof) do
     begin
@@ -2144,8 +2132,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     while not(eof) do
     begin
@@ -2164,8 +2151,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     result := Fields[0].AsString;
   end;
@@ -2185,8 +2171,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     if eof then
       result := ifnull
@@ -2208,8 +2193,7 @@ begin
   with cSQL do
   begin
     sql.add(s);
-    if DebugMode then
-      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(s);
     ApiFirst;
     if eof then
       result := cIllegalDate
@@ -2331,8 +2315,7 @@ begin
   with cOLAP do
   begin
     sql.add(ResolveParameter(sSQL));
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(sql);
     ApiFirst;
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName + '=' + Fields[n].AsString);
@@ -2350,8 +2333,7 @@ begin
   with cNOW do
   begin
     sql.add('select CURRENT_TIMESTAMP from RDB$DATABASE');
-    if DebugMode then
-      AppendStringsToFile(sql, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    dbLog(sql);
     ApiFirst;
     result := Fields[0].AsDateTime;
   end;
@@ -2642,5 +2624,28 @@ begin
   end;
 
 end;
+
+procedure dbLog(s:string;ReadOnly: boolean = true); overload;
+begin
+    if DebugMode then
+    begin
+     if ReadOnly then
+      AppendStringsToFile(s, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8)
+     else
+      AppendStringsToFile(s, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    end;
+end;
+
+procedure dbLog(sl:TStrings;ReadOnly: boolean = true); overload;
+begin
+    if DebugMode then
+    begin
+     if ReadOnly then
+      AppendStringsToFile(sl, DebugLogPath + 'rSQL-' + inttostr(DateGet) + '.txt', Uhr8)
+     else
+      AppendStringsToFile(sl, DebugLogPath + 'wSQL-' + inttostr(DateGet) + '.txt', Uhr8);
+    end;
+end;
+
 
 end.

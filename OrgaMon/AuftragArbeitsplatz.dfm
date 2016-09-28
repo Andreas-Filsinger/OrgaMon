@@ -318,6 +318,57 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
     OnMouseDown = DrawGrid1MouseDown
+    ColWidths = (
+      130
+      130
+      130
+      130)
+    RowHeights = (
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26)
   end
   object DrawGrid2: TDrawGrid
     Left = 0
@@ -338,6 +389,19 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     OnDrawCell = DrawGrid2DrawCell
     OnKeyPress = DrawGrid2KeyPress
     OnMouseDown = DrawGrid2MouseDown
+    ColWidths = (
+      64
+      64
+      64
+      64
+      64
+      64)
+    RowHeights = (
+      24
+      24
+      24
+      24
+      24)
   end
   object Panel1: TPanel
     Left = 204
@@ -993,7 +1057,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     end
     object Button4: TButton
       Left = 514
-      Top = 29
+      Top = 28
       Width = 81
       Height = 25
       Caption = 'an&zeigen'
@@ -1421,7 +1485,7 @@ object FormAuftragArbeitsplatz: TFormAuftragArbeitsplatz
     Left = 368
     Top = 249
     Bitmap = {
-      494C010164006800D40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010164006800D80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0010000010020000000000000A0
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -2958,6 +2958,7 @@ var
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
   NameOhneZaehlerNummerAlt: boolean;
+  NameOhneZaehlerNummerNeu: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   Path: string;
@@ -3023,6 +3024,7 @@ begin
   FotoPrefix := '';
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
+  NameOhneZaehlerNummerNeu := false;
   ShouldAbort := false;
 
   while true do
@@ -3146,12 +3148,21 @@ begin
                       break;
                     end;
 
-                    if (Token = 'ohne-Neu') then
+                    if (Token = 'ohne-Neu') or (Token = '-Neu-ist-OK') then
                     begin
                       UmbenennungAbgeschlossen := true;
                       { Value bleibt leer }
                       break;
                     end;
+
+                    if (Token = 'ohne-Z#Neu') then
+                    begin
+                      NameOhneZaehlerNummerNeu := true;
+                      { Value bleibt leer }
+                      break;
+                    end;
+
+
 
                     // aus einer anderen Spalte
                     if (tNAMES.colof(Token) = -1) then
@@ -3398,6 +3409,17 @@ begin
         end
         else
         begin
+         if NameOhneZaehlerNummerNeu then
+         begin
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt ;
+         end else
+         begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
@@ -3407,6 +3429,7 @@ begin
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
             { } zaehlernummer_neu;
+         end;
           UmbenennungAbgeschlossen := true;
         end;
         break;

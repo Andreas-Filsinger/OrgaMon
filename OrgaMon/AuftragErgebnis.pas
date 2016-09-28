@@ -853,6 +853,7 @@ var
 var
   n, k, y: integer;
   Cmd: string;
+  PDF: TStringList;
 
 begin
   ErrorCount := 0;
@@ -1862,26 +1863,19 @@ begin
                 Files.add(OutFName);
                 if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
                 begin
-                  // Clear older try
-                  FileDelete(OutFName + '.pdf');
-                  Cmd :=
-                  { } '"' + ProgramFilesDir +
-                  { } 'wkhtmltopdf\bin\wkhtmltopdf.exe ' + '" ' +
-                  { } '"' + OutFName + '"' + ' ' +
-                  { } '"' + OutFName + '.pdf' + '"';
-                  WinExec32AndWait(Cmd, SW_SHOWDEFAULT);
-
-                  if (FSize(OutFName + '.pdf') >= 739 { smallest PDF ever } ) then
-                  begin
-                    // Setze das .PDF Datei-Datum/Uhrzeit auf .HTML Datei-Datum/Uhrzeit
-                    FileTouch(OutFName + '.pdf', FileDateTime(OutFName));
-                    Files.add(OutFName + '.pdf');
-                  end
-                  else
+                  PDF := html2pdf(OutFName);
+                  Cmd := PDF.Values['ERROR'];
+                  if (Cmd<>'') then
                   begin
                     inc(ErrorCount);
                     Log(cERRORText + ' PDF-Konvertierung ' + Cmd + ' misslungen', BAUSTELLE_R);
+                  end else
+                  begin
+                    OutFname := PDF.Values['ConversionOutFName'];
+                    FileTouch(OutFName + '.pdf', FileDateTime(OutFName));
+                    Files.add(OutFName + '.pdf');
                   end;
+                  PDF.Free;
                 end;
               end;
 
