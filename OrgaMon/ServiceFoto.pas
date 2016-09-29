@@ -301,7 +301,7 @@ end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyDataBasePath + cFotoService_BaustelleFName);
+  openShell(MyFotoExec.MyDataBasePath2 + cFotoService_BaustelleFName);
 end;
 
 procedure TFormServiceFoto.Button25Click(Sender: TObject);
@@ -681,8 +681,10 @@ end;
 
 procedure TFormServiceFoto.Button12Click(Sender: TObject);
 begin
+  BeginHourGlass;
   ListBox5.ItemIndex := -1;
   Button3Click(Sender);
+  EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button13Click(Sender: TObject);

@@ -1244,7 +1244,7 @@ begin
   sFotos := TStringList.Create;
 
   tBAUSTELLE := TsTable.Create;
-  tBAUSTELLE.insertfromFile(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
+  tBAUSTELLE.insertfromFile(JonDaX.MyDataBasePath2 + cFotoService_BaustelleFName);
   Col_FTP_Benutzer := tBAUSTELLE.colOf(cE_FTPUSER);
 
   //
@@ -1469,8 +1469,8 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MyProgramPath + cDBPath);
-    TJonDaExec.validateBaustelleCSV(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
+    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', JonDaX.MyDataBasePath2);
+    TJonDaExec.validateBaustelleCSV(JonDaX.MyDataBasePath2 + cFotoService_BaustelleFName);
     iFTP.Disconnect;
   except
 
