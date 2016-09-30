@@ -189,7 +189,7 @@ begin
     result := False;
     Sender.MakeError('', ecUnknownIdentifier, Name);
 
-  until true;
+  until yet;
 end;
 {$ENDIF}
 
@@ -867,7 +867,7 @@ begin
       end;
     end;
 
-  until true;
+  until yet;
 
   with TXMLRPC_Server do
     result.AddObject(fromDouble(versandkosten), oDouble);

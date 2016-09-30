@@ -337,7 +337,7 @@ begin
             break
           else
             RID := FieldByName('EVL_R').AsInteger;
-        until false;
+        until eternity;
         CacheMusiker.AddObject(Kette, KettenStartL[n]);
         CacheMusikerNachname.AddObject(KetteNachname, KettenStartL[n]);
         CacheMusikerNurNachname.AddObject(KetteNurNachname, KettenStartL[n]);
@@ -436,7 +436,7 @@ begin
       if (MUSIKER_R < 1) then
         break;
       close;
-    until false;
+    until eternity;
   end;
   cREF.free;
   result := HugeSingleLine(txt);
@@ -469,7 +469,7 @@ begin
       if (MUSIKER_R < 1) then
         break;
       close;
-    until false;
+    until eternity;
   end;
   cREF.free;
 end;
@@ -533,7 +533,7 @@ begin
       else
         RID := FieldByName('RID').AsInteger;
       close;
-    until false;
+    until eternity;
   end;
   cREF.free;
   result := RID;
@@ -792,7 +792,7 @@ begin
 
     result := settings.Values[cE_FTPUSER]
 
-  until true;
+  until yet;
 end;
 
 function cBuildNumber : string;

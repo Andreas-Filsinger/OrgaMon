@@ -338,7 +338,7 @@ var
         // als String!
         result := xls_CellType_String;
 
-      until true;
+      until yet;
 
     end;
   end;
@@ -413,7 +413,7 @@ var
       result := nil;
       CellContentString := FullCell;
       CellCommentString := '';
-    until true;
+    until yet;
   end;
 
 var

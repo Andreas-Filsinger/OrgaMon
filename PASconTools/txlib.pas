@@ -13,6 +13,7 @@ uses
  {$ifdef fpc}
  fpchelper,
  {$endif}
+ anfix32,
  Windows, SysUtils, StrUtils,
  Classes, WinSock, DateUtils;
 
@@ -1910,7 +1911,7 @@ begin
         end
         else
           Break;
-      until False;
+      until eternity;
     end
     else
     begin
@@ -2507,7 +2508,7 @@ begin
 
 			  Break;
       end;
-		until False;
+		until eternity;
   end;
 end;
 
@@ -2569,7 +2570,7 @@ begin
       end
       else
         CurItem := CurItem.FRightChild;
-    until False;
+    until eternity;
 
     CurItem := result;
 
@@ -2648,7 +2649,7 @@ begin
           end;
 
           inc(pstr);
-        until False;
+        until eternity;
 
         if pstart = nil then
         begin
@@ -2701,7 +2702,7 @@ begin
             end;
 
           inc(psrc);
-        until False;
+        until eternity;
       end;
     end;
   end;}
@@ -4525,7 +4526,7 @@ begin
       end;
 
       inc(Src);
-    until False;
+    until eternity;
 
     pres^ := #0;
   end;
@@ -4768,7 +4769,7 @@ begin
         inc(pres);
         inc(result);
       end;
-    until False;
+    until eternity;
 
     pres^ := #0;
   end
@@ -5129,7 +5130,7 @@ begin
                   Break;
 
                 dec(entend);
-              until False;
+              until eternity;
 
               if code <= #65535 then
                 code := WideChar(value)
@@ -5164,7 +5165,7 @@ begin
                   Break;
 
                 dec(entend);
-              until False;
+              until eternity;
 
               if code <= #65535 then
                 code := WideChar(value)
@@ -5277,7 +5278,7 @@ begin
             wr := True;
 
         inc(src);
-      until False;
+      until eternity;
 
       if ui <> 0 then
         lchr := #0;
@@ -6686,7 +6687,7 @@ var
                   Break;
                 end;
                 end;
-            until False;
+            until eternity;
           end;
         end;
         2: // Elementende
@@ -6826,7 +6827,7 @@ var
             end
             else
               dec(src, 1);
-          until False;
+          until eternity;
         end;
         5: // Kommentare
         begin
@@ -6910,7 +6911,7 @@ var
             end
             else
               dec(src, 1);
-          until False;
+          until eternity;
         end;
         end;
       end;
@@ -6946,7 +6947,7 @@ var
 
         cur := src;
       end;
-    until False;
+    until eternity;
   end;
 begin
   Clear;
@@ -8070,7 +8071,7 @@ begin
       result := path + f + ext;
       Break;
     end
-  until False;
+  until eternity;
 end;
 
 

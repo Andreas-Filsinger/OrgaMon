@@ -556,7 +556,7 @@ begin
 
       IgnoreIt := false;
 
-    until true;
+    until yet;
     if not(IgnoreIt) then
       sFilesClientSorter.AddObject(
         { } long2dateLog(File_Date) + '|' +
@@ -644,7 +644,7 @@ begin
         end;
         FullSuccess := true;
 
-      until true;
+      until yet;
 
     except
       on E: Exception do
@@ -891,7 +891,7 @@ begin
                 FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
                   '-' + InttoStr(i) + '.jpg';
               inc(i);
-            until false;
+            until eternity;
 
             // Ist der Dateiname schon belegt, wird ggf. Platz geschaffen.
             // Der hereinkommende Name hat Vorrang vor den bisher
@@ -963,7 +963,7 @@ begin
 
             FullSuccess := true;
 
-          until true;
+          until yet;
         end;
 
       end;
@@ -1587,7 +1587,7 @@ begin
         break;
       Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der -Neu Behandlung unbekannt');
       continue;
-    until true;
+    until yet;
 
     // Nachtrag der Baustellen-Info
     sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
@@ -1744,7 +1744,7 @@ begin
         else
           FNameNeu := copy(FNameNeu, 1, revpos('-', FNameNeu) - 1) + '-' + InttoStr(i) + '.jpg';
         inc(i);
-      until false;
+      until eternity;
 
       if FileMove(FNameAlt, FNameNeu) then
       begin
@@ -1994,7 +1994,7 @@ var
       for m := 0 to pred(sPics.Count) do
         FileDelete(Ablage_PFAD + sPics[m]);
 
-    until true;
+    until yet;
     sPics.Free;
     sOldZips.Free;
 
@@ -2096,7 +2096,7 @@ var
       for m := 0 to pred(sHTMLSs.Count) do
         FileDelete(Ablage_PFAD + sHTMLSs[m]);
 
-    until true;
+    until yet;
     sHTMLSs.Free;
     sOldZips.Free;
   end;

@@ -811,7 +811,7 @@ begin
 
     // LoadMoreMENGENData
 
-  until true;
+  until yet;
 
 end;
 
@@ -1265,7 +1265,7 @@ begin
 
       result := 1;
 
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -1447,7 +1447,7 @@ begin
 
           MENGE_FieldName := 'MENGE';
           AlternativLagerEntnahme := true;
-        until true;
+        until yet;
 
         sql.add('SELECT');
         sql.add(' MENGE_ALTERNATIV_LAGER,');
@@ -1707,7 +1707,7 @@ begin
     // weitere konkrete Ausgabearten
     GetFromAA;
 
-  until true;
+  until yet;
 
 end;
 
@@ -1983,7 +1983,7 @@ begin
 
           DontBook := true;
 
-        until true;
+        until yet;
 
         if not(DontBook) then
         begin
@@ -2282,7 +2282,7 @@ begin
 
     result := e_r_PreisAusgabeart_MUSTER_R;
 
-  until true;
+  until yet;
 end;
 
 const
@@ -2528,7 +2528,7 @@ begin
             { } Netto,
             { } NettoWieBrutto);
 
-        until true;
+        until yet;
       end;
     end;
   except
@@ -3205,8 +3205,8 @@ begin
                                 break;
                               end;
 
-                            until true;
-                          until true;
+                            until yet;
+                          until yet;
                           Post;
 
                           Verbucht_BELEG_R.add(qBELEG.FieldByName('RID').AsString);
@@ -3589,7 +3589,7 @@ begin
 
         DatensammlerGlobal.add('Beleg Titel=' + _('Information über fällige Zahlungen'));
 
-      until true;
+      until yet;
 
       // Insert Data
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
@@ -3676,7 +3676,7 @@ begin
       if FileExists(iShopArtikelBilderPath + FName) then
         result := FName;
 
-    until true;
+    until yet;
 
   end
   else
@@ -3762,7 +3762,7 @@ begin
           break;
         sKasse := copy(sKasse, 1, pred(ProzentPos)) + chr(StrtoInt('$' + copy(sKasse, succ(ProzentPos), 2))) +
           copy(sKasse, ProzentPos + 3, MaxInt);
-      until false;
+      until eternity;
       ersetze(#$D, '', sKasse);
 
       // Wieder in einzelne Zeilen aufteilen
@@ -4034,7 +4034,7 @@ begin
             { } cVersendetag_OffsetTage + LieferzeitInTagen(result));
           break;
         end;
-      until true;
+      until yet;
     end;
     LIEFERZEIT.free;
   end;
@@ -4071,7 +4071,7 @@ begin
           result := FieldByName('PERSON_LIEFERZEIT').AsInteger;
           if (result > 0) then
             break;
-        until true;
+        until yet;
         if (result > 0) then
           result := LieferzeitInTagen(result)
         else
@@ -4151,7 +4151,7 @@ begin
 
       end;
 
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -4276,7 +4276,7 @@ begin
 
         end;
 
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -4333,7 +4333,7 @@ begin
     end;
     qPERSON.free;
 
-  until true;
+  until yet;
 
   result := Rabatt;
 
@@ -4732,7 +4732,7 @@ begin
       Datensammler.add(Prefix + 'Name2=' + ANSCHRIFT.FieldByName('NAME2').AsString);
       Datensammler.add(Prefix + 'Strasse=' + ANSCHRIFT.FieldByName('STRASSE').AsString);
       Datensammler.add(Prefix + 'Ort=' + e_r_Ort(ANSCHRIFT));
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -4852,7 +4852,7 @@ begin
     if (sLinkList.count > 0) then
       result := HugeSingleLine(sLinkList, cOLAPcsvLineBreak);
     sLinkList.free;
-  until true;
+  until yet;
 end;
 
 function e_r_UngelieferteMengeUeberBedarf(AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -5061,7 +5061,7 @@ begin
           break;
         end;
 
-      until true;
+      until yet;
 
       if (PortoModus = ePortoAuto) and (TL = 0) then
       begin
@@ -5140,7 +5140,7 @@ begin
           if (IN_LAND_R = 0) then
             break;
 
-        until false;
+        until eternity;
         EndlessRecurseDetection.free;
       end
       else
@@ -5219,7 +5219,7 @@ begin
         end;
       end;
       ersetze('%p', e_r_plz(dboDS, cPLZlength_default), result);
-    until true;
+    until yet;
 
     ersetze('%l', e_r_land(dboDS), result);
     ersetze('%s', FieldByName('STATE').AsString, result);
@@ -5420,7 +5420,7 @@ begin
       break;
 
     result := isZeroMoney(SALDO_AUSGANGSRECHNUNGEN);
-  until true;
+  until yet;
 end;
 
 function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0;
@@ -5742,7 +5742,7 @@ begin
 
     result := 'auf Anfrage';
 
-  until true;
+  until yet;
 end;
 
 procedure e_w_preDeletePosten(POSTEN_R: integer);
@@ -6141,7 +6141,7 @@ begin
             // der termingerechten Einsatzes des
             ERSTER_ABRECHNUNGSTAG := DatePlus(GEBUCHT_BIS, 1);
 
-          until true;
+          until yet;
 
           // weitere Daten bestimmen!
           PERSON_R := FieldByName('PERSON_R').AsInteger;
@@ -6263,7 +6263,7 @@ begin
           result.add('GEBUCHT_BIS=' + long2date(LETZTER_ABRECHNUNGSTAG));
 
         end;
-      until true;
+      until yet;
       cVERTRAG.free;
       VertragsTexte.free;
     end;
@@ -6392,7 +6392,7 @@ begin
       end;
 
     end;
-  until true;
+  until yet;
   cVERTRAG.free;
   VertragBuchen_Leave;
 end;
@@ -6480,7 +6480,7 @@ begin
       // Danach Vorname und Nachname
       result := cutblank(FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME').AsString);
 
-    until true;
+    until yet;
   end;
   cPERSON.free;
 end;
@@ -7251,7 +7251,7 @@ begin
         end;
 
         DoPost := false;
-      until true;
+      until yet;
 
       if DoPost then
       begin
@@ -7484,7 +7484,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
 
         end;
 
@@ -8128,7 +8128,7 @@ begin
         end;
       end;
 
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -8260,7 +8260,7 @@ begin
       end;
       qSETTINGS.free;
 {$ENDIF}
-    until true;
+    until yet;
   except
     on E: exception do
     begin
@@ -8560,7 +8560,7 @@ begin
       result := cutblank(FieldByName('HANDY').AsString);
       if (result <> '') then
         break;
-    until true;
+    until yet;
   end;
 end;
 
@@ -8624,7 +8624,7 @@ begin
 
       result := e_r_sql('select GEWICHT from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
 
-    until true;
+    until yet;
 
   except
     on E: exception do
@@ -8929,7 +8929,7 @@ begin
         result := e_c_Rabatt(result, _Rabatt);
 
       end;
-    until true;
+    until yet;
   finally
 
   end;
@@ -9080,7 +9080,7 @@ begin
         if (VERLAG_R = e_r_FreiesLager_VERLAG_R) then
           break;
         VERLAG_R := e_r_FreiesLager_VERLAG_R;
-      until false;
+      until eternity;
       DecideStrL.free;
     end;
   end;
@@ -9212,7 +9212,7 @@ begin
 
     result := 'Strom';
 
-  until true;
+  until yet;
 end;
 
 procedure e_w_MergeBeleg(BELEG_R_FROM, BELEG_R_TO: integer; sTexte: TStringList = nil);
@@ -9411,7 +9411,7 @@ begin
 
           // Speichern!
           Post;
-        until true;
+        until yet;
 
       end;
       ApiNext;
@@ -9586,7 +9586,7 @@ begin
     end;
     result := BELEG_R;
 
-  until true;
+  until yet;
 
   //
   cQUELL_BELEG.free;
@@ -9627,7 +9627,7 @@ begin
       { } 'select COALESCE(FAELLIG,' + inttostr(cStandard_ZahlungFrist) + ') ' +
       { } 'from ZAHLUNGTYP where' +
       { } ' RID=' + inttostr(ZAHLUNG_R));
-  until true;
+  until yet;
 end;
 
 function e_r_ZahlungText(ZAHLUNGTYP_R: integer; PERSON_R: integer = 0; MoreInfo: TStringList = nil): string;
@@ -9708,7 +9708,7 @@ begin
     // if (ZAHLUNGTYP_R < cRID_FirstValid) then
     // WARNUNG: Keine Zahlungsart definiert!
 
-  until true;
+  until yet;
 
   // Zahlungsdaten laden
   TheText := TStringList.create;
@@ -10158,7 +10158,7 @@ begin
             end;
             LIEFERANSCHRIFT_R := FieldByName('PERSON_R').AsInteger;
 
-          until true;
+          until yet;
 
           // b) alle Personen-Daten laden:
           with cPERSON do
@@ -10357,7 +10357,7 @@ begin
           FreeAndNil(Name1_2);
         end;
       end;
-    until true;
+    until yet;
 
     cVERSAND.free;
     cVERSENDER.free;
@@ -10826,7 +10826,7 @@ begin
             if (_AnzGeliefert = _AnzAuftrag) then
               PostenzeileSortStr := '3';
 
-          until true;
+          until yet;
 
         end;
         //
@@ -11249,7 +11249,7 @@ begin
 
       AusgabeFNamePreFix := AusgabeFNamePreFix + 'Rechnung';
 
-    until true;
+    until yet;
 
     // jetzt erst rausbelichten!
     MyBeleg := THTMLTemplate.create;
@@ -11651,7 +11651,7 @@ var
         break;
       end;
 
-    until true;
+    until yet;
   end;
 
 var
@@ -11813,7 +11813,7 @@ begin
       OLAP_Script.free;
     end;
 
-  until true;
+  until yet;
 end;
 
 function e_r_Name(ib_q: TdboDataSet): string; overload;
@@ -11853,7 +11853,7 @@ begin
     end;
 
     result := V;
-  until true;
+  until yet;
 end;
 
 function e_r_NameVorname(PERSON_R: integer): string; overload;
@@ -12375,7 +12375,7 @@ begin
       else
         IB_SET_RANG := IB_ARTIKEL;
 
-    until true;
+    until yet;
 
     // set RANG
     inc(n);
@@ -12387,7 +12387,7 @@ begin
       Next;
     end;
 
-  until false;
+  until eternity;
 
   IB_ARTIKEL_AA.Close;
   IB_ARTIKEL.Close;

@@ -360,7 +360,7 @@ var
             raise Exception.Create('Unterschiede bei "' + sErgebnisseSoll[n] + '"');
           break;
 
-        until True;
+        until yet;
 
       end;
 
@@ -389,7 +389,7 @@ var
         break;
       // Fail
       Result := False;
-    until True;
+    until yet;
   end;
 
   function FilterMatch_Test(NameTest: string): boolean;
@@ -405,7 +405,7 @@ var
         break;
       // Fail
       Result := False;
-    until True;
+    until yet;
   end;
 
 var
@@ -465,7 +465,7 @@ begin
 
         nTest := nil;
 
-      until True;
+      until yet;
 
 
       if assigned(nTest) then

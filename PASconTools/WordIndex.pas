@@ -539,7 +539,7 @@ begin
     end;
     if not(renameFile(FName + cTmpFileExtension, FName)) then
       continue;
-  until true;
+  until yet;
 
   LastFileAge := FileAge(FName);
 end;
@@ -1485,7 +1485,7 @@ begin
           // hier das setzen der Class unterbleiben
           tdExtras := 'class=gdef';
 
-        until true;
+        until yet;
 
         if (r = 0) then
           tdExtras := tdExtras + ' bgcolor="#C8D8E0"'
@@ -1715,7 +1715,7 @@ begin
 
       Anfix32.ersetze('"', '', JoinL);
 
-    until true;
+    until yet;
   end;
 
   // Noblank aller Zeilen?!

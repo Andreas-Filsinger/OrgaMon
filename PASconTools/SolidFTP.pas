@@ -430,7 +430,7 @@ begin
       if (s = '') then
         break;
       HostAlternatives.add(s);
-    until false;
+    until eternity;
 
     if (length(UserName) = 0) then
     begin
@@ -830,7 +830,7 @@ begin
               raise Exception.Create('FTP: remote Datei ist ' + IntToStr(rSize - lSize) +
                 ' Bytes grösser als die lokale');
 
-          until true;
+          until yet;
         end;
 
         // Erfolg!
@@ -1120,7 +1120,7 @@ begin
         break;
       end;
 
-  until true;
+  until yet;
 
   result := not(WasError);
   SolidEndTransaction;
@@ -1200,7 +1200,7 @@ begin
         break;
       end;
 
-  until true;
+  until yet;
 
   result := not(WasError);
   SolidEndTransaction;
@@ -1244,7 +1244,7 @@ begin
       end;
     end;
 
-  until true;
+  until yet;
   FileList.free;
   result := not(WasError);
   SolidEndTransaction;

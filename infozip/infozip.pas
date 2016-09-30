@@ -140,7 +140,8 @@ uses
 {$ENDIF}
   windows,
   registry,
-  SysUtils;
+  SysUtils,
+  anfix32;
 
 {$IFDEF fpc}
 {$ELSE}
@@ -620,7 +621,7 @@ begin
 
       // AddFiles(sFiles);
 
-    until true;
+    until yet;
 
     if assigned(Options) then
     begin
@@ -743,7 +744,7 @@ begin
 
     sFilesInternal.addstrings(sFiles);
 
-  until true;
+  until yet;
 
   FS_fill(sFilesInternal);
 
@@ -963,7 +964,7 @@ begin
 
       raise exception.Create('ERROR: 7z.exe / unzip.exe  nicht gefunden');
 
-    until true;
+    until yet;
   end;
 
   // unzip.exe
