@@ -700,7 +700,7 @@ begin
           Name + '"!');
 
     result := true;
-  until true;
+  until yet;
 
 end;
 

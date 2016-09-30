@@ -1183,7 +1183,7 @@ var
               if not(CommandAccepted) then
                 addFatalError('html.Command "' + Command + '" unknown!');
 
-            until true;
+            until yet;
           end;
         end
         else
@@ -1326,7 +1326,7 @@ begin
         if (LookForwardBlock + ActPageFilled > FreiCount_First) and (ActPageFilled > 0) then // eben voll geworden
           break; // raus ohne zu füllen
         inc(ActPageFilled, CBnext);
-      until false;
+      until eternity;
 
       // Rest auf "next" und "Last" verteilen
       // passt der Rest auf "last"?
@@ -1349,14 +1349,14 @@ begin
             if (LookForwardBlock + ActPageFilled > FreiCount_Next) and (ActPageFilled > 0) then
               break; // raus ohne zu füllen
             inc(ActPageFilled, CBnext);
-          until false;
+          until eternity;
           if (LookForwardBlock = 0) then
             // ich bringe auf next nichts mehr unter ->
             // es muss sich um Daten handeln, die nur auf die
             // letzte Seite passen!
             break;
         end;
-      until false;
+      until eternity;
 
       // must use "first" Page
       DeleteBlock(cPageSingle);
@@ -1421,7 +1421,7 @@ begin
           inc(ActPageFilled, CBnext);
           if (CB_LastChecked = FullPage.count) then
             break;
-        until false;
+        until eternity;
 
         // lokale Daten füllen
         ExecAndFill(false, max(succ(FD_local), LastExecuted), CB_LastChecked);
@@ -1437,7 +1437,7 @@ begin
 
     end;
 
-  until false;
+  until eternity;
 
   // The Value Data
   if (count = 0) then
@@ -1733,7 +1733,7 @@ begin
     // Fehler!
     addFatalError('"[!-- INSERT|END ' + FromBlock + '|' + AsBlock + ' --]" nicht gefunden!');
 
-  until true;
+  until yet;
 
   // Gefundene Marke löschen?!
   if KillInsertMark then
@@ -2052,7 +2052,7 @@ begin
     for n := 1 to length(s) do
       result := result + cHTMLCodes[ord(s[n])];
 
-  until true;
+  until yet;
 
 end;
 
@@ -2078,7 +2078,7 @@ begin
     if (k = 0) then
       break;
     result := copy(result, 1, pred(k)) + chr(strtoint('$' + copy(result, k + 1, 2))) + copy(result, k + 3, MaxInt);
-  until false;
+  until eternity;
 end;
 
 procedure THTMLTemplate.DeleteBlock(Block: string);
@@ -2161,7 +2161,7 @@ var
 
       FoundTags := FoundTags + '.' + cTag;
 
-    until false;
+    until eternity;
   end;
 
 var
@@ -2312,7 +2312,7 @@ begin
         { } blow(Tag) +
         { } copy(strings[n], l + length(cReferenceDelimiterEnd), MaxInt);
 
-      until false;
+      until eternity;
       XML.Free;
 
     end
@@ -2401,7 +2401,7 @@ begin
     if (l = 0) or (l > 6) then
       break;
     ersetze(copy(result, k, l), chr(StrtoIntDef(copy(result, k + 2, l - 3), ord('?'))), result);
-  until false;
+  until eternity;
 end;
 
 procedure THTMLTemplate.LoadFromFile(const FileName: string);
@@ -2455,7 +2455,7 @@ begin
       end;
     end;
     inc(n);
-  until false;
+  until eternity;
   if assigned(IncludeS) then
     IncludeS.Free;
 end;
@@ -2717,14 +2717,14 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
         end;
 
     end;
     if pos('</body>', strings[Pline]) > 0 then
       break;
     inc(Pline);
-  until false;
+  until eternity;
   CountForms := InputForms.count;
 end;
 
@@ -2878,7 +2878,7 @@ begin
         end;
     end;
     inc(line);
-  until false;
+  until eternity;
   param := params;
 
   k := 0;

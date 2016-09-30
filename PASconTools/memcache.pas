@@ -185,7 +185,7 @@ begin
       {$endif}
       {$endif}
     end;
-  until true;
+  until yet;
 end;
 
 function TmemcacheClient.version: string;

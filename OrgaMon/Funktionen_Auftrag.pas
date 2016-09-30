@@ -1005,7 +1005,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
 
           // Änderung in der Monteur-Zuordnung?
           repeat
@@ -1022,7 +1022,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
 
           if TerminChanged and FieldByName('VERBRAUCH_PRO_JAHR').IsNotNull then
           begin
@@ -1130,7 +1130,7 @@ begin
                 break;
 
               MakeHistCopy := false;
-            until true;
+            until yet;
           end;
 
           //
@@ -1349,7 +1349,7 @@ begin
 
             end;
 
-          until true;
+          until yet;
 
         end;
 
@@ -1626,7 +1626,7 @@ begin
       result := 'E';
       break;
     end;
-  until true;
+  until yet;
 end;
 
 function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
@@ -1697,7 +1697,7 @@ begin
         break;
     end;
 
-  until true;
+  until yet;
   // Ausbelichten
   // eMail mit html-Attachement versenden
   cBAUSTELLE.free;
@@ -2007,7 +2007,7 @@ begin
         break;
       end;
 
-    until true;
+    until yet;
 
   end;
 
@@ -2821,7 +2821,7 @@ begin
       break;
     ProtokollName := '';
 
-  until true;
+  until yet;
   result := ProtokollName;
 
 end;
@@ -2958,7 +2958,7 @@ begin
           result := fill('?', cSTRASSE_OrtsteilcodeLength);
         end;
       end;
-    until true;
+    until yet;
   end;
 end;
 
@@ -3035,7 +3035,7 @@ begin
           break;
         end;
 
-    until true;
+    until yet;
   end;
   result := cPhasenStatusText[STATUS];
   cAUFTRAG.free;
@@ -3179,7 +3179,7 @@ var
             else
               _STATUS := ord(ctsLast) + 7;
 
-      until true;
+      until yet;
 
       result := inttostr(_STATUS);
     end;
@@ -3334,7 +3334,7 @@ begin
           end;
           result.Add('?');
           break;
-        until true;
+        until yet;
         { [23] }
         result.Add(long2datetext(_Ausfuehren));
         { [24] }
@@ -3640,7 +3640,7 @@ function e_r_Arbeit(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 
         Sperre_Prefix := 'Sonstige';
 
-      until true;
+      until yet;
       if Sperre_Prefix <> '' then
       begin
         result := e_r_Arbeit_Umsetzer[Sperre_Prefix, Arbeit_PERSON(MONTEUR_R).Grund];
@@ -3696,7 +3696,7 @@ function e_r_Arbeit(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 
           Sperre_Prefix := 'Sonstige';
 
-        until true;
+        until yet;
         result := e_r_Arbeit_Umsetzer[Sperre_Prefix, Sperre_PERSON(MONTEUR_R).Grund];
         if (pos('{', result) = 0) then
           result := result + e_r_Arbeit_Umsetzer[Sperre_Prefix, 'StandardFormat'];
@@ -3925,7 +3925,7 @@ begin
 
           end;
 
-        until true;
+        until yet;
       end;
       EchteEinplanungAndererHalbtag.free;
     end;
@@ -4036,7 +4036,7 @@ begin
 
     HauptBaustellen.free;
 
-  until true;
+  until yet;
 
 end;
 
@@ -4173,7 +4173,7 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
           else
             sFormatierung := '{Farbe=#99CC00}';
 
-    until true;
+    until yet;
     result := HugeSingleLine(Baustellen, '|') + sFormatierung;
     Baustellen.free;
 
@@ -4360,7 +4360,7 @@ begin
             // diesen ganzen Tag einzuplanen
             StartD := D;
             EndeD := D + cTime_23_59_59;
-          until true;
+          until yet;
 
           BadColor := FieldByName('BAUSTELLE_R').AsInteger;
           Kontext := FieldByName('MONTEUR1_R').AsInteger;
@@ -4753,7 +4753,7 @@ begin
         break;
 
       ErrorOnGenerate := false;
-    until true;
+    until yet;
   end
   else
   begin
@@ -5183,7 +5183,7 @@ var
         break;
 
       InFName := MyProgramPath + cHTMLTemplatesDir + cHTML_ArbeitszeitFName;
-    until true;
+    until yet;
 
     if FileExists(InFName) then
     begin
@@ -5439,7 +5439,7 @@ begin
 
         sql.Add(' (ARBEITSZEIT.BELEG_R in (' + pBeleg + ')) and');
 
-      until true;
+      until yet;
 
       sql.Add(' (ARBEITSZEIT.ZEIT_V IS NOT NULL) AND');
       sql.Add(' (ARBEITSZEIT.ZEIT_N IS NOT NULL) AND');
@@ -5683,7 +5683,7 @@ begin
         // imp pend: alias loop detected
         break;
       end;
-    until false;
+    until eternity;
     close;
     Visited_Verlag_R.free;
   end;
@@ -5846,7 +5846,7 @@ begin
           close;
         end;
         result := true;
-      until true;
+      until yet;
 
       cQUELLE.free;
       cZIEL.free;

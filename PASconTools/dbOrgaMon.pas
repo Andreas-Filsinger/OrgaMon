@@ -1277,13 +1277,13 @@ begin
 
             qDEST.FieldByName(_FieldName).Assign(cSOURCE.FieldByName(_FieldName));
 
-          until true;
+          until yet;
         end;
         post;
       end;
 
       result := NewRID;
-    until true;
+    until yet;
 
   except
 
@@ -1559,7 +1559,7 @@ var
           if CharInSet(TSql[Token_End + 1], [#9, #32, #13, #10]) then
             break;
           inc(Token_End);
-        until false;
+        until yet;
         _TableName := copy(TSql, Token_Begin, succ(Token_End - Token_Begin));
 
       end
@@ -1696,7 +1696,7 @@ begin
     if TableName = 'TICKET_ZIEL' then
       break;
     result := true;
-  until true;
+  until yet;
 end;
 
 procedure fbDump(TSql: TStrings; Dump: TStrings);
@@ -1781,7 +1781,7 @@ begin
           Dump.Insert(0, 'update ' + TableName + ' set ' + FieldName + '=' + inttostr(_R) + ' where RID in (' +
             CalculatedSQL + ');')
 
-        until true;
+        until yet;
       end;
     end;
   end;
@@ -2034,7 +2034,7 @@ begin
       { } ' ' + nextp(FieldName, '_', 0) + ' ' +
       { } 'where' +
       { } ' RID=' + inttostr(RID)) = 1);
-  until true;
+  until yet;
 end;
 
 function for_update(s: TStrings = nil): string;
@@ -2252,12 +2252,12 @@ var
         if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
           break;
         inc(l);
-      until false;
+      until yet;
 
       // Nun austauschen
       ersetze(copy(result, k, l - k), ParameterL.Values[copy(result, k, l - k)], result);
 
-    until false;
+    until yet;
     ersetze('€€', '$', result);
   end;
 

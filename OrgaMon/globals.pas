@@ -1674,7 +1674,7 @@ begin
       FreeAndNil(MyIni);
     sBootSequence.Add('load ' + MyProgramPath + cIniFName);
     MyIni := TIniFile.create(MyProgramPath + cIniFName);
-  until true;
+  until yet;
   LoadIniFCalled := true;
 
   try
@@ -1700,7 +1700,7 @@ begin
         else
           break;
 
-      until false;
+      until eternity;
 
       iDataBaseName := evalPath(iDataBaseName);
 

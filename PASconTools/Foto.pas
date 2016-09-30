@@ -254,7 +254,7 @@ begin
 
     break;
 
-  until false;
+  until eternity;
 
   sCallScript.Free;
 

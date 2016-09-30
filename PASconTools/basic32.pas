@@ -1155,7 +1155,7 @@ begin
         goto cut;
       end;
 
-    until false;
+    until eternity;
 
   cut:
   until (eop) or (BasicError > 0);

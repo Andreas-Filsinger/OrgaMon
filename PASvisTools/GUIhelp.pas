@@ -294,18 +294,18 @@ begin
                 // Methode "1", Feld Alias mit
                 repeat
                   k := SearchFor('as ' + FieldName);
-                  if k <> -1 then
+                  if (k <> -1) then
                     break;
                   k := SearchFor(' ' + FieldName);
-                  if k <> -1 then
+                  if (k <> -1) then
                     break;
                   k := SearchFor('.' + FieldName);
-                  if k <> -1 then
+                  if (k <> -1) then
                     break;
                   k := SearchFor(FieldName);
-                  if k <> -1 then
+                  if (k <> -1) then
                     break;
-                until true;
+                until yet;
 
                 if (k <> -1) then
                 begin

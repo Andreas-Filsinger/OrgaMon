@@ -330,7 +330,7 @@ begin
     if SchemaMisMatch then
       break;
     result := true;
-  until true;
+  until yet;
 end;
 
 procedure TJonDaExec.maintainGERAETE;
@@ -405,7 +405,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
         end;
         sGeraete.incCell(r, cCol_COUNT);
 
@@ -607,7 +607,7 @@ begin
     end;
 
     result := GeraeteID;
-  until true;
+  until yet;
 end;
 
 function TJonDaExec.FolgeTANFName(GeraetID: string): string;
@@ -625,7 +625,7 @@ begin
       result := copy(result, 2, MaxInt)
     else
       break;
-  until false;
+  until eternity;
 end;
 
 function TJonDaExec.FolgeTAN(GeraetID: string): string;
@@ -912,7 +912,7 @@ var
         MondaStay.addobject(inttostr(mderec.RID), TObject(Stat_MondaStay));
         inc(Stat_MondaStay);
       end;
-    until true;
+    until yet;
   end;
 
   procedure WriteJonDa(s: string);
@@ -970,7 +970,7 @@ var
 
       WriteJonDa(MdeRec2Jonda(mderec, RemoteRev));
 
-    until true;
+    until yet;
   end;
 
   procedure WriteOrgaMon;
@@ -1207,7 +1207,7 @@ var
 
           Status := 1;
 
-        until true;
+        until yet;
 
         // Text bei Status (Spalte 3)
         if ausfuehren_ist_datum <> 0 then
@@ -1350,7 +1350,7 @@ var
             repeat
 
               report(n, HasFoto);
-            until true;
+            until yet;
           end;
 
         end;
@@ -1778,7 +1778,7 @@ begin
 
           JAuftragBisherFName := '';
 
-        until true;
+        until yet;
 
         // nun alle Datensätze aus der alten TRN rüberkopieren!
         if (JAuftragBisherFName <> '') then
@@ -2442,7 +2442,7 @@ begin
         // Auftrag.txt nun wirklich bereitstellen!
         ReNameFile(MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
 
-      until true;
+      until yet;
 
       if (GeraeteNo <> '000') then
         if (Stat_Meldungen > 0) then
@@ -2518,7 +2518,7 @@ begin
       writeln(MonDaGeraetF, AktTrn);
       CloseFile(MonDaGeraetF);
 
-    until true;
+    until yet;
 
     if (ErrorCount = 0) then
     begin
@@ -2907,12 +2907,12 @@ begin
         // Sicherstellen, dass es die Gerätenummer gibt.
         FileEmpty(MyProgramPath + TAN + '\' + GeraetID + '.zip');
 
-      until true;
+      until yet;
     except
       on E: Exception do
         log(cERRORText + ' 2696:' + E.Classname + ': ' + E.Message);
     end;
-  until true;
+  until yet;
   Einstellungen.free;
   result.add(TAN);
 end;
@@ -3172,7 +3172,7 @@ begin
                     end;
                     Value := tNAMES.readCell(r, Token);
 
-                  until true;
+                  until yet;
                   ersetze('~' + Token + '~', Value, FotoPrefix);
                 end;
 
@@ -3220,7 +3220,7 @@ begin
                 end;
 
             end;
-          until true;
+          until yet;
           tNAMES.free;
 
         end;
@@ -3256,7 +3256,7 @@ begin
             // "FN" soll nicht weiterverarbeitet werden!
             UmbenennungAbgeschlossen := true;
 
-          until true;
+          until yet;
 
         end;
       8:
@@ -3308,7 +3308,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
 
         end;
       11:
@@ -3327,7 +3327,7 @@ begin
               break;
             end;
 
-          until true;
+          until yet;
 
         end;
       12:
@@ -3340,7 +3340,7 @@ begin
               FotoPrefix := createTempTag(AUFTRAG_R);
               break;
             end;
-          until true;
+          until yet;
         end;
       13:
         begin
@@ -3488,7 +3488,7 @@ begin
       { } FotoParameter;
       UmbenennungAbgeschlossen := true;
 
-    until true;
+    until yet;
 
     break;
   end;
@@ -3536,7 +3536,7 @@ begin
       // log(cINFOText + ' ' + FName + ': Dateizeitstempel korrigiert');
     end;
 
-  until true;
+  until yet;
 
   iEXIF.free;
 end;
@@ -4110,7 +4110,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
                     inc(Stat_Blau);
                 end;
 
-              until true;
+              until yet;
               sMeldungsDetails.free;
             end;
           end;
@@ -4381,7 +4381,7 @@ begin
 
         result := cProtPrefix;
 
-      until true;
+      until yet;
 
       sProtokolle.add(_baustelle + Art + cJondaProtokollDelimiter + result);
     end;
@@ -4451,7 +4451,7 @@ begin
             break;
           end;
 
-      until true;
+      until yet;
     end;
 end;
 

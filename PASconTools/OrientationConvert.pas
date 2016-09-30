@@ -227,7 +227,7 @@ begin
 
     // default
     result := ZaehlerNummerNeu;
-  until true;
+  until yet;
 
 end;
 
@@ -574,7 +574,7 @@ var
         break;
       end;
 
-    until true;
+    until yet;
     // onClose(Tag) - EVENTS !!!!!
     // ###########################
 
@@ -910,7 +910,7 @@ var
           colName := takeLast(Mapping, 1);
           break;
         end;
-      until true;
+      until yet;
 
       if (n = 0) then
         header := colName
@@ -1150,7 +1150,7 @@ begin
         // Umbenennen misslungen
         raise exception.create('Umbenennen der EXPORT- Datei nicht möglich!');
 
-      until true;
+      until yet;
     end;
   end
   else
@@ -1776,7 +1776,7 @@ var
         failBecause('Zählwerk ' + inttostr(zw) + ' konnte "' + HugeSingleLine(Zaehlwerke, ',') +
           '" nicht zugeordnet werden!');
 
-      until true;
+      until yet;
 
     end
     else
@@ -1801,7 +1801,7 @@ var
 
               // Strom
               result := '1-1:1.8.1'; // ET
-              until true;
+              until yet;
             *)
             result := Zaehlwerke[0];
           end;
@@ -2098,7 +2098,7 @@ var
       // Einfach nur die Infos
       single('INDICATION ' + 'id="000"' + ' ' + 'text="' + MehrInfos + '"');
 
-    until true;
+    until yet;
 
     // Einbau-Bild
     Bild := cutblank(nextp(x(r, 'FN'), ',', 0));
@@ -2671,7 +2671,7 @@ var
             FillChar := ' ';
             LeftSide := false;
 
-          until true;
+          until yet;
 
         end;
 
@@ -2708,7 +2708,7 @@ var
 
         ersetze('~' + sParameter + '~', doformat(sValue, sParameter), s);
 
-      until false;
+      until eternity;
       result := s;
     end;
 
@@ -2997,7 +2997,7 @@ var
             break;
           end;
 
-        until true;
+        until yet;
 
         //
         if not(IsConverted) then
@@ -3210,7 +3210,7 @@ begin
         break;
       end;
 
-    until true;
+    until yet;
 
     // weitere Parameter
     Separator := FixedFormats.values['Separator'];
@@ -3249,7 +3249,7 @@ begin
 
       conversionOutFName := InFName + '.csv';
 
-    until true;
+    until yet;
 
     // Init
     sDiagFiles.add(conversionOutFName);
@@ -3366,7 +3366,7 @@ begin
                 break;
               end;
 
-            until true;
+            until yet;
 
           SonderFormat := FixedFormats.values['Max' + AllHeader[pred(c)]];
           if (SonderFormat <> '') then
@@ -3704,7 +3704,7 @@ var
 
           end;
 
-        until true;
+        until yet;
 
         //
         if not(IsConverted) then
@@ -3943,7 +3943,7 @@ begin
         break;
       end;
 
-    until true;
+    until yet;
 
     // weitere Parameter
     pSeparator := FixedFloods.values['Separator'];
@@ -4066,7 +4066,7 @@ begin
                 break;
               end;
 
-            until true;
+            until yet;
 
           SonderFormat := FixedFloods.values['Max' + AllHeader[pred(c)]];
           if (SonderFormat <> '') then
@@ -4597,7 +4597,7 @@ var
 
               Plausibel := true;
 
-            until true;
+            until yet;
             if not(Plausibel) then
               inc(Stat_Unplausibel);
 
@@ -4921,7 +4921,7 @@ var
 
           end;
 
-        until true;
+        until yet;
 
         //
         if not(IsConverted) then
@@ -4974,7 +4974,7 @@ var
       end;
       sDiagnose.add(cERRORText + ' Funktion "' + FunctionName + '" ist unbekannt!');
       inc(ErrorCount);
-    until true;
+    until yet;
   end;
 
   function komma_F(s: string): string;
@@ -5053,7 +5053,7 @@ var
 
         SpeedExpr := SpeedExpr + SingleField;
 
-      until true;
+      until yet;
 
     end;
 
@@ -5085,7 +5085,7 @@ var
       if (SpeedExpr = _SpeedExpr) then
         break;
 
-    until false;
+    until eternity;
 
     result := cERRORText + ' Parsen scheitert bei "' + SpeedExpr + '"';
     if (SpeedExpr = '1') then
@@ -5203,7 +5203,7 @@ var
 
                 ContentAsWideString := ' ';
 
-              until true;
+              until yet;
               break;
             end;
 
@@ -5272,7 +5272,7 @@ var
                 // default-Wert
                 kk := getHeaderIndex(NextSubFieldName);
                 ContentAsWideString := cutblank(ContentAsWideString + ' ' + read(r, kk));
-              until false;
+              until eternity;
               break;
             end;
 
@@ -5301,7 +5301,7 @@ var
                   break;
                 end;
                 inc(k, 2);
-              until false;
+              until eternity;
               break;
             end;
 
@@ -5327,7 +5327,7 @@ var
               break;
             end;
 
-          until true;
+          until yet;
 
           if (ErrorCount = 0) then
           begin
@@ -5426,7 +5426,7 @@ begin
 
         TemplateFname := WorkPath + c_XLS_VorlageFName;
 
-      until true;
+      until yet;
 
       if not(FileExists(TemplateFname)) then
       begin
@@ -5592,7 +5592,7 @@ begin
         end;
       end;
 
-    until true;
+    until yet;
 
     if assigned(sBericht) then
       sDiagnose.addStrings(sBericht);
@@ -5764,7 +5764,7 @@ var
 
           end;
 
-        until true;
+        until yet;
 
         //
         if not(IsConverted) then
@@ -5817,7 +5817,7 @@ var
       end;
       sDiagnose.add(cERRORText + ' Funktion "' + FunctionName + '" ist unbekannt!');
       inc(ErrorCount);
-    until true;
+    until yet;
   end;
 
   function parseLogik(r: integer; s: string): string;
@@ -5866,7 +5866,7 @@ var
 
         SpeedExpr := SpeedExpr + SingleField;
 
-      until true;
+      until yet;
 
     end;
 
@@ -5898,7 +5898,7 @@ var
       if (SpeedExpr = _SpeedExpr) then
         break;
 
-    until false;
+    until eternity;
 
     result := cERRORText + ' Parsen scheitert bei "' + SpeedExpr + '"';
     if (SpeedExpr = '1') then
@@ -6196,7 +6196,7 @@ begin
 
                       ContentAsWideString := ' ';
 
-                    until true;
+                    until yet;
                     break;
                   end;
 
@@ -6235,7 +6235,7 @@ begin
                         end;
                       end;
                       inc(k);
-                    until false;
+                    until eternity;
                     break;
                   end;
 
@@ -6264,7 +6264,7 @@ begin
                         break;
                       end;
                       inc(k, 2);
-                    until false;
+                    until eternity;
                     break;
                   end;
 
@@ -6317,7 +6317,7 @@ begin
                     break;
                   end;
 
-                until true;
+                until yet;
 
                 if (ErrorCount = 0) then
                 begin
@@ -6376,7 +6376,7 @@ begin
         end;
       end;
 
-    until true;
+    until yet;
     xImport.Free;
     xExport.Free;
   end;
@@ -6485,7 +6485,7 @@ var
       else
         Wert := '';
 
-    until true;
+    until yet;
     // "ZID";"ZWID";"Straße";"Kunde";"Zählernr.";"Medium";"Zählwerk";"Wert";"Ablesedatum";"ja";"Vorkomma";"Nachkomma"
     Ergebnis.add(
       { A } Auftrag.readCell(row_Auftrag_first, col_Auftrag_ZID) + ';' +
@@ -6699,7 +6699,7 @@ begin
             // JA eine weitere Zeile!
             WriteMapping(r);
 
-          until false;
+          until eternity;
 
           inc(Stat_Verarbeitet);
 
@@ -6710,7 +6710,7 @@ begin
           break;
       end;
 
-    until true;
+    until yet;
     sMappings.SaveToFile(WorkPath + cARGOS_Mappings);
 
     // Ergebnis speichern
@@ -7992,7 +7992,7 @@ begin
     xmlSchemaFreeParserCtxt(parser_ctxt);
     xmlFreeDoc(schema_doc);
 
-  until true;
+  until yet;
 
 end;
 
@@ -8666,7 +8666,7 @@ var
         break;
       end;
 
-    until true;
+    until yet;
 
     (*
       OptTaet('Korr. Verbrauchsstelle',x_optional(r,'I1'),r);

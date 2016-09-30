@@ -724,7 +724,7 @@ var
         else
           bucheVollausgleich(BELEG_R, TEILLIEFERUNG, BruttoBetrag);
 
-      until true;
+      until yet;
       result := BruttoBetrag;
     end;
 
@@ -1086,7 +1086,7 @@ begin
 
       GebuchterBetrag := BucheStandard;
 
-    until true;
+    until yet;
 
     // Das ganze Geld muss verbraucht sein!
     if isSomeMoney(GebuchterBetrag) then
@@ -2017,7 +2017,7 @@ begin
           end;
         end;
         saldo.addUmsatz(_DATUM, FieldByName('BETRAG').AsFloat);
-      until true;
+      until yet;
       ApiNext;
     end;
   end;
@@ -2410,7 +2410,7 @@ begin
 
     result := '';
 
-  until true;
+  until yet;
 end;
 
 function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
@@ -2431,7 +2431,7 @@ begin
       break;
     end;
 
-  until true;
+  until yet;
 end;
 
 function IBAN_BLZ_Konto(IBAN: string): string;
@@ -2575,7 +2575,7 @@ begin
         result := cForderung_Lastschrift_Erhalten;
     end;
 
-  until true;
+  until yet;
   b_r_ForderungStatus_EREIGNIS_R := cRID_Unset;
 end;
 

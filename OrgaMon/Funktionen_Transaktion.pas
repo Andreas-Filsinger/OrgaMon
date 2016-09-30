@@ -435,7 +435,7 @@ begin
 
     doSkript(TransaktionsName, lRID);
 
-  until true;
+  until yet;
 end;
 
 procedure doAH1(lRID: TgpIntegerList);
@@ -799,7 +799,7 @@ begin
           FieldByName('SKRIPT').assign(Skript);
           FieldByName('STEMPEL_DOKUMENT').clear;
           post;
-        until true;
+        until yet;
       end;
     end;
   end;
@@ -1012,7 +1012,7 @@ begin
                 break;
 
               DontTouch := true;
-            until true;
+            until yet;
 
             if not(DontTouch) then
             begin
@@ -1066,7 +1066,7 @@ begin
                 AuftragBeforePost(qAUFTRAG);
                 post;
                 inc(Stat_Aenderungen);
-              until true;
+              until yet;
             end;
 
           end
@@ -1157,7 +1157,7 @@ procedure doKE2(lRID: TgpIntegerList);
 const
   cAbleseEinheit = 'Ableseeinheit';
 var
-  n, m: integer;
+  n: integer;
   AUFTRAG_R: integer;
   qAUFTRAG: TIB_Query;
   cAUFTRAG: TIB_Cursor;
@@ -1390,7 +1390,7 @@ begin
               end;
             end;
 
-          until true;
+          until yet;
 
         end;
       end;
@@ -1614,7 +1614,7 @@ var
           post;
         end;
 
-      until true;
+      until yet;
 
     end;
   end;
@@ -1655,7 +1655,7 @@ var
           post;
         end;
 
-      until true;
+      until yet;
 
     end;
     sInfo.free;
@@ -1921,7 +1921,7 @@ begin
           end;
         end;
 
-      until true;
+      until yet;
 
       sRIDs.add(inttostr(AUFTRAG_R));
       if (r MOD 10 = 0) then
@@ -2170,7 +2170,7 @@ begin
           FieldByName('PROTOKOLL').assign(sProtokoll);
           post;
 
-        until true;
+        until yet;
 
       end;
 
@@ -2323,7 +2323,7 @@ var
   end;
 
 var
-  n, m, o: integer;
+  n, o: integer;
   qARTIKEL: TIB_Query;
   IMEI: string;
 
@@ -2486,7 +2486,7 @@ begin
             break;
           end;
 
-        until true;
+        until yet;
         if SomeChange then
         begin
           lProtokoll.Values['N2'] := N2;

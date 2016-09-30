@@ -92,7 +92,7 @@ begin
 
     MustReallyCheck := false;
 
-  until true;
+  until yet;
   if MustReallyCheck then
   begin
     CheckCreateDir(sPath);

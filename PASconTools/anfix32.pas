@@ -114,6 +114,19 @@ const
   // TMP-Dateien
   cTmpFileExtension = '.$$$';
 
+  //
+  // Erhöhung der Lesbarkeit des Quelltextes
+  //
+  // 1) repeat schleife
+
+  // until eternity; = Endlosschleife
+  eternity = false;
+
+  // until yet; = Sofortiges Ende
+  yet = true;
+
+
+
 var
   MandantName: string = 'offline';
   cNachfrage: string = 'Nachfrage';
@@ -886,7 +899,7 @@ begin
       if (jStart <= jCheck) and (jCheck <= jEnde) then
         break;
       jCheck := cEnde + j;
-    until true;
+    until yet;
     j := jCheck;
 
   end;
@@ -1693,7 +1706,7 @@ begin
       system.delete(result, 1, 1)
     else
       break;
-  until false;
+  until eternity;
 end;
 
 procedure bfill(var x: string; Size: byte);
@@ -1816,7 +1829,7 @@ begin
     PatchList.add(pointer(OffsetByNow + k));
     delete(Mystr, 1, pred(k + Fl));
     inc(OffsetByNow, pred(k + Fl));
-  until false;
+  until eternity;
 
   // jetzt das resultat patchen
   OffsetByNow := 0;
@@ -2055,7 +2068,7 @@ begin
     if i = 0 then
       break;
     delete(result, i, 1);
-  until false;
+  until eternity;
 end;
 
 procedure noblank(const sl: TStringList); overload;
@@ -2079,7 +2092,7 @@ begin
     if k = 0 then
       break;
     system.delete(s, k, 1);
-  until false;
+  until eternity;
   result := s;
 end;
 
@@ -2890,7 +2903,7 @@ begin
         end;
       end;
     end;
-  until true;
+  until yet;
 end;
 
 function FileOperation(const Source, Dest: string; op, flags: integer): boolean;
@@ -3036,7 +3049,7 @@ begin
      SicherungFName := ZielPath + ZielNamensraum + '-' + inttostr(MaxCount) + ZielExtension;
      if not(FileExists(SicherungFName)) then
       break;
-    until false;
+    until eternity;
 
     // Die alte Datei entsprechend der Nummer umbenennen
     if not(RenameFile(DestFName, SicherungFName)) then
@@ -3452,7 +3465,7 @@ begin
           cchDomainName, snu)) then
           break;
         _Domain := DomainName;
-      until true;
+      until yet;
     end
     else
     begin
@@ -3701,7 +3714,7 @@ begin
         break;
       i^ := #$20;
       P := i + 1;
-    until false;
+    until eternity;
 
     // In einzelne Zeilen auftrennen
     P := Buffer + 1;
@@ -3820,7 +3833,7 @@ begin
       break
       else
       CheckSemi(k + 1);
-      until false;
+      until eternity;
 
     *)
 
@@ -3869,7 +3882,7 @@ begin
     end;
     if (BufferUse < SizeOf(Buffer)) then
       break;
-  until false;
+  until eternity;
   if (TempStr <> '') then
     s.add(TempStr);
   Stream.free;
@@ -4568,7 +4581,7 @@ begin
 
     //
     result := maxlongint;
-  until true;
+  until yet;
 end;
 
 function NextMonth(dlong: TAnfixDate): TAnfixDate;
@@ -4931,7 +4944,7 @@ begin
       begin
         result.add(NextP(s, Delimiter));
       end;
-    until false;
+    until eternity;
   end
   else
   begin
@@ -4966,7 +4979,7 @@ begin
           result.add(NextP(s, Delimiter));
         end;
       end;
-    until false;
+    until eternity;
   end;
   if Trim then
     noblank(result);
@@ -5068,7 +5081,7 @@ begin
           inc(result, DirSize(dir + sr.Name))
         else
           inc(result, sr.Size);
-      until true;
+      until yet;
       DosError := FindNext(sr);
     end;
     findclose(sr);

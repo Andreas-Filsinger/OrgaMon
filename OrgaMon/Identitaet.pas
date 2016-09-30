@@ -439,7 +439,7 @@ begin
     // Step 3 : Verarbeite offene Jobs
 
     sleep(2000);
-  until false;
+  until eternity;
 end;
 
 procedure RunAsUnImplemented;
@@ -558,7 +558,7 @@ begin
         sleep(1000);
       XMLRPC.free;
 
-    until true;
+    until yet;
     JonDa.free;
   except
     on E: Exception do
@@ -601,7 +601,7 @@ begin
       Ident := id_Test;
       break;
     end;
-  until true;
+  until yet;
 
   // Ident- String
   case Ident of

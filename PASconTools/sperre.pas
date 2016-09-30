@@ -496,7 +496,7 @@ begin
 
     end;
     Result := True;
-  until True;
+  until yet;
 
 end;
 
@@ -590,7 +590,7 @@ begin
 
     end;
     Result := 0;
-  until True;
+  until yet;
 
 end;
 
@@ -685,7 +685,7 @@ begin
       Break;
 
     pColorAusUmstand := True;
-  until True;
+  until yet;
 
   for n := 0 to pred(M.Count) do
   begin
