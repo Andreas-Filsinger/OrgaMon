@@ -46,8 +46,6 @@ const
   // die Umrechnung geschieht zur Laufzeit mit der Funktion DPIx()
   cAppDesigner_PixelsPerInch: double = 96.0;
 
-  // Das zuletzt übergebene Dokument (print,open,exec,...)
-  _Document: string = '';
 
   // ShowMessageTimeout Default Timeout [ms]
   cShowMessageTimeout_TIMEOUT = 5000;
@@ -1081,6 +1079,9 @@ begin
   result := ((State[vk_Control] And 128) <> 0);
 end;
 
+const
+ wkhtmltopdf_Installation: string = '';
+
 function html2pdf(Dokument: string): TStringList;
 const
  cHTMLextension = '.html';
@@ -1090,14 +1091,40 @@ var
  k : integer;
  ErrorMsg: string;
 begin
-repeat
- result := TStringList.Create;
- ErrorMsg := '';
- if not(FileExists(Dokument)) then
- begin
-  ErrorMsg := 'Quell-HTML nicht gefunden!';
-   break;
- end;
+
+
+  repeat
+
+     result := TStringList.Create;
+     ErrorMsg := '';
+     if not(FileExists(Dokument)) then
+     begin
+      ErrorMsg := 'Quell-HTML nicht gefunden!';
+       break;
+     end;
+
+     if (wkhtmltopdf_Installation='') then
+     begin
+      repeat
+       wkhtmltopdf_Installation := 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+       wkhtmltopdf_Installation := ProgramFilesDir + 'wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+       wkhtmltopdf_Installation := 'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+
+                               wkhtmltopdf_Installation := '';
+      until yet;
+     end;
+
+    if wkhtmltopdf_Installation='' then
+    begin
+      ErrorMsg := 'wkhtmltopdf Installation nicht gefunden!';
+      break;
+    end;
 
     Dokument_pdf := Dokument;
 
@@ -1116,7 +1143,7 @@ repeat
     if (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
     begin
       WinExec32AndWait(
-        { } '"' + 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe' + '"' + ' ' +
+        { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
         { } '--quiet ' +
         { } '--print-media-type ' +
         { } '--page-width 2480px ' + // DIN A4 Format
@@ -1126,7 +1153,7 @@ repeat
         { } '--margin-left 9px ' +
         { } '--margin-right 9px ' +
         { } '--dpi 150 ' +
-        { } '--zoom 3.0 ' +
+        { } '--zoom '+iPDFZoom+' ' +
         { } '"' + Dokument + '"' + ' ' +
         { } '"' + Dokument_pdf + '"',
         { } SW_HIDE);

@@ -858,8 +858,7 @@ begin
       { 13 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + zip_Version);
       { 14 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + unzip_Version);
       { 15 } add(
-        { } 'srvXMLRPC Rev. ' +
-        { } RevToStr(srvXMLRPC.Version) + '@' +
+        { } e_r_Kontext + '@' +
         { } ComputerName + ':' +
         { } iXMLRPCPort);
       { 16 } add(

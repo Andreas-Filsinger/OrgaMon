@@ -24,6 +24,10 @@ object FormSystemPflege: TFormSystemPflege
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Inkonsistenter Index'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 360
         Top = 29
@@ -41,7 +45,7 @@ object FormSystemPflege: TFormSystemPflege
       object Label4: TLabel
         Left = 7
         Top = 24
-        Width = 265
+        Width = 264
         Height = 13
         Caption = '2) Versuch alle Prim'#228'ren Indizes zu aktivieren'
       end
@@ -62,14 +66,14 @@ object FormSystemPflege: TFormSystemPflege
       object Label7: TLabel
         Left = 7
         Top = 319
-        Width = 172
+        Width = 171
         Height = 13
         Caption = '4) "Dupilcate Value" Diagnose'
       end
       object Label8: TLabel
         Left = 7
         Top = 373
-        Width = 162
+        Width = 161
         Height = 13
         Caption = '5) GENERATOR '#220'berpr'#252'fung'
       end
@@ -266,6 +270,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet2: TTabSheet
       Caption = 'Datenbank'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object SynMemo1: TSynMemo
         Left = 0
         Top = 72
@@ -341,10 +349,14 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet3: TTabSheet
       Caption = 'Stapel-Transaktionen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24
-        Width = 171
+        Width = 170
         Height = 13
         Caption = '1) Transaktionstyp ausw'#228'hlen'
       end
@@ -358,7 +370,7 @@ object FormSystemPflege: TFormSystemPflege
       object Label14: TLabel
         Left = 16
         Top = 288
-        Width = 144
+        Width = 143
         Height = 13
         Caption = '3) Transaktion ausf'#252'hren'
       end
@@ -499,17 +511,21 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet4: TTabSheet
       Caption = 'Anzeige'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label10: TLabel
         Left = 16
         Top = 23
-        Width = 69
+        Width = 68
         Height = 13
         Caption = 'Farbrechner'
       end
       object Label11: TLabel
         Left = 16
         Top = 48
-        Width = 92
+        Width = 90
         Height = 13
         Caption = 'HTML-Farbcode:'
       end
@@ -551,6 +567,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet5: TTabSheet
       Caption = 'Serversteuerung'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox3: TGroupBox
         Left = 13
         Top = 7
@@ -638,6 +658,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet6: TTabSheet
       Caption = 'Indizierung'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label18: TLabel
         Left = 16
         Top = 80
@@ -703,6 +727,10 @@ object FormSystemPflege: TFormSystemPflege
       Caption = '&Versionsinfo'
       ImageIndex = 6
       OnShow = TabSheet7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -717,10 +745,14 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet8: TTabSheet
       Caption = 'Performance Test'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label20: TLabel
         Left = 32
         Top = 4
-        Width = 113
+        Width = 112
         Height = 13
         Caption = '1) Testvorbereitung'
       end
@@ -782,6 +814,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet9: TTabSheet
       Caption = 'Hardware'
       ImageIndex = 8
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button15: TButton
         Left = 24
         Top = 40
@@ -812,6 +848,10 @@ object FormSystemPflege: TFormSystemPflege
     object TabSheet10: TTabSheet
       Caption = 'Sicherheit'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label23: TLabel
         Left = 32
         Top = 16

@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.230 (06.10.16) Andreas Filsinger
+
+ Neu: PDF: Systemparameter PDFZoom
+
+Rev 8.229 (06.10.16) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.252" neu compiliert!
+
 Rev 8.228 (28.09.16) Andreas Filsinger
 
  Neu: FileVersionedCopy: Wenn es den Dateinamen der Sicherungskopie "-nnn" schon gibt wird incrementiert.
