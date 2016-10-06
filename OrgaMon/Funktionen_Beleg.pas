@@ -665,13 +665,13 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 186;
+  cAllSettingsAnz = 187;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
     'NachTagesAbschlussHerunterfahren', 'TagWacheUm', 'TagWacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
-    'PDFVersender', 'PDFAdmin', 'PDFSend', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
+    'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
     'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
     'Auftragsmotivation', 'AuftragsGrundRückfrage', 'SysdbaPasswort', 'RangZeitfenster', 'LieferzeitZeitfenster',
     'StandardLieferzeit', 'PersonSchnelleRechnung', 'Farbe', 'Replikation', 'OrtFormat', 'GOT',
@@ -8344,6 +8344,7 @@ begin
   iMailHost := sSystemSettings.values['PDFVersender'];
   iPDFAdmin := sSystemSettings.values['PDFAdmin'];
   iPDFSend := sSystemSettings.values['PDFSend'];
+  iPDFZoom := sSystemSettings.values['PDFZoom'];
   iShopDomain := sSystemSettings.values['ShopHost'];
   iShopQRPath := sSystemSettings.values['ShopQRPfad'];
   iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];
@@ -8486,6 +8487,8 @@ begin
     iSicherungsPrefix := nextp(MyProgramPath, '\', CharCount('\', MyProgramPath) - 1) + '_';
   if (iFormColor = 0) then
     iFormColor := TColors.SysBtnFace;
+  if (iPDFZoom='') then
+   iPDFZoom := '3.0';
 
   // AutoUp und FS
   iAutoUpRevDir := evalPath(iAutoUpRevDir);

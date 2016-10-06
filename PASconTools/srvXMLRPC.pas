@@ -33,7 +33,6 @@ uses
   SyncObjs, IdHTTPServer, IdContext;
 
 const
-  Version: single = 1.001;
   cXML_NameSpaceDelimiter = '.';
   cErrorFName = 'XML-RPC-ERROR.log';
 

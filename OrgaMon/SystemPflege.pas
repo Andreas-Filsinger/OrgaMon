@@ -836,7 +836,7 @@ end;
 
 procedure TFormSystemPflege.SpeedButton4Click(Sender: TObject);
 begin
-  Edit13.Text := wanfix32._document;
+  Edit13.Text := anfix32._document;
 end;
 
 procedure TFormSystemPflege.Button13Click(Sender: TObject);

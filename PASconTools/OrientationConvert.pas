@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.251; // ../rev/Oc.rev.txt
+  Version: single = 1.252; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -2448,7 +2448,10 @@ var
 
   SequenceNo: integer;
   IDOCNo: integer;
+
+  // Optionen
   pMEA_Naming: boolean;
+  pFileName: string;
 
   // XLS-Sachen
   xImport: TXLSFile;
@@ -2479,24 +2482,43 @@ var
     result := '(' + inttostr(ZaehlwerkeAusbauSoll) + ':' + inttostr(ZaehlwerkeEinbauSoll) + ')';
   end;
 
+  function FileName (TAN,SEQUENCE:string):string;
+  begin
+    result := pFileName;
+    ersetze('~TAN~', TAN, result);
+    ersetze('~SEQUENCE~', SEQUENCE, result);
+  end;
+
   procedure SetOutFname;
   var
     k: integer;
   begin
-    if pMEA_Naming then
-    begin
-      conversionOutFName :=
-      { } ExtractFilePath(InFName) +
-      { } 'z1isu_meau_' +
-      { } sMapping.values['TAN'] + '-' +
-      { } IntToStrN(IDOCNo, 4);
-    end
-    else
-    begin
+    repeat
+
+      if (pFileName<>'') then
+      begin
+        conversionOutFName :=
+        { } WorkPath +
+        { TAN } FileName(sMapping.values['TAN'],
+        { SEQUENCE }IntToStrN(IDOCNo, 4) );
+        break;
+      end;
+
+      if pMEA_Naming then
+      begin
+        conversionOutFName :=
+        { } WorkPath +
+        { } 'z1isu_meau_' +
+        { } sMapping.values['TAN'] + '-' +
+        { } IntToStrN(IDOCNo, 4);
+        break;
+      end;
+
       conversionOutFName := InFName;
       k := revPos('.', conversionOutFName);
       conversionOutFName := copy(conversionOutFName, 1, pred(k)) + '.' + IntToStrN(IDOCNo, 4) + cIDOC_Extension;
-    end;
+
+    until yet;
   end;
 
 //
@@ -2803,22 +2825,36 @@ begin
   with sMapping do
   begin
     values['NIL' + '.Sequence'] := '0';
+    // Nur die Ziffern interessieren
     values['TAN'] := StrFilter(ExtractFileName(InFName), '0123456789');
+    // Nur die letzten 4 Ziffern sind die TAN
     values['TAN'] := copy(values['TAN'], length(values['TAN']) - pred(4), MaxInt);
+
     values['TimeStamp'] := copy(Datum10, 7, 4) + copy(Datum10, 4, 2) + copy(Datum10, 1, 2) + SecondsToStr6(SecondsGet);
     pMEA_Naming := (values['MEA'] = 'JA');
+    pFileName := values['FileName'];
   end;
 
   // Überbleibsel aus der letzten gleichnamigen Datenlieferung löschen
-  if pMEA_Naming then
-  begin
-    FileDelete(ExtractFilePath(InFName) + 'z1isu_meau_' + sMapping.values['TAN'] + '-*');
-  end
-  else
-  begin
+  repeat
+
+    if (pFileName<>'') then
+    begin
+     FileDelete(WorkPath + FileName(sMapping.Values['TAN'],'????'));
+     break;
+    end;
+
+    if pMEA_Naming then
+    begin
+      FileDelete(WorkPath + 'z1isu_meau_' + sMapping.values['TAN'] + '-*');
+      break;
+    end;
+
+    // default
     n := revPos('.', InFName);
     FileDelete(copy(InFName, 1, pred(n)) + '.????' + cIDOC_Extension);
-  end;
+
+  until yet;
 
   SetOutFname;
 

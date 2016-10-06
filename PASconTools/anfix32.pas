@@ -126,10 +126,13 @@ const
   yet = true;
 
 
-
 var
   MandantName: string = 'offline';
   cNachfrage: string = 'Nachfrage';
+  // Das zuletzt übergebene Dokument (print,open,exec,...)
+  _Document: string = '';
+  iPDFZoom: string = '3.0';
+
   StartDebugger: boolean = false;
   TestMode: boolean = false;
   DebugMode: boolean = false;
