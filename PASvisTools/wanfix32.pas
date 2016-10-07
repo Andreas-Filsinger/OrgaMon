@@ -120,9 +120,10 @@ uses
   shellapi,
   math,
   JclSysUtils,
-  JclMiscel,
+
   ComObj,
-  anfix32;
+  anfix32,
+  systemd;
 
 function ScreenColorRes: int64;
 var
@@ -477,7 +478,7 @@ end;
 function printhtml(dokument: string): boolean;
 begin
   _Document := dokument;
-  result := WinExec32('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"', sw_showdefault);
+  result := RunExternalApp('rundll32.exe mshtml.dll,PrintHTML "' + dokument + '"', sw_showdefault);
 end;
 
 function printpdf(dokument: string): boolean;
@@ -529,7 +530,7 @@ begin
   until true;
 
   if (InstalledReader <> '') then
-    result := WinExec32(
+    result := RunExternalApp(
       { } '"' + InstalledReader + '"' +
       { } ReaderPrintOptions +
       { } '"' + dokument + '"', SW_HIDE)
@@ -1142,7 +1143,7 @@ begin
     //
     if (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
     begin
-      WinExec32AndWait(
+      CallExternalApp(
         { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
         { } '--quiet ' +
         { } '--print-media-type ' +

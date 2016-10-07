@@ -13,15 +13,14 @@ function FotoCompress(FName: string; DestFName: string; kByte: integer; Abweichu
 implementation
 
 uses
-  Windows, Messages, SysUtils,
+  Windows,
+  Messages,
+  SysUtils,
   Classes,
-
   anfix32,
+  systemd,
   CCR.Exif.BaseUtils,
   CCR.Exif,
-{$IFNDEF FPC}
-  JclMiscel,
-{$ENDIF}
   globals;
 
 function FotoAufnahmeMoment(FName: string): TDateTime;
@@ -165,10 +164,8 @@ var
     { } '--batch="(' + cGimpScriptNAME + ')"';
 {$IFDEF FPC}
 {$ELSE}
-    JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+    CallExternalApp(execStr, SW_SHOWNORMAL);
 {$ENDIF}
-    if debugmode then
-      AppendStringsToFile(execStr, DiagnosePath + 'exec.log.txt');
 
     TryFSize := FSize(cGimpTempFName);
 

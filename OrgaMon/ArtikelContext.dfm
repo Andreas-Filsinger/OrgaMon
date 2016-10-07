@@ -177,7 +177,7 @@ object FormArtikelContext: TFormArtikelContext
   object Label5: TLabel
     Left = 299
     Top = 140
-    Width = 69
+    Width = 68
     Height = 14
     Caption = 'Teilnehmer'
   end
@@ -611,6 +611,57 @@ object FormArtikelContext: TFormArtikelContext
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
     OnKeyPress = DrawGrid1KeyPress
+    ColWidths = (
+      130
+      130
+      130
+      130)
+    RowHeights = (
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26
+      26)
   end
   object Button18: TButton
     Left = 685

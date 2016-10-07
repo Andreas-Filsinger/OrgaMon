@@ -159,8 +159,11 @@ var
 implementation
 
 uses
-  globals, anfix32, html,
-  dbOrgaMon, JclMiscel,
+  globals,
+  anfix32,
+  systemd,
+  html,
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -1153,10 +1156,8 @@ begin
   { } ' ' +
   { } '--verbose ' +
   { } '--batch="(' + Prefix + ')"';
-  JclMiscel.WinExec32AndWait(execStr, SW_SHOWNORMAL);
+  CallExternalApp(execStr, SW_SHOWNORMAL);
 
-  if debugmode then
-    AppendStringsToFile(execStr, DiagnosePath + 'exec.log.txt');
 
   sTouch.SaveToFile(SystemPath + '\' + 'Kasse-Touch.ini');
 

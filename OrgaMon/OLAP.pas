@@ -131,7 +131,7 @@ uses
   // Tools
   anfix32, dbOrgaMon, WordIndex,
   CareTakerClient, ExcelHelper, html,
-  Geld, OpenOfficePDF, JclMiscel,
+  Geld, OpenOfficePDF,
   wanfix32,
 
   // OrgaMon-Core
@@ -1599,19 +1599,12 @@ begin
 
               if xlsAutoPrint then
               begin
-                (*
-                  JclMiscel.WinExec32AndWait( '"' +
-                  {} ProgramFilesDir +
-                  {} 'OpenOffice.org 3\program\soffice.exe" '+
-                  {} '-headless -p "' +RohdatenxlsFName(RohdatenCount) +'"',
-                  SW_HIDE);
-                *)
                 if xlsAutoHTML then
                   printhtmlok(RohdatenHTMLFName(RohdatenCount))
                 else
                   printShell(RohdatenxlsFName(RohdatenCount));
-
               end;
+
             end;
           end;
         cState_BASIC:

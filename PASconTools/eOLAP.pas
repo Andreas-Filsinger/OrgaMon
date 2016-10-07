@@ -1541,7 +1541,7 @@ begin
               if xlsAutoPrint then
               begin
                 (*
-                  JclMiscel.WinExec32AndWait( '"' +
+                  CallExternalApp( '"' +
                   {} ProgramFilesDir +
                   {} 'OpenOffice.org 3\program\soffice.exe" '+
                   {} '-headless -p "' +RohdatenxlsFName(RohdatenCount) +'"',
