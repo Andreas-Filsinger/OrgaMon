@@ -109,7 +109,7 @@ uses
   SysUtils,
 
   // anfix
-  CareTakerClient, SimplePassword,
+  CareTakerClient, SimplePassword, systemd,
 
   // Indy FTP
   IdFTPCommon, IDFtpList, IdGlobal, IdException,
@@ -119,9 +119,6 @@ uses
   // Indy UDP
   IdUDPClient,
   globals,
-{$IFNDEF fpc}
-  JclMiscel,
-{$ENDIF}
   windows;
 
 procedure TIdFtpRestart.PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
@@ -1347,7 +1344,7 @@ begin
 {$IFDEF fpc}
     CoreFTPExitCode := -1
 {$ELSE}
-    CoreFTPExitCode := JclMiscel.WinExec32AndWait(CommandL, SW_SHOWNORMAL)
+    CoreFTPExitCode := CallExternalApp(CommandL, SW_SHOWNORMAL)
 {$ENDIF}
   else
     CoreFTPExitCode := 0;

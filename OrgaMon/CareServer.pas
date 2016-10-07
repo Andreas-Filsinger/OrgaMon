@@ -219,13 +219,13 @@ var
 implementation
 
 uses
-  globals, wanfix32, html,
+  globals, systemd, wanfix32, html,
 
   //
   DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
 
   // Tools
-  SolidFTP, OrientationConvert, JclMiscel,
+  SolidFTP, OrientationConvert,
 
   // Server-Steuerung
   IdASN1Util, IDMessage,
@@ -639,7 +639,7 @@ begin
   if (LogInPort <> '') then
     LogInPort := '-P ' + LogInPort + ' ';
 
-  WinExec32(
+  RunExternalApp(
     { } ProgramFilesDir +
     { Cmd } 'puTTY\putty.exe -ssh ' +
     { Port } LogInPort +
@@ -718,7 +718,7 @@ begin
     ShowMessage('Keine Ultra-VNC Installation gefunden');
   until true;
   if (sApp <> '') then
-    WinExec32(sApp + ' ' + sHost + ' /password ' + sSettings.values['vnc'],
+    RunExternalApp(sApp + ' ' + sHost + ' /password ' + sSettings.values['vnc'],
       sw_showdefault);
   sSettings.Free;
 end;
@@ -764,7 +764,7 @@ var
 begin
   sSettings := TStringList.create;
   IB_Query4.FieldByName('INFO').AssignTo(sSettings);
-  WinExec32(ProgramFilesDir + 'puTTY\plink.exe -ssh -pw ' + sSettings.values
+  RunExternalApp(ProgramFilesDir + 'puTTY\plink.exe -ssh -pw ' + sSettings.values
     ['password'] + ' -X root@' + IB_Query4.FieldByName('HOST').AsString +
     ' xterm', sw_showdefault);
   sSettings.Free;

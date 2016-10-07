@@ -135,13 +135,14 @@ uses
   zbase,
   zdeflate,
 {$else}
-  JclMiscel,
+
   JclSysInfo,
 {$ENDIF}
   windows,
   registry,
   SysUtils,
-  anfix32;
+  anfix32,
+  systemd;
 
 {$IFDEF fpc}
 {$ELSE}
@@ -981,7 +982,7 @@ begin
 
     CommandLine := CommandLine + ' "' + FName + '" -d ' + Destination;
 
-    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
+    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
 
     result := 1;
   end;
@@ -1000,7 +1001,7 @@ begin
     // Destination
     CommandLine := CommandLine + ' -o"' + Destination + '" "' + FName + '"';
 
-    JclMiscel.WinExec32AndWait('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
+    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
 
     result := 1;
 

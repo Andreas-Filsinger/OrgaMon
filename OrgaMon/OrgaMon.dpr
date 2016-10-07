@@ -210,7 +210,8 @@ uses
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
   ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
-  PageControlTest in 'PageControlTest.pas' {FormPageControlTest};
+  PageControlTest in 'PageControlTest.pas' {FormPageControlTest},
+  systemd in '..\PASconTools\systemd.pas';
 
 {$R *.RES}
 

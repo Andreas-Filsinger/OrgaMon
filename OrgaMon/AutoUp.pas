@@ -39,9 +39,6 @@ uses
   Forms, Dialogs, Buttons,
   ExtCtrls, StdCtrls, ComCtrls,
 
-  // Jedi
-  JclMiscel,
-
   // Indy FTP
   IdFTP,
 
@@ -257,8 +254,13 @@ var
 implementation
 
 uses
-  CareTakerClient, globals, math,
-  InfoZIP, wanfix32, SolidFTP;
+  CareTakerClient,
+  globals,
+  math,
+  InfoZIP,
+  systemd,
+  wanfix32,
+  SolidFTP;
 {$R *.DFM}
 
 function cAutoUpPath: string;
@@ -704,7 +706,7 @@ end;
 
 procedure TFormAutoUp.Button3Click(Sender: TObject);
 begin
-  WinExec32('notepad.exe ' + iAutoUpRevDir + ComboBox1.Text, SW_SHOW);
+  RunExternalApp('notepad.exe ' + iAutoUpRevDir + ComboBox1.Text, SW_SHOW);
 end;
 
 procedure TFormAutoUp.Button4Click(Sender: TObject);
@@ -1661,7 +1663,7 @@ begin
     if not(FileExists(SourceName)) then
       raise Exception.create('ERROR: ' + SourceName + ' nicht gefunden');
 
-    JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + SourceName + '"', SW_SHOWNORMAL);
+    CallExternalApp('"' + ApplicationName + '" "' + SourceName + '"', SW_SHOWNORMAL);
     // ExecuteAndWait('"' + ApplicationName + '" "' + SourceName + '"',
     // iSourcePath);
 
@@ -1755,7 +1757,7 @@ begin
           if not(FileExists(InnoSetupPatched)) then
             raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-          JclMiscel.WinExec32AndWait('"' + ApplicationName + '"' + ' ' + '"' + InnoSetupPatched + '"', SW_SHOWNORMAL);
+          CallExternalApp('"' + ApplicationName + '"' + ' ' + '"' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
           if not FileExists(InnoResult) then
           begin
@@ -1779,7 +1781,7 @@ begin
             if not(FileExists(InnoSetupPatched)) then
               raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-            JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
+            CallExternalApp('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
             if not FileExists(InnoResult) then
             begin
@@ -1805,7 +1807,7 @@ begin
           if not(FileExists(InnoSetupPatched)) then
             raise Exception.create('ERROR: ' + InnoSetupPatched + ' nicht gefunden');
 
-          JclMiscel.WinExec32AndWait('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
+          CallExternalApp('"' + ApplicationName + '" "' + InnoSetupPatched + '"', SW_SHOWNORMAL);
 
           if not FileExists(InnoResult) then
             raise Exception.create('Fehler im Script ' + InnoSetupPatched);

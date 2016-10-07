@@ -85,7 +85,7 @@ var
 implementation
 
 uses
-  Jvgnugettext, JclMiscel,
+  Jvgnugettext,
   anfix32, wanfix32,
   globals,
   Versender, Main, Datenbank,

@@ -131,7 +131,7 @@ uses
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
   wanfix32, SolidFTP, html,
-  JclMiscel,
+
 
   // IBO
   IB_Components, IB_Access,

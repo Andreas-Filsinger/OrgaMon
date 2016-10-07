@@ -190,11 +190,14 @@ var
 implementation
 
 uses
-  WordIndex, anfix32, globals,
+  anfix32,
+  systemd,
+  WordIndex,
+   globals,
   dbOrgaMon,
   Einstellungen, CareTakerClient, splash,
   SimplePassword, wanfix32, Datenbank,
-  Funktionen_Basis, JclMiscel, math;
+  Funktionen_Basis, math;
 
 {$R *.DFM}
 
@@ -627,7 +630,7 @@ var
         //
         if CloseOtherInstances then
         begin
-          WinExec32(UpdateQuellen[n] + ' /SILENT /SUPPRESSMSGBOXES "/PostExec='
+          RunExternalApp(UpdateQuellen[n] + ' /SILENT /SUPPRESSMSGBOXES "/PostExec='
             + fullCmd + '"', sw_showdefault);
           result := true;
           application.terminate;
@@ -1188,7 +1191,7 @@ begin
       AllParams := AllParams + ' ' + ParamStr(n);
 
   // OrgaMon neu starten
-  WinExec32(application.ExeName + ' ' + cutblank(AllParams + ' -lr'),
+  RunExternalApp(application.ExeName + ' ' + cutblank(AllParams + ' -lr'),
     sw_showdefault);
 
   // Anwendung stoppen

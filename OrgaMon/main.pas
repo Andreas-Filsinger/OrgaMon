@@ -311,7 +311,7 @@ uses
   ArtikelEinheit, PersonMailer, AuftragImport,
   AuftragArbeitsplatz, AuftragSuchindex, Tagwache,
   AuftragMobil, AuftragExtern, AuftragErgebnis,
-  Buchhalter, JclMiscel,
+  Buchhalter,
   AutoUp, GeoArbeitsplatz, GeoLokalisierung,
   AuftragGeo, IniFiles, TPUmain,
   GeoPostleitzahlen, ServiceFoto, ServiceApp,
@@ -321,7 +321,7 @@ uses
   BuchBarKasse, dbOrgaMon, wanfix32,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
-  ArtikelKasse, Cron;
+  ArtikelKasse, Cron, systemd;
 {$R *.DFM}
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -934,7 +934,7 @@ var
 begin
   AnwendungFName := myApplicationPath + 'OrgaMon-VNC.exe';
   if FileExists(AnwendungFName) then
-    WinExec32(AnwendungFName, sw_showdefault)
+    RunExternalApp(AnwendungFName, sw_showdefault)
   else
     ShowMessage('ERROR: Anwendung ' + AnwendungFName + ' nicht gefunden!');
 end;
