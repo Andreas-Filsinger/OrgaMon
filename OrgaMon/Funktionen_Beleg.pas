@@ -8210,6 +8210,33 @@ function e_r_LadeParameter: TStringList;
 
 var
   sSystemSettings: TStringList;
+
+  function localized_parameter(p: string; default : string): string;
+  begin
+   repeat
+     result := sSystemSettings.Values[p+'.'+UserName+'@'+ComputerName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p+'.'+UserName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p+'@'+ComputerName];
+     if (result<>'') then
+      break;
+
+     result := sSystemSettings.Values[p];
+     if (result<>'') then
+      break;
+
+     result := default;
+
+   until yet;
+
+  end;
+
+var
 {$IFDEF CONSOLE}
   cSETTINGS: TdboCursor;
 {$ELSE}
@@ -8344,7 +8371,7 @@ begin
   iMailHost := sSystemSettings.values['PDFVersender'];
   iPDFAdmin := sSystemSettings.values['PDFAdmin'];
   iPDFSend := sSystemSettings.values['PDFSend'];
-  iPDFZoom := sSystemSettings.values['PDFZoom'];
+  iPDFZoom := localized_parameter ('PDFZoom', '3.0');
   iShopDomain := sSystemSettings.values['ShopHost'];
   iShopQRPath := sSystemSettings.values['ShopQRPfad'];
   iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];
@@ -8462,7 +8489,7 @@ begin
 
   iJonDaAdmin := StrToIntDef(sSystemSettings.values['JonDaAdmin'], cRID_Null);
   iJonDaServer := sSystemSettings.values['AppServerURL'];
-  iFSPath := sSystemSettings.values['FunktionsSicherungstellungsPfad'];
+  iFSPath := localized_parameter('FunktionsSicherungstellungsPfad', EigeneOrgaMonDateienPfad + 'fs\');
 
   // defaults
   iOrtFormat := sSystemSettings.values['OrtFormat'];
@@ -8487,8 +8514,6 @@ begin
     iSicherungsPrefix := nextp(MyProgramPath, '\', CharCount('\', MyProgramPath) - 1) + '_';
   if (iFormColor = 0) then
     iFormColor := TColors.SysBtnFace;
-  if (iPDFZoom='') then
-   iPDFZoom := '3.0';
 
   // AutoUp und FS
   iAutoUpRevDir := evalPath(iAutoUpRevDir);
@@ -8496,8 +8521,6 @@ begin
     iAutoUpRevDir := '..\rev\';
   if (pos(':', iAutoUpRevDir) = 0) then
     iAutoUpRevDir := ExpandFileName(MyApplicationPath + iAutoUpRevDir);
-  if (iFSPath = '') then
-    iFSPath := EigeneOrgaMonDateienPfad + 'fs\';
 
   if (iTextDocumentExtension = '') then
     iTextDocumentExtension := cDOCextension;

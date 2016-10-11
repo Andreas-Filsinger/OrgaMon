@@ -102,6 +102,10 @@ begin
         post;
         sDefaultSettings.free;
       end;
+
+      // Hinweis für die Benutzer geben "wie" lokalisierte Parameter
+      // funktionieren
+      FormEinstellungen.Caption := 'Einstellungen.'+UserName+'@'+ComputerName;
     end;
   end;
 end;

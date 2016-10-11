@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1076,8 +1076,10 @@ function CtrlDown: boolean;
 var
   State: TKeyboardState;
 begin
-  GetKeyboardState(State);
-  result := ((State[vk_Control] And 128) <> 0);
+  if GetKeyboardState(State) then
+   result := ((State[VK_CONTROL] And 128) <> 0)
+  else
+   result := false;
 end;
 
 const
@@ -1143,21 +1145,29 @@ begin
     //
     if (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
     begin
-      CallExternalApp(
-        { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
-        { } '--quiet ' +
-        { } '--print-media-type ' +
-        { } '--page-width 2480px ' + // DIN A4 Format
-        { } '--page-height 3508px ' +
-        { } '--margin-top 100px ' +
-        { } '--margin-bottom 9px ' +
-        { } '--margin-left 9px ' +
-        { } '--margin-right 9px ' +
-        { } '--dpi 150 ' +
-        { } '--zoom '+iPDFZoom+' ' +
-        { } '"' + Dokument + '"' + ' ' +
-        { } '"' + Dokument_pdf + '"',
-        { } SW_HIDE);
+      if pos('--',iPDFZoom)=0 then
+        CallExternalApp(
+          { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
+          { } '--quiet ' +
+          { } '--print-media-type ' +
+          { } '--page-width 2480px ' + // DIN A4 Format
+          { } '--page-height 3508px ' +
+          { } '--margin-top 100px ' +
+          { } '--margin-bottom 9px ' +
+          { } '--margin-left 9px ' +
+          { } '--margin-right 9px ' +
+          { } '--dpi 150 ' +
+          { } '--zoom '+iPDFZoom+' ' +
+          { } '"' + Dokument + '"' + ' ' +
+          { } '"' + Dokument_pdf + '"',
+          { } SW_HIDE)
+      else
+        CallExternalApp(
+          { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
+          { } iPDFZoom + ' ' +
+          { } '"' + Dokument + '"' + ' ' +
+          { } '"' + Dokument_pdf + '"',
+          { } SW_HIDE);
     end;
 
     if (FSize(Dokument_pdf)<739) then
