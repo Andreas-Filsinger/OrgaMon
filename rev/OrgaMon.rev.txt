@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.231 (11.10.16) Andreas Filsinger
+
+ Neu: CtrlDown: Abfrage verbessert
+ Neu: erstmals lokalisierte System-Parameter
+
 Rev 8.230 (06.10.16-07.10.16) Andreas Filsinger
 
  Neu: PDF: Systemparameter PDFZoom
