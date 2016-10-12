@@ -1954,9 +1954,14 @@ begin
     IB_Query1.refresh;
     IB_Query1AfterScroll(IB_Query1);
     EndHourGlass;
-
+    if (OutFName='') then
+    begin
+      ShowMessage('Fehler beim Belegbuchen!');
+    end else
+    begin
     if iBelegAnzeigeNachBuchen then
       openShell(OutFName);
+    end;
   end;
 end;
 

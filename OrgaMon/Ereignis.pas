@@ -125,9 +125,8 @@ begin
   BeginHourglass;
   BELEG_R := e_w_BelegNeuAusKasse(EREIGNIS_R);
   OutFName := e_w_BelegBuchen(BELEG_R);
-  // printto(Handle, OutFName);
-  // Ev. durch Auto-Print ersetzen
-  if CheckBox1.checked then
+
+  if CheckBox1.checked and (OutFname<>'')then
     printhtmlOK(OutFName);
 
   // "BEENDET" Wert überschreiben, um "echten" Wert zu ermitteln

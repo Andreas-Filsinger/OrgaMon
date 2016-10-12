@@ -1559,7 +1559,7 @@ var
           if CharInSet(TSql[Token_End + 1], [#9, #32, #13, #10]) then
             break;
           inc(Token_End);
-        until yet;
+        until eternity;
         _TableName := copy(TSql, Token_Begin, succ(Token_End - Token_Begin));
 
       end
@@ -2252,12 +2252,12 @@ var
         if not(result[l] in ['a' .. 'z', 'A' .. 'Z', '0' .. '9', '_']) then
           break;
         inc(l);
-      until yet;
+      until eternity;
 
       // Nun austauschen
       ersetze(copy(result, k, l - k), ParameterL.Values[copy(result, k, l - k)], result);
 
-    until yet;
+    until eternity;
     ersetze('€€', '$', result);
   end;
 
