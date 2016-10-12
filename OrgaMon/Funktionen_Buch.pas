@@ -1577,58 +1577,63 @@ begin
   // wenn es Teilzahlungen gab ist nun alles ausgeglichen
   Teilzahlungen := e_r_BelegTeilzahlungen(BELEG_R);
 
-  if isSomeMoney(Teilzahlungen) then
-  begin
+  repeat
+    if isZeroMoney(Teilzahlungen) then
+     break;
 
-    // Forderungsverlust in den Beleg eintragen
-    e_x_sql('insert into POSTEN (BELEG_R,MENGE,ARTIKEL,PREIS,MWST) values (' +
-      { } inttostr(BELEG_R) + ',' +
-      { } '1,' +
-      { } SQLString('Forderungsverlust') + ',' +
-      { } FloatToStrISO(-Betrag) + ',' +
-      { } FloatToStrISO(iMwStSatzManuelleArtikel) + ')');
+      // Forderungsverlust in den Beleg eintragen
+      e_x_sql('insert into POSTEN (BELEG_R,MENGE,ARTIKEL,PREIS,MWST) values (' +
+        { } inttostr(BELEG_R) + ',' +
+        { } '1,' +
+        { } SQLString('Forderungsverlust') + ',' +
+        { } FloatToStrISO(-Betrag) + ',' +
+        { } FloatToStrISO(iMwStSatzManuelleArtikel) + ')');
 
-    // eine weitere Teillieferung buchen
-    e_w_BelegBuchen(BELEG_R);
-
-    // nun die "neue" Gesamtforderung berechnen
-    Forderung := e_r_BelegForderungen(BELEG_R);
-
-    if isEqual(Teilzahlungen, Forderung) then
-    begin
-      // Es ist Zeit für einen Vollausgelich!
-      ScriptText := TStringList.create;
-      qAUSGLEICH := nQuery;
-      AUSGLEICH_R := e_w_Gen('GEN_BUCH');
-      with qAUSGLEICH do
+      // eine weitere Teillieferung buchen
+      if (e_w_BelegBuchen(BELEG_R)='') then
       begin
-        sql.add('select * from BUCH for update');
-
-        //
-        ScriptText.add('VORZEICHENWECHSEL=' + cIni_Activate);
-        // ScriptText.add('ZWISCHENSATZ=' + cIni_Activate);
-        ScriptText.add(format('BELEG=%d;*;%m', [BELEG_R, Forderung]));
-
-        insert;
-        FieldByName('RID').AsInteger := AUSGLEICH_R;
-        FieldByName('MASTER_R').AsInteger := AUSGLEICH_R;
-        FieldByName('NAME').AsString := cKonto_Anzahlungen;
-        FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
-        FieldByName('ERTRAG').AsString := cC_True;
-        FieldByName('DATUM').AsDateTime := now;
-        FieldByName('SKRIPT').Assign(ScriptText);
-        FieldByName('BETRAG').AsFloat := -Forderung;
-        FieldByName('BELEG_R').AsInteger := BELEG_R;
-        post;
-
+        result := cGeld_KeinElement;
+        break;
       end;
-      qAUSGLEICH.Free;
-      ScriptText.Free;
-      b_w_buche(AUSGLEICH_R);
-      result := cGeld_Zero;
 
-    end;
-  end;
+      // nun die "neue" Gesamtforderung berechnen
+      Forderung := e_r_BelegForderungen(BELEG_R);
+
+      if isOther(Teilzahlungen, Forderung) then
+        break;
+
+        // Es ist Zeit für einen Vollausgelich!
+        ScriptText := TStringList.create;
+        qAUSGLEICH := nQuery;
+        AUSGLEICH_R := e_w_Gen('GEN_BUCH');
+        with qAUSGLEICH do
+        begin
+          sql.add('select * from BUCH for update');
+
+          //
+          ScriptText.add('VORZEICHENWECHSEL=' + cIni_Activate);
+          // ScriptText.add('ZWISCHENSATZ=' + cIni_Activate);
+          ScriptText.add(format('BELEG=%d;*;%m', [BELEG_R, Forderung]));
+
+          insert;
+          FieldByName('RID').AsInteger := AUSGLEICH_R;
+          FieldByName('MASTER_R').AsInteger := AUSGLEICH_R;
+          FieldByName('NAME').AsString := cKonto_Anzahlungen;
+          FieldByName('GEGENKONTO').AsString := cKonto_Erloese;
+          FieldByName('ERTRAG').AsString := cC_True;
+          FieldByName('DATUM').AsDateTime := now;
+          FieldByName('SKRIPT').Assign(ScriptText);
+          FieldByName('BETRAG').AsFloat := -Forderung;
+          FieldByName('BELEG_R').AsInteger := BELEG_R;
+          post;
+
+        end;
+        qAUSGLEICH.Free;
+        ScriptText.Free;
+        b_w_buche(AUSGLEICH_R);
+        result := cGeld_Zero;
+
+  until yet;
 end;
 
 procedure b_w_LastschriftAusgleich(sList: TStrings; Diagnose: TStrings = nil);

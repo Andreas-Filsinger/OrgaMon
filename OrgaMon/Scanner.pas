@@ -555,7 +555,11 @@ begin
     try
 
       // Beleg buchen / Ausgabe / Versand vorbereiten
-      e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck);
+      if (e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck)='') then
+      begin
+        ErrorMsg := 'Fehler bei BelegBuchen';
+        break;
+      end;
 
       // Den Versender noch einstellen
       // Welcher Versender?!

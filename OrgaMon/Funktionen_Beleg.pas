@@ -1261,7 +1261,8 @@ begin
       INTERN_INFO.free;
 
       //
-      e_w_BelegBuchen(BELEG_R);
+      if (e_w_BelegBuchen(BELEG_R)='') then
+       sDiagnose.add(cERRORText + ' Fehler beim Belegbuchen');
 
       result := 1;
 
@@ -3781,7 +3782,7 @@ begin
         { } 'update EREIGNIS set' +
         { } ' BELEG_R=' + inttostr(BELEG_R) + ',' +
         { } ' BEENDET=CURRENT_TIMESTAMP,' +
-        { } ' MENGE=COALESCE(MENGE,0)+1' +
+        { } ' MENGE=coalesce(MENGE,0)+1' +
         { } 'where RID=' + inttostr(EREIGNIS_R));
 
       for n := 0 to pred(lKasse.count) do
@@ -4884,8 +4885,14 @@ begin
   else
   begin
     // Es muss das default Gewicht angenommen werden!
-    PACKFORM_R := e_r_sql('select PACKFORM_R from VERSENDER where RID=' + inttostr(e_r_StandardVersender));
-    result := e_r_sql('select GEWICHT from PACKFORM where RID=' + inttostr(PACKFORM_R));
+    if (e_r_StandardVersender=0) then
+    begin
+      result := 0;
+    end else
+    begin
+      PACKFORM_R := e_r_sql('select PACKFORM_R from VERSENDER where RID=' + inttostr(e_r_StandardVersender));
+      result := e_r_sql('select GEWICHT from PACKFORM where RID=' + inttostr(PACKFORM_R));
+    end;
   end;
 end;
 
@@ -5004,8 +5011,9 @@ begin
       Log('PERSON_R=' + inttostr(PERSON_R));
 
       // LAND_R ermitteln
-      IN_LAND_R := e_r_sql('SELECT LAND_R FROM ANSCHRIFT WHERE RID=(' + 'SELECT PRIV_ANSCHRIFT_R FROM PERSON WHERE RID='
-        + inttostr(PERSON_R) + ')');
+      IN_LAND_R := e_r_sql(
+       { } 'select LAND_R from ANSCHRIFT where RID=(' +
+       { } 'select PRIV_ANSCHRIFT_R from PERSON where RID=' + inttostr(PERSON_R) + ')');
 
       Log('IN_LAND_R=' + inttostr(IN_LAND_R));
 
@@ -5171,11 +5179,16 @@ function e_r_Versender(BELEG_R, TEILLIEFERUNG: integer): string;
 var
   VERSENDER_R: integer;
 begin
-  VERSENDER_R := e_r_sql('select VERSENDER_R from VERSAND where ' + '(BELEG_R=' + inttostr(BELEG_R) + ') and ' +
-    '(TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+  VERSENDER_R := e_r_sql(
+   { } 'select VERSENDER_R from VERSAND where' +
+   { } ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+   { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
   if (VERSENDER_R < cRID_FirstValid) then
     VERSENDER_R := e_r_StandardVersender;
-  result := e_r_sqls('select BEZEICHNUNG from VERSENDER where RID=' + inttostr(VERSENDER_R));
+  if (VERSENDER_R < cRID_FirstValid) then
+   result := ''
+  else
+   result := e_r_sqls('select BEZEICHNUNG from VERSENDER where RID=' + inttostr(VERSENDER_R));
 end;
 
 function e_r_PLZlength(ib_q: TdboDataSet): integer;
@@ -6248,7 +6261,8 @@ begin
           if (EINSTELLUNGEN.values['Verbuchen'] <> cIni_DeActivate) then
             if (ZIEL_BELEG_R >= cRID_FirstValid) then
             begin
-              e_w_BelegBuchen(ZIEL_BELEG_R);
+              if (e_w_BelegBuchen(ZIEL_BELEG_R)='') then
+                result.add('ERROR: Fehler beim Belegbuchen');
               result.add('Verbucht.BELEG_R=' + inttostr(ZIEL_BELEG_R));
             end;
 
@@ -7762,15 +7776,23 @@ begin
   cVERSENDER.free;
 end;
 
+var
+ _e_r_StandardVersender : integer = -1;
+
 function e_r_StandardVersender: integer;
 begin
   // Standard-Versender ermitteln
-  result := e_r_sql('select RID from VERSENDER where STANDARD=''' + cC_True + '''');
+  if (_e_r_StandardVersender=-1) then
+    _e_r_StandardVersender := e_r_sql('select RID from VERSENDER where STANDARD=''' + cC_True + '''');
+  result := _e_r_StandardVersender;
 end;
 
 function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
 begin
-  result := e_r_sqls('select NAME from LAGER where RID=' + inttostr(LAGER_R));
+ if (LAGER_R>=cRID_FirstValid) then
+  result := e_r_sqls('select NAME from LAGER where RID=' + inttostr(LAGER_R))
+ else
+  result := '';
 end;
 
 function e_r_Stempel(PERSON_R, BELEG_R: integer): integer;
@@ -8602,7 +8624,7 @@ end;
 
 function e_r_RabattCode(PERSON_R: integer): string;
 begin
-  result := noblank(e_r_sqls('SELECT RABATT_CODE FROM PERSON WHERE RID=' + inttostr(PERSON_R)));
+  result := noblank(e_r_sqls('select RABATT_CODE from PERSON where RID=' + inttostr(PERSON_R)));
 end;
 
 function e_r_RabattFaehig(PERSON_R: integer): boolean;
@@ -9622,7 +9644,8 @@ begin
   BlackList.free;
 
   if (BelegOptions.values['verbuchen'] = cIni_Activate) then
-    e_w_BelegBuchen(BELEG_R, BelegOptions.values['label'] = cIni_Activate);
+    if (e_w_BelegBuchen(BELEG_R, BelegOptions.values['label'] = cIni_Activate)='') then
+     result := -1;
 
   BelegOptions.free;
 
@@ -9650,7 +9673,7 @@ begin
     if (ZAHLUNG_R < cRID_FirstValid) then
       break;
     result := e_r_sql(
-      { } 'select COALESCE(FAELLIG,' + inttostr(cStandard_ZahlungFrist) + ') ' +
+      { } 'select coalesce(FAELLIG,' + inttostr(cStandard_ZahlungFrist) + ') ' +
       { } 'from ZAHLUNGTYP where' +
       { } ' RID=' + inttostr(ZAHLUNG_R));
   until yet;
@@ -12321,7 +12344,7 @@ begin
   begin
     sql.add('select');
     sql.add(' RANG,');
-    sql.add(' COALESCE(LETZTERVERKAUF,LETZTEAENDERUNG) as AKTION');
+    sql.add(' coalesce(LETZTERVERKAUF,LETZTEAENDERUNG) as AKTION');
     sql.add('from');
     sql.add(' ARTIKEL');
     sql.add('where');
@@ -12338,7 +12361,7 @@ begin
   begin
     sql.add('select');
     sql.add(' RANG,');
-    sql.add(' COALESCE(LETZTERVERKAUF,LETZTEAENDERUNG) as AKTION');
+    sql.add(' coalesce(LETZTERVERKAUF,LETZTEAENDERUNG) as AKTION');
     sql.add('from');
     sql.add(' ARTIKEL_AA');
     sql.add('where');

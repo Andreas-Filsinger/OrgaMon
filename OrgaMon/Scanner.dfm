@@ -515,6 +515,10 @@ object FormScanner: TFormScanner
     TabOrder = 9
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
+    ColWidths = (
+      64)
+    RowHeights = (
+      80)
   end
   object StaticText1: TStaticText
     Left = 464
