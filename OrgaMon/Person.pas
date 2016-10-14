@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -621,9 +621,15 @@ begin
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
       SaveToFileCompressed(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
     end;
-    PDF := html2pdf(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
-    printpdf(PDF.Values['ConversionOutFName']);
-    PDF.Free;
+    if (pos('Windows XP',Betriebssystem)>0) then
+    begin
+      printhtmlok(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
+    end else
+    begin
+      PDF := html2pdf(EigeneOrgaMonDateienPfad + 'druck' + cHTMLextension);
+      printpdf(PDF.Values['ConversionOutFName']);
+      PDF.Free;
+    end;
     DatensammlerGlobal.Free;
     DatensammlerLokal.Free;
     DruckStueck.Free;

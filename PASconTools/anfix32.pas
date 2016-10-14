@@ -3934,6 +3934,9 @@ begin
   CloseFile(InF);
 end;
 
+var
+ _Betriebssystem : string = '';
+
 function Betriebssystem: string;
 
 {$IFDEF fpc}
@@ -3959,16 +3962,20 @@ var
   HNtDll: HMODULE;
   wine_get_version: Twine_get_version;
 begin
+ if (_Betriebssystem='') then
+ begin
   HNtDll := LoadLibrary('ntdll.dll');
   if (HNtDll <> 0) then
   begin
     wine_get_version := GetProcAddress(HNtDll, 'wine_get_version');
     if assigned(wine_get_version) then
-      result := 'wine-' + wine_get_version
+      _Betriebssystem := 'wine-' + wine_get_version
     else
-      result := GetOSVersionString;
+      _Betriebssystem := GetOSVersionString;
     FreeLibrary(HNtDll);
   end;
+ end;
+ result := _Betriebssystem;
 end;
 {$ENDIF}
 // WIN REBOOT

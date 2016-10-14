@@ -548,7 +548,7 @@ object FormGeoArbeitsplatz: TFormGeoArbeitsplatz
     Items.Strings = (
       'xServer (PTV)'
       'Maps (Google)'
-      'OpenStreetMaps (frei)')
+      'OpenStreetMap (frei)')
   end
   object Timer1: TTimer
     Enabled = False
@@ -564,7 +564,7 @@ object FormGeoArbeitsplatz: TFormGeoArbeitsplatz
   end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1
-    AppStoragePath = '%FORM_NAME%'
+    AppStoragePath = '%FORM_NAME%\'
     StoredValues = <>
     Left = 40
     Top = 152

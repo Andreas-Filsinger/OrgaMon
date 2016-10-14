@@ -2,8 +2,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   Left = 329
   Top = 32
   Caption = 'Lokalisierung via HTTP'
-  ClientHeight = 579
-  ClientWidth = 862
+  ClientHeight = 562
+  ClientWidth = 847
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -12,11 +12,12 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 14
   object Label1: TLabel
     Left = 42
-    Top = 144
+    Top = 161
     Width = 35
     Height = 14
     Margins.Left = 4
@@ -27,7 +28,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Label2: TLabel
     Left = 35
-    Top = 21
+    Top = 38
     Width = 42
     Height = 14
     Margins.Left = 4
@@ -39,7 +40,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Label7: TLabel
     Left = 28
-    Top = 46
+    Top = 63
     Width = 49
     Height = 14
     Margins.Left = 4
@@ -51,15 +52,15 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Label3: TLabel
     Left = 21
-    Top = 70
+    Top = 118
     Width = 56
     Height = 14
     Alignment = taRightJustify
     Caption = 'Ortsteil'
   end
   object Image2: TImage
-    Left = 800
-    Top = 8
+    Left = 790
+    Top = 14
     Width = 54
     Height = 22
     Cursor = crHandPoint
@@ -182,19 +183,29 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image2Click
   end
+  object Label4: TLabel
+    Left = 17
+    Top = 14
+    Width = 56
+    Height = 14
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
+    Alignment = taRightJustify
+    Caption = 'Anbieter'
+  end
   object Memo1: TMemo
     Left = 4
-    Top = 168
-    Width = 856
+    Top = 185
+    Width = 840
     Height = 372
-    Lines.Strings = (
-      'Memo1')
     ScrollBars = ssVertical
     TabOrder = 0
   end
   object StaticText1: TStaticText
     Left = 80
-    Top = 143
+    Top = 160
     Width = 137
     Height = 18
     Margins.Left = 4
@@ -208,7 +219,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object StaticText2: TStaticText
     Left = 224
-    Top = 143
+    Top = 160
     Width = 169
     Height = 18
     Margins.Left = 4
@@ -221,8 +232,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     TabOrder = 2
   end
   object Button4: TButton
-    Left = 400
-    Top = 18
+    Left = 431
+    Top = 110
     Width = 145
     Height = 68
     Margins.Left = 4
@@ -234,8 +245,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     OnClick = Button4Click
   end
   object Button1: TButton
-    Left = 80
-    Top = 98
+    Left = 640
+    Top = 153
     Width = 106
     Height = 25
     Margins.Left = 4
@@ -248,8 +259,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Edit2: TEdit
     Left = 80
-    Top = 42
-    Width = 313
+    Top = 59
+    Width = 337
     Height = 22
     Margins.Left = 4
     Margins.Top = 4
@@ -260,8 +271,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   end
   object Edit4: TEdit
     Left = 80
-    Top = 18
-    Width = 313
+    Top = 35
+    Width = 337
     Height = 22
     Margins.Left = 4
     Margins.Top = 4
@@ -271,9 +282,9 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Text = 'Stettfelder Str. 44'
   end
   object Button3: TButton
-    Left = 584
-    Top = 57
-    Width = 260
+    Left = 640
+    Top = 87
+    Width = 204
     Height = 25
     Margins.Left = 4
     Margins.Top = 4
@@ -284,9 +295,9 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     OnClick = Button3Click
   end
   object Button5: TButton
-    Left = 584
-    Top = 83
-    Width = 260
+    Left = 640
+    Top = 120
+    Width = 204
     Height = 25
     Margins.Left = 4
     Margins.Top = 4
@@ -297,8 +308,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     OnClick = Button5Click
   end
   object CheckBox2: TCheckBox
-    Left = 400
-    Top = 113
+    Left = 431
+    Top = 66
     Width = 181
     Height = 17
     Margins.Left = 4
@@ -311,29 +322,49 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     TabOrder = 9
   end
   object CheckBox1: TCheckBox
-    Left = 400
-    Top = 93
-    Width = 145
+    Left = 431
+    Top = 48
+    Width = 105
     Height = 17
-    Caption = 'PHP Diagnose'
+    Caption = 'Diagnose'
     TabOrder = 10
     OnClick = CheckBox1Click
   end
   object Edit1: TEdit
     Left = 80
-    Top = 67
-    Width = 313
+    Top = 114
+    Width = 337
     Height = 22
     TabOrder = 11
     Text = 'Ubstadt'
   end
   object Button2: TButton
-    Left = 584
-    Top = 31
-    Width = 260
+    Left = 640
+    Top = 58
+    Width = 203
     Height = 25
     Caption = 'Karten-Cache auf 1 GB k'#252'rzen'
     TabOrder = 12
     OnClick = Button2Click
+  end
+  object ComboBox2: TComboBox
+    Left = 80
+    Top = 11
+    Width = 337
+    Height = 22
+    Style = csDropDownList
+    TabOrder = 13
+    Items.Strings = (
+      'xServer (PTV)'
+      'Maps (Google)'
+      'OpenStreetMap (frei)')
+  end
+  object CheckBox3: TCheckBox
+    Left = 80
+    Top = 88
+    Width = 337
+    Height = 17
+    Caption = 'die PLZ bei der Anfrage NICHT mit '#252'bermitteln'
+    TabOrder = 14
   end
 end

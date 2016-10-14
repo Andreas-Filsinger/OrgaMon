@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -137,6 +137,7 @@ type
 
 var
   FormGeoArbeitsplatz: TFormGeoArbeitsplatz;
+
 
 implementation
 
@@ -413,8 +414,7 @@ begin
       // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
       Request.Referer := cOpenStreetMap_TileURL;
       // Die Clientkennung
-      Request.UserAgent :=
-        'Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0 FirePHP/0.7.1';
+      Request.UserAgent := cAgent;
     end;
     cookieM := TIdCookieManager.create(self);
     cookieM.OnNewCookie := IdCookieManager1NewCookie;
@@ -592,8 +592,7 @@ begin
       // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
       Request.Referer := cOpenStreetMap_TileURL;
       // Die Client Erkennung, um sich zu tarnen benutze ich gerne den Opera User-Agent
-      Request.UserAgent :=
-        'Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0 FirePHP/0.7.1';
+      Request.UserAgent := cAgent;
     end;
     MemoryS := TMemoryStream.create;
 

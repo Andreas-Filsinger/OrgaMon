@@ -98,6 +98,9 @@ type
     Edit1: TEdit;
     Image2: TImage;
     Button2: TButton;
+    ComboBox2: TComboBox;
+    Label4: TLabel;
+    CheckBox3: TCheckBox;
     procedure Button4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -105,18 +108,25 @@ type
     procedure CheckBox1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private-Deklarationen }
     RequestTime: dword;
     DisableCache: boolean;
+    IgnorePLZ: boolean;
+    Initialized: boolean;
 
     procedure ShowResult(p: Tpoint2D);
+    procedure Init;
 
   public
     { Public-Deklarationen }
     Diagnose_Ergebnis: boolean;
     Diagnose_PHP: boolean;
     p_OffLineMode: boolean;
+    p_OSM: boolean;
+    p_PTV: boolean;
+    p_Google: boolean;
     // =false*: ist nix in der Datenbank, so wird online nachgehakt!
     // =true: nur in der Datenbank suchen!
 
@@ -149,6 +159,7 @@ implementation
 
 uses
   anfix32, globals, wanfix32,
+  OpenStreetMap, OrientationConvert, WordIndex,
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection,
@@ -172,6 +183,7 @@ var
 begin
   StaticText1.caption := '';
   DisableCache := CheckBox2.Checked;
+  IgnorePLZ := CheckBox3.Checked;
   SetDiagMode;
   locate(Edit4.text, Edit2.text, Edit1.text, p);
   UnSetDiagMode;
@@ -208,6 +220,11 @@ var
 
   StrasseRelevant: boolean;
   OrtsteilRelevant: boolean;
+
+  // OSM
+  sRESULT : TsTable;
+  OSMid : string;
+  r : integer;
 
   procedure CacheCheck(PLZ: integer);
   var
@@ -295,7 +312,7 @@ var
     Result := AnsiToRFC1738(Result);
   end;
 
-  function parseResult(s: TStringList): TStringList;
+  function parseResult_PTV(s: TStringList): TStringList;
   var
     AutomataState, n: integer;
   begin
@@ -337,6 +354,18 @@ var
     end;
   end;
 
+  function parseResult_OSM(s: TStringList): TStringList;
+  var
+    AutomataState, n: integer;
+    Bericht: TStringList;
+  begin
+    locateResponse.saveToFile(iKartenPfad+'locate.xml');
+    Result := TStringList.create;
+    Bericht:= TStringList.create;
+    if doConversion(Content_Mode_xml2csv,iKartenPfad+'locate.xml',Bericht) then
+     Result.loadFromFile(iKartenPfad+'locate.xml.csv');
+  end;
+
 begin
 
   // Init!
@@ -347,6 +376,7 @@ begin
   r_error := 'OK (Webservice)';
   rList := nil;
   StartTime := 0;
+  Init;
 
   //
   q_plz := PLZ;
@@ -425,9 +455,12 @@ begin
       // Lister aller Alternativ PLZ abfragen!
       if (StrasseID > 0) then
       begin
-        PLZl := e_r_sqlm('select distinct PLZ from POSTLEITZAHLEN ' + ' where ' + '(STRASSEID=' +
-          inttostr(StrasseID) + ') and ' + '(PLZ_DIVERSITAET IS NOT NULL) and ' + '(PLZ<>' +
-          PLZ + ')');
+        PLZl := e_r_sqlm(
+         {} 'select distinct PLZ from POSTLEITZAHLEN' +
+         {} 'where' +
+         {} ' (STRASSEID=' + inttostr(StrasseID) + ') and' +
+         {} ' (PLZ_DIVERSITAET IS NOT NULL) and' +
+         {} ' (PLZ<>' +   PLZ + ')');
         for n := 0 to pred(PLZl.count) do
         begin
           CacheCheck(PLZl[n]);
@@ -454,42 +487,99 @@ begin
       if not(visible) then
         show;
 
-    httpRequest := iKartenHost + cLocateScript + '?tan=' + pFormat(FindANewPassword);
-
-    if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
+    if p_PTV then
     begin
-      httpRequest := httpRequest + '&zip=' + PLZ;
+      httpRequest := iKartenHost + cLocateScript + '?tan=' + pFormat(FindANewPassword);
 
-      if (pos('!', Ort) > 0) then
-        httpRequest := httpRequest + '&city=' + pFormat(Ort);
+      if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
+      begin
+         httpRequest := httpRequest + '&zip=' + PLZ;
 
-      if not(StrasseRelevant) then
+        if (pos('!', Ort) > 0) then
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
+
+        if not(StrasseRelevant) then
+          if (Ortsteil <> '') then
+            OrtsteilRelevant := true;
+
+      end
+      else
+      begin
+
+        if (Ort <> '') then
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
+
+        if (Ortsteil <> '') then
+          OrtsteilRelevant := true;
+      end;
+
+      if StrasseRelevant then
+      begin
+        httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
+        if (StrasseHausnummer <> '') then
+          httpRequest := httpRequest + '&number=' + pFormat(StrasseHausnummer);
+      end;
+
+      if OrtsteilRelevant then
+        httpRequest := httpRequest + '&district=' + pFormat(Ortsteil);
+
+      if (iKartenProfil <> '') then
+        httpRequest := httpRequest + '&profile=' + iKartenProfil;
+    end;
+
+    if p_OSM then
+    begin
+
+      // Usage Policy
+      delay(1000);
+
+      httpRequest := cOpenStreetMap_GeoURL + 'email=andreas.filsinger@orgamon.org&format=xml&country=de';
+
+      if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
+      begin
+
+        if not(IgnorePLZ) then
+          httpRequest := httpRequest + '&postalcode=' + PLZ;
+
+
+        if not(StrasseRelevant) then
+          if (Ortsteil <> '') then
+            OrtsteilRelevant := true;
+
+        if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil+ ', ' + Ort)
+         else
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
+
+      end
+      else
+      begin
+
         if (Ortsteil <> '') then
           OrtsteilRelevant := true;
 
-    end
-    else
-    begin
+        if (Ort <> '') then
+         if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil + ', ' + Ort)
+         else
+          httpRequest := httpRequest + '&city=' + pFormat(Ort);
 
-      if (Ort <> '') then
-        httpRequest := httpRequest + '&city=' + pFormat(Ort);
+        if (Ort = '') then
+         if OrtsteilRelevant then
+          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil);
 
-      if (Ortsteil <> '') then
-        OrtsteilRelevant := true;
+      end;
+
+      if StrasseRelevant then
+      begin
+        if (StrasseHausnummer <> '') then
+          httpRequest := httpRequest + '&street=' + pFormat(StrasseHausnummer+' '+StrassenName)
+         else
+          httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
+      end;
+
     end;
 
-    if StrasseRelevant then
-    begin
-      httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
-      if (StrasseHausnummer <> '') then
-        httpRequest := httpRequest + '&number=' + pFormat(StrasseHausnummer);
-    end;
-
-    if OrtsteilRelevant then
-      httpRequest := httpRequest + '&district=' + pFormat(Ortsteil);
-
-    if (iKartenProfil <> '') then
-      httpRequest := httpRequest + '&profile=' + iKartenProfil;
 
     if Diagnose_Ergebnis then
     begin
@@ -499,6 +589,25 @@ begin
 
     locateResponse := TStringList.create;
     httpC := TIdHTTP.create(nil);
+    if p_OSM then
+      with httpC do
+      begin
+        // Die Accept Angabe definiert, welche Formen von Daten der Client akzeptiert
+        Request.Accept :=
+          'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1';
+        // Der AcceptCharSet Wert definiert, welche Zeichen-Formate der Client akzeptiert
+        Request.AcceptCharSet := 'utf-8, iso-8859-1, utf-16, *;q=0.1';
+        Request.AcceptLanguage := 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3';
+        // Die AcceptEncoding Angabe definiert, welche Kompressionsformate der Client akzeptiert
+        Request.AcceptEncoding := 'deflate, identity, *;q=0';
+        Request.Connection := 'keep-alive';
+        // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
+        // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
+        Request.Referer := cOpenStreetMap_GeoURL;
+        // Die Clientkennung
+        Request.UserAgent := cAgent;
+
+      end;
     ParamF := TMemoryStream.create;
     try
 
@@ -506,10 +615,21 @@ begin
       httpC.get(httpRequest, ParamF);
 
       ParamF.Position := 0;
-      locateResponse.LoadFromStream(ParamF);
+
+      if p_PTV then
+        locateResponse.LoadFromStream(ParamF);
+
+      if p_OSM then
+        locateResponse.LoadFromStream(ParamF,TEncoding.UTF8);
+
       if Diagnose_PHP then
-        Memo1.Lines.assign(locateResponse);
-      rList := parseResult(locateResponse);
+        Memo1.Lines.addstrings(locateResponse);
+
+      if p_PTV then
+        rList := parseResult_PTV(locateResponse);
+
+      if p_OSM then
+        rList := parseResult_OSM(locateResponse);
 
     except
 
@@ -530,66 +650,203 @@ begin
       Memo1.Lines.add('');
     end;
 
-    if (rList.count = 1) then
+    if p_ptv then
     begin
-      rLine := rList[0];
-    end
-    else
-    begin
+      if (rList.count = 1) then
+      begin
+        rLine := rList[0];
+      end
+      else
+      begin
 
-      // Wenn es mehrere Möglichkeiten gibt, dann muss der
-      // Ort zusätzlich stimmen
-      // Warum: Beispiel
-      // Schulstrasse 7
-      // 38312 Heiningen
-      // -> hier gibt es 7 Möglichkeiten, gleiche PLZ - aber anderer Ortsnane
-      //
-      rLine := '';
-      repeat
+        // Wenn es mehrere Möglichkeiten gibt, dann muss der
+        // Ort zusätzlich stimmen
+        // Warum: Beispiel
+        // Schulstrasse 7
+        // 38312 Heiningen
+        // -> hier gibt es 7 Möglichkeiten, gleiche PLZ - aber anderer Ortsnane
+        //
+        rLine := '';
+        repeat
 
-        // Lauf "1", PLZ,Ort,Strasse muss passen
-        for n := 0 to pred(rList.count) do
-          if
-          { PLZ } (PLZ = nextp(rList[n], ';', 4)) and
-          { Ort } OrtIdentisch(Ort, nextp(rList[n], ';', 5)) and
-          { Strasse } (not(StrasseRelevant) or StrassenNameIdentisch(nextp(rList[n], ';', 5),
-            StrassenName)) then
-          begin
-            EntryFound := true;
-            rLine := rList[n];
+          // Lauf "1", PLZ,Ort,Strasse muss passen
+          for n := 0 to pred(rList.count) do
+            if
+            { PLZ } (PLZ = nextp(rList[n], ';', 4)) and
+            { Ort } OrtIdentisch(Ort, nextp(rList[n], ';', 5)) and
+            { Strasse } (not(StrasseRelevant) or StrassenNameIdentisch(nextp(rList[n], ';', 5),
+              StrassenName)) then
+            begin
+              EntryFound := true;
+              rLine := rList[n];
+              break;
+            end;
+          if EntryFound then
             break;
-          end;
-        if EntryFound then
-          break;
 
-        // Lauf "2", nur Ort muss passen
-        for n := 0 to pred(rList.count) do
-          if OrtIdentisch(Ort, nextp(rList[n], ';', 5)) then
-          begin
-            rLine := rList[n];
-            break;
-          end;
+          // Lauf "2", nur Ort muss passen
+          for n := 0 to pred(rList.count) do
+            if OrtIdentisch(Ort, nextp(rList[n], ';', 5)) then
+            begin
+              rLine := rList[n];
+              break;
+            end;
 
-      until true;
+        until true;
+      end;
+      rList.free;
+
+      if (rLine = '') then
+      begin
+        r_error := cErrorText + ' keine Idee bei mehreren Möglichkeiten';
+        break;
+      end;
+
+      // Ergebnisse extrahieren
+      { X           0 } p.x := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
+      { Y           1 } p.y := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
+      { Strasse     2 } r_strasse := nextp(rLine, ';');
+      { Hausnummer  3 } nextp(rLine, ';');
+      { PLZ         4 } r_plz := nextp(rLine, ';');
+      { Ort         5 } r_ort := nextp(rLine, ';');
+      { Ortsteil    6 } r_ortsteil := nextp(rLine, ';');
+
+      EntryFound := true;
     end;
-    rList.free;
 
-    if (rLine = '') then
+    if p_OSM then
     begin
-      r_error := cErrorText + ' keine Idee bei mehreren Möglichkeiten';
-      break;
+     sRESULT := TsTable.create;
+     with sRESULT do
+     begin
+
+      insertfromfile(iKartenPfad+'locate.xml.csv');
+      if (RowCount = 0) then
+      begin
+       r_error := cErrorText + ' kein Resultat';
+       break;
+      end;
+
+//      if (RowCount>1) then
+//      begin
+//        r_error := cErrorText + ' mehrere Treffer';
+//        break;
+//      end;
+
+      // pst: nimm einfach das erste!
+      r := 1;
+
+      { X           0 } p.x := strtodoubledef(readcell(r,'lon'),0);
+      { Y           1 } p.y := strtodoubledef(readcell(r,'lat'),0);
+      OSMid := readcell(r, 'display_name');
+      anfix32.ersetze(', ','|',OSMid);
+
+      r := CharCount('|',OSMid);
+      if (r=7) then
+       if StrFilter(nextp(OSMid,'|',0), cZiffern)='' then
+
+            if (StrassenNameIdentisch(nextp(OSMid,'|',0), StrassenName)) then
+begin
+   inc(r);
+   OSMID := '0|'+OSMid;
+end;
+
+
+      // 0              1                2                3                           4                  5                           6       7       8
+      // 9r            , Stömmerstraße  , Schubert&Salzer, Nordost                   , Ingolstadt       , Oberbayern                , Bayern, 85055, Deutschland
+      // 5e            , Aussiger Straße, Königstädten   , Rüsselsheim am Main       , Kreis Groß-Gerau , Regierungsbezirk Darmstadt, Hessen, 65428, Deutschland
+      // 128           , Drosselweg, Quellental, Pinneberg, Kreis Pinneberg, Schleswig-Holstein, 25421, Deutschland
+      case r of
+      5: begin
+     //   Eichenplatz, Rellingen, Kreis Pinneberg, Schleswig-Holstein, 25462, Deutschland
+
+       r_strasse := nextp(OSMid,'|',0);
+       r_ortsteil := ''; // is Dorf
+       r_ort := nextp(OSMid,'|',1);
+       r_plz := nextp(OSMid,'|',4);
+
+      end;
+      6 : begin
+
+      // Atzelhofstraße, Waldhof        , Mannheim       , Regierungsbezirk Karlsruhe, Baden-Württemberg, 68305, Deutschland
+      // 125, Hauptstraße, Rellingen, Kreis Pinneberg, Schleswig-Holstein, 25462, Deutschland
+       if (StrFilter(nextp(OSMid,'|',0),cZiffern)='') then
+       begin
+
+       r_strasse := nextp(OSMid,'|',0);
+       r_ortsteil := nextp(OSMid,'|',1);
+       r_ort := nextp(OSMid,'|',2);
+       r_plz := nextp(OSMid,'|',5);
+            end else
+            begin
+       r_strasse := nextp(OSMid,'|',1);
+       r_ortsteil := ''; // is Dorf
+       r_ort := nextp(OSMid,'|',2);
+       r_plz := nextp(OSMid,'|',5);
+
+            end;
+
+      end;
+      7 : begin
+       r_strasse := nextp(OSMid,'|',1);
+       r_ortsteil := nextp(OSMid,'|',2);
+       r_ort := nextp(OSMid,'|',3);
+       r_plz := nextp(OSMid,'|',6);
+
+      end;
+      8:begin
+      { Strasse     2 } r_strasse := nextp(OSMid,'|',1);
+      { PLZ         4 } r_plz := nextp(OSMid,'|',7);
+      { Ort         5 } r_ort := nextp(OSMid,'|',4);
+
+      if pos('Kreis ',r_ort)=1 then
+      begin
+       r_ort := nextp(OSMid,'|',3);
+      { Ortsteil    6 } r_ortsteil := nextp(OSMid,'|',2);
+           end else
+           begin
+      { Ortsteil    6 } r_ortsteil := nextp(OSMid,'|',3);
+           end;
+      end;
+
+      else
+       r_error := cErrorText + ' nicht implementiertes Antwort-Schema';
+       break;
+      end;
+
+      if length(r_plz)<>5 then
+      begin
+        r_error := cErrorText + ' PLZ im Ergebnis hat keine 5 Stellen';
+        break;
+      end;
+
+      EntryFound := true;
+
+     end;
+
+     (*
+
+     Quelle;
+     place_id;
+     osm_type;
+     osm_id;
+     place_rank;
+     boundingbox;
+     display_name;
+     class;
+     type;
+     importance;
+     // Zaehlwerk;
+     // edis_key;
+     // unit
+     *)
+
+     if Diagnose_Ergebnis then
+     begin
+      Memo1.Lines.add('OSMID: ' + OSMid);
+     end;
+
     end;
-
-    // Ergebnisse extrahieren
-    { X           0 } p.x := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
-    { Y           1 } p.y := strtodoubledef(nextp(rLine, ';'), 0) / cGEODEZIMAL_Faktor;
-    { Strasse     2 } r_strasse := nextp(rLine, ';');
-    { Hausnummer  3 } nextp(rLine, ';');
-    { PLZ         4 } r_plz := nextp(rLine, ';');
-    { Ort         5 } r_ort := nextp(rLine, ';');
-    { Ortsteil    6 } r_ortsteil := nextp(rLine, ';');
-
-    EntryFound := true;
 
     //
     if Diagnose_Ergebnis then
@@ -904,6 +1161,44 @@ end;
 procedure TFormGeoLokalisierung.CheckBox1Click(Sender: TObject);
 begin
   Diagnose_PHP := CheckBox1.Checked;
+end;
+
+procedure TFormGeoLokalisierung.Init;
+begin
+  if not(Initialized) then
+  begin
+    p_OSM:= false;
+    p_PTV:= false;
+    p_Google:= false;
+    with ComboBox2 do
+      repeat
+
+        if (pos('tile', iKartenHost) > 0) then
+        begin
+          ItemIndex := 2;
+          p_OSM := true;
+          break;
+        end;
+
+        if (pos('google', iKartenHost) > 0) then
+        begin
+          ItemIndex := 1;
+          p_Google:= true;
+          break;
+        end;
+
+        p_PTV:= true;
+        ItemIndex := 0;
+
+      until yet;
+
+    Initialized := true;
+  end;
+end;
+
+procedure TFormGeoLokalisierung.FormActivate(Sender: TObject);
+begin
+ Init;
 end;
 
 procedure TFormGeoLokalisierung.Image2Click(Sender: TObject);
