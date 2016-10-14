@@ -3036,7 +3036,7 @@ object FormPerson: TFormPerson
   end
   object Edit1: TEdit
     Left = 888
-    Top = 6
+    Top = 5
     Width = 33
     Height = 21
     TabOrder = 35

@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.234 (14.10.16) Andreas Filsinger
+
+ Neu: Geo: Lokalisierung nun über OpenStreetMap
+
+Rev 8.233 (13.10.16) Andreas Filsinger
+
+ Neu: Person: Schnelldruck: Es wird jetzt unter "Windows XP" wieder per printhtml gedruckt!
+
 Rev 8.232 (12.10.16) Andreas Filsinger
 
  Bug: Fehler im Belegverbuchen

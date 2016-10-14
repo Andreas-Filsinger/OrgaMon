@@ -285,6 +285,7 @@ var
   pTakeFirstValue: boolean;
   pReplaceNameSpace: string;
   pZW_SAME_NAME_OK: boolean;
+  pQuote: string;
 
   procedure push(Name: string);
   begin
@@ -797,24 +798,29 @@ var
             6:
               begin // Sammeln eines id="embedded" !
 
-                if (pos('"', Line) = 1) then
-                begin
+                  if (pos('"',Line)=1) then
+                   pQuote := '"';
+                  if (pos('''',Line)=1) then
+                   pQuote := '''';
 
-                  // Wert herausschneiden, Linie verkürzen!
-                  ActParserValue := copy(Line, 2, MaxInt);
-                  k := pos('"', ActParserValue);
-                  if k = 0 then
+                  if (pos(pQuote, Line) = 1) then
                   begin
-                    AutoMataState := 7;
-                    Line := '';
-                  end
-                  else
-                  begin
-                    delete(Line, 1, succ(k));
-                    ActParserValue := copy(ActParserValue, 1, pred(k));
-                    AutoMataState := 5;
+
+                    // Wert herausschneiden, Linie verkürzen!
+                    ActParserValue := copy(Line, 2, MaxInt);
+                    k := pos(pQuote, ActParserValue);
+                    if (k = 0) then
+                    begin
+                      AutoMataState := 7;
+                      Line := '';
+                    end
+                    else
+                    begin
+                      delete(Line, 1, succ(k));
+                      ActParserValue := copy(ActParserValue, 1, pred(k));
+                      AutoMataState := 5;
+                    end;
                   end;
-                end;
 
                 setMessage(fullName + '.' + id, FormatValue(ActParserValue));
 
@@ -822,7 +828,7 @@ var
             7:
               begin // Es kommen noch Zeilen hinzu!
 
-                k := pos('"', Line);
+                k := pos(pQuote, Line);
                 if (k > 0) then
                 begin
                   // Wert herausschneiden, Linie verkürzen!
@@ -885,6 +891,9 @@ var
     pTakeFirstValue := sMapping.values['COALESCE'] = 'JA';
     pReplaceNameSpace := sMapping.values['REPLACE'];
     pZW_SAME_NAME_OK := sMapping.values['ZW_SAME_NAME_OK'] = 'JA';
+    pQuote := sMapping.values['QUOTE'];
+    if (pQuote='') then
+     pQuote := '"';
 
     // Leerzeilen aus der Mapping definition löschen!
     for n := pred(sMapping.count) downto 0 do
