@@ -365,11 +365,19 @@ var
     AutomataState, n: integer;
     Bericht: TStringList;
   begin
+    result := nil;
+    try
     locateResponse.saveToFile(iKartenPfad+'locate.xml');
     Result := TStringList.create;
     Bericht:= TStringList.create;
     if doConversion(Content_Mode_xml2csv,iKartenPfad+'locate.xml',Bericht) then
      Result.loadFromFile(iKartenPfad+'locate.xml.csv');
+    except
+      on E: exception do
+      begin
+        r_error := cErrorText + ' ' + E.Message;
+      end;
+    end;
   end;
 
 begin
@@ -657,6 +665,9 @@ begin
     httpC.free;
     locateResponse.free;
 
+    if (rList=nil) then
+     break;
+
     if Diagnose_Ergebnis then
     begin
       Memo1.Lines.addstrings(rList);
@@ -734,11 +745,17 @@ begin
      begin
 
       insertfromfile(iKartenPfad+'locate.xml.csv');
+
+      for r := RowCount downto 1 do
+       if readcell(r,'class')='shop' then
+        Del(r);
+
       if (RowCount = 0) then
       begin
        r_error := cErrorText + ' kein Resultat';
        break;
       end;
+
 
 //      if (RowCount>1) then
 //      begin
