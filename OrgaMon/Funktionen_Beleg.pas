@@ -11611,8 +11611,10 @@ end;
 
 function e_r_AuftragNummer(BAUSTELLE_R: integer): integer;
 begin
-  result := e_r_sql('select max(NUMMER) from AUFTRAG where ' + ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND ' +
-    ' (STATUS<>6)');
+  result := e_r_sql(
+   { } 'select max(NUMMER) from AUFTRAG where ' +
+   { } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND ' +
+   { } ' (STATUS<>6)');
 end;
 
 function e_r_AuftragPlausi(AUFTRAG_R: integer): string;

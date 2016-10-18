@@ -365,7 +365,7 @@ object FormAuftrag: TFormAuftrag
       Top = 27
       Width = 674
       Height = 135
-      ActivePage = TabSheet6
+      ActivePage = TabSheet8
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'
@@ -808,7 +808,7 @@ object FormAuftrag: TFormAuftrag
         object Label9: TLabel
           Left = 147
           Top = 1
-          Width = 184
+          Width = 183
           Height = 13
           Caption = 'Wo ist der Z'#228'hler (Liegenschaft)'
         end
@@ -1539,7 +1539,7 @@ object FormAuftrag: TFormAuftrag
         object Label49: TLabel
           Left = 20
           Top = 61
-          Width = 23
+          Width = 22
           Height = 13
           Caption = 'TAN'
         end
@@ -1620,7 +1620,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text13: TIB_Text
           Left = 426
           Top = 54
-          Width = 59
+          Width = 58
           Height = 13
           AutoSize = True
           DataField = 'STRASSE'
@@ -2020,7 +2020,7 @@ object FormAuftrag: TFormAuftrag
         object Label34: TLabel
           Left = 4
           Top = 81
-          Width = 71
+          Width = 70
           Height = 13
           Caption = 'Verbrauch/a'
         end
@@ -2121,7 +2121,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text2: TIB_Text
           Left = 168
           Top = 0
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'WORDEXPORT'
@@ -2130,7 +2130,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text3: TIB_Text
           Left = 168
           Top = 16
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'WORDANZ'
@@ -2139,7 +2139,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text4: TIB_Text
           Left = 168
           Top = 33
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'MONTEUREXPORT'
@@ -2169,7 +2169,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text5: TIB_Text
           Left = 168
           Top = 63
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'RID'
@@ -2178,7 +2178,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text6: TIB_Text
           Left = 168
           Top = 92
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'MASTER_R'
@@ -2271,7 +2271,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text1: TIB_Text
           Left = 168
           Top = 78
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'RID_AT_IMPORT'
@@ -2280,7 +2280,7 @@ object FormAuftrag: TFormAuftrag
         object IB_Text7: TIB_Text
           Left = 477
           Top = 49
-          Width = 52
+          Width = 51
           Height = 13
           AutoSize = True
           DataField = 'GEAENDERT'
@@ -2318,7 +2318,7 @@ object FormAuftrag: TFormAuftrag
         object Label43: TLabel
           Left = 7
           Top = 48
-          Width = 107
+          Width = 106
           Height = 13
           Caption = 'Auftraggeber TAN:'
         end
