@@ -2,7 +2,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   Left = 329
   Top = 32
   Caption = 'Lokalisierung via HTTP'
-  ClientHeight = 562
+  ClientHeight = 588
   ClientWidth = 847
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -13,21 +13,26 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
+  DesignSize = (
+    847
+    588)
   PixelsPerInch = 96
   TextHeight = 14
   object Label1: TLabel
-    Left = 42
-    Top = 161
+    Left = 10
+    Top = 569
     Width = 35
     Height = 14
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akLeft, akBottom]
     Caption = 'X;Y :'
+    ExplicitTop = 615
   end
   object Label2: TLabel
-    Left = 35
+    Left = 31
     Top = 38
     Width = 42
     Height = 14
@@ -39,8 +44,8 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Caption = 'Stra'#223'e'
   end
   object Label7: TLabel
-    Left = 28
-    Top = 63
+    Left = 24
+    Top = 64
     Width = 49
     Height = 14
     Margins.Left = 4
@@ -51,7 +56,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Caption = 'PLZ Ort'
   end
   object Label3: TLabel
-    Left = 21
+    Left = 17
     Top = 118
     Width = 56
     Height = 14
@@ -59,11 +64,12 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Caption = 'Ortsteil'
   end
   object Image2: TImage
-    Left = 790
+    Left = 789
     Top = 14
     Width = 54
     Height = 22
     Cursor = crHandPoint
+    Anchors = [akTop, akRight]
     AutoSize = True
     Picture.Data = {
       07544269746D61704E0E0000424D4E0E00000000000036000000280000003600
@@ -195,64 +201,77 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Alignment = taRightJustify
     Caption = 'Anbieter'
   end
+  object Label5: TLabel
+    Left = 59
+    Top = 145
+    Width = 14
+    Height = 14
+    Caption = 'q='
+  end
   object Memo1: TMemo
-    Left = 4
+    Left = 8
     Top = 185
     Width = 840
-    Height = 372
+    Height = 360
+    Anchors = [akLeft, akTop, akRight, akBottom]
     ScrollBars = ssVertical
     TabOrder = 0
   end
   object StaticText1: TStaticText
-    Left = 80
-    Top = 160
+    Left = 48
+    Top = 568
     Width = 137
     Height = 18
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akLeft, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '0;0'
     TabOrder = 1
   end
   object StaticText2: TStaticText
-    Left = 224
-    Top = 160
+    Left = 192
+    Top = 568
     Width = 169
     Height = 18
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akLeft, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '0 ms'
     TabOrder = 2
   end
   object Button4: TButton
-    Left = 431
-    Top = 110
-    Width = 145
-    Height = 68
+    Left = 639
+    Top = 550
+    Width = 204
+    Height = 35
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akRight, akBottom]
     Caption = 'Position ermitteln'
+    Default = True
     TabOrder = 3
     OnClick = Button4Click
   end
   object Button1: TButton
-    Left = 640
+    Left = 639
     Top = 153
-    Width = 106
+    Width = 204
     Height = 25
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akTop, akRight]
     Caption = 'Abstandstest'
     TabOrder = 4
     OnClick = Button1Click
@@ -282,7 +301,7 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Text = 'Stettfelder Str. 44'
   end
   object Button3: TButton
-    Left = 640
+    Left = 639
     Top = 87
     Width = 204
     Height = 25
@@ -290,12 +309,13 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akTop, akRight]
     Caption = 'Geodaten pflegen'
     TabOrder = 7
     OnClick = Button3Click
   end
   object Button5: TButton
-    Left = 640
+    Left = 639
     Top = 120
     Width = 204
     Height = 25
@@ -303,7 +323,14 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
+    Anchors = [akTop, akRight]
     Caption = 'setze PLZ diverse Strassen zur'#252'ck'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -9
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 8
     OnClick = Button5Click
   end
@@ -339,11 +366,18 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Text = 'Ubstadt'
   end
   object Button2: TButton
-    Left = 640
+    Left = 639
     Top = 58
-    Width = 203
+    Width = 204
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = 'Karten-Cache auf 1 GB k'#252'rzen'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -10
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 12
     OnClick = Button2Click
   end
@@ -366,5 +400,15 @@ object FormGeoLokalisierung: TFormGeoLokalisierung
     Height = 17
     Caption = 'die PLZ bei der Anfrage NICHT mit '#252'bermitteln'
     TabOrder = 14
+  end
+  object Edit3: TEdit
+    Left = 80
+    Top = 142
+    Width = 553
+    Height = 22
+    Hint = 'Benutzdefinierte Abfrage, freier Text'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 15
   end
 end

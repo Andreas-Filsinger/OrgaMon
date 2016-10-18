@@ -1369,6 +1369,7 @@ begin
   begin
 
     sql.add('insert into ' + TableName + ' (RID) values (:RID)');
+
     for n := 0 to pred(workL.count) do
     begin
       ParamByName('RID').AsInteger := workL[n];

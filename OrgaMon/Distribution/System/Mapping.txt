@@ -1,0 +1,17 @@
+UTF8=JA
+QUOTE='
+
+searchresults.place.place_id;1
+searchresults.place.osm_type;1
+searchresults.place.osm_id;1
+searchresults.place.place_rank;1
+searchresults.place.boundingbox;1
+searchresults.place.lat;1
+searchresults.place.lon;1
+searchresults.place.display_name;1
+searchresults.place.class;1
+searchresults.place.type;1
+searchresults.place.importance;1
+
+
+WRITE_AT=searchresults.place

@@ -101,6 +101,8 @@ type
     ComboBox2: TComboBox;
     Label4: TLabel;
     CheckBox3: TCheckBox;
+    Edit3: TEdit;
+    Label5: TLabel;
     procedure Button4Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -160,6 +162,7 @@ implementation
 uses
   anfix32, globals, wanfix32,
   OpenStreetMap, OrientationConvert, WordIndex,
+  IdURI, IdGlobal,
 
   // Indy
   IdBaseComponent, IdComponent, IdTCPConnection,
@@ -299,17 +302,20 @@ var
   function pFormat(s: string): string;
   begin
     Result := s;
-    ersetze('ü', 'ue', Result);
-    ersetze('ä', 'ae', Result);
-    ersetze('ö', 'oe', Result);
-    ersetze('Ü', 'Ue', Result);
-    ersetze('Ä', 'Ae', Result);
-    ersetze('Ö', 'Oe', Result);
-    ersetze('ß', 'ss', Result);
+    if p_PTV then
+    begin
+      ersetze('ü', 'ue', Result);
+      ersetze('ä', 'ae', Result);
+      ersetze('ö', 'oe', Result);
+      ersetze('Ü', 'Ue', Result);
+      ersetze('Ä', 'Ae', Result);
+      ersetze('Ö', 'Oe', Result);
+      ersetze('ß', 'ss', Result);
+    end;
     ersetze(#160, ' ', Result);
     ersetze('!', '', Result);
     ersetze('?', '', Result);
-    Result := AnsiToRFC1738(Result);
+    Result := TIdURI.ParamsEncode(result, IndyTextEncoding(encUTF8));
   end;
 
   function parseResult_PTV(s: TStringList): TStringList;
@@ -485,7 +491,10 @@ begin
     // call PHP
     if Diagnose_Ergebnis then
       if not(visible) then
+      begin
         show;
+        Application.ProcessMessages;
+      end;
 
     if p_PTV then
     begin
@@ -534,50 +543,54 @@ begin
       delay(1000);
 
       httpRequest := cOpenStreetMap_GeoURL + 'email=andreas.filsinger@orgamon.org&format=xml&country=de';
-
-      if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
+      if (edit3.Text='') then
       begin
+        if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
+        begin
 
-        if not(IgnorePLZ) then
-          httpRequest := httpRequest + '&postalcode=' + PLZ;
+          if not(IgnorePLZ) then
+            httpRequest := httpRequest + '&postalcode=' + PLZ;
 
 
-        if not(StrasseRelevant) then
+          if not(StrasseRelevant) then
+            if (Ortsteil <> '') then
+              OrtsteilRelevant := true;
+
+          if OrtsteilRelevant then
+            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil+ ', ' + Ort)
+           else
+            httpRequest := httpRequest + '&city=' + pFormat(Ort);
+
+        end
+        else
+        begin
+
           if (Ortsteil <> '') then
             OrtsteilRelevant := true;
 
-        if OrtsteilRelevant then
-          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil+ ', ' + Ort)
-         else
-          httpRequest := httpRequest + '&city=' + pFormat(Ort);
+          if (Ort <> '') then
+           if OrtsteilRelevant then
+            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil + ', ' + Ort)
+           else
+            httpRequest := httpRequest + '&city=' + pFormat(Ort);
 
-      end
-      else
+          if (Ort = '') then
+           if OrtsteilRelevant then
+            httpRequest := httpRequest + '&city=' + pFormat(Ortsteil);
+
+        end;
+
+        if StrasseRelevant then
+        begin
+          if (StrasseHausnummer <> '') then
+            httpRequest := httpRequest + '&street=' + pFormat(StrasseHausnummer+' '+StrassenName)
+           else
+            httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
+        end;
+      end else
       begin
-
-        if (Ortsteil <> '') then
-          OrtsteilRelevant := true;
-
-        if (Ort <> '') then
-         if OrtsteilRelevant then
-          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil + ', ' + Ort)
-         else
-          httpRequest := httpRequest + '&city=' + pFormat(Ort);
-
-        if (Ort = '') then
-         if OrtsteilRelevant then
-          httpRequest := httpRequest + '&city=' + pFormat(Ortsteil);
-
+        httpRequest := httpRequest +'&q=' + PFormat(edit3.Text);
       end;
-
-      if StrasseRelevant then
-      begin
-        if (StrasseHausnummer <> '') then
-          httpRequest := httpRequest + '&street=' + pFormat(StrasseHausnummer+' '+StrassenName)
-         else
-          httpRequest := httpRequest + '&street=' + pFormat(StrassenName);
-      end;
-
     end;
 
 

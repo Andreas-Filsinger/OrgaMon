@@ -1166,9 +1166,11 @@ begin
 
       BaustellenABNUMMER[IncIndex] := BaustellenABNUMMER[IncIndex] + 1;
 
-      e_x_sql('update AUFTRAG set NUMMER=' +
-        inttostr(BaustellenABNUMMER[IncIndex]) + ' where ' + ' RID=' +
-        inttostr(updateList[n]));
+      e_x_sql(
+       { } 'update AUFTRAG set NUMMER=' + inttostr(BaustellenABNUMMER[IncIndex]) + ' ' +
+       { } 'where' +
+       { } ' RID=' + inttostr(updateList[n]));
+
     end;
     e_x_commit;
     updateList.free;
