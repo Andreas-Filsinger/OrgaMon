@@ -212,8 +212,6 @@ var
 
   ParamF: TMemoryStream;
   httpC: TIdHTTP;
-  rList: TStringList;
-  rLine: string;
   //
   Diversitaet: boolean;
   StrasseID: int64;
@@ -224,9 +222,12 @@ var
   StrasseRelevant: boolean;
   OrtsteilRelevant: boolean;
 
+  // PTV
+  rList: TStringList;
+  rLine: string;
+
   // OSM
   sRESULT : TsTable;
-  OSMid : string;
   r : integer;
 
   procedure CacheCheck(PLZ: integer);
@@ -360,18 +361,17 @@ var
     end;
   end;
 
-  function parseResult_OSM(s: TStringList): TStringList;
+  procedure parseResult_OSM(s: TStringList);
   var
     AutomataState, n: integer;
     Bericht: TStringList;
   begin
-    result := nil;
     try
-    locateResponse.saveToFile(iKartenPfad+'locate.xml');
-    Result := TStringList.create;
-    Bericht:= TStringList.create;
-    if doConversion(Content_Mode_xml2csv,iKartenPfad+'locate.xml',Bericht) then
-     Result.loadFromFile(iKartenPfad+'locate.xml.csv');
+      locateResponse.saveToFile(AnwenderPath+'locate.xml');
+      Bericht:= TStringList.create;
+      if not(doConversion(Content_Mode_xml2csv,AnwenderPath+'locate.xml',Bericht)) then
+        r_error := cErrorText + ' Oc misslungen!';
+      Bericht.Free;
     except
       on E: exception do
       begin
@@ -550,7 +550,7 @@ begin
       // Usage Policy
       delay(1000);
 
-      httpRequest := cOpenStreetMap_GeoURL + 'email=andreas.filsinger@orgamon.org&format=xml&country=de';
+      httpRequest := cOpenStreetMap_GeoURL + 'email=andreas.filsinger@orgamon.org&format=xml&addressdetails=1&country=de';
       if (edit3.Text='') then
       begin
         if (PLZ <> '') and (PLZ <> cImpossiblePLZ) then
@@ -650,7 +650,7 @@ begin
         rList := parseResult_PTV(locateResponse);
 
       if p_OSM then
-        rList := parseResult_OSM(locateResponse);
+        parseResult_OSM(locateResponse);
 
     except
 
@@ -665,6 +665,9 @@ begin
     httpC.free;
     locateResponse.free;
 
+
+    if p_ptv then
+    begin
     if (rList=nil) then
      break;
 
@@ -674,8 +677,6 @@ begin
       Memo1.Lines.add('');
     end;
 
-    if p_ptv then
-    begin
       if (rList.count = 1) then
       begin
         rLine := rList[0];
@@ -744,8 +745,9 @@ begin
      with sRESULT do
      begin
 
-      insertfromfile(iKartenPfad+'locate.xml.csv');
+      insertfromfile(AnwenderPath+'locate.xml.csv');
 
+     if (RowCount>1) then
       for r := RowCount downto 1 do
        if readcell(r,'class')='shop' then
         Del(r);
@@ -757,94 +759,23 @@ begin
       end;
 
 
-//      if (RowCount>1) then
-//      begin
-//        r_error := cErrorText + ' mehrere Treffer';
-//        break;
-//      end;
-
       // pst: nimm einfach das erste!
       r := 1;
 
-      { X           0 } p.x := strtodoubledef(readcell(r,'lon'),0);
-      { Y           1 } p.y := strtodoubledef(readcell(r,'lat'),0);
-      OSMid := readcell(r, 'display_name');
-      anfix32.ersetze(', ','|',OSMid);
+      p.x := strtodoubledef(readcell(r,'lon'),0);
+      p.y := strtodoubledef(readcell(r,'lat'),0);
+      r_strasse := readcell(r,'road');
+      r_ort := readcell(r,'city');
+      if (r_ort='') then
+        r_ort := readcell(r,'town');
+      if (r_ort='') then
+        r_ort := readcell(r,'village');
+      if (r_ort='') then
+        r_ort := readcell(r,'state');
+      r_ortsteil := readcell(r,'suburb');
+      r_plz := readcell(r,'postcode');
 
-      r := CharCount('|',OSMid);
-      if (r=7) then
-       if StrFilter(nextp(OSMid,'|',0), cZiffern)='' then
-
-            if (StrassenNameIdentisch(nextp(OSMid,'|',0), StrassenName)) then
-begin
-   inc(r);
-   OSMID := '0|'+OSMid;
-end;
-
-
-      // 0              1                2                3                           4                  5                           6       7       8
-      // 9r            , Stömmerstraße  , Schubert&Salzer, Nordost                   , Ingolstadt       , Oberbayern                , Bayern, 85055, Deutschland
-      // 5e            , Aussiger Straße, Königstädten   , Rüsselsheim am Main       , Kreis Groß-Gerau , Regierungsbezirk Darmstadt, Hessen, 65428, Deutschland
-      // 128           , Drosselweg, Quellental, Pinneberg, Kreis Pinneberg, Schleswig-Holstein, 25421, Deutschland
-      case r of
-      5: begin
-     //   Eichenplatz, Rellingen, Kreis Pinneberg, Schleswig-Holstein, 25462, Deutschland
-
-       r_strasse := nextp(OSMid,'|',0);
-       r_ortsteil := ''; // is Dorf
-       r_ort := nextp(OSMid,'|',1);
-       r_plz := nextp(OSMid,'|',4);
-
-      end;
-      6 : begin
-
-      // Atzelhofstraße, Waldhof        , Mannheim       , Regierungsbezirk Karlsruhe, Baden-Württemberg, 68305, Deutschland
-      // 125, Hauptstraße, Rellingen, Kreis Pinneberg, Schleswig-Holstein, 25462, Deutschland
-       if (StrFilter(nextp(OSMid,'|',0),cZiffern)='') then
-       begin
-
-       r_strasse := nextp(OSMid,'|',0);
-       r_ortsteil := nextp(OSMid,'|',1);
-       r_ort := nextp(OSMid,'|',2);
-       r_plz := nextp(OSMid,'|',5);
-            end else
-            begin
-       r_strasse := nextp(OSMid,'|',1);
-       r_ortsteil := ''; // is Dorf
-       r_ort := nextp(OSMid,'|',2);
-       r_plz := nextp(OSMid,'|',5);
-
-            end;
-
-      end;
-      7 : begin
-       r_strasse := nextp(OSMid,'|',1);
-       r_ortsteil := nextp(OSMid,'|',2);
-       r_ort := nextp(OSMid,'|',3);
-       r_plz := nextp(OSMid,'|',6);
-
-      end;
-      8:begin
-      { Strasse     2 } r_strasse := nextp(OSMid,'|',1);
-      { PLZ         4 } r_plz := nextp(OSMid,'|',7);
-      { Ort         5 } r_ort := nextp(OSMid,'|',4);
-
-      if pos('Kreis ',r_ort)=1 then
-      begin
-       r_ort := nextp(OSMid,'|',3);
-      { Ortsteil    6 } r_ortsteil := nextp(OSMid,'|',2);
-           end else
-           begin
-      { Ortsteil    6 } r_ortsteil := nextp(OSMid,'|',3);
-           end;
-      end;
-
-      else
-       r_error := cErrorText + ' nicht implementiertes Antwort-Schema';
-       break;
-      end;
-
-      if length(r_plz)<>5 then
+      if (length(r_plz)<>5) then
       begin
         r_error := cErrorText + ' PLZ im Ergebnis hat keine 5 Stellen';
         break;
@@ -853,29 +784,6 @@ end;
       EntryFound := true;
 
      end;
-
-     (*
-
-     Quelle;
-     place_id;
-     osm_type;
-     osm_id;
-     place_rank;
-     boundingbox;
-     display_name;
-     class;
-     type;
-     importance;
-     // Zaehlwerk;
-     // edis_key;
-     // unit
-     *)
-
-     if Diagnose_Ergebnis then
-     begin
-      Memo1.Lines.add('OSMID: ' + OSMid);
-     end;
-
     end;
 
     //
@@ -943,7 +851,7 @@ end;
         { Eintrag } 'CURRENT_TIMESTAMP)');
       POSTLEITZAHLEN_R := n;
 
-      if not(OrtIdentisch(Ort, r_ort)) then
+      if (r_ort<>'')  and not(OrtIdentisch(Ort, r_ort)) then
       begin
 
         // Alias Eintrag
@@ -1194,6 +1102,8 @@ begin
 end;
 
 procedure TFormGeoLokalisierung.Init;
+var
+ sMapping: TStringList;
 begin
   if not(Initialized) then
   begin
@@ -1221,6 +1131,38 @@ begin
         ItemIndex := 0;
 
       until yet;
+
+      sMapping := TStringList.Create;
+      with sMapping do
+      begin
+        add('UTF8=JA');
+        add('MIXED=JA');
+        add('');
+        add('searchresults.place.place_id;1');
+        add('searchresults.place.osm_type;1');
+        add('searchresults.place.osm_id;1');
+        add('searchresults.place.place_rank;1');
+        add('searchresults.place.boundingbox;1');
+        add('searchresults.place.lat;1');
+        add('searchresults.place.lon;1');
+        add('searchresults.place.class;1');
+        add('searchresults.place.type;1');
+        add('searchresults.place.importance;1');
+        add('searchresults.place.road;1');
+        add('searchresults.place.house_number;1');
+        add('searchresults.place.suburb;1');
+        add('searchresults.place.postcode;1');
+        add('searchresults.place.state;1');
+        add('searchresults.place.city;1');
+        add('searchresults.place.town;1');
+        add('searchresults.place.village;1');
+        add('searchresults.place.country;1');
+        add('searchresults.place.country_code;1');
+        add('');
+        add('WRITE_AT=searchresults.place');
+      end;
+      sMapping.savetofile(AnwenderPath+cXML_Mapping);
+      sMapping.free;
 
     Initialized := true;
   end;

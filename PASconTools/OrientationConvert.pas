@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.252; // ../rev/Oc.rev.txt
+  Version: single = 1.253; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -60,6 +60,7 @@ const
 
   // XML
   cXML_Extension = '.xml';
+  cXML_Mapping = 'Mapping.txt';
 
   // Vorlage.xls
   c_XLS_VorlageFName = 'Vorlage.xls';
@@ -158,7 +159,7 @@ var
   HeaderLine: string;
   MappingsFName: string;
 begin
-  MappingsFName := ExtractFilePath(InFName) + 'Mapping.txt';
+  MappingsFName := ExtractFilePath(InFName) + cXML_Mapping;
 
   Mapping := TStringList.create;
   sl := TStringList.create;
@@ -262,6 +263,7 @@ var
   CSVWriteSuppress: boolean;
   Stat_doubleORDERid: integer;
   LineNo: integer;
+  Quote: string;
 
   // ARGOS
   sArgosTaetigkeiten: TStringList;
@@ -276,6 +278,7 @@ var
 
   // Parameter
   pArgosMode: boolean;
+  pMixedMode: boolean;
   pUTF8: boolean;
   pWriteAt: TStringList;
   pAddZw: TStringList;
@@ -285,7 +288,6 @@ var
   pTakeFirstValue: boolean;
   pReplaceNameSpace: string;
   pZW_SAME_NAME_OK: boolean;
-  pQuote: string;
 
   procedure push(Name: string);
   begin
@@ -589,6 +591,7 @@ var
     CloseTag := false;
     CSVWriteSuppress := false;
     Stat_doubleORDERid := 0;
+    Quote := '''';
   end;
 
   function FormatValue(s: string): string;
@@ -623,7 +626,7 @@ var
     end;
   end;
 
-  procedure parse(Line: string); // Rwe - Parser
+  procedure parse(Line: string);
   var
     k, l, m: integer;
     tmp: string;
@@ -644,7 +647,7 @@ var
                 begin
                   if (k > 1) then
                   begin
-                    if pArgosMode then
+                    if pArgosMode or pMixedMode then
                       ActParserValue := ActParserValue + copy(Line, 1, pred(k));
                   end;
                   delete(Line, 1, k);
@@ -675,12 +678,13 @@ var
                 if (pos('?', Line) = 1) then
                 begin
                   AutoMataState := 3;
+                  ActParserValue := '';
                   continue;
                 end;
 
                 if (pos('/', Line) = 1) then
                 begin
-                  if pArgosMode then
+                  if pArgosMode or pMixedMode then
                   begin
                     setMessage(fullName, FormatValue(ActParserValue));
                     ActParserValue := '';
@@ -799,16 +803,16 @@ var
               begin // Sammeln eines id="embedded" !
 
                   if (pos('"',Line)=1) then
-                   pQuote := '"';
+                   Quote := '"';
                   if (pos('''',Line)=1) then
-                   pQuote := '''';
+                   Quote := '''';
 
-                  if (pos(pQuote, Line) = 1) then
+                  if (pos(Quote, Line) = 1) then
                   begin
 
                     // Wert herausschneiden, Linie verkürzen!
                     ActParserValue := copy(Line, 2, MaxInt);
-                    k := pos(pQuote, ActParserValue);
+                    k := pos(Quote, ActParserValue);
                     if (k = 0) then
                     begin
                       AutoMataState := 7;
@@ -828,7 +832,7 @@ var
             7:
               begin // Es kommen noch Zeilen hinzu!
 
-                k := pos(pQuote, Line);
+                k := pos(Quote, Line);
                 if (k > 0) then
                 begin
                   // Wert herausschneiden, Linie verkürzen!
@@ -879,9 +883,10 @@ var
     end;
 
   begin
-    sMapping.loadFromFile(ExtractFilePath(InFName) + 'Mapping.txt');
+    sMapping.loadFromFile(ExtractFilePath(InFName) + cXML_Mapping);
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
+    pMixedMode := sMapping.Values['MIXED'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
     pWriteAt := Split(sMapping.values['WRITE_AT'], '|', '', true);
     pAddZw := Split(sMapping.values['ADD_ZW'], '|', '', true);
@@ -891,9 +896,6 @@ var
     pTakeFirstValue := sMapping.values['COALESCE'] = 'JA';
     pReplaceNameSpace := sMapping.values['REPLACE'];
     pZW_SAME_NAME_OK := sMapping.values['ZW_SAME_NAME_OK'] = 'JA';
-    pQuote := sMapping.values['QUOTE'];
-    if (pQuote='') then
-     pQuote := '"';
 
     // Leerzeilen aus der Mapping definition löschen!
     for n := pred(sMapping.count) downto 0 do

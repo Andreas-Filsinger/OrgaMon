@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.238 (21.10.16) Andreas Filsinger
+
+ Neu: Geo: OSM: diverse Verbesserungen bei der Interprätation des  Ergebnisses
+ Neu: Geo: OSM: Autogen der Mapping
+ Neu: Geo: OSM: Zwischendateien entstehen nun im Anwenderverzeichnis
+ Neu: wegen "Oc Rev. 1.253" neu compiliert!
+
+Rev 8.237 (21.10.16) Andreas Filsinger
+
+ Neu: Geo: diverse Verbesserungen bei der Interprätation des Display Names
+
 Rev 8.236 (18.10.16) Andreas Filsinger
 
  Bug: Geo: OSM: class=shop wurde berücksichtigt
