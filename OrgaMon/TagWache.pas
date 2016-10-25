@@ -45,10 +45,12 @@ type
     Panel1: TPanel;
     Label2: TLabel;
     Label3: TLabel;
+    Button2: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure CheckListBox1DblClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private-Deklarationen }
     FirstTimerEventChecked: boolean;
@@ -129,13 +131,7 @@ begin
 
           case n of
             0:
-              begin
-                // Die neuesten Fotos laden
-                e_w_GrabFotos;
-                // Für den Foto Server, aber auch lokal damit die
-                // Bildumbenennung mit aktuellem Wechseldatum klappt
-                e_r_Sync_AuftraegeAlle;
-              end;
+              e_w_GrabFotos;
             1:
               FormAuftragMobil.ReadMobil;
             2:
@@ -173,10 +169,14 @@ begin
             4:
               FormAuftragMobil.WriteMobil;
             5:
+
+                e_r_Sync_AuftraegeAlle;
+
+            6:
               begin
                 FormOLAPArbeitsplatz.TagWache;
               end;
-            6:
+            7:
               begin
                 // Context-OLAPs
                 GlobalVars := TStringList.Create;
@@ -375,6 +375,14 @@ end;
 function TFormTagWache.TagwacheAktiv: boolean;
 begin
   result := (Tagwache_TAN >= cRID_FirstValid);
+end;
+
+procedure TFormTagWache.Button2Click(Sender: TObject);
+var
+  n: integer;
+begin
+  for n := 0 to pred(CheckListBox1.items.Count) do
+    CheckListBox1.checked[n] := true;
 end;
 
 procedure TFormTagWache.CheckListBox1DblClick(Sender: TObject);

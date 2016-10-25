@@ -1161,7 +1161,7 @@ begin
         add('');
         add('WRITE_AT=searchresults.place');
       end;
-      sMapping.savetofile(AnwenderPath+cXML_Mapping);
+      sMapping.savetofile(AnwenderPath+c_Mapping);
       sMapping.free;
 
     Initialized := true;

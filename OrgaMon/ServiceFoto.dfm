@@ -3,7 +3,7 @@
   Top = 0
   Caption = 'Foto.Service'
   ClientHeight = 621
-  ClientWidth = 734
+  ClientWidth = 815
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -72,14 +72,16 @@
   object PageControl1: TPageControl
     Left = 0
     Top = 91
-    Width = 734
+    Width = 815
     Height = 530
     ActivePage = TabSheet4
     Align = alBottom
     TabOrder = 0
+    ExplicitWidth = 734
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
+      ExplicitWidth = 726
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -169,6 +171,7 @@
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
+      ExplicitWidth = 726
       object Button24: TButton
         Left = 48
         Top = 56
@@ -191,6 +194,7 @@
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
+      ExplicitWidth = 726
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -259,8 +263,9 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
+      ExplicitWidth = 726
       DesignSize = (
-        726
+        807
         502)
       object SpeedButton1: TSpeedButton
         Left = 3
@@ -299,10 +304,11 @@
       object Image1: TImage
         Left = 312
         Top = 80
-        Width = 411
+        Width = 492
         Height = 405
         Anchors = [akLeft, akTop, akRight, akBottom]
         Stretch = True
+        ExplicitWidth = 411
         ExplicitHeight = 384
       end
       object Label1: TLabel
@@ -373,6 +379,7 @@
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
+      ExplicitWidth = 726
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -488,8 +495,9 @@
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
+      ExplicitWidth = 726
       DesignSize = (
-        726
+        807
         502)
       object SpeedButton3: TSpeedButton
         Left = 24
@@ -535,11 +543,12 @@
       object ListBox6: TListBox
         Left = 24
         Top = 32
-        Width = 689
+        Width = 770
         Height = 414
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
+        ExplicitWidth = 689
       end
       object Button9: TButton
         Left = 24
@@ -552,7 +561,7 @@
         OnClick = Button9Click
       end
       object CheckBox3: TCheckBox
-        Left = 433
+        Left = 514
         Top = 452
         Width = 280
         Height = 17
@@ -561,6 +570,7 @@
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
         TabOrder = 2
         OnClick = CheckBox3Click
+        ExplicitLeft = 433
       end
       object CheckBox2: TCheckBox
         Left = 24
@@ -574,6 +584,7 @@
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
+      ExplicitWidth = 726
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -725,6 +736,7 @@
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
+      ExplicitWidth = 726
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -747,6 +759,7 @@
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
+      ExplicitWidth = 726
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -816,6 +829,7 @@
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
+      ExplicitWidth = 726
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -907,6 +921,7 @@
     object Rückstand: TTabSheet
       Caption = 'R'#252'ckstand'
       ImageIndex = 10
+      ExplicitWidth = 726
       object Button10: TButton
         Left = 96
         Top = 104
@@ -915,6 +930,107 @@
         Caption = 'R'#252'ckstand-Statistik'
         TabOrder = 0
         OnClick = Button10Click
+      end
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'Wiederholen'
+      ImageIndex = 11
+      ExplicitWidth = 726
+      object Label20: TLabel
+        Left = 13
+        Top = 40
+        Width = 145
+        Height = 13
+        Caption = 'Liste mit "Referenzidenditaet" '
+      end
+      object Label21: TLabel
+        Left = 544
+        Top = 40
+        Width = 37
+        Height = 13
+        Hint = 'Anzahl der RIDs'
+        Caption = 'Label21'
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object Label22: TLabel
+        Left = 544
+        Top = 56
+        Width = 37
+        Height = 13
+        Hint = 'Anzahl RIDs, DISTINCT'
+        Caption = 'Label22'
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object Label23: TLabel
+        Left = 544
+        Top = 75
+        Width = 37
+        Height = 13
+        Hint = #220'brige RIDs'
+        Caption = 'Label23'
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object Sicherungsverzeichnisse: TLabel
+        Left = 16
+        Top = 200
+        Width = 116
+        Height = 13
+        Caption = 'Sicherungsverzeichnisse'
+      end
+      object Edit14: TEdit
+        Left = 164
+        Top = 37
+        Width = 258
+        Height = 21
+        TabOrder = 0
+        Text = 'Z:\Kundendaten\sewa\Fotos\Fotos.xls.csv'
+      end
+      object Button23: TButton
+        Left = 440
+        Top = 35
+        Width = 75
+        Height = 25
+        Caption = 'laden'
+        TabOrder = 1
+        OnClick = Button23Click
+      end
+      object Button32: TButton
+        Left = 428
+        Top = 217
+        Width = 75
+        Height = 25
+        Caption = 'suchen'
+        TabOrder = 2
+        OnClick = Button32Click
+      end
+      object ListBox8: TListBox
+        Left = 13
+        Top = 82
+        Width = 409
+        Height = 97
+        ItemHeight = 13
+        TabOrder = 3
+      end
+      object Memo2: TMemo
+        Left = 16
+        Top = 219
+        Width = 406
+        Height = 89
+        Lines.Strings = (
+          'Z:\Datensicherung\SEWA\JonDaServer\#147\Fotos\')
+        TabOrder = 4
+      end
+      object Button33: TButton
+        Left = 432
+        Top = 336
+        Width = 75
+        Height = 25
+        Caption = 'Wiederholen'
+        TabOrder = 5
+        OnClick = Button33Click
       end
     end
   end
