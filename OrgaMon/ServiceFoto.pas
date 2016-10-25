@@ -148,6 +148,18 @@ type
     Button1: TButton;
     CheckBox2: TCheckBox;
     Label19: TLabel;
+    TabSheet7: TTabSheet;
+    Edit14: TEdit;
+    Label20: TLabel;
+    Button23: TButton;
+    Label21: TLabel;
+    Button32: TButton;
+    ListBox8: TListBox;
+    Label22: TLabel;
+    Label23: TLabel;
+    Memo2: TMemo;
+    Sicherungsverzeichnisse: TLabel;
+    Button33: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -191,6 +203,9 @@ type
     procedure SpeedButton4Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button22Click(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
+    procedure Button32Click(Sender: TObject);
+    procedure Button33Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -405,6 +420,184 @@ begin
     with MyFotoExec do
       Pause(true, Pause);
   refreshPanel;
+end;
+
+
+const
+  _Wiederholen_BETRACHTUNGS_ZEITRAUM = 100; // [Tage]
+
+
+var
+ _Wiederholen_sFOTOS : TsTable = nil;
+ _Wiederholen_sFOUND: TsTable = nil;
+ _Wiederholen_Log: TStringList = nil;
+
+
+procedure TFormServiceFoto.Button23Click(Sender: TObject);
+var
+ n,r,i : integer;
+ LieferMoment_First: TDateTime;
+ sLieferMoment, sLieferMoment_First: String;
+ SrcFname, sRID : string;
+ col_RID: integer;
+ CheckList: TStringList;
+ OneFound: TStringList;
+begin
+
+ // Lade die Suchanfrage
+ if not(assigned(_Wiederholen_sFOTOS)) then
+ begin
+  _Wiederholen_sFOTOS := TsTable.Create;
+ end;
+
+ with _Wiederholen_sFOTOS do
+ begin
+   insertfromFile(edit14.Text);
+   col_RID := colof(cRID_Suchspalte);
+   label21.Caption := IntToStr(RowCount);
+         application.ProcessMessages;
+
+   CheckList:=  TStringList.create;
+  for r := 1 to RowCount do
+  begin
+    sRID := readCell (r,col_RID);
+    if CheckList.IndexOf( sRID)=-1 then
+               CheckList.add(sRID);
+  end;
+   label22.Caption := IntToStr(CheckList.count);
+    application.ProcessMessages;
+
+ end;
+
+
+
+
+ // Lade die Transaktionstabelle
+ if not(assigned(_Wiederholen_Log)) then
+  _Wiederholen_Log := TStringList.create;
+ _Wiederholen_Log.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+
+ // Suche RIDs und deren Ziel und Datum
+ LieferMoment_First := now - _Wiederholen_BETRACHTUNGS_ZEITRAUM;
+ sLieferMoment_First := dTimeStamp(LieferMoment_First);
+
+ _Wiederholen_sFOUND := TsTable.Create;
+ with _Wiederholen_sFOUND do
+ begin
+   addcol(cRID_Suchspalte);
+   addcol('DateiName');
+ end;
+
+ with _Wiederholen_Log do
+    for n := pred(Count) downto 0 do
+    begin
+
+      if (pos('cp ', strings[n]) = 1) then
+      begin
+       SrcFName := nextp(strings[n], ' ', 1);
+       sRID := ExtractSegmentBetween(SrcFname,'-','-');
+       if (length(sRid)>0) then
+       begin
+        r := _Wiederholen_sFOTOS.locate(col_RID,sRID);
+        if (r<>-1) then
+        begin
+         i := CheckList.IndexOf(sRID);
+         if (i<>-1) then
+          CheckList.Delete(i);
+ OneFound:= TStringList.create;
+ OneFound.Add(sRID);
+ OneFound.Add(SrcFname);
+                      _Wiederholen_sFOUND.addRow(OneFound);
+
+         ListBox8.Items.Add(SrcFName);
+         application.ProcessMessages;
+        end;
+       end;
+       continue;
+      end;
+
+      if (pos('timestamp ', strings[n]) = 1) then
+      begin
+        sLieferMoment := copy(strings[n], 11, MaxInt);
+        if (sLieferMoment < sLieferMoment_First) then
+        begin
+          ListBox8.Items.Add('-- Finish Line '+InttoStr(n));
+          break;
+        end;
+        continue;
+      end;
+
+    end;
+_Wiederholen_sFOUND.SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+  label23.Caption := IntToStr(CheckList.Count);
+end;
+
+procedure TFormServiceFoto.Button32Click(Sender: TObject);
+var
+ l, r, n: integer;
+ sDIR : TStringList;
+ SrcFname: string;
+begin
+ // Die Kandidaten in den Sicherungen suchen!
+ if not(assigned(_Wiederholen_sFOUND)) then
+   _Wiederholen_sFOUND := TsTable.Create;
+
+ with _Wiederholen_sFOUND do
+ begin
+
+  if RowCount<1 then
+   insertFromFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+  addCol('Pfad');
+
+  sDIR := TStringList.Create;
+  for l := 0 to pred(Memo2.Lines.Count) do
+  begin
+
+    if (pos('--',Memo2.Lines[l])=1) then
+     continue;
+    if (pos('#',Memo2.Lines[l])=0) then
+     continue;
+    dir(Memo2.Lines[l]+'*.jpg',sDIR,false);
+
+    for n := 0 to pred(sDIR.Count) do
+    begin
+      if (pos('-',sDIR[n])=0) then
+       continue;
+      SrcFName := copy(sDIR[n],7,MaxInt);
+      r := locate(1,SrcFName);
+      if (r<>-1) then
+        writeCell(r,'Pfad',Memo2.Lines[l]+sDIR[n]);
+    end;
+
+  end;
+  if changed then
+   SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+ end;
+end;
+
+procedure TFormServiceFoto.Button33Click(Sender: TObject);
+var
+ r: integer;
+ srcFname,dstFName: string;
+begin
+ if not(assigned(_Wiederholen_sFOUND)) then
+   _Wiederholen_sFOUND := TsTable.Create;
+ with _Wiederholen_sFOUND do
+ begin
+  if (RowCount<1) then
+   insertFromFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+  for r := 1 to RowCount do
+  begin
+   srcFname := readCell(r,'Pfad');
+   if (srcFname<>'') then
+   begin
+    dstFname := readCell(r,1);
+    FileCopy(
+     {} srcFname,
+     {} MyFotoExec.pFTPPath + dstFName );
+   end;
+  end;
+ end;
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);
@@ -647,6 +840,7 @@ begin
   Trn.Free;
 
 end;
+
 
 procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
@@ -1117,8 +1311,6 @@ var
   FoundStr: string;
   n, _ItemIndex: integer;
   GeraeteNo, RID: string;
-  KommandoFName: string;
-  WARTEND: TsTable;
   CopySuccess: boolean;
   FNameSource, FNameDest: string;
 begin

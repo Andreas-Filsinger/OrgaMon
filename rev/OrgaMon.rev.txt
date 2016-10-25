@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.239 (25.10.16) Andreas Filsinger
+
+ Neu: Tagwache: Fotos laden als eigener Punkt.
+
 Rev 8.238 (21.10.16) Andreas Filsinger
 
  Neu: Geo: OSM: diverse Verbesserungen bei der Interprätation des  Ergebnisses

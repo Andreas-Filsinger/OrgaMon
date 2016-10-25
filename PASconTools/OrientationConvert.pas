@@ -42,8 +42,8 @@ const
   Content_Mode_csv = 7;
   Content_Mode_txt = 8;
   Content_Mode_xml2csv = 9; // .xml + Mapping.txt -> .csv
-  Content_Mode_tab2csv = 10;
-  Content_Mode_xls2idoc = 11;
+  Content_Mode_tab2csv = 10; // .tab + Mapping.txt -> .csv
+  Content_Mode_xls2idoc = 11; // .xls + IDOC.Mappings.ini -> .idoc
   Content_Mode_xls2Argos = 12; // Argos XML
   Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> xml/html
   Content_Mode_enBW = 14;
@@ -58,16 +58,11 @@ const
   ErrorCount: integer = 0;
   conversionOutFName: string = '';
 
-  // XML
+  // Parameter Dateien
   cXML_Extension = '.xml';
-  cXML_Mapping = 'Mapping.txt';
-
-  // Vorlage.xls
+  c_Mapping = 'Mapping.txt';
   c_XLS_VorlageFName = 'Vorlage.xls';
-
-  // Vorlage.unmoeglich.xls usw.
   p_XLS_VorlageFName: string = '';
-
   c_ML_VorlageFName = 'Vorlage.ml';
   c_HTML_VorlageFName = 'Vorlage.html';
   cFixedFormatsFName = 'Fixed-Formats.ini';
@@ -159,7 +154,7 @@ var
   HeaderLine: string;
   MappingsFName: string;
 begin
-  MappingsFName := ExtractFilePath(InFName) + cXML_Mapping;
+  MappingsFName := ExtractFilePath(InFName) + c_Mapping;
 
   Mapping := TStringList.create;
   sl := TStringList.create;
@@ -883,7 +878,7 @@ var
     end;
 
   begin
-    sMapping.loadFromFile(ExtractFilePath(InFName) + cXML_Mapping);
+    sMapping.loadFromFile(ExtractFilePath(InFName) + c_Mapping);
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
     pMixedMode := sMapping.Values['MIXED'] = 'JA';

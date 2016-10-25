@@ -3,7 +3,7 @@ object FormTagWache: TFormTagWache
   Top = 412
   BorderStyle = bsDialog
   Caption = 'Tagwache'
-  ClientHeight = 284
+  ClientHeight = 295
   ClientWidth = 497
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -44,9 +44,9 @@ object FormTagWache: TFormTagWache
     ParentFont = False
   end
   object ProgressBar1: TProgressBar
-    Left = 9
+    Left = 4
     Top = 228
-    Width = 393
+    Width = 345
     Height = 17
     TabOrder = 0
   end
@@ -64,6 +64,7 @@ object FormTagWache: TFormTagWache
       'Auftrag Ergebnis'
       'Automatischer Import'
       'Mobil schreiben'
+      'Sync mit dem Fotoserver'
       'OLAP Tagesbericht erstellen'
       'Tagwache OLAPs ausf'#252'hren'
       'kurz warten')
@@ -71,10 +72,10 @@ object FormTagWache: TFormTagWache
     OnDblClick = CheckListBox1DblClick
   end
   object Button1: TButton
-    Left = 405
-    Top = 228
-    Width = 82
-    Height = 52
+    Left = 356
+    Top = 247
+    Width = 131
+    Height = 40
     Caption = 'Start'
     TabOrder = 2
     OnClick = Button1Click
@@ -87,6 +88,15 @@ object FormTagWache: TFormTagWache
     BevelOuter = bvNone
     Color = clGreen
     TabOrder = 3
+  end
+  object Button2: TButton
+    Left = 356
+    Top = 227
+    Width = 131
+    Height = 19
+    Caption = 'Einzeltest vorbereiten'
+    TabOrder = 4
+    OnClick = Button2Click
   end
   object Timer1: TTimer
     Interval = 1250

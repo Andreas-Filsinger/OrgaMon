@@ -311,7 +311,7 @@ begin
       sCSV.Clear;
       sCSV.insertFromFile(FName);
       for r := 1 to sCSV.RowCount do
-        FormAuftragArbeitsplatz.AddMarkierte(StrToIntDef(sCSV.readCell(r, 'ReferenzIdentitaet'), cRID_Null));
+        FormAuftragArbeitsplatz.AddMarkierte(StrToIntDef(sCSV.readCell(r, cRID_Suchspalte), cRID_Null));
     end;
   sCSV.free;
   sNachricht.free;
