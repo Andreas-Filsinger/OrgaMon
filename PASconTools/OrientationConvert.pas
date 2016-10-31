@@ -2655,7 +2655,7 @@ var
         // " " für Auffüllen mit Blanks rechts
         // "N" wie " " aber Nachkommastellen abschneiden
         FillChar: char;
-        LeftSide: boolean;
+        RechtsBuendig: boolean;
       begin
         if (pos('"', s) = 1) then
           s := copy(s, 2, length(s) - 2);
@@ -2675,13 +2675,15 @@ var
             begin
               if (StrFilter(AnsiupperCase(s), cBuchstaben + cZeichen) = '') then
               begin
+                // rein numerisch
                 FillChar := '0';
-                LeftSide := true;
+                RechtsBuendig := true;
               end
               else
               begin
+                // Buchstaben entdeckt
                 FillChar := ' ';
-                LeftSide := false;
+                RechtsBuendig := false;
               end;
               break;
             end;
@@ -2691,13 +2693,13 @@ var
               // Lösche Nachkommastellen
               s := nextp(s, ',', 0);
               FillChar := ' ';
-              LeftSide := false;
+              RechtsBuendig := false;
               break;
             end;
 
             // default
             FillChar := ' ';
-            LeftSide := false;
+            RechtsBuendig := false;
 
           until yet;
 
@@ -2706,7 +2708,7 @@ var
         // Format Informationen sind anzuwenden
         if (length(s) < SizeSoll) then
         begin
-          if LeftSide then
+          if RechtsBuendig then
             s := fill(FillChar, SizeSoll - length(s)) + s
           else
             s := s + fill(FillChar, SizeSoll - length(s));
@@ -4002,8 +4004,8 @@ begin
       pAuftrag.Objects[i] := Auftrag;
     end;
 
-    pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten'], ';', '', true);
-    pAuftragFlood := Split(FixedFloods.values['AuftragFlood'], ';', '', true);
+    pAuftragAnker := Split(FixedFloods.values['AuftragReferenzSpalten'], ';', '', false);
+    pAuftragFlood := Split(FixedFloods.values['AuftragFlood'], ';', '', false);
 
     if (RowCount >= 1) then
       for c := 1 to ColCountInRow(1) do

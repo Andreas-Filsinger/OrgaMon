@@ -854,6 +854,8 @@ var
   n, k, y: integer;
   Cmd: string;
   PDF: TStringList;
+  PDF_ResultInfoStr : string;
+  PDF_FromWhat: string;
 
 begin
   ErrorCount := 0;
@@ -1854,6 +1856,7 @@ begin
             for n := 0 to pred(Oc_Bericht.count) do
             begin
 
+              // Dateinamen des .html bestimmen
               if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
               begin
                 OutFName :=
@@ -1861,19 +1864,22 @@ begin
                 { } e_r_BaustellenPfad(Settings) + '\' +
                 { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
                 Files.add(OutFName);
+
+                // Noch ein PDF hinzu?
                 if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
                 begin
-                  PDF := html2pdf(OutFName);
-                  Cmd := PDF.Values['ERROR'];
-                  if (Cmd<>'') then
+                  PDF_FromWhat := OutFName;
+                  PDF := html2pdf(PDF_FromWhat);
+                  PDF_ResultInfoStr := PDF.Values['ERROR'];
+                  if (PDF_ResultInfoStr<>'') then
                   begin
                     inc(ErrorCount);
-                    Log(cERRORText + ' PDF-Konvertierung ' + Cmd + ' misslungen', BAUSTELLE_R);
+                    Log(cERRORText + ' HTML zu PDF Konvertierung: ' + PDF_ResultInfoStr, BAUSTELLE_R);
                   end else
                   begin
                     OutFname := PDF.Values['ConversionOutFName'];
-                    FileTouch(OutFName + '.pdf', FileDateTime(OutFName));
-                    Files.add(OutFName + '.pdf');
+                    FileTouch(OutFName, FileDateTime(PDF_FromWhat));
+                    Files.add(OutFName);
                   end;
                   PDF.Free;
                 end;

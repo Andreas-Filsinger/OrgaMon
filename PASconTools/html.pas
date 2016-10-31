@@ -484,9 +484,15 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
   begin
 
     // Ermittlung des Anlagen-Verzeichnis
-    AnlagenPath := SystemHeap.Values[cSet_AnlagePath];
-    if (AnlagenPath = '.\') then
-      AnlagenPath := ExtractFilePath(SystemHeap.Values[cSet_Quelle]);
+    if TestMode then
+    begin
+      AnlagenPath := anfix32.DebugLogPath;
+    end else
+    begin
+      AnlagenPath := SystemHeap.Values[cSet_AnlagePath];
+      if (AnlagenPath = '.\') then
+        AnlagenPath := ExtractFilePath(SystemHeap.Values[cSet_Quelle]);
+    end;
 
     // Anlage-Dateiname
     FName :=
