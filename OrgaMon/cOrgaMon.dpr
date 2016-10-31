@@ -78,7 +78,8 @@ uses
   CCR.Exif.TiffUtils in '..\ccr-exif\CCR.Exif.TiffUtils.pas',
   CCR.Exif.IPTC in '..\ccr-exif\CCR.Exif.IPTC.pas',
   Identitaet in 'Identitaet.pas',
-  TestExec in 'TestExec.pas';
+  TestExec in 'TestExec.pas',
+  systemd in '..\PASconTools\systemd.pas';
 
 begin
  setIdentitaetAndRun;

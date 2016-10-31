@@ -1178,10 +1178,13 @@ var
     TestSourceFName: string;
     sErgebnisseSoll: TStringList;
     n: Integer;
+    _anfix32_DebugLogPath : string;
   begin
     sErgebnisseSoll := TStringList.create;
     FullPath := iFSPath + NameSpace + '\' + TestName + '\';
+    _anfix32_DebugLogPath := anfix32.DebugLogPath;
     anfix32.TestMode := true; // suppress timestamps in Result
+    anfix32.DebugLogPath := FullPath;
 
     // den Test durchführen!
     try
@@ -1247,6 +1250,7 @@ var
     end;
 
     anfix32.TestMode := false;
+    anfix32.DebugLogPath := _anfix32_debugLogPath;
 
     sErgebnisseSoll.Free;
   end;

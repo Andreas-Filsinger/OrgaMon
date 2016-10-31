@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.241 (31.10.16) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: PDF-Erstellung hatte nicht mehr funktioniert.
+
+Rev 8.240 (27.10.16) Andreas Filsinger
+
+ Bug: fs: html: Test-Modus: Verbesserte Logik für das Arbeitsverzeichnis
+
 Rev 8.239 (25.10.16) Andreas Filsinger
 
  Neu: Tagwache: Fotos laden als eigener Punkt.
