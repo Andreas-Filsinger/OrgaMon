@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.242 (02.11.16) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: PDF wurde nur neu erstellt wenn eine ev. vorhandenes
+      PDF veraltet war. In diesem Fall ein Fehler da das zugrundeliegende html
+      mit "touch" behandelt wurde.
+ Neu: html2pdf: Schalter "OnlyIfOutDated"
+
 Rev 8.241 (31.10.16) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: PDF-Erstellung hatte nicht mehr funktioniert.

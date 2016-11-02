@@ -1869,7 +1869,7 @@ begin
                 if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
                 begin
                   PDF_FromWhat := OutFName;
-                  PDF := html2pdf(PDF_FromWhat);
+                  PDF := html2pdf(PDF_FromWhat, false);
                   PDF_ResultInfoStr := PDF.Values['ERROR'];
                   if (PDF_ResultInfoStr<>'') then
                   begin

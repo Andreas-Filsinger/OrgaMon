@@ -84,7 +84,7 @@ function printhtmlOK(FName: string): boolean;
 function printpdf(dokument: string): boolean;
 
 // Dokumente konvertieren
-function html2pdf(Dokument: string): TStringList;
+function html2pdf(Dokument: string; OnlyIfOutDated: boolean = true): TStringList;
 
 // Macros, Automatisierung
 procedure SetMousePos(x, y: integer);
@@ -1085,7 +1085,7 @@ end;
 const
  wkhtmltopdf_Installation: string = '';
 
-function html2pdf(Dokument: string): TStringList;
+function html2pdf(Dokument: string; OnlyIfOutDated: boolean = true): TStringList;
 const
  cHTMLextension = '.html';
  cPDFextension = '.pdf';
@@ -1102,12 +1102,13 @@ begin
      ErrorMsg := '';
      if not(FileExists(Dokument)) then
      begin
-      ErrorMsg := 'Quell-HTML nicht gefunden!';
+       ErrorMsg := 'Quell-HTML nicht gefunden!';
        break;
      end;
 
      if (wkhtmltopdf_Installation='') then
      begin
+
       repeat
        wkhtmltopdf_Installation := 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
        if FileExists(wkhtmltopdf_Installation) then
@@ -1118,19 +1119,18 @@ begin
        wkhtmltopdf_Installation := 'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe';
        if FileExists(wkhtmltopdf_Installation) then
         break;
-
-                               wkhtmltopdf_Installation := '';
+       wkhtmltopdf_Installation := '';
       until yet;
+
      end;
 
-    if wkhtmltopdf_Installation='' then
+    if (wkhtmltopdf_Installation='') then
     begin
       ErrorMsg := 'wkhtmltopdf Installation nicht gefunden!';
       break;
     end;
 
     Dokument_pdf := Dokument;
-
 
     k := revpos(cHTMLextension, Dokument_pdf);
     if (k > 0) then
@@ -1142,10 +1142,13 @@ begin
       ErrorMsg := 'Anteil "' + cHTMLextension + '" in "' + Dokument + '" nicht gefunden!';
       break;
     end;
+
     //
-    if (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
+    if
+     {} not(OnlyIfOutDated) or
+     {} (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
     begin
-      if pos('--',iPDFZoom)=0 then
+      if (pos('--',iPDFZoom)=0) then
         CallExternalApp(
           { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
           { } '--quiet ' +
