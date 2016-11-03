@@ -354,8 +354,7 @@ uses
   FastGEO, GeoArbeitsplatz,
   GeoCache, CareTakerClient, dbOrgaMon,
   clipbrd, Datenbank, html,
-  PEM,
-  wanfix32;
+  PEM, wanfix32, JonDaExec;
 {$R *.DFM}
 
 const
@@ -777,7 +776,7 @@ var
 
   function InfoStr(FotoParameter: string): string;
   var
-    FotoFname: string;
+    FotoFName, _FotoFName: string;
     FotoPath: string;
   begin
     FotoFname :=
@@ -785,10 +784,31 @@ var
       { } AUFTRAG_R,
       { } FotoParameter,
       { } IB_Memo4.lines.Values[FotoParameter]);
-    if FileExists(FotoDir + nextp(FotoFname, ',', 0)) then
-      FotoFname := FotoFname + ' OK!'
-    else
-      FotoFname := FotoFname + ' ERROR: In "' + FotoDir + '" fehlt die Datei!';
+    repeat
+
+     if FileExists(FotoDir + nextp(FotoFname, ',', 0)) then
+     begin
+      FotoFname := FotoFname + ' OK!';
+      break;
+     end;
+
+     _FotoFName :=
+    { } e_r_FotoName(
+      { } AUFTRAG_R,
+      { } FotoParameter,
+      { } IB_Memo4.lines.Values[FotoParameter],
+      {} cFoto_Option_ZaehlernummerNeuLeer);
+     if (_FotoFName<>FotoFName) then
+      if FileExists(FotoDir + nextp(_FotoFName, ',', 0)) then
+      begin
+       FileMove(FotoDir + nextp(_FotoFName, ',', 0), FotoDir + nextp(FotoFName, ',', 0));
+       FotoFname := FotoFname + ' OK!';
+       break;
+      end;
+
+      FotoFName := FotoFname + ' ERROR: In "' + FotoDir + '" fehlt die Datei!';
+
+    until yet;
 
     result :=
     { } FotoParameter + '=' +

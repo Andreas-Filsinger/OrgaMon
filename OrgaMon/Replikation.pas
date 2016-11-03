@@ -286,11 +286,11 @@ var
 
   function OpenConnection: boolean;
   begin
+    result := false;
     try
       rCONNECTION.Connect;
       result := true;
     except
-      result := false;
     end;
   end;
 
@@ -685,7 +685,7 @@ begin
   while true do
   begin
 
-    // Verbinung
+    // Verbindung
     if not (OpenConnection) then
     begin
       Log(cERRORText + ' ' + 'Quelldatenbank konnte nicht geöffnet werden!');

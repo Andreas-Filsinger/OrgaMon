@@ -90,6 +90,9 @@ const
   cParameter_foto_ABNummer = 'ABNUMMER'; // Auftragsnummer
   cParameter_foto_geraet = 'GERAET'; // 3-stellige Gerätenummer
   cParameter_foto_Pfad = 'PFAD'; // Ort der Baustellen-Unterverzeichnisse
+  cParameter_foto_Optionen = 'OPTIONEN'; // Verarbeitungs-Optionen
+
+  cFoto_Option_ZaehlernummerNeuLeer = '-ZaehlerNummerNeu'; // Bewirkt dass die Zählernummer Neu leer sein soll!
 
   // INPUT OPTIONAL
   // =====
@@ -2964,7 +2967,7 @@ var
   Path: string;
   tNAMES: TsTable;
   sNAMES: TStringList;
-  r: integer;
+  r,c: integer;
   FName: string;
   FreeFormat: string;
   Token, Value: string;
@@ -2973,6 +2976,12 @@ var
   Mandant, aknr: string;
   ReferenzDiagnose: TStringList;
   ShouldAbort: boolean;
+  Optionen: TStringList;
+
+  function Option(s:string):boolean;
+  begin
+    result := (Optionen.IndexOf(s)<>-1);
+  end;
 
   procedure FatalError(s: string);
   begin
@@ -2994,6 +3003,7 @@ begin
   ZielBaustelle := Baustelle;
   FotoParameter := sParameter.values[cParameter_foto_parameter];
   Zaehler_Info := sParameter.values[cParameter_foto_zaehler_info];
+  Optionen := split(sParameter.values[cParameter_foto_Optionen]);
 
   // Limitierung mit der führenden Null
   zaehlernummer_neu := FormatZaehlerNummerNeu(sParameter.values[cParameter_foto_Zaehlernummer_neu]);
@@ -3162,15 +3172,22 @@ begin
                       break;
                     end;
 
+                   // aus einer anderen Spalte
+                   c := tNAMES.colof(Token);
+                   // gibt es den Spalten-Namen?
+                   if (c = -1) then
+                   begin
+                     FatalError('Spalte "' + Token + '" nicht gefunden');
+                     break;
+                   end else
+                   begin
+                     Value := tNAMES.readCell(r, c);
+                   end;
 
-
-                    // aus einer anderen Spalte
-                    if (tNAMES.colof(Token) = -1) then
-                    begin
-                      FatalError('Spalte "' + Token + '" nicht gefunden');
-                      break;
-                    end;
-                    Value := tNAMES.readCell(r, Token);
+                   if (Value<>'') then
+                    if (Token='ZaehlerNummerNeu') then
+                     if Option(cFoto_Option_ZaehlernummerNeuLeer) then
+                      Value := '';
 
                   until yet;
                   ersetze('~' + Token + '~', Value, FotoPrefix);
@@ -3513,6 +3530,8 @@ begin
       result.values[cParameter_foto_ziel] := ZielBaustelle;
     end;
   end;
+
+  Optionen.Free;
 end;
 
 class procedure TJonDaExec.Foto_setcorrectDateTime(FName: string);
