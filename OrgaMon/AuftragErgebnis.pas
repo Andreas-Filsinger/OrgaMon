@@ -142,6 +142,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
+  JonDaExec,
 
   // Forms
   Bearbeiter, AuftragArbeitsplatz, Datenbank,
@@ -180,8 +181,7 @@ var
   AuchMitFoto: boolean;
   FotoSpalten, _FotoSpalten, FotoSpalte: string; // "FA;FN;FH"
   FilesCandidates: TStringList;
-  FotoFName: string;
-  _FotoFName: string;
+  FotoFName, _FotoFName: string;
 
   // Zwischenspeicher
   ActColumn: TStringList;
@@ -822,8 +822,7 @@ var
 
   procedure Q_CheckFotoFile(f: string; AUFTRAG_R: integer; Parameter: string);
   var
-    FNameA: string;
-    FNameB: string;
+    FNameA, FNameB, FNameC: string;
   begin
     FNameA := nextp(f, ',', 0);
     if (FNameA <> '') then
@@ -841,12 +840,30 @@ var
         if FileExists(FNameB) then
           break;
 
-        if (FNameA = FNameB) then
-          QS_add('[Q25] Bild-Datei "' + FNameA + '" existiert nicht', sPlausi)
-        else
-          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
+        // Prüfung C
+        FNameC := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_ZaehlernummerNeuLeer), ',', 0);
+        if (FNameC<>FNameB) then
+         if FileExists(FNameC) then
+         begin
+           FileMove(FNameC, FNameB);
+           break;
+         end;
 
-      until true;
+        if (FNameA = FNameB) and (FNameB = FNameC) then
+        begin
+          QS_add('[Q25] Bild-Datei "' + FNameA + '" existiert nicht', sPlausi);
+          break;
+        end;
+
+        if (FNameA<>FNameB) and (FNameB=FNameC) then
+        begin
+          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
+          break;
+        end;
+
+        QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" und "' + FNameC + '" existieren nicht', sPlausi);
+
+      until yet;
     end;
   end;
 
@@ -1638,6 +1655,15 @@ begin
                   if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
                   begin
                     FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
+
+                    // Ev. in letzter Sekunde einfach für das Bild sorgen
+                    if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                    begin
+                     _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_ZaehlernummerNeuLeer);
+                     if (_FotoFName<>FotoFName) then
+                       if FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName) then
+                         FileMove(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName, FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName);
+                    end;
 
                     // Rückwärtiges Ändern der Spalte der Ergebnisdatei
                     ActColumn[ActColIndex] := FotoFName;

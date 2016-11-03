@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet10
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -544,7 +544,7 @@ object FormBaustelle: TFormBaustelle
       object Label58: TLabel
         Left = 533
         Top = 38
-        Width = 61
+        Width = 60
         Height = 13
         Caption = 'Vertretung'
       end
@@ -1023,7 +1023,7 @@ object FormBaustelle: TFormBaustelle
       object Label11: TLabel
         Left = 7
         Top = 7
-        Width = 495
+        Width = 494
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1739,7 +1739,7 @@ object FormBaustelle: TFormBaustelle
       object Label7: TLabel
         Left = 121
         Top = 201
-        Width = 120
+        Width = 119
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1750,7 +1750,7 @@ object FormBaustelle: TFormBaustelle
       object Label5: TLabel
         Left = 17
         Top = 248
-        Width = 223
+        Width = 221
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1761,7 +1761,7 @@ object FormBaustelle: TFormBaustelle
       object Label18: TLabel
         Left = 7
         Top = 272
-        Width = 231
+        Width = 230
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -1772,7 +1772,7 @@ object FormBaustelle: TFormBaustelle
       object Label27: TLabel
         Left = 433
         Top = 249
-        Width = 126
+        Width = 125
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2196,7 +2196,7 @@ object FormBaustelle: TFormBaustelle
       object Label29: TLabel
         Left = 20
         Top = 46
-        Width = 58
+        Width = 57
         Height = 13
         Margins.Left = 4
         Margins.Top = 4
@@ -2592,10 +2592,6 @@ object FormBaustelle: TFormBaustelle
       Caption = '&Fotos'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         839
         344)
@@ -3509,10 +3505,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Ablage'
       ImageIndex = 9
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label41: TLabel
         Left = 314
         Top = 58
@@ -3615,7 +3607,7 @@ object FormBaustelle: TFormBaustelle
       object Label59: TLabel
         Left = 7
         Top = 264
-        Width = 118
+        Width = 117
         Height = 13
         Caption = 'Ablage-Vorgang RID'
       end
@@ -3915,7 +3907,7 @@ object FormBaustelle: TFormBaustelle
       object Label48: TLabel
         Left = 17
         Top = 144
-        Width = 93
+        Width = 92
         Height = 13
         Margins.Left = 4
         Margins.Top = 4

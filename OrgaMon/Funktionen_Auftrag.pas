@@ -132,7 +132,7 @@ function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 procedure e_w_GrabFotos;
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''): string;
+function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 
 function e_r_TerminAnzahl_V(rid: Integer): Integer;
 function e_r_TerminAnzahl_N(rid: Integer): Integer;
@@ -1868,7 +1868,7 @@ const
   FotoName_JonDaX: TJonDaExec = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
-function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''): string;
+function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
 var
   cAUFTRAG: TdboCursor;
   sResult: TStringList;
@@ -1892,6 +1892,7 @@ begin
   sParameter.values[cParameter_foto_parameter] := MeldungsName;
   sParameter.values[cParameter_foto_RID] := inttostr(AUFTRAG_R);
   sParameter.values[cParameter_foto_Pfad] := AuftragMobilServerPath;
+  sParameter.Values[cParameter_foto_Optionen] := Optionen;
 
   with cAUFTRAG do
   begin

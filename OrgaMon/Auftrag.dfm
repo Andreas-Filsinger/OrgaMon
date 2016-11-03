@@ -365,7 +365,7 @@ object FormAuftrag: TFormAuftrag
       Top = 27
       Width = 674
       Height = 135
-      ActivePage = TabSheet8
+      ActivePage = TabSheet9
       TabOrder = 1
       object TabSheet1: TTabSheet
         Caption = '&Termin'

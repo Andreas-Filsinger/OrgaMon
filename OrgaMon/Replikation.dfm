@@ -231,7 +231,7 @@ object FormReplikation: TFormReplikation
     Left = 152
     Top = 173
     Width = 481
-    Height = 25
+    Height = 21
     TabOrder = 6
   end
   object IB_UpdateBar1: TIB_UpdateBar
@@ -251,7 +251,7 @@ object FormReplikation: TFormReplikation
     Left = 152
     Top = 196
     Width = 402
-    Height = 25
+    Height = 21
     TabOrder = 8
     Text = 'I:\Kundenumgebung\KammerMusik\'
   end
@@ -268,7 +268,7 @@ object FormReplikation: TFormReplikation
     Left = 152
     Top = 219
     Width = 402
-    Height = 25
+    Height = 21
     TabOrder = 10
     Text = 'C:\Datensicherung\Dokumente\'
   end
