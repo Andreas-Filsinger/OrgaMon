@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.245 (07.11.16) Andreas Filsinger
+
+ Neu: Gimp: kompatibel mit Gimp Version 2.8.* 64Bit
+
+Rev 8.244 (07.11.16) Andreas Filsinger
+
+ Bug: Foto: Service: "/" in Z# Neu stoppte den FotoService
+
 Rev 8.243 (03.11.16) Andreas Filsinger
 
  Neu: Foto: Kopieren von Bildern "ohne ZaehlerNummerNeu" nach "mit ZaehlerNummerNeu"
