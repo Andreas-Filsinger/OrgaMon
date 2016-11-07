@@ -1678,6 +1678,9 @@ begin
       NEU := REGLER_NUMMER_NEU { + };
     end;
 
+    // Verbotene Zeichen entfernen
+    NEU := StrFilter(NEU, cInvalidFNameChars, true);
+
     // nichts neues? -> nichts machen in diesem Fall
     if (NEU = '') then
       continue;

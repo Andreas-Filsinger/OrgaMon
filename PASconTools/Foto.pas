@@ -125,7 +125,7 @@ var
         Clear;
 
       add(';');
-      add('; Dieses Skript wurde automatisch generiert durch FotoCompress');
+      add('; Dieses Skript wurde automatisch generiert durch OrgaMon');
       add(';');
       add('');
       add('(define (' + cGimpScriptNAME + ')');
@@ -158,7 +158,6 @@ var
     // Gimp anhauen!
     execStr :=
     { } cGimpExecutePath +
-    { } 'gimp-console-2.6.exe' +
     { } ' ' +
     { } '--verbose ' +
     { } '--batch="(' + cGimpScriptNAME + ')"';
@@ -211,9 +210,22 @@ begin
   DateTimeOriginal := FotoAufnahmeMoment(FName);
   sKnowHow := TStringList.Create;
 
-  cGimpExecutePath := ProgramFilesDir + 'GIMP-2.0\bin\';
-  cGimpScriptPath := ProgramFilesDir + 'GIMP-2.0\share\gimp\2.0\scripts\';
 
+    repeat
+
+      // 2.8 64Bit-System
+      if FileExists('C:\Program Files\GIMP 2\bin\gimp-console-2.8.exe') then
+      begin
+        cGimpExecutePath := 'C:\Program Files\GIMP 2\bin\gimp-console-2.8.exe';
+        cGimpScriptPath := 'C:\Program Files\GIMP 2\share\gimp\2.0\scripts\';
+        break;
+      end;
+
+      // 2.6 32Bit-System
+      cGimpExecutePath := ProgramFilesDir + 'GIMP-2.0\bin\gimp-console-2.6.exe';
+      cGimpScriptPath := ProgramFilesDir + 'GIMP-2.0\share\gimp\2.0\scripts\';
+
+    until yet;
   sCallScript := TStringList.Create;
 
   p_min := 0.0;
