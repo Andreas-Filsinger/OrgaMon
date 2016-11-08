@@ -2113,6 +2113,15 @@ var
     dir(Ablage_PFAD + '*.zip', sZips, false);
     for m := 0 to pred(sZips.Count) do
     begin
+
+      if (pos('~',sZips[m])>0) then
+      begin
+          Log(cERRORText +
+            { } ' 2119: ZIP "' +
+            { } Ablage_PFAD + sZips[m] + '" kann nicht verschoben werden, da der Dateiname korrupt ist ("~" ist enthalten)');
+          continue;
+      end;
+
       if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
       begin
         CheckCreateDir(BackupDir + Ablage_NAME);
