@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.246 (08.11.16) Andreas Filsinger
+
+ Neu: Foto: Service: *.zip-Ablage: fehlertolerant gegenüber Dateien mit "?"
+
 Rev 8.245 (07.11.16) Andreas Filsinger
 
  Neu: Gimp: kompatibel mit Gimp Version 2.8.* 64Bit
