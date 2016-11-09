@@ -982,7 +982,7 @@ begin
 
     CommandLine := CommandLine + ' "' + FName + '" -d ' + Destination;
 
-    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
+    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_HIDE);
 
     result := 1;
   end;

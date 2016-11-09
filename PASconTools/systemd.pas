@@ -44,29 +44,22 @@ implementation
 uses
  anfix32, JclMiscel, SysUtils;
 
-
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 begin
  if DebugMode then
-      AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
-
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
  result := JclMiscel.WinExec32AndWait(Cmd,CmdShow);
-
  if DebugMode then
-      AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
-
+   AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
 end;
 
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
 begin
  if DebugMode then
-      AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
-
+   AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
  result := JclMiscel.WinExec32(Cmd,CmdShow);
-
  if DebugMode then
-      AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
-
+   AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
 end;
 
 end.

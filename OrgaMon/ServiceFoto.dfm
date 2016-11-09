@@ -74,14 +74,12 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet4
+    ActivePage = TabSheet7
     Align = alBottom
     TabOrder = 0
-    ExplicitWidth = 734
     object TabSheet1: TTabSheet
       Caption = 'Mover'
       OnShow = TabSheet1Show
-      ExplicitWidth = 726
       object Label8: TLabel
         Left = 368
         Top = 385
@@ -171,7 +169,6 @@
     object TabSheet11: TTabSheet
       Caption = 'Info'
       ImageIndex = 10
-      ExplicitWidth = 726
       object Button24: TButton
         Left = 48
         Top = 56
@@ -194,7 +191,6 @@
     object TabSheet2: TTabSheet
       Caption = 'Uploads'
       ImageIndex = 1
-      ExplicitWidth = 726
       object SpeedButton8: TSpeedButton
         Left = 3
         Top = 20
@@ -263,7 +259,6 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitWidth = 726
       DesignSize = (
         807
         502)
@@ -379,7 +374,6 @@
     object TabSheet4: TTabSheet
       Caption = 'Unverarbeitet'
       ImageIndex = 3
-      ExplicitWidth = 726
       object SpeedButton2: TSpeedButton
         Left = 24
         Top = 4
@@ -495,7 +489,6 @@
     object TabSheet5: TTabSheet
       Caption = 'Wartend'
       ImageIndex = 4
-      ExplicitWidth = 726
       DesignSize = (
         807
         502)
@@ -548,7 +541,6 @@
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         TabOrder = 0
-        ExplicitWidth = 689
       end
       object Button9: TButton
         Left = 24
@@ -570,7 +562,6 @@
         Caption = 'ZaehlerNummerNeu.xls.csv ber'#252'cksichtigen'
         TabOrder = 2
         OnClick = CheckBox3Click
-        ExplicitLeft = 433
       end
       object CheckBox2: TCheckBox
         Left = 24
@@ -584,7 +575,6 @@
     object TabSheet6: TTabSheet
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
-      ExplicitWidth = 726
       object Label4: TLabel
         Left = 136
         Top = 256
@@ -736,7 +726,6 @@
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
       ImageIndex = 7
-      ExplicitWidth = 726
       object ListBox9: TListBox
         Left = 32
         Top = 48
@@ -759,7 +748,6 @@
       Caption = 'AUFTRAG+TS'
       ImageIndex = 8
       OnShow = TabSheet9Show
-      ExplicitWidth = 726
       object Label11: TLabel
         Left = 536
         Top = 384
@@ -829,7 +817,6 @@
     object TabSheet10: TTabSheet
       Caption = 'Rollback'
       ImageIndex = 9
-      ExplicitWidth = 726
       object Label12: TLabel
         Left = 11
         Top = 16
@@ -921,7 +908,6 @@
     object Rückstand: TTabSheet
       Caption = 'R'#252'ckstand'
       ImageIndex = 10
-      ExplicitWidth = 726
       object Button10: TButton
         Left = 96
         Top = 104
@@ -935,7 +921,6 @@
     object TabSheet7: TTabSheet
       Caption = 'Wiederholen'
       ImageIndex = 11
-      ExplicitWidth = 726
       object Label20: TLabel
         Left = 13
         Top = 40
@@ -979,6 +964,41 @@
         Width = 116
         Height = 13
         Caption = 'Sicherungsverzeichnisse'
+      end
+      object Label24: TLabel
+        Left = 16
+        Top = 320
+        Width = 105
+        Height = 13
+        Caption = 'Sicherungsverzeichnis'
+      end
+      object Label25: TLabel
+        Left = 16
+        Top = 368
+        Width = 33
+        Height = 13
+        Caption = 'Ablage'
+      end
+      object Label26: TLabel
+        Left = 16
+        Top = 411
+        Width = 31
+        Height = 13
+        Caption = 'Datum'
+      end
+      object Label27: TLabel
+        Left = 16
+        Top = 457
+        Width = 59
+        Height = 13
+        Caption = 'Bereitstellen'
+      end
+      object Label28: TLabel
+        Left = 144
+        Top = 368
+        Width = 64
+        Height = 13
+        Caption = 'ZIP-Passwort'
       end
       object Edit14: TEdit
         Left = 164
@@ -1024,13 +1044,78 @@
         TabOrder = 4
       end
       object Button33: TButton
-        Left = 432
-        Top = 336
+        Left = 428
+        Top = 283
         Width = 75
         Height = 25
         Caption = 'Wiederholen'
         TabOrder = 5
         OnClick = Button33Click
+      end
+      object Button34: TButton
+        Left = 420
+        Top = 474
+        Width = 75
+        Height = 25
+        Caption = 'Suchen'
+        TabOrder = 6
+        OnClick = Button34Click
+      end
+      object Edit16: TEdit
+        Left = 16
+        Top = 339
+        Width = 398
+        Height = 21
+        TabOrder = 7
+        Text = 'Z:\Datensicherung\SEWA\JonDaServer\'
+      end
+      object Edit17: TEdit
+        Left = 16
+        Top = 384
+        Width = 121
+        Height = 21
+        TabOrder = 8
+        Text = 'erdgas-suedwest'
+      end
+      object Edit18: TEdit
+        Left = 16
+        Top = 430
+        Width = 121
+        Height = 21
+        TabOrder = 9
+        Text = '05.07.2016'
+      end
+      object ListBox13: TListBox
+        Left = 512
+        Top = 339
+        Width = 273
+        Height = 137
+        ItemHeight = 13
+        TabOrder = 10
+      end
+      object Edit19: TEdit
+        Left = 16
+        Top = 478
+        Width = 398
+        Height = 21
+        TabOrder = 11
+        Text = 'Z:\Datensicherung\SEWA\Anfrage\'
+      end
+      object Edit20: TEdit
+        Left = 144
+        Top = 384
+        Width = 121
+        Height = 21
+        PasswordChar = '*'
+        TabOrder = 12
+        Text = 'Edit20'
+      end
+      object ProgressBar2: TProgressBar
+        Left = 512
+        Top = 482
+        Width = 273
+        Height = 17
+        TabOrder = 13
       end
     end
   end
