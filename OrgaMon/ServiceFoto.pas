@@ -160,6 +160,19 @@ type
     Memo2: TMemo;
     Sicherungsverzeichnisse: TLabel;
     Button33: TButton;
+    Button34: TButton;
+    Edit16: TEdit;
+    Label24: TLabel;
+    Label25: TLabel;
+    Edit17: TEdit;
+    Edit18: TEdit;
+    Label26: TLabel;
+    ListBox13: TListBox;
+    Label27: TLabel;
+    Edit19: TEdit;
+    Label28: TLabel;
+    Edit20: TEdit;
+    ProgressBar2: TProgressBar;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -206,6 +219,7 @@ type
     procedure Button23Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
+    procedure Button34Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -598,6 +612,63 @@ begin
    end;
   end;
  end;
+end;
+
+procedure TFormServiceFoto.Button34Click(Sender: TObject);
+var
+ sDir: TStringList;
+ zDir: TStringList;
+ rDir: TStringList;
+ n,m: integer;
+ FName: string;
+ sDate, rDate: TANFixDate;
+begin
+BeginHourGlass;
+ CheckCreateDir(edit19.Text);
+ zDir := TStringList.Create;
+ sDir := TStringList.Create;
+ rDir := TStringList.Create;
+ sDate := Date2Long(edit18.Text);
+
+
+ dir(edit16.Text+'*.',sDir,false);
+ for n := 0 to pred(sDir.Count) do
+ begin
+   if pos('.',sDir[n])=1 then
+    continue;
+   dir(
+    {} edit16.Text+sDir[n]+'\'+
+    {} edit17.Text+'\'+
+    {} 'Fotos-*.zip',zDir,false,true);
+   for m := 0 to pred(zDir.Count) do
+   begin
+    FName :=
+      {} edit16.Text +
+      {} sDir[n]+'\'+
+      {} edit17.Text+'\'+
+      {} zDir[m];
+
+    if (FDate(Fname)>=sDate) then
+     rDir.Add(FName);
+
+     listbox13.Items.Add(zDir[m]);
+   end;
+ end;
+
+ rDir.Sort;
+ Progressbar2.Max := rDir.Count;
+ for n := 0 to pred(rDir.Count) do
+ begin
+  Progressbar2.Position := n;
+  unzip(rDir[n],edit19.Text,Split(infozip_Password+'='+edit20.Text));
+  Application.ProcessMessages;
+ end;
+ Progressbar2.Position := 0;
+
+ rDir.Free;
+ sDir.Free;
+ zDir.Free;
+ EndHourGlass;
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);
