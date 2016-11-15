@@ -2025,20 +2025,16 @@ begin
   case CompareType of
     TsIdentical:
       begin
-
         for Row := 1 to pred(Count) do
           if (readCell(Row, Col) = sValue) then
             result.add(Row);
-
       end;
     TsIgnoreLeadingZeros:
       begin
-
         sValue := killLeadingZero(sValue);
         for Row := 1 to pred(Count) do
           if (killLeadingZero(readCell(Row, Col)) = sValue) then
             result.add(Row);
-
       end;
   end;
 end;

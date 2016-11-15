@@ -814,7 +814,6 @@ var
     { } FotoParameter + '=' +
     { } FotoFname;
 
-    AppendStringsToFile(result, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt');
   end;
 
 begin

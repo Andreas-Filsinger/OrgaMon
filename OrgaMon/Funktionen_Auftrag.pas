@@ -1932,8 +1932,14 @@ begin
     nextp(AktuellerWert, ',', 0);
   sSettings.free;
 
+  if DebugMode then
+   AppendStringsToFile(sParameter, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt','foto(');
+
   // Funktion ausführen
   sResult := FotoName_JonDaX.foto(sParameter);
+
+  if DebugMode then
+   AppendStringsToFile(sResult, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt',')=');
 
   result := sResult.values[cParameter_foto_Fehler];
   if (result = '') then

@@ -1585,7 +1585,7 @@ begin
         break;
       if (PARAMETER = 'FE') then
         break;
-      Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der -Neu Behandlung unbekannt');
+      Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der "Neu" Behandlung unbekannt');
       continue;
     until yet;
 
@@ -1798,7 +1798,7 @@ begin
     if (Stat_Umbenannt > 0) then
       Log(cINFOText + ' 1276: ' +
         { } InttoStr(Stat_Umbenannt) +
-        { } ' "-Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
+        { } ' "Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
         { } InttoStr(WARTEND.RowCount) +
         { } ' verbleiben');
 
