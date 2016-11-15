@@ -63,6 +63,7 @@ const
   infozip_Password = 'Password';
   infozip_Level = 'Level';
   infozip_ExtraInfo = 'ExtraInfos';
+  infozip_AES256 = 'AES256';
 
   {
     Versions-Infos dieser API Unit (nicht Info-Zip)
@@ -75,9 +76,10 @@ const
     Rev. 1.004 |       | 12.09.2013 | Fix: zip Filesnames starting with "-" (Minus)
     Rev. 1.005 | R0039 | 05.03.2014 | Lazarus Port "Abrevia" ...
     Rev. 1.006 | R0334 | 11.12.2015 | Lazarus Port "zipper" ...
+    Rev. 1.007 | R0468 | 10.11.2015 | AES256 Support, Unicode Filename Support
   }
 
-  infozip_Version: single = 1.006;
+  infozip_Version: single = 1.007;
 
 var
   zMessages: TStringList;
@@ -87,21 +89,23 @@ var
     |  sFiles :    Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
     |  FName :     Name des neuen Archives, Datei sollte nicht existieren
     |  Options :
-    |  RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
-    |               Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
-    |               aufgenommen. Auf RootPath selbst finden sich keine Hinweise im enstehenden
-    |               Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
+    |    RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
+    |                 Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
+    |                 aufgenommen. Auf RootPath selbst finden sich keine Hinweise im enstehenden
+    |                 Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
     |
-    |  Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
-    |  Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
-    |               eingesetzt werden soll.
-    |               0 = keine Komprimierung (Store) ...
-    |               9 = höchste Komprimierung (default)
-    |  ExtraInfos = <leer> (default>
-    |               0 Aktiv
-    |               genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht
-    |               deterministischen Zips. Deshalb wird es bei alles Tests deaktiviert, sonst
-    |               lasse ich es auf Default also incl. der Extra infos!
+    |    Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
+    |    AES256     = <leer> (default>
+    |                 1 Aktiv
+    |    Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
+    |                 eingesetzt werden soll.
+    |                 0 = keine Komprimierung (Store) ...
+    |                 9 = höchste Komprimierung (default)
+    |    ExtraInfos = <leer> (default>
+    |                 0 Aktiv
+    |                 genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht
+    |                 deterministischen Zips. Deshalb wird es bei alles Tests deaktiviert, sonst
+    |                 lasse ich es auf Default also incl. der Extra infos!
   }
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil)
@@ -956,6 +960,13 @@ begin
         break;
       end;
 
+      UnzipApplication := 'C:\Program Files\7-zip\7z.exe';
+      if FileExists(UnzipApplication) then
+      begin
+        UnzipMethod := cUnzipMethod_7z_exe;
+        break;
+      end;
+
       UnzipApplication := ProgramFilesDir + 'OrgaMon\unzip.exe';
       if FileExists(UnzipApplication) then
       begin
@@ -990,8 +1001,11 @@ begin
   if (UnzipMethod = cUnzipMethod_7z_exe) then
   begin
 
-    // Overwrite
+    // Extract, say "yes" to all questions (for Overwrite)
     CommandLine := 'x -y';
+
+    //    -bb[0-3] : set output log level
+//  -bd : disable progress indicator
 
     // Password
     if assigned(Options) then
@@ -1001,7 +1015,7 @@ begin
     // Destination
     CommandLine := CommandLine + ' -o"' + Destination + '" "' + FName + '"';
 
-    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_SHOWNORMAL);
+    CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_HIDE);
 
     result := 1;
 

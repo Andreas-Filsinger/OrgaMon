@@ -2962,6 +2962,7 @@ var
   FotoDateiNameBisher: string;
   NameOhneZaehlerNummerAlt: boolean;
   NameOhneZaehlerNummerNeu: boolean;
+  NameBereitsMitPlatzhalter: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   Path: string;
@@ -3035,6 +3036,7 @@ begin
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
   NameOhneZaehlerNummerNeu := false;
+  NameBereitsMitPlatzhalter := false;
   ShouldAbort := false;
 
   while true do
@@ -3184,10 +3186,19 @@ begin
                      Value := tNAMES.readCell(r, c);
                    end;
 
-                   if (Value<>'') then
-                    if (Token='ZaehlerNummerNeu') then
-                     if Option(cFoto_Option_ZaehlernummerNeuLeer) then
-                      Value := '';
+                   // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
+                   if (Token='ZaehlerNummerNeu') then
+                   begin
+                     if (Value<>'') then
+                     begin
+                      if Option(cFoto_Option_ZaehlernummerNeuLeer) then
+                        Value := '';
+                     end else
+                     begin
+                       Value := cFotoService_NeuPlatzhalter;
+                       NameBereitsMitPlatzhalter := true;
+                     end;
+                   end;
 
                   until yet;
                   ersetze('~' + Token + '~', Value, FotoPrefix);
@@ -3402,8 +3413,7 @@ begin
         if UmbenennungAbgeschlossen then
         begin
           zaehlernummer_neu := '';
-        end
-        else
+        end else
         begin
           if (zaehlernummer_neu = '') then
             zaehlernummer_neu := FormatZaehlerNummerNeu(
@@ -3414,6 +3424,18 @@ begin
 
         if (zaehlernummer_neu = '') then
         begin
+
+         if NameBereitsMitPlatzhalter then
+         begin
+          if NameOhneZaehlerNummerAlt then
+            FotoDateiNameNeu :=
+            { } FotoPrefix
+          else
+            FotoDateiNameNeu :=
+            { } FotoPrefix +
+            { } zaehlernummer_alt;
+         end else
+         begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
@@ -3423,6 +3445,8 @@ begin
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
             { } cFotoService_NeuPlatzhalter;
+         end;
+
         end
         else
         begin
@@ -3434,20 +3458,34 @@ begin
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } zaehlernummer_alt ;
+            { } zaehlernummer_alt;
          end else
          begin
-          if NameOhneZaehlerNummerAlt then
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_neu
-          else
-            FotoDateiNameNeu :=
-            { } FotoPrefix +
-            { } zaehlernummer_alt + '-' +
-            { } zaehlernummer_neu;
+
+           if NameBereitsMitPlatzhalter then
+           begin
+            ersetze(cFotoService_NeuPlatzhalter,zaehlernummer_neu,FotoPrefix);
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix
+            else
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_alt;
+           end else
+           begin
+            if NameOhneZaehlerNummerAlt then
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_neu
+            else
+              FotoDateiNameNeu :=
+              { } FotoPrefix +
+              { } zaehlernummer_alt + '-' +
+              { } zaehlernummer_neu;
+           end;
          end;
-          UmbenennungAbgeschlossen := true;
+         UmbenennungAbgeschlossen := true;
         end;
         break;
       end;

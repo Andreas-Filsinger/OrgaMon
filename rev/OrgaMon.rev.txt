@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.248 (15.11.16) Andreas Filsinger
+
+ Neu: Foto: "Neu" Logik: "Neu" kann jetzt an beliebiger Stelle im Dateinamen stehen, aber
+      das am weitesten rechts stehende "Neu" wird durch die Z#Neu/R#Neu ersetzt.
+ Neu: Foto: FotoBenennung=6: Wird die Spalte "ZaehlerNummerNeu" verwendet und der Wert
+      ist im Moment "leer" so greift die normale Platzhaltermethode mit dem Platzhalter
+      "Neu".
+
 Rev 8.247 (09.11.16) Andreas Filsinger
 
  Neu: Foto: Service: Recherche nach Datum und Ablagename

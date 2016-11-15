@@ -947,7 +947,7 @@ begin
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } sBaustelle + ';' +
                 { MOMENT } DatumLog,
-                { Dateiname } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
+                { CSV-Dateiname } MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
             end;
 
             // Foto in die richtige Ablage kopieren!
@@ -1696,8 +1696,9 @@ begin
     if (k = 0) then
     begin
       Log(
-        { } cERRORText + ' 1179: ' +
-        { } 'keine Ahnung wie man "' + FNameNeu + '" umbenennen soll');
+        { } cERRORText + ' 1699: ' +
+        { } '"' + cFotoService_NeuPlatzhalter + '"' +
+        { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmöglich');
       continue;
     end;
 
@@ -1705,7 +1706,7 @@ begin
     FNameNeu :=
     { } copy(FNameNeu, 1, pred(k)) +
     { } TJonDaExec.FormatZaehlerNummerNeu(NEU) +
-    { } '.jpg';
+    { } copy(FNameNeu, k + length(cFotoService_NeuPlatzhalter), MaxInt);
 
     // die (TMP..)- Sachen wieder wegzumachen
     FNameNeu := JonDaExec.clearTempTag(FNameNeu);
@@ -1714,7 +1715,7 @@ begin
     if (CharCount(':', FNameNeu) <> 1) then
     begin
       Log(
-        { } cERRORText + ' 1195: ' +
+        { } cERRORText + ' 1718: ' +
         { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerksangabe mit ":" fehlt');
       continue;
     end;
@@ -1723,7 +1724,7 @@ begin
     if (CharCount('\', FNameNeu) < 2) then
     begin
       Log(
-        { } cERRORText + ' 1211: ' +
+        { } cERRORText + ' 1727: ' +
         { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Zwei Pfadtrenner "\" fehlen');
       continue;
     end;
