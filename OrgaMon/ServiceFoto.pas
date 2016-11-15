@@ -173,6 +173,7 @@ type
     Label28: TLabel;
     Edit20: TEdit;
     ProgressBar2: TProgressBar;
+    Label29: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -458,6 +459,8 @@ var
  OneFound: TStringList;
 begin
 
+ BeginHourGlass;
+
  // Lade die Suchanfrage
  if not(assigned(_Wiederholen_sFOTOS)) then
  begin
@@ -468,23 +471,20 @@ begin
  begin
    insertfromFile(edit14.Text);
    col_RID := colof(cRID_Suchspalte);
-   label21.Caption := IntToStr(RowCount);
-         application.ProcessMessages;
+   label21.Caption := IntToStr(RowCount)+' Anfragen';
+   application.ProcessMessages;
 
-   CheckList:=  TStringList.create;
-  for r := 1 to RowCount do
-  begin
-    sRID := readCell (r,col_RID);
-    if CheckList.IndexOf( sRID)=-1 then
-               CheckList.add(sRID);
-  end;
-   label22.Caption := IntToStr(CheckList.count);
-    application.ProcessMessages;
+   CheckList :=  TStringList.create;
+   for r := 1 to RowCount do
+   begin
+     sRID := readCell (r,col_RID);
+     if CheckList.IndexOf( sRID)=-1 then
+       CheckList.add(sRID);
+   end;
+   label22.Caption := IntToStr(CheckList.count)+ ' Anfragen (um Doppelte reduziert)';
+   application.ProcessMessages;
 
  end;
-
-
-
 
  // Lade die Transaktionstabelle
  if not(assigned(_Wiederholen_Log)) then
@@ -518,10 +518,11 @@ begin
          i := CheckList.IndexOf(sRID);
          if (i<>-1) then
           CheckList.Delete(i);
- OneFound:= TStringList.create;
- OneFound.Add(sRID);
- OneFound.Add(SrcFname);
-                      _Wiederholen_sFOUND.addRow(OneFound);
+
+         OneFound:= TStringList.create;
+         OneFound.Add(sRID);
+         OneFound.Add(SrcFname);
+         _Wiederholen_sFOUND.addRow(OneFound);
 
          ListBox8.Items.Add(SrcFName);
          application.ProcessMessages;
@@ -542,8 +543,16 @@ begin
       end;
 
     end;
-_Wiederholen_sFOUND.SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
-  label23.Caption := IntToStr(CheckList.Count);
+  _Wiederholen_sFOUND.SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+  label23.Caption := IntToStr(CheckList.Count)+ ' nicht gefunden';
+  if assigned(CheckList) then
+  begin
+   CheckList.SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-not-Found.csv');
+   CheckList.Free;
+  end;
+
+  EndHourGlass;
+
 end;
 
 procedure TFormServiceFoto.Button32Click(Sender: TObject);
@@ -559,7 +568,7 @@ begin
  with _Wiederholen_sFOUND do
  begin
 
-  if RowCount<1 then
+  if (RowCount<1) then
    insertFromFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
   addCol('Pfad');
 
@@ -586,6 +595,7 @@ begin
   end;
   if changed then
    SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
+  Label29.Caption := IntToStr(RowCount)+' gefunden!';
  end;
 end;
 

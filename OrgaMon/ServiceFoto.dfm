@@ -1000,6 +1000,13 @@
         Height = 13
         Caption = 'ZIP-Passwort'
       end
+      object Label29: TLabel
+        Left = 544
+        Top = 216
+        Width = 37
+        Height = 13
+        Caption = 'Label29'
+      end
       object Edit14: TEdit
         Left = 164
         Top = 37
