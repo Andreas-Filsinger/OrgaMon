@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.251 (15.11.16) Andreas Filsinger
+
+ Neu: Foto: Mehr Debug-Infos beim Umbenennen im Modus 6
+
+Rev 8.250 (15.11.16) Andreas Filsinger
+
+ Neu: Foto: neue, fehlertolerante Ermittlung für den Wert ~JJJJMMTT~
+
+Rev 8.249 (15.11.16) Andreas Filsinger
+
+ Neu: Foto: Mehr Diagnose-Ausgabe bei Bestimmung des Foto-Dateinamens
+
 Rev 8.248 (15.11.16) Andreas Filsinger
 
  Neu: Foto: "Neu" Logik: "Neu" kann jetzt an beliebiger Stelle im Dateinamen stehen, aber

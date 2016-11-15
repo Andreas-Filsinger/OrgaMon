@@ -50,7 +50,7 @@ const
   // Foto - Umbenennen:
   // ==================
   // Innerhalb dieses Zeitraumes müssen Informationen nachgeliefert
-  // werden, um "-Neu" Umbenennungen abzuschliessen.
+  // werden, um "Neu" Umbenennungen abzuschliessen.
   // Die cFotoUmbenennungAusstehend wird automatisch dementsprechend gekürzt
   cMaxAge_Umbenennen = 10; // [Tage] Solange bleiben die Ausstehenden in der Liste
 
@@ -102,10 +102,13 @@ const
   // OUTPUT
   // =====
 
-  cParameter_foto_fertig = 'ENDGUELTIG'; //
-  cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname - ohne Pfad
-  cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
   cParameter_foto_Fehler = 'ERROR'; // Meldung über etwaige Fehler
+  cParameter_foto_neu = 'NAME_NEU'; // Umbenannter Dateiname - ohne Pfad
+
+  cParameter_foto_fertig = 'ENDGUELTIG'; // Ja/Nein ob genug Infos vorliegen
+  cParameter_foto_ziel = 'BAUSTELLE_NEU'; // Kurzform der Baustellen Bez "Ziel"
+  cParameter_foto_definition_csv = 'DEFINITIONS_CSV'; // Im Modes 6 wird eine csv, zu Rate gezogen, welche Dateo ...
+  cParameter_foto_definition_version = 'DEFINITIONS_REV'; // Im Modus 6 wird eine csv zu Rate gezogen, welcher Wissenstand ...
 
 type
   TJonDaExec_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
@@ -754,7 +757,7 @@ var
   JondaAll: TSearchStringList;
   Einstellungen: TStringList;
 
-  // Für die Foto "-Neu" Umbenennung werden 2. Informationen
+  // Für die Foto "Neu" Umbenennung werden 2. Informationen
   // gesammelt: Zählernummer Neu und Reglernummer Neu
   BilderAll: TStringList;
   BilderAll_WechselMomentKorrigiert: TStringList;
@@ -3114,6 +3117,12 @@ begin
               break;
             end;
 
+            if DebugMode then
+            begin
+              result.values[cParameter_foto_definition_csv] := FName;
+              result.values[cParameter_foto_definition_version] := dTimeStamp(FileDateTime(FName));
+            end;
+
             tNAMES.InsertFromFile(FName);
             r := tNAMES.locate(cRID_Suchspalte, inttostr(AUFTRAG_R));
             if (r <> -1) then
@@ -3132,6 +3141,7 @@ begin
                     if (Token = 'JJJJMMTT') then
                     begin
 
+                      // 1.Rang: aus der Spalte Wechsel-Datum
                       WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
                       if DateOK(WechselDatum) then
                       begin
@@ -3139,17 +3149,29 @@ begin
                         break;
                       end;
 
+                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
                       if (FotoDateiNameBisher = '') then
                       begin
                         FatalError('Wert "DATEI=" ist leer');
                         break;
                       end;
-                      if not(FileExists(FotoDateiNameBisher)) then
+                      if FileExists(FotoDateiNameBisher) then
                       begin
-                        FatalError('Datei "' + FotoDateiNameBisher + '" nicht gefunden');
+                        Value := long2dateLog(FileDate(FotoDateiNameBisher));
                         break;
                       end;
-                      Value := long2dateLog(FileDate(FotoDateiNameBisher));
+
+                      // 3.Rang: aus dem Planungsdatum
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := long2dateLog(WechselDatum);
+                        break;
+                      end;
+
+                      // 4.Rang: einfach das aktuelle Datum
+                      Value := long2dateLog(DateGet);
+
                       break;
                     end;
 
@@ -3241,7 +3263,6 @@ begin
               if DebugMode then
                 if FileAge(Path + Baustelle + '-' + cRID_Suchspalte + '.csv') < FileAge(FName) then
                 begin
-
                   ReferenzDiagnose := tNAMES.Col(tNAMES.colof(cRID_Suchspalte));
                   ReferenzDiagnose.SaveToFile(Path + Baustelle + '-' + cRID_Suchspalte + '.csv');
                   ReferenzDiagnose.free;
@@ -3372,7 +3393,7 @@ begin
         end;
       13:
         begin
-          // wie "1" jedoch ohne "-Neu" Logik
+          // wie "1" jedoch ohne "Neu" Logik
           FotoPrefix :=
           { } sParameter.values[cParameter_foto_strasse] + ' ' +
           { } sParameter.values[cParameter_foto_ort];
@@ -3384,7 +3405,7 @@ begin
         end;
       14:
         begin
-          // wie "0" jedoch ohne "-Neu" Logik
+          // wie "0" jedoch ohne "Neu" Logik
           UmbenennungAbgeschlossen := true;
         end;
     end;
