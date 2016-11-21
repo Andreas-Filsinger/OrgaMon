@@ -472,7 +472,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
     if dateOK(s) then
     begin
       result := long2date(date2long(s));
-      result := copy(result, 7, 4) + '-' + copy(result, 3, 2) + '-' + copy(result, 1, 2);
+      result := copy(result, 7, 4) + '-' + copy(result, 4, 2) + '-' + copy(result, 1, 2);
     end;
   end;
 
