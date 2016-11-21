@@ -431,8 +431,7 @@ function THTMLTemplate.CheckReplaceOne(n: integer; const CheckStr, toValue: stri
     // JJJJ "-" MM "-" TT "T" HH ":" MM ":" SS ":"
     // Beispiel: 2015-05-11T10:23:18
     //
-    result := dTimeStamp(mkDateTime(s));
-    ersetze(' ', 'T', result);
+    result := dTimeStampISO(mkDateTime(s));
   end;
 
   function zeit_F(s: string): string;
@@ -852,15 +851,19 @@ begin
         continue;
       end;
 
+      // remove tailing and inner Double-Blanks
       if isCommand('^T') then
       begin
+        // NewValue := cutblank(NewValue);
+        // Rest ? imp pend!!!
+        // fs Testcase!!!
         ersetze('  ', ' ', self, n);
         continue;
       end;
 
       if isCommand('^Y') then
       begin
-        if NewValue = '' then
+        if (NewValue = '') then
         begin
           Rest := '';
           strings[n] := '';

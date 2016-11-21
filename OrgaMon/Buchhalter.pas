@@ -1070,6 +1070,7 @@ var
   Forderung, Mandat: double;
   BLZ: string[8];
   ktonr: string[10];
+  MANDAT_ID : string;
 
   // Limitierung
   Limit_Anzahl: Integer;
@@ -1161,6 +1162,7 @@ begin
     BLZ := StrFilter(iKontoBLZ, cZiffern);
     ktonr := StrFilter(iKontoNummer, cZiffern);
     KontoInhaberName := iKontoInhaber;
+    GlaeubigerID := iGlaeubigerID;
     KontoInhaberOrt := '';
     Lastschrift := true;
     AusfuehrungsDatum := datePlusWorking(DateGet, iKontoSEPAFrist);
@@ -1189,12 +1191,8 @@ begin
 
       if isequal(Mandat, cPreis_ungesetzt) then
       begin
-        MANDAT_ID := 'P' + e_r_sql(
-        { } 'select RID ' +
-        { } 'from BUCH where ' +
-        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
-        { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
-        { } ' (TEILLIEFERUNG=' + FieldByName('TEILLIEFERUNG').AsString + ')');
+        MANDAT_ID := 'P' + FieldByName('PERSON_R').AsString;
+
         Memo1.lines.add(
           { } cINFOText +
           { } ' Zum Beleg ' +
@@ -1204,7 +1202,7 @@ begin
       end
       else
       begin
-        MANDAT_ID := 'M' + e_r_sql(
+        MANDAT_ID := 'M' + e_r_sqls(
         { } 'select RID ' +
         { } 'from BUCH where ' +
         { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
@@ -1271,6 +1269,7 @@ begin
 
           // Datums bisher noch automatisch
           MandatsDatum := cDTA_DatumAutomatisch;
+          MandatsID := MANDAT_ID;
           AusfuehrungsDatum := cDTA_DatumAutomatisch;
 
         end;

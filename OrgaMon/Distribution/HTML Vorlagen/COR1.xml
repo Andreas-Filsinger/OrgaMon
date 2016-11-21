@@ -36,7 +36,9 @@
             </CdtrAcct>
             <CdtrAgt>
                 <FinInstnId>
-                    <BIC>~Einreicher.BIC~</BIC>
+                    <Othr>
+                        <Id>NOTPROVIDED</Id>
+                    </Othr>
                 </FinInstnId>
             </CdtrAgt>
             <ChrgBr>SLEV</ChrgBr>
@@ -48,7 +50,7 @@
                 <InstdAmt Ccy="EUR">~Betrag~!Komma</InstdAmt>
                 <DrctDbtTx>
                     <MndtRltdInf>
-                        <MndtId>RID~RID~</MndtId>
+                        <MndtId>~RID~</MndtId>
                         <DtOfSgntr>~MandatsDatum~!Datum</DtOfSgntr>
                         <AmdmntInd>false</AmdmntInd>
                     </MndtRltdInf>
@@ -67,7 +69,9 @@
                 </DrctDbtTx>
                 <DbtrAgt>
                     <FinInstnId>
-                        <BIC>~BIC~</BIC>
+                        <Othr>
+                            <Id>NOTPROVIDED</Id>
+                        </Othr>
                     </FinInstnId>
                 </DbtrAgt>
                 <Dbtr>
@@ -79,11 +83,11 @@
                     </Id>
                 </DbtrAcct>
                 <RmtInf>
-                    <Ustrd>~VZ1~ ~VZ2~ ~VZ3~ ~VZ4~ ~VZ5~ ~VZ6~ ~VZ7~!^T</Ustrd>
+                    <Ustrd>~VZ~</Ustrd>
                 </RmtInf>
             </DrctDbtTxInf>
 <!-- END POSTEN -->
-<!-- INSERT AUFTRAG -->
+<!-- INSERT POSTEN -->
         </PmtInf>
     </CstmrDrctDbtInitn>
 </Document>
