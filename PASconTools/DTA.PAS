@@ -241,7 +241,7 @@ const
    { } 'a' .. 'z',
    { } 'Ä', 'ä', 'Ö', 'ö', 'Ü', 'ü', 'ß',
    { } ' ', '''', ':', '?', '-', '(', '+', '.', ')', '/', '&', '*', ',', '$', '%' ];
-
+  cAlphaSetXML = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefghijklmnopqrstuvwxyzäöüß '':?-(+.)/&*,$%';
   {
     ANSI-, UTF-8-, DTA- Kodierungen, SEPA
     'Ä' 0x8E -> 0xC3,0x84 -> '[' 0x5B -> AE
@@ -530,9 +530,6 @@ begin
     WriteData('1'); { EURO }
   end;
 
-
-
-
   DtaEC := 0;
   DtaEBetrag := 0.0;
   DtaEKtoNr := 0;
@@ -557,6 +554,7 @@ var
   sBetrag: string;
   Count: byte;
   WriteAnz: byte;
+  n : integer;
 
 begin
 
@@ -692,17 +690,17 @@ begin
       begin
         add('load POSTEN');
         add('EndeZuEndeReferenz='+inttostr(RID));
-        add('Name='+ zahlerName);
+        add('Name=' + StrFilter(cutblank(zahlerName),cAlphaSetXML));
         add('IBAN='+calcIBAN_DE(blz,ktonr ) );
         add('Betrag='+FloatToStrISO(betrag));
-        add('VZ1='+VZweck[1]);
-        add('VZ2='+VZweck[2]);
-        add('VZ3='+VZweck[3]);
-        add('VZ4='+VZweck[4]);
-        add('VZ5='+VZweck[5]);
-        add('VZ6='+VZweck[6]);
-        add('VZ7='+VZweck[7]);
+        sAusgabe := cutblank(VZweck[1]);
+        for n := 2 to 7 do
+         if (cutblank(VZweck[n])<>'') then
+           sAusgabe := sAusgabe + '/+/' + cutblank(VZweck[n]);
+        ersetze('  ',' ',sAusgabe);
+        add('VZ='+StrFilter(sAusgabe,cAlphaSetXML));
         add('MandatsDatum='+Long2Date(Mandatsdatum));
+        add('RID='+StrFilter(MandatsID,cAlphaSetXML));
         add('Einreicher.ID=' + DtaData.GlaeubigerID);
       end;
     end;
@@ -743,8 +741,9 @@ begin
       add('MOMENT=' + sTimeStamp);
       add('ANZAHL=' + IntToStr(DtaEC));
       add('SUMME=' + FloatToStrISO(DtaEBetrag));
-      add('Einreicher.Name=' + KontoInhaberName);
+      add('Einreicher.Name=' + StrFilter(cutblank(KontoInhaberName),cAlphaSetXML));
       add('Einreicher.IBAN=' + calcIBAN_DE(blz, ktonr));
+      add('AusfuehrungsDatum=' + long2date(Ausfuehrungsdatum));
     end;
     with DtaXMLDoc do
     begin

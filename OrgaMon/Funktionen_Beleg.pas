@@ -665,7 +665,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 187;
+  cAllSettingsAnz = 188;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -698,7 +698,7 @@ CONST
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
-    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL');
+    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -8365,6 +8365,7 @@ begin
   iTagWacheAuf := cutblank(sSystemSettings.values['TagWacheAuf']);
   iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren'] = cIni_Activate;
   iKontoInhaber := sSystemSettings.values['KontoInhaber'];
+  iGlaeubigerID := sSystemSettings.values['GläubigerID'];
   iKontoBankName := sSystemSettings.values['KontoBankName'];
   iKontoNummer := sSystemSettings.values['KontoNummer'];
   iKontoBLZ := sSystemSettings.values['KontoBLZ'];

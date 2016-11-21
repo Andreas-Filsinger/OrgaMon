@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.251; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.252; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1044,6 +1044,7 @@ var
   iCronAuf: string;
 
   iKontoInhaber: string;
+  iGlaeubigerID: string;
   iKontoBankName: string;
   iKontoNummer: string;
   iKontoBLZ: string;
