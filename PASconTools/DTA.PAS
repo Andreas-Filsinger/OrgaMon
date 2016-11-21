@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 1995 - 2015  Andreas Filsinger
+  |    Copyright (C) 1995 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ unit DTA;
     <CtrlSum>0.12</CtrlSum>
     <PmtTpInf>
      <SvcLvl><Cd>SEPA</Cd></SvcLvl>
-     <LclInstrm><Cd>COR1</Cd></LclInstrm>
+     <LclInstrm><Cd>COR1|CORE</Cd></LclInstrm>
      <SeqTp>FRST</SeqTp>
     </PmtTpInf>
     <ReqdColltnDt>1999-01-01</ReqdColltnDt>
@@ -97,7 +97,7 @@ unit DTA;
      <DbtrAgt><FinInstnId><BIC>GENODE61WGA</BIC></FinInstnId></DbtrAgt>
      <Dbtr><Nm>Romeo Filsinger</Nm></Dbtr>
      <DbtrAcct><Id><IBAN>DE02660617240000000000</IBAN></Id></DbtrAcct>
-     <RmtInf><Ustrd>SEPA COR1 Test</Ustrd></RmtInf>
+     <RmtInf><Ustrd>SEPA XML Test</Ustrd></RmtInf>
     </DrctDbtTxInf>
    </PmtInf>
   </CstmrDrctDbtInitn>
@@ -160,11 +160,17 @@ const
   { } 'Betrag' + cDTA_csvSeparator +
   { } 'Waehrung';
 
+  cDTA_XML_FName = 'COR1.XML';
+
+  // Parameter
   cDTA_LastschriftVerzoegerung: integer = 5;
+  cDTA_HTML_Vorlagen_Path : string = '';
+  cDTA_XML_Ausgabe_Path : string = '';
 
 type
   // Kopf-Daten: Eigenes Konto
   DtaDataType = record
+    RID: integer;
     FName: string; { File-Name }
     BankName: string[27];
     blz: string[8];
@@ -188,6 +194,7 @@ type
     zahlerName: string[27];
     zahlerOrt: string[27];
     VZweck: array [1 .. 7] of string[27]; // SVWZ = Verwendungszweck
+    MandatsID: string;
     MandatsDatum: TANFixDate;
     AusfuehrungsDatum: TANFixDate; // Default aus dem Kopf
     // +MandatID: string[27];
@@ -217,12 +224,23 @@ var
   { Konto-Inhaber }
   DTAInhaber: DtaDataType;
 
+  { für XML }
+  DatensammlerGlobal: TStringList;
+  DatensammlerLokal: TStringList;
+
 const
   NumSet: set of Ansichar = ['0' .. '9'];
   AlphaSet: set of Ansichar = ['0' .. '9', 'A' .. 'Z', ' ', '.', ',', '&', '-', '+', '*', '%', '/',
     '$', 'Ä', 'Ö', 'Ü', 'ß'];
   AlphaSetSEPA: set of Ansichar = ['0' .. '9', 'a' .. 'z', 'A' .. 'Z', ' ', '/', '?', ':', '(', ')',
     '.', ',', '''', '+', '-'];
+
+  AlphaSetXML: set of WideChar = [
+   { } '0' .. '9',
+   { } 'A' .. 'Z',
+   { } 'a' .. 'z',
+   { } 'Ä', 'ä', 'Ö', 'ö', 'Ü', 'ü', 'ß',
+   { } ' ', '''', ':', '?', '-', '(', '+', '.', ')', '/', '&', '*', ',', '$', '%' ];
 
   {
     ANSI-, UTF-8-, DTA- Kodierungen, SEPA
@@ -240,6 +258,7 @@ const
   cUTF8Prefix = #$C3;
   UmlautUTF8: string[4] = #$84#$96#$9C#$9F;
   sLog: TStringList = nil;
+  DtaXMLDoc : THTMLTemplate = nil;
 
 var
   DtaDatei: file of Ansichar;
@@ -248,8 +267,6 @@ var
   DtaListeAnsi: TextFile; // ANSI Zeichensatz
   DtaListeUTF8: TextFile; // UTF8 Zeichensatz
   DtaListeSEPA: TextFile; // SEPA Zeichensatz
-//  PainDoc : THTMLTemplate;
-
 
 function DTA2Ansi(s: AnsiString): string;
 var
@@ -452,7 +469,6 @@ end;
 procedure DtaOpen(header: DtaDataType);
 var
   hstr: string;
-  sPath: string;
 begin
   // Log vorbereiten
   if assigned(sLog) then
@@ -483,11 +499,15 @@ begin
     writeln(DtaListeRAW, cDTA_LastschriftPosten_Header);
     writeln(DtaListeSEPA, cDTA_LastschriftPosten_Header);
 
-    // SEPA
-    sPath := ExtractFilePath(FName)+'\';
-//    PainDoc := THTMLTemplate.create;
-//    PainDoc.LoadFromFile(sPath+'..\HTML Vorlagen\COR1.xml');
-
+    if (cDTA_HTML_Vorlagen_Path<>'') then
+     if FileExists(cDTA_HTML_Vorlagen_Path + cDTA_XML_FName) then
+     begin
+       DtaXMLDoc := THTMLTemplate.create;
+       DtaXMLDoc.LoadFromFile(cDTA_HTML_Vorlagen_Path + cDTA_XML_FName);
+       DatensammlerGlobal := TStringList.create;
+       DatensammlerGlobal.add('save&delete POSTEN');
+       DatensammlerLokal := TStringList.create;
+     end;
 
     { Schreibe Datensatz A }
     if Lastschrift then
@@ -509,6 +529,10 @@ begin
     WriteData(fill(' ', 24));
     WriteData('1'); { EURO }
   end;
+
+
+
+
   DtaEC := 0;
   DtaEBetrag := 0.0;
   DtaEKtoNr := 0;
@@ -661,6 +685,28 @@ begin
       if (Count = 6) then
         WriteData(fill(' ', 12));
     end;
+
+    if (assigned(DtaXMLDoc)) then
+    begin
+      with CSatz, DatensammlerLokal do
+      begin
+        add('load POSTEN');
+        add('EndeZuEndeReferenz='+inttostr(RID));
+        add('Name='+ zahlerName);
+        add('IBAN='+calcIBAN_DE(blz,ktonr ) );
+        add('Betrag='+FloatToStrISO(betrag));
+        add('VZ1='+VZweck[1]);
+        add('VZ2='+VZweck[2]);
+        add('VZ3='+VZweck[3]);
+        add('VZ4='+VZweck[4]);
+        add('VZ5='+VZweck[5]);
+        add('VZ6='+VZweck[6]);
+        add('VZ7='+VZweck[7]);
+        add('MandatsDatum='+Long2Date(Mandatsdatum));
+        add('Einreicher.ID=' + DtaData.GlaeubigerID);
+      end;
+    end;
+
   end;
 end;
 
@@ -687,6 +733,28 @@ begin
   closeFile(DtaListeUTF8);
   closeFile(DtaListeRAW);
   closeFile(DtaListeSEPA);
+
+  // XML
+  if (assigned(DtaXMLDoc)) then
+  begin
+    with DtaData, DatenSammlerGlobal do
+    begin
+      add('EREIGNIS_R='+ IntToStr(RID));
+      add('MOMENT=' + sTimeStamp);
+      add('ANZAHL=' + IntToStr(DtaEC));
+      add('SUMME=' + FloatToStrISO(DtaEBetrag));
+      add('Einreicher.Name=' + KontoInhaberName);
+      add('Einreicher.IBAN=' + calcIBAN_DE(blz, ktonr));
+    end;
+    with DtaXMLDoc do
+    begin
+     WriteValue(DatenSammlerLokal, DatenSammlerGlobal);
+     SaveToFileCompressed(DtaData.FName + '.xml');
+    end;
+    DatenSammlerLokal.Free;
+    DatenSammlerGlobal.Free;
+    FreeAndNil(DtaXMLDoc);
+  end;
 
   { Datenträger-Begleitzettel }
   with DtaData do

@@ -1152,8 +1152,10 @@ begin
     end;
   end;
 
+  DTA.cDTA_HTML_Vorlagen_Path := HtmlVorlagenPath;
   with DTA_Header do
   begin
+    RID := succ(e_r_gen('EREIGNIS_GID'));
     FName := DiagnosePath + 'DTAUS.DTA';
     BankName := iKontoBankName;
     BLZ := StrFilter(iKontoBLZ, cZiffern);
@@ -1187,6 +1189,12 @@ begin
 
       if isequal(Mandat, cPreis_ungesetzt) then
       begin
+        MANDAT_ID := 'P' + e_r_sql(
+        { } 'select RID ' +
+        { } 'from BUCH where ' +
+        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
+        { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+        { } ' (TEILLIEFERUNG=' + FieldByName('TEILLIEFERUNG').AsString + ')');
         Memo1.lines.add(
           { } cINFOText +
           { } ' Zum Beleg ' +
@@ -1196,6 +1204,13 @@ begin
       end
       else
       begin
+        MANDAT_ID := 'M' + e_r_sql(
+        { } 'select RID ' +
+        { } 'from BUCH where ' +
+        { } ' (NAME=' + SQLString(cKonto_Mandat) + ') and' +
+        { } ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and' +
+        { } ' (TEILLIEFERUNG=' + FieldByName('TEILLIEFERUNG').AsString + ')');
+
         if isother(Forderung, Mandat) then
           Memo1.lines.add(
             { } cWARNINGText +
@@ -2717,11 +2732,17 @@ begin
           end;
 
           if CheckBox7.Checked then
-            BereitsGespeichert := (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' + KontoNummer + ''') and '
-              + '(DATUM=''' + long2date(EntryDate) + ''') and ' + '(MD5=''' + MD5 + ''')') <> 0)
+            BereitsGespeichert := (e_r_sql(
+             {} 'select count(RID) from BUCH where' +
+             {} ' (NAME=''' + KontoNummer + ''') and'              +
+             {} ' (DATUM=''' + long2date(EntryDate) + ''') and' +
+             {} ' (MD5=''' + MD5 + ''')') <> 0)
           else
-            BereitsGespeichert := (e_r_sql('select count(RID) from BUCH where ' + '(NAME=''' + KontoNummer + ''') and '
-              + '(DATUM=''' + long2date(EntryDate) + ''') and ' + '(POSNO=' + inttostr(LfdNo) + ')') <> 0);
+            BereitsGespeichert := (e_r_sql(
+            {} 'select count(RID) from BUCH where' +
+            {} ' (NAME=''' + KontoNummer + ''') and'              +
+            {} ' (DATUM=''' + long2date(EntryDate) + ''') and' +
+            {} ' (POSNO=' + inttostr(LfdNo) + ')') <> 0);
 
           // Fingerabdruck suchen
           if not(BereitsGespeichert) then

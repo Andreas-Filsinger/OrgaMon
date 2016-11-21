@@ -40,7 +40,7 @@
                 </FinInstnId>
             </CdtrAgt>
             <ChrgBr>SLEV</ChrgBr>
-<!-- BEGIN POSTEN --> 
+<!-- BEGIN POSTEN -->
             <DrctDbtTxInf>
                 <PmtId>
                     <EndToEndId>~EndeZuEndeReferenz~</EndToEndId>
@@ -82,7 +82,8 @@
                     <Ustrd>~VZ1~ ~VZ2~ ~VZ3~ ~VZ4~ ~VZ5~ ~VZ6~ ~VZ7~!^T</Ustrd>
                 </RmtInf>
             </DrctDbtTxInf>
-<!-- END POSTEN --> 
+<!-- END POSTEN -->
+<!-- INSERT AUFTRAG -->
         </PmtInf>
     </CstmrDrctDbtInitn>
 </Document>

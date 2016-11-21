@@ -2166,7 +2166,8 @@ CheckCreateDir(MyProgramPath + 'CD-R\System');
 CheckCreateDir(MyProgramPath + 'GermanParcel');
 CheckCreateDir(MyProgramPath + cRechnungsKopiePath);
 CheckCreateDir(MyProgramPath + 'Bestellungskopie');
-CheckCreateDir(MyProgramPath + cHTMLTemplatesDir);
+
+CheckCreateDir(HtmlVorlagenPath);
 CheckCreateDir(MyProgramPath + cHTMLBlocksDir);
 
 CheckCreateDir(DiagnosePath);
