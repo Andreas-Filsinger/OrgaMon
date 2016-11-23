@@ -32,13 +32,16 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, dta, IB_Components, IB_Access,
+  StdCtrls, IB_Components, IB_Access,
   Grids, IB_Grid, ComCtrls,
   Buttons, JvGIF, ExtCtrls,
   DCPcrypt2, DCPmd5,
   gplists, ImgList, JvExControls,
-  JvArrayButton, WordIndex, anfix32,
-  Sperre, JvAnimatedImage, JvGIFCtrl, System.ImageList;
+  JvArrayButton,
+
+  DTA, WordIndex, anfix32,
+  Sperre,
+  JvAnimatedImage, JvGIFCtrl, System.ImageList;
 
 type
   TFormBuchhalter = class(TForm)
@@ -1327,7 +1330,7 @@ begin
     end;
 
     if Limit_Erreicht then
-      ShowMEssageTimeOut('Ihr Limit war wirksam!');
+      ShowMessageTimeOut('Ihr Limit war wirksam!');
 
     // Erfolg
     CheckCreateOnce(MyProgramPath + cHBCIPath);

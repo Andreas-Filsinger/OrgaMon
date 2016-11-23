@@ -41,7 +41,6 @@ uses
   BelegVersand in 'BelegVersand.pas' {FormBelegVersand},
   VersenderPaketID in 'VersenderPaketID.pas' {FormVersenderPaketID},
   BelegRecherche in 'BelegRecherche.pas' {FormBelegRecherche},
-  ArtikelSuchindex in 'ArtikelSuchindex.pas' {FormArtikelSuchindex},
   ArtikelVerlag in 'ArtikelVerlag.pas' {FormArtikelVerlag},
   ArtikelBackorder in 'ArtikelBackorder.pas' {FormArtikelBackorder},
   PreisCode in 'PreisCode.pas' {FormPreisCode},
@@ -257,7 +256,6 @@ begin
   Application.CreateForm(TFormBelegVersand, FormBelegVersand);
   Application.CreateForm(TFormVersenderPaketID, FormVersenderPaketID);
   Application.CreateForm(TFormBelegRecherche, FormBelegRecherche);
-  Application.CreateForm(TFormArtikelSuchindex, FormArtikelSuchindex);
   Application.CreateForm(TFormArtikelVerlag, FormArtikelVerlag);
   Application.CreateForm(TFormArtikelBackorder, FormArtikelBackorder);
   Application.CreateForm(TFormPreisCode, FormPreisCode);

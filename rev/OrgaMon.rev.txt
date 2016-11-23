@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.254 (23.11.16) Andreas Filsinger
+
+ Bug: Webshop: Artikel-OLAPs "System.WebShop.*" werden nun im System-OLAP Verzeichnis
+      gesucht, nicht im privaten Verzeichnis.
+
+ Neu: cOrgaMon: Kommandozeilenparameter "--tagesabschluss"
+
+Rev 8.253 (22.11.16) Andreas Filsinger
+
+ Neu: SEPA-Lastschriftverfahren: "COR1": Prüfung gegen die pain.008.003.02.xsd
+
 Rev 8.252 (21.11.16) Andreas Filsinger
 
  Neu: SEPA-Lastschriftverfahren: "COR1"

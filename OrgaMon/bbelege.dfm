@@ -726,6 +726,57 @@ object FormBBelege: TFormBBelege
       TabOrder = 3
       OnDblClick = DrawGrid1DblClick
       OnDrawCell = DrawGrid1DrawCell
+      ColWidths = (
+        130
+        130
+        130
+        130)
+      RowHeights = (
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26
+        26)
     end
     object Button18: TButton
       Left = 670
@@ -1082,7 +1133,7 @@ object FormBBelege: TFormBBelege
     Left = 320
     Top = 513
     Bitmap = {
-      494C01012B002C00480010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012B002C004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

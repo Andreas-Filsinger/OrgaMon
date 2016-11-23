@@ -78,7 +78,6 @@ type
     Button46: TButton;
     Button35: TButton;
     Button40: TButton;
-    Button47: TButton;
     Button48: TButton;
     Button49: TButton;
     Button51: TButton;
@@ -194,7 +193,6 @@ type
     procedure Button46Click(Sender: TObject);
     procedure Button35Click(Sender: TObject);
     procedure Button40Click(Sender: TObject);
-    procedure Button47Click(Sender: TObject);
     procedure Button48Click(Sender: TObject);
     procedure Button49Click(Sender: TObject);
     procedure Button51Click(Sender: TObject);
@@ -294,9 +292,8 @@ uses
   Inventur, Ereignis, Tagesabschluss,
   Versender, VersenderPaketID, BelegRecherche,
   BaseUpdate, ArtikelVerlag,
-  AusgabeArt, Prorata,
+  AusgabeArt, Prorata, Aktion,
   BestellArbeitsplatz, WebShopConnector,
-  Aktion, ArtikelSuchIndex,
   NatuerlicheResourcen, Scanner, PlakatDruck,
   ArtikelPakete, ArtikelRang,
   ArtikelLeistung, Replikation,
@@ -780,11 +777,6 @@ end;
 procedure TFormMain.Button41Click(Sender: TObject);
 begin
   FormKalender.show;
-end;
-
-procedure TFormMain.Button47Click(Sender: TObject);
-begin
-  FormArtikelSuchIndex.show;
 end;
 
 procedure TFormMain.Button48Click(Sender: TObject);

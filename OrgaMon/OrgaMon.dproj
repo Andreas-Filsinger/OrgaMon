@@ -273,9 +273,6 @@
         <DCCReference Include="BelegRecherche.pas">
             <Form>FormBelegRecherche</Form>
         </DCCReference>
-        <DCCReference Include="ArtikelSuchindex.pas">
-            <Form>FormArtikelSuchindex</Form>
-        </DCCReference>
         <DCCReference Include="ArtikelVerlag.pas">
             <Form>FormArtikelVerlag</Form>
         </DCCReference>

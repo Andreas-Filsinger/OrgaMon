@@ -44,7 +44,8 @@ unit DTA;
   04.01.08 Salden-Objekt
   19.03.08 UTF-8 Codierung der CSV
   29.07.14 SEPA Codierung der CSV
-  30.04.15 SEPA COR1 xml
+  30.04.15 SEPA COR1 xml (Informations-Sammlung)
+  22.11.16 SEPA COR1 xml (erste .xml Datei)
 
 }
 
@@ -108,7 +109,7 @@ unit DTA;
 interface
 
 uses
-  classes, anfix32, DCPcrypt2, DCPmd5;
+  classes, anfix32;
 
 const
   cDTA_csvSeparator = ';';
@@ -211,7 +212,8 @@ function DtaUmsatzMD5(UmsatzLine: string): string;
 implementation
 
 uses
-  SysUtils, Geld, html;
+  SysUtils, Geld, html,
+  OrientationConvert, DCPcrypt2, DCPmd5;
 
 var
 
@@ -712,6 +714,8 @@ function DtaClose: TStringList;
 var
   hstr: string[17];
   BerichtF: TextFile;
+  OutFileName : string;
+  WorkPath : string;
 begin
   WriteInfo('ANZAHL', inttostr(DtaEC));
   WriteInfo('BETRAG', format('%m', [DtaEBetrag]));
@@ -735,6 +739,7 @@ begin
   // XML
   if (assigned(DtaXMLDoc)) then
   begin
+    OutFileName := DtaData.FName + '.xml';
     with DtaData, DatenSammlerGlobal do
     begin
       add('EREIGNIS_R='+ IntToStr(RID));
@@ -747,12 +752,22 @@ begin
     end;
     with DtaXMLDoc do
     begin
+     // Fill with Values
      WriteValue(DatenSammlerLokal, DatenSammlerGlobal);
-     SaveToFileCompressed(DtaData.FName + '.xml');
+
+     // Save
+     SaveToFileCompressed(OutFileName);
     end;
     DatenSammlerLokal.Free;
     DatenSammlerGlobal.Free;
     FreeAndNil(DtaXMLDoc);
+
+    // Check the xml File
+    WorkPath := ExtractFilePath(DtaData.FName + '.xml' );
+    if not(FileExists(WorkPath+c_ML_SchemaFName)) then
+     FileCopy(cDTA_HTML_Vorlagen_Path + 'pain.008.003.02.xsd',WorkPath+c_ML_SchemaFName);
+    doConversion(Content_Mode_xsd, DtaData.FName + '.xml', sLog);
+
   end;
 
   { Datenträger-Begleitzettel }

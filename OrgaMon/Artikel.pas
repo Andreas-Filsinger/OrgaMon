@@ -208,6 +208,7 @@ type
     Edit4: TEdit;
     SpeedButton21: TSpeedButton;
     JvFormStorage1: TJvFormStorage;
+    SpeedButton27: TSpeedButton;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
@@ -275,6 +276,7 @@ type
     procedure Edit4KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton21Click(Sender: TObject);
     procedure SpeedButton22Click(Sender: TObject);
+    procedure SpeedButton27Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _VERLAG_R: Integer;
@@ -1041,6 +1043,13 @@ begin
     end;
     EndHourGlass;
   end;
+end;
+
+procedure TFormArtikel.SpeedButton27Click(Sender: TObject);
+begin
+  BeginHourGlass;
+  ArtikelSuchIndex;
+  EndHourGlass;
 end;
 
 procedure TFormArtikel.SpeedButton2Click(Sender: TObject);

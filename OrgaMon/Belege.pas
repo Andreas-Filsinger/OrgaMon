@@ -344,7 +344,7 @@ uses
   Funktionen_Auftrag,
   html, Person, main,
   mwst, Artikel, AusgangsRechnungen,
-  BelegVersand, Versender, ArtikelSuchIndex,
+  BelegVersand, Versender,
   ArtikelVerlag, Lager,
   BestellArbeitsplatz,
   WarenBewegung, PreAuftrag, TierAuswahl,
