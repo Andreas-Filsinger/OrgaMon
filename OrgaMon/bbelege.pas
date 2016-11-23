@@ -60,7 +60,7 @@ uses
   IB_LocateEdit,
 
   // HeBu Projekt
-  Buttons, JvGIF, IB_EditButton;
+  Buttons, JvGIF, IB_EditButton, System.ImageList;
 
 type
   TFormBBelege = class(TForm)
@@ -256,7 +256,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   funktionen_Auftrag,
-  Artikel, ArtikelSuchIndex,
+  Artikel,
   ArtikelVerlag, Lager,
   AusgabeArt,
   FolgeSetzen, ArtikelBackorder,

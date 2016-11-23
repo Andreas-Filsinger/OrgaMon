@@ -52,6 +52,7 @@ procedure Rebuild;
 
 // Suchindex Cache neu erstellen
 procedure PersonSuchindex;
+procedure ArtikelSuchindex;
 
 // Kartenverzeichnis auf Quota bringen
 procedure KartenQuota;
@@ -362,6 +363,191 @@ procedure KartenQuota;
 begin
   if (iKartenPfad <> '') and (iKartenQuota > 0) then
     DirQuota(iKartenPfad + '*.png', iKartenQuota);
+end;
+
+procedure ArtikelSuchindex;
+var
+  ArtikelInfo: TStringList;
+  cARTIKEL: TIB_Cursor;
+  WebShopRedList: TgpIntegerList;
+  s: string;
+  n: integer;
+  SearchIndex: TWordIndex;
+
+  // cache
+  ARTIKEL_R : integer;
+
+  // verschiedene Suchstrings
+  ArtikelContext1: string;
+  ArtikelContext2: string;
+
+  // die verschiedenen OLAPs für die verschiedenen Name-Spaces
+  OLAPs: TStringList;
+  RIDs: TList;
+  SearchIndexs: TList;
+
+  function ReadLongStr(BlockName: string): string;
+  var
+    MachineState: byte;
+    n, k: integer;
+  begin
+    result := '';
+    MachineState := 0;
+    for n := 0 to pred(ArtikelInfo.count) do
+    begin
+      case MachineState of
+        0:
+        begin
+          k := pos(BlockName + '=', ArtikelInfo[n]);
+          if (k = 1) then
+          begin
+            result := copy(ArtikelInfo[n], length(BlockName) + 2, MaxInt);
+            MachineState := 1;
+          end;
+        end;
+        1:
+        begin
+          k := pos('=', ArtikelINfo[n]);
+          if (k = 0) or (k > 11) then
+            result := result + #13 + ArtikelInfo[n]
+          else
+            exit;
+        end;
+      end;
+    end;
+  end;
+
+begin
+
+  ArtikelInfo := TStringList.create;
+  OLAPs := TStringList.create;
+  RIDs := TList.create;
+  SearchIndexs := TList.create;
+  cARTIKEL := nCursor;
+  SearchIndex := TWordIndex.create(nil);
+
+  // OLAPs ausführen!
+  dir(iSystemOLAPPath+'System.WebShop.*'+cOLAPExtension,OLAPs,false);
+  for n := 0 to pred(OLAPs.count) do
+  begin
+    RIDs.add(e_r_OLAP(iSystemOLAPPath+OLAPs[n]));
+    SearchIndexs.add(TWordIndex.create(nil));
+  end;
+
+  // den Namespace extrahieren!
+  ersetze('System.WebShop.','',OLAPs);
+  ersetze(cOLAPExtension,'',OLAPs);
+
+  // den Namespace "abu" erzwingen!
+  if (OLAPs.indexof('abu')=-1) then
+  begin
+    OLAPs.add('abu');
+    RIDs.add(e_r_sqlm('select RID from ARTIKEL'));
+    SearchIndexs.add(TWordIndex.create(nil));
+  end;
+
+  // Verbot für den WebShop
+  WebShopRedList := e_r_sqlm(
+   {} 'select '+
+   {} ' ARTIKEL.RID '+
+   {} 'from '+
+   {} ' ARTIKEL '+
+   {} 'where '+
+   {} ' (ARTIKEL.WEBSHOP=''N'') or '+
+   {} ' (ARTIKEL.SORTIMENT_R in ('+
+   {} 'select RID from SORTIMENT where WEBSHOP=''N'''+
+    ')) ');
+
+
+  with cARTIKEL do
+  begin
+    sql.add('SELECT');
+    sql.add(' RID,INTERN_INFO,TITEL,VERLAG_R,');
+    sql.add(' KOMPONIST_R,ARRANGEUR_R,CODE,');
+    sql.add(' NUMERO,VERLAGNO,SORTIMENT_R,LAUFNUMMER,');
+    sql.add(' WEBSHOP,GEMA_WN,GTIN');
+    sql.add('FROM');
+    sql.add(' ARTIKEL');
+    sql.add('WHERE');
+    sql.add(' PAKET_R IS NULL');
+    APIfirst;
+    while not (eof) do
+    begin
+
+      ARTIKEL_R := FieldByName('RID').AsINteger;
+
+
+      FieldByName('INTERN_INFO').AssignTo(ArtikelInfo);
+
+      // Grundvolumen aller Clients
+      S :=
+        FieldByName('TITEL').AsString + ' ' +
+        e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsInteger) + ' ' +
+        e_r_MusikerName(FieldByName('KOMPONIST_R').AsInteger) + ' ' +
+        e_r_MusikerName(FieldByName('ARRANGEUR_R').AsInteger) + ' ' +
+        FieldByName('GEMA_WN').AsString + ' ' +
+        FieldByName('GTIN').AsString;
+
+      // intern "vollumfänglich"
+      ArtikelContext1 :=
+        S + ' ' +
+        FieldByName('CODE').AsString + ' ' +
+        FieldByName('NUMERO').AsString + ' ' +
+        FieldByName('VERLAGNO').AsString + ' ' +
+        '~' + FieldByName('SORTIMENT_R').AsString + 's ' +
+        ArtikelInfo.Values['SERIE'] + ' ' +
+        ReadLongStr('BEM') + ' ' +
+        ArtikelInfo.Values['GATTUNG'];
+
+      // extern "teilinfo"
+      ArtikelContext2 :=
+        S + ' ' +
+        FieldByName('LAUFNUMMER').AsString;
+
+      SearchIndex.AddWords(ArtikelContext1, TObject(ARTIKEL_R));
+
+      // ist die Aufnahme des Artikels in den WebShop OK?
+      if (WebShopRedList.indexof(ARTIKEL_R)=-1) then
+      begin
+
+        // alle OLAPs durchlaufen und Wortlisten aufbauen ...
+        for n := 0 to pred(OLAPs.count) do
+          if (TgpIntegerList(RIDs[n]).IndexOf(ARTIKEL_R)<>-1) then
+          begin
+            if (pos('2',OLAPs[n])>0) then
+              TWordIndex(SearchIndexs[n]).AddWords(ArtikelContext2, TObject(ARTIKEL_R))
+            else
+              TWordIndex(SearchIndexs[n]).AddWords(ArtikelContext1, TObject(ARTIKEL_R));
+          end;
+
+      end;
+
+      ApiNext;
+
+    end;
+  end;
+
+  SearchIndex.JoinDuplicates(false);
+  SearchIndex.SaveToFile(SearchDir + format(cArtikelSuchindexFName,[cArtikelSuchindexIntern]));
+
+  for n := 0 to pred(OLAPs.Count) do
+    with TWordIndex(SearchIndexs[n]) do
+    begin
+      JoinDuplicates(false);
+      SaveToFile(SearchDir + format(cArtikelSuchindexFName,[OLAPs[n]]));
+    end;
+
+  // FREE
+  SearchIndex.free;
+  ArtikelInfo.free;
+  OLAPs.free;
+  for n := 0 to pred(RIDs.count) do
+    TgpIntegerList(RIDs[n]).free;
+  RIDs.free;
+  for n := 0 to pred(SearchIndexs.count) do
+    TWordIndex(SearchIndexs[n]).free;
+  SearchIndexs.free;
+  cARTIKEL.Free;
 end;
 
 end.

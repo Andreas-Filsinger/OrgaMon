@@ -85,7 +85,7 @@ uses
   Funktionen_Auftrag,
 
   Datensicherung, Person, CreatorMain,
-  VersenderPaketID, ArtikelSuchindex, NatuerlicheResourcen,
+  VersenderPaketID,  NatuerlicheResourcen,
   Replikation, CareTakerClient, Musiker,
   BaseUpdate, Tier, Mahnung,
   AuftragMobil, AuftragExtern, AuftragSuchindex,
@@ -290,10 +290,7 @@ begin
             18:
               FormTier.CreateIndex;
             19:
-              begin
-                FormArtikelSuchIndex.show;
-                FormArtikelSuchIndex.Button1Click(self);
-              end;
+              ArtikelSuchIndex;
             20:
               begin
                 FormNatuerlicheResourcen.Execute;

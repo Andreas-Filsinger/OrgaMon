@@ -116,6 +116,7 @@ function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: cha
 // Wirtschafts und Lager Logik
 
 { Artikel }
+
 function e_r_ArtikelPDF(ARTIKEL_R: integer): TStringList;
 
 function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
@@ -131,6 +132,9 @@ function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 // Es kann nicht über das Gesamtvolumen hinaus abgeschrieben werden
 // Es wird zurückgeliefert, was wirklich abgeschrieben werden konnte
 // --------------------------------------------------------------------------
+
+
+
 
 implementation
 

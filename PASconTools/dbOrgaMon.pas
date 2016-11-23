@@ -295,7 +295,6 @@ function e_r_sqlslo(s: string): TStringList;
 // Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
 function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
 
-function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
 
 // SQL Update, Execute Statements
 procedure e_x_sql(s: string); overload;
@@ -316,6 +315,19 @@ procedure e_x_commit;
 //
 procedure e_x_dereference(dependencies: TStringList; fromref: string; toref: string = 'NULL'); overload;
 procedure e_x_dereference(dependencies: string; fromref: string; toref: string = 'NULL'); overload;
+
+{
+  |      ___    _          _      ____
+  |     / _ \  | |        / \    |  _ \
+  |    | | | | | |       / _ \   | |_) |
+  |    | |_| | | |___   / ___ \  |  __/
+  |     \___/  |_____| /_/   \_\ |_|
+  |
+}
+
+// OLAP-Script ausführen
+function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload;
+function e_r_OLAP(FName: string): TgpIntegerList; overload;
 
 // Name einer temporären OLAP-Tabelle
 function e_r_OLAP_Tabellenname(n: integer): string;
@@ -2227,7 +2239,7 @@ begin
   sql.free;
 end;
 
-function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList;
+function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload;
 var
   ParameterL: TStringList;
 
@@ -2242,7 +2254,7 @@ var
 
       // Anfangsposition bestimmen
       k := pos('$', result);
-      if k = 0 then
+      if (k = 0) then
         break;
 
       // Länge bestimmen
@@ -2324,6 +2336,49 @@ begin
 
   cOLAP.free;
   ParameterL.free;
+end;
+
+function e_r_OLAP(FName: string): TgpIntegerList; overload;
+var
+ cOLAP: TdboCursor;
+ oSQL: TStringList;
+ n,k: integer;
+begin
+  result := TgpIntegerList.create;
+  cOLAP := nCursor;
+  oSQL := TStringList.create;
+  oSQL.LoadFromFile(FName);
+
+  for n := pred(oSQL.Count) downto 0 do
+  begin
+    // remove comment
+    k := pos('//', oSQL[n]);
+    if (k > 0) then
+     oSQL[n] := copy(oSQL[n], 1, pred(k));
+    k := pos('--', oSQL[n]);
+    if (k > 0) then
+     oSQL[n] := copy(oSQL[n], 1, pred(k));
+
+    // remove empty lines
+    oSQL[n] := cutblank(oSQL[n]);
+    if (oSQL[n]='') then
+      oSQL.Delete(n);
+
+  end;
+
+  with cOLAP do
+  begin
+    sql.Assign(oSQL);
+    dbLog(sql);
+    ApiFirst;
+    while not(eof) do
+    begin
+      result.Add(Fields[0].AsInteger);
+      ApiNext;
+    end;
+  end;
+  cOLAP.free;
+  oSQL.Free;
 end;
 
 function e_r_now: TdateTime;
