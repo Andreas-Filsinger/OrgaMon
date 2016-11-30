@@ -48,7 +48,7 @@ function VertragsVarianten(Purge: boolean = false): string;
 procedure CheckCreateOnce(sPath: string);
 
 // Alle Caches löschen und somit Neuerstellung erzwingen
-procedure Rebuild;
+procedure ReBuild;
 
 // Suchindex Cache neu erstellen
 procedure PersonSuchindex;
@@ -261,7 +261,7 @@ begin
   SpeedIndex.free;
 end;
 
-procedure Rebuild;
+procedure ReBuild;
 begin
   Sortiment(true);
   Laender(true);

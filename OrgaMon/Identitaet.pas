@@ -344,6 +344,8 @@ begin
 end;
 
 procedure RunAsTagesabschluss;
+var
+ TimeDiff: TANFiXTime;
 begin
 (*
   if TagesabschlussAktiv then
@@ -478,16 +480,24 @@ begin
               if (iKontenHBCI <> '') then
                 FormBuchhalter.e_w_KontoSync(iKontenHBCI);
             11:
+*)
               ReBuild;
+(*
             12:
               FormAuftragSuchindex.ReCreateTheIndex;
             13:
+*)
               if iTagesabschlussRang then
                 e_d_Rang;
+(*
             14:
+*)
               e_d_Lieferzeit;
+(*
             15:
+*)
               PersonSuchindex;
+(*
             16:
               FormCreatorMain.CreateSearchIndex;
             17:
@@ -503,11 +513,15 @@ begin
                 FormNatuerlicheResourcen.Execute;
               end;
             21:
+*)
               e_w_LagerFreigeben;
+(*
             22:
               begin
+*)
                 e_x_BelegAusPOS;
                 e_d_Belege;
+(*
               end;
             23:
               if iMahnlaufbeiTagesabschluss then
@@ -521,13 +535,17 @@ begin
                   Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
               end;
             24:
+*)
               e_w_VertragBuchen;
+(*
             25:
               begin
+*)
                 TimeDiff := r_Local_vs_Server_TimeDifference;
                 if (TimeDiff <> 0) then
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
+(*
               end;
             26:
               begin
@@ -602,8 +620,171 @@ begin
 end;
 
 procedure RunAsTagwache;
+var
+  n: integer;
+  ErrorCount: integer;
+  Ticket: TTroubleTicket;
+  GlobalVars: TStringList;
 begin
+(*
+  if TagwacheAktiv then
+  begin
+    Log(cERRORText + ' Benutzer Abbruch');
+    EofTagwache;
+    Button1.caption := 'Abbruch ...';
+    application.processmessages;
+  end
+  else
+  begin
+    BeginHourGlass;
+    NoTimer := true;
+    LetzteTagWacheWarAm := DateGet;
+    LetzteTagWacheWarUm := SecondsGet;
+    Tagwache_TAN := e_w_gen('GEN_TAGWACHE');
+    ProgressBar1.max := CheckListBox1.items.count;
+    Ticket := CareTakerLog('TagWache START');
+    ErrorCount := 0;
+    Log('Start am ' + long2date(LetzteTagWacheWarAm) + ' um ' + secondstostr(LetzteTagWacheWarUm) + ' h auf ' +
+      ComputerName);
 
+    _TagWache := iTagWacheUm;
+    iTagWacheUm := 0;
+    Button1.caption := '&Abbruch';
+    for n := 0 to pred(CheckListBox1.items.count) do
+    begin
+      ProgressBar1.position := n;
+      if not(CheckListBox1.checked[n]) then
+      begin
+        try
+          Log( { } 'Beginne Aktion "' +
+            { } CheckListBox1.items[n] + '" um ' +
+            { } secondstostr(SecondsGet) + ' h');
+
+          case n of
+            0:
+*)
+              e_w_GrabFotos;
+(*
+            1:
+              FormAuftragMobil.ReadMobil;
+            2:
+              FormAuftragErgebnis.UploadNewTANS(-1, false);
+            3:
+              if (iTagwacheBaustelle >= cRID_FirstValid) then
+              begin
+
+                // Baustelle ablegen
+                with FormBaustelle do
+                begin
+                  Show;
+                  if IB_Query1.Locate('RID', iTagwacheBaustelle, []) then
+                  begin
+                    AutoYES := true;
+                    Button7Click(self);
+                  end;
+                  Close;
+                end;
+
+                // WE frisch erzeugen!
+                FormBestellArbeitsplatz.MobilExport;
+
+                // Import-Schema laden
+                with FormAuftragImport do
+                begin
+                  SetContext(iTagwacheBaustelle);
+                  DoImport;
+                  Close;
+                end;
+
+                //
+
+              end;
+            4:
+              FormAuftragMobil.WriteMobil;
+            5:
+*)
+                e_r_Sync_AuftraegeAlle;
+(*
+            6:
+              begin
+                FormOLAPArbeitsplatz.TagWache;
+              end;
+            7:
+              begin
+                // Context-OLAPs
+                GlobalVars := TStringList.Create;
+                GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
+                FormOLAP.DoContextOLAP(
+                  { } iSystemOLAPPath + 'Tagwache.*' + cOLAPExtension,
+                  { } GlobalVars);
+                GlobalVars.free;
+              end;
+          else
+            delay(2000);
+          end;
+        except
+          on e: exception do
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + ' TagWache Exception ' + e.message);
+          end;
+        end;
+        if (ErrorCount = 0) then
+          CheckListBox1.checked[n] := true;
+        application.processmessages;
+        if not(TagwacheAktiv) or (ErrorCount > 0) then
+          break;
+      end;
+    end;
+    ProgressBar1.position := 0;
+    iTagWacheUm := _TagWache;
+    Button1.caption := '&Start';
+    if (ErrorCount > 0) then
+      Log(cERRORText + ' TagWache FAIL at Stage ' + inttostr(n));
+    CareTakerClose(Ticket);
+    Log('Ende um ' + secondstostr(SecondsGet) + ' h');
+
+    // Tagwache-OLAPs ausführen
+    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagwache.*' + cOLAPExtension);
+
+    EofTagwache;
+    EndHourGlass;
+
+    // Aktionen NACH der Tagwache
+    repeat
+
+      // Anwendung neu starten
+      if iNachTagwacheAnwendungNeustart then
+      begin
+        FormBaseUpdate.RestartApplication;
+        break;
+      end;
+
+      // Rechner herunterfahren
+      if iNachTagWacheHerunterfahren then
+      begin
+        WindowsHerunterfahren;
+        break;
+      end;
+
+      // Rechner neu starten
+      if iNachTagwacheRechnerNeustarten then
+      begin
+        FormBaseUpdate.CloseOtherInstances;
+        delay(1000);
+        WindowsNeuStarten;
+        break;
+      end;
+
+      // normal weitermachen ...
+      if (ErrorCount = 0) then
+        for n := 0 to pred(CheckListBox1.items.count) do
+          CheckListBox1.checked[n] := false;
+      Close;
+      NoTimer := false;
+    until true;
+  end;
+*)
 end;
 
 procedure RunAsTWebShop;
