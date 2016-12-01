@@ -582,36 +582,40 @@ begin
 
     // Evaluate Version
     _ListCount := Pi(ReadP)^;
+    {$ifdef FPC}
+    inc(ReadP, 4);
+    {$else}
     inc(integer(ReadP), 4);
+    {$endif}
     if (_ListCount = cTWordIndex_File_Tag) then
     begin
       Version := Pi(ReadP)^;
-      inc(integer(ReadP), 4);
+      inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       pMinWordLenght := Pi(ReadP)^;
-      inc(integer(ReadP), 4);
+      inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       _ListCount := Pi(ReadP)^;
-      inc(integer(ReadP), 4);
+      inc({$ifndef FPC}integer{$endif}(ReadP), 4);
     end;
 
     capacity := _ListCount;
     for n := 0 to pred(_ListCount) do
     begin
       _SubCount := Pi(ReadP)^;
-      inc(integer(ReadP), 4);
+      inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       SubItems := TExtendedList.Create;
       SubItems.capacity := _SubCount;
       for m := 0 to pred(_SubCount) do
       begin
         _refNo := Pi(ReadP)^;
-        inc(integer(ReadP), 4);
+        inc({$ifndef FPC}integer{$endif}(ReadP), 4);
         SubItems.add(TObject(_refNo));
       end;
       _StrLen := Pi(ReadP)^;
-      inc(integer(ReadP), 4);
+      inc({$ifndef FPC}integer{$endif}(ReadP), 4);
       SetLength(InpStr, _StrLen);
       if (_StrLen > 0) then
         system.move(ReadP^, InpStr[1], _StrLen);
-      inc(integer(ReadP), _StrLen);
+      inc({$ifndef FPC}integer{$endif}(ReadP), _StrLen);
       AddObject(InpStr, SubItems);
     end;
     FreeMem(_ReadP, _FSize);

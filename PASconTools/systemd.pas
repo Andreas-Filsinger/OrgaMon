@@ -42,13 +42,20 @@ function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
 implementation
 
 uses
- anfix32, JclMiscel, SysUtils;
+ anfix32,
+ {$ifndef FPC}
+ JclMiscel,
+ {$endif}
+ SysUtils;
 
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 begin
  if DebugMode then
    AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+ {$ifdef FPC}
+ {$else}
  result := JclMiscel.WinExec32AndWait(Cmd,CmdShow);
+ {$endif}
  if DebugMode then
    AppendStringsToFile(IntToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
 end;
@@ -57,7 +64,10 @@ function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
 begin
  if DebugMode then
    AppendStringsToFile(Cmd, DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+ {$ifdef FPC}
+ {$else}
  result := JclMiscel.WinExec32(Cmd,CmdShow);
+ {$endif}
  if DebugMode then
    AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
 end;
