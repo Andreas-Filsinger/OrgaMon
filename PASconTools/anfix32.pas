@@ -144,7 +144,9 @@ procedure StartDebug(s: string);
 
 // String - Utils: Manipulation
 procedure ersetze(const find_str, ersetze_str: string; var d: String); overload;
+{$ifndef FPC}
 procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString); overload;
+{$endif}
 procedure ersetze(const find_str, ersetze_str: string; var d: Shortstring); overload;
 procedure ersetze(s: TStrings; var d: string); overload;
 procedure ersetze(const find_str, ersetze_str: string; s: TStrings); overload;
@@ -1768,6 +1770,7 @@ begin
   d := d + WorkStr;
 end;
 
+{$ifndef FPC}
 procedure ersetze(const find_str, ersetze_str: string; var d: AnsiString);
 var
   i: integer;
@@ -1790,6 +1793,7 @@ begin
   end;
   d := d + WorkStr;
 end;
+{$endif}
 
 procedure ersetze(const find_str, ersetze_str: string; var d: Shortstring);
 var

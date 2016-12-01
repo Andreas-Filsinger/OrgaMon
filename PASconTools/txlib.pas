@@ -6174,9 +6174,12 @@ var
       e:  PAnsiChar;
     begin
       result := nil;
-
+      {$ASMMODE intel}
       asm
+      {$ifndef FPC}
         push esi
+        {$endif}
+
         mov esi, [Str]
         mov al, Chr
         dec esi
@@ -6190,7 +6193,9 @@ var
         mov [result], esi
 @ScanZeroFound:
         mov [e], esi
+        {$ifndef FPC}
         pop esi;
+      {$endif}
       end;
 
       StrEnd := e;
@@ -8459,7 +8464,9 @@ begin
         inc(PSrc, Offset);
         
         asm
-          push edi
+        {$ifndef FPC}
+        push edi
+          {$endif}
           cld
           xor eax, eax
           mov al, Chr
@@ -8468,7 +8475,9 @@ begin
           mov edi, [PSrc]
           repne SCASB
           mov result, ecx
+          {$ifndef FPC}
           pop edi
+          {$endif}
         end;
 
         if result > 0 then
