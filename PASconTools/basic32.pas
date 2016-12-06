@@ -1766,6 +1766,7 @@ begin
     Err(VAREXPECTED, '')
   else
   begin
+{$IFNDEF CONSOLE}
 {$IFNDEF win32}
     InpLen := length(gets(succ(No))) + 1;
     repeat
@@ -1794,6 +1795,7 @@ begin
     begin
       InpStr := OIdOpenMakro + 'BASIC-INPUT' + OIdCloseMakro;
     end;
+{$ENDIF}
 {$ENDIF}
     WriteVal(VarName, cutrblank(InpStr));
   end;

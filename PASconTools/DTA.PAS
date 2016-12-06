@@ -237,13 +237,15 @@ const
   AlphaSetSEPA: set of Ansichar = ['0' .. '9', 'a' .. 'z', 'A' .. 'Z', ' ', '/', '?', ':', '(', ')',
     '.', ',', '''', '+', '-'];
 
+  (*
   AlphaSetXML: set of WideChar = [
    { } '0' .. '9',
    { } 'A' .. 'Z',
    { } 'a' .. 'z',
    { } 'Ä', 'ä', 'Ö', 'ö', 'Ü', 'ü', 'ß',
    { } ' ', '''', ':', '?', '-', '(', '+', '.', ')', '/', '&', '*', ',', '$', '%' ];
-  cAlphaSetXML = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefghijklmnopqrstuvwxyzäöüß '':?-(+.)/&*,$%';
+   *)
+   cAlphaSetXML = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefghijklmnopqrstuvwxyzäöüß '':?-(+.)/&*,$%';
   {
     ANSI-, UTF-8-, DTA- Kodierungen, SEPA
     'Ä' 0x8E -> 0xC3,0x84 -> '[' 0x5B -> AE

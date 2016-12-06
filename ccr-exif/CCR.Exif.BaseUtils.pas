@@ -84,6 +84,9 @@ function GetExecutableName: string; inline;
 { non-specific }
 
 type
+{$ifndef FPC}
+  PtrInt = longint;
+{$endif}
   ECCRExifException = class(Exception);
   EUnsupportedGraphicFormat = class(ECCRExifException);
 
@@ -125,7 +128,7 @@ type
     strict private
       FDisableChanges: Boolean;
     protected
-      function Realloc(var NewCapacity: Longint): Pointer; override;
+      function Realloc(var NewCapacity: PtrInt): Pointer; override;
       procedure SetSize(const NewSize: Int64); override;
     public
       destructor Destroy; override;
@@ -875,7 +878,7 @@ begin
   inherited SetSize(NewSize);
 end;
 
-function TMetadataBlock.TDataStream.Realloc(var NewCapacity: Longint): Pointer;
+function TMetadataBlock.TDataStream.Realloc(var NewCapacity: PtrInt): Pointer;
 begin
   if DisableChanges then
     raise EStreamError.CreateRes(@SStreamIsReadOnly)

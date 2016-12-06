@@ -510,7 +510,7 @@ begin
   k := pos(Delimiter, s);
   if k > 0 then
   begin
-    result := copy(s, 1, pred(k));
+    result := system.copy(s, 1, pred(k));
     delete(s, 1, pred(k + length(Delimiter)));
   end
   else
@@ -548,7 +548,7 @@ begin
         end
         else
         begin
-          result.add(copy(s, 1, pred(QuoteEnd)));
+          result.add(system.copy(s, 1, pred(QuoteEnd)));
           System.delete(s, 1, pred(QuoteEnd + QuoteLength));
           NextP(s, Delimiter);
         end;
@@ -577,8 +577,8 @@ begin
   l := length(find_str);
   while (i > 0) do
   begin
-    d := d + copy(WorkStr, 1, pred(i)) + ersetze_str;
-    WorkStr := copy(WorkStr, i + l, MaxInt);
+    d := d + system.copy(WorkStr, 1, pred(i)) + ersetze_str;
+    WorkStr := system.copy(WorkStr, i + l, MaxInt);
     i := pos(find_str, WorkStr);
   end;
   d := d + WorkStr;
