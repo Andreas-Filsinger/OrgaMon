@@ -368,7 +368,7 @@ end;
 procedure ArtikelSuchindex;
 var
   ArtikelInfo: TStringList;
-  cARTIKEL: TIB_Cursor;
+  cARTIKEL: TdboCursor;
   WebShopRedList: TgpIntegerList;
   s: string;
   n: integer;
@@ -477,7 +477,7 @@ begin
       ARTIKEL_R := FieldByName('RID').AsINteger;
 
 
-      FieldByName('INTERN_INFO').AssignTo(ArtikelInfo);
+      e_r_sqlt(FieldByName('INTERN_INFO'), ArtikelInfo);
 
       // Grundvolumen aller Clients
       S :=

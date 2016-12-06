@@ -139,7 +139,6 @@ function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 implementation
 
 uses
-  JclFileUtils,
   Windows, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
 
@@ -153,6 +152,7 @@ uses
   ZCompatibility,
   ZDbcIntfs,
 {$ELSE}
+  JclFileUtils,
   FlexCel.Core,
   CCR.Exif.Consts,
   GHD_pngimage,
@@ -799,6 +799,12 @@ begin
   until yet;
 end;
 
+{$ifdef FPC}
+function cBuildNumber : string;
+begin
+  result := '0';
+end;
+{$else}
 function cBuildNumber : string;
 var
  v : TJclFileVersionInfo;
@@ -807,6 +813,7 @@ begin
   result := v.FileVersionBuild;
   v.Free;
 end;
+{$endif}
 
 
 function e_r_BasePlug: TStringList;

@@ -2211,7 +2211,11 @@ begin
     if eof then
       result := cIllegalDate
     else
-      result := DateTime2Long(Fields[0].AsDate);
+{$ifdef FPC}
+result := DateTime2Long(Fields[0].AsDateTime);
+{$else}
+result := DateTime2Long(Fields[0].AsDate);
+{$endif}
   end;
   cSQL.free;
 end;

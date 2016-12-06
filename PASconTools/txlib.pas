@@ -6174,7 +6174,9 @@ var
       e:  PAnsiChar;
     begin
       result := nil;
+      {$ifdef FPC}
       {$ASMMODE intel}
+      {$endif}
       asm
       {$ifndef FPC}
         push esi
