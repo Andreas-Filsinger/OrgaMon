@@ -171,6 +171,7 @@ type
     Button34: TButton;
     IB_UpdateBar3: TIB_UpdateBar;
     Image2: TImage;
+    SpeedButton27: TSpeedButton;
     procedure IB_Grid1GetDisplayText(Sender: TObject; ACol, ARow: Integer; var AString: string);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -270,6 +271,7 @@ type
     procedure SpeedButton23Click(Sender: TObject);
     procedure SpeedButton24Click(Sender: TObject);
     procedure IB_Grid2InplaceEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure SpeedButton27Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -338,25 +340,24 @@ implementation
 
 uses
   math, globals, anfix32,
+  html, dbOrgaMon, gplists,
+  GUIhelp, Datenbank,
+  wanfix32, Geld,
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  html, Person, main,
-  mwst, Artikel, AusgangsRechnungen,
-  BelegVersand, Versender,
-  ArtikelVerlag, Lager,
-  BestellArbeitsplatz,
-  WarenBewegung, PreAuftrag, TierAuswahl,
-  ArtikelKategorie, GUIhelp, BelegRecherche,
-  BBelege, ArtikelBackorder,
-  CareTakerClient, QAbzeichnen, ArtikelContext,
-  ArtikelPreis, dbOrgaMon, gplists,
+  Funktionen_LokaleDaten,
+  Person, main, mwst,
+  Artikel, AusgangsRechnungen, BelegVersand,
+  Versender, ArtikelVerlag, Lager,
+  BestellArbeitsplatz, WarenBewegung, PreAuftrag,
+  TierAuswahl, ArtikelKategorie, BelegRecherche,
+  BBelege, ArtikelBackorder, CareTakerClient,
+  QAbzeichnen, ArtikelContext, ArtikelPreis,
   Ereignis, Bearbeiter, OpenOfficePDF,
-  Jvgnugettext, JvDBSpinedit,
-  Vertrag, Kontext,
-  ArtikelAAA, BelegSuche, Geld,
-  Datenbank, wanfix32,
+  Jvgnugettext, Vertrag,
+  Kontext, ArtikelAAA, BelegSuche,
   DruckSpooler, BuchBarKasse, ArtikelAusgabeartAuswahl;
 
 {$R *.DFM}
@@ -1890,6 +1891,13 @@ begin
   ersetze('*.html', '.combined.html', sMask);
   bigDocument.SaveToFile(sMask);
   bigDocument.free;
+end;
+
+procedure TFormBelege.SpeedButton27Click(Sender: TObject);
+begin
+  BeginHourGlass;
+  ArtikelSuchIndex;
+  EndHourGlass;
 end;
 
 procedure TFormBelege.SpeedButton2Click(Sender: TObject);
