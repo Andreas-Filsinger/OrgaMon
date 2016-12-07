@@ -35,7 +35,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="--Test --exec=Rechnung.html"/>
+        <CommandLineParams Value="--app --Id=sewa"/>
       </local>
     </RunParams>
     <RequiredPackages Count="5">
