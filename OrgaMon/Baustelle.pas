@@ -2634,10 +2634,23 @@ var
 
   function SQL_where: string;
   begin
-    if (Edit8.text <> '') then
-      result := ' (MASTER_R in (' + Edit8.text + ')) '
-    else
+    repeat
+
+      if (Edit8.text <> '') then
+      begin
+        result := ' (MASTER_R in (' + Edit8.text + ')) ';
+        break;
+      end;
+
+      if (Edit14.text <> '') then
+      begin
+        result := ' (ABLAGE_R=' + Edit14.text + ') ';
+        break;
+      end;
+
       result := ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') ';
+
+    until yet;
   end;
 
 begin
@@ -2655,7 +2668,7 @@ begin
     sql.Add('select count(RID) C_RID from ABLAGE where');
     sql.Add(SQL_where);
     sql.Add(' and (RID=MASTER_R)');
-    APiFirst;
+    ApiFirst;
     ANZ := FieldByName('C_RID').AsInteger;
   end;
   cABLAGE.free;
@@ -2762,15 +2775,24 @@ begin
   dABLAGE := DataModuleDatenbank.nDSQL;
   with dABLAGE do
   begin
-    // erst die historischen
+
+    // erst die Historischen
     sql.Add('delete from ABLAGE where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ') AND');
+    if (Edit14.text <> '') then
+      sql.Add(' (ABLAGE_R=' + Edit14.text + ') and')
+    else
+      sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ') and');
     sql.Add(' (MASTER_R<>RID)');
+
     execute;
     sql.clear;
+
     // nun den ganzen Rest
     sql.Add('delete from ABLAGE where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ')');
+    if (Edit14.text <> '') then
+      sql.Add(' (ABLAGE_R=' + Edit14.text + ')')
+    else
+      sql.Add(' (BAUSTELLE_R=' + inttostr(IB_Query1.FieldByName('RID').AsInteger) + ')');
     execute;
   end;
   dABLAGE.free;

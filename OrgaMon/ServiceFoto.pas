@@ -174,6 +174,8 @@ type
     Edit20: TEdit;
     ProgressBar2: TProgressBar;
     Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -560,17 +562,20 @@ var
  l, r, n: integer;
  sDIR : TStringList;
  SrcFname: string;
+ AnzEintragungen: integer;
+ cCol_Pfad: integer;
 begin
  // Die Kandidaten in den Sicherungen suchen!
  if not(assigned(_Wiederholen_sFOUND)) then
    _Wiederholen_sFOUND := TsTable.Create;
 
+   AnzEintragungen := 0;
  with _Wiederholen_sFOUND do
  begin
 
   if (RowCount<1) then
    insertFromFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
-  addCol('Pfad');
+  cCol_Pfad := addCol('Pfad');
 
   sDIR := TStringList.Create;
   for l := 0 to pred(Memo2.Lines.Count) do
@@ -589,13 +594,23 @@ begin
       SrcFName := copy(sDIR[n],7,MaxInt);
       r := locate(1,SrcFName);
       if (r<>-1) then
-        writeCell(r,'Pfad',Memo2.Lines[l]+sDIR[n]);
+      begin
+        writeCell(r,cCol_Pfad,Memo2.Lines[l]+sDIR[n]);
+        inc(AnzEintragungen);
+      end;
     end;
 
   end;
   if changed then
    SaveToFile(ExtractFilePath(edit14.Text)+'Fotos-Found.csv');
-  Label29.Caption := IntToStr(RowCount)+' gefunden!';
+  Label29.Caption := IntToStr(RowCount)+' Fotos insgesamt';
+  Label30.Caption := IntToStr(AnzEintragungen)+' eben gefunden';
+
+  AnzEintragungen := 0;
+  for r := 1 to RowCount do
+   if (readCell(r,cCol_Pfad)<>'') then
+    inc(AnzEintragungen);
+  Label31.Caption := IntToStr(RowCount-AnzEintragungen)+' fehlen noch';
  end;
 end;
 
