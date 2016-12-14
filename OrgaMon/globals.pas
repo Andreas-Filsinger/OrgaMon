@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.255; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.256; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -307,6 +307,8 @@ const
   eT_WebShopArtikelAnzeigen = 31; // Anzeige eines Artikels
   eT_WebShopArtikelDetail = 32; // Anzeige von Details eines Artikels
   eT_WebShopArtikelMusik = 33; // Anhören der Musik zu einem Artikel
+  eT_WebShopRemoteSQL = 34; // Ausführen von SQL in der Home-DB
+  eT_WebShopRemoteXMLRPC = 35; // Ausführen von XMLRPC im Home-Land
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

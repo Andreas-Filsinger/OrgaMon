@@ -544,14 +544,14 @@ begin
 
       if not(DateOK(File_Date)) then
       begin
-        Log('Wrong Filedate ' + FName + ' ...');
+        Log('Skip ' + FName + ' (FileTimeStamp illegal) ...');
         break;
       end;
 
       File_Seconds := dateTime2Seconds(FileTimeStamp);
       if SecondsDiff(d, s, File_Date, File_Seconds) < 4 then
       begin
-        Log('Skip new ' + FName + ' ...');
+        Log('Skip ' + FName + ' (too new) ...');
       end;
 
       IgnoreIt := false;

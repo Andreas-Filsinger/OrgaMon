@@ -474,10 +474,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = '&Daten'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -824,10 +820,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Verarbeiten'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label22: TLabel
         Left = 584
         Top = 64
@@ -1005,10 +997,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Korrektur'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 24
         Top = 59
@@ -1968,10 +1956,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = '&Importe'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton11: TSpeedButton
         Left = 11
         Top = 27
@@ -3507,7 +3491,7 @@ object FormBaustelle: TFormBaustelle
       ImageIndex = 9
       object Label41: TLabel
         Left = 314
-        Top = 58
+        Top = 47
         Width = 179
         Height = 13
         Margins.Left = 4
@@ -3605,8 +3589,8 @@ object FormBaustelle: TFormBaustelle
         Caption = 'Datenbank'
       end
       object Label59: TLabel
-        Left = 7
-        Top = 264
+        Left = 314
+        Top = 91
         Width = 117
         Height = 13
         Caption = 'Ablage-Vorgang RID'
@@ -3626,20 +3610,20 @@ object FormBaustelle: TFormBaustelle
       end
       object Button14: TButton
         Left = 7
-        Top = 72
+        Top = 97
         Width = 299
         Height = 26
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
-        Caption = 'Alle Daten dieser Baustelle reaktivieren'
+        Caption = 'Daten dieser Baustelle reaktivieren'
         TabOrder = 1
         OnClick = Button14Click
       end
       object Edit5: TEdit
         Left = 314
-        Top = 75
+        Top = 63
         Width = 75
         Height = 21
         Margins.Left = 4
@@ -3673,8 +3657,8 @@ object FormBaustelle: TFormBaustelle
         OnClick = Button39Click
       end
       object IB_Grid6: TIB_Grid
-        Left = 514
-        Top = 34
+        Left = 515
+        Top = 36
         Width = 320
         Height = 156
         Margins.Left = 4
@@ -3868,8 +3852,8 @@ object FormBaustelle: TFormBaustelle
         TabOrder = 20
       end
       object Edit14: TEdit
-        Left = 140
-        Top = 261
+        Left = 314
+        Top = 111
         Width = 69
         Height = 21
         TabOrder = 21
@@ -3883,8 +3867,8 @@ object FormBaustelle: TFormBaustelle
         TabOrder = 22
       end
       object CheckBox41: TCheckBox
-        Left = 8
-        Top = 104
+        Left = 7
+        Top = 73
         Width = 265
         Height = 17
         Caption = 'danach Ablage leeren'
@@ -3900,10 +3884,6 @@ object FormBaustelle: TFormBaustelle
       Margins.Bottom = 4
       Caption = 'Vertr'#228'ge'
       ImageIndex = 10
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label48: TLabel
         Left = 17
         Top = 144

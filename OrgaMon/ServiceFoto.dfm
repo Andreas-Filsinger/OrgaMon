@@ -1007,6 +1007,20 @@
         Height = 13
         Caption = 'Label29'
       end
+      object Label30: TLabel
+        Left = 544
+        Top = 232
+        Width = 37
+        Height = 13
+        Caption = 'Label30'
+      end
+      object Label31: TLabel
+        Left = 544
+        Top = 248
+        Width = 37
+        Height = 13
+        Caption = 'Label31'
+      end
       object Edit14: TEdit
         Left = 164
         Top = 37
