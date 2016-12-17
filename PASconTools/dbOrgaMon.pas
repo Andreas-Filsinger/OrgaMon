@@ -103,6 +103,7 @@ type
 const
   cSQLwhereMarker = '-- BEGIN';
   cSQLExtension = '.sql.txt';
+  cSicherungsPrefix = 'sicherung_';
 
   // Datenbank Ankreuzfelder (Check)
   cC_True = 'Y';
