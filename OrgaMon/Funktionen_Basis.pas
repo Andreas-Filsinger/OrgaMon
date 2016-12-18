@@ -1560,6 +1560,10 @@ function dbBackup(BackupGID: Integer): boolean;
           Log('läuft ...');
 
           {$ifdef FPC}
+          // imp pend:  firebird/src/include/consts_pub.h
+          // #define isc_spb_res_page_size	10
+          // if (_pageSize.HasValue)
+ 	  //  StartSpb.Append(IscCodes.isc_spb_res_page_size, (int)_pageSize);
           Connect;
           Restore(fbak_Full_FName + '.fdb', fbak_Full_FName, [IBResVerbose, IBResReplace]);
           {$else}
