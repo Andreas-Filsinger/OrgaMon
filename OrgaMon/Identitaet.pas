@@ -346,7 +346,9 @@ end;
 procedure RunAsTagesabschluss;
 var
  TimeDiff: TANFiXTime;
+ TagesAbschluss_TAN : integer;
 begin
+  TagesAbschluss_TAN := e_w_GEN('GEN_BACKUP');
 (*
   if TagesabschlussAktiv then
   begin
@@ -390,7 +392,10 @@ begin
             { } secondstostr(SecondsGet) + ' h');
           case n of
             0:
-              if not(FormDatensicherung.BackUp(TagesAbschluss_TAN)) then
+*)
+           dbBackup(TagesAbschluss_TAN);
+(*
+            if not(FormDatensicherung.BackUp(TagesAbschluss_TAN)) then
                 raise Exception.Create('Datenbanksicherung erfolglos');
             1:
               begin

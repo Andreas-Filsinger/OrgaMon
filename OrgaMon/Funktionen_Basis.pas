@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -172,6 +172,7 @@ uses
   JvclVer,
 {$ENDIF}
   idglobal,
+  IdStack, IdComponent, IdFTP, solidFTP,
   InfoZIP,
   srvXMLRPC,
   memcache;
@@ -1248,7 +1249,14 @@ function dbBackup(BackupGID: Integer): boolean;
   const
     cScript_List_Generators =
       'select RDB$GENERATOR_NAME from RDB$GENERATORS where (RDB$SYSTEM_FLAG=0) or (RDB$SYSTEM_FLAG is null)';
+
+    // Parameter
+    pUpload              : boolean = false; {ehemals "checkbox1"}
+    pNurFbakErstellen    : boolean = false; {ehemals "checkbox2"}
+    pNurArchiveErstellen : boolean = false; {ehemals "checkbox3"}
+    pNurRestore          : boolean = false; {ehemals "checkbox12"}
   var
+    //
     fbak_Full_FName: string;
     fbak_FName: string;
     ResultFName: string;
@@ -1257,6 +1265,8 @@ function dbBackup(BackupGID: Integer): boolean;
     sGENERATORS: TStringList;
     cGENERATORS: TdboCursor;
     cINDEX: TdboCursor;
+    FTP : TIdFTPRestart;
+    FTP_StartOffset : int64;
 
     {$ifdef FPC}
     Admin:TFBAdmin;
@@ -1274,6 +1284,149 @@ function dbBackup(BackupGID: Integer): boolean;
     begin
     end;
 
+    procedure SaveLog;
+    begin
+
+    end;
+
+    {$ifndef FPC}
+    procedure SetUpService(dbService: TIBOBackupRestoreService);
+    begin
+      with dbService do
+      begin
+        //
+        ServerName := iDataBaseHost;
+        if (iDataBaseHost = '') then
+          Protocol := cpLocal
+        else
+          Protocol := cpTCP_IP;
+        LoginPrompt := false;
+
+        Params.clear;
+        Params.add('user_name=SYSDBA');
+        Params.add('password=' + SysDBAPassword);
+        if dbService is TIBOBackupRestoreService then
+          with dbService as TIBOBackupRestoreService do
+            Verbose := true;
+      end;
+    end;
+    {$endif}
+
+    function doUpload(ResultFName: string): boolean;
+    var
+      FtpDestFName: string;
+      rSize: int64;
+      lSize: int64;
+    begin
+      //
+      result := false;
+      lSize := FSize(ResultFName);
+      SolidInit(FTP);
+      with FTP do
+      begin
+
+        Host := cFTP_Host;
+        UserName := cFTP_UserName;
+        Password := cFTP_Password;
+
+        try
+
+          if connected then
+          begin
+            try
+              Abort;
+            except
+
+              on E: EIdSocketError do
+              begin
+                solidLog(cEXCEPTIONText + ' [DaSi-1254] Socket Error: ' +
+                  inttostr(E.LastError));
+              end;
+
+              on E: Exception do
+              begin
+                solidLog(cEXCEPTIONText + ' [DaSi-1254] ' + E.Message);
+              end;
+
+            end;
+          end;
+
+          connect;
+
+          // atomic.begin
+          FtpDestFName := ExtractFileName(ResultFName);
+          repeat
+
+            rSize := Size(FtpDestFName + cTmpFileExtension);
+            if rSize = lSize then
+              break;
+            if rSize > lSize then
+              raise Exception.create('FTP: remote Datei ist ' +
+                inttostr(rSize - lSize) + ' Bytes grösser als die lokale');
+
+            if (rSize < 1) then
+            begin
+              FTP_StartOffset := 0;
+              Put(ResultFName, FtpDestFName + cTmpFileExtension);
+            end
+            else
+            begin
+              FTP_StartOffset := rSize;
+              PutRestart(ResultFName, FtpDestFName + cTmpFileExtension, rSize);
+            end;
+
+          until true;
+
+          rSize := Size(FtpDestFName + cTmpFileExtension);
+          if (lSize = rSize) then
+          begin
+            if (Size(FtpDestFName) >= 0) then
+              Delete(FtpDestFName);
+            Rename(FtpDestFName + cTmpFileExtension, FtpDestFName);
+            result := true;
+          end
+          else
+          begin
+            if (rSize > lSize) then
+              raise Exception.create('FTP: remote Datei ist ' +
+                inttostr(rSize - lSize) + ' Bytes grösser als die lokale')
+            else
+              raise Exception.create('FTP: remote Datei ist ' +
+                inttostr(lSize - rSize) + ' Bytes kleiner als die lokale');
+          end;
+          // atomic.end
+          try
+            disconnect;
+          except
+            on E: EIdSocketError do
+            begin
+              solidLog(cEXCEPTIONText + ' [DaSi-1315] Socket Error: ' +
+                inttostr(E.LastError));
+            end;
+
+            on E: Exception do
+            begin
+              solidLog(cEXCEPTIONText + ' [DaSi-1321] ' + E.Message);
+            end;
+          end;
+        except
+          on E: EIdSocketError do
+          begin
+            solidLog(cEXCEPTIONText + ' [DaSi-1327] Socket Error: ' +
+              inttostr(E.LastError));
+          end;
+
+          on E: Exception do
+          begin
+            solidLog(cEXCEPTIONText + ' [DaSi-1327] ' + E.Message);
+          end;
+          on E: Exception do
+          begin
+            Log(cERRORText + ' Ftp Upload Error: ' + E.Message);
+          end;
+        end;
+      end;
+    end;
 
     procedure ReadGenerators;
     begin
@@ -1341,8 +1494,6 @@ function dbBackup(BackupGID: Integer): boolean;
           Log('läuft ...');
           {$ifdef FPC}
           OnOutput:= dbBackupLogCallBack.Log;
-          User := 'SYSDBA';
-          Password := SysDBAPassword;
           Connect;
           backup(i_c_DataBaseFName,fbak_Full_FName,[]);
           {$else}
@@ -1647,18 +1798,35 @@ function dbBackup(BackupGID: Integer): boolean;
           //
           CheckCreateDir(DatensicherungPath);
 
-          if not(CheckBox3.Checked) then
+          if not(pNurArchiveErstellen) then
           begin
 
             ReadGenerators;
             if (ErrorCount > 0) then
               break;
 
+            {$ifdef FPC}
+            with Admin do
+            begin
+{
+        if (iDataBaseHost = '') then
+          Protocol := cpLocal
+        else
+          Protocol := cpTCP_IP;
+        LoginPrompt := false;
+ }
+              Host := iDataBaseHost;
+              User := 'SYSDBA';
+              Password := SysDBAPassword;
+
+            end;
+            {$else}
             SetUpService(IBOBackupService1);
             SetUpService(IBORestoreService1);
+            {$endif}
 
             // BACKUP
-            if not(CheckBox12.Checked) then
+            if not(pNurRestore) then
             begin
               DoBackup;
               SaveLog;
@@ -1666,7 +1834,7 @@ function dbBackup(BackupGID: Integer): boolean;
 
             if (ErrorCount > 0) then
               break;
-            if CheckBox2.Checked then
+            if pNurFbakErstellen then
               break;
 
             // ist das Backup angekommen? Prüfen über die Windows-Welt
@@ -1682,7 +1850,7 @@ function dbBackup(BackupGID: Integer): boolean;
           if (ErrorCount > 0) then
             break;
 
-          if not(CheckBox1.Checked) and not(CheckBox3.Checked) then
+          if not(pUpload) and not(pNurArchiveErstellen) then
           begin
 
             // restore to proof validty
@@ -1734,14 +1902,14 @@ function dbBackup(BackupGID: Integer): boolean;
             end
             else
             begin
-              SolidInit(IdFTP1);
-              with IdFTP1 do
+              SolidInit(FTP);
+              with FTP do
               begin
                 Host := nextp(iTranslatePath, ';', 0);
                 UserName := nextp(iTranslatePath, ';', 1);
                 Password := nextp(iTranslatePath, ';', 2);
               end;
-              SolidGet(IdFTP1, nextp(iTranslatePath, ';', 3), fbak_FName,'',
+              SolidGet(FTP, nextp(iTranslatePath, ';', 3), fbak_FName,'',
                 DatensicherungPath, true);
             end;
           end;
@@ -1762,11 +1930,11 @@ function dbBackup(BackupGID: Integer): boolean;
         SaveLog;
 
         // FTP Upload?
-        if CheckBox1.Checked and (ErrorCount = 0) then
+        if pUpload and (ErrorCount = 0) then
         begin
           Log('FTP Upload ...');
 
-          CheckBox1.Checked := false;
+
           doUpload(ResultFName);
         end;
         SaveLog;
@@ -1777,7 +1945,9 @@ function dbBackup(BackupGID: Integer): boolean;
         begin
           Log('Erfolgreich beendet');
           result := true;
+          {$ifndef FPC}
           close;
+          {$endif}
         end
         else
         begin
@@ -1787,7 +1957,6 @@ function dbBackup(BackupGID: Integer): boolean;
 
       end;
 
-end;
 
 const
   cKey = 'anfisoft' + cApplicationName;
