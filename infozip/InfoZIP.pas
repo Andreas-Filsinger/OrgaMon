@@ -119,8 +119,6 @@ function zip(sFiles: TStringList; FName: string; Options: string): integer
 function zip(sFile: String; FName: string; Options: string = ''): integer
 { AnzahlDateien }; overload;
 
-function zap(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
-
 { unzip(FName,Destination,Options)
   |
   |  FName :      Name des bestehenden Archives, das ausgepackt werden soll
@@ -248,27 +246,14 @@ end;
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
 var
   ZIP : TZipper;
+  n: integer;
 begin
   ZIP := TZipper.create;
   with ZIP do
   begin
     FileName := FName;
-    Entries.AddFileEntries(sFiles);
-    result := Entries.count;
-    ZipAllFiles;
-  end;
-  ZIP.free;
-end;
-
-function zap(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
-var
-  ZIP : TZipper;
-begin
-  ZIP := TZipper.create;
-  with ZIP do
-  begin
-    FileName := FName;
-    Entries.AddFileEntries(sFiles);
+    for n := 0 to pred(sFiles.count) do
+     Entries.AddFileEntry(sFiles[n], ExtractFileName(sFiles[n]));
     result := Entries.count;
     ZipAllFiles;
   end;

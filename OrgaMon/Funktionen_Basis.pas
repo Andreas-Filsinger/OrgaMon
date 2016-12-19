@@ -1739,7 +1739,7 @@ var
       ZipFileList.add(DatensicherungPath + fbak_FName);
       FileDelete(ResultFName);
       FileDelete(DatensicherungPath + cZIPTempFileMask);
-      if (InfoZIP.zap(ZipFileList, ResultFName) <> 1) then
+      if (InfoZIP.zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
         break;

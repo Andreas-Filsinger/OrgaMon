@@ -40,15 +40,18 @@ program lOrgaMon;
  Indy
  zeos
  fpspreadsheet
+ IBX 2.0
 
  Vergleiche
  ==========
 
  cOrgaMon | lOrgaMon
  =========+=========
- flexcel  | fpspreadsheet! (Lack of Revision Number, 1.5 im Package)
- IBO      | Zeos! (Umlaut OK!) und IBX
- infozip  | zipper!
+ jcl      | -
+ Indy     | Indy
+ flexcel  | fpspreadsheet!
+ IBO      | Zeos! (Umlaut OK!), sowie IBX für Backup Restore
+ infozip  | zipper! (Freepascal nativ)
 
 }
 
