@@ -49,9 +49,9 @@ program lOrgaMon;
  =========+=========
  jcl      | -
  Indy     | Indy
- flexcel  | fpspreadsheet!
- IBO      | Zeos! (Umlaut OK!), sowie IBX für Backup Restore
- infozip  | zipper! (Freepascal nativ)
+ flexcel  | fpspreadsheet
+ IBO      | zeos + IBX
+ infozip  | zipper
 
 }
 
