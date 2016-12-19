@@ -47,7 +47,7 @@ program lOrgaMon;
  cOrgaMon | lOrgaMon
  =========+=========
  flexcel  | fpspreadsheet! (Lack of Revision Number, 1.5 im Package)
- IBO      | Zeos! (Umlaut OK!)
+ IBO      | Zeos! (Umlaut OK!) und IBX
  infozip  | zipper!
 
 }
