@@ -49,16 +49,17 @@ function e_r_Bearbeiter: integer; // [TReference]
 
 function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 // Liefert das Kürzel des Bearbeiters.
-//
+
 
 { Datenbank }
 function SysDBApassword: string;
 
-function dbBackup(BackupGID: Integer): boolean;
+function dbBackup(BackupGID: integer): boolean;
 // Erstellt und prüft ein Backup der aktuellen Datenbank
-//
 
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
+
+function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
+  delimiter: char = #13): string;
 // aus einem Memo-Feld einen Value lesen, der aber über
 // mehrere Zeilen gehen kann.
 // Wirtschafts und Lager Logik
@@ -74,8 +75,8 @@ function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 
 { Baustelle }
 function e_r_ParameterFoto(settings: TStringList; p: string): string;
-function e_r_BaustellenPfadFoto(settings: TStrings): String;
-function e_r_BaustellenPfad(settings: TStrings): String;
+function e_r_BaustellenPfadFoto(settings: TStrings): string;
+function e_r_BaustellenPfad(settings: TStrings): string;
 
 function e_w_Medium: string;
 function e_x_ensureMedium(Name: string): TDOM_Reference;
@@ -114,7 +115,7 @@ function deCrypt_Hex(s: string): string;
 procedure MigrateFrom(BringTo: integer);
 
 // Landesspezifiesche Strings
-//
+
 function e_r_Localize(RID, LAND_R: integer): string;
 function e_r_Localize2(RID, LANGUAGE: integer): string;
 
@@ -129,12 +130,12 @@ function e_r_ArtikelPDF(ARTIKEL_R: integer): TStringList;
 function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 // Abgeschrieben
 // --------------------------------------------------------------------------
-//
+
 // Eine Abschreibe-Menge wird an einem Volumen abgeschrieben. Es wird
 // im Prinzip gerechnet:
-//
+
 // dec(GesamtVolumen,AbschreibeMenge);
-//
+
 // Folgende Besonderheiten
 // Es kann nicht über das Gesamtvolumen hinaus abgeschrieben werden
 // Es wird zurückgeliefert, was wirklich abgeschrieben werden konnte
@@ -148,8 +149,7 @@ implementation
 uses
   Windows, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
-
-  math,
+  Math,
   anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
@@ -158,13 +158,16 @@ uses
   ZConnection,
   ZCompatibility,
   ZDbcIntfs,
-  FBAdmin,
+  ZSequence,
+  IB, IBServices,
 {$ELSE}
   JclFileUtils,
   FlexCel.Core,
   CCR.Exif.Consts,
   GHD_pngimage,
   JclBase,
+  IBOServices,
+  IB_Session,
 {$ENDIF}
 {$IFNDEF CONSOLE}
   Datenbank,
@@ -208,13 +211,13 @@ begin
     EnsureCache_Musiker;
     k := CacheMusiker.indexofobject(TObject(MUSIKER_R));
     if (k <> -1) then
-      result := CacheMusiker[k]
+      Result := CacheMusiker[k]
     else
-      result := '?';
+      Result := '?';
   end
   else
   begin
-    result := '';
+    Result := '';
   end;
 end;
 
@@ -227,13 +230,13 @@ begin
     EnsureCache_Musiker;
     k := CacheMusikerNachname.indexofobject(TObject(MUSIKER_R));
     if (k <> -1) then
-      result := CacheMusikerNachname[k]
+      Result := CacheMusikerNachname[k]
     else
-      result := '?';
+      Result := '?';
   end
   else
   begin
-    result := '';
+    Result := '';
   end;
 end;
 
@@ -246,13 +249,13 @@ begin
     EnsureCache_Musiker;
     k := CacheMusikerNurNachname.indexofobject(TObject(MUSIKER_R));
     if (k <> -1) then
-      result := CacheMusikerNurNachname[k]
+      Result := CacheMusikerNurNachname[k]
     else
-      result := '?';
+      Result := '?';
   end
   else
   begin
-    result := '';
+    Result := '';
   end;
 end;
 
@@ -276,7 +279,7 @@ var
 
   function strValidate(s: string): string;
   begin
-    result := StrFilter(cutblank(s), #13#10#9, true);
+    Result := StrFilter(cutblank(s), #13#10#9, True);
   end;
 
 begin
@@ -285,9 +288,9 @@ begin
     FreeAndNil(CacheMusiker);
     FreeAndNil(CacheMusikerNachname);
     FreeAndNil(CacheMusikerNurNachname);
-    CacheMusiker := TStringList.create;
-    CacheMusikerNachname := TStringList.create;
-    CacheMusikerNurNachname := TStringList.create;
+    CacheMusiker := TStringList.Create;
+    CacheMusikerNachname := TStringList.Create;
+    CacheMusikerNurNachname := TStringList.Create;
     cMUSIKER := nCursor;
     with cMUSIKER do
     begin
@@ -297,13 +300,15 @@ begin
       sql.add('where MUSIKER_R is null');
       sql.add('order by NACHNAME');
       ApiFirst;
-      while not(eof) do
+      while not (EOF) do
       begin
-        CacheMusiker.AddObject(strValidate(FieldByName('VORNAME').AsString + ' ' + FieldByName('NACHNAME').AsString),
+        CacheMusiker.AddObject(strValidate(FieldByName('VORNAME').AsString +
+          ' ' + FieldByName('NACHNAME').AsString),
           TObject(FieldByName('RID').AsInteger));
 
-        CacheMusikerNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString + ', ' + FieldByName('VORNAME')
-          .AsString), TObject(FieldByName('RID').AsInteger));
+        CacheMusikerNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString +
+          ', ' + FieldByName('VORNAME').AsString),
+          TObject(FieldByName('RID').AsInteger));
 
         CacheMusikerNurNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString),
           TObject(FieldByName('RID').AsInteger));
@@ -311,16 +316,17 @@ begin
         ApiNext;
       end;
 
-      KettenStartL := TList.create;
+      KettenStartL := TList.Create;
       // zweiter Durchlauf "Verkettungen"
-      close;
-      sql.clear;
+      Close;
+      sql.Clear;
       // das sind die Anfangs-Punkte der Musiker-Verkettungen
       // Bedingungen: MUSIKER_R hat einen Inhalt
       // auf diesen RID zeigt kein anderer!
-      sql.add('select RID from MUSIKER where MUSIKER_R IS NOT NULL and RID NOT IN (select EVL_R from MUSIKER) order by RID');
+      sql.add(
+        'select RID from MUSIKER where MUSIKER_R IS NOT NULL and RID NOT IN (select EVL_R from MUSIKER) order by RID');
       ApiFirst;
-      while not(eof) do
+      while not (EOF) do
       begin
         KettenStartL.add(TObject(FieldByName('RID').AsInteger));
         ApiNext;
@@ -329,23 +335,27 @@ begin
       // Jetzt immer die Musiker zusammenstellen!
       // Listbox1.items.beginupdate;
       // Listbox1.items.clear;
-      for n := 0 to pred(KettenStartL.count) do
+      for n := 0 to pred(KettenStartL.Count) do
       begin
         Kette := '';
         KetteNachname := '';
         KetteNurNachname := '';
         RID := integer(KettenStartL[n]);
         repeat
-          close;
-          sql.clear;
-          sql.add('select MUSIKER_R,EVL_R,EVL_TRENNER from MUSIKER where RID=' + inttostr(RID));
+          Close;
+          sql.Clear;
+          sql.add('select MUSIKER_R,EVL_R,EVL_TRENNER from MUSIKER where RID=' +
+            IntToStr(RID));
           ApiFirst;
-          Kette := cutblank(Kette + ' ' + e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+          Kette := cutblank(Kette + ' ' +
+            e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
             FieldByName('EVL_TRENNER').AsString);
-          KetteNachname := cutblank(KetteNachname + ' ' + e_r_MusikerNachName(FieldByName('MUSIKER_R').AsInteger) + ' '
-            + FieldByName('EVL_TRENNER').AsString);
-          KetteNurNachname := cutblank(KetteNurNachname + ' ' + e_r_MusikerNurNachName(FieldByName('MUSIKER_R')
-            .AsInteger) + ' ' + FieldByName('EVL_TRENNER').AsString);
+          KetteNachname := cutblank(KetteNachname + ' ' +
+            e_r_MusikerNachName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+            FieldByName('EVL_TRENNER').AsString);
+          KetteNurNachname := cutblank(KetteNurNachname + ' ' +
+            e_r_MusikerNurNachName(FieldByName('MUSIKER_R').AsInteger) +
+            ' ' + FieldByName('EVL_TRENNER').AsString);
           if FieldByName('EVL_R').IsNull then
             break
           else
@@ -357,15 +367,15 @@ begin
         // listbox1.items.addobject(Kette, KettenStartL[n]);
       end;
       // Listbox1.items.endupdate;
-      KettenStartL.free;
+      KettenStartL.Free;
     end;
-    cMUSIKER.free;
+    cMUSIKER.Free;
   end;
 end;
 
 function e_w_Medium: string;
 begin
-  result := inttostrN(e_w_GEN('GEN_MEDIUM'), 8);
+  Result := inttostrN(e_w_GEN('GEN_MEDIUM'), 8);
 end;
 
 const
@@ -376,22 +386,21 @@ function e_x_ensureMedium(Name: string): TDOM_Reference;
 begin
   if (Name = _e_x_ensureMedium_Cache_S) then
   begin
-    result := _e_x_ensureMedium_Cache_R;
+    Result := _e_x_ensureMedium_Cache_R;
     exit;
   end;
 
-  result := e_r_sql(
-    { } 'select RID from MEDIUM where DATEI_ERWEITERUNG=' +
-    { } SQLstring(Name));
+  Result := e_r_sql('select RID from MEDIUM where DATEI_ERWEITERUNG=' +
+    SQLstring(Name));
 
-  if (result < cRID_FirstValid) then
+  if (Result < cRID_FirstValid) then
   begin
     e_x_sql(
-      { } 'insert into MEDIUM (RID,DATEI_ERWEITERUNG) values (0,' + SQLstring(Name) + ')');
-    result := e_x_ensureMedium(Name);
+      'insert into MEDIUM (RID,DATEI_ERWEITERUNG) values (0,' + SQLstring(Name) + ')');
+    Result := e_x_ensureMedium(Name);
   end;
 
-  _e_x_ensureMedium_Cache_R := result;
+  _e_x_ensureMedium_Cache_R := Result;
   _e_x_ensureMedium_Cache_S := Name;
 
 end;
@@ -399,7 +408,8 @@ end;
 procedure e_w_MusikerChangeRef(FROM_RID, TO_RID: string);
 begin
   e_x_sql('update MUSIKER set EVL_R=NULL where EVL_R=' + FROM_RID);
-  e_x_sql('update MUSIKER set MUSIKER_R=' + TO_RID + ' where (MUSIKER_R=' + FROM_RID + ') AND (RID<>' + TO_RID + ')');
+  e_x_sql('update MUSIKER set MUSIKER_R=' + TO_RID + ' where (MUSIKER_R=' +
+    FROM_RID + ') AND (RID<>' + TO_RID + ')');
   e_x_sql('update ARTIKEL set KOMPONIST_R=' + TO_RID + ' where KOMPONIST_R=' + FROM_RID);
   e_x_sql('update ARTIKEL set ARRANGEUR_R=' + TO_RID + ' where ARRANGEUR_R=' + FROM_RID);
 end;
@@ -413,33 +423,33 @@ var
     cMUSIKER: TdboCursor;
     OneTxt: TStringList;
   begin
-    if (txt.count > 0) then
-      if (txt[pred(txt.count)] <> '') then
+    if (txt.Count > 0) then
+      if (txt[pred(txt.Count)] <> '') then
         txt.add('');
     txt.add(e_r_MusikerName(RID));
-    OneTxt := TStringList.create;
+    OneTxt := TStringList.Create;
     cMUSIKER := nCursor;
     with cMUSIKER do
     begin
-      sql.add('select UEBER_INFO from MUSIKER where RID=' + inttostr(RID));
+      sql.add('select UEBER_INFO from MUSIKER where RID=' + IntToStr(RID));
       ApiFirst;
       e_r_sqlt(FieldByName('UEBER_INFO'), OneTxt);
     end;
-    cMUSIKER.free;
+    cMUSIKER.Free;
     txt.addstrings(OneTxt);
-    OneTxt.free;
+    OneTxt.Free;
   end;
 
 var
   cREF: TdboCursor;
 begin
-  txt := TStringList.create;
+  txt := TStringList.Create;
   cREF := nCursor;
   with cREF do
   begin
     repeat
-      sql.clear;
-      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + inttostr(MUSIKER_R));
+      sql.Clear;
+      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + IntToStr(MUSIKER_R));
       ApiFirst;
       if FieldByName('MUSIKER_R').IsNull then
         AddOne(MUSIKER_R)
@@ -448,43 +458,43 @@ begin
       MUSIKER_R := FieldByName('EVL_R').AsInteger;
       if (MUSIKER_R < 1) then
         break;
-      close;
+      Close;
     until eternity;
   end;
-  cREF.free;
-  result := HugeSingleLine(txt);
-  txt.free;
+  cREF.Free;
+  Result := HugeSingleLine(txt);
+  txt.Free;
 end;
 
 function e_r_MusikerCache: TStringList;
 begin
   EnsureCache_Musiker;
-  result := CacheMusiker;
+  Result := CacheMusiker;
 end;
 
 function e_r_MusikerGroup(MUSIKER_R: integer): TList;
 var
   cREF: TdboCursor;
 begin
-  result := TList.create;
+  Result := TList.Create;
   cREF := nCursor;
   with cREF do
   begin
     repeat
-      sql.clear;
-      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + inttostr(MUSIKER_R));
+      sql.Clear;
+      sql.add('select MUSIKER_R,EVL_R from MUSIKER where RID=' + IntToStr(MUSIKER_R));
       ApiFirst;
       if FieldByName('MUSIKER_R').IsNull then
-        result.add(TObject(MUSIKER_R))
+        Result.add(TObject(MUSIKER_R))
       else
-        result.add(TObject(FieldByName('MUSIKER_R').AsInteger));
+        Result.add(TObject(FieldByName('MUSIKER_R').AsInteger));
       MUSIKER_R := FieldByName('EVL_R').AsInteger;
       if (MUSIKER_R < 1) then
         break;
-      close;
+      Close;
     until eternity;
   end;
-  cREF.free;
+  cREF.Free;
 end;
 
 function e_r_MusikerWerke(MUSIKER_R: integer): TList;
@@ -493,25 +503,25 @@ var
   cREF: TdboCursor;
   lRID: string;
 begin
-  result := TList.create;
+  Result := TList.Create;
 
   // Alle RIDs dieses MUSIKERs sammeln
-  lRID := inttostr(MUSIKER_R);
+  lRID := IntToStr(MUSIKER_R);
 
   cREF := nCursor;
   with cREF do
   begin
     sql.add('select RID from MUSIKER where MUSIKER_R=' + lRID);
     ApiFirst;
-    while not(eof) do
+    while not (EOF) do
     begin
-      lRID := lRID + ',' + inttostr(e_r_MusikerGroupRID(FieldByName('RID').AsInteger));
+      lRID := lRID + ',' + IntToStr(e_r_MusikerGroupRID(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
-  cREF.free;
+  cREF.Free;
 
-  //
+
   cARTIKEL := nCursor;
   with cARTIKEL do
   begin
@@ -519,13 +529,13 @@ begin
     sql.add('   KOMPONIST_R IN (' + lRID + ') OR');
     sql.add('   ARRANGEUR_R IN (' + lRID + ')');
     ApiFirst;
-    while not(eof) do
+    while not (EOF) do
     begin
-      result.add(TObject(FieldByName('RID').AsInteger));
+      Result.add(TObject(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
-  cARTIKEL.free;
+  cARTIKEL.Free;
 
 end;
 
@@ -538,24 +548,24 @@ begin
   with cREF do
   begin
     repeat
-      sql.clear;
-      sql.add('select RID from MUSIKER where EVL_R=' + inttostr(RID));
+      sql.Clear;
+      sql.add('select RID from MUSIKER where EVL_R=' + IntToStr(RID));
       ApiFirst;
-      if eof then
+      if EOF then
         break
       else
         RID := FieldByName('RID').AsInteger;
-      close;
+      Close;
     until eternity;
   end;
-  cREF.free;
-  result := RID;
+  cREF.Free;
+  Result := RID;
 end;
 
 function e_r_MusikerNachnamen: TStringList;
 begin
   EnsureCache_Musiker;
-  result := CacheMusikerNachname;
+  Result := CacheMusikerNachname;
 end;
 
 function e_w_MusikerCheckCreate(MusikerListe: string): integer;
@@ -566,13 +576,14 @@ begin
   k := CacheMusiker.indexof(MusikerListe);
   if (k = -1) then
   begin
-    result := succ(e_r_GEN('GEN_MUSIKER'));
-    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' + '''' + MusikerListe + ''')');
+    Result := succ(e_r_GEN('GEN_MUSIKER'));
+    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' + '''' +
+      MusikerListe + ''')');
     InvalidateCache_Musiker;
   end
   else
   begin
-    result := integer(CacheMusiker.objects[k]);
+    Result := integer(CacheMusiker.objects[k]);
   end;
 end;
 
@@ -582,12 +593,12 @@ var
 begin
   if assigned(CacheLaender) then
   begin
-    for n := 0 to pred(CacheLaender.count) do
-      TStringList(CacheLaender.objects[n]).free;
+    for n := 0 to pred(CacheLaender.Count) do
+      TStringList(CacheLaender.objects[n]).Free;
     FreeAndNil(CacheLaender);
 
-    for n := 0 to pred(CacheLaenderFull.count) do
-      TStringList(CacheLaenderFull.objects[n]).free;
+    for n := 0 to pred(CacheLaenderFull.Count) do
+      TStringList(CacheLaenderFull.objects[n]).Free;
     FreeAndNil(CacheLaenderFull);
   end;
 end;
@@ -599,11 +610,12 @@ function cAusgabeArt_Aufnahme_MP3: TDOM_Reference;
 begin
   if (_AusgabeArt_Aufnahme_MP3 = cRID_Unset) then
   begin
-    _AusgabeArt_Aufnahme_MP3 := e_r_sql('select RID from AUSGABEART where KUERZEL=''MP3''');
+    _AusgabeArt_Aufnahme_MP3 :=
+      e_r_sql('select RID from AUSGABEART where KUERZEL=''MP3''');
     if (_AusgabeArt_Aufnahme_MP3 < cRID_FirstValid) then
       _AusgabeArt_Aufnahme_MP3 := cRID_Impossible;
   end;
-  result := _AusgabeArt_Aufnahme_MP3;
+  Result := _AusgabeArt_Aufnahme_MP3;
 end;
 
 procedure EnsureCache_Laender;
@@ -612,27 +624,27 @@ var
 
   function AddOne: TStringList;
   begin
-    result := TStringList.create;
+    Result := TStringList.Create;
     with cLAND do
     begin
       { [0] }
-      result.add(FieldByName('ISO_KURZZEICHEN').AsString);
+      Result.add(FieldByName('ISO_KURZZEICHEN').AsString);
       { [1] }
-      result.add(FieldByName('KURZ_ALT').AsString);
+      Result.add(FieldByName('KURZ_ALT').AsString);
       { [2] }
-      result.add(FieldByName('ORT_FORMAT').AsString);
-      if (result[2] = '') then
-        result[2] := iOrtFormat;
+      Result.add(FieldByName('ORT_FORMAT').AsString);
+      if (Result[2] = '') then
+        Result[2] := iOrtFormat;
       { [3] }
-      result.add(FieldByName('INT_TEXT').AsString);
+      Result.add(FieldByName('INT_TEXT').AsString);
     end;
   end;
 
 begin
-  if not(assigned(CacheLaender)) then
+  if not (assigned(CacheLaender)) then
   begin
-    CacheLaender := TStringList.create;
-    CacheLaenderFull := TStringList.create;
+    CacheLaender := TStringList.Create;
+    CacheLaenderFull := TStringList.Create;
 
     cLAND := nCursor;
     with cLAND do
@@ -650,22 +662,22 @@ begin
       sql.add(' INTERNATIONALTEXT');
       sql.add('on');
       sql.add(' (INTERNATIONALTEXT.RID=LAND.INT_NAME_R) and');
-      sql.add(' (INTERNATIONALTEXT.LAND_R=' + inttostr(iHeimatLand) + ')');
+      sql.add(' (INTERNATIONALTEXT.LAND_R=' + IntToStr(iHeimatLand) + ')');
       ApiFirst;
-      while not(eof) do
+      while not (EOF) do
       begin
         if FieldByName('ARTIKEL_RELEVANT').AsString = 'Y' then
-          CacheLaender.AddObject(inttostr(FieldByName('RID').AsInteger), AddOne);
-        CacheLaenderFull.AddObject(inttostr(FieldByName('RID').AsInteger), AddOne);
+          CacheLaender.AddObject(IntToStr(FieldByName('RID').AsInteger), AddOne);
+        CacheLaenderFull.AddObject(IntToStr(FieldByName('RID').AsInteger), AddOne);
         ApiNext;
       end;
     end;
-    cLAND.free;
+    cLAND.Free;
     CacheLaender.sort;
-    CacheLaender.sorted := true;
+    CacheLaender.sorted := True;
 
     CacheLaenderFull.sort;
-    CacheLaenderFull.sorted := true;
+    CacheLaenderFull.sorted := True;
   end;
 end;
 
@@ -673,13 +685,13 @@ function e_r_LaenderRIDfromALT(ALT: string): integer;
 var
   n: integer;
 begin
-  result := cRID_Null;
+  Result := cRID_Null;
   EnsureCache_Laender;
   ALT := nextp(ALT, '-');
-  for n := 0 to pred(CacheLaender.count) do
+  for n := 0 to pred(CacheLaender.Count) do
     if (TStringList(CacheLaender.objects[n])[1] = ALT) then
     begin
-      result := strtoint(CacheLaender[n]);
+      Result := StrToInt(CacheLaender[n]);
       break;
     end;
 end;
@@ -689,13 +701,13 @@ var
   n: integer;
 begin
   EnsureCache_Laender;
-  for n := 0 to pred(CacheLaender.count) do
+  for n := 0 to pred(CacheLaender.Count) do
     if TStringList(CacheLaender.objects[n])[0] = ISO then
     begin
-      result := strtoint(CacheLaender[n]);
+      Result := StrToInt(CacheLaender[n]);
       exit;
     end;
-  result := -1;
+  Result := -1;
 end;
 
 function e_r_LaenderInternational(RID: integer): string;
@@ -703,11 +715,11 @@ var
   k: integer;
 begin
   EnsureCache_Laender;
-  k := CacheLaenderFull.indexof(inttostr(RID));
+  k := CacheLaenderFull.indexof(IntToStr(RID));
   if (k <> -1) then
-    result := TStringList(CacheLaenderFull.objects[k])[3]
+    Result := TStringList(CacheLaenderFull.objects[k])[3]
   else
-    result := inttostr(RID) + '?';
+    Result := IntToStr(RID) + '?';
 end;
 
 function e_r_LaenderISO(RID: integer): string;
@@ -715,11 +727,11 @@ var
   k: integer;
 begin
   EnsureCache_Laender;
-  k := CacheLaenderFull.indexof(inttostr(RID));
+  k := CacheLaenderFull.indexof(IntToStr(RID));
   if (k <> -1) then
-    result := TStringList(CacheLaenderFull.objects[k])[0]
+    Result := TStringList(CacheLaenderFull.objects[k])[0]
   else
-    result := inttostr(RID) + '?';
+    Result := IntToStr(RID) + '?';
 end;
 
 function e_r_LaenderCache: TStringList;
@@ -727,10 +739,10 @@ var
   n: integer;
 begin
   EnsureCache_Laender;
-  result := TStringList.create;
-  for n := 0 to pred(CacheLaender.count) do
-    result.add(TStringList(CacheLaender.objects[n])[0]);
-  result.sort;
+  Result := TStringList.Create;
+  for n := 0 to pred(CacheLaender.Count) do
+    Result.add(TStringList(CacheLaender.objects[n])[0]);
+  Result.sort;
 end;
 
 function e_r_LaenderPost(RID: integer): string;
@@ -738,11 +750,11 @@ var
   k: integer;
 begin
   EnsureCache_Laender;
-  k := CacheLaenderFull.indexof(inttostr(RID));
+  k := CacheLaenderFull.indexof(IntToStr(RID));
   if (k <> -1) then
-    result := TStringList(CacheLaenderFull.objects[k])[1]
+    Result := TStringList(CacheLaenderFull.objects[k])[1]
   else
-    result := inttostr(RID) + '?';
+    Result := IntToStr(RID) + '?';
 end;
 
 function e_r_LaenderOrtFormat(RID: integer): string;
@@ -750,11 +762,11 @@ var
   k: integer;
 begin
   EnsureCache_Laender;
-  k := CacheLaenderFull.indexof(inttostr(RID));
+  k := CacheLaenderFull.indexof(IntToStr(RID));
   if (k <> -1) then
-    result := TStringList(CacheLaenderFull.objects[k])[2]
+    Result := TStringList(CacheLaenderFull.objects[k])[2]
   else
-    result := inttostr(RID) + '?';
+    Result := IntToStr(RID) + '?';
 end;
 
 const
@@ -775,69 +787,71 @@ end;
 
 function e_r_ParameterFoto(settings: TStringList; p: string): string;
 begin
-  result := settings.Values[p + cE_Postfix_Foto];
-  if (result = '') then
-    result := settings.Values[p];
+  Result := settings.Values[p + cE_Postfix_Foto];
+  if (Result = '') then
+    Result := settings.Values[p];
 end;
 
-function e_r_BaustellenPfad(settings: TStrings): String;
+function e_r_BaustellenPfad(settings: TStrings): string;
 begin
-  result := settings.Values[cE_VERZEICHNIS];
-  if (result = '') then
-    result := settings.Values[cE_FTPUSER];
+  Result := settings.Values[cE_VERZEICHNIS];
+  if (Result = '') then
+    Result := settings.Values[cE_FTPUSER];
 end;
 
-function e_r_BaustellenPfadFoto(settings: TStrings): String;
+function e_r_BaustellenPfadFoto(settings: TStrings): string;
 begin
   repeat
 
-    result := settings.Values[cE_VERZEICHNIS + cE_Postfix_Foto];
-    if (result <> '') then
+    Result := settings.Values[cE_VERZEICHNIS + cE_Postfix_Foto];
+    if (Result <> '') then
       break;
 
-    result := settings.Values[cE_FTPUSER + cE_Postfix_Foto];
-    if (result <> '') then
+    Result := settings.Values[cE_FTPUSER + cE_Postfix_Foto];
+    if (Result <> '') then
       break;
 
-    result := settings.Values[cE_VERZEICHNIS];
-    if (result <> '') then
+    Result := settings.Values[cE_VERZEICHNIS];
+    if (Result <> '') then
       break;
 
-    result := settings.Values[cE_FTPUSER]
+    Result := settings.Values[cE_FTPUSER]
 
   until yet;
 end;
 
 {$ifdef FPC}
-function cBuildNumber : string;
+function cBuildNumber: string;
 begin
-  result := '0';
+  Result := '0';
 end;
+
 {$else}
-function cBuildNumber : string;
+function cBuildNumber: string;
 var
- v : TJclFileVersionInfo;
+  v: TJclFileVersionInfo;
 begin
- v := TJclFileVersionInfo.create( HInstance);
-  result := v.FileVersionBuild;
+  v := TJclFileVersionInfo.Create(HInstance);
+  Result := v.FileVersionBuild;
   v.Free;
 end;
+
 {$endif}
 
 
 function e_r_BasePlug: TStringList;
 begin
-  result := TStringList.create;
-  if not(assigned(CacheBasePlug)) then
+  Result := TStringList.Create;
+  if not (assigned(CacheBasePlug)) then
   begin
-    CacheBasePlug := TStringList.create;
+    CacheBasePlug := TStringList.Create;
     with CacheBasePlug do
     begin
       // ==========================================================
       // ACHTUNG: geht auch über XML-RPC "BasePlug" raus!
       // ACHTUNG: Reihenfolge nicht verändern, nur erweitern!
       // ==========================================================
-      { 01 } add(cAppName+' (Build '+cBuildNumber+')');
+      { 01 } add(cAppName + ' (Build ' + cBuildNumber + ')');
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
       { 02 } add('Zeos Rev. ' + fbConnection.Version);
@@ -854,8 +868,8 @@ begin
       { 07 } add(iBildURL);
 {$IFDEF CONSOLE}
       { 08 } AddObject(
-        { } cServerFunctions_Meta_CallCount,
-        { } TXMLRPC_Server.oMetaString);
+        cServerFunctions_Meta_CallCount,
+        TXMLRPC_Server.oMetaString);
 {$ELSE}
       { 08 } add('TPicUpload Rev. ' + TPUMain.REV);
 {$ENDIF}
@@ -867,7 +881,8 @@ begin
 {$IFDEF fpc}
       { 10 } add('jcl Rev. N/A');
 {$ELSE}
-      { 10 } add('jcl Rev. ' + inttostr(JclVersionMajor) + '.' + inttostr(JclVersionMinor));
+      { 10 } add('jcl Rev. ' + IntToStr(JclVersionMajor) + '.' +
+        IntToStr(JclVersionMinor));
 {$ENDIF}
 {$IFDEF CONSOLE}
       { 11 } add('jvcl Rev. N/A');
@@ -878,17 +893,14 @@ begin
       { 13 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + zip_Version);
       { 14 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + unzip_Version);
       { 15 } add(
-        { } e_r_Kontext + '@' +
-        { } ComputerName + ':' +
-        { } iXMLRPCPort);
+        e_r_Kontext + '@' + ComputerName + ':' + iXMLRPCPort);
       { 16 } add(
-        { } 'memcache Rev. ' +
-        { } RevToStr(memcache.Version) + '@' +
-        { } imemcachedHost);
+        'memcache Rev. ' + RevToStr(memcache.Version) + '@' +
+        imemcachedHost);
       { 17 } add(iDataBaseUser);
       { 18 } add(iDataBasePassword); // connect PWD
       { 19 } add(iDataBase_SYSDBA_pwd); // SYSDBA PWD
-      { 20 } add(e_r_fbClientVersion); //
+      { 20 } add(e_r_fbClientVersion);
 {$IFDEF fpc}
       { 21 } add('Portable Network Graphics Delphi ' + 'N/A');
 {$ELSE}
@@ -898,8 +910,8 @@ begin
       { 23 } add(i_c_DataBaseFName);
 {$IFDEF CONSOLE}
       { 24 } AddObject(
-        { } cServerFunctions_Meta_UpTime,
-        { } TXMLRPC_Server.oMetaString);
+        cServerFunctions_Meta_UpTime,
+        TXMLRPC_Server.oMetaString);
 {$ELSE}
       { 24 } add('N/A');
 {$ENDIF}
@@ -912,17 +924,19 @@ begin
       { 27 } add(Betriebssystem);
     end;
   end;
-  result.Assign(CacheBasePlug);
+  Result.Assign(CacheBasePlug);
 end;
 
 function e_r_Bearbeiter: integer;
 begin
-  result := e_r_sql('select RID from BEARBEITER where UPPER(USERNAME)=''' + AnsiUpperCase(UserName) + '''');
+  Result := e_r_sql('select RID from BEARBEITER where UPPER(USERNAME)=''' +
+    AnsiUpperCase(UserName) + '''');
 end;
 
 function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 begin
-  result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' + inttostr(BEARBEITER_R));
+  Result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' +
+    IntToStr(BEARBEITER_R));
 end;
 
 var
@@ -930,23 +944,23 @@ var
 
 function deCrypt_Hex(s: string): string;
 begin
-  if not(assigned(DCP_blowfish1)) then
-    DCP_blowfish1 := TDCP_Blowfish.create(nil);
+  if not (assigned(DCP_blowfish1)) then
+    DCP_blowfish1 := TDCP_Blowfish.Create(nil);
   with DCP_blowfish1 do
   begin
     Init(CryptKey, CryptKeyLength, nil);
-    result := cutrblank(decryptstring(hexstr2bin(s)));
+    Result := cutrblank(decryptstring(hexstr2bin(s)));
   end;
 end;
 
 function enCrypt_Hex(s: string): string;
 begin
-  if not(assigned(DCP_blowfish1)) then
-    DCP_blowfish1 := TDCP_Blowfish.create(nil);
+  if not (assigned(DCP_blowfish1)) then
+    DCP_blowfish1 := TDCP_Blowfish.Create(nil);
   with DCP_blowfish1 do
   begin
     Init(CryptKey, CryptKeyLength, nil);
-    result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
+    Result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
   end;
 end;
 
@@ -960,29 +974,29 @@ begin
   begin
     sql.add('select * from EINSTELLUNG');
     ApiFirst;
-    settings := TStringList.create;
+    settings := TStringList.Create;
     e_r_sqlt(FieldByName('SETTINGS'), settings);
-    result := settings.Values[cSettings_SysdbaPAssword];
-    if (result = '') then
-      result := 'masterkey'
+    Result := settings.Values[cSettings_SysdbaPAssword];
+    if (Result = '') then
+      Result := 'masterkey'
     else
-      result := deCrypt_Hex(result);
-    settings.free;
+      Result := deCrypt_Hex(Result);
+    settings.Free;
   end;
-  cEINSTELLUNGEN.free;
+  cEINSTELLUNGEN.Free;
 end;
 
 procedure MigrateFrom(BringTo: integer);
 begin
   case BringTo of
     2000:
-      begin
-        // ShowMessage('Willkommen in der Rev. 2.000');
-      end;
+    begin
+      // ShowMessage('Willkommen in der Rev. 2.000');
+    end;
     7129:
       FileMove(MyProgramPath + 'favorites.xml', iOlapPath + cAuftragLupeFavoritenFName);
     7681:
-      if not(iOLAPpublic) then
+      if not (iOLAPpublic) then
       begin
         CheckCreateDir(iOlapPath);
         FileMove(MyApplicationPath + 'OLAP\*', iOlapPath);
@@ -990,54 +1004,54 @@ begin
   end;
 end;
 
-function ReadLongStr(BlockName: string; ArtikelInfo: TStringList; delimiter: char = #13): string;
+function ReadLongStr(BlockName: string; ArtikelInfo: TStringList;
+  delimiter: char = #13): string;
 var
   MachineState: byte;
   n, k: integer;
 begin
-  result := '';
+  Result := '';
   MachineState := 0;
-  for n := 0 to pred(ArtikelInfo.count) do
+  for n := 0 to pred(ArtikelInfo.Count) do
   begin
     case MachineState of
       0:
+      begin
+        k := pos(BlockName + '=', ArtikelInfo[n]);
+        if (k = 1) then
         begin
-          k := pos(BlockName + '=', ArtikelInfo[n]);
-          if (k = 1) then
-          begin
-            result := copy(ArtikelInfo[n], length(BlockName) + 2, MaxInt);
-            MachineState := 1;
-          end;
+          Result := copy(ArtikelInfo[n], length(BlockName) + 2, MaxInt);
+          MachineState := 1;
         end;
+      end;
       1:
-        begin
-          k := pos('=', ArtikelInfo[n]);
-          if (k = 0) or (k > 11) then
-            result := result + delimiter + ArtikelInfo[n]
-          else
-            exit;
-        end;
+      begin
+        k := pos('=', ArtikelInfo[n]);
+        if (k = 0) or (k > 11) then
+          Result := Result + delimiter + ArtikelInfo[n]
+        else
+          exit;
+      end;
     end;
   end;
 end;
 
 function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
-// Abgeschrieben
+  // Abgeschrieben
 var
   Verminderung: integer;
 begin
   Verminderung := min(GesamtVolumen, AbschreibeMenge);
-  dec(GesamtVolumen, Verminderung);
-  dec(AbschreibeMenge, Verminderung);
-  result := Verminderung;
+  Dec(GesamtVolumen, Verminderung);
+  Dec(AbschreibeMenge, Verminderung);
+  Result := Verminderung;
 end;
 
 procedure e_w_PersonSetPassword(PERSON_R: integer);
 begin
-  e_x_sql('update PERSON set' +
-    { } ' USER_PWD=''' + FindANewPassword + ''',' +
-    { } ' USER_SALT=''' + FindANewPassword + '''' +
-    { } ' where RID=' + inttostr(PERSON_R));
+  e_x_sql('update PERSON set' + ' USER_PWD=''' + FindANewPassword +
+    ''',' + ' USER_SALT=''' + FindANewPassword + '''' + ' where RID=' +
+    IntToStr(PERSON_R));
 end;
 
 procedure e_w_PersonEnsurePassword(PERSON_R: integer);
@@ -1046,12 +1060,13 @@ var
 begin
 
   // Salt sicherstellen
-  salt := e_r_sqls('select USER_SALT from PERSON where RID=' + inttostr(PERSON_R));
+  salt := e_r_sqls('select USER_SALT from PERSON where RID=' + IntToStr(PERSON_R));
   if (salt = '') then
-    e_x_sql('update PERSON set USER_SALT=''' + FindANewPassword + ''' where RID=' + inttostr(PERSON_R));
+    e_x_sql('update PERSON set USER_SALT=''' + FindANewPassword +
+      ''' where RID=' + IntToStr(PERSON_R));
 
   // Passwort sicherstellen
-  pwd := e_r_sqls('select USER_PWD from PERSON where RID=' + inttostr(PERSON_R));
+  pwd := e_r_sqls('select USER_PWD from PERSON where RID=' + IntToStr(PERSON_R));
   if (pwd = '') then
     e_w_PersonSetPassword(PERSON_R);
 
@@ -1072,27 +1087,27 @@ var
     if (Path <> '') then
       if (Path <> MyProgramPath) then
       begin
-        sDir := TStringList.create;
-        dir(Path + Numero + '*' + cPDFExtension, sDir, false);
-        if (sDir.count = 0) then
+        sDir := TStringList.Create;
+        dir(Path + Numero + '*' + cPDFExtension, sDir, False);
+        if (sDir.Count = 0) then
         begin
 
           // 2. Option, Numero ist Bestandteil des Dateinamens <Numero> { "_" <Numero> } ".pdf"
-          if not(assigned(e_r_ArtikelPDF_Cache)) then
+          if not (assigned(e_r_ArtikelPDF_Cache)) then
           begin
-            e_r_ArtikelPDF_Cache := TStringList.create;
-            dir(Path + '*' + cPDFExtension, e_r_ArtikelPDF_Cache, false);
+            e_r_ArtikelPDF_Cache := TStringList.Create;
+            dir(Path + '*' + cPDFExtension, e_r_ArtikelPDF_Cache, False);
           end;
-          for n := 0 to pred(e_r_ArtikelPDF_Cache.count) do
+          for n := 0 to pred(e_r_ArtikelPDF_Cache.Count) do
           begin
             if pos('_' + Numero + '_', e_r_ArtikelPDF_Cache[n]) > 0 then
             begin
-              sDir.add ( Path + e_r_ArtikelPDF_Cache[n]);
+              sDir.add(Path + e_r_ArtikelPDF_Cache[n]);
               continue;
             end;
             if pos('_' + Numero + '.', e_r_ArtikelPDF_Cache[n]) > 0 then
             begin
-              sDir.add ( Path + e_r_ArtikelPDF_Cache[n]);
+              sDir.add(Path + e_r_ArtikelPDF_Cache[n]);
               continue;
             end;
           end;
@@ -1100,17 +1115,17 @@ var
         end
         else
         begin
-          for n := 0 to pred(sDir.count) do
+          for n := 0 to pred(sDir.Count) do
             sDir[n] := Path + sDir[n];
         end;
-        result.addstrings(sDir);
-        sDir.free;
+        Result.addstrings(sDir);
+        sDir.Free;
       end;
   end;
 
 begin
-  result := TStringList.create;
-  Numero := e_r_sqls('select NUMERO from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
+  Result := TStringList.Create;
+  Numero := e_r_sqls('select NUMERO from ARTIKEL where RID=' + IntToStr(ARTIKEL_R));
   AddPath(iPDFPathApp);
   AddPath(iPDFPathPublicApp);
 end;
@@ -1120,56 +1135,51 @@ begin
   // das Ereignis abzeichnen
   if (INFO <> '') then
     e_x_sql(
-      { } 'update EREIGNIS set' +
-      { } ' BEARBEITER_R=' + inttostr(sBearbeiter) + ', ' +
-      { } ' INFO=''' + INFO + ''' ' +
-      { } 'where RID=' + inttostr(EREIGNIS_R))
+      'update EREIGNIS set' + ' BEARBEITER_R=' + IntToStr(sBearbeiter) +
+      ', ' + ' INFO=''' + INFO + ''' ' + 'where RID=' + IntToStr(EREIGNIS_R))
   else
     e_x_sql(
-      { } 'update EREIGNIS set' +
-      { } ' BEARBEITER_R=' + inttostr(sBearbeiter) +
-      { } 'where RID=' + inttostr(EREIGNIS_R))
+      'update EREIGNIS set' + ' BEARBEITER_R=' + IntToStr(sBearbeiter) +
+      'where RID=' + IntToStr(EREIGNIS_R));
 end;
 
 function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 begin
-  result := e_r_sqlm(
-    { } 'select RID from PERSON where ' +
-    { } '((Z_ELV_KONTO=''' + Konto + ''') and ' +
-    { } '(Z_ELV_BLZ=''' + BLZ + ''')) or ' +
-    { } '(Z_ELV_KONTO containing ''' + BLZ + inttostrN(Konto, 10) +
-    { } ''')');
+  Result := e_r_sqlm('select RID from PERSON where ' +
+    '((Z_ELV_KONTO=''' + Konto + ''') and ' + '(Z_ELV_BLZ=''' +
+    BLZ + ''')) or ' + '(Z_ELV_KONTO containing ''' + BLZ +
+    inttostrN(Konto, 10) + ''')');
 end;
 
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
 var
   cINTERNATIONALTEXT: TdboCursor;
 begin
-  result := TStringList.create;
+  Result := TStringList.Create;
   cINTERNATIONALTEXT := nCursor;
   with cINTERNATIONALTEXT do
   begin
     sql.add('SELECT INT_TEXT');
     sql.add('FROM INTERNATIONALTEXT');
-    sql.add('WHERE RID=' + inttostr(RID));
+    sql.add('WHERE RID=' + IntToStr(RID));
     if LAND_R > 0 then
-      sql.add('and (LAND_R=' + inttostr(LAND_R) + ')');
+      sql.add('and (LAND_R=' + IntToStr(LAND_R) + ')');
     ApiFirst;
-    if eof then
+    if EOF then
     begin
-      result.add(inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R));
+      Result.add(IntToStr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R));
     end
     else
     begin
-      e_r_sqlt(FieldByName('INT_TEXT'), result);
+      e_r_sqlt(FieldByName('INT_TEXT'), Result);
     end;
   end;
-  cINTERNATIONALTEXT.free;
+  cINTERNATIONALTEXT.Free;
 end;
 
 function e_r_ObtainISOfromRID(LAND_R: integer): string;
 begin
-  result := e_r_sqls('select ISO_KURZZEICHEN from LAND where RID=' + inttostr(LAND_R));
+  Result := e_r_sqls('select ISO_KURZZEICHEN from LAND where RID=' + IntToStr(LAND_R));
 end;
 
 function e_r_Localize(RID, LAND_R: integer): string;
@@ -1182,25 +1192,25 @@ begin
   begin
     sql.add('SELECT INT_TEXT');
     sql.add('FROM INTERNATIONALTEXT');
-    sql.add('WHERE RID=' + inttostr(RID) + ' AND');
-    sql.add('LAND_R=' + inttostr(LAND_R));
+    sql.add('WHERE RID=' + IntToStr(RID) + ' AND');
+    sql.add('LAND_R=' + IntToStr(LAND_R));
     ApiFirst;
-    if eof then
+    if EOF then
     begin
-      result := inttostr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R);
+      Result := IntToStr(RID) + '.' + e_r_ObtainISOfromRID(LAND_R);
     end
     else
     begin
-      InfoText := TStringList.create;
+      InfoText := TStringList.Create;
       e_r_sqlt(FieldByName('INT_TEXT'), InfoText);
-      if InfoText.count > 0 then
-        result := InfoText[0]
+      if InfoText.Count > 0 then
+        Result := InfoText[0]
       else
-        result := '';
-      InfoText.free;
+        Result := '';
+      InfoText.Free;
     end;
   end;
-  cINTERNATIONALTEXT.free;
+  cINTERNATIONALTEXT.Free;
 end;
 
 function e_r_Localize2(RID, LANGUAGE: integer): string;
@@ -1211,755 +1221,722 @@ var
 begin
   if (RID <= 0) then
   begin
-    result := '';
+    Result := '';
     exit;
   end;
-  //
-  Bigmemo := TStringList.create;
+
+  Bigmemo := TStringList.Create;
   Land := nCursor;
   IntTxt := nCursor;
-  //
-  Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + inttostr(RID));
+
+  Land.sql.add('SELECT INT_NAME_R FROM LAND WHERE RID=' + IntToStr(RID));
   Land.First;
-  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' + Land.FieldByName('INT_NAME_R').AsString +
-    ') AND (LAND_R=' + inttostr(LANGUAGE) + ')');
+  IntTxt.sql.add('SELECT INT_TEXT FROM INTERNATIONALTEXT WHERE (RID=' +
+    Land.FieldByName('INT_NAME_R').AsString + ') AND (LAND_R=' +
+    IntToStr(LANGUAGE) + ')');
   IntTxt.First;
   e_r_sqlt(IntTxt.FieldByName('INT_TEXT'), Bigmemo);
   Bigmemo.add('');
-  result := cutblank(Bigmemo[0]);
-  //
-  Bigmemo.free;
-  Land.close;
-  Land.free;
-  IntTxt.close;
-  IntTxt.free;
+  Result := cutblank(Bigmemo[0]);
+
+  Bigmemo.Free;
+  Land.Close;
+  Land.Free;
+  IntTxt.Close;
+  IntTxt.Free;
 end;
 
-type
-  dbBackupLogCallBack = class (TObject)
-    class procedure Log(Sender: TObject; msg: string; IBAdminAction: string);
+function dbBackup(BackupGID: integer): boolean;
+
+const
+  cScript_List_Generators =
+    'select RDB$GENERATOR_NAME from RDB$GENERATORS where (RDB$SYSTEM_FLAG=0) or (RDB$SYSTEM_FLAG is null)';
+
+  // Parameter
+  pUpload: boolean = False; {ehemals "checkbox1"}
+  pNurFbakErstellen: boolean = False; {ehemals "checkbox2"}
+  pNurArchiveErstellen: boolean = False; {ehemals "checkbox3"}
+  pNurRestore: boolean = False; {ehemals "checkbox12"}
+
+var
+  sBericht: TStringList;
+  fbak_Full_FName: string;
+  fbak_FName: string;
+  ResultFName: string;
+  ErrorCount: integer;
+  sGENERATORS: TStringList;
+  cGENERATORS: TdboCursor;
+  cINDEX: TdboCursor;
+  FTP: TIdFTPRestart;
+  FTP_StartOffset: int64;
+
+  {$ifdef FPC}
+  svcBackup: TIBBackupService;
+  svcRestore: TIBRestoreService;
+  rCONNECTION: TZConnection;
+  {$else}
+  rCONNECTION: TIB_Connection;
+  rTRANSACTION: TIB_Transaction;
+  svcBackup: TIBOBackupService;
+  svcRestore: TIBORestoreService;
+  {$endif}
+  GenName: string;
+  GenValIst: int64;
+  GenValSoll: int64;
+  OneLine: string;
+  ZipFileList: TStringList;
+
+  procedure Log(s: string);
+  begin
+    if (Pos(cERRORText, s) > 0) then
+      inc(ErrorCount);
+    sBericht.add(s);
   end;
 
-class procedure dbBackupLogCallBack.Log(Sender: TObject; msg: string; IBAdminAction: string);
-begin
-   // Log(msg);
-end;
+  procedure SaveLog;
+  begin
+    if (sBericht.Count > 0) then
+    begin
+      AppendStringsToFile(sBericht,
+        DiagnosePath + 'Datensicherung-' + inttostrN(BackupGID, 8) + '.log.txt');
+      sBericht.Clear;
+    end;
+  end;
 
-function dbBackup(BackupGID: Integer): boolean;
-  const
-    cScript_List_Generators =
-      'select RDB$GENERATOR_NAME from RDB$GENERATORS where (RDB$SYSTEM_FLAG=0) or (RDB$SYSTEM_FLAG is null)';
+  {$ifndef FPC}
+  procedure SetUpService(dbService: TIBOBackupRestoreService);
+  {$else}
+  procedure SetUpService(dbService: TIBBackupRestoreService);
+  {$endif}
+  begin
+    with dbService do
+    begin
+      ServerName := iDataBaseHost;
+{$ifdef FPC}
+    if (iDataBaseHost = '') then
+      Protocol := IB.local
+    else
+      Protocol := IB.TCP;
+{$else}
+      if (iDataBaseHost = '') then
+        Protocol := cpLocal
+      else
+        Protocol := cpTCP_IP;
+{$endif}
+      LoginPrompt := False;
+      Params.Values['user_name'] := 'SYSDBA';
+      Params.Values['password'] := SysDBAPassword;
+      Verbose := True;
+    end;
+  end;
 
-    // Parameter
-    pUpload              : boolean = false; {ehemals "checkbox1"}
-    pNurFbakErstellen    : boolean = false; {ehemals "checkbox2"}
-    pNurArchiveErstellen : boolean = false; {ehemals "checkbox3"}
-    pNurRestore          : boolean = false; {ehemals "checkbox12"}
+  function doUpload(ResultFName: string): boolean;
   var
-    //
-    fbak_Full_FName: string;
-    fbak_FName: string;
-    ResultFName: string;
-    CommandLine: string;
-    ErrorCount: Integer;
-    sGENERATORS: TStringList;
-    cGENERATORS: TdboCursor;
-    cINDEX: TdboCursor;
-    FTP : TIdFTPRestart;
-    FTP_StartOffset : int64;
+    FtpDestFName: string;
+    rSize: int64;
+    lSize: int64;
+  begin
 
-    {$ifdef FPC}
-    Admin:TFBAdmin;
-    {$else}
-    rCONNECTION: TIB_Connection;
-    rTRANSACTION: TIB_Transaction;
-    {$endif}
-    GenName: string;
-    GenValIst: int64;
-    GenValSoll: int64;
-    OneLine: string;
-    ZipFileList: TStringList;
-
-    procedure Log(s:string);
-    begin
-    end;
-
-    procedure SaveLog;
+    Result := False;
+    lSize := FSize(ResultFName);
+    SolidInit(FTP);
+    with FTP do
     begin
 
-    end;
+      Host := cFTP_Host;
+      UserName := cFTP_UserName;
+      Password := cFTP_Password;
 
-    {$ifndef FPC}
-    procedure SetUpService(dbService: TIBOBackupRestoreService);
-    begin
-      with dbService do
-      begin
-        //
-        ServerName := iDataBaseHost;
-        if (iDataBaseHost = '') then
-          Protocol := cpLocal
-        else
-          Protocol := cpTCP_IP;
-        LoginPrompt := false;
+      try
 
-        Params.clear;
-        Params.add('user_name=SYSDBA');
-        Params.add('password=' + SysDBAPassword);
-        if dbService is TIBOBackupRestoreService then
-          with dbService as TIBOBackupRestoreService do
-            Verbose := true;
-      end;
-    end;
-    {$endif}
-
-    function doUpload(ResultFName: string): boolean;
-    var
-      FtpDestFName: string;
-      rSize: int64;
-      lSize: int64;
-    begin
-      //
-      result := false;
-      lSize := FSize(ResultFName);
-      SolidInit(FTP);
-      with FTP do
-      begin
-
-        Host := cFTP_Host;
-        UserName := cFTP_UserName;
-        Password := cFTP_Password;
-
-        try
-
-          if connected then
-          begin
-            try
-              Abort;
-            except
-
-              on E: EIdSocketError do
-              begin
-                solidLog(cEXCEPTIONText + ' [DaSi-1254] Socket Error: ' +
-                  inttostr(E.LastError));
-              end;
-
-              on E: Exception do
-              begin
-                solidLog(cEXCEPTIONText + ' [DaSi-1254] ' + E.Message);
-              end;
-
-            end;
-          end;
-
-          connect;
-
-          // atomic.begin
-          FtpDestFName := ExtractFileName(ResultFName);
-          repeat
-
-            rSize := Size(FtpDestFName + cTmpFileExtension);
-            if rSize = lSize then
-              break;
-            if rSize > lSize then
-              raise Exception.create('FTP: remote Datei ist ' +
-                inttostr(rSize - lSize) + ' Bytes grösser als die lokale');
-
-            if (rSize < 1) then
-            begin
-              FTP_StartOffset := 0;
-              Put(ResultFName, FtpDestFName + cTmpFileExtension);
-            end
-            else
-            begin
-              FTP_StartOffset := rSize;
-              PutRestart(ResultFName, FtpDestFName + cTmpFileExtension, rSize);
-            end;
-
-          until true;
-
-          rSize := Size(FtpDestFName + cTmpFileExtension);
-          if (lSize = rSize) then
-          begin
-            if (Size(FtpDestFName) >= 0) then
-              Delete(FtpDestFName);
-            Rename(FtpDestFName + cTmpFileExtension, FtpDestFName);
-            result := true;
-          end
-          else
-          begin
-            if (rSize > lSize) then
-              raise Exception.create('FTP: remote Datei ist ' +
-                inttostr(rSize - lSize) + ' Bytes grösser als die lokale')
-            else
-              raise Exception.create('FTP: remote Datei ist ' +
-                inttostr(lSize - rSize) + ' Bytes kleiner als die lokale');
-          end;
-          // atomic.end
+        if connected then
+        begin
           try
-            disconnect;
+            Abort;
           except
+
             on E: EIdSocketError do
             begin
-              solidLog(cEXCEPTIONText + ' [DaSi-1315] Socket Error: ' +
-                inttostr(E.LastError));
+              solidLog(cEXCEPTIONText + ' [DaSi-1254] Socket Error: ' +
+                IntToStr(E.LastError));
             end;
 
             on E: Exception do
             begin
-              solidLog(cEXCEPTIONText + ' [DaSi-1321] ' + E.Message);
+              solidLog(cEXCEPTIONText + ' [DaSi-1254] ' + E.Message);
             end;
+
           end;
+        end;
+
+        connect;
+
+        // atomic.begin
+        FtpDestFName := ExtractFileName(ResultFName);
+        repeat
+
+          rSize := Size(FtpDestFName + cTmpFileExtension);
+          if rSize = lSize then
+            break;
+          if rSize > lSize then
+            raise Exception.Create('FTP: remote Datei ist ' +
+              IntToStr(rSize - lSize) + ' Bytes grösser als die lokale');
+
+          if (rSize < 1) then
+          begin
+            FTP_StartOffset := 0;
+            Put(ResultFName, FtpDestFName + cTmpFileExtension);
+          end
+          else
+          begin
+            FTP_StartOffset := rSize;
+            PutRestart(ResultFName, FtpDestFName + cTmpFileExtension, rSize);
+          end;
+
+        until True;
+
+        rSize := Size(FtpDestFName + cTmpFileExtension);
+        if (lSize = rSize) then
+        begin
+          if (Size(FtpDestFName) >= 0) then
+            Delete(FtpDestFName);
+          Rename(FtpDestFName + cTmpFileExtension, FtpDestFName);
+          Result := True;
+        end
+        else
+        begin
+          if (rSize > lSize) then
+            raise Exception.Create('FTP: remote Datei ist ' +
+              IntToStr(rSize - lSize) + ' Bytes grösser als die lokale')
+          else
+            raise Exception.Create('FTP: remote Datei ist ' +
+              IntToStr(lSize - rSize) + ' Bytes kleiner als die lokale');
+        end;
+        // atomic.end
+        try
+          disconnect;
         except
           on E: EIdSocketError do
           begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1327] Socket Error: ' +
-              inttostr(E.LastError));
+            solidLog(cEXCEPTIONText + ' [DaSi-1315] Socket Error: ' +
+              IntToStr(E.LastError));
           end;
 
           on E: Exception do
           begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1327] ' + E.Message);
-          end;
-          on E: Exception do
-          begin
-            Log(cERRORText + ' Ftp Upload Error: ' + E.Message);
+            solidLog(cEXCEPTIONText + ' [DaSi-1321] ' + E.Message);
           end;
         end;
-      end;
-    end;
-
-    procedure ReadGenerators;
-    begin
-      sGENERATORS := TStringList.create;
-
-      try
-        Log('###############################');
-        Log('# G E N - E V A L U A T I O N #');
-        Log('###############################');
-        cGENERATORS := nCursor;
-        with cGENERATORS do
-        begin
-          sql.add(cScript_List_Generators);
-          ApiFirst;
-          while not(eof) do
-          begin
-            GenName := Fields[0].AsString;
-            sGENERATORS.add(GenName + '=' + inttostr(e_r_GEN(GenName)));
-            Log(sGENERATORS[pred(sGENERATORS.count)]);
-            ApiNext;
-          end;
-        end;
-        cGENERATORS.free;
       except
+        on E: EIdSocketError do
+        begin
+          solidLog(cEXCEPTIONText + ' [DaSi-1327] Socket Error: ' +
+            IntToStr(E.LastError));
+        end;
+
         on E: Exception do
         begin
-          Log(cERRORText + ' IQ-Evaluation Exception: ' + E.Message);
+          solidLog(cEXCEPTIONText + ' [DaSi-1327] ' + E.Message);
+        end;
+        on E: Exception do
+        begin
+          Log(cERRORText + ' Ftp Upload Error: ' + E.Message);
         end;
       end;
     end;
+  end;
 
-    procedure DoBackup;
-    begin
-      {$ifdef FPC}
-      with Admin do
-      {$else}
-      with IBOBackupService1 do
-      {$endif}
+  procedure ReadGenerators;
+  begin
+    sGENERATORS := TStringList.Create;
+
+    try
+      Log('###############################');
+      Log('# G E N - E V A L U A T I O N #');
+      Log('###############################');
+      cGENERATORS := nCursor;
+      with cGENERATORS do
       begin
-
-        {$ifdef FPC}
-        Log(Host);
-        {$else}
-        Log(ServerName);
-        {$endif}
-        try
-
-          {$ifndef FPC}
-          DatabaseName := i_c_DataBaseFName;
-          {$endif}
-
-
-          Log(fbak_Full_FName);
-          Log(iTranslatePath + fbak_FName);
-          {$ifdef FPC}
-
-          {$else}
-          BackupFile.clear;
-          BackupFile.add(fbak_Full_FName);
-          application.processmessages;
-          {$endif}
-          Log('###############');
-          Log('# B A C K U P #');
-          Log('###############');
-          Log('läuft ...');
-          {$ifdef FPC}
-          OnOutput:= dbBackupLogCallBack.Log;
-          Connect;
-          backup(i_c_DataBaseFName,fbak_Full_FName,[]);
-          {$else}
-          Active := true;
-          ServiceStart;
-          repeat
-            try
-              while not eof do
-              begin
-                OneLine := GetNextLine;
-
-                // SF Bug #
-                ersetze(#10, '', OneLine);
-
-                // SF Bug #
-                OneLine := cutrblank(OneLine);
-
-                Log(OneLine);
-              end;
-            except
-              on E: Exception do
-              begin
-                Log(cERRORText + ' Backup Exception: ' + E.Message);
-              end;
-            end;
-          until eof;
-          {$endif}
-
-        finally
-         {$ifdef FPC}
-         Disconnect;
-         {$else}
-         Active := false;
-         {$endif}
+        sql.add(cScript_List_Generators);
+        ApiFirst;
+        while not (EOF) do
+        begin
+          GenName := Fields[0].AsString;
+          sGENERATORS.add(GenName + '=' + IntToStr(e_r_GEN(GenName)));
+          Log(sGENERATORS[pred(sGENERATORS.Count)]);
+          ApiNext;
         end;
-
       end;
-    end;
-
-    procedure DoRestore;
-    begin
-      {$ifdef FPC}
-      with Admin do
-      {$else}
-      with IBORestoreService1 do
-      {$endif}
+      cGENERATORS.Free;
+    except
+      on E: Exception do
       begin
-
-        try
-          {$ifdef FPC}
-
-          {$else}
-          PageSize := 16384;
-          DatabaseName.clear;
-          DatabaseName.add(fbak_Full_FName + '.fdb');
-          BackupFile.clear;
-          BackupFile.add(fbak_Full_FName);
-          application.processmessages;
-          {$endif}
-
-          Log('#################');
-          Log('# R E S T O R E #');
-          Log('#################');
-          Log('läuft ...');
-
-          {$ifdef FPC}
-          // imp pend:  firebird/src/include/consts_pub.h
-          // #define isc_spb_res_page_size	10
-          // if (_pageSize.HasValue)
- 	  //  StartSpb.Append(IscCodes.isc_spb_res_page_size, (int)_pageSize);
-          Connect;
-          Restore(fbak_Full_FName + '.fdb', fbak_Full_FName, [IBResVerbose, IBResReplace]);
-          {$else}
-          Active := true;
-          ServiceStart;
-          repeat
-            try
-              while not eof do
-              begin
-                OneLine := GetNextLine;
-
-                // SF Bug #
-                ersetze(#10, '', OneLine);
-
-                // SF Bug #
-                OneLine := cutrblank(OneLine);
-
-                Log(OneLine);
-              end;
-            except
-              on E: Exception do
-              begin
-                Log(cERRORText + ' Restore Exception: ' + E.Message);
-              end;
-            end;
-          until eof;
-          {$endif}
-
-        finally
-         {$ifdef FPC}
-         Disconnect;
-         {$else}
-         Active := false;
-         {$endif}
-        end;
+        Log(cERRORText + ' IQ-Evaluation Exception: ' + E.Message);
       end;
     end;
+  end;
 
-    procedure DoCheckGenerators;
+  procedure DoBackup;
+  begin
+    with svcBackup do
     begin
-      Log('#########################');
-      Log('# G E N - C O M P A R E #'); // Information Quantity/Quality
-      Log('#########################');
+
+      Log(ServerName);
+      try
+        DatabaseName := i_c_DataBaseFName;
+        Log(fbak_Full_FName);
+        Log(iTranslatePath + fbak_FName);
+        BackupFile.Clear;
+        BackupFile.add(fbak_Full_FName);
+
+        Log('###############');
+        Log('# B A C K U P #');
+        Log('###############');
+        Log('läuft ...');
+        Active := True;
+        ServiceStart;
+        repeat
+          try
+            while not EOF do
+            begin
+              OneLine := GetNextLine;
+
+              // SF Bug #
+              ersetze(#10, '', OneLine);
+
+              // SF Bug #
+              OneLine := cutrblank(OneLine);
+
+              Log(OneLine);
+            end;
+          except
+            on E: Exception do
+            begin
+              Log(cERRORText + ' Backup Exception: ' + E.Message);
+            end;
+          end;
+        until EOF;
+
+      finally
+        Active := False;
+      end;
+
+    end;
+  end;
+
+  procedure DoRestore;
+  begin
+    with svcRestore do
+    begin
 
       try
+        PageSize := 16384;
+        DatabaseName.Clear;
+        DatabaseName.add(fbak_Full_FName + '.fdb');
+        BackupFile.Clear;
+        BackupFile.add(fbak_Full_FName);
 
+
+        Log('#################');
+        Log('# R E S T O R E #');
+        Log('#################');
+        Log('läuft ...');
+
+        Active := True;
+        ServiceStart;
+        repeat
+          try
+            while not EOF do
+            begin
+              OneLine := GetNextLine;
+
+              // SF Bug #
+              ersetze(#10, '', OneLine);
+
+              // SF Bug #
+              OneLine := cutrblank(OneLine);
+
+              Log(OneLine);
+            end;
+          except
+            on E: Exception do
+            begin
+              Log(cERRORText + ' Restore Exception: ' + E.Message);
+            end;
+          end;
+        until EOF;
+
+      finally
+        Active := False;
+      end;
+    end;
+  end;
+
+  procedure DoCheckGenerators;
+{$ifdef FPC}
+var
+  rGEN: TZSequence;
+{$endif}
+  begin
+    Log('#########################');
+    Log('# G E N - C O M P A R E #');
+    Log('#########################');
+
+    try
+     // Verbindung mit der frisch erstellten Datenbank
         {$ifdef FPC}
-        {$else}
-        //
-        rTRANSACTION := TIB_Transaction.create(self);
-        with rTRANSACTION do
-        begin
-          Isolation := tiCommitted;
-          AutoCommit := true;
-          ReadOnly := true;
-        end;
-
-        //
-        rCONNECTION := TIB_Connection.create(self);
+        rCONNECTION := TZConnection.Create(nil);
         with rCONNECTION do
         begin
-          DefaultTransaction := rTRANSACTION;
-          LoginDBReadOnly := true;
-          Protocol := cpTCP_IP;
-          if (iDataBaseHost = '') then
-            DatabaseName := fbak_Full_FName + '.fdb'
-          else
-            DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
-          UserName := 'SYSDBA';
+          ClientCodePage := 'ISO8859_1';
+          ControlsCodePage := cCP_UTF8;
+          Protocol := 'firebird-2.5';
+          TransactIsolationLevel := tiReadCommitted;
+          ReadOnly := true;
+          User := 'SYSDBA';
+          HostName := iDataBaseHost;
+          Database := fbak_Full_FName + '.fdb';
           Password := SysDBAPassword;
+          connect;
         end;
-
-        with rTRANSACTION do
-        begin
-          IB_Connection := rCONNECTION;
-        end;
-
-        rCONNECTION.connect;
-        {$endif}
-
-
-        //
-        cGENERATORS := nCursor;
-        with cGENERATORS do
-        begin
-          {$ifdef FPC}
-          {$else}
-          IB_Connection := rCONNECTION;
-          {$endif}
-          sql.add(cScript_List_Generators);
-          ApiFirst;
-          if (RecordCount <> sGENERATORS.count) then
-          begin
-            Log(cERRORText + ' Anzahl der GENERATORen stimmt nicht!');
-          end;
-
-          while not(eof) do
-          begin
-            GenName := Fields[0].AsString;
-            {$ifdef FPC}
-            GenValIst := -1;
-            {$else}
-            GenValIst := GEN_ID(GenName, 0);
-            {$endif}
-            GenValSoll := strtoint64def(sGENERATORS.values[GenName], 0);
-            if (GenValIst >= GenValSoll) then
-            begin
-              Log(GenName + ' OK');
-            end
-            else
-            begin
-              Log(cERRORText + ' GENERATOR ' + GenName + ': Ist=' +
-                inttostr(GenValIst) + ' Soll=' + inttostr(GenValSoll));
-            end;
-            ApiNext;
-          end;
-        end;
-        sGENERATORS.free;
-        cGENERATORS.free;
-
-        cINDEX := nCursor;
-        with cINDEX do
-        begin
-          {$ifdef FPC}
-          {$else}
-          IB_Connection := rCONNECTION;
-          {$endif}
-          sql.add('SELECT');
-          sql.add(' RDB$INDICES.RDB$RELATION_NAME,');
-          sql.add(' RDB$INDICES.RDB$INDEX_NAME,');
-          sql.add(' RDB$INDEX_SEGMENTS.RDB$FIELD_NAME');
-          sql.add('FROM');
-          sql.add(' RDB$INDICES');
-          sql.add('JOIN');
-          sql.add(' RDB$INDEX_SEGMENTS');
-          sql.add('ON');
-          sql.add(' RDB$INDICES.RDB$INDEX_NAME=RDB$INDEX_SEGMENTS.RDB$INDEX_NAME');
-          sql.add('WHERE');
-          sql.add(' (RDB$INDICES.RDB$SYSTEM_FLAG=0) AND');
-          sql.add(' (RDB$INDICES.RDB$INDEX_INACTIVE=1)');
-          ApiFirst;
-          if (RecordCount <> 0) then
-            Log(cERRORText + ' Es gibt inaktive Indizes');
-          while not(eof) do
-          begin
-            Log(
-              { } cWARNINGtext +
-              { } ' Index ' +
-              { } FieldByName('RDB$RELATION_NAME').AsString + '.' +
-              { } FieldByName('RDB$INDEX_NAME').AsString +
-              { } ' ist nicht aktiv');
-            ApiNext;
-          end;
-        end;
-        cINDEX.free;
-
-        {$ifdef FPC}
         {$else}
-        rCONNECTION.disconnect;
-        rCONNECTION.free;
-        rTRANSACTION.free;
-        {$endif}
-      except
-        on E: Exception do
-        begin
-          Log(cERRORText + ' IQ-Compare Exception: ' + E.Message);
-        end;
+
+      rTRANSACTION := TIB_Transaction.Create(nil);
+      with rTRANSACTION do
+      begin
+        Isolation := tiCommitted;
+        AutoCommit := True;
+        ReadOnly := True;
       end;
 
-    end;
-
-    procedure doCompress;
-    begin
-      repeat
-
-        ResultFName := DatensicherungPath + fbak_FName + '.zip';
-
-        Log('zip ' + ResultFName + ' ...');
-
-        ZipFileList := TStringList.create;
-        ZipFileList.add(DatensicherungPath + fbak_FName);
-        FileDelete(ResultFName);
-        FileDelete(DatensicherungPath + cZIPTempFileMask);
-        if (infozip.zip(ZipFileList, ResultFName) <> 1) then
-        begin
-          Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
-          break;
-        end;
-        ZipFileList.free;
-
-        // hat das Komprimieren geklappt?
-        if not(FileExists(ResultFName)) then
-        begin
-
-          Log(cERRORText + ' Archiv ' + ResultFName + ' nicht gefunden!');
-          break;
-        end;
-
-        // nun das Datenbank-Backup löschen!
-        FileDelete(DatensicherungPath + fbak_FName);
-        if FileExists(DatensicherungPath + fbak_FName) then
-        begin
-          Log(cERRORText + ' Datenbank-Datei ' + DatensicherungPath + fbak_FName +
-            ' nicht löschbar!');
-          break;
-        end;
-
-      until true;
-
-    end;
-
-  begin
-    result := false;
-    if (BackupGID < 0) then exit;
-    {$ifndef FPC}
-    if assigned(IBC) then exit;
-    {$endif}
-
-
-        ErrorCount := 0;
-        fbak_FName := cSicherungsPrefix + inttostrN(BackupGID, 8) + '.fbak';
-        Log( 'Datensicherung - ' + inttostr(BackupGID));
-        if (iDataBaseBackUpDir = '') then
-        begin
-          fbak_Full_FName := i_c_DataBasePath + fbak_FName;
-        end
-        else
-        begin
-          fbak_Full_FName := iDataBaseBackUpDir + fbak_FName;
-        end;
-
-
-        repeat
-
-
-          //
-          CheckCreateDir(DatensicherungPath);
-
-          if not(pNurArchiveErstellen) then
-          begin
-
-            ReadGenerators;
-            if (ErrorCount > 0) then
-              break;
-
-            {$ifdef FPC}
-            with Admin do
-            begin
-{
+      rCONNECTION := TIB_Connection.Create(nil);
+      with rCONNECTION do
+      begin
+        DefaultTransaction := rTRANSACTION;
+        LoginDBReadOnly := True;
+        Protocol := cpTCP_IP;
         if (iDataBaseHost = '') then
-          Protocol := cpLocal
+          DatabaseName := fbak_Full_FName + '.fdb'
         else
-          Protocol := cpTCP_IP;
-        LoginPrompt := false;
- }
-              Host := iDataBaseHost;
-              User := 'SYSDBA';
-              Password := SysDBAPassword;
-
-            end;
-            {$else}
-            SetUpService(IBOBackupService1);
-            SetUpService(IBORestoreService1);
-            {$endif}
-
-            // BACKUP
-            if not(pNurRestore) then
-            begin
-              DoBackup;
-              SaveLog;
-            end;
-
-            if (ErrorCount > 0) then
-              break;
-            if pNurFbakErstellen then
-              break;
-
-            // ist das Backup angekommen? Prüfen über die Windows-Welt
-            if not(FileExists(iTranslatePath + fbak_FName)) then
-            begin
-              Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName +
-                ' fehlt. FreigabePfad= definieren!');
-              break;
-            end;
-
-          end;
-          SaveLog;
-          if (ErrorCount > 0) then
-            break;
-
-          if not(pUpload) and not(pNurArchiveErstellen) then
-          begin
-
-            // restore to proof validty
-            DoRestore;
-            SaveLog;
-
-            if (ErrorCount > 0) then
-              break;
-
-            if not(FileExists(iTranslatePath + fbak_FName + '.fdb')) then
-            begin
-              Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName + '.fdb' +
-                ' fehlt!');
-            end;
-
-            if (ErrorCount > 0) then
-              break;
-            DoCheckGenerators;
-            if (ErrorCount > 0) then
-              break;
-
-            // Datenbankdatei aus Sicht der Backup-Routine löschen
-            FileDelete(iTranslatePath + fbak_FName + '.fdb');
-            if FileExists(iTranslatePath + fbak_FName + '.fdb') then
-            begin
-              Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName + '.fdb' +
-                ' nicht löschbar!');
-            end;
-
-          end;
-          SaveLog;
-          if (ErrorCount > 0) then
-            break;
-
-          ResultFName := DatensicherungPath + fbak_FName;
-
-          // a) in den Windows Bereich kopieren (falls es nicht schon dort ist!)
-          if (iTranslatePath <> DatensicherungPath) then
-          begin
-            if (Pos(';', iTranslatePath) = 0) then
-            begin
-              if not(FileExists(DatensicherungPath + fbak_FName)) then
-              begin
-                Log('mv ' + iTranslatePath + fbak_FName + ' ' + DatensicherungPath
-                  + fbak_FName + ' ...');
-                FileMove(iTranslatePath + fbak_FName,
-                  DatensicherungPath + fbak_FName);
-              end;
-            end
-            else
-            begin
-              SolidInit(FTP);
-              with FTP do
-              begin
-                Host := nextp(iTranslatePath, ';', 0);
-                UserName := nextp(iTranslatePath, ';', 1);
-                Password := nextp(iTranslatePath, ';', 2);
-              end;
-              SolidGet(FTP, nextp(iTranslatePath, ';', 3), fbak_FName,'',
-                DatensicherungPath, true);
-            end;
-          end;
-          SaveLog;
-
-          // Existenz der Ergebnisdatei prüfen!
-          if not(FileExists(DatensicherungPath + fbak_FName)) then
-          begin
-            Log(cERRORText + ' Datei ' + DatensicherungPath + fbak_FName +
-              ' nicht gefunden!');
-            break;
-          end;
-
-          // b) im Windows Bereich komprimieren!
-          doCompress;
-
-        until true;
-        SaveLog;
-
-        // FTP Upload?
-        if pUpload and (ErrorCount = 0) then
-        begin
-          Log('FTP Upload ...');
-
-
-          doUpload(ResultFName);
-        end;
-        SaveLog;
-
-
-        // Ergebnis!
-        if (ErrorCount = 0) then
-        begin
-          Log('Erfolgreich beendet');
-          result := true;
-          {$ifndef FPC}
-          close;
-          {$endif}
-        end
-        else
-        begin
-          Log('Es gab Fehler!');
-        end;
-        SaveLog;
-
+          DatabaseName := iDataBaseHost + ':' + fbak_Full_FName + '.fdb';
+        UserName := 'SYSDBA';
+        Password := SysDBAPassword;
       end;
+
+      with rTRANSACTION do
+      begin
+        IB_Connection := rCONNECTION;
+      end;
+
+      rCONNECTION.connect;
+        {$endif}
+
+      cGENERATORS := nCursor;
+      with cGENERATORS do
+      begin
+          {$ifdef FPC}
+          connection := rCONNECTION;
+          {$else}
+          IB_Connection := rCONNECTION;
+          IB_Transaction := rTRANSACTION;
+          {$endif}
+        sql.add(cScript_List_Generators);
+        ApiFirst;
+        if (RecordCount <> sGENERATORS.Count) then
+          Log(cERRORText + ' Anzahl der GENERATORen stimmt nicht!');
+
+        while not (EOF) do
+        begin
+          GenName := Fields[0].AsString;
+            {$ifdef FPC}
+              rGEN := TZSequence.create(nil);
+              with rGEN do
+              begin
+                connection := rCONNECTION;
+                SequenceName := GenName;
+                GenValIst := GetCurrentValue;
+              end;
+              rGEN.free;
+            {$else}
+          GenValIst := GEN_ID(GenName, 0);
+            {$endif}
+          GenValSoll := strtoint64def(sGENERATORS.values[GenName], 0);
+          if (GenValIst >= GenValSoll) then
+          begin
+            Log(GenName + ' OK');
+          end
+          else
+          begin
+            Log(cERRORText + ' GENERATOR ' + GenName + ': Ist=' +
+              IntToStr(GenValIst) + ' Soll=' + IntToStr(GenValSoll));
+          end;
+          ApiNext;
+        end;
+      end;
+      cGENERATORS.Free;
+      sGENERATORS.Free;
+
+      cINDEX := nCursor;
+      with cINDEX do
+      begin
+          {$ifdef FPC}
+          connection := rConnection;
+          {$else}
+        IB_Connection := rCONNECTION;
+        IB_Transaction := rTRANSACTION;
+          {$endif}
+        sql.add('SELECT');
+        sql.add(' RDB$INDICES.RDB$RELATION_NAME,');
+        sql.add(' RDB$INDICES.RDB$INDEX_NAME,');
+        sql.add(' RDB$INDEX_SEGMENTS.RDB$FIELD_NAME');
+        sql.add('FROM');
+        sql.add(' RDB$INDICES');
+        sql.add('JOIN');
+        sql.add(' RDB$INDEX_SEGMENTS');
+        sql.add('ON');
+        sql.add(' RDB$INDICES.RDB$INDEX_NAME=RDB$INDEX_SEGMENTS.RDB$INDEX_NAME');
+        sql.add('WHERE');
+        sql.add(' (RDB$INDICES.RDB$SYSTEM_FLAG=0) AND');
+        sql.add(' (RDB$INDICES.RDB$INDEX_INACTIVE=1)');
+        ApiFirst;
+        if (RecordCount <> 0) then
+          Log(cERRORText + ' Es gibt inaktive Indizes');
+        while not (EOF) do
+        begin
+          Log(
+            cWARNINGtext + ' Index ' +
+            FieldByName('RDB$RELATION_NAME').AsString + '.' +
+            FieldByName('RDB$INDEX_NAME').AsString +
+            ' ist nicht aktiv');
+          ApiNext;
+        end;
+      end;
+      cINDEX.Free;
+
+      rCONNECTION.disconnect;
+      rCONNECTION.Free;
+      {$ifndef FPC}
+      rTRANSACTION.Free;
+      {$endif}
+    except
+      on E: Exception do
+      begin
+        Log(cERRORText + ' IQ-Compare Exception: ' + E.Message);
+      end;
+    end;
+
+  end;
+
+  procedure doCompress;
+  begin
+    repeat
+
+      ResultFName := DatensicherungPath + fbak_FName + '.zip';
+
+      Log('zip ' + ResultFName + ' ...');
+
+      ZipFileList := TStringList.Create;
+      ZipFileList.add(DatensicherungPath + fbak_FName);
+      FileDelete(ResultFName);
+      FileDelete(DatensicherungPath + cZIPTempFileMask);
+      if (InfoZIP.zap(ZipFileList, ResultFName) <> 1) then
+      begin
+        Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
+        break;
+      end;
+      ZipFileList.Free;
+
+      // hat das Komprimieren geklappt?
+      if not (FileExists(ResultFName)) then
+      begin
+        Log(cERRORText + ' Archiv ' + ResultFName + ' nicht gefunden!');
+        break;
+      end;
+
+      // nun das Datenbank-Backup löschen!
+      FileDelete(DatensicherungPath + fbak_FName);
+      if FileExists(DatensicherungPath + fbak_FName) then
+      begin
+        Log(cERRORText + ' Datenbank-Datei ' + DatensicherungPath +
+          fbak_FName + ' nicht löschbar!');
+        break;
+      end;
+
+    until True;
+
+  end;
+
+begin
+  Result := False;
+  if (BackupGID < 0) then
+    exit;
+
+  if not (assigned(cConnection)) then
+    exit;
+
+  sBericht := TStringList.Create;
+
+  ErrorCount := 0;
+  fbak_FName := cSicherungsPrefix + inttostrN(BackupGID, 8) + '.fbak';
+  Log('Datensicherung - ' + IntToStr(BackupGID));
+  if (iDataBaseBackUpDir = '') then
+  begin
+    fbak_Full_FName := i_c_DataBasePath + fbak_FName;
+  end
+  else
+  begin
+    fbak_Full_FName := iDataBaseBackUpDir + fbak_FName;
+  end;
+
+  repeat
+    CheckCreateDir(DatensicherungPath);
+
+    if not (pNurArchiveErstellen) then
+    begin
+
+      ReadGenerators;
+      if (ErrorCount > 0) then
+        break;
+
+      {$ifdef FPC}
+      svcBackup := TIBBackupService.Create(nil);
+      svcRestore := TIBRestoreService.Create(nil);
+      {$else}
+      svcBackup := TIBOBackupService.Create(nil);
+      svcRestore := TIBORestoreService.Create(nil);
+      {$endif}
+
+      SetUpService(svcBackup);
+      SetUpService(svcRestore);
+
+      // BACKUP
+      if not (pNurRestore) then
+      begin
+        DoBackup;
+        SaveLog;
+      end;
+
+      if (ErrorCount > 0) then
+        break;
+      if pNurFbakErstellen then
+        break;
+
+      // ist das Backup angekommen? Prüfen über die Windows-Welt
+      if not (FileExists(iTranslatePath + fbak_FName)) then
+      begin
+        Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName +
+          ' fehlt. FreigabePfad= definieren!');
+        break;
+      end;
+
+    end;
+    SaveLog;
+    if (ErrorCount > 0) then
+      break;
+
+    if not (pUpload) and not (pNurArchiveErstellen) then
+    begin
+
+      // restore to proof validty
+      DoRestore;
+      SaveLog;
+
+      if (ErrorCount > 0) then
+        break;
+
+      if not (FileExists(iTranslatePath + fbak_FName + '.fdb')) then
+      begin
+        Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName +
+          '.fdb' + ' fehlt!');
+      end;
+
+      if (ErrorCount > 0) then
+        break;
+      DoCheckGenerators;
+      if (ErrorCount > 0) then
+        break;
+
+      // Datenbankdatei aus Sicht der Backup-Routine löschen
+      FileDelete(iTranslatePath + fbak_FName + '.fdb');
+      if FileExists(iTranslatePath + fbak_FName + '.fdb') then
+      begin
+        Log(cERRORText + ' Datei ' + iTranslatePath + fbak_FName +
+          '.fdb' + ' nicht löschbar!');
+      end;
+
+    end;
+    SaveLog;
+    if (ErrorCount > 0) then
+      break;
+
+    svcBackup.Free;
+    svcRestore.Free;
+    ResultFName := DatensicherungPath + fbak_FName;
+
+    // a) in den Windows Bereich kopieren (falls es nicht schon dort ist!)
+    if (iTranslatePath <> DatensicherungPath) then
+    begin
+      if (Pos(';', iTranslatePath) = 0) then
+      begin
+        if not (FileExists(DatensicherungPath + fbak_FName)) then
+        begin
+          Log('mv ' + iTranslatePath + fbak_FName + ' ' +
+            DatensicherungPath + fbak_FName + ' ...');
+          FileMove(iTranslatePath + fbak_FName,
+            DatensicherungPath + fbak_FName);
+        end;
+      end
+      else
+      begin
+        SolidInit(FTP);
+        with FTP do
+        begin
+          Host := nextp(iTranslatePath, ';', 0);
+          UserName := nextp(iTranslatePath, ';', 1);
+          Password := nextp(iTranslatePath, ';', 2);
+        end;
+        SolidGet(FTP, nextp(iTranslatePath, ';', 3), fbak_FName, '',
+          DatensicherungPath, True);
+      end;
+    end;
+    SaveLog;
+
+    // Existenz der Ergebnisdatei prüfen!
+    if not (FileExists(DatensicherungPath + fbak_FName)) then
+    begin
+      Log(cERRORText + ' Datei ' + DatensicherungPath + fbak_FName +
+        ' nicht gefunden!');
+      break;
+    end;
+
+    // b) im Windows Bereich komprimieren!
+    doCompress;
+
+  until True;
+  SaveLog;
+
+  // FTP Upload?
+  if pUpload and (ErrorCount = 0) then
+  begin
+    Log('FTP Upload ...');
+    doUpload(ResultFName);
+  end;
+  SaveLog;
+
+  // Ergebnis!
+  if (ErrorCount = 0) then
+  begin
+    Log('Erfolgreich beendet');
+    Result := True;
+  end
+  else
+  begin
+    Log('Es gab Fehler!');
+  end;
+  SaveLog;
+
+  FreeAndNil(sBericht);
+end;
 
 
 const
@@ -1974,7 +1951,7 @@ begin
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
   // fbTransaction := TZTransaction.create;
-  fbConnection := TZConnection.create(nil);
+  fbConnection := TZConnection.Create(nil);
   with fbConnection do
   begin
     ClientCodePage := 'ISO8859_1';
@@ -1985,23 +1962,23 @@ begin
   end;
 {$ELSE}
   // Datenbank - Zugriffselemente erzeugen!
-  fbSession := TIB_Session.create(nil);
-  fbTransaction := TIB_Transaction.create(nil);
-  fbConnection := TIB_Connection.create(nil);
+  fbSession := TIB_Session.Create(nil);
+  fbTransaction := TIB_Transaction.Create(nil);
+  fbConnection := TIB_Connection.Create(nil);
 
   with fbSession do
   begin
-    AllowDefaultConnection := true;
-    AllowDefaultTransaction := true;
+    AllowDefaultConnection := True;
+    AllowDefaultTransaction := True;
     DefaultConnection := fbConnection;
-    StoreActive := false;
-    UseCursor := false;
+    StoreActive := False;
+    UseCursor := False;
   end;
 
   with fbConnection do
   begin
     IB_Session := fbSession;
-    CacheStatementHandles := false;
+    CacheStatementHandles := False;
     DefaultTransaction := fbTransaction;
     SQLDialect := 3;
     ParameterOrder := poNew;
@@ -2012,10 +1989,10 @@ begin
   begin
     IB_Session := fbSession;
     IB_Connection := fbConnection;
-    ServerAutoCommit := true;
+    ServerAutoCommit := True;
     Isolation := tiCommitted;
-    RecVersion := true;
-    LockWait := true;
+    RecVersion := True;
+    LockWait := True;
   end;
 {$ENDIF}
 {$ENDIF}

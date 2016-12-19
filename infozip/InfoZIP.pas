@@ -119,6 +119,8 @@ function zip(sFiles: TStringList; FName: string; Options: string): integer
 function zip(sFile: String; FName: string; Options: string = ''): integer
 { AnzahlDateien }; overload;
 
+function zap(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
+
 { unzip(FName,Destination,Options)
   |
   |  FName :      Name des bestehenden Archives, das ausgepackt werden soll
@@ -138,6 +140,7 @@ uses
   zipper,
   zbase,
   zdeflate,
+// opkman_zip,
 {$else}
 
   JclSysInfo,
@@ -148,7 +151,130 @@ uses
   anfix32,
   systemd;
 
+
+function NextP(var s: string; Delimiter: string): string;
+var
+  k: integer;
+begin
+  k := pos(Delimiter, s);
+  if k > 0 then
+  begin
+    result := system.copy(s, 1, pred(k));
+    delete(s, 1, pred(k + length(Delimiter)));
+  end
+  else
+  begin
+    result := s;
+    s := '';
+  end;
+end;
+
+function split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
+var
+  QuoteLength: integer;
+  QuoteEnd: integer;
+begin
+  QuoteLength := length(Quote);
+  result := TStringList.Create;
+  if (QuoteLength = 0) then
+  begin
+    while (s <> '') do
+      result.add(NextP(s, Delimiter));
+  end
+  else
+  begin
+    while (s <> '') do
+    begin
+      if (pos(Quote, s) = 1) then
+      begin
+        System.delete(s, 1, QuoteLength);
+        QuoteEnd := pos(Quote, s);
+        if QuoteEnd = 0 then
+        begin
+          // ERROR: closing Quote expected
+          result.add(s);
+          s := '';
+        end
+        else
+        begin
+          result.add(system.copy(s, 1, pred(QuoteEnd)));
+          System.delete(s, 1, pred(QuoteEnd + QuoteLength));
+          NextP(s, Delimiter);
+        end;
+      end
+      else
+      begin
+        result.add(NextP(s, Delimiter));
+      end;
+    end;
+  end;
+end;
+
+procedure ersetze(const find_str, ersetze_str: string; var d: String);
+var
+  i: integer;
+  l: integer;
+  WorkStr: String;
+begin
+  i := pos(find_str, d);
+  if (i = 0) then
+    exit;
+  if (find_str = ersetze_str) or (find_str = '') or (d = '') then
+    exit;
+  WorkStr := d;
+  d := '';
+  l := length(find_str);
+  while (i > 0) do
+  begin
+    d := d + system.copy(WorkStr, 1, pred(i)) + ersetze_str;
+    WorkStr := system.copy(WorkStr, i + l, MaxInt);
+    i := pos(find_str, WorkStr);
+  end;
+  d := d + WorkStr;
+end;
+
+var
+  _ProgramFilesDir: string = '';
+
+function ProgramFilesDir: AnsiString;
+begin
+  if (_ProgramFilesDir = '') then
+    _ProgramFilesDir := GetProgramFilesFolder + '\';
+  result := _ProgramFilesDir;
+end;
+
 {$IFDEF fpc}
+
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
+var
+  ZIP : TZipper;
+begin
+  ZIP := TZipper.create;
+  with ZIP do
+  begin
+    FileName := FName;
+    Entries.AddFileEntries(sFiles);
+    result := Entries.count;
+    ZipAllFiles;
+  end;
+  ZIP.free;
+end;
+
+function zap(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
+var
+  ZIP : TZipper;
+begin
+  ZIP := TZipper.create;
+  with ZIP do
+  begin
+    FileName := FName;
+    Entries.AddFileEntries(sFiles);
+    result := Entries.count;
+    ZipAllFiles;
+  end;
+  ZIP.free;
+end;
+
 {$ELSE}
 
 // globals
@@ -500,182 +626,8 @@ function ZpInit(lpZipUserFunc: LPZIPUSERFUNCTIONS): integer; stdcall;
 function ZpArchive(c: ZCL; Opts: LPZPOPT): integer; stdcall;
   external 'zip32z64.dll' name 'ZpArchive';
 
-{$ENDIF}
-// #### tools ####
-
-function NextP(var s: string; Delimiter: string): string;
-var
-  k: integer;
-begin
-  k := pos(Delimiter, s);
-  if k > 0 then
-  begin
-    result := system.copy(s, 1, pred(k));
-    delete(s, 1, pred(k + length(Delimiter)));
-  end
-  else
-  begin
-    result := s;
-    s := '';
-  end;
-end;
-
-function split(s: string; Delimiter: string = ';'; Quote: string = ''): TStringList;
-var
-  QuoteLength: integer;
-  QuoteEnd: integer;
-begin
-  QuoteLength := length(Quote);
-  result := TStringList.Create;
-  if (QuoteLength = 0) then
-  begin
-    while (s <> '') do
-      result.add(NextP(s, Delimiter));
-  end
-  else
-  begin
-    while (s <> '') do
-    begin
-      if (pos(Quote, s) = 1) then
-      begin
-        System.delete(s, 1, QuoteLength);
-        QuoteEnd := pos(Quote, s);
-        if QuoteEnd = 0 then
-        begin
-          // ERROR: closing Quote expected
-          result.add(s);
-          s := '';
-        end
-        else
-        begin
-          result.add(system.copy(s, 1, pred(QuoteEnd)));
-          System.delete(s, 1, pred(QuoteEnd + QuoteLength));
-          NextP(s, Delimiter);
-        end;
-      end
-      else
-      begin
-        result.add(NextP(s, Delimiter));
-      end;
-    end;
-  end;
-end;
-
-procedure ersetze(const find_str, ersetze_str: string; var d: String);
-var
-  i: integer;
-  l: integer;
-  WorkStr: String;
-begin
-  i := pos(find_str, d);
-  if (i = 0) then
-    exit;
-  if (find_str = ersetze_str) or (find_str = '') or (d = '') then
-    exit;
-  WorkStr := d;
-  d := '';
-  l := length(find_str);
-  while (i > 0) do
-  begin
-    d := d + system.copy(WorkStr, 1, pred(i)) + ersetze_str;
-    WorkStr := system.copy(WorkStr, i + l, MaxInt);
-    i := pos(find_str, WorkStr);
-  end;
-  d := d + WorkStr;
-end;
-
-var
-  _ProgramFilesDir: string = '';
-
-function ProgramFilesDir: AnsiString;
-begin
-  if (_ProgramFilesDir = '') then
-    _ProgramFilesDir := GetProgramFilesFolder + '\';
-  result := _ProgramFilesDir;
-end;
-
-// End - User - API
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
-{$IFDEF fpc}
-begin
-(*
-var
-  zipArchive: TABZipper;
-begin
-  zipArchive := TABZipper.Create(nil);
-  with zipArchive do
-  begin
-    // Archiv-Name
-    FileName := FName;
-
-    // Dateien
-    repeat
-
-      if not(assigned(sFiles)) then
-      begin
-        // AddFiles('*');
-        break;
-      end;
-
-      if (sFiles.Count = 0) then
-      begin
-        // AddFiles('*');
-        break;
-      end;
-
-      // AddFiles(sFiles);
-
-    until yet;
-
-    if assigned(Options) then
-    begin
-
-      // Recurse SubDirs
-      if (Options.Values[infozip_RootPath] <> '') then
-      begin
-        // szRootDir := oRootDir;
-        // fRecurse := 1;
-      end
-      else
-      begin
-        // fNoDirEntries := true;
-        // fJunkDir := true;
-      end;
-
-      // Password
-      if (Options.Values[infozip_Password] <> '') then
-      begin
-        // FilePassword := Options.Values[infozip_Password];
-        // fEncrypt := 1;
-      end;
-      {
-        // Compression Level
-        if (Options.Values[infozip_Level] <> '') then
-        fLevel := ord(Options.Values[infozip_Level][1])
-        else
-        fLevel := ord('9');
-
-        // Extra Infos
-        if (Options.Values[infozip_ExtraInfo] = '0') then
-        fExtra := true;
-      }
-    end
-    else
-    begin
-      {
-        // Defaults!
-        fNoDirEntries := true;
-        fJunkDir := true;
-        fLevel := ord('9');
-      }
-    end;
-
-    // ZipAllFiles;
-  end;
-*)
-{$ELSE}
-
 var
   FilesStore: pointer;
   FilesStoreCount: integer;
@@ -838,8 +790,9 @@ begin
   dispose(ZipOptions);
   sFilesInternal.free;
   FS_free;
-{$ENDIF}
 end;
+
+{$ENDIF}
 
 function zip(sFiles: TStringList; FName: string; Options: string): integer
 { AnzahlDateien }; overload;
@@ -864,46 +817,6 @@ begin
   sFiles.free;
 end;
 
-(*
-  function unzip(FName : string; Destination: string; Options: TStringList = nil) : integer;
-  var
-  Parameter : LPDCL;
-  oArchiveName: array[0..1023] of AnsiChar;
-  oDestination: array[0..1023] of AnsiChar;
-  begin
-  zMessages.clear;
-  FileCount := 0;
-  StrPcopy(oArchiveName,FName);
-  StrPcopy(oDestination,Destination);
-
-
-  new(Parameter);
-  fillchar(Parameter^,sizeof(DCL),0);
-  FilePassword := '';
-
-  with Parameter^ do
-  begin
-  StructVersID := UZ_DCL_STRUCTVER;
-  fQuiet := 1; // nicht so viel ausgaben (speed wanted)
-  noflag := 1; // vorhandenes überschreiben
-  ndflag := 1; // subdirs erstellen
-  lpszZipFN := oArchiveName;
-  lpszExtractDir := oDestination;
-  if Assigned(Options) then
-  if (Options.Values[infozip_Password]<>'') then
-  FilePassword := Options.Values[infozip_Password];
-  end;
-
-  result := Wiz_SingleEntryUnzip(0,nil,0,nil,Parameter,CallBackControl);
-  if result=0 then
-  result := FileCount
-  else
-  result := -result;
-
-  dispose(Parameter);
-  end;
-*)
-
 //
 const
   UnzipMethod: integer = 0;
@@ -916,35 +829,16 @@ const
 
 function unzip(FName: string; Destination: string; Options: TStringList = nil): integer;
 {$IFDEF fpc}
-begin
-(*
-var
-  zipArchive: TAbUnZipper;
-begin
-  result := 0;
 
-  if not(FileExists(FName)) then
-    raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
-
-  zipArchive := TAbUnZipper.Create(nil);
-  with zipArchive do
-  begin
-    FileName := FName;
-    BaseDirectory := Destination;
-    // ExtractOptions := [];
-
-    if assigned(Options) then
-      if (Options.Values[infozip_Password] <> '') then
-        password := Options.Values[infozip_Password];
-    ExtractFiles('*');
-  end;
-*)
 {$ELSE}
 
 var
   CommandLine: string;
+{$endif}
 begin
-  result := 0;
+ {$ifdef FPC}
+ {$else}
+ result := 0;
 
   if not(FileExists(FName)) then
     raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
@@ -1081,3 +975,44 @@ begin
 {$ENDIF}
 
 end.
+
+(*
+  function unzip(FName : string; Destination: string; Options: TStringList = nil) : integer;
+  var
+  Parameter : LPDCL;
+  oArchiveName: array[0..1023] of AnsiChar;
+  oDestination: array[0..1023] of AnsiChar;
+  begin
+  zMessages.clear;
+  FileCount := 0;
+  StrPcopy(oArchiveName,FName);
+  StrPcopy(oDestination,Destination);
+
+
+  new(Parameter);
+  fillchar(Parameter^,sizeof(DCL),0);
+  FilePassword := '';
+
+  with Parameter^ do
+  begin
+  StructVersID := UZ_DCL_STRUCTVER;
+  fQuiet := 1; // nicht so viel ausgaben (speed wanted)
+  noflag := 1; // vorhandenes überschreiben
+  ndflag := 1; // subdirs erstellen
+  lpszZipFN := oArchiveName;
+  lpszExtractDir := oDestination;
+  if Assigned(Options) then
+  if (Options.Values[infozip_Password]<>'') then
+  FilePassword := Options.Values[infozip_Password];
+  end;
+
+  result := Wiz_SingleEntryUnzip(0,nil,0,nil,Parameter,CallBackControl);
+  if result=0 then
+  result := FileCount
+  else
+  result := -result;
+
+  dispose(Parameter);
+  end;
+*)
+
