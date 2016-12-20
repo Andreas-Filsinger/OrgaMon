@@ -530,7 +530,7 @@
         <DCCReference Include="FavoritenSQL.pas">
             <Form>FormSQLFavoriten</Form>
         </DCCReference>
-        <DCCReference Include="..\infozip\infozip.pas"/>
+        <DCCReference Include="..\infozip\InfoZIP.pas"/>
         <DCCReference Include="..\libxml2\libxml2.pas"/>
         <DCCReference Include="Rechnungen.pas">
             <Form>FormRechnungen</Form>

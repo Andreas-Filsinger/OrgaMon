@@ -221,9 +221,7 @@ uses
 
   // ANFiX
   dbOrgaMon,
-
-  // Infozip
-  infozip,
+  InfoZIP,
 
   // OrgaMon-Core
   Funktionen_Basis,

@@ -44,7 +44,7 @@ uses
 
   // Tools
   anfix32, WordIndex, binlager32,
-  Foto, InfoZip,
+  Foto, InfoZIP,
   CareTakerClient,
 
   // OrgaMon
