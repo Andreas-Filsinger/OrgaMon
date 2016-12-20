@@ -228,7 +228,7 @@ uses
   Clipbrd, IniFiles, CareTakerClient,
   pem, gplists, html,
   SolidFTP, BinLager32, wanfix32,
-  InfoZip;
+  InfoZIP;
 
 {$R *.dfm}
 

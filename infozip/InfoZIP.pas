@@ -29,7 +29,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ var
     |                 Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
     |
     |    Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
-    |    AES256     = <leer> (default>
+    |    AES256     = <leer> (default)
     |                 1 Aktiv
     |    Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
     |                 eingesetzt werden soll.

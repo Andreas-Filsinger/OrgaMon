@@ -187,7 +187,7 @@ uses
   dbOrgaMon, WordIndex,
   Sperre, Bearbeiter, GeoLokalisierung,
   FastGeo, AuftragArbeitsplatz, wanfix32,
-  InfoZip,
+  InfoZIP,
 
   // XLS Sachen
   FlexCel.Core, FlexCel.xlsAdapter,

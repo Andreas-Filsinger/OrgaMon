@@ -238,7 +238,7 @@ uses
   Funktionen_Basis,
 
   // Tests
-  InfoZip, DCPmd5, txlib, Datenbank;
+  InfoZIP, DCPmd5, txlib, Datenbank;
 {$R *.dfm}
 
 function TFormCareServer.ShowIfError(sDiagnose: TStringList): boolean;

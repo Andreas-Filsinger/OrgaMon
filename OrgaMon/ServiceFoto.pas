@@ -250,7 +250,7 @@ implementation
 
 uses
   SimplePassword, binlager32, anfix32,
-  globals, IniFiles, InfoZip,
+  globals, IniFiles, InfoZIP,
   math, CCR.Exif, wanfix32,
   dbOrgaMon;
 
