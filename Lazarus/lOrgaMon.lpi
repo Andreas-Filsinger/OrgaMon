@@ -35,7 +35,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="--tagesabschluss --Id=andreas"/>
+        <CommandLineParams Value="-al --Id=andreas"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">

@@ -161,7 +161,10 @@ type
 
   end;
 
-  // Texte gehen in die Log-Datei
+// XMLRPC-Client
+function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList):TStringList;
+
+// Texte gehen in die Log-Datei
 procedure Log(s: string);
 
 implementation
@@ -169,6 +172,9 @@ implementation
 uses
   // System
   Sysutils,
+
+  // Indy
+  IdHTTP,
 
   // anfix-Tools
   html, anfix32, CareTakerClient;
@@ -940,5 +946,56 @@ begin
     Add(Msg);
   end;
 end;
+
+// call a remote XML RPC
+
+function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList):TStringList;
+var
+ cXMLRPC : TIdHTTP;
+ XML : TStringList;
+ RequestContent: TMemoryStream;
+ ResponseContent : TMemoryStream;
+ n : integer;
+begin
+  result := TStringList.Create;
+
+  // generate the XML
+  XML := TStringList.Create;
+  with XML do
+  begin
+   add('<?xml version="1.0"?>');
+   // imp pend: Codierung der Parameter
+   //   if (Parameter.Count=0) then
+    add('<methodCall><methodName>abu.' + Name + '</methodName></methodCall>');
+  end;
+
+  RequestContent := TMemoryStream.Create;
+  XML.SaveToStream(RequestContent);
+
+  ResponseContent:= TMemoryStream.create;
+  cXMLRPC := TIdHTTP.create(nil);
+  with cXMLRPC do
+  begin
+    Request.ContentType := 'text/xml';
+    Request.CharSet := 'ISO-8859-1';     // Dokumentation sagt, XMLRPC wäre ANSI
+    Request.UserAgent := 'srvXMLRPC.pas';
+    Post('http://'+Host+':'+IntToStr(Port),RequestContent,ResponseContent);
+    ResponseContent.Position := 0;
+    result.LoadFromStream(ResponseContent{$ifndef FPC},TEncoding.ANSI{$endif}); // Dokumentation sagt, XMLRPC wäre ANSI
+  end;
+  ResponseContent.Free;
+  RequestContent.Free;
+  XML.free;
+  cXMLRPC.Free;
+
+  // parse result
+   // imp pend: Voll Umfänglicher Ergebnis-Parser
+  for n := pred(result.Count) downto 0 do
+   if pos('<value><string>',result[n])=0 then
+    result.Delete(n)
+   else
+    result[n] := ExtractSegmentBetween(result[n],'<value><string>','</string></value>');
+end;
+
 
 end.
