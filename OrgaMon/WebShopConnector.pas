@@ -139,6 +139,10 @@ type
     Button20: TButton;
     SpeedButton1: TSpeedButton;
     Button21: TButton;
+    Label20: TLabel;
+    Label21: TLabel;
+    Edit10: TEdit;
+    Edit11: TEdit;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -611,6 +615,7 @@ procedure TFormWebShopConnector.Button3Click(Sender: TObject);
 var
   Parameter: TStringList;
 begin
+  ListBoxLog.Items.clear;
   Parameter := TStringList.Create;
   with Edit4 do
     if (Text <> '') then
@@ -621,7 +626,10 @@ begin
   with Edit6 do
     if (Text <> '') then
       Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
-  ListBoxLog.Items.AddStrings(XServer.exec(ComboBox1.Text, Parameter));
+  if (Edit10.Text='') then
+   ListBoxLog.Items.AddStrings(XServer.exec(ComboBox1.Text, Parameter))
+  else
+   ListBoxLog.Items.AddStrings(remote_exec(Edit10.Text,STrToIntDef(Edit11.Text,3049), ComboBox1.Text, Parameter))
 end;
 
 procedure TFormWebShopConnector.Button10Click(Sender: TObject);

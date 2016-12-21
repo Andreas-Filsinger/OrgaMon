@@ -35,7 +35,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet2
+    ActivePage = TabSheet5
     Align = alTop
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -44,10 +44,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'XMLRPC - Server'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 439
         Top = 123
@@ -177,10 +173,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Caption = 'XMLRPC - Funktionen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label13: TLabel
         Left = 3
         Top = 80
@@ -209,13 +201,27 @@ object FormWebShopConnector: TFormWebShopConnector
         Height = 13
         Caption = 'Parameter #3'
       end
+      object Label20: TLabel
+        Left = 8
+        Top = 8
+        Width = 25
+        Height = 13
+        Caption = 'Host'
+      end
+      object Label21: TLabel
+        Left = 162
+        Top = 8
+        Width = 23
+        Height = 13
+        Caption = 'Port'
+      end
       object ComboBox1: TComboBox
         Left = 3
         Top = 99
         Width = 182
         Height = 21
         TabOrder = 0
-        Text = 'Versandkosten'
+        Text = 'BasePlug'
       end
       object Edit4: TEdit
         Left = 191
@@ -223,7 +229,6 @@ object FormWebShopConnector: TFormWebShopConnector
         Width = 121
         Height = 21
         TabOrder = 1
-        Text = '1032'
       end
       object Edit5: TEdit
         Left = 318
@@ -248,6 +253,22 @@ object FormWebShopConnector: TFormWebShopConnector
         TabOrder = 4
         OnClick = Button3Click
       end
+      object Edit10: TEdit
+        Left = 8
+        Top = 24
+        Width = 121
+        Height = 21
+        TabOrder = 5
+        Text = 'KARLSRUHE'
+      end
+      object Edit11: TEdit
+        Left = 160
+        Top = 24
+        Width = 121
+        Height = 21
+        TabOrder = 6
+        Text = '3040'
+      end
     end
     object TabSheet2: TTabSheet
       Margins.Left = 4
@@ -256,10 +277,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - Medien'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 8
         Top = 69
@@ -573,10 +590,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'WebShop - MySQL'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button6: TButton
         Left = 498
         Top = 192
@@ -730,10 +743,6 @@ object FormWebShopConnector: TFormWebShopConnector
       Margins.Bottom = 4
       Caption = 'REST'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button11: TButton
         Left = 17
         Top = 39
@@ -763,10 +772,6 @@ object FormWebShopConnector: TFormWebShopConnector
     object TabSheet6: TTabSheet
       Caption = 'memcache'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label17: TLabel
         Left = 61
         Top = 24

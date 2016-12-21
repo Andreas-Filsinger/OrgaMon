@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.257 (21.12.16) Andreas Filsinger
+
+ Neu: WebShop: XMLRPC: es kann nun auch ein remote XMLRPC angesteuert werden
+
+ FreePascal-Port: IBX 2.0.0 aufgenommen
+ FreePascal-Port: non GUI: "Backup/Restore" implementiert
+
 Rev 8.256 (13.12.16) Andreas Filsinger
 
  Neu: Baustelle: Reaktivieren von abgelegten Daten anhand der des Ablage-RIDs

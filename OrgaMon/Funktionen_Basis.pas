@@ -854,14 +854,14 @@ begin
       { 01 } add(cAppName + ' (Build ' + cBuildNumber + ')');
 {$IFDEF CONSOLE}
 {$IFDEF fpc}
-      { 02 } add('Zeos Rev. ' + fbConnection.Version);
+      { 02 } add('Zeos Rev. ' + ZEOS_VERSION);
 {$ELSE}
       { 02 } add('IBO Rev. ' + fbConnection.Version);
 {$ENDIF}
 {$ELSE}
       { 02 } add('IBO Rev. ' + Datamoduledatenbank.IB_connection1.Version);
 {$ENDIF}
-      { 03 } add(gsIdProductName + ' Rev. ' + gsIdVersion);
+      { 03 } add(gsIdProductName + ' Rev. ' + gsIdVersion); // Indy
       { 04 } add(iPDFPathPublicShop);
       { 05 } add(iMusicPathShop);
       { 06 } add(iHTMLPath);
@@ -879,7 +879,7 @@ begin
       { 09 } add('TMS FlexCel Rev. ' + FlexCelVersion);
 {$ENDIF}
 {$IFDEF fpc}
-      { 10 } add('jcl Rev. N/A');
+      { 10 } add('IBX Rev. ' + IBX_VERSION);
 {$ELSE}
       { 10 } add('jcl Rev. ' + IntToStr(JclVersionMajor) + '.' +
         IntToStr(JclVersionMinor));
