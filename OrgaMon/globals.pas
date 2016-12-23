@@ -379,8 +379,8 @@ const
   cE_XLSVorlage = 'XLSVorlage';
   cE_MaxperLoad = 'MaxAnzahl';
   cE_MaterialNummerAlt = 'MaterialNummerAlt';
-  cE_MaterialNummerNeu = 'MaterialNummerNeu';
   cE_Zaehlwerk = 'Zählwerk';
+  cE_MaterialNummerNeu = 'MaterialNummerNeu';
   cE_ZaehlwerkNeu = 'ZaehlwerksnummerNeu';
   cE_AuchAlsCSV = 'AuchAlsCSV';
   cE_AuchAlsXML = 'AuchAlsXML';
