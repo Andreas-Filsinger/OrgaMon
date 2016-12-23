@@ -362,7 +362,6 @@ var
       CheckSet('Werk', FreieZaehlerCol_Werk);
     if (FreieZaehlerCol_Obis <> -1) then
       CheckSet('Obis', FreieZaehlerCol_Obis);
-
   end;
 
   procedure PrepareFormat;
@@ -1179,13 +1178,14 @@ begin
               begin
 
                 // erst Kombination "SerialNummer" & "MaterialNummer" versuchen!
-                for k := 0 to pred(EFRE.count) do
-                  if FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt then
-                  begin
-                    FoundLine := EFRE[k];
-                    Fill_EFRE(FoundLine);
-                    break;
-                  end;
+                if (material_nummer_alt<>'') then
+                  for k := 0 to pred(EFRE.count) do
+                    if (FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt) then
+                    begin
+                      FoundLine := EFRE[k];
+                      Fill_EFRE(FoundLine);
+                      break;
+                    end;
                 if (FoundLine <> -1) then
                   break;
 
