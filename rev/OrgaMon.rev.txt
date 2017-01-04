@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.258 (04.01.17) Andreas Filsinger
+
+ Neu: Service: Backup: Kürzen der Log- Dateien
+ Neu: Service: Backup: Ablage zu alter Log- Dateien
+
 Rev 8.257 (21.12.16) Andreas Filsinger
 
  Neu: WebShop: XMLRPC: es kann nun auch ein remote XMLRPC angesteuert werden
