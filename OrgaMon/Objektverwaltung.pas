@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -94,6 +94,7 @@ type
     Button4: TButton;
     ReinigungButton: TButton;
     CheckBox1: TCheckBox;
+    CheckBoxMuell: TCheckBox;
     procedure LadenButtonClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ComboBox1Change(Sender: TObject);
@@ -385,11 +386,16 @@ begin
 end;
 
 const
-  cBuchungTableHeader: array [1 .. 9] of string = ('Verursacher          ',
-    'Text                    ', 'Art           ', 'Datum     ',
-    'Wert          ', 'BN', 'für Zeitraum         ', 'Tge',
-    // 'Schlüssel',
-    'MU');
+  cBuchungTableHeader: array [1 .. 9] of string = (
+   {} 'Verursacher          ',
+   {} 'Text                    ',
+   {} 'Art           ',
+   {} 'Datum     ',
+   {} 'Wert          ',
+   {} 'BE#',
+   {} 'für Zeitraum         ',
+   {} 'Tage',
+   {} 'MU');
 
 function TBuchung.Header: string;
 var
@@ -1665,7 +1671,8 @@ begin
   screen.Cursor := crHourGlass;
   ListBox2.Items.BeginUpdate;
   LadenButtonClick(Sender);
-  VerteileMuell;
+  if checkBoxMuell.checked then
+   VerteileMuell;
   VerbrauchAbrechnen('Wasser', 'm³');
   VersicherungButtonClick(Sender);
   VerbrauchAbrechnen('Heizung', 'E');
@@ -1701,7 +1708,7 @@ var
     if assigned(KList) then
       with ListBox2.Items do
       begin
-        add('                                                           BN=Belegnummer der Anlage  MU=auf Mieter umlagefähig? ("*"=JA)');
+        add('                                                           BE#=Belegnummer der Anlage  MU=auf Mieter umlagefähig? ("*"=JA)');
         add(TBuchung(KList[0]).Footer);
         add(TBuchung(KList[0]).Header);
         add(TBuchung(KList[0]).Trenner);
@@ -2585,10 +2592,14 @@ var
         Wert := euro(Wert);
         DieserPreis := format('%.2f €', [Wert]);
 
-        kosten[n] := Nextp(kosten[n], ';', 0) + ';' + Nextp(kosten[n], ';', 1) +
-          ';' + Nextp(kosten[n], ';', 2) + ';' + Nextp(kosten[n], ';', 3) + ';'
-          + DieserPreis + ';' + Nextp(kosten[n], ';', 5) + ';' +
-          Nextp(kosten[n], ';', 6);
+        kosten[n] :=
+         {} Nextp(kosten[n], ';', 0) + ';' +
+         {} Nextp(kosten[n], ';', 1) + ';' +
+          {} Nextp(kosten[n], ';', 2) + ';' +
+          {} Nextp(kosten[n], ';', 3) + ';' +
+          {} DieserPreis + ';' +
+          {} Nextp(kosten[n], ';', 5) + ';' +
+          {} Nextp(kosten[n], ';', 6);
       end;
 
     end;

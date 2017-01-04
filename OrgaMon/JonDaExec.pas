@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -59,6 +59,12 @@ const
   // Nach dieser Zeit werden die Verzeichnise und weitere Rand-Daten
   // in die Datensicherung verschoben
   cMaxAge_Produktive_Sichtbarkeit = 50;
+
+  // Verzeichnis ./log/*
+  // ==========================
+  // Nach dieser Zeit werden die Dateien des Diagnose-Verzeichnisses
+  // in die Datensicherung verschoben
+  cMaxAge_log_Sichtbarkeit = 90;
 
   // Monteur-Individuelle Optionen
   cServerOption_ZeitPruefung = 'ZEIT_PRÜFUNG';
@@ -3854,21 +3860,26 @@ begin
 
   //
   // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
-
 end;
 
 function TJonDaExec.doBackup: int64;
 const
   cTAN_BackupPath = 'TAN\';
+  cLOG_BackupPath = 'log\';
 {$IFDEF fpc}
   MOVEFILE_WRITE_THROUGH = 8;
 {$ENDIF}
 var
+  // TAN-Stuff
   AllTRN: TStringList;
   n: integer;
   TAN: string;
   GeraeteNummer: string;
   TAN_OlderThan, TAN_Date: TANFiXDate;
+
+  // LOG-Stuff
+  sDir: TStringList;
+  sLOG: TStringList;
 begin
   result := -1;
   if oldInfrastructure then
@@ -3882,6 +3893,9 @@ begin
 
   // TAN-Ablage-Bereich erstellen
   checkcreatedir(BackupDir + cTAN_BackupPath);
+
+  // Log-Ablage-Bereich erstellen
+  checkcreatedir(BackupDir + cLOG_BackupPath);
 
   TAN_OlderThan := DatePlus(DateGet, -cMaxAge_Produktive_Sichtbarkeit);
   AllTRN := TStringList.Create;
@@ -3921,11 +3935,56 @@ begin
     end;
 
     // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
+    // Dies darf dann nicht zu einem Fehler führen
     FileDelete(MyProgramPath + cOrgaMonDataPath + TAN + cDATExtension);
 
   end;
 
   AllTRN.free;
+
+  // LOGs-verkleinern
+  sLOG := FileReduce( DiagnosePath+ 'FotoService.log.txt', 4 * 1024 * 1024 );
+  if assigned(sLOG) then
+  begin
+   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'FotoService.log.txt');
+   sLOG.Free;
+  end else
+  begin
+    FileTouch( DiagnosePath+ 'FotoService.log.txt');
+  end;
+
+  sLOG  := FileReduce( DiagnosePath+ 'JonDaServer.log', 3 * 1024 * 1024 );
+  if assigned(sLOG) then
+  begin
+   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'JonDaServer.log');
+
+   sLOG.Free;
+  end else
+  begin
+    FileTouch( DiagnosePath+ 'JonDaServer.log');
+  end;
+
+  sLOG  := FileReduce( DiagnosePath+ 'FotoService-Transaktionen.log.txt', 2 * 1024 * 1024 );
+  if assigned(sLOG) then
+  begin
+   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'FotoService-Transaktionen.log.txt');
+   sLOG.Free;
+  end else
+  begin
+    FileTouch( DiagnosePath+ 'FotoService-Transaktionen.log.txt');
+  end;
+
+  // alte LOG-Wegsichern
+  sDir := TStringList.create;
+  dir(DiagnosePath+'*',sDir,false);
+  for n := 0 to pred(sDir.count) do
+    if (pos('.',sDir[n])<>1) then
+      if FileRetire(DiagnosePath+sDir[n],cMaxAge_log_Sichtbarkeit) then
+        FileMove(DiagnosePath+sDir[n],BackupDir + cLOG_BackupPath +sDir[n]);
+  sDir.Free;
+
+
+
   result := DirSize(BackupDir);
 end;
 
