@@ -3879,7 +3879,22 @@ var
 
   // LOG-Stuff
   sDir: TStringList;
-  sLOG: TStringList;
+
+  procedure LogReduce(FName: string; MaxFSize: int64);
+  var
+   sLOG: TStringList;
+  begin
+    sLOG := FileReduce( DiagnosePath + FName, MaxFSize );
+    if assigned(sLOG) then
+    begin
+     AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + FName);
+     sLOG.Free;
+    end else
+    begin
+      FileTouch( DiagnosePath + FName);
+    end;
+  end;
+
 begin
   result := -1;
   if oldInfrastructure then
@@ -3943,36 +3958,9 @@ begin
   AllTRN.free;
 
   // LOGs-verkleinern
-  sLOG := FileReduce( DiagnosePath+ 'FotoService.log.txt', 4 * 1024 * 1024 );
-  if assigned(sLOG) then
-  begin
-   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'FotoService.log.txt');
-   sLOG.Free;
-  end else
-  begin
-    FileTouch( DiagnosePath+ 'FotoService.log.txt');
-  end;
-
-  sLOG  := FileReduce( DiagnosePath+ 'JonDaServer.log', 3 * 1024 * 1024 );
-  if assigned(sLOG) then
-  begin
-   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'JonDaServer.log');
-
-   sLOG.Free;
-  end else
-  begin
-    FileTouch( DiagnosePath+ 'JonDaServer.log');
-  end;
-
-  sLOG  := FileReduce( DiagnosePath+ 'FotoService-Transaktionen.log.txt', 2 * 1024 * 1024 );
-  if assigned(sLOG) then
-  begin
-   AppendStringsToFile(sLOG,BackupDir + cLOG_BackupPath + 'FotoService-Transaktionen.log.txt');
-   sLOG.Free;
-  end else
-  begin
-    FileTouch( DiagnosePath+ 'FotoService-Transaktionen.log.txt');
-  end;
+  LogReduce('FotoService.log.txt', 4 * 1024 * 1024 );
+  LogReduce('JonDaServer.log', 3 * 1024 * 1024 );
+  LogReduce('FotoService-Transaktionen.log.txt', 2 * 1024 * 1024);
 
   // alte LOG-Wegsichern
   sDir := TStringList.create;
@@ -3983,8 +3971,7 @@ begin
         FileMove(DiagnosePath+sDir[n],BackupDir + cLOG_BackupPath +sDir[n]);
   sDir.Free;
 
-
-
+  // Über die Grösse des Backups informieren
   result := DirSize(BackupDir);
 end;
 
