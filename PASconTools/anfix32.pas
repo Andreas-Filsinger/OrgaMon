@@ -389,7 +389,8 @@ function FileVersionedCopy(const SourceFName, DestFName: string): boolean;
 function FileMove(const Mask, Dest: string): boolean;
 function FileOperationMove(Source, Destination: string): boolean;
 function FileConcat(const Source1, Source2, Dest: string): boolean;
-procedure FileLimitTo(const TextFName: string; TextFSize: dword);
+procedure FileLimitTo(const TextFName: string; TextFSize: int64);
+function FileReduce(const TextFName: string; TextFSize: int64) : TStringList;
 procedure FileEmpty(const FName: string);
 procedure FileAlive(const FName: string);
 function FileVersion(const FName: string): string;
@@ -5329,16 +5330,16 @@ begin
     FileEmpty(FName);
 end;
 
-procedure FileLimitTo(const TextFName: string; TextFSize: dword);
+procedure FileLimitTo(const TextFName: string; TextFSize: int64);
 var
   MyStrings: TStringList;
-  StartFrom: integer;
-  SizeByNow: dword;
+  StartFrom: int64;
+  SizeByNow: int64;
   n: integer;
   OutF: TextFile;
-  SetSizeTo: dword;
+  SetSizeTo: int64;
 begin
-  if (FSize(TextFName) > integer(TextFSize)) then
+  if (FSize(TextFName) > TextFSize) then
   begin
     MyStrings := TStringList.create;
     SetSizeTo := max((TextFSize div 4) * 3, TextFSize - (8 * 1024));
@@ -5360,6 +5361,45 @@ begin
       writeln(OutF, MyStrings[n]);
     CloseFile(OutF);
     MyStrings.free;
+  end;
+end;
+
+function FileReduce(const TextFName: string; TextFSize: int64) : TStringList;
+var
+ FullStrings : TStringList;
+ UnLoadSize, UnLoadMaxSize : int64;
+ n,m: integer;
+begin
+  result := nil;
+  if (FSize(TextFName) > TextFSize) then
+  begin
+
+    // Ist die Schwelle erreicht so wird die Datei um 20 % erleichtert
+    // Dabei gilt folgende Unschärfe: Platz von "s" auf dem Datenträger einer Zeile = length(
+    UnLoadMaxSize := TextFSize DIV 5;
+    UnLoadSize := 0;
+
+    result := TStringList.Create;
+    result.LoadFromFile(TextFName);
+    for n := 0 to pred(result.Count) do
+     begin
+      inc( UnLoadSize, length(result[n])+2);
+      if (UnLoadSize>=UnLoadMaxSize) then
+      begin
+        FullStrings := TStringList.Create;
+        FullStrings.Assign(result);
+
+        // Shrink FullStrings to only the "new" one
+        for m := n downto 0 do
+         FullStrings.Delete(m);
+        FullStrings.SaveToFile(TextFName);
+
+        // Shrink result to only the "old" one
+        for m := pred(result.Count) downto succ(n) do
+         result.delete(m);
+        break;
+      end;
+     end;
   end;
 end;
 
