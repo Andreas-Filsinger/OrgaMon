@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="214">
+    <Units Count="215">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -163,7 +163,7 @@
       </Unit19>
       <Unit20>
         <Filename Value="..\infozip\InfoZIP.pas"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="109"/>
         <CursorPos X="6" Y="139"/>
         <UsageCount Value="23"/>
@@ -887,7 +887,7 @@
       </Unit123>
       <Unit124>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\paszlib\src\zipper.pp"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="362"/>
         <CursorPos X="3" Y="391"/>
         <UsageCount Value="15"/>
@@ -902,7 +902,7 @@
       </Unit125>
       <Unit126>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\paszlib\src\zdeflate.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="30"/>
         <CursorPos X="6" Y="60"/>
         <UsageCount Value="14"/>
@@ -910,14 +910,14 @@
       </Unit126>
       <Unit127>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\paszlib\src\zbase.pas"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <CursorPos X="11" Y="19"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit127>
       <Unit128>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\paszlib\src\zconf.inc"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <CursorPos X="9"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
@@ -1531,13 +1531,21 @@
       </Unit212>
       <Unit213>
         <Filename Value="..\..\fpc\tests\test\trtti14.pp"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="28" Y="9"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit213>
+      <Unit214>
+        <Filename Value="..\..\lazarus-ide\lcl\include\patternbitmap.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="192"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit214>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

@@ -6,7 +6,7 @@
   |†††††\___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |†††††††††††††††|___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -385,8 +385,10 @@ type
 
     procedure SyncKontoUmsaetze;
     procedure SyncNeueEingaenge;
+
     procedure hideForderung(BUCH_R: Integer);
     procedure bucheAufKonto(ZielKonto: string);
+    procedure nextRow(dg : TDrawGrid);
 
     procedure Draw_NeueEingaengeSaldo(saldo: double);
     procedure Draw_PersonSaldo(saldo: double);
@@ -404,12 +406,14 @@ type
     procedure RefreshKontoSearch;
     procedure RefreshDebis(AddInfo: string = '');
     function SetScriptValue(ParamName, ParamValue: string): Integer;
+    procedure SetColorAndAccount(ParamValue:string);
     procedure setDebiContext(s: TStrings = nil; b: double = 0.0; d: TAnfixDate = 0);
     function getSQLwhere: TStringList;
 
     function rPERSON_R: Integer;
     function rBUCH_R: Integer;
     function rERRORs: Integer;
+    function getActiveGrid: TDrawGrid;
     function e_x_KontoSyncREST(BLZ, KontoNummer, JobID: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
     function e_r_SaldoREST(BLZ, KontoNummer, JobID: string): double;
     function e_x_KontoSyncLog(KontoNummer: string; AlleUmsaetze: boolean; Buchen: boolean): Integer;
@@ -1429,6 +1433,12 @@ begin
   setIdentitaetRosa(rPERSON_R);
 end;
 
+procedure TFormBuchhalter.nextRow(dg : TDrawGrid);
+begin
+  with dg do
+    SecureSetRow(dg, min(pred(RowCount), Succ(Row)));
+end;
+
 procedure TFormBuchhalter.SpeedButton22Click(Sender: TObject);
 
   procedure setRow(n: Integer);
@@ -1436,12 +1446,6 @@ procedure TFormBuchhalter.SpeedButton22Click(Sender: TObject);
     SecureSetRow(DrawGrid2, n);
   end;
 
-  procedure nextRow;
-  begin
-    with DrawGrid2 do
-      SecureSetRow(DrawGrid2, min(pred(RowCount), Succ(Row)));
-    application.processmessages;
-  end;
 
 var
   saldo: double;
@@ -5987,32 +5991,66 @@ begin
   end;
 end;
 
-procedure TFormBuchhalter.SpeedButton7Click(Sender: TObject);
+function TFormBuchhalter.getActiveGrid: TDrawGrid;
+begin
+    // welches Control?
+    repeat
+      if (PageControl1.ActivePage=TabSheet4) then
+      begin
+        result := DrawGrid1;
+        break;
+      end;
+      if (PageControl1.ActivePage=TabSheet5) then
+      begin
+        result := DrawGrid2;
+        break;
+      end;
+      result := nil;
+    until yet;
+end;
+
+procedure TFormBuchhalter.SetColorAndAccount(ParamValue:string);
 var
   BUCH_R: Integer;
+  dg : TDrawGrid;
 begin
-  BUCH_R := SetScriptValue('COLOR', cColor_Gruen);
+  BUCH_R := SetScriptValue('COLOR', ParamValue);
   if (BUCH_R >= cRID_FirstValid) then
+  begin
     if (Edit7.Text <> '') then
     begin
       e_x_sql('update BUCH set GEGENKONTO=''' + Edit7.Text + ''' where RID=' + inttostr(BUCH_R));
       FormBuchung.doBuche(BUCH_R);
     end;
+    dg := getActiveGrid;
+     if assigned(dg) then
+      nextRow(dg);
+  end;
+end;
+
+procedure TFormBuchhalter.SpeedButton7Click(Sender: TObject);
+begin
+  SetColorAndAccount(cColor_Gruen);
 end;
 
 procedure TFormBuchhalter.SpeedButton8Click(Sender: TObject);
 begin
-  SetScriptValue('COLOR', cColor_Rosa);
+  SetColorAndAccount(cColor_Rosa);
 end;
 
 procedure TFormBuchhalter.SpeedButton6Click(Sender: TObject);
 begin
-  SetScriptValue('COLOR', cColor_Braun);
+  SetColorAndAccount(cColor_Braun);
 end;
 
 procedure TFormBuchhalter.SpeedButton5Click(Sender: TObject);
 begin
-  SetScriptValue('COLOR', cColor_Rot);
+  SetColorAndAccount(cColor_Rot);
+end;
+
+procedure TFormBuchhalter.SpeedButton9Click(Sender: TObject);
+begin
+  SetColorAndAccount('');
 end;
 
 function TFormBuchhalter.SetScriptValue(ParamName, ParamValue: string): Integer;
@@ -6025,13 +6063,17 @@ begin
   result := cRID_Unset;
   if (ItemKontoAuszugRIDs.count > 0) then
   begin
-    // welches Control?
-    if DrawGrid1.Focused then
-      dg := DrawGrid1
-    else
-      dg := DrawGrid2;
 
-    //
+    dg := getActiveGrid;
+
+    // Suche hat geklappt?
+    if not(assigned(dg)) then
+    begin
+      ShowMessage('Es kann nicht ermittelt werden auf welche Tabelle sich die Skript-ƒnderung bezieht');
+      exit;
+    end;
+
+    // Datensatz ermitteln
     with dg do
       BUCH_R := Integer(ItemKontoAuszugRIDs[Row]);
 
@@ -6085,9 +6127,5 @@ begin
   Button22.Caption := 'ù';
 end;
 
-procedure TFormBuchhalter.SpeedButton9Click(Sender: TObject);
-begin
-  SetScriptValue('COLOR', '');
-end;
 
 end.
