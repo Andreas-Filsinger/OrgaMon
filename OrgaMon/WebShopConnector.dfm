@@ -35,7 +35,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet7
     Align = alTop
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -921,6 +921,19 @@ object FormWebShopConnector: TFormWebShopConnector
         OnClick = Button21Click
       end
     end
+    object TabSheet7: TTabSheet
+      Caption = 'HTTP/2'
+      ImageIndex = 6
+      object Button22: TButton
+        Left = 344
+        Top = 144
+        Width = 75
+        Height = 25
+        Caption = 'start'
+        TabOrder = 0
+        OnClick = Button22Click
+      end
+    end
   end
   object ProgressBar2: TProgressBar
     Left = 8
@@ -989,5 +1002,32 @@ object FormWebShopConnector: TFormWebShopConnector
     OnTimer = Timer1Timer
     Left = 616
     Top = 40
+  end
+  object IdHTTPServer1: TIdHTTPServer
+    Bindings = <>
+    DefaultPort = 443
+    Intercept = IdServerInterceptLogEvent1
+    IOHandler = IdServerIOHandlerSSLOpenSSL1
+    KeepAlive = True
+    ServerSoftware = 'OrgaMon'
+    OnQuerySSLPort = IdHTTPServer1QuerySSLPort
+    OnCommandGet = IdHTTPServer1CommandGet
+    Left = 68
+    Top = 48
+  end
+  object IdServerIOHandlerSSLOpenSSL1: TIdServerIOHandlerSSLOpenSSL
+    SSLOptions.Method = sslvTLSv1_2
+    SSLOptions.SSLVersions = [sslvTLSv1_2]
+    SSLOptions.Mode = sslmServer
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 68
+    Top = 160
+  end
+  object IdServerInterceptLogEvent1: TIdServerInterceptLogEvent
+    LogTime = False
+    OnLogString = IdServerInterceptLogEvent1LogString
+    Left = 68
+    Top = 104
   end
 end

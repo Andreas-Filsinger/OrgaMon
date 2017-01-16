@@ -49,7 +49,9 @@ uses
   IB_Components, IB_Access,
 
   // Indy
-  IdFTP, Vcl.Buttons;
+  IdFTP, Vcl.Buttons, IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent,
+  IdComponent, IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer,
+  IdServerInterceptLogEvent, IdIntercept, IdServerInterceptLogBase, IdContext;
 
 const
   // cXML_RPC_namespace = 'abu';
@@ -143,6 +145,11 @@ type
     Label21: TLabel;
     Edit10: TEdit;
     Edit11: TEdit;
+    TabSheet7: TTabSheet;
+    IdHTTPServer1: TIdHTTPServer;
+    IdServerIOHandlerSSLOpenSSL1: TIdServerIOHandlerSSLOpenSSL;
+    IdServerInterceptLogEvent1: TIdServerInterceptLogEvent;
+    Button22: TButton;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -171,6 +178,12 @@ type
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
+    procedure IdServerInterceptLogEvent1LogString(
+      ASender: TIdServerInterceptLogEvent; const AText: string);
+    procedure IdHTTPServer1QuerySSLPort(APort: Word; var VUseSSL: Boolean);
+    procedure IdHTTPServer1CommandGet(AContext: TIdContext;
+      ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure Button22Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -402,6 +415,25 @@ begin
   ersetze('~id~', e_r_ArtikelLink(ARTIKEL_R), Result);
 end;
 
+procedure TFormWebShopConnector.IdHTTPServer1CommandGet(AContext: TIdContext;
+  ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+begin
+ ListBoxLog.items.Add('Get');
+end;
+
+procedure TFormWebShopConnector.IdHTTPServer1QuerySSLPort(APort: Word;
+  var VUseSSL: Boolean);
+begin
+ ListBoxLog.items.Add('QuerySSLPort: '+Inttostr(APort));
+ VUseSSL := true;
+end;
+
+procedure TFormWebShopConnector.IdServerInterceptLogEvent1LogString(
+  ASender: TIdServerInterceptLogEvent; const AText: string);
+begin
+ ListBoxLog.items.add(AText);
+end;
+
 // OnWork
 
 {
@@ -604,6 +636,11 @@ procedure TFormWebShopConnector.Button21Click(Sender: TObject);
 begin
   MClient.purge;
   ListBoxLog.Items.Add(MClient.LastError);
+end;
+
+procedure TFormWebShopConnector.Button22Click(Sender: TObject);
+begin
+ IdHTTPServer1.Active := true;
 end;
 
 procedure TFormWebShopConnector.Button2Click(Sender: TObject);
