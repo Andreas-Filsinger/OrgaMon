@@ -636,7 +636,7 @@ var
       if (Result[2] = '') then
         Result[2] := iOrtFormat;
       { [3] }
-      Result.add(FieldByName('INT_TEXT').AsString);
+      Result.add(nextp(FieldByName('INT_TEXT').AsString,#13#10,0));
     end;
   end;
 
@@ -666,7 +666,7 @@ begin
       ApiFirst;
       while not (EOF) do
       begin
-        if FieldByName('ARTIKEL_RELEVANT').AsString = 'Y' then
+        if (FieldByName('ARTIKEL_RELEVANT').AsString = 'Y') then
           CacheLaender.AddObject(IntToStr(FieldByName('RID').AsInteger), AddOne);
         CacheLaenderFull.AddObject(IntToStr(FieldByName('RID').AsInteger), AddOne);
         ApiNext;

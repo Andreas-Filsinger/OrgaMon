@@ -96,7 +96,7 @@ object FormPersonSuche: TFormPersonSuche
   object Label1: TLabel
     Left = 8
     Top = 237
-    Width = 62
+    Width = 61
     Height = 13
     Caption = '%d Treffer'
   end
@@ -726,6 +726,17 @@ object FormPersonSuche: TFormPersonSuche
     OnDblClick = StringGrid1DblClick
     OnDrawCell = StringGrid1DrawCell
     OnKeyPress = StringGrid1KeyPress
+    ColWidths = (
+      64
+      64
+      64
+      64)
+    RowHeights = (
+      24
+      24
+      24
+      24
+      24)
   end
   object Button2: TButton
     Left = 854

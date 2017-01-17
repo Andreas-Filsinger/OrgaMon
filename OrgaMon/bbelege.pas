@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 20116  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1374,7 +1374,7 @@ var
   _UstID: string;
   KundenInfo: TStringList;
   ZielLandRID: Integer;
-  _ort: string;
+  _Ort: TStringList;
 
   DatenSammlerGlobal: TStringList;
   DatenSammlerLokal: TStringList;
@@ -1599,9 +1599,15 @@ begin
   begin
     DatenSammlerGlobal.add('Name1=' + FieldByName('NAME1').AsString);
     DatenSammlerGlobal.add('Strasse=' + FieldByName('STRASSE').AsString);
-    _ort := e_r_ort(IB_Query8);
-    DatenSammlerGlobal.add('Ort=' + _ort);
-    ZielLandRID := e_r_LaenderRIDfromALT(_ort);
+
+    _Ort := e_r_ort(IB_Query8);
+     DatenSammlerGlobal.add('Ort=' + _ort[0]);
+    DatenSammlerGlobal.add('Ort1=' + _ort[0]);
+    ZielLandRID := e_r_LaenderRIDfromALT(_ort[0]);
+    if (_Ort.Count>1) then
+     for n := 1 to pred(_Ort.Count) do
+      DatenSammlerGlobal.add('Ort' + IntToStr(succ(n)) + '=' + _ort[n]);
+    _Ort.Free;
 
     DatenSammlerGlobal.add('KontoInhaber=' + e_r_Localize(strtol(iKontoInhaber), ZielLandRID));
     DatenSammlerGlobal.add('KontoBankName=' + e_r_Localize(strtol(iKontoBankName), ZielLandRID));
@@ -1609,7 +1615,7 @@ begin
     DatenSammlerGlobal.add('KontoBLZ=' + e_r_Localize(strtol(iKontoBLZ), ZielLandRID));
 
     _UstID := FieldByName('UST_ID').AsString;
-    if _UstID <> '' then
+    if (_UstID <> '') then
     begin
       DatenSammlerGlobal.add('USTID=' + _UstID);
     end

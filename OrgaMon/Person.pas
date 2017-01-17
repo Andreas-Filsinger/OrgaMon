@@ -1831,7 +1831,7 @@ end;
 procedure TFormPerson.dhlSave;
 var
   OutFName: string;
-  Ort: string;
+  Ort: TStringList;
 begin
   OutFName := EigeneOrgaMonDateienPfad + 'DHL-Versandhelfer.csv';
   if not(FileExists(OutFName)) then
@@ -1852,11 +1852,11 @@ begin
       { } '"' + sAdressat[3] + '";' +
     *)
     { } '"' + IB_Query2.FieldByName('STRASSE').AsString + '";' +
-    { } '"' + nextp(Ort, ' ', 1) + '";' +
-    { } '"' + nextp(Ort, ' ', 0) + '";' +
+    { } '"' + nextp(Ort[0], ' ', 1) + '";' +
+    { } '"' + nextp(Ort[0], ' ', 0) + '";' +
     { } '"Deutschland";' +
     { } ';;;', OutFName);
-
+                          Ort.Free;
   (*
     "Max";"Mustermann";"Musterfirma";"Musterstr. 4";"Musterdorf";12345;"Deutschland";;;;
     "Maria";"Musterfrau";;;;;;"Musterallee 1c";"Musterstadt";54321;"Deutschland"
@@ -2018,7 +2018,7 @@ begin
     add(nosemi(ANSCHRIFT.FieldByName('NAME1').AsString));
     add(nosemi(ANSCHRIFT.FieldByName('NAME2').AsString));
     add(nosemi(ANSCHRIFT.FieldByName('STRASSE').AsString));
-    add(nosemi(e_r_ort(ANSCHRIFT)));
+    add(nosemi(HugeSingleLIne(e_r_ort(ANSCHRIFT),'|',3,true)));
     add(nosemi(Person.FieldByName('PRIV_TEL').AsString));
     add(nosemi(fax));
     add(Datum10);

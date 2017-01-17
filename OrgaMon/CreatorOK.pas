@@ -6,7 +6,7 @@
      \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
                |___/
 
-    Copyright (C) 2007  Andreas Filsinger
+    Copyright (C) 2007 - 2017  Andreas Filsinger
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,9 +65,12 @@ var
 implementation
 
 uses
-  SimplePassword, globals, CreatorMain,
-  splash, Person,
-  Funktionen_Beleg;
+  anfix32, SimplePassword,
+  globals,
+  Funktionen_Beleg,
+  splash,
+  CreatorMain,
+  Person;
 
 {$R *.DFM}
 
@@ -113,11 +116,11 @@ end;
 procedure TFormCreatorOK.Reload;
 begin
   FormPerson.EnsureThatQuerysAreOpen;
-  edit1.Text := FormPerson.IB_Query1.FieldByName('NUMMER').AsString +
-    ' ' +
-    FormPerson.IB_Query1.FieldByName('NACHNAME').AsString + ', ' +
-    FormPerson.IB_Query1.FieldByName('VORNAME').AsString + ' ' +
-    e_r_Ort(FormPerson.IB_Query2);
+  edit1.Text :=
+    {} FormPerson.IB_Query1.FieldByName('NUMMER').AsString + ' ' +
+    {} FormPerson.IB_Query1.FieldByName('NACHNAME').AsString + ', ' +
+    {} FormPerson.IB_Query1.FieldByName('VORNAME').AsString + ' ' +
+    {} HugeSingleLine(e_r_Ort(FormPerson.IB_Query2),'|',3,true);
 end;
 
 procedure TFormCreatorOK.FormCreate(Sender: TObject);

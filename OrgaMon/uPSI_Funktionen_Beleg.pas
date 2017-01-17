@@ -280,7 +280,7 @@ Begin Result := e_r_Name(PERSON_R); END;
 
 (*----------------------------------------------------------------------------*)
 Function e_r_Ort2_P( ib_q : TIB_DataSet) : string;
-Begin Result := e_r_Ort(ib_q); END;
+Begin Result := e_r_Ort(ib_q)[0]; END;
 
 (*----------------------------------------------------------------------------*)
 Function e_w_VertragBuchen3_P : TStringList;

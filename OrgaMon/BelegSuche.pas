@@ -319,9 +319,12 @@ begin
       IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PERSON_R').AsInteger;
       IB_Query4.ParamByName('CROSSREF').AsInteger := IB_Query2.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
 
-      _AddStr := IB_Query2.FieldByName('VORNAME').AsString + ' ' + IB_Query2.FieldByName('NACHNAME').AsString + ' (' +
-        IB_Query2.FieldByName('NUMMER').AsString + ') ' + #13 + IB_Query4.FieldByName('NAME1').AsString + #13 +
-        IB_Query4.FieldByName('STRASSE').AsString + #13 + e_r_ort(IB_Query4);
+      _AddStr :=
+        {} IB_Query2.FieldByName('VORNAME').AsString + ' ' + IB_Query2.FieldByName('NACHNAME').AsString +
+        {} ' (' + IB_Query2.FieldByName('NUMMER').AsString + ') ' + #13 +
+        {} IB_Query4.FieldByName('NAME1').AsString + #13 +
+        {} IB_Query4.FieldByName('STRASSE').AsString + #13 +
+        {} HugeSingleLine(e_r_ort(IB_Query4),#13,MaxInt,true);
 
       WriteValueOnce('Anschrift', _AddStr);
       WriteValueOnce('RB', format('%.2m', [Rechnungs_Betrag]));

@@ -37,7 +37,7 @@ object FormBelegSuche: TFormBelegSuche
     object Label2: TLabel
       Left = 765
       Top = 11
-      Width = 45
+      Width = 44
       Height = 13
       Caption = 'Tag(en)'
     end

@@ -264,9 +264,10 @@ begin
 
         if SuggestToKill then
         begin
-          listbox1.items.add(inttostr(FieldByName('RID').AsInteger) + ';' +
-            ReasonStr + ';' +
-            e_r_ort(IB_Query1)
+          listbox1.items.add(
+           {} inttostr(FieldByName('RID').AsInteger) + ';' +
+           {} ReasonStr + ';' +
+           {} HugeSingleLine(e_r_ort(IB_Query1),'',1,true)
             );
         end;
 

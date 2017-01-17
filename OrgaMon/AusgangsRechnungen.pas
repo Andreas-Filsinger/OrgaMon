@@ -518,7 +518,7 @@ begin
   IB_Query3.ParamByName('CROSSREF').AsInteger := IB_Query2.FieldByName('PRIV_ANSCHRIFT_R')
     .AsInteger;
   Label1.caption := e_r_name(IB_Query2) + ' (' + IB_Query2.FieldByName('NUMMER').AsString + ') ' +
-    e_r_ort(IB_Query3);
+    HugeSingleLine(e_r_ort(IB_Query3),'|',3,true);
 end;
 
 procedure TFormAusgangsRechnungen.SpeedButton13Click(Sender: TObject);

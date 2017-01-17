@@ -279,13 +279,14 @@ begin
 
           end;
 
-          Outstr := NoSemi(e_r_ort(IB_Query2)) + ';' +
-            NoSemi(_Firma) + ';' +
-            NoSemi(_anrede) + ';' +
-            NoSemi(_Name) + ';' +
-            NoSemi(_strasse) + ';' +
-            _nummer + ';' +
-            _Ansprache;
+          Outstr :=
+            {} NoSemi(HugeSingleLine(e_r_ort(IB_Query2),'|',3,true)) + ';' +
+            {} NoSemi(_Firma) + ';' +
+            {} NoSemi(_anrede) + ';' +
+            {} NoSemi(_Name) + ';' +
+            {} NoSemi(_strasse) + ';' +
+            {} _nummer + ';' +
+            {} _Ansprache;
 
      // ************************************************************
      // hier Bedingungen prüfen
