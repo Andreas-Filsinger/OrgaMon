@@ -777,7 +777,7 @@ begin
           result :=
           { } e_r_name(_e_r_Person_cPERSON) +
           { } ' (' + FieldByName('NUMMER').AsString + ') ' +
-          { } e_r_Ort(_e_r_Person_cANSCHRIFT)
+          { } HugeSingleLine(e_r_Ort(_e_r_Person_cANSCHRIFT),'|',3,true)
         end
         else
         begin
@@ -787,7 +787,7 @@ begin
           result :=
           { } BEGRIFF +
           { } ' (' + FieldByName('NUMMER').AsString + ') ' +
-          { } e_r_Ort(_e_r_Person_cANSCHRIFT);
+          { } HugeSingleLine(e_r_Ort(_e_r_Person_cANSCHRIFT),'|',3,true);
         end;
       end
       else

@@ -873,7 +873,7 @@ begin
               + ' ' + cPERSON.FieldByName('NACHNAME').AsString);
             Cells[2, n + 1] := cANSCHRIFT.FieldByName('NAME1').AsString;
             Cells[3, n + 1] := cANSCHRIFT.FieldByName('STRASSE').AsString;
-            Cells[4, n + 1] := e_r_ort(cANSCHRIFT);
+            Cells[4, n + 1] := HugeSingleLine(e_r_ort(cANSCHRIFT),'|',3,true);
             if cPERSON.FieldByName('PAPERCOLOR').IsNotNull then
               Objects[0, n + 1] :=
                 TObject(cPERSON.FieldByName('PAPERCOLOR').AsInteger)

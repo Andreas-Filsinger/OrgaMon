@@ -19,8 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
-Rev 8.259 (10.01.17) Andreas Filsinger
+Rev 8.259 (10.01.17-17.01.17) Andreas Filsinger
 
+ Bug: Länder: Cache: "#13#10" oder $0D$0A wurde im Länder-
+      Namens-Cache gespeichert
+
+ Neu: Länder: Formatierungsstring für Ort kann nun auch "|"
+ Neu: HTML: Belege: Ort1, Ort2, Ort3 ... für mehrzeilige Ortsangaben
+ Neu: BASIC: [ADRESSE.6] ist Ort2
  Neu: Buch: Einfärben springt eine Zeile nach unten
  Neu: Buch: Stapelbuchung ist nun mit allen Farben möglich
 

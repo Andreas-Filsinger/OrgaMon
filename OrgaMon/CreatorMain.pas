@@ -1043,7 +1043,7 @@ var
           Ansprechpartner := IB_Query3.FieldByName('NACHNAME').AsString + ', ' +
             IB_Query3.FieldByName('VORNAME').AsString;
           strasse := IB_Query4.FieldByName('STRASSE').AsString;
-          Ort := e_r_Ort(IB_Query4);
+          Ort := HugeSingleLine(e_r_Ort(IB_Query4),'|',2,true);
           tel := IB_Query3.FieldByName('GESCH_TEL').AsString;
           fax := IB_Query3.FieldByName('GESCH_FAX').AsString;
           eMail := IB_Query3.FieldByName('EMAIL').AsString;

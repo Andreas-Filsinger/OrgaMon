@@ -879,14 +879,15 @@ const
         else
         begin
           CompleteStrL := e_r_Adressat(strtointdef(ParamVal1, 0));
-          result := CSVsecure(CompleteStrL[0]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[1]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator +
-            CSVsecure(CompleteStrL[3]) + cOLAPcsvSeparator +
-            CSVsecure(e_r_sqls('SELECT STRASSE from ANSCHRIFT where RID' +
+          result := CSVsecure(
+            {} CompleteStrL[0]) + cOLAPcsvSeparator +
+            {} CSVsecure(CompleteStrL[1]) + cOLAPcsvSeparator +
+            {} CSVsecure(CompleteStrL[2]) + cOLAPcsvSeparator +
+            {} CSVsecure(CompleteStrL[3]) + cOLAPcsvSeparator +
+            {} CSVsecure(e_r_sqls('SELECT STRASSE from ANSCHRIFT where RID' +
             '=(SELECT PRIV_ANSCHRIFT_R from PERSON where RID=' + ParamVal1 +
             ')')) + cOLAPcsvSeparator +
-            CSVsecure(e_r_Ort(strtointdef(ParamVal1, 0)));
+            {}  CSVsecure(HugeSingleLine(e_r_Ort(strtointdef(ParamVal1, 0)),'|',3,true));
           CompleteStrL.free;
         end;
         break;

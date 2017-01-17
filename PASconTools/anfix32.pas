@@ -233,7 +233,7 @@ function FromP(s: string; Delimiter: string; SkipCount: integer): string;
 function rNextP(var s: string; Delimiter: string): string;
 function ReplaceP(s: string; Delimiter: string; SkipCount: integer; NewP: string): string;
 function FieldCount(const s: string; Delimiter: char): integer;
-function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
+function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt; sFree: boolean = false): string;
 function Split(s: string; Delimiter: string = ';'; Quote: string = ''; Trim: boolean = false): TStringList;
 procedure SetValueSmart(s: TStrings; Name: string; Value: string);
 
@@ -5024,7 +5024,7 @@ begin
   end;
 end;
 
-function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt): string;
+function HugeSingleLine(s: TStrings; Delimiter: string = #13; MaxLines: integer = MaxInt; sFree: boolean = false): string;
 var
   n: integer;
 
@@ -5046,6 +5046,8 @@ begin
   begin
     result := '';
   end;
+  if sFree then
+   s.Free;
 end;
 
 var

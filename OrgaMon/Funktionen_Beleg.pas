@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -559,8 +559,12 @@ procedure e_r_Anschrift(PERSON_R: integer; Datensammler: TStringList; Prefix: st
 procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
 
 function e_r_Adressat(PERSON_R: integer): TStringList;
-function e_r_Ort(PERSON_R: integer): string; overload;
-function e_r_Ort(dboDS: TdboDataSet): string; overload;
+function e_r_Ort(PERSON_R: integer): TStringList; overload;
+function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
+
+// Stringermittlungs Funktionen zu Personen
+function e_r_Strasse(ib_q: TdboDataSet): string; overload;
+function e_r_Strasse(PERSON_R: integer): string; overload;
 function e_r_Name(ib_q: TdboDataSet): string; overload;
 function e_r_Name(PERSON_R: integer): string; overload;
 function e_r_NameVorname(ib_q: TdboDataSet): string; overload;
@@ -4694,6 +4698,8 @@ procedure e_r_Anschrift(PERSON_R: integer; Datensammler: TStringList; Prefix: st
 var
   PERSON, ANSCHRIFT: TdboCursor;
   Adressat: TStringList;
+  Ort: TStringList;
+  n : integer;
 begin
   PERSON := nCursor;
   ANSCHRIFT := nCursor;
@@ -4732,7 +4738,19 @@ begin
       Datensammler.add(Prefix + 'Name1=' + ANSCHRIFT.FieldByName('NAME1').AsString);
       Datensammler.add(Prefix + 'Name2=' + ANSCHRIFT.FieldByName('NAME2').AsString);
       Datensammler.add(Prefix + 'Strasse=' + ANSCHRIFT.FieldByName('STRASSE').AsString);
-      Datensammler.add(Prefix + 'Ort=' + e_r_Ort(ANSCHRIFT));
+
+      Ort := e_r_Ort(ANSCHRIFT);
+      if (Ort.count=1) then
+      begin
+       Datensammler.add(Prefix + 'Ort=' + Ort[0]);
+       Datensammler.add(Prefix + 'Ort1=' + Ort[0]);
+      end else
+      begin
+       for n := 0 to pred(Ort.Count) do
+        Datensammler.add(Prefix + 'Ort'+ inttostr(succ(n)) + '=' + Ort[n]);
+      end;
+      Ort.free;
+
     until yet;
   except
     on E: exception do
@@ -5204,7 +5222,7 @@ begin
       result := StrToIntDef(_LandFormatStr[k + 2], cPLZlength_default);
 end;
 
-function e_r_Ort(dboDS: TdboDataSet): string; overload;
+function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
 // benötigt
 //
 // (LAND_R, STATE, ORT, PLZ)
@@ -5213,35 +5231,38 @@ function e_r_Ort(dboDS: TdboDataSet): string; overload;
 var
   k: integer;
   PLZlength: integer;
+  sResult : string;
 begin
   with dboDS do
   begin
-    result := e_r_LaenderOrtFormat(FieldByName('LAND_R').AsInteger);
+    sResult := e_r_LaenderOrtFormat(FieldByName('LAND_R').AsInteger);
 
     // Postleitzahl
-    k := pos('%p', result);
+    k := pos('%p', sResult);
     repeat
-      if (k > 0) and (k + 2 <= length(result)) then
+      if (k > 0) and (k + 2 <= length(sResult)) then
       begin
-        if (result[k + 2] in ['0' .. '9']) then
+        if (sResult[k + 2] in ['0' .. '9']) then
         begin
-          PLZlength := StrToIntDef(result[k + 2], cPLZlength_default);
-          System.delete(result, k + 2, 1);
-          ersetze('%p', e_r_plz(dboDS, PLZlength), result);
+          PLZlength := StrToIntDef(sResult[k + 2], cPLZlength_default);
+          System.delete(sResult, k + 2, 1);
+          ersetze('%p', e_r_plz(dboDS, PLZlength), sResult);
           break;
         end;
       end;
-      ersetze('%p', e_r_plz(dboDS, cPLZlength_default), result);
+      ersetze('%p', e_r_plz(dboDS, cPLZlength_default), sResult);
     until yet;
 
-    ersetze('%l', e_r_land(dboDS), result);
-    ersetze('%s', FieldByName('STATE').AsString, result);
-    ersetze('%o', FieldByName('ORT').AsString, result);
-    ersetze('%c', e_r_LaenderInternational(FieldByName('LAND_R').AsInteger), result);
+    ersetze('%l', e_r_land(dboDS), sResult);
+    ersetze('%s', FieldByName('STATE').AsString, sResult);
+    ersetze('%o', FieldByName('ORT').AsString, sResult);
+    ersetze('%c', e_r_LaenderInternational(FieldByName('LAND_R').AsInteger), sResult);
+
+    result := split(sResult,'|');
   end;
 end;
 
-function e_r_Ort(PERSON_R: integer): string; overload;
+function e_r_Ort(PERSON_R: integer): TStringList; overload;
 var
   ANSCHRIFT: TdboCursor;
 begin
@@ -5255,9 +5276,18 @@ begin
     if not(eof) then
       result := e_r_Ort(ANSCHRIFT)
     else
-      result := '';
+      result := TStringList.Create;
   end;
   ANSCHRIFT.free;
+end;
+
+function e_r_Strasse(ib_q: TdboDataSet): string;
+begin
+
+end;
+function e_r_Strasse(PERSON_R: integer): string;
+begin
+
 end;
 
 function e_r_land(ib_q: TdboDataSet): string;
@@ -11399,7 +11429,7 @@ procedure e_f_PersonInfo(PERSON_R: integer; AusgabePfad: string);
 var
   OutHeaderL: TStringList;
   OutDataL: TStringList;
-  P4: TStringList;
+  Person,Ort: TStringList;
   cPERSON, cANSCHRIFT: TdboCursor;
   AllParts: TStringList;
   n: integer;
@@ -11411,13 +11441,13 @@ begin
     AllParts.add(AusgabePfad + inttostr(n) + '.csv');
 
   //
-  P4 := e_r_Adressat(PERSON_R);
+  Person := e_r_Adressat(PERSON_R);
   OutHeaderL.add('Adresse1');
   OutHeaderL.add('Adresse2');
   OutHeaderL.add('Adresse3');
   OutHeaderL.add('Adresse4');
-  OutDataL.addstrings(P4);
-  P4.free;
+  OutDataL.addstrings(Person);
+  Person.free;
 
   cPERSON := nCursor;
   with cPERSON do
@@ -11434,9 +11464,18 @@ begin
     OutHeaderL.add('Adresse5');
     OutDataL.add(FieldByName('STRASSE').AsString);
 
+    Ort := e_r_Ort(PERSON_R);
     OutHeaderL.add('Adresse6');
-    OutDataL.add(e_r_Ort(PERSON_R));
-
+    if Ort.Count>=1 then
+     OutDataL.add(Ort[0])
+    else
+     OutDataL.add('');
+    OutHeaderL.add('Adresse7');
+    if Ort.Count>=2 then
+     OutDataL.add(Ort[1])
+    else
+     OutDataL.add('');
+    Ort.Free;
   end;
 
   ExportTable(cPERSON.sql[0], AllParts[1]);

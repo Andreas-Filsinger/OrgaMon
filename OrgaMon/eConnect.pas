@@ -596,13 +596,25 @@ end;
 function TeConnect.rpc_e_r_Ort(sParameter: TStringList): TStringList;
 var
   PERSON_R: integer;
+  Ort : TStringList;
+  n : integer;
 begin
   result := TStringList.create;
   PERSON_R := cRID_unset;
   if (sParameter.count > 1) then
     PERSON_R := StrToIntDef(sParameter[1], cRID_Null);
+    Ort := e_r_ort(PERSON_R);
   with TXMLRPC_Server do
-    result.AddObject(e_r_ort(PERSON_R), oString);
+   if (Ort.Count=1) then
+   begin
+     result.AddObject(Ort[0], oString);
+   end else
+   begin
+     for n := 0 to pred(Ort.Count) do
+       result.AddObject(Ort[n], oString);
+    result.insertObject(0, '', oBeginArray);
+    result.AddObject('', oEndArray);
+   end;
 end;
 
 function TeConnect.rpc_e_r_Preis(sParameter: TStringList): TStringList;

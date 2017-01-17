@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -131,7 +131,8 @@ var
   sTable: string;
   sField: string;
   PERSON_R: integer;
-  n: integer;
+  Ort: TStringList;
+  n,i: integer;
 begin
   with FormDruckSpooler do
   begin
@@ -212,7 +213,9 @@ begin
       begin
         cADRESSE := e_r_Adressat(PERSON_R);
         cADRESSE.Add(cANSCHRIFT.FieldByName('STRASSE').AsString);
-        cADRESSE.Add(e_r_ort(cANSCHRIFT));
+        Ort := e_r_ort(cANSCHRIFT);
+        cADRESSE.AddStrings(Ort);
+        Ort.free;
       end
       else
       begin
@@ -303,7 +306,11 @@ begin
       // Adresse
       if (sTable = 'ADRESSE') then
       begin
-        result := cADRESSE[strtoint(sField)];
+        i := strtoint(sField);
+        if (i<cADRESSE.count) then
+          result := cADRESSE[i]
+        else
+          result := '';
       end;
 
     except
