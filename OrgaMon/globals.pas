@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.259; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.261; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -373,6 +373,7 @@ const
   cE_Praefix = 'ZipPräfix';
   cE_Postfix = 'ZipPostfix'; // ".unmoeglich" oder ""
   cE_FreieZaehler = 'FreieZähler';
+  cE_FreieZaehler_ErhalteBlanks = 'FreieZählerBlanks';
   cE_SAPReihenfolge = 'SpaltenReihenfolge';
   cE_SpaltenAlias = 'SpaltenAlias';
   cE_SpaltenOhneInhalt = 'SpaltenOhneInhalt';
