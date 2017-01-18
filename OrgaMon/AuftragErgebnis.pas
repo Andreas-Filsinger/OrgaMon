@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -925,7 +925,7 @@ begin
           with FreieResourcen do
           begin
 
-            oNoBlank := true;
+            oNoBlank := Settings.values[cE_FreieZaehler_ErhalteBlanks] <> cIni_Activate;
             oDistinct := true;
             insertFromFile(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler]);
 

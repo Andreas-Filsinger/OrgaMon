@@ -32,7 +32,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.253; // ../rev/Oc.rev.txt
+  Version: single = 1.254; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3346,7 +3346,7 @@ begin
           if (SonderFormat <> '') then
             repeat
 
-              // für SÜWAG
+              // für Dezimalpunkt mit 5 Nachkommastellen
               if (SonderFormat = '#.#####') then
               begin
 
@@ -3354,7 +3354,7 @@ begin
                 if (OneCell = '') then
                   break;
 
-                // Wandelung Möglich?
+                // Ist Wandlung Möglich?
                 if (StrtoFloatdef(OneCell, -1) = -1) then
                   break;
 
@@ -3394,12 +3394,21 @@ begin
                 break;
               end;
 
-              // Spezielle Datumsausgabe
+              // Spezielle Datumsausgabe 1
               if (SonderFormat = 'TTMMJJ') then
               begin
                 sDate := date2long(OneCell);
                 if DateOK(sDate) then
                   OneCell := long2date6r(sDate);
+                break;
+              end;
+
+              // Spezielle Datumsausgabe 2
+              if (SonderFormat = 'JJJJ') then
+              begin
+                sDate := date2long(OneCell);
+                if DateOK(sDate) then
+                  OneCell := copy(long2date(sDate),7,4);
                 break;
               end;
 

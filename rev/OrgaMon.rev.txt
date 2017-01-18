@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.261 (18.01.17) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.254" neu compiliert!
+
+Rev 8.260 (18.01.17) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: Einstellung "FreieZählerBlanks=JA" erhält die Leerschritte
+      in der Resource-Datei
+
 Rev 8.259 (10.01.17-17.01.17) Andreas Filsinger
 
  Bug: Länder: Cache: "#13#10" oder $0D$0A wurde im Länder-

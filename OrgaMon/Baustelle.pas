@@ -3109,6 +3109,7 @@ begin
   EnsureEntry(cE_ZIPPASSWORD, IB_Memo5.Lines);
   EnsureEntry(cE_XLSVorlage, IB_Memo5.Lines);
   EnsureEntry(cE_FreieZaehler, IB_Memo5.Lines);
+  EnsureEntry(cE_FreieZaehler_ErhalteBlanks, IB_Memo5.Lines);
   EnsureEntry(cE_SAPReihenfolge, IB_Memo5.Lines);
   EnsureEntry(cE_SpaltenAlias, IB_Memo5.Lines);
   EnsureEntry(cE_ZusaetzlicheZips, IB_Memo5.Lines);
