@@ -159,7 +159,7 @@ uses
   ZCompatibility,
   ZDbcIntfs,
   ZSequence,
-  IB, IBServices,
+  IB, IBServices, IBVersion,
 {$ELSE}
   JclFileUtils,
   FlexCel.Core,
