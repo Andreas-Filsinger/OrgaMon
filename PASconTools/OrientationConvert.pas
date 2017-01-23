@@ -54,6 +54,7 @@ const
   Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
   Content_Mode_xls2rwe = 20; // RWE Rev. 2.3
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> html
+  Content_Mode_Huffman = 22; // .huff -> .pas
 
   ErrorCount: integer = 0;
   conversionOutFName: string = '';
@@ -8100,6 +8101,84 @@ begin
     sBericht.add(cERRORText + ' ' + 'XML-Datei "' + xmlFileName + '" konnte nicht geöffnet werden!');
 end;
 
+procedure Huffman(InFName: string; sBericht: TStringList);
+var
+ sTable : TStringList;
+ BitCount: TgpIntegerList;
+ n,m,o: integer;
+ s: string;
+ HaveNotStart : integer;
+ HaveIt : Boolean;
+ CaseWidth: integer;
+function IntToBinByte(Value: Byte): string;
+var
+  i: Integer;
+begin
+  SetLength(Result, 8);
+  for i := 1 to 8 do begin
+    if (Value shl (i-1) and $ff) shr 7 = 0 then begin
+      Result[i] := '0'
+    end else begin
+      Result[i] := '1';
+    end;
+  end;
+
+begin
+  if not(assigned(sBericht)) then
+    exit;
+
+  sTable := TStringList.Create;
+  sTable.LoadfromFile(InFname);
+
+  sBericht.add(IntToStr(sTable.count)+' Lines loaded!');
+
+  BitCount:= TgpIntegerList.create;
+  for n := 0 to pred(sTable.Count) do
+  begin
+    if (pos('[',sTable[n])=0) then
+     continue;
+    s := noblank(ExtractSegmentBetween(sTable[n],'[',']'));
+    m := StrToIntDef(s,-1);
+    if (m<>-1) then
+     if (BitCount.IndexOf(m)=-1) then
+      BitCount.Add(m);
+  end;
+  BitCount.Sort;
+
+  HaveNotStart := 0;
+  for n := 1 to Bitcount.Last do
+  begin
+    s := IntToStr(n);
+    s := fill(' ',2-length(s)) + s;
+    HaveIt := false;
+    for m := 0 to pred(sTable.Count) do
+     if pos('['+s+']',sTable[m])>0 then
+     begin
+      sBericht.Add(sTable[m]);
+      HaveIt := true;
+     end;
+    if HaveIt then
+    begin
+      CaseWidth := n - HaveNotStart;
+      if CaseWidth>1 then
+      begin
+       sBericht.add('case int'+inttostr(CaseWidth)+' of');
+       for o := 0 to trunc(Power(2,CaseWidth)) do
+        sBericht.add(' %' + IntToBin(o) + ':');
+       sBericht.add('end');
+      end else
+      begin
+        sBericht.add('if int1=0 then');
+      end;
+      HaveNotStart := n;
+    end;
+  end;
+
+
+  sTable.Free;
+
+end;
+
 procedure xls2argos(InFName: string; sBericht: TStringList);
 const
   cSTATUS_Unmoeglich = 9;
@@ -9066,6 +9145,11 @@ begin
         begin
           sDiagnose.add('Modus: yTOx enBW');
           yTOx2(InFName);
+        end;
+      Content_Mode_Huffman:
+        begin
+          sDiagnose.add('Modus: Huffman');
+          Huffman(InFName, sBericht);
         end;
     end;
 
