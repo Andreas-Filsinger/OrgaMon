@@ -58,7 +58,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -79,6 +79,11 @@
         <Filename Value="..\OrgaMon\TestExec.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="..\PASconTools\hpack.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HPACK"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
