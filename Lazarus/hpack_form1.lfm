@@ -1,0 +1,41 @@
+object Form1: TForm1
+  Left = 735
+  Height = 648
+  Top = 430
+  Width = 1320
+  Caption = 'Form1'
+  ClientHeight = 648
+  ClientWidth = 1320
+  LCLVersion = '1.6.2.0'
+  object Memo1: TMemo
+    Left = 24
+    Height = 426
+    Top = 88
+    Width = 1085
+    Lines.Strings = (
+      '---- Soll:'
+      ':method=GET'
+      ':scheme=http'
+      ':authority=yahoo.co.jp'
+      ':path=/'
+      '---- Ist:'
+    )
+    TabOrder = 0
+  end
+  object Edit1: TEdit
+    Left = 25
+    Height = 28
+    Top = 49
+    Width = 1085
+    TabOrder = 1
+    Text = '82860188f439ce75c875fa5784'
+  end
+  object Button1: TButton
+    Left = 24
+    Height = 25
+    Top = 528
+    Width = 75
+    Caption = 'Test'
+    TabOrder = 2
+  end
+end
