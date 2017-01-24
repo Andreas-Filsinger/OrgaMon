@@ -37,7 +37,7 @@ uses
 type
  THPACK = class(TStringList)
    privat
-    // dynamic Table with a static beginning
+    // a dynamic Key=Value Table with a static beginning of 61 Pairs
     TABLE : TStringList;
 
     //
@@ -70,7 +70,8 @@ implementation
 
 
 const
- STATIC_TABLE = array[1..61] of RawByteString (
+ STATIC_TABLE = array[0..61] of RawByteString (
+        { 00 } '',
         { 01 } ':authority',
         { 02 } ':method=GET',
         { 03 } ':method=POST',
