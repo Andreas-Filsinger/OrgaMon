@@ -40,8 +40,14 @@ const
      PIPE_UNLIMITED_INSTANCES = 255;
 
 type
-PColorRec = ^TColorRec;
-TColorRec = record
+ PColorRec = ^TColorRec;
+ TColorRec = record
+   case integer of
+     1: (r, g, b: byte);                   // belegt drei Byte
+     2: (ColorArray: array[0..2] of byte); // belegt drei Byte
+     3: (Color: TColor);                   // belegt drei Byte
+ end;
+
 const
   SystemColor = $FF000000;
   // System Colors (Windows only)
@@ -269,11 +275,12 @@ const
   Yellow = TColor($00FFFF);
   Yellowgreen = TColor($32CD9A);
   Null = TColor($00000000);
+  {
   class var ColorToRGB: function (Color: TColor): Longint;
-{    class operator Implicit(const C: TColor): TColorRec; inline;
+    class operator Implicit(const C: TColor): TColorRec; inline;
   class operator Implicit(const C: TColorRec): TColor; inline;
   class operator Implicit(const C: TColorRec): Longint; inline;
-  class operator Explicit(const C: TColorRec): Longint; inline;}
+  class operator Explicit(const C: TColorRec): Longint; inline;
   case LongWord of
     0:
       (Color: TColor);
@@ -286,8 +293,8 @@ const
       (R, G, B, A: System.Byte);
 {$ENDIF}
 end;
-
 TColors = TColorRec;
+}
 
 const
   NativeNull           = Char(#0);
