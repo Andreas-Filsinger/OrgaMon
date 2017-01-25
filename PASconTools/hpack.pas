@@ -48,10 +48,11 @@ type
     BitIndex : UInt64; // 0 .. MsgLength(octet) * 8
     BitPos : byte;
     BytePos : UInt16;
+    decoderSTOPP : boolean; // Stop Huffman decoding after last symbol decoded
     procedure seek(I:UInt64);
 
     // read Functions
-    function B : boolean; // read 1 Bit from the Turing Machine
+    function B : boolean; inline; // read 1 Bit from the Turing Machine
     function I (MinBits:Byte) : Integer; // read Cardinal stored in at least MinBits
     function O (Octets:Integer) : RawByteString; // read a octet stream of given length
 
@@ -257,7 +258,7 @@ begin
  BytePos :=  BitIndex DIV 8;
 end;
 
-function THPACK.B: boolean;
+function THPACK.B: boolean; inline;
 begin
 
  // read the bit
@@ -265,8 +266,10 @@ begin
 
  // move ahead
  inc(BitPos);
- if (BitPos>=7) then
+ if (BitPos>7) then
  begin
+
+  // Flip to next Byte
   inc(BytePos);
   BitPos := 0;
  end;
@@ -393,7 +396,7 @@ var
   { 20170124 11:49:19 }
   begin
    result := false;
-   while true do
+   while true or decoderSTOPP do
    begin
     if B then
     begin { 1 }
@@ -2192,14 +2195,32 @@ var
    end;
   end;
 
+  procedure __decode;
+  begin
+    ValueString := '';
+    if _decode then
+    begin
+      if (BitPos>0) then
+      begin
+        inc(BytePos);
+        BitPos := 0;
+      end;
+    end else
+    begin
+      raise Exception.Create('Huffman Code Error!');
+    end;
+  end;
+
 begin
  BytePos := 0;
  BitPos := 0;
  while true do
  begin
+   // RFC: "6. Binary Format"
    if B then
    begin
     // "1" ...
+    // RFC: "6.1. Indexed Header Field Representation"
     TABLE_INDEX := I(7);
     if (TABLE_INDEX=0) then
      raise Exception.Create('Table Index 0 is not valid, Coding Error');
@@ -2216,7 +2237,8 @@ begin
     // "0" ...
     if B then
     begin
-     // "01" ...
+      // "01" ...
+      // RFC "6.2.1.  Literal Header Field with Incremental Indexing"
       TABLE_INDEX := I(6);
       if TABLE_INDEX>0 then
       begin
@@ -2244,58 +2266,59 @@ begin
       end;
     end else
     begin
-     // "00"
+     // "00 ..."
      if B then
      begin
        // "001"
-       // 6.3. Dynamic Table Size Update
+       // RFC: "6.3. Dynamic Table Size Update"
        HEADER_TABLE_SIZE := I(5);
 
      end else
      begin
-      // 000
+      // "000 ..."
       if B then
       begin
-        // "0001"
-      TABLE_INDEX := I(4);
+       // "0001"
+       // RFC "6.2.3.  Literal Header Field Never Indexed"
+       TABLE_INDEX := I(4);
       if (TABLE_INDEX>0) then
       begin
-      H := B;
-      ValueLength := I(7);
-      if H then
-       ValueString := LiteralDecode(O(ValueLength))
-      else
-        ValueString := O(ValueLength);
-
+        H := B;
+        ValueLength := I(7);
+        if H then
+         ValueString := LiteralDecode(O(ValueLength))
+        else
+          ValueString := O(ValueLength);
       end else
       begin
-        // "0001" "0000"
-       H := B;
-       NameLength := I(7);
-       if H then
-        NameString := LiteralDecode(O(NameLength))
-       else
-        NameString := O(NameLength);
-       H := B;
-       ValueLength := I(7);
-       if H then
-        ValueString := LiteralDecode(O(ValueLength))
-       else
-        ValueString := O(ValueLength);
-      end;
-
+         // "0001" "0000"
+         H := B;
+         NameLength := I(7);
+         if H then
+          NameString := LiteralDecode(O(NameLength))
+         else
+          NameString := O(NameLength);
+         H := B;
+         ValueLength := I(7);
+         if H then
+          ValueString := LiteralDecode(O(ValueLength))
+         else
+          ValueString := O(ValueLength);
+        end;
       end else
       begin
-        // 0000
+       // "0000"
+       // RFC "6.2.2.  Literal Header Field without Indexing"
        TABLE_INDEX := I(4);
        if (TABLE_INDEX>0) then
        begin
-       H := B;
-       ValueLength := I(7);
-       if H then
-        _decode
-       else
-         ValueString := O(ValueLength);
+         H := B;
+         ValueLength := I(7);
+         if H then
+          __decode
+         else
+           ValueString := O(ValueLength);
+         add(iTABLE[TABLE_INDEX]+'='+ValueString);
        end else
        begin
         // "0000" "0000"
