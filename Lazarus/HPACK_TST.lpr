@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, HPACK_Form1
+  Forms, HPACK_Form1,
   { you can add units after this }
   anfix32 in '../PASconTools/anfix32.pas',
   HPACK in '../PASconTools/hpack.pas';
