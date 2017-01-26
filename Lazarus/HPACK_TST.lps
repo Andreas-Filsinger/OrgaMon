@@ -4,13 +4,13 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos X="14" Y="18"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -20,28 +20,30 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="HPACK_Form1"/>
-        <CursorPos Y="33"/>
-        <UsageCount Value="40"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="8"/>
+        <CursorPos Y="46"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\PASconTools\anfix32.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="4241"/>
         <CursorPos Y="4276"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\PASconTools\hpack.pas"/>
         <UnitName Value="HPACK"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="31"/>
-        <CursorPos Y="54"/>
-        <UsageCount Value="19"/>
+        <TopLine Value="1950"/>
+        <CursorPos Y="1972"/>
+        <UsageCount Value="22"/>
         <Bookmarks Count="1">
-          <Item0 Y="2347" ID="1"/>
+          <Item0 Y="2107" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
@@ -50,7 +52,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="274"/>
         <CursorPos Y="298"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -58,148 +60,164 @@
         <EditorIndex Value="1"/>
         <TopLine Value="3251"/>
         <CursorPos Y="3289"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="..\PASconTools\RFC_7541_Appendix_B.pas"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="1504"/>
+        <CursorPos X="5" Y="1549"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit6>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="404" TopLine="377"/>
+        <Caret Line="1987" TopLine="1958"/>
       </Position1>
       <Position2>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="406" TopLine="377"/>
+        <Caret Line="1994" TopLine="1958"/>
       </Position2>
       <Position3>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1728" TopLine="1707"/>
+        <Caret Line="2102" TopLine="2077"/>
       </Position3>
       <Position4>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1730" TopLine="1707"/>
+        <Caret Line="1979" TopLine="1957"/>
       </Position4>
       <Position5>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1736" TopLine="1707"/>
+        <Caret Line="1980" TopLine="1957"/>
       </Position5>
       <Position6>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="386" TopLine="362"/>
+        <Caret Line="1984" TopLine="1957"/>
       </Position6>
       <Position7>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="387" TopLine="362"/>
+        <Caret Line="1985" TopLine="1957"/>
       </Position7>
       <Position8>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="386" TopLine="362"/>
+        <Caret Line="1987" TopLine="1957"/>
       </Position8>
       <Position9>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2201" TopLine="2179"/>
+        <Caret Line="1994" TopLine="1957"/>
       </Position9>
       <Position10>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="264" TopLine="241"/>
+        <Caret Line="2102" TopLine="2077"/>
       </Position10>
       <Position11>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="267" TopLine="241"/>
+        <Caret Line="1979" TopLine="1957"/>
       </Position11>
       <Position12>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="268" TopLine="241"/>
+        <Caret Line="1980" TopLine="1957"/>
       </Position12>
       <Position13>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="273" TopLine="241"/>
+        <Caret Line="1998" TopLine="1961"/>
       </Position13>
       <Position14>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2205" TopLine="2183"/>
+        <Caret Line="2030" TopLine="2008"/>
       </Position14>
       <Position15>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2200" Column="18" TopLine="2171"/>
+        <Caret Line="2039" TopLine="2008"/>
       </Position15>
       <Position16>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2212" TopLine="2171"/>
+        <Caret Line="2072" TopLine="2050"/>
       </Position16>
       <Position17>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2310" TopLine="2281"/>
+        <Caret Line="2073" TopLine="2050"/>
       </Position17>
       <Position18>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="394" TopLine="364"/>
+        <Caret Line="2075" TopLine="2050"/>
       </Position18>
       <Position19>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="271" Column="17" TopLine="235"/>
+        <Caret Line="2076" TopLine="2050"/>
       </Position19>
       <Position20>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1872" TopLine="1845"/>
+        <Caret Line="2077" TopLine="2050"/>
       </Position20>
       <Position21>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2202" Column="2" TopLine="2174"/>
+        <Caret Line="2078" TopLine="2050"/>
       </Position21>
       <Position22>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2139" Column="15" TopLine="2082"/>
+        <Caret Line="407" TopLine="384"/>
       </Position22>
       <Position23>
         <Filename Value="..\PASconTools\hpack.pas"/>
+        <Caret Line="1979" TopLine="1957"/>
       </Position23>
       <Position24>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1967" TopLine="1917"/>
+        <Caret Line="1980" TopLine="1957"/>
       </Position24>
       <Position25>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2202" TopLine="2177"/>
+        <Caret Line="1984" TopLine="1957"/>
       </Position25>
       <Position26>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="2199" TopLine="2177"/>
+        <Caret Line="1985" TopLine="1957"/>
       </Position26>
       <Position27>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1967" TopLine="1939"/>
+        <Caret Line="1987" TopLine="1957"/>
       </Position27>
       <Position28>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="1968" TopLine="1939"/>
+        <Caret Line="1994" TopLine="1957"/>
       </Position28>
       <Position29>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="400" TopLine="369"/>
+        <Caret Line="2102" TopLine="2077"/>
       </Position29>
       <Position30>
         <Filename Value="..\PASconTools\hpack.pas"/>
-        <Caret Line="398" TopLine="369"/>
+        <Caret Line="1972" TopLine="1950"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="..\PASconTools\hpack.pas"/>
-        <Line Value="1968"/>
+        <Line Value="1979"/>
+      </Item1>
+    </BreakPoints>
+    <Watches Count="4">
+      <Item1>
+        <Expression Value="Octets"/>
       </Item1>
       <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\PASconTools\hpack.pas"/>
-        <Line Value="2200"/>
+        <Expression Value="ValueString"/>
       </Item2>
-    </BreakPoints>
+      <Item3>
+        <Expression Value="BitPos"/>
+      </Item3>
+      <Item4>
+        <Expression Value="BytePos"/>
+      </Item4>
+    </Watches>
   </Debugging>
 </CONFIG>
