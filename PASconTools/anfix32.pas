@@ -19,8 +19,10 @@
 
 *)
 unit anfix32;
+
+{$ifdef FPC}
 {$mode delphi}
-{$ifndef FPC}
+{$else}
 {$I jcl.inc}
 {$endif}
 

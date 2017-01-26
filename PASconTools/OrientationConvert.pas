@@ -8125,7 +8125,6 @@ var
     end;
   end;
 
-
   function known(s:string):boolean;
   var
    n : integer;
@@ -8168,8 +8167,10 @@ var
           sBericht.Add(fill(' ',ReCurseLevel)+' break;');
          end else
          begin
-          sBericht.Add(fill(' ',ReCurseLevel)+' sym('+sym+');');
-          sBericht.Add(fill(' ',ReCurseLevel)+' continue;')
+          sBericht.Add(fill(' ',ReCurseLevel)+' if sym('+sym+') then');
+          sBericht.Add(fill(' ',ReCurseLevel)+'  continue')
+          sBericht.Add(fill(' ',ReCurseLevel)+' else')
+          sBericht.Add(fill(' ',ReCurseLevel)+'  break;')
          end;
          sTable.Delete(n);
          break;
