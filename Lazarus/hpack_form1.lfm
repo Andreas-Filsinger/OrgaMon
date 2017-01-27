@@ -2,16 +2,17 @@ object Form1: TForm1
   Left = 735
   Height = 648
   Top = 430
-  Width = 1320
+  Width = 1134
   Caption = 'Form1'
   ClientHeight = 648
-  ClientWidth = 1320
+  ClientWidth = 1134
   LCLVersion = '1.6.2.0'
   object Memo1: TMemo
     Left = 24
-    Height = 426
-    Top = 88
+    Height = 410
+    Top = 104
     Width = 1085
+    Anchors = [akTop, akLeft, akRight, akBottom]
     Lines.Strings = (
       '---- Soll:'
       ':method=GET'
@@ -20,23 +21,61 @@ object Form1: TForm1
       ':path=/'
       '---- Ist:'
     )
+    ScrollBars = ssVertical
     TabOrder = 0
   end
   object Edit1: TEdit
     Left = 25
     Height = 28
-    Top = 49
+    Top = 32
     Width = 1085
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 1
     Text = '82860188f439ce75c875fa5784'
   end
   object Button1: TButton
-    Left = 24
+    Left = 28
     Height = 25
-    Top = 528
+    Top = 524
     Width = 75
-    Caption = 'Test'
+    Anchors = [akLeft, akBottom]
+    Caption = 'decode'
     OnClick = Button1Click
     TabOrder = 2
+  end
+  object Label1: TLabel
+    Left = 28
+    Height = 20
+    Top = 8
+    Width = 161
+    Caption = 'wire (compressed Code)'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 28
+    Height = 20
+    Top = 70
+    Width = 112
+    Caption = 'Header (HTTP/2)'
+    ParentColor = False
+  end
+  object Edit2: TEdit
+    Left = 25
+    Height = 28
+    Top = 561
+    Width = 1084
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 3
+    Text = 'C:\Users\Andreas\Documents\Embarcadero\Studio\Projekte\http2-tests\hpack-test-case\'
+  end
+  object Button2: TButton
+    Left = 28
+    Height = 25
+    Top = 600
+    Width = 220
+    Anchors = [akLeft, akBottom]
+    Caption = 'Run all "decode" Tests ...'
+    OnClick = Button2Click
+    TabOrder = 4
   end
 end
