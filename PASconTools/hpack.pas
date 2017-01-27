@@ -41,15 +41,16 @@ type
    private
 
     // a dynamic "Key=Value" Table with a static beginning of 61 Pairs
+    // Index[0] is never used
     iTABLE : TStringList;
 
     // a number of octets, representing the encoded representation of the headers
     iWIRE : RawByteString;
 
-    // read/write Position of the
-    BytePos : UInt16;
-    BitPos : byte;
-    Octets : UInt16; // Length/Count of Octets to proceed
+    // read/write Position of the decoder/encoder
+    BytePos : UInt16; // 0..Length(iWIRE)-1
+    BitPos : byte; // 0..7
+    Octets : UInt16; // Length/Count of visible Octets, allowed to proceed (Security)
 
     // read Functions
     function B : boolean; inline; // read 1 Bit from the Turing Machine
@@ -95,8 +96,9 @@ uses
    math;
 
 const
+ // RFC : "Appendix A.  Static Table Definition"
  STATIC_TABLE : array[0..61] of RawByteString = (
-        { 00 } '',
+        { 00 } 'orgamon.org',
         { 01 } ':authority',
         { 02 } ':method=GET',
         { 03 } ':method=POST',
@@ -211,6 +213,88 @@ end;
 
 function decode_integer(data: RawByteString; prefix_bits: Byte):Integer;
 begin
+end;
+
+function THPACK.B: boolean; inline;
+begin
+
+ if (Octets=0) then
+ begin
+
+   // for security: if someone reads across boarder, return "11111..."
+   // this is "EOS" in the huffman code-Table
+   result := true;
+
+ end else
+ begin
+
+   // read the bit
+   result := (ord(iWire[succ(BytePos)]) and SingleBitMask[BitPos]) <> 0;
+
+   // move ahead
+   inc(BitPos);
+   if (BitPos>7) then
+   begin
+
+    // Flip to the next Byte
+    inc(BytePos);
+    BitPos := 0;
+
+    // mark that one more Octet has gone now
+    dec(Octets);
+   end;
+
+ end;
+end;
+
+function THPACK.I(MinBits: Byte): Integer;
+const
+  MIN_BITS_FF = 7; // After the initial "prefix", 7 Bits of an octet are used
+var
+  mask : byte;
+  LastOctet: boolean;
+  significance: Integer;
+begin
+ // RFC: "5.1.  Integer Representation"
+
+ // prepare
+ mask := IntegerPrefixMask[MinBits];
+
+ // read the Int
+ result := ord(iWire[succ(BytePos)]) and mask;
+
+ // move ahead one octet
+ inc(BytePos);
+ BitPos := 0;
+
+ // read another Part of the Int?
+ if (result=mask) then
+ begin
+  mask := IntegerPrefixMask[MIN_BITS_FF];
+  significance := 0;
+  repeat
+   // End of Integer-Parts?
+   LastOctet := (B=false);
+
+   // Increase result value by ...
+   result := result + (ord(iWire[succ(BytePos)]) and mask) * (2 ** significance);
+
+   // move ahead one octet
+   inc(BytePos);
+   BitPos := 0;
+
+   // Leave here if no more work!
+   if LastOctet then
+    break;
+
+   // increase significance for next one (if any!)
+   inc(significance, MIN_BITS_FF);
+
+  until false;
+ end;
+
+end;
+
 (*
 def decode_integer(data, prefix_bits):
     """
@@ -249,75 +333,7 @@ def decode_integer(data, prefix_bits):
 
     return number, index + 1
 *)
-end;
 
-function THPACK.B: boolean; inline;
-begin
-
- if (Octets=0) then
- begin
-
-   // for security: if someone reads across boarder, return "11111..."
-   // this is "EOS" in the huffman code-Table
-   result := true;
-
- end else
- begin
-
-   // read the bit
-   result := (ord(iWire[succ(BytePos)]) and SingleBitMask[BitPos]) <> 0;
-
-   // move ahead
-   inc(BitPos);
-   if (BitPos>7) then
-   begin
-
-    // Flip to the next Byte
-    inc(BytePos);
-    BitPos := 0;
-
-    // mark that one more Octet has gone
-    dec(Octets);
-   end;
-
- end;
-end;
-
-function THPACK.I(MinBits: Byte): Integer;
-var
-  mask : byte;
-  NoMore: boolean;
-  Multiplier: Integer;
-begin
-
- // prepare
- mask := IntegerPrefixMask[MinBits];
-
- // read the Int
- result := ord(iWire[succ(BytePos)]) and mask;
-
- // move ahead one octet
- inc(BytePos);
- BitPos := 0;
-
- // read another Part of the Int?
- if (result=mask) then
- begin
-  mask := IntegerPrefixMask[7];
-  Multiplier := 0;
-  repeat
-   NoMore := (B=false);
-
-   result := result + (ord(iWire[succ(BytePos)]) and mask) * trunc(power(2,Multiplier));
-
-   // move ahead one octet
-   inc(BytePos);
-   BitPos := 0;
-
-  until NoMore;
- end;
-
-end;
 
 function THPACK.O : RawByteString;
 begin
@@ -1982,8 +1998,10 @@ begin
     // "1" ...
     // RFC: "6.1. Indexed Header Field Representation"
     TABLE_INDEX := I(7);
+
     if (TABLE_INDEX=0) then
      raise Exception.Create('Table Index 0 is not valid, Coding Error');
+
     if (TABLE_INDEX>=iTABLE.count) then
      raise Exception.Create(
       {} 'Table Index '+
@@ -1991,6 +2009,7 @@ begin
       {} ' is not valid on a Table with '+
       {} IntToStr(iTABLE.count)+
       {} ' Elements');
+
     add(iTABLE[TABLE_INDEX]);
    end else
    begin
