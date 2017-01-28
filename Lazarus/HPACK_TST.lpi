@@ -36,7 +36,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -49,6 +49,16 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="HPACK_Form1"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="..\PASconTools\hmux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HMUX"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\PASconTools\http2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HTTP2"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -62,6 +72,12 @@
       <OtherUnitFiles Value="..\PASconTools"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="FPC"/>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>
