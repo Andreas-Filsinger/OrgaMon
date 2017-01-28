@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 735
+  Left = 367
   Height = 648
-  Top = 430
+  Top = 22
   Width = 1134
   Caption = 'Form1'
   ClientHeight = 648
@@ -26,7 +26,7 @@ object Form1: TForm1
   end
   object Edit1: TEdit
     Left = 25
-    Height = 28
+    Height = 23
     Top = 32
     Width = 1085
     Anchors = [akTop, akLeft, akRight]
@@ -45,28 +45,28 @@ object Form1: TForm1
   end
   object Label1: TLabel
     Left = 28
-    Height = 20
+    Height = 15
     Top = 8
-    Width = 161
+    Width = 128
     Caption = 'wire (compressed Code)'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 28
-    Height = 20
+    Height = 15
     Top = 70
-    Width = 112
+    Width = 90
     Caption = 'Header (HTTP/2)'
     ParentColor = False
   end
   object Edit2: TEdit
     Left = 25
-    Height = 28
-    Top = 561
+    Height = 23
+    Top = 566
     Width = 1084
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 3
-    Text = 'C:\Users\Andreas\Documents\Embarcadero\Studio\Projekte\http2-tests\hpack-test-case\'
+    Text = 'C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\http2-tests\hpack-test-case\'
   end
   object Button2: TButton
     Left = 28

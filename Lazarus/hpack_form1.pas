@@ -121,10 +121,18 @@ begin
 
             jHEADER := jTEST.getPath('headers');
 
-            memo1.Lines.add(jHEADER.AsJSON);
+            //memo1.Lines.add(Inttostr(jHEADER.count)+'x');
+            //memo1.Lines.add(jHEADER.AsJSON);
+            for i := 0 to pred(jHEADER.count) do
+            begin
+             //memo1.Lines.add(jHEADER.Items[i].AsJSON);
+              memo1.Lines.add('   ' + JSONStringToString(jHEADER.Items[i].AsJSON));
+             // memo1.Lines.add(jHEADER.Strings[ jHEADER.Names[i] ]);
+            end;
 
             //with (jHEADER as TJSONArray) do
 //             memo1.Lines.add(jHEADER.AsString);
+            // end;
 
 
             {
