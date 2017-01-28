@@ -387,6 +387,7 @@ function StrSmartCase(const S: string; Delimiters: TSysCharSet): string;
 function StrCharCount(const S: string; C: Char): Integer;
 function StrStrCount(const S, SubS: string): Integer;
 function StrRepeat(const S: string; Count: Integer): string;
+
 procedure StrReplace(var S: string; const Search, Replace: string; Flags: TReplaceFlags = []);
 function StrSearch(const Substr, S: string; const Index: Integer = 1): Integer;
 
