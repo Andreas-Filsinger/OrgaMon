@@ -27,6 +27,7 @@
 }
 unit HPACK;
 
+{$mode objfpc}{$H+}
 
 interface
 

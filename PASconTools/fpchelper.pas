@@ -1,5 +1,5 @@
 unit fpchelper;
-
+{$mode delphi}
 {(*}
 (*------------------------------------------------------------------------------
  Delphi Code formatter source code 
@@ -275,7 +275,7 @@ const
   Yellow = TColor($00FFFF);
   Yellowgreen = TColor($32CD9A);
   Null = TColor($00000000);
-  {
+  (*
   class var ColorToRGB: function (Color: TColor): Longint;
     class operator Implicit(const C: TColor): TColorRec; inline;
   class operator Implicit(const C: TColorRec): TColor; inline;
@@ -294,7 +294,7 @@ const
 {$ENDIF}
 end;
 TColors = TColorRec;
-}
+*)
 
 const
   NativeNull           = Char(#0);
