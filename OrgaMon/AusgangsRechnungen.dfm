@@ -2,7 +2,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   Left = 1
   Top = 1
   Caption = 'Konto "Ausgangs Rechnungen"'
-  ClientHeight = 561
+  ClientHeight = 559
   ClientWidth = 789
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -12,11 +12,12 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  Scaled = False
   OnActivate = FormActivate
   OnCreate = FormCreate
   DesignSize = (
     789
-    561)
+    559)
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -234,7 +235,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Left = 0
     Top = 163
     Width = 786
-    Height = 273
+    Height = 271
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akBottom]
@@ -244,6 +245,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     DrawCellTextOptions = [gdtEllipsis, gdtShowTextBlob, gdtWordWrap]
     OnCellGainFocus = IB_Grid1CellGainFocus
     OnGetDisplayText = IB_Grid1GetDisplayText
+    ExplicitHeight = 273
   end
   object Panel2: TPanel
     Left = 0
@@ -430,7 +432,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   end
   object IB_Memo1: TIB_Memo
     Left = 0
-    Top = 435
+    Top = 433
     Width = 786
     Height = 81
     DataField = 'TEXT'
@@ -444,14 +446,16 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     ParentFont = False
     TabOrder = 3
     AutoSize = False
+    ExplicitTop = 435
   end
   object Panel4: TPanel
     Left = 0
-    Top = 517
+    Top = 515
     Width = 786
     Height = 44
     Anchors = [akLeft, akBottom]
     TabOrder = 4
+    ExplicitTop = 517
     DesignSize = (
       786
       44)
@@ -473,7 +477,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Caption = '&Zahlungseingang buchen'
       TabOrder = 0
       OnClick = Button8Click
-      ExplicitTop = 12
     end
     object Edit5: TEdit
       Left = 384
@@ -489,7 +492,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       ParentFont = False
       TabOrder = 1
       OnKeyPress = Edit5KeyPress
-      ExplicitTop = 15
     end
     object CheckBox1: TCheckBox
       Left = 142
@@ -499,7 +501,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Anchors = [akRight, akBottom]
       Caption = 'ohne Buchung "Kasse"'
       TabOrder = 2
-      ExplicitLeft = 143
     end
     object CheckBox2: TCheckBox
       Left = 143

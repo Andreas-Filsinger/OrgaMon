@@ -3562,7 +3562,7 @@ begin
         break;
       end;
 
-      // Sonstige / Standard
+      // Sonstige / Standard / "FB" "FC"
       FotoDateiNameNeu :=
       { } FotoPrefix +
       { } zaehlernummer_alt +
