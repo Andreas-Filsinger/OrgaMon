@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 }
 unit systemd;
 
+{$mode objfpc}{$H+}
+
 // #
 // # OS - Wrapper
 // #
@@ -35,9 +37,16 @@ unit systemd;
 
 interface
 
-
+// Tools
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
+
+const
+   SD_LISTEN_FDS_START = 3;
+
+// systemd
+function sd_notify(h:Integer; s:string) : Integer;
+function sd_listen_fds(h:Integer) : Integer;
 
 implementation
 
@@ -70,6 +79,19 @@ begin
  {$endif}
  if DebugMode then
    AppendStringsToFile(BoolToStr(result), DebugLogPath + 'SYSTEMD-' + inttostr(DateGet) + '.log.txt', Uhr8);
+end;
+
+function sd_notify(h: Integer; s: string): Integer;
+// sample:     sd_notify( 0, "RELOADING=1\nSTATUS=50% done\n" );
+// sample
+begin
+ result := -1;
+end;
+
+function sd_listen_fds(h: Integer): Integer;
+begin
+ result := -1;
+
 end;
 
 end.

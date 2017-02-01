@@ -37,95 +37,134 @@ uses
 implementation
 
 uses
-   openssl, HMUX;
+  systemd, openssl, HMUX;
 
-procedure openTLS12;
+// just simple hack wait for new "openssl"
 
+const
+ SSL_CTRL_SET_ECDH_AUTO                      = 94;
+
+
+ function SslMethodTLSV1_2:PSSL_METHOD;
+ begin
+   result := openssl.SslMethodV23;
+ end;
+
+ // end hacks
+
+
+// create a Parameter Context for a TLS 1.2 Server Connection
+// intended for a "HTTPS://" Server Socket
+
+function StrictHTTP2Context : PSSL_CTX;
 begin
 
   if not(InitSSLInterface) then
    Raise Exception.Create('SSL Init Fail');
 
+  result := SslCtxNew(SslMethodTLSV1_2);
+
+  SslCTXCtrl(result,SSL_CTRL_SET_ECDH_AUTO,1,nil);
+
+  if (SslCtxUseCertificateFile(result, 'cert.pem', SSL_FILETYPE_PEM) < 0) then
+  Raise Exception.Create('Register cert.pem fails');
+
+
+  if (SslCtxUsePrivateKeyFile(result, 'key.pem', SSL_FILETYPE_PEM) < 0 ) then
+   Raise Exception.Create('Register key.pem fails');
+
+end;
+
+// binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection
+
+procedure TLS_Bind (H : Integer);
+var
+ ssl : PSSL;
+ Buf: array[0..4096] of byte;
+begin
+
+  ssl := sslNew(StrictHTTP2Context);
+  sslSetFD(ssl, H);
+
+  if (sslAccept(ssl)<=0) then
+   Raise Exception.Create('ssl Accept fail');
+
   (*
-  SSL_CTX *create_context()
+  buf += Header;
+  buf += Content;
+  stack();
+  stack();
+    *)
 
-  const SSL_METHOD *method;
-    SSL_CTX *ctx;
-             TLSv1_2_server_method();
-    method = SSLv23_server_method();
+  SSLwrite(ssl, @Buf, 16);
 
-    ctx = SSL_CTX_new(method);
-    if (!ctx) {
-	perror("Unable to create SSL context");
-	ERR_print_errors_fp(stderr);
-	exit(EXIT_FAILURE);
-    }
 
-    return ctx;
-}
 
-void configure_context(SSL_CTX *ctx)
-{
-    SSL_CTX_set_ecdh_auto(ctx, 1);
 
-    /* Set the key and cert */
-    if (SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) < 0) {
-        ERR_print_errors_fp(stderr);
-	exit(EXIT_FAILURE);
-    }
+end;
 
-    if (SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM) < 0 ) {
-        ERR_print_errors_fp(stderr);
-	exit(EXIT_FAILURE);
-    }
-}
+// Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
+// Im Rang 2: selbst ein Socket öffnen und auf Verbindungsversuche warten
 
-int main(int argc, char **argv)
-{
-    int sock;
-    SSL_CTX *ctx;
+procedure getSocket;
+var
+ fd: Integer;
+begin
+  sd_notify( 0, 'READY=1\nSTATUS=Ready\n' );
+  fd := sd_listen_fds(0);
 
-    init_openssl();
-    ctx = create_context();
+if (fd > 1) then
+ begin
+       Raise Exception.Create('Too many file descriptors received');
+ end else
+ begin
+ if (fd = 1) then
+  begin
+        fd := SD_LISTEN_FDS_START;
+  end else
+  begin
+   // Open via a SOCKET!
+(*
+  union {
+          struct sockaddr sa;
+          struct sockaddr_un un;
+  } sa;
 
-    configure_context(ctx);
+  fd = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (fd < 0) {
+          fprintf(stderr, "socket(): %m\n");
+          exit(1);
+  }
 
-    sock = create_socket(4433);
+  memset(&sa, 0, sizeof(sa));
+  sa.un.sun_family = AF_UNIX;
+  strncpy(sa.un.sun_path, "/run/foobar.sk", sizeof(sa.un.sun_path));
 
-    /* Handle connections */
-    while(1) {
-        struct sockaddr_in addr;
-        uint len = sizeof(addr);
-        SSL *ssl;
-        const char reply[] = "test\n";
+  if (bind(fd, &sa.sa, sizeof(sa)) < 0) {
+          fprintf(stderr, "bind(): %m\n");
+          exit(1);
+  }
 
-        int client = accept(sock, (struct sockaddr * ) &addr, &len);
-        if (client < 0) {
-            perror("Unable to accept");
-            exit(EXIT_FAILURE);
-        }
+  if (listen(fd, SOMAXCONN) < 0) {
+          fprintf(stderr, "listen(): %m\n");
+          exit(1);
+  }
+*)
+  end;
 
-        ssl = SSL_new(ctx);
-        SSL_set_fd(ssl, client);
+ end;
+end;
 
-        if (SSL_accept(ssl) <= 0) {
-            ERR_print_errors_fp(stderr);
-        }
-        else {
-            SSL_write(ssl, reply, strlen(reply));
-        }
-
-        SSL_free(ssl);
-        close(client);
-    }
-
+procedure Release;
+begin
+  (*
+  SSLfree(ssl);
+    close(client);
     close(sock);
     SSL_CTX_free(ctx);
     cleanup_openssl();
-}
-*)
+   *)
 end;
-
 
 
 end.
