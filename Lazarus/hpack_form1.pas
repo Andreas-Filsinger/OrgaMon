@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  fpjson, jsonparser,
-  anfix32, HPACK;
+  ComCtrls, fpjson, jsonparser, anfix32, HPACK, HTTP2;
 
 type
 
@@ -16,15 +15,27 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Memo1: TMemo;
+    Memo2: TMemo;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { private declarations }
+
+    // The File-Descriptor of the Connection
+    // delivered by systemd or a own TCP Connection
+    FD: longint;
   public
     { public declarations }
   end;
@@ -161,6 +172,19 @@ begin
     end;
 
   end;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  FD := getSocket;
+  memo2.lines.add( 'Get Socket : ' + IntToStr(FD) );
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  if FD=0 then
+  exit;
+  TLS_Bind(FD);
 end;
 
 end.

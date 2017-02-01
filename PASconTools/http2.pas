@@ -32,7 +32,15 @@ unit HTTP2;
 interface
 
 uses
-  Classes, SysUtils;
+  cTypes, Classes, SysUtils, ssockets;
+
+const
+  client_socket: TInetServer = nil;
+
+
+function getSocket: longint;
+procedure TLS_Bind(FD: cint32);
+
 
 implementation
 
@@ -42,52 +50,55 @@ uses
 // just simple hack wait for new "openssl"
 
 const
- SSL_CTRL_SET_ECDH_AUTO                      = 94;
+  SSL_CTRL_SET_ECDH_AUTO = 94;
 
 
- function SslMethodTLSV1_2:PSSL_METHOD;
- begin
-   result := openssl.SslMethodV23;
- end;
+function SslMethodTLSV1_2: PSSL_METHOD;
+begin
+  Result := openssl.SslMethodV23;
+end;
 
- // end hacks
+// end hacks
+
 
 
 // create a Parameter Context for a TLS 1.2 Server Connection
 // intended for a "HTTPS://" Server Socket
 
-function StrictHTTP2Context : PSSL_CTX;
+function StrictHTTP2Context: PSSL_CTX;
+var
+   Path: string;
 begin
 
-  if not(InitSSLInterface) then
-   Raise Exception.Create('SSL Init Fail');
+  Path := ExtractFilePath(paramstr(0)) + DirectorySeparator;
+  if not (InitSSLInterface) then
+    raise Exception.Create('SSL Init Fail');
 
-  result := SslCtxNew(SslMethodTLSV1_2);
+  Result := SslCtxNew(SslMethodTLSV1_2);
 
-  SslCTXCtrl(result,SSL_CTRL_SET_ECDH_AUTO,1,nil);
+  SslCTXCtrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-  if (SslCtxUseCertificateFile(result, 'cert.pem', SSL_FILETYPE_PEM) < 0) then
-  Raise Exception.Create('Register cert.pem fails');
+  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) < 0) then
+    raise Exception.Create('Register cert.pem fails');
 
-
-  if (SslCtxUsePrivateKeyFile(result, 'key.pem', SSL_FILETYPE_PEM) < 0 ) then
-   Raise Exception.Create('Register key.pem fails');
+  if (SslCtxUsePrivateKeyFile(Result, Path + 'key.pem', SSL_FILETYPE_PEM) < 0) then
+    raise Exception.Create('Register key.pem fails');
 
 end;
 
 // binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection
 
-procedure TLS_Bind (H : Integer);
+procedure TLS_Bind(FD: cint32);
 var
- ssl : PSSL;
- Buf: array[0..4096] of byte;
+  ssl: PSSL;
+  Buf: array[0..4096] of byte;
 begin
 
   ssl := sslNew(StrictHTTP2Context);
-  sslSetFD(ssl, H);
+  sslSetFD(ssl, FD);
 
-  if (sslAccept(ssl)<=0) then
-   Raise Exception.Create('ssl Accept fail');
+  if (sslAccept(ssl) <= 0) then
+    raise Exception.Create('ssl Accept fail');
 
   (*
   buf += Header;
@@ -98,61 +109,54 @@ begin
 
   SSLwrite(ssl, @Buf, 16);
 
-
-
-
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
-// Im Rang 2: selbst ein Socket öffnen und auf Verbindungsversuche warten
+// Im Rang 2: selbst ein Socket öffnen und auf Verbindungsversuche von aussen warten
 
-procedure getSocket;
-var
- fd: Integer;
+function getSocket: longint;
 begin
-  sd_notify( 0, 'READY=1\nSTATUS=Ready\n' );
-  fd := sd_listen_fds(0);
 
-if (fd > 1) then
- begin
-       Raise Exception.Create('Too many file descriptors received');
- end else
- begin
- if (fd = 1) then
+  // try systemd
+  sd_notify(0, 'READY=1\nSTATUS=Ready\n');
+  Result := sd_listen_fds(0);
+
+  if (Result > 1) then
   begin
-        fd := SD_LISTEN_FDS_START;
-  end else
+    raise Exception.Create('Too many file descriptors received');
+  end
+  else
   begin
-   // Open via a SOCKET!
-(*
-  union {
-          struct sockaddr sa;
-          struct sockaddr_un un;
-  } sa;
 
-  fd = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (fd < 0) {
-          fprintf(stderr, "socket(): %m\n");
-          exit(1);
-  }
+    if (Result = 1) then
+    begin
+      // success via "systemd", result is a "symbolic" handle
+      // with a fixed value (3)
+      Result := SD_LISTEN_FDS_START;
+    end
+    else
+    begin
+      // Open via a SOCKET!
 
-  memset(&sa, 0, sizeof(sa));
-  sa.un.sun_family = AF_UNIX;
-  strncpy(sa.un.sun_path, "/run/foobar.sk", sizeof(sa.un.sun_path));
+   {$ifdef linux}
+      client_socket := TUnixServer.Create('0.0.0.0', 443);
+   {$else}
+      client_socket := TInetServer.Create('0.0.0.0', 443);
+   {$endif}
 
-  if (bind(fd, &sa.sa, sizeof(sa)) < 0) {
-          fprintf(stderr, "bind(): %m\n");
-          exit(1);
-  }
+      with client_socket do
+      begin
+        // Parameter?
 
-  if (listen(fd, SOMAXCONN) < 0) {
-          fprintf(stderr, "listen(): %m\n");
-          exit(1);
-  }
-*)
+        // Bind to Interface
+        bind;
+
+        // Make no further actions, let SSL take over
+        Result := Socket;
+
+      end;
+    end;
   end;
-
- end;
 end;
 
 procedure Release;
@@ -168,4 +172,6 @@ end;
 
 
 end.
+
+
 
