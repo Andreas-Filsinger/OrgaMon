@@ -1,81 +1,129 @@
 object Form1: TForm1
-  Left = 367
-  Height = 648
-  Top = 22
-  Width = 1134
+  Left = 509
+  Height = 859
+  Top = 270
+  Width = 1334
   Caption = 'Form1'
-  ClientHeight = 648
-  ClientWidth = 1134
+  ClientHeight = 859
+  ClientWidth = 1334
   LCLVersion = '1.6.2.0'
-  object Memo1: TMemo
-    Left = 24
-    Height = 410
-    Top = 104
-    Width = 1085
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    Lines.Strings = (
-      '---- Soll:'
-      ':method=GET'
-      ':scheme=http'
-      ':authority=yahoo.co.jp'
-      ':path=/'
-      '---- Ist:'
-    )
-    ScrollBars = ssVertical
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 859
+    Top = 0
+    Width = 1334
+    ActivePage = TabSheet2
+    Align = alClient
+    TabIndex = 1
     TabOrder = 0
-  end
-  object Edit1: TEdit
-    Left = 25
-    Height = 23
-    Top = 32
-    Width = 1085
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 1
-    Text = '82860188f439ce75c875fa5784'
-  end
-  object Button1: TButton
-    Left = 28
-    Height = 25
-    Top = 524
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Caption = 'decode'
-    OnClick = Button1Click
-    TabOrder = 2
-  end
-  object Label1: TLabel
-    Left = 28
-    Height = 15
-    Top = 8
-    Width = 128
-    Caption = 'wire (compressed Code)'
-    ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 28
-    Height = 15
-    Top = 70
-    Width = 90
-    Caption = 'Header (HTTP/2)'
-    ParentColor = False
-  end
-  object Edit2: TEdit
-    Left = 25
-    Height = 23
-    Top = 566
-    Width = 1084
-    Anchors = [akLeft, akRight, akBottom]
-    TabOrder = 3
-    Text = 'C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\http2-tests\hpack-test-case\'
-  end
-  object Button2: TButton
-    Left = 28
-    Height = 25
-    Top = 600
-    Width = 220
-    Anchors = [akLeft, akBottom]
-    Caption = 'Run all "decode" Tests ...'
-    OnClick = Button2Click
-    TabOrder = 4
+    object TabSheet1: TTabSheet
+      Caption = 'HPACK'
+      ClientHeight = 826
+      ClientWidth = 1326
+      object Memo1: TMemo
+        Left = 24
+        Height = 410
+        Top = 104
+        Width = 1085
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Lines.Strings = (
+          '---- Soll:'
+          ':method=GET'
+          ':scheme=http'
+          ':authority=yahoo.co.jp'
+          ':path=/'
+          '---- Ist:'
+        )
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object Edit1: TEdit
+        Left = 25
+        Height = 28
+        Top = 32
+        Width = 1085
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 1
+        Text = '82860188f439ce75c875fa5784'
+      end
+      object Button1: TButton
+        Left = 28
+        Height = 25
+        Top = 524
+        Width = 75
+        Anchors = [akLeft, akBottom]
+        Caption = 'decode'
+        OnClick = Button1Click
+        TabOrder = 2
+      end
+      object Label1: TLabel
+        Left = 28
+        Height = 20
+        Top = 8
+        Width = 161
+        Caption = 'wire (compressed Code)'
+        ParentColor = False
+      end
+      object Label2: TLabel
+        Left = 28
+        Height = 20
+        Top = 70
+        Width = 112
+        Caption = 'Header (HTTP/2)'
+        ParentColor = False
+      end
+      object Edit2: TEdit
+        Left = 25
+        Height = 28
+        Top = 561
+        Width = 1084
+        Anchors = [akLeft, akRight, akBottom]
+        TabOrder = 3
+        Text = 'C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\http2-tests\hpack-test-case\'
+      end
+      object Button2: TButton
+        Left = 28
+        Height = 25
+        Top = 600
+        Width = 220
+        Anchors = [akLeft, akBottom]
+        Caption = 'Run all "decode" Tests ...'
+        OnClick = Button2Click
+        TabOrder = 4
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'HTTPS'
+      ClientHeight = 826
+      ClientWidth = 1326
+      object Memo2: TMemo
+        Left = 28
+        Height = 286
+        Top = 55
+        Width = 797
+        Lines.Strings = (
+          'Memo2'
+        )
+        TabOrder = 0
+      end
+      object Button3: TButton
+        Left = 123
+        Height = 25
+        Top = 358
+        Width = 147
+        Caption = 'open Socket'
+        OnClick = Button3Click
+        TabOrder = 1
+      end
+      object Button4: TButton
+        Left = 123
+        Height = 25
+        Top = 392
+        Width = 147
+        Caption = 'TLS 1.2 Accept'
+        OnClick = Button4Click
+        TabOrder = 2
+      end
+    end
   end
 end
