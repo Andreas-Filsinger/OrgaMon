@@ -9,8 +9,11 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, HPACK_Form1,
   { you can add units after this }
+  http2_openssl,
   anfix32 in '../PASconTools/anfix32.pas',
-  HPACK in '../PASconTools/hpack.pas', HMUX, HTTP2;
+  HPACK in '../PASconTools/hpack.pas',
+  HMUX,
+  HTTP2;
 
 {$R *.res}
 

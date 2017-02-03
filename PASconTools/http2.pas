@@ -35,20 +35,29 @@ uses
   cTypes, Classes, SysUtils, ssockets;
 
 const
-  client_socket: TInetServer = nil;
+  client_socket : TInetServer = nil;
+  OpenSSL_Version : string = '';
+  OpenSSL_Error : string = '';
+     Path: string= '';
+
 
 
 function getSocket: longint;
 procedure TLS_Bind(FD: cint32);
+procedure TLS_Init;
 
 
 implementation
 
 uses
-  systemd, openssl, HMUX;
+  systemd, http2_openssl, HMUX;
+
+// fpopenssl
+// socketssl
 
 // just simple hack wait for new "openssl"
 
+{
 const
   SSL_CTRL_SET_ECDH_AUTO = 94;
 
@@ -58,6 +67,8 @@ begin
   Result := openssl.SslMethodV23;
 end;
 
+ }
+
 // end hacks
 
 
@@ -66,23 +77,23 @@ end;
 // intended for a "HTTPS://" Server Socket
 
 function StrictHTTP2Context: PSSL_CTX;
-var
-   Path: string;
 begin
 
-  Path := ExtractFilePath(paramstr(0)) + DirectorySeparator;
-  if not (InitSSLInterface) then
-    raise Exception.Create('SSL Init Fail');
+  Path := ExtractFilePath(paramstr(0));
+//
+
 
   Result := SslCtxNew(SslMethodTLSV1_2);
+  if not(assigned(result)) then
+    raise Exception.Create('Create a new SSL-Context fails');
 
   SslCTXCtrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) < 0) then
+  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) <= 0) then
     raise Exception.Create('Register cert.pem fails');
 
-  if (SslCtxUsePrivateKeyFile(Result, Path + 'key.pem', SSL_FILETYPE_PEM) < 0) then
-    raise Exception.Create('Register key.pem fails');
+//  if (SslCtxUsePrivateKeyFile(Result, Path + 'key.pem', SSL_FILETYPE_PEM) <= 0) then
+//    raise Exception.Create('Register key.pem fails');
 
 end;
 
@@ -92,14 +103,42 @@ procedure TLS_Bind(FD: cint32);
 var
   ssl: PSSL;
   Buf: array[0..4096] of byte;
+  a,e : cInt;
+//  ErrStr : array[0..4096] of char;
+P : PChar;
+x : AnsiString;
+ERR_F : THandle;
 begin
 
+  // SSL Init
   ssl := sslNew(StrictHTTP2Context);
-  sslSetFD(ssl, FD);
+  if not(assigned(ssl)) then
+    raise Exception.create('SSL_new().OpenSSL  fails');
 
-  if (sslAccept(ssl) <= 0) then
+  // SSL File Handle Übernahme
+  if (sslSetFD(ssl, FD)=0) then
+   raise Exception.create('SSL_set_fd().OpenSSL  fails');
+
+  //
+  a := sslAccept(ssl);
+  case a of
+    0:begin
+
+    end;
+    1: begin
+
+    end;
+  else
+
+  end;
+
+  if (a <= 0) then
+  begin
+               ERR_F := FileCreate( Path+'OpenSSL.log');
+  ERR_print_errors_fp(ERR_F);
+      FileClose(ERR_F);
     raise Exception.Create('ssl Accept fail');
-
+  end;
   (*
   buf += Header;
   buf += Content;
@@ -147,9 +186,10 @@ begin
       with client_socket do
       begin
         // Parameter?
-
+     SetNonBlocking;
         // Bind to Interface
-        bind;
+
+        Listen;
 
         // Make no further actions, let SSL take over
         Result := Socket;
@@ -157,6 +197,16 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TLS_Init;
+begin
+
+if not (InitSSLInterface) then
+  raise Exception.Create('SSL Init Fail');
+
+ERR_load_crypto_strings;
+OpenSSL_Version  := SSLeayversion(0);
 end;
 
 procedure Release;
