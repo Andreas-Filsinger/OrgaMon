@@ -989,7 +989,7 @@ var
   function SslCtxUsePrivateKey(ctx: PSSL_CTX; pkey: SslPtr):cInt;
   function SslCtxUsePrivateKeyASN1(pk: cInt; ctx: PSSL_CTX; d: String; len: cLong):cInt;
 //  function SslCtxUsePrivateKeyFile(ctx: PSSL_CTX; const _file: PChar; _type: cInt):cInt;
-  function SslCtxUsePrivateKeyFile(ctx: PSSL_CTX; const _file: String; _type: cInt):cInt;
+  function SslCtxUsePrivateKeyFile(ctx: PSSL_CTX; _file: PChar; _type: cInt):cInt;
   function SslCtxUseCertificate(ctx: PSSL_CTX; x: SslPtr):cInt;
   function SslCtxUseCertificateASN1(ctx: PSSL_CTX; len: cLong; d: String):cInt;
   function SslCtxUseCertificateFile(ctx: PSSL_CTX; const _file: String; _type: cInt):cInt;
@@ -1391,7 +1391,7 @@ type
   TSslMethodV23 = function:PSSL_METHOD; cdecl;
   TSslCtxUsePrivateKey = function(ctx: PSSL_CTX; pkey: sslptr):cInt; cdecl;
   TSslCtxUsePrivateKeyASN1 = function(pk: cInt; ctx: PSSL_CTX; d: sslptr; len: cInt):cInt; cdecl;
-  TSslCtxUsePrivateKeyFile = function(ctx: PSSL_CTX; const _file: PChar; _type: cInt):cInt; cdecl;
+  TSslCtxUsePrivateKeyFile = function(ctx: PSSL_CTX; _file: PChar; _type: cInt):cInt; cdecl;
   TSslCtxUseCertificate = function(ctx: PSSL_CTX; x: SslPtr):cInt; cdecl;
   TSslCtxUseCertificateASN1 = function(ctx: PSSL_CTX; len: cInt; d: SslPtr):cInt; cdecl;
   TSslCtxUseCertificateFile = function(ctx: PSSL_CTX; const _file: PChar; _type: cInt):cInt; cdecl;
@@ -2047,10 +2047,10 @@ begin
     Result := 0;
 end;
 
-function SslCtxUsePrivateKeyFile(ctx: PSSL_CTX; const _file: String; _type: cInt):cInt;
+function SslCtxUsePrivateKeyFile(ctx: PSSL_CTX; _file: PChar; _type: cInt):cInt;
 begin
   if InitSSLInterface and Assigned(_SslCtxUsePrivateKeyFile) then
-    Result := _SslCtxUsePrivateKeyFile(ctx, PChar(_file), _type)
+    Result := _SslCtxUsePrivateKeyFile(ctx, _file, _type)
   else
     Result := 0;
 end;
@@ -3988,7 +3988,9 @@ begin
   _SslCtxUsePrivateKeyASN1 := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_PrivateKey_ASN1');
   //use SSL_CTX_use_RSAPrivateKey_file instead SSL_CTX_use_PrivateKey_file,
   //because SSL_CTX_use_PrivateKey_file not support DER format. :-O
-  _SslCtxUsePrivateKeyFile := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_RSAPrivateKey_file');
+//  _SslCtxUsePrivateKeyFile := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_RSAPrivateKey_file');
+_SslCtxUsePrivateKeyFile := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_PrivateKey_file');
+
   _SslCtxUseCertificate := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_certificate');
   _SslCtxUseCertificateASN1 := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_certificate_ASN1');
   _SslCtxUseCertificateFile := GetProcAddr(SSLLibHandle, 'SSL_CTX_use_certificate_file');
