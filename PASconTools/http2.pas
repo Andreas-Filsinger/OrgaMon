@@ -77,6 +77,8 @@ end;
 // intended for a "HTTPS://" Server Socket
 
 function StrictHTTP2Context: PSSL_CTX;
+var
+ p : array[0..4096] of char;
 begin
 
   Path := ExtractFilePath(paramstr(0));
@@ -89,11 +91,13 @@ begin
 
   SslCTXCtrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) <= 0) then
-    raise Exception.Create('Register cert.pem fails');
+//  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) <= 0) then
+//    raise Exception.Create('Register cert.pem fails');
 
-//  if (SslCtxUsePrivateKeyFile(Result, Path + 'key.pem', SSL_FILETYPE_PEM) <= 0) then
-//    raise Exception.Create('Register key.pem fails');
+  StrPCopy(p,Path + 'key.pem');
+
+  if (SslCtxUsePrivateKeyFile(Result, @p, SSL_FILETYPE_PEM) <= 0) then
+    raise Exception.Create('Register key.pem fails');
 
 end;
 
