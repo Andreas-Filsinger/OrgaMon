@@ -1,14 +1,13 @@
-unit fpchelper;
-{$mode delphi}
-{(*}
-(*------------------------------------------------------------------------------
- Delphi Code formatter source code 
+{
+This unit contains Delphi-Replacements for the Free-Pascal-Compiler.
+}
 
+(*------------------------------------------------------------------------------
 The Original Code is JcfStringUtils, released October 2008.
-The Initial Developer of the Original Code is Paul Ishenin 
+The Initial Developer of the Original Code is Paul Ishenin
 Portions created by Paul Ishenin are Copyright (C) 1999-2008 Paul Ishenin
-All Rights Reserved. 
-Contributor(s): Anthony Steele. 
+All Rights Reserved.
+Contributor(s): Anthony Steele.
 
 The contents of this file are subject to the Mozilla Public License Version 1.1
 (the "License"). you may not use this file except in compliance with the License.
@@ -16,44 +15,46 @@ You may obtain a copy of the License at http://www.mozilla.org/NPL/
 
 Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied.
-See the License for the specific language governing rights and limitations 
+See the License for the specific language governing rights and limitations
 under the License.
 
 Alternatively, the contents of this file may be used under the terms of
-the GNU General Public License Version 2 or later (the "GPL") 
+the GNU General Public License Version 2 or later (the "GPL")
 See http://www.gnu.org/licenses/gpl.html
 ------------------------------------------------------------------------------*)
-{*)}
-
-//{$I JcfGlobal.inc}
 
 {
 This unit contains string utility code
 For use when the JCL string functions are not avaialable
 }
+unit fpchelper;
+
+{$mode delphi}
+
 interface
 
 uses
-  SysUtils, Classes, graphics, gettext
-  {$ifdef windows}
-  , activex
+  SysUtils, Classes,
+  {$ifdef MSWINDOWS}
+  activex,
   {$endif}
-  ;
+  graphics, gettext;
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;
 
 type
- PColorRec = ^TColorRec;
+  (*
+  PColorRec = ^TColorRec;
  TColorRec = record
    case integer of
      1: (r, g, b: byte);                   // belegt drei Byte
      2: (ColorArray: array[0..2] of byte); // belegt drei Byte
      3: (Color: TColor);                   // belegt drei Byte
  end;
-
-const
-  MaxWord = 65535;
+    *)
+  TColorRec = record
+    const
   SystemColor = $FF000000;
   // System Colors (Windows only)
   cSCROLLBAR = 0;
@@ -280,12 +281,9 @@ const
   Yellow = TColor($00FFFF);
   Yellowgreen = TColor($32CD9A);
   Null = TColor($00000000);
-  (*
-  class var ColorToRGB: function (Color: TColor): Longint;
-    class operator Implicit(const C: TColor): TColorRec; inline;
-  class operator Implicit(const C: TColorRec): TColor; inline;
-  class operator Implicit(const C: TColorRec): Longint; inline;
-  class operator Explicit(const C: TColorRec): Longint; inline;
+
+
+    class var ColorToRGB: function (Color: TColor): Longint;
   case LongWord of
     0:
       (Color: TColor);
@@ -298,10 +296,10 @@ const
       (R, G, B, A: System.Byte);
 {$ENDIF}
 end;
-TColors = TColorRec;
-*)
+  TColors = TColorRec;
 
 const
+  MaxWord = 65535;
   NativeNull           = Char(#0);
   NativeSoh            = Char(#1);
   NativeStx            = Char(#2);
@@ -420,7 +418,7 @@ function StrHasAlpha(const str: String): boolean;
 procedure RegisterExpectedMemoryLeak(var a);
 
 function GetProgramFilesFolder : string;
-{$ifdef windows}
+{$ifdef MSWINDOWS}
 
 function GetPersonalFolder : string;
 function GetAppdataFolder : string;
@@ -901,7 +899,7 @@ begin
       Exit;
     end;
 end;
-{$ifdef windows}
+{$ifdef MSWINDOWS}
 
 function PidlToPath(IdList: PItemIdList): string;
 begin

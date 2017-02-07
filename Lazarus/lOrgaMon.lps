@@ -11,14 +11,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="56"/>
         <CursorPos Y="56"/>
-        <UsageCount Value="170"/>
+        <UsageCount Value="171"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="108"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -27,7 +27,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="102"/>
         <CursorPos X="27" Y="126"/>
-        <UsageCount Value="96"/>
+        <UsageCount Value="97"/>
         <Bookmarks Count="1">
           <Item0 X="12" Y="1022" ID="1"/>
         </Bookmarks>
@@ -39,7 +39,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="16"/>
         <CursorPos Y="26"/>
-        <UsageCount Value="96"/>
+        <UsageCount Value="97"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -48,18 +48,18 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="30" Y="82"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="94"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\PASconTools\hpack.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HPACK"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
         <TopLine Value="324"/>
         <CursorPos X="66" Y="389"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="33"/>
         <Bookmarks Count="1">
           <Item0 Y="262" ID="1"/>
         </Bookmarks>
@@ -184,10 +184,11 @@
       </Unit21>
       <Unit22>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="248"/>
-        <CursorPos X="3" Y="275"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="60" Y="2"/>
         <UsageCount Value="36"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -232,8 +233,10 @@
       </Unit27>
       <Unit28>
         <Filename Value="..\OrgaMon\globals.pas"/>
-        <EditorIndex Value="-1"/>
+        <TopLine Value="535"/>
+        <CursorPos X="31" Y="627"/>
         <UsageCount Value="17"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
@@ -1139,10 +1142,11 @@
       <Unit159>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="926"/>
-        <CursorPos Y="939"/>
-        <UsageCount Value="9"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="35"/>
+        <CursorPos X="3" Y="58"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit159>
       <Unit160>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-base\src\gettext.pp"/>
@@ -1546,10 +1550,126 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit215>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="-1"/>
-    </General>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="943" Column="20" TopLine="906"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="40" Column="20" TopLine="2"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="60" Column="28" TopLine="22"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="347" Column="20" TopLine="309"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="350" Column="20" TopLine="312"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="427" Column="18" TopLine="389"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="442" Column="18" TopLine="404"/>
+      </Position8>
+      <Position9>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="443" Column="10" TopLine="405"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="908" Column="18" TopLine="870"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="944" Column="20" TopLine="906"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="945" TopLine="908"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="292" Column="26" TopLine="264"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="287" Column="21" TopLine="267"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="286" TopLine="264"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="287" TopLine="264"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="139" TopLine="139"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="285" Column="3" TopLine="264"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="627" TopLine="604"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="56" Column="6" TopLine="27"/>
+      </Position21>
+      <Position22>
+        <Filename Value="..\OrgaMon\globals.pas"/>
+        <Caret Line="627" Column="31" TopLine="604"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="307" TopLine="268"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="59" Column="5" TopLine="27"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="3"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="289" TopLine="272"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="32" TopLine="19"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="312" TopLine="285"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="28" Column="15" TopLine="16"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="53" TopLine="35"/>
+      </Position30>
+    </JumpHistory>
   </ProjectSession>
   <Debugging>
     <BreakPoints Count="4">
