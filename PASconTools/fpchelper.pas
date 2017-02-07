@@ -34,7 +34,11 @@ For use when the JCL string functions are not avaialable
 interface
 
 uses
-  SysUtils, Classes, graphics, gettext, activex;
+  SysUtils, Classes, graphics, gettext
+  {$ifdef windows}
+  , activex
+  {$endif}
+  ;
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;
@@ -49,6 +53,7 @@ type
  end;
 
 const
+  MaxWord = 65535;
   SystemColor = $FF000000;
   // System Colors (Windows only)
   cSCROLLBAR = 0;
@@ -415,8 +420,11 @@ function StrHasAlpha(const str: String): boolean;
 procedure RegisterExpectedMemoryLeak(var a);
 
 function GetProgramFilesFolder : string;
+{$ifdef windows}
+
 function GetPersonalFolder : string;
 function GetAppdataFolder : string;
+{$endif}
 
 type
   EJcfConversionError = class(Exception)
@@ -893,6 +901,7 @@ begin
       Exit;
     end;
 end;
+{$ifdef windows}
 
 function PidlToPath(IdList: PItemIdList): string;
 begin
@@ -937,5 +946,6 @@ function GetAppdataFolder : string;
 begin
   result := '// imp pend';
 end;
+{$endif}
 
 end.

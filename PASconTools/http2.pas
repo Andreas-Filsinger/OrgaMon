@@ -35,7 +35,11 @@ uses
   cTypes, Classes, SysUtils, ssockets;
 
 const
+     {$ifdef linux}
+     client_socket : TUnixServer = nil;
+     {$else}
   client_socket : TInetServer = nil;
+  {$endif}
   OpenSSL_Version : string = '';
   OpenSSL_Error : string = '';
      Path: string= '';
@@ -182,7 +186,7 @@ begin
       // Open via a SOCKET!
 
    {$ifdef linux}
-      client_socket := TUnixServer.Create('0.0.0.0', 443);
+      client_socket := TUnixServer.Create('0.0.0.0:443');
    {$else}
       client_socket := TInetServer.Create('0.0.0.0', 443);
    {$endif}

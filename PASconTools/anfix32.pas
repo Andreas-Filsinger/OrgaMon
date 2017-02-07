@@ -29,7 +29,7 @@ unit anfix32;
 interface
 
 uses
-{$IFNDEF linux}
+{$IFDEF MSWINDOWS}
   windows,
 {$ENDIF}
   classes,
@@ -395,7 +395,7 @@ procedure FileLimitTo(const TextFName: string; TextFSize: int64);
 function FileReduce(const TextFName: string; TextFSize: int64) : TStringList;
 procedure FileEmpty(const FName: string);
 procedure FileAlive(const FName: string);
-function FileVersion(const FName: string): string;
+
 function FileCompare(const FName1, FName2: string): boolean;
 function FSize(FName: string): int64;
 function FileDate(FName: string): TAnfixDate;
@@ -427,7 +427,7 @@ function FSerial(DriveName: string): string;
 function FVolume(DriveName: string): string;
 function FisCD(DriveName: string): boolean;
 function FisNetwork(DriveName: string): boolean;
-function ExtractFilePrefix(FileName: string): string;
+function ExtractFileExtension(FileName: string): string;
 
 // Time & Performance
 function Frequently: dword; overload;
@@ -446,6 +446,8 @@ function getParam(x: string): string;
 function AlreadyRunning(ApplicationName: string): boolean;
 procedure CloseAppSem;
 
+{$ifdef MSWINDOWS}
+
 // Win32 Sachen
 function IsAdmin: boolean;
 function SetPrivilege(privilegeName: string; enable: boolean): boolean;
@@ -463,6 +465,7 @@ function Domain: string;
 function NetworkInstalled: boolean;
 function WinNT: boolean;
 function Betriebssystem: string;
+function FileVersion(const FName: string): string;
 
 // spezielle Pfade, im Moment noch über JclSysInfo, mit Slash am Ende!
 function ProgramFilesDir: string;
@@ -472,6 +475,7 @@ function ApplicationDataDir: string;
 // CD-Player Utils
 function GetCDAutoRun: boolean;
 procedure SetCDAutoRun(vAutoRun: boolean);
+{$endif}
 
 // Graphische Utils
 function rXL(r: TRect): integer;
@@ -529,7 +533,7 @@ implementation
 uses
 {$IFDEF fpc}
   lazUTF8Classes,
-{$IFDEF linux}
+{$IFDEF UNIX}
   BaseUnix,
 {$ENDIF}
   fpchelper,
@@ -537,8 +541,10 @@ uses
   JclSysInfo,
 {$ENDIF}
   math,
-  registry,
-  shellapi;
+{$ifdef MSWINDOWS}
+  shellapi,
+{$endif}
+  registry;
 
 // Windows, Forms, DispMsg;
 type
@@ -558,7 +564,7 @@ var
   CPUUsageInit: boolean = false;
   AppSem: THandle;
 
-function ExtractFilePrefix(FileName: string): string;
+function ExtractFileExtension(FileName: string): string;
 begin
   result := copy(FileName, 1, pred(revPos('.', FileName)));
 end;
@@ -2450,7 +2456,11 @@ begin
   if (SysUtils.findfirst(FName, faAnyFile, F) = 0) then
   begin
     try
+      {$ifdef MSWINDOWS}
       result := F.FindData.nFileSizeLow or (F.FindData.nFileSizeHigh shl 32);
+      {$else}
+      // imp pend: linux
+      {$endif}
     finally
       SysUtils.findclose(F);
     end;
@@ -2581,7 +2591,11 @@ var
   ClearedDriveName: array [0 .. 1023] of char;
 begin
   StrPCopy(ClearedDriveName, DriveName[1] + ':\');
+  {$ifdef MSWINDOWS}
   result := (GetDriveType(ClearedDriveName) = DRIVE_REMOTE);
+  {$else}
+  // imp pend: linux
+  {$endif}
 end;
 
 var
@@ -2600,6 +2614,7 @@ begin
   if length(DriveName) > 0 then
   begin
     StrPCopy(ClearedDriveName, DriveName[1] + ':\');
+    {$ifdef MSWINDOWS}
     if GetDriveType(ClearedDriveName) = DRIVE_REMOTE then
     begin
       Size := SizeOf(RemoteNameInfo);
@@ -2609,6 +2624,9 @@ begin
     end;
     if GetVolumeInformation(ClearedDriveName, nil, 0, @SerialNum, d1, d2, nil, 0) then
       result := format('%.8x', [SerialNum]);
+    {$else}
+    // imp pend: linux
+    {$endif}
   end;
 end;
 
@@ -2629,7 +2647,11 @@ begin
 
   StrPCopy(b2, DriveName);
   SerialNum := @c;
+  {$ifdef MSWINDOWS}
   GetVolumeInformation(b2, Buffer, SizeOf(Buffer), SerialNum, a, b, nil, 0);
+  {$else}
+  // imp pend: linux
+  {$endif}
   result := Buffer;
 end;
 
@@ -2640,6 +2662,8 @@ begin
 end;
 
 function InSide(const x, y: integer; Polygon: array of TPoint): boolean;
+{$ifdef MSWINDOWS}
+
 var
   PolyHandle: HRGN;
 begin
@@ -2647,6 +2671,14 @@ begin
   result := PtInRegion(PolyHandle, x, y);
   DeleteObject(PolyHandle);
 end;
+{$else}
+begin
+  // imp pend:
+  result := false;
+end;
+
+{$endif}
+
 
 function InSideRect(const a, b: TRect): boolean;
 begin
@@ -2926,6 +2958,8 @@ begin
 end;
 
 function FileOperation(const Source, Dest: string; op, flags: integer): boolean;
+{$ifdef MSWINDOWS}
+
 var
   shf: TSHFileOpStruct;
   s1, s2: string;
@@ -2940,11 +2974,24 @@ begin
   shf.fFlags := flags;
   result := (SHFileOperation(shf) = 0);
 end (* FileOperation *);
+{$else}
+begin
+  // imp pend: linux
+end;
+
+{$endif}
 
 function FileOperationMove(Source, Destination: string): boolean;
 begin
+{$ifdef MSWINDOWS}
   result := FileOperation(Source, Destination, FO_MOVE, FOF_NOCONFIRMATION + FOF_NOCONFIRMMKDIR + FOF_NOERRORUI);
+{$else}
+// imp pend:
+result := false;
+{$endif}
+
 end;
+
 
 //
 //
@@ -2962,7 +3009,12 @@ var
 begin
   if (pos('*', Mask) = 0) and (pos('?', Mask) = 0) then
   begin
+    {$ifdef MSWINDOWS}
     result := CopyFile(PCHAR(Mask), PCHAR(Dest), false);
+    {$else}
+    // imp pend
+    {$endif}
+
     if result then
       result := (FileSetAttr(Dest, 0) = 0);
     if result and Move then
@@ -3146,13 +3198,21 @@ end;
 
 function AlreadyRunning(ApplicationName: string): boolean;
 begin
+{$ifdef MSWINDOWS}
   AppSem := CreateSemaphore(nil, 0, 1, PCHAR(ApplicationName));
   result := (AppSem <> 0) and (GetLastError = ERROR_ALREADY_EXISTS);
+  {$else}
+  // imp pend:
+  {$endif}
 end;
 
 procedure CloseAppSem;
 begin
+{$ifdef MSWINDOWS}
   CloseHandle(AppSem);
+{$else}
+// imp pend:
+{$endif}
 end;
 
 function FisCD(DriveName: string): boolean;
@@ -3160,7 +3220,11 @@ var
   _DriveName: array [0 .. 63] of char;
 begin
   StrPCopy(_DriveName, AnsiUpperCase(DriveName[1]) + ':\');
+  {$ifdef MSWINDOWS}
   result := GetDriveType(_DriveName) = DRIVE_CDROM;
+  {$else}
+  // imp pend
+  {$endif}
 end;
 
 procedure SetCDAutoRun(vAutoRun: boolean);
@@ -3203,6 +3267,8 @@ begin
   end;
   result := not((AutoRunSetting and (1 shl 5)) <> 0);
 end;
+
+{$ifdef MSWINDOWS}
 
 // Hier gehts los, alles für das CPU-Usage Tool!
 
@@ -3530,6 +3596,24 @@ function NetworkInstalled: boolean;
 begin
   result := (GetSystemMetrics(SM_NETWORK) and $01 = $01);
 end;
+
+{$else}
+
+// imp pend:
+
+function ComputerName: string;
+begin
+  result := '';
+end;
+
+function NetworkInstalled: boolean;
+begin
+  result := true;
+end;
+
+
+{$endif}
+
 
 function dir(const Mask: string): integer; overload;
 var
@@ -3956,7 +4040,7 @@ var
 function Betriebssystem: string;
 
 {$IFDEF fpc}
-{$IFDEF linux}
+{$IFDEF UNIX}
 var
   Name: UtsName;
 begin
@@ -3965,7 +4049,6 @@ begin
     result := Sysname + Release + Version;
 end;
 {$ELSE}
-
 begin
   result := 'Windows';
 end;
@@ -3995,6 +4078,8 @@ begin
 end;
 {$ENDIF}
 // WIN REBOOT
+
+{$ifdef MSWINDOWS}
 
 function SetPrivilege(privilegeName: string; enable: boolean): boolean;
 var
@@ -4117,6 +4202,8 @@ procedure WindowsAbmelden;
 begin
   // %windir%\system32\rundll32.exe user32.dll,LockWorkStation
 end;
+
+{$ENDIF}
 
 const
   MacCodeTable: array [0 .. 255] of AnsiChar =
@@ -5052,6 +5139,9 @@ begin
    s.Free;
 end;
 
+{$ifdef MSWINDOWS}
+
+
 var
   _ProgramFilesDir: string = '';
 
@@ -5076,6 +5166,7 @@ function PersonalDataDir: string;
 begin
   result := ValidatePathName(GetPersonalFolder) + '\';
 end;
+{$endif}
 
 function DirExists(const dir: string): boolean;
 var
@@ -5164,7 +5255,9 @@ var
   Dest: PAnsiChar;
 begin
   GetMem(Dest, succ(length(x)));
+  {$ifdef MSWINDOWS}
   OemToCharA(PAnsiChar(x), Dest);
+  {$endif}
   result := Dest;
   FreeMem(Dest, succ(length(x)));
 end;
@@ -5207,18 +5300,22 @@ begin
     ersetze('ß', 'sz', result);
   end;
 end;
+{$ifdef MSWINDOWS}
 
 function WinNT: boolean;
 begin
   result := (Win32Platform = VER_PLATFORM_WIN32_NT);
 end;
+{$endif}
 
 function ANSI2OEM(x: AnsiString): AnsiString;
 var
   Dest: PAnsiChar;
 begin
   GetMem(Dest, succ(length(x)));
+  {$ifdef MSWINDOWS}
   CharToOemA(PAnsiChar(x), Dest);
+  {$endif}
   result := Dest;
   FreeMem(Dest, succ(length(x)));
 end;
@@ -5762,6 +5859,7 @@ begin
   end;
   CloseFile(F);
 end;
+{$ifdef MSWINDOWS}
 
 procedure CollectCPUData;
 var
@@ -5974,12 +6072,13 @@ begin
       FreeMemory(pFileInfo);
     end;
 end;
+{$endif}
 
 procedure SystemLog(Event: string);
 var
   OutF: TextFile;
 begin
-  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFilePrefix(ExtractFileName(Paramstr(0))) + '.log');
+  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFileExtension(ExtractFileName(Paramstr(0))) + '.log');
 {$I-}
   append(OutF);
 {$I+}
@@ -5988,6 +6087,7 @@ begin
   writeln(OutF, Event);
   CloseFile(OutF);
 end;
+{$ifdef MSWINDOWS}
 
 function IsAdmin: boolean;
 const
@@ -6044,6 +6144,7 @@ begin
     CloseHandle(hAccessToken);
   end;
 end; { Michael Winter }
+{$endif}
 
 function FloatToStrISO(Value: extended; Nachkommastellen: integer = 0): string;
 var
@@ -6154,6 +6255,7 @@ begin
   perfStep;
   _perfFName := '';
 end;
+{$ifdef MSWINDOWS}
 
 Procedure PostKeyEx32(key: Word; Const shift: TShiftState; specialkey: boolean);
 { ************************************************************
@@ -6215,6 +6317,7 @@ Begin
       keybd_event(shiftkeys[i].vkey, MapVirtualKey(shiftkeys[i].vkey, 0), KEYEVENTF_KEYUP, 0);
   End; { For }
 End; { PostKeyEx32 }
+{$endif}
 
 procedure StartDebug(s: string);
 begin
@@ -6289,11 +6392,13 @@ if StartDebugger then
 StartDebug('anfix32');
 
 finalization
+{$ifdef MSWINDOWS}
 
 if CPUUsageInit then
 begin
   ReleaseCPUData;
   FreeMem(_PerfData);
 end;
+{$endif}
 
 end.
