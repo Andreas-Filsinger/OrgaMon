@@ -26,7 +26,9 @@
 }
 unit systemd;
 
+{$ifdef FPC}
 {$mode objfpc}{$H+}
+{$endif}
 
 // #
 // # OS - Wrapper
