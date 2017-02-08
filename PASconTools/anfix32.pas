@@ -427,7 +427,7 @@ function FSerial(DriveName: string): string;
 function FVolume(DriveName: string): string;
 function FisCD(DriveName: string): boolean;
 function FisNetwork(DriveName: string): boolean;
-function ExtractFileExtension(FileName: string): string;
+function ExtractFileNameWithoutExtension(FileName: string): string;
 
 // Time & Performance
 function Frequently: dword; overload;
@@ -564,7 +564,7 @@ var
   CPUUsageInit: boolean = false;
   AppSem: THandle;
 
-function ExtractFileExtension(FileName: string): string;
+function ExtractFileNameWithoutExtension(FileName: string): string;
 begin
   result := copy(FileName, 1, pred(revPos('.', FileName)));
 end;
@@ -6078,7 +6078,7 @@ procedure SystemLog(Event: string);
 var
   OutF: TextFile;
 begin
-  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFileExtension(ExtractFileName(Paramstr(0))) + '.log');
+  assign(OutF, ExtractFilePath(Paramstr(0)) + ExtractFileNameWithoutExtension(ExtractFileName(Paramstr(0))) + '.log');
 {$I-}
   append(OutF);
 {$I+}
