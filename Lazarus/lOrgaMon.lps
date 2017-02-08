@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="216">
+    <Units Count="217">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -184,7 +184,6 @@
       </Unit21>
       <Unit22>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="60" Y="2"/>
         <UsageCount Value="36"/>
@@ -1142,7 +1141,7 @@
       <Unit159>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="35"/>
         <CursorPos X="3" Y="58"/>
         <UsageCount Value="10"/>
@@ -1549,6 +1548,14 @@
         <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit215>
+      <Unit216>
+        <Filename Value="..\..\fpc\tests\tbs\tb0626.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit216>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

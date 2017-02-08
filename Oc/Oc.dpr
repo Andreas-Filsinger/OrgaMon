@@ -7,7 +7,6 @@
   |
   |    Orientation Convert
   |
-  |
   |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify

@@ -1222,7 +1222,7 @@ begin
         try
 
           // Verarbeiten!
-          TAN := ExtractFilePrefix(DirList[n]);
+          TAN := ExtractFileExtension(DirList[n]);
           ProcessNewData(AuftragMobilServerPath, TAN);
 
           // Lokal löschen!

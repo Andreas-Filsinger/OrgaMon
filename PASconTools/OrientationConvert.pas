@@ -1,10 +1,11 @@
 {
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ _
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+  |        ___
+  |       / _ \  ___
+  |      | | | |/ __|
+  |      | |_| | (__
+  |       \___/ \___|
+  |
+  |    Orientation Convert
   |
   |    Copyright (C) 2007 - 2016  Andreas Filsinger
   |
@@ -32,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.254; // ../rev/Oc.rev.txt
+  Version: single = 1.255; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -69,6 +70,7 @@ const
   cFixedFormatsFName = 'Fixed-Formats.ini';
   cFixedFloodFName = 'Fixed-Flood.ini';
   c_ML_SchemaFName = 'Schema.xsd';
+  cXLS_Referenzdatei = 'Zaehlerdaten_Referenz.csv';
   c_ML_CheckFName = 'Check' + cXML_Extension;
   cOc_FehlerMeldung = ' Oc misslungen - (mehr Infos in Diagnose.txt) !';
 
@@ -2422,8 +2424,6 @@ begin
     FileDelete(conversionOutFName);
   end;
 
-  if assigned(sBericht) then
-    sDiagnose.addStrings(sBericht);
 
   sResult.Free;
   sSource.Free;
@@ -2952,8 +2952,6 @@ begin
     until (r > RowCount);
   end;
 
-  if assigned(sBericht) then
-    sDiagnose.addStrings(sBericht);
 
   sResult.Free;
   sMapping.Free;
@@ -4814,6 +4812,7 @@ var
   TargetRow: integer;
   TargetStartRow: integer;
 
+  // Referenz-Datei
   sREF: TStringList;
   sHeader: TStringList;
   sREFERENCECol_Source: integer; // Ankerspalte in der Quelle
@@ -4821,10 +4820,20 @@ var
   mitRegler: boolean;
   AusgabeRotiert: boolean;
 
+  procedure sBerichte(s:string);
+  begin
+    if assigned(sBericht) then
+     sBericht.add(s)
+    else
+     sDiagnose.add(s);
+  end;
+
+  // hide
+  //  sDiagnose, sBericht;
+
   function getRef(Row: integer; ColumnNameAtReference: string): string;
   var
     Key, oneLine: string;
-
     sCOL: TStringList;
     n, k: integer;
     TakeTodayCol: integer;
@@ -4833,11 +4842,12 @@ var
   begin
     if not(assigned(sREF)) then
     begin
+
       // erstmalige Referenzierung
       sREF := TStringList.create;
       sHeader := TStringList.create;
-      sDiagFiles.add(WorkPath + 'Zaehlerdaten_Referenz.csv');
-      sREF.loadFromFile(WorkPath + 'Zaehlerdaten_Referenz.csv');
+      sDiagFiles.add(WorkPath + cXLS_Referenzdatei);
+      sREF.loadFromFile(WorkPath + cXLS_Referenzdatei);
       oneLine := sREF[0];
       k := 0;
       while (oneLine <> '') do
@@ -4848,22 +4858,27 @@ var
           sCOL.add(nextp(sREF[n], ';', k));
         inc(k);
       end;
+
+      // Zuweisung der Ankerspalte
       sREFERENCECol_Source := -1;
       for n := 0 to pred(inHeaders.count) do
       begin
         k := sHeader.indexof(inHeaders[n]);
         if (k <> -1) then
         begin
-          if (sREFERENCECol_Source <> -1) then
-            raise exception.create('überzählige Anker-Spalte "' + inHeaders[n] + '"');
-          sREFERENCECol_Source := n + 1;
-          sREFERENCECol_Referenced := k;
+            if (sREFERENCECol_Source = -1) then
+             sBerichte(cINFOText + ' "' + inHeaders[n] + '" ist Ankerspalte')
+            else
+             sBerichte(cWARNINGText + ' ' + 'überzählige Ankerspalte "' + inHeaders[n] + '" wird ignoriert');
+          if (sREFERENCECol_Source = -1) then
+          begin
+           sREFERENCECol_Source := n + 1;
+           sREFERENCECol_Referenced := k;
+          end;
         end;
       end;
       if (sREFERENCECol_Source = -1) then
-        raise exception.create('keine Anker-Spalte mit identischem Namen gefunden!');
-      if assigned(sBericht) then
-        sBericht.add(cINFOText + ' ' + inHeaders[pred(sREFERENCECol_Source)] + ' ist Ankerspalte');
+        raise exception.create('keine identisch benannte Spaltenüberschrift gefunden!');
 
     end;
     TakeTodayCol := sHeader.indexof(ColumnNameAtReference);
@@ -4874,7 +4889,7 @@ var
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
-      raise exception.create('Anker - Wert ' + Key + ' konnte nicht lokalisiert werden!');
+      raise exception.create('Ankerwert ' + Key + ' konnte nicht lokalisiert werden!');
 
     // ist der Anker eindeutig
     KeyDuplicates := 0;
@@ -4884,8 +4899,7 @@ var
           inc(KeyDuplicates);
 
     if (KeyDuplicates > 0) then
-      if assigned(sBericht) then
-        sBericht.add(cWARNINGText + ' Anker - Wert "' + Key + '" kommt ' + inttostr(KeyDuplicates + 1) + ' mal vor!');
+        sBerichte(cWARNINGText + ' Ankerwert "' + Key + '" kommt ' + inttostr(KeyDuplicates + 1) + ' mal vor!');
 
     sCOL := TStringList(sHeader.Objects[TakeTodayCol]);
     result := sCOL[FoundRowToday];
@@ -4912,7 +4926,7 @@ var
     result := inHeaders.indexof(name) + 1;
     if (result = 0) then
     begin
-      sDiagnose.add(cERRORText + ' Spalte "' + name + '" nicht gefunden!');
+      sBerichte(cERRORText + ' Spalte "' + name + '" nicht gefunden!');
       inc(ErrorCount);
       result := 1; // nur Proforma!
     end;
@@ -4984,8 +4998,8 @@ var
     except
       on e: exception do
       begin
-        sDiagnose.add('WARNING: ' + e.message);
-        sDiagnose.add('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
+        sBerichte('WARNING: ' + e.message);
+        sBerichte('WARNING: Zelle ' + inttostr(r) + ',' + inttostr(c) + ' konnte nicht gelesen werden!');
       end;
     end;
   end;
@@ -5026,7 +5040,7 @@ var
         end;
         break;
       end;
-      sDiagnose.add(cERRORText + ' Funktion "' + FunctionName + '" ist unbekannt!');
+      sBerichte(cERRORText + ' Funktion "' + FunctionName + '" ist unbekannt!');
       inc(ErrorCount);
     until yet;
   end;
@@ -5417,7 +5431,7 @@ var
         on e: exception do
         begin
           inc(ErrorCount);
-          sDiagnose.add(format(cERRORText + ' %s(%d,%d): %s', [Command, r, c, e.message]));
+          sBerichte(format(cERRORText + ' %s(%d,%d): %s', [Command, r, c, e.message]));
         end;
       end;
 
@@ -5447,16 +5461,14 @@ begin
   if FileExists(InFName) then
   begin
 
-    //
+    // Init
+    sREF := nil;
     mitRegler := false;
     AusgabeRotiert := false;
     TargetStartRow := 5;
     inHeaders := TStringList.create;
     OutCommands := TStringList.create;
     OutCommandsRegler := TStringList.create;
-
-    // Für die externe Referenz
-    sREF := nil;
 
     sDiagFiles.add(InFName);
 
@@ -5484,7 +5496,7 @@ begin
 
       if not(FileExists(TemplateFname)) then
       begin
-        sDiagnose.add(cERRORText + ' Datei "' + TemplateFname + '" fehlt!');
+        sBerichte(cERRORText + ' Datei "' + TemplateFname + '" fehlt!');
         break;
       end;
 
@@ -5505,8 +5517,8 @@ begin
         on e: exception do
         begin
           inc(ErrorCount);
-          sDiagnose.add(cERRORText + ' ' + e.message);
-          sDiagnose.add(cERRORText + ' ' + InFName + ' ist durch andere Anwendung geöffnet?');
+          sBerichte(cERRORText + ' ' + e.message);
+          sBerichte(cERRORText + ' ' + InFName + ' ist durch andere Anwendung geöffnet?');
         end;
       end;
       if (ErrorCount > 0) then
@@ -5608,7 +5620,7 @@ begin
                 begin
                   // Eigentlich hätte man einen Regler erfassen müssen
                   // gar keine Eingabe ist meldewürdig
-                  sDiagnose.add('WARNING: (RID=' + read(r, 'Referenzidentitaet') + ') ReglerNummerNeu ist leer!');
+                  sBerichte('WARNING: (RID=' + read(r, 'Referenzidentitaet') + ') ReglerNummerNeu ist leer!');
                 end;
               end;
 
@@ -5616,7 +5628,7 @@ begin
           if AusgabeRotiert then
             if (TargetRow = 253) then
             begin
-              sDiagnose.add('WARNING: Could not write all the data due Excel Column-Limitation');
+              sBerichte('WARNING: Could not write all the data due Excel Column-Limitation');
               break;
             end;
         end;
@@ -5641,15 +5653,13 @@ begin
         on e: exception do
         begin
           inc(ErrorCount);
-          sDiagnose.add(cERRORText + ' ' + e.message);
-          sDiagnose.add(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
+          sBerichte(cERRORText + ' ' + e.message);
+          sBerichte(cERRORText + ' ' + conversionOutFName + ' ist durch andere Anwendung geöffnet?');
         end;
       end;
 
     until yet;
 
-    if assigned(sBericht) then
-      sDiagnose.addStrings(sBericht);
 
     xImport.Free;
     xVorlage.Free;
@@ -5696,8 +5706,8 @@ var
     begin
       sREF := TStringList.create;
       sHeader := TStringList.create;
-      sDiagFiles.add(WorkPath + 'Zaehlerdaten_Referenz.csv');
-      sREF.loadFromFile(WorkPath + 'Zaehlerdaten_Referenz.csv');
+      sDiagFiles.add(WorkPath + cXLS_Referenzdatei);
+      sREF.loadFromFile(WorkPath + cXLS_Referenzdatei);
       oneLine := sREF[0];
       k := 0;
       while (oneLine <> '') do
@@ -5720,7 +5730,7 @@ var
         end;
       end;
       if (sREFERENCECol_Source = -1) then
-        raise exception.create('keine Anker-Spalte mit identischem Namen gefunden!');
+        raise exception.create('keine Ankerspalte mit identischem Namen gefunden!');
     end;
     TakeTodayCol := sHeader.indexof(s);
     if (TakeTodayCol = -1) then
@@ -5729,7 +5739,7 @@ var
     sCOL := TStringList(sHeader.Objects[sREFERENCECol_Referenced]);
     FoundRowToday := sCOL.indexof(Key);
     if (FoundRowToday = -1) then
-      raise exception.create('Anker - Wert ' + Key + ' konnte nicht lokalisiert werden!');
+      raise exception.create('Ankerwert ' + Key + ' konnte nicht lokalisiert werden!');
     sCOL := TStringList(sHeader.Objects[TakeTodayCol]);
     result := sCOL[FoundRowToday];
   end;
@@ -9123,8 +9133,6 @@ begin
   else
     FileDelete(conversionOutFName);
 
-  if assigned(sBericht) then
-    sDiagnose.addStrings(sBericht);
 
   bXML.EndTransaction;
 
