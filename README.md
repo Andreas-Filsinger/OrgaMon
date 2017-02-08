@@ -9,7 +9,7 @@ Dieses Repository enthält alle Delphi/Freepascal Quelltexte des OrgaMon-Systems
 
 Sprachregelung:
 
-Sprache der Datenstrukturen: DE
-Sprache des UI: DE
-Sprache der Kommentare die Funktionserklärend ist: DE
-Sprache der Kommentare bei allgemeiner Programmierung, Anwendung von Technologie: US
+* Sprache der Datenstrukturen: DE
+* Sprache des UI: DE
+* Sprache der Kommentare die Funktionserklärend ist: DE
+* Sprache der Kommentare bei allgemeiner Programmierung, Anwendung von Technologie: US
