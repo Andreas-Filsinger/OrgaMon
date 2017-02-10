@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, Menus, fpjson, jsonparser, anfix32, HPACK, HTTP2;
+  ComCtrls, Menus;
 
 type
 
@@ -46,6 +46,9 @@ var
   Form1: TForm1;
 
 implementation
+
+uses
+ fpjson, jsonparser, anfix32, HPACK, HTTP2, cryptossl;
 
 {$R *.lfm}
 
@@ -192,7 +195,7 @@ end;
 procedure TForm1.Button5Click(Sender: TObject);
 begin
   TLS_Init;
-  memo2.lines.add(OpenSSL_Version);
+  memo2.lines.add(cryptossl.Version);
 end;
 
 end.

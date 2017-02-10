@@ -40,7 +40,6 @@ const
      {$else}
   client_socket : TInetServer = nil;
   {$endif}
-  OpenSSL_Version : string = '';
   OpenSSL_Error : string = '';
      Path: string= '';
 
@@ -54,16 +53,19 @@ procedure TLS_Init;
 implementation
 
 uses
-  systemd, http2_openssl, HMUX;
+  systemd,
+  cryptossl,
+  HMUX;
 
 // fpopenssl
+// http2_openssl.pas
 // socketssl
 
 // just simple hack wait for new "openssl"
 
 {
 const
-  SSL_CTRL_SET_ECDH_AUTO = 94;
+SSL_CTRL_SET_ECDH_AUTO = 94;
 
 
 function SslMethodTLSV1_2: PSSL_METHOD;
@@ -89,18 +91,23 @@ begin
 //
 
 
-  Result := SslCtxNew(SslMethodTLSV1_2);
+  Result := SSL_CTX_new(TLSv1_2_server_method);
+
   if not(assigned(result)) then
     raise Exception.Create('Create a new SSL-Context fails');
 
-  SslCTXCtrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
+  SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-//  if (SslCtxUseCertificateFile(Result, Path + 'cert.pem', SSL_FILETYPE_PEM) <= 0) then
-//    raise Exception.Create('Register cert.pem fails');
+  StrPCopy(p,Path + 'cert.pem');
+
+  if (SSL_CTX_use_certificate_file(Result, PChar(@p), SSL_FILETYPE_PEM) <= 0) then
+    raise Exception.Create('Register cert.pem fails');
 
   StrPCopy(p,Path + 'key.pem');
 
-  if (SslCtxUsePrivateKeyFile(Result, @p, SSL_FILETYPE_PEM) <= 0) then
+
+
+  if (SSL_CTX_use_PrivateKey_file(Result, @p, SSL_FILETYPE_PEM) <= 0) then
     raise Exception.Create('Register key.pem fails');
 
 end;
@@ -117,7 +124,7 @@ P : PChar;
 x : AnsiString;
 ERR_F : THandle;
 begin
-
+         (*
   // SSL Init
   ssl := sslNew(StrictHTTP2Context);
   if not(assigned(ssl)) then
@@ -155,7 +162,7 @@ begin
     *)
 
   SSLwrite(ssl, @Buf, 16);
-
+           *)
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
@@ -210,11 +217,12 @@ end;
 procedure TLS_Init;
 begin
 
-if not (InitSSLInterface) then
-  raise Exception.Create('SSL Init Fail');
+//if not (InitSSLInterface) then
+//  raise Exception.Create('SSL Init Fail');
 
-ERR_load_crypto_strings;
-OpenSSL_Version  := SSLeayversion(0);
+//ERR_load_crypto_strings;
+//OpenSSL_Version  := SSLeayversion(0);
+
 end;
 
 procedure Release;
