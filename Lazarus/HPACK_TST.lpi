@@ -36,7 +36,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="6">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -50,15 +50,22 @@
         <UnitName Value="HPACK_Form1"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\PASconTools\hmux.pas"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="HMUX"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\PASconTools\http2.pas"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HTTP2"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="..\HTTP2\hmux.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\HTTP2\hpack.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -69,12 +76,12 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\PASconTools"/>
+      <OtherUnitFiles Value="..\PASconTools;..\HTTP2"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
-        <SyntaxMode Value="FPC"/>
+        <SyntaxMode Value="fpc"/>
         <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>

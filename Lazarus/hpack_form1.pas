@@ -196,6 +196,7 @@ procedure TForm1.Button5Click(Sender: TObject);
 begin
   TLS_Init;
   memo2.lines.add(cryptossl.Version);
+  memo2.lines.AddStrings(sDebug);
 end;
 
 end.

@@ -28,7 +28,12 @@ unit cryptossl;
 interface
 
 uses
-  ctypes;
+  ctypes, classes;
+
+// debug infos
+
+var
+ sDebug : TStringList;
 
 // lib stuff for the public
 
@@ -82,14 +87,24 @@ begin
   Result := PChar(OpenSSL_version(_OPENSSL_VERSION))
  else
   Result := '- lib not loaded';
-end;            
+end;
+
+function LastError: string;
+begin
+ result :=  GetLoadErrorStr;
+end;
 
 const
 {$ifdef MSWINDOWS}
+{$ifdef win64}
 cLIB_NAME_CRYPTO  = 'libcrypto-1_1-x64.dll';
- cLIB_NAME_SSL     = 'libssl-1_1-x64.dll';
+cLIB_NAME_SSL     = 'libssl-1_1-x64.dll';
 {$else}
-cLIB_NAME_CRYPTO  = '/root/Documents/openssl-1.1.0d/libcrypto.so.1.1';
+cLIB_NAME_CRYPTO  = 'libcrypto-1_1.dll';
+cLIB_NAME_SSL     = 'libssl-1_1.dll';
+{$endif}
+{$else}
+ cLIB_NAME_CRYPTO  = '/root/Documents/openssl-1.1.0d/libcrypto.so.1.1';
  cLIB_NAME_SSL     = '/root/Documents/openssl-1.1.0d/libssl.so.1.1';
 {$endif}
 
@@ -98,6 +113,7 @@ var
  libcrypto_HANDLE : TLibHandle;
 
 begin
+ sDebug :=  TStringList.create;
  // writeln( paramstr(0));
 
  // 
@@ -105,19 +121,28 @@ begin
  // ensure the correct libcrypto is loaded BEFORE
  // libssl do 'own' but 'false' trys
  libcrypto_HANDLE  := LoadLibrary(cLIB_NAME_CRYPTO);
+ sDebug.add( LastError);
+
 // writeln(libcrypto_HANDLE);
 
  libssl_HANDLE  := LoadLibrary(cLIB_NAME_SSL);
+ sDebug.add( LastError);
  // writeln(libssl_HANDLE);
 
  if (libssl_HANDLE>0) then
  begin
   OpenSSL_version :=  TOpenSSL_version (GetProcedureAddress(libssl_HANDLE, 'OpenSSL_version'));
+  sDebug.add( 'Version: ' + LastError);
   TLSv1_2_server_method := TTLSv1_2_server_method (GetProcedureAddress(libssl_HANDLE,'TLSv1_2_server_method'));
+  sDebug.add( LastError);
   SSL_CTX_new := TSSL_CTX_new (GetProcedureAddress(libssl_HANDLE,'SSL_CTX_new'));
+  sDebug.add( LastError);
   SSL_CTX_ctrl := TSSL_CTX_ctrl (GetProcedureAddress(libssl_HANDLE,'SSL_CTX_ctrl'));
+  sDebug.add( LastError);
   SSL_CTX_use_certificate_file :=  TSSL_CTX_use_certificate_file (GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_use_certificate_file'));
+  sDebug.add( LastError);
   SSL_CTX_use_PrivateKey_file := TSSL_CTX_use_PrivateKey_file (GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_use_PrivateKey_file'));
+  sDebug.add( LastError);
 
 //  writeln(Integer(@OpenSSL_Version));
  end;
