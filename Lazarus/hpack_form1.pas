@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, fpjson, jsonparser, anfix32, HPACK, HTTP2;
+  ComCtrls, Menus, fpjson, jsonparser, anfix32, HPACK, HTTP2;
 
 type
 
