@@ -1243,7 +1243,7 @@ begin
           { } Details2Long(AktuellesJahr,
             { } extractMonth(SperreBis),
             { } extractDay(SperreBis));
-          if SperreBis < SperreVon then
+          if (SperreBis < SperreVon) then
             SperreBis :=
             { } Details2Long(AktuellesJahr + 1,
               { } extractMonth(SperreBis),

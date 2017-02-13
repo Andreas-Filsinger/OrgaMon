@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015 Andreas Filsinger
+  |    Copyright (C) 2007 - 2017 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -116,6 +116,7 @@ type
     procedure doCheck;
     procedure doCheckLess;
     procedure doArtikelJump;
+    procedure ResizeDrawgrid1;
 
   public
     _rowBuchbar: boolean;
@@ -154,6 +155,7 @@ uses
 
   Funktionen_Basis,
   Funktionen_Beleg,
+  Funktionen_Auftrag,
 
   GUIhelp, CareTakerClient, Belege,
   Person, main, VersenderPaketID,
@@ -169,6 +171,8 @@ const
   SCAN_LIST_ARTIKEL_R = 3;
   SCAN_LIST_MENGE_SCAN = 4;
   SCAN_LIST_AUSGABEART_R = 5;
+  SCAN_LIST_LAGER = 6;
+  SCAN_LIST_VERLAG = 7;
 
 procedure TFormScanner.Button11Click(Sender: TObject);
 begin
@@ -248,8 +252,10 @@ begin
     if (Edit1.Text <> '') then
     begin
       row := DrawGrid1.row;
-      AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(row,
-        SCAN_LIST_AUSGABEART_R), cRID_Null);
+      AUSGABEART_R :=
+       {} StrToIntDef(
+       {} SCAN_LIST.readCell(row,SCAN_LIST_AUSGABEART_R),
+       {} cRID_Null);
       if (AUSGABEART_R >= cRID_FirstValid) then
       begin
 
@@ -788,8 +794,7 @@ begin
 
               // draw(rect.left + 3, rect.top + 2, StatusBMPs[random(4)]); // Status
             end;
-          1:
-            begin
+          1:begin
               // ARTIKEL
               // brush.color := HTMLColor2TColor($FFCC99);
 
@@ -841,18 +846,37 @@ begin
               begin
                 font.size := 10;
                 TextRect(Rect, Rect.left + 2, Rect.top, TXT);
-
               end;
             end;
-          2:
-            begin
-              // MENGE
-              // brush.color := HTMLColor2TColor($FFCC99);
+          2:begin
+              font.size := 10;
+              if (ARow>0) then
+              begin
+                TextRect(Rect, Rect.left + 2, Rect.top,
+                {} e_r_LagerPlatzNameFromLAGER_R(
+                {} StrToIntDef(
+                {} SCAN_LIST.readCell(ARow, SCAN_LIST_LAGER),
+                {} cRID_Null)));
 
+
+                TextOut(Rect.left + 2, Rect.top + cPlanY,
+                {} e_r_Verlag_PERSON_R (
+                {} StrToIntdef(
+                {} SCAN_LIST.readCell(ARow, SCAN_LIST_VERLAG),
+                {} cRID_Null)));
+
+              end else
+              begin
+                TextRect(Rect, Rect.left + 2, Rect.top,
+                 {} SCAN_LIST.readCell(ARow, SCAN_LIST_LAGER) + '|' +
+                 {} SCAN_LIST.readCell(ARow, SCAN_LIST_VERLAG) );
+              end;
+            end;
+          3:begin
               font.size := 10;
               TextRect(Rect, Rect.left + 2, Rect.top,
-                SCAN_LIST.readCell(ARow, ACol));
-            end;
+                SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN));
+            end
         else
           // dummy Rand Zellen
           FillRect(Rect);
@@ -872,6 +896,17 @@ begin
         FillRect(Rect);
       end;
     end;
+end;
+
+procedure TFormScanner.ResizeDrawgrid1;
+begin
+  with DrawGrid1 do
+  begin
+    ColWidths[1] :=
+     {} clientwidth -
+     {} ColWidths[0] - ColWidths[2] - ColWidths[3] -
+     {} (4 * 2 + ScrollBarWidth);
+  end;
 end;
 
 procedure TFormScanner.Edit1KeyPress(Sender: TObject; var Key: Char);
@@ -897,12 +932,13 @@ begin
       DefaultRowHeight := (cPlanY * 2) + dpiX(2);
       font.NAME := 'Courier New';
       font.Color := clblack;
-      ColCount := 4;
+      ColCount := 5;
       ColWidths[0] := dpiX(60);
-      ColWidths[2] := dpiX(130);
-      ColWidths[3] := 1;
-      ColWidths[1] := clientwidth - ColWidths[0] - ColWidths[2] -
-        (3 * 2 + ScrollBarWidth);
+      // ColWidths[1] := Artikel-Breite wird durch "ResizeDrawGrid1" gesetzt
+      ColWidths[2] := dpiX(190); // Lager|Verlag
+      ColWidths[3] := dpiX(120); // GTIN
+      ColWidths[4] := 1;
+      ResizeDrawGrid1;
       RowCount := 0;
     end;
     dgAutoSize(DrawGrid1, true);
@@ -913,11 +949,7 @@ end;
 procedure TFormScanner.FormResize(Sender: TObject);
 begin
   if initialized then
-    with DrawGrid1 do
-    begin
-      ColWidths[1] := clientwidth - ColWidths[0] - ColWidths[2] -
-        (3 * 2 + ScrollBarWidth);
-    end;
+   ResizeDrawGrid1;
 end;
 
 procedure TFormScanner.hotEvent;
@@ -1165,7 +1197,9 @@ begin
     { 2 } ' coalesce(ARTIKEL_AA.GTIN, ARTIKEL.GTIN) as GTIN,' +
     { 3 } ' POSTEN.ARTIKEL_R,' +
     { 4 } ' 0 as MENGE_SCAN, ' +
-    { 5 } ' POSTEN.AUSGABEART_R ' +
+    { 5 } ' POSTEN.AUSGABEART_R, ' +
+    { 6 } ' ARTIKEL.LAGER_R as LAGER, ' +
+    { 7 } ' ARTIKEL.VERLAG_R as VERLAG ' +
     { } 'from POSTEN ' +
     { } 'left join ARTIKEL on' +
     { } ' (POSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
@@ -1286,5 +1320,6 @@ procedure TFormScanner.Button7Click(Sender: TObject);
 begin
   doArtikelJump;
 end;
+
 
 end.
