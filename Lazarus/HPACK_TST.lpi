@@ -61,6 +61,7 @@
       <Unit4>
         <Filename Value="..\HTTP2\hmux.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="HMUX"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\HTTP2\hpack.pas"/>
@@ -76,6 +77,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <Libraries Value="\usr\lib64\gcc\x86_64-suse-linux\4.8"/>
       <OtherUnitFiles Value="..\PASconTools;..\HTTP2"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -92,6 +94,12 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <CustomOptions Value="if TargetOS='Linux' then
+begin
+ LibPath += ';/usr/lib64/gcc/x86_64-suse-linux/4.8';
+end;"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

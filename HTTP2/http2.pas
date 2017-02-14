@@ -82,6 +82,12 @@ end;
 // create a Parameter Context for a TLS 1.2 Server Connection
 // intended for a "HTTPS://" Server Socket
 
+
+var
+ CTX : PSSL_CTX;
+ METH : PSSL_METHOD;
+
+
 function StrictHTTP2Context: PSSL_CTX;
 var
  p : array[0..4096] of char;
@@ -89,10 +95,12 @@ begin
 
   Path := ExtractFilePath(paramstr(0));
 //
+ METH := nil;
+ METH := TLSv1_2_server_method;
 
+ CTX := SSL_CTX_new(METH);
 
-  Result := SSL_CTX_new(TLSv1_2_server_method);
-
+ result := CTX;
   if not(assigned(result)) then
     raise Exception.Create('Create a new SSL-Context fails');
 
@@ -217,8 +225,10 @@ end;
 procedure TLS_Init;
 begin
 
-//if not (InitSSLInterface) then
-//  raise Exception.Create('SSL Init Fail');
+  CTX := StrictHTTP2Context;
+
+if not(assigned(CTX))  then
+  raise Exception.Create('SSL Init Fail');
 
 //ERR_load_crypto_strings;
 //OpenSSL_Version  := SSLeayversion(0);

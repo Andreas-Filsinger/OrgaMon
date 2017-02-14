@@ -18,6 +18,7 @@ type
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
+    Button6: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
@@ -32,6 +33,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { private declarations }
 
@@ -48,7 +50,14 @@ var
 implementation
 
 uses
- fpjson, jsonparser, anfix32, HPACK, HTTP2, cryptossl;
+  // freepascal / Lazarus
+  fpjson, jsonparser,
+
+  // tools
+  anfix32,
+
+  // aus dem HTTP/2 Projekt
+  HPACK, HTTP2, cryptossl;
 
 {$R *.lfm}
 
@@ -69,7 +78,6 @@ begin
     memo1.Lines.addStrings(HPACK);
   end;
   HPACK.Free;
-
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -78,12 +86,12 @@ const
 var
   sDir: TStringList;
   sTest: TStringList;
-  m,n,o,i: integer;
+  m, n, o, i: integer;
   Path: string;
   S: TFileStream;
   P: TJSONParser;
-  jROOT,jCASE,jTEST,jHEADER : TJSONData;
-  V : TObject;
+  jROOT, jCASE, jTEST, jHEADER: TJSONData;
+  V: TObject;
   W: string;
   H: TStringList;
 
@@ -111,7 +119,7 @@ begin
         S := TFileStream.Create(Path + sTest[m], fmOpenRead);
         try
           P := TJSONParser.Create(S);
-          P.Strict := true;
+          P.Strict := True;
           try
             jROOT := P.Parse;
           finally
@@ -127,27 +135,27 @@ begin
           memo1.Lines.add('  ' + jROOT.getPath('description').AsString);
 
           jCASE := jROOT.getPath('cases');
-          for o := 0 to pred(jCASE.count) do
+          for o := 0 to pred(jCASE.Count) do
           begin
             jTEST := jCASE.items[o];
             W := jTEST.getPath('wire').AsString;
             edit1.Text := W;
 
-            H:= TStringList.create;
+            H := TStringList.Create;
 
             jHEADER := jTEST.getPath('headers');
 
             //memo1.Lines.add(Inttostr(jHEADER.count)+'x');
             //memo1.Lines.add(jHEADER.AsJSON);
-            for i := 0 to pred(jHEADER.count) do
+            for i := 0 to pred(jHEADER.Count) do
             begin
-             //memo1.Lines.add(jHEADER.Items[i].AsJSON);
+              //memo1.Lines.add(jHEADER.Items[i].AsJSON);
               memo1.Lines.add('   ' + JSONStringToString(jHEADER.Items[i].AsJSON));
-             // memo1.Lines.add(jHEADER.Strings[ jHEADER.Names[i] ]);
+              // memo1.Lines.add(jHEADER.Strings[ jHEADER.Names[i] ]);
             end;
 
             //with (jHEADER as TJSONArray) do
-//             memo1.Lines.add(jHEADER.AsString);
+            //             memo1.Lines.add(jHEADER.AsString);
             // end;
 
 
@@ -162,8 +170,8 @@ begin
 }
           end;
 
-
-        end else
+        end
+        else
         begin
           memo1.Lines.add('  ' + '<NIL>');
         end;
@@ -182,12 +190,12 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   FD := getSocket;
-  memo2.lines.add( 'Get Socket : ' + IntToStr(FD) );
+  memo2.Lines.add('Get Socket : ' + IntToStr(FD));
 end;
 
 procedure TForm1.Button4Click(Sender: TObject);
 begin
-  if (FD=0) then
+  if (FD = 0) then
     exit;
   TLS_Bind(FD);
 end;
@@ -195,8 +203,15 @@ end;
 procedure TForm1.Button5Click(Sender: TObject);
 begin
   TLS_Init;
-  memo2.lines.add(cryptossl.Version);
-  memo2.lines.AddStrings(sDebug);
+  if (sDebug.Count = 0) then
+    memo2.Lines.Add('keine Fehler beim "Init"')
+  else
+    memo2.Lines.AddStrings(sDebug);
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+begin
+  memo2.Lines.add(cryptossl.Version);
 end;
 
 end.
