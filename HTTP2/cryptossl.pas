@@ -117,8 +117,13 @@ begin
   if (libssl_HANDLE > 0) then
   begin
 
+    {$ifdef MSWINDOWS}
+    OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,
+      'OpenSSL_version'));
+    {$else}
     OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libssl_HANDLE,
       'OpenSSL_version'));
+    {$endif}
     if not (assigned(OpenSSL_version)) then
       sDebug.add(LastError);
 
