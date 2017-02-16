@@ -33,7 +33,7 @@ uses
 // debug infos
 
 var
-  sDebug: TStringList;
+  sDebug: TStringList = nil;
 
 // lib stuff for the public
 
@@ -41,16 +41,38 @@ const
   SSL_CTRL_SET_ECDH_AUTO = 94;
   SSL_FILETYPE_PEM = 1;
 
+  OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
+OPENSSL_INIT_LOAD_CRYPTO_STRINGS    = $00000002;
+OPENSSL_INIT_ADD_ALL_CIPHERS         = $00000004;
+OPENSSL_INIT_ADD_ALL_DIGESTS         = $00000008;
+OPENSSL_INIT_NO_ADD_ALL_CIPHERS      = $00000010;
+OPENSSL_INIT_NO_ADD_ALL_DIGESTS      = $00000020;
+OPENSSL_INIT_LOAD_CONFIG             = $00000040;
+OPENSSL_INIT_NO_LOAD_CONFIG          = $00000080;
+OPENSSL_INIT_ASYNC                   = $00000100;
+OPENSSL_INIT_ENGINE_RDRAND           = $00000200;
+OPENSSL_INIT_ENGINE_DYNAMIC          = $00000400;
+OPENSSL_INIT_ENGINE_OPENSSL          = $00000800;
+OPENSSL_INIT_ENGINE_CRYPTODEV        = $00001000;
+OPENSSL_INIT_ENGINE_CAPI             = $00002000;
+OPENSSL_INIT_ENGINE_PADLOCK          = $00004000;
+OPENSSL_INIT_ENGINE_AFALG            = $00008000;
+
+  OPENSSL_INIT_NO_LOAD_SSL_STRINGS  =  $00100000;
+  OPENSSL_INIT_LOAD_SSL_STRINGS     =  $00200000;
+
 
 type
   // Data-Types
+  POPENSSL_INIT_SETTINGS = Pointer;
   PSSL_CTX = Pointer;
   PSSL = Pointer;
   PSSL_METHOD = Pointer;
 
   // Function-Types
+  TOPENSSL_init_ssl = function (opts: cuint64; settings : POPENSSL_INIT_SETTINGS) : cInt;
   TOpenSSL_version = function(t: cInt): PChar; cdecl;
-  TTLSv1_2_server_method = function: PSSL_METHOD; cdecl;
+  TTLSv1_2_server_method = function(): PSSL_METHOD; cdecl;
   TSSL_CTX_new = function(meth: PSSL_METHOD): PSSL_CTX; cdecl;
   TSSL_CTX_use_certificate_file = function(ctx: PSSL_CTX; const _file: PChar;
     _type: cInt): cInt; cdecl;
@@ -61,15 +83,23 @@ type
 
 const
   // lib functions for the public
+  OPENSSL_init_ssl : TOPENSSL_init_ssl = nil;
+  OpenSSL_version: TOpenSSL_version = nil;
   TLSv1_2_server_method: TTLSv1_2_server_method = nil;
+  TLS_server_method:     TTLSv1_2_server_method = nil;
+  TLS_client_method:     TTLSv1_2_server_method = nil;
   SSL_CTX_new: TSSL_CTX_new = nil;
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
   SSL_CTX_use_PrivateKey_file: TSSL_CTX_use_PrivateKey_file = nil;
   SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
-  OpenSSL_version: TOpenSSL_version = nil;
 
 function Version: string;
 function LastError: string;
+
+
+var
+ CTX : PSSL_CTX = nil;
+ METH : PSSL_METHOD = nil;
 
 implementation
 
@@ -100,6 +130,9 @@ var
 
 procedure Init;
 begin
+  if assigned(sDebug) then
+   exit;
+
   sDebug := TStringList.Create;
 
 
@@ -117,20 +150,41 @@ begin
   if (libssl_HANDLE > 0) then
   begin
 
-    {$ifdef MSWINDOWS}
+    //
+    // import libcrypto functions
+    //
+
     OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,
       'OpenSSL_version'));
-    {$else}
-    OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libssl_HANDLE,
-      'OpenSSL_version'));
-    {$endif}
     if not (assigned(OpenSSL_version)) then
       sDebug.add(LastError);
+
+    //
+    // import libssl functions
+    //
+
+    OPENSSL_init_ssl :=
+     {} TOPENSSL_init_ssl(
+     {} GetProcedureAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
+    if not(assigned(OPENSSL_init_ssl)) then
+    sDebug.add(LastError);
+
 
     TLSv1_2_server_method := TTLSv1_2_server_method(
       GetProcedureAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
     if not (assigned(TLSv1_2_server_method)) then
-      sDebug.add(LastError);
+    sDebug.add(LastError);
+
+    TLS_server_method := TTLSv1_2_server_method(
+      GetProcedureAddress(libssl_HANDLE, 'TLS_server_method'));
+    if not (assigned(TLS_server_method)) then
+    sDebug.add(LastError);
+
+
+    TLS_client_method := TTLSv1_2_server_method(
+      GetProcedureAddress(libssl_HANDLE, 'TLS_client_method'));
+    if not (assigned(TLS_client_method)) then
+    sDebug.add(LastError);
 
     SSL_CTX_new := TSSL_CTX_new(GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
@@ -150,7 +204,15 @@ begin
       TSSL_CTX_use_PrivateKey_file(GetProcedureAddress(libssl_HANDLE,
       'SSL_CTX_use_PrivateKey_file'));
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
-      sDebug.add(LastError);
+    sDebug.add(LastError);
+
+    //
+    //
+    //
+
+    if (OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CONFIG, nil)<>1) then
+     sDebug.add('OPENSSL_init_ssl fail!');
+
 
   end
   else
@@ -161,8 +223,7 @@ end;
 
 function Version: string;
 begin
-  if not(assigned(OpenSSL_version)) then
-   Init;
+  Init;
 
   if assigned(OpenSSL_version) then
     Result := PChar(OpenSSL_version(_OPENSSL_VERSION))

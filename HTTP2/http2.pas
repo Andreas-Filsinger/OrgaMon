@@ -31,6 +31,7 @@ unit HTTP2;
 
 interface
 
+
 uses
   cTypes, Classes, SysUtils, ssockets;
 
@@ -57,25 +58,12 @@ uses
   cryptossl,
   HMUX;
 
+
+// Knowledge Base
 // fpopenssl
 // http2_openssl.pas
 // socketssl
 
-// just simple hack wait for new "openssl"
-
-{
-const
-SSL_CTRL_SET_ECDH_AUTO = 94;
-
-
-function SslMethodTLSV1_2: PSSL_METHOD;
-begin
-  Result := openssl.SslMethodV23;
-end;
-
- }
-
-// end hacks
 
 
 
@@ -83,9 +71,37 @@ end;
 // intended for a "HTTPS://" Server Socket
 
 
-var
- CTX : PSSL_CTX;
- METH : PSSL_METHOD;
+
+
+
+
+
+
+ (* ServerName Callback!
+
+ static int ssl_servername_cb(SSL *s, int *ad, void *arg)
+ {
+     tlsextctx *p = (tlsextctx * ) arg;
+     const char *servername = SSL_get_servername(s, TLSEXT_NAMETYPE_host_name);
+     if (servername && p->biodebug)
+         BIO_printf(p->biodebug, "Hostname in TLS extension: \"%s\"\n",
+                    servername);
+
+     if (!p->servername)
+         return SSL_TLSEXT_ERR_NOACK;
+
+     if (servername) {
+         if (strcasecmp(servername, p->servername))
+             return p->extension_error;
+         if (ctx2) {
+             BIO_printf(p->biodebug, "Switching server context.\n");
+             SSL_set_SSL_CTX(s, ctx2);
+         }
+     }
+     return SSL_TLSEXT_ERR_OK;
+ }
+    *)
+
 
 
 function StrictHTTP2Context: PSSL_CTX;
@@ -96,7 +112,12 @@ begin
   Path := ExtractFilePath(paramstr(0));
 //
  METH := nil;
- METH := TLSv1_2_server_method;
+// METH := TLSv1_2_server_method;
+ METH := TLS_client_method;
+
+ // SEG-Fault here because of
+
+ CRYPTO_set_mem_functions
 
  CTX := SSL_CTX_new(METH);
 
