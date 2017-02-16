@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015 - 2016  Andreas Filsinger
+  |    Copyright (C) 2015 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1227,7 +1227,7 @@ begin
       if (pos('mv ', AllTRN[n]) = 1) then
         BildName := ExtractFileName(nextp(AllTRN[n], ' ', 1));
 
-      if (BildName <> '') and (pos('Neu', BildName) = 0) then
+      if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
       begin
         //
         GERAET := copy(BildName, 1, 3);
@@ -1271,7 +1271,7 @@ begin
     if (pos('mv ', AllTRN[m]) = 1) then
       BildName := ExtractFileName(nextp(AllTRN[m], ' ', 1));
 
-    if (BildName <> '') and (pos('Neu', BildName) = 0) then
+    if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
     begin
 
       with sHANGOVER do
@@ -1732,6 +1732,7 @@ begin
     if (FNameNeu = FNameAlt) then
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
+      Log(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmt bereits');
       WARTEND.del(r);
       inc(Stat_Umbenannt);
     end

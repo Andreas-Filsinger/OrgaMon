@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.265 (16.02.17) Andreas Filsinger
+
+ Bug: Foto "Neu-1.jpg" wurde nicht korrekt in die -Neu Tabelle eingetragen
+
 Rev 8.264 (13.02.17) Andreas Filsinger
 
  Neu: Scanner: neue Spalten "Lagerplatz" und "Verlagsname"

@@ -3539,24 +3539,29 @@ begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } cFotoService_NeuPlatzhalter
+            { } cFotoService_NeuPlatzhalter +
+      { } '-Regler'
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } cFotoService_NeuPlatzhalter
+            { } cFotoService_NeuPlatzhalter +
+      { } '-Regler'
         end
         else
         begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix +
-            { } Reglernummer_neu
+            { } Reglernummer_neu +
+      { } '-Regler'
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
-            { } Reglernummer_neu;
+            { } Reglernummer_neu +
+      { } '-Regler';
+
           UmbenennungAbgeschlossen := true;
         end;
         break;
