@@ -25,6 +25,10 @@ unit cryptossl;
 
 {$mode objfpc}{$H+}
 
+
+{$define LIB_SSL_REV_10x}
+{ $ define LIB_SSL_REV_11x}
+
 interface
 
 uses
@@ -69,9 +73,9 @@ type
   PSSL_METHOD = Pointer;
 
   // Callback-Function-Types
-  TCRYPTO_malloc = function(num: size_t; const _file: PChar;
+  TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
     line: cint): Pointer; cdecl;
-  TCRYPTO_realloc = function(p: Pointer; num: size_t; _file: PChar;
+  TCRYPTO_realloc = function(p: Pointer; num: cardinal; _file: PChar;
     line: cint): Pointer; cdecl;
   TCRYPTO_free = procedure(str: Pointer; const p1: PChar; p2: cint); cdecl;
 
@@ -81,7 +85,7 @@ type
   TCRYPTO_set_mem_functions = function(m: TCRYPTO_malloc; r: TCRYPTO_realloc;
     f: TCRYPTO_free): cint; cdecl;
   TOpenSSL_version = function(t: cint): PChar; cdecl;
-  TTLSv1_2_server_method = function(): PSSL_METHOD; cdecl;
+  TOpenSSL_method = function: PSSL_METHOD; cdecl;
   TSSL_CTX_new = function(meth: PSSL_METHOD): PSSL_CTX; cdecl;
   TSSL_CTX_use_certificate_file = function(ctx: PSSL_CTX; const _file: PChar;
     _type: cint): cint; cdecl;
@@ -95,9 +99,9 @@ const
   OPENSSL_init_ssl: TOPENSSL_init_ssl = nil;
   CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
-  TLSv1_2_server_method: TTLSv1_2_server_method = nil;
-  TLS_server_method: TTLSv1_2_server_method = nil;
-  TLS_client_method: TTLSv1_2_server_method = nil;
+  TLSv1_2_server_method: TOpenSSL_method = nil;
+  TLS_server_method:TOpenSSL_method = nil;
+  TLS_client_method: TOpenSSL_method = nil;
   SSL_CTX_new: TSSL_CTX_new = nil;
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
   SSL_CTX_use_PrivateKey_file: TSSL_CTX_use_PrivateKey_file = nil;
@@ -122,46 +126,61 @@ const
 
 const
 {$ifdef MSWINDOWS}
-{$ifdef win64}
-  cLIB_NAME_CRYPTO = 'libcrypto-1_1-x64.dll';
-  cLIB_NAME_SSL = 'libssl-1_1-x64.dll';
+
+  {$ifdef win64}
+    cLIB_NAME_CRYPTO = 'libcrypto-1_1-x64.dll';
+    cLIB_NAME_SSL = 'libssl-1_1-x64.dll';
+  {$else}
+    cLIB_NAME_CRYPTO = 'libcrypto-1_1.dll';
+    cLIB_NAME_SSL = 'libssl-1_1.dll';
+  {$endif}
+
 {$else}
-  cLIB_NAME_CRYPTO = 'libcrypto-1_1.dll';
-  cLIB_NAME_SSL = 'libssl-1_1.dll';
-{$endif}
-{$else}
-  cLIB_NAME_CRYPTO = 'libcrypto.so.1.1';
-  cLIB_NAME_SSL = 'libssl.so.1.1';
+
+  {$ifdef LIB_SSL_REV_11x}
+   cLIB_NAME_CRYPTO = 'libcrypto.so.1.1';
+   cLIB_NAME_SSL = 'libssl.so.1.1';
+  {$endif LIB_SSL_REV_11x}
+
+  {$ifdef LIB_SSL_REV_10x}
+   cLIB_NAME_CRYPTO = 'libcrypto.so.1.0.0';
+   cLIB_NAME_SSL = 'libssl.so.1.0.0';
+  {$endif LIB_SSL_REV_10x}
+
 {$endif}
 
 var
   libssl_HANDLE: TLibHandle = 0;
   libcrypto_HANDLE: TLibHandle = 0;
 
-function CRYPTO_malloc(num: size_t; const _file: PChar;
+
+
+
+function CRYPTO_malloc(num: cardinal; const _file: PChar;
   line: cint): Pointer; cdecl;
 begin
   Result := AllocMem(num);
-
     (*
+
+
     Result := nil;
 
-    if (size < 0) then Exit;
+    if (num <= 0) then Exit;
 
     Result := HeapAlloc(
       GetProcessHeap,
       $8{HEAP_ZERO_MEMORY},
       size
       );
-    *)
+      *)
+
 
 end;
 
-function CRYPTO_realloc(p: Pointer; num: size_t; _file: PChar;
+function CRYPTO_realloc(p: Pointer; num: cardinal; _file: PChar;
   line: cint): Pointer; cdecl;
 begin
-  Result := p;
-  ReallocMem(Result, num);
+  result := ReallocMem(p, num);
 
     (*
     Result := nil;
@@ -241,6 +260,10 @@ begin
     OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,
       'OpenSSL_version'));
     if not (assigned(OpenSSL_version)) then
+    begin
+      OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,'SSLeay_version'));
+    end;
+    if not (assigned(OpenSSL_version)) then
       sDebug.add(LastError);
 
     CRYPTO_set_mem_functions :=
@@ -250,27 +273,35 @@ begin
       sDebug.add(LastError);
 
 
+
+
     // import libssl functions
 
+    {$ifdef LIB_SSL_REV_11x}
     OPENSSL_init_ssl :=
       TOPENSSL_init_ssl(GetProcedureAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
+    {$endif}
 
-    TLSv1_2_server_method := TTLSv1_2_server_method(
+    TLSv1_2_server_method := TOpenSSL_method(
       GetProcedureAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
     if not (assigned(TLSv1_2_server_method)) then
       sDebug.add(LastError);
 
-    TLS_server_method := TTLSv1_2_server_method(
+    {$ifdef LIB_SSL_REV_11x}
+    TLS_server_method := TOpenSSL_method(
       GetProcedureAddress(libssl_HANDLE, 'TLS_server_method'));
     if not (assigned(TLS_server_method)) then
       sDebug.add(LastError);
+    {$endif}
 
-    TLS_client_method := TTLSv1_2_server_method(
+    {$ifdef LIB_SSL_REV_11x}
+    TLS_client_method := TOpenSSL_method(
       GetProcedureAddress(libssl_HANDLE, 'TLS_client_method'));
     if not (assigned(TLS_client_method)) then
       sDebug.add(LastError);
+    {$endif}
 
     SSL_CTX_new := TSSL_CTX_new(GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
@@ -292,12 +323,23 @@ begin
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
       sDebug.add(LastError);
 
+    (*
+    if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
+      sDebug.add('CRYPTO_set_mem_functions fail!');
+    *)
+
+    {$ifdef LIB_SSL_REV_10x}
+
+    {$endif}
+
+    {$ifdef LIB_SSL_REV_11x}
 
     if (OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CRYPTO_STRINGS or OPENSSL_INIT_LOAD_SSL_STRINGS, nil) <> 1) then
       sDebug.add('OPENSSL_init_ssl fail!');
 
-    if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
-      sDebug.add('CRYPTO_set_mem_functions fail!');
+    {$endif}
+
+
 
   end
   else

@@ -109,11 +109,11 @@ var
  p : array[0..4096] of char;
 begin
 
-  Path := ExtractFilePath(paramstr(0));
 //
  METH := nil;
  METH := TLSv1_2_server_method;
 // METH := TLS_client_method;
+// METH := TLS_server_method;
 
  // SEG-Fault here because of
 
@@ -253,6 +253,7 @@ if not(assigned(CTX))  then
 
 //ERR_load_crypto_strings;
 //OpenSSL_Version  := SSLeayversion(0);
+Path := ExtractFilePath(paramstr(0));
 
 end;
 
