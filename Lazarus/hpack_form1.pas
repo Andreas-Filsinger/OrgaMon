@@ -212,6 +212,8 @@ end;
 procedure TForm1.Button6Click(Sender: TObject);
 begin
   memo2.Lines.add(cryptossl.Version);
+  memo2.Lines.addstrings(cryptossl.sDebug);
+  memo2.Lines.add('----------');
 end;
 
 end.

@@ -112,12 +112,12 @@ begin
   Path := ExtractFilePath(paramstr(0));
 //
  METH := nil;
-// METH := TLSv1_2_server_method;
- METH := TLS_client_method;
+ METH := TLSv1_2_server_method;
+// METH := TLS_client_method;
 
  // SEG-Fault here because of
 
- CRYPTO_set_mem_functions
+ //CRYPTO_set_mem_functions
 
  CTX := SSL_CTX_new(METH);
 
