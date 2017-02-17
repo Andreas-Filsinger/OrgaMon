@@ -23,18 +23,32 @@
 }
 unit cryptossl;
 
+{$ifdef FPC}
 {$mode objfpc}{$H+}
+{$endif}
 
 
-{$define LIB_SSL_REV_10x}
-{ $ define LIB_SSL_REV_11x}
+{ $ define LIB_SSL_REV_10x}
+{$define LIB_SSL_REV_11x}
 
 interface
 
 uses
-  ctypes, Classes;
+ {$ifdef FPC}
+  ctypes,
+ {$endif}
+  Classes;
 
 // debug infos
+
+{$ifndef FPC}
+type
+ cint = INteger;
+ cint32 = Word;
+ cuint64 = int64;
+ clong = longint;
+{$endif}
+
 
 var
   sDebug: TStringList = nil;
@@ -82,9 +96,10 @@ type
   // API-Function-Types
   TOPENSSL_init_ssl = function(opts: cuint64;
     settings: POPENSSL_INIT_SETTINGS): cint; cdecl;
+  TSSL_library_init = function:cint; cdecl;
   TCRYPTO_set_mem_functions = function(m: TCRYPTO_malloc; r: TCRYPTO_realloc;
     f: TCRYPTO_free): cint; cdecl;
-  TOpenSSL_version = function(t: cint): PChar; cdecl;
+  TOpenSSL_version = function(t: cint): PAnsiChar; cdecl;
   TOpenSSL_method = function: PSSL_METHOD; cdecl;
   TSSL_CTX_new = function(meth: PSSL_METHOD): PSSL_CTX; cdecl;
   TSSL_CTX_use_certificate_file = function(ctx: PSSL_CTX; const _file: PChar;
@@ -97,6 +112,7 @@ type
 const
   // lib functions for the public
   OPENSSL_init_ssl: TOPENSSL_init_ssl = nil;
+  SSL_library_init: TSSL_library_init = nil;
   CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
   TLSv1_2_server_method: TOpenSSL_method = nil;
@@ -118,7 +134,12 @@ var
 implementation
 
 uses
-  dynlibs;
+{$ifdef FPC}
+  dynlibs
+{$else}
+ windows
+ {$endif}
+ ;
 
 const
   _OPENSSL_VERSION = 0;
@@ -150,10 +171,11 @@ const
 {$endif}
 
 var
-  libssl_HANDLE: TLibHandle = 0;
-  libcrypto_HANDLE: TLibHandle = 0;
+//  libssl_HANDLE: TLibHandle = 0;
+//  libcrypto_HANDLE: TLibHandle = 0;
 
-
+  libssl_HANDLE: HMODULE = 0;
+  libcrypto_HANDLE: HMODULE = 0;
 
 
 function CRYPTO_malloc(num: cardinal; const _file: PChar;
@@ -180,7 +202,9 @@ end;
 function CRYPTO_realloc(p: Pointer; num: cardinal; _file: PChar;
   line: cint): Pointer; cdecl;
 begin
+{$ifdef FPC}
   result := ReallocMem(p, num);
+{$endif}
 
     (*
     Result := nil;
@@ -257,17 +281,17 @@ begin
     // import libcrypto functions
 
 
-    OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,
+    OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,
       'OpenSSL_version'));
     if not (assigned(OpenSSL_version)) then
     begin
-      OpenSSL_version := TOpenSSL_version(GetProcedureAddress(libcrypto_HANDLE,'SSLeay_version'));
+      OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,'SSLeay_version'));
     end;
     if not (assigned(OpenSSL_version)) then
       sDebug.add(LastError);
 
     CRYPTO_set_mem_functions :=
-      TCRYPTO_set_mem_functions(GetProcedureAddress(libcrypto_HANDLE,
+      TCRYPTO_set_mem_functions(GetProcAddress(libcrypto_HANDLE,
       'CRYPTO_set_mem_functions'));
     if not (assigned(CRYPTO_set_mem_functions)) then
       sDebug.add(LastError);
@@ -279,46 +303,52 @@ begin
 
     {$ifdef LIB_SSL_REV_11x}
     OPENSSL_init_ssl :=
-      TOPENSSL_init_ssl(GetProcedureAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
+      TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
     {$endif}
 
+    {$ifdef LIB_SSL_REV_10x}
+    SSL_library_init := TSSL_library_init(GetProcAddress(libssl_HANDLE, 'SSL_library_init'));
+    if not (assigned(SSL_library_init)) then
+      sDebug.add(LastError);
+    {$endif}
+
     TLSv1_2_server_method := TOpenSSL_method(
-      GetProcedureAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
+      GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
     if not (assigned(TLSv1_2_server_method)) then
       sDebug.add(LastError);
 
     {$ifdef LIB_SSL_REV_11x}
     TLS_server_method := TOpenSSL_method(
-      GetProcedureAddress(libssl_HANDLE, 'TLS_server_method'));
+      GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
     if not (assigned(TLS_server_method)) then
       sDebug.add(LastError);
     {$endif}
 
     {$ifdef LIB_SSL_REV_11x}
     TLS_client_method := TOpenSSL_method(
-      GetProcedureAddress(libssl_HANDLE, 'TLS_client_method'));
+      GetProcAddress(libssl_HANDLE, 'TLS_client_method'));
     if not (assigned(TLS_client_method)) then
       sDebug.add(LastError);
     {$endif}
 
-    SSL_CTX_new := TSSL_CTX_new(GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_new'));
+    SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
       sDebug.add(LastError);
 
-    SSL_CTX_ctrl := TSSL_CTX_ctrl(GetProcedureAddress(libssl_HANDLE, 'SSL_CTX_ctrl'));
+    SSL_CTX_ctrl := TSSL_CTX_ctrl(GetProcAddress(libssl_HANDLE, 'SSL_CTX_ctrl'));
     if not (assigned(SSL_CTX_ctrl)) then
       sDebug.add(LastError);
 
     SSL_CTX_use_certificate_file :=
-      TSSL_CTX_use_certificate_file(GetProcedureAddress(libssl_HANDLE,
+      TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_certificate_file'));
     if not (assigned(SSL_CTX_use_certificate_file)) then
       sDebug.add(LastError);
 
     SSL_CTX_use_PrivateKey_file :=
-      TSSL_CTX_use_PrivateKey_file(GetProcedureAddress(libssl_HANDLE,
+      TSSL_CTX_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_PrivateKey_file'));
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
       sDebug.add(LastError);
@@ -329,7 +359,11 @@ begin
     *)
 
     {$ifdef LIB_SSL_REV_10x}
-
+                     SSL_library_init;
+    OpenSSL_add_all_algorithms;
+OpenSSL_add_all_ciphers;
+OpenSSL_add_all_digests;
+ERR_load_crypto_strings;
     {$endif}
 
     {$ifdef LIB_SSL_REV_11x}
@@ -349,18 +383,25 @@ begin
 end;
 
 function Version: string;
+var
+ P : PChar;
 begin
   Init;
 
   if assigned(OpenSSL_version) then
-    Result := PChar(OpenSSL_version(_OPENSSL_VERSION))
-  else
+  begin
+    result := OpenSSL_version(_OPENSSL_VERSION);
+  end else
+  begin
     Result := '- lib not loaded';
+  end;
 end;
 
 function LastError: string;
 begin
+{$ifdef FPC}
   Result := GetLoadErrorStr;
+{$endif}
 end;
 
 end.

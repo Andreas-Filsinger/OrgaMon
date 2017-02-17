@@ -1,4 +1,4 @@
-{
+﻿{
 |     _   _   _____   _____   ____       __  ____
 |    | | | | |_   _| |_   _| |  _ \     / / |___ \
 |    | |_| |   | |     | |   | |_) |   / /    __) |
@@ -27,22 +27,32 @@
 }
 unit HTTP2;
 
+{$ifdef FPC}
 {$mode objfpc}{$H+}
+{$endif}
 
 interface
 
 
 uses
-  cTypes, Classes, SysUtils, ssockets;
+ {$ifdef FPC}
+  cTypes,
+  ssockets,
+ {$endif}
+  cryptossl,
+  Classes,
+  SysUtils;
 
 const
-     {$ifdef linux}
-     client_socket : TUnixServer = nil;
-     {$else}
+{$ifdef FPC}
+  {$ifdef linux}
+  client_socket : TUnixServer = nil;
+  {$else}
   client_socket : TInetServer = nil;
   {$endif}
+{$endif}
   OpenSSL_Error : string = '';
-     Path: string= '';
+  Path: string= '';
 
 
 
@@ -53,10 +63,11 @@ procedure TLS_Init;
 
 implementation
 
+  {$ifdef FPC}
 uses
   systemd,
-  cryptossl,
   HMUX;
+  {$endif}
 
 
 // Knowledge Base
@@ -106,18 +117,11 @@ uses
 
 function StrictHTTP2Context: PSSL_CTX;
 var
- p : array[0..4096] of char;
+ p : array[0..4096] of AnsiChar;
 begin
 
 //
- METH := nil;
  METH := TLSv1_2_server_method;
-// METH := TLS_client_method;
-// METH := TLS_server_method;
-
- // SEG-Fault here because of
-
- //CRYPTO_set_mem_functions
 
  CTX := SSL_CTX_new(METH);
 
@@ -188,10 +192,9 @@ begin
   buf += Content;
   stack();
   stack();
+  SSLwrite(ssl, @Buf, 16);
     *)
 
-  SSLwrite(ssl, @Buf, 16);
-           *)
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
@@ -199,7 +202,7 @@ end;
 
 function getSocket: longint;
 begin
-
+  {$ifdef FPC}
   // try systemd
   sd_notify(0, 'READY=1\nSTATUS=Ready\n');
   Result := sd_listen_fds(0);
@@ -241,6 +244,7 @@ begin
       end;
     end;
   end;
+  {$endif}
 end;
 
 procedure TLS_Init;
@@ -253,7 +257,7 @@ if not(assigned(CTX))  then
 
 //ERR_load_crypto_strings;
 //OpenSSL_Version  := SSLeayversion(0);
-Path := ExtractFilePath(paramstr(0));
+//Path := ExtractFilePath(paramstr(0));
 
 end;
 
