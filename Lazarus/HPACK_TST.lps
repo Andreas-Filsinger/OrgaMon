@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="43">
+    <Units Count="44">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -29,7 +29,6 @@
       <Unit2>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <TopLine Value="118"/>
         <CursorPos X="36" Y="147"/>
@@ -310,21 +309,29 @@
         <UsageCount Value="10"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\..\..\..\..\usr\share\fpcsrc\rtl\inc\ctypes.pp"/>
-        <EditorIndex Value="9"/>
+        <Filename Value="Z:\usr\share\fpcsrc\rtl\inc\ctypes.pp"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="23" Y="35"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\..\..\..\..\usr\share\fpcsrc\rtl\inc\heaph.inc"/>
-        <EditorIndex Value="8"/>
+        <Filename Value="Z:\usr\share\fpcsrc\rtl\inc\heaph.inc"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="63"/>
         <CursorPos X="10" Y="97"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit42>
+      <Unit43>
+        <Filename Value="C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\Lazarus\lcl\jsonpropstorage.pas"/>
+        <UnitName Value="JSONPropStorage"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="119"/>
+        <CursorPos Y="150"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit43>
     </Units>
     <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
