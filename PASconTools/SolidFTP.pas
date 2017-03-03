@@ -1391,6 +1391,15 @@ var
 begin
   result := true;
 
+  // Check for illegal Chars inside the FileName
+  for n := 1 to length(cInvalidFNameChars) do
+   if (pos(cInvalidFNameChars[n],FileName)>0) then
+   begin
+     solidLog(cWARNINGText + ' i do now ignore the illegal FileName "'+FileName+'" the FTP-Server just reported');
+     result := false;
+     exit;
+   end;
+
   // No Pattern, no further check
   if (Pattern = '') then
     exit;

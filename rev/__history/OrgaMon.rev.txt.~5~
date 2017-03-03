@@ -21,8 +21,7 @@ Dokumentation
 
 Rev 8.266 (03.03.17) Andreas Filsinger
 
- Bug: FotoService: Datei "Fotobenennung-*" mit Sonderzeichen kann die Verarbeitung stören
- Bug: FotoService: Falsche Syntax des Foto-Dateinamens kann die Verarbeitung stören
+ Bug: Datei "Fotobenennung-*" mit Sonderzeichen kann die Verarbeitung stören
 
 Rev 8.265 (16.02.17) Andreas Filsinger
 

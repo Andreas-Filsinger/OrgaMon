@@ -714,9 +714,21 @@ begin
       while true do
       begin
 
+        if (length(FotoGeraeteNo)<>3) then
+        begin
+          Log(cERRORText + ' ' + sFiles[m] + ': 719: Syntax des Dateinamens falsch: Geräte-ID nicht erkennbar!');
+          break;
+        end;
+
+        if (StrToIntDef(FotoGeraeteNo,0)<=0) then
+        begin
+          Log(cERRORText + ' ' + sFiles[m] + ': 725: Syntax des Dateinamens falsch: Geräte-ID nicht im Bereich von 001-999!');
+          break;
+        end;
+
         if (AUFTRAG_R < 1) then
         begin
-          Log(cERRORText + ' ' + sFiles[m] + ': RID konnte nicht ermittelt werden!');
+          Log(cERRORText + ' ' + sFiles[m] + ': 731: Syntax des Dateinamens falsch: RID konnte nicht ermittelt werden!');
           break;
         end;
 

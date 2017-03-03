@@ -86,12 +86,18 @@ type
   PSSL = Pointer;
   PSSL_METHOD = Pointer;
 
+  //
   // Callback-Function-Types
+
+  // Memory Functions
   TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
     line: cint): Pointer; cdecl;
   TCRYPTO_realloc = function(p: Pointer; num: cardinal; _file: PChar;
     line: cint): Pointer; cdecl;
   TCRYPTO_free = procedure(str: Pointer; const p1: PChar; p2: cint); cdecl;
+
+  // Log-Funktions
+  TINFO_info = procedure(ssl : PSSL; wher, ret : cint); cdecl;
 
   // API-Function-Types
   TOPENSSL_init_ssl = function(opts: cuint64;
@@ -108,20 +114,33 @@ type
     _type: cint): cint; cdecl;
   TSSL_CTX_ctrl = function(ctx: PSSL_CTX; cmd: cint; larg: clong;
     parg: Pointer): clong; cdecl;
+  TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; i: TINFO_info); cdecl;
 
 const
   // lib functions for the public
+
+  // Init & Util
   OPENSSL_init_ssl: TOPENSSL_init_ssl = nil;
   SSL_library_init: TSSL_library_init = nil;
   CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
+  SSL_CTX_set_info_callback:   TSSL_CTX_set_info_callback = nil;
+
+
+
+  // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
   TLS_server_method:TOpenSSL_method = nil;
   TLS_client_method: TOpenSSL_method = nil;
+
+  // CTX - Tools
   SSL_CTX_new: TSSL_CTX_new = nil;
+  SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
+
+  // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
   SSL_CTX_use_PrivateKey_file: TSSL_CTX_use_PrivateKey_file = nil;
-  SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
+  SSL_CTX_use_RSAPrivateKey_file : TSSL_CTX_use_PrivateKey_file = nil;
 
 function Version: string;
 function LastError: string;
@@ -352,6 +371,18 @@ begin
       'SSL_CTX_use_PrivateKey_file'));
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
       sDebug.add(LastError);
+
+    SSL_CTX_use_RSAPrivateKey_file :=
+      TSSL_CTX_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_use_RSAPrivateKey_file'));
+    if not (assigned(SSL_CTX_use_RSAPrivateKey_file)) then
+      sDebug.add(LastError);
+
+     SSL_CTX_set_info_callback := TSSL_CTX_set_info_callback(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_set_info_callback'));
+    if not (assigned(SSL_CTX_set_info_callback)) then
+      sDebug.add(LastError);
+
 
     (*
     if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
