@@ -123,6 +123,9 @@ end;
 function StrictHTTP2Context: PSSL_CTX;
 var
  p : array[0..4096] of AnsiChar;
+ CTX: PSSL_CTX = nil;
+  METH: PSSL_METHOD = nil;
+
 begin
 
 //
@@ -192,14 +195,14 @@ begin
       FileClose(ERR_F);
     raise Exception.Create('ssl Accept fail');
   end;
-  (*
+  {
   buf += Header;
   buf += Content;
   stack();
   stack();
   SSLwrite(ssl, @Buf, 16);
-    *)
-
+   }
+*)
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
