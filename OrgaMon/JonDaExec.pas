@@ -275,7 +275,7 @@ type
     // TOOL: TAN
     function ActTRN: string;
     function NewTrn(IncrementIt: boolean = true): string;
-    function FolgeTANFName(GeraetID: string): string;
+    function FolgeTRNFName(GeraetID: string): string;
     function FolgeTAN(GeraetID: string): string;
     function LogMatch(Pattern, Schema: string): boolean;
 
@@ -298,7 +298,7 @@ type
     procedure doAbschluss;
 
     //
-    //
+    // Verzeichnisse aufräumen
     function doBackup: int64;
 
   end;
@@ -622,10 +622,6 @@ begin
   until yet;
 end;
 
-function TJonDaExec.FolgeTANFName(GeraetID: string): string;
-begin
-  result := MyProgramPath + cServerDataPath + 'TAN.' + GeraetID + '.txt';
-end;
 
 class function TJonDaExec.FormatZaehlerNummerNeu(const s: string): string;
 begin
@@ -640,24 +636,71 @@ begin
   until eternity;
 end;
 
+function TJonDaExec.FolgeTRNFName(GeraetID: string): string;
+begin
+  result := MyProgramPath + cServerDataPath + 'TAN.' + GeraetID + '.txt';
+end;
+
 function TJonDaExec.FolgeTAN(GeraetID: string): string;
 var
-  ErsterVersuch: boolean;
   sFolgeTAN: TStringList;
+  SaveIt: boolean;
+
+
 begin
+  SaveIt := false;
   sFolgeTAN := TStringList.Create;
-  ErsterVersuch := not(FileExists(FolgeTANFName(GeraetID)));
-  if ErsterVersuch then
+
+  if FileExists(FolgeTRNFName(GeraetID)) then
   begin
+    // eine TAN wurde bereits zugeteilt, diese
+    // ist noch unverarbeitet, wird also abermals ausgegeben
+    // dies verhindert dass TANs ausgegeben werden an die
+    // gemeldet wird, aber die niemals abgearbeitet wird
+    // Ein Benutzer erhält gleichzeitig also immer nur
+    // eine TAN, diese muss abgearbeitet sein bevor
+    // eine neue TAN erzeugt wird.
+    sFolgeTAN.LoadFromFile(FolgeTRNFName(GeraetID));
+    repeat
+
+     if (sFolgeTAN.Count=0) then
+     begin
+       // Datei ist leer!
+       log({} cWARNINGText + ' 666:' +
+           {} 'Folge TRN. Datei leer, erzeuge neue TRN ...');
+       result := NewTrn;
+       SaveIt := true;
+       break;
+     end;
+
+     result := StrFilter(sFolgeTAN[0],cZiffern);
+
+     if (length(result)<>length(cFirstTrn)) then
+     begin
+       // Format der Nummer stimmt irgendwie nicht
+       log({} cWARNINGText + ' 678:' +
+           {} 'Folge TRN. Datei defekt, erzeuge neue TRN ...');
+       result := NewTrn;
+       SaveIt := true;
+       break;
+     end;
+
+    until yet;
+
+  end else
+  begin
+    // Erstkontakt! Es wird eine ganz neu TAN
+    // generiert und abgespeichert.
     result := NewTrn;
-    sFolgeTAN.add(result);
-    sFolgeTAN.SaveToFile(FolgeTANFName(GeraetID));
-  end
-  else
-  begin
-    sFolgeTAN.LoadFromFile(FolgeTANFName(GeraetID));
-    result := sFolgeTAN[0];
+    SaveIt := true;
   end;
+
+  if SaveIt then
+  begin
+    sFolgeTAN.add(result);
+    sFolgeTAN.SaveToFile(FolgeTRNFName(GeraetID));
+  end;
+
   sFolgeTAN.free;
 
   // das TAN Verzeichnis anlegen
@@ -1672,7 +1715,7 @@ begin
 
       // "Weiter-Versuche-Marker" löschen, damit der Weg für eine neue TAN frei wird.
       //
-      FileDelete(FolgeTANFName(GeraeteNo));
+      FileDelete(FolgeTRNFName(GeraeteNo));
 
       // aktueller Upload + Info aus .\<ehemaliger TAN>\AUFTRAG + Stand des Handy zusammenbauen
       if FileExists(UpFName(AktTrn)) then
@@ -3935,6 +3978,13 @@ begin
     GeraeteNummer := detectGeraeteNummer(MyProgramPath + TAN);
     if (GeraeteNummer = '') then
       continue;
+
+    // Prüfung ob bei diesem Verzeichnis ein Proceed gemacht ist
+    if not(FileExists(MyProgramPath + TAN + '\' + TAN + '.dat')) then
+    begin
+     log(cERRORText + ' 3985: Trn '+TAN+' ohne Proceed!');
+     continue;
+    end;
 
     TAN_Date := FDate(MyProgramPath + TAN + '\' + GeraeteNummer + cZIPExtension);
     if (TAN_Date < cOrgaMonBirthDayAsLong) then

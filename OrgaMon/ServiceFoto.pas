@@ -176,6 +176,7 @@ type
     Label29: TLabel;
     Label30: TLabel;
     Label31: TLabel;
+    Button35: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -223,6 +224,7 @@ type
     procedure Button32Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button34Click(Sender: TObject);
+    procedure Button35Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -694,6 +696,59 @@ BeginHourGlass;
  sDir.Free;
  zDir.Free;
  EndHourGlass;
+end;
+
+procedure TFormServiceFoto.Button35Click(Sender: TObject);
+const
+ cPOS_MINUS = 6;
+var
+ sDir,sRow : TStringList;
+ FILENAMES : TsTable;
+ LASTNAME: string;
+ n,k,r : integer;
+begin
+
+ FILENAMES := TSTable.create;
+ with FILENAMES do
+ begin
+  addCol('FULLNAME');
+  addCol('ORIGINALNAME');
+ end;
+
+ sDir := TStringList.Create;
+ dir (edit6.Text+'*.jpg',sDir,false,false);
+ for n := 0 to pred(sDir.Count) do
+ begin
+  k := pos('-',sDir[n]);
+  if (k=cPOS_MINUS) then
+  begin
+    sRow := TStringList.Create;
+    sRow.Add(sDir[n]);
+    sRow.Add(copy(sDir[n],succ(cPOS_MINUS),MaxInt));
+    FILENAMES.addRow(sRow);
+  end;
+ end;
+
+ sDir.clear;
+ with FILENAMES do
+ begin
+  SortBy('ORIGINALNAME');
+  SaveToFile(DiagnosePath+'FILENAMES.csv');
+  LASTNAME := '';
+  for r := 1 to RowCount do
+  begin
+    if (readCell(r,1)=LASTNAME) then
+     if not(DeleteFile(edit6.Text+readCell(r,0))) then
+      sDir.Add('rm ' + readCell(r,0));
+    LASTNAME := readCell(r,1);
+  end;
+ end;
+
+ sDir.SaveToFile(DiagnosePath+'rm.sh');
+
+ FILENAMES.free;
+ sDir.Free;
+
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);

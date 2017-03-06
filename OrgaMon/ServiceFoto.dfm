@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet1
+    ActivePage = TabSheet6
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -576,21 +576,21 @@
       Caption = 'Ablegen / Dienste'
       ImageIndex = 5
       object Label4: TLabel
-        Left = 136
+        Left = 189
         Top = 256
         Width = 228
         Height = 13
         Caption = 'Einzelne Ablage, z.B. "stadtwerke-musterstadt"'
       end
       object Label5: TLabel
-        Left = 136
+        Left = 189
         Top = 202
         Width = 251
         Height = 13
         Caption = 'Stichtag (normalerweise "heute"), z.B. "24.12.2012"'
       end
       object Label6: TLabel
-        Left = 136
+        Left = 189
         Top = 373
         Width = 216
         Height = 13
@@ -611,7 +611,7 @@
         Caption = 'erlaubte Abweichung [%]'
       end
       object Button8: TButton
-        Left = 136
+        Left = 189
         Top = 312
         Width = 209
         Height = 25
@@ -620,7 +620,7 @@
         OnClick = Button8Click
       end
       object Button14: TButton
-        Left = 136
+        Left = 189
         Top = 421
         Width = 209
         Height = 25
@@ -629,35 +629,35 @@
         OnClick = Button14Click
       end
       object Edit1: TEdit
-        Left = 136
+        Left = 189
         Top = 397
         Width = 377
         Height = 21
         TabOrder = 2
       end
       object ProgressBar1: TProgressBar
-        Left = 363
+        Left = 416
         Top = 424
         Width = 150
         Height = 17
         TabOrder = 3
       end
       object Edit2: TEdit
-        Left = 136
+        Left = 189
         Top = 275
         Width = 228
         Height = 21
         TabOrder = 4
       end
       object Edit3: TEdit
-        Left = 136
+        Left = 189
         Top = 221
         Width = 89
         Height = 21
         TabOrder = 5
       end
       object CheckBox4: TCheckBox
-        Left = 136
+        Left = 189
         Top = 452
         Width = 65
         Height = 17
@@ -667,10 +667,10 @@
       object Edit6: TEdit
         Left = 24
         Top = 421
-        Width = 89
+        Width = 159
         Height = 21
         TabOrder = 7
-        Text = 'W:\mitgas\'
+        Text = 'Y:\#172\Fotos\'
       end
       object ListBox10: TListBox
         Left = 128
@@ -697,7 +697,7 @@
         Text = '10'
       end
       object Button28: TButton
-        Left = 444
+        Left = 497
         Top = 312
         Width = 181
         Height = 25
@@ -705,7 +705,7 @@
         TabOrder = 11
       end
       object Button7: TButton
-        Left = 472
+        Left = 525
         Top = 224
         Width = 129
         Height = 25
@@ -714,13 +714,22 @@
         OnClick = Button7Click
       end
       object Button6: TButton
-        Left = 136
+        Left = 189
         Top = 342
         Width = 209
         Height = 25
         Caption = 'doBackup'
         TabOrder = 13
         OnClick = Button6Click
+      end
+      object Button35: TButton
+        Left = 24
+        Top = 448
+        Width = 159
+        Height = 25
+        Caption = 'Dubletten l'#246'schen'
+        TabOrder = 14
+        OnClick = Button35Click
       end
     end
     object TabSheet8: TTabSheet
