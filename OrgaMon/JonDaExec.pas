@@ -253,6 +253,7 @@ type
     class procedure Foto_setcorrectDateTime(FName: string);
     class function active(a: boolean): string;
     class procedure validateBaustelleCSV(FName: string);
+    class function isGeraeteNo(s:string):boolean;
 
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
     class function toBild(const mderec: TMdeRec): string;
@@ -713,6 +714,19 @@ begin
     result := cIni_Activate
   else
     result := cIni_Deactivate;
+end;
+
+class function TJonDaExec.isGeraeteNo(s:string):boolean;
+begin
+  result := false;
+  repeat
+    if (length(s)<>3) then
+     break;
+    s := StrFilter(s,cZiffern);
+    if (length(s)<>3) then
+     break;
+    result := true;
+  until yet;
 end;
 
 function TJonDaExec.ActTRN: string;

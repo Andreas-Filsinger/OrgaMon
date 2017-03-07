@@ -1071,6 +1071,7 @@ var
   sProtokoll: TStringList;
   sHANGOVER: tsTable;
   sMONTEURE: tsTable;
+  tIMEI: tsTable;
   BildName: string;
   LieferMoment_First: TDateTime;
   sLieferMoment_First: string;
@@ -1108,6 +1109,7 @@ begin
   BildLieferung := TStringList.Create;
   sHANGOVER := tsTable.Create;
   sMONTEURE := tsTable.Create;
+  tIMEI := tsTable.Create;
 
   ensureGlobals;
 
@@ -1139,6 +1141,8 @@ begin
     addcol('VOM'); // Datum des ältesten Bildes das fehlt
     addcol('PAPERCOLOR');
   end;
+
+  tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
 
   { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
@@ -1184,6 +1188,11 @@ begin
                     { Bilddateiname ermitteln }
                     BildName := nextp(sProtokoll[o], '=', 1);
 
+                    { Gerätenummer ermitteln }
+                    GERAET := copy(BildName, 1, 3);
+                    if not(TJonDaExec.isGeraeteNo(GERAET)) then
+                      continue;
+
                     { Ältestes Datum ermitteln }
                     if (ProceedMoment < ProceedMoment_First) then
                       ProceedMoment_First := ProceedMoment;
@@ -1192,8 +1201,9 @@ begin
                     r := locate(col_NAME, BildName);
                     if (r = -1) then
                     begin
+                      // Neu-Eintrag
                       r := addRow;
-                      writeCell(r, col_GERAET, copy(BildName, 1, 3));
+                      writeCell(r, col_GERAET, GERAET);
                       writeCell(r, col_NAME, BildName);
                       writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
                     end
@@ -1211,6 +1221,9 @@ begin
       end;
     end;
   end;
+
+  if DebugMode then
+   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER.html');
 
   { Schritt 2: Ergänzung der Lieferdatums }
   LieferMoment_First := ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG;
@@ -1257,6 +1270,9 @@ begin
 
     end;
   n := max(n, 0);
+
+  if DebugMode then
+   sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
 
   Log(
     { } 'workAusstehendeFotos: Foto-Lieferungen ab ' +
@@ -1434,6 +1450,17 @@ begin
     // Sortieren, die schlimmsten nach oben
     sortby('RÜCKSTAND numeric descending');
 
+    // Die Namen nachtragen
+    for r := 1 to RowCount do
+    begin
+     n := tIMEI.locate('GERAET', readCell(r,'GERAET'));
+     if (n <> -1) then
+       WriteCell(
+        {} r,'MONTEUR',
+        { } tIMEI.readCell(n, 'VORNAME') + ' ' +
+        { } tIMEI.readCell(n, 'NACHNAME'));
+    end;
+
     // Ausgabe nach htlm
     oHTML_Prefix :=
     { } '<h2>' + Id + ' vom ' + long2date(StartMoment) +
@@ -1448,6 +1475,7 @@ begin
 
   sHANGOVER.Free;
   sMONTEURE.Free;
+  tIMEI.Free;
   AllTRN.Free;
   BildAnkuendigung.Free;
   BildLieferung.Free;
