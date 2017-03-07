@@ -96,7 +96,9 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   eConnect,
   indylaz,
   fpspreadsheet,
-  Identitaet, FotoExec, TestExec, unit1;
+  Identitaet,
+  FotoExec,
+  TestExec;
 
 {$R *.res}
 
