@@ -25,17 +25,6 @@
   |
 }
 unit BBelege;
-//
-// ---------------------------------------------
-// !BESTELL BELEGE!
-// 23.05.2002, abgeleitet aus "Belege"
-//
-// Irgendwie verschiedene Beleg-Modi machen
-// Bestellung,Angebot,Garantie,
-// ---------------------------------------------
-//
-// sollte ev. wieder mit Belge verschmolzen werden.
-//
 
 interface
 
@@ -364,6 +353,9 @@ var
   AUSGABEART_R: Integer;
   ARTIKEL_R: Integer;
   NeuBeauftragteMenge: Integer;
+  ZUSAGE: TDateTime;
+  sZUSAGE: TStringList;
+  EREIGNIS: TdboQuery;
 begin
   with IB_Dataset do
   begin
@@ -395,8 +387,44 @@ begin
       FieldByName('MOTIVATION').AsInteger := eT_MotivationManuell;
 
     if (State = dssedit) then
+    begin
       if FieldByName('PREIS').IsModified then
         FormArtikelPreis.SetContext(AUSGABEART_R, ARTIKEL_R, FieldByName('PREIS').AsDouble, 0);
+      if FieldByName('ZUSAGE').IsModified then
+      begin
+
+        ZUSAGE := e_r_sql_DateTime('select ZUSAGE from BPOSTEN where RID='+FieldByName('RID').AsString);
+        sZUSAGE := TStringList.Create;
+        sZUSAGE.Add('ZUSAGE='+dTimeStamp(ZUSAGE));
+        sZUSAGE.Add('NEW.ZUSAGE='+dTimeStamp(FieldByName('ZUSAGE').AsDateTime));
+        sZUSAGE.Add('ARTIKEL='+FieldByName('ARTIKEL').AsString);
+
+        // Ereignis erstellen
+        EREIGNIS := nQuery;
+        with EREIGNIS do
+        begin
+          sql.add('select * from EREIGNIS');
+          for_update(sql);
+          ColumnAttributes.add('RID=NOTREQUIRED');
+          ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+          Insert;
+          FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+          FieldByName('ART').AsInteger := eT_OrderZusageAenderung;
+          FieldByName('BPOSTEN_R').AsInteger := IB_Dataset.FieldByName('RID').AsINteger;
+          FieldByName('BBELEG_R').AsInteger := IB_Dataset.FieldByName('BELEG_R').AsINteger;
+          FieldByName('MENGE').AsInteger := IB_Dataset.FieldByName('MENGE_ERWARTET').AsInteger;
+          if IB_Dataset.FieldByName('ARTIKEL_R').IsNotNull then
+           FieldByName('ARTIKEL_R').AsInteger := IB_Dataset.FieldByName('ARTIKEL_R').AsInteger;
+          if IB_Dataset.FieldByName('AUSGABEART_R').IsNotNull then
+           FieldByName('AUSGABEART_R').AsInteger := IB_Dataset.FieldByName('AUSGABEART_R').AsInteger;
+          e_w_sqlt(FieldByName('INFO'), sZUSAGE);
+          Post;
+        end;
+        EREIGNIS.free;
+        sZUSAGE.Free;
+      end;
+
+    end;
 
     if FieldByName('AUSGABEART_R').IsNotNull then
     begin

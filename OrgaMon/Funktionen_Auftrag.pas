@@ -2433,7 +2433,10 @@ end;
 
 function e_r_VorlageMail(VorlageName: string): Integer;
 begin
-  result := e_r_sql('select RID from EMAIL where ' + '(VORLAGE_R IS NULL) and ' + '(UID=''' + VorlageName + ''')');
+  result := e_r_sql(
+   {} 'select RID from EMAIL where ' +
+   {} '(VORLAGE_R IS NULL) and ' +
+   {} '(UID=''' + VorlageName + ''')');
 end;
 
 function e_r_MonteureCache(Alle: boolean = true): TStringList;

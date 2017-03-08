@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.269 (08.03.17) Andreas Filsinger
+
+ Neu: Order: Änderung des Feldes "ZUSAGE" erzeugt ein Ereignis "36"
+
 Rev 8.268 (08.03.17) Andreas Filsinger
 
  Neu: Musiker: Feld "GEAENDERT"

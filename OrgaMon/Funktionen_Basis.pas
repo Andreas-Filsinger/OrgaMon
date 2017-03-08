@@ -1135,20 +1135,26 @@ begin
   // das Ereignis abzeichnen
   if (INFO <> '') then
     e_x_sql(
-      'update EREIGNIS set' + ' BEARBEITER_R=' + IntToStr(sBearbeiter) +
-      ', ' + ' INFO=''' + INFO + ''' ' + 'where RID=' + IntToStr(EREIGNIS_R))
+      {} 'update EREIGNIS set' +
+      {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ', ' +
+      {} ' BEENDET=CURRENT_TIMESTAMP,' +
+      {} ' INFO=''' + INFO + ''' ' +
+      {} 'where RID=' + IntToStr(EREIGNIS_R))
   else
     e_x_sql(
-      'update EREIGNIS set' + ' BEARBEITER_R=' + IntToStr(sBearbeiter) +
-      'where RID=' + IntToStr(EREIGNIS_R));
+      {} 'update EREIGNIS set' +
+      {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ',' +
+      {} ' BEENDET=CURRENT_TIMESTAMP' +
+      {} 'where RID=' + IntToStr(EREIGNIS_R));
 end;
 
 function e_r_Person_BLZ_Konto(BLZ, Konto: string): TgpIntegerList;
 begin
-  Result := e_r_sqlm('select RID from PERSON where ' +
-    '((Z_ELV_KONTO=''' + Konto + ''') and ' + '(Z_ELV_BLZ=''' +
-    BLZ + ''')) or ' + '(Z_ELV_KONTO containing ''' + BLZ +
-    inttostrN(Konto, 10) + ''')');
+  Result := e_r_sqlm(
+   {} 'select RID from PERSON where ' +
+   {} '((Z_ELV_KONTO=''' + Konto + ''') and ' +
+   {} ' (Z_ELV_BLZ=''' +    BLZ + ''')) or ' +
+   {} '(Z_ELV_KONTO containing ''' + BLZ +  inttostrN(Konto, 10) + ''')');
 end;
 
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;

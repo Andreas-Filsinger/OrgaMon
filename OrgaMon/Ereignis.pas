@@ -34,7 +34,7 @@ uses
   Forms, Dialogs, Grids,
   IB_Grid, IB_Components, IB_Access, IB_UpdateBar,
   IB_NavigationBar, IB_SearchBar, StdCtrls,
-  ExtCtrls, Buttons;
+  ExtCtrls, Buttons, IB_Controls;
 
 type
   TFormEreignis = class(TForm)
@@ -52,6 +52,7 @@ type
     Timer1: TTimer;
     Label1: TLabel;
     CheckBox1: TCheckBox;
+    IB_Memo1: TIB_Memo;
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);

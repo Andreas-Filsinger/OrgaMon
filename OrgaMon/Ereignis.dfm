@@ -2,7 +2,7 @@ object FormEreignis: TFormEreignis
   Left = 34
   Top = 153
   Caption = 'Ereignisse'
-  ClientHeight = 451
+  ClientHeight = 374
   ClientWidth = 950
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -15,7 +15,7 @@ object FormEreignis: TFormEreignis
   OnActivate = FormActivate
   DesignSize = (
     950
-    451)
+    374)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -29,13 +29,14 @@ object FormEreignis: TFormEreignis
     Left = 0
     Top = 40
     Width = 943
-    Height = 408
+    Height = 229
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     IndicateLongCellText = True
     DrawCellTextOptions = [gdtEllipsis, gdtShowTextBlob]
+    ExplicitHeight = 377
   end
   object Button1: TButton
     Left = 844
@@ -137,6 +138,18 @@ object FormEreignis: TFormEreignis
     Checked = True
     State = cbChecked
     TabOrder = 9
+  end
+  object IB_Memo1: TIB_Memo
+    Left = 0
+    Top = 266
+    Width = 950
+    Height = 108
+    DataField = 'INFO'
+    DataSource = IB_DataSource1
+    Align = alBottom
+    TabOrder = 10
+    AutoSize = False
+    ExplicitTop = 343
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'

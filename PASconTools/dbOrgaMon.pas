@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -270,7 +270,7 @@ function e_w_GEN(GenName: string): integer;
 function e_r_GEN(GenName: string): integer;
 
 // Zeit aus dem Datenbankserver lesen
-function e_r_now: TdateTime;
+function e_r_now: TDateTime;
 
 // Zeitdifferenz zwischen Datenbank-Server und lokalem Server
 function r_Local_vs_Server_TimeDifference: TANFiXTime;
@@ -283,6 +283,9 @@ function e_r_sqlb(s: string): boolean;
 
 // Die erste Zelle einer Datenbankabfrage als Double
 function e_r_sqld(s: string; ifnull: double = 0.0): double;
+
+// Nur das erste Feld als TimeStamp
+function e_r_sql_DateTime(s: string): TDateTime;
 
 // Nur das erste Feld des ersten Records als Datum
 function e_r_sql_Date(s: string): TANFiXDate;
@@ -2221,6 +2224,24 @@ result := DateTime2Long(Fields[0].AsDate);
   cSQL.free;
 end;
 
+function e_r_sql_DateTime(s: string): TDateTime;
+var
+  cSQL: TdboCursor;
+begin
+  cSQL := nCursor;
+  with cSQL do
+  begin
+    sql.add(s);
+    dbLog(s);
+    ApiFirst;
+    if eof then
+      result := cIllegalDate
+    else
+      result := Fields[0].AsDateTime;
+  end;
+  cSQL.free;
+end;
+
 procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false);
 var
   sql: TStringList;
@@ -2386,7 +2407,7 @@ begin
   oSQL.Free;
 end;
 
-function e_r_now: TdateTime;
+function e_r_now: TDateTime;
 var
   cNOW: TdboCursor;
 begin
