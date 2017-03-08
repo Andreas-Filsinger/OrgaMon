@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.268 (08.03.17) Andreas Filsinger
+
+ Neu: Musiker: Feld "GEAENDERT"
+
 Rev 8.267 (07.03.17) Andreas Filsinger
 
  Bug: FotoService: Ausstehende-Statistik: Bilddateinamen mit ungültigem Syntax
@@ -11792,6 +11796,35 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.268
+
+alter table MUSIKER
+add GEAENDERT TIMESTAMP;
+
+SET TERM ^ ;
+CREATE TRIGGER MUSIKER_BU0 FOR MUSIKER
+ACTIVE BEFORE UPDATE POSITION 0
+AS
+begin
+ NEW.GEAENDERT = CURRENT_TIMESTAMP;
+end
+^
+SET TERM ; ^
+
+SET TERM ^ ;
+ALTER TRIGGER MUSIKER_TRI ACTIVE
+BEFORE INSERT POSITION 0
+AS
+begin
+ IF ((NEW.RID is NULL) OR (NEW.RID<1)) THEN
+  NEW.RID = GEN_ID(GEN_MUSIKER,1);
+ NEW.GEAENDERT = CURRENT_TIMESTAMP;
+END^
+SET TERM ; ^
+
+update MUSIKER set
+GEAENDERT = CURRENT_TIMESTAMP;
 
 :8.220
 
