@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.270 (09.03.17) Andreas Filsinger
+
+ Bug: Geolokalisierung: "=" SQL Error
+ Bug: OrgaMon.ini: DataBaseName ohne "*", jedoch mit ";"
+
 Rev 8.269 (08.03.17) Andreas Filsinger
 
  Neu: Order: Änderung des Feldes "ZUSAGE" erzeugt ein Ereignis "36"

@@ -655,9 +655,12 @@ begin
             begin
 
               // Filter Code --------------- BEGIN
-              if FieldByName('AUSFUEHREN').IsNUll or FieldByName('VORMITTAGS')
-                .IsNUll or (FieldByName('STATUS').AsInteger in [cs_DatenFehlen,
-                cs_NeuAnschreiben, cs_Restant]) then
+              if {} FieldByName('AUSFUEHREN').IsNull or
+                 {} FieldByName('VORMITTAGS').IsNull or
+                 {} (FieldByName('STATUS').AsInteger in [
+                 {}  cs_DatenFehlen,
+                 {}  cs_NeuAnschreiben,
+                 {}  cs_Restant]) then
               begin
 
                 // normale berührbare!

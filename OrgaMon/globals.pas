@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.269; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.270; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1786,8 +1786,11 @@ begin
 {$ELSE}
         writeln(
 {$ENDIF}
-          'ERROR: Die Datei ' + #13#10 + #13#10 + MyProgramPath + cIniFName + #13#10 + #13#10 + '[' + sGroup + ']' +
-          #13#10 + cDataBaseName + '=' + #13#10 + #13#10 + ' notwendige Einstellung ist ohne Wert!');
+          { } 'ERROR: Die Datei ' + #13#10 + #13#10 +
+          { } MyProgramPath + cIniFName + #13#10 + #13#10 +
+          { } '[' + sGroup + ']' + #13#10 +
+          { } cDataBaseName + '=' + #13#10 + #13#10 +
+          { } ' notwendige Einstellung ist ohne Wert!');
 
         halt;
       end

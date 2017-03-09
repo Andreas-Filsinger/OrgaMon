@@ -2667,7 +2667,7 @@ begin
   k := pos('*', iDataBaseName);
   if (k = 0) then
   begin
-    result := iDataBaseName;
+    result := nextp(iDataBaseName,';',0);
   end
   else
   begin

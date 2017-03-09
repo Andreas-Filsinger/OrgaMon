@@ -470,7 +470,7 @@ begin
       if (StrasseID > 0) then
       begin
         PLZl := e_r_sqlm(
-         {} 'select distinct PLZ from POSTLEITZAHLEN' +
+         {} 'select distinct PLZ from POSTLEITZAHLEN ' +
          {} 'where' +
          {} ' (STRASSEID=' + inttostr(StrasseID) + ') and' +
          {} ' (PLZ_DIVERSITAET IS NOT NULL) and' +
