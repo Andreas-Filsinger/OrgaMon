@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="10"/>
+    <BuildModes Active="Default"/>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="r2fips.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="55"/>
+        <CursorPos X="20" Y="89"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="C:\lazarus\fpc\3.0.2\source\packages\fcl-base\src\custapp.pp"/>
+        <UnitName Value="CustApp"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="50"/>
+        <CursorPos X="28" Y="72"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="3085"/>
+        <CursorPos X="22" Y="3126"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="22" HistoryIndex="21">
+      <Position1>
+        <Filename Value="C:\lazarus\fpc\3.0.2\source\packages\fcl-base\src\custapp.pp"/>
+        <Caret Line="716" Column="3" TopLine="689"/>
+      </Position1>
+      <Position2>
+        <Filename Value="C:\lazarus\fpc\3.0.2\source\packages\fcl-base\src\custapp.pp"/>
+        <Caret Line="76" Column="21" TopLine="54"/>
+      </Position2>
+      <Position3>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="50" Column="12" TopLine="26"/>
+      </Position3>
+      <Position4>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="59" Column="23" TopLine="26"/>
+      </Position4>
+      <Position5>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="31" Column="16" TopLine="18"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="3"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="628" Column="24" TopLine="586"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="646" Column="24" TopLine="604"/>
+      </Position8>
+      <Position9>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="2303" Column="21" TopLine="2261"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="2354" Column="24" TopLine="2312"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="2380" Column="24" TopLine="2338"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="2456" Column="25" TopLine="2414"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="3695" TopLine="3655"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="4594" TopLine="4553"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="5179" Column="14" TopLine="5137"/>
+      </Position15>
+      <Position16>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="63" Column="19" TopLine="36"/>
+      </Position16>
+      <Position17>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="77" TopLine="46"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <Caret Line="5206" TopLine="5158"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+      </Position19>
+      <Position20>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="31" Column="17" TopLine="15"/>
+      </Position20>
+      <Position21>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="66" Column="10" TopLine="42"/>
+      </Position21>
+      <Position22>
+        <Filename Value="r2fips.lpr"/>
+        <Caret Line="109" Column="26" TopLine="68"/>
+      </Position22>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
