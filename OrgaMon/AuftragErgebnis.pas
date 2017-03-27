@@ -168,7 +168,7 @@ var
   ErrorCount: integer;
   cAUFTRAG: TIB_Cursor;
   cINTERNINFO: TIB_Cursor;
-  OutFName: string;
+  OutFName, SingleFName: string;
   Oc_Bericht: TStringList;
   Oc_Result: boolean;
 
@@ -1865,7 +1865,47 @@ begin
           Oc_Bericht.free;
         end;
 
-        // HTML
+        // XML, XML, ...
+        if (Settings.values[cE_AuchAlsEinzelXML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          Oc_Result := doConversion(Content_Mode_xls2xml, OutFName, Oc_Bericht);
+          if not(Oc_Result) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+
+            for n := 0 to pred(Oc_Bericht.count) do
+            begin
+              // Dateinamen des .xml bestimmen
+              if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
+              begin
+                SingleFName :=
+                { } cAuftragErgebnisPath +
+                { } e_r_BaustellenPfad(Settings) + '\' +
+                { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
+                Files.add(SingleFName);
+              end;
+
+              if (pos('(RID=', Oc_Bericht[n]) > 0) then
+              begin
+                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                if (FailL.indexof(FAIL_R) = -1) then
+                  FailL.add(FAIL_R);
+                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+              application.processmessages;
+            end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // HTML, HTML, ...
         if (Settings.values[cE_AuchAlsHTML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
         begin
           Oc_Bericht := TStringList.create;
@@ -1881,20 +1921,19 @@ begin
           begin
             for n := 0 to pred(Oc_Bericht.count) do
             begin
-
               // Dateinamen des .html bestimmen
               if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
               begin
-                OutFName :=
+                SingleFName :=
                 { } cAuftragErgebnisPath +
                 { } e_r_BaustellenPfad(Settings) + '\' +
                 { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
-                Files.add(OutFName);
+                Files.add(SingleFName);
 
                 // Noch ein PDF hinzu?
                 if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
                 begin
-                  PDF_FromWhat := OutFName;
+                  PDF_FromWhat := SingleFName;
                   PDF := html2pdf(PDF_FromWhat, false);
                   PDF_ResultInfoStr := PDF.Values['ERROR'];
                   if (PDF_ResultInfoStr<>'') then
@@ -1903,9 +1942,9 @@ begin
                     Log(cERRORText + ' HTML zu PDF Konvertierung: ' + PDF_ResultInfoStr, BAUSTELLE_R);
                   end else
                   begin
-                    OutFname := PDF.Values['ConversionOutFName'];
-                    FileTouch(OutFName, FileDateTime(PDF_FromWhat));
-                    Files.add(OutFName);
+                    SingleFname := PDF.Values['ConversionOutFName'];
+                    FileTouch(SingleFName, FileDateTime(PDF_FromWhat));
+                    Files.add(SingleFName);
                   end;
                   PDF.Free;
                 end;

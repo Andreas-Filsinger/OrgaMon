@@ -1136,7 +1136,7 @@ begin
   if (INFO <> '') then
     e_x_sql(
       {} 'update EREIGNIS set' +
-      {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ', ' +
+      {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ',' +
       {} ' BEENDET=CURRENT_TIMESTAMP,' +
       {} ' INFO=''' + INFO + ''' ' +
       {} 'where RID=' + IntToStr(EREIGNIS_R))
@@ -1144,7 +1144,7 @@ begin
     e_x_sql(
       {} 'update EREIGNIS set' +
       {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ',' +
-      {} ' BEENDET=CURRENT_TIMESTAMP' +
+      {} ' BEENDET=CURRENT_TIMESTAMP ' +
       {} 'where RID=' + IntToStr(EREIGNIS_R));
 end;
 

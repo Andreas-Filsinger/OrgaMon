@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.256 (27.03.17) Andreas Filsinger
+
+ Neu: xls2xml: xls in mehrere .xml Dateien
+
 Rev 1.255 (08.02.17) Andreas Filsinger
 
  Bug: Doppelte Diagnose-Ausgabe, erste Einführung von "sBerichte"

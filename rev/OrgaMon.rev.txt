@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.272 (27.03.17) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: neues Ausgabemöglichkeit: Pro Auftrag ein XML
+ Neu: wegen "Oc Rev. 1.256" neu compiliert!
+
+Rev 8.271 (13.03.17) Andreas Filsinger
+
+ Regression 8.270: eMail: Ereignis beenden nicht möglich
+
 Rev 8.270 (09.03.17) Andreas Filsinger
 
  Bug: Geolokalisierung: "=" SQL Error

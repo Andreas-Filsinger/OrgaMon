@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.255; // ../rev/Oc.rev.txt
+  Version: single = 1.256; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -46,7 +46,7 @@ const
   Content_Mode_tab2csv = 10; // .tab + Mapping.txt -> .csv
   Content_Mode_xls2idoc = 11; // .xls + IDOC.Mappings.ini -> .idoc
   Content_Mode_xls2Argos = 12; // Argos XML
-  Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> xml/html
+  Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> html /xml
   Content_Mode_enBW = 14;
   Content_Mode_Datev = 15; // xls+Datev.xls -> .xls
   Content_Mode_xsd = 16; // Prüfe xml Datei gegen eine "Schema.xsd"
@@ -54,8 +54,9 @@ const
   Content_Mode_xls2flood = 18; // xls+Fixed-Flood.ini -> Auftrag füllen
   Content_Mode_csvMap = 19; // csv Datei mit Mappings nach csv Datei
   Content_Mode_xls2rwe = 20; // RWE Rev. 2.3
-  Content_Mode_xls2html = 21; // xls+Vorlage.html -> html
+  Content_Mode_xls2html = 21; // xls+Vorlage.html -> multible html
   Content_Mode_Huffman = 22; // .huff -> .pas
+  Content_Mode_xls2xml = 23; // xls+Vorlage.xml -> multible xml
 
   ErrorCount: integer = 0;
   conversionOutFName: string = '';
@@ -65,8 +66,9 @@ const
   c_Mapping = 'Mapping.txt';
   c_XLS_VorlageFName = 'Vorlage.xls';
   p_XLS_VorlageFName: string = '';
-  c_ML_VorlageFName = 'Vorlage.ml';
-  c_HTML_VorlageFName = 'Vorlage.html';
+  c_ML_VorlageFName = 'Vorlage.ml'; // xls -> xml (mehrere Datensätze in einer xml)
+  c_XML_VorlageFName = 'Vorlage.xml'; // xls -> xml (pro Datensatz eine xml Datei)
+  c_HTML_VorlageFName = 'Vorlage.html'; // xls -> html (pro Datensatz eine html Datei)
   cFixedFormatsFName = 'Fixed-Formats.ini';
   cFixedFloodFName = 'Fixed-Flood.ini';
   c_ML_SchemaFName = 'Schema.xsd';
@@ -130,6 +132,9 @@ const
 
   // für den XML Argos Mode
   cARGOS_XML_SAVE = 'XML';
+
+type
+ eXML_Converter_Mode = (eXML_XML_Single, eXML_HTML_Multi, eXML_XML_Multi);
 
 var
   sDiagnose: TStringList;
@@ -7258,7 +7263,7 @@ begin
   end;
 end;
 
-procedure xls2ml(InFName: string; sBericht: TStringList; iHTML: boolean = false);
+procedure xls2ml(InFName: string; sBericht: TStringList; iModus: eXML_Converter_Mode = eXML_XML_Single);
 const
   cSTATUS_Unmoeglich = 9;
   cSTATUS_Vorgezogen = 7;
@@ -7574,11 +7579,13 @@ begin
   if doSchemaCheck then
     FileDelete(WorkPath + 'Oc-ERROR-*.xml');
 
-  //
-  if iHTML then
-    sResult.loadFromFile(WorkPath + c_HTML_VorlageFName)
-  else
-    sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
+  // die Vorlage laden ...
+  case iModus of
+   eXML_XML_Single: sResult.loadFromFile(WorkPath + c_ML_VorlageFName);
+   eXML_HTML_Multi: sResult.loadFromFile(WorkPath + c_HTML_VorlageFName);
+   eXML_XML_Multi: sResult.loadFromFile(WorkPath + c_XML_VorlageFName);
+  end;
+
   // system
   // UTF8Encode
   // Gefahr: Um wieder UTF-8 codierte Ergebnisse zu Erhalten
@@ -7853,61 +7860,108 @@ begin
         // c-1: nun zum ganzen Volumen dazu!
         if bCheckOK then
         begin
-          if iHTML then
-          begin
+
+          case iModus of
+
+            eXML_HTML_Multi:begin
 
             // Name der HTML Ausgabe-Datei
-            if (cHTMLBenennung <> -1) then
-            begin
-              OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
-            end
-            else
-            begin
-              if (ZAEHLER_NUMMER_NEU <> '') then
-                OutFName :=
-                { } ZAEHLER_NUMMER + '-' +
-                { } ZAEHLER_NUMMER_NEU
+              if (cHTMLBenennung <> -1) then
+              begin
+                OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
+              end
               else
-                OutFName :=
-                { } ZAEHLER_NUMMER;
+              begin
+                if (ZAEHLER_NUMMER_NEU <> '') then
+                  OutFName :=
+                  { } ZAEHLER_NUMMER + '-' +
+                  { } ZAEHLER_NUMMER_NEU
+                else
+                  OutFName :=
+                  { } ZAEHLER_NUMMER;
+              end;
+
+              OutFName := StrFilter(OutFName, cInvalidFNameChars, true) + '.html';
+
+              // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
+              FileDelete(WorkPath + OutFName + '.pdf');
+
+              // Ausgabe speichern!
+              sCheck := THTMLTemplate.create;
+              if isUTF8 then
+                sCheck.forceUTF8 := true;
+              sCheck.addStrings(sResult);
+              sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
+
+              if assigned(sBericht) then
+              begin
+                sBericht.addStrings(sCheck.Messages);
+                sBericht.add(cINFOText + ' save ' + OutFName);
+              end
+              else
+              begin
+                sDiagnose.addStrings(sCheck.Messages);
+                sDiagnose.add(cINFOText + ' save ' + OutFName);
+              end;
+
+              // speichern
+              sCheck.SavetoFileCompressed(WorkPath + OutFName);
+              sCheck.Free;
+
+              // Auf das aktuelle Wechseldatum setzen
+              FileTouch(
+                { } WorkPath + OutFName,
+                { } xWechselMoment(r));
             end;
+           eXML_XML_Multi:begin
 
-            OutFName := StrFilter(OutFName, cInvalidFNameChars, true) + '.html';
+              // Name der HTML Ausgabe-Datei
+              if (cHTMLBenennung <> -1) then
+              begin
+                OutFName := getCellValue(r, succ(cHTMLBenennung)).ToStringInvariant;
+              end
+              else
+              begin
+                if (ZAEHLER_NUMMER_NEU <> '') then
+                  OutFName :=
+                  { } ZAEHLER_NUMMER + '-' +
+                  { } ZAEHLER_NUMMER_NEU
+                else
+                  OutFName :=
+                  { } ZAEHLER_NUMMER;
+              end;
 
-            // bisheriges eventuell vorhandenes PDF ist nicht mehr gültig!
-            FileDelete(WorkPath + OutFName + '.pdf');
+              OutFName := StrFilter(OutFName, cInvalidFNameChars, true) + '.xml';
 
-            // Ausgabe speichern!
-            sCheck := THTMLTemplate.create;
-            if isUTF8 then
-              sCheck.forceUTF8 := true;
-            sCheck.addStrings(sResult);
-            sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
+              // Ausgabe speichern!
+              sCheck := THTMLTemplate.create;
+              if isUTF8 then
+                sCheck.forceUTF8 := true;
+              sCheck.addStrings(sResult);
+              sCheck.WriteValue(DatenSammlerEinzel, DatenSammlerGlobal);
 
-            if assigned(sBericht) then
-            begin
-              sBericht.addStrings(sCheck.Messages);
-              sBericht.add(cINFOText + ' save ' + OutFName);
-            end
-            else
-            begin
-              sDiagnose.addStrings(sCheck.Messages);
-              sDiagnose.add(cINFOText + ' save ' + OutFName);
-            end;
+              if assigned(sBericht) then
+              begin
+                sBericht.addStrings(sCheck.Messages);
+                sBericht.add(cINFOText + ' save ' + OutFName);
+              end
+              else
+              begin
+                sDiagnose.addStrings(sCheck.Messages);
+                sDiagnose.add(cINFOText + ' save ' + OutFName);
+              end;
 
-            // speichern
-            sCheck.SavetoFileCompressed(WorkPath + OutFName);
-            sCheck.Free;
+              // speichern
+              sCheck.SavetoFileCompressed(WorkPath + OutFName);
+              sCheck.Free;
 
-            // Auf das aktuelle Wechseldatum setzen
-            FileTouch(
-              { } WorkPath + OutFName,
-              { } xWechselMoment(r));
+              // Auf das aktuelle Wechseldatum setzen
+              FileTouch(
+                { } WorkPath + OutFName,
+                { } xWechselMoment(r));
 
-          end
-          else
-          begin
-            DatenSammlerLokal.addStrings(DatenSammlerEinzel);
+           end;
+           eXML_XML_Single: DatenSammlerLokal.addStrings(DatenSammlerEinzel);
           end;
         end;
       end;
@@ -7916,14 +7970,14 @@ begin
   end;
 
   // Belichtung des Resultates
-  if not(iHTML) then
+  if (iModus=eXML_XML_Single) then
     sResult.WriteValue(DatenSammlerLokal, DatenSammlerGlobal);
 
   inc(ErrorCount, sResult.FatalErrors);
 
   if (ErrorCount = 0) then
   begin
-    if not(iHTML) then
+    if (iModus=eXML_XML_Single) then
       sResult.SavetoFileCompressed(conversionOutFName);
   end
   else
@@ -9249,8 +9303,13 @@ begin
         end;
       Content_Mode_xls2html:
         begin
-          sDiagnose.add('Modus: xls -> html');
-          xls2ml(InFName, sBericht, true);
+          sDiagnose.add('Modus: xls -> html, html, ...');
+          xls2ml(InFName, sBericht, eXML_HTML_Multi);
+        end;
+      Content_Mode_xls2xml:
+        begin
+          sDiagnose.add('Modus: xls -> xml, xml, ...');
+          xls2ml(InFName, sBericht, eXML_XML_Multi);
         end;
       Content_Mode_xsd:
         begin
