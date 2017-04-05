@@ -223,7 +223,7 @@ object FormAudit: TFormAudit
     TabOrder = 3
   end
   object ComboBox1: TComboBox
-    Left = 292
+    Left = 291
     Top = 193
     Width = 146
     Height = 21

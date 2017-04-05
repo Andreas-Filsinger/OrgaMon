@@ -325,6 +325,7 @@ type
 
   protected
     ColIndex_DLA, ColIndex_Position: integer;
+    INTERN_INFO: TStringList;
     constructor Create;
 
   public
@@ -368,14 +369,15 @@ begin
   fAudit_Cache := 'RWE-';
   fCSV_Mask := fAudit_Cache + 'OFFEN-';
   fCSV_Ergebnis := fAudit_Cache + 'STATUS-';
+  INTERN_INFO := TStringList.Create;
 end;
 
 function TAuditDLA.IndexBegriff: string;
 begin
   with cAUFTRAG do
   begin
-    result := FieldByName('SUCHE').AsString;
-    ersetze('-', '~', result);
+    FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+    result := INTERN_INFO.values['ORDER.id'];
   end;
 end;
 
@@ -389,11 +391,12 @@ procedure TAuditDLA.setSQL;
 begin
   with cAUFTRAG do
   begin
-    sql.add('select REGLER_NR as SUCHE,RID from AUFTRAG where');
+    sql.add('select INTERN_INFO,RID from AUFTRAG where');
     sql.add(' (STATUS<>6) and');
-    sql.add(' (REGLER_NR is not null) and (REGLER_NR<>'''')');
+    sql.add(' (INTERN_INFO containing ''ORDER.id='')');
   end;
 end;
+
 
 type
   TAuditenBW = class(TAuditSkeleton)

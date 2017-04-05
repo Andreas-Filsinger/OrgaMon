@@ -3534,6 +3534,7 @@ begin
         end
         else
         begin
+
          if NameOhneZaehlerNummerNeu then
          begin
           if NameOhneZaehlerNummerAlt then
