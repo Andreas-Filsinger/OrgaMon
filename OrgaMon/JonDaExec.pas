@@ -3027,8 +3027,8 @@ var
   FotoDateiNameNeu: string;
   FotoDateiNameBisher: string;
   NameOhneZaehlerNummerAlt: boolean;
-  NameOhneZaehlerNummerNeu: boolean;
-  NameBereitsMitPlatzhalter: boolean;
+  KeineZaehlerNummerNeuAmEnde: boolean;
+  NameBereitsMitNeuPlatzhalter: boolean;
   UmbenennungAbgeschlossen: boolean;
   AUFTRAG_R: integer;
   Path: string;
@@ -3101,8 +3101,8 @@ begin
   FotoPrefix := '';
   UmbenennungAbgeschlossen := false;
   NameOhneZaehlerNummerAlt := false;
-  NameOhneZaehlerNummerNeu := false;
-  NameBereitsMitPlatzhalter := false;
+  KeineZaehlerNummerNeuAmEnde := false;
+  NameBereitsMitNeuPlatzhalter := false;
   ShouldAbort := false;
 
   while true do
@@ -3254,7 +3254,7 @@ begin
 
                     if (Token = 'ohne-Z#Neu') then
                     begin
-                      NameOhneZaehlerNummerNeu := true;
+                      KeineZaehlerNummerNeuAmEnde := true;
                       { Value bleibt leer }
                       break;
                     end;
@@ -3281,7 +3281,7 @@ begin
                      end else
                      begin
                        Value := cFotoService_NeuPlatzhalter;
-                       NameBereitsMitPlatzhalter := true;
+                       NameBereitsMitNeuPlatzhalter := true;
                      end;
                     end;
 
@@ -3509,7 +3509,7 @@ begin
         if (zaehlernummer_neu = '') then
         begin
 
-         if NameBereitsMitPlatzhalter then
+         if NameBereitsMitNeuPlatzhalter then
          begin
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
@@ -3536,8 +3536,12 @@ begin
         begin
 
          // zaehlernummer_neu ist bekannt
-         if NameOhneZaehlerNummerNeu then
+         if NameBereitsMitNeuPlatzhalter then
+           ersetze(cFotoService_NeuPlatzhalter,zaehlernummer_neu,FotoPrefix);
+
+         if KeineZaehlerNummerNeuAmEnde then
          begin
+
           if NameOhneZaehlerNummerAlt then
             FotoDateiNameNeu :=
             { } FotoPrefix
@@ -3545,21 +3549,10 @@ begin
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt;
+
          end else
          begin
 
-           if NameBereitsMitPlatzhalter then
-           begin
-            ersetze(cFotoService_NeuPlatzhalter,zaehlernummer_neu,FotoPrefix);
-            if NameOhneZaehlerNummerAlt then
-              FotoDateiNameNeu :=
-              { } FotoPrefix
-            else
-              FotoDateiNameNeu :=
-              { } FotoPrefix +
-              { } zaehlernummer_alt;
-           end else
-           begin
             if NameOhneZaehlerNummerAlt then
               FotoDateiNameNeu :=
               { } FotoPrefix +
@@ -3569,7 +3562,7 @@ begin
               { } FotoPrefix +
               { } zaehlernummer_alt + '-' +
               { } zaehlernummer_neu;
-           end;
+
          end;
          UmbenennungAbgeschlossen := true;
         end;

@@ -177,6 +177,8 @@ type
     Label30: TLabel;
     Label31: TLabel;
     Button35: TButton;
+    Label32: TLabel;
+    Edit21: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -1497,12 +1499,14 @@ begin
   // F2: Die Umbenennung muss nochmals durchgeführt werden
   if (Key = VK_F2) then
   begin
-    Path := ExtractSegmentBetween(Edit4.Text, '\', '\');
+    Path := Edit21.Text;
     if Path <> '' then
-      Path := Path + '\';
+      Path := Path + '\'
+     else
+      ShowMessage('Bitte eine Ablage angeben!');
 
     FindStr :=
-    { Blank } ' ' +
+    { Delimiter } '\' +
     { Verzeichnis } Path +
     { Dateiname } ListBox3.Items[_ItemIndex];
 

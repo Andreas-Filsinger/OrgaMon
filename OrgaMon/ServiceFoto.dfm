@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet6
+    ActivePage = TabSheet3
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -259,12 +259,13 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
+      ExplicitLeft = 8
       DesignSize = (
         807
         502)
       object SpeedButton1: TSpeedButton
         Left = 3
-        Top = 52
+        Top = 76
         Width = 21
         Height = 22
         Glyph.Data = {
@@ -298,17 +299,15 @@
       end
       object Image1: TImage
         Left = 312
-        Top = 80
+        Top = 104
         Width = 492
-        Height = 405
+        Height = 381
         Anchors = [akLeft, akTop, akRight, akBottom]
         Stretch = True
-        ExplicitWidth = 411
-        ExplicitHeight = 384
       end
       object Label1: TLabel
         Left = 4
-        Top = 30
+        Top = 51
         Width = 30
         Height = 13
         Caption = 'Maske'
@@ -320,6 +319,13 @@
         Height = 13
         Caption = 'Pfad'
       end
+      object Label32: TLabel
+        Left = 8
+        Top = 32
+        Width = 33
+        Height = 13
+        Caption = 'Ablage'
+      end
       object Edit4: TEdit
         Left = 68
         Top = 3
@@ -330,9 +336,9 @@
       end
       object ListBox3: TListBox
         Left = 3
-        Top = 80
+        Top = 104
         Width = 303
-        Height = 405
+        Height = 381
         Anchors = [akLeft, akTop, akBottom]
         ItemHeight = 13
         TabOrder = 1
@@ -341,7 +347,7 @@
       end
       object Edit5: TEdit
         Left = 68
-        Top = 30
+        Top = 49
         Width = 146
         Height = 21
         TabOrder = 2
@@ -351,7 +357,7 @@
         Left = 312
         Top = 3
         Width = 411
-        Height = 71
+        Height = 95
         ItemHeight = 13
         Items.Strings = (
           'F1 : Die Datei ist korrupt - sie muss nochmals '#252'bertragen werden'
@@ -363,12 +369,20 @@
       end
       object Button30: TButton
         Left = 68
-        Top = 49
+        Top = 73
         Width = 75
         Height = 25
         Caption = 'Touch'
         TabOrder = 4
         OnClick = Button30Click
+      end
+      object Edit21: TEdit
+        Left = 68
+        Top = 26
+        Width = 121
+        Height = 21
+        TabOrder = 5
+        TextHint = 'stadtwerke-muster'
       end
     end
     object TabSheet4: TTabSheet

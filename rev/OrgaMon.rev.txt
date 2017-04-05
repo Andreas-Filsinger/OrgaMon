@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.275 (05.04.17) Andreas Filsinger
+
+ Neu: Foto: F2: Ablage kann direkt angegeben werden, dadurch ist die Aktion
+      vom Arbeitsverzeichnis unabhängig.
+
+Rev 8.274 (05.04.17) Andreas Filsinger
+
+ Bug: Foto: "Neu" - Umbenennung unterblieb bei dem Server bekannter Zähler-#-Neu
+
 Rev 8.273 (31.03.17) Andreas Filsinger
 
  Neu: Audit: RWE angepasst an ORDER.id im INTERN_INFO Feld.
