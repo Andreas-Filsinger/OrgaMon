@@ -3259,21 +3259,21 @@ begin
                       break;
                     end;
 
-                   // aus einer anderen Spalte
-                   c := tNAMES.colof(Token);
-                   // gibt es den Spalten-Namen?
-                   if (c = -1) then
-                   begin
+                    // aus einer anderen Spalte
+                    c := tNAMES.colof(Token);
+                    // gibt es den Spalten-Namen?
+                    if (c = -1) then
+                    begin
                      FatalError('Spalte "' + Token + '" nicht gefunden');
                      break;
-                   end else
-                   begin
+                    end else
+                    begin
                      Value := tNAMES.readCell(r, c);
-                   end;
+                    end;
 
-                   // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
-                   if (Token='ZaehlerNummerNeu') then
-                   begin
+                    // normale "Neu" Logik bei der Spalte "ZaehlerNummerNeu" ...
+                    if (Token='ZaehlerNummerNeu') then
+                    begin
                      if (Value<>'') then
                      begin
                       if Option(cFoto_Option_ZaehlernummerNeuLeer) then
@@ -3283,7 +3283,7 @@ begin
                        Value := cFotoService_NeuPlatzhalter;
                        NameBereitsMitPlatzhalter := true;
                      end;
-                   end;
+                    end;
 
                   until yet;
                   ersetze('~' + Token + '~', Value, FotoPrefix);
@@ -3534,6 +3534,8 @@ begin
         end
         else
         begin
+
+         // zaehlernummer_neu ist bekannt
          if NameOhneZaehlerNummerNeu then
          begin
           if NameOhneZaehlerNummerAlt then
