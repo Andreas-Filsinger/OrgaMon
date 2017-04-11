@@ -73,6 +73,7 @@ type
     function rpc_e_w_LoginInfo(sParameter: TStringList): TStringList;
     function rpc_e_w_Buchen(sParameter: TStringList): TStringList;
     function rpc_e_w_Skript(sParameter: TStringList): TStringList;
+    function rpc_e_w_NextVal(sParameter: TStringList): TStringList;
   end;
 
 {$IFNDEF fpc}
@@ -1006,5 +1007,14 @@ begin
   result.AddObject('', TXMLRPC_Server.oEndArray);
 {$ENDIF}
 end;
+
+function TeConnect.rpc_e_w_NextVal(sParameter: TStringList): TStringList;
+begin
+  result := TStringList.create;
+  if (sParameter.count > 1) then
+   with TXMLRPC_Server do
+     result.AddObject(frominteger(e_w_GEN(sParameter[1])), oInteger);
+end;
+
 
 end.

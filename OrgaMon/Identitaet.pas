@@ -858,6 +858,7 @@ begin
     AddMethod('Miniscore', XMethods.rpc_e_w_Miniscore);
     AddMethod('LoginInfo', XMethods.rpc_e_w_LoginInfo);
     AddMethod('Skript', XMethods.rpc_e_w_Skript);
+    AddMethod('NextVal', XMethods.rpc_e_w_NextVal);
 
     // Starten
     BasePlug := e_r_BasePlug;

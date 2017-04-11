@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.276 (11.04.17) Andreas Filsinger
+
+ Neu: XMLRPC: Funktion "NextVal"
+
 Rev 8.275 (05.04.17) Andreas Filsinger
 
  Neu: Foto: F2: Ablage kann direkt angegeben werden, dadurch ist die Aktion
