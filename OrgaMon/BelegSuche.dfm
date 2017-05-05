@@ -314,6 +314,7 @@ object FormBelegSuche: TFormBelegSuche
       Align = alBottom
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
+      ListBoxStyle = True
       OnGetCellProps = IB_Grid1GetCellProps
     end
     object IB_Memo1: TIB_Memo

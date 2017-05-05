@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.278 (05.05.17) Andreas Filsinger
+
+ Neu: DPI-Fähigkeit des Beleg-Fensters
+ Neu: Icon des cOrgaMon
+
+Rev 8.277 (19.04.17) Andreas Filsinger
+
+ Wegfall: DPI-Fähigkeit des Beleg-Fensters
+
 Rev 8.276 (11.04.17) Andreas Filsinger
 
  Neu: XMLRPC: Funktion "NextVal"

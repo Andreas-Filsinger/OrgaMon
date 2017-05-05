@@ -267,6 +267,7 @@ type
   public
     { Public-Deklarationen }
     procedure UpdateBenutzer(Sender: TObject);
+    procedure IBO_GridResize(Sender: TObject);
     procedure ReflectUpdateStatus;
     procedure registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
       Active: boolean = true);
@@ -314,7 +315,8 @@ uses
   GeoPostleitzahlen, ServiceFoto, ServiceApp,
   QTicketArbeitsplatz, OLAPArbeitsplatz,
   ZahlungECconnect, Medium, Jvgnugettext,
-  IB_Controls, Vertrag, Kontext,
+  IB_Controls,   IB_Grid,
+Vertrag, Kontext,
   BuchBarKasse, dbOrgaMon, wanfix32,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
@@ -551,12 +553,20 @@ begin
                     color := iFormColor;
           end;
 
+          // DPI-Aware
+            for m := 0 to pred(ComponentCount) do
+             if Components[m] is TIB_Grid then
+                with Components[m] as TIB_Grid do
+                 OnResize := IBO_GridResize;
+
+
           // Einstellungen für Queries
           _settings := sSystemSettings.Values[name];
           if (_settings <> '') then
           begin
             _name := nextp(_settings, '=');
             for m := 0 to pred(ComponentCount) do
+            begin
               if Components[m] is TIB_Query then
                 with Components[m] as TIB_Query do
                 begin
@@ -567,6 +577,7 @@ begin
                     break;
                   end;
                 end;
+            end;
           end;
         end;
     end;
@@ -1211,6 +1222,12 @@ end;
 procedure TFormMain.Button24Click(Sender: TObject);
 begin
   FormBelege.mShow;
+end;
+
+procedure TFormMain.IBO_GridResize(Sender: TObject);
+begin
+ with Sender as TIB_Grid do
+  DefaultRowHeight := DPIx(19);
 end;
 
 end.
