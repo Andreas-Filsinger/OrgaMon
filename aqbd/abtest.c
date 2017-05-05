@@ -45,6 +45,7 @@
 #include <aqbanking/jobgetbalance.h>
 #include <aqbanking/jobgettransactions.h>
 #include <aqbanking/jobsepadebitnote.h> 
+#include <aqbanking/jobsepaflashdebitnote.h>
 
 // C
 #include <fcntl.h>
@@ -57,7 +58,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.037";
+const char *currentVersion = "1.037.9";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -1196,13 +1197,22 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
  						betrag[i] = '.';//Dezimalpunkt!!
 					}
 					
+					//
 					// Job erstellen
+					//
+					// SEPA Lastschrift "CORE" job = AB_JobSepaDebitNote_new(a);
+					// SEPA Lastschrift "COR1" job = AB_JobSepaFlashDebitNote_new(a);
+					//
+					//job = AB_JobSepaFlashDebitNote_new(a);
 					job = AB_JobSepaDebitNote_new(a);
-					rv = AB_Job_CheckAvailability(job);
-					if(rv) {
 					
-				        	doc("ERROR: Job \"SepaDebitNote\" ist nicht erlaubt!\n",0);
-						return 2;
+					rv = AB_Job_CheckAvailability(job);
+					
+					if(rv) {
+					       sprintf(buffer,
+					         "ERROR: Code %d. Job \"SEPA-Lastschrift\" ist nicht erlaubt!\n", rv);
+                                               doc(buffer,0);
+					       return 2;
 					}
 					
 					// Init
