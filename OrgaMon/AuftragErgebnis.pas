@@ -1783,8 +1783,6 @@ begin
       { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
       { } noblank(Settings.values[cE_Postfix]) + '.xls';
 
-
-
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
       save(OutFName);
@@ -2034,7 +2032,7 @@ begin
           Oc_Bericht.free;
         end;
 
-      until true;
+      until yet;
     end;
   except
     on e: exception do
@@ -2146,7 +2144,7 @@ var
 
           // FTP - ERROR
           inc(ErrorCount);
-          Log(cERRORText + ' ' + SolidFTP_LastError);
+          Log(cERRORText + ' ' + SolidFTP_LastError, BAUSTELLE_R);
 
           // FTP - Ticket erstellen
           qTICKET := DataModuleDatenbank.nQuery;
@@ -2198,7 +2196,7 @@ var
           begin
             inc(ErrorCount);
             Log(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
-              ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein');
+              ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein', BAUSTELLE_R);
           end;
 
         end;
@@ -2217,7 +2215,7 @@ var
           break;
         end;
 
-    until true;
+    until yet;
   end;
 
   function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean): integer;
@@ -2347,7 +2345,16 @@ var
 
             // Hey, gar nix geschrieben?!
             if (ExportL.count - FailL.count < 1) then
-              break;
+            begin
+             if (ExportL.Count>0) then
+              Log(cINFOText + ' Es gibt wegen 100% Fehlerquote ('+IntToStr(FailL.count)+'/'+IntToStr(ExportL.count)+') nichts zu melden');
+             break;
+            end;
+
+            // Berichten über Anzahl
+            if (ExportL.Count>0) then
+             if (FailL.count>0) then
+              Log(cINFOText + ' Es werden nur '+IntToStr(ExportL.count - FailL.count)+'/'+IntToStr(ExportL.count)+' gemeldet');
 
             // FilesUp aufräumen
             FilesUp.sort;
@@ -2357,8 +2364,15 @@ var
               FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
 
             // Zip "FilesUp"
-            InfoZIP.zip(FilesUp, cAuftragErgebnisPath + FTP_UploadFName,
-              infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD]);
+            if (InfoZIP.zip(
+             { } FilesUp,
+             { } cAuftragErgebnisPath + FTP_UploadFName,
+             { } infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD])<>
+                 FilesUp.Count) then
+            begin
+             Log(cERRORText + ' Erstellte ZIP-Datei ist nicht vollständig');
+             break;
+            end;
 
             Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
 
@@ -2377,7 +2391,12 @@ var
               end;
 
             if (IdFTP1.Host <> '') then
+            begin
               FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
+            end else
+            begin
+              Log(cINFOText + ' Kein Upload, da kein FTP-Host eingetragen ist.');
+            end;
 
           until true;
 
@@ -2429,7 +2448,6 @@ begin
   SolidBeginTransaction;
   HugeTransactionN := e_w_GEN('GEN_EXPORT');
 
-  ErrorCount := 0;
   Settings := TStringList.create;
   eMailParameter := TStringList.create;
   qMail := DataModuleDatenbank.nQuery;
@@ -2523,6 +2541,7 @@ begin
             end;
 
         // Init
+        ErrorCount := 0;
         SolidFTP_Retries := 200;
         TAN := 0;
         ClearStat;
@@ -2609,7 +2628,10 @@ begin
             { } StrToIntDef(
             { } Settings.values[cE_Datenquelle],
             { } cRID_Null)) then
+          begin
             inc(ErrorCount);
+            Log(cERRORText + ' Fehler bei e_w_BaustelleKopie', BAUSTELLE_R);
+          end;
         end;
 
         // neue Erfolgs-TANS übergeben

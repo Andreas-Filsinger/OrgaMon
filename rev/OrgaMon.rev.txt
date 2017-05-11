@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.280 (11.05.17) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: Fatale Export Konfigurationsfehler führten zum unterlassen
+      des Uploads bei den folgenden Baustellen.
+
 Rev 8.279 (10.05.17) Andreas Filsinger
 
  Bug: Bei Fenster "Zahlung" fehlt DPI-Fähigkeit
