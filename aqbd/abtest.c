@@ -45,7 +45,6 @@
 #include <aqbanking/jobgetbalance.h>
 #include <aqbanking/jobgettransactions.h>
 #include <aqbanking/jobsepadebitnote.h> 
-#include <aqbanking/jobsepaflashdebitnote.h>
 
 // C
 #include <fcntl.h>
@@ -58,7 +57,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.037.9";
+const char *currentVersion = "1.038";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -100,36 +99,40 @@ void getCorrectFileNum()
 	};
 }
 
-void doc(const char *text, int x)
+void doc(const char *text, int x) 
 {
+
 		FILE *logfile;
 		char fileName[1024];
 		time_t rawtime;
 		struct tm * timeinfo;
 		
-		printf(text);
+		printf("%s", text);
 
 		//Erstellen des Files
 		sprintf(fileName, "logs/%s.log.txt", fileAusgabeFName);
 		logfile = fopen(fileName,"a");
 		//Ausgabe auf Kommandozeile
 		
-		//Holen der Aktuellen Uhrzeit
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
 		
 		if (lineend)//Ausgabe der Uhrzeit, wenn das Flag lineend true ist
 		{
+                        //Holen der Aktuellen Uhrzeit
+                        time ( &rawtime );
+                        timeinfo = localtime ( &rawtime );
+
 			fprintf(logfile, "%2i:%2i:%2i\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 			lineend =0;
 		}
 		
+		if (text) {
+		if (strlen(text)>=1) {
 		if (text[strlen(text)-1]=='\n') { //Überprüfen ob im letzten Text das letzte Zeichen \n war
 			lineend=1; //Setzen des flags
-		}
+		}}}
 
 		//Ausgabe ins Logfile, und schließen
-		fprintf(logfile, text);
+		fprintf(logfile, "%s", text);
 		fclose(logfile);
 		
 		// Wenn das xFlag gesetzt ist, zusätzlich in eine csv-Datei schreiben
@@ -142,7 +145,7 @@ void doc(const char *text, int x)
 			{
 				text = ";";
 			}
-			fprintf(transactionfile, text);
+			fprintf(transactionfile, "%s", text);
 			fclose(transactionfile);
 		}
 }
@@ -231,7 +234,7 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 				//Tanforderug rausschreinben!!
 				sprintf(fileName, "results/%s.tan-anfrage.txt", fileAusgabeFName);
 				tanreq = fopen(fileName,"w");
-				fprintf(tanreq, text);
+				fprintf(tanreq, "%s", text);
 				fclose(tanreq);
 
 				sprintf(fileName, "jobs/%s.tan", fileAusgabeFName);
@@ -413,7 +416,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 		status=unknown;
 	}
 	
-	
+	// msg is a Format-String
 	sprintf(buffer,msg, organizationName, organizationalUnitName, countryName, localityName, stateOrProvinceName, dbuffer1, dbuffer2, hash);
 	doc (buffer, 0);
 	doc ("</certificate>\n", 0);
@@ -493,7 +496,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
                 // Zugriff nicht von einer Zertifikatsfaelschung ausgehen
 		sprintf(path, "%s.txt", commonName);
 		savCert = fopen(path, "w");
-		fprintf(savCert, buffer);
+		fprintf(savCert, "%s", buffer);
 		fclose(savCert);
 		doc("WARNING: Ein Vergleichs-Zertifikat lag bisher nicht vor!\n",0);
 			doc("INFO: Das Zertifikat wurde erfolgreich geprueft!\n", 0);
@@ -569,12 +572,33 @@ int umsaetze(AB_BANKING *ab, const char *date)
 
 	int rv;
 	int ErrorCount;
-	char buffer [5000];
+	char buffer [10000];
 	AB_ACCOUNT *a;
 	AB_JOB_LIST2 *jl;
 	AB_JOB *j;
 	AB_IMEXPORTER_CONTEXT *ctx;
 	AB_IMEXPORTER_ACCOUNTINFO *ai;
+        const GWEN_STRINGLIST *sl;
+	const AB_VALUE *v;
+	const char *purpose1;
+	const char *purpose2;
+	const char *purpose3;
+	const char *purpose4;
+	const char *purpose5;
+	const char *purpose6;
+	const char *purpose7;
+	const char *vonREF;
+	const char *from1;
+	const char *from2;
+	const char *mref;
+	const char *cred;
+	const char *eref;
+	char betrag [21];
+	char datum [32];
+	char valutaDate [32];
+	int n;
+	const GWEN_TIME *ti;
+
 	
 	//Initialisierungen
 	ctx=AB_ImExporterContext_new();
@@ -618,7 +642,12 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	//Erstellen der .csv-Datei
 	doc("\n<transactions>", 0);
 	//erste Zeile im CSV-File
-	doc("PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7;MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz\r\n", 1);
+	doc("PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;", 1);
+	doc("VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;", 1);
+	doc("Buchungstext1;Buchungstext2;Buchungstext3;", 1);
+	doc("Buchungstext4;Buchungstext5;Buchungstext6;", 1);
+	doc("Buchungstext7;MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz\r\n", 1);
+
 	
 	ai=AB_ImExporterContext_GetFirstAccountInfo(ctx); //AccountInfo herausziehen
         if (ai) {
@@ -626,27 +655,8 @@ int umsaetze(AB_BANKING *ab, const char *date)
           const AB_TRANSACTION *t;
           t=AB_ImExporterAccountInfo_GetFirstTransaction(ai);
           while(t) {
-		const AB_VALUE *v;
-		const char *purpose1;
-		const char *purpose2;
-		const char *purpose3;
-		const char *purpose4;
-		const char *purpose5;
-		const char *purpose6;
-		const char *purpose7;
-		const char *vonREF;
-		const char *from1;
-		const char *from2;
-		const char *mref;
-		const char *cred;
-		const char *eref;
-		char betrag [21];
-		char date [32];
-		char valutaDate [32];
-		int j=0;
-		const GWEN_TIME *ti;
-		const GWEN_STRINGLIST *sl;
 
+          
 		//Getting Time
 		ti = AB_Transaction_GetDate(t);
 		if (ti) 
@@ -656,14 +666,14 @@ int umsaetze(AB_BANKING *ab, const char *date)
 			rv = GWEN_Time_toString(ti, "DD.MM.YYYY", tbuf);
 			if (rv) 
 			{
-				strcpy(date, "Convert Error");
+				strcpy(datum, "Convert Error");
 			}
-			strncpy(date, GWEN_Buffer_GetStart(tbuf), sizeof(date)-1);
+			strncpy(datum, GWEN_Buffer_GetStart(tbuf), sizeof(datum)-1);
 			GWEN_Buffer_free(tbuf);
 		}
 		else
 		{
-			strcpy(date, "date=nil");
+			strcpy(datum, "date=nil");
 		}
 
 		ti = AB_Transaction_GetValutaDate(t);
@@ -683,14 +693,17 @@ int umsaetze(AB_BANKING *ab, const char *date)
 
 		v = AB_Transaction_GetValue(t);
 		sprintf(betrag, "%.2lf", AB_Value_GetValueAsDouble(v));
-		while ((betrag[j]!='.') && (j<20)&& (betrag[j]))
-		{
-			j++;
+		
+		n = 0;
+		while ((betrag[n]!='.') && (n<20)&& (betrag[n])) {
+			n++;
 		}
-		if (betrag[j] == '.')
+		if (betrag[n] == '.')
 		{
-			betrag[j] = ',';//Dezimalkomma
+			betrag[n] = ',';//Dezimalkomma
 		}
+
+
 		sl = AB_Transaction_GetPurpose(t);
 		purpose1 = GWEN_StringList_StringAt(sl,0);
 		purpose2 = GWEN_StringList_StringAt(sl,1);
@@ -715,15 +728,15 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		}
 
 		//Ausgaben in die CSV-Datei
-		sprintf(buffer, "%i;", i);					doc(buffer,1);
-		sprintf(buffer, "%s;", date);					doc(buffer,1);
-		sprintf(buffer, "%s;", valutaDate);				doc(buffer,1);
-		sprintf(buffer, "%s;", betrag);					doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));		doc(buffer,1);
-		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));	doc(buffer,1);
-		sprintf(buffer, "%i;", AB_Transaction_GetTransactionCode(t));	doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Transaction_GetTransactionText(t));	doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Transaction_GetPrimanota(t));		doc(buffer,1);
+		sprintf(buffer, "%i;", i);						doc(buffer,1);
+		sprintf(buffer, "%s;", datum);						doc(buffer,1);
+		sprintf(buffer, "%s;", valutaDate);					doc(buffer,1);
+		sprintf(buffer, "%s;", betrag);						doc(buffer,1);
+		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));			doc(buffer,1);
+		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
+		sprintf(buffer, "%i;", AB_Transaction_GetTransactionCode(t));		doc(buffer,1);
+		sprintf(buffer, "%s;", AB_Transaction_GetTransactionText(t));		doc(buffer,1);
+		sprintf(buffer, "%s;", AB_Transaction_GetPrimanota(t));			doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetRemoteBankCode(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetRemoteAccountNumber(t));	doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetCustomerReference(t));		doc(buffer,1);
@@ -736,14 +749,16 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		sprintf(buffer, "%s;", purpose5);					doc(buffer,1);
 		sprintf(buffer, "%s;", purpose6);					doc(buffer,1);
 		sprintf(buffer, "%s;", purpose7);					doc(buffer,1);
-		sprintf(buffer, "%s;", mref ); doc(buffer,1);
-		sprintf(buffer, "%s;", cred ); doc(buffer,1);
-		sprintf(buffer, "%s;", eref ); doc(buffer,1);
+		sprintf(buffer, "%s;", mref ); 						doc(buffer,1);
+		sprintf(buffer, "%s;", cred ); 						doc(buffer,1);
+		sprintf(buffer, "%s;", eref ); 						doc(buffer,1);
          
 		doc("\r\n", 1);
 		i++;
 
+                
 		t=AB_ImExporterAccountInfo_GetNextTransaction(ai);
+                
 	  } /* while transactions */
          } /* if ai */
         else {
@@ -904,10 +919,10 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		}
 		
 		//Ausgaben in die CSV-Datei
-		sprintf(buffer, "%i;", i);		doc(buffer,1);
-		sprintf(buffer, "%s;", date);		doc(buffer,1);
-		sprintf(buffer, "%s;", valutaDate);	doc(buffer,1);
-		sprintf(buffer, "%s;", betrag);		doc(buffer,1);
+		sprintf(buffer, "%i;", i);						doc(buffer,1);
+		sprintf(buffer, "%s;", date);						doc(buffer,1);
+		sprintf(buffer, "%s;", valutaDate);					doc(buffer,1);
+		sprintf(buffer, "%s;", betrag);						doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));			doc(buffer,1);
 		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
 		sprintf(buffer, "%i;", AB_Transaction_GetTextKey(t));			doc(buffer,1);
@@ -1197,22 +1212,13 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
  						betrag[i] = '.';//Dezimalpunkt!!
 					}
 					
-					//
 					// Job erstellen
-					//
-					// SEPA Lastschrift "CORE" job = AB_JobSepaDebitNote_new(a);
-					// SEPA Lastschrift "COR1" job = AB_JobSepaFlashDebitNote_new(a);
-					//
-					//job = AB_JobSepaFlashDebitNote_new(a);
 					job = AB_JobSepaDebitNote_new(a);
-					
 					rv = AB_Job_CheckAvailability(job);
-					
 					if(rv) {
-					       sprintf(buffer,
-					         "ERROR: Code %d. Job \"SEPA-Lastschrift\" ist nicht erlaubt!\n", rv);
-                                               doc(buffer,0);
-					       return 2;
+					
+				        	doc("ERROR: Job \"SepaDebitNote\" ist nicht erlaubt!\n",0);
+						return 2;
 					}
 					
 					// Init
@@ -1442,7 +1448,7 @@ int saldo(AB_BANKING *ab)
 	bal = AB_AccountStatus_GetBookedBalance (status);
 	v = AB_Balance_GetValue (bal);
 	sprintf(betrag, "%.2lf;%s\r\n", AB_Value_GetValueAsDouble(v), AB_Value_GetCurrency(v));
-    j=0;
+        j=0;
 	while (betrag[j]!='.' && j<20){
 		j++;
 	}
@@ -1709,10 +1715,10 @@ int deamon()
 		
 		if (jobFileName[0]!=0) {
 		
-                        if (iWarteCount>0) {		
-                                  			 printf("Nach %03d:%02d:%02d h Schlaf wegen %s aufgewacht\n", iWarteCount / 3600,	(iWarteCount / 60) % 60, iWarteCount % 60, jobFileName);
-                                             iWarteCount=0;
-                        }
+			if (iWarteCount>0) {		
+                  		printf("Nach %03d:%02d:%02d h Schlaf wegen %s aufgewacht\n", iWarteCount / 3600,	(iWarteCount / 60) % 60, iWarteCount % 60, jobFileName);
+                  		iWarteCount=0;
+                  	}
 			
 			//nur den numerischen "JOB-ID" suchen...
 			i=0;

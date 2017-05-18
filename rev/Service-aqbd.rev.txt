@@ -25,6 +25,10 @@ Dokumentation
 
 @<a href="http://wiki.orgamon.org/index.php5/AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
+Rev 1.038 (18.05.17) Andreas Filsinger
+
+ Bug: "%"  Zeichen konnte in dem Umsätzen nicht verarbeitet werden
+ 
 Rev 1.037 (14.08.14) Andreas Filsinger
 
  Neu: Lastschrift: Anpassungen an aqbanking 5.5
