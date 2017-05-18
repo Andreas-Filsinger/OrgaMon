@@ -8370,6 +8370,7 @@ var
 
   sResult: TStringList;
   sStack: TStringList;
+  sRollBackReasons: TStringList;
   RollBack: boolean;
 
   // Auftrag
@@ -8402,12 +8403,10 @@ var
   TAET_BEGIN: integer;
   TAET_END: integer;
 
-  procedure rollbackBecause(Msg: string);
-  begin
-    if assigned(sBericht) then
-      sBericht.add('(RID=' + RID + ') ' + Msg);
-    RollBack := true;
-  end;
+  // Schnittstellen-Optionen
+  Optionen : string;
+  p_Melde_Eintarif_in_NT : boolean;
+
 
   procedure speak(s: string = '');
   begin
@@ -8415,6 +8414,15 @@ var
       sResult.add('')
     else
       sResult.add(fill(' ', sStack.count) + s);
+  end;
+
+  procedure rollbackBecause(Msg: string);
+  begin
+    if assigned(sBericht) then
+      sBericht.add('(RID=' + RID + ') ' + Msg)
+    else
+     sDiagnose.add(cERRORText + ' (RID=' + RID + ') ' + Msg);
+    RollBack := true;
   end;
 
   procedure push(tag: string);
@@ -8902,13 +8910,25 @@ var
       end
       else
       begin
+        if p_Melde_Eintarif_in_NT then
+        begin
 
-        // Ausbau
-        kurz('StandNT', x(r, 'ZaehlerStandAlt'), r);
+          // Ausbau
+          kurz('StandNT', x(r, 'ZaehlerStandAlt'), r);
 
-        // Einbau
-        kurz('StandNT neu', x(r, 'ZaehlerStandNeu'), r);
+          // Einbau
+          kurz('StandNT neu', x(r, 'ZaehlerStandNeu'), r);
 
+        end else
+        begin
+
+          // Ausbau
+          kurz('StandHT', x(r, 'ZaehlerStandAlt'), r);
+
+          // Einbau
+          kurz('StandHTneu', x(r, 'ZaehlerStandNeu'), r);
+
+        end;
       end;
     end;
 
@@ -9029,6 +9049,7 @@ begin
   sResult := TStringList.create;
   sStack := TStringList.create;
   sSource := TSearchStringList.create;
+
   xImport := TXLSFile.create(true);
   xlsHeaders := TStringList.create;
   bXML := TBLager.create;
@@ -9089,6 +9110,27 @@ begin
 
       for c := 1 to ColCountInRow(1) do
         xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
+
+
+      cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
+      if cARGOS = -1 then
+      begin
+
+        // defaults ohne die Spalte "ARGOS-Optionen"
+        p_Melde_Eintarif_in_NT := true;
+
+      end else
+      begin
+
+        // alternative defaults gültig bei reiner Existenz der Spalte "ARGOS-Optionen"
+        p_Melde_Eintarif_in_NT := false;
+        // Optionen einlesen
+        Optionen := cutblank(getCellValue(2, succ(cARGOS)).ToStringInvariant);
+
+        // Optionen setzen ...
+        if pos('x',Optionen)>0 then
+         p_Melde_Eintarif_in_NT := true;
+      end;
 
       cARGOS := xlsHeaders.indexof('ARGOS');
       if cARGOS = -1 then
@@ -9195,6 +9237,7 @@ begin
   sResult.Free;
   sSource.Free;
   sStack.Free;
+  sRollBackReasons.Free;
   xImport.Free;
   xlsHeaders.Free;
 end;

@@ -2340,6 +2340,7 @@ var
             if not(CreateFiles(Settings, ExportL, FailL, FilesUp)) then
             begin
               inc(ErrorCount);
+              // Create-Files sollte bereits über den Fehler berichtet haben
               break;
             end;
 
@@ -2367,10 +2368,10 @@ var
             if (InfoZIP.zip(
              { } FilesUp,
              { } cAuftragErgebnisPath + FTP_UploadFName,
-             { } infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD])<>
-                 FilesUp.Count) then
+             { } infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
             begin
-             Log(cERRORText + ' Erstellte ZIP-Datei ist nicht vollständig');
+             inc(ErrorCount);
+             Log(cERRORText + ' Erstelltes ZIP-Archiv sollte zumindest eine Datei enthalten.');
              break;
             end;
 

@@ -26,10 +26,9 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet6
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 883
     object TabSheet1: TTabSheet
       Margins.Left = 4
       Margins.Top = 4
@@ -37,7 +36,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitWidth = 875
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -46,10 +44,6 @@ object FormBuchhalter: TFormBuchhalter
         Align = alClient
         Caption = 'Panel1'
         TabOrder = 0
-        ExplicitLeft = 312
-        ExplicitTop = 240
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -360,7 +354,6 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitWidth = 875
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -368,10 +361,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 400
-        ExplicitTop = 240
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -1254,7 +1243,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitWidth = 875
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -1262,10 +1250,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 360
-        ExplicitTop = 224
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -1710,7 +1694,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitWidth = 875
       object Panel6: TPanel
         Left = 0
         Top = 0
@@ -1718,10 +1701,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 280
-        ExplicitTop = 232
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -2422,7 +2401,6 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 1
           OnDblClick = DrawGrid1DblClick
           OnDrawCell = DrawGrid1DrawCell
-          ExplicitWidth = 867
           ColWidths = (
             64)
           RowHeights = (
@@ -2513,7 +2491,6 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 6
           Text = 'TRN'
           OnKeyPress = Edit8KeyPress
-          ExplicitLeft = 797
         end
         object Edit7: TEdit
           Left = 339
@@ -2532,7 +2509,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitWidth = 875
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -2540,10 +2516,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 376
-        ExplicitTop = 280
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -3584,7 +3556,6 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 0
           OnDblClick = DrawGrid2DblClick
           OnDrawCell = DrawGrid2DrawCell
-          ExplicitWidth = 863
           ColWidths = (
             64)
           RowHeights = (
@@ -3612,7 +3583,6 @@ object FormBuchhalter: TFormBuchhalter
           ParentFont = False
           TabOrder = 1
           Transparent = False
-          ExplicitLeft = 687
         end
         object ComboBox2: TComboBox
           Left = 35
@@ -3646,7 +3616,6 @@ object FormBuchhalter: TFormBuchhalter
           ScrollBars = ssVertical
           TabOrder = 3
           OnDrawCell = DrawGrid3DrawCell
-          ExplicitWidth = 863
           ColWidths = (
             64
             64
@@ -3695,7 +3664,6 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 5
           OnClick = Button15Click
-          ExplicitLeft = 517
         end
         object Button16: TButton
           Left = 566
@@ -3713,7 +3681,6 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 6
           OnClick = Button16Click
-          ExplicitLeft = 542
         end
         object Button17: TButton
           Left = 516
@@ -3731,7 +3698,6 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 7
           OnClick = Button17Click
-          ExplicitLeft = 492
         end
         object StaticText2: TStaticText
           Left = 712
@@ -3755,7 +3721,6 @@ object FormBuchhalter: TFormBuchhalter
           ParentFont = False
           TabOrder = 8
           Transparent = False
-          ExplicitLeft = 688
         end
         object Button13: TButton
           Left = 592
@@ -3773,7 +3738,6 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 9
           OnClick = Button13Click
-          ExplicitLeft = 568
         end
         object Button18: TButton
           Left = 442
@@ -3943,7 +3907,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitWidth = 875
       object Panel8: TPanel
         Left = 0
         Top = 0
@@ -3951,10 +3914,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 312
-        ExplicitTop = 256
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         DesignSize = (
           899
           586)
@@ -4157,7 +4116,6 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
-          ExplicitLeft = 679
         end
         object Button11: TButton
           Left = 871
@@ -4181,7 +4139,6 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 1
           OnClick = Button11Click
-          ExplicitLeft = 847
         end
         object IB_Grid2: TIB_Grid
           Left = 1
@@ -4197,9 +4154,6 @@ object FormBuchhalter: TFormBuchhalter
           RowSelect = True
           DrawCellTextOptions = [gdtShowTextBlob]
           OnGetDisplayText = IB_Grid2GetDisplayText
-          ExplicitLeft = 0
-          ExplicitTop = 35
-          ExplicitWidth = 899
         end
       end
     end
@@ -4211,7 +4165,6 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitWidth = 875
       object Panel9: TPanel
         Left = 0
         Top = 0
@@ -4219,10 +4172,6 @@ object FormBuchhalter: TFormBuchhalter
         Height = 586
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 344
-        ExplicitTop = 272
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         object Label11: TLabel
           Left = 24
           Top = 40
@@ -4521,27 +4470,27 @@ object FormBuchhalter: TFormBuchhalter
       'PERSON.Z_ELV_BLZ=ITEM=9'
       'PERSON.Z_ELV_KONTO=ITEM=10'
       'PERSON.Z_ELV_KONTO_INHABER=ITEM=11')
-    Left = 104
-    Top = 88
+    Left = 80
+    Top = 208
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 176
-    Top = 88
+    Left = 208
+    Top = 312
   end
   object IB_Cursor1: TIB_Cursor
     DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from BUCH where RID=:CROSSREF')
-    Left = 104
-    Top = 136
+    Left = 80
+    Top = 248
   end
   object ImageList1: TImageList
-    Left = 288
-    Top = 88
+    Left = 296
+    Top = 224
     Bitmap = {
-      494C010104000900380210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101040009003C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4846,8 +4795,8 @@ object FormBuchhalter: TFormBuchhalter
       ' RID desc')
     ColorScheme = True
     ReadOnly = True
-    Left = 104
-    Top = 192
+    Left = 80
+    Top = 304
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2
@@ -4856,7 +4805,7 @@ object FormBuchhalter: TFormBuchhalter
   end
   object JvFormStorage1: TJvFormStorage
     AppStorage = FormMain.JvAppIniFileStorage1
-    AppStoragePath = '%FORM_NAME%'
+    AppStoragePath = '%FORM_NAME%\'
     Options = [fpSize, fpLocation]
     StoredValues = <>
     Left = 484

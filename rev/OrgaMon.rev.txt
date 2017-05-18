@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.282 (15.05.17) Andreas Filsinger
+
+ Neu: Artikel: GTIN ist jetzt alphanumerisches Feld
+
+Rev 8.281 (15.05.17) Andreas Filsinger
+
+ Bug: Auftrag: Ergebnis: ZIP Erstellung - zu grosse Vorsicht bei der Anzahl der
+      Archiv-Dateien. Es wird mit Datei-Masken gearbeitet die eine unterschiedliche
+      Anzahl von Archiv-Dateien bewirkt.
+
 Rev 8.280 (11.05.17) Andreas Filsinger
 
  Bug: Auftrag: Ergebnis: Fatale Export Konfigurationsfehler führten zum unterlassen
@@ -11849,6 +11859,40 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.282
+
+ALTER TABLE ARTIKEL
+ADD GTIN_TMP VARCHAR(15);
+
+update ARTIKEL set
+GTIN_TMP = GTIN;
+
+ALTER TABLE ARTIKEL DROP GTIN;
+
+ALTER TABLE ARTIKEL
+ADD GTIN VARCHAR(15);
+
+update ARTIKEL set
+GTIN = GTIN_TMP;
+
+ALTER TABLE ARTIKEL DROP GTIN_TMP;
+
+ALTER TABLE ARTIKEL_AA
+ADD GTIN_TMP VARCHAR(15);
+
+update ARTIKEL_AA set
+GTIN_TMP = GTIN;
+
+ALTER TABLE ARTIKEL_AA DROP GTIN;
+
+ALTER TABLE ARTIKEL_AA
+ADD GTIN VARCHAR(15);
+
+update ARTIKEL_AA set
+GTIN = GTIN_TMP;
+
+ALTER TABLE ARTIKEL_AA DROP GTIN_TMP;
 
 :8.268
 

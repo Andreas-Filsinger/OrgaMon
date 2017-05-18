@@ -890,6 +890,7 @@ begin
     _dpi := screen.PixelsPerInch;
   p2 := PixelCount;
   result := round((_dpi / cAppDesigner_PixelsPerInch) * double(p2));
+  // MulDiv(PixelCount, Screen.PixelsPerInch, 96);
 end;
 
 function DoIt(Frage: string; Danger: boolean = false): boolean;
