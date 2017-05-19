@@ -150,6 +150,8 @@ type
     IdServerIOHandlerSSLOpenSSL1: TIdServerIOHandlerSSLOpenSSL;
     IdServerInterceptLogEvent1: TIdServerInterceptLogEvent;
     Button22: TButton;
+    Label22: TLabel;
+    Edit12: TEdit;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -657,17 +659,38 @@ begin
   Parameter := TStringList.Create;
   with Edit4 do
     if (Text <> '') then
-      Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+    begin
+     if StrFilter(Text,cZiffern)=Text then
+      Parameter.AddObject(Text, TXMLRPC_Server.oInteger)
+     else
+      Parameter.AddObject(Text, TXMLRPC_Server.oString)
+    end;
+
   with Edit5 do
     if (Text <> '') then
       Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+
   with Edit6 do
     if (Text <> '') then
       Parameter.AddObject(Text, TXMLRPC_Server.oInteger);
+
   if (Edit10.Text='') then
+  begin
+   // lokal ausführen
    ListBoxLog.Items.AddStrings(XServer.exec(ComboBox1.Text, Parameter))
-  else
-   ListBoxLog.Items.AddStrings(remote_exec(Edit10.Text,STrToIntDef(Edit11.Text,3049), ComboBox1.Text, Parameter))
+  end else
+  begin
+    // remote ausführen
+    ListBoxLog.Items.AddStrings(
+     remote_exec(
+      {} Edit10.Text,
+      {} STrToIntDef(Edit11.Text,3049),
+      {} ComboBox1.Text,
+      {} Parameter,
+      {} Edit12.Text));
+  end;
+
+  ListBoxLog.Items.add('ENDE');
 end;
 
 procedure TFormWebShopConnector.Button10Click(Sender: TObject);
@@ -1451,8 +1474,8 @@ var
 
     function AsString(s: string): string; overload;
     begin
-      // erst mal unerwünschte Zeichen raus
-      Result := StrFilter(s, #10#13, true);
+      // erst mal unerwünschte Zeichen raus <CR> <LF> <\>
+      Result := StrFilter(s, #10#13#92, true);
 
       // nun die Konvertierung nach html
       Result := Ansi2html(Result);
@@ -1490,14 +1513,16 @@ var
     begin
       ParamByName('CROSSREF').AsINteger := ARTIKEL_R;
       ApiFirst;
-      Result := '(' + asNumber(FieldByName('RID')) + ',' + asNumber(FieldByName('LAUFNUMMER')) + ','
-        + AsString(FieldByName('TITEL')) + ',' +
-        AsString(cutblank(FieldByName('SCHWER_GRUPPE').AsString + ' ' +
-        FieldByName('SCHWER_DETAILS').AsString)) + ',' + AsString(FieldByName('DAUER')) + ',' +
-        AsString(e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsINteger)) + ',' +
-        AsString(e_r_MusikerName(FieldByName('KOMPONIST_R').AsINteger)) + ',' +
-        AsString(e_r_MusikerName(FieldByName('ARRANGEUR_R').AsINteger)) + ',' +
-        AsString(e_r_USD(FieldByName('RID').AsINteger)) + ')';
+      Result := '(' +
+        {} asNumber(FieldByName('RID')) + ',' +
+        {} asNumber(FieldByName('LAUFNUMMER')) + ',' +
+        {} AsString(FieldByName('TITEL')) + ',' +
+        {} AsString(cutblank(FieldByName('SCHWER_GRUPPE').AsString + ' ' + FieldByName('SCHWER_DETAILS').AsString)) + ',' +
+        {} AsString(FieldByName('DAUER')) + ',' +
+        {} AsString(e_r_Verlag_PERSON_R(FieldByName('VERLAG_R').AsInteger)) + ',' +
+        {} AsString(e_r_MusikerName(FieldByName('KOMPONIST_R').AsInteger)) + ',' +
+        {} AsString(e_r_MusikerName(FieldByName('ARRANGEUR_R').AsInteger)) + ',' +
+        {} AsString(e_r_USD(FieldByName('RID').AsInteger)) + ')';
     end;
   end;
 
@@ -1531,8 +1556,11 @@ begin
     // den ARTIKEL Zugriff mal sicherstellen!
     with ARTIKEL do
     begin
-      sql.Add('select RID, LAUFNUMMER, TITEL, ' + ' SCHWER_GRUPPE, SCHWER_DETAILS, DAUER, ' +
-        ' VERLAG_R, KOMPONIST_R, ARRANGEUR_R ' + ' from ARTIKEL where RID=:CROSSREF');
+      sql.Add(
+       {} 'select RID, LAUFNUMMER, TITEL, ' +
+       {} ' SCHWER_GRUPPE, SCHWER_DETAILS, DAUER, ' +
+       {} ' VERLAG_R, KOMPONIST_R, ARRANGEUR_R ' +
+       {} ' from ARTIKEL where RID=:CROSSREF');
       open;
     end;
 

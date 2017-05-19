@@ -109,6 +109,8 @@ type
     class function QuoteBeginArray: string;
     class function QuoteEndArray: string;
 
+    class function QuoteParams(Params: TStringList):TStringList;
+
   public
 
     DebugMode: boolean;
@@ -162,7 +164,7 @@ type
   end;
 
 // XMLRPC-Client
-function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList):TStringList;
+function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList; NameSpace: string = 'abu'):TStringList;
 
 // Texte gehen in die Log-Datei
 procedure Log(s: string);
@@ -293,6 +295,55 @@ class function TXMLRPC_Server.QuoteEndArray: string;
 begin
   result := '</data></array></value>';
 end;
+
+class function TXMLRPC_Server.QuoteParams(Params: TStringList):TStringList;
+var
+ n : integer;
+
+begin
+  result := TStringList.create;
+  for n := 0 to pred(Params.count) do
+  begin
+
+
+   case integer(Params.objects[n]) of
+  cXML_SimpleType_String :begin
+      result.add('<param>');
+      result.Add(QuoteString(Params[n]));
+      result.add('</param>');
+  end;
+  cXML_SimpleType_Integer :  begin
+      result.add('<param>');
+   result.Add(QuoteInteger(Params[n]));
+      result.add('</param>');
+  end;
+  cXML_SimpleType_Double :  begin
+      result.add('<param>');
+  result.Add(QuoteDouble(Params[n]));
+      result.add('</param>');
+  end;
+  cXML_SimpleType_DateTime : begin
+      result.add('<param>');
+  result.Add(QuoteDateTime(Params[n]));
+      result.add('</param>');
+  end;
+  cXML_SimpleType_Boolean : begin
+  result.Add(QuoteBoolean(Params[n]));
+  end;
+  cXML_SimpleType_BeginArray : begin
+      result.add('<param>');
+  result.Add(QuoteBeginArray);
+  end;
+  cXML_SimpleType_EndArray : begin
+  result.Add(QuoteEndArray);
+      result.add('</param>');
+  end
+  else
+   raise Exception.Create('Unkown Parameter Type');
+  end;
+  end;
+end;
+
 
 class function TXMLRPC_Server.fromDateTime(d: TDateTime): string;
 begin
@@ -949,7 +1000,7 @@ end;
 
 // call a remote XML RPC
 
-function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList):TStringList;
+function remote_exec(Host:string;Port:integer;Name:string;Parameter:TStringList; NameSpace: string = 'abu'):TStringList;
 var
  cXMLRPC : TIdHTTP;
  XML : TStringList;
@@ -964,9 +1015,16 @@ begin
   with XML do
   begin
    add('<?xml version="1.0"?>');
-   // imp pend: Codierung der Parameter
-   //   if (Parameter.Count=0) then
-    add('<methodCall><methodName>abu.' + Name + '</methodName></methodCall>');
+    if (Parameter.Count=0) then
+    begin
+     add('<methodCall><methodName>'+NameSpace+'.' + Name + '</methodName></methodCall>')
+    end else
+    begin
+     add('<methodCall><methodName>'+NameSpace+'.' + Name + '</methodName><params>');
+     addStrings(TXMLRPC_Server.QuoteParams(Parameter));
+     add('</params></methodCall>');
+    end;
+
   end;
 
   RequestContent := TMemoryStream.Create;
@@ -989,12 +1047,23 @@ begin
   cXMLRPC.Free;
 
   // parse result
-   // imp pend: Voll Umfänglicher Ergebnis-Parser
+   // imp pend: ein Voll Umfänglicher Ergebnis-Parser
   for n := pred(result.Count) downto 0 do
-   if pos('<value><string>',result[n])=0 then
+  begin
+   repeat
+    if pos('<value><string>',result[n])<>0 then
+    begin
+     result[n] := ExtractSegmentBetween(result[n],'<value><string>','</string></value>');
+     break;
+    end;
+    if pos('<value><int>',result[n])<>0 then
+    begin
+     result[n] := ExtractSegmentBetween(result[n],'<value><int>','</int></value>');
+     break;
+    end;
     result.Delete(n)
-   else
-    result[n] := ExtractSegmentBetween(result[n],'<value><string>','</string></value>');
+   until yet;
+  end;
 end;
 
 
