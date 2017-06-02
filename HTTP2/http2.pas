@@ -133,7 +133,7 @@ begin
 
  CTX := SSL_CTX_new(METH);
 
- SSL_CTX_set_info_callback(CTX,cb_info);
+ SSL_CTX_set_info_callback(CTX,@cb_info);
 
   StrPCopy(p,Path + 'key.pem');
   if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then

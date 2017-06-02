@@ -209,6 +209,8 @@ type
     SpeedButton21: TSpeedButton;
     JvFormStorage1: TJvFormStorage;
     SpeedButton27: TSpeedButton;
+    Button4: TButton;
+    Button21: TButton;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
@@ -277,6 +279,7 @@ type
     procedure SpeedButton21Click(Sender: TObject);
     procedure SpeedButton22Click(Sender: TObject);
     procedure SpeedButton27Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _VERLAG_R: Integer;
@@ -300,6 +303,7 @@ type
     procedure ReflectArtikelInfo;
     procedure ReflectPREIS_R;
     procedure DoTheArtikelSearch;
+    procedure w_GTIN(AUSGABEART_R, ARTIKEL_R: integer);
 
     // Combo Boxes
     procedure RefreshKomponistArrangeurCombo;
@@ -1195,9 +1199,34 @@ begin
   FormArtikelSortiment.SetContext(IB_Query1.FieldByName('SORTIMENT_R').AsInteger);
 end;
 
+
+procedure TFormArtikel.w_GTIN(AUSGABEART_R, ARTIKEL_R: integer);
+begin
+  BeginHourGlass;
+  case e_w_GTIN(AUSGABEART_R,ARTIKEL_R) of
+   -1: ShowMessage('Stempel "+" ist nicht definiert');
+   -2: ShowMessage('Bestehende GTIN enthält ungültige Zeichen');
+   -3: ShowMessage('Bestehende GTIN hat eine falsche Prüfziffer');
+   -4: ShowMessage('Bestehende GTIN ist OK');
+  else
+   if (AUSGABEART_R=0) then
+    IB_Query1.refresh
+   else
+    IB_Query13.Refresh;
+  end;
+  EndHourGlass;
+end;
+
 procedure TFormArtikel.Button21Click(Sender: TObject);
 begin
-  IB_Query1.FieldByName('TITEL').clear;
+ w_GTIN(0, IB_Query1.FieldByName('RID').AsInteger);
+end;
+
+procedure TFormArtikel.Button4Click(Sender: TObject);
+begin
+ w_GTIN(
+  {} IB_Query13.FieldByName('AUSGABEART_R').AsInteger,
+  {} IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormArtikel.SpeedButton14Click(Sender: TObject);
@@ -1479,6 +1508,7 @@ begin
     IB_Query3.locate('PERSON_R', PERSON_R, []);
   end;
 end;
+
 
 procedure TFormArtikel.SetContext(sql: string);
 begin

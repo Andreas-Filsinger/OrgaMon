@@ -1132,7 +1132,7 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet6
+    ActivePage = TabSheet3
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -1336,10 +1336,10 @@ object FormArtikel: TFormArtikel
       Caption = 'Ausgabearten'
       ImageIndex = 3
       object IB_Grid2: TIB_Grid
-        Left = 7
-        Top = 40
+        Left = 3
+        Top = 28
         Width = 962
-        Height = 136
+        Height = 148
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource2
         TabOrder = 0
@@ -1349,7 +1349,7 @@ object FormArtikel: TFormArtikel
       end
       object Button9: TButton
         Left = 939
-        Top = 14
+        Top = 1
         Width = 22
         Height = 22
         Hint = 'Journal der Warenbewegungen'
@@ -1360,7 +1360,7 @@ object FormArtikel: TFormArtikel
       end
       object Button19: TButton
         Left = 916
-        Top = 14
+        Top = 1
         Width = 21
         Height = 22
         Hint = 'Mengen anzeigen'
@@ -1371,9 +1371,9 @@ object FormArtikel: TFormArtikel
       end
       object IB_UpdateBar2: TIB_UpdateBar
         Left = 7
-        Top = 7
+        Top = 1
         Width = 156
-        Height = 26
+        Height = 22
         Flat = False
         Ctl3D = False
         ParentCtl3D = False
@@ -1382,6 +1382,18 @@ object FormArtikel: TFormArtikel
         ReceiveFocus = False
         CustomGlyphsSupplied = []
         VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
+      end
+      object Button4: TButton
+        Left = 169
+        Top = 0
+        Width = 43
+        Height = 22
+        Hint = 'Pr'#252'fe oder setze die GTIN'
+        Caption = 'GTIN'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnClick = Button4Click
       end
     end
     object TabSheet5: TTabSheet
@@ -2261,6 +2273,18 @@ object FormArtikel: TFormArtikel
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
     TabOrder = 11
+  end
+  object Button21: TButton
+    Left = 387
+    Top = 2
+    Width = 43
+    Height = 22
+    Hint = 'Pr'#252'fe oder setze die GTIN'
+    Caption = 'GTIN'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 32
+    OnClick = Button21Click
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1

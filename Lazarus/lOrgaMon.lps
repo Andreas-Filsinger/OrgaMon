@@ -8,9 +8,8 @@
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="8"/>
-        <CursorPos X="10" Y="68"/>
         <UsageCount Value="171"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -191,7 +190,6 @@
       <Unit22>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <CursorPos X="60" Y="2"/>
         <UsageCount Value="36"/>
@@ -1626,121 +1624,122 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="40" Column="20" TopLine="2"/>
       </Position1>
       <Position2>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="40" Column="20" TopLine="2"/>
+        <Caret Line="60" Column="28" TopLine="22"/>
       </Position2>
       <Position3>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="60" Column="28" TopLine="22"/>
+        <Caret Line="347" Column="20" TopLine="309"/>
       </Position3>
       <Position4>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="347" Column="20" TopLine="309"/>
+        <Caret Line="350" Column="20" TopLine="312"/>
       </Position4>
       <Position5>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="350" Column="20" TopLine="312"/>
+        <Caret Line="427" Column="18" TopLine="389"/>
       </Position5>
       <Position6>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="427" Column="18" TopLine="389"/>
+        <Caret Line="442" Column="18" TopLine="404"/>
       </Position6>
       <Position7>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="442" Column="18" TopLine="404"/>
+        <Caret Line="443" Column="10" TopLine="405"/>
       </Position7>
       <Position8>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="443" Column="10" TopLine="405"/>
+        <Caret Line="908" Column="18" TopLine="870"/>
       </Position8>
       <Position9>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="908" Column="18" TopLine="870"/>
+        <Caret Line="944" Column="20" TopLine="906"/>
       </Position9>
       <Position10>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="944" Column="20" TopLine="906"/>
+        <Caret Line="945" TopLine="908"/>
       </Position10>
       <Position11>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="945" TopLine="908"/>
       </Position11>
       <Position12>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="292" Column="26" TopLine="264"/>
       </Position12>
       <Position13>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="292" Column="26" TopLine="264"/>
+        <Caret Line="287" Column="21" TopLine="267"/>
       </Position13>
       <Position14>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="287" Column="21" TopLine="267"/>
+        <Caret Line="286" TopLine="264"/>
       </Position14>
       <Position15>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="286" TopLine="264"/>
+        <Caret Line="287" TopLine="264"/>
       </Position15>
       <Position16>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="287" TopLine="264"/>
+        <Caret Line="139" TopLine="139"/>
       </Position16>
       <Position17>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="139" TopLine="139"/>
+        <Caret Line="285" Column="3" TopLine="264"/>
       </Position17>
       <Position18>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="285" Column="3" TopLine="264"/>
-      </Position18>
-      <Position19>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <Caret Line="627" TopLine="604"/>
-      </Position19>
-      <Position20>
+      </Position18>
+      <Position19>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <Caret Line="56" Column="6" TopLine="27"/>
-      </Position20>
-      <Position21>
+      </Position19>
+      <Position20>
         <Filename Value="..\OrgaMon\globals.pas"/>
         <Caret Line="627" Column="31" TopLine="604"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="307" TopLine="268"/>
       </Position21>
       <Position22>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="307" TopLine="268"/>
+        <Caret Line="59" Column="5" TopLine="27"/>
       </Position22>
       <Position23>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="59" Column="5" TopLine="27"/>
+        <Caret Line="3"/>
       </Position23>
       <Position24>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="3"/>
+        <Caret Line="289" TopLine="272"/>
       </Position24>
       <Position25>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="289" TopLine="272"/>
+        <Caret Line="32" TopLine="19"/>
       </Position25>
       <Position26>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="32" TopLine="19"/>
+        <Caret Line="312" TopLine="285"/>
       </Position26>
       <Position27>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="312" TopLine="285"/>
+        <Caret Line="28" Column="15" TopLine="16"/>
       </Position27>
       <Position28>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="28" Column="15" TopLine="16"/>
+        <Caret Line="53" TopLine="35"/>
       </Position28>
       <Position29>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="53" TopLine="35"/>
-      </Position29>
-      <Position30>
         <Filename Value="lOrgaMon.lpr"/>
         <Caret Line="56" TopLine="56"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <Caret Line="2" Column="60"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

@@ -118,6 +118,7 @@ type
     DiagnosePath: string;
     LogContext: string;
     Stat_Calls: Integer;
+    Stat_Exceptions: Integer;
 
   published
 
@@ -910,6 +911,7 @@ begin
     except
       on e: Exception do
       begin
+        inc(Stat_Exceptions);
         WasError := true;
 
         // Log ERROR

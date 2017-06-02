@@ -284,6 +284,10 @@ function e_w_EinLagern(ARTIKEL_R: integer): integer; // [LAGER_R]
 //
 procedure e_w_Zwischenlagern(BELEG_R: integer; LAGER_R: integer);
 
+// GTIN eintragen
+//
+function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
+
 // Lagerplatz vorschlagen
 function e_r_LagerVorschlag(SORTIMENT_R: integer; PERSON_R: integer
   { VERLAG_R } ): integer; // [LAGER_R]
@@ -12643,6 +12647,97 @@ begin
   if (DebugStr.count > 0) then
     DebugStr.SaveToFile(DiagnosePath + 'Lieferzeit.txt');
   DebugStr.free;
+end;
+
+const
+ e_w_GTIN_Stempel_Name : string = '';
+ e_w_GTIN_STEMPEL_R : integer = 0;
+
+//   -1: ShowMessage('Stempel "+" ist nicht definiert');
+//   -2: ShowMessage('Bestehende GTIN enthält ungültige Zeichen');
+//   -3: ShowMessage('Bestehende GTIN hat eine falsche Prüfziffer');
+//   -4: ShowMessage('Bestehende GTIN ist OK');
+
+function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
+var
+ _GTIN, GTIN : string;
+ NUMERO : string;
+begin
+ result := 0;
+ repeat
+
+   if (AUSGABEART_R=0) then
+   begin
+    _GTIN := e_r_sqls('select GTIN from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+   end else
+   begin
+    _GTIN := e_r_sqls(
+     {} 'select GTIN from ARTIKEL_AA where'+
+     {} ' (ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and'+
+     {} ' (AUSGABEART_R='+IntToStr(AUSGABEART_R)+')');
+   end;
+
+   repeat
+   if _GTIN='' then
+    break;
+
+   if (StrFilter(GTIN,cZiffern)<>GTIN) then
+   begin
+     result := -2;
+     break;
+   end;
+
+   NUMERO := e_r_sqls('select NUMERO from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+
+   if (_GTIN=NUMERO) then
+    break;
+
+   if PruefZifferOK(StrToInt64Def(_GTIN,0)) then
+   begin
+     result := -4;
+     break;
+   end;
+
+     result := -3;
+
+   until yet;
+
+   if result<>0 then
+    break;
+
+
+   // Jetzt mal einen Wert aus dem Stempel holen
+   if (e_w_GTIN_Stempel_Name='') then
+   begin
+    e_w_GTIN_Stempel_Name := e_r_sqls('select PREFIX from STEMPEL where PREFIX starts with ''+''');
+    if (e_w_GTIN_Stempel_Name='') then
+    begin
+      result := -1;
+      break;
+    end;
+    e_w_GTIN_STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX='''+e_w_GTIN_Stempel_Name+'''');
+   end;
+
+   // Neue GTIN berechnen
+   GTIN :=
+     {} StrFilter(e_w_GTIN_Stempel_Name,cZiffern)+
+     {} INtToStrN (e_w_Stempel(e_w_GTIN_STEMPEL_R),CharCount('n',e_w_GTIN_Stempel_Name));
+   GTIN := GTIN + Int64ToStr(PruefZiffer(StrToInt64(GTIN)));
+
+   // Neuen Wert setzen
+   if (AUSGABEART_R=0) then
+   begin
+    e_x_sql(
+    {} 'update ARTIKEL set GTIN='''+GTIN+''' where' +
+    {} ' (RID='+INtToStr(ARTIKEL_R)+')');
+   end else
+   begin
+    e_x_sql(
+    {} 'update ARTIKEL_AA set GTIN='''+GTIN+''' where' +
+    {} ' (ARTIKEL_R='+INtToStr(ARTIKEL_R)+') and' +
+    {} ' (AUSGABEART_R='+INtToStr(AUSGABEART_R)+')');
+   end;
+ until yet;
 end;
 
 end.
