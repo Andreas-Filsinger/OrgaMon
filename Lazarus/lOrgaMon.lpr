@@ -95,7 +95,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Funktionen_LokaleDaten,
   eConnect,
   indylaz,
-  fpspreadsheet,
   Identitaet,
   FotoExec,
   TestExec;
