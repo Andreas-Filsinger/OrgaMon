@@ -363,7 +363,6 @@ var
 
   procedure parseResult_OSM(s: TStringList);
   var
-    AutomataState, n: integer;
     Bericht: TStringList;
   begin
     try
@@ -765,6 +764,10 @@ begin
       p.x := strtodoubledef(readcell(r,'lon'),0);
       p.y := strtodoubledef(readcell(r,'lat'),0);
       r_strasse := readcell(r,'road');
+      if (r_strasse='') then
+       r_strasse := readcell(r,'footway');
+      if (r_strasse='') then
+       r_strasse := readcell(r,'pedestrian');
       r_ort := readcell(r,'city');
       if (r_ort='') then
         r_ort := readcell(r,'town');
@@ -1149,6 +1152,8 @@ begin
         add('searchresults.place.type;1');
         add('searchresults.place.importance;1');
         add('searchresults.place.road;1');
+        add('searchresults.place.footway;1');
+        add('searchresults.place.pedestrian;1');
         add('searchresults.place.house_number;1');
         add('searchresults.place.suburb;1');
         add('searchresults.place.postcode;1');

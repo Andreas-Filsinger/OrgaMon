@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.285 (07.06.17) Andreas Filsinger
+
+ Neu: OpenStreetmap: Kenn nun auch <footway> und <pedestrian>
+
 Rev 8.284 (02.06.17) Andreas Filsinger
 
  Neu: Artikel: GTIN automatisch über einen Stempel setztbar.
