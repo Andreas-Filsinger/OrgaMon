@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.287 (22.06.17) Andreas Filsinger
+
+ Neu: Person: "Vorname" <Leerschritt> "Nachname" kann durch Taste VN in
+      die Zwischenablage kopiert werden.
+ Neu: Baustelle: Exporte: AuchAlsXLS=SEPARAT ist nun möglich
+
+Rev 8.286 (07.06.17) Andreas Filsinger
+
+ Neu: cOrgaMon: Ermöglichen von Tabletts als Clients
+
 Rev 8.285 (07.06.17) Andreas Filsinger
 
  Neu: OpenStreetmap: Kenn nun auch <footway> und <pedestrian>

@@ -9,7 +9,7 @@
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos Y="23"/>
-        <UsageCount Value="135"/>
+        <UsageCount Value="136"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -20,19 +20,19 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="HPACK_Form1"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="183"/>
-        <CursorPos X="30" Y="216"/>
-        <UsageCount Value="135"/>
+        <TopLine Value="189"/>
+        <CursorPos Y="205"/>
+        <UsageCount Value="136"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="166"/>
-        <CursorPos X="19" Y="182"/>
-        <UsageCount Value="49"/>
+        <CursorPos X="10" Y="158"/>
+        <UsageCount Value="50"/>
         <Bookmarks Count="1">
           <Item0 Y="154" ID="1"/>
         </Bookmarks>
@@ -42,11 +42,10 @@
         <Filename Value="..\HTTP2\http2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HTTP2"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="118"/>
-        <CursorPos Y="134"/>
-        <UsageCount Value="49"/>
+        <TopLine Value="235"/>
+        <CursorPos Y="261"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
@@ -55,7 +54,7 @@
         <UnitName Value="HMUX"/>
         <EditorIndex Value="3"/>
         <CursorPos X="23"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -65,7 +64,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="50"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\PASconTools\hmux.pas"/>
@@ -86,7 +85,7 @@
       <Unit8>
         <Filename Value="..\PASconTools\anfix32.pas"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="6355"/>
+        <TopLine Value="6346"/>
         <CursorPos X="5" Y="6404"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
@@ -161,6 +160,7 @@
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="29"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\inc\ctypes.pp"/>
@@ -234,8 +234,8 @@
       <Unit29>
         <Filename Value="http2_openssl.pas"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="1736"/>
-        <CursorPos X="26" Y="1750"/>
+        <TopLine Value="1306"/>
+        <CursorPos Y="1318"/>
         <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit29>
@@ -335,122 +335,121 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="124" TopLine="100"/>
       </Position1>
       <Position2>
-        <Filename Value="..\HTTP2\cryptossl.pas"/>
-        <Caret Line="89" Column="15" TopLine="57"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="132" TopLine="100"/>
       </Position2>
       <Position3>
-        <Filename Value="..\HTTP2\cryptossl.pas"/>
-        <Caret Line="105" Column="28" TopLine="73"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="123" TopLine="100"/>
       </Position3>
       <Position4>
-        <Filename Value="HPACK_TST.lpr"/>
-        <Caret Line="15" Column="25"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
       </Position4>
       <Position5>
-        <Filename Value="..\PASconTools\anfix32.pas"/>
-        <Caret Line="4276" TopLine="4241"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="123" Column="28" TopLine="72"/>
       </Position5>
       <Position6>
-        <Filename Value="..\PASconTools\anfix32.pas"/>
-        <Caret Line="6373" Column="23" TopLine="6347"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="170" Column="35" TopLine="119"/>
       </Position6>
       <Position7>
-        <Filename Value="..\PASconTools\anfix32.pas"/>
-        <Caret Line="96" TopLine="96"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="263" Column="28" TopLine="212"/>
       </Position7>
       <Position8>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="122" Column="5" TopLine="90"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="210" Column="3" TopLine="179"/>
       </Position8>
       <Position9>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
-        <Caret Line="306" TopLine="275"/>
       </Position9>
       <Position10>
-        <Filename Value="..\HTTP2\http2.pas"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="85" Column="11" TopLine="34"/>
       </Position10>
       <Position11>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="196" Column="5" TopLine="163"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="110" Column="55" TopLine="59"/>
       </Position11>
       <Position12>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="197" Column="3" TopLine="155"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="111" Column="57" TopLine="60"/>
       </Position12>
       <Position13>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="124" TopLine="99"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="113" Column="56" TopLine="62"/>
       </Position13>
       <Position14>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
-        <Caret Line="154" Column="5" TopLine="144"/>
+        <Caret Line="115" Column="41" TopLine="64"/>
       </Position14>
       <Position15>
-        <Filename Value="HPACK_TST.lpr"/>
-        <Caret Line="13" Column="18"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="117" Column="55" TopLine="66"/>
       </Position15>
       <Position16>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="124" TopLine="109"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="127" Column="40" TopLine="76"/>
       </Position16>
       <Position17>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="123" Column="3" TopLine="109"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="136" Column="9" TopLine="85"/>
       </Position17>
       <Position18>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="127" TopLine="109"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="137" Column="24" TopLine="86"/>
       </Position18>
       <Position19>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="129" TopLine="103"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="138" Column="25" TopLine="87"/>
       </Position19>
       <Position20>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
-        <Caret Line="121" Column="3" TopLine="107"/>
+        <Caret Line="141" Column="41" TopLine="90"/>
       </Position20>
       <Position21>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="127" Column="14" TopLine="112"/>
+        <Filename Value="..\HTTP2\cryptossl.pas"/>
+        <Caret Line="142" Column="40" TopLine="91"/>
       </Position21>
       <Position22>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="129" TopLine="112"/>
+        <Caret Line="263" TopLine="206"/>
       </Position22>
       <Position23>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="256" Column="16" TopLine="242"/>
       </Position23>
       <Position24>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="129" TopLine="115"/>
+        <Caret Line="126" TopLine="72"/>
       </Position24>
       <Position25>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="256" TopLine="242"/>
+        <Filename Value="hpack_form1.pas"/>
+        <Caret Line="205" TopLine="162"/>
       </Position25>
       <Position26>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="129" TopLine="115"/>
+        <Caret Line="259" TopLine="228"/>
       </Position26>
       <Position27>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="256" TopLine="242"/>
+        <Caret Line="261" TopLine="228"/>
       </Position27>
       <Position28>
-        <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="136" Column="33" TopLine="121"/>
+        <Filename Value="hpack_form1.pas"/>
+        <Caret Line="205" TopLine="189"/>
       </Position28>
       <Position29>
         <Filename Value="..\HTTP2\http2.pas"/>
-        <Caret Line="134" TopLine="118"/>
+        <Caret Line="259" TopLine="233"/>
       </Position29>
       <Position30>
-        <Filename Value="HPACK_TST.lpr"/>
-        <Caret Line="23"/>
+        <Filename Value="..\HTTP2\http2.pas"/>
+        <Caret Line="261" TopLine="235"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
@@ -460,8 +459,8 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="HPACK_TST.lpr"/>
-        <Line Value="23"/>
+        <Source Value="hpack_form1.pas"/>
+        <Line Value="205"/>
       </Item1>
     </BreakPoints>
   </Debugging>

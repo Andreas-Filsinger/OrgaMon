@@ -123,8 +123,6 @@ end;
 function StrictHTTP2Context: PSSL_CTX;
 var
  p : array[0..4096] of AnsiChar;
- CTX: PSSL_CTX = nil;
-  METH: PSSL_METHOD = nil;
 
 begin
 

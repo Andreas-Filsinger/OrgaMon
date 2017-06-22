@@ -357,10 +357,10 @@ begin
     end;
 
     // Ensure eMail Entry
-    VORLAGE_R := e_r_VorlageMail('RECHNUNG');
+    VORLAGE_R := e_r_VorlageMail(cMailVorlage_Rechnung);
     if (VORLAGE_R < cRID_FirstValid) then
     begin
-      ErrorMsg := 'eMail-Vorlage "RECHNUNG" existiert nicht!';
+      ErrorMsg := 'eMail-Vorlage "' + cMailVorlage_Rechnung + '" existiert nicht!';
       break;
     end;
 

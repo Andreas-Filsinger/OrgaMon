@@ -1273,7 +1273,7 @@ begin
             begin
               repeat
 
-                // "c" Felder (calculated)
+                // "c" Felder (calculated, berechnet)
                 if (HeaderName = 'cZaehlerNummerEinbau') then
                 begin
                   if (length(ZAEHLER_NR_NEU) = 11) then
@@ -1961,7 +1961,7 @@ begin
           Oc_Bericht.free;
         end;
 
-        // Vorlage.xls
+        // Vorlage.xls, Variante 1/2 (=JA)
         if (Settings.values[cE_AuchAlsXLS] = cINI_Activate) and
           not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
         begin
@@ -2002,6 +2002,32 @@ begin
             end;
             Oc_Bericht.free;
           end;
+
+        end;
+
+        // Vorlage.xls, Variante 2/2 (=SEPARAT)
+        if (Settings.values[cE_AuchAlsXLS] = cINI_Distinct) and
+          not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
+        begin
+
+          if (pos('.unmoeglich', OutFName) > 0) then
+            p_XLS_VorlageFName := 'Vorlage.unmoeglich.xls'
+          else
+            p_XLS_VorlageFName := '';
+
+          Oc_Bericht := TStringList.create;
+          if not(doConversion(Content_Mode_xls2xls, OutFName, Oc_Bericht)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            Files.add(conversionOutFName);
+          end;
+          Oc_Bericht.free;
 
         end;
 

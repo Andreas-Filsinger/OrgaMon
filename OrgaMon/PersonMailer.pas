@@ -1474,7 +1474,7 @@ var
           begin
 
             // Die Datei an den Kunden - alles klar
-            VORLAGE_R := e_r_VorlageMail('PDF');
+            VORLAGE_R := e_r_VorlageMail(cMailVorlage_Dokument);
 
             if (VORLAGE_R >= cRID_FirstValid) then
             begin

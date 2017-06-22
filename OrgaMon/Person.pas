@@ -291,6 +291,7 @@ type
     IB_Edit26: TIB_Edit;
     IB_CheckBox24: TIB_CheckBox;
     IB_Memo3: TIB_Memo;
+    Button12: TButton;
     procedure FormActivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
@@ -373,6 +374,7 @@ type
     procedure SpeedButton19Click(Sender: TObject);
     procedure IB_DataSource1StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
     procedure SpeedButton21Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -829,6 +831,14 @@ procedure TFormPerson.Button11Click(Sender: TObject);
 begin
   FormBBelege.setContext(IB_Query1.FieldByName('RID').AsInteger);
   FormBBelege.show;
+end;
+
+procedure TFormPerson.Button12Click(Sender: TObject);
+begin
+  with IB_Query1 do
+    clipboard.AsText :=
+     { } FieldByName('VORNAME').AsString + ' ' +
+     { } FieldByName('NACHNAME').AsString ;
 end;
 
 function iMacroWorkPath: string;

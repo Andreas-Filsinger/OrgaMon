@@ -81,9 +81,19 @@
     <Parsing>
       <SyntaxOptions>
         <SyntaxMode Value="fpc"/>
+        <IncludeAssertionCode Value="True"/>
         <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <VerifyObjMethodCallValidity Value="True"/>
+    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>

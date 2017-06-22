@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.285; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.287; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -322,6 +322,7 @@ const
   // Ini Schalter
   cIni_Activate = 'JA';
   cIni_Deactivate = 'NEIN';
+  cIni_Distinct = 'SEPARAT';
 
   cAktiveBaustellenFName = 'AktiveBaustellen.txt';
   cMDEFNameMde = 'AUFTRAG.DAT';
@@ -612,6 +613,8 @@ const
   cMailvorlage_Login = 'LOGIN';
   cMailvorlage_Ergebnis = 'ERGEBNIS';
   cMailvorlage_Dokument = 'PDF';
+  cMailvorlage_Rechnung = 'RECHNUNG';
+  cMailvorlage_Mahnung = 'MAHNUNG';  // imp pend
   cMailvorlage_Versand = 'Versand@';
 
   // für die Drucklabels

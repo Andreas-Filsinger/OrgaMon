@@ -2878,6 +2878,9 @@ begin
         else
         begin
 
+          if (IMEI='null') then
+           IMEI := '000000000000000';
+
           if (length(IMEI) <> 15) then
           begin
             log(

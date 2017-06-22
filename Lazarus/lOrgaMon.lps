@@ -9,19 +9,12 @@
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <UsageCount Value="171"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="108"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit1>
-      <Unit2>
         <Filename Value="..\OrgaMon\FotoExec.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -32,8 +25,8 @@
           <Item0 X="12" Y="1022" ID="1"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit2>
-      <Unit3>
+      </Unit1>
+      <Unit2>
         <Filename Value="..\OrgaMon\JonDaExec.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -41,8 +34,8 @@
         <CursorPos Y="26"/>
         <UsageCount Value="97"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="..\OrgaMon\TestExec.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -50,8 +43,191 @@
         <CursorPos X="30" Y="82"/>
         <UsageCount Value="94"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\PASconTools\anfix32.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2153"/>
+        <CursorPos Y="2195"/>
+        <UsageCount Value="44"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
+        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="53"/>
+        <UsageCount Value="46"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\PASconTools\txHoliday.pas"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="806"/>
+        <CursorPos X="27" Y="828"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\PASconTools\sperre.pas"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="57"/>
+        <CursorPos X="29" Y="79"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\infozip\InfoZIP.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="109"/>
+        <CursorPos X="6" Y="139"/>
+        <UsageCount Value="29"/>
+        <Bookmarks Count="1">
+          <Item0 Y="782" ID="2"/>
+        </Bookmarks>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\PASconTools\fpchelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="60" Y="2"/>
+        <UsageCount Value="36"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\PASconTools\OpenStreetMap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="67"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\PASconTools\srvXMLRPC.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="943"/>
+        <CursorPos X="77" Y="986"/>
+        <UsageCount Value="30"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\PASconTools\CareTakerClient.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="28"/>
+        <CursorPos X="3" Y="45"/>
+        <UsageCount Value="21"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\PASconTools\html.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="960"/>
+        <CursorPos Y="992"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\PASconTools\Geld.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="240"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\PASconTools\gplists.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GpLists"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="197"/>
+        <CursorPos X="10" Y="208"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\PASconTools\SolidFTP.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1371"/>
+        <CursorPos Y="1384"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\PASconTools\txlib.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="8451"/>
+        <CursorPos Y="8479"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\PASconTools\WordIndex.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="597"/>
+        <CursorPos X="39" Y="621"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\DCPcrypt\DCPcrypt2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\DCPcrypt\Hashes\DCPmd5.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\PASconTools\SimplePassword.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\PASconTools\binlager32.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\PASconTools\Mapping.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\..\fpspreadsheet\fpspreadsheet.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="108"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit24>
+      <Unit25>
         <Filename Value="..\PASconTools\hpack.pas"/>
         <UnitName Value="HPACK"/>
         <EditorIndex Value="-1"/>
@@ -63,184 +239,6 @@
           <Item0 Y="262" ID="1"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="..\PASconTools\anfix32.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2153"/>
-        <CursorPos Y="2195"/>
-        <UsageCount Value="44"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="53"/>
-        <UsageCount Value="46"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="..\PASconTools\txHoliday.pas"/>
-        <IsPartOfProject Value="True"/>
-        <TopLine Value="806"/>
-        <CursorPos X="27" Y="828"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="..\PASconTools\sperre.pas"/>
-        <IsPartOfProject Value="True"/>
-        <TopLine Value="57"/>
-        <CursorPos X="29" Y="79"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="..\infozip\InfoZIP.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="109"/>
-        <CursorPos X="6" Y="139"/>
-        <UsageCount Value="29"/>
-        <Bookmarks Count="1">
-          <Item0 Y="782" ID="2"/>
-        </Bookmarks>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <CursorPos X="60" Y="2"/>
-        <UsageCount Value="36"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="..\PASconTools\OpenStreetMap.pas"/>
-        <IsPartOfProject Value="True"/>
-        <TopLine Value="67"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="..\PASconTools\srvXMLRPC.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="943"/>
-        <CursorPos X="77" Y="986"/>
-        <UsageCount Value="30"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="..\PASconTools\CareTakerClient.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="28"/>
-        <CursorPos X="3" Y="45"/>
-        <UsageCount Value="21"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="..\PASconTools\html.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="960"/>
-        <CursorPos Y="992"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="..\PASconTools\Geld.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="240"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit16>
-      <Unit17>
-        <Filename Value="..\PASconTools\gplists.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GpLists"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="197"/>
-        <CursorPos X="10" Y="208"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit17>
-      <Unit18>
-        <Filename Value="..\PASconTools\SolidFTP.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1371"/>
-        <CursorPos Y="1384"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit18>
-      <Unit19>
-        <Filename Value="..\PASconTools\txlib.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="8451"/>
-        <CursorPos Y="8479"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit19>
-      <Unit20>
-        <Filename Value="..\PASconTools\WordIndex.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="597"/>
-        <CursorPos X="39" Y="621"/>
-        <UsageCount Value="20"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit20>
-      <Unit21>
-        <Filename Value="..\DCPcrypt\DCPcrypt2.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="..\DCPcrypt\Hashes\DCPmd5.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
-      </Unit22>
-      <Unit23>
-        <Filename Value="..\PASconTools\SimplePassword.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
-      </Unit23>
-      <Unit24>
-        <Filename Value="..\PASconTools\binlager32.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="..\PASconTools\Mapping.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\PASconTools\IBExportTable.pas"/>
@@ -355,10 +353,10 @@
       </Unit40>
       <Unit41>
         <Filename Value="..\OrgaMon\globals.pas"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="535"/>
         <CursorPos X="31" Y="627"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -1200,11 +1198,10 @@
       <Unit164>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="35"/>
         <CursorPos X="3" Y="58"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit164>
       <Unit165>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-base\src\gettext.pp"/>
@@ -1620,127 +1617,10 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit222>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="40" Column="20" TopLine="2"/>
-      </Position1>
-      <Position2>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="60" Column="28" TopLine="22"/>
-      </Position2>
-      <Position3>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="347" Column="20" TopLine="309"/>
-      </Position3>
-      <Position4>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="350" Column="20" TopLine="312"/>
-      </Position4>
-      <Position5>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="427" Column="18" TopLine="389"/>
-      </Position5>
-      <Position6>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="442" Column="18" TopLine="404"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="443" Column="10" TopLine="405"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="908" Column="18" TopLine="870"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="944" Column="20" TopLine="906"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="945" TopLine="908"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="292" Column="26" TopLine="264"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="287" Column="21" TopLine="267"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="286" TopLine="264"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="287" TopLine="264"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="139" TopLine="139"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="285" Column="3" TopLine="264"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="627" TopLine="604"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="56" Column="6" TopLine="27"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\OrgaMon\globals.pas"/>
-        <Caret Line="627" Column="31" TopLine="604"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="307" TopLine="268"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="59" Column="5" TopLine="27"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="3"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="289" TopLine="272"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="32" TopLine="19"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="312" TopLine="285"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="28" Column="15" TopLine="16"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="53" TopLine="35"/>
-      </Position28>
-      <Position29>
-        <Filename Value="lOrgaMon.lpr"/>
-        <Caret Line="56" TopLine="56"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\PASconTools\fpchelper.pas"/>
-        <Caret Line="2" Column="60"/>
-      </Position30>
-    </JumpHistory>
+    <General>
+      <ActiveWindowIndexAtStart Value="-1"/>
+    </General>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
   <Debugging>
     <BreakPoints Count="4">
