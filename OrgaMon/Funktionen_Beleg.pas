@@ -12653,10 +12653,11 @@ const
  e_w_GTIN_Stempel_Name : string = '';
  e_w_GTIN_STEMPEL_R : integer = 0;
 
-//   -1: ShowMessage('Stempel "+" ist nicht definiert');
-//   -2: ShowMessage('Bestehende GTIN enthält ungültige Zeichen');
-//   -3: ShowMessage('Bestehende GTIN hat eine falsche Prüfziffer');
-//   -4: ShowMessage('Bestehende GTIN ist OK');
+//    0: Neue GTIN wurde eingetragen
+//   -1: Stempel "+" ist nicht definiert
+//   -2: Bestehende GTIN enthält ungültige Zeichen
+//   -3: Bestehende GTIN hat eine falsche Prüfziffer
+//   -4: Bestehende GTIN ist OK
 
 function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
 var

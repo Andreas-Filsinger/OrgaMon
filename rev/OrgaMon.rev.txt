@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.289 (26.06.17) Andreas Filsinger
+
+ Neu: BASIC: [WARENBEWEGUNG.eGTIN] setzt die GTIN des Artikels der Warenbewegung
+
+Rev 8.288 (26.06.17) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis: HTML-Benennung, bei Dateien ungültige Zeichen werden
+      gefiltert (incl. ".")
+
 Rev 8.287 (22.06.17) Andreas Filsinger
 
  Neu: Person: "Vorname" <Leerschritt> "Nachname" kann durch Taste VN in

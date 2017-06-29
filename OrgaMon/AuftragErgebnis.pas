@@ -1298,7 +1298,7 @@ begin
                 if (HeaderName = 'HTML-Benennung') then
                   if (HTMLBenennung <> '') then
                   begin
-                    ActValue := evalColumnExpression(HTMLBenennung);
+                    ActValue := StrFilter(evalColumnExpression(HTMLBenennung),cInvalidFNameChars+'.',true);
                     break;
                   end;
 

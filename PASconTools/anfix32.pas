@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2015  Andreas Filsinger
+  Copyright (C) 2007 - 2017  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

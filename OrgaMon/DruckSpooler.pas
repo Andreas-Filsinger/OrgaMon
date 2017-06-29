@@ -239,8 +239,17 @@ begin
 
           if (sField = 'ePreis') then
           begin
-            result := e_r_PreisText(cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
-              cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger);
+            result := e_r_PreisText(
+             {} cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
+             {} cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger);
+            break;
+          end;
+
+          if (sField = 'eGTIN') then
+          begin
+            result := INtToStr(e_w_GTIN(
+             {} cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
+             {}  cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
             break;
           end;
 
