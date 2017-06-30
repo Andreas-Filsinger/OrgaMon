@@ -116,7 +116,7 @@ object FormDruckLabel: TFormDruckLabel
   object Label11: TLabel
     Left = 42
     Top = 377
-    Width = 117
+    Width = 116
     Height = 13
     Caption = 'Anzahl der Testl'#228'ufe'
   end
@@ -6428,7 +6428,8 @@ object FormDruckLabel: TFormDruckLabel
     Top = 437
     Width = 174
     Height = 25
-    Ctl3D = False
+    Flat = False
+    Ctl3D = True
     ParentCtl3D = False
     TabOrder = 10
     DataSource = IB_DataSource1

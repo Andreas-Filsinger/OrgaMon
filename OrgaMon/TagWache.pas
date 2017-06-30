@@ -162,16 +162,11 @@ begin
                   DoImport;
                   Close;
                 end;
-
-                //
-
               end;
             4:
               FormAuftragMobil.WriteMobil;
             5:
-
-                e_r_Sync_AuftraegeAlle;
-
+              e_r_Sync_AuftraegeAlle;
             6:
               begin
                 FormOLAPArbeitsplatz.TagWache;

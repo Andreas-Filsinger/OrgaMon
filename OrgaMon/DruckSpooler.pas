@@ -97,6 +97,7 @@ type
     // für resolve, globale Context Objekte
     JobIsAbout: integer;
     cARTIKEL: TIB_Cursor;
+    cARTIKEL_AA: TIB_Cursor;
     cLAGER: TIB_Cursor;
     cWARENBEWEGUNG: TIB_Cursor;
     cBELEG: TIB_Cursor;
@@ -166,7 +167,10 @@ begin
 
       // Artikel
       cARTIKEL := DataModuleDatenbank.nCursor;
+      cARTIKEL_AA := DataModuleDatenbank.nCursor;
       if not(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').IsNull) then
+      begin
+
         with cARTIKEL do
         begin
           sql.Add('select * from ARTIKEL where RID = ' + inttostr(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
@@ -174,6 +178,18 @@ begin
           if eof then
             Log('ERROR: ARTIKEL_R Referenz ungültig!');
         end;
+
+      if not(cWARENBEWEGUNG.FieldByName('AUSGABEART_R').IsNull) then
+        with cARTIKEL_AA do
+        begin
+          sql.Add(
+           {} 'select * from ARTIKEL_AA where' +
+           {} ' (ARTIKEL_R=' + inttostr(cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger) + ') and' +
+           {} ' (AUSGABEART_R=' + inttostr(cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger) + ')');
+          ApiFirst;
+        end;
+
+      end;
 
       // Beleg
       cBELEG := DataModuleDatenbank.nCursor;
@@ -247,9 +263,19 @@ begin
 
           if (sField = 'eGTIN') then
           begin
+
+            // GTIN ggf. eintragen
             result := INtToStr(e_w_GTIN(
              {} cWARENBEWEGUNG.FieldByName('AUSGABEART_R').AsInteger,
              {}  cWARENBEWEGUNG.FieldByName('ARTIKEL_R').AsInteger));
+
+            // wenn ein Neueintrag erfolgt ist -> refresh
+            if (result='0') then
+            begin
+             cARTIKEL.Refresh;
+             cARTIKEL_AA.Refresh;
+            end;
+
             break;
           end;
 
@@ -276,6 +302,27 @@ begin
           else
             result := cARTIKEL.FieldByName(sField).AsString;
         until true;
+      end;
+
+      // Artikel_AA
+      if (sTable = 'ARTIKEL_AA') then
+      begin
+        repeat
+
+          if (sField = 'ePreis') then
+          begin
+            result := e_r_PreisText(
+             {} cARTIKEL_AA.FieldByName('AUSGABEART_R').AsInteger,
+             {} cARTIKEL_AA.FieldByName('ARTIKEL_R').AsInteger);
+            break;
+          end;
+
+          if cARTIKEL_AA.FieldByName(sField).IsNull then
+            result := '0'
+          else
+            result := cARTIKEL_AA.FieldByName(sField).AsString;
+
+        until yet;
       end;
 
       // Lager
@@ -370,6 +417,7 @@ var
   _now: TDateTime;
   BASIC: TBasicProcessor;
   BASICName: string;
+  n: integer;
   PrintOK: boolean;
 begin
   if not(JobIsRunning) then
@@ -437,7 +485,10 @@ begin
               else
                 BASICName := cZugangsVorgang + ' ' + cLagerBegriff;
 
-            until true;
+            until yet;
+
+            if DebugMode then
+              Log('INFO: RUN "'+BASICName+'"');
 
             cDRUCK := DataModuleDatenbank.nCursor;
             with cDRUCK do
@@ -455,10 +506,14 @@ begin
             BASIC.ResolveData := Resolve;
             BASIC.ResolveSQL := ResolveSQL;
             BASIC.RUN;
+            if DebugMode then
+             for n := 0 to pred(BASIC.BasicErrors.Count) do
+              Log(BASIC.BasicErrors[n]);
             BASIC.free;
 
             //
             FreeAndNil(cARTIKEL);
+            FreeAndNil(cARTIKEL_AA);
             FreeAndNil(cLAGER);
             FreeAndNil(cWARENBEWEGUNG);
             FreeAndNil(cBELEG);
@@ -686,7 +741,7 @@ begin
   with ListBox2 do
   begin
     for n := 0 to pred(items.count) do
-      if not(USerBreak) then
+      if not(UserBreak) then
       begin
         itemindex := n;
         printhtmlok(MyProgramPath + cDruckauftragPath + items[n]);

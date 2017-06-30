@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.290 (30.06.17) Andreas Filsinger
+
+ Bug: Artikel: Warenbewegung: Script: Nach [WARENBEWEGUNG.eGTIN] wurde keine
+      Refresh beim ARTIKEL gemacht
+
+ Neu: BASIC: [ARTIKEL_AA.*]
+
 Rev 8.289 (26.06.17) Andreas Filsinger
 
  Neu: BASIC: [WARENBEWEGUNG.eGTIN] setzt die GTIN des Artikels der Warenbewegung
