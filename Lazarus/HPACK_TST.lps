@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="44">
+    <Units Count="45">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -29,7 +29,6 @@
       <Unit2>
         <Filename Value="..\HTTP2\cryptossl.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="401"/>
         <CursorPos X="10" Y="158"/>
@@ -333,6 +332,14 @@
         <CursorPos Y="150"/>
         <UsageCount Value="10"/>
       </Unit43>
+      <Unit44>
+        <Filename Value="..\..\Indy\Lib\System\IdCompilerDefines.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="7"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit44>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
