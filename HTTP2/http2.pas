@@ -54,8 +54,6 @@ const
   OpenSSL_Error : string = '';
   Path: string= '';
 
-
-
 function getSocket: longint;
 procedure TLS_Bind(FD: cint32);
 procedure TLS_Init;
@@ -531,35 +529,36 @@ begin
   sDebug.Add(IntTostr(wher)+':'+InttoStr(ret));
 end;
 
-
-function StrictHTTP2Context: PSSL_CTX;
 var
  p : array[0..4096] of AnsiChar;
 
+
+function StrictHTTP2Context: PSSL_CTX;
 begin
 
 //
- METH := TLSv1_2_server_method;
+ METH := TLSv1_2_server_method();
 
  CTX := SSL_CTX_new(METH);
 
- SSL_CTX_set_info_callback(CTX,@cb_info);
+// SSL_CTX_set_info_callback(CTX,@cb_info);
+ SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
-  StrPCopy(p,Path + 'key.pem');
-  if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
-    raise Exception.Create('Register key.pem fails');
 
-  if not(assigned(result)) then
-    raise Exception.Create('Create a new SSL-Context fails');
-
-  SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
+ StrPCopy(p,Path + 'key.pem');
+ if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
+   raise Exception.Create('Register key.pem fails');
 
   StrPCopy(p,Path + 'cert.pem');
-  if (SSL_CTX_use_certificate_file(Result, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
+  if (SSL_CTX_use_certificate_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
     raise Exception.Create('Register cert.pem fails');
 
+ // ev. die Paarung cert+key gegeneinander prüfen
+ //  SSL_CTX_check_private_key()
 
  result := CTX;
+  if not(assigned(result)) then
+    raise Exception.Create('Create a new SSL-Context fails');
 
 end;
 
@@ -668,7 +667,7 @@ end;
 procedure TLS_Init;
 begin
 
-  Path := 'Z:\GIT\OrgaMon\HTTP2\';
+  Path := 'R:\GIT\OrgaMon\HTTP2\';
 
   CTX := StrictHTTP2Context;
 
@@ -693,6 +692,3 @@ end;
 
 
 end.
-
-
-

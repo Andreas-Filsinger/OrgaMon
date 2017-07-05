@@ -28,8 +28,8 @@ unit cryptossl;
 {$endif}
 
 
-{$define LIB_SSL_REV_10x}
-{ $ define LIB_SSL_REV_11x}
+{ $ define LIB_SSL_REV_10x}
+{$define LIB_SSL_REV_11x}
 
 interface
 
