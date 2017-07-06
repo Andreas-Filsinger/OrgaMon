@@ -54,8 +54,8 @@ const
   OpenSSL_Error : string = '';
   Path: string= '';
 
-function getSocket: longint;
-procedure TLS_Bind(FD: cint32);
+function getSocket: cint;
+procedure TLS_Bind(FD: cint);
 procedure TLS_Init;
 
 const
@@ -491,44 +491,6 @@ end;
 // create a Parameter Context for a TLS 1.2 Server Connection
 // intended for a "HTTPS://" Server Socket
 
-
-
-
-
-
-
-
- (* ServerName Callback!
-
- static int ssl_servername_cb(SSL *s, int *ad, void *arg)
- {
-     tlsextctx *p = (tlsextctx * ) arg;
-     const char *servername = SSL_get_servername(s, TLSEXT_NAMETYPE_host_name);
-     if (servername && p->biodebug)
-         BIO_printf(p->biodebug, "Hostname in TLS extension: \"%s\"\n",
-                    servername);
-
-     if (!p->servername)
-         return SSL_TLSEXT_ERR_NOACK;
-
-     if (servername) {
-         if (strcasecmp(servername, p->servername))
-             return p->extension_error;
-         if (ctx2) {
-             BIO_printf(p->biodebug, "Switching server context.\n");
-             SSL_set_SSL_CTX(s, ctx2);
-         }
-     }
-     return SSL_TLSEXT_ERR_OK;
- }
-    *)
-
-
-procedure cb_info(ssl : PSSL; wher, ret : cint); cdecl;
-begin
-  sDebug.Add(IntTostr(wher)+':'+InttoStr(ret));
-end;
-
 var
  p : array[0..4096] of AnsiChar;
 
@@ -541,9 +503,9 @@ begin
 
  CTX := SSL_CTX_new(METH);
 
-// SSL_CTX_set_info_callback(CTX,@cb_info);
+ SSL_CTX_set_info_callback(CTX,@cb_info);
  SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
-
+ // SSL_CTX_set_tlsext_servername_callback(CTX,@cb_SERVERNAME);
 
  StrPCopy(p,Path + 'key.pem');
  if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
@@ -564,7 +526,7 @@ end;
 
 // binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection
 
-procedure TLS_Bind(FD: cint32);
+procedure TLS_Bind(FD: cint);
 var
   ssl: PSSL;
   Buf: array[0..4096] of byte;
@@ -574,18 +536,18 @@ P : PChar;
 x : AnsiString;
 ERR_F : THandle;
 begin
-         (*
+
   // SSL Init
-  ssl := sslNew(StrictHTTP2Context);
+  ssl := SSL_new(CTX);
   if not(assigned(ssl)) then
-    raise Exception.create('SSL_new().OpenSSL  fails');
+    raise Exception.create('SSL_new() fails');
 
   // SSL File Handle Übernahme
-  if (sslSetFD(ssl, FD)=0) then
-   raise Exception.create('SSL_set_fd().OpenSSL  fails');
+  if (SSL_set_fd(ssl, FD)<>1) then
+   raise Exception.create('SSL_set_fd() fails');
 
   //
-  a := sslAccept(ssl);
+  a := SSL_accept(ssl);
   case a of
     0:begin
 
@@ -599,10 +561,12 @@ begin
 
   if (a <= 0) then
   begin
-               ERR_F := FileCreate( Path+'OpenSSL.log');
-  ERR_print_errors_fp(ERR_F);
-      FileClose(ERR_F);
-    raise Exception.Create('ssl Accept fail');
+    sDebug.add(SSL_ERROR[SSL_get_error(SSL,a)]);
+    ERR_print_errors_cb(@cb_ERR,nil);
+
+  //             ERR_F := FileCreate( Path+'OpenSSL.log');
+  // ERR_print_errors_fp(ERR_F);
+//      FileClose(ERR_F);
   end;
   {
   buf += Header;
@@ -611,13 +575,18 @@ begin
   stack();
   SSLwrite(ssl, @Buf, 16);
    }
-*)
+
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
 // Im Rang 2: selbst ein Socket öffnen und auf Verbindungsversuche von aussen warten
 
-function getSocket: longint;
+function getSocket: cint;
+var
+ SAddr    : TInetSockAddr;
+ CAddr    : TInetSockAddr;
+ len :    cint;
+ ListenSocket, ConnectionSocket : cint;
 begin
   {$ifdef FPC}
   // try systemd
@@ -639,8 +608,30 @@ begin
     end
     else
     begin
-      // Open via a SOCKET!
+       // Open via a SOCKET!
 
+       ListenSocket:=fpSocket (AF_INET,SOCK_STREAM,0);
+       if SocketError<>0 then
+        raise Exception.Create('Server : Socket : ');
+       SAddr.sin_family:=AF_INET;
+       SAddr.sin_port:=htons(443);
+       SAddr.sin_addr.s_addr:=INADDR_ANY;
+       len := sizeof(SAddr);
+       if fpBind(ListenSocket,@SAddr,sizeof(saddr))=-1 then
+        raise Exception.Create ('Server : Bind : ');
+       if fpListen (ListenSocket,1)=-1 then
+        raise Exception.Create ('Server : Listen : ');
+
+       ConnectionSocket := fpAccept(ListenSocket,@CAddr,@len);
+       if (ConnectionSocket=-1) then
+        raise Exception.Create ('Server : Accept : ');
+
+       sDebug.add(NetAddrToStr(CAddr.sin_addr));
+
+       result := ConnectionSocket;
+
+           (*
+       // OPen via inetServer
    {$ifdef linux}
       client_socket := TUnixServer.Create('0.0.0.0:443');
    {$else}
@@ -650,15 +641,17 @@ begin
       with client_socket do
       begin
         // Parameter?
-     SetNonBlocking;
-        // Bind to Interface
+        SetNonBlocking;
+        KeepAlive := true;
 
-        Listen;
+        // Bind to Interface
+        StartAccepting;
 
         // Make no further actions, let SSL take over
         Result := Socket;
 
       end;
+      *)
     end;
   end;
   {$endif}

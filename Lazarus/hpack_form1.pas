@@ -200,6 +200,7 @@ begin
   if (FD = 0) then
     exit;
   TLS_Bind(FD);
+  memo2.Lines.AddStrings(sDebug);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
