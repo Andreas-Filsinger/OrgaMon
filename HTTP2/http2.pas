@@ -505,7 +505,7 @@ begin
 
  SSL_CTX_set_info_callback(CTX,@cb_info);
  SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
- // SSL_CTX_set_tlsext_servername_callback(CTX,@cb_SERVERNAME);
+ SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
  StrPCopy(p,Path + 'key.pem');
  if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
