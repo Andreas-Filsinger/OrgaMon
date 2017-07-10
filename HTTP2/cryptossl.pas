@@ -98,188 +98,6 @@ const
 
 type
   // Data-Types
-  SSL_st = record
-  	version: cint;
- 	typ : cint;
-
-method: Pointer;// const SSL_METHOD * 	method
-
-rbio: Pointer;//BIO * 	rbio
-
-wbio: Pointer;//BIO * 	wbio
-
-bbio: Pointer;//BIO * 	bbio
-
- 	rwstate: cint;
-
- 	in_handshake: cint;
-
-handshake_func: Pointer;//int(* 	handshake_func )(SSL *)
-
- 	server: cint;
-
- 	new_session: cint;
-
- 	quiet_shutdown: cint;
-
- 	shutdown: cint;
-
- 	state: cint;
-
- 	rstate: cint;
-
-BUF_MEM: Pointer;//BUF_MEM * 	init_buf
-
-init_msg: Pointer;        //void * 	init_msg
-
- 	init_num  : cint;
-
- 	init_off : cint;
-
-packet: Pointer;        //unsigned char * 	packet
-
- 	packet_length : cuint;
-
-s2: Pointer;        //struct ssl2_state_st * 	s2
-
-s3: Pointer;        //struct ssl3_state_st * 	s3
-
-d1: Pointer;        //struct dtls1_state_st * 	d1
-
- 	read_ahead: cint;
-
-msg_callback: Pointer; // void(* 	msg_callback )(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg)
-
-msg_callback_arg: Pointer; // void * 	msg_callback_arg
-
- 	hit: cint;
-
-param: Pointer;//X509_VERIFY_PARAM * 	param
-
- 	mac_flags: cint;
-
-        enc_read_ctx: Pointer;// EVP_CIPHER_CTX * 	enc_read_ctx
-
-        read_hash: Pointer; //EVP_MD_CTX * 	read_hash
-
-        expand: Pointer; //COMP_CTX * 	expand
-
-        enc_write_ctx: Pointer; //EVP_CIPHER_CTX * 	enc_write_ctx
-
-        write_hash: Pointer; //EVP_MD_CTX * 	write_hash
-
-        compress: Pointer; // COMP_CTX * 	compress
-
-cert: Pointer; //struct cert_st * 	cert
-
- 	sid_ctx_length: cuint;
-
-sid_ctx: array[0..31] of char; // unsigned char 	sid_ctx [SSL_MAX_SID_CTX_LENGTH]
-
-session: pointer; //SSL_SESSION * 	session
-
-generate_session_id: Pointer; //GEN_SESSION_CB 	generate_session_id
-
- 	verify_mode : cint;
-
-        verify_callback: Pointer; //int(* 	verify_callback )(int ok, X509_STORE_CTX *ctx)
-
-        info_callback: Pointer; //void(* 	info_callback )(const SSL *ssl, int type, int val)
-
- 	error: cint;
-
- 	error_code: cint;
-
-        kssl_ctx: Pointer; //KSSL_CTX * 	kssl_ctx
-
-        psk_client_callback: Pointer; // unsigned int(* 	psk_client_callback )(SSL *ssl, const char *hint, char *identity, unsigned int max_identity_len, unsigned char *psk, unsigned int max_psk_len)
-
-        psk_server_callback: Pointer; // unsigned int(* 	psk_server_callback )(SSL *ssl, const char *identity, unsigned char *psk, unsigned int max_psk_len)
-
-ctx: Pointer; //SSL_CTX * 	ctx
-
- 	debug : cint;
-
- 	verify_result: clong;
-
-ex_data: Pointer; //CRYPTO_EX_DATA 	ex_data
-
- 	references: cint;
-
- 	options: culong;
-
- 	mode: culong;
-
- 	max_cert_list: clong;
-
- 	first_packet: cint;
-
- 	client_version: cint;
-
- 	max_send_fragment: cuint;
-
-tlsext_debug_cb: Pointer; //void(* 	tlsext_debug_cb )(SSL *s, int client_server, int type, unsigned char *data, int len, void *arg)
-
- 	tlsext_debug_arg: Pointer;
-
- 	tlsext_hostname: PChar;
-
- 	servername_done : cint;
-
- 	tlsext_status_type: cint;
-
- 	tlsext_status_expected: cint;
-
-        tlsext_ocsp_exts: Pointer; //X509_EXTENSIONS * 	tlsext_ocsp_exts
-
-        tlsext_ocsp_resp: Pointer; //unsigned char * 	tlsext_ocsp_resp
-
- 	tlsext_ocsp_resplen: cint;
-
- 	tlsext_ticket_expected: cint;
-
- 	tlsext_ecpointformatlist_length:size_t;
-
-        tlsext_ecpointformatlist: Pointer; //unsigned char * 	tlsext_ecpointformatlist
-
- 	tlsext_ellipticcurvelist_length: size_t;
-
-        tlsext_ellipticcurvelist: Pointer; //unsigned char * 	tlsext_ellipticcurvelist
-
-        tlsext_opaque_prf_input: Pointer; //void * 	tlsext_opaque_prf_input
-
- 	tlsext_opaque_prf_input_len: size_t;
-
-        tlsext_session_ticket: Pointer; //TLS_SESSION_TICKET_EXT * 	tlsext_session_ticket
-
-tls_session_ticket_ext_cb: Pointer;//tls_session_ticket_ext_cb_fn 	tls_session_ticket_ext_cb
-
-tls_session_ticket_ext_cb_arg: Pointer; //void * 	tls_session_ticket_ext_cb_arg
-
-tls_session_secret_cb: Pointer; //tls_session_secret_cb_fn 	tls_session_secret_cb
-
-tls_session_secret_cb_arg: Pointer; // void * 	tls_session_secret_cb_arg
-
-initial_ctx: Pointer; //SSL_CTX * 	initial_ctx
-
-next_proto_negotiated: pointer; //unsigned char * 	next_proto_negotiated
-
-next_proto_negotiated_len: cuchar; //unsigned char 	next_proto_negotiated_len
-
-srtp_profile: Pointer; //SRTP_PROTECTION_PROFILE * 	srtp_profile
-
- 	tlsext_heartbeat :cuint;
-
- 	tlsext_hb_pending:cuint;
-
- 	tlsext_hb_seq:cuint;
-
- 	renegotiate      : cint;
-
-srp_ctx: Pointer;//SRP_CTX 	srp_ctx
-
-  end;
-
   POPENSSL_INIT_SETTINGS = Pointer;
   PSSL_CTX = Pointer;
   PSSL = Pointer;
@@ -321,8 +139,8 @@ srp_ctx: Pointer;//SRP_CTX 	srp_ctx
   TSSL_set_fd = function(SSL: PSSL; fd: cint): cint; cdecl;
   TSSL_accept = function(SSL: PSSL):cint; cdecl;
   TSSL_get_error = function (SSL: PSSL; ret: cint): cint; cdecl;
-  TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong;
-
+  TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong; cdecl;
+  TSSL_get_servername = function (SSL: PSSL; typ: cint): Pchar; cdecl;
 
 const
   // lib functions for the public
@@ -350,6 +168,7 @@ const
   SSL_new : TSSL_new = nil;
   SSL_set_fd : TSSL_set_fd = nil;
   SSL_accept : TSSL_accept = nil;
+  SSL_get_servername : TSSL_get_servername = nil;
 
   // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
@@ -369,7 +188,6 @@ function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 var
   METH: PSSL_METHOD = nil;
   CTX: PSSL_CTX = nil;
-
 
 implementation
 
@@ -521,11 +339,14 @@ function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 var
   ServerExpected : string;
 begin
- // alternativ aus der session:  SSL^.s->session->tlsext_hostname
- ServerExpected := SSL_ST(SSL^).tlsext_hostname;
+ ServerExpected := SSL_get_servername(SSL,  TLSEXT_NAMETYPE_host_name);
 
 
  sDebug.add('REQUEST TO "'+ServerExpected+'"');
+
+ // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
+ // wird der Server als eine andere Identität angesprochen erfolgt ein
+ // Verbindungsabbruch
  if (ServerExpected='localhost') then
   result := SSL_TLSEXT_ERR_OK
  else
@@ -666,6 +487,11 @@ begin
     SSL_CTX_callback_ctrl := TSSL_CTX_callback_ctrl(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_callback_ctrl'));
     if not (assigned(SSL_CTX_callback_ctrl)) then
+      sDebug.add(LastError);
+
+    SSL_get_servername := TSSL_get_servername(GetProcAddress(libssl_HANDLE,
+      'SSL_get_servername'));
+    if not (assigned(SSL_get_servername)) then
       sDebug.add(LastError);
 
 
