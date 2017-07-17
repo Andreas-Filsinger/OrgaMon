@@ -26,7 +26,7 @@ object FormBuchhalter: TFormBuchhalter
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet3
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -4314,16 +4314,20 @@ object FormBuchhalter: TFormBuchhalter
           Top = 195
           Width = 82
           Height = 21
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 1
-          Text = '01.02.2010'
+          TextHint = 'TT.MM.JJJJ'
         end
         object Edit6: TEdit
           Left = 165
           Top = 195
           Width = 84
           Height = 21
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 2
-          Text = '28.02.2010'
+          TextHint = 'TT.MM.JJJJ'
         end
         object Button23: TButton
           Left = 264
@@ -4490,7 +4494,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C0101040009003C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900400210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

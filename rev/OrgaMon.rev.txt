@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.291 (17.07.17) Andreas Filsinger
+
+ Neu: Erweiterung der DATEV Schnittstelle (http://wiki.orgamon.org/index.php5/Datev)
+
 Rev 8.290 (30.06.17) Andreas Filsinger
 
  Bug: Artikel: Warenbewegung: Script: Nach [WARENBEWEGUNG.eGTIN] wurde keine
