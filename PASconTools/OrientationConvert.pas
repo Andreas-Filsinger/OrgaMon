@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.256; // ../rev/Oc.rev.txt
+  Version: single = 1.257; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -3291,6 +3291,7 @@ begin
 
       if (pFileName <> '') then
       begin
+        ersetze('*',StrFilter(InFName, cZiffern),pFileName);
         conversionOutFName := WorkPath + pFileName;
         break;
       end;
@@ -8169,11 +8170,8 @@ procedure Huffman(InFName: string; sBericht: TStringList);
 var
  sTable : TStringList;
  BitCount: TgpIntegerList;
- n,m,o: integer;
+ n,m: integer;
  s: string;
- HaveNotStart : integer;
- HaveIt : Boolean;
- CaseWidth: integer;
  sResult : TStringList;
 
   function IntToBinByte(Value: Byte): string;
@@ -8370,7 +8368,6 @@ var
 
   sResult: TStringList;
   sStack: TStringList;
-  sRollBackReasons: TStringList;
   RollBack: boolean;
 
   // Auftrag
@@ -8773,7 +8770,6 @@ var
 
         end;
       except
-        d := 0;
       end;
     end;
 
@@ -9237,7 +9233,6 @@ begin
   sResult.Free;
   sSource.Free;
   sStack.Free;
-  sRollBackReasons.Free;
   xImport.Free;
   xlsHeaders.Free;
 end;
