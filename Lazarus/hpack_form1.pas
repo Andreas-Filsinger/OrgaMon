@@ -19,6 +19,7 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
+    Button7: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
@@ -34,6 +35,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
   private
     { private declarations }
 
@@ -214,6 +216,56 @@ begin
   memo2.Lines.add(cryptossl.Version);
   memo2.Lines.addstrings(cryptossl.sDebug);
   memo2.Lines.add('----------');
+end;
+
+
+type
+  TOrgaMonServer = Class(THTTPSServer)
+  public
+    procedure HandleRequest(var AHttpsConnection: THttpsConnection); override;
+    procedure Start;
+    procedure Stop;
+  end;
+
+var OrgaMonServer: TOrgaMonServer;
+
+// Hello World
+procedure TOrgaMonServer.HandleRequest(var AHttpsConnection: THttpsConnection);
+begin
+  Form1.memo2.lines.add(AHttpsConnection.RequestHeaders.Text);
+  Form1.memo2.lines.add(AHttpsConnection.RequestContent);
+
+  { TODO 3 -oUdo -cTHttpsConnection : get first header line as protocol, method and url }
+  { TODO 3 -oUdo -cTHttpsConnection : set first header line as protocol, code and text }
+  AHttpsConnection.ResponseHeaders.Add('HTTP/1.1 200 OK');
+  AHttpsConnection.ResponseHeaders.Add('Content-Type: text/html; charset=utf-8');
+  AHttpsConnection.ResponseContent := '<htm><head><title>test</title></head>' +
+                      '<body>Hello World at: '+DateTimeToStr (Now) +'</body></html>';
+
+end;
+
+procedure TOrgaMonServer.Start;
+begin
+  try
+    // start server loop
+    Active := true;
+  finally
+    Free;
+  end;
+end;
+
+procedure TOrgaMonServer.Stop;
+begin
+  // stop server loop
+  Active := false;
+end;
+
+
+procedure TForm1.Button7Click(Sender: TObject);
+begin
+  OrgaMonServer := TOrgaMonServer.Create(nil);
+  OrgaMonServer.Start;
+
 end;
 
 end.

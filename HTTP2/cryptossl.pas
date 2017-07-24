@@ -28,8 +28,8 @@ unit cryptossl;
 {$endif}
 
 
-{ $ define LIB_SSL_REV_10x}
-{$define LIB_SSL_REV_11x}
+{$define LIB_SSL_REV_10x}
+{ $ define LIB_SSL_REV_11x}
 
 interface
 
@@ -171,8 +171,15 @@ const
     cLIB_NAME_CRYPTO = 'libcrypto-1_1-x64.dll';
     cLIB_NAME_SSL = 'libssl-1_1-x64.dll';
   {$else}
+
+  {$ifdef LIB_SSL_REV_11x}
     cLIB_NAME_CRYPTO = 'libcrypto-1_1.dll';
     cLIB_NAME_SSL = 'libssl-1_1.dll';
+    {$endif LIB_SSL_REV_11x}
+    {$ifdef LIB_SSL_REV_10x}
+    cLIB_NAME_CRYPTO = 'libeay32.dll';
+    cLIB_NAME_SSL = 'ssleay32.dll';
+    {$endif LIB_SSL_REV_10x}
   {$endif}
 
 {$else}
@@ -180,7 +187,7 @@ const
   {$ifdef LIB_SSL_REV_11x}
    cLIB_NAME_CRYPTO = 'libcrypto.so.1.1';
    cLIB_NAME_SSL = 'libssl.so.1.1';
-  {$endif LIB_SSL_REV_11x}
+   {$endif LIB_SSL_REV_11x}
 
   {$ifdef LIB_SSL_REV_10x}
    cLIB_NAME_CRYPTO = 'libcrypto.so.1.0.0';
@@ -391,10 +398,10 @@ begin
 
     {$ifdef LIB_SSL_REV_10x}
                      SSL_library_init;
-    OpenSSL_add_all_algorithms;
-OpenSSL_add_all_ciphers;
-OpenSSL_add_all_digests;
-ERR_load_crypto_strings;
+    //    OpenSSL_add_all_algorithms;
+    //OpenSSL_add_all_ciphers;
+    //OpenSSL_add_all_digests;
+    //ERR_load_crypto_strings;
     {$endif}
 
     {$ifdef LIB_SSL_REV_11x}
