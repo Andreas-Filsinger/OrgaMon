@@ -24,18 +24,23 @@ type
     Edit2: TEdit;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     Memo1: TMemo;
     Memo2: TMemo;
+    Memo3: TMemo;
+    Memo4: TMemo;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
-    procedure Button7Click(Sender: TObject);
   private
     { private declarations }
 
@@ -200,6 +205,7 @@ begin
   if (FD = 0) then
     exit;
   TLS_Bind(FD);
+  memo2.Lines.AddStrings(sDebug);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
@@ -218,55 +224,6 @@ begin
   memo2.Lines.add('----------');
 end;
 
-
-type
-  TOrgaMonServer = Class(THTTPSServer)
-  public
-    procedure HandleRequest(var AHttpsConnection: THttpsConnection); override;
-    procedure Start;
-    procedure Stop;
-  end;
-
-var OrgaMonServer: TOrgaMonServer;
-
-// Hello World
-procedure TOrgaMonServer.HandleRequest(var AHttpsConnection: THttpsConnection);
-begin
-  Form1.memo2.lines.add(AHttpsConnection.RequestHeaders.Text);
-  Form1.memo2.lines.add(AHttpsConnection.RequestContent);
-
-  { TODO 3 -oUdo -cTHttpsConnection : get first header line as protocol, method and url }
-  { TODO 3 -oUdo -cTHttpsConnection : set first header line as protocol, code and text }
-  AHttpsConnection.ResponseHeaders.Add('HTTP/1.1 200 OK');
-  AHttpsConnection.ResponseHeaders.Add('Content-Type: text/html; charset=utf-8');
-  AHttpsConnection.ResponseContent := '<htm><head><title>test</title></head>' +
-                      '<body>Hello World at: '+DateTimeToStr (Now) +'</body></html>';
-
-end;
-
-procedure TOrgaMonServer.Start;
-begin
-  try
-    // start server loop
-    Active := true;
-  finally
-    Free;
-  end;
-end;
-
-procedure TOrgaMonServer.Stop;
-begin
-  // stop server loop
-  Active := false;
-end;
-
-
-procedure TForm1.Button7Click(Sender: TObject);
-begin
-  OrgaMonServer := TOrgaMonServer.Create(nil);
-  OrgaMonServer.Start;
-
-end;
 
 end.
 

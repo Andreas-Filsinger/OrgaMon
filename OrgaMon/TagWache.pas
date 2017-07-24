@@ -155,7 +155,7 @@ begin
                 // WE frisch erzeugen!
                 FormBestellArbeitsplatz.MobilExport;
 
-                // Import-Schema laden
+                // Import-Schema laden, neu Aufbauen
                 with FormAuftragImport do
                 begin
                   SetContext(iTagwacheBaustelle);

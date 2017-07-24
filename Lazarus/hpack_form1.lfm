@@ -110,8 +110,8 @@ object Form1: TForm1
       object Button3: TButton
         Left = 120
         Height = 25
-        Top = 432
-        Width = 147
+        Top = 453
+        Width = 405
         Caption = 'open Socket'
         OnClick = Button3Click
         TabOrder = 1
@@ -119,8 +119,8 @@ object Form1: TForm1
       object Button4: TButton
         Left = 120
         Height = 25
-        Top = 456
-        Width = 147
+        Top = 517
+        Width = 403
         Caption = 'TLS 1.2 Accept'
         OnClick = Button4Click
         TabOrder = 2
@@ -128,29 +128,78 @@ object Form1: TForm1
       object Button5: TButton
         Left = 123
         Height = 25
-        Top = 408
-        Width = 144
+        Top = 429
+        Width = 402
         Caption = 'TLS init'
         OnClick = Button5Click
         TabOrder = 3
       end
       object Button6: TButton
-        Left = 123
+        Left = 120
         Height = 25
-        Top = 355
-        Width = 147
+        Top = 400
+        Width = 405
         Caption = 'load openSSL'
         OnClick = Button6Click
         TabOrder = 4
       end
       object Button7: TButton
-        Left = 351
-        Height = 54
-        Top = 389
-        Width = 317
-        Caption = 'start UDOs Webserver'
-        OnClick = Button7Click
+        Left = 125
+        Height = 25
+        Top = 485
+        Width = 400
+        Caption = 'now use Firefox to Request "https://localhost/"'
+        Enabled = False
         TabOrder = 5
+      end
+      object Label3: TLabel
+        Left = 124
+        Height = 20
+        Top = 367
+        Width = 220
+        Caption = 'Steps to start the TLS 1.2 Server ...'
+        ParentColor = False
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'HMUX'
+      ClientHeight = 826
+      ClientWidth = 1326
+      object Memo3: TMemo
+        Left = 58
+        Height = 236
+        Top = 104
+        Width = 767
+        Lines.Strings = (
+          'Memo3'
+        )
+        TabOrder = 0
+      end
+      object Label4: TLabel
+        Left = 63
+        Height = 20
+        Top = 79
+        Width = 86
+        Caption = 'Demuxed IN:'
+        ParentColor = False
+      end
+      object Label5: TLabel
+        Left = 62
+        Height = 20
+        Top = 373
+        Width = 81
+        Caption = 'Muxed OUT:'
+        ParentColor = False
+      end
+      object Memo4: TMemo
+        Left = 66
+        Height = 226
+        Top = 398
+        Width = 758
+        Lines.Strings = (
+          'Memo4'
+        )
+        TabOrder = 1
       end
     end
   end

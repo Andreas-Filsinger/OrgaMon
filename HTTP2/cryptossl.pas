@@ -27,17 +27,13 @@ unit cryptossl;
 {$mode objfpc}{$H+}
 {$endif}
 
-
-{$define LIB_SSL_REV_10x}
-{ $ define LIB_SSL_REV_11x}
-
 interface
 
 uses
  {$ifdef FPC}
   ctypes,
  {$endif}
-  Classes;
+  Classes, Sysutils;
 
 // debug infos
 
@@ -52,12 +48,14 @@ type
 
 var
   sDebug: TStringList = nil;
+  pem_Path : string;
 
 // lib stuff for the public
 
 const
   SSL_CTRL_SET_ECDH_AUTO = 94;
   SSL_FILETYPE_PEM = 1;
+  TLSEXT_NAMETYPE_host_name = 0;
 
   OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
   OPENSSL_INIT_LOAD_CRYPTO_STRINGS = $00000002;
@@ -78,6 +76,22 @@ const
   OPENSSL_INIT_NO_LOAD_SSL_STRINGS = $00100000;
   OPENSSL_INIT_LOAD_SSL_STRINGS = $00200000;
 
+  SSL_ERROR : array[0..7] of string = (
+ 'SSL_ERROR_NONE',
+ 'SSL_ERROR_SSL',
+ 'SSL_ERROR_WANT_READ',
+ 'SSL_ERROR_WANT_WRITE',
+ 'SSL_ERROR_WANT_X509_LOOKUP',
+ 'SSL_ERROR_SYSCALL',
+ 'SSL_ERROR_ZERO_RETURN',
+ 'SSL_ERROR_WANT_CONNECT');
+
+  SSL_TLSEXT_ERR_OK = 0;
+  SSL_TLSEXT_ERR_ALERT_WARNING = 1;
+  SSL_TLSEXT_ERR_ALERT_FATAL = 2;
+  SSL_TLSEXT_ERR_NOACK = 3;
+
+  SSL_CTRL_SET_TLSEXT_SERVERNAME_CB = 53;
 
 type
   // Data-Types
@@ -87,7 +101,10 @@ type
   PSSL_METHOD = Pointer;
 
   //
-  // Callback-Function-Types
+  // Callback-Function-Types, Funktionen die openSSL ruft
+  TCB_INFO = procedure(ssl : PSSL; wher, ret : cint); cdecl;
+  TCB_SERVERNAME = function (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
+  TCB_ERROR = function (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 
   // Memory Functions
   TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
@@ -97,7 +114,7 @@ type
   TCRYPTO_free = procedure(str: Pointer; const p1: PChar; p2: cint); cdecl;
 
   // Log-Funktions
-  TINFO_info = procedure(ssl : PSSL; wher, ret : cint); cdecl;
+  TERR_print_errors_cb = procedure (cb : TCB_ERROR; p : pointer); cdecl;
 
   // API-Function-Types
   TOPENSSL_init_ssl = function(opts: cuint64;
@@ -114,19 +131,25 @@ type
     _type: cint): cint; cdecl;
   TSSL_CTX_ctrl = function(ctx: PSSL_CTX; cmd: cint; larg: clong;
     parg: Pointer): clong; cdecl;
-  TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; i: TINFO_info); cdecl;
+  TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; cb: TCB_INFO); cdecl;
+  TSSL_new = function(ctx: PSSL_CTX):PSSL; cdecl;
+  TSSL_set_fd = function(SSL: PSSL; fd: cint): cint; cdecl;
+  TSSL_accept = function(SSL: PSSL):cint; cdecl;
+  TSSL_get_error = function (SSL: PSSL; ret: cint): cint; cdecl;
+  TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong; cdecl;
+  TSSL_get_servername = function (SSL: PSSL; typ: cint): Pchar; cdecl;
 
 const
   // lib functions for the public
 
-  // Init & Util
+  // Init & Util & Debug
   OPENSSL_init_ssl: TOPENSSL_init_ssl = nil;
   SSL_library_init: TSSL_library_init = nil;
   CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
-  SSL_CTX_set_info_callback:   TSSL_CTX_set_info_callback = nil;
-
-
+  SSL_CTX_set_info_callback: TSSL_CTX_set_info_callback = nil;
+  ERR_print_errors_cb: TERR_print_errors_cb = nil;
+  SSL_get_error: TSSL_get_error = nil;
 
   // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
@@ -136,6 +159,13 @@ const
   // CTX - Tools
   SSL_CTX_new: TSSL_CTX_new = nil;
   SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
+  SSL_CTX_callback_ctrl: TSSL_CTX_callback_ctrl = nil;
+
+  // SSL - Tools
+  SSL_new : TSSL_new = nil;
+  SSL_set_fd : TSSL_set_fd = nil;
+  SSL_accept : TSSL_accept = nil;
+  SSL_get_servername : TSSL_get_servername = nil;
 
   // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
@@ -145,10 +175,18 @@ const
 function Version: string;
 function LastError: string;
 
+// public call-Backs
 
-var
-  CTX: PSSL_CTX = nil;
-  METH: PSSL_METHOD = nil;
+function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
+procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
+function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
+
+// One global Context
+const
+  cs_METH: PSSL_METHOD = nil;
+  cs_CTX: PSSL_CTX = nil;
+  cs_SSL: PSSL = nil;
+  cs_Servername : string = '';
 
 implementation
 
@@ -163,37 +201,18 @@ uses
 const
   _OPENSSL_VERSION = 0;
 
-
 const
 {$ifdef MSWINDOWS}
-
   {$ifdef win64}
     cLIB_NAME_CRYPTO = 'libcrypto-1_1-x64.dll';
     cLIB_NAME_SSL = 'libssl-1_1-x64.dll';
   {$else}
-
-  {$ifdef LIB_SSL_REV_11x}
     cLIB_NAME_CRYPTO = 'libcrypto-1_1.dll';
     cLIB_NAME_SSL = 'libssl-1_1.dll';
-    {$endif LIB_SSL_REV_11x}
-    {$ifdef LIB_SSL_REV_10x}
-    cLIB_NAME_CRYPTO = 'libeay32.dll';
-    cLIB_NAME_SSL = 'ssleay32.dll';
-    {$endif LIB_SSL_REV_10x}
   {$endif}
-
 {$else}
-
-  {$ifdef LIB_SSL_REV_11x}
    cLIB_NAME_CRYPTO = 'libcrypto.so.1.1';
    cLIB_NAME_SSL = 'libssl.so.1.1';
-   {$endif LIB_SSL_REV_11x}
-
-  {$ifdef LIB_SSL_REV_10x}
-   cLIB_NAME_CRYPTO = 'libcrypto.so.1.0.0';
-   cLIB_NAME_SSL = 'libssl.so.1.0.0';
-  {$endif LIB_SSL_REV_10x}
-
 {$endif}
 
 var
@@ -282,13 +301,67 @@ begin
 *)
 end;
 
+function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
+begin
+ sDebug.add(InttoStr(len)+'@cb_ERR');
+ sDebug.add(s);
+end;
+
+procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
+begin
+  sDebug.add(InttoStr(wher)+'@cb_INFO');
+  sDebug.Add(IntTostr(wher)+':'+InttoStr(ret));
+end;
+
+(* ServerName Callback! *)
+
+function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
+var
+ ErrorCount: integer;
+ _cs_Servername : array[0..4096] of AnsiChar;
+begin
+ ErrorCount := 0;
+ cs_Servername := SSL_get_servername(SSL,  TLSEXT_NAMETYPE_host_name);
+
+ sDebug.add('REQUEST TO "'+cs_Servername+'"');
+
+ // load the key
+ StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
+ if (SSL_CTX_use_PrivateKey_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ begin
+   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   inc(ErrorCount);
+ end;
+
+ // load the cert
+ StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ if (SSL_CTX_use_certificate_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ begin
+   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   inc(ErrorCount);
+ end;
+
+ // imp pend:
+ // ev. die Paarung cert+key gegeneinander prüfen
+ //  SSL_CTX_check_private_key()
+
+ // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
+ // wird der Server als eine andere Identität angesprochen erfolgt ein
+ // Verbindungsabbruch
+ if (ErrorCount=0) then
+  result := SSL_TLSEXT_ERR_OK
+ else
+  result := SSL_TLSEXT_ERR_NOACK;
+end;
+
+/////////////////////////////////////////////////////////////////
+
 procedure Init;
 begin
   if assigned(sDebug) then
     exit;
 
   sDebug := TStringList.Create;
-
 
   // libssl has dependencys to libcryto, so
   // ensure the correct libcrypto is loaded BEFORE
@@ -300,7 +373,6 @@ begin
   end;
 
   libssl_HANDLE := LoadLibrary(cLIB_NAME_SSL);
-
   if (libssl_HANDLE > 0) then
   begin
 
@@ -322,42 +394,34 @@ begin
     if not (assigned(CRYPTO_set_mem_functions)) then
       sDebug.add(LastError);
 
-
+    ERR_print_errors_cb := TERR_print_errors_cb(GetProcAddress(libcrypto_HANDLE,
+      'ERR_print_errors_cb'));
+    if not (assigned(ERR_print_errors_cb)) then
+      sDebug.add(LastError);
 
 
     // import libssl functions
 
-    {$ifdef LIB_SSL_REV_11x}
     OPENSSL_init_ssl :=
       TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
-    {$endif}
 
-    {$ifdef LIB_SSL_REV_10x}
-    SSL_library_init := TSSL_library_init(GetProcAddress(libssl_HANDLE, 'SSL_library_init'));
-    if not (assigned(SSL_library_init)) then
-      sDebug.add(LastError);
-    {$endif}
 
     TLSv1_2_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
     if not (assigned(TLSv1_2_server_method)) then
       sDebug.add(LastError);
 
-    {$ifdef LIB_SSL_REV_11x}
     TLS_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
     if not (assigned(TLS_server_method)) then
       sDebug.add(LastError);
-    {$endif}
 
-    {$ifdef LIB_SSL_REV_11x}
     TLS_client_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_client_method'));
     if not (assigned(TLS_client_method)) then
       sDebug.add(LastError);
-    {$endif}
 
     SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
@@ -390,29 +454,44 @@ begin
     if not (assigned(SSL_CTX_set_info_callback)) then
       sDebug.add(LastError);
 
+    SSL_new := TSSL_new(GetProcAddress(libssl_HANDLE,
+      'SSL_new'));
+    if not (assigned(SSL_new)) then
+      sDebug.add(LastError);
+
+    SSL_set_fd := TSSL_set_fd(GetProcAddress(libssl_HANDLE,
+      'SSL_set_fd'));
+    if not (assigned(SSL_set_fd)) then
+      sDebug.add(LastError);
+
+    SSL_accept := TSSL_accept(GetProcAddress(libssl_HANDLE,
+      'SSL_accept'));
+    if not (assigned(SSL_accept)) then
+      sDebug.add(LastError);
+
+    SSL_get_error := TSSL_get_error(GetProcAddress(libssl_HANDLE,
+      'SSL_get_error'));
+    if not (assigned(SSL_get_error)) then
+      sDebug.add(LastError);
+
+    SSL_CTX_callback_ctrl := TSSL_CTX_callback_ctrl(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_callback_ctrl'));
+    if not (assigned(SSL_CTX_callback_ctrl)) then
+      sDebug.add(LastError);
+
+    SSL_get_servername := TSSL_get_servername(GetProcAddress(libssl_HANDLE,
+      'SSL_get_servername'));
+    if not (assigned(SSL_get_servername)) then
+      sDebug.add(LastError);
+
 
     (*
     if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
       sDebug.add('CRYPTO_set_mem_functions fail!');
     *)
 
-    {$ifdef LIB_SSL_REV_10x}
-                     SSL_library_init;
-    //    OpenSSL_add_all_algorithms;
-    //OpenSSL_add_all_ciphers;
-    //OpenSSL_add_all_digests;
-    //ERR_load_crypto_strings;
-    {$endif}
-
-    {$ifdef LIB_SSL_REV_11x}
-
     if (OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CRYPTO_STRINGS or OPENSSL_INIT_LOAD_SSL_STRINGS, nil) <> 1) then
       sDebug.add('OPENSSL_init_ssl fail!');
-
-    {$endif}
-
-
-
   end
   else
   begin

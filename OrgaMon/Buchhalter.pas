@@ -477,7 +477,7 @@ uses
   ExcelHelper, CareServer, OLAP,
 
   REST, dbOrgaMon, wanfix32,
-  GUIhelp, PageControlTest;
+  GUIhelp, PageControlTest, InfoZip;
 {$R *.dfm}
 
 const
@@ -1856,10 +1856,47 @@ const
   { 17 } 'Zeile6;' +
   { 18 } 'Zeile2bis6;' +
   { 19 } 'Zeilen';
+  sSQL_Alle =
+  { } ' select' +
+  { } '  VERSAND.RECHNUNG,' +
+  { } '  VERSAND.LIEFERBETRAG,' +
+  { } '  (select' +
+  { } '    SUM(-B.BETRAG)' +
+  { } '   from' +
+  { } '    AUSGANGSRECHNUNG B' +
+  { } '   where' +
+  { } '    (VERSAND.BELEG_R=B.BELEG_R) and' +
+  { } '    (VERSAND.TEILLIEFERUNG=B.TEILLIEFERUNG) and' +
+  { } '    ((B.VORGANG<>''' + cVorgang_Rechnung + ''') or (B.VORGANG is null))' +
+  { } '   ) as DAVON_BEZAHLT,' +
+  { } '  VERSAND.BELEG_R,' +
+  { } '  VERSAND.TEILLIEFERUNG,' +
+  { } '  VERSAND.AUSGANG,' +
+  { } '  BELEG.MAHNSTUFE,' +
+  { } '  PERSON.RID as PERSON_R,' +
+  { } '  PERSON.SUCHBEGRIFF' +
+  { } ' from' +
+  { } '  VERSAND' +
+  { } ' join' +
+  { } '  BELEG' +
+  { } ' on' +
+  { } '  (BELEG.RID=VERSAND.BELEG_R)' +
+  { } ' join' +
+  { } '  PERSON' +
+  { } ' on' +
+  { } '  (PERSON.RID=BELEG.PERSON_R)' +
+  { } ' where' +
+  { } '  (VERSAND.RECHNUNG is not null) and' +
+  { } '  (VERSAND.AUSGANG>CURRENT_DATE-213) and' +
+  { } '  (VERSAND.AUSGANG<CURRENT_DATE)' +
+  { } ' order by' +
+  { } '  VERSAND.AUSGANG descending ';
+
 var
   Von, Bis: TAnfixDate;
-  cBUCH: TIB_Cursor;
-  cFOLGE: TIB_Cursor;
+  cBUCH: TdboCursor;
+  cFOLGE: TdboCursor;
+  cRECHNUNGEN: TdboCursor;
   sCSV: TStringList;
   STEMPEL: string;
   STEMPEL_R: Integer;
@@ -1869,6 +1906,8 @@ var
   sFolgeBuchungssatz: TStringList;
   n: Integer;
   WarEbenErloesKonto: boolean;
+  WorkPath, _WorkPath : string;
+  RechnungFName, ZipFName : string;
 
   // caching
   MASTER_R: Integer;
@@ -1882,6 +1921,13 @@ begin
 
   if DateOK(Von) and DateOK(Bis) then
   begin
+    //
+
+    _WorkPath := MyProgramPath + cAuswertungenPath;
+    CheckCreateDir(_WorkPath);
+
+    WorkPath := _WorkPath + IntToStr(Bis) + '\';
+    CheckCreateDir(WorkPath);
 
     //
     cBUCH := DataModuleDatenbank.nCursor;
@@ -2042,7 +2088,7 @@ begin
     end;
 
     //
-    sCSV.savetofile(DiagnosePath + 'DATEV.CSV');
+    sCSV.savetofile(WorkPath + 'DATEV.CSV');
 
     cBUCH.free;
     cFOLGE.free;
@@ -2050,8 +2096,48 @@ begin
     sText.free;
     sKontenAlias.free;
 
+    // Nun die Rechnungsbelege ausgeben
+
+    ExportTable(sSQL_Alle, WorkPath + 'AUSGANGSRECHNUNGEN.CSV');
+
+    cRECHNUNGEN:= nCursor;
+    with cRECHNUNGEN do
+    begin
+     sql.add ( sSQL_Alle);
+
+     ApiFirst;
+     while not(eof) do
+     begin
+      RechnungFName := e_r_BelegFNameCombined(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+
+    if not(FileExists(RechnungFName)) then
+      RechnungFName := e_r_BelegFName(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+
+    if FileExists(RechnungFName) then
+      FileCopy(
+       RechnungFName,
+       WorkPath + FieldByName('RECHNUNG').AsString + '.html' );
+
+
+      ApiNext;
+     end;
+    end;
+    cRECHNUNGEN.Free;
+
+    // zip
+    ZipFName := IntToStr(Bis) + cZIPExtension;
+    zip('*', _WorkPath+ZipFName, infozip_RootPath + '=' + WorkPath);
+
+//    FileMove(_WorkPath+ZipFName, WorkPath+ZipFName);
+
     //
-    openShell(DiagnosePath + 'DATEV.CSV');
+    openShell(WorkPath);
   end;
 
 end;
@@ -3920,6 +4006,13 @@ begin
     ComboBox3.Items.Assign(AlleKonten);
     AlleKonten.free;
   end;
+
+  if (Edit2.Text='') then
+  begin
+    Edit2.Text := long2date( DatePlus(DateGet,-213) );
+    Edit6.Text := long2date( DatePlus(DateGet,-1) );
+  end;
+
 end;
 
 procedure TFormBuchhalter.TabSheet7Show(Sender: TObject);

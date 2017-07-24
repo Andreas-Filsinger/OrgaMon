@@ -67,7 +67,7 @@ function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
 function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
-procedure e_r_Sync_AuftraegeAlle;
+procedure e_r_Sync_AuftraegeAlle; // Bereitstellung von Infos für den Foto-Server
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
