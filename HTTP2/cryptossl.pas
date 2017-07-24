@@ -27,10 +27,6 @@ unit cryptossl;
 {$mode objfpc}{$H+}
 {$endif}
 
-
-{ $ define LIB_SSL_REV_10x}
-{$define LIB_SSL_REV_11x}
-
 interface
 
 uses
@@ -52,6 +48,7 @@ type
 
 var
   sDebug: TStringList = nil;
+  pem_Path : string;
 
 // lib stuff for the public
 
@@ -184,10 +181,12 @@ function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 
-
-var
-  METH: PSSL_METHOD = nil;
-  CTX: PSSL_CTX = nil;
+// One global Context
+const
+  cs_METH: PSSL_METHOD = nil;
+  cs_CTX: PSSL_CTX = nil;
+  cs_SSL: PSSL = nil;
+  cs_Servername : string = '';
 
 implementation
 
@@ -202,37 +201,18 @@ uses
 const
   _OPENSSL_VERSION = 0;
 
-
 const
 {$ifdef MSWINDOWS}
-
   {$ifdef win64}
     cLIB_NAME_CRYPTO = 'libcrypto-1_1-x64.dll';
     cLIB_NAME_SSL = 'libssl-1_1-x64.dll';
   {$else}
-
-  {$ifdef LIB_SSL_REV_11x}
     cLIB_NAME_CRYPTO = 'libcrypto-1_1.dll';
     cLIB_NAME_SSL = 'libssl-1_1.dll';
-    {$endif LIB_SSL_REV_11x}
-    {$ifdef LIB_SSL_REV_10x}
-    cLIB_NAME_CRYPTO = 'libeay32.dll';
-    cLIB_NAME_SSL = 'ssleay32.dll';
-    {$endif LIB_SSL_REV_10x}
   {$endif}
-
 {$else}
-
-  {$ifdef LIB_SSL_REV_11x}
    cLIB_NAME_CRYPTO = 'libcrypto.so.1.1';
    cLIB_NAME_SSL = 'libssl.so.1.1';
-   {$endif LIB_SSL_REV_11x}
-
-  {$ifdef LIB_SSL_REV_10x}
-   cLIB_NAME_CRYPTO = 'libcrypto.so.1.0.0';
-   cLIB_NAME_SSL = 'libssl.so.1.0.0';
-  {$endif LIB_SSL_REV_10x}
-
 {$endif}
 
 var
@@ -337,17 +317,38 @@ end;
 
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 var
-  ServerExpected : string;
+ ErrorCount: integer;
+ _cs_Servername : array[0..4096] of AnsiChar;
 begin
- ServerExpected := SSL_get_servername(SSL,  TLSEXT_NAMETYPE_host_name);
+ ErrorCount := 0;
+ cs_Servername := SSL_get_servername(SSL,  TLSEXT_NAMETYPE_host_name);
 
+ sDebug.add('REQUEST TO "'+cs_Servername+'"');
 
- sDebug.add('REQUEST TO "'+ServerExpected+'"');
+ // load the key
+ StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
+ if (SSL_CTX_use_PrivateKey_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ begin
+   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   inc(ErrorCount);
+ end;
+
+ // load the cert
+ StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ if (SSL_CTX_use_certificate_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ begin
+   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   inc(ErrorCount);
+ end;
+
+ // imp pend:
+ // ev. die Paarung cert+key gegeneinander prüfen
+ //  SSL_CTX_check_private_key()
 
  // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
  // wird der Server als eine andere Identität angesprochen erfolgt ein
  // Verbindungsabbruch
- if (ServerExpected='localhost') then
+ if (ErrorCount=0) then
   result := SSL_TLSEXT_ERR_OK
  else
   result := SSL_TLSEXT_ERR_NOACK;
@@ -401,37 +402,26 @@ begin
 
     // import libssl functions
 
-    {$ifdef LIB_SSL_REV_11x}
     OPENSSL_init_ssl :=
       TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
-    {$endif}
 
-    {$ifdef LIB_SSL_REV_10x}
-    SSL_library_init := TSSL_library_init(GetProcAddress(libssl_HANDLE, 'SSL_library_init'));
-    if not (assigned(SSL_library_init)) then
-      sDebug.add(LastError);
-    {$endif}
 
     TLSv1_2_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
     if not (assigned(TLSv1_2_server_method)) then
       sDebug.add(LastError);
 
-    {$ifdef LIB_SSL_REV_11x}
     TLS_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
     if not (assigned(TLS_server_method)) then
       sDebug.add(LastError);
-    {$endif}
 
-    {$ifdef LIB_SSL_REV_11x}
     TLS_client_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_client_method'));
     if not (assigned(TLS_client_method)) then
       sDebug.add(LastError);
-    {$endif}
 
     SSL_CTX_new := TSSL_CTX_new(GetProcAddress(libssl_HANDLE, 'SSL_CTX_new'));
     if not (assigned(SSL_CTX_new)) then
@@ -500,23 +490,8 @@ begin
       sDebug.add('CRYPTO_set_mem_functions fail!');
     *)
 
-    {$ifdef LIB_SSL_REV_10x}
-                     SSL_library_init;
-    //    OpenSSL_add_all_algorithms;
-    //OpenSSL_add_all_ciphers;
-    //OpenSSL_add_all_digests;
-    //ERR_load_crypto_strings;
-    {$endif}
-
-    {$ifdef LIB_SSL_REV_11x}
-
     if (OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CRYPTO_STRINGS or OPENSSL_INIT_LOAD_SSL_STRINGS, nil) <> 1) then
       sDebug.add('OPENSSL_init_ssl fail!');
-
-    {$endif}
-
-
-
   end
   else
   begin

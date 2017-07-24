@@ -43,7 +43,6 @@ uses
 
 const
   OpenSSL_Error : string = '';
-  Path: string= '';
 
 function getSocket: cint;
 procedure TLS_Bind(FD: cint);
@@ -67,34 +66,23 @@ uses
 // create a Parameter Context for a TLS 1.2 Server Connection
 // intended for a "HTTPS://" Server Socket
 
-var
- p : array[0..4096] of AnsiChar;
-
 
 function StrictHTTP2Context: PSSL_CTX;
 begin
 
 //
- METH := TLSv1_2_server_method();
+ cs_METH := TLSv1_2_server_method();
 
- CTX := SSL_CTX_new(METH);
+ cs_CTX := SSL_CTX_new(cs_METH);
 
- SSL_CTX_set_info_callback(CTX,@cb_info);
+ SSL_CTX_set_info_callback(cs_CTX,@cb_info);
  SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
- SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
+ SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
- StrPCopy(p,Path + 'key.pem');
- if (SSL_CTX_use_PrivateKey_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
-   raise Exception.Create('Register key.pem fails');
+ "HIGH:!aNULL:!kRSA:!PSK:!SRP:!MD5:!RC4";
+ res = SSL_CTX_set_cipher_list(ssl, PREFERRED_CIPHERS);
 
-  StrPCopy(p,Path + 'cert.pem');
-  if (SSL_CTX_use_certificate_file(CTX, PChar(@p), SSL_FILETYPE_PEM) <> 1) then
-    raise Exception.Create('Register cert.pem fails');
-
- // ev. die Paarung cert+key gegeneinander prüfen
- //  SSL_CTX_check_private_key()
-
- result := CTX;
+ result := cs_CTX;
   if not(assigned(result)) then
     raise Exception.Create('Create a new SSL-Context fails');
 
@@ -104,7 +92,6 @@ end;
 
 procedure TLS_Bind(FD: cint);
 var
-  ssl: PSSL;
   Buf: array[0..4096] of byte;
   a,e : cInt;
 //  ErrStr : array[0..4096] of char;
@@ -114,16 +101,16 @@ ERR_F : THandle;
 begin
 
   // SSL Init
-  ssl := SSL_new(CTX);
-  if not(assigned(ssl)) then
+  cs_SSL := SSL_new(cs_CTX);
+  if not(assigned(cs_ssl)) then
     raise Exception.create('SSL_new() fails');
 
   // SSL File Handle Übernahme
-  if (SSL_set_fd(ssl, FD)<>1) then
+  if (SSL_set_fd(cs_ssl, FD)<>1) then
    raise Exception.create('SSL_set_fd() fails');
 
   //
-  a := SSL_accept(ssl);
+  a := SSL_accept(cs_ssl);
   case a of
     0:begin
 
@@ -137,7 +124,7 @@ begin
 
   if (a <= 0) then
   begin
-    sDebug.add(SSL_ERROR[SSL_get_error(SSL,a)]);
+    sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,a)]);
     ERR_print_errors_cb(@cb_ERR,nil);
 
   //             ERR_F := FileCreate( Path+'OpenSSL.log');
@@ -159,8 +146,8 @@ end;
 
 function getSocket: cint;
 var
- SAddr    : TInetSockAddr;
- CAddr    : TInetSockAddr;
+ ServerAddr    : TInetSockAddr;
+ ClientAddr    : TInetSockAddr;
  len :    cint;
  ListenSocket, ConnectionSocket : cint;
 begin
@@ -189,20 +176,23 @@ begin
        ListenSocket:=fpSocket (AF_INET,SOCK_STREAM,0);
        if SocketError<>0 then
         raise Exception.Create('Server : Socket : ');
-       SAddr.sin_family:=AF_INET;
-       SAddr.sin_port:=htons(443);
-       SAddr.sin_addr.s_addr:=INADDR_ANY;
-       len := sizeof(SAddr);
-       if fpBind(ListenSocket,@SAddr,sizeof(saddr))=-1 then
+       with ServerAddr do
+       begin
+         sin_family:=AF_INET;
+         sin_port:=htons(443);
+         sin_addr.s_addr:=INADDR_ANY;
+       end;
+       len := sizeof(ServerAddr);
+       if fpBind(ListenSocket,@ServerAddr,sizeof(ServerAddr))=-1 then
         raise Exception.Create ('Server : Bind : ');
        if fpListen (ListenSocket,1)=-1 then
         raise Exception.Create ('Server : Listen : ');
 
-       ConnectionSocket := fpAccept(ListenSocket,@CAddr,@len);
+       ConnectionSocket := fpAccept(ListenSocket,@ClientAddr,@len);
        if (ConnectionSocket=-1) then
         raise Exception.Create ('Server : Accept : ');
 
-       sDebug.add(NetAddrToStr(CAddr.sin_addr));
+       sDebug.add(NetAddrToStr(ClientAddr.sin_addr));
 
        result := ConnectionSocket;
 
@@ -236,15 +226,12 @@ end;
 procedure TLS_Init;
 begin
 
-  Path := 'R:\GIT\OrgaMon\HTTP2\';
+  pem_Path := 'R:\srv\hosts\';
 
-  CTX := StrictHTTP2Context;
+  cs_CTX := StrictHTTP2Context;
 
-if not(assigned(CTX))  then
-  raise Exception.Create('SSL Init Fail');
-
-//ERR_load_crypto_strings;
-//OpenSSL_Version  := SSLeayversion(0);
+ if not(assigned(cs_CTX))  then
+   raise Exception.Create('SSL Init Fail');
 
 end;
 
