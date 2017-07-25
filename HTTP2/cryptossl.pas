@@ -53,9 +53,7 @@ var
 // lib stuff for the public
 
 const
-  SSL_CTRL_SET_ECDH_AUTO = 94;
   SSL_FILETYPE_PEM = 1;
-  TLSEXT_NAMETYPE_host_name = 0;
 
   OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
   OPENSSL_INIT_LOAD_CRYPTO_STRINGS = $00000002;
@@ -86,12 +84,19 @@ const
  'SSL_ERROR_ZERO_RETURN',
  'SSL_ERROR_WANT_CONNECT');
 
+  // TLS EXTENSIONS ...
   SSL_TLSEXT_ERR_OK = 0;
   SSL_TLSEXT_ERR_ALERT_WARNING = 1;
   SSL_TLSEXT_ERR_ALERT_FATAL = 2;
   SSL_TLSEXT_ERR_NOACK = 3;
+  TLSEXT_NAMETYPE_host_name = 0;
 
+  // CTRL ...
   SSL_CTRL_SET_TLSEXT_SERVERNAME_CB = 53;
+  SSL_CTRL_SET_ECDH_AUTO = 94;
+
+  // OPTION ...
+  SSL_OP_CIPHER_SERVER_PREFERENCE = $00400000;
 
 type
   // Data-Types
@@ -127,7 +132,11 @@ type
   TSSL_CTX_new = function(meth: PSSL_METHOD): PSSL_CTX; cdecl;
   TSSL_CTX_use_certificate_file = function(ctx: PSSL_CTX; const _file: PChar;
     _type: cint): cint; cdecl;
+  TSSL_use_certificate_file = function(SSL: PSSL; const _file: PChar;
+    _type: cint): cint; cdecl;
   TSSL_CTX_use_PrivateKey_file = function(ctx: PSSL_CTX; const _file: PChar;
+    _type: cint): cint; cdecl;
+  TSSL_use_PrivateKey_file = function(SSL: PSSL; const _file: PChar;
     _type: cint): cint; cdecl;
   TSSL_CTX_ctrl = function(ctx: PSSL_CTX; cmd: cint; larg: clong;
     parg: Pointer): clong; cdecl;
@@ -138,6 +147,11 @@ type
   TSSL_get_error = function (SSL: PSSL; ret: cint): cint; cdecl;
   TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong; cdecl;
   TSSL_get_servername = function (SSL: PSSL; typ: cint): Pchar; cdecl;
+  TSSL_CTX_set_cipher_list = function (ctx: PSSL_CTX; const str: PChar): cint; cdecl;
+  TSSL_CTX_set_options = function(ctx: PSSL_CTX;   options: clong): clong; cdecl;
+  TSSL_CTX_check_private_key = function (ctx: PSSL_CTX): cint; cdecl;
+  TSSL_check_private_key = function (SSL: PSSL): cint; cdecl;
+
 
 const
   // lib functions for the public
@@ -153,23 +167,29 @@ const
 
   // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
-  TLS_server_method:TOpenSSL_method = nil;
+  TLS_server_method: TOpenSSL_method = nil;
   TLS_client_method: TOpenSSL_method = nil;
 
   // CTX - Tools
   SSL_CTX_new: TSSL_CTX_new = nil;
   SSL_CTX_ctrl: TSSL_CTX_ctrl = nil;
+  SSL_CTX_set_options: TSSL_CTX_set_options = nil;
   SSL_CTX_callback_ctrl: TSSL_CTX_callback_ctrl = nil;
+  SSL_CTX_set_cipher_list: TSSL_CTX_set_cipher_list = nil;
+  SSL_CTX_check_private_key : TSSL_CTX_check_private_key  = nil;
 
   // SSL - Tools
   SSL_new : TSSL_new = nil;
   SSL_set_fd : TSSL_set_fd = nil;
   SSL_accept : TSSL_accept = nil;
   SSL_get_servername : TSSL_get_servername = nil;
+  SSL_check_private_key : TSSL_check_private_key  = nil;
 
   // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
+  SSL_use_certificate_file: TSSL_use_certificate_file = nil;
   SSL_CTX_use_PrivateKey_file: TSSL_CTX_use_PrivateKey_file = nil;
+  SSL_use_PrivateKey_file: TSSL_use_PrivateKey_file = nil;
   SSL_CTX_use_RSAPrivateKey_file : TSSL_CTX_use_PrivateKey_file = nil;
 
 function Version: string;
@@ -321,29 +341,32 @@ var
  _cs_Servername : array[0..4096] of AnsiChar;
 begin
  ErrorCount := 0;
- cs_Servername := SSL_get_servername(SSL,  TLSEXT_NAMETYPE_host_name);
+ cs_Servername := SSL_get_servername(SSL, TLSEXT_NAMETYPE_host_name);
 
  sDebug.add('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
  StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
- if (SSL_CTX_use_PrivateKey_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ if (SSL_use_PrivateKey_file(SSL, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   sDebug.add('ERROR: Register Key '+_cs_Servername+' fails');
    inc(ErrorCount);
  end;
 
  // load the cert
  StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
- if (SSL_CTX_use_certificate_file(cs_CTX, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ if (SSL_use_certificate_file(SSL, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register '+_cs_Servername+' fails');
+   sDebug.add('ERROR: Register Cert '+_cs_Servername+' fails');
    inc(ErrorCount);
  end;
 
- // imp pend:
- // ev. die Paarung cert+key gegeneinander prüfen
- //  SSL_CTX_check_private_key()
+ if (SSL_check_private_key(SSL)<>1) then
+ begin
+   sDebug.add('ERROR: Key & Cert : they dont match');
+   inc(ErrorCount);
+
+ end;
 
  // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
  // wird der Server als eine andere Identität angesprochen erfolgt ein
@@ -431,10 +454,32 @@ begin
     if not (assigned(SSL_CTX_ctrl)) then
       sDebug.add(LastError);
 
+    SSL_CTX_set_cipher_list := TSSL_CTX_set_cipher_list(GetProcAddress(libssl_HANDLE, 'SSL_CTX_set_cipher_list'));
+    if not (assigned(SSL_CTX_set_cipher_list)) then
+      sDebug.add(LastError);
+
+    SSL_CTX_set_options := TSSL_CTX_set_options(GetProcAddress(libssl_HANDLE, 'SSL_CTX_set_options'));
+    if not (assigned(SSL_CTX_set_options)) then
+      sDebug.add(LastError);
+
+    SSL_CTX_check_private_key := TSSL_CTX_check_private_key(GetProcAddress(libssl_HANDLE, 'SSL_CTX_check_private_key'));
+    if not (assigned(SSL_CTX_check_private_key)) then
+      sDebug.add(LastError);
+
+    SSL_check_private_key := TSSL_check_private_key(GetProcAddress(libssl_HANDLE, 'SSL_check_private_key'));
+    if not (assigned(SSL_check_private_key)) then
+      sDebug.add(LastError);
+
     SSL_CTX_use_certificate_file :=
       TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_certificate_file'));
     if not (assigned(SSL_CTX_use_certificate_file)) then
+      sDebug.add(LastError);
+
+    SSL_use_certificate_file :=
+      TSSL_use_certificate_file(GetProcAddress(libssl_HANDLE,
+      'SSL_use_certificate_file'));
+    if not (assigned(SSL_use_certificate_file)) then
       sDebug.add(LastError);
 
     SSL_CTX_use_PrivateKey_file :=
@@ -443,13 +488,20 @@ begin
     if not (assigned(SSL_CTX_use_PrivateKey_file)) then
       sDebug.add(LastError);
 
+    SSL_use_PrivateKey_file :=
+      TSSL_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
+      'SSL_use_PrivateKey_file'));
+    if not (assigned(SSL_use_PrivateKey_file)) then
+      sDebug.add(LastError);
+
     SSL_CTX_use_RSAPrivateKey_file :=
       TSSL_CTX_use_PrivateKey_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_RSAPrivateKey_file'));
     if not (assigned(SSL_CTX_use_RSAPrivateKey_file)) then
       sDebug.add(LastError);
 
-     SSL_CTX_set_info_callback := TSSL_CTX_set_info_callback(GetProcAddress(libssl_HANDLE,
+     SSL_CTX_set_info_callback :=
+     TSSL_CTX_set_info_callback(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_set_info_callback'));
     if not (assigned(SSL_CTX_set_info_callback)) then
       sDebug.add(LastError);

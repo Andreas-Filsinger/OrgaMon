@@ -72,7 +72,6 @@ begin
 
 //
  cs_METH := TLSv1_2_server_method();
-
  cs_CTX := SSL_CTX_new(cs_METH);
 
  SSL_CTX_set_info_callback(cs_CTX,@cb_info);
