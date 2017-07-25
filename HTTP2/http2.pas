@@ -76,11 +76,13 @@ begin
  cs_CTX := SSL_CTX_new(cs_METH);
 
  SSL_CTX_set_info_callback(cs_CTX,@cb_info);
- SSL_CTX_ctrl(Result, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
+ SSL_CTX_ctrl(cs_CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
  SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
- "HIGH:!aNULL:!kRSA:!PSK:!SRP:!MD5:!RC4";
- res = SSL_CTX_set_cipher_list(ssl, PREFERRED_CIPHERS);
+ if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
+  raise Exception.Create('set TLS 1.2 Cipher fails');
+
+ SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
  result := cs_CTX;
   if not(assigned(result)) then
