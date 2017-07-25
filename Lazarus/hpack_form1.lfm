@@ -99,7 +99,7 @@ object Form1: TForm1
       ClientWidth = 1326
       object Memo2: TMemo
         Left = 28
-        Height = 286
+        Height = 761
         Top = 55
         Width = 797
         Lines.Strings = (
@@ -108,57 +108,66 @@ object Form1: TForm1
         TabOrder = 0
       end
       object Button3: TButton
-        Left = 120
+        Left = 856
         Height = 25
-        Top = 453
+        Top = 174
         Width = 405
         Caption = 'open Socket'
         OnClick = Button3Click
         TabOrder = 1
       end
       object Button4: TButton
-        Left = 120
+        Left = 856
         Height = 25
-        Top = 517
+        Top = 238
         Width = 403
         Caption = 'TLS 1.2 Accept'
         OnClick = Button4Click
         TabOrder = 2
       end
       object Button5: TButton
-        Left = 123
+        Left = 859
         Height = 25
-        Top = 429
+        Top = 150
         Width = 402
         Caption = 'TLS init'
         OnClick = Button5Click
         TabOrder = 3
       end
       object Button6: TButton
-        Left = 120
+        Left = 856
         Height = 25
-        Top = 400
+        Top = 121
         Width = 405
         Caption = 'load openSSL'
         OnClick = Button6Click
         TabOrder = 4
       end
       object Button7: TButton
-        Left = 125
+        Left = 861
         Height = 25
-        Top = 485
+        Top = 206
         Width = 400
         Caption = 'now use Firefox to Request "https://localhost/"'
         Enabled = False
         TabOrder = 5
       end
       object Label3: TLabel
-        Left = 124
+        Left = 860
         Height = 20
-        Top = 367
+        Top = 88
         Width = 220
         Caption = 'Steps to start the TLS 1.2 Server ...'
         ParentColor = False
+      end
+      object Button8: TButton
+        Left = 858
+        Height = 25
+        Top = 270
+        Width = 398
+        Caption = 'read clients request'
+        OnClick = Button8Click
+        TabOrder = 6
       end
     end
     object TabSheet3: TTabSheet

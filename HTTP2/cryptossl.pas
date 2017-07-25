@@ -152,6 +152,18 @@ type
   TSSL_CTX_check_private_key = function (ctx: PSSL_CTX): cint; cdecl;
   TSSL_check_private_key = function (SSL: PSSL): cint; cdecl;
 
+  // Advertise it!
+  ngx_http_ssl_npn_advertised
+
+  // Buy it!
+  SSL_CTX_set_alpn_select_cb
+  SSL_select_next_proto
+
+  // IO
+  TSSL_pending = function(SSL: Pssl): cint; cdecl;
+  TSSL_read = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
+  TSSL_write = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
+
 
 const
   // lib functions for the public
@@ -191,6 +203,11 @@ const
   SSL_CTX_use_PrivateKey_file: TSSL_CTX_use_PrivateKey_file = nil;
   SSL_use_PrivateKey_file: TSSL_use_PrivateKey_file = nil;
   SSL_CTX_use_RSAPrivateKey_file : TSSL_CTX_use_PrivateKey_file = nil;
+
+  // IO
+  SSL_pending: TSSL_pending = nil;
+  SSL_read: TSSL_read = nil;
+  SSL_write: TSSL_write = nil;
 
 function Version: string;
 function LastError: string;
@@ -535,6 +552,23 @@ begin
       'SSL_get_servername'));
     if not (assigned(SSL_get_servername)) then
       sDebug.add(LastError);
+
+      SSL_pending:= TSSL_pending(GetProcAddress(libssl_HANDLE,
+      'SSL_pending'));
+    if not (assigned(SSL_pending)) then
+      sDebug.add(LastError);
+
+  SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,
+      'SSL_read'));
+    if not (assigned(SSL_read)) then
+      sDebug.add(LastError);
+
+  SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,
+      'SSL_write'));
+    if not (assigned(SSL_write)) then
+      sDebug.add(LastError);
+
+
 
 
     (*

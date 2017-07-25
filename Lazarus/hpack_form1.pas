@@ -20,6 +20,7 @@ type
     Button5: TButton;
     Button6: TButton;
     Button7: TButton;
+    Button8: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
@@ -41,6 +42,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
   private
     { private declarations }
 
@@ -222,6 +224,34 @@ begin
   memo2.Lines.add(cryptossl.Version);
   memo2.Lines.addstrings(cryptossl.sDebug);
   memo2.Lines.add('----------');
+end;
+
+procedure TForm1.Button8Click(Sender: TObject);
+var
+   buf : array[0..16*1024] of byte;
+   i,n : integer;
+   c : char;
+   Request: string;
+begin
+  i := SSL_pending(cs_SSL);
+  while (i>0) do
+  begin
+    memo2.Lines.add('have '+IntToStr(i)+' Bytes!');
+    Request := '';
+    SSL_read(cs_SSL,@buf,i);
+    for n := 0 to pred(i) do
+    begin
+      c := chr(buf[n]);
+      if (c>='!') and (c<='z') then
+       Request := Request + c
+      else
+       Request := Request + '\' + IntTostr(ord(c)) + ' ';
+    end;
+    memo2.Lines.add('"' + Request + '"');
+
+    i := SSL_pending(cs_SSL);
+  end;
+  memo2.Lines.add('EOF');
 end;
 
 

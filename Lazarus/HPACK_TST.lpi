@@ -63,6 +63,7 @@
       <Unit5>
         <Filename Value="..\HTTP2\hpack.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="HPACK"/>
       </Unit5>
     </Units>
   </ProjectOptions>

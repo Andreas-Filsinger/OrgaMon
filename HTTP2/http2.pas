@@ -67,6 +67,8 @@ uses
 // intended for a "HTTPS://" Server Socket
 
 
+
+
 function StrictHTTP2Context: PSSL_CTX;
 begin
 
@@ -103,42 +105,24 @@ begin
 
   // SSL Init
   cs_SSL := SSL_new(cs_CTX);
-  if not(assigned(cs_ssl)) then
+  if not(assigned(cs_SSL)) then
     raise Exception.create('SSL_new() fails');
 
   // SSL File Handle Übernahme
-  if (SSL_set_fd(cs_ssl, FD)<>1) then
-   raise Exception.create('SSL_set_fd() fails');
+  if (SSL_set_fd(cs_SSL, FD)<>1) then
+  raise Exception.create('SSL_set_fd() fails');
 
   //
-  a := SSL_accept(cs_ssl);
-  case a of
-    0:begin
-
-    end;
-    1: begin
-
-    end;
-  else
-
-  end;
-
-  if (a <= 0) then
+  if (SSL_accept(cs_SSL)<>1) then
   begin
     sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,a)]);
     ERR_print_errors_cb(@cb_ERR,nil);
+    raise Exception.create('SSL_accept() fails');
+  end else
+  begin
 
-  //             ERR_F := FileCreate( Path+'OpenSSL.log');
-  // ERR_print_errors_fp(ERR_F);
-//      FileClose(ERR_F);
+
   end;
-  {
-  buf += Header;
-  buf += Content;
-  stack();
-  stack();
-  SSLwrite(ssl, @Buf, 16);
-   }
 
 end;
 
