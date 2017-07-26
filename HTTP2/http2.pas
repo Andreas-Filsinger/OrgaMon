@@ -79,6 +79,7 @@ begin
  SSL_CTX_set_info_callback(cs_CTX,@cb_info);
  SSL_CTX_ctrl(cs_CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
  SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
+ SSL_CTX_set_alpn_select_cb(cs_CTX,@cb_ALPN,nil);
 
  if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
   raise Exception.Create('set TLS 1.2 Cipher fails');

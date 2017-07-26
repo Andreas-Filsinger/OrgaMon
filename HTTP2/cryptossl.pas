@@ -110,6 +110,7 @@ type
   TCB_INFO = procedure(ssl : PSSL; wher, ret : cint); cdecl;
   TCB_SERVERNAME = function (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
   TCB_ERROR = function (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
+  TCB_ALPN = function (SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
 
   // Memory Functions
   TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
@@ -151,13 +152,20 @@ type
   TSSL_CTX_set_options = function(ctx: PSSL_CTX;   options: clong): clong; cdecl;
   TSSL_CTX_check_private_key = function (ctx: PSSL_CTX): cint; cdecl;
   TSSL_check_private_key = function (SSL: PSSL): cint; cdecl;
+  TSSL_select_next_proto = function (cout : PPChar; outlen : PChar;
+                           server : PChar; server_len: cuint;
+                           client: PChar; client_len : cuint): cint; cdecl;
 
   // Advertise it!
-  ngx_http_ssl_npn_advertised
+  //  SSL_CTX_set_next_protos_advertised_cb
+// see "ngx_http_ssl_npn_advertised"
 
   // Buy it!
-  SSL_CTX_set_alpn_select_cb
-  SSL_select_next_proto
+  TSSL_CTX_set_alpn_select_cb = procedure(ctx: PSSL_CTX; cb: TCB_ALPN; arg: Pointer);
+
+
+
+//  SSL_select_next_proto
 
   // IO
   TSSL_pending = function(SSL: Pssl): cint; cdecl;
@@ -173,9 +181,13 @@ const
   SSL_library_init: TSSL_library_init = nil;
   CRYPTO_set_mem_functions: TCRYPTO_set_mem_functions = nil;
   OpenSSL_version: TOpenSSL_version = nil;
-  SSL_CTX_set_info_callback: TSSL_CTX_set_info_callback = nil;
   ERR_print_errors_cb: TERR_print_errors_cb = nil;
   SSL_get_error: TSSL_get_error = nil;
+  SSL_select_next_proto: TSSL_select_next_proto = nil;
+
+  // Register Callbacks
+  SSL_CTX_set_info_callback: TSSL_CTX_set_info_callback = nil;
+  SSL_CTX_set_alpn_select_cb: TSSL_CTX_set_alpn_select_cb = nil;
 
   // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
@@ -217,6 +229,7 @@ function LastError: string;
 function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
+function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
 
 // One global Context
 const
@@ -224,6 +237,7 @@ const
   cs_CTX: PSSL_CTX = nil;
   cs_SSL: PSSL = nil;
   cs_Servername : string = '';
+  cs_Protokoll_h2 : ShortString = 'h2';
 
 implementation
 
@@ -382,7 +396,6 @@ begin
  begin
    sDebug.add('ERROR: Key & Cert : they dont match');
    inc(ErrorCount);
-
  end;
 
  // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
@@ -392,6 +405,66 @@ begin
   result := SSL_TLSEXT_ERR_OK
  else
   result := SSL_TLSEXT_ERR_NOACK;
+end;
+
+function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
+var
+ ErrorCount: integer;
+ ProtokollName: ShortString;
+ ProtokollNameLength: Byte;
+ ParseCount: cuint;
+ WeHave_h2 : boolean;
+begin
+ ErrorCount := 0;
+(* SSL_select_next_proto(unsigned char **out, unsigned char *outlen,
+                           const unsigned char *server,
+                           unsigned int server_len,
+                           const unsigned char *client,
+                           unsigned int client_len)
+ *)
+ repeat
+   if (inlen=0) then
+   begin
+    sDebug.add('ERROR: Client offers nothing!');
+    inc(ErrorCount);
+    break;
+   end;
+
+   ParseCount := 0;
+   WeHave_h2 := false;
+
+   while (ParseCount<inlen) do
+   begin
+    ProtokollNameLength := ord(pin[0]);
+    Move (pin^,ProtokollName[0],ProtokollNameLength+1);
+
+    if (ProtokollNameLength=2) then
+     if (ProtokollName='h2') then
+      WeHave_h2 := true;
+
+    sDebug.add('ALPN offers "'+ProtokollName+'"');
+    inc(ParseCount,ProtokollNameLength+1);
+    inc(Pin,ProtokollNameLength+1);
+   end;
+
+   if not(WeHave_h2) then
+   begin
+     sDebug.add('ERROR: Client do not offer needed "h2" Protokoll');
+     inc(ErrorCount);
+     break;
+   end;
+
+   // Set result
+   cout^ := @cs_Protokoll_h2;
+   Pchar(outlen)[0] := chr(length(cs_Protokoll_h2)+1);
+
+ until true;
+
+ if (ErrorCount=0) then
+  result := SSL_TLSEXT_ERR_OK
+ else
+  result := SSL_TLSEXT_ERR_ALERT_FATAL;
+
 end;
 
 /////////////////////////////////////////////////////////////////
@@ -446,7 +519,6 @@ begin
       TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
-
 
     TLSv1_2_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
@@ -553,6 +625,18 @@ begin
     if not (assigned(SSL_get_servername)) then
       sDebug.add(LastError);
 
+    SSL_CTX_set_alpn_select_cb :=
+    TSSL_CTX_set_alpn_select_cb(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_set_alpn_select_cb'));
+    if not (assigned(SSL_CTX_set_alpn_select_cb)) then
+      sDebug.add(LastError);
+
+    SSL_select_next_proto :=
+    TSSL_select_next_proto(GetProcAddress(libssl_HANDLE,
+      'SSL_select_next_proto'));
+    if not (assigned(SSL_select_next_proto)) then
+      sDebug.add(LastError);
+
       SSL_pending:= TSSL_pending(GetProcAddress(libssl_HANDLE,
       'SSL_pending'));
     if not (assigned(SSL_pending)) then
@@ -567,9 +651,6 @@ begin
       'SSL_write'));
     if not (assigned(SSL_write)) then
       sDebug.add(LastError);
-
-
-
 
     (*
     if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
