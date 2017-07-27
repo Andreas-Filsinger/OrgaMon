@@ -5,7 +5,7 @@
                    |  _  | |  | | |_| |/  \ _<______>_
 |                  |_| |_|_|  |_|\___//_/\_\
 |
-|    Multiplexing for HTTP/2 (as described in RFC 7540)
+|    Data Transport and Multiplexing for HTTP/2 (as described in RFC 7540)
 |
 |    (c) 2017 Andreas Filsinger
 |
@@ -43,15 +43,23 @@ THTTP2_Stream = Class(TObject)
      SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
 end;
 
+{ THTTP2_Connection }
+
 THTTP2_Connection = class(TObject)
      SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL : Integer;
      SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
+     public
+     class function SETTING : string; overload;
+          class function SETTING (Parameter: word; Value: Integer) : string; overload;
 
 end;
 
 THMUX = class(TObject)
 
  end;
+
+
+function StartFrame : string;
 
 implementation
 
@@ -62,8 +70,10 @@ Type
      Length : UInt24;       // UInt24
      FType : Byte;
      Flags : Byte;
-     ID : Integer;
+     Stream_ID : Integer;
    end;
+const
+  THTTP2_Frame_Size = sizeof(THTTP2_Frame);
 
 const
    // RFC: "7.  Error Codes"
@@ -84,6 +94,7 @@ const
 const
  CRLF = #$0D#$0A;
  CLIENT_HELLO = 'PRI * HTTP/2.0' + CRLF+CRLF + 'SM' + CRLF+CRLF;
+
  FRAME_TYPE_DATA = 0;
  FRAME_TYPE_HEADERS = 1;
  FRAME_TYPE_PRIORITY = 2;
@@ -121,6 +132,38 @@ type
      STREAM_STATUS_HALF_CLOSED_REMOTE,
      STREAM_STATUS_CLOSED,
      STREAM_STATUS_BROKEN);
+
+
+// RFC: 3.5.  HTTP/2 Connection Preface
+
+function StartFrame: string;
+var
+ FRAME : THTTP2_Frame;
+begin
+ with FRAME do
+ begin
+   Length := 0;
+   FType := FRAME_TYPE_SETTINGS;
+   Flags := 0;
+   Stream_ID := 0;
+ end;
+
+ SetLength(result, THTTP2_Frame_Size);
+ move(FRAME, result[1], THTTP2_Frame_Size);
+end;
+
+{ THTTP2_Connection }
+
+class function THTTP2_Connection.SETTING: string;
+begin
+  // empty SETTINGS Frame
+end;
+
+class function THTTP2_Connection.SETTING(Parameter: word; Value: Integer
+  ): string;
+begin
+ //
+end;
 
 
 

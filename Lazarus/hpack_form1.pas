@@ -14,6 +14,7 @@ type
 
   TForm1 = class(TForm)
     Button1: TButton;
+    Button10: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -21,6 +22,7 @@ type
     Button6: TButton;
     Button7: TButton;
     Button8: TButton;
+    Button9: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
@@ -36,6 +38,7 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
+    procedure Button10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -43,6 +46,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
   private
     { private declarations }
 
@@ -66,7 +70,7 @@ uses
   anfix32,
 
   // aus dem HTTP/2 Projekt
-  HPACK, HTTP2, cryptossl;
+  HMUX, HPACK, HTTP2, cryptossl;
 
 {$R *.lfm}
 
@@ -87,6 +91,12 @@ begin
     memo1.Lines.addStrings(HPACK);
   end;
   HPACK.Free;
+end;
+
+procedure TForm1.Button10Click(Sender: TObject);
+begin
+  memo2.lines.addstrings(sdebug);
+  sdebug.clear;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -208,6 +218,7 @@ begin
     exit;
   TLS_Bind(FD);
   memo2.Lines.AddStrings(sDebug);
+  sDebug.clear;
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
@@ -233,6 +244,11 @@ var
    c : char;
    Request: string;
 begin
+  if sDebug.count>0 then
+  begin
+   memo2.Lines.addstrings(sDebug);
+   sDebug.clear;
+  end;
   i := SSL_pending(cs_SSL);
   while (i>0) do
   begin
@@ -252,6 +268,17 @@ begin
     i := SSL_pending(cs_SSL);
   end;
   memo2.Lines.add('EOF');
+end;
+
+procedure TForm1.Button9Click(Sender: TObject);
+var
+ D : string;
+ n : Integer;
+begin
+   D := StartFrame;
+  n := SSL_write(cs_SSL,@D[1],length(D));
+  sDebug.Add(IntTostr(n)+' Bytes written ...');
+
 end;
 
 

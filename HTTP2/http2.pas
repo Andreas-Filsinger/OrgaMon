@@ -72,19 +72,29 @@ uses
 function StrictHTTP2Context: PSSL_CTX;
 begin
 
-//
+ // setup a TLS 1.2 Context
  cs_METH := TLSv1_2_server_method();
  cs_CTX := SSL_CTX_new(cs_METH);
 
  SSL_CTX_set_info_callback(cs_CTX,@cb_info);
  SSL_CTX_ctrl(cs_CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
- SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
- SSL_CTX_set_alpn_select_cb(cs_CTX,@cb_ALPN,nil);
 
+ (*
  if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
   raise Exception.Create('set TLS 1.2 Cipher fails');
 
  SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
+ *)
+
+ // Register a Callback for: "SNI"
+ SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
+
+ // Register a Callback for: Advertise "h2" Protocol
+ // check this: It's never been called ever!
+ SSL_CTX_set_next_protos_advertised_cb(cs_CTX,@cb_PROTOCOL, nil);
+
+ // Register a Callback for: Select "h2" Protocol
+ SSL_CTX_set_alpn_select_cb(cs_CTX,@cb_ALPN,nil);
 
  result := cs_CTX;
   if not(assigned(result)) then

@@ -74,6 +74,25 @@ const
   OPENSSL_INIT_NO_LOAD_SSL_STRINGS = $00100000;
   OPENSSL_INIT_LOAD_SSL_STRINGS = $00200000;
 
+  // STATUS
+  SSL_ST_CONNECT = $1000;
+  SSL_ST_ACCEPT = $2000;
+  SSL_ST_ALERT = $4000;
+  SSL_CB_LOOP = $01;
+  SSL_CB_EXIT = $02;
+  SSL_CB_READ = $04;
+  SSL_CB_WRITE = $08;
+  SSL_CB_HANDSHAKE_START = $10;
+  SSL_CB_HANDSHAKE_DONE = $20;
+
+  SSL_CB_READ_ALERT  = SSL_ST_ALERT or SSL_CB_READ;
+  SSL_CB_WRITE_ALERT = SSL_ST_ALERT or SSL_CB_WRITE;
+  SSL_CB_ACCEPT_LOOP = SSL_ST_ACCEPT or SSL_CB_LOOP;
+  SSL_CB_ACCEPT_EXIT = SSL_ST_ACCEPT or SSL_CB_EXIT;
+  SSL_CB_CONNECT_LOOP = SSL_ST_CONNECT or SSL_CB_LOOP;
+  SSL_CB_CONNECT_EXIT = SSL_ST_CONNECT or SSL_CB_EXIT;
+
+
   SSL_ERROR : array[0..7] of string = (
  'SSL_ERROR_NONE',
  'SSL_ERROR_SSL',
@@ -105,12 +124,12 @@ type
   PSSL = Pointer;
   PSSL_METHOD = Pointer;
 
-  //
   // Callback-Function-Types, Funktionen die openSSL ruft
   TCB_INFO = procedure(ssl : PSSL; wher, ret : cint); cdecl;
   TCB_SERVERNAME = function (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
   TCB_ERROR = function (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
   TCB_ALPN = function (SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
+  TCB_PROTOCOL = function (SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
 
   // Memory Functions
   TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
@@ -121,6 +140,10 @@ type
 
   // Log-Funktions
   TERR_print_errors_cb = procedure (cb : TCB_ERROR; p : pointer); cdecl;
+  TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; cb: TCB_INFO); cdecl;
+  TSSL_state_string_long = function (ssl: PSSL) : PChar;
+  TSSL_alert_type_string_long = function (value: cint) : PChar;
+  TSSL_alert_desc_string_long = function (value: cint) : PChar;
 
   // API-Function-Types
   TOPENSSL_init_ssl = function(opts: cuint64;
@@ -141,7 +164,6 @@ type
     _type: cint): cint; cdecl;
   TSSL_CTX_ctrl = function(ctx: PSSL_CTX; cmd: cint; larg: clong;
     parg: Pointer): clong; cdecl;
-  TSSL_CTX_set_info_callback = procedure(ctx: PSSL_CTX; cb: TCB_INFO); cdecl;
   TSSL_new = function(ctx: PSSL_CTX):PSSL; cdecl;
   TSSL_set_fd = function(SSL: PSSL; fd: cint): cint; cdecl;
   TSSL_accept = function(SSL: PSSL):cint; cdecl;
@@ -157,11 +179,10 @@ type
                            client: PChar; client_len : cuint): cint; cdecl;
 
   // Advertise it!
-  //  SSL_CTX_set_next_protos_advertised_cb
-// see "ngx_http_ssl_npn_advertised"
+  TSSL_CTX_set_next_protos_advertised_cb = procedure(ctx : PSSL_CTX; cb : TCB_PROTOCOL; arg : Pointer); cdecl;
 
   // Buy it!
-  TSSL_CTX_set_alpn_select_cb = procedure(ctx: PSSL_CTX; cb: TCB_ALPN; arg: Pointer);
+  TSSL_CTX_set_alpn_select_cb = procedure(ctx: PSSL_CTX; cb: TCB_ALPN; arg: Pointer); cdecl;
 
 
 
@@ -184,10 +205,14 @@ const
   ERR_print_errors_cb: TERR_print_errors_cb = nil;
   SSL_get_error: TSSL_get_error = nil;
   SSL_select_next_proto: TSSL_select_next_proto = nil;
+  SSL_state_string_long:  TSSL_state_string_long = nil;
+  SSL_alert_type_string_long : TSSL_alert_type_string_long = nil;
+  SSL_alert_desc_string_long : TSSL_alert_desc_string_long = nil;
 
   // Register Callbacks
   SSL_CTX_set_info_callback: TSSL_CTX_set_info_callback = nil;
   SSL_CTX_set_alpn_select_cb: TSSL_CTX_set_alpn_select_cb = nil;
+  SSL_CTX_set_next_protos_advertised_cb: TSSL_CTX_set_next_protos_advertised_cb = nil;
 
   // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
@@ -230,6 +255,7 @@ function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
+function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
 
 // One global Context
 const
@@ -359,11 +385,42 @@ begin
 end;
 
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
+var
+ Alert: PChar;
+ Status: PChar;
+ Msg: string;
 begin
-  sDebug.add(InttoStr(wher)+'@cb_INFO');
-  sDebug.Add(IntTostr(wher)+':'+InttoStr(ret));
-end;
+ Msg := 'cb_INFO:';
 
+ case wher of
+    SSL_ST_CONNECT: Msg := Msg +  'CONNECT';
+    SSL_ST_ACCEPT :Msg := Msg + 'ACCEPT';
+    SSL_ST_ALERT :Msg := Msg + 'ALERT';
+    SSL_CB_LOOP :Msg := Msg + 'LOOP';
+    SSL_CB_EXIT :Msg := Msg + 'EXIT';
+    SSL_CB_READ :Msg := Msg + 'READ';
+    SSL_CB_WRITE :Msg := Msg + 'WRITE';
+    SSL_CB_HANDSHAKE_START :Msg := Msg + 'HANDSHAKE_START';
+    SSL_CB_HANDSHAKE_DONE :Msg := Msg + 'HANDSHAKE_DONE';
+    SSL_CB_READ_ALERT :Msg := Msg + 'READ_ALERT';
+    SSL_CB_WRITE_ALERT :Msg := Msg + 'WRITE_ALERT';
+    SSL_CB_ACCEPT_LOOP :Msg := Msg + 'ACCEPT_LOOP';
+    SSL_CB_ACCEPT_EXIT :Msg := Msg + 'ACCEPT_EXIT';
+    SSL_CB_CONNECT_LOOP :Msg := Msg + 'CONNECT_LOOP';
+    SSL_CB_CONNECT_EXIT :Msg := Msg + 'CONNECT_EXIT';
+ else
+   Msg := Msg + '0x' + IntToHex(wher,4);
+ end;
+
+ if assigned(ssl) then
+  Msg := Msg + '|' + SSL_state_string_long(ssl);
+
+ if (ret<>1) then
+  Msg := Msg + '|' + SSL_alert_type_string_long(ret) + '(' + SSL_alert_desc_string_long(ret) + ')' ;
+
+ sDebug.add(Msg);
+
+end;
 (* ServerName Callback! *)
 
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
@@ -407,6 +464,16 @@ begin
   result := SSL_TLSEXT_ERR_NOACK;
 end;
 
+function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
+begin
+ sDebug.add('Server advertise "h2" - Protocol');
+
+ // Set result
+ cout^ := @cs_Protokoll_h2;
+ Pchar(outlen)[0] := chr(length(cs_Protokoll_h2)+1);
+ result := SSL_TLSEXT_ERR_OK
+end;
+
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
 var
  ErrorCount: integer;
@@ -416,16 +483,10 @@ var
  WeHave_h2 : boolean;
 begin
  ErrorCount := 0;
-(* SSL_select_next_proto(unsigned char **out, unsigned char *outlen,
-                           const unsigned char *server,
-                           unsigned int server_len,
-                           const unsigned char *client,
-                           unsigned int client_len)
- *)
  repeat
    if (inlen=0) then
    begin
-    sDebug.add('ERROR: Client offers nothing!');
+     sDebug.add('ERROR: Client offers nothing!');
     inc(ErrorCount);
     break;
    end;
@@ -595,6 +656,21 @@ begin
     if not (assigned(SSL_CTX_set_info_callback)) then
       sDebug.add(LastError);
 
+    SSL_state_string_long := TSSL_state_string_long(GetProcAddress(libssl_HANDLE,
+      'SSL_state_string_long'));
+    if not (assigned(SSL_state_string_long)) then
+      sDebug.add(LastError);
+
+    SSL_alert_type_string_long := TSSL_alert_type_string_long(GetProcAddress(libssl_HANDLE,
+      'SSL_alert_type_string_long'));
+    if not (assigned(SSL_alert_type_string_long)) then
+      sDebug.add(LastError);
+
+    SSL_alert_desc_string_long := TSSL_alert_desc_string_long(GetProcAddress(libssl_HANDLE,
+      'SSL_alert_desc_string_long'));
+    if not (assigned(SSL_alert_desc_string_long)) then
+      sDebug.add(LastError);
+
     SSL_new := TSSL_new(GetProcAddress(libssl_HANDLE,
       'SSL_new'));
     if not (assigned(SSL_new)) then
@@ -629,6 +705,12 @@ begin
     TSSL_CTX_set_alpn_select_cb(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_set_alpn_select_cb'));
     if not (assigned(SSL_CTX_set_alpn_select_cb)) then
+      sDebug.add(LastError);
+
+    SSL_CTX_set_next_protos_advertised_cb :=
+    TSSL_CTX_set_next_protos_advertised_cb(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_set_next_protos_advertised_cb'));
+    if not (assigned(SSL_CTX_set_next_protos_advertised_cb)) then
       sDebug.add(LastError);
 
     SSL_select_next_proto :=

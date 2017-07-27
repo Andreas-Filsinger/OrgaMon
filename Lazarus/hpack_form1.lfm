@@ -98,9 +98,9 @@ object Form1: TForm1
       ClientHeight = 826
       ClientWidth = 1326
       object Memo2: TMemo
-        Left = 28
+        Left = 16
         Height = 761
-        Top = 55
+        Top = 24
         Width = 797
         Lines.Strings = (
           'Memo2'
@@ -161,13 +161,31 @@ object Form1: TForm1
         ParentColor = False
       end
       object Button8: TButton
-        Left = 858
+        Left = 859
         Height = 25
-        Top = 270
+        Top = 296
         Width = 398
         Caption = 'read clients request'
         OnClick = Button8Click
         TabOrder = 6
+      end
+      object Button9: TButton
+        Left = 860
+        Height = 25
+        Top = 270
+        Width = 395
+        Caption = 'send Server Hello Frame'
+        OnClick = Button9Click
+        TabOrder = 7
+      end
+      object Button10: TButton
+        Left = 869
+        Height = 25
+        Top = 373
+        Width = 75
+        Caption = 'Button10'
+        OnClick = Button10Click
+        TabOrder = 8
       end
     end
     object TabSheet3: TTabSheet
