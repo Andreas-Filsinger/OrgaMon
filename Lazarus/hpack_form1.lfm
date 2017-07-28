@@ -161,16 +161,16 @@ object Form1: TForm1
         ParentColor = False
       end
       object Button8: TButton
-        Left = 859
+        Left = 860
         Height = 25
-        Top = 296
+        Top = 373
         Width = 398
         Caption = 'read clients request'
         OnClick = Button8Click
         TabOrder = 6
       end
       object Button9: TButton
-        Left = 860
+        Left = 861
         Height = 25
         Top = 270
         Width = 395
@@ -179,13 +179,22 @@ object Form1: TForm1
         TabOrder = 7
       end
       object Button10: TButton
-        Left = 869
+        Left = 856
         Height = 25
-        Top = 373
+        Top = 440
         Width = 75
         Caption = 'Button10'
         OnClick = Button10Click
         TabOrder = 8
+      end
+      object Button11: TButton
+        Left = 859
+        Height = 25
+        Top = 296
+        Width = 397
+        Caption = 'send 16 k rubbish'
+        OnClick = Button11Click
+        TabOrder = 9
       end
     end
     object TabSheet3: TTabSheet

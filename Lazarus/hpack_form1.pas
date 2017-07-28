@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, Menus;
+  ComCtrls, Menus, cTypes;
 
 type
 
@@ -15,6 +15,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button10: TButton;
+    Button11: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -39,6 +40,7 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     procedure Button10Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -97,6 +99,20 @@ procedure TForm1.Button10Click(Sender: TObject);
 begin
   memo2.lines.addstrings(sdebug);
   sdebug.clear;
+end;
+
+procedure TForm1.Button11Click(Sender: TObject);
+var
+   buf : array[0..pred(16*1024)] of byte;
+   n : integer;
+   BytesWritten : cint;
+begin
+               for n := low(buf) to high(buf) do
+                buf[n] := random(256);
+
+               BytesWritten := SSL_write(cs_SSL,@buf,sizeof(buf));
+               sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -239,23 +255,44 @@ end;
 
 procedure TForm1.Button8Click(Sender: TObject);
 var
-   buf : array[0..16*1024] of byte;
-   i,n : integer;
+   buf : array[0..pred(16*1024)] of byte;
+   n : integer;
    c : char;
    Request: string;
+   BytesWaiting: cint;
+   BytesRead: cint;
+
+   procedure pending;
+   begin
+     BytesWaiting := SSL_pending(cs_SSL);
+     if (BytesWaiting<0) then
+     begin
+      sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesWaiting)]);
+      ERR_print_errors_cb(@cb_ERR,nil);
+     end;
+   end;
+
 begin
+
   if sDebug.count>0 then
   begin
    memo2.Lines.addstrings(sDebug);
    sDebug.clear;
   end;
-  i := SSL_pending(cs_SSL);
-  while (i>0) do
+
+  pending;
+  while (BytesWaiting>0) do
   begin
-    memo2.Lines.add('have '+IntToStr(i)+' Bytes!');
+    memo2.Lines.add('have '+IntToStr(BytesWaiting)+' Bytes!');
     Request := '';
-    SSL_read(cs_SSL,@buf,i);
-    for n := 0 to pred(i) do
+    BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+    if (BytesRead<0) then
+    begin
+     sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesRead)]);
+     ERR_print_errors_cb(@cb_ERR,nil);
+    end;
+
+    for n := 0 to pred(BytesRead) do
     begin
       c := chr(buf[n]);
       if (c>='!') and (c<='z') then
@@ -265,7 +302,7 @@ begin
     end;
     memo2.Lines.add('"' + Request + '"');
 
-    i := SSL_pending(cs_SSL);
+    pending;
   end;
   memo2.Lines.add('EOF');
 end;
@@ -273,12 +310,11 @@ end;
 procedure TForm1.Button9Click(Sender: TObject);
 var
  D : string;
- n : Integer;
+ BytesWritten: cint;
 begin
-   D := StartFrame;
-  n := SSL_write(cs_SSL,@D[1],length(D));
-  sDebug.Add(IntTostr(n)+' Bytes written ...');
-
+  D := StartFrame;
+  BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+  sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
 end;
 
 

@@ -64,16 +64,27 @@ function StartFrame : string;
 implementation
 
 
-Type
+type
    // RFC: "4.1.  Frame Format"
-   THTTP2_Frame = Packed Record
-     Length : UInt24;       // UInt24
+   THTTP2_FRAME = Packed Record
+     Length : UInt24;
      FType : Byte;
      Flags : Byte;
-     Stream_ID : Integer;
+     Stream_ID : UInt32; // 0,2,4..2147483648  even-numbered on servers
    end;
+
 const
-  THTTP2_Frame_Size = sizeof(THTTP2_Frame);
+  SizeOf_FRAME = sizeof(THTTP2_FRAME);
+
+type
+  // RFC: "6.5.1.  SETTINGS Format"
+   THTTP2_SETTINGS = Packed Record
+    SETTING_ID : UInt16;
+    Value      : UInt32;
+   end;
+
+const
+  SizeOf_SETTINGS = sizeof(THTTP2_SETTINGS);
 
 const
    // RFC: "7.  Error Codes"
@@ -107,13 +118,19 @@ const
  FRAME_TYPE_CONTINUATION = 9;
 
 
- // SETTINGS OPTIONS
- SETTINGS_HEADER_TABLE_SIZE = $01;
- SETTINGS_ENABLE_PUSH = $02;
- SETTINGS_MAX_CONCURRENT_STREAMS = $03;
- SETTINGS_INITIAL_WINDOW_SIZE = $04;
- SETTINGS_MAX_FRAME_SIZE = $05;
- SETTINGS_MAX_HEADER_LIST_SIZE = $06;
+ // RFC: 6.5.2.  Defined SETTINGS Parameters
+
+ // Server
+ SETTINGS_HEADER_TABLE_SIZE = $01; // 0..? default 4096
+ SETTINGS_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
+ SETTINGS_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
+ SETTINGS_MAX_FRAME_SIZE = $05; // 0..? inital 16,384
+ SETTINGS_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
+
+ // Client
+ SETTINGS_ENABLE_PUSH = $02; // 0,1 default 1 (=ON)
+
+
     //
    {
     Length=8, Rauschen
@@ -138,18 +155,52 @@ type
 
 function StartFrame: string;
 var
+ Buf: array[0..pred(16*1024)] of byte;
+ PBuf: ^Byte;
  FRAME : THTTP2_Frame;
+ SettingsCount: Integer;
+ SIZE: Integer;
+
+ procedure add(pSETTING_ID : UInt16;pValue : UInt32);
+ var
+  SETTING : THTTP2_SETTINGS;
+ begin
+   with SETTING do
+   begin
+     SETTING_ID := pSETTING_ID;
+     Value      := pValue;
+   end;
+   move(SETTING,PBuf^,SizeOf_SETTINGS);
+   inc(PBuf,SizeOf_SETTINGS);
+   inc(SettingsCount);
+ end;
+
 begin
+ SettingsCount := 0;
+
+ PBuf := @Buf;
+ inc(PBuf,SizeOf_FRAME);
+
+ add(SETTINGS_HEADER_TABLE_SIZE,4096);
+ add(SETTINGS_MAX_CONCURRENT_STREAMS,101);
+ add(SETTINGS_INITIAL_WINDOW_SIZE,65535);
+ add(SETTINGS_MAX_FRAME_SIZE,1048576);
+
+ PBuf := @Buf;
+
  with FRAME do
  begin
-   Length := 0;
+   Length := SettingsCount*SizeOf_SETTINGS;
    FType := FRAME_TYPE_SETTINGS;
    Flags := 0;
    Stream_ID := 0;
  end;
+ move(FRAME,PBuf^,sizeof(THTTP2_Frame));
 
- SetLength(result, THTTP2_Frame_Size);
- move(FRAME, result[1], THTTP2_Frame_Size);
+ SIZE := Sizeof_FRAME + SettingsCount * SizeOf_SETTINGS;
+
+ SetLength(result, SIZE);
+ move(Buf, result[1], SIZE);
 end;
 
 { THTTP2_Connection }

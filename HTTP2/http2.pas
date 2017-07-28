@@ -124,7 +124,8 @@ begin
   raise Exception.create('SSL_set_fd() fails');
 
   //
-  if (SSL_accept(cs_SSL)<>1) then
+  a := SSL_accept(cs_SSL);
+  if (a<>1) then
   begin
     sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,a)]);
     ERR_print_errors_cb(@cb_ERR,nil);

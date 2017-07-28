@@ -300,7 +300,7 @@ end;
 
 procedure TFormScanner.doActivate(active: boolean);
 begin
-  // init
+  // register callback "hotEvent"
   FormMain.registerHot('Scanner', [], vkF2, active);
 
   // set
@@ -337,10 +337,6 @@ begin
         #13 + 'eingeben und mit <ENTER> abschliessen';
       break;
     end;
-
-    // führende Nullen weg!
-    while (pos('0', ganzerScan) = 1) do
-      delete(ganzerScan, 1, 1);
 
     row := SCAN_LIST.next(DrawGrid1.row, SCAN_LIST_GTIN, ganzerScan);
     if (row = -1) then
