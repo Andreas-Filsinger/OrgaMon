@@ -28,7 +28,7 @@
 unit HMUX;
 
 {$mode objfpc}{$H+}
-
+{$modeswitch advancedrecords}
 interface
 
 uses
@@ -58,33 +58,71 @@ THMUX = class(TObject)
 
  end;
 
+var
+  Buf: array[0..pred(16*1024)] of byte;
 
-function StartFrame : string;
+
+function StartFrames : string;
 
 implementation
+
+type
+  TNum32Bit = packed record
+   {$ifdef FPC_LITTLE_ENDIAN}
+    byte3, byte2, byte1, byte0 : Byte;
+   {$else FPC_LITTLE_ENDIAN}
+    byte0, byte1, byte2, byte3 : Byte;
+   {$endif FPC_LITTLE_ENDIAN}
+    class operator Explicit(a : TNum32Bit) : Cardinal;
+    class operator :=(a : Cardinal) : TNum32Bit;
+  end;
+
+  TNum24Bit = packed record
+   {$ifdef FPC_LITTLE_ENDIAN}
+    byte2, byte1, byte0 : Byte;
+   {$else FPC_LITTLE_ENDIAN}
+    byte0, byte1, byte2 : Byte;
+   {$endif FPC_LITTLE_ENDIAN}
+    class operator Explicit(a : TNum24Bit) : Cardinal;
+    class operator :=(a : Cardinal) : TNum24Bit;
+  end;
+
+  TNum16Bit = packed record
+   {$ifdef FPC_LITTLE_ENDIAN}
+    byte1, byte0 : Byte;
+   {$else FPC_LITTLE_ENDIAN}
+    byte0, byte1 : Byte;
+   {$endif FPC_LITTLE_ENDIAN}
+    class operator Explicit(a : TNum16Bit) : Cardinal;
+    class operator :=(a : Cardinal) : TNum16Bit;
+  end;
 
 
 type
    // RFC: "4.1.  Frame Format"
-   THTTP2_FRAME = Packed Record
-     Length : UInt24;
+   THTTP2_FRAME_HEADER = Packed Record
+     Length : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      FType : Byte;
      Flags : Byte;
-     Stream_ID : UInt32; // 0,2,4..2147483648  even-numbered on servers
+     Stream_ID : TNum32Bit; // 0,2,4..2147483648  even-numbered on servers
    end;
 
-const
-  SizeOf_FRAME = sizeof(THTTP2_FRAME);
 
-type
   // RFC: "6.5.1.  SETTINGS Format"
-   THTTP2_SETTINGS = Packed Record
-    SETTING_ID : UInt16;
-    Value      : UInt32;
+   TFRAME_SETTINGS = Packed Record
+    SETTING_ID : TNum16Bit;
+    Value      : TNum32Bit;
+   end;
+
+   // RFC: "6.9 WINDOW_UPDATE"
+   TFRAME_WINDOW_UPDATE = Packed Record
+    Window_Size_Increment : TNum32Bit;  // 1..2147483647
    end;
 
 const
-  SizeOf_SETTINGS = sizeof(THTTP2_SETTINGS);
+  SizeOf_FRAME_HEADER = sizeof(THTTP2_FRAME_HEADER);
+  SizeOf_SETTINGS = sizeof(TFRAME_SETTINGS);
+  SizeOf_WINDOW_UPDATE = sizeof(TFRAME_WINDOW_UPDATE);
 
 const
    // RFC: "7.  Error Codes"
@@ -124,7 +162,7 @@ const
  SETTINGS_HEADER_TABLE_SIZE = $01; // 0..? default 4096
  SETTINGS_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
  SETTINGS_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
- SETTINGS_MAX_FRAME_SIZE = $05; // 0..? inital 16,384
+ SETTINGS_MAX_FRAME_SIZE = $05; // 16,384..16777215
  SETTINGS_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
 
  // Client
@@ -153,17 +191,17 @@ type
 
 // RFC: 3.5.  HTTP/2 Connection Preface
 
-function StartFrame: string;
+function StartFrames: string;
 var
- Buf: array[0..pred(16*1024)] of byte;
- PBuf: ^Byte;
- FRAME : THTTP2_Frame;
+ PBuf, _PBuf: ^Byte;
+ FRAME : THTTP2_FRAME_HEADER;
+ WINDOW_UPDATE: TFRAME_WINDOW_UPDATE;
  SettingsCount: Integer;
  SIZE: Integer;
 
  procedure add(pSETTING_ID : UInt16;pValue : UInt32);
  var
-  SETTING : THTTP2_SETTINGS;
+  SETTING : TFRAME_SETTINGS;
  begin
    with SETTING do
    begin
@@ -178,15 +216,16 @@ var
 begin
  SettingsCount := 0;
 
+ // A) SETTINGS - FRAME
+
  PBuf := @Buf;
- inc(PBuf,SizeOf_FRAME);
+ inc(PBuf,SizeOf_FRAME_HEADER);
 
  add(SETTINGS_HEADER_TABLE_SIZE,4096);
  add(SETTINGS_MAX_CONCURRENT_STREAMS,101);
  add(SETTINGS_INITIAL_WINDOW_SIZE,65535);
  add(SETTINGS_MAX_FRAME_SIZE,1048576);
-
- PBuf := @Buf;
+ _PBuf := PBuf;
 
  with FRAME do
  begin
@@ -195,10 +234,36 @@ begin
    Flags := 0;
    Stream_ID := 0;
  end;
- move(FRAME,PBuf^,sizeof(THTTP2_Frame));
 
- SIZE := Sizeof_FRAME + SettingsCount * SizeOf_SETTINGS;
+ // Reset Pointer to the start ...
+ PBuf := @Buf;
+ // ... and write HEADER
+ move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
 
+ SIZE := Sizeof_FRAME_HEADER + Cardinal(FRAME.Length);
+
+ // B) WINDOW_UPDATE FRAME
+
+ with FRAME do
+ begin
+   Length := SizeOf_WINDOW_UPDATE;
+   FType := FRAME_TYPE_WINDOW_UPDATE;
+   Flags := 0;
+   Stream_ID := 0;
+ end;
+ PBuf := _PBuf;
+ move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
+ inc(PBuf,SizeOf_FRAME_HEADER);
+
+ with WINDOW_UPDATE do
+ begin
+   Window_Size_Increment := 655360;
+ end;
+ move(WINDOW_UPDATE,PBuf^,SizeOf_WINDOW_UPDATE);
+
+ inc(SIZE, SizeOf_FRAME_HEADER + SizeOf_WINDOW_UPDATE);
+
+ // Return the Structure
  SetLength(result, SIZE);
  move(Buf, result[1], SIZE);
 end;
@@ -216,7 +281,75 @@ begin
  //
 end;
 
+type
+TCardinalRec = packed record
+{$ifdef FPC_LITTLE_ENDIAN}
+  byte0, byte1, byte2, byte3 : Byte;
+{$else FPC_LITTLE_ENDIAN}
+  byte3, byte2, byte1, byte0 : Byte;
+{$endif FPC_LITTLE_ENDIAN}
+end;
 
+class operator TNum32Bit.Explicit(a : TNum32Bit) : Cardinal;
+begin
+  TCardinalRec(Result).byte0 := a.byte0;
+  TCardinalRec(Result).byte1 := a.byte1;
+  TCardinalRec(Result).byte2 := a.byte2;
+  TCardinalRec(Result).byte3 := a.byte3;
+end;
+
+class operator TNum32Bit.:=(a : Cardinal) : TNum32Bit;
+begin
+  Result.byte0 := TCardinalRec(a).byte0;
+  Result.byte1 := TCardinalRec(a).byte1;
+  Result.byte2 := TCardinalRec(a).byte2;
+  Result.byte3 := TCardinalRec(a).byte3;
+end;
+
+class operator TNum24Bit.Explicit(a : TNum24Bit) : Cardinal;
+begin
+  TCardinalRec(Result).byte0 := a.byte0;
+  TCardinalRec(Result).byte1 := a.byte1;
+  TCardinalRec(Result).byte2 := a.byte2;
+  TCardinalRec(Result).byte3 := 0;
+end;
+
+class operator TNum24Bit.:=(a : Cardinal) : TNum24Bit;
+begin
+{$IFOPT R+}
+  if (a > $FFFFFF) then
+    Error(reIntOverflow);
+{$ENDIF R+}
+  Result.byte0 := TCardinalRec(a).byte0;
+  Result.byte1 := TCardinalRec(a).byte1;
+  Result.byte2 := TCardinalRec(a).byte2;
+end;
+
+class operator TNum16Bit.Explicit(a : TNum16Bit) : Cardinal;
+begin
+  TCardinalRec(Result).byte0 := a.byte0;
+  TCardinalRec(Result).byte1 := a.byte1;
+  TCardinalRec(Result).byte2 := 0;
+  TCardinalRec(Result).byte3 := 0;
+end;
+
+class operator TNum16Bit.:=(a : Cardinal) : TNum16Bit;
+begin
+{$IFOPT R+}
+  if (a > $FFFF) then
+    Error(reIntOverflow);
+{$ENDIF R+}
+  Result.byte0 := TCardinalRec(a).byte0;
+  Result.byte1 := TCardinalRec(a).byte1;
+end;
+
+begin
+ if (SizeOf_FRAME_HEADER<>9) then
+  raise exception.create('Break of RFC 7540-4.1');
+ if (SizeOf_SETTINGS<>6) then
+  raise exception.create('Break of RFC 7540-6.5.1');
+ if (SizeOf_WINDOW_UPDATE<>4) then
+  raise exception.create('Break of RFC 7540-6.9');
 
 end.
 

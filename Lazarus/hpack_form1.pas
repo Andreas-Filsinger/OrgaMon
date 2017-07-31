@@ -309,12 +309,35 @@ end;
 
 procedure TForm1.Button9Click(Sender: TObject);
 var
- D : string;
+ D,DD : string;
  BytesWritten: cint;
+ n : Integer;
 begin
-  D := StartFrame;
+  D := StartFrames;
+
+  memo2.Lines.add('--------------------------------------------');
+
+  DD := '';
+  for n := 1 to length(D) do
+  begin
+    DD := DD + ' ' + IntToHex(ord(D[n]),2);
+    if (pred(n) MOD 16=15) then
+    begin
+     memo2.Lines.add(DD);
+     DD := '';
+    end;
+  end;
+  if (DD<>'') then
+   memo2.Lines.add(DD);
+
+  memo2.Lines.add('--------------------------------------------');
+
+  if assigned(cs_SSL) then
+  begin
   BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
   sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+
+  end;
 end;
 
 

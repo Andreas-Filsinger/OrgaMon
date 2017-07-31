@@ -102,9 +102,15 @@ object Form1: TForm1
         Height = 761
         Top = 24
         Width = 797
+        Font.CharSet = ANSI_CHARSET
+        Font.Height = -18
+        Font.Name = 'Consolas'
+        Font.Pitch = fpFixed
+        Font.Quality = fqDraft
         Lines.Strings = (
           'Memo2'
         )
+        ParentFont = False
         TabOrder = 0
       end
       object Button3: TButton
