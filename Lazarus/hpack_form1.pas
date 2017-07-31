@@ -21,15 +21,18 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
+    Button7: TButton;
     Button8: TButton;
     Button9: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
+    Edit3: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
     Memo1: TMemo;
     Memo2: TMemo;
     Memo3: TMemo;
@@ -46,6 +49,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
   private
@@ -98,6 +102,8 @@ procedure TForm1.Button10Click(Sender: TObject);
 begin
   memo2.lines.addstrings(sdebug);
   sdebug.clear;
+  memo2.lines.addstrings(mdebug);
+  mdebug.clear;
 end;
 
 procedure TForm1.Button11Click(Sender: TObject);
@@ -223,8 +229,11 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
+  memo2.lines.Add('Make a request now: (https://localhost/)');
+  application.processmessages;
   FD := getSocket;
   memo2.Lines.add('Get Socket : ' + IntToStr(FD));
+  memo2.Lines.Add('Incoming call, press Accept now');
 end;
 
 procedure TForm1.Button4Click(Sender: TObject);
@@ -250,6 +259,13 @@ begin
   memo2.Lines.add(cryptossl.Version);
   memo2.Lines.addstrings(cryptossl.sDebug);
   memo2.Lines.add('----------');
+  pem_Path := edit3.Text;
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+begin
+  ParserClear;
+  Parse;
 end;
 
 procedure TForm1.Button8Click(Sender: TObject);

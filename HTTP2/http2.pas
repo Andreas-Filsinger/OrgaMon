@@ -158,6 +158,14 @@ begin
    if (DD<>'') then
     sDebug.add(DD+'  '+DC);
 
+   if BytesRead>0 then
+   begin
+    CN_SIze := BytesRead;
+    move(Buf, ClientNoise, CN_Size);
+    CN_Pos := 0;
+    Parse;
+   end;
+
 
   end;
 
@@ -248,7 +256,6 @@ end;
 procedure TLS_Init;
 begin
 
-  pem_Path := 'R:\srv\hosts\';
 
   cs_CTX := StrictHTTP2Context;
 
