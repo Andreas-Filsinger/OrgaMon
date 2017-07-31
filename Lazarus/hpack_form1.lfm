@@ -1,31 +1,30 @@
 object Form1: TForm1
-  Left = 795
-  Height = 859
-  Top = 316
-  Width = 1334
+  Left = 23
+  Height = 637
+  Top = 27
+  Width = 1315
   Caption = 'Form1'
-  ClientHeight = 859
-  ClientWidth = 1334
-  DesignTimePPI = 120
-  LCLVersion = '1.8.0.3'
+  ClientHeight = 637
+  ClientWidth = 1315
+  LCLVersion = '1.8.0.1'
   object PageControl1: TPageControl
     Left = 0
-    Height = 859
+    Height = 637
     Top = 0
-    Width = 1334
+    Width = 1315
     ActivePage = TabSheet2
     Align = alClient
     TabIndex = 1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'HPACK'
-      ClientHeight = 825
-      ClientWidth = 1324
+      ClientHeight = 572
+      ClientWidth = 1198
       object Memo1: TMemo
         Left = 24
-        Height = 410
+        Height = 157
         Top = 104
-        Width = 1085
+        Width = 959
         Anchors = [akTop, akLeft, akRight, akBottom]
         Lines.Strings = (
           '---- Soll:'
@@ -40,9 +39,9 @@ object Form1: TForm1
       end
       object Edit1: TEdit
         Left = 25
-        Height = 28
+        Height = 23
         Top = 32
-        Width = 1085
+        Width = 959
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 1
         Text = '82860188f439ce75c875fa5784'
@@ -50,7 +49,7 @@ object Form1: TForm1
       object Button1: TButton
         Left = 28
         Height = 25
-        Top = 524
+        Top = 271
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'decode'
@@ -59,25 +58,25 @@ object Form1: TForm1
       end
       object Label1: TLabel
         Left = 28
-        Height = 20
+        Height = 15
         Top = 8
-        Width = 161
+        Width = 128
         Caption = 'wire (compressed Code)'
         ParentColor = False
       end
       object Label2: TLabel
         Left = 28
-        Height = 20
+        Height = 15
         Top = 70
-        Width = 112
+        Width = 90
         Caption = 'Header (HTTP/2)'
         ParentColor = False
       end
       object Edit2: TEdit
         Left = 25
-        Height = 28
-        Top = 561
-        Width = 1084
+        Height = 23
+        Top = 313
+        Width = 958
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 3
         Text = 'C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\http2-tests\hpack-test-case\'
@@ -85,7 +84,7 @@ object Form1: TForm1
       object Button2: TButton
         Left = 28
         Height = 25
-        Top = 600
+        Top = 347
         Width = 220
         Anchors = [akLeft, akBottom]
         Caption = 'Run all "decode" Tests ...'
@@ -95,13 +94,13 @@ object Form1: TForm1
     end
     object TabSheet2: TTabSheet
       Caption = 'HTTPS'
-      ClientHeight = 826
-      ClientWidth = 1326
+      ClientHeight = 609
+      ClientWidth = 1307
       object Memo2: TMemo
         Left = 16
         Height = 761
         Top = 24
-        Width = 797
+        Width = 557
         Lines.Strings = (
           'Memo2'
         )
@@ -154,9 +153,9 @@ object Form1: TForm1
       end
       object Label3: TLabel
         Left = 860
-        Height = 20
+        Height = 15
         Top = 88
-        Width = 220
+        Width = 175
         Caption = 'Steps to start the TLS 1.2 Server ...'
         ParentColor = False
       end
