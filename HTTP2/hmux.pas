@@ -5,7 +5,7 @@
                    |  _  | |  | | |_| |/  \ _<______>_
 |                  |_| |_|_|  |_|\___//_/\_\
 |
-|    Data Transport and Multiplexing for HTTP/2 (as described in RFC 7540)
+|    Data Frames, Control and Multiplexing for HTTP/2 (as described in RFC 7540)
 |
 |    (c) 2017 Andreas Filsinger
 |
@@ -29,6 +29,7 @@ unit HMUX;
 
 {$mode objfpc}{$H+}
 {$modeswitch advancedrecords}
+
 interface
 
 uses
@@ -158,16 +159,15 @@ const
 
  // RFC: 6.5.2.  Defined SETTINGS Parameters
 
- // Server
+ //   Server
  SETTINGS_HEADER_TABLE_SIZE = $01; // 0..? default 4096
  SETTINGS_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
  SETTINGS_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
  SETTINGS_MAX_FRAME_SIZE = $05; // 16,384..16777215
  SETTINGS_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
 
- // Client
+ //   Client
  SETTINGS_ENABLE_PUSH = $02; // 0,1 default 1 (=ON)
-
 
     //
    {
@@ -350,6 +350,5 @@ begin
   raise exception.create('Break of RFC 7540-6.5.1');
  if (SizeOf_WINDOW_UPDATE<>4) then
   raise exception.create('Break of RFC 7540-6.9');
-
 end.
 

@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 795
+  Left = 516
   Height = 859
-  Top = 316
+  Top = 280
   Width = 1334
   Caption = 'Form1'
   ClientHeight = 859
@@ -101,7 +101,7 @@ object Form1: TForm1
         Left = 16
         Height = 761
         Top = 24
-        Width = 797
+        Width = 1016
         Font.CharSet = ANSI_CHARSET
         Font.Height = -18
         Font.Name = 'Consolas'
@@ -111,96 +111,88 @@ object Form1: TForm1
           'Memo2'
         )
         ParentFont = False
+        ScrollBars = ssVertical
         TabOrder = 0
       end
       object Button3: TButton
-        Left = 856
+        Left = 1056
         Height = 25
-        Top = 174
-        Width = 405
+        Top = 126
+        Width = 227
         Caption = 'open Socket'
         OnClick = Button3Click
         TabOrder = 1
       end
       object Button4: TButton
-        Left = 856
+        Left = 1056
         Height = 25
-        Top = 238
-        Width = 403
+        Top = 190
+        Width = 226
         Caption = 'TLS 1.2 Accept'
         OnClick = Button4Click
         TabOrder = 2
       end
       object Button5: TButton
-        Left = 859
+        Left = 1060
         Height = 25
-        Top = 150
-        Width = 402
+        Top = 102
+        Width = 223
         Caption = 'TLS init'
         OnClick = Button5Click
         TabOrder = 3
       end
       object Button6: TButton
-        Left = 856
+        Left = 1056
         Height = 25
-        Top = 121
-        Width = 405
+        Top = 72
+        Width = 226
         Caption = 'load openSSL'
         OnClick = Button6Click
         TabOrder = 4
       end
-      object Button7: TButton
-        Left = 861
-        Height = 25
-        Top = 206
-        Width = 400
-        Caption = 'now use Firefox to Request "https://localhost/"'
-        Enabled = False
-        TabOrder = 5
-      end
       object Label3: TLabel
-        Left = 860
+        Left = 1060
         Height = 20
-        Top = 88
+        Top = 40
         Width = 220
         Caption = 'Steps to start the TLS 1.2 Server ...'
         ParentColor = False
       end
       object Button8: TButton
-        Left = 860
+        Left = 1060
         Height = 25
-        Top = 373
-        Width = 398
+        Top = 325
+        Width = 225
         Caption = 'read clients request'
         OnClick = Button8Click
-        TabOrder = 6
+        TabOrder = 5
       end
       object Button9: TButton
-        Left = 861
+        Left = 1061
         Height = 25
-        Top = 270
-        Width = 395
+        Top = 222
+        Width = 219
         Caption = 'send Server Hello Frame'
         OnClick = Button9Click
-        TabOrder = 7
+        TabOrder = 6
       end
       object Button10: TButton
-        Left = 856
+        Left = 1056
         Height = 25
-        Top = 440
+        Top = 392
         Width = 75
         Caption = 'Button10'
         OnClick = Button10Click
-        TabOrder = 8
+        TabOrder = 7
       end
       object Button11: TButton
-        Left = 859
+        Left = 1059
         Height = 25
-        Top = 296
-        Width = 397
+        Top = 248
+        Width = 221
         Caption = 'send 16 k rubbish'
         OnClick = Button11Click
-        TabOrder = 9
+        TabOrder = 8
       end
     end
     object TabSheet3: TTabSheet

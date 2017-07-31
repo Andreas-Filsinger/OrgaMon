@@ -21,7 +21,6 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
-    Button7: TButton;
     Button8: TButton;
     Button9: TButton;
     Edit1: TEdit;
