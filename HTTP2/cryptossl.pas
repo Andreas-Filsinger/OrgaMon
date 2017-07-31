@@ -110,11 +110,6 @@ const
   SSL_TLSEXT_ERR_NOACK = 3;
   TLSEXT_NAMETYPE_host_name = 0;
 
-  // NPN
-  OPENSSL_NPN_UNSUPPORTED = 0;
-  OPENSSL_NPN_NEGOTIATED = 1;
-  OPENSSL_NPN_NO_OVERLAP = 2;
-
   // CTRL ...
   SSL_CTRL_SET_TLSEXT_SERVERNAME_CB = 53;
   SSL_CTRL_SET_ECDH_AUTO = 94;
@@ -134,6 +129,7 @@ type
   TCB_SERVERNAME = function (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
   TCB_ERROR = function (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
   TCB_ALPN = function (SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
+  TCB_PROTOCOL = function (SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
 
   // Memory Functions
   TCRYPTO_malloc = function(num: cardinal; const _file: PChar;
@@ -181,8 +177,16 @@ type
   TSSL_select_next_proto = function (cout : PPChar; outlen : PChar;
                            server : PChar; server_len: cuint;
                            client: PChar; client_len : cuint): cint; cdecl;
-  TSSL_get_version = function(SSL: PSSL):PChar; cdecl;
+
+  // Advertise it!
+  TSSL_CTX_set_next_protos_advertised_cb = procedure(ctx : PSSL_CTX; cb : TCB_PROTOCOL; arg : Pointer); cdecl;
+
+  // Buy it!
   TSSL_CTX_set_alpn_select_cb = procedure(ctx: PSSL_CTX; cb: TCB_ALPN; arg: Pointer); cdecl;
+
+
+
+//  SSL_select_next_proto
 
   // IO
   TSSL_pending = function(SSL: Pssl): cint; cdecl;
@@ -208,6 +212,7 @@ const
   // Register Callbacks
   SSL_CTX_set_info_callback: TSSL_CTX_set_info_callback = nil;
   SSL_CTX_set_alpn_select_cb: TSSL_CTX_set_alpn_select_cb = nil;
+  SSL_CTX_set_next_protos_advertised_cb: TSSL_CTX_set_next_protos_advertised_cb = nil;
 
   // Methods
   TLSv1_2_server_method: TOpenSSL_method = nil;
@@ -228,7 +233,6 @@ const
   SSL_accept : TSSL_accept = nil;
   SSL_get_servername : TSSL_get_servername = nil;
   SSL_check_private_key : TSSL_check_private_key  = nil;
-  SSL_get_version : TSSL_get_version = nil;
 
   // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
@@ -251,7 +255,7 @@ function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
-// function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
+function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
 
 // One global Context
 const
@@ -460,14 +464,23 @@ begin
   result := SSL_TLSEXT_ERR_NOACK;
 end;
 
-function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer) : cint; cdecl;
+function cb_PROTOCOL(SSL : PSSL; cout: PPChar; outlen: PChar; arg: Pointer):cint; cdecl;
+begin
+ sDebug.add('Server advertise "h2" - Protocol');
+
+ // Set result
+ cout^ := @cs_Protokoll_h2;
+ Pchar(outlen)[0] := chr(length(cs_Protokoll_h2)+1);
+ result := SSL_TLSEXT_ERR_OK
+end;
+
+function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
 var
  ErrorCount: integer;
  ProtokollName: ShortString;
  ProtokollNameLength: Byte;
  ParseCount: cuint;
  WeHave_h2 : boolean;
- ClientList: PChar;
 begin
  ErrorCount := 0;
  repeat
@@ -480,54 +493,31 @@ begin
 
    ParseCount := 0;
    WeHave_h2 := false;
-   ClientList := pin;
 
    while (ParseCount<inlen) do
    begin
-    ProtokollNameLength := ord(ClientList[0]);
-    Move (ClientList^,ProtokollName[0],ProtokollNameLength+1);
+    ProtokollNameLength := ord(pin[0]);
+    Move (pin^,ProtokollName[0],ProtokollNameLength+1);
 
     if (ProtokollNameLength=2) then
      if (ProtokollName='h2') then
       WeHave_h2 := true;
 
-    sDebug.add('Client offers Protocol "'+ProtokollName+'"');
+    sDebug.add('ALPN offers "'+ProtokollName+'"');
     inc(ParseCount,ProtokollNameLength+1);
-    inc(ClientList,ProtokollNameLength+1);
+    inc(Pin,ProtokollNameLength+1);
    end;
 
    if not(WeHave_h2) then
    begin
-     sDebug.add('ERROR: Client did not offered needed "h2" Protokoll');
+     sDebug.add('ERROR: Client do not offer needed "h2" Protokoll');
      inc(ErrorCount);
      break;
    end;
 
    // Set result
-   case (SSL_select_next_proto(
-     { result       } cout, outlen,
-     { server wants } @cs_Protokoll_h2, length(cs_Protokoll_h2)+1,
-     { client have  } pin,inlen)) of
-
-    OPENSSL_NPN_UNSUPPORTED :begin
-          sDebug.add('ERROR: UNSUPPORTED -> No agreement about "h2" Protokoll');
-          inc(ErrorCount);
-          break;
-          end;
-    OPENSSL_NPN_NEGOTIATED:begin
-           // success!!
-     sDebug.add('Agreement about Protocol "'+cs_Protokoll_h2+'"');
-          end;
-    OPENSSL_NPN_NO_OVERLAP:begin
-          sDebug.add('ERROR: NO_OVERLAP -> No agreement about "h2" Protokoll');
-          inc(ErrorCount);
-          break;
-          end;
-   else
-     sDebug.add('ERROR: UNKOWN -> No agreement about "h2" Protokoll');
-     inc(ErrorCount);
-     break;
-   end;
+   cout^ := @cs_Protokoll_h2;
+   Pchar(outlen)[0] := chr(length(cs_Protokoll_h2)+1);
 
  until true;
 
@@ -630,11 +620,6 @@ begin
     if not (assigned(SSL_check_private_key)) then
       sDebug.add(LastError);
 
-    SSL_get_version := TSSL_get_version(GetProcAddress(libssl_HANDLE,
-    'SSL_get_version'));
-    if not (assigned(SSL_get_version)) then
-      sDebug.add(LastError);
-
     SSL_CTX_use_certificate_file :=
       TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_certificate_file'));
@@ -720,6 +705,12 @@ begin
     TSSL_CTX_set_alpn_select_cb(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_set_alpn_select_cb'));
     if not (assigned(SSL_CTX_set_alpn_select_cb)) then
+      sDebug.add(LastError);
+
+    SSL_CTX_set_next_protos_advertised_cb :=
+    TSSL_CTX_set_next_protos_advertised_cb(GetProcAddress(libssl_HANDLE,
+      'SSL_CTX_set_next_protos_advertised_cb'));
+    if not (assigned(SSL_CTX_set_next_protos_advertised_cb)) then
       sDebug.add(LastError);
 
     SSL_select_next_proto :=
