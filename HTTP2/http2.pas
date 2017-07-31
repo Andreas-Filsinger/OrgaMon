@@ -82,18 +82,14 @@ begin
  (*
  if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
   raise Exception.Create('set TLS 1.2 Cipher fails');
+  SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
- SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
  *)
 
- // Register a Callback for: "SNI"
+ // Register a Callback for: "SNI" read Identity Client expects
  SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
- // Register a Callback for: Advertise "h2" Protocol
- // check this: It's never been called ever!
- SSL_CTX_set_next_protos_advertised_cb(cs_CTX,@cb_PROTOCOL, nil);
-
- // Register a Callback for: Select "h2" Protocol
+ // Register a Callback for: "ALPN" Select "h2" Protocol
  SSL_CTX_set_alpn_select_cb(cs_CTX,@cb_ALPN,nil);
 
  result := cs_CTX;
@@ -106,12 +102,18 @@ end;
 
 procedure TLS_Bind(FD: cint);
 var
-  Buf: array[0..4096] of byte;
   a,e : cInt;
 //  ErrStr : array[0..4096] of char;
 P : PChar;
 x : AnsiString;
 ERR_F : THandle;
+
+// initial Read
+buf : array[0..pred(16*1024)] of byte;
+BytesRead: cint;
+   DD: string;
+   DC : string;
+   n: Integer;
 begin
 
   // SSL Init
@@ -132,6 +134,37 @@ begin
     raise Exception.create('SSL_accept() fails');
   end else
   begin
+   sDebug.add('connection with "' + SSL_get_version(cs_SSL) + '"-secured established');
+
+   BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+   sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');
+
+   DD := '';
+   DC := '';
+   for n := 0 to pred(BytesRead) do
+   begin
+     DD := DD + ' ' + IntToHex(buf[n],2);
+     if (buf[n]>=ord('!')) and (buf[n]<=ord('z')) then
+      DC := DC + chr(buf[n])
+     else
+      DC := DC + '.';
+     if (n MOD 16=15) then
+     begin
+      sDebug.add(DD+'  '+DC);
+      DD := '';
+      DC := '';
+     end;
+   end;
+   if (DD<>'') then
+    sDebug.add(DD+'  '+DC);
+
+   if BytesRead>0 then
+   begin
+    CN_SIze := BytesRead;
+    move(Buf, ClientNoise, CN_Size);
+    CN_Pos := 0;
+    Parse;
+   end;
 
 
   end;
@@ -223,7 +256,6 @@ end;
 procedure TLS_Init;
 begin
 
-  pem_Path := 'R:\srv\hosts\';
 
   cs_CTX := StrictHTTP2Context;
 
