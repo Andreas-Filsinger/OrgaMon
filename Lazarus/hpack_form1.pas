@@ -112,12 +112,11 @@ var
    n : integer;
    BytesWritten : cint;
 begin
-               for n := low(buf) to high(buf) do
-                buf[n] := random(256);
+   for n := low(buf) to high(buf) do
+    buf[n] := random(256);
 
-               BytesWritten := SSL_write(cs_SSL,@buf,sizeof(buf));
-               sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
-
+   BytesWritten := SSL_write(cs_SSL,@buf,sizeof(buf));
+   sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -349,10 +348,10 @@ begin
 
   if assigned(cs_SSL) then
   begin
-  BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
-  sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
-
+    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+    sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
+
 end;
 
 

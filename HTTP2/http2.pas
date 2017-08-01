@@ -165,10 +165,7 @@ begin
     CN_Pos := 0;
     Parse;
    end;
-
-
   end;
-
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html

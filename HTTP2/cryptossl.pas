@@ -560,8 +560,9 @@ begin
   if (libssl_HANDLE > 0) then
   begin
 
+    /////////////////////////////////////
     // import libcrypto functions
-
+    /////////////////////////////////////
 
     OpenSSL_version := TOpenSSL_version(GetProcAddress(libcrypto_HANDLE,
       'OpenSSL_version'));
@@ -584,7 +585,9 @@ begin
       sDebug.add(LastError);
 
 
+    /////////////////////////////////////
     // import libssl functions
+    /////////////////////////////////////
 
     OPENSSL_init_ssl :=
       TOPENSSL_init_ssl(GetProcAddress(libssl_HANDLE, 'OPENSSL_init_ssl'));

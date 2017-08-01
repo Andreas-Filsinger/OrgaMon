@@ -462,13 +462,11 @@ begin
                FatalError := true;
                break;
              end;
-
-
             end;
 
          else
 
-           mDebug.add('INFO: unknown FRAME - waiting for implementation ...');
+           mDebug.add('INFO: unknown FRAME 0x' + IntToHex( Typ,2)+ '- waiting for implementation ...');
 
          end;
          inc(CN_Pos,Cardinal(Len));

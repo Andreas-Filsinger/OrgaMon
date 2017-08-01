@@ -111,87 +111,89 @@ object Form1: TForm1
           'Setup Help: '
           ''
           'http://wiki.orgamon.org/index.php5/OrgaMon-next#HTTP.2F2_Server'
+          ''
+          ''
         )
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
       end
       object Button3: TButton
-        Left = 1048
+        Left = 1051
         Height = 25
-        Top = 222
-        Width = 227
+        Top = 176
+        Width = 235
         Caption = 'open Socket'
         OnClick = Button3Click
         TabOrder = 1
       end
       object Button4: TButton
-        Left = 1049
+        Left = 1051
         Height = 25
-        Top = 286
-        Width = 226
+        Top = 205
+        Width = 235
         Caption = 'TLS 1.2 Accept'
         OnClick = Button4Click
         TabOrder = 2
       end
       object Button5: TButton
-        Left = 1052
+        Left = 1051
         Height = 25
-        Top = 198
-        Width = 223
+        Top = 148
+        Width = 235
         Caption = 'TLS init'
         OnClick = Button5Click
         TabOrder = 3
       end
       object Button6: TButton
-        Left = 1049
+        Left = 1051
         Height = 25
-        Top = 168
-        Width = 226
+        Top = 120
+        Width = 235
         Caption = 'load openSSL'
         OnClick = Button6Click
         TabOrder = 4
       end
       object Label3: TLabel
-        Left = 1052
+        Left = 1051
         Height = 20
-        Top = 136
+        Top = 88
         Width = 220
         Caption = 'Steps to start the TLS 1.2 Server ...'
         ParentColor = False
       end
       object Button8: TButton
-        Left = 1052
+        Left = 1051
         Height = 25
-        Top = 421
-        Width = 225
+        Top = 345
+        Width = 235
         Caption = 'read clients request'
         OnClick = Button8Click
         TabOrder = 5
       end
       object Button9: TButton
-        Left = 1053
+        Left = 1051
         Height = 25
-        Top = 318
-        Width = 219
+        Top = 260
+        Width = 235
         Caption = 'send Server Hello Frame'
         OnClick = Button9Click
         TabOrder = 6
       end
       object Button10: TButton
-        Left = 1048
+        Left = 1051
         Height = 25
-        Top = 488
-        Width = 75
-        Caption = 'Button10'
+        Top = 403
+        Width = 235
+        Caption = 'Show Debug Msgs'
         OnClick = Button10Click
         TabOrder = 7
       end
       object Button11: TButton
         Left = 1051
         Height = 25
-        Top = 344
-        Width = 221
+        Top = 287
+        Width = 235
         Caption = 'send 16 k rubbish'
         OnClick = Button11Click
         TabOrder = 8
@@ -207,17 +209,17 @@ object Form1: TForm1
       object Edit3: TEdit
         Left = 1051
         Height = 28
-        Top = 56
-        Width = 216
+        Top = 48
+        Width = 235
         TabOrder = 9
         Text = 'R:\srv\hosts\'
       end
       object Button7: TButton
-        Left = 1052
+        Left = 1051
         Height = 25
-        Top = 518
-        Width = 75
-        Caption = 'Button7'
+        Top = 432
+        Width = 235
+        Caption = 'Parse (again)'
         OnClick = Button7Click
         TabOrder = 10
       end
