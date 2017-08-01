@@ -110,11 +110,18 @@ type
 
 type
    // RFC: "4.1.  Frame Format"
+
+   { THTTP2_FRAME_HEADER }
+
    THTTP2_FRAME_HEADER = Packed Record
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      Typ : Byte;
      Flags : Byte;
      Stream_ID : TNum32Bit; // 0,2,4..2147483648  even-numbered on servers
+                            // imp pend TNum31Bit
+     function readR : boolean;
+     procedure writeR (B:boolean);
+     property R : boolean read readR write writeR;
    end;
    PHTTP2_FRAME_HEADER = ^THTTP2_FRAME_HEADER;
 
@@ -480,6 +487,18 @@ begin
    if Size_Unparsed=0 then
      break;
   until false;
+end;
+
+{ THTTP2_FRAME_HEADER }
+
+function THTTP2_FRAME_HEADER.readR: boolean;
+begin
+
+end;
+
+procedure THTTP2_FRAME_HEADER.writeR(B: boolean);
+begin
+
 end;
 
 { THTTP2_Connection }
