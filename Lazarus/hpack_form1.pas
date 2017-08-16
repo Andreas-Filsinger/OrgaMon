@@ -16,6 +16,7 @@ type
     Button1: TButton;
     Button10: TButton;
     Button11: TButton;
+    Button12: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -27,12 +28,14 @@ type
     Edit1: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
+    Edit4: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
     Memo1: TMemo;
     Memo2: TMemo;
     Memo3: TMemo;
@@ -43,6 +46,7 @@ type
     TabSheet3: TTabSheet;
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -58,8 +62,12 @@ type
     // The File-Descriptor of the Connection
     // delivered by systemd or a own TCP Connection
     FD: longint;
+
+    //
+    PathToTests: string;
   public
     { public declarations }
+    procedure InitPathToTest;
   end;
 
 var
@@ -117,6 +125,11 @@ begin
 
    BytesWritten := SSL_write(cs_SSL,@buf,sizeof(buf));
    sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+end;
+
+procedure TForm1.Button12Click(Sender: TObject);
+begin
+ InitPathToTest;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -329,6 +342,10 @@ var
 begin
   D := StartFrames;
 
+  // save it as "init"
+  InitPathToTest;
+
+
   memo2.Lines.add('--------------------------------------------');
 
   DD := '';
@@ -352,6 +369,13 @@ begin
     sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
 
+end;
+
+procedure TForm1.InitPathToTest;
+begin
+  PathToTests := copy(edit3.Text,1,pred(length(edit3.Text)));
+  PathToTests := copy(PathToTests,1,RevPos('\',PathToTests));
+  label7.Caption := PathToTests;
 end;
 
 

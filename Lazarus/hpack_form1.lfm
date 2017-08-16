@@ -7,7 +7,7 @@ object Form1: TForm1
   ClientHeight = 859
   ClientWidth = 1334
   DesignTimePPI = 120
-  LCLVersion = '1.8.0.3'
+  LCLVersion = '1.8.0.4'
   object PageControl1: TPageControl
     Left = 0
     Height = 859
@@ -222,6 +222,31 @@ object Form1: TForm1
         Caption = 'Parse (again)'
         OnClick = Button7Click
         TabOrder = 10
+      end
+      object Edit4: TEdit
+        Left = 1055
+        Height = 28
+        Top = 506
+        Width = 49
+        TabOrder = 11
+        Text = 'init'
+      end
+      object Button12: TButton
+        Left = 1115
+        Height = 33
+        Top = 504
+        Width = 171
+        Caption = 'decode'
+        OnClick = Button12Click
+        TabOrder = 12
+      end
+      object Label7: TLabel
+        Left = 1058
+        Height = 20
+        Top = 484
+        Width = 123
+        Caption = '<Path to Testfiles>'
+        ParentColor = False
       end
     end
     object TabSheet3: TTabSheet

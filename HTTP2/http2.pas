@@ -73,6 +73,7 @@ function StrictHTTP2Context: PSSL_CTX;
 begin
 
  // setup a TLS 1.2 Context
+ // RFC 7540-9.2.
  cs_METH := TLSv1_2_server_method();
  cs_CTX := SSL_CTX_new(cs_METH);
 

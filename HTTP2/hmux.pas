@@ -67,11 +67,15 @@ var
   ClientNoise : TClientNoise;
   CN_Size: Integer;
   CN_Pos: Integer; // 0..pred(CN_Size)
-  mDebug: TStringList;
+
+const
+  mDebug: TStringList = nil;
+  CLIENT_PREFIX: string = '';
 
 function StartFrames : string;
 procedure Parse;
 procedure ParserClear;
+procedure SaveRawBytes(B:string;FName:string);
 
 
 implementation
@@ -139,11 +143,11 @@ type
   PFRAME_RST_STREAM = ^TFRAME_RST_STREAM;
 
   // RFC: "6.5.1.  SETTINGS Format"
-   TFRAME_SETTINGS = Packed Record
-    SETTING_ID : TNum16Bit;
-    Value      : TNum32Bit;
-   end;
-   PFRAME_SETTINGS = ^TFRAME_SETTINGS;
+  TFRAME_SETTINGS = Packed Record
+   SETTING_ID : TNum16Bit;
+   Value      : TNum32Bit;
+  end;
+  PFRAME_SETTINGS = ^TFRAME_SETTINGS;
 
    // RFC: "6.9 WINDOW_UPDATE"
    TFRAME_WINDOW_UPDATE = Packed Record
@@ -175,8 +179,9 @@ const
 
 const
  CRLF = #$0D#$0A;
- CLIENT_PREFIX = 'PRI * HTTP/2.0' + CRLF+CRLF + 'SM' + CRLF+CRLF;
- SizeOf_CLIENT_PREFIX = length(CLIENT_PREFIX);
+ CLIENT_PREFIX_PRISM = 'PRISM' + CRLF+CRLF;
+ CLIENT_PREFIX_HTTP = ' * HTTP/2.0' + CRLF+CRLF;
+ SizeOf_CLIENT_PREFIX = length(CLIENT_PREFIX_PRISM)+length(CLIENT_PREFIX_HTTP);
 
  FRAME_TYPE_DATA = 0;
  FRAME_TYPE_HEADERS = 1;
@@ -189,6 +194,21 @@ const
  FRAME_TYPE_WINDOW_UPDATE = 8;
  FRAME_TYPE_CONTINUATION = 9;
  FRAME_LAST = FRAME_TYPE_CONTINUATION;
+
+
+ // Frame-Type Extensions for use in the future
+ // https://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml#frame-type
+
+ FRAME_TYPE_ALTSVC = 10; // https://tools.ietf.org/html/rfc7838
+ // imp pend: propagate a list off "alternative" connections to the same service (fail overs!)
+ //
+
+ FRAME_TYPE_11 = 11; // there is no information in the internet why ORIGIN moved from "11" to "12"
+ // so "11" is free, so this is a myth
+
+ FRAME_TYPE_ORIGIN = 12; // https://tools.ietf.org/html/draft-ietf-httpbis-origin-frame-03
+ // imp pend: a server may send a list of trusted "other" origins, the "client" is free to connect to
+ // kind of a club member thing ...
 
  FRAME_NAME : array[FRAME_TYPE_DATA..FRAME_LAST] of string =
    ( 'DATA',
@@ -333,6 +353,15 @@ begin
 CN_Pos := 0;
 end;
 
+procedure SaveRawBytes(B: string; FName: string);
+var
+  F:File;
+begin
+ AssignFile(F,FName);
+ rewriteFile(F,1);
+
+end;
+
 procedure Parse;
 
 
@@ -458,7 +487,7 @@ begin
                break;
              end;
 
-             mDebug.add(' ' + INtTOstr(cardinal(Stream_ID)) + ' has Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
+             mDebug.add(' Stream ' + INtTOstr(cardinal(Stream_ID)) + ' has Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
 
             end;
           FRAME_TYPE_CONTINUATION : begin
@@ -577,13 +606,13 @@ begin
 end;
 
 begin
-   mDebug:= TStringList.create;
+ mDebug := TStringList.create;
+ CLIENT_PREFIX := copy(CLIENT_PREFIX_PRISM,1,3) + CLIENT_PREFIX_HTTP + copy(CLIENT_PREFIX_PRISM,4,MaxInt);
 
- if (SizeOf_FRAME_HEADER<>9) then
-  raise exception.create('Break of RFC 7540-4.1');
- if (SizeOf_SETTINGS<>6) then
-  raise exception.create('Break of RFC 7540-6.5.1');
- if (SizeOf_WINDOW_UPDATE<>4) then
-  raise exception.create('Break of RFC 7540-6.9');
+ // Check RFC Conditions
+ assert(SizeOf_CLIENT_PREFIX=24,'Break of RFC 7540-3.5');
+ assert(SizeOf_FRAME_HEADER=9,'Break of RFC 7540-4.1');
+ assert(SizeOf_SETTINGS=6,'Break of RFC 7540-6.5.1');
+ assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 7540-6.9');
 end.
 
