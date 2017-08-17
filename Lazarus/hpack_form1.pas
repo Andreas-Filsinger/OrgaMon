@@ -17,6 +17,7 @@ type
     Button10: TButton;
     Button11: TButton;
     Button12: TButton;
+    Button13: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -47,6 +48,7 @@ type
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
+    procedure Button13Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -68,6 +70,7 @@ type
   public
     { public declarations }
     procedure InitPathToTest;
+    procedure ShowDebugMessages;
   end;
 
 var
@@ -108,10 +111,7 @@ end;
 
 procedure TForm1.Button10Click(Sender: TObject);
 begin
-  memo2.lines.addstrings(sdebug);
-  sdebug.clear;
-  memo2.lines.addstrings(mdebug);
-  mdebug.clear;
+  ShowDebugMessages;
 end;
 
 procedure TForm1.Button11Click(Sender: TObject);
@@ -130,6 +130,14 @@ end;
 procedure TForm1.Button12Click(Sender: TObject);
 begin
  InitPathToTest;
+end;
+
+procedure TForm1.Button13Click(Sender: TObject);
+var
+    BytesWritten : cint;
+begin
+  BytesWritten := SSL_write(cs_SSL,@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
+  sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -252,18 +260,14 @@ procedure TForm1.Button4Click(Sender: TObject);
 begin
   if (FD = 0) then
     exit;
-  TLS_Bind(FD);
-  memo2.Lines.AddStrings(sDebug);
-  sDebug.clear;
+  TLS_Accept(FD);
+  ShowDebugMessages;
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 begin
   TLS_Init;
-  if (sDebug.Count = 0) then
-    memo2.Lines.Add('keine Fehler beim "Init"')
-  else
-    memo2.Lines.AddStrings(sDebug);
+  ShowDebugMessages;
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
@@ -272,6 +276,7 @@ begin
   memo2.Lines.addstrings(cryptossl.sDebug);
   memo2.Lines.add('----------');
   pem_Path := edit3.Text;
+  InitPathToTest;
 end;
 
 procedure TForm1.Button7Click(Sender: TObject);
@@ -296,6 +301,11 @@ var
      begin
       sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesWaiting)]);
       ERR_print_errors_cb(@cb_ERR,nil);
+     end;
+     BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+     if (BytesRead<>0) then
+     begin
+      sDebug.add('ERROR: we have '+IntTostr(BytesRead)+' Bytes, but pending said 0');
      end;
    end;
 
@@ -336,7 +346,8 @@ end;
 
 procedure TForm1.Button9Click(Sender: TObject);
 var
- D,DD : string;
+ D : RawByteString;
+ DD: string;
  BytesWritten: cint;
  n : Integer;
 begin
@@ -344,9 +355,10 @@ begin
 
   // save it as "init"
   InitPathToTest;
+  SaveRawBytes(D,PathToTests+'init.http2');
 
 
-  memo2.Lines.add('--------------------------------------------');
+  sDebug.add('--------------------------------------------');
 
   DD := '';
   for n := 1 to length(D) do
@@ -354,20 +366,22 @@ begin
     DD := DD + ' ' + IntToHex(ord(D[n]),2);
     if (pred(n) MOD 16=15) then
     begin
-     memo2.Lines.add(DD);
+     sDebug.add(DD);
      DD := '';
     end;
   end;
   if (DD<>'') then
-   memo2.Lines.add(DD);
+   sDebug.add(DD);
 
-  memo2.Lines.add('--------------------------------------------');
+  sDebug.add('--------------------------------------------');
 
   if assigned(cs_SSL) then
   begin
     BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
     sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
+
+  ShowDebugMessages;
 
 end;
 
@@ -376,6 +390,14 @@ begin
   PathToTests := copy(edit3.Text,1,pred(length(edit3.Text)));
   PathToTests := copy(PathToTests,1,RevPos('\',PathToTests));
   label7.Caption := PathToTests;
+end;
+
+procedure TForm1.ShowDebugMessages;
+begin
+  memo2.lines.addstrings(sdebug);
+  sdebug.clear;
+  memo2.lines.addstrings(mdebug);
+  mdebug.clear;
 end;
 
 

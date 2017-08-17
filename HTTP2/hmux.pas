@@ -70,12 +70,12 @@ var
 
 const
   mDebug: TStringList = nil;
-  CLIENT_PREFIX: string = '';
+  CLIENT_PREFIX: RawByteString = '';
 
-function StartFrames : string;
-procedure Parse;
+function StartFrames : RawByteString;
+procedure Parse; // (ClientNoise)
 procedure ParserClear;
-procedure SaveRawBytes(B:string;FName:string);
+procedure SaveRawBytes(B:RawByteString;FName:string);
 
 
 implementation
@@ -178,11 +178,13 @@ const
    HTTP_1_1_REQUIRED = $0d;
 
 const
+ // Client Hello String
  CRLF = #$0D#$0A;
  CLIENT_PREFIX_PRISM = 'PRISM' + CRLF+CRLF;
  CLIENT_PREFIX_HTTP = ' * HTTP/2.0' + CRLF+CRLF;
  SizeOf_CLIENT_PREFIX = length(CLIENT_PREFIX_PRISM)+length(CLIENT_PREFIX_HTTP);
 
+ // Frame Types
  FRAME_TYPE_DATA = 0;
  FRAME_TYPE_HEADERS = 1;
  FRAME_TYPE_PRIORITY = 2;
@@ -195,7 +197,6 @@ const
  FRAME_TYPE_CONTINUATION = 9;
  FRAME_LAST = FRAME_TYPE_CONTINUATION;
 
-
  // Frame-Type Extensions for use in the future
  // https://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml#frame-type
 
@@ -207,8 +208,8 @@ const
  // so "11" is free, so this is a myth
 
  FRAME_TYPE_ORIGIN = 12; // https://tools.ietf.org/html/draft-ietf-httpbis-origin-frame-03
- // imp pend: a server may send a list of trusted "other" origins, the "client" is free to connect to
- // kind of a club member thing ...
+ // imp pend: a server may send a list of trusted "other" origins (apart from "this" actual open origin to itself),
+ // the "client" is free as save to connect to this other origins (kind of a family member thing) ...
 
  FRAME_NAME : array[FRAME_TYPE_DATA..FRAME_LAST] of string =
    ( 'DATA',
@@ -265,7 +266,7 @@ type
 
 // RFC: 3.5.  HTTP/2 Connection Preface
 
-function StartFrames: string;
+function StartFrames: RawByteString;
 var
  PBuf, _PBuf: ^Byte;
  FRAME : THTTP2_FRAME_HEADER;
@@ -353,13 +354,14 @@ begin
 CN_Pos := 0;
 end;
 
-procedure SaveRawBytes(B: string; FName: string);
+procedure SaveRawBytes(B: RawByteString; FName: string);
 var
   F:File;
 begin
  AssignFile(F,FName);
- rewriteFile(F,1);
-
+ rewrite(F,1);
+ blockwrite(F,B[1],length(B));
+ CloseFIle(F);
 end;
 
 procedure Parse;
@@ -383,7 +385,7 @@ begin
        begin
          mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
          // imp pend: delay, read, timeout?
-         continue;
+         break;
        end else
        begin
          for n := 1 to SizeOf_CLIENT_PREFIX do

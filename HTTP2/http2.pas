@@ -27,16 +27,12 @@
 }
 unit HTTP2;
 
-{$ifdef FPC}
 {$mode objfpc}{$H+}
-{$endif}
 
 interface
 
 uses
- {$ifdef FPC}
   cTypes,
- {$endif}
   cryptossl,
   Classes,
   SysUtils;
@@ -45,17 +41,15 @@ const
   OpenSSL_Error : string = '';
 
 function getSocket: cint;
-procedure TLS_Bind(FD: cint);
 procedure TLS_Init;
+procedure TLS_Accept(FD: cint);
 
 implementation
 
-{$ifdef FPC}
 uses
  sockets,
  systemd,
  HMUX;
-{$endif}
 
 // Knowledge Base
 //  fpopenssl
@@ -101,7 +95,7 @@ end;
 
 // binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection
 
-procedure TLS_Bind(FD: cint);
+procedure TLS_Accept(FD: cint);
 var
   a,e : cInt;
 //  ErrStr : array[0..4096] of char;
@@ -111,6 +105,9 @@ ERR_F : THandle;
 
 // initial Read
 buf : array[0..pred(16*1024)] of byte;
+
+BytesPending: cint;
+BytesHasPending: cint;
 BytesRead: cint;
    DD: string;
    DC : string;
@@ -124,7 +121,7 @@ begin
 
   // SSL File Handle Übernahme
   if (SSL_set_fd(cs_SSL, FD)<>1) then
-  raise Exception.create('SSL_set_fd() fails');
+   raise Exception.create('SSL_set_fd() fails');
 
   //
   a := SSL_accept(cs_SSL);
@@ -136,8 +133,20 @@ begin
   end else
   begin
    sDebug.add('connection with "' + SSL_get_version(cs_SSL) + '"-secured established');
+   // imp pend: SSL_get_chiper(cs_SSL) name des Chipers ausgeben
+      (*
+   BytesRead := SSL_read(cs_SSL,nil,0);
 
+   BytesPending := SSL_pending(cs_SSL);
+   sDebug.add('we have contact with '+IntTostr(BytesPending)+' pending Bytes of Hello-Code!');
+
+   BytesHasPending:= SSL_has_pending(cs_SSL);
+   sDebug.add('we have contact with '+IntTostr(BytesHasPending)+' has_pending Bytes of Hello-Code!');
+        *)
+
+   sDebug.add('read (may hang) ...');
    BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+
    sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');
 
    DD := '';
@@ -145,7 +154,7 @@ begin
    for n := 0 to pred(BytesRead) do
    begin
      DD := DD + ' ' + IntToHex(buf[n],2);
-     if (buf[n]>=ord('!')) and (buf[n]<=ord('z')) then
+     if (buf[n]>=ord(' ')) and (buf[n]<=ord('z')) then
       DC := DC + chr(buf[n])
      else
       DC := DC + '.';
@@ -159,7 +168,7 @@ begin
    if (DD<>'') then
     sDebug.add(DD+'  '+DC);
 
-   if BytesRead>0 then
+   if (BytesRead>0) then
    begin
     CN_SIze := BytesRead;
     move(Buf, ClientNoise, CN_Size);
@@ -178,8 +187,8 @@ var
  ClientAddr    : TInetSockAddr;
  len :    cint;
  ListenSocket, ConnectionSocket : cint;
+ Flag: Longint;
 begin
-  {$ifdef FPC}
   // try systemd
   sd_notify(0, 'READY=1\nSTATUS=Ready\n');
   Result := sd_listen_fds(0);
@@ -201,9 +210,20 @@ begin
     begin
        // Open via a SOCKET!
 
+       // create a Handle
        ListenSocket:=fpSocket (AF_INET,SOCK_STREAM,0);
        if SocketError<>0 then
         raise Exception.Create('Server : Socket : ');
+
+       // set usefull options
+       Flag := 1;
+       if fpsetsockopt(ListenSocket, IPPROTO_TCP, TCP_NODELAY, @flag, sizeof(LongInt))<0 then
+        raise Exception.Create('Server: Socket: can not set TCP_NODELAY ');
+
+       // FpFcntl(ListenSocket, F_SetFl, FpFcntl(ListenSocket, F_GetFl) or O_NONBLOCK);
+
+
+       // bind to interface
        with ServerAddr do
        begin
          sin_family:=AF_INET;
@@ -248,18 +268,13 @@ begin
       *)
     end;
   end;
-  {$endif}
 end;
 
 procedure TLS_Init;
 begin
-
-
-  cs_CTX := StrictHTTP2Context;
-
+ cs_CTX := StrictHTTP2Context;
  if not(assigned(cs_CTX))  then
    raise Exception.Create('SSL Init Fail');
-
 end;
 
 procedure Release;

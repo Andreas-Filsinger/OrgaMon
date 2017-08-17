@@ -23,28 +23,14 @@
 }
 unit cryptossl;
 
-{$ifdef FPC}
 {$mode objfpc}{$H+}
-{$endif}
 
 interface
 
 uses
- {$ifdef FPC}
   ctypes,
- {$endif}
-  Classes, Sysutils;
-
-// debug infos
-
-{$ifndef FPC}
-type
- cint = INteger;
- cint32 = Word;
- cuint64 = int64;
- clong = longint;
-{$endif}
-
+  Classes,
+  Sysutils;
 
 var
   sDebug: TStringList = nil;
@@ -186,6 +172,7 @@ type
 
   // IO
   TSSL_pending = function(SSL: Pssl): cint; cdecl;
+  TSSL_has_pending = function(SSL: Pssl): cint; cdecl;
   TSSL_read = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
   TSSL_write = function(SSL: Pssl; buf : Pointer;  num: cint): cint; cdecl;
 
@@ -239,6 +226,7 @@ const
 
   // IO
   SSL_pending: TSSL_pending = nil;
+  SSL_has_pending: TSSL_has_pending = nil;
   SSL_read: TSSL_read = nil;
   SSL_write: TSSL_write = nil;
 
@@ -264,12 +252,7 @@ const
 implementation
 
 uses
-{$ifdef FPC}
-  dynlibs
-{$else}
- windows
- {$endif}
- ;
+ dynlibs;
 
 const
   _OPENSSL_VERSION = 0;
@@ -320,9 +303,7 @@ end;
 function CRYPTO_realloc(p: Pointer; num: cardinal; _file: PChar;
   line: cint): Pointer; cdecl;
 begin
-{$ifdef FPC}
   result := ReallocMem(p, num);
-{$endif}
 
     (*
     Result := nil;
@@ -731,9 +712,16 @@ begin
     if not (assigned(SSL_select_next_proto)) then
       sDebug.add(LastError);
 
-      SSL_pending:= TSSL_pending(GetProcAddress(libssl_HANDLE,
-      'SSL_pending'));
+    SSL_pending :=
+    TSSL_pending(GetProcAddress(libssl_HANDLE,
+    'SSL_pending'));
     if not (assigned(SSL_pending)) then
+      sDebug.add(LastError);
+
+    SSL_has_pending :=
+    TSSL_pending(GetProcAddress(libssl_HANDLE,
+    'SSL_has_pending'));
+    if not (assigned(SSL_has_pending)) then
       sDebug.add(LastError);
 
   SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,
@@ -777,9 +765,7 @@ end;
 
 function LastError: string;
 begin
-{$ifdef FPC}
   Result := GetLoadErrorStr;
-{$endif}
 end;
 
 end.
