@@ -2,7 +2,7 @@
 |                   _   _ __  __ _   ___  __
 |                  | | | |  \/  | | | \ \/ / _<___>___
 |      _<______>__ | |_| | |\/| | | | |\  / ___<____>_
-                   |  _  | |  | | |_| |/  \ _<______>_
+|                  |  _  | |  | | |_| |/  \ _<______>_
 |                  |_| |_|_|  |_|\___//_/\_\
 |
 |    Data-Frames, Stream-Control and Multiplexing for HTTP/2 (as described in RFC 7540)
@@ -33,7 +33,7 @@ unit HMUX;
 interface
 
 uses
-  Classes, SysUtils, unicodedata;
+  Classes, SysUtils, unicodedata, Math;
 
 Type
 THTTP2_Stream = Class(TObject)
@@ -71,16 +71,37 @@ var
 const
   mDebug: TStringList = nil;
   CLIENT_PREFIX: RawByteString = '';
+  AutomataState : Byte = 0;
+  ParseRounds : Integer = 0;
+  PathToTests: string = '';
 
 function StartFrames : RawByteString;
 procedure Parse; // (ClientNoise)
 procedure ParserClear;
+procedure ParserSave; // dump ClientNoise to File
 procedure SaveRawBytes(B:RawByteString;FName:string);
+procedure LoadRawBytes(FName:string);
 
 
 implementation
 
 type
+
+  { TNum31Bit }
+
+  TNum31Bit = packed record
+   {$ifdef FPC_LITTLE_ENDIAN}
+    byte3, byte2, byte1, byte0 : Byte;
+   {$else FPC_LITTLE_ENDIAN}
+    byte0, byte1, byte2, byte3 : Byte;
+   {$endif FPC_LITTLE_ENDIAN}
+    class operator Explicit(a : TNum31Bit) : Cardinal;
+    class operator :=(a : Cardinal) : TNum31Bit;
+    function readBit32: boolean;
+    procedure writeBit32(Bit:boolean);
+    property Bit32: boolean read readBit32 write writeBit32;
+  end;
+
   TNum32Bit = packed record
    {$ifdef FPC_LITTLE_ENDIAN}
     byte3, byte2, byte1, byte0 : Byte;
@@ -121,13 +142,23 @@ type
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      Typ : Byte;
      Flags : Byte;
-     Stream_ID : TNum32Bit; // 0,2,4..2147483648  even-numbered on servers
-                            // imp pend TNum31Bit
-     function readR : boolean;
-     procedure writeR (B:boolean);
-     property R : boolean read readR write writeR;
+     Stream_ID : TNum31Bit; // 0,2,4..2147483648  even-numbered on servers
    end;
    PHTTP2_FRAME_HEADER = ^THTTP2_FRAME_HEADER;
+
+  // RFC: "6.2.  HEADERS"
+  // optional FRAME-Fragment: only if FLAG_PADDING is set
+  TFRAME_HEADERS_PADDING = Packed Record
+    Pad_Length : byte;
+  end;
+  PFRAME_HEADERS_PADDING = ^TFRAME_HEADERS_PADDING;
+
+  // optional FRAME-Fragment, only if FLAG_PRIORITY is set
+  TFRAME_HEADERS_PRIORITY = Packed Record
+    Stream_Dependency : TNum31Bit;
+    Weight : byte;
+  end;
+  PFRAME_HEADERS_PRIORITY = ^TFRAME_HEADERS_PRIORITY;
 
   // RFC: "6.3.  PRIORITY"
   TFRAME_PRIORITY = packed record
@@ -223,6 +254,13 @@ const
      'WINDOW_UPDATE',
      'CONTINUATION');
 
+ // FRAME FLAGS
+ FLAG_END_STREAM = $01;
+ FLAG_ACK = $01;
+ FLAG_END_HEADERS = $04;
+ FLAG_PADDED = $08;
+ FLAG_PRIORITY = $20;
+
 
  // RFC: 6.5.2.  Defined SETTINGS Parameters
 
@@ -252,6 +290,8 @@ const
 
    //
 
+
+
 type
    THTTP2_Stream_Status = (
      STREAM_STATUS_IDLE,
@@ -263,6 +303,19 @@ type
      STREAM_STATUS_CLOSED,
      STREAM_STATUS_BROKEN);
 
+// Tools
+
+function FlagName(FLAG:byte):string;
+begin
+ case FLAG of
+   FLAG_ACK : result := 'ACK|END_STREAM';
+   FLAG_END_HEADERS : result := 'END_HEADERS';
+   FLAG_PADDED : result := 'PADDED';
+   FLAG_PRIORITY : result := 'PRIORITY';
+ else
+  result := IntToHex(FLAG,2);
+ end;
+end;
 
 // RFC: 3.5.  HTTP/2 Connection Preface
 
@@ -344,14 +397,20 @@ begin
 end;
 
 const
- AutomataState : Byte = 0;
  FatalError: boolean = false;
 
-procedure ParserClear;
+procedure ParserSave;
+var
+  F: File;
 begin
- AutomataState := 0;
- FatalError:= false;
-CN_Pos := 0;
+ if (PathToTests<>'') then
+  begin
+ AssignFile(F,PathToTests+'client-step-'+inttostr(ParseRounds)+'.http2');
+ rewrite(F,1);
+ blockwrite(F,ClientNoise,CN_Size);
+ CloseFIle(F);
+
+  end;
 end;
 
 procedure SaveRawBytes(B: RawByteString; FName: string);
@@ -362,6 +421,29 @@ begin
  rewrite(F,1);
  blockwrite(F,B[1],length(B));
  CloseFIle(F);
+end;
+
+procedure LoadRawBytes(FName: string);
+var
+  F: File;
+  FSize: int64;
+  R: int64;
+begin
+ AssignFile(F,FName);
+ reset(F,1);
+ FSize := FileSize(F);
+ R := 0;
+ blockread(F,ClientNoise,min(FSize,SizeOf(ClientNoise)),R);
+ CloseFIle(F);
+ CN_Pos := 0;
+ CN_Size := R;
+end;
+
+procedure ParserClear;
+begin
+ AutomataState := 0;
+ FatalError:= false;
+ CN_Pos := 0;
 end;
 
 procedure Parse;
@@ -375,13 +457,16 @@ procedure Parse;
 var
   CN_Pos2: Integer;
   n,m : Integer;
+  HeaderContentSize: INteger;
+  H : RawByteString;
 begin
+ ParserSave;
  repeat
 
    case AutoMataState of
     0:begin // just born
 
-      if (Size_Unparsed<=SizeOf_CLIENT_PREFIX + SizeOf_FRAME_HEADER) then
+      if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME_HEADER) then
        begin
          mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
          // imp pend: delay, read, timeout?
@@ -403,11 +488,11 @@ begin
     end;
     1:begin // FRAME - World
 
-       if (CN_pos<SizeOf_FRAME_HEADER) then
+       if (Size_Unparsed<SizeOf_FRAME_HEADER) then
         begin
           mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
           // imp pend: delay, read, timeout?
-          continue;
+          break;
         end;
 
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
@@ -422,6 +507,53 @@ begin
           FRAME_TYPE_DATA : begin
             end;
           FRAME_TYPE_HEADERS : begin
+
+            mDebug.add(' Stream '+IntToStr(Cardinal(Stream_ID)));
+            HeaderContentSize := Cardinal(Len);
+
+            // has Flags:
+            if (Flags and FLAG_END_STREAM=FLAG_END_STREAM) then
+              mDebug.add(' ' + FlagName(FLAG_END_STREAM));
+
+            if (Flags and FLAG_END_HEADERS=FLAG_END_HEADERS) then
+              mDebug.add(' ' + FlagName(FLAG_END_HEADERS));
+
+            if (Flags and FLAG_PADDED=FLAG_PADDED) then
+            begin
+               with PFRAME_HEADERS_PADDING(@ClientNoise[CN_Pos2])^ do
+               begin
+                mDebug.add(' ' + FlagName(FLAG_PADDED)+' ' +IntTOStr(Pad_Length));
+                dec(HeaderContentSize,Pad_Length);
+               end;
+               inc(CN_Pos2,sizeof(TFRAME_HEADERS_PADDING));
+               dec(HeaderContentSize,sizeof(TFRAME_HEADERS_PADDING));
+            end;
+
+            if (Flags and FLAG_PRIORITY=FLAG_PRIORITY) then
+            begin
+              mDebug.add(' ' + FlagName(FLAG_PRIORITY));
+              with PFRAME_HEADERS_PRIORITY(@ClientNoise[CN_Pos2])^ do
+              begin
+                mDebug.add('  Stream Dependency ' + INtTostr(Cardinal(Stream_Dependency)) );
+                if Stream_Dependency.Bit32 then
+                 mDebug.add('  EXCLUSIVE')
+                else
+                  mDebug.add('  NOT EXCLUSIVE');
+                mDebug.add('  Weight '+INtTOstr(Weight));
+
+              end;
+              inc(CN_Pos2,sizeof(TFRAME_HEADERS_PRIORITY));
+              dec(HeaderContentSize,sizeof(TFRAME_HEADERS_PRIORITY));
+            end;
+
+            mDebug.add(' HEADER_SIZE '+IntToStr(HeaderContentSize));
+
+            //
+            H := '';
+            for n := 0 to pred(HeaderContentSize) do
+              H := H + IntToHex(ClientNoise[CN_Pos2+n],2);
+            mDebug.add(' HEADER '+ H);
+
             end;
           FRAME_TYPE_PRIORITY : begin;
 
@@ -518,19 +650,11 @@ begin
    if Size_Unparsed=0 then
      break;
   until false;
+  inc(ParseRounds);
 end;
 
 { THTTP2_FRAME_HEADER }
 
-function THTTP2_FRAME_HEADER.readR: boolean;
-begin
-
-end;
-
-procedure THTTP2_FRAME_HEADER.writeR(B: boolean);
-begin
-
-end;
 
 { THTTP2_Connection }
 
@@ -552,6 +676,35 @@ TCardinalRec = packed record
 {$else FPC_LITTLE_ENDIAN}
   byte3, byte2, byte1, byte0 : Byte;
 {$endif FPC_LITTLE_ENDIAN}
+end;
+
+class operator TNum31Bit.Explicit(a : TNum31Bit) : Cardinal;
+begin
+  TCardinalRec(Result).byte0 := a.byte0;
+  TCardinalRec(Result).byte1 := a.byte1;
+  TCardinalRec(Result).byte2 := a.byte2;
+  TCardinalRec(Result).byte3 := a.byte3 and $7F;
+end;
+
+class operator TNum31Bit.:=(a : Cardinal) : TNum31Bit;
+begin
+  Result.byte0 := TCardinalRec(a).byte0;
+  Result.byte1 := TCardinalRec(a).byte1;
+  Result.byte2 := TCardinalRec(a).byte2;
+  Result.byte3 := TCardinalRec(a).byte3 and $7F;
+end;
+
+function TNum31Bit.readBit32: boolean;
+begin
+  result := (byte3 and $80=$80)
+end;
+
+procedure TNum31Bit.writeBit32(Bit: boolean);
+begin
+ if Bit then
+  byte3 := byte3 or $80
+   else
+  byte3 := byte3 and $7F;
 end;
 
 class operator TNum32Bit.Explicit(a : TNum32Bit) : Cardinal;

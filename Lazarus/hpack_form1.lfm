@@ -13,21 +13,22 @@ object Form1: TForm1
     Height = 859
     Top = 0
     Width = 1334
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'HPACK'
-      ClientHeight = 825
-      ClientWidth = 1324
+      ClientHeight = 826
+      ClientWidth = 1326
       object Memo1: TMemo
-        Left = 24
-        Height = 410
+        Left = 16
+        Height = 411
         Top = 104
-        Width = 1085
+        Width = 1304
         Anchors = [akTop, akLeft, akRight, akBottom]
         Lines.Strings = (
+          '82860188f439ce75c875fa5784'
           '---- Soll:'
           ':method=GET'
           ':scheme=http'
@@ -39,18 +40,18 @@ object Form1: TForm1
         TabOrder = 0
       end
       object Edit1: TEdit
-        Left = 25
+        Left = 16
         Height = 28
         Top = 32
-        Width = 1085
+        Width = 1304
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 1
-        Text = '82860188f439ce75c875fa5784'
+        Text = '820481634186A0E41D139D09877AB7D07F66A281B0DAE053FAE46AA43F8429A77A8102E0FB5396AE4E35F6A59DEE36DAE0FED4C452753B02004000802A61358594FE586DB5C153B0497CA589D34D1F43AEBA0C41A4C7A98F33A69A3FDF9A68FA1D75D0620D263D4C79A68FBED00177FEBE58F9FBED00177B519390BF45A96E1BBEFB4005DDFA2D5F7DA002ECFF508D9BD9ABFA5242CB40D25FA523B34092B6B9AC1C8558D520A4B6C2AD617B5A54251F810F'
       end
       object Button1: TButton
-        Left = 28
+        Left = 16
         Height = 25
-        Top = 524
+        Top = 528
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'decode'
@@ -58,7 +59,7 @@ object Form1: TForm1
         TabOrder = 2
       end
       object Label1: TLabel
-        Left = 28
+        Left = 16
         Height = 20
         Top = 8
         Width = 161
@@ -66,26 +67,26 @@ object Form1: TForm1
         ParentColor = False
       end
       object Label2: TLabel
-        Left = 28
+        Left = 16
         Height = 20
-        Top = 70
+        Top = 72
         Width = 112
         Caption = 'Header (HTTP/2)'
         ParentColor = False
       end
       object Edit2: TEdit
-        Left = 25
+        Left = 16
         Height = 28
-        Top = 561
-        Width = 1084
+        Top = 562
+        Width = 1086
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 3
         Text = 'C:\Users\Andreas Filsinger\Documents\RAD Studio\Projekte\http2-tests\hpack-test-case\'
       end
       object Button2: TButton
-        Left = 28
+        Left = 16
         Height = 25
-        Top = 600
+        Top = 601
         Width = 220
         Anchors = [akLeft, akBottom]
         Caption = 'Run all "decode" Tests ...'
@@ -224,19 +225,19 @@ object Form1: TForm1
         TabOrder = 10
       end
       object Edit4: TEdit
-        Left = 1055
+        Left = 1051
         Height = 28
         Top = 506
-        Width = 49
+        Width = 235
         TabOrder = 11
-        Text = 'init'
+        Text = 'client-step-1-headers'
       end
       object Button12: TButton
-        Left = 1115
+        Left = 1051
         Height = 33
-        Top = 504
-        Width = 171
-        Caption = 'decode'
+        Top = 539
+        Width = 235
+        Caption = 'Parse'
         OnClick = Button12Click
         TabOrder = 12
       end

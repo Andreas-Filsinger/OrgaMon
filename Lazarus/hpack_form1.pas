@@ -66,7 +66,6 @@ type
     FD: longint;
 
     //
-    PathToTests: string;
   public
     { public declarations }
     procedure InitPathToTest;
@@ -128,8 +127,22 @@ begin
 end;
 
 procedure TForm1.Button12Click(Sender: TObject);
+var
+    FName : string;
 begin
  InitPathToTest;
+ FName := PathToTests + edit4.Text + '.http2';
+ LoadRawBytes(FName);
+
+ if (pos('-0-',FName)>0) then
+  AutomataState := 0 // we expect a "Client Hello", in a initial packet!
+ else
+  AutomataState := 1; // we have no Client Helo!
+
+ CN_Pos := 0; // ensure we start "here"
+ Parse;
+
+ ShowDebugMessages;
 end;
 
 procedure TForm1.Button13Click(Sender: TObject);
@@ -291,57 +304,30 @@ var
    n : integer;
    c : char;
    Request: string;
-   BytesWaiting: cint;
    BytesRead: cint;
 
-   procedure pending;
-   begin
-     BytesWaiting := SSL_pending(cs_SSL);
-     if (BytesWaiting<0) then
-     begin
-      sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesWaiting)]);
-      ERR_print_errors_cb(@cb_ERR,nil);
-     end;
-     BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
-     if (BytesRead<>0) then
-     begin
-      sDebug.add('ERROR: we have '+IntTostr(BytesRead)+' Bytes, but pending said 0');
-     end;
-   end;
-
 begin
+  sDebug.add('read ...');
+  ShowDebugMessages;
 
-  if sDebug.count>0 then
-  begin
-   memo2.Lines.addstrings(sDebug);
-   sDebug.clear;
-  end;
-
-  pending;
-  while (BytesWaiting>0) do
-  begin
-    memo2.Lines.add('have '+IntToStr(BytesWaiting)+' Bytes!');
     Request := '';
-    BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+    BytesRead := SSL_read(cs_SSL,@ClientNoise,sizeof(ClientNoise));
     if (BytesRead<0) then
     begin
      sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesRead)]);
      ERR_print_errors_cb(@cb_ERR,nil);
     end;
 
-    for n := 0 to pred(BytesRead) do
+    if (BytesRead>0) then
     begin
-      c := chr(buf[n]);
-      if (c>='!') and (c<='z') then
-       Request := Request + c
-      else
-       Request := Request + '\' + IntTostr(ord(c)) + ' ';
-    end;
-    memo2.Lines.add('"' + Request + '"');
+      sDebug.add('parse ' + IntTOstr(BytesRead) + ' Bytes ...');
 
-    pending;
-  end;
-  memo2.Lines.add('EOF');
+     CN_Pos := 0;
+     CN_Size := BytesRead;
+     Parse;
+    end;
+    ShowDebugMessages;
+
 end;
 
 procedure TForm1.Button9Click(Sender: TObject);
@@ -382,7 +368,6 @@ begin
   end;
 
   ShowDebugMessages;
-
 end;
 
 procedure TForm1.InitPathToTest;
@@ -394,12 +379,20 @@ end;
 
 procedure TForm1.ShowDebugMessages;
 begin
-  memo2.lines.addstrings(sdebug);
-  sdebug.clear;
-  memo2.lines.addstrings(mdebug);
-  mdebug.clear;
-end;
+  with Memo2 do
+  begin
+   lines.addstrings(sdebug);
+   sdebug.clear;
+   lines.addstrings(mdebug);
+   mdebug.clear;
 
+   SelStart := Length(Lines.Text) - 3;
+   SelLength := 1;
+   if(Visible) then
+    SetFocus;
+   Application.ProcessMessages;
+ end;
+end;
 
 end.
 

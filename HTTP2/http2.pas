@@ -144,7 +144,7 @@ begin
    sDebug.add('we have contact with '+IntTostr(BytesHasPending)+' has_pending Bytes of Hello-Code!');
         *)
 
-   sDebug.add('read (may hang) ...');
+   sDebug.add('read ...');
    BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
 
    sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');

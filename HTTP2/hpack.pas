@@ -53,10 +53,10 @@ type
     BitPos : byte; // 0..7
     Octets : UInt16; // Length/Count of visible Octets, allowed to proceed (Security)
 
-    // read Functions
+    // read Functions @ BytePos.BitPos - they move that index
     function B : boolean; inline; // read 1 Bit from the Turing Machine
     function I (MinBits:Byte) : Integer; // read Cardinal stored in at least MinBits
-    function O : RawByteString; // read a octet stream of given length
+    function O : RawByteString; // read a octet stream of given length in [Octets]
 
     // write Functions
     procedure wBit(Bit:boolean);
@@ -1978,6 +1978,11 @@ end;
       BitPos := 0;
     end;
   end;
+  function fHuffman_decode: RawByteString;
+  begin
+   huffman_decode;
+   result := ValueString;
+  end;
 
 var
  NameLength : Integer;
@@ -2025,22 +2030,24 @@ begin
         H := B;
         Octets := I(7);
         if H then
-         ValueString := LiteralDecode(O)
+         huffman_decode // ValueString := LiteralDecode(O)
         else
           ValueString := O;
+        add(iTABLE[TABLE_INDEX]+'='+ValueString);
+
       end else
       begin
         // "01" "000000"
         H := B;
         NameLength := I(7);
         if H then
-         NameString := LiteralDecode(O)
+         NameString := fHuffman_decode
         else
          NameString := O;
         H := B;
         Octets := I(7);
         if H then
-         ValueString := LiteralDecode(O)
+         huffman_decode
         else
          ValueString := O;
       end;
@@ -2066,7 +2073,7 @@ begin
         H := B;
         Octets := I(7);
         if H then
-         ValueString := LiteralDecode(O)
+         huffman_decode
         else
           ValueString := O;
       end else
@@ -2075,13 +2082,13 @@ begin
          H := B;
          NameLength := I(7);
          if H then
-          NameString := LiteralDecode(O)
+          NameString := fHuffman_decode
          else
           NameString := O;
          H := B;
          Octets := I(7);
          if H then
-          ValueString := LiteralDecode(O)
+          huffman_decode
          else
           ValueString := O;
         end;
@@ -2105,13 +2112,13 @@ begin
         H := B;
         NameLength := I(7);
         if H then
-         NameString := LiteralDecode(O)
+         NameString := fhuffman_decode
         else
          NameString := O;
         H := B;
         Octets := I(7);
         if H then
-         ValueString := LiteralDecode(O)
+         huffman_decode
         else
          ValueString := O;
        end;
