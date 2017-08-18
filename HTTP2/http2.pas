@@ -28,6 +28,7 @@
 unit HTTP2;
 
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 

@@ -28,6 +28,7 @@
 unit HPACK;
 
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
@@ -46,10 +47,10 @@ type
     iTABLE : TStringList;
     nTABLE : TStringList; // same as iTABLE but no values
 
-    // a number of octets, representing the encoded representation of the headers
+    // a number of octets, representing the HPACK-encoded representation of the headers
     iWIRE : RawByteString;
 
-    // read/write Position of the decoder/encoder
+    // read/write Position of the decoder/encoder on iWIRE
     BytePos : UInt16; // 0..Length(iWIRE)-1
     BytePosLast: UInt16; // Length(iWIRE)-1
     BitPos : byte; // 0..7
@@ -75,11 +76,11 @@ type
     function getTABLE_SIZE: Integer;
     procedure setTABLE_SIZE(M: Integer);
 
-    // add a token to the TABLE
-    procedure addTABLE(token:string);
+    // add a NameValuePair to the TABLE
+    procedure addTABLE(NameValuePair:string);
 
-    // add or overwrite a token, RFC calls it "incrementing"
-    procedure incTABLE(token:string);
+    // add a NameValuePair to the TABLE, remove entrys that would exciding size
+    procedure incTABLE(NameValuePair:string);
 
    public
      MAXIMUM_TABLE_SIZE : int64;
@@ -89,7 +90,7 @@ type
      // COMPRESSED DATA
      property Wire : RawByteString read getWire write setWire;
 
-     // TABLE
+     // TABLE (the dynamic part)
      function DynTABLE : TStringList;
 
      // TABLE_SIZE
@@ -378,7 +379,7 @@ end;
 
 function THPACK.getWire: RawByteString;
 begin
-
+  result := iWIRE;
 end;
 
 procedure THPACK.setWire(wire: RawByteString);
@@ -418,20 +419,20 @@ begin
 
 end;
 
-procedure THPACK.addTABLE(token: string);
+procedure THPACK.addTABLE(NameValuePair: string);
 var
  Index,k : integer;
 begin
  Index := min(iTABLE.count,DYN_TABLE_FIRST_ELEMENT);
- iTABLE.insert(Index,token);
- k := pos('=',token);
+ iTABLE.insert(Index,NameValuePair);
+ k := pos('=',NameValuePair);
  if (k=0) then
-  nTABLE.insert(Index,token)
+  nTABLE.insert(Index,NameValuePair)
  else
-  nTABLE.insert(Index,copy(token,1,pred(k)));
+  nTABLE.insert(Index,copy(NameValuePair,1,pred(k)));
 end;
 
-procedure THPACK.incTABLE(token: string);
+procedure THPACK.incTABLE(NameValuePair: string);
 var
   NEW_SIZE_INCREMENT: Integer;
 begin
@@ -439,7 +440,7 @@ begin
  // RFC 4.4.  Entry Eviction When Adding New Entries
  NEW_SIZE_INCREMENT :=
   {} DYN_TABLE_ELEMENT_ADD_SIZE
-  {} + length(token)
+  {} + length(NameValuePair)
   {'='} - 1;
 
  while (TABLE_SIZE+NEW_SIZE_INCREMENT>MAXIMUM_TABLE_SIZE) do
@@ -450,7 +451,7 @@ begin
   end;
 
  if (NEW_SIZE_INCREMENT<=MAXIMUM_TABLE_SIZE) then
-  addTABLE(token);
+  addTABLE(NameValuePair);
 
 end;
 
