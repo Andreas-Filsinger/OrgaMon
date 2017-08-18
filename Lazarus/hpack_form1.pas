@@ -6,7 +6,9 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, Menus, cTypes;
+  ComCtrls, Menus, cTypes,
+
+  HPACK;
 
 type
 
@@ -18,6 +20,7 @@ type
     Button11: TButton;
     Button12: TButton;
     Button13: TButton;
+    Button14: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -49,6 +52,7 @@ type
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -64,6 +68,7 @@ type
     // The File-Descriptor of the Connection
     // delivered by systemd or a own TCP Connection
     FD: longint;
+    HPACK: THPACK;
 
     //
   public
@@ -85,27 +90,28 @@ uses
   anfix32,
 
   // aus dem HTTP/2 Projekt
-  HMUX, HPACK, HTTP2, cryptossl;
+  HMUX,  HTTP2, cryptossl;
 
 {$R *.lfm}
 
 { TForm1 }
 
 procedure TForm1.Button1Click(Sender: TObject);
-var
-  HPACK: THPACK;
 begin
-  HPACK := THPACK.Create;
+  if not(assigned(HPACK)) then
+   HPACK := THPACK.Create;
   with HPACK do
   begin
     Wire := THPACK.HexStrToRawByteString(edit1.Text);
     try
+      clear;
       Decode;
     except
     end;
-    memo1.Lines.addStrings(HPACK);
   end;
-  HPACK.Free;
+  memo1.Lines.add('{-----');
+  memo1.Lines.addStrings(HPACK);
+  memo1.Lines.add('-----}');
 end;
 
 procedure TForm1.Button10Click(Sender: TObject);
@@ -151,6 +157,21 @@ var
 begin
   BytesWritten := SSL_write(cs_SSL,@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
   sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+end;
+
+procedure TForm1.Button14Click(Sender: TObject);
+var
+ n : integer;
+ TABLE: TStringList;
+begin
+  if assigned(HPACK) then
+   with HPACK do
+   begin
+     TABLE := dynTABLE;
+     for n := 0 to pred(TABLE.count) do
+      memo1.Lines.addStrings('['+IntToStr(62+n)+'] '+TABLE[n]);
+     TABLE.free;
+   end;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);

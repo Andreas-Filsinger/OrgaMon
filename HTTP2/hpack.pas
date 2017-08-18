@@ -86,8 +86,8 @@ type
      property Wire : RawByteString read getWire write setWire;
 
      // TABLE
+     function DynTABLE : TStringList;
      property HEADER_TABLE_SIZE : Integer read getTABLE_SIZE write setTABLE_SIZE;
-     procedure Clear;
 
      procedure Save(Stream:TStream);
      procedure Decode; // Wire -> Header-Strings
@@ -389,14 +389,15 @@ end;
 
 procedure THPACK.addTABLE(token: string);
 var
-   k : integer;
+ Index,k : integer;
 begin
- iTABLE.add(token);
+ Index := min(iTABLE.count,62);
+ iTABLE.insert(Index,token);
  k := pos('=',token);
  if k=0 then
-  nTABLE.add(token)
+  nTABLE.insert(Index,token)
  else
-  nTABLE.add(copy(token,1,pred(k)));
+  nTABLE.insert(Index,copy(token,1,pred(k)));
 end;
 
 constructor THPACK.Create;
@@ -411,9 +412,13 @@ begin
   inherited;
 end;
 
-procedure THPACK.Clear;
+function THPACK.DynTABLE: TStringList;
+var
+  n : integer;
 begin
-
+  result := TStringList.create;
+              for n := 62 to pred(iTABLE.count) do
+                result.add(iTABLE[n]);
 end;
 
 procedure THPACK.Save(Stream: TStream);
@@ -2004,6 +2009,7 @@ end;
 
 var
  NameString : string;
+ NameValuePair: string;
  TABLE_INDEX : Integer;
  H : boolean;
 
@@ -2050,8 +2056,7 @@ begin
          huffman_decode
         else
           ValueString := O;
-        add(nTABLE[TABLE_INDEX]+'='+ValueString);
-
+        NameValuePair := nTABLE[TABLE_INDEX]+'='+ValueString;
       end else
       begin
         // "01" "000000"
@@ -2067,8 +2072,11 @@ begin
          huffman_decode
         else
          ValueString := O;
-        add(NameString+'='+ValueString);
+        NameValuePair := NameString+'='+ValueString;
       end;
+      add(NameValuePair);
+      addTABLE(NameValuePair);
+
     end else
     begin
      // "00 ..."
