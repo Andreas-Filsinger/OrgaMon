@@ -51,6 +51,7 @@ type
 
     // read/write Position of the decoder/encoder
     BytePos : UInt16; // 0..Length(iWIRE)-1
+    BytePosLast: UInt16; // Length(iWIRE)-1
     BitPos : byte; // 0..7
     Octets : UInt16; // Length/Count of visible Octets, allowed to proceed (Security)
 
@@ -297,6 +298,7 @@ begin
 
   until false;
  end;
+
 end;
 
 (*
@@ -2001,14 +2003,13 @@ end;
   end;
 
 var
- NameLength : Integer;
  NameString : string;
-
  TABLE_INDEX : Integer;
  H : boolean;
 
 begin
  BytePos := 0;
+ BytePosLast := pred(length(iWire));
  BitPos := 0;
  while true do
  begin
@@ -2055,7 +2056,7 @@ begin
       begin
         // "01" "000000"
         H := B;
-        NameLength := I(7);
+        Octets := I(7);
         if H then
          NameString := fHuffman_decode
         else
@@ -2066,6 +2067,7 @@ begin
          huffman_decode
         else
          ValueString := O;
+        add(NameString+'='+ValueString);
       end;
     end else
     begin
@@ -2092,11 +2094,12 @@ begin
           huffman_decode
          else
           ValueString := O;
+         add(nTABLE[TABLE_INDEX]+'='+ValueString);
        end else
        begin
          // "0001" "0000"
          H := B;
-         NameLength := I(7);
+         Octets := I(7);
          if H then
           NameString := fHuffman_decode
          else
@@ -2107,6 +2110,7 @@ begin
           huffman_decode
          else
           ValueString := O;
+         add(NameString+'='+ValueString);
        end;
       end else
       begin
@@ -2126,7 +2130,7 @@ begin
        begin
         // "0000" "0000"
         H := B;
-        NameLength := I(7);
+        Octets := I(7);
         if H then
          NameString := fhuffman_decode
         else
@@ -2137,12 +2141,13 @@ begin
          huffman_decode
         else
          ValueString := O;
+        add(NameString+'='+ValueString);
        end;
       end;
      end;
     end;
    end;
-   if (BytePos=length(iWire)) then
+   if (BytePos>=BytePosLast) then
     break;
  end;
 end;
