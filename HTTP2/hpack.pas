@@ -297,7 +297,6 @@ begin
 
   until false;
  end;
-
 end;
 
 (*
@@ -2047,10 +2046,10 @@ begin
         H := B;
         Octets := I(7);
         if H then
-         huffman_decode // ValueString := LiteralDecode(O)
+         huffman_decode
         else
           ValueString := O;
-        add(iTABLE[TABLE_INDEX]+'='+ValueString);
+        add(nTABLE[TABLE_INDEX]+'='+ValueString);
 
       end else
       begin
@@ -2085,16 +2084,16 @@ begin
        // "0001"
        // RFC "6.2.3.  Literal Header Field Never Indexed"
        TABLE_INDEX := I(4);
-      if (TABLE_INDEX>0) then
-      begin
-        H := B;
-        Octets := I(7);
-        if H then
-         huffman_decode
-        else
+       if (TABLE_INDEX>0) then
+       begin
+         H := B;
+         Octets := I(7);
+         if H then
+          huffman_decode
+         else
           ValueString := O;
-      end else
-      begin
+       end else
+       begin
          // "0001" "0000"
          H := B;
          NameLength := I(7);
@@ -2108,7 +2107,7 @@ begin
           huffman_decode
          else
           ValueString := O;
-        end;
+       end;
       end else
       begin
        // "0000"
