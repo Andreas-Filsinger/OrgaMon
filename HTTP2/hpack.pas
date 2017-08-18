@@ -44,6 +44,7 @@ type
     // a dynamic "Key=Value" Table with a static beginning of 61 Pairs
     // Index[0] is never used
     iTABLE : TStringList;
+    nTABLE : TStringList; // same as iTABLE but no values
 
     // a number of octets, representing the encoded representation of the headers
     iWIRE : RawByteString;
@@ -73,6 +74,9 @@ type
     // TABLE_SIZE max count of elements TABLE can have
     function getTABLE_SIZE: Integer;
     procedure setTABLE_SIZE(TABLE_SIZE: Integer);
+
+    // add a token to the TABLE
+    procedure addTABLE(token:string);
 
    public
      constructor Create;
@@ -382,13 +386,26 @@ begin
 
 end;
 
+procedure THPACK.addTABLE(token: string);
+var
+   k : integer;
+begin
+ iTABLE.add(token);
+ k := pos('=',token);
+ if k=0 then
+  nTABLE.add(token)
+ else
+  nTABLE.add(copy(token,1,pred(k)));
+end;
+
 constructor THPACK.Create;
 var
- n : integer;
+ n,k : integer;
 begin
   iTABLE := TStringList.Create;
+  nTABLE := TStringList.Create;
   for n := low(STATIC_TABLE) to high(STATIC_TABLE) do
-   iTABLE.add(STATIC_TABLE[n]);
+   addTABLE(STATIC_TABLE[n]);
 
   inherited;
 end;
@@ -2105,7 +2122,7 @@ begin
           huffman_decode
          else
            ValueString := O;
-         add(iTABLE[TABLE_INDEX]+'='+ValueString);
+         add(nTABLE[TABLE_INDEX]+'='+ValueString);
        end else
        begin
         // "0000" "0000"
