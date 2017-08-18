@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 516
+  Left = 1238
   Height = 859
-  Top = 280
+  Top = 477
   Width = 1334
   Caption = 'Form1'
   ClientHeight = 859
@@ -46,7 +46,7 @@ object Form1: TForm1
         Width = 1304
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 1
-        Text = '820481634186A0E41D139D09877AB7D07F66A281B0DAE053FAE46AA43F8429A77A8102E0FB5396AE4E35F6A59DEE36DAE0FED4C452753B02004000802A61358594FE586DB5C153B0497CA589D34D1F43AEBA0C41A4C7A98F33A69A3FDF9A68FA1D75D0620D263D4C79A68FBED00177FEBE58F9FBED00177B519390BF45A96E1BBEFB4005DDFA2D5F7DA002ECFF508D9BD9ABFA5242CB40D25FA523B34092B6B9AC1C8558D520A4B6C2AD617B5A54251F810F'
+        Text = '4803333032580770726976617465611d4d6f6e2c203231204f637420323031332032303a31333a323120474d546e1768747470733a2f2f7777772e6578616d706c652e636f6d'
       end
       object Button1: TButton
         Left = 16
@@ -101,6 +101,15 @@ object Form1: TForm1
         Caption = 'dump TABLE'
         OnClick = Button14Click
         TabOrder = 5
+      end
+      object Button15: TButton
+        Left = 205
+        Height = 25
+        Top = 528
+        Width = 107
+        Caption = 'new Game'
+        OnClick = Button15Click
+        TabOrder = 6
       end
     end
     object TabSheet2: TTabSheet

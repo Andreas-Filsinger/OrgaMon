@@ -21,6 +21,7 @@ type
     Button12: TButton;
     Button13: TButton;
     Button14: TButton;
+    Button15: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -53,6 +54,7 @@ type
     procedure Button12Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -164,14 +166,25 @@ var
  n : integer;
  TABLE: TStringList;
 begin
+  if not(assigned(HPACK)) then
+   HPACK := THPACK.Create;
+
+  with HPACK do
+  begin
+    TABLE := dynTABLE;
+    for n := 0 to pred(TABLE.count) do
+    memo1.Lines.addStrings('['+IntToStr(62+n)+'] '+TABLE[n]);
+    memo1.Lines.addStrings(' Table size: '+IntToStr(TABLE_SIZE)+'/'+IntToStr(MAXIMUM_TABLE_SIZE));
+    TABLE.free;
+  end;
+end;
+
+procedure TForm1.Button15Click(Sender: TObject);
+begin
   if assigned(HPACK) then
-   with HPACK do
-   begin
-     TABLE := dynTABLE;
-     for n := 0 to pred(TABLE.count) do
-      memo1.Lines.addStrings('['+IntToStr(62+n)+'] '+TABLE[n]);
-     TABLE.free;
-   end;
+    FreeAndNil(HPACK);
+  edit1.Text := '';
+  memo1.lines.clear;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);

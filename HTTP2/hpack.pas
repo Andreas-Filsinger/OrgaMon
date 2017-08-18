@@ -72,14 +72,18 @@ type
     function getWire : RawByteString;
     procedure setWire(wire: RawByteString);
 
-    // TABLE_SIZE max count of elements TABLE can have
     function getTABLE_SIZE: Integer;
-    procedure setTABLE_SIZE(TABLE_SIZE: Integer);
+    procedure setTABLE_SIZE(M: Integer);
 
     // add a token to the TABLE
     procedure addTABLE(token:string);
 
+    // add or overwrite a token, RFC calls it "incrementing"
+    procedure incTABLE(token:string);
+
    public
+     MAXIMUM_TABLE_SIZE : int64;
+
      constructor Create;
 
      // COMPRESSED DATA
@@ -87,7 +91,9 @@ type
 
      // TABLE
      function DynTABLE : TStringList;
-     property HEADER_TABLE_SIZE : Integer read getTABLE_SIZE write setTABLE_SIZE;
+
+     // TABLE_SIZE
+     property TABLE_SIZE : Integer read getTABLE_SIZE write setTABLE_SIZE;
 
      procedure Save(Stream:TStream);
      procedure Decode; // Wire -> Header-Strings
@@ -166,6 +172,9 @@ const
         { 59 } 'vary',
         { 60 } 'via',
         { 61 } 'www-authenticate' );
+
+ DYN_TABLE_FIRST_ELEMENT = 62;
+ DYN_TABLE_ELEMENT_ADD_SIZE = 32;
 
  SingleBitMask : array[0..7] of Byte = (
    {} %10000000,
@@ -379,11 +388,33 @@ end;
 
 function THPACK.getTABLE_SIZE: Integer;
 begin
-
+ // RFC      4.1.  Calculating Table Size
+ if (iTABLE.count>DYN_TABLE_FIRST_ELEMENT) then
+ begin
+  result :=
+   {Static Part} length(iTABLE.text)-833 +
+   {RFC-Rules}  ( DYN_TABLE_ELEMENT_ADD_SIZE
+   {CR} -1
+   {LF} -1
+   {'='} -1 )
+   *(iTABLE.count-DYN_TABLE_FIRST_ELEMENT);
+ end else
+ begin
+   result := 0;
+ end;
 end;
 
-procedure THPACK.setTABLE_SIZE(TABLE_SIZE: Integer);
+procedure THPACK.setTABLE_SIZE(M: Integer);
 begin
+  MAXIMUM_TABLE_SIZE := M;
+
+  // shrink to fit the new Size
+  while (TABLE_SIZE>MAXIMUM_TABLE_SIZE) do
+   begin
+    // delete last entry
+    iTABLE.delete(pred(iTABLE.count));
+    nTABLE.delete(pred(nTABLE.count));
+   end;
 
 end;
 
@@ -391,19 +422,43 @@ procedure THPACK.addTABLE(token: string);
 var
  Index,k : integer;
 begin
- Index := min(iTABLE.count,62);
+ Index := min(iTABLE.count,DYN_TABLE_FIRST_ELEMENT);
  iTABLE.insert(Index,token);
  k := pos('=',token);
- if k=0 then
+ if (k=0) then
   nTABLE.insert(Index,token)
  else
   nTABLE.insert(Index,copy(token,1,pred(k)));
+end;
+
+procedure THPACK.incTABLE(token: string);
+var
+  NEW_SIZE_INCREMENT: Integer;
+begin
+
+ // RFC 4.4.  Entry Eviction When Adding New Entries
+ NEW_SIZE_INCREMENT :=
+  {} DYN_TABLE_ELEMENT_ADD_SIZE
+  {} + length(token)
+  {'='} - 1;
+
+ while (TABLE_SIZE+NEW_SIZE_INCREMENT>MAXIMUM_TABLE_SIZE) do
+  begin
+   // delete last entry
+   iTABLE.delete(pred(iTABLE.count));
+   nTABLE.delete(pred(nTABLE.count));
+  end;
+
+ if (NEW_SIZE_INCREMENT<=MAXIMUM_TABLE_SIZE) then
+  addTABLE(token);
+
 end;
 
 constructor THPACK.Create;
 var
  n,k : integer;
 begin
+  MAXIMUM_TABLE_SIZE := 256;
   iTABLE := TStringList.Create;
   nTABLE := TStringList.Create;
   for n := low(STATIC_TABLE) to high(STATIC_TABLE) do
@@ -417,7 +472,7 @@ var
   n : integer;
 begin
   result := TStringList.create;
-              for n := 62 to pred(iTABLE.count) do
+              for n := DYN_TABLE_FIRST_ELEMENT to pred(iTABLE.count) do
                 result.add(iTABLE[n]);
 end;
 
@@ -2075,7 +2130,7 @@ begin
         NameValuePair := NameString+'='+ValueString;
       end;
       add(NameValuePair);
-      addTABLE(NameValuePair);
+      incTABLE(NameValuePair);
 
     end else
     begin
@@ -2084,7 +2139,7 @@ begin
      begin
        // "001"
        // RFC: "6.3. Dynamic Table Size Update"
-       HEADER_TABLE_SIZE := I(5);
+       TABLE_SIZE := I(5);
 
      end else
      begin
@@ -2155,7 +2210,7 @@ begin
      end;
     end;
    end;
-   if (BytePos>=BytePosLast) then
+   if (BytePos>BytePosLast) then
     break;
  end;
 end;
