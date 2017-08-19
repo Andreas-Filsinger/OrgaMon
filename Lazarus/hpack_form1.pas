@@ -22,6 +22,7 @@ type
     Button13: TButton;
     Button14: TButton;
     Button15: TButton;
+    Button16: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -34,6 +35,7 @@ type
     Edit2: TEdit;
     Edit3: TEdit;
     Edit4: TEdit;
+    Edit5: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -55,6 +57,7 @@ type
     procedure Button13Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -185,6 +188,61 @@ begin
     FreeAndNil(HPACK);
   edit1.Text := '';
   memo1.lines.clear;
+end;
+
+procedure TForm1.Button16Click(Sender: TObject);
+var
+ TheHuff : TStringList;
+ ThePascalCodeA: TStringList;
+ ThePascalCodeB: TStringList;
+ A , B : string;
+ BracketPos: Integer;
+ n : integer;
+begin
+  TheHuff := TStringList.create;
+  ThePascalCodeA:= TStringList.create;
+  ThePascalCodeB:= TStringList.create;
+  TheHuff.loadFromFile(Edit5.Text);
+
+  ThePascalCodeA.add(' RFC_7541_Appendix_B_Bits : array[0..256] of int64 = (');
+  ThePascalCodeB.add(' RFC_7541_Appendix_B_Length : array[0..256] of byte = (');
+
+  A := '   ';
+  B := '   ';
+  for n := 0 to pred(TheHuff.count) do
+  begin
+   BracketPos:= pos('[',TheHuff[n]);
+
+   A := A + '$' + noblank(copy(TheHuff[n],BracketPos-12,12));
+   B := B + copy(TheHuff[n],succ(BracketPos),2) ;
+
+   if n<pred(TheHuff.count) then
+     begin
+       A := A +', ';
+       B := B +', ';
+
+     end;
+
+   if n MOD 16 = 15 then
+   begin
+     ThePascalCodeA.add(A);
+     ThePascalCodeB.add(B);
+     A := '   ';
+     B := '   ';
+   end;
+
+  end;
+  ThePascalCodeA.add(A+');');
+  ThePascalCodeB.add(B+');');
+
+  Memo1.lines.clear;
+  Memo1.lines.addstrings(ThePascalCodeA);
+  Memo1.lines.addstrings(ThePascalCodeB);
+
+  ThePascalCodeB.free;
+  ThePascalCodeA.free;
+  TheHuff.free;
+
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);

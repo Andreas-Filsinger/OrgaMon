@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 1238
+  Left = 727
   Height = 859
-  Top = 477
+  Top = 399
   Width = 1334
   Caption = 'Form1'
   ClientHeight = 859
@@ -110,6 +110,23 @@ object Form1: TForm1
         Caption = 'new Game'
         OnClick = Button15Click
         TabOrder = 6
+      end
+      object Edit5: TEdit
+        Left = 16
+        Height = 28
+        Top = 678
+        Width = 888
+        TabOrder = 7
+        Text = 'C:\Users\Andreas\Documents\Embarcadero\Studio\Projekte\OrgaMon\HTTP2\huffman\RFC_7541_Appendix_B.huff'
+      end
+      object Button16: TButton
+        Left = 936
+        Height = 25
+        Top = 680
+        Width = 197
+        Caption = 'generate Pascal Table'
+        OnClick = Button16Click
+        TabOrder = 8
       end
     end
     object TabSheet2: TTabSheet
