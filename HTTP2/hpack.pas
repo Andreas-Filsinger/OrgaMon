@@ -45,9 +45,9 @@ type
     // a dynamic "Key=Value" Table with a static beginning of 61 Pairs
     // Index[0] is never used
     iTABLE : TStringList;
-    nTABLE : TStringList; // same as iTABLE but no values
+    nTABLE : TStringList; // same as iTABLE but no value-Part
 
-    // a number of octets, representing the HPACK-encoded representation of the headers
+    // a number of octets, representing the HPACK-encoded data of a HEADERS FRAME
     iWIRE : RawByteString;
 
     // read/write Position of the decoder/encoder on iWIRE
@@ -73,17 +73,27 @@ type
     function getWire : RawByteString;
     procedure setWire(wire: RawByteString);
 
-    function getTABLE_SIZE: Integer;
-    procedure setTABLE_SIZE(M: Integer);
 
-    // add a NameValuePair to the TABLE
-    procedure addTABLE(NameValuePair:string);
+    ///////////
+    // TABLE //
+    ///////////
 
-    // add a NameValuePair to the TABLE, remove entrys that would exciding size
+    //
+    function TokenSize (const NameValuePair : string): Integer;
+
+    // add a NameValuePair to the TABLE, and remove entrys at the end,
+    // if the add-process would xceed the MAX_TABLE_SIZE
     procedure incTABLE(NameValuePair:string);
+
+    // delete a NameValuePair from the TABLE
+    procedure delTABLE;
+
+
+    procedure shrinkTABLE;
 
    public
      MAXIMUM_TABLE_SIZE : int64;
+     TABLE_SIZE : int64;
 
      constructor Create;
 
@@ -92,9 +102,6 @@ type
 
      // TABLE (the dynamic part)
      function DynTABLE : TStringList;
-
-     // TABLE_SIZE
-     property TABLE_SIZE : Integer read getTABLE_SIZE write setTABLE_SIZE;
 
      procedure Save(Stream:TStream);
      procedure Decode; // Wire -> Header-Strings
@@ -387,72 +394,69 @@ begin
   iWIRE := wire;
 end;
 
-function THPACK.getTABLE_SIZE: Integer;
+procedure THPACK.delTABLE;
+var
+ rmIndex : Integer;
 begin
- // RFC      4.1.  Calculating Table Size
- if (iTABLE.count>DYN_TABLE_FIRST_ELEMENT) then
+ rmIndex := pred(iTABLE.count);
+ if (rmIndex>=DYN_TABLE_FIRST_ELEMENT) then
  begin
-  result :=
-   {Static Part} length(iTABLE.text)-833 +
-   {RFC-Rules}  ( DYN_TABLE_ELEMENT_ADD_SIZE
-   {CR} -1
-   {LF} -1
-   {'='} -1 )
-   *(iTABLE.count-DYN_TABLE_FIRST_ELEMENT);
- end else
- begin
-   result := 0;
+  dec(TABLE_SIZE,TokenSize(iTABLE[rmIndex]));
+  iTABLE.delete(rmIndex);
+  nTABLE.delete(rmIndex);
  end;
 end;
 
-procedure THPACK.setTABLE_SIZE(M: Integer);
+function THPACK.TokenSize(const NameValuePair : string): Integer;
 begin
-  MAXIMUM_TABLE_SIZE := M;
-
-  // shrink to fit the new Size
-  while (TABLE_SIZE>MAXIMUM_TABLE_SIZE) do
-   begin
-    // delete last entry
-    iTABLE.delete(pred(iTABLE.count));
-    nTABLE.delete(pred(nTABLE.count));
-   end;
-
-end;
-
-procedure THPACK.addTABLE(NameValuePair: string);
-var
- Index,k : integer;
-begin
- Index := min(iTABLE.count,DYN_TABLE_FIRST_ELEMENT);
- iTABLE.insert(Index,NameValuePair);
- k := pos('=',NameValuePair);
- if (k=0) then
-  nTABLE.insert(Index,NameValuePair)
- else
-  nTABLE.insert(Index,copy(NameValuePair,1,pred(k)));
+  result := DYN_TABLE_ELEMENT_ADD_SIZE + pred(length(NameValuePair));
 end;
 
 procedure THPACK.incTABLE(NameValuePair: string);
 var
   NEW_SIZE_INCREMENT: Integer;
+ NewIndex,k : integer;
 begin
+ NewIndex := min(iTABLE.count,DYN_TABLE_FIRST_ELEMENT);
+ k := pos('=',NameValuePair);
 
- // RFC 4.4.  Entry Eviction When Adding New Entries
- NEW_SIZE_INCREMENT :=
-  {} DYN_TABLE_ELEMENT_ADD_SIZE
-  {} + length(NameValuePair)
-  {'='} - 1;
+ if (NewIndex=DYN_TABLE_FIRST_ELEMENT) then
+ begin
 
- while (TABLE_SIZE+NEW_SIZE_INCREMENT>MAXIMUM_TABLE_SIZE) do
+  // RFC 4.4.  Entry Eviction When Adding New Entries
+  NEW_SIZE_INCREMENT := TokenSize(NameValuePair);
+
+  while (TABLE_SIZE+NEW_SIZE_INCREMENT>MAXIMUM_TABLE_SIZE) do
+   delTABLE;
+
+  if (NEW_SIZE_INCREMENT<=MAXIMUM_TABLE_SIZE) then
   begin
-   // delete last entry
-   iTABLE.delete(pred(iTABLE.count));
-   nTABLE.delete(pred(nTABLE.count));
+   iTABLE.insert(NewIndex,NameValuePair);
+   if (k=0) then
+    nTABLE.insert(NewIndex,NameValuePair)
+   else
+    nTABLE.insert(NewIndex,copy(NameValuePair,1,pred(k)));
+   inc(TABLE_SIZE,NEW_SIZE_INCREMENT);
   end;
 
- if (NEW_SIZE_INCREMENT<=MAXIMUM_TABLE_SIZE) then
-  addTABLE(NameValuePair);
+ end else
+ begin
 
+  // Static Begin of the TABLE
+  iTABLE.add(NameValuePair);
+  if (k=0) then
+   nTABLE.add(NameValuePair)
+  else
+   nTABLE.add(copy(NameValuePair,1,pred(k)));
+ end;
+
+end;
+
+procedure THPACK.shrinkTABLE;
+begin
+ // shrink to fit MAXIMUM_TABLE_SIZE
+ while (TABLE_SIZE>MAXIMUM_TABLE_SIZE) do
+  delTABLE;
 end;
 
 constructor THPACK.Create;
@@ -463,7 +467,7 @@ begin
   iTABLE := TStringList.Create;
   nTABLE := TStringList.Create;
   for n := low(STATIC_TABLE) to high(STATIC_TABLE) do
-   addTABLE(STATIC_TABLE[n]);
+   incTABLE(STATIC_TABLE[n]);
 
   inherited;
 end;
@@ -2068,7 +2072,7 @@ var
  NameValuePair: string;
  TABLE_INDEX : Integer;
  H : boolean;
-
+ NEW_MAXIMUM_TABLE_SIZE : int64;
 begin
  BytePos := 0;
  BytePosLast := pred(length(iWire));
@@ -2140,7 +2144,15 @@ begin
      begin
        // "001"
        // RFC: "6.3. Dynamic Table Size Update"
-       TABLE_SIZE := I(5);
+       NEW_MAXIMUM_TABLE_SIZE := I(5);
+       if (NEW_MAXIMUM_TABLE_SIZE<MAXIMUM_TABLE_SIZE) then
+       begin
+         MAXIMUM_TABLE_SIZE := NEW_MAXIMUM_TABLE_SIZE;
+         shrinkTABLE;
+       end else
+       begin
+        raise Exception.Create('Illegal Request to increase MAXIMUM_TABLE_SIZE');
+       end;
 
      end else
      begin

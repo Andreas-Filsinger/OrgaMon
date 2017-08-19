@@ -60,6 +60,12 @@ cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
 location: https://www.example.com
 
+[62] location=https://www.example.com
+[63] date=Mon, 21 Oct 2013 20:13:21 GMT
+[64] cache-control=private
+[65] :status=302
+ Table size: 222/256
+
 C.5.2.
 
 4803333037c1c0bf
@@ -68,6 +74,12 @@ C.5.2.
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
 location: https://www.example.com
+
+[62] :status=307
+[63] location=https://www.example.com
+[64] date=Mon, 21 Oct 2013 20:13:21 GMT
+[65] cache-control=private
+ Table size: 222/256
 
 C.5.3.
 
@@ -80,3 +92,7 @@ location: https://www.example.com
 content-encoding: gzip
 set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1
 
+[62] set-cookie=foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1
+[63] content-encoding=gzip
+[64] date=Mon, 21 Oct 2013 20:13:22 GMT
+ Table size: 215/256
