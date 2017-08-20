@@ -202,7 +202,7 @@ const
 
 // RFC : "Appendix B.  Huffman Code"
 
-RFC_7541_Appendix_B_Bits : array[0..256] of int64 = (
+RFC_7541_Appendix_B_Bits : array[0..256] of QWord = (
   $1ff8, $7fffd8, $fffffe2, $fffffe3, $fffffe4, $fffffe5, $fffffe6, $fffffe7, $fffffe8, $ffffea, $3ffffffc, $fffffe9, $fffffea, $3ffffffd, $fffffeb, $fffffec,
   $fffffed, $fffffee, $fffffef, $ffffff0, $ffffff1, $ffffff2, $3ffffffe, $ffffff3, $ffffff4, $ffffff5, $ffffff6, $ffffff7, $ffffff8, $ffffff9, $ffffffa, $ffffffb,
   $14, $3f8, $3f9, $ffa, $1ff9, $15, $f8, $7fa, $3fa, $3fb, $f9, $7fb, $fa, $16, $17, $18,
@@ -2285,7 +2285,7 @@ procedure THPACK.Encode;
 
  *)
  var
-   EAX : int64;
+   EAX : QWord;
    n : integer;
    Token : Integer;
    BitWritePos : Byte;

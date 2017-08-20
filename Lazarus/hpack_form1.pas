@@ -23,6 +23,7 @@ type
     Button14: TButton;
     Button15: TButton;
     Button16: TButton;
+    Button17: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -58,6 +59,7 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -67,6 +69,7 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
+    procedure TabSheet2Show(Sender: TObject);
   private
     { private declarations }
 
@@ -74,6 +77,7 @@ type
     // delivered by systemd or a own TCP Connection
     FD: longint;
     HPACK: THPACK;
+    Initialized: boolean;
 
     //
   public
@@ -245,6 +249,47 @@ begin
 
 end;
 
+procedure TForm1.Button17Click(Sender: TObject);
+var
+ D : RawByteString;
+ DD: string;
+ BytesWritten: cint;
+ n : Integer;
+begin
+  D := PING(PING_PAYLOAD);
+
+  // save it as "init"
+  InitPathToTest;
+  SaveRawBytes(D,PathToTests+'ping.http2');
+
+
+  sDebug.add('--------------------------------------------');
+
+  DD := '';
+  for n := 1 to length(D) do
+  begin
+    DD := DD + ' ' + IntToHex(ord(D[n]),2);
+    if (pred(n) MOD 16=15) then
+    begin
+     sDebug.add(DD);
+     DD := '';
+    end;
+  end;
+  if (DD<>'') then
+   sDebug.add(DD);
+
+  sDebug.add('--------------------------------------------');
+
+  if assigned(cs_SSL) then
+  begin
+    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+    sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+  end;
+
+  ShowDebugMessages;
+
+end;
+
 procedure TForm1.Button2Click(Sender: TObject);
 const
   LIMIT = 1;
@@ -377,10 +422,6 @@ end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 begin
-  memo2.Lines.add(cryptossl.Version);
-  memo2.Lines.addstrings(cryptossl.sDebug);
-  memo2.Lines.add('----------');
-  pem_Path := edit3.Text;
   InitPathToTest;
 end;
 
@@ -460,6 +501,18 @@ begin
   end;
 
   ShowDebugMessages;
+end;
+
+procedure TForm1.TabSheet2Show(Sender: TObject);
+begin
+    pem_Path := edit3.Text;
+ if not(Initialized) then
+ begin
+     memo2.Lines.add(cryptossl.Version);
+  memo2.Lines.addstrings(cryptossl.sDebug);
+  memo2.Lines.add('----------');
+  Initialized := true;
+ end;
 end;
 
 procedure TForm1.InitPathToTest;

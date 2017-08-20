@@ -51,7 +51,7 @@ THTTP2_Connection = class(TObject)
      SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
      public
      class function SETTING : string; overload;
-          class function SETTING (Parameter: word; Value: Integer) : string; overload;
+     class function SETTING (Parameter: word; Value: Integer) : string; overload;
 
 end;
 
@@ -71,11 +71,14 @@ var
 const
   mDebug: TStringList = nil;
   CLIENT_PREFIX: RawByteString = '';
+  PING_PAYLOAD: RawByteString = 'OrgaMon!';
   AutomataState : Byte = 0;
   ParseRounds : Integer = 0;
   PathToTests: string = '';
 
 function StartFrames : RawByteString;
+function PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
+
 procedure Parse; // (ClientNoise)
 procedure ParserClear;
 procedure ParserSave; // dump ClientNoise to File
@@ -321,7 +324,7 @@ end;
 
 function StartFrames: RawByteString;
 var
- PBuf, _PBuf: ^Byte;
+  PBuf, _PBuf: ^Byte;
  FRAME : THTTP2_FRAME_HEADER;
  WINDOW_UPDATE: TFRAME_WINDOW_UPDATE;
  SettingsCount: Integer;
@@ -390,6 +393,40 @@ begin
  move(WINDOW_UPDATE,PBuf^,SizeOf_WINDOW_UPDATE);
 
  inc(SIZE, SizeOf_FRAME_HEADER + SizeOf_WINDOW_UPDATE);
+
+ // Return the Structure
+ SetLength(result, SIZE);
+ move(Buf, result[1], SIZE);
+end;
+
+function PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
+var
+  Buf: array[0..pred(16*1024)] of byte;
+  PBuf: ^Byte;
+  FRAME: THTTP2_FRAME_HEADER;
+  SIZE: Integer;
+begin
+
+ // PING_FRAME
+ with FRAME do
+ begin
+   Len := 8;
+    Typ := FRAME_TYPE_PING;
+   if AsEcho then
+    Flags := FLAG_ACK
+   else
+    Flags := 0;
+   Stream_ID := 0;
+ end;
+ PBuf := @Buf;
+ SIZE:= SizeOf_FRAME_HEADER;
+ move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
+ inc(PBuf,SizeOf_FRAME_HEADER);
+
+ // PING Playload (Echo!)
+ if (length(PayLoad)=8) then
+  move(PayLoad[1],PBuf^,8);
+ inc(SIZE,8);
 
  // Return the Structure
  SetLength(result, SIZE);
@@ -498,7 +535,7 @@ begin
        with PHTTP2_FRAME_HEADER(@ClientNoise[CN_pos])^ do
        begin
          if Typ<=FRAME_LAST then
-          mDebug.add('FRAME_'+FRAME_NAME[Typ]);
+          mDebug.add('FRAME_'+FRAME_NAME[Typ]+', Flags=['+IntToHex(Flags,2)+']');
 
          inc(CN_Pos,SizeOf_FRAME_HEADER);
          CN_Pos2 := CN_pos;
@@ -534,7 +571,7 @@ begin
               mDebug.add(' ' + FlagName(FLAG_PRIORITY));
               with PFRAME_HEADERS_PRIORITY(@ClientNoise[CN_Pos2])^ do
               begin
-                mDebug.add('  Stream Dependency ' + INtTostr(Cardinal(Stream_Dependency)) );
+                mDebug.add('  Stream Dependency ' + IntTostr(Cardinal(Stream_Dependency)) );
                 if Stream_Dependency.Bit32 then
                  mDebug.add('  EXCLUSIVE')
                 else
@@ -603,11 +640,25 @@ begin
           FRAME_TYPE_PING : begin
 
             if (Cardinal(Len)<>8) then
-             begin
-               mDebug.add('ERROR: multible unsupported');
+            begin
+               mDebug.add('ERROR: PING Len of '+IntToStr(Cardinal(Len)));
                FatalError := true;
                break;
-             end;
+            end;
+
+            if (Cardinal(Stream_ID)<>0) then
+            begin
+               mDebug.add('ERROR: invalid StreamID '+IntToStr(Cardinal(Stream_ID)));
+               FatalError := true;
+               break;
+            end;
+
+            if (Flags and FLAG_ACK=0) then
+            begin
+             // ok, We have to answer!
+            end;
+
+
 
           end;
           FRAME_TYPE_GOAWAY : begin
@@ -628,7 +679,7 @@ begin
 
             if (Cardinal(Stream_ID)=0) then
              begin
-               mDebug.add('ERROR: invalid StreamID');
+               mDebug.add('ERROR: invalid StreamID 0');
                FatalError := true;
                break;
              end;
