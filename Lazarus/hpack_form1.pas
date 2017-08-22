@@ -40,18 +40,13 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Memo1: TMemo;
     Memo2: TMemo;
-    Memo3: TMemo;
-    Memo4: TMemo;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -99,7 +94,7 @@ uses
   anfix32,
 
   // aus dem HTTP/2 Projekt
-  HMUX,  HTTP2, cryptossl;
+  HTTP2, cryptossl;
 
 {$R *.lfm}
 

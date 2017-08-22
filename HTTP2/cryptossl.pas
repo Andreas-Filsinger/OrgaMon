@@ -78,7 +78,7 @@ const
   SSL_CB_CONNECT_LOOP = SSL_ST_CONNECT or SSL_CB_LOOP;
   SSL_CB_CONNECT_EXIT = SSL_ST_CONNECT or SSL_CB_EXIT;
 
-
+  // ERRORS
   SSL_ERROR : array[0..7] of string = (
  'SSL_ERROR_NONE',
  'SSL_ERROR_SSL',
@@ -114,6 +114,7 @@ type
   PSSL_CTX = Pointer;
   PSSL = Pointer;
   PSSL_METHOD = Pointer;
+  PSSL_CIPHER = Pointer;
 
   // Callback-Function-Types, Funktionen die openSSL ruft
   TCB_INFO = procedure(ssl : PSSL; wher, ret : cint); cdecl;
@@ -168,6 +169,9 @@ type
                            server : PChar; server_len: cuint;
                            client: PChar; client_len : cuint): cint; cdecl;
   TSSL_get_version = function(SSL: PSSL):PChar; cdecl;
+  TSSL_get_current_cipher = function(SSL: PSSL):PSSL_CIPHER; cdecl;
+  TSSL_CIPHER_description = function(SSL_CIPHER: PSSL_CIPHER; buf: PChar; size: cint) : PChar; cdecl;
+
   TSSL_CTX_set_alpn_select_cb = procedure(ctx: PSSL_CTX; cb: TCB_ALPN; arg: Pointer); cdecl;
 
   // IO
@@ -216,6 +220,8 @@ const
   SSL_get_servername : TSSL_get_servername = nil;
   SSL_check_private_key : TSSL_check_private_key  = nil;
   SSL_get_version : TSSL_get_version = nil;
+  SSL_get_current_cipher : TSSL_get_current_cipher = nil;
+  SSL_CIPHER_description : TSSL_CIPHER_description = nil;
 
   // pem - Files
   SSL_CTX_use_certificate_file: TSSL_CTX_use_certificate_file = nil;
@@ -253,9 +259,6 @@ implementation
 
 uses
  dynlibs;
-
-const
-  _OPENSSL_VERSION = 0;
 
 const
 {$ifdef MSWINDOWS}
@@ -403,7 +406,7 @@ end;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 var
  ErrorCount: integer;
- _cs_Servername : array[0..4096] of AnsiChar;
+ FileName : array[0..4095] of AnsiChar;
 begin
  ErrorCount := 0;
  cs_Servername := SSL_get_servername(SSL, TLSEXT_NAMETYPE_host_name);
@@ -411,30 +414,28 @@ begin
  sDebug.add('REQUEST TO "'+cs_Servername+'"');
 
  // load the key
- StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
- if (SSL_use_PrivateKey_file(SSL, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'key.pem');
+ if (SSL_use_PrivateKey_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register Key '+_cs_Servername+' fails');
+   sDebug.add('ERROR: Register Key '+FileName+' fails');
    inc(ErrorCount);
  end;
 
  // load the cert
- StrPCopy(_cs_Servername,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
- if (SSL_use_certificate_file(SSL, PChar(@_cs_Servername), SSL_FILETYPE_PEM) <> 1) then
+ StrPCopy(FileName,pem_Path + cs_Servername + DirectorySeparator + 'cert.pem');
+ if (SSL_use_certificate_file(SSL, PChar(@FileName), SSL_FILETYPE_PEM) <> 1) then
  begin
-   sDebug.add('ERROR: Register Cert '+_cs_Servername+' fails');
+   sDebug.add('ERROR: Register Cert '+FileName+' fails');
    inc(ErrorCount);
  end;
 
+ // is dependency of "key" and "cert" valid?
  if (SSL_check_private_key(SSL)<>1) then
  begin
    sDebug.add('ERROR: Key & Cert : they dont match');
    inc(ErrorCount);
  end;
 
- // in der Entwicklungsphase ist nur die Identität "localhost" erlaubt
- // wird der Server als eine andere Identität angesprochen erfolgt ein
- // Verbindungsabbruch
  if (ErrorCount=0) then
   result := SSL_TLSEXT_ERR_OK
  else
@@ -619,6 +620,16 @@ begin
     if not (assigned(SSL_get_version)) then
       sDebug.add(LastError);
 
+      SSL_get_current_cipher := TSSL_get_current_cipher(GetProcAddress(libssl_HANDLE,
+    'SSL_get_current_cipher'));
+    if not (assigned(SSL_get_current_cipher)) then
+      sDebug.add(LastError);
+  SSL_CIPHER_description := TSSL_CIPHER_description(GetProcAddress(libssl_HANDLE,
+    'SSL_CIPHER_description'));
+    if not (assigned(SSL_CIPHER_description)) then
+      sDebug.add(LastError);
+
+
     SSL_CTX_use_certificate_file :=
       TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
       'SSL_CTX_use_certificate_file'));
@@ -749,6 +760,8 @@ begin
 end;
 
 function Version: string;
+const
+  _OPENSSL_VERSION = 0;
 var
  P : PChar;
 begin

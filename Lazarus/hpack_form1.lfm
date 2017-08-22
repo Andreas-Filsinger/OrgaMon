@@ -18,7 +18,7 @@ object Form1: TForm1
     TabIndex = 1
     TabOrder = 0
     object TabSheet1: TTabSheet
-      Caption = 'HPACK'
+      Caption = 'HPACK bench'
       ClientHeight = 826
       ClientWidth = 1326
       object Memo1: TMemo
@@ -130,7 +130,7 @@ object Form1: TForm1
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'HTTPS'
+      Caption = 'HTTP/2 bench'
       ClientHeight = 826
       ClientWidth = 1326
       OnShow = TabSheet2Show
@@ -302,47 +302,6 @@ object Form1: TForm1
         Caption = 'send PING'
         OnClick = Button17Click
         TabOrder = 14
-      end
-    end
-    object TabSheet3: TTabSheet
-      Caption = 'HMUX'
-      ClientHeight = 826
-      ClientWidth = 1326
-      object Memo3: TMemo
-        Left = 58
-        Height = 236
-        Top = 104
-        Width = 767
-        Lines.Strings = (
-          'Memo3'
-        )
-        TabOrder = 0
-      end
-      object Label4: TLabel
-        Left = 63
-        Height = 20
-        Top = 79
-        Width = 86
-        Caption = 'Demuxed IN:'
-        ParentColor = False
-      end
-      object Label5: TLabel
-        Left = 62
-        Height = 20
-        Top = 373
-        Width = 81
-        Caption = 'Muxed OUT:'
-        ParentColor = False
-      end
-      object Memo4: TMemo
-        Left = 66
-        Height = 226
-        Top = 398
-        Width = 758
-        Lines.Strings = (
-          'Memo4'
-        )
-        TabOrder = 1
       end
     end
   end

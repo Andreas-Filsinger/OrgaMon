@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="HPACK_TST.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -56,15 +56,10 @@
         <UnitName Value="HTTP2"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\HTTP2\hmux.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="HMUX"/>
-      </Unit4>
-      <Unit5>
         <Filename Value="..\HTTP2\hpack.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="HPACK"/>
-      </Unit5>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
