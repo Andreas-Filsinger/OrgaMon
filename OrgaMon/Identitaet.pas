@@ -329,7 +329,8 @@ begin
 
         // Jedes Mal:
         try
-          workEingang;
+          workEingang_JPG;
+          workEingang_TXT;
         except
           on E: Exception do
             Log(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);

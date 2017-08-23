@@ -62,6 +62,7 @@ const
 
   // Filenames
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
+  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
   cFotoService_Pause = 'pause.txt';
 
@@ -138,10 +139,11 @@ type
 
     function GEN_ID: integer;
 
-    // Work
-    procedure workEingang(sParameter: TStringList = nil);
-    procedure workWartend(sParameter: TStringList = nil);
-    procedure workAblage(sParameter: TStringList = nil);
+    // Work ...
+    procedure workEingang_JPG(sParameter: TStringList = nil); // ftp-Eingänge *.jpg verarbeiten
+    procedure workEingang_TXT(sParameter: TStringList = nil); // ftp-Eingänge *.txt verarbeiten
+    procedure workWartend(sParameter: TStringList = nil); // -Neu Umbenennungen vornehmen
+    procedure workAblage(sParameter: TStringList = nil); //
     procedure workSync;
     procedure workAusstehendeFotos;
 
@@ -434,7 +436,7 @@ begin
   mIni.Free;
 end;
 
-procedure TFotoExec.workEingang(sParameter: TStringList = nil);
+procedure TFotoExec.workEingang_JPG(sParameter: TStringList = nil);
 var
   sFiles: TStringList;
   IgnoreIt: boolean;
@@ -573,7 +575,7 @@ begin
   sFiles.Assign(sTemp);
   sTemp.Free;
 
-  // Reduce Work to Only One!
+  // Reduce Work to Only One?!
   if not(pAll) then
     for n := pred(sFiles.Count) downto 1 do
       sFiles.Delete(n);
@@ -1032,6 +1034,76 @@ begin
 
   sFiles.Free;
   sFilesClientSorter.Free;
+end;
+
+procedure TFotoExec.workEingang_TXT(sParameter: TStringList = nil);
+var
+  sFiles: TStringList;
+  n: integer;
+
+  // Parameter
+  pAll: boolean;
+
+begin
+  if assigned(sParameter) then
+  begin
+    pAll := sParameter.Values['ALL'] <> cIni_Deactivate;
+  end
+  else
+  begin
+    pAll := true;
+  end;
+
+  // Init Phase
+  sFiles := TStringList.Create;
+
+  // get File List
+  dir(pFTPPath + '*.txt', sFiles, false);
+
+  // reduce to Protocols
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+   if (pos(cUTF8DataExtension,sFiles[n])>0) then
+   begin
+    sFiles.Delete(n);
+    continue;
+   end;
+   if (FSize(pFTPPath+sFiles[n])<16) then
+   begin
+    sFiles.Delete(n);
+    continue;
+   end;
+  end;
+
+  // Reduce Work to Only One?!
+  if not(pAll) then
+    for n := pred(sFiles.Count) downto 1 do
+      sFiles.Delete(n);
+
+  // ev. Zeit Datum protokollieren
+  if (sFiles.Count>0) then
+      AppendStringsToFile(
+        { } 'timestamp ' + sTimeStamp,
+        { } DiagnosePath + cProtokollTransaktionenFName);
+
+  // reduce to valid jpg's
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+    if FileMove(pFTPPath + sFiles[n],MyProgramPath + cProtokollPath + sFiles[n]) then
+    begin
+      AppendStringsToFile(
+        { } 'cp ' + sFiles[n] +
+        { } ' ' +
+        { } MyProgramPath + cProtokollPath + sFiles[n],
+        { } DiagnosePath + cProtokollTransaktionenFName);
+    end else
+    begin
+      Log(cERRORText + ' Protokoll konnte nicht aus FTP-Bereich verschoben werden (mv '+sFiles[n]+' '+MyProgramPath + cProtokollPath+')');
+      Log(cFotoService_AbortTag);
+    end;
+  end;
+
+  sFiles.Free;
 end;
 
 const

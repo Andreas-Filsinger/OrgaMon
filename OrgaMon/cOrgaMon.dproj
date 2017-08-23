@@ -79,7 +79,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.15;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
         <DCC_StrictVarStrings>false</DCC_StrictVarStrings>
-        <Debugger_RunParams>--app --Id=gwe</Debugger_RunParams>
+        <Debugger_RunParams>--foto --Id=gwe</Debugger_RunParams>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>

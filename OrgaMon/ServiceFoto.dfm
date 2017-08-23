@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -109,7 +109,7 @@
         Top = 383
         Width = 129
         Height = 25
-        Caption = 'workEingang'
+        Caption = 'workEingang_JPG'
         TabOrder = 2
         OnClick = Button5Click
       end
@@ -164,6 +164,15 @@
         Caption = 'Start'
         TabOrder = 8
         OnClick = Button1Click
+      end
+      object Button36: TButton
+        Left = 664
+        Top = 384
+        Width = 129
+        Height = 25
+        Caption = 'workEingang_TXT'
+        TabOrder = 9
+        OnClick = Button36Click
       end
     end
     object TabSheet11: TTabSheet
@@ -259,7 +268,6 @@
     object TabSheet3: TTabSheet
       Caption = 'Jpegs'
       ImageIndex = 2
-      ExplicitLeft = 8
       DesignSize = (
         807
         502)

@@ -179,6 +179,7 @@ type
     Button35: TButton;
     Label32: TLabel;
     Edit21: TEdit;
+    Button36: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -227,6 +228,7 @@ type
     procedure Button33Click(Sender: TObject);
     procedure Button34Click(Sender: TObject);
     procedure Button35Click(Sender: TObject);
+    procedure Button36Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -750,7 +752,16 @@ begin
 
  FILENAMES.free;
  sDir.Free;
+end;
 
+procedure TFormServiceFoto.Button36Click(Sender: TObject);
+var
+  sParameter: TStringList;
+begin
+  sParameter := TStringList.create;
+  // sParameter.add('ALL=' + cINI_Deactivate);
+  MyFotoExec.workEingang_TXT(sParameter);
+  sParameter.Free;
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);
@@ -1278,7 +1289,7 @@ var
 begin
   sParameter := TStringList.create;
   // sParameter.add('ALL=' + cINI_Deactivate);
-  MyFotoExec.workEingang(sParameter);
+  MyFotoExec.workEingang_JPG(sParameter);
   sParameter.Free;
 end;
 
@@ -1874,7 +1885,8 @@ begin
       end;
 
       // Jedes Mal
-      MyFotoExec.workEingang;
+      MyFotoExec.workEingang_JPG;
+      MyFotoExec.workEingang_TXT;
 
     except
 
