@@ -41,25 +41,33 @@ uses
   unicodedata,
   Math;
 
-const
-  OpenSSL_Error : string = '';
+
 Type
-THTTP2_Stream = Class(TObject)
-     ID : Integer;   { <>0, 1.. }
-     weight : Integer; { 1..256, default 16 }
+ { THTTP2_Stream }
 
-     window_size: Integer;    { 65,535 by default }
-     SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
-end;
+ // RFC: 5.1.  Stream States
 
-{ THTTP2_Connection }
+ TStreamStates = (idle, reserved_local, reserved_remote, open, halfclosed_local, halfclosed_remote, closed);
+
+ THTTP2_Stream = Class(TObject)
+       ID : Integer;   { <>0, 1.. }
+       weight : Integer; { 1..256, default 16 }
+       State : TStreamStates; { default idle }
+
+       window_size: Integer;    { 65,535 by default }
+       SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
+  end;
+
+  { THTTP2_Connection }
 
 THTTP2_Connection = class(TObject)
+
      SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL : Integer;
      SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
-     public
-     class function SETTING : string; overload;
-     class function SETTING (Parameter: word; Value: Integer) : string; overload;
+     SETTINGS_HEADER_TABLE_SIZE: Integer;
+     SETTINGS_INITIAL_WINDOW_SIZE: Integer;
+     SETTINGS_MAX_FRAME_SIZE: Integer;
+     SETTINGS_MAX_HEADER_LIST_SIZE: Integer;
 
 end;
 
@@ -96,6 +104,7 @@ procedure TLS_Accept(FD: cint);
 implementation
 
 uses
+  Windows, // sollte wieder entfallen nur wegen GetLAstError
  sockets,
  systemd;
 
@@ -110,6 +119,7 @@ type
     byte0, byte1, byte2, byte3 : Byte;
    {$endif FPC_LITTLE_ENDIAN}
     class operator Explicit(a : TNum31Bit) : Cardinal;
+    class operator Explicit(a : TNum31Bit) : QWord;
     class operator :=(a : Cardinal) : TNum31Bit;
     function readBit32: boolean;
     procedure writeBit32(Bit:boolean);
@@ -194,33 +204,60 @@ type
   end;
   PFRAME_SETTINGS = ^TFRAME_SETTINGS;
 
-   // RFC: "6.9 WINDOW_UPDATE"
-   TFRAME_WINDOW_UPDATE = Packed Record
-    Window_Size_Increment : TNum32Bit;  // 1..2147483647
-   end;
-   PFRAME_WINDOW_UPDATE = ^TFRAME_WINDOW_UPDATE;
+  // RFC: "6.8.  GOAWAY"
+  TFRAME_GOAWAY = Packed Record
+    Last_Stream_ID : TNum31Bit;
+    Error_Code : TNum32Bit;
+  end;
+  PFRAME_GOAWAY = ^TFRAME_GOAWAY;
+
+  // RFC: "6.9 WINDOW_UPDATE"
+  TFRAME_WINDOW_UPDATE = Packed Record
+   Window_Size_Increment : TNum32Bit;  // 1..2147483647
+  end;
+  PFRAME_WINDOW_UPDATE = ^TFRAME_WINDOW_UPDATE;
 
 const
   SizeOf_FRAME_HEADER = sizeof(THTTP2_FRAME_HEADER);
   SizeOf_SETTINGS = sizeof(TFRAME_SETTINGS);
   SizeOf_WINDOW_UPDATE = sizeof(TFRAME_WINDOW_UPDATE);
+  SizeOf_GOAWAY = sizeof(TFRAME_GOAWAY);
 
 const
    // RFC: "7.  Error Codes"
-   NO_ERROR = $00;
-   PROTOCOL_ERROR = $01;
-   INTERNAL_ERROR = $02;
-   FLOW_CONTROL_ERROR = $03;
-   SETTINGS_TIMEOUT = $04;
-   STREAM_CLOSED = $05;
-   FRAME_SIZE_ERROR = $06;
-   REFUSED_STREAM = $07;
-   CANCEL = $08;
-   COMPRESSION_ERROR = $09;
-   CONNECT_ERROR = $0a;
-   ENHANCE_YOUR_CALM = $0b;
-   INADEQUATE_SECURITY = $0c;
-   HTTP_1_1_REQUIRED = $0d;
+   NO_ERROR             = $00;
+   PROTOCOL_ERROR       = $01;
+   INTERNAL_ERROR       = $02;
+   FLOW_CONTROL_ERROR   = $03;
+   SETTINGS_TIMEOUT     = $04;
+   STREAM_CLOSED        = $05;
+   FRAME_SIZE_ERROR     = $06;
+   REFUSED_STREAM       = $07;
+   CANCEL               = $08;
+   COMPRESSION_ERROR    = $09;
+   CONNECT_ERROR        = $0a;
+   ENHANCE_YOUR_CALM    = $0b;
+   INADEQUATE_SECURITY  = $0c;
+   HTTP_1_1_REQUIRED    = $0d;
+   LAST_ERROR           = HTTP_1_1_REQUIRED;
+
+ ERROR_CODES : array[NO_ERROR..LAST_ERROR] of string = (
+   'NO_ERROR',
+   'PROTOCOL_ERROR',
+   'INTERNAL_ERROR',
+   'FLOW_CONTROL_ERROR',
+   'SETTINGS_TIMEOUT',
+   'STREAM_CLOSED',
+   'FRAME_SIZE_ERROR',
+   'REFUSED_STREAM',
+   'CANCEL',
+   'COMPRESSION_ERROR',
+   'CONNECT_ERROR',
+   'ENHANCE_YOUR_CALM',
+   'INADEQUATE_SECURITY',
+   'HTTP_1_1_REQUIRED');
+
+
 
 const
  // Client Hello String
@@ -631,8 +668,12 @@ begin
                break;
              end;
 
-            mDebug.add(
-             ' ' + INtTOstr(cardinal(Stream_ID)) + ' has Error ' + IntToStr(Cardinal(PFRAME_RST_STREAM(@ClientNoise[CN_Pos2])^.Error_Code)) );
+            with PFRAME_RST_STREAM(@ClientNoise[CN_Pos2])^ do
+            begin
+             mDebug.add(' Stream_ID=' + INtTOstr(cardinal(Stream_ID)));
+             mDebug.add(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)]);
+            end;
+
 
             end;
           FRAME_TYPE_SETTINGS : begin
@@ -673,10 +714,42 @@ begin
 
           end;
           FRAME_TYPE_GOAWAY : begin
+
+            if (Cardinal(Stream_ID)<>0) then
+             begin
+               mDebug.add('ERROR: invalid StreamID<>0');
+               FatalError := true;
+               break;
+             end;
+
+             if (Cardinal(Len)<SizeOf_GOAWAY) then
+             begin
+               mDebug.add('ERROR: unsufficiant GOAWAY FRAME SIZE Payload');
+               FatalError := true;
+               break;
+             end;
+
+             with PFRAME_GOAWAY(@ClientNoise[CN_Pos2])^ do
+             begin
+              mDebug.add(' Last_Stream_ID=' + IntToStr(QWord(Last_Stream_ID)));
+              if Cardinal(Error_Code)<=LAST_ERROR then
+               mDebug.add(' Error_Code=' + ERROR_CODES[Cardinal(Error_Code)])
+              else
+               mDebug.add(' Error_Code=' + IntToHex(Cardinal(Error_Code),4));
+             end;
+
+             inc(CN_Pos2,SizeOf_GOAWAY);
+             Len := Cardinal(Len) - SizeOf_GOAWAY;
+
+             if Cardinal(Len)>0 then
+             begin
+               mDebug.add(' More_Info=' + IntToHex(Cardinal(Len),4)+' Byte(s)');
+             end;
+
             end;
           FRAME_TYPE_WINDOW_UPDATE : begin
 
-            if (Cardinal(Len)<>4) then
+            if (Cardinal(Len)<>SizeOf_WINDOW_UPDATE) then
              begin
                mDebug.add('ERROR: multible unsupported');
                FatalError := true;
@@ -720,16 +793,6 @@ end;
 
 { THTTP2_Connection }
 
-class function THTTP2_Connection.SETTING: string;
-begin
-  // empty SETTINGS Frame
-end;
-
-class function THTTP2_Connection.SETTING(Parameter: word; Value: Integer
-  ): string;
-begin
- //
-end;
 
 type
 TCardinalRec = packed record
@@ -746,6 +809,11 @@ begin
   TCardinalRec(Result).byte1 := a.byte1;
   TCardinalRec(Result).byte2 := a.byte2;
   TCardinalRec(Result).byte3 := a.byte3 and $7F;
+end;
+
+class operator TNum31Bit.Explicit(a: TNum31Bit): QWord;
+begin
+  result := Cardinal(a);
 end;
 
 class operator TNum31Bit.:=(a : Cardinal) : TNum31Bit;
@@ -797,7 +865,7 @@ class operator TNum24Bit.:=(a : Cardinal) : TNum24Bit;
 begin
 {$IFOPT R+}
   if (a > $FFFFFF) then
-    Error(reIntOverflow);
+    system.Error(reIntOverflow);
 {$ENDIF R+}
   Result.byte0 := TCardinalRec(a).byte0;
   Result.byte1 := TCardinalRec(a).byte1;
@@ -816,7 +884,7 @@ class operator TNum16Bit.:=(a : Cardinal) : TNum16Bit;
 begin
 {$IFOPT R+}
   if (a > $FFFF) then
-    Error(reIntOverflow);
+    system.Error(reIntOverflow);
 {$ENDIF R+}
   Result.byte0 := TCardinalRec(a).byte0;
   Result.byte1 := TCardinalRec(a).byte1;
@@ -881,11 +949,13 @@ var
 P : PChar;
 x : AnsiString;
 ERR_F : THandle;
+ERROR: Integer;
 
 // initial Read
 buf : array[0..pred(16*1024)] of byte;
+D : RawByteString;
 
-BytesRead: cint;
+BytesRead, BytesWritten: cint;
    DD: string;
    DC : string;
    n: Integer;
@@ -921,7 +991,7 @@ begin
   if (a<>1) then
   begin
     sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,a)]);
-    ERR_print_errors_cb(@cb_ERR,nil);
+    ERR_print_errors_cb(@cryptossl.cb_ERR,nil);
     raise Exception.create('SSL_accept() fails');
   end else
   begin
@@ -947,16 +1017,46 @@ begin
    CheckSecurityItem('Enc','AESGCM(128)');
    CheckSecurityItem('Mac','AEAD');
 
+
+
+   // chrome
+(*   sleep(200);
+    D := StartFrames;
+    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+    sDebug.add('we have send '+IntTOStr(BytesWritten)+' Bytes of Hello-Code!');
+    *)
+    // chrome
+
+
    //
    sDebug.add('read ...');
    BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
 
+   if (BytesRead<1) then
+   begin
+     ERROR := SSL_get_error(cs_SSL,BytesRead);
+     sDebug.add(SSL_ERROR[ERROR]);
+
+
+     if ERROR=SSL_ERROR_SYSCALL then
+     begin
+      sDebug.add('WSAGetLastError='+IntTOstr(socketerror));
+      sDebug.add('GetLastError='+IntTOstr(GetLastError));
+      // SysErrorMessage()
+     end;
+     ERR_print_errors_cb(@cryptossl.cb_ERR,nil);
+
+     raise Exception.create('SSL_read() fails');
+
+   end else
+   begin
+
    sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');
 
-   DD := '';
-   DC := '';
-   for n := 0 to pred(BytesRead) do
-   begin
+    DD := '';
+    DC := '';
+    for n := 0 to pred(BytesRead) do
+    begin
      DD := DD + ' ' + IntToHex(buf[n],2);
      if (buf[n]>=ord(' ')) and (buf[n]<=ord('z')) then
       DC := DC + chr(buf[n])
@@ -968,12 +1068,10 @@ begin
       DD := '';
       DC := '';
      end;
-   end;
-   if (DD<>'') then
-    sDebug.add(DD+'  '+DC);
+    end;
+    if (DD<>'') then
+     sDebug.add(DD+'  '+DC);
 
-   if (BytesRead>0) then
-   begin
     CN_SIze := BytesRead;
     move(Buf, ClientNoise, CN_Size);
     CN_Pos := 0;
