@@ -249,7 +249,7 @@ type
     class function AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
     class function FormatZaehlerNummerNeu(const s: string): string;
     class function clearTempTag(const s: string): string;
-    class function createTempTag(RID: integer): string;
+    class function createTempTag(RID: integer; Parameter: string): string;
     class procedure Foto_setcorrectDateTime(FName: string);
     class function active(a: boolean): string;
     class procedure validateBaustelleCSV(FName: string);
@@ -3447,12 +3447,13 @@ begin
         end;
       12:
         begin
-          // FA,FN normal - FE = Regler, ohne ZählernummerAlt
+          // FA,FN normal -
+          // FE = ReglerNummerNeu, ohne ZählernummerAlt
           repeat
             if (pos('FE', FotoParameter) = 1) then
             begin
               NameOhneZaehlerNummerAlt := true;
-              FotoPrefix := createTempTag(AUFTRAG_R);
+              FotoPrefix := '';
               break;
             end;
           until yet;
@@ -3595,13 +3596,13 @@ begin
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } cFotoService_NeuPlatzhalter +
-      { } '-Regler'
+            { } '-Regler'
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
             { } cFotoService_NeuPlatzhalter +
-      { } '-Regler'
+            { } '-Regler'
         end
         else
         begin
@@ -3609,13 +3610,13 @@ begin
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } Reglernummer_neu +
-      { } '-Regler'
+            { } '-Regler'
           else
             FotoDateiNameNeu :=
             { } FotoPrefix +
             { } zaehlernummer_alt + '-' +
             { } Reglernummer_neu +
-      { } '-Regler';
+            { } '-Regler';
 
           UmbenennungAbgeschlossen := true;
         end;
@@ -3635,21 +3636,24 @@ begin
     break;
   end;
 
-  if (FotoDateiNameNeu = '') then
+  // Ergebnis
+  if not(ShouldAbort) then
   begin
-    // leeres Ergebnis
-    FatalError(
-      { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
-  end
-  else
-  begin
-    // Ergebnis
-    if not(ShouldAbort) then
-    begin
-      // Wenn fertig, dann die TMP-Sachen wieder wegmachen!
-      if UmbenennungAbgeschlossen then
-        FotoDateiNameNeu := clearTempTag(FotoDateiNameNeu);
 
+    // Wenn fertig, dann die TMP-Sachen wieder wegmachen!
+    if UmbenennungAbgeschlossen then
+      FotoDateiNameNeu := clearTempTag(FotoDateiNameNeu)
+    else
+      FotoDateiNameNeu := FotoDateiNameNeu + createTempTag(AUFTRAG_R,FotoParameter);
+
+    // Gar keine Prefix / Tmp usw. vorhanden, einfach nix
+    if (FotoDateiNameNeu = '') then
+    begin
+      // leeres Ergebnis
+      FatalError(
+        { } 'NAME_NEU kann nicht ermittelt werden, da Prefix und Zählernummer leer sind');
+    end else
+    begin
       result.values[cParameter_foto_fertig] := active(UmbenennungAbgeschlossen);
       result.values[cParameter_foto_neu] := FotoDateiNameNeu + '.jpg';
       result.values[cParameter_foto_ziel] := ZielBaustelle;
@@ -4682,8 +4686,8 @@ begin
 end;
 
 const
-  TmpNameTagOpen = '(RID';
-  TmpNameTagClose = ')-';
+  TmpNameTagOpen = '-(RID';
+  TmpNameTagClose = ')';
 
 class function TJonDaExec.clearTempTag(const s: string): string;
 var
@@ -4703,9 +4707,14 @@ begin
   end;
 end;
 
-class function TJonDaExec.createTempTag(RID: integer): string;
+class function TJonDaExec.createTempTag(RID: integer; Parameter: string): string;
 begin
-  result := TmpNameTagOpen + inttostr(RID) + TmpNameTagClose;
+  result :=
+   { } TmpNameTagOpen +
+   { } inttostr(RID) +
+   { } '#' +
+   { } Parameter +
+   { } TmpNameTagClose;
 end;
 
 constructor TJonDaExec.Create;

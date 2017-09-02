@@ -178,7 +178,7 @@ object Form1: TForm1
         Height = 25
         Top = 148
         Width = 235
-        Caption = 'TLS init'
+        Caption = 'create HTTP2 Server'
         OnClick = Button5Click
         TabOrder = 3
       end
@@ -187,7 +187,7 @@ object Form1: TForm1
         Height = 25
         Top = 120
         Width = 235
-        Caption = 'load openSSL'
+        Caption = 'init Path'
         OnClick = Button6Click
         TabOrder = 4
       end

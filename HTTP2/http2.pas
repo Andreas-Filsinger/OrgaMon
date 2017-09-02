@@ -34,13 +34,16 @@ interface
 
 uses
   cTypes,
-  cryptossl,
   Classes,
   SysUtils,
-  anfix32,
   unicodedata,
-  Math;
+  Math,
 
+  // Tools
+  anfix32,
+  // HTTP/2 Project
+  cryptossl,
+  hpack;
 
 Type
  { THTTP2_Stream }
@@ -51,6 +54,7 @@ Type
 
  THTTP2_Stream = Class(TObject)
        ID : Integer;   { <>0, 1.. }
+       Parent: Integer; { dads ID }
        weight : Integer; { 1..256, default 16 }
        State : TStreamStates; { default idle }
 
@@ -60,8 +64,9 @@ Type
 
   { THTTP2_Connection }
 
-THTTP2_Connection = class(TObject)
+ THTTP2_Connection = class(TObject)
 
+     // Connection Settings
      SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL : Integer;
      SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
      SETTINGS_HEADER_TABLE_SIZE: Integer;
@@ -69,7 +74,36 @@ THTTP2_Connection = class(TObject)
      SETTINGS_MAX_FRAME_SIZE: Integer;
      SETTINGS_MAX_HEADER_LIST_SIZE: Integer;
 
-end;
+     Headers: THPACK;
+     Streams: TList;
+
+     // openSSL Security
+     CTX: PSSL_CTX;
+     SSL: PSSL;
+
+     type
+
+     { TReaderThread }
+
+ TReaderThread=class(TThread)
+       private
+         procedure Execute;override;
+     end;
+
+     public
+       function StrictHTTP2Context: PSSL_CTX;
+       procedure TLS_Accept(FD: cint);
+       procedure Init;
+
+       // read-write
+       function write(buf : Pointer;  num: cint): cint;
+       function read(buf : Pointer;  num: cint): cint;
+
+       // Error Informations
+       procedure loadERROR(Err : cint);
+
+
+ end;
 
 type
  TClientNoise = array[0..pred(16*1024)] of byte;
@@ -98,13 +132,11 @@ procedure SaveRawBytes(B:RawByteString;FName:string);
 procedure LoadRawBytes(FName:string);
 
 function getSocket: cint;
-procedure TLS_Init;
-procedure TLS_Accept(FD: cint);
 
 implementation
 
 uses
-  Windows, // sollte wieder entfallen nur wegen GetLAstError
+ Windows, // sollte wieder entfallen nur wegen GetLAstError
  sockets,
  systemd;
 
@@ -162,7 +194,7 @@ type
 
    { THTTP2_FRAME_HEADER }
 
-   THTTP2_FRAME_HEADER = Packed Record
+   THTTP2_FRAME_HEADER = Packed record
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      Typ : Byte;
      Flags : Byte;
@@ -172,13 +204,13 @@ type
 
   // RFC: "6.2.  HEADERS"
   // optional FRAME-Fragment: only if FLAG_PADDING is set
-  TFRAME_HEADERS_PADDING = Packed Record
+  TFRAME_HEADERS_PADDING = Packed record
     Pad_Length : byte;
   end;
   PFRAME_HEADERS_PADDING = ^TFRAME_HEADERS_PADDING;
 
   // optional FRAME-Fragment, only if FLAG_PRIORITY is set
-  TFRAME_HEADERS_PRIORITY = Packed Record
+  TFRAME_HEADERS_PRIORITY = Packed record
     Stream_Dependency : TNum31Bit;
     Weight : byte;
   end;
@@ -198,21 +230,21 @@ type
   PFRAME_RST_STREAM = ^TFRAME_RST_STREAM;
 
   // RFC: "6.5.1.  SETTINGS Format"
-  TFRAME_SETTINGS = Packed Record
+  TFRAME_SETTINGS = packed record
    SETTING_ID : TNum16Bit;
    Value      : TNum32Bit;
   end;
   PFRAME_SETTINGS = ^TFRAME_SETTINGS;
 
   // RFC: "6.8.  GOAWAY"
-  TFRAME_GOAWAY = Packed Record
+  TFRAME_GOAWAY = packed record
     Last_Stream_ID : TNum31Bit;
     Error_Code : TNum32Bit;
   end;
   PFRAME_GOAWAY = ^TFRAME_GOAWAY;
 
   // RFC: "6.9 WINDOW_UPDATE"
-  TFRAME_WINDOW_UPDATE = Packed Record
+  TFRAME_WINDOW_UPDATE = packed record
    Window_Size_Increment : TNum32Bit;  // 1..2147483647
   end;
   PFRAME_WINDOW_UPDATE = ^TFRAME_WINDOW_UPDATE;
@@ -803,6 +835,13 @@ TCardinalRec = packed record
 {$endif FPC_LITTLE_ENDIAN}
 end;
 
+{ THTTP2_Connection.TReaderThread }
+
+procedure THTTP2_Connection.TReaderThread.Execute;
+begin
+  //
+end;
+
 class operator TNum31Bit.Explicit(a : TNum31Bit) : Cardinal;
 begin
   TCardinalRec(Result).byte0 := a.byte0;
@@ -905,21 +944,18 @@ end;
 // intended for a "HTTPS://" Server Socket
 
 
-
-
-
-
-
-function StrictHTTP2Context: PSSL_CTX;
+function THTTP2_Connection.StrictHTTP2Context: PSSL_CTX;
+var
+   cs_METH : PSSL_METHOD;
 begin
 
  // setup a TLS 1.2 Context
  // RFC 7540-9.2.
  cs_METH := TLSv1_2_server_method();
- cs_CTX := SSL_CTX_new(cs_METH);
+ CTX := SSL_CTX_new(cs_METH);
 
- SSL_CTX_set_info_callback(cs_CTX,@cb_info);
- SSL_CTX_ctrl(cs_CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
+ SSL_CTX_set_info_callback(CTX,@cb_info);
+ SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
  (*
  if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
@@ -929,12 +965,12 @@ begin
  *)
 
  // Register a Callback for: "SNI" read Identity Client expects
- SSL_CTX_callback_ctrl(cs_CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
+ SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
 
  // Register a Callback for: "ALPN" Select "h2" Protocol
- SSL_CTX_set_alpn_select_cb(cs_CTX,@cb_ALPN,nil);
+ SSL_CTX_set_alpn_select_cb(CTX,@cb_ALPN,nil);
 
- result := cs_CTX;
+ result := CTX;
   if not(assigned(result)) then
     raise Exception.Create('Create a new SSL-Context fails');
 
@@ -942,7 +978,7 @@ end;
 
 // binds a HANDLE (comes from systemd, or from incoming socket) to a new SLL Connection
 
-procedure TLS_Accept(FD: cint);
+procedure THTTP2_Connection.TLS_Accept(FD: cint);
 var
   a,e : cInt;
 //  ErrStr : array[0..4096] of char;
@@ -978,26 +1014,26 @@ begin
   ErrorCount := 0;
 
   // SSL Init
-  cs_SSL := SSL_new(cs_CTX);
-  if not(assigned(cs_SSL)) then
+  SSL := SSL_new(CTX);
+  if not(assigned(SSL)) then
     raise Exception.create('SSL_new() fails');
 
   // SSL File Handle Übernahme
-  if (SSL_set_fd(cs_SSL, FD)<>1) then
+  if (SSL_set_fd(SSL, FD)<>1) then
    raise Exception.create('SSL_set_fd() fails');
 
   //
-  a := SSL_accept(cs_SSL);
+  a := SSL_accept(SSL);
   if (a<>1) then
   begin
-    sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,a)]);
-    ERR_print_errors_cb(@cryptossl.cb_ERR,nil);
+    sDebug.add(SSL_ERROR[SSL_get_error(SSL,a)]);
+    ERR_print_errors_cb(@cb_ERROR,nil);
     raise Exception.create('SSL_accept() fails');
   end else
   begin
-   sDebug.add('connection with "' + SSL_get_version(cs_SSL) + '"-secured established');
+   sDebug.add('connection with "' + SSL_get_version(SSL) + '"-secured established');
 
-   SSL_CIPHER := SSL_get_current_cipher(cs_SSL);
+   SSL_CIPHER := SSL_get_current_cipher(SSL);
    Cipher := noDoubleBlank(SSL_CIPHER_description(SSL_CIPHER,@buf,sizeof(buf)));
    ersetze(#$0D,'',Cipher);
    ersetze(#$0A,'',Cipher);
@@ -1030,11 +1066,11 @@ begin
 
    //
    sDebug.add('read ...');
-   BytesRead := SSL_read(cs_SSL,@buf,sizeof(buf));
+   BytesRead := SSL_read(SSL,@buf,sizeof(buf));
 
    if (BytesRead<1) then
    begin
-     ERROR := SSL_get_error(cs_SSL,BytesRead);
+     ERROR := SSL_get_error(SSL,BytesRead);
      sDebug.add(SSL_ERROR[ERROR]);
 
 
@@ -1044,7 +1080,7 @@ begin
       sDebug.add('GetLastError='+IntTOstr(GetLastError));
       // SysErrorMessage()
      end;
-     ERR_print_errors_cb(@cryptossl.cb_ERR,nil);
+     ERR_print_errors_cb(@cb_ERROR,nil);
 
      raise Exception.create('SSL_read() fails');
 
@@ -1078,6 +1114,42 @@ begin
     Parse;
    end;
   end;
+end;
+
+procedure THTTP2_Connection.Init;
+begin
+
+ // create a security context
+ CTX := StrictHTTP2Context;
+ if not(assigned(CTX))  then
+   raise Exception.Create('SSL Init Fail');
+
+ Headers:= THPACK.create;
+ Streams:= TList.create;
+
+end;
+
+function THTTP2_Connection.write(buf: Pointer; num: cint): cint;
+var
+ BytesWritten : cint;
+begin
+
+ BytesWritten := SSL_write(SSL,@buf,num);
+ sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
+
+end;
+
+function THTTP2_Connection.read(buf: Pointer; num: cint): cint;
+begin
+
+end;
+
+procedure THTTP2_Connection.loadERROR(Err: cint);
+begin
+ sDebug.add(SSL_ERROR[SSL_get_error(SSL,Err)]);
+
+ ERR_print_errors_cb(@cb_ERROR,nil);
+
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
@@ -1172,12 +1244,6 @@ begin
   end;
 end;
 
-procedure TLS_Init;
-begin
- cs_CTX := StrictHTTP2Context;
- if not(assigned(cs_CTX))  then
-   raise Exception.Create('SSL Init Fail');
-end;
 
 procedure Release;
 begin

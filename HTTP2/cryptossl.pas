@@ -250,7 +250,7 @@ function LastError: string;
 
 // public call-Backs
 
-function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
+function cb_ERROR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 procedure cb_INFO(ssl : PSSL; wher, ret : cint); cdecl;
 function cb_SERVERNAME (SSL : PSSL; i:cint; p: Pointer):cint; cdecl;
 function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cuint; arg: Pointer):cint; cdecl;
@@ -258,9 +258,6 @@ function cb_ALPN(SSL : PSSL; cout: PPChar; outlen: PChar; pin: PChar; inlen: cui
 
 // One global Context
 const
-  cs_METH: PSSL_METHOD = nil;
-  cs_CTX: PSSL_CTX = nil;
-  cs_SSL: PSSL = nil;
   cs_Servername : string = '';
   cs_Protokoll_h2 : ShortString = 'h2';
 
@@ -367,9 +364,9 @@ begin
 *)
 end;
 
-function cb_ERR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
+function cb_ERROR (const s : PChar; len:size_t; p : Pointer):cint; cdecl;
 begin
- sDebug.add(InttoStr(len)+'@cb_ERR');
+ sDebug.add(InttoStr(len)+'@cb_ERROR');
  sDebug.add(s);
 end;
 

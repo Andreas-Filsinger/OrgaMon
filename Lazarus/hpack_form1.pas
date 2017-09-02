@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ComCtrls, Menus, cTypes,
 
-  HPACK;
+  HPACK, HTTP2;
 
 type
 
@@ -73,6 +73,7 @@ type
     FD: longint;
     HPACK: THPACK;
     Initialized: boolean;
+    HTTP2 : THTTP2_Connection;
 
     //
   public
@@ -94,7 +95,7 @@ uses
   anfix32,
 
   // aus dem HTTP/2 Projekt
-  HTTP2, cryptossl;
+   cryptossl;
 
 {$R *.lfm}
 
@@ -132,7 +133,7 @@ begin
    for n := low(buf) to high(buf) do
     buf[n] := random(256);
 
-   BytesWritten := SSL_write(cs_SSL,@buf,sizeof(buf));
+   BytesWritten := HTTP2.write(@buf,sizeof(buf));
    sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
 end;
 
@@ -159,7 +160,7 @@ procedure TForm1.Button13Click(Sender: TObject);
 var
     BytesWritten : cint;
 begin
-  BytesWritten := SSL_write(cs_SSL,@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
+  BytesWritten := HTTP2.write(@CLIENT_PREFIX[1],length(CLIENT_PREFIX));
   sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
 end;
 
@@ -275,9 +276,9 @@ begin
 
   sDebug.add('--------------------------------------------');
 
-  if assigned(cs_SSL) then
+  if assigned(HTTP2) then
   begin
-    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+    BytesWritten := HTTP2.write(@D[1],length(D));
     sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
 
@@ -405,14 +406,17 @@ procedure TForm1.Button4Click(Sender: TObject);
 begin
   if (FD = 0) then
     exit;
-  TLS_Accept(FD);
+  HTTP2.TLS_Accept(FD);
   ShowDebugMessages;
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 begin
-  TLS_Init;
-  ShowDebugMessages;
+  if not(assigned(HTTP2)) then
+  begin
+   HTTP2 := THTTP2_Connection.create;
+   SHowDebugmessages;
+  end;
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
@@ -439,11 +443,10 @@ begin
   ShowDebugMessages;
 
     Request := '';
-    BytesRead := SSL_read(cs_SSL,@ClientNoise,sizeof(ClientNoise));
+    BytesRead := HTTP2.read(@ClientNoise,sizeof(ClientNoise));
     if (BytesRead<0) then
     begin
-     sDebug.add(SSL_ERROR[SSL_get_error(cs_SSL,BytesRead)]);
-     ERR_print_errors_cb(@cb_ERR,nil);
+     HTTP2.loadERROR(BytesRead);
     end;
 
     if (BytesRead>0) then
@@ -489,9 +492,9 @@ begin
 
   sDebug.add('--------------------------------------------');
 
-  if assigned(cs_SSL) then
+  if assigned(HTTP2) then
   begin
-    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
+    BytesWritten := HTTP2.write(@D[1],length(D));
     sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
   end;
 

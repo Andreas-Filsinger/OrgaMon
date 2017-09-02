@@ -145,7 +145,7 @@ type
     procedure workWartend(sParameter: TStringList = nil); // -Neu Umbenennungen vornehmen
     procedure workAblage(sParameter: TStringList = nil); //
     procedure workSync;
-    procedure workAusstehendeFotos;
+    procedure workAusstehendeFotos; // Liste der bisher unübertragenen Fotos
 
     // muss IMMER überladen werden
     procedure Log(s: string); virtual; abstract;
@@ -951,8 +951,11 @@ begin
                 DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
               if DebugMode then
-                Log(cINFOText + ' 911: ' + cFotoService_UmbenennungAusstehendFName + ': füge "' + DATEINAME_AKTUELL +
-                  '" hinzu');
+                Log(
+                 {} cINFOText + ' 954: ' +
+                 {} cFotoService_UmbenennungAusstehendFName + ': füge ' +
+                 {} '"' + DATEINAME_AKTUELL + '"' +
+                 {} ' hinzu');
 
               AppendStringsToFile(
                 { DATEINAME_ORIGINAL } sFiles[m] + ';' +
@@ -1844,7 +1847,7 @@ begin
     if (FNameNeu = FNameAlt) then
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
-      Log(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmt bereits');
+      Log(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
       WARTEND.del(r);
       inc(Stat_Umbenannt);
     end
