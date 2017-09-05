@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.297 (05.09.17) Andreas Filsinger
+
+ Neu: Ausgangsrechnung "Z": Bar und Rückgeld
+ Neu: "Bar": erste Anzeige beschleunigt durch caching
+
+Rev 8.296 (04.09.17) Andreas Filsinger
+
+ Neu: Automatische GTIN Vergabe prüft auf Existens der nächsten Stempelnummer, so
+      dass eine Doppelt-Vergabe vermieden wird.
+
 Rev 8.295 (02.09.17) Andreas Filsinger
 
  Bug: FotoService: Bei nicht eindeutigem Namens-Schema misslangen "-Neu"-

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,6 @@ type
     IB_Query3: TIB_Query;
     Panel4: TPanel;
     Label2: TLabel;
-    Button8: TButton;
     Edit5: TEdit;
     Label1: TLabel;
     IB_Query4: TIB_Query;
@@ -85,11 +84,17 @@ type
     SpeedButton3: TSpeedButton;
     SpeedButton2: TSpeedButton;
     CheckBox2: TCheckBox;
+    Label3: TLabel;
+    Button8: TButton;
+    Edit1: TEdit;
+    Label5: TLabel;
+    Label6: TLabel;
+    StaticText1: TStaticText;
+    Label8: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-    procedure Button8Click(Sender: TObject);
     procedure StaticText7Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button9Click(Sender: TObject);
@@ -107,13 +112,15 @@ type
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
   private
 
     { Private-Deklarationen }
     PERSON_R: Integer;
     BELEG_R: Integer;
 
-    Summe: double;
+    Summe, Bar, RueckGeld: double;
     CloseIfzero: Boolean;
     RefreshBirth: dword;
 
@@ -125,6 +132,7 @@ type
     procedure SetContext(Kunde_RID: Integer); overload;
     procedure SetContext(Kunde_RID: Integer; Beleg_RID: Integer; Betrag: double = 0.0); overload;
     procedure RefreshZahlungtypCombo;
+    procedure ReflectData;
   end;
 
 var
@@ -166,6 +174,17 @@ begin
     EndHourGlass;
   end;
   EnsureOpen;
+end;
+
+procedure TFormAusgangsRechnungen.ReflectData;
+begin
+  RueckGeld := Bar - Summe;
+
+  // Anzeigen
+  if isHaben(RueckGeld) then
+    StaticText1.Caption := format(cAnzeigeFormat_Geld, [RueckGeld])
+  else
+    StaticText1.Caption := '+++';
 end;
 
 procedure TFormAusgangsRechnungen.Button10Click(Sender: TObject);
@@ -287,54 +306,6 @@ begin
   Edit3.Text := '';
 end;
 
-procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer);
-begin
-  BeginHourGlass;
-  EnsureOpen;
-  SetContextCustomer(Kunde_RID);
-  Edit3.Text := inttostr(Kunde_RID);
-  Edit4.Text := '';
-  Edit5.Text := '';
-  RadioButton1.checked := false;
-  RadioButton2.checked := false;
-  CheckBox1.checked := false;
-  CheckBox2.checked := false;
-
-  application.ProcessMessages;
-  Button4Click(self);
-  refreshSumme;
-  IB_Query1.last;
-  show;
-  EndHourGlass;
-end;
-
-procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer; Beleg_RID: Integer;
-  Betrag: double);
-begin
-  BeginHourGlass;
-  EnsureOpen;
-  SetContextCustomer(Kunde_RID);
-  Edit3.Text := inttostr(Kunde_RID);
-  Edit4.Text := inttostr(Beleg_RID);
-  RadioButton1.checked := false;
-  RadioButton2.checked := false;
-  CheckBox1.checked := false;
-  CheckBox2.checked := false;
-  application.ProcessMessages;
-  Button4Click(self);
-  refreshSumme;
-
-  if (Betrag = 0) then
-    Edit5.Text := format('%.2f', [Summe])
-  else
-    Edit5.Text := format('%.2f', [Betrag]);
-
-  IB_Query1.last;
-  show;
-  Button8.SetFocus;
-  EndHourGlass;
-end;
-
 procedure TFormAusgangsRechnungen.Button8Click(Sender: TObject);
 var
   _davonbezahlt: double; //
@@ -349,8 +320,6 @@ var
   sDiagnose: TStringList;
 begin
   TEILLIEFERUNG := cRID_Null;
-
-  // ist ein Kunde gesetzt
   _AktuelleZahlung := cPreisRundung(Edit5.Text);
 
   if IsSomeMoney(_AktuelleZahlung) then
@@ -500,6 +469,7 @@ begin
         formBelegSuche.IB_UpdateBar1.BtnClick(ubRefreshAll);
 
         Edit5.Text := '';
+        Edit1.Text := '';
         IB_UpdateBar1.BtnClick(ubRefreshAll);
         refreshSumme;
 
@@ -508,6 +478,55 @@ begin
 
       end;
     end;
+end;
+
+procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer);
+begin
+  BeginHourGlass;
+  EnsureOpen;
+  SetContextCustomer(Kunde_RID);
+  Edit3.Text := inttostr(Kunde_RID);
+  Edit4.Text := '';
+  Edit5.Text := '';
+  RadioButton1.checked := false;
+  RadioButton2.checked := false;
+  CheckBox1.checked := false;
+  CheckBox2.checked := false;
+
+  application.ProcessMessages;
+  Button4Click(self);
+  refreshSumme;
+  IB_Query1.last;
+  show;
+  Edit5.SetFocus;
+  EndHourGlass;
+end;
+
+procedure TFormAusgangsRechnungen.SetContext(Kunde_RID: Integer; Beleg_RID: Integer;
+  Betrag: double);
+begin
+  BeginHourGlass;
+  EnsureOpen;
+  SetContextCustomer(Kunde_RID);
+  Edit3.Text := inttostr(Kunde_RID);
+  Edit4.Text := inttostr(Beleg_RID);
+  RadioButton1.checked := false;
+  RadioButton2.checked := false;
+  CheckBox1.checked := false;
+  CheckBox2.checked := false;
+  application.ProcessMessages;
+  Button4Click(self);
+  refreshSumme;
+
+  if (Betrag = 0) then
+    Edit5.Text := format('%.2f', [Summe])
+  else
+    Edit5.Text := format('%.2f', [Betrag]);
+
+  IB_Query1.last;
+  show;
+  Edit5.SetFocus;
+  EndHourGlass;
 end;
 
 procedure TFormAusgangsRechnungen.SetContextCustomer(Kunde_RID: Integer);
@@ -643,12 +662,27 @@ begin
   openShell(e_r_MahnungFName(PERSON_R));
 end;
 
-procedure TFormAusgangsRechnungen.Edit5KeyPress(Sender: TObject; var Key: Char);
+procedure TFormAusgangsRechnungen.Edit1KeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then
+  if (Key = #13) then
   begin
     Key := #0;
-    Button8Click(self);
+    Bar := StrToDoubledef(Edit1.Text, 0);
+    ReflectData;
+  end;
+  if Key = #32 then
+  begin
+    Key := #0;
+    Button8Click(Sender);
+  end;
+end;
+
+procedure TFormAusgangsRechnungen.Edit5KeyPress(Sender: TObject; var Key: Char);
+begin
+  if (Key = #13) then
+  begin
+    Key := #0;
+    Edit1.SetFocus;
   end;
 end;
 
@@ -688,11 +722,17 @@ begin
     EnableControls;
   end;
   enabled := true;
-  StaticText5.caption := format('%m', [abs(Summe)]);
+  StaticText5.caption := format(cAnzeigeFormat_Geld, [abs(Summe)]);
   if (Summe <= 0) then
     StaticText5.Color := cllime
   else
     StaticText5.Color := clred;
+
+  Bar := 0;
+  edit1.TexT := '';
+  reflectData;
+
+
   if (Summe = 0) and CloseIfzero then
     close;
   EndHourGlass;

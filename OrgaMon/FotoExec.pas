@@ -380,7 +380,7 @@ begin
   //
   Log(cINFOText + ' Ini read!');
 
-  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
+  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + cFotoService_GlobalHintFName);
 
 end;
 
@@ -1746,8 +1746,8 @@ begin
           if not(assigned(CSV)) then
           begin
             CSV := tsTable.Create;
-            CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
-            Log(cINFOText + ' 1179: Extra Data loaded');
+            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            Log(cINFOText + ' 1750: suche zusätzlich in GlobalHint.ZaehlerNummerNeu');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then
@@ -1778,8 +1778,8 @@ begin
           if not(assigned(CSV)) then
           begin
             CSV := tsTable.Create;
-            CSV.insertfromFile(MyDataBasePath + 'ZaehlerNummerNeu.xls.csv');
-            Log(cINFOText + ' 1211: Extra Data loaded');
+            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            Log(cINFOText + ' 1782: suche zusätzlich in GlobalHint.ReglerNummerNeu');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
           if (ro <> -1) then

@@ -156,9 +156,6 @@ uses
 
 {$R *.dfm}
 
-const
-  cMoneyFormat = '%m ';
-
 procedure TFormBuchBarKasse.BetragInp(const editBetrag, editNext: TEdit;
   BetragIndex: Integer);
 var
@@ -486,15 +483,15 @@ begin
   RueckGeld := Bar - Summe;
 
   // Anzeigen
-  StaticText3.Caption := format(cMoneyFormat, [BetragN[1]]);
-  StaticText4.Caption := format(cMoneyFormat, [BetragN[2]]);
-  StaticText5.Caption := format(cMoneyFormat, [BetragN[3]]);
-  StaticText6.Caption := format(cMoneyFormat, [BetragN[4]]);
-  StaticText7.Caption := format(cMoneyFormat, [BetragN[5]]);
-  StaticText8.Caption := format(cMoneyFormat, [BetragN[6]]);
-  StaticText1.Caption := format(cMoneyFormat, [Summe]);
+  StaticText3.Caption := format(cAnzeigeFormat_Geld, [BetragN[1]]);
+  StaticText4.Caption := format(cAnzeigeFormat_Geld, [BetragN[2]]);
+  StaticText5.Caption := format(cAnzeigeFormat_Geld, [BetragN[3]]);
+  StaticText6.Caption := format(cAnzeigeFormat_Geld, [BetragN[4]]);
+  StaticText7.Caption := format(cAnzeigeFormat_Geld, [BetragN[5]]);
+  StaticText8.Caption := format(cAnzeigeFormat_Geld, [BetragN[6]]);
+  StaticText1.Caption := format(cAnzeigeFormat_Geld, [Summe]);
   if (RueckGeld > 0) then
-    StaticText2.Caption := format(cMoneyFormat, [RueckGeld])
+    StaticText2.Caption := format(cAnzeigeFormat_Geld, [RueckGeld])
   else
     StaticText2.Caption := '+++';
 end;
@@ -506,6 +503,17 @@ var
 begin
   if not(assigned(Konten)) then
   begin
+    if FileExists(SearchDir+'Konten.cache.txt') then
+    begin
+     KontoNummern := TStringList.create;
+     Konten := TStringList.create;
+
+     Konten.LoadFromFile(SearchDir+'Konten.cache.txt');
+     KontoNummern.LoadFromFile(SearchDir+'KontoNummern.cache.txt');
+
+    end else
+    begin
+
     BeginHourGlass;
 
     KontoNummern := TStringList.create;
@@ -534,6 +542,12 @@ begin
         MwStN[succ(n)] := b_r_MwST(Konto);
     end;
 
+    Konten.SaveToFile(SearchDir+'Konten.cache.txt');
+    KontoNummern.SaveToFile(SearchDir+'KontoNummern.cache.txt');
+
+    EndHourGlass;
+    end;
+
     // die ersten "cBarKasse_AnzahlKonten"
     Label6.Caption := Konten[0];
     Label7.Caption := Konten[1];
@@ -541,8 +555,6 @@ begin
     Label9.Caption := Konten[3];
     Label14.Caption := Konten[4];
     Label16.Caption := Konten[5];
-
-    EndHourGlass;
   end;
 end;
 
@@ -703,6 +715,8 @@ begin
   // refresh Kontoinfo
   FreeAndNil(Konten);
   FreeAndNil(KontoNummern);
+           DeleteFile(SearchDir+'Konten.cache.txt');
+    DeleteFile(SearchDir+'KontoNummern.cache.txt');
   EnsureKonten;
 
   // Infos über alle Konten

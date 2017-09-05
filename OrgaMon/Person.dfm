@@ -1036,8 +1036,6 @@ object FormPerson: TFormPerson
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
-      ExplicitLeft = 24
-      ExplicitTop = 27
       object Label1: TLabel
         Left = 27
         Top = 36

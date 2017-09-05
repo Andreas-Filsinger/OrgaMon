@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -745,7 +745,7 @@ begin
 
     // Saldo seines Kontos
     Summe := b_r_PersonSaldo(PERSON_R);
-    StaticText5.Caption := format('%m', [abs(Summe)]);
+    StaticText5.Caption := format(cAnzeigeFormat_Geld, [abs(Summe)]);
     if isHaben(Summe) then
       StaticText5.Color := clred
     else

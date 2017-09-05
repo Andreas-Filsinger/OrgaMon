@@ -60,6 +60,10 @@ const
   cPreis_unbekannt = -3.0;
   cPreis_ungesetzt = -4.0;
 
+  // Geld Anzeige-Format, Leerschritt am Ende erhöht die
+  // Leserlichkeit
+  cAnzeigeFormat_Geld = '%m ';
+
   // Erlöse (reines Verteilerkonto)
   cKonto_Erloese = '8200';
 

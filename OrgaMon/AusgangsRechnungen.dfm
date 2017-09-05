@@ -2,8 +2,8 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   Left = 1
   Top = 1
   Caption = 'Konto "Ausgangs Rechnungen"'
-  ClientHeight = 559
-  ClientWidth = 789
+  ClientHeight = 511
+  ClientWidth = 788
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -12,12 +12,11 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
-  Scaled = False
   OnActivate = FormActivate
   OnCreate = FormCreate
   DesignSize = (
-    789
-    559)
+    788
+    511)
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -233,9 +232,9 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   end
   object IB_Grid1: TIB_Grid
     Left = 0
-    Top = 163
+    Top = 162
     Width = 786
-    Height = 271
+    Height = 170
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akBottom]
@@ -245,7 +244,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     DrawCellTextOptions = [gdtEllipsis, gdtShowTextBlob, gdtWordWrap]
     OnCellGainFocus = IB_Grid1CellGainFocus
     OnGetDisplayText = IB_Grid1GetDisplayText
-    ExplicitHeight = 273
   end
   object Panel2: TPanel
     Left = 0
@@ -432,7 +430,7 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
   end
   object IB_Memo1: TIB_Memo
     Left = 0
-    Top = 433
+    Top = 332
     Width = 786
     Height = 81
     DataField = 'TEXT'
@@ -446,43 +444,76 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     ParentFont = False
     TabOrder = 3
     AutoSize = False
-    ExplicitTop = 435
+    ExplicitTop = 459
   end
   object Panel4: TPanel
     Left = 0
-    Top = 515
+    Top = 413
     Width = 786
-    Height = 44
+    Height = 98
     Anchors = [akLeft, akBottom]
     TabOrder = 4
-    ExplicitTop = 517
+    ExplicitTop = 504
     DesignSize = (
       786
-      44)
+      98)
     object Label2: TLabel
-      Left = 592
-      Top = 17
-      Width = 7
-      Height = 13
+      Left = 631
+      Top = 8
+      Width = 11
+      Height = 22
       Anchors = [akRight, akBottom]
       Caption = #8364
-      ExplicitTop = 22
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -18
+      Font.Name = 'Verdana'
+      Font.Style = []
+      ParentFont = False
     end
-    object Button8: TButton
-      Left = 618
-      Top = 7
-      Width = 155
-      Height = 30
+    object Label3: TLabel
+      Left = 392
+      Top = 15
+      Width = 44
+      Height = 13
+      Caption = 'S&umme'
+      FocusControl = Edit5
+    end
+    object Label5: TLabel
+      Left = 416
+      Top = 44
+      Width = 20
+      Height = 13
+      Caption = 'B&ar'
+      FocusControl = Edit1
+    end
+    object Label6: TLabel
+      Left = 631
+      Top = 37
+      Width = 11
+      Height = 22
       Anchors = [akRight, akBottom]
-      Caption = '&Zahlungseingang buchen'
-      TabOrder = 0
-      OnClick = Button8Click
+      Caption = #8364
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -18
+      Font.Name = 'Verdana'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label8: TLabel
+      Left = 384
+      Top = 71
+      Width = 52
+      Height = 13
+      Caption = 'R'#252'ckgeld'
     end
     object Edit5: TEdit
-      Left = 384
-      Top = 10
-      Width = 200
+      Left = 443
+      Top = 8
+      Width = 182
       Height = 26
+      Hint = 'Zahlungseingang buchen'
       Anchors = [akRight, akBottom]
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -490,12 +521,14 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       Font.Name = 'Verdana'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 1
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
       OnKeyPress = Edit5KeyPress
     end
     object CheckBox1: TCheckBox
-      Left = 142
-      Top = 5
+      Left = 9
+      Top = 7
       Width = 218
       Height = 18
       Anchors = [akRight, akBottom]
@@ -503,12 +536,63 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
       TabOrder = 2
     end
     object CheckBox2: TCheckBox
-      Left = 143
-      Top = 21
+      Left = 9
+      Top = 24
       Width = 218
-      Height = 17
+      Height = 18
       Caption = 'als Forderungsverlust buchen'
       TabOrder = 3
+    end
+    object Button8: TButton
+      Left = 653
+      Top = 8
+      Width = 129
+      Height = 84
+      Caption = '*'
+      Font.Charset = SYMBOL_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -56
+      Font.Name = 'Wingdings'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      OnClick = Button8Click
+    end
+    object Edit1: TEdit
+      Left = 443
+      Top = 37
+      Width = 182
+      Height = 26
+      Hint = 'Zahlungseingang buchen'
+      Anchors = [akRight, akBottom]
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Verdana'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnKeyPress = Edit1KeyPress
+    end
+    object StaticText1: TStaticText
+      Left = 443
+      Top = 66
+      Width = 200
+      Height = 26
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvNone
+      BorderStyle = sbsSunken
+      Caption = '+++'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Verdana'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
     end
   end
   object IB_Query1: TIB_Query

@@ -12663,6 +12663,7 @@ function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;
 var
  _GTIN, GTIN : string;
  NUMERO : string;
+ GTIN_COUNT: integer;
 begin
  result := 0;
  repeat
@@ -12679,33 +12680,32 @@ begin
    end;
 
    repeat
-   if _GTIN='' then
-    break;
+    if (_GTIN='') then
+     break;
 
-   if (StrFilter(GTIN,cZiffern)<>GTIN) then
-   begin
+    if (StrFilter(GTIN,cZiffern)<>GTIN) then
+    begin
      result := -2;
      break;
-   end;
+    end;
 
-   NUMERO := e_r_sqls('select NUMERO from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
+    NUMERO := e_r_sqls('select NUMERO from ARTIKEL where RID='+IntToStr(ARTIKEL_R));
 
-   if (_GTIN=NUMERO) then
-    break;
-
-   if PruefZifferOK(StrToInt64Def(_GTIN,0)) then
-   begin
-     result := -4;
+    if (_GTIN=NUMERO) then
      break;
-   end;
 
-     result := -3;
+    if PruefZifferOK(StrToInt64Def(_GTIN,0)) then
+    begin
+      result := -4;
+      break;
+    end;
+
+    result := -3;
 
    until yet;
 
    if result<>0 then
     break;
-
 
    // Jetzt mal einen Wert aus dem Stempel holen
    if (e_w_GTIN_Stempel_Name='') then
@@ -12719,11 +12719,23 @@ begin
     e_w_GTIN_STEMPEL_R := e_r_sql('select RID from STEMPEL where PREFIX='''+e_w_GTIN_Stempel_Name+'''');
    end;
 
-   // Neue GTIN berechnen
-   GTIN :=
-     {} StrFilter(e_w_GTIN_Stempel_Name,cZiffern)+
-     {} INtToStrN (e_w_Stempel(e_w_GTIN_STEMPEL_R),CharCount('n',e_w_GTIN_Stempel_Name));
-   GTIN := GTIN + Int64ToStr(PruefZiffer(StrToInt64(GTIN)));
+   repeat
+
+     // Neue GTIN berechnen
+     GTIN :=
+       {} StrFilter(e_w_GTIN_Stempel_Name,cZiffern)+
+       {} INtToStrN (e_w_Stempel(e_w_GTIN_STEMPEL_R),CharCount('n',e_w_GTIN_Stempel_Name));
+     GTIN := GTIN + Int64ToStr(PruefZiffer(StrToInt64(GTIN)));
+
+     GTIN_COUNT := e_r_sql('select count(RID) from ARTIKEL where GTIN='''+GTIN+'''');
+     if (GTIN_COUNT>0) then
+      continue;
+
+     GTIN_COUNT := e_r_sql('select count(RID) from ARTIKEL_AA where GTIN='''+GTIN+'''');
+     if (GTIN_COUNT>0) then
+      continue;
+
+   until yet;
 
    // Neuen Wert setzen
    if (AUSGABEART_R=0) then
