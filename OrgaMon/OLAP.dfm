@@ -346,8 +346,8 @@ object FormOLAP: TFormOLAP
     OnClick = Button1Click
   end
   object Button2: TButton
-    Left = 891
-    Top = 497
+    Left = 892
+    Top = 501
     Width = 86
     Height = 25
     Anchors = [akRight, akBottom]

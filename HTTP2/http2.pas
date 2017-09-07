@@ -77,7 +77,7 @@ Type
      Headers: THPACK;
      Streams: TList;
 
-     // openSSL Security
+     // openSSL-Security
      CTX: PSSL_CTX;
      SSL: PSSL;
 
@@ -929,11 +929,6 @@ begin
   Result.byte1 := TCardinalRec(a).byte1;
 end;
 
-
-
-
-
-
 // Knowledge Base
 //  fpopenssl
 //  http2_openssl.pas
@@ -958,6 +953,8 @@ begin
  SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
  (*
+
+ // not necessary, user defaults
  if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
   raise Exception.Create('set TLS 1.2 Cipher fails');
   SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
@@ -1265,4 +1262,5 @@ begin
  assert(SizeOf_FRAME_HEADER=9,'Break of RFC 7540-4.1');
  assert(SizeOf_SETTINGS=6,'Break of RFC 7540-6.5.1');
  assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 7540-6.9');
+ assert(length(PING_PAYLOAD)=8,'Break of RFC 7540-6.7');
 end.

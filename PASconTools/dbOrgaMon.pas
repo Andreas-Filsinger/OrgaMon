@@ -205,6 +205,8 @@ procedure qSelectList(q: TdboQuery; l: TList); overload;
 procedure qStringsAdd(f: TdboField; s: string);
 function HeaderNames(q: TdboDataset): TStringList; overload;
 function HeaderNames(q: TdboQuery): TStringList; overload;
+function HeaderNames(c: TdboCursor): TStringList; overload;
+
 function ColOf(q: TdboQuery; FieldName: string): integer; overload;
 function ColOf(q: TdboDatasource; FieldName: string): integer; overload;
 
@@ -1472,6 +1474,16 @@ var
 begin
   result := TStringList.create;
   with q do
+    for n := 0 to pred(FieldCount) do
+      result.add(Fields[n].FieldName);
+end;
+
+function HeaderNames(c: TdboCursor): TStringList;
+var
+  n: integer;
+begin
+  result := TStringList.create;
+  with c do
     for n := 0 to pred(FieldCount) do
       result.add(Fields[n].FieldName);
 end;

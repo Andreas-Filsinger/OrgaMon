@@ -351,6 +351,8 @@ var
   LoadFname: string;
   LoadSQL: string;
   LoadSQLinsert: string;
+  LoadSQLvalues: string;
+  LoadSQLvalue: string;
   SpaltenNamen: TStringList;
   LoadSpalte: TgpIntegerList;
   LoadSpalteType: TgpIntegerList;
@@ -363,7 +365,8 @@ var
   // repeat
   RepeatTable: string;
   RepeatSQL, _RepeatSQL: string;
-  cRepeat: TIB_cursor;
+  cRepeat: TdboCursor;
+  RepeatFieldNames: TStringList;
 
   // connect
   ConnectionList: TStringList;
@@ -2185,18 +2188,31 @@ begin
 
               FileDelete(RohdatenFName(RohdatenCount));
 
+              //
               cRepeat := DataModuleDatenbank.nCursor;
               with cRepeat do
               begin
                 ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(RohdatenCount - 2);
                 sql.add(ExecuteStatement);
                 setWaitCaption(ExecuteStatement);
+                Open;
+                RepeatFieldNames := dbOrgaMon.HeaderNames(cRepeat);
                 ApiFirst;
                 l := 0;
                 ProgressBar1.max := recordcount;
                 while not(eof) do
                 begin
-                  ParameterL.values['$RID'] := Fields[0].AsString;
+
+                  if (RepeatFieldNames.Count=1) then
+                  begin
+                   // Sonderbehandlung bei nur einem Datenfeld, das
+                   // heist dann IMMER einfach RID
+                   ParameterL.values['$RID'] := Fields[0].AsString;
+                  end else
+                  begin
+                    for k := 0 to pred(RepeatFieldNames.Count) do
+                      ParameterL.values['$'+RepeatFieldNames[k]] := FieldByName(RepeatFieldNames[k]).AsString;
+                  end;
                   RepeatSQL := ResolveParameter(_RepeatSQL);
 
                   while (RepeatSQL <> '') do
@@ -2217,13 +2233,14 @@ begin
                   inc(l);
                   if frequently(StartWait, 333) or eof then
                   begin
-                    setWaitCaption(RepeatSQL);
+                    setWaitCaption(ExecuteStatement);
                     application.processmessages;
                     ProgressBar1.Position := l;
                   end;
                 end;
               end;
               ProgressBar1.Position := 0;
+              RepeatFieldNames.free;
               cRepeat.free;
               //
               inc(RohdatenCount);
@@ -2283,6 +2300,10 @@ begin
                 if (m <> 0) then
                   LoadSQL := LoadSQL + ',';
               end;
+              LoadSQLinsert :=
+               { } 'insert into ' +
+               { } e_r_OLAP_Tabellenname(RohdatenCount) +
+               { } ' (' + LoadSQL + ') values (';
 
               // QuellDatei laden
               InitJoin;
@@ -2308,8 +2329,7 @@ begin
               begin
 
                 //
-                LoadSQLinsert := 'insert into ' + e_r_OLAP_Tabellenname(RohdatenCount) + '(' + LoadSQL + ') values (';
-
+                LoadSQLvalues := '';
                 //
                 for k := 0 to pred(SpaltenNamen.count) do
                 begin
@@ -2317,23 +2337,31 @@ begin
                   case LoadSpalteType[k] of
                     SQL_TEXT:
                       begin
-                        LoadSQLinsert := LoadSQLinsert + '''' + TStringList(BigJoin[m])[LoadSpalte[k]] + '''';
+                        LoadSQLvalue := TStringList(BigJoin[m])[LoadSpalte[k]];
+
+                        // Unquote it
+                        l := pos('"',LoadSQLvalue);
+                        if l=1 then
+                         LoadSQLvalue := ExtractSegmentBetween(LoadSQLvalue, '"', '"');
+
+                        // Quote it
+                        LoadSQLvalues := LoadSQLvalues + '''' + LoadSQLvalue + '''';
 
                       end;
                   else
-                    LoadSQLinsert := LoadSQLinsert + TStringList(BigJoin[m])[LoadSpalte[k]];
+                    LoadSQLvalues := LoadSQLvalues + TStringList(BigJoin[m])[LoadSpalte[k]];
 
                   end;
 
                   if (k < pred(SpaltenNamen.count)) then
-                    LoadSQLinsert := LoadSQLinsert + ',';
+                    LoadSQLvalues := LoadSQLvalues + ',';
                 end;
 
-                ExecuteStatement := LoadSQLinsert + ')';
-                e_x_sql(ExecuteStatement);
+                e_x_sql(LoadSQLinsert + LoadSQLvalues + ')');
 
                 if frequently(StartWait, 333) then
                 begin
+                  setWaitCaption(LoadSQLvalues);
                   ProgressBar1.Position := m;
                   application.processmessages;
                 end;
