@@ -1132,7 +1132,7 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -2419,6 +2419,7 @@ object FormArtikel: TFormArtikel
       ',GTIN'
       ',MENGE_ALTERNATIV_LAGER'
       ',LAGER_ALTERNATIV_R'
+      ',EXTERN_RID'
       'FROM'
       ' ARTIKEL'
       '-- BEGIN'

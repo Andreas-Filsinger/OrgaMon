@@ -1572,6 +1572,7 @@ var
   IMPORT_R: Integer;
   MyStrL: TStringList;
   VerlagNo: string;
+  ExternRID: string;
   XLS: TXLSFIle;
 begin
   //
@@ -1580,6 +1581,8 @@ begin
     BeginHourGlass;
     XLS := TXLSFIle.create(true);
     Aenderungen := 0;
+    VerlagNo:= '';
+    ExternRID:= '';
 
     UserBreak := false;
     Button1.caption := 'Abbruch';
@@ -1669,6 +1672,27 @@ begin
                     end;
                   end;
 
+                  if (Spalte = 'EXTERN_RID') then
+                  begin
+                    if not(SaveChanges) then
+                    begin
+                      ARTIKEL_R := e_r_sql('select RID from ARTIKEL where EXTERN_RID=''' +
+                        CellStr + '''');
+                      if (ARTIKEL_R > 0) then
+                      begin
+                        inc(Aenderungen);
+                        qARTIKEL.ParamByName('CROSSREF').AsInteger := ARTIKEL_R;
+                        qARTIKEL.edit;
+                        SaveChanges := true;
+                      end
+                      else
+                      begin
+                        ExternRID := CellStr;
+                      end;
+                      break;
+                    end;
+                  end;
+
                   if (Spalte = 'SORTIMENT') then
                   begin
                     if not(SaveChanges) then
@@ -1679,6 +1703,7 @@ begin
                       qARTIKEL.edit;
                       qARTIKEL.FieldByName('IMPORT_RID').AsInteger := IMPORT_R;
                       qARTIKEL.FieldByName('VERLAGNO').AsString := VerlagNo;
+                      qARTIKEL.FieldByName('EXTERN_RID').AsString := ExternRID;
                       SaveChanges := true;
                     end;
                     break;

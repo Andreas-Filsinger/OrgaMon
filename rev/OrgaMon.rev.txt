@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.300 (15.09.17) Andreas Filsinger
+
+ Neu: Artikel: neues Feld EXTERN_RID, für einen Abgleich beim Import
+
 Rev 8.299 (12.09.17) Andreas Filsinger
 
  Neu: Artikel: Suchindex: VERLAGNO jetzt auch am Stück suchbar
@@ -11941,6 +11945,17 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.300
+
+alter table ARTIKEL
+add EXTERN_RID CHAR(25);
+
+create index EXTERN_RID_ARTIKEL_A
+on ARTIKEL (EXTERN_RID);
+
+create descending index EXTERN_RID_ARTIKEL_D
+on ARTIKEL (EXTERN_RID);
 
 :8.282
 
