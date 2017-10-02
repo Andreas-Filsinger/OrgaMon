@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.301 (02.10.17) Andreas Filsinger
+
+ Neu: Remote-WebShop: Ablauf ohne FTP möglich
+
 Rev 8.300 (15.09.17) Andreas Filsinger
 
  Neu: Artikel: neues Feld EXTERN_RID, für einen Abgleich beim Import

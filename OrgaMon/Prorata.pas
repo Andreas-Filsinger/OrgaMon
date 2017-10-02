@@ -766,12 +766,7 @@ begin
 
     if ProrataDoMwSt then
     begin
-
-
-                  FPDataLocal.delete(pred(FPDataLocal.count));
-
-
-
+      FPDataLocal.delete(pred(FPDataLocal.count));
       // Erhöhung der Prorata um den MWST Betrag
       FPDataLocal.add('load MWST');
       FPDataLocal.add('MwStSatz=' + UnBreakAble(format('%2.1f',

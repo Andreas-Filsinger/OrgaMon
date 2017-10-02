@@ -261,7 +261,7 @@ begin
                 if not(FormAuftragExtern.DoJob) then
                   Log(cERRORText + ' AuftragExtern fail');
               end;
-            8:
+            8: // "Webshop extern Datenbank"
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doMediumBuilder) then
                   Log(cERRORText + ' Medium Upload fail');

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -900,6 +900,9 @@ var
   FTPError: boolean;
   FTPLastError: string;
 
+  // FTP-to-do-Liste
+  sFTP: TStringList;
+
   procedure locateArtikel(ARTIKEL_R: integer);
   var
     cARTIKEL: TIB_Cursor;
@@ -1064,6 +1067,14 @@ var
             inc(SummeRemoteCount);
           end;
         end;
+      end else
+      begin
+        sFTP.add(
+         {} inttostr(ARTIKEL_R)+';'+
+         {} LocalMusikFName+';'+
+         {} IntToStr(LocalFSize)+';'+
+         {} RemoteMusikFName);
+
       end;
     end
     else
@@ -1090,13 +1101,16 @@ var
   end;
 
 begin
-  if not(FileExists(iOlapPath + 'Artikel.des.Webshop' + cOLAPExtension)) then
+  if not(FileExists(iOlapPath + cOLAP_ArtikelUmfangRemoteShop + cOLAPExtension)) then
     exit;
 
   //
   BeginHourGlass;
   LocalMusikFName := TStringList.Create;
   RemoteMusikFName := TStringList.Create;
+  sFTP := TStringList.create;
+
+  sFTP.add('ARTIKEL_R;LOCAL;SIZE;REMOTE');
 
   EnsureCache;
 
@@ -1108,8 +1122,11 @@ begin
   IsFTP := IsFTPup or IsFTPdel;
 
   // FTP vorbereiten!
-  SolidBeginTransaction;
-  FTPini;
+  if IsFTP then
+  begin
+   SolidBeginTransaction;
+   FTPini;
+  end;
 
   //
   SummeLocalFSize := 0;
@@ -1131,11 +1148,11 @@ begin
   ProgressBar2.max := ARTIKEL.count;
 
   // Wer darf in den WebShop
-  WEBSHOP := FormOLAP.OLAP('Artikel.des.Webshop');
+  WEBSHOP := FormOLAP.OLAP(cOLAP_ArtikelUmfangRemoteShop);
   Log(inttostr(WEBSHOP.count) + ' Artikel im WebShop');
 
   // Wer darf öffentlich dokumentiert werden?
-  MUSIC := FormOLAP.OLAP('Musik aus externen Links');
+  MUSIC := FormOLAP.OLAP(cOLAP_MusikAusExternenLinks);
   Log(inttostr(MUSIC.count) + ' Artikel mit MP3 Erlaubnis');
 
   // Wer darf
@@ -1390,23 +1407,23 @@ begin
   end;
 
   // Verbindung zum Server trennen
-  try
-    if IsFTP then
-    begin
+  if IsFTP then
+  begin
+    try
       with IdFTP1 do
       begin
         if connected then
           Disconnect;
       end;
+    except
+      ;
     end;
-  except
-    ;
+    SolidEndTransaction;
   end;
 
   Log('ENDE');
   ProgressBar2.Position := 0;
 
-  SolidEndTransaction;
   //
   ARTIKEL.free;
   WEBSHOP.free;
@@ -1415,6 +1432,8 @@ begin
 
   FreeAndNil(LocalMusikFName);
   FreeAndNil(RemoteMusikFName);
+  sFTP.savetoFile(DiagnosePath+'Remote-WebShop-FTP.csv');
+  FreeAndNil(sFTP);
 
   EndHourGlass;
 
@@ -1574,7 +1593,7 @@ begin
       // Add('DELETE FROM ARTIKEL;');
 
       //
-      ARTIKEL_R := FormOLAP.OLAP('Artikel.des.WebShop');
+      ARTIKEL_R := FormOLAP.OLAP(cOLAP_ArtikelUmfangRemoteShop);
       AppendStringsToFile(inttostr(ARTIKEL_R.count), format(DiagnosePath + cMySQLdumpFName,
         ['Count']));
 

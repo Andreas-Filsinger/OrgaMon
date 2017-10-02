@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.300; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.301; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1089,6 +1089,12 @@ var
   iShopQRPath: string;
   imemcachedHost: string; // Host [ ":" Port ]
 
+const
+  // remote Shop Sachen
+ cOLAP_ArtikelUmfangRemoteShop = 'Artikel.des.Webshop';
+ cOLAP_MusikAusExternenLinks = 'Musik aus externen Links';
+
+var
   // remote Shop Sachen
   iShopKey: string;
   iShopKonto: string;

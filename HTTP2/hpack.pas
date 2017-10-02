@@ -272,6 +272,7 @@ begin
 end;
 
 function THPACK.B: boolean; inline;
+{$PUSH}{$R-}{$I-}
 begin
 
  if (Octets=0) then
@@ -302,6 +303,7 @@ begin
 
  end;
 end;
+{$POP}
 
 function THPACK.I(MinBits: Byte): Integer;
 const

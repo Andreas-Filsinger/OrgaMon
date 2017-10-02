@@ -35,7 +35,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet5
+    ActivePage = TabSheet2
     Align = alTop
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -378,7 +378,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Button5: TButton
         Left = 508
-        Top = 202
+        Top = 201
         Width = 177
         Height = 41
         Margins.Left = 4
@@ -1027,8 +1027,8 @@ object FormWebShopConnector: TFormWebShopConnector
     ServerSoftware = 'OrgaMon'
     OnQuerySSLPort = IdHTTPServer1QuerySSLPort
     OnCommandGet = IdHTTPServer1CommandGet
-    Left = 68
-    Top = 48
+    Left = 524
+    Top = 72
   end
   object IdServerIOHandlerSSLOpenSSL1: TIdServerIOHandlerSSLOpenSSL
     SSLOptions.Method = sslvTLSv1_2
@@ -1036,13 +1036,13 @@ object FormWebShopConnector: TFormWebShopConnector
     SSLOptions.Mode = sslmServer
     SSLOptions.VerifyMode = []
     SSLOptions.VerifyDepth = 0
-    Left = 68
-    Top = 160
+    Left = 620
+    Top = 88
   end
   object IdServerInterceptLogEvent1: TIdServerInterceptLogEvent
     LogTime = False
     OnLogString = IdServerInterceptLogEvent1LogString
-    Left = 68
-    Top = 104
+    Left = 628
+    Top = 152
   end
 end
