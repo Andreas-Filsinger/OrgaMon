@@ -13,9 +13,9 @@ object Form1: TForm1
     Height = 859
     Top = 0
     Width = 1334
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'HPACK bench'
@@ -28,6 +28,7 @@ object Form1: TForm1
         Width = 1304
         Anchors = [akTop, akLeft, akRight, akBottom]
         Lines.Strings = (
+          '4803333032580770726976617465611d4d6f6e2c203231204f637420323031332032303a31333a323120474d546e1768747470733a2f2f7777772e6578616d706c652e636f6d'
           '82860188f439ce75c875fa5784'
           '---- Soll:'
           ':method=GET'
@@ -46,7 +47,7 @@ object Form1: TForm1
         Width = 1304
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 1
-        Text = '4803333032580770726976617465611d4d6f6e2c203231204f637420323031332032303a31333a323120474d546e1768747470733a2f2f7777772e6578616d706c652e636f6d'
+        Text = '82860188f439ce75c875fa5784'
       end
       object Button1: TButton
         Left = 16

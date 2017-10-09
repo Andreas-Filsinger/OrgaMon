@@ -57,7 +57,7 @@ type
     Octets : UInt16; // Length/Count of visible Octets, allowed to proceed (Security)
 
     // read Functions @ BytePos.BitPos - they move that index
-    function B : boolean; inline; // read 1 Bit from the Turing Machine
+    function B : boolean; // inline; // read 1 Bit from the Turing Machine
     function I (MinBits:Byte) : Integer; // read Cardinal stored in at least MinBits
     function O : RawByteString; // read a octet stream of given length in [Octets]
 
@@ -271,8 +271,12 @@ function decode_integer(data: RawByteString; prefix_bits: Byte):Integer;
 begin
 end;
 
-function THPACK.B: boolean; inline;
-{$PUSH}{$R-}{$I-}
+function THPACK.B: boolean; // inline;
+{$PUSH}
+
+{$OPTIMIZATION ON}
+{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS OFF}
 begin
 
  if (Octets=0) then

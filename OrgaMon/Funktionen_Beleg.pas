@@ -11190,15 +11190,15 @@ begin
     end
     else
     begin
-      if (_EndSumme >= 0) then
-      begin
-        DatensammlerGlobal.add('Beleg Titel=' + _('RECHNUNG NUMMER') + ' ' + inttostr(BELEG_R));
-        DatensammlerGlobal.add('Beleg_kurz=' + _('Rechnung'));
-      end
-      else
+      if IsSoll(_EndSumme) then
       begin
         DatensammlerGlobal.add('Beleg Titel=' + _('GUTSCHRIFT NUMMER') + ' ' + inttostr(BELEG_R));
         DatensammlerGlobal.add('Beleg_kurz=' + _('Gutschrift'));
+      end
+      else
+      begin
+        DatensammlerGlobal.add('Beleg Titel=' + _('RECHNUNG NUMMER') + ' ' + inttostr(BELEG_R));
+        DatensammlerGlobal.add('Beleg_kurz=' + _('Rechnung'));
       end;
     end;
     DatensammlerGlobal.add('ZS=' + UnbreakAble(format('%.2m', [_Netto])));
