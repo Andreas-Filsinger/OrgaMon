@@ -54,7 +54,8 @@ type
     BytePos : UInt16; // 0..Length(iWIRE)-1
     BytePosLast: UInt16; // Length(iWIRE)-1
     BitPos : byte; // 0..7
-    Octets : UInt16; // Length/Count of visible Octets, allowed to proceed (Security)
+    Octets : UInt32; // Length/Count of visible Octets, allowed to proceed (Security)
+    Dummy : Integer;
 
     // read Functions @ BytePos.BitPos - they move that index
     function B : boolean; // inline; // read 1 Bit from the Turing Machine
@@ -271,12 +272,37 @@ function decode_integer(data: RawByteString; prefix_bits: Byte):Integer;
 begin
 end;
 
-function THPACK.B: boolean; // inline;
+{ another approach is to use a automata state
+
+ case automatastate of
+  0 : begin // we are unititalized, AND we read BitPos"0"
+  AutomataState := 2;
+      end;
+  1 : begin
+        BitPos"0"
+      end;
+  2 : begin
+        BitPos"1"
+      end;
+  ...
+  8 : begin
+        BitPos"8"
+        AutomataState := 1;
+      end;
+ end;
+
+ why do methods load "@self" again and again
+}
+
+
+
+function THPACK.B: boolean;  // inline;
 {$PUSH}
 
-{$OPTIMIZATION ON}
+{$OPTIMIZATION LEVEL3}
 {$RANGECHECKS OFF}
 {$OVERFLOWCHECKS OFF}
+{$ASMMODE intel}
 begin
 
  if (Octets=0) then
@@ -286,8 +312,71 @@ begin
    // this is "EOS" in the huffman code-Table
    result := true;
 
+
+// This is a performant Assembler Jump Table
+// optimized for linear case Statements without "gabs" and "ranges"
+// like Automatastates
+asm
+ mov eax,3         // the "case" Selektor
+ imul eax,5        // calculate the complete Offset Index*5 (5=the Sizeof(JumpTableElement))
+ lea rbx, [rip+5]  // load rbx with the instruction Pointer
+                   // "5" because of the Byte-Consumption of the next 2 asm Statements
+ add rax,rbx       // takes "3" Bytes!
+ JMP rax           // takes "2" Bytes!
+ // Jump-Table
+ JMP @case0
+ JMP @case1
+ JMP @case2
+ JMP @case3
+ JMP @case4
+ JMP @case5
+ JMP @case6
+ JMP @case7
+ DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
+ DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
+ DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
+ @case0:
+ ADD rax,$00
+ JMP @caseend
+ @case1:
+ ADD rax,$01
+ JMP @caseend
+ @case2:
+ ADD rax,$02
+ JMP @caseend
+ @case3:
+ ADD rax,$03
+ JMP @caseend
+ @case4:
+ ADD rax,$04
+ JMP @caseend
+ @case5:
+ ADD rax,$05
+ JMP @caseend
+ @case6:
+ ADD rax,$06
+ JMP @caseend
+ @case7:
+ ADD rax,$07
+ JMP @caseend
+ @caseelse:
+ nop
+ @caseend:
+end;
+
  end else
  begin
+
+   case BitPos of
+   0:begin dummy := dummy * 3; end;
+     1: begin dummy := dummy * 5; end;
+     2: begin dummy := dummy * 7; end;
+     3: begin dummy := dummy * 9; end;
+     4: begin dummy := dummy * 11; end;
+     5: begin dummy := dummy * 13; end;
+     6: begin dummy := dummy * 17; end;
+     7:begin dummy := dummy * 19; end;
+   end;
 
    // read the bit
    result := (ord(iWire[succ(BytePos)]) and SingleBitMask[BitPos]) <> 0;
@@ -302,7 +391,17 @@ begin
     BitPos := 0;
 
     // mark that one more Octet has gone now
-    dec(Octets);
+{$IFDEF CPUx86_64}
+asm
+
+ MOV rax,self    // mov rax,QWORD PTR [rbp-0x8]
+ DEC [rax+Octets]  // dec DWORD PTR [rax+0x96]
+
+end; //  end ['RAX']; -> just show how "result" works
+{$else CPUx86_64}
+     dec(Octets);
+{$endif CPUx86_64}
+
    end;
 
  end;
