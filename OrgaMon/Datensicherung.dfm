@@ -150,10 +150,6 @@ object FormDatensicherung: TFormDatensicherung
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 360
         Top = 396
