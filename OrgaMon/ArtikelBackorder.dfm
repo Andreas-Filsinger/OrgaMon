@@ -3,8 +3,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
   Top = 169
   BorderStyle = bsSingle
   Caption = 'Lager und Wareneingang'
-  ClientHeight = 553
-  ClientWidth = 631
+  ClientHeight = 554
+  ClientWidth = 617
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -12,6 +12,9 @@ object FormArtikelBackorder: TFormArtikelBackorder
   Font.Name = 'Verdana'
   Font.Style = []
   OldCreateOrder = False
+  DesignSize = (
+    617
+    554)
   PixelsPerInch = 96
   TextHeight = 14
   object Label1: TLabel
@@ -30,9 +33,10 @@ object FormArtikelBackorder: TFormArtikelBackorder
   end
   object Label5: TLabel
     Left = 9
-    Top = 376
+    Top = 374
     Width = 200
     Height = 14
+    Anchors = [akLeft, akBottom]
     Caption = 'Aufenthalt in '#220'bergangsf'#228'chern'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -40,34 +44,47 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Font.Name = 'Verdana'
     Font.Style = []
     ParentFont = False
+    ExplicitTop = 376
   end
   object Label2: TLabel
-    Left = 450
-    Top = 419
+    Left = 492
+    Top = 430
     Width = 37
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'Agent'
+    ExplicitLeft = 506
+    ExplicitTop = 432
   end
   object Label4: TLabel
-    Left = 377
-    Top = 443
+    Left = 419
+    Top = 454
     Width = 109
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'Erwartete Menge'
+    ExplicitLeft = 433
+    ExplicitTop = 456
   end
   object Label6: TLabel
-    Left = 386
-    Top = 394
+    Left = 428
+    Top = 405
     Width = 101
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'Mindestbestand'
+    ExplicitLeft = 442
+    ExplicitTop = 407
   end
   object Label7: TLabel
-    Left = 384
-    Top = 488
+    Left = 426
+    Top = 499
     Width = 102
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = #220'berzahl Offene'
+    ExplicitLeft = 440
+    ExplicitTop = 501
   end
   object Label8: TLabel
     Left = 8
@@ -77,22 +94,28 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = 'Order-Historie'
   end
   object Label9: TLabel
-    Left = 385
-    Top = 370
+    Left = 427
+    Top = 381
     Width = 102
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'lagernde Menge'
+    ExplicitLeft = 441
+    ExplicitTop = 383
   end
   object Label10: TLabel
-    Left = 333
-    Top = 512
-    Width = 153
+    Left = 375
+    Top = 523
+    Width = 152
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'Vorschlag weitere Order'
+    ExplicitLeft = 389
+    ExplicitTop = 525
   end
   object SpeedButton2: TSpeedButton
     Left = 8
-    Top = 16
+    Top = 13
     Width = 20
     Height = 20
     Hint = 'alle Werte neu ermitteln'
@@ -128,24 +151,25 @@ object FormArtikelBackorder: TFormArtikelBackorder
     OnClick = SpeedButton2Click
   end
   object Label11: TLabel
-    Left = 40
-    Top = 11
-    Width = 339
-    Height = 30
+    Left = 37
+    Top = 13
+    Width = 287
+    Height = 23
     Caption = 'OrgaMon Mengen Information'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -21
-    Font.Name = 'Arial Black'
+    Font.Height = -19
+    Font.Name = 'Verdana'
     Font.Style = []
     ParentFont = False
   end
   object Image2: TImage
-    Left = 571
-    Top = 13
+    Left = 552
+    Top = 8
     Width = 54
     Height = 22
     Cursor = crHandPoint
+    Anchors = [akTop, akRight]
     AutoSize = True
     Picture.Data = {
       07544269746D61704E0E0000424D4E0E00000000000036000000280000003600
@@ -264,22 +288,28 @@ object FormArtikelBackorder: TFormArtikelBackorder
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image2Click
+    ExplicitLeft = 713
   end
   object Label12: TLabel
-    Left = 422
-    Top = 467
+    Left = 464
+    Top = 478
     Width = 64
     Height = 14
+    Anchors = [akRight, akBottom]
     Caption = 'Unbestellt'
+    ExplicitLeft = 478
+    ExplicitTop = 480
   end
   object IB_Grid1: TIB_Grid
     Left = 8
-    Top = 398
+    Top = 393
     Width = 300
-    Height = 120
+    Height = 147
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource3
+    Anchors = [akLeft, akBottom]
     TabOrder = 0
+    ExplicitTop = 395
   end
   object IB_Grid2: TIB_Grid
     Left = 8
@@ -293,11 +323,13 @@ object FormArtikelBackorder: TFormArtikelBackorder
   object IB_Grid3: TIB_Grid
     Left = 320
     Top = 81
-    Width = 300
+    Width = 286
     Height = 120
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
+    ExplicitWidth = 300
   end
   object Button2: TButton
     Left = 283
@@ -309,96 +341,120 @@ object FormArtikelBackorder: TFormArtikelBackorder
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 595
+    Left = 581
     Top = 55
     Width = 25
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = '&O'
     TabOrder = 4
     OnClick = Button3Click
+    ExplicitLeft = 595
   end
   object Button4: TButton
-    Left = 282
-    Top = 372
+    Left = 283
+    Top = 367
     Width = 25
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = '&B'
     TabOrder = 5
     OnClick = Button4Click
   end
   object StaticText1: TStaticText
-    Left = 490
-    Top = 393
+    Left = 532
+    Top = 404
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 6
+    ExplicitLeft = 546
+    ExplicitTop = 406
   end
   object StaticText2: TStaticText
-    Left = 490
-    Top = 417
+    Left = 532
+    Top = 428
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 7
+    ExplicitLeft = 546
+    ExplicitTop = 430
   end
   object StaticText3: TStaticText
-    Left = 490
-    Top = 441
+    Left = 532
+    Top = 452
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 8
+    ExplicitLeft = 546
+    ExplicitTop = 454
   end
   object StaticText4: TStaticText
-    Left = 490
-    Top = 487
+    Left = 532
+    Top = 498
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 9
+    ExplicitLeft = 546
+    ExplicitTop = 500
   end
   object IB_Grid4: TIB_Grid
     Left = 8
     Top = 241
-    Width = 617
-    Height = 120
+    Width = 598
+    Height = 121
     CustomGlyphsSupplied = []
     DataSource = IB_DataSourceOrderHistroie
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 10
+    ExplicitWidth = 612
+    ExplicitHeight = 120
   end
   object StaticText5: TStaticText
-    Left = 490
-    Top = 369
+    Left = 532
+    Top = 380
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 11
+    ExplicitLeft = 546
+    ExplicitTop = 382
   end
   object Button5: TButton
-    Left = 595
+    Left = 581
     Top = 215
     Width = 25
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = '&O'
     TabOrder = 12
     OnClick = Button5Click
+    ExplicitLeft = 595
   end
   object StaticText6: TStaticText
-    Left = 490
-    Top = 511
+    Left = 532
+    Top = 522
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
@@ -409,23 +465,21 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 13
-  end
-  object Panel1: TPanel
-    Left = 1
-    Top = 46
-    Width = 629
-    Height = 2
-    TabOrder = 14
+    ExplicitLeft = 546
+    ExplicitTop = 524
   end
   object StaticText7: TStaticText
-    Left = 490
-    Top = 465
+    Left = 532
+    Top = 476
     Width = 74
     Height = 18
+    Anchors = [akRight, akBottom]
     AutoSize = False
     BorderStyle = sbsSunken
     Caption = '-?-'
-    TabOrder = 15
+    TabOrder = 14
+    ExplicitLeft = 546
+    ExplicitTop = 478
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -455,8 +509,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
       'WHERE '
       ' (ARTIKEL_R=:CROSSREF) AND'
       ' (MENGE_AGENT>0)')
-    Left = 96
-    Top = 169
+    Left = 48
+    Top = 129
   end
   object IB_Query2: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -491,8 +545,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
       ' ((MENGE_ERWARTET>0) or'
       '  (MENGE_UNBESTELLT>0)'
       ' )')
-    Left = 408
-    Top = 161
+    Left = 368
+    Top = 121
   end
   object IB_Query3: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -508,6 +562,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
       'AUSGABEART_R=30'
       'MENGE_RECHNUNG=40'
       'RID=70')
+    FieldsVisible.Strings = (
+      'POSTEN_R=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -516,7 +572,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
         ' (SELECT LAGER.NAME FROM LAGER WHERE BELEG.LAGER_R=LAGER.RID) UE' +
         'FACH,'
       ' POSTEN.AUSGABEART_R,'
-      ' POSTEN.MENGE_RECHNUNG'
+      ' POSTEN.MENGE_RECHNUNG,'
+      ' POSTEN.RID POSTEN_R'
       'FROM'
       ' BELEG'
       'JOIN'
@@ -527,18 +584,20 @@ object FormArtikelBackorder: TFormArtikelBackorder
       ' (POSTEN.ARTIKEL_R=:CROSSREF) AND'
       ' (POSTEN.MENGE_RECHNUNG>0) AND'
       ' (BELEG.LAGER_R IS NOT NULL)')
-    Left = 152
+    Left = 80
     Top = 433
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
     Left = 128
-    Top = 169
+    Top = 129
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2
-    Left = 440
-    Top = 161
+    Left = 448
+    Top = 121
   end
   object IB_DataSource3: TIB_DataSource
     Dataset = IB_Query3
@@ -583,12 +642,14 @@ object FormArtikelBackorder: TFormArtikelBackorder
       'order by '
       ' RID '
       'descending')
-    Left = 24
+    Left = 64
     Top = 281
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSourceOrderHistroie: TIB_DataSource
     Dataset = IB_QueryOrderHistorie
-    Left = 56
+    Left = 192
     Top = 281
   end
 end

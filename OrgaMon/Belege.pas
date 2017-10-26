@@ -759,9 +759,9 @@ begin
   PageControl1.ActivePage := TabSheet1;
 
   // Parameter nachtragen
-  if (Beleg_rid = 0) and (Posten_Rid <> 0) then
+  if (Beleg_rid < cRID_FirstValid) and (Posten_Rid >= cRID_FirstValid) then
     Beleg_rid := e_r_sql('select BELEG_R from POSTEN where RID=' + inttostr(Posten_Rid));
-  if (Kunde_rid = 0) then
+  if (Kunde_rid < cRID_FirstValid) then
     Kunde_rid := e_r_sql('SELECT PERSON_R FROM BELEG WHERE RID=' + inttostr(Beleg_rid));
 
   PERSON_R := Kunde_rid;
@@ -770,13 +770,11 @@ begin
   inc(DisableAfterScroll);
   EnsureThatItsOpen;
 
-  if (Beleg_rid > 0) then
+  if (Beleg_rid >= cRID_FirstValid ) then
     IB_Query1.locate('RID', Beleg_rid, [])
   else
     IB_Query1.last;
 
-  if (Posten_Rid > 0) then
-    IB_Query2.locate('RID', Posten_Rid, []);
 
   dec(DisableAfterScroll);
 
@@ -788,6 +786,8 @@ begin
   DisableAutoRefreshOnActive := false;
 
   IB_Grid2.SetFocus;
+  if (Posten_Rid >= cRID_FirstValid) then
+    IB_Query2.locate('RID', Posten_Rid, []);
   EndHourGlass;
 end;
 
@@ -2652,7 +2652,9 @@ end;
 
 procedure TFormBelege.Button29Click(Sender: TObject);
 begin
-  FormArtikelBackOrder.SetContext(IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
+  FormArtikelBackOrder.SetContext(
+   {} IB_Query2.FieldByName('AUSGABEART_R').AsInteger,
+   {} IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
 procedure TFormBelege.SpeedButton13Click(Sender: TObject);

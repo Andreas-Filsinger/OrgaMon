@@ -955,12 +955,12 @@ begin
   IB_Query1.ParamByName('CROSSREFERENCE').AsInteger := PersonRID;
   Label5.Caption := e_r_Person(Kunde_rid);
 
-  if Beleg_rid > 0 then
+  if Beleg_rid >= cRID_FirstValid then
     IB_Query1.locate('RID', Beleg_rid, [])
   else
     IB_Query1.last;
 
-  if (Posten_Rid > 0) then
+  if (Posten_Rid >= cRID_FirstValid) then
   begin
     IB_Query2.locate('RID', Posten_Rid, []);
   end;
@@ -1807,7 +1807,9 @@ end;
 
 procedure TFormBBelege.Button6Click(Sender: TObject);
 begin
-  FormArtikelBackOrder.SetContext(IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
+  FormArtikelBackOrder.SetContext(
+   {} IB_Query2.FieldByName('AUSGABEART_R').AsInteger,
+   {} IB_Query2.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
 procedure TFormBBelege.IB_Grid2DrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);

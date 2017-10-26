@@ -39,7 +39,7 @@ uses
   // IBO
   IB_UpdateBar, IB_Grid,
   IB_Components, IB_Access,
-  IB_EditButton, IB_Controls;
+  IB_EditButton, IB_Controls, System.ImageList;
 
 type
   TFormBestellArbeitsplatz = class(TForm)
@@ -1408,8 +1408,9 @@ end;
 procedure TFormBestellArbeitsplatz.Button12Click(Sender: TObject);
 begin
   if not(IB_Grid1.datasource.Dataset.FieldByName('ARTIKEL_R').IsNull) then
-    FormArtikelBackOrder.SetContext(IB_Grid1.datasource.Dataset.FieldByName
-      ('ARTIKEL_R').AsInteger);
+    FormArtikelBackOrder.SetContext(
+     {} IB_Grid1.datasource.Dataset.FieldByName('AUSGABEART_R').AsInteger,
+     {} IB_Grid1.datasource.Dataset.FieldByName('ARTIKEL_R').AsInteger);
 end;
 
 procedure TFormBestellArbeitsplatz.IB_Grid1KeyDown(Sender: TObject;

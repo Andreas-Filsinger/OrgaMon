@@ -2,8 +2,8 @@ object FormInventur: TFormInventur
   Left = 4
   Top = 4
   Caption = 'Inventur'
-  ClientHeight = 541
-  ClientWidth = 788
+  ClientHeight = 551
+  ClientWidth = 826
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -19,29 +19,33 @@ object FormInventur: TFormInventur
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 788
-    Height = 541
-    ActivePage = TabSheet2
+    Width = 826
+    Height = 551
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 788
+    ExplicitHeight = 541
     object TabSheet1: TTabSheet
       Caption = 'Durchf'#252'hrung'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 780
+      ExplicitHeight = 513
+      DesignSize = (
+        818
+        523)
       object Label7: TLabel
-        Left = 12
+        Left = 0
         Top = 3
         Width = 80
         Height = 13
         Caption = 'InventurBlock'
       end
       object Label8: TLabel
-        Left = 419
+        Left = 457
         Top = 473
         Width = 68
         Height = 20
+        Anchors = [akRight, akBottom]
         Caption = '&MENGE'
         FocusControl = Edit2
         Font.Charset = ANSI_CHARSET
@@ -50,12 +54,14 @@ object FormInventur: TFormInventur
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 419
       end
       object Label9: TLabel
-        Left = 602
+        Left = 640
         Top = 473
         Width = 72
         Height = 20
+        Anchors = [akRight, akBottom]
         Caption = 'LABELS'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -63,15 +69,18 @@ object FormInventur: TFormInventur
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 602
       end
       object IB_Grid1: TIB_Grid
         Left = 0
         Top = 56
-        Width = 777
+        Width = 815
         Height = 409
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource1
+        Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
+        ExplicitWidth = 777
       end
       object ComboBox1: TComboBox
         Left = 104
@@ -100,10 +109,11 @@ object FormInventur: TFormInventur
         OnClick = Button11Click
       end
       object Edit3: TEdit
-        Left = 675
+        Left = 713
         Top = 467
         Width = 102
         Height = 28
+        Anchors = [akRight, akBottom]
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
         Font.Height = -17
@@ -112,12 +122,14 @@ object FormInventur: TFormInventur
         ParentFont = False
         TabOrder = 3
         OnKeyPress = Edit3KeyPress
+        ExplicitLeft = 675
       end
       object Edit2: TEdit
-        Left = 493
+        Left = 531
         Top = 469
         Width = 99
         Height = 28
+        Anchors = [akRight, akBottom]
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
         Font.Height = -17
@@ -126,6 +138,7 @@ object FormInventur: TFormInventur
         ParentFont = False
         TabOrder = 4
         OnKeyPress = Edit2KeyPress
+        ExplicitLeft = 493
       end
       object ProgressBar1: TProgressBar
         Left = 449
@@ -135,7 +148,7 @@ object FormInventur: TFormInventur
         TabOrder = 5
       end
       object IB_SearchBar1: TIB_SearchBar
-        Left = 136
+        Left = 127
         Top = 23
         Width = 120
         Height = 25
@@ -174,7 +187,7 @@ object FormInventur: TFormInventur
         VisibleButtons = [ubEdit, ubPost, ubCancel, ubRefreshAll]
       end
       object Button1: TButton
-        Left = 8
+        Left = 0
         Top = 23
         Width = 113
         Height = 25
@@ -183,35 +196,37 @@ object FormInventur: TFormInventur
         OnClick = Button1Click
       end
       object CheckBox3: TCheckBox
-        Left = 416
-        Top = 496
+        Left = 150
+        Top = 477
         Width = 257
         Height = 17
+        Anchors = [akRight, akBottom]
         Caption = 'LABEL menge mit "0" vorbelegen'
         Checked = True
         State = cbChecked
         TabOrder = 10
+        ExplicitLeft = 112
       end
       object Button14: TButton
-        Left = 756
-        Top = 34
-        Width = 22
-        Height = 22
+        Left = 790
+        Top = 25
+        Width = 25
+        Height = 25
         Hint = 'Springe zum Artikel, der unten markiert ist'
+        Anchors = [akTop, akRight]
         Caption = '&A'
         ParentShowHint = False
         ShowHint = True
         TabOrder = 11
         OnClick = Button14Click
+        ExplicitLeft = 789
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Auswertungen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 780
+      ExplicitHeight = 513
       object Label1: TLabel
         Left = 8
         Top = 16
@@ -277,6 +292,11 @@ object FormInventur: TFormInventur
     object TabSheet2: TTabSheet
       Caption = 'Definition'
       ImageIndex = 1
+      ExplicitWidth = 780
+      ExplicitHeight = 513
+      DesignSize = (
+        818
+        523)
       object Label3: TLabel
         Left = -1
         Top = 8
@@ -285,77 +305,135 @@ object FormInventur: TFormInventur
         Caption = 'Inventur Bl'#246'cke'
       end
       object Label4: TLabel
-        Left = -1
-        Top = 120
+        Left = 0
+        Top = 129
         Width = 112
         Height = 13
         Caption = 'zugeordnete Artikel'
       end
       object Label5: TLabel
         Left = -1
-        Top = 303
+        Top = 320
         Width = 74
         Height = 13
+        Anchors = [akLeft, akBottom]
         Caption = 'Artikel suche'
+        ExplicitTop = 323
       end
       object Label6: TLabel
         Left = 103
-        Top = 302
+        Top = 320
         Width = 7
         Height = 13
+        Anchors = [akLeft, akBottom]
         Caption = '0'
+        ExplicitTop = 323
       end
       object Label2: TLabel
-        Left = -1
-        Top = 477
+        Left = 0
+        Top = 498
         Width = 38
         Height = 13
+        Anchors = [akLeft, akBottom]
         Caption = 'suche:'
+        ExplicitTop = 500
       end
       object Label10: TLabel
-        Left = 194
-        Top = 475
+        Left = 230
+        Top = 497
         Width = 57
         Height = 13
+        Anchors = [akRight, akBottom]
         Caption = 'von Lager'
+        ExplicitLeft = 192
+        ExplicitTop = 500
       end
       object Label11: TLabel
-        Left = 336
-        Top = 476
+        Left = 374
+        Top = 497
         Width = 52
         Height = 13
+        Anchors = [akRight, akBottom]
         Caption = 'bis Lager'
+        ExplicitLeft = 336
+        ExplicitTop = 500
       end
       object Label12: TLabel
-        Left = 540
-        Top = 475
-        Width = 37
+        Left = 571
+        Top = 497
+        Width = 36
         Height = 13
+        Anchors = [akRight, akBottom]
         Caption = 'Verlag'
+        ExplicitLeft = 533
+        ExplicitTop = 500
+      end
+      object SpeedButton1: TSpeedButton
+        Left = 236
+        Top = 123
+        Width = 25
+        Height = 25
+        Hint = 'Liste neu beginnen'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+          0000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFF000000FFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+          0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton1Click
       end
       object IB_Grid2: TIB_Grid
         Left = 0
         Top = 31
-        Width = 585
+        Width = 623
         Height = 81
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Inventur
+        Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
+        ExplicitWidth = 585
       end
       object IB_Grid3: TIB_Grid
-        Left = -1
-        Top = 137
-        Width = 769
-        Height = 160
+        Left = 0
+        Top = 152
+        Width = 807
+        Height = 145
         CustomGlyphsSupplied = []
         DataSource = IB_DataSource_Artikel
+        Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 1
+        ExplicitWidth = 769
+        ExplicitHeight = 148
       end
       object DrawGrid1: TDrawGrid
         Left = -1
-        Top = 320
-        Width = 769
+        Top = 343
+        Width = 808
         Height = 145
+        Anchors = [akLeft, akRight, akBottom]
         BorderStyle = bsNone
         ColCount = 4
         DefaultColWidth = 130
@@ -371,10 +449,63 @@ object FormInventur: TFormInventur
         OnDblClick = DrawGrid1DblClick
         OnDrawCell = DrawGrid1DrawCell
         OnKeyPress = DrawGrid1KeyPress
+        ExplicitTop = 346
+        ExplicitWidth = 770
+        ColWidths = (
+          130
+          130
+          130
+          130)
+        RowHeights = (
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26
+          26)
       end
       object Button2: TButton
-        Left = 519
-        Top = 0
+        Left = 520
+        Top = 2
         Width = 65
         Height = 25
         Caption = 'starten'
@@ -382,8 +513,8 @@ object FormInventur: TFormInventur
         OnClick = Button2Click
       end
       object IB_UpdateBar2: TIB_UpdateBar
-        Left = 143
-        Top = 0
+        Left = 93
+        Top = 2
         Width = 138
         Height = 25
         Flat = False
@@ -396,46 +527,55 @@ object FormInventur: TFormInventur
         VisibleButtons = [ubEdit, ubInsert, ubDelete, ubPost, ubCancel, ubRefreshAll]
       end
       object IB_Memo1: TIB_Memo
-        Left = 591
-        Top = 28
+        Left = 629
+        Top = 31
         Width = 178
         Height = 81
         DataField = 'INFO'
         DataSource = IB_DataSource_Inventur
+        Anchors = [akTop, akRight]
         TabOrder = 5
         AutoSize = False
+        ExplicitLeft = 591
       end
       object Button6: TButton
-        Left = 743
-        Top = 116
-        Width = 22
-        Height = 22
+        Left = 782
+        Top = 123
+        Width = 25
+        Height = 25
+        Anchors = [akTop, akRight]
         Caption = '&A'
         TabOrder = 6
         OnClick = Button6Click
+        ExplicitLeft = 744
       end
       object Button7: TButton
-        Left = 678
-        Top = 297
+        Left = 716
+        Top = 315
         Width = 91
-        Height = 22
-        Caption = #220'bern&ehmen'
+        Height = 25
+        Anchors = [akRight, akBottom]
+        Caption = 'Hinzun&ehmen'
         TabOrder = 7
         OnClick = Button7Click
+        ExplicitLeft = 678
+        ExplicitTop = 318
       end
       object Button8: TButton
-        Left = 719
-        Top = 116
-        Width = 22
-        Height = 22
+        Left = 754
+        Top = 123
+        Width = 25
+        Height = 25
         Hint = 'Aus diesem Block entfernen'
+        Anchors = [akTop, akRight]
         Caption = '-'
         TabOrder = 8
         OnClick = Button8Click
+        ExplicitLeft = 716
       end
       object IB_UpdateBar3: TIB_UpdateBar
-        Left = 143
-        Top = 111
+        Left = 116
+        Top = 123
         Width = 116
         Height = 25
         Flat = False
@@ -448,77 +588,100 @@ object FormInventur: TFormInventur
         VisibleButtons = [ubEdit, ubPost, ubCancel, ubRefreshAll]
       end
       object Button9: TButton
-        Left = 655
-        Top = 297
-        Width = 22
-        Height = 22
+        Left = 691
+        Top = 315
+        Width = 25
+        Height = 25
+        Anchors = [akRight, akBottom]
         Caption = '&A'
         TabOrder = 10
         OnClick = Button9Click
+        ExplicitLeft = 653
+        ExplicitTop = 318
       end
       object Button12: TButton
-        Left = 496
-        Top = 298
+        Left = 534
+        Top = 315
         Width = 155
-        Height = 21
-        Caption = 'Alle '#252'bernehmen'
+        Height = 25
+        Anchors = [akRight, akBottom]
+        Caption = 'Alle hinzunehmen'
         TabOrder = 11
         OnClick = Button12Click
+        ExplicitLeft = 496
+        ExplicitTop = 318
       end
       object Edit1: TEdit
-        Left = 40
-        Top = 473
+        Left = 42
+        Top = 495
         Width = 148
         Height = 21
+        Anchors = [akLeft, akBottom]
         TabOrder = 12
         OnKeyPress = Edit1KeyPress
+        ExplicitTop = 497
       end
       object Button5: TButton
-        Left = 472
-        Top = 473
+        Left = 512
+        Top = 493
         Width = 51
-        Height = 21
+        Height = 25
+        Anchors = [akRight, akBottom]
         Caption = 'Start'
         TabOrder = 13
         OnClick = Button5Click
+        ExplicitLeft = 474
+        ExplicitTop = 496
       end
       object Button13: TButton
-        Left = 727
-        Top = 473
+        Left = 761
+        Top = 493
         Width = 46
-        Height = 21
+        Height = 25
+        Anchors = [akRight, akBottom]
         Caption = 'Start'
         TabOrder = 14
         OnClick = Button13Click
+        ExplicitLeft = 723
+        ExplicitTop = 496
       end
       object ComboBox2: TComboBox
-        Left = 254
-        Top = 472
+        Left = 290
+        Top = 494
         Width = 81
         Height = 21
         Style = csDropDownList
+        Anchors = [akRight, akBottom]
         TabOrder = 15
         OnChange = ComboBox2Change
+        ExplicitLeft = 252
+        ExplicitTop = 497
       end
       object ComboBox3: TComboBox
-        Left = 391
-        Top = 472
+        Left = 429
+        Top = 494
         Width = 81
         Height = 21
         Style = csDropDownList
+        Anchors = [akRight, akBottom]
         TabOrder = 16
+        ExplicitLeft = 391
+        ExplicitTop = 497
       end
       object ComboBox4: TComboBox
-        Left = 580
-        Top = 473
+        Left = 614
+        Top = 495
         Width = 145
         Height = 21
         Style = csDropDownList
+        Anchors = [akRight, akBottom]
         TabOrder = 17
+        ExplicitLeft = 576
+        ExplicitTop = 498
       end
       object Button10: TButton
         Left = 291
-        Top = 0
+        Top = 2
         Width = 221
         Height = 25
         Caption = 'Inventur '#252'ber "Menge>0" definieren'
@@ -577,13 +740,14 @@ object FormInventur: TFormInventur
       ' A.TITEL '
       'FOR UPDATE')
     ColorScheme = True
+    OrderingItemNo = -4
     OrderingItems.Strings = (
-      'ART#=ARTIKEL.NUMERO;ARTIKEL.NUMERO DESC'
-      'Titel=ARTIKEL.TITEL;ARTIKEL.TITEL DESC'
-      'LAGER=LAGER.NAME;LAGER.NAME DESC'
-      'I-Moment=ARTIKEL.INVENTUR_MOMENT;ARTIKEL.INVENTUR_MOMENT DESC'
-      'BES#=ARTIKEL.VERLAGNO;ARTIKEL.VERLAGNO DESC'
-      'ANZ=ARTIKEL.MENGE;ARTIKEL.MENGE DESC')
+      'ART#=NUMERO;NUMERO DESC'
+      'Titel=TITEL;TITEL DESC'
+      'LAGER=NAME;NAME DESC'
+      'I-Moment=INVENTUR_MOMENT;INVENTUR_MOMENT DESC'
+      'BES#=VERLAGNO;VERLAGNO DESC'
+      'ANZ=MENGE;MENGE DESC')
     OrderingLinks.Strings = (
       'NUMERO=ITEM=1'
       'TITEL=ITEM=2'
@@ -593,13 +757,15 @@ object FormInventur: TFormInventur
       'MENGE=ITEM=6')
     RequestLive = True
     AfterScroll = IB_Query1AfterScroll
-    Left = 328
-    Top = 64
+    Left = 56
+    Top = 80
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 704
-    Top = 8
+    Left = 136
+    Top = 80
   end
   object IB_Query2: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -620,8 +786,8 @@ object FormInventur: TFormInventur
       'FROM ARTIKEL'
       'FOR UPDATE')
     RequestLive = True
-    Left = 752
-    Top = 8
+    Left = 232
+    Top = 80
   end
   object IB_Query_Inventur: TIB_Query
     ColumnAttributes.Strings = (
@@ -635,8 +801,8 @@ object FormInventur: TFormInventur
     ColorScheme = True
     RequestLive = True
     AfterScroll = IB_Query_InventurAfterScroll
-    Left = 48
-    Top = 160
+    Left = 320
+    Top = 88
   end
   object IB_Query_Artikel: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'
@@ -667,10 +833,11 @@ object FormInventur: TFormInventur
       'order by'
       ' L.NAME,A.TITEL')
     ColorScheme = True
+    OrderingItemNo = -2
     OrderingItems.Strings = (
-      'LAGER=LAGER.NAME;LAGER.NAME DESC'
-      'Ttitel=ARTIKEL.TITEL;ARTIKEL.TITEL DESC'
-      'Art#=ARTIKEL.NUMERO;ARTIKEL.NUMERO DESC')
+      'LAGER=NAME;NAME DESC'
+      'Ttitel=TITEL;TITEL DESC'
+      'Art#=NUMERO;NUMERO DESC')
     OrderingLinks.Strings = (
       'NAME=ITEM=1'
       'TITEL=ITEM=2'
@@ -678,17 +845,19 @@ object FormInventur: TFormInventur
     PreventInserting = True
     PreventDeleting = True
     AfterInsert = IB_Query_ArtikelAfterInsert
-    Left = 40
-    Top = 400
+    Left = 56
+    Top = 240
+    ParamValues = (
+      'CROSSREF=')
   end
   object IB_DataSource_Inventur: TIB_DataSource
     Dataset = IB_Query_Inventur
-    Left = 176
-    Top = 168
+    Left = 440
+    Top = 88
   end
   object IB_DataSource_Artikel: TIB_DataSource
     Dataset = IB_Query_Artikel
-    Left = 152
-    Top = 416
+    Left = 168
+    Top = 240
   end
 end

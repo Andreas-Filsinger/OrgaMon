@@ -1,3 +1,29 @@
+{
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+}
 unit ArtikelBackorder;
 //
 // soll Geheimnisse der Mengen-Wirtschaft verraten
@@ -49,7 +75,6 @@ type
     Label10: TLabel;
     SpeedButton2: TSpeedButton;
     Label11: TLabel;
-    Panel1: TPanel;
     Image2: TImage;
     StaticText7: TStaticText;
     Label12: TLabel;
@@ -67,7 +92,7 @@ type
     procedure RefreshValues;
   public
     { Public-Deklarationen }
-    procedure SetContext(ARTIKEL_R: integer);
+    procedure SetContext(AUSGABEART_R, ARTIKEL_R: integer);
 
   end;
 
@@ -84,6 +109,139 @@ uses
 
 {$R *.dfm}
 
+
+const
+
+ SQL_Query1_AA_NULL =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_AGENT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} '  POSTEN ' +
+   {} 'WHERE' +
+   {} '  (AUSGABEART_R is null) and' +
+   {} '  (ARTIKEL_R=:CR) and' +
+   {} '  (MENGE_AGENT>0)';
+ SQL_Query1 =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_AGENT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} '  POSTEN ' +
+   {} 'WHERE' +
+   {} '  (AUSGABEART_R=:CR1) and' +
+   {} '  (ARTIKEL_R=:CR2) and' +
+   {} '  (MENGE_AGENT>0)';
+
+ SQL_Query2_AA_NULL =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'WHERE' +
+   {} ' (AUSGABEART_R is null) and' +
+   {} ' (ARTIKEL_R=:CR) AND' +
+   {} ' ((MENGE_ERWARTET>0) or' +
+   {} '  (MENGE_UNBESTELLT>0)' +
+   {} ' )';
+ SQL_Query2 =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'WHERE' +
+   {} ' (AUSGABEART_R=:CR1) and' +
+   {} ' (ARTIKEL_R=:CR2) AND' +
+   {} ' ((MENGE_ERWARTET>0) or' +
+   {} '  (MENGE_UNBESTELLT>0)' +
+   {} ' )';
+
+  SQL_QueryOrderHistorie_AA_NULL =
+   {} 'select' +
+   {} ' RID,' +
+   {} ' BELEG_R,' +
+   {} ' MOTIVATION,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_GELIEFERT,' +
+   {} ' (select BESTELLT from BBELEG where RID=BPOSTEN.BELEG_R) BESTELLT ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'where' +
+   {} ' (AUSGABEART_R is null) and' +
+   {} ' (ARTIKEL_R=:CR)' +
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending' ;
+  SQL_QueryOrderHistorie =
+   {} 'select' +
+   {} ' RID,' +
+   {} ' BELEG_R,' +
+   {} ' MOTIVATION,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_GELIEFERT,' +
+   {} ' (select BESTELLT from BBELEG where RID=BPOSTEN.BELEG_R) BESTELLT ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'where' +
+   {} ' (AUSGABEART_R=:CR1) and' +
+   {} ' (ARTIKEL_R=:CR2)' +
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending';
+
+  SQL_Query3_AA_NULL =
+   {} 'select' +
+   {} ' BELEG.RID,' +
+   {} ' (SELECT LAGER.NAME FROM LAGER WHERE BELEG.LAGER_R=LAGER.RID) UEFACH,' +
+   {} ' POSTEN.AUSGABEART_R,' +
+   {} ' POSTEN.MENGE_RECHNUNG,' +
+   {} ' POSTEN.RID POSTEN_R ' +
+   {} 'from' +
+   {} ' BELEG ' +
+   {} 'JOIN' +
+   {} ' POSTEN ' +
+   {} 'ON' +
+   {} ' POSTEN.BELEG_R=BELEG.RID ' +
+   {} 'WHERE' +
+   {} ' (POSTEN.AUSGABEART_R is null) and' +
+   {} ' (POSTEN.ARTIKEL_R=:CR) AND' +
+   {} ' (POSTEN.MENGE_RECHNUNG>0) AND' +
+   {} ' (BELEG.LAGER_R IS NOT NULL)' ;
+  SQL_Query3 =
+   {} 'select' +
+   {} ' BELEG.RID,' +
+   {} ' (SELECT LAGER.NAME FROM LAGER WHERE BELEG.LAGER_R=LAGER.RID) UEFACH,' +
+   {} ' POSTEN.AUSGABEART_R,' +
+   {} ' POSTEN.MENGE_RECHNUNG,' +
+   {} ' POSTEN.RID POSTEN_R ' +
+   {} 'from' +
+   {} ' BELEG ' +
+   {} 'JOIN' +
+   {} ' POSTEN ' +
+   {} 'ON' +
+   {} ' (POSTEN.BELEG_R=BELEG.RID) ' +
+   {} 'WHERE' +
+   {} ' (POSTEN.AUSGABEART_R=:CR1) and' +
+   {} ' (POSTEN.ARTIKEL_R=:CR2) AND' +
+   {} ' (POSTEN.MENGE_RECHNUNG>0) AND' +
+   {} ' (BELEG.LAGER_R IS NOT NULL)' ;
+
 procedure TFormArtikelBackorder.Button1Click(Sender: TObject);
 begin
   RefreshValues;
@@ -91,62 +249,90 @@ end;
 
 procedure TFormArtikelBackorder.Button2Click(Sender: TObject);
 begin
-  FormBelege.SetContext(0, IB_Query1.FieldByName('BELEG_R').AsInteger);
+  FormBelege.SetContext(
+   {} cRID_Null,
+   {} IB_Query1.FieldByName('BELEG_R').AsInteger,
+   {} IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormArtikelBackorder.Button4Click(Sender: TObject);
 begin
-  FormBelege.SetContext(0, IB_Query3.FieldByName('BELEG.RID').AsInteger);
+  FormBelege.SetContext(
+   {} cRID_Null,
+   {} IB_Query3.FieldByName('BELEG.RID').AsInteger,
+   {} IB_Query3.FieldByName('POSTEN_R').AsInteger);
 end;
 
 procedure TFormArtikelBackorder.Button3Click(Sender: TObject);
 begin
-  FormBBelege.SetContext(0, IB_Query2.FieldByName('BELEG_R').AsInteger);
-end;
-
-procedure TFormArtikelBackorder.SetContext(ARTIKEL_R: integer);
-begin
-  show;
-  _ARTIKEL_R := ARTIKEL_R;
-  RefreshValues;
+ if IB_Query2.FieldByName('BELEG_R').IsNotNull then
+  FormBBelege.SetContext(
+   {} cRID_Null,
+   {} IB_Query2.FieldByName('BELEG_R').AsInteger,
+   {} IB_Query2.FieldByName('RID').AsInteger)
+ else
+  ShowMessage('Es ist ein Bestellvorschlag, hier ist noch keine Order zugeordnet!');
 end;
 
 procedure TFormArtikelBackorder.Button5Click(Sender: TObject);
 begin
   if IB_QueryOrderHistorie.FieldByName('BELEG_R').IsNotNull then
-    FormBBelege.SetContext(0, IB_QueryOrderHistorie.FieldByName('BELEG_R').AsInteger, IB_QueryOrderHistorie.FieldByName('RID').AsInteger)
+    FormBBelege.SetContext(
+     {} cRID_Null,
+     {} IB_QueryOrderHistorie.FieldByName('BELEG_R').AsInteger,
+     {} IB_QueryOrderHistorie.FieldByName('RID').AsInteger)
   else
-    beep;
+    ShowMessage('Es ist ein Bestellvorschlag, hier ist noch keine Order zugeordnet!');
+end;
+
+procedure TFormArtikelBackorder.SetContext(AUSGABEART_R, ARTIKEL_R: integer);
+begin
+  show;
+  _ARTIKEL_R := ARTIKEL_R;
+  _AUSGABEART_R := AUSGABEART_R;
+  RefreshValues;
 end;
 
 procedure TFormArtikelBackorder.RefreshValues;
 
-  procedure ReFreshAndSet(IBQ: TIB_Query);
+  procedure ReFreshAndSet(IBQ: TIB_Query; sSQL, sSQL_AA_NULL : string);
   begin
     with IBQ do
     begin
-      close;
-      ParamByName('CROSSREF').AsInteger := _ARTIKEL_R;
-      open;
+     close;
+     if (_AUSGABEART_R=0) then
+     begin
+      sql.text := sSQL_AA_NULL;
+      ParamByName('CR').AsInteger := _ARTIKEL_R;
+     end else
+     begin
+      sql.text := sSQL;
+      ParamByName('CR1').AsInteger := _AUSGABEART_R;
+      ParamByName('CR2').AsInteger := _ARTIKEL_R;
+     end;
+     open;
     end;
   end;
 
 begin
 
   //
-  ReFreshAndSet(IB_Query1);
-  ReFreshAndSet(IB_Query2);
-  ReFreshAndSet(IB_Query3);
-  ReFreshAndSet(IB_QueryOrderHistorie);
+  ReFreshAndSet(IB_Query1,SQL_Query1, SQL_Query1_AA_NULL);
+  ReFreshAndSet(IB_Query2,SQL_Query2, SQL_Query2_AA_NULL);
+  ReFreshAndSet(IB_Query3,SQL_Query3, SQL_Query3_AA_NULL);
+  ReFreshAndSet(IB_QueryOrderHistorie,SQL_QueryOrderHistorie, SQL_QueryOrderHistorie_AA_NULL);
 
   //
-    StaticText5.caption := inttostr(e_r_Menge(cRID_NULL, _AUSGABEART_R, _ARTIKEL_R));
-    StaticText1.caption := inttostr(e_r_MindestMenge(_AUSGABEART_R, _ARTIKEL_R));
-    StaticText2.caption := inttostr(e_r_AgentMenge(_AUSGABEART_R, _ARTIKEL_R));
-    StaticText3.caption := inttostr(e_r_ErwarteteMenge(_AUSGABEART_R, _ARTIKEL_R));
-    StaticText4.Caption := inttostr(e_r_UngelieferteMengeUeberBedarf(_AUSGABEART_R, _ARTIKEL_R));
-    StaticText6.caption := inttostr(e_r_VorschlagMenge(_AUSGABEART_R, _ARTIKEL_R));
-    StaticText7.caption := inttostr(e_r_UnbestellteMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText5.caption := inttostr(e_r_Menge(cRID_NULL, _AUSGABEART_R, _ARTIKEL_R));
+  StaticText1.caption := inttostr(e_r_MindestMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText2.caption := inttostr(e_r_AgentMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText3.caption := inttostr(e_r_ErwarteteMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText4.Caption := inttostr(e_r_UngelieferteMengeUeberBedarf(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText6.caption := inttostr(e_r_VorschlagMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText7.caption := inttostr(e_r_UnbestellteMenge(_AUSGABEART_R, _ARTIKEL_R));
+
+  //
+  label11.Caption := e_r_Artikel(_AUSGABEART_R, _ARTIKEL_R);
 
 end;
 

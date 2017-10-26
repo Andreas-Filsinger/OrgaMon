@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -211,6 +211,7 @@ type
     SpeedButton27: TSpeedButton;
     Button4: TButton;
     Button21: TButton;
+    Button22: TButton;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
@@ -280,6 +281,7 @@ type
     procedure SpeedButton22Click(Sender: TObject);
     procedure SpeedButton27Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button22Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _VERLAG_R: Integer;
@@ -620,7 +622,9 @@ end;
 
 procedure TFormArtikel.Button10Click(Sender: TObject);
 begin
-  FormArtikelBackOrder.SetContext(IB_Query1.FieldByName('RID').AsInteger);
+  FormArtikelBackOrder.SetContext(
+   {} 0,
+   {} IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormArtikel.Button11Click(Sender: TObject);
@@ -1220,6 +1224,13 @@ end;
 procedure TFormArtikel.Button21Click(Sender: TObject);
 begin
  w_GTIN(0, IB_Query1.FieldByName('RID').AsInteger);
+end;
+
+procedure TFormArtikel.Button22Click(Sender: TObject);
+begin
+  FormArtikelBackOrder.SetContext(
+   {} IB_Query13.FieldByName('AUSGABEART_R').AsInteger,
+   {} IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormArtikel.Button4Click(Sender: TObject);

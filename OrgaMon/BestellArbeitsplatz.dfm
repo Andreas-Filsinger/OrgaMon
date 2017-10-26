@@ -551,7 +551,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
       object Label10: TLabel
         Left = 272
         Top = 28
-        Width = 128
+        Width = 127
         Height = 13
         Caption = 'Werktag(en) Lieferzeit'
       end
@@ -584,10 +584,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = '&Wareneingang'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 215
         Top = 37
@@ -689,14 +685,14 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object Label2: TLabel
       Left = 105
       Top = 42
-      Width = 42
+      Width = 41
       Height = 13
       Caption = 'Verlag:'
     end
     object Label3: TLabel
       Left = 6
       Top = 114
-      Width = 142
+      Width = 141
       Height = 13
       Caption = 'Bestellnummer (Verlag):'
     end
@@ -950,7 +946,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C010127009800700010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127009800740010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

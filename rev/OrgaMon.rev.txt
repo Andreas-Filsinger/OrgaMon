@@ -19,6 +19,19 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.304 (26.10.17) Andreas Filsinger
+
+ Bug: Inventur: Sortierung nach TITEL war nicht möglich
+
+ Neu: Inventur: Symbol "Neue" Inventur starten indem die aktuelle Liste geleert wird
+
+Rev 8.303 (26.10.17) Andreas Filsinger
+
+ Bug: Beleg: Anspringen einer bekannten Position inerhalb des Beleges misslang
+ Bug: Artikel: [M] vermischt Hauptartikel mit Ausgabeart
+
+ Neu: Artikel: [M] Anzeige des Artikels mit seiner Ausgabeart im Titel
+
 Rev 8.302 (09.10.17) Andreas Filsinger
 
  Bug: Beleg: Erkennung: "Gutschrift" / "Rechnung" Anfällig für Rundungsproblematik

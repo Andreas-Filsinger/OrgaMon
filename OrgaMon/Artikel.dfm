@@ -1132,7 +1132,7 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -1394,6 +1394,18 @@ object FormArtikel: TFormArtikel
         ShowHint = True
         TabOrder = 4
         OnClick = Button4Click
+      end
+      object Button22: TButton
+        Left = 218
+        Top = 0
+        Width = 22
+        Height = 22
+        Hint = 'Mengen anzeigen'
+        Caption = 'M'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnClick = Button22Click
       end
     end
     object TabSheet5: TTabSheet

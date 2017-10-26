@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ uses
   IB_NavigationBar, IB_SearchBar, Grids,
   IB_Grid, IB_Components, ExtCtrls,
   ComCtrls, StdCtrls,
-  IB_Controls, WordIndex;
+  IB_Controls, WordIndex, Vcl.Buttons;
 
 type
   TFormInventur = class(TForm)
@@ -99,6 +99,7 @@ type
     Button1: TButton;
     CheckBox3: TCheckBox;
     Button14: TButton;
+    SpeedButton1: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -127,6 +128,7 @@ type
     procedure Button13Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button14Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     LastRequestedRID: integer;
@@ -167,7 +169,7 @@ uses
   QueryEdit,  Artikel,
   html, ArtikelVerlag,
   Lager, Datenbank,
-  wanfix32;
+  wanfix32, dborgamon;
 
 {$R *.DFM}
 
@@ -790,6 +792,18 @@ begin
   dARTIKEL.free;
 end;
 
+procedure TFormInventur.SpeedButton1Click(Sender: TObject);
+begin
+ if IB_Query_Inventur.FieldByName('RID').IsNotNull then
+  if doit('Aktuelle Artikel-Liste wirklich neu beginnen') then
+  begin
+   BeginHourGlass;
+   e_x_sql('update ARTIKEL set INVENTUR_R=null where INVENTUR_R='+IB_Query_Inventur.FieldByName('RID').AsString);
+   IB_Query_Artikel.refresh;
+   EndHourGlass;
+  end;
+end;
+
 procedure TFormInventur.Start(RID: integer);
 var
   qARTIKEL: TIB_QUERY;
@@ -906,13 +920,10 @@ begin
     BeginHourGlass;
     for n := 0 to pred(ItemRIDS.count) do
       add(integer(ItemRIDS[n]));
-
-
     IB_Query_Artikel.refresh;
     edit1.SetFocus;
     EndHourGlass;
   end;
-
 end;
 
 procedure TFormInventur.Button2Click(Sender: TObject);
@@ -1003,7 +1014,7 @@ begin
     ApiFirst;
     while not (eof) do
     begin
-      ResultList.add(TObject(FIeldByNAme('RID').AsInteger));
+      ResultList.add(TObject(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
