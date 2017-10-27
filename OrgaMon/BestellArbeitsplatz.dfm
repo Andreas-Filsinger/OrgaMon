@@ -537,10 +537,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = '&Bestellen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 214
         Top = 28
@@ -638,10 +634,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet5: TTabSheet
       Caption = '&Qualit'#228'ts-Sicherung'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 16
         Top = 41
@@ -946,7 +938,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C010127009800740010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127009800780010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2573,18 +2565,6 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Dataset = IB_QueryLA1
     Left = 472
     Top = 256
-  end
-  object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
-    IB_Connection = DataModuleDatenbank.IB_Connection1
-    SQL.Strings = (
-      'DELETE FROM'
-      ' BPOSTEN'
-      'WHERE'
-      ' (MENGE_UNBESTELLT<>0) AND'
-      ' (MOTIVATION<=10)')
-    Left = 784
-    Top = 96
   end
   object IB_DataSource4: TIB_DataSource
     Dataset = IB_Query3

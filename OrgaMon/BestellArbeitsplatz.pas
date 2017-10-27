@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -109,7 +109,6 @@ type
     Button7: TButton;
     Button8: TButton;
     Button9: TButton;
-    IB_DSQL1: TIB_DSQL;
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
     IB_DataSource4: TIB_DataSource;
@@ -234,7 +233,7 @@ uses
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  Lager, Artikel,
+  Lager, Artikel, gplists,
   Belege, BBelege, Person,
   WarenBewegung, html, FolgeSetzen,
   CareTakerClient, ArtikelBackOrder, OLAP,
@@ -262,7 +261,7 @@ type
     // Artikel-Zusatzdaten
     titel: string;
     numero: string;
-    Menge: Integer;
+    Menge_Lager: Integer;
     Menge_mindest: Integer;
     verlagno: string;
     Verlag_r: Integer;
@@ -288,7 +287,7 @@ var
   Last_verlag_r: Integer;
   TAN: Integer;
 
-  function BA_locate(pAUSGABEART_R, pRID: Integer): TBedarf;
+  function BA_locate(pAUSGABEART_R, pARTIKEL_R: Integer): TBedarf;
   var
     Newbedarf: TBedarf;
     n: Integer;
@@ -297,7 +296,7 @@ var
     for n := 0 to pred(BedarfsAnalyse.count) do
       with TBedarf(BedarfsAnalyse[n]) do
       begin
-        if (pRID = RID) and (pAUSGABEART_R = AUSGABEART_R) then
+        if (pARTIKEL_R = RID) and (pAUSGABEART_R = AUSGABEART_R) then
         begin
           result := TBedarf(BedarfsAnalyse[n]);
           break;
@@ -307,24 +306,32 @@ var
     begin
       with IB_QueryBV2 do
       begin
-        ParamByName('CROSSREF').AsInteger := pRID;
+        ParamByName('CROSSREF').AsInteger := pARTIKEL_R;
         if not(Active) then
           Open;
+
+        // Neueintrag
         Newbedarf := TBedarf.create;
         BedarfsAnalyse.add(Newbedarf);
         with Newbedarf do
         begin
 
-          RID := pRID;
+          RID := pARTIKEL_R;
           AUSGABEART_R := pAUSGABEART_R;
 
           Verlag_r := FieldByName('VERLAG_R').AsInteger;
-          Menge := FieldByName('MENGE').AsInteger;
           titel := FieldByName('TITEL').AsString;
           numero := FieldByName('NUMERO').AsString;
           verlagno := FieldByName('VERLAGNO').AsString;
-          Menge_mindest := FieldByName('MINDESTBESTAND').AsInteger;
-
+          if (pAUSGABEART_R<cRID_Firstvalid) then
+          begin
+           Menge_Lager := FieldByName('MENGE').AsInteger;
+           Menge_mindest := FieldByName('MINDESTBESTAND').AsInteger;
+          end else
+          begin
+           Menge_Lager := e_r_Menge(cRID_NULL, pAUSGABEART_R, pARTIKEL_R);
+           Menge_mindest := e_r_MindestMenge(pAUSGABEART_R, pARTIKEL_R);
+          end;
         end;
       end;
       result := Newbedarf;
@@ -360,8 +367,9 @@ begin
     Open;
     while not(eof) do
     begin
-      BA := BA_locate(FieldByName('AUSGABEART_R').AsInteger,
-        FieldByName('ARTIKEL_R').AsInteger);
+      BA := BA_locate(
+        {} FieldByName('AUSGABEART_R').AsInteger,
+        {} FieldByName('ARTIKEL_R').AsInteger);
       BA.Menge_agent := FieldByName('C_ME_AG').AsInteger;
       next;
     end;
@@ -375,22 +383,23 @@ begin
     Open;
     while not(eof) do
     begin
-      BA := BA_locate(cAUSGABEART_OHNE, FieldByName('RID').AsInteger);
+      BA := BA_locate(
+       {} cAUSGABEART_OHNE,
+       {} FieldByName('RID').AsInteger);
       next;
     end;
     Close;
   end;
 
-  // imp pend: Jetzt noch weitere Ausgabearten hinzufügen
-
-  // Nun alle "offenen" Order aufzeigen
+  // Nun alle "offenen" Order aufzeigen und Berechnungswerte ergänzen
   with IB_QueryBV3 do
   begin
     Open;
     while not(eof) do
     begin
-      BA := BA_locate(FieldByName('AUSGABEART_R').AsInteger,
-        FieldByName('ARTIKEL_R').AsInteger);
+      BA := BA_locate(
+        {} FieldByName('AUSGABEART_R').AsInteger,
+        {} FieldByName('ARTIKEL_R').AsInteger);
       with BA do
       begin
         Menge_erwartet := Menge_erwartet + FieldByName('C_ME_ER').AsInteger;
@@ -411,9 +420,9 @@ begin
     with BA do
     begin
 
-      //
+      // Weltformel
       Menge_fehlt := (Menge_mindest + Menge_agent) -
-        (Menge + Menge_erwartet + Menge_unbestellt);
+        (Menge_Lager + Menge_erwartet + Menge_unbestellt);
 
       //
       if (Last_verlag_r <> Verlag_r) then
@@ -424,13 +433,17 @@ begin
 
       if (Menge_fehlt > 0) then
       begin
-        e_w_MehrBedarfsAnzeige(AUSGABEART_R, RID, -1, Menge_fehlt,
-          eT_MotivationMindestbestand);
+        e_w_MehrBedarfsAnzeige(
+         {} AUSGABEART_R,
+         {} RID,
+         {} cRID_Null,
+         {} Menge_fehlt,
+         {} eT_MotivationMindestbestand);
       end;
 
       OutList.add(format('%2dx LAG=%2d MIN=%2d UNB=%2d ERW=%2d AGE=%2d %s',
 
-        [Menge_fehlt, Menge, Menge_mindest, Menge_unbestellt, Menge_erwartet,
+        [Menge_fehlt, Menge_Lager, Menge_mindest, Menge_unbestellt, Menge_erwartet,
         Menge_agent, ' ' + numero + '.' + IntToStr(AUSGABEART_R) + ' ' + '[' +
         verlagno + '] ' + titel])
 
@@ -931,12 +944,23 @@ begin
 end;
 
 procedure TFormBestellArbeitsplatz.ToolButton3Click(Sender: TObject);
+var
+ BPOSTEN : TgpIntegerList;
+ n : integer;
 begin
   // Bestellvorschlag aufräumen
   if doit('Alle durch den Bestellvorschlag erzeugten Positionen löschen?') then
   begin
     BeginHourGlass;
-    IB_DSQL1.Execute;
+    BPOSTEN := e_r_sqlm(
+     {} 'select RID from BPOSTEN where' +
+     {} ' (MENGE_UNBESTELLT<>0) and'+
+        ' (MOTIVATION<=10)');
+    for n := 0 to pred(BPOSTEN.count) do
+    begin
+     e_w_preDeleteBPosten(BPOSTEN[n]);
+     e_x_sql('delete from BPOSTEN where RID='+inttostr(BPOSTEN[n]));
+    end;
     IB_Grid1.datasource.Dataset.RefreshAll;
     EndHourGlass;
   end;

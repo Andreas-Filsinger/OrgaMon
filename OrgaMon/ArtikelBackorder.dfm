@@ -1,10 +1,9 @@
 object FormArtikelBackorder: TFormArtikelBackorder
   Left = 193
   Top = 169
-  BorderStyle = bsSingle
   Caption = 'Lager und Wareneingang'
-  ClientHeight = 554
-  ClientWidth = 617
+  ClientHeight = 540
+  ClientWidth = 607
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -13,8 +12,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
   Font.Style = []
   OldCreateOrder = False
   DesignSize = (
-    617
-    554)
+    607
+    540)
   PixelsPerInch = 96
   TextHeight = 14
   object Label1: TLabel
@@ -33,7 +32,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
   end
   object Label5: TLabel
     Left = 9
-    Top = 374
+    Top = 360
     Width = 200
     Height = 14
     Anchors = [akLeft, akBottom]
@@ -47,8 +46,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitTop = 376
   end
   object Label2: TLabel
-    Left = 492
-    Top = 430
+    Left = 482
+    Top = 416
     Width = 37
     Height = 14
     Anchors = [akRight, akBottom]
@@ -57,8 +56,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitTop = 432
   end
   object Label4: TLabel
-    Left = 419
-    Top = 454
+    Left = 409
+    Top = 440
     Width = 109
     Height = 14
     Anchors = [akRight, akBottom]
@@ -67,8 +66,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitTop = 456
   end
   object Label6: TLabel
-    Left = 428
-    Top = 405
+    Left = 418
+    Top = 391
     Width = 101
     Height = 14
     Anchors = [akRight, akBottom]
@@ -77,8 +76,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitTop = 407
   end
   object Label7: TLabel
-    Left = 426
-    Top = 499
+    Left = 416
+    Top = 485
     Width = 102
     Height = 14
     Anchors = [akRight, akBottom]
@@ -94,8 +93,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = 'Order-Historie'
   end
   object Label9: TLabel
-    Left = 427
-    Top = 381
+    Left = 417
+    Top = 367
     Width = 102
     Height = 14
     Anchors = [akRight, akBottom]
@@ -104,8 +103,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitTop = 383
   end
   object Label10: TLabel
-    Left = 375
-    Top = 523
+    Left = 365
+    Top = 509
     Width = 152
     Height = 14
     Anchors = [akRight, akBottom]
@@ -116,8 +115,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
   object SpeedButton2: TSpeedButton
     Left = 8
     Top = 13
-    Width = 20
-    Height = 20
+    Width = 25
+    Height = 25
     Hint = 'alle Werte neu ermitteln'
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
@@ -151,8 +150,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     OnClick = SpeedButton2Click
   end
   object Label11: TLabel
-    Left = 37
-    Top = 13
+    Left = 70
+    Top = 14
     Width = 287
     Height = 23
     Caption = 'OrgaMon Mengen Information'
@@ -164,7 +163,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ParentFont = False
   end
   object Image2: TImage
-    Left = 552
+    Left = 542
     Top = 8
     Width = 54
     Height = 22
@@ -291,8 +290,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitLeft = 713
   end
   object Label12: TLabel
-    Left = 464
-    Top = 478
+    Left = 454
+    Top = 464
     Width = 64
     Height = 14
     Anchors = [akRight, akBottom]
@@ -300,16 +299,53 @@ object FormArtikelBackorder: TFormArtikelBackorder
     ExplicitLeft = 478
     ExplicitTop = 480
   end
+  object SpeedButton1: TSpeedButton
+    Left = 36
+    Top = 13
+    Width = 25
+    Height = 25
+    Hint = 'Zeige alle Ausgabearten'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000F5F5F5E8E8E8
+      E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E7E7E7EBEBEBF0F0F0F6F6
+      F6FBFBFBFEFEFEFFFFFFECECEC4C4CE62E5DE32EB4E152B24D80BC2DD7C72DC9
+      8643A8487FA75CB9B27BD3E0E0E1EDEDEDF7F7F7FDFDFDFFFFFFFFFFFF7070FF
+      3753FF37CDFF59CD7D7BD338FBF83AFDBC41D36697CF6DC2D184FFE1CFECFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFA3A3FF3B3EFF3BBCFF4DCEC26FCF3FDAF342FF
+      D645E7917BD36FACD68CEEDEA7FFFAF2FFFFFFFFFFFFFFFFFFFFFFFFFFDADAFF
+      4040FF4294FF47D0F471D15CA0DF4BFFF351FBC361DC86A9DB8DC4E1ADF9EAC8
+      FFFAF2FFFEFEFFFFFFFFFFFFFFFFFFFF6F6FFF4962FF4DCEFF65D3AF82D557DA
+      F25FFFE668F6BF88E39FBEE6B0D6EDCDF8F4E2FFFBF5FFFFFFFFFFFFFFFFFFFF
+      C5C5FF5151FF57A4FF5ED6F683D8819DDE6DF2F978FFE787F8D0A6EDC0D2F0CF
+      E3F6E5F4FBF5FDFFFFFFFFFFFFFFFFFFFBFBFF8383FF606CFF67CCFF76DBE799
+      DE86B3E687F5FA97FFF0A7FDE6BDF8E1DCF8E8EFFCF6F9FFFFFFFFFFFFFFFFFF
+      FFFFFFE3E3FF7575FF738FFF7BD9FF8FE1E1ADE49DC1EAA2EDF9B3FFFBC4FFF6
+      D6FEF6E7FEFAF7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCBCBFF8080FF87A6FF92
+      DFFFA4E7EFBEEABDCDEEBCE4F6CCF8FCDBFEFEEAFFFEF7FFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFCACAFF9393FF9CB0FFA9E2FFB7ECFBCBF0E4DCF3D7E8F7
+      E0F2FAECFBFDF7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD9D9FFAB
+      ABFFB1B7FFBDDBFFCAF0FFD7F5FCE5F8F6F1FBF4F9FDF9FFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0F0FFC9C9FFC3C3FFCFD6FFDBEAFFE6F6
+      FFF0FBFFF9FDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFDFDFFEDEDFFDDDDFFDFDFFFE8E9FFF1F3FFFAFBFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9F9FFF5F5
+      FFF6F6FFFBFBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton1Click
+  end
   object IB_Grid1: TIB_Grid
     Left = 8
-    Top = 393
+    Top = 379
     Width = 300
     Height = 147
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource3
     Anchors = [akLeft, akBottom]
     TabOrder = 0
-    ExplicitTop = 395
+    ExplicitTop = 393
   end
   object IB_Grid2: TIB_Grid
     Left = 8
@@ -323,13 +359,13 @@ object FormArtikelBackorder: TFormArtikelBackorder
   object IB_Grid3: TIB_Grid
     Left = 320
     Top = 81
-    Width = 286
+    Width = 276
     Height = 120
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource2
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
-    ExplicitWidth = 300
+    ExplicitWidth = 286
   end
   object Button2: TButton
     Left = 283
@@ -341,7 +377,7 @@ object FormArtikelBackorder: TFormArtikelBackorder
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 581
+    Left = 571
     Top = 55
     Width = 25
     Height = 25
@@ -349,21 +385,22 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = '&O'
     TabOrder = 4
     OnClick = Button3Click
-    ExplicitLeft = 595
+    ExplicitLeft = 581
   end
   object Button4: TButton
     Left = 283
-    Top = 367
+    Top = 353
     Width = 25
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = '&B'
     TabOrder = 5
     OnClick = Button4Click
+    ExplicitTop = 367
   end
   object StaticText1: TStaticText
-    Left = 532
-    Top = 404
+    Left = 522
+    Top = 390
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -371,12 +408,12 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 6
-    ExplicitLeft = 546
-    ExplicitTop = 406
+    ExplicitLeft = 532
+    ExplicitTop = 404
   end
   object StaticText2: TStaticText
-    Left = 532
-    Top = 428
+    Left = 522
+    Top = 414
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -384,12 +421,12 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 7
-    ExplicitLeft = 546
-    ExplicitTop = 430
+    ExplicitLeft = 532
+    ExplicitTop = 428
   end
   object StaticText3: TStaticText
-    Left = 532
-    Top = 452
+    Left = 522
+    Top = 438
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -397,12 +434,12 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 8
-    ExplicitLeft = 546
-    ExplicitTop = 454
+    ExplicitLeft = 532
+    ExplicitTop = 452
   end
   object StaticText4: TStaticText
-    Left = 532
-    Top = 498
+    Left = 522
+    Top = 484
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -410,24 +447,24 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 9
-    ExplicitLeft = 546
-    ExplicitTop = 500
+    ExplicitLeft = 532
+    ExplicitTop = 498
   end
   object IB_Grid4: TIB_Grid
     Left = 8
     Top = 241
-    Width = 598
-    Height = 121
+    Width = 588
+    Height = 107
     CustomGlyphsSupplied = []
     DataSource = IB_DataSourceOrderHistroie
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 10
-    ExplicitWidth = 612
-    ExplicitHeight = 120
+    ExplicitWidth = 598
+    ExplicitHeight = 121
   end
   object StaticText5: TStaticText
-    Left = 532
-    Top = 380
+    Left = 522
+    Top = 366
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -435,11 +472,11 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 11
-    ExplicitLeft = 546
-    ExplicitTop = 382
+    ExplicitLeft = 532
+    ExplicitTop = 380
   end
   object Button5: TButton
-    Left = 581
+    Left = 571
     Top = 215
     Width = 25
     Height = 25
@@ -447,11 +484,11 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = '&O'
     TabOrder = 12
     OnClick = Button5Click
-    ExplicitLeft = 595
+    ExplicitLeft = 581
   end
   object StaticText6: TStaticText
-    Left = 532
-    Top = 522
+    Left = 522
+    Top = 508
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -465,12 +502,12 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 13
-    ExplicitLeft = 546
-    ExplicitTop = 524
+    ExplicitLeft = 532
+    ExplicitTop = 522
   end
   object StaticText7: TStaticText
-    Left = 532
-    Top = 476
+    Left = 522
+    Top = 462
     Width = 74
     Height = 18
     Anchors = [akRight, akBottom]
@@ -478,8 +515,8 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 14
-    ExplicitLeft = 546
-    ExplicitTop = 478
+    ExplicitLeft = 532
+    ExplicitTop = 476
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'

@@ -78,6 +78,7 @@ type
     Image2: TImage;
     StaticText7: TStaticText;
     Label12: TLabel;
+    SpeedButton1: TSpeedButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -85,10 +86,13 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     _ARTIKEL_R: integer;
     _AUSGABEART_R: integer;
+    ZeigeAlleAusgabearten : boolean;
+
     procedure RefreshValues;
   public
     { Public-Deklarationen }
@@ -136,6 +140,17 @@ const
    {} '  (AUSGABEART_R=:CR1) and' +
    {} '  (ARTIKEL_R=:CR2) and' +
    {} '  (MENGE_AGENT>0)';
+ SQL_Query1_ALL =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_AGENT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} '  POSTEN ' +
+   {} 'WHERE' +
+   {} '  (ARTIKEL_R=:CR) and' +
+   {} '  (MENGE_AGENT>0)';
 
  SQL_Query2_AA_NULL =
    {} 'select' +
@@ -151,7 +166,10 @@ const
    {} ' (ARTIKEL_R=:CR) AND' +
    {} ' ((MENGE_ERWARTET>0) or' +
    {} '  (MENGE_UNBESTELLT>0)' +
-   {} ' )';
+   {} ' )'+
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending';
  SQL_Query2 =
    {} 'select' +
    {} ' BELEG_R,' +
@@ -166,7 +184,27 @@ const
    {} ' (ARTIKEL_R=:CR2) AND' +
    {} ' ((MENGE_ERWARTET>0) or' +
    {} '  (MENGE_UNBESTELLT>0)' +
-   {} ' )';
+   {} ' )' +
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending';
+ SQL_Query2_ALL =
+   {} 'select' +
+   {} ' BELEG_R,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' RID ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'WHERE' +
+   {} ' (ARTIKEL_R=:CR) AND' +
+   {} ' ((MENGE_ERWARTET>0) or' +
+   {} '  (MENGE_UNBESTELLT>0)' +
+   {} ' )'+
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending';
 
   SQL_QueryOrderHistorie_AA_NULL =
    {} 'select' +
@@ -204,6 +242,23 @@ const
    {} 'order by' +
    {} ' RID ' +
    {} 'descending';
+  SQL_QueryOrderHistorie_ALL =
+   {} 'select' +
+   {} ' RID,' +
+   {} ' BELEG_R,' +
+   {} ' MOTIVATION,' +
+   {} ' AUSGABEART_R,' +
+   {} ' MENGE_UNBESTELLT,' +
+   {} ' MENGE_ERWARTET,' +
+   {} ' MENGE_GELIEFERT,' +
+   {} ' (select BESTELLT from BBELEG where RID=BPOSTEN.BELEG_R) BESTELLT ' +
+   {} 'from' +
+   {} ' BPOSTEN ' +
+   {} 'where' +
+   {} ' (ARTIKEL_R=:CR)' +
+   {} 'order by' +
+   {} ' RID ' +
+   {} 'descending' ;
 
   SQL_Query3_AA_NULL =
    {} 'select' +
@@ -239,6 +294,23 @@ const
    {} 'WHERE' +
    {} ' (POSTEN.AUSGABEART_R=:CR1) and' +
    {} ' (POSTEN.ARTIKEL_R=:CR2) AND' +
+   {} ' (POSTEN.MENGE_RECHNUNG>0) AND' +
+   {} ' (BELEG.LAGER_R IS NOT NULL)' ;
+  SQL_Query3_ALL =
+   {} 'select' +
+   {} ' BELEG.RID,' +
+   {} ' (SELECT LAGER.NAME FROM LAGER WHERE BELEG.LAGER_R=LAGER.RID) UEFACH,' +
+   {} ' POSTEN.AUSGABEART_R,' +
+   {} ' POSTEN.MENGE_RECHNUNG,' +
+   {} ' POSTEN.RID POSTEN_R ' +
+   {} 'from' +
+   {} ' BELEG ' +
+   {} 'JOIN' +
+   {} ' POSTEN ' +
+   {} 'ON' +
+   {} ' POSTEN.BELEG_R=BELEG.RID ' +
+   {} 'WHERE' +
+   {} ' (POSTEN.ARTIKEL_R=:CR) AND' +
    {} ' (POSTEN.MENGE_RECHNUNG>0) AND' +
    {} ' (BELEG.LAGER_R IS NOT NULL)' ;
 
@@ -288,6 +360,7 @@ end;
 procedure TFormArtikelBackorder.SetContext(AUSGABEART_R, ARTIKEL_R: integer);
 begin
   show;
+  ZeigeAlleAusgabearten := false;
   _ARTIKEL_R := ARTIKEL_R;
   _AUSGABEART_R := AUSGABEART_R;
   RefreshValues;
@@ -295,14 +368,17 @@ end;
 
 procedure TFormArtikelBackorder.RefreshValues;
 
-  procedure ReFreshAndSet(IBQ: TIB_Query; sSQL, sSQL_AA_NULL : string);
+  procedure ReFreshAndSet(IBQ: TIB_Query; sSQL, sSQL_AA_NULL, sSQL_ALL : string);
   begin
     with IBQ do
     begin
      close;
-     if (_AUSGABEART_R=0) then
+     if (_AUSGABEART_R=0) or ZeigeAlleAusgabearten then
      begin
-      sql.text := sSQL_AA_NULL;
+      if ZeigeAlleAusgabearten then
+       sql.text := sSQL_ALL
+      else
+       sql.text := sSQL_AA_NULL;
       ParamByName('CR').AsInteger := _ARTIKEL_R;
      end else
      begin
@@ -314,31 +390,47 @@ procedure TFormArtikelBackorder.RefreshValues;
     end;
   end;
 
+var
+ AUSGABEART_R : Integer;
 begin
+  BeginHourGlass;
 
   //
-  ReFreshAndSet(IB_Query1,SQL_Query1, SQL_Query1_AA_NULL);
-  ReFreshAndSet(IB_Query2,SQL_Query2, SQL_Query2_AA_NULL);
-  ReFreshAndSet(IB_Query3,SQL_Query3, SQL_Query3_AA_NULL);
-  ReFreshAndSet(IB_QueryOrderHistorie,SQL_QueryOrderHistorie, SQL_QueryOrderHistorie_AA_NULL);
+  ReFreshAndSet(IB_Query1,SQL_Query1, SQL_Query1_AA_NULL, SQL_Query1_ALL);
+  ReFreshAndSet(IB_Query2,SQL_Query2, SQL_Query2_AA_NULL, SQL_Query2_ALL);
+  ReFreshAndSet(IB_Query3,SQL_Query3, SQL_Query3_AA_NULL, SQL_Query3_ALL);
+  ReFreshAndSet(IB_QueryOrderHistorie,SQL_QueryOrderHistorie, SQL_QueryOrderHistorie_AA_NULL, SQL_QueryOrderHistorie_ALL);
+
+
+  if ZeigeAlleAusgabearten then
+   AUSGABEART_R := 0
+  else
+   AUSGABEART_R := _AUSGABEART_R;
 
   //
-  StaticText5.caption := inttostr(e_r_Menge(cRID_NULL, _AUSGABEART_R, _ARTIKEL_R));
-  StaticText1.caption := inttostr(e_r_MindestMenge(_AUSGABEART_R, _ARTIKEL_R));
-  StaticText2.caption := inttostr(e_r_AgentMenge(_AUSGABEART_R, _ARTIKEL_R));
-  StaticText3.caption := inttostr(e_r_ErwarteteMenge(_AUSGABEART_R, _ARTIKEL_R));
-  StaticText4.Caption := inttostr(e_r_UngelieferteMengeUeberBedarf(_AUSGABEART_R, _ARTIKEL_R));
-  StaticText6.caption := inttostr(e_r_VorschlagMenge(_AUSGABEART_R, _ARTIKEL_R));
-  StaticText7.caption := inttostr(e_r_UnbestellteMenge(_AUSGABEART_R, _ARTIKEL_R));
+  StaticText5.caption := inttostr(e_r_Menge(cRID_NULL, AUSGABEART_R, _ARTIKEL_R));
+  StaticText1.caption := inttostr(e_r_MindestMenge(AUSGABEART_R, _ARTIKEL_R));
+  StaticText2.caption := inttostr(e_r_AgentMenge(AUSGABEART_R, _ARTIKEL_R));
+  StaticText3.caption := inttostr(e_r_ErwarteteMenge(AUSGABEART_R, _ARTIKEL_R));
+  StaticText4.Caption := inttostr(e_r_UngelieferteMengeUeberBedarf(AUSGABEART_R, _ARTIKEL_R));
+  StaticText6.caption := inttostr(e_r_VorschlagMenge(AUSGABEART_R, _ARTIKEL_R));
+  StaticText7.caption := inttostr(e_r_UnbestellteMenge(AUSGABEART_R, _ARTIKEL_R));
 
   //
-  label11.Caption := e_r_Artikel(_AUSGABEART_R, _ARTIKEL_R);
+  label11.Caption := e_r_Artikel(AUSGABEART_R, _ARTIKEL_R);
 
+  EndHourGlass;
 end;
 
 procedure TFormArtikelBackorder.Image2Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Order#Mengen');
+end;
+
+procedure TFormArtikelBackorder.SpeedButton1Click(Sender: TObject);
+begin
+  ZeigeAlleAusgabearten := not(ZeigeAlleAusgabearten);
+  RefreshValues;
 end;
 
 procedure TFormArtikelBackorder.SpeedButton2Click(Sender: TObject);

@@ -19,6 +19,17 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.306 (27.10.17) Andreas Filsinger
+
+ Bug: Artikel: Fenster [M] war nicht sizeable
+
+ Neu: Artikel: Fenster [M]: andere Ausgabearten lassen sich einblenden
+
+Rev 8.305 (27.10.17) Andreas Filsinger
+
+ Bug: Agent: Symbol "System Bestellvorschlag löschen" hat nicht mehr funktioniert
+ Bug: Agent: Lagermenge und Mindestbestand bei Ausgabeart-Artikeln wurde nicht richtig berechnet
+
 Rev 8.304 (26.10.17) Andreas Filsinger
 
  Bug: Inventur: Sortierung nach TITEL war nicht möglich
