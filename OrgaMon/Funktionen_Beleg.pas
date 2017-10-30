@@ -1455,7 +1455,8 @@ begin
           end;
 
           MENGE_FieldName := 'MENGE';
-          AlternativLagerEntnahme := true;
+          if (MENGE<0) then
+           AlternativLagerEntnahme := true;
         until yet;
 
         sql.add('SELECT');
@@ -1569,6 +1570,9 @@ begin
 {$ENDIF}
         sql.add('select * from WARENBEWEGUNG ' + for_update);
         Insert;
+        if (MENGE>0) then
+        FieldByName('BRISANZ').AsInteger := (eT_MotivationMindestbestand + eT_MotivationManuell) div 2
+        else
         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
         FieldByName('MENGE').AsInteger := MENGE;
         FieldByName('MENGE_BISHER').AsInteger := MENGE_BISHER_0 + MENGE_BISHER_1;
@@ -1783,10 +1787,7 @@ function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
 var
   QueryPOSTEN: TdboQuery;
   QueryBPOSTEN: TdboQuery;
-  ARTIKEL: TdboQuery;
-  DontBook: boolean;
   _Menge: integer;
-  MENGE_BISHER, MENGE_NEU: integer;
   AtomMenge: integer;
   WARENBEWEGUNG: TdboQuery;
   EREIGNIS: TdboQuery;
@@ -1802,9 +1803,9 @@ begin
 
     //
     // 1) BBELEG.BPOSTEN: MENGE_ERWARTET auf MENGE_GELIEFERT buchen
-    // das geschieht in einer schleife
+    //                    das geschieht in einer schleife
     // 2) BELEG.POSTEN: MENGE_AGENT auf MENGE_RECHNUNG buchen
-    // 3) Restmenge in das Mengen Feld des Artikels (LAGER)
+    // 3) Restmenge in das Mengen-Feld des Artikels (LAGER)
     //
 
     // erst mal die erwarteten Menge zurücksetzen
@@ -1957,90 +1958,9 @@ begin
       Close;
     end;
 
+    // Rest einlagern
     if (_Menge > 0) then
-    begin
-
-      LAGER_R := e_r_Lager(cRID_Null, AUSGABEART_R, ARTIKEL_R);
-
-      // Rest auf Lager!!
-      ARTIKEL := nQuery;
-      with ARTIKEL do
-      begin
-        sql.add('SELECT');
-        sql.add(' LAGER_R,');
-
-        DontBook := false;
-        repeat
-
-          if (AUSGABEART_R = cAUSGABEART_OHNE) then
-          begin
-            sql.add('MENGE M');
-            break;
-          end;
-
-          if (AUSGABEART_R = cAusgabeArt_Probestimme_PDF) then
-          begin
-            sql.add('MENGE_PROBE M');
-            break;
-          end;
-
-          if (AUSGABEART_R = cAusgabeArt_Demoaufnahme_MP3) then
-          begin
-            sql.add('MENGE_DEMO M');
-            break;
-          end;
-
-          DontBook := true;
-
-        until yet;
-
-        if not(DontBook) then
-        begin
-          sql.add('FROM ARTIKEL WHERE (RID=' + inttostr(ARTIKEL_R) + ')');
-          for_update(sql);
-          Open;
-
-          MENGE_BISHER := FieldByName('M').AsInteger;
-          MENGE_NEU := MENGE_BISHER + _Menge;
-          if (LAGER_R < cRID_FirstValid) then
-            LAGER_R := e_w_EinLagern(ARTIKEL_R);
-
-          // Warenbewegung eintragen
-          WARENBEWEGUNG := nQuery;
-          with WARENBEWEGUNG do
-          begin
-{$IFNDEF fpc}
-            ColumnAttributes.add('RID=NOTREQUIRED');
-            ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
-{$ENDIF}
-            sql.add('SELECT * FROM WARENBEWEGUNG ' + for_update);
-            Insert;
-            if (AUSGABEART_R > 0) then
-              FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
-            FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
-            if (sBearbeiter > 0) then
-              FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-            FieldByName('MENGE_BISHER').AsInteger := MENGE_BISHER;
-            FieldByName('MENGE_NEU').AsInteger := MENGE_NEU;
-            FieldByName('MENGE').AsInteger := _Menge;
-            if (LAGER_R >= cRID_FirstValid) then
-              FieldByName('LAGER_R').AsInteger := LAGER_R;
-            FieldByName('BRISANZ').AsInteger := (eT_MotivationMindestbestand + eT_MotivationManuell) div 2;
-            Post;
-          end;
-          WARENBEWEGUNG.free;
-
-          // Mengen Buchung
-          edit;
-          FieldByName('M').AsInteger := MENGE_NEU;
-          if (LAGER_R >= cRID_FirstValid) then
-            FieldByName('LAGER_R').AsInteger := LAGER_R;
-          Post;
-          Close;
-        end;
-      end;
-      ARTIKEL.free;
-    end;
+     e_w_Menge(cRID_Null,AUSGABEART_R, ARTIKEL_R,_Menge);
 
     //
     QueryPOSTEN.free;
@@ -6894,10 +6814,13 @@ begin
                     ZUSAMMENHANG := true;
                   end;
 
-                  // Warenbewegung jetzt ausdrucken!
-                  e_w_Menge(FieldByName('EINHEIT_R').AsInteger, FieldByName('AUSGABEART_R').AsInteger,
-                    FieldByName('ARTIKEL_R').AsInteger, _MengeLagerNeu - _MengeLager,
-                    qBELEG.FieldByName('RID').AsInteger, qPosten.FieldByName('RID').AsInteger);
+                  e_w_Menge(
+                   {} FieldByName('EINHEIT_R').AsInteger,
+                   {} FieldByName('AUSGABEART_R').AsInteger,
+                   {} FieldByName('ARTIKEL_R').AsInteger,
+                   {} _MengeLagerNeu - _MengeLager,
+                   {} qBELEG.FieldByName('RID').AsInteger,
+                   {} qPosten.FieldByName('RID').AsInteger);
 
                 end;
               end;

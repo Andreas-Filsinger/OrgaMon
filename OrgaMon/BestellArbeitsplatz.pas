@@ -149,6 +149,7 @@ type
     ToolButton5: TToolButton;
     Button12: TButton;
     IB_UpdateBar2: TIB_UpdateBar;
+    IB_QueryBV5: TIB_Query;
     procedure FormActivate(Sender: TObject);
     procedure ToolButton27Click(Sender: TObject);
     procedure ToolButton20Click(Sender: TObject);
@@ -378,6 +379,7 @@ begin
 
   // Nun alle Artikel, die den Mindestbestand unterschreiten aufnehmen!
   // Es mag sein, dass diese durch erwartete Mengen wieder rausfliegen!
+  // HAUPTARTIKEL
   with IB_QueryBV4 do
   begin
     Open;
@@ -386,6 +388,20 @@ begin
       BA := BA_locate(
        {} cAUSGABEART_OHNE,
        {} FieldByName('RID').AsInteger);
+      next;
+    end;
+    Close;
+  end;
+
+  // Mit Ausgabeart
+  with IB_QueryBV5 do
+  begin
+    Open;
+    while not(eof) do
+    begin
+      BA := BA_locate(
+       {} FieldByName('AUSGABEART_R').AsInteger,
+       {} FieldByName('ARTIKEL_R').AsInteger);
       next;
     end;
     Close;

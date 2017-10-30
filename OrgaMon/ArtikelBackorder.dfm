@@ -345,7 +345,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     DataSource = IB_DataSource3
     Anchors = [akLeft, akBottom]
     TabOrder = 0
-    ExplicitTop = 393
   end
   object IB_Grid2: TIB_Grid
     Left = 8
@@ -365,7 +364,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     DataSource = IB_DataSource2
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
-    ExplicitWidth = 286
   end
   object Button2: TButton
     Left = 283
@@ -385,7 +383,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = '&O'
     TabOrder = 4
     OnClick = Button3Click
-    ExplicitLeft = 581
   end
   object Button4: TButton
     Left = 283
@@ -396,7 +393,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = '&B'
     TabOrder = 5
     OnClick = Button4Click
-    ExplicitTop = 367
   end
   object StaticText1: TStaticText
     Left = 522
@@ -408,8 +404,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 6
-    ExplicitLeft = 532
-    ExplicitTop = 404
   end
   object StaticText2: TStaticText
     Left = 522
@@ -421,8 +415,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 7
-    ExplicitLeft = 532
-    ExplicitTop = 428
   end
   object StaticText3: TStaticText
     Left = 522
@@ -434,8 +426,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 8
-    ExplicitLeft = 532
-    ExplicitTop = 452
   end
   object StaticText4: TStaticText
     Left = 522
@@ -447,8 +437,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 9
-    ExplicitLeft = 532
-    ExplicitTop = 498
   end
   object IB_Grid4: TIB_Grid
     Left = 8
@@ -459,8 +447,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     DataSource = IB_DataSourceOrderHistroie
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 10
-    ExplicitWidth = 598
-    ExplicitHeight = 121
   end
   object StaticText5: TStaticText
     Left = 522
@@ -472,8 +458,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 11
-    ExplicitLeft = 532
-    ExplicitTop = 380
   end
   object Button5: TButton
     Left = 571
@@ -484,7 +468,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Caption = '&O'
     TabOrder = 12
     OnClick = Button5Click
-    ExplicitLeft = 581
   end
   object StaticText6: TStaticText
     Left = 522
@@ -502,8 +485,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 13
-    ExplicitLeft = 532
-    ExplicitTop = 522
   end
   object StaticText7: TStaticText
     Left = 522
@@ -515,8 +496,6 @@ object FormArtikelBackorder: TFormArtikelBackorder
     BorderStyle = sbsSunken
     Caption = '-?-'
     TabOrder = 14
-    ExplicitLeft = 532
-    ExplicitTop = 476
   end
   object IB_Query1: TIB_Query
     DatabaseName = '192.168.115.25:test.fdb'

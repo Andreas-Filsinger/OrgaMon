@@ -417,7 +417,10 @@ begin
   StaticText7.caption := inttostr(e_r_UnbestellteMenge(AUSGABEART_R, _ARTIKEL_R));
 
   //
-  label11.Caption := e_r_Artikel(AUSGABEART_R, _ARTIKEL_R);
+  if ZeigeAlleAusgabearten then
+   label11.Caption := '* ' + e_r_Artikel(AUSGABEART_R, _ARTIKEL_R)
+  else
+   label11.Caption := e_r_Artikel(AUSGABEART_R, _ARTIKEL_R);
 
   EndHourGlass;
 end;

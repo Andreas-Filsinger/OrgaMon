@@ -938,7 +938,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C010127009800780010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101270098007C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2804,5 +2804,21 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Dataset = IB_QueryWEVersand
     Left = 472
     Top = 400
+  end
+  object IB_QueryBV5: TIB_Query
+    DatabaseName = '192.168.115.25:test.fdb'
+    IB_Connection = DataModuleDatenbank.IB_Connection1
+    SQL.Strings = (
+      'SELECT'
+      ' ARTIKEL_R,'
+      ' AUSGABEART_R,'
+      ' RID'
+      'FROM'
+      ' ARTIKEL_AA'
+      'WHERE'
+      ' (MINDESTBESTAND>0) AND'
+      ' ((MINDESTBESTAND>MENGE) OR (MENGE IS NULL))')
+    Left = 737
+    Top = 96
   end
 end

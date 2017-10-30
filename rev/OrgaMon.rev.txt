@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.307 (30.10.17) Andreas Filsinger
+
+ Bug: Lagermenge von AA Artikel wurde nicht erhöht. Deshalb Rolle der Funktion
+      "e_w_Menge" gestärkt: Artikel: Auch Mengen-Zugang wird über die
+      Routine "e_w_Menge" gebucht
+
 Rev 8.306 (27.10.17) Andreas Filsinger
 
  Bug: Artikel: Fenster [M] war nicht sizeable
