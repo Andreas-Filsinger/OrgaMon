@@ -630,11 +630,6 @@
         <DCCReference Include="Funktionen_Beleg.pas"/>
         <DCCReference Include="Funktionen_Auftrag.pas"/>
         <DCCReference Include="Funktionen_Buch.pas"/>
-        <DCCReference Include="uPSI_eConnect.pas"/>
-        <DCCReference Include="uPSI_Funktionen_Auftrag.pas"/>
-        <DCCReference Include="uPSI_Funktionen_Basis.pas"/>
-        <DCCReference Include="uPSI_Funktionen_Beleg.pas"/>
-        <DCCReference Include="uPSI_Funktionen_Buch.pas"/>
         <DCCReference Include="ArtikelKasse.pas">
             <Form>FormArtikelKasse</Form>
         </DCCReference>

@@ -31,10 +31,6 @@ interface
 uses
 
   classes,
-{$IFNDEF fpc}
-  // Pascal Skript
-  uPSUtils, uPSCompiler,
-{$ENDIF}
   WordIndex;
 
 type
@@ -76,11 +72,6 @@ type
     function rpc_e_w_NextVal(sParameter: TStringList): TStringList;
   end;
 
-{$IFNDEF fpc}
-
-function _Uses(Sender: TPSPascalCompiler; const Name: tbtString): Boolean;
-{$ENDIF}
-
 implementation
 
 uses
@@ -105,94 +96,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Buch,
   Funktionen_Auftrag,
-
-{$IFNDEF fpc}
-  // Pascal Skript
-  uPSRuntime,
-  // PS "System"
-  uPSC_Std, uPSR_Std,
-
-  // PS "Classes"
-  uPSC_Classes, uPSR_Classes,
-
-  // PS "TDateTime"
-  uPSC_dateutils, uPSR_dateutils,
-
-  // PS "OrgaMon"
-  uPSI_Funktionen_Basis,
-  uPSI_Funktionen_Beleg,
-  uPSI_Funktionen_Buch,
-  uPSI_Funktionen_Auftrag,
-  uPSI_eConnect,
-{$ENDIF}
   Geld;
-
-{$IFNDEF fpc}
-
-const
-  oCompiler: TPSPascalCompiler = nil;
-  oExecute: TPSExec = nil;
-  oImporter: TPSRuntimeClassImporter = nil;
-
-function _Uses(Sender: TPSPascalCompiler; const Name: tbtString): Boolean;
-begin
-  result := true;
-  repeat
-
-    if (Name = 'SYSTEM') then
-    begin
-      // Sender.AddDelphiFunction('procedure HelloOrgaMon(Data: string)');
-      RegisterDateTimeLibrary_C(Sender);
-      Sender.AddTypeS('TANFIXDATE', 'Longint');
-      Sender.AddTypeS('TANFIXTIME', 'Longint');
-      Sender.AddTypeS('TDOM_REFERENCE', 'Longint'); // eigentlich int64 !!
-      break;
-    end;
-
-    if (Name = 'CLASSES') then
-    begin
-      SIRegister_Std(Sender);
-      SIRegister_Classes(Sender, true);
-      break;
-    end;
-
-    if (Name = 'BASIS') then
-    begin
-      SIRegister_Funktionen_Basis(Sender);
-      break;
-    end;
-
-    if (Name = 'BUCH') then
-    begin
-      SIRegister_Funktionen_Buch(Sender);
-      break;
-    end;
-
-    if (Name = 'BELEG') then
-    begin
-      SIRegister_Funktionen_Beleg(Sender);
-      break;
-    end;
-
-    if (Name = 'AUFTRAG') then
-    begin
-      SIRegister_Funktionen_Auftrag(Sender);
-      break;
-    end;
-
-    if (Name = 'CONNECT') then
-    begin
-      SIRegister_eConnect(Sender);
-      break;
-    end;
-
-    // Falscher Unit-Name
-    result := False;
-    Sender.MakeError('', ecUnknownIdentifier, Name);
-
-  until yet;
-end;
-{$ENDIF}
 
 function TeConnect.CheckLoadSuchIndex(NameSpace: string): TWordIndex;
 var
@@ -946,66 +850,10 @@ var
   Data: AnsiString;
   n: integer;
 begin
-{$IFNDEF fpc}
   result := TStringList.create;
   result.AddObject('', TXMLRPC_Server.oBeginArray);
-  if not(assigned(oCompiler)) then
-  begin
-    oCompiler := TPSPascalCompiler.create;
-    with oCompiler do
-    begin
-      onUses := _Uses;
-    end;
-
-    //
-    oImporter := TPSRuntimeClassImporter.create;
-    with oImporter do
-    begin
-    end;
-
-    // Compiler.OnUses := ScriptOnUses; // assign the OnUses event.
-    oExecute := TPSExec.create; // Create an instance of the executer.
-    RegisterClassLibraryRuntime(oExecute, oImporter);
-    RegisterDateTimeLibrary_R(oExecute);
-    RIRegister_Funktionen_Basis_Routines(oExecute);
-    RIRegister_Funktionen_Buch_Routines(oExecute);
-    RIRegister_Funktionen_Beleg_Routines(oExecute);
-    RIRegister_Funktionen_Auftrag_Routines(oExecute);
-    RIRegister_eConnect(oImporter);
-    with oExecute do
-    begin
-      // RegisterDelphiFunction(@ShMsg, 'HELLOORGAMON', cdRegister);
-      RIRegister_Std(oImporter);
-      RIRegister_Classes(oImporter, true);
-    end;
-
-  end;
-
-  if oCompiler.Compile(sParameter.Text) then
-  begin
-    oCompiler.GetOutput(Data);
-
-    // Save the output of the compiler in the string Data.
-    if oExecute.LoadData(Data) then // Load the data from the Data string.
-    begin
-      result.Add('Run ' + inttostr(length(Data)) + ' Bytes of Code ...');
-      oExecute.RunScript; // Run the script.
-    end;
-
-  end
-  else
-  begin
-    with oCompiler do
-    begin
-      if (MsgCount = 0) then
-        oCompiler.MakeError('', ecUnexpectedEndOfFile, 'Ursache unklar');
-      for n := 0 to pred(MsgCount) do
-        result.Add(Msg[n].MessageToString);
-    end;
-  end;
-  //
+  result.Add('ERROR: Pascal Script unsupported');
   result.AddObject('', TXMLRPC_Server.oEndArray);
-{$ENDIF}
 end;
 
 function TeConnect.rpc_e_w_NextVal(sParameter: TStringList): TStringList;
