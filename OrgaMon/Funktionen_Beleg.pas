@@ -1570,19 +1570,20 @@ begin
 {$ENDIF}
         sql.add('select * from WARENBEWEGUNG ' + for_update);
         Insert;
+
+        if (EINHEIT_R >= cRID_FirstValid) then
+          FieldByName('EINHEIT_R').AsInteger := EINHEIT_R;
+        if (AUSGABEART_R >= cRID_FirstValid) then
+          FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
+        FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+
         if (MENGE>0) then
-        FieldByName('BRISANZ').AsInteger := (eT_MotivationMindestbestand + eT_MotivationManuell) div 2
+         FieldByName('BRISANZ').AsInteger := (eT_MotivationMindestbestand + eT_MotivationManuell) div 2
         else
-        FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
+         FieldByName('BRISANZ').AsInteger := eT_MotivationKundenAuftrag;
         FieldByName('MENGE').AsInteger := MENGE;
         FieldByName('MENGE_BISHER').AsInteger := MENGE_BISHER_0 + MENGE_BISHER_1;
         FieldByName('MENGE_NEU').AsInteger := result;
-
-        FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
-        if (AUSGABEART_R >= cRID_FirstValid) then
-          FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
-        if (EINHEIT_R >= cRID_FirstValid) then
-          FieldByName('EINHEIT_R').AsInteger := EINHEIT_R;
 
         if (sBearbeiter >= cRID_FirstValid) then
           FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
@@ -1958,13 +1959,14 @@ begin
       Close;
     end;
 
-    // Rest einlagern
-    if (_Menge > 0) then
-     e_w_Menge(cRID_Null,AUSGABEART_R, ARTIKEL_R,_Menge);
-
     //
     QueryPOSTEN.free;
     QueryBPOSTEN.free;
+
+    // Rest einlagern
+    if (_Menge > 0) then
+     e_w_Menge(cRID_Null, AUSGABEART_R, ARTIKEL_R, _Menge);
+
 
   except
     on E: exception do
@@ -2003,7 +2005,6 @@ end;
 
 
 // Preis-Tabelle-Caching
-// dieser Code sollte Autogeneriert sein, is aber nicht!
 
 const
   e_r_PreisTabelle_CacheL: TGpIntegerObjectList = nil;
@@ -2508,9 +2509,14 @@ begin
       cPREIS := nCursor;
       with cPREIS do
       begin
-        sql.add('select PREIS.USD from ARTIKEL ' + 'join PREIS on ' + ' (ARTIKEL.PREIS_R=PREIS.RID)' + 'where ' +
-          ' (ARTIKEL.RID=' + inttostr(ARTIKEL_R) + ') and' + ' (ARTIKEL.PREIS_R is not null) and' +
-          ' (PREIS.USD is not null)');
+        sql.add(
+        {} 'select PREIS.USD from ARTIKEL ' +
+        {} 'join PREIS on' +
+        {} ' (ARTIKEL.PREIS_R=PREIS.RID)' +
+        {} 'where' +
+        {} ' (ARTIKEL.RID=' + inttostr(ARTIKEL_R) + ') and' +
+        {} ' (ARTIKEL.PREIS_R is not null) and' +
+        {} ' (PREIS.USD is not null)');
         ApiFirst;
         if not(eof) then
           result := FieldByName('USD').AsFloat;
