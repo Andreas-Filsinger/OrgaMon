@@ -8298,7 +8298,7 @@ begin
   FotoPath := sSystemSettings.values['FotoPfad'];
   iSicherungsPrefix := sSystemSettings.values['SicherungsPrefix'];
   iSicherungenAnzahl := StrToIntDef(sSystemSettings.values['SicherungenAnzahl'], 10);
-  iNichtMehrLieferbar := sSystemSettings.values['NichtMehrLieferbarInfo'];
+  iNichtMehrLieferbarInfo := sSystemSettings.values['NichtMehrLieferbarInfo'];
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
   iTagesAbschlussAuf := cutblank(sSystemSettings.values['TagesabschlussAuf']);
@@ -10531,36 +10531,73 @@ var
   KommaZahl: double;
   cEINHEIT: TdboCursor;
   AusgabeS: string;
+  MENGEN_EINHEIT : string;
+  MENGEN_EINHEIT_SINGULAR : string;
+  MENGEN_EINHEIT_PLURAL: string;
+  k : integer;
 begin
+  cEINHEIT := nil;
   AusgabeS := inttostr(MENGE);
-  if (EINHEIT_R > 0) then
-  begin
+  repeat
+   if (EINHEIT_R < cRID_FirstValid) then
+    break;
+
     cEINHEIT := nCursor;
     with cEINHEIT do
     begin
       sql.add('select * from EINHEIT where RID=' + inttostr(EINHEIT_R));
       ApiFirst;
-      if not(eof) then
-      begin
-        if (FieldByName('EINHEIT').AsInteger > 0) then
+
+      if eof then
+       break;
+
+      if (FieldByName('EINHEIT').AsInteger <= 0) then
+       break;
+
+       if (FieldByName('EINHEIT').AsInteger = 3600) then
+       begin
+          // Sonderfall "Stunden", die hier angegebenen Sekunden werden in
+          // Stunden umgewandelt
+          AusgabeS := secondstostr(MENGE) + ' h';
+          break;
+       end;
+
+       MENGEN_EINHEIT := ExtractSegmentBetween(FieldByName('ART').AsString,'[',']');
+       if (MENGEN_EINHEIT<>'') then
+       begin
+        k := pos('|',MENGEN_EINHEIT);
+        if (k>0) then
         begin
-          if (FieldByName('EINHEIT').AsInteger = 3600) then
-          begin
-            // Sonderfall "Stunden"
-            AusgabeS := secondstostr(MENGE);
-          end
-          else
-          begin
-            KommaZahl := MENGE;
-            KommaZahl := KommaZahl / FieldByName('EINHEIT').AsFloat;
-            AusgabeS := format('%.' + inttostr(pred(length(FieldByName('EINHEIT').AsString))) + 'f', [KommaZahl]);
-          end;
+         MENGEN_EINHEIT_SINGULAR := nextp(MENGEN_EINHEIT,'|');
+         MENGEN_EINHEIT_PLURAL := nextp(MENGEN_EINHEIT,'|');
+        end else
+        begin
+         MENGEN_EINHEIT_SINGULAR := MENGEN_EINHEIT;
+         MENGEN_EINHEIT_PLURAL := MENGEN_EINHEIT;
         end;
-        AusgabeS := cutblank(AusgabeS + ' ' + FieldByName('BASIS').AsString);
-      end;
+        if (MENGE=1) then
+        begin
+         AusgabeS := AusgabeS + ' ' + MENGEN_EINHEIT_SINGULAR;
+        end else
+        begin
+         AusgabeS := AusgabeS + ' ' + MENGEN_EINHEIT_PLURAL;
+        end;
+       end else
+       begin
+        KommaZahl := MENGE;
+        KommaZahl := KommaZahl / FieldByName('EINHEIT').AsFloat;
+        AusgabeS :=
+         {} format('%.' + inttostr(pred(length(FieldByName('EINHEIT').AsString))) + 'f', [KommaZahl]) +
+         {} ' ' +
+         {} FieldByName('BASIS').AsString;
+       end;
     end;
-    cEINHEIT.free;
-  end;
+
+  until yet;
+
+  if assigned(cEINHEIT) then
+   cEINHEIT.free;
+
   result := FormatStr;
   ersetze('%d', AusgabeS, result);
   result := UnbreakAble(result);
@@ -10950,8 +10987,11 @@ begin
 
         if (_Anz <> _AnzAuftrag) then
         begin
-          DatensammlerLokal.add('Anz=' + e_r_MengenAusgabe(_Anz, EINHEIT_R) + '/' + e_r_MengenAusgabe(_AnzAuftrag,
-            EINHEIT_R));
+          DatensammlerLokal.add(
+           {} 'Anz=' +
+           {} e_r_MengenAusgabe(_Anz, EINHEIT_R) +
+           {} '/' +
+           {} e_r_MengenAusgabe(_AnzAuftrag, EINHEIT_R));
         end
         else
         begin
@@ -10965,15 +11005,15 @@ begin
 
         // storniert oder nicht mehr lieferbar
         if (_AnzStorniert > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzStorniert, EINHEIT_R, iNichtMehrLieferbar);
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzStorniert, EINHEIT_R, _(iNichtMehrLieferbarInfo));
 
         // wurde bereits geliefert
         if (_AnzGeliefert > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzGeliefert, EINHEIT_R, iBereitsGeliefertInfo);
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzGeliefert, EINHEIT_R, _(iBereitsGeliefertInfo));
 
         // wird nachgeliefert
         if (_AnzNachlieferung > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzNachlieferung, EINHEIT_R, iNachlieferungInfo);
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzNachlieferung, EINHEIT_R, _(iNachlieferungInfo));
 
         // Artikel-Text
         _titel := FieldByName('ARTIKEL').AsString;

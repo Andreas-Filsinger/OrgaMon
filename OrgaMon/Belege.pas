@@ -537,15 +537,9 @@ begin
             FieldByName('ARTIKEL').Revert;
 
       // Faktor Berechungen
+      if not (iKommaFaktor) then
       if FieldByName('FAKTOR').IsNotNull then
       begin
-
-        if iKommaFaktor then
-        begin
-
-        end
-        else
-        begin
 
           // alten (ehemaligen) Preis finden!
           if FieldByName('FAKTOR').AsDouble = 0 then
@@ -583,7 +577,7 @@ begin
 
           until true;
           POSTEN.free;
-        end;
+
       end;
     end;
   end;

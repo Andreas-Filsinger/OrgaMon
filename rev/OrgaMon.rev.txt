@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.309 (06.11.17) Andreas Filsinger
+
+ i18n: NichtMehrLieferbarInfo ist jetzt internationalisiert
+ i18n: BereitsGeliefertInfo ist jetzt internationalisiert
+ i18n: NachlieferungInfo ist jetzt internationalisiert
+
+ Neu: Einheit: [Text-Singular|Text-Plural] in der Spalte ART gibt die
+      ganzzahlige Einheit an. Es wird in diesem Fall NICHT umgerechnet
+
 Rev 8.308 (02.11.17) Andreas Filsinger
 
  Wegfall: Pascal Script

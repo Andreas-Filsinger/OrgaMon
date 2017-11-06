@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.308; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.309; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1013,7 +1013,7 @@ var
   iPortoMwStLogik: boolean;
   iNachlieferungInfo: string;
   iBereitsGeliefertInfo: string;
-  iNichtMehrLieferbar: string;
+  iNichtMehrLieferbarInfo: string;
   iStandardTextRechnung: string;
   iAuftragsMotivation: string;
   iAuftragsGrundRueckfrage: boolean;
