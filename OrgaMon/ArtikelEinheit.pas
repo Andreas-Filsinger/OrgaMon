@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -34,10 +34,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, Grids, IB_Grid,
   ExtCtrls, IB_Access, IB_UpdateBar,
-  IB_Components, JvGIF, Datenbank, JvExStdCtrls, JvCombobox, JvDriveCtrls,
-  JvListBox, JvBaseDlg, JvBrowseFolder, JvSelectDirectory,
-  IdExceptionCore
-  ;
+  IB_Components;
 
 type
   TFormArtikelEinheit = class(TForm)

@@ -10535,6 +10535,7 @@ var
   MENGEN_EINHEIT_SINGULAR : string;
   MENGEN_EINHEIT_PLURAL: string;
   k : integer;
+  EINHEIT,NENNER : Integer;
 begin
   cEINHEIT := nil;
   AusgabeS := inttostr(MENGE);
@@ -10551,15 +10552,29 @@ begin
       if eof then
        break;
 
-      if (FieldByName('EINHEIT').AsInteger <= 0) then
+      EINHEIT := FieldByName('EINHEIT').AsInteger;
+
+      if (EINHEIT <= 0) then
        break;
 
-       if (FieldByName('EINHEIT').AsInteger = 3600) then
+       if (EINHEIT=3600) then
        begin
           // Sonderfall "Stunden", die hier angegebenen Sekunden werden in
           // Stunden umgewandelt
           AusgabeS := secondstostr(MENGE) + ' h';
           break;
+       end;
+
+       NENNER := FieldByName('NENNER').AsInteger;
+
+       if (NENNER=2) and (MENGE<>0) then
+       begin
+        if (MENGE=1) then
+         AusgabeS := ''
+        else
+         AusgabeS := inttostr(MENGE DIV 2);
+        if (MENGE MOD 2=1) then
+         AusgabeS := cutblank(AusgabeS + ' ½');
        end;
 
        MENGEN_EINHEIT := ExtractSegmentBetween(FieldByName('ART').AsString,'[',']');
@@ -10575,7 +10590,9 @@ begin
          MENGEN_EINHEIT_SINGULAR := MENGEN_EINHEIT;
          MENGEN_EINHEIT_PLURAL := MENGEN_EINHEIT;
         end;
-        if (MENGE=1) then
+        if
+         {} ((NENNER=0) and (MENGE=1)) or
+         {} ((NENNER<>0) and (MENGE>0) and (MENGE<=NENNER) ) then
         begin
          AusgabeS := AusgabeS + ' ' + MENGEN_EINHEIT_SINGULAR;
         end else
@@ -10585,11 +10602,11 @@ begin
        end else
        begin
         KommaZahl := MENGE;
-        KommaZahl := KommaZahl / FieldByName('EINHEIT').AsFloat;
+        KommaZahl := KommaZahl / EINHEIT;
         AusgabeS :=
-         {} format('%.' + inttostr(pred(length(FieldByName('EINHEIT').AsString))) + 'f', [KommaZahl]) +
-         {} ' ' +
-         {} FieldByName('BASIS').AsString;
+         { } format('%.' + inttostr(max(1,pred(length(FieldByName('EINHEIT').AsString)))) + 'f', [KommaZahl]) +
+         { } ' ' +
+         { } FieldByName('BASIS').AsString;
        end;
     end;
 

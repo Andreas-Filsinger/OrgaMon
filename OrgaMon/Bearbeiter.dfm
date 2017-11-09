@@ -204,14 +204,14 @@ object FormBearbeiter: TFormBearbeiter
     object Label1: TLabel
       Left = 173
       Top = 179
-      Width = 58
+      Width = 57
       Height = 13
       Caption = 'Vorschau:'
     end
     object Label2: TLabel
       Left = 11
       Top = 129
-      Width = 102
+      Width = 101
       Height = 13
       Caption = 'NT-Anmeldename'
     end

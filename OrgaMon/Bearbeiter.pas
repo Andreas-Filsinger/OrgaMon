@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -41,12 +41,13 @@ uses
   // IB
   IB_UpdateBar, IB_NavigationBar,
   IB_SearchBar, IB_Grid, IB_Components,
-  IB_Controls, IB_Access,
+  IB_Controls, IB_Access, IB_EditButton,
+
 
   // Jv
   JvGIF, JvExControls, JvComponent,
   JvColorBox, JvColorButton, JvExExtCtrls,
-  JvOfficeColorButton, JvExtComponent, IB_EditButton;
+  JvOfficeColorButton, JvExtComponent;
 
 type
   TFormBearbeiter = class(TForm)
@@ -824,6 +825,3 @@ end;
 
 
 end.
-
-//
-

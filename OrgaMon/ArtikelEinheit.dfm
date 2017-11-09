@@ -2,8 +2,8 @@ object FormArtikelEinheit: TFormArtikelEinheit
   Left = 175
   Top = 198
   Caption = 'Einheiten'
-  ClientHeight = 357
-  ClientWidth = 682
+  ClientHeight = 354
+  ClientWidth = 681
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -14,6 +14,9 @@ object FormArtikelEinheit: TFormArtikelEinheit
   Position = poScreenCenter
   OnActivate = FormActivate
   OnDeactivate = FormDeactivate
+  DesignSize = (
+    681
+    354)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -35,6 +38,7 @@ object FormArtikelEinheit: TFormArtikelEinheit
     Width = 54
     Height = 22
     Cursor = crHandPoint
+    Anchors = [akTop, akRight]
     AutoSize = True
     Picture.Data = {
       07544269746D61704E0E0000424D4E0E00000000000036000000280000003600
@@ -170,19 +174,18 @@ object FormArtikelEinheit: TFormArtikelEinheit
   end
   object IB_Grid1: TIB_Grid
     Left = 8
-    Top = 72
+    Top = 73
     Width = 665
     Height = 273
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.91:test.fdb'
-    FieldsReadOnly.Strings = (
-      'RID=TRUE')
+    DatabaseName = '192.168.115.25:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -191,14 +194,26 @@ object FormArtikelEinheit: TFormArtikelEinheit
       ' EINHEIT'
       'for update')
     ColorScheme = True
+    OrderingItems.Strings = (
+      'RID=RID;RID DESC'
+      'EINHEIT=EINHEIT;EINHEIT DESC'
+      'BASIS=BASIS;BASIS DESC'
+      'ART=ART;ART DESC'
+      'NENNER=NENNER;NENNER DESC')
+    OrderingLinks.Strings = (
+      'RID=ITEM=1'
+      'EINHEIT=ITEM=2'
+      'BASIS=ITEM=3'
+      'ART=ITEM=4'
+      'NENNER=ITEM=5')
     RequestLive = True
     AfterInsert = IB_Query1AfterInsert
-    Left = 32
-    Top = 104
+    Left = 40
+    Top = 112
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
-    Left = 104
+    Left = 120
     Top = 112
   end
 end
