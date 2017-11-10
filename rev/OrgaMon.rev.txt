@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.311 (10.11.17) Andreas Filsinger
+
+ Bug: Einheit: Eine leere ART ("[ ]") führte zu "1  " anstelle von "1"
+
 Rev 8.310 (08.11.17) Andreas Filsinger
 
  Neu: Einheit: NENNER

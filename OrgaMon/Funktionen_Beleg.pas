@@ -10594,19 +10594,19 @@ begin
          {} ((NENNER=0) and (MENGE=1)) or
          {} ((NENNER<>0) and (MENGE>0) and (MENGE<=NENNER) ) then
         begin
-         AusgabeS := AusgabeS + ' ' + MENGEN_EINHEIT_SINGULAR;
+         AusgabeS := cutblank(AusgabeS + ' ' + MENGEN_EINHEIT_SINGULAR);
         end else
         begin
-         AusgabeS := AusgabeS + ' ' + MENGEN_EINHEIT_PLURAL;
+         AusgabeS := cutblank(AusgabeS + ' ' + MENGEN_EINHEIT_PLURAL);
         end;
        end else
        begin
         KommaZahl := MENGE;
         KommaZahl := KommaZahl / EINHEIT;
-        AusgabeS :=
+        AusgabeS :=  cutblank(
          { } format('%.' + inttostr(max(1,pred(length(FieldByName('EINHEIT').AsString)))) + 'f', [KommaZahl]) +
          { } ' ' +
-         { } FieldByName('BASIS').AsString;
+         { } FieldByName('BASIS').AsString);
        end;
     end;
 
