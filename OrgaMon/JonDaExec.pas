@@ -3238,6 +3238,44 @@ begin
                       // 4.Rang: einfach das aktuelle Datum
                       Value := long2dateLog(DateGet);
 
+
+                      break;
+                    end;
+
+                    if (Token = 'TT.MM.JJJJ') then
+                    begin
+
+                      // 1.Rang: aus der Spalte Wechsel-Datum
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'WechselDatum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := long2date(WechselDatum);
+                        break;
+                      end;
+
+                      // 2.Rang: aus dem Datei-Datum der Bild-Datei
+                      if (FotoDateiNameBisher = '') then
+                      begin
+                        FatalError('Wert "DATEI=" ist leer');
+                        break;
+                      end;
+                      if FileExists(FotoDateiNameBisher) then
+                      begin
+                        Value := long2date(FileDate(FotoDateiNameBisher));
+                        break;
+                      end;
+
+                      // 3.Rang: aus dem Planungsdatum
+                      WechselDatum := Date2Long(tNAMES.readCell(r, 'Datum'));
+                      if DateOK(WechselDatum) then
+                      begin
+                        Value := long2date(WechselDatum);
+                        break;
+                      end;
+
+                      // 4.Rang: einfach das aktuelle Datum
+                      Value := long2date(DateGet);
+
                       break;
                     end;
 

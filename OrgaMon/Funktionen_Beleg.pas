@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
@@ -60,13 +60,13 @@ type
 const
   sAugesetzteBelege: TgpIntegerList = nil;
 
-  // kleinere Tools für Artikel Selektion
+  // kleinere Tools fÃ¼r Artikel Selektion
 function e_r_sqlArtikelWhere(AUSGABEART_R, ARTIKEL_R: integer; TableName: string = ''): string;
 
 function e_r_Artikel(AUSGABEART_R, ARTIKEL_R: integer): string;
 //
 
-// Für Belege
+// FÃ¼r Belege
 function e_r_ArtikelInfo(ARTIKEL_R: integer; Prefix: string = ''): TStringList;
 
 //
@@ -77,10 +77,10 @@ function e_r_ArtikelLink(ARTIKEL_R: integer): string;
 // Liefert den Lager-Platz des Artikels
 function e_r_Lager(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// liefert die Menge, die fest bestellt aber noch nicht eingetroffen ist (für Kunden oder Lager)
+// liefert die Menge, die fest bestellt aber noch nicht eingetroffen ist (fÃ¼r Kunden oder Lager)
 function e_r_ErwarteteMenge(AUSGABEART_R, ARTIKEL_R: integer; sDetails: TStringList = nil): integer;
 
-// liefert die Menge, die im Moment zu beschaffen ist (für Kunden)
+// liefert die Menge, die im Moment zu beschaffen ist (fÃ¼r Kunden)
 function e_r_AgentMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // liefert die Menge, die im Moment in der Schwebe ist (unbestellt+ungeliefert)
@@ -89,17 +89,17 @@ function e_r_OffeneMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 // liefert die Menge, die im Moment unbestellt ist
 function e_r_UnbestellteMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// liefert die Menge, die das System vorschlagen würde
+// liefert die Menge, die das System vorschlagen wÃ¼rde
 function e_r_VorschlagMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// liefert die überzählige Menge die vom System erwartet wird, also über "Agent" und "Mindestbestand"
+// liefert die Ã¼berzÃ¤hlige Menge die vom System erwartet wird, also Ã¼ber "Agent" und "Mindestbestand"
 // hinaus.
 function e_r_UngelieferteMengeUeberBedarf(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // liefert die Mindest-Menge, die auf Lager sein sollte
 function e_r_MindestMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// dem Agenten signalisieren, dass ein um MENGE erhöhter Bestell-Bedarf besteht
+// dem Agenten signalisieren, dass ein um MENGE erhÃ¶hter Bestell-Bedarf besteht
 procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer; Motivation: integer);
 
 // dem Agenten signalisieren, dass sich der Bestell-Bedarf um MENGE vermindert hat! (er nun nicht mehr besteht!)
@@ -119,7 +119,7 @@ function e_r_ZahlungText(ZAHLUNGTYP_R: integer; PERSON_R: integer = 0; MoreInfo:
 // liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungRID(PERSON_R: integer): integer;
 
-// liefert die Fälligkeit in Tagen einer Forderung
+// liefert die FÃ¤lligkeit in Tagen einer Forderung
 function e_r_ZahlungFrist(PERSON_R: integer): integer;
 
 // liefert den Zahlungstext zur jeweiligen Person
@@ -140,7 +140,7 @@ function e_r_Verlag(VERLAG_R: integer): string; { SUCHBEGRIFF }
 // Ermittelt den Lieferanten zu diesem Artikel
 function e_r_Lieferant(ARTIKEL_R, MENGE: integer): integer; { PERSON_R }
 
-// Beleg-Löschung durchführen
+// Beleg-LÃ¶schung durchfÃ¼hren
 procedure e_d_Belege;
 
 // Artikel-Rang neu berechnen
@@ -155,13 +155,13 @@ procedure e_x_BelegAusPOS;
 // liefert die Nummer eines Bestellbelegs, ev. wird einer neu erzeugt
 function e_w_BestellBeleg(PERSON_R: integer): integer; { BBELEG_R }
 
-// 2 Belege zusammen führen
+// 2 Belege zusammen fÃ¼hren
 function e_w_JoinBeleg(BELEG_R_FROM, BELEG_R_TO: integer): integer;
 
-// 2 Personen zusammen führen, Quellperson kann gelöscht werden
+// 2 Personen zusammen fÃ¼hren, Quellperson kann gelÃ¶scht werden
 function e_w_JoinPerson(PERSON_R_FROM, PERSON_R_TO: integer): integer;
 
-// einen Beleg von einem Verantwortlichen zum anderen führen
+// einen Beleg von einem Verantwortlichen zum anderen fÃ¼hren
 function e_w_MoveBeleg(BELEG_R_FROM, PERSON_R_TO: integer): integer;
 
 // Beleg neu erstellen anhand einer Vorlage
@@ -187,7 +187,7 @@ procedure e_r_PostenInfo(IBQ: TdboDataSet; NurGeliefertes: boolean; EinzelpreisN
   var _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
   var _Rabatt, _EinzelPreis, _MwStSatz: double);
 
-// Ausgabelauf für den aktuellen Beleg mit Anlage der htmls
+// Ausgabelauf fÃ¼r den aktuellen Beleg mit Anlage der htmls
 // Es wird eine Liste aller erstellten Belichtungs-Ergebnisdateien erzeugt
 function e_w_AusgabeBeleg(BELEG_R: integer; NurGeliefertes: boolean; AlsLieferschein: boolean): TStringList;
 
@@ -200,7 +200,7 @@ function e_r_AusgabeartKurz(AUSGABEART_R: integer): string;
 
 { MENGE }
 // liefert die Lagermenge dieses Artikels in der angegebenen
-// Ausprägungsart
+// AusprÃ¤gungsart
 function e_r_Menge(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // Liest den Preiswert aus der Tabelle aus
@@ -222,8 +222,8 @@ function e_r_PreisText(AUSGABEART_R, ARTIKEL_R: integer): string;
 // liefert den Preis des Artikels
 function e_r_PreisBrutto(AUSGABEART_R, ARTIKEL_R: integer): double;
 
-// liefert die Preisangabe für diesen Artikel
-// unabhängig von netto/brutto Problematik so wie er in der
+// liefert die Preisangabe fÃ¼r diesen Artikel
+// unabhÃ¤ngig von netto/brutto Problematik so wie er in der
 // Datenbank steht.
 function e_r_PreisNativ(AUSGABEART_R, ARTIKEL_R: integer): double;
 
@@ -248,13 +248,13 @@ function e_r_RabattCode(PERSON_R: integer): string;
 // ist es ein Rabatt-Kunde JA/NEIN
 function e_r_RabattFaehig(PERSON_R: integer): boolean;
 
-// liefert den Rabatt, den diese Person bei diesem Artikel erhält
+// liefert den Rabatt, den diese Person bei diesem Artikel erhÃ¤lt
 // nebenbei:
-// wird bei dieser Person ohne MwSt-Ausweisgearbeitet (Ausländer)?
+// wird bei dieser Person ohne MwSt-Ausweisgearbeitet (AuslÃ¤nder)?
 // soll dabei einfach der eigentliche Bruttopreis als Nettopreis ausgewiesen werden?
 function e_r_Rabatt(ARTIKEL_R, PERSON_R: integer; var Netto: boolean; var NettoWieBrutto: boolean): double;
 
-// vermutlicher Rabatt, den PERSON_R bei diesem VERLAG_R bekommen würde
+// vermutlicher Rabatt, den PERSON_R bei diesem VERLAG_R bekommen wÃ¼rde
 //
 // unbeachtet bleiben:
 // Obergrenzen
@@ -268,7 +268,7 @@ function e_r_ekRabatt(ARTIKEL_R: integer): double;
 // MwSt: liefert die MwSt des Artikels
 function e_r_MwSt(AUSGABEART_R, ARTIKEL_R: integer): double; overload;
 
-// MwSt: liefert die MwSt wie in diesem Sortiment üblich
+// MwSt: liefert die MwSt wie in diesem Sortiment Ã¼blich
 function e_r_MwSt(SORTIMENT_R: integer): double; overload;
 
 // MwSt: liefert den Prozentwert eines Steuersatzes
@@ -297,7 +297,7 @@ function e_r_LagerDiversitaet(LAGER_R: integer): integer; // [MENGE]
 
 function e_r_IsUebergangsfach(LAGER_R: integer): boolean;
 
-// Die Verlag-RID der speziellen PERSON "Übergangsfach"
+// Die Verlag-RID der speziellen PERSON "Ãœbergangsfach"
 function e_r_Uebergangsfach_VERLAG_R: integer; // [[VERLAG_R]]
 
 // Ist ein Lager aktiv?
@@ -309,11 +309,11 @@ function e_r_FreiesLager_VERLAG_R: integer;
 // Names eines Lagerplatzes anhand des LAGER_R
 function e_r_LagerPlatzNameFromLAGER_R(LAGER_R: integer): string;
 
-// [LAGER_R in Übergangsfach]
-// Übergangsfach ermitteln
+// [LAGER_R in Ãœbergangsfach]
+// Ãœbergangsfach ermitteln
 function e_r_UebergangsfachFromPerson(PERSON_R: integer): integer;
 
-// gibt Lagerplätze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
+// gibt LagerplÃ¤tze frei, bei denen 14 Tage keine Bewegung mehr ist und Menge=0
 procedure e_w_LagerFreigeben;
 
 // bucht eine Lagermenge ab oder zu
@@ -343,23 +343,23 @@ function e_w_NeuerMahnlauf(ForceNew: boolean = false): boolean;
 //
 function e_w_KontoInfo(PERSON_R: integer; sOptionen: TStringList = nil): TStringList;
 
-// liefert den Lieferrückstand des Lieferanten (erwartete Mengen!)
+// liefert den LieferrÃ¼ckstand des Lieferanten (erwartete Mengen!)
 // erzeugt als Nebeneffekt die aktuelle "Bestellung.html"
 function e_r_BestellInfo(PERSON_R: integer): integer;
 
 // Leert den aktuellen Warenkorb
 procedure e_w_WarenkorbLeeren(PERSON_R: integer);
 
-// Fügt den aktuellen Warenkorb in den angegebenen Beleg
+// FÃ¼gt den aktuellen Warenkorb in den angegebenen Beleg
 // ein.
 function e_w_WarenkorbEinfuegen(BELEG_R: integer): integer;
 
 // Gibt es was zu verbuchen?
 // BELEG_R = null -> Zeitabrechnung bei diesem Kunden
-// Rückgabewert -> Anzahl der erzeugten Belege
+// RÃ¼ckgabewert -> Anzahl der erzeugten Belege
 function e_w_buchen(BELEG_R, PERSON_R: TDOM_Reference): integer;
 
-// liefert den RID den Stemples für diese Person
+// liefert den RID den Stemples fÃ¼r diese Person
 function e_r_Stempel(PERSON_R, BELEG_R: integer): integer; // [STEMPEL_R]
 
 // Anzahl der Stellen der Rechnungsnummer bestimmen
@@ -381,13 +381,13 @@ function e_r_Versandfertig(ib_q: TdboDataSet): boolean;
 function e_r_Versandfaehig(ib_q: TdboDataSet): boolean;
 
 // Legt einen neuen Versand-Eintrag in der Versand-Tabelle an,
-// oder füllt den vorbereiteten!
+// oder fÃ¼llt den vorbereiteten!
 function e_w_BelegVersand(BELEG_R: integer; Summe: double; gewicht: integer): integer;
 
 // setzt die MwSt auf "0"
 function e_w_BelegDrittlandAusfuhr(BELEG_R: integer): boolean;
 
-// wickelt eine Beleg wieder zurück ab
+// wickelt eine Beleg wieder zurÃ¼ck ab
 function e_w_BelegStorno(BELEG_R: integer): boolean;
 
 // VERSENDER_R des Standard-Versenders
@@ -401,17 +401,17 @@ function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 //
 function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
-// gibts infos über den Versendetag aus, es werden spezielle Status Codes
+// gibts infos Ã¼ber den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
 function e_r_ArtikelVersendetag(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // [Tage]
-// gibts infos über den Versendetag aus, es werden spezielle Status Codes
+// gibts infos Ã¼ber den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
 function e_r_Lieferzeit(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // legt einen Artikel im angegebenen Sortiment an
-// liefert den neuen RID zurück!
+// liefert den neuen RID zurÃ¼ck!
 function e_w_ArtikelNeu(SORTIMENT_R: integer): integer; { : RID }
 
 { : Musste angelegt werden }
@@ -419,7 +419,7 @@ function e_w_ArtikelNeu(SORTIMENT_R: integer): integer; { : RID }
 // noch nicht existiert.
 function e_w_Artikel(EINHEIT_R, AUSGABEART_R, ARTIKEL_R: integer): boolean;
 
-// legt eine neue Person (vorläufig) an. Über sie kann der Kunde
+// legt eine neue Person (vorlÃ¤ufig) an. Ãœber sie kann der Kunde
 // vorbestellungen / vormerkungen anlegen.
 function e_w_PersonNeu: integer; { : RID }
 
@@ -433,7 +433,7 @@ function e_r_PortoFreiAbBrutto(PERSON_R: integer): double;
 // berechnet die VersandKosten anhand der Tabelle VREGEL
 // BELEG_R: um welchen Beleg geht es
 // Ergebnis ARTIKEL_R = 0, keine Versandkosten
-// ARTIKEL_R = -1, Berechnung nicht möglich, Problem
+// ARTIKEL_R = -1, Berechnung nicht mÃ¶glich, Problem
 // ARTIKEL_R >0 , der passende Versandkostenartikel
 //
 function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
@@ -444,7 +444,7 @@ function e_r_VersandKosten(BELEG_R: integer): integer; { : ARTIKEL_R }
 function e_r_IsVersandKosten(ARTIKEL_R: integer): boolean;
 
 { : Anzahl der entfernten }
-// löschen der ungebuchten versandkosten des
+// lÃ¶schen der ungebuchten versandkosten des
 // letzten Buchungslaufes
 function e_w_VersandKostenClear(BELEG_R: integer): integer;
 
@@ -460,7 +460,7 @@ function e_r_ArtikelKontext(AUSGABEART_R, ARTIKEL_R: integer): string;
 
 // B E L E G E
 
-// Prüfung, ob ein Beleg einer Aktion entspricht!
+// PrÃ¼fung, ob ein Beleg einer Aktion entspricht!
 function e_r_Aktion(Name: String; BELEG_R: integer): boolean;
 
 // Dateiname des Belegs
@@ -468,7 +468,7 @@ function e_r_BelegFName(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: inte
   AsMask: boolean = false): string;
 function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
 
-// Dateiname der aktuellen Kontoübersicht / Mahnung
+// Dateiname der aktuellen KontoÃ¼bersicht / Mahnung
 function e_r_MahnungFName(PERSON_R: integer): string;
 
 { : diverse ermittelten Werte }
@@ -521,15 +521,15 @@ function e_w_VertragBuchen(VERTRAG_R: integer; sSettings: TStringList): TStringL
 //
 function e_w_VertragBuchen(VERTRAG_R: integer; Erzwingen: boolean = false): TStringList; overload;
 
-// Alle Verträge anwenden und buchen
+// Alle VertrÃ¤ge anwenden und buchen
 //
 function e_w_VertragBuchen: TStringList; overload;
 
-// Alle Verträge der Liste anwenden und buchen
+// Alle VertrÃ¤ge der Liste anwenden und buchen
 //
 function e_w_VertragBuchen(const lVertraege: TgpIntegerList): TStringList; overload;
 
-// Kann für diesen Vertrag eine Abrechnung erfolgen?
+// Kann fÃ¼r diesen Vertrag eine Abrechnung erfolgen?
 //
 function e_r_VertragBuchen(VERTRAG_R: integer; var ANWENDUNG: TAnfixDate): boolean;
 
@@ -580,8 +580,8 @@ function e_r_fax(ib_q: TdboDataSet): string; overload;
 function e_r_fax(PERSON_R: integer): string; overload;
 function e_r_telefon(ib_q: TdboDataSet): string; overload;
 
-// preDelete* sind Funktionen die die Löschung einer Entität vorbereiten
-// und somit erst ermöglichen
+// preDelete* sind Funktionen die die LÃ¶schung einer EntitÃ¤t vorbereiten
+// und somit erst ermÃ¶glichen
 procedure e_w_preDeletePosten(POSTEN_R: integer);
 procedure e_w_preDeleteBPosten(BPOSTEN_R: integer);
 procedure e_w_preDeleteBeleg(BELEG_R: integer);
@@ -595,7 +595,7 @@ function e_w_BelegStatusBuchen(BELEG_R: integer): boolean;
 function e_w_BBelegStatusBuchen(BBELEG_R: integer): boolean;
 
 // vor dem setzen weiterer Felder kann hier Standardasiert ein Artikel in
-// den aktuellen Posten kopiert werden. Zentrale Funktion zum Füllen einer
+// den aktuellen Posten kopiert werden. Zentrale Funktion zum FÃ¼llen einer
 // Posten zeile
 procedure e_w_SetPostenData(ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
 procedure e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R: integer; qPosten: TdboQuery);
@@ -608,13 +608,13 @@ procedure e_r_PreisTabelle_ensureCache;
 procedure e_r_SortimentSatz_EnsureCache;
 procedure e_r_PreisNativ_ensureCache;
 
-// Q - Funktionen sind Qualitätssicherungs-Hilfsfunktionen
+// Q - Funktionen sind QualitÃ¤tssicherungs-Hilfsfunktionen
 function q_r_PersonWarnung(PERSON_R: integer): TStringList;
 
 // F - Sind Download und Upload Funktionen
 procedure e_f_PersonInfo(PERSON_R: integer; AusgabePfad: string);
 
-// T - Funktions zum Integritätstest von Daten
+// T - Funktions zum IntegritÃ¤tstest von Daten
 function t_r_Beleg(BELEG_R: integer): boolean;
 
 // P - Umfeldparameter auslesen
@@ -622,15 +622,15 @@ function t_r_Beleg(BELEG_R: integer): boolean;
 // Auftrags Sachen
 function e_r_AuftragNummer(BAUSTELLE_R: integer): integer; // [max(NUMMER)]
 function e_r_Schritte(AUFTRAG_R: integer): TStringList;
-function e_r_AuftragPlausi(AUFTRAG_R: integer): string; // Plausi-Prüfung
+function e_r_AuftragPlausi(AUFTRAG_R: integer): string; // Plausi-PrÃ¼fung
 function e_r_Sparte(Art: string): string; // Ermittlung der Sparte
 
-// Qualitäts-Sicherungs Sachen
+// QualitÃ¤ts-Sicherungs Sachen
 procedure e_w_Ticket(sContext: string); overload;
 procedure e_w_Ticket(slContext: TStringList); overload;
 //
 
-// erhöht den Stempel um eins und liefert nun diesen Wert.
+// erhÃ¶ht den Stempel um eins und liefert nun diesen Wert.
 //
 function e_w_Stempel(STEMPEL_R: integer): integer;
 
@@ -681,32 +681,32 @@ CONST
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
     'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
     'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
-    'Auftragsmotivation', 'AuftragsGrundRückfrage', 'SysdbaPasswort', 'RangZeitfenster', 'LieferzeitZeitfenster',
+    'Auftragsmotivation', 'AuftragsGrundRÃ¼ckfrage', 'SysdbaPasswort', 'RangZeitfenster', 'LieferzeitZeitfenster',
     'StandardLieferzeit', 'PersonSchnelleRechnung', 'Farbe', 'Replikation', 'OrtFormat', 'GOT',
-    'BelegSetzeMengeNullBeiPreisNull', 'BelegRechnungGlattstellen', 'BelegUnterdrückeGeliefertes',
+    'BelegSetzeMengeNullBeiPreisNull', 'BelegRechnungGlattstellen', 'BelegUnterdrÃ¼ckeGeliefertes',
     'BelegMengenSortierung', 'BelegArtikelNeu', 'BearbeiterSprache', 'EinzelpreisNetto', 'Mahnschwelle',
-    'Mahnfälligkeitstoleranz', 'MahnungAusgelicheneDazwischenAnzeigen', 'MahnungErstAbUnausgeglichenheit',
+    'MahnfÃ¤lligkeitstoleranz', 'MahnungAusgelicheneDazwischenAnzeigen', 'MahnungErstAbUnausgeglichenheit',
     'MahnungGebuehr1', 'MahnungGebuehr2', 'MahnungGebuehr3', 'MahnungZinsSatzPrivat', 'MahnungZinsSatzGewerblich',
     'MahnungMindestZins', 'MahnungMahnstufeZinsEintritt', 'MahnungAbstand', 'MahnlaufbeiTagesabschluss', 'Profil01',
     'Profil02', 'Profil03', 'Profil04', 'Profil05', 'Profil06', 'Profil07', 'Profil08', 'Profil09', 'Profil10',
     'Profil11', 'Profil12', 'Profil13', 'Profil14', 'Profil15', 'Profil16', 'Profil17', 'Profil18',
-    'LagerHoheDiversität', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
+    'LagerHoheDiversitÃ¤t', 'EinzelPositionNetto', 'KommaFaktor', 'BelegAnzeigeNachBuchen',
     'NachTagesAbschlussAnwendungNeustart', 'htmlPath', 'BilderURL', 'WikiServer', 'PrivaterWikiServer',
     'AuftragsObjektPfad', 'FarbeStufe1', 'FarbeStufe2', 'FarbeStufe3', 'FarbeStufe4', 'FarbeStufe5', 'csvQuelle',
-    'AblageVerzögerung', 'TagesArbeitszeit', 'MonDaVorlauf', 'NeuanlageZeitraum', 'Schalter01', 'Schalter02',
+    'AblageVerzÃ¶gerung', 'TagesArbeitszeit', 'MonDaVorlauf', 'NeuanlageZeitraum', 'Schalter01', 'Schalter02',
     'Schalter03', 'Schalter04', 'Schalter05', 'Schalter06', 'Schalter07', 'Schalter08', 'Schalter09', 'Schalter10',
     'Schalter11', 'Schalter12', 'Schalter13', 'Schalter14', 'Schalter15', 'Schalter16', 'Schalter17', 'Schalter18',
     'Schalter19', 'Schalter20', 'TagesabschlussBerechneRang', 'FaktorGanzzahlig', 'CareTaker', 'AutoUpRevPfad',
-    'OLAPIstÖffentlich', 'KartenPfad', 'KartenHost', 'NachTagesAbschlussRechnerNeuStarten', 'AutoUpFTP', 'ShopKey',
+    'OLAPIstÃ–ffentlich', 'KartenPfad', 'KartenHost', 'NachTagesAbschlussRechnerNeuStarten', 'AutoUpFTP', 'ShopKey',
     'ShopKonto', 'ShopLink', 'ShopArtikelBilderURL', 'ShopArtikelBilderPfad', 'ShopQRPfad', 'OpenOfficePDF',
     'AuftragsAblagePfad', 'TagWacheWochentage', 'TagesabschlussWochentage', 'NachTagwacheAnwendungNeustart',
     'FTPProxyHost', 'FTPProxyPort', 'TextdokumentDateierweiterung', 'AusgabeartLastschriftText',
     'KontenHBCI', 'JonDaAdmin', 'RechnungenFortlaufend', 'AnschriftNameOben', 'BruttoVersandGewicht', 'RESTHost',
-    'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
+    'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrÃ¼ckung', 'RechnungsNummerVergabeMoment',
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
     'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
-    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID');
+    'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GlÃ¤ubigerID');
 
 const
   e_i_AusgabeBeleg: TStringList = nil;
@@ -774,7 +774,7 @@ var
 
 begin
 
-  // zunächst kein Ergebnis
+  // zunÃ¤chst kein Ergebnis
   VERLAG_R := -1;
   SORTIMENT_R := -1;
 
@@ -813,9 +813,9 @@ begin
     //
     // Es wird so funktionieren:
     //
-    // IN_MENGE_ARTIKEL    : Regel wirkt, sobald MENGE_AGENT (für diesen Artikel) >= IN_MENGE_ARTIKEL
-    // IN_MENGE_VERLAG     : Regel wirkt, sobald MENGE_AGENT (für diesen Lieferanten) >= IN_MENGE_VERLAG
-    // IN_MENGE_SORTIMENT  : Regel wirkt, sobald MENGE_AGENT (für dieses Sortiment) >= IN_MENGE_VERLAG
+    // IN_MENGE_ARTIKEL    : Regel wirkt, sobald MENGE_AGENT (fÃ¼r diesen Artikel) >= IN_MENGE_ARTIKEL
+    // IN_MENGE_VERLAG     : Regel wirkt, sobald MENGE_AGENT (fÃ¼r diesen Lieferanten) >= IN_MENGE_VERLAG
+    // IN_MENGE_SORTIMENT  : Regel wirkt, sobald MENGE_AGENT (fÃ¼r dieses Sortiment) >= IN_MENGE_VERLAG
 
     // LoadMoreMENGENData
 
@@ -867,7 +867,7 @@ begin
             ArtikelTextFromArtikel := false;
             _titel := FieldByName('ARTIKEL').AsString;
 
-            // ev. Zusage aus dem Posten übernehmen
+            // ev. Zusage aus dem Posten Ã¼bernehmen
             if not(FieldByName('ZUSAGE').IsNull) then
               ZUSAGE := FieldByName('ZUSAGE').AsDateTime;
 
@@ -957,14 +957,14 @@ begin
             // Es gibt schon unbestellte
             if (FieldByName('MENGE').AsInteger + MENGE < 1) then
             begin
-              // Es gibt keinen Bedarf mehr -> Zeile löschen
+              // Es gibt keinen Bedarf mehr -> Zeile lÃ¶schen
               delete;
             end
             else
             begin
               edit;
 
-              // Bedarf erhöhen
+              // Bedarf erhÃ¶hen
               FieldByName('MENGE').AsInteger := FieldByName('MENGE').AsInteger + MENGE;
               FieldByName('MENGE_UNBESTELLT').AsInteger := FieldByName('MENGE_UNBESTELLT').AsInteger + MENGE;
 
@@ -1056,12 +1056,12 @@ var
   KontoNummer, BLZ, BankName: string;
   sBudgetSettings: TStringList;
 begin
-  // Multifunktions "Buchen" das in der Regel der Webshop auslöst:
+  // Multifunktions "Buchen" das in der Regel der Webshop auslÃ¶st:
   //
   // a) Erzeugung von Rechnungsbelegen und Lieferungen von Ausgabeart "7" benutzt (Musikdownloads)
   // Vorgaben
   // * Es muss zumindest ein Download vorhanden sein
-  // * Es dürfen bei der "Lieferung" keine Versandkosten entstehen
+  // * Es dÃ¼rfen bei der "Lieferung" keine Versandkosten entstehen
   // * Die entstandene Forderung muss ordentlich abgebildet werden
   // *
   // b) Erzeugen der aktuellen Zeitabrechnung (wenn BELEG_R ungesetzt)
@@ -1081,7 +1081,7 @@ begin
         break;
       end;
 
-      // Gültiger Beleg angegeben, wenn nicht -> Zeitabrechnung erstellen
+      // GÃ¼ltiger Beleg angegeben, wenn nicht -> Zeitabrechnung erstellen
       if (BELEG_R < cRID_FirstValid) then
       begin
 
@@ -1099,7 +1099,7 @@ begin
         break;
       end;
 
-      // Ist überhaupt was sofort auslieferbares dabei?
+      // Ist Ã¼berhaupt was sofort auslieferbares dabei?
       MENGE_AUFNAHME := e_r_sql(
         { } 'select SUM(MENGE_RECHNUNG) ' +
         { } 'from POSTEN where' +
@@ -1112,7 +1112,7 @@ begin
         break;
       end;
 
-      // Beleg für die "Download" Abrechnung präparieren
+      // Beleg fÃ¼r die "Download" Abrechnung prÃ¤parieren
       qBELEG := nQuery;
       with qBELEG do
       begin
@@ -1123,7 +1123,7 @@ begin
         First;
         if eof then
         begin
-          sDiagnose.add(cERRORText + ' Die BELEG-Referenz ist ungültig!');
+          sDiagnose.add(cERRORText + ' Die BELEG-Referenz ist ungÃ¼ltig!');
           qBELEG.free;
           result := cRID_Null;
           break;
@@ -1167,7 +1167,7 @@ begin
 
         if IsHaben(FieldByName('Z_ELV_FREIGABE').AsFloat) then
         begin
-          sDiagnose.add(cINFOText + ' Der Zahlungspflichtige wurde durch eine ELV Freigabe bestätigt!');
+          sDiagnose.add(cINFOText + ' Der Zahlungspflichtige wurde durch eine ELV Freigabe bestÃ¤tigt!');
           BankverbindungOK := true;
         end;
 
@@ -1178,7 +1178,7 @@ begin
       end;
       cPERSON.free;
 
-      // grundsätzliche Plausibilisierung der BLZ + Konto# Kombination
+      // grundsÃ¤tzliche Plausibilisierung der BLZ + Konto# Kombination
       if not(CheckAccount(BLZ, KontoNummer, BankName, sDiagnose)) then
       begin
         qBELEG.free;
@@ -1220,7 +1220,7 @@ begin
           begin
             ReloadIfNew;
 
-            // Index prüfen
+            // Index prÃ¼fen
             search(Suchbegriff);
             if (FoundList.count > 0) then
               Treffer := e_r_sql(
@@ -1240,7 +1240,7 @@ begin
         if (Treffer = 0) then
         begin
           sDiagnose.add(cWARNINGText +
-            ' Die Bankverbindung muss manuell überprüft werden. Sie erhalten in Kürze eine eMail sobald die Downloads verfügbar sind!');
+            ' Die Bankverbindung muss manuell Ã¼berprÃ¼ft werden. Sie erhalten in KÃ¼rze eine eMail sobald die Downloads verfÃ¼gbar sind!');
           qBELEG.free;
           result := cRID_Null;
           break;
@@ -1377,7 +1377,7 @@ begin
           if (MENGE_BISHER_0 = 0) and (MENGE < 0) and (MENGE_BISHER_1 > 0) then
           begin
 
-            // Nur Einzelverkäufe möglich
+            // Nur EinzelverkÃ¤ufe mÃ¶glich
             if (MENGE <> -1) then
               raise exception.create('Entnahme aus Alternativ-Lager kann nur 1 sein!');
 
@@ -1502,7 +1502,7 @@ begin
               MENGE_NEU := MENGE_BISHER_1 + MENGE;
 
               // Aus dem Alternativ-Lager entnehmen!
-              // Nur Einzelverkäufe möglich
+              // Nur EinzelverkÃ¤ufe mÃ¶glich
               if (MENGE <> -1) then
                 raise exception.create('Entnahmemenge aus Alternativ-Lager kann nur 1 sein!');
 
@@ -1527,7 +1527,7 @@ begin
                 edit;
 
                 // nur eim Einlagern
-                // LAGER zuteilen, wenn benötigt!
+                // LAGER zuteilen, wenn benÃ¶tigt!
                 if (MENGE > 0) and (LAGER_R < cRID_FirstValid) and (MENGE_BISHER_0 <= 0) then
                 begin
                   LAGER_R := e_w_EinLagern(ARTIKEL_R);
@@ -1556,7 +1556,7 @@ begin
       //
       // --- Warenbewegung Log schreiben ---
       //
-      // Situationen: Mengenbuchungen durch Abverkäufe!
+      // Situationen: Mengenbuchungen durch AbverkÃ¤ufe!
       //
       //
       WARENBEWEGUNG := nQuery;
@@ -1731,7 +1731,7 @@ var
   RecN: integer;
   cFOLGE: TdboQuery;
 begin
-  // Ermitteln der "ursprünglichen Reihenfolge"
+  // Ermitteln der "ursprÃ¼nglichen Reihenfolge"
   RIDS := TgpIntegerList.create;
   cFOLGE := nQuery;
   with cFOLGE do
@@ -1809,8 +1809,8 @@ begin
     // 3) Restmenge in das Mengen-Feld des Artikels (LAGER)
     //
 
-    // erst mal die erwarteten Menge zurücksetzen
-    // dabei sollte der User eine mögliche Reihenfolge vorgeben können
+    // erst mal die erwarteten Menge zurÃ¼cksetzen
+    // dabei sollte der User eine mÃ¶gliche Reihenfolge vorgeben kÃ¶nnen
     _Menge := MENGE;
     QueryBPOSTEN := nQuery;
     with QueryBPOSTEN do
@@ -1887,7 +1887,7 @@ begin
       Close;
     end;
 
-    // nun die Agent Mengen->auf Ü-Fächer verteilen!
+    // nun die Agent Mengen->auf Ãœ-FÃ¤cher verteilen!
     QueryPOSTEN := nQuery;
     _Menge := MENGE;
     with QueryPOSTEN do
@@ -1908,7 +1908,7 @@ begin
       while not(eof) do
       begin
 
-        // Menge zurückbuchen
+        // Menge zurÃ¼ckbuchen
         AtomMenge := min(FieldByName('MENGE_AGENT').AsInteger, _Menge);
         edit;
         if (FieldByName('MENGE_AGENT').AsInteger = AtomMenge) then
@@ -1918,11 +1918,11 @@ begin
         FieldByName('MENGE_RECHNUNG').AsInteger := FieldByName('MENGE_RECHNUNG').AsInteger + AtomMenge;
         Post;
 
-        // dem Beleg die Änderung bekanntmachen
+        // dem Beleg die Ã„nderung bekanntmachen
         BELEG_R := FieldByName('BELEG_R').AsInteger;
         e_w_BelegStatusBuchen(BELEG_R);
 
-        // das aktuelle Übergangsfach des Belegs bestimmen
+        // das aktuelle Ãœbergangsfach des Belegs bestimmen
         LAGER_R := e_r_sql('select LAGER_R from BELEG where RID=' + inttostr(BELEG_R));
 
         // Warenbewegung dokumentieren
@@ -1941,7 +1941,7 @@ begin
           FieldByName('MENGE').AsInteger := AtomMenge;
           FieldByName('POSTEN_R').AsInteger := QueryPOSTEN.FieldByName('RID').AsInteger;
           FieldByName('BELEG_R').AsInteger := BELEG_R;
-          // Ü-Fach
+          // Ãœ-Fach
           if LAGER_R > 0 then
             FieldByName('LAGER_R').AsInteger := LAGER_R;
           if (sBearbeiter > 0) then
@@ -2049,7 +2049,7 @@ begin
         if FieldByName('EURO').IsNull and not(FieldByName('PREIS').IsNull) and not(FieldByName('WAEHRUNG_R').IsNull)
         then
         begin
-          // Umrechnen der Auslandswährung auf €
+          // Umrechnen der AuslandswÃ¤hrung auf â‚¬
           cLAND.ParamByName('CROSSREF').AsInteger := FieldByName('WAEHRUNG_R').AsInteger;
           p := cPreisRundung(FieldByName('PREIS').AsFloat * cLAND.FieldByName('KURS').AsFloat);
 
@@ -2545,10 +2545,10 @@ var
   BetragVerzug: double;
 
   // Summen
-  Summe_Offen: double; // gesamtsumme aller Offenen Beträge
-  Summe_Verzug: double; // gesamtsumme der Beträge in Verzug (incl. der offenen)
+  Summe_Offen: double; // gesamtsumme aller Offenen BetrÃ¤ge
+  Summe_Verzug: double; // gesamtsumme der BetrÃ¤ge in Verzug (incl. der offenen)
   Summe_Zahlungen: double; // alle Zahlungen
-  Summe_Ausgleich: double; // Summe der völlig Ausgelichenen Belege
+  Summe_Ausgleich: double; // Summe der vÃ¶llig Ausgelichenen Belege
   Summe_Anzahl: integer; // Anzahl der bisher aufgelisteten Belege
   _ustid: string;
   OutPath: string;
@@ -2563,12 +2563,12 @@ var
   Einzelner_BELEG_R: integer;
 
   // Beleg-Listen
-  Checked_BELEG_R: TStringList; // Saldo aller bisher berührten Belege
+  Checked_BELEG_R: TStringList; // Saldo aller bisher berÃ¼hrten Belege
 
   // Saldo=0 Belege, oder "Ausgeblendete"
   Ausgeglichen_BELEG_R: TgpIntegerList;
 
-  // Fälligkeit ausgesetzt
+  // FÃ¤lligkeit ausgesetzt
   Ausgesetzt_BELEG_R: TgpIntegerList;
 
   // Liste der Belege, in die das Buchungsdatum schon eingetragen wurde
@@ -2614,7 +2614,7 @@ var
   Adressat: TStringList;
   OneDifferenz: boolean;
 
-  // für den Mahnbescheid-Lauf
+  // fÃ¼r den Mahnbescheid-Lauf
   MahnbescheidTAN: integer;
 
   // weitere parameter
@@ -2748,7 +2748,7 @@ begin
         pTemplateFName := values['template'];
         pHeutigeBelege := (values['aktuell'] = cIni_Activate);
         pMahnMoment := mkDateTime(values['moment']);
-        pMahnGebuehr := (values['mahngebühr'] <> cIni_DeActivate);
+        pMahnGebuehr := (values['mahngebÃ¼hr'] <> cIni_DeActivate);
         pOhneAusstehende := (values['ohneAusstehende'] = cIni_Activate);
         pNurEinBeleg := (values['nurEinBeleg'] = cIni_Activate);
       end;
@@ -2776,7 +2776,7 @@ begin
       FileCopy(e_r_MahnungFName(PERSON_R), OutPath + 'Mahnung_' + inttostr(DateGet) + chtmlextension);
     end;
 
-    // TAN für Mahnbescheid auslesen!
+    // TAN fÃ¼r Mahnbescheid auslesen!
     if pAuchMahnbescheid then
     begin
       MahnbescheidTAN := e_r_gen('GEN_MAHNBESCHEID');
@@ -2900,12 +2900,12 @@ begin
         if not(NoBELEG_R) then
         begin
 
-          // prüfen, ob für diesen Beleg/Zahlung schon Ausgelichenheit geprüft wurde
+          // prÃ¼fen, ob fÃ¼r diesen Beleg/Zahlung schon Ausgelichenheit geprÃ¼ft wurde
           if (Ausgeglichen_BELEG_R.IndexOf(BELEG_R) = -1) then
             if (Checked_BELEG_R.IndexOf(FieldByName('BELEG_R').AsString) = -1) then
             begin
 
-              // Prüfung eintragen
+              // PrÃ¼fung eintragen
               cBELEGSALDO.ParamByName('CROSSREF').AsInteger := BELEG_R;
               cBELEGSALDO.ApiFirst;
               if not(cBELEGSALDO.eof) then
@@ -2930,7 +2930,7 @@ begin
           if not(SkipIt) and not(FieldByName('TEILLIEFERUNG').IsNull) then
           begin
 
-            // Micro - Ausgeglichenheit in dieser Teillieferung prüfen!
+            // Micro - Ausgeglichenheit in dieser Teillieferung prÃ¼fen!
             if isZeroMoney(e_r_sqld(
               { } 'select sum(BETRAG) from AUSGANGSRECHNUNG where' +
               { } ' (KUNDE_R=' + inttostr(PERSON_R) + ') and' +
@@ -3067,7 +3067,7 @@ begin
                 if (FaelligSeit > cDTA_LastschriftVerzoegerung) then
                   if (ForderungStatus = cForderung_Lastschrift_Erhalten) then
                   begin
-                    // offensichtlich zurückgebucht da schon so lange her
+                    // offensichtlich zurÃ¼ckgebucht da schon so lange her
                     ForderungStatus := 0;
                   end;
 
@@ -3167,15 +3167,15 @@ begin
                       MoreText := MoreText + ' ' + _('(Mahnung ausgesetzt)');
                     end;
 
-                    // externer Rechnungsempfänger?
+                    // externer RechnungsempfÃ¤nger?
                     if not(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').IsNull) and
                       (qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger <> qBELEG.FieldByName('PERSON_R').AsInteger)
                     then
                     begin
                       MoreText := MoreText + #13 + #13 +
-                        format(_('Rechnungsempfänger war %s.' + #13 +
-                        'Bitte leiten Sie diese Information an den Rechnungsempfänger weiter. Wir weisen Sie ' +
-                        'darauf hin, daß bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.'),
+                        format(_('RechnungsempfÃ¤nger war %s.' + #13 +
+                        'Bitte leiten Sie diese Information an den RechnungsempfÃ¤nger weiter. Wir weisen Sie ' +
+                        'darauf hin, daÃŸ bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.'),
                         [e_r_Person(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger)]);
                     end;
 
@@ -3184,11 +3184,11 @@ begin
                   begin
                     case FaelligSeit of
                       0:
-                        MoreText := MoreText + ' ' + _('(heute fällig)');
+                        MoreText := MoreText + ' ' + _('(heute fÃ¤llig)');
                       1:
-                        MoreText := MoreText + ' ' + _('(morgen fällig)');
+                        MoreText := MoreText + ' ' + _('(morgen fÃ¤llig)');
                     else
-                      MoreText := MoreText + ' ' + format(_('(in %d Tagen fällig)'), [-FaelligSeit]);
+                      MoreText := MoreText + ' ' + format(_('(in %d Tagen fÃ¤llig)'), [-FaelligSeit]);
                     end;
                   end;
                 end
@@ -3367,7 +3367,7 @@ begin
             DatensammlerLokal.add('Betrag.Forderung=');
           end;
 
-          // Prüfung, ob Konto bisher ausgeglichen ist!
+          // PrÃ¼fung, ob Konto bisher ausgeglichen ist!
           if isZeroMoney(Summe_Offen - Summe_Zahlungen) then
           begin
             DatensammlerLokal.add('BelegNo=' + BelegNo + '*');
@@ -3418,9 +3418,9 @@ begin
           DatensammlerLokal.add('BelegDat=');
           DatensammlerLokal.add('Medium=');
           DatensammlerLokal.add('Motivation=');
-          DatensammlerLokal.add('LastschriftText=' + _('Mahngebühr'));
-          DatensammlerLokal.add('LastschriftTextNeu=' + _('Mahngebühr'));
-          DatensammlerLokal.add('BelegFaellig=' + _('Mahngebühr'));
+          DatensammlerLokal.add('LastschriftText=' + _('MahngebÃ¼hr'));
+          DatensammlerLokal.add('LastschriftTextNeu=' + _('MahngebÃ¼hr'));
+          DatensammlerLokal.add('BelegFaellig=' + _('MahngebÃ¼hr'));
           DatensammlerLokal.add('BelegBetrag=' + _BetragAsHTML(MahnGebuehr));
           DatensammlerLokal.add('Betrag.Bezahlt=');
           DatensammlerLokal.add('Betrag.Verzug=' + format('%m', [MahnGebuehr]));
@@ -3522,7 +3522,7 @@ begin
         else
           MahnungsBeleg.addFatalError('Vorlage .\Mahnung.html nicht gefunden!');
 
-        DatensammlerGlobal.add('Beleg Titel=' + _('Information über fällige Zahlungen'));
+        DatensammlerGlobal.add('Beleg Titel=' + _('Information Ã¼ber fÃ¤llige Zahlungen'));
 
       until yet;
 
@@ -3591,14 +3591,14 @@ begin
     result := '';
     repeat
 
-      // Existenz den Pfades geprüft?!
+      // Existenz den Pfades geprÃ¼ft?!
       if not(_iShopArtikelBilderPathChecked) then
       begin
         _iShopArtikelBilderPathOK := DirExists(iShopArtikelBilderPath);
         _iShopArtikelBilderPathChecked := true;
       end;
 
-      // Bilder-Pfad grundsätzlich OK?
+      // Bilder-Pfad grundsÃ¤tzlich OK?
       if not(_iShopArtikelBilderPathOK) then
         break;
 
@@ -3704,7 +3704,7 @@ begin
       lKasse.free;
       lKasse := split(sKasse, #$A);
 
-      // ev. hier noch Relevanz prüfen
+      // ev. hier noch Relevanz prÃ¼fen
       BELEG_R := e_w_BelegNeu(iSchnelleRechnung_PERSON_R);
       if (BELEG_R < cRID_FirstValid) then
         raise exception.create('Neue "Schnelle Rechnung" konnte nicht erstellt werden');
@@ -3777,7 +3777,7 @@ begin
                 AUSGABEART_R := cRID_Null;
               end;
 
-              // Einfügen in den Beleg!
+              // EinfÃ¼gen in den Beleg!
               with qPosten do
               begin
                 Insert;
@@ -3832,7 +3832,7 @@ begin
           // besonderen Befehl auswerten!
           // "BAR", "EC", "ANGEBOT"
 
-          // Auf alle Fälle in den Beleg übernehmen
+          // Auf alle FÃ¤lle in den Beleg Ã¼bernehmen
           with qPosten do
           begin
             Insert;
@@ -3842,7 +3842,7 @@ begin
             Post;
           end;
 
-          // Das Buzz-Wort kommt auf alle Fälle in die Motivation
+          // Das Buzz-Wort kommt auf alle FÃ¤lle in die Motivation
           // des neuen Beleges
           e_x_sql(
             { } 'update BELEG set MOTIVATION=''' + lKasse[n] + '''' +
@@ -4055,7 +4055,7 @@ begin
   try
     repeat
 
-      // gehört der Kunde überhaupt einer Rabattstufe an?
+      // gehÃ¶rt der Kunde Ã¼berhaupt einer Rabattstufe an?
       RABATT_CODE := e_r_RabattCode(PERSON_R);
       if (RABATT_CODE = '') then
         break;
@@ -4067,18 +4067,18 @@ begin
 
         // Rabatt Regeln
 
-        // nur über Verlag
+        // nur Ã¼ber Verlag
         if matchRule(format('select RABATT from RABATT where (CODE=''%s'') and (PERSON_R=%d) and (SORTIMENT_R is null)',
           [_RABATT_CODE, VERLAG_R]), result) then
           break;
 
-        // über Kombination: Verlag + erstes zufälliges Sortiment
+        // Ã¼ber Kombination: Verlag + erstes zufÃ¤lliges Sortiment
         if matchRule
           (format('select RABATT from RABATT where (CODE=''%s'') and (PERSON_R=%d) and ((SORTIMENT_R is not null))',
           [_RABATT_CODE, VERLAG_R]), result) then
           break;
 
-        // einfach nur über den globalen Code
+        // einfach nur Ã¼ber den globalen Code
         if matchRule
           (format('select RABATT from RABATT where (CODE=''%s'') and (ARTIKEL_R is null) and (SORTIMENT_R is null) and (PERSON_R is null)',
           [_RABATT_CODE]), result) then
@@ -4135,7 +4135,7 @@ begin
   try
     repeat
 
-      // gehört der Kunde überhaupt einer Rabattstufe an?
+      // gehÃ¶rt der Kunde Ã¼berhaupt einer Rabattstufe an?
       qRABATT_CODE := nCursor;
       with qRABATT_CODE do
       begin
@@ -4176,7 +4176,7 @@ begin
 
           // Rabatt Regeln
 
-          // nur über ARTIKEL_R, eigentlich ganz weg vom Verlag
+          // nur Ã¼ber ARTIKEL_R, eigentlich ganz weg vom Verlag
           if matchRule(format('select RABATT from RABATT where (CODE=''%s'') and (ARTIKEL_R=%d)',
             [_RABATT_CODE, ARTIKEL_R]), result) then
             break;
@@ -4184,12 +4184,12 @@ begin
           if (VERLAG_R >= cRID_FirstValid) then
           begin
 
-            // über Kombination: Sortiment & Verlag
+            // Ã¼ber Kombination: Sortiment & Verlag
             if matchRule(format('select RABATT from RABATT where (CODE=''%s'') and (SORTIMENT_R=%d) and (PERSON_R=%d)',
               [_RABATT_CODE, SORTIMENT_R, VERLAG_R]), result) then
               break;
 
-            // nur über Verlag
+            // nur Ã¼ber Verlag
             if matchRule
               (format('select RABATT from RABATT where (CODE=''%s'') and (PERSON_R=%d) and (SORTIMENT_R is null)',
               [_RABATT_CODE, VERLAG_R]), result) then
@@ -4197,13 +4197,13 @@ begin
 
           end;
 
-          // nur über Sortiment
+          // nur Ã¼ber Sortiment
           if matchRule
             (format('select RABATT from RABATT where (CODE=''%s'') and (SORTIMENT_R=%d) and (PERSON_R is null)',
             [_RABATT_CODE, SORTIMENT_R]), result) then
             break;
 
-          // einfach nur über den Code
+          // einfach nur Ã¼ber den Code
           if matchRule
             (format('select RABATT from RABATT where (CODE=''%s'') and (ARTIKEL_R is null) and (SORTIMENT_R is null) and (PERSON_R is null)',
             [_RABATT_CODE]), result) then
@@ -4319,11 +4319,11 @@ begin
   ARTIKEL := nQuery;
   try
 
-    // nächste Nummer ermitteln
+    // nÃ¤chste Nummer ermitteln
     with Sortiment do
     begin
 
-      // "NÄCHSTE NUMMER"
+      // "NÃ„CHSTE NUMMER"
       sql.add('SELECT NAECHSTE_NUMMER FROM SORTIMENT WHERE RID=' + inttostr(SORTIMENT_R) + ' ' + for_update);
       Open;
       First;
@@ -4338,7 +4338,7 @@ begin
 
     end;
 
-    // Prüfen, ob die Nummer nicht schon belegt ist!
+    // PrÃ¼fen, ob die Nummer nicht schon belegt ist!
     with ArtikelNo do
     begin
       sql.add('SELECT RID FROM ARTIKEL WHERE NUMERO=:CROSSREF');
@@ -4579,7 +4579,7 @@ begin
       sql.add('select * from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
       ApiFirst;
 
-      // aus dem Artikelstamm übernommene Felder
+      // aus dem Artikelstamm Ã¼bernommene Felder
       result.add('Artikel=' + FieldByName('TITEL').AsString);
       result.add('No=' + FieldByName('NUMERO').AsString);
 
@@ -5101,7 +5101,7 @@ begin
       end
       else
       begin
-        // Markierung für Portofrei!
+        // Markierung fÃ¼r Portofrei!
         ARTIKEL_R := 0;
       end;
 
@@ -5153,7 +5153,7 @@ begin
 end;
 
 function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
-// benötigt
+// benÃ¶tigt
 //
 // (LAND_R, STATE, ORT, PLZ)
 //
@@ -5435,7 +5435,7 @@ var
   Beleg: TdboCursor;
   WARE: TdboCursor;
 
-  // Beleg-Optionen von denen die Berechnung abhängt
+  // Beleg-Optionen von denen die Berechnung abhÃ¤ngt
   NurGeliefertes: boolean;
   EinzelpreisNetto: boolean;
 
@@ -5457,17 +5457,17 @@ var
   PackformGewicht, LieferGewicht, AuftragsGewicht: integer;
   n: integer;
 
-  // Für AddLine
+  // FÃ¼r AddLine
   MwStSaver: TMwSt;
   SATZn: integer;
 
-  // für Glattstellung
+  // fÃ¼r Glattstellung
   BruttoKorrektur: double;
   EINHEIT_R: integer;
-  // errechnet aus einem Brutto-Wert den ursprünglichen Netto Preis
+  // errechnet aus einem Brutto-Wert den ursprÃ¼nglichen Netto Preis
 
 begin
-  NurGeliefertes := false; // nicht als Parameter übergebbar
+  NurGeliefertes := false; // nicht als Parameter Ã¼bergebbar
   result := TStringList.create;
   if (BELEG_R >= cRID_FirstValid) then
   begin
@@ -5627,7 +5627,7 @@ begin
 
     if EinzelpreisNetto then
     begin
-      // nur hier ist die cent-korrektur möglich!
+      // nur hier ist die cent-korrektur mÃ¶glich!
       for n := 0 to pred(MwStSaver.count) do
         result.add('MWST' + inttostr(succ(n)) + 'KN=' + format('%.2f',
           [cNetto(MwStSaver.MWST[n].Satz, BruttoKorrektur)]));
@@ -5635,7 +5635,7 @@ begin
     else
     begin
       // noch keine Idee hier, es reicht eigentlich einen B-Einzelpreis
-      // mit Hilfe des "BRUTTOKORREKTUR" zu verändern.
+      // mit Hilfe des "BRUTTOKORREKTUR" zu verÃ¤ndern.
     end;
     MwStSaver.free;
 
@@ -5767,7 +5767,7 @@ begin
   end;
   POSTEN.free;
 
-  // Posten Referenzen auflösen
+  // Posten Referenzen auflÃ¶sen
   for n := 0 to pred(PDeleteList.count) do
   begin
     POSTEN_R := StrtoInt(PDeleteList[n]);
@@ -5775,12 +5775,12 @@ begin
   end;
   PDeleteList.free;
 
-  // Posten löschen
+  // Posten lÃ¶schen
   e_x_sql('delete from POSTEN where BELEG_R=' + inttostr(BELEG_R));
   e_x_sql('delete from GELIEFERT where BELEG_R=' + inttostr(BELEG_R));
   e_x_sql('delete from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R));
 
-  // Beleg Referenzen auflösen
+  // Beleg Referenzen auflÃ¶sen
   e_w_dereference(BELEG_R, 'ARBEITSZEIT', 'BELEG_R');
   e_w_dereference(BELEG_R, 'BUCH', 'BELEG_R');
   e_w_dereference(BELEG_R, 'DOKUMENT', 'BELEG_R');
@@ -5820,7 +5820,7 @@ begin
   end;
   POSTEN.free;
 
-  // Posten Referenzen auflösen
+  // Posten Referenzen auflÃ¶sen
   for n := 0 to pred(PDeleteList.count) do
   begin
     POSTEN_R := StrtoInt(PDeleteList[n]);
@@ -5828,10 +5828,10 @@ begin
   end;
   PDeleteList.free;
 
-  // Posten löschen
+  // Posten lÃ¶schen
   e_x_sql('DELETE FROM BPOSTEN WHERE BELEG_R=' + inttostr(BBELEG_R));
 
-  // BBeleg Referenzen auflösen
+  // BBeleg Referenzen auflÃ¶sen
   e_w_dereference(BBELEG_R, 'WARENBEWEGUNG', 'BBELEG_R');
   e_w_dereference(BBELEG_R, 'EREIGNIS', 'BBELEG_R');
 end;
@@ -5908,7 +5908,7 @@ begin
     end;
     cPOSTEN.free;
 
-    // entsprechende Posten löschen
+    // entsprechende Posten lÃ¶schen
     if (lPOSTEN.count > 0) then
     begin
       for n := 0 to pred(lPOSTEN.count) do
@@ -6016,7 +6016,7 @@ begin
     while (e_r_VertragBuchen(VERTRAG_R, ANWENDUNG)) or Erzwingen do
     begin
 
-      // es ist nur ein "Erzwingen"-Lauf möglich
+      // es ist nur ein "Erzwingen"-Lauf mÃ¶glich
       Erzwingen := false;
       VertragsTexte := TStringList.create;
       cVERTRAG := nCursor;
@@ -6104,13 +6104,13 @@ begin
 
             if (WIEDERHOLUNGEN > 1) and (STICHTAG < GEBUCHT_BIS) then
             begin
-              // Für den Fall, dass der Abrechnungswunsch VOR dem
+              // FÃ¼r den Fall, dass der Abrechnungswunsch VOR dem
               // Vertragsbeginn stehen wird die Berechnung vorgezogen!
               ERSTER_ABRECHNUNGSTAG := STICHTAG;
               break;
             end;
 
-            // Für den Fall einer nahtlosen Weiterberechnen oder
+            // FÃ¼r den Fall einer nahtlosen Weiterberechnen oder
             // der termingerechten Einsatzes des
             ERSTER_ABRECHNUNGSTAG := DatePlus(GEBUCHT_BIS, 1);
 
@@ -6119,7 +6119,7 @@ begin
           // weitere Daten bestimmen!
           PERSON_R := FieldByName('PERSON_R').AsInteger;
           BELEG_R := FieldByName('BELEG_R').AsInteger;
-          PERSON_RECHNUNG_R := StrToIntDef(EINSTELLUNGEN.values['Rechnungsempfänger'], cRID_unset);
+          PERSON_RECHNUNG_R := StrToIntDef(EINSTELLUNGEN.values['RechnungsempfÃ¤nger'], cRID_unset);
           if (PERSON_RECHNUNG_R < cRID_FirstValid) then
             PERSON_RECHNUNG_R := e_r_sql(
               { } 'select RECHNUNGSANSCHRIFT_R from BELEG where RID=' + inttostr(BELEG_R));
@@ -6144,7 +6144,7 @@ begin
           VertragsTexte.values['Vertragsnehmer.Person'] := e_r_Person(PERSON_R);
           e_r_Anschrift(PERSON_R, VertragsTexte, 'Vertragsnehmer.');
 
-          // Logik für die Kontext / Kostenstelle
+          // Logik fÃ¼r die Kontext / Kostenstelle
           KONTEXT := EINSTELLUNGEN.values['Kontext'];
           if (KONTEXT = '') then
           begin
@@ -6281,7 +6281,7 @@ var
 begin
   VertragBuchen_Enter;
 
-  // Vertrag prüfen, ob man ihn anwenden könnte ....
+  // Vertrag prÃ¼fen, ob man ihn anwenden kÃ¶nnte ....
   ANWENDUNG := cIllegalDate;
   result := false;
   cVERTRAG := nCursor;
@@ -6341,13 +6341,13 @@ begin
       WIEDERHOLUNGEN := max(FieldByName('WIEDERHOLUNGEN').AsInteger, 1);
       if (WIEDERHOLUNGEN > 1) and (STICHTAG < GEBUCHT_BIS) then
       begin
-        // Für den Fall, dass der Abrechnungswunsch VOR dem
+        // FÃ¼r den Fall, dass der Abrechnungswunsch VOR dem
         // Vertragsbeginn stehen wird die Berechnung vorgezogen!
         ERSTER_ABRECHNUNGSTAG := STICHTAG;
       end
       else
       begin
-        // Für den Fall einer nahtlosen Weiterberechnen oder
+        // FÃ¼r den Fall einer nahtlosen Weiterberechnen oder
         // der termingerechten Einsatzes des
         ERSTER_ABRECHNUNGSTAG := DatePlus(GEBUCHT_BIS, 1);
       end;
@@ -6356,7 +6356,7 @@ begin
       ANWENDUNG := DatePlus(ERSTER_ABRECHNUNGSTAG, -VORLAUF);
       result := (DateGet >= ANWENDUNG);
 
-      // Sollte er anwendbar sein, könnte "Ruhend" die Anwendung verhindern
+      // Sollte er anwendbar sein, kÃ¶nnte "Ruhend" die Anwendung verhindern
       // Es gibt aber eine Warnung.
       if result and (FieldByName('RUHEND').AsString = cC_True) then
       begin
@@ -6547,11 +6547,11 @@ var
   EINHEIT_R: integer;
   BUDGET_R: integer;
 
-  // Die eigentlichen Queries, die geändert werden
+  // Die eigentlichen Queries, die geÃ¤ndert werden
   qBELEG: TdboQuery;
   qPosten: TdboQuery;
 
-  // Ticket Erstellung zur Qualtitäts-Sicherung
+  // Ticket Erstellung zur QualtitÃ¤ts-Sicherung
   qTICKET: TdboQuery;
   TICKET_R: TDOM_Reference;
 
@@ -6592,7 +6592,7 @@ begin
         isHaendler := e_r_RabattFaehig(PERSON_R);
       end;
 
-      // Basic-Programm ausführen
+      // Basic-Programm ausfÃ¼hren
       e_x_basic(
         { } MyProgramPath + cDBASICPath + 'BerechneBeleg-1.txt',
         { } 'PERSON_R=' + inttostr(PERSON_R) + ';' +
@@ -6649,7 +6649,7 @@ begin
             if not(FieldByName('ARTIKEL_R').IsNull) then
             begin
 
-              // ist überhaupt was zu verbuchen
+              // ist Ã¼berhaupt was zu verbuchen
               if (_NeuBeauftragt <> 0) then
               begin
 
@@ -6669,7 +6669,7 @@ begin
                 if (_NeuBeauftragt > 0) then
                 begin
 
-                  // Zunächst aus dem Lager
+                  // ZunÃ¤chst aus dem Lager
                   _RechnungDiff := min(_NeuBeauftragt, _MengeLager);
                   _RechnungImPostenNeu := _RechnungImPosten + _RechnungDiff;
                   dec(_NeuBeauftragt, _RechnungDiff);
@@ -6682,7 +6682,7 @@ begin
                 else
                 begin
 
-                  // Erst mal den Bestellbedarf zurückfahren
+                  // Erst mal den Bestellbedarf zurÃ¼ckfahren
                   _AgentDiff := max(-_AgentImPosten, _NeuBeauftragt);
                   _AgentImPostenNeu := _AgentImPosten + _AgentDiff;
                   dec(_NeuBeauftragt, _AgentDiff);
@@ -6736,15 +6736,15 @@ begin
                 if (_AgentImPosten <> _AgentImPostenNeu) then
                 begin
 
-                  // Agentmenge Veränderung!
+                  // Agentmenge VerÃ¤nderung!
                   if _AgentImPostenNeu = 0 then
                     FieldByName('MENGE_AGENT').clear
                   else
                     FieldByName('MENGE_AGENT').AsInteger := _AgentImPostenNeu;
 
-                  // Besteht ein Bestellbedarf für diesen Artikel?
-                  // (könnte ja sein, dass er schon geordert ist (mit Lieferzeit)
-                  // Ticket 'Order Bedarf für Artikel %s'
+                  // Besteht ein Bestellbedarf fÃ¼r diesen Artikel?
+                  // (kÃ¶nnte ja sein, dass er schon geordert ist (mit Lieferzeit)
+                  // Ticket 'Order Bedarf fÃ¼r Artikel %s'
                   qTICKET := nQuery;
                   with qTICKET do
                   begin
@@ -6776,7 +6776,7 @@ begin
                         FieldByName('AUSGABEART_R').AsInteger := qPosten.FieldByName('AUSGABEART_R').AsInteger;
                       FieldByName('ART').AsInteger := eT_WareBestellt;
 
-                      qStringsAdd(FieldByName('INFO'), format('Order für %dx Artikel %s',
+                      qStringsAdd(FieldByName('INFO'), format('Order fÃ¼r %dx Artikel %s',
                         [_AgentImPostenNeu, qPosten.FieldByName('ARTIKEL').AsString]));
                       FieldByName('VORLAGE').AsDateTime := now + 3;
                       FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 5;
@@ -6795,11 +6795,11 @@ begin
                       Open;
                       First;
 
-                      // Ticket abändern!
+                      // Ticket abÃ¤ndern!
                       edit;
                       FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
                       FieldByName('MOMENT').AsDateTime := now;
-                      qStringsAdd(FieldByName('INFO'), format('Order für %dx Artikel %s erwartet',
+                      qStringsAdd(FieldByName('INFO'), format('Order fÃ¼r %dx Artikel %s erwartet',
                         [_AgentImPostenNeu, qPosten.FieldByName('ARTIKEL').AsString]));
                       FieldByName('VORLAGE').AsDateTime := now + 3;
                       FieldByName('ABLAUF').AsDateTime := FieldByName('VORLAGE').AsDateTime + 5;
@@ -6869,12 +6869,12 @@ begin
             Next;
           end;
 
-          // Versand-Artikel hinzufügen!
+          // Versand-Artikel hinzufÃ¼gen!
           ARTIKEL_R := e_r_VersandKosten(BELEG_R);
           if (ARTIKEL_R >= cRID_FirstValid) then
           begin
 
-            // Porto-Logik prüfen
+            // Porto-Logik prÃ¼fen
             _MaxNettoWert := -1.0;
             _groesstesMwStElementIndex := -1;
 
@@ -6924,7 +6924,7 @@ begin
         end;
 
         //
-        // hier schlussendlich Addierungslauf, da ggf. noch Änderungen gemacht wurden!
+        // hier schlussendlich Addierungslauf, da ggf. noch Ã„nderungen gemacht wurden!
         //
         LieferGewicht := e_r_PackformGewicht(BELEG_R);
         MENGE_BUDGET := 0;
@@ -7070,7 +7070,7 @@ begin
           ERSTERLIEFERTAG := min(ERSTERLIEFERTAG, DateTime2Long(FieldByName('ZUSAGE').AsDateTime));
         end;
 
-        // Problematisch: Eigentlich sollte das "if" über das Flag "ZUTAT"
+        // Problematisch: Eigentlich sollte das "if" Ã¼ber das Flag "ZUTAT"
         // entscheiden
         if not(e_r_IsVersandKosten(FieldByName('ARTIKEL_R').AsInteger)) then
         begin
@@ -7145,7 +7145,7 @@ begin
       if (MENGE_GELIEFERT > 0) then
         inc(VERSAND_STATUS, cV_Geliefert);
 
-      // Bedingungen für einen "edit" -> somit auch Generations Wechsel
+      // Bedingungen fÃ¼r einen "edit" -> somit auch Generations Wechsel
 
       IncGeneration := false;
       DoPost := true;
@@ -7266,7 +7266,7 @@ begin
         if (MENGE_AGENT > 0) then
         begin
 
-          // Ticket über Warenausgang sicherstellen!
+          // Ticket Ã¼ber Warenausgang sicherstellen!
           qTICKET := nQuery;
           with qTICKET do
           begin
@@ -7291,7 +7291,7 @@ begin
               FieldByName('MOMENT').AsDateTime := now;
               FieldByName('BELEG_R').AsInteger := BELEG_R;
               FieldByName('PERSON_R').AsInteger := EMPFAENGER_R;
-              qStringsAdd(FieldByName('INFO'), format('Warenausgang für Beleg %d erwartet', [BELEG_R]));
+              qStringsAdd(FieldByName('INFO'), format('Warenausgang fÃ¼r Beleg %d erwartet', [BELEG_R]));
               FieldByName('ART').AsInteger := eT_WareRausgegangen;
               if (ERSTERLIEFERTAG < MaxInt) then
                 FieldByName('VORLAGE').AsDateTime := long2datetime(ERSTERLIEFERTAG);
@@ -7302,7 +7302,7 @@ begin
             else
             begin
 
-              // Ticket abändern!
+              // Ticket abÃ¤ndern!
               TICKET_R := FieldByName('RID').AsInteger;
               Close;
               sql.clear;
@@ -7333,7 +7333,7 @@ begin
         end;
 
         //
-        // Übergangsfach Logik überhaupt aktiv
+        // Ãœbergangsfach Logik Ã¼berhaupt aktiv
         //
         if (e_r_Uebergangsfach_VERLAG_R > 0) then
         begin
@@ -7348,12 +7348,12 @@ begin
               LAGER_R := e_r_UebergangsfachFromPerson(EMPFAENGER_R);
               if (LAGER_R > 0) then
               begin
-                // BELEG.LAGER_R verändern!
+                // BELEG.LAGER_R verÃ¤ndern!
                 e_w_Zwischenlagern(BELEG_R, LAGER_R);
               end
               else
               begin
-                raise exception.create('kein Übergangsfach mehr frei!');
+                raise exception.create('kein Ãœbergangsfach mehr frei!');
               end;
             end;
           end;
@@ -7387,7 +7387,7 @@ begin
                   FieldByName('LAGER_R').AsInteger := LAGER_R;
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
                 EventText := TStringList.create;
-                EventText.add(format('Versandfertig: im Übergangsfach %s!', [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
+                EventText.add(format('Versandfertig: im Ãœbergangsfach %s!', [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
                 FieldByName('INFO').assign(EventText);
                 EventText.free;
                 Post;
@@ -7419,7 +7419,7 @@ begin
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
                 FieldByName('ART').AsInteger := eT_BestellungNunTeilweiseLieferbar;
                 EventText := TStringList.create;
-                EventText.add(format('Versandfähig: Übergangsfach %s zugeteilt!',
+                EventText.add(format('VersandfÃ¤hig: Ãœbergangsfach %s zugeteilt!',
                   [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
                 FieldByName('INFO').assign(EventText);
                 EventText.free;
@@ -7447,7 +7447,7 @@ begin
                 FieldByName('PERSON_R').AsInteger := PERSON_R;
                 FieldByName('ART').AsInteger := eT_BestellungMerkmalTeilweiseLieferbarVerloren;
                 EventText := TStringList.create;
-                EventText.add(format('Versandfähigkeit verloren: Übergangsfach %s freigegeben!',
+                EventText.add(format('VersandfÃ¤higkeit verloren: Ãœbergangsfach %s freigegeben!',
                   [e_r_LagerPlatzNameFromLAGER_R(LAGER_R)]));
                 FieldByName('INFO').assign(EventText);
                 EventText.free;
@@ -7605,12 +7605,12 @@ var
 begin
   UEBERGANGSFACH_VERLAG_R := e_r_Uebergangsfach_VERLAG_R;
 
-  // Ist die Übergangsfach-Logik überhaupt aktiv?
+  // Ist die Ãœbergangsfach-Logik Ã¼berhaupt aktiv?
   if (UEBERGANGSFACH_VERLAG_R > 0) then
   begin
 
     //
-    // hat der Kunde schon ein Übergangsfach
+    // hat der Kunde schon ein Ãœbergangsfach
     //
     cBELEG := nCursor;
     with cBELEG do
@@ -7629,7 +7629,7 @@ begin
       exit;
 
     //
-    // Übergangsfächer auflisten
+    // ÃœbergangsfÃ¤cher auflisten
     //
     cLAGER := nCursor;
     with cLAGER do
@@ -7675,7 +7675,7 @@ begin
   end
   else
   begin
-    // Übergangsfach-Verwaltung ist gar nicht aktiv!
+    // Ãœbergangsfach-Verwaltung ist gar nicht aktiv!
     result := -1;
   end;
 
@@ -8078,7 +8078,7 @@ begin
         PERSON_R := FieldByName('PERSON_R').AsInteger;
       end;
 
-      // Posten öffnen
+      // Posten Ã¶ffnen
       with qPosten do
       begin
         sql.add('select * from POSTEN ' + for_update);
@@ -8088,7 +8088,7 @@ begin
         prepare;
       end;
 
-      // Quelle öffnen
+      // Quelle Ã¶ffnen
       with cWARENKORB do
       begin
         sql.add('select * from WARENKORB where (PERSON_R=' + inttostr(cBELEG.FieldByName('PERSON_R').AsInteger) +
@@ -8281,7 +8281,7 @@ begin
 
   end;
 
-  // völlig ohne Konfiguration?
+  // vÃ¶llig ohne Konfiguration?
   if not(assigned(sSystemSettings)) then
     sSystemSettings := TStringList.create;
 
@@ -8316,7 +8316,7 @@ begin
   iTagesabschlussWochentage := sSystemSettings.values['TagesabschlussWochentage'];
 
   iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
-  iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;
+  iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrÃ¼ckung'] = cIni_Activate;
   iCareTakerOffline := sSystemSettings.values['CareTaker'] = cIni_DeActivate;
   iOpenOfficePDF := sSystemSettings.values['OpenOfficePDF'] = cIni_Activate;
   iAutoUpRevDir := sSystemSettings.values['AutoUpRevPfad'];
@@ -8328,7 +8328,7 @@ begin
   iTagWacheAuf := cutblank(sSystemSettings.values['TagWacheAuf']);
   iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren'] = cIni_Activate;
   iKontoInhaber := sSystemSettings.values['KontoInhaber'];
-  iGlaeubigerID := sSystemSettings.values['GläubigerID'];
+  iGlaeubigerID := sSystemSettings.values['GlÃ¤ubigerID'];
   iKontoBankName := sSystemSettings.values['KontoBankName'];
   iKontoNummer := sSystemSettings.values['KontoNummer'];
   iKontoBLZ := sSystemSettings.values['KontoBLZ'];
@@ -8383,7 +8383,7 @@ begin
   iPortoMwStLogik := sSystemSettings.values['PortoMwStLogik'] <> cIni_DeActivate;
   iAuftragsmedium := sSystemSettings.values['Auftragsmedium'];
   iAuftragsmotivation := sSystemSettings.values['Auftragsmotivation'];
-  iAuftragsGrundRueckfrage := sSystemSettings.values['AuftragsGrundRückfrage'] <> cIni_DeActivate;
+  iAuftragsGrundRueckfrage := sSystemSettings.values['AuftragsGrundRÃ¼ckfrage'] <> cIni_DeActivate;
   iDataBase_SYSDBA_Pwd := sSystemSettings.values['SysdbaPasswort'];
   iRangZeitfenster := StrToIntDef(sSystemSettings.values['RangZeitfenster'], 60);
   iLieferzeitZeitfenster := StrToIntDef(sSystemSettings.values['LieferzeitZeitfenster'], 365);
@@ -8396,12 +8396,12 @@ begin
   iBelegArtikelNeu := sSystemSettings.values['BelegArtikelNeu'] = cIni_Activate;
   iBruttoVersandGewicht := sSystemSettings.values['BruttoVersandGewicht'] = cIni_Activate;
   iRechnungGlattstellen := sSystemSettings.values['BelegRechnungGlattstellen'] = cIni_Activate;
-  iUnterdrueckeGeliefertes := sSystemSettings.values['BelegUnterdrückeGeliefertes'] = cIni_Activate;
+  iUnterdrueckeGeliefertes := sSystemSettings.values['BelegUnterdrÃ¼ckeGeliefertes'] = cIni_Activate;
   iBelegMengenSortierung := sSystemSettings.values['BelegMengenSortierung'] = cIni_Activate;
   iEinzelpreisNetto := sSystemSettings.values['EinzelpreisNetto'] = cIni_Activate;
   iEinzelPositionNetto := sSystemSettings.values['EinzelPositionNetto'];
   iMahnSchwelle := strtodoubledef(sSystemSettings.values['Mahnschwelle'], 6.00);
-  iMahnFaelligkeitstoleranz := StrToIntDef(sSystemSettings.values['Mahnfälligkeitstoleranz'], 5);
+  iMahnFaelligkeitstoleranz := StrToIntDef(sSystemSettings.values['MahnfÃ¤lligkeitstoleranz'], 5);
   iMahnungAusgelicheneDazwischenAnzeigen := sSystemSettings.values['MahnungAusgelicheneDazwischenAnzeigen']
     = cIni_Activate;
   iMahnungErstAbUnausgeglichenheit := sSystemSettings.values['MahnungErstAbUnausgeglichenheit'] = cIni_Activate;
@@ -8432,12 +8432,12 @@ begin
   iCSVOpenPath := sSystemSettings.values['csvQuelle'];
   iTagesArbeitszeit := strtosecondsdef(sSystemSettings.values['TagesArbeitszeit'], 8 * 60 * 60);
   iJonDaVorlauf := strtol(sSystemSettings.values['MonDaVorlauf']);
-  iOLAPpublic := sSystemSettings.values['OLAPIstÖffentlich'] = cIni_Activate;
-  iAblageZeitraum := strtol(sSystemSettings.values['AblageVerzögerung']);
+  iOLAPpublic := sSystemSettings.values['OLAPIstÃ–ffentlich'] = cIni_Activate;
+  iAblageZeitraum := strtol(sSystemSettings.values['AblageVerzÃ¶gerung']);
   if (iAblageZeitraum = 0) then
     iAblageZeitraum := 70;
   iAusgabeartLastschriftText := StrToIntDef(sSystemSettings.values['AusgabeartLastschriftText'], cRID_Null);
-  iBuchSonstigeErloese := sSystemSettings.values['BuchSonstigeErlöse'];
+  iBuchSonstigeErloese := sSystemSettings.values['BuchSonstigeErlÃ¶se'];
   iBaustellenPfad := sSystemSettings.values['BaustellenPfad'];
   iMusikDownloadsProArtikel := StrToIntDef(sSystemSettings.values['MaxDownloadsProArtikel'], 0);
 
@@ -8465,7 +8465,7 @@ begin
   for n := 0 to 19 do
     iSchalterTexte.add(sSystemSettings.values['Schalter' + inttostrN(succ(n), 2)]);
 
-  iLagerHoheDiversitaet := sSystemSettings.values['LagerHoheDiversität'] = cIni_Activate;
+  iLagerHoheDiversitaet := sSystemSettings.values['LagerHoheDiversitÃ¤t'] = cIni_Activate;
   iNeuanlageZeitraum := StrToIntDef(sSystemSettings.values['NeuanlageZeitraum'], 3);
   // [Tage], solange Artikel/Personen als Neuanlage gelten
   iKartenPfad := sSystemSettings.values['KartenPfad'];
@@ -8485,7 +8485,7 @@ begin
   if (iHeimatLand < cRID_FirstValid) then
     iHeimatLand := e_r_LandRID('DE');
   if (iAuftragsmedium = '') then
-    iAuftragsmedium := 'Telefon,Fax,Persönlich,Brief,Webshop';
+    iAuftragsmedium := 'Telefon,Fax,PersÃ¶nlich,Brief,Webshop';
   if (iAuftragsmotivation = '') then
     iAuftragsmotivation := 'Werbung,Katalog,Empfehlung';
   if (iKontoInhaber = '') then
@@ -8533,7 +8533,7 @@ begin
   cSperreAuszeit := HTMLColor2TColor($669933);
   cSperreFeiertag := HTMLColor2TColor($9999FF);
 
-  // Sperr Wertigkeiten für Sperre
+  // Sperr Wertigkeiten fÃ¼r Sperre
   sSperre_Wert_Baustelle.clear;
   sSperre_Wert_Baustelle.add('SPERRE;JA;' + TColor2HTMLColor(cSperreBaustelle) + ';' +
     inttostr(cPrio_BaustellenSperre));
@@ -8607,7 +8607,7 @@ begin
       if (AUSGABEART_R > 0) then
       begin
 
-        // Über Artikel - AA
+        // Ãœber Artikel - AA
         cGEWICHT := nCursor;
         with cGEWICHT do
         begin
@@ -8628,7 +8628,7 @@ begin
         end;
         cGEWICHT.free;
 
-        // über den Standard-Eintrag in der AUSGABEART
+        // Ã¼ber den Standard-Eintrag in der AUSGABEART
         result := e_r_sql('select GEWICHT from AUSGABEART where RID=' + inttostr(AUSGABEART_R));
         break;
 
@@ -8699,7 +8699,7 @@ begin
     // Neuen Beleg richtigstellen
     e_w_BelegStatusBuchen(BELEG_R_TO);
 
-    // Ursprungsbeleg löschen!
+    // Ursprungsbeleg lÃ¶schen!
     e_x_sql('delete from BELEG where RID=' + _BELEG_R_FROM);
 
   end;
@@ -8727,7 +8727,7 @@ begin
     { } inttostrN(BELEG_R_FROM, 10) + '*',
     { } cPersonPath(PERSON_R_TO));
 
-  // Alle Personenzugehörigkeiten umbiegen
+  // Alle PersonenzugehÃ¶rigkeiten umbiegen
   References := TStringList.create;
   References.add('AUSGANGSRECHNUNG.KUNDE_R where BELEG_R=' + inttostr(BELEG_R_FROM));
   References.add('BELEG.PERSON_R where RID=' + inttostr(BELEG_R_FROM));
@@ -8752,7 +8752,7 @@ var
   ArchivePath: string;
 begin
   RollBackDump := TStringList.create;
-  RollBackDomain := 'Löschung-PERSON-' + RIDasStr(PERSON_R_FROM);
+  RollBackDomain := 'LÃ¶schung-PERSON-' + RIDasStr(PERSON_R_FROM);
   result := 0;
   try
 
@@ -8768,7 +8768,7 @@ begin
       fbdump('select * from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM, RollBackDump);
 
       // Imp pend: das ist viel komplizierter hier einen gesamten Kunden zu
-      // löschen, bzw. alle dessen Kundenbezogene Buchungen!
+      // lÃ¶schen, bzw. alle dessen Kundenbezogene Buchungen!
 
       e_x_sql('delete from AUSGANGSRECHNUNG where KUNDE_R=' + _PERSON_R_FROM);
 
@@ -8776,7 +8776,7 @@ begin
       if DirExists(ArchivePath) then
       begin
         ArchiveOptions := TStringList.create;
-        // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
+        // Imp pend: prÃ¼fen, ob infozip mit dem Slash am Ende klarkommt
         ArchiveOptions.values[infozip_RootPath] := ArchivePath;
 
         zip(nil,
@@ -8982,7 +8982,7 @@ end;
 
 procedure e_w_InvalidateCaches;
 begin
-  // Caches ungültig machen!
+  // Caches ungÃ¼ltig machen!
   _e_r_Uebergangsfach := MaxInt;
   _e_r_FreiesLager := MaxInt;
 end;
@@ -9015,7 +9015,7 @@ var
     DecideStrL.clear;
     cLAGER := nCursor;
 
-    // Für diesen Verlag ist ein Lager vorgesehen !
+    // FÃ¼r diesen Verlag ist ein Lager vorgesehen !
     with cLAGER do
     begin
       sql.add('select');
@@ -9040,13 +9040,13 @@ var
         if (FREI > 0) then
         begin
 
-          // Stimmt das Sortiment überein?
+          // Stimmt das Sortiment Ã¼berein?
           if (FieldByName('SORTIMENT_R').AsInteger = SORTIMENT_R) then
             DecideStr := 'A' // gut
           else
             DecideStr := 'B'; // schlechter
 
-          // Die BELEGUNG sollte möglichst gering sein
+          // Die BELEGUNG sollte mÃ¶glichst gering sein
           if iLagerHoheDiversitaet then
             DecideStr := DecideStr + '.' + inttostrN(FREI, 4)
           else
@@ -9066,7 +9066,7 @@ var
   end;
 
 begin
-  // Grundvoraussetzung: Lagerungsfähigkeit
+  // Grundvoraussetzung: LagerungsfÃ¤higkeit
   result := -1;
   if (e_r_sqls('select LAGER from SORTIMENT where RID=' + inttostr(SORTIMENT_R)) = cC_True) then
   begin
@@ -9212,7 +9212,7 @@ begin
 
     if (pos('WM', Art) = 1) then
     begin
-      result := 'Wärme';
+      result := 'WÃ¤rme';
       break;
     end;
 
@@ -9366,8 +9366,8 @@ begin
   begin
     sql.add('select * from POSTEN where ' + ' (BELEG_R=' + inttostr(BELEG_R_FROM) + ')');
 
-    // "Alles" kopieren, sobald "Vollständig" gesetzt ist.
-    if (InternInfosQuelle.values['Vollständig'] <> cIni_Activate) then
+    // "Alles" kopieren, sobald "VollstÃ¤ndig" gesetzt ist.
+    if (InternInfosQuelle.values['VollstÃ¤ndig'] <> cIni_Activate) then
       sql.add(' and (PREIS is not null)');
 
     sql.add('order by POSNO,RID');
@@ -9468,7 +9468,7 @@ begin
 
   repeat
 
-    // prüfe existenz des Quell-Beleges
+    // prÃ¼fe existenz des Quell-Beleges
     with cQUELL_BELEG do
     begin
       sql.add('select * from BELEG where RID=' + inttostr(BELEG_R_FROM));
@@ -9485,7 +9485,7 @@ begin
         if (pos('=', sTexte[n]) > 0) then
           BelegOptions.values[nextp(sTexte[n], '=', 0)] := nextp(sTexte[n], '=', 1);
 
-    // prüfe Existenz der Ziel-Person
+    // prÃ¼fe Existenz der Ziel-Person
     if e_r_sql('select count(RID) from PERSON where RID=' + inttostr(PERSON_R_TO)) <> 1 then
       break;
 
@@ -9716,7 +9716,7 @@ begin
         break;
     end;
 
-    // Einfach den Standard wählen
+    // Einfach den Standard wÃ¤hlen
     ZAHLUNGTYP_R := e_r_sql('select RID from ZAHLUNGTYP where STANDARD=''' + cC_True + '''');
     // if (ZAHLUNGTYP_R < cRID_FirstValid) then
     // WARNUNG: Keine Zahlungsart definiert!
@@ -9734,7 +9734,7 @@ begin
 
     e_r_sqlt(FieldByName('BELEG_INFO'), TheText);
 
-    // Fälligkeit aus der Zahlungsart
+    // FÃ¤lligkeit aus der Zahlungsart
     if FieldByName('FAELLIG').IsNull then
       FAELLIGTAGE := cStandard_ZahlungFrist
     else
@@ -9756,8 +9756,8 @@ begin
     _MoreInfo.add('FOLGEMONAT=' + inttostrN(FOLGEMONAT, 2));
     _MoreInfo.add('FOLGEJAHR=' + inttostrN(FOLGEJAHR, 4));
 
-    pStrReplace('FälligTage', _MoreInfo.values['FAELLIGTAGE']);
-    pStrReplace('FälligDatum', _MoreInfo.values['FAELLIGDATUM']);
+    pStrReplace('FÃ¤lligTage', _MoreInfo.values['FAELLIGTAGE']);
+    pStrReplace('FÃ¤lligDatum', _MoreInfo.values['FAELLIGDATUM']);
     pStrReplace('FolgeMonat', _MoreInfo.values['FOLGEMONAT']);
     pStrReplace('FolgeJahr', _MoreInfo.values['FOLGEJAHR']);
 
@@ -10003,7 +10003,7 @@ begin
     CheckCreateDir(OutPath);
     FileCopy(AusgabeBelege[0], OutPath + OutFName + chtmlextension);
 
-    // mehrere Ausgabebelege / Ausprägungsarten "#M" / "#W"
+    // mehrere Ausgabebelege / AusprÃ¤gungsarten "#M" / "#W"
     for n := 1 to pred(AusgabeBelege.count) do
       FileCopy(AusgabeBelege[n], OutPath + OutFName + '#' + ExtractSegmentBetween(ExtractFileName(AusgabeBelege[n]),
         '#', chtmlextension) + chtmlextension);
@@ -10019,7 +10019,7 @@ begin
     FileCopy(AusgabeBelege[0], MyProgramPath + cRechnungsKopiePath + OutFName + chtmlextension);
     result := OutPath + OutFName + chtmlextension;
 
-    // Arbeitszeit.html in endgültigen Beleg verschieben!
+    // Arbeitszeit.html in endgÃ¼ltigen Beleg verschieben!
     if (RechnungsBudgetVolumen <> 0) then
       if FileExists(OutPath + cHTML_ArbeitszeitFName) then
       begin
@@ -10036,11 +10036,11 @@ begin
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ') ' +
       { } 'order by POSNO,RID');
 
-    // Die einzelnen Teillieferungen über POSNO klar trennen
+    // Die einzelnen Teillieferungen Ã¼ber POSNO klar trennen
     e_x_sql('update GELIEFERT ' + 'set POSNO=' + inttostr(TEILLIEFERUNG) + ' where' + ' (BELEG_R=' + inttostr(BELEG_R) +
       ') and' + ' (POSNO is null)');
 
-    // Für MP3 - Downloads nun die verfügbare Menge setzen
+    // FÃ¼r MP3 - Downloads nun die verfÃ¼gbare Menge setzen
     if (iMusikDownloadsProArtikel > 0) then
       e_x_sql(
         { } 'update GELIEFERT set' +
@@ -10124,7 +10124,7 @@ begin
     end;
     qWARENBEWEGUNG.free;
 
-    // alle zugehörigen Warenbewegungen buchen
+    // alle zugehÃ¶rigen Warenbewegungen buchen
     e_x_sql('UPDATE WARENBEWEGUNG SET BEWEGT=''' + cC_True + ''' WHERE BELEG_R=' + inttostr(BELEG_R));
 
     // Buchungen im Beleg-Kopf
@@ -10211,7 +10211,7 @@ begin
                   // (3) Name2
                   NoSemi(cANSCHRIFT.FieldByName('NAME1').AsString) + ';' +
 
-                  // (4) Straße
+                  // (4) StraÃŸe
                   NoSemi(cANSCHRIFT.FieldByName('STRASSE').AsString) + ';' +
 
                   // (5) Land
@@ -10229,7 +10229,7 @@ begin
                   // (9) ID
                   inttostr(FieldByName('RID').AsInteger) + inttostrN(TEILLIEFERUNG, 2) + ';' +
 
-                  // (10) Infos an den Empfänger
+                  // (10) Infos an den EmpfÃ¤nger
                   cApplicationName);
 
                 if LabelDatensatz then
@@ -10262,7 +10262,7 @@ begin
                 { 08 } 'POOL_EMPF_LANDCODE' + cLimiterType2 +
                 { 09 } 'POOL_GEWICHT' + cLimiterType2;
 
-                // zusätzliche Felder
+                // zusÃ¤tzliche Felder
                 PersonenDatenS := TStringList.create;
                 for n := 0 to pred(ParameterS.count) do
                 begin
@@ -10326,7 +10326,7 @@ begin
                 // Ort
                   NoSemi(cANSCHRIFT.FieldByName('ORT').AsString) + cLimiterType2 +
 
-                // Straße
+                // StraÃŸe
                   NoSemi(cANSCHRIFT.FieldByName('STRASSE').AsString) + cLimiterType2 +
 
                 // Land
@@ -10375,7 +10375,7 @@ begin
     cVERSAND.free;
     cVERSENDER.free;
 
-    // nun noch das Ausgangsdatum buchen, dies ist das Zeichen für "versendet"!
+    // nun noch das Ausgangsdatum buchen, dies ist das Zeichen fÃ¼r "versendet"!
     e_x_sql(
       { } 'update VERSAND set AUSGANG=''now'' where' +
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ') AND' +
@@ -10429,7 +10429,7 @@ begin
   try
     PERSON_R := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
 
-    // Ticket für den Beleg-Storno erstellen
+    // Ticket fÃ¼r den Beleg-Storno erstellen
     qTICKET := nQuery;
     with qTICKET do
     begin
@@ -10444,7 +10444,7 @@ begin
     end;
     qTICKET.free;
 
-    // Forderungen und Ausgleich-Zahlungen löschen
+    // Forderungen und Ausgleich-Zahlungen lÃ¶schen
     fbdump('select * from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R), RollBackDump);
     e_x_sql('delete from AUSGANGSRECHNUNG where BELEG_R=' + inttostr(BELEG_R));
 
@@ -10471,7 +10471,7 @@ begin
             { } BelegDokumente[n]);
         BelegDokumente.free;
 
-        // lösche "Rechnungskopie*"
+        // lÃ¶sche "Rechnungskopie*"
         FileDelete(e_r_BelegFName(cRID_Null, BELEG_R, FieldByName('TEILLIEFERUNG').AsInteger, true));
 
         e_w_dereference(FieldByName('RID').AsInteger, 'EREIGNIS', 'VERSAND_R');
@@ -10495,7 +10495,7 @@ begin
       ApiFirst;
       while not(eof) do
       begin
-        // Rückbuchen!
+        // RÃ¼ckbuchen!
         e_w_Menge(
           { } FieldByName('EINHEIT_R').AsInteger,
           { } FieldByName('AUSGABEART_R').AsInteger,
@@ -10567,14 +10567,44 @@ begin
 
        NENNER := FieldByName('NENNER').AsInteger;
 
-       if (NENNER=2) and (MENGE<>0) then
+       if (MENGE<>0) then
        begin
-        if (MENGE=1) then
-         AusgabeS := ''
-        else
-         AusgabeS := inttostr(MENGE DIV 2);
-        if (MENGE MOD 2=1) then
-         AusgabeS := cutblank(AusgabeS + ' ½');
+
+         if (NENNER=2) then
+         begin
+          if (MENGE<NENNER) then
+           AusgabeS := ''
+          else
+           AusgabeS := inttostr(MENGE DIV NENNER);
+          if (MENGE MOD NENNER=1) then
+           AusgabeS := cutblank(AusgabeS + ' Â½');
+         end;
+
+         if (NENNER=3) then
+         begin
+          if (MENGE<NENNER) then
+           AusgabeS := ''
+          else
+           AusgabeS := inttostr(MENGE DIV NENNER);
+           case (MENGE MOD NENNER) of
+            1:AusgabeS := cutblank(AusgabeS + ' '+Uni2Html(8531)); { â…“ }
+            2:AusgabeS := cutblank(AusgabeS + ' '+Uni2Html(8532)); { â…” }
+           end;
+         end;
+
+         if (NENNER=4) then
+         begin
+          if (MENGE<NENNER) then
+           AusgabeS := ''
+          else
+           AusgabeS := inttostr(MENGE DIV NENNER);
+          case (MENGE MOD NENNER) of
+           1:AusgabeS := cutblank(AusgabeS + ' '+Uni2Html(188)); { Â¼ }
+           2:AusgabeS := cutblank(AusgabeS + ' Â½');
+           3:AusgabeS := cutblank(AusgabeS + ' '+Uni2HTML(190)); { Â¾ }
+          end;
+         end;
+
        end;
 
        MENGEN_EINHEIT := ExtractSegmentBetween(FieldByName('ART').AsString,'[',']');
@@ -10759,7 +10789,7 @@ begin
       else
         RECHNUNGSANSCHRIFT_R := FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger;
 
-      // Kontext setzten für Rechnungs-Anschrift
+      // Kontext setzten fÃ¼r Rechnungs-Anschrift
       // Person!
       if AlsLieferschein then
       begin
@@ -10883,7 +10913,7 @@ begin
             if iUnterdrueckeGeliefertes then
               if (_AnzGeliefert = _AnzAuftrag) then
               begin
-                // vollständig geliefert -> Löschmerkmal!
+                // vollstÃ¤ndig geliefert -> LÃ¶schmerkmal!
                 PostenzeileSortStr := cSortMerkmalDelete;
                 break;
               end;
@@ -10903,7 +10933,7 @@ begin
         ApiNext;
       end;
 
-      // Blöcke löschen, sowie identität eintragen
+      // BlÃ¶cke lÃ¶schen, sowie identitÃ¤t eintragen
       LastSortStrWas := 'Z';
       for n := pred(ClientSorter.count) downto 0 do
       begin
@@ -11052,7 +11082,7 @@ begin
             if (_Anz = 0) then
               values['Konto'] := '';
 
-            // Verlag - Nummer (GOT-Kürzel!)
+            // Verlag - Nummer (GOT-KÃ¼rzel!)
             if not(cPOSTEN.FieldByName('INFO').IsNull) then
               values['VerlagNo'] := UnbreakAble(cPOSTEN.FieldByName('INFO').AsString);
 
@@ -11202,7 +11232,7 @@ begin
     _SkontoAbzug := cPreisRundung(_EndSumme * (strtodoubledef(ZahlungInfo.values['SKONTO'], 0) / 100.0));
     _Skontiert := _EndSumme - _SkontoAbzug;
 
-    // hier können noch weitere Zahlung varibale ausgewertet werden
+    // hier kÃ¶nnen noch weitere Zahlung varibale ausgewertet werden
     DatensammlerGlobal.add('SkontoAbzug=' + UnbreakAble(format('%.2m', [_SkontoAbzug])));
     DatensammlerGlobal.add('Skontiert=' + UnbreakAble(format('%.2m', [_Skontiert])));
 
@@ -11253,7 +11283,7 @@ begin
       DatensammlerLokal.add('PunkteText=' + iStandardTextRechnung);
     end;
 
-    // weitere Bemerkungen hinzufügen!
+    // weitere Bemerkungen hinzufÃ¼gen!
     if not(cBELEG.FieldByName('KUNDEN_INFO').IsNull) then
     begin
       e_r_sqlt(cBELEG.FieldByName('KUNDEN_INFO'), KundenInfo);
@@ -11339,7 +11369,7 @@ begin
       MyBeleg.SaveToFile(DiagnosePath + 'e_r_AusgabeBeleg.html');
 
     MyBeleg.SortPages;
-    // Für eventuelle Mehrseitigkeit (SET NUMBER OF COPIES)
+    // FÃ¼r eventuelle Mehrseitigkeit (SET NUMBER OF COPIES)
     MyBeleg.SaveToFileCompressed(result[0]);
     MyBeleg.free;
 
@@ -11708,7 +11738,7 @@ var
 
       if (b - V < 0) then
       begin
-        Log('[Q06] Zählwerk-Überlauf erwartet' + MoreInfo);
+        Log('[Q06] ZÃ¤hlwerk-Ãœberlauf erwartet' + MoreInfo);
       end;
 
       BandErweiterung := max((b - V) * 3, 1000);
@@ -11726,9 +11756,9 @@ var
       if (ZWS > b) then
       begin
         if (ZWS > b + BandErweiterung) then
-          Log('[Q09] Ablesestand überschreitet massiv obere Grenze' + MoreInfo)
+          Log('[Q09] Ablesestand Ã¼berschreitet massiv obere Grenze' + MoreInfo)
         else
-          Log('[Q10] Ablesestand überschreitet leicht obere Grenze' + MoreInfo);
+          Log('[Q10] Ablesestand Ã¼berschreitet leicht obere Grenze' + MoreInfo);
         break;
       end;
 
@@ -11771,9 +11801,9 @@ begin
           Log('[Q15] Ablesedatum liegt vor Baustellenbeginn');
 
         if (sIntern.values['UNGEMELDET'] <> '') then
-          Log('[Q11] Lief schon mal über die Schnittstelle');
+          Log('[Q11] Lief schon mal Ã¼ber die Schnittstelle');
         if (sIntern.values['QS_UMGANGEN'] <> '') then
-          Log('[Q12] Qualitätssicherung übergangen');
+          Log('[Q12] QualitÃ¤tssicherung Ã¼bergangen');
 
         v1 := round(strtodoubledef(sZaehlerInfo.values['v1'], -1));
         b1 := round(strtodoubledef(sZaehlerInfo.values['b1'], -1));
@@ -11880,7 +11910,7 @@ begin
       break;
     end;
 
-    // Ermittlung über ein OLAP Statement
+    // Ermittlung Ã¼ber ein OLAP Statement
     // aus INTERNATIONALTEXT mit dem Id OLAP:~Id~
     if (pos('OLAP:', iPortoFreiAbBrutto) > 0) then
     begin
@@ -12004,7 +12034,7 @@ begin
   begin
     sDiagnose := TStringList.create;
 
-    // alle "schnelle Rechnungen" ohne Motivation löschen
+    // alle "schnelle Rechnungen" ohne Motivation lÃ¶schen
     RIDS := e_r_sqlm(
       { } 'select RID from BELEG where' +
       { } ' (PERSON_R=' + inttostr(iSchnelleRechnung_PERSON_R) + ') and' +
@@ -12118,7 +12148,7 @@ var
   R_ARTIKEL: TgpIntegerList;
 begin
 
-  // Vorbedingungen prüfen
+  // Vorbedingungen prÃ¼fen
   if not(DirExists(KassePath)) then
     exit;
   if (iSchnelleRechnung_PERSON_R < cRID_FirstValid) then
@@ -12313,7 +12343,7 @@ begin
     ApiFirst;
     if not(eof) then
     begin
-      // grösste Menge bestimmen!
+      // grÃ¶sste Menge bestimmen!
       MaxMenge := FieldByName('VERKAUFS_MENGE').AsInteger;
       Divisor := StrtoDouble('1' + fill('0', length(inttostr(MaxMenge))));
     end;
@@ -12562,7 +12592,7 @@ begin
     while not(eof) do
     begin
 
-      // Plausibilität des Records
+      // PlausibilitÃ¤t des Records
       if (FieldByName('EREIGNIS.AUFTRITT').AsDateTime > FieldByName('BBELEG.BESTELLT').AsDateTime) then
       begin
 
@@ -12641,8 +12671,8 @@ const
 
 //    0: Neue GTIN wurde eingetragen
 //   -1: Stempel "+" ist nicht definiert
-//   -2: Bestehende GTIN enthält ungültige Zeichen
-//   -3: Bestehende GTIN hat eine falsche Prüfziffer
+//   -2: Bestehende GTIN enthÃ¤lt ungÃ¼ltige Zeichen
+//   -3: Bestehende GTIN hat eine falsche PrÃ¼fziffer
 //   -4: Bestehende GTIN ist OK
 
 function e_w_GTIN(AUSGABEART_R, ARTIKEL_R: integer) : int64;

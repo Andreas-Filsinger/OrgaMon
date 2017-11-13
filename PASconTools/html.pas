@@ -304,6 +304,7 @@ function UnbreakAble(s: string): string;
 
 }
 
+function Uni2html(code:Integer):string;
 function Ansi2html(s: AnsiString): string;
 function html2Ansi(x: string): string;
 function AnsiToRFC1738(s: string): string;
@@ -1972,7 +1973,7 @@ const
     (* - *) , #012 (* - *) , '<br>' (* #13 *) , #014 (* - *) , #015
     (* - *) , #016 (* - *) , #017 (* - *) , #018 (* - *) , #019 (* - *) , #020
     (* - *) , #021 (* - *) , #022 (* - *) , #023 (* - *) , #024 (* - *) , #025
-    (* - *) , #026 (* - *) , #027 (* - *) , #028 (* - *) , #029 (* - *) , #030
+    (* - *) , #026 (* - *) , #027 (* - *) , #038 (* & *) , #029 (* - *) , #030
     (* - *) , #031 (* - *) , #032 (* *) , #033 (* ! *) , '&quot;'
     (* " *) , #035 (* # *) , #036 (* $ *) , #037 (* % *) , '&amp;'
     (* & *) , #039 (* ' *) , #040 (* ( *) , #041 (* ) *) , #042 (* * *) , #043
@@ -3327,6 +3328,11 @@ begin
     result :=
     { blanks, tag-name } copy(result, 1, pred(j)) +
     { empty element mark } '/>';
+end;
+
+function Uni2html(code:Integer):string;
+begin
+  result := #28+'#'+IntTostr(code)+';';
 end;
 
 var

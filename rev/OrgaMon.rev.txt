@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.313 (13.11.17) Andreas Filsinger
+
+ Neu: Enheit: NENNER=3, NENNER=4
+
+Rev 8.312 (13.11.17) Andreas Filsinger
+
+ Neu: FotoBenennung=6: ~TT.MM.JJJJ~ ist nun möglich
+
 Rev 8.311 (10.11.17) Andreas Filsinger
 
  Bug: Einheit: Eine leere ART ("[ ]") führte zu "1  " anstelle von "1"

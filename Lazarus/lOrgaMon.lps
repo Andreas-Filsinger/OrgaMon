@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="224">
+    <Units Count="229">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -80,7 +80,6 @@
       <Unit8>
         <Filename Value="..\infozip\InfoZIP.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="118"/>
         <CursorPos X="6" Y="139"/>
@@ -1628,6 +1627,46 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit223>
+      <Unit224>
+        <Filename Value="..\..\fpc\tests\test\cpu16\i8086\tasmabs5.pp"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="15"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit224>
+      <Unit225>
+        <Filename Value="..\..\fpc\tests\test\cpu16\i8086\tasmabs4.pp"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="15"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit225>
+      <Unit226>
+        <Filename Value="..\..\fpc\packages\fcl-db\src\datadict\fpddmysql57.pp"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="43"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit226>
+      <Unit227>
+        <Filename Value="..\..\fpc\tests\test\tasm15a.pp"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit227>
+      <Unit228>
+        <Filename Value="..\..\fpc\tests\test\tasm15.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="52"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit228>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
