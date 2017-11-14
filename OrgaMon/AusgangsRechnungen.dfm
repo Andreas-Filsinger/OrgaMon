@@ -444,7 +444,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     ParentFont = False
     TabOrder = 3
     AutoSize = False
-    ExplicitTop = 459
   end
   object Panel4: TPanel
     Left = 0
@@ -453,7 +452,6 @@ object FormAusgangsRechnungen: TFormAusgangsRechnungen
     Height = 98
     Anchors = [akLeft, akBottom]
     TabOrder = 4
-    ExplicitTop = 504
     DesignSize = (
       786
       98)

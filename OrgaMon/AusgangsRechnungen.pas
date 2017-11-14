@@ -670,7 +670,7 @@ begin
     Bar := StrToDoubledef(Edit1.Text, 0);
     ReflectData;
   end;
-  if Key = #32 then
+  if (Key = #32) then
   begin
     Key := #0;
     Button8Click(Sender);
@@ -682,6 +682,7 @@ begin
   if (Key = #13) then
   begin
     Key := #0;
+    Summe := StrToDoubledef(Edit5.Text, 0);
     Edit1.SetFocus;
   end;
 end;
