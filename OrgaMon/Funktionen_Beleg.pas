@@ -4584,10 +4584,10 @@ begin
       result.add('No=' + FieldByName('NUMERO').AsString);
 
       result.add('Komponist=' + e_r_MusikerName(FieldByName('KOMPONIST_R').AsInteger));
-      result.add('KomponistNachname=' + e_r_MusikerNurNachName(FieldByName('KOMPONIST_R').AsInteger));
+      result.add('KomponistNachname=' + e_r_MusikerNachname(FieldByName('KOMPONIST_R').AsInteger));
 
       result.add('Arrangeur=' + e_r_MusikerName(FieldByName('ARRANGEUR_R').AsInteger));
-      result.add('ArrangeurNachname=' + e_r_MusikerNurNachName(FieldByName('ARRANGEUR_R').AsInteger));
+      result.add('ArrangeurNachname=' + e_r_MusikerNachname(FieldByName('ARRANGEUR_R').AsInteger));
 
       result.add('Verlag=' + e_r_Verlag(FieldByName('VERLAG_R').AsInteger));
       result.add('VerlagNo=' + UnbreakAble(FieldByName('VERLAGNO').AsString));

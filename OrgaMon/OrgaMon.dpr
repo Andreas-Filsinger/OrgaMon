@@ -182,7 +182,6 @@ uses
   ArtikelBild in 'ArtikelBild.pas' {FormArtikelBild},
   Resource.SiteDownload in 'Resource.SiteDownload.pas' {FormSiteDownload},
   TPUUploadProgress in '..\TPicUpload\TPUUploadProgress.pas' {UploadProgressForm},
-  eOLAP in '..\PASconTools\eOLAP.pas',
   SkriptEditor in 'SkriptEditor.pas' {FormSkriptEditor},
   Funktionen_Basis in 'Funktionen_Basis.pas',
   Funktionen_Beleg in 'Funktionen_Beleg.pas',

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2016  Andreas Filsinger
+  |    Copyright (C) 2012 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ var
 begin
   if Purge then
   begin
+    InvalidateCache_Musiker;
     FileDelete(SearchDir + cKreativeCacheFName + cItemsCacheFExtension);
     FileDelete(SearchDir + cKreativeCacheFName + cValueCacheFExtension);
     result := '';
@@ -123,7 +124,7 @@ begin
       AusgabeValues := TStringList.create;
       AusgabeItems.add(cRefComboOhneEintrag);
       AusgabeValues.add('');
-      cache := e_r_MusikerNachnamen;
+      cache := e_r_MusikerNachnamenKommaVornamen;
       for n := 0 to pred(cache.count) do
       begin
         AusgabeItems.add(cache[n]);

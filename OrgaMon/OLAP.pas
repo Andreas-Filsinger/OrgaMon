@@ -812,13 +812,13 @@ var
 
       if (ParamFunction = 'KomponistN') then
       begin
-        result := e_r_MusikerNurNachName(strtointdef(ParamVal1, 0));
+        result := e_r_MusikerNachname(strtointdef(ParamVal1, 0));
         break;
       end;
 
       if (ParamFunction = 'ArrangeurN') then
       begin
-        result := e_r_MusikerNurNachName(strtointdef(ParamVal1, 0));
+        result := e_r_MusikerNachname(strtointdef(ParamVal1, 0));
         break;
       end;
 

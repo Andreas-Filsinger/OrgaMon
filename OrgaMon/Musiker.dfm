@@ -53,6 +53,7 @@ object FormMusiker: TFormMusiker
         Width = 23
         Height = 22
         Hint = 'andere Person '#252'bernehmen'
+        Enabled = False
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -248,10 +249,6 @@ object FormMusiker: TFormMusiker
     object TabSheet2: TTabSheet
       Caption = 'Gruppierungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 16
         Top = 24

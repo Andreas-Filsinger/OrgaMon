@@ -191,9 +191,9 @@ object FormArtikel: TFormArtikel
   end
   object SpeedButton2: TSpeedButton
     Left = 467
-    Top = 234
-    Width = 21
-    Height = 20
+    Top = 232
+    Width = 22
+    Height = 22
     Anchors = [akLeft, akBottom]
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
@@ -223,13 +223,12 @@ object FormArtikel: TFormArtikel
       FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
       A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
     OnClick = SpeedButton2Click
-    ExplicitTop = 362
   end
   object SpeedButton3: TSpeedButton
-    Left = 466
-    Top = 280
-    Width = 21
-    Height = 19
+    Left = 467
+    Top = 277
+    Width = 22
+    Height = 22
     Anchors = [akLeft, akBottom]
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
@@ -259,7 +258,6 @@ object FormArtikel: TFormArtikel
       FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
       A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
     OnClick = SpeedButton3Click
-    ExplicitTop = 408
   end
   object SpeedButton4: TSpeedButton
     Left = 254
@@ -334,9 +332,9 @@ object FormArtikel: TFormArtikel
     ExplicitTop = 298
   end
   object SpeedButton6: TSpeedButton
-    Left = 488
+    Left = 490
     Top = 232
-    Width = 23
+    Width = 22
     Height = 22
     Hint = #220'ber den Komponisten'
     Anchors = [akLeft, akBottom]
@@ -386,7 +384,6 @@ object FormArtikel: TFormArtikel
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton6Click
-    ExplicitTop = 360
   end
   object SpeedButton7: TSpeedButton
     Left = 513
@@ -407,10 +404,9 @@ object FormArtikel: TFormArtikel
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton7Click
-    ExplicitTop = 360
   end
   object SpeedButton8: TSpeedButton
-    Left = 488
+    Left = 490
     Top = 277
     Width = 22
     Height = 22
@@ -462,7 +458,6 @@ object FormArtikel: TFormArtikel
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton8Click
-    ExplicitTop = 405
   end
   object SpeedButton9: TSpeedButton
     Left = 513
@@ -483,7 +478,6 @@ object FormArtikel: TFormArtikel
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton9Click
-    ExplicitTop = 405
   end
   object SpeedButton10: TSpeedButton
     Left = 816

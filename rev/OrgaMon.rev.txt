@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.315 (15.11.17) Andreas Filsinger
+
+ Bug: Artikel: Import: xls - Spalte "KOMPONIST", "ARRANGEUR" führt zu Doppelanlagen
+ Bug: Artikel: Komponist: Refresh ohne Funktion
+ Bug: Artikel: Arrangeur: Refresh ohne Funktion
+
+ Wegfall: Modul eOLAP
+
 Rev 8.314 (14.11.17) Andreas Filsinger
 
  Bug: Ausgangsrechnungen: Anzahlung war nicht mehr möglich

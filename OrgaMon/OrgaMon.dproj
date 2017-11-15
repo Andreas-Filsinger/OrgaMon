@@ -622,7 +622,6 @@
         <DCCReference Include="..\TPicUpload\TPUUploadProgress.pas">
             <Form>UploadProgressForm</Form>
         </DCCReference>
-        <DCCReference Include="..\PASconTools\eOLAP.pas"/>
         <DCCReference Include="SkriptEditor.pas">
             <Form>FormSkriptEditor</Form>
         </DCCReference>

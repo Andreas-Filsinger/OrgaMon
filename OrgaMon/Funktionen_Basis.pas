@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -86,11 +86,11 @@ function cAusgabeArt_Aufnahme_MP3: TDOM_Reference;
 
 { Musiker }
 function e_r_MusikerName(MUSIKER_R: integer): string;
-function e_r_MusikerNachName(MUSIKER_R: integer): string;
-function e_r_MusikerNurNachName(MUSIKER_R: integer): string;
+function e_r_MusikerNachnameKommaVorname(MUSIKER_R: integer): string;
+function e_r_MusikerNachname(MUSIKER_R: integer): string;
 function e_r_MusikerUeber(MUSIKER_R: integer): string;
 function e_r_MusikerCache: TStringList;
-function e_r_MusikerNachnamen: TStringList;
+function e_r_MusikerNachnamenKommaVornamen: TStringList;
 function e_r_MusikerGroup(MUSIKER_R: integer): TList;
 function e_r_MusikerGroupRID(RID: integer): integer;
 function e_r_MusikerWerke(MUSIKER_R: integer): TList;
@@ -122,12 +122,9 @@ function e_r_Localize2(RID, LANGUAGE: integer): string;
 // System Texte
 function e_r_text(RID: integer; LAND_R: integer = 0): TStringList;
 
-
 { Artikel }
-
 function e_r_ArtikelPDF(ARTIKEL_R: integer): TStringList;
 
-function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 // Abgeschrieben
 // --------------------------------------------------------------------------
 
@@ -140,17 +137,22 @@ function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 // Es kann nicht über das Gesamtvolumen hinaus abgeschrieben werden
 // Es wird zurückgeliefert, was wirklich abgeschrieben werden konnte
 // --------------------------------------------------------------------------
+function MengeAbschreiben(var GesamtVolumen, AbschreibeMenge: integer): integer;
 
 function PruefZiffer(n : int64):byte;
 function PruefZifferOK(zahl: Int64): Boolean;
 
 
+procedure EnsureCache_Musiker;
+procedure EnsureCache_Laender;
+
+
 implementation
 
 uses
-  Windows, SysUtils,
+  Math, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
-  Math,
+  WordIndex,
   anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
@@ -186,9 +188,9 @@ const
   { Private-Deklarationen }
   { Cache Musiker }
   CacheMusikerBirth: dword = 0;
-  CacheMusiker: TStringList = nil;
+  CacheMusikerName: TStringList = nil;
+  CacheMusikerNachnameKommaVorname: TStringList = nil;
   CacheMusikerNachname: TStringList = nil;
-  CacheMusikerNurNachname: TStringList = nil;
 
   { Cache Laender }
   CacheLaender: TStringList = nil;
@@ -200,8 +202,6 @@ const
 var
   CryptKey: array [0 .. 1023] of AnsiChar;
 
-procedure EnsureCache_Musiker; forward;
-procedure EnsureCache_Laender; forward;
 
 function e_r_MusikerName(MUSIKER_R: integer): string;
 var
@@ -210,9 +210,28 @@ begin
   if (MUSIKER_R > 0) then
   begin
     EnsureCache_Musiker;
-    k := CacheMusiker.indexofobject(TObject(MUSIKER_R));
+    k := CacheMusikerName.indexofobject(TObject(MUSIKER_R));
     if (k <> -1) then
-      Result := CacheMusiker[k]
+      Result := CacheMusikerName[k]
+    else
+      Result := '?';
+  end
+  else
+  begin
+    Result := '';
+  end;
+end;
+
+function e_r_MusikerNachnameKommaVorname(MUSIKER_R: integer): string;
+var
+  k: integer;
+begin
+  if (MUSIKER_R > 0) then
+  begin
+    EnsureCache_Musiker;
+    k := CacheMusikerNachnameKommaVorname.indexofobject(TObject(MUSIKER_R));
+    if (k <> -1) then
+      Result := CacheMusikerNachnameKommaVorname[k]
     else
       Result := '?';
   end
@@ -241,31 +260,14 @@ begin
   end;
 end;
 
-function e_r_MusikerNurNachName(MUSIKER_R: integer): string;
-var
-  k: integer;
-begin
-  if (MUSIKER_R > 0) then
-  begin
-    EnsureCache_Musiker;
-    k := CacheMusikerNurNachname.indexofobject(TObject(MUSIKER_R));
-    if (k <> -1) then
-      Result := CacheMusikerNurNachname[k]
-    else
-      Result := '?';
-  end
-  else
-  begin
-    Result := '';
-  end;
-end;
-
 procedure InvalidateCache_Musiker;
 begin
-  CacheMusikerBirth := 0;
-  FreeAndNil(CacheMusiker);
-  FreeAndNil(CacheMusikerNachname);
-  FreeAndNil(CacheMusikerNurNachname);
+  if assigned(CacheMusikerName) then
+  begin
+    FreeAndNil(CacheMusikerName);
+    FreeAndNil(CacheMusikerNachnameKommaVorname);
+    FreeAndNil(CacheMusikerNachname);
+  end;
 end;
 
 procedure EnsureCache_Musiker;
@@ -284,14 +286,13 @@ var
   end;
 
 begin
-  if frequently(CacheMusikerBirth, CacheMusikerLiveTime) then
+  if frequently(CacheMusikerBirth, CacheMusikerLiveTime) or (CacheMusikerName=nil) then
   begin
-    FreeAndNil(CacheMusiker);
-    FreeAndNil(CacheMusikerNachname);
-    FreeAndNil(CacheMusikerNurNachname);
-    CacheMusiker := TStringList.Create;
+    InvalidateCache_Musiker;
+    CacheMusikerName := TStringList.Create;
+    CacheMusikerNachnameKommaVorname := TStringList.Create;
     CacheMusikerNachname := TStringList.Create;
-    CacheMusikerNurNachname := TStringList.Create;
+
     cMUSIKER := nCursor;
     with cMUSIKER do
     begin
@@ -303,16 +304,21 @@ begin
       ApiFirst;
       while not (EOF) do
       begin
-        CacheMusiker.AddObject(strValidate(FieldByName('VORNAME').AsString +
-          ' ' + FieldByName('NACHNAME').AsString),
-          TObject(FieldByName('RID').AsInteger));
+        CacheMusikerName.AddObject(
+         {} strValidate(
+         {}  FieldByName('VORNAME').AsString + ' ' +
+         {}  FieldByName('NACHNAME').AsString),
+         {} TObject(FieldByName('RID').AsInteger));
 
-        CacheMusikerNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString +
-          ', ' + FieldByName('VORNAME').AsString),
-          TObject(FieldByName('RID').AsInteger));
+        CacheMusikerNachnameKommaVorname.AddObject(
+         {} strValidate(
+         {}  FieldByName('NACHNAME').AsString + ', ' +
+         {}  FieldByName('VORNAME').AsString),
+         {} TObject(FieldByName('RID').AsInteger));
 
-        CacheMusikerNurNachname.AddObject(strValidate(FieldByName('NACHNAME').AsString),
-          TObject(FieldByName('RID').AsInteger));
+        CacheMusikerNachname.AddObject(
+         {} strValidate(FieldByName('NACHNAME').AsString),
+         {} TObject(FieldByName('RID').AsInteger));
 
         ApiNext;
       end;
@@ -333,9 +339,6 @@ begin
         ApiNext;
       end;
 
-      // Jetzt immer die Musiker zusammenstellen!
-      // Listbox1.items.beginupdate;
-      // Listbox1.items.clear;
       for n := 0 to pred(KettenStartL.Count) do
       begin
         Kette := '';
@@ -348,29 +351,36 @@ begin
           sql.add('select MUSIKER_R,EVL_R,EVL_TRENNER from MUSIKER where RID=' +
             IntToStr(RID));
           ApiFirst;
-          Kette := cutblank(Kette + ' ' +
-            e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
-            FieldByName('EVL_TRENNER').AsString);
-          KetteNachname := cutblank(KetteNachname + ' ' +
-            e_r_MusikerNachName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
-            FieldByName('EVL_TRENNER').AsString);
-          KetteNurNachname := cutblank(KetteNurNachname + ' ' +
-            e_r_MusikerNurNachName(FieldByName('MUSIKER_R').AsInteger) +
-            ' ' + FieldByName('EVL_TRENNER').AsString);
+          Kette :=
+            {} cutblank(Kette + ' ' +
+            {} e_r_MusikerName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+            {} FieldByName('EVL_TRENNER').AsString);
+          KetteNachname :=
+            {} cutblank(KetteNachname + ' ' +
+            {} e_r_MusikerNachnameKommaVorname(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+            {} FieldByName('EVL_TRENNER').AsString);
+          KetteNurNachname :=
+            {} cutblank(KetteNurNachname + ' ' +
+            {} e_r_MusikerNachName(FieldByName('MUSIKER_R').AsInteger) + ' ' +
+            {} FieldByName('EVL_TRENNER').AsString);
           if FieldByName('EVL_R').IsNull then
             break
           else
             RID := FieldByName('EVL_R').AsInteger;
         until eternity;
-        CacheMusiker.AddObject(Kette, KettenStartL[n]);
-        CacheMusikerNachname.AddObject(KetteNachname, KettenStartL[n]);
-        CacheMusikerNurNachname.AddObject(KetteNurNachname, KettenStartL[n]);
-        // listbox1.items.addobject(Kette, KettenStartL[n]);
+        CacheMusikerName.AddObject(Kette, KettenStartL[n]);
+        CacheMusikerNachnameKommaVorname.AddObject(KetteNachname, KettenStartL[n]);
+        CacheMusikerNachname.AddObject(KetteNurNachname, KettenStartL[n]);
       end;
-      // Listbox1.items.endupdate;
       KettenStartL.Free;
     end;
     cMUSIKER.Free;
+    if DebugMode then
+    begin
+      SaveToFileCSV(CacheMusikerName,DiagnosePath+'Musiker.Cache.txt','RID;NAME');
+      SaveToFileCSV(CacheMusikerNachnameKommaVorname,DiagnosePath+'Musiker-Nachname.Cache.txt','RID;NACHNAME');
+      SaveToFileCSV(CacheMusikerNachname,DiagnosePath+'Musiker-Nur-Nachname.Cache.txt','RID;NURNACHNAME');
+    end;
   end;
 end;
 
@@ -470,7 +480,7 @@ end;
 function e_r_MusikerCache: TStringList;
 begin
   EnsureCache_Musiker;
-  Result := CacheMusiker;
+  Result := CacheMusikerName;
 end;
 
 function e_r_MusikerGroup(MUSIKER_R: integer): TList;
@@ -563,10 +573,10 @@ begin
   Result := RID;
 end;
 
-function e_r_MusikerNachnamen: TStringList;
+function e_r_MusikerNachnamenKommaVornamen: TStringList;
 begin
   EnsureCache_Musiker;
-  Result := CacheMusikerNachname;
+  Result := CacheMusikerNachnameKommaVorname;
 end;
 
 function e_w_MusikerCheckCreate(MusikerListe: string): integer;
@@ -574,18 +584,40 @@ var
   k: integer;
 begin
   EnsureCache_Musiker;
-  k := CacheMusiker.indexof(MusikerListe);
-  if (k = -1) then
-  begin
-    Result := succ(e_r_GEN('GEN_MUSIKER'));
-    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' + '''' +
-      MusikerListe + ''')');
-    InvalidateCache_Musiker;
-  end
-  else
-  begin
-    Result := integer(CacheMusiker.objects[k]);
-  end;
+  repeat
+
+   // Rang 1: "Otto M. Schwarz"
+   k := CacheMusikerName.indexof(MusikerListe);
+   if (k<>-1) then
+   begin
+    Result := integer(CacheMusikerName.objects[k]);
+    break;
+   end;
+
+   // Rang 2: "Schwarz, Otto M."
+   k := CacheMusikerNachnameKommaVorname.indexof(MusikerListe);
+   if (k<>-1) then
+   begin
+    Result := integer(CacheMusikerNachnameKommaVorname.objects[k]);
+    break;
+   end;
+
+   Result := succ(e_r_GEN('GEN_MUSIKER'));
+   if (pos(', ',MusikerListe)=0) then
+   begin
+    e_x_sql('insert into MUSIKER (RID,NACHNAME) values (0,' +
+     {} '''' + MusikerListe + ''')');
+   end else
+   begin
+    e_x_sql('insert into MUSIKER (RID,NACHNAME,VORNAME) values (0,' +
+    {} '''' + nextp(MusikerListe,', ',0) + ''','+
+    {} '''' + nextp(MusikerListe,', ',1) + ''')');
+   end;
+   InvalidateCache_Musiker;
+
+
+  until yet;
+
 end;
 
 procedure InvalidateCache_Laender;

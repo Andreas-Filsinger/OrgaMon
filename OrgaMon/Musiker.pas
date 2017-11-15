@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-   Grids, IB_Grid, IB_Access,
+  Grids, IB_Grid, IB_Access,
   ExtCtrls, IB_UpdateBar, IB_Components,
   StdCtrls, IB_Controls, Buttons,
   WordIndex, ComCtrls;
@@ -142,7 +142,10 @@ end;
 
 procedure TFormMusiker.SpeedButton1Click(Sender: TObject);
 begin
+  BeginHourGlass;
+  EnsureCache_Musiker;
   CreateTheIndex;
+  EndHourGlass;
 end;
 
 procedure TFormMusiker.Edit1KeyPress(Sender: TObject; var Key: Char);
@@ -206,7 +209,6 @@ begin
     edit1.SetFocus;
   end;
   EndHourGlass;
-
 end;
 
 procedure TFormMusiker.Button1Click(Sender: TObject);
@@ -291,7 +293,6 @@ begin
   if IB_Dataset.FieldByName('RID').IsNull then
     IB_Dataset.FieldByName('RID').AsInteger := 0;
 end;
-
 
 procedure TFormMusiker.SpeedButton2Click(Sender: TObject);
 
