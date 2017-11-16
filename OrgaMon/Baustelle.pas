@@ -3423,7 +3423,6 @@ begin
     EndHourGlass;
   end;
   NoTimer := false;
-
 end;
 
 procedure TFormBaustelle.SpeedButton11Click(Sender: TObject);

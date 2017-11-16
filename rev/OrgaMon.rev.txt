@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.317 (16.11.17) Andreas Filsinger
+
+ Bug: unzip: Kein Entpacken bei <Leerschritt> in Zielverzeichnis-Namen
+
+Rev 8.316 (15.11.17) Andreas Filsinger
+
+ Neu: Kreative: TICKET wenn Haifisch
+ Neu: Kreative: Symbol "Playknopf": automatisches Zusammenführung von Kreativen
+      anhand bisheriger manueller Zusammenführungen
+
 Rev 8.315 (15.11.17) Andreas Filsinger
 
  Bug: Artikel: Import: xls - Spalte "KOMPONIST", "ARRANGEUR" führt zu Doppelanlagen

@@ -224,11 +224,12 @@ function bool2cC_AsString(b: boolean): string;
 function ResolveSQL(const sql: String): String;
 
 // Tools für SQL Abfragen
-function isRID(RID: integer): string;
 function RIDtostr(RID: integer): string;
 function HasFieldName(IBQ: TdboDataset; FieldName: string): boolean;
 function EnsureSQL(const s: string): string;
 function SQLstring(const s: string): string;
+function isRID(RID: integer): string;
+function isSQLString(FieldName: string; CheckStr:string): string;
 
 // Tools für das Tabellen Handling
 function useTable(TableName: string): string;
@@ -1447,6 +1448,14 @@ begin
     result := ' is null'
   else
     result := '=' + inttostr(RID);
+end;
+
+function isSQLString(FieldName: string; CheckStr:string): string;
+begin
+ if (CheckStr='') then
+  result := ' (('+FieldName+'='''') or ('+FieldName+' is null)) '
+ else
+  result := ' ('+FieldName+'='+SQLString(CheckStr)+') ';
 end;
 
 function ColOf(q: TdboQuery; FieldName: string): integer; overload;

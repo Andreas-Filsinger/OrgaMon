@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.315; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.317; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Anforderungen an die zuliefernde App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -273,8 +273,7 @@ const
   cB_Erwartet = 00010;
   cB_Geliefert = 00001;
 
-  // EREIGNIS-Typen für Geschäftsabläufe
-  // wird auch für Ticket-Arten verwendet
+  // EREIGNIS.ART für Geschäftsabläufe (wird auch für TICKET.ART verwendet)
   eT_BestellungNunVollstaendigLieferbar = 1;
   eT_BestellungNunTeilweiseLieferbar = 2;
   eT_BestellungMerkmalTeilweiseLieferbarVerloren = 3;
@@ -311,6 +310,7 @@ const
   eT_WebShopRemoteSQL = 34; // Ausführen von SQL in der Home-DB
   eT_WebShopRemoteXMLRPC = 35; // Ausführen von XMLRPC im Home-Land
   eT_OrderZusageAenderung = 36; // Neuer Zusage-Termin in einer Order
+  eT_KreativeZusammenfuehren = 37; // Haifisch bei den Kreativen
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

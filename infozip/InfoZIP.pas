@@ -870,7 +870,7 @@ begin
       if (Options.Values[infozip_Password] <> '') then
         CommandLine := CommandLine + ' -P ' + Options.Values[infozip_Password];
 
-    CommandLine := CommandLine + ' "' + FName + '" -d ' + Destination;
+    CommandLine := CommandLine + ' "' + FName + '" -d "' + ValidatePathName(Destination) + '\\"';
 
     CallExternalApp('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_HIDE);
 

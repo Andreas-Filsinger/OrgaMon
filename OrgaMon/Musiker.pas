@@ -63,6 +63,7 @@ type
     SpeedButton8: TSpeedButton;
     Button3: TButton;
     Button4: TButton;
+    SpeedButton22: TSpeedButton;
     procedure FormActivate(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
@@ -78,6 +79,7 @@ type
     procedure SpeedButton8Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure SpeedButton22Click(Sender: TObject);
   private
     { Private-Deklarationen }
     MusikerSearchWI: TWordIndex;
@@ -98,7 +100,7 @@ implementation
 
 uses
   Artikel, globals, anfix32,
-  Funktionen_Basis, dbOrgaMon,
+  Funktionen_Basis, dbOrgaMon, gpLists,
   Funktionen_Beleg, math, Datenbank,
   wanfix32;
 
@@ -120,9 +122,9 @@ begin
     while not (eof) do
     begin
       MusikerSearchWI.AddWords(
-        FieldByName('VORNAME').AsString + ' ' +
-        FieldByName('NACHNAME').AsString,
-        TObject(FieldByName('RID').AsInteger));
+        {} FieldByName('VORNAME').AsString + ' ' +
+        {} FieldByName('NACHNAME').AsString,
+        {} TObject(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
@@ -271,6 +273,8 @@ end;
 procedure TFormMusiker.SpeedButton7Click(Sender: TObject);
 var
   TO_RID, FROM_RID: string;
+  qTICKET: TdboQuery;
+  TicketText : TStringList;
 begin
   BeginHourGlass;
   TO_RID := CheckBox1.caption;
@@ -281,6 +285,34 @@ begin
       'übernehmen?' + #13 +
       'Darf ' + e_r_MusikerName(StrToint(FROM_RID)) + ' nun gelöscht werden') then
     begin
+
+      // Log über diesen Haifisch anlegen
+      qTICKET := nQuery;
+      with qTICKET do
+      begin
+        sql.add('select * from TICKET');
+        for_update(sql);
+        Insert;
+        FieldByName('RID').AsInteger := 0;
+        FieldByName('ART').AsInteger := eT_KreativeZusammenfuehren;
+        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+        FieldByName('MOMENT').AsDateTime := now;
+
+        TicketText := TStringList.create;
+        TicketText.add('VORNAME='+IB_Query1.FieldByNAme('VORNAME').AsString);
+        TicketText.add('NACHNAME='+IB_Query1.FieldByNAme('NACHNAME').AsString);
+        TicketText.add('RID='+IB_Query1.FieldByNAme('RID').AsString);
+        TicketText.add('NEU_VORNAME=' + e_r_sqls('select VORNAME from MUSIKER where RID='+TO_RID));
+        TicketText.add('NEU_NACHNAME=' + e_r_sqls('select NACHNAME from MUSIKER where RID='+TO_RID));
+        TicketText.add('NEU_RID=' + TO_RID);
+        FieldByName('INFO').assign(TicketText);
+        TicketText.free;
+
+        Post;
+      end;
+      qTICKET.Free;
+
+      //
       e_w_MusikerChangeRef(FROM_RID, TO_RID);
       e_x_sql('delete from MUSIKER where RID=' + FROM_RID);
     end;
@@ -293,6 +325,72 @@ begin
   if IB_Dataset.FieldByName('RID').IsNull then
     IB_Dataset.FieldByName('RID').AsInteger := 0;
 end;
+
+procedure TFormMusiker.SpeedButton22Click(Sender: TObject);
+var
+  qTICKET: TdboQuery;
+  sINFO: TStringList;
+  RIDs: TgpIntegerList;
+  TO_RID,VORNAME,NACHNAME: string;
+  n : integer;
+  Stat_Aenderungen : integer;
+begin
+ if doit('Bisherige Zusammenführungen wiederholt anwenden') then
+ begin
+
+  BeginHourGlass;
+  Stat_Aenderungen := 0;
+  sINFO := TStringList.Create;
+  qTICKET := nQuery;
+  with qTICKET do
+  begin
+    sql.add('select * from TICKET where ART='+IntTostr(eT_KreativeZusammenfuehren) );
+    for_update(sql);
+    open;
+    First;
+    while not(eof) do
+    begin
+     e_r_sqlt(FieldByName('INFO'), sINFO);
+
+     VORNAME := sINFO.Values['VORNAME'];
+     NACHNAME := sINFO.Values['NACHNAME'];
+     TO_RID  := sINFO.Values['NEU_RID'];
+
+     RIDs := e_r_sqlm(
+      {} 'select RID from MUSIKER where '+
+      {} isSQLString('VORNAME',VORNAME)+'and'+
+      {} isSQLString('NACHNAME',NACHNAME) );
+
+     for n := 0 to pred(RIDs.count) do
+     begin
+       // Anwenden!
+       e_w_MusikerChangeRef(IntToStr(RIDs[n]), TO_RID);
+       e_x_sql('delete from MUSIKER where RID=' + IntToStr(RIDS[n]));
+       inc(Stat_Aenderungen);
+     end;
+
+     if (RIDs.count>0) then
+     begin
+       edit;
+       FieldByName('NUMMER').AsInteger := FieldByName('NUMMER').AsInteger + RIDs.Count;
+       post;
+     end;
+
+     RIDs.free;
+     next;
+
+    end;
+  end;
+  qTICKET.Free;
+  sINFO.Free;
+
+   EndHourGlass;
+   if (Stat_Aenderungen>0) then
+    ShowMEssage('Heute '+IntToStr(Stat_Aenderungen)+' Änderungen!')
+   else
+    ShowMEssage('Heute keine Änderungen!')
+  end;
+ end;
 
 procedure TFormMusiker.SpeedButton2Click(Sender: TObject);
 
