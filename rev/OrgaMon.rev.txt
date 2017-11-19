@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.318 (19.11.17) Andreas Filsinger
+
+ Bug: Kreative: Verkettung hatte nicht mehr funktioniert
+
 Rev 8.317 (16.11.17) Andreas Filsinger
 
  Bug: unzip: Kein Entpacken bei <Leerschritt> in Zielverzeichnis-Namen

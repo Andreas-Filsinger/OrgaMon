@@ -277,7 +277,7 @@ var
   Kette: string;
   KetteNachname: string;
   KetteNurNachname: string;
-  KettenStartL: TList;
+  KettenStartL: TgpIntegerList;
   n: integer;
 
   function strValidate(s: string): string;
@@ -292,6 +292,12 @@ begin
     CacheMusikerName := TStringList.Create;
     CacheMusikerNachnameKommaVorname := TStringList.Create;
     CacheMusikerNachname := TStringList.Create;
+
+    // Vorlauf
+      // das sind die Anfangs-Punkte der Musiker-Verkettungen
+      // Bedingungen: MUSIKER_R hat einen Inhalt
+      // auf diesen RID zeigt kein anderer!
+    KettenStartL := e_r_sqlm('select RID from MUSIKER where MUSIKER_R IS NOT NULL and RID NOT IN (select EVL_R from MUSIKER where EVL_R is not null) order by RID');
 
     cMUSIKER := nCursor;
     with cMUSIKER do
@@ -323,28 +329,19 @@ begin
         ApiNext;
       end;
 
-      KettenStartL := TList.Create;
-      // zweiter Durchlauf "Verkettungen"
-      Close;
-      sql.Clear;
-      // das sind die Anfangs-Punkte der Musiker-Verkettungen
-      // Bedingungen: MUSIKER_R hat einen Inhalt
-      // auf diesen RID zeigt kein anderer!
-      sql.add(
-        'select RID from MUSIKER where MUSIKER_R IS NOT NULL and RID NOT IN (select EVL_R from MUSIKER) order by RID');
-      ApiFirst;
-      while not (EOF) do
-      begin
-        KettenStartL.add(TObject(FieldByName('RID').AsInteger));
-        ApiNext;
-      end;
+    if DebugMode then
+    begin
+      CacheMusikerName.Add('--Ketten--;--Ketten--');
+      CacheMusikerNachnameKommaVorname.Add('--Ketten--;--Ketten--');
+      CacheMusikerNachname.Add('--Ketten--;--Ketten--');
+   end;
 
       for n := 0 to pred(KettenStartL.Count) do
       begin
         Kette := '';
         KetteNachname := '';
         KetteNurNachname := '';
-        RID := integer(KettenStartL[n]);
+        RID := KettenStartL[n];
         repeat
           Close;
           sql.Clear;
@@ -368,18 +365,20 @@ begin
           else
             RID := FieldByName('EVL_R').AsInteger;
         until eternity;
-        CacheMusikerName.AddObject(Kette, KettenStartL[n]);
-        CacheMusikerNachnameKommaVorname.AddObject(KetteNachname, KettenStartL[n]);
-        CacheMusikerNachname.AddObject(KetteNurNachname, KettenStartL[n]);
+        CacheMusikerName.AddObject(Kette, pointer(KettenStartL[n]));
+        CacheMusikerNachnameKommaVorname.AddObject(KetteNachname, pointer(KettenStartL[n]));
+        CacheMusikerNachname.AddObject(KetteNurNachname, pointer(KettenStartL[n]));
       end;
-      KettenStartL.Free;
     end;
+
     cMUSIKER.Free;
+    KettenStartL.Free;
+
     if DebugMode then
     begin
-      SaveToFileCSV(CacheMusikerName,DiagnosePath+'Musiker.Cache.txt','RID;NAME');
-      SaveToFileCSV(CacheMusikerNachnameKommaVorname,DiagnosePath+'Musiker-Nachname.Cache.txt','RID;NACHNAME');
-      SaveToFileCSV(CacheMusikerNachname,DiagnosePath+'Musiker-Nur-Nachname.Cache.txt','RID;NURNACHNAME');
+      SaveToFileCSV(CacheMusikerName,DiagnosePath+'Musiker.Cache.csv','RID;NAME');
+      SaveToFileCSV(CacheMusikerNachnameKommaVorname,DiagnosePath+'Musiker-Nachname.Cache.csv','RID;NACHNAME');
+      SaveToFileCSV(CacheMusikerNachname,DiagnosePath+'Musiker-Nur-Nachname.Cache.csv','RID;NURNACHNAME');
     end;
   end;
 end;

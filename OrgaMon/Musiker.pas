@@ -453,7 +453,6 @@ begin
         e_x_sql('update MUSIKER set NACHNAME=''' + ActName + ''' where RID=' + inttostr(RID));
         LastEVL := NewEVL(RID, -1, ActDelimiter);
         e_w_MusikerChangeRef(inttostr(RID), inttostr(LastEVL));
-//        DataModuleeCommerce.e_x_sql('update MUSIKER set MUSIKER_R=' + inttostr(RID) + ' where RID=' + inttostr(LastEVL));
       end
       else
       begin
