@@ -1043,6 +1043,7 @@ procedure TFotoExec.workEingang_TXT(sParameter: TStringList = nil);
 var
   sFiles: TStringList;
   n: integer;
+  ProtokollFName : string;
 
   // Parameter
   pAll: boolean;
@@ -1061,7 +1062,7 @@ begin
   sFiles := TStringList.Create;
 
   // get File List
-  dir(pFTPPath + '*.txt', sFiles, false);
+  dir(pFTPPath + '*' + cProtExtension, sFiles, false);
 
   // reduce to Protocols
   for n := pred(sFiles.Count) downto 0 do
@@ -1089,15 +1090,19 @@ begin
         { } 'timestamp ' + sTimeStamp,
         { } DiagnosePath + cProtokollTransaktionenFName);
 
-  // reduce to valid jpg's
+  // Protokolle verschieben
   for n := pred(sFiles.Count) downto 0 do
   begin
-    if FileMove(pFTPPath + sFiles[n],MyProgramPath + cProtokollPath + sFiles[n]) then
+    ProtokollFName := UpperCase(nextp(sFiles[n],'.',0));
+
+    if FileMove(
+     { } pFTPPath + sFiles[n],
+     { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension) then
     begin
       AppendStringsToFile(
         { } 'cp ' + sFiles[n] +
         { } ' ' +
-        { } MyProgramPath + cProtokollPath + sFiles[n],
+        { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension,
         { } DiagnosePath + cProtokollTransaktionenFName);
     end else
     begin

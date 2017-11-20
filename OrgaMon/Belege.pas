@@ -1878,6 +1878,7 @@ begin
   sMainDocFName := ExtractFileName(sMainDoc);
 
   sOtherDocs.delete(sOtherDocs.indexof(sMainDocFName));
+  sOtherDocs.sort;
   for n := 0 to pred(sOtherDocs.count) do
     bigDocument.InsertDocument(sPath + sOtherDocs[n]);
 

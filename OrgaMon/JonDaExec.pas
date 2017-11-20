@@ -2425,7 +2425,12 @@ begin
         WriteJonDa(':' + ProtS);
 
         //
-        ProtocolL.LoadFromFile(MyProgramPath + cProtokollPath + ProtocolAll[m] + cProtExtension);
+        try
+          ProtocolL.LoadFromFile(MyProgramPath + cProtokollPath + ProtocolAll[m] + cProtExtension);
+        except
+          on E: Exception do
+            log(cERRORText + ' 2432:' + E.Message);
+        end;
 
         for k := 0 to pred(ProtocolL.count) do
           if (length(ProtocolL[k]) > 0) then
@@ -4577,7 +4582,7 @@ var
 
   function _baustelle: string;
   begin
-    result := Oem2asci(mderec.Baustelle);
+    result := AnsiUpperCase(Oem2asci(mderec.Baustelle));
   end;
 
 begin
@@ -4596,7 +4601,7 @@ begin
       repeat
         if FileExists(MyProgramPath + cProtokollPath + _baustelle + Art + cProtExtension) then
         begin
-          result := _baustelle + Art;
+          result := _baustelle + AnsiUpperCase(Art);
           break;
         end;
 
@@ -4608,7 +4613,7 @@ begin
 
         if FileExists(MyProgramPath + cProtokollPath + cProtPrefix + Art + cProtExtension) then
         begin
-          result := cProtPrefix + Art;
+          result := cProtPrefix + AnsiUpperCase(Art);
           break;
         end;
 

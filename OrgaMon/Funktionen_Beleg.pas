@@ -11353,13 +11353,24 @@ begin
 
     // jetzt erst rausbelichten!
     MyBeleg := THTMLTemplate.create;
-    if FileExists(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html') then
-      MyBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html')
-    else if FileExists(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html') then
 
-      MyBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html')
-    else
-      MyBeleg.addFatalError('Vorlage .\' + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html nicht gefunden');
+    repeat
+
+      if FileExists(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html') then
+      begin
+        MyBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '3spaltig_n.html');
+        break;
+      end;
+
+      if FileExists(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html') then
+      begin
+        MyBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html');
+        break;
+      end;
+
+       MyBeleg.addFatalError('Vorlage .\' + cHTMLTemplatesDir + AusgabeFNamePreFix + '.html nicht gefunden');
+
+    until yet;
 
     MyBeleg.WriteValue(DatensammlerLokal, DatensammlerGlobal);
     result.add(AnwenderPath + AusgabeFNamePreFix + chtmlextension);

@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.320 (20.11.17) Andreas Filsinger
+
+ Neu: OrgaMon-Foto Server: Protokoll-Verschiebung sollte eine durchg‰ngige
+      Groﬂ- Kleinschreibung aufweisen.
+
+Rev 8.319 (20.11.17) Andreas Filsinger
+
+ Bug: OrgaMon-App Server: Protokolle, Gross- Kleinschreibung inkonsistent
+
 Rev 8.318 (19.11.17) Andreas Filsinger
 
  Bug: Kreative: Verkettung hatte nicht mehr funktioniert
