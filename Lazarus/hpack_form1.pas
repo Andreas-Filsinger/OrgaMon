@@ -30,7 +30,6 @@ type
     Button5: TButton;
     Button6: TButton;
     Button7: TButton;
-    Button8: TButton;
     Button9: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
@@ -62,7 +61,6 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure TabSheet2Show(Sender: TObject);
   private
@@ -89,7 +87,7 @@ implementation
 
 uses
   // freepascal / Lazarus
-  fpjson, jsonparser,
+  fpjson, jsonparser, jsonscanner,
 
   // tools
   anfix32,
@@ -297,11 +295,9 @@ var
   S: TFileStream;
   P: TJSONParser;
   jROOT, jCASE, jTEST, jHEADER: TJSONData;
-  V: TObject;
   W: string;
-  H: TStringList;
-
   TestsToday: integer;
+
 begin
   TestsToday := 0;
   sDir := TStringList.Create;
@@ -324,8 +320,7 @@ begin
 
         S := TFileStream.Create(Path + sTest[m], fmOpenRead);
         try
-          P := TJSONParser.Create(S);
-          P.Strict := True;
+          P := TJSONParser.Create(S,[joStrict]);
           try
             jROOT := P.Parse;
           finally
@@ -347,7 +342,6 @@ begin
             W := jTEST.getPath('wire').AsString;
             edit1.Text := W;
 
-            H := TStringList.Create;
 
             jHEADER := jTEST.getPath('headers');
 
@@ -416,6 +410,8 @@ begin
   begin
    HTTP2 := THTTP2_Connection.create;
    SHowDebugmessages;
+   HTTP2.CTX:=   HTTP2.StrictHTTP2Context;
+   SHowDebugmessages;
   end;
 end;
 
@@ -430,36 +426,6 @@ begin
   Parse;
 end;
 
-procedure TForm1.Button8Click(Sender: TObject);
-var
-   buf : array[0..pred(16*1024)] of byte;
-   n : integer;
-   c : char;
-   Request: string;
-   BytesRead: cint;
-
-begin
-  sDebug.add('read ...');
-  ShowDebugMessages;
-
-    Request := '';
-    BytesRead := HTTP2.read(@ClientNoise,sizeof(ClientNoise));
-    if (BytesRead<0) then
-    begin
-     HTTP2.loadERROR(BytesRead);
-    end;
-
-    if (BytesRead>0) then
-    begin
-      sDebug.add('parse ' + IntTOstr(BytesRead) + ' Bytes ...');
-
-     CN_Pos := 0;
-     CN_Size := BytesRead;
-     Parse;
-    end;
-    ShowDebugMessages;
-
-end;
 
 procedure TForm1.Button9Click(Sender: TObject);
 var

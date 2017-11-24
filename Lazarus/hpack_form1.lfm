@@ -6,24 +6,23 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 859
   ClientWidth = 1334
-  DesignTimePPI = 120
-  LCLVersion = '1.8.0.4'
+  LCLVersion = '1.8.0.5'
   object PageControl1: TPageControl
     Left = 0
     Height = 859
     Top = 0
     Width = 1334
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'HPACK bench'
-      ClientHeight = 826
+      ClientHeight = 831
       ClientWidth = 1326
       object Memo1: TMemo
         Left = 16
-        Height = 411
+        Height = 416
         Top = 99
         Width = 1304
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -42,7 +41,7 @@ object Form1: TForm1
       end
       object Edit1: TEdit
         Left = 16
-        Height = 28
+        Height = 23
         Top = 32
         Width = 1304
         Anchors = [akTop, akLeft, akRight]
@@ -52,7 +51,7 @@ object Form1: TForm1
       object Button1: TButton
         Left = 16
         Height = 25
-        Top = 528
+        Top = 533
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'decode'
@@ -61,24 +60,24 @@ object Form1: TForm1
       end
       object Label1: TLabel
         Left = 16
-        Height = 20
+        Height = 15
         Top = 8
-        Width = 161
+        Width = 128
         Caption = 'wire (compressed Code)'
         ParentColor = False
       end
       object Label2: TLabel
         Left = 16
-        Height = 20
+        Height = 15
         Top = 72
-        Width = 112
+        Width = 90
         Caption = 'Header (HTTP/2)'
         ParentColor = False
       end
       object Edit2: TEdit
         Left = 16
-        Height = 28
-        Top = 562
+        Height = 23
+        Top = 572
         Width = 1086
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 3
@@ -87,7 +86,7 @@ object Form1: TForm1
       object Button2: TButton
         Left = 16
         Height = 25
-        Top = 601
+        Top = 606
         Width = 220
         Anchors = [akLeft, akBottom]
         Caption = 'Run all "decode" Tests ...'
@@ -114,7 +113,7 @@ object Form1: TForm1
       end
       object Edit5: TEdit
         Left = 16
-        Height = 28
+        Height = 23
         Top = 678
         Width = 888
         TabOrder = 7
@@ -132,7 +131,7 @@ object Form1: TForm1
     end
     object TabSheet2: TTabSheet
       Caption = 'HTTP/2 bench'
-      ClientHeight = 826
+      ClientHeight = 831
       ClientWidth = 1326
       OnShow = TabSheet2Show
       object Memo2: TMemo
@@ -194,20 +193,11 @@ object Form1: TForm1
       end
       object Label3: TLabel
         Left = 1051
-        Height = 20
+        Height = 15
         Top = 88
-        Width = 220
+        Width = 175
         Caption = 'Steps to start the TLS 1.2 Server ...'
         ParentColor = False
-      end
-      object Button8: TButton
-        Left = 1051
-        Height = 25
-        Top = 352
-        Width = 235
-        Caption = 'read clients request'
-        OnClick = Button8Click
-        TabOrder = 5
       end
       object Button9: TButton
         Left = 1051
@@ -216,7 +206,7 @@ object Form1: TForm1
         Width = 235
         Caption = 'send SETTINGS'
         OnClick = Button9Click
-        TabOrder = 6
+        TabOrder = 5
       end
       object Button10: TButton
         Left = 1051
@@ -225,7 +215,7 @@ object Form1: TForm1
         Width = 235
         Caption = 'Show Debug Msgs'
         OnClick = Button10Click
-        TabOrder = 7
+        TabOrder = 6
       end
       object Button11: TButton
         Left = 1051
@@ -234,22 +224,22 @@ object Form1: TForm1
         Width = 235
         Caption = 'send 16 k rubbish'
         OnClick = Button11Click
-        TabOrder = 8
+        TabOrder = 7
       end
       object Label6: TLabel
         Left = 1051
-        Height = 20
+        Height = 15
         Top = 24
-        Width = 158
+        Width = 128
         Caption = 'Key and Cert Location ...'
         ParentColor = False
       end
       object Edit3: TEdit
         Left = 1051
-        Height = 28
+        Height = 23
         Top = 48
         Width = 235
-        TabOrder = 9
+        TabOrder = 8
         Text = 'R:\srv\hosts\'
       end
       object Button7: TButton
@@ -259,14 +249,14 @@ object Form1: TForm1
         Width = 235
         Caption = 'Parse (again)'
         OnClick = Button7Click
-        TabOrder = 10
+        TabOrder = 9
       end
       object Edit4: TEdit
         Left = 1051
-        Height = 28
+        Height = 23
         Top = 506
         Width = 235
-        TabOrder = 11
+        TabOrder = 10
         Text = 'client-step-1-headers'
       end
       object Button12: TButton
@@ -276,13 +266,13 @@ object Form1: TForm1
         Width = 235
         Caption = 'Parse'
         OnClick = Button12Click
-        TabOrder = 12
+        TabOrder = 11
       end
       object Label7: TLabel
         Left = 1058
-        Height = 20
+        Height = 15
         Top = 484
-        Width = 123
+        Width = 99
         Caption = '<Path to Testfiles>'
         ParentColor = False
       end
@@ -293,7 +283,7 @@ object Form1: TForm1
         Width = 235
         Caption = 'send ClientInit'
         OnClick = Button13Click
-        TabOrder = 13
+        TabOrder = 12
       end
       object Button17: TButton
         Left = 1051
@@ -302,7 +292,7 @@ object Form1: TForm1
         Width = 235
         Caption = 'send PING'
         OnClick = Button17Click
-        TabOrder = 14
+        TabOrder = 13
       end
     end
   end

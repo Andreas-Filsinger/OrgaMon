@@ -43,12 +43,13 @@ uses
 
   // Tools
   anfix32,
+  PasMP,
   // HTTP/2 Project
   cryptossl,
   hpack;
 
 Type
- { THTTP2_Stream }
+ { THTTP2_Stream - Class }
 
  // RFC: 5.1.  Stream States
 
@@ -64,11 +65,14 @@ Type
        SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
   end;
 
- { THTTP2_Reader Thread }
+ { THTTP2_Reader - Thread }
 
+type
+ TClientNoise = array[0..pred(16*1024)] of byte;
+ TClientNoiseP = ^TClientNoise;
 
- TNoiseEvent = procedure(Sender: TObject; const LineNoise: RawByteString) of object;
- TStatusEvent = procedure(Sender: TObject; StatusCode: Integer; StatusMsg: string) of object;
+ TNoiseQ = specialize TPasMPBoundedQueue<RawByteString>;
+ TStatusQ = specialize TPasMPBoundedQueue<Integer>;
 
  //
  // fires a Noise-Event for every received raw Data-Block
@@ -80,18 +84,21 @@ Type
  THTTP2_Reader = class(TThread)
  private
 
-   FNoise : TNoiseEvent;
-   FStatus : TStatusEvent;
+   FNoise : TThreadMethod;
+   FStatus : TThreadMethod;
    FSSL: PSSL;
 
  protected
    procedure Execute; override;
  public
+   // this should be a stack
+   NOISE : TNoiseQ;
+   ERROR : TStatusQ;
 
    constructor Create(SSL : PSSL);
 
-   property OnNoise : TNoiseEvent read FNoise write FNoise;
-   property OnStatus : TStatusEvent read FStatus write FStatus;
+   property OnNoise : TThreadMethod read FNoise write FNoise;
+   property OnStatus : TThreadMethod read FStatus write FStatus;
  end;
 
  { THTTP2_Connection }
@@ -109,9 +116,12 @@ Type
      Headers: THPACK;
      Streams: TList;
 
-     // openSSL-Security
+     // openSSL
      CTX: PSSL_CTX;
      SSL: PSSL;
+
+     // Incoming Data
+     Reader : THTTP2_Reader;
 
      type
 
@@ -122,19 +132,18 @@ Type
        procedure TLS_Accept(FD: cint);
        procedure Init;
 
-       // read-write
+       // write
        function write(buf : Pointer;  num: cint): cint;
-       function read(buf : Pointer;  num: cint): cint;
+
+       // read Events
+       procedure Noise ;
+       procedure Status ;
 
        // Error Informations
        procedure loadERROR(Err : cint);
 
-
  end;
 
-type
- TClientNoise = array[0..pred(16*1024)] of byte;
- TClientNoiseP = ^TClientNoise;
 
 var
   ClientNoise : TClientNoise;
@@ -150,7 +159,7 @@ const
   ParseRounds : Integer = 0;
 
 function StartFrames : RawByteString;
-function PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
+function PING(PayLoad : RawByteString; AsEcho: boolean = false):RawByteString;
 
 procedure Parse; // (ClientNoise)
 procedure ParserClear;
@@ -835,24 +844,10 @@ begin
    end;
    if FatalError then
      break;
-   if Size_Unparsed=0 then
+   if (Size_Unparsed=0) then
      break;
   until false;
   inc(ParseRounds);
-end;
-
-{ THTTP2_FRAME_HEADER }
-
-
-
-
-type
-TCardinalRec = packed record
-{$ifdef FPC_LITTLE_ENDIAN}
-  byte0, byte1, byte2, byte3 : Byte;
-{$else FPC_LITTLE_ENDIAN}
-  byte3, byte2, byte1, byte0 : Byte;
-{$endif FPC_LITTLE_ENDIAN}
 end;
 
 
@@ -861,9 +856,14 @@ var
  BytesRead, BytesWritten: cint;
  buf : array[0..pred(16*1024)] of byte;
  D : RawByteString;
- ERROR: Integer;
+ _ERROR: integer;
 begin
  try
+   if assigned(FStatus) then
+   begin
+    // we have errors
+     Synchronize(FStatus);
+   end;
    while not self.Terminated do
    begin
 
@@ -872,11 +872,12 @@ begin
 
     if (BytesRead<1) then
     begin
-      ERROR := SSL_get_error(FSSL,BytesRead);
-      sDebug.add(SSL_ERROR[ERROR]);
+       _ERROR := SSL_get_error(FSSL,BytesRead);
+      ERROR.enqueue(_ERROR );
+      sDebug.add(SSL_ERROR[_ERROR]);
 
 
-      if ERROR=SSL_ERROR_SYSCALL then
+      if _ERROR=SSL_ERROR_SYSCALL then
       begin
        sDebug.add('WSAGetLastError='+IntTOstr(socketerror));
        sDebug.add('GetLastError='+IntTOstr(GetLastError));
@@ -887,7 +888,7 @@ begin
       if assigned(FStatus) then
       begin
        // we have errors
-        FStatus(self, -1,'');
+        Synchronize(FStatus);
       end;
 
     end else
@@ -897,12 +898,11 @@ begin
      begin
        SetLength(D, BytesRead);
        move(buf, D[1], BytesRead);
-       FNoise(self,D);
+       NOISE.enqueue(D);
+       Synchronize(FNoise);
      end;
 
 
-
-    sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');
 
 //     CN_SIze := BytesRead;
   //   move(Buf, ClientNoise, CN_Size);
@@ -926,11 +926,23 @@ end;
 
 constructor THTTP2_Reader.Create(SSL : PSSL);
 begin
- inherited Create(True);
  FSSL := SSL;
  FreeOnTerminate := True;
+ ERROR := TStatusQ.Create(1024);
+ NOISE :=  TNoiseQ.Create(1024);
+ inherited Create(True);
 end;
 
+{ THTTP2_FRAME_HEADER }
+
+type
+TCardinalRec = packed record
+{$ifdef FPC_LITTLE_ENDIAN}
+  byte0, byte1, byte2, byte3 : Byte;
+{$else FPC_LITTLE_ENDIAN}
+  byte3, byte2, byte1, byte0 : Byte;
+{$endif FPC_LITTLE_ENDIAN}
+end;
 
 class operator TNum31Bit.Explicit(a : TNum31Bit) : Cardinal;
 begin
@@ -1142,17 +1154,14 @@ begin
    CheckSecurityItem('Mac','AEAD');
 
 
-
-   // chrome
-(*   sleep(200);
-    D := StartFrames;
-    BytesWritten := SSL_write(cs_SSL,@D[1],length(D));
-    sDebug.add('we have send '+IntTOStr(BytesWritten)+' Bytes of Hello-Code!');
-    *)
-    // chrome
+   // Start the Read Connection Data Thread
+   Reader := THTTP2_Reader.Create(SSL);
+   Reader.OnNoise:=@Noise;
+   Reader.OnStatus:=@Status;
+   Reader.Start;
 
 
-   //
+   (*
    sDebug.add('read ...');
    BytesRead := SSL_read(SSL,@buf,sizeof(buf));
 
@@ -1201,6 +1210,7 @@ begin
     CN_Pos := 0;
     Parse;
    end;
+   *)
   end;
 end;
 
@@ -1227,10 +1237,22 @@ begin
 
 end;
 
-function THTTP2_Connection.read(buf: Pointer; num: cint): cint;
+procedure THTTP2_Connection.Noise;
+var
+  D: RawByteString;
 begin
-
+ Reader.NOISE.dequeue(D);
+ sDebug.add('We have contact with '+IntToStr(length(D))+' Byte(s)');
 end;
+
+procedure THTTP2_Connection.Status;
+var
+   I : Integer;
+begin
+  Reader.ERROR.dequeue(I);
+  sDebug.add('We have a Status Update Code '+IntToStr(I));
+end;
+
 
 procedure THTTP2_Connection.loadERROR(Err: cint);
 begin

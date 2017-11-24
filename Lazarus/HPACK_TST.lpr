@@ -12,7 +12,8 @@ uses
   { you can add units after this }
   cryptossl in '../HTTP2/cryptossl.pas',
   HPACK in '../HTTP2/hpack.pas',
-  HTTP2 in '../HTTP2/http2.pas';
+  HTTP2 in '../HTTP2/http2.pas',
+  PasMP;
 
 {$R *.res}
 
