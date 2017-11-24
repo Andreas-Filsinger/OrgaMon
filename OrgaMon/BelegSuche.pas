@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011 - 2016  Andreas Filsinger
+  |    Copyright (C) 2011 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -709,9 +709,6 @@ begin
     while not(eof) do
     begin
 
-      if pos('130.', FieldByName('INFO').AsString) = 1 then
-        sLog.add('Hit');
-
       while true do
       begin
         case AutoMataState of
@@ -839,7 +836,7 @@ begin
               if not(assigned(lVERTRAG_R)) then
                 raise Exception.create('Im Status 1 muss der Vertagskontext klar sein');
 
-              if (FieldByName('MENGE_GELIEFERT').AsInteger = 1) then
+              if (FieldByName('MENGE').IsNotNull) then
               begin
                 ARTIKEL := FieldByName('ARTIKEL').AsString;
                 DATUM := ExtractSegmentBetween(ARTIKEL, ' - ', ' (');

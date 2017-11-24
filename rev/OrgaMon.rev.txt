@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.321 (24.11.17) Andreas Filsinger
+
+ Neu: Vertrag: "Bezahlt"-Merkmal wird unabhängig von Liefermenge eingetragen,
+      ausschlaggebend ist die Vertragsmenge. Für die "Bezahlt" Aktion ist aus-
+      schlaggebend, dass man sich für diesen Umstand entschieden hat, nicht die
+      tatsächliche Menge. So ist es auch möglich anhand von Zeitbelegen den bezahlte
+      Vertragszeitraum zu buchen.
+
 Rev 8.320 (20.11.17) Andreas Filsinger
 
  Neu: OrgaMon-Foto Server: Protokoll-Verschiebung sollte eine durchgängige

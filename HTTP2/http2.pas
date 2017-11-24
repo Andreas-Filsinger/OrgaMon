@@ -39,6 +39,8 @@ uses
   unicodedata,
   Math,
 
+
+
   // Tools
   anfix32,
   // HTTP/2 Project
@@ -62,7 +64,37 @@ Type
        SETTINGS_MAX_FRAME_SIZE : UInt24;  { 16384..16777215 }
   end;
 
-  { THTTP2_Connection }
+ { THTTP2_Reader Thread }
+
+
+ TNoiseEvent = procedure(Sender: TObject; const LineNoise: RawByteString) of object;
+ TStatusEvent = procedure(Sender: TObject; StatusCode: Integer; StatusMsg: string) of object;
+
+ //
+ // fires a Noise-Event for every received raw Data-Block
+ // it makes no assumption about content just the raw bytes
+ // so Noise can be Data from a SSL Connection or a Test Data Generator
+ // or a uncrypted local connection
+ //
+
+ THTTP2_Reader = class(TThread)
+ private
+
+   FNoise : TNoiseEvent;
+   FStatus : TStatusEvent;
+   FSSL: PSSL;
+
+ protected
+   procedure Execute; override;
+ public
+
+   constructor Create(SSL : PSSL);
+
+   property OnNoise : TNoiseEvent read FNoise write FNoise;
+   property OnStatus : TStatusEvent read FStatus write FStatus;
+ end;
+
+ { THTTP2_Connection }
 
  THTTP2_Connection = class(TObject)
 
@@ -84,11 +116,6 @@ Type
      type
 
      { TReaderThread }
-
- TReaderThread=class(TThread)
-       private
-         procedure Execute;override;
-     end;
 
      public
        function StrictHTTP2Context: PSSL_CTX;
@@ -118,9 +145,9 @@ const
   mDebug: TStringList = nil;
   CLIENT_PREFIX: RawByteString = '';
   PING_PAYLOAD: RawByteString = 'OrgaMon!';
+  PathToTests: string = '';
   AutomataState : Byte = 0;
   ParseRounds : Integer = 0;
-  PathToTests: string = '';
 
 function StartFrames : RawByteString;
 function PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
@@ -556,12 +583,6 @@ begin
  CN_Size := R;
 end;
 
-procedure ParserClear;
-begin
- AutomataState := 0;
- FatalError:= false;
- CN_Pos := 0;
-end;
 
 procedure Parse;
 
@@ -788,7 +809,7 @@ begin
                break;
              end;
 
-             mDebug.add(' Stream ' + INtTOstr(cardinal(Stream_ID)) + ' has Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
+             mDebug.add(' Stream ' + IntToStr(cardinal(Stream_ID)) + ' has Window_Size_Increment ' + IntToStr(Cardinal(PFRAME_WINDOW_UPDATE(@ClientNoise[CN_Pos2])^.Window_Size_Increment)) );
 
             end;
           FRAME_TYPE_CONTINUATION : begin
@@ -823,7 +844,6 @@ end;
 { THTTP2_FRAME_HEADER }
 
 
-{ THTTP2_Connection }
 
 
 type
@@ -835,12 +855,82 @@ TCardinalRec = packed record
 {$endif FPC_LITTLE_ENDIAN}
 end;
 
-{ THTTP2_Connection.TReaderThread }
 
-procedure THTTP2_Connection.TReaderThread.Execute;
+procedure THTTP2_Reader.Execute;
+var
+ BytesRead, BytesWritten: cint;
+ buf : array[0..pred(16*1024)] of byte;
+ D : RawByteString;
+ ERROR: Integer;
 begin
-  //
+ try
+   while not self.Terminated do
+   begin
+
+    sDebug.add('read ...');
+    BytesRead := SSL_read(FSSL,@buf,sizeof(buf));
+
+    if (BytesRead<1) then
+    begin
+      ERROR := SSL_get_error(FSSL,BytesRead);
+      sDebug.add(SSL_ERROR[ERROR]);
+
+
+      if ERROR=SSL_ERROR_SYSCALL then
+      begin
+       sDebug.add('WSAGetLastError='+IntTOstr(socketerror));
+       sDebug.add('GetLastError='+IntTOstr(GetLastError));
+       // SysErrorMessage()
+      end;
+      ERR_print_errors_cb(@cb_ERROR,nil);
+
+      if assigned(FStatus) then
+      begin
+       // we have errors
+        FStatus(self, -1,'');
+      end;
+
+    end else
+    begin
+
+     if assigned(FNoise) then
+     begin
+       SetLength(D, BytesRead);
+       move(buf, D[1], BytesRead);
+       FNoise(self,D);
+     end;
+
+
+
+    sDebug.add('we have contact with '+IntTOStr(BytesRead)+' Bytes of Hello-Code!');
+
+//     CN_SIze := BytesRead;
+  //   move(Buf, ClientNoise, CN_Size);
+  //   CN_Pos := 0;
+//     Parse;
+   end;
+
+   end;
+
+ finally
+ end;
+
 end;
+
+procedure ParserClear;
+begin
+ AutomataState := 0;
+ FatalError := false;
+ CN_Pos := 0;
+end;
+
+constructor THTTP2_Reader.Create(SSL : PSSL);
+begin
+ inherited Create(True);
+ FSSL := SSL;
+ FreeOnTerminate := True;
+end;
+
 
 class operator TNum31Bit.Explicit(a : TNum31Bit) : Cardinal;
 begin
@@ -938,6 +1028,7 @@ end;
 // create a Parameter Context for a TLS 1.2 Server Connection
 // intended for a "HTTPS://" Server Socket
 
+{ THTTP2_Connection }
 
 function THTTP2_Connection.StrictHTTP2Context: PSSL_CTX;
 var
