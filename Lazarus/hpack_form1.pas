@@ -78,6 +78,7 @@ type
     { public declarations }
     procedure InitPathToTest;
     procedure ShowDebugMessages;
+    procedure Request(s:String);
   end;
 
 var
@@ -141,15 +142,15 @@ var
 begin
  InitPathToTest;
  FName := PathToTests + edit4.Text + '.http2';
- LoadRawBytes(FName);
+ HTTP2.LoadRawBytes(FName);
 
  if (pos('-0-',FName)>0) then
-  AutomataState := 0 // we expect a "Client Hello", in a initial packet!
+  HTTP2.AutomataState := 0 // we expect a "Client Hello", in a initial packet!
  else
-  AutomataState := 1; // we have no Client Helo!
+  HTTP2.AutomataState := 1; // we have no Client Helo!
 
- CN_Pos := 0; // ensure we start "here"
- Parse;
+ HTTP2.CN_Pos := 0; // ensure we start "here"
+ HTTP2.Parse;
 
  ShowDebugMessages;
 end;
@@ -254,7 +255,7 @@ begin
 
   // save it as "init"
   InitPathToTest;
-  SaveRawBytes(D,PathToTests+'ping.http2');
+  HTTP2.SaveRawBytes(D,PathToTests+'ping.http2');
 
 
   sDebug.add('--------------------------------------------');
@@ -409,6 +410,7 @@ begin
   if not(assigned(HTTP2)) then
   begin
    HTTP2 := THTTP2_Connection.create;
+   HTTP2.OnRequest := @Request;
    SHowDebugmessages;
    HTTP2.CTX:=   HTTP2.StrictHTTP2Context;
    SHowDebugmessages;
@@ -422,8 +424,8 @@ end;
 
 procedure TForm1.Button7Click(Sender: TObject);
 begin
-  ParserClear;
-  Parse;
+  HTTP2.ParserClear;
+  HTTP2.Parse;
 end;
 
 
@@ -438,7 +440,7 @@ begin
 
   // save it as "init"
   InitPathToTest;
-  SaveRawBytes(D,PathToTests+'init.http2');
+  HTTP2.SaveRawBytes(D,PathToTests+'init.http2');
 
 
   sDebug.add('--------------------------------------------');
@@ -501,6 +503,13 @@ begin
     SetFocus;
    Application.ProcessMessages;
  end;
+end;
+
+procedure TForm1.Request(s: String);
+begin
+ if (s<>'') then
+  sDebug.add(s);
+ ShowDebugMessages;
 end;
 
 end.

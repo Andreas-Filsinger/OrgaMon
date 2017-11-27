@@ -39,8 +39,6 @@ uses
   unicodedata,
   Math,
 
-
-
   // Tools
   anfix32,
   PasMP,
@@ -87,13 +85,14 @@ type
    FNoise : TThreadMethod;
    FStatus : TThreadMethod;
    FSSL: PSSL;
+   ErrorCount: Integer;
 
  protected
    procedure Execute; override;
  public
    // this should be a stack
    NOISE : TNoiseQ;
-   ERROR : TStatusQ;
+   STATUS : TStatusQ;
 
    constructor Create(SSL : PSSL);
 
@@ -103,15 +102,20 @@ type
 
  { THTTP2_Connection }
 
+ TRequestMethod = procedure(s : String) of Object;
+
  THTTP2_Connection = class(TObject)
 
-     // Connection Settings
-     SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL : Integer;
-     SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
-     SETTINGS_HEADER_TABLE_SIZE: Integer;
-     SETTINGS_INITIAL_WINDOW_SIZE: Integer;
-     SETTINGS_MAX_FRAME_SIZE: Integer;
-     SETTINGS_MAX_HEADER_LIST_SIZE: Integer;
+     FRequest : TRequestMethod;
+
+   // Connection Settings
+     MAX_CONCURRENT_STREAMS_LOCAL : Integer;
+     MAX_CONCURRENT_STREAMS_REMOTE: Integer;
+     HEADER_TABLE_SIZE: Integer;
+     INITIAL_WINDOW_SIZE: Integer;
+     MAX_FRAME_SIZE: Integer;
+     MAX_HEADER_LIST_SIZE: Integer;
+     PUSH_ENABLED: boolean;
 
      Headers: THPACK;
      Streams: TList;
@@ -123,49 +127,50 @@ type
      // Incoming Data
      Reader : THTTP2_Reader;
 
-     type
-
-     { TReaderThread }
-
      public
+       ClientNoise : TClientNoise;
+       CN_Size: Integer;
+       CN_Pos: Integer; // 0..pred(CN_Size)
+       AutomataState : Byte;
+       ParseRounds : Integer;
+
        function StrictHTTP2Context: PSSL_CTX;
        procedure TLS_Accept(FD: cint);
        procedure Init;
+
+       // Parser
+       procedure Parse;
+       procedure ParserClear;
+       procedure ParserSave;
+       procedure SaveRawBytes(B: RawByteString; FName: string);
+       procedure LoadRawBytes(FName: string);
 
        // write
        function write(buf : Pointer;  num: cint): cint;
 
        // read Events
-       procedure Noise ;
-       procedure Status ;
+       procedure Noise;
+       procedure Status;
 
        // Error Informations
        procedure loadERROR(Err : cint);
 
+       property OnRequest : TrequestMethod read FRequest write FRequest;
+
+
  end;
 
 
-var
-  ClientNoise : TClientNoise;
-  CN_Size: Integer;
-  CN_Pos: Integer; // 0..pred(CN_Size)
 
 const
   mDebug: TStringList = nil;
   CLIENT_PREFIX: RawByteString = '';
   PING_PAYLOAD: RawByteString = 'OrgaMon!';
   PathToTests: string = '';
-  AutomataState : Byte = 0;
-  ParseRounds : Integer = 0;
 
 function StartFrames : RawByteString;
 function PING(PayLoad : RawByteString; AsEcho: boolean = false):RawByteString;
 
-procedure Parse; // (ClientNoise)
-procedure ParserClear;
-procedure ParserSave; // dump ClientNoise to File
-procedure SaveRawBytes(B:RawByteString;FName:string);
-procedure LoadRawBytes(FName:string);
 
 function getSocket: cint;
 
@@ -552,23 +557,22 @@ end;
 const
  FatalError: boolean = false;
 
-procedure ParserSave;
+procedure THTTP2_Connection.ParserSave;
 var
   F: File;
 begin
  if (PathToTests<>'') then
-  begin
- AssignFile(F,PathToTests+'client-step-'+inttostr(ParseRounds)+'.http2');
- rewrite(F,1);
- blockwrite(F,ClientNoise,CN_Size);
- CloseFIle(F);
-
-  end;
+ begin
+  AssignFile(F,PathToTests+'client-step-'+inttostr(ParseRounds)+'.http2');
+  rewrite(F,1);
+  blockwrite(F,ClientNoise,CN_Size);
+  CloseFIle(F);
+ end;
 end;
 
-procedure SaveRawBytes(B: RawByteString; FName: string);
+procedure THTTP2_Connection.SaveRawBytes(B: RawByteString; FName: string);
 var
-  F:File;
+  F: File;
 begin
  AssignFile(F,FName);
  rewrite(F,1);
@@ -576,7 +580,7 @@ begin
  CloseFIle(F);
 end;
 
-procedure LoadRawBytes(FName: string);
+procedure THTTP2_Connection.LoadRawBytes(FName: string);
 var
   F: File;
   FSize: int64;
@@ -593,8 +597,7 @@ begin
 end;
 
 
-procedure Parse;
-
+procedure THTTP2_Connection.Parse;
 
   function Size_Unparsed : Integer;
   begin
@@ -613,26 +616,27 @@ begin
    case AutoMataState of
     0:begin // just born
 
-      if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME_HEADER) then
-       begin
-         mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
-         // imp pend: delay, read, timeout?
-         break;
-       end else
-       begin
-         for n := 1 to SizeOf_CLIENT_PREFIX do
-          if (CLIENT_PREFIX[n]<>chr(ClientNoise[pred(n)])) then
-           begin
-             mDebug.add('ERROR: CLIENT_PREFIX expected, create dump for Diag');
-             // imp pend: dump ClientNoise
-             FatalError := true;
-             break;
-           end;
-          inc(CN_pos,SizeOf_CLIENT_PREFIX);
-          inc(AutomataState);
-       end;
+        if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME_HEADER) then
+         begin
+           mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
+           // imp pend: delay, read, timeout?
+           break;
+         end else
+         begin
+           for n := 1 to SizeOf_CLIENT_PREFIX do
+            if (CLIENT_PREFIX[n]<>chr(ClientNoise[pred(n)])) then
+             begin
+               mDebug.add('ERROR: CLIENT_PREFIX expected, create dump for Diag');
+               // imp pend: dump ClientNoise
+               FatalError := true;
+               break;
+             end;
+            inc(CN_pos,SizeOf_CLIENT_PREFIX);
+            inc(AutomataState);
+            mDebug.add('CLIENT_PREFIX received');
+         end;
 
-    end;
+      end;
     1:begin // FRAME - World
 
        if (Size_Unparsed<SizeOf_FRAME_HEADER) then
@@ -701,6 +705,25 @@ begin
               H := H + IntToHex(ClientNoise[CN_Pos2+n],2);
             mDebug.add(' HEADER '+ H);
 
+            //
+            if assigned(Headers) then
+            begin
+              setLength(H,HeaderContentSize);
+              move(ClientNoise[CN_Pos2],H[1],HeaderContentSize);
+              with Headers do
+              begin
+               Wire := H;
+               Decode;
+              end;
+              mDebug.addStrings(Headers);
+            end else
+            begin
+              mDebug.add('ERROR: get HEADER Data, but no Headers-Object initialised');
+              FatalError := true;
+              break;
+            end;
+
+
             end;
           FRAME_TYPE_PRIORITY : begin;
 
@@ -744,10 +767,42 @@ begin
               begin
                 with PFRAME_SETTINGS(@ClientNoise[CN_Pos2])^ do
                 begin
-                  mDebug.add(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+' '+IntToStr(Cardinal(Value)));
+                  mDebug.add(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+'='+IntToStr(Cardinal(Value)));
+
+                  case cardinal(SETTING_ID) of
+                     SETTINGS_HEADER_TABLE_SIZE:begin
+                      HEADER_TABLE_SIZE := Cardinal(Value);
+                     Headers := THPACK.Create;
+                     Headers.MAXIMUM_TABLE_SIZE:=HEADER_TABLE_SIZE;
+                    end;
+                    SETTINGS_MAX_CONCURRENT_STREAMS :begin
+                     MAX_CONCURRENT_STREAMS_LOCAL := Cardinal(Value);
+                     // or
+                     MAX_CONCURRENT_STREAMS_REMOTE := Cardinal(Value);
+                     // imp pend!!!
+                    end;
+                    SETTINGS_INITIAL_WINDOW_SIZE :begin
+                      INITIAL_WINDOW_SIZE:= Cardinal(Value);
+                    end;
+                    SETTINGS_MAX_FRAME_SIZE :begin
+                      MAX_FRAME_SIZE := Cardinal(Value);
+                    end;
+                    SETTINGS_MAX_HEADER_LIST_SIZE :begin
+                      MAX_HEADER_LIST_SIZE := Cardinal(Value);
+                    end;
+                    SETTINGS_ENABLE_PUSH :begin
+                      PUSH_ENABLED := Cardinal(Value)=1;
+
+
+                    end;
+                  else
+                    // undone SETTING
+                  end;
                 end;
                 inc(CN_Pos2,SizeOf_SETTINGS);
               end;
+
+
             end;
           FRAME_TYPE_PUSH_PROMISE : begin
             end;
@@ -838,7 +893,7 @@ begin
          end;
          inc(CN_Pos,Cardinal(Len));
 
-       end;
+      end;
 
     end;
    end;
@@ -850,34 +905,42 @@ begin
   inc(ParseRounds);
 end;
 
+procedure THTTP2_Connection.ParserClear;
+begin
+ AutomataState := 0;
+ FatalError := false;
+ CN_Pos := 0;
+end;
+
+{ THTTP2_Reader }
 
 procedure THTTP2_Reader.Execute;
 var
- BytesRead, BytesWritten: cint;
+ BytesRead : cint;
  buf : array[0..pred(16*1024)] of byte;
  D : RawByteString;
- _ERROR: integer;
+ ERROR: integer;
 begin
- try
    if assigned(FStatus) then
    begin
-    // we have errors
+     // Just informa about the start of the task
+     STATUS.enqueue(SSL_ERROR_NONE);
      Synchronize(FStatus);
    end;
-   while not self.Terminated do
+   while not Terminated do
    begin
 
-    sDebug.add('read ...');
     BytesRead := SSL_read(FSSL,@buf,sizeof(buf));
 
     if (BytesRead<1) then
     begin
-       _ERROR := SSL_get_error(FSSL,BytesRead);
-      ERROR.enqueue(_ERROR );
-      sDebug.add(SSL_ERROR[_ERROR]);
+      inc(ErrorCount);
 
+      ERROR := SSL_get_error(FSSL,BytesRead);
+      STATUS.enqueue(ERROR);
+      sDebug.add(SSL_ERROR[ERROR]);
 
-      if _ERROR=SSL_ERROR_SYSCALL then
+      if (ERROR=SSL_ERROR_SYSCALL) then
       begin
        sDebug.add('WSAGetLastError='+IntTOstr(socketerror));
        sDebug.add('GetLastError='+IntTOstr(GetLastError));
@@ -891,6 +954,8 @@ begin
         Synchronize(FStatus);
       end;
 
+      Terminate;
+
     end else
     begin
 
@@ -901,34 +966,15 @@ begin
        NOISE.enqueue(D);
        Synchronize(FNoise);
      end;
-
-
-
-//     CN_SIze := BytesRead;
-  //   move(Buf, ClientNoise, CN_Size);
-  //   CN_Pos := 0;
-//     Parse;
    end;
-
-   end;
-
- finally
- end;
-
-end;
-
-procedure ParserClear;
-begin
- AutomataState := 0;
- FatalError := false;
- CN_Pos := 0;
+  end;
 end;
 
 constructor THTTP2_Reader.Create(SSL : PSSL);
 begin
  FSSL := SSL;
  FreeOnTerminate := True;
- ERROR := TStatusQ.Create(1024);
+ STATUS := TStatusQ.Create(1024);
  NOISE :=  TNoiseQ.Create(1024);
  inherited Create(True);
 end;
@@ -1222,7 +1268,6 @@ begin
  if not(assigned(CTX))  then
    raise Exception.Create('SSL Init Fail');
 
- Headers:= THPACK.create;
  Streams:= TList.create;
 
 end;
@@ -1240,17 +1285,34 @@ end;
 procedure THTTP2_Connection.Noise;
 var
   D: RawByteString;
+  CN_NewBlockSize: Integer;
 begin
- Reader.NOISE.dequeue(D);
- sDebug.add('We have contact with '+IntToStr(length(D))+' Byte(s)');
+ if Reader.NOISE.dequeue(D) then
+ begin
+  sDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
+
+  CN_NewBlockSize := length(D);
+  if (CN_Size+CN_NewBlockSize<sizeof(TClientNoise)) then
+  begin
+   move(D[1], ClientNoise[CN_Size], CN_NewBlockSize);
+   inc(CN_Size,CN_NewBlockSize);
+   Parse;
+  end else
+  begin
+    sDebug.add('ERROR: Out of memory');
+  end;
+
+  if assigned(FRequest) then
+   FRequest('');
+ end;
 end;
 
 procedure THTTP2_Connection.Status;
 var
    I : Integer;
 begin
-  Reader.ERROR.dequeue(I);
-  sDebug.add('We have a Status Update Code '+IntToStr(I));
+  if Reader.STATUS.dequeue(I) then
+   sDebug.add('We have a Update of Status Code! New Value is '+IntToStr(I));
 end;
 
 
@@ -1259,7 +1321,6 @@ begin
  sDebug.add(SSL_ERROR[SSL_get_error(SSL,Err)]);
 
  ERR_print_errors_cb(@cb_ERROR,nil);
-
 end;
 
 // Im Rang 1: socket von systemd erhalten: // http://0pointer.de/blog/projects/socket-activation.html
@@ -1267,9 +1328,9 @@ end;
 
 function getSocket: cint;
 var
- ServerAddr    : TInetSockAddr;
- ClientAddr    : TInetSockAddr;
- len :    cint;
+ ServerAddr : TInetSockAddr;
+ ClientAddr : TInetSockAddr;
+ len : cint;
  ListenSocket, ConnectionSocket : cint;
  Flag: Longint;
 begin
