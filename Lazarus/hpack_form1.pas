@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ComCtrls, Menus, cTypes,
 
-  HPACK, HTTP2;
+  HPACK, HTTP2, Types;
 
 type
 
@@ -24,12 +24,15 @@ type
     Button15: TButton;
     Button16: TButton;
     Button17: TButton;
+    Button18: TButton;
+    Button19: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
     Button7: TButton;
+    Button8: TButton;
     Button9: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
@@ -39,13 +42,16 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Memo1: TMemo;
     Memo2: TMemo;
+    Memo3: TMemo;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -54,6 +60,8 @@ type
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure Button19Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -61,7 +69,13 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
+    procedure TabSheet2ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure TabSheet2Show(Sender: TObject);
   private
     { private declarations }
@@ -257,24 +271,6 @@ begin
   InitPathToTest;
   HTTP2.SaveRawBytes(D,PathToTests+'ping.http2');
 
-
-  sDebug.add('--------------------------------------------');
-
-  DD := '';
-  for n := 1 to length(D) do
-  begin
-    DD := DD + ' ' + IntToHex(ord(D[n]),2);
-    if (pred(n) MOD 16=15) then
-    begin
-     sDebug.add(DD);
-     DD := '';
-    end;
-  end;
-  if (DD<>'') then
-   sDebug.add(DD);
-
-  sDebug.add('--------------------------------------------');
-
   if assigned(HTTP2) then
   begin
     BytesWritten := HTTP2.write(@D[1],length(D));
@@ -283,6 +279,16 @@ begin
 
   ShowDebugMessages;
 
+end;
+
+procedure TForm1.Button18Click(Sender: TObject);
+begin
+  Memo3.Clear;
+end;
+
+procedure TForm1.Button19Click(Sender: TObject);
+begin
+  Memo2.clear;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -428,6 +434,33 @@ begin
   HTTP2.Parse;
 end;
 
+procedure TForm1.Button8Click(Sender: TObject);
+var
+ n : Integer;
+ D : RawByteString;
+
+ function StrFilter(s,Filter:string):string;
+ var
+   n : Integer;
+ begin
+   result := '';
+   for n := 1 to length(s) do
+    if pos(s[n],Filter)>0 then
+     result := result + s[n];
+ end;
+
+begin
+ with memo3.lines do
+ begin
+  D := '';
+  for n := 0 to pred(count) do
+   D := D + StrFilter(Strings[n],'0123456789ABCDEFabcdef');
+ end;
+ mDebug.add(D);
+ HTTP2.AutomataState := 1;
+ HTTP2.enqueue(THPACK.HexStrToRawByteString(D));
+end;
+
 
 procedure TForm1.Button9Click(Sender: TObject);
 var
@@ -467,6 +500,23 @@ begin
   end;
 
   ShowDebugMessages;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  PageControl1.ActivePage := TabSheet2;
+end;
+
+procedure TForm1.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+
+end;
+
+procedure TForm1.TabSheet2ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+
 end;
 
 procedure TForm1.TabSheet2Show(Sender: TObject);

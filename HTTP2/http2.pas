@@ -165,6 +165,10 @@ type
        function write(buf : Pointer;  num: cint): cint; overload;
        function write(W : RawByteString): cint; overload;
 
+       // Data
+       procedure debug(D: RawByteString);
+       procedure enqueue(D: RawByteString);
+
        // read Events
        procedure Noise;
        procedure Status;
@@ -763,7 +767,7 @@ begin
 
             mDebug.add(' HEADER_SIZE '+IntToStr(HeaderContentSize));
 
-            //
+            // create the ASCII-HEX Representation of the HEADER
             H := '';
             for n := 0 to pred(HeaderContentSize) do
               H := H + IntToHex(ClientNoise[CN_Pos2+n],2);
@@ -866,7 +870,9 @@ begin
                // if Initialized then
               //write(SETTINGS_ACK);
               // else
-              write(StartFrames);
+              H := StartFrames;
+              // write(H);
+              debug(H);
             end;
           FRAME_TYPE_PUSH_PROMISE : begin
             end;
@@ -952,7 +958,7 @@ begin
 
          else
 
-           mDebug.add('INFO: unknown FRAME 0x' + IntToHex( Typ,2)+ '- waiting for implementation ...');
+           mDebug.add('INFO: skip unknown FRAME 0x' + IntToHex( Typ,2)+ '- waiting for implementation ...');
 
          end;
          inc(CN_Pos,Cardinal(Len));
@@ -1348,8 +1354,8 @@ end;
 
 function THTTP2_Connection.write(buf: Pointer; num: cint): cint; overload;
 begin
-// result := SSL_write(SSL,@buf,num);
- result := num;
+ result := SSL_write(SSL,@buf,num);
+// result := num;
  mDebug.Add(IntTostr(result)+' Bytes written ...');
 end;
 
@@ -1361,27 +1367,56 @@ begin
  result := write(@WriteBuffer, length(W));
 end;
 
+procedure THTTP2_Connection.debug(D: RawByteString);
+var
+  DD : string;
+  n : integer;
+begin
+
+ mDebug.add('--------------------------------------------');
+ DD := '';
+ for n := 1 to length(D) do
+ begin
+   DD := DD + ' ' + IntToHex(ord(D[n]),2);
+   if (pred(n) MOD 16=15) then
+   begin
+    mDebug.add(DD);
+    DD := '';
+   end;
+ end;
+ if (DD<>'') then
+  mDebug.add(DD);
+ mDebug.add('--------------------------------------------');
+
+end;
+
+procedure THTTP2_Connection.enqueue(D: RawByteString);
+var
+ CN_NewBlockSize: Integer;
+begin
+ CN_NewBlockSize := length(D);
+ if (CN_Size+CN_NewBlockSize<sizeof(TNoiseContainer)) then
+ begin
+  move(D[1], ClientNoise[CN_Size], CN_NewBlockSize);
+  inc(CN_Size,CN_NewBlockSize);
+  Parse;
+ end else
+ begin
+   mDebug.add('ERROR: Out of memory');
+ end;
+end;
+
 procedure THTTP2_Connection.Noise;
 var
   D: RawByteString;
-  CN_NewBlockSize: Integer;
 begin
  if Reader.NOISE.dequeue(D) then
  begin
   mDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
 
-  CN_NewBlockSize := length(D);
-  if (CN_Size+CN_NewBlockSize<sizeof(TNoiseContainer)) then
-  begin
-   move(D[1], ClientNoise[CN_Size], CN_NewBlockSize);
-   inc(CN_Size,CN_NewBlockSize);
-   Parse;
-  end else
-  begin
-    mDebug.add('ERROR: Out of memory');
-  end;
+  enqueue(D);
 
-  if assigned(FRequest) then
+   if assigned(FRequest) then
    FRequest('');
  end;
 end;
