@@ -33,6 +33,7 @@ uses
   Sysutils;
 
 var
+  // Debug-Messages from Socket or SSL
   sDebug: TStringList = nil;
   pem_Path : string;
 

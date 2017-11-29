@@ -251,7 +251,7 @@ var
  BytesWritten: cint;
  n : Integer;
 begin
-  D := PING(PING_PAYLOAD);
+  D := HTTP2.PING(PING_PAYLOAD);
 
   // save it as "init"
   InitPathToTest;
@@ -436,7 +436,7 @@ var
  BytesWritten: cint;
  n : Integer;
 begin
-  D := StartFrames;
+  D := HTTP2.StartFrames;
 
   // save it as "init"
   InitPathToTest;

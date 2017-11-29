@@ -66,20 +66,21 @@ Type
  { THTTP2_Reader - Thread }
 
 type
- TClientNoise = array[0..pred(16*1024)] of byte;
- TClientNoiseP = ^TClientNoise;
+ TNoiseContainer = array[0..pred(16*1024)] of byte;
+ TNoiseContainerP = ^TNoiseContainer;
 
  TNoiseQ = specialize TPasMPBoundedQueue<RawByteString>;
  TStatusQ = specialize TPasMPBoundedQueue<Integer>;
 
- //
- // fires a Noise-Event for every received raw Data-Block
- // it makes no assumption about content just the raw bytes
- // so Noise can be Data from a SSL Connection or a Test Data Generator
- // or a uncrypted local connection
- //
 
  THTTP2_Reader = class(TThread)
+       //
+       // fires a Noise-Event for every received raw Data-Block
+       // it makes no assumption about content just the raw bytes
+       // so Noise can be Data from a SSL Connection or a Test Data Generator
+       // or Test Data from the File-System. Please, never use it to get data from a
+       // unsecured Connection or a uncrypted local connection
+       //
  private
 
    FNoise : TThreadMethod;
@@ -90,7 +91,7 @@ type
  protected
    procedure Execute; override;
  public
-   // this should be a stack
+
    NOISE : TNoiseQ;
    STATUS : TStatusQ;
 
@@ -106,17 +107,26 @@ type
 
  THTTP2_Connection = class(TObject)
 
+     //
+     // complete internal handling of a HTTP2 Connection. Wire-coding
+     // encoding (HPACK) and Householding of Data Objects (Streams, Headers)
+     //
+     // Fires an Request-Event only if somethings is to do outside the
+     // HTTP2 internal Stuff.
+     //
+
      FRequest : TRequestMethod;
 
-   // Connection Settings
-     MAX_CONCURRENT_STREAMS_LOCAL : Integer;
-     MAX_CONCURRENT_STREAMS_REMOTE: Integer;
-     HEADER_TABLE_SIZE: Integer;
-     INITIAL_WINDOW_SIZE: Integer;
-     MAX_FRAME_SIZE: Integer;
-     MAX_HEADER_LIST_SIZE: Integer;
-     PUSH_ENABLED: boolean;
+     // Connection Settings
+     SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL : Integer;
+     SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE: Integer;
+     SETTINGS_HEADER_TABLE_SIZE: Integer;
+     SETTINGS_INITIAL_WINDOW_SIZE: Integer;
+     SETTINGS_MAX_FRAME_SIZE: Integer;
+     SETTINGS_MAX_HEADER_LIST_SIZE: Integer;
+     SETTINGS_PUSH_ENABLED: boolean;
 
+     // Data-Objects
      Headers: THPACK;
      Streams: TList;
 
@@ -128,7 +138,7 @@ type
      Reader : THTTP2_Reader;
 
      public
-       ClientNoise : TClientNoise;
+       ClientNoise : TNoiseContainer;
        CN_Size: Integer;
        CN_Pos: Integer; // 0..pred(CN_Size)
        AutomataState : Byte;
@@ -145,8 +155,15 @@ type
        procedure SaveRawBytes(B: RawByteString; FName: string);
        procedure LoadRawBytes(FName: string);
 
-       // write
-       function write(buf : Pointer;  num: cint): cint;
+       // Frames
+       function StartFrames: RawByteString;
+       function PING(PayLoad : RawByteString; AsEcho: boolean = false):RawByteString;
+       function PAGE : RawByteString;
+       function SETTINGS_ACK : RawByteString;
+
+       // write to the Connection
+       function write(buf : Pointer;  num: cint): cint; overload;
+       function write(W : RawByteString): cint; overload;
 
        // read Events
        procedure Noise;
@@ -156,20 +173,16 @@ type
        procedure loadERROR(Err : cint);
 
        property OnRequest : TrequestMethod read FRequest write FRequest;
-
-
  end;
 
 
 
 const
+  // Debug-Messages for the media Layer
   mDebug: TStringList = nil;
   CLIENT_PREFIX: RawByteString = '';
   PING_PAYLOAD: RawByteString = 'OrgaMon!';
   PathToTests: string = '';
-
-function StartFrames : RawByteString;
-function PING(PayLoad : RawByteString; AsEcho: boolean = false):RawByteString;
 
 
 function getSocket: cint;
@@ -233,15 +246,15 @@ type
 type
    // RFC: "4.1.  Frame Format"
 
-   { THTTP2_FRAME_HEADER }
+   { THTTP2_FRAME }
 
-   THTTP2_FRAME_HEADER = Packed record
+   THTTP2_FRAME = Packed record
      Len : TNum24Bit;     // 0..SETTINGS_MAX_FRAME_SIZE
      Typ : Byte;
      Flags : Byte;
      Stream_ID : TNum31Bit; // 0,2,4..2147483648  even-numbered on servers
    end;
-   PHTTP2_FRAME_HEADER = ^THTTP2_FRAME_HEADER;
+   PHTTP2_FRAME_HEADER = ^THTTP2_FRAME;
 
   // RFC: "6.2.  HEADERS"
   // optional FRAME-Fragment: only if FLAG_PADDING is set
@@ -291,7 +304,7 @@ type
   PFRAME_WINDOW_UPDATE = ^TFRAME_WINDOW_UPDATE;
 
 const
-  SizeOf_FRAME_HEADER = sizeof(THTTP2_FRAME_HEADER);
+  SizeOf_FRAME = sizeof(THTTP2_FRAME);
   SizeOf_SETTINGS = sizeof(TFRAME_SETTINGS);
   SizeOf_WINDOW_UPDATE = sizeof(TFRAME_WINDOW_UPDATE);
   SizeOf_GOAWAY = sizeof(TFRAME_GOAWAY);
@@ -329,8 +342,6 @@ const
    'ENHANCE_YOUR_CALM',
    'INADEQUATE_SECURITY',
    'HTTP_1_1_REQUIRED');
-
-
 
 const
  // Client Hello String
@@ -385,18 +396,17 @@ const
  FLAG_PADDED = $08;
  FLAG_PRIORITY = $20;
 
-
  // RFC: 6.5.2.  Defined SETTINGS Parameters
 
  //   Server
- SETTINGS_HEADER_TABLE_SIZE = $01; // 0..? default 4096
- SETTINGS_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
- SETTINGS_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
- SETTINGS_MAX_FRAME_SIZE = $05; // 16,384..16777215
- SETTINGS_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
+ SETTINGS_TYPE_HEADER_TABLE_SIZE = $01; // 0..? default 4096
+ SETTINGS_TYPE_MAX_CONCURRENT_STREAMS = $03; // 0,101..? suggested > 100
+ SETTINGS_TYPE_INITIAL_WINDOW_SIZE = $04; // 0..? default 65,535
+ SETTINGS_TYPE_MAX_FRAME_SIZE = $05; // 16,384..16777215
+ SETTINGS_TYPE_MAX_HEADER_LIST_SIZE = $06; // 0..? default 16,777,215
 
  //   Client
- SETTINGS_ENABLE_PUSH = $02; // 0,1 default 1 (=ON)
+ SETTINGS_TYPE_ENABLE_PUSH = $02; // 0,1 default 1 (=ON)
 
  SETTINGS_NAMES: array[1..6] of string = (
       'HEADER_TABLE_SIZE',
@@ -405,16 +415,6 @@ const
       'INITIAL_WINDOW_SIZE',
       'MAX_FRAME_SIZE',
       'MAX_HEADER_LIST_SIZE');
-
-    //
-   {
-    Length=8, Rauschen
-    Flag=1; im Fall eines Responeses
-   }
-
-   //
-
-
 
 type
    THTTP2_Stream_Status = (
@@ -443,14 +443,14 @@ end;
 
 // RFC: 3.5.  HTTP/2 Connection Preface
 
-function StartFrames: RawByteString;
+function THTTP2_Connection.StartFrames: RawByteString;
 var
-  PBuf, _PBuf: ^Byte;
- FRAME : THTTP2_FRAME_HEADER;
+ Buf: TNoiseContainer;
+ PBuf, _PBuf: ^Byte;
+ FRAME : THTTP2_FRAME;
  WINDOW_UPDATE: TFRAME_WINDOW_UPDATE;
  SettingsCount: Integer;
  SIZE: Integer;
- Buf: array[0..pred(16*1024)] of byte;
 
  procedure add(pSETTING_ID : UInt16;pValue : UInt32);
  var
@@ -472,14 +472,45 @@ begin
  // A) SETTINGS - FRAME
 
  PBuf := @Buf;
- inc(PBuf,SizeOf_FRAME_HEADER);
+ inc(PBuf,SizeOf_FRAME);
 
- add(SETTINGS_HEADER_TABLE_SIZE,4096);
- add(SETTINGS_MAX_CONCURRENT_STREAMS,101);
- add(SETTINGS_INITIAL_WINDOW_SIZE,65535);
- add(SETTINGS_MAX_FRAME_SIZE,1048576);
+ // typical "incoming" SETTING FRAME
+// HEADER_TABLE_SIZE=65536
+// INITIAL_WINDOW_SIZE=131072
+// MAX_FRAME_SIZE=16384
+
+
+
+ if (SETTINGS_HEADER_TABLE_SIZE=0) then
+ begin
+  SETTINGS_HEADER_TABLE_SIZE := 4096;
+  add(SETTINGS_TYPE_HEADER_TABLE_SIZE,SETTINGS_HEADER_TABLE_SIZE);
+ end;
+
+ if (SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL=0) then
+ begin
+  SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL := 101;
+  add(SETTINGS_TYPE_MAX_CONCURRENT_STREAMS,SETTINGS_MAX_CONCURRENT_STREAMS_LOCAL);
+ end;
+
+ if (SETTINGS_INITIAL_WINDOW_SIZE=0) then
+ begin
+  SETTINGS_INITIAL_WINDOW_SIZE := 65535;
+  add(SETTINGS_TYPE_INITIAL_WINDOW_SIZE,SETTINGS_INITIAL_WINDOW_SIZE);
+ end;
+
+ if (SETTINGS_MAX_FRAME_SIZE=0) then
+ begin
+  SETTINGS_MAX_FRAME_SIZE := 1048576;
+  add(SETTINGS_TYPE_MAX_FRAME_SIZE,SETTINGS_MAX_FRAME_SIZE);
+ end;
+
+ // unused
+//      SETTINGS_MAX_HEADER_LIST_SIZE: Integer;
+//      SETTINGS_PUSH_ENABLED: boolean;
+
+
  _PBuf := PBuf;
-
  with FRAME do
  begin
    Len := SettingsCount*SizeOf_SETTINGS;
@@ -491,9 +522,9 @@ begin
  // Reset Pointer to the start ...
  PBuf := @Buf;
  // ... and write HEADER
- move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
+ move(FRAME,PBuf^,SizeOf_FRAME);
 
- SIZE := Sizeof_FRAME_HEADER + Cardinal(FRAME.Len);
+ SIZE := Sizeof_FRAME + Cardinal(FRAME.Len);
 
  // B) WINDOW_UPDATE FRAME
  with FRAME do
@@ -504,8 +535,8 @@ begin
    Stream_ID := 0;
  end;
  PBuf := _PBuf;
- move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
- inc(PBuf,SizeOf_FRAME_HEADER);
+ move(FRAME,PBuf^,SizeOf_FRAME);
+ inc(PBuf,SizeOf_FRAME);
 
  with WINDOW_UPDATE do
  begin
@@ -513,18 +544,38 @@ begin
  end;
  move(WINDOW_UPDATE,PBuf^,SizeOf_WINDOW_UPDATE);
 
- inc(SIZE, SizeOf_FRAME_HEADER + SizeOf_WINDOW_UPDATE);
+ inc(SIZE, SizeOf_FRAME + SizeOf_WINDOW_UPDATE);
 
  // Return the Structure
  SetLength(result, SIZE);
  move(Buf, result[1], SIZE);
 end;
 
-function PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
+function THTTP2_Connection.SETTINGS_ACK: RawByteString;
+var
+ FRAME : THTTP2_FRAME;
+begin
+
+ // A) SETTINGS - FRAME
+ with FRAME do
+ begin
+   Len := 0;
+   Typ := FRAME_TYPE_SETTINGS;
+   Flags := FLAG_ACK;
+   Stream_ID := 0;
+ end;
+
+ // Return the Structure
+ SetLength(result, SizeOf_FRAME);
+ move(FRAME, result[1], SizeOf_FRAME);
+end;
+
+
+function THTTP2_Connection.PING(PayLoad:RawByteString; AsEcho: boolean = false):RawByteString;
 var
   Buf: array[0..pred(16*1024)] of byte;
   PBuf: ^Byte;
-  FRAME: THTTP2_FRAME_HEADER;
+  FRAME: THTTP2_FRAME;
   SIZE: Integer;
 begin
 
@@ -540,9 +591,9 @@ begin
    Stream_ID := 0;
  end;
  PBuf := @Buf;
- SIZE:= SizeOf_FRAME_HEADER;
- move(FRAME,PBuf^,SizeOf_FRAME_HEADER);
- inc(PBuf,SizeOf_FRAME_HEADER);
+ SIZE:= SizeOf_FRAME;
+ move(FRAME,PBuf^,SizeOf_FRAME);
+ inc(PBuf,SizeOf_FRAME);
 
  // PING Playload (Echo!)
  if (length(PayLoad)=8) then
@@ -552,6 +603,19 @@ begin
  // Return the Structure
  SetLength(result, SIZE);
  move(Buf, result[1], SIZE);
+end;
+
+function THTTP2_Connection.PAGE: RawByteString;
+begin
+
+ // Headers.add - no action because this all is default!
+ // { 08 } ':status=200',
+ // { 26 } 'content-encoding',
+ // { 31 } 'content-type',
+
+ // Data.add
+ result := '<html><body><h1>'+PING_PAYLOAD+'</h1></body></html>';
+
 end;
 
 const
@@ -616,7 +680,7 @@ begin
    case AutoMataState of
     0:begin // just born
 
-        if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME_HEADER) then
+        if (Size_Unparsed<SizeOf_CLIENT_PREFIX + SizeOf_FRAME) then
          begin
            mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
            // imp pend: delay, read, timeout?
@@ -639,7 +703,7 @@ begin
       end;
     1:begin // FRAME - World
 
-       if (Size_Unparsed<SizeOf_FRAME_HEADER) then
+       if (Size_Unparsed<SizeOf_FRAME) then
         begin
           mDebug.add('WARNING: nothing worse to parse - i wait and hope for more Noise ...');
           // imp pend: delay, read, timeout?
@@ -651,7 +715,7 @@ begin
          if Typ<=FRAME_LAST then
           mDebug.add('FRAME_'+FRAME_NAME[Typ]+', Flags=['+IntToHex(Flags,2)+']');
 
-         inc(CN_Pos,SizeOf_FRAME_HEADER);
+         inc(CN_Pos,SizeOf_FRAME);
          CN_Pos2 := CN_pos;
 
          case Typ of
@@ -770,28 +834,25 @@ begin
                   mDebug.add(' '+SETTINGS_NAMES[cardinal(SETTING_ID)]+'='+IntToStr(Cardinal(Value)));
 
                   case cardinal(SETTING_ID) of
-                     SETTINGS_HEADER_TABLE_SIZE:begin
-                      HEADER_TABLE_SIZE := Cardinal(Value);
+                     SETTINGS_TYPE_HEADER_TABLE_SIZE:begin
+                      SETTINGS_HEADER_TABLE_SIZE := Cardinal(Value);
                      Headers := THPACK.Create;
-                     Headers.MAXIMUM_TABLE_SIZE:=HEADER_TABLE_SIZE;
+                     Headers.MAXIMUM_TABLE_SIZE:=SETTINGS_HEADER_TABLE_SIZE;
                     end;
-                    SETTINGS_MAX_CONCURRENT_STREAMS :begin
-                     MAX_CONCURRENT_STREAMS_LOCAL := Cardinal(Value);
-                     // or
-                     MAX_CONCURRENT_STREAMS_REMOTE := Cardinal(Value);
-                     // imp pend!!!
+                    SETTINGS_TYPE_MAX_CONCURRENT_STREAMS :begin
+                     SETTINGS_MAX_CONCURRENT_STREAMS_REMOTE := Cardinal(Value);
                     end;
-                    SETTINGS_INITIAL_WINDOW_SIZE :begin
-                      INITIAL_WINDOW_SIZE:= Cardinal(Value);
+                    SETTINGS_TYPE_INITIAL_WINDOW_SIZE :begin
+                      SETTINGS_INITIAL_WINDOW_SIZE:= Cardinal(Value);
                     end;
-                    SETTINGS_MAX_FRAME_SIZE :begin
-                      MAX_FRAME_SIZE := Cardinal(Value);
+                    SETTINGS_TYPE_MAX_FRAME_SIZE :begin
+                      SETTINGS_MAX_FRAME_SIZE := Cardinal(Value);
                     end;
-                    SETTINGS_MAX_HEADER_LIST_SIZE :begin
-                      MAX_HEADER_LIST_SIZE := Cardinal(Value);
+                    SETTINGS_TYPE_MAX_HEADER_LIST_SIZE :begin
+                      SETTINGS_MAX_HEADER_LIST_SIZE := Cardinal(Value);
                     end;
-                    SETTINGS_ENABLE_PUSH :begin
-                      PUSH_ENABLED := Cardinal(Value)=1;
+                    SETTINGS_TYPE_ENABLE_PUSH :begin
+                      SETTINGS_PUSH_ENABLED := Cardinal(Value)=1;
 
 
                     end;
@@ -802,7 +863,10 @@ begin
                 inc(CN_Pos2,SizeOf_SETTINGS);
               end;
 
-
+               // if Initialized then
+              //write(SETTINGS_ACK);
+              // else
+              write(StartFrames);
             end;
           FRAME_TYPE_PUSH_PROMISE : begin
             end;
@@ -937,7 +1001,8 @@ begin
       inc(ErrorCount);
 
       ERROR := SSL_get_error(FSSL,BytesRead);
-      STATUS.enqueue(ERROR);
+      if not(STATUS.IsFull) then
+       STATUS.enqueue(ERROR);
       sDebug.add(SSL_ERROR[ERROR]);
 
       if (ERROR=SSL_ERROR_SYSCALL) then
@@ -950,7 +1015,7 @@ begin
 
       if assigned(FStatus) then
       begin
-       // we have errors
+        // we have errors
         Synchronize(FStatus);
       end;
 
@@ -959,27 +1024,36 @@ begin
     end else
     begin
 
+
      if assigned(FNoise) then
      begin
        SetLength(D, BytesRead);
        move(buf, D[1], BytesRead);
+       while NOISE.IsFull do
+       begin
+         // WARNING: Consumer to slow!!!
+         Sleep(250);
+         // Call consumer, maybe she missed several "FNoise"-Events?
+         Synchronize(FNoise);
+       end;
+       // new data, copy it to a thread-save place!
        NOISE.enqueue(D);
+       // publish the news!
        Synchronize(FNoise);
      end;
+
    end;
   end;
 end;
 
 constructor THTTP2_Reader.Create(SSL : PSSL);
 begin
+ inherited Create(True);
  FSSL := SSL;
  FreeOnTerminate := True;
  STATUS := TStatusQ.Create(1024);
  NOISE :=  TNoiseQ.Create(1024);
- inherited Create(True);
 end;
-
-{ THTTP2_FRAME_HEADER }
 
 type
 TCardinalRec = packed record
@@ -1272,14 +1346,19 @@ begin
 
 end;
 
-function THTTP2_Connection.write(buf: Pointer; num: cint): cint;
-var
- BytesWritten : cint;
+function THTTP2_Connection.write(buf: Pointer; num: cint): cint; overload;
 begin
+// result := SSL_write(SSL,@buf,num);
+ result := num;
+ mDebug.Add(IntTostr(result)+' Bytes written ...');
+end;
 
- BytesWritten := SSL_write(SSL,@buf,num);
- sDebug.Add(IntTostr(BytesWritten)+' Bytes written ...');
-
+function THTTP2_Connection.write(W: RawByteString): cint;
+var
+ WriteBuffer : TNoiseContainer;
+begin
+ move(W[1],WriteBuffer,length(W));
+ result := write(@WriteBuffer, length(W));
 end;
 
 procedure THTTP2_Connection.Noise;
@@ -1289,17 +1368,17 @@ var
 begin
  if Reader.NOISE.dequeue(D) then
  begin
-  sDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
+  mDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
 
   CN_NewBlockSize := length(D);
-  if (CN_Size+CN_NewBlockSize<sizeof(TClientNoise)) then
+  if (CN_Size+CN_NewBlockSize<sizeof(TNoiseContainer)) then
   begin
    move(D[1], ClientNoise[CN_Size], CN_NewBlockSize);
    inc(CN_Size,CN_NewBlockSize);
    Parse;
   end else
   begin
-    sDebug.add('ERROR: Out of memory');
+    mDebug.add('ERROR: Out of memory');
   end;
 
   if assigned(FRequest) then
@@ -1312,7 +1391,7 @@ var
    I : Integer;
 begin
   if Reader.STATUS.dequeue(I) then
-   sDebug.add('We have a Update of Status Code! New Value is '+IntToStr(I));
+   mDebug.add('We have a Update of Status Code! New Value is '+IntToStr(I));
 end;
 
 
@@ -1433,7 +1512,7 @@ begin
 
  // Check RFC Conditions
  assert(SizeOf_CLIENT_PREFIX=24,'Break of RFC 7540-3.5');
- assert(SizeOf_FRAME_HEADER=9,'Break of RFC 7540-4.1');
+ assert(SizeOf_FRAME=9,'Break of RFC 7540-4.1');
  assert(SizeOf_SETTINGS=6,'Break of RFC 7540-6.5.1');
  assert(SizeOf_WINDOW_UPDATE=4,'Break of RFC 7540-6.9');
  assert(length(PING_PAYLOAD)=8,'Break of RFC 7540-6.7');
