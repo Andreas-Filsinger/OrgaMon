@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.322 (05.12.17) Andreas Filsinger
+
+ Neu: Einheit: Löschen bereits verwendeter Einheiten nun möglich
+ Neu: Einheit: Hilfe bei der Umvernummerung von Einheiten: Man kann RIDs die ich verwenden will
+      aber die durch einen anderen Datensatz blockiert sind umvernummern lassen
+ Neu: Einheit: Nach Neuanlage: Cursor steht auf der neuen Zeile
+
 Rev 8.321 (24.11.17) Andreas Filsinger
 
  Neu: Vertrag: "Bezahlt"-Merkmal wird unabhängig von Liefermenge eingetragen,

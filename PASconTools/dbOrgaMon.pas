@@ -307,7 +307,7 @@ function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
 procedure e_x_sql(s: string); overload;
 procedure e_x_sql(s: TStrings); overload;
 procedure e_x_update(s: string; sl: TStringList);
-procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false);
+procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false; References: TStrings = nil);
 
 // BASIC Prozessor
 procedure e_x_basic(FName: string; ParameterL: TStrings = nil); overload;
@@ -321,6 +321,7 @@ procedure e_x_commit;
 // TABELLE "." FELD [","] [" where " CONDITION]
 //
 procedure e_x_dereference(dependencies: TStringList; fromref: string; toref: string = 'NULL'); overload;
+procedure e_x_dereference(dependencies: TStringList; fromref: Integer; toref: Integer); overload;
 procedure e_x_dereference(dependencies: string; fromref: string; toref: string = 'NULL'); overload;
 
 {
@@ -2263,27 +2264,32 @@ begin
   cSQL.free;
 end;
 
-procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false);
+procedure e_w_dereference(RID: integer; TableN, FieldN: string; DeleteIt: boolean = false; References : TStrings = nil);
 var
   sql: TStringList;
 begin
-  sql := TStringList.create;
-  if DeleteIt then
+  if (RID>=cRID_FirstValid) then
   begin
-    sql.add('delete from ' + TableN);
-    sql.add('WHERE');
-    sql.add(FieldN + '=' + inttostr(RID));
-  end
-  else
-  begin
-    sql.add('update');
-    sql.add(TableN + ' set');
-    sql.add(FieldN + ' = NULL');
-    sql.add('WHERE');
-    sql.add(FieldN + '=' + inttostr(RID));
+    sql := TStringList.create;
+    if DeleteIt then
+    begin
+      sql.add('delete from ' + TableN);
+      sql.add('WHERE');
+      sql.add(FieldN + '=' + inttostr(RID));
+    end
+    else
+    begin
+      sql.add('update');
+      sql.add(TableN + ' set');
+      sql.add(FieldN + ' = NULL');
+      sql.add('WHERE');
+      sql.add(FieldN + '=' + inttostr(RID));
+    end;
+    e_x_sql(sql);
+    sql.free;
   end;
-  e_x_sql(sql);
-  sql.free;
+  if assigned(References) then
+   References.add(TableN + '.' + FieldN);
 end;
 
 function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload;
@@ -2500,6 +2506,11 @@ begin
   sl.add(dependencies);
   e_x_dereference(sl, fromref, toref);
   sl.free;
+end;
+
+procedure e_x_dereference(dependencies: TStringList; fromref: Integer; toref: Integer); overload;
+begin
+  e_x_dereference(dependencies, IntToStr(fromref), IntToStr(toref));
 end;
 
 function ResolveSQL(const sql: String): String;

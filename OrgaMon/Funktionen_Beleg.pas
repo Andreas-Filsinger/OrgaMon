@@ -587,6 +587,7 @@ procedure e_w_preDeleteBPosten(BPOSTEN_R: integer);
 procedure e_w_preDeleteBeleg(BELEG_R: integer);
 procedure e_w_preDeleteBBeleg(BBELEG_R: integer);
 procedure e_w_preDeleteArtikel(ARTIKEL_R: integer);
+procedure e_w_preDeleteEinheit(EINHEIT_R: integer; References: TStrings = nil);
 procedure e_w_preDeletePerson(PERSON_R: integer);
 procedure e_w_preDeleteVerlag(VERLAG_R: integer);
 procedure e_w_preDeleteTier(TIER_R: integer);
@@ -5834,6 +5835,16 @@ begin
   // BBeleg Referenzen auflösen
   e_w_dereference(BBELEG_R, 'WARENBEWEGUNG', 'BBELEG_R');
   e_w_dereference(BBELEG_R, 'EREIGNIS', 'BBELEG_R');
+end;
+
+procedure e_w_preDeleteEinheit(EINHEIT_R: integer; References: TStrings = nil);
+begin
+  e_w_dereference(EINHEIT_R,'ARTIKEL', 'EINHEIT_R',false,References);
+  e_w_dereference(EINHEIT_R,'ARTIKEL_AA', 'EINHEIT_R',false,References);
+  e_w_dereference(EINHEIT_R,'BPOSTEN', 'EINHEIT_R',false,References);
+  e_w_dereference(EINHEIT_R,'GELIEFERT', 'EINHEIT_R',false,References);
+  e_w_dereference(EINHEIT_R,'POSTEN', 'EINHEIT_R',false,References);
+  e_w_dereference(EINHEIT_R,'WARENBEWEGUNG', 'EINHEIT_R',false,References);
 end;
 
 procedure e_w_preDeleteArtikel(ARTIKEL_R: integer);

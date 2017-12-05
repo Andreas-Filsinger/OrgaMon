@@ -34,7 +34,7 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, Grids, IB_Grid,
   ExtCtrls, IB_Access, IB_UpdateBar,
-  IB_Components;
+  IB_Components, Vcl.Buttons;
 
 type
   TFormArtikelEinheit = class(TForm)
@@ -44,10 +44,14 @@ type
     IB_UpdateBar1: TIB_UpdateBar;
     IB_Grid1: TIB_Grid;
     Image2: TImage;
+    SpeedButton1: TSpeedButton;
     procedure Image2Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure IB_Query1AfterInsert(IB_Dataset: TIB_Dataset);
+    procedure IB_Query1ConfirmDelete(Sender: TComponent;
+      var Confirmed: Boolean);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -61,13 +65,55 @@ implementation
 
 uses
   globals, CareTakerClient, anfix32,
-  wanfix32;
+  wanfix32, dbOrgaMon, Funktionen_Beleg;
 
 {$R *.dfm}
 
 procedure TFormArtikelEinheit.Image2Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Einheiten');
+end;
+
+procedure TFormArtikelEinheit.SpeedButton1Click(Sender: TObject);
+var
+ ALT_EINHEIT_R: Integer;
+ NEU_EINHEIT_R: Integer;
+ References: TStringList;
+begin
+   ALT_EINHEIT_R:= IB_Query1.FieldByName('RID').AsInteger;
+   if (IB_Query1.state<>dssedit) and (ALT_EINHEIT_R>=cRID_FirstValid) then
+   begin
+     BeginHourGlass;
+
+     // Find a new and unused RID
+     repeat
+      NEU_EINHEIT_R:= e_w_GEN('GEN_EINHEIT');
+      if e_r_sql('select count(RID) from EINHEIT where RID='+inttostr(NEU_EINHEIT_R))=0 then
+       break;
+     until eternity;
+
+     // make a copy of the Record
+     e_x_sql(
+      {} 'insert into EINHEIT (RID,EINHEIT,BASIS,ART,NENNER) select '+
+      {} IntTostr(NEU_EINHEIT_R)+',EINHEIT,BASIS,ART,NENNER from EINHEIT where RID='+Inttostr(ALT_EINHEIT_R));
+
+
+     // route the OLD to the NEW
+     References := TStringList.create;
+     e_w_preDeleteEinheit(cRID_UnSet,References);
+     //
+     e_x_dereference(References, ALT_EINHEIT_R, NEU_EINHEIT_R);
+     References.free;
+
+     // delete the OLD, so this RID is free at all
+     e_x_sql('delete from EINHEIT where RID='+INttoStr(ALT_EINHEIT_R));
+
+     // GUI
+     IB_Query1.Refresh;
+     IB_Query1.Locate('RID',NEU_EINHEIT_R,[]);
+
+     EndHourGlass;
+   end;
 end;
 
 procedure TFormArtikelEinheit.FormActivate(Sender: TObject);
@@ -86,6 +132,23 @@ procedure TFormArtikelEinheit.IB_Query1AfterInsert(
 begin
  IB_Dataset.post;
  IB_Dataset.Refresh;
+ IB_Query1.Locate('RID',e_r_gen('GEN_EINHEIT'),[]);
+end;
+
+procedure TFormArtikelEinheit.IB_Query1ConfirmDelete(Sender: TComponent;
+  var Confirmed: Boolean);
+begin
+  Confirmed := false;
+  with Sender as TIB_Dataset do
+    if doit(FieldByName('EINHEIT').AsString + #13 + FieldByName('BASIS').AsString + #13 +
+      'wirklich löschen') then
+    begin
+      BeginHourGlass;
+      e_w_preDeleteEinheit(FieldByName('RID').AsInteger);
+      Confirmed := true;
+      EndHourGlass;
+    end;
+
 end;
 
 end.
