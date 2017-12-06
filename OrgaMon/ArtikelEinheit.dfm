@@ -159,11 +159,11 @@ object FormArtikelEinheit: TFormArtikelEinheit
     OnClick = Image2Click
   end
   object SpeedButton1: TSpeedButton
-    Left = 171
+    Left = 268
     Top = 40
     Width = 25
     Height = 25
-    Hint = 'diesen RID freigeben, damit er woanders benutzt werden kann'
+    Hint = 'aktuellen RID freigeben und (optional) Wunsch RID setzen'
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -218,7 +218,17 @@ object FormArtikelEinheit: TFormArtikelEinheit
     DataSource = IB_DataSource1
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
-    ExplicitHeight = 273
+  end
+  object Edit1: TEdit
+    Left = 174
+    Top = 40
+    Width = 90
+    Height = 25
+    Hint = 'optionaler Wunsch-RID'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+    TextHint = '[Wunsch-RID]'
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (

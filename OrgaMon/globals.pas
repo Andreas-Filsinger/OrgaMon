@@ -47,9 +47,9 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.322; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.323; // ..\rev\OrgaMon.rev.txt
 
-  // Mindest-Anforderungen an die zuliefernde App
+  // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
 
   // INI Sachen

@@ -45,6 +45,7 @@ type
     IB_Grid1: TIB_Grid;
     Image2: TImage;
     SpeedButton1: TSpeedButton;
+    Edit1: TEdit;
     procedure Image2Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
@@ -75,40 +76,67 @@ begin
 end;
 
 procedure TFormArtikelEinheit.SpeedButton1Click(Sender: TObject);
-var
- ALT_EINHEIT_R: Integer;
- NEU_EINHEIT_R: Integer;
- References: TStringList;
-begin
-   ALT_EINHEIT_R:= IB_Query1.FieldByName('RID').AsInteger;
-   if (IB_Query1.state<>dssedit) and (ALT_EINHEIT_R>=cRID_FirstValid) then
-   begin
-     BeginHourGlass;
 
-     // Find a new and unused RID
-     repeat
-      NEU_EINHEIT_R:= e_w_GEN('GEN_EINHEIT');
-      if e_r_sql('select count(RID) from EINHEIT where RID='+inttostr(NEU_EINHEIT_R))=0 then
-       break;
-     until eternity;
-
+  procedure migrate (FROM_RID,TO_RID:Integer);
+  var
+   References: TStringList;
+  begin
      // make a copy of the Record
      e_x_sql(
       {} 'insert into EINHEIT (RID,EINHEIT,BASIS,ART,NENNER) select '+
-      {} IntTostr(NEU_EINHEIT_R)+',EINHEIT,BASIS,ART,NENNER from EINHEIT where RID='+Inttostr(ALT_EINHEIT_R));
-
+      {} IntTostr(TO_RID)+',EINHEIT,BASIS,ART,NENNER from EINHEIT where RID='+Inttostr(FROM_RID));
 
      // route the OLD to the NEW
      References := TStringList.create;
      e_w_preDeleteEinheit(cRID_UnSet,References);
      //
-     e_x_dereference(References, ALT_EINHEIT_R, NEU_EINHEIT_R);
+     e_x_dereference(References, FROM_RID, TO_RID);
      References.free;
 
      // delete the OLD, so this RID is free at all
-     e_x_sql('delete from EINHEIT where RID='+INttoStr(ALT_EINHEIT_R));
+     e_x_sql('delete from EINHEIT where RID='+INttoStr(FROM_RID));
+  end;
+
+  function e_w_newRID : Integer;
+  begin
+    repeat
+      result:= e_w_GEN('GEN_EINHEIT');
+      if e_r_NoRID('EINHEIT_R',result) then
+        break;
+    until eternity;
+  end;
+
+var
+ ALT_EINHEIT_R: Integer;
+ NEU_EINHEIT_R: Integer;
+ WUNSCH_EINHEIT_R: Integer;
+begin
+   ALT_EINHEIT_R := IB_Query1.FieldByName('RID').AsInteger;
+   if (IB_Query1.state<>dssedit) and (ALT_EINHEIT_R>=cRID_FirstValid) then
+   begin
+     BeginHourGlass;
+     NEU_EINHEIT_R := ALT_EINHEIT_R;
+     repeat
+
+       WUNSCH_EINHEIT_R := StrToIntDef(edit1.Text,cRID_Unset);
+       if (WUNSCH_EINHEIT_R=ALT_EINHEIT_R) then
+        break;
+
+       if (WUNSCH_EINHEIT_R>=cRID_FirstValid) then
+       begin
+         if e_r_isRID('EINHEIT_R',WUNSCH_EINHEIT_R) then
+           migrate(WUNSCH_EINHEIT_R,e_w_newRID);
+         NEU_EINHEIT_R := WUNSCH_EINHEIT_R;
+       end else
+       begin
+         NEU_EINHEIT_R := e_w_newRID;
+       end;
+
+       migrate(ALT_EINHEIT_R,NEU_EINHEIT_R);
+     until yet;
 
      // GUI
+     edit1.Text := '';
      IB_Query1.Refresh;
      IB_Query1.Locate('RID',NEU_EINHEIT_R,[]);
 

@@ -248,8 +248,12 @@ function for_update(s: TStrings = nil): string;
 
 { Datenbank Abfragen allgemein }
 
-// SQL selects, die einen Einzelnen Wert zurückgeben
+// true wenn es den RID in der Tabelle gibt, FieldName muss
+// ~TableName~ "_" ~ignored~ sein, Beispiel: "PERSON_R"
 function e_r_IsRID(FieldName: string; RID: integer): boolean;
+
+// true wenn es den RID in der Tabelle nicht gibt
+function e_r_NoRID(FieldName: string; RID: integer): boolean;
 
 // Nur das erste Feld aus der ersten Zeile als Integer
 function e_r_sql(s: string): integer; overload;
@@ -2073,6 +2077,23 @@ begin
       { } ' ' + nextp(FieldName, '_', 0) + ' ' +
       { } 'where' +
       { } ' RID=' + inttostr(RID)) = 1);
+  until yet;
+end;
+
+function e_r_NoRID(FieldName: string; RID: integer): boolean;
+begin
+  result := false;
+  repeat
+    if (RID < cRID_FirstValid) then
+      break;
+
+    result := (e_r_sql(
+      { } 'select' +
+      { } ' count(RID) ' +
+      { } 'from' +
+      { } ' ' + nextp(FieldName, '_', 0) + ' ' +
+      { } 'where' +
+      { } ' RID=' + inttostr(RID)) = 0);
   until yet;
 end;
 
