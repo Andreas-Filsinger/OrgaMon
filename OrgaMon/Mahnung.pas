@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2017  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ uses
   ComCtrls, IB_Components, IB_Access,
   CheckLst, globals, ExtCtrls,
   IB_UpdateBar, Grids, IB_Grid,
-  gplists;
+  gplists, Vcl.Buttons;
 
 type
   TFormMahnung = class(TForm)
@@ -136,6 +136,9 @@ type
     Button6: TButton;
     Button7: TButton;
     Button1: TButton;
+    SpeedButton24: TSpeedButton;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
     procedure Button4Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -163,6 +166,9 @@ type
     procedure Button15Click(Sender: TObject);
     procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure SpeedButton24Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
   private
     { Private-Deklarationen }
     BlackList: TgpIntegerList; // Liste der Personen, die NICHT gemahnt werden
@@ -218,6 +224,200 @@ begin
     else
       Color := cllime;
   end;
+end;
+
+
+procedure TFormMahnung.SpeedButton24Click(Sender: TObject);
+var
+ MahnungFName : String;
+ DocFName: String;
+ PERSON_R,BELEG_R,TEILLIEFERUNG : Integer;
+ M : TStringList;
+ n : Integer;
+   bigDocument: THTMLTemplate;
+begin
+  PERSON_R := MarkedPERSON_R;
+  M := TStringList.create;
+  bigDocument:= THTMLTemplate.create;
+
+
+  // Mahnung.combined erzeugen
+  MahnungFName := e_r_MahnungFName(PERSON_R);
+  if FileExists(MahnungFname) then
+  begin
+   M.LoadFromFile(MahnungFName);
+   bigDocument.LoadFromFile(MahnungFName);
+
+   for n := 0 to pred(M.count) do
+   begin
+     if pos('BelegNo=',M[n])=1 then
+     begin
+       BELEG_R := StrToIntDef(ExtractSegmentBetween(M[n],'=','-'),cRID_unset);
+       TEILLIEFERUNG := StrToIntDef(nextp(M[n],'-',1),0);
+
+       repeat
+         DocFName := e_r_BelegFNameCombined(
+         { } PERSON_R,
+         { } BELEG_R,
+         { } TEILLIEFERUNG);
+         if FileExists(DocFName) then
+          break;
+
+         DocFName := e_r_BelegFName(
+         { } PERSON_R,
+         { } BELEG_R,
+         { } TEILLIEFERUNG);
+         if FileExists(DocFName) then
+          break;
+
+          continue;
+       until yet;
+       bigDocument.InsertDocument(DocFName);
+     end;
+   end;
+
+   bigDocument.SaveToFile(e_r_MahnungFNameCombined(PERSON_R));
+  end;
+  bigDocument.free;
+  M.free;
+end;
+
+procedure TFormMahnung.SpeedButton2Click(Sender: TObject);
+var
+ EREIGNIS_R: Integer;
+ PERSON_R: Integer;
+ MAHNUNG_R: Integer;
+ ErrorMsg : String;
+ FName_pdf: string;
+ VORLAGE_R: Integer;
+begin
+
+  ErrorMsg := '';
+  repeat
+
+    //
+    PERSON_R := MarkedPERSON_R;
+    MAHNUNG_R:= IB_QueryMahnlauf.FieldByName('RID').AsInteger;
+    if (MAHNUNG_R<cRID_FirstValid) then
+    begin
+      ErrorMsg := 'RID der Mahnung nicht ermittelbar';
+      break;
+    end;
+
+    FName_pdf := e_r_MahnungFNameCombined(PERSON_R);
+    ersetze('.html','.pdf', FName_pdf);
+
+    if not(FileExists(FName_pdf)) then
+    begin
+     FName_pdf := e_r_MahnungFName(PERSON_R);
+     ersetze('.html','.pdf', FName_pdf);
+    end;
+
+    if not(FileExists(FName_pdf)) then
+    begin
+      ErrorMsg := 'Keine Mahnung als PDF vorhanden';
+      break;
+    end;
+
+    if FileDate(FName_pdf)<>dateGet then
+    begin
+      ErrorMsg := 'Die Mahnung ist nicht von heute';
+      break;
+    end;
+
+
+    // Ereignis sicherstellen
+    EREIGNIS_R := e_r_sql(
+        { } 'select RID from' +
+        { } ' EREIGNIS where' +
+        { } ' (ART=' + inttostr(eT_MahnungPerEMail) + ') and ' +
+        { } ' (PERSON_R=' + inttostr(PERSON_R) + ') and ' +
+        { } ' (TEILLIEFERUNG=' + inttostr(MAHNUNG_R) + ')');
+
+    if (EREIGNIS_R < cRID_FirstValid) then
+    begin
+      // Ereignis anlegen
+      EREIGNIS_R := e_w_GEN('EREIGNIS_GID');
+      e_x_sql('insert into EREIGNIS (RID,ART,BEARBEITER_R,PERSON_R,TEILLIEFERUNG) values (' +
+        { } inttostr(EREIGNIS_R) + ',' +
+        { } inttostr(eT_MahnungPerEMail) + ',' +
+        { } inttostr(sBearbeiter) + ',' +
+        { } inttostr(PERSON_R) + ',' +
+        { } inttostr(MAHNUNG_R) + ')');
+    end;
+
+    // Ensure eMail Entry
+    VORLAGE_R := e_r_VorlageMail(cMailvorlage_Mahnung);
+    if (VORLAGE_R < cRID_FirstValid) then
+    begin
+      ErrorMsg := 'eMail-Vorlage "' + cMailvorlage_Mahnung + '" existiert nicht!';
+      break;
+    end;
+
+    e_x_sql('insert into EMAIL (' +
+      { } 'RID,PERSON_R,VORLAGE_R,EREIGNIS_R,DATEI_ANLAGE) values (' +
+      { } '0' + ',' +
+      { } inttostr(PERSON_R) + ',' +
+      { } inttostr(VORLAGE_R) + ',' +
+      { } inttostr(EREIGNIS_R) + ',' +
+      { } '''' + FName_pdf + '''' + ')');
+  until yet;
+
+  if (ErrorMsg<>'') then
+   ShowMessageTimeout(ErrorMsg);
+end;
+
+procedure TFormMahnung.SpeedButton1Click(Sender: TObject);
+var
+ PERSON_R: Integer;
+ MahnungFName : String;
+ ErrorMsg: string;
+ PDF: TStringList;
+ FName_pdf: string;
+begin
+  PERSON_R := MarkedPERSON_R;
+  MahnungFName := '';
+  ErrorMsg := '';
+
+  repeat
+
+   MahnungFName := e_r_MahnungFNameCombined(PERSON_R);
+   if FileExists(MahnungFName) then
+    break;
+
+   MahnungFName := e_r_MahnungFName(PERSON_R);
+   if FileExists(MahnungFName) then
+    break;
+
+  until yet;
+
+  repeat
+
+    if (MahnungFName='') then
+    begin
+      ErrorMsg := 'Keine Mahnung vorhanden!';
+      break;
+    end;
+
+
+    PDF := html2pdf(MahnungFName);
+    ErrorMsg := PDF.values['ERROR'];
+    if (ErrorMsg<>'') then
+     break;
+    FName_pdf := PDF.Values['ConversionOutFName'];
+
+    if not(FileExists(FName_pdf)) then
+    begin
+      ErrorMsg := 'die PDF-Erstellung ist nicht erfolgt';
+      break;
+    end;
+  until yet;
+
+  if (ErrorMsg<>'') then
+   ShowMessageTimeout(ErrorMsg)
+  else
+   openShell(FName_pdf);
+
 end;
 
 procedure TFormMahnung.Button4Click(Sender: TObject);

@@ -1,5 +1,9 @@
-{     Interface to OpenSSL 1.1
+{
+  |   cryptossl
+  |   =========
   |
+  |   minimalistic freepascal Interface to OpenSSL 1.1
+  |                         (c) 2017 Andreas Filsinger
   |
   |    _  _  _                                _
   |   | |(_)| |__    ___  _ __  _   _  _ __  | |_  ___
@@ -18,7 +22,7 @@
   |   (c) File "LICENSE" of OpenSSL 1.1 Distribution
   |
   |
-  |   cryptossl minimalistic Interface (c) Andreas Filsinger 2017
+  |
   |
 }
 unit cryptossl;

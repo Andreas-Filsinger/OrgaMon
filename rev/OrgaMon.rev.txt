@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.324 (12.12.17) Andreas Filsinger
+
+ Bug: Rechnungen: Symbol: "Dokument-Ansicht": "combined" Belege wurden nicht angezeigt
+ Bug: html: "combined": Doppelung von Style-Elementen
+
+ Neu: Mahnung: Kombiniere die Mahnung mit den betroffenen Rechnungen zu einem Dokument
+ Neu: Mahnung: Wandle die Mahnung in ein PDF
+ Neu: Mahnung: Sende die Mahnung als eMail
+
 Rev 8.323 (06.12.17) Andreas Filsinger
 
  Neu: Einheit: Wunsch-RID setzbar

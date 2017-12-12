@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.323; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.324; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -161,6 +161,7 @@ const
 
   // HTML Ausgabebelege
   cHTMLextension = '.html';
+  cCombinedExtension = '.combined';
   cDOCextension = '.doc';
   cHTML_OrderFName = 'Bestellung' + cHTMLextension;
   cHTML_ArbeitszeitFName = 'Arbeitszeit' + cHTMLextension;
@@ -311,6 +312,7 @@ const
   eT_WebShopRemoteXMLRPC = 35; // Ausführen von XMLRPC im Home-Land
   eT_OrderZusageAenderung = 36; // Neuer Zusage-Termin in einer Order
   eT_KreativeZusammenfuehren = 37; // Haifisch bei den Kreativen
+  eT_MahnungPerEMail = 38; // Mahnung per eMail
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag
@@ -616,7 +618,7 @@ const
   cMailvorlage_Ergebnis = 'ERGEBNIS';
   cMailvorlage_Dokument = 'PDF';
   cMailvorlage_Rechnung = 'RECHNUNG';
-  cMailvorlage_Mahnung = 'MAHNUNG';  // imp pend
+  cMailvorlage_Mahnung = 'MAHNUNG';
   cMailvorlage_Versand = 'Versand@';
 
   // für die Drucklabels

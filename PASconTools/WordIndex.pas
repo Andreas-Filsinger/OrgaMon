@@ -22,6 +22,10 @@
 
   http://orgamon.org/
 
+  todo:
+
+  Umstellung der Type-Casts auf PtrUint
+
 *)
 unit WordIndex;
 

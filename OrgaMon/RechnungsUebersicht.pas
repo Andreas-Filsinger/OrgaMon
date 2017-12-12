@@ -238,12 +238,29 @@ begin
 end;
 
 procedure TFormRechnungsUebersicht.Button4Click(Sender: TObject);
+var
+ FName : string;
 begin
   with IB_Query1 do
-    openShell(e_r_BelegFName(
+  begin
+   repeat
+    FName := e_r_BelegFNameCombined(
       { } FieldByName('PERSON_R').AsInteger,
       { } FieldByName('BELEG_R').AsInteger,
-      { } FieldByName('TEILLIEFERUNG').AsInteger));
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+    FName := e_r_BelegFName(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+   until yet;
+    openShell(FName);
+  end;
 end;
 
 procedure TFormRechnungsUebersicht.CheckBox1Click(Sender: TObject);

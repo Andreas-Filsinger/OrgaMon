@@ -116,6 +116,7 @@ const
   cReferenceDelimiterEnd = ')' + cVarDelimiter;
   cPageBreakHerePossible = 'pagebreak';
   cNonBreakableSpace = #160;
+  cAmpersand = #28; { durch dieses Spezial-Zeichen kann ein echtes raw "&" in HTML ausgegeben werden }
   cRawHTMLPrefix = '@'; { @... unterdrückt die "ascii -> html"-Umsetzung }
   cSeite = 'Seite';
   cSeiten = 'Seiten';
@@ -1973,7 +1974,7 @@ const
     (* - *) , #012 (* - *) , '<br>' (* #13 *) , #014 (* - *) , #015
     (* - *) , #016 (* - *) , #017 (* - *) , #018 (* - *) , #019 (* - *) , #020
     (* - *) , #021 (* - *) , #022 (* - *) , #023 (* - *) , #024 (* - *) , #025
-    (* - *) , #026 (* - *) , #027 (* - *) , #038 (* & *) , #029 (* - *) , #030
+    (* - *) , #026 (* - *) , #027 (* - *) , #038 (* raw & *) , #029 (* - *) , #030
     (* - *) , #031 (* - *) , #032 (* *) , #033 (* ! *) , '&quot;'
     (* " *) , #035 (* # *) , #036 (* $ *) , #037 (* % *) , '&amp;'
     (* & *) , #039 (* ' *) , #040 (* ( *) , #041 (* ) *) , #042 (* * *) , #043
@@ -2949,6 +2950,7 @@ var
   HomeLine, NewLine, InsertPos: integer;
   Body_Start, Body_end, HTML_end: integer;
   n: integer;
+  FirstNewStyle: Integer;
 
   nDocument: TStringList;
   nStyle: TStringList;
@@ -2956,8 +2958,40 @@ var
   // Automata
   Automatastate: integer;
   Mission_complete: boolean;
+  LineString: string;
 
 begin
+  // aktuelles Dokument parsen
+  nStyle := nil;
+  FirstNewStyle := 0;
+  Automatastate := 0;
+  for n := 0 to pred(Count) do
+    case Automatastate of
+     0 :
+        if StartTokenIs('<STYLE', n, self) then
+        begin
+          nStyle := TStringList.create;
+          inc(Automatastate);
+        end;
+     1 :
+        if StartTokenIs('</STYLE', n, self) then
+        begin
+          FirstNewStyle := nStyle.count;
+          break;
+        end
+        else
+        begin
+          if (Strings[n] <> '<!--') then
+            if (Strings[n] <> '-->') then
+            begin
+             LineString := cutblank(Strings[n]);
+             if (nStyle.IndexOf(LineString)=-1) then
+               nStyle.add(LineString);
+            end;
+        end;
+
+    end;
+
 
   // Dokument-Fortsetzung laden
   nDocument := TStringList.create;
@@ -2970,7 +3004,6 @@ begin
 
   // die ganzen Tag-Lines den "neuen" Dokumentes bestimmen!
   Automatastate := 0;
-  nStyle := nil;
   Mission_complete := false;
   HomeLine := 0;
   while true do
@@ -2983,7 +3016,8 @@ begin
       0:
         if StartTokenIs('<STYLE', HomeLine, nDocument) then
         begin
-          nStyle := TStringList.create;
+          if not(assigned(nStyle)) then
+            nStyle := TStringList.create;
           inc(Automatastate);
         end;
       1:
@@ -2995,7 +3029,11 @@ begin
         begin
           if (nDocument[HomeLine] <> '<!--') then
             if (nDocument[HomeLine] <> '-->') then
-              nStyle.add(nDocument[HomeLine]);
+            begin
+             LineString := cutblank(nDocument[HomeLine]);
+             if (nStyle.IndexOf(LineString)=-1) then
+               nStyle.add(LineString);
+            end;
         end;
       2:
         if StartTokenIs('<BODY', HomeLine, nDocument) then
@@ -3041,7 +3079,7 @@ begin
         5:
           if StartTokenIs('</STYLE', HomeLine, self) then
           begin
-            for n := 0 to pred(nStyle.count) do
+            for n := FirstNewStyle to pred(nStyle.count) do
             begin
               insert(HomeLine, nStyle[n]);
               inc(HomeLine);
@@ -3083,6 +3121,7 @@ begin
   end;
 
   // Clean Up
+  FreeAndNil(nDocument);
   if assigned(nStyle) then
     FreeAndNil(nStyle);
 
@@ -3093,7 +3132,7 @@ begin
   end;
 
   // Es gab Fehler?
-  if Messages.count > 0 then
+  if (Messages.count > 0) then
   begin
     clear;
     add('<html>');
@@ -3332,7 +3371,7 @@ end;
 
 function Uni2html(code:Integer):string;
 begin
-  result := #28+'#'+IntTostr(code)+';';
+  result := cAmpersand+'#'+IntTostr(code)+';';
 end;
 
 var

@@ -470,6 +470,7 @@ function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERU
 
 // Dateiname der aktuellen Kontoübersicht / Mahnung
 function e_r_MahnungFName(PERSON_R: integer): string;
+function e_r_MahnungFNameCombined(PERSON_R: integer): string;
 
 { : diverse ermittelten Werte }
 //
@@ -5420,7 +5421,7 @@ end;
 function e_r_BelegFNameCombined(PERSON_R: integer; BELEG_R: integer; TEILLIEFERUNG: integer = 0): string;
 begin
   result := e_r_BelegFName(PERSON_R, BELEG_R, TEILLIEFERUNG, true);
-  ersetze('*', '.combined' + chtmlextension, result);
+  ersetze('*', cCombinedExtension + chtmlextension, result);
 end;
 
 function e_r_MahnungFName(PERSON_R: integer): string;
@@ -5428,6 +5429,14 @@ begin
   result :=
   { } cPersonPath(PERSON_R) +
   { } cHTML_MahnungFName;
+end;
+
+function e_r_MahnungFNameCombined(PERSON_R: integer): string;
+begin
+  result :=
+  { } cPersonPath(PERSON_R) +
+  { } cHTML_MahnungFName;
+  ersetze(cHTMLextension, cCombinedExtension + cHTMLextension, result);
 end;
 
 function e_r_BelegInfo(BELEG_R: integer; TEILLIEFERUNG: integer = -1): TStringList;

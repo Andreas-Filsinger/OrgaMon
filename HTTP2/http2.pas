@@ -42,6 +42,7 @@ uses
   // Tools
   anfix32,
   PasMP,
+
   // HTTP/2 Project
   cryptossl,
   hpack;
@@ -96,6 +97,7 @@ type
    STATUS : TStatusQ;
 
    constructor Create(SSL : PSSL);
+
 
    property OnNoise : TThreadMethod read FNoise write FNoise;
    property OnStatus : TThreadMethod read FStatus write FStatus;
