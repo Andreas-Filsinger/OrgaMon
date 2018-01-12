@@ -447,7 +447,7 @@ begin
     SearchIndexs.add(TWordIndex.create(nil));
   end;
 
-  // Verbot für den WebShop
+  // Verbot für den WebShop "rote Liste"
   WebShopRedList := e_r_sqlm(
    {} 'select '+
    {} ' ARTIKEL.RID '+
@@ -529,27 +529,30 @@ begin
     end;
   end;
 
+  cARTIKEL.Free;
+  ArtikelInfo.free;
+
+  // Suchindex "intern"
   SearchIndex.JoinDuplicates(false);
   SearchIndex.SaveToFile(SearchDir + format(cArtikelSuchindexFName,[cArtikelSuchindexIntern]));
+  SearchIndex.free;
 
+  // die anderen Suchindizes speichern
   for n := 0 to pred(OLAPs.Count) do
+  begin
     with TWordIndex(SearchIndexs[n]) do
     begin
       JoinDuplicates(false);
       SaveToFile(SearchDir + format(cArtikelSuchindexFName,[OLAPs[n]]));
     end;
-
-  // FREE
-  SearchIndex.free;
-  ArtikelInfo.free;
-  OLAPs.free;
-  for n := 0 to pred(RIDs.count) do
-    TgpIntegerList(RIDs[n]).free;
-  RIDs.free;
-  for n := 0 to pred(SearchIndexs.count) do
     TWordIndex(SearchIndexs[n]).free;
+    TgpIntegerList(RIDs[n]).free;
+  end;
+
+  // Free
+  RIDs.free;
+  OLAPs.free;
   SearchIndexs.free;
-  cARTIKEL.Free;
 end;
 
 end.

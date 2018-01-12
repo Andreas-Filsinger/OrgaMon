@@ -637,8 +637,8 @@ var
   n : integer;
 begin
   result := TStringList.create;
-              for n := DYN_TABLE_FIRST_ELEMENT to pred(iTABLE.count) do
-                result.add(iTABLE[n]);
+  for n := DYN_TABLE_FIRST_ELEMENT to pred(iTABLE.count) do
+    result.add(iTABLE[n]);
 end;
 
 procedure THPACK.Save(Stream: TStream);
@@ -2206,8 +2206,9 @@ begin
   end;
  end;
 end;
-  procedure huffman_decode;
-  begin
+
+procedure huffman_decode;
+begin
 
    ValueString := '';
     if not(decode_RFC_7541_Appendix_B) then
@@ -2220,12 +2221,13 @@ end;
       inc(BytePos);
       BitPos := 0;
     end;
-  end;
-  function fHuffman_decode: RawByteString;
-  begin
+end;
+
+function fHuffman_decode: RawByteString;
+begin
    huffman_decode;
    result := ValueString;
-  end;
+end;
 
 var
  NameString : string;

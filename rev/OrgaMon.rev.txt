@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.325 (12.01.18) Andreas Filsinger
+
+ Neu: Artikel: Suchindex: Erstellen: Optimierte Freigabe von Hauptspeicher
+
 Rev 8.324 (12.12.17) Andreas Filsinger
 
  Bug: Rechnungen: Symbol: "Dokument-Ansicht": "combined" Belege wurden nicht angezeigt
