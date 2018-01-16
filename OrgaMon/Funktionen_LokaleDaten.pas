@@ -161,7 +161,7 @@ begin
   end;
 end;
 
-procedure PersonSuchindex;
+procedure PersonSuchindexX;
 var
   SpeedIndex: TWordIndex;
   cPERSON: TdboCursor;
@@ -257,6 +257,18 @@ begin
   cANSCHRIFT.free;
   cPERSON.free;
 
+  SpeedIndex.JoinDuplicates(false);
+  SpeedIndex.SaveToFile(SearchDir + 'Kunden' + c_wi_FileExtension);
+  SpeedIndex.free;
+end;
+
+procedure PersonSuchindex;
+var
+  SpeedIndex: TWordIndex;
+begin
+  SpeedIndex := TWordIndex.create(nil);
+  SpeedIndex.AddWords('Antonín Dvorák Über', TObject(33) );
+  SpeedIndex.AddWords('Über Unter', TObject(44) );
   SpeedIndex.JoinDuplicates(false);
   SpeedIndex.SaveToFile(SearchDir + 'Kunden' + c_wi_FileExtension);
   SpeedIndex.free;

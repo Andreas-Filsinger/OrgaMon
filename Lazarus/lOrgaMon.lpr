@@ -55,18 +55,21 @@ program lOrgaMon;
 
 }
 
-{$mode delphi}
-{$H+}
-
+{$mode objfpc}{$H+}
 {$APPTYPE CONSOLE}
+{ $ codepage utf8}
 
-uses {$IFDEF UNIX} {$IFDEF UseCThreads}
-  cthreads, {$ENDIF} {$ENDIF}
+uses
+  {$IFDEF UNIX}
+  {$IFDEF UseCThreads} cthreads, {$ENDIF}
+  cwstring,
+  {$ENDIF}
+  Windows,
+  sysutils, strutils,
   Interfaces,
   Classes,
   Math,
   inifiles,
-  SysUtils,
   fpchelper in '..\PASconTools\fpchelper.pas',
   anfix32 in '..\PASconTools\anfix32.pas',
   WordIndex in '..\PASconTools\WordIndex.pas',
@@ -102,5 +105,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 {$R *.res}
 
 begin
+ SetConsoleCP(CP_UTF8);
+ SetConsoleOutputCP(CP_UTF8);
+ writeln('öäüÖÄÜß - Créme Fresh!');
  setIdentitaetAndRun;
 end.

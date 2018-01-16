@@ -219,6 +219,7 @@ begin
                     FileDelete(iTranslatePath + iSicherungsPrefix + '*', 10);
                 FileDelete(WebPath + '*', 10);
                 FileDelete(cAuftragErgebnisPath + '*', 5);
+                FileDelete(SearchDir + '*', 400);
 
                 // Verzeichnis Löschungen
                 DirDelete(ImportePath + '*', 10);

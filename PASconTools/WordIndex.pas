@@ -2,10 +2,10 @@
 
   TWordIndex - Full Text Search Object
   TsTable - String Table (CSV-Objekt)
-  TSearchStringList - Bin‰re Suche & Incrementelle & "Pos=1" Suche
-  TExtendedList - "AND" "OR" f‰hige Liste
+  TSearchStringList - Bin√§re Suche & Incrementelle & "Pos=1" Suche
+  TExtendedList - "AND" "OR" f√§hige Liste
 
-  Copyright (C) 2007 - 2017  Andreas Filsinger
+  Copyright (C) 2007 - 2018  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@
 *)
 unit WordIndex;
 
+{$ifdef fpc}
+{$mode objfpc}{$H+}
+{$endif}
+
 interface
 
 uses
@@ -37,13 +41,15 @@ uses
 
 const
   WordIndexVersion: single = 1.026; // ..\rev\WordIndex.rev.txt
-  c_wi_TranslateFrom = 'ﬂƒÀ÷‹¡¿…»⁄Ÿ”Õ «≈';
-  c_wi_TranslateTo = 'SAEOUAAEEUUOIECA';
-  c_wi_ValidChars = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
-  c_wi_ValidCharsSort = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
-  c_wi_WhiteSpace_noblank = '_()*+-:&ß",/!?=;<>#{}$%''¥`^' + #$0D;
-  c_wi_WhiteSpace_exact = ' ' + c_wi_WhiteSpace_noblank;
-  c_wi_WhiteSpace = '.' + c_wi_WhiteSpace_exact;
+
+  c_wi_TranslateFrom : string = '√ü√Ñ√ã√ñ√ú√Å√Ä√â√à√ö√ô√ì√ç√ä√á√Ö';
+  c_wi_TranslateTo : string  = 'SAEOUAAEEUUOIECA';
+  c_wi_ValidChars : string  = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + '√ü√Ñ√ã√ñ√ú√Å√Ä√â√à√ö√ô√ì√ç√ä√á√Ö';
+  c_wi_ValidCharsSort : string  = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + 'SAEOUAAEEUUOIECA';
+  c_wi_WhiteSpace_noblank  : string = '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
+  c_wi_WhiteSpace_exact  : string = ' ' + '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
+  c_wi_WhiteSpace  : string = '.' + ' ' + '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
+
   c_st_DefaultSeparator = ';';
   c_wi_FileExtension = '.Suchindex';
   c_wi_RID_Suche = 'RID'; // "RID" n [ { "," n } ]
@@ -61,8 +67,8 @@ type
 
 type
   TExtendedList = class(TList)
-    procedure LogicalOR(List: TList);
-    procedure LogicalAND(List: TList);
+    procedure LogicalOR(L: TList);
+    procedure LogicalAND(L: TList);
     procedure SaveToFile(var f: file); overload;
     procedure LoadFromFile(var f: file); overload;
     procedure SaveToFile(FName: string); overload;
@@ -75,6 +81,20 @@ type
 
 type
   TWordIndex = class(TStringList)
+
+    //
+    // 1) ein String mit vielen Suchbegriffen wird zusammen mit einem RID
+    //    per AddWords(S,R) √ºbergeben. 1 AddWords pro Datensatz
+    // 2) per JoinDuplicates wird der eigentliche Suchindex aufgebaut.
+    //    Dieser Aufruf f√ºhrt dazu dass alle Objects[] der Liste auf eine
+    //    Liste der Vorkommen von einzelnen Worten umgestellt wird. Erst
+    //    danach ist "SaveToFile" oder "SaveToDiagfile" erlaubt.
+    // 3) Nun kann mit "Search(S)" in der Liste gesucht werden, dabei
+    //    wird die Ergebnisliste "FoundList" gef√ºllt mit einer Liste aus
+    //    RIDs. Also die Datens√§tze befinden sich in der Liste die passend
+    //    zu allen Suchworten sind (UND - Logik)
+    //
+
   private
     pMinWordLenght: integer;
     LastFileAge: integer;
@@ -103,7 +123,7 @@ type
     procedure SaveToDiagFile(OutF: TStrings); overload;
 
     //
-    procedure AddWords(BigWordStr: string; ToObject: TObject);
+    procedure AddWords(BigWordStr: string; AObject: TObject);
 
     //
     // LookForClones: muss gesetzt werden wenn ein einzelner
@@ -111,13 +131,12 @@ type
     // enthalten kann. Dann muss sichergestellt
     // werden dass diese "Clones" entfernt werden.
 
-    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f¸hrt zu 2
+    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f√ºhrt zu 2
     // Treffern, aber aus dem selben Datensatzes, also Clones, somit muss
     // LookForClones gesetzt werden.
     //
     procedure JoinDuplicates(LookForClones: boolean);
     procedure Filter(sFilter: string; MaxLength: integer);
-    procedure sCopy(Index, Count: integer);
     function Words: string;
 
   end;
@@ -129,7 +148,7 @@ type
   eTsCompareType = (TsIdentical, TsIgnoreLeadingZeros);
 
   // Eine CSV-Tabelle im Speicher
-  // Anzahl der Datens‰tze: RowCount = pred(count)
+  // Anzahl der Datens√§tze: RowCount = pred(count)
   // Row = 1..pred(count) : die Datenzeilen, alias:
   // Row = 1..RowCount : die Datenzeilen
   // Col = 0..pred(header.count) : die Datenspalten
@@ -186,10 +205,10 @@ type
     // Rechenfunktionen
     function sumCol(HeaderName: string): double;
 
-    // Hˆhere Funktionen
+    // H√∂here Funktionen
     procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
-    function Row(r: integer): TStringList;
+    function readRow(r: integer): TStringList;
 
     // Ersetze in einem String alle Spaltenwerte
     procedure ersetze(Row: integer; var s: string);
@@ -213,6 +232,9 @@ procedure SaveToFileCSV(s:TStringList; FName: string; Header : string = '');
 implementation
 
 uses
+  {$ifdef fpc}
+  lazutf8,
+  {$endif}
 {$IFNDEF CONSOLE}
   Dialogs,
 {$ENDIF}
@@ -258,7 +280,7 @@ begin
   end;
 end;
 
-procedure TWordIndex.AddWords(BigWordStr: string; ToObject: TObject);
+procedure TWordIndex.AddWords(BigWordStr: string; AObject: TObject);
 var
   sLen: integer;
   wStart, wEnd: integer;
@@ -268,24 +290,24 @@ var
   procedure WordOut;
   begin
     if wEnd - wStart >= pMinWordLenght then
-      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), ToObject);
+      Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), AObject);
   end;
 
-  function ValidChar(var c: char): boolean;
+  function ValidChar(Index : Integer): boolean;
   var
     k: integer;
   begin
 
-    if pos(c, c_wi_WhiteSpace) > 0 then
+    if pos(BigWordStr[Index], c_wi_WhiteSpace) > 0 then
     begin
       result := false;
       exit;
     end;
 
-    k := pos(c, c_wi_ValidChars);
+    k := pos(BigWordStr[Index], c_wi_ValidChars);
     if (k > 0) then
     begin
-      c := c_wi_ValidCharsSort[k];
+      BigWordStr[Index] := c_wi_ValidCharsSort[k];
       result := true;
       exit;
     end
@@ -295,8 +317,24 @@ var
     end;
   end;
 
+  var
+     s: string;
 begin
-  BigWordStr := AnsiUpperCase(BigWordStr);
+ {$ifdef fpc}
+
+ s := '1) √úber';
+ writeln(s);
+
+ writeln('2) √úber');
+ writeln(UTF8ToConsole('√úber'));
+ writeln(AnsiToUTF8('√úber'));
+ writeln(UTF8ToConsole(BigWordStr));
+// BigWordStr := AnsiUpperCase(BigWordStr);
+ BigWordStr := UTF8UpperCase(BigWordStr);
+ writeln(UTF8ToConsole(BigWordStr));
+ {$else}
+ BigWordStr := AnsiUpperCase(BigWordStr);
+ {$endif}
   sLen := length(BigWordStr);
   wStart := 0;
   wEnd := 0;
@@ -311,7 +349,7 @@ begin
           inc(wStart);
           if wStart > sLen then
             break;
-          if ValidChar(BigWordStr[wStart]) then
+          if ValidChar(wStart) then
           begin
             AutomataState := 1;
             wEnd := wStart;
@@ -325,7 +363,7 @@ begin
             WordOut;
             break;
           end;
-          if ValidChar(BigWordStr[wEnd]) = false then
+          if ValidChar(wEnd) = false then
           begin
             WordOut;
             AutomataState := 0;
@@ -346,7 +384,7 @@ begin
 
 end;
 
-procedure TWordIndex.JoinDuplicates;
+procedure TWordIndex.JoinDuplicates(LookForClones: boolean);
 var
   AddIndex: integer;
   CheckIndex: integer;
@@ -364,7 +402,7 @@ begin
     while true do
     begin
 
-      // neues Wort anfangen, auf alle F‰lle anf¸gen!
+      // neues Wort anfangen, auf alle F√§lle anf√ºgen!
       ReferenceList := TExtendedList.Create;
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
@@ -432,6 +470,8 @@ begin
     if strings[pred(CheckIndex)]>=strings[CheckIndex] then
     ShowMessage(format('Fehler! %s>=%s',[strings[pred(CheckIndex)],strings[CheckIndex]]));
   }
+  if DebugMode then
+   SaveToDiagFile(DebugLogPath+'Join.txt');
 end;
 
 procedure TWordIndex.ClearTheList;
@@ -465,14 +505,6 @@ begin
     else
       strings[n] := s;
   end;
-end;
-
-procedure TWordIndex.sCopy(Index, Count: integer);
-var
-  n: integer;
-begin
-  for n := 0 to pred(Count) do
-    strings[n] := system.copy(strings[n], Index, Count);
 end;
 
 procedure TWordIndex.SaveToFile(const FName: string);
@@ -613,7 +645,7 @@ begin
       begin
         _refNo := Pi(ReadP)^;
         inc({$ifndef FPC}integer{$endif}(ReadP), 4);
-        SubItems.add(TObject(_refNo));
+        SubItems.add(Pointer(_refNo));
       end;
       _StrLen := Pi(ReadP)^;
       inc({$ifndef FPC}integer{$endif}(ReadP), 4);
@@ -652,17 +684,18 @@ begin
   for n := 0 to pred(Count) do
   begin
     TheList := TList(Objects[n]);
-    if (TheList.Count >= MinSubElementCount) then
-    begin
-      OutStr := '"' + strings[n] + '"' + ' ';
-      if OptionDiagFile_IncludeCount then
-        OutStr := OutStr + '[' + inttostr(TheList.Count) + '] ';
-      for m := 0 to min(pred(TheList.Count), pred(MaxSubElementCount)) do
-        OutStr := OutStr + inttostr(integer(TheList[m])) + ' ';
-      if TheList.Count > MaxSubElementCount then
-        OutStr := OutStr + '... (' + inttostr(TheList.Count) + 'x)';
-      OutF.add(OutStr);
-    end;
+    if assigned(TheList) then
+      if (TheList.Count >= MinSubElementCount) then
+      begin
+        OutStr := '"' + strings[n] + '"' + ' ';
+        if OptionDiagFile_IncludeCount then
+          OutStr := OutStr + '[' + inttostr(TheList.Count) + '] ';
+        for m := 0 to min(pred(TheList.Count), pred(MaxSubElementCount)) do
+          OutStr := OutStr + inttostr(integer(TheList[m])) + ' ';
+        if TheList.Count > MaxSubElementCount then
+          OutStr := OutStr + '... (' + inttostr(TheList.Count) + 'x)';
+        OutF.add(OutStr);
+      end;
   end;
   OutF.SaveToFile(FName);
   OutF.free;
@@ -734,7 +767,7 @@ var
         end
         else
         begin
-          // wow Identit‰t, nix wie raus
+          // wow Identit√§t, nix wie raus
           result := BS_Found;
           exit;
         end;
@@ -912,27 +945,27 @@ begin
   result := HugeSingleLine(self, ' ');
 end;
 
-procedure TExtendedList.LogicalOR(List: TList);
+procedure TExtendedList.LogicalOR(L: TList);
 var
   n: integer;
 begin
-  for n := 0 to pred(List.Count) do
-    if indexof(List[n]) = -1 then
-      add(List[n]);
+  for n := 0 to pred(L.Count) do
+    if indexof(L[n]) = -1 then
+      add(L[n]);
 end;
 
-procedure TExtendedList.LogicalAND(List: TList);
+procedure TExtendedList.LogicalAND(L: TList);
 var
   n: integer;
 begin
-  if (List.Count = 0) then
+  if (L.Count = 0) then
   begin
     clear;
   end
   else
   begin
     for n := 0 to pred(Count) do
-      if List.indexof(Items[n]) = -1 then
+      if L.indexof(Items[n]) = -1 then
         Items[n] := nil;
     pack;
   end;
@@ -995,17 +1028,17 @@ begin
   k := indexof(SearchStr);
   if k <> -1 then
   begin
-    result.add(integer(Objects[k]));
+    result.add(PtrUInt(Objects[k]));
 
     for l := pred(k) downto 0 do
       if (SearchStr = strings[l]) then
-        result.add(integer(Objects[l]))
+        result.add(PtrUInt(Objects[l]))  // result.add(integer(Objects[l]))
       else
         break;
 
     for l := succ(k) to pred(Count) do
       if (SearchStr = strings[l]) then
-        result.add(integer(Objects[l]))
+        result.add(PtrUInt(Objects[l]))
       else
         break;
 
@@ -1069,7 +1102,7 @@ end;
 
 procedure TSearchStringList.IncRef(Index: integer);
 begin
-  Objects[Index] := TObject(integer(Objects[Index]) + 1);
+  Objects[Index] := TObject(PtrUInt(Objects[Index]) + 1);
 end;
 
 procedure TSearchStringList.SaveToFileWithReferences(const FName: string);
@@ -1080,7 +1113,7 @@ begin
   AssignFile(OutF, FName);
   rewrite(OutF);
   for n := 0 to pred(Count) do
-    writeln(OutF, inttostr(integer(Objects[n])) + ';' + strings[n]);
+    writeln(OutF, inttostr(PtrUInt(Objects[n])) + ';' + strings[n]);
   CloseFile(OutF);
 end;
 
@@ -1119,7 +1152,7 @@ begin
   b := AnsiUpperCase(StrFilter(b, c_wi_WhiteSpace_noblank, ' '));
   ersetze('  ', ' ', b);
 
-  // Jedes el(a) mus mit el(b) ¸bereinstimmen
+  // Jedes el(a) mus mit el(b) √ºbereinstimmen
   // Im Moment noch vereinfach, 1:1 UND 2:2 es sollte aber auch z.B.
   // 1:5 UND 2:10 UND 2:23 ein Treffer sein.
   result := true;
@@ -1348,7 +1381,7 @@ var
 begin
   result := TStringList.Create;
   for r := 1 to pred(Count) do
-    result.AddObject(TStringList(Items[r])[c], pointer(r));
+    result.AddObject(TStringList(Items[r])[c], TObject(uint64(r)));
 end;
 
 function TsTable.ColCount: integer;
@@ -1422,7 +1455,7 @@ begin
     (*
 
       //
-      // Versuch, die g¸ltigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
+      // Versuch, die g√ºltigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
       // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
       //
       // -> Funktion noch bisher nicht bewiesen
@@ -1490,7 +1523,7 @@ begin
             break;
           end;
 
-          // Im Falle des erfolgreichen Versuches kˆnnte
+          // Im Falle des erfolgreichen Versuches k√∂nnte
           // hier das setzen der Class unterbleiben
           tdExtras := 'class=gdef';
 
@@ -1539,8 +1572,8 @@ var
   ThisHeader: string;
   SingleHeader: string;
   ThisData: string;
-  ColCount: integer;
-  Col, r: integer;
+  ColAnzahl: integer;
+  c, r: integer;
   //
   ColIndex: TgpIntegerList;
   HeaderL: TStringList;
@@ -1581,12 +1614,12 @@ begin
       ThisHeader := sl[0];
       while (ThisHeader <> '') do
         TStringList(Items[0]).add(nextp(ThisHeader, getSeparator));
-      ColCount := TStringList(Items[0]).Count;
+      ColAnzahl := TStringList(Items[0]).Count;
       for n := 1 to pred(sl.Count) do
       begin
         ThisData := sl[n];
         Cols := TStringList.Create;
-        for m := 0 to pred(ColCount) do
+        for m := 0 to pred(ColAnzahl) do
           Cols.add(nextp(ThisData, getSeparator));
         add(Cols);
       end;
@@ -1595,7 +1628,7 @@ begin
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
+    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
     if (sl.Count > 0) then
     begin
 
@@ -1606,8 +1639,8 @@ begin
       begin
         SingleHeader := nextp(ThisHeader, getSeparator);
 
-        Col := colOf(SingleHeader);
-        if (Col = -1) then
+        c := colOf(SingleHeader);
+        if (c = -1) then
         begin
           // sDiagnose.add('+' + SingleHeader);
           HeaderL.add(SingleHeader);
@@ -1615,7 +1648,7 @@ begin
         end
         else
         begin
-          ColIndex.add(Col);
+          ColIndex.add(c);
         end;
         //
       end;
@@ -1623,16 +1656,16 @@ begin
       for r := 1 to pred(sl.Count) do
       begin
         NewL := TStringList.Create;
-        for Col := 0 to pred(HeaderL.Count) do
+        for c := 0 to pred(HeaderL.Count) do
           NewL.add('');
-        Col := 0;
+        c := 0;
         try
           ThisData := sl[r];
           while (ThisData <> '') do
           begin
-            NewL[ColIndex[Col]] := nextp(ThisData, getSeparator);
-            inc(Col);
-            if (Col >= ColIndex.Count) and (ThisData <> '') then
+            NewL[ColIndex[c]] := nextp(ThisData, getSeparator);
+            inc(c);
+            if (c >= ColIndex.Count) and (ThisData <> '') then
             begin
               // sDiagnose.add('Zeile: ' + JoinL[r]);
               // sDiagnose.add('WARNING: zu viele Felder. Rest: "'+ThisData+'"');
@@ -1678,10 +1711,10 @@ var
   ThisHeader: string;
   SingleHeader: string;
   ThisData: string;
-  ColCount: integer;
+  ColAnzahl: integer;
   SingleCol: boolean;
   JoinL: TStringList;
-  Col, r: integer;
+  c, r: integer;
   //
   ColIndex: TgpIntegerList;
   HeaderL: TStringList;
@@ -1754,12 +1787,12 @@ begin
       ThisHeader := JoinL[0];
       while (ThisHeader <> '') do
         TStringList(Items[0]).add(nextp(ThisHeader, getSeparator));
-      ColCount := TStringList(Items[0]).Count;
+      ColAnzahl := TStringList(Items[0]).Count;
       for n := 1 to pred(JoinL.Count) do
       begin
         ThisData := JoinL[n];
         Cols := TStringList.Create;
-        for m := 0 to pred(ColCount) do
+        for m := 0 to pred(ColAnzahl) do
           Cols.add(nextp(ThisData, getSeparator));
         add(Cols);
       end;
@@ -1768,7 +1801,7 @@ begin
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
+    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
     if (JoinL.Count > 0) then
     begin
 
@@ -1779,8 +1812,8 @@ begin
       begin
         SingleHeader := nextp(ThisHeader, getSeparator);
 
-        Col := colOf(SingleHeader);
-        if (Col = -1) then
+        c := colOf(SingleHeader);
+        if (c = -1) then
         begin
           // sDiagnose.add('+' + SingleHeader);
           HeaderL.add(SingleHeader);
@@ -1788,7 +1821,7 @@ begin
         end
         else
         begin
-          ColIndex.add(Col);
+          ColIndex.add(c);
         end;
         //
       end;
@@ -1796,16 +1829,16 @@ begin
       for r := 1 to pred(JoinL.Count) do
       begin
         NewL := TStringList.Create;
-        for Col := 0 to pred(HeaderL.Count) do
+        for c := 0 to pred(HeaderL.Count) do
           NewL.add('');
-        Col := 0;
+        c := 0;
         try
           ThisData := JoinL[r];
           while (ThisData <> '') do
           begin
-            NewL[ColIndex[Col]] := nextp(ThisData, getSeparator);
-            inc(Col);
-            if (Col >= ColIndex.Count) and (ThisData <> '') then
+            NewL[ColIndex[c]] := nextp(ThisData, getSeparator);
+            inc(c);
+            if (c >= ColIndex.Count) and (ThisData <> '') then
             begin
               // sDiagnose.add('Zeile: ' + JoinL[r]);
               // sDiagnose.add('WARNING: zu viele Felder. Rest: "'+ThisData+'"');
@@ -1857,7 +1890,7 @@ begin
     TStringList(Items[r]).delete(Col);
 end;
 
-function TsTable.Row(r: integer): TStringList;
+function TsTable.readRow(r: integer): TStringList;
 begin
   result := TStringList.Create;
   result.addstrings(TStringList(Items[r]));
@@ -1955,16 +1988,16 @@ begin
         if DoReverse then
           SortStr := reverseSort(SortStr);
         if (n = 0) then
-          ClientSorter.AddObject(SortStr, TObject(m))
+          ClientSorter.AddObject(SortStr, TObject(pointer(m)))
         else
           ClientSorter[pred(m)] := ClientSorter[pred(m)] + SortStr;
       end;
     end;
 
-    // Sind alle Sortierkriterien (zuf‰llig) schon in der richtigen Reihenfolge?
+    // Sind alle Sortierkriterien (zuf√§llig) schon in der richtigen Reihenfolge?
     //
     // In diesem Fall braucht nicht sortiert zu werden das ist sogar eher
-    // sch‰dlich:
+    // sch√§dlich:
     // Sort with identical Items can destroy original order
     // so we need to avoid unneeded sort attemps
     SortierenNotwendig := false;
@@ -1988,17 +2021,17 @@ begin
         for n := 0 to pred(ClientSorter.Count) do
           ClientSorter[n] :=
           { } format('%d "%s"', [
-            { } integer(ClientSorter.Objects[n]),
+            { } PtrUInt(ClientSorter.Objects[n]),
             { } ClientSorter[n]]);
         ClientSorter.SaveToFile(LogFName);
       end;
 
-      // Reihenfolge ¸bernehmen
+      // Reihenfolge √ºbernehmen
       OwnsObjects := false;
       eSave.Assign(self);
       for m := 1 to pred(Count) do
       begin
-        n := integer(ClientSorter.Objects[pred(m)]);
+        n := PtrUInt(ClientSorter.Objects[pred(m)]);
         if (n <> m) then
         begin
           if TestMode then
@@ -2116,7 +2149,7 @@ begin
    ersetze('"','''',o);
    ersetze(';','&',o);
    OutS.add(
-    { RID } InttoStr(Integer(s.objects[n]))+';'+
+    { RID } InttoStr(PtrUInt(s.objects[n]))+';'+
     { TEXT } '"' + o + '"');
  end;
  Outs.SaveToFile(FName);

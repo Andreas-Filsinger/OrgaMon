@@ -7,7 +7,7 @@
 |
 |    Header Compression for HTTP/2 (as described in RFC 7541)
 |
-|    (c) 2017 Andreas Filsinger
+|    (c) 2017 - 2018  Andreas Filsinger
 |
 |    This program is free software: you can redistribute it and/or modify
 |    it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ type
     BytePosLast: UInt16; // Length(iWIRE)-1
     BitPos : byte; // 0..7
     Octets : UInt32; // Length/Count of visible Octets, allowed to proceed (Security)
-    Dummy : Integer;
 
     // read Functions @ BytePos.BitPos - they move that index
     function B : boolean; // inline; // read 1 Bit from the Turing Machine
@@ -294,15 +293,7 @@ end;
  why do methods load "@self" again and again
 }
 
-
-
 function THPACK.B: boolean;  // inline;
-{$PUSH}
-
-{$OPTIMIZATION LEVEL3}
-{$RANGECHECKS OFF}
-{$OVERFLOWCHECKS OFF}
-{$ASMMODE intel}
 begin
 
  if (Octets=0) then
@@ -312,93 +303,8 @@ begin
    // this is "EOS" in the huffman code-Table
    result := true;
 
-
-// This is a performant Assembler Jump Table
-// optimized for linear case Statements without "gabs" and "ranges"
-// like Automatastates
-// ALIGN 5 not possible! why?
-// ALIGN(8), DB $90 not possible
-// ALIGN 8,DB $90 not possible? why
-// ALIGN 5 $90
-asm
- mov eax,3         // the "case" Selektor
-
- // Calculate where to jump
- // Assumption: this block is
- ALIGN 8
- shl eax,3         // {3} calculate the complete Offset Index*5 (5=the Sizeof(JumpTableElement))
- lea rbx, [rip+6]  // {7} load rbx with the instruction Pointer
-                   //     "6" because of the Byte-Consumption of the next 3 asm Statements
- add rax,rbx       // {3} takes "3" Bytes!
- JMP rax           // {2} takes "2" Bytes!
- nop               // {1} takes "1" Byte Sum of {n} = 16 Bytes of Code
-
- // Jump-Table
- // ensure with "ALIGN" static size of every single JMP entry
- // Assembler may produce
- // JMP near {2 Bytes}
- // JMP far {5 Bytes}
- ALIGN 8
- JMP @case0
- ALIGN 8
- JMP @case1
- ALIGN 8
- JMP @case2
- ALIGN 8
- JMP @case3
- ALIGN 8
- JMP @case4
- ALIGN 8
- JMP @case5
- ALIGN 8
- JMP @case6
- ALIGN 8
- JMP @case7
- @case0:
- ADD rax,$00
- JMP @caseend
- @case1:
- ADD rax,$01
- JMP @caseend
- @case2:
- ADD rax,$02
- JMP @caseend
- DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
- DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
- DQ $9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090,$9090909090909090
- @case3:
- ADD rax,$03
- JMP @caseend
- @case4:
- ADD rax,$04
- JMP @caseend
- @case5:
- ADD rax,$05
- JMP @caseend
- @case6:
- ADD rax,$06
- JMP @caseend
- @case7:
- ADD rax,$07
- JMP @caseend
- @caseelse:
- nop
- @caseend:
-end;
-
  end else
  begin
-
-   case BitPos of
-   0:begin dummy := dummy * 3; end;
-     1: begin dummy := dummy * 5; end;
-     2: begin dummy := dummy * 7; end;
-     3: begin dummy := dummy * 9; end;
-     4: begin dummy := dummy * 11; end;
-     5: begin dummy := dummy * 13; end;
-     6: begin dummy := dummy * 17; end;
-     7:begin dummy := dummy * 19; end;
-   end;
 
    // read the bit
    result := (ord(iWire[succ(BytePos)]) and SingleBitMask[BitPos]) <> 0;
@@ -413,22 +319,11 @@ end;
     BitPos := 0;
 
     // mark that one more Octet has gone now
-{$IFDEF CPUx86_64}
-asm
-
- MOV rax,self    // mov rax,QWORD PTR [rbp-0x8]
- DEC [rax+Octets]  // dec DWORD PTR [rax+0x96]
-
-end; //  end ['RAX']; -> just show how "result" works
-{$else CPUx86_64}
-     dec(Octets);
-{$endif CPUx86_64}
+    dec(Octets);
 
    end;
-
  end;
 end;
-{$POP}
 
 function THPACK.I(MinBits: Byte): Integer;
 const
@@ -477,46 +372,6 @@ begin
  end;
 
 end;
-
-(*
-def decode_integer(data, prefix_bits):
-    """
-    This decodes an integer according to the wacky integer encoding rules
-    defined in the HPACK spec. Returns a tuple of the decoded integer and the
-    number of bytes that were consumed from ``data`` in order to get that
-    integer.
-    """
-    max_number = (2 ** prefix_bits) - 1
-    mask = 0xFF >> (8 - prefix_bits)
-    index = 0
-
-    try:
-        number = to_byte(data[index]) & mask
-
-        if number == max_number:
-
-            while True:
-                index += 1
-                next_byte = to_byte(data[index])
-
-                # There's some duplication here, but that's because this is a
-                # hot function, and incurring too many function calls here is
-                # a real problem. For that reason, we unrolled the maths.
-                if next_byte >= 128:
-                    number += (next_byte - 128) * (128 ** (index - 1))
-                else:
-                    number += next_byte * (128 ** (index - 1))
-                    break
-    except IndexError:
-        raise HPACKDecodingError(
-            "Unable to decode HPACK integer representation from %r" % data
-        )
-
-    log.debug("Decoded %d, consumed %d bytes", number, index + 1)
-
-    return number, index + 1
-*)
-
 
 function THPACK.O : RawByteString;
 begin

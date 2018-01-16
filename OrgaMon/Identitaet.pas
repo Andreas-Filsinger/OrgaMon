@@ -56,6 +56,7 @@ uses
 
   // DB
 {$IFDEF FPC}
+  Windows,
 {$ELSE}
   IB_Session,
 {$ENDIF}
@@ -394,6 +395,9 @@ begin
           case n of
             0:
 *)
+PersonSuchindex;
+exit;
+ArtikelSuchIndex;
            dbBackup(TagesAbschluss_TAN);
 (*
             if not(FormDatensicherung.BackUp(TagesAbschluss_TAN)) then
@@ -512,7 +516,7 @@ begin
               FormTier.CreateIndex;
             19:
 *)
-              ArtikelSuchIndex;
+ArtikelSuchIndex;
 (*
             20:
               begin
@@ -1021,6 +1025,12 @@ end;
 
 procedure setIdentitaetAndRun;
 begin
+  {$ifdef fpc}
+  {$IFDEF WINDOWS}
+//  SetConsoleOutputCP(CP_UTF8);
+  {$ENDIF}
+  {$endif}
+
   // Bestimmen in welchem Modus das Programm laufen soll
   Ident := id_TWebShop;
   repeat

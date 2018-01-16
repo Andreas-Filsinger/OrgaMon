@@ -3,7 +3,7 @@
   |   =========
   |
   |   minimalistic freepascal Interface to OpenSSL 1.1
-  |                         (c) 2017 Andreas Filsinger
+  |   (c) 2017 - 2018  Andreas Filsinger
   |
   |    _  _  _                                _
   |   | |(_)| |__    ___  _ __  _   _  _ __  | |_  ___
