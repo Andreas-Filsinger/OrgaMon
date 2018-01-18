@@ -1,10 +1,10 @@
 {
-  |Â Â Â Â Â Â ___                  __  __
-  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |Â Â Â lÂ \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
   |
   |    Copyright (C) 2014 - 2016  Andreas Filsinger
   |
@@ -26,12 +26,15 @@
 }
 program lOrgaMon;
 
+{$APPTYPE CONSOLE}
+{$codepage cp1252}
+{$UNDEF UTF8_RTL}
 {
 
- l("l" fÃ¼r Lazarus / Linux)OrgaMon
+ l("l" für Lazarus / Linux)OrgaMon
 
- cOrgaMon ist der Embarcadero/Delphi XMLRPC-Server fÃ¼r Win32
- dieses lOrgaMon ist das Lazarus/FreePascal GegenstÃ¼ck fÃ¼r die Plattform Win32 und Linux (Yeah!)
+ cOrgaMon ist der Embarcadero/Delphi XMLRPC-Server für Win32
+ dieses lOrgaMon ist das Lazarus/FreePascal Gegenstück für die Plattform Win32 und Linux (Yeah!)
 
 
  Voraussetzungen
@@ -56,17 +59,18 @@ program lOrgaMon;
 }
 
 {$mode objfpc}{$H+}
-{$APPTYPE CONSOLE}
-{ $ codepage utf8}
+
 
 uses
   {$IFDEF UNIX}
   {$IFDEF UseCThreads} cthreads, {$ENDIF}
   cwstring,
   {$ENDIF}
+  Crt,
   Windows,
   sysutils, strutils,
   Interfaces,
+  CHarset,
   Classes,
   Math,
   inifiles,
@@ -105,8 +109,5 @@ uses
 {$R *.res}
 
 begin
- SetConsoleCP(CP_UTF8);
- SetConsoleOutputCP(CP_UTF8);
- writeln('Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ - CrÃ©me Fresh!');
  setIdentitaetAndRun;
 end.

@@ -2,8 +2,8 @@
 
   TWordIndex - Full Text Search Object
   TsTable - String Table (CSV-Objekt)
-  TSearchStringList - Bin√§re Suche & Incrementelle & "Pos=1" Suche
-  TExtendedList - "AND" "OR" f√§hige Liste
+  TSearchStringList - Bin‰re Suche & Incrementelle & "Pos=1" Suche
+  TExtendedList - "AND" "OR" f‰hige Liste
 
   Copyright (C) 2007 - 2018  Andreas Filsinger
 
@@ -42,17 +42,21 @@ uses
 const
   WordIndexVersion: single = 1.026; // ..\rev\WordIndex.rev.txt
 
-  c_wi_TranslateFrom : string = '√ü√Ñ√ã√ñ√ú√Å√Ä√â√à√ö√ô√ì√ç√ä√á√Ö';
-  c_wi_TranslateTo : string  = 'SAEOUAAEEUUOIECA';
-  c_wi_ValidChars : string  = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + '√ü√Ñ√ã√ñ√ú√Å√Ä√â√à√ö√ô√ì√ç√ä√á√Ö';
-  c_wi_ValidCharsSort : string  = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + 'SAEOUAAEEUUOIECA';
-  c_wi_WhiteSpace_noblank  : string = '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
-  c_wi_WhiteSpace_exact  : string = ' ' + '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
-  c_wi_WhiteSpace  : string = '.' + ' ' + '_()*+-:&¬ß",/!?=;<>#{}$%''¬¥`^' + #$0D;
+  {$H-}
+  c_wi_TranslateFrom      = 'ﬂƒÀ÷‹¡¿…»⁄Ÿ”Õ «≈';
+  c_wi_TranslateTo        = 'SAEOUAAEEUUOIECA';
+  c_wi_ValidChars         = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateFrom;
+  c_wi_ValidCharsSort     = '~ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' + c_wi_TranslateTo;
+  c_wi_TranslateLast      = 37;
 
-  c_st_DefaultSeparator = ';';
-  c_wi_FileExtension = '.Suchindex';
-  c_wi_RID_Suche = 'RID'; // "RID" n [ { "," n } ]
+  c_wi_WhiteSpace_noblank = '_()*+-:&ß",/!?=;<>#{}$%''¥`^' + #$0D;
+  c_wi_WhiteSpace_exact   = ' ' + c_wi_WhiteSpace_noblank;
+  c_wi_WhiteSpace         = '.' + c_wi_WhiteSpace_exact;
+  {$H+}
+
+  c_st_DefaultSeparator   = ';';
+  c_wi_FileExtension      = '.Suchindex';
+  c_wi_RID_Suche          = 'RID'; // "RID" n [ { "," n } ]
 
 type
   TSearchStringList = class(TStringList)
@@ -79,19 +83,22 @@ type
     destructor Destroy; override;
   end;
 
+  function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
+
+
 type
   TWordIndex = class(TStringList)
 
     //
     // 1) ein String mit vielen Suchbegriffen wird zusammen mit einem RID
-    //    per AddWords(S,R) √ºbergeben. 1 AddWords pro Datensatz
+    //    per AddWords(S,R) ¸bergeben. 1 AddWords pro Datensatz
     // 2) per JoinDuplicates wird der eigentliche Suchindex aufgebaut.
-    //    Dieser Aufruf f√ºhrt dazu dass alle Objects[] der Liste auf eine
+    //    Dieser Aufruf f¸hrt dazu dass alle Objects[] der Liste auf eine
     //    Liste der Vorkommen von einzelnen Worten umgestellt wird. Erst
     //    danach ist "SaveToFile" oder "SaveToDiagfile" erlaubt.
     // 3) Nun kann mit "Search(S)" in der Liste gesucht werden, dabei
-    //    wird die Ergebnisliste "FoundList" gef√ºllt mit einer Liste aus
-    //    RIDs. Also die Datens√§tze befinden sich in der Liste die passend
+    //    wird die Ergebnisliste "FoundList" gef¸llt mit einer Liste aus
+    //    RIDs. Also die Datens‰tze befinden sich in der Liste die passend
     //    zu allen Suchworten sind (UND - Logik)
     //
 
@@ -123,7 +130,7 @@ type
     procedure SaveToDiagFile(OutF: TStrings); overload;
 
     //
-    procedure AddWords(BigWordStr: string; AObject: TObject);
+    procedure AddWords(BigWordStr: RawByteString; AObject: TObject);
 
     //
     // LookForClones: muss gesetzt werden wenn ein einzelner
@@ -131,7 +138,7 @@ type
     // enthalten kann. Dann muss sichergestellt
     // werden dass diese "Clones" entfernt werden.
 
-    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f√ºhrt zu 2
+    // Beispiel: "Welt Gruppe Welt Klartext" -> "Welt" f¸hrt zu 2
     // Treffern, aber aus dem selben Datensatzes, also Clones, somit muss
     // LookForClones gesetzt werden.
     //
@@ -148,7 +155,7 @@ type
   eTsCompareType = (TsIdentical, TsIgnoreLeadingZeros);
 
   // Eine CSV-Tabelle im Speicher
-  // Anzahl der Datens√§tze: RowCount = pred(count)
+  // Anzahl der Datens‰tze: RowCount = pred(count)
   // Row = 1..pred(count) : die Datenzeilen, alias:
   // Row = 1..RowCount : die Datenzeilen
   // Col = 0..pred(header.count) : die Datenspalten
@@ -205,7 +212,7 @@ type
     // Rechenfunktionen
     function sumCol(HeaderName: string): double;
 
-    // H√∂here Funktionen
+    // Hˆhere Funktionen
     procedure BlowUp(SearchCol: string; FName: string; ExtCol: string);
 
     function readRow(r: integer): TStringList;
@@ -233,7 +240,7 @@ implementation
 
 uses
   {$ifdef fpc}
-  lazutf8,
+  fpchelper,
   {$endif}
 {$IFNDEF CONSOLE}
   Dialogs,
@@ -280,7 +287,7 @@ begin
   end;
 end;
 
-procedure TWordIndex.AddWords(BigWordStr: string; AObject: TObject);
+procedure TWordIndex.AddWords(BigWordStr: RawBytestring; AObject: TObject);
 var
   sLen: integer;
   wStart, wEnd: integer;
@@ -289,14 +296,23 @@ var
 
   procedure WordOut;
   begin
-    if wEnd - wStart >= pMinWordLenght then
+    if (wEnd - wStart >= pMinWordLenght) then
       Candidates.AddObject(system.copy(BigWordStr, wStart, wEnd - wStart), AObject);
   end;
 
   function ValidChar(Index : Integer): boolean;
   var
     k: integer;
+    c : Char;
   begin
+    c := c_wi_ValidChars[succ(c_wi_TranslateLast)];
+
+    {$H-}
+    k := pos('ﬂ',c_wi_TranslateFrom);
+    {$H+}
+
+    if c_wi_ValidChars[succ(c_wi_TranslateLast)]<>c_wi_TranslateFrom[1] then
+     halt;
 
     if pos(BigWordStr[Index], c_wi_WhiteSpace) > 0 then
     begin
@@ -304,10 +320,13 @@ var
       exit;
     end;
 
+    {$H-}
     k := pos(BigWordStr[Index], c_wi_ValidChars);
+    {$H+}
     if (k > 0) then
     begin
-      BigWordStr[Index] := c_wi_ValidCharsSort[k];
+      if (k>c_wi_TranslateLast) then
+       BigWordStr[Index] := AnsiChar(c_wi_ValidCharsSort[k]);
       result := true;
       exit;
     end
@@ -317,37 +336,116 @@ var
     end;
   end;
 
-  var
-     s: string;
-begin
  {$ifdef fpc}
-
- s := '1) √úber';
- writeln(s);
-
- writeln('2) √úber');
- writeln(UTF8ToConsole('√úber'));
- writeln(AnsiToUTF8('√úber'));
- writeln(UTF8ToConsole(BigWordStr));
-// BigWordStr := AnsiUpperCase(BigWordStr);
- BigWordStr := UTF8UpperCase(BigWordStr);
- writeln(UTF8ToConsole(BigWordStr));
- {$else}
- BigWordStr := AnsiUpperCase(BigWordStr);
+  var
+     s: UTF8String;
+     b : string;
+     r : RawByteString;
+     by : Byte;
  {$endif}
-  sLen := length(BigWordStr);
-  wStart := 0;
-  wEnd := 0;
-  AutomataState := 0;
-  Candidates := TStringList.Create;
+begin
+ {$ifdef fpc_console_test}
 
-  while true do
-  begin
+ write('1:'); writeln(#$C3#$9c); // do not Work!
+
+ SetLength(r,2);
+ r[1] := #$C3;
+ r[2] := #$9c;
+ write('1:'); writeln(r); // do not Work!
+
+ by := 27;
+ write(output,AnsiChar(by));
+ by := ord('[');
+ write(output,AnsiChar(by));
+ by := ord('4');
+ write(output,AnsiChar(by));
+ by := ord('3');
+ write(output,AnsiChar(by));
+ by := ord('m');
+ write(output,AnsiChar(by));
+
+
+ write('2:'); writeln('‹'); // Works
+
+ {$H-}
+ write('3-:'); writeln(c_wi_ValidChars);
+
+ r := c_wi_ValidChars;
+ write('4-:'); writeln(r);
+
+ r := SystoUTF8(c_wi_ValidChars);
+ write('5-:'); writeln(r);
+
+ {$H+}
+ write('3+:'); writeln(c_wi_ValidChars);
+
+ r := c_wi_ValidChars;
+ write('4+:'); writeln(r);
+
+ r := SystoUTF8(c_wi_ValidChars);
+ write('5+:'); writeln(r);
+
+ writeln('3:' + '‹'); // not Work
+ writeln('4:' + '¸¸'+'‰‰'); // not Work
+ {$H-}
+ writeln('5:' + '‹'); // Works
+ writeln('6:' + '¸¸'+'‰‰'); // not Work
+
+ {$H+}
+
+ s := '+++‹+++';
+ write('6+:'); writeln(s);
+ write('6+:'); writeln(RawByteString(s));
+ write('6+:'); writeln(AnsiToUTF8(s));
+
+ {$H-}
+ s := '+++‹+++';
+ write('6-:'); writeln(s);
+
+ {$H+}
+ write('6:'); writeln(s);
+
+ {$H-}
+ b := '‹';
+ write('7:'); writeln(b);
+ {$H+}
+
+ b := '‹';
+ write('8:'); writeln(b);
+ write('9:'); writeln(s);
+
+
+// BigWordStr := AnsiUpperCase(BigWordStr);
+// BigWordStr := UTF8UpperCase(BigWordStr);
+ {$endif}
+
+
+ {$ifdef fpc}
+ case StringCodePage(BigWordStr) of
+   0:SetCodePage(BigWordStr, 1252, false);
+   CP_UTF8: SetCodePage(BigWordStr, 1252, true);
+ else
+  Halt(1);
+ end;
+ {$endif}
+
+// writeln(BigWordStr);
+ BigWordStr := {$ifdef fpc}fpchelper.{$endif}AnsiUpperCase(BigWordStr);
+// writeln(BigWordStr);
+
+ sLen := length(BigWordStr);
+ wStart := 0;
+ wEnd := 0;
+ AutomataState := 0;
+ Candidates := TStringList.Create;
+
+ while true do
+ begin
     case AutomataState of
       0:
         begin // search for word start!
           inc(wStart);
-          if wStart > sLen then
+          if (wStart > sLen) then
             break;
           if ValidChar(wStart) then
           begin
@@ -358,12 +456,12 @@ begin
       1:
         begin // search for word end!
           inc(wEnd);
-          if wEnd > sLen then
+          if (wEnd > sLen) then
           begin
             WordOut;
             break;
           end;
-          if ValidChar(wEnd) = false then
+          if not(ValidChar(wEnd)) then
           begin
             WordOut;
             AutomataState := 0;
@@ -371,7 +469,7 @@ begin
           end;
         end;
     end;
-  end;
+ end;
 
   // .addstrings
   if (Candidates.Count > 1) then
@@ -402,7 +500,7 @@ begin
     while true do
     begin
 
-      // neues Wort anfangen, auf alle F√§lle anf√ºgen!
+      // neues Wort anfangen, auf alle F‰lle anf¸gen!
       ReferenceList := TExtendedList.Create;
       ReferenceList.add(pointer(Objects[AddIndex]));
       Objects[AddIndex] := ReferenceList;
@@ -458,6 +556,7 @@ begin
         end;
 
       end;
+      ReferenceList.Sort(@ExtendedListSortCompare);
       if (CheckIndex < 0) then
         break;
       AddIndex := CheckIndex;
@@ -767,7 +866,7 @@ var
         end
         else
         begin
-          // wow Identit√§t, nix wie raus
+          // wow Identit‰t, nix wie raus
           result := BS_Found;
           exit;
         end;
@@ -1152,7 +1251,7 @@ begin
   b := AnsiUpperCase(StrFilter(b, c_wi_WhiteSpace_noblank, ' '));
   ersetze('  ', ' ', b);
 
-  // Jedes el(a) mus mit el(b) √ºbereinstimmen
+  // Jedes el(a) mus mit el(b) ¸bereinstimmen
   // Im Moment noch vereinfach, 1:1 UND 2:2 es sollte aber auch z.B.
   // 1:5 UND 2:10 UND 2:23 ein Treffer sein.
   result := true;
@@ -1455,7 +1554,7 @@ begin
     (*
 
       //
-      // Versuch, die g√ºltigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
+      // Versuch, die g¸ltigkeit des td-Defaults nur auf "border" zu beziehen und nicht global!
       // Versuch, die "Sonder" td nur inerhalb von "border" sichtbar zu machen
       //
       // -> Funktion noch bisher nicht bewiesen
@@ -1523,7 +1622,7 @@ begin
             break;
           end;
 
-          // Im Falle des erfolgreichen Versuches k√∂nnte
+          // Im Falle des erfolgreichen Versuches kˆnnte
           // hier das setzen der Class unterbleiben
           tdExtras := 'class=gdef';
 
@@ -1628,7 +1727,7 @@ begin
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
+    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
     if (sl.Count > 0) then
     begin
 
@@ -1801,7 +1900,7 @@ begin
   else
   begin
 
-    // weitere Tabellen spaltenkonform hinten dranh√§ngen!
+    // weitere Tabellen spaltenkonform hinten dranh‰ngen!
     if (JoinL.Count > 0) then
     begin
 
@@ -1994,10 +2093,10 @@ begin
       end;
     end;
 
-    // Sind alle Sortierkriterien (zuf√§llig) schon in der richtigen Reihenfolge?
+    // Sind alle Sortierkriterien (zuf‰llig) schon in der richtigen Reihenfolge?
     //
     // In diesem Fall braucht nicht sortiert zu werden das ist sogar eher
-    // sch√§dlich:
+    // sch‰dlich:
     // Sort with identical Items can destroy original order
     // so we need to avoid unneeded sort attemps
     SortierenNotwendig := false;
@@ -2026,7 +2125,7 @@ begin
         ClientSorter.SaveToFile(LogFName);
       end;
 
-      // Reihenfolge √ºbernehmen
+      // Reihenfolge ¸bernehmen
       OwnsObjects := false;
       eSave.Assign(self);
       for m := 1 to pred(Count) do
@@ -2155,5 +2254,12 @@ begin
  Outs.SaveToFile(FName);
  Outs.free;
 end;
+
+
+function ExtendedListSortCompare (Item1, Item2: Pointer) : Integer;
+begin
+  result := CompareValue( PtrUInt(Item1), PtrUInt(Item2) );
+end;
+
 
 end.

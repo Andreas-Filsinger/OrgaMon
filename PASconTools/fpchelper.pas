@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   {$ifdef MSWINDOWS}
-  activex,
+  Windows, activex,
   {$endif}
   graphics, gettext;
 
@@ -283,7 +283,7 @@ type
   Null = TColor($00000000);
 
 
-    class var ColorToRGB: function (Color: TColor): Longint;
+  class var ColorToRGB: function (Color: TColor): Longint;
   case LongWord of
     0:
       (Color: TColor);
@@ -368,6 +368,7 @@ function CharIsReturn(const C: Char): Boolean;
 function CharIsWhiteSpace(const C: Char): Boolean;
 
 function CharUpper(const C: Char): Char; 
+function AnsiUpperCase(const S: string): string;
 
 function StrIsAlpha(const S: string): Boolean;
 function StrIsAlphaNum(const S: string): Boolean;
@@ -434,7 +435,7 @@ implementation
 
 uses
 {$ifdef MSWINDOWS}
-  Windows, ShellApi
+  ShellApi
 {$endif}
 {$ifdef Unix}
   Unix
@@ -882,12 +883,13 @@ end;
 
 procedure RegisterExpectedMemoryLeak(var a);
 begin
-                              end;
+end;
 
 function GetProgramFilesFolder : string;
 begin
   result := '// imp pend';
 end;
+
 procedure StrResetLength(var S: AnsiString);
 var
   I: SizeInt;
@@ -946,4 +948,68 @@ begin
 end;
 {$endif}
 
+function AnsiUpperCase(const S: string): string;
+begin
+  if length(s)>0 then
+    begin
+      result:=s;
+      UniqueString(result);
+      CharUpperBuffA(pchar(result),length(result));
+    end
+  else
+    result:='';
+end;
+
+
+{$ifdef MSWINDOWS}
+Const
+  LF_FACESIZE = 32;
+
+  // FONT WEIGHT (BOLD) VALUES
+  FW_DONTCARE         = 0;
+//  FW_NORMAL           = 400;
+  FW_BOLD             = 700;
+
+Type
+  CONSOLE_FONT_INFOEX = record
+    cbSize     : ULONG;
+    nFont      : DWORD;
+    dwFontSize : COORD;
+    FontFamily : UINT;
+    FontWeight : UINT;
+    FaceName   : array [0..LF_FACESIZE-1] of WCHAR;
+  end;
+
+{ Only supported in Vista and onwards!}
+
+function SetCurrentConsoleFontEx(hConsoleOutput: HANDLE; bMaximumWindow: BOOL; var CONSOLE_FONT_INFOEX): BOOL; stdcall; external kernel32;
+
+var
+  New_CONSOLE_FONT_INFOEX: CONSOLE_FONT_INFOEX;
+  TextCodePage : DWORD;
+  {$endif}
+
+  {$ifdef MSWINDOWS}
+initialization
+  TextCodePage := GetTextCodePage(Output);
+
+  SetConsoleOutputCP(DefaultSystemCodePage);
+  SetTextCodePage(Output, DefaultSystemCodePage);
+  SetConsoleCP(CP_UTF8);
+//  SetConsoleOutputCP(CP_UTF8);
+
+  FillChar(New_CONSOLE_FONT_INFOEX, SizeOf(CONSOLE_FONT_INFOEX), 0);
+  New_CONSOLE_FONT_INFOEX.cbSize := SizeOf(CONSOLE_FONT_INFOEX);
+  New_CONSOLE_FONT_INFOEX.FaceName := 'Consolas';
+  New_CONSOLE_FONT_INFOEX.FontWeight := FW_NORMAL;
+  New_CONSOLE_FONT_INFOEX.dwFontSize.Y := 20;
+
+  SetCurrentConsoleFontEx(StdOutputHandle, False, New_CONSOLE_FONT_INFOEX);
+
+  // Start first output
+  Writeln('Default System codepage: ', DefaultSystemCodePage);
+  Writeln('Changed Console output codepage from ', TextCodePage, ' to ',GetTextCodePage(Output));
+  {$endif}
 end.
+
+

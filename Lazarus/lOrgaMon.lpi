@@ -7,6 +7,7 @@
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
@@ -22,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="22"/>
+      <BuildNr Value="25"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -177,13 +178,6 @@
     <CodeGeneration>
       <SmallerCode Value="True"/>
     </CodeGeneration>
-    <Linking>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
-    </Linking>
     <Other>
       <Verbosity>
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
