@@ -417,6 +417,7 @@ begin
  {$ifdef fpc}
  case StringCodePage(BigWordStr) of
    0:SetCodePage(BigWordStr, 1252, false);
+   1252:;
    CP_UTF8: SetCodePage(BigWordStr, 1252, true);
  else
   Halt(1);

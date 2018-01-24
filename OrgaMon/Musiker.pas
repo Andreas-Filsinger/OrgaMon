@@ -110,6 +110,7 @@ procedure TFormMusiker.CreateTheIndex;
 var
   cMUSIKER: TIB_Cursor;
   RawContent: TStringList;
+  TheWordStr: string;
 begin
   BeginHourGlass;
   if DebugMode then
@@ -124,15 +125,20 @@ begin
     ApiFirst;
     while not (eof) do
     begin
+      TheWordStr := StrFilter(
+         {} FieldByName('VORNAME').AsString + ' ' +
+         {} FieldByName('NACHNAME').AsString,
+         {} #0#$0A#$0D,
+         {} True );
+
+
       if DebugMode then
        RawContent.Add(
-         {}  FieldByName('RID').AsString+';'+
-         {}  FieldByName('VORNAME').AsString + ' ' +
-        {} FieldByName('NACHNAME').AsString );
+         {} FieldByName('RID').AsString+ ';' +
+         {} TheWordStr );
 
       MusikerSearchWI.AddWords(
-        {} FieldByName('VORNAME').AsString + ' ' +
-        {} FieldByName('NACHNAME').AsString,
+        {} TheWordStr,
         {} TObject(FieldByName('RID').AsInteger));
       ApiNext;
     end;

@@ -303,17 +303,21 @@ var
  RID : Integer;
 begin
   Content:= TStringList.create;
+
+  DefaultSystemCodePage := 1252;
   Content.LoadFromFile(Path+'Content.csv');
+  DefaultSystemCodePage := CP_UTF8;
+
   MusikerSearchWI := TwordIndex.Create(nil, 1);
   for n := 0 to pred(Content.Count) do
   begin
      k := pos(';',Content[n]);
-     if k=0 then
+     if (k=0) then
       break;
      RID := StrToIntDef(copy(Content[n],1,pred(k)),0);
-     if RID=0 then
+     if (RID=0) then
       break;
-      MusikerSearchWI.AddWords(
+     MusikerSearchWI.AddWords(
         {} copy(Content[n],succ(k),MaxInt),
         {} TObject(RID));
   end;

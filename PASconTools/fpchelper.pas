@@ -986,17 +986,21 @@ function SetCurrentConsoleFontEx(hConsoleOutput: HANDLE; bMaximumWindow: BOOL; v
 
 var
   New_CONSOLE_FONT_INFOEX: CONSOLE_FONT_INFOEX;
-  TextCodePage : DWORD;
+  _SystemCodePage : DWORD;
+  _TextCodePage : DWORD;
   {$endif}
 
   {$ifdef MSWINDOWS}
 initialization
-  TextCodePage := GetTextCodePage(Output);
 
-  SetConsoleOutputCP(DefaultSystemCodePage);
-  SetTextCodePage(Output, DefaultSystemCodePage);
+  _SystemCodePage := DefaultSystemCodePage;
+  _TextCodePage := GetTextCodePage(Output);
+
+  // The whole World: UTF-8 only
+  DefaultSystemCodePage := CP_UTF8;
+  SetConsoleOutputCP(CP_UTF8);
+  SetTextCodePage(Output, CP_UTF8);
   SetConsoleCP(CP_UTF8);
-//  SetConsoleOutputCP(CP_UTF8);
 
   FillChar(New_CONSOLE_FONT_INFOEX, SizeOf(CONSOLE_FONT_INFOEX), 0);
   New_CONSOLE_FONT_INFOEX.cbSize := SizeOf(CONSOLE_FONT_INFOEX);
@@ -1006,9 +1010,9 @@ initialization
 
   SetCurrentConsoleFontEx(StdOutputHandle, False, New_CONSOLE_FONT_INFOEX);
 
-  // Start first output
-  Writeln('Default System codepage: ', DefaultSystemCodePage);
-  Writeln('Changed Console output codepage from ', TextCodePage, ' to ',GetTextCodePage(Output));
+  // we start first output
+  Writeln('default system codepage: ', DefaultSystemCodePage, ' (was ',_SystemCodePage,')');
+  Writeln('console output codepage: ', GetTextCodePage(Output), ' (was ',_TextCodePage,')');
   {$endif}
 end.
 
