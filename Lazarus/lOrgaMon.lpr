@@ -6,7 +6,7 @@
   |   l \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2014 - 2016  Andreas Filsinger
+  |    Copyright (C) 2014 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ program lOrgaMon;
 
 {$APPTYPE CONSOLE}
 {$codepage cp1252}
-{$UNDEF UTF8_RTL}
+
 {
 
  l("l" für Lazarus / Linux)OrgaMon

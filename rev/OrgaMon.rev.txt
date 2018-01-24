@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.326 (24.01.18) Andreas Filsinger
+
+ Neu: html: "load A,B" hat jetzt einen Fallback auf "B"
+
 Rev 8.325 (12.01.18) Andreas Filsinger
 
  Neu: Artikel: Suchindex: Erstellen: Optimierte Freigabe von Hauptspeicher

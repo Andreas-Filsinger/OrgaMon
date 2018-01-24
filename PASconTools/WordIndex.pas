@@ -107,6 +107,10 @@ type
     LastFileAge: integer;
     LastChecked: longword;
 
+    // Am Anfang sind die Objects[] RIDs (ObjectsAreLists=false)
+    // Später sind die Objects TExentedLists mit den RIDs als Elemente
+    ObjectsAreLists: Boolean;
+
     procedure ClearTheList;
 
   public
@@ -303,26 +307,16 @@ var
   function ValidChar(Index : Integer): boolean;
   var
     k: integer;
-    c : Char;
   begin
-    c := c_wi_ValidChars[succ(c_wi_TranslateLast)];
 
-    {$H-}
-    k := pos('ß',c_wi_TranslateFrom);
-    {$H+}
-
-    if c_wi_ValidChars[succ(c_wi_TranslateLast)]<>c_wi_TranslateFrom[1] then
-     halt;
-
+    // nicht Teil eines Zusammenhängenden Wortes
     if pos(BigWordStr[Index], c_wi_WhiteSpace) > 0 then
     begin
       result := false;
       exit;
     end;
 
-    {$H-}
     k := pos(BigWordStr[Index], c_wi_ValidChars);
-    {$H+}
     if (k > 0) then
     begin
       if (k>c_wi_TranslateLast) then
@@ -569,6 +563,7 @@ begin
     if strings[pred(CheckIndex)]>=strings[CheckIndex] then
     ShowMessage(format('Fehler! %s>=%s',[strings[pred(CheckIndex)],strings[CheckIndex]]));
   }
+  ObjectsAreLists := true;
   if DebugMode then
    SaveToDiagFile(DebugLogPath+'Join.txt');
 end;
@@ -582,6 +577,7 @@ begin
     Objects[n].free;
     Objects[n] := nil;
   end;
+  ObjectsAreLists := false;
 end;
 
 destructor TWordIndex.Destroy;
@@ -755,6 +751,7 @@ begin
       AddObject(InpStr, SubItems);
     end;
     FreeMem(_ReadP, _FSize);
+    ObjectsAreLists := true;
 
     EndUpdate;
   end;
@@ -779,7 +776,9 @@ var
   OutF: TStringList;
   TheList: TList;
 begin
-  OutF := TStringList.Create;
+ OutF := TStringList.Create;
+ if ObjectsAreLists then
+ begin
   for n := 0 to pred(Count) do
   begin
     TheList := TList(Objects[n]);
@@ -796,6 +795,11 @@ begin
         OutF.add(OutStr);
       end;
   end;
+ end else
+ begin
+  for n := 0 to pred(Count) do
+   OutF.add (inttostr(PtrUint(Objects[n])) + ';' + strings[n]);
+ end;
   OutF.SaveToFile(FName);
   OutF.free;
 end;
@@ -806,6 +810,8 @@ var
   n, m: integer;
   RIDs: string;
 begin
+ if ObjectsAreLists then
+ begin
   for n := 0 to pred(Count) do
   begin
     TheList := TList(Objects[n]);
@@ -814,6 +820,10 @@ begin
       RIDs := RIDs + ';' + inttostr(integer(TheList[m]));
     OutF.add(inttostrN(TheList.Count, 8) + ';' + strings[n] + RIDs + ':');
   end;
+ end else
+ begin
+
+ end;
 end;
 
 procedure TWordIndex.SaveToDiagFile(FName: string);

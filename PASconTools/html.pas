@@ -1192,7 +1192,7 @@ var
               end;
 
               if not(CommandAccepted) then
-                addFatalError('html.Command "' + Command + '" unknown!');
+                addFatalError('html.Command "' + Command + '" unknown');
 
             until yet;
           end;
@@ -1686,23 +1686,48 @@ end;
 procedure THTMLTemplate.LoadBlock(FromBlock, AsBlock: string; KillInsertMark: boolean = false);
 var
   k: integer;
+  BlockName: string;
 begin
   if (FromBlock = '') then
     FromBlock := AsBlock;
   // Suche Block, den man einfügen muss
-  k := Blocks.indexof(FromBlock);
+  repeat
+
+   k := Blocks.indexof(FromBlock);
+   if (k<>-1) then
+   begin
+     BlockName := FromBlock;
+     break;
+   end;
+
+   if FromBLock=AsBlock then
+    break;
+
+   k := Blocks.indexof(AsBlock);
+   if (k<>-1) then
+   begin
+     BlockName := AsBlock;
+     break;
+   end;
+
+  until yet;
+
+
   if (k <> -1) then
   begin
     if DebugMode then
       AppendStringsToFile(
-        { } IntToStrN(PhaseCount, 3) + ': loadBlock(' + FromBlock + ')',
+        { } IntToStrN(PhaseCount, 3) + ': loadBlock(' + BlockName + ')',
         { } DebugLogPath +
         { } 'Command.log');
-    LoadBlock(FromBlock, AsBlock, TStringList(Blocks.Objects[k]), KillInsertMark);
+    LoadBlock(BlockName, AsBlock, TStringList(Blocks.Objects[k]), KillInsertMark);
   end
   else
   begin
-    addFatalError('html.Block "' + FromBlock + '" nicht gefunden!');
+   if FromBlock=AsBlock then
+    addFatalError('Block "' + FromBlock + '" nicht gefunden')
+   else
+    addFatalError('Block "' + FromBlock + '" (sowie Fallback "' + AsBlock + '") nicht gefunden');
   end;
 end;
 

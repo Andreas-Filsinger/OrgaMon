@@ -109,8 +109,11 @@ uses
 procedure TFormMusiker.CreateTheIndex;
 var
   cMUSIKER: TIB_Cursor;
+  RawContent: TStringList;
 begin
   BeginHourGlass;
+  if DebugMode then
+   RawContent:= TStringList.Create;
   if assigned(MusikerSearchWI) then
     FreeAndNil(MusikerSearchWI);
   MusikerSearchWI := TwordIndex.Create(nil, 1);
@@ -121,6 +124,12 @@ begin
     ApiFirst;
     while not (eof) do
     begin
+      if DebugMode then
+       RawContent.Add(
+         {}  FieldByName('RID').AsString+';'+
+         {}  FieldByName('VORNAME').AsString + ' ' +
+        {} FieldByName('NACHNAME').AsString );
+
       MusikerSearchWI.AddWords(
         {} FieldByName('VORNAME').AsString + ' ' +
         {} FieldByName('NACHNAME').AsString,
@@ -129,8 +138,15 @@ begin
     end;
   end;
   cMUSIKER.Free;
+  if DebugMode then
+  begin
+   RawContent.SaveToFile(DiagnosePath+'Musiker-Raw.csv');
+   MusikerSearchWI.SaveToDiagFile(DiagnosePath+'Musiker.csv');
+  end;
   MusikerSearchWI.JoinDuplicates(false);
   MusikerSearchWI.SaveToFile(SearchDir + cMusikerSuchindexFName);
+  if DebugMode then
+   RawContent.free;
   EndHourGlass;
 end;
 

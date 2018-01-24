@@ -1,7 +1,34 @@
-﻿unit TestExec;
+﻿{
+  |      ___                  __  __
+  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |               |___/
+  |
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |
+  |    This program is free software: you can redistribute it and/or modify
+  |    it under the terms of the GNU General Public License as published by
+  |    the Free Software Foundation, either version 3 of the License, or
+  |    (at your option) any later version.
+  |
+  |    This program is distributed in the hope that it will be useful,
+  |    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  |    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  |    GNU General Public License for more details.
+  |
+  |    You should have received a copy of the GNU General Public License
+  |    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  |
+  |    http://orgamon.org/
+  |
+}
+unit TestExec;
 
 {$ifdef FPC}
 {$mode delphi}
+{$codepage cp1252}
 {$endif}
 
 interface
@@ -21,6 +48,7 @@ uses
   html,
   infozip,
   txlib,
+  WordIndex,
   CaretakerClient,
   globals;
 
@@ -36,6 +64,7 @@ type
     class procedure txLibTest(Path: string);
     class procedure HashTest(Path: string);
     class procedure InfoZIPTest(Path: string);
+    class procedure IndexTest(Path: string);
 
   end;
 
@@ -265,6 +294,36 @@ begin
   sTestData.Free;
 end;
 
+
+class procedure TTester.IndexTest(Path: string);
+var
+ MusikerSearchWI : TWordIndex;
+ Content: TStringList;
+ n, k : Integer;
+ RID : Integer;
+begin
+  Content:= TStringList.create;
+  Content.LoadFromFile(Path+'Content.csv');
+  MusikerSearchWI := TwordIndex.Create(nil, 1);
+  for n := 0 to pred(Content.Count) do
+  begin
+     k := pos(';',Content[n]);
+     if k=0 then
+      break;
+     RID := StrToIntDef(copy(Content[n],1,pred(k)),0);
+     if RID=0 then
+      break;
+      MusikerSearchWI.AddWords(
+        {} copy(Content[n],succ(k),MaxInt),
+        {} TObject(RID));
+  end;
+  Content.Free;
+  MusikerSearchWI.SaveToDiagFile(Path+'Index.csv');
+  MusikerSearchWI.JoinDuplicates(false);
+  MusikerSearchWI.SaveToFile(Path + 'Index' + c_wi_FileExtension);
+  MusikerSearchWI.free;
+end;
+
 procedure RunAsTest;
 const
   cPath_ErgebnisSoll = 'Soll-Ergebnis\';
@@ -414,9 +473,9 @@ var
 
 begin
   TestMask := GetParam('exec');
-  if TestMAsk = '' then
-    TestMAsk := '*.*';
-  iFSPath := 'C:\Users\Andreas\Documents\RAD Studio\Projekte\OrgaMon-fs\';
+  if TestMask = '' then
+    TestMask := '*.*';
+  iFSPath := 'C:\Users\Andreas\Documents\Embarcadero\Studio\Projekte\OrgaMon-FS\';
   // Test starten
   sNameSpaces := TStringList.Create;
   sDiagnose := TStringList.Create;
@@ -460,6 +519,12 @@ begin
         if (sNameSpaces[n] = 'html') then
         begin
           nTest := TTester.htmlTest;
+          break;
+        end;
+
+        if (sNameSpaces[n] = 'Index') then
+        begin
+          nTest := TTester.IndexTest;
           break;
         end;
 
