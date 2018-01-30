@@ -66,11 +66,10 @@ uses
   {$IFDEF UseCThreads} cthreads, {$ENDIF}
   cwstring,
   {$ENDIF}
-  Crt,
   Windows,
-  sysutils, strutils,
-  Interfaces,
-  CHarset,
+  sysutils,
+  strutils,
+  Charset,
   Classes,
   Math,
   inifiles,
@@ -101,7 +100,6 @@ uses
   Funktionen_Beleg,
   Funktionen_LokaleDaten,
   eConnect,
-  indylaz,
   Identitaet,
   FotoExec,
   TestExec;

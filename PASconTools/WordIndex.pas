@@ -30,6 +30,7 @@
 unit WordIndex;
 
 {$ifdef fpc}
+{$codepage cp1252}
 {$mode objfpc}{$H+}
 {$endif}
 
