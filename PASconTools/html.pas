@@ -94,6 +94,11 @@ unit html;
 
 //
 // ..\..\rev\anfix32.rev
+
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

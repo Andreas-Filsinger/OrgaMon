@@ -26,6 +26,11 @@
 }
 unit Funktionen_Basis;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
+
 interface
 
 uses

@@ -62,6 +62,11 @@ unit basic32;
   25.02.15 FPC Port
   컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
+
 interface
 
 uses

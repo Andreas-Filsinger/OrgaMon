@@ -245,11 +245,11 @@ end;
 
 function zip(sFiles: TStringList; FName: string; Options: TStringList = nil): integer;
 var
-  ZIP : TZipper;
+  _ZIP : TZipper;
   n: integer;
 begin
-  ZIP := TZipper.create;
-  with ZIP do
+  _ZIP := TZipper.create;
+  with _ZIP do
   begin
     FileName := FName;
     for n := 0 to pred(sFiles.count) do
@@ -257,7 +257,7 @@ begin
     result := Entries.count;
     ZipAllFiles;
   end;
-  ZIP.free;
+  _ZIP.free;
 end;
 
 {$ELSE}

@@ -1566,6 +1566,7 @@ uses
   Jvgnugettext,
   IB_Session,
 {$ENDIF}
+  IdGlobal,
   SolidFTP,
   SimplePassword;
 
@@ -1973,7 +1974,7 @@ end;
 
 function RIDasStr(PERSON_R: TObject): string;
 begin
-  result := RIDasStr(integer(PERSON_R));
+  result := RIDasStr(PtrUInt(PERSON_R));
 end;
 
 function cPersonPath(PERSON_R: integer): string;

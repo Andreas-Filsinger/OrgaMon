@@ -26,6 +26,10 @@
 }
 unit Geld;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 //
 // SS = SteuerSatz [in Prozent]
 //

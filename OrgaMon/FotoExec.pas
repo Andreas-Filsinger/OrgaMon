@@ -65,7 +65,6 @@ const
   cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
   cFotoService_Pause = 'pause.txt';
-
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
 
   // Bild-Namenskonvention

@@ -38,7 +38,8 @@ uses
   {$ifdef MSWINDOWS}
   Windows, activex,
   {$endif}
-  graphics, gettext;
+  Graphics, // fpc:
+  gettext;
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;

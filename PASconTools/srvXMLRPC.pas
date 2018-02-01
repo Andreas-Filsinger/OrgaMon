@@ -26,6 +26,10 @@
 }
 unit srvXMLRPC;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 uses

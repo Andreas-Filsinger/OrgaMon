@@ -26,6 +26,10 @@
 }
 unit dbOrgaMon;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 {

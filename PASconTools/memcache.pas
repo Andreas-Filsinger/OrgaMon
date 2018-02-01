@@ -26,6 +26,10 @@
 }
 unit memcache;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 (*
 
 *===============================*

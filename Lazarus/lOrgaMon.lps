@@ -4,14 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="237">
+    <Units Count="241">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="66"/>
-        <CursorPos X="5" Y="98"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="48"/>
+        <CursorPos X="5" Y="76"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -91,6 +91,7 @@
       <Unit9>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
+        <CursorPos X="16" Y="41"/>
         <UsageCount Value="113"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -168,9 +169,9 @@
       <Unit18>
         <Filename Value="..\PASconTools\WordIndex.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="541"/>
-        <CursorPos Y="33"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="32"/>
+        <CursorPos Y="77"/>
         <UsageCount Value="97"/>
         <Bookmarks Count="1">
           <Item0 X="12" Y="87" ID="1"/>
@@ -399,10 +400,9 @@
       </Unit46>
       <Unit47>
         <Filename Value="..\..\Indy\Lib\indylaz.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="13"/>
         <UsageCount Value="19"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
@@ -1129,10 +1129,10 @@
       <Unit153>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="35"/>
-        <CursorPos X="3" Y="58"/>
-        <UsageCount Value="4"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="25"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit153>
       <Unit154>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-base\src\gettext.pp"/>
@@ -1648,10 +1648,9 @@
       </Unit226>
       <Unit227>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\rtl-console\src\win\crt.pp"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="6" Y="19"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit227>
       <Unit228>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\rtl-console\src\inc\crth.inc"/>
@@ -1713,12 +1712,42 @@
       <Unit236>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit236>
+      <Unit237>
+        <Filename Value="..\..\fpc\packages\pastojs\tests\tcfiler.pas"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="37"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit237>
+      <Unit238>
+        <Filename Value="..\..\fpc\tests\webtbs\tw32576.pp"/>
+        <UnitName Value="xx"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit238>
+      <Unit239>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33086.pp"/>
+        <UnitName Value="test"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit239>
+      <Unit240>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\gettext.pp"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit240>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="9" HistoryIndex="8">
       <Position1>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <Caret Line="286" TopLine="264"/>
@@ -1751,6 +1780,10 @@
         <Filename Value="lOrgaMon.lpr"/>
         <Caret Line="79" TopLine="62"/>
       </Position8>
+      <Position9>
+        <Filename Value="C:\lazarus\lcl\graphics.pp"/>
+        <Caret Line="58" Column="3" TopLine="35"/>
+      </Position9>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

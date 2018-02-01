@@ -185,6 +185,10 @@
 
 unit GpLists;
 
+{$ifdef fpc}
+{$mode delphi}
+{$endif}
+
 interface
 
 {$IFDEF CONDITIONALEXPRESSIONS}

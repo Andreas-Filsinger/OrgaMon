@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet1
+    ActivePage = TabSheet6
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -727,11 +727,11 @@
         TabOrder = 11
       end
       object Button7: TButton
-        Left = 525
+        Left = 497
         Top = 224
-        Width = 129
+        Width = 181
         Height = 25
-        Caption = 'Migration Foto'
+        Caption = 'Migration "ABLAGE.csv"'
         TabOrder = 12
         OnClick = Button7Click
       end
