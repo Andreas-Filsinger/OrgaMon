@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ type
   end;
 
 const
+  // unspeziefischer Anfangspfad, kann für
+  // "sourcePath" Parameter verwendet werden um auszudrücken dass
+  // kein Pfadwechsel nötig ist
   cSolidFTP_DirCurrent = '';
 
   SolidFTP_LastError: string = '';
@@ -56,7 +59,7 @@ const
   SolidFTP_Command_DestinationPath = 1;
   SolidFTP_Command_DestinationFileName = 2;
 
-  // FTP - Initialisierung
+// FTP - Initialisierung
 procedure SolidInit(ftp: TIdFTP);
 procedure SolidBeginTransaction;
 procedure solidLog(s: string; DoStatistics: boolean = true);
@@ -102,6 +105,8 @@ function CoreFTP_Up(Profile, Mask, DestPath: string): boolean;
 procedure WakeOnLan(MAC: string); // sample: WakeOnLan('00-07-95-1C-64-7E');
 function isFTP_FATAL_ERROR(s: string): boolean;
 function CheckAgainstPattern(FileName, Pattern: string): boolean;
+function e_r_FTP_LoginUser (s:string):string;
+function e_r_FTP_SourcePath (s:string):string;
 
 implementation
 
@@ -247,7 +252,6 @@ begin
   //
   sErrorCount := 0;
   sWarningCount := 0;
-  sActualServerWorkingDirectory := cSolidFTP_DirCurrent;
   SolidFTP_LastError := '';
   sTransactionFatalError := false;
 
@@ -499,7 +503,7 @@ begin
 
     // restore Original Host
     host := HostAlternatives[0];
-    sActualServerWorkingDirectory := cSolidFTP_DirCurrent;
+    sActualServerWorkingDirectory := '/';
 
   end;
 end;
@@ -532,7 +536,7 @@ begin
           if (DestPath = '/') or (DestPath = '\') then
           begin
             SolidSingleStepLog('changedir /');
-            ChangeDir('/')
+            ChangeDir('/');
           end
           else
           begin
@@ -1420,6 +1424,37 @@ begin
   end;
 
   result := false;
+end;
+
+function e_r_FTP_LoginUser (s:string):string;
+begin
+ result := nextp(s, '\', 0);
+end;
+
+function e_r_FTP_SourcePath (s:string):string;
+var
+ i : Integer;
+begin
+  i := pos('\',s);
+  if (i=0) then
+  begin
+   result := '';
+  end else
+  begin
+   result := copy(s,succ(i),MaxInt);
+
+   // Sicherheit vor Pfad Manipulationen
+   result := StrFilter(result,cInvalidFNameChars+'.',true);
+   // Am Ende muss ein Backslash sein!!
+   if (result[length(result)]<>'\') then
+    result := result + '\';
+   // Unnötige Doppel-Slash
+   ersetze('\\','\',result);
+   // Leere Pfadangabe tolerieren
+   if (result='\') then
+    result := '';
+  end;
+
 end;
 
 end.

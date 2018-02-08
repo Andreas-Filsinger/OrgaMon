@@ -19,6 +19,22 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.329 (08.02.18) Andreas Filsinger
+
+ Neu: Foto: Download: Unterverzeichnis im FTPBenutzer wird berücksichtigt
+ Neu: Foto: Download: Mit FotoZiel= lässt sich der Bestimmungsort für die jpgs bestimmen
+      so lassen sich Fotos-nnnn.zip und JPGs trennen.
+
+Rev 8.328 (06.02.18) Andreas Filsinger
+
+ Neu: Foto: Unterverzeichnisse werden bei "workAblage" berücksichtigt
+ Neu: Foto: Unterverzeichnisse: index.php und ampel.gif werden automatisch bei
+      Neuanlage bereitgestellt
+
+Rev 8.327 (05.02.18) Andreas Filsinger
+
+ Neu: Foto: Unterverzeichnisse sind möglich
+
 Rev 8.326 (24.01.18) Andreas Filsinger
 
  Neu: html: "load A,B" hat jetzt einen Fallback auf "B"

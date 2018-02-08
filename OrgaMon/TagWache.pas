@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ begin
 
           case n of
             0:
-              e_w_GrabFotos;
+              e_w_FotoDownload.Free;
             1:
               FormAuftragMobil.ReadMobil;
             2:

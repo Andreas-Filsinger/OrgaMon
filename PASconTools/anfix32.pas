@@ -1,6 +1,6 @@
 (* anfix32 - low level Tools
 
-  Copyright (C) 2007 - 2017  Andreas Filsinger
+  Copyright (C) 2007 - 2018  Andreas Filsinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -259,16 +259,16 @@ procedure AppendStringsToFile(s: string; const FName: string; Encapsulate: strin
 procedure UnpackTime(P: longint; var T: TDateTimeBorlandPascal);
 procedure PackTime(T: TDateTimeBorlandPascal; var P: longint);
 
-// Datums-Utils
-function JahresZahl: string;
-function sTimeStamp: string;
+// aktuelles Datum und oder Uhrzeit
+function JahresZahl: string; // YYYY
+function sTimeStamp: string; // YYYYMMTT hh:mm:ss
 procedure GetDate(var Year, Month, Day, dow: Word);
 function NOW: TDateTime; // analog "now" berücksichtigt aber TestMode
 
 // deutsche Datumsangaben
-function Datum: string; // tt.mm.yy
-function Datum10: string; // tt.mm.yyyy
-function DatumLog: string; // yyyymmtt
+function Datum: string; // TT.MM.YY
+function Datum10: string; // TT.MM.YYYY
+function DatumLog: string; // YYYYMMTT
 
 // Wandlung Datum -> String
 function long2date { 10 } (dlong: TAnfixDate): string; overload; // TT.MM.JJJJ
@@ -413,7 +413,7 @@ procedure SystemLog(Event: string); // system sysutils
 // Directory Funktionen
 procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true; ClearList: boolean = true); overload;
 function dir(const Mask: string): integer; overload;
-function dirs(const Path: string): TStringList;
+function dirs(const Path: string): TStringList; // Liste der Unterverzeichnisse
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
 function DirQuota(const Mask: string; SizeLimit: int64): boolean;
@@ -2989,17 +2989,26 @@ begin
 // imp pend:
 result := false;
 {$endif}
-
 end;
 
-
-//
-//
-// FileOperation (sourcefile,destination,,
-//
-//
-
 function FileCopy(const Mask, Dest: string; Move: boolean = false; Touch: boolean = false): boolean;
+
+  //
+  // Anwendungsfall 1 ("Mask" ohne "*" oder "?")
+  // ===========================================
+  //
+  // Kopiert eine vollständig benannte Datei (mit vollständigem Pfad) "Mask"
+  // in eine neu zu erstellende Datei "Dest", soll der Dateiname unverändert
+  // bleiben, so ist dennoch der Dateiname zu wiederholen!
+  //
+  // Anwendungsfall 2 ("Mask" mit "*" oder "?")
+  // ==========================================
+  //
+  // Kopiert alle Dateien (nicht Verzeichnisse!) die per "Mask" angegeben
+  // sind, in einen das Zielverzeichnis "Dest", existiert es nicht wird es
+  // zuvor angelegt.
+  //
+
 var
   FileL: TStringList;
   ErrorCount: integer;

@@ -3305,121 +3305,18 @@ begin
 end;
 
 procedure TFormBaustelle.SpeedButton10Click(Sender: TObject);
-const
-  cBildFName = 'Bilder.ini';
 var
-  LokaleBilder: TStringList;
-  RemoteBilder: TStringList;
-  RemoteFotos: TStringList;
-  RemoteBilderUnbenannt: TStringList;
-  ZipOptions: TStringList;
-  WorkPath: string;
-  FotoFTP: TIdFTP;
-  Settings: TStringList;
-  n: Integer;
-  ZipFileCount: Integer;
-  LocalFSize, RemoteFSize: Int64;
+ UserMessages: TStringList;
 begin
-  //
+  // imp pend: Migration auf "e_w_GrabFotos"
   NoTimer := true;
   if (FotoPath <> '') then
   begin
     BeginHourGlass;
-
     ListBox1.items.clear;
-
-    LokaleBilder := TStringList.create;
-    RemoteBilder := TStringList.create;
-    RemoteFotos := TStringList.create;
-    RemoteBilderUnbenannt := TStringList.create;
-    Settings := TStringList.create;
-    ZipOptions := TStringList.create;
-    FotoFTP := TIdFTP.create;
-
-    // checks
-    Settings.AddStrings(IB_Memo5.Lines);
-    CheckCreateDir(FotoPath);
-    WorkPath := FotoPath + e_r_BaustellenPfadFoto(Settings) + '\';
-    CheckCreateDir(WorkPath);
-    if FileExists(WorkPath + cBildFName) then
-      LokaleBilder.LoadFromFile(WorkPath + cBildFName);
-
-    SolidInit(FotoFTP);
-    with FotoFTP do
-    begin
-      OnWork := IdFTP1Work;
-      OnWorkBegin := IdFTP1WorkBegin;
-      OnWorkEnd := IdFTP1WorkEnd;
-      Host := e_r_ParameterFoto(Settings, cE_FTPHOST);
-      UserName := nextp(e_r_ParameterFoto(Settings, cE_FTPUSER), '\', 0);
-      password := e_r_ParameterFoto(Settings, cE_FTPPASSWORD);
-    end;
-    ZipOptions.Add('Password=' + e_r_ParameterFoto(Settings, cE_ZIPPASSWORD));
-
-    SolidBeginTransaction;
-    try
-      // Check if some news ...
-      SolidDir(FotoFTP, '', '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
-      SolidDir(FotoFTP, '', 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
-      SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
-      RemoteBilder.AddStrings(RemoteBilderUnbenannt);
-      RemoteBilder.AddStrings(RemoteFotos);
-      for n := 0 to pred(RemoteBilder.count) do
-      begin
-        if (LokaleBilder.values[RemoteBilder[n]] = '') then
-        begin
-
-          // Prüfen ob es die Datei ev. schon gibt
-          LocalFSize := FSize(WorkPath + RemoteBilder[n]);
-
-          if (LocalFSize > cFSize_NotExists) then
-            RemoteFSize := SolidSize(FotoFTP, '', RemoteBilder[n])
-          else
-            RemoteFSize := cFSize_Null;
-
-          if (LocalFSize = RemoteFSize) then
-          begin
-            ListBox1.items.Add('skip ' + RemoteBilder[n] + ' ...');
-            LokaleBilder.values[RemoteBilder[n]] := inttostr(0) + ';' + sTimeStamp;
-            LokaleBilder.SaveToFile(WorkPath + cBildFName);
-            application.processmessages;
-            continue;
-          end;
-
-          //
-          ListBox1.items.Add('lade ' + RemoteBilder[n] + ' ...');
-          application.processmessages;
-
-          //
-          if SolidGet(FotoFTP, '', RemoteBilder[n], '', WorkPath) then
-          begin
-            ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath, ZipOptions);
-            if (ZipFileCount > 0) then
-            begin
-              LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
-              LokaleBilder.SaveToFile(WorkPath + cBildFName);
-            end;
-          end;
-        end;
-      end;
-      ListBox1.items.Add('OK');
-    except
-      on E: Exception do
-      begin
-        solidLog(cERRORText + ' Fotos laden: ' + E.Message);
-      end;
-    end;
-    SolidEndTransaction;
-
-    //
-    LokaleBilder.free;
-    RemoteBilder.free;
-    RemoteFotos.free;
-    RemoteBilderUnbenannt.free;
-    Settings.free;
-    ZipOptions.free;
-    FotoFTP.free;
-
+    UserMessages := e_w_FotoDownload(IB_Query1.FieldByName('RID').AsInteger);
+    ListBox1.items.AddStrings(UserMessages);
+    UserMessages.Free;
     EndHourGlass;
   end;
   NoTimer := false;

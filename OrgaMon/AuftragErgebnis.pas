@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1029,12 +1029,7 @@ begin
       // Spalten, die als "Text" formatiert werden müssen
       HeaderTextFormat := Split(Settings.values[cE_SpalteAlsText]);
       HeaderTextFormat.sort;
-
-      // Umsetzer.Path := SAPPath + settings.values[cE_FTPUSER];
       Umsetzer.Path := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings);
-
-      Settings.values[cE_Filter];
-
       e_r_ProtokollExport(BAUSTELLE_R, ProtokollFeldNamen);
       ProtokollMode := (ProtokollFeldNamen.count > 0);
 

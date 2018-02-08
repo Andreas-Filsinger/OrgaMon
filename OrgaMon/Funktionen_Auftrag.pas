@@ -129,7 +129,7 @@ function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 
 // Baustellen - Foto - Sachen
-procedure e_w_GrabFotos;
+function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
@@ -1721,7 +1721,7 @@ begin
   { } '\Upload\';
 end;
 
-procedure e_w_GrabFotos;
+function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
 const
   cBildFName = 'Bilder.ini';
 var
@@ -1732,18 +1732,28 @@ var
   RemoteBilderUnbenannt: TStringList;
   ZipOptions: TStringList;
   WorkPath: string;
+  JpgPath: string;
   FotoFTP: TIdFTP;
+  SourcePath: string; // FTP-Quellverzeichnis
   settings: TStringList;
   n: Integer;
   ZipFileCount: Integer;
   m: Integer;
   LocalFSize, RemoteFSize: Int64;
 begin
+  result := TStringList.Create;
   //
   if (FotoPath <> '') then
   begin
 
-    lBAUSTELLEN := e_r_sqlm('select RID from BAUSTELLE where NUMMERN_PREFIX starts with ''+'' order by NUMMERN_PREFIX');
+    if (BAUSTELLE_R>=cRID_FirstValid) then
+    begin
+     lBAUSTELLEN := TgpIntegerList.Create;
+     lBAUSTELLEN.Add(BAUSTELLE_R);
+    end else
+    begin
+     lBAUSTELLEN := e_r_sqlm('select RID from BAUSTELLE where NUMMERN_PREFIX starts with ''+'' order by NUMMERN_PREFIX');
+    end;
 
     for m := 0 to pred(lBAUSTELLEN.count) do
     begin
@@ -1760,6 +1770,16 @@ begin
 
       CheckCreateDir(FotoPath);
       WorkPath := FotoPath + e_r_BaustellenPfadFoto(settings) + '\';
+      JpgPath := e_r_ParameterFoto(settings, cE_FotoZiel);
+      if (JpgPath='') then
+       JpgPath := WorkPath
+      else
+      begin
+       JpgPath := FotoPath + JpgPath + '\';
+       CheckCreateDir(JpgPath);
+      end;
+
+      result.Add('Abgleich von '+WorkPath+' ...');
       CheckCreateDir(WorkPath);
       if FileExists(WorkPath + cBildFName) then
         LokaleBilder.LoadFromFile(WorkPath + cBildFName);
@@ -1768,8 +1788,12 @@ begin
       with FotoFTP do
       begin
         Host := e_r_ParameterFoto(settings, cE_FTPHOST);
-        UserName := nextp(e_r_ParameterFoto(settings, cE_FTPUSER), '\', 0);
+        UserName := e_r_FTP_LoginUser(e_r_ParameterFoto(settings, cE_FTPUSER));
+        SourcePath := e_r_FTP_SourcePath (e_r_ParameterFoto(settings, cE_FTPUSER));
         Password := e_r_ParameterFoto(settings, cE_FTPPASSWORD);
+        result.Add(' login '+UserName);
+        if (SourcePath<>'') then
+         result.Add(' cd '+SourcePath);
       end;
       ZipOptions.Add('Password=' + e_r_ParameterFoto(settings, cE_ZIPPASSWORD));
 
@@ -1789,21 +1813,21 @@ begin
           raise Exception.create('Verzeichnis hat keinen Eintrag');
 
         // Check if some news ...
-        SolidDir(FotoFTP, '', '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
-        SolidDir(FotoFTP, '', 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
-        SolidDir(FotoFTP, '', '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
+        SolidDir(FotoFTP, SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
+        SolidDir(FotoFTP, SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
+        SolidDir(FotoFTP, SourcePath, '*-Bilder_Unbenannt.zip', '????-Bilder_Unbenannt.zip', RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteBilderUnbenannt);
         RemoteBilder.AddStrings(RemoteFotos);
         for n := 0 to pred(RemoteBilder.count) do
         begin
-          if LokaleBilder.values[RemoteBilder[n]] = '' then
+          if (LokaleBilder.values[RemoteBilder[n]] = '') then
           begin
 
             // Prüfen ob es die Datei ev. schon gibt
             LocalFSize := FSize(WorkPath + RemoteBilder[n]);
 
             if (LocalFSize > cFSize_NotExists) then
-              RemoteFSize := SolidSize(FotoFTP, '', RemoteBilder[n])
+              RemoteFSize := SolidSize(FotoFTP, SourcePath, RemoteBilder[n])
             else
               RemoteFSize := cFSize_Null;
 
@@ -1816,14 +1840,16 @@ begin
             end;
 
             SolidLog(cINFOText + ' get ' + RemoteBilder[n]);
+            result.Add(' download '+RemoteBilder[n]);
             // lade ...
-            if SolidGet(FotoFTP, '', RemoteBilder[n], '', WorkPath) then
+            if SolidGet(FotoFTP, SourcePath, RemoteBilder[n], '', WorkPath) then
             begin
-              ZipFileCount := unzip(WorkPath + RemoteBilder[n], WorkPath, ZipOptions);
+              ZipFileCount := unzip(WorkPath + RemoteBilder[n], JpgPath, ZipOptions);
               if (ZipFileCount > 0) then
               begin
                 LokaleBilder.values[RemoteBilder[n]] := inttostr(ZipFileCount) + ';' + sTimeStamp;
                 LokaleBilder.SaveToFile(WorkPath + cBildFName);
+                result.Add(' unzip to '+JpgPath);
               end;
             end;
 
@@ -1846,9 +1872,13 @@ begin
       settings.free;
       ZipOptions.free;
       FotoFTP.free;
+      result.Add('OK');
     end;
     lBAUSTELLEN.free;
 
+  end else
+  begin
+   result.Add(cINFOText+' '+'kein FotoPfad= definiert!')
   end;
 end;
 

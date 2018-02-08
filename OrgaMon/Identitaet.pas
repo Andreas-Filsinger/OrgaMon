@@ -673,7 +673,7 @@ begin
           case n of
             0:
 *)
-              e_w_GrabFotos;
+              e_w_FotoDownload;
 (*
             1:
               FormAuftragMobil.ReadMobil;
