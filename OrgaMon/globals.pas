@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.329; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.330; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1514,7 +1514,7 @@ function cOrgaMonCopyright: string;
 function cAppName: string;
 function iDataBaseHost: string; // Host des firebird
 function iMandant: string; // Markante Bezeichnung des Mandanten
-function e_r_Kontext: string;
+function e_r_Kontext: string; // zufälliger Identifikations-String dieser OrgaMon-Instanz
 
 function AddBackSlash(const s: string): string;
 function RemoveBackSlash(const s: string): string;

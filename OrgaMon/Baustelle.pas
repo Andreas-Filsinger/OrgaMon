@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016 Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -458,6 +458,7 @@ uses
   Jvgnugettext, wanfix32,
   globals, math, clipbrd,
   SimplePassword, dbOrgaMon,
+  Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -466,7 +467,7 @@ uses
   GeoLokalisierung, AuftragGeo,
   gplists, AuftragImport, AuftragBildzuordnung,
   Belege, Person, Vertrag,
-  Kontext, Datenbank, AuftragSuchindex,
+  Datenbank, AuftragSuchindex,
   BaustelleFoto, REST, CCR.Exif,
   AuftragErgebnis, mapping, InfoZIP,
   Bearbeiter, CommCtrl,
@@ -3593,7 +3594,7 @@ end;
 
 procedure TFormBaustelle.SpeedButton20Click(Sender: TObject);
 begin
-  FormKontext.cnBAUSTELLE.addContext(IB_Query1.FieldByName('RID').AsInteger);
+  cnBAUSTELLE.addContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormBaustelle.SpeedButton21Click(Sender: TObject);

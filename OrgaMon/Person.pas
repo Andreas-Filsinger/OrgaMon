@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -439,7 +439,7 @@ uses
   CareTakerClient, FastGeo, GeoArbeitsplatz,
   OLAP, Jvgnugettext,
   Vertrag, ExcelHelper, main,
-  OrientationConvert, Kontext, Datenbank,
+  OrientationConvert, Datenbank,
   DruckSpooler, html, clipbrd,
   wanfix32, GUIHelp,
   ZahlungECconnect;
@@ -1116,7 +1116,7 @@ end;
 
 procedure TFormPerson.SpeedButton20Click(Sender: TObject);
 begin
-  FormKontext.cnPERSON.addContext(IB_Query1.FieldByName('RID').AsInteger);
+  cnPERSON.addContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormPerson.SpeedButton21Click(Sender: TObject);
@@ -1166,7 +1166,7 @@ begin
       e_w_JoinPerson(PERSON_R, PERSON_R_TO);
       FormPerson.IB_Query1.locate('RID', PERSON_R, []);
       FormPerson.IB_Query1.delete;
-      FormKontext.cnPERSON.delContext(PERSON_R);
+      cnPERSON.delContext(PERSON_R);
       FormPerson.IB_Query1.locate('RID', PERSON_R_TO, []);
     end;
   end;
@@ -1252,7 +1252,7 @@ begin
       .AsString + #13 + 'wirklich löschen') then
     begin
       BeginHourGlass;
-      FormKontext.cnPERSON.delContext(FieldByName('RID').AsInteger);
+      cnPERSON.delContext(FieldByName('RID').AsInteger);
       e_w_preDeletePerson(FieldByName('RID').AsInteger);
       Confirmed := true;
       EndHourGlass;
@@ -1265,7 +1265,7 @@ var
   wSQL: TStringList;
 begin
   BeginHourGlass;
-  FormKontext.cnPERSON.addContext(PERSON_R);
+  cnPERSON.addContext(PERSON_R);
 
   wSQL := TStringList.create;
   with wSQL do

@@ -148,6 +148,7 @@
         <DCCReference Include="Identitaet.pas"/>
         <DCCReference Include="TestExec.pas"/>
         <DCCReference Include="..\PASconTools\systemd.pas"/>
+        <DCCReference Include="..\PASconTools\ContextBase.pas"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\ccr-exif\CCR.Exif.inc"/>
         <None Include="..\rev\Oc.rev.txt"/>

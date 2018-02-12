@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -133,17 +133,18 @@ var
 implementation
 
 uses
-  anfix32, globals,
+  anfix32, globals, SysHot,
+  wanfix32, gplists, geld,
+  html,
+  dbOrgaMon,
+  Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Buch,
   Funktionen_Auftrag,
   Bearbeiter,
-  html, Person,
-  Belege, Datenbank, Main,
-  dbOrgaMon, SysHot,
-  wanfix32, gplists, geld,
-  Kontext;
+   Person,
+  Belege, Datenbank, Main;
 {$R *.dfm}
 
 const
@@ -503,7 +504,7 @@ begin
       break;
 
     // halt den aktuellsten nehmen!
-    KONTO_PERSON_R := FormKontext.cnPERSON.top;
+    KONTO_PERSON_R := cnPERSON.top;
 
   until true;
   lPERSON.free;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -443,7 +443,7 @@ var
 begin
   with IB_Dataset do
   begin
-    FormKontext.cnBELEG.addContext(BelegRID);
+    cnBELEG.addContext(BelegRID);
 
     FieldByName('BELEG_R').AsInteger := BelegRID;
     ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
@@ -601,7 +601,7 @@ var
 begin
   BeginHourGlass;
   BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
-  FormKontext.cnBELEG.addContext(BELEG_R);
+  cnBELEG.addContext(BELEG_R);
 
   // Auto-Post
   if (IB_Query2.State = dssedit) then // 2=Detail
@@ -1212,7 +1212,7 @@ begin
 
   inc(DisableAfterScroll);
   BELEG_R := e_w_BelegNeu(PERSON_R);
-  FormKontext.cnBELEG.addContext(BELEG_R);
+  cnBELEG.addContext(BELEG_R);
   LastRow := -1;
   IB_Query1.RefreshKeys;
   dec(DisableAfterScroll);
@@ -1814,7 +1814,7 @@ end;
 
 procedure TFormBelege.SpeedButton20Click(Sender: TObject);
 begin
-  FormKontext.cnBELEG.addContext(BelegRID);
+  cnBELEG.addContext(BelegRID);
 end;
 
 procedure TFormBelege.SpeedButton21Click(Sender: TObject);

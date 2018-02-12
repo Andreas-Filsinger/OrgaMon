@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -173,13 +173,13 @@ begin
     if pos('BELEG_R=', LogFileDerVertragsAnwendung[n]) = 1 then
     begin
       RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1), cRID_Null);
-      FormKontext.cnBELEG.addContext(RID);
+      cnBELEG.addContext(RID);
       continue;
     end;
     if pos('PERSON_R=', LogFileDerVertragsAnwendung[n]) = 1 then
     begin
       RID := strtointdef(nextp(LogFileDerVertragsAnwendung[n], '=', 1), cRID_Null);
-      FormKontext.cnPERSON.addContext(RID);
+      cnPERSON.addContext(RID);
       continue;
     end;
   end;

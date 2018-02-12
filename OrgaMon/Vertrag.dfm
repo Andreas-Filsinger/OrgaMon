@@ -545,7 +545,7 @@ object FormVertrag: TFormVertrag
       object Label6: TLabel
         Left = 475
         Top = 11
-        Width = 41
+        Width = 40
         Height = 13
         Caption = 'Vorlauf'
       end
@@ -573,7 +573,7 @@ object FormVertrag: TFormVertrag
       object Label10: TLabel
         Left = 581
         Top = 11
-        Width = 28
+        Width = 27
         Height = 13
         Caption = 'Tage'
       end
@@ -813,14 +813,14 @@ object FormVertrag: TFormVertrag
       object Label15: TLabel
         Left = 4
         Top = 64
-        Width = 173
+        Width = 172
         Height = 13
         Caption = 'Beleg / Vertragsvorlage [RID]'
       end
       object Label17: TLabel
         Left = 287
         Top = 64
-        Width = 90
+        Width = 89
         Height = 13
         Caption = 'Vorspann [RID]'
       end

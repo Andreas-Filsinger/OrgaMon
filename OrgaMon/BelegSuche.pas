@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011 - 2017  Andreas Filsinger
+  |    Copyright (C) 2011 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -134,15 +134,18 @@ var
 implementation
 
 uses
-  Belege, anfix32, html,
-  globals, Person, AusgangsRechnungen,
+  Jvgnugettext,
+  anfix32, wanfix32, html,
+  globals,
+  Person,
+  Belege,
+  AusgangsRechnungen,
+  Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   ArtikelVerlag, Lager, WarenBewegung,
-  dbOrgaMon, Jvgnugettext, main,
-  Kontext, Datenbank, wanfix32,
-  GUIHelp;
+  dbOrgaMon,  main, Datenbank, GUIHelp;
 
 {$R *.DFM}
 
@@ -900,7 +903,7 @@ end;
 
 procedure TFormBelegSuche.SpeedButton20Click(Sender: TObject);
 begin
-  FormKontext.cnBELEG.addContext(IB_Query1.FieldByName('RID').AsInteger);
+  cnBELEG.addContext(IB_Query1.FieldByName('RID').AsInteger);
 end;
 
 procedure TFormBelegSuche.SpeedButton2Click(Sender: TObject);

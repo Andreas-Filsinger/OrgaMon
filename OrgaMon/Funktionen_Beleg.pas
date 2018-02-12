@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -6012,6 +6012,7 @@ var
   EINSTELLUNGEN: TStringList;
   KONTEXT: string;
   KONTEXT_SQL: string;
+  PAPERCOLOR : Integer;
 
   VertragsTexte: TStringList;
   Erzwingen: boolean;
@@ -6036,8 +6037,9 @@ begin
     while (e_r_VertragBuchen(VERTRAG_R, ANWENDUNG)) or Erzwingen do
     begin
 
-      // es ist nur ein "Erzwingen"-Lauf möglich
+      // ein "Erzwingen"-Lauf ist nur einmalig möglich
       Erzwingen := false;
+
       VertragsTexte := TStringList.create;
       cVERTRAG := nCursor;
       repeat
@@ -6139,6 +6141,8 @@ begin
           // weitere Daten bestimmen!
           PERSON_R := FieldByName('PERSON_R').AsInteger;
           BELEG_R := FieldByName('BELEG_R').AsInteger;
+          PAPERCOLOR := e_r_sql(
+              { } 'select PAPERCOLOR from BELEG where RID=' + inttostr(BELEG_R));
           PERSON_RECHNUNG_R := StrToIntDef(EINSTELLUNGEN.values['Rechnungsempfänger'], cRID_unset);
           if (PERSON_RECHNUNG_R < cRID_FirstValid) then
             PERSON_RECHNUNG_R := e_r_sql(
@@ -6186,7 +6190,8 @@ begin
               { } ' (RECHNUNG is null) and ' +
               { } ' (BSTATUS =''*'') and ' +
               { } ' (' + KONTEXT_SQL + ') and ' +
-              { } ' (BTYP <> ''0'')');
+              { } ' (BTYP <> ''0'') and ' +
+              { } ' (PAPERCOLOR = '+inttostr(PAPERCOLOR)+')');
           end
           else
           begin
@@ -6203,6 +6208,7 @@ begin
 
             if VertragAnwendbar(DIESER_ABRECHNUNGSTAG) then
             begin
+              cnPERSON.addContext(PERSON_R);
               result.add('PERSON_R=' + inttostr(PERSON_R));
 
               // ev. Vorspann noch kopieren
@@ -6231,6 +6237,7 @@ begin
                   { } ZIEL_BELEG_R,
                   { } VertragsTexte);
               end;
+              cnBeleg.addContext(ZIEL_BELEG_R);
 
             end;
 

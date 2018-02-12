@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -54,7 +54,6 @@ type
     Button10: TButton;
     Button11: TButton;
     Button12: TButton;
-    procedure FormCreate(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -79,7 +78,6 @@ type
     procedure doExit;
   public
     { Public-Deklarationen }
-    cnPERSON, cnBELEG, cnBAUSTELLE: TContext;
     PERSON_GID, BELEGE_GID, BAUSTELLE_GID: Int64;
     PERSON_R: integer;
     BELEG_R: integer;
@@ -98,6 +96,7 @@ uses
   globals, IB_Components, Datenbank,
   anfix32, Person, Baustelle,
   Belege, Vertrag, dbOrgaMon,
+  Funktionen_LokaleDaten,
   Funktionen_Auftrag;
 
 {$R *.dfm}
@@ -225,13 +224,6 @@ begin
   { } (cnBELEG.GID <> BELEGE_GID) or
   { } (cnBAUSTELLE.GID <> BAUSTELLE_GID) then
     updateControls(false);
-end;
-
-procedure TFormKontext.FormCreate(Sender: TObject);
-begin
-  cnPERSON := TContext.create(ContextPath + 'Person');
-  cnBELEG := TContext.create(ContextPath + 'Beleg');
-  cnBAUSTELLE := TContext.create(ContextPath + 'Baustelle');
 end;
 
 procedure TFormKontext.setContext(Mode: integer);

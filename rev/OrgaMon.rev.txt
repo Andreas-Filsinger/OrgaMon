@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.330 (12.02.18) Andreas Filsinger
+
+ Bug: Vertrag: Fortlaufende Anwendungen, also Vertragsanwendungen, die in einen bestehenden
+               Vertrag fortschreiben suchen nach dem Beleg der gleichen Farbe wie die
+               Vertrags-Vorlage. Dadurch werden durchmischungen unterschiedlicher Vertrags-
+               varianten verhindert.
+
+ Neu: Vertrag: Kommt es zur Vertragsanwendung so wird die betroffene Person gepinnt
+
 Rev 8.329 (08.02.18) Andreas Filsinger
 
  Neu: Foto: Download: Unterverzeichnis im FTPBenutzer wird berücksichtigt

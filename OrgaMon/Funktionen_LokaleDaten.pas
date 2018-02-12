@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2017  Andreas Filsinger
+  |    Copyright (C) 2012 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ unit Funktionen_LokaleDaten;
 interface
 
 uses
-  SysUtils, Classes;
+  SysUtils, Classes, ContextBase;
 
 {
   Erzeugt und speichert 2 Dateien: "*.Cache.Items" und "*.Cache.Values",
@@ -56,6 +56,9 @@ procedure ArtikelSuchindex;
 
 // Kartenverzeichnis auf Quota bringen
 procedure KartenQuota;
+
+var
+ cnPERSON, cnBELEG, cnBAUSTELLE: TContext;
 
 implementation
 
@@ -570,4 +573,8 @@ begin
   SearchIndexs.free;
 end;
 
+begin
+  cnPERSON := TContext.create(ContextPath + 'Person');
+  cnBELEG := TContext.create(ContextPath + 'Beleg');
+  cnBAUSTELLE := TContext.create(ContextPath + 'Baustelle');
 end.

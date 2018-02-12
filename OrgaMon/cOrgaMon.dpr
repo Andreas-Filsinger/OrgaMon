@@ -79,7 +79,8 @@ uses
   CCR.Exif.IPTC in '..\ccr-exif\CCR.Exif.IPTC.pas',
   Identitaet in 'Identitaet.pas',
   TestExec in 'TestExec.pas',
-  systemd in '..\PASconTools\systemd.pas';
+  systemd in '..\PASconTools\systemd.pas',
+  ContextBase in '..\PASconTools\ContextBase.pas';
 
 begin
  setIdentitaetAndRun;

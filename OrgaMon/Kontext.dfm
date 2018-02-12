@@ -12,7 +12,6 @@ object FormKontext: TFormKontext
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 16
   object PageControl1: TPageControl
@@ -25,10 +24,6 @@ object FormKontext: TFormKontext
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Person'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 16
         Top = 32
@@ -60,10 +55,6 @@ object FormKontext: TFormKontext
     object TabSheet2: TTabSheet
       Caption = 'Beleg'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox2: TCheckListBox
         Left = 16
         Top = 34
@@ -95,10 +86,6 @@ object FormKontext: TFormKontext
     object TabSheet3: TTabSheet
       Caption = 'Baustelle'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox3: TCheckListBox
         Left = 16
         Top = 34
