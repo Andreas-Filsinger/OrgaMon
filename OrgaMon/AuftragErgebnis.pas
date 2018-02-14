@@ -2226,7 +2226,7 @@ var
       // Dateien hochladen über die Alternative CoreFTP
       for n := 0 to pred(FTP_UploadMasks.count) do
         if not(CoreFTP_Up(
-          { Profile } nextp(Settings.values[cE_FTPUSER], '\', 0),
+          { Profile } e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]),
           { Mask } nextp(FTP_UploadMasks[n], ';', 0),
           { Path } nextp(FTP_UploadMasks[n], ';', 1))) then
         begin
@@ -2576,6 +2576,7 @@ begin
         SolidInit(IdFTP1);
         with IdFTP1 do
         begin
+
           if connected then
           begin
             try
@@ -2584,6 +2585,7 @@ begin
               // don't handle this!
             end;
           end;
+
           if CheckBox1.checked then
           begin
             Host := cFTP_Host;
@@ -2594,7 +2596,7 @@ begin
           else
           begin
             Host := Settings.values[cE_FTPHOST];
-            Username := nextp(Settings.values[cE_FTPUSER], '\', 0);
+            Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
             Password := Settings.values[cE_FTPPASSWORD];
           end;
 
@@ -2608,17 +2610,19 @@ begin
           *)
 
           // Prüfung der FTP Daten
-          if (Username = '') then
+          if (Host <> '') then
           begin
-            Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPBenutzer=');
-            break;
+            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPHost= somit kein Upload in eine Internet-Ablage');
+
+            if (Username = '') then
+            begin
+              Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPBenutzer=');
+              break;
+            end;
+
+            if (Password = '') then
+              Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPPassword=');
           end;
-
-          if (Host = '') then
-            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPHost=');
-
-          if (Password = '') then
-            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPPassword=');
 
         end;
 
@@ -2681,7 +2685,8 @@ begin
         end;
 
         if (ErrorCount = 0) then
-          doFTP;
+         if (IdFTP1.Host<>'') then
+           doFTP;
 
         // Erfolg in die einzelnen Datensätze eintragen
         if (ErrorCount = 0) and (CommitL.count > 0) then
@@ -2737,7 +2742,7 @@ begin
                     inttostr(Stat_Unmoeglich.count - Stat_Unmoeglich.countReducedBy(Stat_Fail));
 
                   values['FEHLER'] := inttostr(Stat_Fail.count);
-                  values['ABLAGE'] := nextp(Settings.values[cE_FTPUSER], '\', 0);
+                  values['ABLAGE'] := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
                   values['TAN'] := Settings.values[cE_TAN];
                   values['BAUSTELLE'] := Settings.values[cE_BAUSTELLE_KURZ];
 

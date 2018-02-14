@@ -3387,7 +3387,7 @@ begin
   with FTP do
   begin
     Host := Settings.values[cE_FTPHOST];
-    UserName := nextp(Settings.values[cE_FTPUSER], '\', 0);
+    UserName := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
     password := Settings.values[cE_FTPPASSWORD];
   end;
 
