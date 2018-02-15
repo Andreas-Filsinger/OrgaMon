@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -184,6 +184,7 @@ type
   TUmsatz = record
     Datum: TAnfixdate;
     AbschlussBetrag: boolean;
+    Nachtrag: boolean;
     Betrag: double;
   end;
 
@@ -196,8 +197,10 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure addUmsatz(bDatum: TAnfixdate; bBetrag: double);
+    procedure addNachtrag(bDatum: TAnfixdate; bBetrag: double);
     procedure addAbschluss(bDatum: TAnfixdate; bBetrag: double);
     function Saldo(bDatum: TAnfixdate = ccMaxDate): double;
+    function Diagnose : TStringList;
   end;
 
   TGeldBetrag = class(TObject)
@@ -340,6 +343,7 @@ begin
     Datum := bDatum;
     Betrag := bBetrag;
     AbschlussBetrag := true;
+    Nachtrag := false;
   end;
   sorted := false;
 end;
@@ -352,6 +356,20 @@ begin
     Datum := bDatum;
     Betrag := bBetrag;
     AbschlussBetrag := false;
+    Nachtrag := false;
+  end;
+  sorted := false;
+end;
+
+procedure TSaldo.addNachtrag(bDatum: TAnfixdate; bBetrag: double);
+begin
+  SetLength(Umsatz, High(Umsatz) + 2);
+  with Umsatz[High(Umsatz)] do
+  begin
+    Datum := bDatum;
+    Betrag := bBetrag;
+    AbschlussBetrag := false;
+    Nachtrag := true;
   end;
   sorted := false;
 end;
@@ -387,13 +405,39 @@ end;
 
 procedure TSaldo.sort;
 
+  function SortStr(const tmp : TUmsatz):string;
+  begin
+    with tmp do
+    begin
+      repeat
+        result := IntToStr(Datum);
+
+        if (AbschlussBetrag=False) and (Nachtrag=False) then
+        begin
+          result := result + 'A';
+          break;
+        end;
+
+        if (AbschlussBetrag) then
+        begin
+          result := result + 'B';
+          break;
+        end;
+
+        if (Nachtrag) then
+        begin
+         result := result + 'C';
+        end;
+
+      until yet;
+    end;
+  end;
+
   function SwapIfWrong(i, j: integer): boolean;
   var
     tmp: TUmsatz;
   begin
-    result := (Umsatz[i].Datum > Umsatz[j].Datum) or
-      ((Umsatz[i].Datum = Umsatz[j].Datum) and (Umsatz[i].AbschlussBetrag) and
-      not(Umsatz[j].AbschlussBetrag));
+    result := SortStr(Umsatz[i]) > SortStr(Umsatz[j]);
     if result then
     begin
       tmp := Umsatz[i];
@@ -414,6 +458,37 @@ begin
           sorted := false;
     until sorted;
   end;
+end;
+
+function TSaldo.Diagnose : TStringList;
+var
+ n : Integer;
+ S: double;
+begin
+
+  result := TStringList.Create;
+  result.add('DATUM;BETRAG;SALDO;ABSCHLUSS');
+  S := 0;
+  for n := 0 to High(Umsatz) do
+   with Umsatz[n] do
+   begin
+     if AbschlussBetrag then
+     begin
+      result.add(
+       {} long2date(Datum)+';'+
+       {} ';'+
+       {} MoneyToStr(S)+';'+
+       {} MoneyToStr(BETRAG) );
+     end else
+     begin
+      S := S + Betrag;
+      result.add(
+       {} long2date(Datum)+';'+
+       {} MoneyToStr(BETRAG)+';'+
+       {} MoneyToStr(S)+';'+
+       {} '');
+     end;
+   end;
 end;
 
 { TMwSt }

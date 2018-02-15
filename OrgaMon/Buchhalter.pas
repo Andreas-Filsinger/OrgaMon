@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -4068,18 +4068,23 @@ end;
 procedure TFormBuchhalter.SyncKontoUmsaetze;
 var
   cBUCH: TIB_Cursor;
-  UeberweisungsText: TStringList;
-  RecN: Integer;
-  AbschlussBetrag: double;
-  DATUM: TAnfixDate;
-  ABSCHLUSSper: TAnfixDate;
+  ABSCHLUSS: TAnfixDate;
   saldo: TSaldo;
+  DebugAbschluss: TStringList;
 begin
   if Initialized then
   begin
+
     BeginHourGlass;
     ItemKontoAuszugRIDs.clear;
-    UeberweisungsText := TStringList.Create;
+    if DebugMode then
+    begin
+    DebugAbschluss := TStringList.Create;
+    DebugAbschluss.Add('DATUM;PER;ABSCHLUSS');
+    end else
+    begin
+       DebugAbschluss := nil;
+    end;
     saldo := TSaldo.Create;
 
     cBUCH := DataModuleDatenbank.nCursor;
@@ -4115,51 +4120,29 @@ begin
       open;
       DrawGrid1.RowCount := Recordcount;
       ApiFirst;
-      RecN := 0;
+      ABSCHLUSS := 0;
       while not(eof) do
       begin
         // ...
         ItemKontoAuszugRIDs.add(FieldByName('RID').AsInteger);
-        DATUM := datetime2long(FieldByName('DATUM').AsDate);
-
-        // Saldo fortführen ...
-        repeat
-
-          if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
-          begin
-            FieldByName('TEXT').AssignTo(UeberweisungsText);
-            if (UeberweisungsText.count = 1) then
-              b_r_Auszug_Homogenisiert(UeberweisungsText);
-            if (UeberweisungsText.count >= 3) then
-            begin
-              ABSCHLUSSper := Date2Long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
-              AbschlussBetrag := StrToDoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_keinElement);
-
-              if DateOK(ABSCHLUSSper) and (AbschlussBetrag <> cGeld_keinElement) then
-              begin
-                saldo.addAbschluss(ABSCHLUSSper, AbschlussBetrag);
-                break;
-              end
-              else
-              begin
-                // imp pend: Über diesen Fehler berichten!
-              end;
-
-            end;
-          end;
-
-          saldo.addUmsatz(DATUM, FieldByName('BETRAG').AsDouble);
-        until true;
-        inc(RecN);
+        b_r_SaldenFortschreibung(ABSCHLUSS,cBUCH,saldo,DebugAbschluss);
         ApiNext;
       end;
     end;
     RefreshKontoAuszugSaldo(saldo.saldo);
+    if DebugMode then
+    begin
+      DebugAbschluss.SaveToFile(DiagnosePath+'Abschluss.csv');
+      DebugAbschluss.Free;
+      DebugAbschluss := saldo.Diagnose;
+      DebugAbschluss.SaveToFile(DiagnosePath+'Saldo.csv');
+      DebugAbschluss.Free;
+    end;
     cBUCH.free;
-    UeberweisungsText.free;
     saldo.free;
     ItemKontoAuszugAll.Assign(ItemKontoAuszugRIDs);
     EndHourGlass;
+
   end;
 end;
 

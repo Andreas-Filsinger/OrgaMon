@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.332 (15.02.18) Andreas Filsinger
+
+ Neu: Konto: Salden: Buchungen, die nach einem Abschluss (am selben Tag) stattfinden werden
+      nicht mehr zum Abschluss zugehörig betrachtet. Sie werden nunmehr als "nachträglich"
+      markiert und fallen in der Sortierung nun hinter den Abschluss.
+
 Rev 8.331 (14.02.18) Andreas Filsinger
 
  Neu: Baustelle: FTPServer= ist nun optional

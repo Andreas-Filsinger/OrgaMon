@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ interface
 
 uses
   Classes, gplists,
-  anfix32;
+  anfix32, Geld, dbOrgaMon;
 
 const
   cBUCH_Farbe_Kalt = $2222FF;
@@ -139,6 +139,7 @@ function b_r_Person_ELV_Konto(Z_ELV_BLZ, Z_ELV_KONTO: string): string;
 
 // Saldo des Kontos "Konto" am "Datum"
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate = ccMaxDate): double;
+procedure b_r_SaldenFortschreibung(var ABSCHLUSS : TAnfixDate; cBUCH: TdboCursor; Saldo: TSaldo;  DebugAbschluss : TStringList = nil);
 
 // Berechnet hochgerechnete jährliche Kosten im Zeitraum
 // "Von" bis "Bis"
@@ -185,7 +186,7 @@ uses
 {$ENDIF}
   globals, html,
 
-  CareTakerClient, Geld, dbOrgaMon,
+  CareTakerClient,
   WordIndex, DCPcrypt2, DCPmd5;
 
 { TDataModuleBuchungsMotor }
@@ -1959,22 +1960,72 @@ begin
     result := e_r_sqls('select KONTO from SORTIMENT where RID=' + inttostr(SORTIMENT_R));
 end;
 
+procedure b_r_SaldenFortschreibung(var ABSCHLUSS : TAnfixDate; cBUCH: TdboCursor; Saldo: TSaldo; DebugAbschluss : TStringList = nil);
+var
+ DATUM : TAnfixDate;
+ UeberweisungsText: TStringList;
+ BETRAG: double;
+ AbschlussBetrag: double;
+begin
+  with cBUCH do
+  begin
+    DATUM := datetime2long(FieldByName('DATUM').AsDate);
+    BETRAG := FieldByName('BETRAG').AsDouble;
+
+    if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
+    begin
+      UeberweisungsText := TStringList.create;
+      e_r_sqlt(FieldByName('TEXT'), UeberweisungsText);
+
+      if (UeberweisungsText.count = 1) then
+        b_r_Auszug_Homogenisiert(UeberweisungsText);
+      if (UeberweisungsText.count >= 3) then
+      begin
+        ABSCHLUSS := Date2Long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
+        AbschlussBetrag := StrToDoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_keinElement);
+
+        if DateOK(ABSCHLUSS) and (AbschlussBetrag <> cGeld_keinElement) then
+        begin
+          saldo.addUmsatz(ABSCHLUSS, BETRAG);
+          saldo.addAbschluss(ABSCHLUSS, AbschlussBetrag);
+          if DebugMode then
+           if assigned(DebugAbschluss) then
+           DebugAbschluss.Add(
+            {} long2date(DATUM)+';'+
+            {} long2date(ABSCHLUSS)+';'+
+            {} MoneyToStr(AbschlussBetrag));
+        end
+        else
+        begin
+          saldo.addUmsatz(DATUM, BETRAG);
+          if DebugMode then
+           if assigned(DebugAbschluss) then
+           DebugAbschluss.Add(
+            {} long2date(DATUM)+';'+
+            {} cERRORText+';'+
+            {} cERRORText);
+        end;
+      end;
+      UeberweisungsText.Free;
+    end else
+    begin
+     if (DATUM=ABSCHLUSS) then
+       saldo.addNachtrag(DATUM, BETRAG)
+     else
+       saldo.addUmsatz(DATUM, BETRAG);
+    end;
+  end;
+end;
+
 function b_r_KontoSaldo(KONTO: string; Datum: TAnfixDate): double;
 var
   cBUCH: TdboCursor;
-  AbschlussBetrag: double;
-  ABSCHLUSSper: TAnfixDate;
+  ABSCHLUSS: TAnfixDate;
   saldo: TSaldo;
-
-  // Cache
-  _DATUM: TAnfixDate;
-  UeberweisungsText: TStringList;
 begin
-
-  UeberweisungsText := TStringList.create;
   saldo := TSaldo.create;
   cBUCH := nCursor;
-
+  ABSCHLUSS:= 0;
   with cBUCH do
   begin
     sql.add('select');
@@ -1992,44 +2043,12 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      // ...
-      e_r_sqlt(FieldByName('TEXT'), UeberweisungsText);
-      _DATUM := datetime2long(FieldByName('DATUM').AsDateTime);
-
-      // Saldo fortführen ...
-      repeat
-
-        if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
-        begin
-          if (UeberweisungsText.count = 1) then
-            b_r_Auszug_Homogenisiert(UeberweisungsText);
-          if (UeberweisungsText.count >= 3) then
-          begin
-            ABSCHLUSSper := date2long(nextp(UeberweisungsText[UeberweisungsText.count - 3], 'PER', 1));
-            AbschlussBetrag := strtodoubledef(UeberweisungsText[pred(UeberweisungsText.count)], cGeld_KeinElement);
-
-            if DateOK(ABSCHLUSSper) and (AbschlussBetrag <> cGeld_KeinElement) then
-            begin
-              saldo.addAbschluss(ABSCHLUSSper, AbschlussBetrag);
-              break;
-            end
-            else
-            begin
-              // imp pend: Über diesen Fehler berichten!
-              // dabei BUCH_R verwenden
-            end;
-
-          end;
-        end;
-        saldo.addUmsatz(_DATUM, FieldByName('BETRAG').AsFloat);
-      until yet;
+      b_r_SaldenFortschreibung(ABSCHLUSS,cBUCH,saldo);
       ApiNext;
     end;
   end;
   result := saldo.saldo(Datum);
-
   cBUCH.Free;
-  UeberweisungsText.Free;
   saldo.Free;
 end;
 
