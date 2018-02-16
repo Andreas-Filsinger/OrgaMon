@@ -1969,8 +1969,8 @@ var
 begin
   with cBUCH do
   begin
-    DATUM := datetime2long(FieldByName('DATUM').AsDate);
-    BETRAG := FieldByName('BETRAG').AsDouble;
+    DATUM := datetime2long(FieldByName('DATUM').AsDateTime);
+    BETRAG := FieldByName('BETRAG').AsFloat;
 
     if (FieldByName('VORGANG').AsString = cVorgang_Abschluss) then
     begin
