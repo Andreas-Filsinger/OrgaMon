@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.333 (19.02.18) Andreas Filsinger
+
+ Neu: Foto: Unterverzeichnisse: ~fx~,~baustelle~,~geraet~ und ~art~ nun möglich
+
 Rev 8.332 (15.02.18) Andreas Filsinger
 
  Neu: Konto: Salden: Buchungen, die nach einem Abschluss (am selben Tag) stattfinden werden

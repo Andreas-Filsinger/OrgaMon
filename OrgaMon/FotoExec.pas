@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015 - 2017  Andreas Filsinger
+  |    Copyright (C) 2015 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -452,6 +452,7 @@ var
   Id: string;
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
+  AuftragArt: string;
   FotoGeraeteNo: string;
   FotoParameter: string;
   FotoUserAndPath: string;
@@ -823,7 +824,8 @@ begin
               sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
               sFotoCall.Values[cParameter_foto_RID] := InttoStr(RID);
 
-              sFotoCall.Values[cParameter_foto_ART] := art;
+              AuftragArt := Art;
+              sFotoCall.Values[cParameter_foto_ART] := Art;
               sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_ReglerNummer_neu] := Reglernummer_neu;
@@ -881,6 +883,12 @@ begin
           // Fotoziel ist der Name der Internet-Ablage nicht 1:1 der Ablage-Pfad
           FotoZiel := e_r_FTP_LoginUser(FotoUserAndPath);
           FotoUnterverzeichnis := e_r_FTP_SourcePath(FotoUserAndPath);
+
+          // Dinge, die im Pfad angegeben werden können
+          { cParameter_foto_parameter } ersetze('~fx~', FotoParameter, FotoUnterverzeichnis);
+          { cParameter_foto_baustelle } ersetze('~baustelle~', sBaustelle, FotoUnterverzeichnis);
+          { cParameter_foto_ART } ersetze('~art~', AuftragArt, FotoUnterverzeichnis);
+          { cParameter_foto_geraet } ersetze('~geraet~', FotoGeraeteNo, FotoUnterverzeichnis);
 
           repeat
 
