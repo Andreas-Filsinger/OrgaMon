@@ -2419,7 +2419,7 @@ begin
     end;
 
     // Verzeichnis- und Unterverzeichnis-Liste anlegen
-    Ablage_VERZEICHNISSE := dirs(Ablage_PFAD);
+    Ablage_VERZEICHNISSE := anfix32.dirs(Ablage_PFAD);
     Ablage_VERZEICHNISSE.sort;
 
     Ablage_VERZEICHNISSE.Insert(0,'');
@@ -2428,7 +2428,7 @@ begin
       Ablage_VERZEICHNISSE[a] := ValidatePathName(Ablage_PFAD + Ablage_VERZEICHNISSE[a]) + '\';
       if not(FileExists(Ablage_VERZEICHNISSE[a]+'index.php')) then
       begin
-       Log(cINFOText + ' In Ablage "' + Ablage_NAME + '"  wird das Verzeichnis "' + Ablage_VERZEICHNISSE[a] + '" ignoriert');
+       Log(cINFOText + ' In Ablage "' + Ablage_NAME + '" wird das Verzeichnis "' + Ablage_VERZEICHNISSE[a] + '" ignoriert');
        Ablage_VERZEICHNISSE.delete(a);
       end;
     end;
@@ -2461,6 +2461,7 @@ begin
           Log(cERRORText + ' :serviceHTML(' + Ablage_PFAD + '): ' + E.ClassName + ': ' + E.Message);
       end;
     end;
+
     Ablage_VERZEICHNISSE.Free;
 
   end;

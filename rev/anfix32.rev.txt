@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.064 (20.02.18) Andreas Filsinger
+
+ Bug: dirs listete auch Files
+
 Rev 1.063 (27.05.14) Andreas Filsinger
 
  Bug: LoadFromFileCSV_LF insert random character every 32 k

@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.063; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.064; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -115,6 +115,10 @@ const
 
   // TMP-Dateien
   cTmpFileExtension = '.$$$';
+
+  // dir Datei Masken
+  cDirMask_Directory = '*.';
+  cDirMask_All       = '*'; // NOT *.*
 
   //
   // Erhöhung der Lesbarkeit des Quelltextes
@@ -412,8 +416,8 @@ procedure SystemLog(Event: string); // system sysutils
 
 // Directory Funktionen
 procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true; ClearList: boolean = true); overload;
-function dir(const Mask: string): integer; overload;
-function dirs(const Path: string): TStringList; // Liste der Unterverzeichnisse
+function dir(const Mask: string): integer; overload; // Anzahl von Dateien in diesem Verzeichnis
+function dirs(const Path: string): TStringList; // Liste der Unterverzeichnisse, ohne ".", "..", ".*"
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
 function DirQuota(const Mask: string; SizeLimit: int64): boolean;
@@ -3623,13 +3627,12 @@ end;
 
 {$endif}
 
-
 function dir(const Mask: string): integer; overload;
 var
   x: TStringList;
 begin
   x := TStringList.create;
-  dir(Mask, x);
+  dir(Mask, x, false, false);
   result := x.Count;
   x.free;
 end;
@@ -3651,11 +3654,9 @@ begin
     // beliebige Unterverzeichnisse mit ausgeben!
     SubDirs := TStringList.create;
     AllResults := TStringList.create;
-    dir(copy(Mask, 1, k) + '*.', SubDirs, false);
+    dir(copy(Mask, 1, k) + cDirMask_Directory, SubDirs, false, false);
     for n := 0 to pred(SubDirs.Count) do
     begin
-      if (pos('.', SubDirs[n]) = 1) then
-        continue;
       NewMask := Mask;
       ersetze('\*\', '\' + SubDirs[n] + '\', NewMask);
       dir(NewMask, FileNames, uppercase);
@@ -3669,19 +3670,42 @@ begin
   else
   begin
 
-    // suchen nach Verzeichnissen
-    if revPos('.', Mask) = length(Mask) then
-      fr := findfirst(Mask, faDirectory, sr)
-    else
-      fr := findfirst(Mask, faAnyFile - faDirectory, sr);
-    while (fr = 0) do
-    begin
-      if uppercase then
-        FileNames.add(AnsiUpperCase(sr.Name))
-      else
-        FileNames.add(sr.Name);
+    // suchen nach Verzeichnissen? In der Regel angezeigt durch
+    // *. als ein Punkt am Ende. *X. oder X*. sind auch Suchen
+    // nach Unterverzeichnis-Namen
+    k := revPos('.', Mask);
 
-      fr := FindNext(sr);
+    if (k = length(Mask)) then
+    begin
+      fr := findfirst(copy(Mask,1,pred(k)), faDirectory, sr);
+      while (fr = 0) do
+      begin
+        // sorry, have to double check the Attribute!
+        // The Mask in findfirst means "additional" things to "Files"
+        if (sr.Attr and faDirectory = faDirectory) then
+          // unwanted, hidden subDirs
+          // we dont want ".","..",".help", ".wine"
+          // these are hidden SubDirs
+          if (pos('.',sr.Name)<>1) then
+          begin
+            if uppercase then
+              FileNames.add(AnsiUpperCase(sr.Name))
+            else
+              FileNames.add(sr.Name);
+          end;
+        fr := FindNext(sr);
+      end;
+    end else
+    begin
+      fr := findfirst(Mask, faAnyFile - faDirectory, sr);
+      while (fr = 0) do
+      begin
+        if uppercase then
+          FileNames.add(AnsiUpperCase(sr.Name))
+        else
+          FileNames.add(sr.Name);
+        fr := FindNext(sr);
+      end;
     end;
     findclose(sr);
   end;
@@ -3689,16 +3713,17 @@ end;
 
 function dirs(const Path: string): TStringList;
 
-  procedure add(const Path: string);
+  procedure addSubs(const Path: string);
   var
     sPath: TStringList;
     n: integer;
   begin
     sPath := TStringList.create;
-    dir(Path + '*.', sPath, false);
+    dir(Path + cDirMask_Directory, sPath, false);
     for n := 0 to pred(sPath.Count) do
       if (sPath[n] <> '.') and (sPath[n] <> '..') then
         result.add(sPath[n]);
+    sPath.free;
   end;
 
 var
@@ -3706,7 +3731,7 @@ var
   s: TStringList;
 begin
   result := TStringList.create;
-  add(Path);
+  addSubs(Path);
   for n := 0 to pred(result.Count) do
   begin
     s := dirs(Path + result[n] + '\');
