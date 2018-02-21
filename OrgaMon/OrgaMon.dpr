@@ -54,7 +54,7 @@ uses
   NatuerlicheResourcen in 'NatuerlicheResourcen.pas' {FormNatuerlicheResourcen},
   Datensicherung in 'Datensicherung.pas' {FormDatensicherung},
   BaseUpdate in 'BaseUpdate.pas' {FormBaseUpdate},
-  Scanner in 'Scanner.pas' {FormScanner},
+  ArtikelAusgang in 'ArtikelAusgang.pas' {FormArtikelAusgang},
   PreAuftrag in 'PreAuftrag.pas' {FormPreAuftrag},
   ArtikelPakete in 'ArtikelPakete.pas' {FormArtikelPakete},
   ArtikelNeu in 'ArtikelNeu.pas' {FormArtikelNeu},
@@ -203,8 +203,8 @@ uses
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
   ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
-  PageControlTest in 'PageControlTest.pas' {FormPageControlTest},
-  systemd in '..\PASconTools\systemd.pas';
+  systemd in '..\PASconTools\systemd.pas',
+  ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang};
 
 {$R *.RES}
 
@@ -263,7 +263,7 @@ begin
   Application.CreateForm(TFormNatuerlicheResourcen, FormNatuerlicheResourcen);
   Application.CreateForm(TFormDatensicherung, FormDatensicherung);
   Application.CreateForm(TFormBaseUpdate, FormBaseUpdate);
-  Application.CreateForm(TFormScanner, FormScanner);
+  Application.CreateForm(TFormArtikelAusgang, FormArtikelAusgang);
   Application.CreateForm(TFormPreAuftrag, FormPreAuftrag);
   Application.CreateForm(TFormArtikelPakete, FormArtikelPakete);
   Application.CreateForm(TFormArtikelNeu, FormArtikelNeu);
@@ -354,7 +354,7 @@ begin
   Application.CreateForm(TFormServiceApp, FormServiceApp);
   Application.CreateForm(TFormServiceFoto, FormServiceFoto);
   Application.CreateForm(TFormArtikelAusgabeartAuswahl, FormArtikelAusgabeartAuswahl);
-  Application.CreateForm(TFormPageControlTest, FormPageControlTest);
+  Application.CreateForm(TFormArtikelEingang, FormArtikelEingang);
   Application.Run;
 end.
 

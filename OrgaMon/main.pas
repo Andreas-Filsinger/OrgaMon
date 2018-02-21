@@ -157,6 +157,7 @@ type
     JvAppIniFileStorage1: TJvAppIniFileStorage;
     Button54: TButton;
     Button91: TButton;
+    Button47: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -258,6 +259,7 @@ type
     procedure Button90Click(Sender: TObject);
     procedure Button91Click(Sender: TObject);
     procedure Button54Click(Sender: TObject);
+    procedure Button47Click(Sender: TObject);
   private
     { Private-Deklarationen }
     FirstStarted: boolean;
@@ -295,8 +297,8 @@ uses
   BaseUpdate, ArtikelVerlag,
   AusgabeArt, Prorata, Aktion,
   BestellArbeitsplatz, WebShopConnector,
-  NatuerlicheResourcen, Scanner, PlakatDruck,
-  ArtikelPakete, ArtikelRang,
+  NatuerlicheResourcen, ArtikelAusgang, PlakatDruck,
+  ArtikelPakete, ArtikelRang, ArtikelEingang,
   ArtikelLeistung, Replikation,
   ArtikelKategorie, Mahnung,
   Bearbeiter, OLAP,
@@ -608,7 +610,7 @@ begin
     begin
       if pos(AnsiUpperCase(noblank(Computername)) + ',',
         AnsiUpperCase(noblank(iScannerHost) + ',')) > 0 then
-        FormScanner.doActivate(true);
+        FormArtikelAusgang.doActivate(true);
       if pos(AnsiUpperCase(noblank(Computername)) + ',',
         AnsiUpperCase(noblank(iMagnetoHost) + ',')) > 0 then
       begin
@@ -640,8 +642,9 @@ begin
 
     Button56.enabled := (iSchnelleRechnung_PERSON_R >= cRID_FirstValid);
 
-    // Scanner
     JvAppIniFileStorage1.FileName := AnwenderPath + 'Formularpositionen.ini';
+
+    // Scanner (ArtikelAusgang)
     Button49.enabled := true;
 
     EndHourGlass;
@@ -775,6 +778,11 @@ begin
   FormBestellArbeitsplatz.show;
 end;
 
+procedure TFormMain.Button47Click(Sender: TObject);
+begin
+ FormArtikelEingang.Show;
+end;
+
 procedure TFormMain.Button35Click(Sender: TObject);
 begin
   FormWebShopConnector.show;
@@ -797,7 +805,7 @@ end;
 
 procedure TFormMain.Button49Click(Sender: TObject);
 begin
-  FormScanner.show;
+  FormArtikelAusgang.show;
 end;
 
 procedure TFormMain.Button51Click(Sender: TObject);
@@ -995,7 +1003,7 @@ begin
   begin
     repeat
       if (sHotKeys[Index] = 'Scanner') then
-        FormScanner.hotEvent;
+        FormArtikelAusgang.hotEvent;
       if (sHotKeys[Index] = 'EC-Karte') then
         FormZahlungECconnect.hotEvent;
       if (sHotKeys[Index] = 'Menü') then

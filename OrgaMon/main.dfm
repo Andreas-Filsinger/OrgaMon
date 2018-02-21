@@ -966,7 +966,7 @@ object FormMain: TFormMain
     Top = 393
     Width = 74
     Height = 25
-    Caption = 'Scanner'
+    Caption = 'Ausgang'
     Enabled = False
     TabOrder = 35
     OnClick = Button49Click
@@ -1618,6 +1618,15 @@ object FormMain: TFormMain
     Caption = 'App'
     TabOrder = 97
     OnClick = Button91Click
+  end
+  object Button47: TButton
+    Left = 154
+    Top = 107
+    Width = 74
+    Height = 25
+    Caption = 'Eingang'
+    TabOrder = 98
+    OnClick = Button47Click
   end
   object Timer1: TTimer
     Enabled = False

@@ -201,7 +201,6 @@ type
     Edit13: TEdit;
     Panel7: TPanel;
     Button22: TButton;
-    Button24: TButton;
     Panel8: TPanel;
     SpeedButton37: TSpeedButton;
     SpeedButton44: TSpeedButton;
@@ -323,7 +322,6 @@ type
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
-    procedure Button24Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -459,25 +457,24 @@ var
 implementation
 
 uses
-  Math, globals,
-  Geld, Jvgnugettext,
-  CareTakerClient,
-  Datenbank, main,
+  Math,
 
+  html, Geld, Jvgnugettext,
+  wanfix32,InfoZip,
+  globals, dbOrgaMon,
+  REST,
+  GUIhelp,
+  ExcelHelper, CareServer, CareTakerClient,
+  Datenbank, main,
   Funktionen_Basis,
   Funktionen_Buch,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_Transaktion,
   Funktionen_LokaleDaten,
-  Bearbeiter, html,
-  Buchung,
-  Person, Belege, Ausgangsrechnungen,
-  PersonSuche,
-  ExcelHelper, CareServer, OLAP,
-
-  REST, dbOrgaMon, wanfix32,
-  GUIhelp, PageControlTest, InfoZip;
+  Bearbeiter, Buchung, Person,
+  Belege, Ausgangsrechnungen, PersonSuche,
+  OLAP;
 {$R *.dfm}
 
 const
@@ -2140,11 +2137,6 @@ begin
     openShell(WorkPath);
   end;
 
-end;
-
-procedure TFormBuchhalter.Button24Click(Sender: TObject);
-begin
- FormPageControlTest.show;
 end;
 
 procedure TFormBuchhalter.Button2Click(Sender: TObject);
