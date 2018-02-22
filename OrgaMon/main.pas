@@ -609,14 +609,20 @@ begin
     if not(pDisableHotkeys) then
     begin
       if pos(AnsiUpperCase(noblank(Computername)) + ',',
-        AnsiUpperCase(noblank(iScannerHost) + ',')) > 0 then
+        AnsiUpperCase(noblank(iArtikelAusgang_ScannerHost) + ',')) > 0 then
         FormArtikelAusgang.doActivate(true);
+
+      if pos(AnsiUpperCase(noblank(Computername)) + ',',
+        AnsiUpperCase(noblank(iArtikelEingang_ScannerHost) + ',')) > 0 then
+        FormArtikelEingang.doActivate(true);
+
       if pos(AnsiUpperCase(noblank(Computername)) + ',',
         AnsiUpperCase(noblank(iMagnetoHost) + ',')) > 0 then
       begin
         FormZahlungECconnect.doActivate(true);
         FormBuchBarKasse.Swap;
       end;
+
       registerHot('Menü', [hkAlt], vkf10, true);
     end;
     sSystemSettings.Free;

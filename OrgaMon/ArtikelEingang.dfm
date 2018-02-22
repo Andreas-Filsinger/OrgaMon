@@ -3,7 +3,7 @@ object FormArtikelEingang: TFormArtikelEingang
   Top = 122
   Caption = 'Artikel Eingang'
   ClientHeight = 286
-  ClientWidth = 575
+  ClientWidth = 598
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -14,16 +14,16 @@ object FormArtikelEingang: TFormArtikelEingang
   OnActivate = FormActivate
   OnResize = FormResize
   DesignSize = (
-    575
+    598
     286)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
     Left = 7
     Top = 4
-    Width = 229
+    Width = 236
     Height = 14
-    Caption = 'OrgaMon'#8482' Barcode Beleg Scanner'
+    Caption = 'OrgaMon'#8482' Barcode Artikel Scanner'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -128,7 +128,7 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton2Click
   end
   object Image1: TImage
-    Left = 512
+    Left = 535
     Top = 2
     Width = 54
     Height = 22
@@ -252,6 +252,7 @@ object FormArtikelEingang: TFormArtikelEingang
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000}
     OnClick = Image1Click
+    ExplicitLeft = 512
   end
   object SpeedButton3: TSpeedButton
     Left = 152
@@ -295,7 +296,7 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton3Click
   end
   object SpeedButton4: TSpeedButton
-    Left = 434
+    Left = 457
     Top = 31
     Width = 23
     Height = 22
@@ -331,9 +332,10 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton4Click
+    ExplicitLeft = 434
   end
   object SpeedButton5: TSpeedButton
-    Left = 409
+    Left = 432
     Top = 31
     Width = 23
     Height = 22
@@ -385,6 +387,7 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton5Click
+    ExplicitLeft = 409
   end
   object Edit1: TEdit
     Left = 33
@@ -430,16 +433,16 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = CheckBox1Click
   end
   object Button5: TButton
-    Left = 34
-    Top = 32
+    Left = 396
+    Top = 31
     Width = 22
     Height = 21
-    Caption = '&B'
+    Caption = '&O'
     TabOrder = 4
     OnClick = Button5Click
   end
   object Button6: TButton
-    Left = 60
+    Left = 34
     Top = 32
     Width = 21
     Height = 21
@@ -462,7 +465,7 @@ object FormArtikelEingang: TFormArtikelEingang
       'Fehler')
   end
   object Button11: TButton
-    Left = 543
+    Left = 566
     Top = 31
     Width = 23
     Height = 22
@@ -479,6 +482,7 @@ object FormArtikelEingang: TFormArtikelEingang
     ShowHint = True
     TabOrder = 7
     OnClick = Button11Click
+    ExplicitLeft = 543
   end
   object Button7: TButton
     Left = 320
@@ -495,7 +499,7 @@ object FormArtikelEingang: TFormArtikelEingang
   object DrawGrid1: TDrawGrid
     Left = 152
     Top = 59
-    Width = 414
+    Width = 437
     Height = 192
     Margins.Left = 4
     Margins.Top = 4
@@ -515,13 +519,14 @@ object FormArtikelEingang: TFormArtikelEingang
     TabOrder = 9
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
+    ExplicitWidth = 414
     ColWidths = (
       64)
     RowHeights = (
       80)
   end
   object StaticText1: TStaticText
-    Left = 464
+    Left = 487
     Top = 31
     Width = 73
     Height = 25
@@ -542,6 +547,7 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentFont = False
     TabOrder = 10
     Transparent = False
+    ExplicitLeft = 464
   end
   object Button2: TButton
     Left = 349
@@ -557,13 +563,12 @@ object FormArtikelEingang: TFormArtikelEingang
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
-      ' MENGE_RECHNUNG,'
+      ' MENGE_ERWARTET,'
       ' TEILLIEFERUNG'
       'FROM '
-      ' BELEG '
+      ' BBELEG '
       'WHERE '
-      ' (RID=:CROSSREF1) AND'
-      ' (GENERATION=:CROSSREF2)')
+      ' (RID=:CROSSREF1)')
     Left = 32
     Top = 70
   end

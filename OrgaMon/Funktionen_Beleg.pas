@@ -8400,7 +8400,8 @@ begin
   iShopKonto := sSystemSettings.values['ShopKonto'];
   iShopLink := sSystemSettings.values['ShopLink'];
   iShopMP3 := sSystemSettings.values['ShopMP3'];
-  iScannerHost := sSystemSettings.values['ScannerHost'];
+  iArtikelAusgang_ScannerHost := sSystemSettings.values['ScannerHost'];
+  iArtikelEingang_ScannerHost := sSystemSettings.values['ArtikelEingangScannerHost'];
   iScannerAutoBuchen := sSystemSettings.values['ScannerAutoBuchen'] <> cIni_DeActivate;
   iLabelHost := sSystemSettings.values['LabelHost'];
   iKasseHost := sSystemSettings.values['KassenHost'];

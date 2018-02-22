@@ -193,6 +193,8 @@ type
     function locate(Col: string; sValue: string): integer; overload; // [row]
     function locateDuplicates(Col: integer; sValue: string; CompareType: eTsCompareType = TsIdentical): TgpIntegerList;
     // [array of row]
+
+    // Search for "sValue" in Col, starting at Row, return first Hit!
     function next(Row, Col: integer; sValue: string): integer; overload; // [row]
     function next(Row: integer; Col, sValue: string): integer; overload; // [row]
 

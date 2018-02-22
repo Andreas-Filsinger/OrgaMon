@@ -32,18 +32,21 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  anfix32, wordindex,
-  StdCtrls, IB_Components, IB_Access,
-  ExtCtrls,
-  Buttons, jpeg, Datenbank,
+  StdCtrls, Vcl.Grids, ExtCtrls,
+  Buttons, jpeg,
 
-  // Jedi
-  JvExExtCtrls, JvComponent, JvClock,
+  // Tools
+  anfix32, wordindex, Datenbank,
+
+  // IBO
+  IB_Components, IB_Access,
 
   // Indy
   IdBaseComponent, IdComponent, IdUDPBase,
-  IdUDPClient, IdSNTP, JvExtComponent, Vcl.Grids, JvComponentBase,
-  JvFormPlacement, JvAppStorage;
+  IdUDPClient, IdSNTP,
+
+  // Jedi
+  JvFormPlacement, JvAppStorage, JvComponentBase;
 
 type
   TFormArtikelEingang = class(TForm)
@@ -98,15 +101,14 @@ type
     SCAN_LIST: TsTable;
 
     // Parameter der aktuellen Beleg-Ansicht
-    SL_BELEG_R: Integer;
-    SL_GENERATION: Integer;
+    SL_BBELEG_R: Integer;
     SL_LabelDruck: boolean;
     SL_Teillieferung: Integer;
     SL_ScanPrefix: string;
 
-    function Selected_BELEG_R: Integer;
+    function Selected_BBELEG_R: Integer;
     function Selected_PERSON_R: Integer;
-    procedure SL_load(BELEG_R: Integer);
+    procedure SL_load(BBELEG_R: Integer);
     procedure SL_refresh; // Full Rebuild
     procedure SL_show;
     procedure SL_reflect; // Data Change
@@ -160,12 +162,12 @@ uses
   GUIhelp, CareTakerClient, Belege,
   Person, main, VersenderPaketID,
 
-  Artikel;
+  Artikel, bbelege, FolgeSetzen;
 
 {$R *.dfm}
 
 const
-  SCAN_LIST_MENGE_RECHNUNG = 0;
+  SCAN_LIST_MENGE_ERWARTET = 0;
   SCAN_LIST_ARTIKEL = 1;
   SCAN_LIST_GTIN = 2;
   SCAN_LIST_ARTIKEL_R = 3;
@@ -173,32 +175,45 @@ const
   SCAN_LIST_AUSGABEART_R = 5;
   SCAN_LIST_LAGER = 6;
   SCAN_LIST_VERLAG = 7;
+  SCAN_LIST_BBELEG_R = 8;
+  SCAN_LIST_BPOSTEN_R = 9;
 
 procedure TFormArtikelEingang.Button11Click(Sender: TObject);
 begin
-  doBuchen;
+//  doBuchen;
+ ShowMessage('Noch keine Idee für diesen Knopf');
+
 end;
 
 procedure TFormArtikelEingang.Button1Click(Sender: TObject);
 var
   ganzerScan: string;
 begin
+
   ganzerScan := Edit1.Text;
 
   if (ganzerScan <> '') then
   begin
 
+
+    // Historie oben anzeigen
     ListBox1.items.add(ganzerScan);
     ListBox1.ItemIndex := pred(ListBox1.items.count);
+
+    // für die Liste sorgen
+    if not(assigned(SCAN_LIST)) then
+    begin
+      BeginHourGlass;
+      SL_load(cRID_unset);
+      SL_show;
+      EndHourGlass;
+    end;
+
     repeat
 
-      // Sonder-Scan "Paket IDs verarbeiten"
+      // Sonder-Scans aus ArtikelAusgang
       if (ganzerScan = '+00000-') then
       begin
-        FormVersenderPaketID.Execute;
-        WinAmpPlayFile(SoundPath + 'SUCCESS.WAV');
-        Edit1.Text := '';
-
         break;
       end;
 
@@ -301,7 +316,7 @@ end;
 procedure TFormArtikelEingang.doActivate(active: boolean);
 begin
   // register callback "hotEvent"
-  FormMain.registerHot('Scanner', [], vkF2, active);
+  FormMain.registerHot('ArtikelEingangScanner', [], vkF2, active);
 
   // set
   if (active <> CheckBox1.Checked) then
@@ -381,14 +396,14 @@ procedure TFormArtikelEingang.doBelegScan(ganzerScan: string);
 var
   Scan: string;
   ErrorMsg: string;
-  MENGE_RECHNUNG: Integer;
+  MENGE_ERWARTET: Integer;
   n: Integer;
   EventText: TStringList;
   qEREIGNIS: TIB_Query;
 begin
 
   // Scan-Ereignis!
-  MENGE_RECHNUNG := 0;
+  MENGE_ERWARTET := 0;
   ErrorMsg := '';
   SL_LabelDruck := false;
 
@@ -421,13 +436,12 @@ begin
         end;
 
       // restliche Parameter!
-      SL_BELEG_R := StrToIntDef(nextp(Scan, '-', 0), cRID_Null);
-      SL_GENERATION := StrToIntDef(nextp(Scan, '-', 1), 0);
+      SL_BBELEG_R := StrToIntDef(nextp(Scan, '-', 0), cRID_Null);
 
       // Plausibilisierung "BELEG_R"
-      if (SL_BELEG_R >= cRID_FirstValid) then
-        if not(e_r_IsRID('BELEG_R', SL_BELEG_R)) then
-          SL_BELEG_R := cRID_Null;
+      if (SL_BBELEG_R >= cRID_FirstValid) then
+        if not(e_r_IsRID('BBELEG_R', SL_BBELEG_R)) then
+          SL_BBELEG_R := cRID_Null;
 
       // Ganzen Scan loggen
       with qEREIGNIS do
@@ -435,25 +449,24 @@ begin
         insert;
         FieldByName('ART').AsInteger := eT_BelegScan;
         FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        EventText.add('Scan ' + ganzerScan);
-        if (SL_BELEG_R >= cRID_FirstValid) then
-          FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
+        EventText.add('Eingang ' + ganzerScan);
+        if (SL_BBELEG_R >= cRID_FirstValid) then
+          FieldByName('BBELEG_R').AsInteger := SL_BBELEG_R;
         FieldByName('INFO').assign(EventText);
         post;
       end;
 
-      // Prüfung, ob BELEG_R ok ist
-      if (SL_BELEG_R = cRID_Null) then
+      // Prüfung, ob VBELEG_R ok ist
+      if (SL_BBELEG_R = cRID_Null) then
       begin
-        ErrorMsg := 'Beleg ' + Scan + ' wurde nicht gefunden!';
+        ErrorMsg := 'Order ' + Scan + ' wurde nicht gefunden!';
         break;
       end;
 
       // Beleg-Daten nachladen
       with IB_Cursor1 do
       begin
-        ParamByName('CROSSREF1').AsInteger := SL_BELEG_R;
-        ParamByName('CROSSREF2').AsInteger := SL_GENERATION;
+        ParamByName('CROSSREF1').AsInteger := SL_BBELEG_R;
         open;
         if eof then
         begin
@@ -464,7 +477,7 @@ begin
         end
         else
         begin
-          MENGE_RECHNUNG := FieldByName('MENGE_RECHNUNG').AsInteger;
+          MENGE_ERWARTET := FieldByName('MENGE_ERWARTET').AsInteger;
           SL_Teillieferung := FieldByName('TEILLIEFERUNG').AsInteger;
         end;
         close;
@@ -472,9 +485,9 @@ begin
       if (ErrorMsg <> '') then
         break;
 
-      if (MENGE_RECHNUNG = 0) then
+      if (MENGE_ERWARTET = 0) then
       begin
-        ErrorMsg := 'Die Rechnungsmenge des Beleges ist 0!';
+        ErrorMsg := 'Die erwartete Menge des Order-Beleges ist 0!';
         break;
       end;
 
@@ -490,7 +503,7 @@ begin
       end;
 
       // Liste füllen
-      SL_load(SL_BELEG_R);
+      SL_load(SL_BBELEG_R);
       SL_show;
 
     except
@@ -537,11 +550,13 @@ begin
 
   repeat
 
-    if not(assigned(SCAN_LIST)) or (SL_BELEG_R < cRID_FirstValid) then
+    if not(assigned(SCAN_LIST)) or (SL_BBELEG_R < cRID_FirstValid) then
     begin
-      ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
-        'Oder in der Form' + #13 + '"+" | "-" ~Belegnummer~ "-" ~Generation~' +
-        #13 + 'eingeben und mit <ENTER> abschliessen';
+      ErrorMsg :=
+       { } 'Bitte erst eine Belegnummer scannen' + #13 +
+       { } 'Oder in der Form' + #13 +
+       { } '"+" | "-" ~Belegnummer~ "-" ~Generation~' + #13 +
+       { } 'eingeben und mit <ENTER> abschliessen';
       break;
     end;
 
@@ -557,51 +572,6 @@ begin
     try
 
       // Beleg buchen / Ausgabe / Versand vorbereiten
-      if (e_w_BelegBuchen(SL_BELEG_R, SL_LabelDruck)='') then
-      begin
-        ErrorMsg := 'Fehler bei BelegBuchen';
-        break;
-      end;
-
-      // Den Versender noch einstellen
-      // Welcher Versender?!
-      if (SL_ScanPrefix <> '') then
-        VERSENDER_R := e_r_sql('select RID from VERSENDER where LOGO=''' +
-          SL_ScanPrefix + '''');
-      VERSAND_R := e_r_sql('select RID from VERSAND where' + ' (BELEG_R=' +
-        IntTostr(SL_BELEG_R) + ') and' + ' (TEILLIEFERUNG=' +
-        IntTostr(SL_Teillieferung) + ')');
-      if (VERSAND_R >= cRID_FirstValid) then
-        if (VERSENDER_R >= cRID_FirstValid) then
-          e_x_sql(
-            { } 'update VERSAND set ' +
-            { } ' VERSENDER_R=' + IntTostr(VERSENDER_R) + ' ' +
-            { } 'where' +
-            { } ' (RID=' + IntTostr(VERSAND_R) + ')');
-
-      if not(SL_LabelDruck) then
-      begin
-        EventText.clear;
-        with qEREIGNIS do
-        begin
-          insert;
-          FieldByName('ART').AsInteger := eT_PaketIDErhalten;
-          FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
-          FieldByName('VERSAND_R').AsInteger := VERSAND_R;
-          EventText.add('Versand ohne Paket-ID!');
-          FieldByName('INFO').assign(EventText);
-          post;
-        end;
-      end;
-      with IB_Query1 do
-      begin
-        insert;
-        FieldByName('BELEG_R').AsInteger := SL_BELEG_R;
-        FieldByName('GENERATION').AsInteger := SL_GENERATION;
-        FieldByName('ART').AsString := SL_ScanPrefix;
-        FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
-        post;
-      end;
 
     except
       on E: Exception do
@@ -685,11 +655,12 @@ procedure TFormArtikelEingang.DrawGrid1DrawCell(Sender: TObject; ACol, ARow: Int
   Rect: TRect; State: TGridDrawState);
 var
   Fokusiert: boolean;
-  MENGE_RECHNUNG, MENGE_SCAN, MENGE_REST: Integer;
+  MENGE_ERWARTET, MENGE_SCAN, MENGE_REST: Integer;
   AUSGABEART_R: Integer;
   AUSGABEART_NAME, Artikel: string;
   GTIN: string;
   TXT: string;
+  LASTONE: boolean;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -716,43 +687,36 @@ begin
       if assigned(SCAN_LIST) then
       begin
 
-        (* Im Falle von Status "Markiert"
-          if Fokusiert then
-          begin
-          brush.color := HTMLColor2TColor($CCFFFF); // $99FF00
-          end
-          else
-          begin
-          if odd(ARow) then
-          begin
-          brush.color := HTMLColor2TColor($00CCFF);
-          end
-          else
-          begin
-          brush.color := HTMLColor2TColor($0099CC);
-          end;
-          end;
+        repeat
 
-          // Bereichnung der Zeilen Höhe
-          RowHeight := max(cPlanY * 2, cPlanY * UeberweisungsText.count)
-          + dpiX(2);
-          if (RowHeight <> DrawGrid1.RowHeights[ARow]) then
-          begin
-          DrawGrid1.RowHeights[ARow] := RowHeight;
-          UeberweisungsText.free;
-          exit;
-          end;
-        *)
+         if (ARow<1) then
+         begin
+          LASTONE := false;
+          break;
+         end;
+
+         if (ARow=SCAN_LIST.RowCount) then
+         begin
+          LASTONE := true;
+          break;
+         end;
+
+         LASTONE :=
+          {} SCAN_LIST.readCell(ARow,SCAN_LIST_BBELEG_R)<>
+          {} SCAN_LIST.readCell(ARow+1,SCAN_LIST_BBELEG_R);
+
+        until yet;
+
         case ACol of
           0:
             begin
 
               if (ARow > 0) then
               begin
-                MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(ARow, 0), 0);
-                MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(ARow, 4), 0);
-                MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
-                if MENGE_RECHNUNG > MENGE_SCAN then
+                MENGE_ERWARTET := StrToIntDef(SCAN_LIST.readCell(ARow, SCAN_LIST_MENGE_ERWARTET), 0);
+                MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(ARow, SCAN_LIST_MENGE_SCAN), 0);
+                MENGE_REST := MENGE_ERWARTET - MENGE_SCAN;
+                if (MENGE_ERWARTET > MENGE_SCAN) then
                 begin
                   GTIN := SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN);
                   if (GTIN <> sRID_NULL) then
@@ -771,7 +735,6 @@ begin
                 end;
 
                 // MENGE
-
                 FillRect(Rect);
                 font.size := 11;
                 TextOut(Rect.left + 2, Rect.top,
@@ -885,6 +848,15 @@ begin
           MoveTo(Rect.left, Rect.top);
           LineTo(Rect.left, Rect.bottom);
         end;
+
+        // Endlinie für OrderBelege
+        if LASTONE then
+        begin
+          pen.Color := clBlack;
+          MoveTo(Rect.left, Rect.bottom);
+          LineTo(Rect.right, Rect.bottom);
+        end;
+
       end
       else
       begin
@@ -962,7 +934,7 @@ end;
 
 procedure TFormArtikelEingang.Image1Click(Sender: TObject);
 begin
-  openShell(cHelpURL + 'Scanner');
+  openShell(cHelpURL + 'Eingang');
 end;
 
 procedure TFormArtikelEingang.Button4Click(Sender: TObject);
@@ -989,14 +961,14 @@ end;
 
 procedure TFormArtikelEingang.RefreshSumme;
 var
-  MENGE_RECHNUNG, MENGE_SCAN: Integer;
+  MENGE_ERWARTET, MENGE_SCAN: Integer;
   SUMME: Integer;
 begin
   if assigned(SCAN_LIST) then
   begin
-    MENGE_RECHNUNG := round(SCAN_LIST.sumCol('MENGE_RECHNUNG'));
+    MENGE_ERWARTET := round(SCAN_LIST.sumCol('MENGE_ERWARTET'));
     MENGE_SCAN := round(SCAN_LIST.sumCol('MENGE_SCAN'));
-    SUMME := MENGE_RECHNUNG - MENGE_SCAN;
+    SUMME := MENGE_ERWARTET - MENGE_SCAN;
     if (SUMME = 0) then
     begin
       StaticText1.Color := clAqua;
@@ -1035,7 +1007,8 @@ end;
 
 procedure TFormArtikelEingang.SpeedButton1Click(Sender: TObject);
 begin
-  openShell(cPersonPath(Selected_PERSON_R));
+//  openShell(cPersonPath(Selected_PERSON_R));
+ ShowMessage('Noch keine Idee für diesen Knopf');
 end;
 
 procedure TFormArtikelEingang.SpeedButton2Click(Sender: TObject);
@@ -1070,13 +1043,20 @@ end;
 function TFormArtikelEingang.bucheArtikelScan(row: Integer): boolean;
 var
   MENGE_SCAN: Integer;
-  MENGE_RECHNUNG: Integer;
+  MENGE_ERWARTET: Integer;
   MENGE_REST: Integer;
+
+  ZUSAMMENHANG: Integer;
+  ARTIKEL_R: Integer;
+  AUSGABEART_R: Integer;
+  BuchenOK: Boolean;
+
 begin
-  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row,
-    SCAN_LIST_MENGE_RECHNUNG), 0);
+  MENGE_ERWARTET := StrToIntDef(
+   SCAN_LIST.readCell(row,
+    SCAN_LIST_MENGE_ERWARTET), 0);
   MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_MENGE_SCAN), 0);
-  MENGE_REST := MENGE_RECHNUNG - MENGE_SCAN;
+  MENGE_REST := MENGE_ERWARTET - MENGE_SCAN;
   if (MENGE_REST > 0) then
   begin
     inc(MENGE_SCAN);
@@ -1087,17 +1067,42 @@ begin
   begin
     result := false;
   end;
+
+  if result then
+  begin
+    // Scan jetzt als ganzes ausführen
+
+    BeginHourGlass;
+
+    ARTIKEL_R := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_ARTIKEL_R), cRID_Null);
+    AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_AUSGABEART_R), cRID_Null);
+
+    if (e_w_SetFolge(AUSGABEART_R, ARTIKEL_R) > 1) then
+      BuchenOK := FormFolgeSetzen.SetContext(AUSGABEART_R, ARTIKEL_R)
+    else
+     BuchenOK := true;
+
+    if BuchenOK then
+    begin
+      ZUSAMMENHANG := e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE_SCAN);
+      if (ZUSAMMENHANG = -1) then
+        ShowMessage('Es gabe Fehler - siehe Log');
+    end;
+
+    EndHourGlass;
+  end;
+
 end;
 
 function TFormArtikelEingang.rowRest(row: Integer): boolean;
 var
   MENGE_SCAN: Integer;
-  MENGE_RECHNUNG: Integer;
+  MENGE_ERWARTET: Integer;
 begin
-  MENGE_RECHNUNG := StrToIntDef(SCAN_LIST.readCell(row,
-    SCAN_LIST_MENGE_RECHNUNG), 0);
+  MENGE_ERWARTET := StrToIntDef(SCAN_LIST.readCell(row,
+    SCAN_LIST_MENGE_ERWARTET), 0);
   MENGE_SCAN := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_MENGE_SCAN), 0);
-  result := (MENGE_SCAN < MENGE_RECHNUNG);
+  result := (MENGE_SCAN < MENGE_ERWARTET);
 end;
 
 function TFormArtikelEingang.rowBuchbar(row: Integer): Integer;
@@ -1136,7 +1141,7 @@ begin
   Edit1.SetFocus;
 end;
 
-function TFormArtikelEingang.Selected_BELEG_R: Integer;
+function TFormArtikelEingang.Selected_BBELEG_R: Integer;
 var
   s: string;
 begin
@@ -1155,15 +1160,15 @@ end;
 function TFormArtikelEingang.Selected_PERSON_R: Integer;
 var
   s: string;
-  BELEG_R: Integer;
+  BBELEG_R: Integer;
 begin
   if (ListBox1.ItemIndex <> -1) then
   begin
     // ##
     s := ListBox1.items[ListBox1.ItemIndex];
-    BELEG_R := StrToIntDef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
-    result := e_r_sql('select PERSON_R from BELEG where RID=' +
-      IntTostr(BELEG_R));
+    BBELEG_R := StrToIntDef(nextp(copy(s, 2, MaxInt), '-', 0), 0);
+    result := e_r_sql('select PERSON_R from BBELEG where RID=' +
+      IntTostr(BBELEG_R));
   end
   else
   begin
@@ -1177,7 +1182,7 @@ begin
   FreeAndNil(SCAN_LIST);
 end;
 
-procedure TFormArtikelEingang.SL_load(BELEG_R: Integer);
+procedure TFormArtikelEingang.SL_load(BBELEG_R: Integer);
 var
   PostenInfos: TStringList;
   LineA, LineB: string;
@@ -1188,38 +1193,35 @@ begin
   // Beleg Positionen
   SCAN_LIST := csTable(
     { } 'select ' +
-    { 0 } ' POSTEN.MENGE_RECHNUNG,' +
-    { 1 } ' POSTEN.ARTIKEL,' +
+    { 0 } ' BPOSTEN.MENGE_ERWARTET,' +
+    { 1 } ' BPOSTEN.ARTIKEL,' +
     { 2 } ' coalesce(ARTIKEL_AA.GTIN, ARTIKEL.GTIN) as GTIN,' +
-    { 3 } ' POSTEN.ARTIKEL_R,' +
+    { 3 } ' BPOSTEN.ARTIKEL_R,' +
     { 4 } ' 0 as MENGE_SCAN, ' +
-    { 5 } ' POSTEN.AUSGABEART_R, ' +
+    { 5 } ' BPOSTEN.AUSGABEART_R, ' +
     { 6 } ' ARTIKEL.LAGER_R as LAGER, ' +
-    { 7 } ' ARTIKEL.VERLAG_R as VERLAG ' +
-    { } 'from POSTEN ' +
+    { 7 } ' ARTIKEL.VERLAG_R as VERLAG, ' +
+    { 8 } ' BPOSTEN.BELEG_R, ' +
+    { 9 } ' BPOSTEN.RID '+
+    { } 'from BPOSTEN ' +
     { } 'left join ARTIKEL on' +
-    { } ' (POSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
+    { } ' (BPOSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
     { } 'left join ARTIKEL_AA on' +
-    { } ' (POSTEN.ARTIKEL_R=ARTIKEL_AA.ARTIKEL_R) and ' +
-    { } ' (POSTEN.AUSGABEART_R=ARTIKEL_AA.AUSGABEART_R) ' +
+    { } ' (BPOSTEN.ARTIKEL_R=ARTIKEL_AA.ARTIKEL_R) and ' +
+    { } ' (BPOSTEN.AUSGABEART_R=ARTIKEL_AA.AUSGABEART_R) ' +
     { } 'where' +
-    { } ' (POSTEN.BELEG_R=' + IntTostr(BELEG_R) + ') and' +
-    { } ' (POSTEN.MENGE_RECHNUNG>0) and' +
-    { } ' ((POSTEN.ZUTAT is null) or' +
-    { } '  ((POSTEN.ZUTAT is not null) and' +
-    { } '   (ARTIKEL.GTIN is not null))' +
-    { } ' ) ' +
+    { } ' (BPOSTEN.MENGE_ERWARTET>0)' +
     { } 'order by' +
-    { } ' POSTEN.POSNO,POSTEN.RID');
+    { } ' BPOSTEN.BELEG_R,BPOSTEN.POSNO,BPOSTEN.RID');
 
   // Info Positionen
   PostenInfos := e_r_sqlsl(
     { } 'select' +
-    { } ' KUNDEN_INFO ' +
+    { } ' INFO ' +
     { } 'from' +
-    { } ' BELEG ' +
+    { } ' BBELEG ' +
     { } 'where' +
-    { } ' RID=' + IntTostr(BELEG_R));
+    { } ' RID=' + IntTostr(BBELEG_R));
 
   // delete leading empty lines
   repeat
@@ -1269,9 +1271,9 @@ begin
   //
   PostenInfos.free;
 
-  SL_BELEG_R := BELEG_R;
+  SL_BBELEG_R := BBELEG_R;
   if DebugMode then
-    SCAN_LIST.SaveToFile(DiagnosePath + 'SCAN_LIST.csv');
+    SCAN_LIST.SaveToFile(DiagnosePath + 'EINGANG_SCAN_LIST.csv');
 
 end;
 
@@ -1283,10 +1285,12 @@ end;
 
 procedure TFormArtikelEingang.SL_refresh;
 begin
+  BeginHourGlass;
   if assigned(SCAN_LIST) then
     FreeAndNil(SCAN_LIST);
-  SL_load(SL_BELEG_R);
+  SL_load(SL_BBELEG_R);
   SL_show;
+  EndHourGlass;
 end;
 
 procedure TFormArtikelEingang.SL_show;
@@ -1304,12 +1308,18 @@ end;
 
 procedure TFormArtikelEingang.Button5Click(Sender: TObject);
 begin
-  FormBelege.SetContext(0, Selected_BELEG_R);
+//  FormBBelege.SetContext(0, Selected_BBELEG_R);
+ if assigned(SCAN_LIST) then
+  FormBBelege.SetContext(
+   {} 0,
+   {} StrToIntDef(SCAN_LIST.readCell(Drawgrid1.Row,SCAN_LIST_BBELEG_R),cRID_Null),
+   {} StrToIntDef(SCAN_LIST.readCell(Drawgrid1.Row,SCAN_LIST_BPOSTEN_R),cRID_Null));
 end;
 
 procedure TFormArtikelEingang.Button6Click(Sender: TObject);
 begin
-  FormPerson.SetContext(Selected_PERSON_R);
+//  FormPerson.SetContext(Selected_PERSON_R);
+ ShowMessage('Noch keine Idee für diesen Knopf');
 end;
 
 procedure TFormArtikelEingang.Button7Click(Sender: TObject);

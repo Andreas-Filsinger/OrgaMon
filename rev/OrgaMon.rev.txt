@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.335 (22.02.18) Andreas Filsinger
+
+ Neu: Einstellungen: ArtikelEingangScannerHost=
+ Neu: Eingang: Schnelles verbuchen von Wareneingängen
+
 Rev 8.334 (20.02.18) Andreas Filsinger
 
  Bug: anfix32: dirs lieferte auch Dateinamen
