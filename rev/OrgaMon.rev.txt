@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.337 (23.02.18) Andreas Filsinger
+
+ Wegfall: Ablage: Keine Gegenprüfung mehr des Ablage-Namens gegen den FTP-Benutzer
+
+Rev 8.336 (23.02.18) Andreas Filsinger
+
+ Bug: SolidFTP: e_r_FTP_SourcePath: hat "/" und "\" verschluckt
+ Bug: Fotoladebaustelle: existiert das Verzeichnis nocht nicht, dreht er sich zu lange im Kreis.
+      Jetzt wird eine Prüfung gemacht.
+
 Rev 8.335 (22.02.18) Andreas Filsinger
 
  Neu: Einstellungen: ArtikelEingangScannerHost=

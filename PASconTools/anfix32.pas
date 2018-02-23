@@ -107,6 +107,7 @@ const
 
   // Filter: Dateinamen
   cInvalidFNameChars = ':/\?*"<>|';
+  cInvalidPathNameChars = '.:?*"<>|';
   cValidFNameChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-';
 
   // diverses

@@ -2031,7 +2031,6 @@ var
   WARTEND: tsTable;
   col_DATEINAME_AKTUELL: integer;
 
-  Col_FTP_Benutzer: integer;
   Col_ZIPPASSWORD: integer;
   MovedToDay: int64;
 
@@ -2044,7 +2043,6 @@ var
     FotoFSize: int64;
     sPics: TStringList;
     mIni: TIniFile;
-    FTP_Benutzer: string;
     FotosSequence: integer;
     FotosAbzug: boolean;
     sOldZips: TStringList;
@@ -2094,27 +2092,6 @@ var
         end;
       end;
 
-      // Prüfen, ob dies eine ordentliche Baustelle ist
-      FTP_Benutzer := Ablage_NAME;
-      r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
-      if (r = -1) then
-      begin
-        // 2. Suchversuch mit prefixed "u"
-        if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
-        begin
-          FTP_Benutzer := 'u' + FTP_Benutzer;
-          r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
-        end;
-      end;
-
-      // (immer noch) nicht gefunden?
-      if (r = -1) then
-      begin
-        Log(cERRORText + ' FTP-Benutzer "' + FTP_Benutzer + '" unbekannt');
-        Pending := false;
-        break;
-      end;
-
       // Die Nummer des zu erzeugenden ZIP suchen
       FotosAbzug := false;
       mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
@@ -2125,7 +2102,7 @@ var
         if FotosSequence < 0 then
         begin
           dir(Ablage_PFAD + 'Fotos-????.zip', sOldZips, false);
-          if sOldZips.Count > 0 then
+          if (sOldZips.Count > 0) then
           begin
             sOldZips.sort;
             FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Fotos-', '.zip'), -1);
@@ -2203,7 +2180,6 @@ var
     m, r: integer;
     sHTMLSs: TStringList;
     mIni: TIniFile;
-    FTP_Benutzer: string;
     FotosSequence: integer;
     sOldZips: TStringList;
   begin
@@ -2234,14 +2210,6 @@ var
       // erweitere um die .pdf Dateien
       for m := 0 to pred(sHTMLSs.Count) do
         sHTMLSs.add(sHTMLSs[m] + '.pdf');
-
-      // Prüfen, ob dies eine ordentliche Baustelle ist
-      FTP_Benutzer := Ablage_NAME;
-      if CharInSet(FTP_Benutzer[1], ['0' .. '9']) then
-        FTP_Benutzer := 'u' + FTP_Benutzer;
-      r := tBAUSTELLE.locate(Col_FTP_Benutzer, FTP_Benutzer);
-      if (r = -1) then
-        break;
 
       // Die Nummer des zu erzeugenden ZIP suchen
       mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
@@ -2365,7 +2333,6 @@ begin
   end;
 
   // Infos über Baustellen
-  Col_FTP_Benutzer := tBAUSTELLE.colof(cE_FTPUSER);
   Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
 
   // Infos über noch nicht umbenannte Dateien
@@ -2373,9 +2340,7 @@ begin
   WARTEND.insertfromFile(MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
   col_DATEINAME_AKTUELL := WARTEND.colof('DATEINAME_AKTUELL');
 
-
-
-  //
+  // "Wann" ist der Arbeitsfokus
   if (pDatum = '') then
   begin
     BasisDatum := DateGet;

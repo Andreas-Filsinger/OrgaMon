@@ -83,6 +83,9 @@ function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern, DestPath: 
 // FTP - Dir
 function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 
+// FTP -
+function SolidCheckDir(ftp: TIdFTP; SourcePath: string): boolean;
+
 //
 // FTP - FileSize
 //
@@ -568,6 +571,57 @@ begin
     end;
   end;
 end;
+
+function SolidCheckDir(ftp: TIdFTP; SourcePath: string): boolean;
+var
+  ActRetry: integer;
+  n: integer;
+
+  function _logID: string;
+  begin
+    result := 'cd(' + ftp.host + ',' + ftp.UserName + ',' + SourcePath + ')';
+  end;
+
+begin
+  if (SourcePath=cSolidFTP_DirCurrent) then
+  begin
+    result := true;
+  end else
+  begin
+  with ftp do
+  begin
+      try
+        result := false;
+
+        // Verbindung sicherstellen
+        if not(connected) then
+          SolidLogin(ftp);
+
+        // check
+        ChangeDir(ValidatePathName(SourcePath));
+        // go silently back to root
+        ChangeDir('/');
+
+      except
+
+        on E: EIdSocketError do
+        begin
+          solidLog(cEXCEPTIONText + ' [607] Socket Error: ' + IntToStr(E.LastError));
+          if not(solidHandleException(ftp, SolidFTP_Retries, _logID + ': ' + E.Message)) then
+            result := false;
+        end;
+
+        on E: Exception do
+        begin
+          solidLog(cEXCEPTIONText + ' [614] ' + E.Message);
+          if not(solidHandleException(ftp, SolidFTP_Retries, _logID + ': ' + E.Message)) then
+            result := false;
+        end;
+      end;
+    end;
+    end;
+end;
+
 
 function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 var
@@ -1444,7 +1498,8 @@ begin
    result := copy(s,succ(i),MaxInt);
 
    // Sicherheit vor Pfad Manipulationen
-   result := StrFilter(result,cInvalidFNameChars+'.',true);
+   // unerwünscht: Masken und relative Angaben
+   result := StrFilter(result,cInvalidPathNameChars,true);
    // Am Ende muss ein Backslash sein!!
    if (result[length(result)]<>'\') then
     result := result + '\';

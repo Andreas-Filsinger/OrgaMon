@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.335; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.337; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1093,8 +1093,14 @@ var
 
 const
   // remote Shop Sachen
- cOLAP_ArtikelUmfangRemoteShop = 'Artikel.des.Webshop';
- cOLAP_MusikAusExternenLinks = 'Musik aus externen Links';
+  cOLAP_ArtikelUmfangRemoteShop = 'Artikel.des.Webshop';
+  cOLAP_MusikAusExternenLinks = 'Musik aus externen Links';
+
+  // Scanner Konstanten
+  cScanner_VersenderExec  = '+00000-';
+  cScanner_Check_Inc_1    = '+00001-';
+  cScanner_Buchen         = '+00002-';
+  cScanner_Check_Inc_2    = '+00003-';
 
 var
   // remote Shop Sachen

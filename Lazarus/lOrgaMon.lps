@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="244">
+    <Units Count="246">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -168,7 +168,7 @@
       <Unit18>
         <Filename Value="..\PASconTools\WordIndex.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="32"/>
         <CursorPos Y="77"/>
         <UsageCount Value="97"/>
@@ -362,7 +362,7 @@
       </Unit41>
       <Unit42>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="1949"/>
         <CursorPos X="59" Y="1972"/>
         <UsageCount Value="10"/>
@@ -1711,13 +1711,13 @@
       <Unit236>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="13"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit236>
       <Unit237>
         <Filename Value="..\..\fpc\packages\pastojs\tests\tcfiler.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="37"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -1726,7 +1726,7 @@
       <Unit238>
         <Filename Value="..\..\fpc\tests\webtbs\tw32576.pp"/>
         <UnitName Value="xx"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="11"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -1734,7 +1734,7 @@
       <Unit239>
         <Filename Value="..\..\fpc\tests\webtbs\tw33086.pp"/>
         <UnitName Value="test"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="12"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -1747,7 +1747,6 @@
       </Unit240>
       <Unit241>
         <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="25997"/>
         <CursorPos Y="26020"/>
@@ -1761,7 +1760,7 @@
       <Unit242>
         <Filename Value="..\..\fpspreadsheet\source\common\fpstypes.pas"/>
         <UnitName Value="fpsTypes"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <CursorPos X="2" Y="13"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -1769,13 +1768,28 @@
       </Unit242>
       <Unit243>
         <Filename Value="..\..\fpspreadsheet\source\fps.inc"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="6"/>
         <CursorPos Y="30"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit243>
+      <Unit244>
+        <Filename Value="..\..\fpc\tests\test\tasm22.pp"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit244>
+      <Unit245>
+        <Filename Value="..\..\fpc\tests\test\tasm21b.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit245>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

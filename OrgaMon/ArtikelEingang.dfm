@@ -3,7 +3,7 @@ object FormArtikelEingang: TFormArtikelEingang
   Top = 122
   Caption = 'Artikel Eingang'
   ClientHeight = 286
-  ClientWidth = 598
+  ClientWidth = 693
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,7 @@ object FormArtikelEingang: TFormArtikelEingang
   OnActivate = FormActivate
   OnResize = FormResize
   DesignSize = (
-    598
+    693
     286)
   PixelsPerInch = 96
   TextHeight = 13
@@ -35,7 +35,7 @@ object FormArtikelEingang: TFormArtikelEingang
     Left = 7
     Top = 32
     Width = 23
-    Height = 21
+    Height = 23
     Hint = 'Dokumentverzeichnis "Rechnungen" '#246'ffnen'
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
@@ -91,9 +91,9 @@ object FormArtikelEingang: TFormArtikelEingang
   end
   object SpeedButton2: TSpeedButton
     Left = 175
-    Top = 31
-    Width = 21
-    Height = 22
+    Top = 32
+    Width = 23
+    Height = 23
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
@@ -128,7 +128,7 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton2Click
   end
   object Image1: TImage
-    Left = 535
+    Left = 630
     Top = 2
     Width = 54
     Height = 22
@@ -256,9 +256,9 @@ object FormArtikelEingang: TFormArtikelEingang
   end
   object SpeedButton3: TSpeedButton
     Left = 152
-    Top = 31
-    Width = 20
-    Height = 21
+    Top = 32
+    Width = 23
+    Height = 23
     Hint = 'alle Werte neu ermitteln'
     Margins.Left = 4
     Margins.Top = 4
@@ -296,10 +296,10 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton3Click
   end
   object SpeedButton4: TSpeedButton
-    Left = 457
-    Top = 31
+    Left = 552
+    Top = 32
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Artikel ohne Barcode'
     Anchors = [akTop, akRight]
     Glyph.Data = {
@@ -332,13 +332,13 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton4Click
-    ExplicitLeft = 434
+    ExplicitLeft = 502
   end
   object SpeedButton5: TSpeedButton
-    Left = 432
-    Top = 31
+    Left = 524
+    Top = 32
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'manuelles OK'
     Anchors = [akTop, akRight]
     Glyph.Data = {
@@ -387,7 +387,44 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton5Click
-    ExplicitLeft = 409
+  end
+  object SpeedButton6: TSpeedButton
+    Left = 487
+    Top = 32
+    Width = 23
+    Height = 23
+    Hint = 'Vergriffen'
+    Anchors = [akTop, akRight]
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000FFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000
+      0000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFF0000FF0000FF0000FF0000FF0000FF0000FF00
+      00FF0000FF0000FF0000FF0000FF0000FF0000FF0000FFFFFFFFFFFFFF0000FF
+      0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000
+      FF0000FF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFF
+      FFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFF
+      FFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = SpeedButton6Click
   end
   object Edit1: TEdit
     Left = 33
@@ -434,9 +471,9 @@ object FormArtikelEingang: TFormArtikelEingang
   end
   object Button5: TButton
     Left = 396
-    Top = 31
-    Width = 22
-    Height = 21
+    Top = 32
+    Width = 23
+    Height = 23
     Caption = '&O'
     TabOrder = 4
     OnClick = Button5Click
@@ -444,15 +481,15 @@ object FormArtikelEingang: TFormArtikelEingang
   object Button6: TButton
     Left = 34
     Top = 32
-    Width = 21
-    Height = 21
+    Width = 23
+    Height = 23
     Caption = '&P'
     TabOrder = 6
     OnClick = Button6Click
   end
   object ComboBox1: TComboBox
-    Left = 200
-    Top = 31
+    Left = 202
+    Top = 32
     Width = 112
     Height = 21
     Style = csDropDownList
@@ -465,10 +502,10 @@ object FormArtikelEingang: TFormArtikelEingang
       'Fehler')
   end
   object Button11: TButton
-    Left = 566
-    Top = 31
+    Left = 661
+    Top = 32
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Positionen als Rechnung verbuchen, Rechnung ausgeben'
     Anchors = [akTop, akRight]
     Caption = '*'
@@ -482,13 +519,13 @@ object FormArtikelEingang: TFormArtikelEingang
     ShowHint = True
     TabOrder = 7
     OnClick = Button11Click
-    ExplicitLeft = 543
+    ExplicitLeft = 611
   end
   object Button7: TButton
     Left = 320
-    Top = 31
+    Top = 32
     Width = 23
-    Height = 22
+    Height = 23
     Hint = 'Springe zum Artikel, der unten markiert ist'
     Caption = '&A'
     ParentShowHint = False
@@ -499,7 +536,7 @@ object FormArtikelEingang: TFormArtikelEingang
   object DrawGrid1: TDrawGrid
     Left = 152
     Top = 59
-    Width = 437
+    Width = 532
     Height = 192
     Margins.Left = 4
     Margins.Top = 4
@@ -519,15 +556,15 @@ object FormArtikelEingang: TFormArtikelEingang
     TabOrder = 9
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
-    ExplicitWidth = 414
+    ExplicitWidth = 437
     ColWidths = (
       64)
     RowHeights = (
       80)
   end
   object StaticText1: TStaticText
-    Left = 487
-    Top = 31
+    Left = 582
+    Top = 32
     Width = 73
     Height = 25
     Margins.Left = 4
@@ -547,16 +584,39 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentFont = False
     TabOrder = 10
     Transparent = False
-    ExplicitLeft = 464
   end
   object Button2: TButton
     Left = 349
-    Top = 31
+    Top = 32
     Width = 43
-    Height = 22
+    Height = 23
     Caption = 'GTIN'
     TabOrder = 11
     OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 487
+    Top = 257
+    Width = 42
+    Height = 22
+    Caption = '+7'
+    TabOrder = 12
+  end
+  object Button4: TButton
+    Left = 530
+    Top = 257
+    Width = 44
+    Height = 22
+    Caption = '+14'
+    TabOrder = 13
+  end
+  object Edit2: TEdit
+    Left = 577
+    Top = 257
+    Width = 107
+    Height = 21
+    TabOrder = 14
+    TextHint = '+x|TT.MM.JJJJ'
   end
   object IB_Cursor1: TIB_Cursor
     DatabaseName = '192.168.115.25:test.fdb'

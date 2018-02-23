@@ -1812,6 +1812,10 @@ begin
         if (WorkPath = '') then
           raise Exception.create('Verzeichnis hat keinen Eintrag');
 
+        //
+        if not(SolidCheckDir(FotoFTP,SourcePath)) then
+          raise Exception.create('Verzeichnis "'+SourcePath+'" existiert nicht!');
+
         // Check if some news ...
         SolidDir(FotoFTP, SourcePath, '*-Bilder.zip', '????-Bilder.zip', RemoteBilder);
         SolidDir(FotoFTP, SourcePath, 'Fotos-*.zip', 'Fotos-????.zip', RemoteFotos);
@@ -1858,6 +1862,7 @@ begin
       except
         on E: Exception do
         begin
+          result.Add(cERRORText + E.Message);
           SolidLog(cERRORText + ' Fotos laden: ' + E.Message);
         end;
       end;

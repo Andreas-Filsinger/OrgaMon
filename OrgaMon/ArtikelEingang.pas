@@ -73,9 +73,12 @@ type
     Button2: TButton;
     JvFormStorage1: TJvFormStorage;
     SpeedButton5: TSpeedButton;
+    SpeedButton6: TSpeedButton;
+    Button3: TButton;
+    Button4: TButton;
+    Edit2: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
@@ -94,6 +97,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton5Click(Sender: TObject);
+    procedure SpeedButton6Click(Sender: TObject);
   private
     initialized: boolean;
     cPlanY: Integer;
@@ -132,13 +136,15 @@ type
     procedure doArtikelScan(ganzerScan: string);
 
     // =true wenn SCAN_MENGE nunmehr "0"
-    function bucheArtikelScan(row: Integer): boolean;
+    function inc_MENGE_SCAN(row: Integer): boolean;
 
     // hat die Row noch einen Rest
     function rowRest(row: Integer): boolean;
 
     // finde die nächste buchbare Zeile
     function rowBuchbar(row: Integer): Integer;
+
+    procedure notimp;
 
   end;
 
@@ -180,9 +186,7 @@ const
 
 procedure TFormArtikelEingang.Button11Click(Sender: TObject);
 begin
-//  doBuchen;
- ShowMessage('Noch keine Idee für diesen Knopf');
-
+ notimp;
 end;
 
 procedure TFormArtikelEingang.Button1Click(Sender: TObject);
@@ -211,36 +215,13 @@ begin
 
     repeat
 
-      // Sonder-Scans aus ArtikelAusgang
-      if (ganzerScan = '+00000-') then
+      if (ganzerScan = cScanner_VersenderExec) or
+         (ganzerScan = cScanner_Check_Inc_1) or
+         (ganzerScan = cScanner_Buchen) or
+         (ganzerScan = cScanner_Check_Inc_2) then
       begin
-        break;
-      end;
-
-      // Sonder Scan "Artikel so OK"
-      if (ganzerScan = '+00001-') then
-      begin
-        doCheck;
+        notimp;
         Edit1.Text := '';
-
-        break;
-      end;
-
-      // Sonder Scan "Verbuchen"
-      if (ganzerScan = '+00002-') then
-      begin
-        doBuchen;
-        Edit1.Text := '';
-
-        break;
-      end;
-
-      // Sonder Scan "Artikel so OK"
-      if (ganzerScan = '+00003-') then
-      begin
-        doCheckLess;
-        Edit1.Text := '';
-
         break;
       end;
 
@@ -371,7 +352,7 @@ begin
     end;
 
     // Änderung um "1" durchführen
-    ScanFertig := bucheArtikelScan(row);
+    ScanFertig := inc_MENGE_SCAN(row);
     SL_reflect;
     if ScanFertig then
       SecureSetRow(DrawGrid1, min(row + 1, pred(DrawGrid1.RowCount)))
@@ -617,7 +598,7 @@ begin
     begin
 
       // Position buchen
-      ScanFertig := bucheArtikelScan(DrawGrid1.row);
+      ScanFertig := inc_MENGE_SCAN(DrawGrid1.row);
       SL_reflect;
       if ScanFertig then
         SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1,
@@ -639,7 +620,7 @@ begin
   if assigned(SCAN_LIST) then
   begin
     // Position buchen
-    ScanFertig := bucheArtikelScan(DrawGrid1.row);
+    ScanFertig := inc_MENGE_SCAN(DrawGrid1.row);
     SL_reflect;
     if ScanFertig then
       SecureSetRow(DrawGrid1, min(DrawGrid1.row + 1, pred(DrawGrid1.RowCount)));
@@ -937,27 +918,6 @@ begin
   openShell(cHelpURL + 'Eingang');
 end;
 
-procedure TFormArtikelEingang.Button4Click(Sender: TObject);
-var
-  ServerDate: TANFiXDate;
-  ServerTime: TANFiXTime;
-  ServerDiff: TANFiXTime;
-  MoreText: string;
-begin
-  //
-  DateTime2long(e_r_Now, ServerDate, ServerTime);
-
-  //
-  ServerDiff := r_Local_vs_Server_TimeDifference;
-
-  MoreText :=
-    'Die lokale Zeitsynchronisation mit einem Zeit-Server muss extern aktiviert werden';
-
-  ShowMessage(MoreText + #13 + 'Zeit dieses Rechners ' + long2date(DateGet) +
-    ' ' + secondstostr(SecondsGet) + #13 + 'Zeit des Datenbankservers ' +
-    long2date(ServerDate) + ' ' + secondstostr(ServerTime) + #13 + #13 +
-    'bereinigte Differenz ' + secondstostr9(ServerDiff));
-end;
 
 procedure TFormArtikelEingang.RefreshSumme;
 var
@@ -1040,17 +1000,15 @@ begin
   Edit1.SetFocus;
 end;
 
-function TFormArtikelEingang.bucheArtikelScan(row: Integer): boolean;
+function TFormArtikelEingang.inc_MENGE_SCAN(row: Integer): boolean;
 var
   MENGE_SCAN: Integer;
   MENGE_ERWARTET: Integer;
   MENGE_REST: Integer;
-
   ZUSAMMENHANG: Integer;
   ARTIKEL_R: Integer;
   AUSGABEART_R: Integer;
   BuchenOK: Boolean;
-
 begin
   MENGE_ERWARTET := StrToIntDef(
    SCAN_LIST.readCell(row,
@@ -1139,6 +1097,12 @@ procedure TFormArtikelEingang.SpeedButton5Click(Sender: TObject);
 begin
   doCheckLess;
   Edit1.SetFocus;
+end;
+
+procedure TFormArtikelEingang.SpeedButton6Click(Sender: TObject);
+begin
+  // vergriffen
+
 end;
 
 function TFormArtikelEingang.Selected_BBELEG_R: Integer;
@@ -1318,13 +1282,17 @@ end;
 
 procedure TFormArtikelEingang.Button6Click(Sender: TObject);
 begin
-//  FormPerson.SetContext(Selected_PERSON_R);
- ShowMessage('Noch keine Idee für diesen Knopf');
+ notimp;
 end;
 
 procedure TFormArtikelEingang.Button7Click(Sender: TObject);
 begin
   doArtikelJump;
+end;
+
+procedure TFormArtikelEingang.notimp;
+begin
+ notImp;
 end;
 
 
