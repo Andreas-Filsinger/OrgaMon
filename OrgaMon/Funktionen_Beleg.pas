@@ -106,12 +106,15 @@ procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integ
 procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
 
 // Order-Posten-Anz
-// Reihenfolge der Befriediung von Erwarteten Mengen voreinstellen
+// Reihenfolge der Befriedigung von Erwarteten Mengen voreinstellen
 function e_w_SetFolge(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
 // [ZUSAMMENHANG]
 // Waren im System verteilen
 function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
+
+// Ware als vergriffen verbuchen
+function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): integer; // [ZUSAMMENHANG]
 
 // liefert den Zahlungstext zur jeweiligen Person
 function e_r_ZahlungText(ZAHLUNGTYP_R: integer; PERSON_R: integer = 0; MoreInfo: TStringList = nil): string;
@@ -1776,8 +1779,7 @@ begin
   cFOLGE.free;
 end;
 
-function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer;
-// ZUSAMMENHANG
+function e_w_Wareneingang(AUSGABEART_R, ARTIKEL_R, MENGE: integer): integer; // [ZUSAMMENHANG]
 
   function AusgabeArtCompare: string;
   begin
@@ -1812,7 +1814,7 @@ begin
     //
 
     // erst mal die erwarteten Menge zurücksetzen
-    // dabei sollte der User eine mögliche Reihenfolge vorgeben können
+    // dabei sollte mögliche Reihenfolge in FOLGE vorgegeben sein
     _Menge := MENGE;
     QueryBPOSTEN := nQuery;
     with QueryBPOSTEN do
@@ -1978,6 +1980,187 @@ begin
     end;
   end;
 end;
+
+function e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R: Integer): Integer; // [ZUSAMMENHANG]
+
+  function AusgabeArtCompare: string;
+  begin
+    if (AUSGABEART_R <= cAUSGABEART_OHNE) then
+      result := ' is null'
+    else
+      result := ' = ' + inttostr(AUSGABEART_R);
+  end;
+
+var
+  QueryPOSTEN: TdboQuery;
+  QueryBPOSTEN: TdboQuery;
+  EREIGNIS: TdboQuery;
+  BBELEG_R: integer;
+  BELEG_R: integer;
+  MENGE: Integer;
+begin
+
+  // neuen Zusammenhang beginnen
+  result := e_w_GEN('GEN_ZUSAMMENHANG');
+  try
+
+    //
+    // 1) BBELEG.BPOSTEN: MENGE_ERWARTET auf MENGE_AUSFALL verschieben
+    // 2) BELEG.POSTEN: MENGE_AGENT auf MENGE_AUSFALL verschieben
+    // 3) in den Artikel Preis:= -1, Mindestbestand := 0
+    //
+
+    // erst mal die erwarteten Menge zurücksetzen
+    // dabei sollte mögliche Reihenfolge in FOLGE vorgegeben sein
+    QueryBPOSTEN := nQuery;
+    with QueryBPOSTEN do
+    begin
+      sql.add('SELECT');
+      sql.add(' *');
+      sql.add('FROM');
+      sql.add(' BPOSTEN');
+      sql.add('WHERE');
+      sql.add(' (BELEG_R IS NOT NULL) AND');
+      sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND');
+      sql.add(' (AUSGABEART_R' + AusgabeArtCompare + ') AND');
+      sql.add(' (MENGE_ERWARTET>0)');
+      for_update(sql);
+      Open;
+
+      // den aktuellen Zusammenhang festlegen!
+      while not(eof) do
+      begin
+
+        // beliebige Mengen von "ERWARET" nach "AUSFALL" verschieben
+        MENGE := FieldByName('MENGE_ERWARTET').AsInteger;
+        edit;
+        FieldByName('MENGE_AUSFALL').AsInteger :=
+         {} FieldByName('MENGE_AUSFALL').AsInteger +
+         {} MENGE;
+        FieldByName('MENGE_ERWARTET').clear;
+        Post;
+
+        //
+        BBELEG_R := FieldByName('BELEG_R').AsInteger;
+
+        //
+        e_w_BBelegStatusBuchen(BBELEG_R);
+
+        // Ereignis "vergriffen" buchen!
+        EREIGNIS := nQuery;
+        with EREIGNIS do
+        begin
+{$IFNDEF fpc}
+          ColumnAttributes.add('RID=NOTREQUIRED');
+          ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+          sql.add('select * from EREIGNIS ' + for_update);
+          Insert;
+          FieldByName('ART').AsInteger := eT_Vergriffen;
+          FieldByName('ZUSAMMENHANG').AsInteger := result;
+          FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+          FieldByName('PERSON_R').AsInteger := e_r_sql('select PERSON_R from BBELEG where RID=' + inttostr(BBELEG_R));
+          FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+          FieldByName('AUSGABEART_R').assign(QueryBPOSTEN.FieldByName('AUSGABEART_R'));
+          FieldByName('BBELEG_R').AsInteger := BBELEG_R;
+          FieldByName('BPOSTEN_R').assign(QueryBPOSTEN.FieldByName('RID'));
+          FieldByName('MENGE').AsInteger := MENGE;
+          Post;
+        end;
+        EREIGNIS.free;
+        Next;
+      end;
+      Close;
+    end;
+
+    // nun die Agent Mengen->auf Ü-Fächer verteilen!
+    QueryPOSTEN := nQuery;
+    with QueryPOSTEN do
+    begin
+      sql.add('SELECT');
+      sql.add(' *');
+      sql.add('FROM');
+      sql.add(' POSTEN');
+      sql.add('WHERE');
+      sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') AND');
+      sql.add(' (AUSGABEART_R' + AusgabeArtCompare + ') AND');
+      sql.add(' (MENGE_AGENT>0)');
+      for_update(sql);
+
+      Open;
+      while not(eof) do
+      begin
+
+        // Menge zurückbuchen
+        MENGE := FieldByName('MENGE_AGENT').AsInteger;
+        edit;
+        FieldByName('MENGE_AUSFALL').AsInteger :=
+         {} FieldByName('MENGE_AUSFALL').AsInteger +
+         {} MENGE;
+        FieldByName('MENGE_AGENT').clear;
+        Post;
+
+        // dem Beleg die Änderung bekanntmachen
+        BELEG_R := FieldByName('BELEG_R').AsInteger;
+        e_w_BelegStatusBuchen(BELEG_R);
+
+        // Ereignis "Vergriffen" buchen!
+        EREIGNIS := nQuery;
+        with EREIGNIS do
+        begin
+{$IFNDEF fpc}
+          ColumnAttributes.add('RID=NOTREQUIRED');
+          ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+{$ENDIF}
+          sql.add('select * from EREIGNIS ' + for_update);
+          Insert;
+          FieldByName('ART').AsInteger := eT_vergriffen;
+          FieldByName('ZUSAMMENHANG').AsInteger := result;
+          FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+          FieldByName('PERSON_R').AsInteger := e_r_sql('select PERSON_R from BELEG where RID=' + inttostr(BELEG_R));
+          FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+          FieldByName('AUSGABEART_R').assign(QueryPOSTEN.FieldByName('AUSGABEART_R'));
+          FieldByName('BELEG_R').AsInteger := BELEG_R;
+          FieldByName('POSTEN_R').assign(QueryPOSTEN.FieldByName('RID'));
+          FieldByName('MENGE').AsInteger := MENGE;
+          Post;
+        end;
+        EREIGNIS.free;
+        Next;
+      end;
+      Close;
+    end;
+
+    //
+    QueryPOSTEN.free;
+    QueryBPOSTEN.free;
+
+    // im Artikel,  PREIS := -1, MINDESTBESTAND := 0
+    if (AUSGABEART_R <= cAUSGABEART_OHNE) then
+      e_x_sql(
+       {} 'update ARTIKEL set ' +
+       {} ' EURO=' + FloatToStrISO(cPreis_vergriffen,1) +','+
+       {} ' MINDESTBESTAND=null '+
+       {} 'where'+
+       {} ' RID=' + inttostr(ARTIKEL_R))
+    else
+      e_x_sql(
+       {} 'update ARTIKEL_AA set ' +
+       {} ' EURO=' + FloatToStrISO(cPreis_vergriffen,1) +','+
+       {} ' MINDESTBESTAND=null '+
+       {} 'where'+
+       {} ' (RID=' + inttostr(ARTIKEL_R) + ') and' +
+       {} ' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ')');
+
+  except
+    on E: exception do
+    begin
+      CareTakerLog(cERRORText + ' e_w_WarenEingang.' + inttostr(result) + ': ' + E.Message);
+      result := -1;
+    end;
+  end;
+end;
+
 
 procedure e_w_Zwischenlagern(BELEG_R, LAGER_R: integer);
 begin

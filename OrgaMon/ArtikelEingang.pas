@@ -51,7 +51,6 @@ uses
 type
   TFormArtikelEingang = class(TForm)
     Edit1: TEdit;
-    Button1: TButton;
     ListBox1: TListBox;
     CheckBox1: TCheckBox;
     IB_Cursor1: TIB_Cursor;
@@ -77,7 +76,7 @@ type
     Button3: TButton;
     Button4: TButton;
     Edit2: TEdit;
-    procedure Button1Click(Sender: TObject);
+    StaticText2: TStaticText;
     procedure CheckBox1Click(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -98,6 +97,9 @@ type
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Edit2KeyPress(Sender: TObject; var Key: Char);
   private
     initialized: boolean;
     cPlanY: Integer;
@@ -118,6 +120,8 @@ type
     procedure SL_reflect; // Data Change
     procedure SL_free; // empty and free list
     procedure RefreshSumme;
+    procedure RefreshHeader(row: Integer);
+
     procedure doBuchen;
     procedure doCheck;
     procedure doCheckLess;
@@ -129,9 +133,11 @@ type
 
     { Public-Deklarationen }
     procedure doActivate(active: boolean);
+    procedure setZusage(ZUSAGE: TAnfixDate);
     procedure hotEvent;
 
     // verschieden Scan Events
+    procedure doScan;
     procedure doBelegScan(ganzerScan: string);
     procedure doArtikelScan(ganzerScan: string);
 
@@ -183,61 +189,15 @@ const
   SCAN_LIST_VERLAG = 7;
   SCAN_LIST_BBELEG_R = 8;
   SCAN_LIST_BPOSTEN_R = 9;
+  SCAN_LIST_PERSON_R = 10;
+  SCAN_LIST_BESTELLT = 11;
+  SCAN_LIST_ZUSAGE = 12;
 
 procedure TFormArtikelEingang.Button11Click(Sender: TObject);
 begin
  notimp;
 end;
 
-procedure TFormArtikelEingang.Button1Click(Sender: TObject);
-var
-  ganzerScan: string;
-begin
-
-  ganzerScan := Edit1.Text;
-
-  if (ganzerScan <> '') then
-  begin
-
-
-    // Historie oben anzeigen
-    ListBox1.items.add(ganzerScan);
-    ListBox1.ItemIndex := pred(ListBox1.items.count);
-
-    // für die Liste sorgen
-    if not(assigned(SCAN_LIST)) then
-    begin
-      BeginHourGlass;
-      SL_load(cRID_unset);
-      SL_show;
-      EndHourGlass;
-    end;
-
-    repeat
-
-      if (ganzerScan = cScanner_VersenderExec) or
-         (ganzerScan = cScanner_Check_Inc_1) or
-         (ganzerScan = cScanner_Buchen) or
-         (ganzerScan = cScanner_Check_Inc_2) then
-      begin
-        notimp;
-        Edit1.Text := '';
-        break;
-      end;
-
-      if (pos('-', ganzerScan) = 0) then
-        doArtikelScan(ganzerScan)
-      else
-        doBelegScan(ganzerScan);
-
-    until true;
-
-    // Focus back!
-    SetForeGroundWindow(handle);
-    Edit1.SetFocus;
-
-  end;
-end;
 
 procedure TFormArtikelEingang.Button2Click(Sender: TObject);
 var
@@ -289,6 +249,16 @@ begin
     end;
 end;
 
+procedure TFormArtikelEingang.Button3Click(Sender: TObject);
+begin
+ setZusage(DatePlus(DateGet,7));
+end;
+
+procedure TFormArtikelEingang.Button4Click(Sender: TObject);
+begin
+ setZusage(DatePlus(DateGet,14));
+end;
+
 procedure TFormArtikelEingang.CheckBox1Click(Sender: TObject);
 begin
   doActivate(CheckBox1.Checked);
@@ -328,19 +298,22 @@ begin
 
     if not(assigned(SCAN_LIST)) then
     begin
-      ErrorMsg := 'Bitte erst eine Belegnummer scannen' + #13 +
-        'Oder in der Form' + #13 + '"+" | "-" ~Belegnummer~ "-" ~Generation~' +
-        #13 + 'eingeben und mit <ENTER> abschliessen';
+      ErrorMsg :=
+       {} 'Bitte erst eine Belegnummer scannen' + #13 +
+       {} 'Oder in der Form' + #13 +
+       {} '"+" | "-" ~Belegnummer~ "-" ~Generation~' + #13 +
+       {} 'eingeben und mit <ENTER> abschliessen';
       break;
     end;
 
     row := SCAN_LIST.next(DrawGrid1.row, SCAN_LIST_GTIN, ganzerScan);
     if (row = -1) then
     begin
-      ErrorMsg := 'Diese GTIN ist im Moment unbekannt' + #13 +
-        'Entweder der Eintrag fehlt noch beim Artikel oder ist falsch' + #13 +
-        'Oder der Artikel gehört nicht zu dieser Lieferung' + #13 +
-        'Tragen Sie die GTIN nach, indem Sie manuell auf die richtige Zeile positionieren, drücken Sie dann [GTIN]';
+      ErrorMsg :=
+        {} 'Diese GTIN ist im Moment unbekannt' + #13 +
+        {} 'Entweder der Eintrag fehlt noch beim Artikel oder ist falsch' + #13 +
+        {} 'Oder der Artikel gehört nicht zu dieser Lieferung' + #13 +
+        {} 'Tragen Sie die GTIN nach, indem Sie manuell auf die richtige Zeile positionieren, drücken Sie dann [GTIN]';
       break;
     end;
 
@@ -642,6 +615,9 @@ var
   GTIN: string;
   TXT: string;
   LASTONE: boolean;
+  ZUSAGE: TAnfixDate;
+  ZusageAge: Integer;
+  _NewCol : TColor;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -651,6 +627,7 @@ begin
 
       if Fokusiert then
       begin
+        RefreshHeader(ARow);
         brush.Color := HTMLColor2TColor($99CCFF);
       end
       else
@@ -754,7 +731,7 @@ begin
                 end
                 else
                 begin
-                  AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(ARow, 5),
+                  AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(ARow, SCAN_LIST_AUSGABEART_R),
                     cRID_Null);
 
                   if (AUSGABEART_R >= cRID_FirstValid) then
@@ -814,8 +791,42 @@ begin
             end;
           3:begin
               font.size := 10;
-              TextRect(Rect, Rect.left + 2, Rect.top,
-                SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN));
+              if (ARow>0) then
+              begin
+                TextRect(Rect, Rect.left + 2, Rect.top, SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN));
+
+                _NewCol := brush.Color;
+
+                ZUSAGE := date2long(nextp(SCAN_LIST.readCell(ARow,SCAN_LIST_ZUSAGE),' ',0));
+                if DateOk(ZUSAGE) then
+                begin
+                  ZusageAge := DateDiff(Zusage, DateGet);
+                  case ZusageAge of
+                    - 1:
+                      _NewCol := cllime;
+                    0:
+                      _NewCol := clgreen;
+                    1:
+                      _NewCol := rgb($FF, $7F, $7F);
+                  else
+                    if ZusageAge > 1 then
+                      _NewCol := clred;
+                  end;
+                  brush.Color := _NewCol;
+                  Font.color := VisibleContrast(_NewCol);
+                  TextOut(
+                    { } Rect.left + 2,
+                    { } Rect.top + cPlanY,
+                    { } ' ' + IntToStr(ZusageAge)+ '='+long2date8(ZUSAGE)+' ');
+                    Font.Color := clblack;
+                end;
+
+              end else
+              begin
+                TextRect(Rect, Rect.left + 2, Rect.top,
+                 {} SCAN_LIST.readCell(ARow, SCAN_LIST_GTIN) + '|' +
+                 {} SCAN_LIST.readCell(ARow, SCAN_LIST_ZUSAGE) );
+              end;
             end
         else
           // dummy Rand Zellen
@@ -867,7 +878,43 @@ begin
       Key := '+';
     '´':
       Key := '+';
+    #13: begin
+       doScan;
+       Key := #0;
+    end;
   end;
+end;
+
+procedure TFormArtikelEingang.Edit2KeyPress(Sender: TObject; var Key: Char);
+var
+ addZUSAGE: INteger;
+ ZUSAGE: TANfixDate;
+begin
+ if (Key=#13) then
+ begin
+
+   if (pos('+',Edit2.Text)=1) then
+   begin
+     addZUSAGE := StrToIntDef(edit2.Text,-1);
+     if (addZUSAGE>=0) then
+     begin
+      setZusage(DatePlus(DateGet,addZUSAGE));
+      edit2.Text := '';
+     end;
+   end else
+   begin
+     if CharCount('.',edit2.Text)=2 then
+     begin
+                    ZUSAGE := Date2Long(edit2.text);
+                    if DateOK(ZUSAGE) then
+                    begin
+      setZusage(ZUSAGE);
+      edit2.Text := '';
+                    end;
+     end;
+   end;
+   Key := #0;
+ end;
 end;
 
 procedure TFormArtikelEingang.FormActivate(Sender: TObject);
@@ -1100,9 +1147,17 @@ begin
 end;
 
 procedure TFormArtikelEingang.SpeedButton6Click(Sender: TObject);
+var
+ ARTIKEL_R, AUSGABEART_R: Integer;
 begin
   // vergriffen
-
+  ARTIKEL_R := StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, SCAN_LIST_ARTIKEL_R), cRID_Null);
+  AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(DrawGrid1.row, SCAN_LIST_AUSGABEART_R), cRID_Null);
+  e_w_Vergriffen(AUSGABEART_R, ARTIKEL_R);
+  // visuell machen
+  SCAN_LIST.Del(DrawGrid1.row);
+  DrawGrid1.RowCount := SCAN_LIST.RowCount + 1;
+  SL_reflect;
 end;
 
 function TFormArtikelEingang.Selected_BBELEG_R: Integer;
@@ -1166,13 +1221,18 @@ begin
     { 6 } ' ARTIKEL.LAGER_R as LAGER, ' +
     { 7 } ' ARTIKEL.VERLAG_R as VERLAG, ' +
     { 8 } ' BPOSTEN.BELEG_R, ' +
-    { 9 } ' BPOSTEN.RID '+
+    { 9 } ' BPOSTEN.RID, '+
+    { A } ' BBELEG.PERSON_R, '+
+    { B } ' BBELEG.BESTELLT, ' +
+    { B } ' BPOSTEN.ZUSAGE ' +
     { } 'from BPOSTEN ' +
     { } 'left join ARTIKEL on' +
     { } ' (BPOSTEN.ARTIKEL_R=ARTIKEL.RID) ' +
     { } 'left join ARTIKEL_AA on' +
     { } ' (BPOSTEN.ARTIKEL_R=ARTIKEL_AA.ARTIKEL_R) and ' +
     { } ' (BPOSTEN.AUSGABEART_R=ARTIKEL_AA.AUSGABEART_R) ' +
+    { } 'left join BBELEG on'+
+    { } ' (BPOSTEN.BELEG_R=BBELEG.RID) '+
     { } 'where' +
     { } ' (BPOSTEN.MENGE_ERWARTET>0)' +
     { } 'order by' +
@@ -1241,6 +1301,15 @@ begin
 
 end;
 
+procedure TFormArtikelEingang.RefreshHeader(Row: Integer);
+begin
+  if assigned(SCAN_LIST) then
+   StaticText2.caption :=
+    { } '#' + SCAN_LIST.readCell(Row,SCAN_LIST_BBELEG_R) + ' - ' +
+    { } nextp(SCAN_LIST.readCell(Row,SCAN_LIST_BESTELLT),' ',0) + ' - ' +
+    { } e_r_Verlag_PERSON_R(StrtoIntDef(SCAN_LIST.readCell(Row,SCAN_LIST_PERSON_R),cRID_Null) ) ;
+end;
+
 procedure TFormArtikelEingang.SL_reflect;
 begin
   DrawGrid1.Refresh;
@@ -1293,6 +1362,115 @@ end;
 procedure TFormArtikelEingang.notimp;
 begin
  notImp;
+end;
+
+procedure TFormArtikelEingang.setZusage(ZUSAGE: TAnfixDate);
+var
+ Row: Integer;
+ BPOSTEN_R : Integer;
+ BBELEG_R: Integer;
+ ARTIKEL_R: Integer;
+ AUSGABEART_R: Integer;
+ PERSON_R: Integer;
+ sZUSAGE: TStringList;
+ EREIGNIS : TdboQuery;
+ ZUSAGE_TimeStamp: string;
+begin
+ if assigned(SCAN_LIST) then
+ begin
+   Row := DrawGrid1.Row;
+   ZUSAGE_TimeStamp := long2date(ZUSAGE) + ' ' + Uhr8;
+
+   ARTIKEL_R := StrToIntDef(SCAN_LIST.readCell(row, SCAN_LIST_ARTIKEL_R), cRID_Null);
+   AUSGABEART_R := StrToIntDef(SCAN_LIST.readCell(Row, SCAN_LIST_AUSGABEART_R),cRID_Null);
+   BPOSTEN_R := StrToIntDef(SCAN_LIST.readCell(Row, SCAN_LIST_BPOSTEN_R),cRID_Null);
+   BBELEG_R := StrToIntDef(SCAN_LIST.readCell(Row, SCAN_LIST_BBELEG_R),cRID_Null);
+   PERSON_R := StrToIntDef(SCAN_LIST.readCell(Row, SCAN_LIST_PERSON_R),cRID_Null);
+
+   e_x_sql('update BPOSTEN set ZUSAGE = '''+ ZUSAGE_TimeStamp +''' where RID='+IntTostr(BPOSTEN_R));
+
+   sZUSAGE := TStringList.Create;
+   sZUSAGE.Add('ZUSAGE='+SCAN_LIST.readCell(Row, SCAN_LIST_ZUSAGE));
+   sZUSAGE.Add('NEW.ZUSAGE='+ZUSAGE_TimeStamp);
+   sZUSAGE.Add('ARTIKEL='+SCAN_LIST.readCell(Row,SCAN_LIST_ARTIKEL));
+
+   // Ereignis erstellen
+   EREIGNIS := nQuery;
+   with EREIGNIS do
+   begin
+     sql.add('select * from EREIGNIS');
+     for_update(sql);
+     ColumnAttributes.add('RID=NOTREQUIRED');
+     ColumnAttributes.add('AUFTRITT=NOTREQUIRED');
+     Insert;
+     FieldByName('BEARBEITER_R').AsInteger := sBearbeiter;
+     FieldByName('ART').AsInteger := eT_OrderZusageAenderung;
+     FieldByName('BPOSTEN_R').AsInteger := BPOSTEN_R;
+     FieldByName('BBELEG_R').AsInteger := BBELEG_R;
+     FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+     if AUSGABEART_R>=cRID_FIrstValid then
+      FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
+     e_w_sqlt(FieldByName('INFO'), sZUSAGE);
+     Post;
+   end;
+   EREIGNIS.free;
+   sZUSAGE.Free;
+
+   // Neues Datum eintragen
+   SCAN_LIST.writeCell(row, SCAN_LIST_ZUSAGE, ZUSAGE_TimeStamp);
+   SL_reflect;
+
+ end;
+end;
+
+ procedure TFormArtikelEingang.doScan;
+var
+  ganzerScan: string;
+begin
+
+  ganzerScan := Edit1.Text;
+
+  if (ganzerScan <> '') then
+  begin
+
+
+    // Historie oben anzeigen
+    ListBox1.items.add(ganzerScan);
+    ListBox1.ItemIndex := pred(ListBox1.items.count);
+
+    // für die Liste sorgen
+    if not(assigned(SCAN_LIST)) then
+    begin
+      BeginHourGlass;
+      SL_load(cRID_unset);
+      SL_show;
+      EndHourGlass;
+    end;
+
+    repeat
+
+      if (ganzerScan = cScanner_VersenderExec) or
+         (ganzerScan = cScanner_Check_Inc_1) or
+         (ganzerScan = cScanner_Buchen) or
+         (ganzerScan = cScanner_Check_Inc_2) then
+      begin
+        notimp;
+        Edit1.Text := '';
+        break;
+      end;
+
+      if (pos('-', ganzerScan) = 0) then
+        doArtikelScan(ganzerScan)
+      else
+        doBelegScan(ganzerScan);
+
+    until true;
+
+    // Focus back!
+    SetForeGroundWindow(handle);
+    Edit1.SetFocus;
+
+  end;
 end;
 
 

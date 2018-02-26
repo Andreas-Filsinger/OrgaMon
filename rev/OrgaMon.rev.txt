@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.339 (26.02.18) Andreas Filsinger
+
+ Neu: Artikel: Eingang: Anzeige von BBELEG.RID - BBELEG.BESTELLT - BBELEG.PERSON_R.SUCHBEGRIFF
+ Neu: Artikel: Eingang: Anzeige: Zusage mit entsprechender Farbe
+ Neu: Artikel: Eingang: +4,+7,+x, Festes Datum
+
+Rev 8.338 (23.02.18) Andreas Filsinger
+
+ Neu Artikel: Eingang: Vergriffen
+
 Rev 8.337 (23.02.18) Andreas Filsinger
 
  Wegfall: Ablage: Keine Gegenprüfung mehr des Ablage-Namens gegen den FTP-Benutzer
@@ -12141,6 +12151,16 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.338
+
+alter table EREIGNIS
+drop constraint FK_EREIGNIS_POSTEN;
+
+alter table EREIGNIS
+add constraint FK_EREIGNIS_POSTEN
+foreign key (POSTEN_R)
+references POSTEN(RID);
 
 :8.310
 

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -423,7 +423,6 @@ begin
         EREIGNIS.free;
         sZUSAGE.Free;
       end;
-
     end;
 
     if FieldByName('AUSGABEART_R').IsNotNull then

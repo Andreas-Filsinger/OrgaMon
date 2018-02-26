@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.337; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.339; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -313,6 +313,7 @@ const
   eT_OrderZusageAenderung = 36; // Neuer Zusage-Termin in einer Order
   eT_KreativeZusammenfuehren = 37; // Haifisch bei den Kreativen
   eT_MahnungPerEMail = 38; // Mahnung per eMail
+  eT_Vergriffen = 39; // sorry, dieser Artikel ist nunmehr vergriffen
 
   // Bestellsystem Motivationsgrund
   eT_MotivationMindestbestand = 10; // aus dem Bestellvorschlag

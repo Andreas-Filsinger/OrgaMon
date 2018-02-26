@@ -30,7 +30,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
       object Label1: TLabel
         Left = 7
         Top = 43
-        Width = 37
+        Width = 36
         Height = 13
         Caption = 'Verlag'
       end
@@ -142,7 +142,7 @@ object FormArtikelVerlag: TFormArtikelVerlag
       object Label17: TLabel
         Left = 384
         Top = 611
-        Width = 376
+        Width = 375
         Height = 13
         Caption = 'notwendig, um zu ermitteln ob es neue Verlags-Zuordnungen gibt'
       end
@@ -160,6 +160,18 @@ object FormArtikelVerlag: TFormArtikelVerlag
         TabOrder = 0
         OnDblClick = DrawGrid1DblClick
         OnDrawCell = DrawGrid1DrawCell
+        ColWidths = (
+          64
+          64
+          64
+          64
+          64)
+        RowHeights = (
+          24
+          24
+          24
+          24
+          24)
       end
       object Button1: TButton
         Left = 634
@@ -277,10 +289,14 @@ object FormArtikelVerlag: TFormArtikelVerlag
     object TabSheet2: TTabSheet
       Caption = 'Definition'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label18: TLabel
         Left = 182
         Top = 85
-        Width = 183
+        Width = 182
         Height = 13
         Caption = 'Verlagsstatistikstart neu setzten'
       end

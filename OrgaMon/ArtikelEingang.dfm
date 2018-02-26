@@ -2,20 +2,21 @@ object FormArtikelEingang: TFormArtikelEingang
   Left = 211
   Top = 122
   Caption = 'Artikel Eingang'
-  ClientHeight = 286
-  ClientWidth = 693
+  ClientHeight = 338
+  ClientWidth = 730
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Verdana'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   OnActivate = FormActivate
   OnResize = FormResize
   DesignSize = (
-    693
-    286)
+    730
+    338)
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
@@ -70,7 +71,7 @@ object FormArtikelEingang: TFormArtikelEingang
   end
   object Image2: TImage
     Left = 11
-    Top = 261
+    Top = 313
     Width = 16
     Height = 16
     Anchors = [akLeft, akBottom]
@@ -128,7 +129,7 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton2Click
   end
   object Image1: TImage
-    Left = 630
+    Left = 667
     Top = 2
     Width = 54
     Height = 22
@@ -296,7 +297,7 @@ object FormArtikelEingang: TFormArtikelEingang
     OnClick = SpeedButton3Click
   end
   object SpeedButton4: TSpeedButton
-    Left = 552
+    Left = 589
     Top = 32
     Width = 23
     Height = 23
@@ -335,7 +336,7 @@ object FormArtikelEingang: TFormArtikelEingang
     ExplicitLeft = 502
   end
   object SpeedButton5: TSpeedButton
-    Left = 524
+    Left = 561
     Top = 32
     Width = 23
     Height = 23
@@ -387,9 +388,10 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton5Click
+    ExplicitLeft = 524
   end
   object SpeedButton6: TSpeedButton
-    Left = 487
+    Left = 524
     Top = 32
     Width = 23
     Height = 23
@@ -425,10 +427,11 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton6Click
+    ExplicitLeft = 487
   end
   object Edit1: TEdit
     Left = 33
-    Top = 257
+    Top = 309
     Width = 112
     Height = 21
     Hint = '"+" | "-" <BELEG> "-" <GNT>'
@@ -437,26 +440,17 @@ object FormArtikelEingang: TFormArtikelEingang
     ShowHint = True
     TabOrder = 0
     OnKeyPress = Edit1KeyPress
-  end
-  object Button1: TButton
-    Left = 150
-    Top = 257
-    Width = 137
-    Height = 24
-    Anchors = [akLeft, akBottom]
-    Caption = 'OK'
-    Default = True
-    TabOrder = 1
-    OnClick = Button1Click
+    ExplicitTop = 257
   end
   object ListBox1: TListBox
     Left = 7
     Top = 59
     Width = 138
-    Height = 192
+    Height = 244
     Anchors = [akLeft, akTop, akBottom]
     ItemHeight = 13
-    TabOrder = 2
+    TabOrder = 1
+    ExplicitHeight = 192
   end
   object CheckBox1: TCheckBox
     Left = 256
@@ -466,7 +460,7 @@ object FormArtikelEingang: TFormArtikelEingang
     Caption = 'HotKey F2 an Scanner binden'
     Checked = True
     State = cbChecked
-    TabOrder = 3
+    TabOrder = 2
     OnClick = CheckBox1Click
   end
   object Button5: TButton
@@ -475,7 +469,7 @@ object FormArtikelEingang: TFormArtikelEingang
     Width = 23
     Height = 23
     Caption = '&O'
-    TabOrder = 4
+    TabOrder = 3
     OnClick = Button5Click
   end
   object Button6: TButton
@@ -484,7 +478,7 @@ object FormArtikelEingang: TFormArtikelEingang
     Width = 23
     Height = 23
     Caption = '&P'
-    TabOrder = 6
+    TabOrder = 5
     OnClick = Button6Click
   end
   object ComboBox1: TComboBox
@@ -493,7 +487,7 @@ object FormArtikelEingang: TFormArtikelEingang
     Width = 112
     Height = 21
     Style = csDropDownList
-    TabOrder = 5
+    TabOrder = 4
     OnChange = ComboBox1Change
     Items.Strings = (
       '"+" Scan erkannt'
@@ -502,7 +496,7 @@ object FormArtikelEingang: TFormArtikelEingang
       'Fehler')
   end
   object Button11: TButton
-    Left = 661
+    Left = 698
     Top = 32
     Width = 23
     Height = 23
@@ -517,9 +511,9 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 7
+    TabOrder = 6
     OnClick = Button11Click
-    ExplicitLeft = 611
+    ExplicitLeft = 661
   end
   object Button7: TButton
     Left = 320
@@ -530,14 +524,14 @@ object FormArtikelEingang: TFormArtikelEingang
     Caption = '&A'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 8
+    TabOrder = 7
     OnClick = Button7Click
   end
   object DrawGrid1: TDrawGrid
     Left = 152
-    Top = 59
-    Width = 532
-    Height = 192
+    Top = 88
+    Width = 569
+    Height = 215
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -553,17 +547,18 @@ object FormArtikelEingang: TFormArtikelEingang
     ParentShowHint = False
     ScrollBars = ssVertical
     ShowHint = False
-    TabOrder = 9
+    TabOrder = 8
     OnDblClick = DrawGrid1DblClick
     OnDrawCell = DrawGrid1DrawCell
-    ExplicitWidth = 437
+    ExplicitWidth = 532
+    ExplicitHeight = 163
     ColWidths = (
       64)
     RowHeights = (
       80)
   end
   object StaticText1: TStaticText
-    Left = 582
+    Left = 619
     Top = 32
     Width = 73
     Height = 25
@@ -582,8 +577,9 @@ object FormArtikelEingang: TFormArtikelEingang
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 10
+    TabOrder = 9
     Transparent = False
+    ExplicitLeft = 582
   end
   object Button2: TButton
     Left = 349
@@ -591,32 +587,61 @@ object FormArtikelEingang: TFormArtikelEingang
     Width = 43
     Height = 23
     Caption = 'GTIN'
-    TabOrder = 11
+    TabOrder = 10
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 487
-    Top = 257
+    Left = 524
+    Top = 309
     Width = 42
     Height = 22
+    Anchors = [akRight, akBottom]
     Caption = '+7'
-    TabOrder = 12
+    TabOrder = 11
+    OnClick = Button3Click
+    ExplicitLeft = 487
+    ExplicitTop = 257
   end
   object Button4: TButton
-    Left = 530
-    Top = 257
+    Left = 567
+    Top = 309
     Width = 44
     Height = 22
+    Anchors = [akRight, akBottom]
     Caption = '+14'
-    TabOrder = 13
+    TabOrder = 12
+    OnClick = Button4Click
+    ExplicitLeft = 530
+    ExplicitTop = 257
   end
   object Edit2: TEdit
-    Left = 577
-    Top = 257
+    Left = 614
+    Top = 309
     Width = 107
     Height = 21
-    TabOrder = 14
+    Anchors = [akRight, akBottom]
+    TabOrder = 13
     TextHint = '+x|TT.MM.JJJJ'
+    OnKeyPress = Edit2KeyPress
+    ExplicitLeft = 577
+    ExplicitTop = 257
+  end
+  object StaticText2: TStaticText
+    Left = 152
+    Top = 59
+    Width = 569
+    Height = 25
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    BevelInner = bvNone
+    BorderStyle = sbsSunken
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Verdana'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 14
   end
   object IB_Cursor1: TIB_Cursor
     DatabaseName = '192.168.115.25:test.fdb'
