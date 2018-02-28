@@ -2025,6 +2025,7 @@ var
   // Infrastruktur
   Ablage_NAME: string;
   Ablage_PFAD: string;
+  Ablage_ZIP_PASSWORD: string;
   Ablage_VERZEICHNISSE: TStringList;
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
@@ -2032,6 +2033,7 @@ var
   col_DATEINAME_AKTUELL: integer;
 
   Col_ZIPPASSWORD: integer;
+  Col_FTPBenutzer: integer;
   MovedToDay: int64;
 
   procedure serviceJPG;
@@ -2123,7 +2125,7 @@ var
         { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
+        { } Ablage_ZIP_PASSWORD) + ';' +
         { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
@@ -2147,7 +2149,7 @@ var
           { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
           { } infozip_Password + '=' +
           { } deCrypt_Hex(
-          { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
+          { } Ablage_ZIP_PASSWORD) + ';' +
           { } infozip_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
@@ -2243,7 +2245,7 @@ var
         { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
         { } infozip_Password + '=' +
         { } deCrypt_Hex(
-        { } tBAUSTELLE.readCell(r, Col_ZIPPASSWORD)) + ';' +
+        { } Ablage_ZIP_PASSWORD) + ';' +
         { } infozip_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
@@ -2312,7 +2314,9 @@ var
   // Parameter
   pDatum: string;
   pEinzeln: string;
+
   r,a: integer;
+  UserN:string;
 
 begin
 
@@ -2334,6 +2338,7 @@ begin
 
   // Infos über Baustellen
   Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
+  Col_FTPBENUTZER := tBAUSTELLE.colof(cE_FTPUSER);
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
@@ -2359,7 +2364,6 @@ begin
   begin
 
     Ablage_NAME := cutblank(tABLAGE.readCell(r, 'NAME'));
-
     if (Ablage_NAME = '') then
       continue;
 
@@ -2383,6 +2387,29 @@ begin
       continue;
     end;
 
+    // Passwort ermitteln (Für alle Unterverzeichnisse gleich)
+    Ablage_ZIP_PASSWORD := '';
+    for a := 1 to tBAUSTELLE.RowCount do
+    begin
+      UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
+      if (UserN=Ablage_NAME) then
+      begin
+        Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+        break;
+      end;
+      if (length(UserN)>length(Ablage_NAME)) then
+       if (pos(Ablage_NAME+'\',UserN)=1) then
+       begin
+         Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+         break;
+       end;
+    end;
+    if (Ablage_ZIP_PASSWORD='') then
+    begin
+      Log(cERRORText + ' Ablage "' + Ablage_NAME + '"  in ' + cFotoService_BaustelleFName +' nicht gefunden');
+      continue;
+    end;
+
     // Verzeichnis- und Unterverzeichnis-Liste anlegen
     Ablage_VERZEICHNISSE := anfix32.dirs(Ablage_PFAD);
     Ablage_VERZEICHNISSE.sort;
@@ -2398,6 +2425,7 @@ begin
       end;
     end;
 
+    // Hauptablage und alle Unterverzeichnisse (wenn vorhanden)
     for a := 0 to pred(Ablage_VERZEICHNISSE.count) do
     begin
       Ablage_PFAD := Ablage_VERZEICHNISSE[a];

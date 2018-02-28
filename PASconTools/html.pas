@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2000 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -29,68 +29,6 @@ unit html;
 {$ifndef FPC}
 {$I jcl.inc}
 {$endif}
-// ------------------------------------------------------------------
-//
-// (c)'18.04.00 by Andreas Filsinger, http://OrgaMon.org
-//
-// ------------------------------------------------------------------
-
-// to-do: Block-Consumption angebbar machen, das ist die Anzahl der Zeilen
-// oder die aktuelle Höhe, die der eingesetzt Block braucht, im Momnet
-// ist das immer "1". Ev. noch prüfen, da er schon korret die <br>
-// Zählt.
-//
-// Konzept der "Optionalen Fragmente", entweder Ankreuzbar oder
-// eine grundsätzliche Klassifizierung.
-// S=Single Page
-// F=First Page (of n)
-// N=Next Page (of n)
-// L=Last Page (of n)
-//
-// Dokument = S | F [{ N }] L
-//
-// |S|F|N|L|
-// LLLLLLLLL   |X|X| | |  Anschrift
-// LLLLLLLL  |X|X| | |  Header
-// LLLLLLLL  | | |X|X|  Übertrag
-// LLLLLLLL  |X|X|X|X|  Positionen
-// LLLLLL     | |X|X| |  Zwischensumme
-// LLLLLL     |X| | |X|  Summe
-//
-// ----------------------------------------------------------------------------------------
-// bei Tabellen besteht das Problem im Moment des letzten Datensatzes oft nicht
-// zu wissen, dass es weiter geht. Dann muss im Nachhinein der letzt "load ZEILE MID"
-// in ein load ZEILE LAST umgesetzt werden. Dies macht diese Routinen
-// for n := pred(DatensammlerLokal.count) downto 0 do
-// begin
-// if (pos(chtml_MIDAUFTRAG, DatensammlerLokal[n]) = 1) then
-// begin
-// DatensammlerLokal[n] := 'load AUFTRAG LAST,AUFTRAG';
-// break;
-// end;
-// end;
-//
-// ----------------------------------------------------------------------------------------
-// bei Blöcken die even/odd sind, die also eine unterschiedliche ausprägung haben
-// abhängig von ihrer Position besteht ein Problem beim sortieren:
-// wird die Reihenfolge verändert wird die even/odd eigenschaft belassen, aber
-// even kann u.U. nun auf even folgen, was unschön aussieht!
-// Die Lösung ist eigentlich ein "$ifpos" Konstruct inerhalb eines Fragmentes
-// Die ganze Logik für die Ausprägungsunterschiede müssen also im Fragement selbst
-// formuluiert werden können. Es werden dann nicht mehr 2 alternative Blöcke zur
-// verfügung gestellt, sondern nur noch einer, aber mit allen möglichen Varianten
-// schon per Logikausdrücken in sich drin.
-// ----------------------------------------------------------------------------------------
-// Optimierung des Writevalue, besonders bei grossen Ausbelichtungen:
-//
-// Bei CheckreplaceOne könnte man einen SuchCache Namens "~" benutzen. Es müssen nicht
-// immer alle Zeilen durchsucht werden, sondern die, die ein "~" enthalten. "Stufe 1"
-// [Lines]
-// Man könnte auch die Stellen (Zeilennummern) verzeichnen wo bestimmte werte noch stehen
-// ~XX~ in 0,2,3,4 kommen Zeilen hinzu muss der Cache erweitert werden, finden Ersetzungen statt
-// so muss der Cache gekürzt werden. Also eine SearchString@[Lines] Datenstruktur "Stufe 2"
-// Immer bei einem Zugang (insert, load, add) könnte man den Cache erweitern
-// ----------------------------------------------------------------------------------------
 
 //
 // ..\..\rev\anfix32.rev
@@ -150,14 +88,15 @@ const
   cColor_Gruen = '#00FF66';
   cColor_Braun = '#CC9933';
   cColor_Rot = '#FF6600';
-  cHTML_FormFeed = '<p class="breakhere">&nbsp;</p>';
+  cHTML_FormFeed_Class = 'class="breakhere">';
+  cHTML_FormFeed = '<P ' + cHTML_FormFeed_Class + '&nbsp;</P>';
 
   // Prefix-Tags im html
+  // ACHTUNG: Im Quelltext immer an erster Stelle im String - keine Einrückung!!
   cHTML_BeginBlock = '<!-- BEGIN ';
   cHTML_EndBlock = '<!-- END ';
   cHTML_InsertMark = '<!-- INSERT ';
   cHTML_IncludeFile = '<!-- INCLUDE ';
-
   cHTML_MaxLines = '<!-- SET MAXLINES ';
   cHTML_Copies = '<!-- SET NUMBER OF COPIES ';
   cHTML_ComputeFile = '<!-- COMPUTE ';
@@ -1312,7 +1251,7 @@ begin
 
   repeat
     // a) prüfen, ob erste Seite reicht?
-    if CalcBedarf(FreiCount_Single_Killer, 0) <= FreiCount_Single then
+    if (CalcBedarf(FreiCount_Single_Killer, 0) <= FreiCount_Single) then
     begin
       // single page fits all!!
       Seiten := 1;
@@ -1348,7 +1287,7 @@ begin
       // passt der Rest auf "last"?
       CB_Producer := FreiCount_Next_Killer;
       repeat
-        if CalcBedarf(FreiCount_Last_Killer, CB_LastChecked) <= FreiCount_Last then
+        if (CalcBedarf(FreiCount_Last_Killer, CB_LastChecked) <= FreiCount_Last) then
         begin
           // ja -> das wird die letzte Seite
           break;
@@ -2557,7 +2496,7 @@ begin
         begin
 
           //
-          if (pos('class="breakhere">', strings[n]) > 0) then
+          if (pos(cHTML_FormFeed_Class, strings[n]) > 0) then
           begin
             ActPage.EndPage := n;
             ClientSorter.AddObject(ActPage.SortStr, ActPage);
@@ -2614,7 +2553,7 @@ begin
     with ClientSorter.Objects[pred(ClientSorter.count)] as TPageBlock do
     begin
       //
-      if (pos('class="breakhere">', strings[EndPage]) > 0) then
+      if (pos(cHTML_FormFeed_Class, strings[EndPage]) > 0) then
         dec(EndPage);
     end;
 
@@ -3120,7 +3059,7 @@ begin
           begin
             if StartTokenIs('</BODY', HomeLine, self) then
             begin
-              insert(HomeLine, '<P class=breakhere></P>');
+              insert(HomeLine, cHTML_FormFeed);
               inc(HomeLine);
               for n := succ(Body_Start) to pred(Body_end) do
               begin
@@ -3256,7 +3195,7 @@ begin
     with ClientSorter.Objects[pred(ClientSorter.count)] as TPageBlock do
     begin
       //
-      if (pos('class="breakhere">', strings[EndPage]) > 0) then
+      if (pos(cHTML_FormFeed_Class, strings[EndPage]) > 0) then
         dec(EndPage);
     end;
 

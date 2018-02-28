@@ -10216,8 +10216,13 @@ begin
 
     // mehrere Ausgabebelege / Ausprägungsarten "#M" / "#W"
     for n := 1 to pred(AusgabeBelege.count) do
-      FileCopy(AusgabeBelege[n], OutPath + OutFName + '#' + ExtractSegmentBetween(ExtractFileName(AusgabeBelege[n]),
-        '#', chtmlextension) + chtmlextension);
+      FileCopy(
+       {} AusgabeBelege[n],
+       {} OutPath + OutFName +
+       {} '#' +
+       {} ExtractSegmentBetween(
+       {}   ExtractFileName(AusgabeBelege[n]),'#', chtmlextension) +
+       {} chtmlextension);
 
     // In das Druck-Spool-Verzeichnis
     if (INTERN_INFO.values['Druckauftrag'] = cIni_Activate) then
