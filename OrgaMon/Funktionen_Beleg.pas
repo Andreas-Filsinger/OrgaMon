@@ -7258,10 +7258,6 @@ begin
 
     ZUSAGE := 0;
     ERSTERLIEFERTAG := MaxInt;
-    // Delphi Bug "MaxDouble" umschifft
-    // d := MaxDouble;
-    // if d=MaxDouble then ok    <--- this fails
-    //
     cTerminUnset := MaxDouble;
     TERMIN := cTerminUnset;
 
@@ -7688,6 +7684,14 @@ begin
   end;
   cPOSTEN.free;
   qBELEG.free;
+
+  // Basic-Programm ausführen
+  if result then
+   e_x_basic(
+        { } MyProgramPath + cDBASICPath + 'BelegStatusBuchen-1.txt',
+        { } 'PERSON_R=' + inttostr(PERSON_R) + ';' +
+        { } 'BELEG_R=' + inttostr(BELEG_R));
+
 end;
 
 function e_w_BBelegStatusBuchen(BBELEG_R: integer): boolean;

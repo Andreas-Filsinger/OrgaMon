@@ -216,7 +216,8 @@ procedure SetRevision(const ProjectName: string; Rev: single);
 // Floating Point Sachen
 function IntToExtended(const i: integer): extended;
 function FloatToStrISO(Value: extended; Nachkommastellen: integer = 0): string;
-function StrToDouble(x: string): double;
+function StrToDouble(x: string): double; overload;
+function StrToDouble(x: string; var ValError : Boolean): double; overload;
 function StrToDoubleDef(x: string; d: double): double;
 
 // Str - Utils : Charsets
@@ -4437,12 +4438,21 @@ begin
   result := x;
 end;
 
-function StrToDouble(x: string): double; // strto
+function StrToDouble(x: string): double; overload;
 var
   dummy: integer;
 begin
   x := fmMonetary(x);
   val(x, result, dummy);
+end;
+
+function StrToDouble(x: string; var ValError : Boolean): double; overload;
+var
+  dummy: integer;
+begin
+  x := fmMonetary(x);
+  val(x, result, dummy);
+  ValError := (x='') or (dummy<>0)
 end;
 
 function StrToDoubleDef(x: string; d: double): double;

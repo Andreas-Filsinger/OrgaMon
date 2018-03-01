@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -2596,9 +2596,12 @@ begin
   else
   begin
     sBASIC := TStringList(dbBASIC_FName_Cache.Objects[n]);
-    // Im Debug-Modus: Überschreibe das gecachte Script mit dem aus dem Dateisystem
+    // Im Debug-Modus: Überschreibe das ev. gecachte Script (es könnte auch nil sein) mit
+    // dem aus dem Dateisystem - bei jedem einzelnen Lauf, da es sein kann dass dieses Skript
+    // ständig entwickelt also auch abgeändert wird
     if DebugMode then
-      sBASIC.LoadFromFile(FName);
+      if assigned(sBASIC) then
+       sBASIC.LoadFromFile(FName);
   end;
 
   // Execute

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -465,7 +465,7 @@ function TBasicProcessor.strtob(s: string): byte;
 var
   r: double;
 begin
-  r := strtodouble(s);
+  r := StrToDouble(s);
   strtob := round(r);
 end;
 
@@ -473,7 +473,7 @@ function TBasicProcessor.strtow(s: string): word;
 var
   r: double;
 begin
-  r := strtodouble(s);
+  r := StrToDouble(s);
   strtow := round(r);
 end;
 
@@ -601,11 +601,12 @@ begin
   if (BasicError = 0) then
   begin
     BasicError := No;
-    BasicErrors.add(
-      { } 'Zeile ' + inttostr(BasicLine) + ':' + ';' +
-      { } BasicMsg + ';' +
-      { } AddInfo + ';' +
-      { } strings[BasicLine]);
+    if (No<>BASICEND) then
+      BasicErrors.add(
+        { } 'Zeile ' + inttostr(BasicLine) + ':' + ';' +
+        { } BasicMsg + ';' +
+        { } AddInfo + ';' +
+        { } strings[BasicLine]);
   end;
 end;
 
@@ -1348,7 +1349,7 @@ begin
   begin
     delete(No);
     delete(No); { s) }
-    r := strtodouble(gets(No));;
+    r := StrToDouble(gets(No),ValError);
     if ValError then
       Err(NOTANUMBER, '')
     else
@@ -1407,6 +1408,7 @@ end;
 procedure TBasicProcessor.ProcStrId(No: byte); { s=s -> s }
 var
   a, b: double;
+  x, y: string;
   AlphaIden: boolean;
   NumIden: boolean;
 begin
@@ -1414,22 +1416,30 @@ begin
   begin
     delete(No + 1); { ss -> s }
     insert(sId, No); { rss -> s }
-    AlphaIden := gets(No + 1) = gets(No + 2);
-    NumIden := true;
-    a := strtodouble(gets(No + 1));
-    if ValError then
-      NumIden := false
-    else
+    x := gets(No + 1);
+    y := gets(No + 2);
+    AlphaIden := (x = y);
+    if not(AlphaIden) then
     begin
-      b := strtodouble(gets(No + 2));
+      NumIden := true;
+      a := StrToDouble(x,ValError);
       if ValError then
         NumIden := false
       else
       begin
-        NumIden := (a = b);
+        b := StrToDouble(y,ValError);
+        if ValError then
+          NumIden := false
+        else
+        begin
+          NumIden := (a = b);
+        end;
       end;
+      puts(booltostr(NumIden), No);
+    end else
+    begin
+     puts(booltostr(true), No);
     end;
-    puts(booltostr(NumIden or AlphaIden), No);
     delete(No + 1);
     delete(No + 1);
   end;
@@ -1447,12 +1457,12 @@ begin
     insert(sId, No); { rss -> s }
     AlphaIden := gets(No + 1) > gets(No + 2);
     NumIden := true;
-    a := strtodouble(gets(No + 1));
+    a := StrToDouble(gets(No + 1),ValError);
     if ValError then
       NumIden := false
     else
     begin
-      b := strtodouble(gets(No + 2));
+      b := StrToDouble(gets(No + 2),ValError);
       if ValError then
         NumIden := false
       else
@@ -1478,12 +1488,12 @@ begin
     insert(sId, No); { rss -> s }
     AlphaIden := gets(No + 1) < gets(No + 2);
     NumIden := true;
-    a := strtodouble(gets(No + 1));
+    a := StrToDouble(gets(No + 1),ValError);
     if ValError then
       NumIden := false
     else
     begin
-      b := strtodouble(gets(No + 2));
+      b := StrToDouble(gets(No + 2),ValError);
       if ValError then
         NumIden := false
       else
@@ -1572,7 +1582,7 @@ begin
     insert(sId, No); { rsss -> r }
     v := strtob(gets(No + 2));
     n := strtob(gets(No + 3));
-    r := strtodouble(gets(succ(No)));
+    r := StrToDouble(gets(succ(No)));
     if n > 0 then
     begin
       puts(rtostr(r, v, n), No)
@@ -1627,7 +1637,7 @@ begin
     astr := cutblank(gets(succ(No)));
     if (astr <> '') then
     begin
-      a := strtodouble(astr);
+      a := StrToDouble(astr,ValError);
       if ValError then
         Err(NOTANUMBER, astr)
     end
@@ -1639,7 +1649,7 @@ begin
     bstr := cutblank(gets(No + 2));
     if (bstr <> '') then
     begin
-      b := strtodouble(bstr);
+      b := StrToDouble(bstr,ValError);
       if ValError then
         Err(NOTANUMBER, bstr)
     end

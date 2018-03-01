@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.341 (01.03.18) Andreas Filsinger
+
+ Neu: Beleg: D-BASIC Skript "BelegStatusBuchen-1" nach "BerechneBeleg"
+ Bug: D-BASIC: Prüfung auf String-Identität (if s1=s2 then) hatte versagt
+      Fälle von Falsch-Positiv
+
 Rev 8.340 (28.02.18) Andreas Filsinger
 
  Bug: Foto: Ablage: Es wurden keine Foto- Zips mehr erstellt
