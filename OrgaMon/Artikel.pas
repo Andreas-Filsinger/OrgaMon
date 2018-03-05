@@ -1778,8 +1778,7 @@ begin
                           { } ' (MEDIUM_R=' + inttostr(MEDIUM_R) + ')');
                         if DOKUMENT_R >= cRID_FirstValid then
                           e_x_sql('update DOKUMENT set' +
-                            { } ' BEMERKUNG = BEMERKUNG||ASCII_CHAR(13)||ASCII_CHAR(10)||' +
-                            SQLstring(CellStr) + ' ' +
+                            { } ' BEMERKUNG = BEMERKUNG'+cC_CRLF+SQLstring(CellStr) + ' ' +
                             { } 'where' +
                             { } ' (RID=' + inttostr(DOKUMENT_R) + ')')
                         else

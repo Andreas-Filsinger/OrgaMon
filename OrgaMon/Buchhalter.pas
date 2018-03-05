@@ -2448,8 +2448,8 @@ begin
   e_x_sql(
     { } 'update EREIGNIS set ' +
     { } 'BEENDET=CURRENT_TIMESTAMP, ' +
-    { } 'INFO=INFO||ASCII_CHAR(13)||ASCII_CHAR(10)||' +
-    { } '''' + Grund + ''' ' +
+    { } 'INFO=INFO'+cC_CRLF+
+    { } SQLstring(Grund) + ' ' +
     { } 'where RID=' + inttostr(EREIGNIS_R));
 end;
 

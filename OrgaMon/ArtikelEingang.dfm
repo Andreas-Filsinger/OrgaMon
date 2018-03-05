@@ -450,7 +450,6 @@ object FormArtikelEingang: TFormArtikelEingang
     Anchors = [akLeft, akTop, akBottom]
     ItemHeight = 13
     TabOrder = 1
-    ExplicitHeight = 192
   end
   object CheckBox1: TCheckBox
     Left = 256

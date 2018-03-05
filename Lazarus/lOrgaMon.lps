@@ -4,15 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="246">
+    <Units Count="265">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="48"/>
         <CursorPos X="5" Y="76"/>
         <UsageCount Value="210"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -21,7 +20,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos X="3" Y="33"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="175"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -30,7 +29,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="16"/>
         <CursorPos Y="26"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="175"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -39,7 +38,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="285"/>
         <CursorPos X="21" Y="308"/>
-        <UsageCount Value="171"/>
+        <UsageCount Value="172"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -48,7 +47,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3743"/>
         <CursorPos X="5" Y="3772"/>
-        <UsageCount Value="121"/>
+        <UsageCount Value="122"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -56,7 +55,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="5"/>
-        <UsageCount Value="123"/>
+        <UsageCount Value="124"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
@@ -64,7 +63,7 @@
         <IsPartOfProject Value="True"/>
         <TopLine Value="806"/>
         <CursorPos X="27" Y="828"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -72,7 +71,7 @@
         <IsPartOfProject Value="True"/>
         <TopLine Value="57"/>
         <CursorPos X="29" Y="79"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
@@ -81,7 +80,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="118"/>
         <CursorPos X="6" Y="139"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="107"/>
         <Bookmarks Count="1">
           <Item0 Y="782" ID="2"/>
         </Bookmarks>
@@ -90,8 +89,9 @@
       <Unit9>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <CursorPos X="16" Y="41"/>
-        <UsageCount Value="113"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
@@ -99,7 +99,7 @@
         <Filename Value="..\PASconTools\OpenStreetMap.pas"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="67"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
@@ -108,7 +108,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="943"/>
         <CursorPos X="77" Y="986"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="108"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -117,7 +117,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="28"/>
         <CursorPos X="3" Y="45"/>
-        <UsageCount Value="98"/>
+        <UsageCount Value="99"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -126,7 +126,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2335"/>
         <CursorPos X="7" Y="2373"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -134,7 +134,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="240"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -144,7 +144,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="197"/>
         <CursorPos X="10" Y="208"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -153,7 +153,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1371"/>
         <CursorPos Y="1384"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -162,17 +162,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="8451"/>
         <CursorPos Y="8479"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\PASconTools\WordIndex.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="32"/>
         <CursorPos Y="77"/>
-        <UsageCount Value="97"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -182,7 +181,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -192,7 +191,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -202,7 +201,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
@@ -212,7 +211,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -222,7 +221,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -362,11 +361,10 @@
       </Unit41>
       <Unit42>
         <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1949"/>
         <CursorPos X="59" Y="1972"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -1128,10 +1126,9 @@
       <Unit153>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="25"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit153>
       <Unit154>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-base\src\gettext.pp"/>
@@ -1711,206 +1708,195 @@
       <Unit236>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit236>
       <Unit237>
         <Filename Value="..\..\fpc\packages\pastojs\tests\tcfiler.pas"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit237>
       <Unit238>
         <Filename Value="..\..\fpc\tests\webtbs\tw32576.pp"/>
         <UnitName Value="xx"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit238>
       <Unit239>
         <Filename Value="..\..\fpc\tests\webtbs\tw33086.pp"/>
         <UnitName Value="test"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit239>
       <Unit240>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\gettext.pp"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit240>
       <Unit241>
         <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="25997"/>
         <CursorPos Y="26020"/>
         <UsageCount Value="10"/>
         <Bookmarks Count="1">
           <Item0 Y="26012" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit241>
       <Unit242>
         <Filename Value="..\..\fpspreadsheet\source\common\fpstypes.pas"/>
         <UnitName Value="fpsTypes"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="2" Y="13"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit242>
       <Unit243>
         <Filename Value="..\..\fpspreadsheet\source\fps.inc"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="6"/>
         <CursorPos Y="30"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit243>
       <Unit244>
         <Filename Value="..\..\fpc\tests\test\tasm22.pp"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit244>
       <Unit245>
         <Filename Value="..\..\fpc\tests\test\tasm21b.pp"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit245>
+      <Unit246>
+        <Filename Value="..\..\fpc\tests\webtbs\tw32039.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit246>
+      <Unit247>
+        <Filename Value="..\..\fpc\tests\webtbs\tw32001.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit247>
+      <Unit248>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33167.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit248>
+      <Unit249>
+        <Filename Value="..\..\fpc\tests\webtbs\tw25769a.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit249>
+      <Unit250>
+        <Filename Value="..\..\fpc\tests\webtbs\tw26472.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit250>
+      <Unit251>
+        <Filename Value="..\..\fpc\tests\webtbs\tw30654.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit251>
+      <Unit252>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33069.pp"/>
+        <UnitName Value="test"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit252>
+      <Unit253>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33202.pp"/>
+        <UnitName Value="macrotest"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit253>
+      <Unit254>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33230.pp"/>
+        <UnitName Value="Project1"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit254>
+      <Unit255>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33222.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit255>
+      <Unit256>
+        <Filename Value="..\..\fpc\tests\tbs\tb0013.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit256>
+      <Unit257>
+        <Filename Value="..\..\fpc\tests\tbs\tb0641.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit257>
+      <Unit258>
+        <Filename Value="..\..\fpc\tests\webtbf\tw25769.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit258>
+      <Unit259>
+        <Filename Value="..\..\fpc\tests\webtbf\tw31936.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit259>
+      <Unit260>
+        <Filename Value="..\..\fpc\tests\webtbf\tw31717.pp"/>
+        <UnitName Value="Project1"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit260>
+      <Unit261>
+        <Filename Value="..\..\fpc\tests\test\tasm24.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit261>
+      <Unit262>
+        <Filename Value="..\..\fpc\tests\test\tarray12.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="115"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit262>
+      <Unit263>
+        <Filename Value="..\..\fpc\tests\test\tasm23.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit263>
+      <Unit264>
+        <Filename Value="..\..\fpc\tests\test\cg\tmmxshift.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit264>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="16816" Column="11" TopLine="16778"/>
-      </Position1>
-      <Position2>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="16819" Column="25" TopLine="16781"/>
-      </Position2>
-      <Position3>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="16820" Column="10" TopLine="16782"/>
-      </Position3>
-      <Position4>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18643" Column="65" TopLine="18604"/>
-      </Position4>
-      <Position5>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26016" Column="23" TopLine="25993"/>
-      </Position5>
-      <Position6>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18643" Column="15" TopLine="18642"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26016" Column="11" TopLine="26016"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18643" Column="13" TopLine="18642"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26016" Column="13" TopLine="26016"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18643" Column="13" TopLine="18642"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26016" TopLine="26016"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18645" TopLine="18642"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26016" TopLine="25993"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18645" TopLine="18642"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26020" Column="3" TopLine="25997"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\..\fpspreadsheet\source\common\fpstypes.pas"/>
-        <Caret Column="2"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26020" TopLine="25997"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="16776" Column="34" TopLine="16737"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26022" TopLine="25998"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="16776" Column="24" TopLine="16737"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26023" Column="37" TopLine="25999"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26022" Column="10" TopLine="25999"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26023" Column="37" TopLine="25999"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="26020" TopLine="25999"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\fpspreadsheet\source\fps.inc"/>
-        <Caret Line="30" TopLine="6"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\fpspreadsheet\source\common\fpstypes.pas"/>
-        <Caret Line="13" Column="2"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\OrgaMon\Funktionen_Buch.pas"/>
-        <Caret Line="1972" Column="59" TopLine="1949"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\..\Indy\Lib\Protocols\IdSSLOpenSSLHeaders.pas"/>
-        <Caret Line="18644" TopLine="18620"/>
-      </Position30>
-    </JumpHistory>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
   <Debugging>
     <BreakPoints Count="3">

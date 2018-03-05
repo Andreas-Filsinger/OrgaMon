@@ -19,6 +19,16 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.343 (05.03.18) Andreas Filsinger
+
+ Neu: Artikel: Zusage: Eine Änderung der Zusage erzeugt ein Ereignis, das nun mit
+      der Vorlage "ZUSAGE" in eine eMail umgesetzt werden kann.
+
+Rev 8.342 (01.03.18) Andreas Filsinger
+
+ Bug: Foto: Download mit Unterverzeichnissen war nicht möglich
+ Bug: Auftrag: Ergebnis: Missverständliche Warnung
+
 Rev 8.341 (01.03.18) Andreas Filsinger
 
  Neu: Beleg: D-BASIC Skript "BelegStatusBuchen-1" nach "BerechneBeleg"

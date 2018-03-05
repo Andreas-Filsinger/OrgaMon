@@ -1408,7 +1408,7 @@ begin
      FieldByName('BPOSTEN_R').AsInteger := BPOSTEN_R;
      FieldByName('BBELEG_R').AsInteger := BBELEG_R;
      FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
-     if AUSGABEART_R>=cRID_FIrstValid then
+     if (AUSGABEART_R>=cRID_FIrstValid) then
       FieldByName('AUSGABEART_R').AsInteger := AUSGABEART_R;
      e_w_sqlt(FieldByName('INFO'), sZUSAGE);
      Post;

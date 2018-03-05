@@ -1804,13 +1804,11 @@ begin
 
         // Prüfungen
         if (FotoFTP.Host = '') then
-          raise Exception.create('FTP-Host hat keinen Eintrag');
+          raise Exception.create(cE_FTPHOST+' hat keinen Eintrag');
         if (FotoFTP.UserName = '') then
-          raise Exception.create('FTP-Username hat keinen Eintrag');
+          raise Exception.create(cE_FTPUSER+' hat keinen Eintrag');
         if (FotoFTP.Password = '') then
-          raise Exception.create('FTP-Password hat keinen Eintrag');
-        if (WorkPath = '') then
-          raise Exception.create('Verzeichnis hat keinen Eintrag');
+          raise Exception.create(cE_FTPPASSWORD+' hat keinen Eintrag');
 
         //
         if not(SolidCheckDir(FotoFTP,SourcePath)) then

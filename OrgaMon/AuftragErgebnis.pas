@@ -2417,7 +2417,7 @@ var
               FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
             end else
             begin
-              Log(cINFOText + ' Kein Upload, da kein FTP-Host eingetragen ist.');
+              Log(cINFOText + ' Kein Upload, da kein ' + cE_FTPHOST + ' eingetragen ist.');
             end;
 
           until true;
@@ -2612,16 +2612,16 @@ begin
           // Prüfung der FTP Daten
           if (Host <> '') then
           begin
-            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPHost= somit kein Upload in eine Internet-Ablage');
+            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
 
             if (Username = '') then
             begin
-              Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPBenutzer=');
+              Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPUSER+'=');
               break;
             end;
 
             if (Password = '') then
-              Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in FTPPassword=');
+              Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPPASSWORD+'=');
           end;
 
         end;

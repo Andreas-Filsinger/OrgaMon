@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1684,6 +1684,123 @@ var
     eMailParameter.free;
   end;
 
+  procedure doZusage;
+  var
+   VORLAGE_R : Integer;
+   PERSON_R : Integer;
+   ARTIKEL_R : Integer;
+   AUSGABEART_R : Integer;
+   cEREIGNIS : TdboCursor;
+   cPOSTEN : TdboCursor;
+   EREIGNIS_R: Integer;
+   sINFO: TStringList;
+   TODAY, ZUSAGE_ALT, ZUSAGE_NEU : TAnfixDate;
+   eMailParameter : TStringList;
+   qMAIL: TIB_Query;
+  begin
+    VORLAGE_R := e_r_VorlageMail(cMailVorlage_Zusage);
+    sINFO := TStringList.Create;
+    eMailParameter := TStringList.Create;
+    cEREIGNIS := nCursor;
+    qMAIL := nQuery;
+    TODAY := DateGet;
+
+    // Zunächst "abgelaufene" (TimeOut) Ereignisse als beendet ausschliessen
+    with cEREIGNIS do
+    begin
+      sql.Add('select * from EREIGNIS where');
+      sql.add(' (ART=' + inttostr(eT_OrderZusageAenderung) + ') and');
+      sql.add(' (BEENDET IS NULL)');
+      ApiFirst;
+      while not(EOF) do
+      begin
+        EREIGNIS_R := FieldByName('RID').AsInteger;
+        ARTIKEL_R := FieldByName('ARTIKEL_R').AsInteger;
+        AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
+        repeat
+
+          // Umsetzung gar nicht gewünscht?
+          if (VORLAGE_R<cRID_FirstValid) then
+          begin
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' eMail Vorlage "' + cMailVorlage_Zusage + '" nicht gefunden');
+            break;
+          end;
+
+          // Für eine eMail-Info ist es zu spät?
+          e_r_sqlt(FieldByName('INFO'), sINFO);
+          ZUSAGE_ALT := date2long(nextp(sINFO.values['ZUSAGE'],' ',0));
+          ZUSAGE_NEU := date2long(nextp(sINFO.values['NEW.ZUSAGE'],' ',0));
+          if DateNotOK(ZUSAGE_NEU) then
+          begin
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' Zusage-Neu-Datum unlesbar');
+            break;
+          end;
+          if (ZUSAGE_NEU<=TODAY) then
+          begin
+            e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' Zusage-Neu TimeOut');
+            break;
+          end;
+
+          cPOSTEN  := nCursor;
+
+          with cPOSTEN do
+          begin
+            sql.Add('select BELEG.PERSON_R,SUM(POSTEN.MENGE_AGENT) MENGE from POSTEN');
+            sql.add('join BELEG on (POSTEN.BELEG_R=BELEG.RID) and (BELEG.PERSON_R is not null) where');
+            sql.Add(' (POSTEN.ARTIKEL_R='+IntToStr(ARTIKEL_R)+') and');
+            sql.Add(' (POSTEN.AUSGABEART_R' + isRID(AUSGABEART_R) +') and');
+            sql.Add(' (POSTEN.MENGE_AGENT>0)');
+            sql.Add('group by');
+            sql.add(' BELEG.PERSON_R');
+            APiFirst;
+          end;
+
+          while not(cPOSTEN.Eof) do
+          begin
+
+            PERSON_R := cPOSTEN.FieldByName('PERSON_R').AsInteger;
+
+            // eMail schreiben an alle, die darauf warten
+            with eMailParameter do
+            begin
+              values['AUSGABEART_R'] := IntTostr(AUSGABEART_R);
+              values['AUSGABEART'] := e_r_Ausgabeart(AUSGABEART_R);
+              values['MENGE'] := IntToStr(cPOSTEN.FieldByName('MENGE').AsInteger);
+              values['ZUSAGE'] := long2date(ZUSAGE_ALT);
+              values['NEW.ZUSAGE'] := long2date(ZUSAGE_NEU);
+            end;
+
+            with qMAIL do
+            begin
+              if (sql.count = 0) then
+                sql.add('select * from EMAIL for update');
+              insert;
+              FieldByName('RID').AsInteger := cRID_AutoInc;
+              FieldByName('VORLAGE_R').AsInteger := VORLAGE_R;
+              FieldByName('PERSON_R').AsInteger := PERSON_R;
+              FieldByName('ARTIKEL_R').AsInteger := ARTIKEL_R;
+              FieldByName('EREIGNIS_R').AsInteger := EREIGNIS_R;
+              FieldByName('NACHRICHT').Assign(eMailParameter);
+              post;
+            end;
+            cPOSTEN.APINext;
+          end;
+          cPOSTEN.Free;
+
+          // Erfolg verbuchen!
+          e_w_EreignisAbschluss(EREIGNIS_R, cERRORText + ' Zusage-Neu TimeOut');
+
+        until yet;
+        ApiNext;
+      end;
+
+    end;
+    cEREIGNIS.Free;
+    sINFO.Free;
+    qMAIL.Free;
+    eMailParameter.free;
+  end;
+
 begin
   //
   BeginHourGlass;
@@ -1705,6 +1822,13 @@ begin
   except
     on E: Exception do
       Log(cERRORText + ' doVersand: ' + E.Message);
+  end;
+
+  try
+    doZusage;
+  except
+    on E: Exception do
+      Log(cERRORText + ' doZusage: ' + E.Message);
   end;
 
   cEREIGNIS.free;

@@ -634,13 +634,13 @@ begin
         // Prüfung der FTP Daten
         if (UserName = '') then
         begin
-          LogFoto(cERRORText + ' Kein Eintrag in FTPBenutzer=');
+          LogFoto(cERRORText + ' Kein Eintrag in '+cE_FTPUSER+'=');
           break;
         end;
         if (Host = '') then
-          LogFoto(cWARNINGText + ' Kein Eintrag in FTPHost=');
+          LogFoto(cWARNINGText + ' Kein Eintrag in '+cE_FTPHOST+'=');
         if (password = '') then
-          LogFoto(cWARNINGText + ' Kein Eintrag in FTPPassword=');
+          LogFoto(cWARNINGText + ' Kein Eintrag in '+cE_FTPPASSWORD+'=');
 
       end;
 

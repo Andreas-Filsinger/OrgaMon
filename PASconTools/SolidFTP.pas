@@ -601,6 +601,8 @@ begin
         ChangeDir(ValidatePathName(SourcePath));
         // go silently back to root
         ChangeDir('/');
+        //
+        result := true;
 
       except
 

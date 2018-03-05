@@ -115,6 +115,7 @@ const
   cC_False = 'N';
   cC_False_AsString = '''N''';
   cC_concant = '||';
+  cC_CRLF = '||ASCII_CHAR(13)||ASCII_CHAR(10)||';
 
   // Datenbank Referenz Identitäten
   cRID_Unset = -2;

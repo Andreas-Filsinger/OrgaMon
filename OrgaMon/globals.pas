@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.341; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.343; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -367,10 +367,10 @@ const
   cFTP_Password = '1kfan8wx5';
 
   // erweiterte Baustellen Einstellungen
-  cE_ZIPPASSWORD = 'ZipPasswort';
-  cE_FTPPASSWORD = 'FTPPasswort';
-  cE_FTPUSER = 'FTPBenutzer';
   cE_FTPHOST = 'FTPServer';
+  cE_FTPUSER = 'FTPBenutzer';
+  cE_FTPPASSWORD = 'FTPPasswort';
+  cE_ZIPPASSWORD = 'ZipPasswort';
   cE_FTPVerzeichnis = 'FTPVerzeichnis';
   cE_VERZEICHNIS = 'Verzeichnis';
   cE_ZusaetzlicheZips = 'ZusätzlicheZips';
@@ -620,6 +620,7 @@ const
   cMailvorlage_Dokument = 'PDF';
   cMailvorlage_Rechnung = 'RECHNUNG';
   cMailvorlage_Mahnung = 'MAHNUNG';
+  cMailVorlage_Zusage = 'ZUSAGE';
   cMailvorlage_Versand = 'Versand@';
 
   // für die Drucklabels

@@ -1175,7 +1175,7 @@ begin
       {} 'update EREIGNIS set' +
       {} ' BEARBEITER_R=' + IntToStr(sBearbeiter) + ',' +
       {} ' BEENDET=CURRENT_TIMESTAMP,' +
-      {} ' INFO=''' + INFO + ''' ' +
+      {} ' INFO=INFO' + cC_CRLF+ SQLString(INFO) + ' ' +
       {} 'where RID=' + IntToStr(EREIGNIS_R))
   else
     e_x_sql(
