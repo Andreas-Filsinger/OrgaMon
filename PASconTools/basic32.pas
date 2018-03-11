@@ -60,6 +60,7 @@ unit basic32;
   19.07.10 integration in OLAP
   08.06.11 PAGE (Seitenumbruch), Bugfixes im Dokumenthandling
   25.02.15 FPC Port
+  05.03.18 Bug bei if string=string
   컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� }
 
 {$ifdef fpc}
@@ -2361,7 +2362,7 @@ begin
       end;
     until (BasicError > 0);
   end;
-  result := (BasicError = 0);
+  result := (BasicError = 0) or (BasicError=BASICEND);
 
   // Automatischer Abschluss den Druckens
   if (printer.printing) then

@@ -70,8 +70,8 @@ const
 
   // Bild-Namenskonvention
   //
-  // GeraeteID "-" RID "-" BildProtokollName[ "-" N ].jpg
-  // "-" N wird nur angefügt sobald auf dem Smartphone eine Bildnamensgleichheit
+  // GeraeteID "-" RID "-" BildProtokollName[ "-" n ].jpg
+  // "-" n wird nur angefügt sobald auf dem Smartphone eine Bildnamensgleichheit
   // erkannt wird.
   //
   cFotoService_AbortTag = 'FATAL';
