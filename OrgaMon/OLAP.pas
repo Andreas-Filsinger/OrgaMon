@@ -88,6 +88,7 @@ type
     BASIC: TBasicProcessor;
     SilentMode: boolean;
     RohdatenCount: integer;
+    NameSpace: string;
     ListCount: integer;
     pXLS: TXLSFile;
 
@@ -1223,6 +1224,7 @@ begin
     TopKategorie := '';
 
     RohdatenCount := 0;
+    NameSpace := 'TMP';
     CastCount := 0;
     State := cState_Rohdaten;
     LineIndex := -1;
@@ -1291,7 +1293,7 @@ begin
       // Parameter - Definition?
       if (pos('$', Line) = 1) then
       begin
-        if State = cState_default then
+        if (State = cState_default) then
         begin
           if (ResolveParameter(nextp(Line, '=', 0)) = '') then
             ParameterL.add(UserInput(Line));
@@ -1300,6 +1302,8 @@ begin
         begin
           ParameterL.add(UserInput(Line));
         end;
+        if (pos('NAMESPACE=',Line)=2) then
+         NameSpace := nextp(Line,'=',1);
         continue;
       end;
 
@@ -2192,9 +2196,10 @@ begin
               cRepeat := DataModuleDatenbank.nCursor;
               with cRepeat do
               begin
-                ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(RohdatenCount - 2);
+                ExecuteStatement := 'select * from ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount - 2);
                 sql.add(ExecuteStatement);
                 setWaitCaption(ExecuteStatement);
+                dbLog(sql);
                 Open;
                 RepeatFieldNames := dbOrgaMon.HeaderNames(cRepeat);
                 ApiFirst;
@@ -2280,7 +2285,7 @@ begin
                 raise Exception.create('Datei "' + iOlapPath + LoadFname + '" nicht gefunden!');
 
               // bisherige Tabelle löschen
-              DropTable(e_r_OLAP_Tabellenname(RohdatenCount));
+              DropTable(e_r_OLAP_Tabellenname(NameSpace,RohdatenCount));
 
               // jetzt wird die Tabelle angelegt
               LoadSQL := '';
@@ -2291,7 +2296,20 @@ begin
                   LoadSQL := LoadSQL + ', ';
               end;
 
-              e_x_sql('create table ' + e_r_OLAP_Tabellenname(RohdatenCount) + ' ( ' + LoadSQL + ')');
+              if DROP_BUG then
+              begin
+               if not(TableExists(e_r_OLAP_Tabellenname(NameSpace,RohdatenCount))) then
+                 e_x_sql('create table ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount) + ' ( ' + LoadSQL + ')')
+               else
+                 ShowMessage(
+                   {} 'Datenbank-Tabelle ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount) + ':' + #13#10 +
+                   {} 'sollte die Struktur' + #13#10 +
+                   {} LoadSQL + #13#10 +
+                   {} 'aufweisen, ansonsten geht der load schief!');
+              end else
+              begin
+                e_x_sql('create table ' + e_r_OLAP_Tabellenname(NameSpace,RohdatenCount) + ' ( ' + LoadSQL + ')');
+              end;
 
               LoadSQL := '';
               for m := pred(SpaltenNamen.count) downto 0 do
@@ -2302,7 +2320,7 @@ begin
               end;
               LoadSQLinsert :=
                { } 'insert into ' +
-               { } e_r_OLAP_Tabellenname(RohdatenCount) +
+               { } e_r_OLAP_Tabellenname(NameSpace,RohdatenCount) +
                { } ' (' + LoadSQL + ') values (';
 
               // QuellDatei laden
@@ -2428,7 +2446,7 @@ begin
               ListCol := AllHeader.indexof(ListColName);
               if (ListCol <> -1) then
               begin
-                e_n_OLAP(pred(RohdatenCount));
+                e_n_OLAP(NameSpace,pred(RohdatenCount));
                 if ListNumeric then
                   for m := 1 to pred(BigJoin.count) do
                     if (TStringList(BigJoin[m])[ListCol] <> cOLAPNull) then
@@ -2438,7 +2456,7 @@ begin
                         if (LoadSpalte.indexof(k) = -1) then
                           LoadSpalte.add(k);
                     end;
-                e_w_OLAP(pred(RohdatenCount), LoadSpalte);
+                e_w_OLAP(NameSpace,pred(RohdatenCount), LoadSpalte);
               end
               else
               begin

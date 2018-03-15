@@ -64,6 +64,9 @@ uses
   basic32,
   globals;
 
+const
+ DROP_BUG : boolean = true;
+
 type
 {$IFDEF fpc}
   TdboDatasource = TDatasource;
@@ -146,7 +149,6 @@ type
 
   private
     function TableName: string;
-    procedure xsql(s: String);
 
   public
 {$IFDEF fpc}
@@ -347,13 +349,13 @@ function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload
 function e_r_OLAP(FName: string): TgpIntegerList; overload;
 
 // Name einer temporären OLAP-Tabelle
-function e_r_OLAP_Tabellenname(n: integer): string;
+function e_r_OLAP_Tabellenname(NameSpace: string; n: integer): string;
 
 // temporäre OLAP Tabelle anlegen
-procedure e_n_OLAP(n: integer);
+procedure e_n_OLAP(NameSpace: string; n: integer);
 
 // Bulk insert in eine OLAP Tabelle
-procedure e_w_OLAP(n: integer; Werte: TgpIntegerList);
+procedure e_w_OLAP(NameSpace: string; n: integer; Werte: TgpIntegerList);
 
 // Server Infos
 function e_r_fbClientVersion: string;
@@ -1213,11 +1215,25 @@ begin
   TableList.free;
 end;
 
-// imp pend: This is really "DropTableIfExists()"
 procedure DropTable(TableName: string);
 begin
   if TableExists(TableName) then
-    e_x_sql('drop table ' + TableName);
+  begin
+    if DROP_BUG then
+    begin
+      // due a firebird-bug, "dropping a table" in a massive
+      // multiuser environment may corrupt the database-file.
+      // It is more secure to do this "later" inside an exclusive
+      // db-connection, so i "delete" the content, but do
+      // not delete the Table any more. I write the drop to
+      // a Log-File hoping anybody other do the "Drop"
+      e_x_sql('delete from ' + TableName);
+      AppendStringsToFile(TableName,SystemPath+'\DropTable.txt');
+    end else
+    begin
+     e_x_sql('drop table ' + TableName);
+    end;
+  end;
 end;
 
 procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
@@ -1348,7 +1364,7 @@ destructor TdboClub.Destroy;
 begin
   if assigned(items) then
     FreeAndNil(items);
-  xsql('drop table ' + TableName);
+  DropTable(TableName);
   inherited;
 end;
 
@@ -1368,7 +1384,7 @@ function TdboClub.sql(s: string): string;
 begin
   // den Club mit Hife des SQL füllen!
   result := TableName;
-  xsql('insert into ' + result + ' (RID) ' + s);
+  e_x_sql('insert into ' + result + ' (RID) ' + s);
 end;
 
 function TdboClub.sql(fromList: TgpIntegerList = nil): string;
@@ -1418,7 +1434,7 @@ begin
     result := 'CLUB$' + inttostr(ID);
 
     // CLUB Tabelle neu anlegen
-    xsql(
+    e_x_sql(
       { } 'create table ' +
       { } result +
       { } ' (RID DOM_REFERENCE NOT NULL,' +
@@ -1430,11 +1446,6 @@ begin
   begin
     result := 'CLUB$' + inttostr(ID);
   end;
-end;
-
-procedure TdboClub.xsql(s: String);
-begin
-  e_x_sql(s);
 end;
 
 function e_r_fbClientVersion: string;
@@ -2669,27 +2680,43 @@ begin
   result := e_r_sql('select RID from REVISION where DATUM>CURRENT_TIMESTAMP') / 1000.0;
 end;
 
-function e_r_OLAP_Tabellenname(n: integer): string;
+function e_r_OLAP_Tabellenname(NameSpace: string; n: integer): string;
 begin
-  result := 'OLAP$TMP' + inttostr(n);
+  if (NameSpace='') then
+   result := 'OLAP$TMP' + inttostr(n)
+  else
+   result := 'OLAP$'+ NameSpace + inttostr(n);
 end;
 
-procedure e_n_OLAP(n: integer);
+procedure e_n_OLAP(NameSpace: string; n: integer);
+var
+ TableName : string;
+
+  procedure CreateNewTable;
+  begin
+    // Tabelle neu anlegen
+    e_x_sql('create table ' + TableName + ' (' + 'RID DOM_REFERENCE NOT NULL)');
+    e_x_sql('alter table ' + TableName + ' add constraint PK_' + TableName +
+      ' primary key (RID)');
+  end;
+
 begin
-
-  // Tabelle löschen
-  DropTable(e_r_OLAP_Tabellenname(n));
-
-  // Tabelle neu anlegen
-  e_x_sql('create table ' + e_r_OLAP_Tabellenname(n) + ' (' + 'RID DOM_REFERENCE NOT NULL)');
-  e_x_sql('alter table ' + e_r_OLAP_Tabellenname(n) + ' add constraint PK_' + e_r_OLAP_Tabellenname(n) +
-    ' primary key (RID)');
-
-  // e_x_sql('delete from ' + e_r_OLAP_Tabellenname(n));
-
+  TableName := e_r_OLAP_Tabellenname(NameSpace,n);
+  if DROP_BUG then
+  begin
+    if TableExists(TableName) then
+      e_x_sql('delete from ' + TableName)
+    else
+      CreateNewTable;
+  end else
+  begin
+    // Tabelle löschen
+    DropTable(TableName);
+    CreateNewTable;
+  end;
 end;
 
-procedure e_w_OLAP(n: integer; Werte: TgpIntegerList);
+procedure e_w_OLAP(NameSpace:string; n: integer; Werte: TgpIntegerList);
 var
   OLAP: TdboScript;
   i: integer;
@@ -2704,7 +2731,7 @@ begin
   with OLAP do
   begin
     sql.add('insert into');
-    sql.add(e_r_OLAP_Tabellenname(n));
+    sql.add(e_r_OLAP_Tabellenname(NameSpace,n));
     sql.add(' (RID)');
     sql.add('values');
     sql.add(' (:CR1)');
@@ -2712,6 +2739,8 @@ begin
     for i := 0 to pred(Werte.count) do
     begin
       Params[0].AsInteger := Werte[i];
+      if (i=0) then
+       dbLog(sql,false);
       execute;
     end;
   end;

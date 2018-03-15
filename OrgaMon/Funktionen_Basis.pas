@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1311,7 +1311,6 @@ var
   cGENERATORS: TdboCursor;
   cINDEX: TdboCursor;
   FTP: TIdFTPRestart;
-  FTP_StartOffset: int64;
 
   {$ifdef FPC}
   svcBackup: TIBBackupService;
@@ -1376,117 +1375,21 @@ var
   function doUpload(ResultFName: string): boolean;
   var
     FtpDestFName: string;
-    rSize: int64;
-    lSize: int64;
   begin
-
     Result := False;
-    lSize := FSize(ResultFName);
     SolidInit(FTP);
+    FtpDestFName := ExtractFileName(ResultFName);
     with FTP do
     begin
-
       Host := cFTP_Host;
       UserName := cFTP_UserName;
       Password := cFTP_Password;
-
-      try
-
-        if connected then
-        begin
-          try
-            Abort;
-          except
-
-            on E: EIdSocketError do
-            begin
-              solidLog(cEXCEPTIONText + ' [DaSi-1254] Socket Error: ' +
-                IntToStr(E.LastError));
-            end;
-
-            on E: Exception do
-            begin
-              solidLog(cEXCEPTIONText + ' [DaSi-1254] ' + E.Message);
-            end;
-
-          end;
-        end;
-
-        connect;
-
-        // atomic.begin
-        FtpDestFName := ExtractFileName(ResultFName);
-        repeat
-
-          rSize := Size(FtpDestFName + cTmpFileExtension);
-          if rSize = lSize then
-            break;
-          if rSize > lSize then
-            raise Exception.Create('FTP: remote Datei ist ' +
-              IntToStr(rSize - lSize) + ' Bytes grösser als die lokale');
-
-          if (rSize < 1) then
-          begin
-            FTP_StartOffset := 0;
-            Put(ResultFName, FtpDestFName + cTmpFileExtension);
-          end
-          else
-          begin
-            FTP_StartOffset := rSize;
-            PutRestart(ResultFName, FtpDestFName + cTmpFileExtension, rSize);
-          end;
-
-        until True;
-
-        rSize := Size(FtpDestFName + cTmpFileExtension);
-        if (lSize = rSize) then
-        begin
-          if (Size(FtpDestFName) >= 0) then
-            Delete(FtpDestFName);
-          Rename(FtpDestFName + cTmpFileExtension, FtpDestFName);
-          Result := True;
-        end
-        else
-        begin
-          if (rSize > lSize) then
-            raise Exception.Create('FTP: remote Datei ist ' +
-              IntToStr(rSize - lSize) + ' Bytes grösser als die lokale')
-          else
-            raise Exception.Create('FTP: remote Datei ist ' +
-              IntToStr(lSize - rSize) + ' Bytes kleiner als die lokale');
-        end;
-        // atomic.end
-        try
-          disconnect;
-        except
-          on E: EIdSocketError do
-          begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1315] Socket Error: ' +
-              IntToStr(E.LastError));
-          end;
-
-          on E: Exception do
-          begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1321] ' + E.Message);
-          end;
-        end;
-      except
-        on E: EIdSocketError do
-        begin
-          solidLog(cEXCEPTIONText + ' [DaSi-1327] Socket Error: ' +
-            IntToStr(E.LastError));
-        end;
-
-        on E: Exception do
-        begin
-          solidLog(cEXCEPTIONText + ' [DaSi-1327] ' + E.Message);
-        end;
-        on E: Exception do
-        begin
-          Log(cERRORText + ' Ftp Upload Error: ' + E.Message);
-        end;
-      end;
     end;
+    result := SolidUpload(
+     {} FTP,
+     {} ResultFName,
+     {} cSolidFTP_DirCurrent,
+     {} FtpDestFName);
   end;
 
   procedure ReadGenerators;

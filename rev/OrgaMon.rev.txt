@@ -19,6 +19,24 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.346 (15.03.18) Andreas Filsinger
+
+ Bug: Datenbank: "DropTable.txt" wurde im falschen Pfad gespeichert
+ Neu: OLAP: $NAMESPACE=TMP, Optional kann ein anderer Namespace für die
+      OLAP$Tabellennamen gesetzt werden. Dadurch kommen sich verschiedene
+      Auswertungen nicht mehr in die Quere. Da OLAP Tabellen nicht mehr gelöscht
+      werden, sondern immer nur wiederverwendet, kann es passieren dass die
+      erwartete Struktur bei einer Wiederverwendung nicht übereinstimmt.
+      Deshalb kann man sich eindeutige Namespaces ausdenken.
+
+Rev 8.345 (14.03.18) Andreas Filsinger
+
+ Neu: SolidFTP: SolidUpload, ein Hybrid aus SolidUp und SolidStore ...
+
+Rev 8.344 (12.03.18) Andreas Filsinger
+
+ Bug: Firebird: vermeide "drop table"
+
 Rev 8.343 (05.03.18) Andreas Filsinger
 
  Neu: Artikel: Zusage: Eine Änderung der Zusage erzeugt ein Ereignis, das nun mit

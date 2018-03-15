@@ -68,7 +68,7 @@ procedure SolidEndTransaction;
 // FTP - Login
 procedure SolidLogin(ftp: TIdFTP);
 
-// FTP - Upload: Variante "neu startender / immer überschreibender Upload"
+// FTP - Upload: Variante "neu startender / immer wieder überschreibender Upload"
 function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean; overload;
 function SolidPut(ftp: TIdFTP; CommandList: TStringList): boolean; overload;
 
@@ -76,14 +76,18 @@ function SolidPut(ftp: TIdFTP; CommandList: TStringList): boolean; overload;
 function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
 function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 
-// FTP - Download
+// FTP - Upload: Variante "Hybrid aus Put, danach wenn nötig Store"
+function SolidUpload(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
+function SolidUpload(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
+
+// FTP - Download (Herunterladen von Dateien)
 function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern, DestPath: string;
   RemoteDelete: boolean = false): boolean;
 
-// FTP - Dir
+// FTP - Dir (Auflisten von Verzeichnisinhalten)
 function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 
-// FTP -
+// FTP - CheckDir (Prüfen, ob es ein Verzeichnis gibt)
 function SolidCheckDir(ftp: TIdFTP; SourcePath: string): boolean;
 
 //
@@ -96,10 +100,6 @@ function SolidSize(ftp: TIdFTP; SourcePath, SourceFName: string): int64;
 // FTP - Delete
 function SolidDel(ftp: TIdFTP; SourcePath: string; DeleteList: TStringList): boolean; overload;
 function SolidDel(ftp: TIdFTP; SourcePath: string; DelFName: string): boolean; overload;
-
-
-// function SolidSync(ftp: TIdFTP; SourcePath, DestDir): boolean; overload;
-// function SolidUpdate(ftp: TIdFTP; Mask): boolean; overload;
 
 // CoreFTP
 function CoreFTP_Up(Profile, Mask, DestPath: string): boolean;
@@ -789,7 +789,7 @@ begin
         SolidSingleStepLog('size ' + DestFName + cTmpFileExtension);
         if Size(DestFName + cTmpFileExtension) >= 0 then
         begin
-          solidLog(cWARNINGText + 'solidUp: ' + DestFName + cTmpFileExtension + ' gab es schon');
+          solidLog(cWARNINGText + 'solidUpOne: ' + DestFName + cTmpFileExtension + ' gab es schon');
           SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
           Delete(DestFName + cTmpFileExtension);
         end;
@@ -1140,6 +1140,40 @@ begin
   end;
 end;
 
+// let "Command-List" Version do the job!
+
+function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean; overload;
+var
+  CommandList: TStringList;
+begin
+  CommandList := TStringList.Create;
+  CommandList.add(SourceFName + ';' + DestPath + ';' + DestFName);
+  result := SolidPut(ftp, CommandList);
+  CommandList.free;
+end;
+
+function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
+var
+  CommandList: TStringList;
+begin
+  CommandList := TStringList.Create;
+  CommandList.add(SourceFName + ';' + DestPath + ';' + DestFName);
+  result := SolidStore(ftp, CommandList);
+  CommandList.free;
+end;
+
+function SolidUpload(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
+var
+  CommandList: TStringList;
+begin
+  CommandList := TStringList.Create;
+  CommandList.add(SourceFName + ';' + DestPath + ';' + DestFName);
+  result := SolidUpload(ftp, CommandList);
+  CommandList.free;
+end;
+
+// "Put"
+
 function SolidPut(ftp: TIdFTP; CommandList: TStringList): boolean;
 var
   n: integer;
@@ -1183,15 +1217,7 @@ begin
   SolidEndTransaction;
 end;
 
-function SolidPut(ftp: TIdFTP; SourceFName, DestPath, DestFName: string): boolean; overload;
-var
-  CommandList: TStringList;
-begin
-  CommandList := TStringList.Create;
-  CommandList.add(SourceFName + ';' + DestPath + ';' + DestFName);
-  result := SolidPut(ftp, CommandList);
-  CommandList.free;
-end;
+// "Store"
 
 function SolidStore(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 var
@@ -1240,7 +1266,7 @@ begin
           DestFName := DestFName + '-' + FindANewPassword;
 
         // Rename it to keep the "old" Version
-        SolidSingleStepLog('rename ' + DestFName);
+        SolidSingleStepLog('rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
         ftp.Rename(
           { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName),
           { } DestFName);
@@ -1264,15 +1290,94 @@ begin
 
 end;
 
-function SolidStore(ftp: TIdFtpRestart; SourceFName, DestPath, DestFName: string): boolean; overload;
+// "Upload"
+
+function SolidUpload(ftp: TIdFtpRestart; CommandList: TStringList): boolean; overload;
 var
-  CommandList: TStringList;
+  n, k: integer;
+  WasError: boolean;
+  UploadOK: boolean;
+  DestFName: string;
+  _SolidFTP_Retries : Integer;
 begin
-  CommandList := TStringList.Create;
-  CommandList.add(SourceFName + ';' + DestPath + ';' + DestFName);
-  result := SolidStore(ftp, CommandList);
-  CommandList.free;
+  SolidBeginTransaction;
+  _SolidFTP_Retries := SolidFTP_Retries;
+  WasError := false;
+  CommandList.sort;
+  RemoveDuplicates(CommandList);
+
+  repeat
+
+    // Hochladen
+    for n := 0 to pred(CommandList.Count) do
+    begin
+
+      SolidFTP_Retries := 0;
+      UploadOK := solidUpOne(ftp,
+        { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName));
+     _SolidFTP_Retries := SolidFTP_Retries;
+
+      if not(UploadOK) then
+        if not(solidstoreOne(ftp,
+          { } nextp(CommandList[n], ';', SolidFTP_Command_SourceFileName),
+          { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
+          { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
+        begin
+          WasError := true;
+          break;
+        end;
+
+    end;
+    if (WasError) then
+      break;
+
+    // Sicherstellen, dass ältere Uploads gleichen Namens
+    // zuvor *NICHT* überschrieben werden
+    for n := 0 to pred(CommandList.Count) do
+    begin
+      DestFName := nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName);
+      if SolidSize(ftp,
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
+        { } DestFName) > 0 then
+      begin
+        k := revpos('.', DestFName);
+        if (k > 0) then
+          DestFName :=
+          { } copy(DestFName, 1, pred(k)) +
+          { } '-' + FindANewPassword +
+          { } copy(DestFName, k, MaxInt)
+        else
+          DestFName := DestFName + '-' + FindANewPassword;
+
+        // Rename it to keep the "old" Version
+        SolidSingleStepLog('rename ' + nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName) + ' ' + DestFName);
+        ftp.Rename(
+          { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName),
+          { } DestFName);
+      end;
+    end;
+
+    // Commit machen
+    for n := 0 to pred(CommandList.Count) do
+      if not(solidcommitOne(ftp,
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationPath),
+        { } nextp(CommandList[n], ';', SolidFTP_Command_DestinationFileName))) then
+      begin
+        WasError := true;
+        break;
+      end;
+
+  until yet;
+
+  result := not(WasError);
+  SolidEndTransaction;
+
 end;
+
+
+// "Get"
 
 function SolidGet(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern, DestPath: string;
   RemoteDelete: boolean = false): boolean;

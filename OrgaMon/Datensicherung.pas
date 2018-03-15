@@ -113,7 +113,6 @@ type
     CheckBox2: TCheckBox;
     CheckBox3: TCheckBox;
     ListBox2: TListBox;
-    CheckBox4: TCheckBox;
     TabSheet4: TTabSheet;
     Button4: TButton;
     ListBox3: TListBox;
@@ -1394,33 +1393,12 @@ end;
 procedure TFormDatensicherung.Button3Click(Sender: TObject);
 var
   FName: string;
-  FTPAttempt: Integer;
 begin
   BeginHourGlass;
   PageControl1.ActivePage := TabSheet1;
   FName := Edit1.Text + ListBox1.items[ListBox1.itemindex];
   NoTimer := true;
-  FTPAttempt := 0;
-  repeat
-
-    inc(FTPAttempt);
-    if doUpload(FName) then
-      break;
-
-    if CheckBox4.Checked then
-    begin
-      Log('INFO: fail attempt #' + inttostr(FTPAttempt) +
-        ': FTP-Upload  restarts in 10 seconds ...');
-    end
-    else
-    begin
-      Log('WARNING: FTP-Autorestart is deactivated by users choice ...');
-      break;
-    end;
-
-    delay(10000);
-
-  until false;
+  doUpload(FName);
   NoTimer := false;
   EndHourGlass;
 end;
@@ -1758,120 +1736,23 @@ end;
 
 function TFormDatensicherung.doUpload(ResultFName: string): boolean;
 var
-  FtpDestFName: string;
-  rSize: int64;
-  lSize: int64;
+ FTPDestFName : string;
 begin
   //
   result := false;
-  lSize := FSize(ResultFName);
   SolidInit(IdFTP1);
+  FtpDestFName := ExtractFileName(ResultFName);
+  Log('FTP Upload '+FtpDestFName+' ...');
   with IdFTP1 do
   begin
-
     Host := cFTP_Host;
     UserName := cFTP_UserName;
     Password := cFTP_Password;
-
-    try
-
-      FtpStartTime := 0;
-
-      if connected then
-      begin
-        try
-          Abort;
-        except
-
-          on E: EIdSocketError do
-          begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1254] Socket Error: ' +
-              inttostr(E.LastError));
-          end;
-
-          on E: Exception do
-          begin
-            solidLog(cEXCEPTIONText + ' [DaSi-1254] ' + E.Message);
-          end;
-
-        end;
-      end;
-
-      connect;
-
-      // atomic.begin
-      FtpDestFName := ExtractFileName(ResultFName);
-      repeat
-
-        rSize := Size(FtpDestFName + cTmpFileExtension);
-        if rSize = lSize then
-          break;
-        if rSize > lSize then
-          raise Exception.create('FTP: remote Datei ist ' +
-            inttostr(rSize - lSize) + ' Bytes grösser als die lokale');
-
-        if (rSize < 1) then
-        begin
-          FTP_StartOffset := 0;
-          Put(ResultFName, FtpDestFName + cTmpFileExtension);
-        end
-        else
-        begin
-          FTP_StartOffset := rSize;
-          PutRestart(ResultFName, FtpDestFName + cTmpFileExtension, rSize);
-        end;
-
-      until true;
-
-      rSize := Size(FtpDestFName + cTmpFileExtension);
-      if (lSize = rSize) then
-      begin
-        if (Size(FtpDestFName) >= 0) then
-          Delete(FtpDestFName);
-        Rename(FtpDestFName + cTmpFileExtension, FtpDestFName);
-        result := true;
-      end
-      else
-      begin
-        if (rSize > lSize) then
-          raise Exception.create('FTP: remote Datei ist ' +
-            inttostr(rSize - lSize) + ' Bytes grösser als die lokale')
-        else
-          raise Exception.create('FTP: remote Datei ist ' +
-            inttostr(lSize - rSize) + ' Bytes kleiner als die lokale');
-      end;
-      // atomic.end
-      try
-        disconnect;
-      except
-        on E: EIdSocketError do
-        begin
-          solidLog(cEXCEPTIONText + ' [DaSi-1315] Socket Error: ' +
-            inttostr(E.LastError));
-        end;
-
-        on E: Exception do
-        begin
-          solidLog(cEXCEPTIONText + ' [DaSi-1321] ' + E.Message);
-        end;
-      end;
-    except
-      on E: EIdSocketError do
-      begin
-        solidLog(cEXCEPTIONText + ' [DaSi-1327] Socket Error: ' +
-          inttostr(E.LastError));
-      end;
-
-      on E: Exception do
-      begin
-        solidLog(cEXCEPTIONText + ' [DaSi-1327] ' + E.Message);
-      end;
-      on E: Exception do
-      begin
-        Log(cERRORText + ' Ftp Upload Error: ' + E.Message);
-      end;
-    end;
+    SolidFTP_Retries := 200;
   end;
+  result := SolidUpload(IdFTP1,ResultFName,cSolidFTP_DirCurrent,FtpDestFName);
+  if result then
+   Log('OK');
 end;
 
 procedure TFormDatensicherung.FormCreate(Sender: TObject);

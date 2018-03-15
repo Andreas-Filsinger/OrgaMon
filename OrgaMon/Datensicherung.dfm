@@ -146,7 +146,7 @@ object FormDatensicherung: TFormDatensicherung
     Top = 32
     Width = 961
     Height = 455
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'
@@ -204,30 +204,20 @@ object FormDatensicherung: TFormDatensicherung
         Caption = 'nur Archiv erstellen'
         TabOrder = 4
       end
-      object CheckBox4: TCheckBox
-        Left = 360
-        Top = 356
-        Width = 336
-        Height = 16
-        Caption = 'Nach FTP-Fehlern endlos nochmal versuchen'
-        Checked = True
-        State = cbChecked
-        TabOrder = 5
-      end
       object CheckBox12: TCheckBox
         Left = 360
         Top = 372
         Width = 233
         Height = 17
         Caption = 'sofort mit Restore starten'
-        TabOrder = 6
+        TabOrder = 5
       end
       object Edit4: TEdit
         Left = 427
         Top = 393
         Width = 78
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
       end
       object CheckBox13: TCheckBox
         Left = 3
@@ -235,16 +225,12 @@ object FormDatensicherung: TFormDatensicherung
         Width = 270
         Height = 17
         Caption = 'Datenbank dabei frisch erstellen'
-        TabOrder = 8
+        TabOrder = 7
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'OrgaMon-Ordner'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 24
         Top = 3
@@ -295,10 +281,6 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Diagnose Upload'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton8: TSpeedButton
         Left = 431
         Top = 10
@@ -407,10 +389,6 @@ object FormDatensicherung: TFormDatensicherung
     object TabSheet4: TTabSheet
       Caption = '400'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button4: TButton
         Left = 16
         Top = 399
@@ -452,10 +430,6 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Datenbank Restore'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton1: TSpeedButton
         Left = 431
         Top = 10
@@ -556,10 +530,6 @@ object FormDatensicherung: TFormDatensicherung
       Caption = 'Mandant Restore'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SpeedButton4: TSpeedButton
         Left = 431
         Top = 10

@@ -41,6 +41,8 @@ uses
   // Indy
   IdComponent, IdFTP,
 
+  // Anfix
+  SolidFTP,
   gplists;
 
 type
@@ -84,7 +86,7 @@ type
 
     // Zentrale Upload - TAN
     HugeTransactionN: integer;
-    IdFTP1: TIdFTP;
+    IdFTP1: TIdFtpRestart;
     FlexCelXLS: TXLSFile;
 
     // Statistik
@@ -130,7 +132,7 @@ uses
   // lib
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
-  wanfix32, SolidFTP, html,
+  wanfix32, html,
 
 
   // IBO
@@ -2156,7 +2158,7 @@ var
 
         Log('Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
 
-        if not(SolidPut(
+        if not(SolidUpload(
           { } IdFTP1,
           { } FTP_UploadFiles[n],
           { } Settings.values[cE_FTPVerzeichnis],
@@ -2959,7 +2961,7 @@ end;
 procedure TFormAuftragErgebnis.FormCreate(Sender: TObject);
 begin
   Stat_Attachments := TStringList.create;
-  IdFTP1 := TIdFTP.create(self);
+  IdFTP1 := TIdFtpRestart.create(self);
   with IdFTP1 do
   begin
     OnStatus := IdFTP1Status;
