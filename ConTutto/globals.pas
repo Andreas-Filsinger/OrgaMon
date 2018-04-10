@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   sysutils, classes;
 
 const
-  version: single = 2.033; { ..\rev\ConTutto.rev.txt }
+  version: single = 2.035; { ..\rev\ConTutto.rev.txt }
   cCodeName = 'ConTutto';
   cExeName: string = cCodeName + '.exe';
   ProjektID = 'anfisoft\' + cCodeName;

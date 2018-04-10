@@ -5340,7 +5340,7 @@ end;
 function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
 // benötigt
 //
-// (LAND_R, STATE, ORT, PLZ)
+// (LAND_R, STATE, ORT, PLZ, ORTSTEIL)
 //
 //
 var
@@ -5371,6 +5371,7 @@ begin
     ersetze('%l', e_r_land(dboDS), sResult);
     ersetze('%s', FieldByName('STATE').AsString, sResult);
     ersetze('%o', FieldByName('ORT').AsString, sResult);
+    ersetze('%t', FieldByName('ORTSTEIL').AsString, sResult);
     ersetze('%c', e_r_LaenderInternational(FieldByName('LAND_R').AsInteger), sResult);
 
     result := split(sResult,'|');
@@ -5384,7 +5385,7 @@ begin
   ANSCHRIFT := nCursor;
   with ANSCHRIFT do
   begin
-    sql.add('select A.LAND_R, A.STATE, A.PLZ, A.ORT from PERSON P');
+    sql.add('select A.LAND_R, A.STATE, A.PLZ, A.ORT, A.ORTSTEIL from PERSON P');
     sql.add('join ANSCHRIFT A on A.RID=P.PRIV_ANSCHRIFT_R');
     sql.add('where P.RID=' + inttostr(PERSON_R));
     ApiFirst;

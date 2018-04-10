@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ unit BinLager32;
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   Warte-Liste (too implement...)
 
-  ş Whole-Verwaltung legt bisher nur L”cher an, es werden keine wieder benutzt!
+  * Whole-Verwaltung legt bisher nur L”cher an, es werden keine wieder benutzt!
 
-  ş compress:
+  * compress:
 
-  Idee eines compress - Algorithmus: z.B. als Routine verwirklichen,
-  die konsistenz erhaltende Atomic-Aktionen ausfhrt, die maximal
-  eine gewisse zugesicherte Maximal-Zeit in Anspruch nimmt. Dadurch k”nnte
-  man compress gut in Hintergrund-Prozesse integrieren.
+    Idee eines compress - Algorithmus: z.B. als Routine verwirklichen,
+    die konsistenz erhaltende Atomic-Aktionen ausfhrt, die maximal
+    eine gewisse zugesicherte Maximal-Zeit in Anspruch nimmt. Dadurch k”nnte
+    man compress gut in Hintergrund-Prozesse integrieren.
 
   ş Revision - Konzept verwirklichen
 
@@ -59,7 +59,7 @@ unit BinLager32;
   CreateClone
   09.01.95 Bug: Put hatte nicht "IdxChanged" gesetzt
   07.01.95 Test und weitere Implementierung
-  06.01.95 Implementierung (Transaction, get, ...)
+  06.01.95 Implementierung (Transaktion, get, ...)
   05.01.95 Implementierung
   16.05.94 Konzept
   05.04.94 Konzept
@@ -69,8 +69,8 @@ unit BinLager32;
   ========
 
   ş Speicherung unterschiedlich groáer bin„rer Blocke in einer Datei.
-  ş Fr die Bl”cke werden eindeutige LONGINT Kennungen vergeben.
-  ş Betrieb im Netzwerk muá m”glich sein.
+  ş Für die Blöcke werden eindeutige LONGINT Kennungen vergeben.
+  ş Betrieb im Netzwerk muß möglich sein.
 
   Neues Revision Konzept:
   =======================
@@ -82,22 +82,22 @@ unit BinLager32;
   FAIL wenn Programmrevision < DateiRevision
 
 
-  Transaction Konzept:
-  ====================
+  Transaktions Konzept:
+  =====================
 
-  ş Durch die Forderung der Netzwerkf„higkeit muá jede Action
-  immer komplette abgeschlossen werden. D.h. keine Dateien
-  drfen ge”ffnet bleiden / es sei denn im shared Mode. Vor allem
-  darf das Programm keinerlei Annahmen ber den aktuellen Zustand
-  der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
-  Informationen ber Records-Gr”áen usf.). Alle Information mssen
-  "just in time" neu gebildet werden.
-  ş Um jedoch die Verarbeitungs Geschwindigkeit zu erh”hen, kann man
-  Transaktionen starten, die als Ganzes am Stck ausgefhrt werden.
-  W„hrend einer Transaktion ist die Datei fr alle anderen User
-  gesperrt. Sie bleibt fr die aktuelle Transaction ge”ffnet.
-  Indextabellen und File-Header verbleiben im RAM und werden nicht
-  gespeichert.
+  * Durch die Forderung der Netzwerkfähigkeit muß jede Aktion
+    immer komplette abgeschlossen werden. D.h. keine Dateien
+    dürfen geöffnet bleiden / es sei denn im shared Mode. Vor allem
+    darf das Programm keinerlei Annahmen ber den aktuellen Zustand
+    der Datei im RAM-Speicher behalten (z.B. IDX-Tabelle im Speicher
+    Informationen ber Records-Größen usf.). Alle Information müssen
+    "just in time" neu gebildet werden.
+  * Um jedoch die Verarbeitungs Geschwindigkeit zu erh”hen, kann man
+    Transaktionen starten, die als Ganzes am Stück ausgeführt werden.
+    Während einer Transaktion ist die Datei für alle anderen User
+    gesperrt. Sie bleibt für die aktuelle Transaktion geöffnet.
+    Indextabellen und File-Header verbleiben im RAM und werden nicht
+    gespeichert.
 
   Aufbau der Datenstrukturen:
   ===========================
@@ -197,7 +197,7 @@ type
   end;
 
 const
-  IdxMax = 250000;
+  IdxMax = 2500000;
   MaxReTrys = 20;
 
 type
@@ -441,7 +441,7 @@ procedure TBLager.insert(NewId: longint; DSize: longint);
 begin
   BeginTransaction;
 
-  if Tags = IdxMax then
+  if (Tags = IdxMax) then
   begin
     ReportError(BL_IDXTABLEFULL);
   end

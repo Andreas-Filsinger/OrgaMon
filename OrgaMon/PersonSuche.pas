@@ -836,7 +836,7 @@ begin
     cANSCHRIFT := DataModuleDatenbank.nCursor;
     with cANSCHRIFT do
     begin
-      sql.Add('SELECT NAME1, STRASSE, LAND_R, STATE, ORT, PLZ');
+      sql.Add('SELECT NAME1, STRASSE, LAND_R, STATE, ORT, PLZ, ORTSTEIL');
       sql.Add('FROM ANSCHRIFT');
       sql.Add('WHERE RID=:CROSSREF');
       open;

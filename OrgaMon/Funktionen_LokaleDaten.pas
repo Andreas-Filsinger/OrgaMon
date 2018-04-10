@@ -185,7 +185,8 @@ begin
     sql.add(' STATE,');
     sql.add(' PLZ,');
     sql.add(' LAND_R,');
-    sql.add(' ORT');
+    sql.add(' ORT,');
+    sql.add(' ORTSTEIL');
     sql.add('from');
     sql.add(' ANSCHRIFT');
     sql.add('where');
@@ -247,6 +248,7 @@ begin
             { } FieldByName('STRASSE').AsString + ' ' +
             { } FieldByName('PLZ').AsString + ' ' +
             { } FieldByName('ORT').AsString + ' ' +
+            { } FieldByName('ORTSTEIL').AsString + ' ' +
             { } FieldByName('STATE').AsString,
 
             TObject(cPERSON.FieldByName('RID').AsInteger)

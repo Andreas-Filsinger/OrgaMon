@@ -37,7 +37,8 @@ uses
   binlager32 in '..\PASconTools\binlager32.pas',
   AddCursors in 'AddCursors.pas',
   volumes in 'volumes.pas',
-  PasLibVlcUnit in 'PasLibVlcUnit.pas';
+  PasLibVlcUnit in 'PasLibVlcUnit.pas',
+  systemd in '..\PASconTools\systemd.pas';
 
 {$R *.RES}
 

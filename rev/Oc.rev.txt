@@ -15,6 +15,10 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.258 (22.03.18) Andreas Filsinger
+
+ Neu: xml2csv (ARGOS): Erweiterung auf Argos-2018
+
 Rev 1.257 (20.07.17) Andreas Filsinger
 
  Neu: xls2csv: Fixed-Formats.ini: FileName= * (Stern) im Dateinamen wird durch die

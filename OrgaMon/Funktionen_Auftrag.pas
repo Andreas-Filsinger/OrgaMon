@@ -749,6 +749,7 @@ begin
       sql.Add(' PLZ,');
       sql.Add(' STATE,');
       sql.Add(' ORT,');
+      sql.Add(' ORTSTEIL,');
       sql.Add(' LAND_R,');
       sql.Add(' STRASSE,');
       sql.Add(' NAME1,');

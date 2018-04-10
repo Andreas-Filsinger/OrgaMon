@@ -19,6 +19,21 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.349 (10.04.18) Andreas Filsinger
+
+ Bug: Regression aus 8.347: Fehler "ORTSTEIL" nicht gefunden
+ Neu: Person: Ortsteil im Suchindex
+
+Rev 8.348 (10.04.18) Andreas Filsinger
+
+ Bug: Regression aus 8.347: Fehler "ORTSTEIL" nicht gefunden
+
+Rev 8.347 (09.04.18) Andreas Filsinger
+
+ Neu: Anschrift: Ort-Formatierungsstring "%t" als Ortsteil
+ Neu: Anschrift: STATE ist jetzt VARCHAR(45)
+ Neu: BLA-Dateien: Maximal 2.5 Mio anstelle von 250.000 Datensätzen
+
 Rev 8.346 (15.03.18) Andreas Filsinger
 
  Bug: Datenbank: "DropTable.txt" wurde im falschen Pfad gespeichert
@@ -12189,6 +12204,24 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.347
+
+ALTER TABLE ANSCHRIFT
+ADD STATE_TMP VARCHAR(45);
+
+update ANSCHRIFT set
+STATE_TMP = STATE;
+
+ALTER TABLE ANSCHRIFT DROP STATE;
+
+ALTER TABLE ANSCHRIFT
+ADD STATE VARCHAR(45);
+
+update ANSCHRIFT set
+STATE = STATE_TMP;
+
+ALTER TABLE ANSCHRIFT DROP STATE_TMP;
 
 :8.338
 

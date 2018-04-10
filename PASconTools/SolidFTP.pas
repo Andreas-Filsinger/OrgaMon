@@ -795,7 +795,7 @@ begin
         end;
 
         // Ziel hochladen!
-        SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
+        SolidSingleStepLog('put ' + DestFName + cTmpFileExtension + ' 0');
         Put(SourceFName, DestFName + cTmpFileExtension);
 
         // Erfolg!
@@ -860,7 +860,7 @@ begin
             if (rSize = -1) then
             begin
               // Datei bisher unbekannt!
-              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
+              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension + ' 0');
               Put(SourceFName, DestFName + cTmpFileExtension);
               break;
             end;
@@ -868,7 +868,7 @@ begin
             if (rSize < lSize) then
             begin
               // Datei da, aber unvollständig
-              SolidSingleStepLog('putrestart@' + IntToStr(rSize) + ' ' + DestFName + cTmpFileExtension);
+              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension + ' ' + IntToStr(rSize));
               PutRestart(SourceFName, DestFName + cTmpFileExtension, rSize);
               break;
             end;
@@ -878,7 +878,7 @@ begin
               // Datei da, aber leer
               SolidSingleStepLog('delete ' + DestFName + cTmpFileExtension);
               Delete(DestFName + cTmpFileExtension);
-              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension);
+              SolidSingleStepLog('put ' + DestFName + cTmpFileExtension + ' 0');
               Put(SourceFName, DestFName + cTmpFileExtension);
               break;
             end;

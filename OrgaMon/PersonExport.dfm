@@ -140,7 +140,7 @@ object FormPersonExport: TFormPersonExport
       Left = 224
       Top = 22
       Width = 121
-      Height = 25
+      Height = 21
       TabOrder = 3
       Text = 'Edit2'
       OnExit = Edit2Exit

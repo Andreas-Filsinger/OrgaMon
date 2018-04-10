@@ -7,7 +7,7 @@
   |
   |    Orientation Convert
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.257; // ../rev/Oc.rev.txt
+  Version: single = 1.258; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -45,7 +45,7 @@ const
   Content_Mode_xml2csv = 9; // .xml + Mapping.txt -> .csv
   Content_Mode_tab2csv = 10; // .tab + Mapping.txt -> .csv
   Content_Mode_xls2idoc = 11; // .xls + IDOC.Mappings.ini -> .idoc
-  Content_Mode_xls2Argos = 12; // Argos XML
+  Content_Mode_xls2Argos2007 = 12; // xls -> Argos-2007 XML (mit XML.BLA)
   Content_Mode_xls2ml = 13; // xls+Vorlage.(ht)ml -> html /xml
   Content_Mode_enBW = 14;
   Content_Mode_Datev = 15; // xls+Datev.xls -> .xls
@@ -57,6 +57,7 @@ const
   Content_Mode_xls2html = 21; // xls+Vorlage.html -> multible html
   Content_Mode_Huffman = 22; // .huff -> .pas
   Content_Mode_xls2xml = 23; // xls+Vorlage.xml -> multible xml
+  Content_Mode_xls2Argos2018 = 24; // xls -> Argos-2018 XML (mit XML-2018.BLA)
 
   ErrorCount: integer = 0;
   conversionOutFName: string = '';
@@ -131,7 +132,8 @@ const
   cIDOC_Extension = '.idoc';
 
   // für den XML Argos Mode
-  cARGOS_XML_SAVE = 'XML';
+  cARGOS_2007_XML_SAVE = 'XML';
+  cARGOS_2018_XML_SAVE = 'XML-2018';
 
 type
  eXML_Converter_Mode = (eXML_XML_Single, eXML_HTML_Multi, eXML_XML_Multi);
@@ -281,6 +283,7 @@ var
 
   // Parameter
   pArgosMode: boolean;
+  pArgos2018Mode: boolean;
   pMixedMode: boolean;
   pUTF8: boolean;
   pWriteAt: TStringList;
@@ -365,6 +368,8 @@ var
   procedure outOne;
   var
     n: integer;
+
+    // der letzte ID in den Tätigkeiten
     ARGOSID: int64;
     ArgosSave: TMemoryStream;
   begin
@@ -373,9 +378,13 @@ var
 
     if not(CSVWriteSuppress) then
     begin
+
       if pArgosMode then
       begin
         ARGOSID := strtointdef(sMESSAGE.values['TOUR.KUNDE.GERAETEPLATZ.GERAET.TAET.ID'], -1);
+        if (ARGOSID=-1) then
+         ARGOSID := strtointdef(sMESSAGE.values['DSP.OBJ.ACT.TAE_ID'], -1);
+
         if (ARGOSID > -1) then
         begin
           if (ARGOSID > MaxInt) then
@@ -501,6 +510,47 @@ var
             outOne;
             clearOne;
           end;
+
+        if (_FullName = 'DSP.OBJ.ACT') then
+        begin
+           pArgos2018Mode := true;
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-ZW') then
+           addZaehlwerk(
+            sMESSAGE.Values['DSP.OBJ.ACT.KENNZIFFER1'] + ';' +
+            sMESSAGE.Values['DSP.OBJ.ACT.EINHEIT'] );
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-SERINFO') then
+           if (sMESSAGE.Values['DSP.OBJ.ACT.KNOPFGRUPPE']='AGERAET') then
+            sMESSAGE.Values['DSP.OBJ.SERIAL'] := sMESSAGE.Values['DSP.OBJ.ACT.ERG'];
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='CHANGE-GPL_STANDORTTXT') then
+            sMESSAGE.Values['DSP.OBJ.STANDORTTXT'] := sMESSAGE.Values['DSP.OBJ.ACT.ERG'];
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='CHANGE-VS_LGZUSATZ') then
+            sMESSAGE.Values['DSP.OBJ.LGZUSATZ'] := sMESSAGE.Values['DSP.OBJ.ACT.ERG'];
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-INFO') then
+           if (noblank(sMESSAGE.Values['DSP.OBJ.ACT.ERG'])<>'') then
+            if (sMESSAGE.Values['DSP.OBJ.ACT.KNOPFGRUPPE']='AGERAET') then
+            begin
+             if pos(sMESSAGE.Values['DSP.OBJ.ACT.ERG'],sMESSAGE.Values['DSP.OBJ.INFO_AUSBAU'])=0 then
+              sMESSAGE.Values['DSP.OBJ.INFO_AUSBAU'] := sMESSAGE.Values['DSP.OBJ.INFO_AUSBAU'] + ' ' + sMESSAGE.Values['DSP.OBJ.ACT.ERG']
+            end else
+            begin
+             if pos(sMESSAGE.Values['DSP.OBJ.ACT.ERG'],sMESSAGE.Values['DSP.OBJ.INFO_EINBAU'])=0 then
+              sMESSAGE.Values['DSP.OBJ.INFO_EINBAU'] := sMESSAGE.Values['DSP.OBJ.INFO_EINBAU'] + ' ' + sMESSAGE.Values['DSP.OBJ.ACT.ERG'];
+            end;
+
+          if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-MATNRNEU') then
+             sMESSAGE.Values['DSP.OBJ.MATNRNEU'] := sMESSAGE.Values['DSP.OBJ.ACT.ERG'];
+
+          break;
+        end;
+
+        // <ACT> <HOSTKEY>ZM_KLASSEN</HOSTKEY><MERKMAL></MERKMAL><KNOPFGRUPPE>AGERAET</KNOPFGRUPPE><TAE_ID>36102160</TAE_ID><ABLBELEGNR></ABLBELEGNR><KENNZIFFER1></KENNZIFFER1><ALTERG></ALTERG><DATALTERG>1899-12-30T00:00:00</DATALTERG><PLAUSITYP>0</PLAUSITYP><STELLEN>0</STELLEN><NACHKOMMA>0</NACHKOMMA><TOLERANZPLUS>0</TOLERANZPLUS><TOLERANZMINUS>0</TOLERANZMINUS><OBERGRENZE>0</OBERGRENZE><UNTERGRENZE>0</UNTERGRENZE><ZWNUMMER>000</ZWNUMMER><TAGESWERT>0.000000</TAGESWERT><TARIF></TARIF><EINHEIT></EINHEIT><ERG>G12390344</ERG>
+
+
 
           break;
         end;
@@ -889,6 +939,7 @@ var
     sMapping.loadFromFile(ExtractFilePath(InFName) + c_Mapping);
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
+    pArgos2018Mode := false;
     pMixedMode := sMapping.Values['MIXED'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
     pWriteAt := Split(sMapping.values['WRITE_AT'], '|', '', true);
@@ -1102,7 +1153,10 @@ begin
   if pArgosMode then
   begin
     GetMem(ArgosXML_P, cARGOS_MaxSize);
-    SpeedSave.init(WorkPath + cARGOS_XML_SAVE, ArgosXML_P^, 1024 * 1024);
+    if pArgos2018Mode then
+     SpeedSave.init(WorkPath + cARGOS_2018_XML_SAVE, ArgosXML_P^, 1024 * 1024)
+    else
+     SpeedSave.init(WorkPath + cARGOS_2007_XML_SAVE, ArgosXML_P^, 1024 * 1024);
     SpeedSave.BeginTransaction;
     Stat_Lager_Bisher := SpeedSave.CountRecs;
   end;
@@ -7205,10 +7259,17 @@ begin
       exit;
     end;
 
-    // ARGOS Mode?
-    if FileExists(WorkPath + cARGOS_XML_SAVE + cBL_FileExtension) then
+    // ARGOS-2007 Mode?
+    if FileExists(WorkPath + cARGOS_2007_XML_SAVE + cBL_FileExtension) then
     begin
-      result := Content_Mode_xls2Argos;
+      result := Content_Mode_xls2Argos2007;
+      exit;
+    end;
+
+    // ARGOS-2018 Mode?
+    if FileExists(WorkPath + cARGOS_2018_XML_SAVE + cBL_FileExtension) then
+    begin
+      result := Content_Mode_xls2Argos2018;
       exit;
     end;
 
@@ -8354,7 +8415,7 @@ begin
   sResult.Free;
 end;
 
-procedure xls2argos(InFName: string; sBericht: TStringList);
+procedure xls2argos2007(InFName: string; sBericht: TStringList);
 const
   cSTATUS_Unmoeglich = 9;
   cSTATUS_Vorgezogen = 7;
@@ -9055,10 +9116,893 @@ begin
   xmlToday := copy(xmlToday, 7, 4) + copy(xmlToday, 4, 2) + copy(xmlToday, 1, 2);
   xmlMESSAGE := 1;
 
-  if FileExists(WorkPath + '_' + cARGOS_XML_SAVE + cBL_FileExtension) then
-    bXML.init(WorkPath + '_' + cARGOS_XML_SAVE, pXML^, 1024 * 1024)
+  if FileExists(WorkPath + '_' + cARGOS_2007_XML_SAVE + cBL_FileExtension) then
+    bXML.init(WorkPath + '_' + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024)
   else
-    bXML.init(WorkPath + cARGOS_XML_SAVE, pXML^, 1024 * 1024);
+    bXML.init(WorkPath + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024);
+  bXML.ReadOnly := true;
+  bXML.BeginTransaction;
+
+  SetOutFname;
+
+  with sResult do
+  begin
+
+    add('<?xml version="1.0" encoding="iso-8859-1" ?>');
+    speak;
+
+    speak('<!--   ___                                  -->');
+    speak('<!--  / _ \  ___                            -->');
+    speak('<!-- | | | |/ __|  Orientation Convert      -->');
+    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
+    speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
+    speak('<!--                                        -->');
+    speak;
+
+    speak('<!--<Datum> ' + Datum10 + ' -->');
+    speak('<!--<Zeit> ' + Uhr8 + ' -->');
+    speak('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
+    speak;
+    push('TOUR');
+    push('KUNDE');
+    push('GERAETEPLATZ');
+    push('GERAET');
+
+    with xImport do
+    begin
+
+      try
+        Open(InFName);
+      except
+        on e: exception do
+        begin
+          inc(ErrorCount);
+          sDiagnose.add(cERRORText + ' ' + e.message);
+          sDiagnose.add(cERRORText + ' ' + InFName + ' ist durch andere Anwendung geöffnet?');
+        end;
+      end;
+
+      sDiagFiles.add(InFName);
+      sDiagFiles.add(conversionOutFName);
+
+      for c := 1 to ColCountInRow(1) do
+        xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
+
+
+      cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
+      if cARGOS = -1 then
+      begin
+
+        // defaults ohne die Spalte "ARGOS-Optionen"
+        p_Melde_Eintarif_in_NT := true;
+
+      end else
+      begin
+
+        // alternative defaults gültig bei reiner Existenz der Spalte "ARGOS-Optionen"
+        p_Melde_Eintarif_in_NT := false;
+        // Optionen einlesen
+        Optionen := cutblank(getCellValue(2, succ(cARGOS)).ToStringInvariant);
+
+        // Optionen setzen ...
+        if pos('x',Optionen)>0 then
+         p_Melde_Eintarif_in_NT := true;
+      end;
+
+      cARGOS := xlsHeaders.indexof('ARGOS');
+      if cARGOS = -1 then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "ARGOS" nicht gefunden!');
+        exit;
+      end;
+
+      cART := xlsHeaders.indexof('Art');
+      if (cART = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "Art" nicht gefunden!');
+        exit;
+      end;
+
+      cRID := xlsHeaders.indexof('ReferenzIdentitaet');
+      if (cRID = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "ReferenzIdentitaet" nicht gefunden!');
+        exit;
+      end;
+
+      cStatus := xlsHeaders.indexof('Status1');
+      if (cStatus = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "Status1" nicht gefunden!');
+        exit;
+      end;
+
+      r := 2;
+      repeat
+        Argos := strtoint(cutblank(getCellValue(r, succ(cARGOS)).ToStringInvariant));
+        ART := cutblank(getCellValue(r, succ(cART)).ToStringInvariant);
+        ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
+        RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
+        STATUS := strtointdef(getCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+
+        // Status bei bereits gemeldeten umsetzen!
+        if (STATUS = cSTATUS_ErfolgGemeldet) then
+          STATUS := cSTATUS_Erfolg;
+        if (STATUS = cSTATUS_UnmoeglichGemeldet) then
+          STATUS := cSTATUS_Unmoeglich;
+        if (STATUS = cSTATUS_VorgezogenGemeldet) then
+          STATUS := cSTATUS_Vorgezogen;
+
+        if (Argos > 0) and (Argos < MaxInt) then
+        begin
+          if (STATUS in [cSTATUS_Unmoeglich, cSTATUS_Vorgezogen, cSTATUS_Erfolg]) then
+          begin
+            if bXML.exist(Argos) then
+            begin
+
+              fillAufgaben;
+              OneFound(r);
+
+            end
+            else
+            begin
+              if assigned(sBericht) then
+                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in XML.BLA nicht gefunden!');
+            end;
+          end
+          else
+          begin
+            if assigned(sBericht) then
+              sBericht.add('(RID=' + RID + ') STATUS sollte in (Unmöglich,Vorgezogen,Erfolg) sein!');
+          end;
+        end
+        else
+        begin
+          if assigned(sBericht) then
+            sBericht.add('(RID=' + RID + ') ARGOS ist leer!');
+        end;
+        inc(r);
+      until (r > RowCount);
+    end;
+    pop;
+    pop;
+    pop;
+    pop;
+    if (sStack.count <> 0) then
+    begin
+      inc(ErrorCount);
+      sDiagnose.add(cERRORText + ' Stack nicht abgearbeitet!');
+    end;
+
+  end;
+
+  //
+  if (ErrorCount = 0) then
+    sResult.SaveToFile(conversionOutFName)
+  else
+    FileDelete(conversionOutFName);
+
+
+  bXML.EndTransaction;
+
+  FreeMem(pXML);
+  bXML.Free;
+  sResult.Free;
+  sSource.Free;
+  sStack.Free;
+  xImport.Free;
+  xlsHeaders.Free;
+end;
+
+procedure xls2argos2018(InFName: string; sBericht: TStringList);
+const
+  cSTATUS_Unmoeglich = 9;
+  cSTATUS_Vorgezogen = 7;
+  cSTATUS_Erfolg = 4;
+  cSTATUS_ErfolgGemeldet = 12;
+  cSTATUS_UnmoeglichGemeldet = 13;
+  cSTATUS_VorgezogenGemeldet = 14;
+var
+  sSource: TStringList;
+  xlsHeaders: TStringList;
+
+  sResult: TStringList;
+  sStack: TStringList;
+  RollBack: boolean;
+
+  // Auftrag
+  bXML: TBLager;
+  pXML: pointer;
+
+  // Cache
+  xmlToday: string;
+  xmlMESSAGE: integer;
+  xmlCursor: integer;
+
+  // XLS-Sachen
+  xImport: TXLSFile;
+  r, c: integer;
+
+  // Spalten Konstante
+  cARGOS: integer;
+  cART: integer;
+  cRID: integer;
+  cStatus: integer;
+
+  // Datenfelder Cache
+  Argos: int64;
+  ART: string;
+  RID: string;
+  STATUS: integer;
+  ZaehlwerkeIst: integer;
+
+  // TAET
+  TAET_BEGIN: integer;
+  TAET_END: integer;
+
+  // Schnittstellen-Optionen
+  Optionen : string;
+  p_Melde_Eintarif_in_NT : boolean;
+
+
+  procedure speak(s: string = '');
+  begin
+    if (cutblank(s) = '') then
+      sResult.add('')
+    else
+      sResult.add(fill(' ', sStack.count) + s);
+  end;
+
+  procedure rollbackBecause(Msg: string);
+  begin
+    if assigned(sBericht) then
+      sBericht.add('(RID=' + RID + ') ' + Msg)
+    else
+     sDiagnose.add(cERRORText + ' (RID=' + RID + ') ' + Msg);
+    RollBack := true;
+  end;
+
+  procedure push(tag: string);
+  begin
+    speak('<' + tag + '>');
+    sStack.add(nextp(tag, ' ', 0));
+  end;
+
+  procedure pop;
+  var
+    tag: string;
+  begin
+    tag := sStack[pred(sStack.count)];
+    sStack.delete(pred(sStack.count));
+    speak('</' + tag + '>');
+  end;
+
+  procedure single(tag, value: string);
+  begin
+    speak('<' + tag + '>' + value + '</' + tag + '>');
+  end;
+
+  function f { ocus } (tag: string): boolean;
+  var
+    n: integer;
+    AutoMataState: integer;
+  begin
+
+    //
+    TAET_BEGIN := -1;
+    TAET_END := -1;
+    AutoMataState := 0;
+    result := false;
+    for n := xmlCursor to pred(sSource.count) do
+    begin
+      case AutoMataState of
+        0:
+          begin
+            if (pos('<TAET>', sSource[n]) > 0) then
+            begin
+              TAET_BEGIN := n;
+              continue;
+            end;
+            if (pos('<BEZEICHNUNG>' + tag + '</BEZEICHNUNG>', sSource[n]) > 0) then
+            begin
+              AutoMataState := 1;
+              continue;
+            end;
+          end;
+        1:
+          begin
+            if (pos('</TAET>', sSource[n]) > 0) then
+            begin
+              TAET_END := n;
+              break;
+            end;
+          end;
+      end;
+
+    end;
+
+    if (TAET_END <= TAET_BEGIN) then
+    begin
+      // rollbackBecause(inttostr(ARGOS) + ': Bezeichnung "' + Tag + '" nicht gefunden!');
+      if assigned(sBericht) then
+        sBericht.add('WARNUNG: Bei ' + inttostr(Argos) + ': Bezeichnung "' + tag + '" nicht gefunden!');
+    end
+    else
+    begin
+      result := true;
+    end;
+
+  end;
+
+  function k { urzBez } (tag: string): boolean;
+  var
+    n: integer;
+    AutoMataState: integer;
+  begin
+
+    //
+    TAET_BEGIN := -1;
+    TAET_END := -1;
+    AutoMataState := 0;
+    result := false;
+    for n := xmlCursor to pred(sSource.count) do
+    begin
+      case AutoMataState of
+        0:
+          begin
+            if (pos('<TAET>', sSource[n]) > 0) then
+            begin
+              TAET_BEGIN := n;
+              continue;
+            end;
+            if (pos('<KURZBEZ>' + tag + '</KURZBEZ>', sSource[n]) > 0) then
+            begin
+              AutoMataState := 1;
+              continue;
+            end;
+          end;
+        1:
+          begin
+            if (pos('</TAET>', sSource[n]) > 0) then
+            begin
+              TAET_END := n;
+              break;
+            end;
+          end;
+      end;
+
+    end;
+
+    if (TAET_END <= TAET_BEGIN) then
+    begin
+      rollbackBecause(inttostr(Argos) + ': KURZBEZ "' + tag + '" nicht gefunden!');
+    end
+    else
+    begin
+      result := true;
+    end;
+
+  end;
+
+  function q { uestion } (tag: string; CloseTag: string = 'GERAET'): string;
+  var
+    n: integer;
+    k: integer;
+    oneLine: string;
+    FoundTag: boolean;
+    FullTag: string;
+  begin
+    result := '"<ReferenceFailed>"';
+    FoundTag := false;
+    FullTag := '<' + tag + '>';
+    for n := succ(TAET_BEGIN) to pred(TAET_END) do
+    begin
+      if (pos('</' + CloseTag + '>', sSource[n]) > 0) then
+        break;
+      k := pos(FullTag, sSource[n]);
+      if (k = 0) then
+        continue;
+      oneLine := copy(sSource[n], k + length(FullTag), MaxInt);
+      k := pos('</' + tag + '>', oneLine);
+      if (k > 0) then
+        oneLine := copy(oneLine, 1, pred(k));
+      result := oneLine;
+      FoundTag := true;
+      break;
+    end;
+
+    if not(FoundTag) then
+      rollbackBecause(inttostr(Argos) + '[' + inttostr(TAET_BEGIN) + ',' + inttostr(TAET_END) + ']' + ': ' + tag +
+        ' nicht gefunden!');
+  end;
+
+  function qo { uestion optional } (tag: string; CloseTag: string = 'GERAET'): boolean;
+  var
+    n: integer;
+    k: integer;
+    oneLine: string;
+    FullTag: string;
+  begin
+    result := false;
+    FullTag := '<' + tag + '>';
+    for n := succ(TAET_BEGIN) to pred(TAET_END) do
+    begin
+      if (pos('</' + CloseTag + '>', sSource[n]) > 0) then
+        break;
+      k := pos(FullTag, sSource[n]);
+      if (k = 0) then
+        continue;
+      oneLine := copy(sSource[n], k + length(FullTag), MaxInt);
+      k := pos('</' + tag + '>', oneLine);
+      if (k > 0) then
+        oneLine := copy(oneLine, 1, pred(k));
+      result := true;
+      break;
+    end;
+  end;
+
+  function qao { uestion auftrag optional } (tag: string): string;
+  // Frage einen Feldinhalt aus dem originalen Auftrag ab
+  // der Auftrag befindet sich vor den Tätigkeitshülsen
+  var
+    n: integer;
+    k: integer;
+    oneLine: string;
+    FullTag: string;
+    Found: boolean;
+  begin
+    Found := false;
+    result := '';
+    FullTag := '<' + tag + '>';
+    for n := 0 to pred(TAET_BEGIN) do
+    begin
+      k := pos(FullTag, sSource[n]);
+      if (k = 0) then
+        continue;
+      oneLine := copy(sSource[n], k + length(FullTag), MaxInt);
+      k := pos('</' + tag + '>', oneLine);
+      if (k > 0) then
+      begin
+        result := copy(oneLine, 1, pred(k));
+        Found := true;
+        break;
+      end;
+    end;
+    if Found then
+    begin
+      if result = '' then
+        speak('<!-- ' + tag + ' war leer -->')
+      else
+        speak('<!-- ' + tag + ' war ' + result + ' -->');
+    end
+    else
+    begin
+      speak('<!-- ' + tag + ' fehlt im Auftrag -->');
+    end;
+  end;
+
+  procedure fillAufgaben(CloseTag: string = 'GERAET');
+  var
+    n: integer;
+    sXML: TMemoryStream;
+  begin
+
+    // sSource mit den richtigen Werten füllen
+    bXML.get;
+    sXML := TMemoryStream.create;
+    sXML.Write(pXML^, bXML.RecordSize);
+    sXML.Position := 0;
+    sSource.LoadFromStream(sXML);
+    sXML.Free;
+
+    // sSource.SaveToFile(WorkPath+inttostr(ARGOS)+'.log');
+
+    // oberen Kopf-Teil der Source übergehen
+    xmlCursor := -1;
+    for n := 0 to pred(sSource.count) do
+      if (pos('<TAET>', sSource[n]) > 0) then
+      begin
+        xmlCursor := n;
+        break;
+      end;
+    if (xmlCursor < 0) then
+    begin
+      sDiagnose.add(cERRORText + ' <TAET> nicht gefunden!');
+      inc(ErrorCount);
+    end;
+
+  end;
+
+  function x { celValue } (r: integer; c: string): string;
+  var
+    _c: integer;
+  begin
+    _c := xlsHeaders.indexof(c);
+    if (_c = -1) then
+    begin
+      result := '?';
+      sDiagnose.add(cERRORText + ' Spalte "' + c + '" nicht gefunden!');
+      inc(ErrorCount);
+    end
+    else
+    begin
+      result := xImport.getCellValue(r, succ(_c)).ToString;
+      ersetze('"', '''', result);
+      ersetze('&', c_xml_ampersand, result);
+    end;
+  end;
+
+  function xd(r: integer): string; overload;
+  var
+    _cd: integer;
+    _ct: integer;
+    d, t: TDateTime;
+  begin
+    _cd := xlsHeaders.indexof('WechselDatum');
+    _ct := xlsHeaders.indexof('WechselZeit');
+
+    if (_cd = -1) or (_ct = -1) then
+    begin
+      result := '?';
+      sDiagnose.add(cERRORText + ' Spalte "WechselDatum" oder "WechselZeit" nicht gefunden!');
+      inc(ErrorCount);
+    end
+    else
+    begin
+      d := getDateValue(xImport, r, succ(_cd));
+      t := getTimeValue(xImport, r, succ(_ct));
+
+      if (d = 0) then
+        d := now;
+
+      result := long2date(d) + SecondsToStr(t);
+
+      result :=
+      { tt } copy(result, 1, 2) + '.' +
+      { mm } copy(result, 4, 2) + '.' +
+      { yyyy } copy(result, 7, 4) + ' ' +
+      { hh } copy(result, 11, 2) + ':' +
+      { mm } copy(result, 14, 2) + ':' +
+      { ss } copy(result, 17, 2);
+    end;
+  end;
+
+  procedure timeStampBlock(r: integer);
+  var
+    ts: string;
+  begin
+    ts := xd(r);
+    single('ERGEBNISDATUM', ts);
+    single('ERFASSUNGSDATUM', ts);
+  end;
+
+  function xd(r: integer; c: string): string; overload;
+  var
+    _cdt: integer;
+    d: TDateTime;
+  begin
+    _cdt := xlsHeaders.indexof(c);
+    if (_cdt = -1) then
+    begin
+      result := '?';
+      sDiagnose.add(cERRORText + ' Spalte "' + c + '" nicht gefunden!');
+      inc(ErrorCount);
+    end
+    else
+    begin
+
+      result := '';
+      try
+        d := getDateTimeValue(xImport, r, succ(_cdt));
+
+        if (d > 0) then
+        begin
+
+          result := long2date(d) + SecondsToStr(d);
+
+          result :=
+          { yyyy } copy(result, 7, 4) +
+          { mm } copy(result, 4, 2) +
+          { tt } copy(result, 1, 2) +
+          { hh } copy(result, 11, 2) +
+          { mm } copy(result, 14, 2) +
+          { ss } copy(result, 17, 2);
+
+        end;
+      except
+      end;
+    end;
+
+  end;
+
+  function x_optional(r: integer; c: string): string; overload;
+  begin
+    if (xlsHeaders.indexof(c) <> -1) then
+      result := x(r, c)
+    else
+      result := '';
+  end;
+
+  function x_optional_upper(r: integer; c: string): string; overload;
+  begin
+    if (xlsHeaders.indexof(c) <> -1) then
+      result := AnsiupperCase(x(r, c))
+    else
+      result := '';
+  end;
+
+  function x_optional_JNX(r: integer; c: string): string; overload;
+  begin
+    if (xlsHeaders.indexof(c) <> -1) then
+    begin
+      result := AnsiupperCase(x(r, c));
+      if result = 'X' then
+        result := 'ja';
+      if result = 'J' then
+        result := 'ja';
+      if result = 'N' then
+        result := 'nein';
+    end
+    else
+      result := '';
+  end;
+
+  function x_optional_X(r: integer; c: string): string; overload;
+  begin
+    if (xlsHeaders.indexof(c) <> -1) then
+    begin
+      result := AnsiupperCase(x(r, c));
+      if result = 'X' then
+        result := 'ja'
+      else
+        result := 'nein';
+    end
+    else
+      result := '';
+  end;
+
+  procedure clone(tag: string);
+  begin
+    single(tag, q(tag));
+  end;
+
+  procedure clone_optional(tag: string);
+  begin
+    if qo(tag) then
+      single(tag, q(tag));
+  end;
+
+  procedure taet(Bezeichnung, Ergebnis: string; r: integer);
+  begin
+    if f(Bezeichnung) then
+    begin
+      push('TAET');
+      clone('ID');
+      clone('BEZEICHNUNG');
+      clone_optional('KURZBEZ');
+      single('ERGEBNIS', Ergebnis);
+      timeStampBlock(r);
+      clone_optional('HOSTKEY');
+      pop;
+    end;
+  end;
+
+  procedure kurz(KurzBez, Ergebnis: string; r: integer);
+  begin
+    if k(KurzBez) then
+    begin
+      push('TAET');
+      clone('ID');
+      clone('BEZEICHNUNG');
+      clone_optional('KURZBEZ');
+      single('ERGEBNIS', Ergebnis);
+      timeStampBlock(r);
+      clone_optional('HOSTKEY');
+      pop;
+    end;
+  end;
+
+  procedure OptTaet(Bezeichnung, Ergebnis: string; r: integer);
+  begin
+    if (Ergebnis <> '') then
+      taet(Bezeichnung, Ergebnis, r);
+  end;
+
+  procedure OptDiff(Bisher, Bezeichnung, Ergebnis: string; r: integer);
+  // nur etwas melden wenn es in Abänderung zum Auftrag steht
+  begin
+    if (Ergebnis <> '') then
+      if (qao(Bisher) <> Ergebnis) then
+        taet(Bezeichnung, Ergebnis, r);
+  end;
+
+  procedure OneFound(r: integer);
+  var
+    RollBackPosition, n: integer;
+  begin
+    RollBackPosition := sResult.count;
+    RollBack := false;
+
+    if (ART = 'G') or (ART = 'WA') then
+    begin
+      // Gas / Wasser
+      kurz('Stand', x(r, 'ZaehlerStandAlt'), r);
+      kurz('Stand neu', x(r, 'ZaehlerStandNeu'), r);
+    end
+    else
+    begin
+      // Strom
+      if (ZaehlwerkeIst = 2) then
+      begin
+
+        // Ausbau
+        kurz('StandHT', x(r, 'ZaehlerStandAlt'), r);
+        kurz('StandNT', x(r, 'NA'), r);
+
+        // Einbau
+        kurz('StandHTneu', x(r, 'ZaehlerStandNeu'), r);
+        kurz('StandNT neu', x(r, 'NN'), r);
+
+      end
+      else
+      begin
+        if p_Melde_Eintarif_in_NT then
+        begin
+
+          // Ausbau
+          kurz('StandNT', x(r, 'ZaehlerStandAlt'), r);
+
+          // Einbau
+          kurz('StandNT neu', x(r, 'ZaehlerStandNeu'), r);
+
+        end else
+        begin
+
+          // Ausbau
+          kurz('StandHT', x(r, 'ZaehlerStandAlt'), r);
+
+          // Einbau
+          kurz('StandHTneu', x(r, 'ZaehlerStandNeu'), r);
+
+        end;
+      end;
+    end;
+
+    taet('Serial-Nr. neu', x(r, 'ZaehlerNummerNeu'), r);
+    taet('Vorgangsgrund', '11', r);
+    taet('Gerät ausgebaut', 'ja', r);
+
+    OptTaet('1. gescheiterter Versuch', x(r, 'V1'), r);
+    OptTaet('2. gescheiterter Versuch', x(r, 'V2'), r);
+    OptTaet('Unterschrift Monteur', x(r, 'MonteurText') + '(' + x(r, 'MonteurHandy') + ')', r);
+
+    OptTaet('Bemerkung', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
+
+    //
+    OptDiff('MOTAGEKENN', 'Korr. MontagekennzeichenNr', x_optional(r, 'SA'), r);
+    OptTaet('PlombierungOK', x_optional_X(r, 'SB'), r);
+    OptTaet('Mangel sichtbar', x_optional_X(r, 'SC'), r);
+
+    OptDiff('SPERRMKENN', 'Korr. Sperrmöglichkeitnr.', x_optional(r, 'A1'), r);
+
+    OptTaet('Korr. Verbrauchsstelle', x_optional(r, 'A2'), r);
+
+    OptTaet('Korr. Standortnr', x_optional(r, 'A3'), r);
+    OptTaet('Korr. Standortzusatz', x_optional(r, 'A4'), r);
+    OptTaet('Korr. Standortzusatz Freitext', x_optional(r, 'A5'), r);
+
+    OptTaet('Mängelkarte', x_optional_X(r, 'A6'), r);
+    OptTaet('Mängelart', x_optional(r, 'A7'), r);
+
+    OptTaet('Spannungsunterbrechung', x_optional(r, 'SD'), r);
+    OptTaet('Dauer Spannungsausfall', x_optional(r, 'N1'), r);
+
+    // Opttaet('TRE Einbau',x_optional(r,'N2'),r);
+    OptTaet('Rundsteuerempfänger Ausbau', x_optional(r, 'N2'), r);
+    // Opttaet('TRE-Huckepack neu',x_optional(r,'TA'),r);
+    OptTaet('Huckepack-TRE', x_optional(r, 'TA'), r);
+    // Opttaet('TRE-Kommando Einzeln neu',x_optional(r,'TB'),r);
+    OptTaet('TRE-Kommando Einzeln', x_optional(r, 'TB'), r);
+
+    //
+    repeat
+
+      if x_optional_upper(r, 'B1') = 'X' then
+      begin
+        taet('KFR-Ventile', 'RVN', r);
+        break;
+      end;
+
+      if x_optional_upper(r, 'B2') = 'X' then
+      begin
+        taet('KFR-Ventile', 'RVD', r);
+        break;
+      end;
+
+      if x_optional_upper(r, 'B3') = 'J' then
+      begin
+        taet('KFR-Ventile', 'RVP', r);
+        break;
+      end;
+
+      if x_optional_upper(r, 'B3') = 'N' then
+      begin
+        taet('KFR-Ventile', 'RVO', r);
+        break;
+      end;
+
+    until yet;
+
+    (*
+      OptTaet('Korr. Verbrauchsstelle',x_optional(r,'I1'),r);
+      OptTaet('Korr. Standortzusatz Freitext',
+      cutblank(
+      x_optional(r,'I2')+' '+
+      x_optional(r,'I3') ),r);
+      OptTaet('Anschlussobjekthinweis',x_optional(r,'I4'),r);
+    *)
+
+    (*
+      taet('Korr. Standort TXT',
+      cutblank(
+      x(r, 'I3') + '|' +
+      x(r, 'I4') + '|' +
+      x(r, 'N5') + ' ' + x(r, 'I6')
+      ), r);
+    *)
+
+    if RollBack then
+    begin
+      for n := pred(sResult.count) downto RollBackPosition do
+        sResult.delete(n);
+      speak('<!-- catched ' + inttostr(Argos) + ' before finish line, because of quality policies -->');
+      speak('<!-- operator_order_id="' + RID + '" -->');
+      if assigned(sBericht) then
+      begin
+        for n := pred(sBericht.count) downto 0 do
+          if (pos('(RID=' + RID + ')', sBericht[n]) > 0) then
+            speak('<!-- policy_fail_reason="' + sBericht[n] + '" -->')
+          else
+            break;
+      end;
+    end
+    else
+    begin
+      inc(xmlMESSAGE);
+    end;
+  end;
+
+  procedure SetOutFname;
+  var
+    k: integer;
+  begin
+    conversionOutFName := InFName;
+    k := revPos('.', conversionOutFName);
+    conversionOutFName := copy(conversionOutFName, 1, pred(k)) + cXML_Extension;
+  end;
+
+begin
+  sResult := TStringList.create;
+  sStack := TStringList.create;
+  sSource := TSearchStringList.create;
+
+  xImport := TXLSFile.create(true);
+  xlsHeaders := TStringList.create;
+  bXML := TBLager.create;
+  GetMem(pXML, 1024 * 1024);
+
+  xmlToday := Datum10;
+  xmlToday := copy(xmlToday, 7, 4) + copy(xmlToday, 4, 2) + copy(xmlToday, 1, 2);
+  xmlMESSAGE := 1;
+
+  if FileExists(WorkPath + '_' + cARGOS_2007_XML_SAVE + cBL_FileExtension) then
+    bXML.init(WorkPath + '_' + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024)
+  else
+    bXML.init(WorkPath + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024);
   bXML.ReadOnly := true;
   bXML.BeginTransaction;
 
@@ -9329,10 +10273,15 @@ begin
           sDiagnose.add('Modus: xls -> idoc');
           xls2idoc(InFName, sBericht);
         end;
-      Content_Mode_xls2Argos:
+      Content_Mode_xls2Argos2007:
         begin
-          sDiagnose.add('Modus: xls -> ARGOS XML');
-          xls2argos(InFName, sBericht);
+          sDiagnose.add('Modus: xls -> ARGOS-2007 XML');
+          xls2argos2007(InFName, sBericht);
+        end;
+      Content_Mode_xls2Argos2018:
+        begin
+          sDiagnose.add('Modus: xls -> ARGOS-2018 XML');
+          xls2argos2018(InFName, sBericht);
         end;
       Content_Mode_xls2ml:
         begin

@@ -181,6 +181,14 @@ Messe Modus
  f12 - Trefferliste anzeigen
  <esc> offene fenster schliessen
 
+Rev 2.035 (09.04.18) Andreas Filsinger
+
+ Neu: BLA-Dateien mit 2.5 Mio Datensätzen
+
+Rev 2.034 (09.04.18) Andreas Filsinger
+
+ Neu: Compiliert mit Delphi 10.1
+
 Rev 2.033 (08.10.12) Andreas Filsinger
 
  Neu: "BildDokument" im Datensatz

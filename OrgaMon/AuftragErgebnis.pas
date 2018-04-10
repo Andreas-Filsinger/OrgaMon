@@ -1831,8 +1831,10 @@ begin
         begin
           Oc_Bericht := TStringList.create;
           case CheckContent(OutFName) of
-            Content_Mode_xls2Argos:
-              Oc_Result := doConversion(Content_Mode_xls2Argos, OutFName, Oc_Bericht);
+            Content_Mode_xls2Argos2007:
+              Oc_Result := doConversion(Content_Mode_xls2Argos2007, OutFName, Oc_Bericht);
+            Content_Mode_xls2Argos2018:
+              Oc_Result := doConversion(Content_Mode_xls2Argos2018, OutFName, Oc_Bericht);
             Content_Mode_xls2ml:
               Oc_Result := doConversion(Content_Mode_xls2ml, OutFName, Oc_Bericht);
           else
