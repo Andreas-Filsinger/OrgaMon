@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="275">
+    <Units Count="284">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -89,7 +89,6 @@
       <Unit9>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <CursorPos X="16" Y="41"/>
         <UsageCount Value="115"/>
         <Loaded Value="True"/>
@@ -1956,6 +1955,77 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit274>
+      <Unit275>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33205.pp"/>
+        <UnitName Value="BugFPC"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="33"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit275>
+      <Unit276>
+        <Filename Value="..\..\fpc\tests\webtbf\tw28355.pp"/>
+        <UnitName Value="FPC30821_Bug"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit276>
+      <Unit277>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33542.pp"/>
+        <UnitName Value="vectorcall_pd_test1"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="16"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit277>
+      <Unit278>
+        <Filename Value="..\..\fpc\tests\webtbs\tw31605.pp"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit278>
+      <Unit279>
+        <Filename Value="..\..\fpc\tests\webtbs\tw29245.pp"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit279>
+      <Unit280>
+        <Filename Value="..\..\fpc\tests\webtbs\uw29245.pp"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit280>
+      <Unit281>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33548.pp"/>
+        <UnitName Value="app_test_core"/>
+        <EditorIndex Value="7"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit281>
+      <Unit282>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33515.pp"/>
+        <UnitName Value="Test"/>
+        <EditorIndex Value="8"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit282>
+      <Unit283>
+        <Filename Value="..\..\fpc\tests\test\tasm26.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="9"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit283>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>

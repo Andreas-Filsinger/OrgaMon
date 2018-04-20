@@ -4052,10 +4052,16 @@ begin
       break;
 
     // Transaktions-Datenverzeichnisse wegsichern danach löschen
-    MoveFileEx(
+    // ACHTUNG: "MyProgramPath" und "BackupDir" müssen auf dem selben Share liegen -
+    // sonst funktioniert MoveFileEx nicht
+    if not(MoveFileEx(
       { } pchar(MyProgramPath + TAN),
       { } pchar(BackupDir + cTAN_BackupPath + TAN),
-      { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH);
+      { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH)) then
+    begin
+     log(cERRORText + ' 4062: Verzeichnis '+TAN+' konnte nicht in die Sicherung verschoben werden!');
+     continue;
+    end;
 
     if DirExists(BackupDir + cTAN_BackupPath + TAN + '\') then
     begin
@@ -4064,7 +4070,7 @@ begin
     end;
 
     // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
-    // Dies darf dann nicht zu einem Fehler führen
+    // Dies darf dann aber nicht zu einem Fehler führen
     FileDelete(MyProgramPath + cOrgaMonDataPath + TAN + cDATExtension);
 
   end;

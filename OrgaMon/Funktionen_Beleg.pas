@@ -10257,9 +10257,13 @@ begin
       { } ' (BELEG_R=' + inttostr(BELEG_R) + ') ' +
       { } 'order by POSNO,RID');
 
-    // Die einzelnen Teillieferungen über POSNO klar trennen
-    e_x_sql('update GELIEFERT ' + 'set POSNO=' + inttostr(TEILLIEFERUNG) + ' where' + ' (BELEG_R=' + inttostr(BELEG_R) +
-      ') and' + ' (POSNO is null)');
+    // TEILLIEFERUNG wird in POSNO gespeichert
+    // dadurch können die Teillieferungen klar getrennt werden
+    e_x_sql(
+     { } 'update GELIEFERT ' +
+     { } 'set POSNO=' + inttostr(TEILLIEFERUNG) +
+     { } ' where' + ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+     { } ' (POSNO is null)');
 
     // Für MP3 - Downloads nun die verfügbare Menge setzen
     if (iMusikDownloadsProArtikel > 0) then

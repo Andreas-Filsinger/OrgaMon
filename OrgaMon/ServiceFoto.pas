@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2016  Andreas Filsinger
+  |    Copyright (C) 2012 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -180,6 +180,7 @@ type
     Label32: TLabel;
     Edit21: TEdit;
     Button36: TButton;
+    Button37: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure SpeedButton8Click(Sender: TObject);
@@ -229,6 +230,7 @@ type
     procedure Button34Click(Sender: TObject);
     procedure Button35Click(Sender: TObject);
     procedure Button36Click(Sender: TObject);
+    procedure Button37Click(Sender: TObject);
   private
     { Private-Deklarationen }
     TimerWartend: integer;
@@ -762,6 +764,96 @@ begin
   // sParameter.add('ALL=' + cINI_Deactivate);
   MyFotoExec.workEingang_TXT(sParameter);
   sParameter.Free;
+end;
+
+procedure TFormServiceFoto.Button37Click(Sender: TObject);
+var
+ InternetAblage_SourcePath : string;
+ SicherungsPath : string;
+ AblageName : string;
+ sAblagen: TStringList;
+ sRechteSkript: TStringList;
+ n,i: integer;
+ sTAN : TSTringList;
+ ZipOptions: TStringList;
+begin
+
+ // 1) Rechte Vorbereiten und virtueller Host löschen
+ if false then
+ begin
+   InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#185\Ablagen\';
+   SicherungsPath := 'R:\Datensicherung\SEWA\JonDaServer\#185\';
+
+   sAblagen := TStringList.Create;
+   sAblagen.LoadFromFile(InternetAblage_SourcePath+'Ablagen.txt');
+
+   sRechteSkript:= TStringList.Create;
+
+   for n := 0 to pred(sAblagen.Count) do
+   begin
+    AblageName := noblank(nextp(sAblagen[n],' ',1));
+    if (AblageName='') then
+     continue;
+
+    with sRechteSkript do
+    begin
+     add('chmod -R 777 /srv/www/htdocs/'+AblageName+'/*'  );
+     add('chmod 777 /srv/www/htdocs/'+AblageName+'/.htpasswd');
+     add('rm /etc/apache2/vhosts.d/'+ AblageName + '.conf');
+    end;
+
+
+
+   end;
+   sRechteSkript.SaveToFile(InternetAblage_SourcePath+'ablagen.sh');
+  end;
+
+  // 2) Verschieben der Ablagen in die Sicherung:
+  if false then
+  begin
+   InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#185\Ablagen\';
+   SicherungsPath := 'R:\Datensicherung\SEWA\JonDaServer\#185\';
+
+   sAblagen := TStringList.Create;
+   sAblagen.LoadFromFile(InternetAblage_SourcePath+'Ablagen-2.txt');
+
+   for n := 0 to pred(sAblagen.Count) do
+   begin
+    AblageName := noblank(nextp(sAblagen[n],' ',1));
+    if (AblageName='') then
+     continue;
+
+    if
+    MoveFileEx(
+      { Source-Path } pChar('W:\'+AblageName),
+      { Dest-Path } pChar('W:\SEWA\'+AblageName),
+      { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH) then
+     listbox10.Items.Add(AblageName)
+     else
+     listbox10.Items.Add('ERROR:'+AblageName);
+
+    application.ProcessMessages;
+   end;
+  end;
+
+  // 3) ZIP der TAN-Verzeichnisse
+  if false then
+  begin
+    ZipOptions:= TStringList.create;
+
+    InternetAblage_SourcePath := 'R:\Datensicherung\SEWA\JonDaServer\#184\TAN\';
+    sTAN := dirs(InternetAblage_SourcePath);
+    for n := 0 to pred(sTAN.count) do
+    begin
+     ZipOptions.values[infozip_RootPath] := InternetAblage_SourcePath+sTAN[n]+'\';
+     i := zip(nil,InternetAblage_SourcePath+sTAN[n]+'.zip',ZipOptions);
+
+     listbox10.Items.Add(sTAN[n]+':'+IntTOstr(i));
+      application.ProcessMessages;
+
+    end;
+  end;
+
 end;
 
 procedure TFormServiceFoto.Button26Click(Sender: TObject);

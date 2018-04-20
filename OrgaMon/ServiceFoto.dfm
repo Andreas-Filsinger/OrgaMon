@@ -753,6 +753,15 @@
         TabOrder = 14
         OnClick = Button35Click
       end
+      object Button37: TButton
+        Left = 497
+        Top = 255
+        Width = 181
+        Height = 25
+        Caption = 'Abwickeln'
+        TabOrder = 15
+        OnClick = Button37Click
+      end
     end
     object TabSheet8: TTabSheet
       Caption = 'MemCached'
