@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -884,7 +884,13 @@ var
 
       if (ParamFunction = 'Umsatz') then
       begin
-        result := format('%.2m', [e_r_Umsatz(strtointdef(ParamVal1, 0))]);
+        result := format('%.2m', [e_r_PostenUmsatz(strtointdef(ParamVal1, 0))]);
+        break;
+      end;
+
+      if (ParamFunction = 'Netto') then
+      begin
+        result := format('%.2m', [e_r_GeliefertUmsatz(strtointdef(ParamVal1, 0))]);
         break;
       end;
 

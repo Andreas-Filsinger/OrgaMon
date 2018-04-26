@@ -239,8 +239,11 @@ function e_r_PreisNetto(AUSGABEART_R, ARTIKEL_R: integer): double;
 // liefert den Preis des Artikels
 function e_r_PaketPreis(AUSGABEART_R, ARTIKEL_R: integer): double;
 
-// liefert den Netto-Umsatz dieser Position
-function e_r_Umsatz(POSTEN_R: integer): double;
+// liefert den Netto-Umsatz dieser Position aus POSTEN
+function e_r_PostenUmsatz(POSTEN_R: integer): double;
+
+// liefert den Netto-Umsatz dieser Position aus GELIEFERT
+function e_r_GeliefertUmsatz(GELIEFERT_R: integer): double;
 
 // liefert den United States Dollar Preis aus der Preistabelle
 function e_r_USD(ARTIKEL_R: integer): double;
@@ -9079,6 +9082,7 @@ begin
     References.add('MITGLIEDERLISTE.PERSON_R');
     References.add('VERTRAG.PERSON_R');
     References.add('EMAIL.INITIATOR_R');
+    References.add('WEBSHOPCLICKS.PERSON_R');
 
     //
     if DeleteMode then
@@ -9131,7 +9135,7 @@ begin
   result := _e_r_Uebergangsfach;
 end;
 
-function e_r_Umsatz(POSTEN_R: integer): double;
+function e_r_PostenUmsatz(POSTEN_R: integer): double;
 var
   cPOSTEN: TdboCursor;
 var
@@ -9139,7 +9143,7 @@ var
 var
   _Rabatt, _EinzelPreis, _MwStSatz: double;
 begin
-  result := 0.0;
+  result := cGeld_Zero;
   cPOSTEN := nCursor;
   try
     repeat
@@ -9162,6 +9166,50 @@ begin
 
   end;
   cPOSTEN.free;
+end;
+
+// liefert den Netto-Umsatz dieser Position aus GELIEFERT
+function e_r_GeliefertUmsatz(GELIEFERT_R: integer): double;
+var
+  cGELIEFERT: TdboCursor;
+var
+  _Anz, _AnzAuftrag, _AnzGeliefert, _AnzStorniert, _AnzAgent: integer;
+var
+  _Rabatt, _EinzelPreis, _MwStSatz: double;
+begin
+  result := cGeld_Zero;
+  cGELIEFERT := nCursor;
+  try
+    repeat
+      with cGELIEFERT do
+      begin
+        sql.add('select * from GELIEFERT where RID=' + inttostr(GELIEFERT_R));
+        ApiFirst;
+        if eof then
+          break;
+
+        e_r_PostenInfo(
+         {} cGELIEFERT,
+         {} false,
+         {} true,
+         {} _Anz,
+         {} _AnzAuftrag,
+         {} _AnzGeliefert,
+         {} _AnzStorniert,
+         {} _AnzAgent,
+         {} _Rabatt,
+         {} _EinzelPreis,
+         {} _MwStSatz);
+
+        result := e_r_PostenPreis(_EinzelPreis, _Anz, FieldByName('EINHEIT_R').AsInteger);
+        result := e_c_Rabatt(result, _Rabatt);
+
+      end;
+    until yet;
+  finally
+
+  end;
+  cGELIEFERT.free;
 end;
 
 const

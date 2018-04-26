@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.351 (26.04.18) Andreas Filsinger
+
+ Bug: Person: Haifisch: Referenzfehler bei Tabelle WEBSHOPCLICKS
+
+Rev 8.350 (24.04.18) Andreas Filsinger
+
+ Neu: OLAP: complete: Netto
+
 Rev 8.349 (10.04.18) Andreas Filsinger
 
  Bug: Regression aus 8.347: Fehler "ORTSTEIL" nicht gefunden
