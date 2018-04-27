@@ -419,12 +419,11 @@ procedure SystemLog(Event: string); // system sysutils
 // Directory Funktionen
 procedure dir(const Mask: string; FileNames: TStrings; uppercase: boolean = true; ClearList: boolean = true); overload;
 function dir(const Mask: string): integer; overload; // Anzahl von Dateien in diesem Verzeichnis
-function dirs(const Path: string): TStringList; // Liste der Unterverzeichnisse, ohne ".", "..", ".*"
+function dirs(const Path: string): TStringList; // List Sub{\Sub} Dirs without ".", "..", ".*" (recursively)
 function DirExists(const dir: string): boolean;
 function DirSize(dir: string): int64; // WARNING: Time consuming
-function DirQuota(const Mask: string; SizeLimit: int64): boolean;
-// WARNING: Delete oldest Files to Ensure Quota
-procedure CheckCreateDir(dir: string); // recourse create dir
+function DirQuota(const Mask: string; SizeLimit: int64): boolean; // WARNING: Delete oldest Files to Ensure Quota
+procedure CheckCreateDir(dir: string); // create dir (recursively)
 function DirDelete(const Mask: string): boolean; overload;
 function DirDelete(const Mask: string; OlderThan: TAnfixDate): boolean; overload;
 

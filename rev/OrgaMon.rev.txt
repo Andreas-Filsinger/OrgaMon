@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.353 (27.04.18) Andreas Filsinger
+
+ Bug: Foto: Ablage von ZIPs: Bei Unterverzeichnissen: Werden nicht erstellt
+
+Rev 8.352 (26.04.18) Andreas Filsinger
+
+ Bug: Foto: Ablage von ZIPs: Bei Unterverzeichnissen: Wird im Backup ev. Überschrieben
+
 Rev 8.351 (26.04.18) Andreas Filsinger
 
  Bug: Person: Haifisch: Referenzfehler bei Tabelle WEBSHOPCLICKS

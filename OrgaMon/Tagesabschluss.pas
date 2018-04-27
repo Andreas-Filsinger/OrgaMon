@@ -182,7 +182,7 @@ begin
             { } CheckListBox1.items[n] + '" um ' +
             { } secondstostr(SecondsGet) + ' h');
           case n of
-            0:
+            0: // DB-Sicherung
               if not(FormDatensicherung.BackUp(TagesAbschluss_TAN)) then
                 raise Exception.Create('Datenbanksicherung erfolglos');
             1:
@@ -192,9 +192,8 @@ begin
                   if not(FormDatensicherung.doCompress(TagesAbschluss_TAN)) then
                     raise Exception.Create('Gesamtsicherung erfolglos');
               end;
-            2:
+            2: // Dateien verschieben, die zu lange ausser Gebrauch sind!
               begin
-                // Dateien verschieben, die zu lange ausser Gebrauch sind!
                 if iAblage then
                   FormDatensicherung.do400(TagesAbschluss_TAN)
                 else
@@ -266,44 +265,43 @@ begin
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doMediumBuilder) then
                   Log(cERRORText + ' Medium Upload fail');
-            9:
+            9: // Webshop Medien upload
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doContenBuilder) then
                   Log(cERRORText + ' Content Upload fail');
-            10:
+            10: // HBCI-Konten: Umsatzabfrage
               if (iKontenHBCI <> '') then
                 FormBuchhalter.e_w_KontoSync(iKontenHBCI);
-            11:
+            11: // Diverse Caching Elemente neu erzeugen
               ReBuild;
-            12:
+            12: // Auftrag Speed Suche neu erzeugen
+
               FormAuftragSuchindex.ReCreateTheIndex;
-            13:
+            13: // Verkaufsrang berechnen
               if iTagesabschlussRang then
                 e_d_Rang;
-            14:
+            14: // Lieferzeit berechnen
               e_d_Lieferzeit;
-            15:
+            15: // Personen Speed Suche neu erzeugen
               PersonSuchindex;
-            16:
+            16: // CMS Katalog neu erstellen
               FormCreatorMain.CreateSearchIndex;
-            17:
+            17: // Musiker Speed Suche neu erzeugen
               FormMusiker.CreateTheIndex;
-            18:
+            18: // Tier Speed Suche neu erzeugen
               FormTier.CreateIndex;
-            19:
+            19: // Artikel Speed Suche im Belege Fenster neu erzeugen
               ArtikelSuchIndex;
-            20:
-              begin
-                FormNatuerlicheResourcen.Execute;
-              end;
-            21:
+            20: // DMO und PRO Mengen setzen
+              FormNatuerlicheResourcen.Execute;
+            21: // Freigebbare Lagerplätze freigeben
               e_w_LagerFreigeben;
-            22:
+            22: // ausgeglichene Belege löschen
               begin
                 e_x_BelegAusPOS;
                 e_d_Belege;
               end;
-            23:
+            23: // Mahnliste erstellen
               if iMahnlaufbeiTagesabschluss then
               begin
                 if e_w_NeuerMahnlauf then
@@ -314,16 +312,16 @@ begin
                 else
                   Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
               end;
-            24:
+            24: // Verträge anwenden
               e_w_VertragBuchen;
-            25:
+            25: // Abgleich Server Zeitgeber <-> Lokaler Zeitgeber
               begin
                 TimeDiff := r_Local_vs_Server_TimeDifference;
                 if (TimeDiff <> 0) then
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
               end;
-            26:
+            26: // CareTaker Nachmeldungen
               begin
                 Nachmeldungen;
               end;

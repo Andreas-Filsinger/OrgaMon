@@ -1266,12 +1266,14 @@ begin
   ProceedMoment_First := StartMoment;
   ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
 
-  Log(
-    { } 'workAusstehendeFotos: vom ' +
-    { } long2date(ProceedMoment_Oldest) +
-    { } ' bis ' +
-    { } long2date(ProceedMoment_First) +
-    { } ' ...');
+  if DebugMode then
+    Log(
+      { } cINFOText + ' 1271: ' +
+      { } 'vom ' +
+      { } long2date(ProceedMoment_Oldest) +
+      { } ' bis ' +
+      { } long2date(ProceedMoment_First) +
+      { } ' ...');
 
   with sHANGOVER do
   begin
@@ -1424,8 +1426,10 @@ begin
   if DebugMode then
    sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
 
-  Log(
-    { } 'workAusstehendeFotos: Foto-Lieferungen ab ' +
+  if DebugMode then
+    Log(
+    { } cINFOText + ' 1431: ' +
+    { } 'Foto-Lieferungen ab ' +
     { } long2date(LieferMoment_First) +
     { } ' also ab Zeile ' +
     { } InttoStr(n) +
@@ -2022,11 +2026,15 @@ const
   // 0 = gestern ist schon zu alt
   cPicTimeOutDays = 0;
 var
-  // Infrastruktur
-  Ablage_NAME: string;
-  Ablage_PFAD: string;
+  // globale Infrastruktur - Parameter
+  Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage
+  Ablage_PFAD: string; // Realer vollständiger Pfad der Internet-Ablage
+  Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage
   Ablage_ZIP_PASSWORD: string;
-  Ablage_VERZEICHNISSE: TStringList;
+
+  //
+  Ablage_PFADE: TStringList;
+  Ablage_SUBS: TStringList;
   ZIP_OlderThan: TANFiXDate;
   PIC_OlderThan: TANFiXDate;
   WARTEND: tsTable;
@@ -2287,10 +2295,26 @@ var
 
       if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
       begin
-        CheckCreateDir(BackupDir + Ablage_NAME);
+
+        // Datei bereits vorhanden? Darf nicht sein!
+        if FileExists(BackupDir + Ablage_NAME + Ablage_SUB + sZips[m]) then
+        begin
+          Log(cERRORText +
+            { } ' 2295: ZIP "' +
+            { } Ablage_PFAD + sZips[m] +
+            { } '" kann nicht verschoben werden, da diese Datei in "' +
+            { } BackupDir + Ablage_NAME + Ablage_SUB + '" '+
+            { } 'bereits existiert');
+          continue;
+        end;
+
+        // Zielverzeichnis für das Verschieben erstellen
+        CheckCreateDir(BackupDir + Ablage_NAME + Ablage_SUB);
+
+        // Verschieben
         if FileMove(
           { } Ablage_PFAD + sZips[m],
-          { } BackupDir + Ablage_NAME + '\' + sZips[m]) then
+          { } BackupDir + Ablage_NAME + Ablage_SUB + sZips[m]) then
         begin
           inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
           AblageLog(Ablage_PFAD + sZips[m], BackupDir);
@@ -2300,7 +2324,7 @@ var
           Log(cERRORText +
             { } ' 1645: FileMove("' +
             { } Ablage_PFAD + sZips[m] + '", "' +
-            { } BackupDir + Ablage_NAME + '\' + sZips[m] + '")');
+            { } BackupDir + Ablage_NAME + Ablage_SUB + sZips[m] + '")');
           Log(cFotoService_AbortTag);
         end;
       end;
@@ -2317,6 +2341,7 @@ var
 
   r,a: integer;
   UserN:string;
+  PFAD, SUB: string;
 
 begin
 
@@ -2411,24 +2436,40 @@ begin
     end;
 
     // Verzeichnis- und Unterverzeichnis-Liste anlegen
-    Ablage_VERZEICHNISSE := anfix32.dirs(Ablage_PFAD);
-    Ablage_VERZEICHNISSE.sort;
+    Ablage_SUBS := TStringList.Create;
 
-    Ablage_VERZEICHNISSE.Insert(0,'');
-    for a := pred(Ablage_VERZEICHNISSE.Count) downto 0 do
+    Ablage_PFADE := anfix32.dirs(Ablage_PFAD);
+    Ablage_PFADE.sort;
+    Ablage_PFADE.Insert(0,'');
+
+    for a := pred(Ablage_PFADE.Count) downto 0 do
     begin
-      Ablage_VERZEICHNISSE[a] := ValidatePathName(Ablage_PFAD + Ablage_VERZEICHNISSE[a]) + '\';
-      if not(FileExists(Ablage_VERZEICHNISSE[a]+'index.php')) then
+      PFAD := ValidatePathName(Ablage_PFAD + Ablage_PFADE[a]) + '\';
+
+      if not(FileExists(PFAD+'index.php')) then
       begin
-       Log(cINFOText + ' In Ablage "' + Ablage_NAME + '" wird das Verzeichnis "' + Ablage_VERZEICHNISSE[a] + '" ignoriert');
-       Ablage_VERZEICHNISSE.delete(a);
+       Log(
+        cINFOText + ' 2245:'+
+        ' In Ablage "' + Ablage_NAME + '" '+
+        'wird das Verzeichnis "' + Ablage_PFADE[a] + '" '+
+        '('+PFAD+') '+
+        'ignoriert');
+       Ablage_PFADE.delete(a);
+      end else
+      begin
+       SUB := ValidatePathName(Ablage_PFADE[a])+'\';
+       if (SUB='\') then
+        SUB := '';
+       Ablage_SUBS.insert(0,SUB);
+       Ablage_PFADE[a] := PFAD;
       end;
     end;
 
     // Hauptablage und alle Unterverzeichnisse (wenn vorhanden)
-    for a := 0 to pred(Ablage_VERZEICHNISSE.count) do
+    for a := 0 to pred(Ablage_PFADE.count) do
     begin
-      Ablage_PFAD := Ablage_VERZEICHNISSE[a];
+      Ablage_PFAD := Ablage_PFADE[a];
+      Ablage_SUB := Ablage_SUBS[a];
 
       // ganz alte Zips ablegen
       try
@@ -2455,7 +2496,8 @@ begin
       end;
     end;
 
-    Ablage_VERZEICHNISSE.Free;
+    Ablage_PFADE.Free;
+    Ablage_SUBS.Free;
 
   end;
 
