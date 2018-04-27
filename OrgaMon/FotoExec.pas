@@ -560,14 +560,20 @@ begin
 
       if not(DateOK(File_Date)) then
       begin
-        Log('Skip ' + FName + ' (FileTimeStamp illegal) ...');
+        Log(
+          { } cWARNINGText + ' 564: ' +
+          { } 'Skip ' + FName + ' (FileTimeStamp illegal) ...');
         break;
       end;
 
       File_Seconds := dateTime2Seconds(FileTimeStamp);
       if SecondsDiff(d, s, File_Date, File_Seconds) < 4 then
       begin
-        Log('Skip ' + FName + ' (too new) ...');
+        if DebugMode then
+          Log(
+           { } cINFOText + ' 572: ' +
+           { } 'Skip ' + FName + ' (too new) ...');
+        break;
       end;
 
       IgnoreIt := false;
@@ -1697,9 +1703,10 @@ begin
     // Sortieren
     sortby('GERAETENO;MOMENT;DATEINAME_AKTUELL');
     if Changed then
-      Log(
-        { } cINFOText + ' 988: ' +
-        { } ' Frisch sortiert');
+      if DebugMode then
+        Log(
+          { } cINFOText + ' 988: ' +
+          { } ' Frisch sortiert');
 
     // sicherstellen von Spalten
     addcol('BAUSTELLE');
