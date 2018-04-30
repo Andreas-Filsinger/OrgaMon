@@ -2034,9 +2034,9 @@ const
   cPicTimeOutDays = 0;
 var
   // globale Infrastruktur - Parameter
-  Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage
+  Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage: 'abc'
   Ablage_PFAD: string; // Realer vollständiger Pfad der Internet-Ablage
-  Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage
+  Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage '','abc\',...
   Ablage_ZIP_PASSWORD: string;
 
   //
@@ -2055,7 +2055,7 @@ var
   const
     cMaxZIP_Size = 100 * 1024 * 1024;
   var
-    m, r: integer;
+    m: integer;
     Pending: boolean;
     FotoFSize: int64;
     sPics: TStringList;
@@ -2194,7 +2194,7 @@ var
 
   procedure serviceHTML;
   var
-    m, r: integer;
+    m: integer;
     sHTMLSs: TStringList;
     mIni: TIniFile;
     FotosSequence: integer;
@@ -2286,8 +2286,12 @@ var
   var
     sZips: TStringList;
     m: integer;
+    DestPath : string;
+    DestPathCheckCreated: boolean;
   begin
     sZips := TStringList.Create;
+    DestPath := BackupDir + Ablage_NAME + '\' + Ablage_SUB;
+    DestPathCheckCreated := false;
     dir(Ablage_PFAD + '*.zip', sZips, false);
     for m := 0 to pred(sZips.Count) do
     begin
@@ -2304,24 +2308,28 @@ var
       begin
 
         // Datei bereits vorhanden? Darf nicht sein!
-        if FileExists(BackupDir + Ablage_NAME + Ablage_SUB + sZips[m]) then
+        if FileExists(DestPath + sZips[m]) then
         begin
           Log(cERRORText +
             { } ' 2295: ZIP "' +
             { } Ablage_PFAD + sZips[m] +
             { } '" kann nicht verschoben werden, da diese Datei in "' +
-            { } BackupDir + Ablage_NAME + Ablage_SUB + '" '+
+            { } DestPath + '" '+
             { } 'bereits existiert');
           continue;
         end;
 
         // Zielverzeichnis für das Verschieben erstellen
-        CheckCreateDir(BackupDir + Ablage_NAME + Ablage_SUB);
+        if not(DestPathCheckCreated) then
+        begin
+         CheckCreateDir(DestPath);
+         DestPathCheckCreated := true;
+        end;
 
         // Verschieben
         if FileMove(
           { } Ablage_PFAD + sZips[m],
-          { } BackupDir + Ablage_NAME + Ablage_SUB + sZips[m]) then
+          { } DestPath + sZips[m]) then
         begin
           inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
           AblageLog(Ablage_PFAD + sZips[m], BackupDir);
@@ -2331,7 +2339,7 @@ var
           Log(cERRORText +
             { } ' 1645: FileMove("' +
             { } Ablage_PFAD + sZips[m] + '", "' +
-            { } BackupDir + Ablage_NAME + Ablage_SUB + sZips[m] + '")');
+            { } DestPath + sZips[m] + '")');
           Log(cFotoService_AbortTag);
         end;
       end;

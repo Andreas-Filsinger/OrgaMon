@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.354 (30.04.18) Andreas Filsinger
+
+ Bug: Foto: Ablage: Unterverzeichnisse B von A wurd als AB erstellt (Richtig A\B)
+
 Rev 8.353 (27.04.18) Andreas Filsinger
 
  Bug: Foto: Ablage von ZIPs: Bei Unterverzeichnissen: Werden nicht erstellt
