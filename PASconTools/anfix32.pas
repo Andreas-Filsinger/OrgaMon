@@ -287,7 +287,7 @@ function long2date8(dlong: TAnfixDate): string; overload; // TT.MM.JJ
 function long2date8(dlong: TDateTime): string; overload; // TT.MM.JJ
 function long2dateLog(dlong: TAnfixDate): string; overload; // JJJJMMTT
 function long2dateLog(dlong: TDateTime): string; overload; // JJJJMMTT
-function long2dateText(dlong: TAnfixDate): string;
+function long2dateText(dlong: TAnfixDate): string; //
 
 // Lokalisierte Datumsangaben
 function long2dateLocalized(dlong: TAnfixDate): string; overload;

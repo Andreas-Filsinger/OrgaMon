@@ -178,6 +178,14 @@ begin
         CheckListBox1.itemindex := n;
         application.processmessages;
         try
+
+          if (pos(IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
+          begin
+            Log( { } 'Ausschluss Aktion "' +
+                 { } CheckListBox1.items[n] + '"');
+            continue;
+          end;
+
           Log( { } 'Beginne Aktion "' +
             { } CheckListBox1.items[n] + '" um ' +
             { } secondstostr(SecondsGet) + ' h');

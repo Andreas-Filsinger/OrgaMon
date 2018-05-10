@@ -685,7 +685,7 @@ CONST
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
-    'NachTagesAbschlussHerunterfahren', 'TagWacheUm', 'TagWacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
+    'NachTagesAbschlussHerunterfahren', 'TagwacheUm', 'TagwacheAuf', 'NachTagwacheHerunterfahren', 'KontoInhaber',
     'KontoBankName', 'KontoNummer', 'KontoBLZ', 'KontoPIN', 'SpoolPath', 'MusicPath', 'PDFPathShop', 'PDFPathApp',
     'PDFVersender', 'PDFAdmin', 'PDFSend', 'PDFZoom', 'ShopHost', 'XMLRPCHost', 'XMLRPCPort', 'XMLRPCGeroutet', 'ScannerHost',
     'ScannerAutoBuchen', 'LabelHost', 'MagnetoHost', 'PortoFreiAbBrutto', 'PortoMwStLogik', 'Auftragsmedium',
@@ -707,7 +707,7 @@ CONST
     'Schalter19', 'Schalter20', 'TagesabschlussBerechneRang', 'FaktorGanzzahlig', 'CareTaker', 'AutoUpRevPfad',
     'OLAPIstÖffentlich', 'KartenPfad', 'KartenHost', 'NachTagesAbschlussRechnerNeuStarten', 'AutoUpFTP', 'ShopKey',
     'ShopKonto', 'ShopLink', 'ShopArtikelBilderURL', 'ShopArtikelBilderPfad', 'ShopQRPfad', 'OpenOfficePDF',
-    'AuftragsAblagePfad', 'TagWacheWochentage', 'TagesabschlussWochentage', 'NachTagwacheAnwendungNeustart',
+    'AuftragsAblagePfad', 'TagwacheWochentage', 'TagesabschlussWochentage', 'NachTagwacheAnwendungNeustart',
     'FTPProxyHost', 'FTPProxyPort', 'TextdokumentDateierweiterung', 'AusgabeartLastschriftText',
     'KontenHBCI', 'JonDaAdmin', 'RechnungenFortlaufend', 'AnschriftNameOben', 'BruttoVersandGewicht', 'RESTHost',
     'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
@@ -8414,7 +8414,7 @@ function e_r_LadeParameter: TStringList;
 var
   sSystemSettings: TStringList;
 
-  function localized_parameter(p: string; default : string): string;
+  function localized_parameter(p: string; default : string = ''): string;
   begin
    repeat
      result := sSystemSettings.Values[p+'.'+UserName+'@'+ComputerName];
@@ -8529,7 +8529,7 @@ begin
   iNachTagwacheAnwendungNeustart := sSystemSettings.values['NachTagwacheAnwendungNeustart'] = cIni_Activate;
   iTagesabschlussRang := sSystemSettings.values['TagesabschlussBerechneRang'] <> cIni_DeActivate;
   iAblage := sSystemSettings.values['Ablage'] <> cIni_DeActivate;
-  iTagWacheWochentage := sSystemSettings.values['TagWacheWochentage'];
+  iTagwacheWochentage := sSystemSettings.values['TagwacheWochentage'];
   iTagwacheBaustelle := StrToIntDef(sSystemSettings.values['TagwacheBaustelle'], cRID_Null);
   iTagesabschlussWochentage := sSystemSettings.values['TagesabschlussWochentage'];
 
@@ -8542,8 +8542,8 @@ begin
   iMobilFTP := sSystemSettings.values['MobilFTP'];
   iFtpProxyHost := sSystemSettings.values['FTPProxyHost'];
   iFtpProxyPort := StrToIntDef(sSystemSettings.values['FTPProxyPort'], 0);
-  iTagWacheUm := strtoseconds(sSystemSettings.values['TagWacheUm']);
-  iTagWacheAuf := cutblank(sSystemSettings.values['TagWacheAuf']);
+  iTagwacheUm := strtoseconds(sSystemSettings.values['TagwacheUm']);
+  iTagwacheAuf := cutblank(sSystemSettings.values['TagwacheAuf']);
   iNachTagwacheHerunterfahren := sSystemSettings.values['NachTagwacheHerunterfahren'] = cIni_Activate;
   iKontoInhaber := sSystemSettings.values['KontoInhaber'];
   iGlaeubigerID := sSystemSettings.values['GläubigerID'];
@@ -8576,6 +8576,9 @@ begin
   iPDFAdmin := sSystemSettings.values['PDFAdmin'];
   iPDFSend := sSystemSettings.values['PDFSend'];
   iPDFZoom := localized_parameter ('PDFZoom', '3.0');
+  iTagesabschlussAusschluss:= noblank(localized_parameter('TagesabschlussAusschluss'))+',';
+  iTagwacheAusschluss:= noblank(localized_parameter('TagwacheAusschluss'))+',';
+
   iShopDomain := sSystemSettings.values['ShopHost'];
   iShopQRPath := sSystemSettings.values['ShopQRPfad'];
   iXMLRPCHost := sSystemSettings.values['XMLRPCHost'];

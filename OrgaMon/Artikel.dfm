@@ -1108,6 +1108,14 @@ object FormArtikel: TFormArtikel
     ShowHint = True
     OnClick = SpeedButton27Click
   end
+  object Label25: TLabel
+    Left = 168
+    Top = 238
+    Width = 36
+    Height = 13
+    Anchors = [akLeft, akBottom]
+    Caption = 'Seiten'
+  end
   object IB_Grid1: TIB_Grid
     Left = 1
     Top = 24
@@ -1126,15 +1134,11 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet3
+    ActivePage = TabSheet8
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 6
         Top = 7
@@ -1333,10 +1337,6 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 3
         Top = 28
@@ -1450,10 +1450,6 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1852,10 +1848,6 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1917,10 +1909,6 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -1958,7 +1946,7 @@ object FormArtikel: TFormArtikel
     Width = 74
     Height = 21
     Anchors = [akLeft, akBottom]
-    TabOrder = 12
+    TabOrder = 13
     OnDropDown = ComboBox3DropDown
   end
   object IB_Date1: TIB_Date
@@ -2035,7 +2023,7 @@ object FormArtikel: TFormArtikel
   object IB_Edit1: TIB_Edit
     Left = 98
     Top = 254
-    Width = 121
+    Width = 68
     Height = 21
     DataField = 'DAUER'
     DataSource = IB_DataSource1
@@ -2050,7 +2038,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SCHWER_DETAILS'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
-    TabOrder = 13
+    TabOrder = 14
   end
   object IB_ComboBox3: TIB_ComboBox
     Left = 98
@@ -2060,7 +2048,7 @@ object FormArtikel: TFormArtikel
     DataField = 'SCHWER_GRUPPE'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
-    TabOrder = 14
+    TabOrder = 15
     Style = csDropDownList
     Items.Strings = (
       ''
@@ -2099,7 +2087,7 @@ object FormArtikel: TFormArtikel
     DataField = 'KOMPONIST_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
-    TabOrder = 15
+    TabOrder = 16
     Style = csDropDownList
   end
   object IB_ComboBox5: TIB_ComboBox
@@ -2110,7 +2098,7 @@ object FormArtikel: TFormArtikel
     DataField = 'ARRANGEUR_R'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
-    TabOrder = 16
+    TabOrder = 17
     Style = csDropDownList
   end
   object IB_SearchBar1: TIB_SearchBar
@@ -2120,7 +2108,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Ctl3D = False
     ParentCtl3D = False
-    TabOrder = 17
+    TabOrder = 18
     DataSource = IB_DataSource1
     ReceiveFocus = False
     CustomGlyphsSupplied = []
@@ -2133,7 +2121,7 @@ object FormArtikel: TFormArtikel
     Flat = False
     Ctl3D = False
     ParentCtl3D = False
-    TabOrder = 18
+    TabOrder = 19
     DataSource = IB_DataSource1
     ReceiveFocus = False
     CustomGlyphsSupplied = []
@@ -2147,7 +2135,7 @@ object FormArtikel: TFormArtikel
     Flat = False
     Ctl3D = False
     ParentCtl3D = False
-    TabOrder = 19
+    TabOrder = 20
     DataSource = IB_DataSource1
     ReceiveFocus = False
     CustomGlyphsSupplied = []
@@ -2168,7 +2156,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Caption = 'alle anzeigen'
     Enabled = False
-    TabOrder = 21
+    TabOrder = 22
     OnClick = Button16Click
   end
   object Button11: TButton
@@ -2180,7 +2168,7 @@ object FormArtikel: TFormArtikel
     Caption = '&O'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 22
+    TabOrder = 23
     OnClick = Button11Click
   end
   object Button14: TButton
@@ -2198,7 +2186,7 @@ object FormArtikel: TFormArtikel
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 23
+    TabOrder = 24
     OnClick = Button14Click
   end
   object Button12: TButton
@@ -2210,7 +2198,7 @@ object FormArtikel: TFormArtikel
     Caption = '&V'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 24
+    TabOrder = 25
     OnClick = Button12Click
   end
   object Button6: TButton
@@ -2219,7 +2207,7 @@ object FormArtikel: TFormArtikel
     Width = 22
     Height = 22
     Caption = '&K'
-    TabOrder = 25
+    TabOrder = 26
     OnClick = Button6Click
   end
   object Button8: TButton
@@ -2231,7 +2219,7 @@ object FormArtikel: TFormArtikel
     Caption = '&J'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 26
+    TabOrder = 27
     OnClick = Button8Click
   end
   object Button10: TButton
@@ -2243,7 +2231,7 @@ object FormArtikel: TFormArtikel
     Caption = '&M'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 27
+    TabOrder = 28
     OnClick = Button10Click
   end
   object Button2: TButton
@@ -2255,7 +2243,7 @@ object FormArtikel: TFormArtikel
     Caption = '&P'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 28
+    TabOrder = 29
     OnClick = Button2Click
   end
   object Button5: TButton
@@ -2267,7 +2255,7 @@ object FormArtikel: TFormArtikel
     Caption = 'Shop'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 29
+    TabOrder = 30
     OnClick = Button5Click
   end
   object Button17: TButton
@@ -2277,7 +2265,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'im Web-Shop'
-    TabOrder = 30
+    TabOrder = 31
     OnClick = Button17Click
   end
   object Button20: TButton
@@ -2287,7 +2275,7 @@ object FormArtikel: TFormArtikel
     Height = 22
     Anchors = [akLeft, akBottom]
     Caption = 'S'
-    TabOrder = 31
+    TabOrder = 32
     OnClick = Button20Click
   end
   object IB_Edit3: TIB_Edit
@@ -2298,7 +2286,7 @@ object FormArtikel: TFormArtikel
     DataField = 'GEMA_WN'
     DataSource = IB_DataSource1
     Anchors = [akLeft, akBottom]
-    TabOrder = 11
+    TabOrder = 12
   end
   object Button21: TButton
     Left = 387
@@ -2309,8 +2297,18 @@ object FormArtikel: TFormArtikel
     Caption = 'GTIN'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 32
+    TabOrder = 33
     OnClick = Button21Click
+  end
+  object IB_Edit4: TIB_Edit
+    Left = 168
+    Top = 254
+    Width = 62
+    Height = 21
+    DataField = 'SEITEN'
+    DataSource = IB_DataSource1
+    Anchors = [akLeft, akBottom]
+    TabOrder = 11
   end
   object IB_DataSource1: TIB_DataSource
     Dataset = IB_Query1
@@ -2446,6 +2444,7 @@ object FormArtikel: TFormArtikel
       ',MENGE_ALTERNATIV_LAGER'
       ',LAGER_ALTERNATIV_R'
       ',EXTERN_RID'
+      ',SEITEN'
       'FROM'
       ' ARTIKEL'
       '-- BEGIN'

@@ -995,7 +995,7 @@ begin
     ProgressBar1.max := 100;
     ProgressBar1.Position := 50;
 
-    // alte Fragmente entfernen
+    // alte zip-Fragmente entfernen
     FileDelete(EigeneOrgaMonDateienPfad + cZIPTempFileMask);
     FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
 
@@ -1046,7 +1046,12 @@ begin
       // Nun draufkopieren
       if not(FileMove(TmpFName + cTmpFileExtension,
         DestFName + CompressorExtension)) then
-        raise Exception.create('Gesamtsicherung: Verschieben nicht möglich');
+        raise Exception.create(
+         {} 'Gesamtsicherung: Verschieben von '+
+         {} '"' + TmpFName + cTmpFileExtension + '"'+
+         {} ' nach '+
+         {} '"' + DestFName + CompressorExtension + '"' +
+         {} ' nicht möglich');
 
     end;
 

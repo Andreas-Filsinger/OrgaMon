@@ -103,7 +103,7 @@ uses
   AuftragMobil in 'AuftragMobil.pas' {FormAuftragMobil},
   MonteurUmfang in 'MonteurUmfang.pas' {FormMonteurUmfang},
   PlanquadratNachfrage in 'PlanquadratNachfrage.pas' {FormPlanquadratNachfrage},
-  TagWache in 'TagWache.pas' {FormTagWache},
+  Tagwache in 'Tagwache.pas' {FormTagwache},
   AuftragArbeitsplatz in 'AuftragArbeitsplatz.pas' {FormAuftragArbeitsplatz},
   Buchhalter in 'Buchhalter.pas' {FormBuchhalter},
   AutoUp in 'AutoUp.pas' {FormAutoUp},
@@ -311,7 +311,7 @@ begin
   Application.CreateForm(TFormAuftragSuche, FormAuftragSuche);
   Application.CreateForm(TFormMonteurUmfang, FormMonteurUmfang);
   Application.CreateForm(TFormPlanquadratNachfrage, FormPlanquadratNachfrage);
-  Application.CreateForm(TFormTagWache, FormTagWache);
+  Application.CreateForm(TFormTagwache, FormTagwache);
   Application.CreateForm(TFormAuftragArbeitsplatz, FormAuftragArbeitsplatz);
   Application.CreateForm(TFormBuchhalter, FormBuchhalter);
   Application.CreateForm(TFormAutoUp, FormAutoUp);

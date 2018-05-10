@@ -24,7 +24,7 @@
   |    http://orgamon.org/
   |
 }
-unit TagWache;
+unit Tagwache;
 
 interface
 
@@ -36,7 +36,7 @@ uses
   ExtCtrls;
 
 type
-  TFormTagWache = class(TForm)
+  TFormTagwache = class(TForm)
     ProgressBar1: TProgressBar;
     CheckListBox1: TCheckListBox;
     Button1: TButton;
@@ -60,12 +60,12 @@ type
     procedure Log(s: string);
   public
     { Public-Deklarationen }
-    _TagWache: TAnfixTime;
+    _Tagwache: TAnfixTime;
     FlipFlop: integer;
 
     //
-    LetzteTagWacheWarAm: TAnfixDate;
-    LetzteTagWacheWarUm: TAnfixTime;
+    LetzteTagwacheWarAm: TAnfixDate;
+    LetzteTagwacheWarUm: TAnfixTime;
 
     function TagwacheAktiv: boolean;
     procedure EofTagwache;
@@ -73,7 +73,7 @@ type
   end;
 
 var
-  FormTagWache: TFormTagWache;
+  FormTagwache: TFormTagwache;
 
 implementation
 
@@ -89,7 +89,7 @@ uses
 
 {$R *.DFM}
 
-procedure TFormTagWache.Button1Click(Sender: TObject);
+procedure TFormTagwache.Button1Click(Sender: TObject);
 var
   n: integer;
   ErrorCount: integer;
@@ -107,24 +107,34 @@ begin
   begin
     BeginHourGlass;
     NoTimer := true;
-    LetzteTagWacheWarAm := DateGet;
-    LetzteTagWacheWarUm := SecondsGet;
+    LetzteTagwacheWarAm := DateGet;
+    LetzteTagwacheWarUm := SecondsGet;
     Tagwache_TAN := e_w_gen('GEN_TAGWACHE');
     ProgressBar1.max := CheckListBox1.items.count;
-    Ticket := CareTakerLog('TagWache START');
+    Ticket := CareTakerLog('Tagwache START');
     ErrorCount := 0;
-    Log('Start am ' + long2date(LetzteTagWacheWarAm) + ' um ' + secondstostr(LetzteTagWacheWarUm) + ' h auf ' +
+    Log('Start am ' + long2date(LetzteTagwacheWarAm) + ' um ' + secondstostr(LetzteTagwacheWarUm) + ' h auf ' +
       ComputerName);
 
-    _TagWache := iTagWacheUm;
-    iTagWacheUm := 0;
+    _Tagwache := iTagwacheUm;
+    iTagwacheUm := 0;
     Button1.caption := '&Abbruch';
     for n := 0 to pred(CheckListBox1.items.count) do
     begin
       ProgressBar1.position := n;
       if not(CheckListBox1.checked[n]) then
       begin
+        CheckListBox1.itemindex := n;
+        application.processmessages;
         try
+
+          if (pos(IntToStr(succ(n))+',',iTagwacheAusschluss)>0) then
+          begin
+            Log( { } 'Ausschluss Aktion "' +
+                 { } CheckListBox1.items[n] + '"');
+            continue;
+          end;
+
           Log( { } 'Beginne Aktion "' +
             { } CheckListBox1.items[n] + '" um ' +
             { } secondstostr(SecondsGet) + ' h');
@@ -169,7 +179,7 @@ begin
               e_r_Sync_AuftraegeAlle;
             6:
               begin
-                FormOLAPArbeitsplatz.TagWache;
+                FormOLAPArbeitsplatz.Tagwache;
               end;
             7:
               begin
@@ -188,7 +198,7 @@ begin
           on e: exception do
           begin
             inc(ErrorCount);
-            Log(cERRORText + ' TagWache Exception ' + e.message);
+            Log(cERRORText + ' Tagwache Exception ' + e.message);
           end;
         end;
         if (ErrorCount = 0) then
@@ -199,10 +209,10 @@ begin
       end;
     end;
     ProgressBar1.position := 0;
-    iTagWacheUm := _TagWache;
+    iTagwacheUm := _Tagwache;
     Button1.caption := '&Start';
     if (ErrorCount > 0) then
-      Log(cERRORText + ' TagWache FAIL at Stage ' + inttostr(n));
+      Log(cERRORText + ' Tagwache FAIL at Stage ' + inttostr(n));
     CareTakerClose(Ticket);
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
@@ -223,7 +233,7 @@ begin
       end;
 
       // Rechner herunterfahren
-      if iNachTagWacheHerunterfahren then
+      if iNachTagwacheHerunterfahren then
       begin
         WindowsHerunterfahren;
         break;
@@ -248,20 +258,20 @@ begin
   end;
 end;
 
-procedure TFormTagWache.FormActivate(Sender: TObject);
+procedure TFormTagwache.FormActivate(Sender: TObject);
 var
   n: integer;
 begin
   if not(TagwacheAktiv) then
     for n := 0 to pred(CheckListBox1.items.count) do
       CheckListBox1.checked[n] := false;
-  if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagWacheAuf)) then
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) + ' hier auf ' + iTagWacheAuf
+  if (AnsiUpperCase(ComputerName) = AnsiUpperCase(iTagwacheAuf)) then
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagwacheUm) + ' hier auf ' + iTagwacheAuf
   else
-    Label1.caption := 'automatisch um ' + secondstostr5(iTagWacheUm) + ' auf ' + iTagWacheAuf;
+    Label1.caption := 'automatisch um ' + secondstostr5(iTagwacheUm) + ' auf ' + iTagwacheAuf;
 end;
 
-procedure TFormTagWache.Log(s: string);
+procedure TFormTagwache.Log(s: string);
 begin
   try
     AppendStringsToFile(s, DiagnosePath + 'Tagwache-' + inttostrN(Tagwache_TAN, 8) + '.log.txt');
@@ -273,7 +283,7 @@ begin
   end;
 end;
 
-procedure TFormTagWache.Timer1Timer(Sender: TObject);
+procedure TFormTagwache.Timer1Timer(Sender: TObject);
 var
   cPanelActive: TColor;
   _CountDown: integer;
@@ -298,14 +308,14 @@ begin
 
     if TagwacheAktiv then
     begin
-      Label2.caption := 'läuft seit ' + secondstostr(SecondsDiff(SecondsGet, LetzteTagWacheWarUm)) + 'h';
+      Label2.caption := 'läuft seit ' + secondstostr(SecondsDiff(SecondsGet, LetzteTagwacheWarUm)) + 'h';
       cPanelActive := clyellow; // läuft
       break;
     end;
 
-    if (LetzteTagWacheWarAm > 0) then
+    if (LetzteTagwacheWarAm > 0) then
     begin
-      BeendetSeit := SecondsDiff(DateGet, SecondsGet, LetzteTagWacheWarAm, LetzteTagWacheWarUm);
+      BeendetSeit := SecondsDiff(DateGet, SecondsGet, LetzteTagwacheWarAm, LetzteTagwacheWarUm);
       if (BeendetSeit < 60) then
       begin
         // lief kürzlich
@@ -315,10 +325,10 @@ begin
       end;
     end;
 
-    if not(isParam('TagWache')) then
+    if not(isParam('Tagwache')) then
     begin
 
-      if AnsiUpperCase(ComputerName) <> AnsiUpperCase(iTagWacheAuf) then
+      if AnsiUpperCase(ComputerName) <> AnsiUpperCase(iTagwacheAuf) then
       begin
         Label2.caption := 'nicht hier';
         cPanelActive := clred; // nicht vorgesehen
@@ -332,17 +342,17 @@ begin
         MainFormInformed := true;
       end;
 
-      if (iTagWacheWochentage <> '') then
+      if (iTagwacheWochentage <> '') then
       begin
-        if (pos(WeekDayS(DateGet), iTagWacheWochentage) = 0) then
+        if (pos(WeekDayS(DateGet), iTagwacheWochentage) = 0) then
         begin
-          Label2.caption := 'heute nicht da ∉ [' + iTagWacheWochentage + ']';
+          Label2.caption := 'heute nicht da ∉ [' + iTagwacheWochentage + ']';
           cPanelActive := clred; // nicht vorgesehen
           break;
         end;
       end;
 
-      _CountDown := abs(SecondsDiff(iTagWacheUm, SecondsGet));
+      _CountDown := abs(SecondsDiff(iTagwacheUm, SecondsGet));
       if (_CountDown > 10) then
       begin
         Label2.caption := 'in ' + secondstostr(_CountDown) + 'h';
@@ -367,12 +377,12 @@ begin
 
 end;
 
-function TFormTagWache.TagwacheAktiv: boolean;
+function TFormTagwache.TagwacheAktiv: boolean;
 begin
   result := (Tagwache_TAN >= cRID_FirstValid);
 end;
 
-procedure TFormTagWache.Button2Click(Sender: TObject);
+procedure TFormTagwache.Button2Click(Sender: TObject);
 var
   n: integer;
 begin
@@ -380,7 +390,7 @@ begin
     CheckListBox1.checked[n] := true;
 end;
 
-procedure TFormTagWache.CheckListBox1DblClick(Sender: TObject);
+procedure TFormTagwache.CheckListBox1DblClick(Sender: TObject);
 var
   i: integer;
 begin
@@ -389,7 +399,7 @@ begin
       checked[i] := true;
 end;
 
-procedure TFormTagWache.EofTagwache;
+procedure TFormTagwache.EofTagwache;
 begin
   Tagwache_TAN := cRID_null;
 end;

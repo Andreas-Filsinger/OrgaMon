@@ -349,69 +349,101 @@ procedure RunAsTagesabschluss;
 var
  TimeDiff: TANFiXTime;
  TagesAbschluss_TAN : integer;
+ LetzerTagesAbschlussWarAm : TAnfixDate;
+ LetzerTagesAbschlussWarUm : TAnfixTime;
+ ErrorCount: Integer;
+ sAktions: TSTringList;
+ n, Ticket : Integer;
+
+  procedure Log(s: string);
+  begin
+    try
+      writeln(s);
+      AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
+      if (pos(cERRORText, s) > 0) then
+         CareTakerLog(s);
+      if (pos(cFotoService_AbortTag, s) = 1) then
+        halt(1);
+    except
+      // nichts tun!
+    end;
+  end;
+
 begin
   TagesAbschluss_TAN := e_w_GEN('GEN_BACKUP');
-(*
-  if TagesabschlussAktiv then
-  begin
-    Log(cERRORText + ' Tagesabschluss: Abbruch');
-    EofTagesabschluss;
-    Button1.caption := 'Abbruch ...';
-    application.processmessages;
-  end
-  else
-  begin
-    BeginHourGlass;
-    NoTimer := true;
-
-    TagesAbschluss_TAN := FormDatensicherung.GENID;
-    LetzerTagesAbschlussWarAm := DateGet;
-    LetzerTagesAbschlussWarUm := SecondsGet;
-    Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
+  LetzerTagesAbschlussWarAm := DateGet;
+  LetzerTagesAbschlussWarUm := SecondsGet;
+  Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
       ' h auf ' + ComputerName);
+  Ticket := CareTakerLog('Tagesabschluss START');
+  Log('Ticket ' + inttostr(Ticket) + ' erhalten');
+  ErrorCount := 0;
 
-    if iIdleProzessPrioritaetAbschluesse then
-      SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));
-    ProgressBar1.max := CheckListBox1.items.Count;
-    Ticket := CareTakerLog('Tagesabschluss START');
-    Log('Ticket ' + inttostr(Ticket) + ' erhalten');
-    ErrorCount := 0;
+  sAktions:= TSTringList.create;
+  with sAktions do
+  begin
+    add('Datensicherung Datenbank');
+    add('Datensicherung Gesamtsystem');
+    add('Dateiverzeichnisse aufräumen');
+    add('Paket-IDs ermitteln');
+    add('Tagesabschluss.*.OLAP.txt ausführen');
+    add('Replikation mit einer anderen Datenbank');
+    add('Monda empfangen/senden');
+    add('Auftrag Extern aufbereiten');
+    add('Webshop Extern Datenbank upload');
+    add('Webshop Medien upload');
+    add('HBCI-Konten: Umsatzabfrage');
+    add('Diverse Caching Elemente neu erzeugen');
+    add('Auftrag Speed Suche neu erzeugen');
+    add('Verkaufsrang berechnen');
+    add('Lieferzeit berechnen');
+    add('Personen Speed Suche neu erzeugen');
+    add('CMS Katalog neu erstellen');
+    add('Musiker Speed Suche neu erzeugen');
+    add('Tier Speed Suche neu erzeugen');
+    add('Artikel Speed Suche im Belege Fenster neu erzeugen');
+    add('DMO und PRO Mengen setzen');
+    add('Freigebbare Lagerplätze freigeben');
+    add('ausgeglichene Belege löschen');
+    add('Mahnliste erstellen');
+    add('Verträge anwenden');
+    add('Abgleich Server Zeitgeber <-> Lokaler Zeitgeber');
+    add('CareTaker Nachmeldungen');
+  end;
 
-    _TagesAbschluss := iTagesAbschlussUm;
-    iTagesAbschlussUm := 0;
-    Button1.caption := '&Abbruch';
+  for n := 0 to pred(sAktions.Count) do
+  begin
 
-    for n := 0 to pred(CheckListBox1.items.Count) do
-    begin
-      ProgressBar1.position := n;
-      if not(CheckListBox1.checked[n]) and TagesabschlussAktiv then
-      begin
-        CheckListBox1.itemindex := n;
-        application.processmessages;
+        if (pos(IntToStr(succ(n))+',',iTagesabschlussAusschluss)>0) then
+        begin
+          Log( { } 'Ausschluss Aktion "' +
+               { } sAktions[n] + '"');
+          continue;
+        end;
+
         try
           Log( { } 'Beginne Aktion "' +
-            { } CheckListBox1.items[n] + '" um ' +
+            { } sAktions[n] + '" um ' +
             { } secondstostr(SecondsGet) + ' h');
+
           case n of
             0:
-*)
-PersonSuchindex;
-exit;
-ArtikelSuchIndex;
-           dbBackup(TagesAbschluss_TAN);
-(*
-            if not(FormDatensicherung.BackUp(TagesAbschluss_TAN)) then
+           if not(dbBackup(TagesAbschluss_TAN)) then
                 raise Exception.Create('Datenbanksicherung erfolglos');
             1:
               begin
                 // normale Gesamt-Sicherung
+                 (*
                 if (iSicherungenAnzahl <> -1) then
                   if not(FormDatensicherung.doCompress(TagesAbschluss_TAN)) then
                     raise Exception.Create('Gesamtsicherung erfolglos');
+                  *)
               end;
             2:
               begin
                 // Dateien verschieben, die zu lange ausser Gebrauch sind!
+                (*
+
                 if iAblage then
                   FormDatensicherung.do400(TagesAbschluss_TAN)
                 else
@@ -440,15 +472,18 @@ ArtikelSuchIndex;
                 // Verzeichnis Löschungen
                 DirDelete(ImportePath + '*', 10);
                 KartenQuota;
-
+                 *)
               end;
-            3:
-              FormVersenderPaketID.Execute;
+            3: begin
+(*               FormVersenderPaketID.Execute; *)
+
+            end;
+
             4:
               begin
                 // sich selbst enthaltende Kollektionen löschen!
                 e_x_sql('delete from ARTIKEL_MITGLIED where (MASTER_R=ARTIKEL_R)');
-
+                (*
                 // Context-OLAPs
                 GlobalVars := TStringList.Create;
                 GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
@@ -457,83 +492,99 @@ ArtikelSuchIndex;
                   { } iSystemOLAPPath + 'Tagesabschluss.*' + cOLAPExtension,
                   { } GlobalVars);
                 GlobalVars.Free;
-
+                 *)
               end;
             5:
-              begin
+              begin (*
                 if iReplikation then
-                  FormReplikation.Execute;
+                  FormReplikation.Execute; *)
               end;
             6:
-              begin
+              begin                          (*
                 FormAuftragMobil.ReadMobil;
-                FormAuftragMobil.WriteMobil;
+                FormAuftragMobil.WriteMobil;   *)
               end;
             7:
-              begin
+              begin   (*
                 // Für den Foto Server
                 e_r_Sync_AuftraegeAlle;
 
                 // Für externe Auftrags-Routen
                 if not(FormAuftragExtern.DoJob) then
-                  Log(cERRORText + ' AuftragExtern fail');
+                  Log(cERRORText + ' AuftragExtern fail'); *)
               end;
-            8:
+            8: begin
+(*
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doMediumBuilder) then
                   Log(cERRORText + ' Medium Upload fail');
-            9:
+*)
+            end;
+            9: begin
+(*
+
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doContenBuilder) then
                   Log(cERRORText + ' Content Upload fail');
-            10:
+*)
+            end;
+            10: begin
+(*
               if (iKontenHBCI <> '') then
                 FormBuchhalter.e_w_KontoSync(iKontenHBCI);
+*)
+            end;
             11:
-*)
               ReBuild;
+            12: begin
 (*
-            12:
               FormAuftragSuchindex.ReCreateTheIndex;
-            13:
 *)
+                 end;
+            13: begin
               if iTagesabschlussRang then
                 e_d_Rang;
-(*
-            14:
-*)
+                end;
+            14: begin
               e_d_Lieferzeit;
-(*
-            15:
-*)
+            end;
+            15: begin
               PersonSuchindex;
+            end;
+            16: begin
 (*
-            16:
               FormCreatorMain.CreateSearchIndex;
-            17:
-              FormMusiker.CreateTheIndex;
-            18:
-              FormTier.CreateIndex;
-            19:
 *)
-ArtikelSuchIndex;
+              end;
+            17:begin
 (*
+              FormMusiker.CreateTheIndex;
+*)
+            end;
+            18: begin
+(*
+              FormTier.CreateIndex;
+*)
+                end;
+            19: begin
+             ArtikelSuchIndex;
+             end;
             20:
               begin
-                FormNatuerlicheResourcen.Execute;
-              end;
-            21:
-*)
-              e_w_LagerFreigeben;
 (*
+                FormNatuerlicheResourcen.Execute;
+*)
+              end;
+            21: begin
+              e_w_LagerFreigeben;
+               end;
             22:
               begin
-*)
                 e_x_BelegAusPOS;
                 e_d_Belege;
-(*
               end;
-            23:
+            23: begin
+(*
               if iMahnlaufbeiTagesabschluss then
               begin
                 if e_w_NeuerMahnlauf then
@@ -544,25 +595,21 @@ ArtikelSuchIndex;
                 else
                   Log(cERRORText + ' kein neuer Mahnlauf möglich, da noch teilweise "Brief" angekreuzt ist!');
               end;
-            24:
 *)
+               end;
+            24:
               e_w_VertragBuchen;
-(*
             25:
               begin
-*)
                 TimeDiff := r_Local_vs_Server_TimeDifference;
                 if (TimeDiff <> 0) then
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
-(*
               end;
             26:
               begin
                 Nachmeldungen;
               end;
-          else
-            delay(2000);
           end;
         except
           on e: Exception do
@@ -572,61 +619,18 @@ ArtikelSuchIndex;
           end;
         end;
 
-        application.processmessages;
-        CheckListBox1.checked[n] := (ErrorCount = 0);
-        if not(TagesabschlussAktiv) or (ErrorCount > 0) then
+        if (ErrorCount > 0) then
           break;
-      end;
-    end;
-    ProgressBar1.position := 0;
-    iTagesAbschlussUm := _TagesAbschluss;
-    Button1.caption := '&Start';
-    if (ErrorCount > 0) then
-      Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
-    CareTakerClose(Ticket);
-    if iIdleProzessPrioritaetAbschluesse then
-      SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
-    Log('Ende um ' + secondstostr(SecondsGet) + ' h');
-
-    FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
-    EofTagesabschluss;
-
-    EndHourGlass;
-
-    // Aktionen NACH dem Tagesabschluss
-    repeat
-
-      // Anwendung neu starten
-      if iNachTagesAbschlussAnwendungNeustart then
-      begin
-        FormBaseUpdate.RestartApplication;
-        break;
-      end;
-
-      // Rechner abschalten
-      if iNachTagesAbschlussHerunterfahren then
-      begin
-        WindowsHerunterfahren;
-        break;
-      end;
-
-      // Rechner neu starten
-      if iNachTagesAbschlussRechnerNeustarten then
-      begin
-        FormBaseUpdate.CloseOtherInstances;
-        delay(1000);
-        WindowsNeuStarten;
-        break;
-      end;
-
-      // Normal weitermachen
-      NoTimer := false;
-      close;
-
-    until true;
-
-  end;
+ end;
+  if (ErrorCount > 0) then
+    Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
+  CareTakerClose(Ticket);
+  Log('Ende um ' + secondstostr(SecondsGet) + ' h');
+  (*
+  FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
+  EofTagesabschluss;
   *)
+  sAktions.Free;
 end;
 
 procedure RunAsTagwache;

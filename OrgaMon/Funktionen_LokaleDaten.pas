@@ -495,8 +495,7 @@ begin
     while not (eof) do
     begin
 
-      ARTIKEL_R := FieldByName('RID').AsINteger;
-
+      ARTIKEL_R := FieldByName('RID').AsInteger;
 
       e_r_sqlt(FieldByName('INTERN_INFO'), ArtikelInfo);
 

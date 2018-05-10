@@ -1071,7 +1071,7 @@ end;
 
 procedure TFormMain.Button26Click(Sender: TObject);
 begin
-  FormTagWache.show;
+  FormTagwache.show;
 end;
 
 procedure TFormMain.Button42Click(Sender: TObject);

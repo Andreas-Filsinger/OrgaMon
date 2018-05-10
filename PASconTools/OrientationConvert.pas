@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.258; // ../rev/Oc.rev.txt
+  Version: single = 1.261; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -516,9 +516,10 @@ var
            pArgos2018Mode := true;
 
           if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-ZW') then
-           addZaehlwerk(
-            sMESSAGE.Values['DSP.OBJ.ACT.KENNZIFFER1'] + ';' +
-            sMESSAGE.Values['DSP.OBJ.ACT.EINHEIT'] );
+            if (sMESSAGE.Values['DSP.OBJ.ACT.KNOPFGRUPPE']='AGERAET') then
+              addZaehlwerk(
+               sMESSAGE.Values['DSP.OBJ.ACT.KENNZIFFER1'] + ';' +
+               sMESSAGE.Values['DSP.OBJ.ACT.EINHEIT'] );
 
           if (sMESSAGE.Values['DSP.OBJ.ACT.MERKMAL']='MECH-SERINFO') then
            if (sMESSAGE.Values['DSP.OBJ.ACT.KNOPFGRUPPE']='AGERAET') then
@@ -939,10 +940,13 @@ var
     sMapping.loadFromFile(ExtractFilePath(InFName) + c_Mapping);
 
     pArgosMode := sMapping.values['ARGOS'] = 'JA';
-    pArgos2018Mode := false;
     pMixedMode := sMapping.Values['MIXED'] = 'JA';
     pUTF8 := sMapping.values['UTF8'] = 'JA';
     pWriteAt := Split(sMapping.values['WRITE_AT'], '|', '', true);
+    if pArgosMode then
+      pArgos2018Mode := (pWriteAt.IndexOf('DSP.OBJ')<>-1)
+    else
+      pArgos2018Mode := false;
     pAddZw := Split(sMapping.values['ADD_ZW'], '|', '', true);
     pDebug := sMapping.values['DEBUG'] = 'JA';
     pIgnoreZaehlwerke := Split(sMapping.values['IGNORE'], '|', '', true);
@@ -9343,6 +9347,7 @@ var
   // TAET
   TAET_BEGIN: integer;
   TAET_END: integer;
+  TAET_NACHKOMMA: integer;
 
   // Schnittstellen-Optionen
   Optionen : string;
@@ -9438,48 +9443,198 @@ var
 
   end;
 
-  function k { urzBez } (tag: string): boolean;
+  function mk { MERKMAL+KNOPFGRUPPE } (MERKMAL,KNOPFGRUPPE: string): boolean;
   var
     n: integer;
     AutoMataState: integer;
+    END_SEARCH: boolean;
   begin
-
     //
     TAET_BEGIN := -1;
     TAET_END := -1;
+    END_SEARCH := false;
     AutoMataState := 0;
     result := false;
     for n := xmlCursor to pred(sSource.count) do
     begin
-      case AutoMataState of
-        0:
-          begin
-            if (pos('<TAET>', sSource[n]) > 0) then
-            begin
-              TAET_BEGIN := n;
-              continue;
-            end;
-            if (pos('<KURZBEZ>' + tag + '</KURZBEZ>', sSource[n]) > 0) then
-            begin
-              AutoMataState := 1;
-              continue;
-            end;
-          end;
-        1:
-          begin
-            if (pos('</TAET>', sSource[n]) > 0) then
-            begin
-              TAET_END := n;
+      repeat
+        case AutoMataState of
+          0: // 'ACT' suchen
+              if (pos('<ACT>', sSource[n]) > 0) then
+              begin
+                TAET_BEGIN := n;
+                inc(AutoMataState);
+              end else
+              begin
+                break;
+              end;
+          1: // 'Treffer' M + K suchen
+             begin
+              if (pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) and
+                 (pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) then
+              begin
+                TAET_NACHKOMMA := StrToIntDef(ExtractSegmentBetween(sSource[n], '<NACHKOMMA>', '</NACHKOMMA>'),-1);
+                inc(AutoMataState);
+              end else
+              begin
+                if (pos('</ACT>', sSource[n]) > 0) then
+                begin
+                  // Tag ist zu Ende, Suche weiter!
+                  AutoMataState := 0;
+                end;
+                break;
+              end;
+             end;
+          2: // '/ACT' suchen
+             begin
+              if (pos('</ACT>', sSource[n]) > 0) then
+              begin
+                TAET_END := n;
+                END_SEARCH := true;
+              end;
               break;
-            end;
-          end;
-      end;
+             end;
+         end;
+       until eternity;
+       if END_SEARCH then
+        break;
+    end;
+    if (TAET_END <= TAET_BEGIN) then
+    begin
+      rollbackBecause(inttostr(Argos) + ': MERKMAL+KNOPFGRUPPE "' + MERKMAL+'+'+KNOPFGRUPPE + '" nicht gefunden!');
+    end
+    else
+    begin
+      result := true;
+    end;
+  end;
 
+  function mkt { MERKMAL+KNOPFGRUPPE+TARIF } (MERKMAL,KNOPFGRUPPE,TARIF: string): boolean;
+  var
+    n: integer;
+    AutoMataState: integer;
+    END_SEARCH: boolean;
+  begin
+    //
+    TAET_BEGIN := -1;
+    TAET_END := -1;
+    END_SEARCH := false;
+    AutoMataState := 0;
+    result := false;
+    for n := xmlCursor to pred(sSource.count) do
+    begin
+      repeat
+        case AutoMataState of
+          0: // 'ACT' suchen
+              if (pos('<ACT>', sSource[n]) > 0) then
+              begin
+                TAET_BEGIN := n;
+                inc(AutoMataState);
+              end else
+              begin
+                break;
+              end;
+          1: // 'Treffer' M + K suchen
+             begin
+              if (pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) and
+                 (pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) and
+                 (pos('<TARIF>' + TARIF + '</TARIF>', sSource[n]) > 0)
+                 then
+              begin
+                TAET_NACHKOMMA := StrToIntDef(ExtractSegmentBetween(sSource[n], '<NACHKOMMA>', '</NACHKOMMA>'),-1);
+                inc(AutoMataState);
+              end else
+              begin
+                if (pos('</ACT>', sSource[n]) > 0) then
+                begin
+                  // Tag ist zu Ende, Suche weiter!
+                  AutoMataState := 0;
+                end;
+                break;
+              end;
+             end;
+          2: // '/ACT' suchen
+             begin
+              if (pos('</ACT>', sSource[n]) > 0) then
+              begin
+                TAET_END := n;
+                END_SEARCH := true;
+              end;
+              break;
+             end;
+         end;
+       until eternity;
+       if END_SEARCH then
+        break;
+    end;
+    if (TAET_END <= TAET_BEGIN) then
+    begin
+      rollbackBecause(inttostr(Argos) + ': MERKMAL+KNOPFGRUPPE+TARIF "' + MERKMAL+'+'+KNOPFGRUPPE+'+'+TARIF + '" nicht gefunden!');
+    end
+    else
+    begin
+      result := true;
+    end;
+  end;
+
+  function h { ostkey } (HOSTKEY: string): boolean;
+  var
+    n: integer;
+    AutoMataState: integer;
+    END_SEARCH: boolean;
+  begin
+    //
+    TAET_BEGIN := -1;
+    TAET_END := -1;
+    END_SEARCH := false;
+    AutoMataState := 0;
+    result := false;
+    for n := xmlCursor to pred(sSource.count) do
+    begin
+      repeat
+        case AutoMataState of
+          0: // 'ACT' suchen
+              if (pos('<ACT>', sSource[n]) > 0) then
+              begin
+                TAET_BEGIN := n;
+                inc(AutoMataState);
+              end else
+              begin
+                break;
+              end;
+          1: // 'Treffer' M + K suchen
+             begin
+              if (pos('<HOSTKEY>' + HOSTKEY + '</HOSTKEY>', sSource[n]) >0) then
+              begin
+                inc(AutoMataState);
+              end else
+              begin
+                if (pos('</ACT>', sSource[n]) > 0) then
+                begin
+                  // Tag ist zu Ende, Suche weiter!
+                  AutoMataState := 0;
+                end;
+                break;
+              end;
+             end;
+          2: // '/ACT' suchen
+             begin
+              if (pos('</ACT>', sSource[n]) > 0) then
+              begin
+                TAET_END := n;
+                END_SEARCH := true;
+              end;
+              break;
+             end;
+         end;
+       until eternity;
+       if END_SEARCH then
+        break;
     end;
 
     if (TAET_END <= TAET_BEGIN) then
     begin
-      rollbackBecause(inttostr(Argos) + ': KURZBEZ "' + tag + '" nicht gefunden!');
+      rollbackBecause(inttostr(Argos) + ': HOSTKEY "' + HOSTKEY + '" nicht gefunden!');
     end
     else
     begin
@@ -9488,7 +9643,7 @@ var
 
   end;
 
-  function q { uestion } (tag: string; CloseTag: string = 'GERAET'): string;
+  function q { uestion } (tag: string; CloseTag: string = 'ACT'): string;
   var
     n: integer;
     k: integer;
@@ -9499,7 +9654,7 @@ var
     result := '"<ReferenceFailed>"';
     FoundTag := false;
     FullTag := '<' + tag + '>';
-    for n := succ(TAET_BEGIN) to pred(TAET_END) do
+    for n := TAET_BEGIN to pred(TAET_END) do
     begin
       if (pos('</' + CloseTag + '>', sSource[n]) > 0) then
         break;
@@ -9585,7 +9740,7 @@ var
     end;
   end;
 
-  procedure fillAufgaben(CloseTag: string = 'GERAET');
+  procedure fillAufgaben;
   var
     n: integer;
     sXML: TMemoryStream;
@@ -9604,14 +9759,14 @@ var
     // oberen Kopf-Teil der Source übergehen
     xmlCursor := -1;
     for n := 0 to pred(sSource.count) do
-      if (pos('<TAET>', sSource[n]) > 0) then
+      if (pos('<ACT>', sSource[n]) > 0) then
       begin
         xmlCursor := n;
         break;
       end;
     if (xmlCursor < 0) then
     begin
-      sDiagnose.add(cERRORText + ' <TAET> nicht gefunden!');
+      sDiagnose.add(cERRORText + ' <ACT> nicht gefunden!');
       inc(ErrorCount);
     end;
 
@@ -9662,12 +9817,13 @@ var
       result := long2date(d) + SecondsToStr(t);
 
       result :=
-      { tt } copy(result, 1, 2) + '.' +
-      { mm } copy(result, 4, 2) + '.' +
-      { yyyy } copy(result, 7, 4) + ' ' +
-      { hh } copy(result, 11, 2) + ':' +
-      { mm } copy(result, 14, 2) + ':' +
-      { ss } copy(result, 17, 2);
+        { yyyy } copy(result, 7, 4) + '-' +
+        { mm } copy(result, 4, 2) + '-' +
+        { tt } copy(result, 1, 2) +
+        { 'T' } 'T' +
+        { hh } copy(result, 11, 2) + ':' +
+        { mm } copy(result, 14, 2) + ':' +
+        { ss } copy(result, 17, 2);
     end;
   end;
 
@@ -9675,9 +9831,13 @@ var
   var
     ts: string;
   begin
+(*
+<DATERG>2017-04-19T12:30:00</DATERG>
+<DATERF>2017-04-19T12:30:00</DATERF>
+*)
     ts := xd(r);
-    single('ERGEBNISDATUM', ts);
-    single('ERFASSUNGSDATUM', ts);
+    single('DATERG', ts);
+    single('DATERF', ts);
   end;
 
   function xd(r: integer; c: string): string; overload;
@@ -9776,48 +9936,204 @@ var
       single(tag, q(tag));
   end;
 
-  procedure taet(Bezeichnung, Ergebnis: string; r: integer);
+  procedure ACT(Spaltenname, MERKMAL, KNOPFGRUPPE, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  var
+   k : integer;
   begin
-    if f(Bezeichnung) then
+    if mk(MERKMAL,KNOPFGRUPPE) then
     begin
-      push('TAET');
-      clone('ID');
-      clone('BEZEICHNUNG');
-      clone_optional('KURZBEZ');
-      single('ERGEBNIS', Ergebnis);
+      push('ACT');
+      if NumberFormat then
+      begin
+       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
+       Ersetze(',','.',Ergebnis);
+       if (TAET_NACHKOMMA<1) then
+       begin
+         // keine Nachkommastellen
+         k := pos('.',Ergebnis);
+         if (k>0) then
+          Ergebnis := copy(Ergebnis,1,pred(k));
+       end else
+       begin
+         // hat Nachkommastellen
+         k := pos('.',Ergebnis);
+         repeat
+
+           if (k=0) then
+           begin
+            // bisher gar keine Nachkommastellen
+            Ergebnis := Ergebnis + '.' + fill('0',TAET_NACHKOMMA);
+            break;
+           end;
+
+           k := length(Ergebnis)-k;
+
+           if (k=TAET_NACHKOMMA) then
+            break;
+
+           if (k>TAET_NACHKOMMA) then
+           begin
+            // zu vielen Stellen -> abschneiden
+            Ergebnis := copy(Ergebnis,1,length(Ergebnis)-(k-TAET_NACHKOMMA));
+            break;
+           end;
+
+           // zu wenig stellen -> auffüllen
+           Ergebnis := Ergebnis + fill('0',TAET_NACHKOMMA-k);
+
+         until yet;
+       end;
+      end else
+      begin
+       single('BEZEICHNER', SpaltenName);
+      end;
+      clone('TAE_ID');
+      single('ERG', Ergebnis);
       timeStampBlock(r);
-      clone_optional('HOSTKEY');
       pop;
     end;
   end;
 
-  procedure kurz(KurzBez, Ergebnis: string; r: integer);
-  begin
-    if k(KurzBez) then
-    begin
-      push('TAET');
-      clone('ID');
-      clone('BEZEICHNUNG');
-      clone_optional('KURZBEZ');
-      single('ERGEBNIS', Ergebnis);
-      timeStampBlock(r);
-      clone_optional('HOSTKEY');
-      pop;
-    end;
-  end;
-
-  procedure OptTaet(Bezeichnung, Ergebnis: string; r: integer);
+  procedure OptACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis: string; r: integer; NumberFormat:boolean = false);
   begin
     if (Ergebnis <> '') then
-      taet(Bezeichnung, Ergebnis, r);
+      ACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis,r,NumberFormat);
   end;
 
-  procedure OptDiff(Bisher, Bezeichnung, Ergebnis: string; r: integer);
+  procedure ACT2(Spaltenname, HOSTKEY, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  var
+   k : integer;
+  begin
+    if h(HOSTKEY) then
+    begin
+      push('ACT');
+      if NumberFormat then
+      begin
+       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
+       Ersetze(',','.',Ergebnis);
+       if (TAET_NACHKOMMA<1) then
+       begin
+         // keine Nachkommastellen
+         k := pos('.',Ergebnis);
+         if (k>0) then
+          Ergebnis := copy(Ergebnis,1,pred(k));
+       end else
+       begin
+         // hat Nachkommastellen
+         k := pos('.',Ergebnis);
+         repeat
+
+           if (k=0) then
+           begin
+            // bisher gar keine Nachkommastellen
+            Ergebnis := Ergebnis + '.' + fill('0',TAET_NACHKOMMA);
+            break;
+           end;
+
+           k := length(Ergebnis)-k;
+
+           if (k=TAET_NACHKOMMA) then
+            break;
+
+           if (k>TAET_NACHKOMMA) then
+           begin
+            // zu vielen Stellen -> abschneiden
+            Ergebnis := copy(Ergebnis,1,length(Ergebnis)-(k-TAET_NACHKOMMA));
+            break;
+           end;
+
+           // zu wenig stellen -> auffüllen
+           Ergebnis := Ergebnis + fill('0',TAET_NACHKOMMA-k);
+
+         until yet;
+       end;
+      end else
+      begin
+       single('BEZEICHNER', SpaltenName);
+      end;
+      clone('TAE_ID');
+      single('ERG', Ergebnis);
+      timeStampBlock(r);
+      pop;
+    end;
+  end;
+
+  procedure OptACT2(Spaltenname, HOSTKEY, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  begin
+    if (Ergebnis <> '') then
+     ACT2(Spaltenname, HOSTKEY, Ergebnis, r, NumberFormat);
+  end;
+
+  procedure ACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  var
+   k : integer;
+  begin
+    if mkt(MERKMAL,KNOPFGRUPPE,TARIF) then
+    begin
+      push('ACT');
+      if NumberFormat then
+      begin
+       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
+       Ersetze(',','.',Ergebnis);
+       if (TAET_NACHKOMMA<1) then
+       begin
+         // keine Nachkommastellen
+         k := pos('.',Ergebnis);
+         if (k>0) then
+          Ergebnis := copy(Ergebnis,1,pred(k));
+       end else
+       begin
+         // hat Nachkommastellen
+         k := pos('.',Ergebnis);
+         repeat
+
+           if (k=0) then
+           begin
+            // bisher gar keine Nachkommastellen
+            Ergebnis := Ergebnis + '.' + fill('0',TAET_NACHKOMMA);
+            break;
+           end;
+
+           k := length(Ergebnis)-k;
+
+           if (k=TAET_NACHKOMMA) then
+            break;
+
+           if (k>TAET_NACHKOMMA) then
+           begin
+            // zu vielen Stellen -> abschneiden
+            Ergebnis := copy(Ergebnis,1,length(Ergebnis)-(k-TAET_NACHKOMMA));
+            break;
+           end;
+
+           // zu wenig stellen -> auffüllen
+           Ergebnis := Ergebnis + fill('0',TAET_NACHKOMMA-k);
+
+         until yet;
+       end;
+      end else
+      begin
+       single('BEZEICHNER', SpaltenName);
+      end;
+      clone('TAE_ID');
+      single('ERG', Ergebnis);
+      timeStampBlock(r);
+      pop;
+    end;
+  end;
+
+  procedure OptACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  begin
+    if (Ergebnis<>'') then
+      OptACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r, NumberFormat);
+  end;
+
+  procedure OptDiff(Bisher, Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis: string; r: integer);
   // nur etwas melden wenn es in Abänderung zum Auftrag steht
   begin
     if (Ergebnis <> '') then
       if (qao(Bisher) <> Ergebnis) then
-        taet(Bezeichnung, Ergebnis, r);
+        ACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis, r);
   end;
 
   procedure OneFound(r: integer);
@@ -9826,55 +10142,69 @@ var
   begin
     RollBackPosition := sResult.count;
     RollBack := false;
+    speak;
+    speak('<!-- RID'+RID+': -->');
+    push('OBJ');
+    single('AUF_ID',x(r,'AUF_ID'));
+    single('BN_ID',x(r,'BN_ID'));
+    single('AUF_ISTBEARB',xd(r));
 
-    if (ART = 'G') or (ART = 'WA') then
+    ACT2('Rückmeldegrund','ZM_RMG','100',r);
+    ACT2('Text zum Rückmeldegrund','ZM_RMGTXT','Auftrag bearbeitet',r);
+    ACT2('Sachverhalt','ZM_SACHVERHALTNR','0000',r);
+    ACT2('Sachverhaltstext','ZM_SACHVERHALTTXT','Auftrag fertig bearbeitet',r);
+    case STATUS of
+     cSTATUS_Unmoeglich:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','unmöglich',r);
+     cSTATUS_Vorgezogen:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','vorgezogen',r);
+     cSTATUS_Erfolg:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','erfolgreich',r);
+    end;
+    ACT2('Nummer des Vorgangsgrundes','ZM_VORGANGSGRUND' ,'11',r);
+    ACT2('Text des Vorgangsgrundes','ZM_VORGANGSGRUNDTXT' ,'Turnuswechsel', r);
+
+    OptACT2('Hinweis an Disponenten','ZM_HINWEIS', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
+
+
+    if (ZaehlwerkeIst = 2) then
     begin
-      // Gas / Wasser
-      kurz('Stand', x(r, 'ZaehlerStandAlt'), r);
-      kurz('Stand neu', x(r, 'ZaehlerStandNeu'), r);
+
+      ACT('Zaehler_Nummer','MECH-SERINFO','AGERAET', x(r, 'Zaehler_Nummer'), r);
+      ACT3('ZaehlerStandAltHT','MECH-ZW','AGERAET','HT', x(r, 'ZaehlerStandAlt'), r, true);
+      ACT3('ZaehlerStandAltNT','MECH-ZW','AGERAET','NT', x(r, 'NA'), r, true);
+
+      ACT('ZaehlerNummerNeu','MECH-SERNRNEU','EGERAET',x(r, 'ZaehlerNummerNeu'), r);
+      ACT3('ZaehlerStandNeuHT','MECH-ZW','EGERAET','HT', x(r, 'ZaehlerStandNeu'), r, true);
+      ACT3('ZaehlerStandNeuNT','MECH-ZW','EGERAET','NT', x(r, 'NN'), r, true);
+
     end
     else
     begin
-      // Strom
-      if (ZaehlwerkeIst = 2) then
+      if p_Melde_Eintarif_in_NT then
       begin
 
-        // Ausbau
-        kurz('StandHT', x(r, 'ZaehlerStandAlt'), r);
-        kurz('StandNT', x(r, 'NA'), r);
 
-        // Einbau
-        kurz('StandHTneu', x(r, 'ZaehlerStandNeu'), r);
-        kurz('StandNT neu', x(r, 'NN'), r);
-
-      end
-      else
+      end else
       begin
-        if p_Melde_Eintarif_in_NT then
-        begin
 
-          // Ausbau
-          kurz('StandNT', x(r, 'ZaehlerStandAlt'), r);
 
-          // Einbau
-          kurz('StandNT neu', x(r, 'ZaehlerStandNeu'), r);
+        ACT('Zaehler_Nummer','MECH-SERINFO','AGERAET', x(r, 'Zaehler_Nummer'), r);
+        ACT('ZaehlerStandAlt','MECH-ZW','AGERAET', x(r, 'ZaehlerStandAlt'), r, true);
 
-        end else
-        begin
+        ACT('ZaehlerNummerNeu','MECH-SERNRNEU','EGERAET',x(r, 'ZaehlerNummerNeu'), r);
+        ACT('ZaehlerStandNeu','MECH-ZW','EGERAET', x(r, 'ZaehlerStandNeu'), r, true);
 
-          // Ausbau
-          kurz('StandHT', x(r, 'ZaehlerStandAlt'), r);
 
-          // Einbau
-          kurz('StandHTneu', x(r, 'ZaehlerStandNeu'), r);
-
-        end;
       end;
     end;
 
-    taet('Serial-Nr. neu', x(r, 'ZaehlerNummerNeu'), r);
-    taet('Vorgangsgrund', '11', r);
-    taet('Gerät ausgebaut', 'ja', r);
+
+
+    (*
+
+    Reste aus Argos 2007
+
+    // :
+    // taet('Gerät ausgebaut', 'ja', r);
+    // -> ACT('Gerät ausgebaut','MECH-AUSGEBAUT','AGERAET','ja', r);
 
     OptTaet('1. gescheiterter Versuch', x(r, 'V1'), r);
     OptTaet('2. gescheiterter Versuch', x(r, 'V2'), r);
@@ -9936,6 +10266,7 @@ var
       end;
 
     until yet;
+    *)
 
     (*
       OptTaet('Korr. Verbrauchsstelle',x_optional(r,'I1'),r);
@@ -9954,6 +10285,7 @@ var
       x(r, 'N5') + ' ' + x(r, 'I6')
       ), r);
     *)
+    Pop;
 
     if RollBack then
     begin
@@ -9974,6 +10306,14 @@ var
     begin
       inc(xmlMESSAGE);
     end;
+  end;
+
+  function value_dt(D:TAnfixDate;T:TAnfixTime):string;
+  begin
+    result := long2dateLog(D);
+    insert('-',result,5);
+    insert('-',result,8);
+    result := result + 'T' + SecondsToStr(T);
   end;
 
   procedure SetOutFname;
@@ -9999,10 +10339,10 @@ begin
   xmlToday := copy(xmlToday, 7, 4) + copy(xmlToday, 4, 2) + copy(xmlToday, 1, 2);
   xmlMESSAGE := 1;
 
-  if FileExists(WorkPath + '_' + cARGOS_2007_XML_SAVE + cBL_FileExtension) then
-    bXML.init(WorkPath + '_' + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024)
+  if FileExists(WorkPath + '_' + cARGOS_2018_XML_SAVE + cBL_FileExtension) then
+    bXML.init(WorkPath + '_' + cARGOS_2018_XML_SAVE, pXML^, 1024 * 1024)
   else
-    bXML.init(WorkPath + cARGOS_2007_XML_SAVE, pXML^, 1024 * 1024);
+    bXML.init(WorkPath + cARGOS_2018_XML_SAVE, pXML^, 1024 * 1024);
   bXML.ReadOnly := true;
   bXML.BeginTransaction;
 
@@ -10011,26 +10351,8 @@ begin
   with sResult do
   begin
 
-    add('<?xml version="1.0" encoding="iso-8859-1" ?>');
-    speak;
 
-    speak('<!--   ___                                  -->');
-    speak('<!--  / _ \  ___                            -->');
-    speak('<!-- | | | |/ __|  Orientation Convert      -->');
-    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
-    speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
-    speak('<!--                                        -->');
-    speak;
-
-    speak('<!--<Datum> ' + Datum10 + ' -->');
-    speak('<!--<Zeit> ' + Uhr8 + ' -->');
-    speak('<!--<TAN> ' + StrFilter(ExtractFileName(InFName), '0123456789') + ' -->');
-    speak;
-    push('TOUR');
-    push('KUNDE');
-    push('GERAETEPLATZ');
-    push('GERAET');
-
+    //
     with xImport do
     begin
 
@@ -10050,7 +10372,6 @@ begin
 
       for c := 1 to ColCountInRow(1) do
         xlsHeaders.add(getCellValue(1, c).ToStringInvariant);
-
 
       cARGOS := xlsHeaders.indexof('ARGOS-Optionen');
       if cARGOS = -1 then
@@ -10077,7 +10398,6 @@ begin
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "ARGOS" nicht gefunden!');
-        exit;
       end;
 
       cART := xlsHeaders.indexof('Art');
@@ -10085,7 +10405,6 @@ begin
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "Art" nicht gefunden!');
-        exit;
       end;
 
       cRID := xlsHeaders.indexof('ReferenzIdentitaet');
@@ -10093,7 +10412,6 @@ begin
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "ReferenzIdentitaet" nicht gefunden!');
-        exit;
       end;
 
       cStatus := xlsHeaders.indexof('Status1');
@@ -10101,8 +10419,41 @@ begin
       begin
         inc(ErrorCount);
         sDiagnose.add(cERRORText + ' Spalte "Status1" nicht gefunden!');
-        exit;
       end;
+
+      c := xlsHeaders.indexof('AUF_ID');
+      if (c = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "AUF_ID" nicht gefunden!');
+      end;
+
+      c := xlsHeaders.indexof('BN_ID');
+      if (c = -1) then
+      begin
+        inc(ErrorCount);
+        sDiagnose.add(cERRORText + ' Spalte "BN_ID" nicht gefunden!');
+      end;
+
+      if (ErrorCount>0) then
+       exit;
+
+    // Header
+    add('<?xml version="1.0" encoding="utf-8"?>');
+    speak;
+    speak('<!--   ___                                  -->');
+    speak('<!--  / _ \  ___                            -->');
+    speak('<!-- | | | |/ __|  Orientation Convert      -->');
+    speak('<!-- | |_| | (__   (c)1987-' + JahresZahl + ' OrgaMon.org -->');
+    speak('<!--  \___/ \___|  Rev. ' + RevToStr(Version) + '               -->');
+    speak('<!--                                        -->');
+    speak;
+    speak('<!-- Modus '+IntToStr(Content_Mode_xls2Argos2018)+': Argos-2018 -->');
+    speak('<!-- Info: http://wiki.orgamon.org/index.php5/Schnittstelle.Argos.2018 -->');
+    speak('<!-- Quelltexte: https://github.com/Andreas-Filsinger/OrgaMon/blob/master/PASconTools/OrientationConvert.pas -->');
+    speak;
+    push('DSP');
+
 
       r := 2;
       repeat
@@ -10111,6 +10462,7 @@ begin
         ZaehlwerkeIst := strtointdef(StrFilter(ART, '0123456789'), 1);
         RID := cutblank(getCellValue(r, succ(cRID)).ToStringInvariant);
         STATUS := strtointdef(getCellValue(r, succ(cStatus)).ToStringInvariant, -1);
+
 
         // Status bei bereits gemeldeten umsetzen!
         if (STATUS = cSTATUS_ErfolgGemeldet) then
@@ -10152,9 +10504,6 @@ begin
       until (r > RowCount);
     end;
     pop;
-    pop;
-    pop;
-    pop;
     if (sStack.count <> 0) then
     begin
       inc(ErrorCount);
@@ -10165,7 +10514,7 @@ begin
 
   //
   if (ErrorCount = 0) then
-    sResult.SaveToFile(conversionOutFName)
+    sResult.SaveToFile(conversionOutFName, Tencoding.UTF8)
   else
     FileDelete(conversionOutFName);
 

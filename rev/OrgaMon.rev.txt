@@ -19,6 +19,28 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.359 (08.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.261" neu compiliert!
+
+Rev 8.358 (08.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.260" neu compiliert!
+
+Rev 8.357 (07.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.259" neu compiliert!
+
+Rev 8.356 (04.05.18) Andreas Filsinger
+
+ Neu: Tagwache: Systemparameter: TagwacheAusschluss=
+ Neu: Tagesabschluss: Systemparameter: TagesabschlussAusschluss=
+ Neu: cOrgaMon: --tagesabschluss: mehr mögliche Punkte im Tagesabschluss
+
+Rev 8.355 (02.05.18) Andreas Filsinger
+
+ Neu: Artikel: Neues Datenfeld SEITEN
+
 Rev 8.354 (30.04.18) Andreas Filsinger
 
  Bug: Foto: Ablage: Unterverzeichnisse B von A wurd als AB erstellt (Richtig A\B)
@@ -12224,6 +12246,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.355
+
+alter table ARTIKEL
+add SEITEN integer;
 
 :8.347
 

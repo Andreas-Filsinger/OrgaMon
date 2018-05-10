@@ -15,6 +15,20 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.261 (08.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: Toleranz gegen Tausch von VERSCHIEDENEN Zählwerken
+ Neu: Argos-2018: Bei Doppeltarif wird HT,NT <-> HT,NT gefüllt
+
+Rev 1.260 (08.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: AUF_ID, BN_ID sind jetzt Pflichtfelder
+
+Rev 1.259 (04.05.18-07.05.18) Andreas Filsinger
+
+ Bug: Argos-2018: xml->csv: XML-2018.BLA wurde nicht erzeugt (sondern XML.BLA)
+ Neu: Argos-2018: Grundzüge von Gas und Wasser
+
 Rev 1.258 (22.03.18) Andreas Filsinger
 
  Neu: xml2csv (ARGOS): Erweiterung auf Argos-2018

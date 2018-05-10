@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -212,6 +212,8 @@ type
     Button4: TButton;
     Button21: TButton;
     Button22: TButton;
+    Label25: TLabel;
+    IB_Edit4: TIB_Edit;
     procedure SpeedButton16Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Query2BeforePost(IB_Dataset: TIB_Dataset);

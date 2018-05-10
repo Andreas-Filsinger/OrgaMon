@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.354; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.359; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1055,6 +1055,8 @@ var
   iNachTagesAbschlussRechnerNeustarten: boolean;
   iNachTagwacheAnwendungNeustart: boolean;
   iNachTagwacheRechnerNeustarten: boolean;
+  iTagesabschlussAusschluss: string;
+  iTagwacheAusschluss: string;
   iCronAuf: string;
 
   iKontoInhaber: string;
@@ -1072,7 +1074,6 @@ var
   iMailHost: string;
   iPDFAdmin: string;
   iPDFSend: string;
-  //iPDFZoom: string;
   iJonDaAdmin: integer;
   iJonDaServer: string;
 
@@ -1123,15 +1124,15 @@ var
   iSchubladePort: string;
   iLabelHost: string;
   iKasseHost: string;
-  iTagWacheAuf: string;
-  iTagWacheUm: TAnfixTime;
+  iTagwacheAuf: string;
+  iTagwacheUm: TAnfixTime;
   iNachTagwacheHerunterfahren: boolean;
   iTextDocumentExtension: string;
   iIdleProzessPrioritaetAbschluesse: boolean;
 
   iNachTagesAbschlussHerunterfahren: boolean;
-  iTagWacheWochentage: string;
-  iTagWacheBaustelle: integer;
+  iTagwacheWochentage: string;
+  iTagwacheBaustelle: integer;
   iTagesabschlussWochentage: string;
   iAuftragsMedium: string;
   iDataBase_SYSDBA_pwd: string;
@@ -1651,7 +1652,7 @@ const
   MyIni: TIniFile = nil;
   BootStage: integer = 0;
 
-procedure LoadIniF;
+procedure LoadIniF(DefaultGroup:boolean=false);
 const
   cMaxMandanten = 20;
 var
@@ -1675,16 +1676,27 @@ begin
   // Enable Spare
   // in diesem Falle wird vorrangig Spare gefragt, wenn leer
   // fällt Spare wieder auf das Original zurück
-  if isParam('-es') then
-  begin
-    sGroup := 'Spare';
-  end
-  else
-  begin
-    sGroup := getParam('Id');
-    if (sGroup = '') then
+  repeat
+
+    if DefaultGroup then
+    begin
       sGroup := cGroup_Id_Default;
-  end;
+      break;
+    end;
+
+    if isParam('-es') then
+    begin
+      sGroup := 'Spare';
+    end
+    else
+    begin
+      sGroup := getParam('Id');
+      if (sGroup = '') then
+        sGroup := cGroup_Id_Default;
+    end;
+
+  until yet;
+
   sBootSequence.Add('Namespace=' + sGroup);
 
   //
@@ -1815,7 +1827,9 @@ begin
           { } '[' + sGroup + ']' + #13#10 +
           { } cDataBaseName + '=' + #13#10 + #13#10 +
           { } ' notwendige Einstellung ist ohne Wert!');
-
+{$IFDEF CONSOLE}
+  sleep(2000);
+{$ENDIF}
         halt;
       end
       else
@@ -1832,7 +1846,7 @@ begin
           MyProgramPath := iDataBaseName;
 
           if FileExists(iDataBaseName + cIniFName) then
-            LoadIniF;
+            LoadIniF(true);
 
         end
         else

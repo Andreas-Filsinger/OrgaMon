@@ -459,8 +459,8 @@
         <DCCReference Include="PlanquadratNachfrage.pas">
             <Form>FormPlanquadratNachfrage</Form>
         </DCCReference>
-        <DCCReference Include="TagWache.pas">
-            <Form>FormTagWache</Form>
+        <DCCReference Include="Tagwache.pas">
+            <Form>FormTagwache</Form>
         </DCCReference>
         <DCCReference Include="AuftragArbeitsplatz.pas">
             <Form>FormAuftragArbeitsplatz</Form>
