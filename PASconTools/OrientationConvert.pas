@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.261; // ../rev/Oc.rev.txt
+  Version: single = 1.262; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -9443,7 +9443,7 @@ var
 
   end;
 
-  function mk { MERKMAL+KNOPFGRUPPE } (MERKMAL,KNOPFGRUPPE: string): boolean;
+  function hmkt { HOSTKEY+MERKMAL+KNOPFGRUPPE+TARIF } (HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF: string): boolean;
   var
     n: integer;
     AutoMataState: integer;
@@ -9468,10 +9468,12 @@ var
               begin
                 break;
               end;
-          1: // 'Treffer' M + K suchen
+          1: // 'Treffer' H + M + K + T suchen
              begin
-              if (pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) and
-                 (pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) then
+              if ((pos('<HOSTKEY>' + HOSTKEY + '</HOSTKEY>', sSource[n]) >0) or (HOSTKEY='')) and
+                 ((pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) or (KNOPFGRUPPE='')) and
+                 ((pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) or (MERKMAL='')) and
+                 ((pos('<TARIF>' + TARIF + '</TARIF>', sSource[n]) > 0) or (TARIF='')) then
               begin
                 TAET_NACHKOMMA := StrToIntDef(ExtractSegmentBetween(sSource[n], '<NACHKOMMA>', '</NACHKOMMA>'),-1);
                 inc(AutoMataState);
@@ -9936,16 +9938,17 @@ var
       single(tag, q(tag));
   end;
 
-  procedure ACT(Spaltenname, MERKMAL, KNOPFGRUPPE, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  procedure ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
   var
    k : integer;
   begin
-    if mk(MERKMAL,KNOPFGRUPPE) then
+    if hmkt(HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF) then
     begin
       push('ACT');
       if NumberFormat then
       begin
-       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
+       single('BEZEICHNER', BEZEICHNER);
+       speak('<!-- '+IntToStr(TAET_NACHKOMMA)+' Nachkommastellen'+' -->');
        Ersetze(',','.',Ergebnis);
        if (TAET_NACHKOMMA<1) then
        begin
@@ -9985,7 +9988,7 @@ var
        end;
       end else
       begin
-       single('BEZEICHNER', SpaltenName);
+       single('BEZEICHNER', BEZEICHNER);
       end;
       clone('TAE_ID');
       single('ERG', Ergebnis);
@@ -9994,146 +9997,18 @@ var
     end;
   end;
 
-  procedure OptACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  procedure OptACT(BEZEICHNER,HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
   begin
     if (Ergebnis <> '') then
-      ACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis,r,NumberFormat);
+      ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r, NumberFormat);
   end;
 
-  procedure ACT2(Spaltenname, HOSTKEY, Ergebnis: string; r: integer; NumberFormat:boolean = false);
-  var
-   k : integer;
-  begin
-    if h(HOSTKEY) then
-    begin
-      push('ACT');
-      if NumberFormat then
-      begin
-       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
-       Ersetze(',','.',Ergebnis);
-       if (TAET_NACHKOMMA<1) then
-       begin
-         // keine Nachkommastellen
-         k := pos('.',Ergebnis);
-         if (k>0) then
-          Ergebnis := copy(Ergebnis,1,pred(k));
-       end else
-       begin
-         // hat Nachkommastellen
-         k := pos('.',Ergebnis);
-         repeat
-
-           if (k=0) then
-           begin
-            // bisher gar keine Nachkommastellen
-            Ergebnis := Ergebnis + '.' + fill('0',TAET_NACHKOMMA);
-            break;
-           end;
-
-           k := length(Ergebnis)-k;
-
-           if (k=TAET_NACHKOMMA) then
-            break;
-
-           if (k>TAET_NACHKOMMA) then
-           begin
-            // zu vielen Stellen -> abschneiden
-            Ergebnis := copy(Ergebnis,1,length(Ergebnis)-(k-TAET_NACHKOMMA));
-            break;
-           end;
-
-           // zu wenig stellen -> auffüllen
-           Ergebnis := Ergebnis + fill('0',TAET_NACHKOMMA-k);
-
-         until yet;
-       end;
-      end else
-      begin
-       single('BEZEICHNER', SpaltenName);
-      end;
-      clone('TAE_ID');
-      single('ERG', Ergebnis);
-      timeStampBlock(r);
-      pop;
-    end;
-  end;
-
-  procedure OptACT2(Spaltenname, HOSTKEY, Ergebnis: string; r: integer; NumberFormat:boolean = false);
-  begin
-    if (Ergebnis <> '') then
-     ACT2(Spaltenname, HOSTKEY, Ergebnis, r, NumberFormat);
-  end;
-
-  procedure ACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
-  var
-   k : integer;
-  begin
-    if mkt(MERKMAL,KNOPFGRUPPE,TARIF) then
-    begin
-      push('ACT');
-      if NumberFormat then
-      begin
-       single('BEZEICHNER', SpaltenName + ' mit ' + IntToStr(TAET_NACHKOMMA)+' Nachkommastellen');
-       Ersetze(',','.',Ergebnis);
-       if (TAET_NACHKOMMA<1) then
-       begin
-         // keine Nachkommastellen
-         k := pos('.',Ergebnis);
-         if (k>0) then
-          Ergebnis := copy(Ergebnis,1,pred(k));
-       end else
-       begin
-         // hat Nachkommastellen
-         k := pos('.',Ergebnis);
-         repeat
-
-           if (k=0) then
-           begin
-            // bisher gar keine Nachkommastellen
-            Ergebnis := Ergebnis + '.' + fill('0',TAET_NACHKOMMA);
-            break;
-           end;
-
-           k := length(Ergebnis)-k;
-
-           if (k=TAET_NACHKOMMA) then
-            break;
-
-           if (k>TAET_NACHKOMMA) then
-           begin
-            // zu vielen Stellen -> abschneiden
-            Ergebnis := copy(Ergebnis,1,length(Ergebnis)-(k-TAET_NACHKOMMA));
-            break;
-           end;
-
-           // zu wenig stellen -> auffüllen
-           Ergebnis := Ergebnis + fill('0',TAET_NACHKOMMA-k);
-
-         until yet;
-       end;
-      end else
-      begin
-       single('BEZEICHNER', SpaltenName);
-      end;
-      clone('TAE_ID');
-      single('ERG', Ergebnis);
-      timeStampBlock(r);
-      pop;
-    end;
-  end;
-
-  procedure OptACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
-  begin
-    if (Ergebnis<>'') then
-      OptACT3(Spaltenname, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r, NumberFormat);
-  end;
-
-  procedure OptDiff(Bisher, Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis: string; r: integer);
+  procedure OptDiff(Bisher, Spaltenname,HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF, Ergebnis: string; r: integer);
   // nur etwas melden wenn es in Abänderung zum Auftrag steht
   begin
     if (Ergebnis <> '') then
       if (qao(Bisher) <> Ergebnis) then
-        ACT(Spaltenname,MERKMAL,KNOPFGRUPPE, Ergebnis, r);
+        ACT(Spaltenname,HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r);
   end;
 
   procedure OneFound(r: integer);
@@ -10149,54 +10024,58 @@ var
     single('BN_ID',x(r,'BN_ID'));
     single('AUF_ISTBEARB',xd(r));
 
-    ACT2('Rückmeldegrund','ZM_RMG','100',r);
-    ACT2('Text zum Rückmeldegrund','ZM_RMGTXT','Auftrag bearbeitet',r);
-    ACT2('Sachverhalt','ZM_SACHVERHALTNR','0000',r);
-    ACT2('Sachverhaltstext','ZM_SACHVERHALTTXT','Auftrag fertig bearbeitet',r);
+    ACT('Rückmeldegrund','ZM_RMG','','','','100',r);
+    ACT('Text zum Rückmeldegrund','ZM_RMGTXT','','','','Auftrag bearbeitet',r);
+    ACT('Sachverhalt','ZM_SACHVERHALTNR','','','','0000',r);
+    ACT('Sachverhaltstext','ZM_SACHVERHALTTXT','','','','Auftrag fertig bearbeitet',r);
     case STATUS of
-     cSTATUS_Unmoeglich:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','unmöglich',r);
-     cSTATUS_Vorgezogen:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','vorgezogen',r);
-     cSTATUS_Erfolg:ACT2('Sachverhalt Freitext','ZM_SACHVERHALTFREI','erfolgreich',r);
+     cSTATUS_Unmoeglich:ACT('Sachverhalt Freitext','ZM_SACHVERHALTFREI','','','','unmöglich',r);
+     cSTATUS_Vorgezogen:ACT('Sachverhalt Freitext','ZM_SACHVERHALTFREI','','','','vorgezogen',r);
+     cSTATUS_Erfolg:ACT('Sachverhalt Freitext','ZM_SACHVERHALTFREI','','','','erfolgreich',r);
     end;
-    ACT2('Nummer des Vorgangsgrundes','ZM_VORGANGSGRUND' ,'11',r);
-    ACT2('Text des Vorgangsgrundes','ZM_VORGANGSGRUNDTXT' ,'Turnuswechsel', r);
+    ACT('Nummer des Vorgangsgrundes','ZM_VORGANGSGRUND','','','','11',r);
+    ACT('Text des Vorgangsgrundes','ZM_VORGANGSGRUNDTXT','','','','Turnuswechsel', r);
 
-    OptACT2('Hinweis an Disponenten','ZM_HINWEIS', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
+    OptACT('Hinweis an Disponenten','ZM_HINWEIS','','','', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
 
+    repeat
 
-    if (ZaehlwerkeIst = 2) then
-    begin
+     if (ART='G') or (ART='WA') then
+     begin
+       ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET', '',x(r, 'Zaehler_Nummer'), r);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET', '',x(r, 'ZaehlerStandAlt'), r, true);
+       ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET', '',x(r, 'ZaehlerStandNeu'), r, true);
+       break;
+     end;
 
-      ACT('Zaehler_Nummer','MECH-SERINFO','AGERAET', x(r, 'Zaehler_Nummer'), r);
-      ACT3('ZaehlerStandAltHT','MECH-ZW','AGERAET','HT', x(r, 'ZaehlerStandAlt'), r, true);
-      ACT3('ZaehlerStandAltNT','MECH-ZW','AGERAET','NT', x(r, 'NA'), r, true);
+     if (ZaehlwerkeIst = 2) then
+     begin
+       ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET','', x(r, 'Zaehler_Nummer'), r);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','HT', x(r, 'ZaehlerStandAlt'), r, true);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','NT', x(r, 'NA'), r, true);
 
-      ACT('ZaehlerNummerNeu','MECH-SERNRNEU','EGERAET',x(r, 'ZaehlerNummerNeu'), r);
-      ACT3('ZaehlerStandNeuHT','MECH-ZW','EGERAET','HT', x(r, 'ZaehlerStandNeu'), r, true);
-      ACT3('ZaehlerStandNeuNT','MECH-ZW','EGERAET','NT', x(r, 'NN'), r, true);
+       ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','HT', x(r, 'ZaehlerStandNeu'), r, true);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','NT', x(r, 'NN'), r, true);
+       break;
+     end;
 
-    end
-    else
-    begin
-      if p_Melde_Eintarif_in_NT then
-      begin
+     if p_Melde_Eintarif_in_NT then
+     begin
+       ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET','', x(r, 'Zaehler_Nummer'), r);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','NT', x(r, 'ZaehlerStandAlt'), r, true);
+       ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','NT', x(r, 'ZaehlerStandNeu'), r, true);
+       break;
+     end;
 
+     ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET', '',x(r, 'Zaehler_Nummer'), r);
+     ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET', '',x(r, 'ZaehlerStandAlt'), r, true);
+     ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
+     ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET', '',x(r, 'ZaehlerStandNeu'), r, true);
 
-      end else
-      begin
-
-
-        ACT('Zaehler_Nummer','MECH-SERINFO','AGERAET', x(r, 'Zaehler_Nummer'), r);
-        ACT('ZaehlerStandAlt','MECH-ZW','AGERAET', x(r, 'ZaehlerStandAlt'), r, true);
-
-        ACT('ZaehlerNummerNeu','MECH-SERNRNEU','EGERAET',x(r, 'ZaehlerNummerNeu'), r);
-        ACT('ZaehlerStandNeu','MECH-ZW','EGERAET', x(r, 'ZaehlerStandNeu'), r, true);
-
-
-      end;
-    end;
-
-
+    until yet;
 
     (*
 

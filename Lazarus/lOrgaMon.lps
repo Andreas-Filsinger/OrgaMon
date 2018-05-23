@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="284">
+    <Units Count="292">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -2020,12 +2020,73 @@
       </Unit282>
       <Unit283>
         <Filename Value="..\..\fpc\tests\test\tasm26.pp"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit283>
+      <Unit284>
+        <Filename Value="..\..\fpc\tests\test\tasm27.pp"/>
+        <EditorIndex Value="10"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit284>
+      <Unit285>
+        <Filename Value="..\..\fpc\tests\test\udots.moredots.unit7.pp"/>
+        <UnitName Value="UDots.MoreDots.Unit7"/>
+        <EditorIndex Value="11"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit285>
+      <Unit286>
+        <Filename Value="..\..\fpc\tests\test\udots.unit2.pp"/>
+        <UnitName Value="Alpha.Beta"/>
+        <EditorIndex Value="12"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit286>
+      <Unit287>
+        <Filename Value="..\..\fpc\tests\tbs\tb0642.pp"/>
+        <EditorIndex Value="13"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit287>
+      <Unit288>
+        <Filename Value="..\..\fpc\tests\tbs\tb0644.pp"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="84"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit288>
+      <Unit289>
+        <Filename Value="..\..\fpc\tests\test\tarray16.pp"/>
+        <EditorIndex Value="15"/>
+        <TopLine Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit289>
+      <Unit290>
+        <Filename Value="..\..\fpc\tests\test\tarray15.pp"/>
+        <EditorIndex Value="16"/>
+        <TopLine Value="56"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit290>
+      <Unit291>
+        <Filename Value="..\..\fpc\tests\test\tarray17.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="17"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit291>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
