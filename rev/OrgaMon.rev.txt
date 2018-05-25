@@ -19,6 +19,27 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.365 (25.05.18) Andreas Filsinger
+
+ Neu: OSM: neue Server
+ Neu: Google-Maps: Referer war falsch
+
+Rev 8.364 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.266" neu compiliert!
+
+Rev 8.363 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.265" neu compiliert!
+
+Rev 8.362 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.264" neu compiliert!
+
+Rev 8.361 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.263" neu compiliert!
+
 Rev 8.360 (23.05.18) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.262" neu compiliert!

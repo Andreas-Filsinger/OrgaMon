@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.262; // ../rev/Oc.rev.txt
+  Version: single = 1.266; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -9255,7 +9255,7 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in XML.BLA nicht gefunden!');
+                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in '+cARGOS_2007_XML_SAVE + cBL_FileExtension+' nicht gefunden!');
             end;
           end
           else
@@ -9343,6 +9343,7 @@ var
   RID: string;
   STATUS: integer;
   ZaehlwerkeIst: integer;
+  LagezusatzNeu: string;
 
   // TAET
   TAET_BEGIN: integer;
@@ -9352,7 +9353,6 @@ var
   // Schnittstellen-Optionen
   Optionen : string;
   p_Melde_Eintarif_in_NT : boolean;
-
 
   procedure speak(s: string = '');
   begin
@@ -9443,7 +9443,7 @@ var
 
   end;
 
-  function hmkt { HOSTKEY+MERKMAL+KNOPFGRUPPE+TARIF } (HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF: string): boolean;
+  function hmkt { HOSTKEY+MERKMAL+KNOPFGRUPPE+ZWNUMMER } (HOSTKEY, MERKMAL, KNOPFGRUPPE, ZWNUMMER: string): boolean;
   var
     n: integer;
     AutoMataState: integer;
@@ -9471,9 +9471,9 @@ var
           1: // 'Treffer' H + M + K + T suchen
              begin
               if ((pos('<HOSTKEY>' + HOSTKEY + '</HOSTKEY>', sSource[n]) >0) or (HOSTKEY='')) and
-                 ((pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) or (KNOPFGRUPPE='')) and
                  ((pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) or (MERKMAL='')) and
-                 ((pos('<TARIF>' + TARIF + '</TARIF>', sSource[n]) > 0) or (TARIF='')) then
+                 ((pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) or (KNOPFGRUPPE='')) and
+                 ((pos('<ZWNUMMER>' + ZWNUMMER + '</ZWNUMMER>', sSource[n]) > 0) or (ZWNUMMER='')) then
               begin
                 TAET_NACHKOMMA := StrToIntDef(ExtractSegmentBetween(sSource[n], '<NACHKOMMA>', '</NACHKOMMA>'),-1);
                 inc(AutoMataState);
@@ -9503,7 +9503,14 @@ var
     end;
     if (TAET_END <= TAET_BEGIN) then
     begin
-      rollbackBecause(inttostr(Argos) + ': MERKMAL+KNOPFGRUPPE "' + MERKMAL+'+'+KNOPFGRUPPE + '" nicht gefunden!');
+      rollbackBecause(
+       {} inttostr(Argos) +
+       {} ': HOSTKEY+MERKMAL+KNOPFGRUPPE+ZWNUMMER "' +
+       {} HOSTKEY + '+' +
+       {} MERKMAL + '+' +
+       {} KNOPFGRUPPE + '+' +
+       {} ZWNUMMER +
+       {} '" nicht gefunden!');
     end
     else
     begin
@@ -9511,139 +9518,6 @@ var
     end;
   end;
 
-  function mkt { MERKMAL+KNOPFGRUPPE+TARIF } (MERKMAL,KNOPFGRUPPE,TARIF: string): boolean;
-  var
-    n: integer;
-    AutoMataState: integer;
-    END_SEARCH: boolean;
-  begin
-    //
-    TAET_BEGIN := -1;
-    TAET_END := -1;
-    END_SEARCH := false;
-    AutoMataState := 0;
-    result := false;
-    for n := xmlCursor to pred(sSource.count) do
-    begin
-      repeat
-        case AutoMataState of
-          0: // 'ACT' suchen
-              if (pos('<ACT>', sSource[n]) > 0) then
-              begin
-                TAET_BEGIN := n;
-                inc(AutoMataState);
-              end else
-              begin
-                break;
-              end;
-          1: // 'Treffer' M + K suchen
-             begin
-              if (pos('<KNOPFGRUPPE>' + KNOPFGRUPPE + '</KNOPFGRUPPE>', sSource[n]) >0) and
-                 (pos('<MERKMAL>' + MERKMAL + '</MERKMAL>', sSource[n]) > 0) and
-                 (pos('<TARIF>' + TARIF + '</TARIF>', sSource[n]) > 0)
-                 then
-              begin
-                TAET_NACHKOMMA := StrToIntDef(ExtractSegmentBetween(sSource[n], '<NACHKOMMA>', '</NACHKOMMA>'),-1);
-                inc(AutoMataState);
-              end else
-              begin
-                if (pos('</ACT>', sSource[n]) > 0) then
-                begin
-                  // Tag ist zu Ende, Suche weiter!
-                  AutoMataState := 0;
-                end;
-                break;
-              end;
-             end;
-          2: // '/ACT' suchen
-             begin
-              if (pos('</ACT>', sSource[n]) > 0) then
-              begin
-                TAET_END := n;
-                END_SEARCH := true;
-              end;
-              break;
-             end;
-         end;
-       until eternity;
-       if END_SEARCH then
-        break;
-    end;
-    if (TAET_END <= TAET_BEGIN) then
-    begin
-      rollbackBecause(inttostr(Argos) + ': MERKMAL+KNOPFGRUPPE+TARIF "' + MERKMAL+'+'+KNOPFGRUPPE+'+'+TARIF + '" nicht gefunden!');
-    end
-    else
-    begin
-      result := true;
-    end;
-  end;
-
-  function h { ostkey } (HOSTKEY: string): boolean;
-  var
-    n: integer;
-    AutoMataState: integer;
-    END_SEARCH: boolean;
-  begin
-    //
-    TAET_BEGIN := -1;
-    TAET_END := -1;
-    END_SEARCH := false;
-    AutoMataState := 0;
-    result := false;
-    for n := xmlCursor to pred(sSource.count) do
-    begin
-      repeat
-        case AutoMataState of
-          0: // 'ACT' suchen
-              if (pos('<ACT>', sSource[n]) > 0) then
-              begin
-                TAET_BEGIN := n;
-                inc(AutoMataState);
-              end else
-              begin
-                break;
-              end;
-          1: // 'Treffer' M + K suchen
-             begin
-              if (pos('<HOSTKEY>' + HOSTKEY + '</HOSTKEY>', sSource[n]) >0) then
-              begin
-                inc(AutoMataState);
-              end else
-              begin
-                if (pos('</ACT>', sSource[n]) > 0) then
-                begin
-                  // Tag ist zu Ende, Suche weiter!
-                  AutoMataState := 0;
-                end;
-                break;
-              end;
-             end;
-          2: // '/ACT' suchen
-             begin
-              if (pos('</ACT>', sSource[n]) > 0) then
-              begin
-                TAET_END := n;
-                END_SEARCH := true;
-              end;
-              break;
-             end;
-         end;
-       until eternity;
-       if END_SEARCH then
-        break;
-    end;
-
-    if (TAET_END <= TAET_BEGIN) then
-    begin
-      rollbackBecause(inttostr(Argos) + ': HOSTKEY "' + HOSTKEY + '" nicht gefunden!');
-    end
-    else
-    begin
-      result := true;
-    end;
-
-  end;
 
   function q { uestion } (tag: string; CloseTag: string = 'ACT'): string;
   var
@@ -9677,6 +9551,7 @@ var
         ' nicht gefunden!');
   end;
 
+  (*
   function qo { uestion optional } (tag: string; CloseTag: string = 'GERAET'): boolean;
   var
     n: integer;
@@ -9741,7 +9616,7 @@ var
       speak('<!-- ' + tag + ' fehlt im Auftrag -->');
     end;
   end;
-
+  *)
   procedure fillAufgaben;
   var
     n: integer;
@@ -9932,17 +9807,19 @@ var
     single(tag, q(tag));
   end;
 
+  (*
   procedure clone_optional(tag: string);
   begin
     if qo(tag) then
       single(tag, q(tag));
   end;
+  *)
 
-  procedure ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  procedure ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, ZWNUMMER, Ergebnis: string; r: integer; NumberFormat:boolean = false);
   var
    k : integer;
   begin
-    if hmkt(HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF) then
+    if hmkt(HOSTKEY,MERKMAL,KNOPFGRUPPE,ZWNUMMER) then
     begin
       push('ACT');
       if NumberFormat then
@@ -9997,19 +9874,21 @@ var
     end;
   end;
 
-  procedure OptACT(BEZEICHNER,HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF, Ergebnis: string; r: integer; NumberFormat:boolean = false);
+  procedure OptACT(BEZEICHNER,HOSTKEY,MERKMAL,KNOPFGRUPPE,ZWNUMMER, Ergebnis: string; r: integer; NumberFormat:boolean = false);
   begin
     if (Ergebnis <> '') then
-      ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r, NumberFormat);
+      ACT(BEZEICHNER, HOSTKEY, MERKMAL, KNOPFGRUPPE, ZWNUMMER, Ergebnis, r, NumberFormat);
   end;
 
-  procedure OptDiff(Bisher, Spaltenname,HOSTKEY,MERKMAL,KNOPFGRUPPE,TARIF, Ergebnis: string; r: integer);
+  (*
+  procedure OptDiff(Bisher, Spaltenname,HOSTKEY,MERKMAL,KNOPFGRUPPE,ZWNUMMER, Ergebnis: string; r: integer);
   // nur etwas melden wenn es in Abänderung zum Auftrag steht
   begin
     if (Ergebnis <> '') then
       if (qao(Bisher) <> Ergebnis) then
-        ACT(Spaltenname,HOSTKEY, MERKMAL, KNOPFGRUPPE, TARIF, Ergebnis, r);
+        ACT(Spaltenname,HOSTKEY, MERKMAL, KNOPFGRUPPE, ZWNUMMER, Ergebnis, r);
   end;
+  *)
 
   procedure OneFound(r: integer);
   var
@@ -10017,8 +9896,15 @@ var
   begin
     RollBackPosition := sResult.count;
     RollBack := false;
+
     speak;
     speak('<!-- RID'+RID+': -->');
+    if (x(r,'V1')<>'') then
+     speak('<!-- 1. gescheiterter Versuch: '+ x(r, 'V1') + ' -->');
+    if (x(r,'V2')<>'') then
+     speak('<!-- 2. gescheiterter Versuch: '+ x(r, 'V2') + ' -->');
+    speak('<!-- Unterschrift Monteur: '+ x(r, 'MonteurText') + '(' + x(r, 'MonteurHandy') + ') -->');
+
     push('OBJ');
     single('AUF_ID',x(r,'AUF_ID'));
     single('BN_ID',x(r,'BN_ID'));
@@ -10036,6 +9922,42 @@ var
     ACT('Nummer des Vorgangsgrundes','ZM_VORGANGSGRUND','','','','11',r);
     ACT('Text des Vorgangsgrundes','ZM_VORGANGSGRUNDTXT','','','','Turnuswechsel', r);
 
+    // statisch! nur technische Schnittstellen Erfordernisse, keine Inhaltliche Bedeutung
+    ACT('Zähler ausgebaut', 'ZM_KLASSEN', 'MECH-AUSGEBAUT', 'AGERAET', '', 'ja', r);
+    ACT('Plombierung i.O.', 'CHANGE-PLOMBIERUNG', 'CHANGE-PLOMBIERUNG', 'PRUEF', '', 'ja', r);
+    ACT('Mangel vorhanden', 'CHANGE-MANGEL', 'CHANGE-MANGEL', 'PRUEF', '', 'nein', r);
+
+    repeat
+
+       if (ART='G') then
+       begin
+         ACT('Versorg. Unterbrechung', 'CHANGE-SPGUNTER', 'CHANGE-SPGUNTER', 'PRUEF', '', 'ja', r);
+         break;
+       end;
+
+       if (ART='WA') then
+       begin
+         ACT('Versorg. Unterbrechung', 'CHANGE-SPGUNTER', 'CHANGE-SPGUNTER', 'PRUEF', '', 'ja', r);
+         break;
+       end;
+       // Elektro!
+
+       ACT('Versorg. Unterbrechung','CHANGE-SPGUNTERDAUER','CHANGE-SPGUNTERDAUER','PRUEF','','1,0',r);
+
+    until yet;
+
+    if hmkt('ZM_KLASSEN', 'CHANGE-VS_LGZUSATZ', 'PRUEF', '') then
+    begin
+     LagezusatzNeu := q('ERG');
+     if (LagezusatzNeu='') then
+       LagezusatzNeu := 'Zählerraum';
+    end else
+    begin
+     LagezusatzNeu := 'Zählerraum';
+    end;
+
+    ACT('Verbrauchsstelle Lagezusatz NEU', 'ZM_KLASSEN', 'CHANGE-VS_LGZUSATZ_NEU', 'PRUEF', '', LagezusatzNeu, r);
+
     OptACT('Hinweis an Disponenten','ZM_HINWEIS','','','', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
 
     repeat
@@ -10052,21 +9974,21 @@ var
      if (ZaehlwerkeIst = 2) then
      begin
        ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET','', x(r, 'Zaehler_Nummer'), r);
-       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','HT', x(r, 'ZaehlerStandAlt'), r, true);
-       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','NT', x(r, 'NA'), r, true);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','001', x(r, 'ZaehlerStandAlt'), r, true);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','002', x(r, 'NA'), r, true);
 
        ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
-       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','HT', x(r, 'ZaehlerStandNeu'), r, true);
-       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','NT', x(r, 'NN'), r, true);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','001', x(r, 'ZaehlerStandNeu'), r, true);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','002', x(r, 'NN'), r, true);
        break;
      end;
 
      if p_Melde_Eintarif_in_NT then
      begin
        ACT('Seriennummer Ausbaugerät','','MECH-SERINFO','AGERAET','', x(r, 'Zaehler_Nummer'), r);
-       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','NT', x(r, 'ZaehlerStandAlt'), r, true);
+       ACT('Zählerstand Ausbaugerät','','MECH-ZW','AGERAET','002', x(r, 'ZaehlerStandAlt'), r, true);
        ACT('Seriennummer Einbaugerät','','MECH-SERNRNEU','EGERAET','',x(r, 'ZaehlerNummerNeu'), r);
-       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','NT', x(r, 'ZaehlerStandNeu'), r, true);
+       ACT('Zählerstand Einbaugerät','','MECH-ZW','EGERAET','002', x(r, 'ZaehlerStandNeu'), r, true);
        break;
      end;
 
@@ -10077,93 +9999,6 @@ var
 
     until yet;
 
-    (*
-
-    Reste aus Argos 2007
-
-    // :
-    // taet('Gerät ausgebaut', 'ja', r);
-    // -> ACT('Gerät ausgebaut','MECH-AUSGEBAUT','AGERAET','ja', r);
-
-    OptTaet('1. gescheiterter Versuch', x(r, 'V1'), r);
-    OptTaet('2. gescheiterter Versuch', x(r, 'V2'), r);
-    OptTaet('Unterschrift Monteur', x(r, 'MonteurText') + '(' + x(r, 'MonteurHandy') + ')', r);
-
-    OptTaet('Bemerkung', cutblank(x(r, 'I1') + ' ' + x(r, 'I2') + ' ' + x(r, 'I3')), r);
-
-    //
-    OptDiff('MOTAGEKENN', 'Korr. MontagekennzeichenNr', x_optional(r, 'SA'), r);
-    OptTaet('PlombierungOK', x_optional_X(r, 'SB'), r);
-    OptTaet('Mangel sichtbar', x_optional_X(r, 'SC'), r);
-
-    OptDiff('SPERRMKENN', 'Korr. Sperrmöglichkeitnr.', x_optional(r, 'A1'), r);
-
-    OptTaet('Korr. Verbrauchsstelle', x_optional(r, 'A2'), r);
-
-    OptTaet('Korr. Standortnr', x_optional(r, 'A3'), r);
-    OptTaet('Korr. Standortzusatz', x_optional(r, 'A4'), r);
-    OptTaet('Korr. Standortzusatz Freitext', x_optional(r, 'A5'), r);
-
-    OptTaet('Mängelkarte', x_optional_X(r, 'A6'), r);
-    OptTaet('Mängelart', x_optional(r, 'A7'), r);
-
-    OptTaet('Spannungsunterbrechung', x_optional(r, 'SD'), r);
-    OptTaet('Dauer Spannungsausfall', x_optional(r, 'N1'), r);
-
-    // Opttaet('TRE Einbau',x_optional(r,'N2'),r);
-    OptTaet('Rundsteuerempfänger Ausbau', x_optional(r, 'N2'), r);
-    // Opttaet('TRE-Huckepack neu',x_optional(r,'TA'),r);
-    OptTaet('Huckepack-TRE', x_optional(r, 'TA'), r);
-    // Opttaet('TRE-Kommando Einzeln neu',x_optional(r,'TB'),r);
-    OptTaet('TRE-Kommando Einzeln', x_optional(r, 'TB'), r);
-
-    //
-    repeat
-
-      if x_optional_upper(r, 'B1') = 'X' then
-      begin
-        taet('KFR-Ventile', 'RVN', r);
-        break;
-      end;
-
-      if x_optional_upper(r, 'B2') = 'X' then
-      begin
-        taet('KFR-Ventile', 'RVD', r);
-        break;
-      end;
-
-      if x_optional_upper(r, 'B3') = 'J' then
-      begin
-        taet('KFR-Ventile', 'RVP', r);
-        break;
-      end;
-
-      if x_optional_upper(r, 'B3') = 'N' then
-      begin
-        taet('KFR-Ventile', 'RVO', r);
-        break;
-      end;
-
-    until yet;
-    *)
-
-    (*
-      OptTaet('Korr. Verbrauchsstelle',x_optional(r,'I1'),r);
-      OptTaet('Korr. Standortzusatz Freitext',
-      cutblank(
-      x_optional(r,'I2')+' '+
-      x_optional(r,'I3') ),r);
-      OptTaet('Anschlussobjekthinweis',x_optional(r,'I4'),r);
-    *)
-
-    (*
-      taet('Korr. Standort TXT',
-      cutblank(
-      x(r, 'I3') + '|' +
-      x(r, 'I4') + '|' +
-      x(r, 'N5') + ' ' + x(r, 'I6')
-      ), r);
-    *)
     Pop;
 
     if RollBack then
@@ -10268,7 +10103,7 @@ begin
         Optionen := cutblank(getCellValue(2, succ(cARGOS)).ToStringInvariant);
 
         // Optionen setzen ...
-        if pos('x',Optionen)>0 then
+        if (pos('x',Optionen)>0) then
          p_Melde_Eintarif_in_NT := true;
       end;
 
@@ -10365,7 +10200,7 @@ begin
             else
             begin
               if assigned(sBericht) then
-                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in XML.BLA nicht gefunden!');
+                sBericht.add('(RID=' + RID + ') ARGOS "' + inttostr(Argos) + '" in '+cARGOS_2018_XML_SAVE + cBL_FileExtension+' nicht gefunden!');
             end;
           end
           else

@@ -15,6 +15,27 @@ Werten diese zeilenorientiert ausgeben kann oder umgekehrt.
 
 @<a href="http://orgamon.org/mediawiki/index.php/Oc"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 1.266 (24.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: Wegfall des Schlüssels "TARIF" (HT/NT)
+ Neu: Argos-2018: Neu Schlüssel "ZWNUMMER" (001/002)
+
+Rev 1.265 (24.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: im <BEZEICHNER> "Verbrauchsstelle Lagezusatz NEU": Fallback auf "Zählerraum"
+
+Rev 1.264 (24.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: im <BEZEICHNER> "Verbrauchsstelle Lagezusatz NEU": Vorbelegung aus "ZM_KLASSEN, CHANGE-VS_LGZUSATZ, PRUEF,"
+
+Rev 1.263 (24.05.18) Andreas Filsinger
+
+ Neu: Argos-2018: neuer <BEZEICHNER>: Zähler ausgebaut
+ Neu: Argos-2018: neuer <BEZEICHNER>: Plombierung i.O.
+ Neu: Argos-2018: neuer <BEZEICHNER>: Mangel vorhanden
+ Neu: Argos-2018: neuer <BEZEICHNER>: Versorg. Unterbrechung
+ Neu: Argos-2018: neuer <BEZEICHNER>: Verbrauchsstelle Lagezusatz NEU
+
 Rev 1.262 (22.05.18) Andreas Filsinger
 
  Neu: Argos-2018: <BEZEICHNER> müssen stimmen
