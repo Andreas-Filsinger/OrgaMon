@@ -1913,11 +1913,13 @@ var
   WarEbenErloesKonto: boolean;
   WorkPath, _WorkPath : string;
   RechnungFName, ZipFName : string;
+  sPDF: TStringList;
 
   // caching
   MASTER_R: Integer;
   Konto: string;
   DATUM: TAnfixDate;
+
 begin
 
   //
@@ -2012,8 +2014,14 @@ begin
         end;
         sCSV.add(HugeSingleLine(sInitialerBuchungssatz, ';'));
 
-        sFolgeVorgaenger := TStringList.Create;
+        // Nun alle zugehörigen Belege kopieren
+        sPDF := b_r_PDF(FieldByName('MASTER_R').AsInteger);
+        for n := 0 to pred(sPDF.count) do
+         FileCopy(sPDF[n],WorkPath+ExtractFileName(sPDF[n]));
+        sPDF.Free;
+
         // Nun die Folge-Buchungssätze
+        sFolgeVorgaenger := TStringList.Create;
         with cFOLGE do
         begin
           ParamByName('CROSSREF').AsInteger := MASTER_R;
@@ -2135,10 +2143,6 @@ begin
     // zip
     ZipFName := IntToStr(Bis) + cZIPExtension;
     zip('*', _WorkPath+ZipFName, infozip_RootPath + '=' + WorkPath);
-
-//    FileMove(_WorkPath+ZipFName, WorkPath+ZipFName);
-
-    //
     openShell(WorkPath);
   end;
 
@@ -5779,21 +5783,6 @@ var
   end;
  end;
 
- function CheckFile(Needle,Haystack: string):boolean;
- var
-  k : integer;
- begin
-   repeat
-    k := pos(Needle,HayStack);
-    if (k=0) then
-    begin
-      result := false;
-      break;
-    end;
-    result := (pos(HayStack[k+length(Needle)],cZiffern)=0);
-   until yet;
- end;
-
  function DokumentVerzeichnis_PERSON_R(Dir: string):Integer;
  begin
    result := StrToIntDef(copy(Dir,1,10),0);
@@ -5862,7 +5851,7 @@ begin
       repeat
        FoundDokument := false;
        for n := 0 to pred(AlleDokumente.Count) do
-        if CheckFile(STEMPEL,AlleDokumente[n]) then
+        if b_r_Stempel_CheckFile(STEMPEL,AlleDokumente[n]) then
         begin
           PERSON_R_IST := DokumentVerzeichnis_PERSON_R(AlleDokumente[n]);
           FoundDokument := true;

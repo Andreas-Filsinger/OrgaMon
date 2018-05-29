@@ -267,21 +267,13 @@ begin
     PDF := html2pdf(FName);
     PDF.free;
    end;
-    ErrorMsg := PDF.values['ERROR'];
-    if (ErrorMsg<>'') then
-     break;
-    FName_pdf := PDF.Values['ConversionOutFName'];
 
-    if not(
-    begin
-      ErrorMsg := 'die PDF-Erstellung ist nicht erfolgt';
-      break;
-    end;
+   if FileExists(FName_pdf) then
+    openShell(FName_PDF)
+   else
+    ShowMEssage('die PDF-Erstellung ist nicht erfolgt');
 
-
-   openShell(FName_PDF);
   end;
-
 end;
 
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);

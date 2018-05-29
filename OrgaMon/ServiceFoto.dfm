@@ -74,7 +74,7 @@
     Top = 91
     Width = 815
     Height = 530
-    ActivePage = TabSheet6
+    ActivePage = TabSheet7
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
