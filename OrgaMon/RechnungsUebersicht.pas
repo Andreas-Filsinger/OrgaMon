@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    SpeedButton1: TSpeedButton;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -69,6 +70,7 @@ type
     procedure Image4Click(Sender: TObject);
     procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
       var AColor: TColor; AFont: TFont);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure setSQL;
@@ -232,6 +234,56 @@ begin
   end;
 end;
 
+procedure TFormRechnungsUebersicht.SpeedButton1Click(Sender: TObject);
+var
+ FName : string;
+ FName_PDF : string;
+ PDF : TStringList;
+begin
+  // Zeige das PDF Dokument
+  with IB_Query1 do
+  begin
+   repeat
+    FName := e_r_BelegFNameCombined(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+    FName := e_r_BelegFName(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+   until yet;
+
+   FName_PDF := ExtractFileNameWithoutExtension(FName) + '.pdf';
+
+   if not(FileExists(FName_pdf)) then
+   begin
+    PDF := html2pdf(FName);
+    PDF.free;
+   end;
+    ErrorMsg := PDF.values['ERROR'];
+    if (ErrorMsg<>'') then
+     break;
+    FName_pdf := PDF.Values['ConversionOutFName'];
+
+    if not(
+    begin
+      ErrorMsg := 'die PDF-Erstellung ist nicht erfolgt';
+      break;
+    end;
+
+
+   openShell(FName_PDF);
+  end;
+
+end;
+
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);
 begin
   openShell(cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger));
@@ -259,7 +311,7 @@ begin
      break;
 
    until yet;
-    openShell(FName);
+   openShell(FName);
   end;
 end;
 

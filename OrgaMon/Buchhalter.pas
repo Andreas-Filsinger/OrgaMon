@@ -225,6 +225,9 @@ type
     Button23: TButton;
     ComboBox3: TComboBox;
     JvFormStorage1: TJvFormStorage;
+    SpeedButton49: TSpeedButton;
+    SpeedButton50: TSpeedButton;
+    Label27: TLabel;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -322,6 +325,8 @@ type
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
+    procedure SpeedButton49Click(Sender: TObject);
+    procedure SpeedButton50Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -357,6 +362,10 @@ type
 
     // ausführlichere Suche AN/AUS
     mehrDebis: boolean;
+
+    // ToDo Text aus Datei anzeigen?
+    ToDoMode : boolean;
+    ToDoList : TStringList;
 
     // Aktueller Forderungsausgleich-Vorschlag
     // Grundlage: cBuch_HeaderLineForderungen
@@ -1796,7 +1805,6 @@ end;
 
 procedure TFormBuchhalter.Button22Click(Sender: TObject);
 begin
-
   if BelegMode then
   begin
     Button22.Caption := '';
@@ -1969,10 +1977,7 @@ begin
 
         // Vorbereitungen für "STEMPEL"
         STEMPEL_R := FieldByName('STEMPEL_R').AsInteger;
-        if (STEMPEL_R >= cRID_FirstValid) then
-          STEMPEL := e_r_sqls('select PREFIX from STEMPEL where RID=' + inttostr(STEMPEL_R))
-        else
-          STEMPEL := '';
+        STEMPEL := b_r_Stempel(STEMPEL_R);
 
         // Ausgabe vorbereiten
         sInitialerBuchungssatz := TStringList.Create;
@@ -3240,6 +3245,7 @@ var
   DatensatzVorhanden: boolean;
   RowHeight: Integer;
   tmpColor: TColor;
+  Needle : String;
 begin
   if (ARow >= 0) then
     with DrawGrid1.canvas, IB_Cursor1 do
@@ -3315,6 +3321,23 @@ begin
                   TextOut(Rect.left + 2, Rect.top, 'neu');
                   font.Style := [];
                 end;
+
+              if ToDoMode then
+               if Fokusiert then
+               begin
+                 if not(assigned(ToDoList)) then
+                 begin
+                   ToDoList := TStringList.create;
+                   ToDoList.LoadFromFile(DiagnosePath+'ToDo-Buch.txt');
+                 end;
+                 Needle := FieldByName('MASTER_R').AsString+';';
+                 for n := 1 to pred(ToDoList.Count) do
+                  if pos(Needle,ToDoList[n])=1 then
+                  begin
+                   label27.Caption := nextp(ToDoList[n],';',1);
+                   break;
+                  end;
+               end;
               // draw(rect.left + 3, rect.top + 2, StatusBMPs[random(4)]); // Status
             end;
           1:
@@ -4920,8 +4943,6 @@ begin
 end;
 
 procedure TFormBuchhalter.setContext(RIDs: TgpIntegerList);
-var
-  n: Integer;
 begin
   BeginHourGlass;
   show;
@@ -5369,7 +5390,8 @@ begin
 
   with cBUCH do
   begin
-    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME, ');
+    sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
+    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, ');
     sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
     sql.addstrings(getSQLwhere);
     ApiFirst;
@@ -5386,7 +5408,9 @@ begin
         { } 'K' + FieldByName('NAME').AsString + ' ' +
         { } FieldByName('KONTO').AsString + ' ' +
         { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
-        { } 'BELEG' + FieldByName('BELEG_R').AsString, pointer(FieldByName('RID').AsInteger));
+        { } 'BELEG' + FieldByName('BELEG_R').AsString + ' ' +
+        { } b_r_Stempel(FieldbyName('STEMPEL_R').AsInteger)+FieldByName('STEMPEL_DOKUMENT').AsString,
+        { } pointer(FieldByName('RID').AsInteger));
       ApiNext;
     end;
   end;
@@ -5734,6 +5758,144 @@ begin
     ShowMessage('Dazu gibt es keine Liste');
 end;
 
+procedure TFormBuchhalter.SpeedButton49Click(Sender: TObject);
+
+var
+ AlleDokumente : TStringList;
+ AllePersonenVerzeichnisse : TStringList;
+
+ procedure addFiles(Mask:String);
+ var
+  n,m : integer;
+  FoundFiles : TStringList;
+ begin
+  FoundFiles := TStringList.create;
+  for n := 0 to pred(AllePersonenVerzeichnisse.Count) do
+  begin
+   dir( MyProgramPath + cRechnungPath + AllePersonenVerzeichnisse[n] + '\' + Mask + '*.pdf', FoundFiles);
+   if (FoundFiles.Count>0) then
+    for m := 0 to pred(FoundFiles.count) do
+      AlleDokumente.add(AllePersonenVerzeichnisse[n]+'\'+FoundFiles[m]);
+  end;
+ end;
+
+ function CheckFile(Needle,Haystack: string):boolean;
+ var
+  k : integer;
+ begin
+   repeat
+    k := pos(Needle,HayStack);
+    if (k=0) then
+    begin
+      result := false;
+      break;
+    end;
+    result := (pos(HayStack[k+length(Needle)],cZiffern)=0);
+   until yet;
+ end;
+
+ function DokumentVerzeichnis_PERSON_R(Dir: string):Integer;
+ begin
+   result := StrToIntDef(copy(Dir,1,10),0);
+ end;
+
+var
+ Stempel_SQL : TStringList;
+ lSTEMPEL_R : TgpIntegerList;
+ sSTEMPEL : TStringList;
+ n : integer;
+  cBUCH: TdboCursor;
+        STEMPEL : string;
+     UpDate_PERSON_R : boolean;
+     PERSON_R_IST : integer;
+     PERSON_R_SOLL : integer;
+       BUCH_R : Integer;
+       ToDoList: TStringList;
+       FoundDokument: boolean;
+begin
+  BeginHourGlass;
+  ToDoList := TStringList.create;
+  ToDoList.add('BUCH_R;TODO');
+  // berechne alle PDF Zuordnungen
+
+  // 1) sammle alle Datei-Masken (Stempel-Prefixe)
+  Stempel_SQL := TStringList.create;
+  with Stempel_SQL do
+  begin
+    add('select distinct STEMPEL_R from BUCH');
+    add('where');
+    add(' (STEMPEL_R is not null) and');
+    addstrings(getSQLwhere);
+  end;
+  lSTEMPEL_R := e_r_sqlm(Stempel_SQL.Text);
+  sSTEMPEL := e_r_sqlsl('select PREFIX from STEMPEL where RID in '+ ListasSQL(lSTEMPEL_R));
+
+  // 2) sammle alle Unterverzeichnisse, in denen Dokumente liegen
+  AllePersonenVerzeichnisse := TStringList.Create;
+  dir(MyProgramPath + cRechnungPath + cDirMask_Directory,  AllePersonenVerzeichnisse);
+
+  // 3) sammle alle Dokumente
+  AlleDokumente := TStringList.create;
+  for n := 0 to pred(sSTEMPEL.Count) do
+   addFiles(sSTEMPEL[n]+'-');
+
+  if DebugMode then
+   AlleDokumente.SaveToFile(DiagnosePath+'Stempel-Dokumente.txt');
+
+  // 4) gehe alle Buchungen durch und sehe nach, ob es ein Dokument dazu gibt
+  cBUCH := nCursor;
+  with cBUCH do
+  begin
+    sql.add('select * from BUCH where');
+    sql.Add(' (STEMPEL_R is not null) and ');
+    sql.addstrings(getSQLwhere);
+    sql.Add('order by');
+ sql.Add('DATUM,POSNO');
+    open;
+    ApiFirst;
+    while not(eof) do
+    begin
+      UpDate_PERSON_R := FieldByName('PERSON_R').IsNull;
+      PERSON_R_SOLL := FieldByName('PERSON_R').AsInteger;
+      BUCH_R := FieldByName('RID').AsInteger;
+      STEMPEL := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger) + '-' + FieldByName('STEMPEL_DOKUMENT').AsString;
+      repeat
+       FoundDokument := false;
+       for n := 0 to pred(AlleDokumente.Count) do
+        if CheckFile(STEMPEL,AlleDokumente[n]) then
+        begin
+          PERSON_R_IST := DokumentVerzeichnis_PERSON_R(AlleDokumente[n]);
+          FoundDokument := true;
+          if UpDate_PERSON_R then
+          begin
+           e_x_sql('update BUCH set PERSON_R='+inttostr(PERSON_R_IST)+' where RID='+inttostr(BUCH_R));
+           UpDate_PERSON_R := false;
+           PERSON_R_SOLL := PERSON_R_IST;
+          end;
+          if (PERSON_R_IST<>PERSON_R_SOLL) then
+          begin
+           ToDoList.Add(IntToStr(BUCH_R)+';'+'Dokument ist in falschem Verzeichnis (IST='+IntTOstr(PERSON_R_IST)+', SOLL='+INtTostr(PERSON_R_SOLL)+')');
+          end;
+        end;
+       if not(FoundDokument) then
+        ToDoList.Add(IntTostr(BUCH_R)+';'+'Dokument '+STEMPEL+' ist nicht vorhanden');
+      until yet;
+      ApiNext;
+    end;
+  end;
+
+
+  ToDoList.SaveToFile(DiagnosePath+'ToDo-Buch.txt');
+  openShell(DiagnosePath+'ToDo-Buch.txt');
+
+  Stempel_SQL.Free;
+  lSTEMPEL_R.Free;
+  sSTEMPEL.Free;
+  AllePersonenVerzeichnisse.Free;
+  ToDoList.Free;
+  EndHourGlass;
+end;
+
 procedure TFormBuchhalter.SpeedButton4Click(Sender: TObject);
 begin
   RefreshKontoCombos;
@@ -5859,6 +6021,35 @@ end;
 procedure TFormBuchhalter.SpeedButton6Click(Sender: TObject);
 begin
   SetColorAndAccount(cColor_Braun);
+end;
+
+procedure TFormBuchhalter.SpeedButton50Click(Sender: TObject);
+var
+  sOLAPFName: TStringList;
+  n: Integer;
+begin
+  // RID-Liste aus TO-DO-Laden!
+  if ToDoMode then
+  begin
+    ToDoMode := false;
+    if assigned(ToDoList) then
+     FreeAndNil(ToDoList);
+  end else
+  begin
+    BeginHourGlass;
+    sOLAPFName := TStringList.Create;
+    ItemKontoAuszugRIDs.clear;
+    sOLAPFName.LoadFromFile(DiagnosePath+'ToDo-Buch.txt');
+    for n := 1 to pred(sOLAPFName.count) do
+      ItemKontoAuszugRIDs.add(StrToIntDef(nextp(sOLAPFName[n],';',0), cRID_Null));
+    DrawGrid1.RowCount := ItemKontoAuszugRIDs.count;
+    RefreshKontoAuszugSaldo(0);
+    if (ItemKontoAuszugRIDs.count > 0) then
+      SecureSetRow(DrawGrid1, pred(ItemKontoAuszugRIDs.count));
+    sOLAPFName.free;
+    ToDoMode := true;
+    EndHourGlass;
+  end;
 end;
 
 procedure TFormBuchhalter.SpeedButton5Click(Sender: TObject);

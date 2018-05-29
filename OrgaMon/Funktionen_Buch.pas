@@ -168,6 +168,9 @@ function b_r_GutschriftAusLS(VORGANG: string): boolean;
 // deutsche IBAN zerlegen in BLZ und Kontonummer
 function IBAN_BLZ_Konto(IBAN: string): string;
 
+// Stempel
+function b_r_Stempel(STEMPEL_R: Integer):string;
+
 implementation
 
 uses
@@ -2654,6 +2657,14 @@ begin
     result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
   else
     result := false;
+end;
+
+function b_r_Stempel(STEMPEL_R: Integer):string;
+begin
+  if (STEMPEL_R >= cRID_FirstValid) then
+    result := e_r_sqls('select PREFIX from STEMPEL where RID=' + inttostr(STEMPEL_R))
+  else
+    result := '';
 end;
 
 end.

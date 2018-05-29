@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.366 (29.05.18) Andreas Filsinger
+
+ Neu: Buch: Suche nach <Stempel><Nummer> möglich, also "ER2740" oder "AR273"
+ Neu: Buch: Dokumentabgleich, fehlende ER- AR- Dokumente ..., erstellt To-Do-Liste
+ Neu: Buch: Einlesen einer toDo-Liste
+ Neu: Buch: Einsicht in die PDF-Dokumente
+ Neu: Buch: Ausgabe der ER-Belege in die Übergabe-Datei für den Steuerberater
+ Neu: Rechnungen: PDF ansehen (und ggf. erstellen falls nicht vorhanden)
+
 Rev 8.365 (25.05.18) Andreas Filsinger
 
  Neu: OSM: neue Server

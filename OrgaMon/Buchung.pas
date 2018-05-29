@@ -114,6 +114,7 @@ type
     Label8: TLabel;
     IB_Text3: TIB_Text;
     IB_Edit13: TIB_Edit;
+    SpeedButton49: TSpeedButton;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;
@@ -131,6 +132,7 @@ type
     procedure IB_Grid1DblClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
+    procedure SpeedButton49Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Historie_Read: integer;
@@ -361,16 +363,7 @@ begin
     IB_Memo3.readonly := ExterneQuelle;
 
     // Name des Stemples
-    if FieldByName('STEMPEL_R').IsNotNull then
-    begin
-      Label19.caption := e_r_sqls
-        ('select PREFIX from STEMPEL where RID=' + FieldByName('STEMPEL_R')
-          .AsString) + '-';
-    end
-    else
-    begin
-      Label19.caption := '';
-    end;
+    Label19.caption := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger);
 
     // Name des Gegenkontos
     Label20.caption := e_r_sqls
@@ -450,6 +443,11 @@ begin
   else
     beep;
 
+end;
+
+procedure TFormBuchung.SpeedButton49Click(Sender: TObject);
+begin
+  // Öffne die zugeordneten PDF
 end;
 
 procedure TFormBuchung.SpeedButton4Click(Sender: TObject);
