@@ -33,7 +33,7 @@ uses
   Classes;
 
 const
-  Version: single = 1.266; // ../rev/Oc.rev.txt
+  Version: single = 1.267; // ../rev/Oc.rev.txt
 
   Content_Mode_Michelbach = 1;
   Content_Mode_xls2xls = 3; // xls+Vorlage.xls -> xls
@@ -9518,7 +9518,6 @@ var
     end;
   end;
 
-
   function q { uestion } (tag: string; CloseTag: string = 'ACT'): string;
   var
     n: integer;
@@ -9822,9 +9821,9 @@ var
     if hmkt(HOSTKEY,MERKMAL,KNOPFGRUPPE,ZWNUMMER) then
     begin
       push('ACT');
+      single('BEZEICHNER', BEZEICHNER);
       if NumberFormat then
       begin
-       single('BEZEICHNER', BEZEICHNER);
        speak('<!-- '+IntToStr(TAET_NACHKOMMA)+' Nachkommastellen'+' -->');
        Ersetze(',','.',Ergebnis);
        if (TAET_NACHKOMMA<1) then
@@ -9863,9 +9862,7 @@ var
 
          until yet;
        end;
-      end else
-      begin
-       single('BEZEICHNER', BEZEICHNER);
+       Ersetze('.',',',Ergebnis);
       end;
       clone('TAE_ID');
       single('ERG', Ergebnis);
