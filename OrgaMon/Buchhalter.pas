@@ -3335,6 +3335,7 @@ begin
                    ToDoList.LoadFromFile(DiagnosePath+'ToDo-Buch.txt');
                  end;
                  Needle := FieldByName('MASTER_R').AsString+';';
+                 label27.Caption := '';
                  for n := 1 to pred(ToDoList.Count) do
                   if pos(Needle,ToDoList[n])=1 then
                   begin
@@ -4372,7 +4373,7 @@ begin
         for k := 1 to n do
         begin
           v := TgpIntegerList.Create;
-          while (nk(n, k, v)) do
+          while (n_over_k(n, k, v)) do
           begin
             if isequal(Zahlung, sForderungen_saldo(v)) then
             begin
@@ -5803,6 +5804,9 @@ var
        FoundDokument: boolean;
 begin
   BeginHourGlass;
+  if ToDoMode then
+   SpeedButton50Click(Sender);
+
   ToDoList := TStringList.create;
   ToDoList.add('BUCH_R;TODO');
   // berechne alle PDF Zuordnungen
@@ -5882,6 +5886,7 @@ begin
   sSTEMPEL.Free;
   AllePersonenVerzeichnisse.Free;
   ToDoList.Free;
+  SpeedButton50Click(Sender);
   EndHourGlass;
 end;
 
@@ -6021,22 +6026,23 @@ begin
   if ToDoMode then
   begin
     ToDoMode := false;
+    label27.Caption := '-';
     if assigned(ToDoList) then
      FreeAndNil(ToDoList);
   end else
   begin
     BeginHourGlass;
+    ToDoMode := true;
     sOLAPFName := TStringList.Create;
     ItemKontoAuszugRIDs.clear;
     sOLAPFName.LoadFromFile(DiagnosePath+'ToDo-Buch.txt');
     for n := 1 to pred(sOLAPFName.count) do
       ItemKontoAuszugRIDs.add(StrToIntDef(nextp(sOLAPFName[n],';',0), cRID_Null));
+    sOLAPFName.free;
     DrawGrid1.RowCount := ItemKontoAuszugRIDs.count;
     RefreshKontoAuszugSaldo(0);
     if (ItemKontoAuszugRIDs.count > 0) then
       SecureSetRow(DrawGrid1, pred(ItemKontoAuszugRIDs.count));
-    sOLAPFName.free;
-    ToDoMode := true;
     EndHourGlass;
   end;
 end;
