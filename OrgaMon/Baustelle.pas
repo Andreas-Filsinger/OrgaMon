@@ -3127,6 +3127,7 @@ begin
   EnsureEntry(cE_AuchAlsXLSunmoeglich, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsHTML, IB_Memo5.Lines);
   EnsureEntry(cE_AuchAlsPDF, IB_Memo5.Lines);
+  EnsureEntry(cE_OhneHTML, IB_Memo5.Lines);
   EnsureEntry(cE_HTMLBenennung, IB_Memo5.Lines);
   EnsureEntry(cE_OhneStandardXLS, IB_Memo5.Lines);
   EnsureEntry(cE_EinsZuEins, IB_Memo5.Lines);

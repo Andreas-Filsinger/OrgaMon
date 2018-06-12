@@ -32,14 +32,15 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  Grids,
-  StdCtrls, ComCtrls,
-  ToolWin, ImgList, ExtCtrls,
-  Mask, JvGIF,
+  System.ImageList, Grids, StdCtrls,
+  ComCtrls, ToolWin, ImgList,
+  ExtCtrls, Mask, JvGIF,
   // IBO
   IB_UpdateBar, IB_Grid,
   IB_Components, IB_Access,
-  IB_EditButton, IB_Controls, System.ImageList;
+  IB_EditButton, IB_Controls,
+  // OrgaMon
+  BBelege;
 
 type
   TFormBestellArbeitsplatz = class(TForm)
@@ -235,7 +236,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Lager, Artikel, gplists,
-  Belege, BBelege, Person,
+  Belege, Person,
   WarenBewegung, html, FolgeSetzen,
   CareTakerClient, ArtikelBackOrder, OLAP,
   Datenbank, wanfix32, dbOrgaMon;

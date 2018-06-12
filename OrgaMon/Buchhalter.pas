@@ -3386,7 +3386,7 @@ begin
                 if b_r_GutschriftAusLS(VORGANG) then
                 begin
                   tmpColor := brush.color;
-                  brush.color := HTMLColor2TColor($FFBE00);
+                  brush.color := HTMLColor2TColor(cDTA_Color);
                   TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
                   brush.color := tmpColor;
                 end
@@ -3603,7 +3603,7 @@ begin
               if b_r_GutschriftAusLS(VORGANG) then
               begin
                 tmpColor := brush.color;
-                brush.color := HTMLColor2TColor($FFBE00);
+                brush.color := HTMLColor2TColor(cDTA_Color);
                 TextOut(Rect.left + 2, Rect.top + cPlanY, cVorgang_LSG);
                 brush.color := tmpColor;
               end
@@ -5396,7 +5396,7 @@ begin
   with cBUCH do
   begin
     sql.add('select RID, TEXT, BEMERKUNG, BETRAG, NAME,');
-    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, ');
+    sql.Add('STEMPEL_R, STEMPEL_DOKUMENT, IBAN, ');
     sql.add('KONTO, GEGENKONTO, BELEG_R, EREIGNIS_R from BUCH where');
     sql.addstrings(getSQLwhere);
     ApiFirst;
@@ -5413,6 +5413,7 @@ begin
         { } 'K' + FieldByName('NAME').AsString + ' ' +
         { } FieldByName('KONTO').AsString + ' ' +
         { } 'G' + FieldByName('GEGENKONTO').AsString + ' ' +
+        { } FieldByName('IBAN').AsString + ' ' +
         { } 'BELEG' + FieldByName('BELEG_R').AsString + ' ' +
         { } b_r_Stempel(FieldbyName('STEMPEL_R').AsInteger)+FieldByName('STEMPEL_DOKUMENT').AsString,
         { } pointer(FieldByName('RID').AsInteger));
@@ -5727,7 +5728,7 @@ begin
         { } 'where EREIGNIS_R=' +
         { } inttostr(EREIGNIS_R));
 
-      // das Ereignis verschwinden lassen abschliessen
+      // das Ereignis selbst verschwinden lassen abschliessen
       e_w_HBCI_EreignisDel(EREIGNIS_R, 'Wiederholung angefordert!');
       IB_Query2.Refresh;
 

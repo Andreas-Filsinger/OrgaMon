@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="293">
+    <Units Count="294">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -2088,13 +2088,21 @@
       </Unit291>
       <Unit292>
         <Filename Value="..\..\fpc\tests\test\tasm27a.pp"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="18"/>
         <TopLine Value="118"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit292>
+      <Unit293>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33818.pp"/>
+        <UnitName Value="Project1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="19"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit293>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>

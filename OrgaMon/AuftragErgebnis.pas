@@ -1939,6 +1939,8 @@ begin
                     Log(cERRORText + ' HTML zu PDF Konvertierung: ' + PDF_ResultInfoStr, BAUSTELLE_R);
                   end else
                   begin
+                    if (Settings.values[cE_OhneHTML] = cINI_Activate) then
+                      Files.delete(pred(Files.count));
                     SingleFname := PDF.Values['ConversionOutFName'];
                     FileTouch(SingleFName, FileDateTime(PDF_FromWhat));
                     Files.add(SingleFName);

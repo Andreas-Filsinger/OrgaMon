@@ -85,7 +85,7 @@ var
 implementation
 
 uses
-  globals, GUIHelp, html,
+  globals, GUIHelp, html, DTA,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -342,9 +342,7 @@ var
   ForderungsStatus: Integer;
 begin
 
-  // Im Status "gelb" bitte GAR nix zeichnen oder verändern,
-  // sonst wird verhindert dass man den wichtigen geändert sTatus überhuapt
-  // als user erkennen und sehen kann!
+  // Status "gelb" hat vor anderen Farben Vorrang
   if (IB_Query1.State = dssedit) or not(IB_Query1.active) then
     exit;
 
@@ -391,7 +389,7 @@ begin
           cForderung_Lastschrift_Vorgemerkt:
             LastBackgroundCol := HTMLColor2TColor($FFEE30);
           cForderung_Lastschrift_Erhalten:
-            LastBackgroundCol := HTMLColor2TColor($FFBE00); // SEPA - Color
+            LastBackgroundCol := HTMLColor2TColor(cDTA_Color);
         end;
 
         //

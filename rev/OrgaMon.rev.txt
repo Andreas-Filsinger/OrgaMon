@@ -19,6 +19,20 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.369 (12.06.18) Andreas Filsinger
+
+ Bug: Person: Unterer Teil (Anschrift) konnte mit Firebirdsql-Server 2.5.8 nicht mehr
+      geändert werden.
+ Bug: Konto: Suche nach "KONTO" Inhalten war nicht (mehr?) möglich
+
+Rev 8.368 (07.06.18) Andreas Filsinger
+
+ Neu: Mandat: Suche nach IBAN
+
+Rev 8.367 (06.06.18) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis, weglassen des HTML durch OhneHTML=JA
+
 Rev 8.366 (30.05.18) Andreas Filsinger
 
  Neu: Buch: Suche nach <Stempel><Nummer> möglich, also "ER2740" oder "AR273"
