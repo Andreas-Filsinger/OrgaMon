@@ -240,18 +240,26 @@ var
 implementation
 
 uses
-  globals, anfix32, html,
-  Person, main, mwst, GUIHelp,
+  // Tools
+  Jvgnugettext,
+
+  // Anfix
+  anfix32, wanfix32,
+  html, gplists, Geld,
+
+  // OrgaMon-Core
+  globals, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
-  funktionen_Auftrag,
-  Artikel,
-  ArtikelVerlag, Lager,
-  AusgabeArt,
+  Funktionen_Auftrag,
+
+  // OrgaMon-GUI
+  Datenbank,
+  Person, main, mwst, GUIHelp,
+  Artikel, ArtikelVerlag, Lager,
   FolgeSetzen, ArtikelBackorder,
-  ArtikelPreis, dbOrgaMon, CareTakerClient,
-  gplists, OLAP, Jvgnugettext,
-  Geld, Datenbank, wanfix32;
+  ArtikelPreis,  CareTakerClient,
+  OLAP;
 
 const
   cPlanY = 30;

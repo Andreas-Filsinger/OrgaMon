@@ -282,6 +282,8 @@ var
 implementation
 
 uses
+  IB_Controls, IB_Grid, Jvgnugettext,
+  dbOrgaMon, wanfix32,systemd,
   Funktionen_Basis,
   Funktionen_Beleg,
   html, Person, Serie,
@@ -294,9 +296,8 @@ uses
   CreatorMain, wordindex, AusgangsRechnungen,
   Inventur, Ereignis, Tagesabschluss,
   Versender, VersenderPaketID, BelegRecherche,
-  BaseUpdate, ArtikelVerlag,
-  AusgabeArt, Prorata, Aktion,
-  BestellArbeitsplatz, WebShopConnector,
+  BaseUpdate, ArtikelVerlag, Prorata,
+  Aktion, BestellArbeitsplatz, WebShopConnector,
   NatuerlicheResourcen, ArtikelAusgang, PlakatDruck,
   ArtikelPakete, ArtikelRang, ArtikelEingang,
   ArtikelLeistung, Replikation,
@@ -316,13 +317,12 @@ uses
   AuftragGeo, IniFiles, TPUmain,
   GeoPostleitzahlen, ServiceFoto, ServiceApp,
   QTicketArbeitsplatz, OLAPArbeitsplatz,
-  ZahlungECconnect, Medium, Jvgnugettext,
-  IB_Controls,   IB_Grid,
-Vertrag, Kontext,
-  BuchBarKasse, dbOrgaMon, wanfix32,
+  ZahlungECconnect, Medium,
+  Vertrag, Kontext,
+  BuchBarKasse,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
-  ArtikelKasse, Cron, systemd, ArtikelAusgabeArt;
+  ArtikelKasse, Cron, ArtikelAusgabeArt;
 {$R *.DFM}
 
 procedure TFormMain.FormCreate(Sender: TObject);
