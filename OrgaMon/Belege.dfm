@@ -762,8 +762,8 @@ object FormBelege: TFormBelege
       938
       193)
     object Label2: TLabel
-      Left = 27
-      Top = 8
+      Left = 89
+      Top = 7
       Width = 35
       Height = 13
       Caption = 'S&uche'
@@ -771,7 +771,7 @@ object FormBelege: TFormBelege
     end
     object Label3: TLabel
       Left = 487
-      Top = 8
+      Top = 7
       Width = 7
       Height = 13
       Caption = '0'
@@ -779,8 +779,8 @@ object FormBelege: TFormBelege
     object SpeedButton2: TSpeedButton
       Left = 909
       Top = 2
-      Width = 23
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = 'Probestimmen ansehen'
       Anchors = [akTop, akRight]
       Glyph.Data = {
@@ -813,13 +813,12 @@ object FormBelege: TFormBelege
       ParentShowHint = False
       ShowHint = True
       OnClick = SpeedButton2Click
-      ExplicitLeft = 904
     end
     object SpeedButton9: TSpeedButton
       Left = 741
       Top = 2
-      Width = 23
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = 'OLAP Ergebnis importieren'
       Anchors = [akTop, akRight]
       Glyph.Data = {
@@ -869,13 +868,12 @@ object FormBelege: TFormBelege
       ParentShowHint = False
       ShowHint = True
       OnClick = SpeedButton9Click
-      ExplicitLeft = 736
     end
     object SpeedButton14: TSpeedButton
       Left = 790
       Top = 2
-      Width = 21
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = '... im Contextfenster'
       Anchors = [akTop, akRight]
       Glyph.Data = {
@@ -908,13 +906,12 @@ object FormBelege: TFormBelege
       ParentShowHint = False
       ShowHint = True
       OnClick = SpeedButton14Click
-      ExplicitLeft = 785
     end
     object SpeedButton15: TSpeedButton
       Left = 814
       Top = 2
-      Width = 23
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = '... im Contextfenster'
       Anchors = [akTop, akRight]
       Glyph.Data = {
@@ -947,13 +944,12 @@ object FormBelege: TFormBelege
       ParentShowHint = False
       ShowHint = True
       OnClick = SpeedButton15Click
-      ExplicitLeft = 809
     end
     object SpeedButton16: TSpeedButton
       Left = 716
       Top = 2
-      Width = 23
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = 'zeige Neuanlagen'
       Anchors = [akTop, akRight]
       Glyph.Data = {
@@ -986,11 +982,10 @@ object FormBelege: TFormBelege
       ParentShowHint = False
       ShowHint = True
       OnClick = SpeedButton16Click
-      ExplicitLeft = 711
     end
     object SpeedButton27: TSpeedButton
-      Left = 4
-      Top = 4
+      Left = 64
+      Top = 3
       Width = 22
       Height = 22
       Hint = 'Suchindex neu erstellen'
@@ -1110,16 +1105,16 @@ object FormBelege: TFormBelege
       Left = 766
       Top = 2
       Width = 22
-      Height = 23
+      Height = 22
       Anchors = [akTop, akRight]
       Caption = '&A'
       TabOrder = 3
       OnClick = Button8Click
     end
     object Edit1: TEdit
-      Left = 194
-      Top = 4
-      Width = 287
+      Left = 128
+      Top = 3
+      Width = 353
       Height = 22
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1133,8 +1128,8 @@ object FormBelege: TFormBelege
     object Button22: TButton
       Left = 886
       Top = 2
-      Width = 21
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = 'Demoaufnahme abspielen'
       Anchors = [akTop, akRight]
       Caption = '4'
@@ -1152,8 +1147,8 @@ object FormBelege: TFormBelege
     object Button24: TButton
       Left = 837
       Top = 2
-      Width = 23
-      Height = 23
+      Width = 22
+      Height = 22
       Anchors = [akTop, akRight]
       Caption = '&K'
       TabOrder = 4
@@ -1162,8 +1157,8 @@ object FormBelege: TFormBelege
     object Button32: TButton
       Left = 863
       Top = 2
-      Width = 21
-      Height = 23
+      Width = 22
+      Height = 22
       Hint = 'Zeige Ausgabearten'
       Anchors = [akTop, akRight]
       Caption = 'aa'
@@ -1173,10 +1168,10 @@ object FormBelege: TFormBelege
       OnClick = Button32Click
     end
     object IB_Edit1: TIB_Edit
-      Left = 67
-      Top = 4
-      Width = 121
-      Height = 21
+      Left = 3
+      Top = 3
+      Width = 57
+      Height = 22
       DataField = 'AUSGABEART_R'
       DataSource = IB_DataSource2
       TabOrder = 1
@@ -2345,7 +2340,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100640110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100680110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

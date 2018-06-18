@@ -77,7 +77,6 @@ uses
   Budget in 'Budget.pas' {FormBudget},
   Arbeitszeit in 'Arbeitszeit.pas' {FormArbeitszeit},
   GeoPostleitzahlen in 'GeoPostleitzahlen.pas' {FormGeoPostleitzahlen},
-  ArtikelAusgabeart in 'ArtikelAusgabeart.pas' {FormArtikelAusgabeart},
   Zahlungsart in 'Zahlungsart.pas' {FormZahlungsart},
   Musiker in 'Musiker.pas' {FormMusiker},
   FolgeSetzen in 'FolgeSetzen.pas' {FormFolgeSetzen},
@@ -285,7 +284,6 @@ begin
   Application.CreateForm(TFormBudget, FormBudget);
   Application.CreateForm(TFormArbeitszeit, FormArbeitszeit);
   Application.CreateForm(TFormGeoPostleitzahlen, FormGeoPostleitzahlen);
-  Application.CreateForm(TFormArtikelAusgabeart, FormArtikelAusgabeart);
   Application.CreateForm(TFormZahlungsart, FormZahlungsart);
   Application.CreateForm(TFormMusiker, FormMusiker);
   Application.CreateForm(TFormFolgeSetzen, FormFolgeSetzen);

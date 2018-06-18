@@ -58,13 +58,12 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
   end
   object Image4: TImage
     Left = 741
-    Top = 4
+    Top = 3
     Width = 28
-    Height = 20
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Vorbereiten einer EC-Zahlung (ohne Karte)'
     Anchors = [akTop, akRight]
-    AutoSize = True
     ParentShowHint = False
     Picture.Data = {
       07544269746D6170C6060000424DC60600000000000036000000280000001C00
@@ -126,8 +125,8 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     OnClick = Image4Click
   end
   object SpeedButton1: TSpeedButton
-    Left = 801
-    Top = 3
+    Left = 799
+    Top = 2
     Width = 23
     Height = 22
     Hint = 'Probestimmen ansehen'

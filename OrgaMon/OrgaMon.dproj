@@ -381,9 +381,6 @@
         <DCCReference Include="GeoPostleitzahlen.pas">
             <Form>FormGeoPostleitzahlen</Form>
         </DCCReference>
-        <DCCReference Include="ArtikelAusgabeart.pas">
-            <Form>FormArtikelAusgabeart</Form>
-        </DCCReference>
         <DCCReference Include="Zahlungsart.pas">
             <Form>FormZahlungsart</Form>
         </DCCReference>

@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.370 (18.06.18) Andreas Filsinger
+
+ Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE
+ Neu: Beleg: Artikel-Auswahl: Menge wird mit der MINDESTBESTELLMENGE vorbelegt (wenn vorhanden)
+ Neu: Beleg: Beim Wechsel auf eine Ausgabeart
+
 Rev 8.369 (12.06.18) Andreas Filsinger
 
  Bug: Person: Unterer Teil (Anschrift) konnte mit Firebirdsql-Server 2.5.8 nicht mehr
@@ -12296,6 +12302,17 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.370
+
+alter table ARTIKEL
+add MINDESTBESTELLMENGE integer;
+
+alter table ARTIKEL_AA
+add MINDESTBESTELLMENGE integer;
+
+alter table AUSGABEART
+add MINDESTBESTELLMENGE integer;
 
 :8.355
 
