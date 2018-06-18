@@ -101,7 +101,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableHighDPI>true</AppEnableHighDPI>
-        <VerInfo_Build>1363</VerInfo_Build>
+        <VerInfo_Build>1364</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -110,7 +110,7 @@
         <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
         <Debugger_RunParams>nosplash</Debugger_RunParams>
-        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1363;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1364;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -282,8 +282,8 @@
         <DCCReference Include="PreisCode.pas">
             <Form>FormPreisCode</Form>
         </DCCReference>
-        <DCCReference Include="AusgabeArt.pas">
-            <Form>FormAusgabeArt</Form>
+        <DCCReference Include="ArtikelAusgabeArt.pas">
+            <Form>FormArtikelAusgabeArt</Form>
         </DCCReference>
         <DCCReference Include="Prorata.pas">
             <Form>FormProrata</Form>
@@ -419,6 +419,9 @@
         </DCCReference>
         <DCCReference Include="PersonMailer.pas">
             <Form>FormPersonMailer</Form>
+        </DCCReference>
+        <DCCReference Include="ArtikelAusgabeartAuswahl.pas">
+            <Form>FormArtikelAusgabeartAuswahl</Form>
         </DCCReference>
         <DCCReference Include="ArtikelPreis.pas">
             <Form>FormArtikelPreis</Form>
@@ -655,10 +658,6 @@
         <DCCReference Include="..\PASconTools\Foto.pas"/>
         <DCCReference Include="JonDaExec.pas"/>
         <DCCReference Include="FotoExec.pas"/>
-        <DCCReference Include="ArtikelAusgabeartAuswahl.pas">
-            <Form>FormArtikelAusgabeartAuswahl</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\PASconTools\systemd.pas"/>
         <DCCReference Include="ArtikelEingang.pas">
             <Form>FormArtikelEingang</Form>

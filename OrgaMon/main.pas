@@ -322,7 +322,7 @@ Vertrag, Kontext,
   BuchBarKasse, dbOrgaMon, wanfix32,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
-  ArtikelKasse, Cron, systemd;
+  ArtikelKasse, Cron, systemd, ArtikelAusgabeArt;
 {$R *.DFM}
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -766,7 +766,7 @@ end;
 
 procedure TFormMain.Button44Click(Sender: TObject);
 begin
-  FormAusgabeArt.show;
+  FormArtikelAusgabeArt.show;
 end;
 
 procedure TFormMain.Button45Click(Sender: TObject);

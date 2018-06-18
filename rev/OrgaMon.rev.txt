@@ -21,9 +21,9 @@ Dokumentation
 
 Rev 8.370 (18.06.18) Andreas Filsinger
 
- Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE
+ Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE (in den Tabellen ARTIKEL, ARTIKEL_AA, AUSGABEART)
  Neu: Beleg: Artikel-Auswahl: Menge wird mit der MINDESTBESTELLMENGE vorbelegt (wenn vorhanden)
- Neu: Beleg: Beim Wechsel auf eine Ausgabeart
+ Neu: Beleg: Beim Wechsel der Ausgabeart wird MENGE gegen den MINDESTBESTAND kontrolliert
 
 Rev 8.369 (12.06.18) Andreas Filsinger
 
