@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.360; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.370; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -398,6 +398,7 @@ const
   cE_AuchAlsPDF = 'AuchAlsPDF';
   cE_HTMLBenennung = 'HTML-Benennung';
   cE_OhneStandardXLS = 'OhneStandardXLS';
+  cE_OhneHTML = 'OhneHTML';
   cE_EinsZuEins = 'EinsZuEins';
   cE_EineDatei = 'EineDatei';
   cE_Filter = 'Filter'; // für Zählernummer neu

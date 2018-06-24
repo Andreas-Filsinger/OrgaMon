@@ -262,6 +262,12 @@ function e_r_IsRID(FieldName: string; RID: integer): boolean;
 // true wenn es den RID in der Tabelle nicht gibt
 function e_r_NoRID(FieldName: string; RID: integer): boolean;
 
+// erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
+function e_w_GEN(GenName: string): integer;
+
+// liefert den aktuellen Wert des Generators
+function e_r_GEN(GenName: string): integer;
+
 // Nur das erste Feld aus der ersten Zeile als Integer
 function e_r_sql(s: string): integer; overload;
 
@@ -270,24 +276,6 @@ function e_r_sql(s: string; sl: TStringList): integer; overload;
 
 // Nur das erste Feld des ersten Records als mehrzeilige TStringList
 function e_r_sqlt(s: string): TStringList; overload;
-
-// Ersatz für "assignto" bei IBObjects
-procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
-
-// Schreiben eines Datenbank Blob-Feldes
-procedure e_w_sqlt(Field: TdboField; s: TStrings);
-
-// erhöht den Generator erst um eins und liefert dann diesen neuen Wert.
-function e_w_GEN(GenName: string): integer;
-
-// liefert den aktuellen Wert des Generators
-function e_r_GEN(GenName: string): integer;
-
-// Zeit aus dem Datenbankserver lesen
-function e_r_now: TDateTime;
-
-// Zeitdifferenz zwischen Datenbank-Server und lokalem Server
-function r_Local_vs_Server_TimeDifference: TANFiXTime;
 
 // Die erste Zelle einer Datenbankabfrage als String
 function e_r_sqls(s: string): string;
@@ -312,6 +300,18 @@ function e_r_sqlslo(s: string): TStringList;
 
 // Alle numerischen Ergebnisse der ersten Spalte als Integer-Liste
 function e_r_sqlm(s: string; m: TgpIntegerList = nil): TgpIntegerList;
+
+// Zeit aus dem Datenbankserver lesen
+function e_r_now: TDateTime;
+
+// Zeitdifferenz zwischen Datenbank-Server und lokalem Server
+function r_Local_vs_Server_TimeDifference: TANFiXTime;
+
+// BLOBs: Ersatz für "assignto" bei IBObjects
+procedure e_r_sqlt(Field: TdboField; s: TStrings); overload;
+
+// BLOBs: Schreiben eines Datenbank Blob-Feldes
+procedure e_w_sqlt(Field: TdboField; s: TStrings);
 
 
 // SQL Update, Execute Statements

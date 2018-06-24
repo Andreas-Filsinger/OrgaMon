@@ -168,6 +168,13 @@ function b_r_GutschriftAusLS(VORGANG: string): boolean;
 // deutsche IBAN zerlegen in BLZ und Kontonummer
 function IBAN_BLZ_Konto(IBAN: string): string;
 
+// Stempel
+function b_r_Stempel(STEMPEL_R: Integer):string;
+function b_r_Stempel_CheckFile(Needle,Haystack: string):boolean;
+
+// Alle PDF zu einem Buchungssatz
+function b_r_PDF(BUCH_R: Integer) : TStringList;
+
 implementation
 
 uses
@@ -459,6 +466,7 @@ var
       SatzN: integer;
       VERSAND_R: integer;
       _PreisProPosition: double;
+      FName, FName_PDF: string;
     begin
 
       MwSt_Konto_Saver := TMwSt.create;
@@ -470,6 +478,46 @@ var
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
       if (VERSAND_R < cRID_FirstValid) then
         raise Exception.create(format('Die Teillieferung (%d) existiert nicht', [TEILLIEFERUNG]));
+
+      // Gibt es das PDF?
+      if cINITIAL.FieldByName('PERSON_R').IsNotNull and
+         cINITIAL.FieldByName('STEMPEL_R').IsNotNull and
+         cINITIAL.FieldByName('STEMPEL_DOKUMENT').IsNotNull then
+      begin
+        repeat
+          FName := e_r_BelegFNameCombined(
+            { } cINITIAL.FieldByName('PERSON_R').AsInteger,
+            { } BELEG_R,
+            { } TEILLIEFERUNG);
+          if FileExists(FName) then
+           break;
+          FName := e_r_BelegFName(
+            { } cINITIAL.FieldByName('PERSON_R').AsInteger,
+            { } BELEG_R,
+            { } TEILLIEFERUNG);
+          if FileExists(FName) then
+           break;
+          FName := '';
+        until yet;
+
+        repeat
+         if (Fname='') then
+          break;
+         Fname := ExtractFileNameWithoutExtension(FName)+ '.pdf';
+         if not(FileExists(FName)) then
+          break;
+         FName_PDF :=
+           {} cPersonPath(cINITIAL.FieldByName('PERSON_R').AsInteger) +
+           {} b_r_Stempel(cINITIAL.FieldByName('STEMPEL_R').AsInteger) +
+           {} '-'+
+           {} cINITIAL.FieldByName('STEMPEL_DOKUMENT').AsString+
+           {} '-'+
+           {} ExtractFileName(FName);
+         if FileExists(FName_PDF) then
+          break;
+          FileCopy(Fname,FName_PDF);
+        until yet;
+      end;
 
       // Stimmt der Gesamt-Betrag?
       VersandGesamtSumme := e_r_sqld('select SUM(LIEFERBETRAG) from VERSAND where ' +
@@ -2654,6 +2702,62 @@ begin
     result := (pos(VORGANG, cVorgang_Lastschrift) > 0)
   else
     result := false;
+end;
+
+function b_r_Stempel(STEMPEL_R: Integer):string;
+begin
+  if (STEMPEL_R >= cRID_FirstValid) then
+    result := e_r_sqls('select PREFIX from STEMPEL where RID=' + inttostr(STEMPEL_R))
+  else
+    result := '';
+end;
+
+function b_r_Stempel_CheckFile(Needle,Haystack: string):boolean;
+var
+k : integer;
+begin
+ repeat
+  k := pos(Needle,HayStack);
+  if (k=0) then
+  begin
+    result := false;
+    break;
+  end;
+  result := (pos(HayStack[k+length(Needle)],cZiffern)=0);
+ until yet;
+end;
+
+function b_r_PDF(BUCH_R: Integer) : TStringList;
+var
+  cBUCH: TdboCursor;
+  STEMPEL : String;
+  AlleDokumente : TStringList;
+  sPath: string;
+  n : integer;
+begin
+  AlleDokumente := TStringList.create;
+  result := TStringList.Create;
+  cBUCH := nCursor;
+  with cBUCH do
+  begin
+    sql.add(
+      { } 'select' +
+      { } ' STEMPEL_R,STEMPEL_DOKUMENT,PERSON_R from BUCH ' +
+      { } 'where ' +
+      { } ' (RID=' + inttostr(BUCH_R) + ') ' );
+    ApiFirst;
+    if FieldByName('PERSON_R').IsNotNull then
+    begin
+      sPAth :=  cPersonPath(FieldByName('PERSON_R').AsInteger);
+      STEMPEL := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger) + '-' + FieldByName('STEMPEL_DOKUMENT').AsString;
+      dir(sPath + STEMPEL + '*.pdf', AlleDokumente);
+      for n := 0 to pred(AlleDokumente.Count) do
+        if b_r_Stempel_CheckFile(STEMPEL,AlleDokumente[n]) then
+         result.Add(sPath+AlleDokumente[n]);
+    end;
+  end;
+  cBUCH.Free;
+  AlleDokumente.Free;
 end;
 
 end.

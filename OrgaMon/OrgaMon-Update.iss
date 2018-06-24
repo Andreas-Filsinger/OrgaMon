@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 AppName=OrgaMon
 AppVerName=OrgaMon «RevMitPunkt»
-AppCopyright=Copyright (C) 1988-2016 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2018 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon.exe
@@ -44,8 +44,8 @@ Source: "..\infozip\unzip.exe"; DestDir: "{app}"; Flags: onlyifdoesntexist unins
 Source: "..\infozip\unzip.txt"; DestDir: "{app}"; Flags: onlyifdoesntexist uninsneveruninstall
 
 ; openssl
-Source: "..\openssl\openssl-1.0.2f-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit uninsneveruninstall
-Source: "..\openssl\openssl-1.0.2f-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit uninsneveruninstall
+Source: "..\openssl\openssl-1.0.2o-i386-win32\libeay32.dll"; DestDir: "{app}"; Flags: 32bit uninsneveruninstall
+Source: "..\openssl\openssl-1.0.2o-i386-win32\ssleay32.dll"; DestDir: "{app}"; Flags: 32bit uninsneveruninstall
 
 ; libxml2
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall

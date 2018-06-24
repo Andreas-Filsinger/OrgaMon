@@ -537,6 +537,10 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = '&Bestellen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 214
         Top = 28
@@ -580,6 +584,10 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet4: TTabSheet
       Caption = '&Wareneingang'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 215
         Top = 37
@@ -634,6 +642,10 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     object TabSheet5: TTabSheet
       Caption = '&Qualit'#228'ts-Sicherung'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label8: TLabel
         Left = 16
         Top = 41
@@ -938,7 +950,7 @@ object FormBestellArbeitsplatz: TFormBestellArbeitsplatz
     Left = 232
     Top = 112
     Bitmap = {
-      494C010127009800800010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010127009800840010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

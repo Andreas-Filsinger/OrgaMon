@@ -32,10 +32,15 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  ExtCtrls, IB_UpdateBar, IB_Components,
-  Grids, IB_Grid, StdCtrls, IB_Access,
-  IB_Controls, Mask, ComCtrls,
-  Buttons, Datenbank, IB_EditButton, JvComponentBase, JvFormPlacement;
+  ExtCtrls, Mask, ComCtrls,
+  Grids, StdCtrls, Buttons,
+  // IBO
+  IB_UpdateBar, IB_Components,  IB_Grid,  IB_Access,
+  IB_Controls, IB_EditButton,
+  // Jedi
+  JvComponentBase, JvFormPlacement,
+  // OrgaMon
+  Datenbank;
 
 type
   TFormVertrag = class(TForm)
@@ -150,15 +155,17 @@ var
 implementation
 
 uses
-  globals, Baustelle,
-  CaretakerClient, anfix32, Person,
-  Belege, Kontext, OLAP,
-  dbOrgaMon, Main,
+  // Anfix
+  anfix32, wanfix32, gplists,
+  // OrgaMon-Basis
+  globals, dbOrgaMon,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Funktionen_LokaleDaten,
-  wanfix32, gplists;
+  // OrgaMon-GUI
+  Baustelle, CaretakerClient,  Person,
+  Belege, Kontext, OLAP, Main;
 
 {$R *.dfm}
 { TFormVertrag }

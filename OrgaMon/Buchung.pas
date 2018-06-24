@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -114,6 +114,7 @@ type
     Label8: TLabel;
     IB_Text3: TIB_Text;
     IB_Edit13: TIB_Edit;
+    SpeedButton49: TSpeedButton;
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Button5Click(Sender: TObject);
     procedure IB_Query1ConfirmDelete(Sender: TComponent;
@@ -131,6 +132,7 @@ type
     procedure IB_Grid1DblClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
+    procedure SpeedButton49Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Historie_Read: integer;
@@ -361,16 +363,7 @@ begin
     IB_Memo3.readonly := ExterneQuelle;
 
     // Name des Stemples
-    if FieldByName('STEMPEL_R').IsNotNull then
-    begin
-      Label19.caption := e_r_sqls
-        ('select PREFIX from STEMPEL where RID=' + FieldByName('STEMPEL_R')
-          .AsString) + '-';
-    end
-    else
-    begin
-      Label19.caption := '';
-    end;
+    Label19.caption := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger);
 
     // Name des Gegenkontos
     Label20.caption := e_r_sqls
@@ -449,7 +442,23 @@ begin
   end
   else
     beep;
+end;
 
+procedure TFormBuchung.SpeedButton49Click(Sender: TObject);
+var
+  DirEntries: TStringList;
+  n: integer;
+begin
+  // Öffne die zugeordneten PDF
+  DirEntries := b_r_PDF(IB_Query1.FieldByName('MASTER_R').AsInteger);
+  if (DirEntries.count > 0) then
+  begin
+    for n := 0 to pred(DirEntries.count) do
+      openShell(DirEntries[n])
+  end
+  else
+    ShowMessage('kein PDF vorhanden!');
+  DirEntries.free;
 end;
 
 procedure TFormBuchung.SpeedButton4Click(Sender: TObject);

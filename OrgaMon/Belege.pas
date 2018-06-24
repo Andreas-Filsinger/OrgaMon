@@ -440,6 +440,7 @@ var
   AUSGABEART_R: Integer;
   ARTIKEL_R: Integer;
   EINHEIT_R: Integer;
+  MINDESTBESTELLMENGE : Integer;
 begin
   with IB_Dataset do
   begin
@@ -450,77 +451,81 @@ begin
     AUSGABEART_R := FieldByName('AUSGABEART_R').AsInteger;
     EINHEIT_R := FieldByName('EINHEIT_R').AsInteger;
 
-    with IB_Dataset do
-    begin
 
-      // Stornierungs-Aufgaben machen
-      if (FieldByName('MENGE_RECHNUNG').AsInteger + FieldByName('MENGE_GELIEFERT').AsInteger = 0) then
+    // Stornierungs-Aufgaben machen
+    if (FieldByName('MENGE_RECHNUNG').AsInteger + FieldByName('MENGE_GELIEFERT').AsInteger = 0) then
+    begin
+      FieldByName('MENGE_RECHNUNG').clear;
+      FieldByName('MENGE_GELIEFERT').clear;
+    end;
+
+    // ev. ungesetztes "MwSt" setzen
+    if FieldByName('MWST').IsNull then
+      FieldByName('MWST').AsDouble := iMwStSatzManuelleArtikel;
+
+    // ev. ungesetztes "Netto"
+    if (iEinzelPositionNetto <> '') then
+      if FieldByName('NETTO').IsNull then
+        FieldByName('NETTO').AsString := bool2cC(iEinzelPositionNetto = cIni_Activate);
+
+    // Ausgabeart geändert?
+    repeat
+
+      if (State <> dssedit) then
+        break;
+
+      if FieldByName('ARTIKEL_R').IsNull then
+        break;
+      if not(FieldByName('AUSGABEART_R').IsModified) then
+        break;
+
+      // Setze Text neu
+      FieldByName('ARTIKEL').AsString :=
+        cutblank(e_r_Ausgabeart(AUSGABEART_R) + e_r_sqls('select TITEL from ARTIKEL where RID=' +
+        inttostr(ARTIKEL_R)));
+
+      // Setze Gewicht neu
+      FieldByName('GEWICHT').AsInteger := e_r_gewicht(AUSGABEART_R, ARTIKEL_R);
+
+      // Setze Menge neu (wenn Mindestbestellmenge unterschritten)
+      if FieldByName('MENGE').AsInteger>0 then
       begin
-        FieldByName('MENGE_RECHNUNG').clear;
-        FieldByName('MENGE_GELIEFERT').clear;
+        MINDESTBESTELLMENGE := e_r_MindestBestellmenge(AUSGABEART_R, ARTIKEL_R);
+        if (MINDESTBESTELLMENGE>0) then
+         if (FieldByName('MENGE').AsInteger<MINDESTBESTELLMENGE) then
+          FieldByName('MENGE').AsInteger := MINDESTBESTELLMENGE;
       end;
 
-      // ev. ungesetztes "MwSt" setzen
-      if FieldByName('MWST').IsNull then
-        FieldByName('MWST').AsDouble := iMwStSatzManuelleArtikel;
+      // Setze Preis neu
+      e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R, IB_Query2);
 
-      // ev. ungesetztes "Netto"
-      if (iEinzelPositionNetto <> '') then
-        if FieldByName('NETTO').IsNull then
-          FieldByName('NETTO').AsString := bool2cC(iEinzelPositionNetto = cIni_Activate);
+      if FieldByName('AUSGABEART_R').IsNotNull then
+      begin
 
-      // Ausgabeart geändert?
-      repeat
-
-        if (State <> dssedit) then
-          break;
-
-        if FieldByName('ARTIKEL_R').IsNull then
-          break;
-        if not(FieldByName('AUSGABEART_R').IsModified) then
-          break;
-
-        // Setze Text neu
-        FieldByName('ARTIKEL').AsString :=
-          cutblank(e_r_Ausgabeart(AUSGABEART_R) + e_r_sqls('select TITEL from ARTIKEL where RID=' +
-          inttostr(ARTIKEL_R)));
-
-        // Setze Gewicht neu
-        FieldByName('GEWICHT').AsInteger := e_r_gewicht(AUSGABEART_R, ARTIKEL_R);
-
-        // Setze EINHEIT_R neu!
-
-        // Setze Preis neu
-        e_w_SetPostenPreis(EINHEIT_R, AUSGABEART_R, ARTIKEL_R, PERSON_R, IB_Query2);
-
-        if FieldByName('AUSGABEART_R').IsNotNull then
-        begin
-
-          // Sonstige Verarbeitungs-Optionen
-          case e_r_sql('select VERARBEITUNGSART from AUSGABEART where RID=' + inttostr(AUSGABEART_R)) of
-            1:
-              begin
-                //
-                FieldByName('PREIS').AsDouble := 0;
-                FieldByName('ARTIKEL_R').clear;
-              end;
-            2:
-              begin
-                //
-                FieldByName('PREIS').clear;
-              end;
-            3:
-              begin
-                //
-                FieldByName('MWST').AsDouble := e_r_Prozent(1);
-                FieldByName('PREIS').AsDouble := 0.99;
-                FieldByName('GEWICHT').AsInteger := 0;
-              end;
-          end;
-
+        // Sonstige Verarbeitungs-Optionen
+        case e_r_sql('select VERARBEITUNGSART from AUSGABEART where RID=' + inttostr(AUSGABEART_R)) of
+          1:
+            begin
+              //
+              FieldByName('PREIS').AsDouble := 0;
+              FieldByName('ARTIKEL_R').clear;
+            end;
+          2:
+            begin
+              //
+              FieldByName('PREIS').clear;
+            end;
+          3:
+            begin
+              //
+              FieldByName('MWST').AsDouble := e_r_Prozent(1);
+              FieldByName('PREIS').AsDouble := 0.99;
+              FieldByName('GEWICHT').AsInteger := 0;
+            end;
         end;
-      until true;
-    end;
+
+      end;
+    until true;
 
     if (State = dssedit) then
     begin
@@ -888,6 +893,7 @@ var
   ARTIKEL_R: Integer;
   EINHEIT_R: Integer;
   AUSGABEART_R: Integer;
+  MINDESTBESTELLMENGE: Integer;
 
   procedure InsertOne(ARTIKEL_R: Integer; MENGE: Integer);
   begin
@@ -944,14 +950,15 @@ begin
 
     // aktuellen Artikel in den Auftrag übernehmen
 
-    if (ARTIKEL_R > 0) then
+    if (ARTIKEL_R >= cRID_FirstValid) then
     begin
-      cARTIKEL := DataModuleDatenbank.nCursor;
 
+      cARTIKEL := DataModuleDatenbank.nCursor;
       with cARTIKEL do
       begin
-        sql.add('select GEWICHT,EURO,PREIS_R from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
-        APiFirst;
+        sql.add('select GEWICHT,EURO,PREIS_R,MINDESTBESTELLMENGE from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
+        ApiFirst;
+        MINDESTBESTELLMENGE := FieldByName('MINDESTBESTELLMENGE').AsInteger;
       end;
 
       //
@@ -975,14 +982,16 @@ begin
       ARTIKEL_AA_R := cRID_NULL;
       if cARTIKEL.FieldByName('EURO').IsNull then
         if cARTIKEL.FieldByName('PREIS_R').IsNull then
-          if e_r_sql('select COUNT(RID) from ARTIKEL_AA where ' + ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')') > 0 then
+          if e_r_sql(
+           {} 'select COUNT(RID) from ARTIKEL_AA where ' +
+           {} ' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ')') > 0 then
           begin
             FormArtikelAAA.SetContext(ARTIKEL_R);
             ARTIKEL_AA_R := FormArtikelAAA.ARTIKEL_AA_R;
             EnsureHourGlass;
-
             if (ARTIKEL_AA_R = cRID_NULL) then
               exit;
+            MINDESTBESTELLMENGE := e_r_sql('select MINDESTBESTELLMENGE from ARTIKEL_AA where RID='+inttostr(ARTIKEL_AA_R));
           end;
 
       //
@@ -990,13 +999,13 @@ begin
       DisablePostenEvents := true;
 
       inc(DisableAfterScroll);
-      InsertOne(ARTIKEL_R, 0);
+      InsertOne(ARTIKEL_R, MINDESTBESTELLMENGE);
       cPAKET := DataModuleDatenbank.nCursor;
       with cPAKET do
       begin
-        sql.add('select rid,paket_menge,Paket_Artikel_r,Paket_Artikel_AA_R from artikel where paket_r=' +
+        sql.add('select RID,PAKET_MENGE,PAKET_ARTIKEL_R,PAKET_ARTIKEL_AA_R from ARTIKEL where PAKET_R=' +
           inttostr(ARTIKEL_R));
-        sql.add('order by paket_posno');
+        sql.add('order by PAKET_POSNO');
         APiFirst;
         while not(eof) do
         begin

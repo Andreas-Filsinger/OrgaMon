@@ -412,7 +412,7 @@ begin
       Request.Connection := 'keep-alive';
       // Der Referer definiert, auf welcher Webseite wir zuvor waren. Gerade dieser Wert
       // wird gerne von Webseiten abgefragt um ungewünschte Bots zu blocken.
-      Request.Referer := cOpenStreetMap_TileURL;
+      Request.Referer := cGoogle_TileURL;
       // Die Clientkennung
       Request.UserAgent := cAgent;
     end;

@@ -44,7 +44,7 @@ uses
   ArtikelVerlag in 'ArtikelVerlag.pas' {FormArtikelVerlag},
   ArtikelBackorder in 'ArtikelBackorder.pas' {FormArtikelBackorder},
   PreisCode in 'PreisCode.pas' {FormPreisCode},
-  AusgabeArt in 'AusgabeArt.pas' {FormAusgabeArt},
+  ArtikelAusgabeArt in 'ArtikelAusgabeArt.pas' {FormArtikelAusgabeArt},
   Prorata in 'Prorata.pas' {FormProrata},
   bbelege in 'bbelege.pas' {FormBBelege},
   BestellArbeitsplatz in 'BestellArbeitsplatz.pas' {FormBestellArbeitsplatz},
@@ -77,7 +77,6 @@ uses
   Budget in 'Budget.pas' {FormBudget},
   Arbeitszeit in 'Arbeitszeit.pas' {FormArbeitszeit},
   GeoPostleitzahlen in 'GeoPostleitzahlen.pas' {FormGeoPostleitzahlen},
-  ArtikelAusgabeart in 'ArtikelAusgabeart.pas' {FormArtikelAusgabeart},
   Zahlungsart in 'Zahlungsart.pas' {FormZahlungsart},
   Musiker in 'Musiker.pas' {FormMusiker},
   FolgeSetzen in 'FolgeSetzen.pas' {FormFolgeSetzen},
@@ -91,6 +90,7 @@ uses
   QAbzeichnen in 'QAbzeichnen.pas' {FormQAbzeichnen},
   CareServer in 'CareServer.pas' {FormCareServer},
   PersonMailer in 'PersonMailer.pas' {FormPersonMailer},
+  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
   ArtikelPreis in 'ArtikelPreis.pas' {FormArtikelPreis},
   AnschriftOptimierung in 'AnschriftOptimierung.pas' {FormAnschriftOptimierung},
   Auftrag in 'Auftrag.pas' {FormAuftrag},
@@ -202,7 +202,6 @@ uses
   Foto in '..\PASconTools\Foto.pas',
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
-  ArtikelAusgabeartAuswahl in 'ArtikelAusgabeartAuswahl.pas' {FormArtikelAusgabeartAuswahl},
   systemd in '..\PASconTools\systemd.pas',
   ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang};
 
@@ -253,7 +252,7 @@ begin
   Application.CreateForm(TFormArtikelVerlag, FormArtikelVerlag);
   Application.CreateForm(TFormArtikelBackorder, FormArtikelBackorder);
   Application.CreateForm(TFormPreisCode, FormPreisCode);
-  Application.CreateForm(TFormAusgabeArt, FormAusgabeArt);
+  Application.CreateForm(TFormArtikelAusgabeArt, FormArtikelAusgabeArt);
   Application.CreateForm(TFormProrata, FormProrata);
   Application.CreateForm(TFormBBelege, FormBBelege);
   Application.CreateForm(TFormBestellArbeitsplatz, FormBestellArbeitsplatz);
@@ -285,7 +284,6 @@ begin
   Application.CreateForm(TFormBudget, FormBudget);
   Application.CreateForm(TFormArbeitszeit, FormArbeitszeit);
   Application.CreateForm(TFormGeoPostleitzahlen, FormGeoPostleitzahlen);
-  Application.CreateForm(TFormArtikelAusgabeart, FormArtikelAusgabeart);
   Application.CreateForm(TFormZahlungsart, FormZahlungsart);
   Application.CreateForm(TFormMusiker, FormMusiker);
   Application.CreateForm(TFormFolgeSetzen, FormFolgeSetzen);

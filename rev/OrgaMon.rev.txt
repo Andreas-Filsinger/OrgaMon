@@ -19,6 +19,58 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.370 (18.06.18) Andreas Filsinger
+
+ Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE (in den Tabellen ARTIKEL, ARTIKEL_AA, AUSGABEART)
+ Neu: Beleg: Artikel-Auswahl: Menge wird mit der MINDESTBESTELLMENGE vorbelegt (wenn vorhanden)
+ Neu: Beleg: Beim Wechsel der Ausgabeart wird MENGE gegen den MINDESTBESTAND kontrolliert
+
+Rev 8.369 (12.06.18) Andreas Filsinger
+
+ Bug: Person: Unterer Teil (Anschrift) konnte mit Firebirdsql-Server 2.5.8 nicht mehr
+      geändert werden.
+ Bug: Konto: Suche nach "KONTO" Inhalten war nicht (mehr?) möglich
+
+Rev 8.368 (07.06.18) Andreas Filsinger
+
+ Neu: Mandat: Suche nach IBAN
+
+Rev 8.367 (06.06.18) Andreas Filsinger
+
+ Neu: Auftrag: Ergebnis, weglassen des HTML durch OhneHTML=JA
+
+Rev 8.366 (30.05.18) Andreas Filsinger
+
+ Neu: Buch: Suche nach <Stempel><Nummer> möglich, also "ER2740" oder "AR273"
+ Neu: Buch: Dokumentabgleich, fehlende ER- AR- Dokumente ..., erstellt To-Do-Liste
+ Neu: Buch: Einlesen einer toDo-Liste
+ Neu: Buch: neues Symbol: Einsicht in die PDF-Dokumente
+ Neu: Rechnungen: neues Symbol: PDF ansehen (und ggf. erstellen falls nicht vorhanden)
+ Neu: Forderungsausgleich: Rechnungen: Automatisch Kopie nach "AR-" Datei erstellen
+ Neu: Buch: Steuerberater: ER-Belege/AR-Belege gehen zusätzlich in die Übergabe-Datei
+ Neu: wegen "Oc Rev. 1.267" neu compiliert!
+
+Rev 8.365 (25.05.18) Andreas Filsinger
+
+ Neu: OSM: neue Server
+ Neu: Google-Maps: Referer war falsch
+
+Rev 8.364 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.266" neu compiliert!
+
+Rev 8.363 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.265" neu compiliert!
+
+Rev 8.362 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.264" neu compiliert!
+
+Rev 8.361 (24.05.18) Andreas Filsinger
+
+ Neu: wegen "Oc Rev. 1.263" neu compiliert!
+
 Rev 8.360 (23.05.18) Andreas Filsinger
 
  Neu: wegen "Oc Rev. 1.262" neu compiliert!
@@ -12250,6 +12302,17 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.370
+
+alter table ARTIKEL
+add MINDESTBESTELLMENGE integer;
+
+alter table ARTIKEL_AA
+add MINDESTBESTELLMENGE integer;
+
+alter table AUSGABEART
+add MINDESTBESTELLMENGE integer;
 
 :8.355
 

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    SpeedButton1: TSpeedButton;
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -69,6 +70,7 @@ type
     procedure Image4Click(Sender: TObject);
     procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState;
       var AColor: TColor; AFont: TFont);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure setSQL;
@@ -83,7 +85,7 @@ var
 implementation
 
 uses
-  globals, GUIHelp, html,
+  globals, GUIHelp, html, DTA,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -232,6 +234,48 @@ begin
   end;
 end;
 
+procedure TFormRechnungsUebersicht.SpeedButton1Click(Sender: TObject);
+var
+ FName : string;
+ FName_PDF : string;
+ PDF : TStringList;
+begin
+  // Zeige das PDF Dokument
+  with IB_Query1 do
+  begin
+   repeat
+    FName := e_r_BelegFNameCombined(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+    FName := e_r_BelegFName(
+      { } FieldByName('PERSON_R').AsInteger,
+      { } FieldByName('BELEG_R').AsInteger,
+      { } FieldByName('TEILLIEFERUNG').AsInteger);
+    if FileExists(FName) then
+     break;
+
+   until yet;
+
+   FName_PDF := ExtractFileNameWithoutExtension(FName) + '.pdf';
+
+   if not(FileExists(FName_pdf)) then
+   begin
+    PDF := html2pdf(FName);
+    PDF.free;
+   end;
+
+   if FileExists(FName_pdf) then
+    openShell(FName_PDF)
+   else
+    ShowMEssage('die PDF-Erstellung ist nicht erfolgt');
+
+  end;
+end;
+
 procedure TFormRechnungsUebersicht.SpeedButton8Click(Sender: TObject);
 begin
   openShell(cPersonPath(IB_Query1.FieldByName('PERSON_R').AsInteger));
@@ -259,7 +303,7 @@ begin
      break;
 
    until yet;
-    openShell(FName);
+   openShell(FName);
   end;
 end;
 
@@ -298,9 +342,7 @@ var
   ForderungsStatus: Integer;
 begin
 
-  // Im Status "gelb" bitte GAR nix zeichnen oder verändern,
-  // sonst wird verhindert dass man den wichtigen geändert sTatus überhuapt
-  // als user erkennen und sehen kann!
+  // Status "gelb" hat vor anderen Farben Vorrang
   if (IB_Query1.State = dssedit) or not(IB_Query1.active) then
     exit;
 
@@ -347,7 +389,7 @@ begin
           cForderung_Lastschrift_Vorgemerkt:
             LastBackgroundCol := HTMLColor2TColor($FFEE30);
           cForderung_Lastschrift_Erhalten:
-            LastBackgroundCol := HTMLColor2TColor($FFBE00); // SEPA - Color
+            LastBackgroundCol := HTMLColor2TColor(cDTA_Color);
         end;
 
         //

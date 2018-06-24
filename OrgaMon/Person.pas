@@ -136,7 +136,6 @@ type
     Label18: TLabel;
     Label24: TLabel;
     IB_ComboBox1: TIB_ComboBox;
-    IB_Text4: TIB_Text;
     StaticText5: TStaticText;
     Label20: TLabel;
     Label23: TLabel;
@@ -292,6 +291,7 @@ type
     IB_CheckBox24: TIB_CheckBox;
     IB_Memo3: TIB_Memo;
     Button12: TButton;
+    Label59: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
@@ -375,6 +375,7 @@ type
     procedure IB_DataSource1StateChanged(Sender: TIB_DataSource; ADataset: TIB_Dataset);
     procedure SpeedButton21Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
+    procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -415,6 +416,7 @@ type
     procedure RefreshZahlungtypCombo;
     procedure RefreshWordVorlagen;
     procedure RefreshVertraege;
+    procedure ReflectLandALT;
   end;
 
 var
@@ -585,9 +587,12 @@ end;
 function TFormPerson.TakeActual: Boolean;
 begin
   EnsureThatQuerysAreOpen;
-  result := doit('Wollen Sie den Eintrag' + #13 + IB_Query1.FieldByName('NACHNAME').AsString + ', '
-    + IB_Query1.FieldByName('VORNAME').AsString + #13 + IB_Query2.FieldByName('NAME1').AsString +
-    #13 + 'jetzt übernehmen');
+  result := doit(
+   {} 'Wollen Sie den Eintrag' + #13 +
+   {} IB_Query1.FieldByName('NACHNAME').AsString + ', ' +
+   {} IB_Query1.FieldByName('VORNAME').AsString + #13 +
+   {} IB_Query2.FieldByName('NAME1').AsString + #13 +
+   {} 'jetzt übernehmen');
 end;
 
 procedure TFormPerson.Button4Click(Sender: TObject);
@@ -642,10 +647,16 @@ begin
   end;
 end;
 
+
 procedure TFormPerson.IB_Query2BeforePost(IB_Dataset: TIB_Dataset);
 begin
   if IB_Query1.State in [dssedit, dssinsert] then
     IB_Query1.post;
+end;
+
+procedure TFormPerson.IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
+begin
+ ReflectLandALT;
 end;
 
 procedure TFormPerson.Button2Click(Sender: TObject);
@@ -720,10 +731,12 @@ begin
   if not(IB_Query1.eof) then
   begin
     PERSON_R := IB_Query1.FieldByName('RID').AsInteger;
-    IB_Query2.ParamByName('CROSSREF').AsInteger := IB_Query1.FieldByName('PRIV_ANSCHRIFT_R')
-      .AsInteger;
+
+    //
+    IB_Query2.ParamByName('CROSSREF').AsInteger :=
+     IB_Query1.FieldByName('PRIV_ANSCHRIFT_R').AsInteger;
     if not(IB_Query2.active) then
-      IB_Query2.active := true;
+      IB_Query2.Open;
 
     // Farbe des Formulars
     if IB_Query1.FieldByName('PAPERCOLOR').IsNotNull then
@@ -733,6 +746,7 @@ begin
 
     Label24.Caption := LieferzeitToStr(IB_Query1.FieldByName('LIEFERZEIT').AsInteger);
     Label33.Caption := '?';
+    ReflectLandALT;
 
     // Verträge
     CheckListBox1.Items.BeginUpdate;
@@ -2183,6 +2197,11 @@ begin
     inOLAPmode := true;
   end;
   EndHourGlass;
+end;
+
+procedure TFormPerson.ReflectLandALT;
+begin
+  label59.Caption := e_r_LaenderPost(IB_Query2.FieldByName('LAND_R').AsInteger);
 end;
 
 procedure TFormPerson.Button15Click(Sender: TObject);

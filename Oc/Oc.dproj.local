@@ -1,2 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject/>
+<BorlandProject>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="..\..\OrgaMon"/>
+    <File Path="..\libxml2"/>
+    <File Path="..\libxml2\libxml2.pas"/>
+    <File Path="..\PASconTools"/>
+    <File Path="..\PASconTools\anfix32.pas"/>
+    <File Path="..\PASconTools\binlager32.pas"/>
+    <File Path="..\PASconTools\CareTakerClient.pas"/>
+    <File Path="..\PASconTools\ExcelHelper.pas"/>
+    <File Path="..\PASconTools\Geld.pas"/>
+    <File Path="..\PASconTools\gplists.pas"/>
+    <File Path="..\PASconTools\html.pas"/>
+    <File Path="..\PASconTools\Mapping.pas"/>
+    <File Path="..\PASconTools\OrientationConvert.pas"/>
+    <File Path="..\PASconTools\SimplePassword.pas"/>
+    <File Path="..\PASconTools\sperre.pas"/>
+    <File Path="..\PASconTools\txlib.pas"/>
+    <File Path="..\PASconTools\WordIndex.pas"/>
+    <File Path="..\rev"/>
+    <File Path="..\rev\Oc.rev.txt"/>
+  </ProjectSortOrder>
+</BorlandProject>

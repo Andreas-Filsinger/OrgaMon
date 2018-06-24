@@ -42,32 +42,6 @@ unit GeoLokalisierung;
 // # Anderer Ortsteil wurde übermittelt
 // # Anderer Ort wurde übermittelt
 //
-
-
-// Umstellung auf OpenStreet-Map
-
-// Anfrage:
-// ========
-//
-// wget "http://nominatim.openstreetmap.org/search?country=de&city=Ubstadt-Weiher&postalcode=76698&street=44 Stettfelder Str.&format=xml"
-//
-// Antwort:
-// ========
-//
-// <?xml version="1.0" encoding="UTF-8" ?>
-// <searchresults timestamp='Tue, 11 Oct 16 15:13:07 +0000'
-//                attribution='Data © OpenStreetMap contributors, ODbL 1.0. http://www.openstreetmap.org/copyright'
-//                querystring='44 Stettfelder Str., Ubstadt-Weiher, 76698, de'
-//                polygon='false' exclude_place_ids='49820555'
-//                more_url='http://nominatim.openstreetmap.org/search.php?format=xml&amp;exclude_place_ids=49820555&amp;q=44+Stettfelder+Str.%2C+Ubstadt-Weiher%2C+76698%2C+de'>
-// <place place_id='49820555' osm_type='node' osm_id='3666171924' place_rank='30'
-//        boundingbox="49.162616,49.162716,8.6335616,8.6336616"
-//        lat='49.162666' lon='8.6336116'
-//        display_name='44, Stettfelder Straße, Ubstadt, Ubstadt-Weiher, Landkreis Karlsruhe, Regierungsbezirk Karlsruhe, Baden-Württemberg, 76698, Deutschland'
-//        class='place' type='house' importance='0.511'/>
-// </searchresults>
-//
-
 interface
 
 uses

@@ -60,14 +60,6 @@ object FormPerson: TFormPerson
     DataField = 'RID'
     DataSource = IB_DataSource2
   end
-  object IB_Text4: TIB_Text
-    Left = 285
-    Top = 519
-    Width = 65
-    Height = 17
-    DataField = 'LAND_TEXT'
-    DataSource = IB_DataSource2
-  end
   object Label49: TLabel
     Left = 149
     Top = 537
@@ -940,6 +932,13 @@ object FormPerson: TFormPerson
     ParentShowHint = False
     ShowHint = True
     OnClick = SpeedButton27Click
+  end
+  object Label59: TLabel
+    Left = 290
+    Top = 520
+    Width = 16
+    Height = 13
+    Caption = 'DE'
   end
   object IB_Grid1: TIB_Grid
     Left = -4
@@ -3241,9 +3240,6 @@ object FormPerson: TFormPerson
       ',NAME2'
       ',STRASSE'
       ',LAND_R'
-      
-        ',(SELECT L.KURZ_ALT FROM LAND L WHERE L.RID=ANSCHRIFT.LAND_R) AS' +
-        ' LAND_TEXT'
       ',STATE'
       ',PLZ'
       ',ORT'
@@ -3259,11 +3255,12 @@ object FormPerson: TFormPerson
       ' UPDATE')
     ColorScheme = True
     RequestLive = True
+    AfterPost = IB_Query2AfterPost
     BeforePost = IB_Query2BeforePost
     Left = 32
     Top = 396
     ParamValues = (
-      'MLNK_RID_0=')
+      'CROSSREF=')
   end
   object IB_DataSource2: TIB_DataSource
     Dataset = IB_Query2

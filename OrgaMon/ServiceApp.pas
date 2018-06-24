@@ -1523,7 +1523,7 @@ begin
   n := strtoint(Edit25.Text);
   k := strtoint(Edit26.Text);
   v := TgpIntegerList.Create;
-  while (nk(n, k, v)) do
+  while (n_over_k(n, k, v)) do
     ListBox2.items.add('(' + v.AsDelimitedText(',') + ')');
   v.Free;
 end;

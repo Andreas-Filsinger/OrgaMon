@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="292">
+    <Units Count="295">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -89,6 +89,7 @@
       <Unit9>
         <Filename Value="..\PASconTools\fpchelper.pas"/>
         <IsPartOfProject Value="True"/>
+        <TopLine Value="35"/>
         <CursorPos X="16" Y="41"/>
         <UsageCount Value="115"/>
         <Loaded Value="True"/>
@@ -2081,12 +2082,35 @@
       </Unit290>
       <Unit291>
         <Filename Value="..\..\fpc\tests\test\tarray17.pp"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="17"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit291>
+      <Unit292>
+        <Filename Value="..\..\fpc\tests\test\tasm27a.pp"/>
+        <EditorIndex Value="18"/>
+        <TopLine Value="118"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit292>
+      <Unit293>
+        <Filename Value="..\..\fpc\tests\webtbs\tw33818.pp"/>
+        <UnitName Value="Project1"/>
+        <EditorIndex Value="19"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit293>
+      <Unit294>
+        <Filename Value="..\..\fpc\tests\test\tpushpop1.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="20"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit294>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>

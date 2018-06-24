@@ -407,6 +407,10 @@ function e_r_LeerGewicht(PACKFORM_R: integer): integer;
 //
 function e_r_Gewicht(AUSGABEART_R, ARTIKEL_R: integer): integer;
 
+// Mindestbestellmenge des Artikels
+//
+function e_r_MindestBestellmenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
+
 // gibts infos über den Versendetag aus, es werden spezielle Status Codes
 // verwendet. Siehe Doku.
 function e_r_ArtikelVersendetag(AUSGABEART_R, ARTIKEL_R: integer): integer;
@@ -8864,6 +8868,56 @@ begin
     on E: exception do
     begin
       CareTakerLog(cERRORText + ' e_r_Gewicht: ' + E.Message);
+    end;
+  end;
+end;
+
+function e_r_MindestBestellMenge(AUSGABEART_R, ARTIKEL_R: integer): integer;
+var
+  cGEWICHT: TdboCursor;
+begin
+  result := 0;
+  try
+    repeat
+
+      if (AUSGABEART_R > 0) then
+      begin
+
+        // Über Artikel - AA
+        cGEWICHT := nCursor;
+        with cGEWICHT do
+        begin
+          sql.add('select MINDESTBESTELLMENGE from ARTIKEL_AA');
+          sql.add('where');
+          sql.add(' (ARTIKEL_R=' + inttostr(ARTIKEL_R) + ') and');
+          sql.add(' (AUSGABEART_R=' + inttostr(AUSGABEART_R) + ')');
+          ApiFirst;
+          if not(eof) then
+          begin
+            if FieldByName('MINDESTBESTELLMENGE').IsNotNull then
+            begin
+              result := FieldByName('MINDESTBESTELLMENGE').AsInteger;
+              cGEWICHT.free;
+              break;
+            end;
+          end;
+        end;
+        cGEWICHT.free;
+
+        // über den Standard-Eintrag in der AUSGABEART
+        result := e_r_sql('select MINDESTBESTELLMENGE from AUSGABEART where RID=' + inttostr(AUSGABEART_R));
+        break;
+
+      end;
+
+      result := e_r_sql('select MINDESTBESTELLMENGE from ARTIKEL where RID=' + inttostr(ARTIKEL_R));
+
+    until yet;
+
+  except
+    on E: exception do
+    begin
+      CareTakerLog(cERRORText + ' e_r_MindestBestellmenge: ' + E.Message);
     end;
   end;
 end;

@@ -170,7 +170,7 @@ function CentAsMoney(Wert: integer): double;
 // Wenn Kunden Rechnungen in einem Betrag zahlen, muss ermittelt
 // werden, welche der offenen Forderungen kombiniert wurden.
 //
-function nk(n: integer; k: integer; const v: TgpINtegerList): boolean;
+function n_over_k(n: integer; k: integer; const v: TgpIntegerList): boolean;
 
 // Banken-Funktionen
 function checkAccount(BLZ, Konto, Name: string; sDiagnose: TStrings): boolean;
@@ -930,37 +930,28 @@ end;
 
   Algorithm by Siegfried Koepf, inspired by Donald Knuth and many others
 
-  Functions:
-  int gen_comb_norep_lex_init(unsigned char *vector, const unsigned char n, const unsigned char k)
-  Test for special cases
-  Initialization of vector
-  Possible return values are: GEN_ERROR, GEN_EMPTY, GEN_NEXT
-
-  int gen_comb_norep_lex_next(unsigned char *vector, const unsigned char n, const unsigned char k)
-  Transforms current figure in vector into its successor
-  Possible return values are: GEN_NEXT, GEN_TERM
+  Pascal-Version Andreas Filsinger, Binomialkoeffizient, n über k
 
   Arguments:
-  unsigned char *vector; //pointer to the array where the current figure is stored
-  const unsigned char n; //length of alphabet
-  const unsigned char k; //length of figures
 
-  Usage and restrictions:
-  Arguments and elements in vector are restricted to the interval (0, 255)
-  Memory allocation for vector must be provided by the calling process
-  k must be <= n
+  n : length of alphabet
+  k : length of figures
+  v : array where the current figure is stored
 
-  Cardinality:
-  n! / ((n - k)! * k!) == Binomial(n, k)
+  You have to create the TgpIntegerList before calling n_over_k
+  Leave the TgpIntegerList empty and make the first call.
+
+  Example with "3 over 2"
+  =======================
+
+  1. Call: n_over_k(3,2,v)=true, v={0,1}
+  2. Call: n_over_k(3,2,v)=true, v={0,2}
+  3. Call: n_over_k(3,2,v)=true, v={1,2}
+  4. Call: n_over_k(3,2,v)=false, v={1,2} (unchanged!)
 
 *)
 
-//
-// true: Gültige Kombination in v
-// false: v unverändert, nichts passendes gefunden
-//
-
-function nk(n: integer; k: integer; const v: TgpINtegerList): boolean;
+function n_over_k(n: integer; k: integer; const v: TgpIntegerList): boolean;
 var
   i, j: integer;
 begin

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 1995 - 2017  Andreas Filsinger
+  |    Copyright (C) 1995 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -167,6 +167,9 @@ const
   cDTA_LastschriftVerzoegerung: integer = 5;
   cDTA_HTML_Vorlagen_Path : string = '';
   cDTA_XML_Ausgabe_Path : string = '';
+
+  // Einfärbung von SEPA Zahlungen / Forderungen
+  cDTA_Color = $FFBE00;
 
 type
   // Kopf-Daten: Eigenes Konto
