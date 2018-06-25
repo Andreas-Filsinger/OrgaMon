@@ -17,7 +17,7 @@ object FormVersenderPaketID: TFormVersenderPaketID
   object Label3: TLabel
     Left = 7
     Top = 16
-    Width = 59
+    Width = 58
     Height = 13
     Caption = 'Versender'
   end

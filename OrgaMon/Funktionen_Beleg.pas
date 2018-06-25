@@ -8894,7 +8894,7 @@ begin
           ApiFirst;
           if not(eof) then
           begin
-            if FieldByName('MINDESTBESTELLMENGE').IsNotNull then
+            if not FieldByName('MINDESTBESTELLMENGE').IsNull then
             begin
               result := FieldByName('MINDESTBESTELLMENGE').AsInteger;
               cGEWICHT.free;
