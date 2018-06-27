@@ -29,6 +29,7 @@ unit HTTP2;
 
 {$mode objfpc}{$H+}
 {$modeswitch advancedrecords}
+{ $ define TLS13}
 
 interface
 
@@ -1175,10 +1176,23 @@ var
    cs_METH : PSSL_METHOD;
 begin
 
+ {$ifdef TLS13}
+ cs_METH := TLS_server_method();
+ {$else}
  // setup a TLS 1.2 Context
  // RFC 7540-9.2.
  cs_METH := TLSv1_2_server_method();
+ {$endif}
  CTX := SSL_CTX_new(cs_METH);
+
+ {$ifdef TLS13}
+
+
+ if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
+  raise Exception.Create('Set CTX Protokoll Version to 1.3 fails');
+ if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MAX_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
+  raise Exception.Create('Set CTX Protokoll Version to 1.3 fails');
+ {$endif}
 
  SSL_CTX_set_info_callback(CTX,@cb_info);
  SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);

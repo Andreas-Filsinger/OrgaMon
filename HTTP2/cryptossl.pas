@@ -28,6 +28,7 @@
 unit cryptossl;
 
 {$mode objfpc}{$H+}
+{ $ define TLS13}
 
 interface
 
@@ -45,6 +46,7 @@ var
 
 const
   SSL_FILETYPE_PEM = 1;
+  TLS1_3_VERSION = $0304;
 
   OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
   OPENSSL_INIT_LOAD_CRYPTO_STRINGS = $00000002;
@@ -118,6 +120,8 @@ const
   // CTRL ...
   SSL_CTRL_SET_TLSEXT_SERVERNAME_CB = 53;
   SSL_CTRL_SET_ECDH_AUTO = 94;
+  SSL_CTRL_SET_MIN_PROTO_VERSION          = 123;
+  SSL_CTRL_SET_MAX_PROTO_VERSION          = 124;
 
   // OPTION ...
   SSL_OP_CIPHER_SERVER_PREFERENCE = $00400000;
@@ -176,7 +180,7 @@ type
   TSSL_CTX_callback_ctrl = function (ctx: PSSL_CTX; cmd: cint; cb : pointer) : clong; cdecl;
   TSSL_get_servername = function (SSL: PSSL; typ: cint): Pchar; cdecl;
   TSSL_CTX_set_cipher_list = function (ctx: PSSL_CTX; const str: PChar): cint; cdecl;
-  TSSL_CTX_set_options = function(ctx: PSSL_CTX;   options: clong): clong; cdecl;
+  TSSL_CTX_set_options = function(ctx: PSSL_CTX; options: clong): clong; cdecl;
   TSSL_CTX_check_private_key = function (ctx: PSSL_CTX): cint; cdecl;
   TSSL_check_private_key = function (SSL: PSSL): cint; cdecl;
   TSSL_select_next_proto = function (cout : PPChar; outlen : PChar;
@@ -215,7 +219,9 @@ const
   SSL_CTX_set_alpn_select_cb: TSSL_CTX_set_alpn_select_cb = nil;
 
   // Methods
+  {$ifndef TLS13}
   TLSv1_2_server_method: TOpenSSL_method = nil;
+  {$endif}
   TLS_server_method: TOpenSSL_method = nil;
   TLS_client_method: TOpenSSL_method = nil;
 
@@ -587,10 +593,16 @@ begin
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
 
-    TLSv1_2_server_method := TOpenSSL_method(
-      GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
-    if not (assigned(TLSv1_2_server_method)) then
-      sDebug.add(LastError);
+{$ifdef TLS13}
+TLS_server_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
+if not (assigned(TLS_server_method)) then
+  sDebug.add(LastError+'TLS_server_method');
+{$else}
+TLSv1_2_server_method := TOpenSSL_method(
+  GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
+if not (assigned(TLSv1_2_server_method)) then
+  sDebug.add(LastError);
+{$endif}
 
     TLS_server_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
@@ -608,7 +620,7 @@ begin
 
     SSL_CTX_ctrl := TSSL_CTX_ctrl(GetProcAddress(libssl_HANDLE, 'SSL_CTX_ctrl'));
     if not (assigned(SSL_CTX_ctrl)) then
-      sDebug.add(LastError);
+     sDebug.add(LastError);
 
     SSL_CTX_set_cipher_list := TSSL_CTX_set_cipher_list(GetProcAddress(libssl_HANDLE, 'SSL_CTX_set_cipher_list'));
     if not (assigned(SSL_CTX_set_cipher_list)) then
@@ -631,15 +643,13 @@ begin
     if not (assigned(SSL_get_version)) then
       sDebug.add(LastError);
 
-      SSL_get_current_cipher := TSSL_get_current_cipher(GetProcAddress(libssl_HANDLE,
-    'SSL_get_current_cipher'));
+    SSL_get_current_cipher := TSSL_get_current_cipher(GetProcAddress(libssl_HANDLE,'SSL_get_current_cipher'));
     if not (assigned(SSL_get_current_cipher)) then
       sDebug.add(LastError);
-  SSL_CIPHER_description := TSSL_CIPHER_description(GetProcAddress(libssl_HANDLE,
-    'SSL_CIPHER_description'));
+
+    SSL_CIPHER_description := TSSL_CIPHER_description(GetProcAddress(libssl_HANDLE,'SSL_CIPHER_description'));
     if not (assigned(SSL_CIPHER_description)) then
       sDebug.add(LastError);
-
 
     SSL_CTX_use_certificate_file :=
       TSSL_CTX_use_certificate_file(GetProcAddress(libssl_HANDLE,
@@ -746,15 +756,13 @@ begin
     if not (assigned(SSL_has_pending)) then
       sDebug.add(LastError);
 
-  SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,
-      'SSL_read'));
-    if not (assigned(SSL_read)) then
-      sDebug.add(LastError);
+   SSL_read:= TSSL_read(GetProcAddress(libssl_HANDLE,'SSL_read'));
+   if not (assigned(SSL_read)) then
+     sDebug.add(LastError);
 
-  SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,
-      'SSL_write'));
-    if not (assigned(SSL_write)) then
-      sDebug.add(LastError);
+   SSL_write:= TSSL_write(GetProcAddress(libssl_HANDLE,'SSL_write'));
+   if not (assigned(SSL_write)) then
+     sDebug.add(LastError);
 
     (*
     if (CRYPTO_set_mem_functions(@CRYPTO_malloc, @CRYPTO_realloc, @CRYPTO_free) <> 1) then
