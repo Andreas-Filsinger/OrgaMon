@@ -1749,7 +1749,7 @@ begin
 
       if (slAKTUELL.IndexOf(DATEINAME_AKTUELL) <> -1) then
       begin
-        del(r);
+        Del(r);
         inc(Stat_Doppelt);
         Log(
           { } cWARNINGText + ' 1069: ' +
@@ -1786,9 +1786,13 @@ begin
         break;
       if (PARAMETER = 'FE') then
         break;
+
       Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der "Neu" Behandlung unbekannt');
-      continue;
+      PARAMETER := '';
+      WARTEND.Del(r);
     until yet;
+    if (PARAMETER='') then
+     continue;
 
     // Nachtrag der Baustellen-Info
     sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
@@ -1934,7 +1938,7 @@ begin
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
       Log(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
-      WARTEND.del(r);
+      WARTEND.Del(r);
       inc(Stat_Umbenannt);
     end
     else
@@ -1960,7 +1964,7 @@ begin
           { } DiagnosePath + cFotoTransaktionenFName);
         LastLogWasTimeStamp := false;
 
-        WARTEND.del(r);
+        WARTEND.Del(r);
         inc(Stat_Umbenannt);
       end
       else

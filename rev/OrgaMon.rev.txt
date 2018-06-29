@@ -19,6 +19,18 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.373 (29.06.18) Andreas Filsinger
+
+ Bug: FotoService: "Neu" - Logik darf nur bei "FN" und "FE" reagieren
+
+Rev 8.372 (29.06.18) Andreas Filsinger
+
+ Bug: FotoService: "Neu" - Logik darf nur bei "FN" und "FE" reagieren
+
+Rev 8.371 (29.06.18) Andreas Filsinger
+
+ Bug: SolidFTP: Mehrstufiges wechseln des Verzeichnisses mit "\" misslang
+
 Rev 8.370 (18.06.18) Andreas Filsinger
 
  Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE (in den Tabellen ARTIKEL, ARTIKEL_AA, AUSGABEART)
