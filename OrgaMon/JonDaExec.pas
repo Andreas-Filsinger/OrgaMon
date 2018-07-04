@@ -3243,7 +3243,6 @@ begin
                       // 4.Rang: einfach das aktuelle Datum
                       Value := long2dateLog(DateGet);
 
-
                       break;
                     end;
 
@@ -3281,6 +3280,27 @@ begin
                       // 4.Rang: einfach das aktuelle Datum
                       Value := long2date(DateGet);
 
+                      break;
+                    end;
+
+                    if (Token = 'wieFA') then
+                    begin
+                      FotoParameter := 'Ausbau';
+                      { Value bleibt leer }
+                      break;
+                    end;
+
+                    if (Token = 'wieFN') then
+                    begin
+                      FotoParameter := 'Einbau';
+                      { Value bleibt leer }
+                      break;
+                    end;
+
+                    if (Token = 'wieFE') then
+                    begin
+                      FotoParameter := 'Regler';
+                      { Value bleibt leer }
                       break;
                     end;
 
@@ -3666,12 +3686,18 @@ begin
         break;
       end;
 
-      // Sonstige / Standard / "FB" "FC"
-      FotoDateiNameNeu :=
-      { } FotoPrefix +
-      { } zaehlernummer_alt +
-      { } '-' +
-      { } FotoParameter;
+      // Sonstige FotoParameter wie "FB", "FC", "FM" ...
+      // Sollten aber abgeschlossen sein!
+
+      if NameOhneZaehlerNummerAlt then
+       FotoDateiNameNeu :=
+        { } FotoPrefix
+      else
+       FotoDateiNameNeu :=
+         { } FotoPrefix +
+         { } StrFilter(zaehlernummer_alt, cValidFNameChars + '_') +
+         { } '-' +
+         { } FotoParameter;
       UmbenennungAbgeschlossen := true;
 
     until yet;

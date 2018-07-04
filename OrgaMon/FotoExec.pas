@@ -1683,6 +1683,9 @@ var
 
 begin
 
+  // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
+  // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
+
   // Init
   ensureGlobals;
   invalidate_NummerNeuCache;
@@ -1780,20 +1783,6 @@ begin
     PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
     ersetze('.jpg', '', PARAMETER);
 
-    // Prüfe auf erlaubte ('FE','FN')
-    repeat
-      if (PARAMETER = 'FN') then
-        break;
-      if (PARAMETER = 'FE') then
-        break;
-
-      Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der "Neu" Behandlung unbekannt');
-      PARAMETER := '';
-      WARTEND.Del(r);
-    until yet;
-    if (PARAMETER='') then
-     continue;
-
     // Nachtrag der Baustellen-Info
     sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
     if (sBaustelle = '') then
@@ -1819,7 +1808,7 @@ begin
       end;
     end;
 
-    if (PARAMETER = 'FN') then
+    if (PARAMETER >= 'FL') then
     begin
 
       // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
@@ -1851,7 +1840,7 @@ begin
       NEU := ZAEHLER_NUMMER_NEU { + };
     end;
 
-    if (PARAMETER = 'FE') then
+    if (PARAMETER < 'FL') then
     begin
 
       // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"

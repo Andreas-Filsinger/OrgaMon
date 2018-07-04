@@ -1790,7 +1790,7 @@ begin
       begin
         Host := e_r_ParameterFoto(settings, cE_FTPHOST);
         UserName := e_r_FTP_LoginUser(e_r_ParameterFoto(settings, cE_FTPUSER));
-        SourcePath := e_r_FTP_SourcePath (e_r_ParameterFoto(settings, cE_FTPUSER));
+        SourcePath := e_r_FTP_SourcePath(e_r_ParameterFoto(settings, cE_FTPUSER));
         Password := e_r_ParameterFoto(settings, cE_FTPPASSWORD);
         result.Add(' login '+UserName);
         if (SourcePath<>'') then

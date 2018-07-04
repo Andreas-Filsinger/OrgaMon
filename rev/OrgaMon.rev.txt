@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.374 (02.07.18) Andreas Filsinger
+
+ Neu: FTP: <Leerschritte> am Anfang oder Ende eines Benutzernamens werden ignoriert
+ Neu: FTP: <Leerschritte> am Anfang oder Ende eines Unterverzeichnisses werden ignoriert
+ Neu: Foto: Wartende: von FA bis FK: Regler / von FL bis FZ: Zähler
+ Neu: Foto: Benennung: "~wieFA~", "~wieFN~", "~wieFE~"
+ Neu: Foto: Benennung: FN-Kurz wirkt auch bei FB, ...
+
 Rev 8.373 (29.06.18) Andreas Filsinger
 
  Bug: FotoService: "Neu" - Logik darf nur bei "FN" und "FE" reagieren

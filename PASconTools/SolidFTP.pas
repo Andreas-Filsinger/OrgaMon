@@ -1593,7 +1593,7 @@ end;
 
 function e_r_FTP_LoginUser (s:string):string;
 begin
- result := nextp(s, '\', 0);
+ result := cutblank(nextp(s, '\', 0));
 end;
 
 function e_r_FTP_SourcePath (s:string):string;
@@ -1606,7 +1606,7 @@ begin
    result := '';
   end else
   begin
-   result := copy(s,succ(i),MaxInt);
+   result := cutblank(copy(s,succ(i),MaxInt));
 
    // Sicherheit vor Pfad Manipulationen
    // unerwünscht: Masken und relative Angaben
