@@ -1372,7 +1372,7 @@ function THTTP2_Connection.write(buf: Pointer; num: cint): cint; overload;
 begin
  result := SSL_write(SSL,@buf,num);
 // result := num;
- mDebug.Add(IntTostr(result)+' Bytes written ...');
+ mDebug.Add(IntTostr(result)+'/'+IntToStr(num)+' Bytes written ...');
 end;
 
 function THTTP2_Connection.write(W: RawByteString): cint;
@@ -1429,10 +1429,8 @@ begin
  if Reader.NOISE.dequeue(D) then
  begin
   mDebug.add('Have '+IntToStr(length(D))+' Byte(s) of Incoming Data');
-
   enqueue(D);
-
-   if assigned(FRequest) then
+  if assigned(FRequest) then
    FRequest('');
  end;
 end;

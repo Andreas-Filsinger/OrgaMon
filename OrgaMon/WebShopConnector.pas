@@ -1103,6 +1103,8 @@ var
 begin
   if not(FileExists(iOlapPath + cOLAP_ArtikelUmfangRemoteShop + cOLAPExtension)) then
     exit;
+  if (iShopKey='') then
+   exit;
 
   //
   BeginHourGlass;
