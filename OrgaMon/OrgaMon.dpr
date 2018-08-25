@@ -203,7 +203,8 @@ uses
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
   systemd in '..\PASconTools\systemd.pas',
-  ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang};
+  ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang},
+  c7zip in '..\PASconTools\c7zip.pas';
 
 {$R *.RES}
 

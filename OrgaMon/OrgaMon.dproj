@@ -459,7 +459,7 @@
         <DCCReference Include="PlanquadratNachfrage.pas">
             <Form>FormPlanquadratNachfrage</Form>
         </DCCReference>
-        <DCCReference Include="Tagwache.pas">
+        <DCCReference Include="TagWache.pas">
             <Form>FormTagwache</Form>
         </DCCReference>
         <DCCReference Include="AuftragArbeitsplatz.pas">
@@ -663,6 +663,7 @@
             <Form>FormArtikelEingang</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\PASconTools\c7zip.pas"/>
         <None Include="..\rev\Oc.rev.txt"/>
         <None Include="..\rev\OrgaMon.rev.txt"/>
         <None Include="..\rev\TPicUpload.rev.txt"/>

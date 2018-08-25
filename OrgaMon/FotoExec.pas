@@ -1075,30 +1075,9 @@ begin
       bOrgaMonOld.Free;
     end;
 
-    // Bilder jetzt einfach sichern
+    // Bilder jetzt aus FTP-Bereich löschen
     if (sFiles.Count > 0) then
     begin
-      (*
-        if (zip(
-        { } sFiles,
-        { } MobUploadPath + ID + '-Bilder.zip',
-        { } infozip_RootPath + '=' + MobUploadPath) = sFiles.count) then
-        begin
-        Log(ID);
-        for n := 0 to pred(sFiles.count) do
-        if not(FileDelete(MobUploadPath + sFiles[n])) then
-        begin
-        Log('ERROR: ' + 'can not delete ' + sFiles[n]);
-        Timer1.Enabled := false;
-        exit;
-        end;
-        end
-        else
-        begin
-        Log('ERROR: Fehler beim Anlegen der ZIP-Datei!');
-        end;
-      *)
-
       Log(Id);
       for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then

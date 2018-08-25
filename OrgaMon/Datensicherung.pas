@@ -956,39 +956,6 @@ begin
       inttostrN(BackupGID, 8);
     Log('Zwischenziel: ' + TmpFName);
 
-    // Neue Sicherungen anlegen
-    (*
-      with Zip do
-      begin
-      Password := '';
-      CompressorExtension := '.\7\z';
-      SZFileName := TmpFName + cTmpExtension;
-      LZMACompressStrength := ULTRA;
-      AddOptions := [AddRecurseDirs];
-      AddRootDir := MyProgramPath;
-      Files.Clear;
-      Files.AddString(MyProgramPath + '*');
-      // work!
-      ArchiveFiles := Add;
-      end;
-    *)
-
-    (*
-      Progressbar1.Max := 100;
-      with ZipMaster1 do
-      begin
-      CompressorExtension := '.zip';
-      ZipFileName := TmpFName + cTmpExtension;
-      AddOptions := [AddDirNames, AddRecurseDirs];
-      RootDir := MyProgramPath;
-      FSpecArgs.clear;
-      FSpecArgs.add('*');
-      FileDelete(ZipFileName);
-      add;
-      ArchiveFiles := SuccessCnt;
-      end;
-    *)
-
     zipOptions := TStringList.create;
     CompressorExtension := '.zip';
     zipOptions.values[infozip_RootPath] := MyProgramPath;

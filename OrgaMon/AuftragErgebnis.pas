@@ -132,8 +132,7 @@ uses
   // lib
   anfix32, globals, OrientationConvert,
   CareTakerClient, Sperre, PEM,
-  wanfix32, html,
-
+  wanfix32, html, c7zip, WordIndex,
 
   // IBO
   IB_Components, IB_Access,
@@ -148,7 +147,7 @@ uses
 
   // Forms
   Bearbeiter, AuftragArbeitsplatz, Datenbank,
-  Mapping, InfoZIP, WordIndex;
+  Mapping;
 {$R *.dfm}
 
 function TFormAuftragErgebnis.CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
@@ -2392,7 +2391,7 @@ var
               FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
 
             // Zip "FilesUp"
-            if (InfoZIP.zip(
+            if (zip(
              { } FilesUp,
              { } cAuftragErgebnisPath + FTP_UploadFName,
              { } infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
