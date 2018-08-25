@@ -31,14 +31,14 @@ object FormAuftragExtern: TFormAuftragExtern
   object Label2: TLabel
     Left = 13
     Top = 160
-    Width = 41
+    Width = 40
     Height = 13
     Caption = 'Vorlauf'
   end
   object Label3: TLabel
     Left = 104
     Top = 160
-    Width = 28
+    Width = 27
     Height = 13
     Caption = 'Tage'
   end

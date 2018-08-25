@@ -257,8 +257,8 @@ var
 implementation
 
 uses
-  SimplePassword, binlager32, anfix32,
-  globals, IniFiles, InfoZIP,
+  SimplePassword, binlager32, anfix32, c7zip,
+  globals, IniFiles,
   math, CCR.Exif, wanfix32,
   dbOrgaMon;
 

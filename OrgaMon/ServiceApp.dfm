@@ -85,6 +85,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet1: TTabSheet
       Caption = 'proceed'
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 22
@@ -252,6 +256,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -381,6 +389,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 409
         Top = 67
@@ -735,6 +747,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -859,6 +875,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48
@@ -889,6 +909,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -937,6 +961,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet8: TTabSheet
       Caption = 'IMEI'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label23: TLabel
         Left = 40
         Top = 48

@@ -127,7 +127,6 @@ uses
   BaustelleFoto in 'BaustelleFoto.pas' {FormBaustelleFoto},
   epIMPORT in 'epIMPORT.pas' {FormepIMPORT},
   FavoritenSQL in 'FavoritenSQL.pas' {FormSQLFavoriten},
-  InfoZIP in '..\infozip\InfoZIP.pas',
   libxml2 in '..\libxml2\libxml2.pas',
   Rechnungen in 'Rechnungen.pas' {FormRechnungen},
   RechnungenFrame in 'RechnungenFrame.pas' {FrameRechnungUeberblick: TFrame},

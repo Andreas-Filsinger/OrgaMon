@@ -208,7 +208,7 @@ type
     // Vorläufige Implementierung für Oc
     procedure OcTest(Path: string);
     procedure txlibTest(Path: string);
-    procedure infozipTest(Path: string);
+    procedure zipTest(Path: string);
     procedure HashTest(Path: string);
     procedure htmlTest(Path: string);
   end;
@@ -219,7 +219,7 @@ var
 implementation
 
 uses
-  globals, systemd, wanfix32, html,
+  globals, systemd, wanfix32, html, c7zip,
 
   //
   DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
@@ -238,7 +238,7 @@ uses
   Funktionen_Basis,
 
   // Tests
-  InfoZIP, DCPmd5, txlib, Datenbank;
+  DCPmd5, txlib, Datenbank;
 {$R *.dfm}
 
 function TFormCareServer.ShowIfError(sDiagnose: TStringList): boolean;
@@ -1052,7 +1052,7 @@ begin
   end;
 end;
 
-procedure TFormCareServer.infozipTest(Path: string);
+procedure TFormCareServer.zipTest(Path: string);
 const
   cTestArchiveName = 'test.zip';
 var
@@ -1078,7 +1078,7 @@ begin
     zip(sFiles, Path + cTestArchiveName, sOptions);
   end;
 
-  InfoZip.zMessages.SaveToFile(Path + 'Diagnose.txt');
+
 
   sFiles.Free;
   sOptions.Free;
@@ -1320,9 +1320,9 @@ begin
           break;
         end;
 
-        if (sNameSpaces[n] = 'infozip') then
+        if (sNameSpaces[n] = 'zip') then
         begin
-          nTest := infozipTest;
+          nTest := zipTest;
           break;
         end;
 

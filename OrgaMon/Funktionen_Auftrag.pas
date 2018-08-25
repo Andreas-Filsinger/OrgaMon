@@ -240,7 +240,7 @@ uses
   SysUtils,
 
   // Tools
-  html, InfoZIP, OrientationConvert,
+  html, OrientationConvert, c7zip,
   CareTakerClient, Mapping, Geld,
   WordIndex, ExcelHelper,
 

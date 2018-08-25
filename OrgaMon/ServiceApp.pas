@@ -226,9 +226,8 @@ implementation
 
 uses
   Clipbrd, IniFiles, CareTakerClient,
-  pem, gplists, html,
-  SolidFTP, BinLager32, wanfix32,
-  InfoZIP;
+  pem, gplists, html, c7zip,
+  SolidFTP, BinLager32, wanfix32;
 
 {$R *.dfm}
 

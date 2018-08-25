@@ -210,19 +210,17 @@ var
 implementation
 
 uses
+  math,
   JclFileUtils, globals, anfix32,
-  splash, IB_Session, Einstellungen,
-  CareTakerClient, math, wanfix32,
-  Datenbank,
-
+  splash,  Einstellungen, c7zip,
+  CareTakerClient,  wanfix32,
+  IB_Session,
   // Indy
   IdStack,
 
-  // ANFiX
-  dbOrgaMon,
-  InfoZIP,
-
   // OrgaMon-Core
+  Datenbank,
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_LokaleDaten,
 
@@ -507,8 +505,7 @@ var
       ZipFileList := TStringList.create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
       FileDelete(ResultFName);
-      FileDelete(DatensicherungPath + cZIPTempFileMask);
-      if (infozip.zip(ZipFileList, ResultFName) <> 1) then
+      if (zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
         break;
@@ -963,11 +960,10 @@ begin
     ProgressBar1.Position := 50;
 
     // alte zip-Fragmente entfernen
-    FileDelete(EigeneOrgaMonDateienPfad + cZIPTempFileMask);
     FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
 
     // ZIP
-    ArchiveFiles := infozip.zip(nil, TmpFName + cTmpFileExtension, zipOptions);
+    ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
     zipOptions.free;
 
     ProgressBar1.Position := 0;
@@ -1285,7 +1281,7 @@ begin
     { } 'Ablage-' +
     { } inttostrN(TAN, 8) +
     { } cZIPExtension;
-    ZipCount := infozip.zip(
+    ZipCount := zip(
       { } sFiles,
       { } ZipFName,
       { } sOptions);

@@ -459,7 +459,7 @@
         <DCCReference Include="PlanquadratNachfrage.pas">
             <Form>FormPlanquadratNachfrage</Form>
         </DCCReference>
-        <DCCReference Include="TagWache.pas">
+        <DCCReference Include="Tagwache.pas">
             <Form>FormTagwache</Form>
         </DCCReference>
         <DCCReference Include="AuftragArbeitsplatz.pas">
@@ -530,7 +530,6 @@
         <DCCReference Include="FavoritenSQL.pas">
             <Form>FormSQLFavoriten</Form>
         </DCCReference>
-        <DCCReference Include="..\infozip\InfoZIP.pas"/>
         <DCCReference Include="..\libxml2\libxml2.pas"/>
         <DCCReference Include="Rechnungen.pas">
             <Form>FormRechnungen</Form>

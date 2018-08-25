@@ -43,8 +43,8 @@ uses
   CCR.Exif,
 
   // Tools
-  anfix32, WordIndex, binlager32,
-  Foto, InfoZIP,
+  anfix32, WordIndex, binlager32, c7zip,
+  Foto,
   CareTakerClient,
 
   // OrgaMon
@@ -1086,8 +1086,8 @@ begin
           Log(cFotoService_AbortTag);
           break;
         end;
-
     end;
+
   end;
 
   sFiles.Free;
@@ -2116,7 +2116,7 @@ var
         { } infozip_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
-        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' 7zip Fehler');
         Pending := false;
         break;
       end;
@@ -2140,7 +2140,7 @@ var
           { } infozip_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
-          Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+          Log(cERRORText + ' 7zip Fehler');
           Pending := false;
           break;
         end;
@@ -2236,7 +2236,7 @@ var
         { } infozip_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
-        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' 7zip Fehler');
         break;
       end;
 

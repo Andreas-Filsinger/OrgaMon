@@ -45,11 +45,9 @@ uses
   IB_Components,
   IB_Access,
 {$ENDIF}
-  dbOrgaMon,
-  anfix32,
+  anfix32, gplists, c7zip,
   globals,
-  gplists,
-  InfoZIP;
+  dbOrgaMon;
 
 type
   eSuchSubs = (eSS_Titel, eSS_Numero, eSS_PaperColor, eSS_Verlag, eSS_Serie, eSS_Komponist, eSS_Arranger, eSS_Preis,
@@ -9052,7 +9050,6 @@ begin
       if DirExists(ArchivePath) then
       begin
         ArchiveOptions := TStringList.create;
-        // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
         ArchiveOptions.values[infozip_RootPath] := ArchivePath;
 
         zip(nil,

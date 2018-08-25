@@ -76,7 +76,7 @@ var
 implementation
 
 uses
-  globals, wanfix32, InfoZIP,
+  globals, wanfix32, c7zip,
   Datenbank,
 
   Funktionen_Basis,

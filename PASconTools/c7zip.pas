@@ -32,10 +32,9 @@ uses
   Classes;
 
 const
-  unzip_Version: string = 'N/A';
-  zip_Version: string = 'N/A';
+  Version: string = 'N/A';
   cZIPExtension = '.zip';
-  cZIPTempFileMask = 'zia*';
+
   infozip_RootPath = 'RootPath';
   infozip_Password = 'Password';
   infozip_Level = 'Level';
@@ -104,14 +103,26 @@ function zip(sFiles: TStringList; FName: string; Options: TStringList = nil)
   : integer { AnzahlDateien }; overload;
 var
  Switches : string;
+ WorkWithFileList : boolean;
+ CompressionLevel_Switch : string;
 begin
-  if FileExists(FName) then
-   DeleteFile(FName);
+  result := 0;
+  CompressionLevel_Switch := '';
+
   if assigned(sFiles) then
   begin
-
+   sFiles.SaveToFile(FName+'.txt', TEncoding.UTF8);
+   WorkWithFileList := true;
+  end else
+  begin
+   if not(assigned(Options)) then
+    exit; // ERROR: You need the Options with "RootPath=" if you dont have a FileList
+   if (Options.Values[infozip_RootPath]='') then
+    exit; // ERROR: You need to set "RootPath=" if you dont have a FileList
+   if not(DirExists(Options.Values[infozip_RootPath])) then
+    exit; // ERROR: "RootPath=" does not exist or is not accessable
+   WorkWithFileList := false;
   end;
-  sFiles.SaveToFile(FName+'.txt', TEncoding.UTF8);
 
   Switches := '';
   if assigned(Options) then
@@ -122,24 +133,52 @@ begin
        Switches := Switches + '-mem=AES256 -p'+Options.Values[infozip_Password]+' ';
       end;
 
+      if (Options.Values[infozip_Password] <> '') then
+      begin
+       Switches := Switches + '-mem=AES256 -p'+Options.Values[infozip_Password]+' ';
+      end;
+
+      if (Options.Values[infozip_Level] = '0') then
+      begin
+       CompressionLevel_Switch := '-mm=Copy ';
+      end;
+
+
 
   end;
 
+  if (CompressionLevel_Switch='') then
+   CompressionLevel_Switch := '-mm=Deflate64 '; //default
+
   //   {} ' > "'+FName+'.log"',        get the std output do not work
-
-  CallExternalApp(
-   {} c7zip_app + ' ' +
-   {} 'a -tZip -mcu=on -mm=Deflate64 ' +
-   {} Switches +
-   {} '"' + FName + '" ' +
-   {} '@"' + FName + '.txt"',
-   {} SW_HIDE);
-
-  DeleteFile(FName+'.txt');
   if FileExists(FName) then
-   result := 1
-  else
-   result := 0;
+   DeleteFile(FName);
+  if WorkWithFileList then
+  begin
+    CallExternalApp(
+     {} c7zip_app + ' ' +
+     {} 'a -tZip -mcu=on ' +
+     {} CompressionLevel_Switch +
+     {} Switches +
+     {} '"' + FName + '" ' +
+     {} '@"' + FName + '.txt"',
+     {} SW_HIDE);
+     DeleteFile(FName+'.txt');
+  end else
+  begin
+    CallExternalApp(
+     {} c7zip_app + ' ' +
+     {} 'a -tZip -mcu=on ' +
+     {} CompressionLevel_Switch +
+     {} Switches +
+     {} '"' + FName + '" ' +
+     {} '"' + Options.Values[infozip_RootPath] + '*"',
+     {} SW_HIDE);
+
+  end;
+
+  if FileExists(FName) then
+   result := 1;
 end;
 
 function zip(sFiles: TStringList; FName: string; Options: string): integer

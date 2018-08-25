@@ -457,7 +457,8 @@ implementation
 uses
   Jvgnugettext, wanfix32,
   globals, math, clipbrd,
-  SimplePassword, dbOrgaMon,
+  SimplePassword, c7zip,
+  dbOrgaMon,
   Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -469,7 +470,7 @@ uses
   Belege, Person, Vertrag,
   Datenbank, AuftragSuchindex,
   BaustelleFoto, REST, CCR.Exif,
-  AuftragErgebnis, mapping, InfoZIP,
+  AuftragErgebnis, mapping,
   Bearbeiter, CommCtrl,
   // Indy
   IdFTP, SolidFTP,
@@ -792,7 +793,7 @@ begin
   begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
-    DateiAnzahl := InfoZIP.zip(sFilesErfolg, ZipFName,
+    DateiAnzahl := zip(sFilesErfolg, ZipFName,
       { } infozip_Password + '=' + sPassword + ';' +
       { } infozip_Level + '=' + '0' + ';' +
       { } infozip_RootPath + '=' + cFotoZiel);
@@ -831,7 +832,7 @@ begin
   begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
-    DateiAnzahl := InfoZIP.zip(zFiles, ZipFName,
+    DateiAnzahl := zip(zFiles, ZipFName,
       { } infozip_Password + '=' + sPassword + ';' +
       { } infozip_Level + '=' + '0' + ';' +
       { } infozip_RootPath + '=' + cFotoPath);
