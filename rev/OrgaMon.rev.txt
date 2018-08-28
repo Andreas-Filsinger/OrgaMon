@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.375 (25.08.18) Andreas Filsinger
+
+ Neu: zip: AES256 Support durch Verwendung von 7zip
+
 Rev 8.374 (02.07.18) Andreas Filsinger
 
  Neu: FTP: <Leerschritte> am Anfang oder Ende eines Benutzernamens werden ignoriert

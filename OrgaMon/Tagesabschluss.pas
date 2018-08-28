@@ -111,7 +111,7 @@ begin
     if (zip(
       { } sDir,
       { } Path + sDir[pred(sDir.Count)] + cZIPExtension,
-      { } infozip_RootPath + '=' + Path) =
+      { } czip_set_RootPath + '=' + Path) =
       { } sDir.Count) then
     begin
       for n := 0 to pred(sDir.Count) do

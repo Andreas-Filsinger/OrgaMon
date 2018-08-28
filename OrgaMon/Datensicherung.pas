@@ -504,7 +504,6 @@ var
       ProgressBar1.Position := 50;
       ZipFileList := TStringList.create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
-      FileDelete(ResultFName);
       if (zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
@@ -515,7 +514,6 @@ var
       // hat das Komprimieren geklappt?
       if not(FileExists(ResultFName)) then
       begin
-
         Log(cERRORText + ' Archiv ' + ResultFName + ' nicht gefunden!');
         break;
       end;
@@ -955,7 +953,7 @@ begin
 
     zipOptions := TStringList.create;
     CompressorExtension := '.zip';
-    zipOptions.values[infozip_RootPath] := MyProgramPath;
+    zipOptions.values[czip_set_RootPath] := MyProgramPath;
     ProgressBar1.max := 100;
     ProgressBar1.Position := 50;
 
@@ -1272,8 +1270,8 @@ begin
 
     // Zip-Optionen
     sOptions := TStringList.create;
-    sOptions.values[infozip_RootPath] := MyProgramPath;
-    sOptions.values[infozip_Level] := '0';
+    sOptions.values[czip_set_RootPath] := MyProgramPath;
+    sOptions.values[czip_set_Level] := '0';
 
     // nun komprimieren
     ZipFName :=
@@ -1378,6 +1376,8 @@ begin
   BeginHourGlass;
   s400 := die400;
   ListBox3.items.Assign(s400);
+  if DebugMode then
+   s400.SaveToFile(DiagnosePath+'400.txt',Tencoding.UTF8);
   s400.free;
   EndHourGlass;
 end;

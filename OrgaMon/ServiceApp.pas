@@ -1343,11 +1343,11 @@ begin
             { } sPics,
             { } sPath +
             { } 'Fotos-' + inttostrN(FotosSequence, 4) + '.zip',
-            { } infozip_RootPath + '=' + sPath + ';' +
-            { } infozip_Password + '=' +
+            { } czip_set_RootPath + '=' + sPath + ';' +
+            { } czip_set_Password + '=' +
             { } deCrypt_Hex(
             { } tBAUSTELLE.readCell(r, cE_ZIPPASSWORD)) + ';' +
-            { } infozip_Level + '=' + '0') = sPics.count) then
+            { } czip_set_Level + '=' + '0') = sPics.count) then
           begin
             // Löschen!
             for m := 0 to pred(sPics.count) do

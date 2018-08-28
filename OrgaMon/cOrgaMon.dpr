@@ -50,7 +50,6 @@ uses
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
   txHoliday in '..\PASconTools\txHoliday.pas',
-  infozip in '..\infozip\infozip.pas',
   Mapping in '..\PASconTools\Mapping.pas',
   GHD_pngimage in '..\PASconTools\GHD_pngimage.pas',
   GHD_pnglang in '..\PASconTools\GHD_pnglang.pas',
@@ -80,7 +79,8 @@ uses
   Identitaet in 'Identitaet.pas',
   TestExec in 'TestExec.pas',
   systemd in '..\PASconTools\systemd.pas',
-  ContextBase in '..\PASconTools\ContextBase.pas';
+  ContextBase in '..\PASconTools\ContextBase.pas',
+  c7zip in '..\PASconTools\c7zip.pas';
 
 begin
  setIdentitaetAndRun;

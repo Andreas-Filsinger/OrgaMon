@@ -9050,7 +9050,7 @@ begin
       if DirExists(ArchivePath) then
       begin
         ArchiveOptions := TStringList.create;
-        ArchiveOptions.values[infozip_RootPath] := ArchivePath;
+        ArchiveOptions.values[czip_set_RootPath] := ArchivePath;
 
         zip(nil,
           { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,

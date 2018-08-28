@@ -2109,11 +2109,11 @@ var
         { } sPics,
         { } Ablage_PFAD +
         { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-        { } infozip_Password + '=' +
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
         { } deCrypt_Hex(
         { } Ablage_ZIP_PASSWORD) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.Count) then
+        { } czip_set_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
         Log(cERRORText + ' 7zip Fehler');
@@ -2133,11 +2133,11 @@ var
           { } sPics,
           { } Ablage_PFAD +
           { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-          { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-          { } infozip_Password + '=' +
+          { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+          { } czip_set_Password + '=' +
           { } deCrypt_Hex(
           { } Ablage_ZIP_PASSWORD) + ';' +
-          { } infozip_Level + '=' + '0') <> sPics.Count) then
+          { } czip_set_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
           Log(cERRORText + ' 7zip Fehler');
@@ -2229,11 +2229,11 @@ var
         { } sHTMLSs,
         { } Ablage_PFAD +
         { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-        { } infozip_Password + '=' +
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
         { } deCrypt_Hex(
         { } Ablage_ZIP_PASSWORD) + ';' +
-        { } infozip_Level + '=' + '0') <> sHTMLSs.Count) then
+        { } czip_set_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
         Log(cERRORText + ' 7zip Fehler');

@@ -2394,7 +2394,7 @@ var
             if (zip(
              { } FilesUp,
              { } cAuftragErgebnisPath + FTP_UploadFName,
-             { } infozip_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
+             { } czip_set_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
             begin
              inc(ErrorCount);
              Log(cERRORText + ' Erstelltes ZIP-Archiv sollte zumindest eine Datei enthalten.');

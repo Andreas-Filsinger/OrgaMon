@@ -794,9 +794,9 @@ begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
     DateiAnzahl := zip(sFilesErfolg, ZipFName,
-      { } infozip_Password + '=' + sPassword + ';' +
-      { } infozip_Level + '=' + '0' + ';' +
-      { } infozip_RootPath + '=' + cFotoZiel);
+      { } czip_set_Password + '=' + sPassword + ';' +
+      { } czip_set_Level + '=' + '0' + ';' +
+      { } czip_set_RootPath + '=' + cFotoZiel);
 
     FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);
@@ -833,9 +833,9 @@ begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
     DateiAnzahl := zip(zFiles, ZipFName,
-      { } infozip_Password + '=' + sPassword + ';' +
-      { } infozip_Level + '=' + '0' + ';' +
-      { } infozip_RootPath + '=' + cFotoPath);
+      { } czip_set_Password + '=' + sPassword + ';' +
+      { } czip_set_Level + '=' + '0' + ';' +
+      { } czip_set_RootPath + '=' + cFotoPath);
 
     FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder_Unbenannt' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);

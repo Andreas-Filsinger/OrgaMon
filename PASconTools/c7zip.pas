@@ -23,6 +23,7 @@
   |
   |    http://orgamon.org/
   |
+  |    A simple commandline-Interface to 7zip - (c) 2018 Andreas Filsinger
 }
 unit c7zip;
 
@@ -33,18 +34,16 @@ uses
 
 const
   Version: string = 'N/A';
-  cZIPExtension = '.zip';
 
-  infozip_RootPath = 'RootPath';
-  infozip_Password = 'Password';
-  infozip_Level = 'Level';
-  infozip_ExtraInfo = 'ExtraInfos';
-  infozip_AES256 = 'AES256';
+  cZIPExtension = '.zip';
+  czip_set_RootPath = 'RootPath';
+  czip_set_Password = 'Password';
+  czip_set_Level = 'Level';
 
   { zip(sFiles,FName,Options)
     |
-    |  sFiles :    Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
-    |  FName :     Name des neuen Archives, Datei sollte nicht existieren
+    |  sFiles  :      Liste der Dateinamen oder "nil" wenn alle Dateien archiviert werden sollen
+    |  FName   :      Name des neuen Archives, Datei sollte nicht existieren
     |  Options :
     |    RootPath   = Einstiegsverzeichnis, ab dem rekursiv gesichert werden soll es werden
     |                 Unterverzeichnisnamen als relative Pfade zu RootPath ins Archiv mit
@@ -52,41 +51,29 @@ const
     |                 Archiv. Wird gerne in Verbindung mit sFiles=nil benutzt.
     |
     |    Password   = das globale Passwort, mit dem alle Dateien verschlüsselt werden sollen
-    |    AES256     = <leer> (default)
-    |                 1 Aktiv
     |    Level      = der Grad der Komprimierung bzw. die Art des Komprimierungsverfahrens, das
     |                 eingesetzt werden soll.
+    |                   = höchste Komprimierung (default)
     |                 0 = keine Komprimierung (Store) ...
-    |                 9 = höchste Komprimierung (default)
-    |    ExtraInfos = <leer> (default>
-    |                 0 Aktiv
-    |                 genauer Sinn bleibt mir verschlossen: Auf alle Fälle führt es zu nicht
-    |                 deterministischen Zips. Deshalb wird es bei alles Tests deaktiviert, sonst
-    |                 lasse ich es auf Default also incl. der Extra infos!
   }
 
-function zip(sFiles: TStringList; FName: string; Options: TStringList = nil)
-  : integer { AnzahlDateien }; overload;
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { AnzahlDateien }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFiles: TStringList; FName: string; Options: string): integer
-{ AnzahlDateien }; overload;
+function zip(sFiles: TStringList; FName: string; Options: string) : integer { AnzahlDateien }; overload;
 
 // Options-Delimiter = ";"
-function zip(sFile: String; FName: string; Options: string = ''): integer
-{ AnzahlDateien }; overload;
+function zip(sFile: String; FName: string; Options: string = '') : integer { AnzahlDateien }; overload;
 
 { unzip(FName,Destination,Options)
   |
-  |  FName :      Name des bestehenden Archives, das ausgepackt werden soll
-  |  Destination: Verzeichnis, in das entpackt werden soll
-  |  Options :
-  |  Password   = das globale Passwort, welches beim Auspacken benutzt wird
+  |  FName       :   Name des bestehenden Archives, das ausgepackt werden soll
+  |  Destination :   Verzeichnis, in das entpackt werden soll
+  |  Options     :
+  |     Password   = das globale Passwort, welches beim Auspacken benutzt wird
 }
 
-function unzip(FName: string; Destination: string; Options: TStringList = nil)
-  : integer { AnzahlDateien };
-
+function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { AnzahlDateien };
 
 implementation
 
@@ -95,67 +82,107 @@ uses
  anfix32, Systemd;
 
 const
- c7zip_app : string = '"C:\Program Files\7-Zip\7z.exe"';
+ c7zip_app : string = '';
 
-//     ('"' + UnzipApplication + '"' + ' ' + CommandLine, SW_HIDE);
+procedure ensure7zip;
+begin
+ if (c7zip_app='') then
+ begin
 
-function zip(sFiles: TStringList; FName: string; Options: TStringList = nil)
-  : integer { AnzahlDateien }; overload;
+  repeat
+
+    c7zip_app := ProgramFilesDir + '7-zip\7z.exe';
+    if FileExists(c7zip_app) then
+      break;
+
+    c7zip_app := 'C:\Program Files\7-zip\7z.exe';
+    if FileExists(c7zip_app) then
+      break;
+
+    c7zip_app := 'C:\Program Files (x86)\7-zip\7z.exe';
+    if FileExists(c7zip_app) then
+      break;
+
+    raise Exception.create('Keine 7zip-Installation gefunden!');
+
+  until yet;
+  c7zip_app := '"' + c7zip_app + '"';
+
+ end;
+end;
+
+function zip(sFiles: TStringList; FName: string; Options: TStringList = nil) : integer { AnzahlDateien }; overload;
 var
  Switches : string;
+ RootPath : string;
  WorkWithFileList : boolean;
  CompressionLevel_Switch : string;
+ ReturnCode : Cardinal;
+ n : Integer;
 begin
   result := 0;
   CompressionLevel_Switch := '';
 
+  // set RootPath
+  if assigned(options) then
+   RootPath := Options.Values[czip_set_RootPath]
+  else
+   RootPath := '';
+
   if assigned(sFiles) then
   begin
-   sFiles.SaveToFile(FName+'.txt', TEncoding.UTF8);
-   WorkWithFileList := true;
+
+    if (RootPath<>'') then
+    begin
+      if not(SetCurrentDir(RootPath)) then
+       exit; // ERROR: Can not set current Dir to RootPath=
+      for n := 0 to pred(sFiles.Count) do
+       if (pos(RootPath,sFiles[n])=1) then
+        sFiles[n] := copy(sFiles[n],length(RootPath)+1,MaxInt);
+    end;
+    sFiles.SaveToFile(FName+'.txt', TEncoding.UTF8);
+
+    WorkWithFileList := true;
   end else
   begin
+
    if not(assigned(Options)) then
     exit; // ERROR: You need the Options with "RootPath=" if you dont have a FileList
-   if (Options.Values[infozip_RootPath]='') then
+   if (Options.Values[czip_set_RootPath]='') then
     exit; // ERROR: You need to set "RootPath=" if you dont have a FileList
-   if not(DirExists(Options.Values[infozip_RootPath])) then
+   if not(DirExists(Options.Values[czip_set_RootPath])) then
     exit; // ERROR: "RootPath=" does not exist or is not accessable
+
    WorkWithFileList := false;
   end;
 
   Switches := '';
   if assigned(Options) then
   begin
-
-      if (Options.Values[infozip_Password] <> '') then
+      if (Options.Values[czip_set_Password] <> '') then
       begin
-       Switches := Switches + '-mem=AES256 -p'+Options.Values[infozip_Password]+' ';
+       Switches := Switches + '-mem=AES256 -p"'+Options.Values[czip_set_Password]+'" ';
       end;
 
-      if (Options.Values[infozip_Password] <> '') then
-      begin
-       Switches := Switches + '-mem=AES256 -p'+Options.Values[infozip_Password]+' ';
-      end;
-
-      if (Options.Values[infozip_Level] = '0') then
+      if (Options.Values[czip_set_Level] = '0') then
       begin
        CompressionLevel_Switch := '-mm=Copy ';
       end;
-
-
-
   end;
 
+  // defaults
   if (CompressionLevel_Switch='') then
-   CompressionLevel_Switch := '-mm=Deflate64 '; //default
+   CompressionLevel_Switch := '-mm=Deflate64 ';
+  if WorkWithFileList then
+   if (RootPath<>'') then
+     Switches := Switches + '-spf ';
 
-  //   {} ' > "'+FName+'.log"',        get the std output do not work
   if FileExists(FName) then
    DeleteFile(FName);
+  ensure7zip;
   if WorkWithFileList then
   begin
-    CallExternalApp(
+    ReturnCode := CallExternalApp(
      {} c7zip_app + ' ' +
      {} 'a -tZip -mcu=on ' +
      {} CompressionLevel_Switch +
@@ -166,23 +193,30 @@ begin
      DeleteFile(FName+'.txt');
   end else
   begin
-    CallExternalApp(
+    ReturnCode := CallExternalApp(
      {} c7zip_app + ' ' +
      {} 'a -tZip -mcu=on ' +
      {} CompressionLevel_Switch +
      {} Switches +
      {} '"' + FName + '" ' +
-     {} '"' + Options.Values[infozip_RootPath] + '*"',
+     {} '"' + Options.Values[czip_set_RootPath] + '*"',
      {} SW_HIDE);
-
   end;
 
+  if (ReturnCode>1) then
+   exit; // ERROR: 7z Program reports an error
+
   if FileExists(FName) then
-   result := 1;
+  begin
+   if WorkWithFileList then
+    result := sFiles.count
+   else
+    result := 1;
+  end;
+
 end;
 
-function zip(sFiles: TStringList; FName: string; Options: string): integer
-{ AnzahlDateien }; overload;
+function zip(sFiles: TStringList; FName: string; Options: string): integer { AnzahlDateien }; overload;
 var
   sOptions: TStringList;
 begin
@@ -191,8 +225,7 @@ begin
   sOptions.free;
 end;
 
-function zip(sFile: String; FName: string; Options: string): integer
-{ AnzahlDateien }; overload;
+function zip(sFile: String; FName: string; Options: string): integer { AnzahlDateien }; overload;
 var
   sOptions: TStringList;
   sFiles: TStringList;
@@ -204,10 +237,36 @@ begin
   sFiles.free;
 end;
 
-function unzip(FName: string; Destination: string; Options: TStringList = nil)
-  : integer { AnzahlDateien };
+function unzip(FName: string; Destination: string; Options: TStringList = nil) : integer { AnzahlDateien };
+var
+ CommandLine : string;
+ ReturnCode : Cardinal;
 begin
+ result := 0;
+ if not(FileExists(FName)) then
+   raise exception.Create('ERROR: ' + FName + ' nicht gefunden');
 
+ // e"x"tract, "y" to all overwrite messages
+ CommandLine := 'x -y ';
+
+ // Password
+ if assigned(Options) then
+  if (Options.Values[czip_set_Password] <> '') then
+   CommandLine := CommandLine + '-p"' + Options.Values[czip_set_Password] + '" ';
+
+ // Destinati"o"n
+ CommandLine := CommandLine + '-o"' + Destination + '" "' + FName + '"';
+
+ ensure7zip;
+ ReturnCode := CallExternalApp(
+  {} c7zip_app + ' ' +
+  {} CommandLine,
+  {} SW_HIDE);
+
+ if (ReturnCode>2) then
+  exit;
+
+ result := 1;
 end;
 
 end.

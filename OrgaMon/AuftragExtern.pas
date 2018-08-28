@@ -154,7 +154,7 @@ var
         zip(
          XLSFName,
          ZipFName,
-         infozip_Password + '=' + settings.values[cE_ZIPPASSWORD]);
+         czip_set_Password + '=' + settings.values[cE_ZIPPASSWORD]);
 
       except
         on e: exception do

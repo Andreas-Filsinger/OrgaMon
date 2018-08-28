@@ -693,7 +693,7 @@ BeginHourGlass;
  for n := 0 to pred(rDir.Count) do
  begin
   Progressbar2.Position := n;
-  unzip(rDir[n],edit19.Text,Split(infozip_Password+'='+edit20.Text));
+  unzip(rDir[n],edit19.Text,Split(czip_set_Password+'='+edit20.Text));
   Application.ProcessMessages;
  end;
  Progressbar2.Position := 0;
@@ -845,7 +845,7 @@ begin
     sTAN := dirs(InternetAblage_SourcePath);
     for n := 0 to pred(sTAN.count) do
     begin
-     ZipOptions.values[infozip_RootPath] := InternetAblage_SourcePath+sTAN[n]+'\';
+     ZipOptions.values[czip_set_RootPath] := InternetAblage_SourcePath+sTAN[n]+'\';
      i := zip(nil,InternetAblage_SourcePath+sTAN[n]+'.zip',ZipOptions);
 
      listbox10.Items.Add(sTAN[n]+':'+IntTOstr(i));

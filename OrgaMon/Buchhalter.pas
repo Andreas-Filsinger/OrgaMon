@@ -2142,7 +2142,7 @@ begin
 
     // zip
     ZipFName := IntToStr(Bis) + cZIPExtension;
-    zip(nil, _WorkPath+ZipFName, infozip_RootPath + '=' + WorkPath);
+    zip(nil, _WorkPath+ZipFName, czip_set_RootPath + '=' + WorkPath);
     openShell(WorkPath);
   end;
 

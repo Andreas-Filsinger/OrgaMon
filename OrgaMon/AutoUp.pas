@@ -1704,7 +1704,7 @@ begin
     begin
       ShowMessage('Ungetestet seit Umstellung vcl-zip -> ZipMaster');
 
-      zip(nil, cAutoUpContent + rZipFName[0], infozip_RootPath + '=' + InstallFrom);
+      zip(nil, cAutoUpContent + rZipFName[0], czip_set_RootPath + '=' + InstallFrom);
 
       rAutoUps.add(cAutoUpContent + rZipFName[0]);
       break;
@@ -1795,7 +1795,7 @@ begin
     if FullPathPrepared then
     begin
       if CheckBoxFileWork.checked then
-        zip('*', ZipFileName, infozip_RootPath + '=' + FullPathPreparedValue);
+        zip('*', ZipFileName, czip_set_RootPath + '=' + FullPathPreparedValue);
     end
     else
     begin

@@ -721,7 +721,7 @@ begin
     zip(
       { } lZips,
       { } AnwenderPath + 'Bilder.zip',
-      { } infozip_Level + '=' + '0')
+      { } czip_set_Level + '=' + '0')
   else
     FileDelete(AnwenderPath + 'Bilder.zip');
 
