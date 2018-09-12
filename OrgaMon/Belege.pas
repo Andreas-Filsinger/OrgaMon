@@ -330,6 +330,7 @@ type
     procedure setShortCut(pDataSource: TIB_DataSource);
 
     procedure mShow;
+    procedure BuildCache;
 
   end;
 
@@ -1436,8 +1437,6 @@ end;
 
 procedure TFormBelege.FormCreate(Sender: TObject);
 begin
-  // TranslateComponent(self);
-  //
   ItemRIDs := TList.create;
   PageControl1.ActivePage := TabSheet1;
   with DrawGrid1, canvas do
@@ -1464,7 +1463,6 @@ begin
   //
   Query2_SQL := TStringList.create;
   Query2_SQL.AddStrings(IB_Query2.sql);
-
 end;
 
 procedure TFormBelege.mShow;
@@ -1572,22 +1570,33 @@ begin
   end;
 end;
 
+procedure TFormBelege.BuildCache;
+begin
+  if not(assigned(ArtikelSucheWI)) then
+  begin
+    ArtikelSucheWI := TWordIndex.create(nil);
+    ArtikelSucheWI.LoadFromFile(SearchDir + format(cArtikelSuchindexFName, [cArtikelSuchindexIntern]));
+    EnsureCache_Verlag;
+    EnsureCache_Musiker;
+    EnsureCache_Laender;
+    e_r_Preis_ensureCache;
+    e_r_PreisTabelle_ensureCache;
+    e_r_SortimentSatz_EnsureCache;
+    e_r_PreisNativ_ensureCache;
+  end
+  else
+  begin
+    ArtikelSucheWI.ReloadIfNew;
+  end;
+end;
+
 procedure TFormBelege.DoTheArtikelSearch;
 var
   n: Integer;
 begin
   BeginHourGlass;
   Enabled := false;
-  if not(assigned(ArtikelSucheWI)) then
-  begin
-    ArtikelSucheWI := TWordIndex.create(nil);
-    ArtikelSucheWI.LoadFromFile(SearchDir + format(cArtikelSuchindexFName, [cArtikelSuchindexIntern]));
-  end
-  else
-  begin
-    ArtikelSucheWI.ReloadIfNew;
-  end;
-
+  BuildCache;
   ArtikelSucheWI.Search(Edit1.text);
   if (ArtikelSucheWI.FoundList.count > 0) then
   begin

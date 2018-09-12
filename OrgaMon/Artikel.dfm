@@ -1134,7 +1134,7 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet8
+    ActivePage = TabSheet3
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
@@ -2640,6 +2640,28 @@ object FormArtikel: TFormArtikel
       'for '
       ' UPDATE')
     ColorScheme = True
+    OrderingItems.Strings = (
+      'AUSGABEART_R=AUSGABEART_R;AUSGABEART_R DESC'
+      'MINDESTBESTAND=MINDESTBESTAND;MINDESTBESTAND DESC'
+      'EURO=EURO;EURO DESC'
+      'MINDESTBESTELLMENGE=MINDESTBESTELLMENGE;MINDESTBESTELLMENGE DESC'
+      'GEWICHT=GEWICHT;GEWICHT DESC'
+      'MENGE=MENGE;MENGE DESC'
+      'LETZTEAENDERUNG=LETZTEAENDERUNG;LETZTEAENDERUNG DESC'
+      'LETZTERVERKAUF=LETZTERVERKAUF;LETZTERVERKAUF DESC'
+      'INVENTUR_MENGE=INVENTUR_MENGE;INVENTUR_MENGE DESC'
+      'PAPERCOLOR=PAPERCOLOR;PAPERCOLOR DESC')
+    OrderingLinks.Strings = (
+      'AUSGABEART_R=ITEM=1'
+      'MINDESTBESTAND=ITEM=2'
+      'EURO=ITEM=3'
+      'MINDESTBESTELLMENGE=ITEM=4'
+      'GEWICHT=ITEM=5'
+      'MENGE=ITEM=6'
+      'LETZTEAENDERUNG=ITEM=7'
+      'LETZTERVERKAUF=ITEM=8'
+      'INVENTUR_MENGE=ITEM=9'
+      'PAPERCOLOR=ITEM=10')
     RequestLive = True
     BeforePost = IB_Query13BeforePost
     BeforePrepare = IB_Query13BeforePrepare

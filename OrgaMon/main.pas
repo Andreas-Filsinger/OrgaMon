@@ -631,15 +631,32 @@ begin
     FormBearbeiter.OnChange := UpdateBenutzer;
     FormBearbeiter.Start;
 
+    // Artikel
+    application.processmessages;
+    FormArtikel.BuildCache;
+    Button3.enabled := true;
+
+    // Belege
+    application.processmessages;
+    FormBelege.BuildCache;
+    Button4.enabled := true;
+
+    // Person
+    application.processmessages;
+    FormPersonSuche.BuildCache;
+    FormPerson.BuildCache;
+    Button2.enabled := true;
+
     // CareTaker Sachen
+    application.processmessages;
     Nachmeldungen;
 
-    application.processmessages;
 
     // if bErlaubnis('SQL Monitor') then
     // DataModuleDatenbank.IB_Monitor1.enabled := true;
 
     // Haupteinstiege, die gesperrt werden können
+    application.processmessages;
     Button68.enabled := bBilligung('Zahlung');
 
     AllSystemsRunning := true; { eigentlich erst nach dem Update! }
@@ -709,7 +726,6 @@ end;
 
 procedure TFormMain.Button27Click(Sender: TObject);
 begin
-  //
   FormRechnungsUebersicht.show;
 end;
 
@@ -720,7 +736,6 @@ end;
 
 procedure TFormMain.Button29Click(Sender: TObject);
 begin
-  // Inventur
   FormInventur.show;
 end;
 

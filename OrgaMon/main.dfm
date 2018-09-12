@@ -634,6 +634,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 50
     Caption = '&Personen'
+    Enabled = False
     TabOrder = 0
     OnClick = Button2Click
   end
@@ -643,6 +644,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 50
     Caption = 'Artikel'
+    Enabled = False
     TabOrder = 1
     OnClick = Button3Click
   end
@@ -652,6 +654,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 49
     Caption = 'Belege'
+    Enabled = False
     TabOrder = 2
     OnClick = Button4Click
   end

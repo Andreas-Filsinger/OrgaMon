@@ -107,6 +107,7 @@ function e_r_VerlagAlias(VERLAG_R: Integer): Integer;
 function e_r_Verlage2: TStringList;
 function e_r_Verlage1: TStringList; // NICHT FREIGEBEN
 procedure InvalidateCache_Verlag;
+procedure EnsureCache_Verlag;
 
 // Baustellen
 function e_r_BaustelleKuerzel(rid: Integer): string;
@@ -291,7 +292,6 @@ var
 
 procedure EnsureCache_Monteur; forward;
 procedure EnsureCache_Baustelle; forward;
-procedure EnsureCache_Verlag; forward;
 function AktiveBaustellenFName: string; forward;
 function gFeiertage: TSperreOfficalHolidays; forward;
 function Arbeit_PERSON(MONTEUR_R: Integer): TSperre; forward;

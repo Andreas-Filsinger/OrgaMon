@@ -19,6 +19,25 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.378 (12.09.18) Andreas Filsinger
+
+ Neu: Person: schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+ Neu: Beleg: schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+
+Rev 8.377 (12.09.18) Andreas Filsinger
+
+ Neu: Artikel: Ausgabeart: Sortierung möglich nach einigen Feldern
+ Neu: Artikel: Schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+
+ Wegfall: Artikel: Erneute Indexbildung alle 30 Minuten
+
+Rev 8.376 (12.09.18) Andreas Filsinger
+
+ Neu: Anschrift: PLZ ist jetzt ein alphanumerisches Feld
+
 Rev 8.375 (25.08.18) Andreas Filsinger
 
  Neu: zip: AES256 Support durch Verwendung von 7zip
@@ -12326,6 +12345,24 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.376
+
+ALTER TABLE ANSCHRIFT
+ADD PLZ_TMP VARCHAR(15);
+
+update ANSCHRIFT set
+PLZ_TMP = PLZ;
+
+ALTER TABLE ANSCHRIFT DROP PLZ;
+
+ALTER TABLE ANSCHRIFT
+ADD PLZ VARCHAR(15);
+
+update ANSCHRIFT set
+PLZ = PLZ_TMP;
+
+ALTER TABLE ANSCHRIFT DROP PLZ_TMP;
 
 :8.370
 

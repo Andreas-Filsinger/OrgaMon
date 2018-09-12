@@ -521,6 +521,10 @@ object FormVertrag: TFormVertrag
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35

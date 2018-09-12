@@ -1035,6 +1035,10 @@ object FormPerson: TFormPerson
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Name'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 27
         Top = 36
@@ -1324,6 +1328,10 @@ object FormPerson: TFormPerson
     object TabSheet2: TTabSheet
       Caption = 'Kontakt'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 82
         Top = 29
@@ -1504,6 +1512,10 @@ object FormPerson: TFormPerson
     object TabSheet3: TTabSheet
       Caption = 'Profil'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 0
@@ -2221,6 +2233,10 @@ object FormPerson: TFormPerson
     object TabSheet6: TTabSheet
       Caption = 'Lieferant'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label30: TLabel
         Left = 15
         Top = 19
@@ -2372,6 +2388,10 @@ object FormPerson: TFormPerson
     object TabSheet7: TTabSheet
       Caption = 'Rabatt'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label31: TLabel
         Left = 4
         Top = 67
@@ -2442,6 +2462,10 @@ object FormPerson: TFormPerson
     object TabSheet10: TTabSheet
       Caption = 'Import/Export/Korrekturen'
       ImageIndex = 9
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image3: TImage
         Left = 703
         Top = 16
@@ -2621,6 +2645,10 @@ object FormPerson: TFormPerson
     object TabSheet11: TTabSheet
       Caption = 'Lohn'
       ImageIndex = 10
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label14: TLabel
         Left = 23
         Top = 66

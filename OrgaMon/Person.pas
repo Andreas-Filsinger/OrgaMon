@@ -292,7 +292,6 @@ type
     IB_Memo3: TIB_Memo;
     Button12: TButton;
     Label59: TLabel;
-    procedure FormActivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -376,6 +375,7 @@ type
     procedure SpeedButton21Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
+    procedure FormActivate(Sender: TObject);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -401,7 +401,6 @@ type
     procedure ensureiMacro;
     procedure createiMacro(NameSpace: string);
     procedure dhlSave;
-
   public
     { Public-Deklarationen }
     InsideImport: Boolean;
@@ -417,6 +416,7 @@ type
     procedure RefreshWordVorlagen;
     procedure RefreshVertraege;
     procedure ReflectLandALT;
+    procedure BuildCache;
   end;
 
 var
@@ -448,21 +448,18 @@ uses
 
 {$R *.DFM}
 
-procedure TFormPerson.FormActivate(Sender: TObject);
+procedure TFormPerson.BuildCache;
 begin
-  // Alle 30 Min
-  if frequently(RefreshBirth, 30 * 60 * 1000) then
-  begin
-    BeginHourGlass;
-    ReflectLaender;
-    RefreshProfileNames;
-    RefreshZahlungtypCombo;
-    RefreshVertraege;
-    RefreshWordVorlagen;
-    EndHourGlass;
-  end;
+  BeginHourGlass;
+  ReflectLaender;
+  RefreshProfileNames;
+  RefreshZahlungtypCombo;
+  RefreshVertraege;
+  RefreshWordVorlagen;
   EnsureThatQuerysAreOpen;
+  EndHourGlass;
 end;
+
 
 procedure TFormPerson.EnsureThatQuerysAreOpen(Refresh: Boolean = true);
 begin
@@ -915,6 +912,12 @@ procedure TFormPerson.ComboBox1Select(Sender: TObject);
 begin
   createiMacro(ComboBox1.Items[ComboBox1.ItemIndex]);
   ComboBox1.ItemIndex := -1;
+end;
+
+procedure TFormPerson.FormActivate(Sender: TObject);
+begin
+  EnsureThatQuerysAreOpen;
+
 end;
 
 procedure TFormPerson.FormCreate(Sender: TObject);

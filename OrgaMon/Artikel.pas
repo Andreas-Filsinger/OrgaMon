@@ -296,11 +296,14 @@ type
     procedure LagerReflect;
     procedure FromFoundListToGrid(ArtikelSuche: TWordIndex);
     procedure PrepareSearch;
+    procedure RefreshKomponistArrangeurCombo;
+    procedure RefreshSortimentCombo;
+    procedure RefreshLaenderCombo;
+    procedure RefreshSchalterTexte;
   public
     { Public-Deklarationen }
     UserBreak: Boolean;
     InsideImport: Boolean;
-    UserEditMode: Boolean;
     procedure SetContext(RID: Integer; AA: Integer = cRID_Null); overload;
     procedure SetContext(RIDS: TList); overload;
     procedure SetContext(sql: string); overload;
@@ -308,13 +311,7 @@ type
     procedure ReflectPREIS_R;
     procedure DoTheArtikelSearch;
     procedure w_GTIN(AUSGABEART_R, ARTIKEL_R: integer);
-
-    // Combo Boxes
-    procedure RefreshKomponistArrangeurCombo;
-    procedure RefreshSortimentCombo;
-    procedure RefreshLaenderCombo;
-    procedure RefreshSchalterTexte;
-
+    procedure BuildCache;
   end;
 
 var
@@ -341,33 +338,8 @@ uses
 
 procedure TFormArtikel.FormActivate(Sender: TObject);
 begin
-  if frequently(RefreshArtikelTime, 30 * 60 * 1000) then
-  begin
-    BeginHourGlass;
-
-    // Vorbereitungen für die Sortiment-Combobox
-    RefreshSortimentCombo;
-
-    // Komponist und Arrangeur
-    RefreshKomponistArrangeurCombo;
-
-    // Vorbereitungen
-    RefreshLaenderCombo;
-
-    // Schalter
-    RefreshSchalterTexte;
-
-    // IB- Query öffnen
-    if IB_Query1.active then
-      IB_Query1.refresh
-    else
-      IB_Query1.Open;
-
-    EndHourGlass;
-  end;
   if not(IB_Query1.active) then
     IB_Query1.Open;
-  UserEditMode := true;
 end;
 
 procedure TFormArtikel.IB_Query1AfterScroll(IB_Dataset: TIB_Dataset);
@@ -391,8 +363,7 @@ procedure TFormArtikel.IB_Query1BeforePost(IB_Dataset: TIB_Dataset);
 begin
   with IB_Dataset do
   begin
-    if UserEditMode then
-      IB_Dataset.FieldByName('LETZTEAENDERUNG').AsDateTime := now;
+    IB_Dataset.FieldByName('LETZTEAENDERUNG').AsDateTime := now;
     if (state = dssedit) then
       if FieldByName('EURO').IsModified then
       begin
@@ -1842,5 +1813,32 @@ begin
     UserBreak := true;
   end;
 end;
+
+procedure TFormArtikel.BuildCache;
+begin
+  BeginHourGlass;
+
+  // Vorbereitungen für die Sortiment-Combobox
+  RefreshSortimentCombo;
+
+  // Komponist und Arrangeur
+  RefreshKomponistArrangeurCombo;
+
+  // Vorbereitungen
+  RefreshLaenderCombo;
+
+  // Schalter
+  RefreshSchalterTexte;
+
+  // Suche
+  PrepareSearch;
+
+  // Query öffnen
+  if not(IB_Query1.active) then
+    IB_Query1.Open;
+
+  EndHourGlass;
+end;
+
 
 end.
