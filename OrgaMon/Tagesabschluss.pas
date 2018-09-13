@@ -371,7 +371,7 @@ begin
       // Anwendung neu starten
       if iNachTagesAbschlussAnwendungNeustart then
       begin
-        FormBaseUpdate.RestartApplication;
+        FormBaseUpdate.RestartOrgaMon;
         break;
       end;
 

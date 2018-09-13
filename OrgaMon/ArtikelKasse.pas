@@ -993,7 +993,7 @@ begin
       if (Edit1.Text = '*0') then
         CloseKasse;
       if (Edit1.Text = '*00') then
-        Application.terminate;
+        FormBaseUpdate.CloseOrgaMon;
       if (Edit1.Text = '*000') then
         WindowsHerunterfahren;
 
@@ -1003,7 +1003,7 @@ begin
       if (Edit1.Text = '*11') then
       begin
         close;
-        FormBaseUpdate.RestartApplication;
+        FormBaseUpdate.RestartOrgaMon;
       end;
       if (Edit1.Text = '*111') then
         WindowsNeuStarten;

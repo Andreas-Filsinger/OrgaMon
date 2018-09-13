@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.380 (13.09.18) Andreas Filsinger
+
+ Bug: Update: Durch die lange Startzeit misslang das automatische Update
+
+Rev 8.379 (13.09.18) Andreas Filsinger
+
+ Neu: Gattung: Neues Feld BEMERKUNG (Freitext)
+
 Rev 8.378 (12.09.18) Andreas Filsinger
 
  Neu: Person: schnellerer Start des Fensters durch Verschiebung der Index-
@@ -12345,6 +12353,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.379
+
+alter table GATTUNG
+add BEMERKUNG TMEMO;
 
 :8.376
 

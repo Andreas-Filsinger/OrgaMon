@@ -1698,7 +1698,7 @@ begin
 
     // F:
     if CheckBox11.Checked then
-      FormBaseUpdate.RestartApplication;
+      FormBaseUpdate.RestartOrgaMon;
   end;
 end;
 

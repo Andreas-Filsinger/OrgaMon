@@ -270,7 +270,7 @@ type
     { Public-Deklarationen }
     procedure UpdateBenutzer(Sender: TObject);
     procedure IBO_GridResize(Sender: TObject);
-    procedure ReflectUpdateStatus;
+    procedure DoUpdate;
     procedure registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
       Active: boolean = true);
     procedure hotEvent;
@@ -487,7 +487,7 @@ begin
         SplashClose;
         ShowMessage('Keine Verbindung möglich mit' + #13 +
           DataModuleDatenbank.IB_Connection1.DataBaseName + #13 + E.Message);
-        application.terminate;
+        FormBaseUpdate.CloseOrgaMon;
         exit;
       end;
     end;
@@ -503,8 +503,11 @@ begin
     SetForegroundWindow(handle);
     Button37.setfocus;
 
-    //
-    ReflectUpdateStatus;
+    // ggf. ein Update durchführen
+    DoUpdate;
+
+    if iForceAppDown then
+     exit;
 
     // Systemparameter ermitteln
     sSystemSettings := e_r_LadeParameter;
@@ -650,10 +653,6 @@ begin
     // CareTaker Sachen
     application.processmessages;
     Nachmeldungen;
-
-
-    // if bErlaubnis('SQL Monitor') then
-    // DataModuleDatenbank.IB_Monitor1.enabled := true;
 
     // Haupteinstiege, die gesperrt werden können
     application.processmessages;
@@ -1172,7 +1171,7 @@ begin
   FormArtikelKasse.show;
 end;
 
-procedure TFormMain.ReflectUpdateStatus;
+procedure TFormMain.DoUpdate;
 begin
   // Alle Bilder aus!
   Image4.visible := false;
@@ -1180,7 +1179,7 @@ begin
   Image6.visible := false;
   Image7.visible := false;
 
-  case FormBaseUpdate.CheckIfUpdateNeeded(DataModuleDatenbank.IB_Connection1) of
+  case FormBaseUpdate.DoUpdateIfNeeded(DataModuleDatenbank.IB_Connection1) of
     cUpdate_Aktuell:
       Image7.visible := true;
     cUpdate_Laufend:
