@@ -152,6 +152,9 @@ type
     Button22: TButton;
     Label22: TLabel;
     Edit12: TEdit;
+    StaticText10: TStaticText;
+    CheckBox11: TCheckBox;
+    Label23: TLabel;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -232,7 +235,7 @@ type
 
     // Externe Calls
     function doMediumBuilder: boolean;
-    function doContenBuilder: boolean;
+    function doContentBuilder: boolean;
 
     // XMLRPC-Server
     function XMLRPC_Running: boolean;
@@ -560,7 +563,7 @@ begin
 
 end;
 
-function TFormWebShopConnector.doContenBuilder: boolean;
+function TFormWebShopConnector.doContentBuilder: boolean;
 begin
   show;
   PageControl1.ActivePage := TabSheet3;
@@ -892,6 +895,7 @@ var
   SummeRemoteCount: integer;
   SummeUploadCount: integer;
   SummeModifiedLinksCount: integer;
+  SummeRealChecks: integer;
 
   // Timing Sachen
   StartTime: dword;
@@ -902,6 +906,10 @@ var
 
   // FTP-to-do-Liste
   sFTP: TStringList;
+
+  // Cache
+  DateToday : TAnfixDate;
+  sRemoteCache : TStringList;
 
   procedure locateArtikel(ARTIKEL_R: integer);
   var
@@ -1012,7 +1020,24 @@ var
   end;
 
   procedure EnsureUp(LocalMusikFName, RemoteMusikFName: string);
+  var
+   DatumDerLetztenPruefung : string;
+
+   procedure MarkAsChecked;
+   begin
+     // Also heute aber noch +0..13 als Zugabe für eine Bessere Streuung in der Zukunft
+     sRemoteCache.values[RemoteMusikFName] := long2date(DatePlus(DateToday,random(14)));
+   end;
+
   begin
+
+    // EnsureUp Cache
+    // RemoteMusikFname=DatumDerLetztenPrüfung
+    //
+    DatumDerLetztenPruefung := sRemoteCache.values[RemoteMusikFName];
+    if (DatumDerLetztenPruefung<>'') then
+     if (DateDiff(date2long(DatumDerLetztenPruefung), DateToDay)<14) then
+      exit;
 
     LocalFSize := FSize(LocalMusikFName);
     if (LocalFSize > 0) then
@@ -1021,6 +1046,7 @@ var
       Log(LocalMusikFName + ' ...');
       inc(SummeLocalFSize, max(0, LocalFSize));
       inc(SummeLocalCount);
+      inc(SummeRealChecks);
 
       // Datei sicherstellen.
       if IsFTPup then
@@ -1052,6 +1078,7 @@ var
             begin
               SummeFTPFehler := 0;
               inc(SummeUploadFSize, LocalFSize);
+              MarkAsChecked;
             end
             else
             begin
@@ -1065,6 +1092,7 @@ var
           begin
             SummeFTPFehler := 0;
             inc(SummeRemoteCount);
+            MarkAsChecked;
           end;
         end;
       end else
@@ -1108,9 +1136,14 @@ begin
 
   //
   BeginHourGlass;
+  DateToday := DateGet;
   LocalMusikFName := TStringList.Create;
   RemoteMusikFName := TStringList.Create;
   sFTP := TStringList.create;
+  sRemoteCache := TStringList.Create;
+
+  if FileExists(SearchDir + cRemoteMP3CacheFName) then
+   sRemoteCache.LoadFromFile(SearchDir + cRemoteMP3CacheFName);
 
   sFTP.add('ARTIKEL_R;LOCAL;SIZE;REMOTE');
 
@@ -1137,6 +1170,7 @@ begin
   SummeLocalCount := 0;
   SummeRemoteCount := 0;
   SummeUploadCount := 0;
+  SummeRealChecks := 0;
 
   SummeModifiedLinksCount := 0;
 
@@ -1300,8 +1334,10 @@ begin
 
                 // Update!
                 Log(inttostr(ARTIKEL_R) + ' update Links!');
-                sql.Add('select BEMERKUNG from DOKUMENT where ' + ' (RID=' + inttostr(DOKUMENT_R) +
-                  ') ' + ' for update');
+                sql.Add(
+                 { } 'select BEMERKUNG from DOKUMENT where ' +
+                 { } ' (RID=' + inttostr(DOKUMENT_R) + ') ' +
+                 { } ' for update');
                 open;
                 first;
                 if not(eof) then
@@ -1338,6 +1374,7 @@ begin
         StaticText5.caption := inttostr(SummeLocalCount);
         StaticText6.caption := inttostr(SummeRemoteCount);
         StaticText7.caption := inttostr(SummeUploadCount);
+        StaticText10.Caption := inttostr(SummeRealChecks);
 
         // Fehler
         StaticText9.caption := inttostr(SummeFTPFehler);
@@ -1405,6 +1442,8 @@ begin
       break;
     if (SummeFTPFehler > 10) and CheckBox5.Checked then
       break;
+    if (SummeRealChecks > 2000) and CheckBox11.Checked then
+      break;
 
   end;
 
@@ -1436,9 +1475,10 @@ begin
   FreeAndNil(RemoteMusikFName);
   sFTP.savetoFile(DiagnosePath+'Remote-WebShop-FTP.csv');
   FreeAndNil(sFTP);
+  sRemoteCache.SaveToFile(SearchDir + cRemoteMP3CacheFName);
+  FreeAndNil(sRemoteCache);
 
   EndHourGlass;
-
 end;
 
 procedure TFormWebShopConnector.Button6Click(Sender: TObject);

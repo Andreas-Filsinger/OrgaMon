@@ -101,6 +101,13 @@ begin
       DebugLogPath := globals.DiagnosePath;
     end;
 
+    if IsParam('-cl') then
+      if (pos(ComputerName + ':', iDataBaseName)=1) then
+      begin
+        iDataBaseName := copy(iDataBaseName, succ(pos(':', iDataBaseName)), MaxInt);
+        writeln('INFO: i run on the same machine as the database-server -> trying to establish a local connection ...');
+      end;
+
     _iDataBaseName := iDataBaseName;
     if (iDataBaseHost <> '') then
       i_c_DataBaseFName := copy(_iDataBaseName, succ(pos(':', _iDataBaseName)), MaxInt)

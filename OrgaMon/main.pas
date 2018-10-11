@@ -431,7 +431,7 @@ var
   r: integer;
   LastRun: TIniFile;
 
-  procedure DisableServer(sParam: string; const Panel: TPanel; var pDisabled: boolean);
+  procedure SetServerStatus(sParam: string; const Panel: TPanel; var pDisabled: boolean);
   begin
     if IsParam(sParam) then
     begin
@@ -596,16 +596,17 @@ begin
       Panel5.color := clred;
       Panel6.color := clred;
       Panel7.color := clred;
+      pDisableAll := true;
     end
     else
     begin
-      DisableServer('-dm', Panel1, pDisableMailer);
-      DisableServer('-dx', Panel2, pDisableXMLRPC);
-      DisableServer('-dt', Panel3, pDisableTagesabschluss);
-      DisableServer('-dw', Panel4, pDisableTagwache);
-      DisableServer('-dh', Panel5, pDisableHotkeys);
-      DisableServer('-dd', Panel6, pDisableDrucker);
-      DisableServer('-dk', Panel7, pDisableKasse);
+      SetServerStatus('-dm', Panel1, pDisableMailer);
+      SetServerStatus('-dx', Panel2, pDisableXMLRPC);
+      SetServerStatus('-dt', Panel3, pDisableTagesabschluss);
+      SetServerStatus('-dw', Panel4, pDisableTagwache);
+      SetServerStatus('-dh', Panel5, pDisableHotkeys);
+      SetServerStatus('-dd', Panel6, pDisableDrucker);
+      SetServerStatus('-dk', Panel7, pDisableKasse);
     end;
 
     // Hot-Keys
@@ -634,25 +635,36 @@ begin
     FormBearbeiter.OnChange := UpdateBenutzer;
     FormBearbeiter.Start;
 
-    // Artikel
-    application.processmessages;
-    FormArtikel.BuildCache;
-    Button3.enabled := true;
+    if not(pDisableAll) then
+    begin
+      // Erzeuge Caches beim Start
 
-    // Belege
-    application.processmessages;
-    FormBelege.BuildCache;
-    Button4.enabled := true;
+      // Artikel
+      application.processmessages;
+      FormArtikel.BuildCache;
+      Button3.enabled := true;
 
-    // Person
-    application.processmessages;
-    FormPersonSuche.BuildCache;
-    FormPerson.BuildCache;
-    Button2.enabled := true;
+      // Belege
+      application.processmessages;
+      FormBelege.BuildCache;
+      Button4.enabled := true;
 
-    // CareTaker Sachen
-    application.processmessages;
-    Nachmeldungen;
+      // Person
+      application.processmessages;
+      FormPersonSuche.BuildCache;
+      FormPerson.BuildCache;
+      Button2.enabled := true;
+
+      // CareTaker Sachen
+      application.processmessages;
+      Nachmeldungen;
+
+    end else
+    begin
+      Button2.enabled := true;
+      Button3.enabled := true;
+      Button4.enabled := true;
+    end;
 
     // Haupteinstiege, die gesperrt werden können
     application.processmessages;

@@ -19,6 +19,33 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.384 (11.10.18) Andreas Filsinger
+
+ Bug: Person: Feld "PAPERCOLOR" nicht gefunden
+
+ Neu: Kommandozeilenparameter "-cl" check local schaltet die neue "lokale Datenbank"
+      Option erst ein.
+ Neu: Fotos: Unverarbeitete können auch in der Form "???-???-???.jpg" vorliegen, so sind
+      in der Regel Fotos benannt, die durch die Amnestie Funktion umkopiert wurden.
+ Neu: 64bit-Putty kann nun gerufen werden
+
+Rev 8.383 (09.10.18-10.10.18) Andreas Filsinger
+
+ Bug: Tagesabschluss: Reihenfolge "Content-Upload" und "Media-Upload" verwechselt
+
+ Neu: Kommandozeilenparameter "-ds" (Disable Server) unterbindet auch das
+      langwierige Caching beim Programmstart
+ Neu: cOrgaMon: Erkennt eine lokale Datenbank-Verbindung und benutzt entsprechend das
+      lokal Protokoll.
+
+Rev 8.382 (09.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: WebShop: MP3: Caching bei der Prüfung ob eine MP3 bereits existiert
+
+Rev 8.381 (26.09.18) Andreas Filsinger
+
+ Neu: Ticket: Putty: Es wird wenn vorhanden die 64bit Variante von Putty gestartet
+
 Rev 8.380 (13.09.18) Andreas Filsinger
 
  Bug: Update: Durch die lange Startzeit misslang das automatische Update

@@ -304,6 +304,7 @@ type
     { Public-Deklarationen }
     UserBreak: Boolean;
     InsideImport: Boolean;
+    CacheReady: Boolean;
     procedure SetContext(RID: Integer; AA: Integer = cRID_Null); overload;
     procedure SetContext(RIDS: TList); overload;
     procedure SetContext(sql: string); overload;
@@ -338,6 +339,8 @@ uses
 
 procedure TFormArtikel.FormActivate(Sender: TObject);
 begin
+  if not(CacheReady) then
+   BuildCache;
   if not(IB_Query1.active) then
     IB_Query1.Open;
 end;
@@ -1838,6 +1841,8 @@ begin
     IB_Query1.Open;
 
   EndHourGlass;
+
+  CacheReady := true;
 end;
 
 

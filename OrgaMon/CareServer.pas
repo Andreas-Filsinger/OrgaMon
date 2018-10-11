@@ -617,6 +617,37 @@ begin
   sSettings.Free;
 end;
 
+const
+ Putty_app : string = '';
+ cPutty = 'PuTTY\putty.exe';
+
+procedure ensurePutty;
+begin
+ if (Putty_app='') then
+ begin
+
+  repeat
+
+    Putty_app := 'C:\Program Files\' + cPutty;
+    if FileExists(Putty_app) then
+      break;
+
+    Putty_app := ProgramFilesDir + cPutty;
+    if FileExists(Putty_app) then
+      break;
+
+    Putty_app := 'C:\Program Files (x86)\' + cPutty;
+    if FileExists(Putty_app) then
+      break;
+
+    raise Exception.create('Keine ' +  cPutty + '-Installation gefunden!');
+
+  until yet;
+  Putty_app := '"' + Putty_app + '"';
+
+ end;
+end;
+
 procedure TFormCareServer.SpeedButton2Click(Sender: TObject);
 var
   sSettings: TStringList;
@@ -639,9 +670,11 @@ begin
   if (LogInPort <> '') then
     LogInPort := '-P ' + LogInPort + ' ';
 
+  ensurePutty;
+
   RunExternalApp(
-    { } ProgramFilesDir +
-    { Cmd } 'puTTY\putty.exe -ssh ' +
+    { App } Putty_app +
+    { Cmd } ' -ssh ' +
     { Port } LogInPort +
     { Passwort } '-pw ' + sSettings.values['password'] +
     { User@Host } ' ' + LogInName + '@' + LogInHost, sw_showdefault);

@@ -271,12 +271,12 @@ begin
               end;
             8: // Webshop extern Datenbank
               if (iShopKey <> '') then
-                if not(FormWebShopConnector.doMediumBuilder) then
-                  Log(cERRORText + ' Medium Upload fail');
+                if not(FormWebShopConnector.doContentBuilder) then
+                  Log(cERRORText + ' Content Upload fail');
             9: // Webshop Medien upload
               if (iShopKey <> '') then
-                if not(FormWebShopConnector.doContenBuilder) then
-                  Log(cERRORText + ' Content Upload fail');
+                if not(FormWebShopConnector.doMediumBuilder) then
+                  Log(cERRORText + ' Medium Upload fail');
             10: // HBCI-Konten: Umsatzabfrage
               if (iKontenHBCI <> '') then
                 FormBuchhalter.e_w_KontoSync(iKontenHBCI);

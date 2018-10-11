@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.380; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.384; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -156,6 +156,7 @@ const
   cLaenderCacheFName = 'Länder.Cache';
   cKreativeCacheFName = 'Kreative.Cache';
   cVertragsvariantenCacheFName = 'Vertragsvarianten.Cache';
+  cRemoteMP3CacheFName = 'MP3.Cache';
   cItemsCacheFExtension = '.Items';
   cValueCacheFExtension = '.Values';
 
@@ -1229,6 +1230,8 @@ var
   pDisableHotkeys: boolean = true;
   pDisableDrucker: boolean = true;
   pDisableKasse: boolean = true;
+
+  pDisableAll: Boolean = false;
 
 const
   // Für CDR Anwendung

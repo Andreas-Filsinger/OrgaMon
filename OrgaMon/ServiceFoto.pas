@@ -1105,7 +1105,17 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
     FName, FNameRemote: string;
   begin
     FName := ListBox5.Items[n];
-    FNameRemote := nextp(FName, '+', 1);
+    repeat
+
+      if (pos('+',FName)>0) then
+      begin
+       FNameRemote := nextp(FName, '+', 1);
+       break;
+      end;
+
+      FNameRemote := copy(FName,succ(pos('-',FName)),MaxInt);
+
+    until yet;
     FileMove(
       { } MyFotoExec.pUnverarbeitetPath + FName,
       { } MyFotoExec.pFTPPath + FNameRemote);

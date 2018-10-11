@@ -387,6 +387,7 @@ type
     inOLAPmode: Boolean;
     cCOL_PAPERCOLOR: Integer;
     iMacroInitialisiert: Boolean;
+    CacheReady: Boolean;
 
     procedure ReflectPerson;
     procedure ReflectLaender;
@@ -458,8 +459,8 @@ begin
   RefreshWordVorlagen;
   EnsureThatQuerysAreOpen;
   EndHourGlass;
+  CacheReady := true;
 end;
-
 
 procedure TFormPerson.EnsureThatQuerysAreOpen(Refresh: Boolean = true);
 begin
@@ -916,8 +917,8 @@ end;
 
 procedure TFormPerson.FormActivate(Sender: TObject);
 begin
-  EnsureThatQuerysAreOpen;
-
+ if not(CacheReady) then
+   BuildCache;
 end;
 
 procedure TFormPerson.FormCreate(Sender: TObject);
@@ -1295,6 +1296,7 @@ begin
     close;
     ChangeWhere(IB_Query1, wSQL);
     inOLAPmode := true;
+    open;
   end;
   show;
   EndHourGlass;
