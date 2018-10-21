@@ -43,8 +43,8 @@ uses
   CCR.Exif,
 
   // Tools
-  anfix32, WordIndex, binlager32,
-  Foto, InfoZIP,
+  anfix32, WordIndex, binlager32, c7zip,
+  Foto,
   CareTakerClient,
 
   // OrgaMon
@@ -1075,30 +1075,9 @@ begin
       bOrgaMonOld.Free;
     end;
 
-    // Bilder jetzt einfach sichern
+    // Bilder jetzt aus FTP-Bereich löschen
     if (sFiles.Count > 0) then
     begin
-      (*
-        if (zip(
-        { } sFiles,
-        { } MobUploadPath + ID + '-Bilder.zip',
-        { } infozip_RootPath + '=' + MobUploadPath) = sFiles.count) then
-        begin
-        Log(ID);
-        for n := 0 to pred(sFiles.count) do
-        if not(FileDelete(MobUploadPath + sFiles[n])) then
-        begin
-        Log('ERROR: ' + 'can not delete ' + sFiles[n]);
-        Timer1.Enabled := false;
-        exit;
-        end;
-        end
-        else
-        begin
-        Log('ERROR: Fehler beim Anlegen der ZIP-Datei!');
-        end;
-      *)
-
       Log(Id);
       for n := 0 to pred(sFiles.Count) do
         if not(FileDelete(pFTPPath + sFiles[n])) then
@@ -1107,8 +1086,8 @@ begin
           Log(cFotoService_AbortTag);
           break;
         end;
-
     end;
+
   end;
 
   sFiles.Free;
@@ -1683,6 +1662,9 @@ var
 
 begin
 
+  // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
+  // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
+
   // Init
   ensureGlobals;
   invalidate_NummerNeuCache;
@@ -1749,7 +1731,7 @@ begin
 
       if (slAKTUELL.IndexOf(DATEINAME_AKTUELL) <> -1) then
       begin
-        del(r);
+        Del(r);
         inc(Stat_Doppelt);
         Log(
           { } cWARNINGText + ' 1069: ' +
@@ -1780,16 +1762,6 @@ begin
     PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
     ersetze('.jpg', '', PARAMETER);
 
-    // Prüfe auf erlaubte ('FE','FN')
-    repeat
-      if (PARAMETER = 'FN') then
-        break;
-      if (PARAMETER = 'FE') then
-        break;
-      Log(cERRORText + ' 987: Parameter "' + PARAMETER + '" ist bei der "Neu" Behandlung unbekannt');
-      continue;
-    until yet;
-
     // Nachtrag der Baustellen-Info
     sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
     if (sBaustelle = '') then
@@ -1815,7 +1787,7 @@ begin
       end;
     end;
 
-    if (PARAMETER = 'FN') then
+    if (PARAMETER >= 'FL') then
     begin
 
       // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
@@ -1847,7 +1819,7 @@ begin
       NEU := ZAEHLER_NUMMER_NEU { + };
     end;
 
-    if (PARAMETER = 'FE') then
+    if (PARAMETER < 'FL') then
     begin
 
       // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
@@ -1934,7 +1906,7 @@ begin
     begin
       // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
       Log(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
-      WARTEND.del(r);
+      WARTEND.Del(r);
       inc(Stat_Umbenannt);
     end
     else
@@ -1960,7 +1932,7 @@ begin
           { } DiagnosePath + cFotoTransaktionenFName);
         LastLogWasTimeStamp := false;
 
-        WARTEND.del(r);
+        WARTEND.Del(r);
         inc(Stat_Umbenannt);
       end
       else
@@ -2137,14 +2109,14 @@ var
         { } sPics,
         { } Ablage_PFAD +
         { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-        { } infozip_Password + '=' +
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
         { } deCrypt_Hex(
         { } Ablage_ZIP_PASSWORD) + ';' +
-        { } infozip_Level + '=' + '0') <> sPics.Count) then
+        { } czip_set_Level + '=' + '0') <> sPics.Count) then
       begin
         // Problem anzeigen
-        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' 7zip Fehler');
         Pending := false;
         break;
       end;
@@ -2161,14 +2133,14 @@ var
           { } sPics,
           { } Ablage_PFAD +
           { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-          { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-          { } infozip_Password + '=' +
+          { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+          { } czip_set_Password + '=' +
           { } deCrypt_Hex(
           { } Ablage_ZIP_PASSWORD) + ';' +
-          { } infozip_Level + '=' + '0') <> sPics.Count) then
+          { } czip_set_Level + '=' + '0') <> sPics.Count) then
         begin
           // Problem anzeigen
-          Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+          Log(cERRORText + ' 7zip Fehler');
           Pending := false;
           break;
         end;
@@ -2257,14 +2229,14 @@ var
         { } sHTMLSs,
         { } Ablage_PFAD +
         { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
-        { } infozip_RootPath + '=' + Ablage_PFAD + ';' +
-        { } infozip_Password + '=' +
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
         { } deCrypt_Hex(
         { } Ablage_ZIP_PASSWORD) + ';' +
-        { } infozip_Level + '=' + '0') <> sHTMLSs.Count) then
+        { } czip_set_Level + '=' + '0') <> sHTMLSs.Count) then
       begin
         // Problem anzeigen
-        Log(cERRORText + ' ' + HugeSingleLine(zMessages, '|'));
+        Log(cERRORText + ' 7zip Fehler');
         break;
       end;
 

@@ -146,7 +146,7 @@ object FormDatensicherung: TFormDatensicherung
     Top = 32
     Width = 961
     Height = 455
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Datenbank Backup'

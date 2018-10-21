@@ -270,7 +270,7 @@ type
     { Public-Deklarationen }
     procedure UpdateBenutzer(Sender: TObject);
     procedure IBO_GridResize(Sender: TObject);
-    procedure ReflectUpdateStatus;
+    procedure DoUpdate;
     procedure registerHot(EventName: string; ShiftState: THKModifiers; Key: TVirtKey;
       Active: boolean = true);
     procedure hotEvent;
@@ -431,7 +431,7 @@ var
   r: integer;
   LastRun: TIniFile;
 
-  procedure DisableServer(sParam: string; const Panel: TPanel; var pDisabled: boolean);
+  procedure SetServerStatus(sParam: string; const Panel: TPanel; var pDisabled: boolean);
   begin
     if IsParam(sParam) then
     begin
@@ -487,7 +487,7 @@ begin
         SplashClose;
         ShowMessage('Keine Verbindung möglich mit' + #13 +
           DataModuleDatenbank.IB_Connection1.DataBaseName + #13 + E.Message);
-        application.terminate;
+        FormBaseUpdate.CloseOrgaMon;
         exit;
       end;
     end;
@@ -503,8 +503,11 @@ begin
     SetForegroundWindow(handle);
     Button37.setfocus;
 
-    //
-    ReflectUpdateStatus;
+    // ggf. ein Update durchführen
+    DoUpdate;
+
+    if iForceAppDown then
+     exit;
 
     // Systemparameter ermitteln
     sSystemSettings := e_r_LadeParameter;
@@ -593,16 +596,17 @@ begin
       Panel5.color := clred;
       Panel6.color := clred;
       Panel7.color := clred;
+      pDisableAll := true;
     end
     else
     begin
-      DisableServer('-dm', Panel1, pDisableMailer);
-      DisableServer('-dx', Panel2, pDisableXMLRPC);
-      DisableServer('-dt', Panel3, pDisableTagesabschluss);
-      DisableServer('-dw', Panel4, pDisableTagwache);
-      DisableServer('-dh', Panel5, pDisableHotkeys);
-      DisableServer('-dd', Panel6, pDisableDrucker);
-      DisableServer('-dk', Panel7, pDisableKasse);
+      SetServerStatus('-dm', Panel1, pDisableMailer);
+      SetServerStatus('-dx', Panel2, pDisableXMLRPC);
+      SetServerStatus('-dt', Panel3, pDisableTagesabschluss);
+      SetServerStatus('-dw', Panel4, pDisableTagwache);
+      SetServerStatus('-dh', Panel5, pDisableHotkeys);
+      SetServerStatus('-dd', Panel6, pDisableDrucker);
+      SetServerStatus('-dk', Panel7, pDisableKasse);
     end;
 
     // Hot-Keys
@@ -631,15 +635,39 @@ begin
     FormBearbeiter.OnChange := UpdateBenutzer;
     FormBearbeiter.Start;
 
-    // CareTaker Sachen
-    Nachmeldungen;
+    if not(pDisableAll) then
+    begin
+      // Erzeuge Caches beim Start
 
-    application.processmessages;
+      // Artikel
+      application.processmessages;
+      FormArtikel.BuildCache;
+      Button3.enabled := true;
 
-    // if bErlaubnis('SQL Monitor') then
-    // DataModuleDatenbank.IB_Monitor1.enabled := true;
+      // Belege
+      application.processmessages;
+      FormBelege.BuildCache;
+      Button4.enabled := true;
+
+      // Person
+      application.processmessages;
+      FormPersonSuche.BuildCache;
+      FormPerson.BuildCache;
+      Button2.enabled := true;
+
+      // CareTaker Sachen
+      application.processmessages;
+      Nachmeldungen;
+
+    end else
+    begin
+      Button2.enabled := true;
+      Button3.enabled := true;
+      Button4.enabled := true;
+    end;
 
     // Haupteinstiege, die gesperrt werden können
+    application.processmessages;
     Button68.enabled := bBilligung('Zahlung');
 
     AllSystemsRunning := true; { eigentlich erst nach dem Update! }
@@ -709,7 +737,6 @@ end;
 
 procedure TFormMain.Button27Click(Sender: TObject);
 begin
-  //
   FormRechnungsUebersicht.show;
 end;
 
@@ -720,7 +747,6 @@ end;
 
 procedure TFormMain.Button29Click(Sender: TObject);
 begin
-  // Inventur
   FormInventur.show;
 end;
 
@@ -1157,7 +1183,7 @@ begin
   FormArtikelKasse.show;
 end;
 
-procedure TFormMain.ReflectUpdateStatus;
+procedure TFormMain.DoUpdate;
 begin
   // Alle Bilder aus!
   Image4.visible := false;
@@ -1165,7 +1191,7 @@ begin
   Image6.visible := false;
   Image7.visible := false;
 
-  case FormBaseUpdate.CheckIfUpdateNeeded(DataModuleDatenbank.IB_Connection1) of
+  case FormBaseUpdate.DoUpdateIfNeeded(DataModuleDatenbank.IB_Connection1) of
     cUpdate_Aktuell:
       Image7.visible := true;
     cUpdate_Laufend:

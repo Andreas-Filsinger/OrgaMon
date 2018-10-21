@@ -1134,11 +1134,15 @@ object FormArtikel: TFormArtikel
     Top = 321
     Width = 978
     Height = 206
-    ActivePage = TabSheet8
+    ActivePage = TabSheet3
     Anchors = [akLeft, akBottom]
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 6
         Top = 7
@@ -1450,6 +1454,10 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1848,6 +1856,10 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1909,6 +1921,10 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -2640,6 +2656,28 @@ object FormArtikel: TFormArtikel
       'for '
       ' UPDATE')
     ColorScheme = True
+    OrderingItems.Strings = (
+      'AUSGABEART_R=AUSGABEART_R;AUSGABEART_R DESC'
+      'MINDESTBESTAND=MINDESTBESTAND;MINDESTBESTAND DESC'
+      'EURO=EURO;EURO DESC'
+      'MINDESTBESTELLMENGE=MINDESTBESTELLMENGE;MINDESTBESTELLMENGE DESC'
+      'GEWICHT=GEWICHT;GEWICHT DESC'
+      'MENGE=MENGE;MENGE DESC'
+      'LETZTEAENDERUNG=LETZTEAENDERUNG;LETZTEAENDERUNG DESC'
+      'LETZTERVERKAUF=LETZTERVERKAUF;LETZTERVERKAUF DESC'
+      'INVENTUR_MENGE=INVENTUR_MENGE;INVENTUR_MENGE DESC'
+      'PAPERCOLOR=PAPERCOLOR;PAPERCOLOR DESC')
+    OrderingLinks.Strings = (
+      'AUSGABEART_R=ITEM=1'
+      'MINDESTBESTAND=ITEM=2'
+      'EURO=ITEM=3'
+      'MINDESTBESTELLMENGE=ITEM=4'
+      'GEWICHT=ITEM=5'
+      'MENGE=ITEM=6'
+      'LETZTEAENDERUNG=ITEM=7'
+      'LETZTERVERKAUF=ITEM=8'
+      'INVENTUR_MENGE=ITEM=9'
+      'PAPERCOLOR=ITEM=10')
     RequestLive = True
     BeforePost = IB_Query13BeforePost
     BeforePrepare = IB_Query13BeforePrepare

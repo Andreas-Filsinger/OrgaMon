@@ -45,11 +45,9 @@ uses
   IB_Components,
   IB_Access,
 {$ENDIF}
-  dbOrgaMon,
-  anfix32,
+  anfix32, gplists, c7zip,
   globals,
-  gplists,
-  InfoZIP;
+  dbOrgaMon;
 
 type
   eSuchSubs = (eSS_Titel, eSS_Numero, eSS_PaperColor, eSS_Verlag, eSS_Serie, eSS_Komponist, eSS_Arranger, eSS_Preis,
@@ -572,14 +570,9 @@ function e_r_LadeParameter: TStringList; { }
 // Textermittlungs Funktionen zu Personen
 procedure e_r_Anschrift(PERSON_R: integer; Datensammler: TStringList; Prefix: string = '');
 procedure e_r_Bank(PERSON_R: integer; sl: TStringList; Prefix: string = '');
-
 function e_r_Adressat(PERSON_R: integer): TStringList;
-function e_r_Ort(PERSON_R: integer): TStringList; overload;
-function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
 
 // Stringermittlungs Funktionen zu Personen
-function e_r_Strasse(ib_q: TdboDataSet): string; overload;
-function e_r_Strasse(PERSON_R: integer): string; overload;
 function e_r_Name(ib_q: TdboDataSet): string; overload;
 function e_r_Name(PERSON_R: integer): string; overload;
 function e_r_NameVorname(ib_q: TdboDataSet): string; overload;
@@ -587,6 +580,8 @@ function e_r_NameVorname(PERSON_R: integer): string; overload;
 function e_r_land(ib_q: TdboDataSet): string;
 function e_r_PLZlength(ib_q: TdboDataSet): integer;
 function e_r_plz(ib_q: TdboDataSet; PLZlength: integer = -1): string;
+function e_r_Ort(PERSON_R: integer): TStringList; overload;
+function e_r_Ort(dboDS: TdboDataSet): TStringList; overload;
 function e_r_fax(ib_q: TdboDataSet): string; overload;
 function e_r_fax(PERSON_R: integer): string; overload;
 function e_r_telefon(ib_q: TdboDataSet): string; overload;
@@ -5404,15 +5399,6 @@ begin
   ANSCHRIFT.free;
 end;
 
-function e_r_Strasse(ib_q: TdboDataSet): string;
-begin
-
-end;
-function e_r_Strasse(PERSON_R: integer): string;
-begin
-
-end;
-
 function e_r_land(ib_q: TdboDataSet): string;
 begin
   result := e_r_LaenderPost(ib_q.FieldByName('LAND_R').AsInteger);
@@ -5428,7 +5414,7 @@ begin
     if not(FieldByName('PLZ').IsNull) then
     begin
       _land_sub := e_r_land(ib_q);
-      _plz_sub := inttostr(FieldByName('PLZ').AsInteger);
+      _plz_sub := FieldByName('PLZ').AsString;
       if (PLZlength > 0) then
         _plz_sub := fill('0', PLZlength - length(_plz_sub)) + _plz_sub;
       result := _plz_sub;
@@ -8894,7 +8880,7 @@ begin
           ApiFirst;
           if not(eof) then
           begin
-            if FieldByName('MINDESTBESTELLMENGE').IsNotNull then
+            if not FieldByName('MINDESTBESTELLMENGE').IsNull then
             begin
               result := FieldByName('MINDESTBESTELLMENGE').AsInteger;
               cGEWICHT.free;
@@ -9052,8 +9038,7 @@ begin
       if DirExists(ArchivePath) then
       begin
         ArchiveOptions := TStringList.create;
-        // Imp pend: prüfen, ob infozip mit dem Slash am Ende klarkommt
-        ArchiveOptions.values[infozip_RootPath] := ArchivePath;
+        ArchiveOptions.values[czip_set_RootPath] := ArchivePath;
 
         zip(nil,
           { } DiagnosePath + cROLL_BACK + RollBackDomain + cZIPExtension,

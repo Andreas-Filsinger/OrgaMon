@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ var
 implementation
 
 uses
-  globals, wanfix32, InfoZIP,
+  globals, wanfix32, c7zip,
   Datenbank,
 
   Funktionen_Basis,
@@ -111,7 +111,7 @@ begin
     if (zip(
       { } sDir,
       { } Path + sDir[pred(sDir.Count)] + cZIPExtension,
-      { } infozip_RootPath + '=' + Path) =
+      { } czip_set_RootPath + '=' + Path) =
       { } sDir.Count) then
     begin
       for n := 0 to pred(sDir.Count) do
@@ -269,14 +269,14 @@ begin
                 if not(FormAuftragExtern.DoJob) then
                   Log(cERRORText + ' AuftragExtern fail');
               end;
-            8: // "Webshop extern Datenbank"
+            8: // Webshop extern Datenbank
+              if (iShopKey <> '') then
+                if not(FormWebShopConnector.doContentBuilder) then
+                  Log(cERRORText + ' Content Upload fail');
+            9: // Webshop Medien upload
               if (iShopKey <> '') then
                 if not(FormWebShopConnector.doMediumBuilder) then
                   Log(cERRORText + ' Medium Upload fail');
-            9: // Webshop Medien upload
-              if (iShopKey <> '') then
-                if not(FormWebShopConnector.doContenBuilder) then
-                  Log(cERRORText + ' Content Upload fail');
             10: // HBCI-Konten: Umsatzabfrage
               if (iKontenHBCI <> '') then
                 FormBuchhalter.e_w_KontoSync(iKontenHBCI);
@@ -371,7 +371,7 @@ begin
       // Anwendung neu starten
       if iNachTagesAbschlussAnwendungNeustart then
       begin
-        FormBaseUpdate.RestartApplication;
+        FormBaseUpdate.RestartOrgaMon;
         break;
       end;
 

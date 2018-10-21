@@ -127,7 +127,6 @@ uses
   BaustelleFoto in 'BaustelleFoto.pas' {FormBaustelleFoto},
   epIMPORT in 'epIMPORT.pas' {FormepIMPORT},
   FavoritenSQL in 'FavoritenSQL.pas' {FormSQLFavoriten},
-  InfoZIP in '..\infozip\InfoZIP.pas',
   libxml2 in '..\libxml2\libxml2.pas',
   Rechnungen in 'Rechnungen.pas' {FormRechnungen},
   RechnungenFrame in 'RechnungenFrame.pas' {FrameRechnungUeberblick: TFrame},
@@ -203,7 +202,8 @@ uses
   JonDaExec in 'JonDaExec.pas',
   FotoExec in 'FotoExec.pas',
   systemd in '..\PASconTools\systemd.pas',
-  ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang};
+  ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang},
+  c7zip in '..\PASconTools\c7zip.pas';
 
 {$R *.RES}
 

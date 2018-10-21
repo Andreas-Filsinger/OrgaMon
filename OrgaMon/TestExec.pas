@@ -46,7 +46,7 @@ uses
   DCPmd5,
   anfix32,
   html,
-  infozip,
+  c7zip,
   txlib,
   WordIndex,
   CaretakerClient,
@@ -63,7 +63,7 @@ type
    *)   class procedure htmlTest(Path: string);
     class procedure txLibTest(Path: string);
     class procedure HashTest(Path: string);
-    class procedure InfoZIPTest(Path: string);
+    class procedure ZIPTest(Path: string);
     class procedure IndexTest(Path: string);
 
   end;
@@ -208,7 +208,7 @@ begin
   end;
 end;
 
-class procedure TTester.infozipTest(Path: string);
+class procedure TTester.zipTest(Path: string);
 const
   cTestArchiveName = 'test.zip';
 var
@@ -233,8 +233,6 @@ begin
   begin
     zip(sFiles, Path + cTestArchiveName, sOptions);
   end;
-
-  InfoZip.zMessages.SaveToFile(Path + 'Diagnose.txt');
 
   sFiles.Free;
   sOptions.Free;

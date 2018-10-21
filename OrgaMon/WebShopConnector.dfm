@@ -327,7 +327,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label8: TLabel
         Left = 392
-        Top = 69
+        Top = 68
         Width = 31
         Height = 13
         Margins.Left = 4
@@ -338,7 +338,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label9: TLabel
         Left = 391
-        Top = 91
+        Top = 92
         Width = 31
         Height = 13
         Margins.Left = 4
@@ -349,7 +349,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label10: TLabel
         Left = 392
-        Top = 114
+        Top = 113
         Width = 31
         Height = 13
         Margins.Left = 4
@@ -360,7 +360,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label11: TLabel
         Left = 8
-        Top = 134
+        Top = 155
         Width = 137
         Height = 13
         Margins.Left = 4
@@ -371,10 +371,21 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label12: TLabel
         Left = 8
-        Top = 159
+        Top = 176
         Width = 149
         Height = 13
         Caption = 'heutige Verbindungsfehler'
+      end
+      object Label23: TLabel
+        Left = 8
+        Top = 133
+        Width = 88
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'heutige Checks'
       end
       object Button5: TButton
         Left = 508
@@ -405,7 +416,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText2: TStaticText
         Left = 232
-        Top = 64
+        Top = 63
         Width = 153
         Height = 18
         Margins.Left = 4
@@ -422,7 +433,7 @@ object FormWebShopConnector: TFormWebShopConnector
         Left = 232
         Top = 87
         Width = 153
-        Height = 17
+        Height = 18
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -435,9 +446,9 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText4: TStaticText
         Left = 232
-        Top = 110
+        Top = 108
         Width = 153
-        Height = 17
+        Height = 18
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -450,7 +461,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText5: TStaticText
         Left = 169
-        Top = 64
+        Top = 63
         Width = 57
         Height = 18
         Margins.Left = 4
@@ -467,7 +478,7 @@ object FormWebShopConnector: TFormWebShopConnector
         Left = 169
         Top = 87
         Width = 57
-        Height = 17
+        Height = 18
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -480,9 +491,9 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText7: TStaticText
         Left = 169
-        Top = 110
+        Top = 108
         Width = 57
-        Height = 17
+        Height = 18
         Hint = 'Automatischer Abbruch bei 100'
         Margins.Left = 4
         Margins.Top = 4
@@ -498,9 +509,9 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText8: TStaticText
         Left = 169
-        Top = 134
+        Top = 150
         Width = 57
-        Height = 16
+        Height = 18
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
@@ -561,9 +572,9 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object StaticText9: TStaticText
         Left = 169
-        Top = 157
+        Top = 171
         Width = 57
-        Height = 16
+        Height = 18
         Hint = 'Automatischer Abbruch bei 10'
         Margins.Left = 4
         Margins.Top = 4
@@ -579,9 +590,9 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object CheckBox1: TCheckBox
         Left = 8
-        Top = 192
+        Top = 198
         Width = 407
-        Height = 17
+        Height = 18
         Caption = 'beenden nach 100 Uploads'
         Checked = True
         State = cbChecked
@@ -589,13 +600,41 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object CheckBox5: TCheckBox
         Left = 8
-        Top = 207
+        Top = 214
         Width = 425
         Height = 17
         Caption = 'beenden nach 10 Verbindungsproblemen'
         Checked = True
         State = cbChecked
         TabOrder = 15
+      end
+      object StaticText10: TStaticText
+        Left = 169
+        Top = 128
+        Width = 57
+        Height = 18
+        Hint = 'Automatischer Abbruch bei 100'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Alignment = taRightJustify
+        AutoSize = False
+        BorderStyle = sbsSunken
+        Caption = '#'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 16
+      end
+      object CheckBox11: TCheckBox
+        Left = 8
+        Top = 230
+        Width = 425
+        Height = 17
+        Caption = 'beenden nach 2000 Checks'
+        Checked = True
+        State = cbChecked
+        TabOrder = 17
       end
     end
     object TabSheet3: TTabSheet

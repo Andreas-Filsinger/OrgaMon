@@ -202,6 +202,31 @@ object FormArtikelKasse: TFormArtikelKasse
     TabOrder = 7
     OnDrawCell = DrawGrid1DrawCell
     OnKeyPress = DrawGrid1KeyPress
+    ColWidths = (
+      64
+      64
+      64)
+    RowHeights = (
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24
+      24)
   end
   object Timer1: TTimer
     Enabled = False

@@ -1012,8 +1012,10 @@ initialization
   SetCurrentConsoleFontEx(StdOutputHandle, False, New_CONSOLE_FONT_INFOEX);
 
   // we start first output
+  {$ifdef console}
   Writeln('default system codepage: ', DefaultSystemCodePage, ' (was ',_SystemCodePage,')');
   Writeln('console output codepage: ', GetTextCodePage(Output), ' (was ',_TextCodePage,')');
+  {$endif}
   {$endif}
 end.
 

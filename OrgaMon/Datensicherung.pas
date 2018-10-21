@@ -210,19 +210,17 @@ var
 implementation
 
 uses
+  math,
   JclFileUtils, globals, anfix32,
-  splash, IB_Session, Einstellungen,
-  CareTakerClient, math, wanfix32,
-  Datenbank,
-
+  splash,  Einstellungen, c7zip,
+  CareTakerClient,  wanfix32,
+  IB_Session,
   // Indy
   IdStack,
 
-  // ANFiX
-  dbOrgaMon,
-  InfoZIP,
-
   // OrgaMon-Core
+  Datenbank,
+  dbOrgaMon,
   Funktionen_Basis,
   Funktionen_LokaleDaten,
 
@@ -506,9 +504,7 @@ var
       ProgressBar1.Position := 50;
       ZipFileList := TStringList.create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
-      FileDelete(ResultFName);
-      FileDelete(DatensicherungPath + cZIPTempFileMask);
-      if (infozip.zip(ZipFileList, ResultFName) <> 1) then
+      if (zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
         break;
@@ -518,7 +514,6 @@ var
       // hat das Komprimieren geklappt?
       if not(FileExists(ResultFName)) then
       begin
-
         Log(cERRORText + ' Archiv ' + ResultFName + ' nicht gefunden!');
         break;
       end;
@@ -956,51 +951,17 @@ begin
       inttostrN(BackupGID, 8);
     Log('Zwischenziel: ' + TmpFName);
 
-    // Neue Sicherungen anlegen
-    (*
-      with Zip do
-      begin
-      Password := '';
-      CompressorExtension := '.\7\z';
-      SZFileName := TmpFName + cTmpExtension;
-      LZMACompressStrength := ULTRA;
-      AddOptions := [AddRecurseDirs];
-      AddRootDir := MyProgramPath;
-      Files.Clear;
-      Files.AddString(MyProgramPath + '*');
-      // work!
-      ArchiveFiles := Add;
-      end;
-    *)
-
-    (*
-      Progressbar1.Max := 100;
-      with ZipMaster1 do
-      begin
-      CompressorExtension := '.zip';
-      ZipFileName := TmpFName + cTmpExtension;
-      AddOptions := [AddDirNames, AddRecurseDirs];
-      RootDir := MyProgramPath;
-      FSpecArgs.clear;
-      FSpecArgs.add('*');
-      FileDelete(ZipFileName);
-      add;
-      ArchiveFiles := SuccessCnt;
-      end;
-    *)
-
     zipOptions := TStringList.create;
     CompressorExtension := '.zip';
-    zipOptions.values[infozip_RootPath] := MyProgramPath;
+    zipOptions.values[czip_set_RootPath] := MyProgramPath;
     ProgressBar1.max := 100;
     ProgressBar1.Position := 50;
 
     // alte zip-Fragmente entfernen
-    FileDelete(EigeneOrgaMonDateienPfad + cZIPTempFileMask);
     FileDelete(EigeneOrgaMonDateienPfad + '*' + cTmpFileExtension);
 
     // ZIP
-    ArchiveFiles := infozip.zip(nil, TmpFName + cTmpFileExtension, zipOptions);
+    ArchiveFiles := zip(nil, TmpFName + cTmpFileExtension, zipOptions);
     zipOptions.free;
 
     ProgressBar1.Position := 0;
@@ -1309,8 +1270,8 @@ begin
 
     // Zip-Optionen
     sOptions := TStringList.create;
-    sOptions.values[infozip_RootPath] := MyProgramPath;
-    sOptions.values[infozip_Level] := '0';
+    sOptions.values[czip_set_RootPath] := MyProgramPath;
+    sOptions.values[czip_set_Level] := '0';
 
     // nun komprimieren
     ZipFName :=
@@ -1318,7 +1279,7 @@ begin
     { } 'Ablage-' +
     { } inttostrN(TAN, 8) +
     { } cZIPExtension;
-    ZipCount := infozip.zip(
+    ZipCount := zip(
       { } sFiles,
       { } ZipFName,
       { } sOptions);
@@ -1415,6 +1376,8 @@ begin
   BeginHourGlass;
   s400 := die400;
   ListBox3.items.Assign(s400);
+  if DebugMode then
+   s400.SaveToFile(DiagnosePath+'400.txt',Tencoding.UTF8);
   s400.free;
   EndHourGlass;
 end;
@@ -1735,7 +1698,7 @@ begin
 
     // F:
     if CheckBox11.Checked then
-      FormBaseUpdate.RestartApplication;
+      FormBaseUpdate.RestartOrgaMon;
   end;
 end;
 

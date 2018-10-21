@@ -228,7 +228,7 @@ begin
       // Anwendung neu starten
       if iNachTagwacheAnwendungNeustart then
       begin
-        FormBaseUpdate.RestartApplication;
+        FormBaseUpdate.RestartOrgaMon;
         break;
       end;
 

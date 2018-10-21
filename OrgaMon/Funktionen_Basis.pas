@@ -157,7 +157,7 @@ implementation
 uses
   Math, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
-  WordIndex,
+  c7zip, WordIndex,
   anfix32, dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
@@ -184,7 +184,6 @@ uses
 {$ENDIF}
   idglobal,
   IdStack, IdComponent, IdFTP, solidFTP,
-  InfoZIP,
   srvXMLRPC,
   memcache;
 
@@ -927,8 +926,8 @@ begin
       { 11 } add('jvcl Rev. ' + JVCL_VERSIONSTRING);
 {$ENDIF}
       { 12 } add(iShopArtikelBilderURL);
-      { 13 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + zip_Version);
-      { 14 } add('infozip Rev. ' + RevToStr(infozip_version) + ' ' + unzip_Version);
+      { 13 } add('7zip Rev. ' +  c7zip.Version);
+      { 14 } add('N/A');
       { 15 } add(
         e_r_Kontext + '@' + ComputerName + ':' + iXMLRPCPort);
       { 16 } add(
@@ -1684,8 +1683,7 @@ var
       ZipFileList := TStringList.Create;
       ZipFileList.add(DatensicherungPath + fbak_FName);
       FileDelete(ResultFName);
-      FileDelete(DatensicherungPath + cZIPTempFileMask);
-      if (InfoZIP.zip(ZipFileList, ResultFName) <> 1) then
+      if (zip(ZipFileList, ResultFName) <> 1) then
       begin
         Log(cERRORText + ' zip Archiv sollte eine Datei beinhalten!');
         break;

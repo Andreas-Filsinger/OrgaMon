@@ -466,10 +466,10 @@ var
 implementation
 
 uses
-  Math,
+  Math, c7zip,
 
   html, Geld, Jvgnugettext,
-  wanfix32,InfoZip,
+  wanfix32,
   globals, dbOrgaMon,
   REST,
   GUIhelp,
@@ -2142,7 +2142,7 @@ begin
 
     // zip
     ZipFName := IntToStr(Bis) + cZIPExtension;
-    zip('*', _WorkPath+ZipFName, infozip_RootPath + '=' + WorkPath);
+    zip(nil, _WorkPath+ZipFName, czip_set_RootPath + '=' + WorkPath);
     openShell(WorkPath);
   end;
 

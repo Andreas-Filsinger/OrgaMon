@@ -457,7 +457,8 @@ implementation
 uses
   Jvgnugettext, wanfix32,
   globals, math, clipbrd,
-  SimplePassword, dbOrgaMon,
+  SimplePassword, c7zip,
+  dbOrgaMon,
   Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -469,7 +470,7 @@ uses
   Belege, Person, Vertrag,
   Datenbank, AuftragSuchindex,
   BaustelleFoto, REST, CCR.Exif,
-  AuftragErgebnis, mapping, InfoZIP,
+  AuftragErgebnis, mapping,
   Bearbeiter, CommCtrl,
   // Indy
   IdFTP, SolidFTP,
@@ -792,10 +793,10 @@ begin
   begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
-    DateiAnzahl := InfoZIP.zip(sFilesErfolg, ZipFName,
-      { } infozip_Password + '=' + sPassword + ';' +
-      { } infozip_Level + '=' + '0' + ';' +
-      { } infozip_RootPath + '=' + cFotoZiel);
+    DateiAnzahl := zip(sFilesErfolg, ZipFName,
+      { } czip_set_Password + '=' + sPassword + ';' +
+      { } czip_set_Level + '=' + '0' + ';' +
+      { } czip_set_RootPath + '=' + cFotoZiel);
 
     FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);
@@ -831,10 +832,10 @@ begin
   begin
 
     LogFoto('Erstelle ' + ExtractFileName(ZipFName) + ' ...');
-    DateiAnzahl := InfoZIP.zip(zFiles, ZipFName,
-      { } infozip_Password + '=' + sPassword + ';' +
-      { } infozip_Level + '=' + '0' + ';' +
-      { } infozip_RootPath + '=' + cFotoPath);
+    DateiAnzahl := zip(zFiles, ZipFName,
+      { } czip_set_Password + '=' + sPassword + ';' +
+      { } czip_set_Level + '=' + '0' + ';' +
+      { } czip_set_RootPath + '=' + cFotoPath);
 
     FileCopy(ZipFName, cFotoAblage + 'Zips\' + e_w_Medium + '-Bilder_Unbenannt' + cZIPExtension);
     inc(DateiAnzahlGesamt, DateiAnzahl);

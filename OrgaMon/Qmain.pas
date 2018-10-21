@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012  Andreas Filsinger
+  |    Copyright (C) 2012 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -308,11 +308,11 @@ procedure TFormQMain.Timer1Timer(Sender: TObject);
 begin
   if NoTimer then
    exit;
-    if iForceAppDown then
-      close;
-    if GruppeOnceUpdated then
-      if UpdateGruppenSelektionNow then
-        UpdateGruppenSelektion;
+  if iForceAppDown then
+   close;
+  if GruppeOnceUpdated then
+   if UpdateGruppenSelektionNow then
+    UpdateGruppenSelektion;
 end;
 
 procedure TFormQMain.EinstellungenClick(Sender: TObject);

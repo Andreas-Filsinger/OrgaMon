@@ -19,6 +19,84 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.384 (11.10.18) Andreas Filsinger
+
+ Bug: Person: Feld "PAPERCOLOR" nicht gefunden
+
+ Neu: Kommandozeilenparameter "-cl" check local schaltet die neue "lokale Datenbank"
+      Option erst ein.
+ Neu: Fotos: Unverarbeitete können auch in der Form "???-???-???.jpg" vorliegen, so sind
+      in der Regel Fotos benannt, die durch die Amnestie Funktion umkopiert wurden.
+ Neu: 64bit-Putty kann nun gerufen werden
+
+Rev 8.383 (09.10.18-10.10.18) Andreas Filsinger
+
+ Bug: Tagesabschluss: Reihenfolge "Content-Upload" und "Media-Upload" verwechselt
+
+ Neu: Kommandozeilenparameter "-ds" (Disable Server) unterbindet auch das
+      langwierige Caching beim Programmstart
+ Neu: cOrgaMon: Erkennt eine lokale Datenbank-Verbindung und benutzt entsprechend das
+      lokal Protokoll.
+
+Rev 8.382 (09.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: WebShop: MP3: Caching bei der Prüfung ob eine MP3 bereits existiert
+
+Rev 8.381 (26.09.18) Andreas Filsinger
+
+ Neu: Ticket: Putty: Es wird wenn vorhanden die 64bit Variante von Putty gestartet
+
+Rev 8.380 (13.09.18) Andreas Filsinger
+
+ Bug: Update: Durch die lange Startzeit misslang das automatische Update
+
+Rev 8.379 (13.09.18) Andreas Filsinger
+
+ Neu: Gattung: Neues Feld BEMERKUNG (Freitext)
+
+Rev 8.378 (12.09.18) Andreas Filsinger
+
+ Neu: Person: schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+ Neu: Beleg: schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+
+Rev 8.377 (12.09.18) Andreas Filsinger
+
+ Neu: Artikel: Ausgabeart: Sortierung möglich nach einigen Feldern
+ Neu: Artikel: Schnellerer Start des Fensters durch Verschiebung der Index-
+      Bildung an den Programmstart.
+
+ Wegfall: Artikel: Erneute Indexbildung alle 30 Minuten
+
+Rev 8.376 (12.09.18) Andreas Filsinger
+
+ Neu: Anschrift: PLZ ist jetzt ein alphanumerisches Feld
+
+Rev 8.375 (25.08.18) Andreas Filsinger
+
+ Neu: zip: AES256 Support durch Verwendung von 7zip
+
+Rev 8.374 (02.07.18) Andreas Filsinger
+
+ Neu: FTP: <Leerschritte> am Anfang oder Ende eines Benutzernamens werden ignoriert
+ Neu: FTP: <Leerschritte> am Anfang oder Ende eines Unterverzeichnisses werden ignoriert
+ Neu: Foto: Wartende: von FA bis FK: Regler / von FL bis FZ: Zähler
+ Neu: Foto: Benennung: "~wieFA~", "~wieFN~", "~wieFE~"
+ Neu: Foto: Benennung: FN-Kurz wirkt auch bei FB, ...
+
+Rev 8.373 (29.06.18) Andreas Filsinger
+
+ Bug: FotoService: "Neu" - Logik darf nur bei "FN" und "FE" reagieren
+
+Rev 8.372 (29.06.18) Andreas Filsinger
+
+ Bug: FotoService: "Neu" - Logik darf nur bei "FN" und "FE" reagieren
+
+Rev 8.371 (29.06.18) Andreas Filsinger
+
+ Bug: SolidFTP: Mehrstufiges wechseln des Verzeichnisses mit "\" misslang
+
 Rev 8.370 (18.06.18) Andreas Filsinger
 
  Neu: Artikel: Datenbankfeld: MINDESTBESTELLMENGE (in den Tabellen ARTIKEL, ARTIKEL_AA, AUSGABEART)
@@ -12302,6 +12380,29 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.379
+
+alter table GATTUNG
+add BEMERKUNG TMEMO;
+
+:8.376
+
+ALTER TABLE ANSCHRIFT
+ADD PLZ_TMP VARCHAR(15);
+
+update ANSCHRIFT set
+PLZ_TMP = PLZ;
+
+ALTER TABLE ANSCHRIFT DROP PLZ;
+
+ALTER TABLE ANSCHRIFT
+ADD PLZ VARCHAR(15);
+
+update ANSCHRIFT set
+PLZ = PLZ_TMP;
+
+ALTER TABLE ANSCHRIFT DROP PLZ_TMP;
 
 :8.370
 

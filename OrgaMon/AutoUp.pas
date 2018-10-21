@@ -254,10 +254,10 @@ var
 implementation
 
 uses
+  c7zip,
   CareTakerClient,
   globals,
   math,
-  InfoZIP,
   systemd,
   wanfix32,
   SolidFTP;
@@ -1562,7 +1562,7 @@ begin
       if RadioButton_SetupType_ReleaseCandidate.checked then
         break;
 
-      InfoZIP.zip(cTemplatesPath + '*', cAutoUpPath + cTemplatesArchiveFName);
+      zip(cTemplatesPath + '*', cAutoUpPath + cTemplatesArchiveFName);
 
       rAutoUps.add(cAutoUpPath + cTemplatesArchiveFName);
     until true;
@@ -1703,36 +1703,8 @@ begin
     if (InstallFrom <> '') then
     begin
       ShowMessage('Ungetestet seit Umstellung vcl-zip -> ZipMaster');
-      (*
-        with zip do
-        begin
-        zipname := cAutoUpContent + rZipFName[0];
-        Recurse := true;
-        RelativePaths := true;
-        RootDir := InstallFrom;
-        FilesList.clear;
-        FilesList.add('*');
-        if CheckBoxFileWork.checked then
-        begin
-        zip;
-        MakeSFX(iSourcePath + cRohstoffePath + 'sfx.exe', true);
-        FileDelete(zipname);
-        end;
-        end;
-      *)
-      {
-        with ZipMaster1 do
-        begin
-        ZipFileName := cAutoUpContent + rZipFName[0];
-        AddOptions := [AddRecurseDirs,AddDirNames];
-        RootDir := InstallFrom;
-        FSpecArgs.clear;
-        FSpecArgs.add('*');
-        Add;
-        end;
-      }
 
-      InfoZIP.zip('*', cAutoUpContent + rZipFName[0], infozip_RootPath + '=' + InstallFrom);
+      zip(nil, cAutoUpContent + rZipFName[0], czip_set_RootPath + '=' + InstallFrom);
 
       rAutoUps.add(cAutoUpContent + rZipFName[0]);
       break;
@@ -1823,7 +1795,7 @@ begin
     if FullPathPrepared then
     begin
       if CheckBoxFileWork.checked then
-        zip('*', ZipFileName, infozip_RootPath + '=' + FullPathPreparedValue);
+        zip('*', ZipFileName, czip_set_RootPath + '=' + FullPathPreparedValue);
     end
     else
     begin
@@ -2119,7 +2091,7 @@ begin
 
     // entpacken nach .
     FileDelete(cTemplatesPath + '*');
-    InfoZIP.unzip(cAutoUpPath + cTemplatesArchiveFName, cTemplatesPath);
+    unzip(cAutoUpPath + cTemplatesArchiveFName, cTemplatesPath);
     FileDelete(cAutoUpPath + cTemplatesArchiveFName);
 
   end;

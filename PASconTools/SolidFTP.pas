@@ -129,6 +129,12 @@ uses
   globals,
   windows;
 
+function ValidatePathNameFTP(DestPath : string):string;
+begin
+  result := ValidatePathName(DestPath);
+  ersetze('\','/',result);
+end;
+
 procedure TIdFtpRestart.PutRestart(const ASourceFile, ADestFile: string; const StartPosition: int64);
 var
   LSourceStream: TStream;
@@ -543,8 +549,8 @@ begin
           end
           else
           begin
-            SolidSingleStepLog('changedir ' + ValidatePathName(DestPath));
-            ChangeDir(ValidatePathName(DestPath));
+            SolidSingleStepLog('changedir ' + ValidatePathNameFTP(DestPath));
+            ChangeDir(ValidatePathNameFTP(DestPath));
           end;
 
           // Erfolg verbuchen!
@@ -598,7 +604,7 @@ begin
           SolidLogin(ftp);
 
         // check
-        ChangeDir(ValidatePathName(SourcePath));
+        ChangeDir(ValidatePathNameFTP(SourcePath));
         // go silently back to root
         ChangeDir('/');
         //
@@ -623,7 +629,6 @@ begin
     end;
     end;
 end;
-
 
 function SolidDir(ftp: TIdFTP; SourcePath, SourceMask, SourcePattern: string; FileList: TStringList): boolean;
 var
@@ -674,7 +679,6 @@ begin
         // Erfolg verbuchen!
         result := true;
         break;
-
       except
 
         on E: EIdSocketError do
@@ -1589,7 +1593,7 @@ end;
 
 function e_r_FTP_LoginUser (s:string):string;
 begin
- result := nextp(s, '\', 0);
+ result := cutblank(nextp(s, '\', 0));
 end;
 
 function e_r_FTP_SourcePath (s:string):string;
@@ -1602,7 +1606,7 @@ begin
    result := '';
   end else
   begin
-   result := copy(s,succ(i),MaxInt);
+   result := cutblank(copy(s,succ(i),MaxInt));
 
    // Sicherheit vor Pfad Manipulationen
    // unerwünscht: Masken und relative Angaben

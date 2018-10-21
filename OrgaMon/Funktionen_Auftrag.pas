@@ -107,6 +107,7 @@ function e_r_VerlagAlias(VERLAG_R: Integer): Integer;
 function e_r_Verlage2: TStringList;
 function e_r_Verlage1: TStringList; // NICHT FREIGEBEN
 procedure InvalidateCache_Verlag;
+procedure EnsureCache_Verlag;
 
 // Baustellen
 function e_r_BaustelleKuerzel(rid: Integer): string;
@@ -240,7 +241,7 @@ uses
   SysUtils,
 
   // Tools
-  html, InfoZIP, OrientationConvert,
+  html, OrientationConvert, c7zip,
   CareTakerClient, Mapping, Geld,
   WordIndex, ExcelHelper,
 
@@ -291,7 +292,6 @@ var
 
 procedure EnsureCache_Monteur; forward;
 procedure EnsureCache_Baustelle; forward;
-procedure EnsureCache_Verlag; forward;
 function AktiveBaustellenFName: string; forward;
 function gFeiertage: TSperreOfficalHolidays; forward;
 function Arbeit_PERSON(MONTEUR_R: Integer): TSperre; forward;
@@ -1790,7 +1790,7 @@ begin
       begin
         Host := e_r_ParameterFoto(settings, cE_FTPHOST);
         UserName := e_r_FTP_LoginUser(e_r_ParameterFoto(settings, cE_FTPUSER));
-        SourcePath := e_r_FTP_SourcePath (e_r_ParameterFoto(settings, cE_FTPUSER));
+        SourcePath := e_r_FTP_SourcePath(e_r_ParameterFoto(settings, cE_FTPUSER));
         Password := e_r_ParameterFoto(settings, cE_FTPPASSWORD);
         result.Add(' login '+UserName);
         if (SourcePath<>'') then

@@ -115,7 +115,7 @@ object FormArtikelKategorie: TFormArtikelKategorie
     Width = 366
     Height = 91
     Anchors = []
-    ItemHeight = 18
+    ItemHeight = 14
     TabOrder = 0
     OnKeyDown = ListBox1KeyDown
   end
@@ -123,7 +123,7 @@ object FormArtikelKategorie: TFormArtikelKategorie
     Left = 0
     Top = 565
     Width = 337
-    Height = 28
+    Height = 22
     Anchors = []
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -156,7 +156,6 @@ object FormArtikelKategorie: TFormArtikelKategorie
     TabOrder = 1
     OnClick = JvTreeView1Click
     LineColor = 13158600
-    ItemHeight = 20
     Checkboxes = True
   end
 end

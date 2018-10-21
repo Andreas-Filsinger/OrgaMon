@@ -292,7 +292,6 @@ type
     IB_Memo3: TIB_Memo;
     Button12: TButton;
     Label59: TLabel;
-    procedure FormActivate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure IB_Edit18Change(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -376,6 +375,7 @@ type
     procedure SpeedButton21Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
     procedure IB_Query2AfterPost(IB_Dataset: TIB_Dataset);
+    procedure FormActivate(Sender: TObject);
   private
     { Private-Deklarationen }
     RefreshBirth: dword;
@@ -387,6 +387,7 @@ type
     inOLAPmode: Boolean;
     cCOL_PAPERCOLOR: Integer;
     iMacroInitialisiert: Boolean;
+    CacheReady: Boolean;
 
     procedure ReflectPerson;
     procedure ReflectLaender;
@@ -401,7 +402,6 @@ type
     procedure ensureiMacro;
     procedure createiMacro(NameSpace: string);
     procedure dhlSave;
-
   public
     { Public-Deklarationen }
     InsideImport: Boolean;
@@ -417,6 +417,7 @@ type
     procedure RefreshWordVorlagen;
     procedure RefreshVertraege;
     procedure ReflectLandALT;
+    procedure BuildCache;
   end;
 
 var
@@ -448,20 +449,17 @@ uses
 
 {$R *.DFM}
 
-procedure TFormPerson.FormActivate(Sender: TObject);
+procedure TFormPerson.BuildCache;
 begin
-  // Alle 30 Min
-  if frequently(RefreshBirth, 30 * 60 * 1000) then
-  begin
-    BeginHourGlass;
-    ReflectLaender;
-    RefreshProfileNames;
-    RefreshZahlungtypCombo;
-    RefreshVertraege;
-    RefreshWordVorlagen;
-    EndHourGlass;
-  end;
+  BeginHourGlass;
+  ReflectLaender;
+  RefreshProfileNames;
+  RefreshZahlungtypCombo;
+  RefreshVertraege;
+  RefreshWordVorlagen;
   EnsureThatQuerysAreOpen;
+  EndHourGlass;
+  CacheReady := true;
 end;
 
 procedure TFormPerson.EnsureThatQuerysAreOpen(Refresh: Boolean = true);
@@ -917,6 +915,12 @@ begin
   ComboBox1.ItemIndex := -1;
 end;
 
+procedure TFormPerson.FormActivate(Sender: TObject);
+begin
+ if not(CacheReady) then
+   BuildCache;
+end;
+
 procedure TFormPerson.FormCreate(Sender: TObject);
 begin
   TranslateComponent(self);
@@ -1292,6 +1296,7 @@ begin
     close;
     ChangeWhere(IB_Query1, wSQL);
     inOLAPmode := true;
+    open;
   end;
   show;
   EndHourGlass;

@@ -480,9 +480,9 @@ var
         raise Exception.create(format('Die Teillieferung (%d) existiert nicht', [TEILLIEFERUNG]));
 
       // Gibt es das PDF?
-      if cINITIAL.FieldByName('PERSON_R').IsNotNull and
-         cINITIAL.FieldByName('STEMPEL_R').IsNotNull and
-         cINITIAL.FieldByName('STEMPEL_DOKUMENT').IsNotNull then
+      if (not cINITIAL.FieldByName('PERSON_R').IsNull) and
+         (not cINITIAL.FieldByName('STEMPEL_R').IsNull) and
+         (not cINITIAL.FieldByName('STEMPEL_DOKUMENT').IsNull) then
       begin
         repeat
           FName := e_r_BelegFNameCombined(
@@ -2746,7 +2746,7 @@ begin
       { } 'where ' +
       { } ' (RID=' + inttostr(BUCH_R) + ') ' );
     ApiFirst;
-    if FieldByName('PERSON_R').IsNotNull then
+    if not FieldByName('PERSON_R').IsNull then
     begin
       sPAth :=  cPersonPath(FieldByName('PERSON_R').AsInteger);
       STEMPEL := b_r_Stempel(FieldByName('STEMPEL_R').AsInteger) + '-' + FieldByName('STEMPEL_DOKUMENT').AsString;

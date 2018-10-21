@@ -68,13 +68,13 @@ var
 implementation
 
 uses
-  anfix32,
+  anfix32, c7zip,
 
   FlexCel.Core, FlexCel.xlsAdapter,
 
   IB_Components, CareTakerClient,
   Funktionen_Auftrag, WordIndex,
-  html, SolidFTP, InfoZIP, Datenbank, Baustelle;
+  html, SolidFTP, Datenbank, Baustelle;
 
 {$R *.dfm}
 
@@ -151,10 +151,10 @@ var
         end;
         }
 
-        InfoZIP.zip(
+        zip(
          XLSFName,
          ZipFName,
-         infozip_Password + '=' + settings.values[cE_ZIPPASSWORD]);
+         czip_set_Password + '=' + settings.values[cE_ZIPPASSWORD]);
 
       except
         on e: exception do

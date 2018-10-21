@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2015  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -171,10 +171,11 @@ type
     CargoBayRev: single; // im Internet
     UpdatePathRev: single; // im ./Updates Pfad
 
-    function CheckIfUpdateNeeded(pIBC: TIB_Connection): Integer;
+    function DoUpdateIfNeeded(pIBC: TIB_Connection): Integer;
     function EnforceApplicationUpdateTo(Rev: single): Boolean;
     procedure DataBaseUpdate;
-    procedure RestartApplication;
+    procedure RestartOrgaMon;
+    procedure CloseOrgaMon;
     function CloseOtherInstances: Boolean;
 
     procedure ObtainBaseRevisions;
@@ -326,7 +327,7 @@ begin
           if doit(cApplicationName + cRevExtension + ' fehlt!' + #13 +
             'Es kann nicht geprüft werden, ob ein Datenbankupdate' + #13 +
             'durchgeführt werden muss! Anwendung beenden', true) then
-            application.terminate;
+            CloseOrgaMon;
 
         until true;
 
@@ -382,7 +383,7 @@ begin
           if doit(MetaDataUpdateFname + ' fehlt oder ist veraltet!' + #13 +
             'Es kann nicht geprüft werden, ob ein Datenbankupdate' + #13 +
             'durchgeführt werden muss! Anwendung beenden', true) then
-            application.terminate;
+            CloseOrgaMon;
         end;
 
       end;
@@ -392,7 +393,7 @@ begin
     end;
 end;
 
-function TFormBaseUpdate.CheckIfUpdateNeeded(pIBC: TIB_Connection): Integer;
+function TFormBaseUpdate.DoUpdateIfNeeded(pIBC: TIB_Connection): Integer;
 var
   SQL_UpdateNotwendig: Boolean;
   iRCversion: Integer;
@@ -429,7 +430,7 @@ begin
         CloseEvent;
         IBC.disconnect;
       end;
-      application.terminate;
+      CloseOrgaMon;
       result := cUpdate_Laufend;
       exit;
     end;
@@ -471,7 +472,7 @@ begin
           { } 'um das Programm zu beenden!', 20000, true) then
         begin
           IBC.disconnect;
-          application.terminate;
+          CloseOrgaMon;
           result := cUpdate_Laufend;
           exit;
         end;
@@ -633,7 +634,7 @@ var
           RunExternalApp(UpdateQuellen[n] + ' /SILENT /SUPPRESSMSGBOXES "/PostExec='
             + fullCmd + '"', sw_showdefault);
           result := true;
-          application.terminate;
+          CloseOrgaMon;
         end;
         break;
       end;
@@ -647,7 +648,6 @@ begin
 
   // die aktuelle Rev suchen
   UpdateQuellen.add(UpdatePath + SetupUpdateFName(Rev));
-  UpdateQuellen.add('G:\CargoBay\' + SetupUpdateFName(Rev));
 
   // Existenz der Quellen prüfen
   UpdateQuelleGefunden := CheckUpdateQuellen;
@@ -861,9 +861,7 @@ begin
     //
     if (AEventName = cEventsDisconnect) then
     begin
-      NoTimer := true;
-      iForceAppDown := true;
-      application.terminate;
+      CloseOrgaMon;
       break;
     end;
 
@@ -1175,7 +1173,7 @@ begin
   end;
 end;
 
-procedure TFormBaseUpdate.RestartApplication;
+procedure TFormBaseUpdate.RestartOrgaMon;
 var
   AllParams: string;
   n: Integer;
@@ -1195,12 +1193,12 @@ begin
     sw_showdefault);
 
   // Anwendung stoppen
-  application.terminate;
+  CloseOrgaMon;
 end;
 
 procedure TFormBaseUpdate.Button5Click(Sender: TObject);
 begin
-  RestartApplication;
+  RestartOrgaMon;
 end;
 
 procedure TFormBaseUpdate.Button6Click(Sender: TObject);
@@ -1279,6 +1277,13 @@ procedure TFormBaseUpdate.SpeedButton1Click(Sender: TObject);
 begin
   ObtainUpdatePathRevision;
   UpdateRevCaptions;
+end;
+
+procedure TFormBaseUpdate.CloseOrgaMon;
+begin
+  NoTimer := true;
+  iForceAppDown := true;
+  Application.Terminate;
 end;
 
 end.

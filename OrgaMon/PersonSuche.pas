@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011  Andreas Filsinger
+  |    Copyright (C) 2011 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -166,6 +166,7 @@ type
     function AuftragGruppe(Gruppe: string): Integer;
     procedure AufgabeRefresh;
     procedure AufgabeAenderungAnzeigen;
+    function BuildCache : boolean;
   end;
 
 var
@@ -269,21 +270,26 @@ begin
   sMitglieder := TgpIntegerList.create;
 end;
 
+function TFormPersonSuche.BuildCache : boolean;
+begin
+  if (SearchIndex.LastFileName = '') then
+  begin
+    result := true;
+    SearchIndex.LoadFromFile(SearchDir + 'Kunden.Suchindex');
+  end
+  else
+  begin
+    result := SearchIndex.ReloadIfNew;
+  end;
+end;
+
 procedure TFormPersonSuche.FormActivate(Sender: TObject);
 var
   UpdateGridSQL: boolean;
 begin
   BeginHourGlass;
 
-  if (SearchIndex.LastFileName = '') then
-  begin
-    UpdateGridSQL := true;
-    SearchIndex.LoadFromFile(SearchDir + 'Kunden.Suchindex');
-  end
-  else
-  begin
-    UpdateGridSQL := SearchIndex.ReloadIfNew;
-  end;
+  UpdateGridSQL := BuildCache;
 
   if UpdateGridSQL then
   begin

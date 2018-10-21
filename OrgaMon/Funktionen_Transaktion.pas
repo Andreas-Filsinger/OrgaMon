@@ -173,8 +173,8 @@ procedure Dispatch(TransaktionsName: string; lRID: TgpIntegerList);
 implementation
 
 uses
-  anfix32, globals,
-
+  anfix32,  wanfix32, c7zip,
+  globals,
   IB_Components, IB_Access,
   math, html, Datenbank,
   Funktionen_Basis,
@@ -183,8 +183,7 @@ uses
   graphics, CareTakerClient,
   dbOrgaMon, WordIndex,
   Sperre, Bearbeiter, GeoLokalisierung,
-  FastGeo, AuftragArbeitsplatz, wanfix32,
-  InfoZIP,
+  FastGeo, AuftragArbeitsplatz,
 
   // XLS Sachen
   FlexCel.Core, FlexCel.xlsAdapter,
@@ -719,10 +718,10 @@ begin
   end;
 
   if (lZips.count > 0) then
-    InfoZip.zip(
+    zip(
       { } lZips,
       { } AnwenderPath + 'Bilder.zip',
-      { } infozip_Level + '=' + '0')
+      { } czip_set_Level + '=' + '0')
   else
     FileDelete(AnwenderPath + 'Bilder.zip');
 
