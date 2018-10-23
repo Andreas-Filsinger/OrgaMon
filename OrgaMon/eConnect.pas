@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -846,9 +846,6 @@ end;
 // empfangenes Skript lokal ausführen
 
 function TeConnect.rpc_e_w_Skript(sParameter: TStringList): TStringList;
-var
-  Data: AnsiString;
-  n: integer;
 begin
   result := TStringList.create;
   result.AddObject('', TXMLRPC_Server.oBeginArray);
@@ -863,6 +860,5 @@ begin
    with TXMLRPC_Server do
      result.AddObject(frominteger(e_w_GEN(sParameter[1])), oInteger);
 end;
-
 
 end.

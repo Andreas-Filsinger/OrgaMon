@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2016  Andreas Filsinger
+  |    Copyright (C) 2016 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -102,11 +102,20 @@ begin
     end;
 
     if IsParam('-cl') then
+    begin
       if (pos(ComputerName + ':', iDataBaseName)=1) then
       begin
         iDataBaseName := copy(iDataBaseName, succ(pos(':', iDataBaseName)), MaxInt);
         writeln('INFO: i run on the same machine as the database-server -> trying to establish a local connection ...');
       end;
+    end else
+    begin
+      if (pos(ComputerName + ':', iDataBaseName)=1) then
+      begin
+        iDataBaseName := 'localhost' + copy(iDataBaseName, pos(':', iDataBaseName), MaxInt);
+        writeln('INFO: i run on the same machine as the database-server -> trying to establish a localhost: tcp-connection ...');
+      end;
+    end;
 
     _iDataBaseName := iDataBaseName;
     if (iDataBaseHost <> '') then
@@ -996,15 +1005,13 @@ begin
       begin
         DefaultPort := iJonDa_Port;
         DiagnosePath := globals.DiagnosePath;
+        LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
 
         DebugMode := anfix32.DebugMode;
         TimingStats := IsParam('-at');
         // Verbrauchte Zeit pro XMLRPC
         if TimingStats then
-        begin
           writeln('TimingStatistics @' + DiagnosePath);
-        end;
-        LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
 
         // Methoden registrieren
         AddMethod('BasePlug', JonDa.info);

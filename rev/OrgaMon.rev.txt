@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.385 (11.10.18) Andreas Filsinger
+
+ Neu: cOrgaMon: Vereinheitlichtes Log nach "XMLRPC-
+ Neu: cOrgaMon: Erkennt eine lokale Datenbank-Verbindung und benutzt entsprechend das
+      lokalhost: tcp-Protokoll.
+
 Rev 8.384 (11.10.18) Andreas Filsinger
 
  Bug: Person: Feld "PAPERCOLOR" nicht gefunden
