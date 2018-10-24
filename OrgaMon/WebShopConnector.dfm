@@ -17,7 +17,7 @@ object FormWebShopConnector: TFormWebShopConnector
   TextHeight = 13
   object Label7: TLabel
     Left = 8
-    Top = 280
+    Top = 310
     Width = 9
     Height = 13
     Margins.Left = 4
@@ -30,7 +30,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Left = 0
     Top = 0
     Width = 696
-    Height = 274
+    Height = 307
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -387,9 +387,23 @@ object FormWebShopConnector: TFormWebShopConnector
         Margins.Bottom = 4
         Caption = 'heutige Checks'
       end
+      object Label24: TLabel
+        Left = 8
+        Top = 253
+        Width = 102
+        Height = 13
+        Caption = 'Ich bin Arbeiter #'
+      end
+      object Label25: TLabel
+        Left = 155
+        Top = 253
+        Width = 21
+        Height = 13
+        Caption = 'von'
+      end
       object Button5: TButton
         Left = 508
-        Top = 201
+        Top = 237
         Width = 177
         Height = 41
         Margins.Left = 4
@@ -563,7 +577,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Button14: TButton
         Left = 508
-        Top = 163
+        Top = 211
         Width = 178
         Height = 24
         Caption = 'FTP - Test'
@@ -635,6 +649,22 @@ object FormWebShopConnector: TFormWebShopConnector
         Checked = True
         State = cbChecked
         TabOrder = 17
+      end
+      object Edit13: TEdit
+        Left = 115
+        Top = 250
+        Width = 35
+        Height = 21
+        TabOrder = 18
+        Text = '1'
+      end
+      object Edit14: TEdit
+        Left = 182
+        Top = 250
+        Width = 35
+        Height = 21
+        TabOrder = 19
+        Text = '1'
       end
     end
     object TabSheet3: TTabSheet
@@ -1015,9 +1045,9 @@ object FormWebShopConnector: TFormWebShopConnector
   end
   object ListBoxLog: TListBox
     Left = 0
-    Top = 299
+    Top = 328
     Width = 696
-    Height = 182
+    Height = 153
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -1027,7 +1057,7 @@ object FormWebShopConnector: TFormWebShopConnector
   end
   object Button2: TButton
     Left = 613
-    Top = 280
+    Top = 309
     Width = 75
     Height = 17
     Margins.Left = 4

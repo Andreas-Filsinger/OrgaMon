@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -155,6 +155,10 @@ type
     StaticText10: TStaticText;
     CheckBox11: TCheckBox;
     Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Edit13: TEdit;
+    Edit14: TEdit;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -602,8 +606,11 @@ begin
         PatchIndex := 0;
 
       //
-      e_x_sql('update ARTIKEL set LAUFNUMMER=' + inttostr(e_w_GEN('GEN_ARTIKEL_LAUFNUMMER')) +
-        ' where RID=' + inttostr(ARTIKEL_R[PatchIndex]));
+      e_x_sql(
+       {} 'update ARTIKEL set LAUFNUMMER=' +
+       {} inttostr(e_w_GEN('GEN_ARTIKEL_LAUFNUMMER')) +
+       {} ' where RID=' +
+       {} inttostr(ARTIKEL_R[PatchIndex]));
       ARTIKEL_R.Delete(PatchIndex);
 
     until false;
@@ -798,8 +805,9 @@ begin
     ApiFirst;
     while not(eof) do
     begin
-      e_x_sql('update PERSON set USER_PWD=''' + FindANewPassword('', 5) + ''' where RID=' +
-        FieldByName('RID').AsString);
+      e_x_sql(
+       {} 'update PERSON set USER_PWD=''' + FindANewPassword('', 5) + '''' +
+       {} ' where RID=' + FieldByName('RID').AsString);
       ApiNext;
       inc(ZwangsErmittlung);
     end;
@@ -865,7 +873,7 @@ var
   MUSIC: TgpIntegerList; // Alle die Music haben dürfen
   BEMERKUNG: TgpIntegerList;
 
-  w, n: integer;
+  w, n, m: integer;
   ARTIKEL_R: integer;
   IsExternalEmpty: boolean;
   IsFTP: boolean;
@@ -907,9 +915,8 @@ var
   // FTP-to-do-Liste
   sFTP: TStringList;
 
-  // Cache
+  // MEDIA_CHECK
   DateToday : TAnfixDate;
-  sRemoteCache : TStringList;
 
   procedure locateArtikel(ARTIKEL_R: integer);
   var
@@ -1020,24 +1027,7 @@ var
   end;
 
   procedure EnsureUp(LocalMusikFName, RemoteMusikFName: string);
-  var
-   DatumDerLetztenPruefung : string;
-
-   procedure MarkAsChecked;
-   begin
-     // Also heute aber noch +0..13 als Zugabe für eine Bessere Streuung in der Zukunft
-     sRemoteCache.values[RemoteMusikFName] := long2date(DatePlus(DateToday,random(14)));
-   end;
-
   begin
-
-    // EnsureUp Cache
-    // RemoteMusikFname=DatumDerLetztenPrüfung
-    //
-    DatumDerLetztenPruefung := sRemoteCache.values[RemoteMusikFName];
-    if (DatumDerLetztenPruefung<>'') then
-     if (DateDiff(date2long(DatumDerLetztenPruefung), DateToDay)<14) then
-      exit;
 
     LocalFSize := FSize(LocalMusikFName);
     if (LocalFSize > 0) then
@@ -1078,7 +1068,6 @@ var
             begin
               SummeFTPFehler := 0;
               inc(SummeUploadFSize, LocalFSize);
-              MarkAsChecked;
             end
             else
             begin
@@ -1092,7 +1081,6 @@ var
           begin
             SummeFTPFehler := 0;
             inc(SummeRemoteCount);
-            MarkAsChecked;
           end;
         end;
       end else
@@ -1102,7 +1090,6 @@ var
          {} LocalMusikFName+';'+
          {} IntToStr(LocalFSize)+';'+
          {} RemoteMusikFName);
-
       end;
     end
     else
@@ -1140,10 +1127,7 @@ begin
   LocalMusikFName := TStringList.Create;
   RemoteMusikFName := TStringList.Create;
   sFTP := TStringList.create;
-  sRemoteCache := TStringList.Create;
 
-  if FileExists(SearchDir + cRemoteMP3CacheFName) then
-   sRemoteCache.LoadFromFile(SearchDir + cRemoteMP3CacheFName);
 
   sFTP.add('ARTIKEL_R;LOCAL;SIZE;REMOTE');
 
@@ -1178,17 +1162,27 @@ begin
   FTPError := false;
   SummeFTPFehler := 0;
 
+
   // Vorlauf "ARTIKEL"
-  ARTIKEL := e_r_sqlm('select RID from ARTIKEL where LAUFNUMMER is not null');
+  ARTIKEL := e_r_sqlm(
+   {} 'select RID from ARTIKEL where '+
+   {} '(LAUFNUMMER is not null) and ' +
+   {} '((MEDIA_CHECK is null) or (MEDIA_CHECK<=CURRENT_DATE)) and ' +
+   {} '(mod(RID,'+IntTostr(StrToIntDef(edit14.Text,1))+')='+IntTOStr(pred(StrToIntdef(edit13.Text,1)))+')');
+  ARTIKEL.Sort;
+
   Log(inttostr(ARTIKEL.count) + ' relevante Artikel (mit LAUFNUMMER)');
   ProgressBar2.max := ARTIKEL.count;
 
   // Wer darf in den WebShop
   WEBSHOP := FormOLAP.OLAP(cOLAP_ArtikelUmfangRemoteShop);
+  WEBSHOP.Sort;
+
   Log(inttostr(WEBSHOP.count) + ' Artikel im WebShop');
 
   // Wer darf öffentlich dokumentiert werden?
   MUSIC := FormOLAP.OLAP(cOLAP_MusikAusExternenLinks);
+  MUSIC.Sort;
   Log(inttostr(MUSIC.count) + ' Artikel mit MP3 Erlaubnis');
 
   // Wer darf
@@ -1196,6 +1190,7 @@ begin
     { } 'select ARTIKEL_R from DOKUMENT where ' +
     { } '(MEDIUM_R=1) and ' +
     { } '(BEMERKUNG is not null)');
+  BEMERKUNG.Sort;
   Log(inttostr(BEMERKUNG.count) + ' Artikel mit externen Links!');
 
   for w := 0 to pred(ARTIKEL.count) do
@@ -1360,9 +1355,15 @@ begin
 
       end;
 
+     e_x_sql(
+      {} 'update ARTIKEL set'+
+      {} ' MEDIA_CHECK='''+long2date(DatePlus(DateToday,15+random(30)))+''' '+
+      {} 'where'+
+      {} ' RID='+IntToStr(ARTIKEL_R) );
+
       if frequently(StartTime, 777) or (w = pred(ARTIKEL.count)) then
       begin
-        Label7.caption := inttostr(w);
+        Label7.caption := 'RID'+inttostr(ARTIKEL_R);
         ProgressBar2.Position := w;
         application.processmessages;
         // Dateigrössen
@@ -1475,8 +1476,6 @@ begin
   FreeAndNil(RemoteMusikFName);
   sFTP.savetoFile(DiagnosePath+'Remote-WebShop-FTP.csv');
   FreeAndNil(sFTP);
-  sRemoteCache.SaveToFile(SearchDir + cRemoteMP3CacheFName);
-  FreeAndNil(sRemoteCache);
 
   EndHourGlass;
 end;

@@ -19,6 +19,19 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.388 (24.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: MEDIA_CHECK, Skalierung nach dem Worker-Prinzip
+
+Rev 8.387 (24.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: MEDIA_CHECK wird auch bei Artikeln ohne Media gesetzt. Die
+      Prüfung auf Content fand ja statt.
+
+Rev 8.386 (23.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: neues Feld "MEDIA_CHECK" mit dem Moment der nächsten Prüfung
+
 Rev 8.385 (11.10.18) Andreas Filsinger
 
  Neu: cOrgaMon: Vereinheitlichtes Log nach "XMLRPC-
@@ -12386,6 +12399,11 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.386
+
+alter table ARTIKEL
+add MEDIA_CHECK date;
 
 :8.379
 

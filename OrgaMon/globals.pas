@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.385; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.388; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -156,7 +156,6 @@ const
   cLaenderCacheFName = 'Länder.Cache';
   cKreativeCacheFName = 'Kreative.Cache';
   cVertragsvariantenCacheFName = 'Vertragsvarianten.Cache';
-  cRemoteMP3CacheFName = 'MP3.Cache';
   cItemsCacheFExtension = '.Items';
   cValueCacheFExtension = '.Values';
 

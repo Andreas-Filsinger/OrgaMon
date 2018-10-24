@@ -109,7 +109,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>nosplash</Debugger_RunParams>
+        <Debugger_RunParams>nosplash -ds</Debugger_RunParams>
         <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1365;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>
