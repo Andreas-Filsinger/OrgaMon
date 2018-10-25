@@ -159,6 +159,7 @@ type
     Label25: TLabel;
     Edit13: TEdit;
     Edit14: TEdit;
+    CheckBox12: TCheckBox;
     procedure Edit2KeyPress(Sender: TObject; var Key: Char);
     procedure Button9Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
@@ -830,7 +831,7 @@ procedure TFormWebShopConnector.Edit2KeyPress(Sender: TObject; var Key: Char);
 var
   ARTIKEL_R: integer;
 begin
-  if Key = #13 then
+  if (Key = #13) then
   begin
     Key := #0;
 
@@ -898,6 +899,7 @@ var
   SummeLocalFSize: int64;
   SummeRemoteFSize: int64;
 
+  SummeLaufzeit: integer; // [Sekunden]
   SummeFTPFehler: integer;
   SummeLocalCount: integer;
   SummeRemoteCount: integer;
@@ -1126,9 +1128,8 @@ begin
   DateToday := DateGet;
   LocalMusikFName := TStringList.Create;
   RemoteMusikFName := TStringList.Create;
+
   sFTP := TStringList.create;
-
-
   sFTP.add('ARTIKEL_R;LOCAL;SIZE;REMOTE');
 
   EnsureCache;
@@ -1155,8 +1156,8 @@ begin
   SummeRemoteCount := 0;
   SummeUploadCount := 0;
   SummeRealChecks := 0;
-
   SummeModifiedLinksCount := 0;
+  SummeLaufzeit := 0;
 
   StartTime := 0;
   FTPError := false;
@@ -1355,17 +1356,20 @@ begin
 
       end;
 
-     e_x_sql(
-      {} 'update ARTIKEL set'+
-      {} ' MEDIA_CHECK='''+long2date(DatePlus(DateToday,15+random(30)))+''' '+
-      {} 'where'+
-      {} ' RID='+IntToStr(ARTIKEL_R) );
+      // Vermerken dass geprüft wurde und nächsten Prüftermin setzen
+      e_x_sql(
+        {} 'update ARTIKEL set'+
+        {} ' MEDIA_CHECK='''+long2date(DatePlus(DateToday,15+random(30)))+''' '+
+        {} 'where'+
+        {} ' RID='+IntToStr(ARTIKEL_R) );
 
-      if frequently(StartTime, 777) or (w = pred(ARTIKEL.count)) then
+      if frequently(StartTime, 1000) or (w = pred(ARTIKEL.count)) then
       begin
+
         Label7.caption := 'RID'+inttostr(ARTIKEL_R);
         ProgressBar2.Position := w;
         application.processmessages;
+
         // Dateigrössen
         StaticText2.caption := inttostr(SummeLocalFSize);
         StaticText3.caption := inttostr(SummeRemoteFSize);
@@ -1380,10 +1384,22 @@ begin
         // Fehler
         StaticText9.caption := inttostr(SummeFTPFehler);
 
-        //
+        // Datenbank-Änderungen
         StaticText8.caption := inttostr(SummeModifiedLinksCount);
 
+        // Laufzeit
+        inc(SummeLaufzeit);
+
+        // Abbruch-Bedingungen
         if CheckBoxAbbruch.Checked then
+          break;
+        if (SummeUploadCount > 100) and CheckBox1.Checked then
+          break;
+        if (SummeFTPFehler > 10) and CheckBox5.Checked then
+          break;
+        if (SummeRealChecks > 2000) and CheckBox11.Checked then
+          break;
+        if (SummeLaufzeit > 35*60) and CheckBox12.Checked then
           break;
       end;
 
@@ -1439,12 +1455,6 @@ begin
 
     end;
 
-    if (SummeUploadCount > 100) and CheckBox1.Checked then
-      break;
-    if (SummeFTPFehler > 10) and CheckBox5.Checked then
-      break;
-    if (SummeRealChecks > 2000) and CheckBox11.Checked then
-      break;
 
   end;
 
@@ -1474,7 +1484,8 @@ begin
 
   FreeAndNil(LocalMusikFName);
   FreeAndNil(RemoteMusikFName);
-  sFTP.savetoFile(DiagnosePath+'Remote-WebShop-FTP.csv');
+  if DebugMode then
+   sFTP.savetoFile(DiagnosePath+'Remote-WebShop-FTP.csv');
   FreeAndNil(sFTP);
 
   EndHourGlass;

@@ -28,7 +28,8 @@
 unit cryptossl;
 
 {$mode objfpc}{$H+}
-{ $ define TLS13}
+
+{$define TLS13}
 
 interface
 

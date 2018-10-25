@@ -29,7 +29,7 @@ unit HTTP2;
 
 {$mode objfpc}{$H+}
 {$modeswitch advancedrecords}
-{ $ define TLS13}
+{$define TLS13}
 
 interface
 

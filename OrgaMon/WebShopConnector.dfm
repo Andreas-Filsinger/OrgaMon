@@ -17,7 +17,7 @@ object FormWebShopConnector: TFormWebShopConnector
   TextHeight = 13
   object Label7: TLabel
     Left = 8
-    Top = 310
+    Top = 321
     Width = 9
     Height = 13
     Margins.Left = 4
@@ -30,7 +30,7 @@ object FormWebShopConnector: TFormWebShopConnector
     Left = 0
     Top = 0
     Width = 696
-    Height = 307
+    Height = 318
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -389,14 +389,14 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Label24: TLabel
         Left = 8
-        Top = 253
+        Top = 266
         Width = 102
         Height = 13
         Caption = 'Ich bin Arbeiter #'
       end
       object Label25: TLabel
         Left = 155
-        Top = 253
+        Top = 266
         Width = 21
         Height = 13
         Caption = 'von'
@@ -652,7 +652,7 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Edit13: TEdit
         Left = 115
-        Top = 250
+        Top = 263
         Width = 35
         Height = 21
         TabOrder = 18
@@ -660,11 +660,21 @@ object FormWebShopConnector: TFormWebShopConnector
       end
       object Edit14: TEdit
         Left = 182
-        Top = 250
+        Top = 263
         Width = 35
         Height = 21
         TabOrder = 19
         Text = '1'
+      end
+      object CheckBox12: TCheckBox
+        Left = 8
+        Top = 246
+        Width = 313
+        Height = 17
+        Caption = 'beenden nach 35 Minuten'
+        Checked = True
+        State = cbChecked
+        TabOrder = 20
       end
     end
     object TabSheet3: TTabSheet
@@ -1045,9 +1055,9 @@ object FormWebShopConnector: TFormWebShopConnector
   end
   object ListBoxLog: TListBox
     Left = 0
-    Top = 328
+    Top = 339
     Width = 696
-    Height = 153
+    Height = 146
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -1057,7 +1067,7 @@ object FormWebShopConnector: TFormWebShopConnector
   end
   object Button2: TButton
     Left = 613
-    Top = 309
+    Top = 320
     Width = 75
     Height = 17
     Margins.Left = 4
