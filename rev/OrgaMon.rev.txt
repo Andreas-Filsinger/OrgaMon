@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.390 (25.10.18) Andreas Filsinger
+
+ Bug: Artikel: MEDIA_CHECK fehlt
+
 Rev 8.389 (25.10.18) Andreas Filsinger
 
  Neu: Contentmanagement: MEDIA_CHECK Prüfung maximal 35 Minuten lang
