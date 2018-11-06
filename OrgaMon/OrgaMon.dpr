@@ -192,7 +192,6 @@ uses
   Funktionen_LokaleDaten in 'Funktionen_LokaleDaten.pas',
   IB_Components in '..\..\IBO5\source\core\IB_Components.pas',
   IB_Access in '..\..\IBO5\source\access\IB_Access.pas',
-  Cron in 'Cron.pas' {FormCron},
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
   memcache in '..\PASconTools\memcache.pas',
   GUIhelp in '..\PASvisTools\GUIhelp.pas' {DataModuleGUIhelp: TDataModule},
@@ -347,7 +346,6 @@ begin
   Application.CreateForm(TFormSkriptEditor, FormSkriptEditor);
   Application.CreateForm(TFormArtikelKasse, FormArtikelKasse);
   Application.CreateForm(TFormArtikelPOS, FormArtikelPOS);
-  Application.CreateForm(TFormCron, FormCron);
   Application.CreateForm(TDataModuleGUIhelp, DataModuleGUIhelp);
   Application.CreateForm(TFormServiceApp, FormServiceApp);
   Application.CreateForm(TFormServiceFoto, FormServiceFoto);

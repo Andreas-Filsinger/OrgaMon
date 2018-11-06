@@ -29,8 +29,6 @@ unit cryptossl;
 
 {$mode objfpc}{$H+}
 
-{$define TLS13}
-
 interface
 
 uses
@@ -47,6 +45,7 @@ var
 
 const
   SSL_FILETYPE_PEM = 1;
+  TLS1_2_VERSION = $0303;
   TLS1_3_VERSION = $0304;
 
   OPENSSL_INIT_NO_LOAD_CRYPTO_STRINGS = $00000001;
@@ -220,7 +219,7 @@ const
   SSL_CTX_set_alpn_select_cb: TSSL_CTX_set_alpn_select_cb = nil;
 
   // Methods
-  {$ifndef TLS13}
+  {$ifdef TLS12}
   TLSv1_2_server_method: TOpenSSL_method = nil;
   {$endif}
   TLS_server_method: TOpenSSL_method = nil;
@@ -594,21 +593,17 @@ begin
     if not (assigned(OPENSSL_init_ssl)) then
       sDebug.add(LastError);
 
-{$ifdef TLS13}
-TLS_server_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
-if not (assigned(TLS_server_method)) then
-  sDebug.add(LastError+'TLS_server_method');
-{$else}
+   TLS_server_method := TOpenSSL_method(GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
+   if not (assigned(TLS_server_method)) then
+    sDebug.add(LastError+'TLS_server_method');
+
+{$ifdef TLS12}
 TLSv1_2_server_method := TOpenSSL_method(
   GetProcAddress(libssl_HANDLE, 'TLSv1_2_server_method'));
 if not (assigned(TLSv1_2_server_method)) then
   sDebug.add(LastError);
 {$endif}
 
-    TLS_server_method := TOpenSSL_method(
-      GetProcAddress(libssl_HANDLE, 'TLS_server_method'));
-    if not (assigned(TLS_server_method)) then
-      sDebug.add(LastError);
 
     TLS_client_method := TOpenSSL_method(
       GetProcAddress(libssl_HANDLE, 'TLS_client_method'));

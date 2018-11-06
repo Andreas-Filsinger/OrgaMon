@@ -638,10 +638,6 @@
         <DCCReference Include="Funktionen_LokaleDaten.pas"/>
         <DCCReference Include="..\..\IBO5\source\core\IB_Components.pas"/>
         <DCCReference Include="..\..\IBO5\source\access\IB_Access.pas"/>
-        <DCCReference Include="Cron.pas">
-            <Form>FormCron</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
         <DCCReference Include="..\PASconTools\memcache.pas"/>
         <DCCReference Include="..\PASvisTools\GUIhelp.pas">

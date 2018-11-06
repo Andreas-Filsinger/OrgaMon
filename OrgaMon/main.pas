@@ -153,7 +153,6 @@ type
     Button88: TButton;
     Button52: TButton;
     Button89: TButton;
-    Button90: TButton;
     JvAppIniFileStorage1: TJvAppIniFileStorage;
     Button54: TButton;
     Button91: TButton;
@@ -256,7 +255,6 @@ type
     procedure Button88Click(Sender: TObject);
     procedure Button52Click(Sender: TObject);
     procedure Button89Click(Sender: TObject);
-    procedure Button90Click(Sender: TObject);
     procedure Button91Click(Sender: TObject);
     procedure Button54Click(Sender: TObject);
     procedure Button47Click(Sender: TObject);
@@ -322,7 +320,7 @@ uses
   BuchBarKasse,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
-  ArtikelKasse, Cron, ArtikelAusgabeArt;
+  ArtikelKasse, ArtikelAusgabeArt;
 {$R *.DFM}
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -713,11 +711,6 @@ end;
 procedure TFormMain.Button25Click(Sender: TObject);
 begin
   FormDatensicherung.show;
-end;
-
-procedure TFormMain.Button90Click(Sender: TObject);
-begin
-  FormCron.show;
 end;
 
 procedure TFormMain.Button91Click(Sender: TObject);

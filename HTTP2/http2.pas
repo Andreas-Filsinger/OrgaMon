@@ -29,7 +29,6 @@ unit HTTP2;
 
 {$mode objfpc}{$H+}
 {$modeswitch advancedrecords}
-{$define TLS13}
 
 interface
 
@@ -1176,35 +1175,48 @@ var
    cs_METH : PSSL_METHOD;
 begin
 
- {$ifdef TLS13}
- cs_METH := TLS_server_method();
- {$else}
+ //  ssl->ctx = SSL_CTX_new(SSLv23_method());
+
+ {$ifdef TLS12}
  // setup a TLS 1.2 Context
  // RFC 7540-9.2.
  cs_METH := TLSv1_2_server_method();
+ {$else}
+ cs_METH := TLS_server_method();
  {$endif}
+
  CTX := SSL_CTX_new(cs_METH);
 
- {$ifdef TLS13}
+ if not(assigned(CTX)) then
+   raise Exception.Create('Create a new SSL-Context fails');
 
-
- if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
-  raise Exception.Create('Set CTX Protokoll Version to 1.3 fails');
+ if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MIN_PROTO_VERSION, TLS1_2_VERSION, nil) = 0) then
+  raise Exception.Create('Set CTX Min Protokoll Version to <default> fails');
  if (SSL_CTX_ctrl(CTX, SSL_CTRL_SET_MAX_PROTO_VERSION, TLS1_3_VERSION, nil) = 0) then
-  raise Exception.Create('Set CTX Protokoll Version to 1.3 fails');
- {$endif}
+  raise Exception.Create('Set CTX Max Protokoll Version to 1.3 fails');
 
  SSL_CTX_set_info_callback(CTX,@cb_info);
  SSL_CTX_ctrl(CTX, SSL_CTRL_SET_ECDH_AUTO, 1, nil);
 
- (*
+// need SSL_CTX_set_tmp_{dh|rsa}
+// need SSL_CTX_set_cert_cb ?
+// need SSL_CTX_set_client_hello_cb ?
+// need
+{
+tcp_nodelay = 1;
+
+    if (setsockopt(c->fd, IPPROTO_TCP, TCP_NODELAY,
+(const void *) &tcp_nodelay, sizeof(int))
+ }
+ // ?
+ // SSL_CTX_set_read_ahead
 
  // not necessary, user defaults
- if (SSL_CTX_set_cipher_list(cs_CTX, 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH')<>1) then
-  raise Exception.Create('set TLS 1.2 Cipher fails');
-  SSL_CTX_set_options(cs_CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
+ if (SSL_CTX_set_cipher_list(CTX, 'TLS_AES_256_GCM_SHA384')<>1) then
+  raise Exception.Create('set Cipher List fails');
 
- *)
+
+ SSL_CTX_set_options(CTX, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
  // Register a Callback for: "SNI" read Identity Client expects
  SSL_CTX_callback_ctrl(CTX,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,@cb_SERVERNAME);
@@ -1213,8 +1225,6 @@ begin
  SSL_CTX_set_alpn_select_cb(CTX,@cb_ALPN,nil);
 
  result := CTX;
-  if not(assigned(result)) then
-    raise Exception.Create('Create a new SSL-Context fails');
 
 end;
 

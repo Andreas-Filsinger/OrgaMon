@@ -244,9 +244,6 @@ object FormArtikelPakete: TFormArtikelPakete
     Align = alBottom
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
-    ExplicitLeft = 8
-    ExplicitTop = 287
-    ExplicitWidth = 873
   end
   object IB_NavigationBar1: TIB_NavigationBar
     Left = 8
