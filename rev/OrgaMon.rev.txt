@@ -19,6 +19,14 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.392 (14.12.18) Andreas Filsinger
+
+ Bug: Foto: Betrachtung von Meldezeiträumen für die es kein Log mehr gibt
+ Bug: Foto: FileReduce(Foto-Transaktionen) war mit 2 MB zu klein -> 3 MB
+
+ Neu: Foto: Fotos von 280x280 Pixel werden akzeptiert
+ Neu: POS: USB Relay via HID werden untersützt
+
 Rev 8.391 (31.10.18) Andreas Filsinger
 
  Wegfall: Cron

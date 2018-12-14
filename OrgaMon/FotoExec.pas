@@ -625,23 +625,15 @@ begin
         // Load it
         Image.LoadFromFile(FName);
 
-        // Delphi Bug, can not read jpeg compression!
-        (*
-          if (image.CompressionQuality>0) then
-          begin
-          Log('INFO: jpeg quality '+inttostr(image.CompressionQuality));
-          end;
-        *)
-
-        if (Image.Width < 640) then
+        if (Image.Width < 280) then
         begin
-          Log(cERRORText + ' ' + sFiles[n] + ': Breite kleiner als 640');
+          Log(cERRORText + ' ' + sFiles[n] + ': Breite kleiner als 280');
           break;
         end;
 
-        if (Image.Height < 480) then
+        if (Image.Height < 280) then
         begin
-          Log(cERRORText + ' ' + sFiles[n] + ': Höhe kleiner als 480');
+          Log(cERRORText + ' ' + sFiles[n] + ': Höhe kleiner als 280');
           break;
         end;
 
@@ -1195,12 +1187,14 @@ var
   BildAnkuendigung: TStringList;
   BildLieferung: TStringList;
   AllTRN: TStringList;
+  FTPLog: TStringList;
   TAN: string;
   m, n, o, r: integer;
   StartMoment: TDateTime;
   ProceedMoment: TDateTime;
   ProceedMoment_First: TDateTime;
   ProceedMoment_Oldest: TDateTime;
+  LogMoment_Oldest: TDateTime;
   FName: string;
   PROTOKOLL: string;
   sProtokoll: TStringList;
@@ -1240,6 +1234,7 @@ begin
   Timer := RDTSCms;
 
   AllTRN := TStringList.Create;
+  FTPLog := TStringList.Create;
   BildAnkuendigung := TStringList.Create;
   BildLieferung := TStringList.Create;
   sHANGOVER := tsTable.Create;
@@ -1250,6 +1245,23 @@ begin
 
   ProceedMoment_First := StartMoment;
   ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
+
+  // Prüfe ob über der Prüfungszeitraum überhaupt genung
+  // protokolliert ist, oder ob wir ev. kürzen müssen
+  FTPLog.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  LogMoment_Oldest := StartMoment;
+  for n := 0 to pred(FTPLog.count) do
+   if (pos('timestamp ', FTPLog[n]) = 1) then
+   begin
+     LogMoment_Oldest := Long2DateTime(StrtoIntdef(nextp(FTPLog[n], ' ', 1),-1)) + 1.0;
+     break;
+    end;
+
+  // Wenn der Betrachtungszeitraum gar nicht protokolliert wurde?
+  if (LogMoment_Oldest > ProceedMoment_Oldest) then
+   // Korrigiere das am weitesten zurückliegende Datum auf den
+   // Log- Start
+   ProceedMoment_Oldest := LogMoment_Oldest;
 
   if DebugMode then
     Log(
@@ -1365,29 +1377,28 @@ begin
   { Schritt 2: Ergänzung der Lieferdatums }
   LieferMoment_First := ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG;
   sLieferMoment_First := dTimeStamp(LieferMoment_First);
-  AllTRN.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
 
   // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
   // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
   //
   GERAETE := '';
   with sMONTEURE do
-    for n := pred(AllTRN.Count) downto 0 do
+    for n := pred(FTPLog.Count) downto 0 do
     begin
 
-      if (pos('timestamp ', AllTRN[n]) = 1) then
+      if (pos('timestamp ', FTPLog[n]) = 1) then
       begin
-        sLieferMoment := copy(AllTRN[n], 11, MaxInt);
+        sLieferMoment := copy(FTPLog[n], 11, MaxInt);
         if (sLieferMoment < sLieferMoment_First) then
           break;
       end;
 
       BildName := '';
-      if (pos('cp ', AllTRN[n]) = 1) then
-        BildName := nextp(AllTRN[n], ' ', 1);
+      if (pos('cp ', FTPLog[n]) = 1) then
+        BildName := nextp(FTPLog[n], ' ', 1);
 
-      if (pos('mv ', AllTRN[n]) = 1) then
-        BildName := ExtractFileName(nextp(AllTRN[n], ' ', 1));
+      if (pos('mv ', FTPLog[n]) = 1) then
+        BildName := ExtractFileName(nextp(FTPLog[n], ' ', 1));
 
       if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
       begin
@@ -1422,21 +1433,21 @@ begin
 
   // Nun gelieferten die Bilder in der Soll Liste ergänzen
   sLieferMoment := sLieferMoment_First;
-  for m := n to pred(AllTRN.Count) do
+  for m := n to pred(FTPLog.Count) do
   begin
 
-    if (pos('timestamp ', AllTRN[m]) = 1) then
+    if (pos('timestamp ', FTPLog[m]) = 1) then
     begin
-      sLieferMoment := copy(AllTRN[m], 11, MaxInt);
+      sLieferMoment := copy(FTPLog[m], 11, MaxInt);
       continue;
     end;
 
     BildName := '';
-    if (pos('cp ', AllTRN[m]) = 1) then
-      BildName := nextp(AllTRN[m], ' ', 1);
+    if (pos('cp ', FTPLog[m]) = 1) then
+      BildName := nextp(FTPLog[m], ' ', 1);
 
-    if (pos('mv ', AllTRN[m]) = 1) then
-      BildName := ExtractFileName(nextp(AllTRN[m], ' ', 1));
+    if (pos('mv ', FTPLog[m]) = 1) then
+      BildName := ExtractFileName(nextp(FTPLog[m], ' ', 1));
 
     if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
     begin
@@ -1615,6 +1626,7 @@ begin
   sHANGOVER.Free;
   sMONTEURE.Free;
   tIMEI.Free;
+  FTPLog.Free;
   AllTRN.Free;
   BildAnkuendigung.Free;
   BildLieferung.Free;
