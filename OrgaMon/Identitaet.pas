@@ -133,6 +133,8 @@ begin
     end;
 
 {$IFDEF fpc}
+    protocol := 'firebird';
+ CLientCodePage := '';
     User := iDataBaseUser;
     HostName := iDataBaseHost;
     Database := i_c_DataBaseFName;

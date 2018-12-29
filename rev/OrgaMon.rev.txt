@@ -19,6 +19,12 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.393 (29.12.18) Andreas Filsinger
+
+ Neu: Freepascal-Port: Anpassungen an Zeos Rev. 7.3.0
+ Neu: Freepascal-Port: Anpassungen an ibx 2.3.2
+ Neu: Zeos: Datenbank: Impliziter Zeichensatz erforderlich
+
 Rev 8.392 (14.12.18) Andreas Filsinger
 
  Bug: Foto: Betrachtung von Meldezeiträumen für die es kein Log mehr gibt
@@ -12419,6 +12425,13 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.393
+
+update
+ RDB$DATABASE
+set
+ RDB$CHARACTER_SET_NAME='ISO8859_1';
 
 :8.386
 
