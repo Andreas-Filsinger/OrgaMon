@@ -6331,7 +6331,7 @@ begin
           VertragsTexte.values['BeginnMonat'] := inttostrN(extractMonth(ERSTER_ABRECHNUNGSTAG), 2);
           DIESER_ABRECHNUNGSTAG := ERSTER_ABRECHNUNGSTAG;
           for n := 1 to WIEDERHOLUNGEN do
-            DIESER_ABRECHNUNGSTAG := DatePlus(MonthPeriod(DIESER_ABRECHNUNGSTAG), 1);
+            DIESER_ABRECHNUNGSTAG := DatePlus(MonthPeriod(DIESER_ABRECHNUNGSTAG, VON), 1);
           LETZTER_ABRECHNUNGSTAG := DatePlus(DIESER_ABRECHNUNGSTAG, -1);
           VertragsTexte.values['Ende'] := long2date(LETZTER_ABRECHNUNGSTAG);
           VertragsTexte.values['EndeJahr'] := inttostr(extractYear(LETZTER_ABRECHNUNGSTAG));
@@ -6379,7 +6379,7 @@ begin
           begin
 
             VertragsTexte.values['von'] := long2date(DIESER_ABRECHNUNGSTAG);
-            VertragsTexte.values['bis'] := long2date(MonthPeriod(DIESER_ABRECHNUNGSTAG));
+            VertragsTexte.values['bis'] := long2date(MonthPeriod(DIESER_ABRECHNUNGSTAG, VON));
             VertragsTexte.values['Monat'] := cMonatNamenLang[extractMonth(DIESER_ABRECHNUNGSTAG)] + ' ' +
               inttostr(extractYear(DIESER_ABRECHNUNGSTAG));
 
@@ -6418,7 +6418,7 @@ begin
 
             end;
 
-            DIESER_ABRECHNUNGSTAG := DatePlus(MonthPeriod(DIESER_ABRECHNUNGSTAG), 1);
+            DIESER_ABRECHNUNGSTAG := DatePlus(MonthPeriod(DIESER_ABRECHNUNGSTAG, VON), 1);
           end;
 
           // Ist ein Beleg entstanden, und soll gleich verbucht werden?

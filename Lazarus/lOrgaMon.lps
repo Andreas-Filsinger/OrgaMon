@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="324">
+    <Units Count="328">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -53,7 +53,6 @@
       <Unit5>
         <Filename Value="..\PASconTools\dbOrgaMon.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="356"/>
         <CursorPos X="3" Y="372"/>
         <UsageCount Value="129"/>
@@ -2302,6 +2301,35 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit323>
+      <Unit324>
+        <Filename Value="..\..\fpc\tests\webtbf\tw27378.pp"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit324>
+      <Unit325>
+        <Filename Value="..\..\fpc\tests\webtbf\uw27378a.pp"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit325>
+      <Unit326>
+        <Filename Value="..\..\fpc\tests\webtbf\tw34821.pp"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit326>
+      <Unit327>
+        <Filename Value="..\..\fpc\tests\webtbf\uw27378b.pp"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit327>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
     <RunParams>

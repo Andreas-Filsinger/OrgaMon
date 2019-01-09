@@ -521,10 +521,6 @@ object FormVertrag: TFormVertrag
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35
@@ -720,7 +716,7 @@ object FormVertrag: TFormVertrag
       end
       object Button7: TButton
         Left = 193
-        Top = 77
+        Top = 79
         Width = 22
         Height = 21
         Hint = 'weitere Anwendung erzwingen'
@@ -800,10 +796,6 @@ object FormVertrag: TFormVertrag
     object TabSheet3: TTabSheet
       Caption = 'Referenzen'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label13: TLabel
         Left = 94
         Top = 16
