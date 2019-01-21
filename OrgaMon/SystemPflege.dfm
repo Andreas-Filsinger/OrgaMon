@@ -19,7 +19,7 @@ object FormSystemPflege: TFormSystemPflege
     Top = 0
     Width = 651
     Height = 516
-    ActivePage = TabSheet2
+    ActivePage = TabSheet9
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

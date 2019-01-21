@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2016 - 2018  Andreas Filsinger
+  |    Copyright (C) 2016 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ procedure RunAsOrder;
 procedure RunAsTWebShop;
 procedure RunAsTagesabschluss;
 procedure RunAsTagwache;
+procedure RunAsMagneto;
 
 implementation
 
@@ -53,6 +54,8 @@ uses
   srvXMLRPC,
   SolidFTP,
   binlager32,
+  systemd,
+  windows,
 
   // DB
 {$IFDEF FPC}
@@ -79,7 +82,16 @@ uses
   TestExec;
 
 type
-  TIndentitaet = (id_TWebShop, id_Bestellen, id_Mail, id_Druck, id_App, id_Foto, id_Test, id_Tagesabschluss, id_Tagwache);
+  TIndentitaet = (id_TWebShop,
+                  id_Bestellen,
+                  id_Mail,
+                  id_Druck,
+                  id_App,
+                  id_Foto,
+                  id_Test,
+                  id_Tagesabschluss,
+                  id_Tagwache,
+                  id_Magneto);
 
 var
   Ident: TIndentitaet;
@@ -821,7 +833,7 @@ end;
 
 procedure RunAsTWebShop;
 var
-  UsedPort: integer;
+  UsedPort: Word;
   XMethods: TeConnect;
   XServer: TXMLRPC_Server;
   BasePlug: TStringList;
@@ -839,8 +851,8 @@ begin
   writeln(' OK');
 
   // Vorrangig über den "--Port=nnnnn" Parameter
-  UsedPort := StrToIntDef(getParam('port'), -1);
-  if (UsedPort < 0) or (UsedPort > 65536) then
+  UsedPort := StrToIntDef(getParam('port'), 0);
+  if (UsedPort=0) then
     UsedPort := StrToIntDef(iXMLRPCPort, 3040);
 
   XMethods := TeConnect.Create;
@@ -1094,6 +1106,11 @@ begin
       Ident := id_Tagwache;
       break;
     end;
+    if IsParam('--magneto') then
+    begin
+      Ident := id_Magneto;
+      break;
+    end;
   until yet;
 
   // Ident- String
@@ -1116,6 +1133,8 @@ begin
       Modus := 'Tagesabschluss';
     id_Tagwache:
       Modus := 'Tagwache';
+    id_Magneto:
+      Modus := 'Magento';
   end;
 
   try
@@ -1164,6 +1183,10 @@ begin
         begin
           RunAsFoto;
         end;
+      id_Magneto:
+        begin
+          RunAsMagneto;
+        end;
       id_Test:
         begin
           RunAsTest;
@@ -1178,6 +1201,65 @@ begin
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
   sleep(2000);
+end;
+
+type
+ TMagneto = class(TObject)
+ public
+   function rpc_e_w_Magneto(sParameter: TStringList): TStringList;
+ end;
+
+function TMagneto.rpc_e_w_Magneto(sParameter: TStringList): TStringList;
+var
+ OK : boolean;
+begin
+  result := TStringList.create;
+  // Batch-File that do this
+  write('ONOFF ... ');
+  OK := (CallExternalApp('C:\Program Files\USB\bin-Win64\ONOFF.bat', SW_HIDE)<2);
+  with TXMLRPC_Server do
+    result.AddObject(fromboolean(OK), oBoolean);
+  writeln('OK');
+end;
+
+procedure RunAsMagneto;
+var
+  XMLRPC: TXMLRPC_Server;
+  Magneto : TMagneto;
+begin
+  // Erstelle den Dienst
+  Magneto := TMagneto.create;
+  XMLRPC := TXMLRPC_Server.Create(nil);
+  with XMLRPC do
+  begin
+    // Vorrangig über den "--Port=nnnnn" Parameter
+    DefaultPort := StrToIntDef(getParam('port'), 0);
+    if (DefaultPort=0) then
+      DefaultPort := 3040;
+
+    DiagnosePath := globals.DiagnosePath;
+    LogContext := DatumLog + '-' + ComputerName + '-' + inttostr(DefaultPort);
+
+    DebugMode := anfix32.DebugMode;
+    TimingStats := IsParam('-at');
+    // Verbrauchte Zeit pro XMLRPC
+    if TimingStats then
+      writeln('TimingStatistics @' + DiagnosePath);
+
+    // Methoden registrieren
+    AddMethod('Open', Magneto.rpc_e_w_Magneto);
+
+    // Starten
+    write('Aktiviere ' + ComputerName + ':' + inttostr(DefaultPort) + '  ... ');
+    active := true;
+    writeln('OK');
+  end;
+
+  // Arbeite ...
+  while true do
+    sleep(1000);
+  XMLRPC.free;
+  Magneto.Free;
 end;
 
 end.

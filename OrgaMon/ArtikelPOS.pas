@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  anfix32, systemd,
+  anfix32, systemd, srvXMLRPC,
   globals;
 
 {$R *.dfm}
@@ -80,6 +80,8 @@ procedure TFormArtikelPOS.Schublade_Auf(sComPort: string);
 const
   Sequence_RelaisKarteHi: array [0 .. 2] of byte = ($FF, $01, $01);
   Sequence_RelaisKarteLo: array [0 .. 2] of byte = ($FF, $01, $00);
+var
+  Params: TStringList;
 begin
   try
       repeat
@@ -101,6 +103,17 @@ begin
               Connected := false;
             end;
             break;
+        end;
+
+        if (pos('XMLRPC',sComPort)=1) then
+        begin
+          ParamS:= TStringList.create;
+          remote_exec( nextp(sComPort,':',1),
+                       3040,
+                       'Open',
+                       Params);
+          ParamS.free;
+          break;
         end;
 
         // Batch-File that do this

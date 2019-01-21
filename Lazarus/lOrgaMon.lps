@@ -4,14 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="328">
+    <Units Count="331">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="78"/>
         <CursorPos X="10" Y="102"/>
         <UsageCount Value="210"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -979,10 +980,11 @@
       </Unit132>
       <Unit133>
         <Filename Value="..\OrgaMon\Identitaet.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="853"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="851"/>
         <CursorPos X="3" Y="827"/>
         <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit133>
       <Unit134>
@@ -2303,33 +2305,59 @@
       </Unit323>
       <Unit324>
         <Filename Value="..\..\fpc\tests\webtbf\tw27378.pp"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit324>
       <Unit325>
         <Filename Value="..\..\fpc\tests\webtbf\uw27378a.pp"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit325>
       <Unit326>
         <Filename Value="..\..\fpc\tests\webtbf\tw34821.pp"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit326>
       <Unit327>
         <Filename Value="..\..\fpc\tests\webtbf\uw27378b.pp"/>
+        <EditorIndex Value="9"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit327>
+      <Unit328>
+        <Filename Value="..\..\Indy\Lib\Protocols\IdCustomHTTPServer.pas"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="407"/>
+        <CursorPos X="14" Y="495"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit328>
+      <Unit329>
+        <Filename Value="..\..\fpc\tests\webtbs\tw34848.pp"/>
+        <UnitName Value="mytest"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="9"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit329>
+      <Unit330>
+        <Filename Value="..\..\fpc\tests\webtbs\tw34818.pp"/>
+        <UnitName Value="Project1"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit327>
+      </Unit330>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
     <RunParams>

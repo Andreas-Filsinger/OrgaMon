@@ -979,12 +979,12 @@ begin
   end;
 end;
 
-function DaysInYear(dlong: longint): integer;
+function DaysInYear(dlong: TAnfixDate): integer;
 var
-  bufdat: TDateTimeBorlandPascal;
+  j, m, T: integer;
 begin
-  long2datetimeBorlandPascal(dlong, bufdat);
-  if Schaltjahr(bufdat.Year) then
+  long2details(dlong, j, m, T);
+  if Schaltjahr(j) then
     result := 366
   else
     result := 365;
@@ -1038,12 +1038,12 @@ end;
 
 function LastDayOfMonth(dlong: TAnfixDate): integer;
 var
-  bufdat: TDateTimeBorlandPascal;
+  j, m, T: integer;
 begin
-  long2datetimeBorlandPascal(dlong, bufdat);
-  case bufdat.Month of
+  long2details(dlong, j, m, T);
+  case m of
     2:
-      if Schaltjahr(bufdat.Year) then
+      if Schaltjahr(j) then
         result := 29
       else
         result := 28;

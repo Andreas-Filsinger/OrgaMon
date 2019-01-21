@@ -4857,15 +4857,12 @@ begin
       Datensammler.add(Prefix + 'Strasse=' + ANSCHRIFT.FieldByName('STRASSE').AsString);
 
       Ort := e_r_Ort(ANSCHRIFT);
-      if (Ort.count=1) then
-      begin
+      if (Ort.count>0) then
        Datensammler.add(Prefix + 'Ort=' + Ort[0]);
-       Datensammler.add(Prefix + 'Ort1=' + Ort[0]);
-      end else
-      begin
-       for n := 0 to pred(Ort.Count) do
-        Datensammler.add(Prefix + 'Ort'+ inttostr(succ(n)) + '=' + Ort[n]);
-      end;
+      for n := 0 to pred(Ort.Count) do
+       Datensammler.add(Prefix + 'Ort' + inttostr(succ(n)) + '=' + Ort[n]);
+      for n := succ(Ort.Count) to 2 do
+        Datensammler.add(Prefix + 'Ort' + inttostr(n) + '=');
       Ort.free;
 
     until yet;
