@@ -7,7 +7,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 PrivilegesRequired=Admin
 AppName=OrgaMon
-AppVerName=OrgaMon 8.365
+AppVerName=OrgaMon 8.399
 AppCopyright=Copyright (C) 1988-2018 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
@@ -19,9 +19,9 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
 OutputDir=..\..\CargoBay
-OutputBaseFilename=Setup-OrgaMon-8365
-AppVersion=8.365
-VersionInfoVersion=8.365.0.0
+OutputBaseFilename=Setup-OrgaMon-8399
+AppVersion=8.399
+VersionInfoVersion=8.399.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP
@@ -48,12 +48,6 @@ Source: "C:\Program Files (x86)\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; BeforeI
 Source: "Distribution\Hilfe\OrgaMon-VNC.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 Source: "Distribution\Lizenz\gpl-3.0.txt"; DestDir: "{app}"; DestName: "Lizenz.txt"; Flags: onlyifdoesntexist
 
-; Shared Object: infozip
-Source: "..\infozip\zip32z64.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\infozip\unzip32.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
-Source: "..\infozip\unzip.exe"; DestDir: "{app}"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "..\infozip\unzip.txt"; DestDir: "{app}"; Flags: onlyifdoesntexist uninsneveruninstall
-
 ; Shared Object: libxml2
 Source: "..\libxml2\bin\iconv.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
 Source: "..\libxml2\bin\zlib1.dll"; DestDir: "{app}"; Flags: 32bit onlyifdoesntexist uninsneveruninstall
@@ -72,7 +66,7 @@ Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
 
 ; Anwendungsdaten
 Source: "Distribution\OrgaMon-Dokumente.ini"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
-Source: "Distribution\sicherung_00000006-2.5.fdb"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
+Source: "Distribution\SICHERUNG_00000007.FDB"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
 
 Source: "Distribution\OrgaMon-Daten.ini"; DestDir: "{userdocs}\OrgaMon\Daten"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
 

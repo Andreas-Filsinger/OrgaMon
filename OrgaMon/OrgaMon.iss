@@ -66,7 +66,7 @@ Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"
 
 ; Anwendungsdaten
 Source: "Distribution\OrgaMon-Dokumente.ini"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
-Source: "Distribution\sicherung_00000006-2.5.fdb"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
+Source: "Distribution\SICHERUNG_00000007.FDB"; DestDir: "{userdocs}\OrgaMon"; DestName: "OrgaMon.fdb"; Flags: onlyifdoesntexist
 
 Source: "Distribution\OrgaMon-Daten.ini"; DestDir: "{userdocs}\OrgaMon\Daten"; DestName: "OrgaMon.ini"; Flags: onlyifdoesntexist
 
