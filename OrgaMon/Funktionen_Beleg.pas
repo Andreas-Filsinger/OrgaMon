@@ -680,7 +680,7 @@ uses
   Funktionen_Auftrag;
 
 CONST
-  cAllSettingsAnz = 187;
+  cAllSettingsAnz = 186;
   cAllSettings: array [0 .. pred(cAllSettingsAnz)] of string = ('MwStSatzManuelleArtikel', 'NachlieferungInfo',
     'BereitsGeliefertInfo', 'StandardTextRechnung', 'FreigabePfad', 'SicherungsPfad', 'SicherungsPrefix',
     'SicherungenAnzahl', 'NichtMehrLieferbarInfo', 'DatenbankBackupPfad', 'TagesabschlussUm', 'TagesabschlussAuf',
@@ -712,7 +712,7 @@ CONST
     'RESTPort', 'RESTGeroutet', 'HBCIRest', 'BaustellenPfad', 'EinsUnterdrückung', 'RechnungsNummerVergabeMoment',
     'NachTagwacheRechnerNeuStarten', 'TestDrucker', 'FunktionsSicherungstellungsPfad', 'KassenHost', 'MobilFTP',
     'FotoPfad', 'BuchFokus', 'ShopMusicPath', 'MaxDownloadsProArtikel', 'TPicUploadPfad', 'VerlagsdatenabgleichPfad',
-    'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist', 'CronAuf',
+    'KartenProfil', 'SchubladePort', 'TagwacheBaustelle', 'memcachedHost', 'Ablage', 'KontoSEPAFrist',
     'TagesabschlussIdle', 'KartenQuota', 'AppServerURL', 'GläubigerID');
 
 const
@@ -8507,7 +8507,6 @@ begin
   iDataBaseBackUpDir := sSystemSettings.values['DatenbankBackupPfad'];
   iTagesAbschlussUm := strtoseconds(sSystemSettings.values['TagesabschlussUm']);
   iTagesAbschlussAuf := cutblank(sSystemSettings.values['TagesabschlussAuf']);
-  iCronAuf := cutblank(sSystemSettings.values['CronAuf']);
   iIdleProzessPrioritaetAbschluesse := cutblank(sSystemSettings.values['TagesabschlussIdle']) <> cIni_DeActivate;
   iNachTagesAbschlussHerunterfahren := sSystemSettings.values['NachTagesAbschlussHerunterfahren'] = cIni_Activate;
   iNachTagesAbschlussRechnerNeustarten := sSystemSettings.values['NachTagesAbschlussRechnerNeuStarten'] = cIni_Activate;
@@ -11155,6 +11154,7 @@ begin
       DatensammlerGlobal.add('R.G#=' + inttostr(BELEG_R) + '-' + inttostr(GENERATION));
       DatensammlerGlobal.add('Medium=' + FieldByName('MEDIUM').AsString);
       DatensammlerGlobal.add('Motivation=' + FieldByName('MOTIVATION').AsString);
+      DatensammlerGlobal.add('Auftrag=' + FieldByName('KUNDEN_AUFTRAG').AsString);
       DatensammlerGlobal.add('Anleger=' + e_r_BearbeiterKuerzel(FieldByName('ANLEGER_R').AsInteger));
       DatensammlerGlobal.add('Bearbeiter=' + e_r_BearbeiterKuerzel(FieldByName('BEARBEITER_R').AsInteger));
       DatensammlerGlobal.add('Ausgeber=' + e_r_BearbeiterKuerzel(sBearbeiter));
@@ -11343,6 +11343,9 @@ begin
           DatensammlerLokal.add('Ausfuehrung=')
         else
           DatensammlerLokal.add('Ausfuehrung=' + long2date8(DateTime2Long(FieldByName('AUSFUEHRUNG').AsDateTime)));
+
+        DatensammlerLokal.add('Auftrag=' + FieldByName('KUNDEN_AUFTRAG').AsString);
+        DatensammlerLokal.add('Seriennummer=' + FieldByName('SERIENNUMMER').AsString);
 
         if (_Anz <> _AnzAuftrag) then
         begin

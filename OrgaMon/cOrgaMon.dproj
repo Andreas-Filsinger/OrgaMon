@@ -74,10 +74,10 @@
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
         <VerInfo_MajorVer>8</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
-        <VerInfo_Build>25</VerInfo_Build>
+        <VerInfo_Build>26</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.25;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.26;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
         <DCC_StrictVarStrings>false</DCC_StrictVarStrings>
         <Debugger_RunParams>--magneto</Debugger_RunParams>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>

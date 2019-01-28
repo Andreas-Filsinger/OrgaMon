@@ -19,6 +19,15 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.399 (28.01.19) Andreas Filsinger
+
+ Neu: Beleg: neues Feld: KUNDEN_AUFTRAG für eine PO Nummer / Auftragsnummer usw.
+ Neu: Posten: neues Feld: SERIENNUMMER und KUNDEN_AUFTRAG
+
+Rev 8.398 (28.01.19) Andreas Filsinger
+
+ Neu: Replikation: FelderAuf0= kann Felder zwangsweise im Rahmen der Replikation nullen
+
 Rev 8.397 (09.01.19) Andreas Filsinger
 
  Neu: Kassenschublade öffnen via XMLRPC
@@ -12441,6 +12450,23 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.399
+
+alter table BELEG
+add KUNDEN_AUFTRAG CHAR(25);
+
+alter table POSTEN
+add SERIENNUMMER CHAR(25);
+
+alter table POSTEN
+add KUNDEN_AUFTRAG CHAR(25);
+
+alter table GELIEFERT
+add SERIENNUMMER CHAR(25);
+
+alter table GELIEFERT
+add KUNDEN_AUFTRAG CHAR(25);
 
 :8.393
 

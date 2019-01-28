@@ -1171,7 +1171,7 @@ object FormBelege: TFormBelege
       Left = 3
       Top = 3
       Width = 57
-      Height = 22
+      Height = 21
       DataField = 'AUSGABEART_R'
       DataSource = IB_DataSource2
       TabOrder = 1
@@ -2206,7 +2206,7 @@ object FormBelege: TFormBelege
       'TERMIN=NOTIME'
       'ZUSAGE=NOTIME'
       'AUSFUEHRUNG=NOTIME')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_RECHNUNG=REC'
       'MENGE_BESTELLT=BES'
@@ -2300,6 +2300,8 @@ object FormBelege: TFormBelege
       ',BEARBEITER_R'
       ',POSNO'
       ',TIER_R'
+      ',KUNDEN_AUFTRAG'
+      ',SERIENNUMMER'
       'FROM '
       ' POSTEN'
       'WHERE '
@@ -2340,7 +2342,7 @@ object FormBelege: TFormBelege
     Left = 280
     Top = 97
     Bitmap = {
-      494C01012D003100680110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012D003100780110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000C0000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3947,7 +3949,7 @@ object FormBelege: TFormBelege
       'DAVON_BEZAHLT=CURRENCY'
       'EINZELPREIS_NETTO=BOOLEAN=Y,N'
       'MAHNUNG_AUSGESETZT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayFormat.Strings = (
       'TEILLIEFERUNG=00')
     FieldsDisplayLabel.Strings = (
@@ -4059,6 +4061,7 @@ object FormBelege: TFormBelege
       ',DRUCK'
       ',ABSCHLUSS'
       ',KUNDEN_INFO'
+      ',KUNDEN_AUFTRAG'
       ',INTERN_INFO'
       ',VORAB_INFO'
       ',PERSON_R'

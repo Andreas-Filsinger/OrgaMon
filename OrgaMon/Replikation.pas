@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2011  Andreas Filsinger
+  |    Copyright (C) 2011 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -321,11 +321,12 @@ var
     excludeFields: TStringList;
     includeFields: TStringList;
     insertFields: TstringList;
+    ZeroFields: TStringList;
     deactiveIndexes: TStringList;
     Umfang: string;
     StartTime: dword;
     RecN: integer;
-    TableName: string;
+    TableName, FeldName: string;
     AllFields: string;
     n: integer;
   begin
@@ -334,6 +335,7 @@ var
     excludeFields := TStringList.create;
     includeFields := TStringList.create;
     deactiveIndexes := TStringList.Create;
+    ZeroFields:= TStringList.Create;
     sINDEX := TIB_Script.create(self);
 
     // Indizes deaktivieren!
@@ -354,15 +356,24 @@ var
       end;
     end;
 
-    // Bestimmen der Felder, die nur im falle des insert hinzugenommen werden sollen
-    AllFields := AnsiUpperCase('RID,' + noblank(rIni.ReadString(cSectionReplication, 'NurBeiInsert', '')));
-    while (AllFields <> '') do
-      insertFields.add(nextp(AllFields, ','));
-
     // Bestmmen der Felder, die ausgelassen werden sollen
     AllFields := AnsiUpperCase(noblank(rIni.ReadString(cSectionReplication, 'OhneDieFelder', '')));
     while (AllFields <> '') do
       excludeFields.add(nextp(AllFields, ','));
+
+    // Bestmmen der Felder, die auf 0 gesetzt werden sollen
+    AllFields := AnsiUpperCase(noblank(rIni.ReadString(cSectionReplication, 'FelderAuf0', '')));
+    while (AllFields <> '') do
+      zeroFields.add(nextp(AllFields, ','));
+
+    // Bestimmen der Felder, die nur im falle des insert hinzugenommen werden sollen
+    AllFields := AnsiUpperCase('RID,' + noblank(rIni.ReadString(cSectionReplication, 'NurBeiInsert', '')));
+    while (AllFields <> '') do
+    begin
+       FeldName := nextp(AllFields, ',');
+       if (excludeFields.IndexOf(FeldName)=-1) then
+        insertFields.add(FeldName);
+    end;
 
     TableName := rINI.ReadString(cSectionReplication, 'Tabelle', '');
     StartTime := 0;
@@ -410,6 +421,8 @@ var
             QZiel.edit;
             for n := 0 to pred(IncludeFields.count) do
               QZiel.FieldByName(IncludeFields[n]).assign(FieldByName(IncludeFields[n]));
+            for n := 0 to pred(ZeroFields.Count) do
+              QZiel.FieldByName(ZeroFields[n]).AsInteger := 0;
             QZiel.Post;
           end else
           begin
@@ -419,6 +432,8 @@ var
               QZiel.FieldByName(InsertFields[n]).assign(FieldByName(InsertFields[n]));
             for n := 0 to pred(IncludeFields.count) do
               QZiel.FieldByName(IncludeFields[n]).assign(FieldByName(IncludeFields[n]));
+            for n := 0 to pred(ZeroFields.Count) do
+              QZiel.FieldByName(ZeroFields[n]).AsInteger := 0;
             QZiel.Post;
           end;
           inc(RecN);
@@ -471,6 +486,7 @@ var
     includeFields.free;
     insertFields.Free;
     deactiveIndexes.Free;
+    ZeroFields.Free;
     progressbar1.position := 0;
     EndHourGlass;
   end;
