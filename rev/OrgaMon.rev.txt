@@ -19,6 +19,11 @@ Dokumentation
 
 @<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.400 (04.02.19) Andreas Filsinger
+
+ Neu: Zahlung: Forderungsausgleich: Sortierung nach Rechnungsnummer
+      (Symbol: grüner Pfeil nach unten)
+
 Rev 8.399 (28.01.19) Andreas Filsinger
 
  Neu: Beleg: neues Feld: KUNDEN_AUFTRAG für eine PO Nummer / Auftragsnummer usw.

@@ -3,7 +3,7 @@ object FormBuchhalter: TFormBuchhalter
   Top = 114
   BorderWidth = 1
   Caption = 'Buchhalter'
-  ClientHeight = 614
+  ClientHeight = 688
   ClientWidth = 907
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -21,14 +21,15 @@ object FormBuchhalter: TFormBuchhalter
     Left = 0
     Top = 0
     Width = 907
-    Height = 614
+    Height = 688
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 629
     object TabSheet1: TTabSheet
       Margins.Left = 4
       Margins.Top = 4
@@ -36,21 +37,19 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'Lastschriften'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel1: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         Caption = 'Panel1'
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object Label2: TLabel
           Left = 37
           Top = 7
@@ -290,7 +289,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 11
           Top = 38
           Width = 846
-          Height = 508
+          Height = 582
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -299,6 +298,7 @@ object FormBuchhalter: TFormBuchhalter
           DataSource = IB_DataSource1
           Anchors = [akLeft, akTop, akBottom]
           TabOrder = 0
+          ExplicitHeight = 600
         end
         object Button8: TButton
           Left = 745
@@ -341,13 +341,14 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Button7: TButton
           Left = 742
-          Top = 553
+          Top = 627
           Width = 115
           Height = 24
           Anchors = [akLeft, akBottom]
           Caption = 'Lastschrift >>'
           TabOrder = 4
           OnClick = Button7Click
+          ExplicitTop = 568
         end
       end
     end
@@ -358,20 +359,18 @@ object FormBuchhalter: TFormBuchhalter
       Margins.Bottom = 4
       Caption = 'HBCI-Lastschrift'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel4: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object SpeedButton1: TSpeedButton
           Left = 505
           Top = 48
@@ -583,7 +582,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Label34: TLabel
           Left = 31
-          Top = 564
+          Top = 638
           Width = 22
           Height = 13
           Margins.Left = 4
@@ -1187,7 +1186,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Edit10: TEdit
           Left = 62
-          Top = 561
+          Top = 635
           Width = 72
           Height = 21
           Margins.Left = 4
@@ -1197,10 +1196,11 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akBottom]
           TabOrder = 5
           OnKeyPress = Edit10KeyPress
+          ExplicitTop = 576
         end
         object Button6: TButton
           Left = 139
-          Top = 561
+          Top = 635
           Width = 24
           Height = 22
           Hint = 'TAN verarbeiten'
@@ -1220,12 +1220,13 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 6
           OnClick = Button6Click
+          ExplicitTop = 576
         end
         object Memo1: TMemo
           Left = 35
           Top = 190
           Width = 854
-          Height = 366
+          Height = 440
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -1233,6 +1234,7 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akTop, akBottom]
           ScrollBars = ssVertical
           TabOrder = 7
+          ExplicitHeight = 381
         end
         object Edit15: TEdit
           Left = 263
@@ -1251,20 +1253,18 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'HBCI-Umsatzabfrage'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel5: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object Label40: TLabel
           Left = 358
           Top = 8
@@ -1625,7 +1625,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 9
           Top = 150
           Width = 864
-          Height = 430
+          Height = 504
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -1633,6 +1633,7 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akTop, akBottom]
           ItemHeight = 13
           TabOrder = 8
+          ExplicitHeight = 445
         end
         object Edit9: TEdit
           Left = 564
@@ -1706,23 +1707,21 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Buch'
       ImageIndex = 3
       OnShow = TabSheet4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel6: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object Label4: TLabel
           Left = 33
-          Top = 567
+          Top = 637
           Width = 33
           Height = 13
           Margins.Left = 4
@@ -1732,7 +1731,6 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akBottom]
           Caption = '&suche'
           FocusControl = Edit1
-          ExplicitTop = 550
         end
         object Label5: TLabel
           Left = 40
@@ -2055,7 +2053,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton27: TSpeedButton
           Left = 4
-          Top = 563
+          Top = 633
           Width = 22
           Height = 22
           Hint = 'Suchindex neu erstellen'
@@ -2094,7 +2092,6 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton27Click
-          ExplicitTop = 546
         end
         object SpeedButton31: TSpeedButton
           Left = 296
@@ -2150,7 +2147,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton34: TSpeedButton
           Left = 850
-          Top = 560
+          Top = 634
           Width = 22
           Height = 22
           Hint = 'OLAP Ergebnis importieren'
@@ -2206,6 +2203,7 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton34Click
+          ExplicitTop = 560
         end
         object SpeedButton2: TSpeedButton
           Left = 216
@@ -2418,7 +2416,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton50: TSpeedButton
           Left = 873
-          Top = 560
+          Top = 634
           Width = 22
           Height = 22
           Hint = 'To-Do Ergebnis importieren'
@@ -2474,6 +2472,7 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton50Click
+          ExplicitTop = 560
         end
         object Label27: TLabel
           Left = 392
@@ -2484,7 +2483,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Edit1: TEdit
           Left = 70
-          Top = 563
+          Top = 634
           Width = 216
           Height = 21
           Margins.Left = 4
@@ -2499,7 +2498,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 4
           Top = 56
           Width = 891
-          Height = 501
+          Height = 575
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -2518,6 +2517,8 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 1
           OnDblClick = DrawGrid1DblClick
           OnDrawCell = DrawGrid1DrawCell
+          ExplicitWidth = 885
+          ExplicitHeight = 593
           ColWidths = (
             64)
           RowHeights = (
@@ -2561,7 +2562,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Button20: TButton
           Left = 294
-          Top = 563
+          Top = 634
           Width = 89
           Height = 22
           Margins.Left = 4
@@ -2597,7 +2598,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object Edit8: TEdit
           Left = 803
-          Top = 560
+          Top = 634
           Width = 44
           Height = 21
           Margins.Left = 4
@@ -2608,6 +2609,7 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 6
           Text = 'TRN'
           OnKeyPress = Edit8KeyPress
+          ExplicitTop = 575
         end
         object Edit7: TEdit
           Left = 339
@@ -2626,20 +2628,18 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Ausgleich Forderungen'
       ImageIndex = 4
       OnShow = TabSheet5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel2: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object Label16: TLabel
           Left = 37
           Top = 41
@@ -2979,7 +2979,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton20: TSpeedButton
           Left = 9
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'Debitor-Anzeige aktualisieren'
@@ -3018,18 +3018,18 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton20Click
-          ExplicitTop = 578
+          ExplicitTop = 361
         end
         object JvArrayButton1: TJvArrayButton
           Left = 9
-          Top = 474
-          Width = 870
+          Top = 548
+          Width = 889
           Height = 112
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
           Margins.Bottom = 4
-          Anchors = [akLeft, akBottom]
+          Anchors = [akLeft, akRight, akBottom]
           Rows = 4
           Cols = 10
           Font.Charset = ANSI_CHARSET
@@ -3038,7 +3038,8 @@ object FormBuchhalter: TFormBuchhalter
           Font.Name = 'Verdana'
           Font.Style = [fsBold]
           OnArrayButtonClicked = JvArrayButton1ArrayButtonClicked
-          ExplicitTop = 704
+          ExplicitTop = 489
+          ExplicitWidth = 887
         end
         object SpeedButton22: TSpeedButton
           Left = 218
@@ -3091,7 +3092,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton23: TSpeedButton
           Left = 9
-          Top = 451
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'Ausgleichsvorschlag aktualisieren'
@@ -3134,7 +3135,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object SpeedButton24: TSpeedButton
           Left = 631
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'Personen Identit'#228't best'#228'tigen'
@@ -3173,12 +3174,11 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton24Click
-          ExplicitLeft = 615
-          ExplicitTop = 578
+          ExplicitTop = 361
         end
         object SpeedButton21: TSpeedButton
           Left = 656
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'OrgaMon neutraler Zahlungseingang (privat)'
@@ -3216,12 +3216,11 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton21Click
-          ExplicitLeft = 640
-          ExplicitTop = 578
+          ExplicitTop = 361
         end
         object SpeedButton25: TSpeedButton
           Left = 681
-          Top = 348
+          Top = 420
           Width = 23
           Height = 22
           Hint = 'Identit'#228'tszuordnung l'#246'sen'
@@ -3259,8 +3258,7 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton25Click
-          ExplicitLeft = 665
-          ExplicitTop = 578
+          ExplicitTop = 361
         end
         object SpeedButton26: TSpeedButton
           Left = 848
@@ -3306,8 +3304,8 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitLeft = 833
         end
         object SpeedButton32: TSpeedButton
-          Left = 758
-          Top = 451
+          Left = 769
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'interne Auflistung anzeigen'
@@ -3315,7 +3313,7 @@ object FormBuchhalter: TFormBuchhalter
           Margins.Top = 4
           Margins.Right = 4
           Margins.Bottom = 4
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
             08000000000000010000C40E0000C40E00000001000000000000CCD0D000CBCF
@@ -3362,11 +3360,12 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton32Click
-          ExplicitTop = 681
+          ExplicitLeft = 760
+          ExplicitTop = 451
         end
         object Label43: TLabel
           Left = 677
-          Top = 394
+          Top = 468
           Width = 9
           Height = 13
           Margins.Left = 4
@@ -3389,8 +3388,8 @@ object FormBuchhalter: TFormBuchhalter
           Caption = '0'
         end
         object SpeedButton38: TSpeedButton
-          Left = 706
-          Top = 451
+          Left = 692
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'ganze Tabelle nach links'
@@ -3398,7 +3397,7 @@ object FormBuchhalter: TFormBuchhalter
           Margins.Top = 4
           Margins.Right = 4
           Margins.Bottom = 4
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000C40E0000C40E00000000000000000000C8D0D4C8D0D4
@@ -3429,11 +3428,12 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton38Click
-          ExplicitTop = 681
+          ExplicitLeft = 683
+          ExplicitTop = 451
         end
         object SpeedButton39: TSpeedButton
-          Left = 731
-          Top = 451
+          Left = 716
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'ganze Tabelle nach rechts'
@@ -3441,7 +3441,7 @@ object FormBuchhalter: TFormBuchhalter
           Margins.Top = 4
           Margins.Right = 4
           Margins.Bottom = 4
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000C40E0000C40E00000000000000000000C8D0D4C8D0D4
@@ -3472,11 +3472,12 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton39Click
-          ExplicitTop = 681
+          ExplicitLeft = 707
+          ExplicitTop = 451
         end
         object SpeedButton33: TSpeedButton
           Left = 131
-          Top = 451
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'Optimierung ausschalten'
@@ -3540,12 +3541,12 @@ object FormBuchhalter: TFormBuchhalter
           ExplicitTop = 681
         end
         object SpeedButton42: TSpeedButton
-          Left = 654
-          Top = 451
+          Left = 643
+          Top = 525
           Width = 22
           Height = 22
           Hint = '1. Ausgleich fixieren'
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             1800000000000003000000000000000000000000000000000000CE9C00CE9C00
@@ -3576,15 +3577,16 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton42Click
-          ExplicitTop = 681
+          ExplicitLeft = 634
+          ExplicitTop = 451
         end
         object SpeedButton46: TSpeedButton
-          Left = 679
-          Top = 451
+          Left = 667
+          Top = 525
           Width = 23
           Height = 22
           Hint = 'Fixierung aufheben'
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000C40E0000C40E00000000000000000000CC9900CC9900
@@ -3615,15 +3617,16 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton46Click
-          ExplicitTop = 681
+          ExplicitLeft = 658
+          ExplicitTop = 451
         end
         object SpeedButton47: TSpeedButton
-          Left = 809
-          Top = 451
+          Left = 817
+          Top = 525
           Width = 23
           Height = 22
           Hint = 'Als Anzahlung verbuchen'
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             1800000000000003000000000000000000000000000000000000FFFEFFFDFDFD
@@ -3654,13 +3657,62 @@ object FormBuchhalter: TFormBuchhalter
           ParentShowHint = False
           ShowHint = True
           OnClick = SpeedButton47Click
-          ExplicitTop = 681
+          ExplicitLeft = 808
+          ExplicitTop = 451
+        end
+        object SpeedButton51: TSpeedButton
+          Left = 740
+          Top = 525
+          Width = 22
+          Height = 22
+          Hint = 'Sortieren nach Rechnungsnummer'
+          Anchors = [akRight, akBottom]
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000000000000000000000000000000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0000000000FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF000000000000FF000000FF000000FF00000000
+            0000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF000000000000FF000000FF000000FF00000000
+            0000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF000000000000FF000000FF000000FF000000FF000000FF
+            000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF000000000000FF000000FF000000FF000000FF000000FF
+            000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF000000000000FF000000FF000000FF000000FF000000FF000000FF
+            000000FF000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF000000000000000000000000000000000000FF0000000000000000
+            00000000000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF000000000000FF000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00000000000000000000000000FF00
+            FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = SpeedButton51Click
+          ExplicitLeft = 731
+          ExplicitTop = 451
         end
         object DrawGrid2: TDrawGrid
           Left = 9
           Top = 60
           Width = 887
-          Height = 282
+          Height = 354
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -3677,6 +3729,7 @@ object FormBuchhalter: TFormBuchhalter
           TabOrder = 0
           OnDblClick = DrawGrid2DblClick
           OnDrawCell = DrawGrid2DrawCell
+          ExplicitHeight = 295
           ColWidths = (
             64)
           RowHeights = (
@@ -3720,7 +3773,7 @@ object FormBuchhalter: TFormBuchhalter
         end
         object DrawGrid3: TDrawGrid
           Left = 9
-          Top = 374
+          Top = 446
           Width = 887
           Height = 74
           Margins.Left = 4
@@ -3737,6 +3790,7 @@ object FormBuchhalter: TFormBuchhalter
           ScrollBars = ssVertical
           TabOrder = 3
           OnDrawCell = DrawGrid3DrawCell
+          ExplicitTop = 387
           ColWidths = (
             64
             64
@@ -3747,8 +3801,8 @@ object FormBuchhalter: TFormBuchhalter
             80)
         end
         object Button14: TButton
-          Left = 835
-          Top = 451
+          Left = 845
+          Top = 525
           Width = 28
           Height = 22
           Hint = 'Ausgleich buchen'
@@ -3756,7 +3810,7 @@ object FormBuchhalter: TFormBuchhalter
           Margins.Top = 4
           Margins.Right = 4
           Margins.Bottom = 4
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Caption = '*'
           Font.Charset = SYMBOL_CHARSET
           Font.Color = clWindowText
@@ -3768,10 +3822,12 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 4
           OnClick = Button14Click
+          ExplicitLeft = 836
+          ExplicitTop = 466
         end
         object Button15: TButton
           Left = 541
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'Zur Person springen'
@@ -3785,10 +3841,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 5
           OnClick = Button15Click
+          ExplicitTop = 361
         end
         object Button16: TButton
           Left = 566
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'zu den Belegen springen'
@@ -3802,10 +3859,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 6
           OnClick = Button16Click
+          ExplicitTop = 361
         end
         object Button17: TButton
           Left = 516
-          Top = 348
+          Top = 420
           Width = 22
           Height = 22
           Hint = 'Zahlungen einsehen'
@@ -3819,10 +3877,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 7
           OnClick = Button17Click
+          ExplicitTop = 361
         end
         object StaticText2: TStaticText
           Left = 712
-          Top = 347
+          Top = 419
           Width = 185
           Height = 24
           Margins.Left = 4
@@ -3842,10 +3901,11 @@ object FormBuchhalter: TFormBuchhalter
           ParentFont = False
           TabOrder = 8
           Transparent = False
+          ExplicitTop = 360
         end
         object Button13: TButton
           Left = 592
-          Top = 348
+          Top = 420
           Width = 21
           Height = 22
           Hint = 'Infos zu offenen Posten (Mahnung)'
@@ -3859,10 +3919,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 9
           OnClick = Button13Click
+          ExplicitTop = 361
         end
         object Button18: TButton
           Left = 442
-          Top = 348
+          Top = 420
           Width = 40
           Height = 22
           Hint = 'Neue Person aus dem Buchungstext anlegen'
@@ -3876,10 +3937,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 10
           OnClick = Button18Click
+          ExplicitTop = 361
         end
         object Button19: TButton
           Left = 364
-          Top = 348
+          Top = 420
           Width = 75
           Height = 22
           Hint = 'Suchen, wie im Moment der Orgamon sucht'
@@ -3893,10 +3955,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 11
           OnClick = Button19Click
+          ExplicitTop = 361
         end
         object CheckBox5: TCheckBox
-          Left = 236
-          Top = 455
+          Left = 167
+          Top = 530
           Width = 229
           Height = 16
           Margins.Left = 4
@@ -3907,10 +3970,11 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Teilforderungen anhand des Datums'
           TabOrder = 12
           OnClick = CheckBox5Click
+          ExplicitTop = 471
         end
         object Button21: TButton
           Left = 299
-          Top = 348
+          Top = 420
           Width = 61
           Height = 22
           Hint = 'mehr Alternativen anzeigen'
@@ -3924,10 +3988,11 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 13
           OnClick = Button21Click
+          ExplicitTop = 361
         end
         object CheckBox6: TCheckBox
-          Left = 471
-          Top = 455
+          Left = 404
+          Top = 530
           Width = 179
           Height = 16
           Margins.Left = 4
@@ -3938,10 +4003,11 @@ object FormBuchhalter: TFormBuchhalter
           Caption = 'Belegnummer-Teillieferung'
           TabOrder = 14
           OnClick = CheckBox6Click
+          ExplicitTop = 471
         end
         object Panel3: TPanel
           Left = 37
-          Top = 348
+          Top = 420
           Width = 91
           Height = 22
           Margins.Left = 4
@@ -3955,10 +4021,11 @@ object FormBuchhalter: TFormBuchhalter
           Color = clSkyBlue
           ParentBackground = False
           TabOrder = 15
+          ExplicitTop = 361
         end
         object Edit13: TEdit
           Left = 137
-          Top = 348
+          Top = 420
           Width = 149
           Height = 21
           Margins.Left = 4
@@ -3968,10 +4035,11 @@ object FormBuchhalter: TFormBuchhalter
           Anchors = [akLeft, akBottom]
           TabOrder = 16
           OnKeyPress = Edit13KeyPress
+          ExplicitTop = 361
         end
         object Panel7: TPanel
           Left = 37
-          Top = 451
+          Top = 525
           Width = 91
           Height = 21
           Margins.Left = 4
@@ -3985,14 +4053,15 @@ object FormBuchhalter: TFormBuchhalter
           Color = clSkyBlue
           ParentBackground = False
           TabOrder = 17
+          ExplicitTop = 466
         end
         object Button22: TButton
-          Left = 784
-          Top = 451
+          Left = 793
+          Top = 525
           Width = 22
           Height = 22
           Hint = 'abgeschlossenen Rechnungsbeleg '#246'ffnen'
-          Anchors = [akLeft, akBottom]
+          Anchors = [akRight, akBottom]
           Caption = #157
           Font.Charset = SYMBOL_CHARSET
           Font.Color = clWindowText
@@ -4004,6 +4073,8 @@ object FormBuchhalter: TFormBuchhalter
           ShowHint = True
           TabOrder = 18
           OnClick = Button22Click
+          ExplicitLeft = 784
+          ExplicitTop = 466
         end
       end
     end
@@ -4011,20 +4082,18 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'ausstehende Lastschrift'
       ImageIndex = 6
       OnShow = TabSheet7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel8: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         DesignSize = (
           899
-          586)
+          660)
         object SpeedButton37: TSpeedButton
           Left = 4
           Top = 6
@@ -4252,7 +4321,7 @@ object FormBuchhalter: TFormBuchhalter
           Left = 1
           Top = 34
           Width = 897
-          Height = 551
+          Height = 625
           CustomGlyphsSupplied = []
           DataSource = IB_DataSource2
           Align = alBottom
@@ -4262,6 +4331,8 @@ object FormBuchhalter: TFormBuchhalter
           RowSelect = True
           DrawCellTextOptions = [gdtShowTextBlob]
           OnGetDisplayText = IB_Grid2GetDisplayText
+          ExplicitWidth = 887
+          ExplicitHeight = 643
         end
       end
     end
@@ -4273,17 +4344,15 @@ object FormBuchhalter: TFormBuchhalter
       Caption = 'Verwaltung'
       ImageIndex = 5
       OnShow = TabSheet6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 601
       object Panel9: TPanel
         Left = 0
         Top = 0
         Width = 899
-        Height = 586
+        Height = 660
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 601
         object Label11: TLabel
           Left = 24
           Top = 40
@@ -4465,7 +4534,7 @@ object FormBuchhalter: TFormBuchhalter
       'BETRAG=CURRENCY'
       'BELEG.GESAMT_FORDERUNG=CURRENCY'
       'BELEG.DAVON_BEZAHLT=CURRENCY')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANGSRECHNUNG.TEILLIEFERUNG=TL'
       'AUSGANGSRECHNUNG.BELEG_R=B#'
@@ -4595,7 +4664,7 @@ object FormBuchhalter: TFormBuchhalter
     Top = 312
   end
   object IB_Cursor1: TIB_Cursor
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select * from BUCH where RID=:CROSSREF')
@@ -4606,7 +4675,7 @@ object FormBuchhalter: TFormBuchhalter
     Left = 296
     Top = 224
     Bitmap = {
-      494C010104000900780210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000900880210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4886,7 +4955,7 @@ object FormBuchhalter: TFormBuchhalter
   end
   object IB_Query2: TIB_Query
     CalculateAllFields = True
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayWidth.Strings = (
       'BUCHUNGEN=113'
       'VERWENDUNG=132'

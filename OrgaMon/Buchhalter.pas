@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -228,6 +228,7 @@ type
     SpeedButton49: TSpeedButton;
     SpeedButton50: TSpeedButton;
     Label27: TLabel;
+    SpeedButton51: TSpeedButton;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -327,6 +328,7 @@ type
     procedure Image3Click(Sender: TObject);
     procedure SpeedButton49Click(Sender: TObject);
     procedure SpeedButton50Click(Sender: TObject);
+    procedure SpeedButton51Click(Sender: TObject);
   private
     { Private-Deklarationen }
     DTA_Header: DtaDataType;
@@ -4355,7 +4357,7 @@ begin
     for n := 0 to pred(Cols * cButtonGridRows) do
     begin
       captions.add('');
-      colors.add(HTMLColor2RGBConst(cBUCH_Farbe_Neutral)); // '#DDDDDD'
+      colors.add(HTMLColor2RGBConst(cBUCH_Farbe_Neutral));
     end;
   end;
 
@@ -4409,13 +4411,6 @@ begin
 
       // sForderungen auflösen!
       BELEG_R := StrToIntDef(nextp(sForderungen[n], ';', 2), cRID_Null);
-      //
-      // bisher wurde die Person immer berechnet,
-      // möglicherweise Problematisch, da
-      // PERSON_R := e_r_sql(
-      // { } 'select PERSON_R from BELEG where RID=' +
-      // { } inttostr(BELEG_R));
-
       PERSON_R := StrToIntDef(nextp(sForderungen[n], ';', 5), cRID_Null);
       TEILLIEFERUNG := StrToIntDef(nextp(sForderungen[n], ';', 3), cRID_Null);
       UrsprungsForderung := StrToDoubledef(nextp(sForderungen[n], ';', 1), 0);
@@ -4554,12 +4549,16 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
   begin
 
     // Bisherige (An)zahlungen bestimmen!
-    Zahlungen := -e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
-      ') and' + ' (BETRAG<0)');
+    Zahlungen := -e_r_sqld(
+     {} 'select SUM(BETRAG) from AUSGANGSRECHNUNG where ' +
+     {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+     {} ' (BETRAG<0)');
 
     // Forderungen bestimmen!
-    Forderungen := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG where ' + ' (BELEG_R=' + inttostr(BELEG_R) +
-      ') and' + ' (BETRAG>0)');
+    Forderungen := e_r_sqld(
+     {} 'select SUM(BETRAG) from AUSGANGSRECHNUNG where ' +
+     {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+     {} ' (BETRAG>0)');
 
     // Forderungs-Details bestimmen! (Wenn vorhanden!)
     DetailForderungen := 0;
@@ -4655,8 +4654,11 @@ procedure TFormBuchhalter.Erzeuge_sForderungen(PERSON_R: Integer);
         RECHNUNG := FieldByName('RECHNUNG').AsString;
         GESAMT_FORDERUNG := FieldByName('LIEFERBETRAG').AsDouble;
 
-        saldo := e_r_sqld('select SUM(BETRAG) from AUSGANGSRECHNUNG ' + 'where' + ' (BELEG_R=' + inttostr(BELEG_R) +
-          ') and' + ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
+        saldo := e_r_sqld(
+         {} 'select SUM(BETRAG) from AUSGANGSRECHNUNG ' +
+         {} 'where' +
+         {} ' (BELEG_R=' + inttostr(BELEG_R) + ') and' +
+         {} ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')');
 
         if isSomeMoney(saldo) then
         begin
@@ -6046,6 +6048,33 @@ begin
       SecureSetRow(DrawGrid1, pred(ItemKontoAuszugRIDs.count));
     EndHourGlass;
   end;
+end;
+
+procedure TFormBuchhalter.SpeedButton51Click(Sender: TObject);
+var
+ ClientSorter : TStringList;
+ _sForderungen : TStringList;
+ n : Integer;
+begin
+
+ // sort
+ if (sForderungen.Count>1) then
+ begin
+   ClientSorter := TStringList.create;
+   for n := 0 to pred(sForderungen.count) do
+    ClientSorter.addObject( nextp(sForderungen[n],';',0), Pointer(n));
+   ClientSorter.sort;
+   _sForderungen := TStringList.create;
+   for n := 0 to pred(CLientSorter.count) do
+    _sForderungen.add(SForderungen[Integer(ClientSorter.Objects[n])]);
+   ClientSorter.Free;
+   FreeAndNil(sForderungen);
+   sForderungen := _sForderungen;
+ end;
+
+ // show
+ Erzeuge_Show_sYellow(sBetrag, true);
+
 end;
 
 procedure TFormBuchhalter.SpeedButton5Click(Sender: TObject);
