@@ -58,9 +58,7 @@ uses
   windows,
 
   // DB
-{$IFDEF FPC}
-  Windows,
-{$ELSE}
+{$IFNDEF FPC}
   IB_Session,
 {$ENDIF}
   // OrgaMon-Globals

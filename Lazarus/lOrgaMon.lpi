@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="8"/>
-      <BuildNr Value="27"/>
+      <BuildNr Value="28"/>
       <Language Value="0407"/>
       <StringTable ProductVersion="8.0.0.19"/>
     </VersionInfo>
@@ -204,8 +204,8 @@
       <Filename Value="lOrgaMon"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\..\fpspreadsheet\source"/>
-      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\..\fpspreadsheet\source\common;..\ccr-exif;..\..\ibx\fbintf;..\..\ibx\runtime\legacy;..\..\ibx\fbintf\client;..\..\ibx\fbintf\client\2.5;..\..\ibx\fbintf\client\3.0;..\..\ibx\fbintf\client\3.0\firebird;..\..\ibx\runtime\nongui"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\PASconTools;..\OrgaMon;..\..\Indy\lib\Protocols;..\..\Indy\lib\System;..\..\Indy\lib\Core;..\DCPcrypt;..\DCPcrypt\Ciphers;..\ccr-exif;..\..\ibx\fbintf;..\..\ibx\runtime\legacy;..\..\ibx\fbintf\client;..\..\ibx\fbintf\client\2.5;..\..\ibx\fbintf\client\3.0;..\..\ibx\fbintf\client\3.0\firebird;..\..\ibx\runtime\nongui"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
