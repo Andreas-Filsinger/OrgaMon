@@ -1337,14 +1337,14 @@ function WeekDay(ADate: TAnfixDate): byte; // 1= Montag, 7=Sonntag
 begin
   result := pred(DayOfWeek(long2datetime(ADate)));
   if (result = 0) then
-    result := 7;
+    result := cDATE_SONNTAG;
 end;
 
 function WeekDay(ADate: TDateTime): byte; // 1= Montag, 7=Sonntag
 begin
   result := pred(DayOfWeek(ADate));
   if (result = 0) then
-    result := 7;
+    result := cDATE_SONNTAG;
 end;
 
 function WeekDayS(ADate: TAnfixDate): string;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,10 @@
 }
 unit Funktionen_Auftrag;
 
+{
+  Basis-Routinen rund um "Monteur", "Baustelle" und "Auftrag"
+}
+
 interface
 
 uses
@@ -37,12 +41,6 @@ uses
   dbOrgaMon, gplists, anfix32,
   globals, txHoliday;
 
-{
-  eResource:
-
-  Basis-Routinen rund um "Monteur", "Baustelle" und "Auftrag"
-
-}
 const
   IgnoreAuftragPost: boolean = false;
   ForceHistorischer: boolean = false;
@@ -109,23 +107,29 @@ function e_r_Verlage1: TStringList; // NICHT FREIGEBEN
 procedure InvalidateCache_Verlag;
 procedure EnsureCache_Verlag;
 
-// Baustellen
-function e_r_BaustelleKuerzel(rid: Integer): string;
+// Baustellen, schneller Datenzugriff
+function e_r_BaustelleKuerzel(BAUSTELLE_R: Integer): string;
 function e_r_BaustelleKostenstelle(BAUSTELLE_R: Integer): string;
 function e_r_BaustelleBundesland(BAUSTELLE_R: Integer): Integer;
-
 function e_r_BaustelleProtokollName(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Null): string;
-function e_r_BaustelleName(rid: Integer): string;
-function e_r_BaustelleCSV_QUELLE(rid: Integer): string;
+function e_r_BaustelleName(BAUSTELLE_R: Integer): string;
+function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: Integer): string;
 function e_r_BaustelleNameFromKuerzel(KUERZEL: string): string;
 function e_r_BaustelleRIDFromKuerzel(KUERZEL: string): Integer;
-function e_r_BaustelleMonteure(rid: Integer): TStringList;
+function e_r_BaustelleMonteure(BAUSTELLE_R: Integer): TStringList;
 function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
 function e_r_Baustellen: TStringList; overload;
 function e_r_BaustellenLang: TStringList;
 function e_r_BaustellenAktive: TStringList;
-procedure e_r_Sync_Baustelle;
+function e_r_OrtsteilCode(BAUSTELLE_R: Integer; Ort: string): string;
+procedure e_r_ProtokollExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
+procedure e_r_InternExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
+function e_r_EinzelAufwand(BAUSTELLE_R: Integer): TAnfixTime;
+function e_r_Arbeitszeit_V(BAUSTELLE_R: Integer; Wochentag: Integer): TAnfixTime;
+function e_r_Arbeitszeit_N(BAUSTELLE_R: Integer; Wochentag: Integer): TAnfixTime;
 
+// Baustelle, Verwaltung
+procedure e_r_Sync_Baustelle;
 function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
 
@@ -134,18 +138,6 @@ function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringLi
 function e_r_BaustelleFotoPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_BaustelleUploadPath(BAUSTELLE_R: TDOM_Reference): string;
 function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
-
-function e_r_TerminAnzahl_V(rid: Integer): Integer;
-function e_r_TerminAnzahl_N(rid: Integer): Integer;
-function e_r_TerminAnzahl_VN(rid: Integer): Integer;
-
-function e_r_Arbeitszeit_V(rid: Integer): TAnfixTime;
-function e_r_Arbeitszeit_N(rid: Integer): TAnfixTime;
-function e_r_EinzelAufwand(rid: Integer): TAnfixTime;
-
-function e_r_OrtsteilCode(BAUSTELLE_R: Integer; Ort: string): string;
-procedure e_r_ProtokollExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
-procedure e_r_InternExport(BAUSTELLE_R: Integer; FelderListe: TStringList);
 
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
 // [BUNDESLAND_IDX]
@@ -267,19 +259,19 @@ var
   CacheBaustelle: TStringList = nil;
   CacheBaustelleMonteure: TStringList = nil;
   CacheBaustelleOrtsteile: TSearchStringList = nil;
-  CacheBaustelleAufwand: Integer = 0;
+  CacheBaustelleAufwand: Integer = cRID_Unset;
   CacheBaustelleAufwandValue: Integer = 0;
 
-  CacheBaustelleOrtsteile_BAUSTELLE_R: Integer = 0;
-  CacheBaustelleMonteureLastRequestedRID: Integer = 0;
+  CacheBaustelleOrtsteile_BAUSTELLE_R: Integer = cRID_Unset;
+  CacheBaustelleMonteureLastRequestedRID: Integer = cRID_Unset;
 
   // ArbeitszeitV_Cache
-  CacheBaustelleArbeitsZeitV_RID: Integer = 0;
-  CacheBaustelleArbeitsZeitV_Value: TAnfixTime = 0;
+  CacheBaustelleArbeitsZeitV_RID: Integer = cRID_Unset;
+  CacheBaustelleArbeitsZeitV_Value: TStringList = nil;
 
   // ArbeitszeitN_Cache
-  CacheBaustelleArbeitsZeitN_RID: Integer = 0;
-  CacheBaustelleArbeitsZeitN_Value: TAnfixTime = 0;
+  CacheBaustelleArbeitsZeitN_RID: Integer = cRID_Unset;
+  CacheBaustelleArbeitsZeitN_Value: TStringList = nil;
 
   // Feiertage-Cache
   cFeiertage: TSperreOfficalHolidays = nil;
@@ -911,10 +903,10 @@ var
   // cached Fields
   STATUS: TePhaseStatus; // aktueller Status
   MONTEUR_R: Integer; // ein Monteur
+  WOCHENTAG: Integer; // Wochentag der Ausführung
   _STATUS: TePhaseStatus; // Status bisher
   _sBearbeiter: Integer; // Barbeiter bisher
 
-  // DebugInfo: string;
   cOldVersion: TdboCursor;
   cAnzHistorische: TdboCursor;
   InitialChange: boolean;
@@ -1063,12 +1055,6 @@ begin
             end;
           end;
 
-          //
-          // if TerminChanged then
-          // FieldByName('WORDEXPORT').clear;  Wegfall Rev. 1.038
-          // noch mal diskutieren
-          //
-
           if TerminChanged or MonteurChanged then
           begin
             if (sBearbeiter <> cNoBearbeiter) then
@@ -1173,7 +1159,7 @@ begin
         // leeren Aufwand setzen
         with FieldByName('AUFWAND') do
           if IsNull then
-            if (FieldByName('AUFWAND_SCHUTZ').AsString <> 'Y') then
+            if (FieldByName('AUFWAND_SCHUTZ').AsString <> cC_True) then
               AsInteger := e_r_EinzelAufwand(FieldByName('BAUSTELLE_R').AsInteger);
 
         // Word-Status wegmachen
@@ -2491,30 +2477,181 @@ begin
     result := MonteurJonDa_freie;
 end;
 
+// BAUSTELLEN
+
+const
+ CacheBaustelle_NUMMERN_PREFIX = 0;
+ CacheBaustelle_NAME = 1;
+ CacheBaustelle_LAST_V = 2;
+ CacheBaustelle_LAST_N = 3;
+ CacheBaustelle_CSV_QUELLE = 4;
+ CacheBaustelle_ORTE = 5;
+ CacheBaustelle_PROTOKOLLEXPORT = 6;
+ CacheBaustelle_REGEL_ARBEITSZEIT_V = 7;
+ CacheBaustelle_REGEL_ARBEITSZEIT_N = 8;
+ CacheBaustelle_KOSTENSTELLE = 9;
+ CacheBaustelle_BUNDESLAND_IDX = 10;
+ CacheBaustelle_EINZEL_AUFWAND = 11;
+
+procedure EnsureCache_Baustelle;
+var
+  _SubItem: TStringList;
+  _Ortsteile: TStringList;
+  AUFWAND: TStringList;
+  EINZEL_AUFWAND: Integer;
+  cBAUSTELLE: TdboCursor;
+
+  function GanzeWoche (Vormittags:boolean) : string;
+  var
+   Wochentag : Integer;
+   VN : string;
+   MaxAnzahlTermine : Integer;
+   MaxAnzahlTermineAsString: string;
+   REGEL_AUFWAND, HALBTAGES_AUFWAND : Integer;
+  begin
+   result := '';
+
+   with cBAUSTELLE do
+   begin
+
+     case Vormittags of
+      true: VN := 'V';
+      false: VN := 'N';
+     end;
+
+     // default Wert
+     REGEL_AUFWAND := FieldByName('REGEL_ARBEITSZEIT_'+VN).AsInteger;
+
+     for Wochentag := cDATE_MONTAG to cDATE_SONNTAG do
+     begin
+
+      MaxAnzahlTermineAsString := AUFWAND.Values[cTageNamenKurz[Wochentag]+'-'+VN];
+      if (MaxAnzahlTermineAsString<>'') then
+       HALBTAGES_AUFWAND := StrToIntDef(MaxAnzahlTermineAsString,0) * EINZEL_AUFWAND
+      else
+       HALBTAGES_AUFWAND := REGEL_AUFWAND;
+
+       result := result + IntToStr(HALBTAGES_AUFWAND);
+       if (Wochentag<>cDATE_SONNTAG) then
+        result := result + ';';
+    end;
+   end;
+  end;
+
+begin
+  //
+  // Idee, Haltbarkeitsdatum des Cache einführen, danach
+  // !muss! neu geladen werden -> AutoInvalidate
+  //
+  if not(assigned(CacheBaustelle)) then
+  begin
+    // CACHE
+    CacheBaustelle := TStringList.create;
+    CacheBaustelleOrtsteile := TSearchStringList.create;
+
+    _Ortsteile := TStringList.create;
+    cBAUSTELLE := nCursor;
+    with cBAUSTELLE do
+    begin
+      sql.Add('select * from BAUSTELLE');
+      ApiFirst;
+      while not(eof) do
+      begin
+        AUFWAND := TStringList.create;
+        e_r_sqlt(FieldByName('AUFWAND'), AUFWAND);
+
+        EINZEL_AUFWAND := FieldByName('LAST_V').AsInteger + FieldByName('LAST_N').AsInteger;
+        if (EINZEL_AUFWAND > 0) then
+          EINZEL_AUFWAND := round(iTagesArbeitszeit / EINZEL_AUFWAND)
+        else
+          EINZEL_AUFWAND := round(iTagesArbeitszeit / 10.0);
+
+        _SubItem := TStringList.create;
+        { CacheBaustelle_NUMMERN_PREFIX }
+        { [0] } _SubItem.Add(FieldByName('NUMMERN_PREFIX').AsString);
+
+        { CacheBaustelle_NAME }
+        { [1] } _SubItem.Add(FieldByName('NAME').AsString);
+
+        { CacheBaustelle_LAST_V }
+        { [2] } _SubItem.Add(inttostr(FieldByName('LAST_V').AsInteger));
+
+        { CacheBaustelle_LAST_N }
+        { [3] } _SubItem.Add(inttostr(FieldByName('LAST_N').AsInteger));
+
+        { CacheBaustelle_CSV_QUELLE }
+        { [4] } _SubItem.Add(FieldByName('CSV_QUELLE').AsString);
+        if (FieldByName('ORTE_AKTIV').AsString = cC_True) then
+        begin
+          e_r_sqlt(FieldByName('ORTE'), _Ortsteile);
+
+          { CacheBaustelle_ORTE }
+          { [5] } _SubItem.Add(';' + HugeSingleLine(_Ortsteile, ';'));
+        end
+        else
+        begin
+
+          { CacheBaustelle_ORTE }
+          { [5] } _SubItem.Add('');
+        end;
+
+        { CacheBaustelle_PROTOKOLLEXPORT }
+        { [6] } _SubItem.Add(FieldByName('PROTOKOLLEXPORT').AsString);
+
+        { CacheBaustelle_REGEL_ARBEITSZEIT_V }
+        { [7] } _SubItem.Add(GanzeWoche(true));
+
+        { CacheBaustelle_REGEL_ARBEITSZEIT_N }
+        { [8] } _SubItem.Add(GanzeWoche(false));
+
+        { CacheBaustelle_KOSTENSTELLE }
+        { [9] } _SubItem.Add(FieldByName('KOSTENSTELLE').AsString);
+        if (_SubItem[9] = '') then
+          _SubItem[9] := _SubItem[0];
+
+        { CacheBaustelle_BUNDESLAND_IDX }
+        { [10] } _SubItem.Add(FieldByName('BUNDESLAND_IDX').AsString);
+
+        { CacheBaustelle_EINZEL_AUFWAND }
+        { [11] } _SubItem.Add(IntToStr(EINZEL_AUFWAND));
+
+        CacheBaustelle.addobject(inttostr(FieldByName('RID').AsInteger), _SubItem);
+
+        AUFWAND.Free;
+        ApiNext;
+      end;
+      CacheBaustelle.sort;
+      CacheBaustelle.sorted := true;
+      _Ortsteile.free;
+    end;
+    cBAUSTELLE.free;
+  end;
+end;
+
 const
   _ObtainKuerzelFromRID_LastRID: Integer = -1;
   _ObtainKuerzelFromRID_LastResult: string = '';
 
-function e_r_BaustelleKuerzel(rid: Integer): string;
+function e_r_BaustelleKuerzel(BAUSTELLE_R: Integer): string;
 var
   FoundIndex: Integer;
 begin
-  if (rid = _ObtainKuerzelFromRID_LastRID) then
+  if (BAUSTELLE_R = _ObtainKuerzelFromRID_LastRID) then
   begin
     result := _ObtainKuerzelFromRID_LastResult;
   end
   else
   begin
     EnsureCache_Baustelle;
-    FoundIndex := CacheBaustelle.indexof(inttostr(rid));
+    FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
     if (FoundIndex <> -1) then
     begin
-      result := TStringList(CacheBaustelle.Objects[FoundIndex])[0];
-      _ObtainKuerzelFromRID_LastRID := rid;
+      result := TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_NUMMERN_PREFIX];
+      _ObtainKuerzelFromRID_LastRID := BAUSTELLE_R;
       _ObtainKuerzelFromRID_LastResult := result;
     end
     else
-      result := inttostr(rid);
+      result := inttostr(BAUSTELLE_R);
   end;
 end;
 
@@ -2536,7 +2673,7 @@ begin
     FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
     if (FoundIndex <> -1) then
     begin
-      result := TStringList(CacheBaustelle.Objects[FoundIndex])[9];
+      result := TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_KOSTENSTELLE];
       _ObtainKostenstelleFromRID_LastRID := BAUSTELLE_R;
       _ObtainKostenstelleFromRID_LastResult := result;
     end
@@ -2563,7 +2700,7 @@ begin
     FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
     if (FoundIndex <> -1) then
     begin
-      result := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[10], 0);
+      result := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_BUNDESLAND_IDX], 0);
       _ObtainBundeslandFromRID_LastRID := BAUSTELLE_R;
       _ObtainBundeslandFromRID_LastResult := result;
     end
@@ -2572,28 +2709,70 @@ begin
   end;
 end;
 
-function e_r_BaustelleName(rid: Integer): string;
+function e_r_Arbeitszeit_V(BAUSTELLE_R: Integer; Wochentag: Integer): TAnfixTime;
 var
   FoundIndex: Integer;
 begin
-  EnsureCache_Baustelle;
-  FoundIndex := CacheBaustelle.indexof(inttostr(rid));
-  if (FoundIndex <> -1) then
-    result := TStringList(CacheBaustelle.Objects[FoundIndex])[1]
+  if (BAUSTELLE_R <> CacheBaustelleArbeitsZeitV_RID) then
+  begin
+    if assigned(CacheBaustelleArbeitsZeitV_Value) then
+      CacheBaustelleArbeitsZeitV_Value.Free;
+    EnsureCache_Baustelle;
+    FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
+    if (FoundIndex <> -1) then
+      CacheBaustelleArbeitsZeitV_Value := split(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_REGEL_ARBEITSZEIT_V])
+     else
+      CacheBaustelleArbeitsZeitV_Value := nil;
+  end;
+  if assigned(CacheBaustelleArbeitsZeitV_Value) then
+   result := strtoIntDef( CacheBaustelleArbeitsZeitV_Value[pred(WochenTag)], 0)
   else
-    result := inttostr(rid);
+   result := 0;
 end;
 
-function e_r_BaustelleCSV_QUELLE(rid: Integer): string;
+function e_r_Arbeitszeit_N(BAUSTELLE_R: Integer; Wochentag: Integer): TAnfixTime;
+var
+  FoundIndex: Integer;
+begin
+  if (BAUSTELLE_R <> CacheBaustelleArbeitsZeitN_RID) then
+  begin
+    if assigned(CacheBaustelleArbeitsZeitN_Value) then
+      CacheBaustelleArbeitsZeitN_Value.Free;
+    EnsureCache_Baustelle;
+    FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
+    if (FoundIndex <> -1) then
+      CacheBaustelleArbeitsZeitN_Value := split(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_REGEL_ARBEITSZEIT_N])
+     else
+      CacheBaustelleArbeitsZeitN_Value := nil;
+  end;
+  if assigned(CacheBaustelleArbeitsZeitN_Value) then
+   result := strtoIntDef( CacheBaustelleArbeitsZeitN_Value[pred(WochenTag)], 0)
+  else
+   result := 0;
+end;
+
+function e_r_BaustelleName(BAUSTELLE_R: Integer): string;
 var
   FoundIndex: Integer;
 begin
   EnsureCache_Baustelle;
-  FoundIndex := CacheBaustelle.indexof(inttostr(rid));
+  FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
   if (FoundIndex <> -1) then
-    result := TStringList(CacheBaustelle.Objects[FoundIndex])[4]
+    result := TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_NAME]
   else
-    result := inttostr(rid);
+    result := inttostr(BAUSTELLE_R);
+end;
+
+function e_r_BaustelleCSV_QUELLE(BAUSTELLE_R: Integer): string;
+var
+  FoundIndex: Integer;
+begin
+  EnsureCache_Baustelle;
+  FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
+  if (FoundIndex <> -1) then
+    result := TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_CSV_QUELLE]
+  else
+    result := inttostr(BAUSTELLE_R);
 end;
 
 function e_r_BaustelleNameFromKuerzel(KUERZEL: string): string;
@@ -2602,9 +2781,9 @@ var
 begin
   EnsureCache_Baustelle;
   for n := 0 to pred(CacheBaustelle.count) do
-    if KUERZEL = TStringList(CacheBaustelle.Objects[n])[0] then
+    if (KUERZEL = TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NUMMERN_PREFIX]) then
     begin
-      result := TStringList(CacheBaustelle.Objects[n])[1];
+      result := TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NAME];
       exit;
     end;
   result := '?';
@@ -2620,7 +2799,7 @@ begin
   begin
     EnsureCache_Baustelle;
     for n := 0 to pred(CacheBaustelle.count) do
-      if KUERZEL = AnsiUpperCase(TStringList(CacheBaustelle.Objects[n])[0]) then
+      if (KUERZEL = AnsiUpperCase(TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NUMMERN_PREFIX])) then
       begin
         result := strtoint(CacheBaustelle[n]);
         break;
@@ -2628,9 +2807,26 @@ begin
   end;
 end;
 
-function e_r_BearbeiterEinstellungen(BEARBEITER_R: Integer): TStringList;
+function e_r_Baustellen: TStringList;
+var
+  n: Integer;
 begin
-  result := e_r_sqlt('select STATUS from BEARBEITER where RID=' + inttostr(BEARBEITER_R));
+  result := TStringList.create;
+  EnsureCache_Baustelle;
+  for n := 0 to pred(CacheBaustelle.count) do
+    result.addobject(TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NUMMERN_PREFIX], TObject(strtoint(CacheBaustelle[n])));
+  result.sort;
+end;
+
+function e_r_BaustellenLang: TStringList;
+var
+  n: Integer;
+begin
+  result := TStringList.create;
+  EnsureCache_Baustelle;
+  for n := 0 to pred(CacheBaustelle.count) do
+    result.addobject(TStringList(CacheBaustelle.Objects[n])[CacheBaustelle_NAME], TObject(strtoint(CacheBaustelle[n])));
+  result.sort;
 end;
 
 procedure InvalidateCache_Baustelle;
@@ -2645,195 +2841,24 @@ begin
     freeandnil(CacheBaustelle);
     freeandnil(CacheBaustelleOrtsteile);
     freeandnil(CacheBaustelleMonteure);
-    CacheBaustelleOrtsteile_BAUSTELLE_R := -1;
+    CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
   end;
 
   if assigned(cFeiertage) then
     freeandnil(cFeiertage);
 
   // cache dirty flags setzen
-  CacheBaustelleMonteureLastRequestedRID := -1;
-  CacheBaustelleOrtsteile_BAUSTELLE_R := -1;
-  CacheBaustelleAufwand := -1;
-  CacheBaustelleArbeitsZeitV_RID := -1;
-  CacheBaustelleArbeitsZeitN_RID := -1;
+  CacheBaustelleMonteureLastRequestedRID := cRID_Unset;
+  CacheBaustelleOrtsteile_BAUSTELLE_R := cRID_Unset;
+  CacheBaustelleAufwand := cRID_Unset;
+  CacheBaustelleArbeitsZeitV_RID := cRID_Unset;
+  CacheBaustelleArbeitsZeitN_RID := cRID_Unset;
 
-  _ObtainKuerzelFromRID_LastRID := -1;
-  _ObtainKostenstelleFromRID_LastRID := -1;
-  _ObtainBundeslandFromRID_LastRID := -1;
-
-end;
-
-procedure EnsureCache_Baustelle;
-var
-  _SubItem: TStringList;
-  _Ortsteile: TStringList;
-  cBAUSTELLE: TdboCursor;
-begin
-  //
-  // Idee, Haltbarkeitsdatum des Cache einführen, danach
-  // !muss! neu geladen werden -> AutoInvalidate
-  //
-  if not(assigned(CacheBaustelle)) then
-  begin
-    // CACHE
-    CacheBaustelle := TStringList.create;
-    CacheBaustelleOrtsteile := TSearchStringList.create;
-
-    _Ortsteile := TStringList.create;
-    cBAUSTELLE := nCursor;
-    with cBAUSTELLE do
-    begin
-      sql.Add('select * from BAUSTELLE');
-      ApiFirst;
-      while not(eof) do
-      begin
-        _SubItem := TStringList.create;
-        { [0] } _SubItem.Add(FieldByName('NUMMERN_PREFIX').AsString);
-        { [1] } _SubItem.Add(FieldByName('NAME').AsString);
-        { [2] } _SubItem.Add(inttostr(FieldByName('LAST_V').AsInteger));
-        { [3] } _SubItem.Add(inttostr(FieldByName('LAST_N').AsInteger));
-        { [4] } _SubItem.Add(FieldByName('CSV_QUELLE').AsString);
-        if (FieldByName('ORTE_AKTIV').AsString = 'Y') then
-        begin
-          e_r_sqlt(FieldByName('ORTE'), _Ortsteile);
-          { [5] } _SubItem.Add(';' + HugeSingleLine(_Ortsteile, ';'));
-        end
-        else
-        begin
-          { [5] } _SubItem.Add('');
-        end;
-        { [6] } _SubItem.Add(FieldByName('PROTOKOLLEXPORT').AsString);
-        { [7] } _SubItem.Add(FieldByName('REGEL_ARBEITSZEIT_V').AsString);
-        { [8] } _SubItem.Add(FieldByName('REGEL_ARBEITSZEIT_N').AsString);
-
-        { [9] } _SubItem.Add(FieldByName('KOSTENSTELLE').AsString);
-        if (_SubItem[9] = '') then
-          _SubItem[9] := _SubItem[0];
-
-        { [10] } _SubItem.Add(FieldByName('BUNDESLAND_IDX').AsString);
-
-        CacheBaustelle.addobject(inttostr(FieldByName('RID').AsInteger), _SubItem);
-        Apinext;
-      end;
-      CacheBaustelle.sort;
-      CacheBaustelle.sorted := true;
-      _Ortsteile.free;
-    end;
-    cBAUSTELLE.free;
-  end;
-end;
-
-function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
-var
-  INFO: TStringList;
-  MonteurSubs: string;
-  n: Integer;
-  MONTEUR_R: Integer;
-begin
-  result := TgpIntegerList.create;
-  INFO := e_r_sqlt('select INFO from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
-  MonteurSubs := INFO.values['MONTEURE'];
-  INFO.free;
-
-  // Text hinter den Zahlen wegschneiden
-  n := pos('[', MonteurSubs);
-  if n > 0 then
-    MonteurSubs := cutblank(copy(MonteurSubs, 1, pred(n)));
-
-  // Monteure holen
-  while (MonteurSubs <> '') do
-  begin
-    MONTEUR_R := strtointdef(nextp(MonteurSubs, ','), cRID_Null);
-    if (MONTEUR_R >= cRID_FirstValid) then
-      result.Add(MONTEUR_R);
-  end;
+  _ObtainKuerzelFromRID_LastRID := cRID_Unset;
+  _ObtainKostenstelleFromRID_LastRID := cRID_Unset;
+  _ObtainBundeslandFromRID_LastRID := cRID_Unset;
 
 end;
-
-function e_r_BaustelleMonteure(rid: Integer): TStringList;
-var
-  n: Integer;
-  MemoField: TStringList;
-  MonteurSubs: string;
-  MONTEUR_RID: Integer;
-  MonteurPositive: TStringList;
-  AlleMonteure: TStringList;
-  cBAUSTELLE: TdboCursor;
-begin
-  if (rid <> CacheBaustelleMonteureLastRequestedRID) then
-  begin
-    freeandnil(CacheBaustelleMonteure);
-    cBAUSTELLE := nCursor;
-    with cBAUSTELLE do
-    begin
-      sql.Add('select INFO from BAUSTELLE where RID=' + inttostr(rid));
-      ApiFirst;
-
-      // Monteure holen (RID)
-      MemoField := TStringList.create;
-      e_r_sqlt(FieldByName('INFO'), MemoField);
-      MonteurSubs := MemoField.values['MONTEURE'];
-      // Text hinter den Zahlen wegschneiden
-      n := pos('[', MonteurSubs);
-      if n > 0 then
-        MonteurSubs := cutblank(copy(MonteurSubs, 1, pred(n)));
-      MemoField.free;
-
-      // Monteure holen (Text)
-      MonteurPositive := TStringList.create;
-      while (MonteurSubs <> '') do
-      begin
-        MONTEUR_RID := strtointdef(nextp(MonteurSubs, ','), cRID_Null);
-        if (MONTEUR_RID >= cRID_FirstValid) then
-          MonteurPositive.Add(e_r_MonteurKuerzel(MONTEUR_RID));
-      end;
-
-      CacheBaustelleMonteure := TStringList.create;
-      CacheBaustelleMonteureLastRequestedRID := rid;
-
-      // erst die beliebten
-      AlleMonteure := e_r_MonteureCache(true);
-      for n := 0 to pred(AlleMonteure.count) do
-        if (MonteurPositive.indexof(AlleMonteure[n]) <> -1) then
-          CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);
-      CacheBaustelleMonteure.addobject(cMonteurTrenner, nil);
-
-      // nun die freien
-      AlleMonteure := e_r_MonteureCache(false);
-      for n := 0 to pred(AlleMonteure.count) do
-        if (MonteurPositive.indexof(AlleMonteure[n]) = -1) then
-          CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);
-      MonteurPositive.free;
-
-    end;
-    cBAUSTELLE.free;
-  end;
-  result := CacheBaustelleMonteure;
-end;
-
-function e_r_Baustellen: TStringList;
-var
-  n: Integer;
-begin
-  result := TStringList.create;
-  EnsureCache_Baustelle;
-  for n := 0 to pred(CacheBaustelle.count) do
-    result.addobject(TStringList(CacheBaustelle.Objects[n])[0], TObject(strtoint(CacheBaustelle[n])));
-  result.sort;
-end;
-
-function e_r_BaustellenLang: TStringList;
-var
-  n: Integer;
-begin
-  result := TStringList.create;
-  EnsureCache_Baustelle;
-  for n := 0 to pred(CacheBaustelle.count) do
-    result.addobject(TStringList(CacheBaustelle.Objects[n])[1], TObject(strtoint(CacheBaustelle[n])));
-  result.sort;
-end;
-
 function e_r_BaustelleProtokollName(AUFTRAG_R: Integer; BAUSTELLE_R: Integer = cRID_Null): string;
 var
   Baustelle, Art, ProtokollName: string;
@@ -2870,6 +2895,95 @@ begin
 
 end;
 
+function e_r_Monteure(BAUSTELLE_R: Integer): TgpIntegerList;
+var
+  INFO: TStringList;
+  MonteurSubs: string;
+  n: Integer;
+  MONTEUR_R: Integer;
+begin
+  result := TgpIntegerList.create;
+  INFO := e_r_sqlt('select INFO from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+  MonteurSubs := INFO.values['MONTEURE'];
+  INFO.free;
+
+  // Text hinter den Zahlen wegschneiden
+  n := pos('[', MonteurSubs);
+  if n > 0 then
+    MonteurSubs := cutblank(copy(MonteurSubs, 1, pred(n)));
+
+  // Monteure holen
+  while (MonteurSubs <> '') do
+  begin
+    MONTEUR_R := strtointdef(nextp(MonteurSubs, ','), cRID_Null);
+    if (MONTEUR_R >= cRID_FirstValid) then
+      result.Add(MONTEUR_R);
+  end;
+
+end;
+
+function e_r_BaustelleMonteure(BAUSTELLE_R: Integer): TStringList;
+var
+  n: Integer;
+  MemoField: TStringList;
+  MonteurSubs: string;
+  MONTEUR_RID: Integer;
+  MonteurPositive: TStringList;
+  AlleMonteure: TStringList;
+  cBAUSTELLE: TdboCursor;
+begin
+  if (BAUSTELLE_R <> CacheBaustelleMonteureLastRequestedRID) then
+  begin
+    freeandnil(CacheBaustelleMonteure);
+    cBAUSTELLE := nCursor;
+    with cBAUSTELLE do
+    begin
+      sql.Add('select INFO from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
+      ApiFirst;
+
+      // Monteure holen (RID)
+      MemoField := TStringList.create;
+      e_r_sqlt(FieldByName('INFO'), MemoField);
+      MonteurSubs := MemoField.values['MONTEURE'];
+      // Text hinter den Zahlen wegschneiden
+      n := pos('[', MonteurSubs);
+      if n > 0 then
+        MonteurSubs := cutblank(copy(MonteurSubs, 1, pred(n)));
+      MemoField.free;
+
+      // Monteure holen (Text)
+      MonteurPositive := TStringList.create;
+      while (MonteurSubs <> '') do
+      begin
+        MONTEUR_RID := strtointdef(nextp(MonteurSubs, ','), cRID_Null);
+        if (MONTEUR_RID >= cRID_FirstValid) then
+          MonteurPositive.Add(e_r_MonteurKuerzel(MONTEUR_RID));
+      end;
+
+      CacheBaustelleMonteure := TStringList.create;
+      CacheBaustelleMonteureLastRequestedRID := BAUSTELLE_R;
+
+      // erst die beliebten
+      AlleMonteure := e_r_MonteureCache(true);
+      for n := 0 to pred(AlleMonteure.count) do
+        if (MonteurPositive.indexof(AlleMonteure[n]) <> -1) then
+          CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);
+      CacheBaustelleMonteure.addobject(cMonteurTrenner, nil);
+
+      // nun die freien
+      AlleMonteure := e_r_MonteureCache(false);
+      for n := 0 to pred(AlleMonteure.count) do
+        if (MonteurPositive.indexof(AlleMonteure[n]) = -1) then
+          CacheBaustelleMonteure.addobject(AlleMonteure[n], AlleMonteure.Objects[n]);
+      MonteurPositive.free;
+
+    end;
+    cBAUSTELLE.free;
+  end;
+  result := CacheBaustelleMonteure;
+end;
+
+
 function e_r_BaustelleAddSperre(BAUSTELLE_R: Integer; Umstand: TStrings; Sperre: TSperre): Integer;
 var
   MemoInfo: TStringList;
@@ -2905,34 +3019,41 @@ begin
   cBAUSTELLE.free;
 end;
 
-function e_r_TerminAnzahl_V(rid: Integer): Integer;
+function e_r_RegelTerminAnzahl_V(BAUSTELLE_R: Integer): Integer;
 var
   FoundIndex: Integer;
 begin
   EnsureCache_Baustelle;
-  FoundIndex := CacheBaustelle.indexof(inttostr(rid));
+  FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
   if (FoundIndex <> -1) then
-    result := strtoint(TStringList(CacheBaustelle.Objects[FoundIndex])[2])
+    result := strtoint(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_LAST_V])
   else
     result := -1;
 end;
 
-function e_r_TerminAnzahl_N(rid: Integer): Integer;
+function e_r_RegelTerminAnzahl_N(BAUSTELLE_R: Integer): Integer;
 var
   FoundIndex: Integer;
 begin
   EnsureCache_Baustelle;
-  FoundIndex := CacheBaustelle.indexof(inttostr(rid));
+  FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
   if (FoundIndex <> -1) then
-    result := strtoint(TStringList(CacheBaustelle.Objects[FoundIndex])[3])
+    result := strtoint(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_LAST_N])
   else
     result := -1;
 end;
 
-var
-  _c2_Ortsteil: string;
-  _c2_BAUSTELLE_R: Integer;
-  _c2_Code: string;
+function e_r_RegelTerminAnzahl_VN(BAUSTELLE_R: Integer): Integer;
+begin
+  result :=
+   e_r_RegelTerminAnzahl_V(BAUSTELLE_R) +
+   e_r_RegelTerminAnzahl_N(BAUSTELLE_R);
+end;
+
+const
+  _c2_Ortsteil: string = '';
+  _c2_BAUSTELLE_R: Integer = 0;
+  _c2_Code: string = '';
 
 function e_r_OrtsteilCode(BAUSTELLE_R: Integer; Ort: string): string;
 var
@@ -2955,7 +3076,7 @@ begin
       FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
       if (FoundIndex <> -1) then
       begin
-        AlleOrte := TStringList(CacheBaustelle.Objects[FoundIndex])[5];
+        AlleOrte := TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_ORTE];
         while (AlleOrte <> '') do
           CacheBaustelleOrtsteile.Add(nextp(AlleOrte, ';'));
       end
@@ -3018,7 +3139,7 @@ begin
   FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
   if (FoundIndex <> -1) then
   begin
-    if TStringList(CacheBaustelle.Objects[FoundIndex])[6] = 'Y' then
+    if (TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_PROTOKOLLEXPORT] = 'Y') then
     begin
       cBAUSTELLE := nCursor;
       with cBAUSTELLE do
@@ -3037,6 +3158,27 @@ begin
       end;
     end;
   end;
+end;
+
+function e_r_EinzelAufwand(BAUSTELLE_R: Integer): TAnfixTime;
+var
+  FoundIndex: Integer;
+begin
+  //
+  if (BAUSTELLE_R <> CacheBaustelleAufwand) then
+  begin
+    EnsureCache_Baustelle;
+
+    FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
+    if (FoundIndex <> -1) then
+     CacheBaustelleAufwandValue := StrToIntDef(TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_EINZEL_AUFWAND],0)
+    else
+     CacheBaustelleAufwandValue := 0;
+
+    // cache
+    CacheBaustelleAufwand := BAUSTELLE_R;
+  end;
+  result := CacheBaustelleAufwandValue;
 end;
 
 function e_r_PhasenStatus(AUFTRAG_R: Integer): string;
@@ -3097,7 +3239,7 @@ begin
   FoundIndex := CacheBaustelle.indexof(inttostr(BAUSTELLE_R));
   if (FoundIndex <> -1) then
   begin
-    if TStringList(CacheBaustelle.Objects[FoundIndex])[6] = 'Y' then
+    if (TStringList(CacheBaustelle.Objects[FoundIndex])[CacheBaustelle_PROTOKOLLEXPORT] = cC_True) then
     begin
       cBAUSTELLE := nCursor;
       with cBAUSTELLE do
@@ -3115,46 +3257,6 @@ begin
       end;
     end;
   end;
-
-end;
-
-function e_r_EinzelAufwand(rid: Integer): TAnfixTime;
-var
-  Gesamt: double;
-begin
-  //
-  EnsureCache_Baustelle;
-  if (rid <> CacheBaustelleAufwand) then
-  begin
-    CacheBaustelleAufwand := rid;
-    Gesamt := e_r_TerminAnzahl_VN(rid);
-    if (Gesamt > 0) then
-      CacheBaustelleAufwandValue := round(iTagesArbeitszeit / Gesamt)
-    else
-      CacheBaustelleAufwandValue := round(iTagesArbeitszeit / 10.0);
-  end;
-  result := CacheBaustelleAufwandValue;
-end;
-
-function e_r_TerminAnzahl_VN(rid: Integer): Integer;
-begin
-  result := e_r_TerminAnzahl_V(rid) + e_r_TerminAnzahl_N(rid);
-end;
-
-function e_r_Arbeitszeit_V(rid: Integer): TAnfixTime;
-var
-  FoundIndex: Integer;
-begin
-  if (rid <> CacheBaustelleArbeitsZeitV_RID) then
-  begin
-    EnsureCache_Baustelle;
-    FoundIndex := CacheBaustelle.indexof(inttostr(rid));
-    if (FoundIndex <> -1) then
-      CacheBaustelleArbeitsZeitV_Value := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[7], 0)
-    else
-      CacheBaustelleArbeitsZeitV_Value := 0;
-  end;
-  result := CacheBaustelleArbeitsZeitV_Value;
 end;
 
 var
@@ -4475,22 +4577,6 @@ begin
   e_r_AuftragItems_LastRequestedRID := -1;
 end;
 
-function e_r_Arbeitszeit_N(rid: Integer): TAnfixTime;
-var
-  FoundIndex: Integer;
-begin
-  if (rid <> CacheBaustelleArbeitsZeitN_RID) then
-  begin
-    EnsureCache_Baustelle;
-    FoundIndex := CacheBaustelle.indexof(inttostr(rid));
-    if (FoundIndex <> -1) then
-      CacheBaustelleArbeitsZeitN_Value := strtointdef(TStringList(CacheBaustelle.Objects[FoundIndex])[8], 0)
-    else
-      CacheBaustelleArbeitsZeitN_Value := 0;
-  end;
-  result := CacheBaustelleArbeitsZeitN_Value;
-end;
-
 function e_r_BaustellenAktive: TStringList;
 begin
   result := TStringList.create;
@@ -5069,15 +5155,17 @@ var
     end;
   end;
 
-// ermittelter Stundensatz für diese Arbeit
+  // ermittelter Stundensatz für diese Arbeit
   function Stundensatz: double;
   begin
     with cARBEIT do
     begin
       // erst mal über den Abrechnungsbeleg versuchen!
       if not(FieldByName('BELEG_R').IsNull) then
-        result := e_r_sqld('select PREIS from POSTEN where ' + ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and '
-          + ' (ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString + ')')
+        result := e_r_sqld(
+        {} 'select PREIS from POSTEN where ' +
+        {} ' (BELEG_R=' + FieldByName('BELEG_R').AsString + ') and ' +
+        {} ' (ARTIKEL_R=' + FieldByName('ARTIKEL_R').AsString + ')')
       else
         result := e_r_PreisNativ(0, FieldByName('ARTIKEL_R').AsInteger);
     end;
@@ -5740,6 +5828,11 @@ begin
   result := gFeiertage;
 end;
 
+function e_r_BearbeiterEinstellungen(BEARBEITER_R: Integer): TStringList;
+begin
+  result := e_r_sqlt('select STATUS from BEARBEITER where RID=' + inttostr(BEARBEITER_R));
+end;
+
 function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 begin
   result := false;
@@ -5933,6 +6026,8 @@ begin
   ersetze('"', '''''', result);
   ersetze(';', ',', result);
 end;
+
+
 
 begin
   // create

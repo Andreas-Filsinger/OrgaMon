@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.401; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.402; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -383,7 +383,6 @@ const
   cE_SAPReihenfolge = 'SpaltenReihenfolge';
   cE_SpaltenAlias = 'SpaltenAlias';
   cE_SpaltenOhneInhalt = 'SpaltenOhneInhalt';
-  cE_XLSVorlage = 'XLSVorlage';
   cE_MaxperLoad = 'MaxAnzahl';
   cE_MaterialNummerAlt = 'MaterialNummerAlt';
   cE_Zaehlwerk = 'Zählwerk';
@@ -670,6 +669,9 @@ const
   // 44/1
   // 44 WE 19
   cAuftragsNummer_Length = 5;
+
+  // Anzahl [Sekunden] die ein Aufwand grösser sein darf als
+  // die Kapazität ohne dass von Überlast die Rede ist
   cToleranzRahmenVolllast = 90;
 
   cMonteurTrenner = '----';

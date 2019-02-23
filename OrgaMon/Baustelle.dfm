@@ -465,7 +465,7 @@ object FormBaustelle: TFormBaustelle
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = TabSheet9
+    ActivePage = TabSheet5
     Align = alBottom
     TabOrder = 3
     object TabSheet1: TTabSheet
@@ -473,7 +473,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = '&Daten'
+      Caption = 'Basis&daten'
       object Label2: TLabel
         Left = 92
         Top = 15
@@ -498,7 +498,7 @@ object FormBaustelle: TFormBaustelle
       end
       object Label20: TLabel
         Left = 68
-        Top = 187
+        Top = 231
         Width = 113
         Height = 26
         Margins.Left = 4
@@ -511,7 +511,7 @@ object FormBaustelle: TFormBaustelle
       end
       object Label16: TLabel
         Left = 16
-        Top = 110
+        Top = 135
         Width = 165
         Height = 67
         Margins.Left = 4
@@ -531,17 +531,19 @@ object FormBaustelle: TFormBaustelle
         Caption = 'Kostenstelle'
       end
       object Label9: TLabel
-        Left = 533
+        Left = 532
         Top = 16
         Width = 69
         Height = 13
+        Alignment = taRightJustify
         Caption = 'Bearbeitung'
       end
       object Label58: TLabel
-        Left = 533
+        Left = 541
         Top = 38
         Width = 60
         Height = 13
+        Alignment = taRightJustify
         Caption = 'Vertretung'
       end
       object Label51: TLabel
@@ -550,6 +552,29 @@ object FormBaustelle: TFormBaustelle
         Width = 66
         Height = 13
         Caption = 'Bundesland'
+      end
+      object Label6: TLabel
+        Left = 311
+        Top = 113
+        Width = 16
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'bis'
+      end
+      object Label7: TLabel
+        Left = 62
+        Top = 113
+        Width = 119
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Alignment = taRightJustify
+        Caption = 'Termine m'#246'glich von'
       end
       object IB_Edit1: TIB_Edit
         Left = 190
@@ -579,7 +604,7 @@ object FormBaustelle: TFormBaustelle
       end
       object IB_Edit5: TIB_Edit
         Left = 190
-        Top = 187
+        Top = 231
         Width = 65
         Height = 21
         Margins.Left = 4
@@ -588,11 +613,11 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'ZAEHLER_NR_STELLEN'
         DataSource = IB_DataSource1
-        TabOrder = 4
+        TabOrder = 8
       end
       object Button8: TButton
-        Left = 264
-        Top = 187
+        Left = 407
+        Top = 231
         Width = 267
         Height = 21
         Margins.Left = 4
@@ -600,26 +625,26 @@ object FormBaustelle: TFormBaustelle
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = 'Stellenanzahl '#252'bernehmen in die Auftr'#228'ge'
-        TabOrder = 5
+        TabOrder = 10
         OnClick = Button8Click
       end
       object Button9: TButton
-        Left = 45
-        Top = 224
+        Left = 263
+        Top = 231
         Width = 136
-        Height = 24
+        Height = 21
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
         Caption = '** Bedarf ermitteln'
-        TabOrder = 6
+        TabOrder = 9
         OnClick = Button9Click
       end
       object IB_Memo3: TIB_Memo
-        Left = 190
-        Top = 110
-        Width = 224
+        Left = 191
+        Top = 135
+        Width = 258
         Height = 73
         Margins.Left = 4
         Margins.Top = 4
@@ -627,7 +652,7 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         DataField = 'SCHLAGZEILE'
         DataSource = IB_DataSource1
-        TabOrder = 3
+        TabOrder = 7
         AutoSize = False
       end
       object IB_CheckBox2: TIB_CheckBox
@@ -642,7 +667,7 @@ object FormBaustelle: TFormBaustelle
         DataField = 'SUCHINDEX_AUS'
         DataSource = IB_DataSource1
         ParentColor = False
-        TabOrder = 7
+        TabOrder = 11
         Caption = 'nicht Teil des Suchindex'
       end
       object IB_CheckBox3: TIB_CheckBox
@@ -657,7 +682,7 @@ object FormBaustelle: TFormBaustelle
         DataField = 'TERMINLISTE_AUS'
         DataSource = IB_DataSource1
         ParentColor = False
-        TabOrder = 8
+        TabOrder = 12
         Caption = 'nicht Teil der Terminliste'
       end
       object IB_Edit10: TIB_Edit
@@ -674,7 +699,7 @@ object FormBaustelle: TFormBaustelle
         Top = 12
         Width = 145
         Height = 21
-        TabOrder = 9
+        TabOrder = 14
         Text = 'Bearbeiter'
         OnSelect = ComboBox1Select
       end
@@ -683,26 +708,26 @@ object FormBaustelle: TFormBaustelle
         Top = 36
         Width = 145
         Height = 21
-        TabOrder = 10
+        TabOrder = 16
         Text = 'Vertretung'
         OnSelect = ComboBox6Select
       end
       object Button31: TButton
         Left = 760
         Top = 12
-        Width = 40
+        Width = 44
         Height = 21
-        Caption = 'Ich'
-        TabOrder = 11
+        Caption = #9668' Ich'
+        TabOrder = 15
         OnClick = Button31Click
       end
       object Button41: TButton
         Left = 760
         Top = 36
-        Width = 40
+        Width = 44
         Height = 21
-        Caption = 'Ich'
-        TabOrder = 12
+        Caption = #9668' Ich'
+        TabOrder = 17
         OnClick = Button41Click
       end
       object ComboBox7: TComboBox
@@ -711,7 +736,7 @@ object FormBaustelle: TFormBaustelle
         Width = 259
         Height = 21
         ItemIndex = 0
-        TabOrder = 13
+        TabOrder = 3
         Text = 'Bundesweit'
         OnSelect = ComboBox7Select
         Items.Strings = (
@@ -739,7 +764,7 @@ object FormBaustelle: TFormBaustelle
         Width = 76
         Height = 21
         Caption = 'Feiertage...'
-        TabOrder = 14
+        TabOrder = 4
         OnClick = Button43Click
       end
       object IB_CheckBox9: TIB_CheckBox
@@ -750,8 +775,270 @@ object FormBaustelle: TFormBaustelle
         DataField = 'VORRANG'
         DataSource = IB_DataSource1
         ParentColor = False
-        TabOrder = 15
+        TabOrder = 13
         Caption = 'Vorrang bei arbeitsfreier Zeit'
+      end
+      object IB_Date1: TIB_Date
+        Left = 190
+        Top = 110
+        Width = 110
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'VON'
+        DataSource = IB_DataSource1
+        TabOrder = 5
+        IncCellHeight = 1
+        IncCellWidth = 2
+        DrawYearArrow = False
+      end
+      object IB_Date2: TIB_Date
+        Left = 339
+        Top = 110
+        Width = 110
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'BIS'
+        DataSource = IB_DataSource1
+        TabOrder = 6
+        IncCellHeight = 1
+        IncCellWidth = 2
+        DrawYearArrow = False
+      end
+    end
+    object TabSheet5: TTabSheet
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = '&Aufwand'
+      ImageIndex = 4
+      ExplicitTop = 21
+      DesignSize = (
+        839
+        344)
+      object Label5: TLabel
+        Left = 16
+        Top = 16
+        Width = 221
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Alignment = taRightJustify
+        Caption = 'Maximale Anzahl Termine "Vormittags"'
+      end
+      object Label18: TLabel
+        Left = 7
+        Top = 40
+        Width = 230
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Alignment = taRightJustify
+        Caption = 'Maximale Anzahl Termine "Nachmittags"'
+      end
+      object Label27: TLabel
+        Left = 432
+        Top = 17
+        Width = 146
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'h (Arbeitszeit Vormittags)'
+      end
+      object Label28: TLabel
+        Left = 432
+        Top = 42
+        Width = 155
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'h (Arbeitszeit Nachmittags)'
+      end
+      object Label34: TLabel
+        Left = 311
+        Top = 16
+        Width = 9
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = '='
+      end
+      object Label35: TLabel
+        Left = 311
+        Top = 42
+        Width = 9
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = '='
+      end
+      object Label36: TLabel
+        Left = 7
+        Top = 75
+        Width = 75
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Einstellungen'
+      end
+      object SpeedButton27: TSpeedButton
+        Left = 776
+        Top = 65
+        Width = 22
+        Height = 22
+        Hint = 'Z'#228'hlerarten ermitteln'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akLeft, akBottom]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton27Click
+      end
+      object IB_Edit3: TIB_Edit
+        Left = 241
+        Top = 13
+        Width = 62
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'LAST_V'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+        OnChange = IB_Edit3Change
+      end
+      object IB_Edit4: TIB_Edit
+        Left = 241
+        Top = 37
+        Width = 62
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'LAST_N'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+        OnChange = IB_Edit4Change
+      end
+      object IB_Edit7: TIB_Edit
+        Left = 329
+        Top = 13
+        Width = 98
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'REGEL_ARBEITSZEIT_V'
+        DataSource = IB_DataSource1
+        ReadOnly = True
+        TabOrder = 2
+        OnGetDisplayText = IB_Edit7GetDisplayText
+        OnGetEditText = IB_Edit7GetEditText
+        OnSetEditText = IB_Edit7SetEditText
+        OnIsValidChar = IB_Edit7IsValidChar
+      end
+      object IB_Edit8: TIB_Edit
+        Left = 329
+        Top = 38
+        Width = 98
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'REGEL_ARBEITSZEIT_N'
+        DataSource = IB_DataSource1
+        ReadOnly = True
+        TabOrder = 3
+        OnGetDisplayText = IB_Edit7GetDisplayText
+        OnGetEditText = IB_Edit7GetEditText
+        OnSetEditText = IB_Edit7SetEditText
+        OnIsValidChar = IB_Edit7IsValidChar
+      end
+      object IB_Memo6: TIB_Memo
+        Left = 7
+        Top = 94
+        Width = 818
+        Height = 235
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'AUFWAND'
+        DataSource = IB_DataSource1
+        TabOrder = 4
+        AutoSize = False
+      end
+      object Button44: TButton
+        Left = 802
+        Top = 65
+        Width = 23
+        Height = 22
+        Hint = 'neuen AUFWAND in die ganze Baustelle '#252'bernehmen'
+        Anchors = [akLeft, akBottom]
+        Caption = '*'
+        Font.Charset = SYMBOL_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Wingdings'
+        Font.Style = []
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnClick = Button44Click
       end
     end
     object TabSheet2: TTabSheet
@@ -759,7 +1046,7 @@ object FormBaustelle: TFormBaustelle
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
-      Caption = '&Zus'#228'tzlich'
+      Caption = '&Monteure'
       ImageIndex = 1
       object Label8: TLabel
         Left = 7
@@ -811,6 +1098,504 @@ object FormBaustelle: TFormBaustelle
         AutoSize = False
         ScrollBars = ssBoth
         WordWrap = False
+      end
+    end
+    object TabSheet11: TTabSheet
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'Vertr'#228'ge'
+      ImageIndex = 10
+      object Label48: TLabel
+        Left = 17
+        Top = 144
+        Width = 92
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Vertragsnehmer'
+      end
+      object CheckBox33: TCheckBox
+        Left = 17
+        Top = 17
+        Width = 192
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Vertr'#228'ge anzeigen'
+        TabOrder = 0
+        OnClick = CheckBox33Click
+      end
+      object IB_Grid4: TIB_Grid
+        Left = 17
+        Top = 39
+        Width = 800
+        Height = 90
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource4
+        TabOrder = 1
+        OnGetDisplayText = IB_Grid4GetDisplayText
+      end
+      object Button27: TButton
+        Left = 792
+        Top = 7
+        Width = 25
+        Height = 26
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'B'
+        TabOrder = 2
+        OnClick = Button27Click
+      end
+      object IB_Grid5: TIB_Grid
+        Left = 17
+        Top = 167
+        Width = 800
+        Height = 119
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource5
+        TabOrder = 3
+      end
+      object Button35: TButton
+        Left = 792
+        Top = 136
+        Width = 25
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'P'
+        TabOrder = 4
+        OnClick = Button35Click
+      end
+      object Button36: TButton
+        Left = 766
+        Top = 136
+        Width = 25
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'V'
+        TabOrder = 5
+        OnClick = Button36Click
+      end
+    end
+    object TabSheet6: TTabSheet
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = '&Importe'
+      ImageIndex = 5
+      object SpeedButton11: TSpeedButton
+        Left = 11
+        Top = 27
+        Width = 44
+        Height = 44
+        Hint = 'Auftr'#228'ge aus dem Internet laden'
+        Glyph.Data = {
+          360C0000424D360C000000000000360000002800000020000000200000000100
+          180000000000000C0000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEF8F8F8ECECECD7D7
+          D7C9C9C9BEBEBEB9B9B9B6B6B6B4B4B4B0B0B0AAAAAAA5A5A5A3A3A388988D96
+          9C98D9D9D9EEEEEEFAFAFAFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9F9F9E8E8E8BFBCBC9E86858C59
+          558C4B4290473B8E453885423575403562413D55484652525243694F1FAF5427
+          85488E8F8ED4D4D4F0F0F0F9F9F9FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFBFBFBEBEBEBB69E9E97605BA24D3DAE6643A792
+          57A0AE6495BF698CBA6481A257757F4363502C512F1B1D55232DC46471FAAA41
+          EA821C8C43657B6CCBCBCBE9E9E9F8F8F8FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFDFDFDDBD7D7A67979A54839C88C7098C27367C65751C6
+          4B47C04372C6704EAD4A4F994C4F854E4E694D28743B42D1787EF9B273FFAC60
+          FE9F2DE372149E466D7A72C4C4C4EBEBEBF6F6F6FDFDFDFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFAFAFAD5C7C79F4B44C67A65FBECDBFCFCF2E0EED5D1E5C0F1EB
+          DEE6DFD1D2CAC4B4AEA78F8A86686E68248D474EDB8392FFC27FFFB46AFFA558
+          FF9942FF8A28F3740DA643487256B9B9B9E3E3E3F5F5F5FCFCFCFFFFFFFFFFFF
+          FFFFFFFEFEFED7CACAA24E49DA9F87FBEEDDFFF4E8FFF0E0FEECDBF9E6D4EBD7
+          C4D6C4B1B3A39393877B60655425873E5BE3908EFCBE83FFB774FFAD61FFA050
+          FF943AFF842AFF790FEE6008B2414F725AB0B0B0EAEAEAF7F7F7FFFFFFFFFFFF
+          FEFEFEE5DCDCA64B44DAA287FCF1DCFFEAD4FFE5CCFFE3C6FCDEBEF4D5B4DBBE
+          A0BDA3888F7C6859654822A1455EE99389FFBB7DFFB270FFA964FFA153FF9544
+          FF8A2FFF7D1FFF710CFF6308F85405BB3B327746AEB0AEEAEAEAFFFFFFFFFFFF
+          F3F1F1B37371D18E739DC17AEEDEBBFFE1C1FFDCB8FFDAB2FBD4AAF0C8A0D4AF
+          8BB2947463714823A0415EF09678FEB072FFAB6CFFA662FF9F56FF9846FF8C39
+          FF8325FF7615FF6B09FD5C08FB4F04F13E03C6333E8050B5B8B6FFFFFFFFFFFF
+          C9A09FBF6355A0C07890B465FFDBB6FFD5AAFFD2A2FFCF9DFCCA96F2C08CDAAC
+          7CBC946A22A5392ED0613FDB734DED875DFF9D58FF994DFF9243FF8A36FF8129
+          FF7817FF6C0CFF6108FA5205E54102D73202D52C0CB23385AB8FFFFFFFFAFAFA
+          AF5752CFA37D46922CC3BF81FFD2A2FFCD9AFFCA92FFC78DFDC386F6BC80E7B0
+          76CF9D697790494D85392A7B2A30CD5E6CFFA46AFFA15EFF993EFF8524FF751B
+          FF6F0DFE6209FC5907F84902C9331F6121458D5688CA98D7E4DAFFFFFFDAC0C0
+          BE655083A2552D7C157E9B48FDCA92FFC689FFC180FFBF7CFEBC77FCB973F5B3
+          6DE5A665C08B55976E4351642B37CA5D8CFFB686FFB087FFB184FFAF52FF9020
+          FF6F07FB5505F84B05F53F01C82B4F391F72635EDBDBDBFBFBFBFBFAFAB97474
+          C39B70498429327716377919B7A85EDDB46DFFBB74FFB96FFFB66AFFB568FCB2
+          65EEA85ECA8E50A0713F52652836C95A9CFFC196FFBA96FFBA96FFBB96FFBB86
+          FFB04CFC821BF75401F23100C424684D2C744E3FC8C8C8FAFAFAEFE3E3B65551
+          9DA160336E14336E14336E142F6C113F7219F4B163FFB364FFB15FFFB05DFDAF
+          5BF1A556CD8D49A16F3A4D602034C656B1FFCEAAFFC7AAFFC7AAFFC7A9FFC7A9
+          FFC7AEFFCCA9FFC87FF99E1BC43477633F864A30B1B1B1F6F6F6E5CFCFBF6258
+          758D422F650F3367123367123267112F650FC29C48FFB15DFFAE59FFAD58FDAC
+          57F1A352CE8C46A26F39485D1B38C453C0FFD9B8FFD1B8FFD1B8FFD1B8FFD1B8
+          FFD1B8FFD1B9FFD2AFFCC82CC43F7E704C965030A5A5A5F3F3F3DFBDBDC46C5A
+          607B2F305C0B335D0E335D0E335D0E325D0D3D6112BD9541FFAE59FFAE59FEAD
+          59F3A656D3904BAB773E465D193DC14FD5FFE7CCFFDECCFFDECCFFDECCFFDECC
+          FFDECCFFDECCFFDEBFFCD330C13E887B56AA60399C9C9CF2F2F2DDB7B7C8725D
+          5A6F2630550A33570C33570C33560C32550B7B7627E0A350FFB05DFFB05EFEB1
+          5FF5AC5DDB9954BA84483B5B1441C04DEFFFF7E6FFF2E6FFF2E6FFF2E6FFF2E6
+          FFF2E6FFF2E6FFF2D5FCE034C03C8D8158B2663D9B9B9BF1F1F1DDB7B7C8715B
+          5A6822304B07324D09304B08344D09766E24FFB460FFB260FFB363FFB567F8B4
+          68D19D54B98E4AAE8345284909138A104ACB534BCB544BCB544BCB544BCB544B
+          CB544BCB544CCB5442C7491B8D139F8B5AB76A3F9F9F9FF2F2F2E0BFBFC56C59
+          96843E3043053344065D5B18B1893CE4A554FFB363FFB566FFB76CFFBD73AC8B
+          46474F113A470B3D460D2B3B042347032055031F55031F55031F5503305E0940
+          66104D6E1756741B255A062F4C089A864FB3643BA8A8A8F4F4F4E9D4D4BB6157
+          CCA45E846925DA9D4BFAAF59FFB25FFFB363FFB669FFB86EFFBF7BC9A0634A52
+          204F5827545D2E555D2E515A2B4C5426424A1B3A4213323A052C3501534C1240
+          410A3239033B3F072F38022C3601C2955FA45938BBBBBBF8F8F8F4E9E9B65955
+          BB9258936E29FBB15BFCAF5BFFB362FFB566FFBE79FFCB94FED9B2C0B3949598
+          7D9C9D849EA0879EA0869D9F859A9C8296987D8E9073787A595C5C324944102F
+          33013235003134003134013F3D07E0A06A97593ED1D1D1FCFCFCFEFDFDC68585
+          D08F65977B3297782FE5A655FFBD78FFCF9EFFE3C6FFE7CEFFE8D1F0E0C9BCBE
+          A6A8B097A7AF96A7AF96A6AF95A6AF96A8B097A6AF96A8B098ADB49C959F8165
+          724831440E273C00253C00756C2DD68C5F9D7767EDEDEDFFFFFFFFFFFFEAD5D5
+          C05C46AC904A676A1FBCA15FFFE0BEFFE7CDFFE9D1FFEAD4FFECD9FFEFDDF6EB
+          DAD6D5C2AEBDA2B2C0A6B9C4ABBAC4AAD8D4BECDCDB6B5C0A6ACBCA1AEBDA3AD
+          BCA180977033581A274C06BB9F5EB16441B5A5A0FAFAFAFFFFFFFFFFFFFFFFFF
+          BD6C68DB93665A7D36A9C2A2EEE3CCFAEAD4FFEDDAFFEEDDFFF1E2FFF3E6FFF5
+          EAFFF8EECFD9C4BECFB6E2E4D2C8D4BCBCCDB3CCD5BCD2D7BFB6CBB0B5CAAFB5
+          CAAFB8CCB393B38D5F782AD5915DA16B59DEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
+          E0BEBDC06152C3B16BA0BE92C4D7BED0DDC4F1EBD9FFF2E4FFF4E9FFF6ECFFF8
+          F0FFFAF3EDF0E5C2D7BFBCD4BABBD3B9BBD3B9BBD3B9C4D8BEBDD5BABBD4B9BB
+          D4B9BBD4BA6EA063C29F5CB35C38C5BBB8F7F7F7FFFFFFFFFFFFFFFFFFFFFFFF
+          FEFDFDCE9898CC7859C2B473BED8BBC5DEC7C8DEC7D7E5D1ECEEE1F5F4EBFCF9
+          F4FDFCF9EEF4EBCAE0CAC7DEC7C7DEC7C7DEC7C7DEC7C6DEC7C6DEC7C7DEC7C8
+          E0C99DC091AEA85EC4734DB39084F4F4F4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFF9F3F3BC6A65D48763DDCF9CD1E2CCD1E4D1D0E4D0D6E6D5D7E7D6E0EC
+          DEE1EDE0E4EFE3D2E5D2D1E4D1D1E4D1D1E4D1D1E4D1D1E4D1D1E4D1D1E5D3C8
+          D9BDC9B470CF8151B07967E4DFDEFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFF7EFEFC17775D18163F3CDA0E5EAD7DFEDE0E0EDE0E3EEE2F2F6
+          EFF4F8F2F4F8F2E7F0E6DFECDFDFECDFDFECDFDEECDEDFECE0E1EDE0EDDFBFF4
+          C188C7754EB27C6CEEEEEEFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFF7EEEEC37A75C26851F3CBA5F6EDD6F6F8F3F3F7F3F5F8
+          F3F3F7F2F9FAF7FAFBF7F6F8F3F0F5EEE9F3EAEAF4EDF1F1E4F9E5C5ECB280BF
+          6A43BD8D7EE8E2E1FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFEFDFDE4C5C5B55950CB7A5EEDC5A6FAE8D4FDF9
+          F0FAFDF7F9FCF8FEFEFDFEFEFAFEFDF8FCF2E4F9E1C7E7B085CA7A57B56954D5
+          BEB9FAFAFAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1E1E1D9ABA8C27365BB5E47CF85
+          6BDDA58CEABFA5ECC3AAE8BA9EDDA386CC7C59BC6241BF7D6BD3ADA4F0E8E6FD
+          FDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEF4E9E8DBB5
+          B3CB938FC27C71C27A6DC38176CB968FDCBFBAF0E7E5FDFDFDFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton11Click
+      end
+      object SpeedButton12: TSpeedButton
+        Left = 110
+        Top = 27
+        Width = 45
+        Height = 44
+        Hint = 'Dokumentverzeichnis "Ergebnis-Ablage" '#246'ffnen'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
+          0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
+          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
+          9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
+          FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
+          FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
+          CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
+          9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
+          0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
+          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
+          CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
+          FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
+          009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
+          9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton8Click
+      end
+      object Button11: TButton
+        Left = 488
+        Top = 27
+        Width = 153
+        Height = 44
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Importe anzeigen'
+        TabOrder = 0
+        OnClick = Button11Click
+      end
+      object IB_Grid2: TIB_Grid
+        Left = 488
+        Top = 88
+        Width = 336
+        Height = 234
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource2
+        TabOrder = 1
+      end
+      object ListBox2: TListBox
+        Left = 11
+        Top = 88
+        Width = 459
+        Height = 233
+        ItemHeight = 13
+        TabOrder = 2
+      end
+      object Button42: TButton
+        Left = 58
+        Top = 27
+        Width = 48
+        Height = 44
+        Hint = 'Oc auf das Import-Verzeichnis anwenden'
+        Caption = 'Oc'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnClick = Button42Click
+      end
+    end
+    object TabSheet8: TTabSheet
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'Lokalisierun&g'
+      ImageIndex = 7
+      object Label14: TLabel
+        Left = 449
+        Top = 71
+        Width = 146
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = '(immer 2 stellige Codes!)'
+      end
+      object Label15: TLabel
+        Left = 449
+        Top = 111
+        Width = 68
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Zeutern=02'
+      end
+      object Label25: TLabel
+        Left = 7
+        Top = 48
+        Width = 160
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Zuordnungen Ortsteil=Code'
+      end
+      object Label26: TLabel
+        Left = 449
+        Top = 91
+        Width = 49
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Beispiel:'
+      end
+      object IB_CheckBox1: TIB_CheckBox
+        Left = 7
+        Top = 20
+        Width = 186
+        Height = 18
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'ORTE_AKTIV'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 0
+        Caption = 'Ortsteil - Logik anwenden'
+      end
+      object IB_Memo2: TIB_Memo
+        Left = 7
+        Top = 67
+        Width = 434
+        Height = 204
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'ORTE'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+        AutoSize = False
+        ScrollBars = ssVertical
+      end
+      object Button4: TButton
+        Left = 232
+        Top = 43
+        Width = 209
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Ortsteile jetzt neu ermitteln'
+        TabOrder = 2
+        OnClick = Button4Click
+      end
+      object Button6: TButton
+        Left = 215
+        Top = 279
+        Width = 226
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Codes neu eintragen / l'#246'schen'
+        TabOrder = 3
+        OnClick = Button6Click
+      end
+      object Button23: TButton
+        Left = 488
+        Top = 207
+        Width = 273
+        Height = 25
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'PQ Grunddaten aufbereiten'
+        TabOrder = 4
+        OnClick = Button23Click
+      end
+      object Button24: TButton
+        Left = 488
+        Top = 238
+        Width = 273
+        Height = 25
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Lage anzeigen'
+        TabOrder = 5
+        OnClick = Button24Click
+      end
+      object IB_CheckBox7: TIB_CheckBox
+        Left = 215
+        Top = 20
+        Width = 195
+        Height = 18
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'GEO_AKTIV'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 6
+        Caption = 'GEO Lokalisierung verwenden'
+      end
+      object IB_CheckBox8: TIB_CheckBox
+        Left = 423
+        Top = 20
+        Width = 221
+        Height = 18
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'GEO_ORTSTEIL'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 7
+        Caption = 'GEO Ortsteilermittlung verwenden'
+      end
+      object Button26: TButton
+        Left = 488
+        Top = 175
+        Width = 273
+        Height = 25
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Ortsteile aus den Geodaten '#252'bernehmen'
+        TabOrder = 8
+        OnClick = Button26Click
+      end
+      object Button30: TButton
+        Left = 488
+        Top = 144
+        Width = 273
+        Height = 25
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Geodaten l'#246'schen'
+        TabOrder = 9
+        OnClick = Button30Click
       end
     end
     object TabSheet3: TTabSheet
@@ -1704,868 +2489,6 @@ object FormBaustelle: TFormBaustelle
         Margins.Bottom = 4
         Caption = 'ohne Namen'
         TabOrder = 38
-      end
-    end
-    object TabSheet5: TTabSheet
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
-      Caption = '&Aufwand'
-      ImageIndex = 4
-      object Label6: TLabel
-        Left = 209
-        Top = 225
-        Width = 32
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '... bis'
-      end
-      object Label7: TLabel
-        Left = 121
-        Top = 201
-        Width = 119
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Termine m'#246'glich von'
-      end
-      object Label5: TLabel
-        Left = 17
-        Top = 248
-        Width = 221
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Maximale Anzahl Termine "Vormittags"'
-      end
-      object Label18: TLabel
-        Left = 7
-        Top = 272
-        Width = 230
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Maximale Anzahl Termine "Nachmittags"'
-      end
-      object Label27: TLabel
-        Left = 433
-        Top = 249
-        Width = 125
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Arbeitszeit Vormittags'
-      end
-      object Label28: TLabel
-        Left = 435
-        Top = 273
-        Width = 128
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Arbeitszeit Nachmittag'
-      end
-      object Label34: TLabel
-        Left = 311
-        Top = 248
-        Width = 9
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '='
-      end
-      object Label35: TLabel
-        Left = 311
-        Top = 274
-        Width = 9
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '='
-      end
-      object Label36: TLabel
-        Left = 7
-        Top = 7
-        Width = 191
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Zuordnung Z'#228'hlerart<->Aufwand'
-      end
-      object IB_Date1: TIB_Date
-        Left = 241
-        Top = 197
-        Width = 129
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'VON'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-        IncCellHeight = 1
-        IncCellWidth = 2
-        DrawYearArrow = False
-      end
-      object IB_Date2: TIB_Date
-        Left = 241
-        Top = 221
-        Width = 129
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'BIS'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-        IncCellHeight = 1
-        IncCellWidth = 2
-        DrawYearArrow = False
-      end
-      object IB_Edit3: TIB_Edit
-        Left = 241
-        Top = 245
-        Width = 62
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'LAST_V'
-        DataSource = IB_DataSource1
-        TabOrder = 2
-        OnChange = IB_Edit3Change
-      end
-      object IB_Edit4: TIB_Edit
-        Left = 241
-        Top = 269
-        Width = 62
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'LAST_N'
-        DataSource = IB_DataSource1
-        TabOrder = 3
-        OnChange = IB_Edit4Change
-      end
-      object IB_Edit7: TIB_Edit
-        Left = 329
-        Top = 245
-        Width = 98
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'REGEL_ARBEITSZEIT_V'
-        DataSource = IB_DataSource1
-        Enabled = False
-        TabOrder = 4
-        OnGetDisplayText = IB_Edit7GetDisplayText
-        OnGetEditText = IB_Edit7GetEditText
-        OnSetEditText = IB_Edit7SetEditText
-        OnIsValidChar = IB_Edit7IsValidChar
-      end
-      object IB_Edit8: TIB_Edit
-        Left = 329
-        Top = 269
-        Width = 98
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'REGEL_ARBEITSZEIT_N'
-        DataSource = IB_DataSource1
-        Enabled = False
-        TabOrder = 5
-        OnGetDisplayText = IB_Edit7GetDisplayText
-        OnGetEditText = IB_Edit7GetEditText
-        OnSetEditText = IB_Edit7SetEditText
-        OnIsValidChar = IB_Edit7IsValidChar
-      end
-      object Button16: TButton
-        Left = 280
-        Top = 297
-        Width = 329
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'neuen AUFWAND in die ganze Baustelle '#252'bernehmen'
-        TabOrder = 6
-        OnClick = Button16Click
-      end
-      object IB_Memo6: TIB_Memo
-        Left = 7
-        Top = 24
-        Width = 602
-        Height = 169
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'AUFWAND'
-        DataSource = IB_DataSource1
-        TabOrder = 7
-        AutoSize = False
-      end
-      object Button15: TButton
-        Left = 454
-        Top = 4
-        Width = 155
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Z'#228'hlerarten neu ermitteln'
-        TabOrder = 8
-        OnClick = Button15Click
-      end
-    end
-    object TabSheet6: TTabSheet
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
-      Caption = '&Importe'
-      ImageIndex = 5
-      object SpeedButton11: TSpeedButton
-        Left = 11
-        Top = 27
-        Width = 44
-        Height = 44
-        Hint = 'Auftr'#228'ge aus dem Internet laden'
-        Glyph.Data = {
-          360C0000424D360C000000000000360000002800000020000000200000000100
-          180000000000000C0000C40E0000C40E00000000000000000000FFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEF8F8F8ECECECD7D7
-          D7C9C9C9BEBEBEB9B9B9B6B6B6B4B4B4B0B0B0AAAAAAA5A5A5A3A3A388988D96
-          9C98D9D9D9EEEEEEFAFAFAFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9F9F9E8E8E8BFBCBC9E86858C59
-          558C4B4290473B8E453885423575403562413D55484652525243694F1FAF5427
-          85488E8F8ED4D4D4F0F0F0F9F9F9FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFBFBFBEBEBEBB69E9E97605BA24D3DAE6643A792
-          57A0AE6495BF698CBA6481A257757F4363502C512F1B1D55232DC46471FAAA41
-          EA821C8C43657B6CCBCBCBE9E9E9F8F8F8FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFDFDFDDBD7D7A67979A54839C88C7098C27367C65751C6
-          4B47C04372C6704EAD4A4F994C4F854E4E694D28743B42D1787EF9B273FFAC60
-          FE9F2DE372149E466D7A72C4C4C4EBEBEBF6F6F6FDFDFDFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFAFAFAD5C7C79F4B44C67A65FBECDBFCFCF2E0EED5D1E5C0F1EB
-          DEE6DFD1D2CAC4B4AEA78F8A86686E68248D474EDB8392FFC27FFFB46AFFA558
-          FF9942FF8A28F3740DA643487256B9B9B9E3E3E3F5F5F5FCFCFCFFFFFFFFFFFF
-          FFFFFFFEFEFED7CACAA24E49DA9F87FBEEDDFFF4E8FFF0E0FEECDBF9E6D4EBD7
-          C4D6C4B1B3A39393877B60655425873E5BE3908EFCBE83FFB774FFAD61FFA050
-          FF943AFF842AFF790FEE6008B2414F725AB0B0B0EAEAEAF7F7F7FFFFFFFFFFFF
-          FEFEFEE5DCDCA64B44DAA287FCF1DCFFEAD4FFE5CCFFE3C6FCDEBEF4D5B4DBBE
-          A0BDA3888F7C6859654822A1455EE99389FFBB7DFFB270FFA964FFA153FF9544
-          FF8A2FFF7D1FFF710CFF6308F85405BB3B327746AEB0AEEAEAEAFFFFFFFFFFFF
-          F3F1F1B37371D18E739DC17AEEDEBBFFE1C1FFDCB8FFDAB2FBD4AAF0C8A0D4AF
-          8BB2947463714823A0415EF09678FEB072FFAB6CFFA662FF9F56FF9846FF8C39
-          FF8325FF7615FF6B09FD5C08FB4F04F13E03C6333E8050B5B8B6FFFFFFFFFFFF
-          C9A09FBF6355A0C07890B465FFDBB6FFD5AAFFD2A2FFCF9DFCCA96F2C08CDAAC
-          7CBC946A22A5392ED0613FDB734DED875DFF9D58FF994DFF9243FF8A36FF8129
-          FF7817FF6C0CFF6108FA5205E54102D73202D52C0CB23385AB8FFFFFFFFAFAFA
-          AF5752CFA37D46922CC3BF81FFD2A2FFCD9AFFCA92FFC78DFDC386F6BC80E7B0
-          76CF9D697790494D85392A7B2A30CD5E6CFFA46AFFA15EFF993EFF8524FF751B
-          FF6F0DFE6209FC5907F84902C9331F6121458D5688CA98D7E4DAFFFFFFDAC0C0
-          BE655083A2552D7C157E9B48FDCA92FFC689FFC180FFBF7CFEBC77FCB973F5B3
-          6DE5A665C08B55976E4351642B37CA5D8CFFB686FFB087FFB184FFAF52FF9020
-          FF6F07FB5505F84B05F53F01C82B4F391F72635EDBDBDBFBFBFBFBFAFAB97474
-          C39B70498429327716377919B7A85EDDB46DFFBB74FFB96FFFB66AFFB568FCB2
-          65EEA85ECA8E50A0713F52652836C95A9CFFC196FFBA96FFBA96FFBB96FFBB86
-          FFB04CFC821BF75401F23100C424684D2C744E3FC8C8C8FAFAFAEFE3E3B65551
-          9DA160336E14336E14336E142F6C113F7219F4B163FFB364FFB15FFFB05DFDAF
-          5BF1A556CD8D49A16F3A4D602034C656B1FFCEAAFFC7AAFFC7AAFFC7A9FFC7A9
-          FFC7AEFFCCA9FFC87FF99E1BC43477633F864A30B1B1B1F6F6F6E5CFCFBF6258
-          758D422F650F3367123367123267112F650FC29C48FFB15DFFAE59FFAD58FDAC
-          57F1A352CE8C46A26F39485D1B38C453C0FFD9B8FFD1B8FFD1B8FFD1B8FFD1B8
-          FFD1B8FFD1B9FFD2AFFCC82CC43F7E704C965030A5A5A5F3F3F3DFBDBDC46C5A
-          607B2F305C0B335D0E335D0E335D0E325D0D3D6112BD9541FFAE59FFAE59FEAD
-          59F3A656D3904BAB773E465D193DC14FD5FFE7CCFFDECCFFDECCFFDECCFFDECC
-          FFDECCFFDECCFFDEBFFCD330C13E887B56AA60399C9C9CF2F2F2DDB7B7C8725D
-          5A6F2630550A33570C33570C33560C32550B7B7627E0A350FFB05DFFB05EFEB1
-          5FF5AC5DDB9954BA84483B5B1441C04DEFFFF7E6FFF2E6FFF2E6FFF2E6FFF2E6
-          FFF2E6FFF2E6FFF2D5FCE034C03C8D8158B2663D9B9B9BF1F1F1DDB7B7C8715B
-          5A6822304B07324D09304B08344D09766E24FFB460FFB260FFB363FFB567F8B4
-          68D19D54B98E4AAE8345284909138A104ACB534BCB544BCB544BCB544BCB544B
-          CB544BCB544CCB5442C7491B8D139F8B5AB76A3F9F9F9FF2F2F2E0BFBFC56C59
-          96843E3043053344065D5B18B1893CE4A554FFB363FFB566FFB76CFFBD73AC8B
-          46474F113A470B3D460D2B3B042347032055031F55031F55031F5503305E0940
-          66104D6E1756741B255A062F4C089A864FB3643BA8A8A8F4F4F4E9D4D4BB6157
-          CCA45E846925DA9D4BFAAF59FFB25FFFB363FFB669FFB86EFFBF7BC9A0634A52
-          204F5827545D2E555D2E515A2B4C5426424A1B3A4213323A052C3501534C1240
-          410A3239033B3F072F38022C3601C2955FA45938BBBBBBF8F8F8F4E9E9B65955
-          BB9258936E29FBB15BFCAF5BFFB362FFB566FFBE79FFCB94FED9B2C0B3949598
-          7D9C9D849EA0879EA0869D9F859A9C8296987D8E9073787A595C5C324944102F
-          33013235003134003134013F3D07E0A06A97593ED1D1D1FCFCFCFEFDFDC68585
-          D08F65977B3297782FE5A655FFBD78FFCF9EFFE3C6FFE7CEFFE8D1F0E0C9BCBE
-          A6A8B097A7AF96A7AF96A6AF95A6AF96A8B097A6AF96A8B098ADB49C959F8165
-          724831440E273C00253C00756C2DD68C5F9D7767EDEDEDFFFFFFFFFFFFEAD5D5
-          C05C46AC904A676A1FBCA15FFFE0BEFFE7CDFFE9D1FFEAD4FFECD9FFEFDDF6EB
-          DAD6D5C2AEBDA2B2C0A6B9C4ABBAC4AAD8D4BECDCDB6B5C0A6ACBCA1AEBDA3AD
-          BCA180977033581A274C06BB9F5EB16441B5A5A0FAFAFAFFFFFFFFFFFFFFFFFF
-          BD6C68DB93665A7D36A9C2A2EEE3CCFAEAD4FFEDDAFFEEDDFFF1E2FFF3E6FFF5
-          EAFFF8EECFD9C4BECFB6E2E4D2C8D4BCBCCDB3CCD5BCD2D7BFB6CBB0B5CAAFB5
-          CAAFB8CCB393B38D5F782AD5915DA16B59DEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
-          E0BEBDC06152C3B16BA0BE92C4D7BED0DDC4F1EBD9FFF2E4FFF4E9FFF6ECFFF8
-          F0FFFAF3EDF0E5C2D7BFBCD4BABBD3B9BBD3B9BBD3B9C4D8BEBDD5BABBD4B9BB
-          D4B9BBD4BA6EA063C29F5CB35C38C5BBB8F7F7F7FFFFFFFFFFFFFFFFFFFFFFFF
-          FEFDFDCE9898CC7859C2B473BED8BBC5DEC7C8DEC7D7E5D1ECEEE1F5F4EBFCF9
-          F4FDFCF9EEF4EBCAE0CAC7DEC7C7DEC7C7DEC7C7DEC7C6DEC7C6DEC7C7DEC7C8
-          E0C99DC091AEA85EC4734DB39084F4F4F4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFF9F3F3BC6A65D48763DDCF9CD1E2CCD1E4D1D0E4D0D6E6D5D7E7D6E0EC
-          DEE1EDE0E4EFE3D2E5D2D1E4D1D1E4D1D1E4D1D1E4D1D1E4D1D1E4D1D1E5D3C8
-          D9BDC9B470CF8151B07967E4DFDEFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFF7EFEFC17775D18163F3CDA0E5EAD7DFEDE0E0EDE0E3EEE2F2F6
-          EFF4F8F2F4F8F2E7F0E6DFECDFDFECDFDFECDFDEECDEDFECE0E1EDE0EDDFBFF4
-          C188C7754EB27C6CEEEEEEFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFF7EEEEC37A75C26851F3CBA5F6EDD6F6F8F3F3F7F3F5F8
-          F3F3F7F2F9FAF7FAFBF7F6F8F3F0F5EEE9F3EAEAF4EDF1F1E4F9E5C5ECB280BF
-          6A43BD8D7EE8E2E1FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFEFDFDE4C5C5B55950CB7A5EEDC5A6FAE8D4FDF9
-          F0FAFDF7F9FCF8FEFEFDFEFEFAFEFDF8FCF2E4F9E1C7E7B085CA7A57B56954D5
-          BEB9FAFAFAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1E1E1D9ABA8C27365BB5E47CF85
-          6BDDA58CEABFA5ECC3AAE8BA9EDDA386CC7C59BC6241BF7D6BD3ADA4F0E8E6FD
-          FDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFEFEF4E9E8DBB5
-          B3CB938FC27C71C27A6DC38176CB968FDCBFBAF0E7E5FDFDFDFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton11Click
-      end
-      object SpeedButton12: TSpeedButton
-        Left = 110
-        Top = 27
-        Width = 45
-        Height = 44
-        Hint = 'Dokumentverzeichnis "Ergebnis-Ablage" '#246'ffnen'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
-          0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
-          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
-          9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
-          FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
-          FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
-          CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
-          9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
-          0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
-          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
-          CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
-          FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
-          009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
-          9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton8Click
-      end
-      object Button11: TButton
-        Left = 488
-        Top = 27
-        Width = 153
-        Height = 44
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Importe anzeigen'
-        TabOrder = 0
-        OnClick = Button11Click
-      end
-      object IB_Grid2: TIB_Grid
-        Left = 488
-        Top = 88
-        Width = 336
-        Height = 234
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource2
-        TabOrder = 1
-      end
-      object ListBox2: TListBox
-        Left = 11
-        Top = 88
-        Width = 459
-        Height = 233
-        ItemHeight = 13
-        TabOrder = 2
-      end
-      object Button42: TButton
-        Left = 58
-        Top = 27
-        Width = 48
-        Height = 44
-        Hint = 'Oc auf das Import-Verzeichnis anwenden'
-        Caption = 'Oc'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnClick = Button42Click
-      end
-    end
-    object TabSheet7: TTabSheet
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
-      Caption = '&Exporte'
-      ImageIndex = 6
-      object Label24: TLabel
-        Left = 19
-        Top = 22
-        Width = 60
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'csv-Quelle'
-      end
-      object Label29: TLabel
-        Left = 20
-        Top = 46
-        Width = 57
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'letzte TAN'
-      end
-      object Label30: TLabel
-        Left = 4
-        Top = 69
-        Width = 75
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Einstellungen'
-      end
-      object SpeedButton8: TSpeedButton
-        Left = 804
-        Top = 37
-        Width = 23
-        Height = 22
-        Hint = 'Dokumentverzeichnis "Ergebnis-Ablage" '#246'ffnen'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
-          0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
-          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
-          9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
-          FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
-          FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
-          CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
-          9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
-          0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
-          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
-          CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
-          FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
-          FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
-          009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
-          9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton8Click
-      end
-      object IB_Edit6: TIB_Edit
-        Left = 82
-        Top = 20
-        Width = 536
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'CSV_QUELLE'
-        DataSource = IB_DataSource1
-        TabOrder = 0
-      end
-      object IB_Memo5: TIB_Memo
-        Left = 82
-        Top = 66
-        Width = 536
-        Height = 219
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_EINSTELLUNGEN'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-        AutoSize = False
-        ScrollBars = ssBoth
-        WordWrap = False
-      end
-      object IB_Edit9: TIB_Edit
-        Left = 82
-        Top = 43
-        Width = 48
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_TAN'
-        DataSource = IB_DataSource1
-        TabOrder = 2
-      end
-      object Button18: TButton
-        Left = 456
-        Top = 306
-        Width = 162
-        Height = 26
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Passwort generieren'
-        TabOrder = 3
-        OnClick = Button18Click
-      end
-      object IB_CheckBox6: TIB_CheckBox
-        Left = 82
-        Top = 308
-        Width = 304
-        Height = 17
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_EXTERN'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 4
-        Caption = 'Routeninfo f'#252'r Fremd-MDE'
-      end
-      object Button20: TButton
-        Left = 1
-        Top = 89
-        Width = 75
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '..= hinzu'
-        TabOrder = 5
-        OnClick = Button20Click
-      end
-      object IB_CheckBox5: TIB_CheckBox
-        Left = 82
-        Top = 292
-        Width = 304
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'EXPORT_MONDA'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 6
-        Caption = 'Ausgabe zum App-Server'
-      end
-      object Button21: TButton
-        Left = 137
-        Top = 43
-        Width = 104
-        Height = 22
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'R'#252'ckg'#228'ngig'
-        TabOrder = 7
-        OnClick = Button21Click
-      end
-      object Button28: TButton
-        Left = 630
-        Top = 37
-        Width = 169
-        Height = 22
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Meldungen anzeigen'
-        TabOrder = 8
-        OnClick = Button28Click
-      end
-      object IB_Grid3: TIB_Grid
-        Left = 630
-        Top = 66
-        Width = 197
-        Height = 219
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource3
-        TabOrder = 9
-      end
-    end
-    object TabSheet8: TTabSheet
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
-      Caption = 'Lokalisierun&g'
-      ImageIndex = 7
-      object Label14: TLabel
-        Left = 449
-        Top = 71
-        Width = 146
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = '(immer 2 stellige Codes!)'
-      end
-      object Label15: TLabel
-        Left = 449
-        Top = 111
-        Width = 68
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Zeutern=02'
-      end
-      object Label25: TLabel
-        Left = 7
-        Top = 48
-        Width = 160
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Zuordnungen Ortsteil=Code'
-      end
-      object Label26: TLabel
-        Left = 449
-        Top = 91
-        Width = 49
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Beispiel:'
-      end
-      object IB_CheckBox1: TIB_CheckBox
-        Left = 7
-        Top = 20
-        Width = 186
-        Height = 18
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'ORTE_AKTIV'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 0
-        Caption = 'Ortsteil - Logik anwenden'
-      end
-      object IB_Memo2: TIB_Memo
-        Left = 7
-        Top = 67
-        Width = 434
-        Height = 204
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'ORTE'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-        AutoSize = False
-        ScrollBars = ssVertical
-      end
-      object Button4: TButton
-        Left = 232
-        Top = 43
-        Width = 209
-        Height = 21
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Ortsteile jetzt neu ermitteln'
-        TabOrder = 2
-        OnClick = Button4Click
-      end
-      object Button6: TButton
-        Left = 215
-        Top = 279
-        Width = 226
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Codes neu eintragen / l'#246'schen'
-        TabOrder = 3
-        OnClick = Button6Click
-      end
-      object Button23: TButton
-        Left = 488
-        Top = 207
-        Width = 273
-        Height = 25
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'PQ Grunddaten aufbereiten'
-        TabOrder = 4
-        OnClick = Button23Click
-      end
-      object Button24: TButton
-        Left = 488
-        Top = 238
-        Width = 273
-        Height = 25
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Lage anzeigen'
-        TabOrder = 5
-        OnClick = Button24Click
-      end
-      object IB_CheckBox7: TIB_CheckBox
-        Left = 215
-        Top = 20
-        Width = 195
-        Height = 18
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'GEO_AKTIV'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 6
-        Caption = 'GEO Lokalisierung verwenden'
-      end
-      object IB_CheckBox8: TIB_CheckBox
-        Left = 423
-        Top = 20
-        Width = 221
-        Height = 18
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'GEO_ORTSTEIL'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 7
-        Caption = 'GEO Ortsteilermittlung verwenden'
-      end
-      object Button26: TButton
-        Left = 488
-        Top = 175
-        Width = 273
-        Height = 25
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Ortsteile aus den Geodaten '#252'bernehmen'
-        TabOrder = 8
-        OnClick = Button26Click
-      end
-      object Button30: TButton
-        Left = 488
-        Top = 144
-        Width = 273
-        Height = 25
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Geodaten l'#246'schen'
-        TabOrder = 9
-        OnClick = Button30Click
       end
     end
     object TabSheet9: TTabSheet
@@ -3484,6 +3407,487 @@ object FormBaustelle: TFormBaustelle
         TabOrder = 1
       end
     end
+    object TabSheet7: TTabSheet
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = '&Ergebnis'
+      ImageIndex = 6
+      object Label24: TLabel
+        Left = 19
+        Top = 22
+        Width = 60
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'csv-Quelle'
+      end
+      object Label29: TLabel
+        Left = 20
+        Top = 46
+        Width = 57
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'letzte TAN'
+      end
+      object Label30: TLabel
+        Left = 4
+        Top = 69
+        Width = 75
+        Height = 13
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Einstellungen'
+      end
+      object SpeedButton8: TSpeedButton
+        Left = 804
+        Top = 37
+        Width = 23
+        Height = 22
+        Hint = 'Dokumentverzeichnis "Ergebnis-Ablage" '#246'ffnen'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000
+          0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
+          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E
+          9C009E9C000000000000FFFFFFFFFFFF009E9CFFFFFF9CCFFF9CFFFF9CCFFF9C
+          FFFF9CCFFF9CCFFF9CCFFF9CCFFF63CFCE009E9C000000000000FFFFFF009E9C
+          FFFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CCFFF9CFFFF9CCFFF9CCFFF9CCFFF63CF
+          CE000000009E9C000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CCFFF9CFFFF9CCFFF9CCFFF009E9C000000009E9C000000009E9CFFFFFF
+          9CFFFF9CFFFF9CFFFF9CFFFF9CCFFF9CFFFF9CFFFF9CCFFF9CFFFF63CFCE0000
+          0063CFCE63CFCE000000009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CCFFF9CFFFF9CCFFF63CFCE00000063CFCE63CFCE000000009E9C009E9C
+          009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C009E9C63CF
+          CE9CFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF63CFCE000000FFFFFF009E9C
+          FFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFF9CFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFF63CFCE000000FFFFFF009E9CFFFFFF9CFFFF9CFFFF9CFFFF9CFFFF9C
+          FFFFFFFFFF009E9C009E9C009E9C009E9C009E9C009E9CFFFFFFFFFFFFFFFFFF
+          009E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9CFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF009E9C009E9C009E9C009E9C00
+          9E9CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton8Click
+      end
+      object IB_Edit6: TIB_Edit
+        Left = 82
+        Top = 20
+        Width = 536
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'CSV_QUELLE'
+        DataSource = IB_DataSource1
+        TabOrder = 0
+      end
+      object IB_Memo5: TIB_Memo
+        Left = 82
+        Top = 66
+        Width = 536
+        Height = 219
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_EINSTELLUNGEN'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+        AutoSize = False
+        ScrollBars = ssBoth
+        WordWrap = False
+      end
+      object IB_Edit9: TIB_Edit
+        Left = 82
+        Top = 43
+        Width = 48
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_TAN'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+      end
+      object Button18: TButton
+        Left = 456
+        Top = 306
+        Width = 162
+        Height = 26
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Passwort generieren'
+        TabOrder = 3
+        OnClick = Button18Click
+      end
+      object IB_CheckBox6: TIB_CheckBox
+        Left = 82
+        Top = 308
+        Width = 304
+        Height = 17
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_EXTERN'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 4
+        Caption = 'Routeninfo f'#252'r Fremd-MDE'
+      end
+      object Button20: TButton
+        Left = 1
+        Top = 89
+        Width = 75
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = '..= hinzu'
+        TabOrder = 5
+        OnClick = Button20Click
+      end
+      object IB_CheckBox5: TIB_CheckBox
+        Left = 82
+        Top = 292
+        Width = 304
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'EXPORT_MONDA'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 6
+        Caption = 'Ausgabe zum App-Server'
+      end
+      object Button21: TButton
+        Left = 137
+        Top = 43
+        Width = 104
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'R'#252'ckg'#228'ngig'
+        TabOrder = 7
+        OnClick = Button21Click
+      end
+      object Button28: TButton
+        Left = 630
+        Top = 37
+        Width = 169
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Meldungen anzeigen'
+        TabOrder = 8
+        OnClick = Button28Click
+      end
+      object IB_Grid3: TIB_Grid
+        Left = 630
+        Top = 66
+        Width = 197
+        Height = 219
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        CustomGlyphsSupplied = []
+        DataSource = IB_DataSource3
+        TabOrder = 9
+      end
+    end
+    object TabSheet12: TTabSheet
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = 'Protokolle'
+      ImageIndex = 11
+      object Label43: TLabel
+        Left = 41
+        Top = 7
+        Width = 60
+        Height = 14
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Protokoll'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label44: TLabel
+        Left = 306
+        Top = 7
+        Width = 66
+        Height = 14
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Internfeld'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object SpeedButton7: TSpeedButton
+        Left = 17
+        Top = 2
+        Width = 22
+        Height = 22
+        Hint = 'Werte aus aktuellen Eintragungen ermitteln'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton7Click
+      end
+      object SpeedButton9: TSpeedButton
+        Left = 280
+        Top = 2
+        Width = 22
+        Height = 22
+        Hint = 'Werte aus aktuellen Eintragungen ermitteln'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton9Click
+      end
+      object SpeedButton16: TSpeedButton
+        Left = 537
+        Top = 2
+        Width = 22
+        Height = 22
+        Hint = 'Werte aus dem Protokoll selbst ermitteln'
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
+          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
+          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
+          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
+          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
+          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
+          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
+          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
+          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
+          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
+          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
+          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
+          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
+          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
+          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
+          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
+          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
+          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
+          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
+          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
+          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SpeedButton16Click
+      end
+      object Label54: TLabel
+        Left = 560
+        Top = 8
+        Width = 17
+        Height = 13
+        Caption = 'Art'
+      end
+      object IB_CheckBox4: TIB_CheckBox
+        Left = 17
+        Top = 316
+        Width = 200
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'PROTOKOLLEXPORT'
+        DataSource = IB_DataSource1
+        ParentColor = False
+        TabOrder = 0
+        Caption = 'zus'#228'tzliche Spalten ausgeben'
+      end
+      object IB_Memo4: TIB_Memo
+        Left = 17
+        Top = 29
+        Width = 250
+        Height = 233
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'PROTOKOLLFELDER'
+        DataSource = IB_DataSource1
+        TabOrder = 1
+        AutoSize = False
+        ScrollBars = ssBoth
+        WordWrap = False
+      end
+      object IB_Memo7: TIB_Memo
+        Left = 280
+        Top = 29
+        Width = 250
+        Height = 283
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        DataField = 'INTERNFELDER'
+        DataSource = IB_DataSource1
+        TabOrder = 2
+        AutoSize = False
+        ScrollBars = ssBoth
+        WordWrap = False
+      end
+      object Button40: TButton
+        Left = 17
+        Top = 290
+        Width = 96
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Wiki-Tabelle'
+        TabOrder = 3
+        OnClick = Button40Click
+      end
+      object Button13: TButton
+        Left = 17
+        Top = 264
+        Width = 96
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Wert-Tabelle'
+        TabOrder = 4
+        OnClick = Button13Click
+      end
+      object Memo1: TMemo
+        Left = 537
+        Top = 29
+        Width = 250
+        Height = 283
+        ScrollBars = ssVertical
+        TabOrder = 5
+        WordWrap = False
+      end
+      object Edit13: TEdit
+        Left = 584
+        Top = 3
+        Width = 64
+        Height = 21
+        Hint = 'ART'
+        TabOrder = 6
+      end
+    end
     object TabSheet10: TTabSheet
       Margins.Left = 4
       Margins.Top = 4
@@ -3879,366 +4283,6 @@ object FormBaustelle: TFormBaustelle
         TabOrder = 23
       end
     end
-    object TabSheet11: TTabSheet
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
-      Caption = 'Vertr'#228'ge'
-      ImageIndex = 10
-      object Label48: TLabel
-        Left = 17
-        Top = 144
-        Width = 92
-        Height = 13
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Vertragsnehmer'
-      end
-      object CheckBox33: TCheckBox
-        Left = 17
-        Top = 17
-        Width = 192
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Vertr'#228'ge anzeigen'
-        TabOrder = 0
-        OnClick = CheckBox33Click
-      end
-      object IB_Grid4: TIB_Grid
-        Left = 17
-        Top = 39
-        Width = 800
-        Height = 90
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource4
-        TabOrder = 1
-        OnGetDisplayText = IB_Grid4GetDisplayText
-      end
-      object Button27: TButton
-        Left = 792
-        Top = 7
-        Width = 25
-        Height = 26
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'B'
-        TabOrder = 2
-        OnClick = Button27Click
-      end
-      object IB_Grid5: TIB_Grid
-        Left = 17
-        Top = 167
-        Width = 800
-        Height = 119
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        CustomGlyphsSupplied = []
-        DataSource = IB_DataSource5
-        TabOrder = 3
-      end
-      object Button35: TButton
-        Left = 792
-        Top = 136
-        Width = 25
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'P'
-        TabOrder = 4
-        OnClick = Button35Click
-      end
-      object Button36: TButton
-        Left = 766
-        Top = 136
-        Width = 25
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'V'
-        TabOrder = 5
-        OnClick = Button36Click
-      end
-    end
-    object TabSheet12: TTabSheet
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Caption = 'Protokolle'
-      ImageIndex = 11
-      object Label43: TLabel
-        Left = 41
-        Top = 7
-        Width = 60
-        Height = 14
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Protokoll'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold, fsUnderline]
-        ParentFont = False
-      end
-      object Label44: TLabel
-        Left = 306
-        Top = 7
-        Width = 66
-        Height = 14
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Internfeld'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Verdana'
-        Font.Style = [fsBold, fsUnderline]
-        ParentFont = False
-      end
-      object SpeedButton7: TSpeedButton
-        Left = 17
-        Top = 2
-        Width = 22
-        Height = 22
-        Hint = 'Werte aus aktuellen Eintragungen ermitteln'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
-          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
-          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
-          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
-          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
-          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
-          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
-          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
-          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
-          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
-          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
-          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
-          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
-          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
-          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
-          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
-          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
-          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
-          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
-          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
-          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton7Click
-      end
-      object SpeedButton9: TSpeedButton
-        Left = 280
-        Top = 2
-        Width = 22
-        Height = 22
-        Hint = 'Werte aus aktuellen Eintragungen ermitteln'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
-          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
-          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
-          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
-          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
-          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
-          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
-          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
-          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
-          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
-          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
-          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
-          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
-          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
-          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
-          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
-          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
-          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
-          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
-          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
-          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton9Click
-      end
-      object SpeedButton16: TSpeedButton
-        Left = 537
-        Top = 2
-        Width = 22
-        Height = 22
-        Hint = 'Werte aus dem Protokoll selbst ermitteln'
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFB78183A47874A47874A47874A47874A47874A4
-          7874A47874A47874A47874A47874A47874986B66FF00FFFF00FFFF00FFB78183
-          FDEFD9F6E3CBF5DFC2F4DBBAF2D7B2F1D4A9F1D0A2EECC99EECC97EECC97F3D1
-          99986B66FF00FFFF00FFFF00FFB48176FEF3E3F8E7D3F5E3CBF5DFC3CFCF9F01
-          8A02018A02CCC68BEECC9AEECC97F3D199986B66FF00FFFF00FFFF00FFB48176
-          FFF7EBF9EBDA018A02D1D6AC018A02D0CF9ECECC98018A02CCC689EFCD99F3D1
-          98986B66FF00FFFF00FFFF00FFBA8E85FFFCF4FAEFE4018A02018A02D1D5ADF5
-          DFC2F4DBBBCDCC98018A02F0D0A1F3D29B986B66FF00FFFF00FFFF00FFBA8E85
-          FFFFFDFBF4EC018A02018A02018A02F5E3C9F5DFC2F4DBBAF2D7B1F0D4A9F5D5
-          A3986B66FF00FFFF00FFFF00FFCB9A82FFFFFFFEF9F5FBF3ECFAEFE2F9EADAF8
-          E7D2018A02018A02018A02F2D8B2F6D9AC986B66FF00FFFF00FFFF00FFCB9A82
-          FFFFFFFFFEFD018A02D6E3C9F9EFE3F8EADAD2D9B3018A02018A02F4DBB9F8DD
-          B4986B66FF00FFFF00FFFF00FFDCA887FFFFFFFFFFFFD9EDD8018A02D6E3C8D5
-          E0C1018A02D3D8B2018A02F7E1C2F0DAB7986B66FF00FFFF00FFFF00FFDCA887
-          FFFFFFFFFFFFFFFFFFD9EDD8018A02018A02D5DFC1FAEDDCFCEFD9E6D9C4C6BC
-          A9986B66FF00FFFF00FFFF00FFE3B18EFFFFFFFFFFFFFFFFFFFFFFFFFFFEFDFD
-          F8F3FDF6ECF1E1D5B48176B48176B48176B48176FF00FFFF00FFFF00FFE3B18E
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFCFFFEF9E3CFC9B48176E8B270ECA5
-          4AC58768FF00FFFF00FFFF00FFEDBD92FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFE4D4D2B48176FAC577CD9377FF00FFFF00FFFF00FFFF00FFEDBD92
-          FCF7F4FCF7F3FBF6F3FBF6F3FAF5F3F9F5F3F9F5F3E1D0CEB48176CF9B86FF00
-          FFFF00FFFF00FFFF00FFFF00FFEDBD92DAA482DAA482DAA482DAA482DAA482DA
-          A482DAA482DAA482B48176FF00FFFF00FFFF00FFFF00FFFF00FF}
-        ParentShowHint = False
-        ShowHint = True
-        OnClick = SpeedButton16Click
-      end
-      object Label54: TLabel
-        Left = 560
-        Top = 8
-        Width = 17
-        Height = 13
-        Caption = 'Art'
-      end
-      object IB_CheckBox4: TIB_CheckBox
-        Left = 17
-        Top = 316
-        Width = 200
-        Height = 16
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'PROTOKOLLEXPORT'
-        DataSource = IB_DataSource1
-        ParentColor = False
-        TabOrder = 0
-        Caption = 'zus'#228'tzliche Spalten ausgeben'
-      end
-      object IB_Memo4: TIB_Memo
-        Left = 17
-        Top = 29
-        Width = 250
-        Height = 233
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'PROTOKOLLFELDER'
-        DataSource = IB_DataSource1
-        TabOrder = 1
-        AutoSize = False
-        ScrollBars = ssBoth
-        WordWrap = False
-      end
-      object IB_Memo7: TIB_Memo
-        Left = 280
-        Top = 29
-        Width = 250
-        Height = 283
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        DataField = 'INTERNFELDER'
-        DataSource = IB_DataSource1
-        TabOrder = 2
-        AutoSize = False
-        ScrollBars = ssBoth
-        WordWrap = False
-      end
-      object Button40: TButton
-        Left = 17
-        Top = 290
-        Width = 96
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Wiki-Tabelle'
-        TabOrder = 3
-        OnClick = Button40Click
-      end
-      object Button13: TButton
-        Left = 17
-        Top = 264
-        Width = 96
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Caption = 'Wert-Tabelle'
-        TabOrder = 4
-        OnClick = Button13Click
-      end
-      object Memo1: TMemo
-        Left = 537
-        Top = 29
-        Width = 250
-        Height = 283
-        ScrollBars = ssVertical
-        TabOrder = 5
-        WordWrap = False
-      end
-      object Edit13: TEdit
-        Left = 584
-        Top = 3
-        Width = 64
-        Height = 21
-        Hint = 'ART'
-        TabOrder = 6
-      end
-    end
   end
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
@@ -4253,7 +4297,7 @@ object FormBaustelle: TFormBaustelle
       'SUCHINDEX_AUS=BOOLEAN=Y,N'
       'TERMINLISTE_AUS=BOOLEAN=Y,N'
       'VORRANG=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsReadOnly.Strings = (
       'RID=NOEDIT')
     FieldsVisible.Strings = (
@@ -4284,7 +4328,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT NUMMER'
@@ -4299,7 +4343,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4316,7 +4360,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query10: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT ZAEHLER_NUMMER FROM AUFTRAG '
@@ -4328,7 +4372,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query11: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4355,7 +4399,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query12: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'COUNT=Anzahl'
       'RID_AT_IMPORT=Import-RID')
@@ -4381,7 +4425,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_QueryOrte: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'
@@ -4397,7 +4441,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_DSQL4: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'UPDATE '
@@ -4410,7 +4454,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -4434,7 +4478,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -4462,7 +4506,7 @@ object FormBaustelle: TFormBaustelle
   object IB_Query8: TIB_Query
     ColumnAttributes.Strings = (
       'VOLUMEN=CURRENCY')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select distinct '
@@ -4490,7 +4534,7 @@ object FormBaustelle: TFormBaustelle
     Top = 32
   end
   object IB_Query13: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select '
@@ -4525,7 +4569,7 @@ object FormBaustelle: TFormBaustelle
     Top = 72
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
