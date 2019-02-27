@@ -280,17 +280,17 @@ function cHelpURL: string;
 begin
   if (iWikiServer <> '') then
   begin
-    result := iWikiServer + 'index.php5/'
+    result := iWikiServer + '?title='
   end
   else
   begin
-    result := 'http://wiki.orgamon.org/index.php5/';
+    result := 'https://wiki.orgamon.org/?title=';
   end;
 end;
 
 function cTixURL: string;
 begin
-  result := iWikiServer2 + 'index.php5/';
+  result := iWikiServer2 + '?title=';
 end;
 
 function Int64asKeyStr(i: int64): AnsiString;

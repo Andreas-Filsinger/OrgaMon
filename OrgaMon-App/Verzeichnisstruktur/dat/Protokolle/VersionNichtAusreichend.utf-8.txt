@@ -1,0 +1,3 @@
+﻿N;-1;;FILSINGER;;1;;;Alle Daten wurden gesichert, Sie erhalten im 2. Datensatz eine Nachricht vom System:;;;;;;;;;;-5;0
+N;-1;;FILSINGER;;2;;;Ihre Programmversion ist veraltet. Starten Sie "Internet" dann das Lesezeichen "OrgaMon" oder http://orgamon.de/AndroMon.apk;;;;;;;;;;-5;0
+

@@ -1,0 +1,9 @@
+--
+-- Firma xxx
+--
+$KundeFeld=A02
+$VertragsMerkmal=containing 'Rechnungsempfänger=10034'
+$db=W:\xxx\dat\db
+
+include include.IMEI-OK
+

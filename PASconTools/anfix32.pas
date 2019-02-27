@@ -908,7 +908,7 @@ begin
   begin
 
     // Lösung : Das gleitenden Zeitfensters, Dokumentation siehe
-    // http://wiki.orgamon.org/index.php5/Entwickler#Datum
+    // https://wiki.orgamon.org/?title=Entwickler#Datum
 
     // Zeitfenster berechnen
     jStart := ActJahr - 75;

@@ -1,0 +1,62 @@
+﻿$set BARCODE_TYPE CODE_128,CODE_39
+#
+# Elektro-Protokoll 1.0
+# vom 19.04.2013, AF
+#
+Korrektur der Ausbau-Zählernummer
+11=
+N;
+Stand des Ausbau-Zählers
+14=
+D;
+NT-Stand des Ausbau-Zählers
+NA=
+D;
+--
+Nummer des Einbau-Zählers
+12=
+N;
+S;Barcode ~12~
+Stand des Einbau-Zählers
+13=
+D;
+NT-Stand des Einbau-Zählers
+NN=
+D;
+--
+Vergebliche Besuche (2 eingeben für jetzt)
+V1=
+A;
+V2=
+A;
+V3=
+A;
+--
+Bemerkungen
+I3=
+A;
+I4=
+A;
+I5=
+A;
+--
+wichtige Hinweise
+I6=
+A;
+I7=
+A;
+I8=
+A;
+--
+Hinweise Buero
+B1=
+A;
+B2=
+A;
+B3=
+A;
+--
+FA=
+F;Foto Ausbau ~FA~
+FN=
+F;Foto Einbau ~FN~

@@ -10160,7 +10160,7 @@ begin
     speak('<!--                                        -->');
     speak;
     speak('<!-- Modus '+IntToStr(Content_Mode_xls2Argos2018)+': Argos-2018 -->');
-    speak('<!-- Info: http://wiki.orgamon.org/index.php5/Schnittstelle.Argos.2018 -->');
+    speak('<!-- Info: https://wiki.orgamon.org/?title=Schnittstelle.Argos.2018 -->');
     speak('<!-- Quelltexte: https://github.com/Andreas-Filsinger/OrgaMon/blob/master/PASconTools/OrientationConvert.pas -->');
     speak;
     push('DSP');

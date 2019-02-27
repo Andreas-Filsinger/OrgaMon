@@ -17,7 +17,11 @@ Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, u
 
 Dokumentation
 
-@<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+@<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 8.403 (26.02.19) Andreas Filsinger
+
+ Neu: Hilfe: auf "https://" umgestellt
 
 Rev 8.402 (22.02.19-23.02.19) Andreas Filsinger
 

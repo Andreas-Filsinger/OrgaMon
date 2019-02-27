@@ -1,0 +1,3 @@
+﻿N;-1;;OrgaMon;;1;;;Alle Daten wurden gesichert, Sie erhalten im 2. Datensatz eine Nachricht vom System:;;;;;;;;;;-5;0
+N;-1;;OrgaMon;;2;;;Das Vertragsende ist erreicht. Oder der bezahlte Lizenz-Zeitraum ist abgelaufen. Oder Rechnungen könnten unbezahlt sein;;;;;;;;;;-5;0
+

@@ -1,0 +1,34 @@
+--
+-- aktive Vertragsnehmer
+--
+$ExcelOpen=NEIN
+
+select
+ PERSON.NACHNAME,
+ PERSON.VORNAME,
+ PERSON.MONDA as GERAET,
+ PERSON.VERSICHERUNGSNUMMER as IMEI, 
+ PERSON.PRIV_FAX as ERREICHBAR,
+ PERSON.EMAIL,
+ CAST(VERTRAG.BEZAHLT_BIS as DATE) as BEZAHLT_BIS
+from
+ PERSON 
+join
+ VERTRAG
+on
+ (BELEG_R in (8,100,138)) and
+ (PERSON.RID=VERTRAG.PERSON_R) and
+ (VERTRAG.EINSTELLUNGEN $VertragsMerkmal)
+order by
+ NACHNAME, VORNAME
+
+store $db\IMEI.csv
+-
+ 
+excel
+
+GERAET=TEXT
+IMEI=TEXT
+save as html $web\vertrag.html
+open
+-
