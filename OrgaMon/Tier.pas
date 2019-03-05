@@ -117,7 +117,7 @@ uses
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Person, CareTakerClient, Datenbank,
-  dbOrgaMon, Jvgnugettext,
+  dbOrgaMon,
   wanfix32, PersonSuche;
 
 {$R *.dfm}
@@ -169,8 +169,8 @@ procedure TFormTier.IB_Query1ConfirmDelete(Sender: TComponent;
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Tier') + #13 + FieldByName('NAME').AsString + #13 +
-      _('wirklich löschen'), true) then
+    if doit('Tier' + #13 + FieldByName('NAME').AsString + #13 +
+      'wirklich löschen', true) then
     begin
       // e_w_preDeleteTier
       Confirmed := true;

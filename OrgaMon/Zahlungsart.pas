@@ -52,7 +52,6 @@ type
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure Image2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
     procedure RefreshText;
@@ -68,7 +67,7 @@ implementation
 
 uses
   Funktionen_Beleg, anfix32, CareTakerClient,
-  ZahlungECconnect, Jvgnugettext, wanfix32;
+  ZahlungECconnect, wanfix32;
 
 {$R *.dfm}
 
@@ -93,11 +92,6 @@ end;
 procedure TFormZahlungsart.Image2Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Zahlungsart');
-end;
-
-procedure TFormZahlungsart.FormCreate(Sender: TObject);
-begin
-  TranslateComponent(self);
 end;
 
 procedure TFormZahlungsart.IB_Query1AfterPost(IB_Dataset: TIB_Dataset);

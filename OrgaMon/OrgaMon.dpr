@@ -5,7 +5,6 @@ program OrgaMon;
 
 
 uses
-  Jvgnugettext,
   Forms,
   Graphics,
   globals in 'globals.pas',

@@ -470,7 +470,7 @@ implementation
 uses
   Math, c7zip,
 
-  html, Geld, Jvgnugettext,
+  html, Geld,
   wanfix32,
   globals, dbOrgaMon,
   REST,
@@ -572,7 +572,7 @@ begin
   end
   else
   begin
-    ShowMessage(_('Nichts gefunden!'));
+    ShowMessage('Nichts gefunden!');
     Edit1.SetFocus;
   end;
   EndHourGlass;

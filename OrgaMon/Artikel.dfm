@@ -1139,6 +1139,10 @@ object FormArtikel: TFormArtikel
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Import/Export'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 6
         Top = 7
@@ -1337,6 +1341,10 @@ object FormArtikel: TFormArtikel
     object TabSheet3: TTabSheet
       Caption = 'Ausgabearten'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_Grid2: TIB_Grid
         Left = 3
         Top = 28
@@ -1450,6 +1458,10 @@ object FormArtikel: TFormArtikel
     object TabSheet4: TTabSheet
       Caption = 'Schalter'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object IB_CheckBox4: TIB_CheckBox
         Left = 7
         Top = 2
@@ -1848,6 +1860,10 @@ object FormArtikel: TFormArtikel
     object TabSheet7: TTabSheet
       Caption = 'Prorata'
       ImageIndex = 6
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 146
         Top = 13
@@ -1909,6 +1925,10 @@ object FormArtikel: TFormArtikel
     object TabSheet8: TTabSheet
       Caption = 'Transaktionen'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Edit4: TEdit
         Left = 29
         Top = 29
@@ -2338,7 +2358,7 @@ object FormArtikel: TFormArtikel
       'A18=BOOLEAN=Y,N'
       'A19=BOOLEAN=Y,N'
       'A01=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE=ANZ'
       'MENGE_KOMMISION=KOM'
@@ -2486,7 +2506,7 @@ object FormArtikel: TFormArtikel
     Top = 80
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT INTERN_INFO'
@@ -2504,7 +2524,7 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID,'
@@ -2521,7 +2541,7 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT MENGE_GELIEFERT,'
@@ -2534,7 +2554,7 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2547,7 +2567,7 @@ object FormArtikel: TFormArtikel
     Top = 176
   end
   object IB_Query9: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT * FROM'
@@ -2558,7 +2578,7 @@ object FormArtikel: TFormArtikel
     Top = 152
   end
   object IB_Query10: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT LAGER_R'
@@ -2576,7 +2596,7 @@ object FormArtikel: TFormArtikel
     Top = 152
   end
   object IB_Query11: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -2589,7 +2609,7 @@ object FormArtikel: TFormArtikel
     Top = 152
   end
   object IB_Query12: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT LAGER_R '
@@ -2603,7 +2623,7 @@ object FormArtikel: TFormArtikel
   object IB_Query13: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'ARTIKEL_R=FALSE'
       'RID=FALSE')
@@ -2683,7 +2703,7 @@ object FormArtikel: TFormArtikel
     Top = 216
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'MEDIUM_R=FALSE'
@@ -2719,7 +2739,7 @@ object FormArtikel: TFormArtikel
   object IB_Query3: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'ARTIKEL_R=FALSE'

@@ -1065,7 +1065,7 @@ object FormPersonSuche: TFormPersonSuche
   object IB_Query1: TIB_Query
     ColumnAttributes.Strings = (
       'WARTEZEIT=NODATE')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsAlignment.Strings = (
       'PERSON_R=LEFT'
       'TICKET_R=CENTER')

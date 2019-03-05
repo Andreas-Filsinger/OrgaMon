@@ -224,7 +224,6 @@ uses
   fpchelper,
 {$ELSE}
   System.UITypes,
-  Jvgnugettext,
   IB_Access,
 {$ENDIF}
   math,
@@ -5258,7 +5257,7 @@ var
         Sekunden := Integer(sKostenstellen.Objects[n]);
         DatensammlerLokal.Add('KOSTENSTELLE=' + sKostenstellen[n]);
         DatensammlerLokal.Add('SEKUNDEN=' + inttostr(Sekunden));
-        DatensammlerLokal.Add('ZEIT=' + _('Kostenstelle') + #160 + sKostenstellen[n] + #160#160#160 +
+        DatensammlerLokal.Add('ZEIT=' + 'Kostenstelle' + #160 + sKostenstellen[n] + #160#160#160 +
           secondstostr(Sekunden));
         Lohn := cPreisRundung((Sekunden * Stundensatz) / 3600.0);
         DatensammlerLokal.Add('LOHN=' + format('%m', [Lohn]));
@@ -5291,9 +5290,9 @@ var
       DatensammlerLokal.Add('load SUMME');
       DatensammlerLokal.Add('STUNDENSATZ=' + format('%m', [LetzterStundenSatz]));
       DatensammlerLokal.Add('SEKUNDEN=' + inttostr(Sekunden));
-      DatensammlerLokal.Add('ZEIT=' + _('voraussichtlich') + #160 + secondstostr(Sekunden));
+      DatensammlerLokal.Add('ZEIT=' + 'voraussichtlich' + #160 + secondstostr(Sekunden));
       LohnSumme := LohnSumme + Lohn;
-      DatensammlerLokal.Add('LOHN=' + _('voraussichtlich') + #160 + format('%m', [Lohn]));
+      DatensammlerLokal.Add('LOHN=' + 'voraussichtlich' + #160 + format('%m', [Lohn]));
 
     end;
     DatensammlerGlobal.Add('LOHNSUMME=' + format('%m', [LohnSumme]));
@@ -5503,7 +5502,7 @@ begin
     end;
 
     // Anschrift extrahieren!
-    DatensammlerGlobal.Add('Titel=' + _('Arbeitszeit'));
+    DatensammlerGlobal.Add('Titel=' + 'Arbeitszeit');
     DatensammlerGlobal.Add('MehrInfo=' + cOrgaMonCopyright);
     DatensammlerGlobal.Add('AktuellesDatum=' + DatumLocalized);
     DatensammlerGlobal.Add('AktuelleUhrzeit=' + Uhr);

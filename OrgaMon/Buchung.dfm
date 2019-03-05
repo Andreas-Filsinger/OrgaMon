@@ -1271,7 +1271,7 @@ object FormBuchung: TFormBuchung
       'FIXIERT=BOOLEAN=Y,N'
       'ERTRAG=BOOLEAN=Y,N'
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT'
       'BETRAG_SOLL=RIGHT'
@@ -1304,7 +1304,7 @@ object FormBuchung: TFormBuchung
     Top = 214
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayFormat.Strings = (
       'BETRAG=0.00 '#8364)
     FieldsDisplayLabel.Strings = (

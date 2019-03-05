@@ -1575,9 +1575,8 @@ uses
 {$ENDIF}
   math, Geld,
 {$IFDEF FPC}
-  gettext,
+
 {$ELSE}
-  Jvgnugettext,
   IB_Session,
 {$ENDIF}
   IdGlobal,
@@ -2138,7 +2137,6 @@ StartDebug('globals');
 IB_GetClientLibNameFunc := GetFBClientLibName;
 {$ENDIF}
 // i8n
-cNachFrage := _(cNachFrage);
 
 DebugMode := false;
 isBeta :=

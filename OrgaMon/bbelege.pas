@@ -240,9 +240,6 @@ var
 implementation
 
 uses
-  // Tools
-  Jvgnugettext,
-
   // Anfix
   anfix32, wanfix32,
   html, gplists, Geld,
@@ -852,8 +849,8 @@ var
   end;
 
 begin
-  if doit(_('Die Bestellung ist dem Lieferant schon bekannt?') + #13 +
-    _('Die unbestellen Mengen können somit in die erwarteten Mengen gebucht werden')) then
+  if doit('Die Bestellung ist dem Lieferant schon bekannt?' + #13 +
+    'Die unbestellen Mengen können somit in die erwarteten Mengen gebucht werden') then
   begin
     BerechneBeleg(false);
     AusgabeRechnung3_1(false);
@@ -929,7 +926,7 @@ begin
 
       // Teillieferung "0"
       if (SummeNeueLieferungen = 0) then
-        if not(doit(_('Die Bestellmenge ist Null!') + #13 + _('Trotzdem als weitere Teilbestellung verbuchen?'))) then
+        if not(doit('Die Bestellmenge ist Null!' + #13 + 'Trotzdem als weitere Teilbestellung verbuchen?')) then
           break;
 
       //
@@ -1197,7 +1194,7 @@ end;
 
 procedure TFormBBelege.FormCreate(Sender: TObject);
 begin
-  TranslateComponent(self);
+
   GridCol_Motivation := -1;
 
   ItemRIDs := TList.create;
@@ -1790,7 +1787,7 @@ procedure TFormBBelege.IB_Query1ConfirmDelete(Sender: TComponent; var Confirmed:
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Order') + #13 + '#' + FieldByName('RID').AsString + #13 + _('wirklich löschen')) then
+    if doit('Order' + #13 + '#' + FieldByName('RID').AsString + #13 + 'wirklich löschen') then
     begin
       BeginHourGlass;
       e_w_preDeleteBBeleg(FieldByName('RID').AsInteger);
@@ -1803,7 +1800,7 @@ procedure TFormBBelege.IB_Query2ConfirmDelete(Sender: TComponent; var Confirmed:
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Posten') + #13 + FieldByName('ARTIKEL').AsString + #13 + _('wirklich löschen')) then
+    if doit('Posten' + #13 + FieldByName('ARTIKEL').AsString + #13 + 'wirklich löschen') then
     begin
       BeginHourGlass;
       e_w_preDeleteBPosten(FieldByName('RID').AsInteger);
@@ -1910,7 +1907,7 @@ end;
 procedure TFormBBelege.SpeedButton12MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true) then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid2));
       IB_Query2.Close;

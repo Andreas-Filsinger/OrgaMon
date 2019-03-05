@@ -357,7 +357,7 @@ uses
   BBelege, ArtikelBackorder, CareTakerClient,
   QAbzeichnen, ArtikelContext, ArtikelPreis,
   Ereignis, Bearbeiter, OpenOfficePDF,
-  Jvgnugettext, Vertrag,
+  Vertrag,
   Kontext, ArtikelAAA, BelegSuche,
   DruckSpooler, BuchBarKasse, ArtikelAusgabeartAuswahl;
 
@@ -538,7 +538,7 @@ begin
       // Nachträgliche Textänderungen
       if FieldByName('MENGE_GELIEFERT').AsInteger > 0 then
         if FieldByName('ARTIKEL').IsModified then
-          if not(doit(_('Es wurde bereits geliefert!') + #13 + _('Sind Sie sicher das der Text geändert werden kann')))
+          if not(doit('Es wurde bereits geliefert!' + #13 + 'Sind Sie sicher das der Text geändert werden kann'))
           then
             FieldByName('ARTIKEL').Revert;
 
@@ -1610,7 +1610,7 @@ begin
   end
   else
   begin
-    ShowMessage(_('Nichts gefunden!'));
+    ShowMessage('Nichts gefunden!');
     Enabled := true;
     Edit1.SetFocus;
   end;
@@ -1922,7 +1922,7 @@ end;
 procedure TFormBelege.SpeedButton41Click(Sender: TObject);
 begin
   // Storno
-  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true) then
+  if doit('Beleg wirklich stornieren und Artikel wieder einlagern', true) then
   begin
     BeginHourGlass;
     e_w_BelegStorno(IB_Query1.FieldByName('RID').AsInteger);
@@ -1933,7 +1933,7 @@ end;
 
 procedure TFormBelege.SpeedButton4Click(Sender: TObject);
 begin
-  if doit(_('Den Inhalt des Einkaufswagen wirklich zurücklegen'), true) then
+  if doit('Den Inhalt des Einkaufswagen wirklich zurücklegen', true) then
     e_w_WarenkorbLeeren(PERSON_R);
 end;
 
@@ -1959,7 +1959,7 @@ var
 begin
 
   // nochmal Rückfragen
-  VerbuchenOK := doit(_('Darf die Rechnung abgeschlossen werden'));
+  VerbuchenOK := doit('Darf die Rechnung abgeschlossen werden');
   LabelOK := false;
 
   // verbuchen noch gewünscht?
@@ -1968,7 +1968,7 @@ begin
 
     VersenderName := e_r_sqls('select BEZEICHNUNG from VERSENDER where STANDARD=''' + cC_True + '''');
     if (VersenderName <> '') then
-      LabelOK := doit(_('Wollen Sie einen') + #13 + VersenderName + #13 + _('Datensatz schreiben'));
+      LabelOK := doit('Wollen Sie einen' + #13 + VersenderName + #13 + 'Datensatz schreiben');
 
     BeginHourGlass;
     OutFName := e_w_BelegBuchen(IB_Query1.FieldByName('RID').AsInteger, LabelOK);
@@ -2069,7 +2069,7 @@ begin
   else
   begin
 
-    VerbuchenOK := doit(_('Darf der Beleg ins Dokumentverzeichnis kopiert werden'));
+    VerbuchenOK := doit('Darf der Beleg ins Dokumentverzeichnis kopiert werden');
     if VerbuchenOK then
     begin
 
@@ -2079,8 +2079,8 @@ begin
         Arbeitszeiten.LoadFromFile(OutPath + cHTML_ArbeitszeitFName);
         ARBEITSZEIT_R := Arbeitszeiten.AsIntegerList('ARBEITSZEIT_R');
         if (ARBEITSZEIT_R.count > 0) then
-          ArbeitszeitOK := doit(_('Es gibt ' + inttostr(ARBEITSZEIT_R.count) + ' Arbeitszeiten!' + #13 +
-            'Dürfen diese als verbucht markiert werden'));
+          ArbeitszeitOK := doit('Es gibt ' + inttostr(ARBEITSZEIT_R.count) + ' Arbeitszeiten!' + #13 +
+            'Dürfen diese als verbucht markiert werden');
       end;
 
       BeginHourGlass;
@@ -2436,7 +2436,7 @@ begin
   Confirmed := false;
   with Sender as TIB_Dataset do
   begin
-    if doit(_('Posten') + #13 + FieldByName('ARTIKEL').AsString + #13 + _('wirklich löschen'), true) then
+    if doit('Posten' + #13 + FieldByName('ARTIKEL').AsString + #13 + 'wirklich löschen', true) then
     begin
       e_w_preDeletePosten(FieldByName('RID').AsInteger);
       Confirmed := true;
@@ -2456,11 +2456,11 @@ begin
 
     BELEG_R := TIB_Dataset(Sender).FieldByName('RID').AsInteger;
 
-    if not(doit(format(_('Beleg|#%d|wirklich löschen'), [BELEG_R]), true)) then
+    if not(doit(format('Beleg|#%d|wirklich löschen', [BELEG_R]), true)) then
       break;
 
     if not(e_r_BelegeAusgeglichen(BELEG_R)) then
-      if not(doit(_('Der Beleg ist nicht ausgeglichen!|' + 'Beleg dennoch löschen'), true)) then
+      if not(doit('Der Beleg ist nicht ausgeglichen!|' + 'Beleg dennoch löschen', true)) then
         break;
 
     e_w_preDeleteBeleg(BELEG_R);
@@ -2582,7 +2582,7 @@ begin
       sBBelege.add(nextp(sList[n], ';', 1));
     RemoveDuplicates(sBBelege);
     if (sBBelege.count > 1) then
-      ShowMessage(_('Warnung: Der Artikel wird in mehreren Ordern erwartet:') + #13 + HugeSingleLine(sBBelege, #13));
+      ShowMessage('Warnung: Der Artikel wird in mehreren Ordern erwartet:' + #13 + HugeSingleLine(sBBelege, #13));
     FormBBelege.SetContext(0, strtoint(nextp(sList[0], ';', 1)), strtoint(nextp(sList[0], ';', 0)));
   end;
   sBBelege.free;
@@ -2618,7 +2618,7 @@ begin
     BELEG_R := IB_Query1.FieldByName('RID').AsInteger;
     ImportL := TStringList.create;
     ImportL.LoadFromFile(OpenDialog1.FileName);
-    if doit(_('Soll(en) jetzt') + ' ' + inttostr(pred(ImportL.count)) + ' ' + _('Beleg(e) angelegt werden')) then
+    if doit('Soll(en) jetzt' + ' ' + inttostr(pred(ImportL.count)) + ' ' + 'Beleg(e) angelegt werden') then
       for n := 1 to pred(ImportL.count) do
         e_w_CopyBeleg(BELEG_R, strtointdef(nextp(ImportL[n], ';', 0), -1));
     ImportL.free;
@@ -2648,7 +2648,7 @@ end;
 procedure TFormBelege.SpeedButton12MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true) then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid2));
       IB_Query2.close;
@@ -2741,7 +2741,7 @@ end;
 procedure TFormBelege.SpeedButton17MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if (Button = mbRight) then
-    if doit(_('Wollen Sie die Spaltenbreiten wieder auf Standard setzen'), true) then
+    if doit('Wollen Sie die Spaltenbreiten wieder auf Standard setzen', true) then
     begin
       FileDelete(AnwenderPath + HeaderSettingsFName(IB_Grid1));
       IB_Query1.close;

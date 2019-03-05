@@ -173,8 +173,7 @@ function getSetting(Setting: string; RID: integer = 0): string;
 implementation
 
 uses
-  anfix32, globals, CareTakerClient,
-  Jvgnugettext, wanfix32;
+  anfix32, globals, CareTakerClient, wanfix32;
 
 {$R *.DFM}
 
@@ -634,7 +633,7 @@ begin
   result := not(bBilligung(Vorgang,RID));
   if result then
     ShowMessageTimeOut(
-     {} _('Dieser Vorgang kann nicht gebilligt werden!')+#13+
+     {} 'Dieser Vorgang kann nicht gebilligt werden!' + #13+
      {} #13+
      {} '"'+Vorgang+'"'
      );

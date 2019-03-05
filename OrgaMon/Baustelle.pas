@@ -455,7 +455,7 @@ var
 implementation
 
 uses
-  Jvgnugettext, wanfix32,
+  wanfix32,
   globals, math, clipbrd,
   SimplePassword, c7zip,
   dbOrgaMon,
@@ -550,7 +550,7 @@ procedure TFormBaustelle.IB_Query1ConfirmDelete(Sender: TComponent; var Confirme
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Baustelle') + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13 + _('wirklich löschen'), true) then
+    if doit('Baustelle' + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13 + 'wirklich löschen', true) then
     begin
       // e_w_preDeleteBaustelle(Fieldbyname('RID').AsInteger);
       Confirmed := true;

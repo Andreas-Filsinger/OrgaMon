@@ -657,8 +657,7 @@ uses
   // Tools
 {$IFNDEF fpc}
   System.UITypes,
-  Jvgnugettext,
-{$ELSE}
+  {$ELSE}
   graphics,
   fpchelper,
 {$ENDIF}
@@ -3019,7 +3018,7 @@ begin
       prepare;
     end;
 
-    DatensammlerGlobal.add('Titel=' + _('Kontoinformation K#') + ' ' + cPERSON.FieldByName('NUMMER').AsString);
+    DatensammlerGlobal.add('Titel=' + 'Kontoinformation K#' + ' ' + cPERSON.FieldByName('NUMMER').AsString);
     DatensammlerGlobal.add('Datum=' + long2dateLocalized(DateGet));
     DatensammlerGlobal.add('AktuellesDatum=' + DatumLocalized);
     DatensammlerGlobal.add('AktuelleUhrzeit=' + Uhr);
@@ -3266,9 +3265,9 @@ begin
                     // Abbuchung
                     if not(FieldByName('EREIGNIS_R').IsNull) then
                       if (FaelligSeit < cDTA_LastschriftVerzoegerung) then
-                        MoreText := MoreText + ' ' + _('(wird abgebucht)')
+                        MoreText := MoreText + ' ' + '(wird abgebucht)'
                       else
-                        MoreText := MoreText + ' ' + _('(Abbuchung ohne Erfolg)');
+                        MoreText := MoreText + ' ' + '(Abbuchung ohne Erfolg)';
 
                     // auch buchen?
                     if pVerbuchen then
@@ -3339,9 +3338,9 @@ begin
                     begin
 
                       if (FaelligSeit = 1) then
-                        MoreText := MoreText + ' ' + format(_('(seit einem Tag in Verzug)'), [FaelligSeit])
+                        MoreText := MoreText + ' ' + format('(seit einem Tag in Verzug)', [FaelligSeit])
                       else
-                        MoreText := MoreText + ' ' + format(_('(seit %d Tagen in Verzug)'), [FaelligSeit]);
+                        MoreText := MoreText + ' ' + format('(seit %d Tagen in Verzug)', [FaelligSeit]);
                       MaxTageVerzug := max(MaxTageVerzug, FaelligSeit);
                       BetragVerzug := BuchungsBetrag;
                       Summe_Verzug := Summe_Verzug + BuchungsBetrag;
@@ -3351,7 +3350,7 @@ begin
                     end
                     else
                     begin
-                      MoreText := MoreText + ' ' + _('(Mahnung ausgesetzt)');
+                      MoreText := MoreText + ' ' + '(Mahnung ausgesetzt)';
                     end;
 
                     // externer Rechnungsempfänger?
@@ -3360,9 +3359,9 @@ begin
                     then
                     begin
                       MoreText := MoreText + #13 + #13 +
-                        format(_('Rechnungsempfänger war %s.' + #13 +
+                        format('Rechnungsempfänger war %s.' + #13 +
                         'Bitte leiten Sie diese Information an den Rechnungsempfänger weiter. Wir weisen Sie ' +
-                        'darauf hin, daß bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.'),
+                        'darauf hin, daß bei fortdauernder Nichtzahlung, Sie als Auftraggeber letztendlich zur Zahlung verpflichtet sind.',
                         [e_r_Person(qBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').AsInteger)]);
                     end;
 
@@ -3371,11 +3370,11 @@ begin
                   begin
                     case FaelligSeit of
                       0:
-                        MoreText := MoreText + ' ' + _('(heute fällig)');
+                        MoreText := MoreText + ' ' + '(heute fällig)';
                       1:
-                        MoreText := MoreText + ' ' + _('(morgen fällig)');
+                        MoreText := MoreText + ' ' + '(morgen fällig)';
                     else
-                      MoreText := MoreText + ' ' + format(_('(in %d Tagen fällig)'), [-FaelligSeit]);
+                      MoreText := MoreText + ' ' + format('(in %d Tagen fällig)', [-FaelligSeit]);
                     end;
                   end;
                 end
@@ -3383,19 +3382,19 @@ begin
                 begin
                   case ForderungStatus of
                     cForderung_Lastschrift_Anstehend:
-                      MoreText := MoreText + ' ' + _('(wartet auf Abbuchung)');
+                      MoreText := MoreText + ' ' + '(wartet auf Abbuchung)';
                     cForderung_Lastschrift_Vorgemerkt:
-                      MoreText := MoreText + ' ' + _('(wird abgebucht)');
+                      MoreText := MoreText + ' ' + '(wird abgebucht)';
                     cForderung_Lastschrift_Erhalten:
-                      MoreText := MoreText + ' ' + _('(Bank versuchte den Einzug)');
+                      MoreText := MoreText + ' ' + '(Bank versuchte den Einzug)';
                   else
-                    MoreText := MoreText + ' ' + _('(Unbekannter Abbuchungsstatus)');
+                    MoreText := MoreText + ' ' + '(Unbekannter Abbuchungsstatus)';
                   end;
                 end;
               end
               else
               begin
-                MoreText := MoreText + ' ' + _('(ausgeglichen)');
+                MoreText := MoreText + ' ' + '(ausgeglichen)';
                 Summe_Ausgleich := Summe_Ausgleich + BuchungsBetrag;
               end;
 
@@ -3404,19 +3403,19 @@ begin
               begin
 
                 if not(FieldByName('MAHNUNG1').IsNull) then
-                  MoreText := MoreText + #13 + _('Mahnung 1 erhielten Sie am') + ' ' +
+                  MoreText := MoreText + #13 + 'Mahnung 1 erhielten Sie am' + ' ' +
                     long2dateLocalized(DateTime2Long(FieldByName('MAHNUNG1').AsDateTime));
 
                 if not(FieldByName('MAHNUNG2').IsNull) then
-                  MoreText := MoreText + #13 + _('Mahnung 2 erhielten Sie am') + ' ' +
+                  MoreText := MoreText + #13 + 'Mahnung 2 erhielten Sie am' + ' ' +
                     long2dateLocalized(DateTime2Long(FieldByName('MAHNUNG2').AsDateTime));
 
                 if not(FieldByName('MAHNUNG3').IsNull) then
-                  MoreText := MoreText + #13 + _('Mahnung 3 erhielten Sie am') + ' ' +
+                  MoreText := MoreText + #13 + 'Mahnung 3 erhielten Sie am' + ' ' +
                     long2dateLocalized(DateTime2Long(FieldByName('MAHNUNG3').AsDateTime));
 
                 if not(FieldByName('MAHNBESCHEID').IsNull) then
-                  MoreText := MoreText + #13 + _('Mahnbescheid beantragt am') + ' ' +
+                  MoreText := MoreText + #13 + 'Mahnbescheid beantragt am' + ' ' +
                     long2dateLocalized(DateTime2Long(FieldByName('MAHNBESCHEID').AsDateTime));
 
                 SaldoLautBeleg := FieldByName('RECHNUNGS_BETRAG').AsFloat - FieldByName('DAVON_BEZAHLT').AsFloat;
@@ -3456,7 +3455,7 @@ begin
                   if isSomeMoney(BerechneterZins) then
                   begin
                     if (iMahnstufeZinsEintritt = -1) then
-                      MoreText := MoreText + #13 + format(_('bei Verzugszinssatz von %.1f%% = %m'),
+                      MoreText := MoreText + #13 + format('bei Verzugszinssatz von %.1f%% = %m',
                         [VerzugszinsSatz, BerechneterZins]);
                     VerzugszinsGesamt := VerzugszinsGesamt + BerechneterZins;
                     DatensammlerLokal.add(format('Zins.Ausgewiesen=%m', [BerechneterZins]));
@@ -3470,13 +3469,13 @@ begin
 
               if not(MoreTextManuell) then
                 if (SaldoLautBeleg > 0) then
-                  MoreText := MoreText + #13 + _('Noch zu zahlen sind') + ' ' + format('%m', [SaldoLautBeleg])
+                  MoreText := MoreText + #13 + 'Noch zu zahlen sind' + ' ' + format('%m', [SaldoLautBeleg])
                 else
-                  MoreText := MoreText + #13 + _('Zuviel bezahlt sind') + ' ' + format('%m', [-SaldoLautBeleg]);
+                  MoreText := MoreText + #13 + 'Zuviel bezahlt sind' + ' ' + format('%m', [-SaldoLautBeleg]);
 
               if isSomeMoney(SaldoLautBeleg - SaldoLautKonto) then
               begin
-                MoreText := MoreText + #13 + _('ACHTUNG: Konto-Saldo ist') + ' ' + format('%m', [SaldoLautKonto]);
+                MoreText := MoreText + #13 + 'ACHTUNG: Konto-Saldo ist' + ' ' + format('%m', [SaldoLautKonto]);
                 if not(OneDifferenz) then
                   result.add('DIFFERENZ=' + cC_True);
                 OneDifferenz := true;
@@ -3484,7 +3483,7 @@ begin
 
               if NoBELEG_R then
                 if not(MoreTextManuell) then
-                  MoreText := MoreText + #13 + _('INFO: diese Zahlung konnte keinem Beleg zugeordnet werden!');
+                  MoreText := MoreText + #13 + 'INFO: diese Zahlung konnte keinem Beleg zugeordnet werden!';
 
               DatensammlerLokal.add('BelegFaellig=' + long2dateLocalized(DateTime2Long(FieldByName('VALUTA').AsDateTime)
                 ) + #13 + MoreText + _KontoTexte);
@@ -3501,7 +3500,7 @@ begin
 
               // der Betrag ist "0"
               DatensammlerLokal.add('BelegFaellig=' + long2dateLocalized(DateTime2Long(FieldByName('VALUTA').AsDateTime)
-                ) + #13 + _('(kostenfreie Nachlieferung)') + _KontoTexte);
+                ) + #13 + '(kostenfreie Nachlieferung)' + _KontoTexte);
               DatensammlerLokal.add('BelegBetrag=' + _BetragAsHTML(BuchungsBetrag));
 
               DatensammlerLokal.add('Betrag.Bezahlt=');
@@ -3527,8 +3526,8 @@ begin
             DatensammlerLokal.add('MREF=');
             DatensammlerLokal.add('Medium=');
             DatensammlerLokal.add('Motivation=');
-            DatensammlerLokal.add('LastschriftText=' + _('Ihre Zahlung'));
-            DatensammlerLokal.add('LastschriftTextNeu=' + _('Ihre Zahlung'));
+            DatensammlerLokal.add('LastschriftText=' + 'Ihre Zahlung');
+            DatensammlerLokal.add('LastschriftTextNeu=' + 'Ihre Zahlung');
             DatensammlerLokal.add('BelegDat=' + long2dateLocalized(DateTime2Long(FieldByName('DATUM').AsDateTime)));
             if MoreTextManuell then
             begin
@@ -3538,12 +3537,12 @@ begin
             begin
               if FieldByName('TEILLIEFERUNG').IsNull then
               begin
-                DatensammlerLokal.add('BelegFaellig=' + _('Ihre Zahlung zu den Rechnungen') + ' ' +
+                DatensammlerLokal.add('BelegFaellig=' + 'Ihre Zahlung zu den Rechnungen' + ' ' +
                   HugeSingleLine(e_r_RechnungsNummern(BELEG_R), ', '));
               end
               else
               begin
-                DatensammlerLokal.add('BelegFaellig=' + _('Ihre Zahlung zur Rechnung') + ' ' +
+                DatensammlerLokal.add('BelegFaellig=' + 'Ihre Zahlung zur Rechnung' + ' ' +
                   e_r_RechnungsNummer(BELEG_R, FieldByName('TEILLIEFERUNG').AsInteger));
               end;
             end;
@@ -3605,9 +3604,9 @@ begin
           DatensammlerLokal.add('BelegDat=');
           DatensammlerLokal.add('Medium=');
           DatensammlerLokal.add('Motivation=');
-          DatensammlerLokal.add('LastschriftText=' + _('Mahngebühr'));
-          DatensammlerLokal.add('LastschriftTextNeu=' + _('Mahngebühr'));
-          DatensammlerLokal.add('BelegFaellig=' + _('Mahngebühr'));
+          DatensammlerLokal.add('LastschriftText=' + 'Mahngebühr');
+          DatensammlerLokal.add('LastschriftTextNeu=' + 'Mahngebühr');
+          DatensammlerLokal.add('BelegFaellig=' + 'Mahngebühr');
           DatensammlerLokal.add('BelegBetrag=' + _BetragAsHTML(MahnGebuehr));
           DatensammlerLokal.add('Betrag.Bezahlt=');
           DatensammlerLokal.add('Betrag.Verzug=' + format('%m', [MahnGebuehr]));
@@ -3632,9 +3631,9 @@ begin
             DatensammlerLokal.add('BelegDat=');
             DatensammlerLokal.add('Medium=');
             DatensammlerLokal.add('Motivation=');
-            DatensammlerLokal.add('LastschriftText=' + _('Verzugszins'));
-            DatensammlerLokal.add('LastschriftTextNeu=' + _('Verzugszins'));
-            DatensammlerLokal.add('BelegFaellig=' + _('Verzugszins'));
+            DatensammlerLokal.add('LastschriftText=' + 'Verzugszins');
+            DatensammlerLokal.add('LastschriftTextNeu=' + 'Verzugszins');
+            DatensammlerLokal.add('BelegFaellig=' + 'Verzugszins');
             DatensammlerLokal.add('BelegBetrag=' + _BetragAsHTML(VerzugszinsGesamt));
             DatensammlerLokal.add('Betrag.Bezahlt=');
             DatensammlerLokal.add('Betrag.Verzug=' + format('%m', [VerzugszinsGesamt]));
@@ -3691,7 +3690,7 @@ begin
         if (MaxMahnstufe >= 2) then
           if FileExists(MyProgramPath + cHTMLTemplatesDir + 'Mahnung3.html') then
           begin
-            DatensammlerGlobal.add('Beleg Titel=' + _('3. Mahnung'));
+            DatensammlerGlobal.add('Beleg Titel=' + '3. Mahnung');
             MahnungsBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + 'Mahnung3.html');
             break;
           end;
@@ -3699,7 +3698,7 @@ begin
         if (MaxMahnstufe = 1) then
           if FileExists(MyProgramPath + cHTMLTemplatesDir + 'Mahnung2.html') then
           begin
-            DatensammlerGlobal.add('Beleg Titel=' + _('2. Mahnung'));
+            DatensammlerGlobal.add('Beleg Titel=' + '2. Mahnung');
             MahnungsBeleg.LoadFromFile(MyProgramPath + cHTMLTemplatesDir + 'Mahnung2.html');
             break;
           end;
@@ -3709,7 +3708,7 @@ begin
         else
           MahnungsBeleg.addFatalError('Vorlage .\Mahnung.html nicht gefunden!');
 
-        DatensammlerGlobal.add('Beleg Titel=' + _('Information über fällige Zahlungen'));
+        DatensammlerGlobal.add('Beleg Titel=' + 'Information über fällige Zahlungen');
 
       until yet;
 
@@ -4619,7 +4618,7 @@ begin
       Insert;
       FieldByName('RID').AsInteger := PERSON_R;
       FieldByName('NUMMER').AsInteger := NUMMER;
-      FieldByName('NACHNAME').AsString := _('Neuer Eintrag');
+      FieldByName('NACHNAME').AsString := 'Neuer Eintrag';
       FieldByName('PRIV_ANSCHRIFT_R').AsInteger := ANSCHRIFT_R;
       FieldByName('EINTRAG').AsDateTime := now;
       FieldByName('USER_SALT').AsString := FindANewPassword;
@@ -11148,7 +11147,7 @@ begin
       if (VerpackerMehrInfo <> '') then
         VerpackerMehrInfo := ' nach ' + VerpackerMehrInfo + '!';
 
-      DatensammlerGlobal.add('Titel=' + _('Beleg') + ' ' + inttostr(BELEG_R) + '-' +
+      DatensammlerGlobal.add('Titel=' + 'Beleg' + ' ' + inttostr(BELEG_R) + '-' +
         inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2));
       DatensammlerGlobal.add('R#=' + inttostr(BELEG_R));
       DatensammlerGlobal.add('R.G#=' + inttostr(BELEG_R) + '-' + inttostr(GENERATION));
@@ -11160,7 +11159,7 @@ begin
       DatensammlerGlobal.add('Ausgeber=' + e_r_BearbeiterKuerzel(sBearbeiter));
       DatensammlerGlobal.add('T#=' + inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2));
       DatensammlerGlobal.add('GNT#=' + inttostrN(GENERATION, 2));
-      DatensammlerGlobal.add('PL Beleg Titel=' + _('PACKLISTE NUMMER') + ' ' + inttostr(BELEG_R) + '-' +
+      DatensammlerGlobal.add('PL Beleg Titel=' + 'PACKLISTE NUMMER' + ' ' + inttostr(BELEG_R) + '-' +
         inttostrN(FieldByName('TEILLIEFERUNG').AsInteger, 2) + VerpackerMehrInfo);
       DatensammlerGlobal.add('Datum=' + long2dateLocalized(DateGet));
       DatensammlerGlobal.add('AktuellesDatum=' + DatumLocalized);
@@ -11367,15 +11366,15 @@ begin
 
         // storniert oder nicht mehr lieferbar
         if (_AnzStorniert > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzStorniert, EINHEIT_R, _(iNichtMehrLieferbarInfo));
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzStorniert, EINHEIT_R, iNichtMehrLieferbarInfo);
 
         // wurde bereits geliefert
         if (_AnzGeliefert > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzGeliefert, EINHEIT_R, _(iBereitsGeliefertInfo));
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzGeliefert, EINHEIT_R, iBereitsGeliefertInfo);
 
         // wird nachgeliefert
         if (_AnzNachlieferung > 0) then
-          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzNachlieferung, EINHEIT_R, _(iNachlieferungInfo));
+          _AddText := _AddText + #13 + e_r_MengenAusgabe(_AnzNachlieferung, EINHEIT_R, iNachlieferungInfo);
 
         // Artikel-Text
         _titel := FieldByName('ARTIKEL').AsString;
@@ -11516,20 +11515,20 @@ begin
 
     if AlsLieferschein then
     begin
-      DatensammlerGlobal.add('Beleg Titel=' + _('LIEFERSCHEIN NUMMER') + ' ' + inttostr(BELEG_R));
-      DatensammlerGlobal.add('Beleg_kurz=' + _('Lieferschein'));
+      DatensammlerGlobal.add('Beleg Titel=' + 'LIEFERSCHEIN NUMMER' + ' ' + inttostr(BELEG_R));
+      DatensammlerGlobal.add('Beleg_kurz=' + 'Lieferschein');
     end
     else
     begin
       if IsSoll(_EndSumme) then
       begin
-        DatensammlerGlobal.add('Beleg Titel=' + _('GUTSCHRIFT NUMMER') + ' ' + inttostr(BELEG_R));
-        DatensammlerGlobal.add('Beleg_kurz=' + _('Gutschrift'));
+        DatensammlerGlobal.add('Beleg Titel=' + 'GUTSCHRIFT NUMMER' + ' ' + inttostr(BELEG_R));
+        DatensammlerGlobal.add('Beleg_kurz=' + 'Gutschrift');
       end
       else
       begin
-        DatensammlerGlobal.add('Beleg Titel=' + _('RECHNUNG NUMMER') + ' ' + inttostr(BELEG_R));
-        DatensammlerGlobal.add('Beleg_kurz=' + _('Rechnung'));
+        DatensammlerGlobal.add('Beleg Titel=' + 'RECHNUNG NUMMER' + ' ' + inttostr(BELEG_R));
+        DatensammlerGlobal.add('Beleg_kurz=' + 'Rechnung');
       end;
     end;
     DatensammlerGlobal.add('ZS=' + UnbreakAble(format('%.2m', [_Netto])));
@@ -11580,7 +11579,7 @@ begin
     if not(cBELEG.FieldByName('RECHNUNGSANSCHRIFT_R').IsNull) then
     begin
       DatensammlerLokal.add('load PUNKTE');
-      DatensammlerLokal.add('PunkteText=' + _('Auftrag von') + ' ' + e_r_Person(cBELEG.FieldByName('PERSON_R')
+      DatensammlerLokal.add('PunkteText=' + 'Auftrag von' + ' ' + e_r_Person(cBELEG.FieldByName('PERSON_R')
         .AsInteger));
     end;
 
@@ -11588,7 +11587,7 @@ begin
       if not(cBELEG.FieldByName('LIEFERANSCHRIFT_R').IsNull) then
       begin
         DatensammlerLokal.add('load PUNKTE');
-        DatensammlerLokal.add('PunkteText=' + _('Lieferung an') + ' ' +
+        DatensammlerLokal.add('PunkteText=' + 'Lieferung an' + ' ' +
           e_r_Person(cBELEG.FieldByName('LIEFERANSCHRIFT_R').AsInteger));
       end;
 

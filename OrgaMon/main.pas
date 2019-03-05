@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -280,8 +280,8 @@ var
 implementation
 
 uses
-  IB_Controls, IB_Grid, Jvgnugettext,
-  dbOrgaMon, wanfix32,systemd,
+  IB_Controls, IB_Grid,
+  dbOrgaMon, wanfix32, systemd,
   Funktionen_Basis,
   Funktionen_Beleg,
   html, Person, Serie,
@@ -325,13 +325,6 @@ uses
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
-  TP_GlobalIgnoreClass(TIB_StringList);
-  TP_GlobalIgnoreClass(TFont);
-  TP_GlobalIgnoreClass(TIB_Edit);
-  TP_GlobalIgnoreClass(TIB_Text);
-  TP_GlobalIgnoreClass(TIB_ComboBox);
-
-  TranslateComponent(self); // tapplication
   caption := cAppName;
 
   Label1.caption := MachineID;
