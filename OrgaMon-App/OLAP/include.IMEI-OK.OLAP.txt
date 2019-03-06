@@ -1,0 +1,23 @@
+--
+-- erlaubte IMEI Nummern
+--
+
+select
+ VERLAGNO as IMEI
+from
+ ARTIKEL
+where
+ (VERLAGNO is not null) and
+ (VERLAGNO>100000000000000) and
+ ($KundeFeld='Y')
+
+store $db\IMEI-OK.csv 
+-
+ 
+excel
+
+IMEI=TEXT
+save as html
+open
+-
+  

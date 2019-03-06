@@ -1,0 +1,119 @@
+====================================
+* PROJEKT: aqbd
+* SOURCE DIR: ..\aqbd
+* HELP COPY: YES
+* PUBLIC: YES
+* UPDATE: abtest.c
+* UPDATE: index.php
+* UPDATE: mkver.sh
+* UPDATE: Rohstoffe\favicon.ico
+* UPDATE: aqbd.service
+* INFO: Der aqbanking Dämon (in C) für den HBCI-Rest Server (in PHP)
+====================================
+
+// INFO BEGIN
+<br>
+<b>Das Verbindungsglied zwischen OrgaMon und Bank</b><br>
+<br>
+* Ausführen von Lastschriften<br>
+* Abrufen der Umsätze<br>
+* Abrufen der Salden<br>
+* Mittels REST-Server einfach im Intenet abrufbar uns in Programme integrierbar<br>
+<br>
+// INFO END
+
+Dokumentation
+
+@<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+
+Rev 1.038 (05.03.19) Andreas Filsinger
+
+ Neu: Start-Script
+ Neu: systemd-Script
+ Neu: compile/test-Script
+
+Rev 1.037 (14.08.14) Andreas Filsinger
+
+ Neu: Lastschrift: Anpassungen an aqbanking 5.5
+
+Rev 1.036 (12.08.14) Andreas Filsinger
+
+ Neu: Umsatz: Mandatsreferenz, Gläubiger-ID und Ende zu Ende Referenz
+
+Rev 1.035 (04.08.14) Andreas Filsinger
+
+ Neu: SEPA - Lastschrift
+
+Rev 1.034 (04.10.10) Andreas Filsinger
+
+ Neu: Dämon: AB_ Initialisierung und Freigabe wieder bei jedem einzelnen Job
+ Neu: Dämon: Setzen des Namens des Ausführenden (Lastschrift) aus der "ini" Wert "userName"
+ Neu: ein Favicon ist nun Teil der Distribution
+ 
+ Info: PHP: ohne Änderung
+
+Rev 1.033 (28.09.10) Andreas Filsinger
+
+ Neu: Bei Lastschrift nun auch Verwendungszweck 5,6 und 7 möglich
+
+Rev 1.032 (02.09.10) Andreas Filsinger
+
+ Bug: 2. Job konnte nicht ausgeführt werden
+
+Rev 1.031 (01.09.10) Andreas Filsinger
+
+ Neu: Umstellung auf AqBanking 5.0.0
+
+Rev 1.030 (09.02.10) Andreas Filsinger
+
+ Neu: Umstellung auf AqBanking 4.2.4 "textKey" heisst jetzt "TransactionCode"
+
+Rev 1.029 (09.10.09) Andreas Filsinger
+
+ Bug: Eindeutigkeit der Jobnummern wurde fehlerhaft sichergestellt, dadurch konnten Ergebnisse
+      alter Jobs bei neuen Jobs sichtbar werden. Nun wird vor Vergabe der Jobnummer sichergestellt
+  dass diese Nummern zuvor noch nicht verwendet wurde.
+
+Rev 1.028 (31.07.09) Andreas Filsinger
+
+ Bug: Lastschrift: CSV: Spalten mit nur einem Zeichen Inhalt wurden nicht erkannt
+
+Rev 1.027 (31.07.09) Andreas Filsinger
+
+ - keine Info was gemacht wurde -
+
+Rev 1.026 (10.05.09) Andreas Filsinger
+
+ Bug: Eindeutigkeit der Jobnummern wurde nicht sichergestellt, dadurch konnten Ergebnisse
+      alter Jobs bei neuen Jobs sichtbar werden. Nun wird vor Vergabe der Jobnummer sichergestellt
+  dass diese Nummern zuvor noch nicht verwendet wurde.
+
+Rev 1.025 (26.02.09) Andreas Filsinger
+
+ Bug: falsche oder fehlende Zertifikate wurden nicht gemeldet
+
+Rev 1.024 (16.02.09) Andreas Filsinger
+
+ Bug: Lastschrift: Zeile 4 des Verwendungszwecks hatte nicht 
+      funktioniert.
+
+Rev 1.023 (13.02.09) Andreas Filsinger
+
+ Neu: Sammellastschrift ist nun 3 Schritt-Verfahren mit 
+      4 Minuten Wartezeit auf die (i)TAN.
+ Neu: Warten auf die TAN, andere Vorgehensweise	  
+
+Rev 1.022 (06.02.09) Andreas Filsinger
+
+ Neu: Anpassungen an kommende AqBanking 4.0
+
+Rev 1.021 (01.07.08) Christoph Thielecke
+
+ Neu: "-N": Ausgabe der vorgemerkten Überweisungen
+
+Rev 1.020 (27.06.08) Martin Schmidt
+
+ Bug: Jobs mit bereits angeforderter Tan werden bei Programmstart trotzdem bearbeitet
+ 
+ Neu: Zweistufiges Tan-Verfahren voll unterstützt
+ Neu: Erstmals veröffentlicht

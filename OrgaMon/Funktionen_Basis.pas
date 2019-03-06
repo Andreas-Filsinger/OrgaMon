@@ -167,7 +167,8 @@ uses
   ZCompatibility,
   ZDbcIntfs,
   ZSequence,
-  IB, IBServices, IBVersion,
+  // IBX
+  IB, IBVersion, IBServices,
 {$ELSE}
   JclFileUtils,
   FlexCel.Core,
@@ -1355,9 +1356,9 @@ var
       ServerName := iDataBaseHost;
 {$ifdef FPC}
     if (iDataBaseHost = '') then
-      Protocol := IB.local
+      Protocol := TProtocol.local
     else
-      Protocol := IB.TCP;
+      Protocol := TProtocol.TCP;
 {$else}
       if (iDataBaseHost = '') then
         Protocol := cpLocal

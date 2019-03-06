@@ -333,7 +333,7 @@ uses
   ArtikelBackorder, BestellArbeitsplatz, ArtikelKategorie,
   GUIhelp, WarenBewegung, CareTakerClient, ArtikelContext,
   ArtikelPreis, ArtikelPakete, OLAP,
-  Jvgnugettext, ArtikelSortiment, Main;
+  ArtikelSortiment, Main;
 
 {$R *.DFM}
 
@@ -861,7 +861,6 @@ end;
 
 procedure TFormArtikel.FormCreate(Sender: TObject);
 begin
-  TranslateComponent(self);
   PageControl1.ActivePage := TabSheet3;
   Query1_Sql := TStringList.create;
   Query1_Sql.AddStrings(IB_Query1.sql);

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -76,13 +76,6 @@ uses
   // system
   math, sysutils,
 
-{$IFNDEF CONSOLE}
-  {$ifdef fpc}
-  gettext,
-  {$else}
-  Jvgnugettext,
-  {$endif}
-{$ENDIF}
   // anfix
   gplists, anfix32, html,
   SimplePassword,
@@ -101,18 +94,11 @@ const
 function MachineID: string;
 begin
   if (_MachineID = '') then
-    _MachineID := UserName + '@' +
-{$IFDEF CONSOLE}
-      'de_DE' + '.' +
-{$ELSE}
-{$ifdef FPC}
-'de_DE' + '.' +
-
-{$else}
-GetCurrentLanguage  + '.' +
-{$endif}
-{$ENDIF}
-      ComputerName + '.' + MandantName;
+    _MachineID :=
+     {} UserName + '@' +
+     {} 'de_DE' + '.' +
+     {} ComputerName + '.' +
+     {} MandantName;
   result := _MachineID;
 end;
 
@@ -280,17 +266,17 @@ function cHelpURL: string;
 begin
   if (iWikiServer <> '') then
   begin
-    result := iWikiServer + 'index.php5/'
+    result := iWikiServer + '?title='
   end
   else
   begin
-    result := 'http://wiki.orgamon.org/index.php5/';
+    result := 'https://wiki.orgamon.org/?title=';
   end;
 end;
 
 function cTixURL: string;
 begin
-  result := iWikiServer2 + 'index.php5/';
+  result := iWikiServer2 + '?title=';
 end;
 
 function Int64asKeyStr(i: int64): AnsiString;

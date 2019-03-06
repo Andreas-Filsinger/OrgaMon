@@ -316,13 +316,10 @@ function DateTime2long(const dt: TDateTime): TAnfixDate; overload;
 function DateTime2long(date: TDateTimeBorlandPascal): TAnfixDate; overload;
 function DateTime2long(const dt: TDateTime; var ADate: TAnfixDate; var ASeconds: TAnfixTime): TAnfixDate; overload;
 function LastDayOfMonth(dlong: TAnfixDate): integer;
-function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate;
-// Datum des letzten Tages dieses Monats
-function MonthPeriod(dlong: TAnfixDate): TAnfixDate;
-// Aktuelles Datum + 1 Monat - 1 Tag
+function LastDateOfMonth(dlong: TAnfixDate): TAnfixDate; // Datum des letzten Tages dieses Monats
+function MonthPeriod(Start: TAnfixDate; InitialStart: TAnfixDate = cIllegalDate): TAnfixDate; // result := Start + 1 Monat - 1 Tag
 function DaysInYear(dlong: TAnfixDate): integer;
-function dateDiff(d1, d2: TAnfixDate): longint;
-{ d1<d2, computes the number of days between two dates }
+function dateDiff(d1, d2: TAnfixDate): longint; // d1<d2, computes the number of days between two dates
 function datePlus(dlong: TAnfixDate; plus: integer): TAnfixDate;
 function datePlusWorking(dlong: TAnfixDate; plus: integer): TAnfixDate;
 function WerktagDatePlus(StartD: TAnfixDate; plus: integer): TAnfixDate;
@@ -911,7 +908,7 @@ begin
   begin
 
     // Lösung : Das gleitenden Zeitfensters, Dokumentation siehe
-    // http://wiki.orgamon.org/index.php5/Entwickler#Datum
+    // https://wiki.orgamon.org/?title=Entwickler#Datum
 
     // Zeitfenster berechnen
     jStart := ActJahr - 75;
@@ -982,12 +979,12 @@ begin
   end;
 end;
 
-function DaysInYear(dlong: longint): integer;
+function DaysInYear(dlong: TAnfixDate): integer;
 var
-  bufdat: TDateTimeBorlandPascal;
+  j, m, T: integer;
 begin
-  long2datetimeBorlandPascal(dlong, bufdat);
-  if Schaltjahr(bufdat.Year) then
+  long2details(dlong, j, m, T);
+  if Schaltjahr(j) then
     result := 366
   else
     result := 365;
@@ -1001,22 +998,52 @@ begin
   result := Details2Long(j, m, LastDayOfMonth(dlong));
 end;
 
-function MonthPeriod(dlong: TAnfixDate): TAnfixDate;
+function MonthPeriod(Start: TAnfixDate; InitialStart: TAnfixDate = cIllegalDate): TAnfixDate;
+// Für monatliche Abrechnungen wird ein passender Zeitraum berechent:
+// MonthPeriod(01.01.,01.) = 31.01.
+// MonthPeriod(01.02.,01.) = 30.02.
+// MonthPeriod(30.01.,30.) = 27.02. | (28.02) = 29.03 | (30.03) - 29
+// Es werden 2 Prämissen beachtet:
+// 1) der 'folgende' Tag, sollte maximal aus dem nachfolgenden Monat sein
+// 2) der 'folgende' Tag, nach dem berechneten *sollte*
+//    wiederum der Tag des 'InitialStart' sein
 var
-  j, m, T: integer;
+  j, m, T, d: integer;
+  d1, d2: TAnfixDate;
 begin
-  long2details(dlong, j, m, T);
-  result := datePlus(LastDateOfMonth(dlong), pred(T));
+  long2details(Start, j, m, T);
+  if DateOK(InitialStart) then
+    d := extractDay(InitialStart)
+  else
+    d := T;
+  if (d=1) then
+  begin
+   // Beginn am Monats Ersten ist einfach!
+   result := LastDateOfMonth(Start);
+   exit;
+  end;
+  // versuche d-1.m+1.j wobei es NICHT der letzte Tag des Monats sein darf
+  inc(m);
+  if (m>12) then
+  begin
+    inc(j);
+    m := 1;
+  end;
+  // theoretisch optimales Datum, jedoch u.U. zu weit in der Zukunft
+  d2 := Details2Long(j, m, d-1);
+  // reales Datum welches das folgende Datum im selben Monat lässt!
+  d1 := DatePlus(LastDateOfMonth(d2), -1);
+  result := min(d1, d2);
 end;
 
 function LastDayOfMonth(dlong: TAnfixDate): integer;
 var
-  bufdat: TDateTimeBorlandPascal;
+  j, m, T: integer;
 begin
-  long2datetimeBorlandPascal(dlong, bufdat);
-  case bufdat.Month of
+  long2details(dlong, j, m, T);
+  case m of
     2:
-      if Schaltjahr(bufdat.Year) then
+      if Schaltjahr(j) then
         result := 29
       else
         result := 28;
@@ -1046,7 +1073,7 @@ var
 label raus;
 begin
   ok := false;
-  if dlong = 0 then
+  if (dlong = cIllegalDate) then
     goto raus;
 
   long2datetimeBorlandPascal(dlong, bufdat);
@@ -1310,14 +1337,14 @@ function WeekDay(ADate: TAnfixDate): byte; // 1= Montag, 7=Sonntag
 begin
   result := pred(DayOfWeek(long2datetime(ADate)));
   if (result = 0) then
-    result := 7;
+    result := cDATE_SONNTAG;
 end;
 
 function WeekDay(ADate: TDateTime): byte; // 1= Montag, 7=Sonntag
 begin
   result := pred(DayOfWeek(ADate));
   if (result = 0) then
-    result := 7;
+    result := cDATE_SONNTAG;
 end;
 
 function WeekDayS(ADate: TAnfixDate): string;

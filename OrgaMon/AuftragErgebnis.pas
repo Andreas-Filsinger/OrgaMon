@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -1946,15 +1946,18 @@ begin
                   end;
                   PDF.Free;
                 end;
+                continue;
               end;
 
-              if (pos('(RID=', Oc_Bericht[n]) > 0) then
-              begin
-                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
-                if (FailL.indexof(FAIL_R) = -1) then
-                  FailL.add(FAIL_R);
-                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
-              end;
+              if (pos(cWARNINGText, Oc_Bericht[n])=0) then
+                if (pos('(RID=', Oc_Bericht[n]) > 0) then
+                begin
+                  FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                  if (FailL.indexof(FAIL_R) = -1) then
+                    FailL.add(FAIL_R);
+                  Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+                 continue;
+                end;
               application.processmessages;
             end;
           end;

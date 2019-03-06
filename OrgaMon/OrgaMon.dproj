@@ -109,7 +109,7 @@
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_UnitSearchPath>..\ccr-exif;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>OrgaMon_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>nosplash</Debugger_RunParams>
+        <Debugger_RunParams>nosplash -ds</Debugger_RunParams>
         <VerInfo_Keys>CompanyName=OrgaMon.org;FileDescription=Software für Unternehmen;FileVersion=8.2.0.1365;InternalName=OrgaMon;LegalCopyright=GNU GPL 3;LegalTrademarks=;OriginalFilename=OrgaMon.exe;ProductName=OrgaMon;ProductVersion=8.2.0;Comments=Software für Unternehmen</VerInfo_Keys>
     </PropertyGroup>
     <ProjectExtensions>
@@ -638,10 +638,6 @@
         <DCCReference Include="Funktionen_LokaleDaten.pas"/>
         <DCCReference Include="..\..\IBO5\source\core\IB_Components.pas"/>
         <DCCReference Include="..\..\IBO5\source\access\IB_Access.pas"/>
-        <DCCReference Include="Cron.pas">
-            <Form>FormCron</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\PASconTools\dbOrgaMon.pas"/>
         <DCCReference Include="..\PASconTools\memcache.pas"/>
         <DCCReference Include="..\PASvisTools\GUIhelp.pas">

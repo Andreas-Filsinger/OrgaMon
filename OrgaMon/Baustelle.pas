@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -43,14 +43,14 @@ uses
   IB_UpdateBar, IB_NavigationBar, IB_SearchBar,
   IB_Components, IB_Process, IB_DataScan,
   IB_Session, IB_Export, IB_Import,
-  IB_Access, IB_Grid, IB_Controls,
+  IB_Access, IB_Grid, IB_Controls, IB_EditButton,
 
-  //
+  // Indy
   IdComponent,
 
   // anfix
   WordIndex, anfix32,
-  Sperre, JvExControls, JvArrayButton, IB_EditButton;
+  Sperre;
 
 type
   TFormBaustelle = class(TForm)
@@ -133,21 +133,16 @@ type
     TabSheet9: TTabSheet;
     CheckBox16: TCheckBox;
     IB_Query6: TIB_Query;
-    Label6: TLabel;
-    Label7: TLabel;
     Label5: TLabel;
     Label18: TLabel;
     Label27: TLabel;
     Label28: TLabel;
-    IB_Date1: TIB_Date;
-    IB_Date2: TIB_Date;
     IB_Edit3: TIB_Edit;
     IB_Edit4: TIB_Edit;
     IB_Edit7: TIB_Edit;
     IB_Edit8: TIB_Edit;
     Label16: TLabel;
     IB_Memo3: TIB_Memo;
-    Button16: TButton;
     IB_Memo5: TIB_Memo;
     IB_Edit9: TIB_Edit;
     Label29: TLabel;
@@ -170,7 +165,6 @@ type
     Label35: TLabel;
     IB_Memo6: TIB_Memo;
     Label36: TLabel;
-    Button15: TButton;
     CheckBox23: TCheckBox;
     CheckBox24: TCheckBox;
     SpeedButton15: TSpeedButton;
@@ -318,6 +312,12 @@ type
     SpeedButton18: TSpeedButton;
     Label64: TLabel;
     SpeedButton19: TSpeedButton;
+    Label6: TLabel;
+    Label7: TLabel;
+    IB_Date1: TIB_Date;
+    IB_Date2: TIB_Date;
+    Button44: TButton;
+    SpeedButton27: TSpeedButton;
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button33Click(Sender: TObject);
     procedure Button32Click(Sender: TObject);
@@ -347,7 +347,6 @@ type
     procedure IB_Edit7SetEditText(Sender: TObject; var AString: string);
     procedure IB_Edit7GetEditText(Sender: TObject; var AString: string);
     procedure IB_Edit7IsValidChar(Sender: TObject; var AChar: Char; var IsValid: Boolean);
-    procedure Button16Click(Sender: TObject);
     procedure Button14Click(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
@@ -357,7 +356,6 @@ type
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);
     procedure IB_Edit3Change(Sender: TObject);
     procedure IB_Edit4Change(Sender: TObject);
-    procedure Button15Click(Sender: TObject);
     procedure Button22Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure SpeedButton15Click(Sender: TObject);
@@ -409,6 +407,8 @@ type
     procedure SpeedButton17Click(Sender: TObject);
     procedure SpeedButton18Click(Sender: TObject);
     procedure SpeedButton19Click(Sender: TObject);
+    procedure Button44Click(Sender: TObject);
+    procedure SpeedButton27Click(Sender: TObject);
   private
 
     { Private-Deklarationen }
@@ -455,7 +455,7 @@ var
 implementation
 
 uses
-  Jvgnugettext, wanfix32,
+  wanfix32,
   globals, math, clipbrd,
   SimplePassword, c7zip,
   dbOrgaMon,
@@ -550,7 +550,7 @@ procedure TFormBaustelle.IB_Query1ConfirmDelete(Sender: TComponent; var Confirme
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Baustelle') + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13 + _('wirklich löschen'), true) then
+    if doit('Baustelle' + #13 + FieldByName('NUMMERN_PREFIX').AsString + #13 + 'wirklich löschen', true) then
     begin
       // e_w_preDeleteBaustelle(Fieldbyname('RID').AsInteger);
       Confirmed := true;
@@ -1933,6 +1933,84 @@ begin
   FormOfficialHolidays.ShowModal;
 end;
 
+procedure TFormBaustelle.Button44Click(Sender: TObject);
+var
+  BAUSTELLE_R: Integer;
+  AUFWAND: TAnfixTime;
+
+  CustomAUFWAND: TAnfixTime;
+  _CustomAUFWAND: string;
+  ART: string;
+  AufwandFaktor: double;
+  dAUFTRAG: TIB_DSQL;
+  n, k: Integer;
+begin
+  BeginHourGlass;
+
+  // Standard Aufwand setzen
+  if (IB_Query1.State = dssEdit) then
+    IB_Query1.post;
+  InvalidateCache_Baustelle;
+  BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
+  AUFWAND := e_r_EinzelAufwand(BAUSTELLE_R);
+  dAUFTRAG := DataModuleDatenbank.nDSQL;
+  with dAUFTRAG do
+  begin
+    sql.Add('update AUFTRAG set');
+    sql.Add(' AUFWAND=' + inttostr(AUFWAND));
+    sql.Add('where');
+    sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
+    sql.Add(' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ') and');
+    sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) and');
+    sql.Add(' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND IS NULL))');
+    execute;
+  end;
+  dAUFTRAG.free;
+
+  // Alle anderen AUFWAND setzen
+  with IB_Memo6.Lines do
+    for n := 0 to pred(count) do
+    begin
+      k := pos('=', strings[n]);
+      if (k > 0) and (k < 5) then
+      begin
+        ART := nextp(strings[n], '=', 0);
+        _CustomAUFWAND := nextp(strings[n], '=', 1);
+        if _CustomAUFWAND <> '' then
+        begin
+          if (pos('%', _CustomAUFWAND) > 0) then
+          begin
+            // Setzen via Prozentwert
+            _CustomAUFWAND := StrFilter(_CustomAUFWAND, '0123456789.,');
+            AufwandFaktor := strtodoubledef(_CustomAUFWAND, 0) / 100.0;
+            CustomAUFWAND := round(AufwandFaktor * AUFWAND);
+          end
+          else
+          begin
+            // Setzen via Fixe Zeit
+            CustomAUFWAND := StrToSeconds(_CustomAUFWAND);
+          end;
+
+          dAUFTRAG := DataModuleDatenbank.nDSQL;
+          with dAUFTRAG do
+          begin
+            sql.Add('update AUFTRAG set');
+            sql.Add(' AUFWAND=' + inttostr(CustomAUFWAND));
+            sql.Add('where');
+            sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND');
+            sql.Add(' (ART=''' + ART + ''') AND');
+            sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') OR (AUFWAND_SCHUTZ IS NULL))AND');
+            sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND IS NULL))');
+            execute;
+          end;
+          dAUFTRAG.free;
+        end;
+      end;
+    end;
+  EndHourGlass;
+end;
+
+
 procedure TFormBaustelle.Button4Click(Sender: TObject);
 var
   AllOrte: TSearchStringList;
@@ -2108,11 +2186,10 @@ end;
 
 procedure TFormBaustelle.Edit10KeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then
+  if (Key = #13) then
   begin
     Edit10.text := '';
     application.processmessages;
-
   end;
 end;
 
@@ -2144,7 +2221,6 @@ begin
 
     // Daten löschen, die auf unsere Master-Rids referenzieren
     // VerwaisteHistorischeDatensaetzeLoeschen;
-
     e_w_BaustelleLoeschen(BAUSTELLE_R);
     EndHourGlass;
   end;
@@ -2491,82 +2567,6 @@ procedure TFormBaustelle.IB_Edit7IsValidChar(Sender: TObject; var AChar: Char; v
 begin
   if AChar = ':' then
     IsValid := true;
-end;
-
-procedure TFormBaustelle.Button16Click(Sender: TObject);
-var
-  BAUSTELLE_R: Integer;
-  AUFWAND: TAnfixTime;
-
-  CustomAUFWAND: TAnfixTime;
-  _CustomAUFWAND: string;
-  ART: string;
-  AufwandFaktor: double;
-  dAUFTRAG: TIB_DSQL;
-  n, k: Integer;
-begin
-  BeginHourGlass;
-
-  // Standard AUfwand setzen
-  if (IB_Query1.State = dssEdit) then
-    IB_Query1.post;
-  InvalidateCache_Baustelle;
-  BAUSTELLE_R := IB_Query1.FieldByName('RID').AsInteger;
-  AUFWAND := e_r_EinzelAufwand(BAUSTELLE_R);
-  dAUFTRAG := DataModuleDatenbank.nDSQL;
-  with dAUFTRAG do
-  begin
-    sql.Add('update AUFTRAG set');
-    sql.Add(' AUFWAND=' + inttostr(AUFWAND));
-    sql.Add('where');
-    sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND');
-    sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') or (AUFWAND_SCHUTZ IS NULL)) AND');
-    sql.Add(' ((AUFWAND<>' + inttostr(AUFWAND) + ') OR (AUFWAND IS NULL))');
-    execute;
-  end;
-  dAUFTRAG.free;
-
-  // Alle anderen AUFWAND setzen
-  with IB_Memo6.Lines do
-    for n := 0 to pred(count) do
-    begin
-      k := pos('=', strings[n]);
-      if (k > 0) and (k < 5) then
-      begin
-        ART := nextp(strings[n], '=', 0);
-        _CustomAUFWAND := nextp(strings[n], '=', 1);
-        if _CustomAUFWAND <> '' then
-        begin
-          if (pos('%', _CustomAUFWAND) > 0) then
-          begin
-            // Setzen via Prozentwert
-            _CustomAUFWAND := StrFilter(_CustomAUFWAND, '0123456789.,');
-            AufwandFaktor := strtodoubledef(_CustomAUFWAND, 0) / 100.0;
-            CustomAUFWAND := round(AufwandFaktor * AUFWAND);
-          end
-          else
-          begin
-            // Setzen via Fixe Zeit
-            CustomAUFWAND := StrToSeconds(_CustomAUFWAND);
-          end;
-
-          dAUFTRAG := DataModuleDatenbank.nDSQL;
-          with dAUFTRAG do
-          begin
-            sql.Add('update AUFTRAG set');
-            sql.Add(' AUFWAND=' + inttostr(CustomAUFWAND));
-            sql.Add('where');
-            sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') AND');
-            sql.Add(' (ART=''' + ART + ''') AND');
-            sql.Add(' ((AUFWAND_SCHUTZ<>''Y'') OR (AUFWAND_SCHUTZ IS NULL))AND');
-            sql.Add(' ((AUFWAND<>' + inttostr(CustomAUFWAND) + ') OR (AUFWAND IS NULL))');
-            execute;
-          end;
-          dAUFTRAG.free;
-        end;
-      end;
-    end;
-  EndHourGlass;
 end;
 
 procedure TFormBaustelle.Button14Click(Sender: TObject);
@@ -3109,7 +3109,6 @@ begin
   EnsureEntry(cE_FTPVerzeichnis, IB_Memo5.Lines);
   EnsureEntry(cE_VERZEICHNIS, IB_Memo5.Lines);
   EnsureEntry(cE_ZIPPASSWORD, IB_Memo5.Lines);
-  EnsureEntry(cE_XLSVorlage, IB_Memo5.Lines);
   EnsureEntry(cE_FreieZaehler, IB_Memo5.Lines);
   EnsureEntry(cE_FreieZaehler_ErhalteBlanks, IB_Memo5.Lines);
   EnsureEntry(cE_SAPReihenfolge, IB_Memo5.Lines);
@@ -3246,37 +3245,6 @@ end;
 procedure TFormBaustelle.IB_Edit4Change(Sender: TObject);
 begin
   ReflectArbeitszeitInfo;
-end;
-
-procedure TFormBaustelle.Button15Click(Sender: TObject);
-var
-  cAUFTRAEGE: TIB_Cursor;
-  ARTEN: TStringList;
-  Settings: TSearchStringList;
-begin
-  BeginHourGlass;
-  Settings := TSearchStringList.create;
-  ARTEN := TStringList.create;
-  cAUFTRAEGE := DataModuleDatenbank.nCursor;
-  with cAUFTRAEGE do
-  begin
-    sql.Add('select distinct ART from AUFTRAG where');
-    sql.Add(' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ') AND');
-    sql.Add(' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ')');
-    APiFirst;
-    while not(eof) do
-    begin
-      ARTEN.Add(FieldByName('ART').AsString);
-      ApiNext;
-    end;
-  end;
-  cAUFTRAEGE.free;
-  Settings.assign(IB_Memo6.Lines);
-  if Settings.EnsureValues(ARTEN) then
-    IB_Memo6.Lines.assign(Settings);
-  Settings.free;
-  ARTEN.free;
-  EndHourGlass;
 end;
 
 procedure TFormBaustelle.Button22Click(Sender: TObject);
@@ -3618,6 +3586,37 @@ begin
     refreshall;
     locate('RID', BAUSTELLE_R, []);
   end;
+end;
+
+procedure TFormBaustelle.SpeedButton27Click(Sender: TObject);
+var
+  cAUFTRAEGE: TIB_Cursor;
+  ARTEN: TStringList;
+  Settings: TSearchStringList;
+begin
+  BeginHourGlass;
+  Settings := TSearchStringList.create;
+  ARTEN := TStringList.create;
+  cAUFTRAEGE := DataModuleDatenbank.nCursor;
+  with cAUFTRAEGE do
+  begin
+    sql.Add('select distinct ART from AUFTRAG where');
+    sql.Add(' (BAUSTELLE_R=' + IB_Query1.FieldByName('RID').AsString + ') AND');
+    sql.Add(' (STATUS<>' + inttostr(ord(ctsHistorisch)) + ')');
+    APiFirst;
+    while not(eof) do
+    begin
+      ARTEN.Add(FieldByName('ART').AsString);
+      ApiNext;
+    end;
+  end;
+  cAUFTRAEGE.free;
+  Settings.assign(IB_Memo6.Lines);
+  if Settings.EnsureValues(ARTEN) then
+    IB_Memo6.Lines.assign(Settings);
+  Settings.free;
+  ARTEN.free;
+  EndHourGlass;
 end;
 
 procedure TFormBaustelle.SpeedButton2Click(Sender: TObject);

@@ -13,13 +13,12 @@ object FormZahlungsart: TFormZahlungsart
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 16
     Top = 182
-    Width = 163
+    Width = 162
     Height = 13
     Caption = 'Text auf dem Zahlungsbeleg'
   end
@@ -285,7 +284,7 @@ object FormZahlungsart: TFormZahlungsart
       'STANDARD=BOOLEAN=Y,N'
       'AUTOZAHLUNG=BOOLEAN=Y,N'
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'BELEG_INFO=FALSE'

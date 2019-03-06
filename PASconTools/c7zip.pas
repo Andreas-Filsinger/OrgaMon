@@ -140,7 +140,11 @@ begin
        if (pos(RootPath,sFiles[n])=1) then
         sFiles[n] := copy(sFiles[n],length(RootPath)+1,MaxInt);
     end;
+    {$ifdef fpc}
+    sFiles.SaveToFile(FName+'.txt');
+    {$else}
     sFiles.SaveToFile(FName+'.txt', TEncoding.UTF8);
+    {$endif}
 
     WorkWithFileList := true;
   end else

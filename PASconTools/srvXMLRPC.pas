@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2018  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@ uses
 
 const
   cXML_NameSpaceDelimiter = '.';
-  cErrorFName = 'XML-RPC-ERROR.log';
 
 type
   TXMLRPC_Method = function(sParameter: TStringList): TStringList of object;
@@ -97,7 +96,6 @@ type
     mMethodAddr: TMethodList;
     sCloseTagEvents: TStringList;
     callSection: TCriticalSection;
-    function LogFName: string;
     procedure XMLRPC_get(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo;
       AResponseInfo: TIdHTTPResponseInfo);
 
@@ -236,7 +234,7 @@ const
   cXML_SimpleType_MetaString = $00000008;
 
 const
-  gDiagnosePath: string = '';
+  gDiagnoseFName: string = '';
 
 procedure TMethodList.Add(aMethod: TXMLRPC_Method);
 var
@@ -399,7 +397,15 @@ begin
       addobject('methodCall.params.param.value.int', oInteger);
       addobject('methodCall.params.param.value.boolean', oBoolean);
     end;
-    gDiagnosePath := DiagnosePath;
+    if DebugMode then
+     if DiagnosePath = '' then
+       DiagnosePath := 'C:\';
+    if (LogContext<>'') then
+     LogContext := '-' + LogContext;
+    if (DiagnosePath='') then
+      gDiagnoseFName := ''
+    else
+      gDiagnoseFName := DiagnosePath + 'XMLRPC' + LogContext + '.log';
   end;
 
   if (sMethodNames.IndexOf(Name) <> -1) then
@@ -439,11 +445,6 @@ begin
     result := nil;
 end;
 
-function TXMLRPC_Server.LogFName: string;
-begin
-  result := DiagnosePath + 'XML-RPC-' + LogContext + '.log';
-end;
-
 function TXMLRPC_Server.good_xml(OutParam: TStringList): string;
 begin
   result := cXML_Response;
@@ -455,8 +456,8 @@ end;
 
 procedure Log(s: string);
 begin
-  if (gDiagnosePath <> '') then
-    AppendStringsToFile(s, gDiagnosePath + cErrorFName);
+  if (gDiagnoseFName<>'') then
+    AppendStringsToFile(s, gDiagnoseFName);
 end;
 
 class function TXMLRPC_Server.oBoolean: TObject;
@@ -522,7 +523,7 @@ var
   var
     ErrorMsg: TStringList;
   begin
-    if (DiagnosePath <> '') then
+    if (gDiagnoseFName <> '') then
     begin
       ErrorMsg := TStringList.Create;
       ErrorMsg.Add(cERRORText + ' XML-RPC: { Exception ');
@@ -531,7 +532,7 @@ var
       ErrorMsg.AddStrings(xml);
       ErrorMsg.Add(') :');
       ErrorMsg.Add(s + '}');
-      AppendStringsToFile(ErrorMsg, DiagnosePath + cErrorFName);
+      AppendStringsToFile(ErrorMsg, gDiagnoseFName);
       ErrorMsg.free;
     end;
     inc(ErrorCount);
@@ -840,21 +841,13 @@ begin
 
     // Log Request
     if DebugMode then
-    begin
-      if DiagnosePath = '' then
-        DiagnosePath := 'C:\';
-      AppendStringsToFile(Request, LogFName, 'Request');
-    end;
+      AppendStringsToFile(Request, gDiagnoseFName, 'Request');
 
     // parse Input
     inParam := parse(Request);
 
     if DebugMode then
-    begin
-      if DiagnosePath = '' then
-        DiagnosePath := 'C:\';
-      AppendStringsToFile(inParam, LogFName, 'inParam');
-    end;
+      AppendStringsToFile(inParam, gDiagnoseFName, 'inParam');
 
     // extract the method-Name
     n := inParam.IndexOfObject(oMethodName);
@@ -898,7 +891,7 @@ begin
           { } ':' +
           { } IntToStr(RDTSCms - StartTime) +
           { } 'ms',
-          { } LogFName);
+          { } gDiagnoseFName);
 
       end
       else
@@ -919,14 +912,14 @@ begin
         WasError := true;
 
         // Log ERROR
-        if (DiagnosePath <> '') then
+        if (gDiagnoseFName <> '') then
         begin
           ErrorMsg := TStringList.Create;
           ErrorMsg.Add(cERRORText + ' XML-RPC: { Exception ');
           ErrorMsg.Add(DatumLog + ' ' + Uhr8);
           ErrorMsg.Add(Name + '(' + HugeSingleLine(inParam, ',') + ') :');
           ErrorMsg.Add(e.message + '}');
-          AppendStringsToFile(ErrorMsg, DiagnosePath + cErrorFName);
+          AppendStringsToFile(ErrorMsg, gDiagnoseFName);
           ErrorMsg.free;
         end;
 
@@ -974,7 +967,7 @@ begin
   until yet;
 
   if DebugMode then
-    AppendStringsToFile(AResponseInfo.ContentText, LogFName, 'Response');
+    AppendStringsToFile(AResponseInfo.ContentText, gDiagnoseFName, 'Response');
 
   inParam.free;
 end;

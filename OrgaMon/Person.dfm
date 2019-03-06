@@ -2782,10 +2782,6 @@ object FormPerson: TFormPerson
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0
@@ -3129,7 +3125,7 @@ object FormPerson: TFormPerson
       'NETTO=BOOLEAN=Y,N'
       'NETTO_WIE_BRUTTO=BOOLEAN=Y,N'
       'WEBSHOP_RABATT=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayFormat.Strings = (
       'Z_ELV_FREIGABE=0.00')
     FieldsVisible.Strings = (
@@ -3274,7 +3270,7 @@ object FormPerson: TFormPerson
       'RID=NOTREQUIRED'
       'LAND_TEXT=NOTREQUIRED'
       'NAME_OBEN=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'LAND_R=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3312,7 +3308,7 @@ object FormPerson: TFormPerson
     Top = 396
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -3340,7 +3336,7 @@ object FormPerson: TFormPerson
   object IB_Query5: TIB_Query
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE'
       'PERSON_R=FALSE')
@@ -3373,7 +3369,7 @@ object FormPerson: TFormPerson
     Top = 136
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'select Code from'

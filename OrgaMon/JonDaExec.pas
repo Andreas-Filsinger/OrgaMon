@@ -4106,7 +4106,7 @@ begin
   // LOGs-verkleinern
   LogReduce('FotoService.log.txt', 4 * 1024 * 1024 );
   LogReduce('JonDaServer.log', 3 * 1024 * 1024 );
-  LogReduce('FotoService-Transaktionen.log.txt', 2 * 1024 * 1024);
+  LogReduce('FotoService-Transaktionen.log.txt', 3 * 1024 * 1024);
 
   // alte LOG-Wegsichern
   sDir := TStringList.create;

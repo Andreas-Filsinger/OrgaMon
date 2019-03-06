@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -257,7 +257,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure DrawGrid2KeyPress(Sender: TObject; var Key: Char);
     procedure ToolButton36Click(Sender: TObject);
-    procedure DrawGrid2Click(Sender: TObject);
     procedure DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Button11Click(Sender: TObject);
     procedure Button12Click(Sender: TObject);
@@ -2182,12 +2181,13 @@ var
 
   // Maximale Auslastung
   v_MonteurMontagAsDate: TDate;
-  Col: Integer;
+  Wochentag, Col: Integer;
   AUFWAND_C, AUFWAND_S: Integer;
   mBAUSTELLE_R: Integer;
 
-  function AddEntry(MONTEUR_R: Integer; Col: Integer; AUFWAND_C: Integer; AUFWAND_S: Integer;
-    BAUSTELLE_R: Integer): Integer;
+  function AddEntry(MONTEUR_R: Integer; Wochentag : Integer; Col: Integer;
+                    AUFWAND_C: Integer; AUFWAND_S: Integer;
+                    BAUSTELLE_R: Integer): Integer;
   begin
     result := Auslastung.indexof(MONTEUR_R);
     if (result <> -1) then
@@ -2199,15 +2199,15 @@ var
         BaustelleAdd(BAUSTELLE_R);
         if (Kapazitaet = 0) then
           if odd(Col) then
-            Kapazitaet := e_r_Arbeitszeit_N(BAUSTELLE_R)
+            Kapazitaet := e_r_Arbeitszeit_N(BAUSTELLE_R, succ(Wochentag) )
           else
-            Kapazitaet := e_r_Arbeitszeit_V(BAUSTELLE_R);
+            Kapazitaet := e_r_Arbeitszeit_V(BAUSTELLE_R, succ(Wochentag) );
       end;
     end;
   end;
 
 begin
-  if ComboBox7.ItemIndex = 0 then
+  if (ComboBox7.ItemIndex = 0) then
     exit;
 
   BeginHourGlass;
@@ -2263,8 +2263,9 @@ begin
       sql.Add(' count(AUFWAND) AUFWAND_C,');
       sql.Add(' sum(AUFWAND) AUFWAND_S');
       sql.Add('from AUFTRAG where');
-      sql.Add(' (AUSFUEHREN between ' + '''' + Long2date(v_MonteurMontag) + '''' + ' and ' + '''' +
-        Long2date(v_MonteurSonntag) + '''' + ') and ');
+      sql.Add(' (AUSFUEHREN between ' +
+                {} '''' + Long2date(v_MonteurMontag) + '''' + ' and ' +
+                {} '''' + Long2date(v_MonteurSonntag) + '''' + ') and ');
       sql.Add(' (STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' + inttostr(ord(ctsAngeschrieben)) + ',' +
         inttostr(ord(ctsMonteurinformiert)) + ') ) and');
       sql.Add(' (AUFWAND>0)');
@@ -2274,7 +2275,8 @@ begin
       while not(eof) do
       begin
 
-        Col := round(FieldByName('AUSFUEHREN').AsDate - v_MonteurMontagAsDate) * 2;
+        Wochentag := round(FieldByName('AUSFUEHREN').AsDate - v_MonteurMontagAsDate);
+        Col :=  Wochentag * 2;
         AUFWAND_C := FieldByName('AUFWAND_C').AsInteger * 2;
         AUFWAND_S := FieldByName('AUFWAND_S').AsInteger;
         mBAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
@@ -2286,15 +2288,15 @@ begin
         begin
 
           // hey - Doppeltermin, jeder halbe Last
-          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
-          AddEntry(FieldByName('MONTEUR2_R').AsInteger, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Wochentag, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR2_R').AsInteger, Wochentag, Col, AUFWAND_C div 2, AUFWAND_S div 2, mBAUSTELLE_R);
 
         end
         else
         begin
 
           // Normaler Termin, 1 Monteur ...
-          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Col, AUFWAND_C, AUFWAND_S, mBAUSTELLE_R);
+          AddEntry(FieldByName('MONTEUR1_R').AsInteger, Wochentag, Col, AUFWAND_C, AUFWAND_S, mBAUSTELLE_R);
 
         end;
         APInext;
@@ -4500,7 +4502,7 @@ var
             end
             else
             begin
-              // voll normal ey
+              // Unterlast
               font.color := VisibleContrast(brush.color);
               font.style := [];
             end;
@@ -5966,11 +5968,6 @@ begin
   DrawGrid2.canvas.font.size := 8;
   DrawGrid2.rowCount := Auslastung.count;
   DrawGrid2.refresh;
-end;
-
-procedure TFormAuftragArbeitsplatz.DrawGrid2Click(Sender: TObject);
-begin
-  //
 end;
 
 procedure TFormAuftragArbeitsplatz.DrawGrid2MouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;

@@ -805,7 +805,7 @@ object FormBBelege: TFormBBelege
       'ANLAGE=NOTREQUIRED'
       'BTYP=NOTREQUIRED'
       'BSTATUS=NOTREQUIRED')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'VERSAND_STATUS=STA'
       'MENGE_AUFTRAG=AUF'
@@ -905,7 +905,7 @@ object FormBBelege: TFormBBelege
       'BELEG_R=NOTREQUIRED'
       'ARTIKEL=NOTREQUIRED'
       'ZUSAGE=NOTIME')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'MENGE_RECHNUNG=REC'
       'MENGE_BESTELLT=BES'
@@ -1014,7 +1014,7 @@ object FormBBelege: TFormBBelege
     Top = 248
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -1035,7 +1035,7 @@ object FormBBelege: TFormBBelege
       'CROSSREF=2641')
   end
   object IB_Query4: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -1052,7 +1052,7 @@ object FormBBelege: TFormBBelege
     Top = 256
   end
   object IB_Query5: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -1069,7 +1069,7 @@ object FormBBelege: TFormBBelege
     Top = 256
   end
   object IB_Query6: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -1104,7 +1104,7 @@ object FormBBelege: TFormBBelege
     end
   end
   object IB_Query7: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT '
@@ -1117,7 +1117,7 @@ object FormBBelege: TFormBBelege
     Top = 104
   end
   object IB_Query8: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT  '
@@ -1133,7 +1133,7 @@ object FormBBelege: TFormBBelege
     Left = 320
     Top = 513
     Bitmap = {
-      494C01012B002C00600010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012B002C00680010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2593,7 +2593,7 @@ object FormBBelege: TFormBBelege
       000000000000}
   end
   object IB_Query9: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID '
@@ -2603,7 +2603,7 @@ object FormBBelege: TFormBBelege
     Top = 512
   end
   object IB_Query10: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT RID FROM'
@@ -2612,7 +2612,7 @@ object FormBBelege: TFormBBelege
     Top = 512
   end
   object IB_Query11: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT TITEL FROM'
@@ -2621,7 +2621,7 @@ object FormBBelege: TFormBBelege
     Top = 512
   end
   object IB_Query12: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT'

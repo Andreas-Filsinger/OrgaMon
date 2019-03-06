@@ -163,7 +163,7 @@ uses
   Funktionen_Beleg,
   Person, Belege, Ereignis,
  CaretakerClient, CareServer,
-  Jvgnugettext, dbOrgaMon,
+  dbOrgaMon,
   wanfix32, Buchhalter;
 
 procedure TFormBuchung.addHistorie(BUCH_R: integer);
@@ -301,7 +301,7 @@ begin
   Confirmed := false;
   repeat
 
-    if not(doit(_('Buchung wirklich löschen'))) then
+    if not(doit('Buchung wirklich löschen')) then
       break;
 
     b_w_preDeleteBuch(BUCH_R);

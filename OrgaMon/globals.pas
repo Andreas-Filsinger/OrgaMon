@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.384; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.403; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -156,7 +156,6 @@ const
   cLaenderCacheFName = 'Länder.Cache';
   cKreativeCacheFName = 'Kreative.Cache';
   cVertragsvariantenCacheFName = 'Vertragsvarianten.Cache';
-  cRemoteMP3CacheFName = 'MP3.Cache';
   cItemsCacheFExtension = '.Items';
   cValueCacheFExtension = '.Values';
 
@@ -384,7 +383,6 @@ const
   cE_SAPReihenfolge = 'SpaltenReihenfolge';
   cE_SpaltenAlias = 'SpaltenAlias';
   cE_SpaltenOhneInhalt = 'SpaltenOhneInhalt';
-  cE_XLSVorlage = 'XLSVorlage';
   cE_MaxperLoad = 'MaxAnzahl';
   cE_MaterialNummerAlt = 'MaterialNummerAlt';
   cE_Zaehlwerk = 'Zählwerk';
@@ -671,6 +669,9 @@ const
   // 44/1
   // 44 WE 19
   cAuftragsNummer_Length = 5;
+
+  // Anzahl [Sekunden] die ein Aufwand grösser sein darf als
+  // die Kapazität ohne dass von Überlast die Rede ist
   cToleranzRahmenVolllast = 90;
 
   cMonteurTrenner = '----';
@@ -1059,7 +1060,6 @@ var
   iNachTagwacheRechnerNeustarten: boolean;
   iTagesabschlussAusschluss: string;
   iTagwacheAusschluss: string;
-  iCronAuf: string;
 
   iKontoInhaber: string;
   iGlaeubigerID: string;
@@ -1575,9 +1575,8 @@ uses
 {$ENDIF}
   math, Geld,
 {$IFDEF FPC}
-  gettext,
+
 {$ELSE}
-  Jvgnugettext,
   IB_Session,
 {$ENDIF}
   IdGlobal,
@@ -2138,7 +2137,6 @@ StartDebug('globals');
 IB_GetClientLibNameFunc := GetFBClientLibName;
 {$ENDIF}
 // i8n
-cNachFrage := _(cNachFrage);
 
 DebugMode := false;
 isBeta :=

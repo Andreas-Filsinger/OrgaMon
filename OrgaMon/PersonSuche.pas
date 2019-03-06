@@ -176,7 +176,7 @@ implementation
 
 uses
   math, globals, anfix32, Person,
-  Jvgnugettext, wanfix32, GUIhelp,
+  wanfix32, GUIhelp,
   Funktionen_Auftrag, CareTakerClient,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -246,7 +246,6 @@ end;
 
 procedure TFormPersonSuche.FormCreate(Sender: TObject);
 begin
-  TranslateComponent(self);
   sTreffer := Label1.caption;
   with StringGrid1 do
   begin

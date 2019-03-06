@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -153,7 +153,6 @@ type
     Button88: TButton;
     Button52: TButton;
     Button89: TButton;
-    Button90: TButton;
     JvAppIniFileStorage1: TJvAppIniFileStorage;
     Button54: TButton;
     Button91: TButton;
@@ -256,7 +255,6 @@ type
     procedure Button88Click(Sender: TObject);
     procedure Button52Click(Sender: TObject);
     procedure Button89Click(Sender: TObject);
-    procedure Button90Click(Sender: TObject);
     procedure Button91Click(Sender: TObject);
     procedure Button54Click(Sender: TObject);
     procedure Button47Click(Sender: TObject);
@@ -282,8 +280,8 @@ var
 implementation
 
 uses
-  IB_Controls, IB_Grid, Jvgnugettext,
-  dbOrgaMon, wanfix32,systemd,
+  IB_Controls, IB_Grid,
+  dbOrgaMon, wanfix32, systemd,
   Funktionen_Basis,
   Funktionen_Beleg,
   html, Person, Serie,
@@ -322,18 +320,11 @@ uses
   BuchBarKasse,
   Kalender, Auswertung, IB_StringList,
   Audit, Sperre, SkriptEditor,
-  ArtikelKasse, Cron, ArtikelAusgabeArt;
+  ArtikelKasse, ArtikelAusgabeArt;
 {$R *.DFM}
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
-  TP_GlobalIgnoreClass(TIB_StringList);
-  TP_GlobalIgnoreClass(TFont);
-  TP_GlobalIgnoreClass(TIB_Edit);
-  TP_GlobalIgnoreClass(TIB_Text);
-  TP_GlobalIgnoreClass(TIB_ComboBox);
-
-  TranslateComponent(self); // tapplication
   caption := cAppName;
 
   Label1.caption := MachineID;
@@ -713,11 +704,6 @@ end;
 procedure TFormMain.Button25Click(Sender: TObject);
 begin
   FormDatensicherung.show;
-end;
-
-procedure TFormMain.Button90Click(Sender: TObject);
-begin
-  FormCron.show;
 end;
 
 procedure TFormMain.Button91Click(Sender: TObject);

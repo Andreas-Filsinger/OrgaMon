@@ -2,8 +2,8 @@ object FormArtikelPOS: TFormArtikelPOS
   Left = 0
   Top = 0
   Caption = 'FormArtikelPOS'
-  ClientHeight = 104
-  ClientWidth = 314
+  ClientHeight = 132
+  ClientWidth = 320
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,8 +22,8 @@ object FormArtikelPOS: TFormArtikelPOS
     Caption = 'Label1'
   end
   object SpeedButton1: TSpeedButton
-    Left = 159
-    Top = 67
+    Left = 239
+    Top = 94
     Width = 47
     Height = 23
     Hint = 'Kasse '#246'ffnen'
@@ -60,16 +60,39 @@ object FormArtikelPOS: TFormArtikelPOS
     OnClick = SpeedButton1Click
   end
   object ComComboBox1: TComComboBox
-    Left = 8
+    Left = 35
     Top = 69
-    Width = 145
+    Width = 198
     Height = 21
     ComPort = ComPort1
     ComProperty = cpPort
     AutoApply = True
+    Text = 'COM1'
     Style = csDropDownList
-    ItemIndex = -1
+    ItemIndex = 0
     TabOrder = 0
+  end
+  object Edit1: TEdit
+    Left = 35
+    Top = 96
+    Width = 198
+    Height = 21
+    TabOrder = 1
+    Text = 'Edit1'
+  end
+  object RadioButton1: TRadioButton
+    Left = 8
+    Top = 73
+    Width = 17
+    Height = 17
+    TabOrder = 2
+  end
+  object RadioButton2: TRadioButton
+    Left = 8
+    Top = 96
+    Width = 25
+    Height = 17
+    TabOrder = 3
   end
   object ComPort1: TComPort
     BaudRate = br9600

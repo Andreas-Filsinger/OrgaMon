@@ -1,0 +1,21 @@
+#
+# (c) Andreas Filsinger, OrgaMon.org
+#
+
+[Unit]
+Description=AqBanking Daemon
+After=multi-user.target
+
+[Service]
+StandardOutput=null
+StandardError=null 
+
+ExecStartPre=/srv/aqb/aqbd.sh
+ExecStart=/srv/aqb/aqb -D
+
+Restart=on-failure
+RestartSec=15s
+
+[Install]
+WantedBy=multi-user.target
+

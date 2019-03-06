@@ -440,7 +440,7 @@ uses
   Tier, TierAuswahl, PersonSuche, QAbzeichnen,
   GeoLokalisierung, dbOrgaMon,
   CareTakerClient, FastGeo, GeoArbeitsplatz,
-  OLAP, Jvgnugettext,
+  OLAP,
   Vertrag, ExcelHelper, main,
   OrientationConvert, Datenbank,
   DruckSpooler, html, clipbrd,
@@ -923,7 +923,6 @@ end;
 
 procedure TFormPerson.FormCreate(Sender: TObject);
 begin
-  TranslateComponent(self);
   PageControl1.ActivePage := TabSheet1;
   top := 0;
   left := 0;
@@ -1721,35 +1720,35 @@ procedure TFormPerson.Button22Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrte Frau') + ' ' + IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := 'Sehr geehrte Frau' + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.Button23Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrter Herr') + ' ' + IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := 'Sehr geehrter Herr' + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.Button24Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Hallo') + ' ' + IB_Edit2.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := 'Hallo' + ' ' + IB_Edit2.Text;
 end;
 
 procedure TFormPerson.Button25Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Sehr geehrte Damen und Herren');
+  IB_Query1.FieldByName('ANSPRACHE').AsString := 'Sehr geehrte Damen und Herren';
 end;
 
 procedure TFormPerson.Button26Click(Sender: TObject);
 begin
   if not(IB_Query1.State in [dssedit, dssinsert]) then
     IB_Query1.edit;
-  IB_Query1.FieldByName('ANSPRACHE').AsString := _('Liebe Familie') + ' ' + IB_Edit3.Text;
+  IB_Query1.FieldByName('ANSPRACHE').AsString := 'Liebe Familie' + ' ' + IB_Edit3.Text;
 end;
 
 procedure TFormPerson.SpeedButton10Click(Sender: TObject);

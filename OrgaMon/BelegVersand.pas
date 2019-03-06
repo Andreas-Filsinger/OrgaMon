@@ -85,7 +85,6 @@ var
 implementation
 
 uses
-  Jvgnugettext,
   anfix32, wanfix32,
   globals,
   Versender, Main, Datenbank,
@@ -188,7 +187,7 @@ procedure TFormBelegVersand.IB_Query1ConfirmDelete(Sender: TComponent; var Confi
 begin
   Confirmed := false;
   with Sender as TIB_Dataset do
-    if doit(_('Versand vom ') + #13 + FieldByName('AUSGANG').AsString + #13 + _('wirklich löschen'), true) then
+    if doit('Versand vom ' + #13 + FieldByName('AUSGANG').AsString + #13 + 'wirklich löschen', true) then
     begin
       // e_w_preDeleteVersand(Fieldbyname('RID').AsInteger);
       Confirmed := true;

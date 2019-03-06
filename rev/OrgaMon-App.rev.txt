@@ -12,7 +12,27 @@ Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, u
 
 Dokumentation
 
-@<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
+@<a href="http://wiki.orgamon.org/index.php5/JonDa"><font color="blue">Weblink: Onlinedokumentation "OrgaMon-App"</font></a href>
+
+Rev 2.036 (19.02.2019) Andreas Filsinger
+
+ Bug : "Suche" hatte nicht mehr funktioniert seit 2.034
+ 
+Rev 2.035 (13.12.2018) Andreas Filsinger
+
+ Neu: Foto "FU" Unterschrift
+ 
+Rev 2.034 (28.10.2018) Andreas Filsinger
+
+ Neu: Neu-Programmierung auf Basis von Android-Studio 3
+
+Rev 2.033 (21.08.2017) Andreas Filsinger
+
+ Neu: Anpassungen für HeBu Musikverlag  
+
+Rev 2.032 (18.01.2016) Andreas Filsinger
+
+ Neu: Unbekannt
 
 Rev 2.031 (16.12.15-13.01.16) Andreas Filsinger
 

@@ -17,7 +17,96 @@ Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, u
 
 Dokumentation
 
-@<a href="http://www.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+@<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 8.403 (26.02.19) Andreas Filsinger
+
+ Neu: Hilfe: auf "https://" umgestellt
+
+Rev 8.402 (22.02.19-23.02.19) Andreas Filsinger
+
+ Neu: Auftrag: Aufwand: Kapazität kann Halbtageweise eingeschränkt/erhöht werden
+ Neu: Baustelle: Umgestaltung der Reiter, Dokumentations Struktur angelegt
+
+Rev 8.401 (20.02.19) Andreas Filsinger
+
+ Bug: Ergebnis: AuchAlsHTML: !Base64: Fehlendes Bild, war fataler Fehler es
+      sollte aber nur eine Warnung sein.
+
+Rev 8.400 (04.02.19) Andreas Filsinger
+
+ Neu: Zahlung: Forderungsausgleich: Sortierung nach Rechnungsnummer
+      (Symbol: grüner Pfeil nach unten)
+
+Rev 8.399 (28.01.19) Andreas Filsinger
+
+ Neu: Beleg: neues Feld: KUNDEN_AUFTRAG für eine PO Nummer / Auftragsnummer usw.
+ Neu: Posten: neues Feld: SERIENNUMMER und KUNDEN_AUFTRAG
+
+Rev 8.398 (28.01.19) Andreas Filsinger
+
+ Neu: Replikation: FelderAuf0= kann Felder zwangsweise im Rahmen der Replikation nullen
+
+Rev 8.397 (09.01.19) Andreas Filsinger
+
+ Neu: Kassenschublade öffnen via XMLRPC
+
+Rev 8.396 (09.01.19) Andreas Filsinger
+
+ Neu: XMLRPC Server neuer Modus "--magneto"
+
+Rev 8.395 (09.01.19) Andreas Filsinger
+
+ Bug: html: ~Ort~, ~Ort1~, ~Ort2~ werden nun immer ausbelichtet
+
+Rev 8.394 (09.01.19) Andreas Filsinger
+
+ Bug: Vertrag: Monatliche Abrechnung kam nicht mit jedem Zeitraum zurecht
+
+Rev 8.393 (29.12.18) Andreas Filsinger
+
+ Neu: Freepascal-Port: Anpassungen an Zeos Rev. 7.3.0
+ Neu: Freepascal-Port: Anpassungen an ibx 2.3.2
+ Neu: Zeos: Datenbank: Impliziter Zeichensatz erforderlich
+
+Rev 8.392 (14.12.18) Andreas Filsinger
+
+ Bug: Foto: Betrachtung von Meldezeiträumen für die es kein Log mehr gibt
+ Bug: Foto: FileReduce(Foto-Transaktionen) war mit 2 MB zu klein -> 3 MB
+
+ Neu: Foto: Fotos von 280x280 Pixel werden akzeptiert
+ Neu: POS: USB Relay via HID werden untersützt
+
+Rev 8.391 (31.10.18) Andreas Filsinger
+
+ Wegfall: Cron
+
+Rev 8.390 (25.10.18) Andreas Filsinger
+
+ Bug: Artikel: MEDIA_CHECK fehlt
+
+Rev 8.389 (25.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: MEDIA_CHECK Prüfung maximal 35 Minuten lang
+
+Rev 8.388 (24.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: MEDIA_CHECK, Skalierung nach dem Worker-Prinzip
+
+Rev 8.387 (24.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: MEDIA_CHECK wird auch bei Artikeln ohne Media gesetzt. Die
+      Prüfung auf Content fand ja statt.
+
+Rev 8.386 (23.10.18) Andreas Filsinger
+
+ Neu: Contentmanagement: neues Feld "MEDIA_CHECK" mit dem Moment der nächsten Prüfung
+
+Rev 8.385 (11.10.18) Andreas Filsinger
+
+ Neu: cOrgaMon: Vereinheitlichtes Log nach "XMLRPC-
+ Neu: cOrgaMon: Erkennt eine lokale Datenbank-Verbindung und benutzt entsprechend das
+      lokalhost: tcp-Protokoll.
 
 Rev 8.384 (11.10.18) Andreas Filsinger
 
@@ -12380,6 +12469,35 @@ Rev 6.000 (28.06.04) Andreas Filsinger
   \revi\HebuAdmin.rev
 
 .SQL INIT BEGIN
+
+:8.399
+
+alter table BELEG
+add KUNDEN_AUFTRAG CHAR(25);
+
+alter table POSTEN
+add SERIENNUMMER CHAR(25);
+
+alter table POSTEN
+add KUNDEN_AUFTRAG CHAR(25);
+
+alter table GELIEFERT
+add SERIENNUMMER CHAR(25);
+
+alter table GELIEFERT
+add KUNDEN_AUFTRAG CHAR(25);
+
+:8.393
+
+update
+ RDB$DATABASE
+set
+ RDB$CHARACTER_SET_NAME='ISO8859_1';
+
+:8.386
+
+alter table ARTIKEL
+add MEDIA_CHECK date;
 
 :8.379
 

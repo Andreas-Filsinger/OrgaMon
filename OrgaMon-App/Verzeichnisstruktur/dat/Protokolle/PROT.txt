@@ -1,0 +1,66 @@
+﻿#
+# PROT 2015-09-03
+#
+(Zählerwechsel
+Korrektur der Ausbau-Zählernummer
+11=
+N;
+Stand des Ausbau-Zählers
+14=
+D;
+Nummer des Einbau-Zählers
+12=
+N;
+Stand des Einbau-Zählers
+13=
+D;
+)
+(Regler ~6~
+Korrektur der Ausbau-Reglernummer ~6~
+15=
+N;
+Nummer des Einbau-Reglers
+16=
+N;
+)
+#
+--
+Vergebliche Besuche (2 eingeben für jetzt)
+V1=
+A;
+V2=
+A;
+V3=
+A;
+--
+Bemerkungen
+I3=
+A;
+I4=
+A;
+I5=
+A;
+--
+wichtige Hinweise
+I6=
+A;
+I7=
+A;
+I8=
+A;
+--
+ZZ=
+H;Alles fertig
+--
+Hinweise Buero
+B1=
+A;
+B2=
+A;
+B3=
+A;
+--
+FA=
+F;Foto Ausbau ~FA~
+FN=
+F;Foto Einbau ~FN~

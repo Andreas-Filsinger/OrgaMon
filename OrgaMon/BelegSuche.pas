@@ -107,7 +107,6 @@ type
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton9Click(Sender: TObject);
     procedure IB_Query3BeforePrepare(Sender: TIB_Statement);
-    procedure FormCreate(Sender: TObject);
     procedure SpeedButton20Click(Sender: TObject);
     procedure IB_Grid1GetCellProps(Sender: TObject; ACol, ARow: Integer; AState: TGridDrawState; var AColor: TColor;
       AFont: TFont);
@@ -134,7 +133,6 @@ var
 implementation
 
 uses
-  Jvgnugettext,
   anfix32, wanfix32, html,
   globals,
   Person,
@@ -177,12 +175,6 @@ end;
 procedure TFormBelegSuche.FormActivate(Sender: TObject);
 begin
   EnsureQueriesAreOpen;
-end;
-
-procedure TFormBelegSuche.FormCreate(Sender: TObject);
-begin
-  TranslateComponent(self);
-
 end;
 
 var
@@ -569,25 +561,25 @@ begin
   if (ComboBox1.items.count = 0) then
   begin
     ItemRIDs := TgpIntegerList.create;
-    ComboBox1.items.add(_('Standard'));
-    ComboBox1.items.add(_('ungebucht'));
-    ComboBox1.items.add(_('offene Posten'));
-    ComboBox1.items.add(_('fällige Posten'));
-    ComboBox1.items.add(_('versandfähig (teilweise da)'));
-    ComboBox1.items.add(_('versandfertig (alles da)'));
-    ComboBox1.items.add(_('unvollständig (Agent>0)'));
-    ComboBox1.items.add(_('erwartet (Bestellung drausen)'));
-    ComboBox1.items.add(_('abgewickelt'));
-    ComboBox1.items.add(_('Buchungsfehler'));
-    ComboBox1.items.add(_('Alle Status'));
-    ComboBox1.items.add(_('im Übergangsfach'));
-    ComboBox1.items.add(_('Mahnung 1'));
-    ComboBox1.items.add(_('Mahnung 2'));
-    ComboBox1.items.add(_('Mahnung 3'));
-    ComboBox1.items.add(_('Mahnbescheid'));
-    ComboBox1.items.add(_('Mahnung ausgesetzt'));
-    ComboBox1.items.add(_(cOLAP_Ergebnis));
-    ComboBox1.items.add(_('Terminierte'));
+    ComboBox1.items.add('Standard');
+    ComboBox1.items.add('ungebucht');
+    ComboBox1.items.add('offene Posten');
+    ComboBox1.items.add('fällige Posten');
+    ComboBox1.items.add('versandfähig (teilweise da)');
+    ComboBox1.items.add('versandfertig (alles da)');
+    ComboBox1.items.add('unvollständig (Agent>0)');
+    ComboBox1.items.add('erwartet (Bestellung drausen)');
+    ComboBox1.items.add('abgewickelt');
+    ComboBox1.items.add('Buchungsfehler');
+    ComboBox1.items.add('Alle Status');
+    ComboBox1.items.add('im Übergangsfach');
+    ComboBox1.items.add('Mahnung 1');
+    ComboBox1.items.add('Mahnung 2');
+    ComboBox1.items.add('Mahnung 3');
+    ComboBox1.items.add('Mahnbescheid');
+    ComboBox1.items.add('Mahnung ausgesetzt');
+    ComboBox1.items.add(cOLAP_Ergebnis);
+    ComboBox1.items.add('Terminierte');
 
     ComboBox1.Text := ComboBox1.items[0];
   end;
@@ -915,7 +907,7 @@ end;
 
 procedure TFormBelegSuche.SpeedButton41Click(Sender: TObject);
 begin
-  if doit(_('Beleg wirklich stornieren und Artikel wieder einlagern'), true) then
+  if doit('Beleg wirklich stornieren und Artikel wieder einlagern', true) then
   begin
     BeginHourGlass;
     e_w_BelegStorno(IB_Query1.FieldByName('RID').AsInteger);
