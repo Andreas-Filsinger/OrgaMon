@@ -113,7 +113,6 @@ type
     Button3: TButton;
     Label25: TLabel;
     Button4: TButton;
-    Button14: TButton;
     Edit18: TEdit;
     Button15: TButton;
     CheckBox17: TCheckBox;
@@ -172,7 +171,6 @@ type
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
     procedure Button13Click(Sender: TObject);
-    procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure Edit19KeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
@@ -1048,12 +1046,6 @@ begin
 end;
 
 //
-
-procedure TFormServiceApp.Button14Click(Sender: TObject);
-begin
-  Nachmeldungen;
-  ShowMessage(inttostr(CareTakerLog('Hallo')));
-end;
 
 procedure TFormServiceApp.Button15Click(Sender: TObject);
 var

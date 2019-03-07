@@ -1876,7 +1876,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' b_w_ForderungBuchen(' + inttostr(BELEG_R) + '): ' + E.Message);
+     AppendStringsToFile(E.Message, DiagnosePath+'BUCH-ERROR-'+inttostr(DateGet)+'.log.txt', Uhr8);
     end;
   end;
   qBELEG.Free;
@@ -1941,7 +1941,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' b_w_Copy(' + inttostr(BUCH_R) + '): ' + E.Message);
+      AppendStringsToFile(E.Message + '(' + inttostr(BUCH_R) + ')', ErrorFName('b_w_Copy'), Uhr8);
     end;
 
   end;

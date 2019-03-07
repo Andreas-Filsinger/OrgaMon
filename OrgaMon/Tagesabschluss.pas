@@ -127,7 +127,7 @@ begin
     AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
 
     if (pos(cERRORText, s) > 0) then
-      CareTakerLog(s);
+      AppendStringsToFile(s,ErrorFName('TAGESABSCHLUSS'), Uhr8);
   except
     // nichts tun!
   end;
@@ -138,7 +138,6 @@ var
   n: integer;
   TimeDiff: TAnfixTime;
   ErrorCount: integer;
-  Ticket: TTroubleTicket;
   GlobalVars: TStringList;
 begin
   if TagesabschlussAktiv then
@@ -162,8 +161,6 @@ begin
     if iIdleProzessPrioritaetAbschluesse then
       SetPriorityClass(GetCurrentProcess, DWORD(IDLE_PRIORITY_CLASS));
     ProgressBar1.max := CheckListBox1.items.Count;
-    Ticket := CareTakerLog('Tagesabschluss START');
-    Log('Ticket ' + inttostr(Ticket) + ' erhalten');
     ErrorCount := 0;
 
     _TagesAbschluss := iTagesAbschlussUm;
@@ -329,9 +326,9 @@ begin
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
               end;
-            26: // CareTaker Nachmeldungen
+            26: //
               begin
-                Nachmeldungen;
+
               end;
           else
             delay(2000);
@@ -355,7 +352,6 @@ begin
     Button1.caption := '&Start';
     if (ErrorCount > 0) then
       Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
-    CareTakerClose(Ticket);
     if iIdleProzessPrioritaetAbschluesse then
       SetPriorityClass(GetCurrentProcess, DWORD(NORMAL_PRIORITY_CLASS));
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');

@@ -79,16 +79,12 @@ object FormServiceApp: TFormServiceApp
     Top = 88
     Width = 690
     Height = 487
-    ActivePage = TabSheet8
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'proceed'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 22
@@ -201,22 +197,13 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 6
         OnClick = Button12Click
       end
-      object Button14: TButton
-        Left = 527
-        Top = 421
-        Width = 130
-        Height = 25
-        Caption = 'CareTaker Hallo'
-        TabOrder = 7
-        OnClick = Button14Click
-      end
       object CheckBox17: TCheckBox
         Left = 24
         Top = 289
         Width = 169
         Height = 16
         Caption = 'mit Ergebnis TAN Upload'
-        TabOrder = 8
+        TabOrder = 7
       end
       object CheckBox19: TCheckBox
         Left = 16
@@ -226,14 +213,14 @@ object FormServiceApp: TFormServiceApp
         Caption = 'FTW Meldungen'
         Checked = True
         State = cbChecked
-        TabOrder = 9
+        TabOrder = 8
       end
       object Edit20: TEdit
         Left = 151
         Top = 334
         Width = 73
         Height = 21
-        TabOrder = 10
+        TabOrder = 9
       end
       object Button1: TButton
         Left = 305
@@ -241,7 +228,7 @@ object FormServiceApp: TFormServiceApp
         Width = 104
         Height = 26
         Caption = 'Statistik!'
-        TabOrder = 11
+        TabOrder = 10
         OnClick = Button1Click
       end
       object CheckBox22: TCheckBox
@@ -250,16 +237,12 @@ object FormServiceApp: TFormServiceApp
         Width = 185
         Height = 17
         Caption = 'Daten aus access_log'
-        TabOrder = 12
+        TabOrder = 11
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -389,10 +372,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 409
         Top = 67
@@ -747,10 +726,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -875,10 +850,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48
@@ -909,10 +880,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -961,10 +928,6 @@ object FormServiceApp: TFormServiceApp
     object TabSheet8: TTabSheet
       Caption = 'IMEI'
       ImageIndex = 7
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label23: TLabel
         Left = 40
         Top = 48

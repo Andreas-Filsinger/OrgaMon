@@ -586,10 +586,6 @@ begin
     if LogMatch(LogS, cGeraetSchema) then
       sSendenLog.add(LogS);
     writeln(LogF, LogS);
-    if pos(cERRORText, s[n]) > 0 then
-    begin
-      CareTakerLog(s[n]);
-    end;
   end;
   CloseFile(LogF);
 end;

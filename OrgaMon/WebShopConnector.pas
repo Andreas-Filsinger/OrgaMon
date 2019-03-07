@@ -400,7 +400,7 @@ begin
   end;
   if pos(cERRORText, Msg) = 1 then
   begin
-    CareTakerLog(Msg);
+    AppendStringsToFile(Msg, ErrorFName('XMLRPC'), Uhr8);
     if (pos(' rpc_e_', Msg) > 0) and (pos('Zugriffsverletzung', Msg) = 0) then
       inc(ConnectorExceptions);
     if (ConnectorExceptions >= 12) then

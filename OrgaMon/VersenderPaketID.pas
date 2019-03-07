@@ -51,7 +51,6 @@ type
     SpeedButton8: TSpeedButton;
     Image2: TImage;
     CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -356,9 +355,8 @@ begin
             edit;
             FieldByName('PAKETID').AsString := 'konnte nicht ermittelt werden';
             post;
-            if CheckBox2.checked then
-              CareTakerLog(cERRORText + ' BucheDeutschePost: "' + _Index +
-                '" nicht gefunden!');
+            AppendStringsToFile('BucheDeutschePost: "' + _Index +
+                '" nicht gefunden!', ErrorFName('VERSAND'), Uhr8);
           end;
         end;
         next;
@@ -375,7 +373,7 @@ begin
 
   except
     on E: Exception do
-      CareTakerLog(cERRORText + ' BucheDeutschePost: ' + E.Message);
+      AppendStringsToFile('BucheDeutschePost: ' + E.Message, ErrorFName('VERSAND'), Uhr8);
   end;
   AlleInfos.Free;
   sDateien.Free;
@@ -413,7 +411,7 @@ begin
     end;
   except
     on E: Exception do
-      CareTakerLog(cERRORText + ' BucheDeutschePost: ' + E.Message);
+      AppendStringsToFile('BucheDeutschePost: ' + E.Message, ErrorFName('VERSAND'),Uhr8);
   end;
   qEREIGNIS.Free;
   EventText.Free;

@@ -474,7 +474,7 @@ procedure TFormAuftragExtern.Log(s: string);
 begin
   listbox1.items.add(s);
   if (pos(cERRORText, s) > 0) then
-    CareTakerLog('AuftragExtern.' + s);
+    AppendStringsToFile('AuftragExtern.' + s, ErrorFName('AUFTRAG'), Uhr8);
 end;
 
 procedure TFormAuftragExtern.Button1Click(Sender: TObject);

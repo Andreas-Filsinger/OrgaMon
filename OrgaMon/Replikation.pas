@@ -266,7 +266,7 @@ begin
   if (pos(cERRORText, s) = 1) then
   begin
     inc(ErrorCount);
-    CareTakerLog(s);
+    AppendStringsToFile(s,ErrorFName('REPLIKATION'), Uhr8);
   end;
   if (ErrorCount > 0) then
     Label2.caption := inttostr(ErrorCount) + ' Fehler bisher!';

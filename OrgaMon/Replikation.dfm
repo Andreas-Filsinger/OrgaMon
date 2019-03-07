@@ -285,7 +285,7 @@ object FormReplikation: TFormReplikation
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'INAKTIV=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'SCRIPT=FALSE'
       'RID=FALSE')

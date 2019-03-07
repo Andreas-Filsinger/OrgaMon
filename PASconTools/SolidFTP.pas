@@ -320,7 +320,6 @@ begin
     if DoStatistics then
       inc(sErrorCount);
     sErrorMsg.add(TimeStampS);
-    CareTakerLog(s);
   end;
 
   if (pos(cEXCEPTIONText, s) = 1) then

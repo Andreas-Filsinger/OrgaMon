@@ -300,7 +300,7 @@ object FormAuftragMobil: TFormAuftragMobil
     end
     object ComboBox2: TComboBox
       Left = 17
-      Top = 40
+      Top = 42
       Width = 72
       Height = 21
       Margins.Left = 4
@@ -325,7 +325,7 @@ object FormAuftragMobil: TFormAuftragMobil
     end
     object Button6: TButton
       Left = 17
-      Top = 69
+      Top = 68
       Width = 241
       Height = 25
       Margins.Left = 4
@@ -335,15 +335,6 @@ object FormAuftragMobil: TFormAuftragMobil
       Caption = 'Monteur-'#220'berblick'
       TabOrder = 3
       OnClick = Button6Click
-    end
-    object Button7: TButton
-      Left = 265
-      Top = 69
-      Width = 169
-      Height = 25
-      Caption = 'Monteure "senden"'
-      TabOrder = 4
-      OnClick = Button7Click
     end
   end
   object GroupBox2: TGroupBox

@@ -3071,23 +3071,15 @@ var
   BELEG_R: integer;
 begin
   BELEG_R := -1;
-  try
-    with ib_q do
-    begin
-      BELEG_R := FieldByName('RID').AsInteger;
-      edit;
-      FieldByName('RECHNUNG').AsDateTime := Aufdatum;
-      _NewDate := datetime2long(Aufdatum);
-      FieldByName('FAELLIG').AsDateTime :=
-        long2datetime(DatePlus(_NewDate, cStandard_ZahlungFrist));
-      post;
-    end;
-  except
-    on E: Exception do
-    begin
-      CareTakerLog(cERRORText + ' e_w_RechnungsDatumSetzen(' + inttostr(BELEG_R) + '): ' +
-        E.Message);
-    end;
+  with ib_q do
+  begin
+    BELEG_R := FieldByName('RID').AsInteger;
+    edit;
+    FieldByName('RECHNUNG').AsDateTime := Aufdatum;
+    _NewDate := datetime2long(Aufdatum);
+    FieldByName('FAELLIG').AsDateTime :=
+      long2datetime(DatePlus(_NewDate, cStandard_ZahlungFrist));
+    post;
   end;
 end;
 

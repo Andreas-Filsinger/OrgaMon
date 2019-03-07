@@ -1286,7 +1286,6 @@ begin
     begin
       ErrorStr := cERRORText + ' e_w_buchen(' + inttostr(BELEG_R) + ',' + inttostr(PERSON_R) + '): ' + E.Message;
       sDiagnose.add(ErrorStr);
-      CareTakerLog(ErrorStr);
     end;
   end;
 
@@ -1609,7 +1608,7 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_Menge: ' + E.Message);
+      AppendStringsToFile(E.Message,ErrorFName('BELEG'),Uhr8);
     end;
   end;
 end;
@@ -1976,7 +1975,7 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_WarenEingang.' + inttostr(result) + ': ' + E.Message);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr8);
       result := -1;
     end;
   end;
@@ -2156,12 +2155,11 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_WarenEingang.' + inttostr(result) + ': ' + E.Message);
+      AppendStringsToFile('e_w_WarenEingang'+inttostr(result)+':'+E.Message,ErrorFName('BELEG'),Uhr8);
       result := -1;
     end;
   end;
 end;
-
 
 procedure e_w_Zwischenlagern(BELEG_R, LAGER_R: integer);
 begin
@@ -2370,8 +2368,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_PreisNativ(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message);
+      AppendStringsToFile(
+       'e_r_PreisNativ(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): '+
+       E.Message,ErrorFName('BELEG'),Uhr8);
     end;
   end;
 end;
@@ -2650,7 +2649,12 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_Preis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' + E.Message);
+       AppendStringsToFile(
+        'e_r_Preis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' + E.Message,
+        errorFName('BELEG'),
+        Uhr8
+        );
+
     end;
   end;
 end;
@@ -2712,7 +2716,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_USD.' + inttostr(ARTIKEL_R) + ': ' + E.Message);
+      AppendStringsToFile('e_r_USD(' + inttostr(ARTIKEL_R) + '): ' + E.Message,
+      errorFName('BELEG'),
+      uhr8);
     end;
   end;
 end;
@@ -3731,7 +3737,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_KontoInfo(' + inttostr(PERSON_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_KontoInfo(' + inttostr(PERSON_R) + '): ' + E.Message,
+      errorFName('BELEG'),
+      Uhr8);
     end;
   end;
   MahnungsBeleg.free;
@@ -4051,7 +4059,9 @@ begin
     except
       on E: exception do
       begin
-        CareTakerLog(cERRORText + ' e_w_BelegNeuAusKasse: ' + E.Message);
+        AppendStringsToFile('e_w_BelegNeuAusKasse('+inttostr(EREIGNIS_R)+'): ' + E.Message,
+        errorFName('BELEG'),
+        Uhr8);
       end;
     end;
 
@@ -4059,7 +4069,6 @@ begin
 
   end;
   lKasse.free;
-
 end;
 
 function e_w_BelegNeuAusWarenkorb(PERSON_R: integer): integer;
@@ -4082,7 +4091,9 @@ begin
     except
       on E: exception do
       begin
-        CareTakerLog(cERRORText + ' e_w_BelegNeuAusWarenkorb: ' + E.Message);
+        AppendStringsToFile('e_w_BelegNeuAusWarenkorb('+IntToStr(PERSON_R)+'): ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
       end;
     end;
   end;
@@ -4203,8 +4214,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_Lieferzeit(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message);
+      AppendStringsToFile('e_r_Lieferzeit(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
+        E.Message, ErrorFName('BELEG'), Uhr8);
+
     end;
   end;
 end;
@@ -4276,7 +4288,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_VerlagsRabatt: ' + E.Message);
+      AppendStringsToFile('e_r_VerlagsRabatt('+IntToStr(VERLAG_R)+','+IntToStr(PERSON_R)+'): ' + E.Message,
+      ErrorFName('BELEG'),
+      Uhr8);
     end;
   end;
 end;
@@ -4401,7 +4415,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_Rabatt: ' + E.Message);
+      AppendStringsToFile('e_r_Rabatt: ' + E.Message,
+      ErrorFName('BELEG'),
+      Uhr8);
     end;
   end;
   result := min(MaxRabatt, result);
@@ -4571,7 +4587,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_ArtikelNeu(' + inttostr(SORTIMENT_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_ArtikelNeu(' + inttostr(SORTIMENT_R) + '): ' + E.Message,
+      ErrorFname('BELEG'),
+      Uhr8);
     end;
   end;
   ARTIKEL.free;
@@ -4631,7 +4649,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_PersonNeu: ' + E.Message);
+      AppendStringsToFile('e_w_PersonNeu: ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
 end;
@@ -4868,7 +4888,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_Anschrift: ' + E.Message);
+      AppendStringsToFile('e_r_Anschrift: ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
   PERSON.free;
@@ -5301,7 +5323,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_VersandKosten(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_r_VersandKosten(' + inttostr(BELEG_R) + '): ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
 end;
@@ -5869,8 +5893,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_PaketPreis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
-        E.Message);
+      AppendStringsToFile('e_r_PaketPreis(' + inttostr(AUSGABEART_R) + ',' + inttostr(ARTIKEL_R) + '): ' +
+        E.Message, ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
   result := GesamtPreis;
@@ -6444,7 +6469,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_VertragBuchen(' + inttostr(VERTRAG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_VertragBuchen(' + inttostr(VERTRAG_R) + '): ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
   VertragBuchen_Leave;
@@ -7155,7 +7182,9 @@ begin
     except
       on E: exception do
       begin
-        CareTakerLog(cERRORText + ' e_w_BerechneBeleg(' + inttostr(BELEG_R) + '): ' + E.Message);
+        AppendStringsToFile('e_w_BerechneBeleg(' + inttostr(BELEG_R) + '): ' + E.Message,
+          ErrorFName('BELEG'),
+          Uhr8);
       end;
     end;
     qPosten.free;
@@ -7669,7 +7698,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BelegStatusBuchen(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_BelegStatusBuchen(' + inttostr(BELEG_R) + '): ' + E.Message,
+        ErrorFName('BELEG'),
+        Uhr8);
     end;
   end;
   cPOSTEN.free;
@@ -7772,7 +7803,9 @@ begin
     except
       on E: exception do
       begin
-        CareTakerLog(cERRORText + ' e_w_BBelegStatusBuchen(' + inttostr(BBELEG_R) + '): ' + E.Message);
+        AppendStringsToFile('e_w_BBelegStatusBuchen(' + inttostr(BBELEG_R) + '): ' + E.Message,
+          {} ErrorFName('BELEG'),
+          {} Uhr8);
       end;
     end;
     cBPOSTEN.free;
@@ -8145,7 +8178,9 @@ begin
       end
       else
       begin
-        CareTakerLog(cERRORText + ' e_w_BelegVersand(' + inttostr(BELEG_R) + '): locate misslungen!');
+        AppendStringsToFile('e_w_BelegVersand(' + inttostr(BELEG_R) + '): locate misslungen!',
+          {} ErrorFName('BELEG'),
+          {} Uhr8);
       end;
     end;
     cBELEG.free;
@@ -8154,7 +8189,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BelegVersand(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_BelegVersand(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -8248,8 +8285,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_SetPostenData(' + inttostr(ARTIKEL_R) + ',' + inttostr(PERSON_R) + '): ' +
-        E.Message);
+      AppendStringsToFile('e_w_SetPostenData(' + inttostr(ARTIKEL_R) + ',' + inttostr(PERSON_R) + '): ' + E.Message,
+        {} ErrorFname('BELEG'),
+        {} Uhr8);
     end;
   end;
   cARTIKEL.free;
@@ -8276,7 +8314,9 @@ begin
         ApiFirst;
         if eof then
         begin
-          CareTakerLog(cERRORText + ' e_w_WarenkorbEinfuegen(' + inttostr(BELEG_R) + '): Beleg nicht gefunden');
+          AppendStringsToFile('e_w_WarenkorbEinfuegen(' + inttostr(BELEG_R) + '): Beleg nicht gefunden',
+            {} ErrorFName('BELEG'),
+            {} Uhr8);
           break;
         end;
         PERSON_R := FieldByName('PERSON_R').AsInteger;
@@ -8321,7 +8361,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_EinkauswagenEinfuegen(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_WarenkorbEinfuegen(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
   cWARENKORB.free;
@@ -8337,7 +8379,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_EinkauswagenLeeren(' + inttostr(PERSON_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_EinkauswagenLeeren(' + inttostr(PERSON_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -8360,7 +8404,9 @@ begin
     except
       on E: exception do
       begin
-        CareTakerLog(cERRORText + ' e_w_BelegNeu(' + inttostr(PERSON_R) + '): ' + E.Message);
+        AppendStringsToFile('e_w_BelegNeu(' + inttostr(PERSON_R) + '): ' + E.Message,
+          {} ErrorFName('BELEG'),
+          {} Uhr8);
       end;
     end;
   end;
@@ -8480,7 +8526,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_LadeParameter: ' + E.Message);
+      AppendStringsToFile('e_r_LadeParameter: ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
 
   end;
@@ -8520,7 +8568,6 @@ begin
 
   iFaktorGanzzahlig := sSystemSettings.values['FaktorGanzzahlig'] <> cIni_DeActivate;
   iEinsUnterdrueckung := sSystemSettings.values['EinsUnterdrückung'] = cIni_Activate;
-  iCareTakerOffline := sSystemSettings.values['CareTaker'] = cIni_DeActivate;
   iOpenOfficePDF := sSystemSettings.values['OpenOfficePDF'] = cIni_Activate;
   iAutoUpRevDir := sSystemSettings.values['AutoUpRevPfad'];
   iAutoUpFTP := sSystemSettings.values['AutoUpFTP'];
@@ -8848,7 +8895,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_Gewicht: ' + E.Message);
+      AppendStringsToFile('e_r_Gewicht: ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -8898,7 +8947,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_MindestBestellmenge: ' + E.Message);
+      AppendStringsToFile('e_r_MindestBestellmenge: ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -9139,8 +9190,10 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_JoinPerson(' + inttostr(PERSON_R_FROM) + ',' + inttostr(PERSON_R_TO) + '): ' +
-        E.Message);
+      AppendStringsToFile('e_w_JoinPerson(' + inttostr(PERSON_R_FROM) + ',' + inttostr(PERSON_R_TO) + '): ' +
+        E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
   RollBackDump.free;
@@ -10607,8 +10660,10 @@ begin
                 except
                   on E: exception do
                   begin
-                    CareTakerLog(cERRORText + ' e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
-                      E.Message);
+                    AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
+                      E.Message,
+                      {} ErrorFName('BELEG'),
+                      {} Uhr8);
                   end;
 
                 end;
@@ -10664,8 +10719,10 @@ begin
                   except
                     on E: exception do
                     begin
-                      CareTakerLog(cERRORText + ' e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
-                        E.Message);
+                      AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): Deutsche Post : ' +
+                        E.Message,
+                        {} ErrorFName('BELEG'),
+                        {} Uhr8);
                     end;
                   end;
                 end
@@ -10698,7 +10755,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BelegBuchen(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_BelegBuchen(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
   INTERN_INFO.free;
@@ -10717,7 +10776,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BelegDrittlandAusfuhr(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_BelegDrittlandAusfuhr(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -10831,7 +10892,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BelegStorno(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_w_BelegStorno(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -11723,7 +11786,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_AusgabeBeleg(' + inttostr(BELEG_R) + '): ' + E.Message);
+      AppendStringsToFile('e_r_AusgabeBeleg(' + inttostr(BELEG_R) + '): ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
   // Speicher freigeben
@@ -12317,7 +12382,9 @@ begin
   except
     on E: exception do
     begin
-      CareTakerLog(cERRORText + ' e_r_fax: ' + E.Message);
+      AppendStringsToFile('e_r_fax: ' + E.Message,
+        {} ErrorFName('BELEG'),
+        {} Uhr8);
     end;
   end;
 end;
@@ -12581,7 +12648,9 @@ begin
       except
         on E: exception do
         begin
-          CareTakerLog(cERRORText + ' e_x_BelegAusPOS: ' + E.Message);
+          AppendStringsToFile('e_x_BelegAusPOS: ' + E.Message,
+            {} ErrorFName('BELEG'),
+            {} Uhr8);
         end;
       end;
 

@@ -35,7 +35,6 @@ object FormMain: TFormMain
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    OnClick = Label1Click
   end
   object Image1: TImage
     Left = 311

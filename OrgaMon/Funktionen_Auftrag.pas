@@ -5643,7 +5643,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BudgetEinfuegen: ' + E.Message);
+      AppendStringsToFile(E.Message,ErrorFName('e_w_BudgetEinfuegen'),Uhr8);
     end;
   end;
   cARBEIT.free;
@@ -5855,7 +5855,9 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_BaustelleLoeschen: ' + E.Message);
+      AppendStringsToFile('e_w_BaustelleLoeschen: ' + E.Message,
+        {} ErrorFName('AUFTRAG'),
+        {} Uhr8);
     end;
 
   end;
@@ -5995,7 +5997,9 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' e_w_Baustellekopie: ' + E.Message);
+      AppendStringsToFile('e_w_Baustellekopie: ' + E.Message,
+        {} ErrorFName('AUFTRAG'),
+        {} Uhr8);
     end;
   end;
 end;

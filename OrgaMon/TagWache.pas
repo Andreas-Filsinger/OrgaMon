@@ -93,7 +93,6 @@ procedure TFormTagwache.Button1Click(Sender: TObject);
 var
   n: integer;
   ErrorCount: integer;
-  Ticket: TTroubleTicket;
   GlobalVars: TStringList;
 begin
   if TagwacheAktiv then
@@ -111,7 +110,6 @@ begin
     LetzteTagwacheWarUm := SecondsGet;
     Tagwache_TAN := e_w_gen('GEN_TAGWACHE');
     ProgressBar1.max := CheckListBox1.items.count;
-    Ticket := CareTakerLog('Tagwache START');
     ErrorCount := 0;
     Log('Start am ' + long2date(LetzteTagwacheWarAm) + ' um ' + secondstostr(LetzteTagwacheWarUm) + ' h auf ' +
       ComputerName);
@@ -213,7 +211,6 @@ begin
     Button1.caption := '&Start';
     if (ErrorCount > 0) then
       Log(cERRORText + ' Tagwache FAIL at Stage ' + inttostr(n));
-    CareTakerClose(Ticket);
     Log('Ende um ' + secondstostr(SecondsGet) + ' h');
 
     // Tagwache-OLAPs ausführen
@@ -277,7 +274,7 @@ begin
     AppendStringsToFile(s, DiagnosePath + 'Tagwache-' + inttostrN(Tagwache_TAN, 8) + '.log.txt');
 
     if (pos(cERRORText, s) > 0) then
-      CareTakerLog(s);
+      AppendStringsToFile(s,ErrorFName('TAGWACHE'), Uhr8);
   except
     // nichts tun!
   end;

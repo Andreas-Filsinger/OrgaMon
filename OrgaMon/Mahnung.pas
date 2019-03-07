@@ -982,7 +982,7 @@ begin
     on E: Exception do
     begin
       ListBox1.items.add(cERRORText + ' Mahnung: ' + E.Message);
-      CareTakerLog(cERRORText + ' Mahnung: ' + E.Message);
+      AppendStringsToFile('Mahnung: ' + E.Message, ErrorFName('MAHNUNG'), Uhr8);
     end;
   end;
 
