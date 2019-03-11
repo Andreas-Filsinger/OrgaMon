@@ -6,6 +6,7 @@
 * UPDATE: abtest.c
 * UPDATE: index.php
 * UPDATE: mkver.sh
+* UPDATE: aqbd.sh
 * UPDATE: Rohstoffe\favicon.ico
 * UPDATE: aqbd.service
 * INFO: Der aqbanking Dämon (in C) für den HBCI-Rest Server (in PHP)
@@ -25,6 +26,11 @@
 Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
+
+Rev 1.039 (11.03.19) Andreas Filsinger
+
+ Neu: Anpassungen an "AqBanking6"
+ Neu: Anpassungen an "PHP7"
 
 Rev 1.038 (05.03.19) Andreas Filsinger
 

@@ -1,7 +1,7 @@
 <?php
 
 //
-$Version="1.038";
+$Version="1.039";
 
 // REST - Parameter
 $pBLZ="";
@@ -570,7 +570,7 @@ foreach ($_GLOBALS as $var) {
   
 }
 
-list($FunktionsName, $pBLZ, $pKontoNummer, $pDatum) = array_pad(split("/", $rest),4,"");
+list($FunktionsName, $pBLZ, $pKontoNummer, $pDatum) = array_pad(explode("/", $rest),4,"");
 
 // Bearbeitung des Funktionsnamens
 $FunktionsName=strtolower($FunktionsName);
