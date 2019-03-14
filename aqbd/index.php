@@ -1,7 +1,7 @@
 <?php
 
 //
-$Version="1.039";
+$Version="1.040";
 
 // REST - Parameter
 $pBLZ="";
@@ -28,15 +28,15 @@ while (1) {
   break;	
 }
 
-header("Server: phpREST/" . $Version);
-header("Content-Type: text/plain");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Server: aqb/" . $Version);
+header("Content-Type: text/plain; charset=utf-8");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-header("Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
+header("Cache-Control: no-cache");
 header("Pragma: no-cache");
+//
+// https://tools.ietf.org/html/rfc5988#section-5
+header("Link: </favicon.ico>; rel=icon");
 header("ETag: \"" . $JobID . "\"");
-
-//HttpResponse::setETag($JobID);
 
 // TOOLS
 
@@ -45,7 +45,7 @@ function tunnel($DateiName) {
      $line = file($DateiName);
      foreach ($line as $out)
      {
-       echo utf8_decode ($out);
+       echo ($out);
      }
 }
 
@@ -161,7 +161,7 @@ function info(){
   echo "Modul;Version\n\r";
   echo "aqbd;OFFLINE\n\r";
  }
- echo "aqb-REST;$Version\n\r";
+ echo "index.php;$Version\n\r";
 
 }
 
@@ -257,6 +257,66 @@ function umsatz()
      $TimeOut = false;
      $Erfolg = true;
      tunnel($AqErfolg . $JobID . ".Umsatz.csv");
+     break; 
+   }
+ 
+   if (file_exists($AqError . $JobID . ".job" )) 
+   {
+
+     // Es wurden Probleme gemeldet
+     $TimeOut = false;
+     tunnel($AqInfo . $JobID . ".log.txt");
+     break; 
+   }
+ 
+ }
+
+ if ($TimeOut) 
+ {
+  halt_timeout();
+ }
+ 
+ if ($Erfolg==false) 
+ {
+  echo "ERROR: Umsatzbereitstellung erfolglos\n\r";
+ }
+
+}
+
+function vorgemerkt() 
+{ 
+ //Parameter
+ global $pBLZ;
+ global $pKontoNummer;
+ global $pDatum;
+ global $AqError, $AqErfolg, $AqInfo;
+ global $JobID; 
+ 
+ $pPIN = pin();
+ if ($pPIN=="") {
+
+  halt_error("Kombination BLZ/Kontonummer ist unbekannt");
+  return;
+ }
+ 
+ aqJob("-n $pBLZ $pKontoNummer $pPIN $pDatum" );
+
+ $Erfolg = false;
+ $TimeOut = true;
+ $Gewartet = 0;
+
+ while ($Gewartet<60) 
+ {
+
+   sleep(1);
+   $Gewartet++;
+
+   if (file_exists($AqErfolg . $JobID . ".job" )) {
+
+     // Job erfolgreich durchgefuehrt
+     $TimeOut = false;
+     $Erfolg = true;
+     tunnel($AqErfolg . $JobID . ".vorgemerkterUmsatz.csv");
      break; 
    }
  

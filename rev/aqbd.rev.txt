@@ -27,6 +27,17 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/index.php?title=AqBanking"><font color="blue">Weblink: Onlinedokumentation "aqbd"</font></a href>
 
+Rev 1.040 (14.03.19) Andreas Filsinger
+
+ Bug: Umlaute hatten nicht mehr funktioniert
+ Bug: Waehrung war leer
+ Bug: Datum war leer
+ Bug: "kein Umsatz" wurde als "ERROR" ausgegeben
+
+ Neu: Transaktionsverfügbarkeit wird geprüft 
+ Neu: Buchungstext nur noch in Buchungstext1
+ Neu: "utf-8"-Angabe im Header der Server-Antwort
+ 
 Rev 1.039 (11.03.19) Andreas Filsinger
 
  Neu: Anpassungen an "AqBanking6"
