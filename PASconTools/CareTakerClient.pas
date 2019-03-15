@@ -48,18 +48,6 @@ const
   iWikiServer: string = '';
   iWikiServer2: string = '';
 
-(*
-  iCareTakerOffline: boolean = false;
-  cCareTakerKey: string = 'PNE-32bit-STUB-VxD'; // Key! do not change
-  cCareTakerDiagnosePath: string = '';
-  cCareTakerLogFName = 'CareTaker.log.txt';
-function CareTakerFName: string;
-procedure Nachmeldungen;
-function CareTakerLog(s: string; Nachmeldungen: boolean = true): TTroubleTicket;
-procedure CareTakerClose(Ticket: TTroubleTicket);
-function deCrypt(s: string): string;
-*)
-
 function Int64asKeyStr(i: int64): AnsiString;
 function KeyStrasInt64(s: AnsiString): int64;
 function MachineID: string;
@@ -68,10 +56,6 @@ function vhost(url: string): string;
 function cHelpURL: string;
 function cTixURL: string;
 function ResolveServer(s: string): string;
-
-// Funktions Sicherstellung
-function getQuestion(Path: string): TStringList;
-procedure setAnswer(sAnswer: TStringList);
 
 implementation
 
@@ -126,8 +110,6 @@ begin
     result := '';
   end;
 end;
-
-
 
 function vhost(url: string): string;
 var

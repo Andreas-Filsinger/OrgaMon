@@ -980,7 +980,6 @@ begin
 
     // Einstellungen weitergeben
     SolidFTP.SolidFTP_LogDir := DiagnosePath;
-    writeln('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');

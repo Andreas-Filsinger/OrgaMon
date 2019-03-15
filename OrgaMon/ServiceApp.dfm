@@ -243,6 +243,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet2: TTabSheet
       Caption = 'Einstellungen'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 0
         Top = 24
@@ -372,6 +376,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet3: TTabSheet
       Caption = 'Recherche'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 409
         Top = 67
@@ -726,6 +734,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet4: TTabSheet
       Caption = 'Postproduction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label26: TLabel
         Left = 11
         Top = 237
@@ -812,15 +824,6 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 7
         Text = '0'
       end
-      object Button17: TButton
-        Left = 11
-        Top = 389
-        Width = 633
-        Height = 25
-        Caption = '"XXX.txt" hochladen'
-        TabOrder = 8
-        OnClick = Button17Click
-      end
       object Button11: TButton
         Left = 80
         Top = 419
@@ -831,7 +834,7 @@ object FormServiceApp: TFormServiceApp
         Margins.Right = 2
         Margins.Bottom = 2
         Caption = 'Bilder: "Prefix" neu berechnen'
-        TabOrder = 9
+        TabOrder = 8
         OnClick = Button11Click
       end
       object Edit22: TEdit
@@ -843,13 +846,17 @@ object FormServiceApp: TFormServiceApp
         Margins.Top = 2
         Margins.Right = 2
         Margins.Bottom = 2
-        TabOrder = 10
+        TabOrder = 9
         Text = '055'
       end
     end
     object TabSheet5: TTabSheet
       Caption = 'Migration'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button19: TButton
         Left = 144
         Top = 48
@@ -880,6 +887,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet6: TTabSheet
       Caption = 'Pflege'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button18: TButton
         Left = 11
         Top = 278
@@ -928,6 +939,10 @@ object FormServiceApp: TFormServiceApp
     object TabSheet8: TTabSheet
       Caption = 'IMEI'
       ImageIndex = 7
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label23: TLabel
         Left = 40
         Top = 48

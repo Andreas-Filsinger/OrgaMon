@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -124,7 +124,6 @@ type
     Button1: TButton;
     Button5: TButton;
     Edit21: TEdit;
-    Button17: TButton;
     ProgressBar1: TProgressBar;
     Label28: TLabel;
     Button11: TButton;
@@ -175,7 +174,6 @@ type
     procedure Edit19KeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure Button17Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
@@ -436,7 +434,6 @@ begin
 
     // Einstellungen weitergeben
     SolidFTP.SolidFTP_LogDir := DiagnosePath;
-    _log('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
     //
     ComboBox2.items.Clear;
@@ -448,7 +445,7 @@ begin
 
     // Aktuellen TAN Stand anzeigen
     Label25.caption := JonDaX.NewTrn(false);
-    _log('FTP-Login is ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
+    _log('FTP-Verzeichnis ist ' + JonDaX.pFTPPath);
   end;
 end;
 
@@ -1073,129 +1070,6 @@ begin
   openshell(DestFNAme);
 end;
 
-procedure TFormServiceApp.Button17Click(Sender: TObject);
-const
-  cFixedTAN_FName = '50000.DAT';
-var
-  lAbgearbeitet: TgpIntegerList;
-  lMeldungen: TStringList;
-  i: integer;
-  mRID: integer;
-  mderec: TMdeRec;
-  OneJLine: string;
-  JProtokoll: string;
-  OrgaMonErgebnis: file of TMdeRec; // Das sind Ergebnisse von MonDa
-  MyProgramPath: string;
-  sOrgaMonFName: string;
-  dTimeOut: TANFiXDate;
-  dMeldung: TANFiXDate;
-  Stat_Meldungen: integer;
-  lFehlEingaben: TStringList;
-  GeraeteNo: string;
-  MeldungsMoment: string;
-  iFTP: TIdFTP;
-begin
-  iFTP := TIdFTP.Create(self);
-
-  SolidInit(iFTP);
-  with iFTP do
-  begin
-    Host := iJonDa_FTPHost;
-    UserName := iJonDa_FTPUserName;
-    Password := iJonDa_FTPPassword;
-  end;
-
-  _log('melde TAN 50000 ... ');
-
-  MyProgramPath := 'W:\JonDaServer\';
-
-  lAbgearbeitet := TgpIntegerList.Create;
-  lMeldungen := TStringList.Create;
-  lFehlEingaben := TStringList.Create;
-  fillchar(mderec, sizeof(mderec), 0);
-  Stat_Meldungen := 0;
-  try
-    JonDaX.BeginAction('50000:000');
-
-    dTimeOut := DatePlus(DateGet, -8);
-    sOrgaMonFName := MyProgramPath + cOrgaMonDataPath + cFixedTAN_FName;
-    assignFile(OrgaMonErgebnis, sOrgaMonFName);
-    rewrite(OrgaMonErgebnis);
-
-    // Lade die fertigen!
-    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
-
-    // Lade alle Meldungen!
-    lMeldungen.LoadFromFile(MyProgramPath + 'XXX.txt');
-    for i := pred(lMeldungen.count) downto 0 do
-    begin
-      mRID := strtointdef(nextp(lMeldungen[i], ';', 0), 0);
-      if (mRID > 0) then
-      begin
-        if (lAbgearbeitet.IndexOf(mRID) = -1) then
-        begin
-          // damit er nicht mehrfach übertragen wird
-          lAbgearbeitet.add(mRID);
-
-          // nun den mderec Schreiben!
-          OneJLine := ANSI2OEM(lMeldungen[i]);
-          nextp(OneJLine, ';');
-          with mderec do
-          begin
-
-            RID := mRID;
-            zaehlernummer_korr := nextp(OneJLine, ';');
-            zaehlernummer_neu := nextp(OneJLine, ';');
-            zaehlerstand_neu := nextp(OneJLine, ';');
-            zaehlerstand_alt := nextp(OneJLine, ';');
-            Reglernummer_korr := nextp(OneJLine, ';');
-            Reglernummer_neu := nextp(OneJLine, ';');
-            JProtokoll := nextp(OneJLine, ';');
-            ersetze(cJondaProtokollDelimiter, ';', JProtokoll);
-            ProtokollInfo := JProtokoll;
-            ausfuehren_ist_datum := strtointdef(nextp(OneJLine, ';'), 0);
-            ausfuehren_ist_uhr := strtointdef(nextp(OneJLine, ';'), 0);
-            MeldungsMoment := nextp(OneJLine, ';');
-            GeraeteNo := nextp(OneJLine, ';');
-            dMeldung := Date2Long(nextp(MeldungsMoment, ' - ', 0));
-
-          end;
-
-          write(OrgaMonErgebnis, mderec);
-          inc(Stat_Meldungen);
-
-        end;
-      end;
-    end;
-    CloseFile(OrgaMonErgebnis);
-
-    with iFTP do
-    begin
-      //
-      if not(connected) then
-        connect;
-      if (FSize(sOrgaMonFName) > 0) then
-        JonDaX.sput(sOrgaMonFName, cFixedTAN_FName, iFTP)
-      else
-        JonDaX.log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
-      Disconnect;
-    end;
-
-    JonDaX.log('->OrgaMon     : ' + inttostr(Stat_Meldungen));
-    JonDaX.EndAction;
-  except
-  end;
-  lAbgearbeitet.Free;
-  lMeldungen.Free;
-  lFehlEingaben.SaveToFile(MyProgramPath + 'DiagnoseHTNT.txt');
-  lFehlEingaben.Free;
-  iFTP.Free;
-
-  Memo1.lines[pred(Memo1.lines.count)] := Memo1.lines[pred(Memo1.lines.count)] + '(' + inttostr(Stat_Meldungen) +
-    'x) ' + 'OK';
-
-end;
-
 procedure TFormServiceApp.Button18Click(Sender: TObject);
 const
   cIsAblageMarkerFile = 'ampel-horizontal.gif';
@@ -1532,21 +1406,9 @@ begin
 end;
 
 procedure TFormServiceApp.Button1Click(Sender: TObject);
-var
-  iFTP: TIdFTP;
 begin
   BeginHourGlass;
-  iFTP := TIdFTP.Create(self);
-  SolidInit(iFTP);
-  with iFTP do
-  begin
-    Host := iJonDa_FTPHost;
-    UserName := iJonDa_FTPUserName;
-    Password := iJonDa_FTPPassword;
-  end;
-  MyProgramPath := 'W:\JonDaServer\';
-  JonDaX.doStat(iFTP);
-  iFTP.Free;
+  JonDaX.doStat;
   EndHourGlass;
 end;
 
