@@ -381,7 +381,7 @@ var
  LetzerTagesAbschlussWarUm : TAnfixTime;
  ErrorCount: Integer;
  sAktions: TSTringList;
- n, Ticket : Integer;
+ n : Integer;
 
   procedure Log(s: string);
   begin
@@ -389,7 +389,7 @@ var
       writeln(s);
       AppendStringsToFile(s, DiagnosePath + 'Tagesabschluss-' + inttostrN(TagesAbschluss_TAN, 8) + '.log.txt');
       if (pos(cERRORText, s) > 0) then
-         CareTakerLog(s);
+         AppendStringsToFile(s, ErrorFName('TAGESABSCHLUSS'), Uhr8);
       if (pos(cFotoService_AbortTag, s) = 1) then
         halt(1);
     except
@@ -403,8 +403,6 @@ begin
   LetzerTagesAbschlussWarUm := SecondsGet;
   Log('Start am ' + long2date(LetzerTagesAbschlussWarAm) + ' um ' + secondstostr(LetzerTagesAbschlussWarUm) +
       ' h auf ' + ComputerName);
-  Ticket := CareTakerLog('Tagesabschluss START');
-  Log('Ticket ' + inttostr(Ticket) + ' erhalten');
   ErrorCount := 0;
 
   sAktions:= TSTringList.create;
@@ -634,9 +632,9 @@ begin
                   Log(cERRORText + format(' Abweichung der lokalen Zeit zu der des DB-Servers ist %d Sekunde(n)!',
                     [TimeDiff]));
               end;
-            26:
+            26: // Frei
               begin
-                Nachmeldungen;
+
               end;
           end;
         except
@@ -652,7 +650,7 @@ begin
  end;
   if (ErrorCount > 0) then
     Log(cERRORText + ' Tagesabschluss FAIL at Stage ' + inttostr(n));
-  CareTakerClose(Ticket);
+
   Log('Ende um ' + secondstostr(SecondsGet) + ' h');
   (*
   FormOLAP.DoContextOLAP(iSystemOLAPPath + 'System.Tagesabschluss.*' + cOLAPExtension);
@@ -982,12 +980,9 @@ begin
 
     // Einstellungen weitergeben
     SolidFTP.SolidFTP_LogDir := DiagnosePath;
-    writeln('Verwende FTP Zugang ' + iJonDa_FTPUserName + '@' + iJonDa_FTPHost);
 
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
-    CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' gestartet');
-
     repeat
 
       // Disable Abschluss ?!

@@ -380,6 +380,10 @@ object FormBaseUpdate: TFormBaseUpdate
       Caption = 'Datenbank-Update'
       ImageIndex = 1
       OnShow = TabSheet2Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 153
         Top = 45

@@ -149,10 +149,9 @@ object FormEreignis: TFormEreignis
     Align = alBottom
     TabOrder = 10
     AutoSize = False
-    ExplicitTop = 343
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'ART=Art'
       'ZUSAMMENHANG=Zusammenhang')

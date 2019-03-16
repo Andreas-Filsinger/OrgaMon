@@ -755,7 +755,7 @@ procedure TFormDruckSpooler.Log(const s: string);
 begin
   ListBox1.items.Add(s);
   if pos('ERROR:', s) > 0 then
-    CareTakerLog('DruckSpooler.' + s);
+    AppendStringsToFile('DruckSpooler.' + s, ErrorFName('DRUCK'), Uhr8);
 end;
 
 procedure TFormDruckSpooler.refreshDruckauftraege;

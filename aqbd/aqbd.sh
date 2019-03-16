@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# AqBanking Daemon Start Script
+# AqBanking Daemon Pre Startup Script
 #
 
 # Debug-Modus einschalten im Problemfall
@@ -10,13 +10,9 @@ export AQHBCI_LOGLEVEL=info
 export AQBANKING_LOGLEVEL=info
 
 #
-# stoppe ev. bisher aktive Dämonen
-#
-
-#
 # Lock-Verzeichnis aufraeumen
 #
-rm /root/.aqbanking/settings/users/*.lck*
+rm /root/.aqbanking/settings6/users/*.lck*
 
 #
 # Nicht abgearbeitete Jobs verschieben, da eh Timeout
@@ -30,3 +26,4 @@ find /srv/aqb/results/* -atime +14 -exec rm {} \;
 find /srv/aqb/logs/* -atime +14 -exec rm {} \;
 find /srv/aqb/error/* -atime +14 -exec rm {} \;
 
+exit 0

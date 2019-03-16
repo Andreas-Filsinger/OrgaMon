@@ -5210,7 +5210,9 @@ begin
   except
     on e: exception do
     begin
-      CareTakerLog(cERRORText + ' Context.' + e.message);
+      AppendStringsToFile('Context.' + e.message,
+        {} ErrorFName('AUFTRAG'),
+        {} Uhr8);
     end;
   end;
 
@@ -5290,7 +5292,9 @@ begin
     except
       on e: exception do
       begin
-        CareTakerLog(cERRORText + ' Context.' + _NewFName + '.' + e.message);
+        AppendStringsToFile('Context.' + _NewFName + '.' + e.message,
+          {} ErrorFName('AUFTRAG'),
+          {} Uhr8);
       end;
     end;
 

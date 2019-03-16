@@ -8,7 +8,7 @@
                                        
   Copyright (c) 2008 Christoph Thielecke
   Copyright (C) 2008 Martin Schmidt
-  Copyright (C) 2007-2014 Andreas Filsinger
+  Copyright (C) 2007-2019 Andreas Filsinger
                                            
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -42,9 +42,8 @@
 // aqbanking
 #include <aqbanking/version.h>
 #include <aqbanking/banking.h>
-#include <aqbanking/jobgetbalance.h>
-#include <aqbanking/jobgettransactions.h>
-#include <aqbanking/jobsepadebitnote.h> 
+#include <aqbanking/types/transaction.h>
+#include <aqbanking/types/balance.h>
 
 // C
 #include <fcntl.h>
@@ -57,7 +56,7 @@
 #include <unistd.h>
 
 // globale Variable
-const char *currentVersion = "1.038";
+const char *currentVersion = "1.040";
 
 // Zeiger auf die Kommandozeilenparameter
 const char *pin;
@@ -141,8 +140,7 @@ void doc(const char *text, int x)
 			FILE *transactionfile;
 			sprintf(fileName, "results/%s.%s.csv", fileAusgabeFName, csvName);
 			transactionfile = fopen(fileName, "a");
-			if (strcmp(text, "(null);")==0)
-			{
+			if (strcmp(text, "(null);")==0)	{
 				text = ";";
 			}
 			fprintf(transactionfile, "%s", text);
@@ -150,19 +148,22 @@ void doc(const char *text, int x)
 		}
 }
 
-void getVersion()
+void getVersion() 
 {
-	//Liest die Aktuellen Versionen und schreibt sie Raus. 
+
+	// Liest die aktuellen Versionen und schreibt sie raus.
 	char buffer[1000];
 	csvName = "Version";
-	sprintf(buffer, "Modul;Version\r\naqbanking;%s\r\ngwenhywfar;%s\r\nabtest;%s\r\n", 
-	AQBANKING_VERSION_FULL_STRING, GWENHYWFAR_VERSION_FULL_STRING, currentVersion);
+	sprintf(buffer, "Modul;Version\r\naqbanking;%s\r\ngwenhywfar;%s\r\naqbd;%s\r\n", 
+	  AQBANKING_VERSION_FULL_STRING, 
+	  GWENHYWFAR_VERSION_FULL_STRING, 
+	  currentVersion);
 	doc(buffer, 1);
 } 
 
 void usage() 
 {
-	//Bei eingabe von --help oder allem nicht auflösbaren
+	//Bei eingabe von --help oder allem nicht auflÃ¶sbaren
 	printf("\naqbd -[U|L|B|S|D] BLZ KontoNummer PIN [Datum|\"Pfad\"]\n");
 	printf("	-U Ausgabe der Umsaetze in eine Datei \n");
 	printf("	-L Durchfuehren von Lastschriften\n");
@@ -184,11 +185,12 @@ int zMessageBox(GWEN_GUI *gui, uint32_t flags,  const char *title,  const char *
 	return 0;
 }
 					  
-int zProgressLog (GWEN_GUI *gui, uint32_t id, GWEN_LOGGER_LEVEL level, const char *text) {
+int zProgressLog (GWEN_GUI *gui, uint32_t id, GWEN_LOGGER_LEVEL level, const char *text) 
+{
 
-char cHBCI[1024];
+   char cHBCI[1024];
 
-         if(strstr(text, "HBCI: ") == NULL){
+   if(strstr(text, "HBCI: ") == NULL) {
          
 	   //Zusaetzliche Statusinformationen werden hier ausgegeben (Callback)
 	   doc("<log>", 0);
@@ -205,7 +207,17 @@ char cHBCI[1024];
 	return 0;
 }										 
 
-int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *title, const char *text, char *buffer, int minLen, int maxLen, uint32_t guiid)
+int zPasswortFn(GWEN_GUI *gui, 
+                uint32_t flags, 
+                const char *token, 
+                const char *title, 
+                const char *text, 
+                char *buffer, 
+                int minLen, 
+                int maxLen,
+                GWEN_GUI_PASSWORD_METHOD methodId,
+                GWEN_DB_NODE *methodParams,
+                uint32_t guiid)
 {	
 	char tan [100];
 	
@@ -216,9 +228,8 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 	//Wenn der Callback nach dem PIN Fragt, den inder Kommandozeile erhaltenen PIN zurückgeben
 	if (flags & GWEN_GUI_INPUT_FLAGS_TAN) {
 
-			//TanDaemon, wartet auf das tan-File
-			if(deamonMode==1)
-			{
+	  //TanDaemon, wartet auf das tan-File
+	 if(deamonMode==1) {
 				FILE *tanreq;
 				char fileName[1050];
 				char path[1050];
@@ -301,7 +312,8 @@ int zPasswortFn(GWEN_GUI *gui, uint32_t flags, const char *token, const char *ti
 
 
 
-int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, uint32_t guiid) {
+int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, uint32_t guiid) 
+{
 /*
     prueft den Zertifikats-Staus, Rueckgabewerte
   
@@ -352,12 +364,10 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 	status=GWEN_SslCertDescr_GetStatusText(cd);
 
 	ti=GWEN_SslCertDescr_GetNotBefore(cd);
-	if (ti) 
-	{
+	if (ti) {
 		GWEN_BUFFER *tbuf;
 		tbuf=GWEN_Buffer_new(0, 32, 0, 1);
-		if (GWEN_Time_toString(ti, "YYYY/MM/DD hh:mm:ss", tbuf)) 
-		{
+		if (GWEN_Time_toString(ti, "YYYY/MM/DD hh:mm:ss", tbuf)) {
 			DBG_ERROR(GWEN_LOGDOMAIN,"zCheckCert: Could not convert beforeDate to string");
 			abort();
 		}
@@ -371,8 +381,7 @@ int zCheckCert (GWEN_GUI *gui, const GWEN_SSLCERTDESCR *cd, GWEN_SYNCIO *sio, ui
 		GWEN_BUFFER *tbuf;
 
 		tbuf=GWEN_Buffer_new(0, 32, 0, 1);
-		if (GWEN_Time_toString(ti, "YYYY/MM/DD hh:mm:ss", tbuf)) 
-		{
+		if (GWEN_Time_toString(ti, "YYYY/MM/DD hh:mm:ss", tbuf)) {
 			DBG_ERROR(GWEN_LOGDOMAIN,"zCheckCert: Could not convert untilDate to string");
 			abort();
 		}
@@ -522,14 +531,9 @@ int AB_create() {
 		doc(buffer, 0);
 		return 2;
 	}
-	rv=AB_Banking_OnlineInit(ab);
-	if (rv) {
-		sprintf(buffer,"ERROR: AB_Banking_OnlineInit == %d\n", rv);
-		doc(buffer, 0);
-		return 2;
-	}
 	
-	//Setzen der Call-backs::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	
+	// Setzen der Call-backs
 	GWEN_Gui_SetProgressLogFn(gui,zProgressLog);
 	GWEN_Gui_SetGetPasswordFn(gui, zPasswortFn);
 	GWEN_Gui_SetCheckCertFn(gui, zCheckCert);
@@ -544,17 +548,8 @@ int AB_free() {
 	int rv=0;
 	char buffer[1024];
 
-	rv=AB_Banking_OnlineFini(ab);
-	if (rv) 
-	{
-		sprintf(buffer, "ERROR: Error on deinit online modules (%d)!\n", rv);
-		doc(buffer, 0);
-		return 3;
-	}
-
 	rv=AB_Banking_Fini(ab);
-	if (rv) 
-	{
+	if (rv) {
 		sprintf(buffer, "ERROR: Error on deinit (%d)!\n", rv);
 		doc(buffer, 0);
 		return 3;
@@ -562,10 +557,22 @@ int AB_free() {
 
 	AB_Banking_free(ab);
 	return 0;
-
 }
 
+AB_TRANSACTION *createAndCheckRequest(AB_ACCOUNT_SPEC *as, AB_TRANSACTION_COMMAND cmd)
+{
+  if (AB_AccountSpec_GetTransactionLimitsForCommand(as, cmd)) {
+    AB_TRANSACTION *j;
 
+    j=AB_Transaction_new();
+    AB_Transaction_SetUniqueAccountId(j, AB_AccountSpec_GetUniqueId(as));
+    AB_Transaction_SetCommand(j, cmd);
+    return j;
+  }
+  else {
+    return NULL;
+  }
+}
 
 int umsaetze(AB_BANKING *ab, const char *date)
 {
@@ -573,21 +580,17 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	int rv;
 	int ErrorCount;
 	char buffer [10000];
-	AB_ACCOUNT *a;
-	AB_JOB_LIST2 *jl;
-	AB_JOB *j;
+	AB_ACCOUNT_SPEC *a;
+        AB_ACCOUNT_SPEC_LIST *accs=NULL;
+	AB_TRANSACTION_LIST2 *jl;
+	AB_TRANSACTION *j;
 	AB_IMEXPORTER_CONTEXT *ctx;
 	AB_IMEXPORTER_ACCOUNTINFO *ai;
         const GWEN_STRINGLIST *sl;
 	const AB_VALUE *v;
-	const char *purpose1;
-	const char *purpose2;
-	const char *purpose3;
-	const char *purpose4;
-	const char *purpose5;
-	const char *purpose6;
-	const char *purpose7;
+        const char *purpose;
 	const char *vonREF;
+	const char *from;
 	const char *from1;
 	const char *from2;
 	const char *mref;
@@ -595,49 +598,57 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	const char *eref;
 	char betrag [21];
 	char datum [32];
-	char valutaDate [32];
+	char valuta [32];
+	char waehrung [32];
 	int n;
-	const GWEN_TIME *ti;
+	const GWEN_DATE *ti;
 
 	
 	//Initialisierungen
 	ctx=AB_ImExporterContext_new();
-	jl=AB_Job_List2_new();
+	jl=AB_Transaction_List2_new();
 	csvName = "Umsatz";
 	
-	//Transaktionsteil
-	a=AB_Banking_GetAccountByCodeAndNumber(ab, blz, kto);
-	if(!a)
-	{
+        /* get the list of known accounts */
+        AB_Banking_GetAccountSpecList(ab, &accs);
+
+        /* find a matching account within the given list */
+        a = AB_AccountSpec_List_FindFirst(accs,
+                                   "aqhbci",                /* backendName */
+                                   "*",                    /* country */
+                                   blz,                   /* bankId bank */
+                                   kto,                     /* accountNumber */
+                                   "*",                     /* subAccountId */
+                                   "*",                     /* iban */
+                                   "*",                     /* currency */
+                                   AB_AccountType_Unknown); /* ty */
+ 	if (!a)	{
 		doc("ERROR: Kombination BLZ KTO# ist unbekannt!\n", 0);
 		return 1;
 	}
 
-	j=AB_JobGetTransactions_new(a);
-	if(date)
-	{
-		AB_JobGetTransactions_SetFromTime(j, GWEN_Time_fromString(date, "DD.MM.YYYY"));
+        j = createAndCheckRequest(a, AB_Transaction_CommandGetTransactions);
+        if (!j) {
+		doc("ERROR: Kommando GetTransactions ist nicht verfuegbar!\n", 0);
+		return 2;
+        }
+
+	if (date) {
+		AB_Transaction_SetFirstDate(j, GWEN_Date_fromStringWithTemplate(date,"DD.MM.YYYY"));
 	}
 
-	rv=AB_Job_CheckAvailability(j);
-	if (rv)
-	{
-		sprintf(buffer, "ERROR: Job ist nicht verfuegbar (%d)!\n", rv);
-		doc(buffer, 0);
-		return 2;
-	}
 	//Job zur liste hinzufgen
-	AB_Job_List2_PushBack(jl, j);
+	AB_Transaction_List2_PushBack(jl, j);
 	//Jobs ausfuehren!
-	rv=AB_Banking_ExecuteJobs(ab, jl, ctx);	
-	if (rv) 
-	{
+	rv=AB_Banking_SendCommands(ab, jl, ctx);	
+	if (rv) {
 		sprintf(buffer, "ERROR: Ausfuehrung misslungen (%d)!\n", rv);
 		doc(buffer, 0);
 		return 3;
 	}
 	
         ErrorCount=0;
+        int i=0;
 	
 	//Erstellen der .csv-Datei
 	doc("\n<transactions>", 0);
@@ -647,49 +658,51 @@ int umsaetze(AB_BANKING *ab, const char *date)
 	doc("Buchungstext1;Buchungstext2;Buchungstext3;", 1);
 	doc("Buchungstext4;Buchungstext5;Buchungstext6;", 1);
 	doc("Buchungstext7;MandatsReferenz;GlaeubigerID;EndeZuEndeReferenz\r\n", 1);
-
 	
 	ai=AB_ImExporterContext_GetFirstAccountInfo(ctx); //AccountInfo herausziehen
-        if (ai) {
-          int i=1;
+        while (ai) {
+
           const AB_TRANSACTION *t;
-          t=AB_ImExporterAccountInfo_GetFirstTransaction(ai);
+
+          t=AB_ImExporterAccountInfo_GetFirstTransaction(ai,AB_Transaction_TypeStatement,0);
           while(t) {
 
-          
-		//Getting Time
+                i++;
+		// Buchungsdatum
 		ti = AB_Transaction_GetDate(t);
-		if (ti) 
-		{
+		if (!ti) {
+		 ti = AB_Transaction_GetValutaDate(t);
+		} 
+		if (ti) {
 			GWEN_BUFFER *tbuf;
 			tbuf = GWEN_Buffer_new(0, 32, 0, 1);
-			rv = GWEN_Time_toString(ti, "DD.MM.YYYY", tbuf);
-			if (rv) 
-			{
+			rv = GWEN_Date_toStringWithTemplate(ti, "DD.MM.YYYY", tbuf);
+			if (rv<0) {
 				strcpy(datum, "Convert Error");
-			}
-			strncpy(datum, GWEN_Buffer_GetStart(tbuf), sizeof(datum)-1);
+			} else {
+			 strncpy(datum, GWEN_Buffer_GetStart(tbuf), sizeof(datum)-1);
+			} 
 			GWEN_Buffer_free(tbuf);
 		}
-		else
-		{
-			strcpy(datum, "date=nil");
+		else {
+			strcpy(datum, "");
 		}
 
+                // Wertstellungsdatum
 		ti = AB_Transaction_GetValutaDate(t);
-		if(ti)
-		{
+		if (ti) {
 			GWEN_BUFFER *tbuf;
 			tbuf=GWEN_Buffer_new(0, 32, 0, 1);
-			rv = GWEN_Time_toString(ti, "DD.MM.YYYY", tbuf);
-			strncpy(valutaDate, GWEN_Buffer_GetStart(tbuf), sizeof(valutaDate)-1);
+			rv = GWEN_Date_toStringWithTemplate(ti, "DD.MM.YYYY", tbuf);
+			if (rv<0) {
+			 strcpy(valuta, "Convert Error");
+			} else	{ 
+			 strncpy(valuta, GWEN_Buffer_GetStart(tbuf), sizeof(valuta)-1);
+			}
 			GWEN_Buffer_free(tbuf);
+		} else{
+			strcpy(valuta,"");
 		}
-		else
-		{
-			strcpy(valutaDate,"valutaDate=nil");
-		}
-		//Weitere Vorbereitungen
 
 		v = AB_Transaction_GetValue(t);
 		sprintf(betrag, "%.2lf", AB_Value_GetValueAsDouble(v));
@@ -698,42 +711,40 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		while ((betrag[n]!='.') && (n<20)&& (betrag[n])) {
 			n++;
 		}
-		if (betrag[n] == '.')
-		{
+
+		if (betrag[n] == '.') {
 			betrag[n] = ',';//Dezimalkomma
 		}
 
-
-		sl = AB_Transaction_GetPurpose(t);
-		purpose1 = GWEN_StringList_StringAt(sl,0);
-		purpose2 = GWEN_StringList_StringAt(sl,1);
-		purpose3 = GWEN_StringList_StringAt(sl,2);
-		purpose4 = GWEN_StringList_StringAt(sl,3);
-		purpose5 = GWEN_StringList_StringAt(sl,4);
-		purpose6 = GWEN_StringList_StringAt(sl,5);
-		purpose7 = GWEN_StringList_StringAt(sl,6);
-		sl = AB_Transaction_GetRemoteName(t);
+		purpose = AB_Transaction_GetPurpose(t);
+		from = AB_Transaction_GetRemoteName(t);
+                sl=GWEN_StringList_fromString(from, "\n", 0);
 		from1 = GWEN_StringList_StringAt(sl,0);
 		from2 = GWEN_StringList_StringAt(sl,1);
 		vonREF = AB_Transaction_GetCustomerReference(t);
-//		mref = AB_Transaction_GetMandateReference (t);
 		mref = AB_Transaction_GetMandateId (t);
-//		cred = AB_Transaction_GetCreditorIdentifier(t);
 		cred = AB_Transaction_GetCreditorSchemeId(t);
 		eref = AB_Transaction_GetEndToEndReference(t);
 		
-		if(vonREF==0)
-		{
+		if (vonREF==0) {
 			vonREF="NONREF";
 		}
+		
+		//sprintf(waehrung,"%s",AB_Value_GetCurrency(v));
+                strcpy(waehrung , "EUR");   
+//		if (strlen(waehrung)<3) {
+//		  strcpy(waehrung,"â‚¬");
+//                } else {
+//                  strcpy(waehrung,"NIL");
+//                }
 
 		//Ausgaben in die CSV-Datei
 		sprintf(buffer, "%i;", i);						doc(buffer,1);
 		sprintf(buffer, "%s;", datum);						doc(buffer,1);
-		sprintf(buffer, "%s;", valutaDate);					doc(buffer,1);
+		sprintf(buffer, "%s;", valuta);						doc(buffer,1);
 		sprintf(buffer, "%s;", betrag);						doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));			doc(buffer,1);
-		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
+		sprintf(buffer, "%s;", waehrung);					doc(buffer,1);
+		sprintf(buffer, "N%s;",AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
 		sprintf(buffer, "%i;", AB_Transaction_GetTransactionCode(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetTransactionText(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetPrimanota(t));			doc(buffer,1);
@@ -742,38 +753,33 @@ int umsaetze(AB_BANKING *ab, const char *date)
 		sprintf(buffer, "%s;", AB_Transaction_GetCustomerReference(t));		doc(buffer,1);
 		sprintf(buffer, "%s;", from1);						doc(buffer,1);
 		sprintf(buffer, "%s;", from2);						doc(buffer,1);
-		sprintf(buffer, "%s;", purpose1);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose2);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose3);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose4);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose5);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose6);					doc(buffer,1);
-		sprintf(buffer, "%s;", purpose7);					doc(buffer,1);
+		sprintf(buffer, "%s;;;;;;;", purpose);					doc(buffer,1);
 		sprintf(buffer, "%s;", mref ); 						doc(buffer,1);
 		sprintf(buffer, "%s;", cred ); 						doc(buffer,1);
 		sprintf(buffer, "%s;", eref ); 						doc(buffer,1);
          
 		doc("\r\n", 1);
-		i++;
-
                 
-		t=AB_ImExporterAccountInfo_GetNextTransaction(ai);
-                
+		t=AB_Transaction_List_Next(t);
 	  } /* while transactions */
-         } /* if ai */
-        else {
-         ErrorCount++;
+
+           ai=AB_ImExporterAccountInfo_List_Next(ai);
+        } /* while ai */
+     
+        if (i==0) {
          doc("WARNING: Keine Umsaetze!\n",0);
         }
 	doc("</transactions>", 0);
 	
 	//Freigaben
 	if (jl) {
-	 AB_Job_List2_free(jl);
+	 AB_Transaction_List2_free(jl);
 	}
+
 	if (ctx) {
   	 AB_ImExporterContext_free(ctx);
  	}
+
 	return ErrorCount;
 }
 
@@ -783,9 +789,10 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 
 	int rv;
 	char buffer [5000];
-	AB_ACCOUNT *a;
-	AB_JOB_LIST2 *jl;
-	AB_JOB *j;
+	AB_ACCOUNT_SPEC *a;
+        AB_ACCOUNT_SPEC_LIST *accs=NULL;
+	AB_TRANSACTION_LIST2 *jl;
+	AB_TRANSACTION *j;
 	AB_IMEXPORTER_CONTEXT *ctx;
 	AB_IMEXPORTER_ACCOUNTINFO *ai;
 	int i=1;
@@ -794,34 +801,43 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 	
 	//Initialisierungen
 	ctx=AB_ImExporterContext_new();
-	jl=AB_Job_List2_new();
+	jl=AB_Transaction_List2_new();
 	csvName = "vorgemerkterUmsatz";
 	
 	//Transaktionsteil
-	a=AB_Banking_GetAccountByCodeAndNumber(ab, blz, kto);
+        AB_Banking_GetAccountSpecList(ab, &accs);
+        
+	a=AB_AccountSpec_List_FindFirst(accs,
+                                        "aqhbci",
+                                        "*",	 
+	                                 blz, 
+	                                 kto,
+	                                 "*",
+	                                 "*",
+	                                 "*",
+	                                 AB_AccountType_Unknown);
+	                                 
 	if(!a)
 	{
 		doc("ERROR: Kombination BLZ KTO# ist unbekannt!\n", 0);
 		return 1;
 	}
-
-	j=AB_JobGetTransactions_new(a);
-	if(date)
-	{
-		AB_JobGetTransactions_SetFromTime(j, GWEN_Time_fromString(date, "DD.MM.YYYY"));
-	}
-
-	rv=AB_Job_CheckAvailability(j);
-	if (rv)
-	{
-		sprintf(buffer, "ERROR: Job is not available (%d)\n", rv);
-		doc(buffer, 0);
+	
+	j = createAndCheckRequest(a, AB_Transaction_CommandGetStandingOrders);
+        if (!j) {
+		doc("ERROR: Kommando GetStandingOrders ist nicht verfuegbar!\n", 0);
 		return 2;
+        }
+
+	if(date) {
+		//AB_JobGetTransactions_SetFromTime(j, GWEN_Time_fromString(date, "DD.MM.YYYY"));
+              AB_Transaction_SetFirstDate(j, GWEN_Date_fromString(date));
 	}
+
 	//Job zur liste hinzufgen
-	AB_Job_List2_PushBack(jl, j);
+	AB_Transaction_List2_PushBack(jl, j);
 	//Jobs ausfuehren!
-	rv=AB_Banking_ExecuteJobs(ab, jl, ctx);	
+	rv=AB_Banking_SendCommands(ab, jl, ctx);	
 	if (rv) 
 	{
 		sprintf(buffer, "ERROR: ExecuteJobs misslungen (%d)!\n", rv);
@@ -836,10 +852,10 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 	doc("PosNo;Datum;Valuta;Betrag;Waehrung;Typ;VorgangID;VorgangText;PrimaNota;VonBLZ;VonKonto;VonREF;VonName1;VonName2;Buchungstext1;Buchungstext2;Buchungstext3;Buchungstext4;Buchungstext5;Buchungstext6;Buchungstext7\r\n", 1);
 	
 	ai=AB_ImExporterContext_GetFirstAccountInfo(ctx);//AccountInfo herausziehen
-	t=AB_ImExporterAccountInfo_GetFirstNotedTransaction(ai);
-	while(t)// für jede Transaktion = jeden Datensatz
-	{
+	t=AB_ImExporterAccountInfo_GetFirstTransaction(ai,AB_Transaction_TypeNotedStatement,0);
+	while(t) {
 		const AB_VALUE *v;
+		const char *purpose;
 		const char *purpose1;
 		const char *purpose2;
 		const char *purpose3;
@@ -848,12 +864,14 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		const char *purpose6;
 		const char *purpose7;
 		const char *vonREF;
+		const char *from;
 		const char *from1;
 		const char *from2;
 		char betrag [21];
 		char date [32];
-		char valutaDate [32];
-		const GWEN_TIME *ti;
+		char valuta [32];
+		char waehrung [32];
+		const GWEN_DATE *ti;
 		const GWEN_STRINGLIST *sl;
 
 		//Getting Time
@@ -862,17 +880,19 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		{
 			GWEN_BUFFER *tbuf;
 			tbuf = GWEN_Buffer_new(0, 32, 0, 1);
-			rv = GWEN_Time_toString(ti, "DD.MM.YYYY", tbuf);
-			if (rv) 
+			rv = GWEN_Date_toStringWithTemplate(ti, "DD.MM.YYYY", tbuf);
+			if (rv<0) 
 			{
-				strcpy(date, "Convert Error");
+			  strcpy(date, "Convert Error");
+			} else
+			{
+			  strncpy(date, GWEN_Buffer_GetStart(tbuf), sizeof(date)-1);
 			}
-			strncpy(date, GWEN_Buffer_GetStart(tbuf), sizeof(date)-1);
 			GWEN_Buffer_free(tbuf);
 		}
 		else
 		{
-			strcpy(date, "date=nil");
+			strcpy(date, "");
 		}
 
 		ti = AB_Transaction_GetValutaDate(t);
@@ -880,15 +900,20 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		{
 			GWEN_BUFFER *tbuf;
 			tbuf=GWEN_Buffer_new(0, 32, 0, 1);
-			rv = GWEN_Time_toString(ti, "DD.MM.YYYY", tbuf);
-			strncpy(valutaDate, GWEN_Buffer_GetStart(tbuf), sizeof(valutaDate)-1);
+			rv = GWEN_Date_toStringWithTemplate(ti, "DD.MM.YYYY", tbuf);
+			if (rv<0)
+			{
+			 strcpy(valuta, "Convert Error");
+			} else
+			{
+  			 strncpy(valuta, GWEN_Buffer_GetStart(tbuf), sizeof(valuta)-1);
+			}
 			GWEN_Buffer_free(tbuf);
 		}
 		else
 		{
-			strcpy(valutaDate,"valutaDate=nil");
+			strcpy(valuta,"");
 		}
-		//Weitere Vorbereitungen
 
 		// Betrag 
 		v = AB_Transaction_GetValue(t);
@@ -901,7 +926,8 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 			betrag[si] = ',';//Dezimalkomma
 		}
 		
-		sl = AB_Transaction_GetPurpose(t);
+		purpose = AB_Transaction_GetPurpose(t);
+		sl=GWEN_StringList_fromString(purpose,"\n", 0);
 		purpose1 = GWEN_StringList_StringAt(sl,0);
 		purpose2 = GWEN_StringList_StringAt(sl,1);
 		purpose3 = GWEN_StringList_StringAt(sl,2);
@@ -909,21 +935,30 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		purpose5 = GWEN_StringList_StringAt(sl,4);
 		purpose6 = GWEN_StringList_StringAt(sl,5);
 		purpose7 = GWEN_StringList_StringAt(sl,6);
-		sl = AB_Transaction_GetRemoteName(t);
+		// imp pend: free(sl)
+		from = AB_Transaction_GetRemoteName(t);
+		sl=GWEN_StringList_fromString(from,"\n", 0);
 		from1 = GWEN_StringList_StringAt(sl,0);
 		from2 = GWEN_StringList_StringAt(sl,1);
+		// imp pend: free(sl)
 		vonREF = AB_Transaction_GetCustomerReference(t);
 		
-		if(vonREF==0) {
+		if (vonREF==0) {
 			vonREF="NONREF";
 		}
+		
+		sprintf(waehrung,"%s",AB_Value_GetCurrency(v));
+		if (strlen(waehrung)<3) {
+		  sprintf(waehrung,"â‚¬");
+                }
+		
 		
 		//Ausgaben in die CSV-Datei
 		sprintf(buffer, "%i;", i);						doc(buffer,1);
 		sprintf(buffer, "%s;", date);						doc(buffer,1);
-		sprintf(buffer, "%s;", valutaDate);					doc(buffer,1);
+		sprintf(buffer, "%s;", valuta);						doc(buffer,1);
 		sprintf(buffer, "%s;", betrag);						doc(buffer,1);
-		sprintf(buffer, "%s;", AB_Value_GetCurrency(v));			doc(buffer,1);
+		sprintf(buffer, "%s;", waehrung);					doc(buffer,1);
 		sprintf(buffer, "N%s;", AB_Transaction_GetTransactionKey(t));		doc(buffer,1);
 		sprintf(buffer, "%i;", AB_Transaction_GetTextKey(t));			doc(buffer,1);
 		sprintf(buffer, "%s;", AB_Transaction_GetTransactionText(t));		doc(buffer,1);
@@ -943,12 +978,12 @@ int vorgemerkte(AB_BANKING *ab, const char *date)
 		doc("\r\n", 1);
 		i++;
 
-		t=AB_ImExporterAccountInfo_GetNextNotedTransaction(ai);
+		t=AB_Transaction_List_Next(t);
 	} /* while transactions */
 	doc("</notedtransactions>", 0);
 	
 	//Freigaben
-	AB_Job_List2_free(jl);
+	AB_Transaction_List2_free(jl);
 	AB_ImExporterContext_free(ctx);
 	return 0;
 }
@@ -1014,13 +1049,12 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 
 	char buffer[5000];
 	AB_TRANSACTION *t=0;
-	AB_ACCOUNT *a;
-	AB_JOB_LIST2 *jl=0;
+	AB_ACCOUNT_SPEC *a;
+        AB_ACCOUNT_SPEC_LIST *accs=NULL;
+	AB_TRANSACTION_LIST2 *jl=0;
 	AB_IMEXPORTER_CONTEXT *ctx=0;
-	AB_JOB *job=0;
-        AB_USER *u=0;
         GWEN_DATE *dt;
-        GWEN_TIME *tm;
+        GWEN_STRINGLIST *sl;
 
 	FILE *LASTCSV;
 	FILE *gidfile;
@@ -1059,16 +1093,29 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 	int spalte=0;
 	int iLineCount=0;
         AB_BANKINFO *bi;
+
+        /* get the list of known accounts */
+        AB_Banking_GetAccountSpecList(ab, &accs);
+
+        /* find a matching account within the given list */
+        a=AB_AccountSpec_List_FindFirst(accs,
+                                   "aqhbci",                /* backendName */
+                                   "*",                    /* country */
+                                   blz,                   /* bankId bank */
+                                   kto,                     /* accountNumber */
+                                   "*",                     /* subAccountId */
+                                   "*",                     /* iban */
+                                   "*",                     /* currency */
+                                   AB_AccountType_Unknown); /* ty */
 	
-	//Konto suchen
-	a = AB_Banking_GetAccountByCodeAndNumber(ab, blz, kto);
 	if(!a){
 		doc("ERROR: Kombination 'BLZ Kontonummer' nicht gefunden!\n", 0);
 		return 2;
 	}
-        u = AB_Account_GetFirstUser( a );					
 	
-        sprintf(buffer,"INFO: Konto-Bezeichnung (userName) ist \"%s\"!\n",AB_User_GetUserName(u));
+        sprintf(buffer,
+         "INFO: Konto-Bezeichnung (userName) ist \"%s\"!\n",
+         AB_AccountSpec_GetOwnerName(a));
         doc(buffer,0);
         
         // Init
@@ -1093,7 +1140,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
         }
         
         // eigene IBAN suchen
-        strncpy(iban, AB_Account_GetIBAN(a), sizeof(iban)-1);
+        strncpy(iban, AB_AccountSpec_GetIban(a), sizeof(iban)-1);
         if (strlen(iban)!=22) {
           doc("ERROR: GetIBAN ging schief!\n", 0);
           return 2;
@@ -1130,7 +1177,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 		rewind(LASTCSV);
 		
 		ctx=AB_ImExporterContext_new();
-		jl=AB_Job_List2_new();
+		jl=AB_Transaction_List2_new();
 		
 		while(l<size)
 		{
@@ -1213,28 +1260,21 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					}
 					
 					// Job erstellen
-					job = AB_JobSepaDebitNote_new(a);
-					rv = AB_Job_CheckAvailability(job);
-					if(rv) {
-					
-				        	doc("ERROR: Job \"SepaDebitNote\" ist nicht erlaubt!\n",0);
-						return 2;
-					}
+
+
 					
 					// Init
-					t = AB_Transaction_new();
-                                        
-                                        AB_Banking_FillGapsInTransaction(ab, a, t);
+					t = createAndCheckRequest(a, AB_Transaction_CommandSepaDebitNote);
+					if (!t) {
+					   doc("ERROR: Kommando SepaDebitNote ist nicht verfuegbar!\n", 0);
+					   return 2;
+				        }
 					
-                                        // -----------------------------------------
-					// Transaktionsart:
-					//
-
 					// SEPA Basis Lastschrift einmalig
-				        AB_Transaction_SetType(t, AB_Transaction_TypeSepaDebitNote);
-                                        AB_Transaction_SetSequenceType(t, AB_Transaction_SequenceTypeOnce);
+				        //AB_Transaction_SetType(t, AB_Transaction_TypeSepaDebitNote);
+                                        AB_Transaction_SetType(t, AB_Transaction_TypeDebitNote);
+                                        AB_Transaction_SetSequence(t, AB_Transaction_SequenceOnce);
                                         AB_Transaction_SetTextKey(t, 5);
-                                        
                                         
                                         // -----------------------------------------
                                         // Transaktionsparameter:
@@ -1266,30 +1306,34 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 					AB_Transaction_SetEndToEndReference(t, eref);
                                         
                                         // AusfÃ¼hrungsdatum
-                                        sprintf(AusfuehrungsDatum,"%s-00:00",AusfuehrungsDatum);
-                                        tm=GWEN_Time_fromUtcString(AusfuehrungsDatum, "YYYYMMDD-hh:mm");
-				        if (tm==0) {
+                                        //sprintf(AusfuehrungsDatum,"%s-00:00",AusfuehrungsDatum);
+                                        dt = GWEN_Date_fromStringWithTemplate(AusfuehrungsDatum, "YYYYMMDD");
+				        if (dt==0) {
                                             doc("ERROR: AusfÃ¼hrungsdatum-Datum falsch!\n",0);
 					    return 2;
 					}
-                                        AB_Transaction_SetDate(t, tm);
+                                        AB_Transaction_SetDate(t, dt);
 
 					// Betrag
 					AB_Transaction_SetValue(t, AB_Value_fromString(betrag));
 
-                                        // Verwendungszweck
+                                        // Verwendungszweck 
+                                        sl = GWEN_StringList_new();
+                                        
 					if (strlen(vz1)>=1) {
-					 AB_Transaction_AddPurpose(t, vz1,0);
+					 GWEN_StringList_AppendString(sl,vz1,0,0);
 					} 
 					if (strlen(vz2)>=1) {
-					 AB_Transaction_AddPurpose(t, vz2,0);
+					 GWEN_StringList_AppendString(sl,vz2,0,0);
 					} 
 					if (strlen(vz3)>=1) {
-					 AB_Transaction_AddPurpose(t, vz3,0);
+					 GWEN_StringList_AppendString(sl,vz3,0,0);
 					} 
 					if (strlen(vz4)>=1) {
-					 AB_Transaction_AddPurpose(t, vz4,0);
+					 GWEN_StringList_AppendString(sl,vz4,0,0);
 					} 
+					
+					AB_Transaction_SetPurposeFromStringList(t, sl);
 					
 					// Seems aqBanking can take only 4 
 					/*
@@ -1310,7 +1354,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         
                                         // GlÃ¤ubiger Identifikationsnummer der Deutschen Bundesbank
                                         AB_Transaction_SetCreditorSchemeId(t, gid);
-					AB_Transaction_SetLocalName(t, AB_User_GetUserName(u));
+					AB_Transaction_SetLocalName(t, AB_AccountSpec_GetOwnerName(a));
 					AB_Transaction_SetLocalIban(t, iban );
                                         AB_Transaction_SetLocalBic(t, bic); 
                                         
@@ -1323,7 +1367,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         //
 
                                         // Name
-					AB_Transaction_AddRemoteName(t, name, 0);
+					AB_Transaction_SetRemoteName(t, name);
 					
 					// Kontonummer+BLZ
 					AB_Transaction_SetRemoteBankCode(t, fblz);
@@ -1343,8 +1387,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
                                         // -----------------------------------------
 					
 					// save,add,free
-					AB_Job_SetTransaction(job, t);
-					AB_Job_List2_PushBack(jl, job);//Job zur liste hinzufgen
+					AB_Transaction_List2_PushBack(jl, t);//Job zur liste hinzufgen
 					AB_Transaction_free(t);
 				
 					//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1359,11 +1402,11 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 		}
 		fclose(LASTCSV);
 		
-		sprintf(buffer,"INFO: Anzahl Lastschriftauftraege ist %d.\n",AB_Job_List2_GetSize(jl));
+		sprintf(buffer,"INFO: Anzahl Lastschriftauftraege ist %d.\n",AB_Transaction_List2_GetSize(jl));
 		doc(buffer,0 );
 		
-		//Alle Datensätze gelesen und in jobs geparst
-		rv=AB_Banking_ExecuteJobs(ab, jl, ctx);//Jobs ausfuehren!
+		//Alle DatensÃ¤tze gelesen und in jobs geparst
+		rv=AB_Banking_SendCommands(ab, jl, ctx);//Jobs ausfuehren!
 		if (rv) 
 		{
 			sprintf(buffer, "ERROR: AB_Banking_ExecuteJobs : %d\n", rv);
@@ -1390,7 +1433,7 @@ int lastschrift( AB_BANKING *ab, const char *path ) {
 	}
 		
 	//Aufraeumen
-	AB_Job_List2_free(jl);
+	AB_Transaction_List2_free(jl);
 	AB_ImExporterContext_free(ctx);
 	return 0;
 }
@@ -1403,40 +1446,81 @@ int saldo(AB_BANKING *ab)
 	int rv=0;
 	int j=0;
 	char betrag[21];
-	
-	
-	const AB_ACCOUNT_STATUS * status;
+
 	const AB_BALANCE * bal;
-	AB_ACCOUNT *a=0;
-	AB_JOB_LIST2 *jl=0;
+	
+	AB_ACCOUNT_SPEC *a=0;
+	AB_ACCOUNT_SPEC_LIST *accs=NULL;
+        AB_TRANSACTION *t;
+	AB_TRANSACTION_LIST2 *jl=0;
 	AB_IMEXPORTER_CONTEXT *ctx=0;
 	AB_IMEXPORTER_ACCOUNTINFO *ai;
-	AB_JOB *job=0;
-	AB_USER *u=0;
 
 	//Inits
 	csvName = "Saldo";
 	ctx=AB_ImExporterContext_new();
-	jl=AB_Job_List2_new();
-	
-	//Konto suchen
-	a = AB_Banking_GetAccountByCodeAndNumber(ab, blz, kto);
-	if(!a) {
-		sprintf(buffer,"ERROR: Bitte BLZ (%s) und KTO (%s) ueberpruefen!\n",blz,kto);
-		doc(buffer, 0);
-		return 2;
-	}
-	u = AB_Account_GetFirstUser( a );					
+	jl=AB_Transaction_List2_new();
 
-        sprintf(buffer,"INFO: Konto Bezeichnung (userName) ist \"%s\"!\n",AB_User_GetUserName(u));
-        doc(buffer,0);
+//         accs=AB_AccountSpec_List_new();
+        /* get the list of known accounts */
+        AB_Banking_GetAccountSpecList(ab, &accs);
+        if (!accs) {
+		doc("ERROR: Keine Kontenliste erhalten!\n", 0);
+		return 1;
+        }
+
+        /* find a matching account within the given list */
+        a=AB_AccountSpec_List_FindFirst(accs,
+                                   "aqhbci",                /* backendName */
+                                   "*",                    /* country */
+                                   blz,                   /* bankId bank */
+                                   kto,                     /* accountNumber */
+                                   "*",                     /* subAccountId */
+                                   "*",                     /* iban */
+                                   "*",                     /* currency */
+                                   AB_AccountType_Unknown); /* ty */
+ 	if (!a)	{
+
+		doc("ERROR: Kombination BLZ KTO# ist unbekannt!\n", 0);
+		
+		
+    /* return the first entry of the account spec list */
+    a=AB_AccountSpec_List_First(accs);
+    while (a) {
+      fprintf(stderr,
+              "Account: %s %s (%s) [%s] %s\n",
+              AB_AccountSpec_GetBankCode(a),
+              AB_AccountSpec_GetAccountNumber(a),
+              AB_AccountSpec_GetAccountName(a),
+              /* every account is assigned to a backend (sometimes called provider)
+               * which actually performs online banking tasks. We get a pointer
+               * to that provider/backend with this call to show its name in our
+               * example.*/
+              AB_AccountSpec_GetBackendName(a),
+              AB_AccountSpec_GetCountry(a)
+              );
+
+      /* return the next entry of the account spec list */
+      a=AB_AccountSpec_List_Next(a);
+    }
+		
+		
+		
+		return 1;
+	}
 	
-	//Job erzeugen und ausführen
-	job = AB_JobGetBalance_new(a);
-	AB_Job_List2_PushBack(jl, job);
-	rv=AB_Banking_ExecuteJobs(ab, jl, ctx);//Jobs ausfuehren!
-	if (rv) 
-	{
+        // Transaktion erstellen
+	t = createAndCheckRequest(a, AB_Transaction_CommandGetBalance);
+	if (!t) {
+	   doc("ERROR: Kommando GetBalance ist nicht verfuegbar!\n", 0);
+	   return 2;
+        }
+
+	// Job erzeugen und ausfÃ¼hren
+	AB_Transaction_List2_PushBack(jl, t);
+	rv=AB_Banking_SendCommands(ab, jl, ctx);	
+
+	if (rv) {
 		sprintf(buffer, "ERROR: on executeQueue (%d)\n", rv);
 		doc(buffer, 0);
 		return 3;
@@ -1444,8 +1528,11 @@ int saldo(AB_BANKING *ab)
 	
 	//Verarbeitung
 	ai = AB_ImExporterContext_GetFirstAccountInfo (ctx);
-	status = AB_ImExporterAccountInfo_GetFirstAccountStatus (ai);
-	bal = AB_AccountStatus_GetBookedBalance (status);
+        
+        bal = AB_Balance_List_GetLatestByType(
+                 AB_ImExporterAccountInfo_GetBalanceList(ai), 
+                 AB_Balance_TypeBooked);
+
 	v = AB_Balance_GetValue (bal);
 	sprintf(betrag, "%.2lf;%s\r\n", AB_Value_GetValueAsDouble(v), AB_Value_GetCurrency(v));
         j=0;
@@ -1463,7 +1550,7 @@ int saldo(AB_BANKING *ab)
 	doc("==BALANCE==\n", 0);
 	
 	//Freeing 
-	AB_Job_List2_free(jl);
+	AB_Transaction_List2_free(jl);
 	AB_ImExporterContext_free(ctx);
 	
     return 0;

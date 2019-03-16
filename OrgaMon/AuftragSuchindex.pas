@@ -268,8 +268,10 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' c_w_AuftragSuchindex(' + inttostr
-          (BAUSTELLE_R) + '): ' + E.Message);
+      AppendStringsToFile('c_w_AuftragSuchindex(' + inttostr
+          (BAUSTELLE_R) + '): ' + E.Message,
+          {} ErrorFName('SUCHINDEX'),
+          {} Uhr8);
     end;
   end;
   Label1.caption := '#/#';

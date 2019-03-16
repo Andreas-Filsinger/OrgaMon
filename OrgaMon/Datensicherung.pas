@@ -1179,7 +1179,9 @@ begin
   if (Pos(cERRORText, s) > 0) then
   begin
     inc(ErrorCount);
-    CareTakerLog('DaSi ' + s);
+    AppendStringsToFile('DaSi ' + s,
+      {} ErrorFName('BACKUP'),
+      {} Uhr8);
   end;
 
   if frequently(StartTime, 444) then

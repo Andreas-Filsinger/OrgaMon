@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ uses
 {$IFDEF fpc}
   lazUTF8Classes,
 {$ENDIF}
-  globals, classes, Sysutils,
-  windows,
-  anfix32, wordindex, IdFTP;
+  classes, Sysutils,
+  anfix32, gplists, wordindex,
+  globals;
 
 const
   // Für ungesetzte Daten-Bank RIDs
@@ -128,6 +128,7 @@ type
   public
     // ehemals ./Statistik Pfad
     pAppTextPath: string;
+    pFTPPath: string;
     BackupDir: string;
 
     //
@@ -217,7 +218,6 @@ type
     // SERVICE: "proceed"
     //
     // TAN        die verarbeitet werden soll
-    // OFFLINE    sollen keine Daten via FTP hoch/runtergeladen werden?
     function proceed(sParameter: TStringList): TStringList;
 
     // SERVICE: "foto"
@@ -237,7 +237,7 @@ type
     function TrnFName: string;
 
     // TOOL: Gerät
-    function GeraeteAlias(GeraeteID: string; iFTP: TIdFTP): string;
+    function GeraeteAlias(GeraeteID: string): string;
     // [GeraeteID]
 
     function isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
@@ -262,7 +262,6 @@ type
 
     // PFAD-Funktionen
     function MyDataBasePath2: string;
-    function oldInfrastructure: boolean;
 
     // TOOL: Dateinamen
     function UpFName(Trn: string): string;
@@ -278,15 +277,13 @@ type
     function NewTrn(IncrementIt: boolean = true): string;
     function FolgeTRNFName(GeraetID: string): string;
     function FolgeTAN(GeraetID: string): string;
+    function InitTrn(GeraeteNo, AktTrn: string): boolean;
     function LogMatch(Pattern, Schema: string): boolean;
 
-    // TOOL: FTP
-    procedure sput(source, dest: string; iFTP: TIdFTP);
-    function ftpDown(GeraeteNo, AktTrn: string; iFTP: TIdFTP): boolean;
-    function upMeldungen(iFTP: TIdFTP): TStringList;
 
     // REPORT:
-    procedure doStat(iFTP: TIdFTP);
+    procedure doStat;
+    function upMeldungen: TStringList;
 
     // MAINTANACE:
     procedure maintainSENDEN;
@@ -310,11 +307,14 @@ function deCrypt_Hex(s: string): string;
 implementation
 
 uses
-  BinLager32, CareTakerClient, html,
-  gplists, SolidFTP, idGlobal,
+  // System
+  windows, IniFiles,
+  // anfix
+  BinLager32, html, srvXMLRPC, CareTakerClient,
+  // Exit
   CCR.Exif,
-  DCPcrypt2, DCPblockciphers, DCPblowfish,
-  srvXMLRPC, IniFiles;
+  // Crypt
+  DCPcrypt2, DCPblockciphers, DCPblowfish;
 
 { TJonDaExec }
 
@@ -429,10 +429,7 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  if oldInfrastructure then
-    sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html')
-  else
-    sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
+  sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
   sGeraete.free;
 end;
 
@@ -488,10 +485,7 @@ begin
 
     if changed then
     begin
-      if oldInfrastructure then
-        SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
-      else
-        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+      SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
       SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
     end;
   end;
@@ -502,13 +496,7 @@ end;
 function TJonDaExec.AuftragFName(Trn: string): string;
 begin
   // Das Ergebnis im Web bereitstellen
-  if oldInfrastructure then
-    result :=
-    { } MyProgramPath +
-    { } Trn +
-    { } '\auftrag' + cUTF8DataExtension
-  else
-    result :=
+  result :=
     { } MyProgramPath +
     { } cWebPath +
     { } Trn + '.auftrag' + cUTF8DataExtension;
@@ -516,10 +504,7 @@ end;
 
 function TJonDaExec.UpFName(Trn: string): string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + Trn + '\' + Trn + '.txt'
-  else
-    result := MyProgramPath + cWebPath + Trn + '.txt';
+  result := MyProgramPath + cWebPath + Trn + '.txt';
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -586,10 +571,6 @@ begin
     if LogMatch(LogS, cGeraetSchema) then
       sSendenLog.add(LogS);
     writeln(LogF, LogS);
-    if pos(cERRORText, s[n]) > 0 then
-    begin
-      CareTakerLog(s[n]);
-    end;
   end;
   CloseFile(LogF);
 end;
@@ -604,7 +585,7 @@ begin
   StringList.free;
 end;
 
-function TJonDaExec.GeraeteAlias(GeraeteID: string; iFTP: TIdFTP): string;
+function TJonDaExec.GeraeteAlias(GeraeteID: string): string;
 begin
   // Besondere Aktionen bei besonderen Geräte-Nummern ausführen
   repeat
@@ -612,9 +593,9 @@ begin
     if (GeraeteID = '999') then
     begin
       // Statistik
-      doStat(iFTP);
+      doStat;
       // ausstehende Meldungen
-      upMeldungen(iFTP);
+      upMeldungen;
       result := '000';
       break;
     end;
@@ -646,8 +627,6 @@ function TJonDaExec.FolgeTAN(GeraetID: string): string;
 var
   sFolgeTAN: TStringList;
   SaveIt: boolean;
-
-
 begin
   SaveIt := false;
   sFolgeTAN := TStringList.Create;
@@ -784,11 +763,6 @@ begin
 
 end;
 
-function TJonDaExec.oldInfrastructure: boolean;
-begin
-  result := (pos('\JonDaServer\', MyProgramPath) > 0);
-end;
-
 function TJonDaExec.info(sParameter: TStringList): TStringList;
 begin
   result := TStringList.Create;
@@ -796,7 +770,7 @@ begin
   begin
     add(MyProgramPath);
     add(cApplicationName + ' Rev. ' + RevToStr(globals.Version));
-    add(gsIdProductName + ' Rev. ' + gsIdVersion);
+    add('Indy Rev. N/A');
     add('ANFiX Rev. ' + RevToStr(VersionAnfix32));
     add(ComputerName);
     add(datum + ' ' + uhr8);
@@ -811,8 +785,6 @@ function TJonDaExec.proceed(sParameter: TStringList): TStringList;
 var
   AktTrn: string;
   GeraeteNo: string;
-  Online: boolean; //
-  iFTP: TIdFTP;
 
   GoodMonteurL: TStringList;
   ProtocolL: TStringList;
@@ -1479,10 +1451,7 @@ var
     begin
       LoadFromFile(MyProgramPath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      if oldInfrastructure then
-        SaveToFileCompressed(MyProgramPath + 'Info\' + GeraeteNo + '.html')
-      else
-        SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
+      SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -1618,9 +1587,6 @@ begin
     if sParameter.count > 0 then
       AktTrn := sParameter[1];
 
-  // weitere Parmeter
-  Online := sParameter.values['OFFLINE'] <> cIni_Activate;
-
   try
 
     if Option_Console then
@@ -1656,16 +1622,6 @@ begin
 
     WechselmomentKorrektur := TgpIntegerList.Create;
 
-    //
-    iFTP := TIdFTP.Create(nil);
-    SolidInit(iFTP);
-    with iFTP do
-    begin
-      Host := iJonDa_FTPHost;
-      UserName := iJonDa_FTPUserName;
-      Password := iJonDa_FTPPassword;
-    end;
-
     repeat
 
       // Wer (welches Gerät) hat eigentlich gerufen
@@ -1679,8 +1635,9 @@ begin
 
       BeginAction(AktTrn + ':' + GeraeteNo);
 
-      // Verarbeitungsdatum
-      if not(Online) then
+      // zentral wichtiges "Verarbeitungsdatum"
+      // fest gesetzt auf einen vergangenen Wert können Fehler reproduziert werden
+      if not(DebugMode) then
         _DateGet := FDate(MyProgramPath + AktTrn + '\' + GeraeteNo + cZIPExtension)
       else
         _DateGet := DateGet;
@@ -1700,9 +1657,9 @@ begin
 
       // den neuesten <GeraeteNo>.DAT aus dem Internet holen
       // wenn nicht schon vorhanden!
-      if not(ftpDown(GeraeteNo, AktTrn, iFTP)) then
+      if not(InitTrn(GeraeteNo, AktTrn)) then
       begin
-        log(cERRORText + ' 936:FTPdown(' + GeraeteNo + ',' + AktTrn + ') fail!');
+        log(cERRORText + ' 936:InitTrn(' + GeraeteNo + ',' + AktTrn + ') fail!');
         inc(ErrorCount);
         break;
       end;
@@ -1972,7 +1929,7 @@ begin
         FileEmpty(MyProgramPath + AktTrn + '\AUFTRAG.DAT');
       end;
 
-      if not(Online) then
+      if not(DebugMode) then
         FileDelete(MyProgramPath + AktTrn + '\MONDA.DAT');
 
       if not(FileExists(MyProgramPath + AktTrn + '\MONDA.DAT')) then
@@ -2600,39 +2557,29 @@ begin
         if (GeraeteNo <> '000') then
         begin
 
-          FileCopy(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo +
-            cDATExtension);
+          FileCopy(
+           {} MyProgramPath + AktTrn + '\AUFTRAG.DAT',
+           {} MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
+
           try
-            with iFTP do
-            begin
-              //
-              if not(connected) then
-                connect;
               if (FSize(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension) > 0) then
               begin
                 // TAN Upload
-                sput(
+                FileCopy(
                   { } MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension,
-                  { } AktTrn + cDATExtension,
-                  { } iFTP);
-                sput(
+                  { } pFTPPath + AktTrn + cDATExtension);
+                FileCopy(
                   { } MyProgramPath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
-                  { } AktTrn + cUTF8DataExtension,
-                  { } iFTP);
+                  { } pFTPPath + AktTrn + cUTF8DataExtension);
 
               end
               else
               begin
                 log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
-              sput(MyProgramPath + AktTrn + '\AUFTRAG.DAT', 'AUFTRAG.' + GeraeteNo + cDATExtension, iFTP);
-              try
-                DisConnect;
-              except
-                // diese Exception "10054" ist normal und braucht nicht
-                // gehandelt werden.
-              end;
-            end;
+              FileCopy(
+               {} MyProgramPath + AktTrn + '\AUFTRAG.DAT',
+               {} pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
           except
             on E: Exception do
               log(cERRORText + ' 1470:' + E.Message);
@@ -2698,10 +2645,7 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        if oldInfrastructure then
-          SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
-        else
-          SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
         SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
@@ -2726,7 +2670,6 @@ begin
     bOrgaMonAuftrag.free;
     bFotoErgebnis.free;
     WechselmomentKorrektur.free;
-    iFTP.free;
     Einstellungen.free;
 
   except
@@ -2760,6 +2703,7 @@ begin
     //
     DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\');
     pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
+    pFTPPath := ReadString(SectionName, 'FTPPath', '');
 
     //
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
@@ -2992,34 +2936,6 @@ begin
   until yet;
   Einstellungen.free;
   result.add(TAN);
-end;
-
-procedure TJonDaExec.sput(source, dest: string; iFTP: TIdFTP);
-var
-  tmp: string;
-begin
-  try
-    tmp := dest + cTmpFileExtension;
-    with iFTP do
-    begin
-
-      // upload ... take your time ...
-      if Size(tmp) >= 0 then
-        Delete(tmp);
-      put(source, tmp);
-      // upload end.
-
-      // atomic.begin
-      if Size(dest) >= 0 then
-        Delete(dest);
-      Rename(tmp, dest);
-      // atomic.end
-
-    end;
-  except
-    on E: Exception do
-      log(cERRORText + ' 323:' + E.Message);
-  end;
 end;
 
 function TJonDaExec.foto(sParameter: TStringList): TStringList;
@@ -3758,72 +3674,73 @@ begin
   iEXIF.free;
 end;
 
-function TJonDaExec.ftpDown(GeraeteNo, AktTrn: string; iFTP: TIdFTP): boolean;
+function TJonDaExec.InitTrn(GeraeteNo, AktTrn: string): boolean;
 var
   DownFileDate: TDateTime;
   sErgebnisTANs: TStringList;
   GeraeteNoSrc: string;
   FName_Abgezogen: string;
   FName_AbgezogenSrc: string;
+  ErrorCount: Integer;
+
+  procedure FileCopyR (source,destination: string);
+  begin
+    if not(FileCopy(source,destination)) then
+    begin
+     log(cERRORText + ' 3717: copy '+source+' '+destination);
+     inc(ErrorCount);
+    end;
+  end;
+
+var
+ n,l : Integer;
 begin
-  result := true;
-  sErgebnisTANs := TStringList.Create;
+  ErrorCount := 0;
 
-  GeraeteNoSrc := GeraeteAlias(GeraeteNo, iFTP);
-
+  // calculate FileNames
+  GeraeteNoSrc := GeraeteAlias(GeraeteNo);
   FName_Abgezogen := format(cMonDaServer_AbgezogenFName, [GeraeteNo]);
   FName_AbgezogenSrc := format(cMonDaServer_AbgezogenFName, [GeraeteNoSrc]);
 
   // 1) abgearbeitet.dat (OrgaMon will von diesen RIDs keine Ergebnisse mehr!)
-  if not(FileExists(MyProgramPath + AktTrn + '\abgearbeitet.dat')) then
+  if not(FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName)) then
   begin
 
-    // vom Server -> cFreshDataPath
-    try
-      FileDelete(MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension);
-      with iFTP do
-      begin
-        if not(connected) then
-          connect;
-        get(cMonDaServer_AbgearbeitetFName, MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension);
-      end;
-
-      // die unverarbeiteten Dateien vom Server holen!
-      SolidDir(
-        { } iFTP,
-        { } cSolidFTP_DirCurrent,
-        { } cJonDa_ErgebnisMaske_deprecated_FTP,
-        { } cJonDa_ErgebnisMaske_deprecated,
-        { } sErgebnisTANs);
-      sErgebnisTANs.SaveToFile(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
-
-      // Die Datei bereitstellen!
-      FileDelete(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
-      ReNameFile(
-        { } MyProgramPath + cServerDataPath + 'abgearbeitet' + cTmpFileExtension,
-        { } MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
-    except
-      on E: Exception do
-        log(cERRORText + ' 3340:' + E.Message);
+    if not(FileExists(pFTPPath + cMonDaServer_AbgearbeitetFName)) then
+    begin
+      log(cWARNINGText + ' 3724:' + cMonDaServer_AbgearbeitetFName + ' existiert nicht');
+      FileAlive(pFTPPath + cMonDaServer_AbgearbeitetFName);
     end;
 
-    // von cFreshDataPath -> ins lokale Verzeichnis!
-    if FileExists(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName) then
-    begin
-      result :=
-      // abgearbeitet.dat
-        FileCopy(MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName,
-        MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) and
-      // unberuecksichtigte.txt
-        FileCopy(MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName,
-        MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
-    end
-    else
-    begin
-      log(cERRORText + ' 3356:' + cMonDaServer_AbgearbeitetFName + ' fehlt');
-      result := false;
-    end;
+    // 1a) copy to "Data" assuming we are fresh first contact
+    FileCopyR(
+     { } pFTPPath + cMonDaServer_AbgearbeitetFName,
+     { } MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
 
+    // 1b) copy to "TRN"
+    FileCopyR(
+     { } pFTPPath + cMonDaServer_AbgearbeitetFName,
+     { } MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
+
+  end;
+
+  // 2) unberuecksichtigt.txt (OrgaMon kennt diese Daten noch nicht)
+  if not(FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName)) then
+  begin
+    sErgebnisTANs := TStringList.Create;
+    dir(pFTPPath + cJonDa_ErgebnisMaske_deprecated_FTP,sErgebnisTANs);
+
+    // remove nnn.dat and other unwanted .dat Files
+    l := length(cJonDa_ErgebnisMaske_deprecated);
+    for n := pred(sErgebnisTANs.Count) downto 0 do
+     if (length(sErgebnisTANs[n])<>l) then
+       sErgebnisTANs.delete(n);
+    sErgebnisTANS.Sort;
+    sErgebnisTANs.SaveToFile(
+      { } MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
+    sErgebnisTANs.SaveToFile(
+      { } MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
+    sErgebnisTANs.Free;
   end;
 
   // 2) abgezogen.GGG.dat
@@ -3831,45 +3748,23 @@ begin
     if not(FileExists(MyProgramPath + AktTrn + '\' + FName_Abgezogen)) then
     begin
 
-      // vom Server -> cFreshDataPath
-      try
-        FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension);
-        with iFTP do
-        begin
-          if not(connected) then
-            connect;
-          if (Size(FName_AbgezogenSrc) >= 0) then
-          begin
-            get(FName_AbgezogenSrc, MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension)
-          end
-          else
-          begin
-            log(cWARNINGText + ' ' + FName_AbgezogenSrc + ' existiert nicht');
-            FileAlive(MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension);
-          end;
-        end;
-
-        // Die Datei bereitstellen!
-        FileDelete(MyProgramPath + cServerDataPath + FName_Abgezogen);
-        ReNameFile(
-          { } MyProgramPath + cServerDataPath + FName_Abgezogen + cTmpFileExtension,
-          { } MyProgramPath + cServerDataPath + FName_Abgezogen);
-      except
-        on E: Exception do
-          log(cERRORText + ' 3386:' + E.Message);
+      if not(FileExists(pFTPPath + FName_AbgezogenSrc)) then
+      begin
+       log(cWARNINGText + ' ' + FName_AbgezogenSrc + ' existierte nicht und musste erstellt werden');
+       FileAlive(pFTPPath + FName_AbgezogenSrc);
       end;
+
+      // 2a) copy to "Data"
+      FileCopyR(
+       {} pFTPPath + FName_AbgezogenSrc,
+       {} MyProgramPath + cServerDataPath + FName_Abgezogen);
+
+      // 2b) copy to "TRN"
+      FileCopyR(
+       {} pFTPPath + FName_AbgezogenSrc,
+       {} MyProgramPath + AktTrn + '\' + FName_Abgezogen);
 
       // von cFreshDataPath -> ins lokale Verzeichnis!
-      if FileExists(MyProgramPath + cServerDataPath + FName_Abgezogen) then
-      begin
-        result := FileCopy(MyProgramPath + cServerDataPath + FName_Abgezogen,
-          MyProgramPath + AktTrn + '\' + FName_Abgezogen);
-      end
-      else
-      begin
-        log(cERRORText + ' 3397:abgezogen.GGG.DAT fehlt');
-        result := false;
-      end;
 
     end;
 
@@ -3886,63 +3781,25 @@ begin
     else
     begin
 
-      try
-        FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
-        with iFTP do
-        begin
-          if not(connected) then
-            connect;
-
-          if (Size(GeraeteNoSrc + cDATExtension) >= 0) then
-          begin
-            get(GeraeteNoSrc + cDATExtension, MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension)
-          end
-          else
-          begin
-            log(cWARNINGText + ' ' + GeraeteNoSrc + cDATExtension + ' existiert nicht');
-            FileAlive(MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension);
-          end;
-
-          // DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true) - TIdSysVCL.OffsetFromUTC;
-          DownFileDate := FileDate(GeraeteNoSrc + cDATExtension, true);
-        end;
-
-        FileDelete(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
-        ReNameFile(
-          { } MyProgramPath + cServerDataPath + GeraeteNo + cTmpFileExtension,
-          { } MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
-        if (DownFileDate > 0) then
-          FileSetDate(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension, DateTimeToFileDate(DownFileDate));
-      except
-        on E: Exception do
-          log(cWARNINGText + ' 2212:' + E.Message);
+      // 3a) copy to "Data"
+      if not(FileExists(pFTPPath + GeraeteNoSrc + cDATExtension)) then
+      begin
+        log(cWARNINGText + ' ' + GeraeteNoSrc + cDATExtension + ' existiert nicht und musste erstellt werden');
+        FileAlive(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
+      end else
+      begin
+        FileCopyR(
+         {} pFTPPath + GeraeteNoSrc + cDATExtension,
+         {} MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
       end;
 
-      if FileExists(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension) then
-      begin
-        result := FileCopy(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
-          MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
-      end
-      else
-      begin
-        log(cERRORText + ' 2220:' + GeraeteNo + '.DAT fehlt');
-        result := false;
-      end;
-
+      // 3b) copy to "TRN"
+      FileCopyR(
+        { } MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
+        { } MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
     end;
   end;
-
-  try
-    with iFTP do
-    begin
-      if connected then
-        DisConnect;
-    end;
-  except
-    // stille, bzw keine Exception hier
-    // Normal ist: 'Socket Error # 10054 Connection reset by peer.'
-  end;
-  sErgebnisTANs.free;
+  result := (ErrorCount=0);
 end;
 
 procedure TJonDaExec.doAbschluss;
@@ -4030,8 +3887,6 @@ var
 
 begin
   result := -1;
-  if oldInfrastructure then
-    exit;
 
   if (BackupDir = '') then
     exit;
@@ -4121,7 +3976,7 @@ begin
   result := DirSize(BackupDir);
 end;
 
-procedure TJonDaExec.doStat(iFTP: TIdFTP);
+procedure TJonDaExec.doStat;
 
   function SplitUp(s: string): TStringList;
   begin
@@ -4246,7 +4101,6 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     tt_Meldung := strtoSeconds('02:29:59');
     tt_Senden := strtoSeconds('09:59:59');
 
-    iFTP.connect;
 
     for n := 1 to pred(sUmfang.count) do
     begin
@@ -4270,7 +4124,7 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
       bfill(OneCell, 12);
 
       // Anzahl des Planungsvolumens
-      Stat_Planung := iFTP.Size(um_Geraet + '.DAT');
+      Stat_Planung := FSize(pFTPPath + um_Geraet + '.DAT');
 
       if (Stat_Planung > 0) then
       begin
@@ -4413,7 +4267,6 @@ procedure TJonDaExec.doStat(iFTP: TIdFTP);
     sStatistik.add('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
-    iFTP.DisConnect;
     sStatistik.SaveToFile(pAppTextPath + 'Info-' + um_Baustelle + '.txt');
     sStatistik.free;
     sUmfang.free;
@@ -4432,7 +4285,7 @@ begin
   sDir.free;
 end;
 
-function TJonDaExec.upMeldungen(iFTP: TIdFTP): TStringList;
+function TJonDaExec.upMeldungen: TStringList;
 const
   cFixedTAN_FName = '50000.DAT';
 var
@@ -4541,21 +4394,16 @@ begin
     end;
     CloseFile(OrgaMonErgebnis);
 
-    with iFTP do
-    begin
-      //
-      if not(connected) then
-        connect;
       if (FSize(sOrgaMonFName) > 0) then
       begin
-        sput(sOrgaMonFName, cFixedTAN_FName, iFTP)
+        FileCopy(
+         {} sOrgaMonFName,
+         {} pFTPPath + cFixedTAN_FName);
       end
       else
       begin
         log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + cFixedTAN_FName);
       end;
-      DisConnect;
-    end;
     log('->OrgaMon     : ' + inttostr(Stat_Meldungen));
     EndAction;
 
@@ -4660,10 +4508,7 @@ end;
 
 function TJonDaExec.TrnFName: string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + cTrnFName
-  else
-    result := MyProgramPath + cDBPath + cTrnFName
+  result := MyProgramPath + cDBPath + cTrnFName
 end;
 
 class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);
@@ -5029,10 +4874,7 @@ end;
 
 function TJonDaExec.MyDataBasePath2: string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + 'Fotos\'
-  else
-    result := MyProgramPath + cDBPath;
+  result := MyProgramPath + cDBPath;
 end;
 
 function TJonDaExec.detectGeraeteNummer(sPath: string): string;

@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -2522,7 +2522,7 @@ begin
       except
         on E: Exception do
         begin
-          CareTakerLog(cERRORText + ' e_x_dereference("' + CalculatedSQL + '"): ' + E.Message);
+          AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr8);
         end;
       end;
 
@@ -2530,7 +2530,7 @@ begin
   except
     on E: Exception do
     begin
-      CareTakerLog(cERRORText + ' e_x_dereference(): ' + E.Message);
+      AppendStringsToFile(E.Message, ErrorFName('SQL'), Uhr8);
     end;
   end;
 end;

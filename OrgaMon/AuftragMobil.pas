@@ -75,7 +75,6 @@ type
     CheckBox10: TCheckBox;
     CheckBox11: TCheckBox;
     CheckBox12: TCheckBox;
-    Button7: TButton;
     procedure SpeedButton2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -85,7 +84,6 @@ type
     procedure Button6Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Button7Click(Sender: TObject);
   private
     { Private-Deklarationen }
     Initialized: boolean;
@@ -1401,17 +1399,14 @@ end;
 procedure TFormAuftragMobil.Log(s: string);
 begin
   if pos(cERRORText, s) > 0 then
-    CareTakerLog(s);
+    AppendStringsToFile(s,
+      {} ErrorFName('ERGEBNIS'),
+      {} Uhr8);
 end;
 
 procedure TFormAuftragMobil.Button6Click(Sender: TObject);
 begin
   openShell(MdePath + 'Index.html');
-end;
-
-procedure TFormAuftragMobil.Button7Click(Sender: TObject);
-begin
-  openShell('http://orgamon.de/JonDaServer/Statistik/');
 end;
 
 end.

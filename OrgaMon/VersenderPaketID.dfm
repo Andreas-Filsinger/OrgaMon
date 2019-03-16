@@ -185,9 +185,9 @@ object FormVersenderPaketID: TFormVersenderPaketID
   end
   object IB_Grid1: TIB_Grid
     Left = 0
-    Top = 80
+    Top = 58
     Width = 912
-    Height = 386
+    Height = 408
     CustomGlyphsSupplied = []
     DataSource = IB_DataSource1
     Align = alBottom
@@ -277,18 +277,8 @@ object FormVersenderPaketID: TFormVersenderPaketID
     State = cbChecked
     TabOrder = 7
   end
-  object CheckBox2: TCheckBox
-    Left = 8
-    Top = 56
-    Width = 185
-    Height = 17
-    Caption = 'Fehler an Caretaker melden'
-    Checked = True
-    State = cbChecked
-    TabOrder = 8
-  end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsDisplayLabel.Strings = (
       'AUSGANG=Labeldruck'
       'BELEG_R=BELEG'

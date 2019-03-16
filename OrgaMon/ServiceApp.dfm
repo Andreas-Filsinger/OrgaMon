@@ -79,16 +79,12 @@ object FormServiceApp: TFormServiceApp
     Top = 88
     Width = 690
     Height = 487
-    ActivePage = TabSheet8
+    ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'proceed'
       OnShow = TabSheet1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 144
         Top = 22
@@ -201,22 +197,13 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 6
         OnClick = Button12Click
       end
-      object Button14: TButton
-        Left = 527
-        Top = 421
-        Width = 130
-        Height = 25
-        Caption = 'CareTaker Hallo'
-        TabOrder = 7
-        OnClick = Button14Click
-      end
       object CheckBox17: TCheckBox
         Left = 24
         Top = 289
         Width = 169
         Height = 16
         Caption = 'mit Ergebnis TAN Upload'
-        TabOrder = 8
+        TabOrder = 7
       end
       object CheckBox19: TCheckBox
         Left = 16
@@ -226,14 +213,14 @@ object FormServiceApp: TFormServiceApp
         Caption = 'FTW Meldungen'
         Checked = True
         State = cbChecked
-        TabOrder = 9
+        TabOrder = 8
       end
       object Edit20: TEdit
         Left = 151
         Top = 334
         Width = 73
         Height = 21
-        TabOrder = 10
+        TabOrder = 9
       end
       object Button1: TButton
         Left = 305
@@ -241,7 +228,7 @@ object FormServiceApp: TFormServiceApp
         Width = 104
         Height = 26
         Caption = 'Statistik!'
-        TabOrder = 11
+        TabOrder = 10
         OnClick = Button1Click
       end
       object CheckBox22: TCheckBox
@@ -250,7 +237,7 @@ object FormServiceApp: TFormServiceApp
         Width = 185
         Height = 17
         Caption = 'Daten aus access_log'
-        TabOrder = 12
+        TabOrder = 11
       end
     end
     object TabSheet2: TTabSheet
@@ -837,15 +824,6 @@ object FormServiceApp: TFormServiceApp
         TabOrder = 7
         Text = '0'
       end
-      object Button17: TButton
-        Left = 11
-        Top = 389
-        Width = 633
-        Height = 25
-        Caption = '"XXX.txt" hochladen'
-        TabOrder = 8
-        OnClick = Button17Click
-      end
       object Button11: TButton
         Left = 80
         Top = 419
@@ -856,7 +834,7 @@ object FormServiceApp: TFormServiceApp
         Margins.Right = 2
         Margins.Bottom = 2
         Caption = 'Bilder: "Prefix" neu berechnen'
-        TabOrder = 9
+        TabOrder = 8
         OnClick = Button11Click
       end
       object Edit22: TEdit
@@ -868,7 +846,7 @@ object FormServiceApp: TFormServiceApp
         Margins.Top = 2
         Margins.Right = 2
         Margins.Bottom = 2
-        TabOrder = 10
+        TabOrder = 9
         Text = '055'
       end
     end

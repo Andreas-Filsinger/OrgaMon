@@ -40,35 +40,22 @@ type
   tSelfTestProc = function: TStringList of object;
 
 const
-  cCareTakerKey: string = 'PNE-32bit-STUB-VxD'; // Key! do not change
-  cCareTakerDiagnosePath: string = '';
   cERRORText = 'ERROR:'; // never change!
   cWARNINGText = 'WARNING:'; // never change!
   cINFOText = 'INFO:'; // never change!
   cEXCEPTIONText = 'EXCEPTION:'; // never change!
   cOKText = 'OK!'; // never change!
-  cCareTakerLogFName = 'CareTaker.log.txt';
   iWikiServer: string = '';
   iWikiServer2: string = '';
-  iCareTakerOffline: boolean = false;
 
-function CareTakerLog(s: string; Nachmeldungen: boolean = true): TTroubleTicket;
-procedure CareTakerClose(Ticket: TTroubleTicket);
-function deCrypt(s: string): string;
 function Int64asKeyStr(i: int64): AnsiString;
 function KeyStrasInt64(s: AnsiString): int64;
 function MachineID: string;
-function CareTakerFName: string;
-procedure Nachmeldungen;
 procedure MachineIDChanged;
 function vhost(url: string): string;
 function cHelpURL: string;
 function cTixURL: string;
 function ResolveServer(s: string): string;
-
-// Funktions Sicherstellung
-function getQuestion(Path: string): TStringList;
-procedure setAnswer(sAnswer: TStringList);
 
 implementation
 
@@ -107,6 +94,96 @@ begin
   _MachineID := '';
 end;
 
+
+function ResolveServer(s: string): string;
+var
+  hPROXY: TIdHTTP;
+begin
+  try
+    hPROXY := TIdHTTP.create(nil);
+    _TrueServerName :=
+      StrFilter(ExtractSegmentBetween(hPROXY.get(s + '?p=' +
+      FindANewPassword('', 15)), '<BODY>', '</BODY>', true), '.0123456789');
+    result := _TrueServerName;
+    hPROXY.free;
+  except
+    result := '';
+  end;
+end;
+
+function vhost(url: string): string;
+var
+  hCARETAKER: TIdHTTP;
+  RawResult: string;
+begin
+  try
+    hCARETAKER := TIdHTTP.create(nil);
+    RawResult := ExtractSegmentBetween(hCARETAKER.get(url), '<BODY>',
+      '</BODY>', true);
+    hCARETAKER.free;
+    result := StrFilter(RawResult, '0123456789.', false);
+  except
+    result := '';
+  end;
+end;
+
+function cHelpURL: string;
+begin
+  if (iWikiServer <> '') then
+  begin
+    result := iWikiServer + '?title='
+  end
+  else
+  begin
+    result := 'https://wiki.orgamon.org/?title=';
+  end;
+end;
+
+function cTixURL: string;
+begin
+  result := iWikiServer2 + '?title=';
+end;
+
+function Int64asKeyStr(i: int64): AnsiString;
+var
+  L, n: integer;
+begin
+  SetLength(result, 8);
+  L := sizeof(i);
+  for n := 1 to L do
+  begin
+    result[n] := AnsiChar(i AND 255);
+    i := i shr 8;
+  end;
+end;
+
+function KeyStrasInt64(s: AnsiString): int64;
+var
+  L: integer;
+begin
+  result := 0;
+  if (length(s) <> 8) then
+    raise Exception.create
+      ('KeyStr as a base of int64 must have the length of 8 Bytes');
+  for L := 8 downto 1 do
+  begin
+    result := result shl 8;
+    result := result + ord(s[L]);
+  end;
+end;
+
+function getQuestion(Path: string): TStringList;
+begin
+  result := TStringList.create;
+end;
+
+procedure setAnswer(sAnswer: TStringList);
+begin
+
+end;
+
+end.
+
 function enCrypt(s: string): string;
 var
   cBLOWFISH: TDCP_blowfish;
@@ -135,22 +212,6 @@ begin
     result := decryptstring(s);
   end;
   cBLOWFISH.free;
-end;
-
-function ResolveServer(s: string): string;
-var
-  hPROXY: TIdHTTP;
-begin
-  try
-    hPROXY := TIdHTTP.create(nil);
-    _TrueServerName :=
-      StrFilter(ExtractSegmentBetween(hPROXY.get(s + '?p=' +
-      FindANewPassword('', 15)), '<BODY>', '</BODY>', true), '.0123456789');
-    result := _TrueServerName;
-    hPROXY.free;
-  except
-    result := '';
-  end;
 end;
 
 procedure CheckCreateDiagnosePath;
@@ -246,75 +307,3 @@ begin
   result := cCareTakerDiagnosePath + cCareTakerLogFName;
 end;
 
-function vhost(url: string): string;
-var
-  hCARETAKER: TIdHTTP;
-  RawResult: string;
-begin
-  try
-    hCARETAKER := TIdHTTP.create(nil);
-    RawResult := ExtractSegmentBetween(hCARETAKER.get(url), '<BODY>',
-      '</BODY>', true);
-    hCARETAKER.free;
-    result := StrFilter(RawResult, '0123456789.', false);
-  except
-    result := '';
-  end;
-end;
-
-function cHelpURL: string;
-begin
-  if (iWikiServer <> '') then
-  begin
-    result := iWikiServer + '?title='
-  end
-  else
-  begin
-    result := 'https://wiki.orgamon.org/?title=';
-  end;
-end;
-
-function cTixURL: string;
-begin
-  result := iWikiServer2 + '?title=';
-end;
-
-function Int64asKeyStr(i: int64): AnsiString;
-var
-  L, n: integer;
-begin
-  SetLength(result, 8);
-  L := sizeof(i);
-  for n := 1 to L do
-  begin
-    result[n] := AnsiChar(i AND 255);
-    i := i shr 8;
-  end;
-end;
-
-function KeyStrasInt64(s: AnsiString): int64;
-var
-  L: integer;
-begin
-  result := 0;
-  if (length(s) <> 8) then
-    raise Exception.create
-      ('KeyStr as a base of int64 must have the length of 8 Bytes');
-  for L := 8 downto 1 do
-  begin
-    result := result shl 8;
-    result := result + ord(s[L]);
-  end;
-end;
-
-function getQuestion(Path: string): TStringList;
-begin
-  result := TStringList.create;
-end;
-
-procedure setAnswer(sAnswer: TStringList);
-begin
-
-end;
-
-end.

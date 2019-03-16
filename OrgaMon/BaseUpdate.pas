@@ -425,7 +425,9 @@ begin
         + #13 + 'Möchten Sie ' + cApplicationName + ' jetzt beenden', true))
       then
       begin
-        CareTakerLog(cERRORTExt + ' BaseUpdate.PendingUpdate: USER BREAK');
+        AppendStringsToFile('BaseUpdate.PendingUpdate: USER BREAK',
+          {} ErrorFName('UPDATE'),
+          {} Uhr8);
         IBC.connect;
         CloseEvent;
         IBC.disconnect;
@@ -523,8 +525,6 @@ begin
 end;
 
 procedure TFormBaseUpdate.SetToActualRevision(pIBC: TIB_Connection);
-var
-  _iCareTakerOffline: Boolean;
 begin
   BeginHourGlass;
 
@@ -536,14 +536,6 @@ begin
     { } 'CURRENT_TIMESTAMP)');
 
   BaseRev := globals.version;
-
-  // Erfolg verbuchen
-  _iCareTakerOffline := iCareTakerOffline;
-  iCareTakerOffline := false;
-  if CareTakerLog(cApplicationName + ' Rev. ' + RevToStr(globals.version) +
-    ' active!') <> -1 then
-    NachMeldungen;
-  iCareTakerOffline := _iCareTakerOffline;
 
   //
   UpdateRevCaptions;
@@ -574,10 +566,14 @@ begin
     if (k <> -1) then
       CargoBayRev := strtodouble(copy(wow, k + 5, 4)) / 1000
     else
-      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + IdHTTP1.ResponseText);
+      AppendStringsToFile('BaseUpdate.get: ' + IdHTTP1.ResponseText,
+        {} ErrorFName('UPDATE'),
+        {} Uhr8);
   except
     on e: exception do
-      CareTakerLog(cERRORTExt + ' BaseUpdate.get: ' + e.message);
+      AppendStringsToFile('BaseUpdate.get: ' + e.message,
+        {} ErrorFName('UPDATE'),
+        {} Uhr8);
   end;
 end;
 
@@ -682,8 +678,10 @@ begin
   begin
     SplashClose;
     result := false;
-    CareTakerLog(cERRORTExt + ' EnforceBaseUpdate: "' + SetupUpdateFName(Rev) +
-      '" fehlt!');
+    AppendStringsToFile('EnforceBaseUpdate: "' + SetupUpdateFName(Rev) +
+      '" fehlt!',
+      {} ErrorFName('UPDATE'),
+      {} Uhr8);
   end;
 end;
 
@@ -986,7 +984,9 @@ var
         end;
       except
         on e: exception do
-          CareTakerLog(cERRORTExt + ' BaseUpdate.' + e.message);
+          AppendStringsToFile('BaseUpdate.' + e.message,
+           {} ErrorFName('UPDATE'),
+           {} Uhr8);
       end;
     end;
     IB_Script1.SQL.clear;
@@ -1144,7 +1144,9 @@ begin
           'z.B. durch eine externe Anwendung bereits' + #13 + 'erfolgt', true)
         then
         begin
-          CareTakerLog(cERRORTExt + ' BaseUpdate.ForceRev: USER OVERRIDE');
+          AppendStringsToFile('BaseUpdate.ForceRev: USER OVERRIDE',
+            {} ErrorFName('UPDATE'),
+            {} Uhr8);
           SetToActualRevision(IBC);
           close;
         end;
@@ -1251,8 +1253,9 @@ begin
   // open(DiagnosePath + 'AlleOffenenFenster.txt');
   AllW.Free;
   if not(OneFound) then
-    CareTakerLog(cERRORTExt +
-      ' CloseOtherInstances: Nicht mal die eigene Instanz gefunden!');
+    AppendStringsToFile('CloseOtherInstances: Nicht mal die eigene Instanz gefunden!',
+      {} ErrorFName('UPDATE'),
+      {} Uhr8);
   EndHourGlass;
 end;
 

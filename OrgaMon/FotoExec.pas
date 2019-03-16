@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015 - 2018  Andreas Filsinger
+  |    Copyright (C) 2015 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -43,13 +43,10 @@ uses
   CCR.Exif,
 
   // Tools
-  anfix32, WordIndex, binlager32, c7zip,
-  Foto,
-  CareTakerClient,
+  anfix32, WordIndex, binlager32,
 
   // OrgaMon
-  globals,
-  JonDaExec;
+  globals, JonDaExec;
 
 const
 
@@ -67,13 +64,6 @@ const
   cFotoService_Pause = 'pause.txt';
   cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
   cIsAblageMarkerFName = 'ampel.gif';
-
-  // Bild-Namenskonvention
-  //
-  // GeraeteID "-" RID "-" BildProtokollName[ "-" n ].jpg
-  // "-" n wird nur angefügt sobald auf dem Smartphone eine Bildnamensgleichheit
-  // erkannt wird.
-  //
   cFotoService_AbortTag = 'FATAL';
 
 type
@@ -160,7 +150,8 @@ type
 implementation
 
 uses
-  IdFTP, SolidFTP;
+ c7zip, Foto, CareTakerClient,
+ SolidFTP;
 
 const
   _GeraeteNo: string = '';
@@ -358,11 +349,6 @@ begin
       SectionName := cGroup_Id_Default;
     Id := SectionName;
 
-    // Ftp-Bereich für diesen Server
-    iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-    iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-    iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
-
     // die ganzen Pfade
     pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\JonDaServer\');
     pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
@@ -373,9 +359,6 @@ begin
     DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
   end;
   MyIni.Free;
-
-  // Einstellungen weitergeben
-  SolidFTP.SolidFTP_LogDir := DiagnosePath;
 
   //
   Log(cINFOText + ' Ini read!');
@@ -406,10 +389,7 @@ end;
 
 function TFotoExec.MyDataBasePath2: string;
 begin
-  if JonDaExec.oldInfrastructure then
-    result := DiagnosePath
-  else
-    result := MyDataBasePath;
+  result := MyDataBasePath;
 end;
 
 function TFotoExec.MySyncPath: string;
@@ -421,10 +401,7 @@ function TFotoExec.GEN_ID: integer;
 var
   mIni: TIniFile;
 begin
-  if JonDaExec.oldInfrastructure then
-    mIni := TIniFile.Create(pFTPPath + cFotoService_IdFName)
-  else
-    mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
+  mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
   with mIni do
   begin
     result := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '0'));
@@ -1015,8 +992,6 @@ begin
             begin
               // aktueller Dateiname, wo er im Moment liegt
               DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
-              if JonDaExec.oldInfrastructure then
-                DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
               if DebugMode then
                 Log(
@@ -1718,8 +1693,6 @@ begin
     begin
 
       DATEINAME_AKTUELL := readCell(r, col_DATEINAME_AKTUELL);
-      if JonDaExec.oldInfrastructure then
-        DATEINAME_AKTUELL := 'W:\' + DATEINAME_AKTUELL;
 
       if (StrToIntDef(readCell(r, col_MOMENT), ccMaxDate) < MomentTimeout) then
       begin
@@ -1872,8 +1845,6 @@ begin
 
     // Umbenennung starten
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
-    if JonDaExec.oldInfrastructure then
-      FNameAlt := 'W:\' + FNameAlt;
     FNameNeu := FNameAlt;
 
     // das letzte "Neu" am Ende des Dateinamens zählt
@@ -2069,8 +2040,6 @@ var
       for m := pred(sPics.Count) downto 0 do
       begin
         DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
-        if JonDaExec.oldInfrastructure then
-          DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
         if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
           sPics.Delete(m);
@@ -2508,56 +2477,30 @@ end;
 
 procedure TFotoExec.workSync;
 var
-  iFTP: TIdFTP;
   sDir: TStringList;
   n: integer;
   BaustellePath: string;
+
+  procedure FileMoveR(source,destination:string);
+  begin
+    if not(FileMove(
+      { } source,
+      { } destination)) then
+      Log(cERRORText + ' 2502: FileMove("' + source + '", "' + destination + '")');
+  end;
+
 begin
 
-  if (iJonDa_FTPHost = '') or (iJonDa_FTPUserName = '') or (iJonDa_FTPPassword = '') then
-  begin
-    Log(cERRORText + ' 2233: workSync: FTP-Zugangsdaten sind leer');
-    exit;
-  end;
-
-  // Sync Down
-  iFTP := TIdFTP.Create(nil);
-  SolidInit(iFTP);
-  with iFTP do
-  begin
-    Host := iJonDa_FTPHost;
-    UserName := iJonDa_FTPUserName;
-    Password := iJonDa_FTPPassword;
-  end;
-
-  // Get
+  // baustelle.csv
   try
-    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MySyncPath, true);
-    SolidGet(iFTP, '', cE_FotoBenennung + '-*.csv', '', MySyncPath, true);
-  except
-    on E: Exception do
-      Log(cERRORText + ' 1846:' + E.ClassName + ': ' + E.Message);
-  end;
 
-  // close
-  try
-    iFTP.DisConnect;
-  except
-    // Ignore ALL Exceptions at Disconnect, # 10054, ...
-  end;
-
-  // free;
-  try
-    iFTP.Free;
-  except
-    on E: Exception do
-      Log(cERRORText + ' 1861:' + E.ClassName + ': ' + E.Message);
-  end;
-
-  try
-    // baustelle.csv -> sync
-    if FileExists(MySyncPath + cFotoService_BaustelleFName) then
+    if FileExists(pFTPPath + cFotoService_BaustelleFName) then
     begin
+
+     // baustelle.csv -> sync
+     FileMoveR(
+      {} pFTPPath + cFotoService_BaustelleFName,
+      {} MySyncPath + cFotoService_BaustelleFName);
 
       // prepare
       TJonDaExec.validateBaustelleCSV(MySyncPath + cFotoService_BaustelleFName);
@@ -2576,18 +2519,25 @@ begin
       // delete
       FileDelete(MySyncPath + cFotoService_BaustelleFName);
     end;
+
   except
     on E: Exception do
       Log(cERRORText + ' 1889:' + E.ClassName + ': ' + E.Message);
   end;
 
+  // Foto-Benennungen
   try
-    // FotoBenennung-*.csv ->  cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
-    //
+
     sDir := TStringList.Create;
-    dir(MySyncPath + cE_FotoBenennung + '-*.csv', sDir, false);
+    dir(pFTPPath + cE_FotoBenennung + '-*.csv', sDir, false);
     for n := 0 to pred(sDir.Count) do
     begin
+
+     FileMoveR(
+      {} pFTPPath + sDir[n],
+      {} MySyncPath + sDir[n]);
+
+      // FotoBenennung-*.csv ->  cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
 
       // Lese den Pfad aus dem Dateinamen
       BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
@@ -2610,6 +2560,7 @@ begin
       FileDelete(MySyncPath + sDir[n]);
     end;
     sDir.Free;
+
   except
     on E: Exception do
       Log(cERRORText + ' 1923:' + E.ClassName + ': ' + E.Message);

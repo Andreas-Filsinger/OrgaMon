@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -25,46 +25,6 @@
   |
 }
 unit CareServer;
-//
-// CareTaker
-//
-// CareTaker überwacht Rechner, Applikationen und eServices.
-//
-// * Im Problemfall setzt das Trouble-Ticket System ein
-// * Je nach Eskalations-Stufe werden verschiedene eMail Aktionen ausgelöst
-// * Fehler Verfolgung bei Softwareentwicklungsprojekten
-// * Arbteitsschrittverfolgung in der Fertigungsabwicklung
-// * customer relationship management (CRM)
-// * Produktionsfehler Nachverfolgung
-// * help desk System
-// * Problemfallverfolgung und Lösung
-// * Datenbankbasiertes FAQ System mit mehrsprachigem Stichwort-Index
-//
-// RECHNER
-// * RID, Hostname (Beispiel "Herr Hildebrand"), Beschreibung
-//
-// TICKET_GRUPPE
-// * RID, Name (Beispiel "Kunde A")
-//
-// TICKET_QUELLE
-// TICKET_GRUPPE_R,RECHNER_R  ("Herr Hildebrand" gehört zur Firma "Kunde A")
-//
-// TICKET_ZIEL
-// TICKET_GRUPPE_R,PERSON_R
-//
-// TICKET
-// * RID, MOMENT, Rechner_R, Text, EMAIL, NUMMER
-//
-// Vorgehensweise des Servers
-//
-// 1) Nachrichten lesen, Rechner ggf. anlegen, Rechner_R eintragen in DB Speichern
-// 2) Auf Anforderung: alle tickets ohne email: Gruppe bestimmen, dann alle ziele
-// via eMail benachrichtigen!
-//
-//
-// todo
-// verschieben ins eCommerceModul!
-//
 
 interface
 
@@ -74,9 +34,8 @@ uses
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
   IniFiles,
-  IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP, anfix32,
-  IdMessageClient, IdSMTP, Grids,
+  IdBaseComponent, IdComponent,  anfix32,
+   Grids,
   IB_Grid, IB_Components, IB_UpdateBar, IB_Access,
   IdExplicitTLSClientServerBase, IdSMTPBase, IB_Controls,
   Buttons, IdUDPBase, IdUDPClient, IdSNMP,
@@ -85,12 +44,6 @@ uses
 type
   TFormCareServer = class(TForm)
     PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    Memo1: TMemo;
-    RadioGroup1: TRadioGroup;
-    Button2: TButton;
-    IdHTTP1: TIdHTTP;
-    IdSMTP1: TIdSMTP;
     TabSheet3: TTabSheet;
     IB_Grid1: TIB_Grid;
     IB_Grid2: TIB_Grid;
@@ -115,18 +68,13 @@ type
     IB_Grid5: TIB_Grid;
     IB_UpdateBar5: TIB_UpdateBar;
     Button5: TButton;
-    ListBox1: TListBox;
-    Label6: TLabel;
-    Button4: TButton;
     TabSheet2: TTabSheet;
     Edit1: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
-    Button1: TButton;
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    Button6: TButton;
     Label10: TLabel;
     Edit4: TEdit;
     Edit5: TEdit;
@@ -134,11 +82,6 @@ type
     Button7: TButton;
     Edit6: TEdit;
     Label12: TLabel;
-    Edit8: TEdit;
-    Label13: TLabel;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
     Label14: TLabel;
     Button8: TButton;
     Edit7: TEdit;
@@ -152,7 +95,6 @@ type
     Button10: TButton;
     Label17: TLabel;
     Edit10: TEdit;
-    Image2: TImage;
     TabSheet5: TTabSheet;
     Label2: TLabel;
     SpeedButton1: TSpeedButton;
@@ -164,17 +106,9 @@ type
     IB_Grid4: TIB_Grid;
     IB_UpdateBar4: TIB_UpdateBar;
     IB_Memo1: TIB_Memo;
-    procedure Button8Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure IB_Grid5CellDblClick(Sender: TObject; ACol, ARow: Integer;
-      AButton: TMouseButton; AShift: TShiftState);
-    procedure FormDestroy(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
@@ -186,18 +120,10 @@ type
     procedure Image2Click(Sender: TObject);
   private
     { Private-Deklarationen }
-    LastData: TStringList;
     Initialized: boolean;
 
-    procedure BeginHourGlass;
-    procedure EndHourGlass;
-    function pKey: string;
-    function SelectedDate: TAnfixDate;
   public
     { Public-Deklarationen }
-    function LoadLogViaHTTP(Datum: TAnfixDate): string;
-    procedure insertRecords(sl: TStrings);
-    function UnScramble(FName: string): TStringList;
     function ShowIfError(sDiagnose: TStringList): boolean;
 
     // Tests zur "Funktions Sicherstellung" registrieren!
@@ -269,168 +195,14 @@ begin
   end;
 end;
 
-procedure TFormCareServer.Button2Click(Sender: TObject);
-var
-  RawResult: string;
-  OneLine: string;
-  ThisData: TStringList;
-begin
-  if (RadioGroup1.itemindex <> -1) then
-  begin
-    BeginHourGlass;
-    ThisData := TStringList.create;
-
-    RawResult := LoadLogViaHTTP(SelectedDate);
-    LastData.clear;
-    Memo1.lines.clear;
-    while (RawResult <> '') do
-    begin
-      OneLine := StrFilter(nextp(RawResult, #$0A), #$0D#$0A, true);
-      LastData.add(nextp(OneLine, ';', 0) + ';' + nextp(OneLine, ';', 1) + ';' +
-        nextp(OneLine, ';', 2) + ';' + nextp(OneLine, ';', 3));
-
-      OneLine := nextp(OneLine, ';', 0) + ';' + nextp(OneLine, ';', 1) + ';' +
-        deCrypt(nextp(OneLine, ';', 2)) + ';' + nextp(OneLine, ';', 3);
-
-      ThisData.add(OneLine);
-
-      repeat
-
-        // Filter
-        (*
-          if not(checkBox1.checked) then
-          if not (ListBox1.items[0] = '*') then
-          if (ListBox1.items.indexof(nextp(nextp(OneLine, '@', 1), '.', 1)) = -1) then
-          break;
-        *)
-
-        Memo1.lines.add(OneLine);
-      until true;
-
-    end;
-    ThisData.SaveToFile(DiagnosePath + 'CareLog.csv');
-    ThisData.Free;
-    EndHourGlass;
-  end;
-end;
-
-function TFormCareServer.LoadLogViaHTTP(Datum: TAnfixDate): string;
-var
-  _datum: string;
-begin
-  try
-    _datum := long2date(Datum);
-    with IdHTTP1 do
-    begin
-      result := get('http://caretaker.orgamon.org/' + copy(_datum, 7, 4) + '.' +
-        copy(_datum, 4, 2) + '.' + copy(_datum, 1, 2) + '.log');
-    end;
-  except
-    result := '';
-  end;
-end;
-procedure TFormCareServer.Button1Click(Sender: TObject);
-var
-  S: string;
-  Str: string;
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of char;
-begin
-
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, pKey);
-    Init(CryptKey, Length(pKey) * 8, nil);
-
-    if (Edit1.Text <> '') then
-      Str := Edit1.Text
-    else
-      Str := Int64asKeyStr(strtoint64def(Edit4.Text, 0));
-
-    SetLength(S, Length(Str));
-    EncryptCFB8bit(Str[1], S[1], Length(Str));
-    Edit2.Text := S;
-    Edit3.Text := Base64EncodeStr(S);
-    Edit5.Text := AnsiTorfc1738(Edit3.Text);
-
-  end;
-  cBLOWFISH.Free;
-
-end;
-
-procedure TFormCareServer.Button6Click(Sender: TObject);
-var
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of char;
-  S: string;
-  r: string;
-begin
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, pKey);
-    Init(CryptKey, Length(pKey) * 8, nil);
-    S := Base64DecodeStr(Edit3.Text);
-    r := S;
-    SetLength(r, Length(S));
-    Edit2.Text := S;
-    DecryptCFB8bit(r[1], r[1], Length(r));
-    Edit1.Text := r;
-    if (Length(r) = 8) then
-      Edit4.Text := IntToStr(KeystrasInt64(r))
-    else
-      Edit4.Text := '';
-  end;
-  cBLOWFISH.Free;
-end;
-
 procedure TFormCareServer.Button7Click(Sender: TObject);
 begin
   Edit3.Text := rfc1738toAnsi(Edit5.Text);
-  Button6Click(Sender);
-end;
-
-procedure TFormCareServer.Button8Click(Sender: TObject);
-var
-  TheLogPath: string;
-  TheFiles: TStringList;
-  TheLog: TStringList;
-  AllTheLog: TStringList;
-  n: Integer;
-begin
-  BeginHourGlass;
-  AllTheLog := TStringList.create;
-  TheLogPath := Edit7.Text;
-  TheFiles := TStringList.create;
-  dir(TheLogPath + '*.log', TheFiles, false);
-  TheFiles.sort;
-  for n := 0 to pred(TheFiles.count) do
-    if pos('.', TheFiles[n]) = 5 then
-    begin
-      //
-      TheLog := UnScramble(TheLogPath + TheFiles[n]);
-      AllTheLog.addstrings(TheLog);
-      TheLog.Free;
-    end;
-  TheFiles.Free;
-  AllTheLog.SaveToFile(DiagnosePath + 'caretaker.log.txt');
-  AllTheLog.Free;
-  EndHourGlass;
 end;
 
 procedure TFormCareServer.Button9Click(Sender: TObject);
 begin
   Edit9.Text := deCrypt_Hex(Edit9.Text);
-end;
-
-
-function TFormCareServer.pKey: string;
-begin
-  if (Edit6.Text = '<default>') then
-    result := cCareTakerKey
-  else
-    result := Edit6.Text;
 end;
 
 procedure TFormCareServer.addTest(NameSpace: string; test: tTestProc);
@@ -441,165 +213,6 @@ end;
 procedure TFormCareServer.addTest(NameSpace: string; test: tSelfTestProc);
 begin
   //
-end;
-
-procedure TFormCareServer.BeginHourGlass;
-begin
-  screen.cursor := crHourGLass;
-end;
-
-procedure TFormCareServer.EndHourGlass;
-begin
-  screen.cursor := crDefault;
-end;
-
-procedure TFormCareServer.Button4Click(Sender: TObject);
-begin
-  //
-  insertRecords(LastData);
-end;
-
-procedure TFormCareServer.insertRecords(sl: TStrings);
-var
-  n: Integer;
-  HostNames: TStringList;
-  Host: string;
-  cRECHNER: TIB_Cursor;
-  qRECHNER: TIB_Query;
-  cTICKET: TIB_Cursor;
-  Moment: string;
-  TicketNummer: Integer;
-  xTICKET: TIB_DSQL;
-  qTICKET: TIB_Query;
-  RECHNER_R: Integer;
-  TICKET_R: Integer;
-  TroubleText: TStringList;
-begin
-
-  // HostNamen herausfiltern
-  HostNames := TStringList.create;
-  for n := pred(sl.count) downto 0 do
-  begin
-    Host := deCrypt(nextp(sl[n], ';', 2));
-    Host := nextp(Host, ':', 0);
-    Host := nextp(Host, '@', 1);
-    if (Host <> '') then
-    begin
-      sl[n] := Host + ';' + sl[n];
-      HostNames.add(Host);
-    end
-    else
-    begin
-      sl.delete(n);
-    end;
-  end;
-  HostNames.sort;
-  RemoveDuplicates(HostNames);
-
-  // Sicherstellen, dass alle HostNames angelegt sind!
-  // Nach diesem Block sind alle vorkommenden Hostnamen im cache!
-  cRECHNER := DataModuleDatenbank.nCursor;
-  for n := 0 to pred(HostNames.count) do
-  begin
-    with cRECHNER do
-    begin
-      sql.clear;
-      sql.add('select RID from RECHNER where HOST=''' + HostNames[n] + '''');
-      ApiFirst;
-      if eof then
-      begin
-        RECHNER_R := GEN_ID('GEN_RECHNER', 1);
-        qRECHNER := DataModuleDatenbank.nQuery;
-        with qRECHNER do
-        begin
-          sql.add('select * from RECHNER for update');
-          ColumnAttributes.add('RID=NOTREQUIRED');
-          insert;
-          FieldByName('RID').AsInteger := RECHNER_R;
-          FieldByName('HOST').AsString := HostNames[n];
-          post;
-        end;
-
-      end
-      else
-      begin
-        RECHNER_R := FieldByName('RID').AsInteger;
-      end;
-      close;
-      HostNames.objects[n] := TObject(RECHNER_R);
-    end;
-
-  end;
-  cRECHNER.Free;
-
-  // Jetzt alle Log-Einträge eintragen, die noch nicht vorkommen!
-  cTICKET := DataModuleDatenbank.nCursor;
-  for n := 0 to pred(sl.count) do
-  begin
-    with cTICKET do
-    begin
-      RECHNER_R := Integer(HostNames.objects[HostNames.indexof(nextp(sl[n],
-        ';', 0))]);
-      Moment := nextp(sl[n], ';', 1) + ' ' + nextp(sl[n], ';', 2);
-      TicketNummer := strtointdef(StrFilter(nextp(sl[n], ';', 4),
-        '-0123456789'), 0);
-      sql.clear;
-      sql.add('select count(RID) CRID from TICKET where NUMMER=' +
-        IntToStr(TicketNummer) + ' and MOMENT=''' + Moment + '''');
-      ApiFirst;
-      if (FieldByName('CRID').AsInteger = 0) then
-      begin
-
-        // Ticket eintragen
-        xTICKET := DataModuleDatenbank.nDSQL;
-        with xTICKET do
-        begin
-          TICKET_R := GEN_ID('GEN_TICKET', 1);
-          sql.add('insert into TICKET (RID,NUMMER,MOMENT,RECHNER_R)');
-          sql.add('values (' + IntToStr(TICKET_R) + ',' + IntToStr(TicketNummer)
-            + ',''' + Moment + ''',' + IntToStr(RECHNER_R) + ')');
-          execute;
-        end;
-        xTICKET.Free;
-
-        // Ticket Text nachtragen
-        TroubleText := TStringList.create;
-        TroubleText.add(nextp(sl[n], ';', 3));
-        qTICKET := DataModuleDatenbank.nQuery;
-        with qTICKET do
-        begin
-          sql.add('select INFO from TICKET where RID=' + IntToStr(TICKET_R) +
-            ' for update');
-          open;
-          first;
-          edit;
-          FieldByName('INFO').Assign(TroubleText);
-          post;
-        end;
-        qTICKET.Free;
-        TroubleText.Free;
-      end;
-      close;
-    end;
-  end;
-  cTICKET.Free;
-end;
-
-function TFormCareServer.SelectedDate: TAnfixDate;
-begin
-  result := cIllegalDate;
-  case RadioGroup1.itemindex of
-    0:
-      result := Date2Long(Edit8.Text);
-    1:
-      result := datePlus(DateGet, -3);
-    2:
-      result := datePlus(DateGet, -2);
-    3:
-      result := datePlus(DateGet, -1);
-    4:
-      result := DateGet;
-  end;
 end;
 
 procedure TFormCareServer.SpeedButton1Click(Sender: TObject);
@@ -803,61 +416,17 @@ begin
   sSettings.Free;
 end;
 
-function TFormCareServer.UnScramble(FName: string): TStringList;
-var
-  InF: TStringList;
-  n: Integer;
-  OneLine: string;
-  OrgMsg: string;
-begin
-  //
-  result := TStringList.create;
-  //
-  InF := TStringList.create;
-  if FileExists(FName) then
-  begin
-    InF.LoadFromFile(FName);
-    for n := 0 to pred(InF.count) do
-    begin
-      OneLine := InF[n];
-      OrgMsg := deCrypt(nextp(OneLine, ';', 2));
-      ersetze(#13, cLineSeparator, OrgMsg);
-      ersetze(#10, '', OrgMsg);
-
-      result.add(nextp(OneLine, ';', 0) + ';' + // Moment
-        nextp(OneLine, ';', 1) + ';' + // Rechner
-        OrgMsg + ';' + // Meldung
-        nextp(OneLine, ';', 3)); // Übertragungsmoment
-
-    end;
-  end;
-  InF.Free;
-end;
 
 procedure TFormCareServer.FormActivate(Sender: TObject);
 var
-  _DateGet: TAnfixDate;
   cHOSTS: TIB_Cursor;
 begin
   BeginHourGlass;
   if not(Initialized) then
   begin
 
-    LastData := TStringList.create;
-    _DateGet := DateGet;
-    with RadioGroup1 do
-    begin
-      items.add('Freie Eingabe');
-      items.add(long2date(datePlus(_DateGet, -3)));
-      items.add(long2date(datePlus(_DateGet, -2)));
-      items.add(long2date(datePlus(_DateGet, -1)));
-      items.add(long2date(_DateGet));
-      itemindex := pred(items.count);
-    end;
-
     caption := 'Pflege Arbeitsplatz - [' + MachineID + ']';
-    Memo1.lines.clear;
-    PageControl1.ActivePage := TabSheet1;
+    PageControl1.ActivePage := TabSheet5;
 
     Initialized := true;
   end;
@@ -878,23 +447,6 @@ begin
     IB_Query4.refresh;
     IB_Query5.refresh;
   end;
-
-  // Namen der zu überwachenden Hosts bilden
-  ListBox1.items.clear;
-  cHOSTS := DataModuleDatenbank.nCursor;
-  with cHOSTS do
-  begin
-    sql.add('select HOST from RECHNER');
-    ApiFirst;
-    while not(eof) do
-    begin
-      ListBox1.items.add(FieldByName('HOST').AsString);
-      ApiNext;
-    end;
-  end;
-  cHOSTS.Free;
-  if ListBox1.items.count = 0 then
-    ListBox1.items.add('*');
 
   EndHourGlass;
 end;
@@ -918,26 +470,9 @@ begin
     end;
 end;
 
-procedure TFormCareServer.IB_Grid5CellDblClick(Sender: TObject;
-  ACol, ARow: Integer; AButton: TMouseButton; AShift: TShiftState);
-var
-  TheTextLines: TStringList;
-begin
-  TheTextLines := TStringList.create;
-  IB_Query5.FieldByName('INFO').AssignTo(TheTextLines);
-  TheTextLines.add('');
-  ShowMessage(deCrypt(TheTextLines[0]));
-  TheTextLines.Free;
-end;
-
 procedure TFormCareServer.Image2Click(Sender: TObject);
 begin
   openShell(cHelpURL + 'Ticket');
-end;
-
-procedure TFormCareServer.FormDestroy(Sender: TObject);
-begin
-  LastData.Free;
 end;
 
 // TESTS

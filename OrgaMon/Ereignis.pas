@@ -265,7 +265,9 @@ begin
           on E: Exception do
           begin
             Timer1.Enabled := false;
-            CareTakerLog(cERRORText + ' Ereignis-Timer: ' + E.Message);
+            AppendStringsToFile('Ereignis-Timer: ' + E.Message,
+              {} ErrorFName('EREIGNIS'),
+              {} Uhr8);
           end;
         end;
 

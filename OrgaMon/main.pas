@@ -215,7 +215,6 @@ type
     procedure Button62Click(Sender: TObject);
     procedure Button70Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
-    procedure Label1Click(Sender: TObject);
     procedure Button72Click(Sender: TObject);
     procedure Button73Click(Sender: TObject);
     procedure Button75Click(Sender: TObject);
@@ -648,7 +647,6 @@ begin
 
       // CareTaker Sachen
       application.processmessages;
-      Nachmeldungen;
 
     end else
     begin
@@ -662,8 +660,6 @@ begin
     Button68.enabled := bBilligung('Zahlung');
 
     AllSystemsRunning := true; { eigentlich erst nach dem Update! }
-    if IsParam('-lr') then // "log restart"
-      CareTakerLog('All Systems running after restart');
 
     Button56.enabled := (iSchnelleRechnung_PERSON_R >= cRID_FirstValid);
 
@@ -966,18 +962,6 @@ begin
     RunExternalApp(AnwendungFName, sw_showdefault)
   else
     ShowMessage('ERROR: Anwendung ' + AnwendungFName + ' nicht gefunden!');
-end;
-
-procedure TFormMain.Label1Click(Sender: TObject);
-var
-  CT_Ticket: TTroubleTicket;
-begin
-  BeginHourglass;
-  CT_Ticket := CareTakerLog('INFO: Hallo');
-  if (CT_Ticket <> -1) then
-    Nachmeldungen;
-  EndHourGlass;
-  ShowMessageTimeOut('CareTaker-Ticket: ' + Inttostr(CT_Ticket));
 end;
 
 procedure TFormMain.Button72Click(Sender: TObject);

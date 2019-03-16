@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.403; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.407; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1556,6 +1556,7 @@ function iBaustellenPath: string;
 function iSkriptePath: string;
 function evalPath(iDataBaseName: string): string;
 function lookLikePath(s: string): boolean;
+function ErrorFName(Namespace: string):string;
 
 // Umsetzer, Platzhalter in Pfaden
 procedure patchPath(var s: string);
@@ -2125,6 +2126,11 @@ begin
   result := _Kontext;
 end;
 
+function ErrorFName(Namespace: string):string;
+begin
+  result := DiagnosePath + NameSpace +'-' + IntToStr(DateGet) + '-ERROR.log.txt';
+end;
+
 initialization
 
 // if IsParam('-mc') then
@@ -2193,7 +2199,7 @@ WebPath := MyProgramPath + 'Intranet\';
 SchemaPath := MyProgramPath + 'Schemen\';
 RohstoffePath := MyProgramPath + 'Rohstoffe\';
 ImportePath := MyProgramPath + 'Importe\';
-cCareTakerDiagnosePath := MyProgramPath + 'CareTaker\';
+//cCareTakerDiagnosePath := MyProgramPath + 'CareTaker\';
 KassePath := MyProgramPath + 'Kasse\';
 
 StartDebug('CheckCreate.begin');
