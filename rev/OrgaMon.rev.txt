@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.407 (16.03.19) Andreas Filsinger
+
+ Wegfall: Foto: Wegfall von FTP Aktivitäten ("Sync")
+
 Rev 8.406 (16.03.19) Andreas Filsinger
 
  Wegfall: JonDa: Wegfall des Flags "OldInfrastructure"
