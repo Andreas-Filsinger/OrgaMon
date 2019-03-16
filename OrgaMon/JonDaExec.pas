@@ -262,7 +262,6 @@ type
 
     // PFAD-Funktionen
     function MyDataBasePath2: string;
-    function oldInfrastructure: boolean;
 
     // TOOL: Dateinamen
     function UpFName(Trn: string): string;
@@ -430,10 +429,7 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  if oldInfrastructure then
-    sGeraete.SaveToHTML(MyProgramPath + cStatistikPath + 'geraete.html')
-  else
-    sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
+  sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
   sGeraete.free;
 end;
 
@@ -489,10 +485,7 @@ begin
 
     if changed then
     begin
-      if oldInfrastructure then
-        SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
-      else
-        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+      SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
       SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
     end;
   end;
@@ -503,13 +496,7 @@ end;
 function TJonDaExec.AuftragFName(Trn: string): string;
 begin
   // Das Ergebnis im Web bereitstellen
-  if oldInfrastructure then
-    result :=
-    { } MyProgramPath +
-    { } Trn +
-    { } '\auftrag' + cUTF8DataExtension
-  else
-    result :=
+  result :=
     { } MyProgramPath +
     { } cWebPath +
     { } Trn + '.auftrag' + cUTF8DataExtension;
@@ -517,10 +504,7 @@ end;
 
 function TJonDaExec.UpFName(Trn: string): string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + Trn + '\' + Trn + '.txt'
-  else
-    result := MyProgramPath + cWebPath + Trn + '.txt';
+  result := MyProgramPath + cWebPath + Trn + '.txt';
 end;
 
 class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -777,11 +761,6 @@ begin
 
   end;
 
-end;
-
-function TJonDaExec.oldInfrastructure: boolean;
-begin
-  result := (pos('\JonDaServer\', MyProgramPath) > 0);
 end;
 
 function TJonDaExec.info(sParameter: TStringList): TStringList;
@@ -1472,10 +1451,7 @@ var
     begin
       LoadFromFile(MyProgramPath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      if oldInfrastructure then
-        SaveToFileCompressed(MyProgramPath + 'Info\' + GeraeteNo + '.html')
-      else
-        SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
+      SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -2669,10 +2645,7 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        if oldInfrastructure then
-          SaveToHTML(MyProgramPath + cStatistikPath + 'index.html')
-        else
-          SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
+        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
         SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
@@ -3914,8 +3887,6 @@ var
 
 begin
   result := -1;
-  if oldInfrastructure then
-    exit;
 
   if (BackupDir = '') then
     exit;
@@ -4537,10 +4508,7 @@ end;
 
 function TJonDaExec.TrnFName: string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + cTrnFName
-  else
-    result := MyProgramPath + cDBPath + cTrnFName
+  result := MyProgramPath + cDBPath + cTrnFName
 end;
 
 class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);
@@ -4906,10 +4874,7 @@ end;
 
 function TJonDaExec.MyDataBasePath2: string;
 begin
-  if oldInfrastructure then
-    result := MyProgramPath + 'Fotos\'
-  else
-    result := MyProgramPath + cDBPath;
+  result := MyProgramPath + cDBPath;
 end;
 
 function TJonDaExec.detectGeraeteNummer(sPath: string): string;

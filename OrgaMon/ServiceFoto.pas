@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2018  Andreas Filsinger
+  |    Copyright (C) 2012 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -239,7 +239,6 @@ type
     sMoveTransaktionen: TStringList;
     sLog: TStringList;
 
-    function AuftragFName(GeraeteNo: string): string;
   public
     { Public-Deklarationen }
     MyFotoExec: TownFotoExec;
@@ -1905,11 +1904,6 @@ begin
   ListBox7.Items.Assign(sDir);
   sDir.Free;
 
-end;
-
-function TFormServiceFoto.AuftragFName(GeraeteNo: string): string;
-begin
-  result := MyFotoExec.pAppServicePath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + '.DAT';
 end;
 
 procedure TFormServiceFoto.TabSheet1Show(Sender: TObject);

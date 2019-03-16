@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2015 - 2018  Andreas Filsinger
+  |    Copyright (C) 2015 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -406,10 +406,7 @@ end;
 
 function TFotoExec.MyDataBasePath2: string;
 begin
-  if JonDaExec.oldInfrastructure then
-    result := DiagnosePath
-  else
-    result := MyDataBasePath;
+  result := MyDataBasePath;
 end;
 
 function TFotoExec.MySyncPath: string;
@@ -421,10 +418,7 @@ function TFotoExec.GEN_ID: integer;
 var
   mIni: TIniFile;
 begin
-  if JonDaExec.oldInfrastructure then
-    mIni := TIniFile.Create(pFTPPath + cFotoService_IdFName)
-  else
-    mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
+  mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
   with mIni do
   begin
     result := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '0'));
@@ -1015,8 +1009,6 @@ begin
             begin
               // aktueller Dateiname, wo er im Moment liegt
               DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
-              if JonDaExec.oldInfrastructure then
-                DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
               if DebugMode then
                 Log(
@@ -1718,8 +1710,6 @@ begin
     begin
 
       DATEINAME_AKTUELL := readCell(r, col_DATEINAME_AKTUELL);
-      if JonDaExec.oldInfrastructure then
-        DATEINAME_AKTUELL := 'W:\' + DATEINAME_AKTUELL;
 
       if (StrToIntDef(readCell(r, col_MOMENT), ccMaxDate) < MomentTimeout) then
       begin
@@ -1872,8 +1862,6 @@ begin
 
     // Umbenennung starten
     FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
-    if JonDaExec.oldInfrastructure then
-      FNameAlt := 'W:\' + FNameAlt;
     FNameNeu := FNameAlt;
 
     // das letzte "Neu" am Ende des Dateinamens zählt
@@ -2069,8 +2057,6 @@ var
       for m := pred(sPics.Count) downto 0 do
       begin
         DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
-        if JonDaExec.oldInfrastructure then
-          DATEINAME_AKTUELL := copy(DATEINAME_AKTUELL, 4, MaxInt);
 
         if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
           sPics.Delete(m);
