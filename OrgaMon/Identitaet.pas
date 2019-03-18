@@ -52,7 +52,6 @@ uses
   anfix32,
   CaretakerClient,
   srvXMLRPC,
-  SolidFTP,
   binlager32,
   systemd,
   windows,
@@ -260,10 +259,6 @@ begin
       Log('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
-    end
-    else
-    begin
-      SolidFTP_SingleStepLog := false;
     end;
 
     // Server direkt durchstarten?
@@ -956,10 +951,6 @@ begin
       writeln('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
-    end
-    else
-    begin
-      SolidFTP_SingleStepLog := false;
     end;
 
     // lade IMEI
@@ -977,9 +968,6 @@ begin
       insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
       writeln(inttostr(RowCount));
     end;
-
-    // Einstellungen weitergeben
-    SolidFTP.SolidFTP_LogDir := DiagnosePath;
 
     // Log den Neustart
     JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
