@@ -126,6 +126,7 @@
         <DCCReference Include="..\ccr-exif\CCR.Exif.XMPUtils.pas"/>
         <DCCReference Include="eConnect.pas"/>
         <DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
+        <DCCReference Include="Funktionen_App.pas"/>
         <DCCReference Include="Funktionen_Auftrag.pas"/>
         <DCCReference Include="Funktionen_Basis.pas"/>
         <DCCReference Include="Funktionen_Beleg.pas"/>
@@ -137,8 +138,6 @@
         <DCCReference Include="..\PASconTools\DTA.PAS"/>
         <DCCReference Include="..\PASconTools\memcache.pas"/>
         <DCCReference Include="..\PASconTools\Foto.pas"/>
-        <DCCReference Include="JonDaExec.pas"/>
-        <DCCReference Include="FotoExec.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.BaseUtils.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.Consts.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.pas"/>

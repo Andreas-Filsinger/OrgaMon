@@ -32,7 +32,7 @@ uses
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls,
+  StdCtrls, ExtCtrls, ComCtrls, Buttons,
   anfix32, DCPcrypt2,
   DCPmd5, WordIndex, geld,
 
@@ -40,8 +40,9 @@ uses
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdExplicitTLSClientServerBase, IdFTP,
 
-  // JonDaServer
-  globals, JonDaExec, Buttons;
+  // OrgaMon
+  globals,
+  Funktionen_App;
 
 type
   TFormServiceApp = class(TForm)
@@ -207,7 +208,7 @@ type
 
     { Public-Deklarationen }
 
-    JonDaX: TJonDaExec;
+    JonDaX: TOrgaMonApp;
     GeraeteNo: string;
 
     procedure Diagnose_Log(One: TMdeRec; log: TStringList);
@@ -413,7 +414,7 @@ begin
   if not(Initialized) then
   begin
 
-    JonDaX := TJonDaExec.Create;
+    JonDaX := TOrgaMOnApp.Create;
     JonDaX.readIni(ComboBox3.Text);
 
     // lade IMEI
@@ -554,7 +555,7 @@ var
       for n := 1 to FileSize(MonDaF) do
       begin
         read(MonDaF, MonDaRec);
-        TJonDaExec.toAnsi(MonDaRec);
+        TOrgaMonApp.toAnsi(MonDaRec);
 
         Doppelte.add(inttostr(MonDaRec.RID));
         if ((MonDaRec.RID = RID) or (RID = 0)) and ((pos(Edit5.Text, MonDaRec.zaehlernummer_neu) > 0) or
@@ -785,7 +786,7 @@ begin
     outLog('            Reglernummer_korr    : ' + Reglernummer_korr);
     outLog('            Reglernummer_neu     : ' + Reglernummer_neu);
     outLog('            ProtokollInfo        : ' + ProtokollInfo);
-    outLog('            ausfuehren_ist_datum : ' + TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum));
+    outLog('            ausfuehren_ist_datum : ' + TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum));
     outLog('            ausfuehren_ist_uhr   : ' + secondstostr(ausfuehren_ist_uhr));
   end;
 end;
@@ -930,7 +931,7 @@ begin
   dir(MyProgramPath + '?????.', AllTRN, false);
   AllTRN.sort;
 
-  sAltFName := MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '.txt';
+  sAltFName := JonDaX.pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
   sAlt.LoadFromFile(sAltFName);
 
   ProgressBar1.max := pred(sAlt.count);
@@ -995,7 +996,7 @@ begin
   end;
 
   //
-  sNeu.SaveToFile(MyProgramPath + cStatistikPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
+  sNeu.SaveToFile(JonDaX.pAppTextPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
 
   sAlt.Free;
   sNeu.Free;
@@ -1109,12 +1110,12 @@ begin
   sFotos := TStringList.Create;
 
   tBAUSTELLE := TsTable.Create;
-  tBAUSTELLE.insertfromFile(JonDaX.MyDataBasePath2 + cFotoService_BaustelleFName);
+  tBAUSTELLE.insertfromFile(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
   Col_FTP_Benutzer := tBAUSTELLE.colOf(cE_FTPUSER);
 
   //
   WARTEND := TsTable.Create;
-  WARTEND.insertfromFile(JonDaX.MyDataBasePath2 + cFotoService_UmbenennungAusstehendFName);
+  WARTEND.insertfromFile(MyProgramPath + cDBPath + cFotoService_UmbenennungAusstehendFName);
 
   // init
   sRoot := 'W:\';
@@ -1334,8 +1335,8 @@ begin
   end;
 
   try
-    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', JonDaX.MyDataBasePath2);
-    TJonDaExec.validateBaustelleCSV(JonDaX.MyDataBasePath2 + cFotoService_BaustelleFName);
+    SolidGet(iFTP, '', cFotoService_BaustelleFName, '', MyProgramPath + cDBPath);
+    TOrgaMonApp.validateBaustelleCSV(MyProgramPath + cDBPath + cFotoService_BaustelleFName);
     iFTP.Disconnect;
   except
 

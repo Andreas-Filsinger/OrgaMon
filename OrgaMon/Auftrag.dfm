@@ -790,6 +790,10 @@ object FormAuftrag: TFormAuftrag
       object TabSheet3: TTabSheet
         Caption = '&Kunde'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label1: TLabel
           Left = 4
           Top = 2
@@ -1012,6 +1016,10 @@ object FormAuftrag: TFormAuftrag
       object TabSheet5: TTabSheet
         Caption = '&Basis'
         ImageIndex = 4
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label25: TLabel
           Left = 393
           Top = 4
@@ -1596,6 +1604,10 @@ object FormAuftrag: TFormAuftrag
       object TabSheet8: TTabSheet
         Caption = '&Geo'
         ImageIndex = 7
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label45: TLabel
           Left = 4
           Top = 83
@@ -2003,6 +2015,10 @@ object FormAuftrag: TFormAuftrag
         Caption = '&Qualit'#228't'
         ImageIndex = 8
         OnShow = TabSheet9Show
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label32: TLabel
           Left = 14
           Top = 37
@@ -2118,6 +2134,10 @@ object FormAuftrag: TFormAuftrag
       object TabSheet10: TTabSheet
         Caption = '&Info'
         ImageIndex = 9
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object IB_Text2: TIB_Text
           Left = 168
           Top = 0
@@ -2521,7 +2541,7 @@ object FormAuftrag: TFormAuftrag
       'EVENODD=BOOLEAN=Y,N'
       'MONDA_SCHUTZ=BOOLEAN=Y,N'
       'AUFWAND_SCHUTZ=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'
@@ -2545,7 +2565,7 @@ object FormAuftrag: TFormAuftrag
     Left = 112
   end
   object IB_DSQL1: TIB_DSQL
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'DELETE FROM AUFTRAG'
@@ -2555,7 +2575,7 @@ object FormAuftrag: TFormAuftrag
   object IB_Query2: TIB_Query
     ColumnAttributes.Strings = (
       'MONDA_SCHUTZ=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     IB_Connection = DataModuleDatenbank.IB_Connection1
     SQL.Strings = (
       'SELECT *'

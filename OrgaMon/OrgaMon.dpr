@@ -197,11 +197,10 @@ uses
   ServiceApp in 'ServiceApp.pas' {FormServiceApp},
   ServiceFoto in 'ServiceFoto.pas' {FormServiceFoto},
   Foto in '..\PASconTools\Foto.pas',
-  JonDaExec in 'JonDaExec.pas',
-  FotoExec in 'FotoExec.pas',
   systemd in '..\PASconTools\systemd.pas',
   ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang},
-  c7zip in '..\PASconTools\c7zip.pas';
+  c7zip in '..\PASconTools\c7zip.pas',
+  Funktionen_App in 'Funktionen_App.pas';
 
 {$R *.RES}
 

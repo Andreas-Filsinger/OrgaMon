@@ -538,7 +538,6 @@ const
   cServerDataPath = 'Daten\';
   cOrgaMonDataPath = 'OrgaMon\';
   cMeldungPath = 'Meldung\';
-  cStatistikPath = 'Statistik\' deprecated 'Migriere nach pStatistikPath';
   cUpdatePath = 'Update\';
   cProtokollPath = 'Protokolle\';
   cGeraeteEinstellungen = 'Einstellungen\';

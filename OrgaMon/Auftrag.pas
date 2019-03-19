@@ -347,6 +347,7 @@ uses
   AuftragArbeitsplatz, Baustelle,
   globals, DatePick, WordIndex,
   anfix32, gplists, math,
+  Funktionen_App,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -354,7 +355,7 @@ uses
   FastGEO, GeoArbeitsplatz,
   GeoCache, CareTakerClient, dbOrgaMon,
   clipbrd, Datenbank, html,
-  PEM, wanfix32, JonDaExec;
+  PEM, wanfix32;
 {$R *.DFM}
 
 const

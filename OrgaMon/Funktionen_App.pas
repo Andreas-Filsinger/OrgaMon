@@ -24,16 +24,31 @@
   |    http://orgamon.org/
   |
 }
-unit JonDaExec;
+unit Funktionen_App;
 
 interface
 
 uses
+{$IFNDEF linux}
+
+{$ENDIF}
 {$IFDEF fpc}
   lazUTF8Classes,
 {$ENDIF}
+  // System
   classes, Sysutils,
-  anfix32, gplists, wordindex,
+  math,
+{$IFDEF FPC}
+  fpImage, FPReadJPEG, Graphics,
+{$ELSE}
+  jpeg,
+{$ENDIF}
+
+  // Tools
+  anfix32, WordIndex, c7zip,
+  gplists, Foto, SolidFTP,
+
+  // OrgaMon
   globals;
 
 const
@@ -116,20 +131,68 @@ const
   cParameter_foto_definition_csv = 'DEFINITIONS_CSV'; // Im Modes 6 wird eine csv, zu Rate gezogen, welche Dateo ...
   cParameter_foto_definition_version = 'DEFINITIONS_REV'; // Im Modus 6 wird eine csv zu Rate gezogen, welcher Wissenstand ...
 
-type
-  TJonDaExec_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
 
-  TJonDaExec = class(TObject)
+  // Warte Zeiten [min]
+  cKikstart_delay = 10;
+
+  // Anzahl der Stellen verschiedener Ablagesysteme
+  cAnzahlStellen_Transaktionszaehler = 5;
+  cAnzahlStellen_FotosTagwerk = 4;
+
+  // Filenames
+  cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
+  cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
+  cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
+  cFotoService_Pause = 'pause.txt';
+  cIsAblageMarkerFile = 'ampel-horizontal.gif' deprecated 'Alte Ablage!';
+  cIsAblageMarkerFName = 'ampel.gif';
+  cFotoService_AbortTag = 'FATAL';
+
+type
+  TOrgaMonApp_TMoreInfo = function(RID: integer; FotoGeraeteNo: string): string of object;
+
+  TOrgaMonApp = class(TObject)
+
   private
     //
     TabCounter: integer;
     sSendenLog: TStringList;
 
   public
-    // ehemals ./Statistik Pfad
-    pAppTextPath: string;
-    pFTPPath: string;
+
+    // Ini-Sachen
+
+    // bisher fix 'W:\JonDaServer\' jetzt Anwendungsverzeichnis,
+    // Endpunkt der ini-Kette, Home von cOrgaMon.ini
+    // ./dat/
+    pAppServicePath: string;
+
+    // bisher fix 'I:\KundenDaten\SEWA\JonDaServer\' jetzt Parameter "BackupPath"
+    // direkt dorthinein nichts sichern, es gibt ".\#nnn" Unterverzeichnisse,
+    // ACHTUNG: Benutze "BackupDir" zu sichern und NICHT dieses Root-Verzeichnis aller Backups
+    // ./bak/
+    pBackUpRootPath: string;
+
+    // heutiges Sicherungsverzeichnis
+    // ./bak/#053/
     BackupDir: string;
+
+    // bisher fix 'W:\status\' jetzt Parameter "WebPath"
+    // ./web/
+    pWebPath: string;
+
+    // bisher fix 'W:\orgamon-mob\' jetzt Parameter "FTPPath"
+    // ./ftp/
+    pFTPPath: string;
+
+    // bisher fix 'W:\orgamon-mob\unverarbeitet\' jetzt Parameter "UnverarbeitetPath"
+    pUnverarbeitetPath: string;
+
+    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "StatistikPath" mit Default "WebPath"
+    pAppStatistikPath: string;
+
+    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "TextPath" mit Default
+    pAppTextPath: string;
 
     //
     Option_Console: boolean;
@@ -186,19 +249,31 @@ type
     proceed_ProceedAblehnen: boolean; // not imp
 
     // Call-Backs
-    callback_ZaehlerNummerNeu: TJonDaExec_TMoreInfo;
-    callback_ReglerNummerNeu: TJonDaExec_TMoreInfo;
+    callback_ZaehlerNummerNeu: TOrgaMonApp_TMoreInfo;
+    callback_ReglerNummerNeu: TOrgaMonApp_TMoreInfo;
 
     // IMEI-Tabellen
     tIMEI: TsTable;
     tIMEI_OK: TsTable;
+    // aktueller Context
+    tBAUSTELLE: tsTable;
+    tABLAGE: tsTable;
+    LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
+    Id: string;
+    // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
+
+    ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
+
+    AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
+
+
 
     // core
     constructor Create;
     destructor Destroy; override;
 
     // load cOrgaMon.ini
-    procedure readIni(SectionName: string = '');
+    procedure readIni(SectionName: string = ''; Path: string = '');
 
     // SERVICE: "info"
     //
@@ -260,9 +335,6 @@ type
     class procedure toAnsi(var mderec: TMdeRec);
     function detectGeraeteNummer(sPath: string): string;
 
-    // PFAD-Funktionen
-    function MyDataBasePath2: string;
-
     // TOOL: Dateinamen
     function UpFName(Trn: string): string;
     function AuftragFName(Trn: string): string;
@@ -279,7 +351,6 @@ type
     function FolgeTAN(GeraetID: string): string;
     function InitTrn(GeraeteNo, AktTrn: string): boolean;
     function LogMatch(Pattern, Schema: string): boolean;
-
 
     // REPORT:
     procedure doStat;
@@ -298,6 +369,42 @@ type
     //
     // Verzeichnisse aufräumen
     function doBackup: int64;
+    // Verzeichnisse errechnet
+    function MyDataBasePath: string;
+
+    // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
+    function MySyncPath: string;
+
+    // Dateinamen
+    function AblageLogFname: string;
+
+    // im Moment Pause
+    function Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
+
+    // load Settings
+
+    // Init, Deinit
+    procedure ensureGlobals;
+    procedure releaseGlobals;
+
+    function GEN_ID: integer;
+
+    // Work ...
+    procedure workEingang_JPG(sParameter: TStringList = nil); // ftp-Eingänge *.jpg verarbeiten
+    procedure workEingang_TXT(sParameter: TStringList = nil); // ftp-Eingänge *.txt verarbeiten
+    procedure workWartend(sParameter: TStringList = nil); // -Neu Umbenennungen vornehmen
+    procedure workAblage(sParameter: TStringList = nil); //
+    procedure workSync;
+    procedure workAusstehendeFotos; // Liste der bisher unübertragenen Fotos
+
+    // muss IMMER überladen werden
+    procedure FotoLog(s: string); virtual; abstract;
+    procedure Dump(s: string; sl: TStringList);
+
+    // Implementierungen von Prototypen
+    function ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+    function ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+    procedure invalidate_NummerNeuCache;
 
   end;
 
@@ -316,14 +423,14 @@ uses
   // Crypt
   DCPcrypt2, DCPblockciphers, DCPblowfish;
 
-{ TJonDaExec }
+{ TOrgaMonApp }
 
-function TJonDaExec.LogFName: string;
+function TOrgaMonApp.LogFName: string;
 begin
   result := DiagnosePath + cJonDaServer_LogFName;
 end;
 
-function TJonDaExec.LogMatch(Pattern, Schema: string): boolean;
+function TOrgaMonApp.LogMatch(Pattern, Schema: string): boolean;
 var
   n: integer;
   SchemaMisMatch: boolean;
@@ -346,7 +453,7 @@ begin
   until yet;
 end;
 
-procedure TJonDaExec.maintainGERAETE;
+procedure TOrgaMonApp.maintainGERAETE;
 var
   sLog: TStringList;
   n, r: integer;
@@ -436,7 +543,7 @@ end;
 const
   maintainSENDEN_Cache_Init: boolean = false;
 
-procedure TJonDaExec.maintainSENDEN;
+procedure TOrgaMonApp.maintainSENDEN;
 const
   cOlderThan = 10;
 var
@@ -493,7 +600,7 @@ begin
   maintainSENDEN_Cache_Init := true;
 end;
 
-function TJonDaExec.AuftragFName(Trn: string): string;
+function TOrgaMonApp.AuftragFName(Trn: string): string;
 begin
   // Das Ergebnis im Web bereitstellen
   result :=
@@ -502,12 +609,15 @@ begin
     { } Trn + '.auftrag' + cUTF8DataExtension;
 end;
 
-function TJonDaExec.UpFName(Trn: string): string;
+function TOrgaMonApp.UpFName(Trn: string): string;
 begin
-  result := MyProgramPath + cWebPath + Trn + '.txt';
+  result :=
+   {} MyProgramPath +
+   {} cWebPath +
+   {} Trn + '.txt';
 end;
 
-class function TJonDaExec.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
+class function TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
 begin
   begin
     case ausfuehren_ist_datum of
@@ -533,13 +643,13 @@ begin
   end;
 end;
 
-procedure TJonDaExec.BeginAction(ActionText: string);
+procedure TOrgaMonApp.BeginAction(ActionText: string);
 begin
   log(datum + ' ' + secondstostr(secondsget) + ' ' + ActionText);
   inc(TabCounter);
 end;
 
-procedure TJonDaExec.EndAction;
+procedure TOrgaMonApp.EndAction;
 begin
   // pragma
   dec(TabCounter);
@@ -547,7 +657,7 @@ begin
     log(datum + ' ' + secondstostr(secondsget) + ' ' + ActionText);
 end;
 
-procedure TJonDaExec.log(s: TStrings);
+procedure TOrgaMonApp.log(s: TStrings);
 var
   LogF: TextFile;
   n: integer;
@@ -575,7 +685,7 @@ begin
   CloseFile(LogF);
 end;
 
-procedure TJonDaExec.log(s: string);
+procedure TOrgaMonApp.log(s: string);
 var
   StringList: TStringList;
 begin
@@ -585,7 +695,7 @@ begin
   StringList.free;
 end;
 
-function TJonDaExec.GeraeteAlias(GeraeteID: string): string;
+function TOrgaMonApp.GeraeteAlias(GeraeteID: string): string;
 begin
   // Besondere Aktionen bei besonderen Geräte-Nummern ausführen
   repeat
@@ -604,8 +714,7 @@ begin
   until yet;
 end;
 
-
-class function TJonDaExec.FormatZaehlerNummerNeu(const s: string): string;
+class function TOrgaMonApp.FormatZaehlerNummerNeu(const s: string): string;
 begin
   result := cutblank(s);
   repeat
@@ -618,12 +727,12 @@ begin
   until eternity;
 end;
 
-function TJonDaExec.FolgeTRNFName(GeraetID: string): string;
+function TOrgaMonApp.FolgeTRNFName(GeraetID: string): string;
 begin
   result := MyProgramPath + cServerDataPath + 'TAN.' + GeraetID + '.txt';
 end;
 
-function TJonDaExec.FolgeTAN(GeraetID: string): string;
+function TOrgaMonApp.FolgeTAN(GeraetID: string): string;
 var
   sFolgeTAN: TStringList;
   SaveIt: boolean;
@@ -687,7 +796,7 @@ begin
   checkcreatedir(MyProgramPath + result);
 end;
 
-class function TJonDaExec.active(a: boolean): string;
+class function TOrgaMonApp.active(a: boolean): string;
 begin
   if a then
     result := cIni_Activate
@@ -695,7 +804,7 @@ begin
     result := cIni_Deactivate;
 end;
 
-class function TJonDaExec.isGeraeteNo(s:string):boolean;
+class function TOrgaMonApp.isGeraeteNo(s:string):boolean;
 begin
   result := false;
   repeat
@@ -708,12 +817,12 @@ begin
   until yet;
 end;
 
-function TJonDaExec.ActTRN: string;
+function TOrgaMonApp.ActTRN: string;
 begin
   result := NewTrn(false);
 end;
 
-function TJonDaExec.NewTrn(IncrementIt: boolean = true): string;
+function TOrgaMonApp.NewTrn(IncrementIt: boolean = true): string;
 var
   TrnFile: TextFile;
   TrnLine: string;
@@ -763,7 +872,7 @@ begin
 
 end;
 
-function TJonDaExec.info(sParameter: TStringList): TStringList;
+function TOrgaMonApp.info(sParameter: TStringList): TStringList;
 begin
   result := TStringList.Create;
   with result do
@@ -780,7 +889,7 @@ begin
   end;
 end;
 
-function TJonDaExec.proceed(sParameter: TStringList): TStringList;
+function TOrgaMonApp.proceed(sParameter: TStringList): TStringList;
 
 var
   AktTrn: string;
@@ -1257,17 +1366,17 @@ var
           iStatus := '';
 
         // Zukunft + Rot -> aus der Liste ausblenden!
-        if Status = 1 then
+        if (Status = 1) then
           if ausfuehren_soll > _DateGet then
             Status := -1;
 
         // Restant + Rot -> Gelb
-        if Status = 1 then
+        if (Status = 1) then
           if ausfuehren_ist_datum = cMonDa_Status_Restant then
             Status := 4;
 
         // Wegfall + Rot -> Grau
-        if Status = 1 then
+        if (Status = 1) then
           if ausfuehren_ist_datum = cMonDa_Status_Wegfall then
             Status := 3;
 
@@ -1275,13 +1384,13 @@ var
           0:
             iFarbe := '66CC00'; // grün (Foto-Da)
           1:
-            iFarbe := 'CC3333'; // red (kein Foto)
+            iFarbe := 'CC3333'; // rot (kein Foto)
           2:
-            iFarbe := 'FFCC66'; // organge (?)
+            iFarbe := 'FFCC66'; // orange
           3:
-            iFarbe := 'E8F4F8'; // grau?! (bisher keine Eingabe)
+            iFarbe := 'E8F4F8'; // hellblau (bisher keine Eingabe)
           4:
-            iFarbe := 'FFFF00'; // organge (?)
+            iFarbe := 'FFFF00'; // gelb
         end;
 
       end;
@@ -2678,42 +2787,50 @@ begin
   end;
 end;
 
-procedure TJonDaExec.readIni(SectionName: string = '');
+procedure TOrgaMonApp.readIni(SectionName: string = ''; Path: string = '');
 var
   MyIni: TIniFile;
 begin
-  // Ini-Datei öffnen
-  MyIni := TIniFile.Create(MyProgramPath + cIniFNameConsole);
+
+  // Root Path
+  if (Path = '') then
+    Path := MyProgramPath;
+  pAppServicePath := Path;
+
+  MyIni := TIniFile.Create(pAppServicePath + cIniFNameConsole);
   with MyIni do
   begin
-    // Fallback auf [~UserName~]
+    if (SectionName = '') then
+      SectionName := getParam('Id');
     if (SectionName = '') then
       SectionName := UserName;
-
-    // Fall Back auf [System]
     if (ReadString(SectionName, 'ftpuser', '') = '') then
       SectionName := cGroup_Id_Default;
+    Id := SectionName;
 
+    // die ganzen Pfade
     // Ftp-Bereich für diesen Server
-    iJonDa_FTPHost := ReadString(SectionName, 'ftphost', 'gateway');
-    iJonDa_FTPUserName := ReadString(SectionName, 'ftpuser', '');
-    iJonDa_FTPPassword := ReadString(SectionName, 'ftppwd', '');
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
-
-    //
-    DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\');
+    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\JonDaServer\');
+    pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
+    pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
     pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
-    pFTPPath := ReadString(SectionName, 'FTPPath', '');
+    pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
+    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet\');
+    DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
 
-    //
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
-
   end;
-  MyIni.free;
+  MyIni.Free;
+
+  //
+  Log(cINFOText + ' Ini read!');
+
+  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + cFotoService_GlobalHintFName);
 
 end;
 
-function TJonDaExec.start(sParameter: TStringList): TStringList;
+function TOrgaMonApp.start(sParameter: TStringList): TStringList;
 var
   s: string;
   GeraetID, _GeraetID: string;
@@ -2938,7 +3055,7 @@ begin
   result.add(TAN);
 end;
 
-function TJonDaExec.foto(sParameter: TStringList): TStringList;
+function TOrgaMonApp.foto(sParameter: TStringList): TStringList;
 var
   Baustelle: string;
   FotoBenennung: integer;
@@ -3648,7 +3765,7 @@ begin
   Optionen.Free;
 end;
 
-class procedure TJonDaExec.Foto_setcorrectDateTime(FName: string);
+class procedure TOrgaMonApp.Foto_setcorrectDateTime(FName: string);
 var
   iEXIF: TExifData;
 
@@ -3674,7 +3791,7 @@ begin
   iEXIF.free;
 end;
 
-function TJonDaExec.InitTrn(GeraeteNo, AktTrn: string): boolean;
+function TOrgaMonApp.InitTrn(GeraeteNo, AktTrn: string): boolean;
 var
   DownFileDate: TDateTime;
   sErgebnisTANs: TStringList;
@@ -3802,7 +3919,7 @@ begin
   result := (ErrorCount=0);
 end;
 
-procedure TJonDaExec.doAbschluss;
+procedure TOrgaMonApp.doAbschluss;
 var
   MinimumDate: TDateTime;
   LastTrn: string;
@@ -3852,7 +3969,7 @@ begin
   // imp pend: doAbschluss remote auslösbar machen per XMLRPC, per CRON, per Neustart?)
 end;
 
-function TJonDaExec.doBackup: int64;
+function TOrgaMonApp.doBackup: int64;
 const
   cTAN_BackupPath = 'TAN\';
   cLOG_BackupPath = 'log\';
@@ -3976,7 +4093,7 @@ begin
   result := DirSize(BackupDir);
 end;
 
-procedure TJonDaExec.doStat;
+procedure TOrgaMonApp.doStat;
 
   function SplitUp(s: string): TStringList;
   begin
@@ -4285,7 +4402,7 @@ begin
   sDir.free;
 end;
 
-function TJonDaExec.upMeldungen: TStringList;
+function TOrgaMonApp.upMeldungen: TStringList;
 const
   cFixedTAN_FName = '50000.DAT';
 var
@@ -4418,7 +4535,7 @@ begin
 
 end;
 
-class procedure TJonDaExec.validateBaustelleCSV(FName: string);
+class procedure TOrgaMonApp.validateBaustelleCSV(FName: string);
 var
   sBAUSTELLE: TsTable;
   cColumnIndex_NUMMERN_PREFIX: integer;
@@ -4445,7 +4562,7 @@ begin
   sBAUSTELLE.free;
 end;
 
-class function TJonDaExec.VormittagsStr(vormittags: boolean): string;
+class function TOrgaMonApp.VormittagsStr(vormittags: boolean): string;
 begin
   if vormittags then
     result := 'V'
@@ -4453,7 +4570,7 @@ begin
     result := 'N';
 end;
 
-function TJonDaExec.toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
+function TOrgaMonApp.toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
 // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
 // Protokollnamen, es gibt ein Caching über sProtokolle
 var
@@ -4506,12 +4623,12 @@ begin
   end;
 end;
 
-function TJonDaExec.TrnFName: string;
+function TOrgaMonApp.TrnFName: string;
 begin
   result := MyProgramPath + cDBPath + cTrnFName
 end;
 
-class procedure TJonDaExec.toAnsi(var mderec: TMdeRec);
+class procedure TOrgaMonApp.toAnsi(var mderec: TMdeRec);
 begin
   with mderec do
   begin
@@ -4526,7 +4643,7 @@ begin
   end;
 end;
 
-class function TJonDaExec.toBild(const mderec: TMdeRec): string;
+class function TOrgaMonApp.toBild(const mderec: TMdeRec): string;
 begin
   with mderec do
   begin
@@ -4541,7 +4658,7 @@ begin
 end;
 
 // Produktiv- oder Test- Daten
-function TJonDaExec.isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
+function TOrgaMonApp.isProd(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 begin
   result := true;
   if (pGeraeteNo > '299') then
@@ -4570,12 +4687,12 @@ begin
     end;
 end;
 
-function TJonDaExec.isTest(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
+function TOrgaMonApp.isTest(pGeraeteNo: string; pRID: integer; pFertig: TANFiXDate): boolean;
 begin
   result := not(isProd(pGeraeteNo, pRID, pFertig));
 end;
 
-procedure TJonDaExec.ClearStat;
+procedure TOrgaMonApp.ClearStat;
 begin
   if not(assigned(sProtokolle)) then
     sProtokolle := TSearchStringList.Create;
@@ -4609,7 +4726,7 @@ const
   TmpNameTagOpen = '-(RID';
   TmpNameTagClose = ')';
 
-class function TJonDaExec.clearTempTag(const s: string): string;
+class function TOrgaMonApp.clearTempTag(const s: string): string;
 var
   k, l: integer;
   _s: string;
@@ -4627,7 +4744,7 @@ begin
   end;
 end;
 
-class function TJonDaExec.createTempTag(RID: integer; Parameter: string): string;
+class function TOrgaMonApp.createTempTag(RID: integer; Parameter: string): string;
 begin
   result :=
    { } TmpNameTagOpen +
@@ -4637,14 +4754,14 @@ begin
    { } TmpNameTagClose;
 end;
 
-constructor TJonDaExec.Create;
+constructor TOrgaMonApp.Create;
 begin
   inherited Create;
   tIMEI := TsTable.Create;
   tIMEI_OK := TsTable.Create;
 end;
 
-destructor TJonDaExec.Destroy;
+destructor TOrgaMonApp.Destroy;
 begin
   if assigned(sSendenLog) then
     sSendenLog.free;
@@ -4656,13 +4773,13 @@ begin
   inherited;
 end;
 
-function TJonDaExec.WebToMdeRecString(s: AnsiString): AnsiString;
+function TOrgaMonApp.WebToMdeRecString(s: AnsiString): AnsiString;
 begin
   result := ANSI2OEM(s);
   ersetze('*', '.', result);
 end;
 
-function TJonDaExec.MdeRec2Jonda(mderec: TMdeRec; RemoteRev: single): string;
+function TOrgaMonApp.MdeRec2Jonda(mderec: TMdeRec; RemoteRev: single): string;
 
   function toTargetCharset(s: string): string;
   begin
@@ -4750,7 +4867,7 @@ begin
 
 end;
 
-function TJonDaExec.migrateProtokoll(OldFName, NewFName: string): boolean;
+function TOrgaMonApp.migrateProtokoll(OldFName, NewFName: string): boolean;
 
 const
   cMigrationsVorlage_FName = 'JonDa-Migrationsprotokoll.txt';
@@ -4872,12 +4989,7 @@ begin
   sMigrationsVorlage.free;
 end;
 
-function TJonDaExec.MyDataBasePath2: string;
-begin
-  result := MyProgramPath + cDBPath;
-end;
-
-function TJonDaExec.detectGeraeteNummer(sPath: string): string;
+function TOrgaMonApp.detectGeraeteNummer(sPath: string): string;
 var
   DirEntries: TStringList;
   i: integer;
@@ -4933,6 +5045,2373 @@ begin
     Init(CryptKey, CryptKeyLength, nil);
     result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
   end;
+end;
+
+const
+  _GeraeteNo: string = '';
+  EINGABE: tsTable = nil;
+
+procedure TOrgaMonApp.invalidate_NummerNeuCache;
+begin
+  _GeraeteNo := '';
+end;
+
+function TOrgaMonApp.Pause(WechsleStatus: boolean = false; Off: boolean = false): boolean;
+var
+  FName: string;
+begin
+  FName := pAppServicePath + cFotoService_Pause;
+  if WechsleStatus then
+  begin
+    if Off then
+      FileDelete(FName)
+    else
+      FileAlive(FName);
+  end;
+  result := FileExists(FName);
+end;
+
+function TOrgaMonApp.ZaehlerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+var
+  FName: string;
+  r: integer;
+begin
+
+  // Datenspeicher laden
+  if (GeraeteNo <> _GeraeteNo) then
+  begin
+    if not(assigned(EINGABE)) then
+      EINGABE := tsTable.Create
+    else
+      EINGABE.Clear;
+    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
+    if FileExists(FName) then
+      FileAlive(FName);
+    EINGABE.insertfromFile(FName, cHeader_Eingabe);
+    _GeraeteNo := GeraeteNo;
+  end;
+
+  // RID suchen
+  r := EINGABE.locate('RID', InttoStr(AUFTRAG_R));
+  if (r <> -1) then
+    result := EINGABE.readCell(r, 'ZAEHLER_NUMMER_NEU')
+  else
+    result := '';
+
+end;
+
+function TOrgaMonApp.ReglerNummerNeu(AUFTRAG_R: integer; GeraeteNo: string): string;
+var
+  FName: string;
+  r: integer;
+begin
+
+  // Datenspeicher laden
+  if (GeraeteNo <> _GeraeteNo) then
+  begin
+    if not(assigned(EINGABE)) then
+      EINGABE := tsTable.Create
+    else
+      EINGABE.Clear;
+    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
+    if FileExists(FName) then
+      FileAlive(FName);
+    EINGABE.insertfromFile(FName, cHeader_Eingabe);
+    _GeraeteNo := GeraeteNo;
+  end;
+
+  // RID suchen
+  r := EINGABE.locate('RID', InttoStr(AUFTRAG_R));
+  if (r <> -1) then
+    result := EINGABE.readCell(r, 'REGLER_NUMMER_NEU')
+  else
+    result := '';
+end;
+
+procedure TOrgaMonApp.Dump(s: string; sl: TStringList);
+var
+  n: integer;
+begin
+  FotoLog(s + ' {');
+  for n := 0 to pred(sl.Count) do
+    FotoLog(' ' + sl[n]);
+  FotoLog('}');
+end;
+
+procedure TOrgaMonApp.ensureGlobals;
+var
+  r: integer;
+  sDirs: TStringList;
+  n: integer;
+  SubPath: string;
+begin
+  if not(assigned(tBAUSTELLE)) then
+  begin
+
+    // Initialer Lauf
+    callback_ZaehlerNummerNeu := ZaehlerNummerNeu;
+    callback_ReglerNummerNeu := ReglerNummerNeu;
+
+    // die aktuellen Daten aus dem FTP-Bereich jetzt abholen
+    workSync;
+
+    tBAUSTELLE := tsTable.Create;
+    tBAUSTELLE.insertfromFile(MyDataBasePath + cFotoService_BaustelleFName);
+    if FileExists(MyDataBasePath + cFotoService_BaustelleManuellFName) then
+    begin
+      with tBAUSTELLE do
+      begin
+        insertfromFile(MyDataBasePath + cFotoService_BaustelleManuellFName);
+        for r := RowCount downto 1 do
+          if (length(readCell(r, cE_FTPUSER)) < 3) then
+            del(r);
+      end;
+    end;
+
+    tABLAGE := tsTable.Create;
+    tABLAGE.insertfromFile(MyDataBasePath + cFotoService_AblageFName);
+
+    // Datei der Wartenden sicherstellen, Header anlegen
+    if not(FileExists(MyDataBasePath + cFotoService_UmbenennungAusstehendFName)) then
+      AppendStringsToFile(
+        { } cFotoService_UmbenennungAusstehendHeader,
+        { } MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+
+    // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
+    sDirs := TStringList.Create;
+    dir(pBackUpRootPath + '*.', sDirs, false);
+    sDirs.sort;
+    for n := pred(sDirs.Count) downto 0 do
+      if (pos('.', sDirs[n]) = 1) then
+        sDirs.Delete(n);
+    if (sDirs.Count = 0) then
+    begin
+      FotoLog(cERRORText + ' Backup: Kein Unterverzeichnis in ' + pBackUpRootPath);
+      FotoLog(cFotoService_AbortTag);
+    end;
+
+    SubPath := StrFilter(sDirs[pred(sDirs.Count)], '#' + cZiffern);
+    if (length(SubPath) <> 4) then
+    begin
+      FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+      FotoLog(cFotoService_AbortTag);
+    end;
+    if (SubPath[1] <> '#') then
+    begin
+      FotoLog(cERRORText + ' Backup: Unterverzeichnis nicht in der Form #nnn ');
+      FotoLog(cFotoService_AbortTag);
+    end;
+
+    // das gröste Element wählen
+    BackupDir := pBackUpRootPath + sDirs[pred(sDirs.Count)] + '\';
+    sDirs.Free;
+
+
+    // TimeStamp in die Logdatei legen
+    if not(LastLogWasTimeStamp) then
+    begin
+      AppendStringsToFile(
+        { } 'timestamp ' + sTimeStamp,
+        { } DiagnosePath + cFotoTransaktionenFName);
+      LastLogWasTimeStamp := true;
+    end;
+
+  end;
+end;
+
+procedure TOrgaMonApp.releaseGlobals;
+begin
+  if assigned(tBAUSTELLE) then
+  begin
+    try
+      FreeAndNil(tBAUSTELLE);
+      FreeAndNil(tABLAGE);
+    except
+      on E: Exception do
+        FotoLog(cERRORText + ' 345:' + E.ClassName + ': ' + E.Message);
+    end;
+  end;
+end;
+
+function TOrgaMonApp.MyDataBasePath: string;
+begin
+  result := pAppServicePath + cDBPath;
+end;
+
+function TOrgaMonApp.MySyncPath: string;
+begin
+  result := pAppServicePath + cSyncPath;
+end;
+
+function TOrgaMonApp.GEN_ID: integer;
+var
+  mIni: TIniFile;
+begin
+  mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
+  with mIni do
+  begin
+    result := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '0'));
+    inc(result);
+    if (result >= round(power(10, cAnzahlStellen_Transaktionszaehler))) then
+      result := 1;
+    WriteString(cGroup_Id_Default, 'Sequence', InttoStr(result));
+  end;
+  mIni.Free;
+end;
+
+procedure TOrgaMonApp.workEingang_JPG(sParameter: TStringList = nil);
+var
+  sFiles: TStringList;
+  IgnoreIt: boolean;
+  // Überspringen weil zu neu?!
+  sFilesClientSorter: TStringList;
+  sTemp: TStringList;
+  n, m, i, f, r: integer;
+  FileTimeStamp: TDateTime;
+  d, File_Date: TANFiXDate;
+  s, File_Seconds: TANFiXTime;
+  FName: string;
+  DATEINAME_AKTUELL: string;
+  Id: string;
+  bOrgaMon, bOrgaMonOld: TBLager;
+  mderecOrgaMon: TMDERec;
+  AuftragArt: string;
+  FotoGeraeteNo: string;
+  FotoParameter: string;
+  FotoUserAndPath: string;
+
+  // Ein symbolischer Ablage name, z.B. "stadtwerke-bruchsal"
+  FotoZiel: string;
+
+  // Ein realer Pfad in den die Bilder kopiert werden
+  //  Backslash am Ende
+  FotoAblage_PFAD: string;
+
+  // ein Ziel-Unterverzeichnis in das die Bilder kopiert werden,
+  //  Backslash am Ende
+  FotoUnterverzeichnis: string;
+
+  // FA, Ausbau, FN, Anlage usw.
+  // Kompletter Dateiname, ohne Pfad
+  FotoDateiName, FotoDateiNameVerfuegbar: string;
+
+  sIndexDocument : TStringList;
+
+  FullSuccess: boolean;
+  FoundAuftrag: boolean;
+  UmbenennungAbgeschlossen: boolean;
+{$IFDEF FPC}
+  Image: TPicture;
+{$ELSE}
+  Image: TJPEGImage;
+{$ENDIF}
+  sBaustelle: string;
+  sZiel: string;
+
+  BAUSTELLE_Index: integer;
+
+  // alternativer Auftragspool
+  fOrgaMonAuftrag: file of TMDERec;
+  iEXIF: TExifData;
+
+  // Foto - Umbenennung
+  sFotoCall: TStringList;
+  sFotoResult: TStringList;
+  RenameError: boolean;
+
+  // Parameter
+  pAll: boolean;
+
+  procedure unverarbeitet(m: integer);
+  var
+    FNameAlt: string;
+    FNameNeu: string;
+  begin
+    FNameAlt := pFTPPath + sFiles[m];
+    FNameNeu := pUnverarbeitetPath + Id + '+' + sFiles[m];
+
+    // Datei wegsperren, aber nicht löschen!
+    if not(FileMove(
+      { } FNameAlt,
+      { } FNameNeu)) then
+    begin
+      FotoLog(cERRORText + ' 460: FileMove("' + FNameAlt + '", "' + FNameNeu + '")');
+      FotoLog(cFotoService_AbortTag);
+    end;
+
+    // Protokollieren
+    AppendStringsToFile(
+      { } 'mv ' + FNameAlt +
+      { } ' ' + FNameNeu,
+      { } DiagnosePath + cFotoTransaktionenFName);
+    LastLogWasTimeStamp := false;
+
+    // Datei aus der Verarbeitungskette entfernen
+    sFiles.Delete(m);
+  end;
+
+begin
+  if assigned(sParameter) then
+  begin
+    pAll := sParameter.Values['ALL'] <> cIni_Deactivate;
+  end
+  else
+  begin
+    pAll := true;
+  end;
+
+  // Init Phase
+  sFiles := TStringList.Create;
+  sFilesClientSorter := TStringList.Create;
+  Id := '';
+
+  // get File List
+  dir(pFTPPath + '*.jpg', sFiles, false);
+
+  // reduce to Files-Age > 5 Seconds
+  d := DateGet;
+  s := SecondsGet;
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+    FName := pFTPPath + sFiles[n];
+    FileAge(FName, FileTimeStamp);
+    File_Date := DateTime2long(FileTimeStamp);
+    File_Seconds := cIllegalSeconds;
+
+    IgnoreIt := true;
+    repeat
+
+      if not(DateOK(File_Date)) then
+      begin
+        FotoLog(
+          { } cWARNINGText + ' 564: ' +
+          { } 'Skip ' + FName + ' (FileTimeStamp illegal) ...');
+        break;
+      end;
+
+      File_Seconds := dateTime2Seconds(FileTimeStamp);
+      if SecondsDiff(d, s, File_Date, File_Seconds) < 4 then
+      begin
+        if DebugMode then
+          FotoLog(
+           { } cINFOText + ' 572: ' +
+           { } 'Skip ' + FName + ' (too new) ...');
+        break;
+      end;
+
+      IgnoreIt := false;
+
+    until yet;
+    if not(IgnoreIt) then
+      sFilesClientSorter.AddObject(
+        { } long2dateLog(File_Date) + '|' +
+        { } secondstostr(File_Seconds) + '|' +
+        { } sFiles[n], TObject(n));
+
+  end;
+
+  // Sort Files by "Date / Time", Oldest topmost
+  sFilesClientSorter.sort;
+  sTemp := TStringList.Create;
+  for n := 0 to pred(sFilesClientSorter.Count) do
+    sTemp.add(sFiles[integer(sFilesClientSorter.Objects[n])]);
+  sFiles.Assign(sTemp);
+  sTemp.Free;
+
+  // Reduce Work to Only One?!
+  if not(pAll) then
+    for n := pred(sFiles.Count) downto 1 do
+      sFiles.Delete(n);
+
+  // Generate Work-TAN as "ID"
+  if (sFiles.Count > 0) then
+  begin
+    Id := inttostrN(GEN_ID, cAnzahlStellen_Transaktionszaehler);
+    CheckCreateDir(BackupDir + cFotoService_FTPBackupSubPath);
+  end;
+
+  // reduce to valid jpg's
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+
+    FullSuccess := false;
+    FName := pFTPPath + sFiles[n];
+{$IFDEF FPC}
+    Image := TPicture.Create;
+{$ELSE}
+    Image := TJPEGImage.Create;
+{$ENDIF}
+    iEXIF := TExifData.Create;
+    try
+      repeat
+
+        // Load it
+        Image.LoadFromFile(FName);
+
+        if (Image.Width < 280) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[n] + ': Breite kleiner als 280');
+          break;
+        end;
+
+        if (Image.Height < 280) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[n] + ': Höhe kleiner als 280');
+          break;
+        end;
+
+        // get Foto-Moment, touch File-Date-Time
+        if not(iEXIF.LoadFromGraphic(FName)) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[n] + ': EXiF konnte nicht geladen werden');
+          break;
+        end;
+
+        if (iEXIF.DateTimeOriginal <> FileDateTime(FName)) then
+        begin
+
+          FileTouch(FName, iEXIF.DateTimeOriginal);
+
+          AppendStringsToFile(
+            { } 'touch ' + sFiles[n] +
+            { } ' ' + dTimeStamp(iEXIF.DateTimeOriginal),
+            { } DiagnosePath + cFotoTransaktionenFName);
+          LastLogWasTimeStamp := false;
+
+        end;
+        FullSuccess := true;
+
+      until yet;
+
+    except
+      on E: Exception do
+      begin
+        FotoLog(cERRORText + ' ' + sFiles[n] + ': ' + E.Message);
+      end;
+    end;
+    Image.Free;
+    iEXIF.Free;
+
+    if FullSuccess then
+    begin
+      if not(FileCopy(pFTPPath + sFiles[n], BackupDir + cFotoService_FTPBackupSubPath + Id + '-' + sFiles[n])) then
+      begin
+        FotoLog(
+          { } cERRORText + ' 598: ' +
+          { } 'can not write to ' + BackupDir + cFotoService_FTPBackupSubPath);
+        FotoLog(cFotoService_AbortTag);
+        exit;
+      end;
+    end
+    else
+    begin
+      unverarbeitet(n);
+    end;
+  end;
+
+  if (sFiles.Count > 0) then
+  begin
+
+    ensureGlobals;
+
+    bOrgaMon := TBLager.Create;
+    bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+    bOrgaMon.BeginTransaction(now);
+
+    if FileExists(MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    begin
+      bOrgaMonOld := TBLager.Create;
+      bOrgaMonOld.Init(MyDataBasePath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+      bOrgaMonOld.BeginTransaction(now);
+    end
+    else
+    begin
+      bOrgaMonOld := nil;
+    end;
+
+    sFiles.sort;
+
+    // Umbenennen nach dem Standard der jeweiligen Baustelle
+    for m := pred(sFiles.Count) downto 0 do
+    begin
+      RenameError := false;
+      FullSuccess := false;
+      FoundAuftrag := false;
+      UmbenennungAbgeschlossen := false;
+      BAUSTELLE_Index := -1;
+
+      // Parameter aus der Bilddatei berechnen
+      FotoGeraeteNo := nextp(sFiles[m], '-', 0);
+      AUFTRAG_R := StrToIntDef(nextp(sFiles[m], '-', 1), -1);
+      FotoParameter := nextp(nextp(sFiles[m], '-', 2), '.', 0);
+      sBaustelle := '';
+      sZiel := '';
+
+      // passenden Auftrag suchen
+      while true do
+      begin
+
+        if (length(FotoGeraeteNo)<>3) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': 719: Syntax des Dateinamens falsch: Geräte-ID nicht erkennbar!');
+          break;
+        end;
+
+        if (StrToIntDef(FotoGeraeteNo,0)<=0) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': 725: Syntax des Dateinamens falsch: Geräte-ID nicht im Bereich von 001-999!');
+          break;
+        end;
+
+        if (AUFTRAG_R < 1) then
+        begin
+          FotoLog(cERRORText + ' ' + sFiles[m] + ': 731: Syntax des Dateinamens falsch: RID konnte nicht ermittelt werden!');
+          break;
+        end;
+
+        // Im OrgaMon Record-Store
+        if bOrgaMon.exist(AUFTRAG_R) then
+        begin
+          bOrgaMon.get;
+          FoundAuftrag := true;
+          break;
+        end;
+
+        FotoLog('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMon.FileName + ' nicht vorhanden!');
+
+        // In der Alternative suchen
+        if (assigned(bOrgaMonOld)) then
+        begin
+          if bOrgaMonOld.exist(AUFTRAG_R) then
+          begin
+            bOrgaMonOld.get;
+            FoundAuftrag := true;
+            break;
+          end;
+
+          FotoLog('WARNUNG: ' + sFiles[m] + ': RID in ' + bOrgaMonOld.FileName + ' nicht vorhanden!');
+        end;
+
+        // Im aktuellen Auftrag des Monteurs
+        assignFile(fOrgaMonAuftrag, pAppServicePath + cServerDataPath + FotoGeraeteNo + cDATExtension);
+        try
+          reset(fOrgaMonAuftrag);
+        except
+          on E: Exception do
+            FotoLog(cERRORText + ' 614: ' + sFiles[m] + ':' + E.Message);
+        end;
+
+        for f := 1 to FileSize(fOrgaMonAuftrag) do
+        begin
+
+          read(fOrgaMonAuftrag, mderecOrgaMon);
+          if (AUFTRAG_R = mderecOrgaMon.RID) then
+          begin
+            FoundAuftrag := true;
+            break;
+          end;
+        end;
+        CloseFile(fOrgaMonAuftrag);
+        if FoundAuftrag then
+          break;
+        FotoLog(cERRORText + ' ' + sFiles[m] + ': RID ' + InttoStr(AUFTRAG_R) + ' konnte nicht gefunden werden!');
+        break;
+      end;
+
+      if FoundAuftrag then
+      begin
+
+        // das Baustellenkürzel wird aus dem AUFTRAG.BLA ermittelt
+        sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
+        while true do
+        begin
+
+          // Modus und weitere Parameter der Fotobenennung werden über
+          // Tabelle "BAUSTELLE" ermittelt
+          BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
+          if (BAUSTELLE_Index > -1) then
+          begin
+
+            sFotoCall := TStringList.Create;
+            with mderecOrgaMon do
+            begin
+              // Belegung der Foto-Parameter
+              sFotoCall.Values[cParameter_foto_Modus] := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FotoBenennung);
+              sFotoCall.Values[cParameter_foto_parameter] := FotoParameter;
+              // bisheriger Bildparameter
+              sFotoCall.Values[cParameter_foto_baustelle] := sBaustelle;
+              sFotoCall.Values[cParameter_foto_strasse] := Oem2asci(Zaehler_Strasse);
+              sFotoCall.Values[cParameter_foto_ort] := Oem2asci(Zaehler_Ort);
+              sFotoCall.Values[cParameter_foto_zaehler_info] := Zaehler_Info;
+              sFotoCall.Values[cParameter_foto_RID] := InttoStr(RID);
+
+              AuftragArt := Art;
+              sFotoCall.Values[cParameter_foto_ART] := Art;
+              sFotoCall.Values[cParameter_foto_zaehlernummer_alt] := zaehlernummer_alt;
+              sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
+              sFotoCall.Values[cParameter_foto_ReglerNummer_neu] := Reglernummer_neu;
+              sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
+              sFotoCall.Values[cParameter_foto_Pfad] := pAppServicePath + cDBPath;
+              sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
+              sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
+            end;
+
+            if DebugMode then
+              Dump(cINFOText + ' Foto(' + InttoStr(AUFTRAG_R) + ' ', sFotoCall);
+
+            // globale Methode zur Foto-Um-Benennung
+            sFotoResult := Foto(sFotoCall);
+
+            if DebugMode then
+              Dump(cINFOText + ' ) : ', sFotoResult);
+
+            sFotoCall.Free;
+
+            // Ergebnis auswerten
+            FotoDateiName := sFotoResult.Values[cParameter_foto_neu];
+            UmbenennungAbgeschlossen := (sFotoResult.Values[cParameter_foto_fertig] = active(true));
+            sZiel := sFotoResult.Values[cParameter_foto_Ziel];
+
+            if (sFotoResult.Values[cParameter_foto_Fehler] <> '') then
+            begin
+              RenameError := true;
+              FotoLog(cERRORText + ' ' + sFotoResult.Values[cParameter_foto_Fehler]);
+            end;
+
+            sFotoResult.Free;
+
+            if (sBaustelle <> sZiel) then
+              BAUSTELLE_Index := tBAUSTELLE.locate(0, sZiel);
+
+          end;
+
+          //
+          if (BAUSTELLE_Index <= -1) then
+          begin
+            FotoLog(cERRORText + ' ' + sFiles[m] + ': Baustelle "' + sBaustelle + '" unbekannt!');
+          end;
+
+          break;
+        end;
+
+        //
+        if (BAUSTELLE_Index > -1) and not(RenameError) then
+        begin
+
+          // FotoUnterverzeichnis ist das Unterverzeichnis in Fotoziel
+          FotoUserAndPath := tBAUSTELLE.readCell(BAUSTELLE_Index, cE_FTPUSER);
+
+          // Fotoziel ist der Name der Internet-Ablage nicht 1:1 der Ablage-Pfad
+          FotoZiel := e_r_FTP_LoginUser(FotoUserAndPath);
+          FotoUnterverzeichnis := e_r_FTP_SourcePath(FotoUserAndPath);
+
+          // Dinge, die im Pfad angegeben werden können
+          { cParameter_foto_parameter } ersetze('~fx~', FotoParameter, FotoUnterverzeichnis);
+          { cParameter_foto_baustelle } ersetze('~baustelle~', sBaustelle, FotoUnterverzeichnis);
+          { cParameter_foto_ART } ersetze('~art~', AuftragArt, FotoUnterverzeichnis);
+          { cParameter_foto_geraet } ersetze('~geraet~', FotoGeraeteNo, FotoUnterverzeichnis);
+
+          repeat
+
+            if (length(FotoZiel) < 3) then
+            begin
+              FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Keine Internet-Ablage definiert');
+              break;
+            end;
+
+            // Workaround, Linux User mit Ziffer am Anfang geht nicht
+            if (FotoZiel[1] = 'u') and CharInSet(FotoZiel[2], ['0' .. '9']) then
+              FotoZiel := copy(FotoZiel, 2, MaxInt);
+
+            r := tABLAGE.locate('NAME', FotoZiel { + } );
+            if (r = -1) then
+            begin
+              FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                '": Die Ablage ist nicht bekannt');
+              break;
+            end;
+
+            FotoAblage_PFAD := tABLAGE.readCell(r, 'PFAD');
+            if not(DirExists(FotoAblage_PFAD)) then
+            begin
+              FotoLog(cERRORText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                '": Das Verzeichnis "' + FotoAblage_PFAD + '" existiert nicht');
+              break;
+            end;
+
+            if (FotoUnterverzeichnis<>'') then
+            begin
+              if not(DirExists(FotoAblage_PFAD + FotoUnterverzeichnis)) then
+              begin
+               CheckCreateDir(FotoAblage_PFAD + FotoUnterverzeichnis);
+
+               if not(FileCopy(FotoAblage_PFAD + cIsAblageMarkerFName, FotoAblage_PFAD + FotoUnterverzeichnis + cIsAblageMarkerFName)) then
+               begin
+                  FotoLog(
+                   {} cERRORText +
+                   {} ' cp ' +
+                   {} '"' + FotoAblage_PFAD + cIsAblageMarkerFName + '"' +
+                   {} ' ' +
+                   {} '"' + FotoAblage_PFAD + FotoUnterverzeichnis + cIsAblageMarkerFName + '" misslungen');
+                  break;
+               end;
+               // more to copy here? (Make/Load a list?)
+
+               sIndexDocument := TStringList.Create;
+               with sIndexDocument do
+               begin
+                add('<?php');
+                add(' //');
+                add(' // This PHP-Code was generated by cOrgaMonFoto at ' + sTimeStamp + ' by FotoExec.pas Line 943');
+                add(' //');
+                add(' include_once("'+
+                 { } fill('../',
+                 { } CharCount('\',FotoUnterverzeichnis) +
+                 { } 1) +
+                 { } 'zipablagen.php");');
+                add('?>');
+                SaveToFile(FotoAblage_PFAD + FotoUnterverzeichnis + 'index.php');
+               end;
+               sIndexDocument.Free;
+
+               // Bericht
+               FotoLog(cINFOText + ' ' + sFiles[m] + ': ' + sBaustelle + ': Internet-Ablage "' + FotoZiel +
+                 '": Das Unterverzeichnis "' + FotoUnterverzeichnis + '" wurde erstellt');
+              end;
+
+              // Weiterarbeiten mit dem vollen Path
+              FotoAblage_PFAD := FotoAblage_PFAD + FotoUnterverzeichnis;
+            end;
+
+            // freien Ziel-Dateinamen finden:
+            FotoDateiNameVerfuegbar := FotoDateiName;
+            i := 1;
+            repeat
+              if not(FileExists(FotoAblage_PFAD + FotoDateiNameVerfuegbar)) then
+                break;
+              if (i = 1) then
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('.', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg'
+              else
+                FotoDateiNameVerfuegbar := copy(FotoDateiNameVerfuegbar, 1, revpos('-', FotoDateiNameVerfuegbar) - 1) +
+                  '-' + InttoStr(i) + '.jpg';
+              inc(i);
+            until eternity;
+
+            // Ist der Dateiname schon belegt, wird ggf. Platz geschaffen.
+            // Der hereinkommende Name hat Vorrang vor den bisher
+            // unter diesem Namen bereitgestellten Bildern.
+            // Aber nur wenn die hereinkommende Datei jünger ist
+            // als das aktuelle Bild
+            if (FotoDateiName <> FotoDateiNameVerfuegbar) then
+            begin
+              if (
+                { } FotoAufnahmeMoment(pFTPPath + sFiles[m])
+                { } >=
+                { } FotoAufnahmeMoment(FotoAblage_PFAD + FotoDateiName)) then
+              begin
+                if not(RenameFile(
+                  { } FotoAblage_PFAD + FotoDateiName,
+                  { } FotoAblage_PFAD + FotoDateiNameVerfuegbar)) then
+                begin
+                  FotoLog(cERRORText + ' 802: ' + sFiles[m] + ': Platz schaffen nicht erfolgreich');
+                  break;
+                end;
+              end
+              else
+              begin
+                FotoLog(cINFOText + ' ' + sFiles[m] + ': Veraltetes Bild, behalte Neueres');
+                FotoDateiName := FotoDateiNameVerfuegbar;
+              end;
+            end;
+
+            // Transaktion archivieren
+            AppendStringsToFile(
+              { } 'cp ' + sFiles[m] +
+              { } ' ' +
+              { } FotoAblage_PFAD + FotoDateiName,
+              { } DiagnosePath + cFotoTransaktionenFName);
+            LastLogWasTimeStamp := false;
+
+            // Auszeichnen, wenn die Umbenennung vorläufig ist
+            if not(UmbenennungAbgeschlossen) then
+            begin
+              // aktueller Dateiname, wo er im Moment liegt
+              DATEINAME_AKTUELL := FotoAblage_PFAD + FotoDateiName;
+
+              if DebugMode then
+                FotoLog(
+                 {} cINFOText + ' 954: ' +
+                 {} cFotoService_UmbenennungAusstehendFName + ': füge ' +
+                 {} '"' + DATEINAME_AKTUELL + '"' +
+                 {} ' hinzu');
+
+              AppendStringsToFile(
+                { DATEINAME_ORIGINAL } sFiles[m] + ';' +
+                { DATEINAME_AKTUELL } DATEINAME_AKTUELL + ';' +
+                { RID } InttoStr(AUFTRAG_R) + ';' +
+                { GERAETENO } FotoGeraeteNo + ';' +
+                { BAUSTELLE } sBaustelle + ';' +
+                { MOMENT } DatumLog,
+                { CSV-Dateiname } MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+            end;
+
+            // Foto in die richtige Ablage kopieren!
+            if not(FileCopy(
+              { } pFTPPath + sFiles[m],
+              { } FotoAblage_PFAD + FotoDateiName)) then
+            begin
+              FotoLog(cERRORText + ' {' + sFiles[m] + ': Kopieren nicht erfolgreich');
+              FotoLog('Quelle war: "' + pFTPPath + sFiles[m] + '"');
+              FotoLog('Ziel war: "' + FotoAblage_PFAD + FotoDateiName + '" }');
+              break;
+            end;
+
+            FullSuccess := true;
+
+          until yet;
+        end;
+
+      end;
+
+      if not(FullSuccess) then
+        unverarbeitet(m);
+
+    end; // for m
+
+    bOrgaMon.EndTransaction;
+    bOrgaMon.Free;
+
+    if assigned(bOrgaMonOld) then
+    begin
+      bOrgaMonOld.EndTransaction;
+      bOrgaMonOld.Free;
+    end;
+
+    // Bilder jetzt aus FTP-Bereich löschen
+    if (sFiles.Count > 0) then
+    begin
+      FotoLog(Id);
+      for n := 0 to pred(sFiles.Count) do
+        if not(FileDelete(pFTPPath + sFiles[n])) then
+        begin
+          FotoLog(cERRORText + ' "' + pFTPPath + sFiles[n] + '" : Nicht löschbar');
+          FotoLog(cFotoService_AbortTag);
+          break;
+        end;
+    end;
+
+  end;
+
+  sFiles.Free;
+  sFilesClientSorter.Free;
+end;
+
+procedure TOrgaMonApp.workEingang_TXT(sParameter: TStringList = nil);
+var
+  sFiles: TStringList;
+  n: integer;
+  ProtokollFName : string;
+
+  // Parameter
+  pAll: boolean;
+
+begin
+  if assigned(sParameter) then
+  begin
+    pAll := sParameter.Values['ALL'] <> cIni_Deactivate;
+  end
+  else
+  begin
+    pAll := true;
+  end;
+
+  // Init Phase
+  sFiles := TStringList.Create;
+
+  // get File List
+  dir(pFTPPath + '*' + cProtExtension, sFiles, false);
+
+  // reduce to Protocols
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+   if (pos(cUTF8DataExtension,sFiles[n])>0) then
+   begin
+    sFiles.Delete(n);
+    continue;
+   end;
+   if (FSize(pFTPPath+sFiles[n])<16) then
+   begin
+    sFiles.Delete(n);
+    continue;
+   end;
+  end;
+
+  // Reduce Work to Only One?!
+  if not(pAll) then
+    for n := pred(sFiles.Count) downto 1 do
+      sFiles.Delete(n);
+
+  // ev. Zeit Datum protokollieren
+  if (sFiles.Count>0) then
+      AppendStringsToFile(
+        { } 'timestamp ' + sTimeStamp,
+        { } DiagnosePath + cProtokollTransaktionenFName);
+
+  // Protokolle verschieben
+  for n := pred(sFiles.Count) downto 0 do
+  begin
+    ProtokollFName := UpperCase(nextp(sFiles[n],'.',0));
+
+    if FileMove(
+     { } pFTPPath + sFiles[n],
+     { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension) then
+    begin
+      AppendStringsToFile(
+        { } 'cp ' + sFiles[n] +
+        { } ' ' +
+        { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension,
+        { } DiagnosePath + cProtokollTransaktionenFName);
+    end else
+    begin
+      FotoLog(cERRORText + ' Protokoll konnte nicht aus FTP-Bereich verschoben werden (mv '+sFiles[n]+' '+MyProgramPath + cProtokollPath+')');
+      FotoLog(cFotoService_AbortTag);
+    end;
+  end;
+
+  sFiles.Free;
+end;
+
+const
+  col_GERAET = 0;
+  col_NAME = 1;
+  col_AUFNAHME = 2;
+  col_ANKUENDIGUNG = 3;
+  col_LIEFERUNG = 4;
+
+  //
+  // Zeitraum der zurück geblickt wird, Foto Ankündigungen, die
+  // weiter zurück liegen werden nicht berücksichtigt
+  //
+  BETRACHTUNGS_ZEITRAUM = 25; { [Tage] }
+
+  //
+  // Bilder werden im normal-Fall per FTP vom Handy "sofort" nach
+  // der Aufnahme versendet. Die Ankündigung im Protokoll wird
+  // zwar auch sofort eingetragen, wir wissen davon aber erst nach dem
+  // "senden" des Monteures.
+  //
+  VERZOEGERUNG_ANKUENDIGUNG = 14; { [Tage] }
+
+procedure TOrgaMonApp.workAusstehendeFotos;
+var
+  BildAnkuendigung: TStringList;
+  BildLieferung: TStringList;
+  AllTRN: TStringList;
+  FTPLog: TStringList;
+  TAN: string;
+  m, n, o, r: integer;
+  StartMoment: TDateTime;
+  ProceedMoment: TDateTime;
+  ProceedMoment_First: TDateTime;
+  ProceedMoment_Oldest: TDateTime;
+  LogMoment_Oldest: TDateTime;
+  FName: string;
+  PROTOKOLL: string;
+  sProtokoll: TStringList;
+  sHANGOVER: tsTable;
+  sMONTEURE: tsTable;
+  tIMEI: tsTable;
+  BildName: string;
+  LieferMoment_First: TDateTime;
+  sLieferMoment_First: string;
+  sLieferMoment: string;
+  GERAET, _GERAET, GERAETE: string;
+  Anzahl: integer;
+  GesamtAnzahl: integer;
+  Timer: int64;
+  PAPERCOLOR: string;
+  Age: integer; // [Sekunden]
+
+  procedure WriteIt { (_GERAET) };
+  var
+    n: integer;
+  begin
+    with sMONTEURE do
+    begin
+      n := locate('GERAET', _GERAET);
+      if (n = -1) then
+      begin
+        n := addRow;
+        writeCell(n, 'GERAET', _GERAET);
+      end;
+      writeCell(n, 'RÜCKSTAND', InttoStr(Anzahl));
+    end;
+    GesamtAnzahl := GesamtAnzahl + Anzahl;
+  end;
+
+begin
+  StartMoment := now;
+  Timer := RDTSCms;
+
+  AllTRN := TStringList.Create;
+  FTPLog := TStringList.Create;
+  BildAnkuendigung := TStringList.Create;
+  BildLieferung := TStringList.Create;
+  sHANGOVER := tsTable.Create;
+  sMONTEURE := tsTable.Create;
+  tIMEI := tsTable.Create;
+
+  ensureGlobals;
+
+  ProceedMoment_First := StartMoment;
+  ProceedMoment_Oldest := StartMoment - BETRACHTUNGS_ZEITRAUM;
+
+  // Prüfe ob über der Prüfungszeitraum überhaupt genung
+  // protokolliert ist, oder ob wir ev. kürzen müssen
+  FTPLog.LoadFromFile(DiagnosePath + cFotoTransaktionenFName);
+  LogMoment_Oldest := StartMoment;
+  for n := 0 to pred(FTPLog.count) do
+   if (pos('timestamp ', FTPLog[n]) = 1) then
+   begin
+     LogMoment_Oldest := Long2DateTime(StrtoIntdef(nextp(FTPLog[n], ' ', 1),-1)) + 1.0;
+     break;
+    end;
+
+  // Wenn der Betrachtungszeitraum gar nicht protokolliert wurde?
+  if (LogMoment_Oldest > ProceedMoment_Oldest) then
+   // Korrigiere das am weitesten zurückliegende Datum auf den
+   // FotoLog- Start
+   ProceedMoment_Oldest := LogMoment_Oldest;
+
+  if DebugMode then
+    FotoLog(
+      { } cINFOText + ' 1271: ' +
+      { } 'vom ' +
+      { } long2date(ProceedMoment_Oldest) +
+      { } ' bis ' +
+      { } long2date(ProceedMoment_First) +
+      { } ' ...');
+
+  with sHANGOVER do
+  begin
+    addcol('GERAET');
+    addcol('NAME');
+    addcol('AUFNAHME_MOMENT');
+    addcol('ANKÜNDIGUNG');
+    addcol('LIEFERUNG');
+  end;
+
+  with sMONTEURE do
+  begin
+    addcol('GERAET'); // dreistellige Nummer
+    addcol('MONTEUR'); // Name des Monteures
+    addcol('LETZTER_UPLOAD'); // Datum + Uhr der letzten Bild-Lieferung
+    addcol('RÜCKSTAND'); // Anzahl der Bilder, die noch fehlen
+    addcol('VOM'); // Datum des ältesten Bildes das fehlt
+    addcol('PAPERCOLOR');
+  end;
+
+  tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+
+  { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
+  dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
+  AllTRN.sort;
+  for n := pred(AllTRN.Count) downto 0 do
+  begin
+    TAN := StrFilter(AllTRN[n], cZiffern);
+
+    if (length(TAN) = length(cFirstTrn)) then
+    begin
+
+      // Dateiname der Ergebnisdatei
+      FName := { } pAppServicePath +
+      { } TAN + '\' +
+      { } TAN + cUTF8DataExtension;
+
+      ProceedMoment := FileDateTime(FName);
+
+      if (ProceedMoment <> 0) then
+      begin
+
+        //
+        // Abbrechen, wenn es vorhanden ist aber zu weit zurück liegt
+        //
+        if (ProceedMoment < ProceedMoment_Oldest) then
+          break;
+
+        BildLieferung.LoadFromFile(
+          { } pAppServicePath +
+          { } TAN + '\' +
+          { } TAN + cUTF8DataExtension);
+        for m := 0 to pred(BildLieferung.Count) do
+        begin
+          PROTOKOLL := nextp(BildLieferung[m], ';', cMobileMeldung_COLUMN_PROTOKOLL);
+          if pos('F', PROTOKOLL) > 0 then
+          begin
+            sProtokoll := split(PROTOKOLL, '~');
+            for o := 0 to pred(sProtokoll.Count) do
+              if (pos('F', sProtokoll[o]) = 1) then
+                if (pos('=', sProtokoll[o]) = 3) then
+                  with sHANGOVER do
+                  begin
+                    { Bilddateiname ermitteln }
+                    BildName := nextp(sProtokoll[o], '=', 1);
+
+                    { Gerätenummer ermitteln }
+                    GERAET := copy(BildName, 1, 3);
+                    if not(TOrgaMonApp.isGeraeteNo(GERAET)) then
+                      continue;
+
+                    { Ältestes Datum ermitteln }
+                    if (ProceedMoment < ProceedMoment_First) then
+                      ProceedMoment_First := ProceedMoment;
+
+                    { Eintrag in der Tabelle suchen }
+                    r := locate(col_NAME, BildName);
+                    if (r = -1) then
+                    begin
+                      // Neu-Eintrag
+                      r := addRow;
+                      writeCell(r, col_GERAET, GERAET);
+                      writeCell(r, col_NAME, BildName);
+                      writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end
+                    else
+                    begin
+                      { wir wollen den ältesten (kleinsten) Ankündigungsmoment }
+                      if (readCell(r, col_ANKUENDIGUNG) = '') or
+                        (readCell(r, col_ANKUENDIGUNG) > dTimeStamp(ProceedMoment)) then
+                        writeCell(r, col_ANKUENDIGUNG, dTimeStamp(ProceedMoment));
+                    end;
+                  end;
+            sProtokoll.Free;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  if DebugMode then
+   sHANGOVER.SaveToHTML(pWebPath + 'HANGOVER.html');
+
+  { Schritt 2: Ergänzung der Lieferdatums }
+  LieferMoment_First := ProceedMoment_First - VERZOEGERUNG_ANKUENDIGUNG;
+  sLieferMoment_First := dTimeStamp(LieferMoment_First);
+
+  // Bestimmen ab welchem Zeitpunkt die Datei relevant ist
+  // Dabei die Monteure sammeln, die wann zuletzt geliefert haben
+  //
+  GERAETE := '';
+  with sMONTEURE do
+    for n := pred(FTPLog.Count) downto 0 do
+    begin
+
+      if (pos('timestamp ', FTPLog[n]) = 1) then
+      begin
+        sLieferMoment := copy(FTPLog[n], 11, MaxInt);
+        if (sLieferMoment < sLieferMoment_First) then
+          break;
+      end;
+
+      BildName := '';
+      if (pos('cp ', FTPLog[n]) = 1) then
+        BildName := nextp(FTPLog[n], ' ', 1);
+
+      if (pos('mv ', FTPLog[n]) = 1) then
+        BildName := ExtractFileName(nextp(FTPLog[n], ' ', 1));
+
+      if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
+      begin
+        //
+        GERAET := copy(BildName, 1, 3);
+        if pos('{' + GERAET + '}', GERAETE) = 0 then
+        begin
+          GERAETE := GERAETE + '{' + GERAET + '}';
+
+          r := addRow;
+          writeCell(r, 'GERAET', GERAET);
+          writeCell(r, 'LETZTER_UPLOAD', sLieferMoment);
+
+        end;
+
+      end;
+
+    end;
+  n := max(n, 0);
+
+  if DebugMode then
+   sMONTEURE.SaveToHTML(pWebPath + 'MONTEURE.html');
+
+  if DebugMode then
+    FotoLog(
+    { } cINFOText + ' 1431: ' +
+    { } 'Foto-Lieferungen ab ' +
+    { } long2date(LieferMoment_First) +
+    { } ' also ab Zeile ' +
+    { } InttoStr(n) +
+    { } ' ...');
+
+  // Nun gelieferten die Bilder in der Soll Liste ergänzen
+  sLieferMoment := sLieferMoment_First;
+  for m := n to pred(FTPLog.Count) do
+  begin
+
+    if (pos('timestamp ', FTPLog[m]) = 1) then
+    begin
+      sLieferMoment := copy(FTPLog[m], 11, MaxInt);
+      continue;
+    end;
+
+    BildName := '';
+    if (pos('cp ', FTPLog[m]) = 1) then
+      BildName := nextp(FTPLog[m], ' ', 1);
+
+    if (pos('mv ', FTPLog[m]) = 1) then
+      BildName := ExtractFileName(nextp(FTPLog[m], ' ', 1));
+
+    if (BildName <> '') and (pos(cFotoService_NeuPlatzhalter, BildName) = 0) then
+    begin
+
+      with sHANGOVER do
+      begin
+
+        // durch Nachlieferungen auf einem anderen Zustellungsweg
+        // z.B. per eMail kann die Dateiendung verfälscht werden
+        // aus .jpg wird dann z.B. .JPG oder ähnlich. Wir müssen
+        // hier leider angleichen
+        if (pos('.jpg', BildName) = 0) then
+          BildName := copy(BildName, 1, length(BildName) - 4) + '.jpg';
+
+        { Eintrag in der Tabelle suchen }
+        r := locate(col_NAME, BildName);
+        if (r = -1) then
+        begin
+          //
+          // Dies ist ein bereits geliefertes Bild wobei noch nicht "gesendet" wurde
+          // oder die ankündigung in der Vergangenheit liegt. Das Anfügen in die Übersicht
+          // ist optional
+          //
+          {
+            r := addRow;
+            writeCell(r, col_GERAET, copy(BildName, 1, 3));
+            writeCell(r, col_NAME, BildName);
+            writeCell(r, col_LIEFERUNG, LieferMoment);
+          }
+        end
+        else
+        begin
+          { wir wollen den ältesten Ankündigungsmoment }
+          if (readCell(r, col_LIEFERUNG) = '') or (readCell(r, col_LIEFERUNG) > sLieferMoment) then
+            writeCell(r, col_LIEFERUNG, sLieferMoment);
+        end;
+      end;
+    end;
+  end;
+
+  with sHANGOVER do
+  begin
+    sortby('GERAET;LIEFERUNG;ANKÜNDIGUNG');
+
+    //
+    // nun reduzieren auf die, die noch nicht geliefert wurden
+    //
+    for r := RowCount downto 1 do
+      if (readCell(r, col_LIEFERUNG) <> '') then
+        del(r);
+
+    // Diese Detail-Liste auch ausgeben
+    //
+    SaveToFile(MyDataBasePath + 'FotoService-Upload-Ausstehend.csv');
+    SaveToHTML(pWebPath + 'ausstehende-details.html');
+  end;
+
+  //
+  // Nun über die Geräte kumulieren
+  //
+  _GERAET := '';
+  Anzahl := 0;
+  with sHANGOVER do
+  begin
+    for r := 1 to RowCount do
+    begin
+      GERAET := readCell(r, 'GERAET');
+      if (GERAET = _GERAET) then
+      begin
+        inc(Anzahl);
+      end
+      else
+      begin
+        if (_GERAET <> '') then
+          WriteIt;
+        Anzahl := 1;
+        _GERAET := GERAET;
+      end;
+    end;
+    if (RowCount > 0) then
+      WriteIt;
+  end;
+
+  with sMONTEURE do
+  begin
+
+    //
+    // Reduzieren auf die Monteure, die Bilder schuldig sind
+    //
+    GesamtAnzahl := 0;
+    for r := RowCount downto 1 do
+    begin
+      Anzahl := StrToIntDef(readCell(r, 'RÜCKSTAND'), 0);
+      if (Anzahl = 0) then
+      begin
+        del(r)
+      end
+      else
+      begin
+        //
+        // Aufkummulieren der Gesamtfehlmenge
+        //
+        inc(GesamtAnzahl, Anzahl);
+
+        // Nachrüsten der Monteurs-Namen
+        // imp pend
+
+        // Eintragen der Farbgebung
+        //
+        Age := SecondsDiff(StartMoment, mkDateTime(readCell(r, 'LETZTER_UPLOAD'), true));
+        case Age of
+          - 1 * 3600 .. 10 * 60:
+            PAPERCOLOR := '#00FF00'; { tief grün }
+          10 * 60 + 1 .. 20 * 60:
+            PAPERCOLOR := '#2EFE2E';
+          20 * 60 + 1 .. 35 * 60:
+            PAPERCOLOR := '#58FA58';
+          35 * 60 + 1 .. 120 * 60:
+            PAPERCOLOR := '#81F781';
+          120 * 60 + 1 .. 180 * 60:
+            PAPERCOLOR := '#A9F5A9';
+          180 * 60 + 1 .. 4 * 3600:
+            PAPERCOLOR := '#CEF6CE';
+          4 * 3600 + 1 .. 5 * 3600:
+            PAPERCOLOR := '#E0F8E0';
+          5 * 3600 + 1 .. 6 * 3600:
+            PAPERCOLOR := '#EFFBEF';
+          6 * 3600 + 1 .. 7 * 3600:
+            PAPERCOLOR := '#FFFFFF'; { weiß }
+          7 * 3600 + 1 .. 8 * 3600:
+            PAPERCOLOR := '#FBEFEF'; { pastel rot }
+          8 * 3600 + 1 .. 9 * 3600:
+            PAPERCOLOR := '#F6CECE';
+          9 * 3600 + 1 .. 10 * 3600:
+            PAPERCOLOR := '#F5A9A9';
+          10 * 3600 + 1 .. 11 * 3600:
+            PAPERCOLOR := '#F78181';
+          11 * 3600 + 1 .. 12 * 3600:
+            PAPERCOLOR := '#FA5858';
+          12 * 3600 + 1 .. 13 * 3600:
+            PAPERCOLOR := '#FE2E2E';
+        else
+          PAPERCOLOR := '#FF0000'; { tief rot }
+
+        end;
+        writeCell(r, 'PAPERCOLOR', PAPERCOLOR);
+      end;
+    end;
+
+    // Sortieren, die schlimmsten nach oben
+    sortby('RÜCKSTAND numeric descending');
+
+    // Die Namen nachtragen
+    for r := 1 to RowCount do
+    begin
+     n := tIMEI.locate('GERAET', readCell(r,'GERAET'));
+     if (n <> -1) then
+       WriteCell(
+        {} r,'MONTEUR',
+        { } tIMEI.readCell(n, 'VORNAME') + ' ' +
+        { } tIMEI.readCell(n, 'NACHNAME'));
+    end;
+
+    // Ausgabe nach htlm
+    oHTML_Prefix :=
+    { } '<h2>' + Id + ' vom ' + long2date(StartMoment) +
+    { } ' um ' + secondstostr(StartMoment) + '</h2><br>' +
+    { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
+    oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
+
+    SaveToFile(MyDataBasePath + 'FotoService-Upload-Übersicht.csv');
+    SaveToHTML(pWebPath + 'ausstehende-fotos.html');
+
+  end;
+
+  sHANGOVER.Free;
+  sMONTEURE.Free;
+  tIMEI.Free;
+  FTPLog.Free;
+  AllTRN.Free;
+  BildAnkuendigung.Free;
+  BildLieferung.Free;
+end;
+
+procedure TOrgaMonApp.workWartend(sParameter: TStringList = nil);
+var
+  WARTEND: tsTable;
+  Stat_Anfangsbestand: integer;
+  Stat_NachtragBaustelle: integer;
+  Stat_ZuAlt: integer;
+  Stat_Verschwunden: integer;
+  Stat_Doppelt: integer;
+  Stat_Umbenannt: integer;
+
+  col_MOMENT: integer;
+  col_DATEINAME_AKTUELL: integer;
+
+  MomentTimeout: TANFiXDate;
+  CSV: tsTable;
+  r, i, k, ro, c: integer;
+
+  ZAEHLER_NUMMER_NEU: string;
+  REGLER_NUMMER_NEU: string;
+  NEU: string;
+
+  ORIGINAL_DATEI: string;
+  DATEINAME_AKTUELL: string;
+  PARAMETER: string;
+  FNameAlt, FNameNeu: string;
+  RID: integer;
+  sBaustelle: string;
+  BAUSTELLE_Index: integer;
+
+  // Baustellen-Ermittlung
+  bOrgaMon: TBLager;
+  mderecOrgaMon: TMDERec;
+  FotoBenennungsModus: integer;
+
+  // senden einfärben
+  tSENDEN: tsTable;
+
+  // Doppelten Erkennung
+  slAKTUELL: TStringList;
+
+begin
+
+  // 'FA' ... 'FE' ... 'FK' ->Regler#Neu-Umbenennung
+  // 'FL' ... 'FN' ... 'FZ' ->Zähler#Neu-Umbenennung
+
+  // Init
+  ensureGlobals;
+  invalidate_NummerNeuCache;
+
+  CSV := nil;
+  WARTEND := tsTable.Create;
+  with WARTEND do
+  begin
+
+    // load+sort
+    insertfromFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+
+    // init Global Stat
+    Stat_Anfangsbestand := RowCount;
+    Stat_Umbenannt := 0;
+    Stat_NachtragBaustelle := 0;
+
+    // Sortieren
+    sortby('GERAETENO;MOMENT;DATEINAME_AKTUELL');
+    if Changed then
+      if DebugMode then
+        FotoLog(
+          { } cINFOText + ' 988: ' +
+          { } ' Frisch sortiert');
+
+    // sicherstellen von Spalten
+    addcol('BAUSTELLE');
+    addcol('MOMENT');
+
+    // all zu alte Einträge löschen
+    MomentTimeout := DatePlus(DateGet, -cMaxAge_Umbenennen);
+    slAKTUELL := TStringList.Create;
+    Stat_ZuAlt := 0;
+    Stat_Verschwunden := 0;
+    Stat_Doppelt := 0;
+    col_MOMENT := colof('MOMENT');
+    col_DATEINAME_AKTUELL := colof('DATEINAME_AKTUELL');
+    for r := RowCount downto 1 do
+    begin
+
+      DATEINAME_AKTUELL := readCell(r, col_DATEINAME_AKTUELL);
+
+      if (StrToIntDef(readCell(r, col_MOMENT), ccMaxDate) < MomentTimeout) then
+      begin
+        del(r);
+        inc(Stat_ZuAlt);
+        FotoLog(
+          { } cWARNINGText + ' 1049: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie älter als ' + InttoStr(cMaxAge_Umbenennen) + ' Tage ist');
+        continue;
+      end;
+
+      if not(FileExists(DATEINAME_AKTUELL)) then
+      begin
+        del(r);
+        inc(Stat_Verschwunden);
+        FotoLog(
+          { } cWARNINGText + ' 1059: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da sie verschwunden ist');
+        continue;
+      end;
+
+      if (slAKTUELL.IndexOf(DATEINAME_AKTUELL) <> -1) then
+      begin
+        Del(r);
+        inc(Stat_Doppelt);
+        FotoLog(
+          { } cWARNINGText + ' 1069: ' +
+          { } 'gebe "' + DATEINAME_AKTUELL + '" auf, da er Eintrag doppelt ist');
+        continue;
+      end;
+
+      slAKTUELL.add(DATEINAME_AKTUELL);
+    end;
+    slAKTUELL.Free;
+  end;
+
+  bOrgaMon := TBLager.Create;
+  bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+  bOrgaMon.BeginTransaction(now);
+
+  for r := WARTEND.RowCount downto 1 do
+  begin
+
+    // Init
+    ZAEHLER_NUMMER_NEU := '';
+    REGLER_NUMMER_NEU := '';
+    NEU := '';
+
+    // Parameter Init
+    RID := StrToIntDef(WARTEND.readCell(r, 'RID'), 0);
+    ORIGINAL_DATEI := WARTEND.readCell(r, 'DATEINAME_ORIGINAL');
+    PARAMETER := nextp(ORIGINAL_DATEI, '-', 2);
+    ersetze('.jpg', '', PARAMETER);
+
+    // Nachtrag der Baustellen-Info
+    sBaustelle := WARTEND.readCell(r, 'BAUSTELLE');
+    if (sBaustelle = '') then
+      if bOrgaMon.exist(RID) then
+      begin
+        bOrgaMon.get;
+        sBaustelle := Oem2utf8(mderecOrgaMon.Baustelle);
+        WARTEND.writeCell(r, 'BAUSTELLE', sBaustelle);
+        inc(Stat_NachtragBaustelle);
+      end;
+
+    // Ist bei dieser Baustelle eine Umbenennung überhaupt erwünscht?
+    // Die Frage sei dann aber erlaubt: Warum steht es dann in WARTEND?
+    if (sBaustelle <> '') then
+    begin
+      BAUSTELLE_Index := tBAUSTELLE.locate(0, sBaustelle);
+      if (BAUSTELLE_Index > -1) then
+      begin
+        FotoBenennungsModus := StrToIntDef(
+          { } tBAUSTELLE.readCell(
+          { } BAUSTELLE_Index,
+          { } cE_FotoBenennung), 0);
+      end;
+    end;
+
+    if (PARAMETER >= 'FL') then
+    begin
+
+      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
+      if (ZAEHLER_NUMMER_NEU = '') then
+        ZAEHLER_NUMMER_NEU :=
+        { } ZaehlerNummerNeu(
+          { } RID,
+          { } WARTEND.readCell(r, 'GERAETENO'));
+
+      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+      if (ZAEHLER_NUMMER_NEU = '') then
+        if ZaehlerNummerNeuXlsCsv_Vorhanden then
+        begin
+          if not(assigned(CSV)) then
+          begin
+            CSV := tsTable.Create;
+            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            FotoLog(cINFOText + ' 1750: suche zusätzlich in GlobalHint.ZaehlerNummerNeu');
+          end;
+          ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
+          if (ro <> -1) then
+            ZAEHLER_NUMMER_NEU := CSV.readCell(ro, 'ZaehlerNummerNeu');
+        end;
+
+      // kein Ergebnis -> keine Aktion
+      if (ZAEHLER_NUMMER_NEU = '') then
+        continue;
+
+      NEU := ZAEHLER_NUMMER_NEU { + };
+    end;
+
+    if (PARAMETER < 'FL') then
+    begin
+
+      // Umbenennungsversuch über den Callback, in dem Fall also die Monteurs-Eingaben "Eingabe.nnn.txt"
+      if (REGLER_NUMMER_NEU = '') then
+        REGLER_NUMMER_NEU :=
+        { } ReglerNummerNeu(
+          { } RID,
+          { } WARTEND.readCell(r, 'GERAETENO'));
+
+      // Zuschaltbare Alternative für Notfälle: den Inhalt einer CSV prüfen
+      if (REGLER_NUMMER_NEU = '') then
+        if ZaehlerNummerNeuXlsCsv_Vorhanden then
+        begin
+          if not(assigned(CSV)) then
+          begin
+            CSV := tsTable.Create;
+            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            FotoLog(cINFOText + ' 1782: suche zusätzlich in GlobalHint.ReglerNummerNeu');
+          end;
+          ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
+          if (ro <> -1) then
+            REGLER_NUMMER_NEU := CSV.readCell(ro, 'ReglerNummerNeu');
+        end;
+
+      // kein Ergebnis -> keine Aktion
+      if (REGLER_NUMMER_NEU = '') then
+        continue;
+
+      NEU := REGLER_NUMMER_NEU { + };
+    end;
+
+    // Verbotene Zeichen entfernen
+    NEU := StrFilter(NEU, cInvalidFNameChars, true);
+
+    // nichts neues? -> nichts machen in diesem Fall
+    if (NEU = '') then
+      continue;
+
+    // Umbenennung starten
+    FNameAlt := WARTEND.readCell(r, 'DATEINAME_AKTUELL');
+    FNameNeu := FNameAlt;
+
+    // das letzte "Neu" am Ende des Dateinamens zählt
+    k := revpos(cFotoService_NeuPlatzhalter, FNameNeu);
+    if (k = 0) then
+    begin
+      FotoLog(
+        { } cERRORText + ' 1699: ' +
+        { } '"' + cFotoService_NeuPlatzhalter + '"' +
+        { } ' in "' + FNameNeu + '" nicht gefunden, Umbenennen dadurch unmöglich');
+      continue;
+    end;
+
+    // Neuen Dateinamen zusammenbauen
+    FNameNeu :=
+    { } copy(FNameNeu, 1, pred(k)) +
+    { } TOrgaMonApp.FormatZaehlerNummerNeu(NEU) +
+    { } copy(FNameNeu, k + length(cFotoService_NeuPlatzhalter), MaxInt);
+
+    // die (TMP..)- Sachen wieder wegzumachen
+    FNameNeu := clearTempTag(FNameNeu);
+
+    // Laufwerksbuchstaben
+    if (CharCount(':', FNameNeu) <> 1) then
+    begin
+      FotoLog(
+        { } cERRORText + ' 1718: ' +
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Laufwerksangabe mit ":" fehlt');
+      continue;
+    end;
+
+    // Pfad ging irgendwie verloren
+    if (CharCount('\', FNameNeu) < 2) then
+    begin
+      FotoLog(
+        { } cERRORText + ' 1727: ' +
+        { } 'Umbenennung zu "' + FNameNeu + '" ist ungültig. Zwei Pfadtrenner "\" fehlen');
+      continue;
+    end;
+
+    if (FNameNeu = FNameAlt) then
+    begin
+      // ohne Umbenennung (also es stimmt bereits!) einfach nur den Eintrag löschen!
+      FotoLog(cINFOText + ' 1735: Name "'+FNameNeu+'" stimmte bereits');
+      WARTEND.Del(r);
+      inc(Stat_Umbenannt);
+    end
+    else
+    begin
+
+      // freien Ziel-Dateinamen finden:
+      i := 1;
+      repeat
+        if not(FileExists(FNameNeu)) then
+          break;
+        if (i = 1) then
+          FNameNeu := copy(FNameNeu, 1, revpos('.', FNameNeu) - 1) + '-' + InttoStr(i) + '.jpg'
+        else
+          FNameNeu := copy(FNameNeu, 1, revpos('-', FNameNeu) - 1) + '-' + InttoStr(i) + '.jpg';
+        inc(i);
+      until eternity;
+
+      if FileMove(FNameAlt, FNameNeu) then
+      begin
+        AppendStringsToFile(
+          { } 'mv ' + FNameAlt +
+          { } ' ' + FNameNeu,
+          { } DiagnosePath + cFotoTransaktionenFName);
+        LastLogWasTimeStamp := false;
+
+        WARTEND.Del(r);
+        inc(Stat_Umbenannt);
+      end
+      else
+      begin
+        FotoLog(cERRORText + ' 1280: FileMove("' + FNameAlt + '", "' + FNameNeu + '")');
+        FotoLog(cFotoService_AbortTag);
+      end;
+    end;
+  end;
+
+  bOrgaMon.EndTransaction;
+  bOrgaMon.Free;
+
+  if WARTEND.Changed then
+  begin
+
+    // recreate senden.html, muss jemand noch "senden"
+    tSENDEN := tsTable.Create;
+    with tSENDEN do
+    begin
+      insertfromFile(pAppServicePath + cDBPath + cAppService_SendenFName);
+      i := addcol('PAPERCOLOR');
+      k := WARTEND.colof('GERAETENO');
+      c := colof('ID');
+      for r := 1 to RowCount do
+        if (WARTEND.locate(k, readCell(r, c)) <> -1) then
+          writeCell(r, i, '#FFFF00');
+      SaveToHTML(pAppStatistikPath + 'senden.html');
+    end;
+    tSENDEN.Free;
+
+    // save WARTEND / save as html
+    WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
+    WARTEND.SaveToFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+
+    // FotoLog
+    if (Stat_Umbenannt > 0) then
+      FotoLog(cINFOText + ' 1276: ' +
+        { } InttoStr(Stat_Umbenannt) +
+        { } ' "Neu" Umbenennung(en) wurde(n) durchgeführt, ' +
+        { } InttoStr(WARTEND.RowCount) +
+        { } ' verbleiben');
+
+    if (Stat_NachtragBaustelle > 0) then
+      FotoLog(cINFOText + ' 1283: ' +
+        { } InttoStr(Stat_NachtragBaustelle) +
+        { } ' Baustelleninfo(s) wurde(n) nachgetragen');
+
+  end;
+
+  WARTEND.Free;
+  if assigned(CSV) then
+    CSV.Free;
+end;
+
+function TOrgaMonApp.AblageLogFname: string;
+begin
+  result := DiagnosePath + format(cFotoAblageFName, [DatumLog]);
+end;
+
+procedure TOrgaMonApp.workAblage(sParameter: TStringList = nil);
+
+  procedure AblageLog(Source, Dest: string);
+  begin
+    AppendStringsToFile(sTimeStamp + ';' + Source + ';' + Dest, AblageLogFname);
+  end;
+
+const
+  cFileTimeOutDays = 50 + 10;
+  // 0 = gestern ist schon zu alt
+  cPicTimeOutDays = 0;
+var
+  // globale Infrastruktur - Parameter
+  Ablage_NAME: string; // Allgemeiner Name der Internet-Ablage: 'abc'
+  Ablage_PFAD: string; // Realer vollständiger Pfad der Internet-Ablage
+  Ablage_SUB: string; // Unterverzeichnis inerhalb der aktuellen Internet-Ablage '','abc\',...
+  Ablage_ZIP_PASSWORD: string;
+
+  //
+  Ablage_PFADE: TStringList;
+  Ablage_SUBS: TStringList;
+  ZIP_OlderThan: TANFiXDate;
+  PIC_OlderThan: TANFiXDate;
+  WARTEND: tsTable;
+  col_DATEINAME_AKTUELL: integer;
+
+  Col_ZIPPASSWORD: integer;
+  Col_FTPBenutzer: integer;
+  MovedToDay: int64;
+
+  procedure serviceJPG;
+  const
+    cMaxZIP_Size = 100 * 1024 * 1024;
+  var
+    m: integer;
+    Pending: boolean;
+    FotoFSize: int64;
+    sPics: TStringList;
+    mIni: TIniFile;
+    FotosSequence: integer;
+    FotosAbzug: boolean;
+    sOldZips: TStringList;
+    DATEINAME_AKTUELL: string;
+  begin
+    Pending := false;
+    sPics := TStringList.Create;
+    sOldZips := TStringList.Create;
+    repeat
+      // Jpegs
+      dir(Ablage_PFAD + '*.jpg', sPics, false);
+      if (sPics.Count = 0) then
+        break;
+
+      // reduziere um "zu neue" Bilder
+      for m := pred(sPics.Count) downto 0 do
+        if (FileDate(Ablage_PFAD + sPics[m]) >= PIC_OlderThan) then
+          sPics.Delete(m);
+      if (sPics.Count = 0) then
+        break;
+
+      // reduziere um "wartende" Bilder
+      for m := pred(sPics.Count) downto 0 do
+      begin
+        DATEINAME_AKTUELL := Ablage_PFAD + sPics[m];
+
+        if (WARTEND.locate(col_DATEINAME_AKTUELL, DATEINAME_AKTUELL) <> -1) then
+          sPics.Delete(m);
+      end;
+      if (sPics.Count = 0) then
+        break;
+
+      // reduziere auf < 100 MByte
+      FotoFSize := 0;
+      for m := pred(sPics.Count) downto 0 do
+      begin
+        if (FotoFSize >= cMaxZIP_Size) then
+        begin
+          sPics.Delete(m);
+          Pending := true;
+        end
+        else
+        begin
+          inc(FotoFSize, FSize(Ablage_PFAD + sPics[m]));
+        end;
+      end;
+
+      // Die Nummer des zu erzeugenden ZIP suchen
+      FotosAbzug := false;
+      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
+      with mIni do
+      begin
+        FotosSequence := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
+        FotosAbzug := (ReadString(cGroup_Id_Default, 'Abzug', cIni_Deactivate) = cINI_ACTIVATE);
+        if FotosSequence < 0 then
+        begin
+          dir(Ablage_PFAD + 'Fotos-????.zip', sOldZips, false);
+          if (sOldZips.Count > 0) then
+          begin
+            sOldZips.sort;
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Fotos-', '.zip'), -1);
+          end;
+        end;
+        if (FotosSequence < 0) then
+          FotosSequence := 0;
+        inc(FotosSequence);
+      end;
+      mIni.Free;
+
+      // Archivieren in Fotos-nnnn.zip
+      AblageLog(Ablage_PFAD + 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      if (zip(
+        { } sPics,
+        { } Ablage_PFAD +
+        { } 'Fotos-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
+        { } deCrypt_Hex(
+        { } Ablage_ZIP_PASSWORD) + ';' +
+        { } czip_set_Level + '=' + '0') <> sPics.Count) then
+      begin
+        // Problem anzeigen
+        FotoLog(cERRORText + ' 7zip Fehler');
+        Pending := false;
+        break;
+      end;
+
+      if FotosAbzug then
+      begin
+        // Archivieren auch in Abzug-nnnn.zip
+
+        for m := 0 to pred(sPics.Count) do
+          FotoCompress(Ablage_PFAD + sPics[m], Ablage_PFAD + sPics[m], 94, 6);
+
+        AblageLog(Ablage_PFAD + 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+        if (zip(
+          { } sPics,
+          { } Ablage_PFAD +
+          { } 'Abzug-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+          { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+          { } czip_set_Password + '=' +
+          { } deCrypt_Hex(
+          { } Ablage_ZIP_PASSWORD) + ';' +
+          { } czip_set_Level + '=' + '0') <> sPics.Count) then
+        begin
+          // Problem anzeigen
+          FotoLog(cERRORText + ' 7zip Fehler');
+          Pending := false;
+          break;
+        end;
+
+      end;
+
+      // Fotos-nnnn.ini erhöhen
+      mIni := TIniFile.Create(Ablage_PFAD + 'Fotos-nnnn.ini');
+      mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
+      mIni.Free;
+
+      // nun die eben archivierten JPGS schlussendlich löschen!
+      for m := 0 to pred(sPics.Count) do
+        FileDelete(Ablage_PFAD + sPics[m]);
+
+    until yet;
+    sPics.Free;
+    sOldZips.Free;
+
+    if Pending then
+      serviceJPG;
+  end;
+
+  procedure serviceHTML;
+  var
+    m: integer;
+    sHTMLSs: TStringList;
+    mIni: TIniFile;
+    FotosSequence: integer;
+    sOldZips: TStringList;
+  begin
+    sHTMLSs := TStringList.Create;
+    sOldZips := TStringList.Create;
+    repeat
+
+      // Jpegs
+      dir(Ablage_PFAD + '*.zip.html', sHTMLSs, false);
+      if (sHTMLSs.Count = 0) then
+        break;
+
+      // reduziere um "zu neue" Bilder
+      for m := pred(sHTMLSs.Count) downto 0 do
+        if (FileDate(Ablage_PFAD + sHTMLSs[m]) >= PIC_OlderThan) then
+          sHTMLSs.Delete(m);
+      if (sHTMLSs.Count = 0) then
+        break;
+
+      // reduziere um "wartende" Wechselbelege, bei denen das pdf fehlt!
+      for m := pred(sHTMLSs.Count) downto 0 do
+        if not(FileExists(Ablage_PFAD + sHTMLSs[m] + '.pdf')) then
+          sHTMLSs.Delete(m);
+      if (sHTMLSs.Count = 0) then
+        break;
+
+      // .pdf muss auch mit!
+      // erweitere um die .pdf Dateien
+      for m := 0 to pred(sHTMLSs.Count) do
+        sHTMLSs.add(sHTMLSs[m] + '.pdf');
+
+      // Die Nummer des zu erzeugenden ZIP suchen
+      mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
+      with mIni do
+      begin
+        FotosSequence := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '-1'));
+        if (FotosSequence < 0) then
+        begin
+          dir(Ablage_PFAD + 'Wechselbelege-????.zip', sOldZips, false);
+          if sOldZips.Count > 0 then
+          begin
+            sOldZips.sort;
+            FotosSequence := StrToIntDef(ExtractSegmentBetween(sOldZips[pred(sOldZips.Count)], 'Wechselbelege-',
+              '.zip'), -1);
+          end;
+        end;
+
+        if FotosSequence < 0 then
+          FotosSequence := 0;
+
+        inc(FotosSequence);
+      end;
+      mIni.Free;
+
+      // Archivieren
+      AblageLog(Ablage_PFAD + 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip', '.');
+      if (zip(
+        { } sHTMLSs,
+        { } Ablage_PFAD +
+        { } 'Wechselbelege-' + inttostrN(FotosSequence, cAnzahlStellen_FotosTagwerk) + '.zip',
+        { } czip_set_RootPath + '=' + Ablage_PFAD + ';' +
+        { } czip_set_Password + '=' +
+        { } deCrypt_Hex(
+        { } Ablage_ZIP_PASSWORD) + ';' +
+        { } czip_set_Level + '=' + '0') <> sHTMLSs.Count) then
+      begin
+        // Problem anzeigen
+        FotoLog(cERRORText + ' 7zip Fehler');
+        break;
+      end;
+
+      // Laufnummer erhöhen
+      mIni := TIniFile.Create(Ablage_PFAD + 'Wechselbelege-nnnn.ini');
+      mIni.WriteString(cGroup_Id_Default, 'Sequence', InttoStr(FotosSequence));
+      mIni.Free;
+
+      // nun die eben archivierten löschen!
+      for m := 0 to pred(sHTMLSs.Count) do
+        FileDelete(Ablage_PFAD + sHTMLSs[m]);
+
+    until yet;
+    sHTMLSs.Free;
+    sOldZips.Free;
+  end;
+
+  procedure serviceZIP;
+  var
+    sZips: TStringList;
+    m: integer;
+    DestPath : string;
+    DestPathCheckCreated: boolean;
+  begin
+    sZips := TStringList.Create;
+    DestPath := BackupDir + Ablage_NAME + '\' + Ablage_SUB;
+    DestPathCheckCreated := false;
+    dir(Ablage_PFAD + '*.zip', sZips, false);
+    for m := 0 to pred(sZips.Count) do
+    begin
+
+      if (pos('~',sZips[m])>0) then
+      begin
+          FotoLog(cERRORText +
+            { } ' 2119: ZIP "' +
+            { } Ablage_PFAD + sZips[m] + '" kann nicht verschoben werden, da der Dateiname korrupt ist ("~" ist enthalten)');
+          continue;
+      end;
+
+      if (FileDate(Ablage_PFAD + sZips[m]) < ZIP_OlderThan) then
+      begin
+
+        // Datei bereits vorhanden? Darf nicht sein!
+        if FileExists(DestPath + sZips[m]) then
+        begin
+          FotoLog(cERRORText +
+            { } ' 2295: ZIP "' +
+            { } Ablage_PFAD + sZips[m] +
+            { } '" kann nicht verschoben werden, da diese Datei in "' +
+            { } DestPath + '" '+
+            { } 'bereits existiert');
+          continue;
+        end;
+
+        // Zielverzeichnis für das Verschieben erstellen
+        if not(DestPathCheckCreated) then
+        begin
+         CheckCreateDir(DestPath);
+         DestPathCheckCreated := true;
+        end;
+
+        // Verschieben
+        if FileMove(
+          { } Ablage_PFAD + sZips[m],
+          { } DestPath + sZips[m]) then
+        begin
+          inc(MovedToDay, FSize(Ablage_PFAD + sZips[m]));
+          AblageLog(Ablage_PFAD + sZips[m], BackupDir);
+        end
+        else
+        begin
+          FotoLog(cERRORText +
+            { } ' 1645: FileMove("' +
+            { } Ablage_PFAD + sZips[m] + '", "' +
+            { } DestPath + sZips[m] + '")');
+          FotoLog(cFotoService_AbortTag);
+        end;
+      end;
+    end;
+    sZips.Free;
+  end;
+
+var
+  BasisDatum: TANFiXDate;
+
+  // Parameter
+  pDatum: string;
+  pEinzeln: string;
+
+  r,a: integer;
+  UserN:string;
+  PFAD, SUB: string;
+
+begin
+
+  // Set "Lock" for this day
+  FileAlive(AblageLogFname);
+
+  ensureGlobals;
+
+  if assigned(sParameter) then
+  begin
+    pDatum := sParameter.Values['DATUM'];
+    pEinzeln := sParameter.Values['EINZELN'];
+  end
+  else
+  begin
+    pDatum := '';
+    pEinzeln := '';
+  end;
+
+  // Infos über Baustellen
+  Col_ZIPPASSWORD := tBAUSTELLE.colof(cE_ZIPPASSWORD);
+  Col_FTPBENUTZER := tBAUSTELLE.colof(cE_FTPUSER);
+
+  // Infos über noch nicht umbenannte Dateien
+  WARTEND := tsTable.Create;
+  WARTEND.insertfromFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+  col_DATEINAME_AKTUELL := WARTEND.colof('DATEINAME_AKTUELL');
+
+  // "Wann" ist der Arbeitsfokus
+  if (pDatum = '') then
+  begin
+    BasisDatum := DateGet;
+  end
+  else
+  begin
+    BasisDatum := date2long(pDatum);
+  end;
+
+  // init
+  MovedToDay := 0;
+  ZIP_OlderThan := DatePlus(BasisDatum, -cFileTimeOutDays);
+  PIC_OlderThan := DatePlus(BasisDatum, -cPicTimeOutDays);
+
+  for r := 1 to tABLAGE.RowCount do
+  begin
+
+    Ablage_NAME := cutblank(tABLAGE.readCell(r, 'NAME'));
+    if (Ablage_NAME = '') then
+      continue;
+
+    //
+    if (pEinzeln <> '') then
+      if (pEinzeln <> Ablage_NAME) then
+        continue;
+
+    //
+    Ablage_PFAD := cutblank(tABLAGE.readCell(r, 'PFAD'));
+
+    if (Ablage_PFAD = '') then
+    begin
+      FotoLog(cERRORText + ' Bei Ablage "' + Ablage_NAME + '"  ist kein Pfad definiert');
+      continue;
+    end;
+
+    if not(DirExists(Ablage_PFAD)) then
+    begin
+      FotoLog(cERRORText + ' Zu Ablage "' + Ablage_NAME + '"  existiert "' + Ablage_PFAD + '" nicht');
+      continue;
+    end;
+
+    // Passwort ermitteln (Für alle Unterverzeichnisse gleich)
+    Ablage_ZIP_PASSWORD := '';
+    for a := 1 to tBAUSTELLE.RowCount do
+    begin
+      UserN := tBAUSTELLE.readCell(a,Col_FTPBENUTZER);
+      if (UserN=Ablage_NAME) then
+      begin
+        Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+        break;
+      end;
+      if (length(UserN)>length(Ablage_NAME)) then
+       if (pos(Ablage_NAME+'\',UserN)=1) then
+       begin
+         Ablage_ZIP_PASSWORD := tBAUSTELLE.readCell(a,Col_ZIPPASSWORD);
+         break;
+       end;
+    end;
+    if (Ablage_ZIP_PASSWORD='') then
+    begin
+      FotoLog(cERRORText + ' Ablage "' + Ablage_NAME + '"  in ' + cFotoService_BaustelleFName +' nicht gefunden');
+      continue;
+    end;
+
+    // Verzeichnis- und Unterverzeichnis-Liste anlegen
+    Ablage_SUBS := TStringList.Create;
+
+    Ablage_PFADE := anfix32.dirs(Ablage_PFAD);
+    Ablage_PFADE.sort;
+    Ablage_PFADE.Insert(0,'');
+
+    for a := pred(Ablage_PFADE.Count) downto 0 do
+    begin
+      PFAD := ValidatePathName(Ablage_PFAD + Ablage_PFADE[a]) + '\';
+
+      if not(FileExists(PFAD+'index.php')) then
+      begin
+       FotoLog(
+        cINFOText + ' 2245:'+
+        ' In Ablage "' + Ablage_NAME + '" '+
+        'wird das Verzeichnis "' + Ablage_PFADE[a] + '" '+
+        '('+PFAD+') '+
+        'ignoriert');
+       Ablage_PFADE.delete(a);
+      end else
+      begin
+       SUB := ValidatePathName(Ablage_PFADE[a])+'\';
+       if (SUB='\') then
+        SUB := '';
+       Ablage_SUBS.insert(0,SUB);
+       Ablage_PFADE[a] := PFAD;
+      end;
+    end;
+
+    // Hauptablage und alle Unterverzeichnisse (wenn vorhanden)
+    for a := 0 to pred(Ablage_PFADE.count) do
+    begin
+      Ablage_PFAD := Ablage_PFADE[a];
+      Ablage_SUB := Ablage_SUBS[a];
+
+      // ganz alte Zips ablegen
+      try
+        serviceZIP;
+      except
+        on E: Exception do
+          FotoLog(cERRORText + ' :serviceZIP(' + Ablage_PFAD + '): ' + E.ClassName + ': ' + E.Message);
+      end;
+
+      // jpgs von gestern zippen
+      try
+        serviceJPG;
+      except
+        on E: Exception do
+          FotoLog(cERRORText + ' :serviceJPG(' + Ablage_PFAD + '): ' + E.ClassName + ': ' + E.Message);
+      end;
+
+      // htmls von gestern zippen
+      try
+        serviceHTML;
+      except
+        on E: Exception do
+          FotoLog(cERRORText + ' :serviceHTML(' + Ablage_PFAD + '): ' + E.ClassName + ': ' + E.Message);
+      end;
+    end;
+
+    Ablage_PFADE.Free;
+    Ablage_SUBS.Free;
+
+  end;
+
+  // unprepare
+  WARTEND.Free;
+  AblageLog('ENDE', '*');
+
+end;
+
+procedure TOrgaMonApp.workSync;
+var
+  sDir: TStringList;
+  n: integer;
+  BaustellePath: string;
+
+  procedure FileMoveR(source,destination:string);
+  begin
+    if not(FileMove(
+      { } source,
+      { } destination)) then
+      FotoLog(cERRORText + ' 2502: FileMove("' + source + '", "' + destination + '")');
+  end;
+
+begin
+
+  // baustelle.csv
+  try
+
+    if FileExists(pFTPPath + cFotoService_BaustelleFName) then
+    begin
+
+     // baustelle.csv -> sync
+     FileMoveR(
+      {} pFTPPath + cFotoService_BaustelleFName,
+      {} MySyncPath + cFotoService_BaustelleFName);
+
+      // prepare
+      TOrgaMonApp.validateBaustelleCSV(MySyncPath + cFotoService_BaustelleFName);
+
+      // compare + copy
+      if not(FileCompare(
+        { } MySyncPath + cFotoService_BaustelleFName,
+        { } MyDataBasePath + cFotoService_BaustelleFName)) then
+      begin
+        FileVersionedCopy(
+          { } MySyncPath + cFotoService_BaustelleFName,
+          { } MyDataBasePath + cFotoService_BaustelleFName);
+        FotoLog(cINFOText + ' neue ' + cFotoService_BaustelleFName);
+      end;
+
+      // delete
+      FileDelete(MySyncPath + cFotoService_BaustelleFName);
+    end;
+
+  except
+    on E: Exception do
+      FotoLog(cERRORText + ' 1889:' + E.ClassName + ': ' + E.Message);
+  end;
+
+  // Foto-Benennungen
+  try
+
+    sDir := TStringList.Create;
+    dir(pFTPPath + cE_FotoBenennung + '-*.csv', sDir, false);
+    for n := 0 to pred(sDir.Count) do
+    begin
+
+     FileMoveR(
+      {} pFTPPath + sDir[n],
+      {} MySyncPath + sDir[n]);
+
+      // FotoBenennung-*.csv ->  cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
+
+      // Lese den Pfad aus dem Dateinamen
+      BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
+
+      // JonDa - Limitation!
+      BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
+
+      CheckCreateDir(MyDataBasePath + BaustellePath);
+
+      if not(FileCompare(
+        { } MySyncPath + sDir[n],
+        { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv')) then
+      begin
+        FileVersionedCopy(
+          { } MySyncPath + sDir[n],
+          { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv');
+        FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + '.csv');
+      end;
+
+      FileDelete(MySyncPath + sDir[n]);
+    end;
+    sDir.Free;
+
+  except
+    on E: Exception do
+      FotoLog(cERRORText + ' 1923:' + E.ClassName + ': ' + E.Message);
+  end;
+
 end;
 
 end.

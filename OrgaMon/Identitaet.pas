@@ -65,6 +65,7 @@ uses
   dbOrgaMon,
 
   // OrgaMon-Core
+  Funktionen_App,
   Funktionen_Auftrag,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -74,8 +75,6 @@ uses
   eConnect,
 
   // Service
-  FotoExec,
-  JonDaExec,
   TestExec;
 
 type
@@ -211,14 +210,14 @@ begin
 end;
 
 type
-  TownFotoExec = class(TFotoExec)
-    procedure Log(s: string); override;
+  TownFotoExec = class(TOrgaMonApp)
+    procedure FotoLog(s: string); override;
 
   end;
 
   { TownFotoExec }
 
-procedure TownFotoExec.Log(s: string);
+procedure TownFotoExec.FotoLog(s: string);
 begin
   writeln(s);
   // if (pos('ERROR', s) > 0) then
@@ -340,13 +339,13 @@ begin
 
               BackupSizeByNow := 0.0;
               try
-                BackupSizeByNow := JonDaExec.doBackup;
+                BackupSizeByNow := doBackup;
               except
                 on E: Exception do
                   Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
               end;
 
-              Log(cINFOText + format(' %s hat %.3f GB', [JonDaExec.BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+              Log(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
                 1024.0]));
             end;
         end;
@@ -932,12 +931,12 @@ end;
 procedure RunAsApp;
 var
   XMLRPC: TXMLRPC_Server;
-  JonDa: TJonDaExec;
+  JonDa: TOrgaMonApp;
   SectionName: string;
 begin
 
   try
-    JonDa := TJonDaExec.Create;
+    JonDa := TOrgaMonApp.Create;
     with JonDa do
     begin
       Option_Console := true;
@@ -985,7 +984,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } JonDa.MyDataBasePath2 + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } MyProgramPath + cDBPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end

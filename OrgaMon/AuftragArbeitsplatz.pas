@@ -3189,7 +3189,7 @@ begin
               Zaehler_Strasse := Ansi2Oem(SubItems[twh_Verbraucher_Strasse]);
               Zaehler_Ort := Ansi2Oem(SubItems[twh_Verbraucher_Ort]);
 
-              { Feld-Besitzer: JonDa }
+              { Feld-Besitzer: OrgaMon-App }
               zaehlerstand_alt := '';
               zaehlernummer_korr := '';
               zaehlernummer_neu := '';
