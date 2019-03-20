@@ -71,6 +71,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <Debugger_RunParams>--foto --Id=gwe</Debugger_RunParams>
         <Icon_MainIcon>cOrgaMon_Icon.ico</Icon_MainIcon>
         <VerInfo_MajorVer>8</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
@@ -79,7 +80,6 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=8.2.0.28;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=8.0.0.0;Comments=</VerInfo_Keys>
         <DCC_StrictVarStrings>false</DCC_StrictVarStrings>
-        <Debugger_RunParams>--magneto</Debugger_RunParams>
         <DCC_ExeOutput>$(ProgramFiles)\OrgaMon\</DCC_ExeOutput>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_DcuOutput>..\..\dcu-console</DCC_DcuOutput>
@@ -126,6 +126,7 @@
         <DCCReference Include="..\ccr-exif\CCR.Exif.XMPUtils.pas"/>
         <DCCReference Include="eConnect.pas"/>
         <DCCReference Include="..\PASconTools\OpenStreetMap.pas"/>
+        <DCCReference Include="Funktionen_App.pas"/>
         <DCCReference Include="Funktionen_Auftrag.pas"/>
         <DCCReference Include="Funktionen_Basis.pas"/>
         <DCCReference Include="Funktionen_Beleg.pas"/>
@@ -137,8 +138,6 @@
         <DCCReference Include="..\PASconTools\DTA.PAS"/>
         <DCCReference Include="..\PASconTools\memcache.pas"/>
         <DCCReference Include="..\PASconTools\Foto.pas"/>
-        <DCCReference Include="JonDaExec.pas"/>
-        <DCCReference Include="FotoExec.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.BaseUtils.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.Consts.pas"/>
         <DCCReference Include="..\ccr-exif\CCR.Exif.pas"/>

@@ -19,6 +19,13 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.408 (20.03.19) Andreas Filsinger
+
+ Bug: App-Server: kein Touch nach Kopie von Auftrags-Templates (z.B. "unbezahlt")
+
+ Neu: App-Server: Vereinigung von "JonDaExec" und "FotoExec" zu "Funktionen_App"
+ Neu: App-Server: keine Pfadkonfiguration bei Standard-Verzeichnisstruktur mehr nötig
+
 Rev 8.407 (16.03.19) Andreas Filsinger
 
  Wegfall: Foto: Wegfall von FTP Aktivitäten ("Sync")

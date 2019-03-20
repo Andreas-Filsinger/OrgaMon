@@ -237,7 +237,7 @@ uses
   WordIndex, ExcelHelper,
 
   // OrgaMon
-  JonDaExec,
+  Funktionen_App,
   Funktionen_Beleg,
   Funktionen_Basis,
 {$IFNDEF CONSOLE}
@@ -1884,7 +1884,7 @@ begin
 end;
 
 const
-  FotoName_JonDaX: TJonDaExec = nil;
+  FotoName_JonDaX: TOrgaMonApp = nil;
   FotoName_CallBacks: TFotoCallBacks = nil;
 
 function e_r_FotoName(AUFTRAG_R: Integer; MeldungsName: string; AktuellerWert: string = ''; Optionen: string = ''): string;
@@ -1899,7 +1899,7 @@ begin
 
   if (FotoName_JonDaX = nil) then
   begin
-    FotoName_JonDaX := TJonDaExec.create;
+    FotoName_JonDaX := TOrgaMonApp.create;
     FotoName_CallBacks := TFotoCallBacks.create;
     FotoName_JonDaX.callback_ZaehlerNummerNeu := FotoName_CallBacks.ResultEmpty;
     FotoName_JonDaX.callback_ReglerNummerNeu := FotoName_CallBacks.ResultEmpty;
@@ -1947,7 +1947,7 @@ begin
   // Modus noch ermitteln
   sSettings := e_r_sqlt('select EXPORT_EINSTELLUNGEN from BAUSTELLE where RID=' + inttostr(BAUSTELLE_R));
   sParameter.values[cParameter_foto_Modus] := sSettings.values[cE_FotoBenennung];
-  sParameter.values[JonDaExec.cParameter_foto_Datei] := FotoPath + e_r_BaustellenPfad(sSettings) + '\' +
+  sParameter.values[cParameter_foto_Datei] := FotoPath + e_r_BaustellenPfad(sSettings) + '\' +
     nextp(AktuellerWert, ',', 0);
   sSettings.free;
 

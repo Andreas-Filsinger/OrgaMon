@@ -117,7 +117,8 @@ uses
   CareTakerClient, wanfix32, WordIndex,
 
   // OrgaMon tools
-  Datenbank, AuftragArbeitsplatz, JonDaExec,
+  Datenbank, AuftragArbeitsplatz,
+  Funktionen_App,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag;
@@ -290,14 +291,14 @@ begin
 
   if CheckBox12.Checked then
   begin
-    // JonDa-Server über die Baustellen informieren
+    // App-Server über die Baustellen informieren
     Label3.caption := 'Baustellen-Infos ...';
     application.ProcessMessages;
     e_r_Sync_Baustelle;
     FTPup.add(MdePath + cFotoService_BaustelleFName + ';' + ';' + cFotoService_BaustelleFName);
   end;
 
-  // MonDa-Server über abgearbeitete informieren
+  // App-Server über abgearbeitete informieren
   if CheckBox9.Checked then
   begin
     Label3.caption := 'Abgearbeitete ...';
@@ -864,7 +865,7 @@ var
             _RID := RID;
 
             // Daten vorbereiten
-            zaehlernummer_neu := TJonDaExec.formatZaehlerNummerNeu(zaehlernummer_neu);
+            zaehlernummer_neu := TOrgaMonApp.formatZaehlerNummerNeu(zaehlernummer_neu);
 
             // Neuen Auftrag anlegen?
             if (RID = -1) or (ausfuehren_soll = cMonDa_ImmerAusfuehren) then

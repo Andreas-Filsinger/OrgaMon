@@ -52,7 +52,6 @@ uses
   anfix32,
   CaretakerClient,
   srvXMLRPC,
-  SolidFTP,
   binlager32,
   systemd,
   windows,
@@ -66,6 +65,7 @@ uses
   dbOrgaMon,
 
   // OrgaMon-Core
+  Funktionen_App,
   Funktionen_Auftrag,
   Funktionen_Basis,
   Funktionen_Beleg,
@@ -75,8 +75,6 @@ uses
   eConnect,
 
   // Service
-  FotoExec,
-  JonDaExec,
   TestExec;
 
 type
@@ -212,14 +210,14 @@ begin
 end;
 
 type
-  TownFotoExec = class(TFotoExec)
-    procedure Log(s: string); override;
+  TownFotoExec = class(TOrgaMonApp)
+    procedure FotoLog(s: string); override;
 
   end;
 
   { TownFotoExec }
 
-procedure TownFotoExec.Log(s: string);
+procedure TownFotoExec.FotoLog(s: string);
 begin
   writeln(s);
   // if (pos('ERROR', s) > 0) then
@@ -260,10 +258,6 @@ begin
       Log('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
-    end
-    else
-    begin
-      SolidFTP_SingleStepLog := false;
     end;
 
     // Server direkt durchstarten?
@@ -345,13 +339,13 @@ begin
 
               BackupSizeByNow := 0.0;
               try
-                BackupSizeByNow := JonDaExec.doBackup;
+                BackupSizeByNow := doBackup;
               except
                 on E: Exception do
                   Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
               end;
 
-              Log(cINFOText + format(' %s hat %.3f GB', [JonDaExec.BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+              Log(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
                 1024.0]));
             end;
         end;
@@ -937,17 +931,35 @@ end;
 procedure RunAsApp;
 var
   XMLRPC: TXMLRPC_Server;
-  JonDa: TJonDaExec;
+  JonDa: TOrgaMonApp;
   SectionName: string;
 begin
 
   try
-    JonDa := TJonDaExec.Create;
+    // Create App Services
+    JonDa := TOrgaMonApp.Create;
     with JonDa do
     begin
       Option_Console := true;
       SectionName := getParam('Id');
-      JonDa.readIni(SectionName);
+      readIni(SectionName);
+
+      write('Lade Tabelle IMEI ... ');
+      with tIMEI do
+      begin
+       insertfromFile(DataPath + 'IMEI.csv');
+       writeln(inttostr(RowCount));
+      end;
+
+      write('Lade Tabelle IMEI-OK ... ');
+      with tIMEI_OK do
+      begin
+        insertfromFile(DataPath + 'IMEI-OK.csv');
+        writeln(inttostr(RowCount));
+      end;
+
+      // Log den Neustart
+      BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     end;
 
     // DebugMode?
@@ -956,33 +968,8 @@ begin
       writeln('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
-    end
-    else
-    begin
-      SolidFTP_SingleStepLog := false;
     end;
 
-    // lade IMEI
-    write('Lade Tabelle IMEI ... ');
-    with JonDa.tIMEI do
-    begin
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
-      writeln(inttostr(RowCount));
-    end;
-
-    // lade IMEI-OK
-    write('Lade Tabelle IMEI-OK ... ');
-    with JonDa.tIMEI_OK do
-    begin
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
-      writeln(inttostr(RowCount));
-    end;
-
-    // Einstellungen weitergeben
-    SolidFTP.SolidFTP_LogDir := DiagnosePath;
-
-    // Log den Neustart
-    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     repeat
 
       // Disable Abschluss ?!
@@ -997,7 +984,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } JonDa.MyDataBasePath2 + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } JonDa.DataPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end
