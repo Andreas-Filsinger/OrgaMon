@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.407; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.408; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -543,7 +543,6 @@ const
   cGeraeteEinstellungen = 'Einstellungen\';
   cDBPath = 'db\';
   cSyncPath = 'sync\';
-  cWebPath = '..\web\';
   cTrnFName = 'Transaktionsnummer.ini';
   cFirstTrn = '10000';
   cERROR_TAN = '00000';

@@ -936,12 +936,30 @@ var
 begin
 
   try
+    // Create App Services
     JonDa := TOrgaMonApp.Create;
     with JonDa do
     begin
       Option_Console := true;
       SectionName := getParam('Id');
-      JonDa.readIni(SectionName);
+      readIni(SectionName);
+
+      write('Lade Tabelle IMEI ... ');
+      with tIMEI do
+      begin
+       insertfromFile(DataPath + 'IMEI.csv');
+       writeln(inttostr(RowCount));
+      end;
+
+      write('Lade Tabelle IMEI-OK ... ');
+      with tIMEI_OK do
+      begin
+        insertfromFile(DataPath + 'IMEI-OK.csv');
+        writeln(inttostr(RowCount));
+      end;
+
+      // Log den Neustart
+      BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     end;
 
     // DebugMode?
@@ -952,24 +970,6 @@ begin
       DebugLogPath := DiagnosePath;
     end;
 
-    // lade IMEI
-    write('Lade Tabelle IMEI ... ');
-    with JonDa.tIMEI do
-    begin
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
-      writeln(inttostr(RowCount));
-    end;
-
-    // lade IMEI-OK
-    write('Lade Tabelle IMEI-OK ... ');
-    with JonDa.tIMEI_OK do
-    begin
-      insertfromFile(MyProgramPath + cDBPath + 'IMEI-OK.csv');
-      writeln(inttostr(RowCount));
-    end;
-
-    // Log den Neustart
-    JonDa.BeginAction('Start ' + cApplicationName + ' Rev. ' + RevToStr(globals.version) + ' [' + SectionName + ']');
     repeat
 
       // Disable Abschluss ?!
@@ -984,7 +984,7 @@ begin
         write('Auftragsdaten ... ');
         FileCopy(
           { } MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension,
-          { } MyProgramPath + cDBPath + 'AUFTRAG+TS' + cBL_FileExtension);
+          { } JonDa.DataPath + 'AUFTRAG+TS' + cBL_FileExtension);
         writeln('OK');
 
       end

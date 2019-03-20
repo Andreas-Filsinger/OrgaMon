@@ -337,17 +337,17 @@ end;
 
 procedure TFormServiceFoto.Button20Click(Sender: TObject);
 begin
-  FileDelete(MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension);
+  FileDelete(MyFotoExec.DataPath + '_AUFTRAG+TS' + cBL_FileExtension);
 end;
 
 procedure TFormServiceFoto.Button24Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyDataBasePath + cFotoService_BaustelleFName);
+  openShell(MyFotoExec.DataPath + cFotoService_BaustelleFName);
 end;
 
 procedure TFormServiceFoto.Button25Click(Sender: TObject);
 begin
-  openShell(MyFotoExec.MyDataBasePath + cFotoTransaktionenFName);
+  openShell(MyFotoExec.DataPath + cFotoTransaktionenFName);
 end;
 
 procedure TFormServiceFoto.Button21Click(Sender: TObject);
@@ -901,7 +901,7 @@ begin
   tREFERENZ := TsTable.create;
   with tREFERENZ do
   begin
-    insertfromFile(MyFotoExec.MyDataBasePath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
+    insertfromFile(MyFotoExec.DataPath + Edit_Rollback_Baustelle.Text + '\' + cE_FotoBenennung + '.csv');
     Column_RID := colof(cRID_Suchspalte, true);
     for r := 1 to RowCount do
     begin
@@ -954,7 +954,7 @@ begin
       AmnestiePath := MyFotoExec.BackupDir + 'Amnestie\';
       CheckCreateDIr(AmnestiePath);
       FileMove(
-        { } MyFotoExec.pUnverarbeitetPath + FName,
+        { } MyFotoExec.pWebPath + FName,
         { } AmnestiePath + Edit10.Text + FNameRemote);
 
       // delete one Line
@@ -1118,7 +1118,7 @@ procedure TFormServiceFoto.Button3Click(Sender: TObject);
 
     until yet;
     FileMove(
-      { } MyFotoExec.pUnverarbeitetPath + FName,
+      { } MyFotoExec.pWebPath + FName,
       { } MyFotoExec.pFTPPath + FNameRemote);
   end;
 
@@ -1371,7 +1371,7 @@ begin
   end;
   if FileCopy(
     { } Edit9.Text + Trn + '\' + 'AUFTRAG+TS' + cBL_FileExtension,
-    { } MyFotoExec.MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    { } MyFotoExec.DataPath + '_AUFTRAG+TS' + cBL_FileExtension) then
     Label11.Caption := 'OK';
   EndHourGlass;
 end;
@@ -1490,7 +1490,7 @@ begin
     // Delete Entry
     with WARTEND do
     begin
-      insertfromFile(MyFotoExec.MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+      insertfromFile(MyFotoExec.DataPath + cFotoService_UmbenennungAusstehendFName);
       r := locate('RID', inttostr(AUFTRAG_R));
       if (r = -1) then
         break;
@@ -1503,7 +1503,7 @@ begin
       end;
 
       Del(r);
-      savetoFile(MyFotoExec.MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+      savetoFile(MyFotoExec.DataPath + cFotoService_UmbenennungAusstehendFName);
     end;
 
   until true;
@@ -1537,7 +1537,7 @@ var
 begin
   sKommandos := TStringList.create;
 
-  KommandoFName := MyFotoExec.MyDataBasePath + cGeraeteKommandos + GeraeteNo + '.ini';
+  KommandoFName := MyFotoExec.DataPath + cGeraeteKommandos + GeraeteNo + '.ini';
   if FileExists(KommandoFName) then
     sKommandos.LoadFromFile(KommandoFName);
 
@@ -1718,7 +1718,7 @@ begin
               { GERAETENO } GeraeteNo + ';' +
               { BAUSTELLE } ';' +
               { MOMENT } DatumLog,
-              { Dateiname } MyFotoExec.MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+              { Dateiname } MyFotoExec.DataPath + cFotoService_UmbenennungAusstehendFName);
 
             ListBox3.DeleteSelected;
           end;
@@ -1868,7 +1868,7 @@ begin
   if assigned(sLog) then
     FreeAndNil(sLog);
   sDir := TStringList.create;
-  dir(MyFotoExec.pUnverarbeitetPath + '*.jpg', sDir, false);
+  dir(MyFotoExec.pWebPath + '*.jpg', sDir, false);
   Label10.Caption := inttostr(sDir.Count);
   ListBox5.Items.Assign(sDir);
   sDir.Free;
@@ -1879,7 +1879,7 @@ var
   sWartend: TStringList;
 begin
   sWartend := TStringList.create;
-  sWartend.LoadFromFile(MyFotoExec.MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+  sWartend.LoadFromFile(MyFotoExec.DataPath + cFotoService_UmbenennungAusstehendFName);
   ListBox6.Items.Assign(sWartend);
   Label19.Caption := INtToStr(pred(sWartend.Count));
   sWartend.Free;

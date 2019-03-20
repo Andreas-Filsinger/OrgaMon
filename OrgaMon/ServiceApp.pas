@@ -931,7 +931,7 @@ begin
   dir(MyProgramPath + '?????.', AllTRN, false);
   AllTRN.sort;
 
-  sAltFName := JonDaX.pAppTextPath + 'Eingabe.' + GeraeteID + '.txt';
+  sAltFName := JonDaX.DataPath + 'Eingabe.' + GeraeteID + '.txt';
   sAlt.LoadFromFile(sAltFName);
 
   ProgressBar1.max := pred(sAlt.count);
@@ -996,7 +996,7 @@ begin
   end;
 
   //
-  sNeu.SaveToFile(JonDaX.pAppTextPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
+  sNeu.SaveToFile(JonDaX.DataPath + 'Eingabe.' + GeraeteID + '-Neu.txt');
 
   sAlt.Free;
   sNeu.Free;

@@ -163,7 +163,8 @@ type
     // Ini-Sachen
 
     // bisher fix 'W:\JonDaServer\' jetzt Anwendungsverzeichnis,
-    // Endpunkt der ini-Kette, Home von cOrgaMon.ini
+    // Endpunkt der ini-Kette, Home von cOrgaMon.ini,
+    // in der Regel=pAppServicePath
     // ./dat/
     pAppServicePath: string;
 
@@ -184,15 +185,6 @@ type
     // bisher fix 'W:\orgamon-mob\' jetzt Parameter "FTPPath"
     // ./ftp/
     pFTPPath: string;
-
-    // bisher fix 'W:\orgamon-mob\unverarbeitet\' jetzt Parameter "UnverarbeitetPath"
-    pUnverarbeitetPath: string;
-
-    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "StatistikPath" mit Default "WebPath"
-    pAppStatistikPath: string;
-
-    // bisher fix 'W:\JonDaServer\Statistik\' jetzt Parameter "TextPath" mit Default
-    pAppTextPath: string;
 
     //
     Option_Console: boolean;
@@ -369,11 +361,11 @@ type
     //
     // Verzeichnisse aufräumen
     function doBackup: int64;
-    // Verzeichnisse errechnet
-    function MyDataBasePath: string;
 
-    // ehemalige Datenhalten in "\Fotos" heute alles zentral in "\db"
-    function MySyncPath: string;
+    // Verzeichnisse errechnet
+    function DataPath: string; // ./dat/db/
+    function AuftragPath: string; // ./dat/Daten
+    function MySyncPath: string; //
 
     // Dateinamen
     function AblageLogFname: string;
@@ -536,7 +528,7 @@ begin
 
   sGeraete.SortBy('COUNT numeric;CALL numeric descending;GERAET');
   // Ergebnis speichern
-  sGeraete.SaveToHTML(MyProgramPath + cWebPath + 'geraete.html');
+  sGeraete.SaveToHTML(pWebPath + 'geraete.html');
   sGeraete.free;
 end;
 
@@ -555,11 +547,11 @@ begin
 
   // senden.csv angelegt?
   if not(maintainSENDEN_Cache_Init) then
-    if not(FileExists(MyProgramPath + cDBPath + cAppService_SendenFName)) then
+    if not(FileExists(DataPath + cAppService_SendenFName)) then
     begin
       sSENDEN := TStringList.Create;
       sSENDEN.add('IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR');
-      sSENDEN.SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
+      sSENDEN.SaveToFile(DataPath + cAppService_SendenFName);
       sSENDEN.free;
     end;
 
@@ -567,7 +559,7 @@ begin
   tSENDEN := TsTable.Create;
   with tSENDEN do
   begin
-    InsertFromFile(MyProgramPath + cDBPath + cAppService_SendenFName);
+    InsertFromFile(DataPath + cAppService_SendenFName);
 
     if not(maintainSENDEN_Cache_Init) then
     begin
@@ -592,8 +584,8 @@ begin
 
     if changed then
     begin
-      SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
-      SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
+      SaveToHTML(pWebPath + 'senden.html');
+      SaveToFile(DataPath + cAppService_SendenFName);
     end;
   end;
   tSENDEN.free;
@@ -604,17 +596,15 @@ function TOrgaMonApp.AuftragFName(Trn: string): string;
 begin
   // Das Ergebnis im Web bereitstellen
   result :=
-    { } MyProgramPath +
-    { } cWebPath +
+    { } pWebPath +
     { } Trn + '.auftrag' + cUTF8DataExtension;
 end;
 
 function TOrgaMonApp.UpFName(Trn: string): string;
 begin
   result :=
-   {} MyProgramPath +
-   {} cWebPath +
-   {} Trn + '.txt';
+   { } pWebPath +
+   { } Trn + '.txt';
 end;
 
 class function TOrgaMonApp.AusfuehrenStr(ausfuehren_ist_datum: TANFiXDate): string;
@@ -729,7 +719,7 @@ end;
 
 function TOrgaMonApp.FolgeTRNFName(GeraetID: string): string;
 begin
-  result := MyProgramPath + cServerDataPath + 'TAN.' + GeraetID + '.txt';
+  result := AuftragPath + 'TAN.' + GeraetID + '.txt';
 end;
 
 function TOrgaMonApp.FolgeTAN(GeraetID: string): string;
@@ -793,7 +783,7 @@ begin
   sFolgeTAN.free;
 
   // das TAN Verzeichnis anlegen
-  checkcreatedir(MyProgramPath + result);
+  checkcreatedir(pAppServicePath + result);
 end;
 
 class function TOrgaMonApp.active(a: boolean): string;
@@ -877,7 +867,7 @@ begin
   result := TStringList.Create;
   with result do
   begin
-    add(MyProgramPath);
+    add(pAppServicePath);
     add(cApplicationName + ' Rev. ' + RevToStr(globals.Version));
     add('Indy Rev. N/A');
     add('ANFiX Rev. ' + RevToStr(VersionAnfix32));
@@ -1033,7 +1023,7 @@ var
 
   function FName_Abgezogen: string;
   begin
-    result := format(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgezogenFName, [GeraeteNo]);
+    result := format(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgezogenFName, [GeraeteNo]);
   end;
 
   procedure SaveOneStay;
@@ -1159,9 +1149,9 @@ var
     MondaRev: string;
     MonDaRevF: TextFile;
   begin
-    if FileExists(MyProgramPath + AktTrn + '\REV.DAT') then
+    if FileExists(pAppServicePath + AktTrn + '\REV.DAT') then
     begin
-      assignFile(MonDaRevF, MyProgramPath + AktTrn + '\REV.DAT');
+      assignFile(MonDaRevF, pAppServicePath + AktTrn + '\REV.DAT');
       try
         reset(MonDaRevF);
       except
@@ -1186,12 +1176,12 @@ var
     dFertig: TANFiXDate;
     UHR: string;
   begin
-    if FileExists(MyProgramPath + cMeldungPath + GeraeteNo + '.txt') then
+    if FileExists(pAppServicePath + cMeldungPath + GeraeteNo + '.txt') then
     begin
       slGeraet := TStringList.Create;
       ilGemeldeteRIDS := TgpIntegerList.Create;
       try
-        slGeraet.LoadFromFile(MyProgramPath + cMeldungPath + GeraeteNo + '.txt');
+        slGeraet.LoadFromFile(pAppServicePath + cMeldungPath + GeraeteNo + '.txt');
         if (JondaAll.count > 0) then
           slGeraet.AddStrings(JondaAll);
         JondaAll.Clear;
@@ -1216,7 +1206,7 @@ var
 
         end;
         // den Stand dann auch so speichern!
-        JondaAll.SaveToFile(MyProgramPath + cMeldungPath + GeraeteNo + '.txt');
+        JondaAll.SaveToFile(pAppServicePath + cMeldungPath + GeraeteNo + '.txt');
       except
         on E: Exception do
           log(cERRORText + ' 620:' + E.Message);
@@ -1266,13 +1256,13 @@ var
     sTAN_FName: string;
   begin
     sPendings := TStringList.Create;
-    sPendings.LoadFromFile(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
+    sPendings.LoadFromFile(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
     for n := 0 to pred(sPendings.count) do
     begin
       sTAN_FName := cutblank(sPendings[n]);
       if (sTAN_FName <> '') then
       begin
-        sTAN_FName := MyProgramPath + cOrgaMonDataPath + sTAN_FName;
+        sTAN_FName := pAppServicePath + cOrgaMonDataPath + sTAN_FName;
         if FileExists(sTAN_FName) then
           addSingle(sTAN_FName);
       end;
@@ -1446,14 +1436,14 @@ var
       add('save&delete AUFTRAG LAST');
     end;
 
-    bFoto.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderecFoto, sizeof(TMdeRec));
+    bFoto.Init(AuftragPath + 'FOTO+TS', mderecFoto, sizeof(TMdeRec));
     bFoto.BeginTransaction(now);
 
-    bOrgaMon.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMdeRec));
+    bOrgaMon.Init(AuftragPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMdeRec));
     bOrgaMon.BeginTransaction(now);
 
     // der "neue" Auftrag ist massgeblich!
-    assignFile(finfo, MyProgramPath + AktTrn + '\AUFTRAG.DAT');
+    assignFile(finfo, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
     try
       reset(finfo);
     except
@@ -1462,8 +1452,8 @@ var
     end;
 
     // Laden der "Eingabe.???.txt"
-    if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
-      sEingabe.LoadFromFile(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt');
+    if FileExists(DataPath + 'Eingabe.' + GeraeteNo + '.txt') then
+      sEingabe.LoadFromFile(DataPath + 'Eingabe.' + GeraeteNo + '.txt');
 
     // Über die Eingaben des Monteurs selbst
     FirstFoto := false;
@@ -1558,9 +1548,9 @@ var
     MonteurInfo := THTMLTemplate.Create;
     with MonteurInfo do
     begin
-      LoadFromFile(MyProgramPath + 'HTML Vorlagen\Info.html');
+      LoadFromFile(pAppServicePath + 'HTML Vorlagen\Info.html');
       WriteValue(DatensammlerLokal, DatensammlerGlobal);
-      SaveToFileCompressed(MyProgramPath + cWebPath + GeraeteNo + '.html');
+      SaveToFileCompressed(pWebPath + GeraeteNo + '.html');
     end;
     DatensammlerLokal.free;
     DatensammlerGlobal.free;
@@ -1734,10 +1724,10 @@ begin
     repeat
 
       // Wer (welches Gerät) hat eigentlich gerufen
-      GeraeteNo := detectGeraeteNummer(MyProgramPath + AktTrn);
+      GeraeteNo := detectGeraeteNummer(pAppServicePath + AktTrn);
       if (GeraeteNo = '') then
       begin
-        log(cERRORText + ' 1433:"' + MyProgramPath + AktTrn + '\nnn.zip" fehlt!');
+        log(cERRORText + ' 1433:"' + pAppServicePath + AktTrn + '\nnn.zip" fehlt!');
         inc(ErrorCount);
         break;
       end;
@@ -1747,7 +1737,7 @@ begin
       // zentral wichtiges "Verarbeitungsdatum"
       // fest gesetzt auf einen vergangenen Wert können Fehler reproduziert werden
       if not(DebugMode) then
-        _DateGet := FDate(MyProgramPath + AktTrn + '\' + GeraeteNo + cZIPExtension)
+        _DateGet := FDate(pAppServicePath + AktTrn + '\' + GeraeteNo + cZIPExtension)
       else
         _DateGet := DateGet;
 
@@ -1758,8 +1748,8 @@ begin
       _DateGetTimeOut := DatePlus(_DateGet, -13);
 
       // Parameter für diesen Lauf auswerten
-      if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraeteNo + '.ini') then
-        Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen + GeraeteNo + '.ini');
+      if FileExists(pAppServicePath + cGeraeteEinstellungen + GeraeteNo + '.ini') then
+        Einstellungen.LoadFromFile(pAppServicePath + cGeraeteEinstellungen + GeraeteNo + '.ini');
 
       // Optionen setzen
       proceed_EinfacheListe := (Einstellungen.values[cServerOption_EinfacheListe] = cIni_Activate);
@@ -1774,9 +1764,9 @@ begin
       end;
 
       // abgearbeitete Laden
-      if FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) then
+      if FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName) then
       begin
-        OrgaMonAbgearbeitet.LoadFromFile(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
+        OrgaMonAbgearbeitet.LoadFromFile(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
         Stat_OrgaMonGruen := OrgaMonAbgearbeitet.count;
       end;
 
@@ -1786,7 +1776,7 @@ begin
       // JonDaServer seine eigenen Schlusse daraus ziehen.
       //
       // Abgearbeitete der anderen Monteure und anderen TAN laden
-      if FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName) then
+      if FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName) then
         addPending;
       Stat_OrgaMonPending := OrgaMonAbgearbeitet.count - Stat_OrgaMonGruen;
 
@@ -1854,7 +1844,7 @@ begin
           MergeMeldung;
 
         // Es wird nun die ursprüngliche AUFTRAG.DAT des Handys rekonstruiert
-        assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn + '\AUFTRAG.DAT');
+        assignFile(f_OrgaMonApp_Ergebnis, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
         try
           rewrite(f_OrgaMonApp_Ergebnis);
         except
@@ -1902,12 +1892,12 @@ begin
         repeat
 
           // "AUFTRAG.DAT" aus letzter Tan
-          JAuftragBisherFName := MyProgramPath + LastTrnNo + '\AUFTRAG.DAT';
+          JAuftragBisherFName := pAppServicePath + LastTrnNo + '\AUFTRAG.DAT';
           if FileExists(JAuftragBisherFName) then
             break;
 
           // "AUFTRAG.DAT" aus globaler Ablage
-          JAuftragBisherFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + cDATExtension;
+          JAuftragBisherFName := AuftragPath + 'AUFTRAG.' + GeraeteNo + cDATExtension;
           if FileExists(JAuftragBisherFName) then
             break;
 
@@ -2032,24 +2022,24 @@ begin
       log('IMEI ' + IMEI);
 
       { Quell-Datei vorhanden? }
-      if not(FileExists(MyProgramPath + AktTrn + '\AUFTRAG.DAT')) then
+      if not(FileExists(pAppServicePath + AktTrn + '\AUFTRAG.DAT')) then
       begin
-        EndAction(cWARNINGText + ' "' + MyProgramPath + AktTrn + '\AUFTRAG.DAT" fehlt!');
-        FileEmpty(MyProgramPath + AktTrn + '\AUFTRAG.DAT');
+        EndAction(cWARNINGText + ' "' + pAppServicePath + AktTrn + '\AUFTRAG.DAT" fehlt!');
+        FileEmpty(pAppServicePath + AktTrn + '\AUFTRAG.DAT');
       end;
 
       if not(DebugMode) then
-        FileDelete(MyProgramPath + AktTrn + '\MONDA.DAT');
+        FileDelete(pAppServicePath + AktTrn + '\MONDA.DAT');
 
-      if not(FileExists(MyProgramPath + AktTrn + '\MONDA.DAT')) then
-        ReNameFile(MyProgramPath + AktTrn + '\AUFTRAG.DAT', MyProgramPath + AktTrn + '\MONDA.DAT');
+      if not(FileExists(pAppServicePath + AktTrn + '\MONDA.DAT')) then
+        ReNameFile(pAppServicePath + AktTrn + '\AUFTRAG.DAT', pAppServicePath + AktTrn + '\MONDA.DAT');
 
       // Foto-Datei
-      bFotoErgebnis.Init(MyProgramPath + cServerDataPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
+      bFotoErgebnis.Init(AuftragPath + 'FOTO+TS', mderec, sizeof(TMdeRec));
       bFotoErgebnis.BeginTransaction(long2datetime(_DateGet));
 
       // aktuelle, neue OrgaMon Daten fürs Gerät
-      assignFile(f_OrgaMon_Auftrag, MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
+      assignFile(f_OrgaMon_Auftrag, pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension);
       try
         reset(f_OrgaMon_Auftrag);
       except
@@ -2058,7 +2048,7 @@ begin
       end;
 
       // an OrgaMon gemeldete Ergebnisse
-      assignFile(fOrgaMonErgebnis, MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension);
+      assignFile(fOrgaMonErgebnis, pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension);
       try
         rewrite(fOrgaMonErgebnis);
       except
@@ -2070,15 +2060,15 @@ begin
       if (OldTrn <> '') then
       begin
         FileConcat(
-          { } MyProgramPath + AktTrn + '\MONDA.DAT',
-          { } MyProgramPath + OldTrn + '\MONDA.DAT',
-          { } MyProgramPath + AktTrn + '\MONDA' + cTmpFileExtension);
+          { } pAppServicePath + AktTrn + '\MONDA.DAT',
+          { } pAppServicePath + OldTrn + '\MONDA.DAT',
+          { } pAppServicePath + AktTrn + '\MONDA' + cTmpFileExtension);
         FileCopy(
-          { } MyProgramPath + AktTrn + '\MONDA' + cTmpFileExtension,
-          { } MyProgramPath + AktTrn + '\MONDA.DAT');
+          { } pAppServicePath + AktTrn + '\MONDA' + cTmpFileExtension,
+          { } pAppServicePath + AktTrn + '\MONDA.DAT');
       end;
 
-      assignFile(f_OrgaMonApp_Ergebnis, MyProgramPath + AktTrn + '\MONDA.DAT');
+      assignFile(f_OrgaMonApp_Ergebnis, pAppServicePath + AktTrn + '\MONDA.DAT');
       try
         reset(f_OrgaMonApp_Ergebnis);
       except
@@ -2088,7 +2078,7 @@ begin
       Stat_Bisher := FileSize(f_OrgaMonApp_Ergebnis);
 
       // neue, kommende JonDa-Daten!
-      assignFile(f_OrgaMonApp_NeuerAuftrag, MyProgramPath + AktTrn + '\AUFTRAG.DAT');
+      assignFile(f_OrgaMonApp_NeuerAuftrag, pAppServicePath + AktTrn + '\AUFTRAG.DAT');
       try
         rewrite(f_OrgaMonApp_NeuerAuftrag);
       except
@@ -2096,7 +2086,7 @@ begin
           log(cERRORText + ' 1276:' + E.Message);
       end;
 
-      assignFile(MonDaAasTxt, MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension);
+      assignFile(MonDaAasTxt, pAppServicePath + AktTrn + '\auftrag' + cTmpFileExtension);
       try
         rewrite(MonDaAasTxt);
       except
@@ -2105,7 +2095,7 @@ begin
       end;
 
       // hey, hartnäckige MonDa Daten, die bleiben auf dem Gerät
-      assignFile(MonDaA_StayF, MyProgramPath + AktTrn + '\STAY.DAT');
+      assignFile(MonDaA_StayF, pAppServicePath + AktTrn + '\STAY.DAT');
       try
         rewrite(MonDaA_StayF);
       except
@@ -2114,7 +2104,7 @@ begin
       end;
 
       // hoh, diese Daten wurden in den Unmöglich-Zwang übergeben!
-      assignFile(MonDaA_LostF, MyProgramPath + AktTrn + '\LOST.DAT');
+      assignFile(MonDaA_LostF, pAppServicePath + AktTrn + '\LOST.DAT');
       try
         rewrite(MonDaA_LostF);
       except
@@ -2125,7 +2115,7 @@ begin
       { erst mal die neuen RIDs sammeln! }
       { das sind die, welche vom OrgaMon auf dem Gerät gesehen werden }
       { sollen. }
-      bOrgaMonAuftrag.Init(MyProgramPath + cServerDataPath + 'AUFTRAG+TS', mderec, sizeof(TMdeRec));
+      bOrgaMonAuftrag.Init(AuftragPath + 'AUFTRAG+TS', mderec, sizeof(TMdeRec));
       bOrgaMonAuftrag.BeginTransaction(long2datetime(_DateGet));
       EntryPointReached := false;
       for m := 1 to FileSize(f_OrgaMon_Auftrag) do
@@ -2420,7 +2410,7 @@ begin
       CloseFile(fOrgaMonErgebnis);
 
       SaveStringsToFileUTF8(sOrgaMonErgebnis,
-        { } MyProgramPath + AktTrn + '\' + AktTrn + cUTF8DataExtension);
+        { } pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension);
       CloseFile(f_OrgaMonApp_Ergebnis);
       CloseFile(f_OrgaMonApp_NeuerAuftrag);
       CloseFile(MonDaA_StayF);
@@ -2436,12 +2426,12 @@ begin
         // Im aktuellen Verarbeitungs-Verzeichnis die aktuelle Eingabe.nnn.txt bereitstellen
         // Sie stellt die ursprüngliche Wissensbasis dar. Beim ersten Durchlauf fehlt die
         // Datei - sie wird reinkopiert.
-        FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt';
+        FName := pAppServicePath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.txt';
         if not(FileExists(FName)) then
         begin
-          if FileExists(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt') then
+          if FileExists(DataPath + 'Eingabe.' + GeraeteNo + '.txt') then
             FileCopy(
-              { } pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt',
+              { } DataPath + 'Eingabe.' + GeraeteNo + '.txt',
               { } FName)
           else
             FileAlive(FName);
@@ -2461,16 +2451,16 @@ begin
         m := 0;
         repeat
           if (m = 0) then
-            FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
+            FName := pAppServicePath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu.txt'
           else
-            FName := MyProgramPath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
+            FName := pAppServicePath + AktTrn + '\' + 'Eingabe.' + GeraeteNo + '.Neu-' + inttostr(m) + '.txt';
           inc(m);
         until not(FileExists(FName));
 
         // Save lokal
         EingabeL.SaveToFile(FName);
         // Save global
-        EingabeL.SaveToFile(pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt');
+        EingabeL.SaveToFile(DataPath + 'Eingabe.' + GeraeteNo + '.txt');
 
       end;
 
@@ -2492,7 +2482,7 @@ begin
 
         //
         try
-          ProtocolL.LoadFromFile(MyProgramPath + cProtokollPath + ProtocolAll[m] + cProtExtension);
+          ProtocolL.LoadFromFile(pAppServicePath + cProtokollPath + ProtocolAll[m] + cProtExtension);
         except
           on E: Exception do
             log(cERRORText + ' 2432:' + E.Message);
@@ -2513,25 +2503,25 @@ begin
 
       // nun alle (einmaligen) Geräte-Kommandos
       if (RevIsFrom(RemoteRev, 2.016)) then
-        if FileExists(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini') then
+        if FileExists(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini') then
         begin
           Einstellungen := TStringList.Create;
-          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini');
+          Einstellungen.LoadFromFile(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini');
           for k := 0 to pred(Einstellungen.count) do
             WriteJonDa('$' + Einstellungen[k]);
           Einstellungen.free;
 
           // Als verarbeitet markieren indem es nach AktTrn verschoben wird
           FileMove(
-            { } MyProgramPath + cGeraeteKommandos + GeraeteNo + '.ini',
-            { } MyProgramPath + AktTrn + '\' + GeraeteNo + '.ini');
+            { } pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini',
+            { } pAppServicePath + AktTrn + '\' + GeraeteNo + '.ini');
         end;
 
       //
       CloseJonDa;
 
       // Alte Datei löschen
-      FileDelete(MyProgramPath + AktTrn + '\auftrag.txt');
+      FileDelete(pAppServicePath + AktTrn + '\auftrag.txt');
 
       // Neue Aufträge bereitstellen
       repeat
@@ -2541,7 +2531,7 @@ begin
         begin
           // Unbekanntes Handy
           log(cWARNINGText + ' Unbekanntes Handy!');
-          FileCopy(MyProgramPath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn));
+          FileCopy(pAppServicePath + cProtokollPath + 'Unbekannt' + cUTF8DataExtension, AuftragFName(AktTrn));
           Stat_PostError := 'unbekannt';
           break;
         end;
@@ -2551,7 +2541,7 @@ begin
         begin
           // Programmversion ist zu alt!
           log(cWARNINGText + ' Programmversion ' + RevToStr(RemoteRev) + ' zu alt!');
-          FileCopy(MyProgramPath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
+          FileCopy(pAppServicePath + cProtokollPath + 'VersionNichtAusreichend' + cUTF8DataExtension,
             AuftragFName(AktTrn));
           Stat_PostError := 'veraltet';
           break;
@@ -2563,7 +2553,7 @@ begin
           begin
             // Unbekannte Gerätenummer
             log(cWARNINGText + ' Unbekannte Gerätenummer!');
-            FileCopy(MyProgramPath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension, AuftragFName(AktTrn));
+            FileCopy(pAppServicePath + cProtokollPath + 'Undefiniert' + cUTF8DataExtension, AuftragFName(AktTrn));
             Stat_PostError := 'undefiniert';
             break;
           end;
@@ -2574,13 +2564,18 @@ begin
           begin
             // Unbezahlt!
             log(cWARNINGText + ' Unbezahlter Zeitraum!');
-            FileCopy(MyProgramPath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension, AuftragFName(AktTrn));
+            FileCopy(
+             {} pAppServicePath + cProtokollPath + 'Unbezahlt' + cUTF8DataExtension,
+             {} AuftragFName(AktTrn));
+            FileTouch(AuftragFName(AktTrn));
             Stat_PostError := 'unbezahlt';
             break;
           end;
 
         // Auftrag.txt nun wirklich bereitstellen!
-        ReNameFile(MyProgramPath + AktTrn + '\auftrag' + cTmpFileExtension, MyProgramPath + AktTrn + '\auftrag.txt')
+        ReNameFile(
+         { } pAppServicePath + AktTrn + '\auftrag' + cTmpFileExtension,
+         { } pAppServicePath + AktTrn + '\auftrag.txt');
 
       until yet;
 
@@ -2590,8 +2585,8 @@ begin
 
           // Sicherung ins "OrgaMon" Verzeichnis!
           FileCopy(
-            { } MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension,
-            { } MyProgramPath + cOrgaMonDataPath + AktTrn + cDATExtension);
+            { } pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
+            { } pAppServicePath + cOrgaMonDataPath + AktTrn + cDATExtension);
 
           // Web-Statistik anfertigen!
           if (Stat_FotoMeldungen > 0) then
@@ -2637,7 +2632,7 @@ begin
       log('Baustellen    : ' + HugeSingleLine(MondaBaustellen, ','));
       log('Protokolle    : ' + HugeSingleLine(sProtokolle, ' & '));
 
-      assignFile(MonDaGeraetF, MyProgramPath + AktTrn + '\GERAET.DAT');
+      assignFile(MonDaGeraetF, pAppServicePath + AktTrn + '\GERAET.DAT');
       try
         rewrite(MonDaGeraetF);
       except
@@ -2648,7 +2643,7 @@ begin
       writeln(MonDaGeraetF, AktTrn);
       CloseFile(MonDaGeraetF);
 
-      assignFile(MonDaGeraetF, pAppTextPath + GeraeteNo + '.txt');
+      assignFile(MonDaGeraetF, DataPath + GeraeteNo + '.txt');
       try
         rewrite(MonDaGeraetF);
       except
@@ -2667,18 +2662,18 @@ begin
         begin
 
           FileCopy(
-           {} MyProgramPath + AktTrn + '\AUFTRAG.DAT',
-           {} MyProgramPath + cServerDataPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
+           {} pAppServicePath + AktTrn + '\AUFTRAG.DAT',
+           {} AuftragPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
 
           try
-              if (FSize(MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension) > 0) then
+              if (FSize(pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension) > 0) then
               begin
                 // TAN Upload
                 FileCopy(
-                  { } MyProgramPath + AktTrn + '\' + AktTrn + cDATExtension,
+                  { } pAppServicePath + AktTrn + '\' + AktTrn + cDATExtension,
                   { } pFTPPath + AktTrn + cDATExtension);
                 FileCopy(
-                  { } MyProgramPath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
+                  { } pAppServicePath + AktTrn + '\' + AktTrn + cUTF8DataExtension,
                   { } pFTPPath + AktTrn + cUTF8DataExtension);
 
               end
@@ -2687,7 +2682,7 @@ begin
                 log('Unterlassener Upload aufgrund Ergebnislosigkeit bei TRN ' + AktTrn);
               end;
               FileCopy(
-               {} MyProgramPath + AktTrn + '\AUFTRAG.DAT',
+               {} pAppServicePath + AktTrn + '\AUFTRAG.DAT',
                {} pFTPPath + 'AUFTRAG.' + GeraeteNo + cDATExtension);
           except
             on E: Exception do
@@ -2707,13 +2702,13 @@ begin
     // Nach "SENDEN" Tabelle protokollieren
     // IMEI;NAME;ID;MOMENT;TAN;REV;ERROR;PAPERCOLOR
 
-    if FileExists(MyProgramPath + cDBPath + cAppService_SendenFName) then
+    if FileExists(DataPath + cAppService_SendenFName) then
     begin
 
       tSENDEN := TsTable.Create;
       with tSENDEN do
       begin
-        InsertFromFile(MyProgramPath + cDBPath + cAppService_SendenFName);
+        InsertFromFile(DataPath + cAppService_SendenFName);
 
         // Alte Zeile löschen
         n := -1;
@@ -2754,8 +2749,8 @@ begin
         SortBy('descending MOMENT');
 
         // speichern
-        SaveToHTML(MyProgramPath + cWebPath + 'senden.html');
-        SaveToFile(MyProgramPath + cDBPath + cAppService_SendenFName);
+        SaveToHTML(pWebPath + 'senden.html');
+        SaveToFile(DataPath + cAppService_SendenFName);
       end;
       tSENDEN.free;
     end;
@@ -2790,12 +2785,17 @@ end;
 procedure TOrgaMonApp.readIni(SectionName: string = ''; Path: string = '');
 var
   MyIni: TIniFile;
+  RootPath : string;
 begin
 
   // Root Path
   if (Path = '') then
     Path := MyProgramPath;
   pAppServicePath := Path;
+
+  // Berechne Root
+  RootPath := copy(pAppServicePath,1,pred(revPos('\',pAppServicePath)));
+  RootPath := copy(RootPath,1,revPos('\',RootPath));
 
   MyIni := TIniFile.Create(pAppServicePath + cIniFNameConsole);
   with MyIni do
@@ -2808,25 +2808,23 @@ begin
       SectionName := cGroup_Id_Default;
     Id := SectionName;
 
-    // die ganzen Pfade
-    // Ftp-Bereich für diesen Server
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
-    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', 'I:\KundenDaten\SEWA\JonDaServer\');
-    pWebPath := ReadString(SectionName, 'WebPath', 'W:\status\');
-    pAppStatistikPath := ReadString(SectionName, 'StatistikPath', pWebPath);
-    pAppTextPath := ReadString(SectionName, 'TextPath', 'W:\JonDaServer\Statistik\');
-    pFTPPath := ReadString(SectionName, 'FTPPath', 'W:\orgamon-mob\');
-    pUnverarbeitetPath := ReadString(SectionName, 'UnverarbeitetPath', 'W:\orgamon-mob\unverarbeitet\');
-    DiagnosePath := ReadString(SectionName, 'LogPath', 'W:\JonDaServer\Fotos\');
-
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
+
+    // die ganzen Pfade (in der Regel nicht nötig)
+    // wenn die default Installationsvorgaben eingehalten werden
+    pBackUpRootPath := ReadString(SectionName, 'BackUpPath', RootPath + 'bak\');
+    pWebPath := ReadString(SectionName, 'WebPath', RootPath + 'web\');
+    pFTPPath := ReadString(SectionName, 'FTPPath', RootPath + 'ftp\');
+    DiagnosePath := ReadString(SectionName, 'LogPath', RootPath + 'log\');
+
   end;
   MyIni.Free;
 
   //
   Log(cINFOText + ' Ini read!');
 
-  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(MyDataBasePath + cFotoService_GlobalHintFName);
+  ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(DataPath + cFotoService_GlobalHintFName);
 
 end;
 
@@ -2993,9 +2991,9 @@ begin
         end;
 
         // Einstellungen laden
-        if FileExists(MyProgramPath + cGeraeteEinstellungen + GeraetID + '.ini') then
+        if FileExists(pAppServicePath + cGeraeteEinstellungen + GeraetID + '.ini') then
         begin
-          Einstellungen.LoadFromFile(MyProgramPath + cGeraeteEinstellungen + GeraetID + '.ini');
+          Einstellungen.LoadFromFile(pAppServicePath + cGeraeteEinstellungen + GeraetID + '.ini');
           if (Einstellungen.values[cServerOption_ZeitPruefung] = cIni_Deactivate) then
             start_NoTimeCheck := true;
         end;
@@ -3043,7 +3041,7 @@ begin
         end;
 
         // Sicherstellen, dass es die Gerätenummer gibt.
-        FileEmpty(MyProgramPath + TAN + '\' + GeraetID + '.zip');
+        FileEmpty(pAppServicePath + TAN + '\' + GeraetID + '.zip');
 
       until yet;
     except
@@ -3820,7 +3818,7 @@ begin
   FName_AbgezogenSrc := format(cMonDaServer_AbgezogenFName, [GeraeteNoSrc]);
 
   // 1) abgearbeitet.dat (OrgaMon will von diesen RIDs keine Ergebnisse mehr!)
-  if not(FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName)) then
+  if not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName)) then
   begin
 
     if not(FileExists(pFTPPath + cMonDaServer_AbgearbeitetFName)) then
@@ -3832,17 +3830,17 @@ begin
     // 1a) copy to "Data" assuming we are fresh first contact
     FileCopyR(
      { } pFTPPath + cMonDaServer_AbgearbeitetFName,
-     { } MyProgramPath + cServerDataPath + cMonDaServer_AbgearbeitetFName);
+     { } AuftragPath + cMonDaServer_AbgearbeitetFName);
 
     // 1b) copy to "TRN"
     FileCopyR(
      { } pFTPPath + cMonDaServer_AbgearbeitetFName,
-     { } MyProgramPath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
+     { } pAppServicePath + AktTrn + '\' + cMonDaServer_AbgearbeitetFName);
 
   end;
 
   // 2) unberuecksichtigt.txt (OrgaMon kennt diese Daten noch nicht)
-  if not(FileExists(MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName)) then
+  if not(FileExists(pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName)) then
   begin
     sErgebnisTANs := TStringList.Create;
     dir(pFTPPath + cJonDa_ErgebnisMaske_deprecated_FTP,sErgebnisTANs);
@@ -3854,15 +3852,15 @@ begin
        sErgebnisTANs.delete(n);
     sErgebnisTANS.Sort;
     sErgebnisTANs.SaveToFile(
-      { } MyProgramPath + cServerDataPath + cMonDaServer_UnberuecksichtigtFName);
+      { } AuftragPath + cMonDaServer_UnberuecksichtigtFName);
     sErgebnisTANs.SaveToFile(
-      { } MyProgramPath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
+      { } pAppServicePath + AktTrn + '\' + cMonDaServer_UnberuecksichtigtFName);
     sErgebnisTANs.Free;
   end;
 
   // 2) abgezogen.GGG.dat
   if (GeraeteNoSrc <> '000') then
-    if not(FileExists(MyProgramPath + AktTrn + '\' + FName_Abgezogen)) then
+    if not(FileExists(pAppServicePath + AktTrn + '\' + FName_Abgezogen)) then
     begin
 
       if not(FileExists(pFTPPath + FName_AbgezogenSrc)) then
@@ -3874,25 +3872,25 @@ begin
       // 2a) copy to "Data"
       FileCopyR(
        {} pFTPPath + FName_AbgezogenSrc,
-       {} MyProgramPath + cServerDataPath + FName_Abgezogen);
+       {} AuftragPath + FName_Abgezogen);
 
       // 2b) copy to "TRN"
       FileCopyR(
        {} pFTPPath + FName_AbgezogenSrc,
-       {} MyProgramPath + AktTrn + '\' + FName_Abgezogen);
+       {} pAppServicePath + AktTrn + '\' + FName_Abgezogen);
 
       // von cFreshDataPath -> ins lokale Verzeichnis!
 
     end;
 
   // 3) GeraeteNo.dat (das Auftragsvolumen!)
-  if not(FileExists(MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension)) then
+  if not(FileExists(pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension)) then
   begin
 
     if (GeraeteNoSrc = '000') then
     begin
       // Just an empty File!
-      FileEmpty(MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
+      FileEmpty(pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension);
       result := true;
     end
     else
@@ -3902,18 +3900,18 @@ begin
       if not(FileExists(pFTPPath + GeraeteNoSrc + cDATExtension)) then
       begin
         log(cWARNINGText + ' ' + GeraeteNoSrc + cDATExtension + ' existiert nicht und musste erstellt werden');
-        FileAlive(MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
+        FileAlive(AuftragPath + GeraeteNo + cDATExtension);
       end else
       begin
         FileCopyR(
          {} pFTPPath + GeraeteNoSrc + cDATExtension,
-         {} MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension);
+         {} AuftragPath + GeraeteNo + cDATExtension);
       end;
 
       // 3b) copy to "TRN"
       FileCopyR(
-        { } MyProgramPath + cServerDataPath + GeraeteNo + cDATExtension,
-        { } MyProgramPath + AktTrn + '\' + GeraeteNo + cDATExtension);
+        { } AuftragPath + GeraeteNo + cDATExtension,
+        { } pAppServicePath + AktTrn + '\' + GeraeteNo + cDATExtension);
     end;
   end;
   result := (ErrorCount=0);
@@ -3947,17 +3945,17 @@ begin
   LastTrn := inttostr(pred(strtoint(ActTRN)));
 
   // erst mal 'ne Datensicherung machen
-  FileCopy(MyProgramPath + cServerDataPath + 'FOTO+TS' + cBL_FileExtension, MyProgramPath + LastTrn + '\FOTO+TS' +
+  FileCopy(AuftragPath + 'FOTO+TS' + cBL_FileExtension, pAppServicePath + LastTrn + '\FOTO+TS' +
     cBL_FileExtension);
-  FileCopy(MyProgramPath + cServerDataPath + 'AUFTRAG+TS' + cBL_FileExtension, MyProgramPath + LastTrn + '\AUFTRAG+TS' +
+  FileCopy(AuftragPath + 'AUFTRAG+TS' + cBL_FileExtension, pAppServicePath + LastTrn + '\AUFTRAG+TS' +
     cBL_FileExtension);
 
   // Zeitlimit für alte Aufträge setzen
   MinimumDate := long2datetime(DatePlus(DateGet, -cMaxAge_Foto));
 
   // neu aufbauen + alte raus!
-  Freshen(MyProgramPath + cServerDataPath + 'FOTO+TS');
-  Freshen(MyProgramPath + cServerDataPath + 'AUFTRAG+TS');
+  Freshen(AuftragPath + 'FOTO+TS');
+  Freshen(AuftragPath + 'AUFTRAG+TS');
 
   // SENDEN.CSV neu aufbereiten
   maintainSENDEN;
@@ -4019,7 +4017,7 @@ begin
 
   TAN_OlderThan := DatePlus(DateGet, -cMaxAge_Produktive_Sichtbarkeit);
   AllTRN := TStringList.Create;
-  dir(MyProgramPath + '*.', AllTRN, false);
+  dir(pAppServicePath + '*.', AllTRN, false);
   AllTRN.sort;
   for n := 0 to pred(AllTRN.count) do
   begin
@@ -4032,28 +4030,28 @@ begin
     if (length(TAN) <> 5) then
       continue;
 
-    GeraeteNummer := detectGeraeteNummer(MyProgramPath + TAN);
+    GeraeteNummer := detectGeraeteNummer(pAppServicePath + TAN);
     if (GeraeteNummer = '') then
       continue;
 
     // Prüfung ob bei diesem Verzeichnis ein Proceed gemacht ist
-    if not(FileExists(MyProgramPath + TAN + '\' + TAN + '.dat')) then
+    if not(FileExists(pAppServicePath + TAN + '\' + TAN + '.dat')) then
     begin
      log(cERRORText + ' 3985: Trn '+TAN+' ohne Proceed!');
      continue;
     end;
 
-    TAN_Date := FDate(MyProgramPath + TAN + '\' + GeraeteNummer + cZIPExtension);
+    TAN_Date := FDate(pAppServicePath + TAN + '\' + GeraeteNummer + cZIPExtension);
     if (TAN_Date < cOrgaMonBirthDayAsLong) then
       continue;
     if (TAN_Date >= TAN_OlderThan) then
       break;
 
     // Transaktions-Datenverzeichnisse wegsichern danach löschen
-    // ACHTUNG: "MyProgramPath" und "BackupDir" müssen auf dem selben Share liegen -
+    // ACHTUNG: "pAppServicePath" und "BackupDir" müssen auf dem selben Share liegen -
     // sonst funktioniert MoveFileEx nicht
     if not(MoveFileEx(
-      { } pchar(MyProgramPath + TAN),
+      { } pchar(pAppServicePath + TAN),
       { } pchar(BackupDir + cTAN_BackupPath + TAN),
       { } MOVEFILE_COPY_ALLOWED + MOVEFILE_WRITE_THROUGH)) then
     begin
@@ -4069,7 +4067,7 @@ begin
 
     // Möglich, dass es wegen Ergebnislosigkeit die folgende Datei NICHT gibt
     // Dies darf dann aber nicht zu einem Fehler führen
-    FileDelete(MyProgramPath + cOrgaMonDataPath + TAN + cDATExtension);
+    FileDelete(pAppServicePath + cOrgaMonDataPath + TAN + cDATExtension);
 
   end;
 
@@ -4184,7 +4182,7 @@ procedure TOrgaMonApp.doStat;
     sRIDs := TgpIntegerList.Create;
 
     // Umfang laden
-    sUmfang.LoadFromFile(pAppTextPath + UmfangFName);
+    sUmfang.LoadFromFile(DataPath + UmfangFName);
 
     // Colum - Defaults
     um_Col_Gerate := 0;
@@ -4256,15 +4254,15 @@ procedure TOrgaMonApp.doStat;
       OneLine := OneCell;
 
       // Sicherstellen, dass der Merge funktioniert!!
-      if not(FileExists(MyProgramPath + cMeldungPath + um_Geraet + '.txt')) then
+      if not(FileExists(pAppServicePath + cMeldungPath + um_Geraet + '.txt')) then
       begin
-        FileAlive(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
-        FileTouch(MyProgramPath + cMeldungPath + um_Geraet + '.txt', cMonDa_FreieTerminWahl, 0);
+        FileAlive(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
+        FileTouch(pAppServicePath + cMeldungPath + um_Geraet + '.txt', cMonDa_FreieTerminWahl, 0);
       end;
 
       // Über Meldungen berichten!!
-      mDate := FDate(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
-      mTime := FSeconds(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
+      mDate := FDate(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
+      mTime := FSeconds(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
       if (mDate > cMonDa_FreieTerminWahl) then
       begin
         mTimeDiff := SecondsDiff(iDate, iTime, mDate, mTime);
@@ -4281,7 +4279,7 @@ procedure TOrgaMonApp.doStat;
       OneLine := OneLine + ';' + OneCell;
 
       // Anzahl der Datensätze auf dem Gerät
-      sAuftragFName := MyProgramPath + cServerDataPath + 'AUFTRAG.' + um_Geraet + '.DAT';
+      sAuftragFName := AuftragPath + 'AUFTRAG.' + um_Geraet + '.DAT';
       if FileExists(sAuftragFName) then
       begin
         assignFile(fAUFTRAG, sAuftragFName);
@@ -4295,12 +4293,12 @@ procedure TOrgaMonApp.doStat;
       end;
 
       // Senden
-      mDate := FDate(pAppTextPath + um_Geraet + '.txt');
-      mTime := FSeconds(pAppTextPath + um_Geraet + '.txt');
+      mDate := FDate(DataPath + um_Geraet + '.txt');
+      mTime := FSeconds(DataPath + um_Geraet + '.txt');
       if (mDate > 0) then
       begin
         mTimeDiff := SecondsDiff(iDate, iTime, mDate, mTime);
-        sMeldungen.LoadFromFile(pAppTextPath + um_Geraet + '.txt');
+        sMeldungen.LoadFromFile(DataPath + um_Geraet + '.txt');
         OneCell := '  -' + secondstostr9(mTimeDiff) + ' h (' + sMeldungen[0] + ':' +
           format('%4d', [Stat_Auftrag]) + ')';
         OneCell := OneCell + format('x%2d', [Stat_Anzahl_Senden(um_Geraet)]);
@@ -4315,12 +4313,12 @@ procedure TOrgaMonApp.doStat;
       OneLine := OneLine + ';' + OneCell;
 
       // Stückzahl - Heute - Blau
-      if FileExists(MyProgramPath + cMeldungPath + um_Geraet + '.txt') then
+      if FileExists(pAppServicePath + cMeldungPath + um_Geraet + '.txt') then
       begin
         Stat_Stueckzahl := 0;
         Stat_Blau := 0;
         Stat_Heute := 0;
-        sMeldungen.LoadFromFile(MyProgramPath + cMeldungPath + um_Geraet + '.txt');
+        sMeldungen.LoadFromFile(pAppServicePath + cMeldungPath + um_Geraet + '.txt');
         sRIDs.Clear;
         for m := pred(sMeldungen.count) downto 0 do
         begin
@@ -4384,7 +4382,7 @@ procedure TOrgaMonApp.doStat;
     sStatistik.add('  (letzte TAN:Anzahl der Aufträge auf dem Gerät) Anzahl "Senden" inerhalb der letzten 10 Tage');
     sStatistik.add(' Fertig: Summe "Fertig" heute/Summe "Fertig" gesamt');
     sStatistik.add(' Blau: Summe im Status "Blau"');
-    sStatistik.SaveToFile(pAppTextPath + 'Info-' + um_Baustelle + '.txt');
+    sStatistik.SaveToFile(DataPath + 'Info-' + um_Baustelle + '.txt');
     sStatistik.free;
     sUmfang.free;
     sMeldungen.free;
@@ -4396,7 +4394,7 @@ var
   n: integer;
 begin
   sDir := TStringList.Create;
-  dir(pAppTextPath + 'Umfang.*.csv', sDir, false);
+  dir(DataPath + 'Umfang.*.csv', sDir, false);
   for n := 0 to pred(sDir.count) do
     StatSingle(sDir[n]);
   sDir.free;
@@ -4415,7 +4413,7 @@ var
   JProtokoll: string;
   OrgaMonErgebnis: file of TMdeRec;
   // Das sind Ergebnisse von MonDa
-  MyProgramPath: string;
+  pAppServicePath: string;
   sOrgaMonFName: string;
   dTimeOut: TANFiXDate;
   dMeldung: TANFiXDate;
@@ -4435,15 +4433,15 @@ begin
     BeginAction('50000:000');
 
     dTimeOut := DatePlus(DateGet, -8);
-    sOrgaMonFName := MyProgramPath + cOrgaMonDataPath + cFixedTAN_FName;
+    sOrgaMonFName := pAppServicePath + cOrgaMonDataPath + cFixedTAN_FName;
     assignFile(OrgaMonErgebnis, sOrgaMonFName);
     rewrite(OrgaMonErgebnis);
 
     // Lade die fertigen!
-    lAbgearbeitet.LoadFromFile(MyProgramPath + cServerDataPath + 'abgearbeitet.dat');
+    lAbgearbeitet.LoadFromFile(AuftragPath + 'abgearbeitet.dat');
 
     // Lade alle Meldungen!
-    lMeldungen.LoadFromFile(MyProgramPath + cMeldungPath + '000.txt');
+    lMeldungen.LoadFromFile(pAppServicePath + cMeldungPath + '000.txt');
     for i := pred(lMeldungen.count) downto 0 do
     begin
       mRID := strtointdef(nextp(lMeldungen[i], ';', 0), 0);
@@ -4596,19 +4594,19 @@ begin
 
       result := '';
       repeat
-        if FileExists(MyProgramPath + cProtokollPath + _baustelle + Art + cProtExtension) then
+        if FileExists(pAppServicePath + cProtokollPath + _baustelle + Art + cProtExtension) then
         begin
           result := _baustelle + AnsiUpperCase(Art);
           break;
         end;
 
-        if FileExists(MyProgramPath + cProtokollPath + _baustelle + cProtExtension) then
+        if FileExists(pAppServicePath + cProtokollPath + _baustelle + cProtExtension) then
         begin
           result := _baustelle;
           break;
         end;
 
-        if FileExists(MyProgramPath + cProtokollPath + cProtPrefix + Art + cProtExtension) then
+        if FileExists(pAppServicePath + cProtokollPath + cProtPrefix + Art + cProtExtension) then
         begin
           result := cProtPrefix + AnsiUpperCase(Art);
           break;
@@ -4625,7 +4623,7 @@ end;
 
 function TOrgaMonApp.TrnFName: string;
 begin
-  result := MyProgramPath + cDBPath + cTrnFName
+  result := DataPath + cTrnFName
 end;
 
 class procedure TOrgaMonApp.toAnsi(var mderec: TMdeRec);
@@ -4902,7 +4900,7 @@ begin
       insert(3, '#');
     end;
 
-    sMigrationsVorlage.LoadFromFile(MyProgramPath + 'Update\' + cMigrationsVorlage_FName);
+    sMigrationsVorlage.LoadFromFile(pAppServicePath + 'Update\' + cMigrationsVorlage_FName);
 
     // Einfüge Punkt suchen
     InsertPoint := sMigrationsVorlage.IndexOf(cJondaProtokollDelimiter);
@@ -5084,7 +5082,7 @@ begin
       EINGABE := tsTable.Create
     else
       EINGABE.Clear;
-    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
+    FName := DataPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
@@ -5113,7 +5111,7 @@ begin
       EINGABE := tsTable.Create
     else
       EINGABE.Clear;
-    FName := pAppTextPath + 'Eingabe.' + GeraeteNo + '.txt';
+    FName := DataPath + 'Eingabe.' + GeraeteNo + '.txt';
     if FileExists(FName) then
       FileAlive(FName);
     EINGABE.insertfromFile(FName, cHeader_Eingabe);
@@ -5156,12 +5154,12 @@ begin
     workSync;
 
     tBAUSTELLE := tsTable.Create;
-    tBAUSTELLE.insertfromFile(MyDataBasePath + cFotoService_BaustelleFName);
-    if FileExists(MyDataBasePath + cFotoService_BaustelleManuellFName) then
+    tBAUSTELLE.insertfromFile(DataPath + cFotoService_BaustelleFName);
+    if FileExists(DataPath + cFotoService_BaustelleManuellFName) then
     begin
       with tBAUSTELLE do
       begin
-        insertfromFile(MyDataBasePath + cFotoService_BaustelleManuellFName);
+        insertfromFile(DataPath + cFotoService_BaustelleManuellFName);
         for r := RowCount downto 1 do
           if (length(readCell(r, cE_FTPUSER)) < 3) then
             del(r);
@@ -5169,13 +5167,13 @@ begin
     end;
 
     tABLAGE := tsTable.Create;
-    tABLAGE.insertfromFile(MyDataBasePath + cFotoService_AblageFName);
+    tABLAGE.insertfromFile(DataPath + cFotoService_AblageFName);
 
     // Datei der Wartenden sicherstellen, Header anlegen
-    if not(FileExists(MyDataBasePath + cFotoService_UmbenennungAusstehendFName)) then
+    if not(FileExists(DataPath + cFotoService_UmbenennungAusstehendFName)) then
       AppendStringsToFile(
         { } cFotoService_UmbenennungAusstehendHeader,
-        { } MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+        { } DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // heutiges BackupDir bestimmen, "...\#001\", "...\#002" usw.
     sDirs := TStringList.Create;
@@ -5233,12 +5231,17 @@ begin
   end;
 end;
 
-function TOrgaMonApp.MyDataBasePath: string;
+function TOrgaMonApp.DataPath: string; // ./dat/db/
 begin
   result := pAppServicePath + cDBPath;
 end;
 
-function TOrgaMonApp.MySyncPath: string;
+function TOrgaMonApp.AuftragPath: string; // ./dat/Daten
+begin
+  result := pAppServicePath + cServerDataPath;
+end;
+
+function TOrgaMonApp.MySyncPath: string; // ./dat/sync
 begin
   result := pAppServicePath + cSyncPath;
 end;
@@ -5247,7 +5250,7 @@ function TOrgaMonApp.GEN_ID: integer;
 var
   mIni: TIniFile;
 begin
-  mIni := TIniFile.Create(MyDataBasePath + cFotoService_IdFName);
+  mIni := TIniFile.Create(DataPath + cFotoService_IdFName);
   with mIni do
   begin
     result := StrToInt(ReadString(cGroup_Id_Default, 'Sequence', '0'));
@@ -5328,7 +5331,7 @@ var
     FNameNeu: string;
   begin
     FNameAlt := pFTPPath + sFiles[m];
-    FNameNeu := pUnverarbeitetPath + Id + '+' + sFiles[m];
+    FNameNeu := pWebPath + Id + '+' + sFiles[m];
 
     // Datei wegsperren, aber nicht löschen!
     if not(FileMove(
@@ -5515,13 +5518,13 @@ begin
     ensureGlobals;
 
     bOrgaMon := TBLager.Create;
-    bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+    bOrgaMon.Init(DataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
     bOrgaMon.BeginTransaction(now);
 
-    if FileExists(MyDataBasePath + '_AUFTRAG+TS' + cBL_FileExtension) then
+    if FileExists(DataPath + '_AUFTRAG+TS' + cBL_FileExtension) then
     begin
       bOrgaMonOld := TBLager.Create;
-      bOrgaMonOld.Init(MyDataBasePath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+      bOrgaMonOld.Init(DataPath + '_AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
       bOrgaMonOld.BeginTransaction(now);
     end
     else
@@ -5651,7 +5654,7 @@ begin
               sFotoCall.Values[cParameter_foto_zaehlernummer_neu] := zaehlernummer_neu;
               sFotoCall.Values[cParameter_foto_ReglerNummer_neu] := Reglernummer_neu;
               sFotoCall.Values[cParameter_foto_geraet] := FotoGeraeteNo;
-              sFotoCall.Values[cParameter_foto_Pfad] := pAppServicePath + cDBPath;
+              sFotoCall.Values[cParameter_foto_Pfad] := DataPath;
               sFotoCall.Values[cParameter_foto_Datei] := pFTPPath + sFiles[m];
               sFotoCall.Values[cParameter_foto_ABNummer] := ABNummer;
             end;
@@ -5853,7 +5856,7 @@ begin
                 { GERAETENO } FotoGeraeteNo + ';' +
                 { BAUSTELLE } sBaustelle + ';' +
                 { MOMENT } DatumLog,
-                { CSV-Dateiname } MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+                { CSV-Dateiname } DataPath + cFotoService_UmbenennungAusstehendFName);
             end;
 
             // Foto in die richtige Ablage kopieren!
@@ -5965,16 +5968,16 @@ begin
 
     if FileMove(
      { } pFTPPath + sFiles[n],
-     { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension) then
+     { } pAppServicePath + cProtokollPath + ProtokollFName + cProtExtension) then
     begin
       AppendStringsToFile(
         { } 'cp ' + sFiles[n] +
         { } ' ' +
-        { } MyProgramPath + cProtokollPath + ProtokollFName + cProtExtension,
+        { } pAppServicePath + cProtokollPath + ProtokollFName + cProtExtension,
         { } DiagnosePath + cProtokollTransaktionenFName);
     end else
     begin
-      FotoLog(cERRORText + ' Protokoll konnte nicht aus FTP-Bereich verschoben werden (mv '+sFiles[n]+' '+MyProgramPath + cProtokollPath+')');
+      FotoLog(cERRORText + ' Protokoll konnte nicht aus FTP-Bereich verschoben werden (mv '+sFiles[n]+' '+pAppServicePath + cProtokollPath+')');
       FotoLog(cFotoService_AbortTag);
     end;
   end;
@@ -6112,7 +6115,7 @@ begin
     addcol('PAPERCOLOR');
   end;
 
-  tIMEI.insertfromFile(MyProgramPath + cDBPath + 'IMEI.csv');
+  tIMEI.insertfromFile(DataPath + 'IMEI.csv');
 
   { Schritt 1: Bildnamen aus der Ankündigung ermitteln und das Datum der Ankündigung im Protokoll }
   dir(pAppServicePath + cApp_TAN_Maske + '.', AllTRN, false);
@@ -6322,7 +6325,7 @@ begin
 
     // Diese Detail-Liste auch ausgeben
     //
-    SaveToFile(MyDataBasePath + 'FotoService-Upload-Ausstehend.csv');
+    SaveToFile(DataPath + 'FotoService-Upload-Ausstehend.csv');
     SaveToHTML(pWebPath + 'ausstehende-details.html');
   end;
 
@@ -6439,7 +6442,7 @@ begin
     { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';
 
-    SaveToFile(MyDataBasePath + 'FotoService-Upload-Übersicht.csv');
+    SaveToFile(DataPath + 'FotoService-Upload-Übersicht.csv');
     SaveToHTML(pWebPath + 'ausstehende-fotos.html');
 
   end;
@@ -6508,7 +6511,7 @@ begin
   begin
 
     // load+sort
-    insertfromFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+    insertfromFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // init Global Stat
     Stat_Anfangsbestand := RowCount;
@@ -6576,7 +6579,7 @@ begin
   end;
 
   bOrgaMon := TBLager.Create;
-  bOrgaMon.Init(MyDataBasePath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
+  bOrgaMon.Init(DataPath + 'AUFTRAG+TS', mderecOrgaMon, sizeof(TMDERec));
   bOrgaMon.BeginTransaction(now);
 
   for r := WARTEND.RowCount downto 1 do
@@ -6635,7 +6638,7 @@ begin
           if not(assigned(CSV)) then
           begin
             CSV := tsTable.Create;
-            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            CSV.insertfromFile(DataPath + cFotoService_GlobalHintFName);
             FotoLog(cINFOText + ' 1750: suche zusätzlich in GlobalHint.ZaehlerNummerNeu');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
@@ -6667,7 +6670,7 @@ begin
           if not(assigned(CSV)) then
           begin
             CSV := tsTable.Create;
-            CSV.insertfromFile(MyDataBasePath + cFotoService_GlobalHintFName);
+            CSV.insertfromFile(DataPath + cFotoService_GlobalHintFName);
             FotoLog(cINFOText + ' 1782: suche zusätzlich in GlobalHint.ReglerNummerNeu');
           end;
           ro := CSV.locate('ReferenzIdentitaet', InttoStr(RID));
@@ -6782,20 +6785,20 @@ begin
     tSENDEN := tsTable.Create;
     with tSENDEN do
     begin
-      insertfromFile(pAppServicePath + cDBPath + cAppService_SendenFName);
+      insertfromFile(DataPath + cAppService_SendenFName);
       i := addcol('PAPERCOLOR');
       k := WARTEND.colof('GERAETENO');
       c := colof('ID');
       for r := 1 to RowCount do
         if (WARTEND.locate(k, readCell(r, c)) <> -1) then
           writeCell(r, i, '#FFFF00');
-      SaveToHTML(pAppStatistikPath + 'senden.html');
+      SaveToHTML(pWebPath + 'senden.html');
     end;
     tSENDEN.Free;
 
     // save WARTEND / save as html
-    WARTEND.SaveToHTML(pAppStatistikPath + '-neu.html');
-    WARTEND.SaveToFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+    WARTEND.SaveToHTML(pWebPath + '-neu.html');
+    WARTEND.SaveToFile(DataPath + cFotoService_UmbenennungAusstehendFName);
 
     // FotoLog
     if (Stat_Umbenannt > 0) then
@@ -7181,7 +7184,7 @@ begin
 
   // Infos über noch nicht umbenannte Dateien
   WARTEND := tsTable.Create;
-  WARTEND.insertfromFile(MyDataBasePath + cFotoService_UmbenennungAusstehendFName);
+  WARTEND.insertfromFile(DataPath + cFotoService_UmbenennungAusstehendFName);
   col_DATEINAME_AKTUELL := WARTEND.colof('DATEINAME_AKTUELL');
 
   // "Wann" ist der Arbeitsfokus
@@ -7354,11 +7357,11 @@ begin
       // compare + copy
       if not(FileCompare(
         { } MySyncPath + cFotoService_BaustelleFName,
-        { } MyDataBasePath + cFotoService_BaustelleFName)) then
+        { } DataPath + cFotoService_BaustelleFName)) then
       begin
         FileVersionedCopy(
           { } MySyncPath + cFotoService_BaustelleFName,
-          { } MyDataBasePath + cFotoService_BaustelleFName);
+          { } DataPath + cFotoService_BaustelleFName);
         FotoLog(cINFOText + ' neue ' + cFotoService_BaustelleFName);
       end;
 
@@ -7383,7 +7386,7 @@ begin
       {} pFTPPath + sDir[n],
       {} MySyncPath + sDir[n]);
 
-      // FotoBenennung-*.csv ->  cDBPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
+      // FotoBenennung-*.csv ->  DataPath + Baustelle + "FotoBenennung-"+ Baustelle + ".csv"
 
       // Lese den Pfad aus dem Dateinamen
       BaustellePath := ExtractSegmentBetween(sDir[n], cE_FotoBenennung + '-', '.csv');
@@ -7391,15 +7394,15 @@ begin
       // JonDa - Limitation!
       BaustellePath := copy(noblank(BaustellePath), 1, 6) + '\';
 
-      CheckCreateDir(MyDataBasePath + BaustellePath);
+      CheckCreateDir(DataPath + BaustellePath);
 
       if not(FileCompare(
         { } MySyncPath + sDir[n],
-        { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv')) then
+        { } DataPath + BaustellePath + cE_FotoBenennung + '.csv')) then
       begin
         FileVersionedCopy(
           { } MySyncPath + sDir[n],
-          { } MyDataBasePath + BaustellePath + cE_FotoBenennung + '.csv');
+          { } DataPath + BaustellePath + cE_FotoBenennung + '.csv');
         FotoLog(cINFOText + ' in ' + BaustellePath + ' neue ' + cE_FotoBenennung + '.csv');
       end;
 
