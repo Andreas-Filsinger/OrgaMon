@@ -86,7 +86,6 @@ uses
   SolidFTP in '..\PASconTools\SolidFTP.pas',
   sperre in '..\PASconTools\sperre.pas',
   txlib in '..\PASconTools\txlib.pas',
-  JonDaExec in '..\JonDaServer\JonDaExec.pas',
   binlager32 in '..\PASconTools\binlager32.pas',
   srvXMLRPC in '..\PASconTools\srvXMLRPC.pas',
   dbOrgaMon in '..\PASconTools\dbOrgaMon.pas',
@@ -100,7 +99,6 @@ uses
   Funktionen_LokaleDaten,
   eConnect,
   Identitaet,
-  FotoExec,
   TestExec;
 
 {$R *.res}
