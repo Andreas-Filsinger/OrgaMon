@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2016 Andreas Filsinger
+  |    Copyright (C) 2007 - 2019 Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -244,7 +244,7 @@ var
 begin
   result := true;
 
-  if not(FileExists(HtmlVorlagenPath + 'MonDa_Index.html')) then
+  if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
     exit;
 
   BeginHourGlass;
@@ -340,7 +340,7 @@ begin
     sql.add(' person.MONDA,person.KUERZEL');
 
     //
-    LoadFromFile(HtmlVorlagenPath + 'MonDa_Index.html');
+    LoadFromFile(HtmlVorlagenPath + cMonDaIndex);
     WriteGlobal('save&delete GERÄT');
     WriteGlobal('Titel=' + long2dateText(DateGet) + ' bis ' + long2dateText(DatePlus(DateGet, pred(JonDaVorlauf))));
 
@@ -1134,9 +1134,8 @@ begin
   result := true;
   ERGEBNIS_TAN := 0;
 
-  if FileExists(HtmlVorlagenPath + 'MonDa_Index.html') then
-  begin
-
+  if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
+exit;
     //
     BeginHourGlass;
     Label3.caption := 'Vorlauf ...';
@@ -1271,7 +1270,6 @@ begin
     if result and CloseLater then
       close;
     EndHourGlass;
-  end;
 end;
 
 procedure TFormAuftragMobil.Button4Click(Sender: TObject);

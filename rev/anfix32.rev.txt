@@ -37,6 +37,10 @@
  SymbolPool.pas  : Liste von kleinen Symbolen aus einem Hintergrund herausgelößt<br>
 // INFO END
 
+Rev 1.065 (22.03.19) Andreas Filsinger
+
+ Neu: Feedback-Infrastruktur
+
 Rev 1.064 (20.02.18) Andreas Filsinger
 
  Bug: dirs listete auch Files
