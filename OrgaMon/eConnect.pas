@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -70,6 +70,7 @@ type
     function rpc_e_w_Buchen(sParameter: TStringList): TStringList;
     function rpc_e_w_Skript(sParameter: TStringList): TStringList;
     function rpc_e_w_NextVal(sParameter: TStringList): TStringList;
+    function rpc_e_w_Senden(sParameter: TStringList): TStringList;
   end;
 
 implementation
@@ -859,6 +860,32 @@ begin
   if (sParameter.count > 1) then
    with TXMLRPC_Server do
      result.AddObject(frominteger(e_w_GEN(sParameter[1])), oInteger);
+end;
+
+function TeConnect.rpc_e_w_Senden(sParameter: TStringList): TStringList;
+begin
+  result := TStringList.create;
+  if (iTagwacheBaustelle >= cRID_FirstValid) then
+  begin
+     repeat
+       if not(e_w_ReadMobil) then
+        break;
+       if not(e_w_Ergebnis(-1, false)) then
+        break;
+       if not(e_w_BaustelleAblegen(iTagwacheBaustelle)) then
+        break;
+       if not(e_w_BaustelleLoeschen(iTagwacheBaustelle)) then
+        break;
+       if not(e_r_Bewegungen) then
+        break;
+       if not(e_w_Import(iTagwacheBaustelle)) then
+        break;
+       if not(e_w_WriteMobil) then
+        break;
+     until yet;
+  end;
+  with TXMLRPC_Server do
+    result.AddObject(fromboolean(true), oBoolean);
 end;
 
 end.

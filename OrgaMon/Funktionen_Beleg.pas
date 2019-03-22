@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -102,6 +102,9 @@ procedure e_w_MehrBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integ
 
 // dem Agenten signalisieren, dass sich der Bestell-Bedarf um MENGE vermindert hat! (er nun nicht mehr besteht!)
 procedure e_w_MinderBedarfsAnzeige(AUSGABEART_R, ARTIKEL_R, POSTEN_R, MENGE: integer);
+
+// schreibt Soll- Lagerbewegungen nach WE.csv
+function e_r_Bewegungen : boolean;
 
 // Order-Posten-Anz
 // Reihenfolge der Befriedigung von Erwarteten Mengen voreinstellen
@@ -13161,6 +13164,64 @@ begin
     {} ' (AUSGABEART_R='+INtToStr(AUSGABEART_R)+')');
    end;
  until yet;
+end;
+
+function e_r_Bewegungen : boolean;
+var
+  sql: TStringList;
+begin
+  result := true;
+  sql := TStringList.create;
+  sql.add('SELECT');
+  sql.add('       WARENBEWEGUNG.MENGE');
+  sql.add('     , ARTIKEL.MENGE LAGER_MENGE');
+  sql.add('     , ARTIKEL.MINDESTBESTAND');
+  sql.add('     , WARENBEWEGUNG.AUFTRITT');
+  sql.add('     , WARENBEWEGUNG.AUSGABEART_R');
+  sql.add('     , ARTIKEL.NUMERO');
+  sql.add('     , ARTIKEL.VERLAGNO');
+  sql.add('     , ARTIKEL.TITEL');
+  sql.add('     , LAGER.NAME');
+  sql.add('     , (SELECT LAGER.NAME FROM LAGER WHERE LAGER.RID=BELEG.LAGER_R) ZIEL');
+  sql.add('     , WARENBEWEGUNG.BEWEGT');
+  sql.add('     , WARENBEWEGUNG.MENGE_BISHER');
+  sql.add('     , WARENBEWEGUNG.MENGE_NEU');
+  sql.add('     , WARENBEWEGUNG.ZUSAMMENHANG');
+  sql.add('     , WARENBEWEGUNG.BRISANZ');
+  sql.add('     , WARENBEWEGUNG.RID');
+  sql.add('     , WARENBEWEGUNG.ARTIKEL_R');
+  sql.add('     , WARENBEWEGUNG.BELEG_R');
+  sql.add('     , WARENBEWEGUNG.POSTEN_R');
+  sql.add('     , WARENBEWEGUNG.BBELEG_R');
+  sql.add('     , WARENBEWEGUNG.BPOSTEN_R');
+  sql.Add('     , (''S1(1+''||WARENBEWEGUNG.LAGER_R||'')'') S1');
+  sql.Add('     , (''S2(1+''||BELEG.LAGER_R||'')'') S2');
+  sql.Add('     , AUSGABEART.NAME AA');
+  sql.add('FROM');
+  sql.add(' WARENBEWEGUNG');
+  sql.add('LEFT JOIN');
+  sql.add(' ARTIKEL');
+  sql.add('ON');
+  sql.add(' WARENBEWEGUNG.ARTIKEL_R=ARTIKEL.RID');
+  sql.Add('LEFT JOIN');
+  sql.add(' AUSGABEART');
+  sql.add('ON');
+  sql.add(' WARENBEWEGUNG.AUSGABEART_R=AUSGABEART.RID');
+  sql.Add('LEFT JOIN');
+  sql.Add(' BELEG');
+  sql.add('ON');
+  sql.Add(' WARENBEWEGUNG.BELEG_R=BELEG.RID');
+  sql.add('LEFT JOIN');
+  sql.add(' LAGER');
+  sql.add('ON');
+  sql.add(' WARENBEWEGUNG.LAGER_R=LAGER.RID');
+  sql.add('WHERE');
+  sql.add(' (WARENBEWEGUNG.BEWEGT<>''Y'') OR');
+  sql.add(' (WARENBEWEGUNG.BEWEGT IS NULL)');
+  sql.add('ORDER BY');
+  sql.add(' LAGER.NAME, BELEG.RID, ARTIKEL.TITEL, AUSGABEART.NAME');
+  ExportTable(sql, DiagnosePath + 'WE.csv');
+  sql.free;
 end;
 
 end.

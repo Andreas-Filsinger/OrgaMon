@@ -161,7 +161,7 @@ begin
                 end;
 
                 // WE frisch erzeugen!
-                FormBestellArbeitsplatz.MobilExport;
+                e_r_Bewegungen;
 
                 // Import-Schema laden, neu Aufbauen
                 with FormAuftragImport do

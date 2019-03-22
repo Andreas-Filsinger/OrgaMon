@@ -36,7 +36,7 @@ uses
   SysUtils;
 
 const
-  VersionAnfix32: single = 1.064; // ..\rev\anfix32.rev.txt
+  VersionAnfix32: single = 1.065; // ..\rev\anfix32.rev.txt
   cRevNotAValidProject: single = 0.000;
   NVAC = #255; // not valid char
 
@@ -132,6 +132,48 @@ const
   // until yet; = Sofortiges Ende
   yet = true;
 
+// Feedback-Infrastruktur
+// ======================
+//
+// Ermöglicht einer NON-GUI Funktion im Rahmen ihrer lange andauernden
+// Verarbeitung ab und an Feedback an die Aufrufende Funktion zurückzugeben.
+// Dabei gibt der Aufrufer schon beim Funktions-Aufruf ein Feedback Callback
+// Objekt als Parameter an. Dahinter verbirgt sich dann eine Funktion die
+// Anzeigen an das UI ausgibt.
+// Dabei wird immer ein numerischer Key (Integer) und ein Value (String) übergeben
+// Über den "key" kann ein Namespace-Shift gelegt werden, dadurch ist über ein
+// case Statement eine schnelle Implementierung zahlreicher GUI-Elemente möglich
+//
+// Im worker: feeback(cFeedBack_Label + 23, 'fast fertig');
+//
+// Im Caller: case key of
+//             cFeedBack_Label + 21 : label21.caption := value;
+//             cFeedBack_Label + 22 : label22.caption := value;
+//             cFeedBack_Label + 23 : label23.caption := value;
+//            end;
+//
+
+const
+ // keys
+ cFeedBack_SingleElement_MaxCount = 999;
+ cFeedBack_ProcessMessages = 0*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Log = 1*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ProgressBar_Position = 2*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ProgressBar_Max = 3*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ProgressBar_stepit = 4*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Label = 5*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ListBox = 6*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ShowMessage = 7*cFeedBack_SingleElement_MaxCount;
+
+ // return codes
+ cFeedBack_CONT = 0;
+ cFeedBack_BREAK = 1;
+ cFeedBack_TRUE = 2;
+ cFeedBack_FALSE = 3;
+
+type
+ TFeedback = function (key : Integer; value : string = '') : Integer;
+ TOFeedback = function (key : Integer; value : string = '') : Integer of object;
 
 var
   MandantName: string = 'offline';

@@ -66,6 +66,21 @@ function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
 procedure e_r_Sync_AuftraegeAlle; // Bereitstellung von Infos für den Foto-Server
+function e_r_InfoBlatt(
+      { } Datum_RIDs,
+      { } Monteur_RIDs,
+      { } Single_RIDs: TgpIntegerList;
+      { } ItemInformiert: TList;
+      { } MondaMode: boolean = false;
+      { } FaxMode: boolean = false;
+      { } fb: TFeedBack = nil): TStringList;
+//
+// AnzahlTermine=
+// MonteurRIDsCount=
+//
+
+function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
+function e_w_Import(BAUSTELLE_R: integer):boolean;
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
@@ -132,6 +147,7 @@ function e_r_Arbeitszeit_N(BAUSTELLE_R: Integer; Wochentag: Integer): TAnfixTime
 procedure e_r_Sync_Baustelle;
 function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 function e_w_BaustelleKopie(BAUSTELLE_R: Integer): boolean;
+function e_w_BaustelleAblegen(BAUSTELLE_R: Integer): boolean;
 
 // Baustellen - Foto - Sachen
 function e_w_FotoDownload(BAUSTELLE_R : TDOM_Reference = cRID_Unset) : TStringList;
@@ -169,6 +185,10 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 
 // Arbeitshalbtage in dieser Woche
 function e_r_Halbtage(MONTEUR_R, BAUSTELLE_R: Integer; ArbeitsTag: TANFiXDate): Integer;
+
+// OrgaMon-App
+function e_w_ReadMobil(Options : TStringList = nil; fb : TFeedback = nil): boolean;
+function e_w_WriteMobil(Options : TStringList = nil; fb : TFeedback = nil): boolean;
 
 // Geo
 function DeleteGeo(AUFTRAG_R: Integer): Integer;
@@ -229,7 +249,7 @@ uses
   math,
 
   // types,
-  SysUtils,
+  Types, SysUtils,
 
   // Tools
   html, OrientationConvert, c7zip,
@@ -6030,6 +6050,2119 @@ begin
   ersetze(';', ',', result);
 end;
 
+function e_w_BaustelleAblegen(BAUSTELLE_R: Integer): boolean;
+var
+  RecN: Integer;
+  InsertN: Integer;
+  DSQL_ABLAGE_Copy: TdboScript;
+  DSQL_ABLAGE_Del: TdboScript;
+  DSQL_AUFTRAG_Clear: TdboScript;
+  cAUFTRAG: TdboCursor;
+  n: Integer;
+  AUFTRAG_FieldNames: TStringList;
+  ABLAGE_R: Integer;
+
+  procedure InsertCol(RID: Integer);
+  begin
+    with DSQL_ABLAGE_Del do
+    begin
+      ParamByName('CROSSREF').AsInteger := RID;
+      execute;
+    end;
+
+    with DSQL_ABLAGE_Copy do
+    begin
+      ParamByName('CROSSREF').AsInteger := RID;
+      execute;
+    end;
+
+    inc(InsertN);
+  end;
+
+begin
+  result := false;
+
+    ABLAGE_R := e_w_GEN('GEN_ZUSAMMENHANG');
+
+    // Quell-Datensätze bestimmen
+    cAUFTRAG := nCursor;
+    AUFTRAG_FieldNames := TStringList.create;
+    with cAUFTRAG do
+    begin
+      sql.Add('select');
+      sql.Add(' *');
+      sql.Add('from');
+      sql.Add(' AUFTRAG');
+      sql.Add('where');
+      sql.Add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or ');
+      sql.Add(' (MASTER_R in (select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
+      Open;
+      // Liste der Feldnamen speichern!
+      for n := 0 to pred(FieldCount) do
+        AUFTRAG_FieldNames.Add(Fields[n].FieldName);
+    end;
+
+    DSQL_ABLAGE_Copy := nScript;
+    with DSQL_ABLAGE_Copy do
+    begin
+      sql.Add('insert into ABLAGE');
+      sql.Add('(' + HugeSingleLine(AUFTRAG_FieldNames, ',') + ')');
+      sql.Add('SELECT');
+      sql.Add(HugeSingleLine(AUFTRAG_FieldNames, ','));
+      sql.Add('FROM');
+      sql.Add(' AUFTRAG');
+      sql.Add('WHERE');
+      sql.Add(' RID=:CROSSREF');
+      prepare;
+    end;
+
+    DSQL_ABLAGE_Del := nScript;
+    with DSQL_ABLAGE_Del do
+    begin
+      sql.Add('DELETE FROM');
+      sql.Add(' ABLAGE');
+      sql.Add('WHERE');
+      sql.Add(' RID=:CROSSREF');
+      prepare;
+    end;
+
+    DSQL_AUFTRAG_Clear := nScript;
+    with DSQL_AUFTRAG_Clear do
+    begin
+      sql.Add('update');
+      sql.Add(' AUFTRAG');
+      sql.Add('set');
+      sql.Add(' MASTER_R=RID');
+      sql.Add('where');
+      sql.Add(' MASTER_R is null');
+      execute;
+    end;
+
+    InsertN := 0;
+    RecN := 0;
+
+    with cAUFTRAG do
+    begin
+
+      // Zunächst die Masterdatensätze
+        APiFirst;
+        while not(eof) do
+        begin
+          if (FieldByName('RID').AsInteger = FieldByName('MASTER_R').AsInteger) then
+            InsertCol(FieldByName('RID').AsInteger);
+          ApiNext;
+          inc(RecN);
+        end;
+
+      // Nun die Historischen Datensätze
+        APiFirst;
+        while not(eof) do
+        begin
+          if (FieldByName('RID').AsInteger <> FieldByName('MASTER_R').AsInteger) then
+            InsertCol(FieldByName('RID').AsInteger);
+          ApiNext;
+          inc(RecN);
+        end;
+
+    end;
+
+    cAUFTRAG.free;
+    DSQL_ABLAGE_Copy.free;
+    DSQL_ABLAGE_Del.free;
+    DSQL_AUFTRAG_Clear.free;
+    AUFTRAG_FieldNames.free;
+
+end;
+
+
+function e_w_ReadMobil(Options : TStringList = nil; fb : TFeedBack = nil):boolean;
+
+{$I feedback.inc}
+
+var
+  AuftragArray: array of TMDErec;
+  ERGEBNIS_TAN: integer;
+  MdeRecordCount: integer;
+  INf: file of TMDErec; // Ergebnisdaten als mderec
+  sTAN: TSearchStringList; // Ergebnisdaten als csv-Datei
+  DirList: TStringList;
+  Bericht: TStringList;
+  Aenderungen: TStringList;
+  AUSFUEHREN: TAnfixDate;
+
+  Stat_Meldungen: integer;
+  Stat_Aenderungen: integer;
+  Stat_FehlendeRIDS: integer;
+
+  ErrorCount: integer;
+  StartTime: dword;
+  Ergaenzungsmodus: boolean;
+  IdFTP1 : TIdFTP;
+
+  // Parameter
+  pDownloadTANs: boolean; // was "CheckBox5.Checked"
+  pPreserveTANsOnServer: boolean; // was "CheckBox6.Checked"
+  pMoveTANsToDiagnose: boolean; // was "CheckBox10.Checked"
+
+  function toDataBaseString(s: string; len: integer): string;
+  begin
+    result := s;
+    ersetze('''', '', result);
+    ersetze('"', '', result);
+    result := '''' + copy(result, 1, len) + '''';
+  end;
+
+  function VNfromTime(t: TAnfixTime): string;
+  begin
+    if (t <= cNoon) then
+      result := cVormittagsChar
+    else
+      result := cNachmittagsChar;
+  end;
+
+  function NeuerAuftrag(var mderec: TMDErec): integer;
+  var
+    qAUFTRAG: TIB_Query;
+    BAUSTELLE_R: integer;
+    MONTEUR_R: integer;
+    Protokoll: TStringList;
+    OneLine: string;
+  begin
+    result := -1;
+    Protokoll := TStringList.create;
+    with mderec do
+    begin
+
+      repeat
+
+        // Protokoll mal einlesen
+        Protokoll.clear;
+        OneLine := Oem2ansi(ProtokollInfo);
+        while (OneLine <> '') do
+          Protokoll.add(nextp(OneLine, ';'));
+
+        // Überhaupt Daten vorhanden?
+        if (Protokoll.Values['BG'] = '') and (ausfuehren_ist_Datum <= 0) then
+          break;
+
+        // Vorbelegung der Werte
+        if (RID > 0) then
+        begin
+          BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(RID));
+          MONTEUR_R := e_r_sql('select MONTEUR1_R from AUFTRAG where RID=' + inttostr(RID));
+        end
+        else
+        begin
+          BAUSTELLE_R := 279; // grrrrrrrrrrrrr - argh -
+          MONTEUR_R := e_r_sql('select RID from PERSON where MONDA=''' + Baustelle + '''');
+        end;
+
+        // ohne Monteur / Baustelle geht nix!
+        if (MONTEUR_R <= 0) or (BAUSTELLE_R <= 0) then
+          break;
+
+        if (ausfuehren_ist_Datum <= 0) then
+        begin
+          ausfuehren_ist_Datum := date2long(nextp(Monteur_Info, ' - ', 0));
+          ausfuehren_ist_uhr := StrToSeconds(nextp(Monteur_Info, ' - ', 1));
+        end;
+
+        if (ausfuehren_ist_Datum <= cMonDa_ImmerAusfuehren) then
+        begin
+          ausfuehren_ist_Datum := DateGet;
+          ausfuehren_ist_uhr := SecondsGet;
+        end;
+
+        // eindeutiges Handle erzeugen
+        RID := e_w_gen('GEN_AUFTRAG');
+
+        // den Auftrag einfach mal anlegen
+        e_x_sql('insert into auftrag (ZAEHLER_NUMMER,KUNDE_STRASSE,KUNDE_ORT,AUSFUEHREN,VORMITTAGS,MONTEUR1_R,BAUSTELLE_R,RID_AT_IMPORT)  values ('
+          +
+
+          // aufgenommene Regler Nummer
+          toDataBaseString(cutblank(Protokoll.Values['BG']), 15) + ',' +
+
+          // aufgenommene Strasse
+          toDataBaseString(cutblank(cutblank(Protokoll.Values['I5']) + ' ' + cutblank(Protokoll.Values['I6']) + ' ' +
+          cutblank(Protokoll.Values['I7']) + ' '), 45) + ',' +
+
+          // aufgenommener Ort
+          toDataBaseString(cutblank(cutblank(Protokoll.Values['I3']) + ' ' + cutblank(Protokoll.Values['I4'])),
+          45) + ',' +
+
+          // Ausführungsdatum
+          toDataBaseString(long2date(ausfuehren_ist_Datum), 10) + ',' +
+
+          // Ausführungsuhrzeit
+          toDataBaseString(VNfromTime(ausfuehren_ist_uhr), 1) + ',' +
+
+          inttostr(MONTEUR_R) + ',' + inttostr(BAUSTELLE_R) + ',' + inttostr(RID) + ')');
+
+        // den Auftrag durch den Kernel absegnen lassen
+        qAUFTRAG := nQuery;
+        with qAUFTRAG do
+        begin
+          sql.add('select * from auftrag where');
+          sql.add(' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') and');
+          sql.add(' (MONTEUR1_R=' + inttostr(MONTEUR_R) + ') and');
+          sql.add(' (RID_AT_IMPORT=' + inttostr(RID) + ')');
+          sql.add('for update');
+          open;
+          first;
+          if not(eof) then
+          begin
+            result := FieldByName('RID').AsInteger;
+            edit;
+            AuftragBeforePost(qAUFTRAG);
+            post;
+          end;
+        end;
+        qAUFTRAG.free;
+
+      until true;
+    end;
+    Protokoll.free;
+  end;
+
+  procedure ProcessNewData(pPath: string; pTAN: string);
+  var
+    qAUFTRAG: TIB_Query;
+
+    // gecachte Datenbankfelder
+    INTERN_INFO: TStringList;
+    Protokoll: TStringList;
+    V, V_Neu: TStringList;
+    V_OldCount: integer;
+    STATUS: integer;
+    VMITTAGS: string;
+
+    Stat_Wert_Ueberschreibungen: integer;
+    Stat_Wert_Beitrag: integer;
+    Stat_Changes: string;
+
+    procedure updateField(sFieldName: string; NewValue: string);
+    var
+      OldValue: string;
+    begin
+      OldValue := qAUFTRAG.FieldByName(sFieldName).AsString;
+      repeat
+
+        // keine Wertänderung
+        if (OldValue = NewValue) then
+        begin
+          // keine weitere Aktion notwendig!!
+          break;
+        end;
+
+        // etwas soll durch nichts ersetzt werden -> nicht möglich
+        if (NewValue = '') and (OldValue <> '') then
+        begin
+          // Eine Löschung der Eintragung wird nicht zugelassen (Einbahnstrasse)
+          break;
+        end;
+
+        // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen
+        if (OldValue = '') and (NewValue <> '') then
+        begin
+          // Ersteintrag!!
+          qAUFTRAG.FieldByName(sFieldName).AsString := NewValue;
+          inc(Stat_Wert_Beitrag);
+          Stat_Changes := Stat_Changes + sFieldName + '=' + NewValue + cProtokollTrenner;
+          break;
+        end;
+
+        // eine Abänderung eines bestehenden Wertes!
+        if not(Ergaenzungsmodus) then
+          if (OldValue <> NewValue) then
+          begin
+            // Änderung!!
+            qAUFTRAG.FieldByName(sFieldName).AsString := NewValue;
+            inc(Stat_Wert_Ueberschreibungen);
+            inc(Stat_Wert_Beitrag);
+            Stat_Changes := Stat_Changes + sFieldName + '*' + NewValue + cProtokollTrenner;
+            break;
+          end;
+
+      until true;
+
+    end;
+
+    procedure neuerSTATUS(NewStatus: integer);
+    begin
+      repeat
+
+        // keine Wertänderung
+        if (STATUS = NewStatus) then
+        begin
+          // keine weitere Aktion notwendig!!
+          break;
+        end;
+
+        // eine Abänderung eines bestehenden Wertes!
+        if not(Ergaenzungsmodus) then
+          if (STATUS <> NewStatus) then
+          begin
+            // Änderung!!
+            qAUFTRAG.FieldByName('STATUS').AsInteger := NewStatus;
+            inc(Stat_Wert_Ueberschreibungen);
+            inc(Stat_Wert_Beitrag);
+            Stat_Changes := Stat_Changes + 'STATUS' + '*' + inttostr(NewStatus) + cProtokollTrenner;
+            break;
+          end;
+
+      until true;
+    end;
+
+    procedure V_add(s: string);
+    begin
+      repeat
+        if (s = '') then
+          break;
+        if (V.indexof(s) <> -1) then
+          break;
+        V.add(s);
+      until true;
+    end;
+
+  var
+    n, m, k: integer;
+    OneLine: string;
+    ProtParameterName: string;
+    ProtValue: string;
+    OldValue: string;
+    _RID: integer;
+
+  begin
+
+    // Anzeigen, um was es geht!
+    _(cFeedBack_Label + 3, inttostrN(ERGEBNIS_TAN, 6) + '.' + pTAN);
+    _(cFeedBack_ProcessMessages);
+
+    INTERN_INFO := TStringList.create;
+    Protokoll := TStringList.create;
+    V := TStringList.create;
+    V_Neu := TStringList.create;
+    sTAN := TSearchStringList.create;
+
+    // Einlesen der TAN Daten als Text
+    if FileExists(pPath + pTAN + cUTF8DataExtension) then
+      sTAN.LoadFromFile(pPath + pTAN + cUTF8DataExtension);
+
+    // Einlesen der TAN Datei (alte Art!)
+    AssignFile(INf, pPath + pTAN + cDATExtension);
+    reset(INf);
+    MdeRecordCount := FileSize(INf);
+    inc(Stat_Meldungen, MdeRecordCount);
+
+    //
+    Bericht.add('[I] Verarbeite Monteur TAN ' + pTAN + ' mit ' + inttostr(MdeRecordCount) + ' Datensätzen');
+
+    SetLength(AuftragArray, MdeRecordCount);
+    for n := 0 to pred(MdeRecordCount) do
+      read(INf, AuftragArray[n]);
+    CloseFile(INf);
+
+    // Übertragen in die Datenbank
+    // Verfahren dabei:
+    // MONDA_SCHUTZ verhindert jegliche Manipulation durch Monda
+    //
+    // Problem 1:
+    // Tag1 : Monteur setzt auf Neu Anschreiben
+    // Tag2 : Büro vereinbart neuen Termin
+    // Tag3 : es wird nochmals "Neu Anschreiben" gemeldet
+    //
+    // wichtig: hat das Büro dann schon umterminiert darf am Termin
+    // nichts mehr gemacht werden.
+    // -> Sonderbehandlung der Stati "Restat" und "Neu Anschreiben"
+    //
+    // Problem 2:
+    // Tag1: Monteur liefert V1=xxx, V2=yyy
+    // Tag2: Der Termin wird vom Büro NEU eingeplant
+    // Tag3: Monteur liefert V1=zzz
+    // -> V1 darf hier nicht überschrieben werden es muss angereiht werden (Implementiert!)
+    //
+    qAUFTRAG := nQuery;
+    with qAUFTRAG do
+    begin
+      sql.add('SELECT * FROM');
+      sql.add(' AUFTRAG');
+      sql.add('WHERE');
+
+      // der Meister!
+      sql.add(' (RID=(select MASTER_R from AUFTRAG where RID=:CROSSREF)) and');
+
+      // ungesetzer Monda Schutz
+      sql.add(' ((MONDA_SCHUTZ IS NULL) OR (MONDA_SCHUTZ=''' + cC_False + ''')) and');
+
+      // nicht ein ewiger Termin (die haben auch einen Schutz!)
+      sql.add(' ((AUSFUEHREN IS NULL) OR (AUSFUEHREN <> ''01.01.2000''))');
+
+      sql.add('for update');
+
+      for n := 0 to pred(MdeRecordCount) do
+      begin
+        with AuftragArray[n] do
+        begin
+          if (ausfuehren_ist_Datum <> cMonDa_Status_Wegfall) and (ausfuehren_ist_Datum <> cMonDa_Status_Info) and
+            (ausfuehren_ist_Datum <> cMonDa_Status_unbearbeitet) then
+          begin
+
+            // Orginal-Daten retten
+            _RID := RID;
+
+            // Daten vorbereiten
+            zaehlernummer_neu := TOrgaMonApp.formatZaehlerNummerNeu(zaehlernummer_neu);
+
+            // Neuen Auftrag anlegen?
+            if (RID = -1) or (ausfuehren_soll = cMonDa_ImmerAusfuehren) then
+              RID := NeuerAuftrag(AuftragArray[n]);
+
+            ParamByName('CROSSREF').AsInteger := RID;
+            if not(Active) then
+              open;
+            first;
+
+            if IsEmpty then
+              if (iTagwacheBaustelle >= cRID_FirstValid) then
+              begin
+
+                //
+                RID :=
+                { } e_r_sql(
+                  { } 'select MASTER_R from AUFTRAG where ' +
+                  { } '(ZAEHLER_NUMMER=''' + zaehlernummer_alt + ''') and' +
+                  { } '(BAUSTELLE_R=' + inttostr(iTagwacheBaustelle) + ')');
+
+                if (RID >= cRID_FirstValid) then
+                  ParamByName('CROSSREF').AsInteger := RID;
+              end;
+
+            if not(IsEmpty) then
+            begin
+
+              // Init
+              Stat_Wert_Ueberschreibungen := 0;
+              Stat_Wert_Beitrag := 0;
+              Stat_Changes := '';
+
+              // bisherige Werte auslesen
+              AUSFUEHREN := DateTime2long(FieldByName('AUSFUEHREN').AsDate);
+              VMITTAGS := FieldByName('VORMITTAGS').AsString;
+              STATUS := FieldByName('STATUS').AsInteger;
+              Ergaenzungsmodus := FieldByName('EXPORT_TAN').IsNotNull;
+              FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+              FieldByName('PROTOKOLL').AssignTo(Protokoll);
+
+              // Vergebliche Besuche
+              V_Neu.clear;
+              V.clear;
+              for m := 1 to 10 do
+                V_add(Protokoll.Values['V' + inttostr(m)]);
+              V_OldCount := V.count;
+
+              // gehe in den Edit-Modus
+              edit;
+
+              // wird immer Eingetragen: der Ergebnis-Kontakt
+              INTERN_INFO.add('ERGEBNIS.' + inttostrN(ERGEBNIS_TAN, 6) + '=' + pTAN);
+
+              // Protokoll-String aufbereiten
+              k := sTAN.FindInc(inttostr(RID));
+              if (k <> -1) then
+              begin
+                OneLine := nextp(sTAN[k], ';', cMobileMeldung_COLUMN_PROTOKOLL);
+                ersetze(cJondaProtokollDelimiter, ';', OneLine);
+              end
+              else
+              begin
+                OneLine := Oem2ansi(ProtokollInfo);
+              end;
+
+              // Parameter für Parameter!
+              while (OneLine <> '') do
+              begin
+
+                ProtValue := nextp(OneLine, ';');
+                ProtParameterName := nextp(ProtValue, '=');
+                OldValue := Protokoll.Values[ProtParameterName];
+
+                if (ProtParameterName <> '') then
+                begin
+                  repeat
+
+                    // Spezialbehandlung für V1,V2,V3
+                    if (pos('V', ProtParameterName) = 1) then
+                    begin
+                      V_Neu.add(ProtParameterName + '=' + ProtValue);
+                      break;
+                    end;
+
+                    // keine Wertänderung
+                    if (OldValue = ProtValue) then
+                    begin
+                      // keine weitere Aktion notwendig!!
+                      break;
+                    end;
+
+                    // etwas soll durch nichts ersetzt werden -> nicht möglich
+                    if (ProtValue = '') and (OldValue <> '') then
+                    begin
+                      // Eine Löschung der Eintragung wird nicht zugelassen (Einbahnstrasse)
+                      break;
+                    end;
+
+                    // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen
+                    if (OldValue = '') and (ProtValue <> '') then
+                    begin
+                      // Ersteintrag!!
+                      Protokoll.Values[ProtParameterName] := ProtValue;
+                      inc(Stat_Wert_Beitrag);
+                      Stat_Changes := Stat_Changes + ProtParameterName + '=' + ProtValue + cProtokollTrenner;
+                      break;
+                    end;
+
+                    // eine Abänderung eines bestehenden Wertes!
+                    if not(Ergaenzungsmodus) then
+                      if (OldValue <> ProtValue) then
+                      begin
+                        // Änderung!!
+                        Protokoll.Values[ProtParameterName] := ProtValue;
+                        inc(Stat_Wert_Ueberschreibungen);
+                        inc(Stat_Wert_Beitrag);
+                        Stat_Changes := Stat_Changes + ProtParameterName + '*' + ProtValue + cProtokollTrenner;
+                        break;
+                      end;
+
+                  until true;
+                end;
+              end;
+
+              // Alle neuen V nun Hinzunehmen
+              V_Neu.sort; // V1, V2 Reihenfolge sicherstellen!
+              for m := 0 to pred(V_Neu.count) do
+                V_add(nextp(V_Neu[m], '=', 1));
+
+              // imp pend: Alle Vs, nun in Hinsicht auf den Zeitstempel-Wert sortieren!
+
+              // Alle Vs nun dauerhaft Speichern
+              for m := 0 to 9 do
+              begin
+
+                // Name=Value ermitteln
+                ProtParameterName := 'V' + inttostr(succ(m));
+                OldValue := Protokoll.Values[ProtParameterName];
+                if (m < V.count) then
+                  ProtValue := V[m]
+                else
+                  ProtValue := '';
+
+                // speichern bzw. leeren
+                if (OldValue <> ProtValue) then
+                begin
+                  Protokoll.Values[ProtParameterName] := ProtValue;
+                  inc(Stat_Wert_Beitrag);
+                  Stat_Changes := Stat_Changes + ProtParameterName + '=' + ProtValue + cProtokollTrenner;
+                end;
+
+              end;
+
+              // Status Berechnungen
+              case ausfuehren_ist_Datum of
+
+                cMonDa_Status_FallBack, cMonDa_Status_Restant:
+                  begin
+
+                    // Meint der Monteur auch diese Variante?
+                    if (ausfuehren_soll = AUSFUEHREN) and (VormittagsToChar(vormittags) = VMITTAGS) and
+
+                    // Neu-Anschreiben schützt vor Status Restant
+                      (STATUS <> cs_NeuAnschreiben) and (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and
+                      (STATUS <> cs_Unmoeglich) and
+
+                    // Termin liegt in der Vergangenheit
+                      (AUSFUEHREN < DateGet) then
+                      neuerSTATUS(cs_Restant);
+
+                  end;
+
+                cMonDa_Status_NeuAnschreiben:
+                  begin
+
+                    // Meint der Monteur auch diese Variante?
+                    if (ausfuehren_soll = AUSFUEHREN) and (VormittagsToChar(vormittags) = VMITTAGS) and
+                      (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and (STATUS <> cs_Unmoeglich)
+
+                    then
+                      neuerSTATUS(cs_NeuAnschreiben);
+                  end;
+
+                cMonDa_Status_Unmoeglich:
+                  begin
+                    neuerSTATUS(cs_Unmoeglich);
+                  end;
+                cMonDa_Status_Vorgezogen:
+                  begin
+
+                    if (STATUS <> cs_Erfolg) then
+                      neuerSTATUS(cs_Vorgezogen);
+
+                  end;
+
+              else
+
+                // Erfolgs-Status!
+                neuerSTATUS(cs_Erfolg);
+
+                if DateOK(ausfuehren_ist_Datum) then
+                begin
+                  if (ausfuehren_ist_Datum < 20040000) then
+                  begin
+                    ausfuehren_ist_Datum := ausfuehren_soll;
+                    ausfuehren_ist_uhr := 0;
+                  end;
+                  if not(Ergaenzungsmodus) then
+                    FieldByName('ZAEHLER_WECHSEL').AsDateTime := mkDateTime(ausfuehren_ist_Datum, ausfuehren_ist_uhr);
+                end;
+
+              end;
+
+              // In allen Fälle: diese Fehler gehören MonDa
+              updateField('REGLER_NR_KORREKTUR', reglernummer_korr);
+              updateField('REGLER_NR_NEU', reglernummer_neu);
+              updateField('ZAEHLER_NR_KORREKTUR', zaehlernummer_korr);
+              updateField('ZAEHLER_NR_NEU', zaehlernummer_neu);
+              updateField('ZAEHLER_STAND_ALT', zaehlerstand_alt);
+              updateField('ZAEHLER_STAND_NEU', zaehlerstand_neu);
+
+              // Weitere Zuweisungen
+              FieldByName('PROTOKOLL').Assign(Protokoll);
+              FieldByName('INTERN_INFO').Assign(INTERN_INFO);
+
+              // Speichern
+              if (Stat_Wert_Beitrag > 0) then
+              begin
+                Aenderungen.add(inttostr(RID) + ';' + Stat_Changes);
+                ForceHistorischer := (Stat_Wert_Ueberschreibungen > 0);
+                AuftragBeforePost(qAUFTRAG);
+                inc(Stat_Aenderungen);
+              end;
+              post;
+
+            end
+            else
+            begin
+              // Log, dass dieser RID nicht gefunden wurde!
+              inc(Stat_FehlendeRIDS);
+              Bericht.add('[E] (RID=' + inttostr(_RID) + ') (Z#=' + zaehlernummer_alt + ') Datensatz nicht gefunden!');
+            end;
+
+          end;
+        end;
+        if frequently(StartTime, 222) then
+          _(cFeedBack_ProcessMessages);
+      end;
+      close;
+    end;
+    qAUFTRAG.close;
+    INTERN_INFO.free;
+    Protokoll.free;
+    V.free;
+    V_Neu.free;
+    sTAN.free;
+  end;
+
+var
+  n: integer;
+  _sBearbeiter: integer; // typeof(sBearbeiter)
+  TAN: string;
+begin
+  result := true;
+  ERGEBNIS_TAN := 0;
+
+  if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
+exit;
+
+    //
+    _(cFeedBack_Label+3,'Vorlauf ...');
+    _(cFeedBack_ProcessMessages);
+
+    // Parameter auswerten
+
+
+    if assigned(Options) then
+    begin
+     pDownLoadTANs := Options.Values['DownLoadTANs']<>cIni_Deactivate;
+
+    end else
+    begin
+     // defaults
+     pDownloadTANs := true;
+     pPreserveTANsOnServer:= false; // was "
+     pMoveTANsToDiagnose:= true;
+    end;
+
+
+    CheckCreateDir(AuftragMobilServerPath);
+    CheckCreateDir(MdePath);
+    ErrorCount := 0;
+    DirList := TStringList.create;
+    Bericht := TStringList.create;
+    Aenderungen := TStringList.create;
+    IdFTP1 := TIdFTP.create;
+    Aenderungen.add('RID;INFO');
+
+    Bericht.add(datum + ' ' + uhr);
+    Stat_Meldungen := 0;
+    Stat_Aenderungen := 0;
+    Stat_FehlendeRIDS := 0;
+    StartTime := 0;
+
+    SolidFTP_Retries := 200;
+    SolidInit(IdFTP1);
+    with IdFTP1 do
+    begin
+      Host := nextp(iMobilFTP, ';', 0);
+      UserName := nextp(iMobilFTP, ';', 1);
+      Password := nextp(iMobilFTP, ';', 2);
+    end;
+
+    // neue TANs downloaden
+    if pDownloadTANs then
+    begin
+      _(cFeedBack_Label+3, 'FTP ...');
+      _(cFeedBack_ProcessMessages);
+
+      solidGet(
+        { } IdFTP1,
+        { } '',
+        { } cJonDa_ErgebnisMaske_deprecated_FTP,
+        { } cJonDa_ErgebnisMaske_deprecated,
+        { } AuftragMobilServerPath,
+        { } not(pPreserveTANsOnServer));
+
+      solidGet(
+        { } IdFTP1,
+        { } '',
+        { } cJonDa_ErgebnisMaske_utf8_FTP,
+        { } cJonDa_ErgebnisMaske_utf8,
+        { } AuftragMobilServerPath,
+        { } not(pPreserveTANsOnServer));
+      try
+        IdFTP1.Disconnect;
+      except
+      end;
+    end;
+
+    // TANs auflisten und verarbeiten
+    dir(AuftragMobilServerPath + cJonDa_ErgebnisMaske_deprecated, DirList);
+    DirList.sort;
+
+    // jede einzelne TAN abarbeiten
+    _(cFeedBack_ProgressBar_Max+1,IntToStr( DirList.count));
+
+    // Reihenfolge: Ältestes zuerst verarbeiten!
+    if (DirList.count > 0) then
+    begin
+
+      _sBearbeiter := sBearbeiter;
+      if (iJonDaAdmin >= cRID_FirstValid) then
+        sBearbeiter := iJonDaAdmin;
+
+      ERGEBNIS_TAN := e_w_gen('GEN_ERGEBNIS');
+      for n := 0 to pred(DirList.count) do
+      begin
+
+        try
+
+          // Verarbeiten!
+          TAN := ExtractFileNameWithoutExtension(DirList[n]);
+          ProcessNewData(AuftragMobilServerPath, TAN);
+
+          // Lokal löschen!
+          if pMoveTANsToDiagnose then
+            FileMove(AuftragMobilServerPath + TAN + '.*', DiagnosePath);
+
+        except
+          on e: exception do
+          begin
+            inc(ErrorCount);
+            _(cFeedBack_Log,cERRORText + ' ReadMobil: ' + 'TAN: ' + TAN + ': ' + e.message);
+            Bericht.add('[E] ' + DirList[n]);
+          end;
+        end;
+
+        _(cFeedBack_ProgressBar_Position, intToStr( n));
+        _(cFeedBAck_ProcessMessages);
+      end;
+      sBearbeiter := _sBearbeiter;
+    end;
+
+    //
+    Bericht.add('[I] Meldungen: ' + inttostr(Stat_Meldungen));
+    Bericht.add('[I] Änderungen: ' + inttostr(Stat_Aenderungen));
+    if (Stat_FehlendeRIDS > 0) then
+      Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
+
+    Bericht.add('-----------');
+    Bericht.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+    Aenderungen.SaveToFile(DiagnosePath + 'MobilAuslesen_' + inttostrN(ERGEBNIS_TAN, 6) + '.csv');
+
+    if assigned(SolidFTP_sLog) then
+      if (SolidFTP_sLog.count > 0) then
+        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_down_' + inttostrN(ERGEBNIS_TAN, 6) + '.log.txt');
+
+    DirList.free;
+    Bericht.free;
+    Aenderungen.free;
+    IDFTP1.free;
+
+    _(cFeedBack_ProgressBar_Position);
+    _(cFeedBack_Label+3);
+
+    // Im Verzeichnis aufräumen!
+    FileDelete(AuftragMobilServerPath + '*.DAT', 10);
+
+    result := (ErrorCount = 0);
+
+end;
+
+function e_w_WriteMobil(Options : TStringList = nil; fb : TFeedback = nil):boolean;
+
+{$I feedback.inc}
+
+var
+  ActionCount: integer;
+  BerichtL: TStringList;
+  LastTime: dword;
+  DatumsL: TgpIntegerList;
+  EinMonteurL: TgpIntegerList;
+  n: integer;
+  IndexH: THTMLTemplate;
+  Monteur: string;
+  LastGeraeteNo: string;
+  GeraeteNo: string;
+  ErrorCount: integer;
+  _Datum: TAnfixDate;
+  CloseLater: boolean;
+  JONDA_TAN: integer;
+  cPERSON: TIB_Cursor;
+  lAbgearbeitet: TgpIntegerList;
+  lAbgezogen: TgpIntegerList;
+  lMonteure: TgpIntegerList;
+  PERSON_R: integer;
+  FTPup: TStringList;
+  sMONTEUR_R: string;
+  MONTEUR_R: integer;
+
+  // Parameter
+  pFTPDiagnose: boolean; // war CheckBox7.Checked
+  pPurgeZero: boolean; // war CheckBox8.Checked
+  pUploadBaustellenInfos: boolean; // was CheckBox12.Checked
+  pUploadAbgearbeitete: boolean; // was CheckBox9.Checked
+  pUploadAbgezogene: boolean; // was CheckBox11.Checked
+  pAsHTML: boolean; // was CheckBox2.Checked
+  pFTPup: boolean; // was CheckBox1.Checked
+
+  procedure ShowStep;
+  begin
+    inc(ActionCount);
+    if frequently(LastTime, 333) then
+    begin
+      _(cFeedBack_ProgressBar_Position+1,IntToStr(ActionCount));
+      _(cFeedBack_ProcessMessages);
+    end;
+  end;
+
+  procedure doFTPup;
+  var
+    lUeberzaehligeGeraete: TStringList;
+    n, k: integer;
+  IdFTP1 : TIdFTP;
+  begin
+
+    lUeberzaehligeGeraete := TStringList.create;
+    IdFTP1 := TIdFTP.create(nil);
+    //
+    _(cFeedBack_Label+3,'FTP-Upload ...');
+    _(cFeedBack_ProcessMessages);
+    SolidFTP_Retries := 200;
+
+    SolidInit(IdFTP1);
+      with IdFTP1 do
+    if pFTPDiagnose then
+    begin
+        // Test Zugangsdaten
+        Host := cFTP_Host;
+        UserName := cFTP_UserName;
+        Password := cFTP_Password;
+    end else
+    begin
+        Host := nextp(iMobilFTP, ';', 0);
+        UserName := nextp(iMobilFTP, ';', 1);
+        Password := nextp(iMobilFTP, ';', 2);
+    end;
+
+    //
+    repeat
+
+      // alle alten ???.DAT löschen!
+      if pPurgeZero then
+        if (lMonteure.count = 0) then
+        begin
+
+          //
+          if not(SolidDir(IdFTP1, '', '*.DAT', '???.DAT', lUeberzaehligeGeraete)) then
+          begin
+            _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+            break;
+          end;
+          lUeberzaehligeGeraete.sort;
+
+          // die heute übertragenen Schützen, alles andere löschen!
+          for n := 0 to pred(FTPup.count) do
+          begin
+            k := lUeberzaehligeGeraete.indexof(nextp(FTPup[n], ';', 2));
+            if (k <> -1) then
+              lUeberzaehligeGeraete.delete(k);
+          end;
+
+        end;
+
+      //
+      if not(SolidPut(IdFTP1, FTPup)) then
+      begin
+        _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+        break;
+      end;
+
+      //
+      if pPurgeZero then
+        if not(SolidDel(IdFTP1, '', lUeberzaehligeGeraete)) then
+        begin
+          _(cFeedBack_Log,cERRORText + ' ' + SolidFTP_LastError);
+          break;
+        end;
+      try
+        IdFTP1.Disconnect;
+      except
+      end;
+      try
+        IdFTP1.free;
+      except
+      end;
+    until true;
+
+    if assigned(SolidFTP_sLog) then
+      if (SolidFTP_sLog.count > 0) then
+        SolidFTP_sLog.SaveToFile(DiagnosePath + 'FTP_up_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
+
+    lUeberzaehligeGeraete.free;
+  end;
+
+begin
+  result := true;
+
+  if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
+    exit;
+
+  JONDA_TAN := e_w_gen('GEN_JONDA');
+
+  //
+  _(cFeedBack_Label+3, 'Vorlauf ...');
+  _(cFeedBack_ProcessMessages);
+
+  ErrorCount := 0;
+
+  BerichtL := TStringList.create;
+  FTPup := TStringList.create;
+
+  IndexH := THTMLTemplate.create;
+  DatumsL := TgpIntegerList.create;
+  EinMonteurL := TgpIntegerList.create;
+  cPERSON := nCursor;
+  lAbgearbeitet := TgpIntegerList.create;
+  lMonteure := TgpIntegerList.create;
+
+  ActionCount := 0;
+  LastTime := 0;
+  for n := 0 to pred(JonDaVorlauf) do
+    DatumsL.add(DatePlus(DateGet, n));
+  FileDelete(MdePath + 'MonDa*.html');
+  InvalidateCache_Monteur;
+
+  if assigned(Options) then
+  for n := 0 to pred(Options.count) do
+  begin
+    PERSON_R := e_r_MonteurRIDFromKuerzel(nextp(Options[n], ',', 0));
+    if (PERSON_R > 0) then
+      lMonteure.add(PERSON_R);
+  end;
+
+  if pUploadBaustellenInfos then
+  begin
+    // App-Server über die Baustellen informieren
+    _(cFeedBack_Label+3, 'Baustellen-Infos ...');
+    _(cFeedBack_ProcessMessages);
+    e_r_Sync_Baustelle;
+    FTPup.add(MdePath + cFotoService_BaustelleFName + ';' + ';' + cFotoService_BaustelleFName);
+  end;
+
+  // App-Server über abgearbeitete informieren
+  if pUploadAbgearbeitete then
+  begin
+    _(cFeedBack_Label+3, 'Abgearbeitete ...');
+    _(cFeedBack_ProcessMessages);
+    lAbgearbeitet := e_r_sqlm(
+      { } 'select AUFTRAG.RID from AUFTRAG ' +
+      { } 'join BAUSTELLE on ' +
+      { } ' (BAUSTELLE.RID=AUFTRAG.BAUSTELLE_R) and' +
+      { } ' (BAUSTELLE.EXPORT_MONDA=''' + cC_True + ''')' +
+      { } 'where' +
+      { } ' (AUFTRAG.STATUS in (' +
+      { } inttostr(cs_Erfolg) + ',' +
+      { } inttostr(cs_NeuAnschreiben) + ',' +
+      { } inttostr(cs_Vorgezogen) + ',' +
+      { } inttostr(cs_Unmoeglich) + '))');
+    lAbgearbeitet.SaveToFile(MdePath + 'abgearbeitet.dat');
+    FTPup.add(MdePath + 'abgearbeitet.dat' + ';' + ';' + 'abgearbeitet.dat');
+  end;
+
+  with cPERSON do
+  begin
+    // alle Monteure mit Geräten ...
+    sql.add('SELECT');
+    sql.add(' person.RID,');
+    sql.add(' person.MONDA,');
+    sql.add(' anschrift.NAME1');
+    sql.add('FROM');
+    sql.add(' PERSON');
+    sql.add('join');
+    sql.add(' anschrift');
+    sql.add('on');
+    sql.add(' person.priv_anschrift_r=anschrift.rid');
+    sql.add('WHERE');
+    if (lMonteure.count > 0) then
+      sql.add(' (person.rid in ' + ListasSQL(lMonteure) + ') AND');
+    sql.add(' (person.MONDA IS NOT NULL) AND');
+    sql.add(' (person.MONDA<>'''')');
+    sql.add('ORDER BY');
+    sql.add(' person.MONDA,person.KUERZEL');
+
+    //
+    IndexH.LoadFromFile(HtmlVorlagenPath + cMonDaIndex);
+    IndexH.WriteGlobal('save&delete GERÄT');
+    IndexH.WriteGlobal('Titel=' + long2dateText(DateGet) + ' bis ' + long2dateText(DatePlus(DateGet, pred(JonDaVorlauf))));
+
+    ApiFirst;
+    _(cFeedBack_ProgressBar_Max+1,IntToStr( RecordCount));
+    LastGeraeteNo := '?';
+    while not(eof) do
+    begin
+
+      MONTEUR_R := FieldByName('RID').AsInteger;
+
+      //
+      IndexH.WriteLocal('load GERÄT');
+
+      // Monteure
+      EinMonteurL.clear;
+      EinMonteurL.add(MONTEUR_R);
+      Monteur := e_r_MonteurKuerzel(FieldByName('RID').AsInteger);
+
+      // Datums
+      DatumsL.clear;
+
+      // für "ewige" Termine, die auf das MDE drauf sollen!
+      DatumsL.add(cMonDa_ImmerAusfuehren);
+
+      // für nicht fixierte Termine, die der Monteur selbst wählen kann!
+      DatumsL.add(cMonDa_FreieTerminWahl);
+
+      // Heutiger Tag bis zum pred("Heutiger Tag" + Vorlauf)
+      for n := 0 to pred(JonDaVorlauf) do
+        DatumsL.add(DatePlus(DateGet, n));
+
+      // Geräte ID
+      GeraeteNo := FieldByName('MONDA').AsString;
+
+      // ev. noch weitere Tage hinzu?!
+      if assigned(Options) then
+        for n := 0 to pred(Options.count) do
+          if pos(Monteur + ',', Options[n]) = 1 then
+          begin
+            _Datum := date2long(nextp(Options[n], ',', 1));
+            if (DatumsL.indexof(_Datum) = -1) then
+              DatumsL.add(_Datum);
+          end;
+
+      // Neue Auftragsdatei anfangen?!
+      if (LastGeraeteNo <> GeraeteNo) then
+      begin
+        FileDelete(MdePath + GeraeteNo + '.DAT');
+        FileAlive(MdePath + GeraeteNo + '.DAT');
+        LastGeraeteNo := GeraeteNo;
+      end;
+
+      _(cFeedBack_Label+3, Monteur + '-' + GeraeteNo + ' ...');
+      _(cFeedBack_ProcessMessages);
+
+      // Ganz normale Terminliste erzeugen!
+      // imp pend
+      e_r_InfoBlatt(DatumsL, EinMonteurL, nil, nil, true).Free;
+
+      // Geräte-Daten hochladen
+      FTPup.add(MdePath + GeraeteNo + '.DAT' + ';' + ';' + GeraeteNo + '.DAT');
+
+      // Abgezogene
+      if pUploadAbgezogene then
+      begin
+
+        //
+        sMONTEUR_R := inttostr(MONTEUR_R);
+        lAbgezogen := e_r_sqlm(
+          { } 'select distinct ' +
+          { } ' H.MASTER_R ' +
+          { } 'from ' +
+          { } ' AUFTRAG H ' +
+          { } 'join AUFTRAG A on ' +
+          { } ' (A.STATUS<>6) and ' +
+          { } ' (A.RID=H.MASTER_R) and ' +
+          { } ' ( ' +
+          { } '  (A.MONTEUR1_R is null) or ' +
+          { } '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R is null)) or ' +
+          { } '  ((A.MONTEUR1_R<>' + sMONTEUR_R + ') and (A.MONTEUR2_R<>' + sMONTEUR_R + ')) ' +
+          { } ' ) ' +
+          { } 'where ' +
+          { } ' (H.STATUS=6) and ' +
+          { } ' (H.MONTEUREXPORT is not null) and ' +
+          { } ' ((H.MONTEUR1_R=' + sMONTEUR_R + ') or (H.MONTEUR2_R=' +
+          { } sMONTEUR_R + ')) ');
+
+        lAbgezogen.SaveToFile(MdePath + 'abgezogen.' + GeraeteNo + '.dat');
+
+        FTPup.add(MdePath + 'abgezogen.' + GeraeteNo + '.dat' + ';' + ';' + 'abgezogen.' + GeraeteNo + '.dat');
+
+        lAbgezogen.free;
+      end;
+
+      // Monteure-Kurz-Info
+      if pAsHTML then
+        FTPup.add(
+         {} MdePath + 'MonDa' + inttostr(EinMonteurL[0]) + cHTMLextension + ';' +
+         {} ';' +
+         {} 'MonDa' + inttostr(EinMonteurL[0]) + cHTMLextension);
+
+      //
+      with IndexH do
+      begin
+        WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
+        WriteLocal('Link=MonDa' + FieldByName('RID').AsString + cHTMLextension);
+        WriteLocal('Gerät=' + GeraeteNo);
+        // imp pend
+        //         WriteLocal('AnzTermine=' + inttostr(FormAuftragArbeitsplatz._LastTerminCount));
+        WritePageBreak;
+      end;
+      //
+
+      ShowStep; { 3. }
+
+      ApiNext;
+
+    end;
+
+    with IndexH do
+    begin
+      WriteValue;
+      SaveToFileCompressed(MdePath + 'Index.html');
+    end;
+
+    // FTP - Up
+    if pAsHTML then
+      FTPup.add(MdePath + 'Index.html' + ';' + ';' + 'index.html');
+
+  end;
+
+  // Wenn gewünscht FTP Upload!
+  if pFTPup then
+    doFTPup;
+
+  //
+  BerichtL.addstrings(IndexH);
+  BerichtL.SaveToFile(DiagnosePath + 'MobilVolumen_' + inttostrN(JONDA_TAN, 6) + '.log.txt');
+
+  cPERSON.free;
+  DatumsL.free;
+  EinMonteurL.free;
+  IndexH.free;
+  BerichtL.free;
+  lAbgearbeitet.free;
+  lMonteure.free;
+  FTPup.free;
+
+  _(cFeedBack_ProgressBar_Position+1);
+  _(cFeedBack_Label+3);
+
+  result := (ErrorCount = 0);
+end;
+
+function e_r_InfoBlatt(
+ {} Datum_RIDs,
+ {} Monteur_RIDs,
+ {} Single_RIDs: TgpIntegerList;
+ {} ItemInformiert: TList;
+ {} MondaMode: boolean = false;
+ {} FaxMode: boolean = false;
+ {} fb: TFeedback = nil): TStringList;
+
+{$I feedback.inc}
+
+const
+  chtml_MIDAUFTRAG = 'load AUFTRAG MID,AUFTRAG';
+  chtml_HEADER = 'load HEADER,HEADER';
+var
+  OutR: TMDERec;
+  StartTime: dword;
+  MonDaOutF: file of TMDERec;
+  InfoBlatt: THTMLTemplate;
+  RecN: Integer;
+  Auftrag_RID: Integer;
+  Master_RID: Integer;
+  SubItems: TStringlist;
+  AnschriftText: TStringlist;
+  BriefText: TStringlist;
+  Zaehlertext: TStringlist;
+  InfoText: TStringlist;
+  FirstNachmittag: boolean;
+  FirstData: boolean;
+  Baustellen: TStringlist;
+  n, m: Integer;
+  d: Integer;
+  FName: string;
+  _a, _b, _c: string;
+  InfoAboutOld: boolean;
+  TrueMonteurRIDs: TgpIntegerList;
+  _OrgterminStr: string;
+  LastTerminStr: string;
+  LastMaster_RID: Integer;
+  DatensammlerLokal: TStringlist;
+  DatensammlerGlobal: TStringlist;
+  cAUFTRAG, cHISTORISCH: TIB_Cursor;
+  PreLookl: TStringlist;
+  PreN, PreM: Integer;
+  Headers: Integer;
+  STATUS: TePhaseStatus;
+  STATUS_MASTER: TeVirtualPhaseStatus;
+  MondaBaustellenL: TList;
+  cBAUSTELLE: TIB_Cursor;
+  BAUSTELLE_R: Integer;
+  RawMode: boolean;
+  ZEITRAUM_VON: TANFiXDate;
+  ZEITRAUM_BIS: TANFiXDate;
+  AUSFUEHREN_SOLL: TANFiXDate;
+  Protokoll: TStringlist;
+  _RueckKanal: string;
+  sVorlagen: TStringlist;
+
+  // geht wieder raus
+  _MonteurRIDsCount: Integer;
+  _LastTerminCount: Integer;
+  v_MonteurTag: TANFiXDate;
+
+  function TerminStr: string; // aus dem aktuellen Datensatz einen
+  // eindeutigen Termin-String zaubern
+  begin
+    result := SubItems[twh_Monteur] + ' ' + // Monteur
+      SubItems[twh_WochentagKurz] + ' ' + // Wochentag
+      copy(SubItems[twh_Datum], 1, 5) + // Datum
+      AnsiUpperCase(SubItems[twh_ZeitText][1]) + '-' + // V/N
+      'KW' + //
+      inttostr(WeekGet(Date2Long(SubItems[twh_Datum])));
+  end;
+
+  function Hauptbaustelle: string;
+  begin
+    if (Baustellen.count = 0) then
+      result := SubItems[twh_Baustelle]
+    else
+      result := Baustellen[0];
+  end;
+
+  function FaxAusschluss: string;
+  var
+    AusschlussL: TgpIntegerList;
+  begin
+    result := '';
+    AusschlussL := e_r_sqlm('select RID from BAUSTELLE where TERMINLISTE_AUS=''' + cC_True + '''');
+    if (AusschlussL.count > 0) then
+    begin
+      result := ' (BAUSTELLE_R not in ' + ListasSQL(AusschlussL) + ') and';
+    end;
+    AusschlussL.free;
+  end;
+
+  function SortierBegriffStr: string;
+  begin
+    if (Monteur_RIDs.count > 1) then
+      result := AnsiUpperCase(Hauptbaustelle + '.' + // Baustelle
+        SubItems[twh_Monteur] + '.' + // Monteur
+        inttostr(Date2Long(SubItems[twh_Datum])) + '.' + // Datum
+        inttostr(CharCount('N', SubItems[twh_Zeit])) // V=0, N=1
+        )
+    else
+      result := AnsiUpperCase(inttostr(Date2Long(SubItems[twh_Datum])) + '.' +
+        // Datum
+        inttostr(CharCount('N', SubItems[twh_Zeit])) // V=0, N=1
+        );
+  end;
+
+  function TitelStr: string;
+  var
+    DatumsStr: string;
+  begin
+    DatumsStr := SubItems[twh_DatumText];
+    ersetze(',', ' ' + SubItems[twh_ZeitText] + ',', DatumsStr);
+    result := e_r_BaustelleNameFromKuerzel(Hauptbaustelle) + ': ' + SubItems[twh_MonteurText] + ' ' + DatumsStr +
+      ' (KW ' + inttostr(WeekGet(Date2Long(SubItems[twh_Datum]))) + ')';
+  end;
+
+  procedure OpenHeader;
+  begin
+    //
+    DatensammlerLokal.Add(chtml_HEADER);
+    DatensammlerLokal.Add('Tabelle Titel=' + TitelStr);
+    DatensammlerLokal.Add('Sortierbegriff=' + SortierBegriffStr);
+    inc(Headers);
+  end;
+
+  procedure CloseHeader(vormittags: boolean);
+  var
+    n: Integer;
+  begin
+    for n := pred(DatensammlerLokal.count) downto 0 do
+    begin
+      if (pos(chtml_HEADER, DatensammlerLokal[n]) = 1) then
+        break;
+      if (pos(chtml_MIDAUFTRAG, DatensammlerLokal[n]) = 1) then
+      begin
+        DatensammlerLokal[n] := 'load AUFTRAG LAST' + VormittagsToChar(vormittags) + ',AUFTRAG';
+        dec(Headers);
+        break;
+      end;
+    end;
+  end;
+
+  procedure ErmittleBaustellen;
+  var
+    n: Integer;
+  begin
+    Baustellen.clear;
+    for n := 0 to pred(PreLookl.count) do
+    begin
+      if not(TePhaseStatus(strtol(nextp(PreLookl[n], ';', 3))) in [ctsHistorisch, ctsUnmoeglich, ctsVorgezogen]) then
+        Baustellen.Add(e_r_BaustelleKuerzel(strtointdef(nextp(PreLookl[n], ';', 4), 0)));
+    end;
+    Baustellen.sort;
+    removeDuplicates(Baustellen);
+  end;
+
+begin
+  BeginHourGlass;
+
+  // Vorlauf
+  Baustellen := TStringlist.create;
+  AnschriftText := TStringlist.create;
+  BriefText := TStringlist.create;
+  Zaehlertext := TStringlist.create;
+  InfoText := TStringlist.create;
+  Protokoll := TStringlist.create;
+  TrueMonteurRIDs := TgpIntegerList.create;
+  DatensammlerLokal := TStringlist.create;
+  DatensammlerGlobal := TStringlist.create;
+  PreLookl := TStringlist.create;
+  MondaBaustellenL := TList.create;
+
+  if assigned(ItemInformiert) then
+  ItemInformiert.clear; // Auftrags-Sammler
+_LastTerminCount:=0;
+  result := TStringList.Create;
+
+  cAUFTRAG := nCursor;
+  with cAUFTRAG do
+  begin
+    sql.Add('SELECT');
+    sql.Add(' RID,VORMITTAGS,MASTER_R,STATUS,MONTEUREXPORT,');
+    sql.Add(' ZAEHLER_WECHSEL,ZAEHLER_INFO,MONTEUR_INFO,BAUSTELLE_R,');
+    sql.Add(' ZEITRAUM_VON,ZEITRAUM_BIS,PROTOKOLL');
+    sql.Add('FROM AUFTRAG');
+    if assigned(Single_RIDs) then
+    begin
+      // ##
+      Monteur_RIDs := TgpIntegerList.create;
+      Monteur_RIDs.Add(1);
+      Datum_RIDs := TgpIntegerList.create;
+      Datum_RIDs.Add(1);
+
+      sql.Add(' WHERE RID in (');
+      for n := pred(Single_RIDs.count) downto 0 do
+        if (n > 0) then
+          sql.Add(inttostr(Integer(Single_RIDs[n])) + ',')
+        else
+          sql.Add(inttostr(Integer(Single_RIDs[n])) + ')');
+    end
+    else
+    begin
+      sql.Add('where');
+      if FaxMode then
+        sql.Add(FaxAusschluss);
+      sql.Add(' (AUSFUEHREN=:AUSF) and');
+      sql.Add(' (VORMITTAGS IS NOT NULL) and');
+      sql.Add(' ((MONTEUR1_R=:MON) OR (MONTEUR2_R=:MON)) and');
+      sql.Add(' ((STATUS in (' + inttostr(ord(ctsTerminiert)) + ',' + inttostr(ord(ctsAngeschrieben)) + ',' +
+        inttostr(ord(ctsMonteurinformiert)) + ',' + inttostr(ord(ctsNeuAnschreiben)) + ',' + inttostr(ord(ctsRestant)) +
+        ',' + inttostr(ord(ctsVorgezogen)) + ',' + inttostr(ord(ctsErfolg)) + ',' + inttostr(ord(ctsUnmoeglich))
+        + ')) OR');
+      sql.Add('       ((STATUS=' + inttostr(ord(ctsHistorisch)) + ') and MONTEUREXPORT is not null)');
+      sql.Add('      )');
+    end;
+    sql.Add('ORDER BY');
+    sql.Add(' VORMITTAGS DESCENDING,'); // Y/N
+    sql.Add(' BAUSTELLE_R,'); // baustelle
+    sql.Add(' STRASSE,'); // PQ-Strassen
+    sql.Add(' NUMMER'); // AB-Nummern
+    prepare;
+  end;
+
+  cHISTORISCH := nCursor;
+  with cHISTORISCH do
+  begin
+    sql.Add('SELECT RID FROM AUFTRAG');
+    sql.Add('WHERE (MASTER_R=:CROSSREF) AND');
+    sql.Add('      (RID<>MASTER_R) AND');
+    sql.Add('      (MONTEUREXPORT IS NOT NULL) AND');
+    sql.Add('      (AUSFUEHREN IS NOT NULL)');
+    sql.Add('ORDER BY RID DESCENDING');
+    prepare;
+  end;
+
+
+  if MondaMode then
+  begin
+
+    // Datei anlegen
+    CheckCreateDir(MDEPath);
+    if (Monteur_RIDs.count = 1) then
+    begin
+      assignFile(MonDaOutF, MDEPath + e_r_MonteurGeraeteID(Monteur_RIDs[0]) + '.DAT');
+{$I-}
+      reset(MonDaOutF);
+{$I+}
+      if (ioresult <> 0) then
+        rewrite(MonDaOutF);
+      // Ans Dateiende positionieren!
+      seek(MonDaOutF, FileSize(MonDaOutF));
+    end
+    else
+    begin
+      assignFile(MonDaOutF, MDEPath + 'NEUES.DAT');
+      rewrite(MonDaOutF);
+    end;
+
+    // mögliche Baustellen auflisten
+    cBAUSTELLE := nCursor;
+    with cBAUSTELLE do
+    begin
+      sql.Add('select RID from BAUSTELLE where EXPORT_MONDA=''' + cC_True + '''');
+      ApiFirst;
+      while not(eof) do
+      begin
+        MondaBaustellenL.Add(pointer(FieldByName('RID').AsInteger));
+        APInext;
+      end;
+    end;
+    cBAUSTELLE.free;
+
+  end;
+
+  // !prepare!
+  DatensammlerGlobal.Add('save&delete AUFTRAG MID');
+  DatensammlerGlobal.Add('save&delete AUFTRAG LASTV');
+  DatensammlerGlobal.Add('save&delete AUFTRAG LASTN');
+  DatensammlerGlobal.Add('save&delete HEADER');
+
+  Headers := 0;
+  _MonteurRIDsCount := 0;
+  EnsureHourGlass;
+  _(cFeedBack_ProgressBar_max+1,IntToStr( Datum_RIDs.count * Monteur_RIDs.count));
+  _(cFeedBack_ProgressBar_Position+1);
+  for n := 0 to pred(Monteur_RIDs.count) do
+  begin
+
+    for d := 0 to pred(Datum_RIDs.count) do
+    begin
+
+      v_MonteurTag := Integer(Datum_RIDs[d]);
+
+      _(cFeedBack_ProgressBar_stepit+1);;
+      _(cFeedBack_processmessages);
+
+      with cAUFTRAG do
+      begin
+
+        if not(assigned(Single_RIDs)) then
+        begin
+          params.BeginUpdate;
+          ParamByName('AUSF').AsDate := long2datetime(v_MonteurTag);
+          ParamByName('MON').AsInteger := Monteur_RIDs[n];
+          params.EndUpdate(true);
+        end;
+
+        if (RecordCount = 0) then
+          continue;
+
+        // Vorlauf
+        PreLookl.clear;
+        ApiFirst;
+        while not(eof) do
+        begin
+          PreLookl.AddObject(
+            { [00] } FieldByName('RID').AsString + ';' +
+            { [01] } FieldByName('VORMITTAGS').AsString + ';' +
+            { [02] } FieldByName('MASTER_R').AsString + ';' +
+            { [03] } FieldByName('STATUS').AsString + ';' +
+            { [04] } FieldByName('BAUSTELLE_R').AsString, TObject(FieldByName('RID').AsInteger));
+          APInext;
+        end;
+
+        // Prüfung, ob was schief geht
+        // PreLookl.SaveToFile(DiagnosePath+'pre.0.txt');
+        PreM := 0;
+        repeat
+
+          if (nextp(PreLookl[PreM], ';', 3) <> '6') then
+          begin
+            // echter Datensatz! -> lösche alle historischen!
+            for PreN := pred(PreLookl.count) downto 0 do
+              if (PreN <> PreM) then
+                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
+                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2)) then // gleicher !master!
+                begin
+                  PreLookl.Delete(PreN);
+                  if (PreN < PreM) then
+                    dec(PreM);
+                end;
+
+          end
+          else
+          begin
+
+            // historischer! -> lösche alle älteren historischen
+            for PreN := pred(PreLookl.count) downto 0 do
+              if (PreN <> PreM) then
+                if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
+                  (nextp(PreLookl[PreN], ';', 2) = nextp(PreLookl[PreM], ';', 2)) and // gleicher !master!
+                  (nextp(PreLookl[PreN], ';', 3) = inttostr(ord(ctsHistorisch))) and // Staus=6
+                  (strtointdef(nextp(PreLookl[PreN], ';', 0), 0) < strtointdef(nextp(PreLookl[PreM], ';', 0), 0)) then
+                // RID kleiner
+                begin
+                  PreLookl.Delete(PreN);
+                  if (PreN < PreM) then
+                    dec(PreM);
+                end;
+          end;
+          inc(PreM);
+        until (PreM >= PreLookl.count);
+        // PreLookl.SaveToFile(DiagnosePath+'pre.1.txt');
+
+        // Ermittlung der aktive Baustellen!
+        ErmittleBaustellen;
+
+        // Jetzt kommt die Tatsächliche Ausgabe
+        RecN := 0;
+        FirstNachmittag := true;
+        FirstData := true;
+        LastTerminStr := '';
+        LastMaster_RID := -1;
+        ApiFirst;
+        while not(eof) do
+        begin
+
+          repeat
+
+            // Ein historischer Datensatz, jedoch ohne Monteur-Info
+            // d.h. der Monteur weis nix davon
+            Auftrag_RID := FieldByName('RID').AsInteger;
+            if (PreLookl.indexofobject(TObject(Auftrag_RID)) = -1) then
+              break;
+
+            // Bei freier Terminwahl kommen nur die "offenen"
+            // auf das Gerät!
+            STATUS := TePhaseStatus(FieldByName('STATUS').AsInteger);
+            if (v_MonteurTag = cMonDa_FreieTerminWahl) then
+              if STATUS in [ctsDatenFehlen, ctsErfolg, ctsNeuAnschreiben, ctsHistorisch, ctsVorgezogen, ctsUnmoeglich]
+              then
+                break;
+
+            Master_RID := FieldByName('MASTER_R').AsInteger;
+            BAUSTELLE_R := FieldByName('BAUSTELLE_R').AsInteger;
+            SubItems := e_r_AuftragItems(Auftrag_RID);
+
+            // OK, die Zeile kommt dazu
+            inc(RecN);
+            if assigned(ItemInformiert) then
+             ItemInformiert.Add(pointer(Auftrag_RID));
+
+            // Monda Daten erstellen
+            fillchar(OutR, sizeof(OutR), #0);
+            with OutR do
+            begin
+
+              { Feld-Besitzer: OrgaMon }
+              RID := Auftrag_RID;
+              Baustelle := Ansi2Oem(SubItems[twh_Baustelle]);
+              ABNummer := SubItems[twh_Auftrags_Nummer];
+              Monteur := Ansi2Oem(SubItems[twh_Monteur]);
+              Art := SubItems[twh_Art];
+              if (length(SubItems[twh_Zaehler_Nummer]) > cMonDa_FieldLength_ZaehlerNummer) then
+                zaehlernummer_alt := revCopy(SubItems[twh_Zaehler_Nummer], 1, cMonDa_FieldLength_ZaehlerNummer)
+              else
+                zaehlernummer_alt := SubItems[twh_Zaehler_Nummer];
+              reglernummer_alt := SubItems[twh_ReglerNummerAlt];
+              AUSFUEHREN_SOLL := Date2Long(SubItems[twh_Datum]);
+              vormittags := (SubItems[twh_Zeit] = 'V');
+              Zaehler_Name1 := Ansi2Oem(SubItems[twh_Verbraucher_Name]);
+              Zaehler_Name2 := Ansi2Oem(SubItems[twh_Verbraucher_Name2]);
+              Zaehler_Strasse := Ansi2Oem(SubItems[twh_Verbraucher_Strasse]);
+              Zaehler_Ort := Ansi2Oem(SubItems[twh_Verbraucher_Ort]);
+
+              { Feld-Besitzer: OrgaMon-App }
+              zaehlerstand_alt := '';
+              zaehlernummer_korr := '';
+              zaehlernummer_neu := '';
+              zaehlerstand_neu := '';
+              reglernummer_korr := '';
+              reglernummer_neu := '';
+              ProtokollInfo := '';
+              ausfuehren_ist_uhr := 0;
+              case STATUS of
+                ctsHistorisch:
+                  ausfuehren_ist_datum := cMonDa_Status_Wegfall;
+                ctsRestant:
+                  ausfuehren_ist_datum := cMonDa_Status_Restant;
+                ctsVorgezogen:
+                  ausfuehren_ist_datum := cMonDa_Status_Vorgezogen;
+                ctsUnmoeglich:
+                  ausfuehren_ist_datum := cMonDa_Status_Unmoeglich;
+                ctsErfolg:
+                  begin
+                    if FieldByName('ZAEHLER_WECHSEL').IsNull then
+                      ausfuehren_ist_datum := DateGet
+                    else
+                      ausfuehren_ist_datum := DateTime2long(FieldByName('ZAEHLER_WECHSEL').AsDate);
+                  end;
+              else
+                ausfuehren_ist_datum := cMonDa_Status_unbearbeitet;
+              end;
+
+            end;
+
+            repeat
+
+              if FirstData then
+              begin
+
+                // wenn es keine "v" Termine gibt ist das die letzte Tabelle
+                if (SubItems[twh_ZeitText][1] = 'n') then
+                  FirstNachmittag := false;
+
+                // Jetzt die Anzahl der informierten Monteure zählen
+                if (TrueMonteurRIDs.indexof(Monteur_RIDs[n]) = -1) then
+                begin
+                  inc(_MonteurRIDsCount);
+                  TrueMonteurRIDs.Add(Monteur_RIDs[n]);
+                end;
+
+                // Jetzt ev. eine neue Tabelle laden (incl. FF)
+                OpenHeader;
+
+                FirstData := false;
+                break;
+              end;
+
+              if FirstNachmittag then
+                if (SubItems[twh_ZeitText][1] = 'n') then
+                begin
+                  CloseHeader(true);
+                  OpenHeader;
+                  FirstNachmittag := false;
+                end;
+
+            until true;
+
+            // Auftrag laden
+            DatensammlerLokal.Add(chtml_MIDAUFTRAG);
+
+            if assigned(Single_RIDs) then
+            begin
+              _a := SubItems[twh_DatumText] + ':' + SubItems[twh_Monteur] + #13;
+            end
+            else
+            begin
+              _a := '';
+            end;
+
+            case STATUS of
+              ctsRestant, ctsHistorisch, ctsErfolg, ctsVorgezogen, ctsUnmoeglich:
+                DatensammlerLokal.Add('No=' + _a + '(' + SubItems[twh_Baustelle] + '-' + SubItems[twh_Auftrags_Nummer] +
+                  ')' + #13 + SubItems[twh_Zaehler_Nummer])
+            else
+              if (SubItems[twh_WordEmpfaenger] <> '') then
+              begin
+                DatensammlerLokal.Add('No=@' + Ansi2html(_a) + '<u>' + Ansi2html(SubItems[twh_Baustelle] + '-' +
+                  SubItems[twh_Auftrags_Nummer]) + '</u><br>' + Ansi2html(SubItems[twh_Zaehler_Nummer]));
+              end
+              else
+                DatensammlerLokal.Add('No=' + _a + SubItems[twh_Baustelle] + '-' + SubItems[twh_Auftrags_Nummer] + #13 +
+                  SubItems[twh_Zaehler_Nummer])
+
+            end;
+
+            DatensammlerLokal.Add('VN=' + AnsiUpperCase(SubItems[twh_ZeitText][1]) + #13 + SubItems[twh_Art]);
+
+            // zwingendes Blank
+            AnschriftText.clear;
+            _a := cutblank(SubItems[twh_Verbraucher_Strasse]);
+            ersetze(' ', cNonBreakableSpace, _a);
+            _b := cutblank(SubItems[twh_Verbraucher_Name]);
+            ersetze(' ', cNonBreakableSpace, _b);
+            _c := cutblank(SubItems[twh_Verbraucher_Name2]);
+            ersetze(' ', cNonBreakableSpace, _c);
+            AnschriftText.Add(cutblank(_a + ' ' + _b + ' ' + _c));
+
+            _a := cutblank(SubItems[twh_Verbraucher_Ort]);
+            ersetze(' ', cNonBreakableSpace, _a);
+            _b := cutblank(SubItems[twh_Verbraucher_Ortsteil]);
+            ersetze(' ', cNonBreakableSpace, _b);
+            AnschriftText.Add(cutblank(_a + ' ' + _b));
+
+            DatensammlerLokal.Add('Anschrift=' + HugeSingleLine(AnschriftText));
+
+            // Anschreiben
+            if
+            { } (
+              { } (SubItems[twh_Anschreiben_Strasse] <> '') or
+              { } (SubItems[twh_Anschreiben_Name] <> '') or
+              { } (SubItems[twh_Anschreiben_Name2] <> '') or
+              { } (SubItems[twh_Anschreiben_Ort] <> '')
+              { } ) and
+            { } (
+              { } (SubItems[twh_Verbraucher_Strasse] <> SubItems[twh_Anschreiben_Strasse]) or
+              { } (SubItems[twh_Verbraucher_Name] <> SubItems[twh_Anschreiben_Name]) or
+              { } (SubItems[twh_Verbraucher_Name2] <> SubItems[twh_Anschreiben_Name2]) or
+              { } (SubItems[twh_Verbraucher_Ort] <> SubItems[twh_Anschreiben_Ort])
+              { } ) then
+            begin
+              // Brief-Text
+              BriefText.clear;
+              _a := cutblank(SubItems[twh_Anschreiben_Strasse]);
+              ersetze(' ', cNonBreakableSpace, _a);
+              _b := cutblank(SubItems[twh_Anschreiben_Name]);
+              ersetze(' ', cNonBreakableSpace, _b);
+              _c := cutblank(SubItems[twh_Anschreiben_Name2]);
+              ersetze(' ', cNonBreakableSpace, _c);
+              BriefText.Add(cutblank(_a + ' ' + _b + ' ' + _c));
+              _a := cutblank(SubItems[twh_Anschreiben_Ort]);
+              ersetze(' ', cNonBreakableSpace, _a);
+              BriefText.Add(cutblank(_a));
+
+              DatensammlerLokal.Add('Brief=' + HugeSingleLine(BriefText));
+            end
+            else
+            begin
+              DatensammlerLokal.Add('Brief=');
+            end;
+
+            FieldByName('ZAEHLER_INFO').AssignTo(Zaehlertext);
+            DatensammlerLokal.Add('Zähler=' + HugeSingleLine(Zaehlertext, ', '));
+
+            FieldByName('MONTEUR_INFO').AssignTo(InfoText);
+
+            // Werte aus dem Protokoll zurück in die Terminänderunsliste
+            FieldByName('PROTOKOLL').AssignTo(Protokoll);
+            with Protokoll do
+              _RueckKanal := cutblank(values['I1'] + ' ' + values['I2'] + ' ' + values['I6'] + ' ' + values['I7'] + ' '
+                + values['I8']);
+            if (_RueckKanal <> '') then
+              InfoText.Add('[' + _RueckKanal + ']');
+
+            _OrgterminStr := TerminStr;
+
+            repeat
+
+              // historische
+              if (STATUS = ctsHistorisch) then
+              begin
+
+                // Nachladen des aktuellen Masters
+                SubItems := e_r_AuftragItems(Master_RID);
+                STATUS_MASTER := TeVirtualPhaseStatus(strtol(SubItems[twh_Status1]));
+                e_r_sql('select MONTEUR_INFO from AUFTRAG where RID=' + inttostr(Master_RID), InfoText);
+
+                repeat
+
+                  // - -
+                  if (STATUS_MASTER in [ctvTerminiert, ctvAngeschrieben, ctvMonteurinformiert, ctvRestant,
+                    ctvNeuAnschreiben, ctvAngeschriebenInformiert]) and (SubItems[twh_Monteur] <> '') then
+                  begin
+                    if (SubItems[twh_ZeitText] <> '?') then
+                      InfoText.insert(0, '   (neuer Termin:' + TerminStr + ')');
+                    InfoText.insert(0, '   !!!WEGFALL!!!');
+                    break;
+                  end;
+
+                  // - -
+                  case STATUS_MASTER of
+                    ctvErfolg, ctvErfolgGemeldet:
+                      begin
+                        InfoText.insert(0, '   (bereits durchgeführt!)');
+                        InfoText.insert(0, '   !!!WEGFALL!!!');
+                      end;
+                    ctvUnmoeglich, ctvUnmoeglichGemeldet:
+                      InfoText.insert(0, '   !!!UNMÖGLICH!!!');
+                    ctvVorgezogen, ctvVorgezogenGemeldet:
+                      InfoText.insert(0, '   !!!VORGEZOGEN!!!');
+                  else
+                    InfoText.insert(0, '   (kein neuer Termin!)');
+                    InfoText.insert(0, '   !!!WEGFALL!!!');
+                  end;
+
+                until true;
+                break;
+              end;
+
+              // unmögliche
+              if (STATUS = ctsUnmoeglich) then
+              begin
+                InfoText.insert(0, '   !!!UNMÖGLICH!!!');
+                break;
+              end;
+
+              // Restant
+              if (STATUS = ctsRestant) then
+              begin
+                InfoText.insert(0, '   !!!RESTANT!!!');
+                break;
+              end;
+
+              // Vorgezogen
+              if (STATUS = ctsVorgezogen) then
+              begin
+                InfoText.insert(0, '   !!!VORGEZOGEN!!!');
+                break;
+              end;
+
+              // Erledigt
+              if (STATUS = ctsErfolg) then
+              begin
+                InfoText.insert(0, '   !!!FERTIG!!!');
+                break;
+              end;
+
+              InfoAboutOld := false;
+              with cHISTORISCH do
+              begin
+                // den entsprechenden Historische Datensätze suchen
+                ParamByName('CROSSREF').AsInteger := Auftrag_RID;
+                ApiFirst;
+                while not(eof) do
+                begin
+                  InfoAboutOld := true; // es gibt alte!
+                  SubItems := e_r_AuftragItems(FieldByName('RID').AsInteger);
+                  if (TerminStr <> _OrgterminStr) then
+                  begin
+                    InfoText.insert(0, TerminStr);
+                    InfoText.insert(0, 'TERMIN ALT:');
+                    break;
+                  end;
+                  APInext;
+                end;
+              end;
+
+              // Wechselzeitraum!
+              if FieldByName('ZEITRAUM_VON').IsNotNull or FieldByName('ZEITRAUM_BIS').IsNotNull then
+              begin
+                ZEITRAUM_VON := DateTime2long(FieldByName('ZEITRAUM_VON').AsDate);
+                ZEITRAUM_BIS := DateTime2long(FieldByName('ZEITRAUM_BIS').AsDate);
+                if (abs(DateDiff(ZEITRAUM_VON, v_MonteurTag)) <= 7) or (abs(DateDiff(ZEITRAUM_BIS, v_MonteurTag)) <= 7)
+                then
+                  InfoText.insert(0, 'zwischen ' + copy(Long2date(ZEITRAUM_VON), 1, 6) + ' und ' +
+                    copy(Long2date(ZEITRAUM_BIS), 1, 6));
+              end;
+
+              // keine weiteren Texte bei Sonder-Terminen
+              if (OutR.AUSFUEHREN_SOLL <= cMonDa_FreieTerminWahl) then
+                break;
+
+              //
+              if FieldByName('MONTEUREXPORT').IsNull then
+              begin
+                if not(InfoAboutOld) then
+                  InfoText.insert(0, '   Neu!');
+                break;
+              end;
+
+              if not(InfoAboutOld) then
+                InfoText.insert(0, '   wie vereinbart');
+
+            until true;
+
+            if assigned(Single_RIDs) then
+              InfoText.insert(0, 'EINZELNE NACHMELDUNG:');
+
+            // Info ausgeben
+            if (InfoText.count > 0) then
+            begin
+
+              // ermitteln ob mit html gearbeitet wird
+              // das kann nicht in einzelnen Zeilen, sondern nur im ganzen
+              // Block gemacht werden
+              RawMode := false;
+              for m := 0 to pred(InfoText.count) do
+                if pos('@', InfoText[m]) = 1 then
+                begin
+                  RawMode := true;
+                  InfoText[m] := copy(InfoText[m], 2, MaxInt);
+                end;
+
+              if RawMode then
+                DatensammlerLokal.Add('Info=@' + HugeSingleLine(InfoText, '<br>'))
+              else
+                DatensammlerLokal.Add('Info=' + HugeSingleLine(InfoText));
+
+              OutR.Monteur_Info := Ansi2Oem(HugeSingleLine(InfoText));
+            end
+            else
+            begin
+              DatensammlerLokal.Add('Info=' + cNonBreakableSpace);
+            end;
+            DatensammlerLokal.Add('pagebreak');
+
+            // Datensatz auch an MDE
+            OutR.Zaehler_info := Ansi2Oem(HugeSingleLine(Zaehlertext, ' '));
+            if MondaMode then
+              if (MondaBaustellenL.indexof(pointer(BAUSTELLE_R)) <> -1) then
+                write(MonDaOutF, OutR);
+
+            inc(_LastTerminCount);
+          until true;
+          APInext;
+        end;
+
+        // Ende des ganzen Tages erreicht!
+        if (RecN > 0) then
+        begin
+          CloseHeader(false);
+          case Baustellen.count of
+            0:
+              DatensammlerLokal.Add('MehrInfo=' + 'An diesem Tag sind keine Termine vorhanden!');
+            1:
+              DatensammlerLokal.Add('MehrInfo=' + 'An diesem Tag kein Wechsel der Baustelle!');
+          else
+            DatensammlerLokal.Add('MehrInfo=' + 'Sie arbeiten heute auf ' + inttostr(Baustellen.count) + ' Baustellen ('
+              + HugeSingleLine(Baustellen, ',') + ')!');
+          end;
+          DatensammlerLokal.Add('NochMehrInfo=' + cOrgaMonCopyright);
+        end;
+
+      end;
+    end;
+  end;
+
+  cAUFTRAG.close;
+  cHISTORISCH.close;
+
+  cAUFTRAG.free;
+  cHISTORISCH.free;
+
+  if MondaMode then
+  begin
+    CloseFile(MonDaOutF);
+  end;
+
+  Baustellen.free;
+  AnschriftText.free;
+  BriefText.free;
+  Zaehlertext.free;
+  InfoText.free;
+  Protokoll.free;
+  TrueMonteurRIDs.free;
+  PreLookl.free;
+  MondaBaustellenL.free;
+
+  // hier jetzt noch den Index-HTML neu erzeugen!
+  if (Headers <> 0) then
+    _(cFeedBack_ShowMessage,'ERROR: html nicht vollständig korrekt!');
+
+  //
+  sVorlagen := TStringlist.create;
+  dir(HtmlVorlagenPath + 'Monteur.?.???.html', sVorlagen, false);
+  sVorlagen.sort;
+
+  // Jetzt belichten
+  InfoBlatt := THTMLTemplate.create;
+  InfoBlatt.LoadFromFile(HtmlVorlagenPath + sVorlagen[pred(sVorlagen.count)]);
+  sVorlagen.free;
+
+  with InfoBlatt do
+  begin
+    CanUseQuick := true;
+    WriteValue(DatensammlerLokal, DatensammlerGlobal);
+    if MondaMode then
+    begin
+      FName := MDEPath + 'MonDa' + inttostr(Monteur_RIDs[0]) + '.html';
+    end
+    else
+    begin
+      if (Monteur_RIDs.count > 1) then
+      begin
+        if (Datum_RIDs.count > 1) then
+          FName := WebPath + 'w' + inttostr(WeekGet(Integer(Datum_RIDs[0]))) + '.html'
+        else
+          FName := WebPath + 'g' + inttostr(v_MonteurTag) + '.html';
+      end
+      else
+        FName := WebPath + 'm' + inttostr(Monteur_RIDs[0]) + '-' + inttostr(v_MonteurTag) + '.html';
+    end;
+    SortPages;
+    SaveToFileCompressed(FName);
+  end;
+
+  InfoBlatt.free;
+  DatensammlerLokal.free;
+  DatensammlerGlobal.free;
+
+  _(cFeedBack_ProgressBar_Position+1);
+
+  with result do
+  begin
+    values['MonteurRIDsCount'] := IntTostr(_MonteurRIDsCount);
+    values['LastTerminCount'] := IntTostr(_LastTerminCount);
+    values['v_MonteurTag'] := IntTostr(v_MonteurTag);
+  end;
+
+end;
+
+function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
+begin
+  result := false;
+  // imp pend
+end;
+
+function e_w_Import(BAUSTELLE_R: integer): boolean;
+begin
+  result := false;
+  // imp pend
+end;
 
 
 begin

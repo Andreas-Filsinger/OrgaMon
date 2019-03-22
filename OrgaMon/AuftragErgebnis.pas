@@ -2609,15 +2609,6 @@ begin
             Password := Settings.values[cE_FTPPASSWORD];
           end;
 
-          (* // FTPES
-            IdSSLIOHandlerSocketOpenSSL1.PassThrough := false;
-            Port := 2001;
-            IOHandler := IdSSLIOHandlerSocketOpenSSL1;
-            UseTLS := utUseExplicitTLS;
-            AUTHCmd := tAuthTLS;
-            DataPortProtection := ftpdpsPrivate; // !!! Datenkanal auch verschlüsseln
-          *)
-
           // Prüfung der FTP Daten
           if (Host <> '') then
           begin

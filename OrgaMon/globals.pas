@@ -553,6 +553,8 @@ const
   cJondaProtokollDelimiter = '~';
   cProtPrefix = 'PROT';
   cProtExtension = '.txt';
+  // html-Dateien
+  cMonDaIndex = 'MonDa_Index' + cHTMLextension;
   // Eingabe.nnn.txt
   cHeader_Eingabe = 'DATUM;UHRZEIT;RID;REGLER_NUMMER_NEU;ZAEHLER_NUMMER_NEU';
   cActionRestantenLeeren = 'Restanten ignorieren';
@@ -1457,10 +1459,6 @@ type
 
   tverlage = array [0 .. pred(MaxVerlage)] of tVerlag;
   pverlage = ^tverlage;
-
-  // TMwstSatz = class(TObject)
-  // Wert: double;
-  // end;
 
 const
   clpaper = $00808080;
