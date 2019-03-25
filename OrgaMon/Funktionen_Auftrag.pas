@@ -188,8 +188,8 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 function e_r_Halbtage(MONTEUR_R, BAUSTELLE_R: Integer; ArbeitsTag: TANFiXDate): Integer;
 
 // OrgaMon-App
-function e_w_ReadMobil(Options : TStringList = nil; fb : TFeedback = nil): boolean;
-function e_w_WriteMobil(Options : TStringList = nil; fb : TFeedback = nil): boolean;
+function e_w_ReadMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean;
+function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil): boolean;
 
 // Geo
 function DeleteGeo(AUFTRAG_R: Integer): Integer;
@@ -6223,7 +6223,7 @@ var
 
   function NeuerAuftrag(var mderec: TMDErec): integer;
   var
-    qAUFTRAG: TIB_Query;
+    qAUFTRAG: TdboQuery;
     BAUSTELLE_R: integer;
     MONTEUR_R: integer;
     Protokoll: TStringList;
@@ -6328,7 +6328,7 @@ var
 
   procedure ProcessNewData(pPath: string; pTAN: string);
   var
-    qAUFTRAG: TIB_Query;
+    qAUFTRAG: TdboQuery;
 
     // gecachte Datenbankfelder
     INTERN_INFO: TStringList;
@@ -6548,12 +6548,12 @@ var
               Stat_Changes := '';
 
               // bisherige Werte auslesen
-              AUSFUEHREN := DateTime2long(FieldByName('AUSFUEHREN').AsDate);
+              AUSFUEHREN := DateTime2long(FieldByName('AUSFUEHREN').AsDateTime);
               VMITTAGS := FieldByName('VORMITTAGS').AsString;
               STATUS := FieldByName('STATUS').AsInteger;
-              Ergaenzungsmodus := FieldByName('EXPORT_TAN').IsNotNull;
-              FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
-              FieldByName('PROTOKOLL').AssignTo(Protokoll);
+              Ergaenzungsmodus := not(FieldByName('EXPORT_TAN').IsNull);
+              e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
+              e_r_sqlt(FieldByName('PROTOKOLL'),Protokoll);
 
               // Vergebliche Besuche
               V_Neu.clear;
@@ -6791,9 +6791,9 @@ exit;
     // Parameter auswerten
 
 
-    if assigned(Options) then
+    if assigned(pOptions) then
     begin
-     pDownLoadTANs := Options.Values['DownLoadTANs']<>cIni_Deactivate;
+     pDownLoadTANs := pOptions.Values['DownLoadTANs']<>cIni_Deactivate;
 
     end else
     begin
@@ -6928,7 +6928,7 @@ exit;
 
 end;
 
-function e_w_WriteMobil(Options : TStringList = nil; fb : TFeedback = nil):boolean;
+function e_w_WriteMobil(pOptions : TStringList = nil; fb : TFeedback = nil):boolean;
 
 {$I feedback.inc}
 
@@ -6947,7 +6947,7 @@ var
   _Datum: TAnfixDate;
   CloseLater: boolean;
   JONDA_TAN: integer;
-  cPERSON: TIB_Cursor;
+  cPERSON: TdboCursor;
   lAbgearbeitet: TgpIntegerList;
   lAbgezogen: TgpIntegerList;
   lMonteure: TgpIntegerList;
@@ -6979,7 +6979,7 @@ var
   var
     lUeberzaehligeGeraete: TStringList;
     n, k: integer;
-  IdFTP1 : TIdFTP;
+    IdFTP1: TIdFTP;
   begin
 
     lUeberzaehligeGeraete := TStringList.create;
@@ -6991,6 +6991,7 @@ var
 
     SolidInit(IdFTP1);
       with IdFTP1 do
+      begin
     if pFTPDiagnose then
     begin
         // Test Zugangsdaten
@@ -7003,7 +7004,7 @@ var
         UserName := nextp(iMobilFTP, ';', 1);
         Password := nextp(iMobilFTP, ';', 2);
     end;
-
+           end;
     //
     repeat
 
@@ -7067,6 +7068,29 @@ begin
   if not(FileExists(HtmlVorlagenPath + cMonDaIndex)) then
     exit;
 
+  if assigned(pOptions) then
+  begin
+    (*
+    pFTPDiagnose: boolean; // war CheckBox7.Checked
+    pPurgeZero: boolean; // war CheckBox8.Checked
+    pUploadBaustellenInfos: boolean; // was CheckBox12.Checked
+    pUploadAbgearbeitete: boolean; // was CheckBox9.Checked
+    pUploadAbgezogene: boolean; // was CheckBox11.Checked
+    pAsHTML: boolean; // was CheckBox2.Checked
+    pFTPup: boolean; // was CheckBox1.Checked
+     *)
+  end else
+  begin
+    pFTPDiagnose:= true;  // war CheckBox7.Checked
+    pPurgeZero:= true; // war CheckBox8.Checked
+    pUploadBaustellenInfos:= true; // was CheckBox12.Checked
+    pUploadAbgearbeitete:= true; // was CheckBox9.Checked
+    pUploadAbgezogene:= true; // was CheckBox11.Checked
+    pAsHTML:= true; // was CheckBox2.Checked
+    pFTPup:= true; // was CheckBox1.Checked
+
+  end;
+
   JONDA_TAN := e_w_gen('GEN_JONDA');
 
   //
@@ -7092,10 +7116,10 @@ begin
   FileDelete(MdePath + 'MonDa*.html');
   InvalidateCache_Monteur;
 
-  if assigned(Options) then
-  for n := 0 to pred(Options.count) do
+  if assigned(pOptions) then
+  for n := 0 to pred(pOptions.count) do
   begin
-    PERSON_R := e_r_MonteurRIDFromKuerzel(nextp(Options[n], ',', 0));
+    PERSON_R := e_r_MonteurRIDFromKuerzel(nextp(pOptions[n], ',', 0));
     if (PERSON_R > 0) then
       lMonteure.add(PERSON_R);
   end;
@@ -7188,11 +7212,11 @@ begin
       GeraeteNo := FieldByName('MONDA').AsString;
 
       // ev. noch weitere Tage hinzu?!
-      if assigned(Options) then
-        for n := 0 to pred(Options.count) do
-          if pos(Monteur + ',', Options[n]) = 1 then
+      if assigned(pOptions) then
+        for n := 0 to pred(pOptions.count) do
+          if pos(Monteur + ',', pOptions[n]) = 1 then
           begin
-            _Datum := date2long(nextp(Options[n], ',', 1));
+            _Datum := date2long(nextp(pOptions[n], ',', 1));
             if (DatumsL.indexof(_Datum) = -1) then
               DatumsL.add(_Datum);
           end;
@@ -7348,14 +7372,14 @@ var
   LastMaster_RID: Integer;
   DatensammlerLokal: TStringlist;
   DatensammlerGlobal: TStringlist;
-  cAUFTRAG, cHISTORISCH: TIB_Cursor;
+  cAUFTRAG, cHISTORISCH: TdboCursor;
   PreLookl: TStringlist;
   PreN, PreM: Integer;
   Headers: Integer;
   STATUS: TePhaseStatus;
   STATUS_MASTER: TeVirtualPhaseStatus;
   MondaBaustellenL: TList;
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
   BAUSTELLE_R: Integer;
   RawMode: boolean;
   ZEITRAUM_VON: TANFiXDate;
@@ -7615,7 +7639,11 @@ _LastTerminCount:=0;
           params.BeginUpdate;
           ParamByName('AUSF').AsDate := long2datetime(v_MonteurTag);
           ParamByName('MON').AsInteger := Monteur_RIDs[n];
+          {$ifdef fpc}
+          params.EndUpdate;
+          {$else}
           params.EndUpdate(true);
+          {$endif}
         end;
 
         if (RecordCount = 0) then
@@ -7759,7 +7787,7 @@ _LastTerminCount:=0;
                     if FieldByName('ZAEHLER_WECHSEL').IsNull then
                       ausfuehren_ist_datum := DateGet
                     else
-                      ausfuehren_ist_datum := DateTime2long(FieldByName('ZAEHLER_WECHSEL').AsDate);
+                      ausfuehren_ist_datum := DateTime2long(FieldByName('ZAEHLER_WECHSEL').AsDateTime);
                   end;
               else
                 ausfuehren_ist_datum := cMonDa_Status_unbearbeitet;
