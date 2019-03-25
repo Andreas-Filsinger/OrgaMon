@@ -78,7 +78,8 @@ function e_r_InfoBlatt(
 // AnzahlTermine=
 // MonteurRIDsCount=
 //
-
+function e_w_CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
+      Files: TStringList): boolean;
 function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
 function e_w_Import(BAUSTELLE_R: integer):boolean;
 
@@ -8150,6 +8151,13 @@ _LastTerminCount:=0;
     values['v_MonteurTag'] := IntTostr(v_MonteurTag);
   end;
 
+end;
+
+function e_w_CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
+      Files: TStringList): boolean;
+begin
+ result := false;
+ // imp pend
 end;
 
 function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
