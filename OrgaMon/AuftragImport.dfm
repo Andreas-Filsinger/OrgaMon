@@ -165,10 +165,6 @@ object FormAuftragImport: TFormAuftragImport
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 1
         Top = -1

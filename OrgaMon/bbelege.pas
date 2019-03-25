@@ -29,14 +29,13 @@ unit BBelege;
 interface
 
 uses
+  // System
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls,
   ExtCtrls, Grids, Mask,
-  Menus, ImgList,
-
-  // Tools
-  Wordindex,
+  Menus, ImgList, Buttons,
+  System.ImageList,
 
   // IB-Objects
   IB_Access,
@@ -47,9 +46,10 @@ uses
   IB_Grid,
   IB_Controls,
   IB_LocateEdit,
+  IB_EditButton,
 
-  // HeBu Projekt
-  Buttons, JvGIF, IB_EditButton, System.ImageList;
+  // Tools
+  Wordindex;
 
 type
   TFormBBelege = class(TForm)

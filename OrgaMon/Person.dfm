@@ -2782,6 +2782,10 @@ object FormPerson: TFormPerson
     object TabSheet12: TTabSheet
       Caption = 'CMS'
       ImageIndex = 11
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CheckListBox1: TCheckListBox
         Left = 0
         Top = 0

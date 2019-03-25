@@ -164,6 +164,9 @@ const
  cFeedBack_Label = 5*cFeedBack_SingleElement_MaxCount;
  cFeedBack_ListBox = 6*cFeedBack_SingleElement_MaxCount;
  cFeedBack_ShowMessage = 7*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Function = 8*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_doit = 9*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Edit = 10*cFeedBack_SingleElement_MaxCount;
 
  // return codes
  cFeedBack_CONT = 0;

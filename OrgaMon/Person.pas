@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -35,21 +35,19 @@ uses
   Windows, Messages, SysUtils,
   Classes, Graphics, Controls,
   Forms, Dialogs, Grids,
-  StdCtrls, Mask,
+  StdCtrls, Mask, Buttons, CheckLst,
+  ComCtrls, ExtCtrls, ToolWin,
 
   // Tools
   gplists,
 
   // IB-Objects
-  IB_Access,
-  IB_Components,
-  IB_Grid,
+  IB_Access, IB_Components, IB_Grid,
+  IB_NavigationBar, IB_SearchBar, IB_Controls,
+  IB_UpdateBar, IB_EditButton,
 
-  // HeBuAdmin-Projekt
-  Buttons,
-  JvGIF, JvExExtCtrls, JvRadioGroup,
-  CheckLst, IB_NavigationBar, IB_SearchBar, IB_Controls, ComCtrls, ExtCtrls,
-  IB_UpdateBar, ToolWin, IB_EditButton;
+  // OrgaMon
+  Funktionen_OLAP;
 
 type
   TFormPerson = class(TForm)
@@ -444,7 +442,7 @@ uses
   Vertrag, ExcelHelper, main,
   OrientationConvert, Datenbank,
   DruckSpooler, html, clipbrd,
-  wanfix32, GUIHelp,
+  systemd, wanfix32, GUIHelp,
   ZahlungECconnect;
 
 {$R *.DFM}
@@ -2196,7 +2194,7 @@ begin
   with IB_Query1 do
   begin
     close;
-    qSelectList(IB_Query1, FormOLAP.RohdatenFName(0));
+    qSelectList(IB_Query1, RohdatenFName(0));
     Open;
     inOLAPmode := true;
   end;

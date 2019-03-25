@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ uses
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, Buttons,
-  ExtCtrls, anfix32;
+  ExtCtrls, anfix32, Funktionen_OLAP;
 
 type
   TFormAuswertung = class(TForm)
@@ -281,7 +281,7 @@ begin
   GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
   GlobalVars.add('$Vorlage=''' + sBegriff + '''');
   GlobalVars.addstrings(Memo2.lines);
-  FormOLAP.StandardParameter(GlobalVars);
+  StandardParameter(GlobalVars);
 
   //
   // Idee für die Verallgemeinerung:

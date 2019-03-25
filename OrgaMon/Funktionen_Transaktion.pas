@@ -175,6 +175,8 @@ implementation
 uses
   anfix32,  wanfix32, c7zip,
   globals,
+
+  // IB-Objects
   IB_Components, IB_Access,
   math, html, Datenbank,
   Funktionen_Basis,

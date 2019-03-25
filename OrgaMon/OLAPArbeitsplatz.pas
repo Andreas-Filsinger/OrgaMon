@@ -57,7 +57,8 @@ uses
   ImgList, ComCtrls, JvGIF,
   ExtCtrls, StdCtrls, ToolWin,
   Grids, IB_Components, IB_Access,
-  gplists, Buttons, System.ImageList;
+  gplists, Buttons, System.ImageList,
+  Funktionen_OLAP;
 
 type
   TFormOLAPArbeitsplatz = class(TForm)
@@ -737,7 +738,7 @@ procedure TFormOLAPArbeitsplatz.LoadStartupView;
 begin
   //
   FormOLAP.DoContextOLAP(iOlapPath + 'Datenbanken.OLAP.txt');
-  Content_load(FormOLAP.RohdatenFName(0));
+  Content_load(RohdatenFName(0));
   quFillGrid;
 end;
 

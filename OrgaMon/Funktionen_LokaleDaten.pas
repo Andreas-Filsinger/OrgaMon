@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2012 - 2018  Andreas Filsinger
+  |    Copyright (C) 2012 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@ uses
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
+  Funktionen_OLAP,
   Funktionen_Auftrag,
   Funktionen_Buch,
   wordindex;

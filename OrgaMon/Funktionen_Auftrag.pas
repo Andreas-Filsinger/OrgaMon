@@ -1,10 +1,10 @@
-{
-  |      ___                  __  __
-  |     / _ \ _ __ __ _  __ _|  \/  | ___  _ __
-  |    | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
-  |    | |_| | | | (_| | (_| | |  | | (_) | | | |
-  |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
-  |               |___/
+ï»¿{
+  |Â Â Â Â Â Â ___                  __  __
+  |Â Â Â Â Â / _ \ _ __ __ _  __ _|  \/  | ___  _ __
+  |Â Â Â Â | | | | '__/ _` |/ _` | |\/| |/ _ \| '_ \
+  |Â Â Â Â | |_| | | | (_| | (_| | |  | | (_) | | | |
+  |Â Â Â Â Â \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
+  |Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â |___/
   |
   |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
@@ -33,11 +33,20 @@ unit Funktionen_Auftrag;
 interface
 
 uses
-  Classes,
+  Classes, Windows, SysUtils,
 {$IFNDEF fpc}
   IB_Components,
 {$ENDIF}
-  Sperre,
+
+  Funktionen_OLAP,
+
+  // FlexCel
+  FlexCel.Core, FlexCel.xlsAdapter,
+
+  // Indy
+  IdComponent, IdFTP,
+
+  SolidFTP, Sperre,
   dbOrgaMon, gplists, anfix32,
   globals, txHoliday;
 
@@ -50,6 +59,24 @@ const
   AuftragLastChangeRID: Integer = 0;
   HANDLUNGSBEDARF_POSTEN_RID: Integer = 0;
   HANDLUNGSBEDARF_MEILENSTEIN_RID: Integer = 0;
+
+var
+    // Zentrale Upload - TAN
+    HugeTransactionN: integer;
+    IdFTP1: TIdFtpRestart;
+    FlexCelXLS: TXLSFile;
+
+    // Statistik
+    Stat_Erfolg: TgpIntegerList;
+    Stat_Vorgezogen: TgpIntegerList;
+    Stat_Unmoeglich: TgpIntegerList;
+    Stat_Fail: TgpIntegerList;
+    Stat_meldungen: integer;
+    Stat_nichtEFRE: integer;
+    Stat_Attachments: TStringList;
+    Stat_FehlendeResourcen: TStringList;
+
+    MaxAnzahl: integer;
 
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: Integer); overload;
 procedure AuftragHistorischerDatensatz(AUFTRAG_R: TList); overload;
@@ -65,7 +92,7 @@ function e_r_AuftragItems(AUFTRAG_R: Integer): TStringList;
 function e_r_AuftragLine(AUFTRAG_R: Integer): string;
 procedure InvalidateCache_Auftrag;
 procedure e_r_Sync_Auftraege(BAUSTELLE_R: Integer);
-procedure e_r_Sync_AuftraegeAlle; // Bereitstellung von Infos für den Foto-Server
+procedure e_r_Sync_AuftraegeAlle; // Bereitstellung von Infos fÃ¼r den Foto-Server
 function e_r_InfoBlatt(
       { } Datum_RIDs,
       { } Monteur_RIDs,
@@ -74,14 +101,30 @@ function e_r_InfoBlatt(
       { } MondaMode: boolean = false;
       { } FaxMode: boolean = false;
       { } fb: TFeedBack = nil): TStringList;
+function nichtEFREFName(Settings: TStringList): string;
 //
 // AnzahlTermine=
 // MonteurRIDsCount=
 //
-function e_w_CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
-      Files: TStringList): boolean;
-function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
-function e_w_Import(BAUSTELLE_R: integer):boolean;
+function e_w_CreateFiles(
+ { } Settings: TStringList;
+ { } RIDs: TgpIntegerList;
+ { } FailL: TgpIntegerList;
+ { } Files: TStringList;
+ { } fb: TFeedBack = nil): boolean;
+
+
+procedure ClearStat;
+
+function e_w_Ergebnis(
+ { } BAUSTELLE_R: integer;
+ { } ManuellInitiiert: boolean;
+ { } fb: TFeedBack = nil): boolean;
+
+function e_w_Import(
+ { } BAUSTELLE_R: integer;
+ { } pOptions: TStringList = nil;
+ { } fb: TFeedBack = nil): boolean;
 
 // Mail Sachen
 procedure e_w_AuftrageMail(AUFTRAG_R: Integer);
@@ -163,8 +206,8 @@ procedure ReCreateAktiveBaustellen;
 
 // Auf welchen Baustellen arbeitet der Monteur "normalerweise" und in
 // Wirklichkeit an dem angegebenen Datum. Dazu wird die Planungsinformation
-// zu Rate gezogen. Rückgabewerte:
-// -1 = Fehler, Angaben führen zu Uneindeutigkeit
+// zu Rate gezogen. RÃ¼ckgabewerte:
+// -1 = Fehler, Angaben fÃ¼hren zu Uneindeutigkeit
 // 0  = keine Arbeit
 // n = RID der Baustelle auf der Gearbeitet oder geplant wurde
 //
@@ -174,14 +217,14 @@ function e_r_Baustelle(
   { } MOMENT: TDateTime;
   { } var Wertigkeit: TeWertigkeitBaustellenzuordnung): Integer;
 
-// Arbeit : Kurzinfo über Arbeit an diesem Tag,
+// Arbeit : Kurzinfo Ã¼ber Arbeit an diesem Tag,
 // incl. Formatierungsangaben "{...}"
 //
 function e_r_Arbeit(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 procedure EnsureCache_ArbeitBaustelle;
 procedure InvalidateCache_ArbeitBaustelle;
 
-// Einsatz : Kurzinfo über die Einsatzplanung an diesem Tag
+// Einsatz : Kurzinfo Ã¼ber die Einsatzplanung an diesem Tag
 function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
 
 // Arbeitshalbtage in dieser Woche
@@ -202,7 +245,7 @@ function e_r_BearbeiterEinstellungen(BEARBEITER_R: Integer): TStringList;
 // Budget
 function e_w_BudgetEinfuegen(BELEG_R: Integer; SubBudget: string = '*'; PERSON_R: Integer = 0;
   moreSettings: TStringList = nil): Integer;
-// Fügt unberechnetes Volumen aus offenen Bugets in den angegebenen
+// FÃ¼gt unberechnetes Volumen aus offenen Bugets in den angegebenen
 // Beleg ein.
 procedure e_w_BudgetAbschreiben(BELEG_R: Integer; FName: string);
 
@@ -233,7 +276,7 @@ function OrtIdentisch(a, b: string): boolean;
 function SAP2Art(Material: string): string;
 function csvCheck(const s: string): string;
 
-// Zählernummer / Zählerstand
+// ZÃ¤hlernummer / ZÃ¤hlerstand
 function KommaCheck(const s: string): string;
 
 implementation
@@ -241,7 +284,6 @@ implementation
 uses
   // Delphi
 {$IFDEF fpc}
-  graphics,
   fpchelper,
 {$ELSE}
   System.UITypes,
@@ -250,22 +292,22 @@ uses
   math,
 
   // types,
-  Types, SysUtils,
+  Graphics, Types,
 
   // Tools
   html, OrientationConvert, c7zip,
   CareTakerClient, Mapping, Geld,
-  WordIndex, ExcelHelper,
+  WordIndex, ExcelHelper, systemd,
 
   // OrgaMon
-  Funktionen_App,
-  Funktionen_Beleg,
-  Funktionen_Basis,
 {$IFNDEF CONSOLE}
   Datenbank,
 {$ENDIF}
-  // Indy
-  IdComponent, IdFTP, SolidFTP;
+  Funktionen_App,
+  Funktionen_Beleg,
+  Funktionen_Basis,
+  Funktionen_Transaktion,
+  PEM;
 
 var
   { Private-Deklarationen }
@@ -316,7 +358,7 @@ begin
 
   e_x_sql('update AUFTRAG set MASTER_R=RID where MASTER_R is null');
 
-  // Quell-Datensätze bestimmen
+  // Quell-DatensÃ¤tze bestimmen
   _AuftragAblage_Quelle := nCursor;
   _AuftragAblage_FieldNames := TStringList.create;
   with _AuftragAblage_Quelle do
@@ -390,7 +432,7 @@ begin
 
     ParamByName('CROSSREF').AsInteger := Master_R;
 
-    // Zunächst die Masterdatensätze
+    // ZunÃ¤chst die MasterdatensÃ¤tze
     ApiFirst;
     while not(eof) do
     begin
@@ -399,7 +441,7 @@ begin
       Apinext;
     end;
 
-    // Nun die Historischen Datensätze
+    // Nun die Historischen DatensÃ¤tze
     ApiFirst;
     while not(eof) do
     begin
@@ -440,7 +482,7 @@ begin
   begin
     //
     // eine Liste erstellen aller, die auf den Datensatz zeigen
-    // diese als erste löschen!
+    // diese als erste lÃ¶schen!
     //
     RIDs := TList.create;
     Auftrag := nQuery;
@@ -624,7 +666,7 @@ function OrtIdentisch(a, b: string): boolean;
   begin
     result := noblank(s);
     ersetze('ST.', 'SANKT', result);
-    ersetze('ß', 'SS', result);
+    ersetze('ÃŸ', 'SS', result);
     ersetze('A.D.', 'ANDER', result);
     result := AnsiUpperCase(result);
   end;
@@ -648,10 +690,10 @@ begin
     { } '@', 0), '#', 0)));
 
   ersetze('ST.', 'SANKT', result);
-  ersetze('ß', 'SS', result);
-  ersetze('Ä', 'AE', result);
-  ersetze('Ö', 'OE', result);
-  ersetze('Ü', 'UE', result);
+  ersetze('ÃŸ', 'SS', result);
+  ersetze('Ã„', 'AE', result);
+  ersetze('Ã–', 'OE', result);
+  ersetze('Ãœ', 'UE', result);
   ersetze('-', ' ', result);
   ersetze('''', ' ', result);
   ersetze('  ', ' ', result);
@@ -697,7 +739,7 @@ begin
     0:
       result := '?';
     1:
-      result := 'entgültig vergriffen';
+      result := 'entgÃ¼ltig vergriffen';
     2:
       result := 'zur Zeit vergriffen, Neuauflage jedoch ungewiss';
     3:
@@ -915,7 +957,7 @@ var
   MonteurChanged: boolean;
   MakeHistCopy: boolean;
 
-  // Nochmaliges Prüfen der Sperre
+  // Nochmaliges PrÃ¼fen der Sperre
   _Sperre: TSperre;
   Umstand: TStringList;
   Kontext: Integer;
@@ -923,7 +965,7 @@ var
   // cached Fields
   STATUS: TePhaseStatus; // aktueller Status
   MONTEUR_R: Integer; // ein Monteur
-  WOCHENTAG: Integer; // Wochentag der Ausführung
+  WOCHENTAG: Integer; // Wochentag der AusfÃ¼hrung
   _STATUS: TePhaseStatus; // Status bisher
   _sBearbeiter: Integer; // Barbeiter bisher
 
@@ -933,10 +975,10 @@ var
   AnzHistorische: Integer;
 
   OneWasReallyChanged: boolean;
-  // Änderung von NULL auf irgendwas oder echte Änderung?!
+  // Ã„nderung von NULL auf irgendwas oder echte Ã„nderung?!
   ZaehlerInfo: TStringList;
 
-  // Plausibilitätsprüfung
+  // PlausibilitÃ¤tsprÃ¼fung
   ZaehlerstandExact: double;
   JahresVerbrauch: double;
   Toleranzband: double;
@@ -954,7 +996,7 @@ begin
 
       if (STATUS = ctsHistorisch) then
       begin
-        // man kann überhaupt nur noch "MONTEUREXPORT" ändern!
+        // man kann Ã¼berhaupt nur noch "MONTEUREXPORT" Ã¤ndern!
         for n := 0 to pred(FieldCount) do
           if Fields[n].IsModified then
             if (Fields[n].FieldName <> 'MONTEUREXPORT') then
@@ -966,7 +1008,7 @@ begin
         // Aktuellen Datensatz-RID merken
         AuftragLastChangeRID := FieldByName('RID').AsInteger;
 
-        // Liste der geänderten Datenfelder erstellen!
+        // Liste der geÃ¤nderten Datenfelder erstellen!
         AuftragLastChangeFields.clear;
         for n := 0 to pred(FieldCount) do
           if Fields[n].IsModified then
@@ -997,13 +1039,13 @@ begin
               FieldByName('VORMITTAGS').clear;
 
           //
-          MonteurChanged := false; // wurde der Monteur verändert / gelöscht
-          TerminChanged := false; // wurde der Termin geändert / gelöscht?
+          MonteurChanged := false; // wurde der Monteur verÃ¤ndert / gelÃ¶scht
+          TerminChanged := false; // wurde der Termin geÃ¤ndert / gelÃ¶scht?
           InitialChange := false; // war es ein Ersteintrag?
           AnzHistorische := -1;
-          // war das überhaupt schon terminiert?
+          // war das Ã¼berhaupt schon terminiert?
 
-          // Änderung im Termin-Datum?
+          // Ã„nderung im Termin-Datum?
           repeat
 
             if (cOldVersion.FieldByName('AUSFUEHREN').AsDate <> FieldByName('AUSFUEHREN').AsDate) then
@@ -1020,7 +1062,7 @@ begin
 
           until yet;
 
-          // Änderung in der Monteur-Zuordnung?
+          // Ã„nderung in der Monteur-Zuordnung?
           repeat
 
             if (cOldVersion.FieldByName('MONTEUR1_R').AsString <> FieldByName('MONTEUR1_R').AsString) then
@@ -1040,7 +1082,7 @@ begin
           if TerminChanged and FieldByName('VERBRAUCH_PRO_JAHR').IsNotNull then
           begin
 
-            // Die Plausibilitätskennzahlen neu errechnen
+            // Die PlausibilitÃ¤tskennzahlen neu errechnen
             JahresVerbrauch := strtodouble(FieldByName('VERBRAUCH_PRO_JAHR').AsString);
 
             ZaehlerstandExact := strtodouble(FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString) +
@@ -1060,7 +1102,7 @@ begin
             ZaehlerInfo.free;
           end;
 
-          // Verlust des Monteur-Informiert bei änderungen von
+          // Verlust des Monteur-Informiert bei Ã¤nderungen von
           //
           // * termin
           // * Monteur
@@ -1196,7 +1238,7 @@ begin
               STATUS := ctsMonteurInformiert;
             end;
 
-            // Ist wieder ein Termin drin, muss Neu anschreiben gelöscht werden!
+            // Ist wieder ein Termin drin, muss Neu anschreiben gelÃ¶scht werden!
             if FieldByName('VORMITTAGS').IsNotNull and FieldByName('AUSFUEHREN').IsNotNull then
               STATUS := ctsTerminiert;
 
@@ -1204,7 +1246,7 @@ begin
           else
           begin
 
-            // Word-Export darf gelöscht werden!
+            // Word-Export darf gelÃ¶scht werden!
             if FieldByName('WORDEXPORT').IsNotNull then
               FieldByName('WORDEXPORT').clear;
           end;
@@ -1318,7 +1360,7 @@ begin
           end;
         end;
 
-        // EXPORT_TAN löschung sicherstellen!
+        // EXPORT_TAN lÃ¶schung sicherstellen!
         if FieldByName('EXPORT_TAN').IsNotNull then
           if not(STATUS in [ctsVorgezogen, ctsUnmoeglich, ctsErfolg, ctsHistorisch]) then
             FieldByName('EXPORT_TAN').clear;
@@ -1331,7 +1373,7 @@ begin
             if ((FieldByName('AUSFUEHREN').IsNull) or (pos(FieldByName('VORMITTAGS').AsString,
               cVormittagsChar + cNachmittagsChar) = 0)) and FieldByName('ZAEHLER_WECHSEL').IsNull then
             begin
-              // unvollständige Daten!
+              // unvollstÃ¤ndige Daten!
               FieldByName('STATUS').AsInteger := ord(ctsDatenFehlen);
               FieldByName('WORDEXPORT').clear;
               FieldByName('FITNESS').AsInteger := ord(cisOK);
@@ -1365,7 +1407,7 @@ begin
           (pos(FieldByName('VORMITTAGS').AsString, cVormittagsChar + cNachmittagsChar) > 0) and
           (FieldByName('AUSFUEHREN').AsDate > long2datetime(cMonDa_ErsterTermin)) then
         begin
-          // Status-Flag prüfen, SPERREN!
+          // Status-Flag prÃ¼fen, SPERREN!
           _Sperre := TSperre.create;
           Umstand := TStringList.create;
 
@@ -1593,7 +1635,7 @@ begin
     end;
 
     //
-    if (pos('WÄRME', Material) > 0) then
+    if (pos('WÃ„RME', Material) > 0) then
     begin
       result := 'WM';
       break;
@@ -1809,7 +1851,7 @@ begin
         //
         SolidLog(cINFOText + ' ' + FotoFTP.UserName + ' ...');
 
-        // Prüfungen
+        // PrÃ¼fungen
         if (FotoFTP.Host = '') then
           raise Exception.create(cE_FTPHOST+' hat keinen Eintrag');
         if (FotoFTP.UserName = '') then
@@ -1832,7 +1874,7 @@ begin
           if (LokaleBilder.values[RemoteBilder[n]] = '') then
           begin
 
-            // Prüfen ob es die Datei ev. schon gibt
+            // PrÃ¼fen ob es die Datei ev. schon gibt
             LocalFSize := FSize(WorkPath + RemoteBilder[n]);
 
             if (LocalFSize > cFSize_NotExists) then
@@ -1975,7 +2017,7 @@ begin
   if DebugMode then
    AppendStringsToFile(sParameter, DiagnosePath + 'Fotos-' + DatumLog + '.log.txt','foto(');
 
-  // Funktion ausführen
+  // Funktion ausfÃ¼hren
   sResult := FotoName_JonDaX.foto(sParameter);
 
   if DebugMode then
@@ -2089,7 +2131,7 @@ begin
     while not(MEILENSTEIN.eof) do
     begin
 
-      // Dauer erhöhen
+      // Dauer erhÃ¶hen
       if not(MEILENSTEIN.FieldByName('DAUER').IsNull) then
       begin
         _DAUER := MEILENSTEIN.FieldByName('DAUER').AsInteger;
@@ -2136,7 +2178,7 @@ begin
         end;
       end;
 
-      // nächster Datensatz
+      // nÃ¤chster Datensatz
       MEILENSTEIN.next;
     end;
 
@@ -2166,7 +2208,7 @@ begin
         FieldByName('GRUPPE_R').clear;
       end;
 
-      // BESITZ-ÜBERNAHME
+      // BESITZ-ÃœBERNAHME
       if FieldByName('OWNER_R').IsNull then
         if not(Auftrag.FieldByName('OWNER_R').IsNull) then
           FieldByName('OWNER_R').AsInteger := Auftrag.FieldByName('OWNER_R').AsInteger;
@@ -2560,7 +2602,7 @@ var
 
 begin
   //
-  // Idee, Haltbarkeitsdatum des Cache einführen, danach
+  // Idee, Haltbarkeitsdatum des Cache einfÃ¼hren, danach
   // !muss! neu geladen werden -> AutoInvalidate
   //
   if not(assigned(CacheBaustelle)) then
@@ -3017,10 +3059,10 @@ begin
     ApiFirst;
     if not(eof) then
     begin
-      // Bundesland für weitere Prüfungen zurückgeben
+      // Bundesland fÃ¼r weitere PrÃ¼fungen zurÃ¼ckgeben
       result := FieldByName('BUNDESLAND_IDX').AsInteger;
 
-      // ganz normale Ausführung laden
+      // ganz normale AusfÃ¼hrung laden
       if not(FieldByName('VON').IsNull) and not(FieldByName('BIS').IsNull) then
         Sperre.Add(FieldByName('VON').AsDateTime, FieldByName('BIS').AsDateTime, false, cSperreAusfuehren,
           cPrio_BaustellenSperre);
@@ -3544,9 +3586,9 @@ begin
         { [43] }
         e_r_sqlt(FieldByName('PROTOKOLL'), MoreInfo);
         result.Add(HugeSingleLine(MoreInfo, cProtokollTrenner));
-        { [44] }// Datum Zählerwechsel
+        { [44] }// Datum ZÃ¤hlerwechsel
         result.Add(Long2date(DateTime2Long(FieldByName('ZAEHLER_WECHSEL').AsDateTime)));
-        { [45] }// Uhr Zählerwechsel
+        { [45] }// Uhr ZÃ¤hlerwechsel
         result.Add(secondstostr(datetime2seconds(FieldByName('ZAEHLER_WECHSEL').AsDateTime)));
         { [46] }
         result.Add(FieldByName('REGLER_NR').AsString);
@@ -3641,7 +3683,7 @@ end;
 
 
 //
-// gemeinsamer Cache für "e_r_Arbeit", "e_r_Baustelle" "e_r_Einsatz"
+// gemeinsamer Cache fÃ¼r "e_r_Arbeit", "e_r_Baustelle" "e_r_Einsatz"
 //
 
 var
@@ -3667,13 +3709,13 @@ var
   e_r_Baustelle_Einsatz: TSperre;
 
   // Arbeitszeitmodell
-  e_r_Baustelle_mitModell: TgpIntegerList; // Prüfung, ob ein Modell vorliegt
+  e_r_Baustelle_mitModell: TgpIntegerList; // PrÃ¼fung, ob ein Modell vorliegt
   // [Kontext=Baustelle] Arbeitstage sind eingetragen
   e_r_Baustelle_Modell: TSperre; // Arbeit= bei Baustellen
 
   e_r_Baustelle_Stopp: TSperre; // Baustopp= bei Baustellen
 
-  // speichert den letzten Tag der Einplanung für jeden Monteur
+  // speichert den letzten Tag der Einplanung fÃ¼r jeden Monteur
   e_r_PlanungsEndeMonteure: TgpIntegerList;
   e_r_PlanungsEndeDatum: array of TDateTime;
 
@@ -3960,7 +4002,7 @@ var
   BAUSTELLE_R: Integer;
   BAUSTELLE_R_ZUORDNUNG: Integer;
 
-  // Enthält die Liste immer wieder dieselbe Kostenstelle, so darf
+  // EnthÃ¤lt die Liste immer wieder dieselbe Kostenstelle, so darf
   // sie auf eine reduziert werden
   procedure Reduziere(const Baustellen: TgpIntegerList);
 
@@ -4021,7 +4063,7 @@ begin
       // Einsatz auf 2 oder mehr Baustellen
       if (BAUSTELLE_R_ZUORDNUNG <> TColors.SysDefault) then
       begin
-        // Die vorhandene Zuordnung überstrahlt nun dieses Problem ...
+        // Die vorhandene Zuordnung Ã¼berstrahlt nun dieses Problem ...
         result := BAUSTELLE_R_ZUORDNUNG;
         // ... mit entsprechender Wertigkeit
         if (EchteEinplanung.indexof(BAUSTELLE_R_ZUORDNUNG) <> -1) then
@@ -4103,7 +4145,7 @@ begin
       break;
     end;
 
-    // "Prio 1" Zuordnung: etwas "schwächer" als echte Arbeit, aber stärker als
+    // "Prio 1" Zuordnung: etwas "schwÃ¤cher" als echte Arbeit, aber stÃ¤rker als
     // Vorrangbaustellen und Hauptbaustellen
     if (BAUSTELLE_R_ZUORDNUNG <> TColors.SysDefault) then
     begin
@@ -4118,7 +4160,7 @@ begin
 
       if ArbeitsTag then
       begin
-        // Zuordnung gültig
+        // Zuordnung gÃ¼ltig
         result := BAUSTELLE_R_ZUORDNUNG;
         Wertigkeit := cwb_Zuordnung;
         break;
@@ -4143,13 +4185,13 @@ begin
       break;
     end;
 
-    // Suche eine Baustelle die überhaupt Arbeit an diesem Tag anbietet
+    // Suche eine Baustelle die Ã¼berhaupt Arbeit an diesem Tag anbietet
     for n := pred(HauptBaustellen.count) downto 0 do
       // nur Baustellen mit Arbeitszeitmodell
       if (e_r_Baustelle_mitModell.indexof(HauptBaustellen[n]) <> -1) then
         // heute keine Arbeit
         if (e_r_Baustelle_Modell.CheckIt(MOMENT, HauptBaustellen[n]) = TColors.SysDefault) then
-          // löschen
+          // lÃ¶schen
           HauptBaustellen.Delete(n);
 
     // Reduziere, wenn identische Kostenstellen
@@ -4174,8 +4216,8 @@ begin
         break;
       end;
 
-      // Es gibt mehrere Favoriten -> wähle die Baustelle, die
-      // einer mit einem Einplanungsdatum am nächsten liegt!
+      // Es gibt mehrere Favoriten -> wÃ¤hle die Baustelle, die
+      // einer mit einem Einplanungsdatum am nÃ¤chsten liegt!
       BAUSTELLE_R := e_r_Baustelle_Einsatz.CheckNear(MOMENT, MONTEUR_R);
       if (BAUSTELLE_R <> TColors.SysDefault) then
         for n := pred(HauptBaustellen.count) downto 0 do
@@ -4186,7 +4228,7 @@ begin
 
     if (HauptBaustellen.count = 1) then
     begin
-      // genau für eine Baustelle ein Favorit
+      // genau fÃ¼r eine Baustelle ein Favorit
       result := HauptBaustellen[0];
       HauptBaustellen.free;
       Wertigkeit := cwb_Vermutung;
@@ -4222,7 +4264,7 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
       // String bilden
       sBaustelle := e_r_BaustelleKuerzel(BAUSTELLE_R) + Markierung;
       if (e_r_Baustelle_Vorrang.indexof(BAUSTELLE_R) <> -1) then
-        sBaustelle := sBaustelle + '§';
+        sBaustelle := sBaustelle + 'Â§';
 
       if (e_r_Baustelle_mitModell.indexof(BAUSTELLE_R) <> -1) then
       begin
@@ -4286,7 +4328,7 @@ function e_r_Einsatz(MONTEUR_R: Integer; ArbeitsTag: TANFiXDate): string;
       for n := 0 to pred(EchteEinplanung.count) do
         addBaustelleAs(EchteEinplanung[n], '!!');
 
-      // Sollte es keinen Termin geben, Berechne mal den komplementär-Termin
+      // Sollte es keinen Termin geben, Berechne mal den komplementÃ¤r-Termin
       if (EchteEinplanung.count = 0) then
       begin
         EchteEinplanungAndererHalbtag := e_r_Baustelle_Einsatz.CheckEm(e_r_AndererHalbtag(DATUM), MONTEUR_R);
@@ -4544,8 +4586,8 @@ begin
     end;
     cAUFTRAG.free;
 
-    // Jetzt für alle Monteure das maximale Planungs-Datum bestimmen
-    // darüber hinaus, wird das Arbeitszeitmodell nicht angewendet!
+    // Jetzt fÃ¼r alle Monteure das maximale Planungs-Datum bestimmen
+    // darÃ¼ber hinaus, wird das Arbeitszeitmodell nicht angewendet!
     e_r_PlanungsEndeMonteure := e_r_Baustelle_Einsatz.Kontexte;
     SetLength(e_r_PlanungsEndeDatum, e_r_PlanungsEndeMonteure.count);
     for i := 0 to pred(e_r_PlanungsEndeMonteure.count) do
@@ -4585,7 +4627,7 @@ begin
     e_r_Baustelle_Stopp.free;
     e_r_PlanungsEndeMonteure.free;
     e_r_Arbeit_MonteurZuordnung.free;
-    // imp pend: Prüfen, ob Objects freigegeben werden
+    // imp pend: PrÃ¼fen, ob Objects freigegeben werden
     SetLength(e_r_PlanungsEndeDatum, 0);
   end;
 end;
@@ -4703,7 +4745,7 @@ var
 
   Baustelle: string;
 
-  // Für Excel
+  // FÃ¼r Excel
   xTable: TList;
   xSubs: TStringList;
   xOneLine: string;
@@ -4741,13 +4783,13 @@ begin
   e_r_ProtokollExport(BAUSTELLE_R, ProtokollFelder);
   e_r_InternExport(BAUSTELLE_R, InternFelder);
 
-  // Kopf Zeile für Excel
+  // Kopf Zeile fÃ¼r Excel
   xNewLine;
   xOneLine := cWordHeaderLine;
   while xOneLine <> '' do
     xSubs.Add(nextp(xOneLine, ';'));
 
-  // Spalten Optionen für Excel
+  // Spalten Optionen fÃ¼r Excel
   with xOptions do
   begin
     Add('Datum=DATE');
@@ -4898,7 +4940,7 @@ begin
       if not(FileCopy(conversionOutFName, xPath + cE_FotoBenennung + '-' + Baustelle + '.csv')) then
         break;
 
-      // Löschen der "doppelten" Datei
+      // LÃ¶schen der "doppelten" Datei
       if not(FileDelete(conversionOutFName)) then
         break;
 
@@ -4968,7 +5010,7 @@ var
 begin
   AktiveBaustellen := TStringList.create;
 
-  // Baustellen mit Aufträgen suchen
+  // Baustellen mit AuftrÃ¤gen suchen
   cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
@@ -5161,8 +5203,8 @@ var
   ZeitAbschnittVerwenden: boolean;
   n: Integer;
 
-  // Summierung Über Kostenstellen, die am Anfang der Info
-  // in eckigen Klammern angegeben werden müssen
+  // Summierung Ãœber Kostenstellen, die am Anfang der Info
+  // in eckigen Klammern angegeben werden mÃ¼ssen
   sKostenstellen: TStringList;
   // in Objects : Arbeitszeitsumme in diesem Budget!
 
@@ -5175,12 +5217,12 @@ var
     end;
   end;
 
-  // ermittelter Stundensatz für diese Arbeit
+  // ermittelter Stundensatz fÃ¼r diese Arbeit
   function Stundensatz: double;
   begin
     with cARBEIT do
     begin
-      // erst mal über den Abrechnungsbeleg versuchen!
+      // erst mal Ã¼ber den Abrechnungsbeleg versuchen!
       if not(FieldByName('BELEG_R').IsNull) then
         result := e_r_sqld(
         {} 'select PREIS from POSTEN where ' +
@@ -5267,7 +5309,7 @@ var
     if (StundenSaetze.count = 1) then
     begin
       //
-      // imp pend: Kostenstellen bei mehreren Stundensätzen!!!
+      // imp pend: Kostenstellen bei mehreren StundensÃ¤tzen!!!
       //
       Stundensatz := strtodoubledef(nextp(StundenSaetze[0], '=', 0), 0);
       sKostenstellen.sort;
@@ -5606,7 +5648,7 @@ begin
       while not(eof) do
       begin
 
-        // Diese Posten überhaupt nehmen?
+        // Diese Posten Ã¼berhaupt nehmen?
         // Nachsehen, ob das angegebene Wort im Subbudget enthalten ist.
         ZeitAbschnittVerwenden := (SubBudget = '*') and (pFromDatum = cIllegalDate);
 
@@ -5631,7 +5673,7 @@ begin
 
         end;
 
-        // Arbeitszeitposten hinzufügen
+        // Arbeitszeitposten hinzufÃ¼gen
         if ZeitAbschnittVerwenden then
         begin
 
@@ -5857,18 +5899,18 @@ function e_w_BaustelleLoeschen(BAUSTELLE_R: Integer): boolean;
 begin
   result := false;
   try
-    // Bei allen Daten die Referenz zerstören
+    // Bei allen Daten die Referenz zerstÃ¶ren
     e_x_sql(
       { } 'update AUFTRAG set MASTER_R=null where' +
-      { Datensätze der Hauptbaustelle } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or' +
-      { Historische Datensätze in anderen Baustellen } ' (MASTER_R in ' +
+      { DatensÃ¤tze der Hauptbaustelle } ' (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ') or' +
+      { Historische DatensÃ¤tze in anderen Baustellen } ' (MASTER_R in ' +
       { } '(select RID from AUFTRAG where (BAUSTELLE_R=' + inttostr(BAUSTELLE_R) + ')))');
 
-    // Alle löschen, die auf die Datensätze zeigen mit "MASTER_R" = null
+    // Alle lÃ¶schen, die auf die DatensÃ¤tze zeigen mit "MASTER_R" = null
     e_x_sql(
       { } 'delete from AUFTRAG where MASTER_R in (select RID from AUFTRAG where MASTER_R is null)');
 
-    // Die Datensätze an sich löschen
+    // Die DatensÃ¤tze an sich lÃ¶schen
     e_x_sql(
       { } 'delete from AUFTRAG where MASTER_R is null');
 
@@ -5935,7 +5977,7 @@ begin
           end;
         end;
 
-        // ZIEL Baustelle löschen
+        // ZIEL Baustelle lÃ¶schen
         if (lKOPIE_RIDs.count > 0) then
           if not e_w_BaustelleLoeschen(BAUSTELLE_R) then
             break;
@@ -5991,7 +6033,7 @@ begin
             end
             else
             begin
-              // ist neu für die Zielbaustelle
+              // ist neu fÃ¼r die Zielbaustelle
               qZIEL.FieldByName('RID').AsInteger := 0;
               qZIEL.FieldByName('MASTER_R').clear;
               qZIEL.FieldByName('EXPORT_TAN').clear;
@@ -6085,7 +6127,7 @@ begin
 
     ABLAGE_R := e_w_GEN('GEN_ZUSAMMENHANG');
 
-    // Quell-Datensätze bestimmen
+    // Quell-DatensÃ¤tze bestimmen
     cAUFTRAG := nCursor;
     AUFTRAG_FieldNames := TStringList.create;
     with cAUFTRAG do
@@ -6145,7 +6187,7 @@ begin
     with cAUFTRAG do
     begin
 
-      // Zunächst die Masterdatensätze
+      // ZunÃ¤chst die MasterdatensÃ¤tze
         APiFirst;
         while not(eof) do
         begin
@@ -6155,7 +6197,7 @@ begin
           inc(RecN);
         end;
 
-      // Nun die Historischen Datensätze
+      // Nun die Historischen DatensÃ¤tze
         APiFirst;
         while not(eof) do
         begin
@@ -6176,7 +6218,7 @@ begin
 end;
 
 
-function e_w_ReadMobil(Options : TStringList = nil; fb : TFeedBack = nil):boolean;
+function e_w_ReadMobil(pOptions : TStringList = nil; fb : TFeedBack = nil):boolean;
 
 {$I feedback.inc}
 
@@ -6242,7 +6284,7 @@ var
         while (OneLine <> '') do
           Protokoll.add(nextp(OneLine, ';'));
 
-        // Überhaupt Daten vorhanden?
+        // Ãœberhaupt Daten vorhanden?
         if (Protokoll.Values['BG'] = '') and (ausfuehren_ist_Datum <= 0) then
           break;
 
@@ -6292,10 +6334,10 @@ var
           toDataBaseString(cutblank(cutblank(Protokoll.Values['I3']) + ' ' + cutblank(Protokoll.Values['I4'])),
           45) + ',' +
 
-          // Ausführungsdatum
+          // AusfÃ¼hrungsdatum
           toDataBaseString(long2date(ausfuehren_ist_Datum), 10) + ',' +
 
-          // Ausführungsuhrzeit
+          // AusfÃ¼hrungsuhrzeit
           toDataBaseString(VNfromTime(ausfuehren_ist_uhr), 1) + ',' +
 
           inttostr(MONTEUR_R) + ',' + inttostr(BAUSTELLE_R) + ',' + inttostr(RID) + ')');
@@ -6349,21 +6391,21 @@ var
       OldValue := qAUFTRAG.FieldByName(sFieldName).AsString;
       repeat
 
-        // keine Wertänderung
+        // keine WertÃ¤nderung
         if (OldValue = NewValue) then
         begin
           // keine weitere Aktion notwendig!!
           break;
         end;
 
-        // etwas soll durch nichts ersetzt werden -> nicht möglich
+        // etwas soll durch nichts ersetzt werden -> nicht mÃ¶glich
         if (NewValue = '') and (OldValue <> '') then
         begin
-          // Eine Löschung der Eintragung wird nicht zugelassen (Einbahnstrasse)
+          // Eine LÃ¶schung der Eintragung wird nicht zugelassen (Einbahnstrasse)
           break;
         end;
 
-        // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen
+        // der Normal-Fall: bisher keine Eintrag, nun jedoch fÃ¼llen
         if (OldValue = '') and (NewValue <> '') then
         begin
           // Ersteintrag!!
@@ -6373,11 +6415,11 @@ var
           break;
         end;
 
-        // eine Abänderung eines bestehenden Wertes!
+        // eine AbÃ¤nderung eines bestehenden Wertes!
         if not(Ergaenzungsmodus) then
           if (OldValue <> NewValue) then
           begin
-            // Änderung!!
+            // Ã„nderung!!
             qAUFTRAG.FieldByName(sFieldName).AsString := NewValue;
             inc(Stat_Wert_Ueberschreibungen);
             inc(Stat_Wert_Beitrag);
@@ -6393,18 +6435,18 @@ var
     begin
       repeat
 
-        // keine Wertänderung
+        // keine WertÃ¤nderung
         if (STATUS = NewStatus) then
         begin
           // keine weitere Aktion notwendig!!
           break;
         end;
 
-        // eine Abänderung eines bestehenden Wertes!
+        // eine AbÃ¤nderung eines bestehenden Wertes!
         if not(Ergaenzungsmodus) then
           if (STATUS <> NewStatus) then
           begin
-            // Änderung!!
+            // Ã„nderung!!
             qAUFTRAG.FieldByName('STATUS').AsInteger := NewStatus;
             inc(Stat_Wert_Ueberschreibungen);
             inc(Stat_Wert_Beitrag);
@@ -6457,31 +6499,31 @@ var
     inc(Stat_Meldungen, MdeRecordCount);
 
     //
-    Bericht.add('[I] Verarbeite Monteur TAN ' + pTAN + ' mit ' + inttostr(MdeRecordCount) + ' Datensätzen');
+    Bericht.add('[I] Verarbeite Monteur TAN ' + pTAN + ' mit ' + inttostr(MdeRecordCount) + ' DatensÃ¤tzen');
 
     SetLength(AuftragArray, MdeRecordCount);
     for n := 0 to pred(MdeRecordCount) do
       read(INf, AuftragArray[n]);
     CloseFile(INf);
 
-    // Übertragen in die Datenbank
+    // Ãœbertragen in die Datenbank
     // Verfahren dabei:
     // MONDA_SCHUTZ verhindert jegliche Manipulation durch Monda
     //
     // Problem 1:
     // Tag1 : Monteur setzt auf Neu Anschreiben
-    // Tag2 : Büro vereinbart neuen Termin
+    // Tag2 : BÃ¼ro vereinbart neuen Termin
     // Tag3 : es wird nochmals "Neu Anschreiben" gemeldet
     //
-    // wichtig: hat das Büro dann schon umterminiert darf am Termin
+    // wichtig: hat das BÃ¼ro dann schon umterminiert darf am Termin
     // nichts mehr gemacht werden.
     // -> Sonderbehandlung der Stati "Restat" und "Neu Anschreiben"
     //
     // Problem 2:
     // Tag1: Monteur liefert V1=xxx, V2=yyy
-    // Tag2: Der Termin wird vom Büro NEU eingeplant
+    // Tag2: Der Termin wird vom BÃ¼ro NEU eingeplant
     // Tag3: Monteur liefert V1=zzz
-    // -> V1 darf hier nicht überschrieben werden es muss angereiht werden (Implementiert!)
+    // -> V1 darf hier nicht Ã¼berschrieben werden es muss angereiht werden (Implementiert!)
     //
     qAUFTRAG := nQuery;
     with qAUFTRAG do
@@ -6580,7 +6622,7 @@ var
                 OneLine := Oem2ansi(ProtokollInfo);
               end;
 
-              // Parameter für Parameter!
+              // Parameter fÃ¼r Parameter!
               while (OneLine <> '') do
               begin
 
@@ -6592,28 +6634,28 @@ var
                 begin
                   repeat
 
-                    // Spezialbehandlung für V1,V2,V3
+                    // Spezialbehandlung fÃ¼r V1,V2,V3
                     if (pos('V', ProtParameterName) = 1) then
                     begin
                       V_Neu.add(ProtParameterName + '=' + ProtValue);
                       break;
                     end;
 
-                    // keine Wertänderung
+                    // keine WertÃ¤nderung
                     if (OldValue = ProtValue) then
                     begin
                       // keine weitere Aktion notwendig!!
                       break;
                     end;
 
-                    // etwas soll durch nichts ersetzt werden -> nicht möglich
+                    // etwas soll durch nichts ersetzt werden -> nicht mÃ¶glich
                     if (ProtValue = '') and (OldValue <> '') then
                     begin
-                      // Eine Löschung der Eintragung wird nicht zugelassen (Einbahnstrasse)
+                      // Eine LÃ¶schung der Eintragung wird nicht zugelassen (Einbahnstrasse)
                       break;
                     end;
 
-                    // der Normal-Fall: bisher keine Eintrag, nun jedoch füllen
+                    // der Normal-Fall: bisher keine Eintrag, nun jedoch fÃ¼llen
                     if (OldValue = '') and (ProtValue <> '') then
                     begin
                       // Ersteintrag!!
@@ -6623,11 +6665,11 @@ var
                       break;
                     end;
 
-                    // eine Abänderung eines bestehenden Wertes!
+                    // eine AbÃ¤nderung eines bestehenden Wertes!
                     if not(Ergaenzungsmodus) then
                       if (OldValue <> ProtValue) then
                       begin
-                        // Änderung!!
+                        // Ã„nderung!!
                         Protokoll.Values[ProtParameterName] := ProtValue;
                         inc(Stat_Wert_Ueberschreibungen);
                         inc(Stat_Wert_Beitrag);
@@ -6677,7 +6719,7 @@ var
                     // Meint der Monteur auch diese Variante?
                     if (ausfuehren_soll = AUSFUEHREN) and (VormittagsToChar(vormittags) = VMITTAGS) and
 
-                    // Neu-Anschreiben schützt vor Status Restant
+                    // Neu-Anschreiben schÃ¼tzt vor Status Restant
                       (STATUS <> cs_NeuAnschreiben) and (STATUS <> cs_Erfolg) and (STATUS <> cs_Vorgezogen) and
                       (STATUS <> cs_Unmoeglich) and
 
@@ -6728,7 +6770,7 @@ var
 
               end;
 
-              // In allen Fälle: diese Fehler gehören MonDa
+              // In allen FÃ¤lle: diese Fehler gehÃ¶ren MonDa
               updateField('REGLER_NR_KORREKTUR', reglernummer_korr);
               updateField('REGLER_NR_NEU', reglernummer_neu);
               updateField('ZAEHLER_NR_KORREKTUR', zaehlernummer_korr);
@@ -6862,7 +6904,7 @@ exit;
     // jede einzelne TAN abarbeiten
     _(cFeedBack_ProgressBar_Max+1,IntToStr( DirList.count));
 
-    // Reihenfolge: Ältestes zuerst verarbeiten!
+    // Reihenfolge: Ã„ltestes zuerst verarbeiten!
     if (DirList.count > 0) then
     begin
 
@@ -6880,7 +6922,7 @@ exit;
           TAN := ExtractFileNameWithoutExtension(DirList[n]);
           ProcessNewData(AuftragMobilServerPath, TAN);
 
-          // Lokal löschen!
+          // Lokal lÃ¶schen!
           if pMoveTANsToDiagnose then
             FileMove(AuftragMobilServerPath + TAN + '.*', DiagnosePath);
 
@@ -6901,7 +6943,7 @@ exit;
 
     //
     Bericht.add('[I] Meldungen: ' + inttostr(Stat_Meldungen));
-    Bericht.add('[I] Änderungen: ' + inttostr(Stat_Aenderungen));
+    Bericht.add('[I] Ã„nderungen: ' + inttostr(Stat_Aenderungen));
     if (Stat_FehlendeRIDS > 0) then
       Bericht.add('[I] WARNUNG: fehlende RIDS: ' + inttostr(Stat_FehlendeRIDS));
 
@@ -6921,7 +6963,7 @@ exit;
     _(cFeedBack_ProgressBar_Position);
     _(cFeedBack_Label+3);
 
-    // Im Verzeichnis aufräumen!
+    // Im Verzeichnis aufrÃ¤umen!
     FileDelete(AuftragMobilServerPath + '*.DAT', 10);
 
     result := (ErrorCount = 0);
@@ -6945,7 +6987,6 @@ var
   GeraeteNo: string;
   ErrorCount: integer;
   _Datum: TAnfixDate;
-  CloseLater: boolean;
   JONDA_TAN: integer;
   cPERSON: TdboCursor;
   lAbgearbeitet: TgpIntegerList;
@@ -7008,7 +7049,7 @@ var
     //
     repeat
 
-      // alle alten ???.DAT löschen!
+      // alle alten ???.DAT lÃ¶schen!
       if pPurgeZero then
         if (lMonteure.count = 0) then
         begin
@@ -7021,7 +7062,7 @@ var
           end;
           lUeberzaehligeGeraete.sort;
 
-          // die heute übertragenen Schützen, alles andere löschen!
+          // die heute Ã¼bertragenen SchÃ¼tzen, alles andere lÃ¶schen!
           for n := 0 to pred(FTPup.count) do
           begin
             k := lUeberzaehligeGeraete.indexof(nextp(FTPup[n], ';', 2));
@@ -7126,14 +7167,14 @@ begin
 
   if pUploadBaustellenInfos then
   begin
-    // App-Server über die Baustellen informieren
+    // App-Server Ã¼ber die Baustellen informieren
     _(cFeedBack_Label+3, 'Baustellen-Infos ...');
     _(cFeedBack_ProcessMessages);
     e_r_Sync_Baustelle;
     FTPup.add(MdePath + cFotoService_BaustelleFName + ';' + ';' + cFotoService_BaustelleFName);
   end;
 
-  // App-Server über abgearbeitete informieren
+  // App-Server Ã¼ber abgearbeitete informieren
   if pUploadAbgearbeitete then
   begin
     _(cFeedBack_Label+3, 'Abgearbeitete ...');
@@ -7155,7 +7196,7 @@ begin
 
   with cPERSON do
   begin
-    // alle Monteure mit Geräten ...
+    // alle Monteure mit GerÃ¤ten ...
     sql.add('SELECT');
     sql.add(' person.RID,');
     sql.add(' person.MONDA,');
@@ -7176,7 +7217,7 @@ begin
 
     //
     IndexH.LoadFromFile(HtmlVorlagenPath + cMonDaIndex);
-    IndexH.WriteGlobal('save&delete GERÄT');
+    IndexH.WriteGlobal('save&delete GERÃ„T');
     IndexH.WriteGlobal('Titel=' + long2dateText(DateGet) + ' bis ' + long2dateText(DatePlus(DateGet, pred(JonDaVorlauf))));
 
     ApiFirst;
@@ -7188,7 +7229,7 @@ begin
       MONTEUR_R := FieldByName('RID').AsInteger;
 
       //
-      IndexH.WriteLocal('load GERÄT');
+      IndexH.WriteLocal('load GERÃ„T');
 
       // Monteure
       EinMonteurL.clear;
@@ -7198,17 +7239,17 @@ begin
       // Datums
       DatumsL.clear;
 
-      // für "ewige" Termine, die auf das MDE drauf sollen!
+      // fÃ¼r "ewige" Termine, die auf das MDE drauf sollen!
       DatumsL.add(cMonDa_ImmerAusfuehren);
 
-      // für nicht fixierte Termine, die der Monteur selbst wählen kann!
+      // fÃ¼r nicht fixierte Termine, die der Monteur selbst wÃ¤hlen kann!
       DatumsL.add(cMonDa_FreieTerminWahl);
 
       // Heutiger Tag bis zum pred("Heutiger Tag" + Vorlauf)
       for n := 0 to pred(JonDaVorlauf) do
         DatumsL.add(DatePlus(DateGet, n));
 
-      // Geräte ID
+      // GerÃ¤te ID
       GeraeteNo := FieldByName('MONDA').AsString;
 
       // ev. noch weitere Tage hinzu?!
@@ -7236,7 +7277,7 @@ begin
       // imp pend
       e_r_InfoBlatt(DatumsL, EinMonteurL, nil, nil, true).Free;
 
-      // Geräte-Daten hochladen
+      // GerÃ¤te-Daten hochladen
       FTPup.add(MdePath + GeraeteNo + '.DAT' + ';' + ';' + GeraeteNo + '.DAT');
 
       // Abgezogene
@@ -7283,7 +7324,7 @@ begin
       begin
         WriteLocal('Monteur=' + FieldByName('NAME1').AsString);
         WriteLocal('Link=MonDa' + FieldByName('RID').AsString + cHTMLextension);
-        WriteLocal('Gerät=' + GeraeteNo);
+        WriteLocal('GerÃ¤t=' + GeraeteNo);
         // imp pend
         //         WriteLocal('AnzTermine=' + inttostr(FormAuftragArbeitsplatz._LastTerminCount));
         WritePageBreak;
@@ -7308,7 +7349,7 @@ begin
 
   end;
 
-  // Wenn gewünscht FTP Upload!
+  // Wenn gewÃ¼nscht FTP Upload!
   if pFTPup then
     doFTPup;
 
@@ -7593,7 +7634,7 @@ _LastTerminCount:=0;
       rewrite(MonDaOutF);
     end;
 
-    // mögliche Baustellen auflisten
+    // mÃ¶gliche Baustellen auflisten
     cBAUSTELLE := nCursor;
     with cBAUSTELLE do
     begin
@@ -7663,14 +7704,14 @@ _LastTerminCount:=0;
           APInext;
         end;
 
-        // Prüfung, ob was schief geht
+        // PrÃ¼fung, ob was schief geht
         // PreLookl.SaveToFile(DiagnosePath+'pre.0.txt');
         PreM := 0;
         repeat
 
           if (nextp(PreLookl[PreM], ';', 3) <> '6') then
           begin
-            // echter Datensatz! -> lösche alle historischen!
+            // echter Datensatz! -> lÃ¶sche alle historischen!
             for PreN := pred(PreLookl.count) downto 0 do
               if (PreN <> PreM) then
                 if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
@@ -7685,7 +7726,7 @@ _LastTerminCount:=0;
           else
           begin
 
-            // historischer! -> lösche alle älteren historischen
+            // historischer! -> lÃ¶sche alle Ã¤lteren historischen
             for PreN := pred(PreLookl.count) downto 0 do
               if (PreN <> PreM) then
                 if (nextp(PreLookl[PreN], ';', 1) = nextp(PreLookl[PreM], ';', 1)) and // V/N
@@ -7706,7 +7747,7 @@ _LastTerminCount:=0;
         // Ermittlung der aktive Baustellen!
         ErmittleBaustellen;
 
-        // Jetzt kommt die Tatsächliche Ausgabe
+        // Jetzt kommt die TatsÃ¤chliche Ausgabe
         RecN := 0;
         FirstNachmittag := true;
         FirstData := true;
@@ -7725,7 +7766,7 @@ _LastTerminCount:=0;
               break;
 
             // Bei freier Terminwahl kommen nur die "offenen"
-            // auf das Gerät!
+            // auf das GerÃ¤t!
             STATUS := TePhaseStatus(FieldByName('STATUS').AsInteger);
             if (v_MonteurTag = cMonDa_FreieTerminWahl) then
               if STATUS in [ctsDatenFehlen, ctsErfolg, ctsNeuAnschreiben, ctsHistorisch, ctsVorgezogen, ctsUnmoeglich]
@@ -7804,7 +7845,7 @@ _LastTerminCount:=0;
                 if (SubItems[twh_ZeitText][1] = 'n') then
                   FirstNachmittag := false;
 
-                // Jetzt die Anzahl der informierten Monteure zählen
+                // Jetzt die Anzahl der informierten Monteure zÃ¤hlen
                 if (TrueMonteurRIDs.indexof(Monteur_RIDs[n]) = -1) then
                 begin
                   inc(_MonteurRIDsCount);
@@ -7912,11 +7953,11 @@ _LastTerminCount:=0;
             end;
 
             FieldByName('ZAEHLER_INFO').AssignTo(Zaehlertext);
-            DatensammlerLokal.Add('Zähler=' + HugeSingleLine(Zaehlertext, ', '));
+            DatensammlerLokal.Add('ZÃ¤hler=' + HugeSingleLine(Zaehlertext, ', '));
 
             FieldByName('MONTEUR_INFO').AssignTo(InfoText);
 
-            // Werte aus dem Protokoll zurück in die Terminänderunsliste
+            // Werte aus dem Protokoll zurÃ¼ck in die TerminÃ¤nderunsliste
             FieldByName('PROTOKOLL').AssignTo(Protokoll);
             with Protokoll do
               _RueckKanal := cutblank(values['I1'] + ' ' + values['I2'] + ' ' + values['I6'] + ' ' + values['I7'] + ' '
@@ -7953,11 +7994,11 @@ _LastTerminCount:=0;
                   case STATUS_MASTER of
                     ctvErfolg, ctvErfolgGemeldet:
                       begin
-                        InfoText.insert(0, '   (bereits durchgeführt!)');
+                        InfoText.insert(0, '   (bereits durchgefÃ¼hrt!)');
                         InfoText.insert(0, '   !!!WEGFALL!!!');
                       end;
                     ctvUnmoeglich, ctvUnmoeglichGemeldet:
-                      InfoText.insert(0, '   !!!UNMÖGLICH!!!');
+                      InfoText.insert(0, '   !!!UNMÃ–GLICH!!!');
                     ctvVorgezogen, ctvVorgezogenGemeldet:
                       InfoText.insert(0, '   !!!VORGEZOGEN!!!');
                   else
@@ -7969,10 +8010,10 @@ _LastTerminCount:=0;
                 break;
               end;
 
-              // unmögliche
+              // unmÃ¶gliche
               if (STATUS = ctsUnmoeglich) then
               begin
-                InfoText.insert(0, '   !!!UNMÖGLICH!!!');
+                InfoText.insert(0, '   !!!UNMÃ–GLICH!!!');
                 break;
               end;
 
@@ -8000,7 +8041,7 @@ _LastTerminCount:=0;
               InfoAboutOld := false;
               with cHISTORISCH do
               begin
-                // den entsprechenden Historische Datensätze suchen
+                // den entsprechenden Historische DatensÃ¤tze suchen
                 ParamByName('CROSSREF').AsInteger := Auftrag_RID;
                 ApiFirst;
                 while not(eof) do
@@ -8130,7 +8171,7 @@ _LastTerminCount:=0;
 
   // hier jetzt noch den Index-HTML neu erzeugen!
   if (Headers <> 0) then
-    _(cFeedBack_ShowMessage,'ERROR: html nicht vollständig korrekt!');
+    _(cFeedBack_ShowMessage,'ERROR: html nicht vollstÃ¤ndig korrekt!');
 
   //
   sVorlagen := TStringlist.create;
@@ -8181,23 +8222,4171 @@ _LastTerminCount:=0;
 
 end;
 
-function e_w_CreateFiles(Settings: TStringList; RIDs: TgpIntegerList; FailL: TgpIntegerList;
-      Files: TStringList): boolean;
+function nichtEFREFName(Settings: TStringList): string;
 begin
- result := false;
- // imp pend
+  // Datei mit der Liste der nicht einbaufÃ¤higen NeugerÃ¤te
+  result :=
+  { } cAuftragErgebnisPath +
+  { } e_r_BaustellenPfad(Settings) + '\' +
+  { } 'nicht-EFRE-' + Settings.values[cE_BAUSTELLE_KURZ] + '.csv';
 end;
 
-function e_w_Ergebnis(BAUSTELLE_R: integer; ManuellInitiiert: boolean): boolean;
+function e_w_CreateFiles(
+ {} Settings: TStringList;
+ {} RIDs: TgpIntegerList;
+ {} FailL: TgpIntegerList;
+ {} Files: TStringList;
+ {} fb : TFeedBack = nil): boolean;
+
+{$I Feedback.inc}
+
+var
+  ExcelWriteRow: integer;
+  HugeTransactionN : Integer;
+
+  // Kopf-Zeile
+  Header: TStringList;
+  Header_col_Scan: integer;
+
+  // Strings: A|B|C|A Objects: [0,3]|[1]|[2]|[0,3] so geht das Ding raus!!!
+  HeaderDefault: TStringList; // vordefiniert
+  HeaderSuppress: TStringList; // nicht erwÃ¼nschte Daten
+  HeaderFromIntern: TStringList; // Spalten aus dem INTERN Feld
+  HeaderTextFormat: TStringList; // xls Ausgabe Zellformats soll Text sein
+
+  LinesL: TList;
+  ErrorCount: integer;
+  cAUFTRAG: TIB_Cursor;
+  cINTERNINFO: TIB_Cursor;
+  OutFName, SingleFName: string;
+  Oc_Bericht: TStringList;
+  Oc_Result: boolean;
+
+  // QualitÃ¤ts-Sicherung
+  sPlausi: string;
+  PlausiMode: integer;
+  sQS_kritisch: TStringList;
+
+  // Foto mit im Zip?!
+  AuchMitFoto: boolean;
+  FotoSpalten, _FotoSpalten, FotoSpalte: string; // "FA;FN;FH"
+  FilesCandidates: TStringList;
+  FotoFName, _FotoFName: string;
+
+  // Zwischenspeicher
+  ActColumn: TStringList;
+  ActValue: string;
+  ActColIndex: integer;
+  zweizeilig: boolean;
+
+  // fÃ¼r die Gesamtausgabe
+  HeaderLine: string;
+  HeaderName: string;
+  DataLine: string;
+  ProtokollLine: string;
+  Zaehlwerk: string;
+  ProtokollFeldNamen: TStringList;
+  MussFelder: TStringList;
+  RauteFelder: TStringList;
+  OhneInhaltFelder: TStringList;
+  IstEinMussFeld: boolean;
+  IstEinRauteFeld: boolean;
+  ProtokollMode: boolean;
+  ProtokollWerte: TStringList;
+  Umsetzer: TFieldMapping;
+
+  // ZÃ¤hlernummer Neu Umkonvertierungen
+  Zaehler_nr_neu_filter: string;
+  Zaehler_nr_neu_zeichen: string;
+
+  zaehler_stand_neu: double;
+  zaehler_stand_neu_soll: double;
+  material_nummer_alt: string;
+  FoundLine: integer;
+  FAIL_R: integer;
+  writePermission: boolean;
+
+  // Cache-Felder von Werten aus dem Datensatz
+  // oder Parameter
+  AUFTRAG_R: integer;
+  BAUSTELLE_R: integer;
+  N1, NA, NN, Sparte, A1: string;
+  vSTATUS: TeVirtualPhaseStatus;
+  ART: string;
+  ZAEHLER_NR_NEU: string;
+  ZaehlerNummerNeuPreFix: string;
+  ZaehlwerkeIst: integer; // aus der Art
+  INTERN_INFO: TStringList;
+  HTMLBenennung: string;
+
+  // Dinge fÃ¼r die freien ZÃ¤hler "EFRE"
+  FreieResourcen: TsTable;
+  Sparten: TFieldMapping;
+  EFRE_ZAEHLER_NR_NEU: string;
+  EFRE: TgpIntegerList;
+
+  // EFRE - Column Cache
+  FreieZaehlerCol_ZaehlerNummer: integer;
+  FreieZaehlerCol_MaterialNummer: integer;
+  FreieZaehlerCol_Zaehlwerk: integer;
+  FreieZaehlerCol_Zaehlerstand: integer;
+  FreieZaehlerCol_Lager: integer;
+  FreieZaehlerCol_Werk: integer;
+  FreieZaehlerCol_Sparte: integer;
+  FreieZaehlerCol_Obis: integer;
+
+  // Excel-Formate
+  // Dinge fÃ¼r Protokoll-Text Feld
+  fmProtokollText: integer;
+  fmInternText: integer;
+
+  // PrÃ¼fung doppelte ZÃ¤hlernummer neu
+  ZaehlerNummernNeuAusN1: boolean;
+  ZaehlerNummernNeuMitA1: boolean;
+  ZaehlerNummernNeu: TSearchStringList;
+  lZNN_Dupletten: TgpIntegerList;
+  DublettenPruefling: string;
+
+procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
 begin
-  result := false;
-  // imp pend
+  if (BAUSTELLE_R > 0) then
+    s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
+  if (TAN <> '') then
+    s := s + ' ' + TAN;
+  _(cFeedBack_ListBox+1,s);
+  _(cFeedBack_processmessages);
+  AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
 end;
 
-function e_w_Import(BAUSTELLE_R: integer): boolean;
+procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
+var
+  n: integer;
 begin
-  result := false;
-  // imp pend
+  for n := 0 to pred(s.count) do
+  begin
+    if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
+      continue;
+    if (pos(cE_FTPPASSWORD, s[n]) = 1) then
+      continue;
+    Log(s[n], BAUSTELLE_R, TAN);
+  end;
+end;
+
+
+
+  procedure FuelleZaehlerNummerNeu;
+  var
+    AUFTRAG_R: integer;
+    cAUFTRAG: TIB_Cursor;
+    PROTOKOLL: TStringList;
+    ART: string;
+    z: string;
+    PreFix: string;
+  begin
+    ZaehlerNummernNeu.clear;
+    cAUFTRAG := DataModuleDatenbank.nCursor;
+    PROTOKOLL := TStringList.create;
+    with cAUFTRAG do
+    begin
+      sql.add('select RID,ART,ZAEHLER_NR_NEU,PROTOKOLL from AUFTRAG where'); //
+      sql.add(' (STATUS<>6) and');
+      sql.add(' (BAUSTELLE_R=' + Settings.values[cE_Datenquelle] + ')');
+      ApiFirst;
+      while not(eof) do
+      begin
+
+        // Init
+        AUFTRAG_R := FieldByName('RID').AsInteger;
+        ART := FieldByName('ART').AsString;
+        z := FieldByName('ZAEHLER_NR_NEU').AsString;
+        FieldByName('PROTOKOLL').AssignTo(PROTOKOLL);
+
+        if ZaehlerNummernNeuMitA1 then
+          PreFix := PROTOKOLL.values['A1']
+        else
+          PreFix := '';
+
+        if (z <> '') then
+          ZaehlerNummernNeu.addobject(ART + '~' + PreFix + z, pointer(AUFTRAG_R));
+
+        if ZaehlerNummernNeuAusN1 then
+        begin
+          z := PROTOKOLL.values['N1'];
+          if (z <> '') then
+            ZaehlerNummernNeu.addobject(ART + '~' + PreFix + z, pointer(AUFTRAG_R));
+        end;
+
+        ApiNext;
+      end;
+    end;
+    cAUFTRAG.free;
+    PROTOKOLL.free;
+    ZaehlerNummernNeu.sort;
+  end;
+
+  function EFRE_Filter_ZaehlerNummerNeu(s: string): string;
+  var
+    _Filter: string;
+  begin
+    // EFRE- Filter fÃ¼r "ZÃ¤hlernummer Neu"
+    _Filter := Settings.values[cE_ZaehlerNummerNeuZeichen];
+    if (_Filter <> '') then
+      result := StrFilter(s, _Filter)
+    else
+      result := s;
+  end;
+
+//
+  function getColumn(ColumnName: string): string;
+  var
+    RawColumn: integer;
+  begin
+    RawColumn := Header.indexof(ColumnName);
+    if (RawColumn <> -1) then
+    begin
+      result := ActColumn[RawColumn];
+      ersetze(',', '.', result);
+      ersetze(';', '', result);
+    end
+    else
+    begin
+      result := '';
+    end;
+  end;
+
+  procedure Fill_EFRE(Row: integer);
+
+    procedure CheckSet(FieldName: string; Col: integer; valueDefault: string = '');
+    var
+      valueFreieZaehler: string;
+    begin
+      if (FieldName <> '') then
+      begin
+        valueFreieZaehler := FreieResourcen.readCell(Row, Col);
+        if (valueFreieZaehler = '') then
+          valueFreieZaehler := valueDefault;
+        INTERN_INFO.add(FieldName + '=' + valueFreieZaehler);
+      end;
+    end;
+
+  begin
+    // folgende Spalten vervollstÃ¤ndigen:
+    CheckSet(Settings.values[cE_MaterialNummerNeu], FreieZaehlerCol_MaterialNummer);
+    CheckSet(Settings.values[cE_ZaehlwerkNeu], FreieZaehlerCol_Zaehlwerk, '1');
+    if (FreieZaehlerCol_Lager <> -1) then
+      CheckSet('Lager', FreieZaehlerCol_Lager);
+    if (FreieZaehlerCol_Werk <> -1) then
+      CheckSet('Werk', FreieZaehlerCol_Werk);
+    if (FreieZaehlerCol_Obis <> -1) then
+      CheckSet('Obis', FreieZaehlerCol_Obis);
+  end;
+
+  procedure PrepareFormat;
+  var
+    fmfm: TFlxFormat;
+  begin
+    with FlexCelXLS do
+    begin
+
+      fmfm := GetDefaultFormat;
+      with fmfm do
+      begin
+        Font.name := 'Courier New';
+        Font.Size20 := round(8.0 * 20);
+        borders.Left.style := TFlxBorderStyle.Thin;
+        borders.Left.color := clblack;
+        FillPattern.Pattern := TFlxPatternStyle.Solid;
+        FillPattern.BgColor := 0;
+        VAlignment := TVFlxAlignment.top;
+        FillPattern.FgColor := HTMLColor2TColor($99CCFF);
+        WrapText := true;
+      end;
+      fmProtokollText := addformat(fmfm);
+
+      fmfm := GetDefaultFormat;
+      with fmfm do
+      begin
+        format := '@';
+      end;
+      fmInternText := addformat(fmfm);
+
+    end;
+  end;
+
+  procedure WriteLine;
+  var
+    n: integer;
+    fm: integer;
+  begin
+
+    for n := 0 to pred(ActColumn.count) do
+    begin
+
+      // Zell-Formatierung
+      fm := -1;
+      if (n < Header.count) then
+      begin
+        repeat
+
+          // ganzes Protokoll
+          if (Header[n] = 'ProtokollText') then
+          begin
+            fm := fmProtokollText;
+            FlexCelXLS.setcolwidth(succ(n), 340 * 18);
+            break;
+          end;
+
+          // q* Felder im Textformat, damit sie keine schadhafte Formatierung erhalten
+          if (pos('q', Header[n]) = 1) then
+          begin
+            fm := fmInternText;
+            break;
+          end;
+
+          // AusdrÃ¼ckliche Textfelder
+          if (HeaderTextFormat.indexof(Header[n]) <> -1) then
+          begin
+            fm := fmInternText;
+            break;
+          end;
+
+        until true;
+
+      end;
+
+      try
+        if (fm = -1) then
+        begin
+          FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm);
+        end
+        else
+        begin
+          FlexCelXLS.SetCellFormat(ExcelWriteRow, succ(n), fm);
+          FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
+        end;
+      except
+        FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), 'ERROR');
+      end;
+
+    end;
+
+    inc(ExcelWriteRow);
+  end;
+
+  function ZaehlerNrNeuFilter(Zaehler_Nummer_neu: string): string;
+  var
+    allFilter: string;
+    Filter: string;
+    Raster: string;
+    Maske: string;
+    n: integer;
+    quellIndex: integer;
+    RasterMatch: boolean;
+    FilterMatch: boolean;
+    ZaehlerNummerNeu_AnzahlStellen: integer;
+  begin
+    result := Zaehler_Nummer_neu;
+    repeat
+
+      // Zeichen fÃ¼r einen Eintrag durch einen Scan
+      if (pos('#', Zaehler_Nummer_neu) = 1) then
+      begin
+
+        // Original-Scan sichern und unbehandelt kopieren
+        if (Header_col_Scan <> -1) then
+          ActColumn[Header_col_Scan] := Zaehler_Nummer_neu;
+
+        // Filter-Beispiele
+        //
+        // #B2********=xxx!!!!!!!x
+        // #B2******=xxx!!!!!!
+
+        allFilter := Zaehler_nr_neu_filter;
+        FilterMatch := false;
+        while (allFilter <> '') do
+        begin
+          Filter := nextp(allFilter, ',');
+          Raster := nextp(Filter, '=', 0);
+
+          // erst mal sehn, ob das Raster passt!
+          if (length(Raster) = length(Zaehler_Nummer_neu)) then
+          begin
+
+            // Maske anwenden!
+            Maske := nextp(Filter, '=', 1);
+
+            RasterMatch := true;
+            for n := 1 to length(Zaehler_Nummer_neu) do
+            begin
+              if (Raster[n] <> '*') then
+                if (Raster[n] <> Zaehler_Nummer_neu[n]) then
+                begin
+                  RasterMatch := false;
+                  break;
+                end;
+            end;
+
+            if RasterMatch then
+            begin
+              quellIndex := 1;
+              result := '';
+              for n := 1 to length(Maske) do
+              begin
+                case Maske[n] of
+                  'x':
+                    begin
+                      inc(quellIndex);
+                    end;
+                  '!':
+                    begin
+                      result := result + Zaehler_Nummer_neu[quellIndex];
+                      inc(quellIndex);
+                    end;
+                else
+                  result := result + Maske[n];
+                end;
+              end;
+              FilterMatch := true;
+              break;
+            end;
+          end;
+        end;
+
+        if not(FilterMatch) then
+        begin
+          log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ZÃ¤hlernummer Neu "' + Zaehler_Nummer_neu +
+            '" hat keine Filter-Regel!', BAUSTELLE_R, Settings.values[cE_TAN]);
+          writePermission := false;
+          if (FailL.indexof(AUFTRAG_R) = -1) then
+            FailL.add(AUFTRAG_R);
+        end;
+        break;
+      end;
+
+      if (pos(':', Zaehler_nr_neu_filter) = 1) then
+      begin
+
+        // Filter= ":" ~AnzahlDerStellen~ {[ "," ":" ~AnzahlDerStellen~ ]}
+        FilterMatch := false;
+        ZaehlerNummerNeu_AnzahlStellen := length(result);
+
+        allFilter := noblank(Zaehler_nr_neu_filter);
+        while (allFilter <> '') do
+        begin
+          Filter := nextp(allFilter, ',');
+          Raster := nextp(Filter, ':', 1);
+
+          if (ZaehlerNummerNeu_AnzahlStellen = StrToIntDef(Raster, -1)) then
+          begin
+            // LÃ¤nge passt
+            FilterMatch := true;
+            break;
+          end;
+        end;
+
+        if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+          if not(FilterMatch) then
+          begin
+            QS_add('[Q27] Anzahl der Stellen ":' + inttostr(ZaehlerNummerNeu_AnzahlStellen) +
+              '" von "ZÃ¤hlernummer-Neu" ist nicht erlaubt', sPlausi);
+          end;
+
+        break;
+      end;
+
+      if (Header_col_Scan <> -1) then
+        ActColumn[Header_col_Scan] := '';
+
+    until true;
+
+    // abschliessendes Filtern
+    // im Filter sind alle erlaubten Zeichen angegeben
+    if (Zaehler_nr_neu_zeichen <> '') then
+      result := StrFilter(result, Zaehler_nr_neu_zeichen);
+
+  end;
+
+  procedure SetHeaderNames;
+  var
+    n, m: integer;
+    HeaderAliasNames: TStringList;
+    AliasNames: string;
+    OhneInhaltNames: string;
+    NewHeaderName: string;
+    InternFelder: TStringList;
+    IsMuss, IsRaute: boolean;
+    AllCols: TgpIntegerList;
+  begin
+
+    // Liste aufbereiten, wie Sie vom System kommt
+    HeaderLine := cWordHeaderLine;
+    while (HeaderLine <> '') do
+      HeaderDefault.add(nextp(HeaderLine, ';'));
+
+    // Red - List aufbereiten!
+    HeaderLine := cRedHeaderLine;
+    while (HeaderLine <> '') do
+      HeaderSuppress.add(nextp(HeaderLine, ';'));
+
+    // Red - List erweitern!
+    HeaderLine := cutblank(Settings.values[cE_verboteneSpalten]);
+    while (HeaderLine <> '') do
+      HeaderSuppress.add(cutblank(nextp(HeaderLine, ';')));
+
+    // am Anfang stehen die vorgegebenen Titelspalten.
+    // kommt es nicht vom "System" muss es ein "Intern"-Feld sein.
+    HeaderLine := Settings.values[cE_SAPReihenfolge];
+    while (HeaderLine <> '') do
+    begin
+      HeaderName := cutblank(nextp(HeaderLine, ';'));
+      if (HeaderName <> '') then
+      begin
+
+        IsMuss := false;
+        IsRaute := false;
+
+        if (pos('!', HeaderName) > 0) then
+        begin
+          ersetze('!', '', HeaderName);
+          IsMuss := true;
+        end;
+
+        if (pos('#', HeaderName) > 0) then
+        begin
+          ersetze('#', '', HeaderName);
+          IsRaute := true;
+        end;
+
+        // Den Feldnamen jetzt zu den einzelnen Listen hinzunehmen!
+        if (HeaderDefault.indexof(HeaderName) = -1) then
+          if (ProtokollFeldNamen.indexof(HeaderName) = -1) then
+            HeaderFromIntern.add(HeaderName);
+
+        Header.add(HeaderName);
+        if IsMuss then
+          MussFelder.add(HeaderName);
+        if IsRaute then
+          RauteFelder.add(HeaderName);
+
+      end;
+    end;
+
+    // nun alle fehlenden SpaltenÃ¼berschriften hinzunehmen (wenn nicht schon vorhanden)
+    for n := 0 to pred(HeaderDefault.count) do
+    begin
+      if (HeaderSuppress.indexof(HeaderDefault[n]) = -1) then
+        if (Header.indexof(HeaderDefault[n]) = -1) then
+          Header.add(HeaderDefault[n]);
+    end;
+
+    // nun alle Protokollfelder hinzunehmen (wenn nicht schon vorhanden)
+    for n := 0 to pred(ProtokollFeldNamen.count) do
+      if (HeaderSuppress.indexof(ProtokollFeldNamen[n]) = -1) then
+        if (Header.indexof(ProtokollFeldNamen[n]) = -1) then
+          Header.add(ProtokollFeldNamen[n]);
+
+    // nun alle InternFelder hinzunehmen (wenn nicht schon vorhanden)
+    if (Settings.values[cE_InternInfos] = cINI_Activate) then
+    begin
+      InternFelder := TStringList.create;
+      e_r_InternExport(BAUSTELLE_R, InternFelder);
+      for n := 0 to pred(InternFelder.count) do
+      begin
+        HeaderName := InternFelder[n];
+        if (HeaderSuppress.indexof(HeaderName) = -1) then
+          if (Header.indexof(HeaderName) = -1) then
+          begin
+            Header.add(HeaderName);
+            HeaderFromIntern.add(HeaderName);
+          end;
+      end;
+      InternFelder.free;
+    end;
+
+    // nun noch errechnete Spalten hinzunehmen
+    if (Zaehler_nr_neu_filter <> '') then
+    begin
+      //
+      if (Header.indexof('Scan_Zaehler_Nummer_Neu') = -1) then
+        Header.add('Scan_Zaehler_Nummer_Neu');
+      Header_col_Scan := Header.indexof('Scan_Zaehler_Nummer_Neu');
+    end;
+
+    // Alias / Umbenennung der SpaltenÃ¼berschriften
+    HeaderAliasNames := TStringList.create;
+    AliasNames := Settings.values[cE_SpaltenAlias];
+    while (AliasNames <> '') do
+      HeaderAliasNames.add(nextp(AliasNames, ';'));
+    with FlexCelXLS do
+      for n := 0 to pred(Header.count) do
+      begin
+        NewHeaderName := HeaderAliasNames.values[Header[n]];
+        if (NewHeaderName = '') then
+          NewHeaderName := Header[n];
+        SetCellValue(1, succ(n), NewHeaderName);
+      end;
+    HeaderAliasNames.free;
+
+    // Spalten ohne Inhalt
+    OhneInhaltNames := Settings.values[cE_SpaltenOhneInhalt];
+    if (OhneInhaltNames = '') then
+      OhneInhaltNames := 'Bemerkung';
+    OhneInhaltFelder.free;
+    OhneInhaltFelder := Split(OhneInhaltNames);
+
+    // "Index-Liste" aufbauen, Beispiel:
+    // A;B;C;A -> [0,3];[1];[2];[0,3]
+    //
+    for n := 0 to pred(Header.count) do
+    begin
+      AllCols := TgpIntegerList.create;
+      for m := 0 to pred(Header.count) do
+        if Header[n] = Header[m] then
+          AllCols.add(m);
+      Header.objects[n] := AllCols;
+    end;
+
+  end;
+
+  function SetCell(ActColIndex: integer; Value: string): boolean; overload;
+  var
+    n: integer;
+    AllCols: TgpIntegerList;
+    c: integer;
+    UmsetzerName: string;
+    _Value: string;
+  begin
+    result := false;
+    if (ActColIndex <> -1) then
+    begin
+
+      // Zwang zu ohne Inhalt
+      if (Value <> '') then
+        if (OhneInhaltFelder.indexof(Header[ActColIndex]) <> -1) then
+          Value := '';
+
+      // Raute
+      if (Value <> '') then
+        if (RauteFelder.indexof(Header[ActColIndex]) <> -1) then
+        begin
+          if (pos('E', Value) > 0) then
+            Value := inttostr(round(strtodouble(Value)));
+
+          if (pos('#', Value) <> 1) then
+            Value := '#' + Value;
+        end;
+
+      // Umsetzer
+      try
+        Value := Umsetzer[Header[ActColIndex], Value];
+      except
+        on e: exception do
+        begin
+          writePermission := false;
+          Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + Header[ActColIndex] + '.ini":' + e.message,
+            BAUSTELLE_R, Settings.values[cE_TAN]);
+          if (FailL.indexof(AUFTRAG_R) = -1) then
+            FailL.add(AUFTRAG_R);
+        end;
+      end;
+
+      AllCols := TgpIntegerList(Header.objects[ActColIndex]);
+      for n := 0 to pred(AllCols.count) do
+      begin
+        c := AllCols[n];
+        UmsetzerName := 'Column_' + inttostr(succ(c));
+        try
+          _Value := Umsetzer[UmsetzerName, Value];
+        except
+          on e: exception do
+          begin
+            writePermission := false;
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ') Umsetzer "' + UmsetzerName + '.ini":' + e.message,
+              BAUSTELLE_R, Settings.values[cE_TAN]);
+            if (FailL.indexof(AUFTRAG_R) = -1) then
+              FailL.add(AUFTRAG_R);
+          end;
+        end;
+        ActColumn[c] := _Value;
+      end;
+      result := true;
+    end;
+  end;
+
+  function evalColumnExpression(e: string): string;
+  var
+    Token, Value: string;
+    Col: integer;
+  begin
+    result := e;
+    while (pos('~', result) > 0) do
+    begin
+      Token := ExtractSegmentBetween(result, '~', '~');
+      Col := Header.indexof(Token);
+      if (Col <> -1) then
+        Value := ActColumn[Col]
+      else
+        Value := 'REF!';
+      ersetze('~' + Token + '~', Value, result);
+    end;
+  end;
+
+  function SetCell(ColumName: string; Value: string): boolean; overload;
+  begin
+    result := SetCell(Header.indexof(ColumName), Value);
+  end;
+
+  procedure Q_CheckFotoFile(f: string; AUFTRAG_R: integer; Parameter: string);
+  var
+    FNameA, FNameB, FNameC: string;
+  begin
+    FNameA := nextp(f, ',', 0);
+    if (FNameA <> '') then
+    begin
+
+      repeat
+
+        // PrÃ¼fung A
+        FNameA := FotoPath + e_r_BaustellenPfad(Settings) + '\' + FNameA;
+        if FileExists(FNameA) then
+          break;
+
+        // PrÃ¼fung B
+        FNameB := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter), ',', 0);
+        if FileExists(FNameB) then
+          break;
+
+        // PrÃ¼fung C
+        FNameC := FotoPath + e_r_BaustellenPfad(Settings) + '\' + nextp(e_r_FotoName(AUFTRAG_R, Parameter, '', cFoto_Option_ZaehlernummerNeuLeer), ',', 0);
+        if (FNameC<>FNameB) then
+         if FileExists(FNameC) then
+         begin
+           FileMove(FNameC, FNameB);
+           break;
+         end;
+
+        if (FNameA = FNameB) and (FNameB = FNameC) then
+        begin
+          QS_add('[Q25] Bild-Datei "' + FNameA + '" existiert nicht', sPlausi);
+          break;
+        end;
+
+        if (FNameA<>FNameB) and (FNameB=FNameC) then
+        begin
+          QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" existieren nicht', sPlausi);
+          break;
+        end;
+
+        QS_add('[Q25] Bild-Datei "' + FNameA + '" sowie "' + FNameB + '" und "' + FNameC + '" existieren nicht', sPlausi);
+
+      until yet;
+    end;
+  end;
+
+var
+  n, k, y: integer;
+  Cmd: string;
+  PDF: TStringList;
+  PDF_ResultInfoStr : string;
+  PDF_FromWhat: string;
+
+begin
+  ErrorCount := 0;
+  BAUSTELLE_R := 0;
+  vSTATUS := ctvDatenFehlen;
+
+  //
+  FreieZaehlerCol_ZaehlerNummer := -1;
+  FreieZaehlerCol_MaterialNummer := -1;
+  FreieZaehlerCol_Zaehlwerk := -1;
+  FreieZaehlerCol_Zaehlerstand := -1;
+  FreieZaehlerCol_Lager := -1;
+  FreieZaehlerCol_Werk := -1;
+  FreieZaehlerCol_Sparte := -1;
+  FreieZaehlerCol_Obis := -1;
+
+  LinesL := TList.create;
+  ProtokollFeldNamen := TStringList.create;
+  ProtokollWerte := TStringList.create;
+  FreieResourcen := TsTable.create;
+  Sparten := TFieldMapping.create;
+
+  ActColumn := TStringList.create;
+  MussFelder := TStringList.create;
+  RauteFelder := TStringList.create;
+  OhneInhaltFelder := TStringList.create;
+
+  ZaehlerNummernNeu := TSearchStringList.create;
+
+  try
+    _(cFeedBack_ProgressBar_max+1,IntTOStr( RIDs.count));
+    _(cFeedBack_ProgressBar_position+1);
+
+    with FlexCelXLS do
+    begin
+
+      if (Settings.values[cE_FreieZaehler] <> '') then
+      begin
+
+        // Freie ZÃ¤hler laden
+        if FileExists(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler]) then
+        begin
+
+          // Sparten Umsetzer (im normalen Export-Verzeichnis)
+          Sparten.Path := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings);
+
+          // FehlendeResourcen
+          FileDelete(nichtEFREFName(Settings));
+
+          // Laden der EFRE - Datei
+          with FreieResourcen do
+          begin
+
+            oNoBlank := Settings.values[cE_FreieZaehler_ErhalteBlanks] <> cIni_Activate;
+            oDistinct := true;
+            insertFromFile(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler]);
+
+            FreieZaehlerCol_ZaehlerNummer := colof('Serialnummer');
+            if (FreieZaehlerCol_ZaehlerNummer = -1) then
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "Serialnummer" fehlt');
+
+            //
+            FreieZaehlerCol_MaterialNummer := colof('MaterialNo');
+            if (FreieZaehlerCol_MaterialNummer = -1) then
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "MaterialNo" fehlt');
+
+            //
+            FreieZaehlerCol_Zaehlwerk := colof('ZWrk');
+            if (FreieZaehlerCol_Zaehlwerk = -1) then
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "ZWrk" fehlt');
+
+            //
+            FreieZaehlerCol_Zaehlerstand := colof('Stand');
+            if (FreieZaehlerCol_Zaehlerstand = -1) then
+              raise exception.create(Settings.values[cE_FreieZaehler] + ': Spalte "Stand" fehlt');
+
+            // Optionale Felder!
+            FreieZaehlerCol_Lager := colof('Lager');
+            FreieZaehlerCol_Werk := colof('Werk');
+            FreieZaehlerCol_Sparte := colof('Sparte');
+            FreieZaehlerCol_Obis := colof('Obis');
+
+            // Umkonvertierungen
+            for n := 1 to pred(count) do
+            begin
+
+              // ZÃ¤hlernummer Neu
+              WriteCell(n, FreieZaehlerCol_ZaehlerNummer,
+                EFRE_Filter_ZaehlerNummerNeu(readCell(n, FreieZaehlerCol_ZaehlerNummer)));
+
+              // Sparten
+              if (FreieZaehlerCol_Sparte <> -1) then
+                WriteCell(n, FreieZaehlerCol_Sparte, Sparten[cMapping_EFRE_Sparten,
+                  readCell(n, FreieZaehlerCol_Sparte)]);
+
+            end;
+          end;
+
+          // Diagnose speichern
+          FreieResourcen.SaveToFile(
+            { } cAuftragErgebnisPath +
+            { } e_r_BaustellenPfad(Settings) + '\' +
+            { } 'Diagnose-EFRE.csv');
+        end
+        else
+        begin
+          raise exception.create(cAuftragErgebnisPath + Settings.values[cE_FreieZaehler] + ' fehlt!');
+        end;
+
+      end;
+
+      // Datei neu erstellen
+      NewFile(1);
+      PrepareFormat;
+
+      // Einstellungen laden
+      BAUSTELLE_R := strtoint(Settings.values[cE_BAUSTELLE_R]);
+      Zaehlwerk := Settings.values[cE_Zaehlwerk];
+      Zaehler_nr_neu_filter := Settings.values[cE_Filter];
+      Zaehler_nr_neu_zeichen := Settings.values[cE_ZaehlerNummerNeuZeichen];
+      HTMLBenennung := Settings.values[cE_HTMLBenennung];
+      PlausiMode := StrToIntDef(Settings.values[cE_QS_Mode], 4);
+
+      // =JA oder =FA oder =FA;FN
+      AuchMitFoto :=
+      { } (Settings.values[cE_AuchMitFoto] <> cIni_DeActivate) and
+      { } (Settings.values[cE_AuchMitFoto] <> '') and
+      { } (FotoPath <> '');
+      if AuchMitFoto then
+      begin
+        if (Settings.values[cE_AuchMitFoto] = cINI_Activate) then
+          FotoSpalten := 'FA'
+        else
+          FotoSpalten := Settings.values[cE_AuchMitFoto];
+      end
+      else
+        FotoSpalten := '';
+
+      ZaehlerNummernNeuAusN1 := (Settings.values[cE_ZaehlerNummerNeuAusN1] <> cIni_DeActivate);
+      ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cINI_Activate);
+
+      cINTERNINFO := DataModuleDatenbank.nCursor;
+      cINTERNINFO.sql.add('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
+      INTERN_INFO := TStringList.create;
+
+      // Header ermitteln und schreiben
+      HeaderDefault := TStringList.create; // so kommt es vom System!
+      Header := TStringList.create; // so nehmen wir es!
+      Header_col_Scan := -1;
+
+      HeaderFromIntern := TStringList.create;
+      // die kommen aus den intern Feldern
+      HeaderSuppress := TStringList.create; // unerwÃ¼nschte Daten
+      Umsetzer := TFieldMapping.create;
+      // Spalten, die als "Text" formatiert werden mÃ¼ssen
+      HeaderTextFormat := Split(Settings.values[cE_SpalteAlsText]);
+      HeaderTextFormat.sort;
+      Umsetzer.Path := cAuftragErgebnisPath + e_r_BaustellenPfad(Settings);
+      e_r_ProtokollExport(BAUSTELLE_R, ProtokollFeldNamen);
+      ProtokollMode := (ProtokollFeldNamen.count > 0);
+
+      // Excel-Titel-Zeile erzeugen
+      SetHeaderNames;
+
+      // Liste der bisherigen Z# Neu erstellen
+      FuelleZaehlerNummerNeu;
+
+      // "leere" Zeile vorbereiten
+      ActColumn.clear;
+      for n := 0 to pred(Header.count) do
+        ActColumn.add('');
+
+      // nun die einzelnen Daten schreiben
+      ExcelWriteRow := 2;
+      for n := 0 to pred(RIDs.count) do
+      begin
+
+        AUFTRAG_R := integer(RIDs[n]);
+        zweizeilig := false;
+        writePermission := true;
+        sPlausi := ''; // QualitÃ¤tssicherung [Qnn] System initialisieren
+
+        _(cFeedBack_ProgressBar_position+1,IntToStr( n));
+        _(cFeedBack_processmessages);
+
+        // normale Daten - Spalten
+        ProtokollWerte.clear;
+        DataLine := e_r_AuftragLine(AUFTRAG_R);
+        k := 0;
+        while (DataLine <> '') do
+        begin
+          ActValue := nextp(DataLine, ';');
+          repeat
+
+            if (k = twh_Protokoll) then
+            begin
+              while (ActValue <> '') do
+                ProtokollWerte.add(nextp(ActValue, cProtokollTrenner));
+              break;
+            end;
+
+            if (k = twh_ZaehlerNummerNeu) then
+            begin
+              ActValue := ZaehlerNrNeuFilter(ActValue);
+              ZAEHLER_NR_NEU := ActValue;
+            end;
+
+            if (k = twh_Status1) then
+              vSTATUS := TeVirtualPhaseStatus(StrToIntDef(ActValue, ord(ctvDatenFehlen)));
+
+            if (k = twh_ART) then
+            begin
+              ART := ActValue;
+              Sparte := Sparten[cMapping_EFRE_Sparten, ART];
+            end;
+
+            SetCell(HeaderDefault[k], ActValue);
+
+          until true;
+          inc(k);
+        end;
+
+        // Protokollspalten fÃ¼llen
+        for k := 0 to pred(ProtokollFeldNamen.count) do
+        begin
+          ActValue := KommaCheck(ProtokollWerte.values[ProtokollFeldNamen[k]]);
+
+          if (ProtokollFeldNamen[k] = 'N1') then
+            N1 := ActValue;
+          if (ProtokollFeldNamen[k] = 'A1') then
+            A1 := ActValue;
+
+          SetCell(ProtokollFeldNamen[k], ActValue);
+        end;
+
+        // Protokoll als Text auffÃ¼llen
+        ActColIndex := Header.indexof('ProtokollText');
+        if (ActColIndex <> -1) then
+          SetCell(ActColIndex, HugeSingleLine(pem_show(ProtokollePath + ActColumn[Header.indexof('Baustelle')] +
+            ActColumn[Header.indexof('Art')], ProtokollWerte), #10));
+
+        // ZusÃ¤tzliche Felder lesen
+        with cINTERNINFO do
+        begin
+          ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
+          ApiFirst;
+          FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+          if (Zaehlwerk <> '') then
+          begin
+            INTERN_INFO.add('ZaehlwerkMitArt=' + ART + '-1');
+            INTERN_INFO.add(Zaehlwerk + '=1');
+          end;
+
+          // Q-System umgehen
+          if (INTERN_INFO.values['QS_UMGANGEN'] <> '') then
+            QS_add('[Q12] QualitÃ¤tssicherung Ã¼bergangen', sPlausi);
+
+          // Q-System soll einen Stop auslÃ¶sen
+          if (INTERN_INFO.values['QS_NOGO'] <> '') then
+            QS_add('[Q26] QS_NOGO ist gesetzt, ev. Nacharbeiten notwendig', sPlausi);
+
+          // aus den normalen Daten
+          EFRE_ZAEHLER_NR_NEU := EFRE_Filter_ZaehlerNummerNeu(FieldByName('ZAEHLER_NR_NEU').AsString);
+          zaehler_stand_neu := strtodoubledef(FieldByName('ZAEHLER_STAND_NEU').AsString, 0);
+
+          // aus den intern Feldern
+          material_nummer_alt := INTERN_INFO.values[Settings.values[cE_MaterialNummerAlt]];
+          close;
+        end;
+
+        // Nun noch die Intern Infos Ã¼bernehmen
+        if (HeaderFromIntern.count > 0) then
+        begin
+
+          if (FreieResourcen.count > 0) and (EFRE_ZAEHLER_NR_NEU <> '') then
+          begin
+
+            // Gib die Liste der EintrÃ¤ge mit passender ZÃ¤hlernummer
+            EFRE := FreieResourcen.locateDuplicates(FreieZaehlerCol_ZaehlerNummer, EFRE_ZAEHLER_NR_NEU);
+
+            FoundLine := -1;
+            repeat
+
+              if (FreieZaehlerCol_Sparte <> -1) then
+              begin
+
+                // Wenn die Spalte "Sparte" vorhanden ist wird sie auch ausgewertet
+                // Es Treffer MUSS dann auch in der Sparte passen
+                for k := 0 to pred(EFRE.count) do
+                  if (FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_Sparte) = Sparte) then
+                  begin
+                    FoundLine := EFRE[k];
+                    Fill_EFRE(FoundLine);
+                    break;
+                  end;
+
+              end
+              else
+              begin
+
+                // erst Kombination "SerialNummer" & "MaterialNummer" versuchen!
+                if (material_nummer_alt<>'') then
+                  for k := 0 to pred(EFRE.count) do
+                    if (FreieResourcen.readCell(EFRE[k], FreieZaehlerCol_MaterialNummer) = material_nummer_alt) then
+                    begin
+                      FoundLine := EFRE[k];
+                      Fill_EFRE(FoundLine);
+                      break;
+                    end;
+                if (FoundLine <> -1) then
+                  break;
+
+                // Jetzt einfach nur den ersten Treffer nehmen
+                if (EFRE.count > 0) then
+                begin
+                  FoundLine := EFRE[0];
+                  Fill_EFRE(FoundLine);
+                  break;
+                end;
+
+              end;
+
+            until true;
+
+            EFRE.free;
+
+            if (FoundLine = -1) then
+            begin
+
+              writePermission := false;
+              inc(Stat_nichtEFRE);
+
+              // Fehler Berichten
+
+              // Sparte relevant JA/NEIN
+              if (FreieZaehlerCol_Sparte <> -1) then
+              begin
+                Stat_FehlendeResourcen.add(
+                  { } Sparte + ';' +
+                  { } EFRE_ZAEHLER_NR_NEU + ';' +
+                  { } material_nummer_alt + ';' +
+                  { } Settings.values[cE_TAN] + ';' +
+                  { } inttostr(AUFTRAG_R) + ';' +
+                  { } ZAEHLER_NR_NEU);
+                Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource Sparte+ZÃ¤hlernummer "' + Sparte +
+                  '"+"' + EFRE_ZAEHLER_NR_NEU + '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN])
+              end
+              else
+              begin
+                Stat_FehlendeResourcen.add(
+                  { } '*' + ';' +
+                  { } EFRE_ZAEHLER_NR_NEU + ';' +
+                  { } material_nummer_alt + ';' +
+                  { } Settings.values[cE_TAN] + ';' +
+                  { } inttostr(AUFTRAG_R) + ';' +
+                  { } ZAEHLER_NR_NEU);
+                Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Resource ZÃ¤hlernummer "' + EFRE_ZAEHLER_NR_NEU
+                  + '" nicht gefunden!', BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+
+              //
+              if (FailL.indexof(AUFTRAG_R) = -1) then
+              begin
+                FailL.add(AUFTRAG_R);
+              end;
+
+            end
+            else
+            begin
+
+              // PlausibilitÃ¤t ZÃ¤hlerstand "neu" prÃ¼fen
+              zaehler_stand_neu_soll :=
+                strtodoubledef(FreieResourcen.readCell(FoundLine, FreieZaehlerCol_Zaehlerstand), -1);
+
+              if (zaehler_stand_neu_soll > 0) then
+              begin
+                if (abs(zaehler_stand_neu - zaehler_stand_neu_soll) > 35.0) then
+                  QS_add(format('[Q22] Einbaustand falsch (ZÃ¤hlerstand-EFRE=%.0f <> ZÃ¤hlerstand-Monteur=%.0f)',
+                    [zaehler_stand_neu_soll, zaehler_stand_neu]), sPlausi);
+              end;
+
+              // zumindest fÃ¼r dieses Mal diese Zeile lÃ¶schen
+              FreieResourcen.del(FoundLine);
+            end;
+
+          end;
+
+          // Jetzt noch die Intern-Namen einfÃ¼gen!
+          for k := 0 to pred(HeaderFromIntern.count) do
+          begin
+            HeaderName := HeaderFromIntern[k];
+            ActColIndex := Header.indexof(HeaderName);
+            if (ActColIndex <> -1) then
+            begin
+              repeat
+
+                // "c" Felder (calculated, berechnet)
+                if (HeaderName = 'cZaehlerNummerEinbau') then
+                begin
+                  if (length(ZAEHLER_NR_NEU) = 11) then
+                    if (pos('+009', ZAEHLER_NR_NEU) = 1) then
+                    begin
+                      ActValue := copy(ZAEHLER_NR_NEU, 2, 9);
+                      break;
+                    end;
+                end;
+
+                // cFA, cFN, cFH ...
+                if (length(HeaderName) = 3) then
+                  if (pos('cF', HeaderName) = 1) then
+                  begin
+                    ActValue := e_r_FotoName(
+                      { } AUFTRAG_R, copy(
+                      { } HeaderName, 2, MaxInt));
+                    break;
+                  end;
+
+                // Dateiname fÃ¼r die HTML Ausgabe
+                if (HeaderName = 'HTML-Benennung') then
+                  if (HTMLBenennung <> '') then
+                  begin
+                    ActValue := StrFilter(evalColumnExpression(HTMLBenennung),cInvalidFNameChars+'.',true);
+                    break;
+                  end;
+
+                ActValue := KommaCheck(INTERN_INFO.values[HeaderName]);
+              until true;
+              SetCell(ActColIndex, ActValue);
+            end;
+          end;
+
+          // Jetzt noch ev. das Zw = 2 schreiben
+          if (Zaehlwerk <> '') then
+          begin
+
+            // Bei der Art "2" sollten Nebentarif-StÃ¤nde da sein!
+            ZaehlwerkeIst := StrToIntDef(StrFilter(ART, '0123456789'), 1);
+
+            if (ZaehlwerkeIst > 1) then
+            begin
+
+              zweizeilig := true;
+
+              // Nebentarif alter ZÃ¤hler
+              ActColIndex := Header.indexof('NA');
+              if (ActColIndex <> -1) then
+                NA := ActColumn[ActColIndex];
+
+              // Nebentarif neuer ZÃ¤hler
+              ActColIndex := Header.indexof('NN');
+              if (ActColIndex <> -1) then
+                NN := ActColumn[ActColIndex];
+
+              ActColIndex := Header.indexof('Sparte');
+              if (ActColIndex <> -1) then
+                Sparte := ActColumn[ActColIndex]
+              else
+                Sparte := '?';
+
+              if (Settings.values[cE_EinsZuEins] <> cIni_DeActivate) and (vSTATUS in [ctvErfolg, ctvErfolgGemeldet])
+              then
+              begin
+                // HIER DIE PLAUSIBILITÃ„TSPRÃœFUNGEN
+
+                // Plausi fÃ¼r Nebentarif Alt
+                if (Sparte <> 'Einbau') then
+                  if (NA = '') then
+                  begin
+                    writePermission := false;
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Alter ZÃ¤hler: Nebentarif NA fehlt!',
+                      BAUSTELLE_R, Settings.values[cE_TAN]);
+                    if (FailL.indexof(AUFTRAG_R) = -1) then
+                      FailL.add(AUFTRAG_R);
+                  end;
+
+                // Plausi fÃ¼r Nebentarif Neu
+                if (Sparte <> 'Ausbau') then
+                  if (NN = '') then
+                  begin
+                    writePermission := false;
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Neuer ZÃ¤hler: Nebentarif NN fehlt!',
+                      BAUSTELLE_R, Settings.values[cE_TAN]);
+                    if (FailL.indexof(AUFTRAG_R) = -1) then
+                      FailL.add(AUFTRAG_R);
+                  end;
+              end;
+
+            end;
+
+          end;
+        end; // Aufgaben von Internfeldern
+
+        // ÃœberprÃ¼fung der Zwangsfelder!
+        if writePermission then
+        begin
+          if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+            for k := 0 to pred(MussFelder.count) do
+            begin
+              ActColIndex := Header.indexof(MussFelder[k]);
+              if (ActColIndex <> -1) then
+                if (noblank(ActColumn[ActColIndex]) = '') then
+                begin
+                  writePermission := false;
+                  Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' Mussfeld "' + MussFelder[k] +
+                    '" hat keinen Eintrag', BAUSTELLE_R, Settings.values[cE_TAN]);
+                  if (FailL.indexof(AUFTRAG_R) = -1) then
+                    FailL.add(AUFTRAG_R);
+                end;
+            end;
+        end;
+
+        if writePermission then
+        begin
+
+          case PlausiMode of
+            0:
+              ; // Aus!
+            1:
+              QS_add(e_r_AuftragPlausi(AUFTRAG_R), sPlausi);
+            2:
+              begin
+                if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+                begin
+
+                  ActColIndex := Header.indexof('ZaehlerStandAlt');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q01] Kein Ausbaustand', sPlausi);
+
+                  ActColIndex := Header.indexof('ZaehlerNummerNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                  begin
+                    ActColIndex := Header.indexof('N1');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
+                  end;
+
+                  ActColIndex := Header.indexof('ZaehlerStandNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q03] Kein Einbaustand', sPlausi);
+
+                  ActColIndex := Header.indexof('Art');
+                  ZaehlwerkeIst := StrToIntDef(StrFilter(ActColumn[ActColIndex], '0123456789'), 1);
+
+                  if (ZaehlwerkeIst > 1) then
+                  begin
+
+                    // Nebentarif alter ZÃ¤hler
+                    ActColIndex := Header.indexof('NA');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
+
+                    // Nebentarif neuer ZÃ¤hler
+                    ActColIndex := Header.indexof('NN');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
+
+                  end;
+
+                end;
+              end;
+            3:
+              begin
+                if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+                begin
+
+                  ActColIndex := Header.indexof('ZaehlerStandAlt');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q01] Kein Ausbaustand', sPlausi);
+
+                  ActColIndex := Header.indexof('ZaehlerNummerNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                  begin
+                    ActColIndex := Header.indexof('N1');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
+                  end;
+
+                  ActColIndex := Header.indexof('ZaehlerStandNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q03] Kein Einbaustand', sPlausi);
+
+                end;
+
+                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet, ctvUnmoeglichGemeldet]) then
+                begin
+                  k := 0;
+                  ActColIndex := Header.indexof('I3');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  ActColIndex := Header.indexof('I6');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  ActColIndex := Header.indexof('I7');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  if (k = 3) then
+                    QS_add('[Q20] Keine Anmerkung des Monteurs', sPlausi);
+                end;
+
+              end;
+            4: // das default Modell!
+              begin
+                if (vSTATUS in [ctvErfolg, ctvErfolgGemeldet]) then
+                begin
+
+                  ActColIndex := Header.indexof('ZaehlerStandAlt');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q01] Kein Ausbaustand', sPlausi);
+
+                  ActColIndex := Header.indexof('ZaehlerNummerNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                  begin
+                    ActColIndex := Header.indexof('N1');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q02] Kein EinbauzÃ¤hler', sPlausi);
+                  end;
+
+                  ActColIndex := Header.indexof('ZaehlerStandNeu');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    QS_add('[Q03] Kein Einbaustand', sPlausi);
+
+                  ZaehlwerkeIst := StrToIntDef(StrFilter(ART, cZiffern), 1);
+
+                  if (ZaehlwerkeIst > 1) then
+                  begin
+
+                    // Nebentarif alter ZÃ¤hler
+                    ActColIndex := Header.indexof('NA');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q04] Kein Nebentarif Ausbaustand', sPlausi);
+
+                    // Nebentarif neuer ZÃ¤hler
+                    ActColIndex := Header.indexof('NN');
+                    if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q05] Kein Nebentarif Einbaustand', sPlausi);
+
+                  end;
+
+                  ActColIndex := Header.indexof('FA');
+                  if (ActColIndex <> -1) then
+                    if (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q23] FA ist leer im Status Erfolg', sPlausi);
+
+                end;
+
+                if (vSTATUS in [ctvVorgezogen, ctvUnmoeglich, ctvVorgezogenGemeldet, ctvUnmoeglichGemeldet]) then
+                begin
+                  k := 0;
+                  ActColIndex := Header.indexof('I3');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  ActColIndex := Header.indexof('I6');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  ActColIndex := Header.indexof('I7');
+                  if (ActColIndex = -1) or (ActColumn[ActColIndex] = '') then
+                    inc(k);
+                  if (k = 3) then
+                    QS_add('[Q20] Keine Anmerkung des Monteurs', sPlausi);
+
+                  ActColIndex := Header.indexof('FA');
+                  if (ActColIndex <> -1) then
+                    if (ActColumn[ActColIndex] = '') then
+                      QS_add('[Q24] FA ist leer im Status UnmÃ¶glich oder Vorgezogen', sPlausi);
+
+                end;
+
+                ActColIndex := Header.indexof('FA');
+                if (ActColIndex <> -1) then
+                  Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, 'FA');
+
+                ActColIndex := Header.indexof('FN');
+                if (ActColIndex <> -1) then
+                  Q_CheckFotoFile(ActColumn[ActColIndex], AUFTRAG_R, 'FN');
+
+              end;
+          else
+            QS_add('[Q99] Bewertungsmodell unbekannt', sPlausi);
+          end;
+
+        end;
+
+        // Dubletten-PrÃ¼fung
+        if (PlausiMode > 0) then
+          if
+          { } ((ZAEHLER_NR_NEU <> '0') and
+            { } (ZAEHLER_NR_NEU <> '')) or
+          { } ((N1 <> '0') and (N1 <> '') and ZaehlerNummernNeuAusN1) then
+          begin
+
+            // Alphanumerischer Vorsatz
+            if ZaehlerNummernNeuMitA1 then
+              ZaehlerNummerNeuPreFix := A1
+            else
+              ZaehlerNummerNeuPreFix := '';
+
+            // ZÃ¤hlernumer Neu
+            if (ZAEHLER_NR_NEU <> '') then
+            begin
+              DublettenPruefling := ART + '~' + ZaehlerNummerNeuPreFix + ZAEHLER_NR_NEU;
+              lZNN_Dupletten := ZaehlerNummernNeu.find(DublettenPruefling);
+              for k := 0 to pred(lZNN_Dupletten.count) do
+                if (lZNN_Dupletten[k] <> AUFTRAG_R) then
+                begin
+                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' + inttostr(lZNN_Dupletten[k]) +
+                    ' ist die "ZÃ¤hlernummer Neu"-Dublette (' + DublettenPruefling + ')', BAUSTELLE_R,
+                    Settings.values[cE_TAN]);
+
+                  QS_add('[Q21] EinbauzÃ¤hler gibt es bereits', sPlausi);
+                end;
+              lZNN_Dupletten.free;
+            end;
+
+            // N1
+            if (N1 <> '') and ZaehlerNummernNeuAusN1 then
+            begin
+              DublettenPruefling := ART + '~' + ZaehlerNummerNeuPreFix + N1;
+              lZNN_Dupletten := ZaehlerNummernNeu.find(DublettenPruefling);
+              for k := 0 to pred(lZNN_Dupletten.count) do
+                if (lZNN_Dupletten[k] <> AUFTRAG_R) then
+                begin
+                  Log(cINFOText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' RID=' + inttostr(lZNN_Dupletten[k]) +
+
+                    ' ist die "N1"-Dublette (' + DublettenPruefling + ')', BAUSTELLE_R, Settings.values[cE_TAN]);
+
+                  QS_add('[Q21] EinbauzÃ¤hler gibt es bereits', sPlausi);
+                end;
+              lZNN_Dupletten.free;
+            end;
+
+          end;
+
+        // abschliessende Bewertung
+        if not(QS_gut(sPlausi, Settings)) then
+        begin
+          writePermission := false;
+          sQS_kritisch := QS_kritisch(sPlausi, Settings);
+          for k := 0 to pred(sQS_kritisch.count) do
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + sQS_kritisch[k], BAUSTELLE_R,
+              Settings.values[cE_TAN]);
+          sQS_kritisch.free;
+          if (FailL.indexof(AUFTRAG_R) = -1) then
+            FailL.add(AUFTRAG_R);
+        end;
+
+        if writePermission then
+          // ist MaxAnzahl Ã¼berschritten?
+          if (Stat_Erfolg.count + Stat_Vorgezogen.count + Stat_Unmoeglich.count >= MaxAnzahl) then
+          begin
+            writePermission := false;
+            Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + ' Limit (' + inttostr(MaxAnzahl) +
+              ') der Meldungen ist erreicht!', BAUSTELLE_R, Settings.values[cE_TAN]);
+            if (FailL.indexof(AUFTRAG_R) = -1) then
+              FailL.add(AUFTRAG_R);
+          end;
+
+        // Bild dazumachen!
+        if writePermission and AuchMitFoto then
+        begin
+          FilesCandidates := TStringList.create;
+
+          _FotoSpalten := noblank(FotoSpalten);
+          while (_FotoSpalten <> '') do
+          begin
+            FotoSpalte := nextp(_FotoSpalten);
+
+            ActColIndex := Header.indexof(FotoSpalte);
+            if (ActColIndex <> -1) then
+            begin
+
+              FotoFName := nextp(ActColumn[ActColIndex], ',', 0);
+              if (FotoFName <> '') then
+              begin
+                repeat
+
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                  begin
+                    FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte);
+
+                    // Ev. in letzter Sekunde einfach fÃ¼r das Bild sorgen
+                    if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                    begin
+                     _FotoFName := e_r_FotoName(AUFTRAG_R, FotoSpalte, '',cFoto_Option_ZaehlernummerNeuLeer);
+                     if (_FotoFName<>FotoFName) then
+                       if FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName) then
+                         FileMove(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName, FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName);
+                    end;
+
+                    // RÃ¼ckwÃ¤rtiges Ã„ndern der Spalte der Ergebnisdatei
+                    ActColumn[ActColIndex] := FotoFName;
+                    FotoFName := nextp(FotoFName, ',', 0);
+                  end;
+
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName)) then
+                  begin
+                    writePermission := false;
+                    Log(cERRORText + ' (RID=' + inttostr(AUFTRAG_R) + ')' + ' ' + FotoSpalte + '-Bild "' + FotoFName +
+                      '" fehlt!', BAUSTELLE_R, Settings.values[cE_TAN]);
+                    if (FailL.indexof(AUFTRAG_R) = -1) then
+                      FailL.add(AUFTRAG_R);
+                    break;
+                  end;
+
+                  // Ev. eine vom Bilddateinamen vereinfachte Datei-Dublette anlegen
+                  _FotoFName := StrFilter(FotoFName, 'Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ', true);
+                  if not(FileExists(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName)) then
+                    FileCopy(FotoPath + e_r_BaustellenPfad(Settings) + '\' + FotoFName,
+                      FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName);
+
+                  // Erfolg! Foto muss mit ins ZIP
+                  FilesCandidates.add(FotoPath + e_r_BaustellenPfad(Settings) + '\' + _FotoFName);
+
+                until true;
+              end;
+            end;
+          end;
+
+          // Nur bei Fehlerfreiheit alles dazu
+          if writePermission then
+            Files.AddStrings(FilesCandidates);
+          FilesCandidates.free;
+
+        end;
+
+        if writePermission then
+        begin
+          // rausschreiben der Daten!
+          WriteLine;
+
+          if zweizeilig then
+          begin
+
+            // ZÃ¤hlwerke auf "2" setzen
+            ActColIndex := Header.indexof(Zaehlwerk);
+            if (ActColIndex <> -1) then
+              SetCell(ActColIndex, '2');
+            if (Settings.values[cE_ZaehlwerkNeu] <> '') then
+            begin
+              ActColIndex := Header.indexof(Settings.values[cE_ZaehlwerkNeu]);
+              if (ActColIndex <> -1) then
+                SetCell(ActColIndex, '2');
+            end;
+            ActColIndex := Header.indexof('ZaehlwerkMitArt');
+            SetCell(ActColIndex, ART + '-2');
+
+            ActColIndex := Header.indexof('ZaehlerStandAlt');
+            if (ActColIndex <> -1) then
+              SetCell(ActColIndex, NA);
+
+            ActColIndex := Header.indexof('ZaehlerStandNeu');
+            if (ActColIndex <> -1) then
+              SetCell(ActColIndex, NN);
+
+            // Jetzt noch die "Intern-Namen.2" einfÃ¼gen!
+            for k := 0 to pred(HeaderFromIntern.count) do
+            begin
+              HeaderName := HeaderFromIntern[k];
+              ActColIndex := Header.indexof(HeaderName);
+              if (ActColIndex <> -1) then
+              begin
+                ActValue := KommaCheck(INTERN_INFO.values[HeaderName + '.2']);
+                if (ActValue <> '') then
+                  SetCell(ActColIndex, ActValue);
+              end;
+            end;
+
+            WriteLine;
+
+          end;
+
+          case vSTATUS of
+            ctvErfolg, ctvErfolgGemeldet:
+              Stat_Erfolg.add(AUFTRAG_R);
+            ctvVorgezogen, ctvVorgezogenGemeldet:
+              Stat_Vorgezogen.add(AUFTRAG_R);
+            ctvUnmoeglich, ctvUnmoeglichGemeldet:
+              Stat_Unmoeglich.add(AUFTRAG_R);
+          end;
+
+        end;
+
+        Log(
+          { } inttostr(succ(n)) + '/' + inttostr(RIDs.count) + ' ' +
+          { } booltostr(zweizeilig, 'x2 ', '') +
+          { } '(' + inttostr(integer(RIDs[n])) + ' : ' + booltostr(FailL.indexof(RIDs[n]) = -1) + ')');
+
+      end; // for RIDS..
+
+      HeaderDefault.free;
+      for n := 0 to pred(Header.count) do
+        TgpIntegerList(Header.objects[n]).free;
+      Header.free;
+      HeaderFromIntern.free;
+      HeaderSuppress.free;
+      HeaderTextFormat.free;
+      INTERN_INFO.free;
+      cINTERNINFO.free;
+
+      // Ausgabe in die neue Datei
+      OutFName :=
+      { } cAuftragErgebnisPath +
+      { } e_r_BaustellenPfad(Settings) + '\' +
+      { } noblank(Settings.values[cE_Praefix]) +
+      { } 'Zaehlerdaten_' + Settings.values[cE_TAN] +
+      { } noblank(Settings.values[cE_Postfix]) + '.xls';
+
+      CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
+      FileDelete(OutFName);
+      save(OutFName);
+      if (Settings.values[cE_OhneStandardXLS] <> cINI_Activate) then
+        Files.add(OutFName);
+
+      repeat
+
+        // Wenn es gar nix mehr zu melden gibt? Ist hier Ende
+        if (RIDs.Count<=FailL.Count) then
+         break;
+
+        // Oc noch rufen, um wieder eine csv draus zu machen?
+        if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) and (Settings.values[cE_AuchAlsXLS] <> cINI_Activate) then
+        begin
+
+          // Bestimmen des Konvertierungs-Modus
+          if FileExists(
+            { } cAuftragErgebnisPath +
+            { } e_r_BaustellenPfad(Settings) + '\' +
+            { } cFixedFloodFName) then
+            n := Content_Mode_xls2Flood
+          else
+            n := Content_Mode_xls2csv;
+
+          // Konvertieren
+          Oc_Bericht := TStringList.create;
+          if not(doConversion(n, OutFName, Oc_Bericht)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+
+            // Normales Oc Ergebnis
+            Files.add(conversionOutFName);
+
+            // weitere Dateien dazu
+            Files.add(copy(OutFName, 1, length(OutFName) - 4) + '-*.xls');
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // XML
+        if (Settings.values[cE_AuchAlsXML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          case CheckContent(OutFName) of
+            Content_Mode_xls2Argos2007:
+              Oc_Result := doConversion(Content_Mode_xls2Argos2007, OutFName, Oc_Bericht);
+            Content_Mode_xls2Argos2018:
+              Oc_Result := doConversion(Content_Mode_xls2Argos2018, OutFName, Oc_Bericht);
+            Content_Mode_xls2ml:
+              Oc_Result := doConversion(Content_Mode_xls2ml, OutFName, Oc_Bericht);
+          else
+            Oc_Result := doConversion(Content_Mode_xls2rwe, OutFName, Oc_Bericht);
+          end;
+          if not(Oc_Result) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            Files.add(copy(OutFName, 1, length(OutFName) - 4) + '.xml');
+            for n := 0 to pred(Oc_Bericht.count) do
+              if (pos('(RID=', Oc_Bericht[n]) > 0) then
+              begin
+                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                if (FailL.indexof(FAIL_R) = -1) then
+                  FailL.add(FAIL_R);
+                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // XML, XML, ...
+        if (Settings.values[cE_AuchAlsEinzelXML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          Oc_Result := doConversion(Content_Mode_xls2xml, OutFName, Oc_Bericht);
+          if not(Oc_Result) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+
+            for n := 0 to pred(Oc_Bericht.count) do
+            begin
+              // Dateinamen des .xml bestimmen
+              if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
+              begin
+                SingleFName :=
+                { } cAuftragErgebnisPath +
+                { } e_r_BaustellenPfad(Settings) + '\' +
+                { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
+                Files.add(SingleFName);
+              end;
+
+              if (pos('(RID=', Oc_Bericht[n]) > 0) then
+              begin
+                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                if (FailL.indexof(FAIL_R) = -1) then
+                  FailL.add(FAIL_R);
+                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+              _(cFeedBack_processmessages);
+            end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // HTML, HTML, ...
+        if (Settings.values[cE_AuchAlsHTML] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          Oc_Result := doConversion(Content_Mode_xls2html, OutFName, Oc_Bericht);
+          if not(Oc_Result) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            for n := 0 to pred(Oc_Bericht.count) do
+            begin
+              // Dateinamen des .html bestimmen
+              if (pos('INFO: save ', Oc_Bericht[n]) > 0) then
+              begin
+                SingleFName :=
+                { } cAuftragErgebnisPath +
+                { } e_r_BaustellenPfad(Settings) + '\' +
+                { } nextp(Oc_Bericht[n], 'INFO: save ', 1);
+                Files.add(SingleFName);
+
+                // Noch ein PDF hinzu?
+                if (Settings.values[cE_AuchAlsPDF] = cINI_Activate) then
+                begin
+                  PDF_FromWhat := SingleFName;
+                  PDF := html2pdf(PDF_FromWhat, false);
+                  PDF_ResultInfoStr := PDF.Values['ERROR'];
+                  if (PDF_ResultInfoStr<>'') then
+                  begin
+                    inc(ErrorCount);
+                    Log(cERRORText + ' HTML zu PDF Konvertierung: ' + PDF_ResultInfoStr, BAUSTELLE_R);
+                  end else
+                  begin
+                    if (Settings.values[cE_OhneHTML] = cINI_Activate) then
+                      Files.delete(pred(Files.count));
+                    SingleFname := PDF.Values['ConversionOutFName'];
+                    FileTouch(SingleFName, FileDateTime(PDF_FromWhat));
+                    Files.add(SingleFName);
+                  end;
+                  PDF.Free;
+                end;
+                continue;
+              end;
+
+              if (pos(cWARNINGText, Oc_Bericht[n])=0) then
+                if (pos('(RID=', Oc_Bericht[n]) > 0) then
+                begin
+                  FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                  if (FailL.indexof(FAIL_R) = -1) then
+                    FailL.add(FAIL_R);
+                  Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+                 continue;
+                end;
+              _(cFeedback_processmessages);
+            end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+        // Vorlage.xls, Variante 1/2 (=JA)
+        if (Settings.values[cE_AuchAlsXLS] = cINI_Activate) and
+          not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
+        begin
+
+          if (pos('.unmoeglich', OutFName) > 0) then
+            p_XLS_VorlageFName := 'Vorlage.unmoeglich.xls'
+          else
+            p_XLS_VorlageFName := '';
+
+          Oc_Bericht := TStringList.create;
+          if not(doConversion(Content_Mode_xls2xls, OutFName, Oc_Bericht)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            Files.add(conversionOutFName);
+          end;
+          Oc_Bericht.free;
+
+          // die Konvertierte auch als CSV?
+          if (Settings.values[cE_AuchAlsCSV] = cINI_Activate) then
+          begin
+            Oc_Bericht := TStringList.create;
+            if not(doConversion(Content_Mode_xls2csv, conversionOutFName, Oc_Bericht)) then
+            begin
+              inc(ErrorCount);
+              Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+              Log(Oc_Bericht, BAUSTELLE_R);
+              break;
+            end
+            else
+            begin
+              Files.add(conversionOutFName);
+            end;
+            Oc_Bericht.free;
+          end;
+
+        end;
+
+        // Vorlage.xls, Variante 2/2 (=SEPARAT)
+        if (Settings.values[cE_AuchAlsXLS] = cINI_Distinct) and
+          not((Settings.values[cE_AuchAlsXLSunmoeglich] = cIni_DeActivate) and (pos('.unmoeglich', OutFName) > 0)) then
+        begin
+
+          if (pos('.unmoeglich', OutFName) > 0) then
+            p_XLS_VorlageFName := 'Vorlage.unmoeglich.xls'
+          else
+            p_XLS_VorlageFName := '';
+
+          Oc_Bericht := TStringList.create;
+          if not(doConversion(Content_Mode_xls2xls, OutFName, Oc_Bericht)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            Files.add(conversionOutFName);
+          end;
+          Oc_Bericht.free;
+
+        end;
+
+        // IDOC
+        if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) and (pos('.unmoeglich', OutFName) = 0) then
+        begin
+          Oc_Bericht := TStringList.create;
+          if not(doConversion(Content_Mode_xls2idoc, OutFName, Oc_Bericht)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + cOc_FehlerMeldung, BAUSTELLE_R);
+            Log(Oc_Bericht, BAUSTELLE_R);
+            break;
+          end
+          else
+          begin
+            Files.add(copy(OutFName, 1, length(OutFName) - 4) + '.????.idoc');
+            Files.add(ExtractFilePath(OutFName) + 'z1isu_meau_' + Settings.values[cE_TAN] + '-*');
+            for n := 0 to pred(Oc_Bericht.count) do
+              if (pos('(RID=', Oc_Bericht[n]) > 0) then
+              begin
+                FAIL_R := StrToIntDef(ExtractSegmentBetween(Oc_Bericht[n], '(RID=', ')'), 0);
+                if (FailL.indexof(FAIL_R) = -1) then
+                  FailL.add(FAIL_R);
+                Log(cERRORText + ' ' + Oc_Bericht[n], BAUSTELLE_R, Settings.values[cE_TAN]);
+              end;
+          end;
+          Oc_Bericht.free;
+        end;
+
+      until yet;
+    end;
+  except
+    on e: exception do
+    begin
+      inc(ErrorCount);
+      Log(cERRORText + ' ' + e.message, BAUSTELLE_R);
+    end;
+  end;
+  p_XLS_VorlageFName := '';
+
+  LinesL.free;
+  ProtokollFeldNamen.free;
+  ProtokollWerte.free;
+  FreieResourcen.free;
+  Sparten.free;
+  ActColumn.free;
+  MussFelder.free;
+  RauteFelder.free;
+  OhneInhaltFelder.free;
+  ZaehlerNummernNeu.free;
+
+  _(cFeedBack_ProgressBar_position+1);
+  result := (ErrorCount = 0);
+end;
+
+procedure ClearStat;
+begin
+  if not(assigned(Stat_Erfolg)) then
+  begin
+    Stat_Erfolg := TgpIntegerList.create;
+    Stat_Vorgezogen := TgpIntegerList.create;
+    Stat_Unmoeglich := TgpIntegerList.create;
+    Stat_Fail := TgpIntegerList.create;
+    Stat_FehlendeResourcen := TStringList.create;
+  end
+  else
+  begin
+    Stat_Erfolg.clear;
+    Stat_Vorgezogen.clear;
+    Stat_Unmoeglich.clear;
+    Stat_Fail.clear;
+    Stat_FehlendeResourcen.clear;
+  end;
+  Stat_meldungen := 0;
+  Stat_nichtEFRE := 0;
+  Stat_Attachments.clear;
+  Stat_FehlendeResourcen.add('Sparte;ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
+end;
+
+
+function e_w_Ergebnis(
+ {} BAUSTELLE_R: integer;
+ {} ManuellInitiiert: boolean;
+ {} fb: TFeedBack = nil): boolean;
+
+{$I Feedback.inc}
+
+procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
+begin
+  if (BAUSTELLE_R > 0) then
+    s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
+  if (TAN <> '') then
+    s := s + ' ' + TAN;
+  _(cFeedBack_ListBox+1,s);
+  _(cFeedBack_processmessages);
+  AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
+end;
+
+procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
+var
+  n: integer;
+begin
+  for n := 0 to pred(s.count) do
+  begin
+    if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
+      continue;
+    if (pos(cE_FTPPASSWORD, s[n]) = 1) then
+      continue;
+    Log(s[n], BAUSTELLE_R, TAN);
+  end;
+end;
+
+
+var
+  qMail: TdboQuery;
+  eMailParameter: TStringList;
+  PERSON_R: integer;
+  VORLAGE_R: integer;
+  TAN: integer;
+  Settings: TStringList;
+  FTP_UploadFName: string;
+  ErrorCount: integer;
+  n: integer;
+  BaustelleKurz: string;
+
+  // upload einzelner Dateien
+  FTP_UploadFiles: TStringList;
+  FTP_UploadMasks: TStringList;
+  FTP_DeleteLocal: TStringList;
+  iSourcePathAdditionalFiles: string;
+  CloseLater: boolean;
+
+  // Commit - Code
+  CommitL: TgpIntegerList;
+
+  // Eingangsparameter
+  pTAN_wiederholen : boolean; // was CheckBox5.checked
+  pTAN             : string;  // was edit2
+  pSQL             : string;  // was Memo1.lines
+  pAUFTRAG_R       : Integer; // was Edit1.Text / Checkbox4
+  pEinzelneBaustelle : string; // [KÃ¼rzel] was RadioButton3.checked / ComboBox1.Text
+  pFTP_Diagnose : boolean; // was CheckBox1.checked
+  pEinzelMeldeErlaubnis : boolean; // was not(CheckBox2.checked)
+  pTAN_statisch : boolean; //was CheckBox3.checked
+
+  procedure doCommit;
+  var
+    dAUFTRAG: TIB_DSQL;
+    n: integer;
+    TransaktionsName: string;
+  begin
+
+    // Erfolg in die Auftragsdaten eintragen: "COMMIT!"
+    dAUFTRAG := DataModuleDatenbank.nDSQL;
+    with dAUFTRAG do
+    begin
+      sql.add('update AUFTRAG set');
+      sql.add(' EXPORT_TAN = ' + inttostr(TAN));
+      sql.add('where RID = :CROSSREF');
+      prepare;
+      for n := 0 to pred(CommitL.count) do
+      begin
+        ParamByName('CROSSREF').AsInteger := integer(CommitL[n]);
+        execute;
+      end;
+    end;
+    dAUFTRAG.free;
+
+    // Eine Abschluss-Transaktion durchfÃ¼hren
+    if (Settings.values[cE_AbschlussTransaktion] <> '') then
+    begin
+      TransaktionsName := Settings.values[cE_AbschlussTransaktion];
+      while (TransaktionsName <> '') do
+        Funktionen_Transaktion.Dispatch(nextp(TransaktionsName), CommitL);
+    end;
+
+  end;
+
+  procedure doFTP;
+  var
+    n: integer;
+    NativeFileName: string;
+    Local_FSize: int64;
+    FTP_FSize: int64;
+    qTICKET: TIB_Query;
+    FTP_Infos: TStringList;
+  begin
+
+    repeat
+
+      // Dateien hochladen
+      for n := 0 to pred(FTP_UploadFiles.count) do
+      begin
+
+        Local_FSize := FSize(FTP_UploadFiles[n]);
+        NativeFileName := ExtractFileName(FTP_UploadFiles[n]);
+
+        _(cFeedback_Log,'Upload "' + NativeFileName + '" ' + inttostr(Local_FSize) + ' Byte(s) ...');
+
+        if not(SolidUpload(
+          { } IdFTP1,
+          { } FTP_UploadFiles[n],
+          { } Settings.values[cE_FTPVerzeichnis],
+          { } NativeFileName)) then
+        begin
+
+          // FTP - ERROR
+          inc(ErrorCount);
+          Log(cERRORText + ' ' + SolidFTP_LastError, BAUSTELLE_R);
+
+          // FTP - Ticket erstellen
+          qTICKET := DataModuleDatenbank.nQuery;
+          FTP_Infos := TStringList.create;
+
+          with FTP_Infos do
+          begin
+            values[cE_FTPHOST] := IdFTP1.Host;
+            values[cE_FTPUSER] := IdFTP1.Username;
+            values[cE_FTPPASSWORD] := IdFTP1.Password;
+            values[cE_FTPVerzeichnis] := Settings.values[cE_FTPVerzeichnis];
+            values['Datei'] := FTP_UploadFiles[n];
+            values['NachUploadLÃ¶schen'] := bool2cO(FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1);
+            values['Fehler'] := SolidFTP_LastError;
+          end;
+
+          with qTICKET do
+          begin
+            // ein Ticket, durch das System erzeugt
+            sql.add('select * from TICKET for update');
+            insert;
+            FieldByName('RID').AsInteger := 0;
+            FieldByName('ART').AsInteger := eT_FTP;
+            FieldByName('INFO').Assign(FTP_Infos);
+            post;
+          end;
+
+          qTICKET.free;
+          FTP_Infos.free;
+
+          break;
+        end
+        else
+        begin
+
+          FTP_FSize := SolidSize(
+            { } IdFTP1,
+            { } Settings.values[cE_FTPVerzeichnis],
+            { } NativeFileName);
+
+          if (FTP_FSize = Local_FSize) then
+          begin
+            inc(Stat_meldungen);
+            // Nach Erfolg ev. lÃ¶schen? Nicht bei allen Dateien
+            if (FTP_DeleteLocal.indexof(FTP_UploadFiles[n]) <> -1) then
+              FileDelete(FTP_UploadFiles[n]);
+          end
+          else
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + ' Datei "' + FTP_UploadFiles[n] + '" belegt auf der FTP-Ablage ' + inttostr(FTP_FSize) +
+              ' Byte(s) - es sollten aber ' + inttostr(Local_FSize) + ' Byte(s) sein', BAUSTELLE_R);
+          end;
+
+        end;
+      end;
+
+      // Dateien hochladen Ã¼ber die Alternative CoreFTP
+      for n := 0 to pred(FTP_UploadMasks.count) do
+        if not(CoreFTP_Up(
+          { Profile } e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]),
+          { Mask } nextp(FTP_UploadMasks[n], ';', 0),
+          { Path } nextp(FTP_UploadMasks[n], ';', 1))) then
+        begin
+          // FTP - ERROR
+          inc(ErrorCount);
+          Log(cERRORText + ' Ursache siehe CoreFTP-' + inttostr(DateGet) + '.log.txt');
+          break;
+        end;
+
+    until yet;
+  end;
+
+  function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean): integer;
+  // [Anzahl der Meldungen]
+  var
+    cAUFTRAG: TIB_Cursor;
+    _Expected_TAN: integer;
+    ExportL: TgpIntegerList;
+    FailL: TgpIntegerList;
+    FilesUp: TStringList;
+    n: integer;
+    AUFTRAG_R: Integer;
+  begin
+    result := 0;
+    if { } pTAN_wiederholen and
+    { } (pTAN <> '') and
+    { } (pos(',', pTAN) = 0) and
+    { } (pos('-', pTAN) = 0) then
+      _Expected_TAN := StrToIntDef(pTAN, -1)
+    else
+      _Expected_TAN := StrToIntDef(Settings.values[cE_EXPORT_TAN], -2) + 1;
+
+    // Es kÃ¶nnte sein, dass bei der Datenquelle= die TAN rasugenommen wurde
+    if (_Expected_TAN = -1) then
+    begin
+      inc(ErrorCount);
+      Log(cERRORText + ' Die neue TAN konnte nicht ermittelt werden|Letzte TAN leer oder keine Zahl');
+      exit;
+    end;
+
+    cAUFTRAG := DataModuleDatenbank.nCursor;
+    with cAUFTRAG do
+    begin
+      sql.add('select RID from AUFTRAG where'); //
+
+      sql.add(' (BAUSTELLE_R=' + Settings.values[cE_Datenquelle] + ') AND');
+      // diese Baustelle
+      repeat
+
+        if Erfolgsmeldungen and Unmoeglichmeldungen then
+        begin
+          sql.add(' ((STATUS=' + inttostr(ord(ctsErfolg)) + ') OR ');
+          sql.add('  (STATUS=' + inttostr(ord(ctsVorgezogen)) + ') OR ');
+          sql.add('  (STATUS=' + inttostr(ord(ctsUnmoeglich)) + ')) AND');
+          break;
+        end;
+
+        if Erfolgsmeldungen then
+        begin
+          sql.add(' (STATUS=' + inttostr(ord(ctsErfolg)) + ') and');
+          break;
+        end;
+
+        sql.add(' ((STATUS=' + inttostr(ord(ctsVorgezogen)) + ') OR');
+        sql.add('  (STATUS=' + inttostr(ord(ctsUnmoeglich)) + ')) and');
+
+      until true;
+
+      // Filter-SQL noch dazu ...
+      if (Settings.values[cE_SQL_Filter] <> '') then
+        sql.add(Settings.values[cE_SQL_Filter]);
+
+      sql.Add(pSQL);
+      repeat
+
+        AUFTRAG_R := _(cFeedback_Function);
+        if (AUFTRAG_R >= cRID_FirstValid) then
+        begin
+          sql.add(' (RID=' + inttostr(AUFTRAG_R) + ')');
+          break;
+        end;
+
+        if pTAN_wiederholen and (pTAN <> '') then
+        begin
+          if (pos(',', pTAN) > 0) or (pos('-', pTAN) > 0) then
+            sql.add(' (EXPORT_TAN in (' + StrRange(pTAN) + '))')
+          else
+            sql.add(' (EXPORT_TAN=' + pTAN + ')');
+          break;
+        end;
+
+        sql.add(' ((EXPORT_TAN is null) or (EXPORT_TAN=' + inttostr(_Expected_TAN) + '))')
+        // ungemeldet
+
+      until true;
+      sql.add('order by');
+      sql.add(' ZAEHLER_WECHSEL,RID');
+
+      // Ã¼bers SQL informieren
+      Log(sql);
+
+      // ermittelte Anzahl
+      Log('Anz=' + inttostr(RecordCount));
+
+      ApiFirst;
+      if not(eof) then
+      begin
+
+        // hey! Ã¼berhaupt was zu melden!
+        ExportL := TgpIntegerList.create;
+        FailL := TgpIntegerList.create;
+        FilesUp := TStringList.create;
+
+        // Vorlauf
+        try
+          repeat
+
+            TAN := _Expected_TAN;
+            Settings.values[cE_TAN] := inttostrN(TAN, cE_TANLENGTH);
+            FTP_UploadFName :=
+            { } noblank(Settings.values[cE_Praefix]) +
+            { } Settings.values[cE_TAN] +
+            { } noblank(Settings.values[cE_Postfix]) +
+            { } '.zip';
+
+            while not(eof) do
+            begin
+              // Liste aufbauen
+              ExportL.add(FieldByName('RID').AsInteger);
+              ApiNext;
+            end;
+
+            // Dateien erzeugen
+            if not(e_w_CreateFiles(Settings, ExportL, FailL, FilesUp, fb)) then
+            begin
+              inc(ErrorCount);
+              // Create-Files sollte bereits Ã¼ber den Fehler berichtet haben
+              break;
+            end;
+
+            // Hey, gar nix geschrieben?!
+            if (ExportL.count - FailL.count < 1) then
+            begin
+             if (ExportL.Count>0) then
+              Log(cINFOText + ' Es gibt wegen 100% Fehlerquote ('+IntToStr(FailL.count)+'/'+IntToStr(ExportL.count)+') nichts zu melden');
+             break;
+            end;
+
+            // Berichten Ã¼ber Anzahl
+            if (ExportL.Count>0) then
+             if (FailL.count>0) then
+              Log(cINFOText + ' Es werden nur '+IntToStr(ExportL.count - FailL.count)+'/'+IntToStr(ExportL.count)+' gemeldet');
+
+            // FilesUp aufrÃ¤umen
+            FilesUp.sort;
+            RemoveDuplicates(FilesUp);
+
+            if DebugMode then
+              FilesUp.SaveToFile(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' + 'Files-For-Zip.txt');
+
+            // Zip "FilesUp"
+            if (zip(
+             { } FilesUp,
+             { } cAuftragErgebnisPath + FTP_UploadFName,
+             { } czip_set_Password + '=' + Settings.values[cE_ZIPPASSWORD])<1) then
+            begin
+             inc(ErrorCount);
+             Log(cERRORText + ' Erstelltes ZIP-Archiv sollte zumindest eine Datei enthalten.');
+             break;
+            end;
+
+            Stat_Attachments.add(cAuftragErgebnisPath + FTP_UploadFName);
+
+            // ev. FTP-Masken hinzufÃ¼gen (nur CoreFTP)
+            if (Settings.values[cE_AuchAlsIDOC] = cINI_Activate) then
+              if (Settings.values[cE_CoreFTP] <> '') then
+              begin
+                if Erfolgsmeldungen then
+                  FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
+                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '.????.idoc' +
+                    ';' + '/IDOC');
+                if Unmoeglichmeldungen then
+                  FTP_UploadMasks.add(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings) + '\' +
+                    noblank(Settings.values[cE_Praefix]) + 'Zaehlerdaten_' + Settings.values[cE_TAN] + '*.xls' + ';'
+                    + '/TEXT');
+              end;
+
+            if (IdFTP1.Host <> '') then
+            begin
+              FTP_UploadFiles.add(cAuftragErgebnisPath + FTP_UploadFName);
+            end else
+            begin
+              Log(cINFOText + ' Kein Upload, da kein ' + cE_FTPHOST + ' eingetragen ist.');
+            end;
+
+          until true;
+
+          result := ExportL.count - FailL.count;
+        except
+          on e: exception do
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + ' ' + e.message);
+          end;
+        end;
+
+        Stat_Fail.Append(FailL);
+
+        // die erfolgreichen Mitteilen
+        for n := 0 to pred(ExportL.count) do
+          if FailL.indexof(ExportL[n]) = -1 then
+            CommitL.add(ExportL[n]);
+
+        ExportL.free;
+        FailL.free;
+        FilesUp.free;
+
+      end;
+    end;
+    cAUFTRAG.free;
+  end;
+
+var
+  cBAUSTELLE: TIB_Cursor;
+
+begin
+  // imp pend: pOptions
+  Log('[Info]');
+  Log('Beginn=' + sTimeStamp);
+  Log('Bearbeiter=' + sBearbeiterKurz);
+  Log('Manuell=' + bool2cO(ManuellInitiiert));
+  Log('pBAUSTELLE_R=' + inttostr(BAUSTELLE_R));
+  Log('pAUFTRAG_R=' + IntToStr(pAUFTRAG_R));
+  SolidBeginTransaction;
+  HugeTransactionN := e_w_GEN('GEN_EXPORT');
+
+  Settings := TStringList.create;
+  eMailParameter := TStringList.create;
+  qMail := DataModuleDatenbank.nQuery;
+  cBAUSTELLE := DataModuleDatenbank.nCursor;
+  FTP_UploadMasks := TStringList.create;
+  FTP_UploadFiles := TStringList.create;
+  FTP_DeleteLocal := TStringList.create;
+  CommitL := TgpIntegerList.create;
+
+  with qMail do
+  begin
+    sql.add('select * from EMAIL for update');
+  end;
+
+  with cBAUSTELLE do
+  begin
+
+    // Selektion aufbereiten
+    repeat
+      sql.add('select NUMMERN_PREFIX, RID, EXPORT_EINSTELLUNGEN');
+      sql.add('from BAUSTELLE where');
+
+      if (pAUFTRAG_R >= cRID_FirstValid) then
+      begin
+        sql.add('(RID=(select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(pAUFTRAG_R) + '))');
+        break;
+      end;
+
+      if (BAUSTELLE_R >= cRID_FirstValid) then
+      begin
+        sql.add('(RID=' + inttostr(BAUSTELLE_R) + ')');
+        break;
+      end;
+
+      if (pEinzelneBaustelle<>'') then
+      begin
+        sql.add('(RID=' + inttostr(e_r_BaustelleRIDFromKuerzel(pEinzelneBaustelle)) + ')');
+        break;
+      end;
+
+      sql.add('(EXPORT_TAN is not null)');
+
+    until true;
+
+    Log(sql);
+
+    Open;
+    ApiFirst;
+    _(cFeedback_ProgressBar_max+2, IntToStr(RecordCount + 1));
+    _(cFeedback_ProgressBar_position+2, IntToStr(1));
+    while not(eof) do
+    begin
+      BaustelleKurz := FieldByName('NUMMERN_PREFIX').AsString;
+
+      _(cFeedback_Label+3, BaustelleKurz);
+      Log('[' + BaustelleKurz + ']');
+      Log('Beginn=' + sTimeStamp);
+
+      // init
+      FieldByName('EXPORT_EINSTELLUNGEN').AssignTo(Settings);
+
+      // defaults!
+      Settings.values[cE_BAUSTELLE_R] := FieldByName('RID').AsString;
+      Settings.values[cE_BAUSTELLE_KURZ] := BaustelleKurz;
+      if (Settings.values[cE_Datenquelle] = '') then
+        Settings.values[cE_Datenquelle] := Settings.values[cE_BAUSTELLE_R];
+      if (Settings.values['Q12'] = '') then
+        Settings.values['Q12'] := cQ_erloesend;
+      if (StrToIntDef(Settings.values[cE_Datenquelle], cRID_Null) < cRID_FirstValid) then
+        Settings.values[cE_Datenquelle] := inttostr(e_r_BaustelleRIDFromKuerzel(Settings.values[cE_Datenquelle]));
+      MaxAnzahl := StrToIntDef(Settings.values[cE_MaxperLoad], MaxInt);
+
+      // die aktuelle Export-TAN ermitteln
+      Settings.values[cE_EXPORT_TAN] := e_r_sqls(
+        { } 'select EXPORT_TAN from BAUSTELLE ' +
+        { } 'where RID=' + Settings.values[cE_Datenquelle]);
+
+      Log(Settings);
+
+      repeat
+
+        if not(ManuellInitiiert) then
+          if (Settings.values[cE_Wochentage] <> '') then
+            if (pos(WeekDayS(DateGet), Settings.values[cE_Wochentage]) = 0) then
+            begin
+              Log(
+                { } cWARNINGText + ' ' + BaustelleKurz + ': ' +
+                { } 'Heute nicht, ' +
+                { } 'da âˆ‰ [' + Settings.values[cE_Wochentage] + ']!');
+              break;
+            end;
+
+        // Init
+        ErrorCount := 0;
+        SolidFTP_Retries := 200;
+        TAN := 0;
+        ClearStat;
+        eMailParameter.clear;
+        FTP_UploadFiles.clear;
+        FTP_UploadMasks.clear;
+        FTP_DeleteLocal.clear;
+        CommitL.clear;
+
+        SolidInit(IdFTP1);
+        with IdFTP1 do
+        begin
+
+          if connected then
+          begin
+            try
+              Disconnect;
+            Except
+              // don't handle this!
+            end;
+          end;
+
+          if pFTP_Diagnose then
+          begin
+            Host := cFTP_Host;
+            Username := cFTP_UserName;
+            Password := cFTP_Password;
+            Settings.values[cE_FTPVerzeichnis] := '';
+          end
+          else
+          begin
+            Host := Settings.values[cE_FTPHOST];
+            Username := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
+            Password := Settings.values[cE_FTPPASSWORD];
+          end;
+
+          // PrÃ¼fung der FTP Daten
+          if (Host <> '') then
+          begin
+            Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPHOST+'= somit kein Upload in eine Internet-Ablage');
+
+            if (Username = '') then
+            begin
+              Log(cERRORText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPUSER+'=');
+              break;
+            end;
+
+            if (Password = '') then
+              Log(cWARNINGText + ' ' + BaustelleKurz + ':Kein Eintrag in '+cE_FTPPASSWORD+'=');
+          end;
+
+        end;
+
+        // noch weitere Einzel-Upload Dateien Ã¼bertragen
+        iSourcePathAdditionalFiles := Settings.values[cE_ZusaetzlicheZips];
+        if (iSourcePathAdditionalFiles = cINI_Activate) then
+          iSourcePathAdditionalFiles := e_r_BaustelleUploadPath(BAUSTELLE_R);
+
+        if (iSourcePathAdditionalFiles <> '') and (IdFTP1.Host <> '') then
+        begin
+          // zusÃ¤tzliche Zips ...
+          dir(iSourcePathAdditionalFiles + '*.zip', FTP_UploadFiles, false);
+          for n := 0 to pred(FTP_UploadFiles.count) do
+          begin
+            FTP_UploadFiles[n] :=
+            { } iSourcePathAdditionalFiles +
+            { } FTP_UploadFiles[n];
+            FTP_DeleteLocal.add(FTP_UploadFiles[n]);
+
+            // Das funktioniert nicht, da die Dateien gelÃ¶scht werden ...
+            // Stat_Attachments.add(FTP_UploadFiles[n]);
+          end;
+        end;
+
+        // Eine Kopie-Baustelle?
+        if (Settings.values[cE_KopieVon] <> '') then
+        begin
+          if not e_w_BaustelleKopie(
+            { } StrToIntDef(
+            { } Settings.values[cE_Datenquelle],
+            { } cRID_Null)) then
+          begin
+            inc(ErrorCount);
+            Log(cERRORText + ' Fehler bei e_w_BaustelleKopie', BAUSTELLE_R);
+          end;
+        end;
+
+        // neue Erfolgs-TANS Ã¼bergeben
+        if pEinzelMeldeErlaubnis then
+        begin
+          if (Settings.values[cE_EineDatei] = cINI_Activate) then
+          begin
+            inc(Stat_meldungen, ReportBlock(true, true));
+          end
+          else
+          begin
+            inc(Stat_meldungen, ReportBlock(true, false));
+            if (ErrorCount = 0) then
+            begin
+              Settings.values[cE_Postfix] := '.unmoeglich';
+              inc(Stat_meldungen, ReportBlock(false, true));
+            end;
+          end;
+        end;
+
+        if (Stat_nichtEFRE > 0) then
+        begin
+          Stat_FehlendeResourcen.SaveToFile(nichtEFREFName(Settings));
+          Settings.values[cE_nichtEFRE] := nichtEFREFName(Settings);
+        end;
+
+        if (ErrorCount = 0) then
+         if (IdFTP1.Host<>'') then
+           doFTP;
+
+        // Erfolg in die einzelnen DatensÃ¤tze eintragen
+        if (ErrorCount = 0) and (CommitL.count > 0) then
+          doCommit;
+
+        if (TAN > 0) and (ErrorCount = 0) and (Stat_meldungen > 0) then
+        begin
+
+          // Erfolg in die Quell-Baustelle eintragen
+          if not(pTAN_statisch) then
+          begin
+            e_x_sql(
+              { } 'update BAUSTELLE set ' +
+              { } 'EXPORT_TAN=' + inttostr(TAN) + ' ' +
+              { } 'where RID=' + Settings.values[cE_Datenquelle]);
+          end;
+
+        end;
+
+        // Mail verschicken
+        if (Settings.values[cE_eMail] <> '') and not(pFTP_Diagnose) then
+          if (ErrorCount = 0) then
+            if (Stat_meldungen > 0) or (Stat_nichtEFRE > 0) then
+            begin
+
+              PERSON_R := StrToIntDef(Settings.values[cE_eMail], -1);
+              if not(e_r_IsRID('PERSON_R', PERSON_R)) then
+              begin
+                Log(cWARNINGText + ' ' + BaustelleKurz + ':' + cE_eMail + ' ungÃ¼ltig');
+                PERSON_R := cRID_Null;
+              end;
+              VORLAGE_R := e_r_VorlageMail(cMailvorlage_Ergebnis);
+
+              if (PERSON_R >= cRID_FirstValid) and (VORLAGE_R >= cRID_FirstValid) then
+              begin
+
+                // informative Werte
+                with eMailParameter do
+                begin
+                  values['ERFOLGREICH'] := inttostr(Stat_Erfolg.count);
+                  values['VORGEZOGEN'] := inttostr(Stat_Vorgezogen.count);
+                  values['UNMOEGLICH'] := inttostr(Stat_Unmoeglich.count);
+                  values['NICHT_EFRE'] := inttostr(Stat_nichtEFRE);
+
+                  values['ERFOLGREICH_GEMELDET'] := inttostr(Stat_Erfolg.countReducedBy(Stat_Fail));
+                  values['VORGEZOGEN_GEMELDET'] := inttostr(Stat_Vorgezogen.countReducedBy(Stat_Fail));
+                  values['UNMOEGLICH_GEMELDET'] := inttostr(Stat_Unmoeglich.countReducedBy(Stat_Fail));
+
+                  values['ERFOLGREICH_FEHLER'] := inttostr(Stat_Erfolg.count - Stat_Erfolg.countReducedBy(Stat_Fail));
+                  values['VORGEZOGEN_FEHLER'] :=
+                    inttostr(Stat_Vorgezogen.count - Stat_Vorgezogen.countReducedBy(Stat_Fail));
+                  values['UNMOEGLICH_FEHLER'] :=
+                    inttostr(Stat_Unmoeglich.count - Stat_Unmoeglich.countReducedBy(Stat_Fail));
+
+                  values['FEHLER'] := inttostr(Stat_Fail.count);
+                  values['ABLAGE'] := e_r_FTP_LoginUser(Settings.values[cE_FTPUSER]);
+                  values['TAN'] := Settings.values[cE_TAN];
+                  values['BAUSTELLE'] := Settings.values[cE_BAUSTELLE_KURZ];
+
+                end;
+
+                // Datei-Anlagen hinzufÃ¼gen
+                if (Settings.values[cE_ZipAnlage] = cINI_Activate) then
+                  for n := 0 to pred(Stat_Attachments.count) do
+                    eMailParameter.add('Anlage:' + Stat_Attachments[n]);
+
+                // Fehler-Anlagen hinzufÃ¼gen
+                if (Settings.values[cE_nichtEFRE] <> '') then
+                  eMailParameter.add('Anlage:' + Settings.values[cE_nichtEFRE]);
+
+                // Sendung beantragen
+                with qMail do
+                begin
+                  insert;
+                  FieldByName('RID').AsInteger := cRID_AutoInc;
+                  FieldByName('PERSON_R').AsInteger := PERSON_R;
+                  FieldByName('VORLAGE_R').AsInteger := VORLAGE_R;
+                  FieldByName('NACHRICHT').Assign(eMailParameter);
+                  post;
+                end;
+
+              end;
+            end;
+
+        // FTP Verbindung beenden
+        with IdFTP1 do
+        begin
+          if connected then
+          begin
+            try
+              Disconnect;
+            Except
+              // do not handle this
+            end;
+          end;
+        end;
+
+      until true;
+      ApiNext;
+
+      Log('Ende=' + sTimeStamp);
+
+      // qBAUSTELLE
+      _(cFeedback_processmessages);
+      _(cFeedback_ProgressBar_StepIt+2);
+    end;
+    Log('Ende=' + sTimeStamp);
+  end;
+
+  cBAUSTELLE.free;
+  qMail.free;
+  eMailParameter.free;
+  Settings.free;
+  FTP_UploadMasks.free;
+  FTP_UploadFiles.free;
+  FTP_DeleteLocal.free;
+  CommitL.free;
+
+  result := (ErrorCount = 0);
+  _(cFeedback_ProgressBar_position+2);
+  SolidEndTransaction;
+end;
+
+// ###
+
+function e_w_Import(
+ {} BAUSTELLE_R: integer;
+ {} pOptions: TStringList = nil;
+ {} fb: TFeedBack = nil): boolean;
+
+{$I Feedback.inc}
+
+var
+  InpStr: string;
+  n, m, k, l: integer;
+  STime: dword;
+
+  _Monteur_r: integer;
+  _Monteur: string;
+  _Nummer: string;
+
+  _Name: string;
+  _Strasse: string;
+  _HausNummer: string;
+
+  _plz: string;
+  _ort: string;
+  _Art: string;
+  _Zeile: string;
+  _Zaehlwerke: integer;
+  Zaehlwerk: integer;
+  Anzahl_Zaehlwerk_0: integer;
+  Anzahl_Zaehlwerk_nicht_1: integer;
+
+  _ZaehlerMehrInfo: TStringList;
+  _MonteurMehrInfo: TStringList;
+  _InternMehrInfo: TStringList;
+  _ProtokollMehrInfo: TStringList;
+
+  _ZaehlerTyp: string;
+  MoreTextInfo: TStringList;
+
+  // Parameter aus der Baustelle
+  Baustelle_StellenAnzZaehlerNummer: integer;
+  Baustelle_Ortsteilcodes: boolean;
+
+  _Verbraucher_r: integer;
+  ThisDate: TANFiXDate;
+  SpaltenWerte_Primaer: TStringList;
+  SpaltenWerte_Sekundaer: TStringList;
+  SubItemIndex: integer;
+  Umsetzer: TStringList;
+  InfoFile: TStringList;
+  ParameterItems: TStringList;
+  AllParameter: string;
+  UmsetzerNo: integer;
+  ParameterError: boolean;
+  AUFTRAG_R: integer;
+  qAUFTRAG: TdboQuery;
+  cBAUSTELLE: TdboCursor;
+  RID_AT_IMPORT: integer;
+  _Date, _Date1, _Date2: TANFiXDate;
+  _planquadrat: string;
+  MONTEUR_R: integer;
+  // imp pend: LOAD
+  ImportFile : TStringList;
+  cAUFTRAG: TdboCursor;
+
+  //
+  MoreInfo: TWordIndex;
+  OrgCount: integer;
+  DeleteCount: integer;
+  AllCount: integer;
+
+  // ZÃ¤hlernummer Verwaltung
+  ZaehlerNummernInCSV: TStringList;
+  ZaehlerNummernImBestand: TStringList; // [<Art> "-" ] Nummer
+  Abgelehnte: TStringList;
+  _ZaehlerNummer: string; // ZÃ¤hlernummer aus dem Import
+  ZaehlerNummerAbgeschnittenCount: integer;
+
+  // ermittelte Spalten Index
+  ZaehlerNummer_FieldIndex: integer;
+  KundeBriefName1_FieldIndex: integer;
+  ZaehlerArt_FieldIndex: integer;
+  MaterialNummer_FieldIndex: integer;
+  Zaehlwerk_FieldIndex: integer;
+  OrtsTeil_FieldIndex: integer;
+  VorberechnetePlausibilitaetVon_FieldIndex: integer;
+  VorberechnetePlausibilitaetBis_FieldIndex: integer;
+  LetzterAblesestand_FieldIndex: integer;
+
+  Importierte: TStringList;
+  lImportierte: TgpIntegerList;
+  _zaehler_nummer: string;
+  _importFile: TStringList;
+  OrtsteileDerQuelle: TStringList;
+
+  // FÃ¼r Strassen / Planquadrat Informationen
+  _LastLocation: string;
+  _DieseStrasse: string;
+  _DieserOrt: string;
+  _HausZusatz: string;
+  StrassenListeMitPlanquadrat: TSearchStringList;
+
+  r1AsString: string;
+  ABNummer: integer;
+
+  // Verbrauchs Geschichten
+  Verbrauch_0_Datum: TANFiXDate;
+  Verbrauch_1_Datum: TANFiXDate;
+  Verbrauch_0_Zaehler_Stand: int64;
+  Verbrauch_1_Zaehler_Stand: int64;
+
+  // Post-Transaktionen
+  Transaktionen: TStringList;
+
+  // Parameter
+  pNurDenLetztenBlock : boolean; // was CheckBox14.checked
+  pNurZiffern : boolean; // was CheckBox13.checked
+  pQuellHeaderLines: Integer; // was QuellHeaderLines
+  pMappings: TStringList; // was pMappings
+  pNummerConcatArt: boolean; // was CheckBox5.checked
+  pNummerConcarMaterial: boolean; // was CheckBox11.checked
+  pPlanquadrat: string; // was Edit3.Text
+  pIgnoreEmptyArt: boolean;  // was CheckBox12.checked
+  pQuellDelimiter: Char; // was QuellDelimiter, default ";"
+  pBaustelle : string; // was ComboBox6.Text
+  pEindeutig : boolean; // was CheckBox1.checked
+  pSimulieren : boolean; // was CheckBox3.checked
+  pDeleteMarked: boolean; // was CheckBox10.checked
+  pMarkImported: boolean; // was CheckBox9.checked
+
+  // RÃ¼ckgabe Parameter
+  rLast_Import_RID: Integer; // was Last_Import_RID
+
+  function sSpaltenWert(i: integer): string;
+  begin
+    if (i >= 0) and (i < SpaltenWerte_Primaer.count) then
+      result := SpaltenWerte_Primaer[i]
+    else
+      result := '';
+  end;
+
+  function sSpaltenWert_Sekundaer(i: integer): string;
+  begin
+    if (i >= 0) and (i < SpaltenWerte_Sekundaer.count) then
+      result := SpaltenWerte_Sekundaer[i]
+    else
+      result := '';
+  end;
+
+  function rSpaltenWert(n: byte): string;
+  begin
+    result := sSpaltenWert(strtol(ParameterItems[pred(n)]) - 1);
+  end;
+
+  function rSpaltenWert_Sekundaer(n: byte): string;
+  begin
+    result := sSpaltenWert_Sekundaer(strtol(ParameterItems[pred(n)]) - 1);
+  end;
+
+  function FormatZaehlerNummer(s: string): string;
+  var
+    ZaehlerNummer: int64;
+    n: integer;
+    zn: string;
+  begin
+    if (Baustelle_StellenAnzZaehlerNummer < 99) then
+    begin
+
+      // GrundsÃ¤tzliche Aktionen
+      s := noblank(s);
+
+      // nur den letzten Ziffernblok?
+      if pNurDenLetztenBlock then
+      begin
+        zn := '';
+        for n := length(s) downto 1 do
+          if s[n] in ['0' .. '9'] then
+            zn := s[n] + zn
+          else
+            break;
+        s := zn;
+      end;
+
+      // Nur Ziffern?
+      if pNurZiffern then
+        s := StrFilter(s, '0123456789');
+
+      ZaehlerNummer := strtoint64def(s, 0);
+      if (ZaehlerNummer <> 0) then
+        result := inttostrN(ZaehlerNummer, Baustelle_StellenAnzZaehlerNummer)
+      else
+        result := Fill('0', Baustelle_StellenAnzZaehlerNummer - length(s)) + s;
+    end
+    else
+    begin
+      result := noblank(s);
+    end;
+    if length(result) > cZaehlerNummerFieldLength then
+      inc(ZaehlerNummerAbgeschnittenCount);
+  end;
+
+  function FormatZaehlerNummerAsOneWord(s: string): string;
+  begin
+    // sicherstellen, dass das Word-Index Objekt die ZÃ¤hlernummern nicht zerreist
+    result := FormatZaehlerNummer(s);
+    ersetze('-', '~', result);
+  end;
+
+  function ObtainOrtCode(const _ort: string): string;
+  begin
+    result := e_r_OrtsteilCode(BAUSTELLE_R, _ort);
+  end;
+
+  function artA: string;
+  begin
+    result := sSpaltenWert(ZaehlerArt_FieldIndex);
+    if (Zaehlwerk_FieldIndex <> -1) then
+      result := SAP2art(result);
+  end;
+
+  function artB: string;
+  begin
+    result := sSpaltenWert_Sekundaer(ZaehlerArt_FieldIndex);
+    if (Zaehlwerk_FieldIndex <> -1) then
+      result := SAP2art(result);
+  end;
+
+  function Format_HausZusatz(s: string): string;
+  begin
+    result := cutblank(s) + ' ';
+    if result[1] in ['0' .. '9'] then
+      result := '/' + result;
+    result := cutblank(result);
+  end;
+
+  function Format_HausNummer(s: string): string;
+  begin
+    result := cutblank(s);
+    while (pos('0', result) = 1) do
+      delete(result, 1, 1);
+  end;
+
+  function date_JJJJMMTT_2long(s: string): TANFiXDate;
+  var
+    i: integer;
+  begin
+    result := 0;
+    i := strtointdef(s, 0);
+    if (i > date2long(cOrgaMonBirthDay)) then
+      result := date2long(copy(s, 7, 2) + '.' + copy(s, 5, 2) + '.' + copy(s, 1, 4))
+  end;
+
+  procedure readMinMax(Zaehlwerk: integer; sMin, sMax, sAlt: string);
+
+    function MinMaxToDouble(const s: string): double;
+    begin
+      result := strtodoubledef(s, -1);
+    end;
+
+  var
+    dMin, dMax, dAlt: double;
+  begin
+    dMin := MinMaxToDouble(sMin);
+    dMax := MinMaxToDouble(sMax);
+    dAlt := MinMaxToDouble(sAlt);
+    if (dMin >= 0) and (dMax >= dMin) then
+    begin
+      _ZaehlerMehrInfo.add('v' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dMin]));
+      _ZaehlerMehrInfo.add('b' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dMax]));
+      _ZaehlerMehrInfo.add('a' + inttostr(Zaehlwerk) + '=' + format('%.2f', [dAlt]));
+    end;
+  end;
+
+begin
+
+  // Baustelle ermitteln
+  if (BAUSTELLE_R < cRID_FirstValid) then
+  begin
+    _(cFeedback_ShowMessage,'Keine Baustelle zugeordnet!');
+    exit;
+  end;
+
+  // Baustellen-Daten einlesen
+  cBAUSTELLE := nCursor;
+  with cBAUSTELLE do
+  begin
+    sql.Add('select * from BAUSTELLE where RID=' + IntToStr(BAUSTELLE_R));
+    ApiFirst;
+    Baustelle_StellenAnzZaehlerNummer := FieldByName('ZAEHLER_NR_STELLEN').AsInteger;
+    Baustelle_Ortsteilcodes := (FieldByName('ORTE_AKTIV').AsString = 'Y');
+    close;
+  end;
+  FreeAndNil(cBAUSTELLE);
+
+  // bisherige ZÃ¤hlernummern lesen!
+  ImportFile := TStringList.Create;
+  ZaehlerNummernInCSV := TStringList.create;
+  ZaehlerNummernImBestand := TStringList.create;
+  OrtsteileDerQuelle := TStringList.create;
+  Transaktionen := TStringList.create;
+  SpaltenWerte_Primaer := nil;
+
+  ZaehlerNummerAbgeschnittenCount := 0;
+  DeleteCount := 0;
+  OrgCount := ImportFile.count - pQuellHeaderLines;
+  ZaehlerNummer_FieldIndex := -1;
+  KundeBriefName1_FieldIndex := -1;
+  ZaehlerArt_FieldIndex := -1;
+  MaterialNummer_FieldIndex := -1;
+  Zaehlwerk_FieldIndex := -1;
+  OrtsTeil_FieldIndex := -1;
+  VorberechnetePlausibilitaetVon_FieldIndex := -1;
+  VorberechnetePlausibilitaetBis_FieldIndex := -1;
+  LetzterAblesestand_FieldIndex := -1;
+
+  for n := 0 to pred(pMappings.count) do
+  begin
+
+    InpStr := pMappings[n];
+    nextp(InpStr, '(');
+
+    repeat
+
+      if pos('Art' + '(', pMappings[n]) = 1 then
+      begin
+        ZaehlerArt_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('SAP_Art_#_#' + '(', pMappings[n]) = 1 then
+      begin
+        ZaehlerArt_FieldIndex := pred(strtol(nextp(InpStr, ',')));
+        Zaehlwerk_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        pNummerConcatArt := true;
+        break;
+      end;
+
+      if pos('ZÃ¤hler_Nummer' + '(', pMappings[n]) = 1 then
+      begin
+        ZaehlerNummer_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('Material_Nummer' + '(', pMappings[n]) = 1 then
+      begin
+        MaterialNummer_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('Kunde_Brief_Name1' + '(', pMappings[n]) = 1 then
+      begin
+        KundeBriefName1_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('ZÃ¤hler_Ort_Ortsteil' + '(', pMappings[n]) = 1 then
+      begin
+        OrtsTeil_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+      if pos('C_ZÃ¤hler_Ort_Ortsteil' + '(', pMappings[n]) = 1 then
+      begin
+        OrtsteileDerQuelle.add(nextp(InpStr, ')'));
+        break;
+      end;
+
+      if pos('PlausibilitÃ¤t_Min_Max_#_#_#' + '(', pMappings[n]) = 1 then
+      begin
+        VorberechnetePlausibilitaetVon_FieldIndex := pred(strtol(nextp(InpStr, ',')));
+        VorberechnetePlausibilitaetBis_FieldIndex := pred(strtol(nextp(InpStr, ',')));
+        LetzterAblesestand_FieldIndex := pred(strtol(nextp(InpStr, ')')));
+        break;
+      end;
+
+    until true;
+  end;
+
+  // P r Ã¼ f u n g e n
+  if (ZaehlerNummer_FieldIndex = -1) then
+  begin
+    _(cFeedback_ShowMessage,'Das Feld ZÃ¤hler_Nummer muss importiert werden!');
+    ZaehlerNummernImBestand.free;
+    exit;
+  end;
+
+  if pNummerConcatArt and (ZaehlerArt_FieldIndex = -1) then
+  begin
+    _(cFeedback_ShowMessage,'Das Feld Art muss importiert werden!');
+    ZaehlerNummernImBestand.free;
+    exit;
+  end;
+
+  if pNummerConcarMaterial and (MaterialNummer_FieldIndex = -1) then
+  begin
+    _(cFeedback_ShowMessage,'Das Feld Material_Nummer muss importiert werden!');
+    ZaehlerNummernImBestand.free;
+    exit;
+  end;
+
+  cAUFTRAG := nCursor;
+  with cAUFTRAG do
+  begin
+    sql.add('SELECT');
+    sql.add(' ZAEHLER_NUMMER,');
+    sql.add(' MATERIAL_NUMMER,');
+    sql.add(' RID,');
+    sql.add(' ART,');
+    sql.add(' PLANQUADRAT,');
+    sql.add(' KUNDE_STRASSE,');
+    sql.add(' KUNDE_ORT,');
+    sql.add(' STATUS,');
+    sql.add(' KUNDE_ORTSTEIL');
+    sql.add('FROM');
+    sql.add(' AUFTRAG');
+    sql.add('WHERE');
+    sql.add(' (BAUSTELLE_R='+IntToStr(BAUSTELLE_R)+') AND');
+    sql.add(' (RID=MASTER_R)');
+    sql.add('ORDER BY');
+    sql.add(' STRASSE');
+    ApiFirst;
+    while not(eof) do
+    begin
+
+      // ZÃ¤hlernummern sammeln
+      repeat
+
+        // ab verwendet und OK?
+        if (pPlanquadrat <> '') then
+          if (FieldByName('PLANQUADRAT').AsString < pPlanquadrat) then
+            break;
+
+        // hinzunehmen
+        _ZaehlerNummer := FormatZaehlerNummer(FieldByName('ZAEHLER_NUMMER').AsString);
+
+        if pNummerConcatArt then
+          _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' + _ZaehlerNummer;
+
+        if pNummerConcarMaterial then
+          _ZaehlerNummer := FieldByName('MATERIAL_NUMMER').AsString + '~' + _ZaehlerNummer;
+
+        ZaehlerNummernImBestand.addobject(_ZaehlerNummer, TObject(FieldByName('RID').AsInteger));
+
+      until true;
+
+      next;
+    end;
+    close;
+  end;
+  ZaehlerNummernImBestand.Sort;
+  RemoveDuplicates(ZaehlerNummernImBestand, DeleteCount);
+  EndHourGlass;
+
+  if (DeleteCount > 0) then
+  begin
+    if not(
+     _(cFeedback_Function,
+       { } 'Info: Die angegebene Baustelle hat schon' + #13 +
+       { } 'ohne diesen Import doppelte ZÃ¤hlernummern!' + #13 +
+       { } 'Mit dem Schalter 33/33 kÃ¶nnen Sie die doppelten' + #13 +
+       { } 'anzeigen. Wollen Sie dennoch importieren')=0) then
+    begin
+      ZaehlerNummernInCSV.free;
+      ZaehlerNummernImBestand.free;
+      exit;
+    end;
+  end;
+
+  // Import File nochmal laden, da beim letzten Import ev. durch doppelte
+
+  // imp pend:
+  //LoadImportFile;
+
+  // Spalte "ZÃ¤hlernummer" nun laden:
+  if pNummerConcatArt then
+  begin
+    _zaehler_nummer := '#';
+    // mit Art
+    for m := pQuellHeaderLines to pred(ImportFile.count) do
+    begin
+      SpaltenWerte_Primaer := Split(ImportFile[m], pQuellDelimiter, '"');
+      _Art := artA;
+      repeat
+
+        // Leere Art weglassen!
+        if pIgnoreEmptyArt then
+          if (_Art = '') then
+            break;
+
+        // ZÃ¤hlwerke<>'1' weglassen
+        if (Zaehlwerk_FieldIndex <> -1) then
+        begin
+          // es wird nur EINE Zeile eines identischen Blocks importiert, danach
+          // wird ignoriert!
+          if (_zaehler_nummer = sSpaltenWert(ZaehlerNummer_FieldIndex)) then
+            break;
+          k := strtointdef(sSpaltenWert(Zaehlwerk_FieldIndex), 0);
+          if (k <> 1) then
+            break;
+
+          // keine gÃ¼ltige Zeile -> lÃ¶schen
+          _zaehler_nummer := sSpaltenWert(ZaehlerNummer_FieldIndex);
+          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) + FormatZaehlerNummerAsOneWord(_zaehler_nummer), TObject(m));
+
+        end
+        else
+        begin
+
+          //
+          ZaehlerNummernInCSV.addobject(e_r_Sparte(_Art) + FormatZaehlerNummerAsOneWord
+            (sSpaltenWert(ZaehlerNummer_FieldIndex)), TObject(m));
+        end;
+      until true;
+      FreeAndNil(SpaltenWerte_Primaer);
+    end;
+  end
+  else
+  begin
+    // ohne Art-ErgÃ¤nzung
+    for m := pQuellHeaderLines to pred(ImportFile.count) do
+    begin
+      SpaltenWerte_Primaer := Split(ImportFile[m], pQuellDelimiter, '"');
+      _Art := artA;
+      repeat
+        // Leere Art weglassen!
+        if pIgnoreEmptyArt then
+          if (_Art = '') then
+            break;
+
+        ZaehlerNummernInCSV.addobject(FormatZaehlerNummerAsOneWord(sSpaltenWert(ZaehlerNummer_FieldIndex)), TObject(m));
+      until true;
+      FreeAndNil(SpaltenWerte_Primaer);
+    end;
+  end;
+
+  // Schreibe Diagnose-Datei
+  AllCount := ZaehlerNummernInCSV.count;
+  MoreInfo := TWordIndex.create(ZaehlerNummernInCSV, 1);
+  MoreInfo.saveToDiagFile(DiagnosePath + 'Import-Doppelte.txt', 2, MaxInt);
+  ZaehlerNummernInCSV.Sort;
+  ZaehlerNummernInCSV.SaveToFile(DiagnosePath + 'Import-ZaehlerNummern.txt');
+  RemoveDuplicates(ZaehlerNummernInCSV, DeleteCount);
+  MoreInfo.free;
+
+  // auf die eindeutigen reduzieren!
+  EndHourGlass;
+
+  if (ZaehlerNummerAbgeschnittenCount > 0) then
+  begin
+    if _(cFeedback_doit,
+     { } 'Die Baustelle hat keinen Eintrag ' + #13 +
+     { } 'in "Anzahl der Stellen ZÃ¤hlernummer".' + #13 +
+     { } 'Es mussten daher sehr lange ZÃ¤hlernummern' + #13 +
+     { } '(>15 Zeichen) abgeschnitten werden.' + #13 +
+     { } 'DrÃ¼cken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
+     { } 'ZurÃ¼ck')=1 then
+    begin
+      ZaehlerNummernInCSV.free;
+      ZaehlerNummernImBestand.free;
+      exit;
+    end;
+  end;
+
+  if (DeleteCount > 0) then
+  begin
+    if _(cFeedBack_doit,
+      {} 'Es gibt ' + inttostr(DeleteCount) + ' doppelte ZÃ¤hlernummern in der csv!' + #13 + inttostr(AllCount) +
+      {} ' Nummern insgesamt!' + #13 + 'DrÃ¼cken Sie jetzt <OK> fÃ¼r eine Diagnose!' + #13 +
+      {} ' Sie erhalten eine Aufstellung der Doppelten und sollten' + #13 +
+      {} ' im Anschluss die "falschen" doppelten entfernen!' + #13 +
+      {} 'DrÃ¼cken Sie jetzt <ABBRECHEN> um dennoch zu importieren!' + #13 +
+      {} ' Doppelte Nummern werden dabei nicht importiert!' + #13)=1 then
+    begin
+      _(cFeedBack_Function{openShell},DiagnosePath + 'Import-Doppelte.txt');
+      ZaehlerNummernInCSV.free;
+      ZaehlerNummernImBestand.free;
+      exit;
+    end;
+  end;
+
+  ZaehlerNummernInCSV.free;
+
+  // noch sehen, ob es alle Ortsteile in der Baustelle schon gibt!
+  if Baustelle_Ortsteilcodes then
+  begin
+
+    if (OrtsTeil_FieldIndex > -1) then
+      for m := pQuellHeaderLines to pred(ImportFile.count) do
+        OrtsteileDerQuelle.add(cutblank(nextp(ImportFile[m], pQuellDelimiter, OrtsTeil_FieldIndex)));
+    // NIX NIX ^
+    OrtsteileDerQuelle.Sort;
+    RemoveDuplicates(OrtsteileDerQuelle);
+
+    for m := pred(OrtsteileDerQuelle.count) downto 0 do
+    begin
+      if (e_r_OrtsteilCode(BAUSTELLE_R, OrtsteileDerQuelle[m]) <> '??') or (OrtsteileDerQuelle[m] = '') then
+        OrtsteileDerQuelle.delete(m);
+    end;
+
+    if (OrtsteileDerQuelle.count > 0) then
+    begin
+      for m := 0 to pred(OrtsteileDerQuelle.count) do
+        OrtsteileDerQuelle[m] := OrtsteileDerQuelle[m] + '=';
+      OrtsteileDerQuelle.Insert(0, '// ');
+      OrtsteileDerQuelle.Insert(1, '// Unten sind neue Ortsteile angegeben, die in der Baustelle noch');
+      OrtsteileDerQuelle.Insert(2, '// nicht eingetragen sind. Kopieren Sie die Zeilen in die ');
+      OrtsteileDerQuelle.Insert(3, '// Zwischenablage. WÃ¤hlen Sie Baustelle->richtige Baustelle');
+      OrtsteileDerQuelle.Insert(4, '// auswÃ¤hlen->Verabeiten. FÃ¼gen Sie die neuen Orsteile aus');
+      OrtsteileDerQuelle.Insert(5, '// der Zwischenablage ein. Versehen Sie die Ortsteile mit');
+      OrtsteileDerQuelle.Insert(6, '// einem Code. Versuchen Sie den Import danach nochmals.');
+      OrtsteileDerQuelle.Insert(7, '// ');
+      OrtsteileDerQuelle.SaveToFile(DiagnosePath + 'NeueOrtsteile.txt');
+      _(cFeedBack_ShowMessage,'Es gibt Ortsteile, die noch nicht eingetragen sind!');
+      _(cFeedBack_Function{openShell},DiagnosePath + 'NeueOrtsteile.txt');
+      exit;
+    end;
+
+  end;
+
+  // wow, eigentlicher Import startet hier
+  Umsetzer := TStringList.create;
+  InfoFile := TStringList.create;
+  StrassenListeMitPlanquadrat := TSearchStringList.create;
+
+  InfoFile.add('Benutzer ' + sBearbeiterKurz + ' mit Rev. ' + RevToStr(globals.Version));
+  InfoFile.add('Datum ' + datum);
+  InfoFile.add('Uhr ' + uhr);
+  InfoFile.add('Baustelle ' + inttostr(BAUSTELLE_R) + '=' + pBaustelle);
+  InfoFile.add(' Ortsteillogik [' + booltostr(Baustelle_Ortsteilcodes) + ']');
+  InfoFile.add('doppelte ablehnen [' + booltostr(pEindeutig) + ']');
+  InfoFile.add('numerisch [' + booltostr(pNurZiffern) + ']');
+  InfoFile.add('letzter Block [' + booltostr(pNurDenLetztenBlock) + ']');
+  InfoFile.add('nur simulieren [' + booltostr(pSimulieren) + ']');
+
+  ParameterError := false;
+
+  Umsetzer.AddStrings(pMappings);
+  for n := 0 to pred(Umsetzer.count) do
+  begin
+
+    AllParameter := Umsetzer[n];
+    AllParameter := copy(AllParameter, succ(pos('(', AllParameter)), MaxInt);
+    delete(AllParameter, length(AllParameter), 1);
+
+    // Umsetzer Nummer ermitteln!
+    for m := 0 to high(cImportFields) do
+      if pos(cImportFields[m] + '(', Umsetzer[n]) = 1 then
+      begin
+        Umsetzer[n] := inttostrN(m, 2) + ':' + Umsetzer[n];
+        break;
+      end;
+
+    // Alle Parameter in eine Stringliste
+    ParameterItems := TStringList.create;
+    Umsetzer.objects[n] := ParameterItems;
+
+    for m := 1 to 3 do
+      ParameterItems.add(nextp(AllParameter, ','));
+  end;
+
+  qAUFTRAG := nQuery;
+  if not(ParameterError) then
+  begin
+    _(cFeedBack_ProgressBar_max+1,IntToStr( ImportFile.count));
+    with qAUFTRAG do
+    begin
+      sql.add('SELECT *');
+      sql.add('FROM AUFTRAG');
+      sql.add('FOR UPDATE');
+      open;
+    end;
+    RID_AT_IMPORT := e_w_Gen('GEN_AUFTRAG');
+    ABNummer := e_r_AuftragNummer(BAUSTELLE_R) + 1;
+
+    CheckCreateDir(ImportePath + inttostr(RID_AT_IMPORT));
+    // imp pend:
+    //SaveSchema(ImportePath + inttostr(RID_AT_IMPORT) + '\Schema' + cSchemaExtension);
+    ImportFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Daten.csv');
+
+    _(cFeedBack_Edit+1,inttostr(RID_AT_IMPORT));
+    InfoFile.Insert(0, 'Import-RID: ' + inttostr(RID_AT_IMPORT));
+    rLast_Import_RID := RID_AT_IMPORT;
+    STime := 0;
+    Anzahl_Zaehlwerk_0 := 0;
+    Anzahl_Zaehlwerk_nicht_1 := 0;
+
+    MoreTextInfo := TStringList.create;
+    _ZaehlerMehrInfo := TStringList.create;
+    _MonteurMehrInfo := TStringList.create;
+    _InternMehrInfo := TStringList.create;
+    _ProtokollMehrInfo := TStringList.create;
+
+    Abgelehnte := TStringList.create;
+    Importierte := TStringList.create;
+
+    for m := 0 to pred(pQuellHeaderLines) do
+      Abgelehnte.add(ImportFile[m]);
+    for m := 0 to pred(pQuellHeaderLines) do
+      Importierte.add(ImportFile[m]);
+
+    InfoFile.add('Import-Quelle: ursprÃ¼ngliche Anzahl ' + inttostr(OrgCount));
+    InfoFile.add('Import-Quelle: doppelte ZÃ¤hlernummern ' + inttostr(DeleteCount));
+    InfoFile.add('Import-Quelle: Anzahl reduziert auf ' + inttostr(ImportFile.count - pQuellHeaderLines));
+    _LastLocation := '!null!';
+
+    ZaehlerNummernImBestand.add('### neue Nummern ###');
+
+    // tatsÃ¤chlicher Import
+    with qAUFTRAG do
+      for n := pQuellHeaderLines to pred(ImportFile.count) do
+      begin
+
+        // Ab jetzt kommt ein echter Datensatz!
+        if assigned(SpaltenWerte_Primaer) then
+          FreeAndNil(SpaltenWerte_Primaer);
+        SpaltenWerte_Primaer := Split(ImportFile[n], pQuellDelimiter, '"');
+
+        if pIgnoreEmptyArt then
+          if (artA = '') then
+            continue;
+
+        if (Zaehlwerk_FieldIndex <> -1) then
+        begin
+          // Nur Zeilen mit Zaehlwerk=1 wird beachtet!!
+          Zaehlwerk := strtointdef(sSpaltenWert(Zaehlwerk_FieldIndex), 0);
+          if (Zaehlwerk = 0) then
+            inc(Anzahl_Zaehlwerk_0);
+          if (Zaehlwerk <> 1) then
+          begin
+            inc(Anzahl_Zaehlwerk_nicht_1);
+
+            // fÃ¼r dieses ZÃ¤hlwerk die InternInfos erweitern
+            qAUFTRAG := DataModuleDatenbank.nQuery;
+            with qAUFTRAG do
+            begin
+              sql.add('SELECT INTERN_INFO FROM AUFTRAG WHERE RID=' + inttostr(AUFTRAG_R) + ' for update');
+              open;
+              first;
+              edit;
+              FieldByName('INTERN_INFO').assignto(_InternMehrInfo);
+              for m := 0 to pred(Umsetzer.count) do
+              begin
+                UmsetzerNo := strtoint(copy(Umsetzer[m], 1, 2));
+                if (UmsetzerNo = 39) then
+                begin
+                  ParameterItems := Umsetzer.objects[m] as TStringList;
+                  _InternMehrInfo.add(cutblank(
+                    { } ParameterItems[0] +
+                    { } '.' + inttostr(Zaehlwerk) +
+                    { } '=' +
+                    { } rSpaltenWert(2)));
+                end;
+              end;
+              FieldByName('INTERN_INFO').assign(_InternMehrInfo);
+              post;
+            end;
+            qAUFTRAG.free;
+
+            // ansonsten nix mehr machen
+            continue;
+          end;
+        end;
+
+        _ZaehlerMehrInfo.clear;
+        _MonteurMehrInfo.clear;
+        _InternMehrInfo.clear;
+        _ProtokollMehrInfo.clear;
+
+        Insert; // neue Auftragszeile!
+
+        AUFTRAG_R := e_w_GEN('GEN_AUFTRAG');
+        // setze Standards
+        FieldByName('RID').AsInteger := AUFTRAG_R;
+        FieldByName('PROTECT_RID').AsString := cC_True;
+        FieldByName('BAUSTELLE_R').AsInteger := BAUSTELLE_R;
+        FieldByName('RID_AT_IMPORT').AsInteger := RID_AT_IMPORT;
+        FieldByName('EVENODD').AsString := cC_True;
+
+        // jetzt die Feld-Umsetzer
+        try
+          for m := 0 to pred(Umsetzer.count) do
+          begin
+            UmsetzerNo := strtoint(copy(Umsetzer[m], 1, 2));
+            ParameterItems := Umsetzer.objects[m] as TStringList;
+            case UmsetzerNo of
+              00:
+                begin
+                  // 'Art',
+                  FieldByName('ART').AsString := rSpaltenWert(1);
+                end;
+              01:
+                begin
+                  // 'ZÃ¤hler_Nummer',
+                  _zaehler_nummer := FormatZaehlerNummer(rSpaltenWert(1));
+                  FieldByName('ZAEHLER_NUMMER').AsString := _zaehler_nummer;
+                end;
+              02:
+                begin
+                  // 'ZÃ¤hler_Ort_Name1',
+                  FieldByName('KUNDE_NAME1').AsString := rSpaltenWert(1);
+                end;
+              03:
+                begin
+                  // 'ZÃ¤hler_Ort_Name2',
+                  FieldByName('KUNDE_NAME2').AsString := rSpaltenWert(1);
+                end;
+              04:
+                begin
+                  // 'ZÃ¤hler_Ort_Strasse',
+                  FieldByName('KUNDE_STRASSE').AsString := rSpaltenWert(1);
+                end;
+              05:
+                begin
+                  // 'ZÃ¤hler_Ort_Strasse_#_#_#',
+                  FieldByName('KUNDE_STRASSE').AsString :=
+                    cutblank(cutblank(rSpaltenWert(1)) + ' ' + Format_HausNummer(rSpaltenWert(2)) +
+                    Format_HausZusatz(rSpaltenWert(3)));
+                end;
+              06:
+                begin
+                  // 'ZÃ¤hler_Ort_Ort',
+                  FieldByName('KUNDE_ORT').AsString := rSpaltenWert(1);
+                end;
+              07:
+                begin
+                  // 'ZÃ¤hler_Ort_Ort_#_#',
+                  FieldByName('KUNDE_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
+                end;
+              08:
+                begin
+                  // 'ZÃ¤hler_Info_#_#', // Konstante + Feld -> eine Zeile
+                  if (ParameterItems[0] <> '') then
+                  begin
+                    if (strtointdef(ParameterItems[1], -1) = -1) then
+                      _ZaehlerMehrInfo.add(ParameterItems[0] + '_' + ParameterItems[1])
+                    else
+                      _ZaehlerMehrInfo.add(ParameterItems[0] + '_' + rSpaltenWert(2));
+                  end
+                  else
+                  begin
+                    if (rSpaltenWert(2) <> '') then
+                      _ZaehlerMehrInfo.add(rSpaltenWert(2));
+                  end;
+                end;
+              09:
+                begin
+                  // 'ZÃ¤hler_Planquadrat',
+                  _planquadrat := noblank(rSpaltenWert(1));
+                  if (length(_planquadrat) < cAutoPlanquadratLength) then
+                    _planquadrat := Fill('0', cAutoPlanquadratLength - length(_planquadrat)) + _planquadrat;
+                  FieldByName('PLANQUADRAT').AsString := _planquadrat;
+                end;
+              10:
+                begin
+                  // 'Kunde_Brief_Nummer',
+                  FieldByName('KUNDE_NUMMER').AsString := rSpaltenWert(1);
+                end;
+              11:
+                begin
+                  // 'Kunde_Brief_Name1',
+                  FieldByName('BRIEF_NAME1').AsString := rSpaltenWert(1);
+                end;
+              12:
+                begin
+                  // 'Kunde_Brief_Name2',
+                  FieldByName('BRIEF_NAME2').AsString := rSpaltenWert(1);
+                end;
+              13:
+                begin
+                  // 'Kunde_Brief_StraÃŸe',
+                  FieldByName('BRIEF_STRASSE').AsString := rSpaltenWert(1);
+                end;
+              14:
+                begin
+                  // 'Kunde_Brief_Ort',
+                  FieldByName('BRIEF_ORT').AsString := rSpaltenWert(1);
+                end;
+              15:
+                begin
+                  // 'Kunde_Brief_Ort_#_#' );
+                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
+                end;
+              16:
+                begin
+                  // 'Monteur_Info_#_#'
+                  if (ParameterItems[0] = '') then
+                  begin
+                    _Zeile := cutblank(rSpaltenWert(2));
+                    while (_Zeile <> '') do
+                      _MonteurMehrInfo.add(cutblank(nextp(_Zeile, cLineSeparator)));
+                  end
+                  else
+                  begin
+                    _MonteurMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)))
+                  end;
+                end;
+              17:
+                begin
+                  // 'C_Art_Info'
+                  FieldByName('ART').AsString := ParameterItems[0];
+                end;
+              18:
+                begin
+                  // 'C_ZÃ¤hler_Ort_Info'
+                  FieldByName('KUNDE_ORT').AsString := ParameterItems[0];
+                end;
+              19:
+                begin
+                  _Date := date2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date);
+                end;
+              20:
+                begin
+                  _Date := date2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date);
+                end;
+              21:
+                begin
+                  FieldByName('BRIEF_STRASSE').AsString :=
+                    cutblank(cutblank(rSpaltenWert(1)) + ' ' + Format_HausNummer(rSpaltenWert(2)) +
+                    Format_HausZusatz(rSpaltenWert(3)));
+                end;
+              22:
+                begin
+                  // ''
+                  FieldByName('BRIEF_NAME1').AsString := cutblank(rSpaltenWert(1)) + ' ' + rSpaltenWert(2);
+                end;
+              23:
+                begin
+                  // ''
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '_' + rSpaltenWert(2)));
+                end;
+              24:
+                begin
+                  FieldByName('KUNDE_ORTSTEIL').AsString := rSpaltenWert(1);
+                end;
+              25:
+                begin
+                  FieldByName('BRIEF_ORT').AsString := cutblank(rSpaltenWert(1)) + ' ' + cutblank(rSpaltenWert(2)) + ' '
+                    + rSpaltenWert(3);
+                end;
+              26:
+                begin
+                  FieldByName('PLANQUADRAT').AsString := rSpaltenWert(1) + rSpaltenWert(2);
+                end;
+              27:
+                begin
+                  Verbrauch_1_Datum := 0;
+                  if DateOK(date2long(rSpaltenWert(1))) then
+                  begin
+                    Verbrauch_1_Datum := date2long(rSpaltenWert(1));
+                    appendstringstofile(rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
+                      ImportePath + 'datums.txt');
+
+                    FieldByName('VERBRAUCH_DATUM').AsDate := long2datetime(date2long(rSpaltenWert(1)));
+                  end;
+                end;
+              28:
+                begin
+                  Verbrauch_1_Zaehler_Stand := strtoint64def(rSpaltenWert(1), -1);
+                  FieldByName('VERBRAUCH_ZAEHLER_STAND').AsString := inttostr(Verbrauch_1_Zaehler_Stand);
+                end;
+              29:
+                begin
+                  FieldByName('VERBRAUCH_PRO_JAHR').AsString := rSpaltenWert(1);
+                end;
+              30:
+                begin
+                  FieldByName('REGLER_NR').AsString := rSpaltenWert(1);
+                end;
+              31:
+                begin
+                  MONTEUR_R := e_r_MonteurRIDFromKuerzel(ParameterItems[0]);
+                  if (MONTEUR_R > 0) then
+                    FieldByName('MONTEUR1_R').AsInteger := MONTEUR_R;
+                end;
+              32:
+                begin
+                  MONTEUR_R := e_r_MonteurRIDFromKuerzel(ParameterItems[0]);
+                  if (MONTEUR_R > 0) then
+                    FieldByName('MONTEUR2_R').AsInteger := MONTEUR_R;
+                end;
+              33:
+                begin
+                  // numerische Angabe?
+                  MONTEUR_R := strtointdef(rSpaltenWert(1), cRID_Unset);
+                  if MONTEUR_R < cRID_FirstValid then
+                    // KÃ¼rzel angegeben?
+                    MONTEUR_R := e_r_MonteurRIDFromKuerzel(rSpaltenWert(1));
+                  if (MONTEUR_R >= cRID_FirstValid) then
+                    FieldByName('MONTEUR1_R').AsInteger := MONTEUR_R;
+                end;
+              34:
+                begin
+                  MONTEUR_R := strtointdef(rSpaltenWert(1), cRID_Unset);
+                  if MONTEUR_R < cRID_FirstValid then
+                    MONTEUR_R := e_r_MonteurRIDFromKuerzel(rSpaltenWert(1));
+                  if (MONTEUR_R >= cRID_FirstValid) then
+                    FieldByName('MONTEUR2_R').AsInteger := MONTEUR_R;
+                end;
+              35:
+                begin
+                  r1AsString := noblank(AnsiUpperCase(rSpaltenWert(1)));
+                  if r1AsString <> '' then
+                    FieldByName('WORDEMPFAENGER').AsString := r1AsString;
+                end;
+              36:
+                begin
+                  // C_ZÃ¤hler_Ort_Ortsteil
+                  FieldByName('KUNDE_ORTSTEIL').AsString := ParameterItems[0];
+                end;
+              37:
+                begin
+                  // 'Verbrauch_0_Datum',
+                  Verbrauch_0_Datum := 0;
+                  if DateOK(date2long(rSpaltenWert(1))) then
+                  begin
+                    Verbrauch_0_Datum := date2long(rSpaltenWert(1));
+                  end;
+                end;
+              38:
+                begin
+                  // 'Verbrauch_0_ZÃ¤hler_Stand'
+                  Verbrauch_0_Zaehler_Stand := strtoint64def(rSpaltenWert(1), -1);
+                  //
+
+                  if (Verbrauch_1_Zaehler_Stand > 0) then
+                    if (Verbrauch_0_Zaehler_Stand > 0) then
+                      if DateOK(Verbrauch_0_Datum) then
+                        if DateOK(Verbrauch_1_Datum) then
+                          if (Verbrauch_0_Datum < Verbrauch_1_Datum) then
+                          begin
+                            FieldByName('VERBRAUCH_PRO_JAHR').AsString :=
+                              inttostr(round((Verbrauch_1_Zaehler_Stand - Verbrauch_0_Zaehler_Stand) /
+                              DateDiff(Verbrauch_0_Datum, Verbrauch_1_Datum) * 365));
+                          end;
+
+                end;
+              39: // SAP_Info_#_#
+                begin
+
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '=' + rSpaltenWert(2)));
+                end;
+              40: // SAP Art
+                begin
+
+                  _Art := SAP2art(rSpaltenWert(1));
+                  _Zaehlwerke := 1;
+
+                  SpaltenWerte_Sekundaer := nil;
+                  for k := succ(n) to pred(ImportFile.count) do
+                  begin
+
+                    if assigned(SpaltenWerte_Sekundaer) then
+                      FreeAndNil(SpaltenWerte_Sekundaer);
+                    SpaltenWerte_Sekundaer := Split(ImportFile[k], pQuellDelimiter, '"');
+
+                    l := strtointdef(sSpaltenWert_Sekundaer(Zaehlwerk_FieldIndex), 0);
+
+                    // weitere Zeilen mÃ¼ssen Werte >1 haben
+                    if (l < 2) then
+                      break;
+
+                    // das grÃ¶sste ZÃ¤hlwerk ermitteln!
+                    if (l > _Zaehlwerke) then
+                      _Zaehlwerke := l;
+
+                    _ZaehlerNummer := FormatZaehlerNummer(sSpaltenWert_Sekundaer(ZaehlerNummer_FieldIndex));
+                    if (_ZaehlerNummer <> _zaehler_nummer) then
+                    begin
+                      if (l = 2) then
+                        FieldByName('REGLER_NR').AsString := _ZaehlerNummer
+                      else
+                        break;
+                    end;
+
+                  end;
+                  if assigned(SpaltenWerte_Sekundaer) then
+                    FreeAndNil(SpaltenWerte_Sekundaer);
+
+                  // ZÃ¤hlwerk eintragen!
+                  if (_Zaehlwerke > 1) then
+                    _Art := _Art + inttostr(min(9, _Zaehlwerke));
+                  FieldByName('ART').AsString := _Art;
+
+                end;
+              41:
+                begin
+                  FieldByName('ZAEHLER_STAND_ALT').AsString := rSpaltenWert(1);
+                end;
+              42:
+                begin
+                  FieldByName('ZAEHLER_STAND_NEU').AsString := rSpaltenWert(1);
+                end;
+              43:
+                begin
+                  FieldByName('KUNDE_NAME1').AsString :=
+                    cutblank(cutblank(rSpaltenWert(1)) + ' ' + cutblank(rSpaltenWert(2)));
+                end;
+              44:
+                begin
+                  FieldByName('KUNDE_NAME2').AsString :=
+                    cutblank(cutblank(rSpaltenWert(1)) + ' ' + cutblank(rSpaltenWert(2)));
+                end;
+              45:
+                begin
+                  _Date := date2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('ZEITRAUM_VON').AsDate := long2datetime(_Date);
+                end;
+              46:
+                begin
+                  _Date := date2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('ZEITRAUM_BIS').AsDate := long2datetime(_Date);
+                end;
+              47:
+                begin
+                  r1AsString := noblank(rSpaltenWert(1));
+                  if (length(r1AsString) = 8) then
+                    r1AsString := copy(r1AsString, 7, 2) + { TT }
+                      copy(r1AsString, 5, 2) + { MM }
+                      copy(r1AsString, 1, 4) { JJJJ }
+                      ;
+                  _Date := date2long(r1AsString);
+                  if DateOK(_Date) then
+                  begin
+                    _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
+                    _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
+                    FieldByName('ZEITRAUM_VON').AsDate := long2datetime(_Date1);
+                    FieldByName('ZEITRAUM_BIS').AsDate := long2datetime(_Date2);
+                  end;
+                end;
+              48:
+                begin
+                  r1AsString := noblank(rSpaltenWert(1));
+                  if (length(r1AsString) = 8) then
+                    r1AsString := copy(r1AsString, 7, 2) + { TT }
+                      copy(r1AsString, 5, 2) + { MM }
+                      copy(r1AsString, 1, 4) { JJJJ }
+                      ;
+                  _Date := date2long(r1AsString);
+                  if DateOK(_Date) then
+                  begin
+                    _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
+                    _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
+                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date1);
+                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date2);
+                  end;
+                end;
+              49:
+                begin
+                  _Date := date_JJJJMMTT_2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date);
+                end;
+              50:
+                begin
+                  _Date := date_JJJJMMTT_2long(rSpaltenWert(1));
+                  if DateOK(_Date) then
+                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date);
+                end;
+              51:
+                begin
+
+                  // vorberechnete Plausi
+                  readMinMax(1, rSpaltenWert(1), rSpaltenWert(2), rSpaltenWert(3));
+                  _Zaehlwerke := 1;
+
+                  SpaltenWerte_Sekundaer := nil;
+                  for k := succ(n) to pred(ImportFile.count) do
+                  begin
+                    if assigned(SpaltenWerte_Sekundaer) then
+                      FreeAndNil(SpaltenWerte_Sekundaer);
+                    SpaltenWerte_Sekundaer := Split(ImportFile[k], pQuellDelimiter, '"');
+
+                    l := strtointdef(sSpaltenWert_Sekundaer(Zaehlwerk_FieldIndex), 0);
+                    if (l > _Zaehlwerke) then
+                    begin
+                      readMinMax(l, sSpaltenWert_Sekundaer(VorberechnetePlausibilitaetVon_FieldIndex),
+                        sSpaltenWert_Sekundaer(VorberechnetePlausibilitaetBis_FieldIndex),
+                        sSpaltenWert_Sekundaer(LetzterAblesestand_FieldIndex));
+                      _Zaehlwerke := l;
+                    end
+                    else
+                      break;
+                  end;
+                  if assigned(SpaltenWerte_Sekundaer) then
+                    FreeAndNil(SpaltenWerte_Sekundaer);
+
+                end;
+              52:
+                begin
+                  // 'Strassen_erst_ungerade',
+                  // UnterdrÃ¼ckung ausschalten!
+                  FieldByName('EVENODD').AsString := cC_False;
+                end;
+              53:
+                begin
+                  // 'Nummer_Auto',
+                  // +Fixe Vorgabe der Reihenfolge
+                  FieldByName('NUMMER').AsInteger := ABNummer;
+                  FieldByName('PLANQUADRAT').AsString := inttostrN(ABNummer, 5);
+                  inc(ABNummer);
+                end;
+              54:
+                begin
+                  // {54}'Termin'
+                  if (ParameterItems[0] = 'now') then
+                    FieldByName('AUSFUEHREN').AsDate := now
+                  else
+                    FieldByName('AUSFUEHREN').AsDate := long2datetime(date2long(rSpaltenWert(1)));
+                  FieldByName('VORMITTAGS').AsString := cVormittagsChar;
+                end;
+              55:
+                begin
+                  // {55}'Zusatzarbeiten'
+                  SpaltenWerte_Sekundaer := nil;
+                  for k := succ(n) to pred(ImportFile.count) do
+                  begin
+
+                    if assigned(SpaltenWerte_Sekundaer) then
+                      FreeAndNil(SpaltenWerte_Sekundaer);
+                    SpaltenWerte_Sekundaer := Split(ImportFile[k], pQuellDelimiter, '"');
+
+                    if artB <> '' then
+                      break;
+
+                    if (_MonteurMehrInfo.indexof(rSpaltenWert_Sekundaer(1)) = -1) then
+                      _MonteurMehrInfo.add(rSpaltenWert_Sekundaer(1));
+
+                  end;
+                  if assigned(SpaltenWerte_Sekundaer) then
+                    FreeAndNil(SpaltenWerte_Sekundaer);
+
+                end;
+              56: // C_SAP_INFO_#_#
+                begin
+                  // ''
+                  _InternMehrInfo.add(cutblank(ParameterItems[0] + '=' + ParameterItems[1]));
+                end;
+              57: // Transaktion
+                begin
+                  // die Angegebene Transaktion ausfÃ¼hren
+                  if (Transaktionen.indexof(ParameterItems[0]) = -1) then
+                    Transaktionen.add(ParameterItems[0]);
+                end;
+
+              58:
+                begin
+                  // 'Material_Nummer',
+                  FieldByName('MATERIAL_NUMMER').AsString := rSpaltenWert(1);
+                end;
+              59:
+                begin
+                  // Protokoll_#
+                  _ProtokollMehrInfo.add(rSpaltenWert(1));
+                end;
+              60:
+                begin
+                  // Protokoll_C_#
+                  _ProtokollMehrInfo.add(ParameterItems[0] + '=' + rSpaltenWert(2));
+                end;
+              61:
+                begin
+                  // Protokoll_C_C
+                  _ProtokollMehrInfo.add(ParameterItems[0] + '=' + ParameterItems[1]);
+                end;
+            else
+              // Fehler!
+            end;
+          end; // for Import-Tags do
+        except
+          ParameterError := true;
+          InfoFile.add('Exception');
+        end;
+
+        // die Texte
+        FieldByName('ZAEHLER_INFO').assign(_ZaehlerMehrInfo);
+        FieldByName('MONTEUR_INFO').assign(_MonteurMehrInfo);
+        FieldByName('INTERN_INFO').assign(_InternMehrInfo);
+        FieldByName('PROTOKOLL').assign(_ProtokollMehrInfo);
+
+        //
+        if (FieldByName('BRIEF_NAME1').AsString = '') and (FieldByName('BRIEF_NAME2').AsString = '') and
+          (FieldByName('BRIEF_STRASSE').AsString = '') and (FieldByName('BRIEF_ORT').AsString = '') then
+        begin
+          FieldByName('BRIEF_NAME1').assign(FieldByName('KUNDE_NAME1'));
+          FieldByName('BRIEF_NAME2').assign(FieldByName('KUNDE_NAME2'));
+          FieldByName('BRIEF_STRASSE').assign(FieldByName('KUNDE_STRASSE'));
+          FieldByName('BRIEF_ORT').assign(FieldByName('KUNDE_ORT'));
+        end;
+
+        repeat
+
+          if pEindeutig then
+          begin
+            // Detectierung der ZÃ¤hlernummern
+            _ZaehlerNummer := FieldByName('ZAEHLER_NUMMER').AsString;
+            if pNummerConcatArt then
+              _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' + _ZaehlerNummer;
+
+            if (ZaehlerNummernImBestand.indexof(_ZaehlerNummer) <> -1) then
+            begin
+              Abgelehnte.add(ImportFile[n]);
+              cancel;
+              break;
+            end;
+            ZaehlerNummernImBestand.add(_ZaehlerNummer);
+          end;
+
+          Importierte.add(ImportFile[n]);
+
+          // Save it!
+          if not(pSimulieren) then // "simulation"
+          begin
+            AuftragBeforePost(qAUFTRAG);
+            post;
+          end
+          else
+          begin
+            cancel;
+          end;
+
+        until true;
+
+        if frequently(STime, 400) or (n = pred(ImportFile.count)) then
+        begin
+          _(cFeedBack_ProgressBar_position+1,IntTostr( n));
+          _(cFeedBack_processmessages);
+        end;
+
+      end; // for all the import line
+
+    if pDeleteMarked then
+      _(cFeedBack_Function{FormAuftragArbeitsplatz.ClearMarkierte});
+    if pMarkImported then
+      if (Importierte.count - pQuellHeaderLines > 0) then
+        _(cFeedBack_Function{FormAuftragArbeitsplatz.AddMarkierte_RID_AT_IMPORT(RID_AT_IMPORT)});
+
+    // Post-Transaktionen durchfÃ¼hren
+    if (Transaktionen.count > 0) then
+      if (Importierte.count - pQuellHeaderLines > 0) then
+      begin
+        lImportierte := e_r_sqlm(
+          { } 'select RID from AUFTRAG where' +
+          { } ' (RID_AT_IMPORT=' + inttostr(RID_AT_IMPORT) + ') and' +
+          { } ' (RID=MASTER_R)');
+        for n := 0 to pred(Transaktionen.count) do
+        begin
+          InfoFile.add('Transaktion "' + Transaktionen[n] + '"');
+          Funktionen_Transaktion.Dispatch(Transaktionen[n], lImportierte);
+        end;
+        lImportierte.free;
+      end;
+
+    if assigned(SpaltenWerte_Primaer) then
+      FreeAndNil(SpaltenWerte_Primaer);
+    MoreTextInfo.free;
+    _ZaehlerMehrInfo.free;
+    _MonteurMehrInfo.free;
+    _InternMehrInfo.free;
+    _ProtokollMehrInfo.free;
+
+    InfoFile.add(cINFOText + 'Abgelehnte ' + inttostr(Abgelehnte.count - pQuellHeaderLines));
+    InfoFile.add('Importierte ' + inttostr(Importierte.count - pQuellHeaderLines));
+    InfoFile.add(cWARNINGText + 'ZÃ¤hlwerk_ist_"0" ' + inttostr(Anzahl_Zaehlwerk_0));
+    InfoFile.add(cWARNINGText + 'ZÃ¤hlwerk_ist_nicht_"1" ' + inttostr(Anzahl_Zaehlwerk_nicht_1));
+
+    InfoFile.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
+    Abgelehnte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Abgelehnte.csv');
+    Importierte.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\Importierte.csv');
+    ZaehlerNummernImBestand.SaveToFile(ImportePath + inttostr(RID_AT_IMPORT) + '\ZaehlerNummern.txt');
+
+    if (Abgelehnte.count > pQuellHeaderLines) then
+      _(cFeedBack_ShowMessage,
+       {} 'Es wurden ' + inttostr(Abgelehnte.count - pQuellHeaderLines) + ' von ' +
+       {} inttostr(Importierte.count + Abgelehnte.count - pQuellHeaderLines - pQuellHeaderLines) +
+       {} ' ZÃ¤hlernummern abgelehnt!');
+    if (Anzahl_Zaehlwerk_0 > 0) then
+      _(cFeedBack_ShowMessage,
+       {} inttostr(Anzahl_Zaehlwerk_0) + ' Zeilen wurden Ã¼berlesen ' + #13 +
+       {} 'da die Spalte ZÃ¤hlwerk (angegeben im 2. Parameter der SAP_Art_#_#())' + #13 +
+       {} 'leer ist, oder den Wert "0" hat.');
+
+    if (Importierte.count - pQuellHeaderLines) = 0 then
+      _(cFeedBack_Function{openShell},ImportePath + inttostr(RID_AT_IMPORT) + '\Info.txt');
+
+  end;
+  for n := 0 to pred(Umsetzer.count) do
+    Umsetzer.objects[n].free;
+  FreeAndNil(Umsetzer);
+  FreeAndNil(InfoFile);
+  FreeAndNil(Abgelehnte);
+  FreeAndNil(Importierte);
+  FreeAndNil(ZaehlerNummernImBestand);
+  FreeAndNil(OrtsteileDerQuelle);
+  FreeAndNil(StrassenListeMitPlanquadrat);
+  FreeAndNil(Transaktionen);
+  _(cFeedBack_ProgressBar_position+1);
 end;
 
 

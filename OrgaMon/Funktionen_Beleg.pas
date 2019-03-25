@@ -667,6 +667,8 @@ uses
   html, Geld, DTA,
   SimplePassword, WordIndex, OpenStreetMap,
 
+
+
   // DC-Crypt
   DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
 
@@ -676,6 +678,7 @@ uses
 {$ENDIF}
   // OrgaMon
   CareTakerClient,
+  Funktionen_OLAP,
   Funktionen_LokaleDaten,
   Funktionen_Basis,
   Funktionen_Buch,

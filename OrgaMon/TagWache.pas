@@ -143,7 +143,7 @@ begin
             1:
               FormAuftragMobil.ReadMobil;
             2:
-              FormAuftragErgebnis.UploadNewTANS(-1, false);
+              e_w_Ergebnis(-1, false);
             3:
               if (iTagwacheBaustelle >= cRID_FirstValid) then
               begin
@@ -164,12 +164,15 @@ begin
                 e_r_Bewegungen;
 
                 // Import-Schema laden, neu Aufbauen
+                e_w_Import(iTagwacheBaustelle);
+                (* imp pend:
+                 Prüfen, ob alles so gemacht wird:
                 with FormAuftragImport do
                 begin
                   SetContext(iTagwacheBaustelle);
-                  DoImport;
                   Close;
                 end;
+                *)
               end;
             4:
               FormAuftragMobil.WriteMobil;

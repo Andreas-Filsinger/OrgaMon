@@ -29,19 +29,28 @@ unit Buchhalter;
 interface
 
 uses
+  // System
   Windows, Messages, SysUtils,
   Variants, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, IB_Components, IB_Access,
-  Grids, IB_Grid, ComCtrls,
-  Buttons, JvGIF, ExtCtrls,
-  DCPcrypt2, DCPmd5,
-  gplists, ImgList, JvExControls,
-  JvArrayButton,
+  StdCtrls, Grids, ComCtrls,
+  Buttons, ExtCtrls, ImgList, System.ImageList,
 
+  // IB-Objects
+  IB_Components, IB_Access, IB_Grid,
+
+  // Jedi
+  JvGIF, JvExControls, JvArrayButton,
+  JvAnimatedImage, JvGIFCtrl,
+  JvComponentBase, JvFormPlacement,
+
+  // Anfix
+  gplists,   DCPcrypt2, DCPmd5,
   DTA, WordIndex, anfix32,
+
+  // OrgaMon
   Sperre,
-  JvAnimatedImage, JvGIFCtrl, System.ImageList, JvComponentBase, JvFormPlacement;
+  Funktionen_OLAP;
 
 type
   TFormBuchhalter = class(TForm)
@@ -1709,7 +1718,7 @@ begin
   BeginHourGlass;
   sOLAPFName := TStringList.Create;
   ItemKontoAuszugRIDs.clear;
-  sOLAPFName.LoadFromFile(FormOLAP.RohdatenFName(0));
+  sOLAPFName.LoadFromFile(RohdatenFName(0));
   for n := 1 to pred(sOLAPFName.count) do
     ItemKontoAuszugRIDs.add(StrToIntDef(sOLAPFName[n], cRID_Null));
   DrawGrid1.RowCount := ItemKontoAuszugRIDs.count;

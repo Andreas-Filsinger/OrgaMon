@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -39,9 +39,15 @@ unit systemd;
 
 interface
 
+uses
+ Classes;
+
 // Tools
 function CallExternalApp(Cmd: string; const CmdShow: Integer): Cardinal;
 function RunExternalApp(Cmd: string; const CmdShow: Integer): boolean;
+
+// Dokumente konvertieren
+function html2pdf(Dokument: string; OnlyIfOutDated: boolean = true): TStringList;
 
 const
    SD_LISTEN_FDS_START = 3;
@@ -55,6 +61,7 @@ implementation
 uses
  anfix32,
  {$ifndef FPC}
+ windows,
  JclMiscel,
  {$endif}
  SysUtils;
@@ -94,6 +101,109 @@ function sd_listen_fds(h: Integer): Integer;
 begin
  result := -1;
 
+end;
+const
+ wkhtmltopdf_Installation: string = '';
+
+function html2pdf(Dokument: string; OnlyIfOutDated: boolean = true): TStringList;
+const
+ cHTMLextension = '.html';
+ cPDFextension = '.pdf';
+var
+ Dokument_pdf : string;
+ k : integer;
+ ErrorMsg: string;
+begin
+
+
+  repeat
+
+     result := TStringList.Create;
+     ErrorMsg := '';
+     if not(FileExists(Dokument)) then
+     begin
+       ErrorMsg := 'Quell-HTML nicht gefunden!';
+       break;
+     end;
+
+     if (wkhtmltopdf_Installation='') then
+     begin
+
+      repeat
+       wkhtmltopdf_Installation := 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+       wkhtmltopdf_Installation := ProgramFilesDir + 'wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+       wkhtmltopdf_Installation := 'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe';
+       if FileExists(wkhtmltopdf_Installation) then
+        break;
+       wkhtmltopdf_Installation := '';
+      until yet;
+
+     end;
+
+    if (wkhtmltopdf_Installation='') then
+    begin
+      ErrorMsg := 'wkhtmltopdf Installation nicht gefunden!';
+      break;
+    end;
+
+    Dokument_pdf := Dokument;
+
+    k := revpos(cHTMLextension, Dokument_pdf);
+    if (k > 0) then
+    begin
+      Dokument_pdf := copy(Dokument_pdf, 1, pred(k)) + cPDFExtension
+    end
+    else
+    begin
+      ErrorMsg := 'Anteil "' + cHTMLextension + '" in "' + Dokument + '" nicht gefunden!';
+      break;
+    end;
+
+    //
+    if
+     {} not(OnlyIfOutDated) or
+     {} (FileDateTime(Dokument) > FileDateTime(Dokument_pdf)) then
+    begin
+      if (pos('--',iPDFZoom)=0) then
+        CallExternalApp(
+          { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
+          { } '--quiet ' +
+          { } '--print-media-type ' +
+          { } '--page-width 2480px ' + // DIN A4 Format
+          { } '--page-height 3508px ' +
+          { } '--margin-top 100px ' +
+          { } '--margin-bottom 9px ' +
+          { } '--margin-left 9px ' +
+          { } '--margin-right 9px ' +
+          { } '--dpi 150 ' +
+          { } '--zoom '+iPDFZoom+' ' +
+          { } '"' + Dokument + '"' + ' ' +
+          { } '"' + Dokument_pdf + '"',
+          { } SW_HIDE)
+      else
+        CallExternalApp(
+          { } '"' + wkhtmltopdf_Installation + '"' + ' ' +
+          { } iPDFZoom + ' ' +
+          { } '"' + Dokument + '"' + ' ' +
+          { } '"' + Dokument_pdf + '"',
+          { } SW_HIDE);
+    end;
+
+    if (FSize(Dokument_pdf)<739) then
+    begin
+      ErrorMsg := 'PDF-Erstellung ist nicht erfolgt. Ev. keine wkhtmltopdf Installation gefunden!';
+      break;
+    end;
+
+  until true;
+  if (ErrorMsg<>'') then
+   result.values['ERROR'] := ErrorMsg
+  else
+   result.values['ConversionOutFName'] := Dokument_pdf;
 end;
 
 end.

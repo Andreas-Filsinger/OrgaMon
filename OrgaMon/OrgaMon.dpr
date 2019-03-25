@@ -200,7 +200,8 @@ uses
   systemd in '..\PASconTools\systemd.pas',
   ArtikelEingang in 'ArtikelEingang.pas' {FormArtikelEingang},
   c7zip in '..\PASconTools\c7zip.pas',
-  Funktionen_App in 'Funktionen_App.pas';
+  Funktionen_App in 'Funktionen_App.pas',
+  Funktionen_OLAP in 'Funktionen_OLAP.pas';
 
 {$R *.RES}
 

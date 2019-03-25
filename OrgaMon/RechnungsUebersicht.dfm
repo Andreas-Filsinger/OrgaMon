@@ -300,7 +300,7 @@ object FormRechnungsUebersicht: TFormRechnungsUebersicht
     TabOrder = 10
   end
   object IB_Query1: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsAlignment.Strings = (
       'BETRAG=RIGHT'
       'DAVON_BEZAHLT=RIGHT'

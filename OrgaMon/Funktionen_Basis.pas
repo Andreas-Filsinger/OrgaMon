@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2018  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -38,8 +38,18 @@ uses
   IB_Access,
   IB_Components,
 {$ENDIF}
-  Classes, gplists, globals,
-  CareTakerClient;
+  // System
+  Classes,
+
+  // XLS
+  FlexCel.xlsAdapter,
+
+  // Tools
+  gplists, CareTakerClient, anfix32,
+  html,
+
+  // OrgaMon
+  globals;
 
 {
   eBasis: Grundlegende Funktionen des OrgaMon ohne besondere Zuordnung zu
@@ -151,14 +161,13 @@ function PruefZifferOK(zahl: Int64): Boolean;
 procedure EnsureCache_Musiker;
 procedure EnsureCache_Laender;
 
-
 implementation
 
 uses
   Math, SysUtils,
   DCPcrypt2, DCPblockciphers, DCPblowfish,
-  c7zip, WordIndex,
-  anfix32, dbOrgaMon, SimplePassword,
+  c7zip, WordIndex, ExcelHelper,
+  dbOrgaMon, SimplePassword,
 
   // wegen der Versionsnummern
 {$IFDEF fpc}
@@ -185,6 +194,7 @@ uses
 {$ENDIF}
   idglobal,
   IdStack, IdComponent, IdFTP, solidFTP,
+  OpenOfficePDF,
   srvXMLRPC,
   memcache;
 
