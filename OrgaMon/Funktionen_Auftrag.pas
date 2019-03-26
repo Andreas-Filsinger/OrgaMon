@@ -8353,7 +8353,7 @@ var
       s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
     if (TAN <> '') then
       s := s + ' ' + TAN;
-    _(cFeedBack_ListBox+1,s);
+    _(cFeedBack_ListBox_Add+1,s);
     _(cFeedBack_processmessages);
     AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
   end;
@@ -11053,6 +11053,7 @@ var
   // Parameter aus der Baustelle
   Baustelle_StellenAnzZaehlerNummer: integer;
   Baustelle_Ortsteilcodes: boolean;
+  Baustelle_Kuerzel: string;
 
   _Verbraucher_r: integer;
   ThisDate: TANFiXDate;
@@ -11072,8 +11073,9 @@ var
   _Date, _Date1, _Date2: TANFiXDate;
   _planquadrat: string;
   MONTEUR_R: integer;
-  // imp pend: LOAD
+  ImportFileFName: string;
   ImportFile : TStringList;
+  Schema : TStringList;
   cAUFTRAG: TdboCursor;
 
   //
@@ -11129,20 +11131,93 @@ var
   pNurDenLetztenBlock : boolean; // was CheckBox14.checked
   pNurZiffern : boolean; // was CheckBox13.checked
   pQuellHeaderLines: Integer; // was QuellHeaderLines
-  pMappings: TStringList; // was pMappings
   pNummerConcatArt: boolean; // was CheckBox5.checked
   pNummerConcarMaterial: boolean; // was CheckBox11.checked
   pPlanquadrat: string; // was Edit3.Text
   pIgnoreEmptyArt: boolean;  // was CheckBox12.checked
   pQuellDelimiter: Char; // was QuellDelimiter, default ";"
-  pBaustelle : string; // was ComboBox6.Text
   pEindeutig : boolean; // was CheckBox1.checked
   pSimulieren : boolean; // was CheckBox3.checked
   pDeleteMarked: boolean; // was CheckBox10.checked
   pMarkImported: boolean; // was CheckBox9.checked
+  pOEM : boolean; // was CheckBox8.checked
 
   // Rückgabe Parameter
   rLast_Import_RID: Integer; // was Last_Import_RID
+
+  procedure LoadImportFile(sFileName:string);
+  var
+    SpalteNo: integer;
+    SpalteNo2: integer;
+    OneLine: string;
+    n, k: integer;
+    sExcelFileName: string;
+  begin
+
+    k := revpos('.', sFileName);
+    if (k > 0) then
+    begin
+
+      // Aus Excel konvertieren?!
+      sExcelFileName := copy(sFileName, 1, pred(k));
+      k := revpos('.', sExcelFileName);
+      if (AnsiUpperCase(copy(sExcelFileName, k, MaxInt)) = AnsiUpperCase(cExcelExtension)) then
+        if FileExists(sExcelFileName) then
+          if (FileAge(sFileName) < FileAge(sExcelFileName)) then
+          begin
+            BeginHourGlass;
+            doConversion(Content_Mode_xls2csv, sExcelFileName);
+            EndHourGlass;
+          end;
+
+    end;
+
+    if FileExists(sFileName) then
+    begin
+
+      BeginHourGlass;
+      LoadFromFileCSV(true, ImportFile, sFileName);
+      EndHourGlass;
+
+      if (ImportFile.count > 0) then
+      begin
+
+        if pOEM then
+        begin
+          for n := 0 to pred(ImportFile.count) do
+            ImportFile[n] := Oem2Ansi(ImportFile[n]);
+        end;
+
+        _(cFeedBack_ListBox_clear+3);
+        OneLine := ImportFile[0];
+        SpalteNo := 0;
+        while (OneLine <> '') do
+        begin
+          inc(SpalteNo);
+          _(cFeedBack_ListBox_add+3,
+            {} inttostrN(SpalteNo, 2) + ':' + nextp(OneLine, pQuellDelimiter));
+        end;
+        SpalteNo := CharCount(pQuellDelimiter, ImportFile[0]);
+
+        if (ImportFile.count > 1) then
+          SpalteNo2 := CharCount(pQuellDelimiter, ImportFile[1])
+        else
+          SpalteNo2 := 0;
+
+        // Caches
+        _(cFeedBack_ListBox_clear+4);
+
+        //
+        _(cFeedBack_Label+14,
+         { } '(' + inttostr(ImportFile.count - pQuellHeaderLines) +
+         { } ' Datensätze / ' + inttostr(SpalteNo) + '(' + inttostr(SpalteNo2) + ') Spalten)');
+      end
+      else
+      begin
+        _(cFeedback_ShowMessage,'Eine andere Anwendung sperrt diese Datei (Excel?!)!' + #13 + 'Oder die Datei ist leer!');
+      end;
+    end;
+  end;
 
   function sSpaltenWert(i: integer): string;
   begin
@@ -11301,12 +11376,29 @@ begin
     ApiFirst;
     Baustelle_StellenAnzZaehlerNummer := FieldByName('ZAEHLER_NR_STELLEN').AsInteger;
     Baustelle_Ortsteilcodes := (FieldByName('ORTE_AKTIV').AsString = 'Y');
+    Baustelle_Kuerzel := FieldByName('NUMMERN_PREFIX').AsString;
     close;
   end;
   FreeAndNil(cBAUSTELLE);
 
-  // bisherige Zählernummern lesen!
+
+  if not(FileExists(SchemaPath+Baustelle_Kuerzel+cSchemaExtension)) then
+  begin
+    _(cFeedBack_Log,cERRORText+' Import-Schema nicht gefunden');
+    exit;
+  end else
+  begin
+   Schema := TStringList.Create;
+   Schema.LoadFromFile(SchemaPath+Baustelle_Kuerzel+cSchemaExtension);
+   ImportFileFName := Schema[0];
+   Schema.delete(0);
+  end;
+
+  // Load Data
   ImportFile := TStringList.Create;
+  LoadImportFile(ImportFileFName);
+
+
   ZaehlerNummernInCSV := TStringList.create;
   ZaehlerNummernImBestand := TStringList.create;
   OrtsteileDerQuelle := TStringList.create;
@@ -11326,21 +11418,21 @@ begin
   VorberechnetePlausibilitaetBis_FieldIndex := -1;
   LetzterAblesestand_FieldIndex := -1;
 
-  for n := 0 to pred(pMappings.count) do
+  for n := 0 to pred(Schema.count) do
   begin
 
-    InpStr := pMappings[n];
+    InpStr := Schema[n];
     nextp(InpStr, '(');
 
     repeat
 
-      if pos('Art' + '(', pMappings[n]) = 1 then
+      if pos('Art' + '(', Schema[n]) = 1 then
       begin
         ZaehlerArt_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 
-      if pos('SAP_Art_#_#' + '(', pMappings[n]) = 1 then
+      if pos('SAP_Art_#_#' + '(', Schema[n]) = 1 then
       begin
         ZaehlerArt_FieldIndex := pred(strtol(nextp(InpStr, ',')));
         Zaehlwerk_FieldIndex := pred(strtol(nextp(InpStr, ')')));
@@ -11348,37 +11440,37 @@ begin
         break;
       end;
 
-      if pos('Zähler_Nummer' + '(', pMappings[n]) = 1 then
+      if pos('Zähler_Nummer' + '(', Schema[n]) = 1 then
       begin
         ZaehlerNummer_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 
-      if pos('Material_Nummer' + '(', pMappings[n]) = 1 then
+      if pos('Material_Nummer' + '(', Schema[n]) = 1 then
       begin
         MaterialNummer_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 
-      if pos('Kunde_Brief_Name1' + '(', pMappings[n]) = 1 then
+      if pos('Kunde_Brief_Name1' + '(', Schema[n]) = 1 then
       begin
         KundeBriefName1_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 
-      if pos('Zähler_Ort_Ortsteil' + '(', pMappings[n]) = 1 then
+      if pos('Zähler_Ort_Ortsteil' + '(', Schema[n]) = 1 then
       begin
         OrtsTeil_FieldIndex := pred(strtol(nextp(InpStr, ')')));
         break;
       end;
 
-      if pos('C_Zähler_Ort_Ortsteil' + '(', pMappings[n]) = 1 then
+      if pos('C_Zähler_Ort_Ortsteil' + '(', Schema[n]) = 1 then
       begin
         OrtsteileDerQuelle.add(nextp(InpStr, ')'));
         break;
       end;
 
-      if pos('Plausibilität_Min_Max_#_#_#' + '(', pMappings[n]) = 1 then
+      if pos('Plausibilität_Min_Max_#_#_#' + '(', Schema[n]) = 1 then
       begin
         VorberechnetePlausibilitaetVon_FieldIndex := pred(strtol(nextp(InpStr, ',')));
         VorberechnetePlausibilitaetBis_FieldIndex := pred(strtol(nextp(InpStr, ',')));
@@ -11467,11 +11559,11 @@ begin
   if (DeleteCount > 0) then
   begin
     if not(
-     _(cFeedback_Function,
+     _(cFeedback_Doit,
        { } 'Info: Die angegebene Baustelle hat schon' + #13 +
        { } 'ohne diesen Import doppelte Zählernummern!' + #13 +
        { } 'Mit dem Schalter 33/33 können Sie die doppelten' + #13 +
-       { } 'anzeigen. Wollen Sie dennoch importieren')=0) then
+       { } 'anzeigen. Wollen Sie dennoch importieren')=cFeedBack_TRUE) then
     begin
       ZaehlerNummernInCSV.free;
       ZaehlerNummernImBestand.free;
@@ -11638,7 +11730,7 @@ begin
   InfoFile.add('Benutzer ' + sBearbeiterKurz + ' mit Rev. ' + RevToStr(globals.Version));
   InfoFile.add('Datum ' + datum);
   InfoFile.add('Uhr ' + uhr);
-  InfoFile.add('Baustelle ' + inttostr(BAUSTELLE_R) + '=' + pBaustelle);
+  InfoFile.add('Baustelle ' + inttostr(BAUSTELLE_R) + '=' + e_r_BaustelleKuerzel(BAUSTELLE_R));
   InfoFile.add(' Ortsteillogik [' + booltostr(Baustelle_Ortsteilcodes) + ']');
   InfoFile.add('doppelte ablehnen [' + booltostr(pEindeutig) + ']');
   InfoFile.add('numerisch [' + booltostr(pNurZiffern) + ']');
@@ -11647,7 +11739,7 @@ begin
 
   ParameterError := false;
 
-  Umsetzer.AddStrings(pMappings);
+  Umsetzer.AddStrings(Schema);
   for n := 0 to pred(Umsetzer.count) do
   begin
 

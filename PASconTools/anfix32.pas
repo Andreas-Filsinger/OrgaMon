@@ -162,12 +162,13 @@ const
  cFeedBack_ProgressBar_Max = 3*cFeedBack_SingleElement_MaxCount;
  cFeedBack_ProgressBar_stepit = 4*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Label = 5*cFeedBack_SingleElement_MaxCount;
- cFeedBack_ListBox = 6*cFeedBack_SingleElement_MaxCount;
- cFeedBack_ShowMessage = 7*cFeedBack_SingleElement_MaxCount;
- cFeedBack_Function = 8*cFeedBack_SingleElement_MaxCount;
- cFeedBack_doit = 9*cFeedBack_SingleElement_MaxCount;
- cFeedBack_Edit = 10*cFeedBack_SingleElement_MaxCount;
- cFeedBack_Result = 11*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ListBox_clear = 6*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ListBox_add = 7*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_ShowMessage = 8*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Function = 9*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_doit = 10*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Edit = 11*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Result = 12*cFeedBack_SingleElement_MaxCount;
 
  // return codes
  cFeedBack_CONT = 0;

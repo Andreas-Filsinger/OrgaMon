@@ -198,15 +198,29 @@ uses
 
 function Feedback (key : Integer; value : string = '') : Integer;
 begin
+  result := 0;
   with FormAuftragImport do
   begin
     case key of
-     1:;
+     cFeedBack_ProcessMessages:Application.ProcessMessages;
+     cFeedBack_Edit+1:edit1.Text := value;
+     cFeedBack_ProgressBar_Max+1:ProgressBar1.Max := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_Position+1:ProgressBar1.Position := StrToIntDef(value,0);
+     cFeedBack_Function:openShell(value);
+     cFeedBack_Label+14:label14.Caption := value;
+     cFeedBack_ListBox_clear+3:Listbox3.Items.Clear;
+     cFeedBack_ListBox_clear+4:Listbox4.Items.Clear;
+     cFeedBack_ListBox_add+3:Listbox3.items.Add(value);
+     cFeedBack_ShowMessage:ShowMessage(value);
+     cFeedback_doit:if doit(value) then
+                      result := cFeedBack_TRUE
+                    else
+                     result := cFeedBack_FALSE;
+    else
+     ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;
   end;
 end;
-
-
 
 procedure TFormAuftragImport.Button1Click(Sender: TObject);
 var
@@ -670,16 +684,34 @@ var
  BAUSTELLE_R: Integer;
 begin
   Button3.enabled := false;
-  qOptions:= TStringList.create;
-  with qOptions do
+
+  //
+  BAUSTELLE_R := e_r_BaustelleRIDFromKuerzel(ComboBox6.Text);
+  if BAUSTELLE_R>=cRID_FirstValid then
   begin
 
-  end;
-  e_w_Import(
-   {} BAUSTELLE_R,
-   {} qOptions,
-   {} Feedback);
+    qOptions:= TStringList.create;
+    with qOptions do
+    begin
+      values['NurDenLetztenBlock'] := bool2cO( CheckBox14.checked);
+      values['NurZiffern'] :=  bool2cO( CheckBox13.checked);
+      values['QuellHeaderLines'] := IntToStr(QuellHeaderLines); // imp pend: QuellHeaderLines;
+      values['NummerConcatArt'] := bool2cO(CheckBox5.checked);
+      values['NummerConcarMaterial'] := bool2cO( CheckBox11.checked);
+      values['Planquadrat'] := Edit3.Text;
+      values['IgnoreEmptyArt'] := bool2cO( CheckBox12.checked);
+      values['QuellDelimiter'] :=  QuellDelimiter;
+      values['Eindeutig'] := bool2cO(CheckBox1.checked);
+      values['Simulieren'] := bool2cO(CheckBox3.checked);
+      values['DeleteMarked'] := bool2cO(CheckBox10.checked);
+      values['MarkImported'] := bool2cO(CheckBox9.checked);
+    end;
+    e_w_Import(
+     { } BAUSTELLE_R,
+     { } qOptions,
+     { } Feedback);
 
+  end;
   Button3.enabled := true;
   if not(CheckBox3.checked) then
     close;

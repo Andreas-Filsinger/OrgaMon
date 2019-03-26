@@ -115,6 +115,7 @@ begin
   with FormAuftragErgebnis do
   begin
     case Key of
+
      cFeedBack_Log:begin
                     ListBox1.items.add(value);
                     ListBox1.itemindex := pred(ListBox1.items.count);
