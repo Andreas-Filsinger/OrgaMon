@@ -102,6 +102,6 @@ object FormTagWache: TFormTagWache
     Interval = 1250
     OnTimer = Timer1Timer
     Left = 440
-    Top = 24
+    Top = 22
   end
 end
