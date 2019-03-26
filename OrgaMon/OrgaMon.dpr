@@ -180,7 +180,6 @@ uses
   ArtikelBild in 'ArtikelBild.pas' {FormArtikelBild},
   Resource.SiteDownload in 'Resource.SiteDownload.pas' {FormSiteDownload},
   TPUUploadProgress in '..\TPicUpload\TPUUploadProgress.pas' {UploadProgressForm},
-  SkriptEditor in 'SkriptEditor.pas' {FormSkriptEditor},
   Funktionen_Basis in 'Funktionen_Basis.pas',
   Funktionen_Beleg in 'Funktionen_Beleg.pas',
   Funktionen_Auftrag in 'Funktionen_Auftrag.pas',
@@ -342,7 +341,6 @@ begin
   Application.CreateForm(TFormArtikelBild, FormArtikelBild);
   Application.CreateForm(TFormSiteDownload, FormSiteDownload);
   Application.CreateForm(TUploadProgressForm, UploadProgressForm);
-  Application.CreateForm(TFormSkriptEditor, FormSkriptEditor);
   Application.CreateForm(TFormArtikelKasse, FormArtikelKasse);
   Application.CreateForm(TFormArtikelPOS, FormArtikelPOS);
   Application.CreateForm(TDataModuleGUIhelp, DataModuleGUIhelp);

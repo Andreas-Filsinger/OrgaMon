@@ -35,14 +35,7 @@ uses
   Forms, Dialogs, ComCtrls,
   StdCtrls,
 
-  // FlexCell
-  FlexCel.Core, FlexCel.xlsAdapter,
-
-  // Indy
-  IdComponent, IdFTP,
-
   // Anfix
-  SolidFTP,
   gplists;
 
 type
@@ -78,24 +71,10 @@ type
     procedure Button2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox5Click(Sender: TObject);
   private
     { Private-Deklarationen }
-
-
-
-    // FTP
-    procedure IdFTP1Status(ASender: TObject; const AStatus: TIdStatus; const AStatusText: string);
-    procedure IdFTP1BannerAfterLogin(ASender: TObject; const AMsg: string);
-    procedure IdFTP1BannerBeforeLogin(ASender: TObject; const AMsg: string);
-
-    //
-    procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-    procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-    function AUFTRAG_R: integer;
-    function EinzelMeldeErlaubnis: boolean;
 
   public
     { Public-Deklarationen }
@@ -133,24 +112,48 @@ uses
 
 function FeedBack (key : Integer; value : string = '') : Integer;
 begin
- with FormAuftragErgebnis do
- begin
-   case Key of
-    1:;
-    cFeedBack_Function : result := AUFTRAG_R;
-   end;
- end;
+  with FormAuftragErgebnis do
+  begin
+    case Key of
+     cFeedBack_Log:begin
+                    ListBox1.items.add(value);
+                    ListBox1.itemindex := pred(ListBox1.items.count);
+                   end;
+     cFeedBack_ProcessMessages: Application.Processmessages;
+     cFeedBack_ProgressBar_Max+2: progressbar2.max := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_Position+2: progressbar2.position := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_stepit+2: progressbar2.StepIt;
+     cFeedBack_Label+3: label3.caption := value;
+    else
+     ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
+    end;
+  end;
 end;
-
 
 procedure TFormAuftragErgebnis.Button1Click(Sender: TObject);
 var
   CloseLater: boolean;
   ResultIs: boolean;
-
+  pOptions: TStringList;
+  BAUSTELLE_R : Integer;
 begin
   Button1.enabled := false;
   FormAuftragArbeitsplatz.InvalidateCache_ProblemInfos;
+  pOptions:= TStringList.Create;
+  with pOptions do
+  begin
+    values['TAN_wiederholen'] := bool2cO(CheckBox5.checked);
+    values['TAN'] := edit2.Text;
+    values['SQL'] := HugeSingleLine(Memo1.lines,' ');
+    if CheckBox4.Checked then
+     values['AUFTRAG_R'] :=  Edit1.Text;
+    values['FTP_Diagnose'] :=  bool2cO(CheckBox1.checked);
+    values['Report'] := bool2cO(not(CheckBox2.checked));
+    values['TAN_statisch'] := bool2cO(CheckBox3.checked);
+    values['Manuell'] := bool2cO(CheckBox6.checked);
+  end;
+
+  // Autoclose?
   CloseLater := false;
   if not(active) then
   begin
@@ -158,38 +161,17 @@ begin
     CloseLater := true;
   end;
   BeginHourGlass;
-  ResultIs := e_w_Ergebnis(-1, CheckBox6.checked, FeedBack);
+  if RadioButton3.Checked then
+   BAUSTELLE_R := e_r_BaustelleRIDFromKuerzel(ComboBox1.Text)
+  else
+   BAUSTELLE_R := cRID_unset;
+
+  ResultIs := e_w_Ergebnis(BAUSTELLE_R, pOptions, FeedBack);
   Button1.enabled := true;
   SetDefaults(false);
   EndHourGlass;
   if ResultIs and CloseLater then
     close;
-end;
-
-procedure TFormAuftragErgebnis.Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = '');
-begin
-  if (BAUSTELLE_R > 0) then
-    s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
-  if (TAN <> '') then
-    s := s + ' ' + TAN;
-  ListBox1.items.add(s);
-  ListBox1.itemindex := pred(ListBox1.items.count);
-  application.processmessages;
-  AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
-end;
-
-procedure TFormAuftragErgebnis.Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = '');
-var
-  n: integer;
-begin
-  for n := 0 to pred(s.count) do
-  begin
-    if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
-      continue;
-    if (pos(cE_FTPPASSWORD, s[n]) = 1) then
-      continue;
-    Log(s[n], BAUSTELLE_R, TAN);
-  end;
 end;
 
 procedure TFormAuftragErgebnis.SetDefaults(ResetRadioButton: boolean);
@@ -253,47 +235,6 @@ end;
 procedure TFormAuftragErgebnis.Button2Click(Sender: TObject);
 begin
   SetDefaults(true);
-end;
-
-function TFormAuftragErgebnis.AUFTRAG_R: integer;
-begin
-  if (Edit1.Text <> '') and CheckBox4.checked then
-    result := StrToIntDef(Edit1.Text, 0)
-  else
-    result := 0;
-end;
-
-function TFormAuftragErgebnis.EinzelMeldeErlaubnis: boolean;
-begin
-  result := not(CheckBox2.checked);
-end;
-
-procedure TFormAuftragErgebnis.FormCreate(Sender: TObject);
-begin
-  Stat_Attachments := TStringList.create;
-  IdFTP1 := TIdFtpRestart.create(self);
-  with IdFTP1 do
-  begin
-    OnStatus := IdFTP1Status;
-    OnBannerAfterLogin := IdFTP1BannerAfterLogin;
-    OnBannerBeforeLogin := IdFTP1BannerBeforeLogin;
-  end;
-  FlexCelXLS := TXLSFile.create(true);
-end;
-
-procedure TFormAuftragErgebnis.IdFTP1BannerAfterLogin(ASender: TObject; const AMsg: string);
-begin
-  Log(AMsg);
-end;
-
-procedure TFormAuftragErgebnis.IdFTP1BannerBeforeLogin(ASender: TObject; const AMsg: string);
-begin
-  Log(AMsg);
-end;
-
-procedure TFormAuftragErgebnis.IdFTP1Status(ASender: TObject; const AStatus: TIdStatus; const AStatusText: string);
-begin
-  Log(AStatusText);
 end;
 
 procedure TFormAuftragErgebnis.Image2Click(Sender: TObject);

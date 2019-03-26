@@ -143,7 +143,7 @@ begin
             1:
               FormAuftragMobil.ReadMobil;
             2:
-              e_w_Ergebnis(-1, false);
+              e_w_Ergebnis(cRID_Unset);
             3:
               if (iTagwacheBaustelle >= cRID_FirstValid) then
               begin

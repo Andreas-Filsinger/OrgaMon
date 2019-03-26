@@ -79,7 +79,10 @@ uses
   TestExec in 'TestExec.pas',
   systemd in '..\PASconTools\systemd.pas',
   ContextBase in '..\PASconTools\ContextBase.pas',
-  c7zip in '..\PASconTools\c7zip.pas';
+  c7zip in '..\PASconTools\c7zip.pas',
+  OpenOfficePDF in '..\PASconTools\OpenOfficePDF.pas',
+  Funktionen_OLAP in 'Funktionen_OLAP.pas',
+  Funktionen_Transaktion in 'Funktionen_Transaktion.pas';
 
 begin
  setIdentitaetAndRun;

@@ -63,8 +63,6 @@ const
 var
     // Zentrale Upload - TAN
     HugeTransactionN: integer;
-    IdFTP1: TIdFtpRestart;
-    FlexCelXLS: TXLSFile;
 
     // Statistik
     Stat_Erfolg: TgpIntegerList;
@@ -113,12 +111,11 @@ function e_w_CreateFiles(
  { } Files: TStringList;
  { } fb: TFeedBack = nil): boolean;
 
-
 procedure ClearStat;
 
 function e_w_Ergebnis(
  { } BAUSTELLE_R: integer;
- { } ManuellInitiiert: boolean;
+ { } pOptions: TStringList = nil;
  { } fb: TFeedBack = nil): boolean;
 
 function e_w_Import(
@@ -8238,7 +8235,7 @@ function e_w_CreateFiles(
  {} Files: TStringList;
  {} fb : TFeedBack = nil): boolean;
 
-{$I Feedback.inc}
+  {$I Feedback.inc}
 
 var
   ExcelWriteRow: integer;
@@ -8335,6 +8332,9 @@ var
   FreieZaehlerCol_Sparte: integer;
   FreieZaehlerCol_Obis: integer;
 
+  // Excel-Ausgabe
+  FlexCelXLS: TXLSFile;
+
   // Excel-Formate
   // Dinge für Protokoll-Text Feld
   fmProtokollText: integer;
@@ -8347,32 +8347,30 @@ var
   lZNN_Dupletten: TgpIntegerList;
   DublettenPruefling: string;
 
-procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-begin
-  if (BAUSTELLE_R > 0) then
-    s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
-  if (TAN <> '') then
-    s := s + ' ' + TAN;
-  _(cFeedBack_ListBox+1,s);
-  _(cFeedBack_processmessages);
-  AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
-end;
-
-procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-var
-  n: integer;
-begin
-  for n := 0 to pred(s.count) do
+  procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
   begin
-    if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
-      continue;
-    if (pos(cE_FTPPASSWORD, s[n]) = 1) then
-      continue;
-    Log(s[n], BAUSTELLE_R, TAN);
+    if (BAUSTELLE_R > 0) then
+      s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
+    if (TAN <> '') then
+      s := s + ' ' + TAN;
+    _(cFeedBack_ListBox+1,s);
+    _(cFeedBack_processmessages);
+    AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
   end;
-end;
 
-
+  procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
+  var
+    n: integer;
+  begin
+    for n := 0 to pred(s.count) do
+    begin
+      if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
+        continue;
+      if (pos(cE_FTPPASSWORD, s[n]) = 1) then
+        continue;
+      Log(s[n], BAUSTELLE_R, TAN);
+    end;
+  end;
 
   procedure FuelleZaehlerNummerNeu;
   var
@@ -8384,7 +8382,7 @@ end;
     PreFix: string;
   begin
     ZaehlerNummernNeu.clear;
-    cAUFTRAG := DataModuleDatenbank.nCursor;
+    cAUFTRAG := nCursor;
     PROTOKOLL := TStringList.create;
     with cAUFTRAG do
     begin
@@ -9017,6 +9015,7 @@ begin
   OhneInhaltFelder := TStringList.create;
 
   ZaehlerNummernNeu := TSearchStringList.create;
+  FlexCelXLS := TXLSFile.create(true);
 
   try
     _(cFeedBack_ProgressBar_max+1,IntTOStr( RIDs.count));
@@ -9130,7 +9129,7 @@ begin
       ZaehlerNummernNeuAusN1 := (Settings.values[cE_ZaehlerNummerNeuAusN1] <> cIni_DeActivate);
       ZaehlerNummernNeuMitA1 := (Settings.values[cE_ZaehlerNummerNeuMitA1] = cINI_Activate);
 
-      cINTERNINFO := DataModuleDatenbank.nCursor;
+      cINTERNINFO := nCursor;
       cINTERNINFO.sql.add('select INTERN_INFO, ZAEHLER_NR_NEU, ZAEHLER_STAND_NEU from AUFTRAG where RID=:CROSSREF');
       INTERN_INFO := TStringList.create;
 
@@ -10212,6 +10211,7 @@ begin
     Stat_Unmoeglich := TgpIntegerList.create;
     Stat_Fail := TgpIntegerList.create;
     Stat_FehlendeResourcen := TStringList.create;
+    Stat_Attachments := TStringList.create;
   end
   else
   begin
@@ -10220,46 +10220,44 @@ begin
     Stat_Unmoeglich.clear;
     Stat_Fail.clear;
     Stat_FehlendeResourcen.clear;
+    Stat_Attachments.clear;
   end;
   Stat_meldungen := 0;
   Stat_nichtEFRE := 0;
-  Stat_Attachments.clear;
   Stat_FehlendeResourcen.add('Sparte;ZaehlerNummerNeu;MaterialNummerAlt;MeldungsTAN;RID;TextZaehlerNummerNeu');
 end;
 
-
 function e_w_Ergebnis(
- {} BAUSTELLE_R: integer;
- {} ManuellInitiiert: boolean;
- {} fb: TFeedBack = nil): boolean;
+ { } BAUSTELLE_R: integer;
+ { } pOptions: TStringList = nil;
+ { } fb: TFeedBack = nil): boolean;
 
-{$I Feedback.inc}
+  {$I Feedback.inc}
 
-procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-begin
-  if (BAUSTELLE_R > 0) then
-    s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
-  if (TAN <> '') then
-    s := s + ' ' + TAN;
-  _(cFeedBack_ListBox+1,s);
-  _(cFeedBack_processmessages);
-  AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
-end;
-
-procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
-var
-  n: integer;
-begin
-  for n := 0 to pred(s.count) do
+  procedure Log(s: string; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
   begin
-    if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
-      continue;
-    if (pos(cE_FTPPASSWORD, s[n]) = 1) then
-      continue;
-    Log(s[n], BAUSTELLE_R, TAN);
+    if (BAUSTELLE_R > 0) then
+      s := s + ' ' + e_r_BaustelleKuerzel(BAUSTELLE_R);
+    if (TAN <> '') then
+      s := s + ' ' + TAN;
+    _(cFeedBack_Log,s);
+    _(cFeedBack_processmessages);
+    AppendStringsToFile(s, DiagnosePath + 'Export_' + inttostrN(HugeTransactionN, 6) + '.csv');
   end;
-end;
 
+  procedure Log(s: TStrings; BAUSTELLE_R: integer = 0; TAN: string = ''); overload;
+  var
+    n: integer;
+  begin
+    for n := 0 to pred(s.count) do
+    begin
+      if (pos(cE_ZIPPASSWORD, s[n]) = 1) then
+        continue;
+      if (pos(cE_FTPPASSWORD, s[n]) = 1) then
+        continue;
+      Log(s[n], BAUSTELLE_R, TAN);
+    end;
+  end;
 
 var
   qMail: TdboQuery;
@@ -10272,6 +10270,10 @@ var
   ErrorCount: integer;
   n: integer;
   BaustelleKurz: string;
+  // imp pend: free
+  IdFTP1: TIdFtpRestart;
+  // imp pend: free
+  FlexCelXLS: TXLSFile;
 
   // upload einzelner Dateien
   FTP_UploadFiles: TStringList;
@@ -10284,14 +10286,19 @@ var
   CommitL: TgpIntegerList;
 
   // Eingangsparameter
-  pTAN_wiederholen : boolean; // was CheckBox5.checked
-  pTAN             : string;  // was edit2
-  pSQL             : string;  // was Memo1.lines
-  pAUFTRAG_R       : Integer; // was Edit1.Text / Checkbox4
-  pEinzelneBaustelle : string; // [Kürzel] was RadioButton3.checked / ComboBox1.Text
-  pFTP_Diagnose : boolean; // was CheckBox1.checked
-  pEinzelMeldeErlaubnis : boolean; // was not(CheckBox2.checked)
-  pTAN_statisch : boolean; //was CheckBox3.checked
+  pTAN_wiederholen      : boolean; // was CheckBox5.checked
+  pTAN                  : string;  // was edit2
+  pSQL                  : string;  // was Memo1.lines
+  pAUFTRAG_R            : Integer; // was Edit1.Text / Checkbox4
+  pFTP_Diagnose         : boolean; // was CheckBox1.checked
+  pReport               : boolean; // was not(CheckBox2.checked)
+  pTAN_statisch         : boolean; // was CheckBox3.checked
+  pManuell              : boolean; // was ManuellInitiiert
+
+  (*
+  IdFTP1 := TIdFtpRestart.create(self);
+  FlexCelXLS := TXLSFile.create(true);
+*)
 
   procedure doCommit;
   var
@@ -10301,7 +10308,7 @@ var
   begin
 
     // Erfolg in die Auftragsdaten eintragen: "COMMIT!"
-    dAUFTRAG := DataModuleDatenbank.nDSQL;
+    dAUFTRAG := nScript;
     with dAUFTRAG do
     begin
       sql.add('update AUFTRAG set');
@@ -10359,7 +10366,7 @@ var
           Log(cERRORText + ' ' + SolidFTP_LastError, BAUSTELLE_R);
 
           // FTP - Ticket erstellen
-          qTICKET := DataModuleDatenbank.nQuery;
+          qTICKET := nQuery;
           FTP_Infos := TStringList.create;
 
           with FTP_Infos do
@@ -10430,7 +10437,7 @@ var
     until yet;
   end;
 
-  function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean): integer;
+  function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean; AUFTRAG_R: Integer): integer;
   // [Anzahl der Meldungen]
   var
     cAUFTRAG: TIB_Cursor;
@@ -10439,7 +10446,6 @@ var
     FailL: TgpIntegerList;
     FilesUp: TStringList;
     n: integer;
-    AUFTRAG_R: Integer;
   begin
     result := 0;
     if { } pTAN_wiederholen and
@@ -10458,7 +10464,7 @@ var
       exit;
     end;
 
-    cAUFTRAG := DataModuleDatenbank.nCursor;
+    cAUFTRAG := nCursor;
     with cAUFTRAG do
     begin
       sql.add('select RID from AUFTRAG where'); //
@@ -10493,7 +10499,6 @@ var
       sql.Add(pSQL);
       repeat
 
-        AUFTRAG_R := _(cFeedback_Function);
         if (AUFTRAG_R >= cRID_FirstValid) then
         begin
           sql.add(' (RID=' + inttostr(AUFTRAG_R) + ')');
@@ -10644,11 +10649,40 @@ var
   cBAUSTELLE: TIB_Cursor;
 
 begin
-  // imp pend: pOptions
+  // optionale Zusatz-Optionen bei diesem Durchlauf
+  if assigned(pOptions) then
+  begin
+     with pOptions do
+     begin
+       pTAN_wiederholen := values['TAN_wiederholen']=cIni_Activate;
+       pTAN             := values['TAN'];
+       pSQL             := values['SQL'];
+       pAUFTRAG_R       := StrToIntDef(values['AUFTRAG_R'],cRID_unset);
+       pFTP_Diagnose := values['FTP_Diagnose']=cIni_Activate;
+       pReport := values['Report']<>cIni_Deactivate;
+       pTAN_statisch := values['TAN_statisch']=cIni_Activate;
+       pManuell:= values['Manuell']=cIni_Activate;
+     end;
+  end else
+  begin
+    // defaults
+    pTAN_wiederholen := false;
+    pTAN             := '';
+    pSQL             := '';
+    pAUFTRAG_R       := cRID_unset;
+    pFTP_Diagnose := false;
+    pReport := true;
+    pTAN_statisch := false;
+    pManuell:= false;
+  end;
+
+  IdFTP1 := TIdFtpRestart.create;
+  FlexCelXLS := TXLSFile.create;
+
   Log('[Info]');
   Log('Beginn=' + sTimeStamp);
   Log('Bearbeiter=' + sBearbeiterKurz);
-  Log('Manuell=' + bool2cO(ManuellInitiiert));
+  Log('Manuell=' + bool2cO(pManuell));
   Log('pBAUSTELLE_R=' + inttostr(BAUSTELLE_R));
   Log('pAUFTRAG_R=' + IntToStr(pAUFTRAG_R));
   SolidBeginTransaction;
@@ -10656,8 +10690,8 @@ begin
 
   Settings := TStringList.create;
   eMailParameter := TStringList.create;
-  qMail := DataModuleDatenbank.nQuery;
-  cBAUSTELLE := DataModuleDatenbank.nCursor;
+  qMail := nQuery;
+  cBAUSTELLE := nCursor;
   FTP_UploadMasks := TStringList.create;
   FTP_UploadFiles := TStringList.create;
   FTP_DeleteLocal := TStringList.create;
@@ -10688,15 +10722,9 @@ begin
         break;
       end;
 
-      if (pEinzelneBaustelle<>'') then
-      begin
-        sql.add('(RID=' + inttostr(e_r_BaustelleRIDFromKuerzel(pEinzelneBaustelle)) + ')');
-        break;
-      end;
-
       sql.add('(EXPORT_TAN is not null)');
 
-    until true;
+    until yet;
 
     Log(sql);
 
@@ -10735,7 +10763,7 @@ begin
 
       repeat
 
-        if not(ManuellInitiiert) then
+        if not(pManuell) then
           if (Settings.values[cE_Wochentage] <> '') then
             if (pos(WeekDayS(DateGet), Settings.values[cE_Wochentage]) = 0) then
             begin
@@ -10836,19 +10864,19 @@ begin
         end;
 
         // neue Erfolgs-TANS übergeben
-        if pEinzelMeldeErlaubnis then
+        if pReport then
         begin
           if (Settings.values[cE_EineDatei] = cINI_Activate) then
           begin
-            inc(Stat_meldungen, ReportBlock(true, true));
+            inc(Stat_meldungen, ReportBlock(true, true, pAUFTRAG_R));
           end
           else
           begin
-            inc(Stat_meldungen, ReportBlock(true, false));
+            inc(Stat_meldungen, ReportBlock(true, false, pAUFTRAG_R));
             if (ErrorCount = 0) then
             begin
               Settings.values[cE_Postfix] := '.unmoeglich';
-              inc(Stat_meldungen, ReportBlock(false, true));
+              inc(Stat_meldungen, ReportBlock(false, true, pAUFTRAG_R));
             end;
           end;
         end;
@@ -10984,8 +11012,6 @@ begin
   _(cFeedback_ProgressBar_position+2);
   SolidEndTransaction;
 end;
-
-// ###
 
 function e_w_Import(
  {} BAUSTELLE_R: integer;
@@ -11717,7 +11743,7 @@ begin
             inc(Anzahl_Zaehlwerk_nicht_1);
 
             // für dieses Zählwerk die InternInfos erweitern
-            qAUFTRAG := DataModuleDatenbank.nQuery;
+            qAUFTRAG := nQuery;
             with qAUFTRAG do
             begin
               sql.add('SELECT INTERN_INFO FROM AUFTRAG WHERE RID=' + inttostr(AUFTRAG_R) + ' for update');

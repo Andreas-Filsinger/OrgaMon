@@ -68,7 +68,6 @@ type
     function rpc_e_w_Miniscore(sParameter: TStringList): TStringList;
     function rpc_e_w_LoginInfo(sParameter: TStringList): TStringList;
     function rpc_e_w_Buchen(sParameter: TStringList): TStringList;
-    function rpc_e_w_Skript(sParameter: TStringList): TStringList;
     function rpc_e_w_NextVal(sParameter: TStringList): TStringList;
     function rpc_e_w_Senden(sParameter: TStringList): TStringList;
   end;
@@ -844,16 +843,6 @@ begin
     result.AddObject(frominteger(e_w_PersonNeu), oInteger);
 end;
 
-// empfangenes Skript lokal ausführen
-
-function TeConnect.rpc_e_w_Skript(sParameter: TStringList): TStringList;
-begin
-  result := TStringList.create;
-  result.AddObject('', TXMLRPC_Server.oBeginArray);
-  result.Add('ERROR: Pascal Script unsupported');
-  result.AddObject('', TXMLRPC_Server.oEndArray);
-end;
-
 function TeConnect.rpc_e_w_NextVal(sParameter: TStringList): TStringList;
 begin
   result := TStringList.create;
@@ -870,7 +859,7 @@ begin
      repeat
        if not(e_w_ReadMobil) then
         break;
-       if not(e_w_Ergebnis(-1, false)) then
+       if not(e_w_Ergebnis(iTagwacheBaustelle)) then
         break;
        if not(e_w_BaustelleAblegen(iTagwacheBaustelle)) then
         break;

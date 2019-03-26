@@ -155,7 +155,7 @@ const
 
 const
  // keys
- cFeedBack_SingleElement_MaxCount = 999;
+ cFeedBack_SingleElement_MaxCount = 1000;
  cFeedBack_ProcessMessages = 0*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Log = 1*cFeedBack_SingleElement_MaxCount;
  cFeedBack_ProgressBar_Position = 2*cFeedBack_SingleElement_MaxCount;
@@ -167,6 +167,7 @@ const
  cFeedBack_Function = 8*cFeedBack_SingleElement_MaxCount;
  cFeedBack_doit = 9*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Edit = 10*cFeedBack_SingleElement_MaxCount;
+ cFeedBack_Result = 11*cFeedBack_SingleElement_MaxCount;
 
  // return codes
  cFeedBack_CONT = 0;

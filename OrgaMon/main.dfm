@@ -1576,22 +1576,13 @@ object FormMain: TFormMain
     TabOrder = 92
     OnClick = Button88Click
   end
-  object Button52: TButton
-    Left = 154
-    Top = 422
-    Width = 74
-    Height = 24
-    Caption = 'Skript'
-    TabOrder = 93
-    OnClick = Button52Click
-  end
   object Button89: TButton
     Left = 381
     Top = 315
     Width = 76
     Height = 25
     Caption = 'Kasse'
-    TabOrder = 94
+    TabOrder = 93
     OnClick = Button89Click
   end
   object Button54: TButton
@@ -1600,7 +1591,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'Foto'
-    TabOrder = 95
+    TabOrder = 94
     OnClick = Button54Click
   end
   object Button91: TButton
@@ -1609,7 +1600,7 @@ object FormMain: TFormMain
     Width = 75
     Height = 25
     Caption = 'App'
-    TabOrder = 96
+    TabOrder = 95
     OnClick = Button91Click
   end
   object Button47: TButton
@@ -1618,7 +1609,7 @@ object FormMain: TFormMain
     Width = 74
     Height = 25
     Caption = 'Eingang'
-    TabOrder = 97
+    TabOrder = 96
     OnClick = Button47Click
   end
   object Timer1: TTimer

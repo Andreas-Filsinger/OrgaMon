@@ -621,9 +621,6 @@
         <DCCReference Include="..\TPicUpload\TPUUploadProgress.pas">
             <Form>UploadProgressForm</Form>
         </DCCReference>
-        <DCCReference Include="SkriptEditor.pas">
-            <Form>FormSkriptEditor</Form>
-        </DCCReference>
         <DCCReference Include="Funktionen_Basis.pas"/>
         <DCCReference Include="Funktionen_Beleg.pas"/>
         <DCCReference Include="Funktionen_Auftrag.pas"/>

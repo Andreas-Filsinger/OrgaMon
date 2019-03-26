@@ -6,7 +6,7 @@
   |     \___/|_|  \__, |\__,_|_|  |_|\___/|_| |_|
   |               |___/
   |
-  |    Copyright (C) 2007 - 2017  Andreas Filsinger
+  |    Copyright (C) 2007 - 2019  Andreas Filsinger
   |
   |    This program is free software: you can redistribute it and/or modify
   |    it under the terms of the GNU General Public License as published by
@@ -173,19 +173,25 @@ procedure Dispatch(TransaktionsName: string; lRID: TgpIntegerList);
 implementation
 
 uses
-  anfix32,  wanfix32, c7zip,
-  globals,
+  // System
+  math,   graphics,
+
+  // Tools
+  anfix32, c7zip, html,
+  WordIndex,
 
   // IB-Objects
   IB_Components, IB_Access,
-  math, html, Datenbank,
+
+  // OrgaMon
+  globals, dbOrgaMon, Sperre,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
-  graphics, CareTakerClient,
-  dbOrgaMon, WordIndex,
-  Sperre, Bearbeiter, GeoLokalisierung,
-  FastGeo, AuftragArbeitsplatz,
+ CareTakerClient,
+
+  // Sperre, Bearbeiter, GeoLokalisierung,
+  // FastGeo, AuftragArbeitsplatz,
 
   // XLS Sachen
   FlexCel.Core, FlexCel.xlsAdapter,
@@ -478,7 +484,7 @@ begin
   sOrgaMon := TSearchStringList.create;
   sOrgaMon.LoadFromFile(DiagnosePath + 'RWSI.Status.csv');
 
-  cAUFTRAG := DataModuleDatenbank.nCursor;
+  cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
     sql.add('select REGLER_NR from AUFTRAG where RID=:CROSSREF');
@@ -545,8 +551,8 @@ var
   OneIsNUll: boolean;
 begin
   BeginHourGlass;
-  cHIST := DataModuleDatenbank.nCursor;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  cHIST := nCursor;
+  qAUFTRAG := nQuery;
   lRestoreFelder := TStringList.create;
 
   with cHIST do
@@ -631,7 +637,7 @@ begin
   BeginHourGlass;
   sCommandSet := TStringList.create;
   sCommandSet.LoadFromFile(AnwenderPath + 'AY4.txt');
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
   begin
@@ -675,7 +681,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  cAUFTRAG := DataModuleDatenbank.nCursor;
+  cAUFTRAG := nCursor;
   lSettings := TStringList.create;
   lProtokoll := TStringList.create;
   lZips := TStringList.create;
@@ -743,7 +749,7 @@ begin
 
   // Migrationshilfe Belegzuordnung
   Skript := TStringList.create;
-  qBuch := DataModuleDatenbank.nQuery;
+  qBuch := nQuery;
   with qBuch do
   begin
     sql.add('select');
@@ -795,7 +801,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
 
   with qAUFTRAG do
@@ -837,7 +843,7 @@ var
   qAUFTRAG: TIB_Query;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
 
   with qAUFTRAG do
   begin
@@ -874,7 +880,7 @@ var
   qAUFTRAG: TIB_Query;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
 
   with qAUFTRAG do
   begin
@@ -936,7 +942,7 @@ begin
   sWerte := TStringList.create;
   sWerte.LoadFromFile(MyProgramPath + 'NonDa/Nachmeldung Werte.xls.csv');
   sLog := TStringList.create;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   with qAUFTRAG do
   begin
     //
@@ -1078,7 +1084,7 @@ begin
 
   EndHourGlass;
 
-  openShell(DiagnosePath + 'HA1.log.txt');
+
 end;
 
 procedure doHA1;
@@ -1101,7 +1107,7 @@ begin
 
   // 550G wieder dazumachen
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
 
   with qAUFTRAG do
   begin
@@ -1151,8 +1157,8 @@ begin
   BeginHourGlass;
   sBericht := TStringList.create;
   FehlendeAbleseEinheiten := TStringList.create;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
-  cAUFTRAG := DataModuleDatenbank.nCursor;
+  qAUFTRAG := nQuery;
+  cAUFTRAG := nCursor;
   InternInfos := TStringList.create;
 
   with cAUFTRAG do
@@ -1263,7 +1269,6 @@ begin
   qAUFTRAG.free;
   sBericht.free;
   FehlendeAbleseEinheiten.free;
-  openShell(DiagnosePath + 'KE2.txt');
   EndHourGlass;
 end;
 
@@ -1274,7 +1279,7 @@ var
   qAUFTRAG: TIB_Query;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
 
   with qAUFTRAG do
   begin
@@ -1318,7 +1323,7 @@ var
   QUELLE: string;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
   InternInfos := TStringList.create;
 
@@ -1392,7 +1397,7 @@ var
   ZaehlerInfos: TStringList;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
 
   with qAUFTRAG do
@@ -1432,7 +1437,7 @@ var
   ZaehlerInfos: TStringList;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   ZaehlerInfos := TStringList.create;
 
   with qAUFTRAG do
@@ -1523,8 +1528,8 @@ var
   sQSmerkmal: string;
 begin
   BeginHourGlass;
-  sQSmerkmal := 'QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + FormBearbeiter.sBearbeiterKurz;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  sQSmerkmal := 'QS_UMGANGEN=' + datum + ';' + secondstostr(SecondsGet) + ';' + sBearbeiterKurz;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
 
   with qAUFTRAG do
@@ -1654,7 +1659,7 @@ begin
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
 
   // Excel-Dokument öffnen
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   with qAUFTRAG do
   begin
     sql.add('select * from');
@@ -1684,8 +1689,6 @@ begin
   xImport.free;
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
-  if (sDiagnose.count > 0) then
-    openShell(DiagnosePath + 'Nachtrag.txt');
   EndHourGlass;
 end;
 
@@ -1721,8 +1724,8 @@ var
               while not(eof) do
               begin
                 AUFTRAG_R := FieldByName('RID').AsInteger;
-                if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
-                  FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
+                if (lRID.indexof(AUFTRAG_R) = -1) then
+                  lRID.add(AUFTRAG_R);
                 next;
               end;
             end;
@@ -1733,8 +1736,8 @@ var
           while not(eof) do
           begin
             AUFTRAG_R := FieldByName('RID').AsInteger;
-            if (FormAuftragArbeitsplatz.ItemsMARKED.indexof(pointer(AUFTRAG_R)) = -1) then
-              FormAuftragArbeitsplatz.ItemsMARKED.add(pointer(AUFTRAG_R));
+            if (lRID.indexof(AUFTRAG_R) = -1) then
+              lRID.add(AUFTRAG_R);
             next;
           end;
         end;
@@ -1753,9 +1756,9 @@ begin
   BeginHourGlass;
   // um welche Baustelle geht es
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
-  FormAuftragArbeitsplatz.ItemsMARKED.clear;
+  lRID.clear;
   // Excel-Dokument öffnen
-  cAUFTRAG := DataModuleDatenbank.nCursor;
+  cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
     sql.add('select RID from');
@@ -1767,7 +1770,7 @@ begin
     OPen;
   end;
 
-  cAUFTRAG2 := DataModuleDatenbank.nCursor;
+  cAUFTRAG2 := nCursor;
   with cAUFTRAG2 do
   begin
     sql.add('select RID from');
@@ -1794,8 +1797,6 @@ begin
   cAUFTRAG.free;
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
-  if sDiagnose.count > 0 then
-    openShell(DiagnosePath + 'Nachtrag.txt');
   sDiagnose.free;
   EndHourGlass;
 end;
@@ -1826,7 +1827,7 @@ begin
 
   // um welche Baustelle geht es
 
-  cAUFTRAG := DataModuleDatenbank.nCursor;
+  cAUFTRAG := nCursor;
   with cAUFTRAG do
   begin
     sql.add('select RID from');
@@ -1838,7 +1839,7 @@ begin
     OPen;
   end;
 
-  cABLAGE := DataModuleDatenbank.nCursor;
+  cABLAGE := nCursor;
   with cABLAGE do
   begin
     sql.add('select RID from');
@@ -1927,11 +1928,10 @@ var
   n: integer;
   AUFTRAG_R: integer;
   qAUFTRAG: TIB_Query;
-  p: TPoint2D;
   POSTLEITZAHL_R: integer;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
 
   with qAUFTRAG do
   begin
@@ -1954,16 +1954,22 @@ begin
           e_w_unlocate(POSTLEITZAHL_R);
 
         // referenzen wieder eintragen
+        // imp pend: call "localte"
+        (*
         POSTLEITZAHL_R := FormGeoLokalisierung.locate(FieldByName('KUNDE_STRASSE').AsString,
           FieldByName('KUNDE_ORT').AsString, FieldByName('KUNDE_ORTSTEIL').AsString, p);
+        *)
 
         // Ergebnis eintragen
         if (POSTLEITZAHL_R > 0) then
         begin
           edit;
           FieldByName('POSTLEITZAHL_R').AsInteger := POSTLEITZAHL_R;
+          // imp pend:
+          (*
           if (FieldByName('KUNDE_ORTSTEIL').AsString = '') then
             FieldByName('KUNDE_ORTSTEIL').AsString := FormGeoLokalisierung.r_ortsteil;
+          *)
           post;
         end
 
@@ -1983,7 +1989,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2028,7 +2034,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2089,7 +2095,7 @@ begin
   BAUSTELLE_R := e_r_sql('select BAUSTELLE_R from AUFTRAG where RID=' + inttostr(integer(lRID[0])));
 
   // Excel-Dokument öffnen
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   with qAUFTRAG do
   begin
     sql.add('select PROTOKOLL from');
@@ -2158,8 +2164,6 @@ begin
   xImport.free;
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
-  if (sDiagnose.count > 0) then
-    openShell(DiagnosePath + 'Nachtrag.txt');
 
   sHeader.free;
   sProtokoll.free;
@@ -2176,7 +2180,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2218,7 +2222,7 @@ var
 begin
   // FA eintragen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2373,7 +2377,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
@@ -2422,7 +2426,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2493,7 +2497,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
 
   with qAUFTRAG do
@@ -2534,7 +2538,7 @@ var
   lProtokoll: TStringList;
 begin
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lProtokoll := TStringList.create;
   with qAUFTRAG do
   begin
@@ -2572,7 +2576,7 @@ var
 begin
   sBericht := TStringList.create;
   sBericht.add('RID;DAUER-BISHER;DAUER-NEU');
-  qARTIKEL := DataModuleDatenbank.nQuery;
+  qARTIKEL := nQuery;
   with qARTIKEL do
   begin
     sql.add('select DAUER from ARTIKEL where RID=:CROSSREF');
@@ -2610,8 +2614,8 @@ var
 begin
   BeginHourGlass;
 
-  cAUFTRAG := DataModuleDatenbank.nCursor;
-  dWARENBEWEGUNG := DataModuleDatenbank.nDSQL;
+  cAUFTRAG := nCursor;
+  dWARENBEWEGUNG := nScript;
   lProtokoll := TStringList.create;
   with dWARENBEWEGUNG do
   begin
@@ -2667,7 +2671,7 @@ var
 begin
   // aus den Interninfos diverse felder rauslöschen!
   BeginHourGlass;
-  qAUFTRAG := DataModuleDatenbank.nQuery;
+  qAUFTRAG := nQuery;
   lInternInfo := TStringList.create;
   sErsetze := TStringList.create;
 
@@ -2735,7 +2739,7 @@ var
   qBELEG: TIB_Query;
   n: integer;
 begin
-  qBELEG := DataModuleDatenbank.nQuery;
+  qBELEG := nQuery;
   with qBELEG do
   begin
     sql.add('select RID,MAHNSTUFE,MAHNUNG,MAHNUNG1,MAHNUNG2,MAHNUNG3,MAHNBESCHEID ');
