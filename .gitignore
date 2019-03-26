@@ -32,3 +32,5 @@
 /HTTP2/backup
 /rev/__history/*.~5~
 /rev/__history
+__history
+__recovery
