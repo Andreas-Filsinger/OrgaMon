@@ -238,6 +238,7 @@ type
     SpeedButton50: TSpeedButton;
     Label27: TLabel;
     SpeedButton51: TSpeedButton;
+    ProgressBar1: TProgressBar;
     procedure DrawGrid1DblClick(Sender: TObject);
     procedure SpeedButton10Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -642,15 +643,28 @@ begin
     FormCareServer.ShowIfError(sDiagnose);
 
   end;
-
   sDiagnose.free;
-
 end;
 
 procedure TFormBuchhalter.Button10Click(Sender: TObject);
 begin
   with IB_Query1 do
     FormAusgangsrechnungen.setContext(FieldByName('PERSON_R').AsInteger, FieldByName('BELEG_R').AsInteger);
+end;
+
+function FeedBack (key : Integer; value : string = '') : Integer;
+begin
+  with FormBuchhalter do
+  begin
+    case Key of
+     cFeedBack_ProgressBar_Max : begin
+                                  Progressbar1.Max := StrToIntDef(value,0);
+                                  Progressbar1.Step := 1;
+                                 end;
+     cFeedBack_ProgressBar_Position : Progressbar1.Position := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_stepit : Progressbar1.StepIt;
+    end;
+  end;
 end;
 
 procedure TFormBuchhalter.Button11Click(Sender: TObject);
@@ -677,7 +691,7 @@ begin
     { } 'alle Einzugsmandate verbucht werden') then
   begin
     BeginHourGlass;
-    b_w_ForderungAusgleich(EREIGNIS_R);
+    b_w_ForderungAusgleich(EREIGNIS_R,FeedBack);
     IB_Query2.Refresh;
     EndHourGlass;
   end;

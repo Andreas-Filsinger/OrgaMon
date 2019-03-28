@@ -41,10 +41,6 @@ uses
   // OrgaMon
   globals;
 
-
-const
- UI_String : string = '';
-
 { OLAP }
 
 // Tool Funktionen
@@ -54,7 +50,8 @@ function RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
 function IncludeFName(n: integer): string;
 function LoadSQLInclude(n: integer): string;
 function ResolveParameter(s: string; ParameterL: TStringList; GlobalVars: TStringList = nil): string;
-procedure StandardParameter(s: TStrings);
+
+procedure OLAP_addDefaults(s: TStrings);
 
 procedure e_w_OLAP_XLS(XLS: TXLSFile);
 
@@ -96,7 +93,7 @@ uses
  Funktionen_Buch,
  Funktionen_Auftrag;
 
-procedure StandardParameter(s: TStrings);
+procedure OLAP_addDefaults(s: TStrings);
 
   function prepareValue(s: string): string;
   begin
@@ -107,6 +104,7 @@ procedure StandardParameter(s: TStrings);
 begin
   with s do
   begin
+    add('$Version='''+cAppName+'''');
     add('$Datum=' + Datum10);
     add('$Datum10=' + Datum10);
     add('$Datum8=' + Datum);
@@ -437,6 +435,59 @@ var
     if (length(result) = 7) then
       if (result[1] = '#') then
         result := inttostr(HTMLColor2TColor(result));
+  end;
+
+  function completeValue(Line: string): string;
+  var
+    DimensionValues: TStringList;
+    n: integer;
+    AskLabel : string;
+    AskCaption : string;
+  begin
+    result := Line;
+    repeat
+      if pos('=?', Line) > 0 then
+      begin
+
+        // Text Vor dem Eingabe Feld!
+        AskLabel := nextp(nextp(Line, '=?', 1), 'from', 0);
+
+        // Titel des Dialoges
+        AskCaption := 'Dimensionsbestimmung ' + nextp(Line, '=', 0);
+
+        // Eine Box der möglichen Elemente füllen
+        DimensionValues := TStringList.create;
+        DimensionValues.loadfromFile(RohdatenFName(strtointdef(nextp(Line, 'from', 1), 0)));
+        DimensionValues.delete(0);
+        for n := 0 to pred(DimensionValues.count) do
+        begin
+          if (pos('"', DimensionValues[n]) = 1) then
+            DimensionValues[n] := ExtractSegmentBetween(DimensionValues[n], '"', '"');
+        end;
+        DimensionValues.sort;
+
+        // Unsupported FeedBack
+        _(-1,
+         {} cERRORText+' Benutzereingabe '+
+         {} AskLabel+':'+
+         {} AskCaption+'@'+
+         {} HugeSingleLine(DimensionValues,'|')+' nicht möglich');
+
+        DimensionValues.Free;
+        result := '';
+        break;
+      end;
+
+      // Paramerter muss wiederum aufgelöst werden ...
+      n := pos('=select ', Line);
+      if (n > 0) then
+      begin
+        ExecuteStatement := ResolveParameter(copy(Line, n + 1, MaxInt),ParameterL);
+        result := copy(Line, 1, n) + e_r_sqls(ExecuteStatement);
+        break;
+      end;
+
+    until true;
   end;
 
   procedure SaveCopy(FName: string);
@@ -1142,7 +1193,7 @@ begin
 
     ParameterL.add('$Skript=' + nextp(ExtractFileName(FName), cOLAPExtension, 0));
     ParameterL.add('$Lines=' + inttostr(Script.count));
-    StandardParameter(ParameterL);
+    OLAP_addDefaults(ParameterL);
 
     if DebugMode then
     begin
@@ -1203,15 +1254,11 @@ begin
         if (State = cState_default) then
         begin
           if (ResolveParameter(nextp(Line, '=', 0),ParameterL) = '') then
-          begin
-            _(cFeedback_function);
-            ParameterL.add(UI_String);
-          end;
+            ParameterL.add(completeValue(Line));
         end
         else
         begin
-          _(cFeedback_function,Line);
-          ParameterL.add(UI_String);
+          ParameterL.add(completeValue(Line));
         end;
         if (pos('NAMESPACE=',Line)=2) then
          NameSpace := nextp(Line,'=',1);
@@ -1523,9 +1570,9 @@ begin
               if xlsAutoPrint then
               begin
                 if xlsAutoHTML then
-                  _(cFeedback_Function{printhtmlok},RohdatenHTMLFName(RohdatenCount))
+                  _(cFeedback_Function+1{printhtmlok},RohdatenHTMLFName(RohdatenCount))
                 else
-                  _(cFeedback_Function{printShell},RohdatenxlsFName(RohdatenCount));
+                  _(cFeedback_Function+2{printShell},RohdatenxlsFName(RohdatenCount));
               end;
 
             end;

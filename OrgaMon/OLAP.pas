@@ -140,6 +140,35 @@ uses
 
 {$R *.dfm}
 
+function FeedBack (key : Integer; value : string = '') : Integer;
+begin
+  with FormOLAP do
+  begin
+    case Key of
+  (*
+     cFeedBack_Log:begin
+                    ListBox1.items.add(value);
+                    ListBox1.itemindex := pred(ListBox1.items.count);
+                   end;
+*)
+     cFeedBack_ProcessMessages: Application.Processmessages;
+     cFeedBack_ProgressBar_Max+1: progressbar1.max := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_Position+1: progressbar1.position := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_stepit+1: progressbar1.StepIt;
+     cFeedBack_Label+4: label4.caption := value;
+     cFeedBack_Function: openShell(value);
+     cFeedBack_Function+1: printhtmlok(value);
+     cFeedBack_Function+2: printShell(value);
+     cFeedBack_Function+3: UserInput(value);
+    else
+     ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
+    end;
+  end;
+end;
+
+
+
+
 function TFormOLAP.DefaultFName: string;
 begin
   result := iOlapPath + 'default' + cOLAPExtension;
@@ -174,7 +203,6 @@ begin
   end;
 end;
 
-
 procedure TFormOLAP.ReFreshFileList;
 var
   AllOLAPs: TStringList;
@@ -188,7 +216,11 @@ end;
 
 procedure TFormOLAP.Button2Click(Sender: TObject);
 begin
-  // OLAP
+  // silent save
+  if UnSaved then
+      SynMemo1.lines.savetofile(ActFName);
+  // execute
+  e_x_OLAP(ActFName, nil, FeedBack);
 end;
 
 procedure TFormOLAP.ComboBox1Select(Sender: TObject);

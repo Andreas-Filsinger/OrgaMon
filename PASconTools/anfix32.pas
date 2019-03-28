@@ -170,7 +170,7 @@ const
  cFeedBack_Edit = 11*cFeedBack_SingleElement_MaxCount;
  cFeedBack_Result = 12*cFeedBack_SingleElement_MaxCount;
 
- // return codes
+ // return codes, Feedback can "break" long Calculations
  cFeedBack_CONT = 0;
  cFeedBack_BREAK = 1;
  cFeedBack_TRUE = 2;

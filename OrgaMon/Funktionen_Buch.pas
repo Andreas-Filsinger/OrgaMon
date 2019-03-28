@@ -85,7 +85,7 @@ procedure b_w_ForderungAusgleich(s: String; Diagnose: TStrings = nil); overload;
 //
 // Ausgleich über einen vollständig erhaltenen Lastschrift-Einzug
 //
-procedure b_w_ForderungAusgleich(EREIGNIS_R: integer); overload;
+procedure b_w_ForderungAusgleich(EREIGNIS_R: integer; fb : TFeedBack = nil); overload;
 
 //
 // Storno des ganzen oder teilweise
@@ -1506,7 +1506,10 @@ begin
   sl.Free;
 end;
 
-procedure b_w_ForderungAusgleich(EREIGNIS_R: integer);
+procedure b_w_ForderungAusgleich(EREIGNIS_R: integer; fb : TFeedBack = nil);
+
+{$I Feedback.inc}
+
 var
   BELEG_R, BUCH_R: integer;
   PERSON_R: integer;
@@ -1515,7 +1518,7 @@ var
   VALUTA: string;
   sCSV: TStringList;
   sVOLUMEN: TsTable;
-  r: integer;
+  StartRow, r: integer;
 begin
 
   sVOLUMEN := TsTable.create;
@@ -1525,6 +1528,16 @@ begin
   else
     sVOLUMEN.insertFromFile(MyProgramPath + cHBCIPath + 'DTAUS-' + inttostrN(EREIGNIS_R, 8) + '.csv');
   MandatsSumme := 0.0;
+
+  if DebugMode then
+   sVOLUMEN.SaveToFile(DiagnosePath+'VOLUMEN.csv');
+
+  _(cFeedBack_Progressbar_Max,IntToStr(sVOLUMEN.RowCount+2));
+  _(cFeedBack_Progressbar_Position);
+
+  StartRow := e_r_sql('select POSNO from EREIGNIS where RID='+IntToStr(EREIGNIS_R));
+
+  _(cFeedBack_Progressbar_Position,IntToStr(StartRow+1));
 
   with sVOLUMEN do
   begin
@@ -1540,6 +1553,8 @@ begin
       { } 'select CAST(WERTSTELLUNG as DATE) from ' +
       { } 'BUCH where RID=' + inttostr(BUCH_R));
 
+    _(cFeedBack_Progressbar_StepIt);
+
     long2date(DatePlus(DateGet, 10));
     for r := 1 to RowCount do
     begin
@@ -1550,27 +1565,39 @@ begin
       TEILLIEFERUNG := strtointdef(readCell(r, 'TEILLIEFERUNG'), 0);
       Betrag := StrToMoneyDef(readCell(r, 'BETRAG'));
 
-      // Jetzt den ganzen Rattenschwanz buchen
-      b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
-        { } PERSON_R,
-        { } BELEG_R,
-        { } Betrag,
-        { } VALUTA,
-        { BUCH_R } -r,
-        { } 'Lastschrift',
-        { } cKonto_Bank,
-        { } TEILLIEFERUNG,
-        { } EREIGNIS_R]));
+      if (r>StartRow) then
+      begin
 
-      // Bei der Person die Freigabe wieder zurücksetzen
-      e_x_sql(
-        { } 'update PERSON set ' +
-        { } ' Z_ELV_FREIGABE=' +
-        { } ' (Z_ELV_FREIGABE - ' + FloatToStrISO(Betrag, 2) + ') ' +
-        { } 'where' +
-        { } ' (RID=' + inttostr(PERSON_R) + ') and' +
-        // (wenn überhaupt darüber gebucht wurde)
-        { } ' (Z_ELV_FREIGABE is not null)');
+        // Jetzt den ganzen Rattenschwanz buchen
+        b_w_ForderungAusgleich(format(cBuch_Ausgleich, [
+          { } PERSON_R,
+          { } BELEG_R,
+          { } Betrag,
+          { } VALUTA,
+          { BUCH_R } -r,
+          { } 'Lastschrift',
+          { } cKonto_Bank,
+          { } TEILLIEFERUNG,
+          { } EREIGNIS_R]));
+
+        // Bei der Person die Freigabe wieder zurücksetzen
+        e_x_sql(
+          { } 'update PERSON set ' +
+          { } ' Z_ELV_FREIGABE=' +
+          { } ' (Z_ELV_FREIGABE - ' + FloatToStrISO(Betrag, 2) + ') ' +
+          { } 'where' +
+          { } ' (RID=' + inttostr(PERSON_R) + ') and' +
+          // wenn überhaupt darüber gebucht wurde
+          { } ' (Z_ELV_FREIGABE is not null)');
+
+        // Nun diesen Teilerfolg eintragen
+        e_x_sql(
+          { } 'update EREIGNIS ' +
+          { } 'set' +
+          { } ' POSNO='+IntToStr(r)+' ' +
+          { } 'where' +
+          { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
+      end;
 
       // Falls über ein Mandat gebucht wird, ebenfalls die Summe bilden
       // jedoch der tatsächlich benutzte Betrag, nicht die Mandatshöhe
@@ -1581,6 +1608,8 @@ begin
         { } ' (TEILLIEFERUNG=' + inttostr(TEILLIEFERUNG) + ')')
       { } > 0 then
         MandatsSumme := MandatsSumme + Betrag;
+
+      _(cFeedBack_Progressbar_StepIt);
     end;
   end;
 
@@ -1609,6 +1638,8 @@ begin
     { } ' BEENDET=CURRENT_TIMESTAMP ' +
     { } 'where' +
     { } ' (RID=' + inttostr(EREIGNIS_R) + ')');
+
+  _(cFeedBack_Progressbar_Position);
 
   sVOLUMEN.Free;
   sCSV.Free;

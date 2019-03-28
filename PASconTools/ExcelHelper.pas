@@ -573,6 +573,9 @@ begin
       for c := 0 to pred(Subs.count) do
       begin
 
+         if (r=12) and (c=0) then
+          if assigned(Options) then
+           options.values['x'] := '';
         // Wert,Kommentar,Formatierung bestimmen
         CellFormats := cellsplit(Subs[c], CellContent, CellComment);
 

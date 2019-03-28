@@ -82,6 +82,8 @@ type
     procedure RadioButton6Click(Sender: TObject);
   private
     { Private-Deklarationen }
+    FeedBackLog : TStringList;
+
     procedure xlsOLAPrefresh;
   public
     { Public-Deklarationen }
@@ -106,6 +108,17 @@ uses
    Auswertung.Generator.MixStatistik.main;
 
 {$R *.dfm}
+
+
+function FeedBack (key : Integer; value : string = '') : Integer;
+begin
+  with FormAuswertung do
+  begin
+    if not(assigned(FeedBackLog)) then
+     FeedBackLog := TStringList.Create;
+    FeedBackLog.add(IntToStr(Key)+': '+value);
+  end;
+end;
 
 procedure TFormAuswertung.Button22Click(Sender: TObject);
 begin
@@ -275,24 +288,19 @@ begin
   xlsAUSGABE := TXLSFile.create(true);
   DestFName := AnwenderPath + sBegriff + cExcelExtension;
   FileDelete(DestFName);
+
+  // 1) wichtig für Auswertung
   GlobalVars.add('$StartDatum=''' + long2date(getStart) + '''');
   GlobalVars.add('$EndeDatum=''' + long2date(getStopp) + '''');
   GlobalVars.add('$StoppDatum=''' + long2date(DatePlus(getStopp, -1)) + '''');
   GlobalVars.add('$ExcelOpen=' + cINI_Deactivate);
   GlobalVars.add('$Vorlage=''' + sBegriff + '''');
-  GlobalVars.addstrings(Memo2.lines);
-  StandardParameter(GlobalVars);
 
-  //
-  // Idee für die Verallgemeinerung:
-  //
-  // # öffne die Excel-Vorlage
-  // # das Arbeitsblatt 1 (meist "Deckblatt") bleibt vollig unberührt
-  // # schreibe die Parameter in Arbeitsblatt 2+ (Name "Parameter" wird gesucht)
-  // # lade zu jedem weiteren Arbeitsblatt das OLAP Vorlagename.ArbeitsblattName.OLAP.txt
-  // und fülle das Blatt entsprechend dem Ergebnis.
-  // #
-  //
+  // 2) zusätzlich
+  GlobalVars.addstrings(Memo2.lines);
+
+  // 3) die Standards
+  OLAP_addDefaults(GlobalVars);
 
   with xlsAUSGABE do
   begin
@@ -330,6 +338,9 @@ begin
     ClearSheet;
     ExcelExport('', Content, Headers, nil, xlsAUSGABE);
 
+    // XLS bekanntgeben und setzen
+    e_w_OLAP_XLS(xlsAUSGABE);
+
     for n := succ(SheetParameter) to SheetCount do
     begin
       ActiveSheet := n;
@@ -339,9 +350,17 @@ begin
       // Sicherstellen, dass es die Datei gibt!
       FileAlive(iOlapPath + sBegriff + '.' + SheetName + cOLAPExtension);
 
+
       // Nun das OLAP ausführen!
-      FormOLAP.DoContextOLAP(iOlapPath + sBegriff + '.' + SheetName +
-        cOLAPExtension, GlobalVars, xlsAUSGABE);
+      if DebugMode then
+        e_x_OLAP(
+         {} iOlapPath + sBegriff + '.' + SheetName + cOLAPExtension,
+         {} GlobalVars,
+         {} FeedBack)
+      else
+        e_x_OLAP(
+         {} iOlapPath + sBegriff + '.' + SheetName + cOLAPExtension,
+         {} GlobalVars);
     end;
 
     ActiveSheet := 1;
@@ -356,6 +375,9 @@ begin
   ProgressBar1.Position := 0;
   if not(Silent) then
     openShell(DestFName);
+  if DebugMode then
+   if assigned(FeedBackLog) then
+    FeedBackLog.SaveToFile(DiagnosePath+'FeedBack.log.txt');
   EndHourGlass;
 end;
 

@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.408; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.410; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -71,12 +71,13 @@ const
   iForceAppDown: boolean = false; // Anwendung muss jetzt verlassen werden
   nosplash: boolean = false; // wenn true, kein Splash Screen beim Programmstart
 
-  // wenn true, wird keinerlei Timer Routine mehr ausgeführt werden sollen
+  // wenn true, wird keinerlei Timer-Routinen mehr ausgeführt werden sollen
   notimer: boolean = false;
 
   TimerLevel: integer = 0; // wir erhöht, wenn jemand in einem Timer steckt!
 
-  // wenn true, kein Update der DB-Meta-Daten, andere Update-Quelle
+  // wenn true, kein Update der DB-Meta-Daten,
+  // wenn true gilt eine andere Update-Quelle
   isBeta: boolean = true;
   is1400: boolean = false;
 
@@ -1587,8 +1588,11 @@ const
 
 function cOrgaMonCopyright: string;
 begin
-  result := cApplicationName + cTradeMark + ' Rev ' + RevToStr(globals.Version) + ' ©1987-' + JahresZahl +
-    ' http://www.orgamon.org';
+  result :=
+   {} cApplicationName + cTradeMark +
+   {} ' Rev ' + RevToStr(globals.Version) +
+   {} ' ©1987-' + JahresZahl +
+    ' https://wiki.orgamon.org/';
 end;
 
 function cAppName: string;
