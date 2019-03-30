@@ -49,7 +49,7 @@ function RohdatenxlsFName(n: integer; MitPfad: boolean = true): string;
 function RohdatenHTMLFName(n: integer; MitPfad: boolean = true): string;
 function IncludeFName(n: integer): string;
 function LoadSQLInclude(n: integer): string;
-function ResolveParameter(s: string; ParameterL: TStringList; GlobalVars: TStringList = nil): string;
+function ResolveParameter(s: string; ParameterL: TStringList): string;
 
 procedure OLAP_addDefaults(s: TStrings);
 
@@ -1191,6 +1191,7 @@ begin
     xlsAutoPrint := false;
     xlsAutoHTML := false;
 
+    // self assigned Parameters
     ParameterL.add('$Skript=' + nextp(ExtractFileName(FName), cOLAPExtension, 0));
     ParameterL.add('$Lines=' + inttostr(Script.count));
     OLAP_addDefaults(ParameterL);
@@ -1208,6 +1209,14 @@ begin
       AppendStringsToFile(DebugInfos, DebugLogPath + 'OLAP-' + inttostr(DateGet) + '.txt', DatumUhr);
       DebugInfos.free;
     end;
+
+    // Merge all to ParameterL
+    if assigned(GlobalVars) then
+     for m := pred(GlobalVars.count) downto 0 do
+       ParameterL.insert(0, GlobalVars[m]);
+
+    // set Parameter from Vars
+    SilentMode := (ParameterL.values['$Silent'] <> cINI_deactivate);
 
     repeat
 
@@ -1594,11 +1603,6 @@ begin
                 // ParameterL
                 for m := 0 to pred(ParameterL.count) do
                   WriteVal(nextp(ParameterL[m], '=', 0), nextp(ParameterL[m], '=', 1));
-
-                // GlobalVars
-                if assigned(GlobalVars) then
-                  for m := 0 to pred(GlobalVars.count) do
-                    WriteVal(nextp(GlobalVars[m], '=', 0), nextp(GlobalVars[m], '=', 1));
 
                 if RUN then
                 begin
@@ -2370,15 +2374,11 @@ begin
             begin
               html := THTMLTemplate.create;
               html.loadfromFile(HTMLVorlagenPath + htmlFName + cHTMLextension);
-              if assigned(GlobalVars) then
-                html.WriteValue(GlobalVars);
               html.WriteValue(ParameterL);
               html.SaveToFileCompressed(htmlSaveFName);
               html.free;
               SaveCopy(htmlSaveFName);
-
-            end
-            else
+            end else
             begin
 
               // Hier noch html-variable Hinzufügbar machen usw.
@@ -3291,7 +3291,8 @@ end;
     TheSQL.free;
   end;
 
-  function ResolveParameter(s: string; ParameterL: TStringList; GlobalVars: TStringList): string;
+  function ResolveParameter(s: string; ParameterL: TStringList): string;
+
   function getValueofParameter(ParamS: string): string;
   begin
     result := ParameterL.values[ParamS];
@@ -3303,15 +3304,6 @@ end;
     i, n, k, l: integer;
     IsNumeric: boolean;
   begin
-
-    // Globale Konstanten den aktuellen lokalen Parametern noch hinzufügen
-    if assigned(GlobalVars) then
-      if (GlobalVars.count > 0) then
-      begin
-        for n := pred(GlobalVars.count) downto 0 do
-          ParameterL.insert(0, GlobalVars[n]);
-        GlobalVars.clear;
-      end;
 
     //
     result := s;

@@ -100,18 +100,20 @@ var
 implementation
 
 uses
-  globals, CaretakerClient, wanfix32,
-  ExcelHelper,
+  // Tools
+  wanfix32, CaretakerClient, ExcelHelper,
 
+  // Flexcell
   FlexCel.Core, FlexCel.xlsAdapter,
-  OLAP, Funktionen_Auftrag,
-   Auswertung.Generator.MixStatistik.main;
+
+  // OrgaMon
+  globals, Funktionen_Auftrag, Auswertung.Generator.MixStatistik.main;
 
 {$R *.dfm}
 
-
 function FeedBack (key : Integer; value : string = '') : Integer;
 begin
+  result := cFeedBack_CONT;
   with FormAuswertung do
   begin
     if not(assigned(FeedBackLog)) then
@@ -341,15 +343,16 @@ begin
     // XLS bekanntgeben und setzen
     e_w_OLAP_XLS(xlsAUSGABE);
 
+    // Pro Sheet eine OLAP-Datei ausführen
     for n := succ(SheetParameter) to SheetCount do
     begin
+
       ActiveSheet := n;
       ProgressBar1.Position := n;
       ClearSheet;
 
-      // Sicherstellen, dass es die Datei gibt!
+      // Sicherstellen, dass es die OLAP-Datei gibt!
       FileAlive(iOlapPath + sBegriff + '.' + SheetName + cOLAPExtension);
-
 
       // Nun das OLAP ausführen!
       if DebugMode then
@@ -367,6 +370,7 @@ begin
     Save(DestFName);
   end;
   xlsAUSGABE.free;
+
   for n := 0 to pred(Content.Count) do
     TStringList(Content[n]).free;
   Content.free;

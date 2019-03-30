@@ -852,8 +852,11 @@ begin
 end;
 
 function TeConnect.rpc_e_w_Senden(sParameter: TStringList): TStringList;
+var
+ Erfolg: boolean;
 begin
   result := TStringList.create;
+  Erfolg := false;
   if (iTagwacheBaustelle >= cRID_FirstValid) then
   begin
      repeat
@@ -871,6 +874,7 @@ begin
         break;
        if not(e_w_WriteMobil) then
         break;
+       Erfolg := true;
      until yet;
   end;
   with TXMLRPC_Server do

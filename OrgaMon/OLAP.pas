@@ -80,7 +80,6 @@ type
     UnSaved: boolean;
     ActFName: string;
     GlobalVars: TStringList;
-    SilentMode: boolean;
     RohdatenCount: integer;
     pXLS: TXLSFile;
 
@@ -215,12 +214,20 @@ begin
 end;
 
 procedure TFormOLAP.Button2Click(Sender: TObject);
+var
+ GlobalVars: TStringList;
 begin
+
   // silent save
   if UnSaved then
-      SynMemo1.lines.savetofile(ActFName);
+    SynMemo1.lines.savetofile(ActFName);
+
   // execute
-  e_x_OLAP(ActFName, nil, FeedBack);
+  GlobalVars := TStringList.Create;
+  GlobalVars.Add('$Silent='+cIni_Deactivate);
+  e_x_OLAP(ActFName, GlobalVars, FeedBack);
+  GlobalVars.Free;
+
 end;
 
 procedure TFormOLAP.ComboBox1Select(Sender: TObject);
@@ -334,7 +341,6 @@ begin
         ActFName := FName;
         SynMemo1.lines.loadfromFile(FName);
         SynMemo1.lines.AddStrings(GlobalVars);
-        SilentMode := (SynMemo1.lines.values['$Silent'] <> cINI_deactivate);
         Button2Click(nil);
       until true;
     end
@@ -344,7 +350,6 @@ begin
     end;
   except
   end;
-  SilentMode := false;
 end;
 
 procedure DoContextOLAP(g: TIB_Grid);
@@ -372,7 +377,6 @@ begin
 
       ActFName := FName;
       SynMemo1.lines.loadfromFile(FName);
-      SilentMode := true;
 
       // Liste der Globales Variable aufbauen!
       if assigned(GlobalVar) then
@@ -385,7 +389,6 @@ begin
       end;
 
       Button2Click(nil);
-      SilentMode := false;
     until true;
 
   end

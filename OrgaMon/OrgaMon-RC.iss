@@ -8,7 +8,7 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 [Setup]
 AppName=OrgaMon-RC
 AppVerName=OrgaMon «RevMitPunkt» RC
-AppCopyright=Copyright (C) 1988-2016 Andreas Filsinger
+AppCopyright=Copyright (C) 1988-2019 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon-RC.exe
@@ -30,6 +30,7 @@ PrivilegesRequired=none
 [Files]
 ; Anwendung
 Source: "«ProgramFiles»\OrgaMon\OrgaMon.exe"; DestDir: "{app}"; DestName: "OrgaMon-RC.exe"; BeforeInstall: WaitForExit; Flags: ignoreversion restartreplace
+Source: "«ProgramFiles»\OrgaMon\cOrgaMon.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace
 
 ; Lizenz-Infos
 Source: "..\..\CargoBay\OrgaMon_Info.html"; DestDir: "{app}"

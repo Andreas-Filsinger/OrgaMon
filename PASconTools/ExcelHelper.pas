@@ -147,7 +147,6 @@ end;
 
 
 
-end.
 {$ELSE}
   uses
 
@@ -420,7 +419,7 @@ var
   CellContent, CellComment: string;
   CellFormats: TStringList;
   f, c, r: integer;
-
+  _SheetName: string;
 begin
   if not(assigned(pXLS)) then
   begin
@@ -560,9 +559,10 @@ begin
       if HLM_Col <> -1 then
         HLM_Mode := HLM_byCol;
 
-      // Den Name des Sheets bestimmen
-      if (Options.Values[cExcel_TabellenName] <> '') then
-        SheetName := Options.Values[cExcel_TabellenName];
+      // Den Name des Sheets setzen
+      _SheetName := Options.Values[cExcel_TabellenName];
+      if (_SheetName <> '') then
+        SheetName := _SheetName;
 
     end;
 
@@ -809,5 +809,7 @@ begin
       result := 0;
 end;
 
-end.
 {$ENDIF}
+
+end.
+
