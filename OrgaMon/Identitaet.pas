@@ -250,13 +250,13 @@ begin
 
     readIni;
 
-    // Log startup
+    // Startup
     FotoLog(cINFOText + ' FotoService Rev. ' + RevToStr(version));
 
     // DebugMode?
     if IsParam('-al') then
     begin
-      Log('DebugMode @' + DiagnosePath);
+      FotoLog('DebugMode @' + DiagnosePath);
       DebugMode := true;
       DebugLogPath := DiagnosePath;
     end;
@@ -276,11 +276,11 @@ begin
       if (TimerInit < cKikstart_delay * 60 * 1000) then
       begin
         if (TimerInit = 0) then
-          Log('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
+          FotoLog('Warte ' + inttostr(cKikstart_delay) + ' Minuten ...');
         inc(TimerInit, Worker_Intervall);
         if (TimerInit >= cKikstart_delay * 60 * 1000) then
         begin
-          Log('Erwacht ... ');
+          FotoLog('Erwacht ... ');
         end;
       end
       else
@@ -289,7 +289,7 @@ begin
         // Ist die Verarbeitung im Moment pausiert
         if Pause then
         begin
-          Log('Pausiert ...');
+          FotoLog('Pausiert ...');
           ReleaseGlobals;
           sleep(Sleep_Intervall);
           continue;
@@ -306,7 +306,7 @@ begin
             ReleaseGlobals;
           except
             on E: Exception do
-              Log(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
+              FotoLog(cERRORText + ' 271:' + E.ClassName + ': ' + E.Message);
           end;
 
           try
@@ -314,7 +314,7 @@ begin
             workWartend;
           except
             on E: Exception do
-              Log(cERRORText + ' 279:' + E.ClassName + ': ' + E.Message);
+              FotoLog(cERRORText + ' 279:' + E.ClassName + ': ' + E.Message);
           end;
 
           try
@@ -322,7 +322,7 @@ begin
             workAusstehendeFotos;
           except
             on E: Exception do
-              Log(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
+              FotoLog(cERRORText + ' 287:' + E.ClassName + ': ' + E.Message);
           end;
 
           // Zwischen "00:00 h" und ]"01:00 h" (=eine Stunde lang prüfen!)
@@ -335,7 +335,7 @@ begin
                 workAblage;
               except
                 on E: Exception do
-                  Log(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
+                  FotoLog(cERRORText + ' 300:' + E.ClassName + ': ' + E.Message);
               end;
 
               BackupSizeByNow := 0.0;
@@ -343,10 +343,10 @@ begin
                 BackupSizeByNow := doBackup;
               except
                 on E: Exception do
-                  Log(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
+                  FotoLog(cERRORText + ' 307:' + E.ClassName + ': ' + E.Message);
               end;
 
-              Log(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
+              FotoLog(cINFOText + format(' %s hat %.3f GB', [BackupDir, BackupSizeByNow / 1024.0 / 1024.0 /
                 1024.0]));
             end;
         end;
@@ -357,7 +357,7 @@ begin
           workEingang_TXT;
         except
           on E: Exception do
-            Log(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
+            FotoLog(cERRORText + ' 318:' + E.ClassName + ': ' + E.Message);
         end;
 
       end;

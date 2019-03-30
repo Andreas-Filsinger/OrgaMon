@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.414 (30.03.19) Andreas Filsinger
+
+ Bug: Foto: Log ging (immer noch) in die falsche Datei
+
 Rev 8.413 (30.03.19) Andreas Filsinger
 
  Bug: cOrgaMon.exe: cOrgaMon.ini sollte "READY ONLY" geöffnet werden
