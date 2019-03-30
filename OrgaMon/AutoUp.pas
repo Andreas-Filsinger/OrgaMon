@@ -977,8 +977,10 @@ begin
       CopySrc := nextp(CopyCommand, ',');
       CopyDest := nextp(CopyCommand, ',');
       if FileExists(CopySrc) then
-        FileCopy(CopySrc, CopyDest)
-      else
+      begin
+        if not(FileCopy(CopySrc, CopyDest)) then
+          ShowMessage(CopyDest + ' konnt nicht angelegt werden!');
+      end else
         ShowMessage(CopySrc + ' nicht gefunden!');
       continue;
     end;

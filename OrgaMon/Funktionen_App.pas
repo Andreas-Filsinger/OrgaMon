@@ -140,6 +140,7 @@ const
   cAnzahlStellen_FotosTagwerk = 4;
 
   // Filenames
+  cFotoLogFName = 'FotoService.log.txt';
   cFotoTransaktionenFName = 'FotoService-Transaktionen.log.txt';
   cProtokollTransaktionenFName = 'ProtokollService-Transaktionen.log.txt';
   cFotoAblageFName = 'FotoService-Ablage-%s.log.txt';
@@ -2784,7 +2785,7 @@ end;
 
 procedure TOrgaMonApp.readIni(SectionName: string = ''; Path: string = '');
 var
-  MyIni: TIniFile;
+  MyIni: TMemIniFile;
   RootPath : string;
 begin
 
@@ -2797,7 +2798,7 @@ begin
   RootPath := copy(pAppServicePath,1,pred(revPos('\',pAppServicePath)));
   RootPath := copy(RootPath,1,revPos('\',RootPath));
 
-  MyIni := TIniFile.Create(pAppServicePath + cIniFNameConsole);
+  MyIni := TMemIniFile.Create(pAppServicePath + cIniFNameConsole);
   with MyIni do
   begin
     if (SectionName = '') then
@@ -2821,11 +2822,7 @@ begin
   end;
   MyIni.Free;
 
-  //
-  Log(cINFOText + ' Ini read!');
-
   ZaehlerNummerNeuXlsCsv_Vorhanden := FileExists(DataPath + cFotoService_GlobalHintFName);
-
 end;
 
 function TOrgaMonApp.start(sParameter: TStringList): TStringList;
@@ -4074,9 +4071,9 @@ begin
   AllTRN.free;
 
   // LOGs-verkleinern
-  LogReduce('FotoService.log.txt', 4 * 1024 * 1024 );
-  LogReduce('JonDaServer.log', 3 * 1024 * 1024 );
-  LogReduce('FotoService-Transaktionen.log.txt', 3 * 1024 * 1024);
+  LogReduce(cFotoLogFName, 4 * 1024 * 1024 );
+  LogReduce(cJonDaServer_LogFName, 3 * 1024 * 1024 );
+  LogReduce(cFotoTransaktionenFName, 3 * 1024 * 1024);
 
   // alte LOG-Wegsichern
   sDir := TStringList.create;

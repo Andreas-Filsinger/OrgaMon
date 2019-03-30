@@ -220,12 +220,13 @@ type
 procedure TownFotoExec.FotoLog(s: string);
 begin
   writeln(s);
-  // if (pos('ERROR', s) > 0) then
+
   AppendStringsToFile(
     { } sTimeStamp + ';' +
     { } inttostr(AUFTRAG_R) + ';' +
     { } s,
-    { } DiagnosePath + 'FotoService.log.txt');
+    { } DiagnosePath + cFotoLogFName);
+
   if (pos(cFotoService_AbortTag, s) = 1) then
     halt(1);
 end;
@@ -250,7 +251,7 @@ begin
     readIni;
 
     // Log startup
-    Log(cINFOText + ' FotoService Rev. ' + RevToStr(version));
+    FotoLog(cINFOText + ' FotoService Rev. ' + RevToStr(version));
 
     // DebugMode?
     if IsParam('-al') then

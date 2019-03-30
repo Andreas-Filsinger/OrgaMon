@@ -7,21 +7,21 @@ Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Setup]
 AppName=OrgaMon-RC
-AppVerName=OrgaMon 8.411 RC
+AppVerName=OrgaMon 8.413 RC
 AppCopyright=Copyright (C) 1988-2019 Andreas Filsinger
 DefaultDirName={pf}\OrgaMon
 DefaultGroupName=OrgaMon
 UninstallDisplayIcon={app}\OrgaMon-RC.exe
-LicenseFile=Distribution\Lizenz\gpl-3.0.txt
 DisableStartupPrompt=yes
 DisableReadyPage=yes
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
+DisableFinishedPage=yes
 OutputDir=..\..\CargoBay
 OutputBaseFilename=Setup-OrgaMon-RC
-AppVersion=8.411 RC
-VersionInfoVersion=8.411.0.0
+AppVersion=8.413 RC
+VersionInfoVersion=8.413.0.0
 Compression=lzma/max
 WizardImageFile=compiler:WIZMODERNIMAGE-IS.BMP
 WizardSmallImageFile=compiler:WIZMODERNSMALLIMAGE-IS.BMP

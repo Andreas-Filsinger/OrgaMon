@@ -2,7 +2,7 @@
 * PROJEKT: OrgaMon
 * SOURCE DIR: ..\OrgaMon
 * PUBLIC: YES
-* HELP COPY: YE
+* COPY: C:\Program Files (x86)\OrgaMon\cOrgaMon.exe,\\server\web\cargobay\cOrgaMon.exe
 * INNO SETUP SCRIPT: OrgaMon.iss
 * INNO SETUP UPDATE: YES
 * INNO SETUP WITHOUT POINT: YES
@@ -18,6 +18,14 @@ Zentral auf InterNet-Technologien abgestimmt. Beinhaltet einen XML-RPC-Server, u
 Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
+
+Rev 8.413 (30.03.19) Andreas Filsinger
+
+ Bug: cOrgaMon.exe: cOrgaMon.ini sollte "READY ONLY" geöffnet werden
+
+Rev 8.412 (30.03.19) Andreas Filsinger
+
+ Bug: Foto: Log ging in die falsche Datei
 
 Rev 8.411 (29.03.19) Andreas Filsinger
 
