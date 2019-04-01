@@ -483,12 +483,6 @@
         <DCCReference Include="QTicketArbeitsplatz.pas">
             <Form>FormQTicketArbeitsplatz</Form>
         </DCCReference>
-        <DCCReference Include="OLAPArbeitsplatz.pas">
-            <Form>FormOLAPArbeitsplatz</Form>
-        </DCCReference>
-        <DCCReference Include="OLAPedit.pas">
-            <Form>FormOLAPedit</Form>
-        </DCCReference>
         <DCCReference Include="Buchung.pas">
             <Form>FormBuchung</Form>
         </DCCReference>

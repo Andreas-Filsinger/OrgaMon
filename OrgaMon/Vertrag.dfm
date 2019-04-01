@@ -521,6 +521,10 @@ object FormVertrag: TFormVertrag
     TabOrder = 7
     object TabSheet1: TTabSheet
       Caption = 'Basis Optionen'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label3: TLabel
         Left = 59
         Top = 35
@@ -796,6 +800,10 @@ object FormVertrag: TFormVertrag
     object TabSheet3: TTabSheet
       Caption = 'Referenzen'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label13: TLabel
         Left = 94
         Top = 16
@@ -941,7 +949,7 @@ object FormVertrag: TFormVertrag
     ColumnAttributes.Strings = (
       'RID=NOTREQUIRED'
       'RUHEND=BOOLEAN=Y,N')
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'RID=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1
@@ -967,7 +975,7 @@ object FormVertrag: TFormVertrag
       'CROSSREF=')
   end
   object IB_Query2: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'BELEG_R=FALSE'
       'BAUSTELLE_R=FALSE')
@@ -1012,7 +1020,7 @@ object FormVertrag: TFormVertrag
     Top = 56
   end
   object IB_Query3: TIB_Query
-    DatabaseName = '192.168.115.25:test.fdb'
+    DatabaseName = '192.168.115.1:test.fdb'
     FieldsVisible.Strings = (
       'PERSON_R=FALSE')
     IB_Connection = DataModuleDatenbank.IB_Connection1

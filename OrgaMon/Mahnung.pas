@@ -204,13 +204,14 @@ uses
   systemd, Geld, wanfix32,
 
   // OrgaMon
+  Funktionen_OLAP,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
   Person, Belege, AusgangsRechnungen,
   InternationaleTexte,
   CareTakerClient, Einstellungen,
-  DruckSpooler,  OLAP,
+  DruckSpooler,
   Datenbank, dbOrgaMon;
 
 {$R *.DFM}
@@ -746,9 +747,10 @@ begin
   dir(iOlapPath + 'System.Mahnung.Ausschluss.*' + cOLAPExtension, sDirOLAP, false);
   for n := 0 to pred(sDirOLAP.count) do
   begin
-    AusschlussName := ExtractSegmentBetween(sDirOLAP[n], 'System.Mahnung.Ausschluss.',
-      cOLAPExtension);
-    sAusnahmen := FormOLAP.OLAP(sDirOLAP[n]);
+    AusschlussName :=
+      ExtractSegmentBetween(sDirOLAP[n], 'System.Mahnung.Ausschluss.',cOLAPExtension);
+
+    sAusnahmen := e_r_OLAP(sDirOLAP[n]);
     StartWait('Ausschluss "' + AusschlussName + '" ermitteln', sAusnahmen.count);
     for m := 0 to pred(sAusnahmen.count) do
     begin

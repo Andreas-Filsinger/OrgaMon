@@ -129,7 +129,6 @@ type
     Resource: TLabel;
     Button1: TButton;
     Button5: TButton;
-    Button23: TButton;
     Image3: TImage;
     Button45: TButton;
     Button74: TButton;
@@ -236,7 +235,6 @@ type
     procedure Button16Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure Button23Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure Button45Click(Sender: TObject);
@@ -311,7 +309,7 @@ uses
   AutoUp, GeoArbeitsplatz, GeoLokalisierung,
   AuftragGeo, IniFiles, TPUmain,
   GeoPostleitzahlen, ServiceFoto, ServiceApp,
-  QTicketArbeitsplatz, OLAPArbeitsplatz,
+  QTicketArbeitsplatz,
   ZahlungECconnect, Medium,
   Vertrag, Kontext,
   BuchBarKasse,
@@ -669,8 +667,6 @@ begin
 
     EndHourGlass;
 
-    if bErlaubnis('OLAP Arbeitsplatz Autostart') then
-      FormOLAPArbeitsplatz.show;
     if bErlaubnis('Kasse Autostart') then
     begin
       FormArtikelKasse.prepare;
@@ -1216,11 +1212,6 @@ end;
 procedure TFormMain.Button5Click(Sender: TObject);
 begin
   openShell(MDEPath + 'Index.html');
-end;
-
-procedure TFormMain.Button23Click(Sender: TObject);
-begin
-  FormOLAPArbeitsplatz.show;
 end;
 
 procedure TFormMain.Button24Click(Sender: TObject);

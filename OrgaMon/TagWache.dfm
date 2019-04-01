@@ -65,7 +65,7 @@ object FormTagWache: TFormTagWache
       'Automatischer Import'
       'Mobil schreiben'
       'Sync mit dem Fotoserver'
-      'OLAP Tagesbericht erstellen'
+      '-'
       'Tagwache OLAPs ausf'#252'hren'
       'kurz warten')
     TabOrder = 1

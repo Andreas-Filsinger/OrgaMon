@@ -93,6 +93,10 @@ uses
  Funktionen_Buch,
  Funktionen_Auftrag;
 
+const
+ RohdatenCount: Integer = 0;
+ pXLS: TXLSFile = nil;
+
 procedure OLAP_addDefaults(s: TStrings);
 
   function prepareValue(s: string): string;
@@ -182,12 +186,6 @@ begin
   OLAP.free;
 end;
 
-
-// OLAP
-
-const
- pXLS: TXLSFile = nil;
-
 procedure e_w_OLAP_XLS(XLS: TXLSFile);
 begin
   pXLS := XLS;
@@ -247,8 +245,6 @@ var
   Line: string;
   LineIndex: integer;
   ExecuteStatement: string;
-  // imp pend
-  RohdatenCount: Integer;
   SilentMode: boolean;
   NameSpace: string;
   StartWait: dword;
@@ -3339,6 +3335,7 @@ end;
     until false;
     ersetze('€€', '$', result);
   end;
+
 function e_r_OLAP(OLAP: TStringList; Params: TStringList): TStringList; overload;
 var
   ParameterL: TStringList;
@@ -3440,6 +3437,35 @@ end;
 
 function e_r_OLAP(FName: string): TgpIntegerList; overload;
 var
+  myRIDs: TStringList;
+  n: integer;
+  aRID: integer;
+begin
+  result := TgpIntegerList.create;
+  myRIDs := TStringList.create;
+  if (pos(cOLAPExtension, FName) = 0) then
+    e_x_OLAP(iOlapPath + FName + cOLAPExtension)
+  else
+    e_x_OLAP(iOlapPath + FName);
+  // imp pend: RohdatenCount?
+  myRIDs.loadfromFile(RohdatenFName(pred(RohdatenCount)));
+  for n := 1 to pred(myRIDs.count) do
+    if (myRIDs[n] <> cOLAPNull) then
+    begin
+      aRID := strtointdef(nextp(myRIDs[n], ';', 0), cRID_Null);
+      if (aRID >= cRID_FirstValid) then
+        result.add(aRID);
+    end;
+  myRIDs.free;
+end;
+
+end.
+
+function OLAP(FName: string): TgpIntegerList;
+
+// Historisches Schmallspur OLAP
+
+var
  cOLAP: TdboCursor;
  oSQL: TStringList;
  n,k: integer;
@@ -3481,4 +3507,4 @@ begin
   oSQL.Free;
 end;
 
-end.
+

@@ -82,7 +82,7 @@ uses
   Datenbank,
 
   Funktionen_Basis, Funktionen_Beleg, Funktionen_Auftrag,
-  AuftragMobil, AuftragErgebnis, OLAPArbeitsplatz,
+  AuftragMobil, AuftragErgebnis,
   BaseUpdate, Datensicherung, dbOrgaMon,
 
   OLAP, Baustelle, BestellArbeitsplatz, AuftragImport, main;
@@ -178,10 +178,7 @@ begin
               FormAuftragMobil.WriteMobil;
             5:
               e_r_Sync_AuftraegeAlle;
-            6:
-              begin
-                FormOLAPArbeitsplatz.Tagwache;
-              end;
+            6:;
             7:
               begin
                 // Context-OLAPs

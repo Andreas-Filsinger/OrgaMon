@@ -252,14 +252,11 @@ type
     tBAUSTELLE: tsTable;
     tABLAGE: tsTable;
     LastLogWasTimeStamp: boolean; // Protect TimeStamp Flood
-    Id: string;
-    // heutige Datensicherungen gehen hier hin (=pBackUpRootPath+#001\ als Beispiel)
+
+    MandantId: string; // Der [Mandantname]
 
     ZaehlerNummerNeuXlsCsv_Vorhanden: boolean;
-
     AUFTRAG_R: integer; // Aktueller Context für Log-Datei, Fehlermeldungsausgabe usw.
-
-
 
     // core
     constructor Create;
@@ -2807,7 +2804,7 @@ begin
       SectionName := UserName;
     if (ReadString(SectionName, 'ftpuser', '') = '') then
       SectionName := cGroup_Id_Default;
-    Id := SectionName;
+    MandantId := SectionName;
 
     iJonDa_Port := strtointdef(ReadString(SectionName, 'port', getParam('Port')), 3049);
     start_NoTimeCheck := ReadString(SectionName, 'NoTimeCheck', '') = cIni_Activate;
@@ -5272,7 +5269,7 @@ var
   s, File_Seconds: TANFiXTime;
   FName: string;
   DATEINAME_AKTUELL: string;
-  Id: string;
+  Id: string; //
   bOrgaMon, bOrgaMonOld: TBLager;
   mderecOrgaMon: TMDERec;
   AuftragArt: string;
@@ -6434,7 +6431,7 @@ begin
 
     // Ausgabe nach htlm
     oHTML_Prefix :=
-    { } '<h2>' + Id + ' vom ' + long2date(StartMoment) +
+    { } '<h2>' + MandantId + ' vom ' + long2date(StartMoment) +
     { } ' um ' + secondstostr(StartMoment) + '</h2><br>' +
     { } '<h1>Es fehlen ' + InttoStr(GesamtAnzahl) + ' Foto(s):</h1><br>';
     oHTML_Postfix := '<br>' + cOrgaMonCopyright + '<br>[erstellt in ' + InttoStr(RDTSCms - Timer) + ' ms]';

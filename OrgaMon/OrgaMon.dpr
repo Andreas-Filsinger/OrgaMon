@@ -110,8 +110,6 @@ uses
   AuftragGeo in 'AuftragGeo.pas' {FormAuftragGeo},
   GeoArbeitsplatz in 'GeoArbeitsplatz.pas' {FormGeoArbeitsplatz},
   QTicketArbeitsplatz in 'QTicketArbeitsplatz.pas' {FormQTicketArbeitsplatz},
-  OLAPArbeitsplatz in 'OLAPArbeitsplatz.pas' {FormOLAPArbeitsplatz},
-  OLAPedit in 'OLAPedit.pas' {FormOLAPedit},
   Buchung in 'Buchung.pas' {FormBuchung},
   ZahlungECconnect in 'ZahlungECconnect.pas' {FormZahlungECconnect},
   AuftragBildzuordnung in 'AuftragBildzuordnung.pas' {FormAuftragBildzuordnung},
@@ -223,8 +221,6 @@ begin
   Application.CreateForm(TFormPersonDoppelte, FormPersonDoppelte);
   Application.CreateForm(TFormPersonExport, FormPersonExport);
   Application.CreateForm(TFormQTicketArbeitsplatz, FormQTicketArbeitsplatz);
-  Application.CreateForm(TFormOLAPArbeitsplatz, FormOLAPArbeitsplatz);
-  Application.CreateForm(TFormOLAPedit, FormOLAPedit);
   Application.CreateForm(TFormBuchung, FormBuchung);
   Application.CreateForm(TFormBelege, FormBelege);
   Application.CreateForm(TFormLager, FormLager);

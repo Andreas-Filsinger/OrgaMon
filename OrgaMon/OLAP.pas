@@ -79,12 +79,8 @@ type
     Initialized: boolean;
     UnSaved: boolean;
     ActFName: string;
-    GlobalVars: TStringList;
-    RohdatenCount: integer;
-    pXLS: TXLSFile;
 
     procedure ReFreshFileList;
-    procedure Log(s: string);
     function DefaultFName: string;
   public
 
@@ -96,10 +92,7 @@ type
 
     // Haupt - Auswerte Funktionen
     procedure DoContextOLAP(g: TIB_Grid; Variante: string = ''); overload;
-    procedure DoContextOLAP(GlobalVars, OLAPScript: TStringList; Connection: TIB_Connection); overload;
-    procedure DoContextOLAP(FName: string; GlobalVar: TStringList = nil; XLS: TXLSFile = nil); overload;
-    function OLAP(FName: string): TgpIntegerList;
-
+    procedure DoContextOLAP(FileMask:string; GlobalVars: TStringList = nil); overload;
 
   end;
 
@@ -141,6 +134,7 @@ uses
 
 function FeedBack (key : Integer; value : string = '') : Integer;
 begin
+  result := cFeedBack_CONT;
   with FormOLAP do
   begin
     case Key of
@@ -164,9 +158,6 @@ begin
     end;
   end;
 end;
-
-
-
 
 function TFormOLAP.DefaultFName: string;
 begin
@@ -244,35 +235,6 @@ begin
   openShell(cHelpURL + 'OLAP');
 end;
 
-procedure TFormOLAP.Log(s: string);
-begin
-  //
-end;
-
-function TFormOLAP.OLAP(FName: string): TgpIntegerList;
-var
-  myRIDs: TStringList;
-  n: integer;
-  aRID: integer;
-begin
-  result := TgpIntegerList.create;
-  myRIDs := TStringList.create;
-  if (pos(cOLAPExtension, FName) = 0) then
-    DoContextOLAP(iOlapPath + FName + cOLAPExtension)
-  else
-    DoContextOLAP(iOlapPath + FName);
-  myRIDs.loadfromFile(RohdatenFName(pred(RohdatenCount)));
-  for n := 1 to pred(myRIDs.count) do
-    if (myRIDs[n] <> cOLAPNull) then
-    begin
-      aRID := strtointdef(nextp(myRIDs[n], ';', 0), cRID_Null);
-      if (aRID >= cRID_FirstValid) then
-        result.add(aRID);
-    end;
-  myRIDs.free;
-end;
-
-
 procedure TFormOLAP.SpeedButton1Click(Sender: TObject);
 begin
   openShell(iOlapPath);
@@ -297,21 +259,19 @@ procedure TFormOLAP.DoContextOLAP(g: TIB_Grid; Variante: string = '');
 var
   FName: string;
   n: integer;
+  ParameterL : TStringList;
 begin
   try
     FName := iOlapPath + GridSettingsIdentifier(g) + Variante + cOLAPExtension;
+
     if FileExists(FName) then
     begin
+      ParameterL := TStringList.create;
       repeat
         //
         if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0)) then
           break;
 
-        // Lister der Globales Variable aufbauen!
-        if assigned(GlobalVars) then
-          GlobalVars.clear
-        else
-          GlobalVars := TStringList.create;
 
         //
         with g.DataSource.Dataset do
@@ -321,7 +281,7 @@ begin
             begin
               if IsNull then
               begin
-                GlobalVars.add('$' + FieldName + '=null');
+                ParameterL.add('$' + FieldName + '=null');
               end
               else
               begin
@@ -330,7 +290,7 @@ begin
                     SQL_VARYING, SQL_VARYING_, SQL_TEXT, SQL_TEXT_, SQL_TIMESTAMP, SQL_TIMESTAMP_, SQL_TYPE_DATE,
                     SQL_TYPE_DATE_:
                     begin
-                      GlobalVars.add('$' + FieldName + '=' + AsString);
+                      ParameterL.add('$' + FieldName + '=' + AsString);
                     end;
                 end;
               end;
@@ -338,11 +298,9 @@ begin
         end;
 
         // Ausführen
-        ActFName := FName;
-        SynMemo1.lines.loadfromFile(FName);
-        SynMemo1.lines.AddStrings(GlobalVars);
-        Button2Click(nil);
-      until true;
+        e_x_OLAP(FName, ParameterL);
+      until yet;
+      ParameterL.Free;
     end
     else
     begin
@@ -352,55 +310,37 @@ begin
   end;
 end;
 
-procedure DoContextOLAP(g: TIB_Grid);
-begin
-  FormOLAP.DoContextOLAP(g);
-end;
-
-procedure TFormOLAP.DoContextOLAP(GlobalVars, OLAPScript: TStringList; Connection: TIB_Connection);
-begin
-  // #-#
-end;
-
-procedure TFormOLAP.DoContextOLAP(FName: string; GlobalVar: TStringList = nil; XLS: TXLSFile = nil);
+procedure TFormOLAP.DoContextOLAP(FileMask:string; GlobalVars: TStringList = nil);
 var
   sOLAPs: TStringList;
   n: integer;
 begin
-  pXLS := XLS;
-  if (StrFilter(FName, '*?') = '') then
+  if (StrFilter(FileMask, '*?') = '') then
   begin
     repeat
 
-      if bnBilligung('OLAP:' + nextp(ExtractFileName(FName), cOLAPExtension, 0)) then
+      if bnBilligung('OLAP:' + nextp(ExtractFileName(FileMask), cOLAPExtension, 0)) then
         break;
 
-      ActFName := FName;
-      SynMemo1.lines.loadfromFile(FName);
-
       // Liste der Globales Variable aufbauen!
-      if assigned(GlobalVar) then
-      begin
-        if assigned(GlobalVars) then
-          GlobalVars.clear
-        else
-          GlobalVars := TStringList.create;
-        GlobalVars.AddStrings(GlobalVar);
-      end;
+      e_x_OLAP(FileMask,GlobalVars);
 
-      Button2Click(nil);
-    until true;
+    until yet;
 
   end
   else
   begin
     sOLAPs := TStringList.create;
-    dir(FName, sOLAPs, false);
+    dir(FileMask, sOLAPs, false);
     for n := 0 to pred(sOLAPs.count) do
-      DoContextOLAP(ExtractFilePath(FName) + sOLAPs[n], GlobalVar, XLS);
+      DoContextOLAP(ExtractFilePath(FileMask) + sOLAPs[n], GlobalVars);
     sOLAPs.free;
   end;
-  pXLS := nil;
+end;
+
+procedure DoContextOLAP(g: TIB_Grid);
+begin
+  FormOLAP.DoContextOLAP(g);
 end;
 
 function TFormOLAP.UserInput(Line: string): string;
@@ -478,3 +418,4 @@ begin
 end;
 
 end.
+

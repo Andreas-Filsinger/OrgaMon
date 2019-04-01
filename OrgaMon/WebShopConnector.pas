@@ -261,6 +261,7 @@ implementation
 uses
   math, geld, anfix32,
   globals, Datenbank, Person,
+  Funktionen_OLAP,
   Funktionen_Basis,
   Funktionen_Beleg,
   Funktionen_Auftrag,
@@ -1176,13 +1177,13 @@ begin
   ProgressBar2.max := ARTIKEL.count;
 
   // Wer darf in den WebShop
-  WEBSHOP := FormOLAP.OLAP(cOLAP_ArtikelUmfangRemoteShop);
+  WEBSHOP := e_r_OLAP(cOLAP_ArtikelUmfangRemoteShop);
   WEBSHOP.Sort;
 
   Log(inttostr(WEBSHOP.count) + ' Artikel im WebShop');
 
   // Wer darf öffentlich dokumentiert werden?
-  MUSIC := FormOLAP.OLAP(cOLAP_MusikAusExternenLinks);
+  MUSIC := e_r_OLAP(cOLAP_MusikAusExternenLinks);
   MUSIC.Sort;
   Log(inttostr(MUSIC.count) + ' Artikel mit MP3 Erlaubnis');
 
@@ -1645,7 +1646,7 @@ begin
       // Add('DELETE FROM ARTIKEL;');
 
       //
-      ARTIKEL_R := FormOLAP.OLAP(cOLAP_ArtikelUmfangRemoteShop);
+      ARTIKEL_R := e_r_OLAP(cOLAP_ArtikelUmfangRemoteShop);
       AppendStringsToFile(inttostr(ARTIKEL_R.count), format(DiagnosePath + cMySQLdumpFName,
         ['Count']));
 

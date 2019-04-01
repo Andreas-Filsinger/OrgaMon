@@ -1816,7 +1816,7 @@ begin
   begin
     if assigned(MyFotoExec) then
     begin
-      Caption := MyFotoExec.Id;
+      Caption := MyFotoExec.MandantId;
       if MyFotoExec.Pause then
       begin
         color := clred;
