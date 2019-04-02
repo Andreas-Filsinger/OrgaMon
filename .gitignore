@@ -34,3 +34,11 @@
 /rev/__history
 __history
 __recovery
+*.local
+*.identcache
+*.stat
+/OrgaMon/backup
+/Lazarus/lib/i386-win32
+/Lazarus/backup
+/PASconTools/backup
+/webUI/Win32/Debug
