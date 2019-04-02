@@ -43,6 +43,7 @@ uses
 
 const
      PIPE_UNLIMITED_INSTANCES = 255;
+     SW_HIDE = 0;
 
 type
   (*

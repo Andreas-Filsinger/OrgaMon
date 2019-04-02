@@ -1135,6 +1135,9 @@ begin
     end;
     writeln(Modus + '@' + noblank(Betriebssystem) + ' [' + MyProgramPath + ']');
 
+    if IsParam('--version') then
+     halt;
+
     case Ident of
       id_TWebShop:
         begin
@@ -1174,14 +1177,12 @@ begin
         end
     else
       RunAsUnImplemented;
-
     end;
 
   except
     on E: Exception do
       writeln(cERRORText + E.ClassName, ': ', E.Message);
   end;
-  sleep(2000);
 end;
 
 type

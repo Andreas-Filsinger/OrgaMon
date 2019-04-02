@@ -1035,13 +1035,11 @@ begin
       FieldByName('BTYP').AsString := '*';
       FieldByName('BSTATUS').AsString := '*';
       Post;
-      // imp pend: NOT MULTIUSER VALIDATED
       result := e_r_gen('GEN_BBELEG');
       Close;
     end;
     IB_w_NewOne.free;
   end;
-
 end;
 
 const

@@ -180,8 +180,13 @@ uses
   anfix32, c7zip, html,
   WordIndex,
 
+{$ifdef fpc}
+{$else}
   // IB-Objects
   IB_Components, IB_Access,
+  // XLS Sachen
+  FlexCel.Core, FlexCel.xlsAdapter,
+{$endif}
 
   // OrgaMon
   globals, dbOrgaMon, Sperre,
@@ -193,8 +198,6 @@ uses
   // Sperre, Bearbeiter, GeoLokalisierung,
   // FastGeo, AuftragArbeitsplatz,
 
-  // XLS Sachen
-  FlexCel.Core, FlexCel.xlsAdapter,
 
   eConnect;
 
@@ -456,7 +459,7 @@ procedure doAH1(lRID: TgpIntegerList);
   end;
 
 var
-  cAUFTRAG: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
   AUFTRAG_R: integer;
   n, k: integer;
 
@@ -545,8 +548,8 @@ var
   n, m, k: integer;
   AUFTRAG_R: integer;
   lHistorische: TgpIntegerList;
-  cHIST: TIB_Cursor;
-  qAUFTRAG: TIB_Query;
+  cHIST: TdboCursor;
+  qAUFTRAG: TdboQuery;
   lRestoreFelder: TStringList;
   OneIsNUll: boolean;
 begin
@@ -629,7 +632,7 @@ procedure doAY4(lRID: TgpIntegerList);
 var
   n, m: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   sCommandSet: TStringList;
 begin
@@ -653,7 +656,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName(sCommandSet[0]).AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName(sCommandSet[0]),lInternInfo);
         edit;
         for m := 1 to pred(sCommandSet.count) do
           if pos('|', sCommandSet[m]) > 0 then
@@ -673,7 +676,7 @@ procedure doAY5(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  cAUFTRAG: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
   lSettings: TStringList;
   lProtokoll: TStringList;
   FName: string;
@@ -701,12 +704,12 @@ begin
       first;
       while not(eof) do
       begin
-        FieldByName('PROTOKOLL').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lProtokoll);
 
         FName := nextp(lProtokoll.Values['FA'], ',', 0);
         if (FName <> '') then
         begin
-          FieldByName('EXPORT_EINSTELLUNGEN').AssignTo(lSettings);
+          e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
           FName := FotoPath + e_r_BaustellenPfad(lSettings) + '\' + FName;
           if FileExists(FName) then
             lZips.add(FName);
@@ -715,7 +718,7 @@ begin
         FName := nextp(lProtokoll.Values['FN'], ',', 0);
         if (FName <> '') then
         begin
-          FieldByName('EXPORT_EINSTELLUNGEN').AssignTo(lSettings);
+          e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),lSettings);
           FName := FotoPath + e_r_BaustellenPfad(lSettings) + '\' + FName;
           if FileExists(FName) then
             lZips.add(FName);
@@ -742,7 +745,7 @@ end;
 
 procedure doBI1(lRID: TgpIntegerList);
 var
-  qBuch: TIB_Query;
+  qBuch: TdboQuery;
   Skript: TStringList;
   n: integer;
 begin
@@ -776,9 +779,11 @@ begin
             break;
 
           // machs
-          FieldByName('Skript').AssignTo(Skript);
-          Skript.add(format('BELEG=%d;%d;%m', [FieldByName('BELEG_R').AsInteger,
-            FieldByName('STEMPEL_DOKUMENT').AsInteger, FieldByName('BETRAG').AsDouble]));
+          e_r_sqlt(FieldByName('Skript'),Skript);
+          Skript.add(format('BELEG=%d;%d;%m', [
+            {} FieldByName('BELEG_R').AsInteger,
+            {} FieldByName('STEMPEL_DOKUMENT').AsInteger,
+            {} FieldByName('BETRAG').AsCurrency]));
 
           edit;
           FieldByName('SKRIPT').assign(Skript);
@@ -796,7 +801,7 @@ procedure doHA3(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
@@ -819,7 +824,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
         edit;
         lInternInfo.Values['Auftragseinheit'] := '';
         lInternInfo.Values['Auftragsnummer'] := '';
@@ -840,7 +845,7 @@ procedure doHA4(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
 begin
   BeginHourGlass;
   qAUFTRAG := nQuery;
@@ -860,7 +865,7 @@ begin
       first;
       if not(eof) then
       begin
-        if FieldByName('EXPORT_TAN').IsNotNull then
+        if not(FieldByName('EXPORT_TAN').IsNull) then
         begin
           edit;
           FieldByName('EXPORT_TAN').clear;
@@ -877,7 +882,7 @@ procedure doHA5(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
 begin
   BeginHourGlass;
   qAUFTRAG := nQuery;
@@ -928,7 +933,7 @@ var
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   sProtokoll: TStringList;
   DontTouch: boolean;
 
@@ -980,14 +985,14 @@ begin
           begin
 
             //
-            FieldByName('PROTOKOLL').AssignTo(sProtokoll);
+            e_r_sqlt(FieldByName('PROTOKOLL'),sProtokoll);
             DontTouch := false;
             repeat
               if (FieldByName('ZAEHLER_STAND_ALT').AsString <> ZaehlerStandHT) then
                 break;
               if (FieldByName('ZAEHLER_STAND_NEU').AsString <> ZaehlerStandNT) then
                 break;
-              if (FieldByName('ZAEHLER_WECHSEL').AsDate <> Long2datetime(AbleseDatum)) then
+              if (FieldByName('ZAEHLER_WECHSEL').AsDateTime <> Long2datetime(AbleseDatum)) then
                 break;
               if (sProtokoll.Values['SA'] <> 'X') then
                 break;
@@ -1041,9 +1046,9 @@ begin
                   FieldByName('ZAEHLER_STAND_NEU').AsString := ZaehlerStandNT;
                 end;
                 if DateOK(AbleseDatum) then
-                  FieldByName('ZAEHLER_WECHSEL').AsDate := Long2datetime(AbleseDatum)
+                  FieldByName('ZAEHLER_WECHSEL').AsDateTime := Long2datetime(AbleseDatum)
                 else
-                  FieldByName('ZAEHLER_WECHSEL').AsDate := now;
+                  FieldByName('ZAEHLER_WECHSEL').AsDateTime := now;
                 FieldByName('STATUS').AsInteger := ord(ctsErfolg);
                 FieldByName('EXPORT_TAN').clear;
                 FieldByName('MONDA_SCHUTZ').AsString := cC_True;
@@ -1101,7 +1106,7 @@ procedure doKE1(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   ZaehlerNummer: string;
 begin
 
@@ -1144,8 +1149,8 @@ const
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
-  cAUFTRAG: TIB_Cursor;
+  qAUFTRAG: TdboQuery;
+  cAUFTRAG: TdboCursor;
   InternInfos: TStringList;
   AbleseEinheit: string;
   sBericht: TStringList;
@@ -1183,10 +1188,10 @@ begin
       begin
 
         // Ermittlung der AbleseEinheit noch unsicher!
-        FieldByName('INTERN_INFO').AssignTo(InternInfos);
+        e_r_sqlt(FieldByName('INTERN_INFO'),InternInfos);
         AbleseEinheit := InternInfos.Values[cAbleseEinheit];
-        _SperreVon := DateTime2long(FieldByName('SPERRE_VON').AsDate);
-        _SperreBis := DateTime2long(FieldByName('SPERRE_BIS').AsDate);
+        _SperreVon := DateTime2long(FieldByName('SPERRE_VON').AsDateTime);
+        _SperreBis := DateTime2long(FieldByName('SPERRE_BIS').AsDateTime);
         SperreVon := _SperreVon;
         SperreBis := _SperreBis;
 
@@ -1196,8 +1201,8 @@ begin
           cAUFTRAG.ApiFirst;
           if not(cAUFTRAG.eof) then
           begin
-            SperreVon := DateTime2long(cAUFTRAG.FieldByName('SPERRE_VON').AsDate);
-            SperreBis := DateTime2long(cAUFTRAG.FieldByName('SPERRE_BIS').AsDate);
+            SperreVon := DateTime2long(cAUFTRAG.FieldByName('SPERRE_VON').AsDateTime);
+            SperreBis := DateTime2long(cAUFTRAG.FieldByName('SPERRE_BIS').AsDateTime);
           end
           else
           begin
@@ -1242,8 +1247,8 @@ begin
               long2date(SperreBis));
 
             edit;
-            FieldByName('SPERRE_VON').AsDate := Long2datetime(SperreVon);
-            FieldByName('SPERRE_BIS').AsDate := Long2datetime(SperreBis);
+            FieldByName('SPERRE_VON').AsDateTime := Long2datetime(SperreVon);
+            FieldByName('SPERRE_BIS').AsDateTime := Long2datetime(SperreBis);
             post;
           end;
         end;
@@ -1276,7 +1281,7 @@ procedure doKE3(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
 begin
   BeginHourGlass;
   qAUFTRAG := nQuery;
@@ -1316,7 +1321,7 @@ procedure doKE4(lRID: TgpIntegerList);
 var
   n, k: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   ZaehlerInfos: TStringList;
   InternInfos: TStringList;
   ZAEHLER_NUMMER: string;
@@ -1338,8 +1343,8 @@ begin
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
       if not(eof) then
       begin
-        FieldByName('ZAEHLER_INFO').AssignTo(ZaehlerInfos);
-        FieldByName('INTERN_INFO').AssignTo(InternInfos);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'),ZaehlerInfos);
+        e_r_sqlt(FieldByName('INTERN_INFO'),InternInfos);
         for k := pred(ZaehlerInfos.count) downto 0 do
         begin
 
@@ -1393,7 +1398,7 @@ const
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   ZaehlerInfos: TStringList;
 begin
   BeginHourGlass;
@@ -1411,7 +1416,7 @@ begin
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
       if not(eof) then
       begin
-        FieldByName('ZAEHLER_INFO').AssignTo(ZaehlerInfos);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'),ZaehlerInfos);
         if (ZaehlerInfos.indexof(cNachtrag) = -1) then
         begin
           ZaehlerInfos.Insert(0, cNachtrag);
@@ -1432,7 +1437,7 @@ procedure doHA6(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   StandplatzInfo: string;
   ZaehlerInfos: TStringList;
 begin
@@ -1451,7 +1456,7 @@ begin
       ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
       if not(eof) then
       begin
-        FieldByName('ZAEHLER_INFO').AssignTo(ZaehlerInfos);
+        e_r_sqlt(FieldByName('ZAEHLER_INFO'),ZaehlerInfos);
         StandplatzInfo := HugeSingleLine(ZaehlerInfos, ' ');
         StandplatzInfo := AnsiUpperCase(noblank(nextp(StandplatzInfo, 'v1=')));
         if (pos('IM', StandplatzInfo) = 1) then
@@ -1523,7 +1528,7 @@ procedure doHA8(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   sQSmerkmal: string;
 begin
@@ -1547,7 +1552,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
         lInternInfo.add(sQSmerkmal);
         edit;
         FieldByName('INTERN_INFO').assign(lInternInfo);
@@ -1563,8 +1568,11 @@ end;
 procedure doHA9(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
+{$ifdef fpc}
+{$else}
   xImport: TXLSFile;
-  qAUFTRAG: TIB_Query;
+{$endif}
+  qAUFTRAG: TdboQuery;
   sDiagnose: TStringList;
 
   procedure setVorgezogen(ZaehlerNummer: string);
@@ -1629,7 +1637,7 @@ var
           break;
         end;
 
-        FieldByName('MONTEUR_INFO').AssignTo(sInfo);
+        e_r_sqlt(FieldByName('MONTEUR_INFO'),sInfo);
         if sInfo.indexof(Hinweis) = -1 then
         begin
           sInfo.add(Hinweis);
@@ -1647,7 +1655,11 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
+   {$ifdef fpc}
+   // imp pend
+   {$else}
     result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
+   {$endif}
   end;
 
 var
@@ -1672,6 +1684,8 @@ begin
     OPen;
   end;
 
+  {$ifdef fpc}
+  {$else}
   xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
@@ -1687,6 +1701,7 @@ begin
   end;
 
   xImport.free;
+  {$endif}
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
   EndHourGlass;
@@ -1695,9 +1710,12 @@ end;
 procedure doHAA(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
+{$ifdef fpc}
+{$else}
   xImport: TXLSFile;
-  cAUFTRAG: TIB_Cursor;
-  cAUFTRAG2: TIB_Cursor;
+{$endif}
+  cAUFTRAG: TdboCursor;
+  cAUFTRAG2: TdboCursor;
   sDiagnose: TStringList;
 
   procedure setMarkiert(ZaehlerNummer: string);
@@ -1746,7 +1764,11 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
+   {$ifdef fpc}
+   // imp pend
+   {$else}
     result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
+   {$endif}
   end;
 
 var
@@ -1782,6 +1804,9 @@ begin
     OPen;
   end;
 
+  {$ifdef fpc}
+  // imp pend
+  {$else}
   xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
@@ -1794,6 +1819,7 @@ begin
   end;
 
   xImport.free;
+  {$endif}
   cAUFTRAG.free;
   cAUFTRAG2.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
@@ -1803,9 +1829,12 @@ end;
 
 procedure doAH3(lRID: TgpIntegerList);
 var
+  {$ifdef fpc}
+  {$else}
   xImport: TXLSFile;
-  cAUFTRAG: TIB_Cursor;
-  cABLAGE: TIB_Cursor;
+  {$endif}
+  cAUFTRAG: TdboCursor;
+  cABLAGE: TdboCursor;
 
   sRIDs: TStringList;
   sABLAGE: TStringList;
@@ -1816,7 +1845,11 @@ var
 
   function rC { readCell } (r, c: integer): string;
   begin
+   {$ifdef fpc}
+   // imp pend
+   {$else}
     result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
+   {$endif}
   end;
 
 var
@@ -1851,6 +1884,9 @@ begin
     OPen;
   end;
 
+  {$ifdef fpc}
+  // imp pend
+  {$else}
   // Excel-Dokument öffnen
   xImport := TXLSFile.create(true);
 
@@ -1914,6 +1950,7 @@ begin
   end;
 
   xImport.free;
+  {$endif}
   cAUFTRAG.free;
   cABLAGE.free;
   sRIDs.SaveToFile(DiagnosePath + 'AH3-AUFTRAG.csv');
@@ -1927,7 +1964,7 @@ procedure doKE6(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   POSTLEITZAHL_R: integer;
 begin
   BeginHourGlass;
@@ -1984,7 +2021,7 @@ procedure doKE7(lRID: TgpIntegerList);
 var
   n, m, l: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
@@ -2005,7 +2042,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
         edit;
         for m := 0 to pred(lInternInfo.count) do
         begin
@@ -2028,7 +2065,7 @@ procedure doKE8(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   ZAEHLER_NR_NEU: string;
 begin
@@ -2068,14 +2105,21 @@ end;
 procedure doKE9(lRID: TgpIntegerList);
 var
   BAUSTELLE_R: integer;
+{$ifdef fpc}
+{$else}
   xImport: TXLSFile;
-  qAUFTRAG: TIB_Query;
+{$endif}
+  qAUFTRAG: TdboQuery;
   sDiagnose: TStringList;
   sProtokoll: TStringList;
 
   function rC { readCell } (r, c: integer): string;
   begin
+    {$ifdef fpc}
+    // imp pend
+    {$else}
     result := cutblank(xImport.getCellValue(r, c).ToStringInvariant);
+    {$endif}
   end;
 
 var
@@ -2108,6 +2152,8 @@ begin
     OPen;
   end;
 
+  {$ifdef fpc}
+  {$else}
   xImport := TXLSFile.create(true);
   sDiagnose := TStringList.create;
 
@@ -2162,6 +2208,7 @@ begin
   end;
 
   xImport.free;
+  {$endif}
   qAUFTRAG.free;
   sDiagnose.SaveToFile(DiagnosePath + 'Nachtrag.txt');
 
@@ -2175,7 +2222,7 @@ procedure doHAB(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
 begin
   // aus den Interninfos diverse felder rauslöschen!
@@ -2196,7 +2243,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
         edit;
         ersetze('aegpl_devloc=', 'GeraeteplatzAlt=', lInternInfo);
         ersetze('aeastl_anlage=', 'AnlageAlt=', lInternInfo);
@@ -2216,7 +2263,7 @@ procedure doFI1(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lProtokoll: TStringList;
   FA: string;
 begin
@@ -2238,7 +2285,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('PROTOKOLL').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lProtokoll);
         FA := lProtokoll.Values['FA'];
         edit;
         lProtokoll.Values['FA'] :=
@@ -2307,7 +2354,7 @@ var
 
 var
   n, o: integer;
-  qARTIKEL: TIB_Query;
+  qARTIKEL: TdboQuery;
   IMEI: string;
 
 begin
@@ -2371,7 +2418,7 @@ procedure doHAC(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   lProtokoll: TStringList;
 begin
@@ -2394,8 +2441,8 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
-        FieldByName('PROTOKOLL').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lProtokoll);
         if lInternInfo.indexof('Sparte=Einbau') <> -1 then
         begin
           if (lProtokoll.Values['FA'] = '') then
@@ -2419,7 +2466,7 @@ procedure doKEA(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lProtokoll: TStringList;
   SomeChange: boolean;
   N2: string;
@@ -2442,7 +2489,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('PROTOKOLL').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lProtokoll);
         SomeChange := false;
         repeat
           if (lProtokoll.Values['N2'] <> '') then
@@ -2491,7 +2538,7 @@ const
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   ObjektSchluessel: string;
 begin
@@ -2515,7 +2562,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lInternInfo);
         edit;
         ObjektSchluessel := lInternInfo.Values[cReplaceTag];
         ersetze('X', ' ', ObjektSchluessel);
@@ -2534,7 +2581,7 @@ procedure doKEC(lRID: TgpIntegerList);
 var
   n: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lProtokoll: TStringList;
 begin
   BeginHourGlass;
@@ -2554,7 +2601,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('INTERN_INFO').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('INTERN_INFO'),lProtokoll);
         edit;
         FieldByName('REGLER_NR').AsString := lProtokoll.Values['aknr'];
         post;
@@ -2568,7 +2615,7 @@ end;
 
 procedure doKN1(lRID: TgpIntegerList);
 var
-  qARTIKEL: TIB_Query;
+  qARTIKEL: TdboQuery;
   DAUER: string;
   n: integer;
   sBericht: TStringList;
@@ -2607,8 +2654,8 @@ var
   n: integer;
   AUFTRAG_R: integer;
   WARENBEWEGUNG_R: integer;
-  cAUFTRAG: TIB_Cursor;
-  dWARENBEWEGUNG: TIB_dsql;
+  cAUFTRAG: TdboCursor;
+  dWARENBEWEGUNG: TdboScript;
   lProtokoll: TStringList;
   S1, S2: string;
 begin
@@ -2635,7 +2682,7 @@ begin
       begin
 
         // Ev. hier noch Plausibilisieren
-        FieldByName('PROTOKOLL').AssignTo(lProtokoll);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lProtokoll);
         S1 := lProtokoll.Values['S1'];
         S2 := lProtokoll.Values['S2'];
 
@@ -2665,7 +2712,7 @@ procedure doHE1(lRID: TgpIntegerList);
 var
   n, m: integer;
   AUFTRAG_R: integer;
-  qAUFTRAG: TIB_Query;
+  qAUFTRAG: TdboQuery;
   lInternInfo: TStringList;
   sErsetze: TStringList;
 begin
@@ -2694,7 +2741,7 @@ begin
       first;
       if not(eof) then
       begin
-        FieldByName('PROTOKOLL').AssignTo(lInternInfo);
+        e_r_sqlt(FieldByName('PROTOKOLL'),lInternInfo);
         edit;
         for m := 0 to pred(sErsetze.count) do
           ersetze(nextp(sErsetze[m], ';', 0), nextp(sErsetze[m], ';', 1), lInternInfo);
@@ -2736,7 +2783,7 @@ end;
 
 procedure doMA1(lRID: TgpIntegerList); // Beleg: gehe eine Mahnstufe zurück
 var
-  qBELEG: TIB_Query;
+  qBELEG: TdboQuery;
   n: integer;
 begin
   qBELEG := nQuery;

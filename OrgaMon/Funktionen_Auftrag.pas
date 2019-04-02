@@ -36,12 +36,11 @@ uses
   Classes, Windows, SysUtils,
 {$IFNDEF fpc}
   IB_Components,
+  // FlexCel
+  FlexCel.Core, FlexCel.xlsAdapter,
 {$ENDIF}
 
   Funktionen_OLAP,
-
-  // FlexCel
-  FlexCel.Core, FlexCel.xlsAdapter,
 
   // Indy
   IdComponent, IdFTP,
@@ -7949,13 +7948,13 @@ _LastTerminCount:=0;
               DatensammlerLokal.Add('Brief=');
             end;
 
-            FieldByName('ZAEHLER_INFO').AssignTo(Zaehlertext);
+            e_r_sqlt(FieldByName('ZAEHLER_INFO'),Zaehlertext);
             DatensammlerLokal.Add('Zähler=' + HugeSingleLine(Zaehlertext, ', '));
 
-            FieldByName('MONTEUR_INFO').AssignTo(InfoText);
+            e_r_sqlt(FieldByName('MONTEUR_INFO'),InfoText);
 
             // Werte aus dem Protokoll zurück in die Terminänderunsliste
-            FieldByName('PROTOKOLL').AssignTo(Protokoll);
+            e_r_sqlt(FieldByName('PROTOKOLL'),Protokoll);
             with Protokoll do
               _RueckKanal := cutblank(values['I1'] + ' ' + values['I2'] + ' ' + values['I6'] + ' ' + values['I7'] + ' '
                 + values['I8']);
@@ -8056,10 +8055,10 @@ _LastTerminCount:=0;
               end;
 
               // Wechselzeitraum!
-              if FieldByName('ZEITRAUM_VON').IsNotNull or FieldByName('ZEITRAUM_BIS').IsNotNull then
+              if not(FieldByName('ZEITRAUM_VON').IsNull) or not(FieldByName('ZEITRAUM_BIS').IsNull) then
               begin
-                ZEITRAUM_VON := DateTime2long(FieldByName('ZEITRAUM_VON').AsDate);
-                ZEITRAUM_BIS := DateTime2long(FieldByName('ZEITRAUM_BIS').AsDate);
+                ZEITRAUM_VON := DateTime2long(FieldByName('ZEITRAUM_VON').AsDateTime);
+                ZEITRAUM_BIS := DateTime2long(FieldByName('ZEITRAUM_BIS').AsDateTime);
                 if (abs(DateDiff(ZEITRAUM_VON, v_MonteurTag)) <= 7) or (abs(DateDiff(ZEITRAUM_BIS, v_MonteurTag)) <= 7)
                 then
                   InfoText.insert(0, 'zwischen ' + copy(Long2date(ZEITRAUM_VON), 1, 6) + ' und ' +
@@ -8253,8 +8252,8 @@ var
 
   LinesL: TList;
   ErrorCount: integer;
-  cAUFTRAG: TIB_Cursor;
-  cINTERNINFO: TIB_Cursor;
+  cAUFTRAG: TdboCursor;
+  cINTERNINFO: TdboCursor;
   OutFName, SingleFName: string;
   Oc_Bericht: TStringList;
   Oc_Result: boolean;
@@ -8332,8 +8331,11 @@ var
   FreieZaehlerCol_Sparte: integer;
   FreieZaehlerCol_Obis: integer;
 
+  {$ifdef fpc}
+  {$else}
   // Excel-Ausgabe
   FlexCelXLS: TXLSFile;
+  {$endif}
 
   // Excel-Formate
   // Dinge für Protokoll-Text Feld
@@ -8375,7 +8377,7 @@ var
   procedure FuelleZaehlerNummerNeu;
   var
     AUFTRAG_R: integer;
-    cAUFTRAG: TIB_Cursor;
+    cAUFTRAG: TdboCursor;
     PROTOKOLL: TStringList;
     ART: string;
     z: string;
@@ -8397,7 +8399,7 @@ var
         AUFTRAG_R := FieldByName('RID').AsInteger;
         ART := FieldByName('ART').AsString;
         z := FieldByName('ZAEHLER_NR_NEU').AsString;
-        FieldByName('PROTOKOLL').AssignTo(PROTOKOLL);
+        e_r_sqlt(FieldByName('PROTOKOLL'),PROTOKOLL);
 
         if ZaehlerNummernNeuMitA1 then
           PreFix := PROTOKOLL.values['A1']
@@ -8480,6 +8482,11 @@ var
   end;
 
   procedure PrepareFormat;
+  {$ifdef fpc}
+  begin
+
+  end;
+  {$else}
   var
     fmfm: TFlxFormat;
   begin
@@ -8510,6 +8517,7 @@ var
 
     end;
   end;
+  {$endif}
 
   procedure WriteLine;
   var
@@ -8530,7 +8538,10 @@ var
           if (Header[n] = 'ProtokollText') then
           begin
             fm := fmProtokollText;
+            {$ifdef fpc}
+            {$else}
             FlexCelXLS.setcolwidth(succ(n), 340 * 18);
+            {$endif}
             break;
           end;
 
@@ -8555,15 +8566,24 @@ var
       try
         if (fm = -1) then
         begin
+          {$ifdef fpc}
+          {$else}
           FlexCelXLS.setCellFromString(ExcelWriteRow, succ(n), ActColumn[n], fm);
+          {$endif}
         end
         else
         begin
+          {$ifdef fpc}
+          {$else}
           FlexCelXLS.SetCellFormat(ExcelWriteRow, succ(n), fm);
           FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), ActColumn[n]);
+          {$endif}
         end;
       except
+        {$ifdef fpc}
+        {$else}
         FlexCelXLS.SetCellValue(ExcelWriteRow, succ(n), 'ERROR');
+        {$endif}
       end;
 
     end;
@@ -8815,13 +8835,19 @@ var
     AliasNames := Settings.values[cE_SpaltenAlias];
     while (AliasNames <> '') do
       HeaderAliasNames.add(nextp(AliasNames, ';'));
+{$ifdef fpc}
+{$else}
     with FlexCelXLS do
+{$endif}
       for n := 0 to pred(Header.count) do
       begin
         NewHeaderName := HeaderAliasNames.values[Header[n]];
         if (NewHeaderName = '') then
           NewHeaderName := Header[n];
+{$ifdef fpc}
+{$else}
         SetCellValue(1, succ(n), NewHeaderName);
+{$endif}
       end;
     HeaderAliasNames.free;
 
@@ -9015,13 +9041,20 @@ begin
   OhneInhaltFelder := TStringList.create;
 
   ZaehlerNummernNeu := TSearchStringList.create;
+{$ifdef fpc}
+{$else}
   FlexCelXLS := TXLSFile.create(true);
+{$endif}
 
   try
     _(cFeedBack_ProgressBar_max+1,IntTOStr( RIDs.count));
     _(cFeedBack_ProgressBar_position+1);
 
+{$ifdef fpc}
+// imp pend
+{$else}
     with FlexCelXLS do
+{$endif}
     begin
 
       if (Settings.values[cE_FreieZaehler] <> '') then
@@ -9100,7 +9133,10 @@ begin
       end;
 
       // Datei neu erstellen
+      {$ifdef fpc}
+      {$else}
       NewFile(1);
+      {$endif}
       PrepareFormat;
 
       // Einstellungen laden
@@ -9234,7 +9270,7 @@ begin
         begin
           ParamByName('CROSSREF').AsInteger := AUFTRAG_R;
           ApiFirst;
-          FieldByName('INTERN_INFO').AssignTo(INTERN_INFO);
+          e_r_sqlt(FieldByName('INTERN_INFO'),INTERN_INFO);
           if (Zaehlwerk <> '') then
           begin
             INTERN_INFO.add('ZaehlwerkMitArt=' + ART + '-1');
@@ -9896,7 +9932,10 @@ begin
 
       CheckCreateDir(cAuftragErgebnisPath + e_r_BaustellenPfad(Settings));
       FileDelete(OutFName);
+      {$ifdef fpc}
+      {$else}
       save(OutFName);
+      {$endif}
       if (Settings.values[cE_OhneStandardXLS] <> cINI_Activate) then
         Files.add(OutFName);
 
@@ -10270,10 +10309,11 @@ var
   ErrorCount: integer;
   n: integer;
   BaustelleKurz: string;
-  // imp pend: free
   IdFTP1: TIdFtpRestart;
-  // imp pend: free
+  {$ifdef fpc}
+  {$else}
   FlexCelXLS: TXLSFile;
+  {$endif}
 
   // upload einzelner Dateien
   FTP_UploadFiles: TStringList;
@@ -10302,7 +10342,7 @@ var
 
   procedure doCommit;
   var
-    dAUFTRAG: TIB_DSQL;
+    dAUFTRAG: TdboScript;
     n: integer;
     TransaktionsName: string;
   begin
@@ -10339,7 +10379,7 @@ var
     NativeFileName: string;
     Local_FSize: int64;
     FTP_FSize: int64;
-    qTICKET: TIB_Query;
+    qTICKET: TdboQuery;
     FTP_Infos: TStringList;
   begin
 
@@ -10440,7 +10480,7 @@ var
   function ReportBlock(Erfolgsmeldungen, Unmoeglichmeldungen: boolean; AUFTRAG_R: Integer): integer;
   // [Anzahl der Meldungen]
   var
-    cAUFTRAG: TIB_Cursor;
+    cAUFTRAG: TdboCursor;
     _Expected_TAN: integer;
     ExportL: TgpIntegerList;
     FailL: TgpIntegerList;
@@ -10646,7 +10686,7 @@ var
   end;
 
 var
-  cBAUSTELLE: TIB_Cursor;
+  cBAUSTELLE: TdboCursor;
 
 begin
   // optionale Zusatz-Optionen bei diesem Durchlauf
@@ -10677,7 +10717,10 @@ begin
   end;
 
   IdFTP1 := TIdFtpRestart.create;
+  {$ifdef fpc}
+  {$else}
   FlexCelXLS := TXLSFile.create;
+  {$endif}
 
   Log('[Info]');
   Log('Beginn=' + sTimeStamp);
@@ -10741,7 +10784,7 @@ begin
       Log('Beginn=' + sTimeStamp);
 
       // init
-      FieldByName('EXPORT_EINSTELLUNGEN').AssignTo(Settings);
+      e_r_sqlt(FieldByName('EXPORT_EINSTELLUNGEN'),Settings);
 
       // defaults!
       Settings.values[cE_BAUSTELLE_R] := FieldByName('RID').AsString;
@@ -11010,6 +11053,11 @@ begin
 
   result := (ErrorCount = 0);
   _(cFeedback_ProgressBar_position+2);
+  IdFTP1.Free;
+  {$ifdef fpc}
+  {$else}
+  FlexCelXLS.Free;
+  {$endif}
   SolidEndTransaction;
 end;
 
@@ -11842,7 +11890,7 @@ begin
               open;
               first;
               edit;
-              FieldByName('INTERN_INFO').assignto(_InternMehrInfo);
+              e_r_sqlt(FieldByName('INTERN_INFO'),_InternMehrInfo);
               for m := 0 to pred(Umsetzer.count) do
               begin
                 UmsetzerNo := strtoint(copy(Umsetzer[m], 1, 2));
@@ -12013,13 +12061,13 @@ begin
                 begin
                   _Date := date2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date);
+                    FieldByName('SPERRE_VON').AsDateTime := long2datetime(_Date);
                 end;
               20:
                 begin
                   _Date := date2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date);
+                    FieldByName('SPERRE_BIS').AsDateTime := long2datetime(_Date);
                 end;
               21:
                 begin
@@ -12059,7 +12107,7 @@ begin
                     appendstringstofile(rSpaltenWert(1) + ';' + inttostr(Verbrauch_1_Datum),
                       ImportePath + 'datums.txt');
 
-                    FieldByName('VERBRAUCH_DATUM').AsDate := long2datetime(date2long(rSpaltenWert(1)));
+                    FieldByName('VERBRAUCH_DATUM').AsDateTime := long2datetime(date2long(rSpaltenWert(1)));
                   end;
                 end;
               28:
@@ -12213,13 +12261,13 @@ begin
                 begin
                   _Date := date2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('ZEITRAUM_VON').AsDate := long2datetime(_Date);
+                    FieldByName('ZEITRAUM_VON').AsDateTime := long2datetime(_Date);
                 end;
               46:
                 begin
                   _Date := date2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('ZEITRAUM_BIS').AsDate := long2datetime(_Date);
+                    FieldByName('ZEITRAUM_BIS').AsDateTime := long2datetime(_Date);
                 end;
               47:
                 begin
@@ -12234,8 +12282,8 @@ begin
                   begin
                     _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
                     _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
-                    FieldByName('ZEITRAUM_VON').AsDate := long2datetime(_Date1);
-                    FieldByName('ZEITRAUM_BIS').AsDate := long2datetime(_Date2);
+                    FieldByName('ZEITRAUM_VON').AsDateTime := long2datetime(_Date1);
+                    FieldByName('ZEITRAUM_BIS').AsDateTime := long2datetime(_Date2);
                   end;
                 end;
               48:
@@ -12251,21 +12299,21 @@ begin
                   begin
                     _Date1 := DatePlus(_Date, -strtointdef(ParameterItems[1], 0));
                     _Date2 := DatePlus(_Date, strtointdef(ParameterItems[2], 0));
-                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date1);
-                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date2);
+                    FieldByName('SPERRE_VON').AsDateTime := long2datetime(_Date1);
+                    FieldByName('SPERRE_BIS').AsDateTime := long2datetime(_Date2);
                   end;
                 end;
               49:
                 begin
                   _Date := date_JJJJMMTT_2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('SPERRE_VON').AsDate := long2datetime(_Date);
+                    FieldByName('SPERRE_VON').AsDateTime := long2datetime(_Date);
                 end;
               50:
                 begin
                   _Date := date_JJJJMMTT_2long(rSpaltenWert(1));
                   if DateOK(_Date) then
-                    FieldByName('SPERRE_BIS').AsDate := long2datetime(_Date);
+                    FieldByName('SPERRE_BIS').AsDateTime := long2datetime(_Date);
                 end;
               51:
                 begin
@@ -12314,9 +12362,9 @@ begin
                 begin
                   // {54}'Termin'
                   if (ParameterItems[0] = 'now') then
-                    FieldByName('AUSFUEHREN').AsDate := now
+                    FieldByName('AUSFUEHREN').AsDateTime := now
                   else
-                    FieldByName('AUSFUEHREN').AsDate := long2datetime(date2long(rSpaltenWert(1)));
+                    FieldByName('AUSFUEHREN').AsDateTime := long2datetime(date2long(rSpaltenWert(1)));
                   FieldByName('VORMITTAGS').AsString := cVormittagsChar;
                 end;
               55:

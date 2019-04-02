@@ -63,6 +63,8 @@ uses
  {$ifndef FPC}
  windows,
  JclMiscel,
+ {$else}
+ fpchelper,
  {$endif}
  SysUtils;
 

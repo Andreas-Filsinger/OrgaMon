@@ -34,15 +34,17 @@ unit Funktionen_Basis;
 interface
 
 uses
-{$IFNDEF fpc}
-  IB_Access,
-  IB_Components,
-{$ENDIF}
   // System
   Classes,
+{$IFDEF fpc}
+{$else}
+  // IB-Objects
+  IB_Access,
+  IB_Components,
+ // XLS
+ FlexCel.xlsAdapter,
+{$ENDIF}
 
-  // XLS
-  FlexCel.xlsAdapter,
 
   // Tools
   gplists, CareTakerClient, anfix32,

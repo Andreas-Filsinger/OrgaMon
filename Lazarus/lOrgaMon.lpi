@@ -97,7 +97,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="lOrgaMon.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -191,6 +191,10 @@
         <Filename Value="..\OrgaMon\Funktionen_App.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="..\OrgaMon\Funktionen_OLAP.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

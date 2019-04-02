@@ -31,8 +31,13 @@ uses
   // System
   Classes,
 
+  {$ifdef fpc}
+  // fpspreadsheet
+  fpspreadsheet,
+  {$else}
   // FlexCel
   FlexCel.Core, FlexCel.xlsAdapter,
+  {$endif}
 
   // Tools
   gplists, CareTakerClient, anfix32,
@@ -53,7 +58,11 @@ function ResolveParameter(s: string; ParameterL: TStringList): string;
 
 procedure OLAP_addDefaults(s: TStrings);
 
+{$ifdef fpc}
+procedure e_w_OLAP_ODS(ODS: TsWorkbook);
+{$else}
 procedure e_w_OLAP_XLS(XLS: TXLSFile);
+{$endif}
 
 function e_x_OLAP(
  { } FName: string;
@@ -83,8 +92,13 @@ uses
  WordIndex, ExcelHelper, OpenOfficePDF,
  Geld, basic32,
 
+{$ifdef fpc}
+ // ZEOS
+ ZPlainFirebirdInterbaseConstants,
+{$else}
  // IB-Objects
  IB_Components, IB_Header, IB_Session,
+{$endif}
 
  // OrgaMon
  dbOrgaMon,
@@ -95,7 +109,11 @@ uses
 
 const
  RohdatenCount: Integer = 0;
+ {$ifdef fpc}
+ pODS: TsWorkbook = nil;
+ {$else}
  pXLS: TXLSFile = nil;
+ {$endif}
 
 procedure OLAP_addDefaults(s: TStrings);
 
@@ -186,10 +204,17 @@ begin
   OLAP.free;
 end;
 
+{$ifdef fpc}
+procedure e_w_OLAP_ODS(ODS: TsWorkbook);
+begin
+  pODS := ODS;
+end;
+{$else}
 procedure e_w_OLAP_XLS(XLS: TXLSFile);
 begin
   pXLS := XLS;
 end;
+{$endif}
 
 function e_x_OLAP(
  {} FName: string;
@@ -379,7 +404,9 @@ var
 
   // connect
   ConnectionList: TStringList;
+{$ifndef fpc}
   rTRANSACTION: TIB_Transaction;
+{$endif}
 
   // consult
   col_Question: integer; // Spaltenindex der Fragestellung
@@ -524,15 +551,24 @@ var
         excelFormats.values[cExcel_TabellenName] := getValueofParameter('$Skript');
     end;
 
+    {$ifdef fpc}
+    // als ODS ausgeben
+    ExcelExport(RohdatenxlsFName(RohdatenCount), BigJoin, nil, excelFormats, pODS);
+    {$else}
     // als Excel ausgeben
     ExcelExport(RohdatenxlsFName(RohdatenCount), BigJoin, nil, excelFormats, pXLS);
+    {$endif}
 
     // wegkopieren?
     SaveCopy(RohdatenxlsFName(RohdatenCount));
 
     // als PDF ausgeben
     if (getValueofParameter('$AuchAlsPDF') = cIni_Activate) then
+      {$ifdef fpc}
+      if (pODS = nil) then
+      {$else}
       if (pXLS = nil) then
+      {$endif}
       begin
         MakePDF(RohdatenxlsFName(RohdatenCount), RohdatenxlsFName(RohdatenCount) + cPDF_Extension);
 
@@ -1084,8 +1120,12 @@ var
         // Ergebnis saugen!
         with cCalc do
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           if assigned(cConnection) then
             IB_Connection := cConnection;
+          {$endif}
           sql.add(ExecuteStatement);
           ApiFirst;
           if eof then
@@ -1124,8 +1164,12 @@ var
         // Ergebnis saugen!
         with cCalc do
         begin
+          {$ifdef fpc}
+          // imp pend
+          {$else}
           if assigned(cConnection) then
             IB_Connection := cConnection;
+          {$endif}
           sql.add(ExecuteStatement);
           ApiFirst;
           if eof then
@@ -1168,7 +1212,9 @@ begin
   ConnectionList := TStringList.create;
   excelFormats := TStringList.create;
   CompleteHeader := TStringList.create;
+  {$ifndef fpc}
   rTRANSACTION := nil;
+  {$endif}
   BASIC := nil;
 
   try
@@ -1630,6 +1676,7 @@ begin
             end
             else
             begin
+              {$ifndef fpc}
               if not(assigned(rTRANSACTION)) then
               begin
                 rTRANSACTION := TIB_Transaction.create(nil);
@@ -1666,6 +1713,7 @@ begin
               rTRANSACTION.IB_Connection := cConnection;
 
               cConnection.connect;
+              {$endif}
             end;
 
           end;
@@ -3241,8 +3289,10 @@ begin
   ParameterL.free;
   ConnectionList.free;
   excelFormats.free;
+{$ifndef fpc}
   if assigned(rTRANSACTION) then
     rTRANSACTION.free;
+{$endif}
   CompleteHeader.free;
 
   EndHourGlass;

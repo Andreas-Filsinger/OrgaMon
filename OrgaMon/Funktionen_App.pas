@@ -85,6 +85,7 @@ const
   cServerOption_ZeitPruefung = 'ZEIT_PRÜFUNG';
   cServerOption_JonDaOptionen = 'OPTIONEN';
   cServerOption_EinfacheListe = 'EinfacheListe';
+  cServerOption_ProtokollPfad = 'ProtokollPfad';
 
 const
   // Namens-konvention Bild: Gerät-RID-ProtokollParameter.jpg
@@ -217,7 +218,10 @@ type
     Stat_AusfuehrungsMomentKorrektur: integer;
     Stat_FotoMeldungen: integer;
 
-    // Caching Elemente
+    // Caching Element:
+    //  Wenn es einmal schon einen Datei-Treffer für einen Protokoll-Namen gab
+    //  wird nach dieser Datei nicht mehr gesucht, sondern der Dateiname
+    //  wird direkt in dieser Liste gespeichert und später direkt gefunden
     sProtokolle: TSearchStringList;
 
     // Optionen für "start"
@@ -233,6 +237,7 @@ type
     //
     // Ignoriert "Letzte TAN", "Restanten", "Stay-Liste"
     proceed_EinfacheListe: boolean;
+    proceed_ProtokollPfad: string;
 
     //
     // Normale Verarbeitung OHNE Ergebnis-Upload
@@ -320,7 +325,10 @@ type
     class procedure validateBaustelleCSV(FName: string);
     class function isGeraeteNo(s:string):boolean;
 
+    // Errechnet aus einem aktuellen MDEREC den jeweils gültigen
+    // Protokollnamen, es gibt ein Caching über sProtokolle
     function toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
+
     class function toBild(const mderec: TMdeRec): string;
     class procedure toAnsi(var mderec: TMdeRec);
     function detectGeraeteNummer(sPath: string): string;
@@ -1681,7 +1689,7 @@ begin
   // ermittlung des "TAN"-Parameters
   AktTrn := sParameter.values['TAN'];
   if (AktTrn = '') then
-    if sParameter.count > 0 then
+    if (sParameter.count > 0) then
       AktTrn := sParameter[1];
 
   try
@@ -1750,7 +1758,11 @@ begin
         Einstellungen.LoadFromFile(pAppServicePath + cGeraeteEinstellungen + GeraeteNo + '.ini');
 
       // Optionen setzen
-      proceed_EinfacheListe := (Einstellungen.values[cServerOption_EinfacheListe] = cIni_Activate);
+      with Einstellungen do
+      begin
+       proceed_EinfacheListe := (values[cServerOption_EinfacheListe] = cIni_Activate);
+       proceed_ProtokollPfad := values[cServerOption_ProtokollPfad];
+      end;
 
       // den neuesten <GeraeteNo>.DAT aus dem Internet holen
       // wenn nicht schon vorhanden!
@@ -2462,8 +2474,10 @@ begin
 
       end;
 
-      // alle Zuordnungen ansehen,
-      // Beispiel:    PLED3->PLE & PLED2->PLE
+      // alle Zuordnungen ansehen, und die existierenden unter ihrem
+      // realen Namen hinzunehmen.
+      // Beispiel:  PLED3->PLE & PLED2->PLE : Es wird nur einmal "PLE"
+      //            hinzugefügt
       for m := 0 to pred(sProtokolle.count) do
       begin
         OneJLine := AnsiUpperCase(nextp(sProtokolle[m], cJondaProtokollDelimiter, 1));
@@ -2476,16 +2490,28 @@ begin
       for m := 0 to pred(ProtocolAll.count) do
       begin
         ProtS := ProtocolAll[m];
+        // der Doppelpunkt leitet Protokolle ein
         WriteJonDa(':' + ProtS);
 
-        //
+        // Lade nun das ermittelte Protokoll
         try
-          ProtocolL.LoadFromFile(pAppServicePath + cProtokollPath + ProtocolAll[m] + cProtExtension);
+          // Vorrangig aus dem "privaten" Verzeichnis
+          repeat
+            if (proceed_ProtokollPfad<>'') then
+             if FileExists(pAppServicePath + cProtokollPath + proceed_ProtokollPfad + ProtocolAll[m] + cProtExtension) then
+             begin
+               ProtocolL.LoadFromFile(pAppServicePath + cProtokollPath + proceed_ProtokollPfad + ProtocolAll[m] + cProtExtension);
+               break;
+             end;
+           ProtocolL.LoadFromFile(pAppServicePath + cProtokollPath + ProtocolAll[m] + cProtExtension);
+          until yet;
+
         except
           on E: Exception do
             log(cERRORText + ' 2432:' + E.Message);
         end;
 
+        // Schreibe es hinter den ":", verhindere aber weitere ":"
         for k := 0 to pred(ProtocolL.count) do
           if (length(ProtocolL[k]) > 0) then
             if (ProtocolL[k][1] <> ':') then
@@ -2493,13 +2519,14 @@ begin
       end;
 
       // nun alle Geräte-Optionen noch anfügen, falls vorhanden
+      // wird im Moment nicht ausgewertet
       if (Einstellungen.values[cServerOption_JonDaOptionen] <> '') then
       begin
         WriteJonDa(':' + 'OPTIONEN');
         WriteJonDa(Einstellungen.values[cServerOption_JonDaOptionen]);
       end;
 
-      // nun alle (einmaligen) Geräte-Kommandos
+      // nun alle (einmaligen) Geräte-.\Kommandos
       if (RevIsFrom(RemoteRev, 2.016)) then
         if FileExists(pAppServicePath + cGeraeteKommandos + GeraeteNo + '.ini') then
         begin
@@ -4563,11 +4590,8 @@ begin
 end;
 
 function TOrgaMonApp.toProtokollFName(const mderec: TMdeRec; RemoteRev: single): string;
-// Errechnet aus einem aktuellen MDEREC den jeweils gültigen
-// Protokollnamen, es gibt ein Caching über sProtokolle
 var
   k: integer;
-  JonDaProtokoll: string;
 
   function _baustelle: string;
   begin
@@ -4606,6 +4630,7 @@ begin
           break;
         end;
 
+        // Default - dieses Protokoll MUSS vorhanden sein!
         result := cProtPrefix;
 
       until yet;

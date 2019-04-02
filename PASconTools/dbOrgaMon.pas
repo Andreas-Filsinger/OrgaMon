@@ -367,6 +367,7 @@ uses
   Windows,
   SysUtils,
 {$IFDEF fpc}
+  ZPlainFirebirdInterbaseConstants,
   fpchelper,
 {$ELSE}
 {$IFNDEF CONSOLE}
@@ -541,11 +542,25 @@ begin
         begin
           if not(IsNull) then
           begin
-{$IFDEF fpc}
-            Infostr := Infostr + AsString;
-{$ELSE}
-            case SQLType of
-              SQL_DOUBLE, SQL_DOUBLE_:
+{$ifdef fpc}
+ case DataType of
+   ftCurrency:Infostr := Infostr + format('%.2f', [AsCurrency]);
+   ftInteger: Infostr := Infostr + inttostr(AsInteger);
+ else
+   Infostr := Infostr + 'SQLType ' + inttostr(ord(DataType)) + ' unbekannt!';
+ end;
+   (*
+   ftUnknown, ftString, ftSmallint, ftInteger, ftWord,
+               ftBoolean, ftFloat, , ftBCD, ftDate,  ftTime, ftDateTime,
+               ftBytes, ftVarBytes, ftAutoInc, ftBlob, ftMemo, ftGraphic, ftFmtMemo,
+               ftParadoxOle, ftDBaseOle, ftTypedBinary, ftCursor, ftFixedChar,
+               ftWideString, ftLargeint, ftADT, ftArray, ftReference,
+               ftDataSet, ftOraBlob, ftOraClob, ftVariant, ftInterface,
+               ftIDispatch, ftGuid, ftTimeStamp, ftFMTBcd, ftFixedWideChar, ftWideMemo
+   *)
+{$else}
+           case SQLType of
+           SQL_DOUBLE, SQL_DOUBLE_:
                 Infostr := Infostr + format('%.2f', [AsDouble]);
 
               SQL_INT64, SQL_INT64_:
@@ -595,7 +610,8 @@ begin
             else
               Infostr := Infostr + 'SQLType ' + inttostr(SQLType) + ' unbekannt!';
             end;
-{$ENDIF}
+
+           {$endif}
           end
           else
           begin
