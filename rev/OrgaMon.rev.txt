@@ -19,6 +19,10 @@ Dokumentation
 
 @<a href="https://wiki.orgamon.org/"><font color="blue">Weblink: Onlinedokumentation "OrgaMon"</font></a href>
 
+Rev 8.416 (03.04.19) Andreas Filsinger
+
+ Bug: Auftrag-Ergebnis: Unbekannter Feedback Key 3001
+
 Rev 8.415 (01.04.19) Andreas Filsinger
 
  Wegfall: OLAPArbeitsplatz

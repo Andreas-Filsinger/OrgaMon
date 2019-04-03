@@ -11175,12 +11175,13 @@ var
   // Post-Transaktionen
   Transaktionen: TStringList;
 
+
   // Parameter
   pNurDenLetztenBlock : boolean; // was CheckBox14.checked
   pNurZiffern : boolean; // was CheckBox13.checked
   pQuellHeaderLines: Integer; // was QuellHeaderLines
   pNummerConcatArt: boolean; // was CheckBox5.checked
-  pNummerConcarMaterial: boolean; // was CheckBox11.checked
+  pNummerConcatMaterial: boolean; // was CheckBox11.checked
   pPlanquadrat: string; // was Edit3.Text
   pIgnoreEmptyArt: boolean;  // was CheckBox12.checked
   pQuellDelimiter: Char; // was QuellDelimiter, default ";"
@@ -11408,6 +11409,46 @@ var
   end;
 
 begin
+  // Parameter
+  if assigned(pOptions) then
+  begin
+   with pOptions do
+   begin
+    pNurDenLetztenBlock := (values['NurDenLetztenBlock']=cIni_Activate);
+    pNurZiffern := (values['NurZiffern']=cIni_Activate);
+    pQuellHeaderLines:= StrToIntDef(values['QuellHeaderLines'],1);
+    pNummerConcatArt:= (values['NummerConcatArt']=cIni_Activate);
+    pNummerConcatMaterial:= (values['NummerConcatMaterial']=cIni_Activate);
+    pPlanquadrat:= values['Planquadrat'];
+    pIgnoreEmptyArt:= (values['IgnoreEmptyArt']=cIni_Activate);
+    InpStr := values['QuellDelimiter'];
+    if (length(InpStr)<>1) then
+     pQuellDelimiter := ';'
+    else
+     pQuellDelimiter := InpStr[1];
+    pEindeutig := (values['Eindeutig']<>cIni_DeActivate);
+    pSimulieren := (values['Simulieren']=cIni_Activate);
+    pDeleteMarked:= (values['DeleteMarked']=cIni_Activate);
+    pMarkImported:= (values['MarkImported']<>cIni_DeActivate);
+    pOEM := (values['OEM']=cIni_Activate);
+   end;
+  end else
+  begin
+    // defaults
+    pNurDenLetztenBlock := false;
+    pNurZiffern := false;
+    pQuellHeaderLines:= 1;
+    pNummerConcatArt:= false;
+    pNummerConcatMaterial:= false;
+    pPlanquadrat:= '';
+    pIgnoreEmptyArt:= false;
+    pQuellDelimiter:= ';';
+    pEindeutig := true;
+    pSimulieren := false;
+    pDeleteMarked:= false;
+    pMarkImported:= true;
+    pOEM := false;
+  end;
 
   // Baustelle ermitteln
   if (BAUSTELLE_R < cRID_FirstValid) then
@@ -11432,7 +11473,7 @@ begin
 
   if not(FileExists(SchemaPath+Baustelle_Kuerzel+cSchemaExtension)) then
   begin
-    _(cFeedBack_Log,cERRORText+' Import-Schema nicht gefunden');
+    _(cFeedBack_ShowMessage,cERRORText+' Import-Schema nicht gefunden');
     exit;
   end else
   begin
@@ -11544,7 +11585,7 @@ begin
     exit;
   end;
 
-  if pNummerConcarMaterial and (MaterialNummer_FieldIndex = -1) then
+  if pNummerConcatMaterial and (MaterialNummer_FieldIndex = -1) then
   begin
     _(cFeedback_ShowMessage,'Das Feld Material_Nummer muss importiert werden!');
     ZaehlerNummernImBestand.free;
@@ -11589,7 +11630,7 @@ begin
         if pNummerConcatArt then
           _ZaehlerNummer := e_r_Sparte(FieldByName('ART').AsString) + '~' + _ZaehlerNummer;
 
-        if pNummerConcarMaterial then
+        if pNummerConcatMaterial then
           _ZaehlerNummer := FieldByName('MATERIAL_NUMMER').AsString + '~' + _ZaehlerNummer;
 
         ZaehlerNummernImBestand.addobject(_ZaehlerNummer, TObject(FieldByName('RID').AsInteger));

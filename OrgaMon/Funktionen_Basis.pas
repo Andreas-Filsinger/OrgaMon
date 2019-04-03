@@ -127,8 +127,6 @@ function e_r_LaenderCache: TStringList;
 // liefert das ISO Landeskennzeichen
 function e_r_ObtainISOfromRID(LAND_R: integer): string;
 
-function enCrypt_Hex(s: string): string;
-function deCrypt_Hex(s: string): string;
 procedure MigrateFrom(BringTo: integer);
 
 // Landesspezifiesche Strings
@@ -167,7 +165,6 @@ implementation
 
 uses
   Math, SysUtils,
-  DCPcrypt2, DCPblockciphers, DCPblowfish,
   c7zip, WordIndex, ExcelHelper,
   dbOrgaMon, SimplePassword,
 
@@ -198,7 +195,7 @@ uses
   IdStack, IdComponent, IdFTP, solidFTP,
   OpenOfficePDF,
   srvXMLRPC,
-  memcache;
+  memcache, types;
 
 const
   CacheMusikerLiveTime = 2 * 60 * 60 * 1000; // 2 Stunden
@@ -212,12 +209,6 @@ const
   { Cache Laender }
   CacheLaender: TStringList = nil;
   CacheLaenderFull: TStringList = nil;
-
-  { Pwd Crypt }
-  CryptKeyLength: integer = 0;
-
-var
-  CryptKey: array [0 .. 1023] of AnsiChar;
 
 
 function e_r_MusikerName(MUSIKER_R: integer): string;
@@ -986,31 +977,6 @@ function e_r_BearbeiterKuerzel(BEARBEITER_R: integer): string;
 begin
   Result := e_r_sqls('select KUERZEL from BEARBEITER where RID=' +
     IntToStr(BEARBEITER_R));
-end;
-
-var
-  DCP_blowfish1: TDCP_Blowfish = nil;
-
-function deCrypt_Hex(s: string): string;
-begin
-  if not (assigned(DCP_blowfish1)) then
-    DCP_blowfish1 := TDCP_Blowfish.Create(nil);
-  with DCP_blowfish1 do
-  begin
-    Init(CryptKey, CryptKeyLength, nil);
-    Result := cutrblank(decryptstring(hexstr2bin(s)));
-  end;
-end;
-
-function enCrypt_Hex(s: string): string;
-begin
-  if not (assigned(DCP_blowfish1)) then
-    DCP_blowfish1 := TDCP_Blowfish.Create(nil);
-  with DCP_blowfish1 do
-  begin
-    Init(CryptKey, CryptKeyLength, nil);
-    Result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
-  end;
 end;
 
 function SysDBApassword: string;
@@ -1971,14 +1937,7 @@ begin
   result := modula10(n);
 end;
 
-const
-  cKey = 'anfisoft' + cApplicationName;
-
 begin
-
-  // Verschlüsselungs Namespace
-  CryptKey := cKey;
-  CryptKeyLength := length(cKey) * 8;
 
 {$IFDEF CONSOLE}
 {$IFDEF fpc}

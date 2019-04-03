@@ -697,7 +697,7 @@ begin
       values['NurZiffern'] :=  bool2cO( CheckBox13.checked);
       values['QuellHeaderLines'] := IntToStr(QuellHeaderLines); // imp pend: QuellHeaderLines;
       values['NummerConcatArt'] := bool2cO(CheckBox5.checked);
-      values['NummerConcarMaterial'] := bool2cO( CheckBox11.checked);
+      values['NummerConcatMaterial'] := bool2cO( CheckBox11.checked);
       values['Planquadrat'] := Edit3.Text;
       values['IgnoreEmptyArt'] := bool2cO( CheckBox12.checked);
       values['QuellDelimiter'] :=  QuellDelimiter;
@@ -705,6 +705,7 @@ begin
       values['Simulieren'] := bool2cO(CheckBox3.checked);
       values['DeleteMarked'] := bool2cO(CheckBox10.checked);
       values['MarkImported'] := bool2cO(CheckBox9.checked);
+      values['OEM'] :=bool2cO(CheckBox8.checked);
     end;
     e_w_Import(
      { } BAUSTELLE_R,

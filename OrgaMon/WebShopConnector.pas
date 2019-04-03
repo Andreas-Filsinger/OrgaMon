@@ -268,8 +268,7 @@ uses
   SimplePassword, html,
   DateUtils, CareTakerClient,
   gplists, OLAP, SolidFTP,
-  DCPcrypt2, DCPblockciphers, DCPblowfish,
-  DCPbase64, ArtikelVerlag,
+  ArtikelVerlag,
   IdHttp,
 
   JclBase, JvclVer,

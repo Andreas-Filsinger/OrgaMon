@@ -147,9 +147,6 @@ implementation
 uses
   globals, systemd, wanfix32, html, c7zip,
 
-  //
-  DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
-
   // Tools
   SolidFTP, OrientationConvert,
 

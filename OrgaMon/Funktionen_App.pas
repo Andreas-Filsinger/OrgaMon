@@ -406,9 +406,6 @@ type
 
   end;
 
-function enCrypt_Hex(s: string): string;
-function deCrypt_Hex(s: string): string;
-
 implementation
 
 uses
@@ -417,9 +414,7 @@ uses
   // anfix
   BinLager32, html, srvXMLRPC, CareTakerClient,
   // Exit
-  CCR.Exif,
-  // Crypt
-  DCPcrypt2, DCPblockciphers, DCPblowfish;
+  CCR.Exif;
 
 { TOrgaMonApp }
 
@@ -5025,43 +5020,6 @@ begin
     end;
   end;
   DirEntries.free;
-end;
-
-var
-  DCP_blowfish1: TDCP_Blowfish = nil;
-  CryptKeyLength: integer = 0;
-  CryptKey: array [0 .. 1023] of AnsiChar;
-
-procedure Crypt_Init;
-const
-  cApplicationNameOrgaMon = 'OrgaMon';
-begin
-  // Verschlüsselungs Namespace
-  CryptKey := 'anfisoft' + cApplicationNameOrgaMon;
-  CryptKeyLength := StrLen(CryptKey) * 8;
-  DCP_blowfish1 := TDCP_Blowfish.Create(nil);
-end;
-
-function deCrypt_Hex(s: string): string;
-begin
-  if not(assigned(DCP_blowfish1)) then
-    Crypt_Init;
-  with DCP_blowfish1 do
-  begin
-    Init(CryptKey, CryptKeyLength, nil);
-    result := cutrblank(decryptstring(hexstr2bin(s)));
-  end;
-end;
-
-function enCrypt_Hex(s: string): string;
-begin
-  if not(assigned(DCP_blowfish1)) then
-    Crypt_Init;
-  with DCP_blowfish1 do
-  begin
-    Init(CryptKey, CryptKeyLength, nil);
-    result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
-  end;
 end;
 
 const

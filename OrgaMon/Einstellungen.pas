@@ -45,7 +45,6 @@ uses
   Datenbank,
 
   //
-  DCPcrypt2, DCPblockciphers, DCPblowfish,
   Buttons;
 
 type
@@ -58,7 +57,6 @@ type
     Button1: TButton;
     IB_UpdateBar1: TIB_UpdateBar;
     Image2: TImage;
-    DCP_blowfish1: TDCP_blowfish;
     IB_Memo1: TIB_Memo;
     procedure FormActivate(Sender: TObject);
     procedure IB_Query1AfterPost(IB_Dataset: TIB_Dataset);

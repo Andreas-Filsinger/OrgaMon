@@ -1476,6 +1476,7 @@ var
 begin
   Button9.Enabled := false;
   BeginHourGlass;
+  i := MaxInt;
   WARTEND := TsTable.create;
   repeat
 

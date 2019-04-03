@@ -47,7 +47,7 @@ uses
 
 const
   cApplicationName = 'OrgaMon'; // CRYPT-KEY! - never Change a bit!!!
-  Version: single = 8.415; // ..\rev\OrgaMon.rev.txt
+  Version: single = 8.416; // ..\rev\OrgaMon.rev.txt
 
   // Mindest-Versions-Anforderungen an die Client-App
   cMinVersion_OrgaMonApp: single = 2.020;
@@ -1561,6 +1561,10 @@ procedure patchPath(var s: string);
 // dynamische Parameter
 function JonDaVorlauf: integer;
 
+// Verschlüssellung
+function enCrypt_Hex(s: string): string;
+function deCrypt_Hex(s: string): string;
+
 implementation
 
 uses
@@ -1578,6 +1582,7 @@ uses
   IB_Session,
 {$ENDIF}
   IdGlobal,
+  DCPcrypt2, DCPblockciphers, DCPblowfish,
   SolidFTP,
   SimplePassword;
 
@@ -2129,6 +2134,40 @@ end;
 function ErrorFName(Namespace: string):string;
 begin
   result := DiagnosePath + NameSpace +'-' + IntToStr(DateGet) + '-ERROR.log.txt';
+end;
+
+const
+  DCP_blowfish1: TDCP_Blowfish = nil;
+  CryptKeyLength: integer = 0;
+  CryptKey: array [0 .. 1023] of AnsiChar = 'anfisoft' + cApplicationName;
+
+procedure Crypt_Init;
+begin
+  // Verschlüsselungs Namespace
+  CryptKeyLength := StrLen(CryptKey) * 8;
+  DCP_blowfish1 := TDCP_Blowfish.Create(nil);
+end;
+
+function deCrypt_Hex(s: string): string;
+begin
+  if not(assigned(DCP_blowfish1)) then
+    Crypt_Init;
+  with DCP_blowfish1 do
+  begin
+    Init(CryptKey, CryptKeyLength, nil);
+    result := cutrblank(decryptstring(hexstr2bin(s)));
+  end;
+end;
+
+function enCrypt_Hex(s: string): string;
+begin
+  if not(assigned(DCP_blowfish1)) then
+    Crypt_Init;
+  with DCP_blowfish1 do
+  begin
+    Init(CryptKey, CryptKeyLength, nil);
+    result := bin2hexstr(encryptstring(s + fill(' ', 16 - length(s))));
+  end;
 end;
 
 initialization

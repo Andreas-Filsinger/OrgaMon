@@ -161,7 +161,7 @@ object FormAuftragImport: TFormAuftragImport
     Top = 49
     Width = 1017
     Height = 617
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 5
     object TabSheet1: TTabSheet
       Caption = 'Quelle und Zuordnungen'

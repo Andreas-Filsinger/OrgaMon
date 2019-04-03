@@ -121,10 +121,14 @@ begin
                     ListBox1.itemindex := pred(ListBox1.items.count);
                    end;
      cFeedBack_ProcessMessages: Application.Processmessages;
+     cFeedBack_ProgressBar_Max+1: progressbar1.max := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_Position+1: progressbar1.position := StrToIntDef(value,0);
+     cFeedBack_ProgressBar_stepit+1: progressbar1.StepIt;
      cFeedBack_ProgressBar_Max+2: progressbar2.max := StrToIntDef(value,0);
      cFeedBack_ProgressBar_Position+2: progressbar2.position := StrToIntDef(value,0);
      cFeedBack_ProgressBar_stepit+2: progressbar2.StepIt;
      cFeedBack_Label+3: label3.caption := value;
+     cFeedBack_ListBox_add+1: Listbox1.Items.Add(value);
     else
      ShowMessage('Unbekannter Feedback Key '+IntToStr(Key));
     end;

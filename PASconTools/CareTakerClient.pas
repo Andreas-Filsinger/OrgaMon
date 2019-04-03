@@ -68,10 +68,9 @@ uses
   SimplePassword,
 
   // Indy
-  IdHttp,
+  IdHttp;
 
-  // aus DCP
-  DCPcrypt2, DCPblockciphers, DCPblowfish;
+
 
 const
   _TrueServerName: string = '';
@@ -183,127 +182,4 @@ begin
 end;
 
 end.
-
-function enCrypt(s: string): string;
-var
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of AnsiChar;
-begin
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, cCareTakerKey);
-    Init(CryptKey, length(cCareTakerKey) * 8, nil);
-    result := encryptstring(s);
-  end;
-  cBLOWFISH.free;
-end;
-
-function deCrypt(s: string): string;
-var
-  cBLOWFISH: TDCP_blowfish;
-  CryptKey: array [0 .. 1023] of AnsiChar;
-begin
-  cBLOWFISH := TDCP_blowfish.create(nil);
-  with cBLOWFISH do
-  begin
-    StrPCopy(CryptKey, cCareTakerKey);
-    Init(CryptKey, length(cCareTakerKey) * 8, nil);
-    result := decryptstring(s);
-  end;
-  cBLOWFISH.free;
-end;
-
-procedure CheckCreateDiagnosePath;
-begin
-  if (cCareTakerDiagnosePath = '') then
-  begin
-    // nimm den Anwendungspfad - der braucht nicht überprüft werden
-    cCareTakerDiagnosePath := ExtractFilePath(ParamStr(0));
-    CareTakerDiagnosePathChecked := cCareTakerDiagnosePath;
-  end
-  else
-  begin
-    // nur prüfen, wenn nicht schon erfolgt!
-    if (CareTakerDiagnosePathChecked <> cCareTakerDiagnosePath) then
-    begin
-      CheckCreateDir(cCareTakerDiagnosePath);
-      CareTakerDiagnosePathChecked := cCareTakerDiagnosePath;
-    end;
-  end;
-end;
-
-function CareTakerLog(s: string; Nachmeldungen: boolean = true): TTroubleTicket;
-var
-  hCARETAKER: TIdHTTP;
-  RawResult: string;
-begin
-  result := -1;
-  s := MachineID + ': ' + s;
-  if not(iCareTakerOffline) then
-  begin
-    try
-      hCARETAKER := TIdHTTP.create(nil);
-      RawResult := ExtractSegmentBetween
-        (hCARETAKER.get('http://caretaker.orgamon.org/log.php?msg=' +
-        AnsiTorfc1738(enCrypt(copy(s, 1, 240)))), '<BODY>', '</BODY>', true);
-      hCARETAKER.free;
-      result := strtointdef(StrFilter(RawResult, '0123456789', false), -1);
-    except
-    end;
-  end;
-
-  //
-  // if log fail, write to file: Note the Moment of fail!
-  //
-  if Nachmeldungen then
-    if (result = -1) then
-      AppendStringsToFile(s + ' [' + long2date(DateGet) + ' ' +
-        secondstostr(SecondsGet) + ']', CareTakerFName);
-end;
-
-procedure CareTakerClose(Ticket: TTroubleTicket);
-begin
-  CareTakerLog('Close Ticket ' + inttostr(Ticket));
-end;
-
-procedure Nachmeldungen;
-var
-  n: integer;
-  LogS: TStringList;
-  Nachgemeldete: TgpIntegerList;
-begin
-  if not(iCareTakerOffline) then
-    if FileExists(CareTakerFName) then
-    begin
-
-      Nachgemeldete := TgpIntegerList.create;
-      LogS := TStringList.create;
-      LogS.LoadFromFile(CareTakerFName);
-
-      // Melde nach, aber nur maximal 4
-      for n := 0 to min(4, pred(LogS.count)) do
-        if (CareTakerLog(LogS[n], false) > 0) then
-          Nachgemeldete.add(n)
-        else
-          break;
-
-      if (Nachgemeldete.count > 0) then
-      begin
-        for n := pred(Nachgemeldete.count) downto 0 do
-          LogS.delete(Nachgemeldete[n]);
-        if (LogS.count = 0) then
-          FileDelete(CareTakerFName)
-        else
-          LogS.savetoFile(CareTakerFName);
-      end;
-      LogS.free;
-    end;
-end;
-
-function CareTakerFName: string;
-begin
-  CheckCreateDiagnosePath;
-  result := cCareTakerDiagnosePath + cCareTakerLogFName;
-end;
 

@@ -667,9 +667,7 @@ uses
   html, Geld, DTA,
   SimplePassword, WordIndex, OpenStreetMap,
 
-
-
-  // DC-Crypt
+  // Blowfish
   DCPcrypt2, DCPblockciphers, DCPblowfish, DCPbase64,
 
   // DataBase
